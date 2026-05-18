@@ -122,7 +122,7 @@ export class WebGLRenderer {
       // Setup resize observer
       this.setupResizeObserver();
       
-      console.log('WebGLRenderer initialized successfully');
+      console.info('WebGLRenderer initialized successfully');
       
     } catch (error) {
       console.error('Failed to initialize WebGLRenderer:', error);
@@ -293,7 +293,7 @@ export class WebGLRenderer {
   }
   
   private increaseQuality(): void {
-    console.log(`High FPS detected (${this.currentFPS}), can increase quality`);
+    console.info(`High FPS detected (${this.currentFPS}), can increase quality`);
     
     // This would be called when performance is good
     // Implementation would gradually increase quality
@@ -330,7 +330,7 @@ export class WebGLRenderer {
   }
   
   private restoreContext(): void {
-    console.log('Restoring WebGL context');
+    console.info('Restoring WebGL context');
     
     // Reinitialize shaders
     this.recompileShaders();

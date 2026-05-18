@@ -143,9 +143,9 @@ export function renderDynamicStatusTable(
   };
 
   // Render table
-  console.log("\n" + "█".repeat(100));
-  console.log(Bun.color("hsl(220, 60%, 70%)") + " 🔌 LIVE ENDPOINT STATUS" + "\x1b[0m");
-  console.log("█".repeat(100));
+  console.info("\n" + "█".repeat(100));
+  console.info(Bun.color("hsl(220, 60%, 70%)") + " 🔌 LIVE ENDPOINT STATUS" + "\x1b[0m");
+  console.info("█".repeat(100));
 
   // Headers
   const headers = [
@@ -164,8 +164,8 @@ export function renderDynamicStatusTable(
     "\x1b[0m"
   ).join(" │ ");
 
-  console.log(headerLine);
-  console.log("─".repeat(100));
+  console.info(headerLine);
+  console.info("─".repeat(100));
 
   // Rows with dynamic colors
   endpoints.forEach(ep => {
@@ -205,10 +205,10 @@ export function renderDynamicStatusTable(
       "\x1b[90m" + ep.lastCheck.toLocaleTimeString().padStart(12) + "\x1b[0m"
     ];
 
-    console.log(cells.join(" │ "));
+    console.info(cells.join(" │ "));
   });
 
-  console.log("█".repeat(100));
+  console.info("█".repeat(100));
 
   // Overall health score with dynamic color
   const healthScore = calculateHealthScore(endpoints);
@@ -216,7 +216,7 @@ export function renderDynamicStatusTable(
                     healthScore >= 70 ? "hsl(48, 100%, 60%)" :
                     "hsl(10, 90%, 55%)";
 
-  console.log(`\n${Bun.color(scoreColor)}` +
+  console.info(`\n${Bun.color(scoreColor)}` +
     ` Overall Health: ${healthScore}/100` +
     `\x1b[0m` +
     (healthScore < 90 ? " ⚠️ Run /fw-vault-health-fix" : " ✅ All systems optimal"));
@@ -286,7 +286,7 @@ async function main() {
   const watch = args.includes('--watch');
 
   if (watch) {
-    console.log('👁️  Watch mode - Refreshing every 5 seconds (Ctrl+C to stop)');
+    console.info('👁️  Watch mode - Refreshing every 5 seconds (Ctrl+C to stop)');
     while (true) {
       console.clear();
       demoDynamicStatusTable();

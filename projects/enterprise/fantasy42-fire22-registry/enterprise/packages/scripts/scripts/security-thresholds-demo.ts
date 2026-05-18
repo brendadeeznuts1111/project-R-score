@@ -142,14 +142,14 @@ class SecurityThresholdsDemo {
    * Demonstrate different risk tolerance levels
    */
   async demonstrateRiskTolerance(): Promise<void> {
-    console.log('🎯 Security Thresholds Demo');
-    console.log('='.repeat(60));
-    console.log('Testing different risk tolerance levels with same package set');
+    console.info('🎯 Security Thresholds Demo');
+    console.info('='.repeat(60));
+    console.info('Testing different risk tolerance levels with same package set');
 
     for (const [level, config] of Object.entries(RISK_TOLERANCE_LEVELS)) {
-      console.log(`\n🏷️  ${config.name}`);
-      console.log(`   📝 ${config.description}`);
-      console.log('-'.repeat(50));
+      console.info(`\n🏷️  ${config.name}`);
+      console.info(`   📝 ${config.description}`);
+      console.info('-'.repeat(50));
 
       try {
         await enhancedScan(this.testPackages, {
@@ -158,7 +158,7 @@ class SecurityThresholdsDemo {
           failOnThresholdExceeded: false, // Demo mode
         });
       } catch (error) {
-        console.log(`   🚫 Threshold exceeded: ${error.message}`);
+        console.info(`   🚫 Threshold exceeded: ${error.message}`);
       }
     }
   }
@@ -167,23 +167,23 @@ class SecurityThresholdsDemo {
    * Demonstrate exception handling
    */
   async demonstrateExceptions(): Promise<void> {
-    console.log('\n🛡️  Exception Handling Demo');
-    console.log('-'.repeat(50));
+    console.info('\n🛡️  Exception Handling Demo');
+    console.info('-'.repeat(50));
 
     const exceptions = Object.values(EXCEPTIONS_DATABASE);
 
-    console.log('📋 Active Security Exceptions:');
+    console.info('📋 Active Security Exceptions:');
     exceptions.forEach((exception, index) => {
-      console.log(`\n   ${index + 1}. ${exception.cve || exception.package}`);
-      console.log(`      📦 Package: ${exception.package}`);
-      console.log(`      📝 Reason: ${exception.reason}`);
-      console.log(`      👤 Approved by: ${exception.approvedBy}`);
-      console.log(`      ⏰ Expires: ${exception.expiresAt?.toISOString().split('T')[0]}`);
-      console.log(`      🛡️  Mitigation: ${exception.mitigation}`);
+      console.info(`\n   ${index + 1}. ${exception.cve || exception.package}`);
+      console.info(`      📦 Package: ${exception.package}`);
+      console.info(`      📝 Reason: ${exception.reason}`);
+      console.info(`      👤 Approved by: ${exception.approvedBy}`);
+      console.info(`      ⏰ Expires: ${exception.expiresAt?.toISOString().split('T')[0]}`);
+      console.info(`      🛡️  Mitigation: ${exception.mitigation}`);
     });
 
-    console.log('\n🔍 Testing with Exceptions Applied:');
-    console.log('-'.repeat(40));
+    console.info('\n🔍 Testing with Exceptions Applied:');
+    console.info('-'.repeat(40));
 
     try {
       await enhancedScan(this.testPackages, {
@@ -193,7 +193,7 @@ class SecurityThresholdsDemo {
         failOnThresholdExceeded: false,
       });
     } catch (error) {
-      console.log(`   🚫 Result: ${error.message}`);
+      console.info(`   🚫 Result: ${error.message}`);
     }
   }
 
@@ -201,8 +201,8 @@ class SecurityThresholdsDemo {
    * Demonstrate threshold validation
    */
   validateThresholdConfigurations(): void {
-    console.log('\n✅ Threshold Configuration Validation');
-    console.log('-'.repeat(50));
+    console.info('\n✅ Threshold Configuration Validation');
+    console.info('-'.repeat(50));
 
     const testConfigs = [
       {
@@ -234,11 +234,11 @@ class SecurityThresholdsDemo {
     testConfigs.forEach(({ name, config, expected }) => {
       const validation = validateSecurityConfig(config);
       const status = validation.valid === expected ? '✅' : '❌';
-      console.log(`${status} ${name}`);
+      console.info(`${status} ${name}`);
 
       if (!validation.valid) {
         validation.errors.forEach(error => {
-          console.log(`   ⚠️  ${error}`);
+          console.info(`   ⚠️  ${error}`);
         });
       }
     });
@@ -248,21 +248,21 @@ class SecurityThresholdsDemo {
    * Show recommended thresholds for different environments
    */
   showRecommendedConfigurations(): void {
-    console.log('\n📋 Recommended Configurations by Environment');
-    console.log('-'.repeat(50));
+    console.info('\n📋 Recommended Configurations by Environment');
+    console.info('-'.repeat(50));
 
     const environments = ['development', 'staging', 'production', 'ci'];
 
     environments.forEach(env => {
       const recommended = getRecommendedThresholds(env);
-      console.log(`\n🏭 ${env.toUpperCase()}:`);
-      console.log(`   🚨 Max Fatal Issues: ${recommended.maxFatalIssues}`);
-      console.log(`   ⚠️  Max Warnings: ${recommended.maxWarningIssues}`);
-      console.log(`   📊 Max Risk Score: ${recommended.maxRiskScore}`);
-      console.log(`   📅 Max Vulnerability Age: ${recommended.maxVulnerabilityAge} days`);
-      console.log(`   📋 Require License Info: ${recommended.requireLicenseInfo}`);
-      console.log(`   🔒 Block Untrusted Registries: ${recommended.blockUntrustedRegistries}`);
-      console.log(
+      console.info(`\n🏭 ${env.toUpperCase()}:`);
+      console.info(`   🚨 Max Fatal Issues: ${recommended.maxFatalIssues}`);
+      console.info(`   ⚠️  Max Warnings: ${recommended.maxWarningIssues}`);
+      console.info(`   📊 Max Risk Score: ${recommended.maxRiskScore}`);
+      console.info(`   📅 Max Vulnerability Age: ${recommended.maxVulnerabilityAge} days`);
+      console.info(`   📋 Require License Info: ${recommended.requireLicenseInfo}`);
+      console.info(`   🔒 Block Untrusted Registries: ${recommended.blockUntrustedRegistries}`);
+      console.info(
         `   📜 Allowed Licenses: ${recommended.allowedLicenses?.slice(0, 3).join(', ')}...`
       );
     });
@@ -272,12 +272,12 @@ class SecurityThresholdsDemo {
    * Demonstrate dynamic threshold adjustment
    */
   demonstrateDynamicThresholds(): void {
-    console.log('\n🔄 Dynamic Threshold Adjustment');
-    console.log('-'.repeat(50));
+    console.info('\n🔄 Dynamic Threshold Adjustment');
+    console.info('-'.repeat(50));
 
     const baseThresholds = RISK_TOLERANCE_LEVELS.balanced.thresholds;
 
-    console.log('🎚️  Adjusting thresholds based on project needs:');
+    console.info('🎚️  Adjusting thresholds based on project needs:');
 
     const adjustments = [
       {
@@ -303,11 +303,11 @@ class SecurityThresholdsDemo {
     ];
 
     adjustments.forEach(({ scenario, adjustment, reason }) => {
-      console.log(`\n📈 ${scenario}:`);
+      console.info(`\n📈 ${scenario}:`);
       Object.entries(adjustment).forEach(([key, value]) => {
-        console.log(`   🔧 ${key}: ${value}`);
+        console.info(`   🔧 ${key}: ${value}`);
       });
-      console.log(`   📝 Reason: ${reason}`);
+      console.info(`   📝 Reason: ${reason}`);
     });
   }
 }
@@ -319,15 +319,15 @@ class SecurityThresholdsDemo {
 async function runSecurityThresholdsDemo(): Promise<void> {
   const demo = new SecurityThresholdsDemo();
 
-  console.log('🎯 Fire22 Security Thresholds Configuration');
-  console.log('='.repeat(60));
+  console.info('🎯 Fire22 Security Thresholds Configuration');
+  console.info('='.repeat(60));
 
-  console.log('📊 This demo shows how to:');
-  console.log('   • Configure security thresholds based on risk tolerance');
-  console.log('   • Handle exceptions for specific vulnerabilities');
-  console.log('   • Validate threshold configurations');
-  console.log('   • Use recommended settings for different environments');
-  console.log('   • Dynamically adjust thresholds based on project needs');
+  console.info('📊 This demo shows how to:');
+  console.info('   • Configure security thresholds based on risk tolerance');
+  console.info('   • Handle exceptions for specific vulnerabilities');
+  console.info('   • Validate threshold configurations');
+  console.info('   • Use recommended settings for different environments');
+  console.info('   • Dynamically adjust thresholds based on project needs');
 
   // Demonstrate risk tolerance levels
   await demo.demonstrateRiskTolerance();
@@ -344,31 +344,31 @@ async function runSecurityThresholdsDemo(): Promise<void> {
   // Demonstrate dynamic adjustments
   demo.demonstrateDynamicThresholds();
 
-  console.log('\n🎯 Threshold Configuration Guide');
-  console.log('-'.repeat(50));
+  console.info('\n🎯 Threshold Configuration Guide');
+  console.info('-'.repeat(50));
 
-  console.log('📋 Choosing the Right Thresholds:');
-  console.log('   🛡️  CONSERVATIVE: Use for production, critical systems');
-  console.log('   ⚖️  BALANCED: Default for most projects');
-  console.log('   🔓 PERMISSIVE: Development, proof-of-concepts');
-  console.log('   🏢 ENTERPRISE: Maximum security, compliance-focused');
+  console.info('📋 Choosing the Right Thresholds:');
+  console.info('   🛡️  CONSERVATIVE: Use for production, critical systems');
+  console.info('   ⚖️  BALANCED: Default for most projects');
+  console.info('   🔓 PERMISSIVE: Development, proof-of-concepts');
+  console.info('   🏢 ENTERPRISE: Maximum security, compliance-focused');
 
-  console.log('\n🛠️  Implementation Steps:');
-  console.log('   1. Choose risk tolerance level');
-  console.log('   2. Configure thresholds in bunfig.toml');
-  console.log('   3. Add exceptions for known acceptable risks');
-  console.log('   4. Test with different package scenarios');
-  console.log('   5. Monitor and adjust based on findings');
+  console.info('\n🛠️  Implementation Steps:');
+  console.info('   1. Choose risk tolerance level');
+  console.info('   2. Configure thresholds in bunfig.toml');
+  console.info('   3. Add exceptions for known acceptable risks');
+  console.info('   4. Test with different package scenarios');
+  console.info('   5. Monitor and adjust based on findings');
 
-  console.log('\n📊 Key Metrics to Monitor:');
-  console.log('   📈 Average risk score over time');
-  console.log('   📦 Package health trends');
-  console.log('   🚨 Critical issue frequency');
-  console.log('   ✅ Compliance rate');
+  console.info('\n📊 Key Metrics to Monitor:');
+  console.info('   📈 Average risk score over time');
+  console.info('   📦 Package health trends');
+  console.info('   🚨 Critical issue frequency');
+  console.info('   ✅ Compliance rate');
 
-  console.log('\n🎉 Security Thresholds Demo Complete!');
-  console.log('   Your Fire22 project now has configurable, enterprise-grade security thresholds!');
-  console.log(
+  console.info('\n🎉 Security Thresholds Demo Complete!');
+  console.info('   Your Fire22 project now has configurable, enterprise-grade security thresholds!');
+  console.info(
     "   Adjust thresholds based on your project's risk tolerance and compliance requirements!"
   );
 }

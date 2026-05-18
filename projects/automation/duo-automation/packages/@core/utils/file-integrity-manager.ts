@@ -41,7 +41,7 @@ export class FileIntegrityManager {
       const crc32Hex = hash.toString(16).padStart(8, '0');
       
       const duration = performance.now() - startTime;
-      console.log(`🔐 CRC32 calculated for ${filePath} in ${duration.toFixed(3)}ms`);
+      console.info(`🔐 CRC32 calculated for ${filePath} in ${duration.toFixed(3)}ms`);
       
       return crc32Hex;
     } catch (error) {
@@ -80,7 +80,7 @@ export class FileIntegrityManager {
       this.duplicates.get(crc32)!.push(filePath);
       
       const duration = performance.now() - startTime;
-      console.log(`✅ File verified: ${filePath} (${duration.toFixed(3)}ms)`);
+      console.info(`✅ File verified: ${filePath} (${duration.toFixed(3)}ms)`);
       
       return result;
     } catch (error) {
@@ -94,7 +94,7 @@ export class FileIntegrityManager {
    */
   async verifyFiles(filePaths: string[], expectedHashes?: Record<string, string>): Promise<FileIntegrityResult[]> {
     const startTime = performance.now();
-    console.log(`🔐 Verifying ${filePaths.length} files using Bun v1.3.6 hash.crc32...`);
+    console.info(`🔐 Verifying ${filePaths.length} files using Bun v1.3.6 hash.crc32...`);
     
     // Process files in parallel for maximum performance
     const results = await Promise.allSettled(
@@ -119,9 +119,9 @@ export class FileIntegrityManager {
     const duration = performance.now() - startTime;
     const throughput = filePaths.length / (duration / 1000);
     
-    console.log(`✅ Batch verification completed in ${duration.toFixed(0)}ms`);
-    console.log(`📊 Throughput: ${throughput.toFixed(0)} files/second`);
-    console.log(`🔍 Corrupted files: ${corruptedFiles.length}`);
+    console.info(`✅ Batch verification completed in ${duration.toFixed(0)}ms`);
+    console.info(`📊 Throughput: ${throughput.toFixed(0)} files/second`);
+    console.info(`🔍 Corrupted files: ${corruptedFiles.length}`);
     
     return verifiedResults;
   }
@@ -134,7 +134,7 @@ export class FileIntegrityManager {
     
     // Find all files
     const filePaths = await this.findFiles(directory, recursive);
-    console.log(`📁 Found ${filePaths.length} files in ${directory}`);
+    console.info(`📁 Found ${filePaths.length} files in ${directory}`);
     
     // Verify all files
     const results = await this.verifyFiles(filePaths);
@@ -215,7 +215,7 @@ export class FileIntegrityManager {
       const extractDir = `${backupPath}.extracted`;
       
       if (backupPath.endsWith('.tar.gz')) {
-        console.log(`📦 Extracting backup: ${backupPath}`);
+        console.info(`📦 Extracting backup: ${backupPath}`);
         const archiveData = await Bun.file(backupPath).bytes();
         const archive = new Bun.Archive(archiveData);
         await archive.extract(extractDir);
@@ -235,10 +235,10 @@ export class FileIntegrityManager {
       }
       
       const isValid = report.corruptedFiles.length === 0;
-      console.log(`✅ Backup validation: ${isValid ? 'PASSED' : 'FAILED'}`);
+      console.info(`✅ Backup validation: ${isValid ? 'PASSED' : 'FAILED'}`);
       
       if (report.corruptedFiles.length > 0) {
-        console.log(`❌ Corrupted files: ${report.corruptedFiles.join(', ')}`);
+        console.info(`❌ Corrupted files: ${report.corruptedFiles.join(', ')}`);
       }
       
       return isValid;
@@ -252,7 +252,7 @@ export class FileIntegrityManager {
    * Generate checksum manifest for directory
    */
   async generateChecksumManifest(directory: string, outputFile = 'checksums.json'): Promise<void> {
-    console.log(`🔐 Generating checksum manifest for ${directory}...`);
+    console.info(`🔐 Generating checksum manifest for ${directory}...`);
     
     const report = await this.generateIntegrityReport(directory, true);
     const checksums: Record<string, { crc32: string; size: number; modified: string }> = {};
@@ -279,7 +279,7 @@ export class FileIntegrityManager {
     };
     
     await Bun.write(outputFile, JSON.stringify(manifest, null, 2));
-    console.log(`✅ Checksum manifest saved to ${outputFile}`);
+    console.info(`✅ Checksum manifest saved to ${outputFile}`);
   }
 
   /**
@@ -288,7 +288,7 @@ export class FileIntegrityManager {
   clearCache(): void {
     this.cache.clear();
     this.duplicates.clear();
-    console.log(`🧩 Integrity cache cleared`);
+    console.info(`🧩 Integrity cache cleared`);
   }
 
   /**
@@ -324,37 +324,37 @@ if (import.meta.main) {
     case 'verify':
       if (target) {
         const result = await integrityManager.verifyFile(target);
-        console.log('Verification result:', result);
+        console.info('Verification result:', result);
       } else {
-        console.log('Usage: bun file-integrity-manager.ts verify <file-path>');
+        console.info('Usage: bun file-integrity-manager.ts verify <file-path>');
       }
       break;
       
     case 'report':
       if (target) {
         const report = await integrityManager.generateIntegrityReport(target);
-        console.log('\n📊 File Integrity Report:');
-        console.log(`📁 Total files: ${report.totalFiles}`);
-        console.log(`✅ Verified files: ${report.verifiedFiles}`);
-        console.log(`❌ Corrupted files: ${report.corruptedFiles.length}`);
-        console.log(`🔄 Duplicate groups: ${report.duplicateFiles.length}`);
-        console.log(`⏱️ Processing time: ${report.processingTime.toFixed(0)}ms`);
-        console.log(`🚀 Throughput: ${report.throughput.toFixed(0)} files/sec`);
+        console.info('\n📊 File Integrity Report:');
+        console.info(`📁 Total files: ${report.totalFiles}`);
+        console.info(`✅ Verified files: ${report.verifiedFiles}`);
+        console.info(`❌ Corrupted files: ${report.corruptedFiles.length}`);
+        console.info(`🔄 Duplicate groups: ${report.duplicateFiles.length}`);
+        console.info(`⏱️ Processing time: ${report.processingTime.toFixed(0)}ms`);
+        console.info(`🚀 Throughput: ${report.throughput.toFixed(0)} files/sec`);
         
         if (report.corruptedFiles.length > 0) {
-          console.log('\n❌ Corrupted files:');
-          report.corruptedFiles.forEach(file => console.log(`  - ${file}`));
+          console.info('\n❌ Corrupted files:');
+          report.corruptedFiles.forEach(file => console.info(`  - ${file}`));
         }
         
         if (report.duplicateFiles.length > 0) {
-          console.log('\n🔄 Duplicate files:');
+          console.info('\n🔄 Duplicate files:');
           report.duplicateFiles.forEach(dup => {
-            console.log(`  Hash: ${dup.hash}`);
-            dup.files.forEach(file => console.log(`    - ${file}`));
+            console.info(`  Hash: ${dup.hash}`);
+            dup.files.forEach(file => console.info(`    - ${file}`));
           });
         }
       } else {
-        console.log('Usage: bun file-integrity-manager.ts report <directory>');
+        console.info('Usage: bun file-integrity-manager.ts report <directory>');
       }
       break;
       
@@ -362,25 +362,25 @@ if (import.meta.main) {
       if (target) {
         await integrityManager.generateChecksumManifest(target);
       } else {
-        console.log('Usage: bun file-integrity-manager.ts manifest <directory>');
+        console.info('Usage: bun file-integrity-manager.ts manifest <directory>');
       }
       break;
       
     case 'validate':
       if (target) {
         const isValid = await integrityManager.validateBackup(target);
-        console.log(`Backup validation: ${isValid ? '✅ PASSED' : '❌ FAILED'}`);
+        console.info(`Backup validation: ${isValid ? '✅ PASSED' : '❌ FAILED'}`);
       } else {
-        console.log('Usage: bun file-integrity-manager.ts validate <backup-path>');
+        console.info('Usage: bun file-integrity-manager.ts validate <backup-path>');
       }
       break;
       
     default:
-      console.log('Available commands:');
-      console.log('  verify <file>     - Verify single file');
-      console.log('  report <dir>      - Generate integrity report for directory');
-      console.log('  manifest <dir>    - Generate checksum manifest');
-      console.log('  validate <backup> - Validate backup integrity');
+      console.info('Available commands:');
+      console.info('  verify <file>     - Verify single file');
+      console.info('  report <dir>      - Generate integrity report for directory');
+      console.info('  manifest <dir>    - Generate checksum manifest');
+      console.info('  validate <backup> - Validate backup integrity');
   }
 }
 

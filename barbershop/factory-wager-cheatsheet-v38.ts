@@ -25,25 +25,25 @@ const COLORS = {
 const cmd = process.argv[2] || 'help';
 
 function printHeader(title: string) {
-  console.log(
+  console.info(
     `${COLORS.blue}╔══════════════════════════════════════════════════════════════╗${COLORS.reset}`
   );
-  console.log(
+  console.info(
     `${COLORS.blue}║${COLORS.reset} ${COLORS.bright}${title.padEnd(60)}${COLORS.reset}${COLORS.blue} ║${COLORS.reset}`
   );
-  console.log(
+  console.info(
     `${COLORS.blue}╚══════════════════════════════════════════════════════════════╝${COLORS.reset}`
   );
-  console.log();
+  console.info();
 }
 
 function printSection(title: string) {
-  console.log(`${COLORS.teal}▶ ${title}${COLORS.reset}`);
-  console.log(`${COLORS.teal}${'─'.repeat(50)}${COLORS.reset}`);
+  console.info(`${COLORS.teal}▶ ${title}${COLORS.reset}`);
+  console.info(`${COLORS.teal}${'─'.repeat(50)}${COLORS.reset}`);
 }
 
 function printCmd(name: string, description: string) {
-  console.log(`  ${COLORS.green}${name.padEnd(30)}${COLORS.reset} ${description}`);
+  console.info(`  ${COLORS.green}${name.padEnd(30)}${COLORS.reset} ${description}`);
 }
 
 // ==================== COMMANDS ====================
@@ -53,28 +53,28 @@ const commands: Record<string, () => Promise<void>> = {
     printHeader('🏰 FactoryWager v3.8 Cheatsheet');
 
     printSection('Available Commands');
-    console.log(`  ${COLORS.green}suite${COLORS.reset}           Run full benchmark suite`);
-    console.log(`  ${COLORS.green}export${COLORS.reset}          Export cheatsheet to markdown`);
-    console.log(
+    console.info(`  ${COLORS.green}suite${COLORS.reset}           Run full benchmark suite`);
+    console.info(`  ${COLORS.green}export${COLORS.reset}          Export cheatsheet to markdown`);
+    console.info(
       `  ${COLORS.green}category <name>${COLORS.reset} Run specific category (r2|secrets|dashboard|profile)`
     );
-    console.log(`  ${COLORS.green}theme${COLORS.reset}           Show FactoryWager theme palette`);
-    console.log(`  ${COLORS.green}cache${COLORS.reset}           Show cache statistics`);
-    console.log(`  ${COLORS.green}metrics${COLORS.reset}         Show all metrics`);
-    console.log();
+    console.info(`  ${COLORS.green}theme${COLORS.reset}           Show FactoryWager theme palette`);
+    console.info(`  ${COLORS.green}cache${COLORS.reset}           Show cache statistics`);
+    console.info(`  ${COLORS.green}metrics${COLORS.reset}         Show all metrics`);
+    console.info();
 
     printSection('Categories');
     printCmd('r2', 'R2/Cloudflare operations');
     printCmd('secrets', 'Secret management');
     printCmd('dashboard', 'Dashboard system');
     printCmd('profile', 'Profiling tools');
-    console.log();
+    console.info();
 
     printSection('Examples');
-    console.log(`  bun run factory-wager-cheatsheet-v38.ts suite`);
-    console.log(`  bun run factory-wager-cheatsheet-v38.ts category r2`);
-    console.log(`  bun run factory-wager-cheatsheet-v38.ts theme`);
-    console.log();
+    console.info(`  bun run factory-wager-cheatsheet-v38.ts suite`);
+    console.info(`  bun run factory-wager-cheatsheet-v38.ts category r2`);
+    console.info(`  bun run factory-wager-cheatsheet-v38.ts theme`);
+    console.info();
   },
 
   async suite() {
@@ -85,59 +85,59 @@ const commands: Record<string, () => Promise<void>> = {
     printSection('Theme System');
     const t1 = performance.now();
     const theme = themes.factorywager;
-    console.log(`  Primary color: ${theme.colors.primary['500']}`);
-    console.log(`  Secondary: ${theme.colors.secondary['500']}`);
-    console.log(
+    console.info(`  Primary color: ${theme.colors.primary['500']}`);
+    console.info(`  Secondary: ${theme.colors.secondary['500']}`);
+    console.info(
       `  ${COLORS.green}✓ Theme loaded in ${(performance.now() - t1).toFixed(2)}ms${COLORS.reset}`
     );
-    console.log();
+    console.info();
 
     // Dashboard benchmark
     printSection('Dashboard System');
     const t2 = performance.now();
     const dashboard = createAdminDashboard();
     const built = dashboard.build();
-    console.log(`  Widgets: ${built.widgets.length}`);
-    console.log(`  Layouts: ${built.layouts.length}`);
-    console.log(
+    console.info(`  Widgets: ${built.widgets.length}`);
+    console.info(`  Layouts: ${built.layouts.length}`);
+    console.info(
       `  ${COLORS.green}✓ Dashboard built in ${(performance.now() - t2).toFixed(2)}ms${COLORS.reset}`
     );
-    console.log();
+    console.info();
 
     // Profile engine benchmark
     printSection('Profile Engine');
     const t3 = performance.now();
     const engine = createProfileEngine();
-    console.log(
+    console.info(
       `  ${COLORS.green}✓ Profile engine created in ${(performance.now() - t3).toFixed(2)}ms${COLORS.reset}`
     );
-    console.log();
+    console.info();
 
     // Cache stats
     printSection('Cache Statistics');
     const t4 = performance.now();
     const stats = cachedCloudflare.getCacheStats();
-    console.log(`  Hit rate: ${stats.hitRate.toFixed(1)}%`);
-    console.log(`  Size: ${stats.size} entries`);
-    console.log(
+    console.info(`  Hit rate: ${stats.hitRate.toFixed(1)}%`);
+    console.info(`  Size: ${stats.size} entries`);
+    console.info(
       `  ${COLORS.green}✓ Cache stats in ${(performance.now() - t4).toFixed(2)}ms${COLORS.reset}`
     );
-    console.log();
+    console.info();
 
     // Secret manager
     printSection('Secret Manager');
     const t5 = performance.now();
     const smStats = optimizedSecretManager.getMetrics();
-    console.log(`  Cache hit rate: ${smStats.hitRate.toFixed(1)}%`);
-    console.log(
+    console.info(`  Cache hit rate: ${smStats.hitRate.toFixed(1)}%`);
+    console.info(
       `  ${COLORS.green}✓ Metrics retrieved in ${(performance.now() - t5).toFixed(2)}ms${COLORS.reset}`
     );
-    console.log();
+    console.info();
 
     const total = performance.now() - start;
     printSection(`Suite Complete`);
-    console.log(`  Total time: ${COLORS.green}${total.toFixed(2)}ms${COLORS.reset}`);
-    console.log();
+    console.info(`  Total time: ${COLORS.green}${total.toFixed(2)}ms${COLORS.reset}`);
+    console.info();
   },
 
   async export() {
@@ -181,7 +181,7 @@ bun run factory-wager-cheatsheet-v38.ts theme
 \`\`\`typescript
 import { createAdminDashboard } from './src/dashboard';
 const db = createAdminDashboard();
-console.log(db.export('html'));
+console.info(db.export('html'));
 \`\`\`
 
 ### Profile
@@ -199,15 +199,15 @@ cachedCloudflare.printStats();
 `;
 
     await Bun.write('FACTORY_WAGER_CHEATSHEET.md', markdown);
-    console.log(`${COLORS.green}✓ Exported to FACTORY_WAGER_CHEATSHEET.md${COLORS.reset}`);
-    console.log();
+    console.info(`${COLORS.green}✓ Exported to FACTORY_WAGER_CHEATSHEET.md${COLORS.reset}`);
+    console.info();
   },
 
   async category() {
     const cat = process.argv[3];
     if (!cat) {
-      console.log(`${COLORS.red}Error: No category specified${COLORS.reset}`);
-      console.log(
+      console.info(`${COLORS.red}Error: No category specified${COLORS.reset}`);
+      console.info(
         `Usage: bun run factory-wager-cheatsheet-v38.ts category <r2|secrets|dashboard|profile>`
       );
       return;
@@ -218,44 +218,44 @@ cachedCloudflare.printStats();
     switch (cat) {
       case 'r2':
         printSection('R2 / Cloudflare Operations');
-        console.log('  Cache Stats:');
+        console.info('  Cache Stats:');
         const stats = cachedCloudflare.getCacheStats();
-        console.log(`    Hit rate: ${stats.hitRate.toFixed(1)}%`);
-        console.log(`    Hits: ${stats.hits}`);
-        console.log(`    Misses: ${stats.misses}`);
-        console.log(`    Size: ${stats.size}`);
+        console.info(`    Hit rate: ${stats.hitRate.toFixed(1)}%`);
+        console.info(`    Hits: ${stats.hits}`);
+        console.info(`    Misses: ${stats.misses}`);
+        console.info(`    Size: ${stats.size}`);
         break;
 
       case 'secrets':
         printSection('Secret Manager');
         const smStats = optimizedSecretManager.getMetrics();
-        console.log(`  Cache hit rate: ${smStats.hitRate.toFixed(1)}%`);
-        console.log(`  Cache hits: ${smStats.cacheHits}`);
-        console.log(`  Cache misses: ${smStats.cacheMisses}`);
-        console.log(`  Batch operations: ${smStats.batchOperations}`);
+        console.info(`  Cache hit rate: ${smStats.hitRate.toFixed(1)}%`);
+        console.info(`  Cache hits: ${smStats.cacheHits}`);
+        console.info(`  Cache misses: ${smStats.cacheMisses}`);
+        console.info(`  Batch operations: ${smStats.batchOperations}`);
         break;
 
       case 'dashboard':
         printSection('Dashboard System');
         const db = createAdminDashboard();
         const built = db.build();
-        console.log(`  View: ${built.config.view}`);
-        console.log(`  Theme: ${built.config.theme}`);
-        console.log(`  Widgets: ${built.widgets.length}`);
-        console.log(`  Live updates: ${built.config.liveUpdates}`);
+        console.info(`  View: ${built.config.view}`);
+        console.info(`  Theme: ${built.config.theme}`);
+        console.info(`  Widgets: ${built.widgets.length}`);
+        console.info(`  Live updates: ${built.config.liveUpdates}`);
         break;
 
       case 'profile':
         printSection('Profile Engine');
         const engine = createProfileEngine();
-        console.log(`  Engine created successfully`);
-        console.log(`  Output dir: ./profiles`);
+        console.info(`  Engine created successfully`);
+        console.info(`  Output dir: ./profiles`);
         break;
 
       default:
-        console.log(`${COLORS.red}Unknown category: ${cat}${COLORS.reset}`);
+        console.info(`${COLORS.red}Unknown category: ${cat}${COLORS.reset}`);
     }
-    console.log();
+    console.info();
   },
 
   async theme() {
@@ -264,37 +264,37 @@ cachedCloudflare.printStats();
     const fw = themes.factorywager;
 
     printSection('Primary - Blue');
-    console.log(`  500: ${fw.colors.primary['500']}`);
-    console.log(`  600: ${fw.colors.primary['600']}`);
-    console.log(`  700: ${fw.colors.primary['700']}`);
-    console.log();
+    console.info(`  500: ${fw.colors.primary['500']}`);
+    console.info(`  600: ${fw.colors.primary['600']}`);
+    console.info(`  700: ${fw.colors.primary['700']}`);
+    console.info();
 
     printSection('Secondary - Teal');
-    console.log(`  500: ${fw.colors.secondary['500']}`);
-    console.log(`  600: ${fw.colors.secondary['600']}`);
-    console.log();
+    console.info(`  500: ${fw.colors.secondary['500']}`);
+    console.info(`  600: ${fw.colors.secondary['600']}`);
+    console.info();
 
     printSection('Success - Green');
-    console.log(`  500: ${fw.colors.success['500']}`);
-    console.log();
+    console.info(`  500: ${fw.colors.success['500']}`);
+    console.info();
 
     printSection('Warning - Orange');
-    console.log(`  500: ${fw.colors.warning['500']}`);
-    console.log();
+    console.info(`  500: ${fw.colors.warning['500']}`);
+    console.info();
 
     printSection('Error - Red');
-    console.log(`  500: ${fw.colors.error['500']}`);
-    console.log();
+    console.info(`  500: ${fw.colors.error['500']}`);
+    console.info();
 
     printSection('Status Indicators');
-    console.log(`  Online:  ${fw.colors.status.online}  (Green)`);
-    console.log(`  Away:    ${fw.colors.status.away}  (Orange)`);
-    console.log(`  Busy:    ${fw.colors.status.busy}  (Red)`);
-    console.log(`  Offline: ${fw.colors.status.offline}  (Gray)`);
-    console.log();
+    console.info(`  Online:  ${fw.colors.status.online}  (Green)`);
+    console.info(`  Away:    ${fw.colors.status.away}  (Orange)`);
+    console.info(`  Busy:    ${fw.colors.status.busy}  (Red)`);
+    console.info(`  Offline: ${fw.colors.status.offline}  (Gray)`);
+    console.info();
 
-    console.log(`${COLORS.green}✅ NO purple/indigo colors (hues 240-300)${COLORS.reset}`);
-    console.log();
+    console.info(`${COLORS.green}✅ NO purple/indigo colors (hues 240-300)${COLORS.reset}`);
+    console.info();
   },
 
   async cache() {
@@ -302,19 +302,19 @@ cachedCloudflare.printStats();
 
     printSection('Cloudflare Cached Client');
     const cfStats = cachedCloudflare.getCacheStats();
-    console.log(`  Hit rate: ${cfStats.hitRate.toFixed(1)}%`);
-    console.log(`  Hits: ${cfStats.hits}`);
-    console.log(`  Misses: ${cfStats.misses}`);
-    console.log(`  Size: ${cfStats.size} entries`);
-    console.log();
+    console.info(`  Hit rate: ${cfStats.hitRate.toFixed(1)}%`);
+    console.info(`  Hits: ${cfStats.hits}`);
+    console.info(`  Misses: ${cfStats.misses}`);
+    console.info(`  Size: ${cfStats.size} entries`);
+    console.info();
 
     printSection('Secret Manager');
     const smStats = optimizedSecretManager.getMetrics();
-    console.log(`  Hit rate: ${smStats.hitRate.toFixed(1)}%`);
-    console.log(`  Hits: ${smStats.cacheHits}`);
-    console.log(`  Misses: ${smStats.cacheMisses}`);
-    console.log(`  Evictions: ${smStats.evictions}`);
-    console.log();
+    console.info(`  Hit rate: ${smStats.hitRate.toFixed(1)}%`);
+    console.info(`  Hits: ${smStats.cacheHits}`);
+    console.info(`  Misses: ${smStats.cacheMisses}`);
+    console.info(`  Evictions: ${smStats.evictions}`);
+    console.info();
   },
 
   async metrics() {
@@ -325,9 +325,9 @@ cachedCloudflare.printStats();
     printSection('Dashboard');
     const db = createAdminDashboard();
     const built = db.build();
-    console.log(`  Widgets: ${built.widgets.length}`);
-    console.log(`  Theme: ${built.config.theme}`);
-    console.log();
+    console.info(`  Widgets: ${built.widgets.length}`);
+    console.info(`  Theme: ${built.config.theme}`);
+    console.info();
   },
 };
 
@@ -336,7 +336,7 @@ const fn = commands[cmd];
 if (fn) {
   await fn();
 } else {
-  console.log(`${COLORS.red}Unknown command: ${cmd}${COLORS.reset}`);
+  console.info(`${COLORS.red}Unknown command: ${cmd}${COLORS.reset}`);
   await commands.help();
   process.exit(1);
 }

@@ -20,8 +20,8 @@ export const CookieManagerComponent = () => {
     refreshCookies();
     
     // Log colorful cookie info
-    console.log("%c=== Cookie Manager ===", "color: #e67e22; font-size: 16px");
-    console.log(`%cActive cookies: ${cookieManager.size}`, "color: #e67e22");
+    console.info("%c=== Cookie Manager ===", "color: #e67e22; font-size: 16px");
+    console.info(`%cActive cookies: ${cookieManager.size}`, "color: #e67e22");
   }, []);
 
   const addCookie = () => {

@@ -170,7 +170,7 @@ export class GraphAnalyzer {
     const filepath = `/tmp/${filename}`;
 
     // Write file (mock - in real implementation would use file system)
-    console.log(`📁 Graph exported to: ${filepath}`);
+    console.info(`📁 Graph exported to: ${filepath}`);
 
     const exportInfo: GraphExport = {
       path: filepath,
@@ -356,7 +356,7 @@ export class GraphAnalyzer {
     <script>
         const data = ${JSON.stringify(graphData, null, 2)};
         // D3.js visualization code would go here
-        console.log('Graph data:', data);
+        console.info('Graph data:', data);
     </script>
 </body>
 </html>`;

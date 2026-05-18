@@ -52,7 +52,7 @@ export class Tier1380SecretsManager {
       })
     ]);
 
-    console.log("🔐 R2 credentials stored securely");
+    console.info("🔐 R2 credentials stored securely");
   }
 
   /**
@@ -87,7 +87,7 @@ export class Tier1380SecretsManager {
       allowUnrestrictedAccess: this.ALLOW_UNRESTRICTED
     });
 
-    console.log(`🔐 API key for ${service} stored securely`);
+    console.info(`🔐 API key for ${service} stored securely`);
   }
 
   /**
@@ -111,7 +111,7 @@ export class Tier1380SecretsManager {
       allowUnrestrictedAccess: this.ALLOW_UNRESTRICTED
     });
 
-    console.log(`🔐 Session token for ${sessionId} stored securely`);
+    console.info(`🔐 Session token for ${sessionId} stored securely`);
   }
 
   /**
@@ -135,7 +135,7 @@ export class Tier1380SecretsManager {
       allowUnrestrictedAccess: this.ALLOW_UNRESTRICTED
     });
 
-    console.log(`🔐 CSRF token for ${tokenId} stored securely`);
+    console.info(`🔐 CSRF token for ${tokenId} stored securely`);
   }
 
   /**
@@ -159,7 +159,7 @@ export class Tier1380SecretsManager {
       allowUnrestrictedAccess: this.ALLOW_UNRESTRICTED
     });
 
-    console.log("🔐 Database URL stored securely");
+    console.info("🔐 Database URL stored securely");
   }
 
   /**
@@ -203,9 +203,9 @@ export class Tier1380SecretsManager {
     });
 
     if (deleted) {
-      console.log(`🗑️ Secret ${name} deleted successfully`);
+      console.info(`🗑️ Secret ${name} deleted successfully`);
     } else {
-      console.log(`⚠️ Secret ${name} not found`);
+      console.info(`⚠️ Secret ${name} not found`);
     }
 
     return deleted;
@@ -226,7 +226,7 @@ export class Tier1380SecretsManager {
     );
 
     const deletedCount = results.filter(Boolean).length;
-    console.log(`🗑️ Deleted ${deletedCount}/${secretsToDelete.length} Tier-1380 secrets`);
+    console.info(`🗑️ Deleted ${deletedCount}/${secretsToDelete.length} Tier-1380 secrets`);
   }
 
   /**
@@ -258,7 +258,7 @@ export class Tier1380SecretsManager {
    * Migrate from environment variables to secrets
    */
   static async migrateFromEnv(): Promise<void> {
-    console.log("🔄 Migrating credentials from environment to secure storage...");
+    console.info("🔄 Migrating credentials from environment to secure storage...");
 
     const migrations = [
       { name: "r2-access-key-id", env: "R2_ACCESS_KEY_ID" },
@@ -275,7 +275,7 @@ export class Tier1380SecretsManager {
           value: envValue,
           allowUnrestrictedAccess: this.ALLOW_UNRESTRICTED
         });
-        console.log(`✅ Migrated ${env} to secure storage`);
+        console.info(`✅ Migrated ${env} to secure storage`);
       }
     }
   }
@@ -300,7 +300,7 @@ export class Tier1380SecretsManager {
    * Import secrets from backup (encrypted)
    */
   static async importSecrets(secretsData: { [key: string]: string }): Promise<void> {
-    console.log("📥 Importing secrets from backup...");
+    console.info("📥 Importing secrets from backup...");
 
     for (const [key, value] of Object.entries(secretsData)) {
       if (value) {
@@ -310,7 +310,7 @@ export class Tier1380SecretsManager {
           value,
           allowUnrestrictedAccess: this.ALLOW_UNRESTRICTED
         });
-        console.log(`✅ Imported ${key}`);
+        console.info(`✅ Imported ${key}`);
       }
     }
   }
@@ -342,7 +342,7 @@ export class Tier1380SecretsManager {
       if (exists) {
         healthyCount++;
       } else if (critical) {
-        console.log(`⚠️ Critical secret missing: ${name}`);
+        console.info(`⚠️ Critical secret missing: ${name}`);
       }
     }
 
@@ -367,7 +367,7 @@ if (import.meta.path === Bun.main) {
   switch (command) {
     case "store-r2":
       if (process.argv.length < 5) {
-        console.log("Usage: bun tier1380-secrets.ts store-r2 <access-key-id> <secret-access-key>");
+        console.info("Usage: bun tier1380-secrets.ts store-r2 <access-key-id> <secret-access-key>");
         process.exit(1);
       }
       await Tier1380SecretsManager.storeR2Credentials(process.argv[3], process.argv[4]);
@@ -375,12 +375,12 @@ if (import.meta.path === Bun.main) {
 
     case "get-r2":
       const r2Creds = await Tier1380SecretsManager.getR2Credentials();
-      console.log("R2 Credentials:", r2Creds);
+      console.info("R2 Credentials:", r2Creds);
       break;
 
     case "store-api":
       if (process.argv.length < 5) {
-        console.log("Usage: bun tier1380-secrets.ts store-api <service> <api-key>");
+        console.info("Usage: bun tier1380-secrets.ts store-api <service> <api-key>");
         process.exit(1);
       }
       await Tier1380SecretsManager.storeApiKey(process.argv[3], process.argv[4]);
@@ -388,11 +388,11 @@ if (import.meta.path === Bun.main) {
 
     case "get-api":
       if (process.argv.length < 4) {
-        console.log("Usage: bun tier1380-secrets.ts get-api <service>");
+        console.info("Usage: bun tier1380-secrets.ts get-api <service>");
         process.exit(1);
       }
       const apiKey = await Tier1380SecretsManager.getApiKey(process.argv[3]);
-      console.log(`API Key for ${process.argv[3]}:`, apiKey || "Not found");
+      console.info(`API Key for ${process.argv[3]}:`, apiKey || "Not found");
       break;
 
     case "migrate":
@@ -401,20 +401,20 @@ if (import.meta.path === Bun.main) {
 
     case "health":
       const health = await Tier1380SecretsManager.healthCheck();
-      console.log("Secrets Health Check:");
-      console.log(`Status: ${health.status}`);
-      console.log(`Message: ${health.message}`);
-      console.log("Checks:", health.checks);
+      console.info("Secrets Health Check:");
+      console.info(`Status: ${health.status}`);
+      console.info(`Message: ${health.message}`);
+      console.info("Checks:", health.checks);
       break;
 
     case "list":
       const secrets = await Tier1380SecretsManager.listSecrets();
-      console.log("Stored secrets:", secrets);
+      console.info("Stored secrets:", secrets);
       break;
 
     case "delete":
       if (process.argv.length < 4) {
-        console.log("Usage: bun tier1380-secrets.ts delete <secret-name>");
+        console.info("Usage: bun tier1380-secrets.ts delete <secret-name>");
         process.exit(1);
       }
       await Tier1380SecretsManager.deleteSecret(process.argv[3]);
@@ -426,28 +426,28 @@ if (import.meta.path === Bun.main) {
 
     case "export":
       const exported = await Tier1380SecretsManager.exportSecrets();
-      console.log("Exported secrets:", exported);
+      console.info("Exported secrets:", exported);
       break;
 
     case "import":
-      console.log("Import feature requires JSON data from stdin");
+      console.info("Import feature requires JSON data from stdin");
       break;
 
     default:
-      console.log("Tier-1380 Secrets Manager");
-      console.log("==========================");
-      console.log("Commands:");
-      console.log("  store-r2 <access-key-id> <secret-access-key>  Store R2 credentials");
-      console.log("  get-r2                                      Get R2 credentials");
-      console.log("  store-api <service> <api-key>              Store API key");
-      console.log("  get-api <service>                           Get API key");
-      console.log("  migrate                                     Migrate from env vars");
-      console.log("  health                                      Health check");
-      console.log("  list                                        List stored secrets");
-      console.log("  delete <secret-name>                       Delete specific secret");
-      console.log("  delete-all                                  Delete all secrets");
-      console.log("  export                                      Export secrets");
-      console.log("  import                                      Import secrets");
+      console.info("Tier-1380 Secrets Manager");
+      console.info("==========================");
+      console.info("Commands:");
+      console.info("  store-r2 <access-key-id> <secret-access-key>  Store R2 credentials");
+      console.info("  get-r2                                      Get R2 credentials");
+      console.info("  store-api <service> <api-key>              Store API key");
+      console.info("  get-api <service>                           Get API key");
+      console.info("  migrate                                     Migrate from env vars");
+      console.info("  health                                      Health check");
+      console.info("  list                                        List stored secrets");
+      console.info("  delete <secret-name>                       Delete specific secret");
+      console.info("  delete-all                                  Delete all secrets");
+      console.info("  export                                      Export secrets");
+      console.info("  import                                      Import secrets");
       break;
   }
 }

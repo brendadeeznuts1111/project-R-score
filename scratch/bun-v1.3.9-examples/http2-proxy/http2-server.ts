@@ -23,8 +23,8 @@ try {
   cert = readFileSync(join(import.meta.dirname || ".", "cert.pem"), "utf-8");
   key = readFileSync(join(import.meta.dirname || ".", "key.pem"), "utf-8");
 } catch {
-  console.log("⚠ No certificates found, using dummy values");
-  console.log("  Generate with: openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes");
+  console.info("⚠ No certificates found, using dummy values");
+  console.info("  Generate with: openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes");
   cert = "dummy";
   key = "dummy";
 }
@@ -33,7 +33,7 @@ try {
 const h2Server = createSecureServer(
   { cert, key },
   (req, res) => {
-    console.log(`[H2] ${req.method} ${req.url}`);
+    console.info(`[H2] ${req.method} ${req.url}`);
     
     res.writeHead(200, { "content-type": "application/json" });
     res.end(JSON.stringify({
@@ -47,7 +47,7 @@ const h2Server = createSecureServer(
 
 // Handle HTTP/2 specific events
 h2Server.on("stream", (stream, headers) => {
-  console.log(`[H2 Stream] ${headers[":method"]} ${headers[":path"]}`);
+  console.info(`[H2 Stream] ${headers[":method"]} ${headers[":path"]}`);
 });
 
 h2Server.on("error", (err) => {
@@ -57,7 +57,7 @@ h2Server.on("error", (err) => {
 // Option 1: Direct HTTP/2 server
 function startDirect() {
   h2Server.listen(PORT, HOST, () => {
-    console.log(`✓ HTTP/2 server listening on https://${HOST}:${PORT}`);
+    console.info(`✓ HTTP/2 server listening on https://${HOST}:${PORT}`);
   });
 }
 
@@ -70,8 +70,8 @@ function startWithUpgrade() {
   });
   
   netServer.listen(PORT, HOST, () => {
-    console.log(`✓ HTTP/2 server (with connection upgrade) on https://${HOST}:${PORT}`);
-    console.log("  Note: Connection upgrade path now works correctly in v1.3.9+");
+    console.info(`✓ HTTP/2 server (with connection upgrade) on https://${HOST}:${PORT}`);
+    console.info("  Note: Connection upgrade path now works correctly in v1.3.9+");
   });
   
   return netServer;
@@ -96,19 +96,19 @@ function startHealthCheck() {
   });
   
   healthServer.listen(healthPort, () => {
-    console.log(`✓ Health check on port ${healthPort}`);
+    console.info(`✓ Health check on port ${healthPort}`);
   });
 }
 
 // Main
 const mode = process.argv[2] || "direct";
 
-console.log("=".repeat(60));
-console.log("Bun v1.3.9 HTTP/2 Connection Upgrade Demo");
-console.log("=".repeat(60));
-console.log(`Mode: ${mode}`);
-console.log(`Bun: ${Bun.version}`);
-console.log("");
+console.info("=".repeat(60));
+console.info("Bun v1.3.9 HTTP/2 Connection Upgrade Demo");
+console.info("=".repeat(60));
+console.info(`Mode: ${mode}`);
+console.info(`Bun: ${Bun.version}`);
+console.info("");
 
 switch (mode) {
   case "direct":
@@ -122,10 +122,10 @@ switch (mode) {
     startHealthCheck();
     break;
   default:
-    console.log("Usage: bun run http2-server.ts [direct|upgrade|health]");
+    console.info("Usage: bun run http2-server.ts [direct|upgrade|health]");
     process.exit(1);
 }
 
-console.log("\nTest with:");
-console.log(`  curl -k --http2 https://${HOST}:${PORT}/`);
-console.log("");
+console.info("\nTest with:");
+console.info(`  curl -k --http2 https://${HOST}:${PORT}/`);
+console.info("");

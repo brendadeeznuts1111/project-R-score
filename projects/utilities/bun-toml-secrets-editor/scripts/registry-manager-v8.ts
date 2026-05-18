@@ -197,15 +197,15 @@ class BunRegistry {
 	 * 🚀 Universal Build & Push (No reused binaries)
 	 */
 	async publishAll(packageName: string): Promise<void> {
-		console.log(
+		console.info(
 			bold(color.blue(`\n📦 Publishing ${packageName} v${this.version}`)),
 		);
-		console.log(
+		console.info(
 			color.gray(
 				`Commit: ${this.gitCommit.slice(0, 8)} | Build: ${this.buildTime}`,
 			),
 		);
-		console.log(
+		console.info(
 			color.gray(`Storage: ${this.bucketName} | Debug: ${this.debugMode}\n`),
 		);
 
@@ -237,7 +237,7 @@ class BunRegistry {
 					];
 
 					if (this.debugMode) {
-						console.log(color.gray(`   Building ${plat}...`));
+						console.info(color.gray(`   Building ${plat}...`));
 					}
 
 					const buildProc = Bun.spawn(buildCmd, {
@@ -269,7 +269,7 @@ class BunRegistry {
 
 					const elapsed = (performance.now() - start).toFixed(0);
 					const sizeMB = (buffer.byteLength / 1e6).toFixed(1);
-					console.log(
+					console.info(
 						`${color.green("✅")} ${plat.padEnd(15)} ${color.gray(`(${elapsed}ms, ${sizeMB}MB)`)}`,
 					);
 
@@ -301,7 +301,7 @@ class BunRegistry {
 		const ext = tag.startsWith("windows") ? ".exe" : "";
 		const key: `v${string}/${string}-${PlatformTag}${string}` = `v${this.version}/${packageName}-${tag}${ext}`;
 
-		console.log(
+		console.info(
 			color.yellow(`📦 Fetching ${color.bold(packageName)} for ${tag}...`),
 		);
 
@@ -321,10 +321,10 @@ class BunRegistry {
 			await $`chmod +x ${tempPath}`.quiet();
 		}
 
-		console.log(
+		console.info(
 			color.green(`✅ Downloaded (${Math.round(binary.byteLength / 1e6)}MB)`),
 		);
-		console.log(color.cyan(`🚀 Executing...\n`));
+		console.info(color.cyan(`🚀 Executing...\n`));
 
 		const proc = Bun.spawn([tempPath, ...args], {
 			stdout: "inherit",
@@ -348,10 +348,10 @@ class BunRegistry {
 	 * 📊 Version Info
 	 */
 	async version(packageName: string): Promise<void> {
-		console.log(color.blue(bold(`${packageName} v${this.version}`)));
-		console.log(color.gray(`Commit: ${this.gitCommit.slice(0, 8)}`));
-		console.log(color.gray(`Build: ${this.buildTime}`));
-		console.log(
+		console.info(color.blue(bold(`${packageName} v${this.version}`)));
+		console.info(color.gray(`Commit: ${this.gitCommit.slice(0, 8)}`));
+		console.info(color.gray(`Build: ${this.buildTime}`));
+		console.info(
 			color.gray(`Debug: ${this.debugMode ? "enabled" : "disabled"}`),
 		);
 	}
@@ -361,17 +361,17 @@ class BunRegistry {
 		const status =
 			successCount === total ? color.green("PERFECT") : color.red("INCOMPLETE");
 
-		console.log(
+		console.info(
 			color.yellow(bold(`\n┌──────────────────────────────────────────┐`)),
 		);
-		console.log(color.yellow(`│  Registry Status: ${status}        │`));
-		console.log(
+		console.info(color.yellow(`│  Registry Status: ${status}        │`));
+		console.info(
 			color.yellow(
 				`│  Total Platforms: ${successCount}/${total}                  │`,
 			),
 		);
-		console.log(color.yellow(`│  Version: v${this.version.padEnd(28)}│`));
-		console.log(color.yellow(`└──────────────────────────────────────────┘\n`));
+		console.info(color.yellow(`│  Version: v${this.version.padEnd(28)}│`));
+		console.info(color.yellow(`└──────────────────────────────────────────┘\n`));
 	}
 }
 
@@ -444,22 +444,22 @@ async function main() {
 	} else if (cmd === "run") {
 		await manager.runRegistryBinary(packageName, args);
 	} else {
-		console.log(color.magenta("\n🚀 Bun Registry Manager v8.0\n"));
-		console.log(color.cyan("Available commands:"));
-		console.log(
+		console.info(color.magenta("\n🚀 Bun Registry Manager v8.0\n"));
+		console.info(color.cyan("Available commands:"));
+		console.info(
 			color.gray("  publish <name>  - Build and upload all platforms"),
 		);
-		console.log(
+		console.info(
 			color.gray("  run <name>      - Pull from registry and execute natively"),
 		);
-		console.log(
+		console.info(
 			color.gray("  version <name>  - Show version with build metadata\n"),
 		);
-		console.log(color.yellow("Environment Variables:"));
-		console.log(
+		console.info(color.yellow("Environment Variables:"));
+		console.info(
 			color.gray("  AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, BUCKET_NAME"),
 		);
-		console.log(color.gray("  Optional: BUCKET_ENDPOINT, AWS_REGION\n"));
+		console.info(color.gray("  Optional: BUCKET_ENDPOINT, AWS_REGION\n"));
 	}
 }
 

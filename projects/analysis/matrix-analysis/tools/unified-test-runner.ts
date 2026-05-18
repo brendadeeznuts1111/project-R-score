@@ -120,7 +120,7 @@ const TEST_PROFILES = [
 const PROCESS_ACTIONS = ["kill", "list", "monitor", "graceful", "kill-all"] as const;
 
 function printUsage(): void {
-	console.log(`
+	console.info(`
 ${fmt.bold("🧪 Unified Test Runner")}
 
 ${fmt.bold("Usage:")} bun tools/unified-test-runner.ts [command] [options]
@@ -172,15 +172,15 @@ async function runTests(
 	if (options.profile) {
 		const profile = TEST_PROFILES.find((p) => p.name === options.profile);
 		if (profile?.command) {
-			console.log(`${fmt.info("Using profile")}: ${fmt.bold(options.profile)}`);
+			console.info(`${fmt.info("Using profile")}: ${fmt.bold(options.profile)}`);
 			// Execute profile setup command
 			const profileCmd = profile.command;
-			console.log(`${fmt.dim("Running")}: ${profileCmd}`);
+			console.info(`${fmt.dim("Running")}: ${profileCmd}`);
 			// Profile commands typically set environment variables or run setup
 			// For now, we'll just note it and continue
 		} else {
 			console.error(fmt.fail(`Unknown profile: ${options.profile}`));
-			console.log(`Available profiles: ${TEST_PROFILES.map((p) => p.name).join(", ")}`);
+			console.info(`Available profiles: ${TEST_PROFILES.map((p) => p.name).join(", ")}`);
 			process.exit(EXIT_CODES.USAGE_ERROR);
 		}
 	}
@@ -194,22 +194,22 @@ async function runTests(
 
 	if (groupsToRun.length === 0) {
 		console.error(fmt.fail(`No test groups found matching: ${group}`));
-		console.log(`Available groups: ${TEST_GROUPS.map((g) => g.name).join(", ")}`);
+		console.info(`Available groups: ${TEST_GROUPS.map((g) => g.name).join(", ")}`);
 		process.exit(EXIT_CODES.USAGE_ERROR);
 	}
 
-	console.log(
+	console.info(
 		`${fmt.info("Running tests")}: ${fmt.bold(groupsToRun.map((g) => g.name).join(", "))}`,
 	);
-	console.log();
+	console.info();
 
 	let overallSuccess = true;
 
 	for (const testGroup of groupsToRun) {
-		console.log(`${fmt.bold("▶")} ${testGroup.name} (${testGroup.duration})`);
-		console.log(`${fmt.dim("   ")} ${testGroup.description}`);
-		console.log(`${fmt.dim("   ")} ${testGroup.command}`);
-		console.log();
+		console.info(`${fmt.bold("▶")} ${testGroup.name} (${testGroup.duration})`);
+		console.info(`${fmt.dim("   ")} ${testGroup.description}`);
+		console.info(`${fmt.dim("   ")} ${testGroup.command}`);
+		console.info();
 
 		const result = Bun.spawnSync({
 			cmd: testGroup.command,
@@ -219,18 +219,18 @@ async function runTests(
 
 		if (result.code !== 0) {
 			overallSuccess = false;
-			console.log(
+			console.info(
 				`${fmt.fail("✗")} ${testGroup.name} failed with exit code ${result.code}`,
 			);
 		} else {
-			console.log(`${fmt.success("✓")} ${testGroup.name} completed`);
+			console.info(`${fmt.success("✓")} ${testGroup.name} completed`);
 		}
-		console.log();
+		console.info();
 	}
 
 	const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
-	console.log(`─────────────────────────────────────`);
-	console.log(
+	console.info(`─────────────────────────────────────`);
+	console.info(
 		`${fmt.bold("Summary")}: ${overallSuccess ? fmt.success("All passed") : fmt.fail("Some failed")} in ${totalTime}s`,
 	);
 
@@ -238,32 +238,32 @@ async function runTests(
 }
 
 async function listGroups(): void {
-	console.log(`${fmt.bold("Available Test Groups")}\n`);
-	console.log(`${"Group".padEnd(12)} ${"Duration".padEnd(10)} Description`);
-	console.log(
+	console.info(`${fmt.bold("Available Test Groups")}\n`);
+	console.info(`${"Group".padEnd(12)} ${"Duration".padEnd(10)} Description`);
+	console.info(
 		`${"─".repeat(12)} ${"─".repeat(10)} ──────────────────────────────────────`,
 	);
 	for (const group of TEST_GROUPS) {
-		console.log(
+		console.info(
 			`${fmt.green(group.name).padEnd(12)} ${group.duration.padEnd(10)} ${group.description}`,
 		);
 	}
-	console.log();
-	console.log(`${fmt.bold("Usage:")} bun tools/unified-test-runner.ts run <group>`);
-	console.log(`${fmt.bold("Example:")} bun tools/unified-test-runner.ts run smoke`);
+	console.info();
+	console.info(`${fmt.bold("Usage:")} bun tools/unified-test-runner.ts run <group>`);
+	console.info(`${fmt.bold("Example:")} bun tools/unified-test-runner.ts run smoke`);
 }
 
 async function useProfile(profileName: string): Promise<void> {
 	const profile = TEST_PROFILES.find((p) => p.name === profileName);
 	if (!profile) {
 		console.error(fmt.fail(`Unknown profile: ${profileName}`));
-		console.log(`Available profiles: ${TEST_PROFILES.map((p) => p.name).join(", ")}`);
+		console.info(`Available profiles: ${TEST_PROFILES.map((p) => p.name).join(", ")}`);
 		process.exit(EXIT_CODES.USAGE_ERROR);
 	}
 
 	if (profile.command) {
-		console.log(`${fmt.info("Activating profile")}: ${fmt.bold(profileName)}`);
-		console.log(`${fmt.dim("Command")}: ${profile.command}`);
+		console.info(`${fmt.info("Activating profile")}: ${fmt.bold(profileName)}`);
+		console.info(`${fmt.dim("Command")}: ${profile.command}`);
 		// Execute the profile command
 		const result = Bun.spawnSync({
 			cmd: profile.command,
@@ -271,15 +271,15 @@ async function useProfile(profileName: string): Promise<void> {
 		});
 		process.exit(result.code);
 	} else {
-		console.log(
+		console.info(
 			`${fmt.info("Profile")}: ${fmt.bold(profileName)} - ${profile.description}`,
 		);
-		console.log(`${fmt.warn("Note")}: This profile is informational only`);
+		console.info(`${fmt.warn("Note")}: This profile is informational only`);
 	}
 }
 
 async function processManagement(action: string): Promise<void> {
-	console.log(`${fmt.info("Process management")}: ${fmt.bold(action)}`);
+	console.info(`${fmt.info("Process management")}: ${fmt.bold(action)}`);
 
 	const commands = {
 		kill: "bun scripts/test-process-manager.ts kill",
@@ -292,7 +292,7 @@ async function processManagement(action: string): Promise<void> {
 	const command = commands[action as keyof typeof commands];
 	if (!command) {
 		console.error(fmt.fail(`Unknown action: ${action}`));
-		console.log(`Available actions: ${PROCESS_ACTIONS.join(", ")}`);
+		console.info(`Available actions: ${PROCESS_ACTIONS.join(", ")}`);
 		process.exit(EXIT_CODES.USAGE_ERROR);
 	}
 
@@ -304,7 +304,7 @@ async function processManagement(action: string): Promise<void> {
 }
 
 async function runOrganize(): Promise<void> {
-	console.log(`${fmt.info("Running test organizer")}...`);
+	console.info(`${fmt.info("Running test organizer")}...`);
 	const result = Bun.spawnSync({
 		cmd: "bun scripts/test-organizer.ts",
 		stdio: "inherit",
@@ -313,8 +313,8 @@ async function runOrganize(): Promise<void> {
 }
 
 async function runCI(): Promise<void> {
-	console.log(`${fmt.info("CI mode")} - Running optimized test suite...`);
-	console.log();
+	console.info(`${fmt.info("CI mode")} - Running optimized test suite...`);
+	console.info();
 
 	// CI typically runs: smoke, unit, integration with coverage
 	const ciGroups = ["smoke", "unit", "integration"];
@@ -382,8 +382,8 @@ async function main(): Promise<void> {
 			case "profile":
 				if (!options._positional) {
 					console.error(fmt.fail("Profile name is required"));
-					console.log("Usage: test profile <name>");
-					console.log(`Available: ${TEST_PROFILES.map((p) => p.name).join(", ")}`);
+					console.info("Usage: test profile <name>");
+					console.info(`Available: ${TEST_PROFILES.map((p) => p.name).join(", ")}`);
 					process.exit(EXIT_CODES.USAGE_ERROR);
 				}
 				await useProfile(options._positional as string);
@@ -392,8 +392,8 @@ async function main(): Promise<void> {
 			case "process":
 				if (!options._positional) {
 					console.error(fmt.fail("Process action is required"));
-					console.log("Usage: test process <action>");
-					console.log(`Available: ${PROCESS_ACTIONS.join(", ")}`);
+					console.info("Usage: test process <action>");
+					console.info(`Available: ${PROCESS_ACTIONS.join(", ")}`);
 					process.exit(EXIT_CODES.USAGE_ERROR);
 				}
 				await processManagement(options._positional as string);

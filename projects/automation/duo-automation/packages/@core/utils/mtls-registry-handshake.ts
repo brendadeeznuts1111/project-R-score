@@ -7,7 +7,7 @@ import { serve } from "bun";
 
 export class MTLSRegistryHandshake {
   static async startSovereignGateway() {
-    console.log("🔐 Starting Sovereign mTLS Registry Gateway...");
+    console.info("🔐 Starting Sovereign mTLS Registry Gateway...");
 
     serve({
       port: 3004,
@@ -25,7 +25,7 @@ export class MTLSRegistryHandshake {
       },
     });
 
-    console.log("💎 mTLS Handshake Kernel ACTIVE. Only provisioned devices may connect.");
+    console.info("💎 mTLS Handshake Kernel ACTIVE. Only provisioned devices may connect.");
   }
 }
 

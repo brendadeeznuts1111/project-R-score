@@ -155,11 +155,11 @@ async function loadEnhancedFeedPatternsInternal(filePath: string): Promise<Enhan
 
 	// Use streaming for large files (> 1MB)
 	if (fileSize > 1024 * 1024) {
-		console.log(`📊 Streaming large feed file: ${filePath} (${(fileSize / 1024).toFixed(1)}KB)`);
+		console.info(`📊 Streaming large feed file: ${filePath} (${(fileSize / 1024).toFixed(1)}KB)`);
 		const stream = file.stream();
 		const text = await Bun.readableStreamToText(stream);
 		const patterns = JSON.parse(text) as EnhancedFeedPattern[];
-		console.log(`✅ Streamed ${patterns.length} feed patterns from ${filePath}`);
+		console.info(`✅ Streamed ${patterns.length} feed patterns from ${filePath}`);
 		return patterns;
 	}
 	

@@ -15,20 +15,20 @@ import { telemetryWebSocket } from './websocket/telemetry';
 const config = YAML.parse(await Bun.file('bun.yaml').text());
 const serverConfig = config.server || { port: 3003, host: '0.0.0.0' };
 
-console.log('🚀 Starting Bun 1.3 Enhanced Server - Login-to-ETL Pipeline');
-console.log('================================================');
-console.log('🔑 Auth: JWT gsession cookies + CSRF protection');
-console.log('🎨 Client: Minified JS with zstd compression');
-console.log('📡 Telemetry: WebSocket streaming with JWT auth');
-console.log('⚡ ETL: ReadableStream processing pipeline');
-console.log('');
+console.info('🚀 Starting Bun 1.3 Enhanced Server - Login-to-ETL Pipeline');
+console.info('================================================');
+console.info('🔑 Auth: JWT gsession cookies + CSRF protection');
+console.info('🎨 Client: Minified JS with zstd compression');
+console.info('📡 Telemetry: WebSocket streaming with JWT auth');
+console.info('⚡ ETL: ReadableStream processing pipeline');
+console.info('');
 
-console.log('📋 Available endpoints:');
-console.log(`   POST /api/auth/login - JWT gsession authentication`);
-console.log(`   GET  /api/js/client.min.js - Minified client with zstd`);
-console.log(`   WS   /ws/telemetry - Live telemetry streaming`);
-console.log(`   POST /api/etl/start - ETL pipeline trigger`);
-console.log('');
+console.info('📋 Available endpoints:');
+console.info(`   POST /api/auth/login - JWT gsession authentication`);
+console.info(`   GET  /api/js/client.min.js - Minified client with zstd`);
+console.info(`   WS   /ws/telemetry - Live telemetry streaming`);
+console.info(`   POST /api/etl/start - ETL pipeline trigger`);
+console.info('');
 
 // Server with all handlers integrated
 const server = serve({
@@ -44,7 +44,7 @@ const server = serve({
       if (url.pathname === '/api/auth/login' && request.method === 'POST') {
         const response = await handleLogin(request);
         const totalTime = performance.now() - startTime;
-        console.log(`🔑 Login request completed in ${totalTime.toFixed(2)}ms`);
+        console.info(`🔑 Login request completed in ${totalTime.toFixed(2)}ms`);
         return response;
       }
 
@@ -52,7 +52,7 @@ const server = serve({
       if (url.pathname === '/api/js/client.min.js' && request.method === 'GET') {
         const response = await handleServeClient(request);
         const totalTime = performance.now() - startTime;
-        console.log(`🎨 Client serve request completed in ${totalTime.toFixed(2)}ms`);
+        console.info(`🎨 Client serve request completed in ${totalTime.toFixed(2)}ms`);
         return response;
       }
 
@@ -60,7 +60,7 @@ const server = serve({
       if (url.pathname === '/api/etl/start' && request.method === 'POST') {
         const response = await handleETLStart(request);
         const totalTime = performance.now() - startTime;
-        console.log(`⚡ ETL request completed in ${totalTime.toFixed(2)}ms`);
+        console.info(`⚡ ETL request completed in ${totalTime.toFixed(2)}ms`);
         return response;
       }
 
@@ -155,40 +155,40 @@ const server = serve({
   }
 });
 
-console.log(`🎯 Bun 1.3 Enhanced Server running on http://${serverConfig.host}:${server.port}`);
-console.log('');
-console.log('🧪 Test commands:');
-console.log('');
-console.log('# 1. Health check:');
-console.log(`curl http://${serverConfig.host}:${server.port}/health`);
-console.log('');
-console.log('# 2. Login test:');
-console.log(`curl -X POST http://${serverConfig.host}:${server.port}/api/auth/login \\`);
-console.log(`  -H "Content-Type: application/json" \\`);
-console.log(`  -d '{"username":"trader1","password":"password123"}' -v`);
-console.log('');
-console.log('# 3. Get minified client:');
-console.log(`curl -H "Accept-Encoding: zstd" http://${serverConfig.host}:${server.port}/api/js/client.min.js | head -c 200`);
-console.log('');
-console.log('# 4. ETL test:');
-console.log(`curl -X POST http://${serverConfig.host}:${server.port}/api/etl/start \\`);
-console.log(`  -H "Content-Type: application/json" \\`);
-console.log(`  -d '{"dataType":"TELEMETRY","payload":{"cpu":75.5,"mem":134217728,"timestamp":"'$(date -Iseconds)'"}}'`);
-console.log('');
-console.log('📡 WebSocket telemetry available at:');
-console.log(`ws://${serverConfig.host}:${server.port}/ws/telemetry`);
-console.log('');
-console.log('🎉 Login-to-ETL Pipeline Citadel operational!');
+console.info(`🎯 Bun 1.3 Enhanced Server running on http://${serverConfig.host}:${server.port}`);
+console.info('');
+console.info('🧪 Test commands:');
+console.info('');
+console.info('# 1. Health check:');
+console.info(`curl http://${serverConfig.host}:${server.port}/health`);
+console.info('');
+console.info('# 2. Login test:');
+console.info(`curl -X POST http://${serverConfig.host}:${server.port}/api/auth/login \\`);
+console.info(`  -H "Content-Type: application/json" \\`);
+console.info(`  -d '{"username":"trader1","password":"password123"}' -v`);
+console.info('');
+console.info('# 3. Get minified client:');
+console.info(`curl -H "Accept-Encoding: zstd" http://${serverConfig.host}:${server.port}/api/js/client.min.js | head -c 200`);
+console.info('');
+console.info('# 4. ETL test:');
+console.info(`curl -X POST http://${serverConfig.host}:${server.port}/api/etl/start \\`);
+console.info(`  -H "Content-Type: application/json" \\`);
+console.info(`  -d '{"dataType":"TELEMETRY","payload":{"cpu":75.5,"mem":134217728,"timestamp":"'$(date -Iseconds)'"}}'`);
+console.info('');
+console.info('📡 WebSocket telemetry available at:');
+console.info(`ws://${serverConfig.host}:${server.port}/ws/telemetry`);
+console.info('');
+console.info('🎉 Login-to-ETL Pipeline Citadel operational!');
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Received SIGINT, shutting down gracefully...');
+  console.info('\n🛑 Received SIGINT, shutting down gracefully...');
   server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n🛑 Received SIGTERM, shutting down gracefully...');
+  console.info('\n🛑 Received SIGTERM, shutting down gracefully...');
   server.stop();
   process.exit(0);
 });

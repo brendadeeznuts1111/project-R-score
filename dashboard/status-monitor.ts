@@ -212,5 +212,5 @@ export function buildProjectStatusReport(): string {
 }
 
 if (import.meta.main) {
-  console.log(buildProjectStatusReport());
+  console.info(buildProjectStatusReport());
 }

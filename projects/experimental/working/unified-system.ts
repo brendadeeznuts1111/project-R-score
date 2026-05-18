@@ -180,7 +180,7 @@ class UnifiedQuantumSystem {
   private async initializeCryptoSystem(): Promise<void> {
     try {
       await this.quantumCrypto.initialize();
-      console.log('✅ Quantum hybrid cryptography initialized');
+      console.info('✅ Quantum hybrid cryptography initialized');
     } catch (error) {
       console.error('❌ Failed to initialize quantum crypto:', error);
     }
@@ -401,7 +401,7 @@ class UnifiedQuantumSystem {
       tension: this.calculateHSLTension(edge.fd)
     });
 
-    console.log(`Dashboard update for ${game.id}:\n${diagram}`);
+    console.info(`Dashboard update for ${game.id}:\n${diagram}`);
   }
 
   private async generateQuantumSignature(data: any): Promise<string> {

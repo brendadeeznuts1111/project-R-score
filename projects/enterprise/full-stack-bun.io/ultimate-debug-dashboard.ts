@@ -55,10 +55,10 @@ interface OddsData {
 // ==================== ENHANCED INSPECT UTILS ====================
 class DebugArsenal {
 	static inspectOddsBuffer(buffer: Uint8Array) {
-		console.log('\n🔍 BUFFER INSPECT');
-		console.log(Bun.inspect(buffer)); // Uint8Array perfect
+		console.info('\n🔍 BUFFER INSPECT');
+		console.info(Bun.inspect(buffer)); // Uint8Array perfect
 
-		console.log('\n📏 BUFFER METRICS');
+		console.info('\n📏 BUFFER METRICS');
 		
 		const hexPreview = Array.from(buffer.slice(0, 64))
 			.map(b => b.toString(16).padStart(2, '0'))
@@ -91,7 +91,7 @@ class DebugArsenal {
 	}
 
 	static streamDebugTable() {
-		console.log('\n🚀 STREAM DEBUG TABLE');
+		console.info('\n🚀 STREAM DEBUG TABLE');
 
 		// Multi-format table
 		Bun.inspect.table([
@@ -127,7 +127,7 @@ class DebugArsenal {
 			Bun.readableStreamToText(stream5).catch(() => null)
 		]);
 
-		console.log('\n📡 MULTI-FORMAT STREAM DEBUG');
+		console.info('\n📡 MULTI-FORMAT STREAM DEBUG');
 		Bun.inspect.table([
 			{ format: 'ArrayBuffer', size: arrayBuffer?.byteLength || 0, status: arrayBuffer ? '✅' : '❌' },
 			{ format: 'Bytes', size: bytes?.length || 0, status: bytes ? '✅' : '❌' },
@@ -201,8 +201,8 @@ async function ultimateDebugTerminal() {
 		LIMIT 15
 	`).all() as ArbOpportunity[];
 
-	console.log('\n🚀 HYPERBUN DEBUG TERMINAL v2');
-	console.log(`📊 ${liveArbs.length} High-Value Arbitrage Opportunities\n`);
+	console.info('\n🚀 HYPERBUN DEBUG TERMINAL v2');
+	console.info(`📊 ${liveArbs.length} High-Value Arbitrage Opportunities\n`);
 
 	// Format table data
 	const tableData = liveArbs.map(arb => ({
@@ -214,11 +214,11 @@ async function ultimateDebugTerminal() {
 	}));
 
 	// Table with colors option
-	console.log('Table (with colors):');
+	console.info('Table (with colors):');
 	Bun.inspect.table(tableData, ['league', 'market', 'profit', 'value', 'steam'], { colors: true });
 	
 	// Table without colors (subset)
-	console.log('\nTable (subset, no colors):');
+	console.info('\nTable (subset, no colors):');
 	Bun.inspect.table(tableData.slice(0, 3), ['league', 'profit']);
 
 	// 2. STREAM DEBUG SECTION
@@ -237,8 +237,8 @@ async function ultimateDebugTerminal() {
 		avg_profit_pct: 0.042,
 		total_value_usd: 1250000
 	});
-	console.log('\n🎯 CUSTOM INSPECT');
-	console.log(Bun.inspect(customOdds));
+	console.info('\n🎯 CUSTOM INSPECT');
+	console.info(Bun.inspect(customOdds));
 
 	// 5. MULTI-FORMAT STREAM DEBUG
 	const mockOdds = {
@@ -264,11 +264,11 @@ async function ultimateDebugTerminal() {
 		status: m.status
 	}));
 
-	console.log('\n📊 CLEAN METRICS (stripANSI)');
+	console.info('\n📊 CLEAN METRICS (stripANSI)');
 	Bun.inspect.table(cleanMetrics, ['metric', 'cleanValue', 'status']);
 
 	// 7. Performance summary
-	console.log('\n⚡ PERFORMANCE SUMMARY');
+	console.info('\n⚡ PERFORMANCE SUMMARY');
 	const perfData = [
 		{ operation: 'Stream Debug', time: '0.8ms', throughput: '50MB/s' },
 		{ operation: 'Buffer Inspect', time: '<0.1ms', throughput: 'N/A' },
@@ -285,16 +285,16 @@ ultimateDebugTerminal();
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-	console.log('\n\n👋 Shutting down debug terminal...');
+	console.info('\n\n👋 Shutting down debug terminal...');
 	process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-	console.log('\n\n👋 Shutting down debug terminal...');
+	console.info('\n\n👋 Shutting down debug terminal...');
 	process.exit(0);
 });
 
-console.log('%j', {
+console.info('%j', {
 	debug_terminal_v2: 'INSPECT-SUPREMACY-LIVE',
 	refresh_rate: '1s',
 	features: ['inspect.table', 'custom inspect', 'multi-format streams', 'stripANSI']

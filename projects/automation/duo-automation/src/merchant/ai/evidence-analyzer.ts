@@ -218,7 +218,7 @@ export interface MerchantHistory {
 class VisionAI {
   async annotateImage(request: any): Promise<any[]> {
     // Mock Google Vision AI implementation
-    console.log(`🔍 Analyzing image with Vision AI: ${request.image.source.imageUri}`);
+    console.info(`🔍 Analyzing image with Vision AI: ${request.image.source.imageUri}`);
     
     // Simulate API response
     return [{
@@ -363,7 +363,7 @@ class PatternRecognition {
 
 class ReceiptParser {
   async parse(receiptUrl: string): Promise<ReceiptData | null> {
-    console.log(`🧾 Parsing receipt: ${receiptUrl}`);
+    console.info(`🧾 Parsing receipt: ${receiptUrl}`);
     
     // Mock receipt parsing
     if (receiptUrl.includes('valid')) {
@@ -429,7 +429,7 @@ export class AIEvidenceAnalyzer {
   
   async analyzeDispute(dispute: Dispute): Promise<AIAnalysis> {
     const startTime = Date.now();
-    console.log(`🤖 Starting AI analysis for dispute ${dispute.id}`);
+    console.info(`🤖 Starting AI analysis for dispute ${dispute.id}`);
     
     try {
       // Parallel analysis of all evidence
@@ -485,7 +485,7 @@ export class AIEvidenceAnalyzer {
         }
       };
       
-      console.log(`✅ AI analysis completed for dispute ${dispute.id} in ${aiAnalysis.metadata.processingTime}ms`);
+      console.info(`✅ AI analysis completed for dispute ${dispute.id} in ${aiAnalysis.metadata.processingTime}ms`);
       return aiAnalysis;
       
     } catch (error) {
@@ -547,7 +547,7 @@ export class AIEvidenceAnalyzer {
   }
   
   private async analyzeImage(imageUrl: string): Promise<ImageAnalysis> {
-    console.log(`🖼️ Analyzing image: ${imageUrl}`);
+    console.info(`🖼️ Analyzing image: ${imageUrl}`);
     
     const analysis: ImageAnalysis = {
       evidenceId: '',
@@ -624,7 +624,7 @@ export class AIEvidenceAnalyzer {
   }
   
   private async analyzeReceipt(receiptUrl: string, dispute: Dispute): Promise<ReceiptAnalysis> {
-    console.log(`🧾 Analyzing receipt: ${receiptUrl}`);
+    console.info(`🧾 Analyzing receipt: ${receiptUrl}`);
     
     const analysis: ReceiptAnalysis = {
       evidenceId: '',

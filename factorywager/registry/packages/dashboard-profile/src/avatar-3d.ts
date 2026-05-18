@@ -175,7 +175,7 @@ const avatarDashboardHTML = `
     const ws = new WebSocket('ws://' + window.location.host + '/ws', ['permessage-deflate']);
     
     ws.onopen = () => {
-      console.log('✅ WebSocket connected');
+      console.info('✅ WebSocket connected');
       initScene();
       // Request profile data
       const userId = window.location.pathname.split('/avatar/')[1] || '@ashschaeffer1';

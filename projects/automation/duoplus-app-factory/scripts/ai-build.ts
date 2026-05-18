@@ -143,7 +143,7 @@ export async function validateModel(): Promise<boolean> {
     };
 
     const score = await infer(testSignal);
-    console.log("Model validation score:", score);
+    console.info("Model validation score:", score);
     
     return score >= 0 && score <= 1;
   } catch (error) {
@@ -155,7 +155,7 @@ export async function validateModel(): Promise<boolean> {
 if (require.main === module) {
   validateModel()
     .then((success) => {
-      console.log("Model validation:", success ? "PASSED" : "FAILED");
+      console.info("Model validation:", success ? "PASSED" : "FAILED");
       process.exit(success ? 0 : 1);
     })
     .catch((error) => {
@@ -196,20 +196,20 @@ if (require.main === module) {
 if (require.main === module) {
   buildAI()
     .then((result) => {
-      console.log("\n=== AI Build Process ===");
-      console.log(`Success: ${result.success}`);
-      console.log(`Model Path: ${result.modelPath || "Not created"}`);
-      console.log(`WASM Path: ${result.wasmPath || "Not found"}`);
-      console.log(`Errors: ${result.errors.length}`);
+      console.info("\n=== AI Build Process ===");
+      console.info(`Success: ${result.success}`);
+      console.info(`Model Path: ${result.modelPath || "Not created"}`);
+      console.info(`WASM Path: ${result.wasmPath || "Not found"}`);
+      console.info(`Errors: ${result.errors.length}`);
 
       if (result.errors.length > 0) {
-        console.log("\nErrors:");
-        result.errors.forEach(err => console.log(`  ✗ ${err}`));
+        console.info("\nErrors:");
+        result.errors.forEach(err => console.info(`  ✗ ${err}`));
       }
 
-      console.log("\nNext Steps:");
-      console.log("  1. bun run ai:train");
-      console.log("  2. bun run start");
+      console.info("\nNext Steps:");
+      console.info("  1. bun run ai:train");
+      console.info("  2. bun run start");
 
       process.exit(result.success ? 0 : 1);
     })

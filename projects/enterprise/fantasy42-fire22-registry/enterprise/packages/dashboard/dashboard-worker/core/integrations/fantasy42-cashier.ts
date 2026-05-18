@@ -160,7 +160,7 @@ export class Fantasy42Cashier {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('💰 Initializing Fantasy42 Cashier System...');
+      console.info('💰 Initializing Fantasy42 Cashier System...');
 
       // Detect cashier menu element
       await this.detectCashierMenu();
@@ -194,7 +194,7 @@ export class Fantasy42Cashier {
       await this.initializeSecurityFeatures();
 
       this.isInitialized = true;
-      console.log('✅ Fantasy42 Cashier System initialized');
+      console.info('✅ Fantasy42 Cashier System initialized');
 
       return true;
     } catch (error) {
@@ -309,7 +309,7 @@ export class Fantasy42Cashier {
     for (const selector of cashierSelectors) {
       cashierElement = document.querySelector(selector);
       if (cashierElement) {
-        console.log(`✅ Found cashier menu element: ${selector}`);
+        console.info(`✅ Found cashier menu element: ${selector}`);
         break;
       }
     }
@@ -318,7 +318,7 @@ export class Fantasy42Cashier {
       // Setup cashier menu interaction
       await this.setupCashierMenuInteraction(cashierElement);
     } else {
-      console.log('⚠️ Cashier menu element not found, creating fallback');
+      console.info('⚠️ Cashier menu element not found, creating fallback');
       await this.createFallbackCashierMenu();
     }
   }
@@ -338,7 +338,7 @@ export class Fantasy42Cashier {
     // Add visual enhancements
     this.enhanceCashierMenuElement(element);
 
-    console.log('✅ Cashier menu interaction setup');
+    console.info('✅ Cashier menu interaction setup');
   }
 
   /**
@@ -359,7 +359,7 @@ export class Fantasy42Cashier {
       cashierMenuItem.addEventListener('click', () => this.openCashierInterface());
 
       menuContainer.appendChild(cashierMenuItem);
-      console.log('✅ Fallback cashier menu created');
+      console.info('✅ Fallback cashier menu created');
     }
   }
 
@@ -428,7 +428,7 @@ export class Fantasy42Cashier {
       this.timers.set('balance-refresh', refreshTimer);
     }
 
-    console.log('✅ Balance management initialized');
+    console.info('✅ Balance management initialized');
   }
 
   /**
@@ -441,7 +441,7 @@ export class Fantasy42Cashier {
     // Setup payment method management
     await this.setupPaymentMethodManagement();
 
-    console.log('✅ Payment methods initialized');
+    console.info('✅ Payment methods initialized');
   }
 
   /**
@@ -454,7 +454,7 @@ export class Fantasy42Cashier {
     // Setup transaction display
     await this.setupTransactionDisplay();
 
-    console.log('✅ Transaction history initialized');
+    console.info('✅ Transaction history initialized');
   }
 
   /**
@@ -467,7 +467,7 @@ export class Fantasy42Cashier {
     // Setup deposit validation
     await this.setupDepositValidation();
 
-    console.log('✅ Deposit system initialized');
+    console.info('✅ Deposit system initialized');
   }
 
   /**
@@ -480,7 +480,7 @@ export class Fantasy42Cashier {
     // Setup withdrawal validation
     await this.setupWithdrawalValidation();
 
-    console.log('✅ Withdrawal system initialized');
+    console.info('✅ Withdrawal system initialized');
   }
 
   /**
@@ -490,7 +490,7 @@ export class Fantasy42Cashier {
     // Setup WebSocket or polling for real-time updates
     await this.setupRealTimeUpdates();
 
-    console.log('✅ Real-time updates initialized');
+    console.info('✅ Real-time updates initialized');
   }
 
   /**
@@ -500,7 +500,7 @@ export class Fantasy42Cashier {
     // Setup analytics tracking for cashier actions
     await this.setupAnalyticsTracking();
 
-    console.log('✅ Analytics tracking initialized');
+    console.info('✅ Analytics tracking initialized');
   }
 
   /**
@@ -510,14 +510,14 @@ export class Fantasy42Cashier {
     // Setup security features
     await this.setupSecurityFeatures();
 
-    console.log('✅ Security features initialized');
+    console.info('✅ Security features initialized');
   }
 
   /**
    * Open cashier interface
    */
   private async openCashierInterface(): Promise<void> {
-    console.log('💰 Opening cashier interface');
+    console.info('💰 Opening cashier interface');
 
     // Mark menu as active
     this.markCashierMenuActive();
@@ -560,7 +560,7 @@ export class Fantasy42Cashier {
     // Add styles
     this.addCashierInterfaceStyles();
 
-    console.log('✅ Cashier interface created');
+    console.info('✅ Cashier interface created');
   }
 
   /**
@@ -670,7 +670,7 @@ export class Fantasy42Cashier {
       }
     });
 
-    console.log('✅ Cashier interface interactions setup');
+    console.info('✅ Cashier interface interactions setup');
   }
 
   /**
@@ -921,7 +921,7 @@ export class Fantasy42Cashier {
       cashierMenu.classList.remove('active');
     }
 
-    console.log('💰 Cashier interface closed');
+    console.info('💰 Cashier interface closed');
   }
 
   /**
@@ -937,7 +937,7 @@ export class Fantasy42Cashier {
     // Setup form interactions
     await this.setupDepositFormInteractions(formsContainer);
 
-    console.log('💳 Deposit form displayed');
+    console.info('💳 Deposit form displayed');
   }
 
   /**
@@ -953,7 +953,7 @@ export class Fantasy42Cashier {
     // Setup form interactions
     await this.setupWithdrawalFormInteractions(formsContainer);
 
-    console.log('💸 Withdrawal form displayed');
+    console.info('💸 Withdrawal form displayed');
   }
 
   /**
@@ -969,7 +969,7 @@ export class Fantasy42Cashier {
     // Setup history interactions
     await this.setupTransactionHistoryInteractions(formsContainer);
 
-    console.log('📊 Transaction history displayed');
+    console.info('📊 Transaction history displayed');
   }
 
   /**
@@ -1689,7 +1689,7 @@ export class Fantasy42Cashier {
    */
   updateConfiguration(newConfig: Partial<CashierConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    console.log('⚙️ Cashier configuration updated');
+    console.info('⚙️ Cashier configuration updated');
   }
 
   /**
@@ -1702,7 +1702,7 @@ export class Fantasy42Cashier {
       this.refreshTransactionHistory(),
     ]);
 
-    console.log('🔄 All cashier data refreshed');
+    console.info('🔄 All cashier data refreshed');
   }
 
   /**
@@ -1733,7 +1733,7 @@ export class Fantasy42Cashier {
     }
 
     this.isInitialized = false;
-    console.log('🧹 Cashier system cleaned up');
+    console.info('🧹 Cashier system cleaned up');
   }
 }
 

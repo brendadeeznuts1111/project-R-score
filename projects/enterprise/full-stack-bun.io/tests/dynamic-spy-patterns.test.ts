@@ -444,6 +444,6 @@ test("scales to 1000+ dynamic keys", () => {
 	// Performance assertion (should complete in reasonable time)
 	expect(durationMs).toBeLessThan(100); // Should complete in < 100ms
 
-	console.log(`✅ 1000+ dynamic keys processed in ${durationMs.toFixed(2)}ms`);
+	console.info(`✅ 1000+ dynamic keys processed in ${durationMs.toFixed(2)}ms`);
 });
 

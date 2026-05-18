@@ -65,7 +65,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
-    console.log(HELP);
+    console.info(HELP);
     process.exit(0);
   }
 
@@ -97,7 +97,7 @@ async function main() {
         break;
       default:
         console.error(`Unknown command: ${command}`);
-        console.log(HELP);
+        console.info(HELP);
         process.exit(1);
     }
   } catch (error: any) {
@@ -172,16 +172,16 @@ async function deployCommand(args: string[]) {
   EnhancedOutput.displayBuildResults([result]);
 
   if (result.deployment?.uploaded) {
-    console.log("\n\x1b[1mDeployment URLs:\x1b[0m");
+    console.info("\n\x1b[1mDeployment URLs:\x1b[0m");
     result.deployment.urls.forEach((url, i) => {
-      console.log(`  ${i + 1}. ${url}`);
+      console.info(`  ${i + 1}. ${url}`);
     });
   }
 
   if (result.deployment?.cdnConfig) {
-    console.log("\n\x1b[1mCDN Configuration:\x1b[0m");
-    console.log(`  Domain: ${result.deployment.cdnConfig.domain}`);
-    console.log(`  Cache TTL: ${result.deployment.cdnConfig.cacheTtl}s`);
+    console.info("\n\x1b[1mCDN Configuration:\x1b[0m");
+    console.info(`  Domain: ${result.deployment.cdnConfig.domain}`);
+    console.info(`  Cache TTL: ${result.deployment.cdnConfig.cacheTtl}s`);
   }
 
   if (result.deployment?.error) {
@@ -224,12 +224,12 @@ async function versionCommand(args: string[]) {
   spinner.stop(`Version ${version} created`);
 
   // Display version info
-  console.log("\n\x1b[1mVersion Details:\x1b[0m");
-  console.log(`  Build ID: ${versionedBuild.buildId}`);
-  console.log(`  Manifest Hash: ${versionedBuild.manifest.manifestHash}`);
-  console.log(`  Files: ${versionedBuild.manifest.files.length}`);
-  console.log(`  Total Size: ${EnhancedOutput.formatBytes(versionedBuild.manifest.totalSize)}`);
-  console.log(`  Dependencies: ${versionedBuild.dependencies.length}`);
+  console.info("\n\x1b[1mVersion Details:\x1b[0m");
+  console.info(`  Build ID: ${versionedBuild.buildId}`);
+  console.info(`  Manifest Hash: ${versionedBuild.manifest.manifestHash}`);
+  console.info(`  Files: ${versionedBuild.manifest.files.length}`);
+  console.info(`  Total Size: ${EnhancedOutput.formatBytes(versionedBuild.manifest.totalSize)}`);
+  console.info(`  Dependencies: ${versionedBuild.dependencies.length}`);
 
   if (versionedBuild.buildResult.success) {
     EnhancedOutput.success(`Executable: ${versionedBuild.buildResult.executablePath}`);
@@ -305,7 +305,7 @@ async function historyCommand(args: string[]) {
     Checksum: v.buildResult.checksum.slice(0, 8),
   }));
 
-  console.log(
+  console.info(
     EnhancedOutput.table(tableData, {
       columns: [
         { key: "#", width: 3, align: "right" },
@@ -351,33 +351,33 @@ async function compareCommand(args: string[]) {
     values["compare-to"]
   );
 
-  console.log("\n\x1b[1mDifferences:\x1b[0m");
-  console.log(`  Added: ${diff.added.length}`);
-  console.log(`  Removed: ${diff.removed.length}`);
-  console.log(`  Modified: ${diff.modified.length}`);
-  console.log(`  Unchanged: ${diff.unchanged.length}`);
+  console.info("\n\x1b[1mDifferences:\x1b[0m");
+  console.info(`  Added: ${diff.added.length}`);
+  console.info(`  Removed: ${diff.removed.length}`);
+  console.info(`  Modified: ${diff.modified.length}`);
+  console.info(`  Unchanged: ${diff.unchanged.length}`);
 
   if (diff.added.length > 0) {
-    console.log("\n\x1b[32mAdded:\x1b[0m");
-    diff.added.slice(0, 10).forEach((f) => console.log(`  + ${f}`));
+    console.info("\n\x1b[32mAdded:\x1b[0m");
+    diff.added.slice(0, 10).forEach((f) => console.info(`  + ${f}`));
     if (diff.added.length > 10) {
-      console.log(`  ... and ${diff.added.length - 10} more`);
+      console.info(`  ... and ${diff.added.length - 10} more`);
     }
   }
 
   if (diff.removed.length > 0) {
-    console.log("\n\x1b[31mRemoved:\x1b[0m");
-    diff.removed.slice(0, 10).forEach((f) => console.log(`  - ${f}`));
+    console.info("\n\x1b[31mRemoved:\x1b[0m");
+    diff.removed.slice(0, 10).forEach((f) => console.info(`  - ${f}`));
     if (diff.removed.length > 10) {
-      console.log(`  ... and ${diff.removed.length - 10} more`);
+      console.info(`  ... and ${diff.removed.length - 10} more`);
     }
   }
 
   if (diff.modified.length > 0) {
-    console.log("\n\x1b[33mModified:\x1b[0m");
-    diff.modified.slice(0, 10).forEach((f) => console.log(`  ~ ${f}`));
+    console.info("\n\x1b[33mModified:\x1b[0m");
+    diff.modified.slice(0, 10).forEach((f) => console.info(`  ~ ${f}`));
     if (diff.modified.length > 10) {
-      console.log(`  ... and ${diff.modified.length - 10} more`);
+      console.info(`  ... and ${diff.modified.length - 10} more`);
     }
   }
 }
@@ -399,7 +399,7 @@ async function pruneCommand(args: string[]) {
   const keepCount = parseInt(values.keep || "5");
 
   EnhancedOutput.printHeader(`Pruning versions: ${skillId}`);
-  console.log(`Keeping latest ${keepCount} versions\n`);
+  console.info(`Keeping latest ${keepCount} versions\n`);
 
   const builder = createR2BuilderFromEnv();
 
@@ -438,41 +438,41 @@ async function integrityCommand(args: string[]) {
 
   spinner.stop("Report generated");
 
-  console.log("\n\x1b[1mIntegrity Report:\x1b[0m");
-  console.log(`  Skill ID: ${report.skillId}`);
-  console.log(`  Valid: ${report.valid ? "\x1b[32mYes\x1b[0m" : "\x1b[31mNo\x1b[0m"}`);
-  console.log(`  Hash: ${report.hash}`);
-  console.log(`  Timestamp: ${report.timestamp}`);
+  console.info("\n\x1b[1mIntegrity Report:\x1b[0m");
+  console.info(`  Skill ID: ${report.skillId}`);
+  console.info(`  Valid: ${report.valid ? "\x1b[32mYes\x1b[0m" : "\x1b[31mNo\x1b[0m"}`);
+  console.info(`  Hash: ${report.hash}`);
+  console.info(`  Timestamp: ${report.timestamp}`);
 
   if (report.manifest) {
-    console.log(`\n\x1b[1mManifest:\x1b[0m`);
-    console.log(`  Manifest Hash: ${report.manifest.manifestHash}`);
-    console.log(`  Total Files: ${report.manifest.files.length}`);
-    console.log(`  Total Size: ${EnhancedOutput.formatBytes(report.manifest.totalSize)}`);
+    console.info(`\n\x1b[1mManifest:\x1b[0m`);
+    console.info(`  Manifest Hash: ${report.manifest.manifestHash}`);
+    console.info(`  Total Files: ${report.manifest.files.length}`);
+    console.info(`  Total Size: ${EnhancedOutput.formatBytes(report.manifest.totalSize)}`);
   }
 
   if (report.verification) {
-    console.log(`\n\x1b[1mVerification:\x1b[0m`);
-    console.log(`  Verified: ${report.verification.verifiedFiles}/${report.verification.totalFiles}`);
+    console.info(`\n\x1b[1mVerification:\x1b[0m`);
+    console.info(`  Verified: ${report.verification.verifiedFiles}/${report.verification.totalFiles}`);
 
     if (report.verification.mismatchedFiles.length > 0) {
-      console.log(`\n\x1b[33mMismatched Files:\x1b[0m`);
+      console.info(`\n\x1b[33mMismatched Files:\x1b[0m`);
       report.verification.mismatchedFiles.forEach((f) =>
-        console.log(`  ~ ${f}`)
+        console.info(`  ~ ${f}`)
       );
     }
 
     if (report.verification.missingFiles.length > 0) {
-      console.log(`\n\x1b[31mMissing Files:\x1b[0m`);
+      console.info(`\n\x1b[31mMissing Files:\x1b[0m`);
       report.verification.missingFiles.forEach((f) =>
-        console.log(`  - ${f}`)
+        console.info(`  - ${f}`)
       );
     }
 
     if (report.verification.extraFiles.length > 0) {
-      console.log(`\n\x1b[32mExtra Files:\x1b[0m`);
+      console.info(`\n\x1b[32mExtra Files:\x1b[0m`);
       report.verification.extraFiles.forEach((f) =>
-        console.log(`  + ${f}`)
+        console.info(`  + ${f}`)
       );
     }
   }
@@ -486,12 +486,12 @@ async function displaySkillInfo(skillId: string) {
   const skillJson = await getSkillJson(skillId);
 
   if (skillJson) {
-    console.log("\n\x1b[1mSkill Info:\x1b[0m");
-    console.log(`  Name: ${skillJson.name || skillId}`);
-    console.log(`  Version: ${skillJson.version || "1.0.0"}`);
-    console.log(`  Description: ${skillJson.description || "N/A"}`);
-    console.log(`  Author: ${skillJson.author || "Unknown"}`);
-    console.log("");
+    console.info("\n\x1b[1mSkill Info:\x1b[0m");
+    console.info(`  Name: ${skillJson.name || skillId}`);
+    console.info(`  Version: ${skillJson.version || "1.0.0"}`);
+    console.info(`  Description: ${skillJson.description || "N/A"}`);
+    console.info(`  Author: ${skillJson.author || "Unknown"}`);
+    console.info("");
   }
 }
 

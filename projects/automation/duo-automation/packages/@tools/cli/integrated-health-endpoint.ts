@@ -426,25 +426,25 @@ const app = new Elysia()
 const port = process.env.PORT || 3000;
 const server = app.listen(port);
 
-console.log(UnicodeTableFormatter.colorize('🚀 Integrated Health Endpoint Server Started', DesignSystem.status.operational));
-console.log(UnicodeTableFormatter.colorize(`🌐 Server: http://localhost:${port}`, DesignSystem.text.accent.blue));
-console.log(UnicodeTableFormatter.colorize(`📊 Health: http://localhost:${port}/health`, DesignSystem.text.accent.green));
-console.log(UnicodeTableFormatter.colorize(`🔐 Secrets: http://localhost:${port}/health/secrets`, DesignSystem.text.accent.purple));
-console.log(UnicodeTableFormatter.colorize(`⚙️  Systems: http://localhost:${port}/health/systems`, DesignSystem.text.accent.yellow));
-console.log(UnicodeTableFormatter.colorize(`📋 Status: http://localhost:${port}/api/status`, DesignSystem.text.primary));
+console.info(UnicodeTableFormatter.colorize('🚀 Integrated Health Endpoint Server Started', DesignSystem.status.operational));
+console.info(UnicodeTableFormatter.colorize(`🌐 Server: http://localhost:${port}`, DesignSystem.text.accent.blue));
+console.info(UnicodeTableFormatter.colorize(`📊 Health: http://localhost:${port}/health`, DesignSystem.text.accent.green));
+console.info(UnicodeTableFormatter.colorize(`🔐 Secrets: http://localhost:${port}/health/secrets`, DesignSystem.text.accent.purple));
+console.info(UnicodeTableFormatter.colorize(`⚙️  Systems: http://localhost:${port}/health/systems`, DesignSystem.text.accent.yellow));
+console.info(UnicodeTableFormatter.colorize(`📋 Status: http://localhost:${port}/api/status`, DesignSystem.text.primary));
 
-console.log(EmpireProDashboard.generateFooter());
+console.info(EmpireProDashboard.generateFooter());
 
-console.log('\n🎉 INTEGRATED HEALTH ENDPOINT READY!');
-console.log('✅ Secrets backend connectivity integrated with status page');
-console.log('✅ System health monitoring added to existing status structure');
-console.log('✅ Empire Pro v3.7 health tracking with domain integration');
-console.log('✅ Multiple endpoints for different health views');
-console.log('✅ Ready for production deployment on your domain');
+console.info('\n🎉 INTEGRATED HEALTH ENDPOINT READY!');
+console.info('✅ Secrets backend connectivity integrated with status page');
+console.info('✅ System health monitoring added to existing status structure');
+console.info('✅ Empire Pro v3.7 health tracking with domain integration');
+console.info('✅ Multiple endpoints for different health views');
+console.info('✅ Ready for production deployment on your domain');
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log(UnicodeTableFormatter.colorize('\n🛑 Shutting down integrated health server...', DesignSystem.text.secondary));
+  console.info(UnicodeTableFormatter.colorize('\n🛑 Shutting down integrated health server...', DesignSystem.text.secondary));
   server.stop();
   process.exit(0);
 });

@@ -43,8 +43,8 @@ export async function runPreCommit(options: HookOptions = {}): Promise<HookResul
 
   const tomlFiles = patterns.filter((f: string) => f.endsWith('.toml'));
 
-  console.log('\x1b[1;36m🔍 TOML Guard Pre-commit Hook\x1b[0m');
-  console.log(`\x1b[90mChecking ${tomlFiles.length} TOML files...\x1b[0m\n`);
+  console.info('\x1b[1;36m🔍 TOML Guard Pre-commit Hook\x1b[0m');
+  console.info(`\x1b[90mChecking ${tomlFiles.length} TOML files...\x1b[0m\n`);
 
   for (const file of tomlFiles) {
     try {
@@ -90,7 +90,7 @@ export async function runPreCommit(options: HookOptions = {}): Promise<HookResul
         if (optimized !== content) {
           await Bun.file(file).write(optimized);
           result.filesModified++;
-          console.log(`\x1b[32m✓ Optimized: ${file}\x1b[0m`);
+          console.info(`\x1b[32m✓ Optimized: ${file}\x1b[0m`);
         }
       }
 
@@ -104,28 +104,28 @@ export async function runPreCommit(options: HookOptions = {}): Promise<HookResul
   }
 
   // Print summary
-  console.log('\n\x1b[90m' + '─'.repeat(50) + '\x1b[0m');
+  console.info('\n\x1b[90m' + '─'.repeat(50) + '\x1b[0m');
 
   if (result.passed) {
-    console.log('\x1b[32m✓ Pre-commit check passed\x1b[0m');
+    console.info('\x1b[32m✓ Pre-commit check passed\x1b[0m');
   } else {
-    console.log('\x1b[31m✗ Pre-commit check failed\x1b[0m');
+    console.info('\x1b[31m✗ Pre-commit check failed\x1b[0m');
   }
 
-  console.log(`  Files checked: ${result.filesChecked}`);
-  console.log(`  Files modified: ${result.filesModified}`);
+  console.info(`  Files checked: ${result.filesChecked}`);
+  console.info(`  Files modified: ${result.filesModified}`);
 
   if (result.errors.length > 0) {
-    console.log('\x1b[31mErrors:\x1b[0m');
+    console.info('\x1b[31mErrors:\x1b[0m');
     for (const err of result.errors) {
-      console.log(`  - ${err.file}: ${err.message}`);
+      console.info(`  - ${err.file}: ${err.message}`);
     }
   }
 
   if (result.warnings.length > 0) {
-    console.log('\x1b[33mWarnings:\x1b[0m');
+    console.info('\x1b[33mWarnings:\x1b[0m');
     for (const warn of result.warnings) {
-      console.log(`  - ${warn.file}: ${warn.message}`);
+      console.info(`  - ${warn.file}: ${warn.message}`);
     }
   }
 
@@ -173,8 +173,8 @@ exec bun run ./scripts/pre-commit-hook.ts --fail-on-dangerous --auto-fix
 `;
 
   Bun.file('.git/hooks/pre-commit').write(hookContent);
-  console.log('\x1b[32m✓ Pre-commit hook installed at .git/hooks/pre-commit\x1b[0m');
-  console.log('\x1b[90mMake sure to run: chmod +x .git/hooks/pre-commit\x1b[0m');
+  console.info('\x1b[32m✓ Pre-commit hook installed at .git/hooks/pre-commit\x1b[0m');
+  console.info('\x1b[90mMake sure to run: chmod +x .git/hooks/pre-commit\x1b[0m');
 }
 
 export function installHusky(): void {
@@ -188,8 +188,8 @@ export function installHusky(): void {
 exec bun run ./scripts/pre-commit-hook.ts --fail-on-dangerous --auto-fix
 `);
 
-  console.log('\x1b[32m✓ Husky pre-commit hook installed\x1b[0m');
-  console.log('\x1b[90mRun: chmod +x .husky/pre-commit\x1b[0m');
+  console.info('\x1b[32m✓ Husky pre-commit hook installed\x1b[0m');
+  console.info('\x1b[90mRun: chmod +x .husky/pre-commit\x1b[0m');
 }
 
 // CLI entry point

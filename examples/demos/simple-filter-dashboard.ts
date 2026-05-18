@@ -62,13 +62,13 @@ const server = (globalThis as any).Bun?.serve({
   },
   websocket: {
     message(ws, message) {
-      console.log('WebSocket message:', message);
+      console.info('WebSocket message:', message);
     },
     open(ws) {
-      console.log('WebSocket opened');
+      console.info('WebSocket opened');
     },
     close(ws) {
-      console.log('WebSocket closed');
+      console.info('WebSocket closed');
     },
     error(ws, error) {
       console.error('WebSocket error:', error);
@@ -76,13 +76,13 @@ const server = (globalThis as any).Bun?.serve({
   }
 });
 
-console.log('🚀 Simple Filter Dashboard running on http://localhost:3002');
+console.info('🚀 Simple Filter Dashboard running on http://localhost:3002');
 
 async function handleFilterRun(url: URL, corsHeaders: Record<string, string>): Promise<Response> {
   const pattern = url.searchParams.get('pattern') || '*';
   const script = url.searchParams.get('script') || 'test';
   
-  console.log(`🔍 Running filter: pattern="${pattern}", script="${script}"`);
+  console.info(`🔍 Running filter: pattern="${pattern}", script="${script}"`);
   
   // Parse filter options
   const options = {
@@ -130,7 +130,7 @@ async function handleFilterRun(url: URL, corsHeaders: Record<string, string>): P
       }
     };
     
-    console.log(`✅ Filter completed: ${results.successfulPackages}/${results.matchedPackages} successful`);
+    console.info(`✅ Filter completed: ${results.successfulPackages}/${results.matchedPackages} successful`);
     
     return Response.json(response, {
       headers: { 'Content-Type': 'application/json', ...corsHeaders }
@@ -335,7 +335,7 @@ function getDashboardHTML(): string {
             try {
                 const response = await fetch('/api/packages');
                 const data = await response.json();
-                console.log('Available packages:', data);
+                console.info('Available packages:', data);
             } catch (error) {
                 console.error('Failed to load packages:', error);
             }

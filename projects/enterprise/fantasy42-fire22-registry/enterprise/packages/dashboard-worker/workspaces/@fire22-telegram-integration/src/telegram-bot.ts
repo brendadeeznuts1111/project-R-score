@@ -120,19 +120,19 @@ export class Fire22TelegramBot {
    */
   async start() {
     try {
-      console.log('🚀 Starting Fire22 Telegram Bot...');
+      console.info('🚀 Starting Fire22 Telegram Bot...');
 
       // Set webhook if configured
       if (this.config.webhookUrl) {
         await this.bot.setWebhook(this.config.webhookUrl);
-        console.log(`✅ Webhook set to: ${this.config.webhookUrl}`);
+        console.info(`✅ Webhook set to: ${this.config.webhookUrl}`);
       } else {
         // Start polling
         await this.startPolling();
       }
 
       this.isRunning = true;
-      console.log('✅ Fire22 Telegram Bot is now running!');
+      console.info('✅ Fire22 Telegram Bot is now running!');
 
       // Send startup notification to admins
       await this.notifyAdmins('🚀 Fire22 Telegram Bot has started successfully!');
@@ -177,7 +177,7 @@ export class Fire22TelegramBot {
 
       if (!text || !from) return;
 
-      console.log(`📨 Message from ${from.username || from.first_name}: ${text}`);
+      console.info(`📨 Message from ${from.username || from.first_name}: ${text}`);
 
       // Check if user is allowed
       if (!this.isUserAllowed(from.username || from.first_name || '')) {
@@ -1340,7 +1340,7 @@ ${text}
       //   await this.sendMessage(user.telegram_id, message);
       // }
 
-      console.log(`📱 Notification sent to @${username}: ${message}`);
+      console.info(`📱 Notification sent to @${username}: ${message}`);
     } catch (error) {
       console.error('❌ Error sending notification:', error);
     }
@@ -1352,7 +1352,7 @@ ${text}
   async sendNotificationById(telegramId: number, message: string) {
     try {
       await this.sendMessage(telegramId, message);
-      console.log(`📱 Notification sent to ID ${telegramId}: ${message}`);
+      console.info(`📱 Notification sent to ID ${telegramId}: ${message}`);
     } catch (error) {
       console.error('❌ Error sending notification:', error);
     }
@@ -1393,15 +1393,15 @@ ${text}
    */
   async stop() {
     try {
-      console.log('🛑 Stopping Fire22 Telegram Bot...');
+      console.info('🛑 Stopping Fire22 Telegram Bot...');
       this.isRunning = false;
 
       if (this.config.webhookUrl) {
         await this.bot.deleteWebhook();
-        console.log('✅ Webhook removed');
+        console.info('✅ Webhook removed');
       }
 
-      console.log('✅ Fire22 Telegram Bot stopped successfully');
+      console.info('✅ Fire22 Telegram Bot stopped successfully');
     } catch (error) {
       console.error('❌ Error stopping bot:', error);
     }

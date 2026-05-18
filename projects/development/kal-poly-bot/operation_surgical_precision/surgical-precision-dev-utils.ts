@@ -204,7 +204,7 @@ export class SurgicalPrecisionTools {
 
     try {
       await Bun.openInEditor(file, editorConfig);
-      console.log(`📝 Opened: ${file} in ${editorInfo.command}`);
+      console.info(`📝 Opened: ${file} in ${editorInfo.command}`);
       return true;
     } catch (error) {
       console.error(`❌ Failed to open ${file} in ${editorInfo.command}:`, error);
@@ -296,9 +296,9 @@ export class SurgicalPrecisionValidator {
    */
   static inspect<T>(value: T, label?: string, options?: { depth?: number; colors?: boolean }): T {
     if (label) {
-      console.log(`🔬 ${label}:`, Bun.inspect(value, options));
+      console.info(`🔬 ${label}:`, Bun.inspect(value, options));
     } else {
-      console.log(Bun.inspect(value, options));
+      console.info(Bun.inspect(value, options));
     }
     return value;
   }
@@ -392,19 +392,19 @@ export class SurgicalPrecisionDevUtils {
     try {
       const fullPath = resource.path.startsWith('./') ? resource.path : `./${resource.path}`;
       await Bun.openInEditor(fullPath, { line: 1, column: 1 });
-      console.log(`📝 Opened: ${resource.name} - ${resource.description}`);
+      console.info(`📝 Opened: ${resource.name} - ${resource.description}`);
     } catch (error) {
       console.error(`❌ Failed to open ${resource.name}:`, error);
-      console.log(`   Try manually: ${resource.path}`);
+      console.info(`   Try manually: ${resource.path}`);
     }
   }
 
   static async openCategory(category: DevelopmentResource['category']): Promise<void> {
-    console.log(`🔍 Opening ${category.toUpperCase()} files...\n`);
+    console.info(`🔍 Opening ${category.toUpperCase()} files...\n`);
 
     const categoryResources = RESOURCES.filter(r => r.category === category);
     if (categoryResources.length === 0) {
-      console.log(`❌ No resources found in category: ${category}`);
+      console.info(`❌ No resources found in category: ${category}`);
       return;
     }
 
@@ -416,22 +416,22 @@ export class SurgicalPrecisionDevUtils {
   }
 
   static async openMultiple(names: string[]): Promise<void> {
-    console.log(`🔍 Opening ${names.length} specific files...\n`);
+    console.info(`🔍 Opening ${names.length} specific files...\n`);
 
     for (const name of names) {
       const resource = RESOURCES.find(r => r.name === name);
       if (resource) {
         await this.openInEditor(resource);
       } else {
-        console.log(`❌ Resource not found: ${name}`);
-        console.log(`   Available: ${RESOURCES.map(r => r.name).join(', ')}`);
+        console.info(`❌ Resource not found: ${name}`);
+        console.info(`   Available: ${RESOURCES.map(r => r.name).join(', ')}`);
       }
     }
   }
 
   static listResources(category?: DevelopmentResource['category']): void {
-    console.log('📋 SURGICAL PRECISION DEVELOPMENT RESOURCES');
-    console.log('═'.repeat(50));
+    console.info('📋 SURGICAL PRECISION DEVELOPMENT RESOURCES');
+    console.info('═'.repeat(50));
 
     const toList = category ?
       RESOURCES.filter(r => r.category === category) :
@@ -442,19 +442,19 @@ export class SurgicalPrecisionDevUtils {
     categories.forEach(cat => {
       const catResources = toList.filter(r => r.category === cat);
       if (catResources.length > 0) {
-        console.log(`\n📁 ${cat.toUpperCase()}:`);
+        console.info(`\n📁 ${cat.toUpperCase()}:`);
         catResources.forEach(r => {
-          console.log(`   ${r.name.padEnd(15)} - ${r.description}`);
+          console.info(`   ${r.name.padEnd(15)} - ${r.description}`);
         });
       }
     });
 
-    console.log('\n🎯 Usage:');
-    console.log('   bun run edit [resource...]    - Open specific resources');
-    console.log('   bun run docs                 - Open documentation files');
-    console.log('   bun run config               - Open configuration files');
-    console.log('   bun run troubleshoot         - Open troubleshooting files');
-    console.log('   bun run surgical-precision-dev-utils.ts [command|resource...]');
+    console.info('\n🎯 Usage:');
+    console.info('   bun run edit [resource...]    - Open specific resources');
+    console.info('   bun run docs                 - Open documentation files');
+    console.info('   bun run config               - Open configuration files');
+    console.info('   bun run troubleshoot         - Open troubleshooting files');
+    console.info('   bun run surgical-precision-dev-utils.ts [command|resource...]');
   }
 
   static async handleCommand(args: string[]): Promise<void> {

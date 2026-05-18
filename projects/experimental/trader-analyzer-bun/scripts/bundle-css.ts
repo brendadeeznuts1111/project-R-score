@@ -30,11 +30,11 @@ const output = outputIndex >= 0 && args[outputIndex + 1]
 const minify = minifyIndex >= 0 || args.includes("--minify");
 const sourcemap = sourcemapIndex >= 0 || args.includes("--sourcemap");
 
-console.log(`Bundling CSS...`);
-console.log(`  Input: ${input}`);
-console.log(`  Output: ${output}`);
-console.log(`  Minify: ${minify}`);
-console.log(`  Sourcemap: ${sourcemap}`);
+console.info(`Bundling CSS...`);
+console.info(`  Input: ${input}`);
+console.info(`  Output: ${output}`);
+console.info(`  Minify: ${minify}`);
+console.info(`  Sourcemap: ${sourcemap}`);
 
 try {
 	const result = await cssBundler.bundle({
@@ -44,10 +44,10 @@ try {
 		sourcemap,
 	});
 
-	console.log(`✅ CSS bundled successfully!`);
-	console.log(`  Size: ${(result.size / 1024).toFixed(2)} KB`);
-	console.log(`  Files: ${result.inputs.length}`);
-	console.log(`  Output: ${output}`);
+	console.info(`✅ CSS bundled successfully!`);
+	console.info(`  Size: ${(result.size / 1024).toFixed(2)} KB`);
+	console.info(`  Files: ${result.inputs.length}`);
+	console.info(`  Output: ${output}`);
 } catch (error) {
 	console.error(`❌ Error bundling CSS:`, error);
 	process.exit(1);

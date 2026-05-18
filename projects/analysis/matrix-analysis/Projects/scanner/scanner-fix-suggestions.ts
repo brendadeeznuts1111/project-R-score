@@ -108,5 +108,5 @@ export async function exportSuggestions(
   };
 
   await Bun.write(outputPath, JSON.stringify(output, null, 2));
-  console.log(`✅ Exported ${suggestions.length} fix suggestions to ${outputPath}`);
+  console.info(`✅ Exported ${suggestions.length} fix suggestions to ${outputPath}`);
 }

@@ -47,10 +47,10 @@ class BufferPerformanceDemo {
 	}
 
 	async demonstrateBufferOptimization() {
-		console.log("🚀 BUFFER PERFORMANCE DEMO - Bun v1.3.7");
-		console.log("==========================================\n");
+		console.info("🚀 BUFFER PERFORMANCE DEMO - Bun v1.3.7");
+		console.info("==========================================\n");
 
-		console.log("📊 Testing 50% faster Buffer.from() optimization:\n");
+		console.info("📊 Testing 50% faster Buffer.from() optimization:\n");
 
 		// Test 1: Buffer Creation Performance
 		await this.testBufferCreation();
@@ -66,8 +66,8 @@ class BufferPerformanceDemo {
 	}
 
 	async testBufferCreation() {
-		console.log("🔧 Test 1: Buffer Creation Performance");
-		console.log("---------------------------------------");
+		console.info("🔧 Test 1: Buffer Creation Performance");
+		console.info("---------------------------------------");
 
 		const iterations = 10000;
 		const testData = new TextEncoder().encode(this.testData);
@@ -85,21 +85,21 @@ class BufferPerformanceDemo {
 		const bufferTime = performance.now() - startTime;
 		this.performanceResults.bufferCreation.push(bufferTime);
 
-		console.log(
+		console.info(
 			`   ✅ ${iterations} Buffer.from() operations: ${bufferTime.toFixed(2)}ms`,
 		);
-		console.log(
+		console.info(
 			`   ⚡ Average per operation: ${(bufferTime / iterations).toFixed(4)}ms`,
 		);
-		console.log(
+		console.info(
 			`   🚀 Operations per second: ${(iterations / (bufferTime / 1000)).toFixed(0)}`,
 		);
-		console.log("");
+		console.info("");
 	}
 
 	async testXMLParsing() {
-		console.log("📝 Test 2: XML Parsing Performance");
-		console.log("-----------------------------------");
+		console.info("📝 Test 2: XML Parsing Performance");
+		console.info("-----------------------------------");
 
 		const iterations = 1000;
 		const mockResponse = {
@@ -116,21 +116,21 @@ class BufferPerformanceDemo {
 		const parsingTime = performance.now() - startTime;
 		this.performanceResults.xmlParsing.push(parsingTime);
 
-		console.log(
+		console.info(
 			`   ✅ ${iterations} XML parse operations: ${parsingTime.toFixed(2)}ms`,
 		);
-		console.log(
+		console.info(
 			`   ⚡ Average per parse: ${(parsingTime / iterations).toFixed(4)}ms`,
 		);
-		console.log(
+		console.info(
 			`   🚀 Parses per second: ${(iterations / (parsingTime / 1000)).toFixed(0)}`,
 		);
-		console.log("");
+		console.info("");
 	}
 
 	async testBatchProcessing() {
-		console.log("🔄 Test 3: Batch Processing Performance");
-		console.log("--------------------------------------");
+		console.info("🔄 Test 3: Batch Processing Performance");
+		console.info("--------------------------------------");
 
 		const batchSize = 100;
 		const mockResponses = Array.from({ length: batchSize }, (_, i) => ({
@@ -148,114 +148,114 @@ class BufferPerformanceDemo {
 		const batchTime = performance.now() - startTime;
 		this.performanceResults.batchProcessing.push(batchTime);
 
-		console.log(
+		console.info(
 			`   ✅ Batch processed ${batchSize} RSS feeds: ${batchTime.toFixed(2)}ms`,
 		);
-		console.log(`   📦 Total items extracted: ${allItems.length}`);
-		console.log(
+		console.info(`   📦 Total items extracted: ${allItems.length}`);
+		console.info(
 			`   ⚡ Average per feed: ${(batchTime / batchSize).toFixed(4)}ms`,
 		);
-		console.log(
+		console.info(
 			`   🚀 Feeds per second: ${(batchSize / (batchTime / 1000)).toFixed(0)}`,
 		);
-		console.log("");
+		console.info("");
 	}
 
 	showPerformanceSummary() {
-		console.log("📈 PERFORMANCE SUMMARY");
-		console.log("=====================\n");
+		console.info("📈 PERFORMANCE SUMMARY");
+		console.info("=====================\n");
 
 		const bufferAvg = this.performanceResults.bufferCreation[0] / 10000;
 		const parseAvg = this.performanceResults.xmlParsing[0] / 1000;
 		const batchAvg = this.performanceResults.batchProcessing[0] / 100;
 
-		console.log("🔧 Buffer Creation (v1.3.7 optimized):");
-		console.log(`   • Average: ${bufferAvg.toFixed(4)}ms per operation`);
-		console.log(`   • 50% faster than pre-1.3.7 ✅`);
-		console.log("");
+		console.info("🔧 Buffer Creation (v1.3.7 optimized):");
+		console.info(`   • Average: ${bufferAvg.toFixed(4)}ms per operation`);
+		console.info(`   • 50% faster than pre-1.3.7 ✅`);
+		console.info("");
 
-		console.log("📝 XML Parsing (with Buffer optimization):");
-		console.log(`   • Average: ${parseAvg.toFixed(4)}ms per parse`);
-		console.log(`   • Includes 50% faster Buffer.from() ✅`);
-		console.log("");
+		console.info("📝 XML Parsing (with Buffer optimization):");
+		console.info(`   • Average: ${parseAvg.toFixed(4)}ms per parse`);
+		console.info(`   • Includes 50% faster Buffer.from() ✅`);
+		console.info("");
 
-		console.log("🔄 Batch Processing (3x faster array.flat()):");
-		console.log(`   • Average: ${batchAvg.toFixed(4)}ms per feed`);
-		console.log(`   • 35% faster Promise.all() + 3x faster flat() ✅`);
-		console.log("");
+		console.info("🔄 Batch Processing (3x faster array.flat()):");
+		console.info(`   • Average: ${batchAvg.toFixed(4)}ms per feed`);
+		console.info(`   • 35% faster Promise.all() + 3x faster flat() ✅`);
+		console.info("");
 
 		this.showRealWorldImpact();
 	}
 
 	showRealWorldImpact() {
-		console.log("🌍 REAL-WORLD RSS PROCESSING IMPACT");
-		console.log("===================================\n");
+		console.info("🌍 REAL-WORLD RSS PROCESSING IMPACT");
+		console.info("===================================\n");
 
-		console.log("📊 High-Throughput Scenarios:");
-		console.log("");
+		console.info("📊 High-Throughput Scenarios:");
+		console.info("");
 
 		// Calculate real-world metrics
 		const feedsPerSecond =
 			(1000 / this.performanceResults.xmlParsing[0]) * 1000;
 		const itemsPerSecond = feedsPerSecond * 100; // 100 items per feed
 
-		console.log(
+		console.info(
 			`🚀 Single RSS Feed Processing: ${feedsPerSecond.toFixed(0)} feeds/second`,
 		);
-		console.log(
+		console.info(
 			`📦 Item Extraction Rate: ${itemsPerSecond.toFixed(0)} items/second`,
 		);
-		console.log(
+		console.info(
 			`⚡ Batch Processing (100 feeds): ${(100 / (this.performanceResults.batchProcessing[0] / 1000)).toFixed(0)} feeds/second`,
 		);
-		console.log("");
+		console.info("");
 
-		console.log("💡 Enterprise Benefits:");
-		console.log("   ✅ Process 10,000 RSS feeds in <30 seconds");
-		console.log("   ✅ Handle 1M+ RSS items per minute");
-		console.log("   ✅ Real-time feed aggregation at scale");
-		console.log("   ✅ Reduced server costs with faster processing");
-		console.log("");
+		console.info("💡 Enterprise Benefits:");
+		console.info("   ✅ Process 10,000 RSS feeds in <30 seconds");
+		console.info("   ✅ Handle 1M+ RSS items per minute");
+		console.info("   ✅ Real-time feed aggregation at scale");
+		console.info("   ✅ Reduced server costs with faster processing");
+		console.info("");
 
-		console.log("🎯 Technical Advantages:");
-		console.log("   • 50% faster Buffer.from() reduces memory allocation time");
-		console.log("   • Optimized XML parsing for large RSS feeds");
-		console.log("   • 3x faster array.flat() for item aggregation");
-		console.log("   • 35% faster Promise.all() for concurrent processing");
-		console.log("");
+		console.info("🎯 Technical Advantages:");
+		console.info("   • 50% faster Buffer.from() reduces memory allocation time");
+		console.info("   • Optimized XML parsing for large RSS feeds");
+		console.info("   • 3x faster array.flat() for item aggregation");
+		console.info("   • 35% faster Promise.all() for concurrent processing");
+		console.info("");
 
 		this.showComparison();
 	}
 
 	showComparison() {
-		console.log("📊 PERFORMANCE COMPARISON");
-		console.log("========================\n");
+		console.info("📊 PERFORMANCE COMPARISON");
+		console.info("========================\n");
 
-		console.log("| Operation | Pre-1.3.7 | v1.3.7 | Improvement |");
-		console.log("|-----------|-----------|--------|-------------|");
-		console.log("| Buffer.from() | ~0.10ms | ~0.05ms | **50% faster** |");
-		console.log("| XML Parsing | ~2.0ms | ~1.0ms | **50% faster** |");
-		console.log("| array.flat() | ~1.5ms | ~0.5ms | **3x faster** |");
-		console.log("| Promise.all() | ~100ms | ~65ms | **35% faster** |");
-		console.log("| Batch RSS | ~150ms | ~50ms | **3x faster** |");
-		console.log("");
+		console.info("| Operation | Pre-1.3.7 | v1.3.7 | Improvement |");
+		console.info("|-----------|-----------|--------|-------------|");
+		console.info("| Buffer.from() | ~0.10ms | ~0.05ms | **50% faster** |");
+		console.info("| XML Parsing | ~2.0ms | ~1.0ms | **50% faster** |");
+		console.info("| array.flat() | ~1.5ms | ~0.5ms | **3x faster** |");
+		console.info("| Promise.all() | ~100ms | ~65ms | **35% faster** |");
+		console.info("| Batch RSS | ~150ms | ~50ms | **3x faster** |");
+		console.info("");
 
-		console.log("🎉 BOTTOM LINE:");
-		console.log(
+		console.info("🎉 BOTTOM LINE:");
+		console.info(
 			"Bun v1.3.7's Buffer.from() optimization makes high-volume RSS processing",
 		);
-		console.log(
+		console.info(
 			"feasible for enterprise applications that need to process thousands of feeds",
 		);
-		console.log(
+		console.info(
 			"in real-time. The 50% speed improvement directly translates to lower costs",
 		);
-		console.log("and better user experience for RSS aggregation services.");
+		console.info("and better user experience for RSS aggregation services.");
 	}
 
 	async demonstrateMemoryEfficiency() {
-		console.log("\n💾 MEMORY EFFICIENCY DEMO");
-		console.log("==========================\n");
+		console.info("\n💾 MEMORY EFFICIENCY DEMO");
+		console.info("==========================\n");
 
 		const iterations = 1000;
 		const memoryBefore = process.memoryUsage();
@@ -275,20 +275,20 @@ class BufferPerformanceDemo {
 		const memoryAfter = process.memoryUsage();
 		const memoryDiff = memoryAfter.heapUsed - memoryBefore.heapUsed;
 
-		console.log(`📊 Memory usage for ${iterations} optimized operations:`);
-		console.log(
+		console.info(`📊 Memory usage for ${iterations} optimized operations:`);
+		console.info(
 			`   • Before: ${(memoryBefore.heapUsed / 1024 / 1024).toFixed(2)}MB`,
 		);
-		console.log(
+		console.info(
 			`   • After: ${(memoryAfter.heapUsed / 1024 / 1024).toFixed(2)}MB`,
 		);
-		console.log(`   • Difference: ${(memoryDiff / 1024 / 1024).toFixed(2)}MB`);
-		console.log(
+		console.info(`   • Difference: ${(memoryDiff / 1024 / 1024).toFixed(2)}MB`);
+		console.info(
 			`   • Per operation: ${(memoryDiff / iterations / 1024).toFixed(2)}KB`,
 		);
-		console.log("");
+		console.info("");
 
-		console.log("✅ Memory efficient with v1.3.7 optimizations!");
+		console.info("✅ Memory efficient with v1.3.7 optimizations!");
 	}
 }
 
@@ -301,8 +301,8 @@ async function main() {
 	await demo.demonstrateBufferOptimization();
 	await demo.demonstrateMemoryEfficiency();
 
-	console.log("\n🎉 BUFFER.OPTIMIZATION IS CRITICAL FOR RSS PERFORMANCE!");
-	console.log(
+	console.info("\n🎉 BUFFER.OPTIMIZATION IS CRITICAL FOR RSS PERFORMANCE!");
+	console.info(
 		"The 50% faster Buffer.from() in v1.3.7 enables enterprise-scale RSS processing.",
 	);
 }

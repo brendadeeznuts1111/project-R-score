@@ -49,7 +49,7 @@ class DepartmentOutreachCoordinator {
    * 📞 Create outreach tasks for all departments
    */
   async createDepartmentOutreachTasks(): Promise<void> {
-    console.log('📞 Creating department outreach coordination tasks...');
+    console.info('📞 Creating department outreach coordination tasks...');
 
     if (!this.taskService) {
       throw new Error('Task service not initialized');
@@ -59,31 +59,31 @@ class DepartmentOutreachCoordinator {
     const createdTasks = [];
 
     for (const dept of departments) {
-      console.log(`\n🏢 Processing ${dept.name}...`);
+      console.info(`\n🏢 Processing ${dept.name}...`);
 
       // Task 1: Point of Contact Request
       const pocTask = await this.createPointOfContactTask(dept);
       if (pocTask) {
         createdTasks.push(pocTask);
-        console.log(`  ✅ Point of contact task created: ${pocTask.uuid}`);
+        console.info(`  ✅ Point of contact task created: ${pocTask.uuid}`);
       }
 
       // Task 2: Blog Information Request
       const blogTask = await this.createBlogInformationTask(dept);
       if (blogTask) {
         createdTasks.push(blogTask);
-        console.log(`  ✅ Blog information task created: ${blogTask.uuid}`);
+        console.info(`  ✅ Blog information task created: ${blogTask.uuid}`);
       }
 
       // Task 3: RSS Feed Setup Request
       const rssTask = await this.createRSSFeedTask(dept);
       if (rssTask) {
         createdTasks.push(rssTask);
-        console.log(`  ✅ RSS feed task created: ${rssTask.uuid}`);
+        console.info(`  ✅ RSS feed task created: ${rssTask.uuid}`);
       }
     }
 
-    console.log(
+    console.info(
       `\n🎯 Summary: Created ${createdTasks.length} outreach tasks across ${departments.length} departments`
     );
 
@@ -360,7 +360,7 @@ ${createdTasks.map(task => `- ${task.title} (${task.uuid})`).join('\n')}
     try {
       const result = await this.taskService!.createTask(taskData);
       if (result.success) {
-        console.log(`\n📋 Master coordination task created: ${result.data!.uuid}`);
+        console.info(`\n📋 Master coordination task created: ${result.data!.uuid}`);
       }
     } catch (error) {
       console.error('❌ Error creating master coordination task:', error);
@@ -407,21 +407,21 @@ ${createdTasks.map(task => `- ${task.title} (${task.uuid})`).join('\n')}
 
 // CLI execution
 async function main() {
-  console.log('🚀 Fire22 Department Outreach Coordinator');
-  console.log('!==!==!==!==!==!==!==!==');
+  console.info('🚀 Fire22 Department Outreach Coordinator');
+  console.info('!==!==!==!==!==!==!==!==');
 
   try {
     const coordinator = new DepartmentOutreachCoordinator();
     await coordinator.initialize();
     await coordinator.createDepartmentOutreachTasks();
 
-    console.log('\n✅ Department outreach coordination completed successfully!');
-    console.log('\n📧 Next Steps:');
-    console.log('1. Monitor task responses from each department');
-    console.log('2. Follow up with non-responsive departments');
-    console.log('3. Compile contact information and blog details');
-    console.log('4. Implement RSS feed infrastructure');
-    console.log('5. Update dashboard with new contact information');
+    console.info('\n✅ Department outreach coordination completed successfully!');
+    console.info('\n📧 Next Steps:');
+    console.info('1. Monitor task responses from each department');
+    console.info('2. Follow up with non-responsive departments');
+    console.info('3. Compile contact information and blog details');
+    console.info('4. Implement RSS feed infrastructure');
+    console.info('5. Update dashboard with new contact information');
   } catch (error) {
     console.error('❌ Error during department outreach coordination:', error);
     process.exit(1);

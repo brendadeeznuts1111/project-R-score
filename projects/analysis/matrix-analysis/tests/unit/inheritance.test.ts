@@ -15,7 +15,7 @@ describe('Configuration Inheritance Tests', () => {
     // Test that registry settings are inherited from bunfig.toml
     const registry = process.env.npm_config_registry || 'https://registry.npmjs.org';
     expect(registry).toBeTruthy();
-    console.log(`Using registry: ${registry}`);
+    console.info(`Using registry: ${registry}`);
   });
 
   it('should have security validation enabled', () => {
@@ -55,11 +55,11 @@ describe('Inheritance Feature Flags', () => {
   it('should respect smol mode when inherited', () => {
     // This test will behave differently in smol mode
     const isSmol = process.env.BUN_TEST_SMOL === 'true';
-    console.log(`Smol mode: ${isSmol}`);
+    console.info(`Smol mode: ${isSmol}`);
     
     // In smol mode, we expect reduced memory usage
     if (isSmol) {
-      console.log('Running in smol mode - memory optimized');
+      console.info('Running in smol mode - memory optimized');
     }
   });
 
@@ -76,11 +76,11 @@ describe('Inheritance Feature Flags', () => {
   it('should handle coverage inheritance', () => {
     // Check if coverage is enabled
     const coverageEnabled = process.env.BUN_TEST_COVERAGE === 'true';
-    console.log(`Coverage enabled: ${coverageEnabled}`);
+    console.info(`Coverage enabled: ${coverageEnabled}`);
     
     // Coverage-specific test behavior
     if (coverageEnabled) {
-      console.log('Running with coverage tracking');
+      console.info('Running with coverage tracking');
     }
   });
 });

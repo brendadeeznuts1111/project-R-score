@@ -47,7 +47,7 @@ function log(message: string, level: 'info' | 'success' | 'error' | 'warning' = 
     warning: '⚠️',
   }[level];
 
-  console.log(`${timestamp} ${prefix} ${message}`);
+  console.info(`${timestamp} ${prefix} ${message}`);
 }
 
 async function checkCommand(command: string): Promise<boolean> {
@@ -101,12 +101,12 @@ async function configureDNS(): Promise<void> {
 
   log('Required DNS Records:', 'info');
   dnsRecords.forEach((record, index) => {
-    console.log(`  ${index + 1}. ${record.type} Record:`);
-    console.log(`     Name: ${record.name}`);
-    console.log(`     Target: ${record.target}`);
-    console.log(`     Proxy: ${record.proxied ? '✅ Proxied (orange cloud)' : '❌ DNS only'}`);
-    console.log(`     TTL: ${record.ttl}`);
-    console.log('');
+    console.info(`  ${index + 1}. ${record.type} Record:`);
+    console.info(`     Name: ${record.name}`);
+    console.info(`     Target: ${record.target}`);
+    console.info(`     Proxy: ${record.proxied ? '✅ Proxied (orange cloud)' : '❌ DNS only'}`);
+    console.info(`     TTL: ${record.ttl}`);
+    console.info('');
   });
 
   log('Please add these records in your Cloudflare dashboard:', 'warning');
@@ -267,9 +267,9 @@ bun run health:custom
 }
 
 async function main(): Promise<void> {
-  console.log('🌐 Crystal Clear Architecture - Custom Domain Setup');
-  console.log('!==!==!==!==!==!==!==!==!====');
-  console.log('');
+  console.info('🌐 Crystal Clear Architecture - Custom Domain Setup');
+  console.info('!==!==!==!==!==!==!==!==!====');
+  console.info('');
 
   try {
     // Step 1: Environment validation
@@ -288,17 +288,17 @@ async function main(): Promise<void> {
     await generateDocumentation();
 
     // Success summary
-    console.log('');
+    console.info('');
     log('Custom domain setup completed successfully!', 'success');
-    console.log('');
-    console.log('📋 Next Steps:');
-    console.log('1. Add DNS records in Cloudflare dashboard');
-    console.log('2. Wait for DNS propagation (5-10 minutes)');
-    console.log('3. Test custom domain: bun run domain:test');
-    console.log('4. Deploy: bun run deploy');
-    console.log('');
-    console.log('📚 Documentation: CUSTOM-DOMAIN-README.md');
-    console.log('🌐 Custom Domain: https://' + CONFIG.domain);
+    console.info('');
+    console.info('📋 Next Steps:');
+    console.info('1. Add DNS records in Cloudflare dashboard');
+    console.info('2. Wait for DNS propagation (5-10 minutes)');
+    console.info('3. Test custom domain: bun run domain:test');
+    console.info('4. Deploy: bun run deploy');
+    console.info('');
+    console.info('📚 Documentation: CUSTOM-DOMAIN-README.md');
+    console.info('🌐 Custom Domain: https://' + CONFIG.domain);
   } catch (error) {
     log(`Setup failed: ${error}`, 'error');
     process.exit(1);
@@ -319,13 +319,13 @@ switch (command) {
     break;
 
   case 'validate':
-    console.log('🔍 Validating current configuration...');
+    console.info('🔍 Validating current configuration...');
     await validateEnvironment();
     await testConfiguration();
     break;
 
   case 'help':
-    console.log(`
+    console.info(`
 🚀 Crystal Clear Architecture - Domain Setup Tool
 
 Usage:
@@ -345,8 +345,8 @@ Examples:
     break;
 
   default:
-    console.log(`Unknown command: ${command}`);
-    console.log('Run with --help for usage information');
+    console.info(`Unknown command: ${command}`);
+    console.info('Run with --help for usage information');
     process.exit(1);
 }
 

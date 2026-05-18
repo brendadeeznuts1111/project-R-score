@@ -798,7 +798,7 @@ ${Object.entries(healthStatus.components)
   // !==!==!==!==!==!==!==!==!==!==!==!==!==!====
 
   public async start(): Promise<void> {
-    console.log('🔥📱 Fire22 Telegram Workflow Orchestrator starting...');
+    console.info('🔥📱 Fire22 Telegram Workflow Orchestrator starting...');
 
     const validation = this.environment.validateRequiredSecrets();
     if (!validation.valid) {
@@ -806,14 +806,14 @@ ${Object.entries(healthStatus.components)
     }
 
     await this.bot.start();
-    console.log('✅ Telegram bot started successfully!');
+    console.info('✅ Telegram bot started successfully!');
   }
 
   public async stop(): Promise<void> {
     // Clean up health monitoring
     this.healthCheckHandler.cleanup();
     await this.bot.stop();
-    console.log('🛑 Telegram bot stopped');
+    console.info('🛑 Telegram bot stopped');
   }
 
   public getActiveWorkflows(): number {

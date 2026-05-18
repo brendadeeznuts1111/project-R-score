@@ -137,14 +137,14 @@ class RevenueAttributionManager {
         // const Stripe = require('stripe');
         // this.stripe = new Stripe(apiKey);
         // this.isLive = true;
-        console.log('⚠️ Stripe SDK integration ready (using mock for demo)');
+        console.info('⚠️ Stripe SDK integration ready (using mock for demo)');
         this.stripe = new MockStripeClient();
       } catch {
-        console.log('⚠️ Stripe SDK not found, using mock client');
+        console.info('⚠️ Stripe SDK not found, using mock client');
         this.stripe = new MockStripeClient();
       }
     } else {
-      console.log('ℹ️ STRIPE_API_KEY not set, using mock client');
+      console.info('ℹ️ STRIPE_API_KEY not set, using mock client');
       this.stripe = new MockStripeClient();
     }
   }
@@ -153,7 +153,7 @@ class RevenueAttributionManager {
    * Generate revenue report by domain/scope
    */
   async generateReport(): Promise<RevenueReport> {
-    console.log('📊 Generating revenue report...');
+    console.info('📊 Generating revenue report...');
 
     const report: RevenueReport = {
       generatedAt: new Date().toISOString(),
@@ -167,7 +167,7 @@ class RevenueAttributionManager {
     // Get all products with duoplus metadata
     const { data: products } = await this.stripe.searchProducts('duoplus');
 
-    console.log(`📦 Found ${products.length} tagged products`);
+    console.info(`📦 Found ${products.length} tagged products`);
 
     for (const product of products) {
       const domain = product.metadata['duoplus.domain'] || 'UNKNOWN';
@@ -235,38 +235,38 @@ class RevenueAttributionManager {
   async displayReport(): Promise<void> {
     const report = await this.generateReport();
 
-    console.log('\n💰 REVENUE ATTRIBUTION REPORT');
-    console.log('═'.repeat(60));
-    console.log(`📅 Generated: ${report.generatedAt}`);
-    console.log(`💵 Total MRR: $${(report.totalMRR / 100).toLocaleString()}`);
-    console.log(`📈 Total ARR: $${(report.totalARR / 100).toLocaleString()}`);
+    console.info('\n💰 REVENUE ATTRIBUTION REPORT');
+    console.info('═'.repeat(60));
+    console.info(`📅 Generated: ${report.generatedAt}`);
+    console.info(`💵 Total MRR: $${(report.totalMRR / 100).toLocaleString()}`);
+    console.info(`📈 Total ARR: $${(report.totalARR / 100).toLocaleString()}`);
 
-    console.log('\n📊 BY DOMAIN');
-    console.log('─'.repeat(60));
-    console.log(`| ${'Domain'.padEnd(15)} | ${'MRR'.padEnd(12)} | ${'ARR'.padEnd(14)} | Products |`);
-    console.log(`|${'-'.repeat(17)}|${'-'.repeat(14)}|${'-'.repeat(16)}|${'-'.repeat(10)}|`);
+    console.info('\n📊 BY DOMAIN');
+    console.info('─'.repeat(60));
+    console.info(`| ${'Domain'.padEnd(15)} | ${'MRR'.padEnd(12)} | ${'ARR'.padEnd(14)} | Products |`);
+    console.info(`|${'-'.repeat(17)}|${'-'.repeat(14)}|${'-'.repeat(16)}|${'-'.repeat(10)}|`);
 
     for (const [domain, data] of Object.entries(report.byDomain)) {
       const mrrStr = `$${(data.mrr / 100).toLocaleString()}`;
       const arrStr = `$${(data.arr / 100).toLocaleString()}`;
-      console.log(`| ${domain.padEnd(15)} | ${mrrStr.padEnd(12)} | ${arrStr.padEnd(14)} | ${data.productCount.toString().padEnd(8)} |`);
+      console.info(`| ${domain.padEnd(15)} | ${mrrStr.padEnd(12)} | ${arrStr.padEnd(14)} | ${data.productCount.toString().padEnd(8)} |`);
     }
 
-    console.log('\n🏆 TOP PRODUCTS');
-    console.log('─'.repeat(60));
+    console.info('\n🏆 TOP PRODUCTS');
+    console.info('─'.repeat(60));
     for (const product of report.topProducts.slice(0, 5)) {
-      console.log(`  ${product.name}`);
-      console.log(`    💵 MRR: $${(product.mrr / 100).toLocaleString()} | 🏷️ ${product.domain} | #${product.tagRef}`);
+      console.info(`  ${product.name}`);
+      console.info(`    💵 MRR: $${(product.mrr / 100).toLocaleString()} | 🏷️ ${product.domain} | #${product.tagRef}`);
     }
 
-    console.log('\n═'.repeat(60));
+    console.info('\n═'.repeat(60));
 
     // ROI insight
     const avgMRRPerDomain = report.totalMRR / Object.keys(report.byDomain).length;
-    console.log(`📈 Avg MRR/Domain: $${(avgMRRPerDomain / 100).toLocaleString()}`);
-    console.log(`🎯 Revenue visibility: ${this.isLive ? 'LIVE' : 'MOCK DATA'}`);
+    console.info(`📈 Avg MRR/Domain: $${(avgMRRPerDomain / 100).toLocaleString()}`);
+    console.info(`🎯 Revenue visibility: ${this.isLive ? 'LIVE' : 'MOCK DATA'}`);
     if (!this.isLive) {
-      console.log(`   💡 Set STRIPE_API_KEY for live data: ${urlLink('https://dashboard.stripe.com/apikeys', 'Get API Key')}`);
+      console.info(`   💡 Set STRIPE_API_KEY for live data: ${urlLink('https://dashboard.stripe.com/apikeys', 'Get API Key')}`);
     }
   }
 
@@ -278,18 +278,18 @@ class RevenueAttributionManager {
     const domainData = report.byDomain[domain.toUpperCase()];
 
     if (!domainData) {
-      console.log(`❌ No revenue data found for domain: ${domain}`);
-      console.log(`   Available domains: ${Object.keys(report.byDomain).join(', ')}`);
+      console.info(`❌ No revenue data found for domain: ${domain}`);
+      console.info(`   Available domains: ${Object.keys(report.byDomain).join(', ')}`);
       return;
     }
 
-    console.log(`\n💰 REVENUE FOR DOMAIN: ${domain.toUpperCase()}`);
-    console.log('═'.repeat(50));
-    console.log(`💵 MRR: $${(domainData.mrr / 100).toLocaleString()}`);
-    console.log(`📈 ARR: $${(domainData.arr / 100).toLocaleString()}`);
-    console.log(`📦 Products: ${domainData.productCount}`);
-    console.log(`🏷️ Tags: ${domainData.tags.join(', ')}`);
-    console.log('═'.repeat(50));
+    console.info(`\n💰 REVENUE FOR DOMAIN: ${domain.toUpperCase()}`);
+    console.info('═'.repeat(50));
+    console.info(`💵 MRR: $${(domainData.mrr / 100).toLocaleString()}`);
+    console.info(`📈 ARR: $${(domainData.arr / 100).toLocaleString()}`);
+    console.info(`📦 Products: ${domainData.productCount}`);
+    console.info(`🏷️ Tags: ${domainData.tags.join(', ')}`);
+    console.info('═'.repeat(50));
   }
 
   /**
@@ -297,13 +297,13 @@ class RevenueAttributionManager {
    */
   async syncToStripe(): Promise<void> {
     if (!this.isLive) {
-      console.log('⚠️ Sync requires STRIPE_API_KEY environment variable');
-      console.log(`   See ${urlLink('https://dashboard.stripe.com/apikeys', 'Stripe Dashboard')} to get your API key`);
-      console.log('   Set it and re-run to sync tag metadata to Stripe');
+      console.info('⚠️ Sync requires STRIPE_API_KEY environment variable');
+      console.info(`   See ${urlLink('https://dashboard.stripe.com/apikeys', 'Stripe Dashboard')} to get your API key`);
+      console.info('   Set it and re-run to sync tag metadata to Stripe');
       return;
     }
 
-    console.log('🔄 Syncing tags to Stripe metadata...');
+    console.info('🔄 Syncing tags to Stripe metadata...');
 
     try {
       const mappingContent = await readFile(this.mappingFile, 'utf-8');
@@ -312,7 +312,7 @@ class RevenueAttributionManager {
       for (const mapping of mappings) {
         for (const productId of mapping.productIds) {
           const productUrl = `https://dashboard.stripe.com/products/${productId}`;
-          console.log(`  Updating ${urlLink(productUrl, productId)} with tag ${mapping.tagRef}...`);
+          console.info(`  Updating ${urlLink(productUrl, productId)} with tag ${mapping.tagRef}...`);
           await this.stripe.updateProduct(productId, {
             'duoplus.tag': mapping.tagRef,
             'duoplus.domain': mapping.domain,
@@ -322,10 +322,10 @@ class RevenueAttributionManager {
         }
       }
 
-      console.log('✅ Sync completed');
+      console.info('✅ Sync completed');
     } catch (error) {
-      console.log(`❌ Sync failed: ${(error as Error).message}`);
-      console.log(`   Ensure ${fileLink(this.mappingFile)} exists with tag-product mappings`);
+      console.info(`❌ Sync failed: ${(error as Error).message}`);
+      console.info(`   Ensure ${fileLink(this.mappingFile)} exists with tag-product mappings`);
     }
   }
 
@@ -335,7 +335,7 @@ class RevenueAttributionManager {
   async exportReport(outputPath: string): Promise<void> {
     const report = await this.generateReport();
     await writeFile(outputPath, JSON.stringify(report, null, 2));
-    console.log(`✅ Report exported to: ${fileLink(outputPath)}`);
+    console.info(`✅ Report exported to: ${fileLink(outputPath)}`);
   }
 }
 
@@ -357,7 +357,7 @@ async function main() {
     case '--by-domain':
       const domain = process.argv[3];
       if (!domain) {
-        console.log('Usage: bun run tags-revenue-sync.ts --by-domain VENMO');
+        console.info('Usage: bun run tags-revenue-sync.ts --by-domain VENMO');
         process.exit(1);
       }
       await manager.getRevenueByDomain(domain);
@@ -370,7 +370,7 @@ async function main() {
 
     case '--help':
     default:
-      console.log(`
+      console.info(`
 💰 Tags Revenue Attribution v4.1
 
 Connect code tags to Stripe revenue data for ROI visibility.

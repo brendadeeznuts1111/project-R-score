@@ -48,15 +48,15 @@ async function benchmark() {
 
     // Output
     if (flags.has('-q') || flags.has('--quiet')) {
-      console.log(grade);
+      console.info(grade);
     } else if (flags.has('-j') || flags.has('--json')) {
-      console.log(JSON.stringify({
+      console.info(JSON.stringify({
         grade, stringWidth: sw, fileWrite: fw,
         build: bd, spawn: sp, bun: Bun.version,
         platform: `${process.platform}/${process.arch}`
       }, null, flags.has('--min') ? 0 : 2));
     } else if (flags.has('-h') || flags.has('--help')) {
-      console.log(`bun-grade - Bun Performance Benchmark
+      console.info(`bun-grade - Bun Performance Benchmark
 Usage: bun grade [flags]
 
 Flags:
@@ -72,13 +72,13 @@ Examples:
   bun grade -j       # JSON for CI
   bun grade -j --min # Compact JSON`);
     } else if (flags.has('-v') || flags.has('--version')) {
-      console.log('bun-grade/1.0');
+      console.info('bun-grade/1.0');
     } else {
-      console.log(`\n🏆 Bun Performance: ${grade}\n${'─'.repeat(30)}`);
+      console.info(`\n🏆 Bun Performance: ${grade}\n${'─'.repeat(30)}`);
       ['String Width', 'File Write', 'Build', 'Spawn'].forEach((name, i) => {
-        console.log(`  ${name.padEnd(12)} ${results[i].toFixed(i ? 0 : 1).padStart(8)} ns`);
+        console.info(`  ${name.padEnd(12)} ${results[i].toFixed(i ? 0 : 1).padStart(8)} ns`);
       });
-      console.log(`\n  Bun ${Bun.version} on ${process.platform}/${process.arch}`);
+      console.info(`\n  Bun ${Bun.version} on ${process.platform}/${process.arch}`);
     }
 
     return grade;

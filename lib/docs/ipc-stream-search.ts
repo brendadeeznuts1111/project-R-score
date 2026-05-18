@@ -43,7 +43,7 @@ class IPCDocumentationWorker {
   private setupIPCListeners() {
     // Listen for search requests from parent process
     process.on('message', async (message: IPCMessage) => {
-      console.log(`📨 Worker received message: ${message.type}`);
+      console.info(`📨 Worker received message: ${message.type}`);
       
       switch (message.type) {
         case 'search':
@@ -76,7 +76,7 @@ class IPCDocumentationWorker {
     }
 
     try {
-      console.log(`🔍 Worker starting search for: ${message.query}`);
+      console.info(`🔍 Worker starting search for: ${message.query}`);
       
       // Perform streaming search with progress callbacks
       const stats = await this.searcher.streamSearch({
@@ -118,7 +118,7 @@ class IPCDocumentationWorker {
   }
 
   private shutdown() {
-    console.log('🛑 Worker shutting down...');
+    console.info('🛑 Worker shutting down...');
     this.isRunning = false;
     process.exit(0);
   }
@@ -148,7 +148,7 @@ class IPCDocumentationOrchestrator {
       });
 
       this.workers.set(workerId, worker);
-      console.log(`🚀 Spawned worker: ${workerId}`);
+      console.info(`🚀 Spawned worker: ${workerId}`);
       
       // Wait a moment for worker to initialize
       setTimeout(() => {
@@ -173,27 +173,27 @@ class IPCDocumentationOrchestrator {
    * Handle messages from worker processes
    */
   private handleWorkerMessage(workerId: string, message: IPCMessage, subprocess: any) {
-    console.log(`📬 Message from ${workerId}: ${message.type}`);
+    console.info(`📬 Message from ${workerId}: ${message.type}`);
 
     switch (message.type) {
       case 'result':
         if (message.results) {
           const existing = this.searchResults.get(workerId) || [];
           this.searchResults.set(workerId, [...existing, ...message.results]);
-          console.log(`✨ ${workerId} found ${message.results.length} matches`);
+          console.info(`✨ ${workerId} found ${message.results.length} matches`);
         }
         break;
 
       case 'progress':
         if (message.progress !== undefined) {
-          console.log(`📈 ${workerId} progress: ${message.progress} matches`);
+          console.info(`📈 ${workerId} progress: ${message.progress} matches`);
         }
         break;
 
       case 'complete':
         if (message.stats) {
           this.searchStats.set(workerId, message.stats);
-          console.log(`✅ ${workerId} search complete: ${message.stats.matchesFound} matches`);
+          console.info(`✅ ${workerId} search complete: ${message.stats.matchesFound} matches`);
         }
         break;
 
@@ -202,7 +202,7 @@ class IPCDocumentationOrchestrator {
         break;
 
       default:
-        console.log(`📋 ${workerId}: ${JSON.stringify(message)}`);
+        console.info(`📋 ${workerId}: ${JSON.stringify(message)}`);
     }
   }
 
@@ -210,12 +210,12 @@ class IPCDocumentationOrchestrator {
    * Execute a search across all workers
    */
   async searchAcrossWorkers(query: string): Promise<void> {
-    console.log(`🔍 Initiating search across ${this.workers.size} workers: ${query}`);
+    console.info(`🔍 Initiating search across ${this.workers.size} workers: ${query}`);
 
     for (const [workerId, worker] of this.workers) {
       // Check if worker is still alive
       if (worker.killed) {
-        console.log(`⚠️ Worker ${workerId} is killed, skipping...`);
+        console.info(`⚠️ Worker ${workerId} is killed, skipping...`);
         continue;
       }
 
@@ -264,7 +264,7 @@ class IPCDocumentationOrchestrator {
    * Shutdown all workers
    */
   async shutdownWorkers(): Promise<void> {
-    console.log('🛑 Shutting down all workers...');
+    console.info('🛑 Shutting down all workers...');
 
     for (const [workerId, worker] of this.workers) {
       try {
@@ -315,7 +315,7 @@ class TerminalDocumentationExplorer {
         process.stdout.write(data);
       },
       exit: (terminal: any, exitCode: number) => {
-        console.log(`\n📟 Terminal exited with code: ${exitCode}`);
+        console.info(`\n📟 Terminal exited with code: ${exitCode}`);
       }
     });
   }
@@ -324,7 +324,7 @@ class TerminalDocumentationExplorer {
    * Start interactive documentation search with fzf
    */
   async startInteractiveSearch(): Promise<void> {
-    console.log('🎯 Starting interactive documentation search...');
+    console.info('🎯 Starting interactive documentation search...');
 
     this.process = Bun.spawn(["fzf", "--ansi", "--multi", "--height", "20"], {
       terminal: this.terminal,
@@ -344,7 +344,7 @@ class TerminalDocumentationExplorer {
    * Start interactive bash session for documentation exploration
    */
   async startBashSession(): Promise<void> {
-    console.log('🐚 Starting bash session for documentation exploration...');
+    console.info('🐚 Starting bash session for documentation exploration...');
 
     this.process = Bun.spawn(["bash"], {
       terminal: this.terminal,
@@ -374,12 +374,12 @@ class TerminalDocumentationExplorer {
  * Demonstration function for IPC and Terminal capabilities
  */
 async function demonstrateAdvancedFeatures() {
-  console.log('🚀 Advanced Bun.spawn Features Demonstration');
-  console.log('=' .repeat(60));
+  console.info('🚀 Advanced Bun.spawn Features Demonstration');
+  console.info('=' .repeat(60));
 
   // 1. IPC-based Multi-Worker Documentation Search
-  console.log('\n📡 1. IPC-Based Multi-Worker Search');
-  console.log('-' .repeat(40));
+  console.info('\n📡 1. IPC-Based Multi-Worker Search');
+  console.info('-' .repeat(40));
 
   const orchestrator = new IPCDocumentationOrchestrator();
 
@@ -400,15 +400,15 @@ async function demonstrateAdvancedFeatures() {
 
     // Get aggregated results
     const results = orchestrator.getAggregatedResults();
-    console.log(`\n📊 Aggregated Results: ${results.totalMatches} total matches`);
+    console.info(`\n📊 Aggregated Results: ${results.totalMatches} total matches`);
 
     // Shutdown workers
     await orchestrator.shutdownWorkers();
   }
 
   // 2. Terminal-based Interactive Documentation Explorer
-  console.log('\n📟 2. Terminal-Based Interactive Explorer');
-  console.log('-' .repeat(40));
+  console.info('\n📟 2. Terminal-Based Interactive Explorer');
+  console.info('-' .repeat(40));
 
   const explorer = new TerminalDocumentationExplorer();
 
@@ -417,14 +417,14 @@ async function demonstrateAdvancedFeatures() {
     const searchPromise = explorer.startInteractiveSearch();
     const timeoutPromise = new Promise(resolve => {
       setTimeout(() => {
-        console.log('\n⏰ Interactive search timeout');
+        console.info('\n⏰ Interactive search timeout');
         resolve(null);
       }, 10000);
     });
 
     await Promise.race([searchPromise, timeoutPromise]);
   } catch (error) {
-    console.log('⚠️ Interactive search not available (fzf not installed)');
+    console.info('⚠️ Interactive search not available (fzf not installed)');
   }
 
   explorer.close();

@@ -211,7 +211,7 @@ async function main() {
   const [command, ...args] = process.argv.slice(2);
 
   if (!command) {
-    console.log(`
+    console.info(`
 Blockchain Registry v1.0.0 - On-chain Agent Registry
 
 Usage:
@@ -246,8 +246,8 @@ Examples:
         const result = await registry.registerBundle(entry);
 
         if (result.success) {
-          console.log(`✅ Registered bundle: ${owner}/${name}@${version}`);
-          console.log(`🔗 Transaction: ${result.txHash}`);
+          console.info(`✅ Registered bundle: ${owner}/${name}@${version}`);
+          console.info(`🔗 Transaction: ${result.txHash}`);
         } else {
           console.error(`❌ Registration failed: ${result.error}`);
         }
@@ -262,10 +262,10 @@ Examples:
         const verifyResult = await registry.verifyBundle(verifyOwner, verifyName, verifyVersion);
 
         if (verifyResult.verified) {
-          console.log(`✅ Bundle verified: ${verifyOwner}/${verifyName}@${verifyVersion}`);
-          console.log(`📦 CID: ${verifyResult.entry?.manifestCID}`);
+          console.info(`✅ Bundle verified: ${verifyOwner}/${verifyName}@${verifyVersion}`);
+          console.info(`📦 CID: ${verifyResult.entry?.manifestCID}`);
         } else {
-          console.log(`❌ Bundle not verified: ${verifyResult.error || 'Not found'}`);
+          console.info(`❌ Bundle not verified: ${verifyResult.error || 'Not found'}`);
         }
         break;
 
@@ -276,8 +276,8 @@ Examples:
         }
 
         const versionsResult = await registry.getPackageVersions(versionsOwner, versionsName);
-        console.log(`📦 ${versionsOwner}/${versionsName} versions:`);
-        versionsResult.versions.forEach(v => console.log(`  ${v}`));
+        console.info(`📦 ${versionsOwner}/${versionsName} versions:`);
+        versionsResult.versions.forEach(v => console.info(`  ${v}`));
         break;
 
       case 'transfer':
@@ -289,8 +289,8 @@ Examples:
         const transferResult = await registry.transferOwnership(transferOwner, transferName, newOwner);
 
         if (transferResult.success) {
-          console.log(`✅ Ownership transferred: ${transferOwner}/${transferName} → ${newOwner}`);
-          console.log(`🔗 Transaction: ${transferResult.txHash}`);
+          console.info(`✅ Ownership transferred: ${transferOwner}/${transferName} → ${newOwner}`);
+          console.info(`🔗 Transaction: ${transferResult.txHash}`);
         } else {
           console.error(`❌ Transfer failed: ${transferResult.error}`);
         }
@@ -298,10 +298,10 @@ Examples:
 
       case 'stats':
         const stats = await registry.getStats();
-        console.log('📊 Registry Statistics:');
-        console.log(`  📦 Total Packages: ${stats.totalPackages}`);
-        console.log(`  🏷️  Total Versions: ${stats.totalVersions}`);
-        console.log(`  👥 Active Users: ${stats.activeUsers}`);
+        console.info('📊 Registry Statistics:');
+        console.info(`  📦 Total Packages: ${stats.totalPackages}`);
+        console.info(`  🏷️  Total Versions: ${stats.totalVersions}`);
+        console.info(`  👥 Active Users: ${stats.activeUsers}`);
         break;
 
       default:

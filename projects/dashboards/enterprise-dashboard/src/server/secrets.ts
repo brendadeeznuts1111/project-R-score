@@ -188,12 +188,12 @@ export async function promptAndSetSecret(key: CredentialKey, promptMessage?: str
   const value = prompt(message);
 
   if (!value) {
-    console.log("No value provided, skipping.");
+    console.info("No value provided, skipping.");
     return false;
   }
 
   await setSecret(key, value);
-  console.log(`Secret '${key}' stored securely in system keychain.`);
+  console.info(`Secret '${key}' stored securely in system keychain.`);
   return true;
 }
 

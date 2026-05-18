@@ -4,9 +4,9 @@ import { describe, expect, test } from "bun:test";
 
 describe("🎯 THE PATTERN: Bun handles Bun flags, CLI handles CLI flags", () => {
   test("✅ Perfect flag separation demonstration", async () => {
-    console.log("🎯 DEMONSTRATING THE PERFECT PATTERN:");
-    console.log("Pattern: bun [bun-flags] dev-hq [command] [cli-flags]");
-    console.log("");
+    console.info("🎯 DEMONSTRATING THE PERFECT PATTERN:");
+    console.info("Pattern: bun [bun-flags] dev-hq [command] [cli-flags]");
+    console.info("");
 
     // Test the exact pattern you mentioned
     const examples = [
@@ -41,12 +41,12 @@ describe("🎯 THE PATTERN: Bun handles Bun flags, CLI handles CLI flags", () =>
     ];
 
     for (const example of examples) {
-      console.log(`📋 ${example.description}:`);
-      console.log(`   Command: ${example.command}`);
-      console.log(`   🟡 Bun flags: [${example.bunFlags.join(", ")}]`);
-      console.log(`   🟢 CLI flags: [${example.cliFlags.join(", ")}]`);
-      console.log(`   🔵 Command: ${example.command}`);
-      console.log("");
+      console.info(`📋 ${example.description}:`);
+      console.info(`   Command: ${example.command}`);
+      console.info(`   🟡 Bun flags: [${example.bunFlags.join(", ")}]`);
+      console.info(`   🟢 CLI flags: [${example.cliFlags.join(", ")}]`);
+      console.info(`   🔵 Command: ${example.command}`);
+      console.info("");
 
       // Test that the CLI correctly parses these flags
       const result = await Bun.spawn(
@@ -63,8 +63,8 @@ describe("🎯 THE PATTERN: Bun handles Bun flags, CLI handles CLI flags", () =>
   });
 
   test("✅ Flag parsing logic verification", async () => {
-    console.log("🔍 Testing flag parsing logic:");
-    console.log("");
+    console.info("🔍 Testing flag parsing logic:");
+    console.info("");
 
     // Test the parsing logic directly
     const parseArguments = (argv: string[]) => {
@@ -170,11 +170,11 @@ describe("🎯 THE PATTERN: Bun handles Bun flags, CLI handles CLI flags", () =>
     for (const testCase of testCases) {
       const result = parseArguments(testCase.input);
 
-      console.log(`📝 Input: [${testCase.input.join(", ")}]`);
-      console.log(`   🟡 Bun flags: [${result.bunFlags.join(", ")}]`);
-      console.log(`   🔵 Command: ${result.command}`);
-      console.log(`   🟢 CLI flags: [${result.cliFlags.join(", ")}]`);
-      console.log("");
+      console.info(`📝 Input: [${testCase.input.join(", ")}]`);
+      console.info(`   🟡 Bun flags: [${result.bunFlags.join(", ")}]`);
+      console.info(`   🔵 Command: ${result.command}`);
+      console.info(`   🟢 CLI flags: [${result.cliFlags.join(", ")}]`);
+      console.info("");
 
       expect(result.bunFlags).toEqual(testCase.expected.bunFlags);
       expect(result.command).toEqual(testCase.expected.command);
@@ -183,8 +183,8 @@ describe("🎯 THE PATTERN: Bun handles Bun flags, CLI handles CLI flags", () =>
   });
 
   test("✅ Real-world usage scenarios", async () => {
-    console.log("🌍 Real-world scenarios:");
-    console.log("");
+    console.info("🌍 Real-world scenarios:");
+    console.info("");
 
     const scenarios = [
       {
@@ -218,10 +218,10 @@ describe("🎯 THE PATTERN: Bun handles Bun flags, CLI handles CLI flags", () =>
     ];
 
     for (const scenario of scenarios) {
-      console.log(`📋 ${scenario.name}:`);
-      console.log(`   Command: ${scenario.command}`);
-      console.log(`   Use case: ${scenario.useCase}`);
-      console.log("");
+      console.info(`📋 ${scenario.name}:`);
+      console.info(`   Command: ${scenario.command}`);
+      console.info(`   Use case: ${scenario.useCase}`);
+      console.info("");
 
       // Parse and verify
       const parts = scenario.command.split(" ");
@@ -233,62 +233,62 @@ describe("🎯 THE PATTERN: Bun handles Bun flags, CLI handles CLI flags", () =>
         const command = remaining[0];
         const cliFlags = remaining.slice(1);
 
-        console.log(`   🟡 Bun flags: [${bunFlags.join(", ")}]`);
-        console.log(`   🔵 Command: ${command}`);
-        console.log(`   🟢 CLI flags: [${cliFlags.join(", ")}]`);
+        console.info(`   🟡 Bun flags: [${bunFlags.join(", ")}]`);
+        console.info(`   🔵 Command: ${command}`);
+        console.info(`   🟢 CLI flags: [${cliFlags.join(", ")}]`);
       }
 
-      console.log("");
+      console.info("");
     }
   });
 
   test("✅ Flag responsibility verification", async () => {
-    console.log("🔍 Flag responsibility verification:");
-    console.log("");
+    console.info("🔍 Flag responsibility verification:");
+    console.info("");
 
-    console.log("🟡 Bun Flags (handled by Bun runtime):");
-    console.log("   --hot           → Hot module replacement");
-    console.log("   --watch         → File watching");
-    console.log("   --smol          → Reduced memory mode");
-    console.log("   --define        → Environment variables");
-    console.log("   --drop          → Code elimination");
-    console.log("   --loader        → Custom loaders");
-    console.log("   --filter        → Package filtering");
-    console.log("   --conditions    → Export conditions");
-    console.log("   --no-clear-screen → Screen control");
-    console.log("   --preserveWatchOutput → Output preservation");
-    console.log("");
+    console.info("🟡 Bun Flags (handled by Bun runtime):");
+    console.info("   --hot           → Hot module replacement");
+    console.info("   --watch         → File watching");
+    console.info("   --smol          → Reduced memory mode");
+    console.info("   --define        → Environment variables");
+    console.info("   --drop          → Code elimination");
+    console.info("   --loader        → Custom loaders");
+    console.info("   --filter        → Package filtering");
+    console.info("   --conditions    → Export conditions");
+    console.info("   --no-clear-screen → Screen control");
+    console.info("   --preserveWatchOutput → Output preservation");
+    console.info("");
 
-    console.log("🟢 CLI Flags (handled by CLI):");
-    console.log("   --table         → Tabular output formatting");
-    console.log("   --json          → JSON output formatting");
-    console.log("   --verbose       → Detailed logging");
-    console.log("   --quiet         → Minimal output");
-    console.log("   --timeout       → Command timeout");
-    console.log("   --output        → File output");
-    console.log("   --format        → Output format");
-    console.log("");
+    console.info("🟢 CLI Flags (handled by CLI):");
+    console.info("   --table         → Tabular output formatting");
+    console.info("   --json          → JSON output formatting");
+    console.info("   --verbose       → Detailed logging");
+    console.info("   --quiet         → Minimal output");
+    console.info("   --timeout       → Command timeout");
+    console.info("   --output        → File output");
+    console.info("   --format        → Output format");
+    console.info("");
 
-    console.log("🔵 Commands (handled by CLI):");
-    console.log("   insights        → Comprehensive project analysis");
-    console.log("   git             → Git repository analysis");
-    console.log("   cloc            → Code analysis");
-    console.log("   test            → Test execution");
-    console.log("   docker          → Docker insights");
-    console.log("   health          → System health check");
-    console.log("   server          → Start automation server");
-    console.log("   run             → Execute arbitrary command");
-    console.log("");
+    console.info("🔵 Commands (handled by CLI):");
+    console.info("   insights        → Comprehensive project analysis");
+    console.info("   git             → Git repository analysis");
+    console.info("   cloc            → Code analysis");
+    console.info("   test            → Test execution");
+    console.info("   docker          → Docker insights");
+    console.info("   health          → System health check");
+    console.info("   server          → Start automation server");
+    console.info("   run             → Execute arbitrary command");
+    console.info("");
 
-    console.log("✅ Perfect separation achieved!");
-    console.log("   Bun handles runtime behavior");
-    console.log("   CLI handles output formatting");
-    console.log("   Commands handle business logic");
+    console.info("✅ Perfect separation achieved!");
+    console.info("   Bun handles runtime behavior");
+    console.info("   CLI handles output formatting");
+    console.info("   Commands handle business logic");
   });
 
   test("✅ Pattern benefits demonstration", async () => {
-    console.log("💡 Pattern Benefits:");
-    console.log("");
+    console.info("💡 Pattern Benefits:");
+    console.info("");
 
     const benefits = [
       "🎯 Clear separation of concerns",
@@ -303,11 +303,11 @@ describe("🎯 THE PATTERN: Bun handles Bun flags, CLI handles CLI flags", () =>
     ];
 
     benefits.forEach((benefit) => {
-      console.log(`   ${benefit}`);
+      console.info(`   ${benefit}`);
     });
 
-    console.log("");
-    console.log(
+    console.info("");
+    console.info(
       "🏆 This pattern is THE way to build modern CLI tools with Bun!"
     );
   });

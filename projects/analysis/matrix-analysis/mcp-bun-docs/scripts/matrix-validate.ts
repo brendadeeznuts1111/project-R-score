@@ -46,16 +46,16 @@ function main(): void {
 	const colArg = args.find((a) => a.startsWith("--col="))?.split("=")[1];
 	const colLimit = colArg ? parseInt(colArg, 10) : COL_93_LIMIT;
 
-	console.log("\n  ╭─────────────────────────────────────────────────────────╮");
-	console.log("  │  🔷 Tier-1380 Matrix Validation                          │");
-	console.log("  ╰─────────────────────────────────────────────────────────╯\n");
-	console.log(`  Region: ${region} | Check: ${check} | Col limit: ${colLimit}\n`);
+	console.info("\n  ╭─────────────────────────────────────────────────────────╮");
+	console.info("  │  🔷 Tier-1380 Matrix Validation                          │");
+	console.info("  ╰─────────────────────────────────────────────────────────╯\n");
+	console.info(`  Region: ${region} | Check: ${check} | Col limit: ${colLimit}\n`);
 
 	let failed = false;
 
 	if (check === "gb9c" || check === "all") {
 		const gb9c = validateGB9c();
-		console.log(
+		console.info(
 			`  GB9c (Bun.stringWidth): ${gb9c ? "✓ pass" : "✗ fail (Bun.stringWidth not available)"}`,
 		);
 		if (!gb9c) failed = true;
@@ -63,10 +63,10 @@ function main(): void {
 
 	if (check === "col" || check === "all" || check === "gb9c") {
 		const { pass, details } = validateCol93(colLimit);
-		console.log(`  Col ${colLimit} integrity: ${pass ? "✓ pass" : "✗ fail"}`);
+		console.info(`  Col ${colLimit} integrity: ${pass ? "✓ pass" : "✗ fail"}`);
 		for (const d of details) {
 			const ok = d.width <= colLimit;
-			console.log(
+			console.info(
 				`    ${ok ? "✓" : "✗"} "${d.term}" → width ${d.width} (limit ${d.limit})`,
 			);
 			if (!ok) failed = true;
@@ -77,12 +77,12 @@ function main(): void {
 	if (check === "security" || check === "all") {
 		const inspectorEntry = BUN_DOC_ENTRIES.find((e) => e.term === "node:inspector");
 		const gated = inspectorEntry?.security?.notes?.includes("--inspect") ?? false;
-		console.log(
+		console.info(
 			`  node:inspector --inspect gate: ${gated ? "✓ documented" : "⚠ not documented"}`,
 		);
 	}
 
-	console.log(`\n  Matrix version: ${BUN_DOCS_VERSION}\n`);
+	console.info(`\n  Matrix version: ${BUN_DOCS_VERSION}\n`);
 	process.exit(failed ? 1 : 0);
 }
 

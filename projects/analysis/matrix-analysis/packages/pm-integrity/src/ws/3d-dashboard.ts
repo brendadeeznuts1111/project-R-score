@@ -32,7 +32,7 @@ export class Integrity3DDashboard {
     this.wss = new WebSocketServer({ port });
     this.setupWebSocketServer();
     this.startPeriodicUpdates();
-    console.log(`🚀 3D Integrity Dashboard: http://localhost:${port}`);
+    console.info(`🚀 3D Integrity Dashboard: http://localhost:${port}`);
   }
   
   private setupWebSocketServer() {
@@ -46,7 +46,7 @@ export class Integrity3DDashboard {
       };
       
       this.clients.set(clientId, client);
-      console.log(`📡 Client connected: ${clientId}`);
+      console.info(`📡 Client connected: ${clientId}`);
       
       // Send initial data
       this.sendInitialData(client);
@@ -64,7 +64,7 @@ export class Integrity3DDashboard {
       // Handle disconnection
       ws.on('close', () => {
         this.clients.delete(clientId);
-        console.log(`📡 Client disconnected: ${clientId}`);
+        console.info(`📡 Client disconnected: ${clientId}`);
       });
       
       // Handle errors
@@ -77,7 +77,7 @@ export class Integrity3DDashboard {
       this.startPingInterval(client);
     });
     
-    console.log(`🌐 WebSocket server started on port ${this.port}`);
+    console.info(`🌐 WebSocket server started on port ${this.port}`);
   }
   
   private generateClientId(): string {
@@ -125,14 +125,14 @@ export class Integrity3DDashboard {
       case 'subscribe':
         if (message.data) {
           client.subscriptions.add(message.data);
-          console.log(`📧 Client ${client.id} subscribed to: ${message.data}`);
+          console.info(`📧 Client ${client.id} subscribed to: ${message.data}`);
         }
         break;
         
       case 'unsubscribe':
         if (message.data) {
           client.subscriptions.delete(message.data);
-          console.log(`📧 Client ${client.id} unsubscribed from: ${message.data}`);
+          console.info(`📧 Client ${client.id} unsubscribed from: ${message.data}`);
         }
         break;
         
@@ -347,7 +347,7 @@ export class Integrity3DDashboard {
   }
   
   async shutdown() {
-    console.log('🛑 Shutting down 3D Dashboard...');
+    console.info('🛑 Shutting down 3D Dashboard...');
     
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
@@ -374,7 +374,7 @@ export class Integrity3DDashboard {
     
     // Close server
     this.wss.close(() => {
-      console.log('✅ 3D Dashboard shutdown complete');
+      console.info('✅ 3D Dashboard shutdown complete');
     });
   }
 }
@@ -409,7 +409,7 @@ async function startHTTPServer(port: number = 3001) {
     }
   });
   
-  console.log(`🌐 HTTP Dashboard: http://localhost:${port}`);
+  console.info(`🌐 HTTP Dashboard: http://localhost:${port}`);
 }
 
 async function generateDashboardHTML(): Promise<string> {
@@ -704,13 +704,13 @@ async function main() {
   
   // Handle graceful shutdown
   process.on('SIGINT', async () => {
-    console.log('\n🛑 Received SIGINT, shutting down gracefully...');
+    console.info('\n🛑 Received SIGINT, shutting down gracefully...');
     await dashboard.shutdown();
     process.exit(0);
   });
   
   process.on('SIGTERM', async () => {
-    console.log('\n🛑 Received SIGTERM, shutting down gracefully...');
+    console.info('\n🛑 Received SIGTERM, shutting down gracefully...');
     await dashboard.shutdown();
     process.exit(0);
   });

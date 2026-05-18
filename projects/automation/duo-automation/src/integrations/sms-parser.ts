@@ -568,7 +568,7 @@ export class SMSWebhookHandler {
    */
   private async sendSMSResponse(toNumber: string, message: string): Promise<void> {
     // This would integrate with Twilio, AWS SNS, or other SMS service
-    console.log(`📤 Sending SMS to ${toNumber}: ${message}`);
+    console.info(`📤 Sending SMS to ${toNumber}: ${message}`);
     
     // Example with Twilio:
     /*
@@ -592,9 +592,9 @@ const smsParser = new SMSParser();
 
 // Parse a payment SMS
 const result = await smsParser.parseSMS('+1234567890', 'PAY $25.50 TO JOHN');
-console.log('SMS result:', result);
+console.info('SMS result:', result);
 
 // Parse balance inquiry
 const balanceResult = await smsParser.parseSMS('+1234567890', 'BALANCE');
-console.log('Balance result:', balanceResult);
+console.info('Balance result:', balanceResult);
 */

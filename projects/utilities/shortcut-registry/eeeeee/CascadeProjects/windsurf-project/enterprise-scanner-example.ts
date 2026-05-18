@@ -39,49 +39,49 @@ const customRules: AnnotationRule[] = [
 // Perform annotation
 const result = scanner.suggestAnnotations(sourceCode, customRules);
 
-console.log('🎯 Enterprise Scanner - Exact Format Demonstration');
-console.log('═══════════════════════════════════════════════════\n');
+console.info('🎯 Enterprise Scanner - Exact Format Demonstration');
+console.info('═══════════════════════════════════════════════════\n');
 
-console.log('📝 Input Source Code:');
-console.log('─────────────────────');
-console.log(sourceCode);
+console.info('📝 Input Source Code:');
+console.info('─────────────────────');
+console.info(sourceCode);
 
-console.log('📋 Annotated Output:');
-console.log('───────────────────');
-console.log(result.annotatedCode);
+console.info('📋 Annotated Output:');
+console.info('───────────────────');
+console.info(result.annotatedCode);
 
-console.log('📊 Summary:');
-console.log('──────────');
-console.log(`Total Annotations: ${result.summary.totalAnnotations}`);
-console.log('By Domain:', Object.entries(result.summary.byDomain).map(([d, c]) => `${d}: ${c}`).join(', '));
+console.info('📊 Summary:');
+console.info('──────────');
+console.info(`Total Annotations: ${result.summary.totalAnnotations}`);
+console.info('By Domain:', Object.entries(result.summary.byDomain).map(([d, c]) => `${d}: ${c}`).join(', '));
 
-console.log('\n🔧 Key Features Demonstrated:');
-console.log('─────────────────────────────');
-console.log('✅ Domain-based classification (PERF, SEC, COMP, BUN)');
-console.log('✅ Scope targeting (GLOBAL, FUNCTION, CLASS, MODULE)');
-console.log('✅ Type-specific annotations (SYNC_IO, SEC_RISK, etc.)');
-console.log('✅ Metadata with fix suggestions and issue IDs');
-console.log('✅ Class and function context awareness');
-console.log('✅ Reference linking to documentation');
-console.log('✅ Bun-native optimization indicators');
+console.info('\n🔧 Key Features Demonstrated:');
+console.info('─────────────────────────────');
+console.info('✅ Domain-based classification (PERF, SEC, COMP, BUN)');
+console.info('✅ Scope targeting (GLOBAL, FUNCTION, CLASS, MODULE)');
+console.info('✅ Type-specific annotations (SYNC_IO, SEC_RISK, etc.)');
+console.info('✅ Metadata with fix suggestions and issue IDs');
+console.info('✅ Class and function context awareness');
+console.info('✅ Reference linking to documentation');
+console.info('✅ Bun-native optimization indicators');
 
-console.log('\n💻 CLI Usage Examples:');
-console.log('─────────────────────');
-console.log('# Basic annotation:');
-console.log('bun enterprise-scanner.ts source.ts');
-console.log('');
-console.log('# JSON output:');
-console.log('bun enterprise-scanner.ts source.ts --format json');
-console.log('');
-console.log('# With severity filtering:');
-console.log('bun enterprise-scanner.ts source.ts --severity high');
-console.log('');
-console.log('# Generate detailed report:');
-console.log('bun enterprise-scanner.ts source.ts --report');
-console.log('');
-console.log('# Pipe from stdin:');
-console.log('cat source.ts | bun enterprise-scanner.ts --format summary');
+console.info('\n💻 CLI Usage Examples:');
+console.info('─────────────────────');
+console.info('# Basic annotation:');
+console.info('bun enterprise-scanner.ts source.ts');
+console.info('');
+console.info('# JSON output:');
+console.info('bun enterprise-scanner.ts source.ts --format json');
+console.info('');
+console.info('# With severity filtering:');
+console.info('bun enterprise-scanner.ts source.ts --severity high');
+console.info('');
+console.info('# Generate detailed report:');
+console.info('bun enterprise-scanner.ts source.ts --report');
+console.info('');
+console.info('# Pipe from stdin:');
+console.info('cat source.ts | bun enterprise-scanner.ts --format summary');
 
-console.log('\n🎉 Enterprise Scanner Implementation Complete!');
-console.log('The system now provides intelligent code annotations with');
-console.log('enterprise-grade analysis and customizable rule sets.');
+console.info('\n🎉 Enterprise Scanner Implementation Complete!');
+console.info('The system now provides intelligent code annotations with');
+console.info('enterprise-grade analysis and customizable rule sets.');

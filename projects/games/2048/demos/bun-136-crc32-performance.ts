@@ -1,18 +1,18 @@
 #!/usr/bin/env bun
 
 // Demonstration of Bun v1.3.6 Hardware-Accelerated CRC32 Performance
-console.log("⚡ Bun v1.3.6 Hardware-Accelerated CRC32 Performance");
-console.log("=".repeat(58));
+console.info("⚡ Bun v1.3.6 Hardware-Accelerated CRC32 Performance");
+console.info("=".repeat(58));
 
 // Test 1: CRC32 Performance Overview
-console.log("\n1️⃣ Hardware-Accelerated CRC32 Overview:");
+console.info("\n1️⃣ Hardware-Accelerated CRC32 Overview:");
 
 function demonstrateCRC32Performance() {
-  console.log("✅ Bun.hash.crc32 is now ~20x faster");
-  console.log("🔧 Uses hardware-accelerated CRC32 instructions via zlib");
-  console.log("🚀 Leverages PCLMULQDQ on x86 and native CRC32 on ARM");
+  console.info("✅ Bun.hash.crc32 is now ~20x faster");
+  console.info("🔧 Uses hardware-accelerated CRC32 instructions via zlib");
+  console.info("🚀 Leverages PCLMULQDQ on x86 and native CRC32 on ARM");
 
-  console.log("\n   📋 Performance improvements:");
+  console.info("\n   📋 Performance improvements:");
   const improvements = [
     {
       metric: "Speed Improvement",
@@ -37,18 +37,18 @@ function demonstrateCRC32Performance() {
   ];
 
   improvements.forEach((item, index) => {
-    console.log(`   ${index + 1}. ${item.metric}: ${item.value}`);
-    console.log(`      ${item.description}`);
+    console.info(`   ${index + 1}. ${item.metric}: ${item.value}`);
+    console.info(`      ${item.description}`);
   });
 }
 
 // Test 2: CRC32 Performance Benchmark
 async function demonstrateCRC32Benchmark() {
-  console.log("\n2️⃣ CRC32 Performance Benchmark:");
+  console.info("\n2️⃣ CRC32 Performance Benchmark:");
 
-  console.log("✅ Real-world performance comparison");
-  console.log("🔧 Testing with various data sizes");
-  console.log("🚀 Hardware acceleration in action");
+  console.info("✅ Real-world performance comparison");
+  console.info("🔧 Testing with various data sizes");
+  console.info("🚀 Hardware acceleration in action");
 
   const benchmarkCode = `
 // v1.3.6: Hardware-accelerated CRC32 benchmark
@@ -75,14 +75,14 @@ class CRC32PerformanceBenchmark {
 
     const throughput = (size * iterations) / (totalTime / 1000) / 1024 / 1024; // MB/s
 
-    console.log(\`Data size: \${size} bytes, Throughput: \${throughput.toFixed(2)} MB/s\`);
+    console.info(\`Data size: \${size} bytes, Throughput: \${throughput.toFixed(2)} MB/s\`);
 
     return throughput;
   }
 
   async runBenchmark(): Promise<void> {
-    console.log("🚀 Hardware-Accelerated CRC32 Performance Benchmark");
-    console.log("=".repeat(55));
+    console.info("🚀 Hardware-Accelerated CRC32 Performance Benchmark");
+    console.info("=".repeat(55));
 
     const sizes = [
       1024,        // 1KB
@@ -99,20 +99,20 @@ class CRC32PerformanceBenchmark {
       results.push({ size, throughput });
     }
 
-    console.log("\\n📊 Performance Results:");
-    console.log("Size (bytes) | Throughput (MB/s)");
-    console.log("-".repeat(35));
+    console.info("\\n📊 Performance Results:");
+    console.info("Size (bytes) | Throughput (MB/s)");
+    console.info("-".repeat(35));
 
     results.forEach(result => {
       const sizeStr = result.size.toString().padEnd(12);
       const throughputStr = result.throughput.toFixed(2).padEnd(16);
-      console.log(\`\${sizeStr} | \${throughputStr}\`);
+      console.info(\`\${sizeStr} | \${throughputStr}\`);
     });
 
     // Calculate average throughput
     const avgThroughput = results.reduce((sum, r) => sum + r.throughput, 0) / results.length;
-    console.log(\`\\n🎯 Average throughput: \${avgThroughput.toFixed(2)} MB/s\`);
-    console.log("🚀 Hardware acceleration provides ~20x speedup!");
+    console.info(\`\\n🎯 Average throughput: \${avgThroughput.toFixed(2)} MB/s\`);
+    console.info("🚀 Hardware acceleration provides ~20x speedup!");
   }
 }
 
@@ -121,15 +121,15 @@ const benchmark = new CRC32PerformanceBenchmark();
 await benchmark.runBenchmark();
   `;
 
-  console.log("   💡 Performance benchmark implementation:");
-  console.log(benchmarkCode);
+  console.info("   💡 Performance benchmark implementation:");
+  console.info(benchmarkCode);
 }
 
 // Test 3: CRC32 Use Cases
-console.log("\n3️⃣ CRC32 Real-World Use Cases:");
+console.info("\n3️⃣ CRC32 Real-World Use Cases:");
 
 function demonstrateCRC32UseCases() {
-  console.log("✅ Practical applications of hardware-accelerated CRC32");
+  console.info("✅ Practical applications of hardware-accelerated CRC32");
 
   const useCases = [
     {
@@ -159,18 +159,18 @@ function demonstrateCRC32UseCases() {
   ];
 
   useCases.forEach((useCase, index) => {
-    console.log(`\n   ${index + 1}. ${useCase.scenario}:`);
-    console.log(`      Description: ${useCase.description}`);
-    console.log(`      Examples: ${useCase.example}`);
-    console.log(`      Benefit: ${useCase.benefit}`);
+    console.info(`\n   ${index + 1}. ${useCase.scenario}:`);
+    console.info(`      Description: ${useCase.description}`);
+    console.info(`      Examples: ${useCase.example}`);
+    console.info(`      Benefit: ${useCase.benefit}`);
   });
 }
 
 // Test 4: CRC32 Implementation Examples
-console.log("\n4️⃣ CRC32 Implementation Examples:");
+console.info("\n4️⃣ CRC32 Implementation Examples:");
 
 function demonstrateCRC32Implementation() {
-  console.log("✅ Practical implementation with hardware acceleration");
+  console.info("✅ Practical implementation with hardware acceleration");
 
   const implementationCode = `
 // v1.3.6: Hardware-accelerated CRC32 implementations
@@ -232,9 +232,9 @@ class FastCRC32Processor {
 
     const speedup = swTime / hwTime;
 
-    console.log(\`Hardware CRC32: \${hwTime.toFixed(2)}ms\`);
-    console.log(\`Software CRC32: \${swTime.toFixed(2)}ms\`);
-    console.log(\`🚀 Speedup: \${speedup.toFixed(2)}x faster!\`);
+    console.info(\`Hardware CRC32: \${hwTime.toFixed(2)}ms\`);
+    console.info(\`Software CRC32: \${swTime.toFixed(2)}ms\`);
+    console.info(\`🚀 Speedup: \${speedup.toFixed(2)}x faster!\`);
   }
 }
 
@@ -243,32 +243,32 @@ const processor = new FastCRC32Processor();
 
 // File integrity check
 const fileCRC32 = await processor.calculateFileCRC32("large-file.dat");
-console.log(\`File CRC32: \${fileCRC32.toString(16)}\`);
+console.info(\`File CRC32: \${fileCRC32.toString(16)}\`);
 
 // Data integrity for streaming
 const chunks = [Buffer.from("chunk1"), Buffer.from("chunk2")];
 const streamCRC32 = processor.calculateStreamingCRC32(chunks);
-console.log(\`Stream CRC32: \${streamCRC32.toString(16)}\`);
+console.info(\`Stream CRC32: \${streamCRC32.toString(16)}\`);
 
 // Database record hashing
 const record = { id: 123, name: "test", data: "large data..." };
 const recordCRC32 = processor.calculateRecordCRC32(record);
-console.log(\`Record CRC32: \${recordCRC32.toString(16)}\`);
+console.info(\`Record CRC32: \${recordCRC32.toString(16)}\`);
 
 // Performance comparison
 const testData = Buffer.alloc(1024 * 1024); // 1MB
 await processor.comparePerformance(testData);
   `;
 
-  console.log("   💡 Implementation examples:");
-  console.log(implementationCode);
+  console.info("   💡 Implementation examples:");
+  console.info(implementationCode);
 }
 
 // Test 5: Integration with Existing Code
-console.log("\n5️⃣ Integration with Existing Code:");
+console.info("\n5️⃣ Integration with Existing Code:");
 
 function demonstrateIntegration() {
-  console.log("✅ Seamless integration with existing CRC32 usage");
+  console.info("✅ Seamless integration with existing CRC32 usage");
 
   const integrationCode = `
 // v1.3.6: Upgrade existing CRC32 code to hardware acceleration
@@ -294,7 +294,7 @@ class CRC32Migration {
     const oldHash = CRC32Migration.migrateFunction(oldCRC32Hash);
     const newHash = (data: Buffer) => Bun.hash.crc32(data);
 
-    console.log("🔄 Migration benchmark:");
+    console.info("🔄 Migration benchmark:");
 
     // Test old implementation
     const oldStart = performance.now();
@@ -310,9 +310,9 @@ class CRC32Migration {
     }
     const newTime = performance.now() - newStart;
 
-    console.log(\`Old implementation: \${oldTime.toFixed(2)}ms\`);
-    console.log(\`New implementation: \${newTime.toFixed(2)}ms\`);
-    console.log(\`🚀 Performance gain: \${(oldTime / newTime).toFixed(2)}x faster\`);
+    console.info(\`Old implementation: \${oldTime.toFixed(2)}ms\`);
+    console.info(\`New implementation: \${newTime.toFixed(2)}ms\`);
+    console.info(\`🚀 Performance gain: \${(oldTime / newTime).toFixed(2)}x faster\`);
   }
 }
 
@@ -323,12 +323,12 @@ const data = Buffer.alloc(1024 * 1024);
 const oldResult = oldCRC32Hash(data);
 const newResult = Bun.hash.crc32(data);
 
-console.log(\`Results match: \${oldResult === newResult}\`); // true
-console.log("✅ Migration complete with 20x performance improvement!");
+console.info(\`Results match: \${oldResult === newResult}\`); // true
+console.info("✅ Migration complete with 20x performance improvement!");
   `;
 
-  console.log("   💡 Integration examples:");
-  console.log(integrationCode);
+  console.info("   💡 Integration examples:");
+  console.info(integrationCode);
 }
 
 // Main demonstration function
@@ -340,17 +340,17 @@ async function main() {
     demonstrateCRC32Implementation();
     demonstrateIntegration();
 
-    console.log("\n🎯 Summary of Bun v1.3.6 Hardware-Accelerated CRC32:");
-    console.log("   ⚡ ~20x faster performance with hardware acceleration");
-    console.log("   🔧 Uses PCLMULQDQ on x86 and native CRC32 on ARM");
-    console.log("   🚀 zlib-based implementation for optimal performance");
-    console.log("   📊 Significant speedup on large data buffers");
-    console.log("   🔄 Drop-in replacement with zero code changes");
-    console.log(
+    console.info("\n🎯 Summary of Bun v1.3.6 Hardware-Accelerated CRC32:");
+    console.info("   ⚡ ~20x faster performance with hardware acceleration");
+    console.info("   🔧 Uses PCLMULQDQ on x86 and native CRC32 on ARM");
+    console.info("   🚀 zlib-based implementation for optimal performance");
+    console.info("   📊 Significant speedup on large data buffers");
+    console.info("   🔄 Drop-in replacement with zero code changes");
+    console.info(
       "   💼 Perfect for data integrity, databases, and network protocols",
     );
 
-    console.log("\n💨 CRC32 operations are now lightning fast!");
+    console.info("\n💨 CRC32 operations are now lightning fast!");
   } catch (error) {
     console.error("❌ Demonstration failed:", error);
   }

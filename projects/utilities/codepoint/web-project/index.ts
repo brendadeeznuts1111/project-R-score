@@ -30,7 +30,7 @@ async function basicExample() {
 
   const server = new BunProxyServer(config);
   await server.start();
-  console.log("Basic proxy server running on ws://localhost:3000");
+  console.info("Basic proxy server running on ws://localhost:3000");
 }
 
 /**
@@ -86,7 +86,7 @@ async function productionExample() {
 
   const server = new BunProxyServer(config);
   await server.start();
-  console.log("Production proxy server running on wss://localhost:443");
+  console.info("Production proxy server running on wss://localhost:443");
 }
 
 /**
@@ -122,7 +122,7 @@ async function loadBalancedExample() {
 
   const server = new BunProxyServer(config);
   await server.start();
-  console.log("Load balanced proxy server running on ws://localhost:3000");
+  console.info("Load balanced proxy server running on ws://localhost:3000");
 }
 
 /**
@@ -140,7 +140,7 @@ async function builderExample() {
 
   const server = new BunProxyServer(config);
   await server.start();
-  console.log("Builder-based proxy server running on ws://localhost:3000");
+  console.info("Builder-based proxy server running on ws://localhost:3000");
 }
 
 // Export examples for documentation

@@ -124,7 +124,7 @@ export const builtinPlugins: Plugin[] = [
 				handler: async () => {
 					const { $ } = await import("bun");
 					const result = await $`git status --short`.nothrow();
-					console.log(result.stdout.toString() || "Clean working tree");
+					console.info(result.stdout.toString() || "Clean working tree");
 				},
 			},
 			{
@@ -134,7 +134,7 @@ export const builtinPlugins: Plugin[] = [
 					const { $ } = await import("bun");
 					const count = args[0] || "5";
 					const result = await $`git log --oneline -${count}`.nothrow();
-					console.log(result.stdout.toString());
+					console.info(result.stdout.toString());
 				},
 			},
 		],
@@ -148,20 +148,20 @@ export const builtinPlugins: Plugin[] = [
 				name: "bun",
 				description: "Show Bun version and info",
 				handler: () => {
-					console.log(`${COLORS.cyan}Bun v${Bun.version}${COLORS.reset}`);
-					console.log(`  Platform: ${process.platform}`);
-					console.log(`  Arch: ${process.arch}`);
-					console.log(`  PID: ${process.pid}`);
+					console.info(`${COLORS.cyan}Bun v${Bun.version}${COLORS.reset}`);
+					console.info(`  Platform: ${process.platform}`);
+					console.info(`  Arch: ${process.arch}`);
+					console.info(`  PID: ${process.pid}`);
 				},
 			},
 			{
 				name: "env",
 				description: "Show environment info",
 				handler: () => {
-					console.log(`${COLORS.cyan}Environment:${COLORS.reset}`);
-					console.log(`  NODE_ENV: ${process.env.NODE_ENV || "not set"}`);
-					console.log(`  TIER: ${process.env.TIER || "not set"}`);
-					console.log(`  FW_MODE: ${process.env.FW_MODE || "not set"}`);
+					console.info(`${COLORS.cyan}Environment:${COLORS.reset}`);
+					console.info(`  NODE_ENV: ${process.env.NODE_ENV || "not set"}`);
+					console.info(`  TIER: ${process.env.TIER || "not set"}`);
+					console.info(`  FW_MODE: ${process.env.FW_MODE || "not set"}`);
 				},
 			},
 		],
@@ -181,21 +181,21 @@ async function main() {
 
 	switch (command) {
 		case "list": {
-			console.log(`${COLORS.bold}Loaded Plugins:${COLORS.reset}\n`);
+			console.info(`${COLORS.bold}Loaded Plugins:${COLORS.reset}\n`);
 			for (const plugin of manager.getAllPlugins()) {
-				console.log(
+				console.info(
 					`  ${COLORS.green}●${COLORS.reset} ${COLORS.bold}${plugin.name}${COLORS.reset} v${plugin.version}`,
 				);
-				console.log(`    ${COLORS.gray}${plugin.description}${COLORS.reset}`);
+				console.info(`    ${COLORS.gray}${plugin.description}${COLORS.reset}`);
 			}
 			break;
 		}
 
 		case "commands": {
 			const commands = manager.listCommands();
-			console.log(`${COLORS.bold}Available Commands:${COLORS.reset}\n`);
+			console.info(`${COLORS.bold}Available Commands:${COLORS.reset}\n`);
 			for (const cmd of commands) {
-				console.log(
+				console.info(
 					`  ${COLORS.cyan}${cmd.plugin}:${cmd.command}${COLORS.reset} - ${cmd.description}`,
 				);
 			}
@@ -213,14 +213,14 @@ async function main() {
 		}
 
 		default: {
-			console.log(`${COLORS.bold}🐚 Kimi Shell Plugin System${COLORS.reset}\n`);
-			console.log("Usage:");
-			console.log("  plugin-system.ts list              List loaded plugins");
-			console.log("  plugin-system.ts commands          List available commands");
-			console.log("  plugin-system.ts exec <p> <c>      Execute plugin command");
-			console.log("\nExample:");
-			console.log("  plugin-system.ts exec git-utils status");
-			console.log("  plugin-system.ts exec system-info bun");
+			console.info(`${COLORS.bold}🐚 Kimi Shell Plugin System${COLORS.reset}\n`);
+			console.info("Usage:");
+			console.info("  plugin-system.ts list              List loaded plugins");
+			console.info("  plugin-system.ts commands          List available commands");
+			console.info("  plugin-system.ts exec <p> <c>      Execute plugin command");
+			console.info("\nExample:");
+			console.info("  plugin-system.ts exec git-utils status");
+			console.info("  plugin-system.ts exec system-info bun");
 		}
 	}
 }

@@ -56,7 +56,7 @@ export class Logger {
     
     // If DEBUG flag and terminal.raw, output JSON
     if (isDebug && config?.terminalMode === 2) {
-      console.log(JSON.stringify(entry));
+      console.info(JSON.stringify(entry));
       return;
     }
     
@@ -79,7 +79,7 @@ export class Logger {
         console.warn(formatted);
         break;
       case LogLevel.INFO:
-        console.log(formatted);
+        console.info(formatted);
         break;
       case LogLevel.DEBUG:
         if (isDebug) {
@@ -110,7 +110,7 @@ export class Logger {
   info(message: string, context?: Record<string, any>): void {
     if (!this.shouldLog(LogLevel.INFO)) return;
     this.output(this.formatEntry(LogLevel.INFO, message, context)).catch(() => {
-      console.log(`[${this.domain}] ${message}`, context);
+      console.info(`[${this.domain}] ${message}`, context);
     });
   }
   

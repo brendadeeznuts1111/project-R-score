@@ -48,14 +48,14 @@ class ServerBenchmark {
   }
 
   async runBenchmark(): Promise<ServerBenchmarkResult> {
-    console.log('📊 Starting Server Performance Benchmark');
-    console.log('='.repeat(45));
-    console.log(`📋 Test: ${this.config.name}`);
-    console.log(`🌐 URL: ${this.config.url}`);
-    console.log(`🔄 Iterations: ${this.config.iterations}`);
-    console.log(`⚡ Concurrency: ${this.config.concurrency}`);
-    console.log(`⏱️ Timeout: ${this.config.timeout}ms`);
-    console.log('');
+    console.info('📊 Starting Server Performance Benchmark');
+    console.info('='.repeat(45));
+    console.info(`📋 Test: ${this.config.name}`);
+    console.info(`🌐 URL: ${this.config.url}`);
+    console.info(`🔄 Iterations: ${this.config.iterations}`);
+    console.info(`⚡ Concurrency: ${this.config.concurrency}`);
+    console.info(`⏱️ Timeout: ${this.config.timeout}ms`);
+    console.info('');
 
     const startTime = Date.now();
     const results: ServerBenchmarkResult['results'] = [];
@@ -63,7 +63,7 @@ class ServerBenchmark {
 
     // Run benchmark iterations
     for (let i = 0; i < this.config.iterations; i++) {
-      console.log(`🔄 Running iteration ${i + 1}/${this.config.iterations}`);
+      console.info(`🔄 Running iteration ${i + 1}/${this.config.iterations}`);
       
       const result = await this.makeRequest(i + 1);
       results.push(result);
@@ -73,7 +73,7 @@ class ServerBenchmark {
       }
       
       const progress = ((i + 1) / this.config.iterations * 100).toFixed(1);
-      console.log(`📈 Progress: ${progress}% - Response: ${result.responseTime}ms - Status: ${result.statusCode}`);
+      console.info(`📈 Progress: ${progress}% - Response: ${result.responseTime}ms - Status: ${result.statusCode}`);
     }
 
     const endTime = Date.now();
@@ -103,8 +103,8 @@ class ServerBenchmark {
       results
     };
 
-    console.log('');
-    console.log('✅ Benchmark completed successfully');
+    console.info('');
+    console.info('✅ Benchmark completed successfully');
     return benchmarkResult;
   }
 
@@ -366,7 +366,7 @@ class ServerBenchmarkCLI {
     const config = this.configs.get(configName);
     if (!config) {
       console.error(`❌ Benchmark configuration '${configName}' not found`);
-      console.log('💡 Available configurations: local, production, api, health, stress');
+      console.info('💡 Available configurations: local, production, api, health, stress');
       process.exit(1);
     }
 
@@ -378,7 +378,7 @@ class ServerBenchmarkCLI {
       const result = await benchmark.runBenchmark();
       
       const report = benchmark.generateReport(result);
-      console.log(report);
+      console.info(report);
 
       // Save results if requested
       if (options.save) {
@@ -391,7 +391,7 @@ class ServerBenchmarkCLI {
           require('fs').writeFileSync(filename, benchmark.exportResults(result, 'json'));
         }
         
-        console.log(`💾 Results saved to: ${filename}`);
+        console.info(`💾 Results saved to: ${filename}`);
       }
 
     } catch (error) {
@@ -401,49 +401,49 @@ class ServerBenchmarkCLI {
   }
 
   listConfigs(): void {
-    console.log('📊 Available Server Benchmark Configurations:');
-    console.log('='.repeat(50));
+    console.info('📊 Available Server Benchmark Configurations:');
+    console.info('='.repeat(50));
 
     this.configs.forEach((config, name) => {
-      console.log(`\n🔧 ${name}: ${config.name}`);
-      console.log(`   🌐 URL: ${config.url}`);
-      console.log(`   🔄 Iterations: ${config.iterations}`);
-      console.log(`   ⚡ Concurrency: ${config.concurrency}`);
-      console.log(`   ⏱️ Timeout: ${config.timeout}ms`);
+      console.info(`\n🔧 ${name}: ${config.name}`);
+      console.info(`   🌐 URL: ${config.url}`);
+      console.info(`   🔄 Iterations: ${config.iterations}`);
+      console.info(`   ⚡ Concurrency: ${config.concurrency}`);
+      console.info(`   ⏱️ Timeout: ${config.timeout}ms`);
     });
   }
 
   showHelp(): void {
-    console.log('📊 Server Performance Benchmark CLI');
-    console.log('='.repeat(35));
-    console.log('');
-    console.log('USAGE:');
-    console.log('  bun run server-benchmark.ts <command> [options]');
-    console.log('');
-    console.log('COMMANDS:');
-    console.log('  run <config>            Run server benchmark');
-    console.log('  list                    List available configurations');
-    console.log('  help                    Show this help message');
-    console.log('');
-    console.log('CONFIGURATIONS:');
-    console.log('  local                   Local development server');
-    console.log('  production              Production server test');
-    console.log('  api                     API endpoint test');
-    console.log('  health                  Health check test');
-    console.log('  stress                  Stress test');
-    console.log('');
-    console.log('OPTIONS:');
-    console.log('  --iterations <n>        Override iteration count');
-    console.log('  --timeout <ms>          Override request timeout');
-    console.log('  --save                  Save results to file');
-    console.log('  --output <path>         Output file path');
-    console.log('  --format <format>       Output format (json|csv)');
-    console.log('');
-    console.log('EXAMPLES:');
-    console.log('  bun run server-benchmark.ts run local');
-    console.log('  bun run server-benchmark.ts run production --save');
-    console.log('  bun run server-benchmark.ts run api --iterations 100 --save --format csv');
-    console.log('');
+    console.info('📊 Server Performance Benchmark CLI');
+    console.info('='.repeat(35));
+    console.info('');
+    console.info('USAGE:');
+    console.info('  bun run server-benchmark.ts <command> [options]');
+    console.info('');
+    console.info('COMMANDS:');
+    console.info('  run <config>            Run server benchmark');
+    console.info('  list                    List available configurations');
+    console.info('  help                    Show this help message');
+    console.info('');
+    console.info('CONFIGURATIONS:');
+    console.info('  local                   Local development server');
+    console.info('  production              Production server test');
+    console.info('  api                     API endpoint test');
+    console.info('  health                  Health check test');
+    console.info('  stress                  Stress test');
+    console.info('');
+    console.info('OPTIONS:');
+    console.info('  --iterations <n>        Override iteration count');
+    console.info('  --timeout <ms>          Override request timeout');
+    console.info('  --save                  Save results to file');
+    console.info('  --output <path>         Output file path');
+    console.info('  --format <format>       Output format (json|csv)');
+    console.info('');
+    console.info('EXAMPLES:');
+    console.info('  bun run server-benchmark.ts run local');
+    console.info('  bun run server-benchmark.ts run production --save');
+    console.info('  bun run server-benchmark.ts run api --iterations 100 --save --format csv');
+    console.info('');
   }
 
   async run(): Promise<void> {
@@ -492,7 +492,7 @@ class ServerBenchmarkCLI {
 
         default:
           console.error(`❌ Unknown command: ${command}`);
-          console.log('💡 Run "bun run server-benchmark.ts help" for available commands');
+          console.info('💡 Run "bun run server-benchmark.ts help" for available commands');
           process.exit(1);
       }
     } catch (error) {

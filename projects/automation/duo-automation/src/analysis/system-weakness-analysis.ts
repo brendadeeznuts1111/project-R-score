@@ -203,5 +203,5 @@ export class SystemWeaknessAnalyzer {
 // Run analysis if this is the main module
 if (import.meta.main) {
   const analyzer = new SystemWeaknessAnalyzer();
-  console.log(analyzer.generateReport());
+  console.info(analyzer.generateReport());
 }

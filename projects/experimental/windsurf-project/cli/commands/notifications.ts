@@ -35,7 +35,7 @@ interface SlackMessage {
 class NotificationService {
   
   async sendSlack(message: string, priority: string = 'medium'): Promise<boolean> {
-    console.log(`📤 Sending Slack notification [${priority.toUpperCase()}]...`);
+    console.info(`📤 Sending Slack notification [${priority.toUpperCase()}]...`);
     
     // Validate configuration
     if (!config.notifications.slack.webhookUrl) {
@@ -77,7 +77,7 @@ class NotificationService {
 
       // Slack webhooks return "ok" on success
       if (await response.text() === 'ok') {
-        console.log('✅ Slack notification sent successfully');
+        console.info('✅ Slack notification sent successfully');
         return true;
       } else {
         console.error('❌ Unexpected Slack response');
@@ -105,7 +105,7 @@ class NotificationService {
   }
 
   async sendEmail(message: string, to: string): Promise<boolean> {
-    console.log(`📧 Sending email notification to ${to}...`);
+    console.info(`📧 Sending email notification to ${to}...`);
     
     // Validate configuration
     if (!config.notifications.email.smtp.host) {
@@ -116,13 +116,13 @@ class NotificationService {
     try {
       // For now, implement a simple email using nodemailer or similar
       // This is a placeholder - in production you'd use a proper email library
-      console.log(`📧 Email configuration: ${config.notifications.email.smtp.host}:${config.notifications.email.smtp.port}`);
-      console.log(`📧 From: ${config.notifications.email.from}`);
-      console.log(`📧 To: ${to}`);
-      console.log(`📧 Message: ${message}`);
+      console.info(`📧 Email configuration: ${config.notifications.email.smtp.host}:${config.notifications.email.smtp.port}`);
+      console.info(`📧 From: ${config.notifications.email.from}`);
+      console.info(`📧 To: ${to}`);
+      console.info(`📧 Message: ${message}`);
       
       // Mock email sending for now
-      console.log('✅ Email notification sent (mock implementation)');
+      console.info('✅ Email notification sent (mock implementation)');
       return true;
     } catch (error) {
       console.error('❌ Error sending email notification:', error);
@@ -131,7 +131,7 @@ class NotificationService {
   }
 
   async sendWebhook(message: string, url: string): Promise<boolean> {
-    console.log(`🔗 Sending webhook notification to ${url}...`);
+    console.info(`🔗 Sending webhook notification to ${url}...`);
     
     try {
       const response = await retryNotification(async () => {
@@ -154,7 +154,7 @@ class NotificationService {
         return webhookResponse;
       });
 
-      console.log('✅ Webhook notification sent successfully');
+      console.info('✅ Webhook notification sent successfully');
       return true;
     } catch (error) {
       if (error instanceof RetryError) {

@@ -213,7 +213,7 @@ defineCommand({
 		// --count: print total and exit
 		if (values.count) {
 			const records = await readRecords();
-			console.log(records.length.toString());
+			console.info(records.length.toString());
 			return;
 		}
 
@@ -229,7 +229,7 @@ defineCommand({
 			const remaining = records.filter((r) => r.id !== targetId);
 			const lines = remaining.map((r) => JSON.stringify(r)).join("\n");
 			await Bun.write(LOG_FILE, lines.length > 0 ? `${lines}\n` : "");
-			console.log(fmt.ok(`Deleted record ${fmt.dim(`[${targetId}]`)}`));
+			console.info(fmt.ok(`Deleted record ${fmt.dim(`[${targetId}]`)}`));
 			return;
 		}
 
@@ -246,9 +246,9 @@ defineCommand({
 				email,
 			});
 			if (format === "json") {
-				console.log(JSON.stringify(records, null, 2));
+				console.info(JSON.stringify(records, null, 2));
 			} else {
-				console.log(recordsToCsv(records));
+				console.info(recordsToCsv(records));
 			}
 			return;
 		}
@@ -261,11 +261,11 @@ defineCommand({
 				email,
 			});
 			if (records.length === 0) {
-				console.log(fmt.dim("No matching entries."));
+				console.info(fmt.dim("No matching entries."));
 				return;
 			}
 			for (const r of records) {
-				console.log(formatEntry(r));
+				console.info(formatEntry(r));
 			}
 			return;
 		}
@@ -276,13 +276,13 @@ defineCommand({
 			const records = await readRecords();
 			const tail = records.slice(-n);
 			for (const r of tail) {
-				console.log(formatEntry(r));
+				console.info(formatEntry(r));
 			}
 
 			const file = Bun.file(LOG_FILE);
 			let offset = (await file.exists()) ? file.size : 0;
 
-			console.log(fmt.dim("--- watching for new entries (Ctrl+C to stop) ---"));
+			console.info(fmt.dim("--- watching for new entries (Ctrl+C to stop) ---"));
 
 			const watcher = watch(LOG_FILE, async () => {
 				const current = Bun.file(LOG_FILE);
@@ -294,7 +294,7 @@ defineCommand({
 				const lines = chunk.split("\n").filter((l) => l.trim().length > 0);
 				for (const line of lines) {
 					const r: FeedbackRecord = JSON.parse(line);
-					console.log(formatEntry(r));
+					console.info(formatEntry(r));
 				}
 			});
 
@@ -312,12 +312,12 @@ defineCommand({
 		if (values.list) {
 			const records = await readRecords();
 			if (records.length === 0) {
-				console.log(fmt.dim("No feedback entries yet."));
+				console.info(fmt.dim("No feedback entries yet."));
 				return;
 			}
 			const last10 = records.slice(-10);
 			for (const r of last10) {
-				console.log(formatEntry(r));
+				console.info(formatEntry(r));
 			}
 			return;
 		}
@@ -384,6 +384,6 @@ defineCommand({
 
 		const record = buildRecord(source, message, email, files);
 		await appendRecord(record);
-		console.log(fmt.ok(`Feedback recorded ${fmt.dim(`[${record.id}]`)}`));
+		console.info(fmt.ok(`Feedback recorded ${fmt.dim(`[${record.id}]`)}`));
 	},
 });

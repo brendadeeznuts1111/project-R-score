@@ -79,7 +79,7 @@ class RBACDashboard {
 
   private async handleMetricsRequest(req: Request) {
     const auth = await this.authenticate(req, PERMISSIONS.OPS.METRICS);
-    console.log(`[METRICS] User=${auth.userId} Role=${auth.role}`);
+    console.info(`[METRICS] User=${auth.userId} Role=${auth.role}`);
     
     const metrics = await this.storage.getMetrics();
     return Response.json(metrics);
@@ -87,7 +87,7 @@ class RBACDashboard {
 
   private async handleTaskHistoryRequest(req: Request) {
     const auth = await this.authenticate(req, PERMISSIONS.OPS.METRICS);
-    console.log(`[HISTORY] User=${auth.userId}`);
+    console.info(`[HISTORY] User=${auth.userId}`);
     
     return Response.json({
       history: this.taskHistory,
@@ -97,7 +97,7 @@ class RBACDashboard {
 
   private async handleLogsRequest(req: Request) {
     const auth = await this.authenticate(req, PERMISSIONS.STORAGE.READ);
-    console.log(`[LOGS] User=${auth.userId}`);
+    console.info(`[LOGS] User=${auth.userId}`);
     
     // ✅ Use actual R2 list (not stub)
     const logs = await this.storage.listRecent(R2_DIRS.LOGS);
@@ -106,7 +106,7 @@ class RBACDashboard {
 
   private async handleTaskGeneration(req: Request) {
     const auth = await this.authenticate(req, PERMISSIONS.TASKS.CREATE);
-    console.log(`[TASK] User=${auth.userId} Role=${auth.role}`);
+    console.info(`[TASK] User=${auth.userId} Role=${auth.role}`);
     
     // ✅ INPUT VALIDATION
     const body = await req.json();
@@ -146,7 +146,7 @@ class RBACDashboard {
 
   private async handleCleanup(req: Request) {
     const auth = await this.authenticate(req, PERMISSIONS.OPS.CLEANUP);
-    console.log(`[CLEANUP] User=${auth.userId}`);
+    console.info(`[CLEANUP] User=${auth.userId}`);
     
     // ✅ REAL CLEANUP LOGIC
     const failedDir = R2_DIRS.FAILED;
@@ -165,7 +165,7 @@ class RBACDashboard {
 
   private async handleUserManagement(req: Request) {
     const auth = await this.authenticate(req, PERMISSIONS.USER.MANAGE);
-    console.log(`[USER] Create by=${auth.userId}`);
+    console.info(`[USER] Create by=${auth.userId}`);
     
     // ✅ VALIDATION
     const body = await req.json();
@@ -197,7 +197,7 @@ class RBACDashboard {
 
   private async handlePhonePush(req: Request) {
     const auth = await this.authenticate(req, PERMISSIONS.TASKS.PUSH);
-    console.log(`[PUSH] User=${auth.userId} Phones=${req.headers.get('x-phone-count') || 'unknown'}`);
+    console.info(`[PUSH] User=${auth.userId} Phones=${req.headers.get('x-phone-count') || 'unknown'}`);
     
     const body = await req.json();
     const schema = z.object({
@@ -327,9 +327,9 @@ class RBACDashboard {
       }
     });
 
-    console.log(`\n🎯 HARDENED RBAC DASHBOARD LIVE at http://localhost:${server.port}`);
-    console.log(`📊 Metrics: http://localhost:${server.port}/api/metrics`);
-    console.log(`🔐 Health: http://localhost:${server.port}/health`);
+    console.info(`\n🎯 HARDENED RBAC DASHBOARD LIVE at http://localhost:${server.port}`);
+    console.info(`📊 Metrics: http://localhost:${server.port}/api/metrics`);
+    console.info(`🔐 Health: http://localhost:${server.port}/health`);
   }
 }
 

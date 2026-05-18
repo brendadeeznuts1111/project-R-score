@@ -5,7 +5,7 @@ import { validateToolCall, quickValidate } from './validate.js';
 // Load registry
 const TOOL_SCHEMAS = require('./registry.json');
 
-console.log('🚀 Tier-1380 MCP Tool Registry Demo\n');
+console.info('🚀 Tier-1380 MCP Tool Registry Demo\n');
 
 // Demonstrate validation with various tool calls
 const demonstrations = [
@@ -61,50 +61,50 @@ let validCount = 0;
 let invalidCount = 0;
 
 demonstrations.forEach((demo, index) => {
-  console.log(`${index + 1}. ${demo.title}`);
-  console.log(`   ${demo.description}`);
-  console.log(`   Call: ${JSON.stringify(demo.call)}`);
+  console.info(`${index + 1}. ${demo.title}`);
+  console.info(`   ${demo.description}`);
+  console.info(`   Call: ${JSON.stringify(demo.call)}`);
   
   const result = validateToolCall(demo.call.name, demo.call.arguments);
   
   if (result.valid) {
-    console.log(`   ✅ Validation: PASSED`);
+    console.info(`   ✅ Validation: PASSED`);
     validCount++;
   } else {
-    console.log(`   ❌ Validation: FAILED`);
-    console.log(`   Error: ${result.error}`);
+    console.info(`   ❌ Validation: FAILED`);
+    console.info(`   Error: ${result.error}`);
     invalidCount++;
   }
   
-  console.log('');
+  console.info('');
 });
 
 // Summary
-console.log('📊 Summary:');
-console.log(`   Valid calls: ${validCount}`);
-console.log(`   Invalid calls: ${invalidCount}`);
-console.log(`   Total demonstrations: ${validCount + invalidCount}`);
+console.info('📊 Summary:');
+console.info(`   Valid calls: ${validCount}`);
+console.info(`   Invalid calls: ${invalidCount}`);
+console.info(`   Total demonstrations: ${validCount + invalidCount}`);
 
 // Quick validation examples
-console.log('\n🚀 Quick Validation One-Liners:\n');
+console.info('\n🚀 Quick Validation One-Liners:\n');
 
-console.log('// Example 1: Valid subset');
-console.log('const call = { name: "rss/query", arguments: { pattern: "bun" } };');
-console.log(`quickValidate(call) // ${quickValidate({ name: 'rss/query', arguments: { pattern: 'bun' } })}`);
-console.log('');
+console.info('// Example 1: Valid subset');
+console.info('const call = { name: "rss/query", arguments: { pattern: "bun" } };');
+console.info(`quickValidate(call) // ${quickValidate({ name: 'rss/query', arguments: { pattern: 'bun' } })}`);
+console.info('');
 
-console.log('// Example 2: Missing required field');
-console.log('const call = { name: "rss/query", arguments: { limit: 10 } };');
-console.log(`quickValidate(call) // ${quickValidate({ name: 'rss/query', arguments: { limit: 10 } })}`);
-console.log('');
+console.info('// Example 2: Missing required field');
+console.info('const call = { name: "rss/query", arguments: { limit: 10 } };');
+console.info(`quickValidate(call) // ${quickValidate({ name: 'rss/query', arguments: { limit: 10 } })}`);
+console.info('');
 
 // Registry information
-console.log('📋 Registry Information:');
+console.info('📋 Registry Information:');
 const categories = [...new Set(Object.values(TOOL_SCHEMAS).map((t: any) => t.category))];
-console.log(`   Total tools: ${Object.keys(TOOL_SCHEMAS).length}`);
-console.log(`   Categories: ${categories.join(', ')}`);
-console.log(`   Security tier: 1380 (all tools)`);
-console.log(`   Validation: Type-safe with constraints`);
+console.info(`   Total tools: ${Object.keys(TOOL_SCHEMAS).length}`);
+console.info(`   Categories: ${categories.join(', ')}`);
+console.info(`   Security tier: 1380 (all tools)`);
+console.info(`   Validation: Type-safe with constraints`);
 
-console.log('\n🔐 Tier-1380 MCP Registry - Production Ready');
-console.log('   ▵⟂⥂ standing by. Chalmette 12:32 AM CST');
+console.info('\n🔐 Tier-1380 MCP Registry - Production Ready');
+console.info('   ▵⟂⥂ standing by. Chalmette 12:32 AM CST');

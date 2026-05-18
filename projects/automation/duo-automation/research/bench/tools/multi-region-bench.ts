@@ -56,25 +56,25 @@ class MultiRegionBenchmark {
   ];
 
   async runMultiRegionBenchmark(testSize: number = 100): Promise<RegionResult[]> {
-    console.log('🌍 **Multi-Region R2 Benchmark**');
-    console.log('='.repeat(60));
-    console.log(`📊 Test Size: ${testSize} uploads per region`);
-    console.log(`🔄 Regions: ${this.regions.length} locations`);
-    console.log('');
+    console.info('🌍 **Multi-Region R2 Benchmark**');
+    console.info('='.repeat(60));
+    console.info(`📊 Test Size: ${testSize} uploads per region`);
+    console.info(`🔄 Regions: ${this.regions.length} locations`);
+    console.info('');
 
     const results: RegionResult[] = [];
 
     for (const region of this.regions) {
-      console.log(`🌐 Testing ${region.name} (${region.region})...`);
+      console.info(`🌐 Testing ${region.name} (${region.region})...`);
       
       try {
         const result = await this.benchmarkRegion(region, testSize);
         results.push(result);
         
-        console.log(`   ✅ Time: ${result.avgTime.toFixed(0)}ms | Throughput: ${result.throughput.toFixed(0)} IDs/s | Latency: ${result.latency.toFixed(0)}ms`);
+        console.info(`   ✅ Time: ${result.avgTime.toFixed(0)}ms | Throughput: ${result.throughput.toFixed(0)} IDs/s | Latency: ${result.latency.toFixed(0)}ms`);
         
       } catch (error: any) {
-        console.log(`   ❌ Failed: ${error.message}`);
+        console.info(`   ❌ Failed: ${error.message}`);
         
         // Add failed result for comparison
         results.push({
@@ -171,12 +171,12 @@ class MultiRegionBenchmark {
   }
 
   private displayResults(results: RegionResult[]) {
-    console.log('');
-    console.log('📊 **Multi-Region Results**');
-    console.log('='.repeat(80));
+    console.info('');
+    console.info('📊 **Multi-Region Results**');
+    console.info('='.repeat(80));
     
-    console.log('| Region | Endpoint | Time | Throughput | Compression | Errors | Latency | Cost |');
-    console.log('|--------|----------|------|------------|-------------|---------|----------|------|');
+    console.info('| Region | Endpoint | Time | Throughput | Compression | Errors | Latency | Cost |');
+    console.info('|--------|----------|------|------------|-------------|---------|----------|------|');
     
     results.forEach(result => {
       const region = result.region.padEnd(7);
@@ -188,10 +188,10 @@ class MultiRegionBenchmark {
       const latency = result.latency > 0 ? `${result.latency.toFixed(0)}ms`.padEnd(7) : '0ms'.padEnd(7);
       const cost = result.cost > 0 ? `$${result.cost.toFixed(6)}`.padEnd(5) : '$0'.padEnd(5);
       
-      console.log(`| ${region} | ${endpoint} | ${time} | ${throughput} | ${compression} | ${errors} | ${latency} | ${cost} |`);
+      console.info(`| ${region} | ${endpoint} | ${time} | ${throughput} | ${compression} | ${errors} | ${latency} | ${cost} |`);
     });
 
-    console.log('');
+    console.info('');
 
     // Performance analysis
     const successful = results.filter(r => r.throughput > 0);
@@ -206,10 +206,10 @@ class MultiRegionBenchmark {
         current.compression > best.compression ? current : best
       );
 
-      console.log('🏆 **Performance Leaders**');
-      console.log(`🚀 Fastest Throughput: ${fastest.region} (${fastest.throughput.toFixed(0)} IDs/s)`);
-      console.log(`⚡ Lowest Latency: ${lowestLatency.region} (${lowestLatency.latency.toFixed(0)}ms)`);
-      console.log(`🗜️ Best Compression: ${bestCompression.region} (${bestCompression.compression.toFixed(1)}%)`);
+      console.info('🏆 **Performance Leaders**');
+      console.info(`🚀 Fastest Throughput: ${fastest.region} (${fastest.throughput.toFixed(0)} IDs/s)`);
+      console.info(`⚡ Lowest Latency: ${lowestLatency.region} (${lowestLatency.latency.toFixed(0)}ms)`);
+      console.info(`🗜️ Best Compression: ${bestCompression.region} (${bestCompression.compression.toFixed(1)}%)`);
     }
   }
 
@@ -243,8 +243,8 @@ class MultiRegionBenchmark {
       const manager = new BunR2AppleManager({}, Bun.env.R2_BUCKET!);
       await manager.uploadReport(reportData, `multi-region-comparison-${Date.now()}.json`);
       
-      console.log('');
-      console.log('📤 Multi-region comparison uploaded to R2');
+      console.info('');
+      console.info('📤 Multi-region comparison uploaded to R2');
       
     } catch (error: any) {
       console.error('❌ Failed to upload multi-region report:', error.message);

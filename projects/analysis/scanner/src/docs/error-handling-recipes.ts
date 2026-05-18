@@ -74,7 +74,7 @@ export function isResolveMessage(error: unknown): error is ResolveMessage {
  * ```typescript
  * const result = await resolveWithErrorHandling('lodash', import.meta.dir);
  * if (result.success) {
- *   console.log('Resolved:', result.path);
+ *   console.info('Resolved:', result.path);
  * } else {
  *   console.error('Error:', result.error?.message);
  * }
@@ -139,7 +139,7 @@ export function resolveSyncWithErrorHandling(specifier: string, from?: string): 
  * const result = await resolveWithSpecificHandling('missing-module');
  * switch (result.error?.code) {
  *   case 'MODULE_NOT_FOUND':
- *     console.log('Module not found, trying fallback...');
+ *     console.info('Module not found, trying fallback...');
  *     break;
  *   case 'INVALID_SPECIFIER':
  *     console.error('Invalid module specifier');
@@ -352,7 +352,7 @@ export async function safeImport<T = unknown>(specifier: string, from?: string):
  * ```typescript
  * const result = await importMetaResolveWithErrorHandling('./utils');
  * if (result.success) {
- *   console.log('Resolved:', result.path);
+ *   console.info('Resolved:', result.path);
  * }
  * ```
  */

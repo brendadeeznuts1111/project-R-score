@@ -23,7 +23,7 @@ export class IntegratedCashAppScalingManager extends DuoPlusScalingManager {
    * Focus on CashApp validation with strict anti-ban measures
    */
   async executeCashAppPhase1(): Promise<CashAppScalingResult> {
-    console.log("💰 Starting CashApp-Optimized Phase 1: 20→50 accounts");
+    console.info("💰 Starting CashApp-Optimized Phase 1: 20→50 accounts");
 
     const phase1Config = {
       // CashApp (high priority, conservative settings)
@@ -59,7 +59,7 @@ export class IntegratedCashAppScalingManager extends DuoPlusScalingManager {
     };
 
     // Process CashApp first (highest priority)
-    console.log("🏦 Processing CashApp devices with strict anti-ban measures...");
+    console.info("🏦 Processing CashApp devices with strict anti-ban measures...");
     const cashAppResult = await this.provisionCashAppDevices(
       phase1Config.cashapp.count,
       this.generateCashAppAccountData(phase1Config.cashapp.count)
@@ -112,14 +112,14 @@ export class IntegratedCashAppScalingManager extends DuoPlusScalingManager {
     results.estimatedCost += results.platformResults.cashapp.estimatedCost;
     results.estimatedTime += results.platformResults.cashapp.estimatedTime;
 
-    console.log("✅ CashApp Phase 1 Complete:");
-    console.log(
+    console.info("✅ CashApp Phase 1 Complete:");
+    console.info(
       `   CashApp Devices: ${results.cashAppSpecific.devicesCreated}/${phase1Config.cashapp.count}`
     );
-    console.log(`   CashApp Success Rate: ${results.cashAppSpecific.successRate.toFixed(1)}%`);
-    console.log(`   Compliance Score: ${results.cashAppSpecific.complianceScore}/100`);
-    console.log(`   Total Devices: ${results.totalDevices}`);
-    console.log(`   Estimated Cost: $${results.estimatedCost}/month`);
+    console.info(`   CashApp Success Rate: ${results.cashAppSpecific.successRate.toFixed(1)}%`);
+    console.info(`   Compliance Score: ${results.cashAppSpecific.complianceScore}/100`);
+    console.info(`   Total Devices: ${results.totalDevices}`);
+    console.info(`   Estimated Cost: $${results.estimatedCost}/month`);
 
     return results;
   }
@@ -129,13 +129,13 @@ export class IntegratedCashAppScalingManager extends DuoPlusScalingManager {
    * Scale CashApp only if Phase 1 success rate >85%
    */
   async executeCashAppPhase2(): Promise<CashAppScalingResult> {
-    console.log("💰 Starting CashApp-Optimized Phase 2: 50→100 accounts");
+    console.info("💰 Starting CashApp-Optimized Phase 2: 50→100 accounts");
 
     // Check CashApp Phase 1 effectiveness
     const cashAppEffectiveness = this.getCashAppEffectiveness();
 
     if (cashAppEffectiveness.successRate < 85) {
-      console.log(
+      console.info(
         `⚠️ CashApp success rate too low (${cashAppEffectiveness.successRate}%), maintaining current scale`
       );
       return this.maintainCashAppScale();
@@ -165,12 +165,12 @@ export class IntegratedCashAppScalingManager extends DuoPlusScalingManager {
    * Full scale with CashApp compliance monitoring
    */
   async executeCashAppPhase3(): Promise<CashAppScalingResult> {
-    console.log("💰 Starting CashApp-Optimized Phase 3: 100→200 accounts");
+    console.info("💰 Starting CashApp-Optimized Phase 3: 100→200 accounts");
 
     const cashAppEffectiveness = this.getCashAppEffectiveness();
 
     if (cashAppEffectiveness.banRate > 15) {
-      console.log(
+      console.info(
         `⚠️ CashApp ban rate too high (${cashAppEffectiveness.banRate}%), reducing scale`
       );
       return this.reduceCashAppScale();
@@ -378,7 +378,7 @@ export class IntegratedCashAppScalingManager extends DuoPlusScalingManager {
   }
 
   private async maintainCashAppScale(): Promise<CashAppScalingResult> {
-    console.log("🔄 Maintaining current CashApp scale due to low effectiveness");
+    console.info("🔄 Maintaining current CashApp scale due to low effectiveness");
     // Return current status without scaling
     return {
       phase: "Maintenance Mode",
@@ -397,7 +397,7 @@ export class IntegratedCashAppScalingManager extends DuoPlusScalingManager {
   }
 
   private async reduceCashAppScale(): Promise<CashAppScalingResult> {
-    console.log("📉 Reducing CashApp scale due to high ban rate");
+    console.info("📉 Reducing CashApp scale due to high ban rate");
     // Return reduced scale
     return {
       phase: "Scale Reduction",
@@ -492,42 +492,42 @@ interface CashAppComplianceReport {
 
 // Usage example
 export async function demonstrateIntegratedCashAppScaling(): Promise<void> {
-  console.log("💰 Integrated CashApp + General Scaling Strategy Demo");
-  console.log("=".repeat(60));
+  console.info("💰 Integrated CashApp + General Scaling Strategy Demo");
+  console.info("=".repeat(60));
 
   const integratedManager = new IntegratedCashAppScalingManager();
 
   try {
     // Execute CashApp-optimized Phase 1
-    console.log("\n🏦 CashApp-Optimized Phase 1:");
+    console.info("\n🏦 CashApp-Optimized Phase 1:");
     await integratedManager.executeCashAppPhase1();
 
     // Monitor compliance
-    console.log("\n📊 CashApp Compliance Monitoring:");
+    console.info("\n📊 CashApp Compliance Monitoring:");
     const complianceReport = await integratedManager.monitorCashAppCompliance();
 
-    console.log(`   Compliance Score: ${complianceReport.complianceScore}/100`);
-    console.log(`   Status: ${complianceReport.status.toUpperCase()}`);
-    console.log(`   Risk Factors: ${complianceReport.riskFactors.length}`);
-    console.log(`   Recommendations: ${complianceReport.recommendations.length}`);
+    console.info(`   Compliance Score: ${complianceReport.complianceScore}/100`);
+    console.info(`   Status: ${complianceReport.status.toUpperCase()}`);
+    console.info(`   Risk Factors: ${complianceReport.riskFactors.length}`);
+    console.info(`   Recommendations: ${complianceReport.recommendations.length}`);
 
     // Display anti-ban checklist
-    console.log("\n🛡️ CashApp Anti-Ban Checklist:");
-    console.log("   MUST DO:");
+    console.info("\n🛡️ CashApp Anti-Ban Checklist:");
+    console.info("   MUST DO:");
     CASHAPP_ANTI_BAN_CHECKLIST.MUST_DO.forEach((item) => {
-      console.log(`     ✅ ${item}`);
+      console.info(`     ✅ ${item}`);
     });
 
-    console.log("\n   BAN TRIGGERS TO AVOID:");
+    console.info("\n   BAN TRIGGERS TO AVOID:");
     CASHAPP_ANTI_BAN_CHECKLIST.BAN_TRIGGERS.forEach((trigger) => {
-      console.log(`     ❌ ${trigger}`);
+      console.info(`     ❌ ${trigger}`);
     });
 
-    console.log("\n✅ Integrated CashApp scaling strategy ready for implementation");
-    console.log("📈 Expected Results:");
-    console.log(`   ${CASHAPP_ANTI_BAN_CHECKLIST.EXPECTED_RESULTS.FIRST_WEEK}`);
-    console.log(`   ${CASHAPP_ANTI_BAN_CHECKLIST.EXPECTED_RESULTS.SECOND_WEEK}`);
-    console.log(`   ${CASHAPP_ANTI_BAN_CHECKLIST.EXPECTED_RESULTS.FIRST_MONTH}`);
+    console.info("\n✅ Integrated CashApp scaling strategy ready for implementation");
+    console.info("📈 Expected Results:");
+    console.info(`   ${CASHAPP_ANTI_BAN_CHECKLIST.EXPECTED_RESULTS.FIRST_WEEK}`);
+    console.info(`   ${CASHAPP_ANTI_BAN_CHECKLIST.EXPECTED_RESULTS.SECOND_WEEK}`);
+    console.info(`   ${CASHAPP_ANTI_BAN_CHECKLIST.EXPECTED_RESULTS.FIRST_MONTH}`);
   } catch (error) {
     console.error("❌ Integrated CashApp scaling failed:", error);
   }

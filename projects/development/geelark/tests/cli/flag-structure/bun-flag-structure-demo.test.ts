@@ -17,11 +17,11 @@ describe("🏗️ Bun CLI Flag Structure Demo", () => {
 
     await Bun.write("/tmp/package.json", JSON.stringify(packageJson, null, 2));
 
-    console.log("🎯 CLI Flag Structure Examples:");
-    console.log("");
+    console.info("🎯 CLI Flag Structure Examples:");
+    console.info("");
 
     // Example 1: Basic structure
-    console.log("1️⃣ Basic: bun run <script>");
+    console.info("1️⃣ Basic: bun run <script>");
     await Bun.spawn(["bun", "run", "dev"], {
       cwd: "/tmp",
       stdout: "inherit",
@@ -29,7 +29,7 @@ describe("🏗️ Bun CLI Flag Structure Demo", () => {
     }).exited;
 
     // Example 2: Bun flags only
-    console.log("2️⃣ Bun flags: bun --watch run <script>");
+    console.info("2️⃣ Bun flags: bun --watch run <script>");
     const proc1 = Bun.spawn(["bun", "--watch", "run", "dev"], {
       cwd: "/tmp",
       stdout: "inherit",
@@ -39,7 +39,7 @@ describe("🏗️ Bun CLI Flag Structure Demo", () => {
     proc1.kill();
 
     // Example 3: Script flags only
-    console.log("3️⃣ Script flags: bun run <script> --verbose");
+    console.info("3️⃣ Script flags: bun run <script> --verbose");
     await Bun.spawn(["bun", "run", "build", "--verbose"], {
       cwd: "/tmp",
       stdout: "inherit",
@@ -47,7 +47,7 @@ describe("🏗️ Bun CLI Flag Structure Demo", () => {
     }).exited;
 
     // Example 4: Combined structure
-    console.log("4️⃣ Combined: bun [bun flags] run <script> [script flags]");
+    console.info("4️⃣ Combined: bun [bun flags] run <script> [script flags]");
     const proc2 = Bun.spawn(
       [
         "bun",
@@ -67,22 +67,22 @@ describe("🏗️ Bun CLI Flag Structure Demo", () => {
     await new Promise((resolve) => setTimeout(resolve, 500));
     proc2.kill();
 
-    console.log("✅ All flag structures demonstrated successfully!");
+    console.info("✅ All flag structures demonstrated successfully!");
   });
 
   test("✅ Flag separation verification", async () => {
     // Create script that shows flag handling
     const flagScript = `
-console.log('=== Flag Separation Demo ===');
-console.log('Script arguments:', process.argv.slice(2));
-console.log('NODE_ENV from Bun --define:', process.env.NODE_ENV || 'undefined');
-console.log('Bun version:', typeof Bun !== 'undefined' ? Bun.version : 'N/A');
+console.info('=== Flag Separation Demo ===');
+console.info('Script arguments:', process.argv.slice(2));
+console.info('NODE_ENV from Bun --define:', process.env.NODE_ENV || 'undefined');
+console.info('Bun version:', typeof Bun !== 'undefined' ? Bun.version : 'N/A');
 `;
 
     await Bun.write("/tmp/flag-demo.js", flagScript);
 
-    console.log("\n🔍 Flag Separation:");
-    console.log(
+    console.info("\n🔍 Flag Separation:");
+    console.info(
       "Bun flags are processed by Bun, script flags passed to script"
     );
 

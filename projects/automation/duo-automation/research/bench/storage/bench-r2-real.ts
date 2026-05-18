@@ -56,7 +56,7 @@ async function generateTestData(count: number, runIndex: number): Promise<AppleI
 }
 
 async function generatePresignsWithWrangler(bucket: string, prefix: string): Promise<Record<string, string>> {
-  console.log(`🔑 Generating presigned URLs for prefix: ${prefix}`);
+  console.info(`🔑 Generating presigned URLs for prefix: ${prefix}`);
   
   const isReal = process.argv.includes('--real');
   
@@ -95,7 +95,7 @@ async function generatePresignsWithWrangler(bucket: string, prefix: string): Pro
     }
     
     await Promise.all(presignPromises);
-    console.log(`✅ Generated ${Object.keys(presigns).length} URLs`);
+    console.info(`✅ Generated ${Object.keys(presigns).length} URLs`);
     return presigns;
   } catch (error: any) {
     const mockPresigns: Record<string, string> = {};
@@ -113,10 +113,10 @@ async function r2Benchmark(name: string, uploads: number, parallel: boolean, buc
   let etagCount = 0;
 
   // Hyperlink logs (OSC 8 clickable)
-  console.log(`\n\u001b]8;;bun bench-r2-real.ts\u001b\\🚀 R2 LIVE 1934/s\u001b[0m | Scale: ${uploads} (${parallel ? 'parallel' : 'serial'})`);
+  console.info(`\n\u001b]8;;bun bench-r2-real.ts\u001b\\🚀 R2 LIVE 1934/s\u001b[0m | Scale: ${uploads} (${parallel ? 'parallel' : 'serial'})`);
 
   for (let run = 0; run < R2_BENCH.RUNS; run++) {
-    console.log(`   Run ${run + 1}/${R2_BENCH.RUNS}...`);
+    console.info(`   Run ${run + 1}/${R2_BENCH.RUNS}...`);
     
     // Generate test data
     const testData = await generateTestData(uploads, run);
@@ -162,7 +162,7 @@ async function r2Benchmark(name: string, uploads: number, parallel: boolean, buc
     etagCount += successful.length;
 
     const throughput = uploads / timeMs * 1000;
-    console.log(`     ⏱️  ${timeMs.toFixed(0)}ms | ✅ ${successful.length}/${uploads} | 🚀 ${throughput.toFixed(0)} IDs/s | 💾 ${successful.length > 0 ? (runSavings / successful.length).toFixed(1) : 0}% saved`);
+    console.info(`     ⏱️  ${timeMs.toFixed(0)}ms | ✅ ${successful.length}/${uploads} | 🚀 ${throughput.toFixed(0)} IDs/s | 💾 ${successful.length > 0 ? (runSavings / successful.length).toFixed(1) : 0}% saved`);
     
     // Cleanup between runs
     await cleanupBenchObjects(bucket, prefix);
@@ -188,14 +188,14 @@ async function r2Benchmark(name: string, uploads: number, parallel: boolean, buc
 async function cleanupBenchObjects(bucket: string, prefix?: string) {
   try {
     const cleanupPrefix = prefix || 'bench-';
-    console.log(`🧹 Cleanup: removing objects with prefix "${cleanupPrefix}"`);
+    console.info(`🧹 Cleanup: removing objects with prefix "${cleanupPrefix}"`);
     
     // Use R2 manager for cleanup if possible
     const manager = new BunR2AppleManager({}, bucket);
     await manager.initialize();
     
     // For now, just log cleanup (actual deletion would require listing objects first)
-    console.log(`🧹 Cleanup completed (simulated for prefix "${cleanupPrefix}")`);
+    console.info(`🧹 Cleanup completed (simulated for prefix "${cleanupPrefix}")`);
   } catch (error: any) {
     console.warn('⚠️ Cleanup failed (may be expected in mock mode):', error.message);
   }
@@ -263,7 +263,7 @@ function generateMasterPerfMatrix(results: R2BenchResult[], presignTime: number)
 }
 
 async function logMasterPerfMatrix(matrix: MasterPerfRow[]) {
-  console.log('\n📊 MASTER_PERF Matrix Update:');
+  console.info('\n📊 MASTER_PERF Matrix Update:');
   const { alignedTable } = await import('../../utils/super-table.js');
   
   const dashboardUrl = 'http://localhost:3000/dashboard'; // Unified Dashboard URL
@@ -282,7 +282,7 @@ async function logMasterPerfMatrix(matrix: MasterPerfRow[]) {
     };
   }), ['Category', 'SubCat', 'ID', 'Value', 'Locations', 'Impact']);
   
-  console.log(`\n🔗 \u001b]8;;${dashboardUrl}\u001b\\View Performance Dashboard\u001b[0m (CTRL+Click)`);
+  console.info(`\n🔗 \u001b]8;;${dashboardUrl}\u001b\\View Performance Dashboard\u001b[0m (CTRL+Click)`);
 }
 
 async function main() {
@@ -293,13 +293,13 @@ async function main() {
   
   const bucket = secretsCreds.r2Bucket || 'factory-wager-packages';
   
-  console.log(`🔐 Secrets-loaded: ${bucket.slice(0, 8)}*** (${loadMs.toFixed(2)}ms)`);
-  console.log(`🚀 LIVE R2 Bench on ${bucket} (zstd + presigns + parallel)`);
-  console.log(`📈 Testing scales: ${R2_BENCH.UPLOADS.join(', ')} uploads | ${R2_BENCH.RUNS} runs each`);
+  console.info(`🔐 Secrets-loaded: ${bucket.slice(0, 8)}*** (${loadMs.toFixed(2)}ms)`);
+  console.info(`🚀 LIVE R2 Bench on ${bucket} (zstd + presigns + parallel)`);
+  console.info(`📈 Testing scales: ${R2_BENCH.UPLOADS.join(', ')} uploads | ${R2_BENCH.RUNS} runs each`);
   
   // Set Cloudflare API token for fallback
   if (Bun.env.CLOUDFLARE_API_TOKEN) {
-    console.log('✅ Cloudflare API token available for fallback');
+    console.info('✅ Cloudflare API token available for fallback');
   }
 
   const results: R2BenchResult[] = [];
@@ -318,7 +318,7 @@ async function main() {
   }
 
   // Presign Generation Benchmark (Bonus)
-  console.log('\n🔑 Benchmarking presign generation...');
+  console.info('\n🔑 Benchmarking presign generation...');
   const presignStart = Bun.nanoseconds();
   let presignTime = 45; // Default fallback time
   
@@ -327,10 +327,10 @@ async function main() {
     await manager.initialize();
     await manager.getPresignedUrl('bench-presign-test/test.json', 'PUT');
     presignTime = (Bun.nanoseconds() - presignStart) / 1e6;
-    console.log(`Presign Gen: ${presignTime.toFixed(0)}ms`);
+    console.info(`Presign Gen: ${presignTime.toFixed(0)}ms`);
   } catch (error: any) {
     console.warn('⚠️ Presign benchmark failed:', error.message);
-    console.log(`Presign Gen: using fallback time ${presignTime}ms`);
+    console.info(`Presign Gen: using fallback time ${presignTime}ms`);
   }
 
   // Generate and log MASTER_PERF matrix (always display)
@@ -338,7 +338,7 @@ async function main() {
   await logMasterPerfMatrix(matrix);
 
   // Final results table
-  console.log('\n📊 R2 LIVE Benchmark Results (stringWidth Aligned):');
+  console.info('\n📊 R2 LIVE Benchmark Results (stringWidth Aligned):');
   const { alignedTable } = await import('../../utils/super-table.js');
   alignedTable(results.map(r => ({
     Benchmark: r.name,
@@ -351,7 +351,7 @@ async function main() {
   })), ['Benchmark', 'Time (avg)', '(min…max)', 'p75/p99', 'Throughput', 'Savings', 'ETags']);
 
   // Emoji alignment test
-  console.log('\n✨ Emoji Alignment Stability (stringWidth):');
+  console.info('\n✨ Emoji Alignment Stability (stringWidth):');
   alignedTable([
     { name: 'US Flag', val: '🇺🇸', width: Bun.stringWidth('🇺🇸') },
     { name: 'Family ZWJ', val: '👨👩👧🏽', width: Bun.stringWidth('👨👩👧🏽') },
@@ -366,8 +366,8 @@ async function main() {
   const summaryTime = maxParallelResult?.avg || 0;
   const summaryThroughput = maxParallelResult?.throughput || 0;
   
-  console.log(`\n📊 R2 LIVE Summary: 500 parallel → ${summaryTime.toFixed(0)}ms (${summaryThroughput.toLocaleString()} IDs/s) 🚀`);
-  console.log('✅ Live R2 performance proven - zstd compression + parallel uploads achieved!');
+  console.info(`\n📊 R2 LIVE Summary: 500 parallel → ${summaryTime.toFixed(0)}ms (${summaryThroughput.toLocaleString()} IDs/s) 🚀`);
+  console.info('✅ Live R2 performance proven - zstd compression + parallel uploads achieved!');
 }
 
 // ========================================
@@ -385,7 +385,7 @@ interface BenchmarkResult {
 }
 
 async function benchmark(name: string, fn: () => Promise<void> | void, iterations: number = 100): Promise<BenchmarkResult> {
-  console.log(`⏱️  Benchmarking: ${name}`);
+  console.info(`⏱️  Benchmarking: ${name}`);
   
   const times: number[] = [];
   
@@ -407,13 +407,13 @@ async function benchmark(name: string, fn: () => Promise<void> | void, iteration
     throughput: 1000000 / (times.reduce((a, b) => a + b) / times.length)
   };
   
-  console.log(`   Avg: ${result.avg.toFixed(0)}μs | Ops/s: ${result.throughput.toFixed(0)} | p75/p99: ${result.p75.toFixed(0)}/${result.p99.toFixed(0)}μs`);
+  console.info(`   Avg: ${result.avg.toFixed(0)}μs | Ops/s: ${result.throughput.toFixed(0)} | p75/p99: ${result.p75.toFixed(0)}/${result.p99.toFixed(0)}μs`);
   
   return result;
 }
 
 async function benchmarkURLPattern() {
-  console.log('\n🎯 **URLPattern Classification Benchmark**');
+  console.info('\n🎯 **URLPattern Classification Benchmark**');
   
   // Import classifyPath function
   const { classifyPath } = await import('../../utils/urlpattern-r2.js');
@@ -423,10 +423,10 @@ async function benchmarkURLPattern() {
     paths.forEach(classifyPath);  // Full scan
   });
   
-  console.log(`URLPattern: 50k paths → ${patternBench.avg.toFixed(0)}μs (12x vs regex)`);
+  console.info(`URLPattern: 50k paths → ${patternBench.avg.toFixed(0)}μs (12x vs regex)`);
   
   // Additional pattern-specific benchmarks
-  console.log('\n📊 **Pattern-Specific Performance**');
+  console.info('\n📊 **Pattern-Specific Performance**');
   
   const patterns = [
     { name: 'apple-ids', pattern: 'apple-ids/:userId.json' },
@@ -450,11 +450,11 @@ async function benchmarkURLPattern() {
       testPaths.forEach(classifyPath);
     }, 100);
     
-    console.log(`  ${p.name}: ${bench.avg.toFixed(0)}μs avg (${(testPaths.length / bench.avg * 1000000).toFixed(0)} paths/s)`);
+    console.info(`  ${p.name}: ${bench.avg.toFixed(0)}μs avg (${(testPaths.length / bench.avg * 1000000).toFixed(0)} paths/s)`);
   }
   
   // Regex comparison
-  console.log('\n⚔️ **URLPattern vs Regex Comparison**');
+  console.info('\n⚔️ **URLPattern vs Regex Comparison**');
   
   const regexPattern = /^apple-ids\/(.+)\.json$/;
   const testPath = `apple-ids/user123.json`;
@@ -468,7 +468,7 @@ async function benchmarkURLPattern() {
   }, 10000);
   
   const speedup = regexBench.avg / urlpatternBench.avg;
-  console.log(`🏆 URLPattern is ${speedup.toFixed(1)}x faster than regex!`);
+  console.info(`🏆 URLPattern is ${speedup.toFixed(1)}x faster than regex!`);
   
   return { patternBench, regexBench, urlpatternBench, speedup };
 }
@@ -481,11 +481,11 @@ async function mainWithURLPattern() {
   await main();  // Run original R2 benchmarks
   
   // Secrets Loading Benchmark (Refined)
-  console.log('\n🔐 **Secrets Management Benchmark**');
+  console.info('\n🔐 **Secrets Management Benchmark**');
   const secretsBench = await benchmark('Secrets Load', async () => {
     await loadScopedSecrets();  // Try/catch + platform detection
   }, 100);
-  console.log(`Secrets: ${secretsBench.avg.toFixed(0)}μs (retry-safe, p75: ${secretsBench.p75.toFixed(0)}μs)`);
+  console.info(`Secrets: ${secretsBench.avg.toFixed(0)}μs (retry-safe, p75: ${secretsBench.p75.toFixed(0)}μs)`);
 
   await benchmarkURLPattern();  // Add URLPattern benchmarks
 }

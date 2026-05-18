@@ -74,7 +74,7 @@ export class CookieStorage implements StorageAdapter {
       });
       
       // In a real implementation, this would set the cookie via headers
-      console.log(`🍪 Cookie set: ${cookie.toString()}`);
+      console.info(`🍪 Cookie set: ${cookie.toString()}`);
       return true;
     } catch (error) {
       console.error(`❌ Cookie set failed: ${error.message}`);
@@ -85,7 +85,7 @@ export class CookieStorage implements StorageAdapter {
   async get(key: string): Promise<any> {
     try {
       // In a real implementation, this would parse from request headers
-      console.log(`🍪 Cookie get: ${key}`);
+      console.info(`🍪 Cookie get: ${key}`);
       return null; // Placeholder
     } catch (error) {
       console.error(`❌ Cookie get failed: ${error.message}`);
@@ -96,7 +96,7 @@ export class CookieStorage implements StorageAdapter {
   async delete(key: string): Promise<boolean> {
     try {
       const cookie = new Cookie(key, '', { maxAge: 0 });
-      console.log(`🍪 Cookie deleted: ${cookie.toString()}`);
+      console.info(`🍪 Cookie deleted: ${cookie.toString()}`);
       return true;
     } catch (error) {
       console.error(`❌ Cookie delete failed: ${error.message}`);
@@ -105,7 +105,7 @@ export class CookieStorage implements StorageAdapter {
   }
   
   async clear(): Promise<boolean> {
-    console.log('🍪 All cookies cleared');
+    console.info('🍪 All cookies cleared');
     return true;
   }
   
@@ -115,12 +115,12 @@ export class CookieStorage implements StorageAdapter {
   }
   
   async size(): Promise<number> {
-    console.log('🍪 Cookie size calculated');
+    console.info('🍪 Cookie size calculated');
     return 0; // Placeholder
   }
   
   async keys(): Promise<string[]> {
-    console.log('🍪 Cookie keys retrieved');
+    console.info('🍪 Cookie keys retrieved');
     return []; // Placeholder
   }
 }
@@ -146,7 +146,7 @@ export class WebStorage implements StorageAdapter {
       });
       
       this.storage.setItem(fullKey, serialized);
-      console.log(`💾 WebStorage set: ${fullKey}`);
+      console.info(`💾 WebStorage set: ${fullKey}`);
       return true;
     } catch (error) {
       console.error(`❌ WebStorage set failed: ${error.message}`);
@@ -169,7 +169,7 @@ export class WebStorage implements StorageAdapter {
         return null;
       }
       
-      console.log(`💾 WebStorage get: ${fullKey}`);
+      console.info(`💾 WebStorage get: ${fullKey}`);
       return data.value;
     } catch (error) {
       console.error(`❌ WebStorage get failed: ${error.message}`);
@@ -181,7 +181,7 @@ export class WebStorage implements StorageAdapter {
     try {
       const fullKey = this.prefix + key;
       this.storage.removeItem(fullKey);
-      console.log(`💾 WebStorage deleted: ${fullKey}`);
+      console.info(`💾 WebStorage deleted: ${fullKey}`);
       return true;
     } catch (error) {
       console.error(`❌ WebStorage delete failed: ${error.message}`);
@@ -193,7 +193,7 @@ export class WebStorage implements StorageAdapter {
     try {
       const keys = this.getStorageKeys().filter(key => key.startsWith(this.prefix));
       keys.forEach(key => this.storage.removeItem(key));
-      console.log(`💾 WebStorage cleared ${keys.length} items`);
+      console.info(`💾 WebStorage cleared ${keys.length} items`);
       return true;
     } catch (error) {
       console.error(`❌ WebStorage clear failed: ${error.message}`);
@@ -384,7 +384,7 @@ export class FutureProofCookieSystem {
     try {
       // Check if cookies are supported/enabled
       if (method === 'cookie' && !this.areCookiesSupported()) {
-        console.log('🍪 Cookies not supported, falling back to localStorage');
+        console.info('🍪 Cookies not supported, falling back to localStorage');
         return await this.storage.localStorage.set(key, value, options);
       }
       
@@ -430,7 +430,7 @@ export class FutureProofCookieSystem {
     
     // Check user preferences before setting
     if (!consentManager.hasConsent(category)) {
-      console.log(`🚫 No consent for ${category}, creating ephemeral cookie`);
+      console.info(`🚫 No consent for ${category}, creating ephemeral cookie`);
       return FutureProofCookieSystem.createEphemeralCookie(name, value, options);
     }
     
@@ -497,7 +497,7 @@ export class FutureProofCookieSystem {
   
   // 🔄 FALLBACK STRATEGIES
   private async fallbackStore(key: string, value: any, options: any): Promise<boolean> {
-    console.log(`🔄 Using fallback strategy: ${this.fallbackStrategy}`);
+    console.info(`🔄 Using fallback strategy: ${this.fallbackStrategy}`);
     
     switch (this.fallbackStrategy) {
       case 'localStorage':
@@ -506,7 +506,7 @@ export class FutureProofCookieSystem {
         return await this.storage.sessionStorage.set(key, value, options);
       case 'memory':
         // In-memory storage (volatile)
-        console.log(`💾 Memory fallback: ${key}`);
+        console.info(`💾 Memory fallback: ${key}`);
         return true;
       default:
         return false;
@@ -514,7 +514,7 @@ export class FutureProofCookieSystem {
   }
   
   private async fallbackRetrieve(key: string): Promise<any> {
-    console.log(`🔄 Using fallback retrieve: ${this.fallbackStrategy}`);
+    console.info(`🔄 Using fallback retrieve: ${this.fallbackStrategy}`);
     
     switch (this.fallbackStrategy) {
       case 'localStorage':
@@ -522,7 +522,7 @@ export class FutureProofCookieSystem {
       case 'sessionStorage':
         return await this.storage.sessionStorage.get(key);
       case 'memory':
-        console.log(`💾 Memory retrieve: ${key}`);
+        console.info(`💾 Memory retrieve: ${key}`);
         return null;
       default:
         return null;
@@ -530,7 +530,7 @@ export class FutureProofCookieSystem {
   }
   
   private async fallbackRemove(key: string): Promise<boolean> {
-    console.log(`🔄 Using fallback remove: ${this.fallbackStrategy}`);
+    console.info(`🔄 Using fallback remove: ${this.fallbackStrategy}`);
     
     switch (this.fallbackStrategy) {
       case 'localStorage':
@@ -538,7 +538,7 @@ export class FutureProofCookieSystem {
       case 'sessionStorage':
         return await this.storage.sessionStorage.delete(key);
       case 'memory':
-        console.log(`💾 Memory remove: ${key}`);
+        console.info(`💾 Memory remove: ${key}`);
         return true;
       default:
         return false;
@@ -607,7 +607,7 @@ export class FutureProofCookieSystem {
   
   // 🧹 CLEANUP & MAINTENANCE
   async cleanup(): Promise<void> {
-    console.log('🧹 Starting storage cleanup...');
+    console.info('🧹 Starting storage cleanup...');
     
     for (const [method, storage] of Object.entries(this.storage)) {
       try {
@@ -627,7 +627,7 @@ export class FutureProofCookieSystem {
           await storage.delete(key);
         }
         
-        console.log(`🧹 ${method}: Removed ${expiredKeys.length} expired items`);
+        console.info(`🧹 ${method}: Removed ${expiredKeys.length} expired items`);
       } catch (error) {
         console.error(`❌ Cleanup failed for ${method}: ${error.message}`);
       }
@@ -663,7 +663,7 @@ export class FutureProofCookieSystem {
       }
       
       result.success = result.errors.length === 0;
-      console.log(`📈 Migration ${fromMethod} → ${toMethod}: ${result.itemsMigrated} items, ${result.errors.length} errors`);
+      console.info(`📈 Migration ${fromMethod} → ${toMethod}: ${result.itemsMigrated} items, ${result.errors.length} errors`);
       
     } catch (error) {
       result.errors.push(`Migration failed: ${error.message}`);
@@ -697,46 +697,46 @@ export class FutureProofCookieDemo {
   }
   
   async runDemo(): Promise<void> {
-    console.log('🌐 Future-Proof Cookie System Demo');
-    console.log('='.repeat(50));
+    console.info('🌐 Future-Proof Cookie System Demo');
+    console.info('='.repeat(50));
     
     // Demo 1: Storage Analysis
-    console.log('\n📊 Demo 1: Storage Analysis');
-    console.log('-'.repeat(30));
+    console.info('\n📊 Demo 1: Storage Analysis');
+    console.info('-'.repeat(30));
     const analysis = await this.system.getStorageAnalysis();
-    console.log('Storage Analysis:', analysis);
+    console.info('Storage Analysis:', analysis);
     
     // Demo 2: Consent Management
-    console.log('\n🎯 Demo 2: Consent Management');
-    console.log('-'.repeat(30));
+    console.info('\n🎯 Demo 2: Consent Management');
+    console.info('-'.repeat(30));
     const consentManager = ConsentManager.getInstance();
-    console.log('Current consent:', consentManager.getConsent());
+    console.info('Current consent:', consentManager.getConsent());
     
     // Update consent
     consentManager.updateConsent({ analytics: true, functional: true });
-    console.log('Updated consent:', consentManager.getConsent());
+    console.info('Updated consent:', consentManager.getConsent());
     
     // Demo 3: Consent-Aware Cookies
-    console.log('\n🍪 Demo 3: Consent-Aware Cookies');
-    console.log('-'.repeat(30));
+    console.info('\n🍪 Demo 3: Consent-Aware Cookies');
+    console.info('-'.repeat(30));
     
     const analyticsCookie = FutureProofCookieSystem.createConsentAwareCookie(
       '_ga', 
       'GA.123.456', 
       'analytics'
     );
-    console.log('Analytics cookie:', analyticsCookie?.toString());
+    console.info('Analytics cookie:', analyticsCookie?.toString());
     
     const marketingCookie = FutureProofCookieSystem.createConsentAwareCookie(
       'marketing', 
       'promo_data', 
       'marketing'
     );
-    console.log('Marketing cookie:', marketingCookie?.toString());
+    console.info('Marketing cookie:', marketingCookie?.toString());
     
     // Demo 4: Unified Storage Interface
-    console.log('\n💾 Demo 4: Unified Storage Interface');
-    console.log('-'.repeat(30));
+    console.info('\n💾 Demo 4: Unified Storage Interface');
+    console.info('-'.repeat(30));
     
     await this.system.store('user_id', '12345', 'localStorage');
     await this.system.store('session_token', 'abc123', 'sessionStorage');
@@ -746,24 +746,24 @@ export class FutureProofCookieDemo {
     const sessionToken = await this.system.retrieve('session_token', 'sessionStorage');
     const secureData = await this.system.retrieve('secure_data', 'httpOnly');
     
-    console.log('Retrieved user_id:', userId);
-    console.log('Retrieved session_token:', sessionToken);
-    console.log('Retrieved secure_data:', secureData);
+    console.info('Retrieved user_id:', userId);
+    console.info('Retrieved session_token:', sessionToken);
+    console.info('Retrieved secure_data:', secureData);
     
     // Demo 5: Migration
-    console.log('\n📈 Demo 5: Storage Migration');
-    console.log('-'.repeat(30));
+    console.info('\n📈 Demo 5: Storage Migration');
+    console.info('-'.repeat(30));
     
     const migrationResult = await this.system.migrateToStorage('localStorage', 'sessionStorage');
-    console.log('Migration result:', migrationResult);
+    console.info('Migration result:', migrationResult);
     
     // Demo 6: Cleanup
-    console.log('\n🧹 Demo 6: Storage Cleanup');
-    console.log('-'.repeat(30));
+    console.info('\n🧹 Demo 6: Storage Cleanup');
+    console.info('-'.repeat(30));
     
     await this.system.cleanup();
     
-    console.log('\n🎉 Demo Complete!');
+    console.info('\n🎉 Demo Complete!');
   }
 }
 

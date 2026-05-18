@@ -38,7 +38,7 @@ class SubmarketWebSocketServer {
   }
 
   async start(): Promise<void> {
-    console.log(`🚀 Starting Submarket WebSocket Server on port ${this.port}`);
+    console.info(`🚀 Starting Submarket WebSocket Server on port ${this.port}`);
 
     // Initialize Bun WebSocket server
     this.server = Bun.serve({
@@ -58,7 +58,7 @@ class SubmarketWebSocketServer {
           this.clients.set(clientId, client);
           ws.data = client;
 
-          console.log(`🔌 Client connected: ${clientId}`);
+          console.info(`🔌 Client connected: ${clientId}`);
           
           // Send welcome message
           this.sendToClient(client, {
@@ -85,9 +85,9 @@ class SubmarketWebSocketServer {
     // Start real-time data updates
     this.startRealTimeUpdates();
 
-    console.log(`✅ Submarket WebSocket Server running on ws://localhost:${this.port}`);
-    console.log(`📊 Real-time updates enabled (2-second intervals)`);
-    console.log(`🔗 Dashboard available at http://localhost:${this.port + 1}`);
+    console.info(`✅ Submarket WebSocket Server running on ws://localhost:${this.port}`);
+    console.info(`📊 Real-time updates enabled (2-second intervals)`);
+    console.info(`🔗 Dashboard available at http://localhost:${this.port + 1}`);
   }
 
   private async handleHttpRequest(req: Request): Promise<Response> {
@@ -168,7 +168,7 @@ class SubmarketWebSocketServer {
   private handleWebSocketClose(ws: any, code: number, message: string): void {
     const client = ws.data as ClientConnection;
     this.clients.delete(client.id);
-    console.log(`🔌 Client disconnected: ${client.id} (${code}: ${message})`);
+    console.info(`🔌 Client disconnected: ${client.id} (${code}: ${message})`);
   }
 
   private handleWebSocketError(ws: any, error: Error): void {
@@ -531,7 +531,7 @@ class SubmarketWebSocketServer {
       this.server.stop();
     }
     
-    console.log('🛑 Submarket WebSocket Server stopped');
+    console.info('🛑 Submarket WebSocket Server stopped');
   }
 }
 
@@ -544,13 +544,13 @@ async function main() {
     
     // Handle graceful shutdown
     process.on('SIGINT', async () => {
-      console.log('\n🛑 Shutting down server...');
+      console.info('\n🛑 Shutting down server...');
       await server.stop();
       process.exit(0);
     });
     
     process.on('SIGTERM', async () => {
-      console.log('\n🛑 Shutting down server...');
+      console.info('\n🛑 Shutting down server...');
       await server.stop();
       process.exit(0);
     });

@@ -345,10 +345,10 @@ describe("📦 Bun Package.json Script Execution Benchmarks", () => {
         return Math.max(...results); // Parallel time is the longest task
       }, "Parallel script execution");
 
-      console.log(`📊 Script execution performance:`);
-      console.log(`  Sequential: ${sequentialTime.toFixed(2)}ms`);
-      console.log(`  Parallel: ${parallelTime.toFixed(2)}ms`);
-      console.log(`  Speedup: ${(sequentialTime / parallelTime).toFixed(2)}x`);
+      console.info(`📊 Script execution performance:`);
+      console.info(`  Sequential: ${sequentialTime.toFixed(2)}ms`);
+      console.info(`  Parallel: ${parallelTime.toFixed(2)}ms`);
+      console.info(`  Speedup: ${(sequentialTime / parallelTime).toFixed(2)}x`);
 
       expect(typeof sequentialTime).toBe("number");
       expect(typeof parallelTime).toBe("number");
@@ -558,7 +558,7 @@ describe("📦 Bun Package.json Script Execution Benchmarks", () => {
         // Script ${i}
         const data${i} = Array.from({ length: 1000 }, j => ({ id: j, value: 'item-' + ${i} + '-' + j }));
         const processed${i} = data${i}.map(item => ({ ...item, processed: true }));
-        console.log('Script ${i} processed', processed${i}.length, 'items');
+        console.info('Script ${i} processed', processed${i}.length, 'items');
         `;
       }).join('\n');
 
@@ -570,10 +570,10 @@ describe("📦 Bun Package.json Script Execution Benchmarks", () => {
       expect(processedScripts.length).toBeGreaterThan(10);
 
       if (beforeMemory > 0) {
-        console.log(`🧠 Memory usage during script execution:`);
-        console.log(`  Before: ${(beforeMemory / 1024).toFixed(2)}KB`);
-        console.log(`  After: ${(afterMemory / 1024).toFixed(2)}KB`);
-        console.log(`  Delta: ${((afterMemory - beforeMemory) / 1024).toFixed(2)}KB`);
+        console.info(`🧠 Memory usage during script execution:`);
+        console.info(`  Before: ${(beforeMemory / 1024).toFixed(2)}KB`);
+        console.info(`  After: ${(afterMemory / 1024).toFixed(2)}KB`);
+        console.info(`  Delta: ${((afterMemory - beforeMemory) / 1024).toFixed(2)}KB`);
       }
     });
   });

@@ -333,7 +333,7 @@ if (import.meta.main) {
   };
 
   const result = detector.detectAnomalies(gameId, currentVector);
-  console.log(JSON.stringify(result, null, 2));
+  console.info(JSON.stringify(result, null, 2));
 }
 // [TENSION-VOLUME-001]
 // [TENSION-LINK-002]

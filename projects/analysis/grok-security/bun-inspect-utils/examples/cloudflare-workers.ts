@@ -57,7 +57,7 @@ export class InspectionDurableObject {
     });
 
     server.addEventListener("close", () => {
-      console.log("WebSocket closed");
+      console.info("WebSocket closed");
     });
 
     return new Response(null, {
@@ -160,7 +160,7 @@ export default {
 
   async scheduled(event: ScheduledEvent, env: any): Promise<void> {
     // Periodic cleanup of old logs
-    console.log("Running scheduled cleanup...");
+    console.info("Running scheduled cleanup...");
   },
 };
 

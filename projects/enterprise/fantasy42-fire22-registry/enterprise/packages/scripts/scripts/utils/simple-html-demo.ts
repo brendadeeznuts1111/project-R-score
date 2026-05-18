@@ -11,16 +11,16 @@ import { TimezoneUtils } from './src/shared/timezone-configuration';
 import { envConfig } from './src/shared/environment-configuration';
 
 async function demonstrateSimpleHTMLTemplates() {
-  console.log('🌐 Simple HTML Templates Demo with Bun Import\n');
+  console.info('🌐 Simple HTML Templates Demo with Bun Import\n');
 
   // 1. Show raw HTML import
-  console.log('📄 Raw HTML Import:');
-  console.log(`   HTML content length: ${dashboardHTML.length} characters`);
-  console.log(`   Contains DOCTYPE: ${dashboardHTML.includes('<!DOCTYPE html>')}`);
-  console.log(`   Contains template variables: ${dashboardHTML.includes('{{timezone}}')}\n`);
+  console.info('📄 Raw HTML Import:');
+  console.info(`   HTML content length: ${dashboardHTML.length} characters`);
+  console.info(`   Contains DOCTYPE: ${dashboardHTML.includes('<!DOCTYPE html>')}`);
+  console.info(`   Contains template variables: ${dashboardHTML.includes('{{timezone}}')}\n`);
 
   // 2. Show template rendering
-  console.log('🎨 Template Rendering:');
+  console.info('🎨 Template Rendering:');
   const templateData = {
     totalRevenue: '125000',
     totalCollections: '450',
@@ -34,35 +34,35 @@ async function demonstrateSimpleHTMLTemplates() {
   };
 
   const renderedHTML = htmlTemplateManager.renderTemplate('dashboard', templateData);
-  console.log(`   ✅ Template rendered successfully (${renderedHTML.length} characters)`);
-  console.log(`   ✅ Variables replaced: ${renderedHTML.includes('America/Chicago')}`);
-  console.log(`   ✅ Timezone info included: ${renderedHTML.includes('Current Time')}\n`);
+  console.info(`   ✅ Template rendered successfully (${renderedHTML.length} characters)`);
+  console.info(`   ✅ Variables replaced: ${renderedHTML.includes('America/Chicago')}`);
+  console.info(`   ✅ Timezone info included: ${renderedHTML.includes('Current Time')}\n`);
 
   // 3. Show template features
-  console.log('🔧 Template Features Demonstrated:');
-  console.log(`   • Bun HTML import with type: "text"`);
-  console.log(`   • Template variable replacement ({{variable}})`);
-  console.log(`   • CSS styling and responsive design`);
-  console.log(`   • JavaScript integration for auto-refresh`);
-  console.log(`   • Domain-specific data rendering`);
-  console.log(`   • Timezone-aware content generation\n`);
+  console.info('🔧 Template Features Demonstrated:');
+  console.info(`   • Bun HTML import with type: "text"`);
+  console.info(`   • Template variable replacement ({{variable}})`);
+  console.info(`   • CSS styling and responsive design`);
+  console.info(`   • JavaScript integration for auto-refresh`);
+  console.info(`   • Domain-specific data rendering`);
+  console.info(`   • Timezone-aware content generation\n`);
 
   // 4. Show available templates
-  console.log('📋 Available Domain Templates:');
+  console.info('📋 Available Domain Templates:');
   const templates = htmlTemplateManager.getAllTemplateNames();
   templates.forEach((template, index) => {
     const icons = ['📊', '📈', '💳', '📋'];
-    console.log(`   ${icons[index] || '📄'} ${template}`);
+    console.info(`   ${icons[index] || '📄'} ${template}`);
   });
-  console.log('');
+  console.info('');
 
-  console.log('🎉 Simple HTML Templates Demo Complete!');
-  console.log('Key Benefits:');
-  console.log('  • Hot reload support during development');
-  console.log('  • Type-safe HTML imports');
-  console.log('  • Template-based content generation');
-  console.log('  • Domain-driven template organization');
-  console.log('  • Integration with timezone and environment systems');
+  console.info('🎉 Simple HTML Templates Demo Complete!');
+  console.info('Key Benefits:');
+  console.info('  • Hot reload support during development');
+  console.info('  • Type-safe HTML imports');
+  console.info('  • Template-based content generation');
+  console.info('  • Domain-driven template organization');
+  console.info('  • Integration with timezone and environment systems');
 }
 
 if (import.meta.main) {

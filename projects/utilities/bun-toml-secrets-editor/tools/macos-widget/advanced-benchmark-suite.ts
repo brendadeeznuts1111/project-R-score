@@ -29,11 +29,11 @@ class AdvancedBenchmarkSuite {
 	private arch = process.arch;
 
 	constructor() {
-		console.log("🔬 Advanced Performance Benchmark Suite");
-		console.log("=======================================");
-		console.log(`📊 Platform: ${this.platform} (${this.arch})`);
-		console.log(`🔧 Bun Version: ${process.version}`);
-		console.log("");
+		console.info("🔬 Advanced Performance Benchmark Suite");
+		console.info("=======================================");
+		console.info(`📊 Platform: ${this.platform} (${this.arch})`);
+		console.info(`🔧 Bun Version: ${process.version}`);
+		console.info("");
 
 		this.initializeRegressionTests();
 	}
@@ -105,8 +105,8 @@ class AdvancedBenchmarkSuite {
 	}
 
 	async runFullBenchmarkSuite(): Promise<void> {
-		console.log("🚀 Starting comprehensive benchmark suite...");
-		console.log("");
+		console.info("🚀 Starting comprehensive benchmark suite...");
+		console.info("");
 
 		// Warm-up phase
 		await this.warmupPhase();
@@ -128,7 +128,7 @@ class AdvancedBenchmarkSuite {
 	}
 
 	private async warmupPhase(): Promise<void> {
-		console.log("🔥 Warm-up phase...");
+		console.info("🔥 Warm-up phase...");
 
 		const warmupStart = performance.now();
 
@@ -145,13 +145,13 @@ class AdvancedBenchmarkSuite {
 		}
 
 		const warmupDuration = performance.now() - warmupStart;
-		console.log(`   Warm-up completed in ${warmupDuration.toFixed(2)}ms`);
-		console.log("");
+		console.info(`   Warm-up completed in ${warmupDuration.toFixed(2)}ms`);
+		console.info("");
 	}
 
 	private async runRegressionTests(): Promise<void> {
-		console.log("🧪 Running Performance Regression Tests");
-		console.log("---------------------------------------");
+		console.info("🧪 Running Performance Regression Tests");
+		console.info("---------------------------------------");
 
 		for (const test of this.regressionTests) {
 			const memoryBefore = process.memoryUsage().heapUsed;
@@ -177,16 +177,16 @@ class AdvancedBenchmarkSuite {
 
 				const status = passed ? "✅" : "❌";
 				const memoryText = `${(memoryDelta / 1024 / 1024).toFixed(2)}MB`;
-				console.log(`${status} ${test.name}`);
-				console.log(
+				console.info(`${status} ${test.name}`);
+				console.info(
 					`   Duration: ${duration.toFixed(2)}ms (threshold: ${test.threshold}ms)`,
 				);
-				console.log(`   Memory: ${memoryText} delta`);
-				console.log(`   Category: ${test.category}`);
-				console.log("");
+				console.info(`   Memory: ${memoryText} delta`);
+				console.info(`   Category: ${test.category}`);
+				console.info("");
 			} catch (error) {
-				console.log(`❌ ${test.name} - ERROR: ${error}`);
-				console.log("");
+				console.info(`❌ ${test.name} - ERROR: ${error}`);
+				console.info("");
 			}
 		}
 	}
@@ -348,8 +348,8 @@ class AdvancedBenchmarkSuite {
 	}
 
 	private async runMemoryStressTest(): Promise<void> {
-		console.log("💾 Memory Stress Test");
-		console.log("--------------------");
+		console.info("💾 Memory Stress Test");
+		console.info("--------------------");
 
 		const baselineMemory = process.memoryUsage().heapUsed;
 		const arrays: Buffer[] = [];
@@ -364,7 +364,7 @@ class AdvancedBenchmarkSuite {
 				if (i % 10 === 0) {
 					const currentMemory = process.memoryUsage().heapUsed;
 					const memoryUsed = (currentMemory - baselineMemory) / 1024 / 1024;
-					console.log(
+					console.info(
 						`   Memory allocated: ${memoryUsed.toFixed(1)}MB (${i} buffers)`,
 					);
 				}
@@ -372,7 +372,7 @@ class AdvancedBenchmarkSuite {
 
 			const peakMemory = process.memoryUsage().heapUsed;
 			const totalMemory = (peakMemory - baselineMemory) / 1024 / 1024;
-			console.log(`   Peak memory usage: ${totalMemory.toFixed(1)}MB`);
+			console.info(`   Peak memory usage: ${totalMemory.toFixed(1)}MB`);
 		} finally {
 			// Clean up
 			arrays.length = 0;
@@ -380,21 +380,21 @@ class AdvancedBenchmarkSuite {
 
 			const finalMemory = process.memoryUsage().heapUsed;
 			const memoryLeaked = (finalMemory - baselineMemory) / 1024 / 1024;
-			console.log(`   Memory after cleanup: ${memoryLeaked.toFixed(1)}MB`);
+			console.info(`   Memory after cleanup: ${memoryLeaked.toFixed(1)}MB`);
 
 			if (memoryLeaked > 5) {
-				console.log("   ⚠️  Potential memory leak detected!");
+				console.info("   ⚠️  Potential memory leak detected!");
 			} else {
-				console.log("   ✅ Memory cleanup successful");
+				console.info("   ✅ Memory cleanup successful");
 			}
 		}
 
-		console.log("");
+		console.info("");
 	}
 
 	private async runThroughputBenchmark(): Promise<void> {
-		console.log("📊 Throughput Benchmark");
-		console.log("-----------------------");
+		console.info("📊 Throughput Benchmark");
+		console.info("-----------------------");
 
 		const operations = [
 			{
@@ -414,12 +414,12 @@ class AdvancedBenchmarkSuite {
 
 		for (const op of operations) {
 			const { opsPerSecond, duration } = await op.test();
-			console.log(
+			console.info(
 				`   ${op.name}: ${opsPerSecond.toLocaleString()} ops/sec (${duration.toFixed(2)}ms)`,
 			);
 		}
 
-		console.log("");
+		console.info("");
 	}
 
 	private async benchmarkBufferThroughput(): Promise<{
@@ -506,41 +506,41 @@ class AdvancedBenchmarkSuite {
 	}
 
 	private async runCrossPlatformComparison(): Promise<void> {
-		console.log("🌐 Cross-Platform Analysis");
-		console.log("--------------------------");
+		console.info("🌐 Cross-Platform Analysis");
+		console.info("--------------------------");
 
 		// Platform-specific optimizations
 		const isARM64 = this.arch === "arm64";
 		const isAppleSilicon = this.platform === "darwin" && isARM64;
 
-		console.log(`   Architecture: ${this.arch}`);
-		console.log(`   Platform: ${this.platform}`);
-		console.log(`   Apple Silicon: ${isAppleSilicon ? "Yes" : "No"}`);
+		console.info(`   Architecture: ${this.arch}`);
+		console.info(`   Platform: ${this.platform}`);
+		console.info(`   Apple Silicon: ${isAppleSilicon ? "Yes" : "No"}`);
 
 		if (isAppleSilicon) {
-			console.log("   ✅ ARM64 optimizations fully enabled");
-			console.log("   ✅ Compound boolean expressions active");
-			console.log("   ✅ Floating-point optimizations active");
+			console.info("   ✅ ARM64 optimizations fully enabled");
+			console.info("   ✅ Compound boolean expressions active");
+			console.info("   ✅ Floating-point optimizations active");
 		} else {
-			console.log("   ⚠️  Running on non-ARM64 architecture");
-			console.log("   ⚠️  Some optimizations may not be available");
+			console.info("   ⚠️  Running on non-ARM64 architecture");
+			console.info("   ⚠️  Some optimizations may not be available");
 		}
 
-		console.log("");
+		console.info("");
 	}
 
 	private generateFinalReport(): void {
-		console.log("📋 Final Benchmark Report");
-		console.log("=========================");
+		console.info("📋 Final Benchmark Report");
+		console.info("=========================");
 
 		const passedTests = this.results.filter((r) => r.passed).length;
 		const totalTests = this.results.length;
 		const passRate = (passedTests / totalTests) * 100;
 
-		console.log(
+		console.info(
 			`📊 Test Summary: ${passedTests}/${totalTests} passed (${passRate.toFixed(1)}%)`,
 		);
-		console.log("");
+		console.info("");
 
 		// Performance categories
 		const categories = [
@@ -566,39 +566,39 @@ class AdvancedBenchmarkSuite {
 					categoryTests.reduce((sum, t) => sum + t.memoryDelta, 0) /
 					categoryTests.length;
 
-				console.log(`${category.toUpperCase()}:`);
-				console.log(`   Tests: ${passed}/${categoryTests.length} passed`);
-				console.log(`   Avg Duration: ${avgDuration.toFixed(2)}ms`);
-				console.log(`   Avg Memory: ${(avgMemory / 1024 / 1024).toFixed(2)}MB`);
-				console.log("");
+				console.info(`${category.toUpperCase()}:`);
+				console.info(`   Tests: ${passed}/${categoryTests.length} passed`);
+				console.info(`   Avg Duration: ${avgDuration.toFixed(2)}ms`);
+				console.info(`   Avg Memory: ${(avgMemory / 1024 / 1024).toFixed(2)}MB`);
+				console.info("");
 			}
 		}
 
 		// Recommendations
-		console.log("💡 Recommendations:");
+		console.info("💡 Recommendations:");
 
 		const failedTests = this.results.filter((r) => !r.passed);
 		if (failedTests.length > 0) {
-			console.log("   ⚠️  Failed tests detected:");
+			console.info("   ⚠️  Failed tests detected:");
 			failedTests.forEach((test) => {
-				console.log(`      - ${test.name}`);
+				console.info(`      - ${test.name}`);
 			});
 		} else {
-			console.log("   ✅ All tests passed! System is performing optimally.");
+			console.info("   ✅ All tests passed! System is performing optimally.");
 		}
 
 		const isAppleSilicon = this.platform === "darwin" && this.arch === "arm64";
 		if (isAppleSilicon) {
-			console.log("   🍎 Apple Silicon optimizations are fully utilized");
+			console.info("   🍎 Apple Silicon optimizations are fully utilized");
 		}
 
-		console.log(
+		console.info(
 			"   📈 Consider running benchmarks regularly to track performance",
 		);
-		console.log("   🔧 Monitor memory usage in production environments");
-		console.log("");
+		console.info("   🔧 Monitor memory usage in production environments");
+		console.info("");
 
-		console.log("🎉 Benchmark suite completed!");
+		console.info("🎉 Benchmark suite completed!");
 	}
 }
 

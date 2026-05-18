@@ -99,7 +99,7 @@ export class BunCascadeEngine {
     });
     
     // Verify connection is shared
-    console.log(`🔗 Cascade DB connected: ${this.db.filename}`);
+    console.info(`🔗 Cascade DB connected: ${this.db.filename}`);
     this.initializeSchema();
   }
   
@@ -140,7 +140,7 @@ export class BunCascadeEngine {
     `);
     
     this.isInitialized = true;
-    console.log('✅ Cascade schema initialized');
+    console.info('✅ Cascade schema initialized');
   }
   
   // Reinforcement: Proper cleanup on shutdown
@@ -151,7 +151,7 @@ export class BunCascadeEngine {
     this.db.exec('PRAGMA wal_checkpoint(TRUNCATE);');
     this.db.close();
     this.isInitialized = false;
-    console.log('🔒 Cascade DB shutdown complete');
+    console.info('🔒 Cascade DB shutdown complete');
   }
   
   // Shared database operations

@@ -479,7 +479,7 @@ function parseV137Args(): V137CliOptions {
 }
 
 function showV137Help(): void {
-	console.log(`
+	console.info(`
 🚀 v1.3.7 Profile-RSS Integration CLI
 
 USAGE:
@@ -532,12 +532,12 @@ async function main(): Promise<void> {
 	});
 
 	// Show integration info
-	console.log(integration.getIntegrationInfo());
-	console.log("");
+	console.info(integration.getIntegrationInfo());
+	console.info("");
 
 	// Generate and display report
 	const report = integration.exportData(options.format || "table");
-	console.log(report);
+	console.info(report);
 
 	// Cleanup
 	await bridge.shutdown();

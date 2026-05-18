@@ -402,10 +402,10 @@ describe("🌐 Bun HTTP Server Export Default Benchmarks", () => {
         return Math.max(...results); // Parallel time is the longest operation
       }, "Parallel server operations");
 
-      console.log(`📊 Concurrent operations performance:`);
-      console.log(`  Sequential: ${sequentialTime.toFixed(2)}ms`);
-      console.log(`  Parallel: ${parallelTime.toFixed(2)}ms`);
-      console.log(`  Speedup: ${(sequentialTime / parallelTime).toFixed(2)}x`);
+      console.info(`📊 Concurrent operations performance:`);
+      console.info(`  Sequential: ${sequentialTime.toFixed(2)}ms`);
+      console.info(`  Parallel: ${parallelTime.toFixed(2)}ms`);
+      console.info(`  Speedup: ${(sequentialTime / parallelTime).toFixed(2)}x`);
 
       expect(typeof sequentialTime).toBe("number");
       expect(typeof parallelTime).toBe("number");
@@ -440,11 +440,11 @@ describe("🌐 Bun HTTP Server Export Default Benchmarks", () => {
       expect(totalObjects).toBe(370); // 100 + 20 + 50 + 200
 
       if (beforeMemory > 0) {
-        console.log(`🧠 Memory usage during server operations:`);
-        console.log(`  Before: ${(beforeMemory / 1024).toFixed(2)}KB`);
-        console.log(`  After: ${(afterMemory / 1024).toFixed(2)}KB`);
-        console.log(`  Simulated allocation: ${(memoryAllocated / 1024).toFixed(2)}KB`);
-        console.log(`  Delta: ${((afterMemory - beforeMemory) / 1024).toFixed(2)}KB`);
+        console.info(`🧠 Memory usage during server operations:`);
+        console.info(`  Before: ${(beforeMemory / 1024).toFixed(2)}KB`);
+        console.info(`  After: ${(afterMemory / 1024).toFixed(2)}KB`);
+        console.info(`  Simulated allocation: ${(memoryAllocated / 1024).toFixed(2)}KB`);
+        console.info(`  Delta: ${((afterMemory - beforeMemory) / 1024).toFixed(2)}KB`);
       }
     });
 
@@ -561,7 +561,7 @@ describe("🌐 Bun HTTP Server Export Default Benchmarks", () => {
               ws.send(`Echo: ${message}`);
             },
             close(ws: any) {
-              console.log("WebSocket closed");
+              console.info("WebSocket closed");
             }
           },
           port: 3001,

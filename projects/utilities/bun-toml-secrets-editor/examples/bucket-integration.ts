@@ -26,7 +26,7 @@ class ConfigService {
 			configJson,
 			"application/json5",
 		);
-		console.log("✅ Configuration saved to bucket");
+		console.info("✅ Configuration saved to bucket");
 	}
 
 	@profile
@@ -107,10 +107,10 @@ class MediaService {
 
 // Usage examples
 async function demonstrateBucketIntegration() {
-	console.log("🗂️  Bucket Storage Integration Examples\n");
+	console.info("🗂️  Bucket Storage Integration Examples\n");
 
 	// Configuration management
-	console.log("1. Configuration Management:");
+	console.info("1. Configuration Management:");
 	const configService = new ConfigService("app-config-bucket");
 
 	const appConfig = {
@@ -130,20 +130,20 @@ async function demonstrateBucketIntegration() {
 
 	await configService.saveConfig(appConfig);
 	const loadedConfig = await configService.loadConfig();
-	console.log(
+	console.info(
 		`   Loaded config: ${loadedConfig.name} v${loadedConfig.version}`,
 	);
 
 	// Backup configuration
 	const backupKey = await configService.backupConfig();
-	console.log(`   Backup created: ${backupKey}`);
+	console.info(`   Backup created: ${backupKey}`);
 
 	// List backups
 	const backups = await configService.listBackups();
-	console.log(`   Total backups: ${backups.length}`);
+	console.info(`   Total backups: ${backups.length}`);
 
 	// Media storage
-	console.log("\n2. Media Storage:");
+	console.info("\n2. Media Storage:");
 	const mediaService = new MediaService("app-media-bucket");
 
 	// Upload sample media
@@ -153,29 +153,29 @@ async function demonstrateBucketIntegration() {
 		sampleImage,
 		"image/png",
 	);
-	console.log(`   Uploaded: ${uploadResult.url} (ETag: ${uploadResult.etag})`);
+	console.info(`   Uploaded: ${uploadResult.url} (ETag: ${uploadResult.etag})`);
 
 	// List media
 	const mediaFiles = await mediaService.listMedia();
-	console.log(`   Media files: ${mediaFiles.length}`);
+	console.info(`   Media files: ${mediaFiles.length}`);
 	mediaFiles.forEach((file) => {
-		console.log(`     - ${file.key} (${file.size} bytes)`);
+		console.info(`     - ${file.key} (${file.size} bytes)`);
 	});
 
 	// Demonstrate caching
-	console.log("\n3. Caching Performance:");
+	console.info("\n3. Caching Performance:");
 	configService.clearCache();
 
-	console.log("   First load (from bucket):");
+	console.info("   First load (from bucket):");
 	await configService.loadConfig();
 
-	console.log("   Second load (from cache):");
+	console.info("   Second load (from cache):");
 	await configService.loadConfig();
 
-	console.log("   Third load (from cache):");
+	console.info("   Third load (from cache):");
 	await configService.loadConfig();
 
-	console.log("\n✅ Bucket integration examples completed!");
+	console.info("\n✅ Bucket integration examples completed!");
 }
 
 // Export for use in other files

@@ -56,7 +56,7 @@ export class BunXIntegration {
   async execute(options: BunXOptions): Promise<{ exitCode: number; output?: string }> {
     const { package: pkgName, version, args = [] } = options;
 
-    console.log(styled(`🚀 Executing ${pkgName}${version ? `@${version}` : ''}`, 'accent'));
+    console.info(styled(`🚀 Executing ${pkgName}${version ? `@${version}` : ''}`, 'accent'));
 
     try {
       // Resolve version
@@ -66,7 +66,7 @@ export class BunXIntegration {
         return { exitCode: 1 };
       }
 
-      console.log(styled(`📦 Resolved to ${pkgName}@${resolvedVersion}`, 'success'));
+      console.info(styled(`📦 Resolved to ${pkgName}@${resolvedVersion}`, 'success'));
 
       // Check cache
       let cached = await this.getCachedPackage(pkgName, resolvedVersion);
@@ -202,7 +202,7 @@ export class BunXIntegration {
 
       // Download tarball
       const tarballUrl = versionData.dist.tarball;
-      console.log(styled(`📥 Downloading from ${tarballUrl}`, 'info'));
+      console.info(styled(`📥 Downloading from ${tarballUrl}`, 'info'));
 
       const tarballResponse = await fetch(tarballUrl, {
         headers: credentials?.token ? { Authorization: `Bearer ${credentials.token}` } : {},
@@ -237,7 +237,7 @@ export class BunXIntegration {
       // Save cache metadata
       await this.saveCacheMetadata(cached);
 
-      console.log(styled(`✅ Cached to ${cachePath}`, 'success'));
+      console.info(styled(`✅ Cached to ${cachePath}`, 'success'));
       return cached;
     } catch (error) {
       console.error(styled(`❌ Download failed: ${error.message}`, 'error'));
@@ -384,7 +384,7 @@ export class BunXIntegration {
         }
       }
 
-      console.log(styled(`🧹 Cleaned ${cleaned} old cache entries`, 'success'));
+      console.info(styled(`🧹 Cleaned ${cleaned} old cache entries`, 'success'));
       return cleaned;
     } catch (error) {
       console.error(styled(`❌ Clean failed: ${error.message}`, 'error'));
@@ -420,8 +420,8 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
   const command = args[0];
 
-  console.log(styled('🚀 bun x Registry Integration', 'accent'));
-  console.log(styled('=============================', 'accent'));
+  console.info(styled('🚀 bun x Registry Integration', 'accent'));
+  console.info(styled('=============================', 'accent'));
 
   switch (command) {
     case 'run': {
@@ -453,24 +453,24 @@ if (import.meta.main) {
       }
 
       const versions = await bunx.getPackageVersions(pkgSpec);
-      console.log(styled(`\n📦 ${pkgSpec} versions:`, 'info'));
-      versions.slice(0, 10).forEach(v => console.log(styled(`  • ${v}`, 'muted')));
+      console.info(styled(`\n📦 ${pkgSpec} versions:`, 'info'));
+      versions.slice(0, 10).forEach(v => console.info(styled(`  • ${v}`, 'muted')));
 
       if (range) {
         const resolved = await bunx.resolveVersion(pkgSpec, range);
-        console.log(styled(`\n✅ Resolved ${range} → ${resolved}`, 'success'));
+        console.info(styled(`\n✅ Resolved ${range} → ${resolved}`, 'success'));
       }
       break;
     }
 
     case 'cache': {
       const packages = await bunx.listCache();
-      console.log(styled(`\n📦 Cached Packages (${packages.length}):`, 'info'));
+      console.info(styled(`\n📦 Cached Packages (${packages.length}):`, 'info'));
 
       for (const pkg of packages) {
         const size = (pkg.size / 1024 / 1024).toFixed(2);
         const lastUsed = new Date(pkg.lastUsed).toLocaleDateString();
-        console.log(
+        console.info(
           styled(`  • ${pkg.name}@${pkg.version} (${size} MB) - Last used: ${lastUsed}`, 'muted')
         );
       }
@@ -480,15 +480,15 @@ if (import.meta.main) {
     case 'clean': {
       const days = parseInt(args[1] || '30');
       const cleaned = await bunx.cleanCache(days);
-      console.log(styled(`\n✅ Cleaned ${cleaned} packages older than ${days} days`, 'success'));
+      console.info(styled(`\n✅ Cleaned ${cleaned} packages older than ${days} days`, 'success'));
       break;
     }
 
     default:
-      console.log(styled('\nCommands:', 'info'));
-      console.log(styled('  run <pkg>[@v] [args]  Execute a package', 'muted'));
-      console.log(styled('  resolve <pkg> [range] Resolve version', 'muted'));
-      console.log(styled('  cache                 List cached packages', 'muted'));
-      console.log(styled('  clean [days]          Clean old cache', 'muted'));
+      console.info(styled('\nCommands:', 'info'));
+      console.info(styled('  run <pkg>[@v] [args]  Execute a package', 'muted'));
+      console.info(styled('  resolve <pkg> [range] Resolve version', 'muted'));
+      console.info(styled('  cache                 List cached packages', 'muted'));
+      console.info(styled('  clean [days]          Clean old cache', 'muted'));
   }
 }

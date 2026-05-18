@@ -61,7 +61,7 @@ async function checkChangelog(
 			.trim();
 
 		if (latestCommit && latestCommit !== changelogLastHash) {
-			console.log(`📋 New changelog entries detected (${latestCommit})`);
+			console.info(`📋 New changelog entries detected (${latestCommit})`);
 			await postChangelog({
 				limit: config.limit,
 				topicId: config.topicId,
@@ -92,7 +92,7 @@ async function checkRSSFeed(config: MonitorConfig["rss"]): Promise<void> {
 		const latestPubDate = latestPubDateMatch ? latestPubDateMatch[1] : null;
 
 		if (latestPubDate && latestPubDate !== rssLastPubDate) {
-			console.log(`📢 New RSS feed items detected (${latestPubDate})`);
+			console.info(`📢 New RSS feed items detected (${latestPubDate})`);
 			await postRSSFeed({
 				limit: config.limit,
 				topicId: config.topicId,
@@ -111,11 +111,11 @@ async function checkRSSFeed(config: MonitorConfig["rss"]): Promise<void> {
 export async function startMonitor(
 	config: MonitorConfig = DEFAULT_CONFIG,
 ): Promise<void> {
-	console.log("🚀 Starting Feed Monitor Service\n");
-	console.log(
+	console.info("🚀 Starting Feed Monitor Service\n");
+	console.info(
 		`Changelog: ${config.changelog.enabled ? "✅" : "❌"} (every ${config.changelog.intervalMinutes}min)`,
 	);
-	console.log(
+	console.info(
 		`RSS Feed: ${config.rss.enabled ? "✅" : "❌"} (every ${config.rss.intervalMinutes}min)\n`,
 	);
 
@@ -143,7 +143,7 @@ export async function startMonitor(
 		);
 	}
 
-	console.log("✅ Monitor service started. Press Ctrl+C to stop.\n");
+	console.info("✅ Monitor service started. Press Ctrl+C to stop.\n");
 }
 
 // CLI entry point
@@ -172,7 +172,7 @@ if (import.meta.main) {
 			process.exit(1);
 		});
 	} else {
-		console.log(`
+		console.info(`
 📡 Feed Monitor Service
 
 USAGE:

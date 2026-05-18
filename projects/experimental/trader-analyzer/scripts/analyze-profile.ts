@@ -239,24 +239,24 @@ export class ProfileAnalyzer {
     };
 
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`📊 Analysis report saved to: ${reportPath}`);
+    console.info(`📊 Analysis report saved to: ${reportPath}`);
 
     // Print summary
-    console.log('\n🔥 Performance Hotspots:');
+    console.info('\n🔥 Performance Hotspots:');
     analysis.hotspots.forEach((hotspot, i) => {
-      console.log(
+      console.info(
         `  ${i + 1}. ${hotspot.function}: ${hotspot.timeMs.toFixed(2)}ms`,
       );
     });
 
-    console.log('\n🏗️  Layer Performance:');
+    console.info('\n🏗️  Layer Performance:');
     Object.entries(analysis.layerPerformance).forEach(([layer, time]) => {
-      console.log(`  ${layer}: ${time.toFixed(2)}ms`);
+      console.info(`  ${layer}: ${time.toFixed(2)}ms`);
     });
 
-    console.log('\n💡 Recommendations:');
+    console.info('\n💡 Recommendations:');
     analysis.recommendations.forEach((rec, i) => {
-      console.log(`  ${i + 1}. ${rec}`);
+      console.info(`  ${i + 1}. ${rec}`);
     });
   }
 }

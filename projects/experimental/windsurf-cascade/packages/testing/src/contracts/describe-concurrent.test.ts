@@ -8,7 +8,7 @@ describe.concurrent("API Server Tests", () => {
 
     beforeAll(async () => {
         // Setup for API server tests (runs once per describe block)
-        console.log("🚀 Setting up API server test environment...");
+        console.info("🚀 Setting up API server test environment...");
         await new Promise(resolve => setTimeout(resolve, 50));
     });
 
@@ -46,7 +46,7 @@ describe.concurrent("API Server Tests", () => {
     });
 
     afterAll(() => {
-        console.log("🧹 Cleaning up API server test environment...");
+        console.info("🧹 Cleaning up API server test environment...");
     });
 });
 
@@ -54,7 +54,7 @@ describe.concurrent("API Server Tests", () => {
 describe.concurrent("Database Tests", () => {
 
     beforeAll(async () => {
-        console.log("🗄️ Setting up database test environment...");
+        console.info("🗄️ Setting up database test environment...");
         await new Promise(resolve => setTimeout(resolve, 30));
     });
 
@@ -89,7 +89,7 @@ describe.concurrent("Database Tests", () => {
     });
 
     afterAll(() => {
-        console.log("🧹 Cleaning up database test environment...");
+        console.info("🧹 Cleaning up database test environment...");
     });
 });
 
@@ -162,7 +162,7 @@ describe.concurrent("Performance Tests", () => {
 
 // Serial test - runs after all concurrent describe blocks complete
 test("serial validation test", () => {
-    console.log("📋 Running serial validation after concurrent tests...");
+    console.info("📋 Running serial validation after concurrent tests...");
 
     // Validate that all concurrent tests completed successfully
     const testResults = {

@@ -138,21 +138,21 @@ export class CashAppEmailManager {
         })
       });
 
-      console.log(`📧 Created custom email: ${email}`);
+      console.info(`📧 Created custom email: ${email}`);
       return email;
     } catch {
-      console.log("⏳ Device warm-up simulation complete");
+      console.info("⏳ Device warm-up simulation complete");
       return email;
     }
   }
 
   // Create UseSMS email (fallback)
   async createUseSMSEmail(): Promise<{ email: string; password: string }> {
-    console.log("📧 Creating UseSMS email for CashApp...");
+    console.info("📧 Creating UseSMS email for CashApp...");
 
     try {
       const emailAccount = await USESMS_EMAIL_CONFIG.create();
-      console.log(`   ✅ UseSMS email created: ${emailAccount.email}`);
+      console.info(`   ✅ UseSMS email created: ${emailAccount.email}`);
       return emailAccount;
     } catch (err) {
       console.error(
@@ -164,7 +164,7 @@ export class CashAppEmailManager {
 
   // Wait for CashApp email verification
   async waitForVerificationEmail(email: string, timeout: number = 120): Promise<string | null> {
-    console.log(`📧 Waiting for CashApp verification email to: ${email}`);
+    console.info(`📧 Waiting for CashApp verification email to: ${email}`);
 
     const startTime = Date.now();
     while (Date.now() - startTime < timeout * 1000) {
@@ -172,18 +172,18 @@ export class CashAppEmailManager {
         // Poll via IMAP (simplified for demo)
         const verificationLink = await this.pollInboxForVerification(email);
         if (verificationLink) {
-          console.log(`   ✅ Verification link found: ${verificationLink.substring(0, 50)}...`);
+          console.info(`   ✅ Verification link found: ${verificationLink.substring(0, 50)}...`);
           return verificationLink;
         }
 
         // Wait before next poll
         await new Promise((resolve) => setTimeout(resolve, 5000));
       } catch {
-        console.log(`   ⏳ Polling... (${Math.floor((Date.now() - startTime) / 1000)}s elapsed)`);
+        console.info(`   ⏳ Polling... (${Math.floor((Date.now() - startTime) / 1000)}s elapsed)`);
       }
     }
 
-    console.log("   ❌ Timeout waiting for verification email");
+    console.info("   ❌ Timeout waiting for verification email");
     return null;
   }
 
@@ -196,7 +196,7 @@ export class CashAppEmailManager {
 
     // Simulate 30% chance of finding email on each poll
     if (Math.random() < 0.3) {
-      console.log(`Polling for ${email}...`);
+      console.info(`Polling for ${email}...`);
       return mockVerificationLink;
     }
 
@@ -414,7 +414,7 @@ export class CashAppDuoPlusDevice {
 
   // CRITICAL: Warm up device before CashApp operations
   private async warmUpDevice(): Promise<void> {
-    console.log(`🔥 Warming up CashApp device ${this.deviceId}`);
+    console.info(`🔥 Warming up CashApp device ${this.deviceId}`);
 
     // Simulate device warm-up activities
     const warmUpActivities = [
@@ -424,13 +424,13 @@ export class CashAppDuoPlusDevice {
     ];
 
     for (const activity of warmUpActivities) {
-      console.log(
+      console.info(
         `   ${activity.type}: ${activity.app || activity.sites?.join(", ")} (${activity.duration}s)`
       );
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate activity
     }
 
-    console.log("   ✅ Device warm-up complete - wait 24h before account creation");
+    console.info("   ✅ Device warm-up complete - wait 24h before account creation");
   }
 
   // Create CashApp account with enhanced verification and email strategy
@@ -449,7 +449,7 @@ export class CashAppDuoPlusDevice {
     try {
       const accountIdentifier =
         accountId || `ca_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-      console.log(`💰 Creating CashApp account: ${cashtag} (ID: ${accountIdentifier})`);
+      console.info(`💰 Creating CashApp account: ${cashtag} (ID: ${accountIdentifier})`);
 
       // 1. Create email account using selected provider strategy
       const emailResult = await this.createEmailAccount(accountIdentifier, emailProvider);
@@ -474,7 +474,7 @@ export class CashAppDuoPlusDevice {
       }
 
       // 5. Wait for CashApp to process (anti-bot delay)
-      console.log("   ⏳ Waiting for CashApp processing...");
+      console.info("   ⏳ Waiting for CashApp processing...");
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
       const fullAccountId = `${this.deviceId}-${cashtag}-${accountIdentifier}`;
@@ -494,7 +494,7 @@ export class CashAppDuoPlusDevice {
 
   // Simulate CashApp sign-up process
   private async simulateCashAppSignup(cashtag: string): Promise<void> {
-    console.log(`   📱 Starting CashApp sign-up for ${cashtag}`);
+    console.info(`   📱 Starting CashApp sign-up for ${cashtag}`);
 
     const steps = [
       "Launch CashApp",
@@ -506,7 +506,7 @@ export class CashAppDuoPlusDevice {
     ];
 
     for (const step of steps) {
-      console.log(`      ${step}...`);
+      console.info(`      ${step}...`);
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
   }
@@ -516,26 +516,26 @@ export class CashAppDuoPlusDevice {
     accountId: string,
     provider: "custom" | "usesms" | "gmail" = "custom"
   ): Promise<{ email: string; password?: string }> {
-    console.log(`📧 Creating ${provider} email account for CashApp (Account ID: ${accountId})...`);
+    console.info(`📧 Creating ${provider} email account for CashApp (Account ID: ${accountId})...`);
 
     try {
       switch (provider) {
         case "custom":
           // Best for scale: Custom domain with forwarding
           this.customEmail = await this.emailManager.createCustomEmail(accountId);
-          console.log(`   ✅ Custom domain email created: ${this.customEmail}`);
+          console.info(`   ✅ Custom domain email created: ${this.customEmail}`);
           return { email: this.customEmail };
 
         case "usesms":
           // Quick start: UseSMS service
           this.emailAccount = await this.emailManager.createUseSMSEmail();
-          console.log(`   ✅ UseSMS email created: ${this.emailAccount.email}`);
+          console.info(`   ✅ UseSMS email created: ${this.emailAccount.email}`);
           return this.emailAccount;
 
         case "gmail": {
           // Premium: Gmail workspace with plus addressing
           const gmailEmail = GMAIL_WORKSPACE_CONFIG.generateEmail(accountId);
-          console.log(`   ✅ Gmail plus address generated: ${gmailEmail}`);
+          console.info(`   ✅ Gmail plus address generated: ${gmailEmail}`);
           return { email: gmailEmail };
         }
 
@@ -552,24 +552,24 @@ export class CashAppDuoPlusDevice {
 
   // Handle email verification for CashApp with proper link extraction
   async handleEmailVerification(email: string): Promise<string | null> {
-    console.log(`📧 Checking email for CashApp verification: ${email}`);
+    console.info(`📧 Checking email for CashApp verification: ${email}`);
 
     try {
       // Wait for CashApp verification email
       const verificationLink = await this.emailManager.waitForVerificationEmail(email, 120);
 
       if (verificationLink) {
-        console.log("   ✅ Email verification link received");
+        console.info("   ✅ Email verification link received");
 
         // In production, you would automatically click the link
         // For demo, we'll extract the token
         const token = this.extractTokenFromLink(verificationLink);
-        console.log(`   🔑 Verification token: ${token}`);
+        console.info(`   🔑 Verification token: ${token}`);
 
         return token;
       }
 
-      console.log("   ⏳ No verification email received yet...");
+      console.info("   ⏳ No verification email received yet...");
       return null;
     } catch (err) {
       console.error(
@@ -587,26 +587,26 @@ export class CashAppDuoPlusDevice {
 
   // Enter phone verification code in CashApp
   async enterPhoneCode(code: string): Promise<void> {
-    console.log(`📱 Entering phone code: ${code}`);
+    console.info(`📱 Entering phone code: ${code}`);
     // In production, this would automate the CashApp UI
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("✅ Phone code entered successfully");
+    console.info("✅ Phone code entered successfully");
   }
 
   // Enter email in CashApp signup
   async enterEmail(email: string): Promise<void> {
-    console.log(`📧 Entering email: ${email}`);
+    console.info(`📧 Entering email: ${email}`);
     // In production, this would automate the CashApp UI
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("✅ Email entered successfully");
+    console.info("✅ Email entered successfully");
   }
 
   // Open verification link in device browser
   async openVerificationLink(link: string): Promise<void> {
-    console.log(`🔗 Opening verification link: ${link.substring(0, 50)}...`);
+    console.info(`🔗 Opening verification link: ${link.substring(0, 50)}...`);
     // In production, this would open the link in the device browser
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log("✅ Verification link opened successfully");
+    console.info("✅ Verification link opened successfully");
   }
 
   // Complete CashApp profile setup
@@ -615,18 +615,18 @@ export class CashAppDuoPlusDevice {
     displayName: string;
     password: string;
   }): Promise<void> {
-    console.log("👤 Completing profile setup:");
-    console.log(`   Cashtag: ${profileData.cashtag}`);
-    console.log(`   Display Name: ${profileData.displayName}`);
+    console.info("👤 Completing profile setup:");
+    console.info(`   Cashtag: ${profileData.cashtag}`);
+    console.info(`   Display Name: ${profileData.displayName}`);
 
     // In production, this would automate the CashApp profile setup
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log("✅ Profile setup completed");
+    console.info("✅ Profile setup completed");
   }
 
   // Set up two-factor authentication
   async setupTwoFactorAuth(): Promise<string[]> {
-    console.log("🔐 Setting up 2FA...");
+    console.info("🔐 Setting up 2FA...");
     // In production, this would automate 2FA setup
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
@@ -639,7 +639,7 @@ export class CashAppDuoPlusDevice {
       `code5-${Date.now()}`
     ];
 
-    console.log(`✅ 2FA setup completed with ${backupCodes.length} backup codes`);
+    console.info(`✅ 2FA setup completed with ${backupCodes.length} backup codes`);
     return backupCodes;
   }
 
@@ -651,7 +651,7 @@ export class CashAppDuoPlusDevice {
     issues: string[];
     recommendations: string[];
   }> {
-    console.log("🔍 Checking account health...");
+    console.info("🔍 Checking account health...");
 
     // Mock health check - in production, this would check actual account status
     const health = {
@@ -662,7 +662,7 @@ export class CashAppDuoPlusDevice {
       recommendations: [] as string[]
     };
 
-    console.log(`✅ Account health: healthy=${health.healthy}, risk=${health.riskScore}`);
+    console.info(`✅ Account health: healthy=${health.healthy}, risk=${health.riskScore}`);
     return health;
   }
 
@@ -675,7 +675,7 @@ export class CashAppDuoPlusDevice {
     transactionId?: string;
     error?: string;
   }> {
-    console.log(`💸 Executing transaction: $${amount} to ${toCashtag}`);
+    console.info(`💸 Executing transaction: $${amount} to ${toCashtag}`);
 
     try {
       // Mock transaction - in production, this would automate CashApp transactions
@@ -683,7 +683,7 @@ export class CashAppDuoPlusDevice {
 
       const transactionId = `txn_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
 
-      console.log(`✅ Transaction executed successfully: ${transactionId}`);
+      console.info(`✅ Transaction executed successfully: ${transactionId}`);
       return { success: true, transactionId };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
@@ -697,40 +697,40 @@ export class CashAppDuoPlusDevice {
     accountId: string,
     emailProvider: "custom" | "usesms" | "gmail" = "custom"
   ): Promise<string | null> {
-    console.log(`🔐 Starting CashApp verification with ${emailProvider} email...`);
+    console.info(`🔐 Starting CashApp verification with ${emailProvider} email...`);
 
     // Create email account based on provider strategy
     const emailResult = await this.createEmailAccount(accountId, emailProvider);
     const email = emailResult.email;
 
     // Try SMS verification first (primary method)
-    console.log("   📱 Trying SMS verification first...");
+    console.info("   📱 Trying SMS verification first...");
     const smsCode = await this.handleSmsVerification();
     if (smsCode) {
-      console.log("   ✅ SMS verification successful");
+      console.info("   ✅ SMS verification successful");
       return smsCode;
     }
 
     // Fallback to email verification
-    console.log(`   📧 SMS failed, trying ${emailProvider} email verification...`);
+    console.info(`   📧 SMS failed, trying ${emailProvider} email verification...`);
     const emailToken = await this.handleEmailVerification(email);
     if (emailToken) {
-      console.log("   ✅ Email verification successful");
+      console.info("   ✅ Email verification successful");
       return emailToken;
     }
 
-    console.log("   ❌ Both SMS and email verification failed");
+    console.info("   ❌ Both SMS and email verification failed");
     return null;
   }
 
   async handleSmsVerification(): Promise<string | null> {
-    console.log("📨 Waiting for CashApp SMS verification...");
+    console.info("📨 Waiting for CashApp SMS verification...");
 
     // DuoPlus intercepts SMS automatically
     const code = await this.extractSmsWithPatterns();
 
     if (code) {
-      console.log(`   ✅ SMS verification code received: ${code}`);
+      console.info(`   ✅ SMS verification code received: ${code}`);
       return code;
     }
 
@@ -741,7 +741,7 @@ export class CashAppDuoPlusDevice {
 
   // Manual SMS extraction fallback
   private async extractSmsManually(): Promise<string | null> {
-    console.log("   📋 Manual SMS extraction fallback...");
+    console.info("   📋 Manual SMS extraction fallback...");
     // Simulate manual extraction
     await new Promise((resolve) => setTimeout(resolve, 1000));
     return Math.floor(100000 + Math.random() * 900000).toString();
@@ -765,7 +765,7 @@ export class CashAppDuoPlusDevice {
     for (const pattern of patterns) {
       const match = `Cash App: ${code} is your sign-in code`.match(pattern);
       if (match && match[1]) {
-        console.log(`   📋 Pattern matched: ${pattern.source}`);
+        console.info(`   📋 Pattern matched: ${pattern.source}`);
         return match[1];
       }
     }
@@ -775,7 +775,7 @@ export class CashAppDuoPlusDevice {
 
   // Validate proxy location matches expected (CashApp requirement) - used in device creation
   private async __validateProxyLocation(): Promise<boolean> {
-    console.log("🌍 Validating proxy location for CashApp compliance...");
+    console.info("🌍 Validating proxy location for CashApp compliance...");
 
     // Simulate IP quality check
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -798,8 +798,8 @@ export class CashAppDuoPlusDevice {
       !proxyChecks.isBot &&
       proxyChecks.hasLocation;
 
-    console.log(`   ✅ Proxy validation: ${isValid ? "PASSED" : "FAILED"}`);
-    console.log(`   📊 Fraud Score: ${proxyChecks.fraudScore}/30`);
+    console.info(`   ✅ Proxy validation: ${isValid ? "PASSED" : "FAILED"}`);
+    console.info(`   📊 Fraud Score: ${proxyChecks.fraudScore}/30`);
 
     return isValid;
   }
@@ -811,12 +811,12 @@ export class CashAppDuoPlusDevice {
         ? CASHAPP_CONFIG.DEVICE_LIMITS.cooldown.betweenAccounts
         : CASHAPP_CONFIG.DEVICE_LIMITS.cooldown.betweenTransactions;
 
-    console.log(`⏳ Applying CashApp cooldown: ${cooldownTime}s (${operation})`);
+    console.info(`⏳ Applying CashApp cooldown: ${cooldownTime}s (${operation})`);
 
     // Simulate cooldown (in real implementation, this would be actual waiting)
     await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulated for demo
 
-    console.log("   ✅ Cooldown complete");
+    console.info("   ✅ Cooldown complete");
   }
 
   // Get CashApp scaling statistics
@@ -832,13 +832,13 @@ export class CashAppDuoPlusDevice {
       error?: string;
     }>
   > {
-    console.log(`💰 Provisioning ${count} CashApp devices with enhanced anti-fraud measures...`);
+    console.info(`💰 Provisioning ${count} CashApp devices with enhanced anti-fraud measures...`);
     const results = [];
     const devices: CashAppDuoPlusDevice[] = [];
 
     // Create devices (parallel, but limited to avoid rate limits)
     const batchSize = Math.min(count, 5); // CashApp rate limit: 5 devices max
-    console.log(`   Creating ${batchSize} devices (CashApp rate limit enforced)`);
+    console.info(`   Creating ${batchSize} devices (CashApp rate limit enforced)`);
 
     for (let i = 0; i < batchSize; i++) {
       const device = new CashAppDuoPlusDevice();
@@ -855,17 +855,17 @@ export class CashAppDuoPlusDevice {
 
       // CashApp rate limit: 1 device per 10 minutes max
       if (i < batchSize - 1) {
-        console.log("   ⏳ CashApp rate limit: waiting 10 minutes before next device...");
+        console.info("   ⏳ CashApp rate limit: waiting 10 minutes before next device...");
         await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulated for demo
       }
     }
 
     // Create accounts sequentially (CashApp bans parallel creation)
-    console.log("   Creating accounts sequentially (CashApp requires sequential creation)...");
+    console.info("   Creating accounts sequentially (CashApp requires sequential creation)...");
 
     for (let i = 0; i < devices.length; i++) {
       if (results[i].status === "success" && accountData[i]) {
-        console.log(`   Creating account ${i + 1}/${devices.length}: ${accountData[i].cashtag}`);
+        console.info(`   Creating account ${i + 1}/${devices.length}: ${accountData[i].cashtag}`);
 
         const accountResult = await devices[i].createAccount(
           accountData[i].email,
@@ -877,13 +877,13 @@ export class CashAppDuoPlusDevice {
           results[i].status = "failed";
           results[i].error = accountResult.error;
         } else {
-          console.log(`   ✅ Account created: ${accountData[i].cashtag}`);
+          console.info(`   ✅ Account created: ${accountData[i].cashtag}`);
 
           // Monitor account health after creation
           const health = await devices[i].getAccountHealth();
-          console.log(`   🏥 Account Health: ${health.healthy ? "HEALTHY" : "NEEDS ATTENTION"}`);
+          console.info(`   🏥 Account Health: ${health.healthy ? "HEALTHY" : "NEEDS ATTENTION"}`);
           if (!health.healthy) {
-            console.log(`   ⚠️ Recommendations: ${health.recommendations.join(", ")}`);
+            console.info(`   ⚠️ Recommendations: ${health.recommendations.join(", ")}`);
           }
         }
       }
@@ -967,13 +967,13 @@ export class CashAppScalingManager {
       error?: string;
     }>
   > {
-    console.log(`💰 Provisioning ${count} CashApp devices with enhanced anti-fraud measures...`);
+    console.info(`💰 Provisioning ${count} CashApp devices with enhanced anti-fraud measures...`);
     const results = [];
     const devices: CashAppDuoPlusDevice[] = [];
 
     // Create devices (limited to avoid rate limits)
     const batchSize = Math.min(count, 5);
-    console.log(`   Creating ${batchSize} devices (CashApp rate limit enforced)`);
+    console.info(`   Creating ${batchSize} devices (CashApp rate limit enforced)`);
 
     for (let i = 0; i < batchSize; i++) {
       const device = new CashAppDuoPlusDevice();
@@ -990,17 +990,17 @@ export class CashAppScalingManager {
 
       // CashApp rate limit: 1 device per 10 minutes max
       if (i < batchSize - 1) {
-        console.log("   ⏳ CashApp rate limit: waiting 10 minutes before next device...");
+        console.info("   ⏳ CashApp rate limit: waiting 10 minutes before next device...");
         await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulated for demo
       }
     }
 
     // Create accounts sequentially (CashApp bans parallel creation)
-    console.log("   Creating accounts sequentially (CashApp requires sequential creation)...");
+    console.info("   Creating accounts sequentially (CashApp requires sequential creation)...");
 
     for (let i = 0; i < devices.length; i++) {
       if (results[i].status === "success" && accountData[i]) {
-        console.log(`   Creating account ${i + 1}/${devices.length}: ${accountData[i].cashtag}`);
+        console.info(`   Creating account ${i + 1}/${devices.length}: ${accountData[i].cashtag}`);
 
         const accountResult = await devices[i].createAccount(
           accountData[i].email,
@@ -1012,7 +1012,7 @@ export class CashAppScalingManager {
           results[i].status = "failed";
           results[i].error = accountResult.error;
         } else {
-          console.log(`   ✅ Account created: ${accountData[i].cashtag}`);
+          console.info(`   ✅ Account created: ${accountData[i].cashtag}`);
         }
       }
     }
@@ -1061,8 +1061,8 @@ export class CashAppScalingManager {
 }
 // Usage example
 export async function demonstrateCashAppScaling(): Promise<void> {
-  console.log("💰 CashApp DuoPlus Scaling Strategy Demo");
-  console.log("=".repeat(50));
+  console.info("💰 CashApp DuoPlus Scaling Strategy Demo");
+  console.info("=".repeat(50));
 
   const scalingManager = new CashAppScalingManager();
 
@@ -1078,8 +1078,8 @@ export async function demonstrateCashAppScaling(): Promise<void> {
   ];
 
   for (const strategy of emailStrategies) {
-    console.log(`\n📧 Testing ${strategy.name} Strategy: ${strategy.description}`);
-    console.log("-".repeat(50));
+    console.info(`\n📧 Testing ${strategy.name} Strategy: ${strategy.description}`);
+    console.info("-".repeat(50));
 
     try {
       // Create device with specific email strategy
@@ -1095,11 +1095,11 @@ export async function demonstrateCashAppScaling(): Promise<void> {
       );
 
       if (accountResult.success) {
-        console.log(`✅ ${strategy.name} strategy successful!`);
-        console.log(`   Account ID: ${accountResult.accountId}`);
-        console.log(`   Email: ${accountResult.email}`);
+        console.info(`✅ ${strategy.name} strategy successful!`);
+        console.info(`   Account ID: ${accountResult.accountId}`);
+        console.info(`   Email: ${accountResult.email}`);
       } else {
-        console.log(`❌ ${strategy.name} strategy failed: ${accountResult.error}`);
+        console.info(`❌ ${strategy.name} strategy failed: ${accountResult.error}`);
       }
     } catch (err) {
       console.error("❌ Integrated CashApp scaling failed:", err);
@@ -1107,21 +1107,21 @@ export async function demonstrateCashAppScaling(): Promise<void> {
   }
 
   // Show cost comparison
-  console.log("\n💰 Cost Comparison for 100 CashApp Accounts:");
-  console.log("-".repeat(50));
-  console.log("Custom Domain:   $3/month  (unlimited addresses)");
-  console.log("UseSMS:          $20/month ($0.20 x 100 accounts)");
-  console.log("Gmail Workspace: $600/month ($6 x 100 accounts)");
-  console.log("\n💡 Recommendation: Use Custom Domain for scale!");
+  console.info("\n💰 Cost Comparison for 100 CashApp Accounts:");
+  console.info("-".repeat(50));
+  console.info("Custom Domain:   $3/month  (unlimited addresses)");
+  console.info("UseSMS:          $20/month ($0.20 x 100 accounts)");
+  console.info("Gmail Workspace: $600/month ($6 x 100 accounts)");
+  console.info("\n💡 Recommendation: Use Custom Domain for scale!");
 
   // Show scaling statistics
   const stats = scalingManager.getScalingStats();
-  console.log("\n📊 Scaling Statistics:");
-  console.log("-".repeat(30));
-  console.log(`Total Devices: ${stats.totalDevices}`);
-  console.log(`Active Devices: ${stats.activeDevices}`);
-  console.log(`Total Accounts: ${stats.totalAccounts}`);
-  console.log(`Success Rate: ${stats.successRate}%`);
+  console.info("\n📊 Scaling Statistics:");
+  console.info("-".repeat(30));
+  console.info(`Total Devices: ${stats.totalDevices}`);
+  console.info(`Active Devices: ${stats.activeDevices}`);
+  console.info(`Total Accounts: ${stats.totalAccounts}`);
+  console.info(`Success Rate: ${stats.successRate}%`);
 }
 
 // Export pipeline classes for complete workflow

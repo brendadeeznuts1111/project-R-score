@@ -115,26 +115,26 @@ class FeatureStatusClient {
 
 // Display functions
 function displaySystemStatus(status: any) {
-  console.log(colorize('\n🏗️ SYSTEM STATUS', 'cyan'));
-  console.log('═'.repeat(50));
+  console.info(colorize('\n🏗️ SYSTEM STATUS', 'cyan'));
+  console.info('═'.repeat(50));
   
-  console.log(`Environment: ${colorize(status.environment, 'yellow')}`);
-  console.log(`Version: ${colorize(status.version, 'blue')}`);
-  console.log(`Uptime: ${colorize(`${Math.floor(status.uptime / 3600)}h ${Math.floor((status.uptime % 3600) / 60)}m`, 'green')}`);
-  console.log(`Overall Health: ${formatHealth(status.overallHealth)} ${colorize(status.overallHealth.toUpperCase(), getStatusColor(status.overallHealth))}`);
+  console.info(`Environment: ${colorize(status.environment, 'yellow')}`);
+  console.info(`Version: ${colorize(status.version, 'blue')}`);
+  console.info(`Uptime: ${colorize(`${Math.floor(status.uptime / 3600)}h ${Math.floor((status.uptime % 3600) / 60)}m`, 'green')}`);
+  console.info(`Overall Health: ${formatHealth(status.overallHealth)} ${colorize(status.overallHealth.toUpperCase(), getStatusColor(status.overallHealth))}`);
   
-  console.log(colorize('\n📊 FEATURE SUMMARY', 'cyan'));
-  console.log('─'.repeat(30));
-  console.log(`Total Features: ${colorize(status.totalFeatures.toString(), 'white')}`);
-  console.log(`Active: ${colorize(status.activeFeatures.toString(), 'green')}`);
-  console.log(`Inactive: ${colorize(status.inactiveFeatures.toString(), 'yellow')}`);
-  console.log(`Error: ${colorize(status.errorFeatures.toString(), 'red')}`);
-  console.log(`Maintenance: ${colorize(status.maintenanceFeatures.toString(), 'blue')}`);
+  console.info(colorize('\n📊 FEATURE SUMMARY', 'cyan'));
+  console.info('─'.repeat(30));
+  console.info(`Total Features: ${colorize(status.totalFeatures.toString(), 'white')}`);
+  console.info(`Active: ${colorize(status.activeFeatures.toString(), 'green')}`);
+  console.info(`Inactive: ${colorize(status.inactiveFeatures.toString(), 'yellow')}`);
+  console.info(`Error: ${colorize(status.errorFeatures.toString(), 'red')}`);
+  console.info(`Maintenance: ${colorize(status.maintenanceFeatures.toString(), 'blue')}`);
 }
 
 function displayFeatures(features: any, detailed: boolean = false) {
-  console.log(colorize('\n🔧 FEATURE REGISTRY', 'cyan'));
-  console.log('═'.repeat(80));
+  console.info(colorize('\n🔧 FEATURE REGISTRY', 'cyan'));
+  console.info('═'.repeat(80));
   
   // Group by category
   const grouped = features.features.reduce((acc: any, feature: any) => {
@@ -146,84 +146,84 @@ function displayFeatures(features: any, detailed: boolean = false) {
   }, {});
 
   Object.entries(grouped).forEach(([category, categoryFeatures]: [string, any]) => {
-    console.log(colorize(`\n${category.toUpperCase()} (${categoryFeatures.length})`, 'yellow'));
-    console.log('─'.repeat(40));
+    console.info(colorize(`\n${category.toUpperCase()} (${categoryFeatures.length})`, 'yellow'));
+    console.info('─'.repeat(40));
     
     categoryFeatures.forEach((feature: any) => {
       const statusIcon = feature.enabled ? '✓' : '✗';
       const statusColor = feature.enabled ? 'green' : 'red';
       
-      console.log(`${formatHealth(feature.health)} ${colorize(statusIcon, statusColor)} ${colorize(feature.name, 'white')}`);
-      console.log(`  ${colorize('ID:', 'gray')} ${feature.id}`);
-      console.log(`  ${colorize('Status:', 'gray')} ${colorize(feature.status, getStatusColor(feature.status))}`);
-      console.log(`  ${colorize('Version:', 'gray')} ${feature.version}`);
+      console.info(`${formatHealth(feature.health)} ${colorize(statusIcon, statusColor)} ${colorize(feature.name, 'white')}`);
+      console.info(`  ${colorize('ID:', 'gray')} ${feature.id}`);
+      console.info(`  ${colorize('Status:', 'gray')} ${colorize(feature.status, getStatusColor(feature.status))}`);
+      console.info(`  ${colorize('Version:', 'gray')} ${feature.version}`);
       
       if (detailed) {
-        console.log(`  ${colorize('Description:', 'gray')} ${feature.description}`);
+        console.info(`  ${colorize('Description:', 'gray')} ${feature.description}`);
         if (feature.endpoints && feature.endpoints.length > 0) {
-          console.log(`  ${colorize('Endpoints:', 'gray')} ${feature.endpoints.join(', ')}`);
+          console.info(`  ${colorize('Endpoints:', 'gray')} ${feature.endpoints.join(', ')}`);
         }
       }
-      console.log();
+      console.info();
     });
   });
 }
 
 function displayFeatureDetails(feature: any) {
-  console.log(colorize('\n🔍 FEATURE DETAILS', 'cyan'));
-  console.log('═'.repeat(50));
+  console.info(colorize('\n🔍 FEATURE DETAILS', 'cyan'));
+  console.info('═'.repeat(50));
   
-  console.log(`${colorize('Name:', 'yellow')} ${feature.name}`);
-  console.log(`${colorize('ID:', 'yellow')} ${feature.id}`);
-  console.log(`${colorize('Description:', 'yellow')} ${feature.description}`);
-  console.log(`${colorize('Category:', 'yellow')} ${feature.category}`);
-  console.log(`${colorize('Status:', 'yellow')} ${formatHealth(feature.health)} ${colorize(feature.status, getStatusColor(feature.status))}`);
-  console.log(`${colorize('Enabled:', 'yellow')} ${feature.enabled ? colorize('Yes', 'green') : colorize('No', 'red')}`);
-  console.log(`${colorize('Version:', 'yellow')} ${feature.version}`);
-  console.log(`${colorize('Deployment:', 'yellow')} ${feature.deploymentStatus}`);
-  console.log(`${colorize('Last Checked:', 'yellow')} ${new Date(feature.lastChecked).toLocaleString()}`);
+  console.info(`${colorize('Name:', 'yellow')} ${feature.name}`);
+  console.info(`${colorize('ID:', 'yellow')} ${feature.id}`);
+  console.info(`${colorize('Description:', 'yellow')} ${feature.description}`);
+  console.info(`${colorize('Category:', 'yellow')} ${feature.category}`);
+  console.info(`${colorize('Status:', 'yellow')} ${formatHealth(feature.health)} ${colorize(feature.status, getStatusColor(feature.status))}`);
+  console.info(`${colorize('Enabled:', 'yellow')} ${feature.enabled ? colorize('Yes', 'green') : colorize('No', 'red')}`);
+  console.info(`${colorize('Version:', 'yellow')} ${feature.version}`);
+  console.info(`${colorize('Deployment:', 'yellow')} ${feature.deploymentStatus}`);
+  console.info(`${colorize('Last Checked:', 'yellow')} ${new Date(feature.lastChecked).toLocaleString()}`);
   
   if (feature.dependencies && feature.dependencies.length > 0) {
-    console.log(`${colorize('Dependencies:', 'yellow')} ${feature.dependencies.join(', ')}`);
+    console.info(`${colorize('Dependencies:', 'yellow')} ${feature.dependencies.join(', ')}`);
   }
   
   if (feature.endpoints && feature.endpoints.length > 0) {
-    console.log(`${colorize('Endpoints:', 'yellow')}`);
+    console.info(`${colorize('Endpoints:', 'yellow')}`);
     feature.endpoints.forEach((endpoint: string) => {
-      console.log(`  • ${endpoint}`);
+      console.info(`  • ${endpoint}`);
     });
   }
   
   if (feature.metrics) {
-    console.log(colorize('\n📈 Metrics:', 'yellow'));
+    console.info(colorize('\n📈 Metrics:', 'yellow'));
     if (feature.metrics.performance !== undefined) {
-      console.log(`  Performance: ${colorize(`${feature.metrics.performance.toFixed(1)}%`, 'green')}`);
+      console.info(`  Performance: ${colorize(`${feature.metrics.performance.toFixed(1)}%`, 'green')}`);
     }
     if (feature.metrics.uptime !== undefined) {
-      console.log(`  Uptime: ${colorize(`${feature.metrics.uptime}%`, 'green')}`);
+      console.info(`  Uptime: ${colorize(`${feature.metrics.uptime}%`, 'green')}`);
     }
     if (feature.metrics.errorRate !== undefined) {
-      console.log(`  Error Rate: ${colorize(`${feature.metrics.errorRate.toFixed(2)}%`, feature.metrics.errorRate > 1 ? 'red' : 'green')}`);
+      console.info(`  Error Rate: ${colorize(`${feature.metrics.errorRate.toFixed(2)}%`, feature.metrics.errorRate > 1 ? 'red' : 'green')}`);
     }
     if (feature.metrics.lastError) {
-      console.log(`  Last Error: ${colorize(feature.metrics.lastError, 'red')}`);
+      console.info(`  Last Error: ${colorize(feature.metrics.lastError, 'red')}`);
     }
   }
 }
 
 function displayServices(services: any[]) {
-  console.log(colorize('\n🏃 SERVICE STATUS', 'cyan'));
-  console.log('═'.repeat(60));
+  console.info(colorize('\n🏃 SERVICE STATUS', 'cyan'));
+  console.info('═'.repeat(60));
   
   services.forEach(service => {
     const healthIcon = service.health === 'healthy' ? '●' : service.health === 'degraded' ? '◐' : '○';
     const healthColor = service.health === 'healthy' ? 'green' : service.health === 'degraded' ? 'yellow' : 'red';
     
-    console.log(`${colorize(healthIcon, healthColor)} ${colorize(service.name, 'white')} (${service.port})`);
-    console.log(`  Status: ${colorize(service.status, getStatusColor(service.status))}`);
-    console.log(`  Health: ${colorize(service.health, healthColor)}`);
-    console.log(`  Last Check: ${new Date(service.lastCheck).toLocaleString()}`);
-    console.log();
+    console.info(`${colorize(healthIcon, healthColor)} ${colorize(service.name, 'white')} (${service.port})`);
+    console.info(`  Status: ${colorize(service.status, getStatusColor(service.status))}`);
+    console.info(`  Health: ${colorize(service.health, healthColor)}`);
+    console.info(`  Last Check: ${new Date(service.lastCheck).toLocaleString()}`);
+    console.info();
   });
 }
 
@@ -256,7 +256,7 @@ async function cmdFeature(client: FeatureStatusClient, args: string[]) {
   const featureId = args[0];
   if (!featureId) {
     console.error(colorize('Error: Feature ID required', 'red'));
-    console.log('Usage: feature-status feature <feature-id>');
+    console.info('Usage: feature-status feature <feature-id>');
     process.exit(1);
   }
 
@@ -276,12 +276,12 @@ async function cmdFeature(client: FeatureStatusClient, args: string[]) {
 async function cmdHealth(client: FeatureStatusClient) {
   try {
     const health = await client.getHealth();
-    console.log(colorize('\n🏥 SYSTEM HEALTH', 'cyan'));
-    console.log('═'.repeat(30));
-    console.log(`Status: ${formatHealth(health.status)} ${colorize(health.status.toUpperCase(), getStatusColor(health.status))}`);
-    console.log(`Uptime: ${colorize(`${Math.floor(health.uptime / 3600)}h ${Math.floor((health.uptime % 3600) / 60)}m`, 'green')}`);
-    console.log(`Active Features: ${colorize(`${health.activeFeatures}/${health.totalFeatures}`, 'blue')}`);
-    console.log(`Timestamp: ${new Date(health.timestamp).toLocaleString()}`);
+    console.info(colorize('\n🏥 SYSTEM HEALTH', 'cyan'));
+    console.info('═'.repeat(30));
+    console.info(`Status: ${formatHealth(health.status)} ${colorize(health.status.toUpperCase(), getStatusColor(health.status))}`);
+    console.info(`Uptime: ${colorize(`${Math.floor(health.uptime / 3600)}h ${Math.floor((health.uptime % 3600) / 60)}m`, 'green')}`);
+    console.info(`Active Features: ${colorize(`${health.activeFeatures}/${health.totalFeatures}`, 'blue')}`);
+    console.info(`Timestamp: ${new Date(health.timestamp).toLocaleString()}`);
   } catch (error) {
     console.error(colorize(`Error: ${(error as Error).message}`, 'red'));
     process.exit(1);
@@ -302,14 +302,14 @@ async function cmdToggle(client: FeatureStatusClient, args: string[]) {
   const featureId = args[0];
   if (!featureId) {
     console.error(colorize('Error: Feature ID required', 'red'));
-    console.log('Usage: feature-status toggle <feature-id>');
+    console.info('Usage: feature-status toggle <feature-id>');
     process.exit(1);
   }
 
   try {
     const result = await client.toggleFeature(featureId);
-    console.log(colorize(result.message, 'green'));
-    console.log(`Feature: ${result.feature.id} - ${result.feature.enabled ? 'ENABLED' : 'DISABLED'}`);
+    console.info(colorize(result.message, 'green'));
+    console.info(`Feature: ${result.feature.id} - ${result.feature.enabled ? 'ENABLED' : 'DISABLED'}`);
   } catch (error) {
     console.error(colorize(`Error: ${(error as Error).message}`, 'red'));
     process.exit(1);
@@ -319,12 +319,12 @@ async function cmdToggle(client: FeatureStatusClient, args: string[]) {
 async function cmdList(client: FeatureStatusClient) {
   try {
     const features = await client.getFeatures();
-    console.log(colorize('\n📋 AVAILABLE FEATURES', 'cyan'));
-    console.log('═'.repeat(50));
+    console.info(colorize('\n📋 AVAILABLE FEATURES', 'cyan'));
+    console.info('═'.repeat(50));
     
     features.features.forEach((feature: any) => {
       const status = feature.enabled ? colorize('ENABLED', 'green') : colorize('DISABLED', 'red');
-      console.log(`${colorize(feature.id, 'blue')} - ${feature.name} (${status})`);
+      console.info(`${colorize(feature.id, 'blue')} - ${feature.name} (${status})`);
     });
   } catch (error) {
     console.error(colorize(`Error: ${(error as Error).message}`, 'red'));
@@ -338,26 +338,26 @@ async function main() {
   const command = args[0];
 
   if (!command || command === '--help' || command === '-h') {
-    console.log(colorize('\n🔧 Feature Status CLI Tool', 'cyan'));
-    console.log('═'.repeat(40));
-    console.log('Usage: feature-status <command> [options]');
-    console.log();
-    console.log(colorize('Commands:', 'yellow'));
-    console.log('  status [--features] [--detailed]  Show system status');
-    console.log('  features [--detailed]              List all features');
-    console.log('  feature <id>                       Show feature details');
-    console.log('  health                              Show system health');
-    console.log('  services                            Show service status');
-    console.log('  toggle <id>                        Enable/disable feature');
-    console.log('  list                               List available features');
-    console.log('  help                               Show this help');
-    console.log();
-    console.log(colorize('Options:', 'yellow'));
-    console.log('  --features    Show features in status output');
-    console.log('  --detailed    Show detailed information');
-    console.log();
-    console.log(colorize('Environment Variables:', 'yellow'));
-    console.log(`  FEATURE_API_URL    API server URL (default: ${API_BASE_URL})`);
+    console.info(colorize('\n🔧 Feature Status CLI Tool', 'cyan'));
+    console.info('═'.repeat(40));
+    console.info('Usage: feature-status <command> [options]');
+    console.info();
+    console.info(colorize('Commands:', 'yellow'));
+    console.info('  status [--features] [--detailed]  Show system status');
+    console.info('  features [--detailed]              List all features');
+    console.info('  feature <id>                       Show feature details');
+    console.info('  health                              Show system health');
+    console.info('  services                            Show service status');
+    console.info('  toggle <id>                        Enable/disable feature');
+    console.info('  list                               List available features');
+    console.info('  help                               Show this help');
+    console.info();
+    console.info(colorize('Options:', 'yellow'));
+    console.info('  --features    Show features in status output');
+    console.info('  --detailed    Show detailed information');
+    console.info();
+    console.info(colorize('Environment Variables:', 'yellow'));
+    console.info(`  FEATURE_API_URL    API server URL (default: ${API_BASE_URL})`);
     return;
   }
 
@@ -387,7 +387,7 @@ async function main() {
       break;
     default:
       console.error(colorize(`Error: Unknown command '${command}'`, 'red'));
-      console.log('Use --help for available commands');
+      console.info('Use --help for available commands');
       process.exit(1);
   }
 }

@@ -49,8 +49,8 @@ class Fire22EnvWizard {
 
   constructor() {
     this.environments = this.getEnvironmentTemplates();
-    console.log('🔐 Fire22 Environment Setup Wizard v3.0.9');
-    console.log('Interactive environment configuration with secure credential storage\n');
+    console.info('🔐 Fire22 Environment Setup Wizard v3.0.9');
+    console.info('Interactive environment configuration with secure credential storage\n');
   }
 
   /**
@@ -426,22 +426,22 @@ class Fire22EnvWizard {
       if (typeof Bun !== 'undefined' && Bun.secrets) {
         if (sensitive) {
           await Bun.secrets.store(secretKey, value);
-          console.log(`   🔐 Stored ${key} in system keychain`);
+          console.info(`   🔐 Stored ${key} in system keychain`);
         } else {
           // Store non-sensitive values in .env file
           await this.appendToEnvFile(env, key, value);
-          console.log(`   📝 Added ${key} to .env.${env}`);
+          console.info(`   📝 Added ${key} to .env.${env}`);
         }
       } else {
         // Fallback to environment file
         await this.appendToEnvFile(env, key, value);
         const protection = sensitive ? '(⚠️ Consider using secure storage)' : '';
-        console.log(`   📝 Added ${key} to .env.${env} ${protection}`);
+        console.info(`   📝 Added ${key} to .env.${env} ${protection}`);
       }
     } catch (error) {
       // Fallback to environment file
       await this.appendToEnvFile(env, key, value);
-      console.log(`   📝 Added ${key} to .env.${env}`);
+      console.info(`   📝 Added ${key} to .env.${env}`);
     }
   }
 
@@ -475,15 +475,15 @@ class Fire22EnvWizard {
    * Test environment configuration
    */
   private async testEnvironment(env: string): Promise<boolean> {
-    console.log(`🧪 Testing ${env} environment configuration...`);
+    console.info(`🧪 Testing ${env} environment configuration...`);
 
     try {
       // Test database connection if URL is provided
       const dbUrl = await this.getCredentialValue(env, 'DATABASE_URL');
       if (dbUrl) {
-        console.log('   🗄️ Testing database connection...');
+        console.info('   🗄️ Testing database connection...');
         // In a real implementation, you'd test the actual connection
-        console.log('   ✅ Database connection configuration looks valid');
+        console.info('   ✅ Database connection configuration looks valid');
       }
 
       // Test Fire22 API if key is provided
@@ -491,7 +491,7 @@ class Fire22EnvWizard {
       const apiBaseUrl = await this.getCredentialValue(env, 'FIRE22_API_BASE_URL');
 
       if (apiKey && apiBaseUrl) {
-        console.log('   🔌 Testing Fire22 API connection...');
+        console.info('   🔌 Testing Fire22 API connection...');
         try {
           const response = await fetch(`${apiBaseUrl}/health`, {
             headers: { Authorization: `Bearer ${apiKey}` },
@@ -499,19 +499,19 @@ class Fire22EnvWizard {
           });
 
           if (response.ok) {
-            console.log('   ✅ Fire22 API connection successful');
+            console.info('   ✅ Fire22 API connection successful');
           } else {
-            console.log('   ⚠️ Fire22 API responded with non-OK status');
+            console.info('   ⚠️ Fire22 API responded with non-OK status');
           }
         } catch (error) {
-          console.log('   ⚠️ Fire22 API connection test failed (this may be expected)');
+          console.info('   ⚠️ Fire22 API connection test failed (this may be expected)');
         }
       }
 
-      console.log(`✅ ${env} environment test completed\n`);
+      console.info(`✅ ${env} environment test completed\n`);
       return true;
     } catch (error) {
-      console.log(`❌ ${env} environment test failed: ${error.message}\n`);
+      console.info(`❌ ${env} environment test failed: ${error.message}\n`);
       return false;
     }
   }
@@ -551,14 +551,14 @@ class Fire22EnvWizard {
    * Setup a single environment
    */
   private async setupEnvironment(envConfig: EnvironmentConfig): Promise<void> {
-    console.log(`\n🔧 Setting up ${envConfig.name} environment`);
-    console.log(`📋 ${envConfig.description}\n`);
+    console.info(`\n🔧 Setting up ${envConfig.name} environment`);
+    console.info(`📋 ${envConfig.description}\n`);
 
     const envData: EnvironmentData = {};
 
     for (const credential of envConfig.credentials) {
-      console.log(`\n📝 ${credential.name}`);
-      console.log(`   ${credential.description}`);
+      console.info(`\n📝 ${credential.name}`);
+      console.info(`   ${credential.description}`);
 
       let value: string | undefined;
       let isValid = false;
@@ -572,7 +572,7 @@ class Fire22EnvWizard {
             );
             if (useGenerated.toLowerCase() === 'y' || useGenerated.toLowerCase() === 'yes') {
               value = this.generateSecureToken();
-              console.log('   🔐 Generated secure token');
+              console.info('   🔐 Generated secure token');
               isValid = true;
               continue;
             }
@@ -584,7 +584,7 @@ class Fire22EnvWizard {
 
         const error = this.validateInput(value, credential);
         if (error) {
-          console.log(`   ❌ ${error}`);
+          console.info(`   ❌ ${error}`);
         } else {
           isValid = true;
         }
@@ -602,7 +602,7 @@ class Fire22EnvWizard {
       }
     }
 
-    console.log(`\n✅ ${envConfig.name} environment configuration complete!`);
+    console.info(`\n✅ ${envConfig.name} environment configuration complete!`);
 
     // Test the environment
     await this.testEnvironment(envConfig.name);
@@ -637,34 +637,34 @@ class Fire22EnvWizard {
     }
 
     writeFileSync(gitignorePath, gitignoreContent);
-    console.log('📝 Updated .gitignore with environment file patterns');
+    console.info('📝 Updated .gitignore with environment file patterns');
   }
 
   /**
    * Display environment summary
    */
   private async showSummary(): Promise<void> {
-    console.log('\n📊 Environment Setup Summary');
-    console.log('='.repeat(50));
+    console.info('\n📊 Environment Setup Summary');
+    console.info('='.repeat(50));
 
     for (const envConfig of this.environments) {
       const envFile = `.env.${envConfig.name}`;
       const hasEnvFile = existsSync(join(process.cwd(), envFile));
       const status = hasEnvFile ? '✅ Configured' : '❌ Not configured';
 
-      console.log(`${envConfig.name.padEnd(12)} ${status}`);
+      console.info(`${envConfig.name.padEnd(12)} ${status}`);
     }
 
-    console.log('\n💡 Next Steps:');
-    console.log('• Review your .env files and ensure all values are correct');
-    console.log('• Test your environments: bun run test:quick');
-    console.log('• Start development: fire22 dev');
-    console.log('• Run API tests: fire22 test:api');
-    console.log('\n🔐 Security Notes:');
-    console.log('• Sensitive credentials are stored securely when Bun.secrets is available');
-    console.log('• Never commit .env files to version control');
-    console.log('• Rotate production secrets regularly');
-    console.log('• Use different secrets for each environment');
+    console.info('\n💡 Next Steps:');
+    console.info('• Review your .env files and ensure all values are correct');
+    console.info('• Test your environments: bun run test:quick');
+    console.info('• Start development: fire22 dev');
+    console.info('• Run API tests: fire22 test:api');
+    console.info('\n🔐 Security Notes:');
+    console.info('• Sensitive credentials are stored securely when Bun.secrets is available');
+    console.info('• Never commit .env files to version control');
+    console.info('• Rotate production secrets regularly');
+    console.info('• Use different secrets for each environment');
   }
 
   /**
@@ -672,17 +672,17 @@ class Fire22EnvWizard {
    */
   async run(): Promise<void> {
     try {
-      console.log('🌟 Welcome to the Fire22 Environment Setup Wizard!');
-      console.log('This wizard will help you configure your development environments securely.\n');
+      console.info('🌟 Welcome to the Fire22 Environment Setup Wizard!');
+      console.info('This wizard will help you configure your development environments securely.\n');
 
       // Show available environments
-      console.log('📋 Available Environments:');
+      console.info('📋 Available Environments:');
       this.environments.forEach((env, index) => {
         const required = env.required ? '(Required)' : '(Optional)';
-        console.log(`${index + 1}. ${env.name} - ${env.description} ${required}`);
+        console.info(`${index + 1}. ${env.name} - ${env.description} ${required}`);
       });
 
-      console.log('');
+      console.info('');
       const setupAll = await this.prompt('Setup all environments? (y/n)', 'y');
 
       if (setupAll.toLowerCase() === 'y' || setupAll.toLowerCase() === 'yes') {
@@ -710,7 +710,7 @@ class Fire22EnvWizard {
       // Show summary
       await this.showSummary();
 
-      console.log('\n🎉 Environment setup complete! Happy coding! 🔥');
+      console.info('\n🎉 Environment setup complete! Happy coding! 🔥');
     } catch (error) {
       console.error('💥 Setup wizard failed:', error.message);
       process.exit(1);
@@ -723,7 +723,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🔐 Fire22 Environment Setup Wizard
 
 DESCRIPTION:

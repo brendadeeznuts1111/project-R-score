@@ -21,8 +21,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 
-console.log('🚀 Fire22 Registry Publish Script');
-console.log('==================================');
+console.info('🚀 Fire22 Registry Publish Script');
+console.info('==================================');
 
 // Configuration
 const config = {
@@ -94,7 +94,7 @@ const config = {
 
 // Validate environment
 async function validateEnvironment() {
-  console.log('\n🔍 Validating environment...');
+  console.info('\n🔍 Validating environment...');
 
   // Check if we're in a git repository
   const gitCheck = await $`git rev-parse --git-dir`.nothrow();
@@ -105,29 +105,29 @@ async function validateEnvironment() {
   // Check if npm is logged in
   const npmCheck = await $`npm whoami`.nothrow();
   if (npmCheck.exitCode !== 0) {
-    console.log('⚠️  NPM not logged in, attempting login...');
+    console.info('⚠️  NPM not logged in, attempting login...');
     await $`npm login`.nothrow();
   }
 
   // Check if GitHub CLI is available
   const ghCheck = await $`gh --version`.nothrow();
   if (ghCheck.exitCode !== 0) {
-    console.log('⚠️  GitHub CLI not available - releases will need to be created manually');
+    console.info('⚠️  GitHub CLI not available - releases will need to be created manually');
   }
 
-  console.log('✅ Environment validation complete');
+  console.info('✅ Environment validation complete');
 }
 
 // Validate bun.semver compliance
 async function validateBunSemver() {
-  console.log('\n📦 Validating Bun semver compliance...');
+  console.info('\n📦 Validating Bun semver compliance...');
 
   for (const pkg of config.packages) {
     try {
       // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file reading and JSON parsing
       const packageJson = await Bun.file(`${pkg}/package.json`).json();
 
-      console.log(`🔍 Checking ${pkg}@${packageJson.version}...`);
+      console.info(`🔍 Checking ${pkg}@${packageJson.version}...`);
 
       // Check if version follows semver
       if (!semver.valid(packageJson.version)) {
@@ -137,17 +137,17 @@ async function validateBunSemver() {
       // Check Bun version compatibility
       const bunVersion = packageJson.engines?.bun;
       if (bunVersion && !semver.satisfies('1.1.0', bunVersion)) {
-        console.log(`⚠️  Warning: Package requires Bun ${bunVersion}, current is 1.1.0`);
+        console.info(`⚠️  Warning: Package requires Bun ${bunVersion}, current is 1.1.0`);
       }
 
       // Check for changelog
       const changelogPath = `${pkg}/CHANGELOG.md`;
       const hasChangelog = await Bun.file(changelogPath).exists();
       if (config.semver.requireChangelog && !hasChangelog) {
-        console.log(`⚠️  Warning: No CHANGELOG.md found for ${pkg}`);
+        console.info(`⚠️  Warning: No CHANGELOG.md found for ${pkg}`);
       }
 
-      console.log(`✅ ${pkg} semver validation passed`);
+      console.info(`✅ ${pkg} semver validation passed`);
     } catch (error) {
       console.error(`❌ Semver validation failed for ${pkg}: ${error.message}`);
       if (config.semver.strict) {
@@ -156,23 +156,23 @@ async function validateBunSemver() {
     }
   }
 
-  console.log('✅ Bun semver validation complete');
+  console.info('✅ Bun semver validation complete');
 }
 
 // Department-specific package validation
 async function validateDepartmentCompliance() {
-  console.log('\n🏛️ Running department-specific validation...');
+  console.info('\n🏛️ Running department-specific validation...');
 
   for (const pkg of config.packages) {
     const deptConfig = config.departments[pkg];
     if (!deptConfig) {
-      console.log(`⚠️  No department configuration found for ${pkg}, skipping validation`);
+      console.info(`⚠️  No department configuration found for ${pkg}, skipping validation`);
       continue;
     }
 
-    console.log(`🔍 ${deptConfig.primary} Department validating ${pkg}...`);
-    console.log(`   📋 Primary: ${deptConfig.head}`);
-    console.log(`   👥 Validators: ${deptConfig.validators.join(', ')}`);
+    console.info(`🔍 ${deptConfig.primary} Department validating ${pkg}...`);
+    console.info(`   📋 Primary: ${deptConfig.head}`);
+    console.info(`   👥 Validators: ${deptConfig.validators.join(', ')}`);
 
     try {
       // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file reading and JSON parsing
@@ -180,7 +180,7 @@ async function validateDepartmentCompliance() {
 
       // Validate compliance requirements
       for (const compliance of deptConfig.compliance) {
-        console.log(`   ✅ Checking ${compliance} compliance...`);
+        console.info(`   ✅ Checking ${compliance} compliance...`);
 
         // Add specific compliance checks based on department
         switch (compliance) {
@@ -200,11 +200,11 @@ async function validateDepartmentCompliance() {
             await validatePerformanceCompliance(pkg);
             break;
           default:
-            console.log(`   ⚠️  Unknown compliance check: ${compliance}`);
+            console.info(`   ⚠️  Unknown compliance check: ${compliance}`);
         }
       }
 
-      console.log(`✅ ${deptConfig.primary} validation passed for ${pkg}`);
+      console.info(`✅ ${deptConfig.primary} validation passed for ${pkg}`);
 
     } catch (error) {
       console.error(`❌ Department validation failed for ${pkg}: ${error.message}`);
@@ -212,7 +212,7 @@ async function validateDepartmentCompliance() {
     }
   }
 
-  console.log('✅ Department validation complete');
+  console.info('✅ Department validation complete');
 }
 
 // Compliance validation functions
@@ -222,7 +222,7 @@ async function validateAccessibilityCompliance(pkg: string) {
   for (const file of files) {
     const content = await Bun.file(`${pkg}/${file}`).text();
     if (!content.includes('accessibility') && !content.includes('WCAG')) {
-      console.log(`   ⚠️  No accessibility documentation in ${file}`);
+      console.info(`   ⚠️  No accessibility documentation in ${file}`);
     }
   }
 }
@@ -230,7 +230,7 @@ async function validateAccessibilityCompliance(pkg: string) {
 async function validateGDPRCompliance(pkg: string) {
   const packageJson = await Bun.file(`${pkg}/package.json`).json();
   if (!packageJson.keywords?.includes('gdpr')) {
-    console.log(`   ⚠️  Package should include 'gdpr' keyword`);
+    console.info(`   ⚠️  Package should include 'gdpr' keyword`);
   }
 }
 
@@ -238,33 +238,33 @@ async function validateSOC2Compliance(pkg: string) {
   // Check for security audit files
   const hasAudit = await Bun.file(`${pkg}/SECURITY.md`).exists();
   if (!hasAudit) {
-    console.log(`   ⚠️  Missing SECURITY.md file`);
+    console.info(`   ⚠️  Missing SECURITY.md file`);
   }
 }
 
 async function validateSecurityCompliance(pkg: string) {
   const packageJson = await Bun.file(`${pkg}/package.json`).json();
   if (!packageJson.scripts?.['security:audit']) {
-    console.log(`   ⚠️  Missing security audit script`);
+    console.info(`   ⚠️  Missing security audit script`);
   }
 }
 
 async function validatePerformanceCompliance(pkg: string) {
   const packageJson = await Bun.file(`${pkg}/package.json`).json();
   if (!packageJson.scripts?.['test:performance']) {
-    console.log(`   ⚠️  Missing performance test script`);
+    console.info(`   ⚠️  Missing performance test script`);
   }
 }
 
 // Intelligent tagging system
 async function createIntelligentTags() {
-  console.log('\n🏷️ Creating intelligent tags...');
+  console.info('\n🏷️ Creating intelligent tags...');
 
   const currentBranch = await $`git branch --show-current`.nothrow();
   const branchName = currentBranch.stdout.toString().trim();
 
   if (!config.tagging.releaseBranches.includes(branchName)) {
-    console.log(`ℹ️  Not on a release branch (${branchName}), skipping tagging`);
+    console.info(`ℹ️  Not on a release branch (${branchName}), skipping tagging`);
     return null;
   }
 
@@ -274,13 +274,13 @@ async function createIntelligentTags() {
 
   // Create version tag
   const tagName = `${config.tagging.tagPrefix}${version}`;
-  console.log(`🏷️ Creating tag: ${tagName}`);
+  console.info(`🏷️ Creating tag: ${tagName}`);
 
   try {
     // Check if tag already exists
     const tagCheck = await $`git tag -l ${tagName}`.nothrow();
     if (tagCheck.stdout.toString().trim()) {
-      console.log(`ℹ️  Tag ${tagName} already exists`);
+      console.info(`ℹ️  Tag ${tagName} already exists`);
       return tagName;
     }
 
@@ -295,7 +295,7 @@ async function createIntelligentTags() {
 Auto-generated by Fire22 registry release system`;
 
     await $`git tag -a ${tagName} -m ${tagMessage}`.nothrow();
-    console.log(`✅ Created tag: ${tagName}`);
+    console.info(`✅ Created tag: ${tagName}`);
 
     return tagName;
   } catch (error) {
@@ -306,37 +306,37 @@ Auto-generated by Fire22 registry release system`;
 
 // Build packages
 async function buildPackages() {
-  console.log('\n🏗️ Building packages...');
+  console.info('\n🏗️ Building packages...');
 
   for (const pkg of config.packages) {
     try {
       await Bun.file(pkg).exists();
-      console.log(`📦 Building ${pkg}...`);
+      console.info(`📦 Building ${pkg}...`);
 
       // Navigate to package directory and build
       const buildResult = await $`cd ${pkg} && bun run build`.nothrow();
       if (buildResult.exitCode !== 0) {
-        console.log(`⚠️  Build failed for ${pkg}, skipping...`);
+        console.info(`⚠️  Build failed for ${pkg}, skipping...`);
       } else {
-        console.log(`✅ Built ${pkg}`);
+        console.info(`✅ Built ${pkg}`);
       }
     } catch (error) {
-      console.log(`⚠️  Package ${pkg} not found, skipping...`);
+      console.info(`⚠️  Package ${pkg} not found, skipping...`);
     }
   }
 
-  console.log('✅ Package builds complete');
+  console.info('✅ Package builds complete');
 }
 
 // Publish packages to npm
 async function publishPackages() {
-  console.log('\n📤 Publishing packages to npm...');
+  console.info('\n📤 Publishing packages to npm...');
 
   for (const pkg of config.packages) {
     try {
       // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file existence check
       await Bun.file(pkg).exists();
-      console.log(`🚀 Publishing ${pkg}...`);
+      console.info(`🚀 Publishing ${pkg}...`);
 
       try {
         // 🚀 BUN 1.1.X OPTIMIZATION: Using native JSON parsing
@@ -353,25 +353,25 @@ async function publishPackages() {
           await $`cd ${pkg} && npm publish --tag ${tag} --access public`.nothrow();
 
         if (publishResult.exitCode === 0) {
-          console.log(`✅ Published ${pkg}@${packageJson.version} with tag '${tag}'`);
-          console.log(`🔗 https://www.npmjs.com/package/${packageJson.name}`);
+          console.info(`✅ Published ${pkg}@${packageJson.version} with tag '${tag}'`);
+          console.info(`🔗 https://www.npmjs.com/package/${packageJson.name}`);
         } else {
-          console.log(`❌ Failed to publish ${pkg}: ${publishResult.stderr}`);
+          console.info(`❌ Failed to publish ${pkg}: ${publishResult.stderr}`);
         }
       } catch (error) {
-        console.log(`❌ Error publishing ${pkg}: ${error.message}`);
+        console.info(`❌ Error publishing ${pkg}: ${error.message}`);
       }
     } catch (error) {
-      console.log(`⚠️  Package directory not found: ${pkg}`);
+      console.info(`⚠️  Package directory not found: ${pkg}`);
     }
   }
 
-  console.log('✅ Package publishing complete');
+  console.info('✅ Package publishing complete');
 }
 
 // Generate comprehensive changelog
 async function generateChangelog() {
-  console.log('\n📝 Generating changelog...');
+  console.info('\n📝 Generating changelog...');
 
   const changelog = `# 🚀 Fire22 Registry Release
 
@@ -441,21 +441,21 @@ async function generateChangelog() {
 *Auto-generated by Fire22 publish system on ${new Date().toISOString()}*`;
 
   await Bun.write('CHANGELOG.md', changelog);
-  console.log('✅ Changelog generated: CHANGELOG.md');
+  console.info('✅ Changelog generated: CHANGELOG.md');
 }
 
 // Git operations
 async function gitOperations() {
-  console.log('\n🔄 Git Operations...');
+  console.info('\n🔄 Git Operations...');
 
   // Check for changes
   const status = await $`git status --porcelain`.nothrow();
   if (!status.stdout.toString().trim()) {
-    console.log('ℹ️  No changes to commit');
+    console.info('ℹ️  No changes to commit');
     return;
   }
 
-  console.log('📝 Changes detected, preparing commit...');
+  console.info('📝 Changes detected, preparing commit...');
 
   // Add all changes
   await $`git add .`.nothrow();
@@ -484,64 +484,64 @@ Auto-generated by Fire22 publish system`;
   // Commit changes
   const commit = await $`git commit -m ${commitMessage}`.nothrow();
   if (commit.exitCode === 0) {
-    console.log('✅ Changes committed successfully');
+    console.info('✅ Changes committed successfully');
 
     // Get commit hash for links
     const commitHash = await $`git rev-parse HEAD`.nothrow();
     const hash = commitHash.stdout.toString().trim();
 
-    console.log(
+    console.info(
       `🔗 Commit: https://github.com/${config.github.owner}/${config.github.repo}/commit/${hash}`
     );
 
     // Push to remote
-    console.log('⬆️ Pushing to remote...');
+    console.info('⬆️ Pushing to remote...');
     const push = await $`git push origin main`.nothrow();
     if (push.exitCode === 0) {
-      console.log('✅ Successfully pushed to remote');
-      console.log(
+      console.info('✅ Successfully pushed to remote');
+      console.info(
         `🔗 View on GitHub: https://github.com/${config.github.owner}/${config.github.repo}`
       );
     } else {
-      console.log('⚠️  Push failed, you may need to push manually');
+      console.info('⚠️  Push failed, you may need to push manually');
     }
   } else {
-    console.log('⚠️  Commit failed or no changes to commit');
+    console.info('⚠️  Commit failed or no changes to commit');
   }
 }
 
 // Create GitHub release
 async function createGitHubRelease() {
-  console.log('\n🏷️ Creating GitHub release...');
+  console.info('\n🏷️ Creating GitHub release...');
 
   // Check if this is a tagged commit
   const tag = await $`git describe --tags --exact-match HEAD 2>/dev/null`.nothrow();
   if (tag.exitCode !== 0) {
-    console.log('ℹ️  Not a tagged commit, skipping GitHub release creation');
+    console.info('ℹ️  Not a tagged commit, skipping GitHub release creation');
     return;
   }
 
   const tagName = tag.stdout.toString().trim();
-  console.log(`🏷️ Tagged release detected: ${tagName}`);
+  console.info(`🏷️ Tagged release detected: ${tagName}`);
 
   // Create release using GitHub CLI
   const release =
     await $`gh release create ${tagName} --title "Fire22 Registry ${tagName}" --notes-file CHANGELOG.md --latest`.nothrow();
 
   if (release.exitCode === 0) {
-    console.log(`✅ GitHub release created successfully`);
-    console.log(
+    console.info(`✅ GitHub release created successfully`);
+    console.info(
       `🔗 Release: https://github.com/${config.github.owner}/${config.github.repo}/releases/tag/${tagName}`
     );
   } else {
-    console.log('⚠️  GitHub release creation failed');
-    console.log('   You can manually create the release using CHANGELOG.md');
+    console.info('⚠️  GitHub release creation failed');
+    console.info('   You can manually create the release using CHANGELOG.md');
   }
 }
 
 // Update registry manifest
 async function updateRegistryManifest() {
-  console.log('\n📝 Updating registry manifest...');
+  console.info('\n📝 Updating registry manifest...');
 
   const manifest = {
     name: 'fantasy42-fire22-registry',
@@ -581,15 +581,15 @@ async function updateRegistryManifest() {
   };
 
   await Bun.write('registry-manifest.json', JSON.stringify(manifest, null, 2));
-  console.log('✅ Registry manifest updated: registry-manifest.json');
+  console.info('✅ Registry manifest updated: registry-manifest.json');
 }
 
 // Main execution
 async function main() {
   try {
-    console.log(`📅 Started at: ${new Date().toISOString()}`);
-    console.log('🏛️ Enterprise Registry Release with Department Validation');
-    console.log('=========================================================');
+    console.info(`📅 Started at: ${new Date().toISOString()}`);
+    console.info('🏛️ Enterprise Registry Release with Department Validation');
+    console.info('=========================================================');
 
     // Phase 1: Environment and Pre-validation
     await validateEnvironment();
@@ -611,27 +611,27 @@ async function main() {
     await createGitHubRelease();
     await updateRegistryManifest();
 
-    console.log('\n🎉 Enterprise Registry Release Completed Successfully!');
-    console.log('\n📋 Release Summary:');
-    console.log(`   📦 Packages published: ${config.packages.length}`);
-    console.log(`   🏷️ Release tag: ${tagName || 'N/A'}`);
-    console.log(`   📚 Documentation: ${config.deepLinks.docs}`);
-    console.log(
+    console.info('\n🎉 Enterprise Registry Release Completed Successfully!');
+    console.info('\n📋 Release Summary:');
+    console.info(`   📦 Packages published: ${config.packages.length}`);
+    console.info(`   🏷️ Release tag: ${tagName || 'N/A'}`);
+    console.info(`   📚 Documentation: ${config.deepLinks.docs}`);
+    console.info(
       `   🐙 Repository: https://github.com/${config.github.owner}/${config.github.repo}`
     );
-    console.log(`   📧 Support: enterprise@fire22.com`);
+    console.info(`   📧 Support: enterprise@fire22.com`);
 
-    console.log('\n🏛️ Department Validation Summary:');
+    console.info('\n🏛️ Department Validation Summary:');
     Object.entries(config.departments).forEach(([pkg, dept]) => {
-      console.log(`   ✅ ${dept.primary}: ${pkg} validated by ${dept.head}`);
+      console.info(`   ✅ ${dept.primary}: ${pkg} validated by ${dept.head}`);
     });
 
-    console.log('\n🔗 Important Links:');
+    console.info('\n🔗 Important Links:');
     Object.entries(config.deepLinks).forEach(([key, url]) => {
-      console.log(`   ${key.charAt(0).toUpperCase() + key.slice(1)}: ${url}`);
+      console.info(`   ${key.charAt(0).toUpperCase() + key.slice(1)}: ${url}`);
     });
 
-    console.log('\n🚀 Enterprise release workflow completed!');
+    console.info('\n🚀 Enterprise release workflow completed!');
   } catch (error) {
     console.error('❌ Enterprise release failed:', error);
     console.error('\n🔍 Troubleshooting:');

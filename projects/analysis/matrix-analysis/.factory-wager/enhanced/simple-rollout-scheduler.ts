@@ -45,17 +45,17 @@ class SimpleRolloutScheduler {
 
   start(): void {
     if (this.intervalId) {
-      console.log('⚠️ Rollout already running');
+      console.info('⚠️ Rollout already running');
       return;
     }
 
-    console.log('🚀 FactoryWager Simple Rollout Scheduler v2.0');
-    console.log('==============================================');
-    console.log('📊 Phases: 5% → 25% → 50% → 100%');
-    console.log('⏱️ Phase Duration: 1 minute');
-    console.log('🎯 Risk Reduction: 10 points per phase');
-    console.log('📡 SSE Server: http://localhost:3003/events');
-    console.log('');
+    console.info('🚀 FactoryWager Simple Rollout Scheduler v2.0');
+    console.info('==============================================');
+    console.info('📊 Phases: 5% → 25% → 50% → 100%');
+    console.info('⏱️ Phase Duration: 1 minute');
+    console.info('🎯 Risk Reduction: 10 points per phase');
+    console.info('📡 SSE Server: http://localhost:3003/events');
+    console.info('');
 
     // Start SSE server
     this.startSSEServer();
@@ -80,7 +80,7 @@ class SimpleRolloutScheduler {
       this.server = undefined;
     }
 
-    console.log('🛑 Rollout scheduler stopped');
+    console.info('🛑 Rollout scheduler stopped');
     this.broadcastUpdate({
       type: 'rollout_stopped',
       timestamp: new Date().toISOString()
@@ -96,7 +96,7 @@ class SimpleRolloutScheduler {
     const shouldServe = random <= currentPercentage;
     
     if (!shouldServe) {
-      console.log('🚫 Request blocked (not in rollout phase)');
+      console.info('🚫 Request blocked (not in rollout phase)');
     }
     
     return shouldServe;
@@ -112,7 +112,7 @@ class SimpleRolloutScheduler {
 
     // Log performance
     const status = success ? '✅' : '❌';
-    console.log(`${status} Request ${this.requestCount}: ${Math.round(responseTime)}ms | Health: ${this.metrics.health}%`);
+    console.info(`${status} Request ${this.requestCount}: ${Math.round(responseTime)}ms | Health: ${this.metrics.health}%`);
   }
 
   getCurrentPhase(): number {
@@ -132,7 +132,7 @@ class SimpleRolloutScheduler {
     const phase = this.phases[this.rolloutPhase];
     const risk = 65 - this.rolloutPhase * 10;
     
-    console.log(`🚀 Rollout Phase: ${phase} | Risk: ${risk}/100`);
+    console.info(`🚀 Rollout Phase: ${phase} | Risk: ${risk}/100`);
     
     // Update metrics
     this.metrics.rollout = this.rolloutPhase;
@@ -232,10 +232,10 @@ class SimpleRolloutScheduler {
     });
 
     this.server.listen(3003, () => {
-      console.log('📡 SSE server started on http://localhost:3003');
-      console.log('   Events: http://localhost:3003/events');
-      console.log('   Status: http://localhost:3003/status');
-      console.log('   Health: http://localhost:3003/health');
+      console.info('📡 SSE server started on http://localhost:3003');
+      console.info('   Events: http://localhost:3003/events');
+      console.info('   Status: http://localhost:3003/status');
+      console.info('   Health: http://localhost:3003/health');
     });
   }
 
@@ -313,7 +313,7 @@ if (import.meta.main) {
   switch (command) {
     case 'start':
       scheduler.start();
-      console.log('Press Ctrl+C to stop the rollout');
+      console.info('Press Ctrl+C to stop the rollout');
       break;
     
     case 'stop':
@@ -321,7 +321,7 @@ if (import.meta.main) {
       break;
     
     case 'status':
-      console.log(JSON.stringify(scheduler.getMetrics(), null, 2));
+      console.info(JSON.stringify(scheduler.getMetrics(), null, 2));
       break;
     
     case 'demo':
@@ -335,16 +335,16 @@ if (import.meta.main) {
         scheduler.recordRequest(success, responseTime);
       }, 2000);
       
-      console.log('🎬 Demo started with simulated traffic');
+      console.info('🎬 Demo started with simulated traffic');
       break;
     
     default:
-      console.log('Usage: bun simple-rollout-scheduler.ts [start|stop|status|demo]');
+      console.info('Usage: bun simple-rollout-scheduler.ts [start|stop|status|demo]');
   }
 
   // Handle graceful shutdown
   process.on('SIGINT', () => {
-    console.log('\n🛑 Shutting down rollout scheduler...');
+    console.info('\n🛑 Shutting down rollout scheduler...');
     scheduler.stop();
     process.exit(0);
   });

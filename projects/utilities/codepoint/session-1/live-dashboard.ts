@@ -18,14 +18,14 @@ class HMRDashboard {
     const { showDetails = false, refreshRate = 3000, maxEvents = 50 } = options;
 
     console.clear();
-    console.log("🔄 Live HMR Monitoring Dashboard");
-    console.log("=".repeat(80));
-    console.log(
+    console.info("🔄 Live HMR Monitoring Dashboard");
+    console.info("=".repeat(80));
+    console.info(
       `Last update: ${new Date().toLocaleTimeString()} | Refresh: ${refreshRate}ms\n`
     );
 
     // Display server overview table
-    console.log("📊 Server Overview:");
+    console.info("📊 Server Overview:");
     const serverTable = CustomProxyServer.formatServerTable(servers, {
       columns: [
         "name",
@@ -37,21 +37,21 @@ class HMRDashboard {
       ],
       includeComputed: true,
     });
-    console.log(Bun.inspect.table(serverTable, { colors: true }));
+    console.info(Bun.inspect.table(serverTable, { colors: true }));
 
     // Display detailed server information if requested
     if (showDetails) {
-      console.log("\n🔍 Detailed Server Information:");
+      console.info("\n🔍 Detailed Server Information:");
       servers.forEach((server, index) => {
-        console.log(`\n${index + 1}. ${server.name} (${server.region})`);
-        console.log(
+        console.info(`\n${index + 1}. ${server.name} (${server.region})`);
+        console.info(
           `   Connections: ${server.connections.toLocaleString()} / ${server.config.maxConnections.toLocaleString()}`
         );
-        console.log(
+        console.info(
           `   HMR Enabled: ${server.config.hmrEnabled ? "✅" : "❌"}`
         );
-        console.log(`   Protocol: ${server.config.protocol.toUpperCase()}`);
-        console.log(
+        console.info(`   Protocol: ${server.config.protocol.toUpperCase()}`);
+        console.info(
           `   Uptime: ${this.formatUptime(
             Date.now() - server.startedAt.getTime()
           )}`
@@ -59,37 +59,37 @@ class HMRDashboard {
 
         // Show recent events with icons
         if (server.hmrEvents.length > 0) {
-          console.log(`   Recent Events:`);
+          console.info(`   Recent Events:`);
           const recent = server.hmrEvents.slice(-3).reverse();
           recent.forEach((event, i) => {
             const icon = this.getEventIcon(event.name);
             const time = event.timestamp.toLocaleTimeString();
             const module = event.module ? ` (${event.module})` : "";
             const duration = event.duration ? ` [${event.duration}ms]` : "";
-            console.log(
+            console.info(
               `     ${i + 1}. ${icon} ${
                 event.name
               }${module}${duration} - ${time}`
             );
           });
         } else {
-          console.log(`   Recent Events: No events recorded`);
+          console.info(`   Recent Events: No events recorded`);
         }
       });
     }
 
     // Show aggregated statistics
-    console.log("\n📈 Aggregate Statistics:");
+    console.info("\n📈 Aggregate Statistics:");
     this.displayAggregateStats(servers);
 
     // Show performance metrics
-    console.log("\n⚡ Performance Metrics:");
+    console.info("\n⚡ Performance Metrics:");
     this.displayPerformanceMetrics(servers);
 
     // Show recent errors if any
     const recentErrors = this.getRecentErrors(servers, 5);
     if (recentErrors.length > 0) {
-      console.log("\n🚨 Recent Errors:");
+      console.info("\n🚨 Recent Errors:");
       const errorTable = recentErrors.map((error) => ({
         Server: error.serverName,
         Event: error.event.name,
@@ -99,11 +99,11 @@ class HMRDashboard {
           ? JSON.stringify(error.event.details).slice(0, 50) + "..."
           : "None",
       }));
-      console.log(Bun.inspect.table(errorTable, { colors: true }));
+      console.info(Bun.inspect.table(errorTable, { colors: true }));
     }
 
     // Show event trends
-    console.log("\n📊 Event Trends (Last 10 Events):");
+    console.info("\n📊 Event Trends (Last 10 Events):");
     this.displayEventTrends(servers, maxEvents);
   }
 
@@ -114,16 +114,16 @@ class HMRDashboard {
     const { interval = 3000, showDetails = false, maxEvents = 50 } = options;
 
     if (this.isRunning) {
-      console.log("🔄 Live monitoring is already running!");
+      console.info("🔄 Live monitoring is already running!");
       return;
     }
 
     this.isRunning = true;
-    console.log("🚀 Starting live HMR monitoring...");
-    console.log(`   Update interval: ${interval}ms`);
-    console.log(`   Detailed view: ${showDetails ? "Enabled" : "Disabled"}`);
-    console.log(`   Max events: ${maxEvents}`);
-    console.log("   Press Ctrl+C to stop monitoring\n");
+    console.info("🚀 Starting live HMR monitoring...");
+    console.info(`   Update interval: ${interval}ms`);
+    console.info(`   Detailed view: ${showDetails ? "Enabled" : "Disabled"}`);
+    console.info(`   Max events: ${maxEvents}`);
+    console.info("   Press Ctrl+C to stop monitoring\n");
 
     // Initial display
     this.displayLiveStatus(servers, {
@@ -153,12 +153,12 @@ class HMRDashboard {
       this.updateInterval = undefined;
     }
     this.isRunning = false;
-    console.log("\n🛑 Live monitoring stopped");
+    console.info("\n🛑 Live monitoring stopped");
 
     // Show final summary
-    console.log("\n📊 Final Summary:");
-    console.log("   Total monitoring session completed");
-    console.log("   Data exported to logs");
+    console.info("\n📊 Final Summary:");
+    console.info("   Total monitoring session completed");
+    console.info("   Data exported to logs");
   }
 
   private static displayAggregateStats(servers) {
@@ -168,7 +168,7 @@ class HMRDashboard {
     });
 
     if (allEvents.length === 0) {
-      console.log("   No events recorded yet");
+      console.info("   No events recorded yet");
       return;
     }
 
@@ -184,7 +184,7 @@ class HMRDashboard {
       Percentage: `${Math.round((count / allEvents.length) * 100)}%`,
     }));
 
-    console.log(Bun.inspect.table(statsTable, { colors: true }));
+    console.info(Bun.inspect.table(statsTable, { colors: true }));
 
     // Show summary metrics
     const totalEvents = allEvents.length;
@@ -192,7 +192,7 @@ class HMRDashboard {
     const errorRate =
       totalEvents > 0 ? Math.round((totalErrors / totalEvents) * 100) : 0;
 
-    console.log(
+    console.info(
       `\n   Total Events: ${totalEvents} | Errors: ${totalErrors} | Error Rate: ${errorRate}%`
     );
   }
@@ -226,7 +226,7 @@ class HMRDashboard {
       };
     });
 
-    console.log(Bun.inspect.table(metricsTable, { colors: true }));
+    console.info(Bun.inspect.table(metricsTable, { colors: true }));
   }
 
   private static displayEventTrends(
@@ -246,7 +246,7 @@ class HMRDashboard {
       .slice(0, maxEvents);
 
     if (recentEvents.length === 0) {
-      console.log("   No recent events");
+      console.info("   No recent events");
       return;
     }
 
@@ -258,7 +258,7 @@ class HMRDashboard {
       Duration: event.duration ? `${event.duration}ms` : "-",
     }));
 
-    console.log(Bun.inspect.table(trendsTable, { colors: true }));
+    console.info(Bun.inspect.table(trendsTable, { colors: true }));
   }
 
   private static getRecentErrors(servers, limit) {
@@ -304,8 +304,8 @@ class HMRDashboard {
 }
 
 // Simulation and demo setup
-console.log("🎯 Live HMR Dashboard Demo");
-console.log("========================\n");
+console.info("🎯 Live HMR Dashboard Demo");
+console.info("========================\n");
 
 // Create servers for monitoring
 const servers = [
@@ -376,10 +376,10 @@ setTimeout(() => {
   HMRDashboard.stopLiveMonitoring();
 
   // Export final data
-  console.log("\n📤 Exporting final data...");
+  console.info("\n📤 Exporting final data...");
   if (devServer) {
-    console.log("\n📄 Final HMR Data (JSON):");
-    console.log(exportHMRData(devServer, "json"));
+    console.info("\n📄 Final HMR Data (JSON):");
+    console.info(exportHMRData(devServer, "json"));
   }
 
   process.exit(0);

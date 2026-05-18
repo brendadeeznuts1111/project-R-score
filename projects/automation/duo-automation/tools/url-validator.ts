@@ -17,7 +17,7 @@ class URLValidator {
   }
   
   async validateAllUrls() {
-    console.log('🔍 Validating all DuoPlus Enterprise URLs...\n');
+    console.info('🔍 Validating all DuoPlus Enterprise URLs...\n');
     
     const allUrls = [
       ...URL_SETS.REGISTRY,
@@ -38,7 +38,7 @@ class URLValidator {
     // Remove duplicates
     const uniqueUrls = [...new Set(allUrls)];
     
-    console.log(`📊 Testing ${uniqueUrls.length} unique URLs...\n`);
+    console.info(`📊 Testing ${uniqueUrls.length} unique URLs...\n`);
     
     const results = await this.monitor.checkMultipleHealth(uniqueUrls);
     
@@ -47,25 +47,25 @@ class URLValidator {
     const unhealthy = results.filter(r => r.status === 'unhealthy');
     
     // Print results
-    console.log(`✅ Healthy URLs (${healthy.length}):`);
+    console.info(`✅ Healthy URLs (${healthy.length}):`);
     healthy.forEach(result => {
-      console.log(`  ✓ ${result.url} (${result.responseTime}ms)`);
+      console.info(`  ✓ ${result.url} (${result.responseTime}ms)`);
     });
     
     if (unhealthy.length > 0) {
-      console.log(`\n❌ Unhealthy URLs (${unhealthy.length}):`);
+      console.info(`\n❌ Unhealthy URLs (${unhealthy.length}):`);
       unhealthy.forEach(result => {
-        console.log(`  ✗ ${result.url}`);
-        console.log(`    Error: ${result.error}`);
+        console.info(`  ✗ ${result.url}`);
+        console.info(`    Error: ${result.error}`);
       });
     }
     
     // Summary
-    console.log(`\n📈 Summary:`);
-    console.log(`  Total: ${results.length}`);
-    console.log(`  Healthy: ${healthy.length}`);
-    console.log(`  Unhealthy: ${unhealthy.length}`);
-    console.log(`  Success Rate: ${((healthy.length / results.length) * 100).toFixed(1)}%`);
+    console.info(`\n📈 Summary:`);
+    console.info(`  Total: ${results.length}`);
+    console.info(`  Healthy: ${healthy.length}`);
+    console.info(`  Unhealthy: ${unhealthy.length}`);
+    console.info(`  Success Rate: ${((healthy.length / results.length) * 100).toFixed(1)}%`);
     
     return {
       total: results.length,
@@ -76,7 +76,7 @@ class URLValidator {
   }
   
   async validateUrlSet(setName: keyof typeof URL_SETS) {
-    console.log(`🔍 Validating URL set: ${setName}...\n`);
+    console.info(`🔍 Validating URL set: ${setName}...\n`);
     
     const urls = URL_SETS[setName];
     const results = await this.monitor.checkMultipleHealth(urls);
@@ -84,15 +84,15 @@ class URLValidator {
     const healthy = results.filter(r => r.status === 'healthy');
     const unhealthy = results.filter(r => r.status === 'unhealthy');
     
-    console.log(`📊 Results for ${setName}:`);
-    console.log(`  Total: ${results.length}`);
-    console.log(`  Healthy: ${healthy.length}`);
-    console.log(`  Unhealthy: ${unhealthy.length}`);
+    console.info(`📊 Results for ${setName}:`);
+    console.info(`  Total: ${results.length}`);
+    console.info(`  Healthy: ${healthy.length}`);
+    console.info(`  Unhealthy: ${unhealthy.length}`);
     
     if (unhealthy.length > 0) {
-      console.log(`\n❌ Unhealthy URLs:`);
+      console.info(`\n❌ Unhealthy URLs:`);
       unhealthy.forEach(result => {
-        console.log(`  ✗ ${result.url} - ${result.error}`);
+        console.info(`  ✗ ${result.url} - ${result.error}`);
       });
     }
     
@@ -100,21 +100,21 @@ class URLValidator {
   }
   
   async validateSingleUrl(url: string) {
-    console.log(`🔍 Validating: ${url}`);
+    console.info(`🔍 Validating: ${url}`);
     
     const result = await this.monitor.checkHealth(url);
     
     if (result.status === 'healthy') {
-      console.log(`✅ Healthy (${result.responseTime}ms)`);
+      console.info(`✅ Healthy (${result.responseTime}ms)`);
     } else {
-      console.log(`❌ Unhealthy - ${result.error}`);
+      console.info(`❌ Unhealthy - ${result.error}`);
     }
     
     return result;
   }
   
   generateUrlReport() {
-    console.log('📋 Generating URL organization report...\n');
+    console.info('📋 Generating URL organization report...\n');
     
     const report = {
       registry: URLHelper.getAllRegistryUrls(),
@@ -133,48 +133,48 @@ class URLValidator {
       }
     };
     
-    console.log('📊 URL Organization Report:');
-    console.log(JSON.stringify(report, null, 2));
+    console.info('📊 URL Organization Report:');
+    console.info(JSON.stringify(report, null, 2));
     
     return report;
   }
   
   testUrlHelper() {
-    console.log('🧪 Testing URL Helper utilities...\n');
+    console.info('🧪 Testing URL Helper utilities...\n');
     
     // Test URL building
     const searchUrl = URLHelper.getSearchUrl('@duoplus/core');
-    console.log(`✓ Search URL: ${searchUrl}`);
+    console.info(`✓ Search URL: ${searchUrl}`);
     
     // Test package URLs
     const packageUrls = URLHelper.getPackageUrls('core', '1.0.0');
-    console.log(`✓ Package URLs:`, packageUrls);
+    console.info(`✓ Package URLs:`, packageUrls);
     
     // Test URL validation
     const validUrl = URLHelper.isValidUrl('https://duoplus-registry.utahj4754.workers.dev');
-    console.log(`✓ URL validation: ${validUrl}`);
+    console.info(`✓ URL validation: ${validUrl}`);
     
     // Test URL parsing
     const host = URLHelper.getHost('https://registry.factory-wager.com/health');
-    console.log(`✓ URL host: ${host}`);
+    console.info(`✓ URL host: ${host}`);
     
     // Test HTTPS check
     const isHttps = URLHelper.isHttps('https://registry.factory-wager.com');
-    console.log(`✓ HTTPS check: ${isHttps}`);
+    console.info(`✓ HTTPS check: ${isHttps}`);
     
     // Test local check
     const isLocal = URLHelper.isLocal('http://localhost:3000');
-    console.log(`✓ Local check: ${isLocal}`);
+    console.info(`✓ Local check: ${isLocal}`);
     
     // Test URL joining
     const joined = URLHelper.joinPaths('https://registry.factory-wager.com', 'api', 'v1', 'packages');
-    console.log(`✓ URL join: ${joined}`);
+    console.info(`✓ URL join: ${joined}`);
     
     // Test URL building with params
     const built = URLHelper.buildUrl('https://registry.factory-wager.com', 'search', { text: '@duoplus/core', limit: '10' });
-    console.log(`✓ URL build: ${built}`);
+    console.info(`✓ URL build: ${built}`);
     
-    console.log('\n✅ All URL Helper tests passed!');
+    console.info('\n✅ All URL Helper tests passed!');
   }
 }
 
@@ -208,17 +208,17 @@ async function main() {
       break;
       
     case 'monitor':
-      console.log('🔍 Starting URL monitoring...');
+      console.info('🔍 Starting URL monitoring...');
       validator.monitor.startCriticalMonitoring();
       
       // Run initial check
       await validator.monitor.checkMultipleHealth(URL_SETS.CRITICAL);
       
-      console.log('✅ Monitoring started. Press Ctrl+C to stop.');
+      console.info('✅ Monitoring started. Press Ctrl+C to stop.');
       
       // Keep process alive
       process.on('SIGINT', () => {
-        console.log('\n🛑 Stopping monitoring...');
+        console.info('\n🛑 Stopping monitoring...');
         validator.monitor.stopAllMonitoring();
         process.exit(0);
       });
@@ -226,13 +226,13 @@ async function main() {
       // Generate periodic reports
       setInterval(() => {
         const report = validator.monitor.generateReport();
-        console.log(report);
+        console.info(report);
       }, 60000); // Every minute
       
       break;
       
     default:
-      console.log(`
+      console.info(`
 🔍 DuoPlus URL Validator
 
 Usage: bun run tools/url-validator.ts [command] [target]

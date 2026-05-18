@@ -35,8 +35,8 @@ class ModularDashboardGenerator {
    * Generate all dashboards using modular configuration
    */
   async generateAllDashboards(): Promise<void> {
-    console.log('🏗️  Generating Modular Dashboards...');
-    console.log('=====================================');
+    console.info('🏗️  Generating Modular Dashboards...');
+    console.info('=====================================');
 
     // Ensure output directory exists
     await mkdir(this.outputDir, { recursive: true });
@@ -49,14 +49,14 @@ class ModularDashboardGenerator {
     // Generate main index
     await this.generateMainIndex();
 
-    console.log(`✅ Generated ${Object.keys(Dashboards).length} dashboards in ${this.outputDir}`);
+    console.info(`✅ Generated ${Object.keys(Dashboards).length} dashboards in ${this.outputDir}`);
   }
 
   /**
    * Generate individual dashboard
    */
   private async generateDashboard(id: string, config: any): Promise<void> {
-    console.log(`📱 Generating ${config.name}...`);
+    console.info(`📱 Generating ${config.name}...`);
 
     const colorScheme = ColorSchemes[config.colorScheme];
     const template = this.buildDashboardTemplate(id, config, colorScheme);
@@ -65,7 +65,7 @@ class ModularDashboardGenerator {
     const filepath = join(this.outputDir, filename);
     
     await writeFile(filepath, template);
-    console.log(`   ✅ Generated: ${filename}`);
+    console.info(`   ✅ Generated: ${filename}`);
   }
 
   /**
@@ -383,7 +383,7 @@ class ModularDashboardGenerator {
    * Generate main index with all dashboards
    */
   private async generateMainIndex(): Promise<void> {
-    console.log('📋 Generating main index...');
+    console.info('📋 Generating main index...');
 
     const dashboardCards = Object.entries(Dashboards).map(([id, config]) => {
       const colors = ColorSchemes[config.colorScheme];
@@ -540,7 +540,7 @@ class ModularDashboardGenerator {
 </html>`;
 
     await writeFile(join(this.outputDir, 'index.html'), indexContent);
-    console.log('   ✅ Generated: index.html');
+    console.info('   ✅ Generated: index.html');
   }
 }
 
@@ -550,8 +550,8 @@ async function main() {
   
   try {
     await generator.generateAllDashboards();
-    console.log('🎉 Modular Dashboard Generation Complete!');
-    console.log('📱 Open: ./generated-dashboards/index.html');
+    console.info('🎉 Modular Dashboard Generation Complete!');
+    console.info('📱 Open: ./generated-dashboards/index.html');
   } catch (error) {
     console.error('❌ Generation failed:', error);
     process.exit(1);

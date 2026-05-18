@@ -102,7 +102,7 @@ export async function stageDeploy(deployConfig: any): Promise<any> {
     // Update staging index
     await updateStagingIndex(deployId);
 
-    console.log(`🟢 Staged: ${deployId} for ${deployConfig.target} (v${deployConfig.version})`);
+    console.info(`🟢 Staged: ${deployId} for ${deployConfig.target} (v${deployConfig.version})`);
 
     const duration = performance.now() - startTime;
 
@@ -177,7 +177,7 @@ export async function rollbackDeploy(deployId: string): Promise<any> {
     if (await previousConfigFile.exists()) {
       const previousConfig = YAML.parse(await previousConfigFile.text());
       
-      console.log(`🔄 Rolling back ${deployId} to ${previousDeploy.id} (v${previousConfig.version})`);
+      console.info(`🔄 Rolling back ${deployId} to ${previousDeploy.id} (v${previousConfig.version})`);
 
       return {
         success: true,

@@ -39,7 +39,7 @@ class PureBunSecurityAudit {
   };
 
   constructor() {
-    console.log('🔒 Starting Pure Bun Ecosystem Security Audit...\n');
+    console.info('🔒 Starting Pure Bun Ecosystem Security Audit...\n');
   }
 
   private addFinding(finding: SecurityFinding): void {
@@ -67,7 +67,7 @@ class PureBunSecurityAudit {
   }
 
   private auditDependencyManagement(): void {
-    console.log('📦 Auditing Dependency Management...');
+    console.info('📦 Auditing Dependency Management...');
 
     // Check for package.json
     const packageJsonPath = join(process.cwd(), 'package.json');
@@ -149,7 +149,7 @@ class PureBunSecurityAudit {
   }
 
   private auditNativeApiSecurity(): void {
-    console.log('🔧 Auditing Native API Security...');
+    console.info('🔧 Auditing Native API Security...');
 
     // Test Bun SQLite security features
     const db = new Database(':memory:');
@@ -218,7 +218,7 @@ class PureBunSecurityAudit {
   }
 
   private auditAttackSurface(): void {
-    console.log('🎯 Auditing Attack Surface...');
+    console.info('🎯 Auditing Attack Surface...');
 
     // Calculate attack surface reduction
     const traditionalSqliteDeps = ['better-sqlite3', 'sqlite3', '@types/better-sqlite3'];
@@ -256,7 +256,7 @@ class PureBunSecurityAudit {
   }
 
   private auditCompliance(): void {
-    console.log('📋 Auditing Compliance Requirements...');
+    console.info('📋 Auditing Compliance Requirements...');
 
     // Check for security headers and configurations
     const securityFeatures = [
@@ -293,7 +293,7 @@ class PureBunSecurityAudit {
   }
 
   private auditPerformanceSecurity(): void {
-    console.log('⚡ Auditing Performance Security...');
+    console.info('⚡ Auditing Performance Security...');
 
     // Test that performance optimizations don't compromise security
     const db = new Database(':memory:');
@@ -354,9 +354,9 @@ class PureBunSecurityAudit {
   }
 
   private displayResults(totalTime: number): void {
-    console.log('\n' + '='.repeat(80));
-    console.log('🔒 PURE BUN ECOSYSTEM SECURITY AUDIT RESULTS');
-    console.log('='.repeat(80));
+    console.info('\n' + '='.repeat(80));
+    console.info('🔒 PURE BUN ECOSYSTEM SECURITY AUDIT RESULTS');
+    console.info('='.repeat(80));
 
     // Summary statistics
     const critical = this.findings.filter(f => f.severity === 'CRITICAL').length;
@@ -369,83 +369,83 @@ class PureBunSecurityAudit {
     const failed = this.findings.filter(f => f.status === 'FAIL').length;
     const warnings = this.findings.filter(f => f.status === 'WARN').length;
 
-    console.log(`\n📊 Audit Summary:`);
-    console.log(`   ⏱️  Audit Time: ${Math.round(totalTime / 1000)}s`);
-    console.log(`   🔍 Findings: ${this.findings.length} total`);
-    console.log(`   ✅ Passed: ${passed}`);
-    console.log(`   ⚠️  Warnings: ${warnings}`);
-    console.log(`   ❌ Failed: ${failed}`);
+    console.info(`\n📊 Audit Summary:`);
+    console.info(`   ⏱️  Audit Time: ${Math.round(totalTime / 1000)}s`);
+    console.info(`   🔍 Findings: ${this.findings.length} total`);
+    console.info(`   ✅ Passed: ${passed}`);
+    console.info(`   ⚠️  Warnings: ${warnings}`);
+    console.info(`   ❌ Failed: ${failed}`);
 
-    console.log(`\n🚨 Severity Breakdown:`);
-    console.log(`   🔴 Critical: ${critical}`);
-    console.log(`   🟠 High: ${high}`);
-    console.log(`   🟡 Medium: ${medium}`);
-    console.log(`   🔵 Low: ${low}`);
-    console.log(`   ℹ️  Info: ${info}`);
+    console.info(`\n🚨 Severity Breakdown:`);
+    console.info(`   🔴 Critical: ${critical}`);
+    console.info(`   🟠 High: ${high}`);
+    console.info(`   🟡 Medium: ${medium}`);
+    console.info(`   🔵 Low: ${low}`);
+    console.info(`   ℹ️  Info: ${info}`);
 
-    console.log(`\n📈 Security Metrics:`);
-    console.log(`   🎯 Attack Surface: ${this.metrics.attackSurface} dependencies`);
-    console.log(`   📦 Total Dependencies: ${this.metrics.dependencies}`);
-    console.log(`   🛡️  Vulnerabilities Found: ${this.metrics.vulnerabilities}`);
-    console.log(`   📊 Compliance Score: ${this.metrics.complianceScore}/100`);
+    console.info(`\n📈 Security Metrics:`);
+    console.info(`   🎯 Attack Surface: ${this.metrics.attackSurface} dependencies`);
+    console.info(`   📦 Total Dependencies: ${this.metrics.dependencies}`);
+    console.info(`   🛡️  Vulnerabilities Found: ${this.metrics.vulnerabilities}`);
+    console.info(`   📊 Compliance Score: ${this.metrics.complianceScore}/100`);
 
     // Display findings by status
     if (failed > 0) {
-      console.log('\n❌ FAILED FINDINGS:');
+      console.info('\n❌ FAILED FINDINGS:');
       for (const finding of this.findings.filter(f => f.status === 'FAIL')) {
-        console.log(`\n  ${this.getSeverityIcon(finding.severity)} ${finding.title}`);
-        console.log(`     Category: ${finding.category}`);
-        console.log(`     Impact: ${finding.impact}`);
-        console.log(`     Recommendation: ${finding.recommendation}`);
+        console.info(`\n  ${this.getSeverityIcon(finding.severity)} ${finding.title}`);
+        console.info(`     Category: ${finding.category}`);
+        console.info(`     Impact: ${finding.impact}`);
+        console.info(`     Recommendation: ${finding.recommendation}`);
         if (finding.evidence) {
-          console.log(`     Evidence: ${finding.evidence}`);
+          console.info(`     Evidence: ${finding.evidence}`);
         }
       }
     }
 
     if (warnings > 0) {
-      console.log('\n⚠️  WARNINGS:');
+      console.info('\n⚠️  WARNINGS:');
       for (const finding of this.findings.filter(f => f.status === 'WARN')) {
-        console.log(`\n  ${this.getSeverityIcon(finding.severity)} ${finding.title}`);
-        console.log(`     Category: ${finding.category}`);
-        console.log(`     Impact: ${finding.impact}`);
-        console.log(`     Recommendation: ${finding.recommendation}`);
+        console.info(`\n  ${this.getSeverityIcon(finding.severity)} ${finding.title}`);
+        console.info(`     Category: ${finding.category}`);
+        console.info(`     Impact: ${finding.impact}`);
+        console.info(`     Recommendation: ${finding.recommendation}`);
       }
     }
 
-    console.log('\n✅ PASSED CONTROLS:');
+    console.info('\n✅ PASSED CONTROLS:');
     for (const finding of this.findings.filter(f => f.status === 'PASS')) {
-      console.log(`  ${this.getSeverityIcon(finding.severity)} ${finding.title}`);
+      console.info(`  ${this.getSeverityIcon(finding.severity)} ${finding.title}`);
     }
 
     // Overall assessment
-    console.log('\n' + '='.repeat(80));
-    console.log('🎯 SECURITY ASSESSMENT:');
+    console.info('\n' + '='.repeat(80));
+    console.info('🎯 SECURITY ASSESSMENT:');
 
     if (failed === 0 && this.metrics.complianceScore >= 80) {
-      console.log('🟢 EXCELLENT: Pure Bun ecosystem significantly improves security');
-      console.log('   ✅ Zero external SQLite dependencies');
-      console.log('   ✅ Native API security features');
-      console.log('   ✅ Reduced attack surface');
-      console.log('   ✅ High compliance score');
+      console.info('🟢 EXCELLENT: Pure Bun ecosystem significantly improves security');
+      console.info('   ✅ Zero external SQLite dependencies');
+      console.info('   ✅ Native API security features');
+      console.info('   ✅ Reduced attack surface');
+      console.info('   ✅ High compliance score');
     } else if (failed <= 2 && this.metrics.complianceScore >= 70) {
-      console.log('🟡 GOOD: Pure Bun ecosystem provides solid security improvements');
-      console.log('   ⚠️  Minor issues to address');
-      console.log('   ✅ Core security features working');
+      console.info('🟡 GOOD: Pure Bun ecosystem provides solid security improvements');
+      console.info('   ⚠️  Minor issues to address');
+      console.info('   ✅ Core security features working');
     } else {
-      console.log('🔴 NEEDS ATTENTION: Security improvements needed');
-      console.log('   ❌ Significant security concerns found');
-      console.log('   🔧 Address failed findings immediately');
+      console.info('🔴 NEEDS ATTENTION: Security improvements needed');
+      console.info('   ❌ Significant security concerns found');
+      console.info('   🔧 Address failed findings immediately');
     }
 
-    console.log('\n💡 KEY SECURITY BENEFITS:');
-    console.log('   🔐 No external package vulnerabilities');
-    console.log('   🚀 Native performance with security');
-    console.log('   🛡️ Built-in SQL injection protection');
-    console.log('   🔄 Automatic security updates with Bun');
-    console.log('   📦 Minimal dependency attack surface');
+    console.info('\n💡 KEY SECURITY BENEFITS:');
+    console.info('   🔐 No external package vulnerabilities');
+    console.info('   🚀 Native performance with security');
+    console.info('   🛡️ Built-in SQL injection protection');
+    console.info('   🔄 Automatic security updates with Bun');
+    console.info('   📦 Minimal dependency attack surface');
 
-    console.log('='.repeat(80));
+    console.info('='.repeat(80));
   }
 
   private getSeverityIcon(severity: string): string {

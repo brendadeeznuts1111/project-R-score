@@ -428,7 +428,7 @@ async function main() {
   const [command, ...args] = process.argv.slice(2);
 
   if (!command) {
-    console.log(`
+    console.info(`
 AST Rewriter Agent v1.0.0 - Code transformation with AST awareness
 
 Usage:
@@ -469,13 +469,13 @@ Examples:
           dryRun: false
         };
 
-        console.log(`🔄 Rewriting ${filePath} with rule ${ruleId}...`);
+        console.info(`🔄 Rewriting ${filePath} with rule ${ruleId}...`);
         const result = await agent.rewriteFile(filePath, ruleId, fileOptions);
 
         if (result.errors.length > 0) {
           console.error(`❌ Errors: ${result.errors.join(', ')}`);
         } else {
-          console.log(`✅ ${result.file}: ${result.changes} changes applied`);
+          console.info(`✅ ${result.file}: ${result.changes} changes applied`);
         }
         break;
 
@@ -497,25 +497,25 @@ Examples:
           filesOpts.maxFiles = parseInt(filesOptions[maxFilesIndex + 1]);
         }
 
-        console.log(`🔄 Rewriting files matching ${pattern} with rule ${filesRuleId}...`);
+        console.info(`🔄 Rewriting files matching ${pattern} with rule ${filesRuleId}...`);
         const results = await agent.rewriteFiles(pattern, filesRuleId, filesOpts);
 
         const report = agent.generateReport(results);
-        console.log(report);
+        console.info(report);
         break;
 
       case 'list-rules':
         const tags = args;
         const rules = agent.getRules(tags.length > 0 ? tags : undefined);
 
-        console.log('Available AST Rewrite Rules:');
+        console.info('Available AST Rewrite Rules:');
         rules.forEach(rule => {
-          console.log(`\n📝 ${rule.name} (${rule.id})`);
-          console.log(`   ${rule.description}`);
-          console.log(`   Language: ${rule.language || 'auto'}`);
-          console.log(`   Tags: ${rule.metadata.tags.join(', ')}`);
+          console.info(`\n📝 ${rule.name} (${rule.id})`);
+          console.info(`   ${rule.description}`);
+          console.info(`   Language: ${rule.language || 'auto'}`);
+          console.info(`   Tags: ${rule.metadata.tags.join(', ')}`);
           if (rule.constraints?.file_pattern) {
-            console.log(`   Pattern: ${rule.constraints.file_pattern}`);
+            console.info(`   Pattern: ${rule.constraints.file_pattern}`);
           }
         });
         break;
@@ -528,7 +528,7 @@ Examples:
 
         const rule = JSON.parse(ruleJson);
         agent.createRule(rule);
-        console.log(`✅ Created custom rule: ${rule.id}`);
+        console.info(`✅ Created custom rule: ${rule.id}`);
         break;
 
       case 'dry-run':
@@ -537,13 +537,13 @@ Examples:
           throw new Error('Usage: dry-run <file> <rule-id>');
         }
 
-        console.log(`🔍 Dry run: ${dryFile} with rule ${dryRuleId}`);
+        console.info(`🔍 Dry run: ${dryFile} with rule ${dryRuleId}`);
         const dryResult = await agent.rewriteFile(dryFile, dryRuleId, { dryRun: true });
 
         if (dryResult.errors.length > 0) {
           console.error(`❌ Errors: ${dryResult.errors.join(', ')}`);
         } else {
-          console.log(`📊 Would apply ${dryResult.changes} changes`);
+          console.info(`📊 Would apply ${dryResult.changes} changes`);
         }
         break;
 

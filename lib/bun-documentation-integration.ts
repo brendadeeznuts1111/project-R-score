@@ -82,7 +82,7 @@ export class BunDocumentationIntegration {
    * Initialize the documentation integration system
    */
   async initialize(): Promise<void> {
-    console.log('🦌 Initializing Bun Documentation Integration...');
+    console.info('🦌 Initializing Bun Documentation Integration...');
     
     // Load existing documentation index
     await this.loadDocumentationIndex();
@@ -95,7 +95,7 @@ export class BunDocumentationIntegration {
     // Analyze current package for Bun API usage
     await this.analyzeCurrentPackage();
     
-    console.log('✅ Bun Documentation Integration initialized');
+    console.info('✅ Bun Documentation Integration initialized');
   }
 
   /**
@@ -147,7 +147,7 @@ export class BunDocumentationIntegration {
                   description: 'Read files with Bun\'s optimized API',
                   code: `const file = Bun.file('./data.json');
 const content = await file.text();
-console.log(content);`,
+console.info(content);`,
                   language: 'typescript',
                   runnable: true
                 }
@@ -170,7 +170,7 @@ console.log(content);`,
   }
 });
 
-console.log(\`Server running on http://localhost:\${server.port}\`);`,
+console.info(\`Server running on http://localhost:\${server.port}\`);`,
                   language: 'typescript',
                   runnable: true
                 }
@@ -205,7 +205,7 @@ db.run(\`INSERT INTO users (name) VALUES (?)\`, ['Alice']);
 
 // Query data
 const users = db.query(\`SELECT * FROM users\`).all();
-console.log(users);`,
+console.info(users);`,
                   language: 'typescript',
                   runnable: true
                 }
@@ -456,7 +456,7 @@ test('async operations', async () => {
               });
             });
             this.docIndex = index;
-            console.log('✅ Loaded documentation index from cache');
+            console.info('✅ Loaded documentation index from cache');
             return;
           } catch (parseError) {
             console.warn('Failed to parse cached documentation index:', parseError);
@@ -476,7 +476,7 @@ test('async operations', async () => {
    * Generate new documentation index
    */
   private async generateDocumentationIndex(): Promise<void> {
-    console.log('🔄 Generating new documentation index...');
+    console.info('🔄 Generating new documentation index...');
     
     // Create comprehensive documentation structure
     this.docIndex = {
@@ -532,13 +532,13 @@ test('async operations', async () => {
     if (this.r2Storage) {
       try {
         await this.r2Storage.upload('bun-documentation-index.json', JSON.stringify(this.docIndex));
-        console.log('✅ Saved documentation index to R2');
+        console.info('✅ Saved documentation index to R2');
       } catch (error) {
         console.warn('Failed to save documentation index to R2:', error);
       }
     }
 
-    console.log('✅ Generated new documentation index');
+    console.info('✅ Generated new documentation index');
   }
 
   /**
@@ -549,7 +549,7 @@ test('async operations', async () => {
     
     try {
       await this.rssManager.subscribe('https://bun.com/rss.xml', 'Bun Official Blog');
-      console.log('✅ Subscribed to Bun RSS feed');
+      console.info('✅ Subscribed to Bun RSS feed');
     } catch (error) {
       console.warn('Failed to subscribe to Bun RSS feed:', error);
     }
@@ -561,7 +561,7 @@ test('async operations', async () => {
   private async analyzeCurrentPackage(): Promise<void> {
     try {
       const analysis = await this.packageManager.analyzePackage();
-      console.log(`📦 Package analysis complete: ${analysis.bunDocs?.length || 0} Bun APIs found`);
+      console.info(`📦 Package analysis complete: ${analysis.bunDocs?.length || 0} Bun APIs found`);
     } catch (error) {
       console.warn('Package analysis failed:', error);
     }

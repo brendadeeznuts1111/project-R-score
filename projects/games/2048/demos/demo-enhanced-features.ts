@@ -33,30 +33,30 @@ const db = new Database("./crc32-enhanced.db");
 const sql = db as any;
 
 async function initializeEnhancedSystem(): Promise<void> {
-  console.log("🚀 Initializing Enhanced CRC32 Audit Trail System");
-  console.log("=".repeat(60));
+  console.info("🚀 Initializing Enhanced CRC32 Audit Trail System");
+  console.info("=".repeat(60));
 
   try {
     // Run enhanced database migration
-    console.log("📋 Running enhanced database migration...");
+    console.info("📋 Running enhanced database migration...");
     const migrationSQL = await Bun.file(
       "./migrations/002_enhanced_audit_system_sqlite.sql"
     ).text();
     db.exec(migrationSQL);
-    console.log("✅ Enhanced database schema created");
+    console.info("✅ Enhanced database schema created");
 
     // Initialize helper
     const helper = new CRC32SQLHelper(sql);
 
     // Test basic functionality
-    console.log("🧪 Testing basic CRC32 SQL helper...");
+    console.info("🧪 Testing basic CRC32 SQL helper...");
     const testResult = await helper.insertWithCRC32Validation("test_entity", {
       id: "test-1",
       data: "enhanced demo data",
     });
-    console.log(`✅ Basic test passed: ${testResult.id}`);
+    console.info(`✅ Basic test passed: ${testResult.id}`);
 
-    console.log("🎯 Enhanced system initialization complete!\n");
+    console.info("🎯 Enhanced system initialization complete!\n");
   } catch (error) {
     console.error("❌ Initialization failed:", error);
     throw error;
@@ -64,13 +64,13 @@ async function initializeEnhancedSystem(): Promise<void> {
 }
 
 async function demonstrateSelfHealing(): Promise<void> {
-  console.log("🔧 Demonstrating Self-Healing System");
-  console.log("=".repeat(50));
+  console.info("🔧 Demonstrating Self-Healing System");
+  console.info("=".repeat(50));
 
   const healer = new SelfHealingCRC32System(sql);
 
   // Simulate some performance issues by inserting problematic data
-  console.log("🌪️  Simulating performance issues...");
+  console.info("🌪️  Simulating performance issues...");
 
   // Insert some anomalous data points
   const anomalies = [
@@ -97,45 +97,45 @@ async function demonstrateSelfHealing(): Promise<void> {
     `;
   }
 
-  console.log("⚠️  Anomalies inserted, running self-healing...");
+  console.info("⚠️  Anomalies inserted, running self-healing...");
 
   // Run self-healing
   const report = await healer.selfHealing();
 
-  console.log("\n📊 Self-Healing Report:");
-  console.log(`Issues Detected: ${report.issuesDetected}`);
-  console.log(`Issues Resolved: ${report.issuesResolved}`);
-  console.log(
+  console.info("\n📊 Self-Healing Report:");
+  console.info(`Issues Detected: ${report.issuesDetected}`);
+  console.info(`Issues Resolved: ${report.issuesResolved}`);
+  console.info(
     `Success Rate: ${
       report.issuesDetected > 0
         ? ((report.issuesResolved / report.issuesDetected) * 100).toFixed(1)
         : 100
     }%`
   );
-  console.log(`System Health: ${report.systemHealth.overall.toUpperCase()}`);
+  console.info(`System Health: ${report.systemHealth.overall.toUpperCase()}`);
 
   if (report.corrections.length > 0) {
-    console.log("\n🔧 Corrections Applied:");
+    console.info("\n🔧 Corrections Applied:");
     report.corrections.forEach((correction) => {
       const status = correction.success ? "✅" : "❌";
-      console.log(`${status} ${correction.correction}`);
+      console.info(`${status} ${correction.correction}`);
     });
   }
 
-  console.log("\n💡 Recommendations:");
-  report.recommendations.forEach((rec) => console.log(`• ${rec}`));
+  console.info("\n💡 Recommendations:");
+  report.recommendations.forEach((rec) => console.info(`• ${rec}`));
 
-  console.log("\n✅ Self-healing demo complete!\n");
+  console.info("\n✅ Self-healing demo complete!\n");
 }
 
 async function demonstrateIntelligentBatch(): Promise<void> {
-  console.log("📦 Demonstrating Intelligent Batch Processing");
-  console.log("=".repeat(55));
+  console.info("📦 Demonstrating Intelligent Batch Processing");
+  console.info("=".repeat(55));
 
   const processor = new IntelligentBatchProcessor(sql);
 
   // Generate diverse test data
-  console.log("📊 Generating diverse test dataset...");
+  console.info("📊 Generating diverse test dataset...");
 
   const testItems = Array.from({ length: 500 }, (_, i) => ({
     id: `batch-item-${i}`,
@@ -145,7 +145,7 @@ async function demonstrateIntelligentBatch(): Promise<void> {
     priority: i % 10 === 0 ? "high" : i % 5 === 0 ? "normal" : ("low" as const),
   }));
 
-  console.log(`Generated ${testItems.length} test items`);
+  console.info(`Generated ${testItems.length} test items`);
 
   // Process with intelligent batching
   const startTime = performance.now();
@@ -156,55 +156,55 @@ async function demonstrateIntelligentBatch(): Promise<void> {
   });
   const duration = performance.now() - startTime;
 
-  console.log("\n📊 Batch Processing Results:");
-  console.log(`Batch ID: ${result.batchId}`);
-  console.log(`Duration: ${duration.toFixed(2)}ms`);
-  console.log(`Total Items: ${result.summary.total}`);
-  console.log(`Successful: ${result.summary.successful}`);
-  console.log(`Failed: ${result.summary.failed}`);
-  console.log(
+  console.info("\n📊 Batch Processing Results:");
+  console.info(`Batch ID: ${result.batchId}`);
+  console.info(`Duration: ${duration.toFixed(2)}ms`);
+  console.info(`Total Items: ${result.summary.total}`);
+  console.info(`Successful: ${result.summary.successful}`);
+  console.info(`Failed: ${result.summary.failed}`);
+  console.info(
     `Success Rate: ${(
       (result.summary.successful / result.summary.total) *
       100
     ).toFixed(1)}%`
   );
-  console.log(
+  console.info(
     `Avg Throughput: ${result.summary.avgThroughput.toFixed(1)} MB/s`
   );
-  console.log(
+  console.info(
     `Total Bytes: ${(result.summary.totalBytes / 1024 / 1024).toFixed(2)} MB`
   );
-  console.log(
+  console.info(
     `Hardware Utilization: ${(
       result.summary.hardwareUtilizationRate * 100
     ).toFixed(1)}%`
   );
-  console.log(
+  console.info(
     `Avg Confidence: ${(result.summary.avgConfidence * 100).toFixed(1)}%`
   );
 
   // Show performance breakdown
-  console.log("\n📈 Performance Breakdown:");
+  console.info("\n📈 Performance Breakdown:");
   const throughputPerSecond =
     result.summary.totalBytes / 1024 / 1024 / (duration / 1000);
-  console.log(`Throughput: ${throughputPerSecond.toFixed(2)} MB/s`);
-  console.log(
+  console.info(`Throughput: ${throughputPerSecond.toFixed(2)} MB/s`);
+  console.info(
     `Items/Second: ${(result.summary.total / (duration / 1000)).toFixed(
       0
     )} items/s`
   );
 
-  console.log("\n✅ Intelligent batch processing demo complete!\n");
+  console.info("\n✅ Intelligent batch processing demo complete!\n");
 }
 
 async function demonstrateMLAnalytics(): Promise<void> {
-  console.log("🧠 Demonstrating ML-Powered Analytics");
-  console.log("=".repeat(45));
+  console.info("🧠 Demonstrating ML-Powered Analytics");
+  console.info("=".repeat(45));
 
   const analytics = new CRC32MLAnalytics(sql);
 
   // Generate historical data for ML training
-  console.log("📚 Generating historical training data...");
+  console.info("📚 Generating historical training data...");
 
   const entityTypes = ["document", "image", "video", "dataset", "archive"];
   const historicalData = [];
@@ -241,10 +241,10 @@ async function demonstrateMLAnalytics(): Promise<void> {
     `;
   }
 
-  console.log("✅ Historical data generated");
+  console.info("✅ Historical data generated");
 
   // Demonstrate ML predictions
-  console.log("\n🎯 Testing ML Predictions...");
+  console.info("\n🎯 Testing ML Predictions...");
 
   const testEntity = {
     type: "document",
@@ -255,87 +255,87 @@ async function demonstrateMLAnalytics(): Promise<void> {
 
   const predictions = await analytics.predictOptimalSettings(testEntity);
 
-  console.log("\n🧠 ML Prediction Results:");
-  console.log(`Entity Type: ${testEntity.type}`);
-  console.log(`Entity Size: ${testEntity.size} bytes`);
-  console.log(`Predicted Chunk Size: ${predictions.chunkSize}`);
-  console.log(`Predicted Concurrency: ${predictions.concurrency}`);
-  console.log(
+  console.info("\n🧠 ML Prediction Results:");
+  console.info(`Entity Type: ${testEntity.type}`);
+  console.info(`Entity Size: ${testEntity.size} bytes`);
+  console.info(`Predicted Chunk Size: ${predictions.chunkSize}`);
+  console.info(`Predicted Concurrency: ${predictions.concurrency}`);
+  console.info(
     `Hardware Acceleration: ${predictions.hardwareAcceleration ? "YES" : "NO"}`
   );
-  console.log(`Compression: ${predictions.compression ? "YES" : "NO"}`);
-  console.log(
+  console.info(`Compression: ${predictions.compression ? "YES" : "NO"}`);
+  console.info(
     `Expected Throughput: ${predictions.expectedThroughput.toFixed(1)} MB/s`
   );
-  console.log(
+  console.info(
     `Prediction Confidence: ${(predictions.confidence * 100).toFixed(1)}%`
   );
 
   // Demonstrate anomaly detection
-  console.log("\n🔍 Running Anomaly Detection...");
+  console.info("\n🔍 Running Anomaly Detection...");
 
   const anomalies = await analytics.detectAnomalies("1h");
 
-  console.log("\n⚠️  Anomaly Detection Results:");
-  console.log(`Total Anomalies: ${anomalies.summary.totalAnomalies}`);
-  console.log("Severity Distribution:", anomalies.summary.severityDistribution);
+  console.info("\n⚠️  Anomaly Detection Results:");
+  console.info(`Total Anomalies: ${anomalies.summary.totalAnomalies}`);
+  console.info("Severity Distribution:", anomalies.summary.severityDistribution);
 
   if (anomalies.anomalies.length > 0) {
-    console.log("\nRecent Anomalies:");
+    console.info("\nRecent Anomalies:");
     anomalies.anomalies.slice(0, 3).forEach((anomaly) => {
-      console.log(
+      console.info(
         `  ${anomaly.anomalousMetric}: ${anomaly.value.toFixed(2)} (${
           anomaly.severity
         })`
       );
-      console.log(`    Recommendation: ${anomaly.recommendation}`);
+      console.info(`    Recommendation: ${anomaly.recommendation}`);
     });
   }
 
   // Generate performance report
-  console.log("\n📊 Generating Performance Report...");
+  console.info("\n📊 Generating Performance Report...");
 
   const report = await analytics.generatePerformanceReport("24h");
 
-  console.log("\n📋 24-Hour Performance Report:");
-  console.log(`Period: ${report.period}`);
-  console.log(`Total Operations: ${report.performance.sample_count}`);
-  console.log(
+  console.info("\n📋 24-Hour Performance Report:");
+  console.info(`Period: ${report.period}`);
+  console.info(`Total Operations: ${report.performance.sample_count}`);
+  console.info(
     `Avg Throughput: ${report.performance.avg_throughput.toFixed(1)} MB/s`
   );
-  console.log(
+  console.info(
     `Max Throughput: ${report.performance.max_throughput.toFixed(1)} MB/s`
   );
-  console.log(`Avg Latency: ${report.performance.avg_latency.toFixed(1)} ms`);
-  console.log(
+  console.info(`Avg Latency: ${report.performance.avg_latency.toFixed(1)} ms`);
+  console.info(
     `Hardware Utilization: ${(
       report.performance.hardware_utilization_rate * 100
     ).toFixed(1)}%`
   );
-  console.log(
+  console.info(
     `Integrity Rate: ${(report.integrity.valid_rate * 100).toFixed(1)}%`
   );
-  console.log(
+  console.info(
     `Avg Confidence: ${(report.integrity.avg_confidence * 100).toFixed(1)}%`
   );
 
-  console.log("\n💡 ML Recommendations:");
-  report.recommendations.forEach((rec) => console.log(`• ${rec}`));
+  console.info("\n💡 ML Recommendations:");
+  report.recommendations.forEach((rec) => console.info(`• ${rec}`));
 
-  console.log("\n🎯 Next Steps:");
-  report.nextSteps.forEach((step) => console.log(`• ${step}`));
+  console.info("\n🎯 Next Steps:");
+  report.nextSteps.forEach((step) => console.info(`• ${step}`));
 
-  console.log("\n✅ ML analytics demo complete!\n");
+  console.info("\n✅ ML analytics demo complete!\n");
 }
 
 async function demonstrateRealTimeDashboard(): Promise<void> {
-  console.log("📺 Demonstrating Real-time Audit Dashboard");
-  console.log("=".repeat(50));
+  console.info("📺 Demonstrating Real-time Audit Dashboard");
+  console.info("=".repeat(50));
 
   const dashboard = new CRC32AuditDashboard(sql);
 
   // Generate some real-time data
-  console.log("📊 Generating real-time audit data...");
+  console.info("📊 Generating real-time audit data...");
 
   for (let i = 0; i < 20; i++) {
     const throughput = 2000 + Math.random() * 3000;
@@ -362,27 +362,27 @@ async function demonstrateRealTimeDashboard(): Promise<void> {
   // Get dashboard data
   const dashboardData = await dashboard.getAuditDashboard("5m");
 
-  console.log("\n📊 Real-time Dashboard Data:");
-  console.log(`Total Audits: ${dashboardData.summary.totalAudits}`);
-  console.log(
+  console.info("\n📊 Real-time Dashboard Data:");
+  console.info(`Total Audits: ${dashboardData.summary.totalAudits}`);
+  console.info(
     `Integrity Rate: ${(dashboardData.summary.integrityRate * 100).toFixed(1)}%`
   );
-  console.log(
+  console.info(
     `Avg Throughput: ${dashboardData.summary.avgThroughput.toFixed(1)} MB/s`
   );
-  console.log(
+  console.info(
     `Hardware Utilization: ${(
       dashboardData.summary.hardwareUtilization * 100
     ).toFixed(1)}%`
   );
-  console.log(
+  console.info(
     `Avg Confidence: ${(dashboardData.summary.avgConfidence * 100).toFixed(1)}%`
   );
 
   if (dashboardData.trends.length > 0) {
-    console.log("\n📈 Performance Trends:");
+    console.info("\n📈 Performance Trends:");
     dashboardData.trends.slice(0, 3).forEach((trend) => {
-      console.log(
+      console.info(
         `  ${trend.timestamp}: ${trend.throughput.toFixed(
           1
         )} MB/s, ${trend.latency.toFixed(1)}ms latency`
@@ -391,9 +391,9 @@ async function demonstrateRealTimeDashboard(): Promise<void> {
   }
 
   if (dashboardData.recentFailures.length > 0) {
-    console.log("\n⚠️  Recent Failures:");
+    console.info("\n⚠️  Recent Failures:");
     dashboardData.recentFailures.slice(0, 3).forEach((failure) => {
-      console.log(
+      console.info(
         `  ${failure.entityType}:${failure.entityId} - ${
           failure.status
         } (${failure.confidenceScore.toFixed(2)})`
@@ -404,9 +404,9 @@ async function demonstrateRealTimeDashboard(): Promise<void> {
   // Get performance metrics
   const performanceMetrics = await dashboard.getPerformanceMetrics("5m");
 
-  console.log("\n📊 Detailed Performance Metrics:");
-  console.log(`Total Operations: ${performanceMetrics.total_operations}`);
-  console.log(
+  console.info("\n📊 Detailed Performance Metrics:");
+  console.info(`Total Operations: ${performanceMetrics.total_operations}`);
+  console.info(
     `Success Rate: ${(
       ((performanceMetrics.total_operations -
         performanceMetrics.total_operations *
@@ -415,28 +415,28 @@ async function demonstrateRealTimeDashboard(): Promise<void> {
       100
     ).toFixed(1)}%`
   );
-  console.log(
+  console.info(
     `P95 Throughput: ${performanceMetrics.percentiles.throughput.p95.toFixed(
       1
     )} MB/s`
   );
-  console.log(
+  console.info(
     `P95 Latency: ${performanceMetrics.percentiles.latency.p95.toFixed(1)} ms`
   );
 
-  console.log("\n✅ Real-time dashboard demo complete!\n");
+  console.info("\n✅ Real-time dashboard demo complete!\n");
 }
 
 async function runCompleteDemo(): Promise<void> {
-  console.log("🚀 Enhanced CRC32 Audit Trail System - Complete Demo");
-  console.log("=".repeat(65));
-  console.log("This demo showcases all advanced features:");
-  console.log("• Self-healing system with automatic issue correction");
-  console.log("• Intelligent batch processing with ML optimization");
-  console.log("• ML-powered analytics and anomaly detection");
-  console.log("• Real-time audit dashboard with streaming");
-  console.log("• Enhanced database schema with audit trails");
-  console.log("=".repeat(65));
+  console.info("🚀 Enhanced CRC32 Audit Trail System - Complete Demo");
+  console.info("=".repeat(65));
+  console.info("This demo showcases all advanced features:");
+  console.info("• Self-healing system with automatic issue correction");
+  console.info("• Intelligent batch processing with ML optimization");
+  console.info("• ML-powered analytics and anomaly detection");
+  console.info("• Real-time audit dashboard with streaming");
+  console.info("• Enhanced database schema with audit trails");
+  console.info("=".repeat(65));
 
   try {
     await initializeEnhancedSystem();
@@ -445,35 +445,35 @@ async function runCompleteDemo(): Promise<void> {
     await demonstrateMLAnalytics();
     await demonstrateRealTimeDashboard();
 
-    console.log("🎉 Complete Enhanced Demo Finished Successfully!");
-    console.log("=".repeat(50));
+    console.info("🎉 Complete Enhanced Demo Finished Successfully!");
+    console.info("=".repeat(50));
 
     // Show final system status
     const systemHealth = await sql`
       SELECT * FROM v_system_health LIMIT 1
     `.then((rows) => rows[0]);
 
-    console.log("\n🏥 Final System Health:");
-    console.log(`Recent Operations: ${systemHealth.recent_operations}`);
-    console.log(
+    console.info("\n🏥 Final System Health:");
+    console.info(`Recent Operations: ${systemHealth.recent_operations}`);
+    console.info(
       `Current Throughput: ${
         systemHealth.current_throughput?.toFixed(1) || 0
       } MB/s`
     );
-    console.log(
+    console.info(
       `Current Latency: ${systemHealth.current_latency?.toFixed(1) || 0} ms`
     );
-    console.log(
+    console.info(
       `Integrity Rate: ${((systemHealth.integrity_rate || 0) * 100).toFixed(
         1
       )}%`
     );
-    console.log(`Active Anomalies: ${systemHealth.active_anomalies}`);
-    console.log(`Queue Size: ${systemHealth.queue_size}`);
-    console.log(`Active Batches: ${systemHealth.active_batches}`);
+    console.info(`Active Anomalies: ${systemHealth.active_anomalies}`);
+    console.info(`Queue Size: ${systemHealth.queue_size}`);
+    console.info(`Active Batches: ${systemHealth.active_batches}`);
 
-    console.log("\n🚀 Ready for Production!");
-    console.log(
+    console.info("\n🚀 Ready for Production!");
+    console.info(
       "All enhanced features are operational and ready for deployment."
     );
   } catch (error) {

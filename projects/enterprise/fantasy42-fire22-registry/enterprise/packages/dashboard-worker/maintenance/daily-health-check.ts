@@ -43,10 +43,10 @@ class DailyHealthChecker {
    * 🏥 Run comprehensive daily health check
    */
   async runHealthCheck(): Promise<HealthReport> {
-    console.log('🏥 Fire22 Dashboard Daily Health Check');
-    console.log('!==!==!==!==!==!==!==');
-    console.log(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
-    console.log(`⏰ Time: ${new Date().toLocaleTimeString()}\n`);
+    console.info('🏥 Fire22 Dashboard Daily Health Check');
+    console.info('!==!==!==!==!==!==!==');
+    console.info(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
+    console.info(`⏰ Time: ${new Date().toLocaleTimeString()}\n`);
 
     // Core system checks
     await this.checkDashboardAccessibility();
@@ -70,7 +70,7 @@ class DailyHealthChecker {
    * 🌐 Check dashboard accessibility and basic functionality
    */
   private async checkDashboardAccessibility(): Promise<void> {
-    console.log('🌐 Checking dashboard accessibility...');
+    console.info('🌐 Checking dashboard accessibility...');
 
     try {
       const startTime = Date.now();
@@ -105,7 +105,7 @@ class DailyHealthChecker {
    * 📡 Check RSS feed functionality for all departments
    */
   private async checkRSSFeeds(): Promise<void> {
-    console.log('📡 Checking RSS feeds...');
+    console.info('📡 Checking RSS feeds...');
 
     const departments = [
       'finance',
@@ -180,7 +180,7 @@ class DailyHealthChecker {
    * 🗄️ Check database connectivity and performance
    */
   private async checkDatabaseConnectivity(): Promise<void> {
-    console.log('🗄️ Checking database connectivity...');
+    console.info('🗄️ Checking database connectivity...');
 
     try {
       // Check if database files exist (SQLite)
@@ -212,7 +212,7 @@ class DailyHealthChecker {
    * 🔌 Check API endpoint health
    */
   private async checkAPIEndpoints(): Promise<void> {
-    console.log('🔌 Checking API endpoints...');
+    console.info('🔌 Checking API endpoints...');
 
     const endpoints = ['/api/tasks', '/api/tasks/events', '/api/departments', '/feeds/index.html'];
 
@@ -262,7 +262,7 @@ class DailyHealthChecker {
    * 💻 Check codebase health and quality
    */
   private async checkCodebaseHealth(): Promise<void> {
-    console.log('💻 Checking codebase health...');
+    console.info('💻 Checking codebase health...');
 
     try {
       // Check package.json and dependencies
@@ -305,7 +305,7 @@ class DailyHealthChecker {
    * 📚 Check documentation status and freshness
    */
   private async checkDocumentationStatus(): Promise<void> {
-    console.log('📚 Checking documentation status...');
+    console.info('📚 Checking documentation status...');
 
     try {
       const docsPath = join(process.cwd(), 'docs');
@@ -363,7 +363,7 @@ class DailyHealthChecker {
    * 🔒 Check security status
    */
   private async checkSecurityStatus(): Promise<void> {
-    console.log('🔒 Checking security status...');
+    console.info('🔒 Checking security status...');
 
     try {
       // Check for security-related files
@@ -406,7 +406,7 @@ class DailyHealthChecker {
    * ⚡ Check performance metrics
    */
   private async checkPerformanceMetrics(): Promise<void> {
-    console.log('⚡ Checking performance metrics...');
+    console.info('⚡ Checking performance metrics...');
 
     try {
       const totalCheckTime = Date.now() - this.startTime;
@@ -455,7 +455,7 @@ class DailyHealthChecker {
     });
 
     const emoji = status === 'healthy' ? '✅' : status === 'warning' ? '⚠️' : '❌';
-    console.log(`  ${emoji} ${component}: ${message}`);
+    console.info(`  ${emoji} ${component}: ${message}`);
   }
 
   /**
@@ -494,7 +494,7 @@ class DailyHealthChecker {
       const reportPath = join(reportsDir, `health-check-${report.date}.json`);
       await Bun.write(reportPath, JSON.stringify(report, null, 2));
 
-      console.log(`\n📊 Health report saved: ${reportPath}`);
+      console.info(`\n📊 Health report saved: ${reportPath}`);
     } catch (error) {
       console.error(`❌ Failed to save health report: ${error}`);
     }
@@ -505,19 +505,19 @@ class DailyHealthChecker {
    */
   private async sendAlerts(report: HealthReport): Promise<void> {
     if (report.overallStatus === 'critical') {
-      console.log('\n🚨 CRITICAL ISSUES DETECTED - ALERTS SENT');
+      console.info('\n🚨 CRITICAL ISSUES DETECTED - ALERTS SENT');
 
       const criticalIssues = report.checks.filter(check => check.status === 'critical');
-      console.log('Critical Issues:');
+      console.info('Critical Issues:');
       criticalIssues.forEach(issue => {
-        console.log(`  ❌ ${issue.component}: ${issue.message}`);
+        console.info(`  ❌ ${issue.component}: ${issue.message}`);
       });
 
       // In a real implementation, this would send emails/Slack notifications
-      console.log('📧 Alert notifications would be sent to:');
-      console.log('  - Alex Rodriguez (alex.rodriguez@technology.fire22)');
-      console.log('  - Maria Garcia (maria.garcia@technology.fire22)');
-      console.log('  - Sarah Martinez (sarah.martinez@communications.fire22)');
+      console.info('📧 Alert notifications would be sent to:');
+      console.info('  - Alex Rodriguez (alex.rodriguez@technology.fire22)');
+      console.info('  - Maria Garcia (maria.garcia@technology.fire22)');
+      console.info('  - Sarah Martinez (sarah.martinez@communications.fire22)');
     }
   }
 }
@@ -528,11 +528,11 @@ async function main() {
     const checker = new DailyHealthChecker();
     const report = await checker.runHealthCheck();
 
-    console.log('\n📋 Health Check Summary:');
-    console.log(`  Overall Status: ${report.overallStatus.toUpperCase()}`);
-    console.log(`  ✅ Healthy: ${report.summary.healthy}`);
-    console.log(`  ⚠️ Warnings: ${report.summary.warning}`);
-    console.log(`  ❌ Critical: ${report.summary.critical}`);
+    console.info('\n📋 Health Check Summary:');
+    console.info(`  Overall Status: ${report.overallStatus.toUpperCase()}`);
+    console.info(`  ✅ Healthy: ${report.summary.healthy}`);
+    console.info(`  ⚠️ Warnings: ${report.summary.warning}`);
+    console.info(`  ❌ Critical: ${report.summary.critical}`);
 
     process.exit(report.overallStatus === 'critical' ? 1 : 0);
   } catch (error) {

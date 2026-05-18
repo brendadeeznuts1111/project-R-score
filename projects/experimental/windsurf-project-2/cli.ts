@@ -138,9 +138,9 @@ async function cmdEdit(options: CLIOptions): Promise<void> {
     }
   }
 
-  console.log(`Edited: ${file}`);
-  console.log(`Secrets: ${result.secretsCount}`);
-  console.log(`Security Score: ${result.securityScore}`);
+  console.info(`Edited: ${file}`);
+  console.info(`Secrets: ${result.secretsCount}`);
+  console.info(`Security Score: ${result.securityScore}`);
 }
 
 async function cmdOptimize(options: CLIOptions): Promise<void> {
@@ -164,9 +164,9 @@ async function cmdOptimize(options: CLIOptions): Promise<void> {
   const output = options.output || file;
   await Bun.file(output).write(result.optimized);
 
-  console.log(`Optimized: ${file} -> ${output}`);
-  console.log(`Size reduction: ${result.sizeReduction} bytes`);
-  console.log(`Compression ratio: ${(result.compressionRatio * 100).toFixed(1)}%`);
+  console.info(`Optimized: ${file} -> ${output}`);
+  console.info(`Size reduction: ${result.sizeReduction} bytes`);
+  console.info(`Compression ratio: ${(result.compressionRatio * 100).toFixed(1)}%`);
 }
 
 async function cmdAudit(options: CLIOptions): Promise<void> {
@@ -191,7 +191,7 @@ async function cmdAudit(options: CLIOptions): Promise<void> {
   }
 
   if (options.reportFormat === 'json') {
-    console.log(JSON.stringify(results, null, 2));
+    console.info(JSON.stringify(results, null, 2));
   } else {
     for (const result of results) {
       printAuditSummary(result);
@@ -221,7 +221,7 @@ async function cmdDiff(options: CLIOptions): Promise<void> {
   const content2 = await Bun.file(file2).text();
 
   const diff = computeDiff(content1, content2);
-  console.log(JSON.stringify(diff, null, 2));
+  console.info(JSON.stringify(diff, null, 2));
 }
 
 async function cmdRestore(options: CLIOptions): Promise<void> {
@@ -231,15 +231,15 @@ async function cmdRestore(options: CLIOptions): Promise<void> {
     process.exit(1);
   }
 
-  console.log(`Restoring: ${source}`);
-  console.log('Note: Implement decompression from S3 or local archive');
+  console.info(`Restoring: ${source}`);
+  console.info('Note: Implement decompression from S3 or local archive');
 }
 
 async function cmdGenPolicy(options: CLIOptions): Promise<void> {
   const sourceDir = options.sourceDir || '.';
   const outputPath = options.output || '.observatory-policy.toml';
 
-  console.log(`\x1b[1;36mGenerating security policy from ${sourceDir}...\x1b[0m`);
+  console.info(`\x1b[1;36mGenerating security policy from ${sourceDir}...\x1b[0m`);
 
   const generator = new PolicyGenerator(sourceDir);
 
@@ -251,34 +251,34 @@ async function cmdGenPolicy(options: CLIOptions): Promise<void> {
 
   if (options.dryRun) {
     const toml = await generator.generateTOML(policy);
-    console.log('\x1b[33m=== DRY RUN - Policy would be: ===\x1b[0m');
-    console.log(toml);
+    console.info('\x1b[33m=== DRY RUN - Policy would be: ===\x1b[0m');
+    console.info(toml);
     return;
   }
 
   await generator.savePolicy(policy, outputPath);
 
-  console.log(`\x1b[32m✓ Policy generated: ${outputPath}\x1b[0m`);
-  console.log(`  Patterns found: ${policy.metadata.patterns_found}`);
-  console.log(`  Secrets classified: ${policy.metadata.secrets_classified}`);
-  console.log(`  URL patterns extracted: ${policy.metadata.url_patterns_extracted}`);
-  console.log(`  Allowed prefixes: ${policy.secrets.allowed_prefixes.join(', ')}`);
-  console.log(`  Blocked substrings: ${policy.secrets.blocked_substrings.join(', ')}`);
+  console.info(`\x1b[32m✓ Policy generated: ${outputPath}\x1b[0m`);
+  console.info(`  Patterns found: ${policy.metadata.patterns_found}`);
+  console.info(`  Secrets classified: ${policy.metadata.secrets_classified}`);
+  console.info(`  URL patterns extracted: ${policy.metadata.url_patterns_extracted}`);
+  console.info(`  Allowed prefixes: ${policy.secrets.allowed_prefixes.join(', ')}`);
+  console.info(`  Blocked substrings: ${policy.secrets.blocked_substrings.join(', ')}`);
 
   if (options.merge) {
     const diff = await generator.diffWithExisting(policy, outputPath);
-    console.log('\x1b[33m=== Diff with existing policy ===\x1b[0m');
-    console.log(`  Added sections: ${diff.added.join(', ') || 'none'}`);
-    console.log(`  Removed sections: ${diff.removed.join(', ') || 'none'}`);
-    console.log(`  Modified sections: ${diff.modified.join(', ') || 'none'}`);
-    console.log(`  Changes: ${diff.diff}`);
+    console.info('\x1b[33m=== Diff with existing policy ===\x1b[0m');
+    console.info(`  Added sections: ${diff.added.join(', ') || 'none'}`);
+    console.info(`  Removed sections: ${diff.removed.join(', ') || 'none'}`);
+    console.info(`  Modified sections: ${diff.modified.join(', ') || 'none'}`);
+    console.info(`  Changes: ${diff.diff}`);
   }
 
-  console.log('\n\x1b[90mRun `toml-guard audit` to validate the generated policy.\x1b[0m');
+  console.info('\n\x1b[90mRun `toml-guard audit` to validate the generated policy.\x1b[0m');
 }
 
 function printHelp(): void {
-  console.log(`
+  console.info(`
 TOML Guard - Secure TOML Editor
 
 Usage: toml-guard <command> [options] [files...]
@@ -316,15 +316,15 @@ Examples:
 }
 
 function printAuditSummary(result: AuditResult): void {
-  console.log(`\n${result.file}:`);
-  console.log(`  Secrets: ${result.secretsCount}`);
-  console.log(`  Dangerous: ${result.dangerousCount}`);
-  console.log(`  Score: ${result.securityScore}/100`);
+  console.info(`\n${result.file}:`);
+  console.info(`  Secrets: ${result.secretsCount}`);
+  console.info(`  Dangerous: ${result.dangerousCount}`);
+  console.info(`  Score: ${result.securityScore}/100`);
 
   if (result.issues.length > 0) {
-    console.log('  Issues:');
+    console.info('  Issues:');
     for (const issue of result.issues) {
-      console.log(`    - ${issue}`);
+      console.info(`    - ${issue}`);
     }
   }
 }

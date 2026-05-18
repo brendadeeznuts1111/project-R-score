@@ -37,7 +37,7 @@ class TagVisualizer {
    * Generate comprehensive tag visualizations
    */
   async generateVisualizations(options: VisualizationOptions = {}): Promise<void> {
-    console.log('🎨 Generating tag visualizations...');
+    console.info('🎨 Generating tag visualizations...');
     const startTime = Date.now();
 
     await this.collectTagData();
@@ -52,14 +52,14 @@ class TagVisualizer {
     }
 
     const elapsed = Date.now() - startTime;
-    console.log(`✅ Visualizations generated in ${elapsed}ms`);
+    console.info(`✅ Visualizations generated in ${elapsed}ms`);
   }
 
   /**
    * Collect tag data from all artifacts
    */
   private async collectTagData(): Promise<void> {
-    console.log('📊 Collecting tag data...');
+    console.info('📊 Collecting tag data...');
     
     const excludeDirs = [
       '.git', 'node_modules', '.bun', 'dist', 'build', 'coverage',
@@ -86,7 +86,7 @@ class TagVisualizer {
     };
 
     scanDirectory('./');
-    console.log(`📈 Analyzed ${this.totalArtifacts} artifacts`);
+    console.info(`📈 Analyzed ${this.totalArtifacts} artifacts`);
   }
 
   /**
@@ -125,7 +125,7 @@ class TagVisualizer {
    * Analyze tag relationships
    */
   private async analyzeRelationships(): Promise<void> {
-    console.log('🔗 Analyzing tag relationships...');
+    console.info('🔗 Analyzing tag relationships...');
     
     // Analyze co-occurrence
     const artifactTags: string[][] = [];
@@ -162,7 +162,7 @@ class TagVisualizer {
       });
     });
 
-    console.log(`🔗 Found ${this.relationships.length} tag relationships`);
+    console.info(`🔗 Found ${this.relationships.length} tag relationships`);
   }
 
   /**
@@ -186,7 +186,7 @@ class TagVisualizer {
    * Generate Mermaid diagram for tag relationships
    */
   private generateMermaidDiagram(options: VisualizationOptions): void {
-    console.log('🎨 Generating Mermaid relationship diagram...');
+    console.info('🎨 Generating Mermaid relationship diagram...');
     
     const minUsage = options.minUsage || 2;
     const significantTags = Array.from(this.tagData.values())
@@ -234,14 +234,14 @@ class TagVisualizer {
 
     // Write to file
     await this.writeToFile('docs/TAG_RELATIONSHIPS.mmd', mermaid);
-    console.log('✅ Mermaid diagram saved to docs/TAG_RELATIONSHIPS.mmd');
+    console.info('✅ Mermaid diagram saved to docs/TAG_RELATIONSHIPS.mmd');
   }
 
   /**
    * Generate heatmap visualization
    */
   private async generateHeatmap(options: VisualizationOptions): Promise<void> {
-    console.log('🔥 Generating tag usage heatmap...');
+    console.info('🔥 Generating tag usage heatmap...');
     
     const categories = ['status', 'domain', 'technology', 'type', 'priority', 'audience', 'environment'];
     const heatmapData: string[][] = [];
@@ -289,14 +289,14 @@ class TagVisualizer {
     markdown += '🔥 High Usage (>10%) | 🌡️ Medium Usage (5-10%) | ❄️ Low Usage (<5%)\n\n';
 
     await this.writeToFile('docs/TAG_HEATMAP.md', markdown);
-    console.log('✅ Heatmap saved to docs/TAG_HEATMAP.md');
+    console.info('✅ Heatmap saved to docs/TAG_HEATMAP.md');
   }
 
   /**
    * Generate dependency graph
    */
   private async generateDependencyGraph(options: VisualizationOptions): Promise<void> {
-    console.log('🕸️  Generating artifact dependency graph...');
+    console.info('🕸️  Generating artifact dependency graph...');
     
     let dot = 'digraph ArtifactDependencies {\n';
     dot += '  rankdir=LR;\n';
@@ -338,7 +338,7 @@ class TagVisualizer {
     dot += '}\n';
 
     await this.writeToFile('docs/ARTIFACT_DEPENDENCIES.dot', dot);
-    console.log('✅ Dependency graph saved to docs/ARTIFACT_DEPENDENCIES.dot');
+    console.info('✅ Dependency graph saved to docs/ARTIFACT_DEPENDENCIES.dot');
   }
 
   /**
@@ -508,7 +508,7 @@ async function main() {
         break;
       case '--help':
       case '-h':
-        console.log(`
+        console.info(`
 🎨 Tag Visualization CLI
 
 Usage: bun run scripts/visualize-tags.ts [options]
@@ -534,12 +534,12 @@ Examples:
   
   if (options.includeStats) {
     const stats = visualizer.getStats();
-    console.log('\n📊 Visualization Statistics:');
-    console.log(`  Total Tags: ${stats.totalTags}`);
-    console.log(`  Total Relationships: ${stats.totalRelationships}`);
-    console.log(`  Total Artifacts: ${stats.totalArtifacts}`);
-    console.log(`  Category Distribution:`, stats.categoryDistribution);
-    console.log(`  Top Tags:`, stats.topTags.slice(0, 5));
+    console.info('\n📊 Visualization Statistics:');
+    console.info(`  Total Tags: ${stats.totalTags}`);
+    console.info(`  Total Relationships: ${stats.totalRelationships}`);
+    console.info(`  Total Artifacts: ${stats.totalArtifacts}`);
+    console.info(`  Category Distribution:`, stats.categoryDistribution);
+    console.info(`  Top Tags:`, stats.topTags.slice(0, 5));
   }
 }
 

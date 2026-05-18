@@ -46,11 +46,11 @@ class DepartmentSecurityOnboarding {
    * 🚀 Start department security onboarding process
    */
   async startOnboarding(): Promise<void> {
-    console.log('🏢 FIRE22 DEPARTMENT SECURITY ONBOARDING');
-    console.log('!==!==!==!==!==!==!====');
-    console.log(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
-    console.log(`⏰ Time: ${new Date().toLocaleTimeString()}`);
-    console.log(`🎯 Operation: SECURE-COMM-22\n`);
+    console.info('🏢 FIRE22 DEPARTMENT SECURITY ONBOARDING');
+    console.info('!==!==!==!==!==!==!====');
+    console.info(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
+    console.info(`⏰ Time: ${new Date().toLocaleTimeString()}`);
+    console.info(`🎯 Operation: SECURE-COMM-22\n`);
 
     // Create onboarding materials for each department
     for (const department of this.departments) {
@@ -63,17 +63,17 @@ class DepartmentSecurityOnboarding {
     // Create security training materials
     await this.createSecurityTrainingMaterials();
 
-    console.log('\n✅ DEPARTMENT ONBOARDING INITIATED');
-    console.log('📧 Onboarding packages sent to all department heads');
-    console.log('📋 Training materials prepared');
-    console.log('📅 Onboarding schedule generated');
+    console.info('\n✅ DEPARTMENT ONBOARDING INITIATED');
+    console.info('📧 Onboarding packages sent to all department heads');
+    console.info('📋 Training materials prepared');
+    console.info('📅 Onboarding schedule generated');
   }
 
   /**
    * 📦 Create onboarding package for specific department
    */
   private async createDepartmentOnboardingPackage(department: Department): Promise<void> {
-    console.log(`📦 Creating onboarding package for ${department.name}...`);
+    console.info(`📦 Creating onboarding package for ${department.name}...`);
 
     const packageDir = join(process.cwd(), 'communications', 'onboarding', department.id);
 
@@ -93,7 +93,7 @@ class DepartmentSecurityOnboarding {
     const credentialsTemplate = this.generateCredentialsTemplate(department);
     writeFileSync(join(packageDir, 'access-credentials-template.md'), credentialsTemplate);
 
-    console.log(`  ✅ ${department.name} onboarding package created`);
+    console.info(`  ✅ ${department.name} onboarding package created`);
   }
 
   /**
@@ -412,7 +412,7 @@ ${department.teamMembers
    * 📅 Generate master onboarding schedule
    */
   private async generateOnboardingSchedule(): Promise<void> {
-    console.log('📅 Generating master onboarding schedule...');
+    console.info('📅 Generating master onboarding schedule...');
 
     const schedule = `# 📅 Fire22 Department Security Onboarding Schedule
 **OPERATION: SECURE-COMM-22**
@@ -496,14 +496,14 @@ ${this.departments
     );
     writeFileSync(schedulePath, schedule);
 
-    console.log('  ✅ Master onboarding schedule generated');
+    console.info('  ✅ Master onboarding schedule generated');
   }
 
   /**
    * 📚 Create security training materials
    */
   private async createSecurityTrainingMaterials(): Promise<void> {
-    console.log('📚 Creating security training materials...');
+    console.info('📚 Creating security training materials...');
 
     const trainingMaterial = `# 📚 Fire22 Security Training Materials
 **CLOUDFLARE DURABLE OBJECTS EMAIL SECURITY**
@@ -595,7 +595,7 @@ This comprehensive training program ensures all Fire22 department members unders
     );
     writeFileSync(trainingPath, trainingMaterial);
 
-    console.log('  ✅ Security training materials created');
+    console.info('  ✅ Security training materials created');
   }
 
   // Helper methods
@@ -797,18 +797,18 @@ async function main() {
     const onboarding = new DepartmentSecurityOnboarding();
     await onboarding.startOnboarding();
 
-    console.log('\n🎉 DEPARTMENT SECURITY ONBOARDING INITIATED!');
-    console.log('!==!==!==!==!==!==!==!===');
-    console.log('✅ 10 department onboarding packages created');
-    console.log('✅ Master onboarding schedule generated');
-    console.log('✅ Security training materials prepared');
-    console.log('✅ All department heads will receive onboarding packages');
+    console.info('\n🎉 DEPARTMENT SECURITY ONBOARDING INITIATED!');
+    console.info('!==!==!==!==!==!==!==!===');
+    console.info('✅ 10 department onboarding packages created');
+    console.info('✅ Master onboarding schedule generated');
+    console.info('✅ Security training materials prepared');
+    console.info('✅ All department heads will receive onboarding packages');
 
-    console.log('\n📋 Next Steps:');
-    console.log('1. Send onboarding packages to department heads');
-    console.log('2. Schedule initial security briefings');
-    console.log('3. Begin Tier 1 department onboarding');
-    console.log('4. Monitor onboarding progress');
+    console.info('\n📋 Next Steps:');
+    console.info('1. Send onboarding packages to department heads');
+    console.info('2. Schedule initial security briefings');
+    console.info('3. Begin Tier 1 department onboarding');
+    console.info('4. Monitor onboarding progress');
   } catch (error) {
     console.error('❌ Department onboarding initiation failed:', error);
     process.exit(1);

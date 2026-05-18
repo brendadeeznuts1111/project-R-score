@@ -8,7 +8,7 @@ import { alignedTable } from "../../utils/super-table.js";
  */
 
 async function runLiveDemo() {
-    console.log("🚀 Starting Native S3 Inline Browser Demo...");
+    console.info("🚀 Starting Native S3 Inline Browser Demo...");
 
     const PUBLIC_URL_BASE = "https://pub-dc0e1ef5dd2245be81d6670a9b7b1550.r2.dev";
 
@@ -39,7 +39,7 @@ async function runLiveDemo() {
         captured_by: "Cline-Native-S3"
     };
 
-    console.log(`📤 Uploading demo screenshot to: ${demoKey}`);
+    console.info(`📤 Uploading demo screenshot to: ${demoKey}`);
     const uploadResult = await manager.uploadScreenshot(pngData, demoKey, envMetadata);
 
     if (!uploadResult.success) {
@@ -47,13 +47,13 @@ async function runLiveDemo() {
         return;
     }
 
-    console.log("✅ Upload Successful!");
+    console.info("✅ Upload Successful!");
     const publicUrl = `${PUBLIC_URL_BASE}/${demoKey}`;
-    console.log(`🔗 Public URL: ${publicUrl}`);
+    console.info(`🔗 Public URL: ${publicUrl}`);
 
     // 3. Start Demo Server
     const port = 3344;
-    console.log(`\n🌐 Starting Demo Server on http://localhost:${port}...`);
+    console.info(`\n🌐 Starting Demo Server on http://localhost:${port}...`);
     
     const server = Bun.serve({
         port,
@@ -96,10 +96,10 @@ async function runLiveDemo() {
         }
     });
 
-    console.log(`🚀 Demo is live! Close the script to stop.`);
+    console.info(`🚀 Demo is live! Close the script to stop.`);
     
     // Log a nice table summary
-    console.log("\n--- Demo Summary ---");
+    console.info("\n--- Demo Summary ---");
     alignedTable([
         { Metric: "Manager", Value: "S3R2NativeManager (bun:s3)" },
         { Metric: "Object Key", Value: demoKey },
@@ -111,7 +111,7 @@ async function runLiveDemo() {
     // Keep alive for a bit or until user kills it
     // In automated context, we might just exit, but here we want to let the user see it.
     // We'll keep it running for 10 minutes to allow browser interaction.
-    console.log("Waiting for interaction (Press Ctrl+C to stop)...");
+    console.info("Waiting for interaction (Press Ctrl+C to stop)...");
 }
 
 runLiveDemo().catch(console.error);

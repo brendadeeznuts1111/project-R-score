@@ -129,7 +129,7 @@ export class BunServe {
     // Initialize with a default WebSocket handler to satisfy Bun's type requirements
     this.wsHandler = {
       message: (ws, message) => {
-        console.log('WebSocket message received:', message);
+        console.info('WebSocket message received:', message);
       }
     };
 
@@ -240,7 +240,7 @@ export class BunServe {
         : undefined,
     });
 
-    console.log(`🚀 Server started on http://${hostname}:${this.server.port}`);
+    console.info(`🚀 Server started on http://${hostname}:${this.server.port}`);
   }
 
   /**
@@ -248,18 +248,18 @@ export class BunServe {
    */
   async stop(force?: boolean): Promise<void> {
     if (!this.server) {
-      console.log("⚠️ Server not running");
+      console.info("⚠️ Server not running");
       return;
     }
 
     if (force) {
       // Force stop and close all active connections immediately
       await this.server.stop(true);
-      console.log("🛑 Server force stopped (all connections terminated)");
+      console.info("🛑 Server force stopped (all connections terminated)");
     } else {
       // Gracefully stop the server (waits for in-flight requests)
       await this.server.stop();
-      console.log("🛑 Server gracefully stopped (in-flight requests completed)");
+      console.info("🛑 Server gracefully stopped (in-flight requests completed)");
     }
   }
 
@@ -268,26 +268,26 @@ export class BunServe {
    */
   unref(): void {
     if (!this.server) {
-      console.log("⚠️ Server not running");
+      console.info("⚠️ Server not running");
       return;
     }
 
     // Don't keep process alive if server is the only thing running
     // @ts-ignore - server.unref is available at runtime
     this.server.unref();
-    console.log("🔓 Server unref'd (process can exit without server)");
+    console.info("🔓 Server unref'd (process can exit without server)");
   }
 
   ref(): void {
     if (!this.server) {
-      console.log("⚠️ Server not running");
+      console.info("⚠️ Server not running");
       return;
     }
 
     // Restore default behavior - keep process alive
     // @ts-ignore - server.ref is available at runtime
     this.server.ref();
-    console.log("🔗 Server ref'd (process kept alive by server)");
+    console.info("🔗 Server ref'd (process kept alive by server)");
   }
 
   /**
@@ -295,16 +295,16 @@ export class BunServe {
    */
   reload(newOptions?: Partial<ServerOptions>): void {
     if (!this.server) {
-      console.log("⚠️ Server not running, cannot reload");
+      console.info("⚠️ Server not running, cannot reload");
       return;
     }
 
     if (!this.hotReloadEnabled) {
-      console.log("⚠️ Hot reload is not enabled");
+      console.info("⚠️ Hot reload is not enabled");
       return;
     }
 
-    console.log("🔄 Hot reloading server configuration...");
+    console.info("🔄 Hot reloading server configuration...");
 
     // Preserve existing connections
     const existingConnections = this.server.pendingWebSockets || 0;
@@ -328,9 +328,9 @@ export class BunServe {
           : undefined,
       });
 
-      console.log(`✅ Server reloaded successfully (${existingConnections} connections preserved)`);
+      console.info(`✅ Server reloaded successfully (${existingConnections} connections preserved)`);
     } else {
-      console.log("⚠️ Server reload not available in this Bun version");
+      console.info("⚠️ Server reload not available in this Bun version");
     }
   }
 
@@ -385,7 +385,7 @@ export default {
    */
   setTimeout(req: Request, seconds: number): void {
     if (!this.server) {
-      console.log("⚠️ Server not running");
+      console.info("⚠️ Server not running");
       return;
     }
 
@@ -398,7 +398,7 @@ export default {
    */
   getRequestIP(req: Request): { address: string; port: number } | null {
     if (!this.server) {
-      console.log("⚠️ Server not running");
+      console.info("⚠️ Server not running");
       return null;
     }
 
@@ -577,7 +577,7 @@ export default {
    */
   publish(topic: string, data: string | Buffer, compress?: boolean): void {
     if (!this.server) {
-      console.log("⚠️ Server not running");
+      console.info("⚠️ Server not running");
       return;
     }
 

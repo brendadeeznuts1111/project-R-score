@@ -233,8 +233,8 @@ const displayStatus = async () => {
 		{ name: "Prometheus", check: checkPrometheus },
 	];
 
-	console.log("\n🐾 Tier-1380 OpenClaw Status\n");
-	console.log("─".repeat(60));
+	console.info("\n🐾 Tier-1380 OpenClaw Status\n");
+	console.info("─".repeat(60));
 
 	const results: StatusResponse[] = [];
 
@@ -253,39 +253,39 @@ const displayStatus = async () => {
 					: "\x1b[31m";
 		const reset = "\x1b[0m";
 
-		console.log(`${color}${icon}${reset} ${result.status.toUpperCase()}`);
+		console.info(`${color}${icon}${reset} ${result.status.toUpperCase()}`);
 
 		if (result.latency) {
-			console.log(`      Latency: ${result.latency}ms`);
+			console.info(`      Latency: ${result.latency}ms`);
 		}
 		if (result.version) {
-			console.log(`      Version: ${result.version}`);
+			console.info(`      Version: ${result.version}`);
 		}
 		if (result.message && result.status !== "healthy") {
-			console.log(`      ${color}${result.message}${reset}`);
+			console.info(`      ${color}${result.message}${reset}`);
 		}
 	}
 
-	console.log("─".repeat(60));
+	console.info("─".repeat(60));
 
 	const healthy = results.filter((r) => r.status === "healthy").length;
 	const total = results.length;
 
-	console.log(`\nSummary: ${healthy}/${total} components healthy`);
+	console.info(`\nSummary: ${healthy}/${total} components healthy`);
 
 	if (healthy === total) {
-		console.log("\x1b[32m✓ All systems operational\x1b[0m");
+		console.info("\x1b[32m✓ All systems operational\x1b[0m");
 	} else if (healthy >= total / 2) {
-		console.log("\x1b[33m⚠ Some components degraded\x1b[0m");
+		console.info("\x1b[33m⚠ Some components degraded\x1b[0m");
 	} else {
-		console.log("\x1b[31m✗ Multiple components down\x1b[0m");
+		console.info("\x1b[31m✗ Multiple components down\x1b[0m");
 	}
 
-	console.log();
+	console.info();
 };
 
 const displayInfo = async () => {
-	console.log("\n🐾 Tier-1380 OpenClaw Integration\n");
+	console.info("\n🐾 Tier-1380 OpenClaw Integration\n");
 
 	const info = {
 		"Gateway Version": "v2026.1.30",
@@ -298,8 +298,8 @@ const displayInfo = async () => {
 		"Prometheus Port": CONFIG.monitoring.prometheusPort,
 	};
 
-	console.log(Bun.inspect.table(info));
-	console.log();
+	console.info(Bun.inspect.table(info));
+	console.info();
 };
 
 // Command handlers
@@ -309,8 +309,8 @@ const commands: Record<string, () => Promise<void>> = {
 
 	gateway: async () => {
 		const gateway = await checkGateway();
-		console.log("\n🌐 OpenClaw Gateway\n");
-		console.log(
+		console.info("\n🌐 OpenClaw Gateway\n");
+		console.info(
 			Bun.inspect.table({
 				Status: gateway.status,
 				Version: gateway.version || "N/A",
@@ -319,13 +319,13 @@ const commands: Record<string, () => Promise<void>> = {
 				"Tailscale Host": CONFIG.gateway.tailscale,
 			}),
 		);
-		console.log();
+		console.info();
 	},
 
 	matrix: async () => {
 		const agent = await checkMatrixAgent();
-		console.log("\n🤖 Matrix Agent\n");
-		console.log(
+		console.info("\n🤖 Matrix Agent\n");
+		console.info(
 			Bun.inspect.table({
 				Status: agent.status,
 				Version: agent.version || "N/A",
@@ -333,47 +333,47 @@ const commands: Record<string, () => Promise<void>> = {
 				Profiles: expandPath(CONFIG.matrix.profilesPath),
 			}),
 		);
-		console.log();
+		console.info();
 	},
 
 	telegram: async () => {
 		const bot = await checkTelegramBot();
-		console.log("\n📱 Telegram Bot\n");
-		console.log(
+		console.info("\n📱 Telegram Bot\n");
+		console.info(
 			Bun.inspect.table({
 				Status: bot.status,
 				Username: bot.message || "N/A",
 				"Config Path": expandPath(CONFIG.gateway.configPath),
 			}),
 		);
-		console.log();
+		console.info();
 	},
 
 	migrate: async () => {
-		console.log("\n🔄 Migration from clawdbot\n");
+		console.info("\n🔄 Migration from clawdbot\n");
 
 		const legacyPath = expandPath("~/.clawdbot");
 		const matrixPath = expandPath("~/.matrix");
 		const markerPath = join(matrixPath, ".migrated-from-clawdbot");
 
 		if (!existsSync(legacyPath)) {
-			console.log("No legacy clawdbot installation found.");
+			console.info("No legacy clawdbot installation found.");
 			return;
 		}
 
 		if (existsSync(markerPath)) {
-			console.log("Migration already completed.");
-			console.log(`Marker: ${markerPath}`);
+			console.info("Migration already completed.");
+			console.info(`Marker: ${markerPath}`);
 			return;
 		}
 
-		console.log("Legacy installation found at:", legacyPath);
-		console.log("Matrix path:", matrixPath);
-		console.log("\nTo migrate, run:");
-		console.log("  matrix-agent migrate");
-		console.log("\nOr manually copy configuration and create marker:");
-		console.log(`  touch ${markerPath}`);
-		console.log();
+		console.info("Legacy installation found at:", legacyPath);
+		console.info("Matrix path:", matrixPath);
+		console.info("\nTo migrate, run:");
+		console.info("  matrix-agent migrate");
+		console.info("\nOr manually copy configuration and create marker:");
+		console.info(`  touch ${markerPath}`);
+		console.info();
 	},
 
 	health: async () => {
@@ -384,11 +384,11 @@ const commands: Record<string, () => Promise<void>> = {
 			checkPrometheus(),
 		]);
 
-		console.log(JSON.stringify(all, null, 2));
+		console.info(JSON.stringify(all, null, 2));
 	},
 
 	help: async () => {
-		console.log(`
+		console.info(`
 🐾 Tier-1380 OpenClaw Integration
 
 Usage: openclaw-integration.ts <command>
@@ -419,7 +419,7 @@ const main = async () => {
 		await commands[cmd]();
 	} else {
 		console.error(`Unknown command: ${cmd}`);
-		console.log("Run 'openclaw-integration.ts help' for usage.");
+		console.info("Run 'openclaw-integration.ts help' for usage.");
 		process.exit(1);
 	}
 };

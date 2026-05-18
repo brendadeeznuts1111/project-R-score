@@ -58,13 +58,13 @@ const colors = options.noColor ? {
 
 // Logging utilities
 const log = {
-  info: (msg: string) => !options.quiet && console.log(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) => !options.quiet && console.log(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) => !options.quiet && console.log(`${colors.yellow}⚠️${colors.reset} ${msg}`),
-  error: (msg: string) => console.log(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) => options.verbose && console.log(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) => !options.quiet && console.log(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.log(JSON.stringify(data, null, 2))
+  info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
+  success: (msg: string) => !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
+  warning: (msg: string) => !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
+  error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
+  verbose: (msg: string) => options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
+  section: (title: string) => !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
+  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2))
 };
 
 // Test results storage
@@ -485,8 +485,8 @@ async function checkErrorHandling() {
 
 // Main check function
 async function runStatusCheck() {
-  console.log(`${colors.cyan}🔍 Documentation Status Checker${colors.reset}`);
-  console.log(`${colors.gray}Checking all constants and URLs...${colors.reset}\n`);
+  console.info(`${colors.cyan}🔍 Documentation Status Checker${colors.reset}`);
+  console.info(`${colors.gray}Checking all constants and URLs...${colors.reset}\n`);
 
   const startTime = Date.now();
 
@@ -512,11 +512,11 @@ async function runStatusCheck() {
     const { total, passed, failed } = testResults.summary;
     const successRate = total > 0 ? ((passed / total) * 100).toFixed(1) : '0';
 
-    console.log(`${colors.white}Total Tests:${colors.reset} ${total}`);
-    console.log(`${colors.green}Passed:${colors.reset} ${passed}`);
-    console.log(`${colors.red}Failed:${colors.reset} ${failed}`);
-    console.log(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
-    console.log(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
+    console.info(`${colors.white}Total Tests:${colors.reset} ${total}`);
+    console.info(`${colors.green}Passed:${colors.reset} ${passed}`);
+    console.info(`${colors.red}Failed:${colors.reset} ${failed}`);
+    console.info(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
+    console.info(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
 
     // Output JSON if requested
     if (options.json) {
@@ -525,10 +525,10 @@ async function runStatusCheck() {
 
     // Exit with appropriate code
     if (failed > 0) {
-      console.log(`\n${colors.yellow}⚠️ Some checks failed. See details above.${colors.reset}`);
+      console.info(`\n${colors.yellow}⚠️ Some checks failed. See details above.${colors.reset}`);
       process.exit(1);
     } else {
-      console.log(`\n${colors.green}🎉 All checks passed!${colors.reset}`);
+      console.info(`\n${colors.green}🎉 All checks passed!${colors.reset}`);
       process.exit(0);
     }
 

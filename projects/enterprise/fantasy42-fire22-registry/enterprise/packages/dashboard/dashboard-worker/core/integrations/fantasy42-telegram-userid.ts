@@ -142,7 +142,7 @@ export class Fantasy42TelegramUserId {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('📱 Initializing Fantasy42 Telegram User ID System...');
+      console.info('📱 Initializing Fantasy42 Telegram User ID System...');
 
       // Detect Telegram user ID setup elements
       await this.detectTelegramUserIdElements();
@@ -162,7 +162,7 @@ export class Fantasy42TelegramUserId {
       }
 
       this.isInitialized = true;
-      console.log('✅ Fantasy42 Telegram User ID System initialized');
+      console.info('✅ Fantasy42 Telegram User ID System initialized');
 
       return true;
     } catch (error) {
@@ -271,7 +271,7 @@ export class Fantasy42TelegramUserId {
           element.textContent?.toLowerCase().includes('id')
         ) {
           telegramElement = element;
-          console.log('✅ Found Telegram user ID element:', selector);
+          console.info('✅ Found Telegram user ID element:', selector);
           this.setupTelegramUserIdElement(telegramElement as HTMLElement);
           break;
         }
@@ -280,7 +280,7 @@ export class Fantasy42TelegramUserId {
     }
 
     if (!telegramElement) {
-      console.log('⚠️ Telegram user ID element not found, system will initialize on demand');
+      console.info('⚠️ Telegram user ID element not found, system will initialize on demand');
     }
   }
 
@@ -311,7 +311,7 @@ export class Fantasy42TelegramUserId {
     // Initialize user ID input and validation
     this.initializeUserIdInput(container as HTMLElement);
 
-    console.log('✅ Telegram user ID element setup complete');
+    console.info('✅ Telegram user ID element setup complete');
   }
 
   /**
@@ -763,7 +763,7 @@ export class Fantasy42TelegramUserId {
       });
     }
 
-    console.log('✅ User ID input initialized');
+    console.info('✅ User ID input initialized');
   }
 
   /**
@@ -1169,7 +1169,7 @@ export class Fantasy42TelegramUserId {
     // Initialize or refresh the setup interface
     this.initializeUserIdInput(container);
 
-    console.log('📱 Telegram setup initiated');
+    console.info('📱 Telegram setup initiated');
   }
 
   /**
@@ -1177,7 +1177,7 @@ export class Fantasy42TelegramUserId {
    */
   private async initializeUserIdValidation(): Promise<void> {
     // Setup validation engine
-    console.log('🔍 User ID validation initialized');
+    console.info('🔍 User ID validation initialized');
   }
 
   /**
@@ -1187,7 +1187,7 @@ export class Fantasy42TelegramUserId {
     // Setup verification processing
     this.startVerificationProcessing();
 
-    console.log('✅ Verification system initialized');
+    console.info('✅ Verification system initialized');
   }
 
   /**
@@ -1195,7 +1195,7 @@ export class Fantasy42TelegramUserId {
    */
   private async initializeAlertIntegration(): Promise<void> {
     // Setup integration with alert systems
-    console.log('🚨 Alert integration initialized');
+    console.info('🚨 Alert integration initialized');
   }
 
   /**
@@ -1205,7 +1205,7 @@ export class Fantasy42TelegramUserId {
     // Setup analytics tracking
     this.updateAnalyticsDisplay();
 
-    console.log('📊 Analytics tracking initialized');
+    console.info('📊 Analytics tracking initialized');
   }
 
   /**
@@ -1213,7 +1213,7 @@ export class Fantasy42TelegramUserId {
    */
   private startVerificationProcessing(): void {
     // Start processing verification queue
-    console.log('⚙️ Verification processing started');
+    console.info('⚙️ Verification processing started');
   }
 
   /**
@@ -1264,7 +1264,7 @@ export class Fantasy42TelegramUserId {
     // Update display
     this.updateAnalyticsDisplay();
 
-    console.log('📊 Analytics updated:', event, data);
+    console.info('📊 Analytics updated:', event, data);
   }
 
   /**
@@ -1386,7 +1386,7 @@ export class Fantasy42TelegramUserId {
    */
   updateConfiguration(newConfig: Partial<TelegramUserIdConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    console.log('⚙️ Telegram User ID configuration updated');
+    console.info('⚙️ Telegram User ID configuration updated');
   }
 
   /**
@@ -1426,7 +1426,7 @@ export class Fantasy42TelegramUserId {
     this.eventListeners.clear();
 
     this.isInitialized = false;
-    console.log('🧹 Telegram User ID system cleaned up');
+    console.info('🧹 Telegram User ID system cleaned up');
   }
 
   // Private properties

@@ -5,7 +5,7 @@ if (import.meta.main) {
   // Only run when executed directly
   main().catch(console.error);
 } else {
-  console.log('ℹ️  Script was imported, not executed directly');
+  console.info('ℹ️  Script was imported, not executed directly');
 }
 
 import { readFileSync, existsSync } from 'fs';
@@ -221,7 +221,7 @@ class PortManager {
     const portValidation = ValidationUtils.validatePort(config.port, 'Configuration port');
     if (!portValidation.isValid) {
       console.error(`Invalid port configuration: ${portValidation.errors.join(', ')}`);
-      console.log(`Falling back to default port ${this.getDefaultConfig().port}`);
+      console.info(`Falling back to default port ${this.getDefaultConfig().port}`);
       config.port = this.getDefaultConfig().port;
     }
 
@@ -229,7 +229,7 @@ class PortManager {
     if (!rangeValidation.isValid) {
       console.error(`Invalid port range: ${rangeValidation.errors.join(', ')}`);
       const defaultConfig = this.getDefaultConfig();
-      console.log(
+      console.info(
         `Falling back to default range ${defaultConfig.range.start}-${defaultConfig.range.end}`
       );
       config.range = defaultConfig.range;
@@ -241,7 +241,7 @@ class PortManager {
     );
     if (!connectionValidation.isValid) {
       console.error(`Invalid connection limit: ${connectionValidation.errors.join(', ')}`);
-      console.log(
+      console.info(
         `Falling back to default maxConnections ${this.getDefaultConfig().maxConnections}`
       );
       config.maxConnections = this.getDefaultConfig().maxConnections;
@@ -280,7 +280,7 @@ class PortManager {
       // Check if project already has an allocated port
       if (this.PORT_ALLOCATION.has(projectPath)) {
         const existingPort = this.PORT_ALLOCATION.get(projectPath)!;
-        console.log(`🚪 Port ${existingPort} already allocated to project: ${config.project}`);
+        console.info(`🚪 Port ${existingPort} already allocated to project: ${config.project}`);
         return existingPort;
       }
 
@@ -310,7 +310,7 @@ class PortManager {
       this.PORT_ALLOCATION.set(projectPath, allocatedPort);
       this.PROJECT_CONFIGS.set(projectPath, config);
 
-      console.log(`🚪 Port ${allocatedPort} allocated to project: ${config.project}`);
+      console.info(`🚪 Port ${allocatedPort} allocated to project: ${config.project}`);
       return allocatedPort;
     } finally {
       this.isAllocating = false;
@@ -326,7 +326,7 @@ class PortManager {
       this.USED_PORTS.delete(port);
       this.PORT_ALLOCATION.delete(projectPath);
       this.PROJECT_CONFIGS.delete(projectPath);
-      console.log(`🔓 Port ${port} released from project: ${projectPath}`);
+      console.info(`🔓 Port ${port} released from project: ${projectPath}`);
     }
   }
 
@@ -365,7 +365,7 @@ class DNSOptimizer {
       if (typeof Bun !== 'undefined' && Bun.dns && Bun.dns.prefetch) {
         await Bun.dns.prefetch(host);
         this.prefetchedHosts.add(host);
-        console.log(`🌐 DNS prefetched for: ${host}`);
+        console.info(`🌐 DNS prefetched for: ${host}`);
       }
     } catch (error) {
       console.warn(`DNS prefetch failed for ${host}: ${error.message}`);
@@ -384,7 +384,7 @@ class DNSOptimizer {
       if (typeof Bun !== 'undefined' && Bun.fetch && Bun.fetch.preconnect) {
         await Bun.fetch.preconnect(`https://${host}`);
         this.preconnectedHosts.add(host);
-        console.log(`🔗 Preconnected to: ${host}`);
+        console.info(`🔗 Preconnected to: ${host}`);
       }
     } catch (error) {
       console.warn(`Preconnect failed for ${host}: ${error.message}`);
@@ -414,7 +414,7 @@ class DNSOptimizer {
   static clearCache(): void {
     this.prefetchedHosts.clear();
     this.preconnectedHosts.clear();
-    console.log('🧹 DNS and preconnect cache cleared');
+    console.info('🧹 DNS and preconnect cache cleared');
   }
 }
 
@@ -597,7 +597,7 @@ class ConnectionPool {
     }
 
     if (cleanedUp > 0) {
-      console.log(`🧹 Connection pool cleanup: removed ${cleanedUp} expired connections`);
+      console.info(`🧹 Connection pool cleanup: removed ${cleanedUp} expired connections`);
     }
   }
 
@@ -620,7 +620,7 @@ class ConnectionPool {
     this.activeConnections.clear();
     this.connectionTimestamps.clear();
 
-    console.log('🔌 Connection pool destroyed and all connections cleaned up');
+    console.info('🔌 Connection pool destroyed and all connections cleaned up');
   }
 
   /**
@@ -634,11 +634,11 @@ class ConnectionPool {
       destroyed: false,
       close: () => {
         // Simulate connection close
-        console.log(`Connection closed to ${host}:${port}`);
+        console.info(`Connection closed to ${host}:${port}`);
       },
       destroy: () => {
         // Simulate connection destroy
-        console.log(`Connection destroyed to ${host}:${port}`);
+        console.info(`Connection destroyed to ${host}:${port}`);
       },
     };
   }
@@ -719,7 +719,7 @@ class OptimizedFetch {
       console.error(
         `Invalid BUN_CONFIG_MAX_HTTP_REQUESTS: ${requestsValidation.errors.join(', ')}`
       );
-      console.log(`Falling back to default: ${VALIDATION_CONSTANTS.CONNECTIONS.DEFAULT}`);
+      console.info(`Falling back to default: ${VALIDATION_CONSTANTS.CONNECTIONS.DEFAULT}`);
       maxRequests = VALIDATION_CONSTANTS.CONNECTIONS.DEFAULT;
     }
 
@@ -727,7 +727,7 @@ class OptimizedFetch {
       console.error(
         `Invalid BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST: ${perHostValidation.errors.join(', ')}`
       );
-      console.log(`Falling back to default: 6`);
+      console.info(`Falling back to default: 6`);
       maxConnectionsPerHost = 6;
     }
 
@@ -765,11 +765,11 @@ class OptimizedFetch {
       });
     }
 
-    console.log(`🌐 Optimized fetch initialized with validated configuration:`);
-    console.log(`   BUN_CONFIG_MAX_HTTP_REQUESTS: ${limits.simultaneousConnections}`);
-    console.log(`   BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST: ${limits.connectionsPerHost}`);
-    console.log(`   Keep-Alive: ${limits.keepAlive}`);
-    console.log(`   Connection Timeout: ${limits.connectionTimeout}ms`);
+    console.info(`🌐 Optimized fetch initialized with validated configuration:`);
+    console.info(`   BUN_CONFIG_MAX_HTTP_REQUESTS: ${limits.simultaneousConnections}`);
+    console.info(`   BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST: ${limits.connectionsPerHost}`);
+    console.info(`   Keep-Alive: ${limits.keepAlive}`);
+    console.info(`   Connection Timeout: ${limits.connectionTimeout}ms`);
   }
 
   /**
@@ -881,7 +881,7 @@ class OptimizedFetch {
       // await write("output.txt", response);
       if (typeof Bun !== 'undefined' && Bun.write) {
         await Bun.write(outputPath, response);
-        console.log(`📄 Response buffered to file: ${outputPath}`);
+        console.info(`📄 Response buffered to file: ${outputPath}`);
       } else {
         // Fallback for non-Bun environments
         const text = await response.text();
@@ -953,7 +953,7 @@ class OptimizedFetch {
    */
   static clearAllCaches(): void {
     DNSOptimizer.clearCache();
-    console.log('🧹 All optimization caches cleared');
+    console.info('🧹 All optimization caches cleared');
   }
 }
 
@@ -997,17 +997,17 @@ class ProjectServer {
       retryDelay: 1000,
     });
 
-    console.log(`🚀 Project server initialized for: ${this.config.project}`);
-    console.log(`   Environment BUN_CONFIG_MAX_HTTP_REQUESTS: ${maxRequests}`);
-    console.log(`   Environment BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST: ${maxConnectionsPerHost}`);
-    console.log(`   Project-specific maxConnections: ${this.config.maxConnections}`);
+    console.info(`🚀 Project server initialized for: ${this.config.project}`);
+    console.info(`   Environment BUN_CONFIG_MAX_HTTP_REQUESTS: ${maxRequests}`);
+    console.info(`   Environment BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST: ${maxConnectionsPerHost}`);
+    console.info(`   Project-specific maxConnections: ${this.config.maxConnections}`);
   }
 
   /**
    * Start optimized server with dedicated port (async allocation)
    */
   async start(): Promise<void> {
-    console.log(`🚀 Starting server for project: ${this.config.project}`);
+    console.info(`🚀 Starting server for project: ${this.config.project}`);
 
     // Allocate port asynchronously to prevent race conditions
     try {
@@ -1017,9 +1017,9 @@ class ProjectServer {
       throw error;
     }
 
-    console.log(`📍 Dedicated port: ${this.port}`);
-    console.log(`🔗 Max connections: ${this.config.maxConnections}`);
-    console.log(`⏱️ Connection timeout: ${this.config.connectionTimeout}ms`);
+    console.info(`📍 Dedicated port: ${this.port}`);
+    console.info(`🔗 Max connections: ${this.config.maxConnections}`);
+    console.info(`⏱️ Connection timeout: ${this.config.connectionTimeout}ms`);
 
     try {
       this.server = Bun.serve({
@@ -1029,7 +1029,7 @@ class ProjectServer {
         error: this.handleError.bind(this),
       });
 
-      console.log(`✅ Server started successfully on port ${this.port}`);
+      console.info(`✅ Server started successfully on port ${this.port}`);
     } catch (error) {
       console.error(`❌ Failed to start server: ${error.message}`);
       PortManager.releasePort(this.projectPath);
@@ -1096,7 +1096,7 @@ class ProjectServer {
    * Stop the server and cleanup resources
    */
   async stop(): Promise<void> {
-    console.log(`🛑 Stopping server for project: ${this.config.project}`);
+    console.info(`🛑 Stopping server for project: ${this.config.project}`);
 
     // Stop the server
     if (this.server) {
@@ -1115,7 +1115,7 @@ class ProjectServer {
       PortManager.releasePort(this.projectPath);
     }
 
-    console.log(`✅ Server stopped and resources cleaned up for: ${this.config.project}`);
+    console.info(`✅ Server stopped and resources cleaned up for: ${this.config.project}`);
   }
 
   /**
@@ -1137,18 +1137,18 @@ class ProjectServer {
 // ============================================================================
 
 async function demonstratePortManagement(): Promise<void> {
-  console.log('🚀 PORT MANAGEMENT AND CONNECTION POOLING DEMO');
-  console.log('='.repeat(60));
+  console.info('🚀 PORT MANAGEMENT AND CONNECTION POOLING DEMO');
+  console.info('='.repeat(60));
 
   // Show Bun's environment variables
-  console.log('🌍 Bun Environment Variables:');
-  console.log(
+  console.info('🌍 Bun Environment Variables:');
+  console.info(
     `   BUN_CONFIG_MAX_HTTP_REQUESTS: ${process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '512 (default)'}`
   );
-  console.log(
+  console.info(
     `   BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST: ${process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6 (default)'}`
   );
-  console.log('');
+  console.info('');
 
   // Initialize optimized fetch with Bun's native configuration
   OptimizedFetch.initialize({
@@ -1175,19 +1175,19 @@ async function demonstratePortManagement(): Promise<void> {
         await server.start();
         servers.push(server);
       } catch (error) {
-        console.log(`⚠️ Could not start server for ${projectPath}: ${error.message}`);
+        console.info(`⚠️ Could not start server for ${projectPath}: ${error.message}`);
       }
     }
 
     // Show port allocation
-    console.log('\n📊 PORT ALLOCATION:');
+    console.info('\n📊 PORT ALLOCATION:');
     const allocatedPorts = PortManager.getAllocatedPorts();
     for (const [project, port] of allocatedPorts.entries()) {
-      console.log(`   ${project}: ${port}`);
+      console.info(`   ${project}: ${port}`);
     }
 
     // Test connection pooling
-    console.log('\n🔗 TESTING CONNECTION POOLING:');
+    console.info('\n🔗 TESTING CONNECTION POOLING:');
     const testUrl = `http://example.com:${servers[0]?.getInfo().port}/`;
 
     if (servers.length > 0) {
@@ -1199,22 +1199,22 @@ async function demonstratePortManagement(): Promise<void> {
       const responses = await Promise.all(promises);
       const totalTime = Date.now() - startTime;
 
-      console.log(`   10 concurrent requests completed in ${totalTime}ms`);
-      console.log(`   Average per request: ${(totalTime / 10).toFixed(2)}ms`);
+      console.info(`   10 concurrent requests completed in ${totalTime}ms`);
+      console.info(`   Average per request: ${(totalTime / 10).toFixed(2)}ms`);
 
       // Show connection pool stats
-      console.log('\n📈 CONNECTION POOL STATS:');
+      console.info('\n📈 CONNECTION POOL STATS:');
       const stats = OptimizedFetch.getStats();
       for (const [key, stat] of Object.entries(stats)) {
-        console.log(`   ${key}: ${stat.active}/${stat.max} active, ${stat.available} available`);
+        console.info(`   ${key}: ${stat.active}/${stat.max} active, ${stat.available} available`);
       }
     }
 
     // Keep servers running for demo
-    console.log('\n🌐 Servers running. Press Ctrl+C to stop...');
+    console.info('\n🌐 Servers running. Press Ctrl+C to stop...');
 
     process.on('SIGINT', async () => {
-      console.log('\n🛑 Shutting down all servers...');
+      console.info('\n🛑 Shutting down all servers...');
       for (const server of servers) {
         await server.stop();
       }

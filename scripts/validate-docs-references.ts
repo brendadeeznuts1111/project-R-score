@@ -146,7 +146,7 @@ async function fixFile(filePath: string, issues: ValidationResult[]): Promise<vo
       fixedContent = fixedContent.replace(issue.url, issue.suggestedUrl);
       
       if (CONFIG.VERBOSE) {
-        console.log(`  Fixed: ${issue.url} → ${issue.suggestedUrl}`);
+        console.info(`  Fixed: ${issue.url} → ${issue.suggestedUrl}`);
       }
     }
   }
@@ -195,20 +195,20 @@ function generateReferenceTable(): string {
  * Main validation function
  */
 async function main() {
-  console.log('🔍 Documentation Reference Validation');
-  console.log('=====================================\n');
+  console.info('🔍 Documentation Reference Validation');
+  console.info('=====================================\n');
   
   if (CONFIG.DRY_RUN) {
-    console.log('🔬 DRY RUN MODE - No files will be modified\n');
+    console.info('🔬 DRY RUN MODE - No files will be modified\n');
   }
   
   if (CONFIG.FIX) {
-    console.log('🔧 FIX MODE - Invalid URLs will be corrected\n');
+    console.info('🔧 FIX MODE - Invalid URLs will be corrected\n');
   }
   
   // Find all files to process
   const files = await findFiles(CONFIG.ROOT_DIR);
-  console.log(`📁 Found ${files.length} files to check\n`);
+  console.info(`📁 Found ${files.length} files to check\n`);
   
   let totalUrls = 0;
   let totalValid = 0;
@@ -218,19 +218,19 @@ async function main() {
   // Process each file
   for (const filePath of files) {
     if (CONFIG.VERBOSE) {
-      console.log(`🔍 Processing: ${filePath}`);
+      console.info(`🔍 Processing: ${filePath}`);
     }
     
     const result = await processFile(filePath);
     
     if (result.issues.length > 0) {
-      console.log(`❌ ${filePath}: ${result.issues.length} issues`);
+      console.info(`❌ ${filePath}: ${result.issues.length} issues`);
       
       if (CONFIG.VERBOSE) {
         result.issues.forEach(issue => {
-          console.log(`   Line ${issue.line}: ${issue.url}`);
-          if (issue.error) console.log(`   Error: ${issue.error}`);
-          if (issue.suggestedUrl) console.log(`   Suggested: ${issue.suggestedUrl}`);
+          console.info(`   Line ${issue.line}: ${issue.url}`);
+          if (issue.error) console.info(`   Error: ${issue.error}`);
+          if (issue.suggestedUrl) console.info(`   Suggested: ${issue.suggestedUrl}`);
         });
       }
       
@@ -239,10 +239,10 @@ async function main() {
       // Fix file if requested
       if (CONFIG.FIX && !CONFIG.DRY_RUN) {
         await fixFile(filePath, result.issues);
-        console.log(`✅ Fixed: ${filePath}`);
+        console.info(`✅ Fixed: ${filePath}`);
       }
     } else if (CONFIG.VERBOSE && result.totalUrls > 0) {
-      console.log(`✅ ${filePath}: ${result.totalUrls} URLs validated`);
+      console.info(`✅ ${filePath}: ${result.totalUrls} URLs validated`);
     }
     
     totalUrls += result.totalUrls;
@@ -251,28 +251,28 @@ async function main() {
   }
   
   // Summary
-  console.log('\n📊 Validation Summary');
-  console.log('=====================');
-  console.log(`Total URLs found: ${totalUrls}`);
-  console.log(`Valid URLs: ${totalValid}`);
-  console.log(`Invalid URLs: ${totalInvalid}`);
-  console.log(`Success rate: ${((totalValid / totalUrls) * 100).toFixed(1)}%`);
+  console.info('\n📊 Validation Summary');
+  console.info('=====================');
+  console.info(`Total URLs found: ${totalUrls}`);
+  console.info(`Valid URLs: ${totalValid}`);
+  console.info(`Invalid URLs: ${totalInvalid}`);
+  console.info(`Success rate: ${((totalValid / totalUrls) * 100).toFixed(1)}%`);
   
   if (totalInvalid > 0) {
-    console.log(`\n⚠️  Found ${totalInvalid} invalid documentation references`);
+    console.info(`\n⚠️  Found ${totalInvalid} invalid documentation references`);
     
     if (!CONFIG.FIX && !CONFIG.DRY_RUN) {
-      console.log('💡 Run with --fix to automatically correct issues');
-      console.log('💡 Run with --dry-run --fix to preview corrections');
+      console.info('💡 Run with --fix to automatically correct issues');
+      console.info('💡 Run with --dry-run --fix to preview corrections');
     }
   } else {
-    console.log('\n🎉 All documentation references are valid!');
+    console.info('\n🎉 All documentation references are valid!');
   }
   
   // Generate reference table
-  console.log('\n📚 Documentation Reference Table');
-  console.log('================================');
-  console.log(generateReferenceTable());
+  console.info('\n📚 Documentation Reference Table');
+  console.info('================================');
+  console.info(generateReferenceTable());
   
   // Exit with appropriate code
   process.exit(totalInvalid > 0 && !CONFIG.FIX ? 1 : 0);

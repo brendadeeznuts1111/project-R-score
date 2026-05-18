@@ -13,8 +13,8 @@ if (!file || !version) {
 	process.exit(1);
 }
 
-console.log(`📤 Uploading ${file} to R2 as factory-wager-${version}-darwin-arm64`);
-console.log(
+console.info(`📤 Uploading ${file} to R2 as factory-wager-${version}-darwin-arm64`);
+console.info(
 	`🔗 Binary URL: https://factory-wager-downloads.r2.cloudflarestorage.com/factory-wager-${version}-darwin-arm64`,
 );
-console.log(`✅ Upload simulated (R2 integration would go here)`);
+console.info(`✅ Upload simulated (R2 integration would go here)`);

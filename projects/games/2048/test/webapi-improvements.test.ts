@@ -85,7 +85,7 @@ const ws = new WebSocket("wss://example.com");
 
 ws.onmessage = (event) => {
   // Messages larger than 128MB decompressed are automatically rejected
-  console.log("Received safe message:", event.data.length);
+  console.info("Received safe message:", event.data.length);
 };
 
 // Built-in protection against compression bombs
@@ -135,7 +135,7 @@ ws.onerror = (error) => {
 
 ws.onclose = (event) => {
   if (event.code === 1009) {
-    console.log('Message too large - protection active');
+    console.info('Message too large - protection active');
   }
 };
 
@@ -164,7 +164,7 @@ async function fetchWithMemoryManagement(url: string) {
       if (done) break;
 
       // Process chunk without memory accumulation
-      console.log('Received chunk:', value.length);
+      console.info('Received chunk:', value.length);
     }
 
     // v1.3.6: Stream automatically released
@@ -190,7 +190,7 @@ async function downloadMultiple(urls: string[]) {
 
   try {
     await Promise.all(promises);
-    console.log('All downloads completed without memory leaks');
+    console.info('All downloads completed without memory leaks');
   } catch (error) {
     console.error('Download failed:', error);
   }
@@ -261,7 +261,7 @@ class WebAPIPerformanceMonitor {
 // v1.3.6: Memory usage tracking
 setInterval(() => {
   const usage = process.memoryUsage();
-  console.log(\`Memory usage: \${(usage.heapUsed / 1024 / 1024).toFixed(2)} MB\`);
+  console.info(\`Memory usage: \${(usage.heapUsed / 1024 / 1024).toFixed(2)} MB\`);
 }, 5000);
 
 // v1.3.6 improvements ensure stable memory usage
@@ -318,7 +318,7 @@ class RealTimeDashboard {
   }
 
   private updateDashboard(data: any) {
-    console.log('Dashboard updated:', data);
+    console.info('Dashboard updated:', data);
   }
 }
     `;
@@ -353,5 +353,5 @@ class WebScraper {
   });
 });
 
-console.log("🌐 Web API Improvements Tests Loaded!");
-console.log("   Run with: bun test --grep 'Web API Improvements'");
+console.info("🌐 Web API Improvements Tests Loaded!");
+console.info("   Run with: bun test --grep 'Web API Improvements'");

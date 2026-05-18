@@ -125,13 +125,13 @@ async function displayPerfectTerminal() {
 		process.stdout.write('\u001b[2J\u001b[H');
 
 		// Header
-		console.log(`\n${ANSI.bold}${ANSI.cyan}🚀 HYPERBUN ARBITRAGE TERMINAL${ANSI.reset}`);
+		console.info(`\n${ANSI.bold}${ANSI.cyan}🚀 HYPERBUN ARBITRAGE TERMINAL${ANSI.reset}`);
 		
 		const totalValue = liveArbs.reduce((sum, arb) => sum + (arb.value_usd || 0), 0);
-		console.log(`📊 ${ANSI.cyan}Scans: 5,670/min | Value: $${totalValue.toLocaleString()}${ANSI.reset}\n`);
+		console.info(`📊 ${ANSI.cyan}Scans: 5,670/min | Value: $${totalValue.toLocaleString()}${ANSI.reset}\n`);
 
 		if (liveArbs.length === 0) {
-			console.log(`${ANSI.gray}No arbitrage opportunities found.${ANSI.reset}\n`);
+			console.info(`${ANSI.gray}No arbitrage opportunities found.${ANSI.reset}\n`);
 			return;
 		}
 
@@ -153,7 +153,7 @@ async function displayPerfectTerminal() {
 			maxWidths.value + maxWidths.status + (separatorWidth * 4);
 
 		// Header separator
-		console.log('═'.repeat(totalWidth));
+		console.info('═'.repeat(totalWidth));
 
 		
 		// Header row (perfectly aligned using ANSI-aware padding)
@@ -165,8 +165,8 @@ async function displayPerfectTerminal() {
 			padToWidth('Status', maxWidths.status)
 		].join(' │ ');
 		
-		console.log(headerRow);
-		console.log('─'.repeat(totalWidth));
+		console.info(headerRow);
+		console.info('─'.repeat(totalWidth));
 
 		// ANSI-perfect rows (using ANSI-aware padding)
 		tableRows.forEach(row => {
@@ -178,10 +178,10 @@ async function displayPerfectTerminal() {
 				padToWidth(row.status, maxWidths.status)
 			].join(' │ ');
 			
-			console.log(rowStr);
+			console.info(rowStr);
 		});
 
-		console.log('═'.repeat(totalWidth));
+		console.info('═'.repeat(totalWidth));
 
 		// Progress bars (ANSI-aware)
 		const progressBars = liveArbs.slice(0, 5).map((arb, i) => ({
@@ -190,10 +190,10 @@ async function displayPerfectTerminal() {
 			bar: createProgressBar(arb.profit_pct * 100, 40)
 		}));
 
-		console.log(`\n${ANSI.bold}📈 PROFIT DISTRIBUTION${ANSI.reset}`);
+		console.info(`\n${ANSI.bold}📈 PROFIT DISTRIBUTION${ANSI.reset}`);
 		progressBars.forEach(({ label, pct, bar }) => {
 			const paddedLabel = padToWidth(label, 12);
-			console.log(`${paddedLabel} ${bar} ${pct.toFixed(1)}%`);
+			console.info(`${paddedLabel} ${bar} ${pct.toFixed(1)}%`);
 		});
 
 	} catch (error) {
@@ -224,11 +224,11 @@ async function displayProgressMetrics() {
 		const valueProgress = Math.min((totalValue / 1e6) * 100, 100);
 		const highValueProgress = Math.min((highValue / 10) * 100, 100);
 
-		console.log(`\n${ANSI.bold}⚙️  LIVE METRICS${ANSI.reset}`);
-		console.log(`Scans: ${createProgressBar(scanProgress, 30)} ${totalScans}/min`);
-		console.log(`Profit: ${createProgressBar(profitProgress, 30)} ${avgProfit.toFixed(2)}%`);
-		console.log(`Value:  ${createProgressBar(valueProgress, 30)} $${(totalValue / 1000).toLocaleString()}K`);
-		console.log(`High$:  ${createProgressBar(highValueProgress, 30)} ${highValue}`);
+		console.info(`\n${ANSI.bold}⚙️  LIVE METRICS${ANSI.reset}`);
+		console.info(`Scans: ${createProgressBar(scanProgress, 30)} ${totalScans}/min`);
+		console.info(`Profit: ${createProgressBar(profitProgress, 30)} ${avgProfit.toFixed(2)}%`);
+		console.info(`Value:  ${createProgressBar(valueProgress, 30)} $${(totalValue / 1000).toLocaleString()}K`);
+		console.info(`High$:  ${createProgressBar(highValueProgress, 30)} ${highValue}`);
 	} catch (error) {
 		console.error('%j', { metrics_error: error });
 	}
@@ -278,16 +278,16 @@ setInterval(async () => {
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-	console.log(`\n${ANSI.cyan}Shutting down terminal...${ANSI.reset}`);
+	console.info(`\n${ANSI.cyan}Shutting down terminal...${ANSI.reset}`);
 	process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-	console.log(`\n${ANSI.cyan}Shutting down terminal...${ANSI.reset}`);
+	console.info(`\n${ANSI.cyan}Shutting down terminal...${ANSI.reset}`);
 	process.exit(0);
 });
 
-console.log('%j', {
+console.info('%j', {
 	terminal_perfect: 'ANSI-AWARE-LIVE',
 	stringWidth: 'enabled',
 	refresh_rate: '60fps',

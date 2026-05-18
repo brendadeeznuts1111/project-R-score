@@ -808,7 +808,7 @@ if (result !== 0) {
   process.exit(1);
 }
 
-console.log('✅ ESLint check passed');
+console.info('✅ ESLint check passed');
 `;
 
 // Export utility for programmatic use
@@ -826,14 +826,14 @@ if (import.meta.main) {
     // Write TypeScript config
     const config = generateTypeScriptConfig();
     await Bun.write('tsconfig.lint.json', JSON.stringify(config, null, 2));
-    console.log('✅ Created tsconfig.lint.json');
+    console.info('✅ Created tsconfig.lint.json');
     
     // Write pre-commit hook
     await Bun.write('.husky/pre-commit', preCommitHook);
-    console.log('✅ Created .husky/pre-commit hook');
+    console.info('✅ Created .husky/pre-commit hook');
     
-    console.log('\n🚀 ESLint configuration complete!');
-    console.log('Run: bun eslint.config.ts lint');
+    console.info('\n🚀 ESLint configuration complete!');
+    console.info('Run: bun eslint.config.ts lint');
   } else if (args[0] === 'lint') {
     const exitCode = await runESLint({
       fix: args.includes('--fix'),
@@ -842,7 +842,7 @@ if (import.meta.main) {
     });
     process.exit(exitCode);
   } else {
-    console.log(`
+    console.info(`
 Usage:
   bun eslint.config.ts init          Initialize ESLint configuration
   bun eslint.config.ts lint          Run ESLint

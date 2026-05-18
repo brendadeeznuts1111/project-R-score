@@ -17,11 +17,11 @@ const server = Bun.serve({
   }
 });
 
-console.log("Server started with initial routes. Version: 1.0.0");
+console.info("Server started with initial routes. Version: 1.0.0");
 
 // Simulate hot reloading after 3 seconds
 setTimeout(() => {
-  console.log("Hot reloading routes...");
+  console.info("Hot reloading routes...");
 
   routes = {
     "/api/version": () => Response.json({ version: "2.0.0", status: "updated" }),
@@ -29,7 +29,7 @@ setTimeout(() => {
     "/api/new-feature": () => Response.json({ feature: "new", available: true }),
   };
 
-  console.log("Routes reloaded! Version: 2.0.0");
+  console.info("Routes reloaded! Version: 2.0.0");
 }, 3000);
 
 export default server;

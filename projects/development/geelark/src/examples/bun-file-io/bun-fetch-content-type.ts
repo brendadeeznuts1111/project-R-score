@@ -21,18 +21,18 @@ async function demonstrateContentType(name: string, body: BodyInit, headers?: Re
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     
-    console.log(`✅ ${name}`);
+    console.info(`✅ ${name}`);
     return response;
   } catch (error) {
-    console.log(`❌ ${name} failed`);
+    console.info(`❌ ${name} failed`);
     if (process.env.DEBUG === '1') {
-      console.log('Debug info:', error.message);
+      console.info('Debug info:', error.message);
     }
   }
 }
 
 // Example 1: String body - defaults to text/plain
-console.log('1. String Body (text/plain)');
+console.info('1. String Body (text/plain)');
 
 async function stringBodyExample() {
   await demonstrateContentType(
@@ -42,7 +42,7 @@ async function stringBodyExample() {
 }
 
 // Example 2: JSON object - needs explicit Content-Type
-console.log('\n2. JSON Object (application/json)');
+console.info('\n2. JSON Object (application/json)');
 
 async function jsonObjectExample() {
   const jsonData = {
@@ -59,7 +59,7 @@ async function jsonObjectExample() {
 }
 
 // Example 3: Blob object - uses blob's type
-console.log('\n3. Blob Object (uses blob.type)');
+console.info('\n3. Blob Object (uses blob.type)');
 
 async function blobObjectExample() {
   // Test different blob types
@@ -71,7 +71,7 @@ async function blobObjectExample() {
   ];
 
   for (const { content, type } of blobTypes) {
-    console.log(`\n📝 Testing blob with type: ${type}`);
+    console.info(`\n📝 Testing blob with type: ${type}`);
     const blob = new Blob([content], { type });
     
     await demonstrateContentType(
@@ -82,7 +82,7 @@ async function blobObjectExample() {
 }
 
 // Example 4: FormData - automatic multipart boundary
-console.log('\n4. FormData (multipart/form-data)');
+console.info('\n4. FormData (multipart/form-data)');
 
 async function formDataExample() {
   const formData = new FormData();
@@ -113,7 +113,7 @@ async function formDataExample() {
 }
 
 // Example 5: ArrayBuffer - defaults to application/octet-stream
-console.log('\n5. ArrayBuffer (application/octet-stream)');
+console.info('\n5. ArrayBuffer (application/octet-stream)');
 
 async function arrayBufferExample() {
   // Create different types of binary data
@@ -124,7 +124,7 @@ async function arrayBufferExample() {
   ];
 
   for (const { name, data } of examples) {
-    console.log(`\n📝 Testing ${name}`);
+    console.info(`\n📝 Testing ${name}`);
 
     // Initialize DataView with some data if needed
     if (data instanceof DataView) {
@@ -140,7 +140,7 @@ async function arrayBufferExample() {
 }
 
 // Example 6: URLSearchParams - application/x-www-form-urlencoded
-console.log('\n6. URLSearchParams (application/x-www-form-urlencoded)');
+console.info('\n6. URLSearchParams (application/x-www-form-urlencoded)');
 
 async function urlSearchParamsExample() {
   const params = new URLSearchParams({
@@ -158,7 +158,7 @@ async function urlSearchParamsExample() {
 }
 
 // Example 7: ReadableStream - defaults to application/octet-stream
-console.log('\n7. ReadableStream (application/octet-stream)');
+console.info('\n7. ReadableStream (application/octet-stream)');
 
 async function readableStreamExample() {
   // Create a readable stream with proper error handling
@@ -182,7 +182,7 @@ async function readableStreamExample() {
 }
 
 // Example 8: Content-Type override scenarios
-console.log('\n8. Content-Type Override Scenarios');
+console.info('\n8. Content-Type Override Scenarios');
 
 async function contentTypeOverrideExample() {
   const scenarios = [
@@ -204,7 +204,7 @@ async function contentTypeOverrideExample() {
   ];
 
   for (const { name, body, contentType } of scenarios) {
-    console.log(`\n📝 ${name}`);
+    console.info(`\n📝 ${name}`);
 
     await demonstrateContentType(
       `Override successful - Content-Type: ${contentType}`,
@@ -216,8 +216,8 @@ async function contentTypeOverrideExample() {
 
 // Main execution function
 async function runContentTypeExamples() {
-  console.log('🚀 Bun Fetch Content-Type Auto-Detection Demo');
-  console.log('============================================\n');
+  console.info('🚀 Bun Fetch Content-Type Auto-Detection Demo');
+  console.info('============================================\n');
 
   try {
     // Run examples concurrently for better performance
@@ -232,14 +232,14 @@ async function runContentTypeExamples() {
       contentTypeOverrideExample()
     ]);
 
-    console.log('\n🎉 All Content-Type examples completed!');
-    console.log('💡 Key insights:');
-    console.log('   • String bodies default to text/plain');
-    console.log('   • Blob objects use their type property');
-    console.log('   • FormData gets automatic multipart boundaries');
-    console.log('   • ArrayBuffer/TypedArray defaults to application/octet-stream');
-    console.log('   • URLSearchParams uses application/x-www-form-urlencoded');
-    console.log('   • Explicit Content-Type always overrides automatic detection');
+    console.info('\n🎉 All Content-Type examples completed!');
+    console.info('💡 Key insights:');
+    console.info('   • String bodies default to text/plain');
+    console.info('   • Blob objects use their type property');
+    console.info('   • FormData gets automatic multipart boundaries');
+    console.info('   • ArrayBuffer/TypedArray defaults to application/octet-stream');
+    console.info('   • URLSearchParams uses application/x-www-form-urlencoded');
+    console.info('   • Explicit Content-Type always overrides automatic detection');
 
   } catch (error) {
     console.error('\n❌ Error in examples:', error);

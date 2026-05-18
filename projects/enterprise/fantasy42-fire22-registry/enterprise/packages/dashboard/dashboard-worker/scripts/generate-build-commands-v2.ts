@@ -104,17 +104,17 @@ const buildTargets: BuildTarget[] = [
 ];
 
 async function generateCommands() {
-  console.log('🛠️ Fire22 Enhanced Build Command Generator v3.0');
-  console.log('='.repeat(60));
-  console.log('🚀 Enhanced with Bun.spawn and Advanced Process Management');
+  console.info('🛠️ Fire22 Enhanced Build Command Generator v3.0');
+  console.info('='.repeat(60));
+  console.info('🚀 Enhanced with Bun.spawn and Advanced Process Management');
 
   const processManager = new AdvancedProcessManager();
 
-  console.log('\n📋 **Generated Build Commands**\n');
+  console.info('\n📋 **Generated Build Commands**\n');
 
   for (const target of buildTargets) {
-    console.log(`### ${target.name.charAt(0).toUpperCase() + target.name.slice(1)} Build`);
-    console.log('```bash');
+    console.info(`### ${target.name.charAt(0).toUpperCase() + target.name.slice(1)} Build`);
+    console.info('```bash');
 
     const outputFile =
       target.name === 'windows' ? './dist/Fire22-Dashboard.exe' : `./dist/fire22-${target.name}`;
@@ -131,8 +131,8 @@ async function generateCommands() {
       windowsOptions: target.windowsOptions,
     });
 
-    console.log(command);
-    console.log('```\n');
+    console.info(command);
+    console.info('```\n');
 
     // Show build constants for this target
     const originalEnv = process.env.NODE_ENV;
@@ -140,10 +140,10 @@ async function generateCommands() {
     const constants = generateBuildConstants();
     process.env.NODE_ENV = originalEnv;
 
-    console.log(
+    console.info(
       `#### Build Constants (${constants.DEPENDENCIES_COUNT} deps, ${Object.keys(constants).length} constants)`
     );
-    console.log('```json');
+    console.info('```json');
 
     // Show key constants for this environment
     const keyConstants = {
@@ -155,35 +155,35 @@ async function generateCommands() {
       FEATURE_FLAGS: constants.FEATURE_FLAGS,
     };
 
-    console.log(JSON.stringify(keyConstants, null, 2));
-    console.log('```\n');
+    console.info(JSON.stringify(keyConstants, null, 2));
+    console.info('```\n');
 
-    console.log('#### Resource Estimates');
-    console.log(`- **Build Time**: ~${getBuildTimeEstimate(target)} seconds`);
-    console.log(`- **Bundle Size**: ~${getBundleSizeEstimate(target)}`);
-    console.log(
+    console.info('#### Resource Estimates');
+    console.info(`- **Build Time**: ~${getBuildTimeEstimate(target)} seconds`);
+    console.info(`- **Bundle Size**: ~${getBundleSizeEstimate(target)}`);
+    console.info(
       `- **Optimizations**: ${target.optimization.minify ? '✅ Minify' : '❌ Minify'} | ${target.optimization.sourcemap ? '✅ Sourcemap' : '❌ Sourcemap'} | ${target.optimization.bytecode ? '✅ Bytecode' : '❌ Bytecode'}`
     );
-    console.log();
+    console.info();
   }
 
   // Show parallel build capabilities
-  console.log('### 🚀 **Parallel Build System**');
-  console.log('```bash');
-  console.log('# Build all targets in parallel (max 4 concurrent)');
-  console.log('bun run scripts/parallel-build-system.ts --all --concurrency=4');
-  console.log('');
-  console.log('# Build specific targets with progress monitoring');
-  console.log('bun run scripts/parallel-build-system.ts --targets=production,staging --monitor');
-  console.log('');
-  console.log('# Build with resource monitoring and analytics');
-  console.log('bun run scripts/parallel-build-system.ts --analytics --retry=3');
-  console.log('```\n');
+  console.info('### 🚀 **Parallel Build System**');
+  console.info('```bash');
+  console.info('# Build all targets in parallel (max 4 concurrent)');
+  console.info('bun run scripts/parallel-build-system.ts --all --concurrency=4');
+  console.info('');
+  console.info('# Build specific targets with progress monitoring');
+  console.info('bun run scripts/parallel-build-system.ts --targets=production,staging --monitor');
+  console.info('');
+  console.info('# Build with resource monitoring and analytics');
+  console.info('bun run scripts/parallel-build-system.ts --analytics --retry=3');
+  console.info('```\n');
 
   // Generate enhanced package.json script updates
-  console.log('### 📦 **Enhanced Package.json Scripts**');
-  console.log('```json');
-  console.log('"scripts": {');
+  console.info('### 📦 **Enhanced Package.json Scripts**');
+  console.info('```json');
+  console.info('"scripts": {');
 
   const scripts = [
     '"build:all": "bun run scripts/parallel-build-system.ts --all"',
@@ -195,44 +195,44 @@ async function generateCommands() {
 
   scripts.forEach((script, index) => {
     const comma = index < scripts.length - 1 ? ',' : '';
-    console.log(`  ${script}${comma}`);
+    console.info(`  ${script}${comma}`);
   });
 
-  console.log('}');
-  console.log('```\n');
+  console.info('}');
+  console.info('```\n');
 
-  console.log('### 🎯 **Advanced Usage Examples**');
-  console.log('```bash');
-  console.log('# Single target build with monitoring');
-  console.log('NODE_ENV=production bun run scripts/build-constants.ts');
-  console.log('');
-  console.log('# Parallel builds with resource monitoring');
-  console.log('bun run build:all');
-  console.log('');
-  console.log('# Development build with hot constants');
-  console.log('bun run build:development');
-  console.log('');
-  console.log('# Production build with full analytics');
-  console.log('bun run build:analytics');
-  console.log('```');
+  console.info('### 🎯 **Advanced Usage Examples**');
+  console.info('```bash');
+  console.info('# Single target build with monitoring');
+  console.info('NODE_ENV=production bun run scripts/build-constants.ts');
+  console.info('');
+  console.info('# Parallel builds with resource monitoring');
+  console.info('bun run build:all');
+  console.info('');
+  console.info('# Development build with hot constants');
+  console.info('bun run build:development');
+  console.info('');
+  console.info('# Production build with full analytics');
+  console.info('bun run build:analytics');
+  console.info('```');
 
   // Show performance benefits
-  console.log('\n### 📊 **Performance Improvements**');
-  console.log('- **60% faster** process spawning with Bun.spawn vs Node.js child_process');
-  console.log('- **Real-time monitoring** with resource usage tracking');
-  console.log('- **Parallel execution** with configurable concurrency limits');
-  console.log('- **Advanced error handling** with retry mechanisms and timeouts');
-  console.log('- **Build analytics** with performance insights and optimization suggestions');
+  console.info('\n### 📊 **Performance Improvements**');
+  console.info('- **60% faster** process spawning with Bun.spawn vs Node.js child_process');
+  console.info('- **Real-time monitoring** with resource usage tracking');
+  console.info('- **Parallel execution** with configurable concurrency limits');
+  console.info('- **Advanced error handling** with retry mechanisms and timeouts');
+  console.info('- **Build analytics** with performance insights and optimization suggestions');
 
   // Show process manager capabilities
-  console.log('\n### 🔧 **Advanced Process Management Features**');
-  console.log('- **Timeout Management**: Configurable timeouts with graceful termination');
-  console.log('- **Resource Monitoring**: CPU time, memory usage, I/O tracking');
-  console.log('- **Retry Logic**: Exponential backoff for failed builds');
-  console.log('- **Parallel Orchestration**: Concurrent builds with failure handling');
-  console.log('- **IPC Communication**: Real-time progress reporting');
+  console.info('\n### 🔧 **Advanced Process Management Features**');
+  console.info('- **Timeout Management**: Configurable timeouts with graceful termination');
+  console.info('- **Resource Monitoring**: CPU time, memory usage, I/O tracking');
+  console.info('- **Retry Logic**: Exponential backoff for failed builds');
+  console.info('- **Parallel Orchestration**: Concurrent builds with failure handling');
+  console.info('- **IPC Communication**: Real-time progress reporting');
 
-  console.log('\n✅ Enhanced build system ready!');
+  console.info('\n✅ Enhanced build system ready!');
 
   await processManager.dispose();
 }

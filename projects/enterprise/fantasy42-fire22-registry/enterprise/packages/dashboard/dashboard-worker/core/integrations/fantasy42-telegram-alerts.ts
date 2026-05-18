@@ -78,7 +78,7 @@ export class Fantasy42TelegramAlerts {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🚨 Initializing Fantasy42 Telegram Wager Alerts...');
+      console.info('🚨 Initializing Fantasy42 Telegram Wager Alerts...');
 
       // Find and monitor wager alert element
       const elementFound = await this.locateAlertElement();
@@ -99,7 +99,7 @@ export class Fantasy42TelegramAlerts {
       // Load alert history
       await this.loadAlertHistory();
 
-      console.log('✅ Fantasy42 Telegram Wager Alerts initialized');
+      console.info('✅ Fantasy42 Telegram Wager Alerts initialized');
       return true;
     } catch (error) {
       console.error('❌ Failed to initialize Telegram alerts:', error);
@@ -114,7 +114,7 @@ export class Fantasy42TelegramAlerts {
     const element = this.xpathHandler.findElementByXPath(this.config.wagerAlertXPath);
 
     if (element) {
-      console.log('✅ Telegram wager alert element found:', element.tagName);
+      console.info('✅ Telegram wager alert element found:', element.tagName);
       return true;
     } else {
       console.warn('⚠️ Telegram wager alert element not found at:', this.config.wagerAlertXPath);
@@ -137,7 +137,7 @@ export class Fantasy42TelegramAlerts {
         associatedElement.addEventListener('change', this.handleAlertToggle.bind(this));
         associatedElement.addEventListener('click', this.handleAlertTrigger.bind(this));
 
-        console.log('✅ Alert listeners setup for Telegram wager alerts');
+        console.info('✅ Alert listeners setup for Telegram wager alerts');
       }
     }
 
@@ -190,7 +190,7 @@ export class Fantasy42TelegramAlerts {
     // Listen for high-risk wager detection
     this.wagerAnalysis.on('high-risk-detected', this.handleHighRiskWager.bind(this));
 
-    console.log('✅ Wager event listeners setup');
+    console.info('✅ Wager event listeners setup');
   }
 
   /**
@@ -200,17 +200,17 @@ export class Fantasy42TelegramAlerts {
     // Initialize Telegram bot
     if (this.config.notificationChannels.telegram) {
       await this.telegramBot.initialize();
-      console.log('✅ Telegram notification channel initialized');
+      console.info('✅ Telegram notification channel initialized');
     }
 
     // Initialize Signal integration
     if (this.config.notificationChannels.signal) {
       await this.signalIntegration.initialize();
-      console.log('✅ Signal notification channel initialized');
+      console.info('✅ Signal notification channel initialized');
     }
 
     // Email and SMS would be initialized here if enabled
-    console.log('✅ Notification channels initialized');
+    console.info('✅ Notification channels initialized');
   }
 
   /**
@@ -222,7 +222,7 @@ export class Fantasy42TelegramAlerts {
       await this.checkForNewWagers();
     }, 5000); // Check every 5 seconds
 
-    console.log('✅ Wager monitoring setup');
+    console.info('✅ Wager monitoring setup');
   }
 
   /**
@@ -232,7 +232,7 @@ export class Fantasy42TelegramAlerts {
     const target = event.target as HTMLInputElement;
     const isEnabled = target.checked;
 
-    console.log(`🚨 Telegram wager alerts ${isEnabled ? 'enabled' : 'disabled'}`);
+    console.info(`🚨 Telegram wager alerts ${isEnabled ? 'enabled' : 'disabled'}`);
 
     // Update configuration
     this.config.autoSendEnabled = isEnabled;
@@ -250,7 +250,7 @@ export class Fantasy42TelegramAlerts {
    * Handle alert trigger (manual send)
    */
   private async handleAlertTrigger(event: Event): Promise<void> {
-    console.log('🚨 Manual Telegram wager alert triggered');
+    console.info('🚨 Manual Telegram wager alert triggered');
 
     // Get current wager context
     const currentWager = await this.getCurrentWagerContext();
@@ -266,7 +266,7 @@ export class Fantasy42TelegramAlerts {
    * Handle wager created event
    */
   private async handleWagerCreated(wagerData: any): Promise<void> {
-    console.log('🎯 New wager created:', wagerData.wagerId);
+    console.info('🎯 New wager created:', wagerData.wagerId);
 
     // Analyze wager for alert conditions
     const alert = await this.analyzeWagerForAlert(wagerData);
@@ -278,7 +278,7 @@ export class Fantasy42TelegramAlerts {
       if (this.config.autoSendEnabled) {
         await this.sendWagerAlert(alert, 'auto_wager_created');
       } else {
-        console.log('⚠️ Auto-send disabled, manual review required');
+        console.info('⚠️ Auto-send disabled, manual review required');
       }
     }
   }
@@ -287,7 +287,7 @@ export class Fantasy42TelegramAlerts {
    * Handle wager updated event
    */
   private async handleWagerUpdated(wagerData: any): Promise<void> {
-    console.log('📝 Wager updated:', wagerData.wagerId);
+    console.info('📝 Wager updated:', wagerData.wagerId);
 
     // Check if this wager is already being monitored
     const existingAlert = this.activeAlerts.get(wagerData.wagerId);
@@ -308,7 +308,7 @@ export class Fantasy42TelegramAlerts {
    * Handle high-risk wager detection
    */
   private async handleHighRiskWager(wagerData: any): Promise<void> {
-    console.log('⚠️ High-risk wager detected:', wagerData.wagerId);
+    console.info('⚠️ High-risk wager detected:', wagerData.wagerId);
 
     // Create high-priority alert
     const alert: WagerAlert = {
@@ -522,7 +522,7 @@ export class Fantasy42TelegramAlerts {
    * Send wager alert
    */
   private async sendWagerAlert(alert: WagerAlert, triggerReason: string): Promise<void> {
-    console.log(`🚨 Sending wager alert: ${alert.wagerId} (${triggerReason})`);
+    console.info(`🚨 Sending wager alert: ${alert.wagerId} (${triggerReason})`);
 
     // Create alert message
     const message = this.formatAlertMessage(alert, triggerReason);
@@ -555,7 +555,7 @@ export class Fantasy42TelegramAlerts {
     // Update Fantasy42 interface
     await this.updateFantasy42Interface(alert);
 
-    console.log(`✅ Wager alert sent: ${alert.wagerId}`);
+    console.info(`✅ Wager alert sent: ${alert.wagerId}`);
   }
 
   /**
@@ -590,7 +590,7 @@ Please review and take appropriate action.
 
       await this.telegramBot.sendWagerAlert(department, message, alert);
 
-      console.log(`📱 Telegram alert sent to ${department}`);
+      console.info(`📱 Telegram alert sent to ${department}`);
     } catch (error) {
       console.error('❌ Failed to send Telegram alert:', error);
     }
@@ -605,7 +605,7 @@ Please review and take appropriate action.
 
       await this.signalIntegration.sendWagerAlert(message, alert, priority);
 
-      console.log(`📞 Signal alert sent with ${priority} priority`);
+      console.info(`📞 Signal alert sent with ${priority} priority`);
     } catch (error) {
       console.error('❌ Failed to send Signal alert:', error);
     }
@@ -616,7 +616,7 @@ Please review and take appropriate action.
    */
   private async sendEmailAlert(message: string, alert: WagerAlert): Promise<void> {
     // Email implementation would go here
-    console.log(`📧 Email alert would be sent for wager ${alert.wagerId}`);
+    console.info(`📧 Email alert would be sent for wager ${alert.wagerId}`);
   }
 
   /**
@@ -624,7 +624,7 @@ Please review and take appropriate action.
    */
   private async sendSMSAlert(message: string, alert: WagerAlert): Promise<void> {
     // SMS implementation would go here
-    console.log(`💬 SMS alert would be sent for wager ${alert.wagerId}`);
+    console.info(`💬 SMS alert would be sent for wager ${alert.wagerId}`);
   }
 
   /**
@@ -665,7 +665,7 @@ Please review and take appropriate action.
    * Escalate high-risk alert
    */
   private async escalateHighRiskAlert(alert: WagerAlert): Promise<void> {
-    console.log(`🚨 Escalating high-risk alert: ${alert.wagerId}`);
+    console.info(`🚨 Escalating high-risk alert: ${alert.wagerId}`);
 
     // Send to multiple channels with urgency
     const escalationMessage = `🚨 **CRITICAL RISK ALERT** 🚨\n\n${this.formatAlertMessage(alert, 'high_risk_escalation')}`;
@@ -681,7 +681,7 @@ Please review and take appropriate action.
     }
 
     // Log escalation
-    console.log(`✅ High-risk alert escalated: ${alert.wagerId}`);
+    console.info(`✅ High-risk alert escalated: ${alert.wagerId}`);
   }
 
   /**
@@ -693,7 +693,7 @@ Please review and take appropriate action.
       const statusMessage = `Alert sent - ${alert.wagerId} (${alert.riskLevel})`;
       await handleFantasy42Element('write', statusMessage);
 
-      console.log('✅ Fantasy42 interface updated with alert status');
+      console.info('✅ Fantasy42 interface updated with alert status');
     } catch (error) {
       console.error('❌ Failed to update Fantasy42 interface:', error);
     }
@@ -728,7 +728,7 @@ Please review and take appropriate action.
       await this.telegramBot.sendSystemMessage('system', confirmationMessage);
     }
 
-    console.log(`✅ Alert confirmation sent: ${confirmationMessage}`);
+    console.info(`✅ Alert confirmation sent: ${confirmationMessage}`);
   }
 
   /**
@@ -759,7 +759,7 @@ Please review and take appropriate action.
    */
   private async loadAlertHistory(): Promise<void> {
     // Load recent alert history from storage
-    console.log('📋 Alert history loaded');
+    console.info('📋 Alert history loaded');
   }
 
   /**
@@ -796,7 +796,7 @@ Please review and take appropriate action.
    */
   clearActiveAlerts(): void {
     this.activeAlerts.clear();
-    console.log('🧹 Active alerts cleared');
+    console.info('🧹 Active alerts cleared');
   }
 }
 

@@ -24,9 +24,9 @@ class RegistryClient {
     }
 
     async initialize() {
-        console.log('🔄 Initializing registry client...');
+        console.info('🔄 Initializing registry client...');
         await this.updateWorkingRegistries();
-        console.log(`✅ Registry client ready with ${this.workingRegistries.length} working servers`);
+        console.info(`✅ Registry client ready with ${this.workingRegistries.length} working servers`);
     }
 
     async updateWorkingRegistries() {
@@ -61,7 +61,7 @@ class RegistryClient {
         const cached = this.getFromCache(cacheKey);
         
         if (cached && !options.skipCache) {
-            console.log(`📦 Cache hit for ${url}`);
+            console.info(`📦 Cache hit for ${url}`);
             return cached;
         }
 
@@ -76,7 +76,7 @@ class RegistryClient {
             const fullUrl = url.startsWith('http') ? url : `${registry}${url}`;
             
             try {
-                console.log(`🔄 Trying ${registry}...`);
+                console.info(`🔄 Trying ${registry}...`);
                 
                 const response = await Promise.race([
                     fetch(fullUrl, {
@@ -95,12 +95,12 @@ class RegistryClient {
                 const data = await response.json();
                 this.setCache(cacheKey, data);
                 
-                console.log(`✅ Success from ${registry}`);
+                console.info(`✅ Success from ${registry}`);
                 return data;
 
             } catch (error) {
                 lastError = error;
-                console.log(`❌ Failed ${registry}: ${error.message}`);
+                console.info(`❌ Failed ${registry}: ${error.message}`);
                 
                 // Mark registry as non-working temporarily
                 const index = this.workingRegistries.indexOf(registry);
@@ -111,7 +111,7 @@ class RegistryClient {
         }
 
         // If all failed, refresh DNS and try once more
-        console.log('🔄 All registries failed, refreshing DNS...');
+        console.info('🔄 All registries failed, refreshing DNS...');
         await this.updateWorkingRegistries();
         
         if (this.workingRegistries.length > 0) {
@@ -123,7 +123,7 @@ class RegistryClient {
 
     async getPackage(packageName) {
         try {
-            console.log(`📦 Fetching package: ${packageName}`);
+            console.info(`📦 Fetching package: ${packageName}`);
             const data = await this.fetchWithFallback(`${packageName}`);
             return data;
         } catch (error) {
@@ -134,7 +134,7 @@ class RegistryClient {
 
     async searchPackages(query) {
         try {
-            console.log(`🔍 Searching packages: ${query}`);
+            console.info(`🔍 Searching packages: ${query}`);
             const data = await this.fetchWithFallback(`-/v1/search?text=${encodeURIComponent(query)}`);
             return data;
         } catch (error) {
@@ -148,7 +148,7 @@ class RegistryClient {
         
         for (const registry of registries) {
             try {
-                console.log(`📤 Publishing to ${registry}...`);
+                console.info(`📤 Publishing to ${registry}...`);
                 
                 const response = await fetch(`${registry}package`, {
                     method: 'PUT',
@@ -166,11 +166,11 @@ class RegistryClient {
                 }
 
                 const data = await response.json();
-                console.log(`✅ Successfully published to ${registry}`);
+                console.info(`✅ Successfully published to ${registry}`);
                 return data;
 
             } catch (error) {
-                console.log(`❌ Failed to publish to ${registry}: ${error.message}`);
+                console.info(`❌ Failed to publish to ${registry}: ${error.message}`);
                 if (registry === registries[registries.length - 1]) {
                     throw error; // Last registry failed
                 }
@@ -189,7 +189,7 @@ class RegistryClient {
 
     clearCache() {
         this.cache.clear();
-        console.log('🧹 Cache cleared');
+        console.info('🧹 Cache cleared');
     }
 }
 
@@ -217,8 +217,8 @@ if (require.main === module) {
                     break;
                     
                 case 'stats':
-                    console.log('📊 Registry Client Stats:');
-                    console.log(JSON.stringify(client.getStats(), null, 2));
+                    console.info('📊 Registry Client Stats:');
+                    console.info(JSON.stringify(client.getStats(), null, 2));
                     break;
                     
                 case 'clear-cache':
@@ -226,11 +226,11 @@ if (require.main === module) {
                     break;
                     
                 default:
-                    console.log('Usage:');
-                    console.log('  node registry-client.js get <package>');
-                    console.log('  node registry-client.js search [query]');
-                    console.log('  node registry-client.js stats');
-                    console.log('  node registry-client.js clear-cache');
+                    console.info('Usage:');
+                    console.info('  node registry-client.js get <package>');
+                    console.info('  node registry-client.js search [query]');
+                    console.info('  node registry-client.js stats');
+                    console.info('  node registry-client.js clear-cache');
             }
         } catch (error) {
             console.error('❌ Operation failed:', error.message);

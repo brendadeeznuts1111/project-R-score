@@ -58,10 +58,10 @@ class BenchmarkRunner {
   };
 
   constructor() {
-    console.log(`🚀 Starting URLPattern Benchmark Suite`);
-    console.log(`Runtime: ${typeof Bun !== 'undefined' ? 'Bun' : 'Node.js'}`);
-    console.log(`Version: ${typeof Bun !== 'undefined' ? Bun.version : process.version}`);
-    console.log(`Platform: ${process.platform} ${process.arch}\n`);
+    console.info(`🚀 Starting URLPattern Benchmark Suite`);
+    console.info(`Runtime: ${typeof Bun !== 'undefined' ? 'Bun' : 'Node.js'}`);
+    console.info(`Version: ${typeof Bun !== 'undefined' ? Bun.version : process.version}`);
+    console.info(`Platform: ${process.platform} ${process.arch}\n`);
   }
 
   async runAllBenchmarks() {
@@ -77,15 +77,15 @@ class BenchmarkRunner {
       }
     };
 
-    console.log(`🔐 Security Audit Session: ${sessionData.sessionId}`);
-    console.log(`📊 Starting benchmark with audit trail\n`);
+    console.info(`🔐 Security Audit Session: ${sessionData.sessionId}`);
+    console.info(`📊 Starting benchmark with audit trail\n`);
 
     // Warm up the JIT
     await this.warmup();
 
     for (const testCase of testCases) {
-      console.log(`📊 Testing: ${testCase.name}`);
-      console.log(`   ${testCase.description}`);
+      console.info(`📊 Testing: ${testCase.name}`);
+      console.info(`   ${testCase.description}`);
 
       const urlPatternResult = await this.benchmarkURLPattern(testCase);
       const regexResult = await this.benchmarkRegExp(testCase);
@@ -96,9 +96,9 @@ class BenchmarkRunner {
 
       this.results.push(urlPatternResult, regexResult);
 
-      console.log(`   URLPattern: ${Math.round(urlPatternResult.opsPerSecond).toLocaleString()} ops/sec`);
-      console.log(`   RegExp:     ${Math.round(regexResult.opsPerSecond).toLocaleString()} ops/sec`);
-      console.log(`   Difference: ${this.calculateDifference(urlPatternResult, regexResult)}%\n`);
+      console.info(`   URLPattern: ${Math.round(urlPatternResult.opsPerSecond).toLocaleString()} ops/sec`);
+      console.info(`   RegExp:     ${Math.round(regexResult.opsPerSecond).toLocaleString()} ops/sec`);
+      console.info(`   Difference: ${this.calculateDifference(urlPatternResult, regexResult)}%\n`);
     }
 
     await this.generateReport();
@@ -218,7 +218,7 @@ class BenchmarkRunner {
   }
 
   private async warmup() {
-    console.log('🔥 Warming up JIT...');
+    console.info('🔥 Warming up JIT...');
 
     // Create some patterns and run them
     const simplePattern = new URLPattern({ pathname: '/test/:id' });
@@ -234,7 +234,7 @@ class BenchmarkRunner {
       }
     }
 
-    console.log('✅ Warmup complete\n');
+    console.info('✅ Warmup complete\n');
   }
 
   private async benchmarkURLPattern(testCase: TestCase): Promise<BenchmarkResult> {
@@ -323,8 +323,8 @@ class BenchmarkRunner {
   }
 
   private async generateReport() {
-    console.log('\n📈 FINAL RESULTS');
-    console.log('='.repeat(80));
+    console.info('\n📈 FINAL RESULTS');
+    console.info('='.repeat(80));
 
     // Sort by performance
     this.results.sort((a, b) => b.opsPerSecond - a.opsPerSecond);
@@ -382,8 +382,8 @@ class BenchmarkRunner {
 
     writeFileSync(filename, markdown);
 
-    console.log(markdown);
-    console.log(`\n📄 Full report saved to: ${filename}`);
+    console.info(markdown);
+    console.info(`\n📄 Full report saved to: ${filename}`);
   }
 
   private async sendAuditNotification(sessionData: any) {
@@ -414,7 +414,7 @@ class BenchmarkRunner {
     auditRecord.summary.performanceDifference = ((Math.abs(avgURLPattern - avgRegExp) / Math.min(avgURLPattern, avgRegExp)) * 100);
     auditRecord.summary.winner = avgURLPattern > avgRegExp ? 'URLPattern' : 'RegExp';
 
-    console.log(`🔐 Sending security audit notification...`);
+    console.info(`🔐 Sending security audit notification...`);
 
     // Send audit notification
     if (Bun.env.BENCHMARK_AUDIT_WEBHOOK) {
@@ -433,12 +433,12 @@ class BenchmarkRunner {
             compliance: this.config.compliance
           })
         });
-        console.log(`✅ Audit notification sent successfully`);
+        console.info(`✅ Audit notification sent successfully`);
       } catch (error) {
         console.warn(`⚠️  Failed to send audit notification: ${error}`);
       }
     } else {
-      console.log(`ℹ️  No audit webhook configured (set BENCHMARK_AUDIT_WEBHOOK)`);
+      console.info(`ℹ️  No audit webhook configured (set BENCHMARK_AUDIT_WEBHOOK)`);
     }
   }
 }

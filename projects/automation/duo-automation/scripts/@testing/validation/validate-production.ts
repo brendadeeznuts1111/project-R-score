@@ -16,8 +16,8 @@ class ProductionValidator {
   ];
 
   async validateDNSResolution(): Promise<void> {
-    console.log('🌐 DNS Resolution Validation');
-    console.log('═'.repeat(40));
+    console.info('🌐 DNS Resolution Validation');
+    console.info('═'.repeat(40));
     
     for (const endpoint of this.endpoints) {
       try {
@@ -27,60 +27,60 @@ class ProductionValidator {
         });
         
         if (response.ok) {
-          console.log(`✅ ${endpoint.name.padEnd(10)}: ${response.status} - ACTIVE`);
+          console.info(`✅ ${endpoint.name.padEnd(10)}: ${response.status} - ACTIVE`);
         } else {
-          console.log(`⚠️  ${endpoint.name.padEnd(10)}: ${response.status} - Partial`);
+          console.info(`⚠️  ${endpoint.name.padEnd(10)}: ${response.status} - Partial`);
         }
       } catch (error) {
-        console.log(`❌ ${endpoint.name.padEnd(10)}: Timeout - Check DNS`);
+        console.info(`❌ ${endpoint.name.padEnd(10)}: Timeout - Check DNS`);
       }
     }
   }
 
   async validatePhoneIntelligence(): Promise<void> {
-    console.log('\n🧠 Phone Intelligence System');
-    console.log('═'.repeat(40));
+    console.info('\n🧠 Phone Intelligence System');
+    console.info('═'.repeat(40));
     
     try {
       const { PhoneIntelligenceSystem } = await import('../src/core/filter/phone-intelligence-system.js');
       const system = new PhoneIntelligenceSystem();
       const result = await system.process('+14155552671');
       
-      console.log(`✅ System: OPERATIONAL`);
-      console.log(`   Duration: ${result.duration.toFixed(2)}ms`);
-      console.log(`   Trust Score: ${result.trustScore}/100`);
-      console.log(`   Patterns: ${result.matrixRows.length}/8`);
-      console.log(`   Compliant: ${result.compliance.compliant ? 'YES' : 'NO'}`);
+      console.info(`✅ System: OPERATIONAL`);
+      console.info(`   Duration: ${result.duration.toFixed(2)}ms`);
+      console.info(`   Trust Score: ${result.trustScore}/100`);
+      console.info(`   Patterns: ${result.matrixRows.length}/8`);
+      console.info(`   Compliant: ${result.compliance.compliant ? 'YES' : 'NO'}`);
     } catch (error: any) {
-      console.log(`❌ System: ${error?.message || 'Unknown error'}`);
+      console.info(`❌ System: ${error?.message || 'Unknown error'}`);
     }
   }
 
   async validateR2Storage(): Promise<void> {
-    console.log('\n📦 R2 Storage Validation');
-    console.log('═'.repeat(40));
+    console.info('\n📦 R2 Storage Validation');
+    console.info('═'.repeat(40));
     
     const r2Config = config.original.reporting.cloudflareR2;
     
-    console.log(`✅ Account: ${r2Config.accountId}`);
-    console.log(`✅ Bucket: ${r2Config.bucketName}`);
-    console.log(`✅ Endpoint: ${r2Config.endpoint}`);
+    console.info(`✅ Account: ${r2Config.accountId}`);
+    console.info(`✅ Bucket: ${r2Config.bucketName}`);
+    console.info(`✅ Endpoint: ${r2Config.endpoint}`);
     
     try {
       const { BunR2AppleManager } = await import('../src/storage/r2-apple-manager.js');
       const manager = new BunR2AppleManager();
       const metrics = await manager.getMetrics();
       
-      console.log(`✅ Status: ${metrics.status.toUpperCase()}`);
-      console.log(`✅ Connection: ESTABLISHED`);
+      console.info(`✅ Status: ${metrics.status.toUpperCase()}`);
+      console.info(`✅ Connection: ESTABLISHED`);
     } catch (error: any) {
-      console.log(`⚠️  Local Test: ${error?.message || 'Expected in local environment'}`);
+      console.info(`⚠️  Local Test: ${error?.message || 'Expected in local environment'}`);
     }
   }
 
   async validateCLICommands(): Promise<void> {
-    console.log('\n🔧 CLI Commands Validation');
-    console.log('═'.repeat(40));
+    console.info('\n🔧 CLI Commands Validation');
+    console.info('═'.repeat(40));
     
     const commands = [
       'phone-emergency',
@@ -92,12 +92,12 @@ class ProductionValidator {
       try {
         const result = await Bun.$`bun run cli --help`.quiet();
         if (result.text().includes(command)) {
-          console.log(`✅ ${command.padEnd(15)}: Available`);
+          console.info(`✅ ${command.padEnd(15)}: Available`);
         } else {
-          console.log(`❌ ${command.padEnd(15)}: Missing`);
+          console.info(`❌ ${command.padEnd(15)}: Missing`);
         }
       } catch (error) {
-        console.log(`❌ ${command.padEnd(15)}: Error`);
+        console.info(`❌ ${command.padEnd(15)}: Error`);
       }
     }
   }
@@ -124,11 +124,11 @@ class ProductionValidator {
   }
 
   async generateReport(): Promise<void> {
-    console.log('🎯 EMPIRE PRO PRODUCTION VALIDATION REPORT');
-    console.log('═'.repeat(60));
-    console.log(`Generated: ${new Date().toISOString()}`);
-    console.log(`Domain: ${config.original.domain.subdomain}.${config.original.domain.name}`);
-    console.log('');
+    console.info('🎯 EMPIRE PRO PRODUCTION VALIDATION REPORT');
+    console.info('═'.repeat(60));
+    console.info(`Generated: ${new Date().toISOString()}`);
+    console.info(`Domain: ${config.original.domain.subdomain}.${config.original.domain.name}`);
+    console.info('');
 
     await this.validateDNSResolution();
     await this.validatePhoneIntelligence();
@@ -137,37 +137,37 @@ class ProductionValidator {
 
     const deployment = this.calculateDeploymentStatus();
     
-    console.log('\n📊 DEPLOYMENT STATUS');
-    console.log('═'.repeat(40));
-    console.log(`Completion: ${deployment.percentage}%`);
-    console.log(`Status: ${deployment.status}`);
+    console.info('\n📊 DEPLOYMENT STATUS');
+    console.info('═'.repeat(40));
+    console.info(`Completion: ${deployment.percentage}%`);
+    console.info(`Status: ${deployment.status}`);
     
-    console.log('\n🚀 PERFORMANCE METRICS');
-    console.log('═'.repeat(40));
-    console.log('ROI: 63,374% (19X OVER TARGET)');
-    console.log('Latency: <2.1ms (ON TARGET)');
-    console.log('Throughput: 543k/second');
-    console.log('Compliance: 100% (TCPA/GDPR/CCPA)');
+    console.info('\n🚀 PERFORMANCE METRICS');
+    console.info('═'.repeat(40));
+    console.info('ROI: 63,374% (19X OVER TARGET)');
+    console.info('Latency: <2.1ms (ON TARGET)');
+    console.info('Throughput: 543k/second');
+    console.info('Compliance: 100% (TCPA/GDPR/CCPA)');
     
-    console.log('\n🎯 NEXT STEPS');
-    console.log('═'.repeat(40));
+    console.info('\n🎯 NEXT STEPS');
+    console.info('═'.repeat(40));
     
     if (deployment.percentage >= 95) {
-      console.log('✅ SYSTEM IS PRODUCTION READY');
-      console.log('   • All endpoints are accessible');
-      console.log('   • Performance targets exceeded');
-      console.log('   • Security and compliance verified');
-      console.log('   • Ready for live traffic');
+      console.info('✅ SYSTEM IS PRODUCTION READY');
+      console.info('   • All endpoints are accessible');
+      console.info('   • Performance targets exceeded');
+      console.info('   • Security and compliance verified');
+      console.info('   • Ready for live traffic');
     } else {
-      console.log('⚠️  SYSTEM NEEDS FINAL CONFIGURATION');
-      console.log('   • DNS propagation may be pending');
-      console.log('   • Some endpoints may need time');
-      console.log('   • Run validation again in 5-10 minutes');
+      console.info('⚠️  SYSTEM NEEDS FINAL CONFIGURATION');
+      console.info('   • DNS propagation may be pending');
+      console.info('   • Some endpoints may need time');
+      console.info('   • Run validation again in 5-10 minutes');
     }
     
-    console.log('\n🌟 EMPIRE PRO PHONE INTELLIGENCE');
-    console.log(`Status: ${deployment.status} (${deployment.percentage}%)`);
-    console.log('═'.repeat(60));
+    console.info('\n🌟 EMPIRE PRO PHONE INTELLIGENCE');
+    console.info(`Status: ${deployment.status} (${deployment.percentage}%)`);
+    console.info('═'.repeat(60));
   }
 }
 

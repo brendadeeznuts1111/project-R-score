@@ -18,23 +18,23 @@ export class InteractiveTier1380 {
 
 		if (!check.shouldContinue && !this.isCI) {
 			// Interactive confirmation
-			console.log(`\n⚠️  Loop detected: ${check.reason}`);
-			console.log(`Command: ${command.slice(0, 60)}...`);
-			console.log(`Duration: ${duration.toFixed(2)}ms`);
+			console.info(`\n⚠️  Loop detected: ${check.reason}`);
+			console.info(`Command: ${command.slice(0, 60)}...`);
+			console.info(`Duration: ${duration.toFixed(2)}ms`);
 
 			const response = await this.prompt('Continue? [y/N/s(tatus)/d(iff)]: ');
 
 			if (response.toLowerCase() === 'y') {
-				console.log('🚀 Continuing...');
+				console.info('🚀 Continuing...');
 				return result;
 			} else if (response.toLowerCase() === 's') {
-				console.log(this.guard.getStatus());
+				console.info(this.guard.getStatus());
 				return this.execute(command, executor); // Retry with info
 			} else if (response.toLowerCase() === 'd') {
 				this.showDiff(command, resultStr);
 				return this.execute(command, executor);
 			} else {
-				console.log('🛑 Stopped by user');
+				console.info('🛑 Stopped by user');
 				process.exit(0);
 			}
 		}
@@ -58,9 +58,9 @@ export class InteractiveTier1380 {
 		const history = (this.guard as unknown as {history: {lastCommand: string; lastOutput: string}[]}).history;
 		const last = history.at(-1);
 		if (last) {
-			console.log('\n📊 Diff from previous execution:');
-			console.log('Command delta:', this.diffStrings(last.lastCommand, command));
-			console.log('Output delta:', this.diffStrings(last.lastOutput.slice(0, 200), current.slice(0, 200)));
+			console.info('\n📊 Diff from previous execution:');
+			console.info('Command delta:', this.diffStrings(last.lastCommand, command));
+			console.info('Output delta:', this.diffStrings(last.lastOutput.slice(0, 200), current.slice(0, 200)));
 		}
 	}
 

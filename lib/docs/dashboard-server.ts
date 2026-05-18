@@ -31,9 +31,9 @@ const dashboardServer = (Bun as any).serve({
   },
 });
 
-console.log(`🌐 Zen Dashboard Server running at:`);
-console.log(`   📱 Local:   http://localhost:${dashboardServer.port}/dashboard`);
-console.log(`   🔗 Bun URL: bun://localhost:${dashboardServer.port}/dashboard`);
-console.log(`   📊 API:     http://localhost:${dashboardServer.port}/api/metrics`);
-console.log('\n🎯 Open in browser to see the visualization!');
-console.log('🔄 Press Ctrl+C to stop the server');
+console.info(`🌐 Zen Dashboard Server running at:`);
+console.info(`   📱 Local:   http://localhost:${dashboardServer.port}/dashboard`);
+console.info(`   🔗 Bun URL: bun://localhost:${dashboardServer.port}/dashboard`);
+console.info(`   📊 API:     http://localhost:${dashboardServer.port}/api/metrics`);
+console.info('\n🎯 Open in browser to see the visualization!');
+console.info('🔄 Press Ctrl+C to stop the server');

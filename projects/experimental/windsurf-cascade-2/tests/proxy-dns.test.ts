@@ -63,7 +63,7 @@ describe("DNS Cache Performance", () => {
     // Cache hits should be under 100ns
     expect(avgPerResolution).toBeLessThan(100);
     
-    console.log(`Average cache hit time: ${avgPerResolution.toFixed(2)}ns`);
+    console.info(`Average cache hit time: ${avgPerResolution.toFixed(2)}ns`);
   });
 
   test("cache misses take longer", async () => {
@@ -80,7 +80,7 @@ describe("DNS Cache Performance", () => {
     // Cache misses should take longer (simulated 1-5ms)
     expect(avgPerResolution).toBeGreaterThan(1000); // 1μs minimum
     
-    console.log(`Average cache miss time: ${avgPerResolution.toFixed(2)}ns`);
+    console.info(`Average cache miss time: ${avgPerResolution.toFixed(2)}ns`);
   });
 });
 
@@ -235,7 +235,7 @@ describe("Performance SLA", () => {
     // SLA: < 60ns for cache hits
     expect(avgPerResolution).toBeLessThan(60);
     
-    console.log(`SLA Test - Cache hit: ${avgPerResolution.toFixed(2)}ns < 60ns ✅`);
+    console.info(`SLA Test - Cache hit: ${avgPerResolution.toFixed(2)}ns < 60ns ✅`);
   });
 
   test("meets cache miss SLA", async () => {
@@ -252,7 +252,7 @@ describe("Performance SLA", () => {
     // SLA: < 10ms for cache misses (10,000,000ns)
     expect(avgPerResolution).toBeLessThan(10000000);
     
-    console.log(`SLA Test - Cache miss: ${avgPerResolution.toFixed(2)}ns < 10ms ✅`);
+    console.info(`SLA Test - Cache miss: ${avgPerResolution.toFixed(2)}ns < 10ms ✅`);
   });
 
   test("maintains high cache hit rate", async () => {
@@ -281,6 +281,6 @@ describe("Performance SLA", () => {
     // Should maintain >70% cache hit rate
     expect(metrics.hitRate).toBeGreaterThan(70);
     
-    console.log(`Cache hit rate: ${metrics.hitRate.toFixed(1)}% > 70% ✅`);
+    console.info(`Cache hit rate: ${metrics.hitRate.toFixed(1)}% > 70% ✅`);
   });
 });

@@ -51,7 +51,7 @@ function main(): void {
 	const { valid, errors } = validateOptions();
 
 	for (const row of BUN_TEST_CLI_OPTIONS) {
-		console.log(`🟢 ${row.Name}: ${row.Topic} [${row.Type}] | ${row.Example}`);
+		console.info(`🟢 ${row.Name}: ${row.Topic} [${row.Type}] | ${row.Example}`);
 	}
 
 	if (errors.length > 0) {
@@ -59,13 +59,13 @@ function main(): void {
 		process.exit(1);
 	}
 
-	console.log(`\n🎉 All ${valid} options valid & search-ready (BUN-TEST-001)`);
+	console.info(`\n🎉 All ${valid} options valid & search-ready (BUN-TEST-001)`);
 
 	// Render test — ensure markdown generates
 	const md = renderCliMatrix();
 	if (!md.includes("| Name |") || !md.includes("--test-name-pattern"))
 		throw new Error("renderCliMatrix() output invalid");
-	console.log("   ✓ renderCliMatrix() OK");
+	console.info("   ✓ renderCliMatrix() OK");
 }
 
 main();

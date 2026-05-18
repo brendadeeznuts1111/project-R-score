@@ -32,7 +32,7 @@ class MetricsCollector {
   private maxPoints: number = 1000;
 
   constructor() {
-    console.log("📊 Initializing Metrics Collector with Bun.YAML");
+    console.info("📊 Initializing Metrics Collector with Bun.YAML");
   }
 
   /**
@@ -149,7 +149,7 @@ class MetricsCollector {
         this.metrics.set(name, data);
       }
 
-      console.log(`📥 Imported ${snapshot.metrics.length} metrics from YAML`);
+      console.info(`📥 Imported ${snapshot.metrics.length} metrics from YAML`);
     } catch (error) {
       console.error("❌ Failed to import metrics from YAML:", error);
     }
@@ -190,7 +190,7 @@ class MetricsCollector {
    */
   clear(): void {
     this.metrics.clear();
-    console.log("🧹 Cleared all metrics");
+    console.info("🧹 Cleared all metrics");
   }
 
   /**
@@ -200,7 +200,7 @@ class MetricsCollector {
     try {
       const yamlContent = this.exportToYAML();
       await Bun.write(filePath, yamlContent);
-      console.log(`💾 Saved metrics to: ${filePath}`);
+      console.info(`💾 Saved metrics to: ${filePath}`);
     } catch (error) {
       console.error(`❌ Failed to save metrics to ${filePath}:`, error);
     }
@@ -214,7 +214,7 @@ class MetricsCollector {
       const file = Bun.file(filePath);
       const yamlContent = await file.text();
       this.importFromYAML(yamlContent);
-      console.log(`📂 Loaded metrics from: ${filePath}`);
+      console.info(`📂 Loaded metrics from: ${filePath}`);
     } catch (error) {
       console.error(`❌ Failed to load metrics from ${filePath}:`, error);
     }
@@ -245,7 +245,7 @@ export function initializeMetricsCollector(): MetricsCollector {
   collector.record('system.uptime', process.uptime(), { unit: 'seconds' });
   collector.record('system.node_version', parseInt(process.version.replace('v', '').split('.')[0]));
 
-  console.log("🚀 Metrics collector initialized with system metrics");
+  console.info("🚀 Metrics collector initialized with system metrics");
 
   return collector;
 }

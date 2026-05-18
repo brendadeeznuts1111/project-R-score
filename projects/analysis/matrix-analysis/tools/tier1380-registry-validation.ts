@@ -131,7 +131,7 @@ interface ComplianceMetrics {
 export function calculateComplianceScore(
 	tenantId: string = "default",
 ): ComplianceMetrics {
-	console.log(`${GLYPHS.DRIFT} Calculating Compliance Score for ${tenantId}\n`);
+	console.info(`${GLYPHS.DRIFT} Calculating Compliance Score for ${tenantId}\n`);
 
 	const dbPath = "./data/tier1380.db";
 	if (!existsSync(dbPath)) {
@@ -210,15 +210,15 @@ export function calculateComplianceScore(
 }
 
 export function displayComplianceScore(metrics: ComplianceMetrics): void {
-	console.log("-".repeat(70));
-	console.log(`  Total Lines:        ${metrics.totalLines.toLocaleString()}`);
-	console.log(
+	console.info("-".repeat(70));
+	console.info(`  Total Lines:        ${metrics.totalLines.toLocaleString()}`);
+	console.info(
 		`  Compliant Lines:    ${metrics.compliantLines.toLocaleString()} (${((metrics.compliantLines / metrics.totalLines) * 100).toFixed(1)}%)`,
 	);
-	console.log(`  Violations:         ${metrics.violations}`);
-	console.log(`  Max Width:          ${metrics.maxWidth} cols`);
-	console.log(`  Avg Width:          ${metrics.avgWidth} cols`);
-	console.log();
+	console.info(`  Violations:         ${metrics.violations}`);
+	console.info(`  Max Width:          ${metrics.maxWidth} cols`);
+	console.info(`  Avg Width:          ${metrics.avgWidth} cols`);
+	console.info();
 
 	const scoreColor =
 		metrics.score >= 90
@@ -226,8 +226,8 @@ export function displayComplianceScore(metrics: ComplianceMetrics): void {
 			: metrics.score >= 70
 				? COLORS.warning
 				: COLORS.error;
-	console.log(`  Compliance Score:   ${scoreColor(metrics.score.toString())}/100`);
-	console.log(`  Grade:              ${scoreColor(metrics.grade)}`);
+	console.info(`  Compliance Score:   ${scoreColor(metrics.score.toString())}/100`);
+	console.info(`  Grade:              ${scoreColor(metrics.grade)}`);
 
 	// Trend indicator
 	const trend =
@@ -238,9 +238,9 @@ export function displayComplianceScore(metrics: ComplianceMetrics): void {
 				: metrics.score >= 60
 					? "🟠 Needs Improvement"
 					: "🔴 Critical";
-	console.log(`  Status:             ${trend}`);
+	console.info(`  Status:             ${trend}`);
 
-	console.log("-".repeat(70));
+	console.info("-".repeat(70));
 }
 
 // ─── Export Registry Stats ────────────────────────
@@ -291,22 +291,22 @@ async function main() {
 				process.exit(1);
 			}
 
-			console.log(`${GLYPHS.SCHEMA} Validating: ${toolName}`);
-			console.log(`  Args: ${JSON.stringify(toolArgs)}\n`);
+			console.info(`${GLYPHS.SCHEMA} Validating: ${toolName}`);
+			console.info(`  Args: ${JSON.stringify(toolArgs)}\n`);
 
 			const start = Bun.nanoseconds();
 			const result = validateToolCall(toolName, toolArgs);
 			const duration = Number(Bun.nanoseconds() - start) / 1000;
 
 			if (result.valid) {
-				console.log(
+				console.info(
 					`${GLYPHS.VALID} ${COLORS.success("VALID")} (${duration.toFixed(2)}µs)`,
 				);
 			} else {
-				console.log(
+				console.info(
 					`${GLYPHS.INVALID} ${COLORS.error("INVALID")} (${duration.toFixed(2)}µs)`,
 				);
-				result.errors.forEach((e) => console.log(`  ${GLYPHS.INVALID} ${e}`));
+				result.errors.forEach((e) => console.info(`  ${GLYPHS.INVALID} ${e}`));
 			}
 			break;
 		}
@@ -336,7 +336,7 @@ async function main() {
 					"INSERT INTO compliance_scores (tenant, score, grade, violations) VALUES (?, ?, ?, ?)",
 				).run(tenantId, metrics.score, metrics.grade, metrics.violations);
 
-				console.log(`\n${GLYPHS.VALID} Score saved to database`);
+				console.info(`\n${GLYPHS.VALID} Score saved to database`);
 				db.close();
 			}
 			break;
@@ -347,16 +347,16 @@ async function main() {
 			const output = await exportRegistryStats(format);
 			const outputPath = `./.registry-cache/stats.${format}`;
 			await Bun.write(outputPath, output);
-			console.log(`${GLYPHS.VALID} Exported to ${outputPath}`);
-			console.log(output.slice(0, 500));
+			console.info(`${GLYPHS.VALID} Exported to ${outputPath}`);
+			console.info(output.slice(0, 500));
 			break;
 		}
 
 		case "list": {
-			console.log(
+			console.info(
 				`${GLYPHS.SCHEMA} Registered Tools (${Object.keys(TOOL_SCHEMAS).length}):\n`,
 			);
-			console.log(
+			console.info(
 				Bun.inspect.table(
 					Object.entries(TOOL_SCHEMAS).map(([name, schema]) => ({
 						Tool: name,
@@ -372,7 +372,7 @@ async function main() {
 
 		case "help":
 		default:
-			console.log(`
+			console.info(`
 ${GLYPHS.DRIFT} Tier-1380 Registry Validation & Compliance
 
 Usage:

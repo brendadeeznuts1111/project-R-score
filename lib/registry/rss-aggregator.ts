@@ -142,7 +142,7 @@ export class RSSAggregator {
     // Sort by date
     this.items.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
 
-    console.log(styled(`✅ Fetched ${newItems.length} new items`, 'success'));
+    console.info(styled(`✅ Fetched ${newItems.length} new items`, 'success'));
     return this.items;
   }
 
@@ -150,7 +150,7 @@ export class RSSAggregator {
    * Fetch a single feed
    */
   private async fetchFeed(feed: RSSFeed): Promise<RSSItem[]> {
-    console.log(styled(`📡 Fetching: ${feed.name}`, 'info'));
+    console.info(styled(`📡 Fetching: ${feed.name}`, 'info'));
 
     const response = await fetch(feed.url, {
       headers: {
@@ -363,7 +363,7 @@ export class RSSAggregator {
 
     try {
       // In production, this would save to R2
-      console.log(styled(`💾 Saved ${this.items.length} items to R2`, 'success'));
+      console.info(styled(`💾 Saved ${this.items.length} items to R2`, 'success'));
       return true;
     } catch (error) {
       console.error(styled(`❌ Failed to save: ${error.message}`, 'error'));
@@ -377,7 +377,7 @@ export class RSSAggregator {
   async loadFromR2(): Promise<boolean> {
     try {
       // In production, this would load from R2
-      console.log(styled(`📂 Loaded from R2`, 'success'));
+      console.info(styled(`📂 Loaded from R2`, 'success'));
       return true;
     } catch (error) {
       console.error(styled(`❌ Failed to load: ${error.message}`, 'error'));
@@ -527,8 +527,8 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
   const command = args[0];
 
-  console.log(styled('📰 RSS Aggregator', 'accent'));
-  console.log(styled('=================', 'accent'));
+  console.info(styled('📰 RSS Aggregator', 'accent'));
+  console.info(styled('=================', 'accent'));
 
   switch (command) {
     case 'fetch': {
@@ -538,33 +538,33 @@ if (import.meta.main) {
 
     case 'list': {
       const items = aggregator.getItems({ limit: 20 });
-      console.log(styled(`\n📄 Recent Items (${items.length}):`, 'info'));
+      console.info(styled(`\n📄 Recent Items (${items.length}):`, 'info'));
 
       for (const item of items) {
         const feed = aggregator.getFeed(item.feedId);
         const readBadge = item.read ? '' : styled(' [NEW]', 'success');
-        console.log(styled(`\n  📰 ${item.title}${readBadge}`, 'muted'));
-        console.log(
+        console.info(styled(`\n  📰 ${item.title}${readBadge}`, 'muted'));
+        console.info(
           styled(`     ${feed?.name} • ${new Date(item.pubDate).toLocaleDateString()}`, 'muted')
         );
-        console.log(styled(`     ${item.link}`, 'info'));
+        console.info(styled(`     ${item.link}`, 'info'));
       }
       break;
     }
 
     case 'feeds': {
       const feeds = aggregator.getFeeds();
-      console.log(styled(`\n📡 Subscribed Feeds (${feeds.length}):`, 'info'));
+      console.info(styled(`\n📡 Subscribed Feeds (${feeds.length}):`, 'info'));
 
       for (const feed of feeds) {
         const statusBadge = feed.enabled ? styled('●', 'success') : styled('○', 'muted');
         const lastFetched = feed.lastFetched
           ? new Date(feed.lastFetched).toLocaleDateString()
           : 'Never';
-        console.log(styled(`\n  ${statusBadge} ${feed.name}`, 'muted'));
-        console.log(styled(`     Type: ${feed.type} • Category: ${feed.category}`, 'muted'));
-        console.log(styled(`     Last fetched: ${lastFetched}`, 'muted'));
-        console.log(styled(`     ${feed.url}`, 'info'));
+        console.info(styled(`\n  ${statusBadge} ${feed.name}`, 'muted'));
+        console.info(styled(`     Type: ${feed.type} • Category: ${feed.category}`, 'muted'));
+        console.info(styled(`     Last fetched: ${lastFetched}`, 'muted'));
+        console.info(styled(`     ${feed.url}`, 'info'));
       }
       break;
     }
@@ -585,34 +585,34 @@ if (import.meta.main) {
         enabled: true,
       });
 
-      console.log(styled(`\n✅ Added feed: ${feed.name}`, 'success'));
-      console.log(styled(`   ID: ${feed.id}`, 'muted'));
+      console.info(styled(`\n✅ Added feed: ${feed.name}`, 'success'));
+      console.info(styled(`   ID: ${feed.id}`, 'muted'));
       break;
     }
 
     case 'stats': {
-      console.log(styled('\n📊 Statistics:', 'info'));
-      console.log(styled(`  Feeds: ${aggregator.getFeeds().length}`, 'muted'));
-      console.log(styled(`  Items: ${aggregator.getItems().length}`, 'muted'));
-      console.log(styled(`  Unread: ${aggregator.getUnreadCount()}`, 'muted'));
-      console.log(styled(`  Starred: ${aggregator.getStarredCount()}`, 'muted'));
+      console.info(styled('\n📊 Statistics:', 'info'));
+      console.info(styled(`  Feeds: ${aggregator.getFeeds().length}`, 'muted'));
+      console.info(styled(`  Items: ${aggregator.getItems().length}`, 'muted'));
+      console.info(styled(`  Unread: ${aggregator.getUnreadCount()}`, 'muted'));
+      console.info(styled(`  Starred: ${aggregator.getStarredCount()}`, 'muted'));
       break;
     }
 
     case 'html': {
       const html = aggregator.generateHtml();
       await Bun.write('rss-feed.html', html);
-      console.log(styled('\n✅ Generated rss-feed.html', 'success'));
+      console.info(styled('\n✅ Generated rss-feed.html', 'success'));
       break;
     }
 
     default:
-      console.log(styled('\nCommands:', 'info'));
-      console.log(styled('  fetch              Fetch all feeds', 'muted'));
-      console.log(styled('  list               List recent items', 'muted'));
-      console.log(styled('  feeds              List subscribed feeds', 'muted'));
-      console.log(styled('  add <url> <name>   Add a feed', 'muted'));
-      console.log(styled('  stats              Show statistics', 'muted'));
-      console.log(styled('  html               Generate HTML view', 'muted'));
+      console.info(styled('\nCommands:', 'info'));
+      console.info(styled('  fetch              Fetch all feeds', 'muted'));
+      console.info(styled('  list               List recent items', 'muted'));
+      console.info(styled('  feeds              List subscribed feeds', 'muted'));
+      console.info(styled('  add <url> <name>   Add a feed', 'muted'));
+      console.info(styled('  stats              Show statistics', 'muted'));
+      console.info(styled('  html               Generate HTML view', 'muted'));
   }
 }

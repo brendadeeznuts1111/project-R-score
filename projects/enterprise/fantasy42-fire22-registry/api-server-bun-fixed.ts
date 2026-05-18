@@ -374,7 +374,7 @@ async function handleRequest(request: Request): Promise<Response> {
 const PORT = 3003; // Changed from 3000/3001/3002 to avoid conflicts
 const HOST = '127.0.0.1';
 
-console.log('🚀 Starting Fire22 Dashboard API Server with Bun...');
+console.info('🚀 Starting Fire22 Dashboard API Server with Bun...');
 
 try {
   const server = serve({
@@ -384,27 +384,27 @@ try {
     development: process.env.NODE_ENV !== 'production',
   });
 
-  console.log(`🚀 Fire22 Dashboard API Server running on http://${HOST}:${PORT}`);
-  console.log(`📊 Dashboard endpoints available at:`);
-  console.log(`   • http://${HOST}:${PORT}/api/dashboard/metrics`);
-  console.log(`   • http://${HOST}:${PORT}/api/dashboard/analytics`);
-  console.log(`   • http://${HOST}:${PORT}/api/dashboard/health`);
-  console.log(`   • http://${HOST}:${PORT}/api/dashboard/performance`);
-  console.log(`🏥 Health check: http://${HOST}:${PORT}/health`);
-  console.log(`📖 API info: http://${HOST}:${PORT}/api`);
-  console.log(`🔧 Test with: curl http://localhost:${PORT}/health`);
+  console.info(`🚀 Fire22 Dashboard API Server running on http://${HOST}:${PORT}`);
+  console.info(`📊 Dashboard endpoints available at:`);
+  console.info(`   • http://${HOST}:${PORT}/api/dashboard/metrics`);
+  console.info(`   • http://${HOST}:${PORT}/api/dashboard/analytics`);
+  console.info(`   • http://${HOST}:${PORT}/api/dashboard/health`);
+  console.info(`   • http://${HOST}:${PORT}/api/dashboard/performance`);
+  console.info(`🏥 Health check: http://${HOST}:${PORT}/health`);
+  console.info(`📖 API info: http://${HOST}:${PORT}/api`);
+  console.info(`🔧 Test with: curl http://localhost:${PORT}/health`);
 
   process.on('SIGINT', () => {
-    console.log('\n🛑 Shutting down Dashboard API Server...');
+    console.info('\n🛑 Shutting down Dashboard API Server...');
     server.stop();
-    console.log('✅ Server closed successfully');
+    console.info('✅ Server closed successfully');
     process.exit(0);
   });
 
   process.on('SIGTERM', () => {
-    console.log('\n🛑 Received SIGTERM, shutting down gracefully...');
+    console.info('\n🛑 Received SIGTERM, shutting down gracefully...');
     server.stop();
-    console.log('✅ Server closed successfully');
+    console.info('✅ Server closed successfully');
     process.exit(0);
   });
 

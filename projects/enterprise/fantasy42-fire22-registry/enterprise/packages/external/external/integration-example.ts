@@ -17,7 +17,7 @@ import {
 
 // Example: Setting up the Fantasy402 Gateway
 async function setupFantasy402Integration() {
-  console.log('🚀 Setting up Fantasy402 Integration...');
+  console.info('🚀 Setting up Fantasy402 Integration...');
 
   // Configure the gateway
   const gateway = new Fantasy402Gateway({
@@ -40,7 +40,7 @@ async function setupFantasy402Integration() {
 
 // Example: Fetching live sports events
 async function fetchLiveEvents(gateway: Fantasy402Gateway) {
-  console.log('📊 Fetching live sports events...');
+  console.info('📊 Fetching live sports events...');
 
   const events = await gateway.getLiveSportEvents({
     sport: 'football',
@@ -48,11 +48,11 @@ async function fetchLiveEvents(gateway: Fantasy402Gateway) {
     limit: 10,
   });
 
-  console.log(`Found ${events.length} live events:`);
+  console.info(`Found ${events.length} live events:`);
   events.forEach(event => {
-    console.log(`- ${event.getDisplayName()} (${event.getSport()})`);
-    console.log(`  Status: ${event.getStatus()}`);
-    console.log(
+    console.info(`- ${event.getDisplayName()} (${event.getSport()})`);
+    console.info(`  Status: ${event.getStatus()}`);
+    console.info(
       `  Score: ${event.getScore() ? `${event.getScore()?.home} - ${event.getScore()?.away}` : 'Not started'}`
     );
   });
@@ -62,24 +62,24 @@ async function fetchLiveEvents(gateway: Fantasy402Gateway) {
 
 // Example: Getting agent information
 async function getAgentDetails(gateway: Fantasy402Gateway, agentId: string) {
-  console.log(`👤 Getting agent details for: ${agentId}`);
+  console.info(`👤 Getting agent details for: ${agentId}`);
 
   const agent = await gateway.getAgent(agentId);
   if (!agent) {
-    console.log('Agent not found');
+    console.info('Agent not found');
     return null;
   }
 
   const account = await gateway.getAgentAccount(agentId);
 
-  console.log(`Agent: ${agent.getOffice()} - ${agent.getStore()}`);
-  console.log(`Type: ${agent.getAgentType()}`);
-  console.log(`Status: ${agent.getStatus()}`);
-  console.log(`Permissions:`, agent.getPermissions());
+  console.info(`Agent: ${agent.getOffice()} - ${agent.getStore()}`);
+  console.info(`Type: ${agent.getAgentType()}`);
+  console.info(`Status: ${agent.getStatus()}`);
+  console.info(`Permissions:`, agent.getPermissions());
 
   if (account) {
-    console.log(`Balance: $${account.getCurrentBalance().getAmount()}`);
-    console.log(`Available: $${account.getAvailableBalance().getAmount()}`);
+    console.info(`Balance: $${account.getCurrentBalance().getAmount()}`);
+    console.info(`Available: $${account.getAvailableBalance().getAmount()}`);
   }
 
   return { agent, account };
@@ -87,7 +87,7 @@ async function getAgentDetails(gateway: Fantasy402Gateway, agentId: string) {
 
 // Example: Placing a bet
 async function placeBetExample(gateway: Fantasy402Gateway) {
-  console.log('🎯 Placing a bet...');
+  console.info('🎯 Placing a bet...');
 
   try {
     const bet = await gateway.placeBet({
@@ -99,11 +99,11 @@ async function placeBetExample(gateway: Fantasy402Gateway) {
       selection: 'home',
     });
 
-    console.log(`Bet placed successfully:`);
-    console.log(`- Bet ID: ${bet.getExternalId()}`);
-    console.log(`- Amount: $${bet.getAmount().getAmount()}`);
-    console.log(`- Odds: ${bet.getOdds()}`);
-    console.log(`- Potential Payout: $${bet.getPotentialPayout().getAmount()}`);
+    console.info(`Bet placed successfully:`);
+    console.info(`- Bet ID: ${bet.getExternalId()}`);
+    console.info(`- Amount: $${bet.getAmount().getAmount()}`);
+    console.info(`- Odds: ${bet.getOdds()}`);
+    console.info(`- Potential Payout: $${bet.getPotentialPayout().getAmount()}`);
 
     return bet;
   } catch (error) {
@@ -114,7 +114,7 @@ async function placeBetExample(gateway: Fantasy402Gateway) {
 
 // Example: Processing external events
 async function processExternalEventExample(eventMapper: ExternalEventMapper) {
-  console.log('📡 Processing external event...');
+  console.info('📡 Processing external event...');
 
   // Simulate receiving an external event
   const externalEvent = {
@@ -135,7 +135,7 @@ async function processExternalEventExample(eventMapper: ExternalEventMapper) {
   // Process the external event (this will publish internal domain events)
   await eventMapper.processExternalEvent(externalEvent);
 
-  console.log('External event processed and internal events published');
+  console.info('External event processed and internal events published');
 }
 
 // Example: Setting up event handlers for domain communication
@@ -144,7 +144,7 @@ function setupEventHandlers() {
 
   // Handle new sport events discovered
   events.subscribe('fantasy.sport_event.discovered', async event => {
-    console.log('🎉 New sport event discovered:', event.payload);
+    console.info('🎉 New sport event discovered:', event.payload);
 
     // Here you could notify other domains (e.g., Collections domain)
     // about new betting opportunities
@@ -152,7 +152,7 @@ function setupEventHandlers() {
 
   // Handle bet placements
   events.subscribe('fantasy.bet.placed', async event => {
-    console.log('💰 Bet placed:', event.payload);
+    console.info('💰 Bet placed:', event.payload);
 
     // Here you could update balance in Balance domain
     // or send notifications via Communications domain
@@ -160,19 +160,19 @@ function setupEventHandlers() {
 
   // Handle agent balance updates
   events.subscribe('fantasy.account.balance_updated', async event => {
-    console.log('💵 Agent balance updated:', event.payload);
+    console.info('💵 Agent balance updated:', event.payload);
 
     // Here you could trigger balance alerts or update
     // internal balance tracking
   });
 
-  console.log('Event handlers set up successfully');
+  console.info('Event handlers set up successfully');
 }
 
 // Main integration example
 async function runIntegrationExample() {
   try {
-    console.log('🎯 Starting Fantasy402 Integration Example...\n');
+    console.info('🎯 Starting Fantasy402 Integration Example...\n');
 
     // Step 1: Set up integration
     const { gateway, eventMapper } = await setupFantasy402Integration();
@@ -181,24 +181,24 @@ async function runIntegrationExample() {
     setupEventHandlers();
 
     // Step 3: Demonstrate functionality
-    console.log('\n=== FETCHING LIVE EVENTS ===');
+    console.info('\n=== FETCHING LIVE EVENTS ===');
     await fetchLiveEvents(gateway);
 
-    console.log('\n=== GETTING AGENT DETAILS ===');
+    console.info('\n=== GETTING AGENT DETAILS ===');
     await getAgentDetails(gateway, 'AGENT001');
 
-    console.log('\n=== PLACING BET EXAMPLE ===');
+    console.info('\n=== PLACING BET EXAMPLE ===');
     await placeBetExample(gateway);
 
-    console.log('\n=== PROCESSING EXTERNAL EVENT ===');
+    console.info('\n=== PROCESSING EXTERNAL EVENT ===');
     await processExternalEventExample(eventMapper);
 
     // Step 4: Health check
-    console.log('\n=== HEALTH CHECK ===');
+    console.info('\n=== HEALTH CHECK ===');
     const health = await gateway.healthCheck();
-    console.log(`Gateway Health: ${health.status} (${health.latency}ms)`);
+    console.info(`Gateway Health: ${health.status} (${health.latency}ms)`);
 
-    console.log('\n✅ Integration example completed successfully!');
+    console.info('\n✅ Integration example completed successfully!');
   } catch (error) {
     console.error('❌ Integration example failed:', error);
   }

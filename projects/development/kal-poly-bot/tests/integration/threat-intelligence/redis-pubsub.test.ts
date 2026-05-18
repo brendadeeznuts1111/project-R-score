@@ -144,7 +144,7 @@ describe("ThreatIntelligence Redis Pub/Sub Integration Tests", () => {
     const duration = endTime - startTime;
     const throughput = messageCount / (duration / 1000);
 
-    console.log(`High-volume publishing: ${throughput.toFixed(0)} msg/s`);
+    console.info(`High-volume publishing: ${throughput.toFixed(0)} msg/s`);
 
     expect(throughput).toBeGreaterThan(50); // Should handle at least 50 msg/s
     expect(duration).toBeLessThan(5000); // Should complete within 5 seconds

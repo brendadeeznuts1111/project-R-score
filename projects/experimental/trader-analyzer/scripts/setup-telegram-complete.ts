@@ -11,9 +11,9 @@ const scripts = [
 ];
 
 async function runScript(scriptPath: string): Promise<boolean> {
-	console.log(`\n${'='.repeat(60)}`);
-	console.log(`Running: ${scriptPath}`);
-	console.log('='.repeat(60));
+	console.info(`\n${'='.repeat(60)}`);
+	console.info(`Running: ${scriptPath}`);
+	console.info('='.repeat(60));
 
 	const proc = Bun.spawn(['bun', 'run', scriptPath], {
 		stdout: 'inherit',
@@ -25,7 +25,7 @@ async function runScript(scriptPath: string): Promise<boolean> {
 }
 
 async function setupComplete() {
-	console.log('🚀 Starting Complete Telegram Bot Setup...\n');
+	console.info('🚀 Starting Complete Telegram Bot Setup...\n');
 
 	if (!process.env.TELEGRAM_BOT_TOKEN) {
 		console.error('❌ TELEGRAM_BOT_TOKEN environment variable is required');
@@ -42,22 +42,22 @@ async function setupComplete() {
 		}
 	}
 
-	console.log('\n' + '='.repeat(60));
+	console.info('\n' + '='.repeat(60));
 	if (allSuccess) {
-		console.log('✅ Complete Telegram Bot Setup Successful!');
-		console.log('\n📋 Summary:');
-		console.log('   ✅ Bot commands configured');
-		console.log('   ✅ Menu buttons configured');
-		console.log('\n💡 Next Steps:');
-		console.log('   1. Test commands in Telegram: /sports_correlation');
-		console.log('   2. Verify menu buttons appear in supergroup');
-		console.log('   3. Test mini-app URLs are accessible');
+		console.info('✅ Complete Telegram Bot Setup Successful!');
+		console.info('\n📋 Summary:');
+		console.info('   ✅ Bot commands configured');
+		console.info('   ✅ Menu buttons configured');
+		console.info('\n💡 Next Steps:');
+		console.info('   1. Test commands in Telegram: /sports_correlation');
+		console.info('   2. Verify menu buttons appear in supergroup');
+		console.info('   3. Test mini-app URLs are accessible');
 	} else {
-		console.log('❌ Complete Telegram Bot Setup Failed');
-		console.log('   Check errors above and fix issues');
+		console.info('❌ Complete Telegram Bot Setup Failed');
+		console.info('   Check errors above and fix issues');
 		process.exit(1);
 	}
-	console.log('='.repeat(60));
+	console.info('='.repeat(60));
 }
 
 if (import.meta.main) {

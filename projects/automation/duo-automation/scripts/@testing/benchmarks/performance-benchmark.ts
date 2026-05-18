@@ -7,10 +7,10 @@
 
 import { performance } from 'perf_hooks';
 
-console.log('🚀 Bun Response.json() Performance Benchmark');
-console.log('==============================================');
-console.log('Testing Empire Pro Config Empire API with optimized Response.json()');
-console.log('');
+console.info('🚀 Bun Response.json() Performance Benchmark');
+console.info('==============================================');
+console.info('Testing Empire Pro Config Empire API with optimized Response.json()');
+console.info('');
 
 // Test data of varying sizes
 const testCases = [
@@ -21,8 +21,8 @@ const testCases = [
 
 // Performance test function
 async function benchmarkEndpoint(name: string, url: string, iterations = 10) {
-  console.log(`📊 Testing ${name} (${iterations} iterations)`);
-  console.log(`URL: ${url}`);
+  console.info(`📊 Testing ${name} (${iterations} iterations)`);
+  console.info(`URL: ${url}`);
   
   const times: number[] = [];
   
@@ -37,7 +37,7 @@ async function benchmarkEndpoint(name: string, url: string, iterations = 10) {
       times.push(end - start);
       
       if (i === 0) {
-        console.log(`   Sample response size: ${JSON.stringify(data).length} bytes`);
+        console.info(`   Sample response size: ${JSON.stringify(data).length} bytes`);
       }
     } catch (error) {
       console.error(`   Error on iteration ${i + 1}:`, error);
@@ -49,62 +49,62 @@ async function benchmarkEndpoint(name: string, url: string, iterations = 10) {
   const minTime = Math.min(...times);
   const maxTime = Math.max(...times);
   
-  console.log(`   Average: ${avgTime.toFixed(3)}ms`);
-  console.log(`   Min: ${minTime.toFixed(3)}ms`);
-  console.log(`   Max: ${maxTime.toFixed(3)}ms`);
-  console.log(`   Throughput: ${(1000 / avgTime).toFixed(0)} requests/second`);
-  console.log('');
+  console.info(`   Average: ${avgTime.toFixed(3)}ms`);
+  console.info(`   Min: ${minTime.toFixed(3)}ms`);
+  console.info(`   Max: ${maxTime.toFixed(3)}ms`);
+  console.info(`   Throughput: ${(1000 / avgTime).toFixed(0)} requests/second`);
+  console.info('');
 }
 
 // Run benchmarks
-console.log('🎯 Empire Pro API Performance with Optimized Response.json()\n');
+console.info('🎯 Empire Pro API Performance with Optimized Response.json()\n');
 
 for (const testCase of testCases) {
   await benchmarkEndpoint(testCase.name, testCase.url);
 }
 
 // Comparison with old method (simulated)
-console.log('📈 Performance Comparison');
-console.log('========================');
+console.info('📈 Performance Comparison');
+console.info('========================');
 
-console.log('Before Optimization (JSON.stringify + Response):');
-console.log('   Response.json():                2415ms (large payload)');
-console.log('   JSON.stringify() + Response():  689ms (large payload)');
-console.log('   Performance Gap:                3.50x slower');
-console.log('');
+console.info('Before Optimization (JSON.stringify + Response):');
+console.info('   Response.json():                2415ms (large payload)');
+console.info('   JSON.stringify() + Response():  689ms (large payload)');
+console.info('   Performance Gap:                3.50x slower');
+console.info('');
 
-console.log('After Optimization (Bun v1.3.6+):');
-console.log('   Response.json():                ~700ms (large payload)');
-console.log('   JSON.stringify() + Response():  ~700ms (large payload)');
-console.log('   Performance Gap:                ~1.0x (parity achieved)');
-console.log('');
+console.info('After Optimization (Bun v1.3.6+):');
+console.info('   Response.json():                ~700ms (large payload)');
+console.info('   JSON.stringify() + Response():  ~700ms (large payload)');
+console.info('   Performance Gap:                ~1.0x (parity achieved)');
+console.info('');
 
-console.log('🚀 Empire Pro Benefits:');
-console.log('   ✅ 3.5x faster JSON responses');
-console.log('   ✅ SIMD-optimized FastStringifier');
-console.log('   ✅ Zero code changes required');
-console.log('   ✅ Automatic performance boost');
-console.log('   ✅ Better throughput for all endpoints');
-console.log('');
+console.info('🚀 Empire Pro Benefits:');
+console.info('   ✅ 3.5x faster JSON responses');
+console.info('   ✅ SIMD-optimized FastStringifier');
+console.info('   ✅ Zero code changes required');
+console.info('   ✅ Automatic performance boost');
+console.info('   ✅ Better throughput for all endpoints');
+console.info('');
 
 // Empire Pro specific benefits
-console.log('🏰 Empire Pro Config Empire Impact:');
-console.log('   🔐 Secrets API responses: 3.5x faster');
-console.log('   🌐 Configuration endpoints: 3.5x faster');
-console.log('   📊 Health checks: 3.5x faster');
-console.log('   🚀 Real-time updates: 3.5x faster');
-console.log('   📈 Client SDK performance: 3.5x faster');
-console.log('');
+console.info('🏰 Empire Pro Config Empire Impact:');
+console.info('   🔐 Secrets API responses: 3.5x faster');
+console.info('   🌐 Configuration endpoints: 3.5x faster');
+console.info('   📊 Health checks: 3.5x faster');
+console.info('   🚀 Real-time updates: 3.5x faster');
+console.info('   📈 Client SDK performance: 3.5x faster');
+console.info('');
 
 // Technical details
-console.log('🔧 Technical Implementation:');
-console.log('   📯 JavaScriptCore SIMD optimization');
-console.log('   ⚡ FastStringifier code path');
-console.log('   🎯 Zero-copy string operations');
-console.log('   🚀 Native JSON serialization');
-console.log('   📊 Memory-efficient processing');
-console.log('');
+console.info('🔧 Technical Implementation:');
+console.info('   📯 JavaScriptCore SIMD optimization');
+console.info('   ⚡ FastStringifier code path');
+console.info('   🎯 Zero-copy string operations');
+console.info('   🚀 Native JSON serialization');
+console.info('   📊 Memory-efficient processing');
+console.info('');
 
-console.log('✅ Empire Pro Config Empire is now 3.5x faster!');
-console.log('🎉 All API endpoints benefiting from Bun optimization!');
-console.log('🚀 Ready for high-throughput production deployment!');
+console.info('✅ Empire Pro Config Empire is now 3.5x faster!');
+console.info('🎉 All API endpoints benefiting from Bun optimization!');
+console.info('🚀 Ready for high-throughput production deployment!');

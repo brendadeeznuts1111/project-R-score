@@ -26,7 +26,7 @@ const { values, positionals } = parseArgs({
 });
 
 function showHelp() {
-  console.log(`
+  console.info(`
 🔧 Bun Headers CLI Tool
 
 Usage:
@@ -68,21 +68,21 @@ function createSampleHeaders() {
 }
 
 function basicDemo() {
-  console.log("🎯 Basic Headers.toJSON() Demo\n");
+  console.info("🎯 Basic Headers.toJSON() Demo\n");
 
   const headers = createSampleHeaders();
-  console.log("Original Headers:", headers);
+  console.info("Original Headers:", headers);
 
-  console.log("\n📤 Using toJSON():");
+  console.info("\n📤 Using toJSON():");
   const jsonResult = headers.toJSON();
-  console.log(jsonResult);
+  console.info(jsonResult);
 
-  console.log("\n📄 Using JSON.stringify():");
-  console.log(JSON.stringify(headers, null, 2));
+  console.info("\n📄 Using JSON.stringify():");
+  console.info(JSON.stringify(headers, null, 2));
 }
 
 function performanceDemo(iterations: number = 100000) {
-  console.log(
+  console.info(
     `⚡ Performance Demo (${iterations.toLocaleString()} iterations)\n`
   );
 
@@ -110,12 +110,12 @@ function performanceDemo(iterations: number = 100000) {
 }
 
 function filteringDemo() {
-  console.log("🔍 Header Filtering Demo\n");
+  console.info("🔍 Header Filtering Demo\n");
 
   const headers = createSampleHeaders();
 
   // Filter authorization headers
-  console.log("1. Authorization headers:");
+  console.info("1. Authorization headers:");
   const authHeaders = Object.fromEntries(
     Array.from(headers.entries()).filter(
       ([key]) =>
@@ -123,68 +123,68 @@ function filteringDemo() {
         key.toLowerCase().includes("authorization")
     )
   );
-  console.log(authHeaders);
+  console.info(authHeaders);
 
   // Filter custom headers
-  console.log("\n2. Custom headers (X-):");
+  console.info("\n2. Custom headers (X-):");
   const customHeaders = Object.fromEntries(
     Array.from(headers.entries()).filter(([key]) =>
       key.toLowerCase().startsWith("x-")
     )
   );
-  console.log(customHeaders);
+  console.info(customHeaders);
 
   // Filter cache-related headers
-  console.log("\n3. Cache-related headers:");
+  console.info("\n3. Cache-related headers:");
   const cacheHeaders = Object.fromEntries(
     Array.from(headers.entries()).filter(([key]) =>
       key.toLowerCase().includes("cache")
     )
   );
-  console.log(cacheHeaders);
+  console.info(cacheHeaders);
 }
 
 function transformDemo() {
-  console.log("🔄 Header Transformation Demo\n");
+  console.info("🔄 Header Transformation Demo\n");
 
   const headers = createSampleHeaders();
 
   // HTTP request format
-  console.log("1. HTTP request format:");
+  console.info("1. HTTP request format:");
   const httpRequestFormat = Array.from(headers.entries())
     .map(
       ([key, value]) =>
         `${key}: ${Array.isArray(value) ? value.join("; ") : value}`
     )
     .join("\n");
-  console.log(httpRequestFormat);
+  console.info(httpRequestFormat);
 
   // cURL format
-  console.log("\n2. cURL format:");
+  console.info("\n2. cURL format:");
   const curlFormat = Array.from(headers.entries())
     .map(
       ([key, value]) =>
         `  -H "${key}: ${Array.isArray(value) ? value.join("; ") : value}"`
     )
     .join(" \\\n");
-  console.log(`curl -X GET \\\n${curlFormat}`);
+  console.info(`curl -X GET \\\n${curlFormat}`);
 
   // JavaScript object format
-  console.log("\n3. JavaScript fetch format:");
-  console.log("fetch(url, {");
-  console.log("  headers: {");
+  console.info("\n3. JavaScript fetch format:");
+  console.info("fetch(url, {");
+  console.info("  headers: {");
   Array.from(headers.entries()).forEach(([key, value], index) => {
     const comma = index < Array.from(headers.entries()).length - 1 ? "," : "";
-    console.log(
+    console.info(
       `    "${key}": "${Array.isArray(value) ? value.join("; ") : value}"${comma}`
     );
   });
-  console.log("  }");
-  console.log("});");
+  console.info("  }");
+  console.info("});");
 }
 
 function statsDemo() {
-  console.log("📊 Header Statistics Demo\n");
+  console.info("📊 Header Statistics Demo\n");
 
   const headers = createSampleHeaders();
 
@@ -215,12 +215,12 @@ function statsDemo() {
 
   stats.averageLength = Math.round(totalLength / stats.totalHeaders);
 
-  console.log("Header Statistics:");
-  console.log(JSON.stringify(stats, null, 2));
+  console.info("Header Statistics:");
+  console.info(JSON.stringify(stats, null, 2));
 }
 
 function lookupDemo() {
-  console.log("🔎 Fast Header Lookup Demo\n");
+  console.info("🔎 Fast Header Lookup Demo\n");
 
   const headers = createSampleHeaders();
 
@@ -232,15 +232,15 @@ function lookupDemo() {
     ])
   );
 
-  console.log("Fast lookups (case-insensitive):");
-  console.log("Content-Type:", headerMap.get("content-type"));
-  console.log("content-type:", headerMap.get("content-type"));
-  console.log("USER-AGENT:", headerMap.get("user-agent"));
-  console.log("x-request-id:", headerMap.get("x-request-id"));
+  console.info("Fast lookups (case-insensitive):");
+  console.info("Content-Type:", headerMap.get("content-type"));
+  console.info("content-type:", headerMap.get("content-type"));
+  console.info("USER-AGENT:", headerMap.get("user-agent"));
+  console.info("x-request-id:", headerMap.get("x-request-id"));
 
   // Demonstrate lookup performance
   const iterations = 100000;
-  console.log(
+  console.info(
     `\n🚀 Lookup Performance (${iterations.toLocaleString()} lookups):`
   );
 
@@ -259,23 +259,23 @@ function lookupDemo() {
 }
 
 function runAllDemos(iterations: number = 100000) {
-  console.log("🎪 Running All Headers Demos\n");
-  console.log("=".repeat(50));
+  console.info("🎪 Running All Headers Demos\n");
+  console.info("=".repeat(50));
 
   basicDemo();
-  console.log("\n" + "=".repeat(50));
+  console.info("\n" + "=".repeat(50));
 
   performanceDemo(iterations);
-  console.log("\n" + "=".repeat(50));
+  console.info("\n" + "=".repeat(50));
 
   filteringDemo();
-  console.log("\n" + "=".repeat(50));
+  console.info("\n" + "=".repeat(50));
 
   transformDemo();
-  console.log("\n" + "=".repeat(50));
+  console.info("\n" + "=".repeat(50));
 
   statsDemo();
-  console.log("\n" + "=".repeat(50));
+  console.info("\n" + "=".repeat(50));
 
   lookupDemo();
 }

@@ -263,7 +263,7 @@ export class CashAppCLI {
               }
               
               changes.forEach(change => {
-                console.log(`  ${chalk.yellow('•')} ${change}`);
+                console.info(`  ${chalk.yellow('•')} ${change}`);
               });
             }
           }
@@ -276,7 +276,7 @@ export class CashAppCLI {
                        riskScore > 40 ? chalk.yellow('MEDIUM') : 
                        chalk.green('LOW');
           
-          console.log(`${cashtag}: ${status} (Risk: ${riskScore})`);
+          console.info(`${cashtag}: ${status} (Risk: ${riskScore})`);
 
         } catch (error) {
           empireLog.error(`❌ Failed to monitor ${cashtag}: ${error}`);
@@ -319,37 +319,37 @@ export class CashAppCLI {
       spinner.succeed();
 
       console.clear();
-      console.log(chalk.cyan(`🎯 Risk Assessment for ${normalizedCashtag}\n`));
+      console.info(chalk.cyan(`🎯 Risk Assessment for ${normalizedCashtag}\n`));
 
       // Overall risk score
       const score = riskAssessment.overallScore;
       const level = riskAssessment.riskLevel;
       const color = level === 'HIGH' ? 'red' : level === 'MEDIUM' ? 'yellow' : 'green';
       
-      console.log(`Overall Risk Score: ${chalk[color](score)}/100`);
-      console.log(`Risk Level: ${chalk[color](level)}`);
-      console.log(`Confidence: ${chalk.gray(riskAssessment.confidence)}%\n`);
+      console.info(`Overall Risk Score: ${chalk[color](score)}/100`);
+      console.info(`Risk Level: ${chalk[color](level)}`);
+      console.info(`Confidence: ${chalk.gray(riskAssessment.confidence)}%\n`);
 
       // Risk factors
       if (options.factors && riskAssessment.factors) {
-        console.log(chalk.cyan('📊 Risk Factors:\n'));
+        console.info(chalk.cyan('📊 Risk Factors:\n'));
         riskAssessment.factors.forEach((factor: any) => {
           const factorColor = factor.severity === 'HIGH' ? 'red' : 
                             factor.severity === 'MEDIUM' ? 'yellow' : 'green';
-          console.log(`  ${chalk[factorColor]('•')} ${factor.name}: ${factor.score} (${factor.severity})`);
-          console.log(`    ${chalk.gray(factor.description)}`);
+          console.info(`  ${chalk[factorColor]('•')} ${factor.name}: ${factor.score} (${factor.severity})`);
+          console.info(`    ${chalk.gray(factor.description)}`);
         });
-        console.log();
+        console.info();
       }
 
       // Recommendations
       if (options.recommendations && riskAssessment.recommendations) {
-        console.log(chalk.cyan('💡 Recommendations:\n'));
+        console.info(chalk.cyan('💡 Recommendations:\n'));
         riskAssessment.recommendations.forEach((rec: any) => {
           const priorityColor = rec.priority === 'HIGH' ? 'red' : 
                               rec.priority === 'MEDIUM' ? 'yellow' : 'green';
-          console.log(`  ${chalk[priorityColor]('•')} ${rec.title}`);
-          console.log(`    ${chalk.gray(rec.description)}`);
+          console.info(`  ${chalk[priorityColor]('•')} ${rec.title}`);
+          console.info(`    ${chalk.gray(rec.description)}`);
         });
       }
 
@@ -441,51 +441,51 @@ export class CashAppCLI {
    */
   private displayProfile(profile: any, format: string): void {
     if (format === 'json') {
-      console.log(JSON.stringify(profile, null, 2));
+      console.info(JSON.stringify(profile, null, 2));
       return;
     }
 
     if (!profile) {
-      console.log(chalk.yellow('No profile data available'));
+      console.info(chalk.yellow('No profile data available'));
       return;
     }
 
     console.clear();
-    console.log(chalk.cyan(`👤 CashApp Profile: ${profile.cashtag}\n`));
+    console.info(chalk.cyan(`👤 CashApp Profile: ${profile.cashtag}\n`));
     
-    console.log(`Display Name: ${chalk.green(profile.displayName || 'N/A')}`);
-    console.log(`Verification: ${profile.verificationStatus === 'verified' ? chalk.green('✅') : chalk.red('❌')}`);
-    console.log(`Phone: ${chalk.gray(profile.phone || 'N/A')}`);
-    console.log(`Confidence: ${chalk.gray((profile.confidence * 100).toFixed(1))}%`);
+    console.info(`Display Name: ${chalk.green(profile.displayName || 'N/A')}`);
+    console.info(`Verification: ${profile.verificationStatus === 'verified' ? chalk.green('✅') : chalk.red('❌')}`);
+    console.info(`Phone: ${chalk.gray(profile.phone || 'N/A')}`);
+    console.info(`Confidence: ${chalk.gray((profile.confidence * 100).toFixed(1))}%`);
     
     if (profile.transactionVolume30d) {
-      console.log(`Transaction Volume (30d): ${chalk.yellow('$' + (profile.transactionVolume30d / 100).toFixed(2))}`);
+      console.info(`Transaction Volume (30d): ${chalk.yellow('$' + (profile.transactionVolume30d / 100).toFixed(2))}`);
     }
   }
 
   private displayBatchResults(results: any, format: string): void {
     if (format === 'json') {
-      console.log(JSON.stringify(results, null, 2));
+      console.info(JSON.stringify(results, null, 2));
       return;
     }
 
     console.clear();
-    console.log(chalk.cyan(`📊 Batch Analysis Results\n`));
+    console.info(chalk.cyan(`📊 Batch Analysis Results\n`));
     
     const total = results.total || results.phones?.length || 0;
     const successful = results.successful || Object.values(results.results || {}).filter((r: any) => r !== null).length;
     const failed = total - successful;
     
-    console.log(`Total: ${total}`);
-    console.log(`Successful: ${chalk.green(successful.toString())}`);
-    console.log(`Failed: ${chalk.red(failed.toString())}`);
-    console.log(`Success Rate: ${chalk.green(total > 0 ? Math.round((successful / total) * 100).toString() : '0')}%`);
+    console.info(`Total: ${total}`);
+    console.info(`Successful: ${chalk.green(successful.toString())}`);
+    console.info(`Failed: ${chalk.red(failed.toString())}`);
+    console.info(`Success Rate: ${chalk.green(total > 0 ? Math.round((successful / total) * 100).toString() : '0')}%`);
 
     if (results.results && typeof results.results === 'object') {
-      console.log(chalk.cyan('\nDetailed Results:\n'));
+      console.info(chalk.cyan('\nDetailed Results:\n'));
       Object.entries(results.results).forEach(([cashtag, result]: [string, any]) => {
         const status = result ? chalk.green('✅') : chalk.red('❌');
-        console.log(`${status} ${cashtag}: ${result ? 'Analyzed' : 'Failed'}`);
+        console.info(`${status} ${cashtag}: ${result ? 'Analyzed' : 'Failed'}`);
       });
     }
   }
@@ -549,17 +549,17 @@ export class CashAppCLI {
 
   private displayAnalytics(analytics: any, format: string): void {
     if (format === 'json') {
-      console.log(JSON.stringify(analytics, null, 2));
+      console.info(JSON.stringify(analytics, null, 2));
       return;
     }
 
     console.clear();
-    console.log(chalk.cyan('📊 Analytics Report\n'));
-    console.log(`Period: ${analytics.period}`);
-    console.log(`Total Accounts: ${analytics.totalAccounts}`);
-    console.log(`High Risk: ${chalk.red(analytics.highRisk)}`);
-    console.log(`Medium Risk: ${chalk.yellow(analytics.mediumRisk)}`);
-    console.log(`Low Risk: ${chalk.green(analytics.lowRisk)}`);
+    console.info(chalk.cyan('📊 Analytics Report\n'));
+    console.info(`Period: ${analytics.period}`);
+    console.info(`Total Accounts: ${analytics.totalAccounts}`);
+    console.info(`High Risk: ${chalk.red(analytics.highRisk)}`);
+    console.info(`Medium Risk: ${chalk.yellow(analytics.mediumRisk)}`);
+    console.info(`Low Risk: ${chalk.green(analytics.lowRisk)}`);
   }
 
   // Placeholder implementations for webhook and config methods

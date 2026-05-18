@@ -8,8 +8,8 @@
 // Detect if running in playground (no TTY) vs terminal
 const useColors = process.stdout.isTTY && !process.env.PLAYGROUND_NO_COLORS;
 
-console.log("🏃 Running Brand Benchmarks...\n");
-console.log(`Colors: ${useColors ? "enabled (TTY)" : "disabled (non-interactive)"}\n`);
+console.info("🏃 Running Brand Benchmarks...\n");
+console.info(`Colors: ${useColors ? "enabled (TTY)" : "disabled (non-interactive)"}\n`);
 
 // Simulate benchmark operations
 const operations = [
@@ -21,13 +21,13 @@ const operations = [
 ];
 
 // Warmup
-console.log("Warming up...");
+console.info("Warming up...");
 for (let i = 0; i < 1000; i++) {
   operations.forEach(op => { void op.ops; });
 }
 
 // Run benchmarks
-console.log("Running benchmarks...\n");
+console.info("Running benchmarks...\n");
 
 const results = operations.map(op => ({
   operation: op.name,
@@ -36,8 +36,8 @@ const results = operations.map(op => ({
   performance: op.ops > 3_000_000 ? "🔥 Fast" : op.ops > 1_000_000 ? "⚡ Good" : "✅ OK"
 }));
 
-console.log("📊 Benchmark Results:");
-console.log(Bun.inspect.table(
+console.info("📊 Benchmark Results:");
+console.info(Bun.inspect.table(
   results,
   ["operation", "ops/sec", "time (ms)", "performance"],
   { colors: useColors }
@@ -45,9 +45,9 @@ console.log(Bun.inspect.table(
 
 // Find best performer
 const best = operations.reduce((a, b) => a.ops > b.ops ? a : b);
-console.log(`\n🏆 Best: ${best.name} (${best.ops.toLocaleString()} ops/sec)`);
+console.info(`\n🏆 Best: ${best.name} (${best.ops.toLocaleString()} ops/sec)`);
 
 // Summary statistics
 const avgOps = operations.reduce((sum, op) => sum + op.ops, 0) / operations.length;
-console.log(`📈 Average: ${Math.round(avgOps).toLocaleString()} ops/sec`);
-console.log(`⚡ Total operations: ${operations.length}`);
+console.info(`📈 Average: ${Math.round(avgOps).toLocaleString()} ops/sec`);
+console.info(`⚡ Total operations: ${operations.length}`);

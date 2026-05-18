@@ -200,7 +200,7 @@ export async function filterLargeInspectionAsync(
   }
   
   // Use async processing for large datasets
-  console.log(`🔄 Processing large dataset (${nodeCount} nodes) asynchronously...`);
+  console.info(`🔄 Processing large dataset (${nodeCount} nodes) asynchronously...`);
   
   return new Promise((resolve, reject) => {
     try {

@@ -117,8 +117,8 @@ class DashboardAnalyzer {
   }
 
   analyze() {
-    console.log(`🧬 ${getVersionString()} - Dashboard Export Analysis`);
-    console.log('========================================\n');
+    console.info(`🧬 ${getVersionString()} - Dashboard Export Analysis`);
+    console.info('========================================\n');
 
     this.analyzeSystemStatus();
     this.analyzeLogs();
@@ -134,25 +134,25 @@ class DashboardAnalyzer {
   }
 
   private analyzeSystemStatus() {
-    console.log('📊 SYSTEM STATUS');
-    console.log('---------------');
+    console.info('📊 SYSTEM STATUS');
+    console.info('---------------');
 
     const uptimeHours = Math.floor(this.data.system.uptime / 3600);
     const uptimeMinutes = Math.floor((this.data.system.uptime % 3600) / 60);
     const uptimeSeconds = this.data.system.uptime % 60;
 
-    console.log(`⏱️  Uptime: ${uptimeHours}:${uptimeMinutes.toString().padStart(2, '0')}:${uptimeSeconds.toString().padStart(2, '0')}`);
-    console.log(`📱 Devices: ${this.data.system.deviceCount}`);
-    console.log(`🖥️  System Health:`);
-    console.log(`   • CPU: ${this.data.system.systemHealth.cpu}%`);
-    console.log(`   • Memory: ${this.data.system.systemHealth.memory}%`);
-    console.log(`   • Disk: ${this.data.system.systemHealth.disk}%`);
-    console.log(`   • Network: ${this.data.system.systemHealth.network}%`);
+    console.info(`⏱️  Uptime: ${uptimeHours}:${uptimeMinutes.toString().padStart(2, '0')}:${uptimeSeconds.toString().padStart(2, '0')}`);
+    console.info(`📱 Devices: ${this.data.system.deviceCount}`);
+    console.info(`🖥️  System Health:`);
+    console.info(`   • CPU: ${this.data.system.systemHealth.cpu}%`);
+    console.info(`   • Memory: ${this.data.system.systemHealth.memory}%`);
+    console.info(`   • Disk: ${this.data.system.systemHealth.disk}%`);
+    console.info(`   • Network: ${this.data.system.systemHealth.network}%`);
 
     // Health assessment
     const healthScore = this.calculateHealthScore();
     const healthStatus = healthScore > 80 ? '🟢 Excellent' : healthScore > 60 ? '🟡 Good' : '🔴 Needs Attention';
-    console.log(`🏥 Overall Health: ${healthStatus} (${healthScore}/100)\n`);
+    console.info(`🏥 Overall Health: ${healthStatus} (${healthScore}/100)\n`);
 
     // Store in analysis result
     this.analysisResult.systemHealth = {
@@ -179,31 +179,31 @@ class DashboardAnalyzer {
   }
 
   private analyzeLogs() {
-    console.log('📋 LOG ANALYSIS');
-    console.log('--------------');
+    console.info('📋 LOG ANALYSIS');
+    console.info('--------------');
 
     const logStats = this.data.logs.reduce((acc, log) => {
       acc[log.type] = (acc[log.type] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
-    console.log('Log Entries by Type:');
+    console.info('Log Entries by Type:');
     Object.entries(logStats).forEach(([type, count]) => {
       const icon = this.getLogTypeIcon(type);
-      console.log(`  ${icon} ${type}: ${count}`);
+      console.info(`  ${icon} ${type}: ${count}`);
     });
 
     // Error analysis
     const errors = this.data.logs.filter(log => log.type === 'error');
     if (errors.length > 0) {
-      console.log(`\n⚠️  Recent Errors (${errors.length}):`);
+      console.info(`\n⚠️  Recent Errors (${errors.length}):`);
       errors.slice(0, 3).forEach(error => {
         const time = new Date(error.timestamp).toLocaleTimeString();
-        console.log(`  • ${time}: ${error.message}`);
+        console.info(`  • ${time}: ${error.message}`);
       });
     }
 
-    console.log('');
+    console.info('');
   }
 
   private getLogTypeIcon(type: string): string {
@@ -221,65 +221,65 @@ class DashboardAnalyzer {
   }
 
   private analyzeConfiguration() {
-    console.log('⚙️  CONFIGURATION ANALYSIS');
-    console.log('------------------------');
+    console.info('⚙️  CONFIGURATION ANALYSIS');
+    console.info('------------------------');
 
     const config = this.data.config;
 
-    console.log(`🎨 Theme: ${config.theme}`);
-    console.log(`🔄 Refresh Intervals:`);
-    console.log(`   • Lightning: ${config.lightningRefresh}s`);
-    console.log(`   • Device: ${config.deviceRefresh}s`);
-    console.log(`   • Atlas: ${config.atlasRefresh}s`);
+    console.info(`🎨 Theme: ${config.theme}`);
+    console.info(`🔄 Refresh Intervals:`);
+    console.info(`   • Lightning: ${config.lightningRefresh}s`);
+    console.info(`   • Device: ${config.deviceRefresh}s`);
+    console.info(`   • Atlas: ${config.atlasRefresh}s`);
 
-    console.log(`🔒 Security Settings:`);
-    console.log(`   • Session Timeout: ${config.sessionTimeout} minutes`);
-    console.log(`   • Auto-lock: ${config.autoLock ? 'Enabled' : 'Disabled'}`);
-    console.log(`   • Data Encryption: ${config.dataEncryption ? 'Enabled' : 'Disabled'}`);
+    console.info(`🔒 Security Settings:`);
+    console.info(`   • Session Timeout: ${config.sessionTimeout} minutes`);
+    console.info(`   • Auto-lock: ${config.autoLock ? 'Enabled' : 'Disabled'}`);
+    console.info(`   • Data Encryption: ${config.dataEncryption ? 'Enabled' : 'Disabled'}`);
 
-    console.log(`⚡ Performance Settings:`);
-    console.log(`   • Max Log Entries: ${config.maxLogEntries}`);
-    console.log(`   • WebSocket Reconnect: ${config.websocketReconnect ? 'Enabled' : 'Disabled'}`);
-    console.log(`   • Data Compression: ${config.dataCompression ? 'Enabled' : 'Disabled'}`);
+    console.info(`⚡ Performance Settings:`);
+    console.info(`   • Max Log Entries: ${config.maxLogEntries}`);
+    console.info(`   • WebSocket Reconnect: ${config.websocketReconnect ? 'Enabled' : 'Disabled'}`);
+    console.info(`   • Data Compression: ${config.dataCompression ? 'Enabled' : 'Disabled'}`);
 
-    console.log('');
+    console.info('');
   }
 
   private analyzeAtlasData() {
     if (!this.data.atlasData) {
-      console.log('🗂️  ATLAS DATA: Not available\n');
+      console.info('🗂️  ATLAS DATA: Not available\n');
       return;
     }
 
-    console.log('🗂️  ATLAS INVENTORY ANALYSIS');
-    console.log('---------------------------');
+    console.info('🗂️  ATLAS INVENTORY ANALYSIS');
+    console.info('---------------------------');
 
     const atlas = this.data.atlasData;
 
-    console.log('Device Distribution by Age:');
+    console.info('Device Distribution by Age:');
     atlas.ageGroups.forEach(group => {
       const activePercent = group.count > 0 ? Math.round((group.active / group.count) * 100) : 0;
       const volumeK = (group.volume / 1000).toFixed(1);
-      console.log(`  📅 ${group.range}:`);
-      console.log(`    • Count: ${group.count} (${activePercent}% active)`);
-      console.log(`    • Volume: $${volumeK}k`);
-      console.log(`    • Snapshots: ${group.snaps}`);
+      console.info(`  📅 ${group.range}:`);
+      console.info(`    • Count: ${group.count} (${activePercent}% active)`);
+      console.info(`    • Volume: $${volumeK}k`);
+      console.info(`    • Snapshots: ${group.snaps}`);
     });
 
-    console.log(`\n📈 Fleet Summary:`);
-    console.log(`  • Total Devices: ${atlas.total.count.toLocaleString()}`);
-    console.log(`  • Active Devices: ${atlas.total.active.toLocaleString()}`);
-    console.log(`  • Total Volume: $${(atlas.total.volume / 1000).toFixed(1)}k`);
-    console.log(`  • Total Snapshots: ${atlas.total.snaps.toLocaleString()}`);
-    console.log(`  • Cold Exports: ${atlas.total.coldExports.toLocaleString()}`);
+    console.info(`\n📈 Fleet Summary:`);
+    console.info(`  • Total Devices: ${atlas.total.count.toLocaleString()}`);
+    console.info(`  • Active Devices: ${atlas.total.active.toLocaleString()}`);
+    console.info(`  • Total Volume: $${(atlas.total.volume / 1000).toFixed(1)}k`);
+    console.info(`  • Total Snapshots: ${atlas.total.snaps.toLocaleString()}`);
+    console.info(`  • Cold Exports: ${atlas.total.coldExports.toLocaleString()}`);
 
     const lastExport = atlas.total.lastExport ?
       new Date(atlas.total.lastExport).toLocaleString() : 'Never';
-    console.log(`  • Last Cold Export: ${lastExport}`);
+    console.info(`  • Last Cold Export: ${lastExport}`);
 
     // Fleet health assessment
     const fleetHealth = this.calculateFleetHealth(atlas);
-    console.log(`\n🏥 Fleet Health: ${fleetHealth.status} (${fleetHealth.score}/100)`);
+    console.info(`\n🏥 Fleet Health: ${fleetHealth.status} (${fleetHealth.score}/100)`);
 
     // Store in analysis result
     this.analysisResult.fleetHealth = {
@@ -295,7 +295,7 @@ class DashboardAnalyzer {
       }
     };
 
-    console.log('');
+    console.info('');
   }
 
   private calculateFleetHealth(atlas: any) {
@@ -323,35 +323,35 @@ class DashboardAnalyzer {
 
   private analyzeMetrics() {
     if (!this.data.metricsData) {
-      console.log('📊 METRICS DATA: Not available\n');
+      console.info('📊 METRICS DATA: Not available\n');
       return;
     }
 
-    console.log('📊 OPERATIONAL METRICS ANALYSIS');
-    console.log('-------------------------------');
+    console.info('📊 OPERATIONAL METRICS ANALYSIS');
+    console.info('-------------------------------');
 
     const metrics = this.data.metricsData;
 
-    console.log('🚀 Core Performance:');
-    console.log(`  • Starlight-IDs: ${metrics.starlightIDs}`);
-    console.log(`  • Orbit-Assign Legs: ${metrics.orbitAssignLegs}`);
-    console.log(`  • Comet-Collect: ${metrics.cometCollect}`);
-    console.log(`  • ETA: ${metrics.cometCollectEta} minutes`);
+    console.info('🚀 Core Performance:');
+    console.info(`  • Starlight-IDs: ${metrics.starlightIDs}`);
+    console.info(`  • Orbit-Assign Legs: ${metrics.orbitAssignLegs}`);
+    console.info(`  • Comet-Collect: ${metrics.cometCollect}`);
+    console.info(`  • ETA: ${metrics.cometCollectEta} minutes`);
 
-    console.log('\n💰 Yield Performance:');
-    console.log(`  • Stardrop Yield: ${metrics.stardropYieldPct}%`);
-    console.log(`  • Profit: $${metrics.stardropProfit.toLocaleString()}`);
+    console.info('\n💰 Yield Performance:');
+    console.info(`  • Stardrop Yield: ${metrics.stardropYieldPct}%`);
+    console.info(`  • Profit: $${metrics.stardropProfit.toLocaleString()}`);
 
-    console.log('\n⚠️  Risk Management:');
-    console.log(`  • Black-Hole Rate: ${metrics.blackHoleRatePct}%`);
-    console.log(`  • Disputes: ${metrics.blackHoleDisputes}`);
+    console.info('\n⚠️  Risk Management:');
+    console.info(`  • Black-Hole Rate: ${metrics.blackHoleRatePct}%`);
+    console.info(`  • Disputes: ${metrics.blackHoleDisputes}`);
 
-    console.log('\n⏱️  Performance Timing:');
-    console.log(`  • Event Horizon: ${metrics.eventHorizon}`);
+    console.info('\n⏱️  Performance Timing:');
+    console.info(`  • Event Horizon: ${metrics.eventHorizon}`);
 
     // Performance assessment
     const perfScore = this.calculatePerformanceScore(metrics);
-    console.log(`\n🏆 Performance Score: ${perfScore.status} (${perfScore.score}/100)`);
+    console.info(`\n🏆 Performance Score: ${perfScore.status} (${perfScore.score}/100)`);
 
     // Store in analysis result
     this.analysisResult.performanceScore = {
@@ -369,14 +369,14 @@ class DashboardAnalyzer {
       }
     };
 
-    console.log('');
+    console.info('');
   }
 
   private analyzeTrends() {
     if (!this.data.metricsData) return;
 
-    console.log('📈 TREND ANALYSIS');
-    console.log('----------------');
+    console.info('📈 TREND ANALYSIS');
+    console.info('----------------');
 
     const metrics = this.data.metricsData;
     const profit = metrics.stardropProfit;
@@ -388,20 +388,20 @@ class DashboardAnalyzer {
     const monthlyProjection = dailyProfit * 30;
     const yearlyProjection = dailyProfit * 365;
 
-    console.log(`💰 Profit Projections:`);
-    console.log(`  • Daily: $${dailyProfit.toLocaleString()}`);
-    console.log(`  • Monthly: $${monthlyProjection.toLocaleString()}`);
-    console.log(`  • Yearly: $${yearlyProjection.toLocaleString()}`);
+    console.info(`💰 Profit Projections:`);
+    console.info(`  • Daily: $${dailyProfit.toLocaleString()}`);
+    console.info(`  • Monthly: $${monthlyProjection.toLocaleString()}`);
+    console.info(`  • Yearly: $${yearlyProjection.toLocaleString()}`);
 
     // Efficiency trend
     const efficiencyTrend = yieldPct >= 1.5 ? '📈 Improving' :
                            yieldPct >= 1.0 ? '➡️ Stable' : '📉 Declining';
-    console.log(`\n⚡ Efficiency Trend: ${efficiencyTrend}`);
+    console.info(`\n⚡ Efficiency Trend: ${efficiencyTrend}`);
 
     // Risk trend
     const riskTrend = blackHoleRate <= 1.0 ? '✅ Low Risk' :
                      blackHoleRate <= 2.0 ? '⚠️ Moderate Risk' : '🔴 High Risk';
-    console.log(`⚠️  Risk Assessment: ${riskTrend}`);
+    console.info(`⚠️  Risk Assessment: ${riskTrend}`);
 
     // Store trends
     this.analysisResult.trends = {
@@ -410,7 +410,7 @@ class DashboardAnalyzer {
       riskTrend: riskTrend
     };
 
-    console.log('');
+    console.info('');
   }
 
   private calculatePerformanceScore(metrics: any) {
@@ -440,8 +440,8 @@ class DashboardAnalyzer {
   }
 
   private generateRecommendations() {
-    console.log('💡 RECOMMENDATIONS & INSIGHTS');
-    console.log('=============================');
+    console.info('💡 RECOMMENDATIONS & INSIGHTS');
+    console.info('=============================');
 
     const recommendations: string[] = [];
 
@@ -488,21 +488,21 @@ class DashboardAnalyzer {
     }
 
     if (recommendations.length === 0) {
-      console.log('✅ All systems operating within normal parameters');
-      console.log('🎉 Great job maintaining your Nebula-Flow™ ecosystem!');
+      console.info('✅ All systems operating within normal parameters');
+      console.info('🎉 Great job maintaining your Nebula-Flow™ ecosystem!');
       recommendations.push('✅ All systems operating within normal parameters');
     } else {
-      recommendations.forEach(rec => console.log(rec));
+      recommendations.forEach(rec => console.info(rec));
     }
 
     // Store recommendations
     this.analysisResult.recommendations = recommendations;
 
-    console.log('\n📅 Export Summary:');
-    console.log(`  • Exported: ${this.data.metadata.exportDate}`);
-    console.log(`  • Version: ${this.data.version}`);
-    console.log(`  • Current Tab: ${this.data.currentTab}`);
-    console.log(`  • Log Entries: ${this.data.logs.length}`);
+    console.info('\n📅 Export Summary:');
+    console.info(`  • Exported: ${this.data.metadata.exportDate}`);
+    console.info(`  • Version: ${this.data.version}`);
+    console.info(`  • Current Tab: ${this.data.currentTab}`);
+    console.info(`  • Log Entries: ${this.data.logs.length}`);
   }
 
   async exportToJSON(outputPath?: string): Promise<string> {
@@ -524,7 +524,7 @@ class DashboardAnalyzer {
     };
 
     await writeFile(filename, JSON.stringify(exportData, null, 2), 'utf-8');
-    console.log(`\n✅ Analysis exported to: ${filename}`);
+    console.info(`\n✅ Analysis exported to: ${filename}`);
     return filename;
   }
 
@@ -534,7 +534,7 @@ class DashboardAnalyzer {
 
     const html = this.generateHTMLReport();
     await writeFile(filename, html, 'utf-8');
-    console.log(`✅ HTML report exported to: ${filename}`);
+    console.info(`✅ HTML report exported to: ${filename}`);
     return filename;
   }
 
@@ -762,13 +762,13 @@ const outputDir = args.find(arg => arg.startsWith('--output='))?.split('=')[1] |
                   args.find(arg => arg.startsWith('-o='))?.split('=')[1];
 
 if (!filename || filename.startsWith('--') || filename.startsWith('-')) {
-  console.log('Usage: bun run analyze-dashboard-export.ts <filename> [options]');
-  console.log('\nOptions:');
-  console.log('  --export-json, -j    Export analysis to JSON file');
-  console.log('  --export-html, -h   Export analysis to HTML report');
-  console.log('  --output=<dir>, -o=<dir>  Output directory for exports');
-  console.log('\nExample:');
-  console.log('  bun run analyze-dashboard-export.ts nebula-dashboard-2026-01-21.json --export-json --export-html');
+  console.info('Usage: bun run analyze-dashboard-export.ts <filename> [options]');
+  console.info('\nOptions:');
+  console.info('  --export-json, -j    Export analysis to JSON file');
+  console.info('  --export-html, -h   Export analysis to HTML report');
+  console.info('  --output=<dir>, -o=<dir>  Output directory for exports');
+  console.info('\nExample:');
+  console.info('  bun run analyze-dashboard-export.ts nebula-dashboard-2026-01-21.json --export-json --export-html');
   process.exit(1);
 }
 

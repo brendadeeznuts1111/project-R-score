@@ -33,8 +33,8 @@ class DatabaseConnectionFixer {
   }
 
   async diagnoseAndFix(): Promise<void> {
-    console.log('🔧 Database Connection Diagnostic & Fix');
-    console.log('━'.repeat(50));
+    console.info('🔧 Database Connection Diagnostic & Fix');
+    console.info('━'.repeat(50));
 
     const steps = [
       { name: 'Check Environment Variables', fn: this.checkEnvironmentVariables },
@@ -47,13 +47,13 @@ class DatabaseConnectionFixer {
 
     for (let i = 0; i < steps.length; i++) {
       const step = steps[i];
-      console.log(`\n[${i + 1}/${steps.length}] ${step.name}...`);
+      console.info(`\n[${i + 1}/${steps.length}] ${step.name}...`);
 
       try {
         await step.fn.call(this);
-        console.log(`✅ ${step.name} completed successfully`);
+        console.info(`✅ ${step.name} completed successfully`);
       } catch (error) {
-        console.log(`❌ ${step.name} failed: ${error.message}`);
+        console.info(`❌ ${step.name} failed: ${error.message}`);
         await this.suggestSolution(step.name, error);
       }
     }
@@ -68,7 +68,7 @@ class DatabaseConnectionFixer {
       if (!value || value.trim() === '') {
         missingVars.push(varName);
       } else {
-        console.log(`  ✅ ${varName}: ${varName === 'DB_PASSWORD' ? '***' : value}`);
+        console.info(`  ✅ ${varName}: ${varName === 'DB_PASSWORD' ? '***' : value}`);
       }
     }
 
@@ -78,14 +78,14 @@ class DatabaseConnectionFixer {
   }
 
   private async testNetworkConnectivity(): Promise<void> {
-    console.log(`  🌐 Testing connectivity to ${this.config.host}:${this.config.port}`);
+    console.info(`  🌐 Testing connectivity to ${this.config.host}:${this.config.port}`);
 
     try {
       // Test basic network connectivity
       const result = await $`nc -z ${this.config.host} ${this.config.port}`.quiet();
 
       if (result.exitCode === 0) {
-        console.log(`  ✅ Network connectivity successful`);
+        console.info(`  ✅ Network connectivity successful`);
       } else {
         throw new Error(`Cannot reach ${this.config.host}:${this.config.port}`);
       }
@@ -93,7 +93,7 @@ class DatabaseConnectionFixer {
       // Fallback: try telnet or ping
       try {
         await $`ping -c 1 ${this.config.host}`.quiet();
-        console.log(`  ⚠️  Host is reachable but port ${this.config.port} may be closed`);
+        console.info(`  ⚠️  Host is reachable but port ${this.config.port} may be closed`);
       } catch {
         throw new Error(`Host ${this.config.host} is unreachable`);
       }
@@ -101,7 +101,7 @@ class DatabaseConnectionFixer {
   }
 
   private async validateCredentials(): Promise<void> {
-    console.log(`  🔐 Validating database credentials`);
+    console.info(`  🔐 Validating database credentials`);
 
     // Check if credentials format is valid
     if (this.config.username.length < 1) {
@@ -116,11 +116,11 @@ class DatabaseConnectionFixer {
       throw new Error('Database name cannot be empty');
     }
 
-    console.log(`  ✅ Credential format validation passed`);
+    console.info(`  ✅ Credential format validation passed`);
   }
 
   private async testDatabaseConnection(): Promise<void> {
-    console.log(`  🔌 Testing database connection`);
+    console.info(`  🔌 Testing database connection`);
 
     // Create a simple test connection (using psql)
     const connectionString = `postgresql://${this.config.username}:${this.config.password}@${this.config.host}:${this.config.port}/${this.config.database}`;
@@ -131,7 +131,7 @@ class DatabaseConnectionFixer {
         await $`timeout 10 psql "${connectionString}" -c "SELECT 1 as test;" -t`.quiet();
 
       if (result.exitCode === 0) {
-        console.log(`  ✅ Database connection successful`);
+        console.info(`  ✅ Database connection successful`);
       } else {
         throw new Error('Database connection failed - check credentials and permissions');
       }
@@ -141,21 +141,21 @@ class DatabaseConnectionFixer {
   }
 
   private async checkConnectionPool(): Promise<void> {
-    console.log(`  🏊 Checking connection pool configuration`);
+    console.info(`  🏊 Checking connection pool configuration`);
 
     if (this.config.maxConnections < 5) {
-      console.log(`  ⚠️  Connection pool size is very low: ${this.config.maxConnections}`);
-      console.log(`  💡 Consider increasing DB_MAX_CONNECTIONS (recommended: 20-50)`);
+      console.info(`  ⚠️  Connection pool size is very low: ${this.config.maxConnections}`);
+      console.info(`  💡 Consider increasing DB_MAX_CONNECTIONS (recommended: 20-50)`);
     } else if (this.config.maxConnections > 100) {
-      console.log(`  ⚠️  Connection pool size is very high: ${this.config.maxConnections}`);
-      console.log(`  💡 Consider reducing DB_MAX_CONNECTIONS to prevent resource exhaustion`);
+      console.info(`  ⚠️  Connection pool size is very high: ${this.config.maxConnections}`);
+      console.info(`  💡 Consider reducing DB_MAX_CONNECTIONS to prevent resource exhaustion`);
     } else {
-      console.log(`  ✅ Connection pool size looks good: ${this.config.maxConnections}`);
+      console.info(`  ✅ Connection pool size looks good: ${this.config.maxConnections}`);
     }
   }
 
   private async applyFixes(): Promise<void> {
-    console.log(`  🔧 Applying automatic fixes`);
+    console.info(`  🔧 Applying automatic fixes`);
 
     // Create or update .env file with proper database configuration
     const envContent = `# Database Configuration - Generated by fix-database-connection.ts
@@ -179,7 +179,7 @@ DB_RETRY_DELAY=1000
 `;
 
     await Bun.write('.env.database', envContent);
-    console.log(`  ✅ Created .env.database with optimized settings`);
+    console.info(`  ✅ Created .env.database with optimized settings`);
 
     // Create a database health check script
     const healthCheckScript = `#!/usr/bin/env bun
@@ -221,51 +221,51 @@ export const dbHealthChecker = new DatabaseHealthChecker();
 `;
 
     await Bun.write('scripts/database-health-check.ts', healthCheckScript);
-    console.log(`  ✅ Created database health check utility`);
+    console.info(`  ✅ Created database health check utility`);
   }
 
   private async suggestSolution(stepName: string, error: Error): Promise<void> {
-    console.log(`\n💡 Suggested Solutions for ${stepName}:`);
+    console.info(`\n💡 Suggested Solutions for ${stepName}:`);
 
     switch (stepName) {
       case 'Check Environment Variables':
-        console.log(`  1. Create .env file with required database variables`);
-        console.log(`  2. Copy from .env.example if available`);
-        console.log(`  3. Verify no typos in variable names`);
+        console.info(`  1. Create .env file with required database variables`);
+        console.info(`  2. Copy from .env.example if available`);
+        console.info(`  3. Verify no typos in variable names`);
         break;
 
       case 'Test Network Connectivity':
-        console.log(`  1. Check if database server is running`);
-        console.log(`  2. Verify firewall settings allow database port`);
-        console.log(`  3. Check network routing and DNS resolution`);
-        console.log(`  4. Try connecting from database host itself`);
+        console.info(`  1. Check if database server is running`);
+        console.info(`  2. Verify firewall settings allow database port`);
+        console.info(`  3. Check network routing and DNS resolution`);
+        console.info(`  4. Try connecting from database host itself`);
         break;
 
       case 'Validate Database Credentials':
-        console.log(`  1. Verify username and password are correct`);
-        console.log(`  2. Check if user has necessary permissions`);
-        console.log(`  3. Ensure database exists and user has access`);
-        console.log(`  4. Test credentials with database admin tools`);
+        console.info(`  1. Verify username and password are correct`);
+        console.info(`  2. Check if user has necessary permissions`);
+        console.info(`  3. Ensure database exists and user has access`);
+        console.info(`  4. Test credentials with database admin tools`);
         break;
 
       case 'Test Database Connection':
-        console.log(`  1. Install postgresql client: 'bun add pg'`);
-        console.log(`  2. Check database server logs for connection errors`);
-        console.log(`  3. Verify SSL/TLS settings if required`);
-        console.log(`  4. Try connection with admin credentials first`);
+        console.info(`  1. Install postgresql client: 'bun add pg'`);
+        console.info(`  2. Check database server logs for connection errors`);
+        console.info(`  3. Verify SSL/TLS settings if required`);
+        console.info(`  4. Try connection with admin credentials first`);
         break;
 
       case 'Check Connection Pool':
-        console.log(`  1. Adjust DB_MAX_CONNECTIONS based on server capacity`);
-        console.log(`  2. Monitor connection usage in production`);
-        console.log(`  3. Implement connection pooling with pg-pool`);
-        console.log(`  4. Set appropriate timeout values`);
+        console.info(`  1. Adjust DB_MAX_CONNECTIONS based on server capacity`);
+        console.info(`  2. Monitor connection usage in production`);
+        console.info(`  3. Implement connection pooling with pg-pool`);
+        console.info(`  4. Set appropriate timeout values`);
         break;
 
       default:
-        console.log(`  1. Check logs for detailed error information`);
-        console.log(`  2. Verify configuration settings`);
-        console.log(`  3. Contact database administrator if needed`);
+        console.info(`  1. Check logs for detailed error information`);
+        console.info(`  2. Verify configuration settings`);
+        console.info(`  3. Contact database administrator if needed`);
     }
   }
 }
@@ -275,7 +275,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🔧 Database Connection Fix Script
 
 Usage: bun run scripts/fix-database-connection.ts [options]
@@ -309,8 +309,8 @@ Related Error Codes:
   const fixer = new DatabaseConnectionFixer();
   await fixer.diagnoseAndFix();
 
-  console.log(`\n🎉 Database Connection Diagnostic Complete!`);
-  console.log(`📚 For more help, see: /docs/database/connection-troubleshooting`);
+  console.info(`\n🎉 Database Connection Diagnostic Complete!`);
+  console.info(`📚 For more help, see: /docs/database/connection-troubleshooting`);
 }
 
 main().catch(console.error);

@@ -60,8 +60,8 @@ export class DNSSynchronization {
    * Initialize DNS synchronization
    */
   async initialize(): Promise<void> {
-    console.log(styled('🌐 Initializing DNS Synchronization', 'accent'));
-    console.log(styled('===================================', 'accent'));
+    console.info(styled('🌐 Initializing DNS Synchronization', 'accent'));
+    console.info(styled('===================================', 'accent'));
 
     // Get current DNS records from Cloudflare
     await this.syncDNSRecords();
@@ -75,14 +75,14 @@ export class DNSSynchronization {
     // Setup DNS monitoring
     await this.setupDNSMonitoring();
 
-    console.log(styled('✅ DNS synchronization initialized', 'success'));
+    console.info(styled('✅ DNS synchronization initialized', 'success'));
   }
 
   /**
    * Sync DNS records from Cloudflare API
    */
   async syncDNSRecords(): Promise<void> {
-    console.log(styled('🔄 Syncing DNS records from Cloudflare...', 'info'));
+    console.info(styled('🔄 Syncing DNS records from Cloudflare...', 'info'));
 
     // Since we don't have the actual zone in this account,
     // let's create a comprehensive DNS record set based on the subdomains
@@ -103,8 +103,8 @@ export class DNSSynchronization {
     const key = `domains/factory-wager/cloudflare/dns/records.json`;
     await this.r2.putJSON(key, syncData);
 
-    console.log(styled(`✅ DNS records synced: ${key}`, 'success'));
-    console.log(styled(`   Total records: ${dnsRecords.length}`, 'muted'));
+    console.info(styled(`✅ DNS records synced: ${key}`, 'success'));
+    console.info(styled(`   Total records: ${dnsRecords.length}`, 'muted'));
   }
 
   /**
@@ -258,7 +258,7 @@ export class DNSSynchronization {
    * Analyze DNS health across all records
    */
   async analyzeDNSHealth(): Promise<void> {
-    console.log(styled('🏥 Analyzing DNS health...', 'info'));
+    console.info(styled('🏥 Analyzing DNS health...', 'info'));
 
     const healthStatus: DNSHealthStatus[] = [];
     const subdomains = cloudflareDomainManager.getAllSubdomains();
@@ -298,14 +298,14 @@ export class DNSSynchronization {
     const key = `domains/factory-wager/cloudflare/dns/health/${new Date().toISOString().split('T')[0]}.json`;
     await this.r2.putJSON(key, healthData);
 
-    console.log(styled(`✅ DNS health analysis stored: ${key}`, 'success'));
+    console.info(styled(`✅ DNS health analysis stored: ${key}`, 'success'));
   }
 
   /**
    * Store comprehensive DNS configuration
    */
   async storeDNSConfiguration(): Promise<void> {
-    console.log(styled('💾 Storing DNS configuration...', 'info'));
+    console.info(styled('💾 Storing DNS configuration...', 'info'));
 
     const config = {
       timestamp: new Date().toISOString(),
@@ -335,14 +335,14 @@ export class DNSSynchronization {
     const key = `domains/factory-wager/cloudflare/dns/config.json`;
     await this.r2.putJSON(key, config);
 
-    console.log(styled(`✅ DNS configuration stored: ${key}`, 'success'));
+    console.info(styled(`✅ DNS configuration stored: ${key}`, 'success'));
   }
 
   /**
    * Setup continuous DNS monitoring
    */
   async setupDNSMonitoring(): Promise<void> {
-    console.log(styled('📊 Setting up DNS monitoring...', 'info'));
+    console.info(styled('📊 Setting up DNS monitoring...', 'info'));
 
     const monitoring = {
       timestamp: new Date().toISOString(),
@@ -373,7 +373,7 @@ export class DNSSynchronization {
     const key = `domains/factory-wager/cloudflare/dns/monitoring.json`;
     await this.r2.putJSON(key, monitoring);
 
-    console.log(styled(`✅ DNS monitoring setup stored: ${key}`, 'success'));
+    console.info(styled(`✅ DNS monitoring setup stored: ${key}`, 'success'));
   }
 
   /**
@@ -442,26 +442,26 @@ export class DNSSynchronization {
    * Display DNS synchronization status
    */
   async displayStatus(): Promise<void> {
-    console.log(styled('\n🌐 DNS Synchronization Status', 'accent'));
-    console.log(styled('=============================', 'accent'));
+    console.info(styled('\n🌐 DNS Synchronization Status', 'accent'));
+    console.info(styled('=============================', 'accent'));
 
-    console.log(styled(`Zone: ${this.zoneName}`, 'info'));
-    console.log(styled(`Account ID: ${this.accountId}`, 'info'));
+    console.info(styled(`Zone: ${this.zoneName}`, 'info'));
+    console.info(styled(`Account ID: ${this.accountId}`, 'info'));
 
-    console.log(styled('\n🔗 Dashboard URLs:', 'info'));
-    console.log(
+    console.info(styled('\n🔗 Dashboard URLs:', 'info'));
+    console.info(
       styled(
         `  DNS Records: https://dash.cloudflare.com/${this.accountId}/dns/${this.zoneName}/records`,
         'muted'
       )
     );
-    console.log(
+    console.info(
       styled(
         `  DNS Overview: https://dash.cloudflare.com/${this.accountId}/dns/${this.zoneName}`,
         'muted'
       )
     );
-    console.log(
+    console.info(
       styled(
         `  DNS Settings: https://dash.cloudflare.com/${this.accountId}/dns/${this.zoneName}/settings`,
         'muted'
@@ -469,12 +469,12 @@ export class DNSSynchronization {
     );
 
     const subdomains = cloudflareDomainManager.getAllSubdomains();
-    console.log(styled(`\n📡 Managed Subdomains: ${subdomains.length}`, 'info'));
-    console.log(
+    console.info(styled(`\n📡 Managed Subdomains: ${subdomains.length}`, 'info'));
+    console.info(
       styled(`   Enterprise: ${subdomains.filter(s => s.enterprise_tier).length}`, 'muted')
     );
-    console.log(styled(`   Proxied: ${subdomains.filter(s => s.proxied).length}`, 'muted'));
-    console.log(
+    console.info(styled(`   Proxied: ${subdomains.filter(s => s.proxied).length}`, 'muted'));
+    console.info(
       styled(`   SSL Required: ${subdomains.filter(s => s.ssl_required).length}`, 'muted')
     );
   }
@@ -490,6 +490,6 @@ if (import.meta.main) {
   await dns.initialize();
   await dns.displayStatus();
 
-  console.log(styled('\n🎉 DNS synchronization complete!', 'success'));
-  console.log(styled('All DNS records integrated with R2 MCP system.', 'info'));
+  console.info(styled('\n🎉 DNS synchronization complete!', 'success'));
+  console.info(styled('All DNS records integrated with R2 MCP system.', 'info'));
 }

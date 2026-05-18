@@ -41,7 +41,7 @@ export class PhoneIntelQualifier implements FilterPattern<string, PhoneIntellige
     };
 
     if (isDeepEnrich) {
-      console.log(`💎 [PREMIUM] Deep Intel §Enrich:DEEP performed for ${phone}`);
+      console.info(`💎 [PREMIUM] Deep Intel §Enrich:DEEP performed for ${phone}`);
     }
 
     return {

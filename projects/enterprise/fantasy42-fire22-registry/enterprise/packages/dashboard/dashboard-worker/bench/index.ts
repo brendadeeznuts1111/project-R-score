@@ -28,7 +28,7 @@ export async function runCompleteBenchmark() {
   const formatter = new BenchmarkFormatter();
   const reporter = new BenchmarkReporter();
 
-  console.log(
+  console.info(
     formatter.createBox(
       '🚀 Fire22 Complete Benchmark Suite\n' + 'Running all performance tests...',
       'BENCHMARKING',
@@ -37,17 +37,17 @@ export async function runCompleteBenchmark() {
   );
 
   // 1. Core benchmarks
-  console.log('\n' + formatter.formatTitle('Core Performance'));
+  console.info('\n' + formatter.formatTitle('Core Performance'));
   const suite = new BenchmarkSuite('Core Suite');
   await suite.runAll();
 
   // 2. Memory profiling
-  console.log('\n' + formatter.formatTitle('Memory Analysis'));
+  console.info('\n' + formatter.formatTitle('Memory Analysis'));
   const profiler = new MemoryProfiler('Memory Suite');
   await profiler.generateHeapSnapshot('bench-heap.json');
 
   // 3. Microbenchmarks
-  console.log('\n' + formatter.formatTitle('Microbenchmarks'));
+  console.info('\n' + formatter.formatTitle('Microbenchmarks'));
   const micro = new MicroBenchmarks();
   await micro.runAll();
 
@@ -58,7 +58,7 @@ export async function runCompleteBenchmark() {
   const json = suite.exportJson();
   await Bun.write('bench/results/benchmark-results.json', json);
 
-  console.log(
+  console.info(
     '\n' +
       formatter.createBox(
         '✅ Benchmarking Complete!\n' + 'Reports saved to bench/results/',

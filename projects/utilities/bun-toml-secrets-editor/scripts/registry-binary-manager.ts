@@ -176,7 +176,7 @@ async function getBinaryFromRegistry(
 	client: S3Client,
 ) {
 	const key = `v${version}/${packageName}-${targetOS}${targetOS.startsWith("windows") ? ".exe" : ""}`;
-	console.log(
+	console.info(
 		color.gray(`📦 Fetching ${packageName}-${targetOS} from registry...`),
 	);
 
@@ -184,7 +184,7 @@ async function getBinaryFromRegistry(
 	if (exists.exists) {
 		const binary = await client.getObject(key);
 		if (binary) {
-			console.log(
+			console.info(
 				color.green("✅"),
 				`Downloaded ${packageName}-${targetOS} (${Math.round(binary.byteLength / 1e6)}MB)`,
 			);
@@ -252,8 +252,8 @@ class RegistryBinaryManager {
 
 	async version() {
 		await this.init();
-		console.log(color.blue(bold(PACKAGE_NAME)));
-		console.log(
+		console.info(color.blue(bold(PACKAGE_NAME)));
+		console.info(
 			color.gray(
 				`v${this.version} (${this.gitCommit.slice(0, 8)}) | ${this.buildTime}`,
 			),
@@ -268,7 +268,7 @@ class RegistryBinaryManager {
 		}
 
 		this.version();
-		console.log(color.gray(`${getProvider()} → ${config.bucket}`));
+		console.info(color.gray(`${getProvider()} → ${config.bucket}`));
 
 		// 🛠️ Build ALL platforms → Upload (single command!)
 		await this.buildAndUploadAll();
@@ -299,7 +299,7 @@ class RegistryBinaryManager {
 		}
 
 		// 🔥 Execute downloaded binary!
-		console.log(color.cyan(`🚀 Executing ${filename}...\n`));
+		console.info(color.cyan(`🚀 Executing ${filename}...\n`));
 		const proc = Bun.spawn([tempPath, ...process.argv.slice(4)], {
 			stdin: "inherit",
 			stdout: "inherit",
@@ -329,12 +329,12 @@ class RegistryBinaryManager {
 			{ target: "bun-windows-x64", name: "windows-x64" },
 		];
 
-		console.log(
+		console.info(
 			color.blue(bold(`🚀 Building ${platforms.length} platforms...\n`)),
 		);
 
 		for (const { target, name } of platforms) {
-			console.log(color.cyan(`🔨 Building ${name}...`));
+			console.info(color.cyan(`🔨 Building ${name}...`));
 
 			// 🟢 Single bun build command per platform
 			const outfile = `dist/${PACKAGE_NAME}-${name}${name.startsWith("windows") ? ".exe" : ""}`;
@@ -350,7 +350,7 @@ class RegistryBinaryManager {
 					await $`rm ${outfile}`.quiet();
 				} catch {}
 
-				console.log(color.green(`✅ ${name} built and uploaded\n`));
+				console.info(color.green(`✅ ${name} built and uploaded\n`));
 			} catch (error) {
 				console.error(color.red(`❌ Failed to build ${name}:`), error);
 			}
@@ -367,12 +367,12 @@ class RegistryBinaryManager {
 		const file = Bun.file(filePath);
 		const body = await file.arrayBuffer();
 
-		console.log(
+		console.info(
 			color.cyan(`📤 [${Math.round(body.byteLength / 1e6)}MB] ${filename}`),
 		);
 
 		await client.putObject(key, body);
-		console.log(color.gray(`   → s3://${config.bucket}/${key}`));
+		console.info(color.gray(`   → s3://${config.bucket}/${key}`));
 	}
 }
 

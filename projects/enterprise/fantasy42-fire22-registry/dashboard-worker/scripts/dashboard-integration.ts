@@ -344,7 +344,7 @@ class DashboardIntegration {
     // Read current version from package.json
     try {
       const packageJson = await Bun.file('package.json').json();
-      console.log(`Current version: ${packageJson.version}`);
+      console.info(`Current version: ${packageJson.version}`);
     } catch (error) {
       throw new Error('Failed to read package.json');
     }
@@ -369,7 +369,7 @@ class DashboardIntegration {
       // Build each package
       for (const pkg of this.packages) {
         const packagePath = pkg.path;
-        console.log(`Building package: ${pkg.name}`);
+        console.info(`Building package: ${pkg.name}`);
 
         // Change to package directory and build
         process.chdir(packagePath);
@@ -423,7 +423,7 @@ class DashboardIntegration {
     try {
       // Update build statistics
       await this.updateBuildStatistics();
-      console.log('Build finalized successfully');
+      console.info('Build finalized successfully');
     } catch (error) {
       throw new Error(`Build finalization failed: ${error.message}`);
     }
@@ -470,7 +470,7 @@ class DashboardIntegration {
    */
   private async updateBuildStatistics(): Promise<void> {
     // This would typically update a database or file with build statistics
-    console.log('Build statistics updated');
+    console.info('Build statistics updated');
   }
 
   /**
@@ -512,30 +512,30 @@ export { DashboardIntegration, PackageInfo, BuildStatus, BuildStep };
 if (import.meta.main) {
   const integration = new DashboardIntegration();
 
-  console.log('🔥 Fire22 Dashboard Integration Script');
-  console.log('!==!==!==!==!==!==!==\n');
+  console.info('🔥 Fire22 Dashboard Integration Script');
+  console.info('!==!==!==!==!==!==!==\n');
 
   // Scan packages
-  console.log('Scanning packages...');
+  console.info('Scanning packages...');
   const packages = await integration.scanPackages();
-  console.log(`Found ${packages.length} packages:\n`);
+  console.info(`Found ${packages.length} packages:\n`);
 
   packages.forEach(pkg => {
-    console.log(`  ${pkg.name}@${pkg.version} - ${pkg.status} (${pkg.size})`);
+    console.info(`  ${pkg.name}@${pkg.version} - ${pkg.status} (${pkg.size})`);
   });
 
-  console.log('\nPackage Statistics:');
+  console.info('\nPackage Statistics:');
   const stats = integration.getPackageStatistics();
-  console.log(`  Total: ${stats.total}`);
-  console.log(`  Built: ${stats.built}`);
-  console.log(`  Building: ${stats.building}`);
-  console.log(`  Pending: ${stats.pending}`);
-  console.log(`  Error: ${stats.error}`);
-  console.log(`  Success Rate: ${stats.successRate.toFixed(1)}%`);
+  console.info(`  Total: ${stats.total}`);
+  console.info(`  Built: ${stats.built}`);
+  console.info(`  Building: ${stats.building}`);
+  console.info(`  Pending: ${stats.pending}`);
+  console.info(`  Error: ${stats.error}`);
+  console.info(`  Success Rate: ${stats.successRate.toFixed(1)}%`);
 
-  console.log('\nTo integrate with the dashboard:');
-  console.log('1. Import this class in your dashboard JavaScript');
-  console.log('2. Replace simulation calls with real integration methods');
-  console.log('3. Use WebSockets or polling for real-time updates');
-  console.log('4. Connect build buttons to startBuild() method');
+  console.info('\nTo integrate with the dashboard:');
+  console.info('1. Import this class in your dashboard JavaScript');
+  console.info('2. Replace simulation calls with real integration methods');
+  console.info('3. Use WebSockets or polling for real-time updates');
+  console.info('4. Connect build buttons to startBuild() method');
 }

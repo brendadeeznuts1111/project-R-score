@@ -363,7 +363,7 @@ export class EnhancedRegulatoryExportService {
     format: 'csv' | 'xml' | 'json' = 'csv'
   ): Promise<string> {
     try {
-      console.log(`📋 Generating ${format.toUpperCase()} regulatory report for ${date}...`);
+      console.info(`📋 Generating ${format.toUpperCase()} regulatory report for ${date}...`);
 
       // Generate transaction records
       const records = await this.generateDailyTransactionReport(date);
@@ -387,7 +387,7 @@ export class EnhancedRegulatoryExportService {
       // Log export in audit database
       await this.logExportAudit(date, format, records.length);
 
-      console.log(`✅ Generated ${format.toUpperCase()} report with ${records.length} records`);
+      console.info(`✅ Generated ${format.toUpperCase()} report with ${records.length} records`);
       return content;
     } catch (error) {
       console.error('❌ Failed to generate regulatory report:', error);
@@ -440,7 +440,7 @@ export class EnhancedRegulatoryExportService {
     // Ensure exports directory exists
     await Bun.write(Bun.file(filepath), content);
 
-    console.log(`💾 Report saved to: ${filepath}`);
+    console.info(`💾 Report saved to: ${filepath}`);
     return filepath;
   }
 

@@ -65,7 +65,7 @@ export class SimpleRSCHandler {
   async fetchBatch(requests: SimpleRSCRequest[]): Promise<SimpleRSCResponse[]> {
     if (requests.length === 0) return [];
 
-    console.log(`📦 RSC Batch: ${requests.length} requests using keep-alive pooling`);
+    console.info(`📦 RSC Batch: ${requests.length} requests using keep-alive pooling`);
 
     const startTime = performance.now();
 
@@ -77,10 +77,10 @@ export class SimpleRSCHandler {
     const totalTime = endTime - startTime;
     const avgLatency = responses.reduce((sum, r) => sum + (r.latency || 0), 0) / responses.length;
 
-    console.log(
+    console.info(
       `📊 Batch Results: ${responses.filter(r => r.status === 200).length}/${requests.length} successful`
     );
-    console.log(
+    console.info(
       `⚡ Total Time: ${totalTime.toFixed(2)}ms, Avg: ${avgLatency.toFixed(2)}ms per request`
     );
 
@@ -91,7 +91,7 @@ export class SimpleRSCHandler {
    * Prefetch RSC components (background loading)
    */
   async prefetchBatch(requests: SimpleRSCRequest[]): Promise<void> {
-    console.log(`🖱️ Background prefetch: ${requests.length} components`);
+    console.info(`🖱️ Background prefetch: ${requests.length} components`);
 
     // Add prefetch headers
     const prefetchRequests = requests.map(request => ({
@@ -117,7 +117,7 @@ export class SimpleRSCHandler {
     speedup: number;
     efficiency: number;
   }> {
-    console.log(`🧪 Performance Test: ${urls.length} URLs`);
+    console.info(`🧪 Performance Test: ${urls.length} URLs`);
 
     // Test serial (baseline)
     console.time('Serial');

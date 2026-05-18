@@ -53,19 +53,19 @@ async function benchmark(
 }
 
 function printResult(result: BenchmarkResult) {
-  console.log(`\n📊 ${result.name}:`);
-  console.log(`   Operations: ${result.operations.toLocaleString()}`);
-  console.log(`   Total Time: ${result.totalTime.toFixed(2)}ms`);
-  console.log(
+  console.info(`\n📊 ${result.name}:`);
+  console.info(`   Operations: ${result.operations.toLocaleString()}`);
+  console.info(`   Total Time: ${result.totalTime.toFixed(2)}ms`);
+  console.info(
     `   Ops/Second: ${result.opsPerSecond.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
   );
-  console.log(`   Average: ${result.averageTime.toFixed(3)}ms`);
-  console.log(`   Min: ${result.minTime.toFixed(3)}ms`);
-  console.log(`   Max: ${result.maxTime.toFixed(3)}ms`);
+  console.info(`   Average: ${result.averageTime.toFixed(3)}ms`);
+  console.info(`   Min: ${result.minTime.toFixed(3)}ms`);
+  console.info(`   Max: ${result.maxTime.toFixed(3)}ms`);
 }
 
 async function main() {
-  console.log('🚀 Fire22 API Benchmark Starting...\n');
+  console.info('🚀 Fire22 API Benchmark Starting...\n');
 
   // Import API
   const { default: api } = await import('../index.ts');
@@ -172,18 +172,18 @@ async function main() {
       },
     };
 
-    console.log('\n📋 Benchmark Summary:');
-    console.log(`   Health Endpoint: ${healthResult.opsPerSecond.toFixed(0)} ops/sec`);
-    console.log(`   Schema Validation: ${schemaResult.opsPerSecond.toFixed(0)} ops/sec`);
-    console.log(`   Route Resolution: ${routeResult.opsPerSecond.toFixed(0)} ops/sec`);
-    console.log(`   Concurrent Handling: ${concurrentResult.opsPerSecond.toFixed(0)} ops/sec`);
-    console.log(`   Authentication: ${authResult.opsPerSecond.toFixed(0)} ops/sec`);
+    console.info('\n📋 Benchmark Summary:');
+    console.info(`   Health Endpoint: ${healthResult.opsPerSecond.toFixed(0)} ops/sec`);
+    console.info(`   Schema Validation: ${schemaResult.opsPerSecond.toFixed(0)} ops/sec`);
+    console.info(`   Route Resolution: ${routeResult.opsPerSecond.toFixed(0)} ops/sec`);
+    console.info(`   Concurrent Handling: ${concurrentResult.opsPerSecond.toFixed(0)} ops/sec`);
+    console.info(`   Authentication: ${authResult.opsPerSecond.toFixed(0)} ops/sec`);
 
     // Write results
     await Bun.write('benchmark-results-api.json', JSON.stringify(report, null, 2));
-    console.log('\n📄 Results saved to benchmark-results-api.json');
+    console.info('\n📄 Results saved to benchmark-results-api.json');
 
-    console.log('\n✅ Benchmark Complete!');
+    console.info('\n✅ Benchmark Complete!');
   } finally {
     server.stop();
   }

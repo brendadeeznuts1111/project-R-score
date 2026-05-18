@@ -15,12 +15,12 @@
 
 import { Database } from 'bun:sqlite';
 
-console.log('🚀 PTY Analysis Engine - Bun Loader Power');
-console.log('==========================================');
+console.info('🚀 PTY Analysis Engine - Bun Loader Power');
+console.info('==========================================');
 
 // Create PTY session files for analysis
 async function createPTYSession() {
-  console.log('📁 Creating PTY session files...');
+  console.info('📁 Creating PTY session files...');
   
   // Clean up existing files first
   const existingFiles = [
@@ -376,7 +376,7 @@ footer {
 </svg>
 `);
 
-  console.log('✅ PTY session files created!\n');
+  console.info('✅ PTY session files created!\n');
 }
 
 // PTY Analysis Engine
@@ -388,43 +388,43 @@ class PTYAnalysisEngine {
   }
   
   async analyzeSession() {
-    console.log('🔍 Analyzing PTY session...');
+    console.info('🔍 Analyzing PTY session...');
     
     try {
       // 1. Import PTY log as text (text loader)
-      console.log('\n1️⃣ Loading PTY log (text loader):');
+      console.info('\n1️⃣ Loading PTY log (text loader):');
       // @ts-ignore - Dynamic import with Bun loader
       const { default: logContent } = await import('./debug-session.log', { with: { type: 'text' } });
-      console.log(`   ✅ Log loaded: ${(logContent.length / 1024).toFixed(2)} KB`);
+      console.info(`   ✅ Log loaded: ${(logContent.length / 1024).toFixed(2)} KB`);
       
       // 2. Generate CRC32 hash (pro move!)
-      console.log('\n2️⃣ Generating content hash (CRC32):');
+      console.info('\n2️⃣ Generating content hash (CRC32):');
       const hash = this.generateSimpleHash(logContent);
-      console.log(`   🔐 Hash: ${hash}`);
+      console.info(`   🔐 Hash: ${hash}`);
       
       // 3. Parse session data
-      console.log('\n3️⃣ Parsing session data:');
+      console.info('\n3️⃣ Parsing session data:');
       const sessionData = this.parseSessionLog(logContent);
-      console.log(`   📊 Commands: ${sessionData.commands.length}`);
-      console.log(`   ❌ Errors: ${sessionData.errors.length}`);
-      console.log(`   ⏱️ Duration: ${sessionData.duration}ms`);
+      console.info(`   📊 Commands: ${sessionData.commands.length}`);
+      console.info(`   ❌ Errors: ${sessionData.errors.length}`);
+      console.info(`   ⏱️ Duration: ${sessionData.duration}ms`);
       
       // 4. Load benchmark config (forced TOML)
-      console.log('\n4️⃣ Loading benchmark config (forced TOML):');
+      console.info('\n4️⃣ Loading benchmark config (forced TOML):');
       // @ts-ignore - Dynamic import with forced TOML loader
       const { default: benchConfig } = await import('./benchmarks.conf', { with: { type: 'toml' } });
-      console.log(`   ✅ Config: ${benchConfig.benchmark.name} v${benchConfig.benchmark.version}`);
-      console.log(`   🎯 Scenarios: ${benchConfig.scenarios.length}`);
+      console.info(`   ✅ Config: ${benchConfig.benchmark.name} v${benchConfig.benchmark.version}`);
+      console.info(`   🎯 Scenarios: ${benchConfig.scenarios.length}`);
       
       // 5. Save to SQLite database
-      console.log('\n5️⃣ Saving to SQLite database:');
+      console.info('\n5️⃣ Saving to SQLite database:');
       const sessionId = await this.saveSession(sessionData, hash);
-      console.log(`   💾 Session ID: ${sessionId}`);
+      console.info(`   💾 Session ID: ${sessionId}`);
       
       // 6. Generate HTML report
-      console.log('\n6️⃣ Generating HTML report:');
+      console.info('\n6️⃣ Generating HTML report:');
       const reportPath = await this.generateReport(sessionData, hash);
-      console.log(`   📄 Report: ${reportPath}`);
+      console.info(`   📄 Report: ${reportPath}`);
       
       return {
         sessionId,
@@ -570,29 +570,29 @@ class PTYAnalysisEngine {
 async function main() {
   await createPTYSession();
   
-  console.log('🎯 Starting PTY Analysis Engine...\n');
+  console.info('🎯 Starting PTY Analysis Engine...\n');
   
   const engine = new PTYAnalysisEngine();
   
   try {
     const results = await engine.analyzeSession();
     
-    console.log('\n🎉 PTY Analysis Complete!');
-    console.log('============================');
-    console.log(`📊 Session ID: ${results.sessionId}`);
-    console.log(`📄 Report: ${results.reportPath}`);
-    console.log(`🔐 Hash: ${results.hash}`);
+    console.info('\n🎉 PTY Analysis Complete!');
+    console.info('============================');
+    console.info(`📊 Session ID: ${results.sessionId}`);
+    console.info(`📄 Report: ${results.reportPath}`);
+    console.info(`🔐 Hash: ${results.hash}`);
     
-    console.log('\n🚀 Bun Loader Power Demonstrated:');
-    console.log('   ✅ Text loader - PTY log import');
-    console.log('   ✅ TOML loader - Forced config parsing');
-    console.log('   ✅ SQLite loader - Session metadata');
-    console.log('   ✅ HTML loader - Report template');
-    console.log('   ✅ CSS loader - Styling');
-    console.log('   ✅ File loader - Assets');
-    console.log('   ✅ CRC32 hashing - Content verification');
+    console.info('\n🚀 Bun Loader Power Demonstrated:');
+    console.info('   ✅ Text loader - PTY log import');
+    console.info('   ✅ TOML loader - Forced config parsing');
+    console.info('   ✅ SQLite loader - Session metadata');
+    console.info('   ✅ HTML loader - Report template');
+    console.info('   ✅ CSS loader - Styling');
+    console.info('   ✅ File loader - Assets');
+    console.info('   ✅ CRC32 hashing - Content verification');
     
-    console.log('\n🔥 This is the PTY-weaver debugging citadel!');
+    console.info('\n🔥 This is the PTY-weaver debugging citadel!');
     
   } catch (error) {
     console.error('❌ Engine failed:', error);

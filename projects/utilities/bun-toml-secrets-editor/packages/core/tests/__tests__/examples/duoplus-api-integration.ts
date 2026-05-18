@@ -4,7 +4,7 @@
 import { getADBMock } from "../mocks/adb-mock";
 
 async function demonstrateDuoplusIntegration() {
-	console.log("🚀 Duoplus API Integration Demo\n");
+	console.info("🚀 Duoplus API Integration Demo\n");
 
 	// Initialize ADB mock with real Duoplus endpoint
 	const adb = getADBMock();
@@ -14,7 +14,7 @@ async function demonstrateDuoplusIntegration() {
 
 	try {
 		// 1. Get cloud phone list (following official Duoplus API spec)
-		console.log("📱 Getting cloud phone list...");
+		console.info("📱 Getting cloud phone list...");
 
 		// Example 1: Basic list with pagination
 		const basicList = await adb.getCloudPhoneList({
@@ -23,19 +23,19 @@ async function demonstrateDuoplusIntegration() {
 		});
 
 		if (basicList.code === 200) {
-			console.log("✅ Basic device list:");
+			console.info("✅ Basic device list:");
 			basicList.data.list.forEach((device) => {
-				console.log(
+				console.info(
 					`  📱 ${device.name} (${device.id}) - Status: ${device.status} - ${device.os}`,
 				);
 			});
-			console.log(
+			console.info(
 				`📊 Pagination: Page ${basicList.data.page}/${basicList.data.total_page}, Total: ${basicList.data.total}`,
 			);
 		}
 
 		// Example 2: Filtered list (ADB enabled devices only)
-		console.log("\n🔧 Getting ADB-enabled devices...");
+		console.info("\n🔧 Getting ADB-enabled devices...");
 		const adbDevices = await adb.getCloudPhoneList({
 			page: 1,
 			pagesize: 50,
@@ -45,16 +45,16 @@ async function demonstrateDuoplusIntegration() {
 		});
 
 		if (adbDevices.code === 200) {
-			console.log("✅ ADB-enabled devices:", adbDevices.data.list.length);
+			console.info("✅ ADB-enabled devices:", adbDevices.data.list.length);
 			adbDevices.data.list.forEach((device) => {
-				console.log(
+				console.info(
 					`  📱 ${device.name} - IP: ${device.ip} - ADB: ${device.adb}`,
 				);
 			});
 		}
 
 		// Example 3: Search by device name
-		console.log("\n� Searching for Oppo devices...");
+		console.info("\n� Searching for Oppo devices...");
 		const searchResults = await adb.getCloudPhoneList({
 			page: 1,
 			pagesize: 10,
@@ -65,22 +65,22 @@ async function demonstrateDuoplusIntegration() {
 		});
 
 		if (searchResults.code === 200) {
-			console.log("✅ Search results:", searchResults.data.list.length);
+			console.info("✅ Search results:", searchResults.data.list.length);
 			searchResults.data.list.forEach((device) => {
-				console.log(
+				console.info(
 					`  📱 ${device.name} - Area: ${device.area} - Size: ${device.size}`,
 				);
 			});
 		}
 
 		// 2. Get cloud phone status (using official API spec)
-		console.log("\n🔍 Checking device status...");
+		console.info("\n🔍 Checking device status...");
 		const statusResult = await adb.getCloudPhoneStatus([
 			"DUOPLUS-OPPO-FIND-X7",
 		]);
 
 		if (statusResult.code === 200) {
-			console.log("✅ Device status results:");
+			console.info("✅ Device status results:");
 			statusResult.data.list.forEach((device) => {
 				const statusText =
 					{
@@ -96,110 +96,110 @@ async function demonstrateDuoplusIntegration() {
 
 				const isOnline = device.status === 1; // Powered on = online
 
-				console.log(
+				console.info(
 					`  📱 ${device.name} (${device.id}) - Status: ${statusText} ${isOnline ? "(Online)" : "(Offline)"}`,
 				);
 			});
 		} else {
-			console.log("❌ Failed to get device status");
+			console.info("❌ Failed to get device status");
 		}
 
 		// 3. Get comprehensive device details
-		console.log("\n📋 Getting detailed device information...");
+		console.info("\n📋 Getting detailed device information...");
 		const deviceDetails = await adb.getCloudPhoneDetails(
 			"DUOPLUS-OPPO-FIND-X7",
 		);
 
 		if (deviceDetails.code === 200) {
 			const details = deviceDetails.data;
-			console.log("✅ Device Details:");
-			console.log(
+			console.info("✅ Device Details:");
+			console.info(
 				`  📱 Device: ${details.device.manufacturer} ${details.device.brand} ${details.device.model}`,
 			);
-			console.log(`  🔧 OS: ${details.os}`);
-			console.log(
+			console.info(`  🔧 OS: ${details.os}`);
+			console.info(
 				`  🌐 Network: ${details.proxy.ip} (${details.proxy.city}, ${details.proxy.region})`,
 			);
-			console.log(
+			console.info(
 				`  📍 GPS: ${details.gps.latitude}, ${details.gps.longitude}`,
 			);
-			console.log(`  🕐 Timezone: ${details.locale.timezone}`);
-			console.log(`  📞 SIM: ${details.sim.operator} (${details.sim.msisdn})`);
-			console.log(`  📶 WiFi: ${details.wifi.name} (${details.wifi.mac})`);
-			console.log(
+			console.info(`  🕐 Timezone: ${details.locale.timezone}`);
+			console.info(`  📞 SIM: ${details.sim.operator} (${details.sim.msisdn})`);
+			console.info(`  📶 WiFi: ${details.wifi.name} (${details.wifi.mac})`);
+			console.info(
 				`  🔊 Bluetooth: ${details.bluetooth.name} (${details.bluetooth.address})`,
 			);
-			console.log(
+			console.info(
 				`  🔍 Device IDs: IMEI=${details.device.imei}, Serial=${details.device.serialno}`,
 			);
 		} else {
-			console.log("❌ Failed to get device details");
+			console.info("❌ Failed to get device details");
 		}
 
 		// 4. Batch power on devices
-		console.log("\n⚡ Powering on devices...");
+		console.info("\n⚡ Powering on devices...");
 		const powerResult = await adb.batchPowerOn(["DUOPLUS-OPPO-FIND-X7"]);
-		console.log("✅ Power result:", powerResult.results);
+		console.info("✅ Power result:", powerResult.results);
 
 		// 5. Enable ADB on devices (using official Duoplus API format)
-		console.log("\n🔧 Enabling ADB...");
+		console.info("\n🔧 Enabling ADB...");
 		const adbResult = await adb.batchEnableADB(["DUOPLUS-OPPO-FIND-X7"]);
 
 		if (adbResult.code === 200) {
-			console.log("✅ ADB enable results:");
-			console.log(
+			console.info("✅ ADB enable results:");
+			console.info(
 				`  ✅ Successfully enabled: ${adbResult.data.success.join(", ")}`,
 			);
 			if (adbResult.data.fail.length > 0) {
-				console.log(`  ❌ Failed to enable: ${adbResult.data.fail.join(", ")}`);
+				console.info(`  ❌ Failed to enable: ${adbResult.data.fail.join(", ")}`);
 				Object.entries(adbResult.data.fail_reason).forEach(([id, reason]) => {
-					console.log(`    ${id}: ${reason}`);
+					console.info(`    ${id}: ${reason}`);
 				});
 			}
 		} else {
-			console.log("❌ ADB enable failed:", adbResult.message);
+			console.info("❌ ADB enable failed:", adbResult.message);
 		}
 
 		// 6. Execute ADB commands (using official Duoplus API format)
-		console.log("\n📋 Executing ADB commands...");
+		console.info("\n📋 Executing ADB commands...");
 
 		// Example 1: Single device command (official format)
-		console.log("\n🔧 Single device ADB command...");
+		console.info("\n🔧 Single device ADB command...");
 		const singleCommandResult = await adb.executeADBCommand(
 			"DUOPLUS-OPPO-FIND-X7",
 			"ls /sdcard",
 		);
 
 		if (singleCommandResult.code === 200) {
-			console.log("✅ Single command result:");
-			console.log(`  Success: ${singleCommandResult.data.success}`);
-			console.log(`  Content: ${singleCommandResult.data.content.trim()}`);
-			console.log(`  Message: ${singleCommandResult.data.message}`);
+			console.info("✅ Single command result:");
+			console.info(`  Success: ${singleCommandResult.data.success}`);
+			console.info(`  Content: ${singleCommandResult.data.content.trim()}`);
+			console.info(`  Message: ${singleCommandResult.data.message}`);
 		} else {
-			console.log("❌ Single command failed:", singleCommandResult.message);
+			console.info("❌ Single command failed:", singleCommandResult.message);
 		}
 
 		// Example 2: Batch ADB commands (official format)
-		console.log("\n🔧 Batch ADB commands...");
+		console.info("\n🔧 Batch ADB commands...");
 		const batchCommandResult = await adb.batchExecuteADBCommands(
 			["DUOPLUS-OPPO-FIND-X7"],
 			"getprop ro.product.model",
 		);
 
 		if (batchCommandResult.code === 200) {
-			console.log("✅ Batch command results:");
+			console.info("✅ Batch command results:");
 			Object.entries(batchCommandResult.data).forEach(([deviceId, result]) => {
-				console.log(`  📱 ${deviceId}:`);
-				console.log(`    Success: ${result.success}`);
-				console.log(`    Content: ${result.content.trim()}`);
-				console.log(`    Message: ${result.message}`);
+				console.info(`  📱 ${deviceId}:`);
+				console.info(`    Success: ${result.success}`);
+				console.info(`    Content: ${result.content.trim()}`);
+				console.info(`    Message: ${result.message}`);
 			});
 		} else {
-			console.log("❌ Batch command failed:", batchCommandResult.message);
+			console.info("❌ Batch command failed:", batchCommandResult.message);
 		}
 
 		// Example 3: Multiple commands for KYC testing
-		console.log("\n🔍 KYC device information gathering...");
+		console.info("\n🔍 KYC device information gathering...");
 		const kycCommands = [
 			"getprop ro.product.model",
 			"getprop ro.build.version.release",
@@ -211,14 +211,14 @@ async function demonstrateDuoplusIntegration() {
 		for (const cmd of kycCommands) {
 			const result = await adb.executeADBCommand("DUOPLUS-OPPO-FIND-X7", cmd);
 			if (result.code === 200 && result.data.success) {
-				console.log(`🔹 ${cmd}: ${result.data.content.trim()}`);
+				console.info(`🔹 ${cmd}: ${result.data.content.trim()}`);
 			} else {
-				console.log(`❌ ${cmd}: Failed - ${result.data.message}`);
+				console.info(`❌ ${cmd}: Failed - ${result.data.message}`);
 			}
 		}
 
 		// Example 4: Background command (long-running)
-		console.log("\n⏳ Testing background command...");
+		console.info("\n⏳ Testing background command...");
 		const backgroundCommand =
 			"curl --no-check-certificate -O /sdcard/test.apk https://example.com/test.apk > /dev/null 2>&1 &";
 		const bgResult = await adb.executeADBCommand(
@@ -227,14 +227,14 @@ async function demonstrateDuoplusIntegration() {
 		);
 
 		if (bgResult.code === 200) {
-			console.log("✅ Background command initiated");
-			console.log(`  Success: ${bgResult.data.success}`);
+			console.info("✅ Background command initiated");
+			console.info(`  Success: ${bgResult.data.success}`);
 		}
 
 		// 7. Get device fingerprint for security validation
-		console.log("\n🔒 Getting device fingerprint...");
+		console.info("\n🔒 Getting device fingerprint...");
 		const fingerprint = await adb.getDeviceFingerprint("DUOPLUS-OPPO-FIND-X7");
-		console.log("✅ Device fingerprint:", {
+		console.info("✅ Device fingerprint:", {
 			manufacturer: fingerprint.manufacturer,
 			model: fingerprint.model,
 			androidVersion: fingerprint.androidVersion,
@@ -242,7 +242,7 @@ async function demonstrateDuoplusIntegration() {
 		});
 
 		// 8. Batch modify device parameters
-		console.log("\n⚙️ Modifying device parameters...");
+		console.info("\n⚙️ Modifying device parameters...");
 
 		// Example 1: Full parameter modification
 		const modifyResult = await adb.batchModifyParameters([
@@ -297,24 +297,24 @@ async function demonstrateDuoplusIntegration() {
 		]);
 
 		if (modifyResult.code === 200) {
-			console.log("✅ Full parameter modification results:");
-			console.log(
+			console.info("✅ Full parameter modification results:");
+			console.info(
 				`  ✅ Successfully updated: ${modifyResult.data.success.join(", ")}`,
 			);
 			if (modifyResult.data.fail.length > 0) {
-				console.log(
+				console.info(
 					`  ❌ Failed to update: ${modifyResult.data.fail.join(", ")}`,
 				);
 				Object.entries(modifyResult.data.fail_reason).forEach(
 					([id, reason]) => {
-						console.log(`    ${id}: ${reason}`);
+						console.info(`    ${id}: ${reason}`);
 					},
 				);
 			}
 		}
 
 		// Example 2: Proxy-only modification with automatic GPS/locale simulation
-		console.log(
+		console.info(
 			"\n🌐 Proxy-only modification (with automatic GPS/locale simulation)...",
 		);
 		const proxyOnlyResult = await adb.batchModifyParameters([
@@ -336,8 +336,8 @@ async function demonstrateDuoplusIntegration() {
 		]);
 
 		if (proxyOnlyResult.code === 200) {
-			console.log("✅ Proxy-only modification results:");
-			console.log(
+			console.info("✅ Proxy-only modification results:");
+			console.info(
 				`  ✅ Successfully updated: ${proxyOnlyResult.data.success.join(", ")}`,
 			);
 
@@ -347,18 +347,18 @@ async function demonstrateDuoplusIntegration() {
 			);
 			if (updatedDetails.code === 200) {
 				const details = updatedDetails.data;
-				console.log("  📍 Auto-simulated location:");
-				console.log(`    IP: ${details.proxy.ip}`);
-				console.log(
+				console.info("  📍 Auto-simulated location:");
+				console.info(`    IP: ${details.proxy.ip}`);
+				console.info(
 					`    GPS: ${details.gps.latitude}, ${details.gps.longitude}`,
 				);
-				console.log(`    Timezone: ${details.locale.timezone}`);
-				console.log(`    Language: ${details.locale.language}`);
+				console.info(`    Timezone: ${details.locale.timezone}`);
+				console.info(`    Language: ${details.locale.language}`);
 			}
 		}
 
 		// Example 3: Mixed success/failure response demonstration
-		console.log("\n🔄 Testing mixed success/failure response...");
+		console.info("\n🔄 Testing mixed success/failure response...");
 		const mixedResult = await adb.batchModifyParameters([
 			{
 				image_id: "DUOPLUS-OPPO-FIND-X7", // Exists - should succeed
@@ -373,18 +373,18 @@ async function demonstrateDuoplusIntegration() {
 		]);
 
 		if (mixedResult.code === 200) {
-			console.log("✅ Mixed response results:");
-			console.log(`  ✅ Success: ${mixedResult.data.success.join(", ")}`);
-			console.log(`  ❌ Failed: ${mixedResult.data.fail.join(", ")}`);
+			console.info("✅ Mixed response results:");
+			console.info(`  ✅ Success: ${mixedResult.data.success.join(", ")}`);
+			console.info(`  ❌ Failed: ${mixedResult.data.fail.join(", ")}`);
 
 			// Show failure reasons
 			Object.entries(mixedResult.data.fail_reason).forEach(([id, reason]) => {
-				console.log(`    ${id}: ${reason}`);
+				console.info(`    ${id}: ${reason}`);
 			});
 
 			// Demonstrate official response format
-			console.log("\n📋 Official API Response Format:");
-			console.log(
+			console.info("\n📋 Official API Response Format:");
+			console.info(
 				JSON.stringify(
 					{
 						code: mixedResult.code,
@@ -402,7 +402,7 @@ async function demonstrateDuoplusIntegration() {
 		}
 
 		// Example 4: Reset and regenerate device
-		console.log("\n🔄 Resetting and regenerating device...");
+		console.info("\n🔄 Resetting and regenerating device...");
 		const resetResult = await adb.resetAndRegenerateDevice(
 			"DUOPLUS-OPPO-FIND-X7",
 			{
@@ -427,47 +427,47 @@ async function demonstrateDuoplusIntegration() {
 		);
 
 		if (resetResult.code === 200) {
-			console.log("✅ Device reset successfully!");
+			console.info("✅ Device reset successfully!");
 
 			// Verify the reset by getting new device details
 			const newDetails = await adb.getCloudPhoneDetails("DUOPLUS-OPPO-FIND-X7");
 			if (newDetails.code === 200) {
 				const details = newDetails.data;
-				console.log("📱 New device identity:");
-				console.log(`  Model: ${details.device.model}`);
-				console.log(`  Serial: ${details.device.serialno}`);
-				console.log(`  Phone: ${details.sim.msisdn}`);
-				console.log(`  Operator: ${details.sim.operator}`);
-				console.log(
+				console.info("📱 New device identity:");
+				console.info(`  Model: ${details.device.model}`);
+				console.info(`  Serial: ${details.device.serialno}`);
+				console.info(`  Phone: ${details.sim.msisdn}`);
+				console.info(`  Operator: ${details.sim.operator}`);
+				console.info(
 					`  Location: ${details.gps.latitude}, ${details.gps.longitude}`,
 				);
-				console.log(`  Timezone: ${details.locale.timezone}`);
-				console.log(`  Bluetooth MAC: ${details.bluetooth.address}`);
-				console.log(`  Build Fingerprint: ${details.device.serialno}`); // Would be actual fingerprint in real API
+				console.info(`  Timezone: ${details.locale.timezone}`);
+				console.info(`  Bluetooth MAC: ${details.bluetooth.address}`);
+				console.info(`  Build Fingerprint: ${details.device.serialno}`); // Would be actual fingerprint in real API
 			}
 		} else {
-			console.log("❌ Device reset failed:", resetResult.message);
+			console.info("❌ Device reset failed:", resetResult.message);
 		}
 
 		// Example 5: Simple reset (factory defaults)
-		console.log("\n🔄 Simple factory reset...");
+		console.info("\n🔄 Simple factory reset...");
 		const simpleResetResult = await adb.resetAndRegenerateDevice(
 			"DUOPLUS-OPPO-FIND-X7",
 		);
 
 		if (simpleResetResult.code === 200) {
-			console.log("✅ Factory reset completed!");
-			console.log(
+			console.info("✅ Factory reset completed!");
+			console.info(
 				"  Device restored to default settings with new random identity",
 			);
 		}
 
 		// 11. Validate security compliance
-		console.log("\n🛡️ Validating security compliance...");
+		console.info("\n🛡️ Validating security compliance...");
 		const compliance = await adb.validateSecurityCompliance(
 			"DUOPLUS-OPPO-FIND-X7",
 		);
-		console.log("✅ Security compliance:", {
+		console.info("✅ Security compliance:", {
 			passesAllChecks: compliance.passesAllChecks,
 			riskScore: compliance.riskScore,
 			isGenuine: compliance.isGenuine,
@@ -475,12 +475,12 @@ async function demonstrateDuoplusIntegration() {
 		});
 
 		// 12. Show command history
-		console.log("\n📊 Command history:");
+		console.info("\n📊 Command history:");
 		adb.getCommandHistory().forEach((cmd, index) => {
-			console.log(`  ${index + 1}. ${cmd}`);
+			console.info(`  ${index + 1}. ${cmd}`);
 		});
 
-		console.log("\n✨ Duoplus API integration demo completed successfully!");
+		console.info("\n✨ Duoplus API integration demo completed successfully!");
 	} catch (error) {
 		console.error(
 			"❌ Error during demo:",
@@ -491,7 +491,7 @@ async function demonstrateDuoplusIntegration() {
 
 // KYC Testing Integration Example
 async function kycTestingWithDuoplus() {
-	console.log("\n🔐 KYC Testing with Duoplus Integration\n");
+	console.info("\n🔐 KYC Testing with Duoplus Integration\n");
 
 	const adb = getADBMock();
 	adb.configureRealDevice("https://api.duoplus.net", "kyc-test-api-key");
@@ -511,7 +511,7 @@ async function kycTestingWithDuoplus() {
 		}
 
 		const deviceStatus = status.data.list[0];
-		console.log(`✅ Device verified: ${deviceStatus.name} is online`);
+		console.info(`✅ Device verified: ${deviceStatus.name} is online`);
 
 		// Step 2: Enable ADB for device inspection
 		const adbResult = await adb.batchEnableADB([deviceId]);
@@ -520,7 +520,7 @@ async function kycTestingWithDuoplus() {
 			throw new Error("Failed to enable ADB on device");
 		}
 
-		console.log("✅ ADB enabled successfully");
+		console.info("✅ ADB enabled successfully");
 
 		// Step 3: Gather device information for KYC
 		const deviceInfo = await Promise.all([
@@ -530,12 +530,12 @@ async function kycTestingWithDuoplus() {
 			adb.executeADBCommand(deviceId, "getenforce"),
 		]);
 
-		console.log("📋 Device Information for KYC:");
+		console.info("📋 Device Information for KYC:");
 		deviceInfo.forEach((result) => {
 			if (result.code === 200 && result.data.success) {
-				console.log(`  ${result.data.content.trim()}`);
+				console.info(`  ${result.data.content.trim()}`);
 			} else {
-				console.log(`  Error: ${result.data.message}`);
+				console.info(`  Error: ${result.data.message}`);
 			}
 		});
 
@@ -551,14 +551,14 @@ async function kycTestingWithDuoplus() {
 		// Step 5: Device fingerprint verification
 		const fingerprint = await adb.getDeviceFingerprint(deviceId);
 
-		console.log("🔒 Security Verification Results:");
-		console.log(`  ✅ Genuine Hardware: ${compliance.isGenuine}`);
-		console.log(`  ✅ Not Rooted: ${compliance.isNotRooted}`);
-		console.log(`  ✅ Secure Boot: ${compliance.isSecureBoot}`);
-		console.log(`  ✅ Risk Score: ${compliance.riskScore} (Low Risk)`);
-		console.log(`  ✅ Duoplus Verified: ${fingerprint.duoplusVerified}`);
+		console.info("🔒 Security Verification Results:");
+		console.info(`  ✅ Genuine Hardware: ${compliance.isGenuine}`);
+		console.info(`  ✅ Not Rooted: ${compliance.isNotRooted}`);
+		console.info(`  ✅ Secure Boot: ${compliance.isSecureBoot}`);
+		console.info(`  ✅ Risk Score: ${compliance.riskScore} (Low Risk)`);
+		console.info(`  ✅ Duoplus Verified: ${fingerprint.duoplusVerified}`);
 
-		console.log("\n✅ KYC device verification passed!");
+		console.info("\n✅ KYC device verification passed!");
 		return {
 			verified: true,
 			deviceId,

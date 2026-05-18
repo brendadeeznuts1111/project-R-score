@@ -4,7 +4,7 @@
 import { enhancedSecurityManager } from '../lib/security/enhanced-security-manager';
 
 async function testPerformanceMetrics(): Promise<boolean> {
-  console.log('🧪 Testing Performance Metrics...');
+  console.info('🧪 Testing Performance Metrics...');
   
   try {
     const manager = enhancedSecurityManager as any;
@@ -26,23 +26,23 @@ async function testPerformanceMetrics(): Promise<boolean> {
         typeof metrics.peakConcurrentOperations === 'number' &&
         typeof metrics.cacheHitRatio === 'number') {
       
-      console.log('✅ Performance metrics: PASSED');
-      console.log(`   Average response time: ${metrics.averageResponseTime.toFixed(2)}ms`);
-      console.log(`   Total operations: ${metrics.totalOperationsProcessed}`);
-      console.log(`   Cache hit ratio: ${(metrics.cacheHitRatio * 100).toFixed(1)}%`);
+      console.info('✅ Performance metrics: PASSED');
+      console.info(`   Average response time: ${metrics.averageResponseTime.toFixed(2)}ms`);
+      console.info(`   Total operations: ${metrics.totalOperationsProcessed}`);
+      console.info(`   Cache hit ratio: ${(metrics.cacheHitRatio * 100).toFixed(1)}%`);
       return true;
     } else {
-      console.log('❌ Performance metrics: FAILED - Missing metrics');
+      console.info('❌ Performance metrics: FAILED - Missing metrics');
       return false;
     }
   } catch (error) {
-    console.log(`❌ Performance metrics: FAILED - ${error.message}`);
+    console.info(`❌ Performance metrics: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testMonitoringDashboard(): Promise<boolean> {
-  console.log('🧪 Testing Monitoring Dashboard...');
+  console.info('🧪 Testing Monitoring Dashboard...');
   
   try {
     const manager = enhancedSecurityManager as any;
@@ -60,9 +60,9 @@ async function testMonitoringDashboard(): Promise<boolean> {
       if (dashboard.performance.currentConcurrentOperations !== undefined &&
           Array.isArray(dashboard.performance.responseTimeHistory) &&
           dashboard.performance.cacheEfficiency) {
-        console.log('✅ Monitoring dashboard: Performance section valid');
+        console.info('✅ Monitoring dashboard: Performance section valid');
       } else {
-        console.log('❌ Monitoring dashboard: Performance section invalid');
+        console.info('❌ Monitoring dashboard: Performance section invalid');
         return false;
       }
       
@@ -70,9 +70,9 @@ async function testMonitoringDashboard(): Promise<boolean> {
       if (dashboard.security.events && 
           dashboard.security.threatLevels && 
           dashboard.security.blockedIps) {
-        console.log('✅ Monitoring dashboard: Security section valid');
+        console.info('✅ Monitoring dashboard: Security section valid');
       } else {
-        console.log('❌ Monitoring dashboard: Security section invalid');
+        console.info('❌ Monitoring dashboard: Security section invalid');
         return false;
       }
       
@@ -80,26 +80,26 @@ async function testMonitoringDashboard(): Promise<boolean> {
       if (dashboard.system.health && 
           dashboard.system.uptime && 
           dashboard.system.auditLog) {
-        console.log('✅ Monitoring dashboard: System section valid');
+        console.info('✅ Monitoring dashboard: System section valid');
       } else {
-        console.log('❌ Monitoring dashboard: System section invalid');
+        console.info('❌ Monitoring dashboard: System section invalid');
         return false;
       }
       
-      console.log('✅ Monitoring dashboard: PASSED');
+      console.info('✅ Monitoring dashboard: PASSED');
       return true;
     } else {
-      console.log('❌ Monitoring dashboard: FAILED - Invalid dashboard structure');
+      console.info('❌ Monitoring dashboard: FAILED - Invalid dashboard structure');
       return false;
     }
   } catch (error) {
-    console.log(`❌ Monitoring dashboard: FAILED - ${error.message}`);
+    console.info(`❌ Monitoring dashboard: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testSystemHealthMonitoring(): Promise<boolean> {
-  console.log('🧪 Testing System Health Monitoring...');
+  console.info('🧪 Testing System Health Monitoring...');
   
   try {
     const manager = enhancedSecurityManager as any;
@@ -113,24 +113,24 @@ async function testSystemHealthMonitoring(): Promise<boolean> {
         health.lastCheck instanceof Date &&
         Array.isArray(health.issues)) {
       
-      console.log(`✅ System health monitoring: PASSED`);
-      console.log(`   Status: ${health.status}`);
-      console.log(`   Last check: ${health.lastCheck.toISOString()}`);
-      console.log(`   Issues: ${health.issues.length}`);
+      console.info(`✅ System health monitoring: PASSED`);
+      console.info(`   Status: ${health.status}`);
+      console.info(`   Last check: ${health.lastCheck.toISOString()}`);
+      console.info(`   Issues: ${health.issues.length}`);
       
       return true;
     } else {
-      console.log('❌ System health monitoring: FAILED - Invalid health data');
+      console.info('❌ System health monitoring: FAILED - Invalid health data');
       return false;
     }
   } catch (error) {
-    console.log(`❌ System health monitoring: FAILED - ${error.message}`);
+    console.info(`❌ System health monitoring: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testSecurityAlerts(): Promise<boolean> {
-  console.log('🧪 Testing Security Alerts...');
+  console.info('🧪 Testing Security Alerts...');
   
   try {
     const manager = enhancedSecurityManager as any;
@@ -140,30 +140,30 @@ async function testSecurityAlerts(): Promise<boolean> {
     const alerts = dashboard?.alerts;
     
     if (Array.isArray(alerts)) {
-      console.log('✅ Security alerts: PASSED');
-      console.log(`   Active alerts: ${alerts.length}`);
+      console.info('✅ Security alerts: PASSED');
+      console.info(`   Active alerts: ${alerts.length}`);
       
       // Check alert structure if any exist
       if (alerts.length > 0) {
         const alert = alerts[0];
         if (alert.level && alert.message && alert.timestamp) {
-          console.log(`   Sample alert: ${alert.level} - ${alert.message}`);
+          console.info(`   Sample alert: ${alert.level} - ${alert.message}`);
         }
       }
       
       return true;
     } else {
-      console.log('❌ Security alerts: FAILED - Alerts not an array');
+      console.info('❌ Security alerts: FAILED - Alerts not an array');
       return false;
     }
   } catch (error) {
-    console.log(`❌ Security alerts: FAILED - ${error.message}`);
+    console.info(`❌ Security alerts: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testSecurityAnalytics(): Promise<boolean> {
-  console.log('🧪 Testing Security Analytics...');
+  console.info('🧪 Testing Security Analytics...');
   
   try {
     const manager = enhancedSecurityManager as any;
@@ -181,24 +181,24 @@ async function testSecurityAnalytics(): Promise<boolean> {
         typeof security.threatLevels === 'object' &&
         security.blockedIps) {
       
-      console.log('✅ Security analytics: PASSED');
-      console.log(`   Event types tracked: ${Object.keys(security.events).length}`);
-      console.log(`   Threat levels: ${Object.keys(security.threatLevels).length}`);
-      console.log(`   Blocked IPs tracked: ${security.blockedIps.current}`);
+      console.info('✅ Security analytics: PASSED');
+      console.info(`   Event types tracked: ${Object.keys(security.events).length}`);
+      console.info(`   Threat levels: ${Object.keys(security.threatLevels).length}`);
+      console.info(`   Blocked IPs tracked: ${security.blockedIps.current}`);
       
       return true;
     } else {
-      console.log('❌ Security analytics: FAILED - Missing analytics data');
+      console.info('❌ Security analytics: FAILED - Missing analytics data');
       return false;
     }
   } catch (error) {
-    console.log(`❌ Security analytics: FAILED - ${error.message}`);
+    console.info(`❌ Security analytics: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testPerformanceOptimization(): Promise<boolean> {
-  console.log('🧪 Testing Performance Optimization...');
+  console.info('🧪 Testing Performance Optimization...');
   
   try {
     const manager = enhancedSecurityManager as any;
@@ -221,25 +221,25 @@ async function testPerformanceOptimization(): Promise<boolean> {
       const peakConcurrent = metrics.peakConcurrentOperations;
       const cacheEfficiency = dashboard.performance.cacheEfficiency;
       
-      console.log('✅ Performance optimization: PASSED');
-      console.log(`   20 concurrent operations completed in ${totalTime}ms`);
-      console.log(`   Average response time: ${avgResponseTime.toFixed(2)}ms`);
-      console.log(`   Peak concurrent ops: ${peakConcurrent}`);
-      console.log(`   Cache efficiency: ${(cacheEfficiency.ratio * 100).toFixed(1)}%`);
+      console.info('✅ Performance optimization: PASSED');
+      console.info(`   20 concurrent operations completed in ${totalTime}ms`);
+      console.info(`   Average response time: ${avgResponseTime.toFixed(2)}ms`);
+      console.info(`   Peak concurrent ops: ${peakConcurrent}`);
+      console.info(`   Cache efficiency: ${(cacheEfficiency.ratio * 100).toFixed(1)}%`);
       
       return true;
     } else {
-      console.log('❌ Performance optimization: FAILED - Missing metrics');
+      console.info('❌ Performance optimization: FAILED - Missing metrics');
       return false;
     }
   } catch (error) {
-    console.log(`❌ Performance optimization: FAILED - ${error.message}`);
+    console.info(`❌ Performance optimization: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testMemoryAndResourceManagement(): Promise<boolean> {
-  console.log('🧪 Testing Memory and Resource Management...');
+  console.info('🧪 Testing Memory and Resource Management...');
   
   try {
     const manager = enhancedSecurityManager as any;
@@ -249,28 +249,28 @@ async function testMemoryAndResourceManagement(): Promise<boolean> {
     const performance = dashboard?.performance;
     
     if (performance && typeof performance.memoryUsage === 'number') {
-      console.log('✅ Memory and resource management: PASSED');
-      console.log(`   Memory usage: ${performance.memoryUsage.toFixed(2)}MB`);
-      console.log(`   Active operations: ${dashboard.performance.currentConcurrentOperations}`);
-      console.log(`   Audit buffer size: ${dashboard.system.auditLog.bufferSize}`);
+      console.info('✅ Memory and resource management: PASSED');
+      console.info(`   Memory usage: ${performance.memoryUsage.toFixed(2)}MB`);
+      console.info(`   Active operations: ${dashboard.performance.currentConcurrentOperations}`);
+      console.info(`   Audit buffer size: ${dashboard.system.auditLog.bufferSize}`);
       
       // Test cleanup functionality
       manager.clearExpiredRateLimits();
-      console.log('✅ Resource cleanup: PASSED');
+      console.info('✅ Resource cleanup: PASSED');
       
       return true;
     } else {
-      console.log('❌ Memory and resource management: FAILED - Missing resource data');
+      console.info('❌ Memory and resource management: FAILED - Missing resource data');
       return false;
     }
   } catch (error) {
-    console.log(`❌ Memory and resource management: FAILED - ${error.message}`);
+    console.info(`❌ Memory and resource management: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function runPerformanceMonitoringTests(): Promise<void> {
-  console.log('🚀 Running Phase 4 Performance & Monitoring Tests\\n');
+  console.info('🚀 Running Phase 4 Performance & Monitoring Tests\\n');
   
   const tests = [
     { name: 'Performance Metrics', test: testPerformanceMetrics },
@@ -286,7 +286,7 @@ async function runPerformanceMonitoringTests(): Promise<void> {
   let failed = 0;
   
   for (const { name, test } of tests) {
-    console.log(`\\n--- ${name} ---`);
+    console.info(`\\n--- ${name} ---`);
     const result = await test();
     if (result) {
       passed++;
@@ -295,25 +295,25 @@ async function runPerformanceMonitoringTests(): Promise<void> {
     }
   }
   
-  console.log('\\n📊 Phase 4 Performance & Monitoring Test Results:');
-  console.log(`✅ Passed: ${passed}`);
-  console.log(`❌ Failed: ${failed}`);
-  console.log(`📈 Success Rate: ${((passed / (passed + failed)) * 100).toFixed(1)}%`);
+  console.info('\\n📊 Phase 4 Performance & Monitoring Test Results:');
+  console.info(`✅ Passed: ${passed}`);
+  console.info(`❌ Failed: ${failed}`);
+  console.info(`📈 Success Rate: ${((passed / (passed + failed)) * 100).toFixed(1)}%`);
   
   if (failed === 0) {
-    console.log('\\n🎉 ALL PHASE 4 PERFORMANCE & MONITORING FEATURES WORKING PERFECTLY!');
-    console.log('\\n🚀 Advanced Performance & Monitoring Features:');
-    console.log('📊 Real-time performance metrics and optimization');
-    console.log('🖥️ Comprehensive monitoring dashboard');
-    console.log('🏥 System health monitoring with alerts');
-    console.log('📈 Security analytics and threat intelligence');
-    console.log('⚡ Performance optimization for high-volume operations');
-    console.log('🧠 Memory and resource management');
-    console.log('🚨 Automated security alerts and incident response');
-    console.log('\\n🏆 SYSTEM NOW HAS COMPLETE ENTERPRISE-GRADE PROTECTION!');
-    console.log('   All 4 phases implemented with 100% success rate');
+    console.info('\\n🎉 ALL PHASE 4 PERFORMANCE & MONITORING FEATURES WORKING PERFECTLY!');
+    console.info('\\n🚀 Advanced Performance & Monitoring Features:');
+    console.info('📊 Real-time performance metrics and optimization');
+    console.info('🖥️ Comprehensive monitoring dashboard');
+    console.info('🏥 System health monitoring with alerts');
+    console.info('📈 Security analytics and threat intelligence');
+    console.info('⚡ Performance optimization for high-volume operations');
+    console.info('🧠 Memory and resource management');
+    console.info('🚨 Automated security alerts and incident response');
+    console.info('\\n🏆 SYSTEM NOW HAS COMPLETE ENTERPRISE-GRADE PROTECTION!');
+    console.info('   All 4 phases implemented with 100% success rate');
   } else {
-    console.log('\\n⚠️ Some Phase 4 features need attention. Please review the failed tests.');
+    console.info('\\n⚠️ Some Phase 4 features need attention. Please review the failed tests.');
   }
   
   // Cleanup

@@ -9,8 +9,8 @@ class WranglerSetup {
   private accountId?: string;
 
   async setup(): Promise<void> {
-    console.log("⛅️ FactoryWager Wrangler Setup");
-    console.log("==============================");
+    console.info("⛅️ FactoryWager Wrangler Setup");
+    console.info("==============================");
 
     // Check current authentication status
     await this.checkAuthStatus();
@@ -29,34 +29,34 @@ class WranglerSetup {
   }
 
   private async checkAuthStatus(): Promise<void> {
-    console.log("\n🔍 Checking Cloudflare authentication...");
+    console.info("\n🔍 Checking Cloudflare authentication...");
     
     try {
       const result = await Bun.$`bunx wrangler whoami`.text();
-      console.log("✅ Authenticated:", result.trim());
+      console.info("✅ Authenticated:", result.trim());
     } catch (error) {
-      console.log("❌ Not authenticated");
-      console.log("🔧 Run: bunx wrangler login");
+      console.info("❌ Not authenticated");
+      console.info("🔧 Run: bunx wrangler login");
     }
   }
 
   private async showSetupCommands(): Promise<void> {
-    console.log("\n🔧 Authentication Setup Commands:");
-    console.log("1. Login to Cloudflare:");
-    console.log("   bunx wrangler login");
+    console.info("\n🔧 Authentication Setup Commands:");
+    console.info("1. Login to Cloudflare:");
+    console.info("   bunx wrangler login");
     
-    console.log("\n2. Verify authentication:");
-    console.log("   bunx wrangler whoami");
+    console.info("\n2. Verify authentication:");
+    console.info("   bunx wrangler whoami");
     
-    console.log("\n3. List available accounts:");
-    console.log("   bunx wrangler accounts list");
+    console.info("\n3. List available accounts:");
+    console.info("   bunx wrangler accounts list");
     
-    console.log("\n4. Set default account (if needed):");
-    console.log("   bunx wrangler accounts use <account-id>");
+    console.info("\n4. Set default account (if needed):");
+    console.info("   bunx wrangler accounts use <account-id>");
   }
 
   private async createWranglerConfig(): Promise<void> {
-    console.log("\n📝 Creating wrangler.toml configuration...");
+    console.info("\n📝 Creating wrangler.toml configuration...");
     
     const config = `name = "factory-wager-registry"
 main = "src/index.ts"
@@ -102,7 +102,7 @@ DOMAIN = "registry.factory-wager.co"
 `;
 
     await Bun.write(Bun.file('./wrangler.toml'), config);
-    console.log("✅ wrangler.toml created");
+    console.info("✅ wrangler.toml created");
     
     // Create basic worker source
     const workerSource = `/**
@@ -173,61 +173,61 @@ async function handleRegistryAPI(request: Request, env: Env, path: string): Prom
     // Create src directory and worker file
     await Bun.$`mkdir -p src`.quiet();
     await Bun.write(Bun.file('./src/index.ts'), workerSource);
-    console.log("✅ src/index.ts created");
+    console.info("✅ src/index.ts created");
   }
 
   private async showR2Commands(): Promise<void> {
-    console.log("\n📦 R2 Bucket Management Commands:");
+    console.info("\n📦 R2 Bucket Management Commands:");
     
-    console.log("\n1. Create R2 buckets:");
-    console.log("   bunx wrangler r2 bucket create factory-wager-registry");
-    console.log("   bunx wrangler r2 bucket create factory-wager-artifacts");
+    console.info("\n1. Create R2 buckets:");
+    console.info("   bunx wrangler r2 bucket create factory-wager-registry");
+    console.info("   bunx wrangler r2 bucket create factory-wager-artifacts");
     
-    console.log("\n2. List R2 buckets:");
-    console.log("   bunx wrangler r2 bucket list");
+    console.info("\n2. List R2 buckets:");
+    console.info("   bunx wrangler r2 bucket list");
     
-    console.log("\n3. Upload files to R2:");
-    console.log("   bunx wrangler r2 object put factory-wager-registry/config.json --file=config.json");
+    console.info("\n3. Upload files to R2:");
+    console.info("   bunx wrangler r2 object put factory-wager-registry/config.json --file=config.json");
     
-    console.log("\n4. List R2 objects:");
-    console.log("   bunx wrangler r2 object list factory-wager-registry");
+    console.info("\n4. List R2 objects:");
+    console.info("   bunx wrangler r2 object list factory-wager-registry");
     
-    console.log("\n5. Download from R2:");
-    console.log("   bunx wrangler r2 object get factory-wager-registry/config.json");
+    console.info("\n5. Download from R2:");
+    console.info("   bunx wrangler r2 object get factory-wager-registry/config.json");
   }
 
   private async showDeploymentCommands(): Promise<void> {
-    console.log("\n🚀 Deployment Commands:");
+    console.info("\n🚀 Deployment Commands:");
     
-    console.log("\n1. Development deployment:");
-    console.log("   bunx wrangler dev");
+    console.info("\n1. Development deployment:");
+    console.info("   bunx wrangler dev");
     
-    console.log("\n2. Deploy to production:");
-    console.log("   bunx wrangler deploy --env production");
+    console.info("\n2. Deploy to production:");
+    console.info("   bunx wrangler deploy --env production");
     
-    console.log("\n3. Deploy to staging:");
-    console.log("   bunx wrangler deploy --env staging");
+    console.info("\n3. Deploy to staging:");
+    console.info("   bunx wrangler deploy --env staging");
     
-    console.log("\n4. Set secrets:");
-    console.log("   bunx wrangler secret put CLOUDFLARE_API_TOKEN");
-    console.log("   bunx wrangler secret put REGISTRY_SECRET_KEY");
+    console.info("\n4. Set secrets:");
+    console.info("   bunx wrangler secret put CLOUDFLARE_API_TOKEN");
+    console.info("   bunx wrangler secret put REGISTRY_SECRET_KEY");
     
-    console.log("\n5. View deployments:");
-    console.log("   bunx wrangler deployments");
+    console.info("\n5. View deployments:");
+    console.info("   bunx wrangler deployments");
     
-    console.log("\n6. Tail logs:");
-    console.log("   bunx wrangler tail");
+    console.info("\n6. Tail logs:");
+    console.info("   bunx wrangler tail");
   }
 
   async createRegistryWorker(): Promise<void> {
-    console.log("\n🏗️ Creating Registry Worker...");
+    console.info("\n🏗️ Creating Registry Worker...");
     
     try {
       // Initialize a new worker
       await Bun.$`bunx wrangler init factory-wager-registry --yes`.quiet();
-      console.log("✅ Worker initialized");
+      console.info("✅ Worker initialized");
     } catch (error) {
-      console.log("⚠️ Worker may already exist or init failed");
+      console.info("⚠️ Worker may already exist or init failed");
     }
     
     // Create enhanced registry worker
@@ -423,7 +423,7 @@ async function getMetrics(env: Env): Promise<any> {
 `;
 
     await Bun.write(Bun.file('./src/registry.ts'), registryWorker);
-    console.log("✅ Enhanced registry worker created");
+    console.info("✅ Enhanced registry worker created");
   }
 }
 
@@ -439,12 +439,12 @@ async function main() {
     await setup.createRegistryWorker();
   }
   
-  console.log("\n🚀 Next Steps:");
-  console.log("1. Authenticate: bunx wrangler login");
-  console.log("2. Create buckets: bunx wrangler r2 bucket create factory-wager-registry");
-  console.log("3. Set secrets: bunx wrangler secret put CLOUDFLARE_API_TOKEN");
-  console.log("4. Deploy: bunx wrangler deploy");
-  console.log("5. Test: curl https://factory-wager-registry.your-subdomain.workers.dev/health");
+  console.info("\n🚀 Next Steps:");
+  console.info("1. Authenticate: bunx wrangler login");
+  console.info("2. Create buckets: bunx wrangler r2 bucket create factory-wager-registry");
+  console.info("3. Set secrets: bunx wrangler secret put CLOUDFLARE_API_TOKEN");
+  console.info("4. Deploy: bunx wrangler deploy");
+  console.info("5. Test: curl https://factory-wager-registry.your-subdomain.workers.dev/health");
 }
 
 if (import.meta.main) {

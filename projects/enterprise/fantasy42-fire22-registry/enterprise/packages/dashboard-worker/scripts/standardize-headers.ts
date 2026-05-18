@@ -97,7 +97,7 @@ async function standardizeHtmlHeaders(filePath: string): Promise<boolean> {
 
     if (updatedContent !== content) {
       await fs.writeFile(filePath, updatedContent, 'utf-8');
-      console.log(`✅ Updated HTML header: ${path.basename(filePath)}`);
+      console.info(`✅ Updated HTML header: ${path.basename(filePath)}`);
       return true;
     }
 
@@ -133,7 +133,7 @@ async function standardizeMarkdownHeaders(filePath: string): Promise<boolean> {
 
     if (updatedContent !== content) {
       await fs.writeFile(filePath, updatedContent, 'utf-8');
-      console.log(`✅ Updated Markdown header: ${path.basename(filePath)}`);
+      console.info(`✅ Updated Markdown header: ${path.basename(filePath)}`);
       return true;
     }
 
@@ -145,8 +145,8 @@ async function standardizeMarkdownHeaders(filePath: string): Promise<boolean> {
 }
 
 async function main() {
-  console.log(`🔧 Fire22 Header Standardization Script v${VERSION}`);
-  console.log('!==!==!==!==!==!==!==');
+  console.info(`🔧 Fire22 Header Standardization Script v${VERSION}`);
+  console.info('!==!==!==!==!==!==!==');
 
   let totalUpdates = 0;
 
@@ -172,7 +172,7 @@ async function main() {
     'SECURITY-INTEGRATION-GUIDE.md',
   ];
 
-  console.log('\n📄 Processing target files...');
+  console.info('\n📄 Processing target files...');
 
   for (const file of targetFiles) {
     try {
@@ -183,14 +183,14 @@ async function main() {
         : await standardizeMarkdownHeaders(file);
       if (updated) totalUpdates++;
     } catch (error) {
-      console.log(`⚠️  File not found: ${file}`);
+      console.info(`⚠️  File not found: ${file}`);
     }
   }
 
-  console.log('\n🎉 Header Standardization Complete!');
-  console.log(`📊 Total files updated: ${totalUpdates}`);
-  console.log(`🚀 Version: ${VERSION}`);
-  console.log('!==!==!==!==!==!==!==');
+  console.info('\n🎉 Header Standardization Complete!');
+  console.info(`📊 Total files updated: ${totalUpdates}`);
+  console.info(`🚀 Version: ${VERSION}`);
+  console.info('!==!==!==!==!==!==!==');
 }
 
 // Run the script

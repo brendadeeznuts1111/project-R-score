@@ -82,7 +82,7 @@ class PerformanceDashboard {
   async start(port: number = 3001) {
     this.port = port;
 
-    console.log(`📊 Starting Performance Dashboard on port ${port}...`);
+    console.info(`📊 Starting Performance Dashboard on port ${port}...`);
 
     // Initial data load
     await this.refreshData();
@@ -137,8 +137,8 @@ class PerformanceDashboard {
       },
     });
 
-    console.log(`✅ Dashboard available at http://localhost:${port}`);
-    console.log("🔄 Auto-refreshing every 30 seconds...");
+    console.info(`✅ Dashboard available at http://localhost:${port}`);
+    console.info("🔄 Auto-refreshing every 30 seconds...");
 
     // Auto-refresh data every 30 seconds
     setInterval(() => this.refreshData(), 30000);
@@ -146,7 +146,7 @@ class PerformanceDashboard {
 
   private async refreshData() {
     try {
-      console.log("🔄 Refreshing dashboard data...");
+      console.info("🔄 Refreshing dashboard data...");
 
       const [profileResults, perfReport, testResults] = await Promise.all([
         this.analyzer.analyzeAllProfiles(),
@@ -169,7 +169,7 @@ class PerformanceDashboard {
         trends: this.calculateTrends(),
       };
 
-      console.log("✅ Data refreshed");
+      console.info("✅ Data refreshed");
     } catch (error) {
       console.error("❌ Failed to refresh data:", error);
     }
@@ -743,7 +743,7 @@ function parseCliFlags(): CliFlags {
 }
 
 function printHelp() {
-  console.log(`
+  console.info(`
 Performance Dashboard CLI
 
 Usage: bun run performance-dashboard.ts [options]
@@ -762,7 +762,7 @@ Examples:
 }
 
 function printVersion() {
-  console.log("Performance Dashboard v2.0.0");
+  console.info("Performance Dashboard v2.0.0");
 }
 
 // CLI interface
@@ -781,10 +781,10 @@ async function main() {
 
   const dashboard = new PerformanceDashboard();
 
-  console.log(`🚀 Starting Performance Dashboard v2.0.0`);
-  console.log(`📊 Port: ${flags.port}`);
-  console.log(`🔄 Refresh interval: ${flags.interval}s`);
-  console.log(`🖥️  Headless mode: ${flags.headless ? "enabled" : "disabled"}`);
+  console.info(`🚀 Starting Performance Dashboard v2.0.0`);
+  console.info(`📊 Port: ${flags.port}`);
+  console.info(`🔄 Refresh interval: ${flags.interval}s`);
+  console.info(`🖥️  Headless mode: ${flags.headless ? "enabled" : "disabled"}`);
 
   try {
     await dashboard.start(flags.port);

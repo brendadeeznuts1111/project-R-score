@@ -382,7 +382,7 @@ export class BunHTMLIntegration {
   async preloadTemplates(): Promise<void> {
     if (!this.config.preloadTemplates) return;
 
-    console.log('🔄 Preloading templates for production...');
+    console.info('🔄 Preloading templates for production...');
 
     const templates = this.templateManager.getAllTemplateNames();
     const preloadData = {
@@ -401,13 +401,13 @@ export class BunHTMLIntegration {
       try {
         const data = preloadData[templateName as keyof typeof preloadData] || {};
         this.templateManager.renderTemplate(templateName, data);
-        console.log(`   ✅ Preloaded: ${templateName}`);
+        console.info(`   ✅ Preloaded: ${templateName}`);
       } catch (error) {
-        console.log(`   ⚠️  Failed to preload: ${templateName}`);
+        console.info(`   ⚠️  Failed to preload: ${templateName}`);
       }
     }
 
-    console.log('✅ Template preloading complete!');
+    console.info('✅ Template preloading complete!');
   }
 }
 
@@ -418,23 +418,23 @@ export function createBunHTMLServer(port: number = 3000, config?: BunHTMLConfig)
   const bunHTML = new BunHTMLIntegration(config);
   const serveConfig = bunHTML.createBunServeConfig(port);
 
-  console.log('🚀 Starting Bun HTML Server...');
-  console.log(`📍 Development Mode: ${serveConfig.development}`);
-  console.log(`🔄 Caching: ${config?.enableCaching !== false ? 'Enabled' : 'Disabled'}`);
-  console.log(`📦 Minification: ${config?.minify !== false ? 'Enabled' : 'Disabled'}`);
-  console.log(`🏷️  Auto ETags: ✅ Enabled by Bun`);
-  console.log('');
+  console.info('🚀 Starting Bun HTML Server...');
+  console.info(`📍 Development Mode: ${serveConfig.development}`);
+  console.info(`🔄 Caching: ${config?.enableCaching !== false ? 'Enabled' : 'Disabled'}`);
+  console.info(`📦 Minification: ${config?.minify !== false ? 'Enabled' : 'Disabled'}`);
+  console.info(`🏷️  Auto ETags: ✅ Enabled by Bun`);
+  console.info('');
 
   const server = Bun.serve(serveConfig);
 
-  console.log('📋 Available Routes:');
+  console.info('📋 Available Routes:');
   Object.keys(serveConfig.routes).forEach(route => {
-    console.log(`   🌐 ${route}`);
+    console.info(`   🌐 ${route}`);
   });
-  console.log('');
-  console.log(`🎯 Server: http://${serveConfig.hostname}:${port}`);
-  console.log(`📊 Cache Stats: http://${serveConfig.hostname}:${port}/cache/stats`);
-  console.log(`🔧 API: http://${serveConfig.hostname}:${port}/api/templates`);
+  console.info('');
+  console.info(`🎯 Server: http://${serveConfig.hostname}:${port}`);
+  console.info(`📊 Cache Stats: http://${serveConfig.hostname}:${port}/cache/stats`);
+  console.info(`🔧 API: http://${serveConfig.hostname}:${port}/api/templates`);
 
   // Preload templates if configured
   if (config?.preloadTemplates) {
@@ -448,7 +448,7 @@ export function createBunHTMLServer(port: number = 3000, config?: BunHTMLConfig)
  * Build production bundle with ahead-of-time bundling
  */
 export async function buildProductionBundle(entryPoint: string = './src/index.ts') {
-  console.log('🏗️  Building production bundle with AOT bundling...');
+  console.info('🏗️  Building production bundle with AOT bundling...');
 
   const buildResult = await Bun.build({
     entrypoints: [entryPoint],
@@ -462,18 +462,18 @@ export async function buildProductionBundle(entryPoint: string = './src/index.ts
   });
 
   if (buildResult.success) {
-    console.log('✅ Production bundle created successfully!');
-    console.log(`📦 Output: ./dist/`);
-    console.log(`🎯 Entry: ${entryPoint}`);
-    console.log(`📊 Files: ${buildResult.outputs.length}`);
+    console.info('✅ Production bundle created successfully!');
+    console.info(`📦 Output: ./dist/`);
+    console.info(`🎯 Entry: ${entryPoint}`);
+    console.info(`📊 Files: ${buildResult.outputs.length}`);
 
     // Show file details
     buildResult.outputs.forEach((output, index) => {
-      console.log(`   ${index + 1}. ${output.path} (${(output.size / 1024).toFixed(2)} KB)`);
+      console.info(`   ${index + 1}. ${output.path} (${(output.size / 1024).toFixed(2)} KB)`);
     });
 
-    console.log('\n🚀 Ready for production deployment!');
-    console.log('   Run: bun run ./dist/index.js');
+    console.info('\n🚀 Ready for production deployment!');
+    console.info('   Run: bun run ./dist/index.js');
   } else {
     console.error('❌ Build failed:');
     buildResult.logs.forEach(log => console.error(`   ${log}`));

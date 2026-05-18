@@ -15,20 +15,20 @@ const MAGENTA = "\x1b[35m";
 const WHITE = "\x1b[37m";
 
 function printHeader(title: string): void {
-	console.log(`\n${BOLD}${BLUE}╔${"═".repeat(76)}╗${RESET}`);
-	console.log(
+	console.info(`\n${BOLD}${BLUE}╔${"═".repeat(76)}╗${RESET}`);
+	console.info(
 		`${BOLD}${BLUE}║${RESET} ${CYAN}${title.padEnd(74)}${RESET}${BOLD}${BLUE} ║${RESET}`,
 	);
-	console.log(`${BOLD}${BLUE}╚${"═".repeat(76)}╝${RESET}`);
+	console.info(`${BOLD}${BLUE}╚${"═".repeat(76)}╝${RESET}`);
 }
 
 function printSection(title: string): void {
-	console.log(`\n  ${BOLD}${WHITE}${title}${RESET}`);
-	console.log(`  ${DIM}${"─".repeat(74)}${RESET}`);
+	console.info(`\n  ${BOLD}${WHITE}${title}${RESET}`);
+	console.info(`  ${DIM}${"─".repeat(74)}${RESET}`);
 }
 
 function printArrow(label: string, color: string = CYAN): void {
-	console.log(`    ${color}▼${RESET} ${DIM}${label}${RESET}`);
+	console.info(`    ${color}▼${RESET} ${DIM}${label}${RESET}`);
 }
 
 function printBox(label: string, type: "mcp" | "acp" | "bun" | "service"): void {
@@ -47,23 +47,23 @@ function printBox(label: string, type: "mcp" | "acp" | "bun" | "service"): void 
 				: type === "bun"
 					? "[BUN]"
 					: "[SRV]";
-	console.log(`    ${color}┌${"─".repeat(50)}┐${RESET}`);
-	console.log(`    ${color}│${RESET} ${prefix} ${label.padEnd(43)}${color}│${RESET}`);
-	console.log(`    ${color}└${"─".repeat(50)}┘${RESET}`);
+	console.info(`    ${color}┌${"─".repeat(50)}┐${RESET}`);
+	console.info(`    ${color}│${RESET} ${prefix} ${label.padEnd(43)}${color}│${RESET}`);
+	console.info(`    ${color}└${"─".repeat(50)}┘${RESET}`);
 }
 
 function printCode(code: string, lang: string = "typescript"): void {
-	console.log(`\n    ${DIM}${lang}:${RESET}`);
-	console.log(`    ${DIM}${"─".repeat(40)}${RESET}`);
+	console.info(`\n    ${DIM}${lang}:${RESET}`);
+	console.info(`    ${DIM}${"─".repeat(40)}${RESET}`);
 	for (const line of code.split("\n")) {
-		console.log(`    ${CYAN}${line}${RESET}`);
+		console.info(`    ${CYAN}${line}${RESET}`);
 	}
 }
 
 function showMCPFlow(): void {
 	printHeader("MCP (Model Context Protocol) WORKFLOW");
 
-	console.log(`\n  ${BOLD}Step 1: User initiates request${RESET}`);
+	console.info(`\n  ${BOLD}Step 1: User initiates request${RESET}`);
 	printArrow("JSON-RPC Request");
 	printBox("kimi mcp call shell_execute", "mcp");
 
@@ -71,28 +71,28 @@ function showMCPFlow(): void {
 	printBox("unified-shell-bridge.ts", "mcp");
 
 	printArrow("Parse & validate");
-	console.log(`    ${MAGENTA}┌${"─".repeat(50)}┐${RESET}`);
-	console.log(`    ${MAGENTA}│${RESET} ${WHITE}tools/call${RESET} ${MAGENTA}│${RESET}`);
-	console.log(
+	console.info(`    ${MAGENTA}┌${"─".repeat(50)}┐${RESET}`);
+	console.info(`    ${MAGENTA}│${RESET} ${WHITE}tools/call${RESET} ${MAGENTA}│${RESET}`);
+	console.info(
 		`    ${MAGENTA}│${RESET} ${DIM}• Extract tool name${RESET} ${MAGENTA}│${RESET}`,
 	);
-	console.log(
+	console.info(
 		`    ${MAGENTA}│${RESET} ${DIM}• Validate arguments${RESET} ${MAGENTA}│${RESET}`,
 	);
-	console.log(
+	console.info(
 		`    ${MAGENTA}│${RESET} ${DIM}• Check permissions${RESET} ${MAGENTA}│${RESET}`,
 	);
-	console.log(`    ${MAGENTA}└${"─".repeat(50)}┘${RESET}`);
+	console.info(`    ${MAGENTA}└${"─".repeat(50)}┘${RESET}`);
 
 	printArrow("Execute tool handler");
 	printBox("handleToolCall(name, args)", "mcp");
 
 	printArrow("Load environment");
-	console.log(`    ${BLUE}┌${"─".repeat(50)}┐${RESET}`);
-	console.log(`    ${BLUE}│${RESET} ${WHITE}Bun.secrets.get()${RESET} ${BLUE}│${RESET}`);
-	console.log(`    ${BLUE}│${RESET} ${DIM}• OpenClaw token${RESET} ${BLUE}│${RESET}`);
-	console.log(`    ${BLUE}│${RESET} ${DIM}• Profile env${RESET} ${BLUE}│${RESET}`);
-	console.log(`    ${BLUE}└${"─".repeat(50)}┘${RESET}`);
+	console.info(`    ${BLUE}┌${"─".repeat(50)}┐${RESET}`);
+	console.info(`    ${BLUE}│${RESET} ${WHITE}Bun.secrets.get()${RESET} ${BLUE}│${RESET}`);
+	console.info(`    ${BLUE}│${RESET} ${DIM}• OpenClaw token${RESET} ${BLUE}│${RESET}`);
+	console.info(`    ${BLUE}│${RESET} ${DIM}• Profile env${RESET} ${BLUE}│${RESET}`);
+	console.info(`    ${BLUE}└${"─".repeat(50)}┘${RESET}`);
 
 	printArrow("Execute command");
 	printBox("Bun.shell($)", "bun");
@@ -118,7 +118,7 @@ function showMCPFlow(): void {
 function showACPFlow(): void {
 	printHeader("ACP (Agent Communication Protocol) WORKFLOW");
 
-	console.log(`\n  ${BOLD}Step 1: Create ACP message${RESET}`);
+	console.info(`\n  ${BOLD}Step 1: Create ACP message${RESET}`);
 	printCode(`const message: ACPMessage = {
   id: "cmd-123",
   type: "command",
@@ -135,17 +135,17 @@ function showACPFlow(): void {
 	printBox("OpenClawBridge.sendToOpenClaw()", "acp");
 
 	printArrow("ACP transport");
-	console.log(`    ${YELLOW}┌${"─".repeat(50)}┐${RESET}`);
-	console.log(
+	console.info(`    ${YELLOW}┌${"─".repeat(50)}┐${RESET}`);
+	console.info(
 		`    ${YELLOW}│${RESET} ${WHITE}WebSocket / CLI${RESET} ${YELLOW}│${RESET}`,
 	);
-	console.log(
+	console.info(
 		`    ${YELLOW}│${RESET} ${DIM}• ws://127.0.0.1:18789${RESET} ${YELLOW}│${RESET}`,
 	);
-	console.log(
+	console.info(
 		`    ${YELLOW}│${RESET} ${DIM}• openclaw <cmd>${RESET} ${YELLOW}│${RESET}`,
 	);
-	console.log(`    ${YELLOW}└${"─".repeat(50)}┘${RESET}`);
+	console.info(`    ${YELLOW}└${"─".repeat(50)}┘${RESET}`);
 
 	printArrow("OpenClaw receives");
 	printBox("Gateway ACP Handler", "service");
@@ -169,32 +169,32 @@ function showIntegratedFlow(): void {
 	printHeader("INTEGRATED WORKFLOW: Profile Switch + OpenClaw");
 
 	printSection("Actors");
-	console.log(`    ${MAGENTA}[MCP]${RESET} Kimi Shell (User Interface)`);
-	console.log(`    ${YELLOW}[ACP]${RESET} Matrix Agent Bridge`);
-	console.log(`    ${GREEN}[BUN]${RESET} Bun.shell($) (Execution)`);
-	console.log(`    ${BLUE}[SRV]${RESET} OpenClaw Gateway`);
+	console.info(`    ${MAGENTA}[MCP]${RESET} Kimi Shell (User Interface)`);
+	console.info(`    ${YELLOW}[ACP]${RESET} Matrix Agent Bridge`);
+	console.info(`    ${GREEN}[BUN]${RESET} Bun.shell($) (Execution)`);
+	console.info(`    ${BLUE}[SRV]${RESET} OpenClaw Gateway`);
 
 	printSection("Sequence");
 
-	console.log(`\n  ${BOLD}1. User switches profile${RESET}`);
-	console.log(
+	console.info(`\n  ${BOLD}1. User switches profile${RESET}`);
+	console.info(
 		`     $ ${CYAN}kimi mcp call profile_switch '{"profile": "prod"}'${RESET}`,
 	);
 	printArrow("MCP Request → Bridge", MAGENTA);
 
-	console.log(`\n  ${BOLD}2. Load profile environment${RESET}`);
-	console.log(`     ${DIM}Reading ~/.matrix/profiles/prod.json${RESET}`);
+	console.info(`\n  ${BOLD}2. Load profile environment${RESET}`);
+	console.info(`     ${DIM}Reading ~/.matrix/profiles/prod.json${RESET}`);
 	printArrow("Profile env → Bun.shell", GREEN);
 
-	console.log(`\n  ${BOLD}3. Verify OpenClaw status${RESET}`);
-	console.log(`     ${DIM}Check gateway with new profile context${RESET}`);
+	console.info(`\n  ${BOLD}3. Verify OpenClaw status${RESET}`);
+	console.info(`     ${DIM}Check gateway with new profile context${RESET}`);
 	printArrow("ACP Query → Gateway", YELLOW);
 
-	console.log(`\n  ${BOLD}4. Gateway responds${RESET}`);
-	console.log(`     ${DIM}Status: running, Port: 18789${RESET}`);
+	console.info(`\n  ${BOLD}4. Gateway responds${RESET}`);
+	console.info(`     ${DIM}Status: running, Port: 18789${RESET}`);
 	printArrow("ACP Response → Bridge", YELLOW);
 
-	console.log(`\n  ${BOLD}5. MCP Response to user${RESET}`);
+	console.info(`\n  ${BOLD}5. MCP Response to user${RESET}`);
 	printCode(
 		`{
   "profile": "prod",
@@ -224,16 +224,16 @@ function showToolMatrix(): void {
 		{ name: "cron_list", mcp: true, acp: false, bun: true },
 	];
 
-	console.log(
+	console.info(
 		`\n    ${BOLD}Tool                    MCP    ACP    Bun    Description${RESET}`,
 	);
-	console.log(`    ${DIM}${"─".repeat(74)}${RESET}`);
+	console.info(`    ${DIM}${"─".repeat(74)}${RESET}`);
 
 	for (const tool of tools) {
 		const mcp = tool.mcp ? `${MAGENTA}●${RESET}` : `${DIM}○${RESET}`;
 		const acp = tool.acp ? `${YELLOW}●${RESET}` : `${DIM}○${RESET}`;
 		const bun = tool.bun ? `${GREEN}●${RESET}` : `${DIM}○${RESET}`;
-		console.log(
+		console.info(
 			`    ${tool.name.padEnd(22)} ${mcp.padEnd(6)} ${acp.padEnd(6)} ${bun.padEnd(6)} ${DIM}${getToolDesc(tool.name)}${RESET}`,
 		);
 	}
@@ -258,7 +258,7 @@ function showQuickReference(): void {
 
 	printSection("Commands");
 
-	console.log(`
+	console.info(`
     ${BOLD}Start MCP Server:${RESET}
       $ ${CYAN}kimi mcp serve${RESET}
 
@@ -277,7 +277,7 @@ function showQuickReference(): void {
 
 	printSection("Environment Variables");
 
-	console.log(`
+	console.info(`
     ${DIM}# Add to ~/.zshrc${RESET}
     export MATRIX_PROFILES_DIR="$HOME/.matrix/profiles"
     export KIMI_MCP_CONFIG="$HOME/.kimi/mcp.json"
@@ -312,11 +312,11 @@ async function main(): Promise<void> {
 			break;
 	}
 
-	console.log(`\n${DIM}  ┌${"─".repeat(74)}┐${RESET}`);
-	console.log(
+	console.info(`\n${DIM}  ┌${"─".repeat(74)}┐${RESET}`);
+	console.info(
 		`${DIM}  │${RESET}  ${CYAN}Tier-1380 OMEGA${RESET} | ${MAGENTA}MCP${RESET} + ${YELLOW}ACP${RESET} Integration | ${GREEN}Bun${RESET} v${Bun.version}  ${DIM}│${RESET}`,
 	);
-	console.log(`${DIM}  └${"─".repeat(74)}┘${RESET}\n`);
+	console.info(`${DIM}  └${"─".repeat(74)}┘${RESET}\n`);
 }
 
 if (import.meta.main) {

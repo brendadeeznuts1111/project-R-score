@@ -324,7 +324,7 @@ export class Fire22SecurityScanner {
   async performSecurityScan(directory: string = process.cwd()): Promise<SecurityScanResult> {
     this.scanStartTime = Bun.nanoseconds();
 
-    console.log('🔍 Starting Fire22 security scan...');
+    console.info('🔍 Starting Fire22 security scan...');
 
     const vulnerabilities: Vulnerability[] = [];
 
@@ -332,18 +332,18 @@ export class Fire22SecurityScanner {
     const packageJsonPath = join(directory, 'package.json');
     try {
       await stat(packageJsonPath);
-      console.log('📦 Scanning dependencies...');
+      console.info('📦 Scanning dependencies...');
       vulnerabilities.push(...(await this.scanDependencies(packageJsonPath)));
     } catch {
       // package.json doesn't exist, skip dependency scan
     }
 
     // Scan for secrets
-    console.log('🔐 Scanning for exposed secrets...');
+    console.info('🔐 Scanning for exposed secrets...');
     vulnerabilities.push(...(await this.scanSecrets(directory)));
 
     // Scan system security
-    console.log('🛡️ Scanning system security...');
+    console.info('🛡️ Scanning system security...');
     vulnerabilities.push(...(await this.scanSystemSecurity(directory)));
 
     const scanEndTime = Bun.nanoseconds();
@@ -358,11 +358,11 @@ export class Fire22SecurityScanner {
       scanDuration,
     };
 
-    console.log(`✅ Security scan completed in ${scanDuration.toFixed(2)}ms`);
-    console.log(
+    console.info(`✅ Security scan completed in ${scanDuration.toFixed(2)}ms`);
+    console.info(
       `📊 Security Score: ${result.score}/100 (Risk Level: ${result.riskLevel.toUpperCase()})`
     );
-    console.log(`🔍 Found ${vulnerabilities.length} potential security issues`);
+    console.info(`🔍 Found ${vulnerabilities.length} potential security issues`);
 
     return result;
   }
@@ -377,7 +377,7 @@ export class Fire22SecurityScanner {
         name: `scan-result-${Date.now()}`,
         value: JSON.stringify(scanResult),
       });
-      console.log('🔒 Scan results stored securely using Bun.secrets');
+      console.info('🔒 Scan results stored securely using Bun.secrets');
     } catch (error) {
       console.error('❌ Failed to store scan results:', error);
     }
@@ -390,7 +390,7 @@ export class Fire22SecurityScanner {
     try {
       // Note: Bun.secrets doesn't have a list function, so this is a placeholder
       // In a real implementation, you'd need to track result keys separately
-      console.log('🔍 Retrieving stored scan results...');
+      console.info('🔍 Retrieving stored scan results...');
       return [];
     } catch (error) {
       console.error('❌ Failed to retrieve scan results:', error);
@@ -408,16 +408,16 @@ if (import.meta.main) {
   const result = await scanner.performSecurityScan();
 
   if (result.vulnerabilities.length > 0) {
-    console.log('\n🚨 SECURITY VULNERABILITIES FOUND:');
+    console.info('\n🚨 SECURITY VULNERABILITIES FOUND:');
     for (const vuln of result.vulnerabilities) {
-      console.log(`\n📍 ${vuln.title} (${vuln.severity.toUpperCase()})`);
-      console.log(`   ${vuln.description}`);
-      console.log(`   💡 ${vuln.recommendation}`);
+      console.info(`\n📍 ${vuln.title} (${vuln.severity.toUpperCase()})`);
+      console.info(`   ${vuln.description}`);
+      console.info(`   💡 ${vuln.recommendation}`);
     }
   }
 
-  console.log('\n💡 RECOMMENDATIONS:');
-  result.recommendations.forEach(rec => console.log(`   ${rec}`));
+  console.info('\n💡 RECOMMENDATIONS:');
+  result.recommendations.forEach(rec => console.info(`   ${rec}`));
 
   // Store results securely
   await scanner.storeSecureScanResults(result);

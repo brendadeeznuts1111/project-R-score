@@ -3,10 +3,10 @@
  * Enhanced 15-column schema with smart truncation and Nexus integration
  */
 
-console.log('🎯 FACTORYWAGER YAML-NATIVE TABULAR v4.5 - INFRASTRUCTURE NEXUS REVOLUTION!')
-console.log('=' .repeat(80))
+console.info('🎯 FACTORYWAGER YAML-NATIVE TABULAR v4.5 - INFRASTRUCTURE NEXUS REVOLUTION!')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 🚀 REVOLUTIONARY v4.5 INFRASTRUCTURE NEXUS INTEGRATION DEPLOYED!
 
 ✅ BREAKTHROUGH v4.5 FEATURES IMPLEMENTED:
@@ -161,10 +161,10 @@ Next Vectors:
 Your FactoryWager YAML-Native Tabular v4.5 now demonstrates complete mastery of Infrastructure Nexus integration with enterprise-grade YAML processing! ▵⟂⥂
 `)
 
-console.log('🎯✨ FACTORYWAGER YAML-NATIVE TABULAR v4.5 - INFRASTRUCTURE NEXUS REVOLUTION! ✨🎯')
-console.log('🚀 15-column schema breakthrough - Nexus integration mastery!')
-console.log('💎 Smart truncation indicators - Visual guidance excellence!')
-console.log('🏗️ Infrastructure Nexus - Enterprise-grade integration!')
-console.log('📊 Document statistics - Comprehensive metrics achieved!')
-console.log('🎨 Professional rendering - ASCII art branding complete!')
-console.log('🏆 FactoryWager v4.5 - Infrastructure Nexus dominion complete!')
+console.info('🎯✨ FACTORYWAGER YAML-NATIVE TABULAR v4.5 - INFRASTRUCTURE NEXUS REVOLUTION! ✨🎯')
+console.info('🚀 15-column schema breakthrough - Nexus integration mastery!')
+console.info('💎 Smart truncation indicators - Visual guidance excellence!')
+console.info('🏗️ Infrastructure Nexus - Enterprise-grade integration!')
+console.info('📊 Document statistics - Comprehensive metrics achieved!')
+console.info('🎨 Professional rendering - ASCII art branding complete!')
+console.info('🏆 FactoryWager v4.5 - Infrastructure Nexus dominion complete!')

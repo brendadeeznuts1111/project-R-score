@@ -83,7 +83,7 @@ const redis = new Redis(REDIS_URL, {
 });
 
 redis.on('error', (err) => console.error('Redis error:', err.message));
-redis.on('connect', () => console.log('✅ Redis connected'));
+redis.on('connect', () => console.info('✅ Redis connected'));
 
 const pc = PINECONE_API_KEY
   ? new Pinecone({ apiKey: PINECONE_API_KEY })
@@ -106,7 +106,7 @@ function verifyPayPalWebhook(body: string, headers: Headers): boolean {
   const sig = headers.get('paypal-transmission-sig');
   if (!sig) return false;
   if (!PAYPAL_WEBHOOK_SECRET) {
-    console.log('⚠️  PayPal webhook secret not set - accepting (dev mode)');
+    console.info('⚠️  PayPal webhook secret not set - accepting (dev mode)');
     return true;
   }
   const expected = hmacSha256Hex(PAYPAL_WEBHOOK_SECRET, body);
@@ -117,7 +117,7 @@ function verifyVenmoWebhook(body: string, headers: Headers): boolean {
   const sig = headers.get('x-venmo-signature');
   if (!sig) return false;
   if (!VENMO_WEBHOOK_SECRET) {
-    console.log('⚠️  Venmo webhook secret not set - accepting (dev mode)');
+    console.info('⚠️  Venmo webhook secret not set - accepting (dev mode)');
     return true;
   }
   const expected = hmacSha256Hex(VENMO_WEBHOOK_SECRET, body);
@@ -153,7 +153,7 @@ async function getSuperProfile(userId: string): Promise<SuperProfile | null> {
     };
     
     const duration = (performance.now() - startTime).toFixed(2);
-    console.log(`✅ Profile query: ${duration}ms | Score: ${profile.score} | Drift: ${profile.drift}`);
+    console.info(`✅ Profile query: ${duration}ms | Score: ${profile.score} | Drift: ${profile.drift}`);
     
     return profile;
   } catch (err: any) {
@@ -204,7 +204,7 @@ async function executePersonalizedDeposit(
   const totalDeposit = amount + bonusCalc.bonus;
   
   // TODO: Wire to actual PayPal Payouts API
-  console.log(`💰 DEPOSIT: $${totalDeposit.toFixed(2)} → ${userId} (${bonusCalc.reason})`);
+  console.info(`💰 DEPOSIT: $${totalDeposit.toFixed(2)} → ${userId} (${bonusCalc.reason})`);
   
   await redis.publish('PERSONALIZED_DEPOSIT', JSON.stringify({
     userId,
@@ -241,13 +241,13 @@ async function handlePersonalizedPaymentFlow(
   // Step 2: Fetch habits (personalization)
   const habits = await getHabits(userId);
   if (habits) {
-    console.log(`🎯 User habits: ${habits.tier} (${habits.txnCount} txns, $${habits.avgTxn.toFixed(2)} avg)`);
+    console.info(`🎯 User habits: ${habits.tier} (${habits.txnCount} txns, $${habits.avgTxn.toFixed(2)} avg)`);
   }
   
   // Step 3: Apply VIP risk override
   const finalRisk = applyVipRiskOverride(habits, risk.risk);
   if (finalRisk.risk !== risk.risk) {
-    console.log(`👑 VIP override: ${risk.risk} → ${finalRisk.risk} (${finalRisk.reason})`);
+    console.info(`👑 VIP override: ${risk.risk} → ${finalRisk.risk} (${finalRisk.reason})`);
   }
   
   // Step 4: Decision with personalization
@@ -317,7 +317,7 @@ async function handlePersonalizedPaymentFlow(
   }
   
   const duration = (performance.now() - startTime).toFixed(2);
-  console.log(`⏱️  Total flow time: ${duration}ms | Status: ${result.status} | Bonus: $${result.bonus.toFixed(2)}`);
+  console.info(`⏱️  Total flow time: ${duration}ms | Status: ${result.status} | Bonus: $${result.bonus.toFixed(2)}`);
   
   return result;
 }
@@ -550,20 +550,20 @@ const server = Bun.serve({
   },
 });
 
-console.log('');
-console.log('╔════════════════════════════════════════════════════════════╗');
-console.log('║  🦘 Payment Webhook Server v2 - PERSONALIZED               ║');
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log(`║  URL:     http://localhost:${PORT}                        ║`);
-console.log(`║  Health:  http://localhost:${PORT}/health                 ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log('║  Features:                                                 ║');
-console.log('║    • 🐋 Whale detection (20% bonus)                        ║');
-console.log('║    • ⚡ High-volume (10% bonus)                            ║');
-console.log('║    • 🎯 Active (5% bonus)                                  ║');
-console.log('║    • 👑 VIP risk override                                  ║');
-console.log('║    • 💡 Personalized recommendations                       ║');
-console.log('╚════════════════════════════════════════════════════════════╝');
-console.log('');
+console.info('');
+console.info('╔════════════════════════════════════════════════════════════╗');
+console.info('║  🦘 Payment Webhook Server v2 - PERSONALIZED               ║');
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info(`║  URL:     http://localhost:${PORT}                        ║`);
+console.info(`║  Health:  http://localhost:${PORT}/health                 ║`);
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info('║  Features:                                                 ║');
+console.info('║    • 🐋 Whale detection (20% bonus)                        ║');
+console.info('║    • ⚡ High-volume (10% bonus)                            ║');
+console.info('║    • 🎯 Active (5% bonus)                                  ║');
+console.info('║    • 👑 VIP risk override                                  ║');
+console.info('║    • 💡 Personalized recommendations                       ║');
+console.info('╚════════════════════════════════════════════════════════════╝');
+console.info('');
 
 export default server;

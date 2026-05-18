@@ -8,7 +8,7 @@
 try {
   // Attempt common import patterns
   const pkg = await import('./package.json');
-  console.log('Project:', pkg.name || 'unknown');
+  console.info('Project:', pkg.name || 'unknown');
   
   // Try importing index files
   try {
@@ -26,7 +26,7 @@ try {
   // Small delay to ensure profiling captures the state
   await new Promise(resolve => setTimeout(resolve, 100));
   
-  console.log('Profile test completed');
+  console.info('Profile test completed');
 } catch (error) {
   console.error('Error in profile test:', error);
 }

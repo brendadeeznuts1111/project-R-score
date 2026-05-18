@@ -41,18 +41,18 @@ class ColorLint {
   }
 
   async run() {
-    console.log('🔍 ColorLint - Strict Color Validation');
+    console.info('🔍 ColorLint - Strict Color Validation');
     
     const result = await this.validate();
     this.displayResults(result);
     
     if (this.config.failOnError && !result.valid) {
-      console.log('\n❌ Color validation failed. Fix violations before proceeding.');
+      console.info('\n❌ Color validation failed. Fix violations before proceeding.');
       process.exit(1);
     }
     
     if (result.valid) {
-      console.log('\n✅ All colors are valid!');
+      console.info('\n✅ All colors are valid!');
     }
   }
 
@@ -85,7 +85,7 @@ class ColorLint {
         
         // Save default palette for future use
         writeFileSync(paletteFile, JSON.stringify(this.palette, null, 2));
-        console.log(`📝 Created default palette: ${paletteFile}`);
+        console.info(`📝 Created default palette: ${paletteFile}`);
       }
     } catch (error) {
       console.error(`❌ Failed to load palette: ${paletteFile}`);
@@ -238,15 +238,15 @@ class ColorLint {
   }
 
   private displayResults(result: ColorLintResult) {
-    console.log('\n📊 ColorLint Results:');
-    console.log('================================');
-    console.log(`📁 Total Files: ${result.summary.totalFiles}`);
-    console.log(`✅ Valid Files: ${result.summary.totalFiles - result.summary.violations}`);
-    console.log(`❌ Violations: ${result.summary.violations}`);
-    console.log(`📈 Compliance: ${result.summary.compliance}%`);
+    console.info('\n📊 ColorLint Results:');
+    console.info('================================');
+    console.info(`📁 Total Files: ${result.summary.totalFiles}`);
+    console.info(`✅ Valid Files: ${result.summary.totalFiles - result.summary.violations}`);
+    console.info(`❌ Violations: ${result.summary.violations}`);
+    console.info(`📈 Compliance: ${result.summary.compliance}%`);
     
     if (result.violations.length > 0) {
-      console.log('\n🚨 Color Violations:');
+      console.info('\n🚨 Color Violations:');
       
       // Group violations by file
       const violationsByFile = result.violations.reduce((acc, v) => {
@@ -256,25 +256,25 @@ class ColorLint {
       }, {} as { [key: string]: typeof result.violations });
       
       Object.entries(violationsByFile).forEach(([file, violations]) => {
-        console.log(`\n📄 ${file}:`);
+        console.info(`\n📄 ${file}:`);
         violations.forEach(v => {
-          console.log(`   • Line ${v.line}: \`${v.color}\` (${v.rule})`);
+          console.info(`   • Line ${v.line}: \`${v.color}\` (${v.rule})`);
           if (v.expected.length > 0) {
-            console.log(`     Expected: ${v.expected.slice(0, 3).join(', ')}${v.expected.length > 3 ? '...' : ''}`);
+            console.info(`     Expected: ${v.expected.slice(0, 3).join(', ')}${v.expected.length > 3 ? '...' : ''}`);
           }
         });
       });
       
-      console.log('\n💡 Suggestions:');
-      console.log('   • Run with --fix to auto-correct common issues');
-      console.log('   • Check the palette file for approved colors');
-      console.log('   • Use CSS custom properties for consistency');
+      console.info('\n💡 Suggestions:');
+      console.info('   • Run with --fix to auto-correct common issues');
+      console.info('   • Check the palette file for approved colors');
+      console.info('   • Use CSS custom properties for consistency');
     }
     
     // Save detailed report
     const reportFile = this.config.output || 'colorlint-report.json';
     writeFileSync(reportFile, JSON.stringify(result, null, 2));
-    console.log(`\n📄 Detailed report saved to: ${reportFile}`);
+    console.info(`\n📄 Detailed report saved to: ${reportFile}`);
   }
 }
 

@@ -280,7 +280,7 @@ export class Fire22ApiClient {
         await this.handleAgentBalanceUpdated(payload.data);
         break;
       default:
-        console.log(`Unhandled webhook event: ${payload.event}`);
+        console.info(`Unhandled webhook event: ${payload.event}`);
     }
   }
 
@@ -448,7 +448,7 @@ export class Fire22ApiClient {
    * Handle transaction completed webhook
    */
   private async handleTransactionCompleted(data: any): Promise<void> {
-    console.log('Transaction completed:', data);
+    console.info('Transaction completed:', data);
     // Implement your business logic here
     // e.g., update local database, send notifications, etc.
   }
@@ -457,7 +457,7 @@ export class Fire22ApiClient {
    * Handle user status changed webhook
    */
   private async handleUserStatusChanged(data: any): Promise<void> {
-    console.log('User status changed:', data);
+    console.info('User status changed:', data);
     // Implement your business logic here
   }
 
@@ -465,7 +465,7 @@ export class Fire22ApiClient {
    * Handle agent balance updated webhook
    */
   private async handleAgentBalanceUpdated(data: any): Promise<void> {
-    console.log('Agent balance updated:', data);
+    console.info('Agent balance updated:', data);
     // Implement your business logic here
   }
 

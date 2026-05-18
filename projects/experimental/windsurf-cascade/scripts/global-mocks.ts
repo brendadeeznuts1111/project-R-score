@@ -43,7 +43,7 @@ mock.module("@citadel/nba-api", () => ({
 // Mock database dependencies
 mock.module("@citadel/database", () => ({
     query: mock((sql: string, params?: any[]) => {
-        console.log(`[Mock DB] Executing: ${sql.substring(0, 50)}...`);
+        console.info(`[Mock DB] Executing: ${sql.substring(0, 50)}...`);
         return Promise.resolve({
             rows: [
                 {
@@ -61,11 +61,11 @@ mock.module("@citadel/database", () => ({
     }),
 
     transaction: mock((callback: any) => {
-        console.log('[Mock DB] Transaction started');
+        console.info('[Mock DB] Transaction started');
         return Promise.resolve(callback({
             query: mock.query
         })).then(result => {
-            console.log('[Mock DB] Transaction completed');
+            console.info('[Mock DB] Transaction completed');
             return result;
         });
     })
@@ -97,24 +97,24 @@ mock.module("./external-api", () => ({
 // Mock filesystem operations
 mock.module("fs", () => ({
     readFileSync: mock((path: string) => {
-        console.log(`[Mock FS] Reading file: ${path}`);
+        console.info(`[Mock FS] Reading file: ${path}`);
         return JSON.stringify({ test: "data", path });
     }),
 
     writeFileSync: mock((path: string, data: string) => {
-        console.log(`[Mock FS] Writing file: ${path}`);
+        console.info(`[Mock FS] Writing file: ${path}`);
         return true;
     }),
 
     existsSync: mock((path: string) => {
-        console.log(`[Mock FS] Checking existence: ${path}`);
+        console.info(`[Mock FS] Checking existence: ${path}`);
         return true;
     })
 }));
 
 // Mock network requests
 global.fetch = mock((url: string, options?: any) => {
-    console.log(`[Mock Fetch] ${url}`);
+    console.info(`[Mock Fetch] ${url}`);
     return Promise.resolve({
         ok: true,
         status: 200,
@@ -182,8 +182,8 @@ global.testUtils = {
     delay: (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 };
 
-console.log('🎭 Global mocks loaded successfully');
-console.log('   Environment: test');
-console.log('   API URL: http://localhost:3001');
-console.log('   Database: postgresql://localhost:5432/test_db');
-console.log('   External services: mocked');
+console.info('🎭 Global mocks loaded successfully');
+console.info('   Environment: test');
+console.info('   API URL: http://localhost:3001');
+console.info('   Database: postgresql://localhost:5432/test_db');
+console.info('   External services: mocked');

@@ -4,7 +4,7 @@ import { LightningService } from "../src/services/lightningService";
 import { KYCValidator } from "../src/services/lightningService";
 import { SavingsOptimizer } from "../src/services/lightningService";
 
-console.log(`
+console.info(`
 🧪 **LIGHTNING NETWORK INTEGRATION TESTS**
 ═══════════════════════════════════════════════════════════════════
 
@@ -25,17 +25,17 @@ describe("LightningService", () => {
   let lightning: LightningService;
 
   beforeAll(() => {
-    console.log("🔧 Initializing LightningService for testing...");
+    console.info("🔧 Initializing LightningService for testing...");
     lightning = LightningService.getInstance();
   });
 
   afterAll(() => {
-    console.log("🧹 Cleaning up LightningService tests...");
+    console.info("🧹 Cleaning up LightningService tests...");
   });
 
   describe("Invoice Generation", () => {
     test("generates valid BOLT-11 invoice", async () => {
-      console.log("📝 Testing BOLT-11 invoice generation...");
+      console.info("📝 Testing BOLT-11 invoice generation...");
       
       const invoice = await lightning.generateQuestInvoice({
         questId: "test-quest-123",
@@ -49,11 +49,11 @@ describe("LightningService", () => {
       expect(invoice.length).toBeGreaterThan(100);
       expect(invoice).toContain("test"); // Should contain our test description
       
-      console.log(`✅ Generated invoice: ${invoice.substring(0, 50)}...`);
+      console.info(`✅ Generated invoice: ${invoice.substring(0, 50)}...`);
     });
 
     test("handles invoice generation with minimum amount", async () => {
-      console.log("📝 Testing minimum amount invoice...");
+      console.info("📝 Testing minimum amount invoice...");
       
       const invoice = await lightning.generateQuestInvoice({
         questId: "min-quest",
@@ -66,11 +66,11 @@ describe("LightningService", () => {
       expect(invoice).toMatch(/^lnbc1/);
       expect(invoice.length).toBeGreaterThan(50);
       
-      console.log(`✅ Minimum amount invoice generated`);
+      console.info(`✅ Minimum amount invoice generated`);
     });
 
     test("handles invoice generation with large amount", async () => {
-      console.log("📝 Testing large amount invoice...");
+      console.info("📝 Testing large amount invoice...");
       
       const invoice = await lightning.generateQuestInvoice({
         questId: "large-quest",
@@ -83,11 +83,11 @@ describe("LightningService", () => {
       expect(invoice).toMatch(/^lnbc1/);
       expect(invoice.length).toBeGreaterThan(100);
       
-      console.log(`✅ Large amount invoice generated`);
+      console.info(`✅ Large amount invoice generated`);
     });
 
     test("rejects invalid invoice parameters", async () => {
-      console.log("📝 Testing invalid parameter rejection...");
+      console.info("📝 Testing invalid parameter rejection...");
       
       // Test negative amount
       await expect(lightning.generateQuestInvoice({
@@ -105,13 +105,13 @@ describe("LightningService", () => {
         description: "Zero Test"
       })).rejects.toThrow();
       
-      console.log(`✅ Invalid parameters properly rejected`);
+      console.info(`✅ Invalid parameters properly rejected`);
     });
   });
 
   describe("Node Balance", () => {
     test("retrieves node balance correctly", async () => {
-      console.log("💰 Testing node balance retrieval...");
+      console.info("💰 Testing node balance retrieval...");
       
       const balance = await lightning.getNodeBalance();
       
@@ -125,13 +125,13 @@ describe("LightningService", () => {
       expect(balance.remote).toBeGreaterThanOrEqual(0);
       expect(balance.pending).toBeGreaterThanOrEqual(0);
       
-      console.log(`✅ Node balance: Local=${balance.local}, Remote=${balance.remote}, Pending=${balance.pending}`);
+      console.info(`✅ Node balance: Local=${balance.local}, Remote=${balance.remote}, Pending=${balance.pending}`);
     });
   });
 
   describe("Invoice Settlement", () => {
     test("processes settled invoice correctly", async () => {
-      console.log("💰 Testing invoice settlement processing...");
+      console.info("💰 Testing invoice settlement processing...");
       
       const webhookData = {
         state: "SETTLED",
@@ -143,11 +143,11 @@ describe("LightningService", () => {
       // Should not throw
       await expect(lightning.handleInvoiceSettlement(webhookData)).resolves.not.toThrow();
       
-      console.log(`✅ Invoice settlement processed successfully`);
+      console.info(`✅ Invoice settlement processed successfully`);
     });
 
     test("ignores non-settled invoices", async () => {
-      console.log("💰 Testing non-settled invoice handling...");
+      console.info("💰 Testing non-settled invoice handling...");
       
       const webhookData = {
         state: "OPEN",
@@ -159,7 +159,7 @@ describe("LightningService", () => {
       // Should not throw or process
       await expect(lightning.handleInvoiceSettlement(webhookData)).resolves.not.toThrow();
       
-      console.log(`✅ Non-settled invoice properly ignored`);
+      console.info(`✅ Non-settled invoice properly ignored`);
     });
   });
 });
@@ -172,24 +172,24 @@ describe("KYCValidator", () => {
   let kycValidator: KYCValidator;
 
   beforeAll(() => {
-    console.log("🔐 Initializing KYCValidator for testing...");
+    console.info("🔐 Initializing KYCValidator for testing...");
     kycValidator = new KYCValidator();
   });
 
   describe("Lightning Payment Validation", () => {
     test("allows compliant small payments", async () => {
-      console.log("🔍 Testing compliant small payment validation...");
+      console.info("🔍 Testing compliant small payment validation...");
       
       const result = await kycValidator.validateLightningPayment("low-risk-user", 100);
       
       expect(result.allowed).toBe(true);
       expect(result.requiresReview).toBeUndefined();
       
-      console.log(`✅ Small compliant payment allowed: $100`);
+      console.info(`✅ Small compliant payment allowed: $100`);
     });
 
     test("blocks payments exceeding FinCEN threshold", async () => {
-      console.log("🔍 Testing FinCEN threshold enforcement...");
+      console.info("🔍 Testing FinCEN threshold enforcement...");
       
       const result = await kycValidator.validateLightningPayment("any-user", 15000);
       
@@ -197,22 +197,22 @@ describe("KYCValidator", () => {
       expect(result.message).toContain("exceeds $10,000");
       expect(result.requiresReview).toBe(true);
       
-      console.log(`✅ Large payment properly blocked: $15,000`);
+      console.info(`✅ Large payment properly blocked: $15,000`);
     });
 
     test("blocks high-risk users over $3,000", async () => {
-      console.log("🔍 Testing high-risk user restrictions...");
+      console.info("🔍 Testing high-risk user restrictions...");
       
       const result = await kycValidator.validateLightningPayment("high-risk-user", 5000);
       
       expect(result.allowed).toBe(false);
       expect(result.requiresReview).toBe(true);
       
-      console.log(`✅ High-risk user payment blocked: $5,000`);
+      console.info(`✅ High-risk user payment blocked: $5,000`);
     });
 
     test("enforces daily limits per risk tier", async () => {
-      console.log("🔍 Testing daily limit enforcement...");
+      console.info("🔍 Testing daily limit enforcement...");
       
       // Test multiple payments that would exceed daily limit
       const result1 = await kycValidator.validateLightningPayment("medium-risk-user", 3000);
@@ -223,7 +223,7 @@ describe("KYCValidator", () => {
       expect(result2.allowed).toBe(false);
       expect(result2.message).toContain("Daily Lightning limit exceeded");
       
-      console.log(`✅ Daily limits properly enforced`);
+      console.info(`✅ Daily limits properly enforced`);
     });
   });
 });
@@ -236,13 +236,13 @@ describe("SavingsOptimizer", () => {
   let savingsOptimizer: SavingsOptimizer;
 
   beforeAll(() => {
-    console.log("💰 Initializing SavingsOptimizer for testing...");
+    console.info("💰 Initializing SavingsOptimizer for testing...");
     savingsOptimizer = new SavingsOptimizer();
   });
 
   describe("Payment Routing", () => {
     test("routes microtransactions to Lightning wallet", async () => {
-      console.log("💸 Testing microtransaction routing...");
+      console.info("💸 Testing microtransaction routing...");
       
       const result = await savingsOptimizer.processLightningPayment({
         userId: "micro-user",
@@ -254,11 +254,11 @@ describe("SavingsOptimizer", () => {
       expect(result.amount).toBeLessThan(50);
       expect(result.projectedYield).toBe(0);
       
-      console.log(`✅ Microtransaction routed to Lightning wallet: $${result.amount.toFixed(2)}`);
+      console.info(`✅ Microtransaction routed to Lightning wallet: $${result.amount.toFixed(2)}`);
     });
 
     test("routes medium amounts to Cash App Green", async () => {
-      console.log("💳 Testing Cash App Green routing...");
+      console.info("💳 Testing Cash App Green routing...");
       
       const result = await savingsOptimizer.processLightningPayment({
         userId: "green-user",
@@ -271,11 +271,11 @@ describe("SavingsOptimizer", () => {
       expect(result.amount).toBeLessThan(1000);
       expect(result.projectedYield).toBeGreaterThan(0);
       
-      console.log(`✅ Medium amount routed to Cash App Green: $${result.amount.toFixed(2)} (Yield: $${result.projectedYield.toFixed(2)})`);
+      console.info(`✅ Medium amount routed to Cash App Green: $${result.amount.toFixed(2)} (Yield: $${result.projectedYield.toFixed(2)})`);
     });
 
     test("routes large amounts to standard account", async () => {
-      console.log("🏦 Testing standard account routing...");
+      console.info("🏦 Testing standard account routing...");
       
       const result = await savingsOptimizer.processLightningPayment({
         userId: "standard-user",
@@ -287,11 +287,11 @@ describe("SavingsOptimizer", () => {
       expect(result.amount).toBeGreaterThanOrEqual(1000);
       expect(result.projectedYield).toBeGreaterThan(0);
       
-      console.log(`✅ Large amount routed to standard account: $${result.amount.toFixed(2)} (Yield: $${result.projectedYield.toFixed(2)})`);
+      console.info(`✅ Large amount routed to standard account: $${result.amount.toFixed(2)} (Yield: $${result.projectedYield.toFixed(2)})`);
     });
 
     test("calculates projected yield correctly", async () => {
-      console.log("📊 Testing yield calculations...");
+      console.info("📊 Testing yield calculations...");
       
       const greenResult = await savingsOptimizer.processLightningPayment({
         userId: "yield-test-user",
@@ -302,7 +302,7 @@ describe("SavingsOptimizer", () => {
       expect(greenResult.destination).toBe("cashapp_green");
       expect(greenResult.projectedYield).toBeCloseTo(9 * 0.0325, 2); // 3.25% APY
       
-      console.log(`✅ Yield calculation correct: $${greenResult.projectedYield.toFixed(2)} annually`);
+      console.info(`✅ Yield calculation correct: $${greenResult.projectedYield.toFixed(2)} annually`);
     });
   });
 });
@@ -313,7 +313,7 @@ describe("SavingsOptimizer", () => {
 
 describe("Lightning Integration", () => {
   test("end-to-end quest payment flow", async () => {
-    console.log("🔄 Testing end-to-end payment flow...");
+    console.info("🔄 Testing end-to-end payment flow...");
     
     const lightning = LightningService.getInstance();
     const kycValidator = new KYCValidator();
@@ -348,11 +348,11 @@ describe("Lightning Integration", () => {
     });
     expect(routingResult.destination).toBe("cashapp_green");
     
-    console.log(`✅ End-to-end flow completed successfully`);
+    console.info(`✅ End-to-end flow completed successfully`);
   });
 
   test("handles compliance rejection flow", async () => {
-    console.log("🚫 Testing compliance rejection flow...");
+    console.info("🚫 Testing compliance rejection flow...");
     
     const kycValidator = new KYCValidator();
     
@@ -362,11 +362,11 @@ describe("Lightning Integration", () => {
     expect(validationResult.allowed).toBe(false);
     expect(result.requiresReview).toBe(true);
     
-    console.log(`✅ Compliance rejection flow working correctly`);
+    console.info(`✅ Compliance rejection flow working correctly`);
   });
 
   test("auto-consolidation triggers correctly", async () => {
-    console.log("💰 Testing auto-consolidation trigger...");
+    console.info("💰 Testing auto-consolidation trigger...");
     
     const lightning = LightningService.getInstance();
     
@@ -380,7 +380,7 @@ describe("Lightning Integration", () => {
     // This would trigger consolidation in real implementation
     expect(mockBalance.local).toBeGreaterThan(500000);
     
-    console.log(`✅ Auto-consolidation threshold correctly identified`);
+    console.info(`✅ Auto-consolidation threshold correctly identified`);
   });
 });
 
@@ -390,7 +390,7 @@ describe("Lightning Integration", () => {
 
 describe("Performance Tests", () => {
   test("invoice generation under 1 second", async () => {
-    console.log("⚡ Testing invoice generation performance...");
+    console.info("⚡ Testing invoice generation performance...");
     
     const lightning = LightningService.getInstance();
     const startTime = performance.now();
@@ -405,11 +405,11 @@ describe("Performance Tests", () => {
     const duration = performance.now() - startTime;
     expect(duration).toBeLessThan(1000); // Under 1 second
     
-    console.log(`✅ Invoice generation: ${duration.toFixed(2)}ms`);
+    console.info(`✅ Invoice generation: ${duration.toFixed(2)}ms`);
   });
 
   test("KYC validation under 500ms", async () => {
-    console.log("⚡ Testing KYC validation performance...");
+    console.info("⚡ Testing KYC validation performance...");
     
     const kycValidator = new KYCValidator();
     const startTime = performance.now();
@@ -419,11 +419,11 @@ describe("Performance Tests", () => {
     const duration = performance.now() - startTime;
     expect(duration).toBeLessThan(500); // Under 500ms
     
-    console.log(`✅ KYC validation: ${duration.toFixed(2)}ms`);
+    console.info(`✅ KYC validation: ${duration.toFixed(2)}ms`);
   });
 
   test("savings routing under 200ms", async () => {
-    console.log("⚡ Testing savings routing performance...");
+    console.info("⚡ Testing savings routing performance...");
     
     const savingsOptimizer = new SavingsOptimizer();
     const startTime = performance.now();
@@ -437,7 +437,7 @@ describe("Performance Tests", () => {
     const duration = performance.now() - startTime;
     expect(duration).toBeLessThan(200); // Under 200ms
     
-    console.log(`✅ Savings routing: ${duration.toFixed(2)}ms`);
+    console.info(`✅ Savings routing: ${duration.toFixed(2)}ms`);
   });
 });
 
@@ -446,7 +446,7 @@ describe("Performance Tests", () => {
 // ============================================================================
 
 async function runLightningTests() {
-  console.log(`
+  console.info(`
 🚀 **LIGHTNING NETWORK TEST SUITE**
 ═══════════════════════════════════════════════════════════════════
 
@@ -463,7 +463,7 @@ async function runLightningTests() {
     const startTime = performance.now();
     
     // Run tests (Bun test runner will handle this)
-    console.log("🧪 Starting test execution...");
+    console.info("🧪 Starting test execution...");
     
     const testResults = {
       total: 0,
@@ -473,15 +473,15 @@ async function runLightningTests() {
     };
     
     // Mock test execution (real tests would be run by Bun test runner)
-    console.log("📊 Test Results:");
-    console.log(`   Total Tests: ${testResults.total}`);
-    console.log(`   Passed: ${testResults.passed}`);
-    console.log(`   Failed: ${testResults.failed}`);
-    console.log(`   Skipped: ${testResults.skipped}`);
+    console.info("📊 Test Results:");
+    console.info(`   Total Tests: ${testResults.total}`);
+    console.info(`   Passed: ${testResults.passed}`);
+    console.info(`   Failed: ${testResults.failed}`);
+    console.info(`   Skipped: ${testResults.skipped}`);
     
     const duration = performance.now() - startTime;
     
-    console.log(`
+    console.info(`
 🎉 **LIGHTNING TESTS COMPLETED!**
 ═══════════════════════════════════════════════════════════════════
 

@@ -192,10 +192,10 @@ async function run(): Promise<number> {
   const failed = checks.filter((c) => !c.ok);
   for (const check of checks) {
     const status = check.ok ? "PASS" : "FAIL";
-    console.log(`[${status}] ${check.name} :: ${check.details}`);
+    console.info(`[${status}] ${check.name} :: ${check.details}`);
   }
   const { base } = getDashboardTestConfig();
-  console.log(`Checked ${checks.length} protocol assertions against ${base}${PROTOCOL ? ` (protocol=${PROTOCOL})` : ""}`);
+  console.info(`Checked ${checks.length} protocol assertions against ${base}${PROTOCOL ? ` (protocol=${PROTOCOL})` : ""}`);
   return failed.length === 0 ? 0 : 1;
 }
 

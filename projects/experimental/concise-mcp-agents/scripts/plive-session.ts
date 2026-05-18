@@ -15,7 +15,7 @@ switch (command) {
 		await testSession();
 		break;
 	default:
-		console.log(`Usage:
+		console.info(`Usage:
   bun scripts/plive-session.ts setup
   bun scripts/plive-session.ts status
   bun scripts/plive-session.ts test`);
@@ -32,7 +32,7 @@ async function setupSession(): Promise<void> {
 			rl.question(question, (answer) => resolve(answer));
 		});
 
-	console.log("Paste the browser values from your logged-in Fantasy402 / PLIVE session.");
+	console.info("Paste the browser values from your logged-in Fantasy402 / PLIVE session.");
 	const cookie = (await ask("Cookie: ")).trim();
 	if (!cookie) {
 		rl.close();
@@ -42,18 +42,18 @@ async function setupSession(): Promise<void> {
 	rl.close();
 
 	await storePliveSession({ cookie, sessionId });
-	console.log("✅ PLIVE session stored");
+	console.info("✅ PLIVE session stored");
 	await printStatus();
 }
 
 async function printStatus(): Promise<void> {
 	try {
 		const { cookie, sessionId } = await getPliveSession();
-		console.log("PLIVE session is configured");
-		console.log(`cookie=${redactSecret(cookie)}`);
-		console.log(`x-gs-session=${sessionId ? redactSecret(sessionId) : "(not set)"}`);
+		console.info("PLIVE session is configured");
+		console.info(`cookie=${redactSecret(cookie)}`);
+		console.info(`x-gs-session=${sessionId ? redactSecret(sessionId) : "(not set)"}`);
 	} catch (error) {
-		console.log(error instanceof Error ? error.message : String(error));
+		console.info(error instanceof Error ? error.message : String(error));
 		process.exit(1);
 	}
 }
@@ -82,9 +82,9 @@ async function testSession(): Promise<void> {
 		body: `action=getBetReport&minVolume=0&maxTimeUntilScore=0&from=${from}&to=${now}&toTime=86399&dateFilterBy=calcTime&state=0`,
 	});
 
-	console.log(`${response.status} ${response.statusText}`);
+	console.info(`${response.status} ${response.statusText}`);
 	const text = await response.text();
-	console.log(text.slice(0, 800));
+	console.info(text.slice(0, 800));
 
 	if (!response.ok) {
 		process.exit(1);

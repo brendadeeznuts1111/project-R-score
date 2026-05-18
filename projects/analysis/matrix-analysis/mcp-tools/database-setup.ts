@@ -60,12 +60,12 @@ export function setupDatabase(): Database {
   db.run("CREATE INDEX IF NOT EXISTS idx_daily_tenant_date ON daily_violations(tenant, date)");
   db.run("CREATE INDEX IF NOT EXISTS idx_metrics_tenant_date ON tenant_metrics(tenant, metric_date)");
 
-  console.log("✅ Database initialized successfully");
+  console.info("✅ Database initialized successfully");
   return db;
 }
 
 export function insertHistoricalData(db: Database, tenant: string, months: number = 12): void {
-  console.log(`📊 Inserting historical data for ${tenant} (${months} months)`);
+  console.info(`📊 Inserting historical data for ${tenant} (${months} months)`);
 
   const now = new Date();
 
@@ -84,7 +84,7 @@ export function insertHistoricalData(db: Database, tenant: string, months: numbe
         VALUES (?, ?, ?, ?, ?)
       `, [tenant, monthStr, parseFloat(baseScore.toFixed(2)), totalLines, violationCount]);
 
-      console.log(`  ✅ ${monthStr}: ${baseScore.toFixed(2)}% compliance, ${violationCount} violations`);
+      console.info(`  ✅ ${monthStr}: ${baseScore.toFixed(2)}% compliance, ${violationCount} violations`);
     } catch (error) {
       console.error(`  ❌ Failed to insert ${monthStr}:`, error);
     }
@@ -92,7 +92,7 @@ export function insertHistoricalData(db: Database, tenant: string, months: numbe
 }
 
 export function insertSampleViolations(db: Database, tenant: string, days: number = 30): void {
-  console.log(`🚨 Inserting sample violations for ${tenant} (${days} days)`);
+  console.info(`🚨 Inserting sample violations for ${tenant} (${days} days)`);
 
   const files = [
     "src/components/Header.tsx",
@@ -130,11 +130,11 @@ export function insertSampleViolations(db: Database, tenant: string, days: numbe
     }
   }
 
-  console.log(`  ✅ Generated sample violations for ${days} days`);
+  console.info(`  ✅ Generated sample violations for ${days} days`);
 }
 
 export function calculateTenantMetrics(db: Database, tenant: string): void {
-  console.log(`📈 Calculating metrics for ${tenant}`);
+  console.info(`📈 Calculating metrics for ${tenant}`);
 
   // Get last 30 days of data
   const thirtyDaysAgo = new Date();
@@ -171,7 +171,7 @@ export function calculateTenantMetrics(db: Database, tenant: string): void {
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `, [tenant, today, result.total_files || 0, totalLines, result.critical_violations || 0, result.warning_violations || 0, parseFloat(complianceScore.toFixed(2))]);
 
-      console.log(`  ✅ Metrics calculated: ${complianceScore.toFixed(2)}% compliance`);
+      console.info(`  ✅ Metrics calculated: ${complianceScore.toFixed(2)}% compliance`);
     }
   } catch (error) {
     console.error(`  ❌ Failed to calculate metrics:`, error);
@@ -180,8 +180,8 @@ export function calculateTenantMetrics(db: Database, tenant: string): void {
 
 // Main setup function
 if (import.meta.main) {
-  console.log("🚀 Setting up Tier-1380 Database");
-  console.log("=" .repeat(50));
+  console.info("🚀 Setting up Tier-1380 Database");
+  console.info("=" .repeat(50));
 
   const db = setupDatabase();
 
@@ -189,16 +189,16 @@ if (import.meta.main) {
   const tenants = ["tenant-a", "tenant-b", "tenant-c"];
 
   tenants.forEach(tenant => {
-    console.log(`\n📊 Processing ${tenant}`);
+    console.info(`\n📊 Processing ${tenant}`);
     insertHistoricalData(db, tenant, 12);
     insertSampleViolations(db, tenant, 30);
     calculateTenantMetrics(db, tenant);
   });
 
-  console.log("\n🎉 Database setup complete!");
-  console.log("\n📋 Available tables:");
+  console.info("\n🎉 Database setup complete!");
+  console.info("\n📋 Available tables:");
   const tables = db.query("SELECT name FROM sqlite_master WHERE type='table'").all();
-  tables.forEach((table: any) => console.log(`  - ${table.name}`));
+  tables.forEach((table: any) => console.info(`  - ${table.name}`));
 
   db.close();
 }

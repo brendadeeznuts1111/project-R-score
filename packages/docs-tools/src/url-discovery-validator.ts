@@ -11,7 +11,7 @@ export class URLDiscoveryValidator {
    * Discover all URLs in the project
    */
   static async discoverURLs(): Promise<void> {
-    console.log('🔍 DISCOVERING URLs IN PROJECT...');
+    console.info('🔍 DISCOVERING URLs IN PROJECT...');
 
     // Known URLs from documentation constants
     const knownURLs = [
@@ -92,7 +92,7 @@ export class URLDiscoveryValidator {
       this.FOUND_URLS.set(url, { source, type });
     });
 
-    console.log(`   Found ${this.FOUND_URLS.size} URLs`);
+    console.info(`   Found ${this.FOUND_URLS.size} URLs`);
 
     // Group by type
     const byType = new Map<string, string[]>();
@@ -102,7 +102,7 @@ export class URLDiscoveryValidator {
     }
 
     for (const [type, urls] of byType) {
-      console.log(`   ${type}: ${urls.length} URLs`);
+      console.info(`   ${type}: ${urls.length} URLs`);
     }
   }
 
@@ -117,7 +117,7 @@ export class URLDiscoveryValidator {
     errors: Array<{ url: string; error: string; source: string }>;
     performance: Array<{ url: string; time: number; source: string }>;
   }> {
-    console.log('\n🌐 VALIDATING DISCOVERED URLs...');
+    console.info('\n🌐 VALIDATING DISCOVERED URLs...');
 
     let total = 0;
     let valid = 0;
@@ -131,7 +131,7 @@ export class URLDiscoveryValidator {
 
       // Skip example.com URLs
       if (info.type === 'local') {
-        console.log(`   ⏭️  SKIP (local): ${url}`);
+        console.info(`   ⏭️  SKIP (local): ${url}`);
         skipped++;
         continue;
       }
@@ -145,16 +145,16 @@ export class URLDiscoveryValidator {
         const responseTime = Date.now() - startTime;
 
         if (response.ok) {
-          console.log(`   ✅ VALID (${responseTime.toFixed(0)}ms): ${url} [${info.source}]`);
+          console.info(`   ✅ VALID (${responseTime.toFixed(0)}ms): ${url} [${info.source}]`);
           valid++;
           performance.push({ url, time: responseTime, source: info.source });
         } else {
-          console.log(`   ❌ INVALID (${response.status}): ${url} [${info.source}]`);
+          console.info(`   ❌ INVALID (${response.status}): ${url} [${info.source}]`);
           invalid++;
           errors.push({ url, error: `HTTP ${response.status}`, source: info.source });
         }
       } catch (error) {
-        console.log(`   ❌ ERROR: ${url} [${info.source}] - ${error}`);
+        console.info(`   ❌ ERROR: ${url} [${info.source}] - ${error}`);
         invalid++;
         errors.push({ url, error: String(error), source: info.source });
       }
@@ -196,8 +196,8 @@ export class URLDiscoveryValidator {
    * Generate comprehensive report
    */
   static async generateReport(): Promise<void> {
-    console.log('\n📊 COMPREHENSIVE URL VALIDATION REPORT');
-    console.log('='.repeat(60));
+    console.info('\n📊 COMPREHENSIVE URL VALIDATION REPORT');
+    console.info('='.repeat(60));
 
     // Discover URLs
     await this.discoverURLs();
@@ -209,58 +209,58 @@ export class URLDiscoveryValidator {
     const perfAnalysis = this.analyzePerformance(results.performance);
 
     // Summary
-    console.log('\n📈 VALIDATION SUMMARY:');
-    console.log(`   Total URLs: ${results.total}`);
-    console.log(`   Valid: ${results.valid}`);
-    console.log(`   Invalid: ${results.invalid}`);
-    console.log(`   Skipped (local): ${results.skipped}`);
-    console.log(
+    console.info('\n📈 VALIDATION SUMMARY:');
+    console.info(`   Total URLs: ${results.total}`);
+    console.info(`   Valid: ${results.valid}`);
+    console.info(`   Invalid: ${results.invalid}`);
+    console.info(`   Skipped (local): ${results.skipped}`);
+    console.info(
       `   Success Rate: ${((results.valid / (results.total - results.skipped)) * 100).toFixed(1)}%`
     );
 
     // Performance metrics
     if (results.performance.length > 0) {
-      console.log(`\n⚡ PERFORMANCE METRICS:`);
-      console.log(`   Average Response Time: ${perfAnalysis.average.toFixed(0)}ms`);
+      console.info(`\n⚡ PERFORMANCE METRICS:`);
+      console.info(`   Average Response Time: ${perfAnalysis.average.toFixed(0)}ms`);
 
-      console.log('\n   🚀 Fastest URLs:');
+      console.info('\n   🚀 Fastest URLs:');
       perfAnalysis.fastest.forEach(({ url, time, source }) => {
-        console.log(`      ${time.toFixed(0)}ms - ${url} [${source}]`);
+        console.info(`      ${time.toFixed(0)}ms - ${url} [${source}]`);
       });
 
-      console.log('\n   🐌 Slowest URLs:');
+      console.info('\n   🐌 Slowest URLs:');
       perfAnalysis.slowest.forEach(({ url, time, source }) => {
-        console.log(`      ${time.toFixed(0)}ms - ${url} [${source}]`);
+        console.info(`      ${time.toFixed(0)}ms - ${url} [${source}]`);
       });
 
-      console.log('\n   📊 Performance by Source:');
+      console.info('\n   📊 Performance by Source:');
       for (const [source, stats] of Object.entries(perfAnalysis.bySource)) {
-        console.log(`      ${source}: ${stats.count} URLs, avg ${stats.avgTime.toFixed(0)}ms`);
+        console.info(`      ${source}: ${stats.count} URLs, avg ${stats.avgTime.toFixed(0)}ms`);
       }
     }
 
     // Errors
     if (results.errors.length > 0) {
-      console.log('\n🚨 VALIDATION ERRORS:');
+      console.info('\n🚨 VALIDATION ERRORS:');
       results.errors.forEach(({ url, error, source }) => {
-        console.log(`   • ${url} [${source}]: ${error}`);
+        console.info(`   • ${url} [${source}]: ${error}`);
       });
     }
 
     // Recommendations
-    console.log('\n💡 RECOMMENDATIONS:');
+    console.info('\n💡 RECOMMENDATIONS:');
     if (results.invalid > 0) {
-      console.log('   • Fix broken URLs found in validation errors');
+      console.info('   • Fix broken URLs found in validation errors');
     }
     if (perfAnalysis.slowest.length > 0 && perfAnalysis.slowest[0].time > 2000) {
-      console.log('   • Consider optimizing slow-loading URLs');
+      console.info('   • Consider optimizing slow-loading URLs');
     }
     if (results.skipped > 0) {
-      console.log('   • Review example.com URLs for production readiness');
+      console.info('   • Review example.com URLs for production readiness');
     }
-    console.log('   • Add new URLs to documentation constants for better tracking');
+    console.info('   • Add new URLs to documentation constants for better tracking');
 
-    console.log('\n' + '='.repeat(60));
+    console.info('\n' + '='.repeat(60));
   }
 }
 
@@ -269,12 +269,12 @@ export class URLDiscoveryValidator {
 // ============================================================================
 
 export async function runURLDiscoveryValidator(): Promise<void> {
-  console.log('🔍 COMPREHENSIVE URL VALIDATION FOR UNTRACKED FILES');
-  console.log('='.repeat(60));
+  console.info('🔍 COMPREHENSIVE URL VALIDATION FOR UNTRACKED FILES');
+  console.info('='.repeat(60));
 
   try {
     await URLDiscoveryValidator.generateReport();
-    console.log('\n✅ URL validation completed!');
+    console.info('\n✅ URL validation completed!');
   } catch (error) {
     console.error('\n❌ URL validation failed:', error);
     process.exit(1);

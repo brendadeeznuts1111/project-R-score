@@ -13,14 +13,14 @@ import { inspect } from "bun";
 import { spawn } from "bun";
 
 // Diagnostic and fallback for missing Bun features
-console.log(`Bun ${Bun.version} • Node ${process.version}`);
-console.log('✅ Bun.table:', typeof Bun.table);
-console.log('✅ Bun.inspect.table:', typeof Bun.inspect.table);
-console.log('✅ Bun.inspect.custom:', typeof Bun.inspect.custom);
-console.log('✅ Bun.deepEquals:', typeof Bun.deepEquals);
-console.log('✅ Bun.escapeHTML:', typeof Bun.escapeHTML);
-console.log('✅ Bun.stringWidth:', typeof Bun.stringWidth);
-console.log('✅ Bun.readline:', typeof Bun.readline);
+console.info(`Bun ${Bun.version} • Node ${process.version}`);
+console.info('✅ Bun.table:', typeof Bun.table);
+console.info('✅ Bun.inspect.table:', typeof Bun.inspect.table);
+console.info('✅ Bun.inspect.custom:', typeof Bun.inspect.custom);
+console.info('✅ Bun.deepEquals:', typeof Bun.deepEquals);
+console.info('✅ Bun.escapeHTML:', typeof Bun.escapeHTML);
+console.info('✅ Bun.stringWidth:', typeof Bun.stringWidth);
+console.info('✅ Bun.readline:', typeof Bun.readline);
 
 // Quick fix for missing features:
 // Bun.inspect.table returns a string, unlike console.table which just logs
@@ -163,21 +163,21 @@ async function analyzeCodebase(): Promise<CodebaseInsights> {
 
 // Dashboard display
 function dashboard(insights: CodebaseInsights) {
-  console.log("\n🎯 Dev HQ Codebase Insights\n");
-  console.log(`📊 Total Files: ${insights.stats.totalFiles}`);
-  console.log(`📝 Total Lines: ${insights.stats.totalLines.toLocaleString()}`);
-  console.log(`💾 Total Size: ${(insights.stats.totalSize / 1024).toFixed(2)} KB`);
-  console.log(`❤️  Health Score: ${insights.stats.healthScore}%`);
-  console.log("\n📚 Languages:");
+  console.info("\n🎯 Dev HQ Codebase Insights\n");
+  console.info(`📊 Total Files: ${insights.stats.totalFiles}`);
+  console.info(`📝 Total Lines: ${insights.stats.totalLines.toLocaleString()}`);
+  console.info(`💾 Total Size: ${(insights.stats.totalSize / 1024).toFixed(2)} KB`);
+  console.info(`❤️  Health Score: ${insights.stats.healthScore}%`);
+  console.info("\n📚 Languages:");
   for (const [lang, count] of Object.entries(insights.stats.languages)) {
-    console.log(`  ${lang}: ${count} files`);
+    console.info(`  ${lang}: ${count} files`);
   }
-  console.log("\n📁 Top Files:");
+  console.info("\n📁 Top Files:");
   insights.files
     .sort((a, b) => b.lines - a.lines)
     .slice(0, 10)
     .forEach((file) => {
-      console.log(`  ${file.path} (${file.lines} lines, ${file.language})`);
+      console.info(`  ${file.path} (${file.lines} lines, ${file.language})`);
     });
 }
 
@@ -299,7 +299,7 @@ program
         Size: `${(f.size / 1024).toFixed(1)} KB`,
         Language: f.language,
       }));
-      console.log(inspect.table(tableData));
+      console.info(inspect.table(tableData));
 
       // Stats table
       const statsTable = [
@@ -308,10 +308,10 @@ program
         { Metric: "Total Size", Value: `${(insights.stats.totalSize / 1024).toFixed(1)} KB` },
         { Metric: "Health Score", Value: `${insights.stats.healthScore}%` },
       ];
-      console.log("\n📊 Statistics:");
-      console.log(inspect.table(statsTable));
+      console.info("\n📊 Statistics:");
+      console.info(inspect.table(statsTable));
     } else if (options.json) {
-      console.log(JSON.stringify(insights, null, 2));
+      console.info(JSON.stringify(insights, null, 2));
     } else {
       dashboard(insights);
     }
@@ -347,46 +347,46 @@ program
       },
     });
 
-    console.log(`🚀 Dev HQ server running on ${server.url.href}`);
+    console.info(`🚀 Dev HQ server running on ${server.url.href}`);
 
     const opts = program.opts();
 
     // Log enabled features
     if (opts.hot) {
-      console.log("🔥 Hot reload enabled");
+      console.info("🔥 Hot reload enabled");
     }
     if (opts.watch) {
-      console.log("👀 Watch mode enabled");
+      console.info("👀 Watch mode enabled");
     }
     if (opts.inspect) {
       const port = typeof opts.inspect === "string"
         ? opts.inspect
         : "9229";
-      console.log(`🔍 Debugger available on port ${port}`);
+      console.info(`🔍 Debugger available on port ${port}`);
     }
     if (opts.inspectWait) {
-      console.log(`🔍 Debugger waiting for connection on port ${typeof opts.inspectWait === "string" ? opts.inspectWait : "9229"}`);
+      console.info(`🔍 Debugger waiting for connection on port ${typeof opts.inspectWait === "string" ? opts.inspectWait : "9229"}`);
     }
     if (opts.inspectBrk) {
-      console.log(`🔍 Debugger with breakpoint on port ${typeof opts.inspectBrk === "string" ? opts.inspectBrk : "9229"}`);
+      console.info(`🔍 Debugger with breakpoint on port ${typeof opts.inspectBrk === "string" ? opts.inspectBrk : "9229"}`);
     }
     if (opts.smol) {
-      console.log("💾 Low memory mode enabled (--smol)");
-      console.log("   → Using less memory, running GC more frequently");
+      console.info("💾 Low memory mode enabled (--smol)");
+      console.info("   → Using less memory, running GC more frequently");
     }
     if (opts.exposeGc) {
-      console.log("🗑️  Garbage collector exposed (--expose-gc)");
-      console.log("   → gc() available globally (Bun.gc() is always available)");
+      console.info("🗑️  Garbage collector exposed (--expose-gc)");
+      console.info("   → gc() available globally (Bun.gc() is always available)");
     }
     if (opts.consoleDepth) {
-      console.log(`📊 Console depth set to ${opts.consoleDepth} (--console-depth=${opts.consoleDepth})`);
-      console.log(`   → Object inspection depth: ${opts.consoleDepth}`);
+      console.info(`📊 Console depth set to ${opts.consoleDepth} (--console-depth=${opts.consoleDepth})`);
+      console.info(`   → Object inspection depth: ${opts.consoleDepth}`);
     }
     if (opts.preferOffline) {
-      console.log("📦 Using offline cache (--prefer-offline)");
+      console.info("📦 Using offline cache (--prefer-offline)");
     }
     if (opts.noInstall) {
-      console.log("⏭️  Auto-install disabled (--no-install)");
+      console.info("⏭️  Auto-install disabled (--no-install)");
     }
   });
 
@@ -399,10 +399,10 @@ program
     const score = insights.stats.healthScore;
     const status = score >= 70 ? "healthy" : score >= 50 ? "degraded" : "critical";
 
-    console.log(`📊 Health Score: ${score}%`);
-    console.log(`Status: ${status}`);
-    console.log(`Files: ${insights.stats.totalFiles}`);
-    console.log(`Lines: ${insights.stats.totalLines.toLocaleString()}`);
+    console.info(`📊 Health Score: ${score}%`);
+    console.info(`Status: ${status}`);
+    console.info(`Files: ${insights.stats.totalFiles}`);
+    console.info(`Lines: ${insights.stats.totalLines.toLocaleString()}`);
 
     process.exit(score < 70 ? 1 : 0);
   });
@@ -416,29 +416,29 @@ program
     const mem = process.memoryUsage();
     const formatBytes = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(2)} MB`;
 
-    console.log("\n🔧 Runtime Configuration:\n");
+    console.info("\n🔧 Runtime Configuration:\n");
 
     // Memory stats
-    console.log("💾 Memory Usage:");
-    console.log(`  Heap Used: ${formatBytes(mem.heapUsed)}`);
-    console.log(`  Heap Total: ${formatBytes(mem.heapTotal)}`);
-    console.log(`  External: ${formatBytes(mem.external)}`);
-    console.log(`  RSS: ${formatBytes(mem.rss)}`);
+    console.info("💾 Memory Usage:");
+    console.info(`  Heap Used: ${formatBytes(mem.heapUsed)}`);
+    console.info(`  Heap Total: ${formatBytes(mem.heapTotal)}`);
+    console.info(`  External: ${formatBytes(mem.external)}`);
+    console.info(`  RSS: ${formatBytes(mem.rss)}`);
 
     // Runtime flags detection (check both process.argv and CLI options)
-    console.log("\n⚙️  Runtime Flags:");
+    console.info("\n⚙️  Runtime Flags:");
     const argv = process.argv;
     const smolEnabled = argv.includes('--smol') || opts.smol;
     const exposeGcEnabled = argv.includes('--expose-gc') || opts.exposeGc;
 
-    console.log(`  --smol: ${smolEnabled ? '✅ enabled' : '❌ disabled'}`);
+    console.info(`  --smol: ${smolEnabled ? '✅ enabled' : '❌ disabled'}`);
     if (smolEnabled) {
-      console.log(`    → Memory-optimized mode: less memory, more frequent GC`);
+      console.info(`    → Memory-optimized mode: less memory, more frequent GC`);
     }
 
-    console.log(`  --expose-gc: ${exposeGcEnabled ? '✅ enabled' : '❌ disabled'}`);
+    console.info(`  --expose-gc: ${exposeGcEnabled ? '✅ enabled' : '❌ disabled'}`);
     if (exposeGcEnabled) {
-      console.log(`    → gc() available globally (Bun.gc() is always available)`);
+      console.info(`    → gc() available globally (Bun.gc() is always available)`);
     }
 
     const consoleDepthValue = opts.consoleDepth ||
@@ -446,37 +446,37 @@ program
         const match = argv.find(arg => arg.startsWith('--console-depth='));
         return match ? match.split('=')[1] : '2';
       })();
-    console.log(`  --console-depth: ${consoleDepthValue}`);
-    console.log(`    → Object inspection depth: ${consoleDepthValue} levels`);
+    console.info(`  --console-depth: ${consoleDepthValue}`);
+    console.info(`    → Object inspection depth: ${consoleDepthValue} levels`);
 
     // GC availability
-    console.log("\n🗑️  Garbage Collection:");
-    console.log(`  Bun.gc(): ✅ always available (preferred)`);
+    console.info("\n🗑️  Garbage Collection:");
+    console.info(`  Bun.gc(): ✅ always available (preferred)`);
     const globalGcAvailable = typeof globalThis.gc === 'function';
-    console.log(`  global gc(): ${globalGcAvailable ? '✅ available' : '❌ not available (use --expose-gc)'}`);
+    console.info(`  global gc(): ${globalGcAvailable ? '✅ available' : '❌ not available (use --expose-gc)'}`);
 
     if (globalGcAvailable) {
-      console.log(`    → Note: Bun.gc() is preferred and always available`);
+      console.info(`    → Note: Bun.gc() is preferred and always available`);
     }
 
     // Process info
-    console.log("\n📋 Process Info:");
-    console.log(`  Node: ${process.version}`);
-    console.log(`  Platform: ${process.platform}`);
-    console.log(`  Arch: ${process.arch}`);
-    console.log(`  PID: ${process.pid}`);
-    console.log(`  Uptime: ${process.uptime().toFixed(2)}s`);
+    console.info("\n📋 Process Info:");
+    console.info(`  Node: ${process.version}`);
+    console.info(`  Platform: ${process.platform}`);
+    console.info(`  Arch: ${process.arch}`);
+    console.info(`  PID: ${process.pid}`);
+    console.info(`  Uptime: ${process.uptime().toFixed(2)}s`);
 
     // Usage examples
-    console.log("\n💡 Usage Examples:");
-    console.log(`  # Memory-optimized mode`);
-    console.log(`  bun --smol run dev`);
-    console.log(`  \n  # Expose garbage collector`);
-    console.log(`  bun --expose-gc run dev`);
-    console.log(`  \n  # Control console depth`);
-    console.log(`  bun --console-depth=5 run dev`);
+    console.info("\n💡 Usage Examples:");
+    console.info(`  # Memory-optimized mode`);
+    console.info(`  bun --smol run dev`);
+    console.info(`  \n  # Expose garbage collector`);
+    console.info(`  bun --expose-gc run dev`);
+    console.info(`  \n  # Control console depth`);
+    console.info(`  bun --console-depth=5 run dev`);
 
-    console.log();
+    console.info();
   });
 
 // Test command
@@ -485,9 +485,9 @@ program
   .description("Run tests")
   .option("--feature <features>", "Feature flags (comma-separated)")
   .action(async (options) => {
-    console.log("🧪 Running tests...");
+    console.info("🧪 Running tests...");
     if (options.feature) {
-      console.log(`Feature flags: ${options.feature}`);
+      console.info(`Feature flags: ${options.feature}`);
     }
 
     // In real implementation, this would run bun test
@@ -507,7 +507,7 @@ program
   .description("Run command with Dev HQ monitoring")
   .option("-m, --metrics", "Capture metrics", false)
   .action(async (cmd: string[], options: { metrics: boolean }) => {
-    console.log(`🚀 Running: ${cmd.join(" ")}`);
+    console.info(`🚀 Running: ${cmd.join(" ")}`);
 
     const start = performance.now();
     const proc = spawn(cmd, {
@@ -520,7 +520,7 @@ program
 
     if (options.metrics) {
       const insights = await analyzeCodebase();
-      console.log(`
+      console.info(`
 📊 Dev HQ Metrics:
   ✅ Duration: ${duration.toFixed(2)}ms
   ✅ Exit Code: ${exitCode || 0}

@@ -305,7 +305,7 @@ export class BrandingAuditor {
     const files = await this.findFiles(patterns);
     const results: AuditResult[] = [];
 
-    console.log(`🎨 Auditing ${files.length} files for brand compliance...`);
+    console.info(`🎨 Auditing ${files.length} files for brand compliance...`);
 
     for (const file of files) {
       try {
@@ -1229,26 +1229,26 @@ export class BrandingAuditCLI {
 
   private async runAudit(args: string[]): Promise<void> {
     const patterns = args.length > 0 ? args : ['**/*.{css,scss,html,js,ts}'];
-    console.log('🎨 Starting Fire22 Branding Audit...');
+    console.info('🎨 Starting Fire22 Branding Audit...');
 
     const results = await this.auditor.auditFiles(patterns);
     const report = await this.auditor.generateReport(results);
 
-    console.log(`\n📊 Audit Complete!`);
-    console.log(`Grade: ${report.summary.grade}`);
-    console.log(`Compliance Score: ${report.summary.complianceScore}%`);
-    console.log(`Files: ${report.summary.totalFiles}`);
-    console.log(`Colors: ${report.summary.totalColors}`);
-    console.log(`Issues: ${report.summary.totalIssues}`);
+    console.info(`\n📊 Audit Complete!`);
+    console.info(`Grade: ${report.summary.grade}`);
+    console.info(`Compliance Score: ${report.summary.complianceScore}%`);
+    console.info(`Files: ${report.summary.totalFiles}`);
+    console.info(`Colors: ${report.summary.totalColors}`);
+    console.info(`Issues: ${report.summary.totalIssues}`);
 
     // Save JSON report using Bun's optimized file writing
     await Bun.write('branding-audit-report.json', JSON.stringify(report, null, 2));
-    console.log('\n💾 Report saved to branding-audit-report.json');
+    console.info('\n💾 Report saved to branding-audit-report.json');
 
     // Generate HTML report
     const htmlReport = await this.auditor.exportReport(report, 'html');
     await Bun.write('branding-audit-report.html', htmlReport);
-    console.log('💾 HTML report saved to branding-audit-report.html');
+    console.info('💾 HTML report saved to branding-audit-report.html');
   }
 
   private async generateReport(args: string[]): Promise<void> {
@@ -1264,7 +1264,7 @@ export class BrandingAuditCLI {
 
       // Use Bun's optimized file writing
       await Bun.write(filename, exported);
-      console.log(`💾 Report exported to ${filename}`);
+      console.info(`💾 Report exported to ${filename}`);
     } catch (error) {
       console.error('❌ Failed to generate report:', error.message);
     }
@@ -1273,21 +1273,21 @@ export class BrandingAuditCLI {
   private showColors(): void {
     const colors = this.auditor.getBrandColors();
 
-    console.log('🎨 Fire22 Brand Colors:\n');
+    console.info('🎨 Fire22 Brand Colors:\n');
 
     colors.forEach(color => {
-      console.log(`${color.name}:`);
-      console.log(`  Hex: ${color.hex}`);
-      console.log(`  RGB: rgb(${color.rgb.join(', ')})`);
-      console.log(`  HSL: hsl(${color.hsl[0]}, ${color.hsl[1]}%, ${color.hsl[2]}%)`);
-      console.log(`  Usage: ${color.usage.join(', ')}`);
-      console.log(`  WCAG AA: ${color.accessibility.wcagAA ? '✅' : '❌'}`);
-      console.log(`  WCAG AAA: ${color.accessibility.wcagAAA ? '✅' : '❌'}\n`);
+      console.info(`${color.name}:`);
+      console.info(`  Hex: ${color.hex}`);
+      console.info(`  RGB: rgb(${color.rgb.join(', ')})`);
+      console.info(`  HSL: hsl(${color.hsl[0]}, ${color.hsl[1]}%, ${color.hsl[2]}%)`);
+      console.info(`  Usage: ${color.usage.join(', ')}`);
+      console.info(`  WCAG AA: ${color.accessibility.wcagAA ? '✅' : '❌'}`);
+      console.info(`  WCAG AAA: ${color.accessibility.wcagAAA ? '✅' : '❌'}\n`);
     });
   }
 
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🎨 Fire22 Branding Audit Toolkit v2.1.0
 
 Usage: fire22-brand-audit <command> [options]

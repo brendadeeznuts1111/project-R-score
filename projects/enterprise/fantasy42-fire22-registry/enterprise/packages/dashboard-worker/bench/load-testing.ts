@@ -39,10 +39,10 @@ export default class LoadTester {
   async run(scenario: LoadTestScenario): Promise<LoadTestResult> {
     const { url, method = 'GET', headers = {}, connections = 10, duration = 10 } = scenario;
 
-    console.log(`🔄 Running load test: ${scenario.name}`);
-    console.log(`   URL: ${url}`);
-    console.log(`   Connections: ${connections}`);
-    console.log(`   Duration: ${duration}s`);
+    console.info(`🔄 Running load test: ${scenario.name}`);
+    console.info(`   URL: ${url}`);
+    console.info(`   Connections: ${connections}`);
+    console.info(`   Duration: ${duration}s`);
 
     const startTime = Bun.nanoseconds();
     const results: number[] = [];
@@ -117,13 +117,13 @@ export default class LoadTester {
   }
 
   private printResults(name: string, result: LoadTestResult): void {
-    console.log(`\n✅ ${name} Complete:`);
-    console.log(`   Requests: ${result.requests.toLocaleString()}`);
-    console.log(`   RPS: ${result.rps.toFixed(2)}`);
-    console.log(`   Avg Latency: ${result.avgLatency.toFixed(2)}ms`);
-    console.log(`   P50 Latency: ${result.p50Latency.toFixed(2)}ms`);
-    console.log(`   P95 Latency: ${result.p95Latency.toFixed(2)}ms`);
-    console.log(`   P99 Latency: ${result.p99Latency.toFixed(2)}ms`);
-    console.log(`   Errors: ${result.errors} (${result.errorRate.toFixed(2)}%)`);
+    console.info(`\n✅ ${name} Complete:`);
+    console.info(`   Requests: ${result.requests.toLocaleString()}`);
+    console.info(`   RPS: ${result.rps.toFixed(2)}`);
+    console.info(`   Avg Latency: ${result.avgLatency.toFixed(2)}ms`);
+    console.info(`   P50 Latency: ${result.p50Latency.toFixed(2)}ms`);
+    console.info(`   P95 Latency: ${result.p95Latency.toFixed(2)}ms`);
+    console.info(`   P99 Latency: ${result.p99Latency.toFixed(2)}ms`);
+    console.info(`   Errors: ${result.errors} (${result.errorRate.toFixed(2)}%)`);
   }
 }

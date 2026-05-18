@@ -143,11 +143,11 @@ class BytecodeProfiler {
     this.parseJSCProfile(profile);
 
     if (name) {
-      console.log(`🔥 Profiled ${name}: ${duration.toFixed(2)}ms (Optimization: ${this.metrics.optimizationScore.toFixed(0)}%)`);
+      console.info(`🔥 Profiled ${name}: ${duration.toFixed(2)}ms (Optimization: ${this.metrics.optimizationScore.toFixed(0)}%)`);
       if (this.hasJSC) {
-        console.log("✅ Using real JSC profiling data");
+        console.info("✅ Using real JSC profiling data");
       } else {
-        console.log("⚠️ Using simulated profiling data");
+        console.info("⚠️ Using simulated profiling data");
       }
     }
 
@@ -179,16 +179,16 @@ class BytecodeProfiler {
 
   // Compare metrics across runs
   compareMetrics(runName: string): void {
-    console.log(`📊 Performance comparison for ${runName}`);
-    console.log(`Optimization Score: ${this.metrics.optimizationScore.toFixed(0)}%`);
-    console.log(`FTL JIT Usage: ${this.metrics.tierBreakdown.ftl.toFixed(1)}%`);
+    console.info(`📊 Performance comparison for ${runName}`);
+    console.info(`Optimization Score: ${this.metrics.optimizationScore.toFixed(0)}%`);
+    console.info(`FTL JIT Usage: ${this.metrics.tierBreakdown.ftl.toFixed(1)}%`);
     
     if (this.metrics.optimizationScore > 80) {
-      console.log('✅ Excellent performance');
+      console.info('✅ Excellent performance');
     } else if (this.metrics.optimizationScore > 60) {
-      console.log('⚠️ Moderate performance');
+      console.info('⚠️ Moderate performance');
     } else {
-      console.log('❌ Poor performance - optimization needed');
+      console.info('❌ Poor performance - optimization needed');
     }
   }
 

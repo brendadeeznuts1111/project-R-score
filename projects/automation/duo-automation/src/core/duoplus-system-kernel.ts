@@ -131,7 +131,7 @@ export class FactoryWagerSystemKernel {
 
   // System Initialization with Bun-native optimizations
   static async initialize(config: SystemConfig): Promise<SystemContext> {
-    console.log(`🚀 Initializing ${this.DOMAIN_CONTEXT.domain} system...`);
+    console.info(`🚀 Initializing ${this.DOMAIN_CONTEXT.domain} system...`);
     const startTime = performance.now();
     
     // Bun-specific optimizations
@@ -161,13 +161,13 @@ export class FactoryWagerSystemKernel {
     this.registerSystemEvents();
     
     const startupTime = performance.now() - startTime;
-    console.log(`✅ System initialized in ${startupTime.toFixed(2)}ms`);
+    console.info(`✅ System initialized in ${startupTime.toFixed(2)}ms`);
     
     return context;
   }
 
   private static async initializeSubsystems(config: SystemConfig): Promise<Subsystems> {
-    console.log("🔧 Initializing subsystems...");
+    console.info("🔧 Initializing subsystems...");
     
     // Parallel initialization of all subsystems
     const results = await Promise.allSettled([
@@ -227,7 +227,7 @@ export class FactoryWagerSystemKernel {
       maxConcurrent: config.maxConcurrentDisputes || 1000,
       processDispute: async (disputeId: string) => {
         // Process dispute logic
-        console.log(`Processing dispute: ${disputeId}`);
+        console.info(`Processing dispute: ${disputeId}`);
         return { success: true, disputeId };
       }
     };
@@ -258,7 +258,7 @@ export class FactoryWagerSystemKernel {
       connections: new Map(),
       realtimeUpdates: true,
       sendUpdate: async (merchantId: string, update: any) => {
-        console.log(`Sending update to ${merchantId}:`, update);
+        console.info(`Sending update to ${merchantId}:`, update);
       }
     };
   }
@@ -281,7 +281,7 @@ export class FactoryWagerSystemKernel {
       cache: new Map(),
       backup: async () => {
         // Backup logic
-        console.log("Performing backup...");
+        console.info("Performing backup...");
       }
     };
   }
@@ -407,7 +407,7 @@ export class FactoryWagerSystemKernel {
     
     // Graceful shutdown
     process.on('SIGINT', () => {
-      console.log('🛑 Shutting down gracefully...');
+      console.info('🛑 Shutting down gracefully...');
       process.exit(0);
     });
   }

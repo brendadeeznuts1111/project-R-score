@@ -3,131 +3,131 @@
 
 import { startEnhancedProxyDemo } from './src/proxy/enhanced-http-proxy.js';
 
-console.log('🚀 Starting Enhanced HTTP Proxy Demonstration\n');
+console.info('🚀 Starting Enhanced HTTP Proxy Demonstration\n');
 
 // Start the enhanced proxy server
 const server = startEnhancedProxyDemo();
 
-console.log('🎯 Enhanced Proxy Features:');
-console.log('   🔍 Strict header validation (formats, ranges, checksums)');
-console.log('   🌐 DNS cache integration (50ns hit, 5ms miss)');
-console.log('   📊 Performance metrics and monitoring');
-console.log('   🛡️ Security through comprehensive validation');
-console.log('   ⚡ Nanosecond-level performance');
-console.log('   📈 Real-time health monitoring');
-console.log('');
+console.info('🎯 Enhanced Proxy Features:');
+console.info('   🔍 Strict header validation (formats, ranges, checksums)');
+console.info('   🌐 DNS cache integration (50ns hit, 5ms miss)');
+console.info('   📊 Performance metrics and monitoring');
+console.info('   🛡️ Security through comprehensive validation');
+console.info('   ⚡ Nanosecond-level performance');
+console.info('   📈 Real-time health monitoring');
+console.info('');
 
 // Demonstration of validation behavior
-console.log('🧪 Validation Behavior:');
-console.log('   ✅ Valid headers -> Proxy connection allowed');
-console.log('   ❌ Invalid format -> 400 Bad Request');
-console.log('   🚨 Out of range -> 400 Bad Request');
-console.log('   🔍 Checksum mismatch -> 400 Bad Request');
-console.log('   🎫 Invalid token -> 401 Unauthorized');
-console.log('   🌐 Domain mismatch -> 403 Forbidden');
-console.log('   ⚡ DNS cache hit -> <60ns resolution');
-console.log('   🌐 DNS cache miss -> <10ms resolution');
-console.log('');
+console.info('🧪 Validation Behavior:');
+console.info('   ✅ Valid headers -> Proxy connection allowed');
+console.info('   ❌ Invalid format -> 400 Bad Request');
+console.info('   🚨 Out of range -> 400 Bad Request');
+console.info('   🔍 Checksum mismatch -> 400 Bad Request');
+console.info('   🎫 Invalid token -> 401 Unauthorized');
+console.info('   🌐 Domain mismatch -> 403 Forbidden');
+console.info('   ⚡ DNS cache hit -> <60ns resolution');
+console.info('   🌐 DNS cache miss -> <10ms resolution');
+console.info('');
 
 // Performance characteristics
-console.log('⚡ Performance Characteristics:');
-console.log('   🔍 Header validation: <100ns per header');
-console.log('   🎫 Token verification: <200ns');
-console.log('   🌐 DNS cache hit: <60ns');
-console.log('   🌐 DNS cache miss: <10ms');
-console.log('   📊 Total validation: <400ns');
-console.log('   🚀 Tunnel establishment: <20ns + RTT');
-console.log('');
+console.info('⚡ Performance Characteristics:');
+console.info('   🔍 Header validation: <100ns per header');
+console.info('   🎫 Token verification: <200ns');
+console.info('   🌐 DNS cache hit: <60ns');
+console.info('   🌐 DNS cache miss: <10ms');
+console.info('   📊 Total validation: <400ns');
+console.info('   🚀 Tunnel establishment: <20ns + RTT');
+console.info('');
 
 // Validation rules
-console.log('📋 Validation Rules:');
-console.log('   X-Bun-Config-Version: 0-255 (decimal)');
-console.log('   X-Bun-Registry-Hash: 0x + 8 hex chars');
-console.log('   X-Bun-Feature-Flags: 0x + 8 hex chars, no reserved bits');
-console.log('   X-Bun-Terminal-Mode: 0-3 (disabled, cooked, raw, pipe)');
-console.log('   X-Bun-Terminal-Rows: 1-255 (VT100 limit)');
-console.log('   X-Bun-Terminal-Cols: 1-255 (VT100 limit)');
-console.log('   X-Bun-Config-Dump: 0x + 26 hex chars with XOR checksum');
-console.log('   X-Bun-Proxy-Token: JWT with domain validation');
-console.log('   X-Bun-Domain: @domain1 or @domain2');
-console.log('   X-Bun-Domain-Hash: 0x + 8 hex chars');
-console.log('');
+console.info('📋 Validation Rules:');
+console.info('   X-Bun-Config-Version: 0-255 (decimal)');
+console.info('   X-Bun-Registry-Hash: 0x + 8 hex chars');
+console.info('   X-Bun-Feature-Flags: 0x + 8 hex chars, no reserved bits');
+console.info('   X-Bun-Terminal-Mode: 0-3 (disabled, cooked, raw, pipe)');
+console.info('   X-Bun-Terminal-Rows: 1-255 (VT100 limit)');
+console.info('   X-Bun-Terminal-Cols: 1-255 (VT100 limit)');
+console.info('   X-Bun-Config-Dump: 0x + 26 hex chars with XOR checksum');
+console.info('   X-Bun-Proxy-Token: JWT with domain validation');
+console.info('   X-Bun-Domain: @domain1 or @domain2');
+console.info('   X-Bun-Domain-Hash: 0x + 8 hex chars');
+console.info('');
 
 // Test commands
-console.log('📋 Interactive Test Commands:');
-console.log('');
+console.info('📋 Interactive Test Commands:');
+console.info('');
 
-console.log('1️⃣ Check proxy status:');
-console.log('   curl http://localhost:8082/proxy-status');
-console.log('');
+console.info('1️⃣ Check proxy status:');
+console.info('   curl http://localhost:8082/proxy-status');
+console.info('');
 
-console.log('2️⃣ Test health check:');
-console.log('   curl http://localhost:8082/health');
-console.log('');
+console.info('2️⃣ Test health check:');
+console.info('   curl http://localhost:8082/health');
+console.info('');
 
-console.log('3️⃣ View metrics:');
-console.log('   curl http://localhost:8082/metrics');
-console.log('');
+console.info('3️⃣ View metrics:');
+console.info('   curl http://localhost:8082/metrics');
+console.info('');
 
-console.log('4️⃣ Test validation with VALID headers:');
-console.log('   curl -X POST http://localhost:8082/validate-test \\');
-console.log('        -H "Content-Type: application/json" \\');
-console.log('        -d \'{"headers": {');
-console.log('          "X-Bun-Config-Version": "1",');
-console.log('          "X-Bun-Registry-Hash": "0x12345678",');
-console.log('          "X-Bun-Feature-Flags": "0x00000007",');
-console.log('          "X-Bun-Terminal-Mode": "2",');
-console.log('          "X-Bun-Terminal-Rows": "24",');
-console.log('          "X-Bun-Terminal-Cols": "80",');
-console.log('          "X-Bun-Proxy-Token": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJkb21haW4iOiJAZG9tYWluMSIsImV4cCI6MTczNjQ0MjQzMH0.YzJkNjY1ZjQ1ZjE2YjE2NjE2NjE2Ng"');
-console.log('        }}\'');
-console.log('');
+console.info('4️⃣ Test validation with VALID headers:');
+console.info('   curl -X POST http://localhost:8082/validate-test \\');
+console.info('        -H "Content-Type: application/json" \\');
+console.info('        -d \'{"headers": {');
+console.info('          "X-Bun-Config-Version": "1",');
+console.info('          "X-Bun-Registry-Hash": "0x12345678",');
+console.info('          "X-Bun-Feature-Flags": "0x00000007",');
+console.info('          "X-Bun-Terminal-Mode": "2",');
+console.info('          "X-Bun-Terminal-Rows": "24",');
+console.info('          "X-Bun-Terminal-Cols": "80",');
+console.info('          "X-Bun-Proxy-Token": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJkb21haW4iOiJAZG9tYWluMSIsImV4cCI6MTczNjQ0MjQzMH0.YzJkNjY1ZjQ1ZjE2YjE2NjE2NjE2Ng"');
+console.info('        }}\'');
+console.info('');
 
-console.log('5️⃣ Test validation with INVALID headers:');
-console.log('   curl -X POST http://localhost:8082/validate-test \\');
-console.log('        -H "Content-Type: application/json" \\');
-console.log('        -d \'{"headers": {');
-console.log('          "X-Bun-Config-Version": "256",     # Out of range');
-console.log('          "X-Bun-Registry-Hash": "0xinvalid", # Invalid format');
-console.log('          "X-Bun-Feature-Flags": "0xFFFFFFFF" # Reserved bits set');
-console.log('        }}\'');
-console.log('');
+console.info('5️⃣ Test validation with INVALID headers:');
+console.info('   curl -X POST http://localhost:8082/validate-test \\');
+console.info('        -H "Content-Type: application/json" \\');
+console.info('        -d \'{"headers": {');
+console.info('          "X-Bun-Config-Version": "256",     # Out of range');
+console.info('          "X-Bun-Registry-Hash": "0xinvalid", # Invalid format');
+console.info('          "X-Bun-Feature-Flags": "0xFFFFFFFF" # Reserved bits set');
+console.info('        }}\'');
+console.info('');
 
-console.log('6️⃣ Test DNS cache performance:');
-console.log('   # First call (cache miss)');
-console.log('   time curl http://localhost:8082/proxy-status');
-console.log('   # Second call (cache hit)');
-console.log('   time curl http://localhost:8082/proxy-status');
-console.log('');
+console.info('6️⃣ Test DNS cache performance:');
+console.info('   # First call (cache miss)');
+console.info('   time curl http://localhost:8082/proxy-status');
+console.info('   # Second call (cache hit)');
+console.info('   time curl http://localhost:8082/proxy-status');
+console.info('');
 
-console.log('7️⃣ Stress test validation:');
-console.log('   for i in {1..100}; do');
-console.log('     curl -s http://localhost:8082/proxy-status > /dev/null;');
-console.log('   done');
-console.log('   curl http://localhost:8082/metrics');
-console.log('');
+console.info('7️⃣ Stress test validation:');
+console.info('   for i in {1..100}; do');
+console.info('     curl -s http://localhost:8082/proxy-status > /dev/null;');
+console.info('   done');
+console.info('   curl http://localhost:8082/metrics');
+console.info('');
 
 // Live demo
-console.log('🎬 Live Demo:');
-console.log('   The proxy server is now running with all features enabled!');
-console.log('   Try the commands above to see validation in action.');
-console.log('   Check the metrics endpoint to see performance data.');
-console.log('   Use the validation test endpoint to debug header issues.');
-console.log('');
+console.info('🎬 Live Demo:');
+console.info('   The proxy server is now running with all features enabled!');
+console.info('   Try the commands above to see validation in action.');
+console.info('   Check the metrics endpoint to see performance data.');
+console.info('   Use the validation test endpoint to debug header issues.');
+console.info('');
 
 // Monitoring
-console.log('📊 Monitoring:');
-console.log('   • Validation metrics: Success/failure rates, error types');
-console.log('   • DNS cache metrics: Hit rates, latency measurements');
-console.log('   • Health monitoring: System status and performance');
-console.log('   • Real-time logging: Detailed request/response tracking');
-console.log('');
+console.info('📊 Monitoring:');
+console.info('   • Validation metrics: Success/failure rates, error types');
+console.info('   • DNS cache metrics: Hit rates, latency measurements');
+console.info('   • Health monitoring: System status and performance');
+console.info('   • Real-time logging: Detailed request/response tracking');
+console.info('');
 
-console.log('🎉 Enhanced HTTP Proxy is running!');
-console.log('   All X-Bun-* headers are strictly validated!');
-console.log('   DNS cache provides zero-overhead resolution!');
-console.log('   Performance metrics are collected in real-time!');
-console.log('   Try the test commands above to see it in action!');
+console.info('🎉 Enhanced HTTP Proxy is running!');
+console.info('   All X-Bun-* headers are strictly validated!');
+console.info('   DNS cache provides zero-overhead resolution!');
+console.info('   Performance metrics are collected in real-time!');
+console.info('   Try the test commands above to see it in action!');
 
 // Keep the server running
 setInterval(() => {

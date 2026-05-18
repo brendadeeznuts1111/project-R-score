@@ -57,7 +57,7 @@ const testInit: RequestInit = {
   },
 };
 
-console.log(`
+console.info(`
 ╔═══════════════════════════════════════════════════════════════════════════╗
 ║                    Network-Aware Config Benchmarks                          ║
 ╠═══════════════════════════════════════════════════════════════════════════╣
@@ -67,7 +67,7 @@ console.log(`
 `);
 
 await describe("Config State Operations", async () => {
-  console.log("\n📊 Config State Operations");
+  console.info("\n📊 Config State Operations");
 
   bench("serializeConfig (13 bytes)", () => {
     serializeConfig(testConfig);
@@ -89,7 +89,7 @@ await describe("Config State Operations", async () => {
 });
 
 await describe("HTTP Header Operations", async () => {
-  console.log("\n🌐 HTTP Header Operations");
+  console.info("\n🌐 HTTP Header Operations");
 
   bench("injectConfigHeaders (9 headers)", () => {
     injectConfigHeaders(testInit);
@@ -107,7 +107,7 @@ await describe("HTTP Header Operations", async () => {
 });
 
 await describe("Proxy Token Operations", async () => {
-  console.log("\n🔒 Proxy Token Operations");
+  console.info("\n🔒 Proxy Token Operations");
 
   const token = issueProxyToken("@mycompany");
 
@@ -121,7 +121,7 @@ await describe("Proxy Token Operations", async () => {
 });
 
 await describe("Binary Protocol - Config Update", async () => {
-  console.log("\n📡 Binary Protocol - Config Update");
+  console.info("\n📡 Binary Protocol - Config Update");
 
   bench("encodeConfigUpdate (14 bytes)", () => {
     encodeConfigUpdate("terminalMode", 2);
@@ -139,7 +139,7 @@ await describe("Binary Protocol - Config Update", async () => {
 });
 
 await describe("Binary Protocol - Terminal Resize", async () => {
-  console.log("\n🖥️  Binary Protocol - Terminal Resize");
+  console.info("\n🖥️  Binary Protocol - Terminal Resize");
 
   bench("encodeTerminalResize (14 bytes)", () => {
     encodeTerminalResize(40, 120);
@@ -152,7 +152,7 @@ await describe("Binary Protocol - Terminal Resize", async () => {
 });
 
 await describe("Binary Protocol - Feature Toggle", async () => {
-  console.log("\n🔧 Binary Protocol - Feature Toggle");
+  console.info("\n🔧 Binary Protocol - Feature Toggle");
 
   bench("encodeFeatureToggle (14 bytes)", () => {
     encodeFeatureToggle(2, true);
@@ -165,7 +165,7 @@ await describe("Binary Protocol - Feature Toggle", async () => {
 });
 
 await describe("Binary Protocol - Bulk Update", async () => {
-  console.log("\n📦 Binary Protocol - Bulk Update");
+  console.info("\n📦 Binary Protocol - Bulk Update");
 
   const updates = [
     { field: "terminalMode", value: 2 },
@@ -184,7 +184,7 @@ await describe("Binary Protocol - Bulk Update", async () => {
 });
 
 await describe("Binary Protocol - Heartbeat", async () => {
-  console.log("\n💓 Binary Protocol - Heartbeat");
+  console.info("\n💓 Binary Protocol - Heartbeat");
 
   bench("encodeHeartbeat (14 bytes)", () => {
     encodeHeartbeat();
@@ -197,7 +197,7 @@ await describe("Binary Protocol - Heartbeat", async () => {
 });
 
 await describe("Checksum Calculation", async () => {
-  console.log("\n🔐 Checksum Calculation");
+  console.info("\n🔐 Checksum Calculation");
 
   const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
 
@@ -207,7 +207,7 @@ await describe("Checksum Calculation", async () => {
 });
 
 await describe("Comparison: Binary vs JSON", async () => {
-  console.log("\n⚡ Comparison: Binary vs JSON");
+  console.info("\n⚡ Comparison: Binary vs JSON");
 
   const field = "terminalMode";
   const value = 2;
@@ -221,10 +221,10 @@ await describe("Comparison: Binary vs JSON", async () => {
     JSON.parse(json);
   });
 
-  console.log("\n  💡 Binary protocol is ~42x faster than JSON");
+  console.info("\n  💡 Binary protocol is ~42x faster than JSON");
 });
 
-console.log(`
+console.info(`
 ╔═══════════════════════════════════════════════════════════════════════════╗
 ║                           Benchmark Summary                               ║
 ╠═══════════════════════════════════════════════════════════════════════════╣

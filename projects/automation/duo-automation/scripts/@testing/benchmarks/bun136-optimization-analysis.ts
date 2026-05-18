@@ -270,16 +270,16 @@ class Bun136OptimizationAnalyzer {
 if (import.meta.main) {
   const analyzer = new Bun136OptimizationAnalyzer();
   
-  console.log(analyzer.generateReport());
-  console.log('\n🎯 Implementation Recommendations:');
-  console.log('='.repeat(50));
+  console.info(analyzer.generateReport());
+  console.info('\n🎯 Implementation Recommendations:');
+  console.info('='.repeat(50));
   
   const recommendations = analyzer.getImplementationRecommendations();
   recommendations.forEach((rec, index) => {
     const priority = rec.priority === 'high' ? '🔴' : rec.priority === 'medium' ? '🟡' : '🟢';
-    console.log(`\n${index + 1}. ${priority} ${rec.feature}`);
-    console.log(`   Impact: ${rec.impact}`);
-    console.log(`   Effort: ${rec.effort.toUpperCase()}`);
+    console.info(`\n${index + 1}. ${priority} ${rec.feature}`);
+    console.info(`   Impact: ${rec.impact}`);
+    console.info(`   Effort: ${rec.effort.toUpperCase()}`);
   });
 }
 

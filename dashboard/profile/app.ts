@@ -1282,4 +1282,4 @@ const server = Bun.serve({
   }
 });
 
-console.log('Profile dashboard running on http://localhost:' + server.port);
+console.info('Profile dashboard running on http://localhost:' + server.port);

@@ -601,4 +601,4 @@ afterAll(() => {
   config.logLevel = originalLogLevel;
 });
 
-console.log('✅ Smoke tests loaded. Run with: bun test tests/payment-smoke-tests.ts');
+console.info('✅ Smoke tests loaded. Run with: bun test tests/payment-smoke-tests.ts');

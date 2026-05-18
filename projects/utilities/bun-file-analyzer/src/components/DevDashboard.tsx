@@ -76,19 +76,19 @@ export const DevDashboard = () => {
     refresh();
     
     // Colorful logging with theme
-    console.log(
+    console.info(
       `%c=== Bun v${stats.bunVersion} Enhanced Dev Dashboard ===`, 
       `color: ${THEME.colors.primary}; font-size: 16px; font-weight: bold`
     );
-    console.log(
+    console.info(
       `%cBuild ID: ${stats.buildId}`, 
       `color: ${THEME.colors.info}`
     );
-    console.log(
+    console.info(
       `%cHMR: ${import.meta.hot ? "enabled" : "disabled"}`,
       `color: ${import.meta.hot ? THEME.colors.success : THEME.colors.error}` 
     );
-    console.log(
+    console.info(
       `%cVirtual Files: 🔄 Setting up...`,
       `color: ${THEME.semantic.config}`
     );

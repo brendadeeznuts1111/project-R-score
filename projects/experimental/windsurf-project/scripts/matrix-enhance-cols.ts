@@ -36,7 +36,7 @@ const HEADER_LINE = `| ${NEW_HEADERS.join(' | ')} |`;
 
 async function enhanceMatrix() {
     const SIMULATION_SIMULATE_FAILURES = false; // Set true to test error paths
-    console.log('📊 Synchronizing MASTER_MATRIX with production-grade data integrity...');
+    console.info('📊 Synchronizing MASTER_MATRIX with production-grade data integrity...');
 
     if (!existsSync(path)) {
     throw new Error(`File not found: ${path}`);
@@ -51,7 +51,7 @@ async function enhanceMatrix() {
   
   // Create Backup
   await Bun.write(backupPath, content);
-  console.log(`✅ Atomic backup created: ${backupPath}`);
+  console.info(`✅ Atomic backup created: ${backupPath}`);
 
   const rows: MatrixRow[] = await parseMarkdownTable(path);
   if (!rows || rows.length === 0) {
@@ -151,8 +151,8 @@ async function enhanceMatrix() {
 
   await Bun.write(path, outputLines.join('\n'));
   
-  console.log(`✅ Matrix enhanced safely with ${processedRows.length} rows.`);
-  console.log(`📈 Real Metrics: Total Gain: ${totalGainVal.toFixed(1)}%, Avg ROI: ${avgROI}x, High Prio: ${highPrioCount}`);
+  console.info(`✅ Matrix enhanced safely with ${processedRows.length} rows.`);
+  console.info(`📈 Real Metrics: Total Gain: ${totalGainVal.toFixed(1)}%, Avg ROI: ${avgROI}x, High Prio: ${highPrioCount}`);
 }
 
 enhanceMatrix().catch(error => {

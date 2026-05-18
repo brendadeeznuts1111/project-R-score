@@ -28,7 +28,7 @@ program
   .option('--no-cli', 'Skip CLI integration')
   .option('--no-docs', 'Skip documentation generation')
   .action(async (type, name, options) => {
-    console.log(`🧠 Generating ${type} pattern: ${name}`);
+    console.info(`🧠 Generating ${type} pattern: ${name}`);
     
     if (!options.prompt) {
       console.error('❌ --prompt is required');
@@ -45,11 +45,11 @@ program
         includeDocs: options.docs !== false
       });
 
-      console.log(`✅ Pattern generated successfully!`);
-      console.log(`📁 Files written to: ${result.files.implementationPath.replace('/index.ts', '')}`);
-      console.log(`🏃 Benchmark: ${result.benchmarks.avgLatency}ms avg latency`);
-      console.log(`📊 Throughput: ${result.benchmarks.throughput} reqs/s`);
-      console.log(`✅ Status: ${result.benchmarks.passed ? 'PASS' : 'FAIL'}`);
+      console.info(`✅ Pattern generated successfully!`);
+      console.info(`📁 Files written to: ${result.files.implementationPath.replace('/index.ts', '')}`);
+      console.info(`🏃 Benchmark: ${result.benchmarks.avgLatency}ms avg latency`);
+      console.info(`📊 Throughput: ${result.benchmarks.throughput} reqs/s`);
+      console.info(`✅ Status: ${result.benchmarks.passed ? 'PASS' : 'FAIL'}`);
       
       // Update CLI
       await updateCLICommands(result);
@@ -67,8 +67,8 @@ program
   .option('-t, --type <type>', 'Filter by type')
   .option('-s, --section <section>', 'Filter by section')
   .action((options) => {
-    console.log('📋 Available Patterns:');
-    console.log('═'.repeat(80));
+    console.info('📋 Available Patterns:');
+    console.info('═'.repeat(80));
     
     const patterns = Object.entries(MASTER_MATRIX);
     
@@ -85,10 +85,10 @@ program
     }
 
     filtered.forEach(([id, data]) => {
-      console.log(`${id.padEnd(20)} ${data.perf.padEnd(10)} ${data.roi.padEnd(8)} ${data.section}`);
+      console.info(`${id.padEnd(20)} ${data.perf.padEnd(10)} ${data.roi.padEnd(8)} ${data.section}`);
     });
     
-    console.log(`\nTotal: ${filtered.length} patterns`);
+    console.info(`\nTotal: ${filtered.length} patterns`);
   });
 
 // Show pattern details
@@ -102,13 +102,13 @@ program
       process.exit(1);
     }
 
-    console.log(`📋 Pattern Details: ${patternId}`);
-    console.log('═'.repeat(60));
-    console.log(`Performance: ${pattern.perf}`);
-    console.log(`ROI: ${pattern.roi}`);
-    console.log(`Section: ${pattern.section}`);
-    console.log(`Semantics: ${pattern.semantics?.join(', ') || 'N/A'}`);
-    console.log(`Status: ${pattern.status || 'ACTIVE'}`);
+    console.info(`📋 Pattern Details: ${patternId}`);
+    console.info('═'.repeat(60));
+    console.info(`Performance: ${pattern.perf}`);
+    console.info(`ROI: ${pattern.roi}`);
+    console.info(`Section: ${pattern.section}`);
+    console.info(`Semantics: ${pattern.semantics?.join(', ') || 'N/A'}`);
+    console.info(`Status: ${pattern.status || 'ACTIVE'}`);
   });
 
 // Benchmark all patterns
@@ -119,7 +119,7 @@ program
   .option('-f, --fast', 'Quick benchmark (100 iterations)')
   .option('--full', 'Full benchmark (10000 iterations)')
   .action(async (options) => {
-    console.log('🏃 Running pattern benchmarks...');
+    console.info('🏃 Running pattern benchmarks...');
     
     if (options.pattern) {
       await benchmarkPattern(options.pattern, options);
@@ -131,7 +131,7 @@ program
       }
     }
     
-    console.log('✅ All benchmarks completed');
+    console.info('✅ All benchmarks completed');
   });
 
 // Generate documentation
@@ -140,14 +140,14 @@ program
   .description('Generate comprehensive documentation')
   .option('-o, --output <path>', 'Output directory', './docs')
   .action(async (options) => {
-    console.log('📚 Generating documentation...');
+    console.info('📚 Generating documentation...');
     
     const generator = new PatternGenerator();
     
     // Generate master documentation
     const docs = await generateMasterDocumentation();
     
-    console.log(`✅ Documentation generated in ${options.output}`);
+    console.info(`✅ Documentation generated in ${options.output}`);
   });
 
 // Auto-healing system
@@ -156,30 +156,30 @@ program
   .description('Run auto-healing diagnostics')
   .option('-f, --fix', 'Automatically fix issues')
   .action(async (options) => {
-    console.log('🛠️ Running auto-healing diagnostics...');
+    console.info('🛠️ Running auto-healing diagnostics...');
     
     const issues = await diagnoseSystem();
     
     if (issues.length === 0) {
-      console.log('✅ No issues found');
+      console.info('✅ No issues found');
       return;
     }
     
-    console.log(`❌ Found ${issues.length} issues:`);
-    issues.forEach(issue => console.log(`  - ${issue}`));
+    console.info(`❌ Found ${issues.length} issues:`);
+    issues.forEach(issue => console.info(`  - ${issue}`));
     
     if (options.fix) {
-      console.log('🔧 Attempting to fix issues...');
+      console.info('🔧 Attempting to fix issues...');
       await fixIssues(issues);
     }
   });
 
 // Helper functions
 async function updateCLICommands(generatedPattern: any): Promise<void> {
-  console.log('🔧 Updating CLI commands...');
+  console.info('🔧 Updating CLI commands...');
   
   // This would dynamically update the CLI with new pattern commands
-  console.log(`✅ Added command: bun ${generatedPattern.name.toLowerCase()} [options]`);
+  console.info(`✅ Added command: bun ${generatedPattern.name.toLowerCase()} [options]`);
 }
 
 async function benchmarkPattern(patternId: string, options: any): Promise<void> {
@@ -189,7 +189,7 @@ async function benchmarkPattern(patternId: string, options: any): Promise<void> 
     return;
   }
 
-  console.log(`🏃 Benchmarking ${patternId}...`);
+  console.info(`🏃 Benchmarking ${patternId}...`);
   
   // Simulate benchmark
   const iterations = options.full ? 10000 : options.fast ? 100 : 1000;
@@ -208,7 +208,7 @@ async function benchmarkPattern(patternId: string, options: any): Promise<void> 
   const targetPerf = parseFloat(pattern.perf.replace(/[<>=ms]/g, ''));
   const passed = avgLatency <= targetPerf;
   
-  console.log(`  ${patternId}: ${avgLatency.toFixed(2)}ms avg, ${throughput} reqs/s - ${passed ? '✅ PASS' : '❌ FAIL'}`);
+  console.info(`  ${patternId}: ${avgLatency.toFixed(2)}ms avg, ${throughput} reqs/s - ${passed ? '✅ PASS' : '❌ FAIL'}`);
 }
 
 async function generateMasterDocumentation(): Promise<string> {
@@ -254,11 +254,11 @@ async function diagnoseSystem(): Promise<string[]> {
 
 async function fixIssues(issues: string[]): Promise<void> {
   for (const issue of issues) {
-    console.log(`🔧 Fixing: ${issue}`);
+    console.info(`🔧 Fixing: ${issue}`);
     // Simulate fixing
     await new Promise(resolve => setTimeout(resolve, 500));
   }
-  console.log('✅ All issues fixed');
+  console.info('✅ All issues fixed');
 }
 
 // Export for use in main CLI
@@ -304,7 +304,7 @@ const autoGeneratedExamples = {
   }
 };
 
-console.log(`
+console.info(`
 🧠 Pattern Generation System Examples:
 ${Object.entries(autoGeneratedExamples).map(([name, example]) => `
 ${name}:

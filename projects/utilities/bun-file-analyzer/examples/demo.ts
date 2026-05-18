@@ -51,10 +51,10 @@ class ExamplesDemo {
   ];
 
   async runDemo(): Promise<void> {
-    console.log("🚀 Enhanced Examples Demo");
-    console.log("=".repeat(50));
-    console.log("This demo showcases the monitoring and analysis tools");
-    console.log("available in the examples directory.\n");
+    console.info("🚀 Enhanced Examples Demo");
+    console.info("=".repeat(50));
+    console.info("This demo showcases the monitoring and analysis tools");
+    console.info("available in the examples directory.\n");
 
     // Ensure we have a build directory
     this.ensureBuildDirectory();
@@ -65,33 +65,33 @@ class ExamplesDemo {
     for (let i = 0; i < this.steps.length; i++) {
       const step = this.steps[i];
       
-      console.log(`\n📋 Step ${i + 1}/${this.steps.length}: ${step.name}`);
-      console.log(`📝 ${step.description}`);
-      console.log("─".repeat(40));
+      console.info(`\n📋 Step ${i + 1}/${this.steps.length}: ${step.name}`);
+      console.info(`📝 ${step.description}`);
+      console.info("─".repeat(40));
 
       try {
         const result = await this.executeStep(step);
         
         if (result.success) {
-          console.log("✅ Success");
+          console.info("✅ Success");
           if (result.output) {
-            console.log("📄 Output:", result.output.slice(0, 200) + (result.output.length > 200 ? "..." : ""));
+            console.info("📄 Output:", result.output.slice(0, 200) + (result.output.length > 200 ? "..." : ""));
           }
           successCount++;
         } else {
-          console.log("❌ Failed");
+          console.info("❌ Failed");
           if (result.error) {
-            console.log("🚨 Error:", result.error);
+            console.info("🚨 Error:", result.error);
           }
           failureCount++;
           
           if (step.skipOnError) {
-            console.log("⏭️ Skipping remaining steps...");
+            console.info("⏭️ Skipping remaining steps...");
             break;
           }
         }
       } catch (error) {
-        console.log("❌ Error:", (error as Error).message);
+        console.info("❌ Error:", (error as Error).message);
         failureCount++;
       }
 
@@ -99,16 +99,16 @@ class ExamplesDemo {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    console.log("\n" + "=".repeat(50));
-    console.log("📊 Demo Results:");
-    console.log(`✅ Successful: ${successCount}/${this.steps.length}`);
-    console.log(`❌ Failed: ${failureCount}/${this.steps.length}`);
+    console.info("\n" + "=".repeat(50));
+    console.info("📊 Demo Results:");
+    console.info(`✅ Successful: ${successCount}/${this.steps.length}`);
+    console.info(`❌ Failed: ${failureCount}/${this.steps.length}`);
 
     if (successCount === this.steps.length) {
-      console.log("\n🎉 All examples working perfectly!");
+      console.info("\n🎉 All examples working perfectly!");
       this.showNextSteps();
     } else {
-      console.log("\n⚠️ Some examples failed. Check the errors above.");
+      console.info("\n⚠️ Some examples failed. Check the errors above.");
       this.showTroubleshooting();
     }
   }
@@ -152,46 +152,46 @@ class ExamplesDemo {
 
   private ensureBuildDirectory(): void {
     if (!existsSync("./dist")) {
-      console.log("📁 Creating sample build directory...");
+      console.info("📁 Creating sample build directory...");
       mkdirSync("./dist", { recursive: true });
     }
   }
 
   private showNextSteps(): void {
-    console.log("\n🎯 Next Steps:");
-    console.log("1. Run individual examples:");
-    console.log("   bun run examples:monitoring    # Real-time monitoring");
-    console.log("   bun run examples:analyzer     # Bundle analysis");
-    console.log("   bun run examples:benchmark    # Performance tests");
-    console.log("   bun run examples:compare      # Build comparison");
-    console.log("");
-    console.log("2. View detailed documentation:");
-    console.log("   cat examples/README.md");
-    console.log("   cat examples/README-Realtime-Monitoring.md");
-    console.log("");
-    console.log("3. Integrate into your workflow:");
-    console.log("   - Add to CI/CD pipeline");
-    console.log("   - Set up monitoring dashboard");
-    console.log("   - Configure performance alerts");
+    console.info("\n🎯 Next Steps:");
+    console.info("1. Run individual examples:");
+    console.info("   bun run examples:monitoring    # Real-time monitoring");
+    console.info("   bun run examples:analyzer     # Bundle analysis");
+    console.info("   bun run examples:benchmark    # Performance tests");
+    console.info("   bun run examples:compare      # Build comparison");
+    console.info("");
+    console.info("2. View detailed documentation:");
+    console.info("   cat examples/README.md");
+    console.info("   cat examples/README-Realtime-Monitoring.md");
+    console.info("");
+    console.info("3. Integrate into your workflow:");
+    console.info("   - Add to CI/CD pipeline");
+    console.info("   - Set up monitoring dashboard");
+    console.info("   - Configure performance alerts");
   }
 
   private showTroubleshooting(): void {
-    console.log("\n🔧 Troubleshooting:");
-    console.log("1. Check dependencies:");
-    console.log("   bun run examples:check");
-    console.log("");
-    console.log("2. Create sample data:");
-    console.log("   bun run examples:test");
-    console.log("");
-    console.log("3. Check file permissions:");
-    console.log("   chmod +x examples/*.ts");
-    console.log("");
-    console.log("4. Verify Bun installation:");
-    console.log("   bun --version");
+    console.info("\n🔧 Troubleshooting:");
+    console.info("1. Check dependencies:");
+    console.info("   bun run examples:check");
+    console.info("");
+    console.info("2. Create sample data:");
+    console.info("   bun run examples:test");
+    console.info("");
+    console.info("3. Check file permissions:");
+    console.info("   chmod +x examples/*.ts");
+    console.info("");
+    console.info("4. Verify Bun installation:");
+    console.info("   bun --version");
   }
 
   async quickShowcase(): Promise<void> {
-    console.log("⚡ Quick Showcase - Running Key Examples\n");
+    console.info("⚡ Quick Showcase - Running Key Examples\n");
 
     const showcaseSteps = [
       {
@@ -212,9 +212,9 @@ class ExamplesDemo {
     ];
 
     for (const step of showcaseSteps) {
-      console.log(`🎯 ${step.name}`);
-      console.log(`📝 ${step.description}`);
-      console.log("─".repeat(30));
+      console.info(`🎯 ${step.name}`);
+      console.info(`📝 ${step.description}`);
+      console.info("─".repeat(30));
 
       try {
         const process = spawn(step.command, {
@@ -225,14 +225,14 @@ class ExamplesDemo {
 
         await process.exited;
       } catch (error) {
-        console.log("⚠️ Demo step failed, continuing...");
+        console.info("⚠️ Demo step failed, continuing...");
       }
 
-      console.log("");
+      console.info("");
     }
 
-    console.log("🎉 Quick showcase complete!");
-    console.log("Run 'bun run demo.ts' for the full demo.");
+    console.info("🎉 Quick showcase complete!");
+    console.info("Run 'bun run demo.ts' for the full demo.");
   }
 }
 
@@ -252,7 +252,7 @@ async function main() {
       break;
     case 'help':
     default:
-      console.log(`
+      console.info(`
 🚀 Enhanced Examples Demo
 
 Usage:

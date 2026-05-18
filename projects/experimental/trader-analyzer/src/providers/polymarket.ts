@@ -8,7 +8,7 @@
  * await provider.connect();
  * const markets = await provider.fetchMarkets(50);
  * if (markets.ok) {
- *   console.log(`Found ${markets.data.length} active markets`);
+ *   console.info(`Found ${markets.data.length} active markets`);
  * }
  */
 
@@ -178,7 +178,7 @@ export class PolymarketProvider implements DataProvider {
 	 * @example
 	 * const result = await provider.fetchMarkets(50);
 	 * if (result.ok) {
-	 *   result.data.forEach(m => console.log(`${m.question}: ${m.outcomes[0].price}`));
+	 *   result.data.forEach(m => console.info(`${m.question}: ${m.outcomes[0].price}`));
 	 * }
 	 */
 	async fetchMarkets(limit = 100): Promise<Result<PredictionMarket[]>> {
@@ -318,7 +318,7 @@ export class PolymarketProvider implements DataProvider {
 	 *
 	 * @example
 	 * const result = await provider.fetchAllTrades(undefined, count => {
-	 *   console.log(`Fetched ${count} trades...`);
+	 *   console.info(`Fetched ${count} trades...`);
 	 * });
 	 */
 	async fetchAllTrades(

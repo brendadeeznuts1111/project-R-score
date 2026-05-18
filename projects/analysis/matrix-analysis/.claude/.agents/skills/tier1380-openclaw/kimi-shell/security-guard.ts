@@ -294,10 +294,10 @@ async function main() {
 
 			try {
 				const result = guard.validateCommand(cmd);
-				console.log(`${COLORS.green}✓ Command is safe${COLORS.reset}`);
-				console.log(`  Sanitized: ${result.sanitized}`);
+				console.info(`${COLORS.green}✓ Command is safe${COLORS.reset}`);
+				console.info(`  Sanitized: ${result.sanitized}`);
 				if (result.warnings.length > 0) {
-					console.log(`  Warnings: ${result.warnings.join(", ")}`);
+					console.info(`  Warnings: ${result.warnings.join(", ")}`);
 				}
 			} catch (error) {
 				if (error instanceof SecurityError) {
@@ -321,7 +321,7 @@ async function main() {
 
 			try {
 				guard.validatePath(path, operation as "read" | "write" | "execute");
-				console.log(`${COLORS.green}✓ Path is allowed${COLORS.reset}`);
+				console.info(`${COLORS.green}✓ Path is allowed${COLORS.reset}`);
 			} catch (error) {
 				if (error instanceof SecurityError) {
 					console.error(`${COLORS.red}✗ ${error.message}${COLORS.reset}`);
@@ -334,14 +334,14 @@ async function main() {
 
 		case "policy": {
 			const policy = guard.getPolicy();
-			console.log("Security Policy:\n");
-			console.log(`Allowed Commands: ${policy.allowedCommands.join(", ")}`);
-			console.log(`Blocked Patterns: ${policy.blockedPatterns.length} patterns`);
-			console.log(`Allowed Paths: ${policy.allowedPaths.join(", ")}`);
-			console.log(`Max Execution Time: ${policy.maxExecutionTime}ms`);
-			console.log(`Allow Sudo: ${policy.allowSudo}`);
-			console.log(`Allow Network: ${policy.allowNetwork}`);
-			console.log(`Allow File Write: ${policy.allowFileWrite}`);
+			console.info("Security Policy:\n");
+			console.info(`Allowed Commands: ${policy.allowedCommands.join(", ")}`);
+			console.info(`Blocked Patterns: ${policy.blockedPatterns.length} patterns`);
+			console.info(`Allowed Paths: ${policy.allowedPaths.join(", ")}`);
+			console.info(`Max Execution Time: ${policy.maxExecutionTime}ms`);
+			console.info(`Allow Sudo: ${policy.allowSudo}`);
+			console.info(`Allow Network: ${policy.allowNetwork}`);
+			console.info(`Allow File Write: ${policy.allowFileWrite}`);
 			break;
 		}
 
@@ -355,7 +355,7 @@ async function main() {
 				{ cmd: "echo hello", shouldPass: true },
 			];
 
-			console.log("Running security tests:\n");
+			console.info("Running security tests:\n");
 
 			for (const test of testCases) {
 				try {
@@ -363,14 +363,14 @@ async function main() {
 					const status = test.shouldPass
 						? `${COLORS.green}✓${COLORS.reset}`
 						: `${COLORS.yellow}⚠${COLORS.reset}`;
-					console.log(
+					console.info(
 						`${status} ${test.cmd} - ${test.shouldPass ? "Allowed" : "Should have been blocked"}`,
 					);
 				} catch (error) {
 					const status = !test.shouldPass
 						? `${COLORS.green}✓${COLORS.reset}`
 						: `${COLORS.red}✗${COLORS.reset}`;
-					console.log(
+					console.info(
 						`${status} ${test.cmd} - ${!test.shouldPass ? "Blocked (correct)" : "Blocked (incorrect)"}`,
 					);
 				}
@@ -379,18 +379,18 @@ async function main() {
 		}
 
 		default: {
-			console.log("🐚 Kimi Security Guard\n");
-			console.log("Usage:");
-			console.log("  security-guard.ts validate <command>    Validate command safety");
-			console.log("  security-guard.ts check-path <p> <op>   Check path access");
-			console.log("  security-guard.ts policy                Show current policy");
-			console.log("  security-guard.ts test                  Run test suite");
-			console.log("\nFeatures:");
-			console.log("  • Command allowlist validation");
-			console.log("  • Blocked pattern detection");
-			console.log("  • Path traversal protection");
-			console.log("  • Environment variable sanitization");
-			console.log("  • sudo restriction");
+			console.info("🐚 Kimi Security Guard\n");
+			console.info("Usage:");
+			console.info("  security-guard.ts validate <command>    Validate command safety");
+			console.info("  security-guard.ts check-path <p> <op>   Check path access");
+			console.info("  security-guard.ts policy                Show current policy");
+			console.info("  security-guard.ts test                  Run test suite");
+			console.info("\nFeatures:");
+			console.info("  • Command allowlist validation");
+			console.info("  • Blocked pattern detection");
+			console.info("  • Path traversal protection");
+			console.info("  • Environment variable sanitization");
+			console.info("  • sudo restriction");
 		}
 	}
 }

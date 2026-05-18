@@ -78,7 +78,7 @@ REGISTRY_AUTO_INDEX=true
 `;
 
   await Bun.write('.env.r2-template', envTemplate);
-  console.log('✅ Created .env.r2-template');
+  console.info('✅ Created .env.r2-template');
 }
 
 async function createWranglerConfig() {
@@ -129,7 +129,7 @@ content_security_policy = "default-src 'self'; script-src 'self' 'unsafe-inline'
 `;
 
   await Bun.write('wrangler-registry.toml', wranglerConfig);
-  console.log('✅ Created wrangler-registry.toml');
+  console.info('✅ Created wrangler-registry.toml');
 }
 
 async function createRegistryManifest() {
@@ -168,7 +168,7 @@ async function createRegistryManifest() {
   };
 
   await Bun.write('registry-manifest.json', JSON.stringify(manifest, null, 2));
-  console.log('✅ Created registry-manifest.json');
+  console.info('✅ Created registry-manifest.json');
 }
 
 async function setupRegistryDirectories() {
@@ -185,12 +185,12 @@ async function setupRegistryDirectories() {
     await fs.promises.mkdir(dir, { recursive: true });
   }
 
-  console.log('✅ Created registry directory structure');
+  console.info('✅ Created registry directory structure');
 }
 
 async function validateR2Connection(config: Partial<R2RegistryConfig>) {
   if (!config.accessKeyId || !config.secretAccessKey || !config.endpoint) {
-    console.log('⚠️  R2 credentials not configured - skipping connection test');
+    console.info('⚠️  R2 credentials not configured - skipping connection test');
     return false;
   }
 
@@ -205,10 +205,10 @@ async function validateR2Connection(config: Partial<R2RegistryConfig>) {
 
     // Test connection by listing objects
     await client.listObjects({ maxKeys: 1 });
-    console.log('✅ R2 connection successful');
+    console.info('✅ R2 connection successful');
     return true;
   } catch (error) {
-    console.log('❌ R2 connection failed:', error.message);
+    console.info('❌ R2 connection failed:', error.message);
     return false;
   }
 }
@@ -299,7 +299,7 @@ bun run registry-admin.bun.ts --audit
 `;
 
   await Bun.write('R2-REGISTRY-SETUP.md', instructions);
-  console.log('✅ Created R2-REGISTRY-SETUP.md');
+  console.info('✅ Created R2-REGISTRY-SETUP.md');
 }
 
 // CLI Interface
@@ -307,12 +307,12 @@ async function main() {
   const args = process.argv.slice(2);
   const command = args[0];
 
-  console.log('🚀 Fire22 R2 Registry Setup');
-  console.log('===========================\n');
+  console.info('🚀 Fire22 R2 Registry Setup');
+  console.info('===========================\n');
 
   switch (command) {
     case '--test-connection':
-      console.log('🔍 Testing R2 connection...');
+      console.info('🔍 Testing R2 connection...');
       const config = {
         endpoint: process.env.R2_ENDPOINT,
         accessKeyId: process.env.R2_ACCESS_KEY_ID,
@@ -324,18 +324,18 @@ async function main() {
       break;
 
     case '--init':
-      console.log('📁 Initializing R2 registry...');
+      console.info('📁 Initializing R2 registry...');
       await createEnvTemplate();
       await createWranglerConfig();
       await createRegistryManifest();
       await setupRegistryDirectories();
       await generateSetupInstructions();
-      console.log('\n🎉 Registry initialized!');
-      console.log('📖 Read R2-REGISTRY-SETUP.md for next steps');
+      console.info('\n🎉 Registry initialized!');
+      console.info('📖 Read R2-REGISTRY-SETUP.md for next steps');
       break;
 
     case '--validate':
-      console.log('✅ Validating registry setup...');
+      console.info('✅ Validating registry setup...');
       const isConnected = await validateR2Connection({
         endpoint: process.env.R2_ENDPOINT,
         accessKeyId: process.env.R2_ACCESS_KEY_ID,
@@ -345,22 +345,22 @@ async function main() {
       });
 
       if (isConnected) {
-        console.log('🎯 Registry is ready for uploads!');
+        console.info('🎯 Registry is ready for uploads!');
       } else {
-        console.log('⚠️  Registry needs configuration');
+        console.info('⚠️  Registry needs configuration');
       }
       break;
 
     default:
-      console.log('Usage:');
-      console.log('  bun run r2-registry-setup.bun.ts --init        # Initialize registry');
-      console.log('  bun run r2-registry-setup.bun.ts --test-connection  # Test R2 connection');
-      console.log('  bun run r2-registry-setup.bun.ts --validate    # Validate setup');
-      console.log('\nQuick start:');
-      console.log('  1. bun run r2-registry-setup.bun.ts --init');
-      console.log('  2. Configure .env file');
-      console.log('  3. bun run r2-registry-setup.bun.ts --test-connection');
-      console.log('  4. bun run registry-upload.bun.ts');
+      console.info('Usage:');
+      console.info('  bun run r2-registry-setup.bun.ts --init        # Initialize registry');
+      console.info('  bun run r2-registry-setup.bun.ts --test-connection  # Test R2 connection');
+      console.info('  bun run r2-registry-setup.bun.ts --validate    # Validate setup');
+      console.info('\nQuick start:');
+      console.info('  1. bun run r2-registry-setup.bun.ts --init');
+      console.info('  2. Configure .env file');
+      console.info('  3. bun run r2-registry-setup.bun.ts --test-connection');
+      console.info('  4. bun run registry-upload.bun.ts');
   }
 }
 

@@ -85,8 +85,8 @@ class SimpleTestRunner {
    * Run tests
    */
   async run(): Promise<void> {
-    console.log('🚀 Starting Simple Bun Test Runner');
-    console.log(`📊 Configuration: ${JSON.stringify(this.config, null, 2)}`);
+    console.info('🚀 Starting Simple Bun Test Runner');
+    console.info(`📊 Configuration: ${JSON.stringify(this.config, null, 2)}`);
 
     try {
       // Validate configuration
@@ -101,7 +101,7 @@ class SimpleTestRunner {
         await this.runAll();
       }
 
-      console.log('✅ All tests completed successfully');
+      console.info('✅ All tests completed successfully');
     } catch (error) {
       console.error('❌ Test runner failed:', error);
       process.exit(1);
@@ -129,7 +129,7 @@ class SimpleTestRunner {
    * Run tests by groups
    */
   private async runByGroups(): Promise<void> {
-    console.log(`🎯 Running test groups: ${this.config.groups.join(', ')}`);
+    console.info(`🎯 Running test groups: ${this.config.groups.join(', ')}`);
 
     // Sort groups by priority
     const sortedGroups = this.config.groups.sort((a, b) => {
@@ -149,7 +149,7 @@ class SimpleTestRunner {
    */
   private async runGroup(groupName: string): Promise<void> {
     const group = TEST_GROUPS[groupName as keyof typeof TEST_GROUPS];
-    console.log(`\n📋 Running ${group.name} (${groupName})`);
+    console.info(`\n📋 Running ${group.name} (${groupName})`);
 
     const patterns = this.config.patterns.length > 0
       ? this.config.patterns
@@ -162,15 +162,15 @@ class SimpleTestRunner {
       const testFiles = await this.findTestFiles(patterns);
 
       if (testFiles.length === 0) {
-        console.log(`⚠️  No test files found for group: ${groupName}`);
+        console.info(`⚠️  No test files found for group: ${groupName}`);
         return;
       }
 
-      console.log(`📁 Found ${testFiles.length} test files`);
+      console.info(`📁 Found ${testFiles.length} test files`);
 
       // Build and run test command
       const testCommand = this.buildTestCommand(testFiles);
-      console.log(`🔧 Running command: ${testCommand}`);
+      console.info(`🔧 Running command: ${testCommand}`);
 
       const { stdout, stderr, exitCode } = await this.runCommand(testCommand, timeout + 5000);
 
@@ -178,7 +178,7 @@ class SimpleTestRunner {
         throw new Error(`Test group ${groupName} failed: ${stderr}`);
       }
 
-      console.log(`✅ ${group.name} completed successfully`);
+      console.info(`✅ ${group.name} completed successfully`);
 
     } catch (error) {
       console.error(`❌ ${group.name} failed:`, error);
@@ -190,7 +190,7 @@ class SimpleTestRunner {
    * Run tests by custom patterns
    */
   private async runByPatterns(): Promise<void> {
-    console.log(`🔍 Running tests with patterns: ${this.config.patterns.join(', ')}`);
+    console.info(`🔍 Running tests with patterns: ${this.config.patterns.join(', ')}`);
     await this.runGroup('custom');
   }
 
@@ -198,7 +198,7 @@ class SimpleTestRunner {
    * Run all tests
    */
   private async runAll(): Promise<void> {
-    console.log('🏃 Running all tests');
+    console.info('🏃 Running all tests');
 
     // Run all predefined groups
     const allGroups = Object.keys(TEST_GROUPS) as Array<keyof typeof TEST_GROUPS>;
@@ -364,7 +364,7 @@ async function main(): Promise<void> {
  * Print help information
  */
 function printHelp(): void {
-  console.log(`
+  console.info(`
 Simple Bun Test Runner
 
 Usage: bun run scripts/bun-test-runner.ts [options]

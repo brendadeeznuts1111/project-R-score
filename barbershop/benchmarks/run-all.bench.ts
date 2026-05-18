@@ -5,13 +5,13 @@
  * Runs all benchmarks and generates a comprehensive report
  */
 
-console.log('\n╔══════════════════════════════════════════════════════════════════════════════╗');
-console.log('║                                                                              ║');
-console.log('║           🚀 ELITE v4.5 "INFINITY" - PERFORMANCE BENCHMARKS                  ║');
-console.log('║                                                                              ║');
-console.log('╠══════════════════════════════════════════════════════════════════════════════╣');
-console.log('║  Security • Resilience • Infrastructure                                      ║');
-console.log('╚══════════════════════════════════════════════════════════════════════════════╝\n');
+console.info('\n╔══════════════════════════════════════════════════════════════════════════════╗');
+console.info('║                                                                              ║');
+console.info('║           🚀 ELITE v4.5 "INFINITY" - PERFORMANCE BENCHMARKS                  ║');
+console.info('║                                                                              ║');
+console.info('╠══════════════════════════════════════════════════════════════════════════════╣');
+console.info('║  Security • Resilience • Infrastructure                                      ║');
+console.info('╚══════════════════════════════════════════════════════════════════════════════╝\n');
 
 // Run all benchmark suites
 await import('./elite-security.bench');
@@ -20,6 +20,6 @@ await import('./elite-resilience.bench');
 await Bun.sleep(100);
 await import('./elite-infrastructure.bench');
 
-console.log('\n╔══════════════════════════════════════════════════════════════════════════════╗');
-console.log('║                           ✅ ALL BENCHMARKS COMPLETE                         ║');
-console.log('╚══════════════════════════════════════════════════════════════════════════════╝\n');
+console.info('\n╔══════════════════════════════════════════════════════════════════════════════╗');
+console.info('║                           ✅ ALL BENCHMARKS COMPLETE                         ║');
+console.info('╚══════════════════════════════════════════════════════════════════════════════╝\n');

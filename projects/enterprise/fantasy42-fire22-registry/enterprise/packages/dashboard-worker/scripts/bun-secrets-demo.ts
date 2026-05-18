@@ -24,8 +24,8 @@ class Fire22SecureCredentialManager {
    */
   async storeCredential(name: string, value: string, description?: string): Promise<boolean> {
     try {
-      console.log(`🔐 Storing credential: ${name}`);
-      console.log(`📝 Description: ${description || 'Fire22 credential'}`);
+      console.info(`🔐 Storing credential: ${name}`);
+      console.info(`📝 Description: ${description || 'Fire22 credential'}`);
 
       await secrets.set({
         service: this.serviceName,
@@ -33,7 +33,7 @@ class Fire22SecureCredentialManager {
         value: value,
       });
 
-      console.log(`✅ Successfully stored ${name} in OS keychain`);
+      console.info(`✅ Successfully stored ${name} in OS keychain`);
       return true;
     } catch (error) {
       console.error(`❌ Failed to store ${name}:`, error);
@@ -46,7 +46,7 @@ class Fire22SecureCredentialManager {
    */
   async getCredential(name: string): Promise<string | null> {
     try {
-      console.log(`🔍 Retrieving credential: ${name}`);
+      console.info(`🔍 Retrieving credential: ${name}`);
 
       const value = await secrets.get({
         service: this.serviceName,
@@ -54,13 +54,13 @@ class Fire22SecureCredentialManager {
       });
 
       if (value) {
-        console.log(`✅ Retrieved ${name} from keychain`);
+        console.info(`✅ Retrieved ${name} from keychain`);
         // Show masked version for demo
         const masked = value.substring(0, 8) + '...' + value.substring(value.length - 4);
-        console.log(`📋 Value: ${masked}`);
+        console.info(`📋 Value: ${masked}`);
         return value;
       } else {
-        console.log(`⚠️  Credential ${name} not found in keychain`);
+        console.info(`⚠️  Credential ${name} not found in keychain`);
         return null;
       }
     } catch (error) {
@@ -74,14 +74,14 @@ class Fire22SecureCredentialManager {
    */
   async deleteCredential(name: string): Promise<boolean> {
     try {
-      console.log(`🗑️  Deleting credential: ${name}`);
+      console.info(`🗑️  Deleting credential: ${name}`);
 
       await secrets.delete({
         service: this.serviceName,
         name: name,
       });
 
-      console.log(`✅ Successfully deleted ${name} from keychain`);
+      console.info(`✅ Successfully deleted ${name} from keychain`);
       return true;
     } catch (error) {
       console.error(`❌ Failed to delete ${name}:`, error);
@@ -93,7 +93,7 @@ class Fire22SecureCredentialManager {
    * Demo: Setup Fire22 dashboard credentials
    */
   async demoFireCredentialSetup(): Promise<void> {
-    console.log('\n🚀 Fire22 Dashboard Credential Setup Demo\n');
+    console.info('\n🚀 Fire22 Dashboard Credential Setup Demo\n');
 
     const credentials: Fire22Credentials[] = [
       {
@@ -123,23 +123,23 @@ class Fire22SecureCredentialManager {
     ];
 
     // Store all credentials
-    console.log('📥 Storing Fire22 credentials in OS keychain...\n');
+    console.info('📥 Storing Fire22 credentials in OS keychain...\n');
     for (const cred of credentials) {
       await this.storeCredential(cred.name, cred.value, cred.description);
-      console.log(''); // spacing
+      console.info(''); // spacing
     }
 
     // Simulate retrieval during app startup
-    console.log('🔄 Simulating app startup - retrieving credentials...\n');
+    console.info('🔄 Simulating app startup - retrieving credentials...\n');
     const dbUrl = await this.getCredential('database_url');
     const apiToken = await this.getCredential('fire22_api_token');
 
     // Demo environment variable replacement
     if (dbUrl && apiToken) {
-      console.log('\n✅ Fire22 Dashboard Ready!');
-      console.log('🔗 Database connection: SECURE (retrieved from keychain)');
-      console.log('🔑 API authentication: SECURE (retrieved from keychain)');
-      console.log('🚫 No plaintext credentials in .env files!');
+      console.info('\n✅ Fire22 Dashboard Ready!');
+      console.info('🔗 Database connection: SECURE (retrieved from keychain)');
+      console.info('🔑 API authentication: SECURE (retrieved from keychain)');
+      console.info('🚫 No plaintext credentials in .env files!');
     }
   }
 
@@ -147,7 +147,7 @@ class Fire22SecureCredentialManager {
    * Demo: Migration from .env to Bun.secrets
    */
   async demoEnvMigration(): Promise<void> {
-    console.log('\n📋 .env Migration Demo\n');
+    console.info('\n📋 .env Migration Demo\n');
 
     // Simulate reading from .env file
     const envCredentials = new Map([
@@ -157,12 +157,12 @@ class Fire22SecureCredentialManager {
       ['CLOUDFLARE_API_TOKEN', 'cf_token_1A2b3C4d...'],
     ]);
 
-    console.log('📁 Found .env file with sensitive credentials:');
+    console.info('📁 Found .env file with sensitive credentials:');
     for (const [key, value] of envCredentials) {
-      console.log(`   ${key}=${value.substring(0, 15)}...`);
+      console.info(`   ${key}=${value.substring(0, 15)}...`);
     }
 
-    console.log('\n🔄 Migrating to Bun.secrets...');
+    console.info('\n🔄 Migrating to Bun.secrets...');
 
     // Migrate each credential
     for (const [envKey, envValue] of envCredentials) {
@@ -170,54 +170,54 @@ class Fire22SecureCredentialManager {
       await this.storeCredential(secretName, envValue, `Migrated from ${envKey}`);
     }
 
-    console.log('\n✅ Migration complete!');
-    console.log('💡 Next steps:');
-    console.log('   1. Update your app to use Bun.secrets');
-    console.log('   2. Remove credentials from .env file');
-    console.log('   3. Add .env to .gitignore if not already');
+    console.info('\n✅ Migration complete!');
+    console.info('💡 Next steps:');
+    console.info('   1. Update your app to use Bun.secrets');
+    console.info('   2. Remove credentials from .env file');
+    console.info('   3. Add .env to .gitignore if not already');
   }
 
   /**
    * Demo: Cross-platform keychain info
    */
   displayKeychainInfo(): void {
-    console.log('\n🌐 Cross-Platform Keychain Integration\n');
+    console.info('\n🌐 Cross-Platform Keychain Integration\n');
 
     const platform = process.platform;
-    console.log(`🖥️  Platform: ${platform}`);
+    console.info(`🖥️  Platform: ${platform}`);
 
     switch (platform) {
       case 'darwin':
-        console.log('🔐 Using: macOS Keychain Services');
-        console.log('📍 Location: Keychain Access app');
-        console.log('🔍 Search: "fire22-dashboard" in Keychain Access');
+        console.info('🔐 Using: macOS Keychain Services');
+        console.info('📍 Location: Keychain Access app');
+        console.info('🔍 Search: "fire22-dashboard" in Keychain Access');
         break;
       case 'linux':
-        console.log('🔐 Using: libsecret (GNOME Keyring/KWallet)');
-        console.log('📍 Location: GNOME Keyring or KDE KWallet');
-        console.log('🔍 Access: seahorse (GNOME) or kwalletmanager (KDE)');
+        console.info('🔐 Using: libsecret (GNOME Keyring/KWallet)');
+        console.info('📍 Location: GNOME Keyring or KDE KWallet');
+        console.info('🔍 Access: seahorse (GNOME) or kwalletmanager (KDE)');
         break;
       case 'win32':
-        console.log('🔐 Using: Windows Credential Manager');
-        console.log('📍 Location: Control Panel > Credential Manager');
-        console.log('🔍 Search: Windows Credentials > Generic Credentials');
+        console.info('🔐 Using: Windows Credential Manager');
+        console.info('📍 Location: Control Panel > Credential Manager');
+        console.info('🔍 Search: Windows Credentials > Generic Credentials');
         break;
       default:
-        console.log('🔐 Using: OS-specific credential storage');
+        console.info('🔐 Using: OS-specific credential storage');
     }
 
-    console.log('\n🛡️  Security Benefits:');
-    console.log('   • Encrypted at rest by operating system');
-    console.log('   • No plaintext secrets in code or config files');
-    console.log('   • Integrated with OS security policies');
-    console.log('   • Protected by user authentication');
+    console.info('\n🛡️  Security Benefits:');
+    console.info('   • Encrypted at rest by operating system');
+    console.info('   • No plaintext secrets in code or config files');
+    console.info('   • Integrated with OS security policies');
+    console.info('   • Protected by user authentication');
   }
 
   /**
    * Demo: Performance comparison
    */
   async performanceDemo(): Promise<void> {
-    console.log('\n⚡ Performance Comparison Demo\n');
+    console.info('\n⚡ Performance Comparison Demo\n');
 
     // Setup credential for testing
     await this.storeCredential(
@@ -229,7 +229,7 @@ class Fire22SecureCredentialManager {
     const iterations = 100;
 
     // Test Bun.secrets performance
-    console.log(`🔍 Testing Bun.secrets retrieval (${iterations} iterations)...`);
+    console.info(`🔍 Testing Bun.secrets retrieval (${iterations} iterations)...`);
     const start = Bun.nanoseconds();
 
     for (let i = 0; i < iterations; i++) {
@@ -240,9 +240,9 @@ class Fire22SecureCredentialManager {
     const duration = (end - start) / 1_000_000; // Convert to milliseconds
     const avgPerRetrieval = duration / iterations;
 
-    console.log(`⏱️  Total time: ${duration.toFixed(2)}ms`);
-    console.log(`📊 Average per retrieval: ${avgPerRetrieval.toFixed(3)}ms`);
-    console.log(`🚀 Performance: Excellent for production use`);
+    console.info(`⏱️  Total time: ${duration.toFixed(2)}ms`);
+    console.info(`📊 Average per retrieval: ${avgPerRetrieval.toFixed(3)}ms`);
+    console.info(`🚀 Performance: Excellent for production use`);
 
     // Cleanup
     await this.deleteCredential('perf_test');
@@ -251,17 +251,17 @@ class Fire22SecureCredentialManager {
 
 // Demo execution
 async function runDemo(): Promise<void> {
-  console.log('🔥 Fire22 Dashboard - Bun.secrets Security Demo');
-  console.log('='.repeat(50));
+  console.info('🔥 Fire22 Dashboard - Bun.secrets Security Demo');
+  console.info('='.repeat(50));
 
   const credManager = new Fire22SecureCredentialManager();
 
   // Check if Bun.secrets is available
   try {
     await secrets.get({ service: 'test', name: 'test' });
-    console.log('✅ Bun.secrets API is available and functional\n');
+    console.info('✅ Bun.secrets API is available and functional\n');
   } catch (error) {
-    console.log("❌ Bun.secrets not available. Ensure you're using Bun >= 1.2.20\n");
+    console.info("❌ Bun.secrets not available. Ensure you're using Bun >= 1.2.20\n");
     return;
   }
 
@@ -271,12 +271,12 @@ async function runDemo(): Promise<void> {
   credManager.displayKeychainInfo();
   await credManager.performanceDemo();
 
-  console.log('\n🎉 Demo Complete!');
-  console.log('\n💡 Integration with Fire22 Dashboard:');
-  console.log('   • Replace DATABASE_URL in .env with Bun.secrets');
-  console.log('   • Secure Fire22 API tokens in OS keychain');
-  console.log('   • Integrate with existing env-manager.ts');
-  console.log('   • Add to workspace-orchestrator.ts for multi-env management');
+  console.info('\n🎉 Demo Complete!');
+  console.info('\n💡 Integration with Fire22 Dashboard:');
+  console.info('   • Replace DATABASE_URL in .env with Bun.secrets');
+  console.info('   • Secure Fire22 API tokens in OS keychain');
+  console.info('   • Integrate with existing env-manager.ts');
+  console.info('   • Add to workspace-orchestrator.ts for multi-env management');
 }
 
 // Run if called directly

@@ -28,4 +28,4 @@ const server = serve({
   }
 });
 
-console.log('🚀 Simple Test API running on port 3010');
+console.info('🚀 Simple Test API running on port 3010');

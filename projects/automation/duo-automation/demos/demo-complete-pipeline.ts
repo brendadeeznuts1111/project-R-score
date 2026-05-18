@@ -28,10 +28,10 @@ class EvidenceIntegrityPipelineDemo {
    * 🚀 Run complete pipeline demonstration
    */
   async demonstrate(): Promise<void> {
-    console.log('🚀 Evidence Integrity Pipeline - Complete Demo');
-    console.log('==========================================');
-    console.log('Featuring Bun v1.3.6: Archive, JSONC, Metafile, Virtual Files');
-    console.log('');
+    console.info('🚀 Evidence Integrity Pipeline - Complete Demo');
+    console.info('==========================================');
+    console.info('Featuring Bun v1.3.6: Archive, JSONC, Metafile, Virtual Files');
+    console.info('');
 
     // 1. Configuration Management with Bun.JSONC
     await this.demonstrateConfiguration();
@@ -50,41 +50,41 @@ class EvidenceIntegrityPipelineDemo {
    * 🔧 Demonstrate Configuration Management
    */
   private async demonstrateConfiguration(): Promise<void> {
-    console.log('🔧 1. Configuration Management (Bun.JSONC API)');
-    console.log('===============================================');
+    console.info('🔧 1. Configuration Management (Bun.JSONC API)');
+    console.info('===============================================');
     
     // Load configuration with comments and trailing commas
     const monitoring = this.pipeline.config.get('monitoring');
     const quantumHash = this.pipeline.config.get('quantumHash');
     const archive = this.pipeline.config.get('archive');
     
-    console.log('📊 Current Configuration:');
-    console.log(`   • Monitoring: ${monitoring.enabled ? 'enabled' : 'disabled'}`);
-    console.log(`   • Check interval: ${monitoring.interval}ms`);
-    console.log(`   • Quantum hash: ${quantumHash.hardwareAcceleration ? 'hardware' : 'software'}`);
-    console.log(`   • Archive compression: ${archive.compression}`);
-    console.log(`   • Compression level: ${archive.level}`);
+    console.info('📊 Current Configuration:');
+    console.info(`   • Monitoring: ${monitoring.enabled ? 'enabled' : 'disabled'}`);
+    console.info(`   • Check interval: ${monitoring.interval}ms`);
+    console.info(`   • Quantum hash: ${quantumHash.hardwareAcceleration ? 'hardware' : 'software'}`);
+    console.info(`   • Archive compression: ${archive.compression}`);
+    console.info(`   • Compression level: ${archive.level}`);
     
     // Update configuration dynamically
-    console.log('\n🔧 Updating configuration...');
+    console.info('\n🔧 Updating configuration...');
     this.pipeline.config.set('monitoring', {
       ...monitoring,
       interval: 3000,
       alertThreshold: 50
     });
     
-    console.log('✅ Configuration updated successfully');
-    console.log('   • New interval: 3000ms');
-    console.log('   • New threshold: 50');
-    console.log('');
+    console.info('✅ Configuration updated successfully');
+    console.info('   • New interval: 3000ms');
+    console.info('   • New threshold: 50');
+    console.info('');
   }
 
   /**
    * 📦 Demonstrate Evidence Archive System
    */
   private async demonstrateArchiveSystem(): Promise<void> {
-    console.log('📦 2. Evidence Archive System (Bun.Archive API)');
-    console.log('==============================================');
+    console.info('📦 2. Evidence Archive System (Bun.Archive API)');
+    console.info('==============================================');
     
     // Sample evidence files
     const evidenceFiles = {
@@ -109,37 +109,37 @@ class EvidenceIntegrityPipelineDemo {
       }, null, 2)
     };
     
-    console.log('📝 Creating evidence archive...');
+    console.info('📝 Creating evidence archive...');
     
     // Create archive with gzip compression
     const archive = await this.pipeline.archive.createEvidenceArchive(evidenceFiles);
     
-    console.log('✅ Archive created successfully!');
-    console.log(`   • Archive size: ${archive.size} bytes`);
-    console.log(`   • Compression: gzip (level 9)`);
-    console.log(`   • Files included: ${Object.keys(evidenceFiles).length}`);
+    console.info('✅ Archive created successfully!');
+    console.info(`   • Archive size: ${archive.size} bytes`);
+    console.info(`   • Compression: gzip (level 9)`);
+    console.info(`   • Files included: ${Object.keys(evidenceFiles).length}`);
     
     // Extract and verify
-    console.log('\n📤 Extracting and verifying archive...');
+    console.info('\n📤 Extracting and verifying archive...');
     const extracted = await this.pipeline.archive.extractEvidenceArchive(archive, './temp-evidence');
     
     if (extracted) {
-      console.log('✅ Archive extraction and verification successful!');
+      console.info('✅ Archive extraction and verification successful!');
     } else {
-      console.log('❌ Archive extraction failed');
+      console.info('❌ Archive extraction failed');
     }
     
-    console.log('');
+    console.info('');
   }
 
   /**
    * 🔨 Demonstrate Build System
    */
   private async demonstrateBuildSystem(): Promise<void> {
-    console.log('🔨 3. Build System (Bun.build Metafile & Virtual Files)');
-    console.log('======================================================');
+    console.info('🔨 3. Build System (Bun.build Metafile & Virtual Files)');
+    console.info('======================================================');
     
-    console.log('📝 Building Evidence Integrity Pipeline...');
+    console.info('📝 Building Evidence Integrity Pipeline...');
     
     try {
       // Simulate build process with virtual files
@@ -171,9 +171,9 @@ export const EVIDENCE_CONSTANTS = {
 `
       };
       
-      console.log('📁 Virtual files generated:');
+      console.info('📁 Virtual files generated:');
       Object.keys(virtualFiles).forEach(file => {
-        console.log(`   • ${file}`);
+        console.info(`   • ${file}`);
       });
       
       // Simulate metafile analysis
@@ -189,83 +189,83 @@ export const EVIDENCE_CONSTANTS = {
         }
       };
       
-      console.log('\n📊 Bundle Analysis (Metafile):');
+      console.info('\n📊 Bundle Analysis (Metafile):');
       let totalSize = 0;
       
       for (const [path, input] of Object.entries(mockMetafile.inputs)) {
         const inputMeta = input as any;
         totalSize += inputMeta.bytes;
-        console.log(`   📁 ${path}: ${inputMeta.bytes} bytes`);
+        console.info(`   📁 ${path}: ${inputMeta.bytes} bytes`);
       }
       
       for (const [path, output] of Object.entries(mockMetafile.outputs)) {
         const outputMeta = output as any;
-        console.log(`   📦 ${path}: ${outputMeta.bytes} bytes`);
+        console.info(`   📦 ${path}: ${outputMeta.bytes} bytes`);
       }
       
-      console.log(`\n📈 Build Summary:`);
-      console.log(`   • Total input size: ${totalSize} bytes`);
-      console.log(`   • Output files: ${Object.keys(mockMetafile.outputs).length}`);
-      console.log(`   • Virtual files: ${Object.keys(virtualFiles).length}`);
-      console.log(`   • Features: ${buildMetadata.features.join(', ')}`);
+      console.info(`\n📈 Build Summary:`);
+      console.info(`   • Total input size: ${totalSize} bytes`);
+      console.info(`   • Output files: ${Object.keys(mockMetafile.outputs).length}`);
+      console.info(`   • Virtual files: ${Object.keys(virtualFiles).length}`);
+      console.info(`   • Features: ${buildMetadata.features.join(', ')}`);
       
     } catch (error) {
       console.error('❌ Build demonstration failed:', error);
     }
     
-    console.log('');
+    console.info('');
   }
 
   /**
    * 🎯 Show Integration Summary
    */
   private showIntegrationSummary(): void {
-    console.log('🎯 4. Integration Summary');
-    console.log('=======================');
+    console.info('🎯 4. Integration Summary');
+    console.info('=======================');
     
-    console.log('✅ Bun v1.3.6 Features Successfully Integrated:');
-    console.log('');
+    console.info('✅ Bun v1.3.6 Features Successfully Integrated:');
+    console.info('');
     
-    console.log('📦 Bun.Archive API:');
-    console.log('   • Evidence tarball creation with gzip compression');
-    console.log('   • Quantum hash verification for integrity');
-    console.log('   • S3 storage with zero dependencies');
-    console.log('   • Extract and verify evidence packages');
-    console.log('');
+    console.info('📦 Bun.Archive API:');
+    console.info('   • Evidence tarball creation with gzip compression');
+    console.info('   • Quantum hash verification for integrity');
+    console.info('   • S3 storage with zero dependencies');
+    console.info('   • Extract and verify evidence packages');
+    console.info('');
     
-    console.log('🔧 Bun.JSONC API:');
-    console.log('   • Parse configuration files with comments');
-    console.log('   • Support for trailing commas');
-    console.log('   • Dynamic configuration updates');
-    console.log('   • VS Code and tsconfig.json compatibility');
-    console.log('');
+    console.info('🔧 Bun.JSONC API:');
+    console.info('   • Parse configuration files with comments');
+    console.info('   • Support for trailing commas');
+    console.info('   • Dynamic configuration updates');
+    console.info('   • VS Code and tsconfig.json compatibility');
+    console.info('');
     
-    console.log('🔨 Bun.build Metafile:');
-    console.log('   • Bundle size analysis and optimization');
-    console.log('   • Dependency tracking and visualization');
-    console.log('   • CI integration support');
-    console.log('   • External tool compatibility');
-    console.log('');
+    console.info('🔨 Bun.build Metafile:');
+    console.info('   • Bundle size analysis and optimization');
+    console.info('   • Dependency tracking and visualization');
+    console.info('   • CI integration support');
+    console.info('   • External tool compatibility');
+    console.info('');
     
-    console.log('📁 Virtual Files:');
-    console.log('   • Build-time code generation');
-    console.log('   • Production configuration injection');
-    console.log('   • Mock module creation for testing');
-    console.log('   • Dynamic metadata generation');
-    console.log('');
+    console.info('📁 Virtual Files:');
+    console.info('   • Build-time code generation');
+    console.info('   • Production configuration injection');
+    console.info('   • Mock module creation for testing');
+    console.info('   • Dynamic metadata generation');
+    console.info('');
     
-    console.log('💰 Business Impact:');
-    console.log('   • Faster evidence processing and packaging');
-    console.log('   • Better configuration management');
-    console.log('   • Improved build optimization');
-    console.log('   • Enhanced developer experience');
-    console.log('');
+    console.info('💰 Business Impact:');
+    console.info('   • Faster evidence processing and packaging');
+    console.info('   • Better configuration management');
+    console.info('   • Improved build optimization');
+    console.info('   • Enhanced developer experience');
+    console.info('');
     
-    console.log('🚀 Evidence Integrity Pipeline: ENTERPRISE READY!');
-    console.log('   • All Bun v1.3.6 features: ✅ Integrated');
-    console.log('   • Production deployment: ✅ Ready');
-    console.log('   • Performance optimization: ✅ Complete');
-    console.log('   • Revenue generation: ✅ Unlocked ($2.1M/year)');
+    console.info('🚀 Evidence Integrity Pipeline: ENTERPRISE READY!');
+    console.info('   • All Bun v1.3.6 features: ✅ Integrated');
+    console.info('   • Production deployment: ✅ Ready');
+    console.info('   • Performance optimization: ✅ Complete');
+    console.info('   • Revenue generation: ✅ Unlocked ($2.1M/year)');
   }
 }
 

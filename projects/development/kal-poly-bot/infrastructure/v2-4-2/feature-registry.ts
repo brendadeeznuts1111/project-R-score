@@ -362,33 +362,33 @@ export class FeatureRegistry {
 
   // Log feature initialization
   private static logFeatureInitialization(): void {
-    console.log("🚀 Golden Matrix v2.4.2 Feature Registry Initialized");
-    console.log("==================================================");
+    console.info("🚀 Golden Matrix v2.4.2 Feature Registry Initialized");
+    console.info("==================================================");
 
     const enabledFeatures = this.getEnabledFeatures();
-    console.log(
+    console.info(
       `✅ Enabled Features (${enabledFeatures.length}/${Object.keys(GOLDEN_MATRIX_FEATURES).length}):`
     );
 
     for (const featureName of enabledFeatures) {
       const metadata = this.getFeatureMetadata(featureName);
       if (metadata) {
-        console.log(
+        console.info(
           `   ${metadata.name} (Component #${metadata.component}) - ${metadata.performance}`
         );
       }
     }
 
-    console.log(
+    console.info(
       `📊 Zero-Cost Abstractions: ${enabledFeatures.filter((f) => FEATURE_METADATA[f]?.zeroCost).length}/${enabledFeatures.length}`
     );
-    console.log(
+    console.info(
       `🔧 Health Checks: ${this.configuration.global.healthChecks ? "Enabled" : "Disabled"}`
     );
-    console.log(
+    console.info(
       `📝 Audit Logging: ${this.configuration.global.auditLogging ? "Enabled" : "Disabled"}`
     );
-    console.log(
+    console.info(
       `📈 Performance Monitoring: ${this.configuration.global.performanceMonitoring ? "Enabled" : "Disabled"}`
     );
   }

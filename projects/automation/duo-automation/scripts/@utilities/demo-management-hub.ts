@@ -12,10 +12,10 @@ const HUB_PORT = parseInt(process.env.HUB_PORT || '3005');
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 async function runDemo() {
-  console.log('🌟 Starting DuoPlus Management Hub Demo...');
+  console.info('🌟 Starting DuoPlus Management Hub Demo...');
 
   // 1. Start the Hub Server in THIS process
-  console.log(`📡 Launching Management Hub Server on port ${HUB_PORT}...`);
+  console.info(`📡 Launching Management Hub Server on port ${HUB_PORT}...`);
   
   const server = serve({
     port: HUB_PORT,
@@ -84,10 +84,10 @@ async function runDemo() {
     }
   });
 
-  console.log(`✅ Management Hub Server running at http://localhost:${HUB_PORT}`);
+  console.info(`✅ Management Hub Server running at http://localhost:${HUB_PORT}`);
 
   // 2. Launch several dashboard children representing different scopes
-  console.log('🚀 Spawning sample scoped dashboards...');
+  console.info('🚀 Spawning sample scoped dashboards...');
   
   // Enterprise scope (on port 3004)
   process.env.AGENT_ID = 'demo-agent-001';
@@ -114,16 +114,16 @@ async function runDemo() {
     3007
   );
 
-  console.log('\n--- Demo Active ---');
-  console.log(`📍 Management Hub: http://localhost:${HUB_PORT}`);
-  console.log('Active Scopes: ENTERPRISE, DEVELOPMENT, LOCAL-SANDBOX');
-  console.log('Metrics are being pushed via Bun Native IPC every second.\n');
+  console.info('\n--- Demo Active ---');
+  console.info(`📍 Management Hub: http://localhost:${HUB_PORT}`);
+  console.info('Active Scopes: ENTERPRISE, DEVELOPMENT, LOCAL-SANDBOX');
+  console.info('Metrics are being pushed via Bun Native IPC every second.\n');
 
-  console.log('Press Ctrl+C to stop the demo and shutdown all processes.');
+  console.info('Press Ctrl+C to stop the demo and shutdown all processes.');
 
   // Handle cleanup on exit
   const cleanup = async () => {
-    console.log('\n🛑 Cleaning up demo processes...');
+    console.info('\n🛑 Cleaning up demo processes...');
     await UnifiedDashboardLauncher.shutdownAll();
     server.stop();
     process.exit(0);

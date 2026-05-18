@@ -40,7 +40,7 @@ function withUnifiedTracking(handler: (req: Request, cookies: AnalyticsCookieMap
       const finalResponse = unifiedManager.applyUnifiedCookies(cookies, metrics, response);
       
       const duration = performance.now() - startTime;
-      console.log(`⚡ Unified request processed in ${duration.toFixed(2)}ms`);
+      console.info(`⚡ Unified request processed in ${duration.toFixed(2)}ms`);
       
       return finalResponse;
     } catch (error) {
@@ -471,7 +471,7 @@ const routes = {
 };
 
 // Start unified server
-console.log(`🚀 Unified Cookie + DataView Server v3.24 starting...`);
+console.info(`🚀 Unified Cookie + DataView Server v3.24 starting...`);
 
 const server = (Bun as any).serve({
   port: PORT,
@@ -487,5 +487,5 @@ const server = (Bun as any).serve({
   }
 });
 
-console.log(`🎯 Unified server running on http://localhost:${server.port}`);
-console.log(`📊 Features: Enhanced Security + Binary Telemetry + Real-time Analytics`);
+console.info(`🎯 Unified server running on http://localhost:${server.port}`);
+console.info(`📊 Features: Enhanced Security + Binary Telemetry + Real-time Analytics`);

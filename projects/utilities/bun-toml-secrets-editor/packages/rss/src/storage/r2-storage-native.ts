@@ -71,7 +71,7 @@ export class R2StorageNative {
 
 		try {
 			await this.s3.write(key, JSON.stringify(feedData, null, 2));
-			console.log(`✅ RSS feed stored: ${key}`);
+			console.info(`✅ RSS feed stored: ${key}`);
 			return key;
 		} catch (error) {
 			console.error(`❌ Failed to store RSS feed: ${error}`);
@@ -87,7 +87,7 @@ export class R2StorageNative {
 
 		try {
 			await this.s3.write(key, JSON.stringify(report, null, 2));
-			console.log(`✅ Profiling report stored: ${key}`);
+			console.info(`✅ Profiling report stored: ${key}`);
 			return key;
 		} catch (error) {
 			console.error(`❌ Failed to store profiling report: ${error}`);
@@ -182,7 +182,7 @@ export class R2StorageNative {
 	async delete(key: string): Promise<boolean> {
 		try {
 			await this.s3.delete(key);
-			console.log(`✅ Deleted: ${key}`);
+			console.info(`✅ Deleted: ${key}`);
 			return true;
 		} catch (error) {
 			console.error(`❌ Failed to delete ${key}: ${error}`);

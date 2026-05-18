@@ -103,7 +103,7 @@ export class KPIComponentTestSuite {
    * 🚀 Run all tests
    */
   public async runAllTests(): Promise<void> {
-    console.log('🧪 Starting KPI Component Tests...');
+    console.info('🧪 Starting KPI Component Tests...');
 
     // Basic functionality tests
     this.testBasicCreation();
@@ -121,7 +121,7 @@ export class KPIComponentTestSuite {
     // Cleanup tests
     this.testCleanup();
 
-    console.log('🧪 All tests completed!');
+    console.info('🧪 All tests completed!');
     this.logResults();
   }
 
@@ -510,20 +510,20 @@ export class KPIComponentTestSuite {
     const passed = this.testResults.filter(r => r.passed).length;
     const total = this.testResults.length;
 
-    console.log(`\n🧪 KPI Component Test Results:`);
-    console.log(`✅ Passed: ${passed}/${total}`);
-    console.log(`❌ Failed: ${total - passed}/${total}`);
+    console.info(`\n🧪 KPI Component Test Results:`);
+    console.info(`✅ Passed: ${passed}/${total}`);
+    console.info(`❌ Failed: ${total - passed}/${total}`);
 
     if (passed < total) {
-      console.log('\n❌ Failed Tests:');
+      console.info('\n❌ Failed Tests:');
       this.testResults
         .filter(r => !r.passed)
         .forEach(result => {
-          console.log(`  - ${result.test}: ${result.message}`);
+          console.info(`  - ${result.test}: ${result.message}`);
         });
     }
 
-    console.log(`\n🎯 Success Rate: ${((passed / total) * 100).toFixed(1)}%`);
+    console.info(`\n🎯 Success Rate: ${((passed / total) * 100).toFixed(1)}%`);
   }
 
   /**

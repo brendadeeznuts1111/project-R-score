@@ -19,40 +19,40 @@ class VaultWorkflowIntegration {
    * 1. Auto-Rotate on Deploy Integration
    */
   async deployPreFlight(): Promise<boolean> {
-    console.log("🚀 FactoryWager Deploy Pre-flight Check");
-    console.log("=====================================");
+    console.info("🚀 FactoryWager Deploy Pre-flight Check");
+    console.info("=====================================");
 
     // Check vault health
     const healthStatus = await this.vault.healthCheck();
     if (!healthStatus) {
-      console.log("⚠️  Vault health issues detected - running emergency rotation");
+      console.info("⚠️  Vault health issues detected - running emergency rotation");
       await this.vault.rotateAllCredentials();
 
       // Re-check after rotation
       const recheckStatus = await this.vault.healthCheck();
       if (!recheckStatus) {
-        console.log("❌ Vault rotation failed - aborting deployment");
+        console.info("❌ Vault rotation failed - aborting deployment");
         return false;
       }
-      console.log("✅ Emergency rotation completed successfully");
+      console.info("✅ Emergency rotation completed successfully");
     } else {
-      console.log("✅ Vault health check passed");
+      console.info("✅ Vault health check passed");
     }
 
     // Check for credentials older than 80 days
     const needsRotation = await this.checkCredentialAge();
     if (needsRotation) {
-      console.log("🔄 Rotating credentials older than 80 days...");
+      console.info("🔄 Rotating credentials older than 80 days...");
       await this.vault.rotateAllCredentials();
-      console.log("✅ Scheduled rotation completed");
+      console.info("✅ Scheduled rotation completed");
     } else {
-      console.log("✅ All credentials within freshness window");
+      console.info("✅ All credentials within freshness window");
     }
 
     // Generate deployment report
     await this.generateDeploymentReport();
 
-    console.log("🎉 Deploy pre-flight complete - ready for deployment");
+    console.info("🎉 Deploy pre-flight complete - ready for deployment");
     return true;
   }
 
@@ -76,7 +76,7 @@ class VaultWorkflowIntegration {
       for (const [key, cred] of Object.entries(metadata)) {
         const rotatedAt = new Date(cred.rotatedAt).getTime();
         if (rotatedAt < eightyDaysAgo) {
-          console.log(`⚠️  Found old credential: ${key} (${Math.floor((Date.now() - rotatedAt) / (24 * 60 * 60 * 1000))} days old)`);
+          console.info(`⚠️  Found old credential: ${key} (${Math.floor((Date.now() - rotatedAt) / (24 * 60 * 60 * 1000))} days old)`);
           return true;
         }
       }
@@ -92,7 +92,7 @@ class VaultWorkflowIntegration {
    * 2. Secret Injection into YAML
    */
   async injectSecretsIntoYaml(yamlPath: string, outputPath?: string): Promise<void> {
-    console.log(`🔐 Injecting vault secrets into YAML: ${yamlPath}`);
+    console.info(`🔐 Injecting vault secrets into YAML: ${yamlPath}`);
 
     try {
       const yamlContent = await Bun.file(yamlPath).text();
@@ -102,37 +102,37 @@ class VaultWorkflowIntegration {
       const vaultPattern = /VAULT:([a-zA-Z0-9._-]+)/g;
       const matches = [...yamlContent.matchAll(vaultPattern)];
 
-      console.log(`📝 Found ${matches.length} vault references to inject`);
+      console.info(`📝 Found ${matches.length} vault references to inject`);
 
       for (const match of matches) {
         const vaultKey = match[1];
-        console.log(`🔍 Processing vault key: ${vaultKey}`);
-        console.log(`🔍 Full match: ${match[0]}`);
+        console.info(`🔍 Processing vault key: ${vaultKey}`);
+        console.info(`🔍 Full match: ${match[0]}`);
 
         // Parse the vault key to extract service and actual key
         // Format: com.factory-wager.registry.service.key
         const parts = vaultKey.split('.');
-        console.log(`🔍 Key parts: [${parts.join(', ')}] (count: ${parts.length})`);
+        console.info(`🔍 Key parts: [${parts.join(', ')}] (count: ${parts.length})`);
 
         if (parts.length >= 5) {
           const service = parts[3]; // registry, r2, domain, mcp
           const actualKey = parts.slice(4).join('.'); // token, secret_key, ssl_cert, etc.
 
-          console.log(`  → Service: ${service}, Key: ${actualKey}`);
+          console.info(`  → Service: ${service}, Key: ${actualKey}`);
 
           if (service && actualKey) {
-            console.log(`  → Calling vault.getCredential("${service}", "${actualKey}")`);
+            console.info(`  → Calling vault.getCredential("${service}", "${actualKey}")`);
             const secret = await this.vault.getCredential(service as any, actualKey);
             if (secret) {
               processedContent = processedContent.replace(match[0], secret);
-              console.log(`  ✅ Injected: ${vaultKey} → ${secret.substring(0, 8)}...`);
+              console.info(`  ✅ Injected: ${vaultKey} → ${secret.substring(0, 8)}...`);
             } else {
-              console.log(`  ❌ Missing: ${service}.${actualKey}`);
+              console.info(`  ❌ Missing: ${service}.${actualKey}`);
               throw new Error(`Vault secret not found: ${service}.${actualKey}`);
             }
           }
         } else {
-          console.log(`  ❌ Invalid vault key format: ${vaultKey}`);
+          console.info(`  ❌ Invalid vault key format: ${vaultKey}`);
           throw new Error(`Invalid vault key format: ${vaultKey}`);
         }
       }
@@ -140,10 +140,10 @@ class VaultWorkflowIntegration {
       const output = outputPath || yamlPath.replace('.yaml', '.injected.yaml');
       await Bun.write(output, processedContent);
 
-      console.log(`✅ YAML secrets injected: ${output}`);
+      console.info(`✅ YAML secrets injected: ${output}`);
 
       // Secure cleanup - don't log injected content
-      console.log("🔒 Sensitive content written to disk securely");
+      console.info("🔒 Sensitive content written to disk securely");
 
     } catch (error) {
       console.error(`❌ YAML injection failed: ${(error as Error).message}`);
@@ -155,8 +155,8 @@ class VaultWorkflowIntegration {
    * 3. Emergency Lockdown (one-liner)
    */
   async emergencyLockdown(): Promise<void> {
-    console.log("🚨 EMERGENCY VAULT LOCKDOWN INITIATED");
-    console.log("=====================================");
+    console.info("🚨 EMERGENCY VAULT LOCKDOWN INITIATED");
+    console.info("=====================================");
 
     const services = ["registry", "r2", "domain", "mcp"];
     let deletedCount = 0;
@@ -165,14 +165,14 @@ class VaultWorkflowIntegration {
       try {
         const deleted = await this.vault.deleteCredential(service, "api_key");
         if (deleted) {
-          console.log(`🗑️  Deleted: ${service}.api_key`);
+          console.info(`🗑️  Deleted: ${service}.api_key`);
           deletedCount++;
         }
 
         // Also delete backup keys
         const backupDeleted = await this.vault.deleteCredential(service, "api_key_backup");
         if (backupDeleted) {
-          console.log(`🗑️  Deleted: ${service}.api_key_backup`);
+          console.info(`🗑️  Deleted: ${service}.api_key_backup`);
           deletedCount++;
         }
 
@@ -181,8 +181,8 @@ class VaultWorkflowIntegration {
       }
     }
 
-    console.log(`🔒 Emergency lockdown complete: ${deletedCount} credentials deleted`);
-    console.log("⚠️  All access revoked - manual intervention required");
+    console.info(`🔒 Emergency lockdown complete: ${deletedCount} credentials deleted`);
+    console.info("⚠️  All access revoked - manual intervention required");
   }
 
   /**
@@ -203,14 +203,14 @@ class VaultWorkflowIntegration {
     const reportPath = `${process.env.HOME || '.'}/.factory-wager/deployment-credentials.json`;
     await Bun.write(reportPath, JSON.stringify(report, null, 2));
 
-    console.log(`📊 Deployment report: ${reportPath}`);
+    console.info(`📊 Deployment report: ${reportPath}`);
   }
 
   /**
    * 4. Audit Trail to R2
    */
   async uploadAuditTrailToR2(): Promise<void> {
-    console.log("📤 Uploading vault audit trail to R2...");
+    console.info("📤 Uploading vault audit trail to R2...");
 
     try {
       const auditLog = {
@@ -232,8 +232,8 @@ class VaultWorkflowIntegration {
       const r2Path = `${process.env.HOME || '.'}/.factory-wager/r2-audit/${auditFileName}`;
       await Bun.write(r2Path, auditContent);
 
-      console.log(`✅ Audit trail uploaded: ${auditFileName}`);
-      console.log(`📊 Credentials audited: ${auditLog.credentials.total}`);
+      console.info(`✅ Audit trail uploaded: ${auditFileName}`);
+      console.info(`📊 Credentials audited: ${auditLog.credentials.total}`);
 
     } catch (error) {
       console.error(`❌ Audit trail upload failed: ${(error as Error).message}`);
@@ -303,23 +303,23 @@ class VaultWorkflowIntegration {
    * Full Vault Audit (one-liner implementation)
    */
   async fullVaultAudit(): Promise<boolean> {
-    console.log("🔍 Full Vault Audit");
-    console.log("==================");
+    console.info("🔍 Full Vault Audit");
+    console.info("==================");
 
     try {
       const healthStatus = await this.vault.healthCheck();
       const credentialSummary = await this.getCredentialSummary();
 
-      console.log(`📊 Credentials: ${credentialSummary.total} total, ${credentialSummary.healthy} healthy`);
-      console.log(`🔐 Backend: Bun.secrets (OS keychain)`);
-      console.log(`🔒 Encryption: OS-level`);
-      console.log(`📅 Last check: ${new Date().toISOString()}`);
+      console.info(`📊 Credentials: ${credentialSummary.total} total, ${credentialSummary.healthy} healthy`);
+      console.info(`🔐 Backend: Bun.secrets (OS keychain)`);
+      console.info(`🔒 Encryption: OS-level`);
+      console.info(`📅 Last check: ${new Date().toISOString()}`);
 
       if (healthStatus) {
-        console.log("🎉 Vault Locked & Loaded");
+        console.info("🎉 Vault Locked & Loaded");
         return true;
       } else {
-        console.log("🚨 Vault Compromised - Issues Detected");
+        console.info("🚨 Vault Compromised - Issues Detected");
         return false;
       }
     } catch (error) {
@@ -380,7 +380,7 @@ async function main(): Promise<void> {
 
     case "dashboard":
       const widget = await integration.getDashboardWidget();
-      console.log(JSON.stringify(widget, null, 2));
+      console.info(JSON.stringify(widget, null, 2));
       break;
 
     case "full-audit":
@@ -389,13 +389,13 @@ async function main(): Promise<void> {
       break;
 
     case "cron-config":
-      console.log(integration.generateCronConfig());
+      console.info(integration.generateCronConfig());
       break;
 
     case "help":
     case "--help":
     case "-h":
-      console.log(`
+      console.info(`
 🔐 FactoryWager Vault Workflow Integration v1.3.8
 
 Usage:
@@ -428,7 +428,7 @@ Integration Points:
 
     default:
       console.error(`❌ Unknown command: ${cmd}`);
-      console.log("Use --help for usage information");
+      console.info("Use --help for usage information");
       process.exit(1);
   }
 }

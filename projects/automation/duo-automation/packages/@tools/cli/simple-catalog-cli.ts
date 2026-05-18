@@ -68,21 +68,21 @@ async function handleListCommand(catalog: CatalogViewer, args: string[]): Promis
   const results = catalog.search(query);
 
   if (results.length === 0) {
-    console.log(`📭 No items found for category: ${category}`);
+    console.info(`📭 No items found for category: ${category}`);
     return;
   }
 
-  console.log(`\n📦 ${category === 'all' ? 'All Items' : category.charAt(0).toUpperCase() + category.slice(1)} (${results.length} items)\n`);
-  console.log('─'.repeat(80));
+  console.info(`\n📦 ${category === 'all' ? 'All Items' : category.charAt(0).toUpperCase() + category.slice(1)} (${results.length} items)\n`);
+  console.info('─'.repeat(80));
 
   results.forEach((item, index) => {
-    console.log(`\n${index + 1}. ${formatRegistryItem(item, {
+    console.info(`\n${index + 1}. ${formatRegistryItem(item, {
       includeDetails: false,
       colorize: true
     })}`);
   });
 
-  console.log('\n' + '─'.repeat(80));
+  console.info('\n' + '─'.repeat(80));
 }
 
 /**
@@ -91,8 +91,8 @@ async function handleListCommand(catalog: CatalogViewer, args: string[]): Promis
 async function handleSearchCommand(catalog: CatalogViewer, args: string[]): Promise<void> {
   const query = args[1];
   if (!query) {
-    console.log('❌ Please provide a search query');
-    console.log('Usage: catalog search <query>');
+    console.info('❌ Please provide a search query');
+    console.info('Usage: catalog search <query>');
     return;
   }
 
@@ -100,22 +100,22 @@ async function handleSearchCommand(catalog: CatalogViewer, args: string[]): Prom
   const results = catalog.search({ text: query, limit });
 
   if (results.length === 0) {
-    console.log(`📭 No items found for search: '${query}'`);
+    console.info(`📭 No items found for search: '${query}'`);
     return;
   }
 
-  console.log(`\n🔍 Search Results for '${query}' (${results.length} items)\n`);
-  console.log('─'.repeat(80));
+  console.info(`\n🔍 Search Results for '${query}' (${results.length} items)\n`);
+  console.info('─'.repeat(80));
 
   results.forEach((item, index) => {
-    console.log(`\n${index + 1}. ${formatRegistryItem(item, {
+    console.info(`\n${index + 1}. ${formatRegistryItem(item, {
       includeDetails: false,
       colorize: true
     })}`);
   });
 
-  console.log('\n' + '─'.repeat(80));
-  console.log(`\n💡 Use 'catalog info <id>' for detailed information about any item`);
+  console.info('\n' + '─'.repeat(80));
+  console.info(`\n💡 Use 'catalog info <id>' for detailed information about any item`);
 }
 
 /**
@@ -124,13 +124,13 @@ async function handleSearchCommand(catalog: CatalogViewer, args: string[]): Prom
 async function handleCrossReferenceCommand(catalog: CatalogViewer, args: string[]): Promise<void> {
   const itemId = args[1];
   if (!itemId) {
-    console.log('❌ Please provide an item ID');
-    console.log('Usage: catalog crossref <id>');
+    console.info('❌ Please provide an item ID');
+    console.info('Usage: catalog crossref <id>');
     return;
   }
 
   try {
-    console.log(`🔗 Cross-References for ${itemId}...\n`);
+    console.info(`🔗 Cross-References for ${itemId}...\n`);
     
     // Get cross-references using the new API
     const crossRefs = await catalog.getCrossReferences(itemId, {
@@ -142,15 +142,15 @@ async function handleCrossReferenceCommand(catalog: CatalogViewer, args: string[
       minStrength: 30
     });
 
-    console.log(`📊 Cross-Reference Summary:`);
-    console.log(`   Item ID: ${crossRefs.itemId}`);
-    console.log(`   Related By: ${crossRefs.relatedBy}`);
-    console.log(`   Strength: ${crossRefs.strength}/100`);
-    console.log(`   References Found: ${crossRefs.crossReferences.length}\n`);
+    console.info(`📊 Cross-Reference Summary:`);
+    console.info(`   Item ID: ${crossRefs.itemId}`);
+    console.info(`   Related By: ${crossRefs.relatedBy}`);
+    console.info(`   Strength: ${crossRefs.strength}/100`);
+    console.info(`   References Found: ${crossRefs.crossReferences.length}\n`);
 
     if (crossRefs.crossReferences.length > 0) {
-      console.log(`🔗 Cross-References (${crossRefs.crossReferences.length} items):\n`);
-      console.log('─'.repeat(80));
+      console.info(`🔗 Cross-References (${crossRefs.crossReferences.length} items):\n`);
+      console.info('─'.repeat(80));
       
       crossRefs.crossReferences.forEach((ref, index) => {
         const icon = ref.relationship === 'dependency' ? '🔗' : 
@@ -158,35 +158,35 @@ async function handleCrossReferenceCommand(catalog: CatalogViewer, args: string[
                     ref.relationship === 'similar' ? '🔍' :
                     ref.relationship === 'category' ? '📂' : '🏷️';
         
-        console.log(`${index + 1}. ${icon} ${ref.name} v${ref.version}`);
-        console.log(`   📋 ${ref.description.substring(0, 80)}${ref.description.length > 80 ? '...' : ''}`);
-        console.log(`   🎯 Relationship: ${ref.relationship} (Relevance: ${ref.relevanceScore}%)`);
-        console.log(`   📊 Downloads: ${ref.metrics.downloads.toLocaleString()} | ⭐ Stars: ${ref.metrics.stars}`);
-        console.log(`   🏷️ Tags: ${ref.tags.map(tag => `#${tag}`).join(', ')}`);
-        console.log('');
+        console.info(`${index + 1}. ${icon} ${ref.name} v${ref.version}`);
+        console.info(`   📋 ${ref.description.substring(0, 80)}${ref.description.length > 80 ? '...' : ''}`);
+        console.info(`   🎯 Relationship: ${ref.relationship} (Relevance: ${ref.relevanceScore}%)`);
+        console.info(`   📊 Downloads: ${ref.metrics.downloads.toLocaleString()} | ⭐ Stars: ${ref.metrics.stars}`);
+        console.info(`   🏷️ Tags: ${ref.tags.map(tag => `#${tag}`).join(', ')}`);
+        console.info('');
       });
 
-      console.log('─'.repeat(80));
+      console.info('─'.repeat(80));
       
       // Show metadata
-      console.log(`\n📊 Cross-Reference Metadata:`);
-      console.log(`   Shared Tags: ${crossRefs.metadata.sharedTags.map(tag => `#${tag}`).join(', ')}`);
-      console.log(`   Same Category: ${crossRefs.metadata.sharedCategory ? 'Yes' : 'No'}`);
-      console.log(`   Dependency Chain: ${crossRefs.metadata.dependencyChain.join(' → ') || 'None'}`);
-      console.log(`   Compatibility: ${crossRefs.metadata.compatibility}%`);
+      console.info(`\n📊 Cross-Reference Metadata:`);
+      console.info(`   Shared Tags: ${crossRefs.metadata.sharedTags.map(tag => `#${tag}`).join(', ')}`);
+      console.info(`   Same Category: ${crossRefs.metadata.sharedCategory ? 'Yes' : 'No'}`);
+      console.info(`   Dependency Chain: ${crossRefs.metadata.dependencyChain.join(' → ') || 'None'}`);
+      console.info(`   Compatibility: ${crossRefs.metadata.compatibility}%`);
       
       if (crossRefs.metadata.usagePatterns.length > 0) {
-        console.log(`   Usage Patterns:`);
+        console.info(`   Usage Patterns:`);
         crossRefs.metadata.usagePatterns.forEach(pattern => {
-          console.log(`     • ${pattern}`);
+          console.info(`     • ${pattern}`);
         });
       }
     } else {
-      console.log('📭 No cross-references found for this item.');
+      console.info('📭 No cross-references found for this item.');
     }
 
-    console.log('\n💡 Use "catalog crossref <id> --deps" to see only dependencies');
-    console.log('💡 Use "catalog crossref <id> --similar" to see similar items');
+    console.info('\n💡 Use "catalog crossref <id> --deps" to see only dependencies');
+    console.info('💡 Use "catalog crossref <id> --similar" to see similar items');
 
   } catch (error) {
     console.error(`❌ Cross-reference command failed: ${error instanceof Error ? error.message : String(error)}`);
@@ -198,19 +198,19 @@ async function handleCrossReferenceCommand(catalog: CatalogViewer, args: string[
  */
 async function handleCrossReferenceStatsCommand(catalog: CatalogViewer): Promise<void> {
   try {
-    console.log('📊 Cross-Reference Statistics\n');
+    console.info('📊 Cross-Reference Statistics\n');
     
     const stats = await catalog.getCrossReferenceStats();
     
-    console.log('📈 Overall Statistics:');
-    console.log(`   Total Items: ${stats.totalItems}`);
-    console.log(`   Total Relationships: ${stats.totalRelationships}`);
-    console.log(`   Average References per Item: ${stats.averageReferences}`);
-    console.log(`   Most Connected Item: ${stats.mostConnected}`);
-    console.log(`   Strongest Relationship: ${stats.strongestRelationship}\n`);
+    console.info('📈 Overall Statistics:');
+    console.info(`   Total Items: ${stats.totalItems}`);
+    console.info(`   Total Relationships: ${stats.totalRelationships}`);
+    console.info(`   Average References per Item: ${stats.averageReferences}`);
+    console.info(`   Most Connected Item: ${stats.mostConnected}`);
+    console.info(`   Strongest Relationship: ${stats.strongestRelationship}\n`);
     
-    console.log('🔗 Relationship Distribution:');
-    console.log('─'.repeat(50));
+    console.info('🔗 Relationship Distribution:');
+    console.info('─'.repeat(50));
     
     // Get detailed relationship stats
     const allItems = catalog.search({ limit: 1000 });
@@ -232,10 +232,10 @@ async function handleCrossReferenceStatsCommand(catalog: CatalogViewer): Promise
                   relationship === 'dependent' ? '🔌' :
                   relationship === 'similar' ? '🔍' :
                   relationship === 'category' ? '📂' : '🏷️';
-      console.log(`   ${icon} ${relationship}: ${count}`);
+      console.info(`   ${icon} ${relationship}: ${count}`);
     });
     
-    console.log('─'.repeat(50));
+    console.info('─'.repeat(50));
     
   } catch (error) {
     console.error(`❌ Cross-reference stats command failed: ${error instanceof Error ? error.message : String(error)}`);
@@ -248,28 +248,28 @@ async function handleCrossReferenceStatsCommand(catalog: CatalogViewer): Promise
 async function handleInfoCommand(catalog: CatalogViewer, args: string[]): Promise<void> {
   const itemId = args[1];
   if (!itemId) {
-    console.log('❌ Please provide an item ID');
-    console.log('Usage: catalog info <id>');
+    console.info('❌ Please provide an item ID');
+    console.info('Usage: catalog info <id>');
     return;
   }
 
   const item = catalog.getItem(itemId);
   if (!item) {
-    console.log(`❌ Item '${itemId}' not found in catalog.`);
-    console.log(`💡 Use 'catalog search ${itemId}' to search for similar items.`);
+    console.info(`❌ Item '${itemId}' not found in catalog.`);
+    console.info(`💡 Use 'catalog search ${itemId}' to search for similar items.`);
     return;
   }
 
-  console.log(`\n📋 Item Information: ${item.name}\n`);
-  console.log('─'.repeat(80));
+  console.info(`\n📋 Item Information: ${item.name}\n`);
+  console.info('─'.repeat(80));
   
-  console.log(formatRegistryItem(item, {
+  console.info(formatRegistryItem(item, {
     includeDetails: true,
     includeDependencies: true,
     colorize: true
   }));
 
-  console.log('\n' + '─'.repeat(80));
+  console.info('\n' + '─'.repeat(80));
 }
 
 /**
@@ -278,15 +278,15 @@ async function handleInfoCommand(catalog: CatalogViewer, args: string[]): Promis
 async function handleStatsCommand(catalog: CatalogViewer): Promise<void> {
   const stats = catalog.getStats();
 
-  console.log('\n📊 Empire Pro Catalog Statistics\n');
-  console.log('─'.repeat(50));
+  console.info('\n📊 Empire Pro Catalog Statistics\n');
+  console.info('─'.repeat(50));
   
-  console.log(`\n📦 Overview:`);
-  console.log(`  Total Items: ${stats.total}`);
-  console.log(`  Categories: ${Object.keys(stats.categories).length}`);
-  console.log(`  Top Tags: ${stats.topTags.length}`);
+  console.info(`\n📦 Overview:`);
+  console.info(`  Total Items: ${stats.total}`);
+  console.info(`  Categories: ${Object.keys(stats.categories).length}`);
+  console.info(`  Top Tags: ${stats.topTags.length}`);
 
-  console.log(`\n📂 By Category:`);
+  console.info(`\n📂 By Category:`);
   Object.entries(stats.categories).forEach(([category, count]) => {
     const icons = {
       component: '🧩',
@@ -295,15 +295,15 @@ async function handleStatsCommand(catalog: CatalogViewer): Promise<void> {
       package: '📦',
       tool: '🔧'
     };
-    console.log(`  ${icons[category as keyof typeof icons] || '📦'} ${category.charAt(0).toUpperCase() + category.slice(1)}: ${count}`);
+    console.info(`  ${icons[category as keyof typeof icons] || '📦'} ${category.charAt(0).toUpperCase() + category.slice(1)}: ${count}`);
   });
 
-  console.log(`\n🏷️ Top Tags:`);
+  console.info(`\n🏷️ Top Tags:`);
   stats.topTags.slice(0, 5).forEach(({ tag, count }) => {
-    console.log(`  #${tag}: ${count}`);
+    console.info(`  #${tag}: ${count}`);
   });
 
-  console.log(`\n📈 Status Distribution:`);
+  console.info(`\n📈 Status Distribution:`);
   Object.entries(stats.statuses).forEach(([status, count]) => {
     const icons = {
       active: '✅',
@@ -311,17 +311,17 @@ async function handleStatsCommand(catalog: CatalogViewer): Promise<void> {
       experimental: '🧪',
       archived: '📦'
     };
-    console.log(`  ${icons[status as keyof typeof icons] || '📦'} ${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`);
+    console.info(`  ${icons[status as keyof typeof icons] || '📦'} ${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`);
   });
 
-  console.log('\n' + '─'.repeat(50));
+  console.info('\n' + '─'.repeat(50));
 }
 
 /**
  * ❓ Show help
  */
 function showHelp(): void {
-  console.log(`
+  console.info(`
 🗂️ Empire Pro Catalog CLI
 
 Usage: catalog <command> [options]

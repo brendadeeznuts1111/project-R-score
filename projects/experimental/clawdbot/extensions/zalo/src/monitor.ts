@@ -317,10 +317,10 @@ async function processUpdate(
       );
       break;
     case "message.sticker.received":
-      console.log(`[${account.accountId}] Received sticker from ${message.from.id}`);
+      console.info(`[${account.accountId}] Received sticker from ${message.from.id}`);
       break;
     case "message.unsupported.received":
-      console.log(
+      console.info(
         `[${account.accountId}] Received unsupported message type from ${message.from.id}`,
       );
       break;

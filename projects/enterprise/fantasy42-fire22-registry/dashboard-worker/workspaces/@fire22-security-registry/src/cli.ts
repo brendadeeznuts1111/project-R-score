@@ -41,15 +41,15 @@ program
       const report = await scanner.scan();
       spinner.succeed('Security scan completed');
 
-      console.log(chalk.blue('\n🔍 Security Scan Report'));
-      console.log(chalk.gray('─'.repeat(50)));
+      console.info(chalk.blue('\n🔍 Security Scan Report'));
+      console.info(chalk.gray('─'.repeat(50)));
 
       if (report.vulnerabilities.length === 0) {
-        console.log(chalk.green('✅ No vulnerabilities found'));
+        console.info(chalk.green('✅ No vulnerabilities found'));
       } else {
-        console.log(chalk.red(`❌ Found ${report.vulnerabilities.length} vulnerabilities`));
-        console.log(chalk.yellow(`📊 Risk Level: ${report.riskLevel}`));
-        console.log(chalk.cyan(`🔢 Security Score: ${report.score}/100`));
+        console.info(chalk.red(`❌ Found ${report.vulnerabilities.length} vulnerabilities`));
+        console.info(chalk.yellow(`📊 Risk Level: ${report.riskLevel}`));
+        console.info(chalk.cyan(`🔢 Security Score: ${report.score}/100`));
       }
     } catch (error) {
       spinner.fail('Security scan failed');
@@ -75,11 +75,11 @@ program
 
       spinner.succeed('Dependency audit completed');
 
-      console.log(chalk.blue('\n🔍 Dependency Audit Report'));
-      console.log(chalk.gray('─'.repeat(50)));
-      console.log(`📦 Packages scanned: ${auditResult.packagesScanned}`);
-      console.log(`⚠️  Issues found: ${auditResult.issuesFound}`);
-      console.log(`✅ Fixed: ${auditResult.fixed}`);
+      console.info(chalk.blue('\n🔍 Dependency Audit Report'));
+      console.info(chalk.gray('─'.repeat(50)));
+      console.info(`📦 Packages scanned: ${auditResult.packagesScanned}`);
+      console.info(`⚠️  Issues found: ${auditResult.issuesFound}`);
+      console.info(`✅ Fixed: ${auditResult.fixed}`);
     } catch (error) {
       spinner.fail('Audit failed');
       console.error(chalk.red(`Error: ${error.message}`));
@@ -105,11 +105,11 @@ program
       const result = await registry.publish();
       spinner.succeed('Package published successfully');
 
-      console.log(chalk.green('\n✅ Package Published'));
-      console.log(chalk.gray('─'.repeat(50)));
-      console.log(`📦 Package: ${result.name}@${result.version}`);
-      console.log(`🔗 Registry: ${result.registry}`);
-      console.log(`🔐 Security Score: ${result.securityScore}/100`);
+      console.info(chalk.green('\n✅ Package Published'));
+      console.info(chalk.gray('─'.repeat(50)));
+      console.info(`📦 Package: ${result.name}@${result.version}`);
+      console.info(`🔗 Registry: ${result.registry}`);
+      console.info(`🔐 Security Score: ${result.securityScore}/100`);
     } catch (error) {
       spinner.fail('Publishing failed');
       console.error(chalk.red(`Error: ${error.message}`));
@@ -136,9 +136,9 @@ program
       spinner.succeed(`${packageName} installed successfully`);
 
       if (result.securityWarnings.length > 0) {
-        console.log(chalk.yellow('\n⚠️  Security Warnings:'));
+        console.info(chalk.yellow('\n⚠️  Security Warnings:'));
         result.securityWarnings.forEach(warning => {
-          console.log(chalk.yellow(`  • ${warning}`));
+          console.info(chalk.yellow(`  • ${warning}`));
         });
       }
     } catch (error) {
@@ -164,11 +164,11 @@ program
       await bunx.setup();
       spinner.succeed('Bunx integration setup completed');
 
-      console.log(chalk.green('\n✅ Bunx Integration Ready'));
-      console.log(chalk.gray('─'.repeat(50)));
-      console.log('🔐 Security scanning enabled for bunx packages');
-      console.log('📦 Fire22 registry configured as default');
-      console.log('⚡ Performance optimizations applied');
+      console.info(chalk.green('\n✅ Bunx Integration Ready'));
+      console.info(chalk.gray('─'.repeat(50)));
+      console.info('🔐 Security scanning enabled for bunx packages');
+      console.info('📦 Fire22 registry configured as default');
+      console.info('⚡ Performance optimizations applied');
     } catch (error) {
       spinner.fail('Bunx setup failed');
       console.error(chalk.red(`Error: ${error.message}`));
@@ -188,16 +188,16 @@ program
 
       spinner.succeed('Bunx packages scanned');
 
-      console.log(chalk.blue('\n🔍 Bunx Security Report'));
-      console.log(chalk.gray('─'.repeat(50)));
-      console.log(`📦 Global packages: ${report.totalPackages}`);
-      console.log(`⚠️  Vulnerable packages: ${report.vulnerablePackages}`);
-      console.log(`🔐 Security score: ${report.overallScore}/100`);
+      console.info(chalk.blue('\n🔍 Bunx Security Report'));
+      console.info(chalk.gray('─'.repeat(50)));
+      console.info(`📦 Global packages: ${report.totalPackages}`);
+      console.info(`⚠️  Vulnerable packages: ${report.vulnerablePackages}`);
+      console.info(`🔐 Security score: ${report.overallScore}/100`);
 
       if (report.recommendations.length > 0) {
-        console.log(chalk.yellow('\n💡 Recommendations:'));
+        console.info(chalk.yellow('\n💡 Recommendations:'));
         report.recommendations.forEach(rec => {
-          console.log(chalk.yellow(`  • ${rec}`));
+          console.info(chalk.yellow(`  • ${rec}`));
         });
       }
     } catch (error) {
@@ -215,8 +215,8 @@ program
   .option('--reset', 'Reset to default configuration')
   .action(async options => {
     if (options.show) {
-      console.log(chalk.blue('\n🔧 Fire22 Security Configuration'));
-      console.log(chalk.gray('─'.repeat(50)));
+      console.info(chalk.blue('\n🔧 Fire22 Security Configuration'));
+      console.info(chalk.gray('─'.repeat(50)));
       // Show configuration logic here
     }
 
@@ -230,7 +230,7 @@ program
 // Error handling
 program.on('command:*', () => {
   console.error(chalk.red(`Invalid command: ${program.args.join(' ')}`));
-  console.log(chalk.cyan('Run "fire22-security --help" for available commands'));
+  console.info(chalk.cyan('Run "fire22-security --help" for available commands'));
   process.exit(1);
 });
 

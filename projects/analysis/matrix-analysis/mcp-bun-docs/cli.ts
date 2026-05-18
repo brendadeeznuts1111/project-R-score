@@ -22,7 +22,7 @@ import {
 const args = process.argv.slice(2);
 
 function printUsage(): void {
-	console.log(`
+	console.info(`
 Bun Docs MCP CLI - Access Bun documentation constants and search
 
 Usage:
@@ -69,12 +69,12 @@ async function main(): Promise<void> {
 
 	try {
 		if (hasFlag("--base-url")) {
-			console.log(BUN_BASE_URL);
+			console.info(BUN_BASE_URL);
 			return;
 		}
 
 		if (hasFlag("--docs-base")) {
-			console.log(BUN_DOCS_BASE);
+			console.info(BUN_DOCS_BASE);
 			return;
 		}
 
@@ -83,13 +83,13 @@ async function main(): Promise<void> {
 			if (term) {
 				const path = BUN_DOC_MAP[term];
 				if (path) {
-					console.log(JSON.stringify({ term, path, url: buildDocUrl(path) }, null, 2));
+					console.info(JSON.stringify({ term, path, url: buildDocUrl(path) }, null, 2));
 				} else {
 					console.error(`Term "${term}" not found in BUN_DOC_MAP`);
 					process.exit(1);
 				}
 			} else {
-				console.log(JSON.stringify(BUN_DOC_MAP, null, 2));
+				console.info(JSON.stringify(BUN_DOC_MAP, null, 2));
 			}
 			return;
 		}
@@ -101,7 +101,7 @@ async function main(): Promise<void> {
 				process.exit(1);
 			}
 			const results = await searchBunDocs(query);
-			console.log(results);
+			console.info(results);
 			return;
 		}
 
@@ -113,7 +113,7 @@ async function main(): Promise<void> {
 			}
 			const entry = getDocEntry(term);
 			if (entry) {
-				console.log(JSON.stringify({ ...entry, url: buildDocUrl(entry.path) }, null, 2));
+				console.info(JSON.stringify({ ...entry, url: buildDocUrl(entry.path) }, null, 2));
 			} else {
 				console.error(`No curated entry found for term: ${term}`);
 				process.exit(1);
@@ -129,7 +129,7 @@ async function main(): Promise<void> {
 			}
 			const entry = getDocEntry(term);
 			if (entry) {
-				console.log(buildDocUrl(entry.path));
+				console.info(buildDocUrl(entry.path));
 			} else {
 				console.error(`No curated entry found for term: ${term}`);
 				process.exit(1);
@@ -139,20 +139,20 @@ async function main(): Promise<void> {
 
 		if (hasFlag("--list-terms")) {
 			const terms = Object.keys(BUN_DOC_MAP).sort();
-			terms.forEach((term) => console.log(term));
+			terms.forEach((term) => console.info(term));
 			return;
 		}
 
 		if (hasFlag("--count")) {
-			console.log(`BUN_DOC_MAP entries: ${Object.keys(BUN_DOC_MAP).length}`);
-			console.log(`BUN_DOC_ENTRIES: ${BUN_DOC_ENTRIES.length}`);
+			console.info(`BUN_DOC_MAP entries: ${Object.keys(BUN_DOC_MAP).length}`);
+			console.info(`BUN_DOC_ENTRIES: ${BUN_DOC_ENTRIES.length}`);
 			return;
 		}
 
 		// Default: show base URLs
-		console.log(`BUN_BASE_URL: ${BUN_BASE_URL}`);
-		console.log(`BUN_DOCS_BASE: ${BUN_DOCS_BASE}`);
-		console.log(`BUN_DOC_MAP entries: ${Object.keys(BUN_DOC_MAP).length}`);
+		console.info(`BUN_BASE_URL: ${BUN_BASE_URL}`);
+		console.info(`BUN_DOCS_BASE: ${BUN_DOCS_BASE}`);
+		console.info(`BUN_DOC_MAP entries: ${Object.keys(BUN_DOC_MAP).length}`);
 	} catch (error) {
 		console.error(`Error: ${error instanceof Error ? error.message : String(error)}`);
 		process.exit(1);

@@ -74,7 +74,7 @@ class DiPerformanceMonitor {
     };
 
     // Use console.log with structured JSON (compatible with DataDog/Splunk)
-    console.log(JSON.stringify(logEntry));
+    console.info(JSON.stringify(logEntry));
   }
 
   getSummary() {

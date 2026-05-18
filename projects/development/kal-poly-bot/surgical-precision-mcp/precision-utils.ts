@@ -721,7 +721,7 @@ export const TableUtils = {
    *   ["⚠️ Alert", "\x1b[33mWarning\x1b[0m", "$50"],
    *   ["🇺🇸 US", "\x1b[31mStopped\x1b[0m", "$0"],
    * ];
-   * console.log(TableUtils.formatTable(table));
+   * console.info(TableUtils.formatTable(table));
    */
   formatTable(rows: string[][], separator = '  '): string {
     if (rows.length === 0) return '';

@@ -281,7 +281,7 @@ class AIRegistryService {
         // TODO: Implement actual vault sync with Bun.secrets
         // For now, just log (non-blocking)
         Promise.resolve().then(() => {
-          console.log(`🔐 Syncing ${Object.keys(secrets).length} secrets to vault`);
+          console.info(`🔐 Syncing ${Object.keys(secrets).length} secrets to vault`);
         });
       }
 

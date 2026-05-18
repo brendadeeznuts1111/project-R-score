@@ -22,9 +22,9 @@ function fixSecurityGuide() {
 
   if (modified) {
     writeFileSync(filePath, newLines.join('\n'));
-    console.log('✅ Fixed SECURITY-INTEGRATION-GUIDE.md');
+    console.info('✅ Fixed SECURITY-INTEGRATION-GUIDE.md');
   } else {
-    console.log('⏭️ No changes needed for SECURITY-INTEGRATION-GUIDE.md');
+    console.info('⏭️ No changes needed for SECURITY-INTEGRATION-GUIDE.md');
   }
 }
 

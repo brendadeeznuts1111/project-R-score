@@ -23,7 +23,7 @@ async function loadConfig() {
       config = JSON.parse(await file.text());
     }
   } catch (error) {
-    console.log(console.yellow('⚠️  No configuration found, please run "duo-cli init"'));
+    console.info(console.yellow('⚠️  No configuration found, please run "duo-cli init"'));
   }
 }
 
@@ -69,7 +69,7 @@ program
   .command('init')
   .description('Initialize CLI configuration')
   .action(async () => {
-    console.log(console.blue(figlet.textSync('Duo CLI', { font: 'Small' })));
+    console.info(console.blue(figlet.textSync('Duo CLI', { font: 'Small' })));
     
     const answers = await inquirer.prompt([
       {
@@ -103,14 +103,14 @@ program
     config.apiKey = answers.customKey || answers.keyType;
     saveConfig();
 
-    console.log(console.green('✅ Configuration saved successfully!'));
+    console.info(console.green('✅ Configuration saved successfully!'));
     
     // Test connection
     try {
       const response = await apiRequest('/api/dashboard/health');
-      console.log(console.green('✅ Connection test successful!'));
+      console.info(console.green('✅ Connection test successful!'));
     } catch (error) {
-      console.log(console.red(`❌ Connection test failed: ${error.message}`));
+      console.info(console.red(`❌ Connection test failed: ${error.message}`));
     }
   });
 
@@ -120,33 +120,33 @@ program
   .description('Check agent status and system health')
   .action(async () => {
     try {
-      console.log(console.blue('🔍 Checking system status...'));
+      console.info(console.blue('🔍 Checking system status...'));
       
       // Get agent status
       const agentStatus = await apiRequest('/api/agent/status');
-      console.log(console.green('✅ Agent Status: Online'));
+      console.info(console.green('✅ Agent Status: Online'));
       
       // Get dashboard metrics
       const metrics = await apiRequest('/api/dashboard/metrics');
-      console.log(console.cyan('📊 System Metrics:'));
-      console.log(`   Total Requests: ${metrics.data.overview.totalRequests.toLocaleString()}`);
-      console.log(`   Avg Response Time: ${metrics.data.overview.averageResponseTime}ms`);
-      console.log(`   Error Rate: ${metrics.data.overview.errorRate}%`);
-      console.log(`   Uptime: ${metrics.data.overview.uptime}%`);
+      console.info(console.cyan('📊 System Metrics:'));
+      console.info(`   Total Requests: ${metrics.data.overview.totalRequests.toLocaleString()}`);
+      console.info(`   Avg Response Time: ${metrics.data.overview.averageResponseTime}ms`);
+      console.info(`   Error Rate: ${metrics.data.overview.errorRate}%`);
+      console.info(`   Uptime: ${metrics.data.overview.uptime}%`);
       
       // Get R2 stats if available
       try {
         const r2Stats = await apiRequest('/api/r2/stats');
-        console.log(console.magenta('💾 R2 Storage:'));
-        console.log(`   Total Files: ${r2Stats.data.usage.totalFiles.toLocaleString()}`);
-        console.log(`   Storage Used: ${r2Stats.data.usage.totalSize}`);
-        console.log(`   Uploads Today: ${r2Stats.data.usage.uploadsToday}`);
+        console.info(console.magenta('💾 R2 Storage:'));
+        console.info(`   Total Files: ${r2Stats.data.usage.totalFiles.toLocaleString()}`);
+        console.info(`   Storage Used: ${r2Stats.data.usage.totalSize}`);
+        console.info(`   Uploads Today: ${r2Stats.data.usage.uploadsToday}`);
       } catch (error) {
         // R2 not available, skip
       }
       
     } catch (error) {
-      console.log(console.red(`❌ Status check failed: ${error.message}`));
+      console.info(console.red(`❌ Status check failed: ${error.message}`));
     }
   });
 
@@ -185,37 +185,37 @@ program
           });
         });
         
-        console.log(console.blue('📋 Agent Tasks:'));
+        console.info(console.blue('📋 Agent Tasks:'));
         table.printTable();
-        console.log(console.gray(`Total: ${response.data.total} | Running: ${response.data.running} | Completed: ${response.data.completed}`));
+        console.info(console.gray(`Total: ${response.data.total} | Running: ${response.data.running} | Completed: ${response.data.completed}`));
       }
       
       if (options.execute) {
-        console.log(console.blue(`🚀 Executing task: ${options.execute}`));
+        console.info(console.blue(`🚀 Executing task: ${options.execute}`));
         const response = await apiRequest(`/api/agent/tasks/${options.execute}/execute`, {
           method: 'POST'
         });
-        console.log(console.green(`✅ Task execution started: ${response.data.taskId}`));
-        console.log(console.cyan(`⏱️  Estimated completion: ${response.data.estimatedCompletion}`));
+        console.info(console.green(`✅ Task execution started: ${response.data.taskId}`));
+        console.info(console.cyan(`⏱️  Estimated completion: ${response.data.estimatedCompletion}`));
       }
       
       if (options.cancel) {
-        console.log(console.yellow(`⏹️  Canceling task: ${options.cancel}`));
+        console.info(console.yellow(`⏹️  Canceling task: ${options.cancel}`));
         const response = await apiRequest(`/api/agent/tasks/${options.cancel}/cancel`, {
           method: 'POST'
         });
-        console.log(console.green(`✅ Task canceled: ${response.data.taskId}`));
+        console.info(console.green(`✅ Task canceled: ${response.data.taskId}`));
       }
       
       if (options.results) {
-        console.log(console.blue(`📊 Getting results for task: ${options.results}`));
+        console.info(console.blue(`📊 Getting results for task: ${options.results}`));
         const response = await apiRequest(`/api/agent/results/${options.results}`);
-        console.log(console.green('📈 Task Results:'));
-        console.log(JSON.stringify(response.data.results, null, 2));
+        console.info(console.green('📈 Task Results:'));
+        console.info(JSON.stringify(response.data.results, null, 2));
       }
       
     } catch (error) {
-      console.log(console.red(`❌ Task operation failed: ${error.message}`));
+      console.info(console.red(`❌ Task operation failed: ${error.message}`));
     }
   });
 
@@ -231,7 +231,7 @@ program
   .action(async (target, options) => {
     try {
       if (options.phone) {
-        console.log(console.blue(`🔍 Analyzing phone: ${target}`));
+        console.info(console.blue(`🔍 Analyzing phone: ${target}`));
         
         let endpoint = `/api/analyze/phone/${target}`;
         if (options.risk) {
@@ -240,28 +240,28 @@ program
         
         const response = await apiRequest(endpoint);
         
-        console.log(console.green('✅ Analysis complete:'));
-        console.log(JSON.stringify(response.data, null, 2));
+        console.info(console.green('✅ Analysis complete:'));
+        console.info(JSON.stringify(response.data, null, 2));
         
         if (options.risk) {
           const riskLevel = response.data.risk.level;
           const riskColor = riskLevel === 'LOW' ? 'green' : 
                            riskLevel === 'MEDIUM' ? 'yellow' : 'red';
-          console.log(console[riskColor](`⚠️  Risk Level: ${riskLevel}`));
+          console.info(console[riskColor](`⚠️  Risk Level: ${riskLevel}`));
         }
       }
       
       if (options.platform && options.user) {
-        console.log(console.blue(`🔍 Analyzing ${options.platform} user: ${options.user}`));
+        console.info(console.blue(`🔍 Analyzing ${options.platform} user: ${options.user}`));
         
         const response = await apiRequest(`/api/v1/platform/${options.platform}/users/${options.user}`);
         
-        console.log(console.green('✅ Platform analysis complete:'));
-        console.log(JSON.stringify(response.data, null, 2));
+        console.info(console.green('✅ Platform analysis complete:'));
+        console.info(JSON.stringify(response.data, null, 2));
       }
       
     } catch (error) {
-      console.log(console.red(`❌ Analysis failed: ${error.message}`));
+      console.info(console.red(`❌ Analysis failed: ${error.message}`));
     }
   });
 
@@ -277,19 +277,19 @@ program
   .action(async (options) => {
     try {
       if (options.stats || Object.keys(options).length === 0) {
-        console.log(console.blue('📊 Getting storage statistics...'));
+        console.info(console.blue('📊 Getting storage statistics...'));
         const response = await apiRequest('/api/r2/stats');
         
-        console.log(console.green('💾 Storage Statistics:'));
-        console.log(`   Bucket: ${response.data.bucket.name}`);
-        console.log(`   Total Files: ${response.data.usage.totalFiles.toLocaleString()}`);
-        console.log(`   Storage Used: ${response.data.usage.totalSize}`);
-        console.log(`   Available: ${response.data.storage.available}`);
-        console.log(`   Utilization: ${(response.data.storage.utilizationPercent * 100).toFixed(2)}%`);
+        console.info(console.green('💾 Storage Statistics:'));
+        console.info(`   Bucket: ${response.data.bucket.name}`);
+        console.info(`   Total Files: ${response.data.usage.totalFiles.toLocaleString()}`);
+        console.info(`   Storage Used: ${response.data.usage.totalSize}`);
+        console.info(`   Available: ${response.data.storage.available}`);
+        console.info(`   Utilization: ${(response.data.storage.utilizationPercent * 100).toFixed(2)}%`);
       }
       
       if (options.list) {
-        console.log(console.blue('📁 Listing files...'));
+        console.info(console.blue('📁 Listing files...'));
         const response = await apiRequest('/api/r2/files');
         
         const table = new Table({
@@ -314,7 +314,7 @@ program
           });
         });
         
-        console.log(console.green('📄 Files:'));
+        console.info(console.green('📄 Files:'));
         table.printTable();
       }
       
@@ -324,7 +324,7 @@ program
           throw new Error(`File not found: ${options.upload}`);
         }
         
-        console.log(console.blue(`📤 Uploading file: ${options.upload}`));
+        console.info(console.blue(`📤 Uploading file: ${options.upload}`));
         
         const formData = new FormData();
         formData.append('file', Bun.file(options.upload));
@@ -336,21 +336,21 @@ program
           headers: {} // Let browser set Content-Type for FormData
         });
         
-        console.log(console.green(`✅ Upload successful: ${response.data.key}`));
-        console.log(console.cyan(`🔗 URL: ${response.data.url}`));
+        console.info(console.green(`✅ Upload successful: ${response.data.key}`));
+        console.info(console.cyan(`🔗 URL: ${response.data.url}`));
       }
       
       if (options.download) {
-        console.log(console.blue(`📥 Generating download URL for: ${options.download}`));
+        console.info(console.blue(`📥 Generating download URL for: ${options.download}`));
         const response = await apiRequest(`/api/r2/download/${options.download}`);
         
-        console.log(console.green(`✅ Download URL generated:`));
-        console.log(console.cyan(response.data.signedUrl));
-        console.log(console.yellow(`⏰ Expires: ${response.data.expires}`));
+        console.info(console.green(`✅ Download URL generated:`));
+        console.info(console.cyan(response.data.signedUrl));
+        console.info(console.yellow(`⏰ Expires: ${response.data.expires}`));
       }
       
     } catch (error) {
-      console.log(console.red(`❌ Storage operation failed: ${error.message}`));
+      console.info(console.red(`❌ Storage operation failed: ${error.message}`));
     }
   });
 
@@ -364,43 +364,43 @@ program
   .action(async (options) => {
     try {
       if (options.plans || Object.keys(options).length === 0) {
-        console.log(console.blue('💳 Available Plans:'));
+        console.info(console.blue('💳 Available Plans:'));
         const response = await apiRequest('/api/billing/plans');
         
         response.data.plans.forEach((plan: any) => {
           const price = plan.price === 0 ? 'FREE' : `$${plan.price}/${plan.interval}`;
-          console.log(console.green(`\n📦 ${plan.name} - ${price}`));
+          console.info(console.green(`\n📦 ${plan.name} - ${price}`));
           
           plan.features.forEach((feature: string) => {
-            console.log(console.gray(`   ✓ ${feature}`));
+            console.info(console.gray(`   ✓ ${feature}`));
           });
         });
       }
       
       if (options.subscription) {
-        console.log(console.blue('📊 Current Subscription:'));
+        console.info(console.blue('📊 Current Subscription:'));
         const response = await apiRequest('/api/billing/subscription');
         
         const sub = response.data.subscription;
-        console.log(console.green(`Plan: ${sub.plan.toUpperCase()}`));
-        console.log(console.cyan(`Status: ${sub.status}`));
-        console.log(console.blue(`Period: ${sub.currentPeriodStart} to ${sub.currentPeriodEnd}`));
+        console.info(console.green(`Plan: ${sub.plan.toUpperCase()}`));
+        console.info(console.cyan(`Status: ${sub.status}`));
+        console.info(console.blue(`Period: ${sub.currentPeriodStart} to ${sub.currentPeriodEnd}`));
         
-        console.log(console.yellow('\n📈 Usage:'));
-        console.log(`   API Calls: ${sub.usage.apiCalls} / ${sub.limits.apiCalls}`);
-        console.log(`   Storage: ${sub.usage.storage} / ${sub.limits.storage}`);
-        console.log(`   Users: ${sub.usage.users} / ${sub.limits.users}`);
+        console.info(console.yellow('\n📈 Usage:'));
+        console.info(`   API Calls: ${sub.usage.apiCalls} / ${sub.limits.apiCalls}`);
+        console.info(`   Storage: ${sub.usage.storage} / ${sub.limits.storage}`);
+        console.info(`   Users: ${sub.usage.users} / ${sub.limits.users}`);
       }
       
       if (options.usage) {
-        console.log(console.blue('📊 Usage Statistics:'));
+        console.info(console.blue('📊 Usage Statistics:'));
         const response = await apiRequest('/api/billing/usage');
         
-        console.log(JSON.stringify(response.data, null, 2));
+        console.info(JSON.stringify(response.data, null, 2));
       }
       
     } catch (error) {
-      console.log(console.red(`❌ Billing operation failed: ${error.message}`));
+      console.info(console.red(`❌ Billing operation failed: ${error.message}`));
     }
   });
 
@@ -412,15 +412,15 @@ program
   .option('-r, --reset', 'Reset configuration')
   .action(async (options) => {
     if (options.show || Object.keys(options).length === 0) {
-      console.log(console.blue('⚙️  Current Configuration:'));
-      console.log(`Base URL: ${config.baseUrl || 'Not set'}`);
-      console.log(`API Key: ${config.apiKey ? `${config.apiKey.substring(0, 8)}...` : 'Not set'}`);
+      console.info(console.blue('⚙️  Current Configuration:'));
+      console.info(`Base URL: ${config.baseUrl || 'Not set'}`);
+      console.info(`API Key: ${config.apiKey ? `${config.apiKey.substring(0, 8)}...` : 'Not set'}`);
     }
     
     if (options.reset) {
       await Bun.remove(CONFIG_FILE);
-      console.log(console.green('✅ Configuration reset'));
-      console.log(console.yellow('Run "duo-cli init" to reconfigure'));
+      console.info(console.green('✅ Configuration reset'));
+      console.info(console.yellow('Run "duo-cli init" to reconfigure'));
     }
   });
 
@@ -428,8 +428,8 @@ program
 loadConfig();
 
 if (process.argv.length === 2) {
-  console.log(console.blue(figlet.textSync('Duo CLI', { font: 'Small' })));
-  console.log(console.gray('Duo Automation CLI Agent\n'));
+  console.info(console.blue(figlet.textSync('Duo CLI', { font: 'Small' })));
+  console.info(console.gray('Duo Automation CLI Agent\n'));
   program.help();
 }
 

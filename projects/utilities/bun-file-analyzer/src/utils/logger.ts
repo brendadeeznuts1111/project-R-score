@@ -75,7 +75,7 @@ class Logger {
     }
     
     // Output to console with styling
-    console.log(`%c${formattedMessage}`, styles);
+    console.info(`%c${formattedMessage}`, styles);
   }
 
   // Standard log methods

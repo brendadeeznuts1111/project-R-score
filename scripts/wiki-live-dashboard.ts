@@ -90,7 +90,7 @@ const server = (globalThis as any).Bun.serve({
       const hmr = url.searchParams.get('hmr') !== 'false';
       
       try {
-        console.log(`🔥 Live Wiki Request: prompt="${prompt}" format="${format}" lang="${lang}"`);
+        console.info(`🔥 Live Wiki Request: prompt="${prompt}" format="${format}" lang="${lang}"`);
         const startTime = performance.now();
         
         // Generate AI wiki section
@@ -444,12 +444,12 @@ const server = (globalThis as any).Bun.serve({
   }
 });
 
-console.log(`🔥 Wiki v3.19 Live Dashboard running on http://localhost:${server.port}`);
-console.log(`📱 Available endpoints:`);
-console.log(`   GET / - Interactive dashboard`);
-console.log(`   GET /wiki-live - Live preview (supports ?prompt=&format=&lang=&hmr=)`);
-console.log(`   POST /wiki-live - Submit markdown for preview`);
-console.log(`   GET /wiki-i18n - Multi-language configuration`);
-console.log(`   GET /wiki-gen - Generate full wiki`);
-console.log(``);
-console.log(`🚀 AI Revolution Started! Visit http://localhost:${server.port}`);
+console.info(`🔥 Wiki v3.19 Live Dashboard running on http://localhost:${server.port}`);
+console.info(`📱 Available endpoints:`);
+console.info(`   GET / - Interactive dashboard`);
+console.info(`   GET /wiki-live - Live preview (supports ?prompt=&format=&lang=&hmr=)`);
+console.info(`   POST /wiki-live - Submit markdown for preview`);
+console.info(`   GET /wiki-i18n - Multi-language configuration`);
+console.info(`   GET /wiki-gen - Generate full wiki`);
+console.info(``);
+console.info(`🚀 AI Revolution Started! Visit http://localhost:${server.port}`);

@@ -42,7 +42,7 @@ async function suspendWorkflow(eventId: string, marketId: string): Promise<void>
   if (!ev) return;
   const m = ev.markets.find(m => m.id === marketId);
   if (m) m.suspended = true;
-  console.log(`[WORKFLOW] suspended ${marketId} on ${eventId}`);
+  console.info(`[WORKFLOW] suspended ${marketId} on ${eventId}`);
 }
 
 /* ---------- 4.  MINI IPFS STUB  (signed audit log) ------------------ */
@@ -101,7 +101,7 @@ serve({
           const bet: Bet = { id: crypto.randomUUID(), user: "demo", outcome, stake: +stake, odds: o.odds, ts: Date.now() };
           bets.set(eventId, [...(bets.get(eventId) || []), bet]);
           const entry = audit({ type: "bet", bet });
-          console.log("[AUDIT]", entry);
+          console.info("[AUDIT]", entry);
           reply(`OK bet ${bet.id}`);
 
           // risk check → workflow
@@ -141,7 +141,7 @@ setInterval(() => {
   for (const ws of clients) ws.send(`ODDS ${payload}`);
 }, 2000);
 
-console.log("🏦 Cursor-Sportsbook PoC on ws://localhost:3000");
-console.log("Try:  /event Arsenal Chelsea");
-console.log("      /bet <eventId> H 100");
-console.log("      /market suspend <eventId> win");
+console.info("🏦 Cursor-Sportsbook PoC on ws://localhost:3000");
+console.info("Try:  /event Arsenal Chelsea");
+console.info("      /bet <eventId> H 100");
+console.info("      /market suspend <eventId> win");

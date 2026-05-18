@@ -51,9 +51,9 @@ describe("Advanced Bun Features", () => {
       const testCode = `
         import { feature } from "bun:bundle";
         if (feature("DEBUG")) {
-          console.log("DEBUG enabled");
+          console.info("DEBUG enabled");
         } else {
-          console.log("DEBUG disabled");
+          console.info("DEBUG disabled");
         }
       `;
 
@@ -80,9 +80,9 @@ describe("Advanced Bun Features", () => {
       const testCode = `
         import { feature } from "bun:bundle";
         if (feature("DEBUG")) {
-          console.log("DEBUG enabled");
+          console.info("DEBUG enabled");
         } else {
-          console.log("DEBUG disabled");
+          console.info("DEBUG disabled");
         }
       `;
 
@@ -107,9 +107,9 @@ describe("Advanced Bun Features", () => {
         const features = ["DEBUG", "PERFORMANCE", "SECURITY"];
         features.forEach(f => {
           if (feature(f)) {
-            console.log(f + " enabled");
+            console.info(f + " enabled");
           } else {
-            console.log(f + " disabled");
+            console.info(f + " disabled");
           }
         });
       `;

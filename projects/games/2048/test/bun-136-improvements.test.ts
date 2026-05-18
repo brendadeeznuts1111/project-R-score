@@ -42,7 +42,7 @@ describe("JSON Serialization", () => {
 
     // Test %j format (3x faster in v1.3.6)
     const startTime = performance.now();
-    console.log("%j", largeObject);
+    console.info("%j", largeObject);
     const endTime = performance.now();
 
     expect(endTime - startTime).toBeLessThan(100); // Should be very fast
@@ -111,7 +111,7 @@ describe("Performance Benchmarks", () => {
 
     // Should complete very quickly with hardware acceleration
     expect(totalTime).toBeLessThan(50);
-    console.log(
+    console.info(
       `CRC32 benchmark: ${totalTime.toFixed(2)}ms for 100 operations`,
     );
   });
@@ -132,7 +132,7 @@ describe("Performance Benchmarks", () => {
     expect(result.exitCode).toBe(0);
     expect(executionTime).toBeLessThan(10); // Should be very fast after v1.3.6 fix
 
-    console.log(`spawnSync execution time: ${executionTime.toFixed(2)}ms`);
+    console.info(`spawnSync execution time: ${executionTime.toFixed(2)}ms`);
   });
 });
 
@@ -227,8 +227,8 @@ describe("Game Logic", () => {
   });
 });
 
-console.log("🧪 Test file loaded! Use --grep to run specific tests:");
-console.log('   bun test --grep "crc32"');
-console.log('   bun test --grep "json"');
-console.log('   bun test --grep "sqlite"');
-console.log('   bun test --grep "performance"');
+console.info("🧪 Test file loaded! Use --grep to run specific tests:");
+console.info('   bun test --grep "crc32"');
+console.info('   bun test --grep "json"');
+console.info('   bun test --grep "sqlite"');
+console.info('   bun test --grep "performance"');

@@ -24,12 +24,12 @@ class InspectorDebugger {
   // Start inspector server
   async startInspector() {
     if (this.isRunning) {
-      console.log('🔍 Inspector is already running');
+      console.info('🔍 Inspector is already running');
       return;
     }
 
     try {
-      console.log(`🚀 Starting Inspector on ${this.inspectorUrl}`);
+      console.info(`🚀 Starting Inspector on ${this.inspectorUrl}`);
       
       // Enable inspector using Node.js compatibility
       process.env.NODE_OPTIONS = `--inspect=${this.host}:${this.port}`;
@@ -43,8 +43,8 @@ class InspectorDebugger {
       this.session.connect();
       
       this.isRunning = true;
-      console.log(`✅ Inspector started successfully`);
-      console.log(`🌐 Open Chrome DevTools: chrome://inspect → ${this.inspectorUrl}`);
+      console.info(`✅ Inspector started successfully`);
+      console.info(`🌐 Open Chrome DevTools: chrome://inspect → ${this.inspectorUrl}`);
       
       // Setup event handlers
       this.setupEventHandlers();
@@ -59,16 +59,16 @@ class InspectorDebugger {
     if (!this.session) return;
 
     this.session.on('Debugger.paused', (params) => {
-      console.log('⏸️  Debugger paused:', params.reason);
-      console.log(`📍 Location: ${params.callFrames[0]?.functionName || 'anonymous'} at ${params.callFrames[0]?.url}:${params.callFrames[0]?.lineNumber}`);
+      console.info('⏸️  Debugger paused:', params.reason);
+      console.info(`📍 Location: ${params.callFrames[0]?.functionName || 'anonymous'} at ${params.callFrames[0]?.url}:${params.callFrames[0]?.lineNumber}`);
     });
 
     this.session.on('Debugger.resumed', () => {
-      console.log('▶️  Debugger resumed');
+      console.info('▶️  Debugger resumed');
     });
 
     this.session.on('Debugger.breakpointResolved', (params) => {
-      console.log(`🎯 Breakpoint resolved: ${params.breakpointId}`);
+      console.info(`🎯 Breakpoint resolved: ${params.breakpointId}`);
     });
   }
 
@@ -79,7 +79,7 @@ class InspectorDebugger {
     }
 
     await this.session.post('Debugger.enable');
-    console.log('🔧 Debugger enabled');
+    console.info('🔧 Debugger enabled');
   }
 
   // Set breakpoint
@@ -97,9 +97,9 @@ class InspectorDebugger {
       const breakpointId = result.breakpointId;
       this.breakpoints.add(breakpointId);
       
-      console.log(`🎯 Breakpoint set at ${url}:${lineNumber}`);
+      console.info(`🎯 Breakpoint set at ${url}:${lineNumber}`);
       if (condition) {
-        console.log(`   Condition: ${condition}`);
+        console.info(`   Condition: ${condition}`);
       }
       
       return breakpointId;
@@ -118,7 +118,7 @@ class InspectorDebugger {
     try {
       await this.session.post('Debugger.removeBreakpoint', { breakpointId });
       this.breakpoints.delete(breakpointId);
-      console.log(`🗑️  Breakpoint removed: ${breakpointId}`);
+      console.info(`🗑️  Breakpoint removed: ${breakpointId}`);
     } catch (error) {
       console.error('❌ Failed to remove breakpoint:', error.message);
       throw error;
@@ -135,7 +135,7 @@ class InspectorDebugger {
       await this.session.post('Profiler.enable');
       await this.session.post('Profiler.start');
       
-      console.log('🔥 CPU profiling started');
+      console.info('🔥 CPU profiling started');
       this.profiling = { type: 'cpu', startTime: Date.now() };
       
     } catch (error) {
@@ -155,12 +155,12 @@ class InspectorDebugger {
       const profile = result.profile;
       
       const duration = Date.now() - this.profiling.startTime;
-      console.log(`✅ CPU profiling completed in ${duration}ms`);
+      console.info(`✅ CPU profiling completed in ${duration}ms`);
       
       // Save profile
       const profilePath = `./profiles/cpu-inspector-${Date.now()}.json`;
       writeFileSync(profilePath, JSON.stringify(profile, null, 2));
-      console.log(`📁 Profile saved: ${profilePath}`);
+      console.info(`📁 Profile saved: ${profilePath}`);
       
       // Analyze profile
       this.analyzeCPUProfile(profile);
@@ -176,7 +176,7 @@ class InspectorDebugger {
 
   // Analyze CPU profile
   analyzeCPUProfile(profile) {
-    console.log('📊 CPU Profile Analysis:');
+    console.info('📊 CPU Profile Analysis:');
     
     const totalTime = profile.nodes.reduce((sum, node) => sum + (node.callCount || 0), 0);
     const heavyFunctions = profile.nodes
@@ -184,11 +184,11 @@ class InspectorDebugger {
       .sort((a, b) => (b.callCount || 0) - (a.callCount || 0))
       .slice(0, 5);
 
-    console.log(`   Total function calls: ${totalTime.toLocaleString()}`);
-    console.log(`   Heavy functions (top 5):`);
+    console.info(`   Total function calls: ${totalTime.toLocaleString()}`);
+    console.info(`   Heavy functions (top 5):`);
     
     heavyFunctions.forEach((func, index) => {
-      console.log(`   ${index + 1}. ${func.functionName || 'anonymous'}: ${func.callCount?.toLocaleString() || 0} calls`);
+      console.info(`   ${index + 1}. ${func.functionName || 'anonymous'}: ${func.callCount?.toLocaleString() || 0} calls`);
     });
   }
 
@@ -204,7 +204,7 @@ class InspectorDebugger {
         samplingInterval: 1024
       });
       
-      console.log('🧠 Heap profiling started');
+      console.info('🧠 Heap profiling started');
       this.profiling = { type: 'heap', startTime: Date.now() };
       
     } catch (error) {
@@ -224,12 +224,12 @@ class InspectorDebugger {
       const profile = result.profile;
       
       const duration = Date.now() - this.profiling.startTime;
-      console.log(`✅ Heap profiling completed in ${duration}ms`);
+      console.info(`✅ Heap profiling completed in ${duration}ms`);
       
       // Save profile
       const profilePath = `./profiles/heap-inspector-${Date.now()}.json`;
       writeFileSync(profilePath, JSON.stringify(profile, null, 2));
-      console.log(`📁 Profile saved: ${profilePath}`);
+      console.info(`📁 Profile saved: ${profilePath}`);
       
       // Analyze profile
       this.analyzeHeapProfile(profile);
@@ -245,7 +245,7 @@ class InspectorDebugger {
 
   // Analyze heap profile
   analyzeHeapProfile(profile) {
-    console.log('📊 Heap Profile Analysis:');
+    console.info('📊 Heap Profile Analysis:');
     
     const totalSize = profile.samples.reduce((sum, sample) => sum + sample.size, 0);
     const objectTypes = {};
@@ -255,14 +255,14 @@ class InspectorDebugger {
       objectTypes[type] = (objectTypes[type] || 0) + 1;
     });
 
-    console.log(`   Total heap size: ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`   Object types:`);
+    console.info(`   Total heap size: ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`   Object types:`);
     
     Object.entries(objectTypes)
       .sort(([,a], [,b]) => b - a)
       .slice(0, 5)
       .forEach(([type, count]) => {
-        console.log(`   ${type}: ${count.toLocaleString()} objects`);
+        console.info(`   ${type}: ${count.toLocaleString()} objects`);
       });
   }
 
@@ -273,7 +273,7 @@ class InspectorDebugger {
     }
 
     await this.session.post('Debugger.pause');
-    console.log('⏸️  Execution paused');
+    console.info('⏸️  Execution paused');
   }
 
   // Resume execution
@@ -283,7 +283,7 @@ class InspectorDebugger {
     }
 
     await this.session.post('Debugger.resume');
-    console.log('▶️  Execution resumed');
+    console.info('▶️  Execution resumed');
   }
 
   // Step over
@@ -293,7 +293,7 @@ class InspectorDebugger {
     }
 
     await this.session.post('Debugger.stepOver');
-    console.log('⏭️  Stepped over');
+    console.info('⏭️  Stepped over');
   }
 
   // Step into
@@ -303,7 +303,7 @@ class InspectorDebugger {
     }
 
     await this.session.post('Debugger.stepInto');
-    console.log('⤵️  Stepped into');
+    console.info('⤵️  Stepped into');
   }
 
   // Step out
@@ -313,7 +313,7 @@ class InspectorDebugger {
     }
 
     await this.session.post('Debugger.stepOut');
-    console.log('⤴️  Stepped out');
+    console.info('⤴️  Stepped out');
   }
 
   // Get current call stack
@@ -327,9 +327,9 @@ class InspectorDebugger {
         stackTraceId: 1
       });
 
-      console.log('📋 Current Call Stack:');
+      console.info('📋 Current Call Stack:');
       result.callFrames.forEach((frame, index) => {
-        console.log(`   ${index}. ${frame.functionName || 'anonymous'} at ${frame.url}:${frame.lineNumber}:${frame.columnNumber}`);
+        console.info(`   ${index}. ${frame.functionName || 'anonymous'} at ${frame.url}:${frame.lineNumber}:${frame.columnNumber}`);
       });
 
       return result.callFrames;
@@ -352,8 +352,8 @@ class InspectorDebugger {
         returnByValue: true
       });
 
-      console.log(`🔍 Evaluation: ${expression}`);
-      console.log(`   Result: ${result.result.value}`);
+      console.info(`🔍 Evaluation: ${expression}`);
+      console.info(`   Result: ${result.result.value}`);
       
       return result.result;
     } catch (error) {
@@ -376,8 +376,8 @@ class InspectorDebugger {
       const funcStr = fn.toString();
       const lines = funcStr.split('\n');
       
-      console.log(`🐛 Debugging function: ${fn.name || 'anonymous'}`);
-      console.log(`📝 Function source (${lines.length} lines)`);
+      console.info(`🐛 Debugging function: ${fn.name || 'anonymous'}`);
+      console.info(`📝 Function source (${lines.length} lines)`);
 
       // Execute function with debugging
       const result = await this.evaluate(`(${funcStr})()`);
@@ -392,7 +392,7 @@ class InspectorDebugger {
   // Stop inspector
   async stopInspector() {
     if (!this.isRunning) {
-      console.log('🔍 Inspector is not running');
+      console.info('🔍 Inspector is not running');
       return;
     }
 
@@ -402,7 +402,7 @@ class InspectorDebugger {
       }
       
       this.isRunning = false;
-      console.log('🛑 Inspector stopped');
+      console.info('🛑 Inspector stopped');
       
     } catch (error) {
       console.error('❌ Failed to stop inspector:', error.message);
@@ -428,8 +428,8 @@ export { InspectorDebugger };
 if (import.meta.main) {
   const = new InspectorDebugger();
   
-  console.log('🔍 Bun Inspector Debugger Demo');
-  console.log('================================');
+  console.info('🔍 Bun Inspector Debugger Demo');
+  console.info('================================');
   
   try {
     // Start inspector
@@ -439,7 +439,7 @@ if (import.meta.main) {
     await .enableDebugger();
     
     // Demo profiling
-    console.log('\n📊 Starting profiling demo...');
+    console.info('\n📊 Starting profiling demo...');
     
     await .startCPUProfiling();
     
@@ -449,11 +449,11 @@ if (import.meta.main) {
     await .stopCPUProfiling();
     
     // Show status
-    console.log('\n📋 Inspector Status:');
-    console.log(JSON.stringify(debugger.getStatus(), null, 2));
+    console.info('\n📋 Inspector Status:');
+    console.info(JSON.stringify(debugger.getStatus(), null, 2));
     
-    console.log('\n✅ Inspector demo complete!');
-    console.log(`🌐 Connect with Chrome DevTools: ${debugger.inspectorUrl}`);
+    console.info('\n✅ Inspector demo complete!');
+    console.info(`🌐 Connect with Chrome DevTools: ${debugger.inspectorUrl}`);
     
   } catch (error) {
     console.error('❌ Inspector demo failed:', error.message);

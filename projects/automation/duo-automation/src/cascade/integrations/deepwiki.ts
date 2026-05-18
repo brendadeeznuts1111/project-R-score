@@ -41,7 +41,7 @@ export class DeepWikiIntegration {
       this.knowledgeCache.set(cacheKey, answer);
       
       // Log knowledge acquisition for observability
-      console.log(`🧠 Acquired knowledge from ${repoName}: ${question.substring(0, 50)}...`);
+      console.info(`🧠 Acquired knowledge from ${repoName}: ${question.substring(0, 50)}...`);
       
       return answer;
     } catch (error) {
@@ -125,7 +125,7 @@ export class DeepWikiIntegration {
       try {
         const knowledge = await enhancer();
         context.knowledge = knowledge;
-        console.log(`🧠 Enhanced ${operation} with external knowledge`);
+        console.info(`🧠 Enhanced ${operation} with external knowledge`);
       } catch (error) {
         console.warn(`⚠️ Knowledge enhancement failed for ${operation}:`, error);
       }
@@ -139,7 +139,7 @@ export class DeepWikiIntegration {
    */
   clearCache(): void {
     this.knowledgeCache.clear();
-    console.log('🧹 DeepWiki knowledge cache cleared');
+    console.info('🧹 DeepWiki knowledge cache cleared');
   }
   
   /**

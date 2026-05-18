@@ -17,22 +17,22 @@ declare const window: any;
 // Mock benchmark function for compatibility
 class BenchRunner {
 	static bench(name: string, fn: () => void | Promise<void>) {
-		console.log(`Running benchmark: ${name}`);
+		console.info(`Running benchmark: ${name}`);
 		const start = performance.now();
 		const result = fn();
 		if (result && typeof result.then === "function") {
 			return result.then(() => {
 				const end = performance.now();
-				console.log(`✓ ${name}: ${(end - start).toFixed(2)}ms`);
+				console.info(`✓ ${name}: ${(end - start).toFixed(2)}ms`);
 			});
 		} else {
 			const end = performance.now();
-			console.log(`✓ ${name}: ${(end - start).toFixed(2)}ms`);
+			console.info(`✓ ${name}: ${(end - start).toFixed(2)}ms`);
 		}
 	}
 
 	static describe(name: string, fn: () => void) {
-		console.log(`\n📊 ${name}`);
+		console.info(`\n📊 ${name}`);
 		fn();
 	}
 }
@@ -92,12 +92,12 @@ class MockArchive {
 		files: string[],
 		options?: { format?: "tar" | "zip"; compression?: "gzip" },
 	) {
-		console.log(`Creating archive with ${files.length} files`);
+		console.info(`Creating archive with ${files.length} files`);
 		return `mock-archive-${Date.now()}.tar.gz`;
 	}
 
 	static async extract(archivePath: string, targetPath: string) {
-		console.log(`Extracting ${archivePath} to ${targetPath}`);
+		console.info(`Extracting ${archivePath} to ${targetPath}`);
 		return true;
 	}
 }
@@ -822,7 +822,7 @@ describe("Compliance Performance", () => {
 			compliant: true,
 			checks: Object.keys(securityChecks).length,
 		};
-		console.log(
+		console.info(
 			`Security compliance: ${result.compliant}, checks: ${result.checks}`,
 		);
 	});
@@ -917,14 +917,14 @@ function generateMockMetrics() {
 
 // Run benchmarks with specific configuration
 if (typeof window !== "undefined") {
-	console.log("🚀 Starting Dashboard Performance Benchmarks");
-	console.log("📊 Target: 28-second onboarding, 200ms max render time");
-	console.log("🔒 Security: mTLS, 5-min JWT, biometric required");
-	console.log("📈 ROI: MRR tracking, churn prediction, CLV analysis");
-	console.log("⚡ Bun v1.3.6: Archive API, JSONC, SIMD optimizations");
-	console.log("🔥 Performance: 3.5x Response.json, 20x CRC32, 15% async/await");
-	console.log("");
+	console.info("🚀 Starting Dashboard Performance Benchmarks");
+	console.info("📊 Target: 28-second onboarding, 200ms max render time");
+	console.info("🔒 Security: mTLS, 5-min JWT, biometric required");
+	console.info("📈 ROI: MRR tracking, churn prediction, CLV analysis");
+	console.info("⚡ Bun v1.3.6: Archive API, JSONC, SIMD optimizations");
+	console.info("🔥 Performance: 3.5x Response.json, 20x CRC32, 15% async/await");
+	console.info("");
 
 	// Run all benchmarks
-	console.log("✅ Benchmarks completed");
+	console.info("✅ Benchmarks completed");
 }

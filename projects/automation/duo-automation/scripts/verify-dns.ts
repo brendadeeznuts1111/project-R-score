@@ -1,7 +1,7 @@
 // scripts/verify-dns.ts [#REF:CLI]
 export class DNSVerifier {
   async verifyAll(): Promise<VerificationResult> {
-    console.log('🔍 Verifying DuoPlus DNS Configuration...\n');
+    console.info('🔍 Verifying DuoPlus DNS Configuration...\n');
     
     const results = {
       dnsRecords: await this.verifyDNSRecords(),
@@ -12,15 +12,15 @@ export class DNSVerifier {
     };
     
     // Generate report
-    console.log('\n📋 VERIFICATION REPORT');
-    console.log('='.repeat(50));
+    console.info('\n📋 VERIFICATION REPORT');
+    console.info('='.repeat(50));
     
     const allPassed = Object.values(results).every(r => r.passed);
     
     if (allPassed) {
-      console.log('✅ ALL SYSTEMS GO! Your apple. subdomain architecture is fully operational.');
+      console.info('✅ ALL SYSTEMS GO! Your apple. subdomain architecture is fully operational.');
     } else {
-      console.log('❌ Some issues detected. See details above.');
+      console.info('❌ Some issues detected. See details above.');
       process.exit(1);
     }
     
@@ -28,7 +28,7 @@ export class DNSVerifier {
   }
 
   private async verifyDNSRecords(): Promise<VerificationResult> {
-    console.log('1️⃣  Checking DNS Records...');
+    console.info('1️⃣  Checking DNS Records...');
     
     const required = ['api.apple', 'qr.apple', 'ws.apple', 'auth.apple', 'monitor.apple'];
     const results = [];
@@ -42,10 +42,10 @@ export class DNSVerifier {
         const hasRecords = response.Answer && response.Answer.length > 0;
         results.push({ subdomain, passed: hasRecords });
         
-        console.log(`  ${hasRecords ? '✅' : '❌'} ${subdomain}.factory-wager.com`);
+        console.info(`  ${hasRecords ? '✅' : '❌'} ${subdomain}.factory-wager.com`);
       } catch (error) {
         results.push({ subdomain, passed: false, error: error.message });
-        console.log(`  ❌ ${subdomain}.factory-wager.com - ${error.message}`);
+        console.info(`  ❌ ${subdomain}.factory-wager.com - ${error.message}`);
       }
     }
     
@@ -54,7 +54,7 @@ export class DNSVerifier {
   }
 
   private async verifyWorkerRoutes(): Promise<VerificationResult> {
-    console.log('\n2️⃣  Checking Cloudflare Worker Routes...');
+    console.info('\n2️⃣  Checking Cloudflare Worker Routes...');
     
     const routes = [
       { pattern: 'api.apple.factory-wager.com/api/*', worker: 'duoplus-api' },
@@ -67,7 +67,7 @@ export class DNSVerifier {
     const wrangler = await Bun.file('./wrangler.toml').text();
     const results = routes.map(route => {
       const isConfigured = wrangler.includes(route.pattern);
-      console.log(`  ${isConfigured ? '✅' : '❌'} ${route.pattern} -> ${route.worker}`);
+      console.info(`  ${isConfigured ? '✅' : '❌'} ${route.pattern} -> ${route.worker}`);
       return { ...route, passed: isConfigured };
     });
     
@@ -76,7 +76,7 @@ export class DNSVerifier {
   }
 
   private async verifyAPIEndpoints(): Promise<VerificationResult> {
-    console.log('\n3️⃣  Testing API Endpoints...');
+    console.info('\n3️⃣  Testing API Endpoints...');
     
     const endpoints = [
       { url: 'https://api.apple.factory-wager.com/api/status', expected: 200 },
@@ -88,10 +88,10 @@ export class DNSVerifier {
         try {
           const response = await fetch(endpoint.url, { signal: AbortSignal.timeout(5000) });
           const passed = response.status === endpoint.expected;
-          console.log(`  ${passed ? '✅' : '❌'} ${endpoint.url} (${response.status})`);
+          console.info(`  ${passed ? '✅' : '❌'} ${endpoint.url} (${response.status})`);
           return { ...endpoint, actual: response.status, passed };
         } catch (error) {
-          console.log(`  ❌ ${endpoint.url} - ${error.message}`);
+          console.info(`  ❌ ${endpoint.url} - ${error.message}`);
           return { ...endpoint, passed: false, error: error.message };
         }
       })
@@ -102,7 +102,7 @@ export class DNSVerifier {
   }
 
   private async checkPropagation(): Promise<VerificationResult> {
-    console.log('\n4️⃣  Checking Global Propagation...');
+    console.info('\n4️⃣  Checking Global Propagation...');
     
     const checkPoints = [
       { location: 'New York', server: '8.8.8.8' },
@@ -119,10 +119,10 @@ export class DNSVerifier {
         const ip = await this.dnsLookup(testDomain, checkpoint.server);
         const propagated = ip.includes('cloudflare') || ip === this.BASE_DOMAIN;
         results.push({ location: checkpoint.location, propagated, ip });
-        console.log(`  ${propagated ? '✅' : '⏳'} ${checkpoint.location} (${checkpoint.server}) - ${ip || 'Not found'}`);
+        console.info(`  ${propagated ? '✅' : '⏳'} ${checkpoint.location} (${checkpoint.server}) - ${ip || 'Not found'}`);
       } catch (error) {
         results.push({ location: checkpoint.location, propagated: false, error: error.message });
-        console.log(`  ❌ ${checkpoint.location} - ${error.message}`);
+        console.info(`  ❌ ${checkpoint.location} - ${error.message}`);
       }
     }
     
@@ -136,7 +136,7 @@ export class DNSVerifier {
   }
 
   private async verifySSL(): Promise<VerificationResult> {
-    console.log('\n5️⃣  Verifying SSL Certificates...');
+    console.info('\n5️⃣  Verifying SSL Certificates...');
     
     try {
       const response = await fetch('https://api.apple.factory-wager.com', {
@@ -147,10 +147,10 @@ export class DNSVerifier {
       const certInfo = response.headers.get('cf-meta-certificate');
       const passed = certInfo !== null;
       
-      console.log(`  ${passed ? '✅' : '❌'} SSL Certificate active`);
+      console.info(`  ${passed ? '✅' : '❌'} SSL Certificate active`);
       return { passed, details: { certInfo } };
     } catch (error) {
-      console.log(`  ❌ SSL verification failed: ${error.message}`);
+      console.info(`  ❌ SSL verification failed: ${error.message}`);
       return { passed: false, details: { error: error.message } };
     }
   }

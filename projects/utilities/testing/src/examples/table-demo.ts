@@ -11,9 +11,9 @@ const salesData = [
 ];
 
 function demoTableWithMetrics() {
-  console.log("\n" + "=".repeat(60));
-  console.log("TABLE METRICS DEMONSTRATION");
-  console.log("=".repeat(60) + "\n");
+  console.info("\n" + "=".repeat(60));
+  console.info("TABLE METRICS DEMONSTRATION");
+  console.info("=".repeat(60) + "\n");
   
   // Create table with custom inspection
   const table: any = TableInspector.createTable(salesData, {
@@ -23,36 +23,36 @@ function demoTableWithMetrics() {
   });
   
   // Display the table
-  console.log(Bun.inspect(table));
+  console.info(Bun.inspect(table));
   
   // Show metrics
-  console.log("\n📈 METRICS ANALYSIS:");
+  console.info("\n📈 METRICS ANALYSIS:");
   const metrics = table.metrics;
-  console.log(metrics);
+  console.info(metrics);
   
   // Premium features
   if (feature("PREMIUM")) {
-    console.log("\n🎯 RECOMMENDATIONS:");
+    console.info("\n🎯 RECOMMENDATIONS:");
     const recommendations = metrics.recommendations;
     recommendations?.forEach((rec: string, i: number) => {
-      console.log(`  ${i + 1}. ${rec}`);
+      console.info(`  ${i + 1}. ${rec}`);
     });
     
     // Show string width visualization
-    console.log("\n📏 STRING WIDTH VISUALIZATION:");
+    console.info("\n📏 STRING WIDTH VISUALIZATION:");
     const widthMetrics = metrics.stringMetrics;
     if (widthMetrics) {
       for (const [col, width] of Object.entries(widthMetrics.maxWidths)) {
         const bar = "█".repeat(Math.min(20, Math.round(width / 5)));
-        console.log(`  ${col.padEnd(15)}: ${bar} (${width} chars)`);
+        console.info(`  ${col.padEnd(15)}: ${bar} (${width} chars)`);
       }
     }
   }
   
   if (feature("DEBUG")) {
-    console.log("\n🔍 DEBUG INFO:");
-    console.log("Active features:", Array.from(detectActiveFeatures()));
-    console.log("Memory breakdown:", analyzeMemoryPerColumn(salesData));
+    console.info("\n🔍 DEBUG INFO:");
+    console.info("Active features:", Array.from(detectActiveFeatures()));
+    console.info("Memory breakdown:", analyzeMemoryPerColumn(salesData));
   }
 }
 
@@ -106,8 +106,8 @@ if (feature("PREMIUM")) {
   // Basic table display
   // @ts-ignore
   if (typeof Bun.table === "function") {
-    console.log(Bun.table(salesData.slice(0, 3)));
+    console.info(Bun.table(salesData.slice(0, 3)));
   } else {
-    console.log(salesData.slice(0, 3));
+    console.info(salesData.slice(0, 3));
   }
 }

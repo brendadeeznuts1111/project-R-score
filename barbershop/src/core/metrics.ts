@@ -313,7 +313,7 @@ export type MetricsSnapshot = { timestamp: number; metrics: string };
 
 // Demo
 if (import.meta.main) {
-  console.log(`\n📊 Metrics Module\n`);
+  console.info(`\n📊 Metrics Module\n`);
   
   // Simulate traffic
   for (let i = 0; i < 100; i++) {
@@ -327,10 +327,10 @@ if (import.meta.main) {
   
   metrics.activeConnections.set(15);
   
-  console.log('Prometheus Export:');
-  console.log(metrics.export());
+  console.info('Prometheus Export:');
+  console.info(metrics.export());
   
-  console.log('✅ Metrics demo complete!\n');
+  console.info('✅ Metrics demo complete!\n');
 }
 
 export default metrics;

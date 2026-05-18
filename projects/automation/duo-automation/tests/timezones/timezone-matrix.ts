@@ -66,7 +66,7 @@ export class TimezoneTestUtils {
       setSystemTime(new Date(mockDate));
     }
     
-    console.log(`🌍 Timezone test setup: ${zone} ${mockDate ? `(${mockDate})` : ''}`);
+    console.info(`🌍 Timezone test setup: ${zone} ${mockDate ? `(${mockDate})` : ''}`);
   }
 
   /**
@@ -81,7 +81,7 @@ export class TimezoneTestUtils {
         setSystemTime(new Date(mockDate));
       }
       
-      console.log(`🎯 Scope test setup: ${scope} → ${config.scopeTimezone} ${mockDate ? `(${mockDate})` : ''}`);
+      console.info(`🎯 Scope test setup: ${scope} → ${config.scopeTimezone} ${mockDate ? `(${mockDate})` : ''}`);
     } catch (error) {
       throw new Error(`❌ Failed to setup scope ${scope}: ${error}`);
     }
@@ -189,7 +189,7 @@ export class TimezoneTestUtils {
     setSystemTime();
     _resetTimezoneState();
     process.env.TZ = "UTC";
-    console.log('🧹 Timezone test cleanup completed');
+    console.info('🧹 Timezone test cleanup completed');
   }
 
   /**
@@ -243,39 +243,39 @@ export class TimezoneTestUtils {
  */
 export class TimezoneMatrixTests {
   static testComponentMapping(): void {
-    console.log('🧪 Testing component timezone mapping...');
+    console.info('🧪 Testing component timezone mapping...');
     
     // Test known mappings
     const nyDashboard = TimezoneTestUtils.getTimezoneForComponent('ny-dashboard');
-    console.log(`ny-dashboard → ${nyDashboard}`);
+    console.info(`ny-dashboard → ${nyDashboard}`);
     
     const auditTrails = TimezoneTestUtils.getTimezoneForComponent('audit-trails');
-    console.log(`audit-trails → ${auditTrails}`);
+    console.info(`audit-trails → ${auditTrails}`);
     
     // Test reverse mapping
     const nyComponents = TimezoneTestUtils.getComponentsForTimezone('America/New_York');
-    console.log(`America/New_York components:`, nyComponents);
+    console.info(`America/New_York components:`, nyComponents);
   }
 
   static testFeatureFlagIntegration(): void {
-    console.log('🧪 Testing feature flag integration...');
+    console.info('🧪 Testing feature flag integration...');
     
     const featureComponents = TimezoneTestUtils.getFeatureFlagComponents();
     
     featureComponents.forEach((components, flag) => {
-      console.log(`${flag} enabled components:`, components);
+      console.info(`${flag} enabled components:`, components);
     });
   }
 
   static testCanonicalCompliance(): void {
-    console.log('🧪 Testing canonical zone compliance...');
+    console.info('🧪 Testing canonical zone compliance...');
     
     const validation = TimezoneTestUtils.validateCanonicalZones();
     
     if (validation.valid) {
-      console.log('✅ All zones are canonical tzdb 2025c entries');
+      console.info('✅ All zones are canonical tzdb 2025c entries');
     } else {
-      console.log('❌ Non-canonical zones found:', validation.invalid);
+      console.info('❌ Non-canonical zones found:', validation.invalid);
     }
   }
 }

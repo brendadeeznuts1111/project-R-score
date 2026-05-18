@@ -52,7 +52,7 @@ class SecurityHealthMonitor {
    * Perform comprehensive security health check
    */
   async performHealthCheck(): Promise<SecurityHealthReport> {
-    console.log('🔐 Running Security Health Check...\n');
+    console.info('🔐 Running Security Health Check...\n');
 
     const timestamp = new Date().toISOString();
     this.alerts = [];
@@ -249,53 +249,53 @@ class SecurityHealthMonitor {
     const statusColor =
       report.overall === 'healthy' ? '🟢' : report.overall === 'degraded' ? '🟡' : '🔴';
 
-    console.log(`${statusColor} Overall Security Status: ${report.overall.toUpperCase()}`);
-    console.log('='.repeat(60));
+    console.info(`${statusColor} Overall Security Status: ${report.overall.toUpperCase()}`);
+    console.info('='.repeat(60));
 
     // Authentication status
-    console.log('\n🔐 Authentication System:');
-    console.log(`   Status: ${report.authentication.status}`);
-    console.log(`   Recent Failures: ${report.authentication.stats.recentFailures}`);
-    console.log(`   Active Blocks: ${report.authentication.stats.activeBlocks}`);
-    console.log(`   Blacklisted Tokens: ${report.authentication.stats.blacklistedTokens}`);
+    console.info('\n🔐 Authentication System:');
+    console.info(`   Status: ${report.authentication.status}`);
+    console.info(`   Recent Failures: ${report.authentication.stats.recentFailures}`);
+    console.info(`   Active Blocks: ${report.authentication.stats.activeBlocks}`);
+    console.info(`   Blacklisted Tokens: ${report.authentication.stats.blacklistedTokens}`);
 
     // Rate limiting
-    console.log('\n🚦 Rate Limiting:');
-    console.log(`   Active Blocks: ${report.rateLimit.activeBlocks}`);
-    console.log(`   Recent Violations: ${report.rateLimit.recentViolations}`);
+    console.info('\n🚦 Rate Limiting:');
+    console.info(`   Active Blocks: ${report.rateLimit.activeBlocks}`);
+    console.info(`   Recent Violations: ${report.rateLimit.recentViolations}`);
 
     // Audit information
-    console.log('\n📊 Security Audit:');
-    console.log(`   Recent Events: ${report.audit.recentEvents}`);
-    console.log(`   Suspicious Activity: ${report.audit.suspiciousActivity}`);
-    console.log(`   Token Revocations: ${report.audit.tokenRevocations}`);
+    console.info('\n📊 Security Audit:');
+    console.info(`   Recent Events: ${report.audit.recentEvents}`);
+    console.info(`   Suspicious Activity: ${report.audit.suspiciousActivity}`);
+    console.info(`   Token Revocations: ${report.audit.tokenRevocations}`);
 
     // Issues
     if (report.authentication.issues.length > 0) {
-      console.log('\n⚠️  Issues Found:');
+      console.info('\n⚠️  Issues Found:');
       report.authentication.issues.forEach(issue => {
-        console.log(`   • ${issue}`);
+        console.info(`   • ${issue}`);
       });
     }
 
     // Recommendations
     if (report.recommendations.length > 0) {
-      console.log('\n💡 Recommendations:');
+      console.info('\n💡 Recommendations:');
       report.recommendations.forEach(rec => {
-        console.log(`   • ${rec}`);
+        console.info(`   • ${rec}`);
       });
     }
 
     // Alerts
     if (report.alerts.length > 0) {
-      console.log('\n🚨 Alerts:');
+      console.info('\n🚨 Alerts:');
       report.alerts.forEach(alert => {
         const icon = alert.level === 'critical' ? '🔴' : alert.level === 'warning' ? '🟡' : '🔵';
-        console.log(`   ${icon} [${alert.level.toUpperCase()}] ${alert.message}`);
+        console.info(`   ${icon} [${alert.level.toUpperCase()}] ${alert.message}`);
       });
     }
 
-    console.log(`\n📅 Report generated: ${new Date(report.timestamp).toLocaleString()}`);
+    console.info(`\n📅 Report generated: ${new Date(report.timestamp).toLocaleString()}`);
   }
 
   /**
@@ -307,7 +307,7 @@ class SecurityHealthMonitor {
 
     try {
       writeFileSync(filepath, JSON.stringify(report, null, 2));
-      console.log(`\n💾 Report saved: ${filename}`);
+      console.info(`\n💾 Report saved: ${filename}`);
     } catch (error) {
       console.error('❌ Failed to save report:', error);
     }
@@ -317,17 +317,17 @@ class SecurityHealthMonitor {
    * Monitor security continuously
    */
   async startContinuousMonitoring(intervalMinutes: number = 15): Promise<void> {
-    console.log(`🔄 Starting continuous security monitoring (${intervalMinutes}min intervals)`);
+    console.info(`🔄 Starting continuous security monitoring (${intervalMinutes}min intervals)`);
 
     const monitor = async () => {
       const report = await this.performHealthCheck();
 
       // Alert on critical issues
       if (report.overall === 'unhealthy') {
-        console.log('\n🚨 CRITICAL: Security system unhealthy!');
+        console.info('\n🚨 CRITICAL: Security system unhealthy!');
       }
 
-      console.log(`\n⏰ Next check in ${intervalMinutes} minutes...`);
+      console.info(`\n⏰ Next check in ${intervalMinutes} minutes...`);
     };
 
     // Initial check
@@ -344,7 +344,7 @@ async function main() {
   const monitor = new SecurityHealthMonitor();
 
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🔐 Fire22 Security Health Monitor
 
 DESCRIPTION:

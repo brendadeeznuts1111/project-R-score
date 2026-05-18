@@ -11,7 +11,7 @@ import { handleFantasy402Element, findFantasy402Element } from '../core/ui/xpath
  * Example: Basic Fantasy402 Player Notes Integration
  */
 export async function basicFantasy402NotesExample() {
-  console.log('🎯 Fantasy402 Player Notes Integration Example');
+  console.info('🎯 Fantasy402 Player Notes Integration Example');
 
   // Initialize Fantasy402 client
   const client = new Fantasy402AgentClient('your-username', 'your-password');
@@ -29,9 +29,9 @@ export async function basicFantasy402NotesExample() {
   const integrationReady = await notesManager.initialize();
 
   if (integrationReady) {
-    console.log('✅ Fantasy402 Notes Integration Ready');
+    console.info('✅ Fantasy402 Notes Integration Ready');
   } else {
-    console.log(
+    console.info(
       '⚠️ Fantasy402 element not found, integration will initialize when element appears'
     );
   }
@@ -43,7 +43,7 @@ export async function basicFantasy402NotesExample() {
  * Example: Direct XPath Element Interaction
  */
 export async function directXPathInteractionExample() {
-  console.log('🎯 Direct XPath Element Interaction Example');
+  console.info('🎯 Direct XPath Element Interaction Example');
 
   // Wait for element to be available
   const waitForElement = () => {
@@ -70,12 +70,12 @@ export async function directXPathInteractionExample() {
     return;
   }
 
-  console.log('✅ Fantasy402 notes element found:', element);
+  console.info('✅ Fantasy402 notes element found:', element);
 
   // Example: Read current notes
   const readResult = await handleFantasy402Element('read');
   if (readResult.success) {
-    console.log('📖 Current notes:', readResult.data);
+    console.info('📖 Current notes:', readResult.data);
   }
 
   // Example: Write new notes
@@ -91,7 +91,7 @@ Last Updated: ${new Date().toLocaleString()}`;
 
   const writeResult = await handleFantasy402Element('write', newNotes);
   if (writeResult.success) {
-    console.log('✍️ Notes updated successfully');
+    console.info('✍️ Notes updated successfully');
   } else {
     console.error('❌ Failed to update notes:', writeResult.error);
   }
@@ -103,14 +103,14 @@ Last Updated: ${new Date().toLocaleString()}`;
     maxLength: 5000,
   });
 
-  console.log('🔍 Validation result:', validateResult);
+  console.info('🔍 Validation result:', validateResult);
 }
 
 /**
  * Example: Fantasy402 Notes with Agent Workflow
  */
 export async function fantasy402AgentWorkflowExample() {
-  console.log('🎯 Fantasy402 Agent Workflow Example');
+  console.info('🎯 Fantasy402 Agent Workflow Example');
 
   // Initialize client and manager
   const client = new Fantasy402AgentClient('agent-username', 'agent-password');
@@ -122,19 +122,19 @@ export async function fantasy402AgentWorkflowExample() {
   const customerId = 'BBB9901'; // Bob's customer ID
 
   // 1. Load existing notes
-  console.log('📝 Step 1: Loading existing notes...');
+  console.info('📝 Step 1: Loading existing notes...');
   const notesResult = await client.getPlayerNotes(customerId);
 
   if (notesResult.success) {
-    console.log('📋 Current notes:', notesResult.playerNotes);
-    console.log('📊 Notes history:', notesResult.noteHistory.length, 'entries');
+    console.info('📋 Current notes:', notesResult.playerNotes);
+    console.info('📊 Notes history:', notesResult.noteHistory.length, 'entries');
 
     // Update the Fantasy402 element
     await handleFantasy402Element('write', notesResult.playerNotes);
   }
 
   // 2. Add a new note
-  console.log('📝 Step 2: Adding new note...');
+  console.info('📝 Step 2: Adding new note...');
   const newNote = `Agent Session - ${new Date().toISOString()}
 
 • Reviewed player's lottery activity
@@ -147,7 +147,7 @@ Next Follow-up: Review lottery performance after next draw`;
   const addResult = await client.addPlayerNote(customerId, newNote, 'lottery');
 
   if (addResult.success) {
-    console.log('✅ Note added successfully, ID:', addResult.noteId);
+    console.info('✅ Note added successfully, ID:', addResult.noteId);
 
     // Update the element with the new note
     const updatedNotes = `${notesResult.playerNotes}\n\n--- New Entry ---\n${newNote}`;
@@ -155,38 +155,38 @@ Next Follow-up: Review lottery performance after next draw`;
   }
 
   // 3. Search for specific content
-  console.log('🔍 Step 3: Searching notes...');
+  console.info('🔍 Step 3: Searching notes...');
   const searchResult = await client.searchPlayerNotes('lottery', {
     customerID: customerId,
     limit: 5,
   });
 
   if (searchResult.success) {
-    console.log('🔍 Found', searchResult.totalCount, 'matches');
+    console.info('🔍 Found', searchResult.totalCount, 'matches');
     searchResult.results.forEach((result, index) => {
-      console.log(`${index + 1}. ${result.customerName}: ${result.note.substring(0, 100)}...`);
+      console.info(`${index + 1}. ${result.customerName}: ${result.note.substring(0, 100)}...`);
     });
   }
 
   // 4. Get notes by category
-  console.log('📊 Step 4: Getting notes by category...');
+  console.info('📊 Step 4: Getting notes by category...');
   const categoryResult = await client.getNotesByCategory('lottery', {
     customerID: customerId,
     limit: 10,
   });
 
   if (categoryResult.success) {
-    console.log('🎲 Lottery-related notes:', categoryResult.totalCount);
+    console.info('🎲 Lottery-related notes:', categoryResult.totalCount);
   }
 
-  console.log('✅ Agent workflow completed successfully');
+  console.info('✅ Agent workflow completed successfully');
 }
 
 /**
  * Example: Real-time Fantasy402 Element Monitoring
  */
 export async function realTimeFantasy402MonitoringExample() {
-  console.log('🎯 Real-time Fantasy402 Element Monitoring Example');
+  console.info('🎯 Real-time Fantasy402 Element Monitoring Example');
 
   // Monitor the element for changes
   const monitorElement = () => {
@@ -196,7 +196,7 @@ export async function realTimeFantasy402MonitoringExample() {
       // Add event listeners for real-time monitoring
       element.addEventListener('input', e => {
         const target = e.target as HTMLTextAreaElement;
-        console.log('📝 Real-time input:', target.value.length, 'characters');
+        console.info('📝 Real-time input:', target.value.length, 'characters');
 
         // Auto-save or validate in real-time
         if (target.value.length > 4800) {
@@ -205,26 +205,26 @@ export async function realTimeFantasy402MonitoringExample() {
       });
 
       element.addEventListener('focus', () => {
-        console.log('🎯 Element focused - starting session');
+        console.info('🎯 Element focused - starting session');
       });
 
       element.addEventListener('blur', async () => {
-        console.log('🎯 Element blurred - auto-saving...');
+        console.info('🎯 Element blurred - auto-saving...');
 
         // Auto-save on blur
         const target = element as HTMLTextAreaElement;
         if (target.value.trim()) {
           const result = await handleFantasy402Element('read');
           if (result.success) {
-            console.log('💾 Auto-saved notes');
+            console.info('💾 Auto-saved notes');
           }
         }
       });
 
-      console.log('✅ Real-time monitoring activated');
+      console.info('✅ Real-time monitoring activated');
       return true;
     } else {
-      console.log('⏳ Element not found, retrying...');
+      console.info('⏳ Element not found, retrying...');
       return false;
     }
   };
@@ -241,7 +241,7 @@ export async function realTimeFantasy402MonitoringExample() {
     // Stop after 30 seconds
     setTimeout(() => {
       clearInterval(monitorInterval);
-      console.log('⏰ Stopped monitoring - element not found');
+      console.info('⏰ Stopped monitoring - element not found');
     }, 30000);
   }
 }
@@ -250,7 +250,7 @@ export async function realTimeFantasy402MonitoringExample() {
  * Example: Fantasy402 Element Integration with Dashboard
  */
 export async function fantasy402DashboardIntegrationExample() {
-  console.log('🎯 Fantasy402 Dashboard Integration Example');
+  console.info('🎯 Fantasy402 Dashboard Integration Example');
 
   // This example shows how to integrate the Fantasy402 element
   // with a larger dashboard system
@@ -265,7 +265,7 @@ export async function fantasy402DashboardIntegrationExample() {
     },
     callbacks: {
       onChange: async (newValue: string) => {
-        console.log('📝 Notes changed:', newValue.length, 'characters');
+        console.info('📝 Notes changed:', newValue.length, 'characters');
 
         // Validate content
         if (newValue.length > 5000) {
@@ -282,16 +282,16 @@ export async function fantasy402DashboardIntegrationExample() {
         return result.success;
       },
       onFocus: () => {
-        console.log('🎯 Notes field focused - showing additional controls');
+        console.info('🎯 Notes field focused - showing additional controls');
         // Could show character counter, save button, etc.
       },
       onBlur: () => {
-        console.log('🎯 Notes field blurred - hiding additional controls');
+        console.info('🎯 Notes field blurred - hiding additional controls');
         // Could hide additional controls
       },
       onSave: (success: boolean) => {
         if (success) {
-          console.log('✅ Notes saved successfully');
+          console.info('✅ Notes saved successfully');
         } else {
           console.error('❌ Failed to save notes');
         }
@@ -326,10 +326,10 @@ export async function fantasy402DashboardIntegrationExample() {
         element.addEventListener('blur', integrationConfig.callbacks.onBlur);
       }
 
-      console.log('✅ Fantasy402 dashboard integration complete');
+      console.info('✅ Fantasy402 dashboard integration complete');
       return true;
     } else {
-      console.log('⏳ Element not found, integration will retry');
+      console.info('⏳ Element not found, integration will retry');
       return false;
     }
   };
@@ -345,7 +345,7 @@ export async function fantasy402DashboardIntegrationExample() {
 
     setTimeout(() => {
       clearInterval(retryInterval);
-      console.log('⏰ Integration setup timeout');
+      console.info('⏰ Integration setup timeout');
     }, 30000);
   }
 }
@@ -354,30 +354,30 @@ export async function fantasy402DashboardIntegrationExample() {
  * Example: Complete Fantasy402 Workflow
  */
 export async function completeFantasy402WorkflowExample() {
-  console.log('🎯 Complete Fantasy402 Workflow Example');
+  console.info('🎯 Complete Fantasy402 Workflow Example');
 
   try {
     // 1. Initialize components
-    console.log('🚀 Step 1: Initializing components...');
+    console.info('🚀 Step 1: Initializing components...');
     const notesManager = await basicFantasy402NotesExample();
 
     // 2. Setup direct interaction
-    console.log('🔧 Step 2: Setting up direct interaction...');
+    console.info('🔧 Step 2: Setting up direct interaction...');
     await directXPathInteractionExample();
 
     // 3. Run agent workflow
-    console.log('👨‍💼 Step 3: Running agent workflow...');
+    console.info('👨‍💼 Step 3: Running agent workflow...');
     await fantasy402AgentWorkflowExample();
 
     // 4. Enable real-time monitoring
-    console.log('📊 Step 4: Enabling real-time monitoring...');
+    console.info('📊 Step 4: Enabling real-time monitoring...');
     await realTimeFantasy402MonitoringExample();
 
     // 5. Integrate with dashboard
-    console.log('🎛️ Step 5: Integrating with dashboard...');
+    console.info('🎛️ Step 5: Integrating with dashboard...');
     await fantasy402DashboardIntegrationExample();
 
-    console.log('✅ Complete Fantasy402 workflow finished successfully!');
+    console.info('✅ Complete Fantasy402 workflow finished successfully!');
   } catch (error) {
     console.error('❌ Complete workflow failed:', error);
   }

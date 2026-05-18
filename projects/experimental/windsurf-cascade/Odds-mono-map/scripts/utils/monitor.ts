@@ -84,15 +84,15 @@ class VaultMonitor {
 
     async start(): Promise<void> {
         if (this.isRunning) {
-            console.log(chalk.yellow('⚠️  Monitor is already running'));
+            console.info(chalk.yellow('⚠️  Monitor is already running'));
             return;
         }
 
-        console.log(chalk.blue.bold('👁️  Starting Vault Monitor...'));
-        console.log(chalk.gray(`Monitoring: ${this.vaultPath}`));
-        console.log(chalk.gray(`Interval: ${this.config.interval}ms`));
-        console.log(chalk.gray(`Auto-organize: ${this.config.autoOrganize}`));
-        console.log(chalk.gray(`Auto-validate: ${this.config.autoValidate}`));
+        console.info(chalk.blue.bold('👁️  Starting Vault Monitor...'));
+        console.info(chalk.gray(`Monitoring: ${this.vaultPath}`));
+        console.info(chalk.gray(`Interval: ${this.config.interval}ms`));
+        console.info(chalk.gray(`Auto-organize: ${this.config.autoOrganize}`));
+        console.info(chalk.gray(`Auto-validate: ${this.config.autoValidate}`));
 
         this.isRunning = true;
         this.updateStatus(true);
@@ -109,8 +109,8 @@ class VaultMonitor {
             this.setupPeriodicValidation();
         }
 
-        console.log(chalk.green('✅ Vault monitor started successfully'));
-        console.log(chalk.gray('Press Ctrl+C to stop monitoring'));
+        console.info(chalk.green('✅ Vault monitor started successfully'));
+        console.info(chalk.gray('Press Ctrl+C to stop monitoring'));
 
         // Keep process running
         process.on('SIGINT', () => this.stop());
@@ -141,7 +141,7 @@ class VaultMonitor {
                 return;
             }
 
-            console.log(chalk.blue(`📝 File ${eventType}: ${filename}`));
+            console.info(chalk.blue(`📝 File ${eventType}: ${filename}`));
 
             if (eventType === 'rename' && this.config.autoOrganize) {
                 // Give file system a moment to settle
@@ -169,14 +169,14 @@ class VaultMonitor {
 
     private async organizeNewFile(filename: string): Promise<void> {
         try {
-            console.log(chalk.yellow(`🔄 Organizing new file: ${filename}`));
+            console.info(chalk.yellow(`🔄 Organizing new file: ${filename}`));
 
             // Run organization on just this file (would need to modify organizer)
             // For now, run full organization
             if (this.config.autoOrganize) {
                 const result = await this.organizer.organizeAll();
                 if (result.moved.length > 0 || result.renamed.length > 0) {
-                    console.log(chalk.green(`✅ Auto-organized: ${filename}`));
+                    console.info(chalk.green(`✅ Auto-organized: ${filename}`));
                 }
             }
         } catch (error) {
@@ -195,7 +195,7 @@ class VaultMonitor {
         // Run validation every hour
         setInterval(async () => {
             if (this.config.autoValidate) {
-                console.log(chalk.blue('🔍 Running periodic validation...'));
+                console.info(chalk.blue('🔍 Running periodic validation...'));
                 try {
                     await this.validator.validateAll();
                 } catch (error) {
@@ -267,15 +267,15 @@ class VaultMonitor {
 
     stop(): void {
         if (!this.isRunning) {
-            console.log(chalk.yellow('⚠️  Monitor is not running'));
+            console.info(chalk.yellow('⚠️  Monitor is not running'));
             return;
         }
         if (!this.isRunning) {
-            console.log(chalk.yellow('⚠️  Monitor is not running'));
+            console.info(chalk.yellow('⚠️  Monitor is not running'));
             return;
         }
 
-        console.log(chalk.blue('\n🛑 Stopping Vault Monitor...'));
+        console.info(chalk.blue('\n🛑 Stopping Vault Monitor...'));
 
         this.isRunning = false;
         this.updateStatus(false);
@@ -285,7 +285,7 @@ class VaultMonitor {
             this.watcher = null;
         }
 
-        console.log(chalk.green('✅ Vault monitor stopped'));
+        console.info(chalk.green('✅ Vault monitor stopped'));
         process.exit(0);
     }
 
@@ -293,28 +293,28 @@ class VaultMonitor {
         const statusFile = join(this.vaultPath, '.vault-status.json');
 
         if (!existsSync(statusFile)) {
-            console.log(chalk.red('❌ Status file not found. Run setup first.'));
+            console.info(chalk.red('❌ Status file not found. Run setup first.'));
             return;
         }
 
         try {
             const statusData = JSON.parse(readFileSync(statusFile, 'utf-8'));
 
-            console.log(chalk.blue.bold('📊 Monitor Status:'));
-            console.log(chalk.gray(`Active: ${statusData.monitorActive ? 'Yes' : 'No'}`));
-            console.log(chalk.gray(`Last Update: ${statusData.lastUpdate}`));
-            console.log(chalk.gray(`Last Validation: ${statusData.lastValidation || 'Never'}`));
-            console.log(chalk.gray(`Last Organization: ${statusData.lastOrganization || 'Never'}`));
-            console.log(chalk.gray(`Issues: ${statusData.issues || 0}`));
-            console.log(chalk.gray(`Warnings: ${statusData.warnings || 0}`));
-            console.log(chalk.blue(`Compliance: ${statusData.compliance || 0}%`));
+            console.info(chalk.blue.bold('📊 Monitor Status:'));
+            console.info(chalk.gray(`Active: ${statusData.monitorActive ? 'Yes' : 'No'}`));
+            console.info(chalk.gray(`Last Update: ${statusData.lastUpdate}`));
+            console.info(chalk.gray(`Last Validation: ${statusData.lastValidation || 'Never'}`));
+            console.info(chalk.gray(`Last Organization: ${statusData.lastOrganization || 'Never'}`));
+            console.info(chalk.gray(`Issues: ${statusData.issues || 0}`));
+            console.info(chalk.gray(`Warnings: ${statusData.warnings || 0}`));
+            console.info(chalk.blue(`Compliance: ${statusData.compliance || 0}%`));
 
             if (statusData.organizationStats) {
-                console.log(chalk.blue.bold('\n📁 Organization Stats:'));
-                console.log(chalk.gray(`Files Moved: ${statusData.organizationStats.moved}`));
-                console.log(chalk.gray(`Files Renamed: ${statusData.organizationStats.renamed}`));
-                console.log(chalk.gray(`Templates Applied: ${statusData.organizationStats.templated}`));
-                console.log(chalk.gray(`Errors: ${statusData.organizationStats.errors}`));
+                console.info(chalk.blue.bold('\n📁 Organization Stats:'));
+                console.info(chalk.gray(`Files Moved: ${statusData.organizationStats.moved}`));
+                console.info(chalk.gray(`Files Renamed: ${statusData.organizationStats.renamed}`));
+                console.info(chalk.gray(`Templates Applied: ${statusData.organizationStats.templated}`));
+                console.info(chalk.gray(`Errors: ${statusData.organizationStats.errors}`));
             }
 
         } catch (error) {
@@ -346,11 +346,11 @@ async function main() {
             monitor.getStatus();
             break;
         default:
-            console.log(chalk.blue('Vault Monitor Commands:'));
-            console.log('  start   - Start monitoring');
-            console.log('  stop    - Stop monitoring');
-            console.log('  status  - Show monitor status');
-            console.log('\nUsage: bun run vault:monitor [command]');
+            console.info(chalk.blue('Vault Monitor Commands:'));
+            console.info('  start   - Start monitoring');
+            console.info('  stop    - Stop monitoring');
+            console.info('  status  - Show monitor status');
+            console.info('\nUsage: bun run vault:monitor [command]');
             break;
     }
 }

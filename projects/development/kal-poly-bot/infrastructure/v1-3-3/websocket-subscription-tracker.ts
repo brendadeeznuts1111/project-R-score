@@ -79,7 +79,7 @@ export class WebSocketSubscriptionTracker {
     const upgraded = server.upgrade(req, enhancedServer);
 
     if (upgraded) {
-      console.log(`[WS_TRACKER] Connection upgraded: ${connectionId}`);
+      console.info(`[WS_TRACKER] Connection upgraded: ${connectionId}`);
     } else {
       this.connections.delete(connectionId);
       this.metrics.totalConnections--;
@@ -116,7 +116,7 @@ export class WebSocketSubscriptionTracker {
 
     // Check for deduplication
     if (connection.subscriptions.has(topic)) {
-      console.log(`[WS_TRACKER] Already subscribed to: ${topic}`);
+      console.info(`[WS_TRACKER] Already subscribed to: ${topic}`);
       return;
     }
 
@@ -148,7 +148,7 @@ export class WebSocketSubscriptionTracker {
     // Actually subscribe to WebSocket
     ws.subscribe(topic);
 
-    console.log(
+    console.info(
       `[WS_TRACKER] Subscribed: ${topic} (priority: ${priority}, pattern: ${patternId})`
     );
     this.updateMetrics();
@@ -186,7 +186,7 @@ export class WebSocketSubscriptionTracker {
     connection.data.subscriptionPriorities?.delete(topic);
     ws.unsubscribe(topic);
 
-    console.log(`[WS_TRACKER] Unsubscribed: ${topic}`);
+    console.info(`[WS_TRACKER] Unsubscribed: ${topic}`);
     this.updateMetrics();
   }
 
@@ -279,7 +279,7 @@ export class WebSocketSubscriptionTracker {
     }
 
     if (inactiveConnections.length > 0) {
-      console.log(
+      console.info(
         `[WS_TRACKER] Cleaned up ${inactiveConnections.length} inactive connections`
       );
     }
@@ -306,7 +306,7 @@ export class WebSocketSubscriptionTracker {
     this.connections.delete(connectionId);
     this.metrics.totalConnections--;
 
-    console.log(`[WS_TRACKER] Removed connection: ${connectionId}`);
+    console.info(`[WS_TRACKER] Removed connection: ${connectionId}`);
     this.updateMetrics();
   }
 
@@ -378,7 +378,7 @@ export class WebSocketSubscriptionTracker {
       averageMessagesPerSecond: 0,
       kalmanPatternSubscriptions: 0,
     };
-    console.log("[WS_TRACKER] Cleaned up all connections and subscriptions");
+    console.info("[WS_TRACKER] Cleaned up all connections and subscriptions");
   }
 }
 

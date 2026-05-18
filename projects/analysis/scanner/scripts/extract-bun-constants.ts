@@ -239,7 +239,7 @@ function updateRegistry(matches: ConstantMatch[]): void {
 		};
 
 		writeFileSync(REGISTRY_FILE, JSON.stringify(registry, null, 2));
-		console.log(`📝 Registry updated: ${REGISTRY_FILE}`);
+		console.info(`📝 Registry updated: ${REGISTRY_FILE}`);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);
 		console.warn(`⚠️  Failed to update registry: ${message}`);
@@ -247,7 +247,7 @@ function updateRegistry(matches: ConstantMatch[]): void {
 }
 
 function format95ColumnMatrix(matches: ConstantMatch[]): void {
-	console.log('\n📊 Tier-1380 Terminal Matrix (95-column optimized)\n');
+	console.info('\n📊 Tier-1380 Terminal Matrix (95-column optimized)\n');
 
 	const header =
 		'│ Constant'.padEnd(20) +
@@ -263,9 +263,9 @@ function format95ColumnMatrix(matches: ConstantMatch[]): void {
 		'┼'.padEnd(9, '─') +
 		'┤';
 
-	console.log('┌' + '─'.repeat(95) + '┐');
-	console.log(header);
-	console.log(separator);
+	console.info('┌' + '─'.repeat(95) + '┐');
+	console.info(header);
+	console.info(separator);
 
 	for (const match of matches.slice(0, 10)) {
 		// Show first 10 for demo
@@ -275,16 +275,16 @@ function format95ColumnMatrix(matches: ConstantMatch[]): void {
 		const category = (match.category ?? '-').padEnd(12);
 		const project = match.project.padEnd(7);
 
-		console.log(`│ ${constant} │ ${value} │ ${type} │ ${category} │ ${project} │`);
+		console.info(`│ ${constant} │ ${value} │ ${type} │ ${category} │ ${project} │`);
 	}
 
 	if (matches.length > 10) {
 		const more = `... and ${matches.length - 10} more`.padEnd(95);
-		console.log(`│ ${more} │`);
+		console.info(`│ ${more} │`);
 	}
 
-	console.log('└' + '─'.repeat(95) + '┘');
-	console.log(`📈 Total: ${matches.length} constants | Tier-1380 Certified | Col-89 Compliant`);
+	console.info('└' + '─'.repeat(95) + '┘');
+	console.info(`📈 Total: ${matches.length} constants | Tier-1380 Certified | Col-89 Compliant`);
 }
 
 function main(): void {
@@ -294,36 +294,36 @@ function main(): void {
 		'mcp-bun-docs': matches.filter(m => m.project === 'mcp-bun-docs'),
 	};
 
-	console.log('## BUN_ Constants Extraction Report - Tier-1380 Enhanced\n');
-	console.log(`**Version**: ${BUN_CONSTANTS_VERSION}`);
-	console.log(`**Total**: ${matches.length} exported BUN_ constants`);
-	console.log(`**Schema**: 20-column Tier-1380 certified`);
-	console.log(`**Extraction**: ${new Date().toISOString()}\n`);
+	console.info('## BUN_ Constants Extraction Report - Tier-1380 Enhanced\n');
+	console.info(`**Version**: ${BUN_CONSTANTS_VERSION}`);
+	console.info(`**Total**: ${matches.length} exported BUN_ constants`);
+	console.info(`**Schema**: 20-column Tier-1380 certified`);
+	console.info(`**Extraction**: ${new Date().toISOString()}\n`);
 
-	console.log('### Scanner Project\n');
-	console.log('| Constant | Path | Type | Category | Security |');
-	console.log('|----------|------|------|----------|----------|');
+	console.info('### Scanner Project\n');
+	console.info('| Constant | Path | Type | Category | Security |');
+	console.info('|----------|------|------|----------|----------|');
 	for (const m of byProject.scanner) {
 		const path = `\`${m.relPath}:${m.line}\``;
 		const type = m.type ?? 'string';
 		const category = m.category ?? 'config';
 		const security = m.security ?? 'low';
-		console.log(`| \`${m.name}\` | ${path} | ${type} | ${category} | ${security} |`);
+		console.info(`| \`${m.name}\` | ${path} | ${type} | ${category} | ${security} |`);
 	}
 
-	console.log('\n### MCP Bun Docs Project\n');
-	console.log('| Constant | Path | Type | Category | MCP |');
-	console.log('|----------|------|------|----------|-----|');
+	console.info('\n### MCP Bun Docs Project\n');
+	console.info('| Constant | Path | Type | Category | MCP |');
+	console.info('|----------|------|------|----------|-----|');
 	for (const m of byProject['mcp-bun-docs']) {
 		const path = `\`${m.relPath}:${m.line}\``;
 		const type = m.type ?? 'string';
 		const category = m.category ?? 'config';
 		const mcp = m.tier1380?.mcpExposed === true ? '✅' : '❌';
-		console.log(`| \`${m.name}\` | ${path} | ${type} | ${category} | ${mcp} |`);
+		console.info(`| \`${m.name}\` | ${path} | ${type} | ${category} | ${mcp} |`);
 	}
 
 	// Enhanced JSON output with full schema
-	console.log('\n### JSON Registry (Tier-1380 Schema)\n');
+	console.info('\n### JSON Registry (Tier-1380 Schema)\n');
 	const registryData = {
 		version: BUN_CONSTANTS_VERSION,
 		schemaVersion: '1.0.0',
@@ -351,7 +351,7 @@ function main(): void {
 		})),
 	};
 
-	console.log(JSON.stringify(registryData, null, 2));
+	console.info(JSON.stringify(registryData, null, 2));
 
 	// Update registry file
 	updateRegistry(matches);
@@ -360,19 +360,19 @@ function main(): void {
 	format95ColumnMatrix(matches);
 
 	// Verification commands
-	console.log('\n### 🔍 Verification Commands\n');
-	console.log('```bash');
-	console.log('# One-liner integrity check');
-	console.log(
-		`bun -e 'const v=await Bun.file("${REGISTRY_FILE}").json(); console.log(\`✅ v\${v.version} | Bun \${v.bunVersion} | Schema \${v.schemaVersion} | MCP \${v.mcpEnabled?"✓":"✗"}\`)'`,
+	console.info('\n### 🔍 Verification Commands\n');
+	console.info('```bash');
+	console.info('# One-liner integrity check');
+	console.info(
+		`bun -e 'const v=await Bun.file("${REGISTRY_FILE}").json(); console.info(\`✅ v\${v.version} | Bun \${v.bunVersion} | Schema \${v.schemaVersion} | MCP \${v.mcpEnabled?"✓":"✗"}\`)'`,
 	);
-	console.log('');
-	console.log('# Version bump');
-	console.log('bun version-bump.ts --type patch');
-	console.log('');
-	console.log('# Validate integrity');
-	console.log('bun version-bump.ts --validate');
-	console.log('```');
+	console.info('');
+	console.info('# Version bump');
+	console.info('bun version-bump.ts --type patch');
+	console.info('');
+	console.info('# Validate integrity');
+	console.info('bun version-bump.ts --validate');
+	console.info('```');
 }
 
 main();

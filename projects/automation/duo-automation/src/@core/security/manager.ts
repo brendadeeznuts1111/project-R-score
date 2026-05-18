@@ -49,7 +49,7 @@ export class BunSecretManager {
       const nativeR2 = await (globalThis as any).Bun?.secrets?.get(SERVICE_NAME, 'r2-config');
 
       if (nativeTokensStr && nativeFactoryWager && nativeR2) {
-        console.log('🔐 Loading from OS Native Store (Keychain/Vault)');
+        console.info('🔐 Loading from OS Native Store (Keychain/Vault)');
         return SecretSchema.parse({
           tokens: JSON.parse(nativeTokensStr),
           duoPlus: nativeFactoryWager,
@@ -64,7 +64,7 @@ export class BunSecretManager {
     try {
       const secretStore = (globalThis as any).Bun?.secret?.store;
       if (secretStore?.tokens) {
-        console.log('🔐 Using Bun.secret encrypted store');
+        console.info('🔐 Using Bun.secret encrypted store');
         return SecretSchema.parse(secretStore);
       }
     } catch {
@@ -75,7 +75,7 @@ export class BunSecretManager {
     try {
       const secretsFile = Bun.file('.env.secrets');
       if (await secretsFile.exists() || Bun.env.SECRET_TOKENS) {
-        console.log(' Loading from .env or .env.secrets');
+        console.info(' Loading from .env or .env.secrets');
         return SecretSchema.parse({
           tokens: JSON.parse(Bun.env.SECRET_TOKENS || Bun.env.RBAC_TOKENS || '{}'),
           duoPlus: Bun.env.SECRET_FACTORY_WAGER_KEY || Bun.env.FACTORY_WAGER_API_KEY || '',
@@ -152,7 +152,7 @@ export class BunSecretManager {
       await (globalThis as any).Bun?.secrets?.set(SERVICE_NAME, 'rbac-tokens', JSON.stringify(this.secrets.tokens));
       await (globalThis as any).Bun?.secrets?.set(SERVICE_NAME, 'factory-wager-key', this.secrets.duoPlus);
       await (globalThis as any).Bun?.secrets?.set(SERVICE_NAME, 'r2-config', JSON.stringify(this.secrets.r2));
-      console.log('✅ Ported secrets to OS Native Store (Keychain/Vault)');
+      console.info('✅ Ported secrets to OS Native Store (Keychain/Vault)');
     } catch (e: any) {
       console.error('❌ Failed to persist to OS Native Store:', e.message);
     }
@@ -191,7 +191,7 @@ export class BunSecretManager {
     this.hashedTokens.clear();
     await this.prehashTokens();
     
-    console.log(`🔁 Token rotated for ${userId}`);
+    console.info(`🔁 Token rotated for ${userId}`);
     return newToken;
   }
 

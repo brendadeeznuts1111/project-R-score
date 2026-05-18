@@ -83,7 +83,7 @@ function parseArgs(argv) {
 // ─── Archive Operations ─────────────────────────────────────────────────────
 // @ts-expect-error - Implicit any types for runtime compatibility
 async function createArchive(sourcePath, outputPath, options = {}) {
-	console.log(`${GLYPH.archive} Creating secure archive...`);
+	console.info(`${GLYPH.archive} Creating secure archive...`);
 
 	const startTime = Date.now();
 	/** @type {{ [key: string]: Uint8Array }} */
@@ -148,14 +148,14 @@ async function createArchive(sourcePath, outputPath, options = {}) {
 	// Write archive
 	if (!options.dry) {
 		await Bun.write(outputPath, archiveBytes);
-		console.log(`${GLYPH.ok} Archive created: ${outputPath}`);
-		console.log(
+		console.info(`${GLYPH.ok} Archive created: ${outputPath}`);
+		console.info(
 			`${GLYPH.info} Files: ${fileCount}, Size: ${(totalSize / 1024 / 1024).toFixed(2)}MB`,
 		);
-		console.log(`${GLYPH.info} Compression: ${options.compress || "none"}`);
-		console.log(`${GLYPH.lock} SHA-256: ${hash.slice(0, 16)}…`);
+		console.info(`${GLYPH.info} Compression: ${options.compress || "none"}`);
+		console.info(`${GLYPH.lock} SHA-256: ${hash.slice(0, 16)}…`);
 	} else {
-		console.log(`${GLYPH.info} Dry run - would create archive with ${fileCount} files`);
+		console.info(`${GLYPH.info} Dry run - would create archive with ${fileCount} files`);
 	}
 
 	// Generate SBOM if requested
@@ -166,7 +166,7 @@ async function createArchive(sourcePath, outputPath, options = {}) {
 		if (!options.dry) {
 			const sbomFilename = outputPath.replace(/\.(tar|tar\.gz)$/, ".sbom.json");
 			await Bun.write(sbomFilename, sbom.json);
-			console.log(`${GLYPH.sbom} SBOM generated: ${sbomFilename}`);
+			console.info(`${GLYPH.sbom} SBOM generated: ${sbomFilename}`);
 		}
 	}
 
@@ -211,13 +211,13 @@ async function createArchive(sourcePath, outputPath, options = {}) {
 	}
 
 	const duration = Date.now() - startTime;
-	console.log(`${GLYPH.info} Completed in ${duration}ms`);
+	console.info(`${GLYPH.info} Completed in ${duration}ms`);
 
 	return { fileCount, totalSize, hash, duration };
 }
 
 async function extractArchive(archivePath, outputPath, options = {}) {
-	console.log(`${GLYPH.archive} Extracting secure archive...`);
+	console.info(`${GLYPH.archive} Extracting secure archive...`);
 
 	const startTime = Date.now();
 
@@ -231,19 +231,19 @@ async function extractArchive(archivePath, outputPath, options = {}) {
 		const hashBuffer = await crypto.subtle.digest("SHA-256", archiveData);
 		const hashArray = Array.from(new Uint8Array(hashBuffer));
 		const hash = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-		console.log(`${GLYPH.lock} Archive SHA-256: ${hash.slice(0, 16)}…`);
+		console.info(`${GLYPH.lock} Archive SHA-256: ${hash.slice(0, 16)}…`);
 	}
 
 	// Extract with optional filtering
 	let extractCount;
 	if (options.glob) {
 		extractCount = await archive.extract(outputPath, { glob: options.glob });
-		console.log(
+		console.info(
 			`${GLYPH.info} Extracted ${extractCount} entries matching pattern: ${options.glob}`,
 		);
 	} else {
 		extractCount = await archive.extract(outputPath);
-		console.log(`${GLYPH.info} Extracted ${extractCount} entries`);
+		console.info(`${GLYPH.info} Extracted ${extractCount} entries`);
 	}
 
 	// Log to audit database
@@ -261,13 +261,13 @@ async function extractArchive(archivePath, outputPath, options = {}) {
 	);
 
 	const duration = Date.now() - startTime;
-	console.log(`${GLYPH.ok} Extraction completed in ${duration}ms`);
+	console.info(`${GLYPH.ok} Extraction completed in ${duration}ms`);
 
 	return { extractCount, duration };
 }
 
 async function auditArchive(archivePath, options = {}) {
-	console.log(`${GLYPH.scan} Auditing archive: ${archivePath}`);
+	console.info(`${GLYPH.scan} Auditing archive: ${archivePath}`);
 
 	const startTime = Date.now();
 
@@ -282,12 +282,12 @@ async function auditArchive(archivePath, options = {}) {
 	const hashArray = Array.from(new Uint8Array(hashBuffer));
 	const hash = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 
-	console.log(`${GLYPH.info} Archive size: ${(archiveSize / 1024 / 1024).toFixed(2)}MB`);
-	console.log(`${GLYPH.lock} SHA-256: ${hash}`);
+	console.info(`${GLYPH.info} Archive size: ${(archiveSize / 1024 / 1024).toFixed(2)}MB`);
+	console.info(`${GLYPH.lock} SHA-256: ${hash}`);
 
 	// List files
 	const files = await archive.files(options.glob);
-	console.log(`${GLYPH.info} Files found: ${files.size}`);
+	console.info(`${GLYPH.info} Files found: ${files.size}`);
 
 	let totalFileSize = 0;
 	const fileTypes = {};
@@ -306,24 +306,24 @@ async function auditArchive(archivePath, options = {}) {
 			const fileHash = fileHashArray
 				.map((b) => b.toString(16).padStart(2, "0"))
 				.join("");
-			console.log(`  ${path}: ${file.size} bytes, SHA-256: ${fileHash.slice(0, 12)}…`);
+			console.info(`  ${path}: ${file.size} bytes, SHA-256: ${fileHash.slice(0, 12)}…`);
 		} else {
-			console.log(`  ${path}: ${file.size} bytes`);
+			console.info(`  ${path}: ${file.size} bytes`);
 		}
 	}
 
-	console.log(
+	console.info(
 		`${GLYPH.info} Total file size: ${(totalFileSize / 1024 / 1024).toFixed(2)}MB`,
 	);
-	console.log(`${GLYPH.info} File types:`);
+	console.info(`${GLYPH.info} File types:`);
 	Object.entries(fileTypes)
 		.sort((a, b) => b[1] - a[1])
 		.forEach(([ext, count]) => {
-			console.log(`  .${ext}: ${count} files`);
+			console.info(`  .${ext}: ${count} files`);
 		});
 
 	const duration = Date.now() - startTime;
-	console.log(`${GLYPH.info} Audit completed in ${duration}ms`);
+	console.info(`${GLYPH.info} Audit completed in ${duration}ms`);
 
 	return { fileCount: files.size, totalFileSize, fileTypes, duration };
 }
@@ -384,7 +384,7 @@ async function generateArchiveSBOM(archivePath, files, options = {}) {
 
 // ─── Analytics ─────────────────────────────────────────────────────────────
 function showArchiveAnalytics(tenant = "default") {
-	console.log(`\n${GLYPH.info} Archive Analytics for tenant: ${tenant}`);
+	console.info(`\n${GLYPH.info} Archive Analytics for tenant: ${tenant}`);
 
 	/** @type {any} */
 	const total = AUDIT_DB.query(
@@ -407,11 +407,11 @@ function showArchiveAnalytics(tenant = "default") {
 		"SELECT SUM(total_size) as total FROM archive_operations WHERE tenant = ? AND total_size IS NOT NULL",
 	).get(tenant);
 
-	console.log(`   Total operations: ${total?.count || 0}`);
-	console.log(`   Archives created: ${creates?.count || 0}`);
-	console.log(`   Archives extracted: ${extracts?.count || 0}`);
-	console.log(`   Total files processed: ${totalFiles?.total || 0}`);
-	console.log(
+	console.info(`   Total operations: ${total?.count || 0}`);
+	console.info(`   Archives created: ${creates?.count || 0}`);
+	console.info(`   Archives extracted: ${extracts?.count || 0}`);
+	console.info(`   Total files processed: ${totalFiles?.total || 0}`);
+	console.info(
 		`   Total size processed: ${totalSize?.total ? (totalSize.total / 1024 / 1024).toFixed(2) + "MB" : "0MB"}`,
 	);
 
@@ -421,12 +421,12 @@ function showArchiveAnalytics(tenant = "default") {
 		"SELECT operation, archive_path, file_count, total_size, ts FROM archive_operations WHERE tenant = ? ORDER BY ts DESC LIMIT 5",
 	).all(tenant);
 	if (recent.length > 0) {
-		console.log(`\n   Recent operations:`);
+		console.info(`\n   Recent operations:`);
 		recent.forEach((op) => {
 			const size = op.total_size
 				? ` (${(op.total_size / 1024 / 1024).toFixed(1)}MB)`
 				: "";
-			console.log(
+			console.info(
 				`   ${op.operation.toUpperCase()}: ${op.archive_path?.split("/").pop()}${size} - ${new Date(op.ts).toLocaleTimeString()}`,
 			);
 		});
@@ -438,38 +438,38 @@ async function main() {
 	const args = parseArgs(process.argv);
 
 	if (!args.command || args.command === "--help") {
-		console.log(`${GLYPH.archive} Tier-1380 Secure Archive Manager v1.0.0`);
-		console.log(`\nUsage: tier1380-archive-secure.ts <command> [options]`);
-		console.log(`\nCommands:`);
-		console.log(`  create <source> <output>    Create secure archive`);
-		console.log(`  extract <archive> <output>  Extract archive with validation`);
-		console.log(`  audit <archive>             Audit archive contents`);
-		console.log(`  analytics                   Show operation analytics`);
-		console.log(`\nOptions:`);
-		console.log(`  --compress <type>          Compression: gzip (default: none)`);
-		console.log(`  --level <1-12>             Compression level (default: 6)`);
-		console.log(`  --sbom                      Generate SBOM`);
-		console.log(`  --tenant <name>            Tenant isolation`);
-		console.log(`  --dry                       Dry run (no changes)`);
-		console.log(`  --validate                  Validate archive integrity`);
-		console.log(`  --glob <pattern>            Filter files (glob pattern)`);
-		console.log(`  --verbose                   Detailed output`);
-		console.log(`\nExamples:`);
-		console.log(
+		console.info(`${GLYPH.archive} Tier-1380 Secure Archive Manager v1.0.0`);
+		console.info(`\nUsage: tier1380-archive-secure.ts <command> [options]`);
+		console.info(`\nCommands:`);
+		console.info(`  create <source> <output>    Create secure archive`);
+		console.info(`  extract <archive> <output>  Extract archive with validation`);
+		console.info(`  audit <archive>             Audit archive contents`);
+		console.info(`  analytics                   Show operation analytics`);
+		console.info(`\nOptions:`);
+		console.info(`  --compress <type>          Compression: gzip (default: none)`);
+		console.info(`  --level <1-12>             Compression level (default: 6)`);
+		console.info(`  --sbom                      Generate SBOM`);
+		console.info(`  --tenant <name>            Tenant isolation`);
+		console.info(`  --dry                       Dry run (no changes)`);
+		console.info(`  --validate                  Validate archive integrity`);
+		console.info(`  --glob <pattern>            Filter files (glob pattern)`);
+		console.info(`  --verbose                   Detailed output`);
+		console.info(`\nExamples:`);
+		console.info(
 			`  bun tools/tier1380-archive-secure.ts create ./src ./bundle.tar.gz --compress gzip --sbom`,
 		);
-		console.log(
+		console.info(
 			`  bun tools/tier1380-archive-secure.ts extract ./bundle.tar.gz ./output --validate`,
 		);
-		console.log(
+		console.info(
 			`  bun tools/tier1380-archive-secure.ts audit ./bundle.tar.gz --verbose`,
 		);
-		console.log(`  bun tools/tier1380-archive-secure.ts analytics --tenant production`);
+		console.info(`  bun tools/tier1380-archive-secure.ts analytics --tenant production`);
 		process.exit(1);
 	}
 
-	console.log(`${GLYPH.archive} Tier-1380 Secure Archive Manager v1.0.0`);
-	console.log(`${GLYPH.lock} Tenant: ${args.tenant || "default"}\n`);
+	console.info(`${GLYPH.archive} Tier-1380 Secure Archive Manager v1.0.0`);
+	console.info(`${GLYPH.lock} Tenant: ${args.tenant || "default"}\n`);
 
 	try {
 		switch (args.command) {

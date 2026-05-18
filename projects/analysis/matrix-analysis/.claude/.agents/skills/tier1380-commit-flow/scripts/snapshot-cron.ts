@@ -31,11 +31,11 @@ class SnapshotCron {
 
 	async start(): Promise<void> {
 		if (!this.config.enabled) {
-			console.log("⏸️  Cron disabled");
+			console.info("⏸️  Cron disabled");
 			return;
 		}
 
-		console.log(`🕐 Starting snapshot cron (every ${this.config.intervalHours}h)`);
+		console.info(`🕐 Starting snapshot cron (every ${this.config.intervalHours}h)`);
 
 		// Run immediately
 		await this.runSnapshotJob();
@@ -44,23 +44,23 @@ class SnapshotCron {
 		const intervalMs = this.config.intervalHours * 60 * 60 * 1000;
 		this.timer = setInterval(() => this.runSnapshotJob(), intervalMs);
 
-		console.log(`   Next run: ${new Date(Date.now() + intervalMs).toISOString()}`);
+		console.info(`   Next run: ${new Date(Date.now() + intervalMs).toISOString()}`);
 	}
 
 	stop(): void {
 		if (this.timer) {
 			clearInterval(this.timer);
 			this.timer = null;
-			console.log("⏹️  Cron stopped");
+			console.info("⏹️  Cron stopped");
 		}
 	}
 
 	private async runSnapshotJob(): Promise<void> {
-		console.log(`\n[${new Date().toISOString()}] Running snapshot job...`);
+		console.info(`\n[${new Date().toISOString()}] Running snapshot job...`);
 
 		try {
 			const tenants = await this.getActiveTenants();
-			console.log(`   Found ${tenants.length} active tenants`);
+			console.info(`   Found ${tenants.length} active tenants`);
 
 			const results = [];
 			for (const tenant of tenants) {
@@ -80,7 +80,7 @@ class SnapshotCron {
 				}
 			}
 
-			console.log(`   ✅ Created ${results.length} snapshots`);
+			console.info(`   ✅ Created ${results.length} snapshots`);
 
 			// Run retention cleanup
 			await this.cleanupOldSnapshots();
@@ -153,19 +153,19 @@ class SnapshotCron {
 			});
 		} catch {
 			// Notification failed, but snapshot succeeded
-			console.log(`   ⚠️  Notification failed for ${tenant}`);
+			console.info(`   ⚠️  Notification failed for ${tenant}`);
 		}
 	}
 
 	private async cleanupOldSnapshots(): Promise<void> {
-		console.log("   Running retention cleanup...");
+		console.info("   Running retention cleanup...");
 
 		try {
 			const { $ } = await import("bun");
 			await $`bun ${import.meta.dir}/snapshot-retention.ts --dir=${this.config.snapshotDir} --max-age=30 --max-count=10`.quiet();
-			console.log("   🧹 Cleanup complete");
+			console.info("   🧹 Cleanup complete");
 		} catch {
-			console.log("   ⚠️  Cleanup skipped");
+			console.info("   ⚠️  Cleanup skipped");
 		}
 	}
 }
@@ -181,10 +181,10 @@ if (import.meta.main) {
 	const notifyUrl = args.find((a) => a.startsWith("--notify="))?.split("=")[1];
 	const once = args.includes("--once");
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Snapshot Cron                      ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Snapshot Cron                      ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	const cron = new SnapshotCron({
 		intervalHours: once ? 0 : interval,
@@ -194,7 +194,7 @@ if (import.meta.main) {
 	});
 
 	if (once) {
-		console.log("Running once...\n");
+		console.info("Running once...\n");
 		await cron.runSnapshotJob();
 		process.exit(0);
 	} else {
@@ -202,7 +202,7 @@ if (import.meta.main) {
 
 		// Handle graceful shutdown
 		process.on("SIGINT", () => {
-			console.log("\n");
+			console.info("\n");
 			cron.stop();
 			process.exit(0);
 		});

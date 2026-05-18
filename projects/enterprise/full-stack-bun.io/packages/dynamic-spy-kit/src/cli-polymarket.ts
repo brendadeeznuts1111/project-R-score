@@ -31,7 +31,7 @@ switch (command) {
 		client.fetchMarkets(options.historical === 'true').then(async (markets) => {
 			const output = options.output || 'polymarket-markets.json';
 			await writeFile(output, JSON.stringify(markets, null, 2));
-			console.log(`✅ Fetched ${markets.length} markets → ${output}`);
+			console.info(`✅ Fetched ${markets.length} markets → ${output}`);
 		}).catch(error => {
 			console.error('Error:', error);
 			process.exit(1);
@@ -46,7 +46,7 @@ switch (command) {
 		client.searchMarkets(options.query).then(async (markets) => {
 			const output = options.output || 'polymarket-search.json';
 			await writeFile(output, JSON.stringify(markets, null, 2));
-			console.log(`✅ Found ${markets.length} markets → ${output}`);
+			console.info(`✅ Found ${markets.length} markets → ${output}`);
 		}).catch(error => {
 			console.error('Error:', error);
 			process.exit(1);
@@ -62,7 +62,7 @@ switch (command) {
 		client.fetchHistorical(options.market, days).then(async (historical) => {
 			const output = options.output || 'polymarket-historical.json';
 			await writeFile(output, JSON.stringify(historical, null, 2));
-			console.log(`✅ Fetched ${historical.length} days of history → ${output}`);
+			console.info(`✅ Fetched ${historical.length} days of history → ${output}`);
 		}).catch(error => {
 			console.error('Error:', error);
 			process.exit(1);
@@ -70,17 +70,17 @@ switch (command) {
 		break;
 
 	default:
-		console.log('Polymarket CLI - Crypto Prediction Markets');
-		console.log('');
-		console.log('Usage:');
-		console.log('  bunx polymarket markets [--historical=true] [--output=file.json]');
-		console.log('  bunx polymarket search --query="sports" [--output=file.json]');
-		console.log('  bunx polymarket historical --market=market-id [--days=30] [--output=file.json]');
-		console.log('');
-		console.log('Examples:');
-		console.log('  bunx polymarket markets --historical=true');
-		console.log('  bunx polymarket search --query="manchester united"');
-		console.log('  bunx polymarket historical --market=market-1 --days=60');
+		console.info('Polymarket CLI - Crypto Prediction Markets');
+		console.info('');
+		console.info('Usage:');
+		console.info('  bunx polymarket markets [--historical=true] [--output=file.json]');
+		console.info('  bunx polymarket search --query="sports" [--output=file.json]');
+		console.info('  bunx polymarket historical --market=market-id [--days=30] [--output=file.json]');
+		console.info('');
+		console.info('Examples:');
+		console.info('  bunx polymarket markets --historical=true');
+		console.info('  bunx polymarket search --query="manchester united"');
+		console.info('  bunx polymarket historical --market=market-1 --days=60');
 		process.exit(0);
 }
 

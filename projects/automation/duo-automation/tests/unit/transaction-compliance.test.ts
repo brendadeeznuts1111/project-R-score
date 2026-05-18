@@ -25,7 +25,7 @@ describe('Golden Path: Transaction Compliance', () => {
     expect(ledger.balanced).toBe(true);
 
     const duration = performance.now() - start;
-    console.log(`✅ Compliance flow completed in ${duration.toFixed(2)}ms`);
+    console.info(`✅ Compliance flow completed in ${duration.toFixed(2)}ms`);
     
     expect(duration).toBeLessThan(FLOW_TIMEOUT);
   }, FLOW_TIMEOUT);

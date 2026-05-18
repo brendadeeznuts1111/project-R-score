@@ -87,9 +87,9 @@ class BuildOptimizer {
       try {
         const cacheData = JSON.parse(readFileSync(cacheFile, 'utf-8'));
         this.cache = new Map(Object.entries(cacheData));
-        console.log(`📦 Loaded build cache with ${this.cache.size} entries`);
+        console.info(`📦 Loaded build cache with ${this.cache.size} entries`);
       } catch (error) {
-        console.log('⚠️ Could not load build cache, starting fresh');
+        console.info('⚠️ Could not load build cache, starting fresh');
       }
     }
   }
@@ -127,7 +127,7 @@ class BuildOptimizer {
     if (this.config.cache.enabled) {
       const cacheAge = Date.now() - cached.timestamp;
       if (cacheAge > this.config.cache.maxAge) {
-        console.log(
+        console.info(
           `⏰ Cache expired for ${target.name} (${Math.floor(cacheAge / 1000 / 60)}m old)`
         );
         return true;
@@ -138,12 +138,12 @@ class BuildOptimizer {
     if (this.config.incremental.trackChanges) {
       const currentHash = await this.calculateBuildHash(target);
       if (currentHash !== cached.hash) {
-        console.log(`🔄 Source changed for ${target.name}`);
+        console.info(`🔄 Source changed for ${target.name}`);
         return true;
       }
     }
 
-    console.log(`✅ Build cache hit for ${target.name}`);
+    console.info(`✅ Build cache hit for ${target.name}`);
     return false;
   }
 
@@ -185,7 +185,7 @@ class BuildOptimizer {
     const startTime = Date.now();
 
     try {
-      console.log(`🏗️ Building ${target.name}...`);
+      console.info(`🏗️ Building ${target.name}...`);
 
       // Change to target directory
       const originalDir = process.cwd();
@@ -208,7 +208,7 @@ class BuildOptimizer {
       process.chdir(originalDir);
 
       const buildTime = Date.now() - startTime;
-      console.log(`✅ Built ${target.name} in ${buildTime}ms`);
+      console.info(`✅ Built ${target.name} in ${buildTime}ms`);
 
       // Update cache
       if (this.config.incremental.enabled) {
@@ -303,11 +303,11 @@ class BuildOptimizer {
   }
 
   async buildAll(): Promise<boolean> {
-    console.log('🚀 Starting optimized build process...\n');
+    console.info('🚀 Starting optimized build process...\n');
 
     // Discover build targets
     const targets = await this.discoverBuildTargets();
-    console.log(`📦 Found ${targets.length} build targets\n`);
+    console.info(`📦 Found ${targets.length} build targets\n`);
 
     // Filter targets that need building
     const targetsToBuild: BuildTarget[] = [];
@@ -319,17 +319,17 @@ class BuildOptimizer {
     }
 
     if (targetsToBuild.length === 0) {
-      console.log('🎉 All targets are up to date!');
+      console.info('🎉 All targets are up to date!');
       return true;
     }
 
-    console.log(`🏗️ Building ${targetsToBuild.length} targets...\n`);
+    console.info(`🏗️ Building ${targetsToBuild.length} targets...\n`);
 
     // Build with parallelization
     const success = await this.buildWithParallelization(targetsToBuild);
 
     if (success) {
-      console.log('\n🎉 Build completed successfully!');
+      console.info('\n🎉 Build completed successfully!');
 
       // Show build stats
       this.showBuildStats(targets);
@@ -337,7 +337,7 @@ class BuildOptimizer {
       // Save cache
       this.saveCache();
     } else {
-      console.log('\n❌ Build failed!');
+      console.info('\n❌ Build failed!');
     }
 
     return success;
@@ -391,7 +391,7 @@ class BuildOptimizer {
   }
 
   private showBuildStats(targets: BuildTarget[]): void {
-    console.log('\n📊 Build Statistics:');
+    console.info('\n📊 Build Statistics:');
 
     let totalSize = 0;
     let builtCount = 0;
@@ -401,17 +401,17 @@ class BuildOptimizer {
       if (existsSync(distPath)) {
         builtCount++;
         // Calculate size (simplified)
-        console.log(`  📦 ${target.name}: Built`);
+        console.info(`  📦 ${target.name}: Built`);
       } else {
-        console.log(`  ⏭️ ${target.name}: Skipped (up to date)`);
+        console.info(`  ⏭️ ${target.name}: Skipped (up to date)`);
       }
     }
 
-    console.log(`\n📈 Summary: ${builtCount}/${targets.length} targets built`);
+    console.info(`\n📈 Summary: ${builtCount}/${targets.length} targets built`);
   }
 
   async clean(): Promise<void> {
-    console.log('🧹 Cleaning build artifacts...');
+    console.info('🧹 Cleaning build artifacts...');
 
     const targets = await this.discoverBuildTargets();
 
@@ -419,30 +419,30 @@ class BuildOptimizer {
       const distPath = join(target.path, 'dist');
       if (existsSync(distPath)) {
         execSync(`rm -rf "${distPath}"`);
-        console.log(`✅ Cleaned ${target.name}`);
+        console.info(`✅ Cleaned ${target.name}`);
       }
     }
 
     // Clear cache
     if (this.config.cache.enabled) {
       execSync(`rm -rf "${this.config.cache.dir}"`);
-      console.log('✅ Cleared build cache');
+      console.info('✅ Cleared build cache');
     }
 
-    console.log('🎉 Clean completed');
+    console.info('🎉 Clean completed');
   }
 
   async watch(): Promise<void> {
-    console.log('👀 Starting build watch mode...');
+    console.info('👀 Starting build watch mode...');
 
     const targets = await this.discoverBuildTargets();
 
     // This would implement file watching for incremental builds
-    console.log('💡 Watch mode would rebuild targets when source files change');
-    console.log('📁 Currently watching:');
+    console.info('💡 Watch mode would rebuild targets when source files change');
+    console.info('📁 Currently watching:');
 
     for (const target of targets) {
-      console.log(`  📦 ${target.name} (${relative(process.cwd(), target.path)})`);
+      console.info(`  📦 ${target.name} (${relative(process.cwd(), target.path)})`);
     }
   }
 }
@@ -487,29 +487,29 @@ if (import.meta.main) {
       break;
 
     case 'cache':
-      console.log('📦 Build cache management:');
-      console.log('  --no-cache     Disable build caching');
-      console.log('  clean          Clear all caches');
+      console.info('📦 Build cache management:');
+      console.info('  --no-cache     Disable build caching');
+      console.info('  clean          Clear all caches');
       break;
 
     default:
-      console.log('⚡ Build Performance Optimizer\n');
-      console.log('Commands:');
-      console.log('  build          - Build all targets with optimizations');
-      console.log('  clean          - Clean build artifacts and cache');
-      console.log('  watch          - Watch mode for incremental builds');
-      console.log('  cache          - Cache management options');
-      console.log('');
-      console.log('Options:');
-      console.log('  --no-cache      - Disable build caching');
-      console.log('  --no-parallel   - Disable parallel builds');
-      console.log('  --no-incremental - Disable incremental builds');
-      console.log('  --no-optimize   - Disable build optimizations');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun run scripts/build-optimizer.bun.ts build');
-      console.log('  bun run scripts/build-optimizer.bun.ts build --no-cache');
-      console.log('  bun run scripts/build-optimizer.bun.ts clean');
+      console.info('⚡ Build Performance Optimizer\n');
+      console.info('Commands:');
+      console.info('  build          - Build all targets with optimizations');
+      console.info('  clean          - Clean build artifacts and cache');
+      console.info('  watch          - Watch mode for incremental builds');
+      console.info('  cache          - Cache management options');
+      console.info('');
+      console.info('Options:');
+      console.info('  --no-cache      - Disable build caching');
+      console.info('  --no-parallel   - Disable parallel builds');
+      console.info('  --no-incremental - Disable incremental builds');
+      console.info('  --no-optimize   - Disable build optimizations');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun run scripts/build-optimizer.bun.ts build');
+      console.info('  bun run scripts/build-optimizer.bun.ts build --no-cache');
+      console.info('  bun run scripts/build-optimizer.bun.ts clean');
       break;
   }
 }

@@ -116,7 +116,7 @@ export class MonitoringAuth {
       // Calculate proper padding using Bun.stringWidth for Unicode/emoji support
       const passwordPadding = 44 - (typeof Bun !== 'undefined' ? Bun.stringWidth(defaultPassword) : defaultPassword.length);
 
-      console.log(`
+      console.info(`
 ╔════════════════════════════════════════════════════════════╗
 ║           🔐 Monitoring Authentication Setup                  ║
 ╠════════════════════════════════════════════════════════════╣

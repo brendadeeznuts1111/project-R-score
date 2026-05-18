@@ -105,10 +105,10 @@ const server = Bun.serve({
 	},
 });
 
-console.log(
+console.info(
 	`🚀 RSS Storage API Server running on http://localhost:${server.port}`,
 );
-console.log(`📖 API Documentation: http://localhost:${server.port}/api`);
-console.log(`💚 Health Check: http://localhost:${server.port}/health`);
+console.info(`📖 API Documentation: http://localhost:${server.port}/api`);
+console.info(`💚 Health Check: http://localhost:${server.port}/health`);
 
 export default server;

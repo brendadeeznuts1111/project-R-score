@@ -134,10 +134,10 @@ if (import.meta.main) {
 	const args = Bun.argv.slice(2);
 	const force = args.includes("--force") || args.includes("-f");
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Pre-Push Hook                      ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Pre-Push Hook                      ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	const results = await runPrePushChecks();
 
@@ -146,33 +146,33 @@ if (import.meta.main) {
 
 	for (const result of results) {
 		if (result.passed) {
-			console.log(`✅ ${result.name}`);
+			console.info(`✅ ${result.name}`);
 			passed++;
 		} else {
-			console.log(`❌ ${result.name}`);
+			console.info(`❌ ${result.name}`);
 			if (result.details) {
-				console.log(`   ${result.details}`);
+				console.info(`   ${result.details}`);
 			}
 			failed++;
 		}
 	}
 
-	console.log();
-	console.log(`Results: ${passed} passed, ${failed} failed`);
+	console.info();
+	console.info(`Results: ${passed} passed, ${failed} failed`);
 
 	if (failed > 0) {
-		console.log();
-		console.log("⚠️  Fix failing checks before pushing");
+		console.info();
+		console.info("⚠️  Fix failing checks before pushing");
 
 		if (force) {
-			console.log("   (Proceeding due to --force flag)");
+			console.info("   (Proceeding due to --force flag)");
 			process.exit(0);
 		}
 
 		process.exit(1);
 	} else {
-		console.log();
-		console.log("✨ All checks passed! Ready to push.");
+		console.info();
+		console.info("✨ All checks passed! Ready to push.");
 	}
 }
 

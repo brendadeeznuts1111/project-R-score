@@ -42,7 +42,7 @@ export class CashAppAuditLogger {
     // 1. Console logging (Development)
     if (process.env.NODE_ENV !== 'production') {
       const timestamp = new Date(fullLog.timestamp).toISOString();
-      console.log(`[AUDIT] [${timestamp}] ${fullLog.action} - Phone: ${fullLog.phone} - Risk: ${fullLog.riskScore || 'N/A'}`);
+      console.info(`[AUDIT] [${timestamp}] ${fullLog.action} - Phone: ${fullLog.phone} - Risk: ${fullLog.riskScore || 'N/A'}`);
     }
 
     // 2. Supabase logging (Persistence)

@@ -97,7 +97,7 @@ export class LiveExecutionEngine {
 
     // Register risk alerts
     this.risk_manager.onAlert((event) => {
-      console.log(`[LIVE-ENGINE] Risk Alert: ${event.description}`);
+      console.info(`[LIVE-ENGINE] Risk Alert: ${event.description}`);
     });
   }
 
@@ -129,7 +129,7 @@ export class LiveExecutionEngine {
 
         // Validate pattern for live execution
         if (!await this.validatePatternForExecution(value)) {
-          console.log(`[LIVE-ENGINE] Pattern ${value.pattern_id} rejected: validation failed`);
+          console.info(`[LIVE-ENGINE] Pattern ${value.pattern_id} rejected: validation failed`);
           continue;
         }
 
@@ -164,14 +164,14 @@ export class LiveExecutionEngine {
 
       // Log risk assessment details
       if (risk_assessment.violations.length > 0) {
-        console.log(`[LIVE-ENGINE] Pattern ${pattern.pattern_id} risk violations:`, risk_assessment.violations);
+        console.info(`[LIVE-ENGINE] Pattern ${pattern.pattern_id} risk violations:`, risk_assessment.violations);
       }
 
       if (risk_assessment.recommendations.length > 0) {
-        console.log(`[LIVE-ENGINE] Pattern ${pattern.pattern_id} recommendations:`, risk_assessment.recommendations);
+        console.info(`[LIVE-ENGINE] Pattern ${pattern.pattern_id} recommendations:`, risk_assessment.recommendations);
       }
 
-      console.log(`[LIVE-ENGINE] Pattern ${pattern.pattern_id} risk score: ${risk_assessment.risk_score.toFixed(3)}`);
+      console.info(`[LIVE-ENGINE] Pattern ${pattern.pattern_id} risk score: ${risk_assessment.risk_score.toFixed(3)}`);
 
       return risk_assessment.approved;
 
@@ -235,7 +235,7 @@ export class LiveExecutionEngine {
       // Update performance metrics
       this.updatePerformanceMetrics(execution_result.execution_latency_ns);
 
-      console.log(`[LIVE-ENGINE] Executed pattern ${pattern.pattern_id}: success=${result.success}, profit=${result.actual_profit}¢, latency=${Number(execution_result.execution_latency_ns)/1000}µs`);
+      console.info(`[LIVE-ENGINE] Executed pattern ${pattern.pattern_id}: success=${result.success}, profit=${result.actual_profit}¢, latency=${Number(execution_result.execution_latency_ns)/1000}µs`);
 
     } catch (error) {
       console.error(`[LIVE-ENGINE] Execution failed for pattern ${pattern.pattern_id}:`, error);

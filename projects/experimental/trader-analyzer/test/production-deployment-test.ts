@@ -10,7 +10,7 @@ import { HyperBunScheduler } from '../src/hyper-bun/scheduler';
 import { configureGlobalConsole, logger } from '../src/hyper-bun/console-enhancement';
 
 async function testProductionDeployment() {
-  console.log('🏭 Starting Production Deployment Test for Console Enhancements\n');
+  console.info('🏭 Starting Production Deployment Test for Console Enhancements\n');
 
   // Configure enhanced console for production
   configureGlobalConsole();
@@ -97,8 +97,8 @@ async function testProductionDeployment() {
 
     // Final status
     logger.success('Production deployment test completed successfully');
-    console.log('\n✅ All production tests passed!');
-    console.log('🎯 Console enhancements are production-ready');
+    console.info('\n✅ All production tests passed!');
+    console.info('🎯 Console enhancements are production-ready');
 
   } catch (error) {
     logger.error('Production deployment test failed', error);

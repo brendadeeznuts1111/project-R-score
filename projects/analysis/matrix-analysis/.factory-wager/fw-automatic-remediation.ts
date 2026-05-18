@@ -34,8 +34,8 @@ export class AutomaticRemediation {
     env?: string;
     mode?: string;
   }): Promise<void> {
-    console.log(`\n🛠️  AUTOMATIC REMEDIATION TRIGGERED`);
-    console.log(`Violation: ${violation}`);
+    console.info(`\n🛠️  AUTOMATIC REMEDIATION TRIGGERED`);
+    console.info(`Violation: ${violation}`);
 
     // Log the violation for Tier-1380 compliance
     await this.logViolation(violation, context);
@@ -59,7 +59,7 @@ export class AutomaticRemediation {
         break;
 
       default:
-        console.log(`⚠️  Unknown violation type: ${violation}`);
+        console.info(`⚠️  Unknown violation type: ${violation}`);
     }
   }
 
@@ -81,7 +81,7 @@ export class AutomaticRemediation {
 
     await Bun.write(auditFile, entry, { append: true });
 
-    console.log(`🔒 Violation logged with tamper-evident hash: ${auditEntry.hash}`);
+    console.info(`🔒 Violation logged with tamper-evident hash: ${auditEntry.hash}`);
   }
 
   private generateTamperEvidentHash(violation: string, context: any): string {
@@ -97,8 +97,8 @@ export class AutomaticRemediation {
   }
 
   private async remediateMixedReality(): Promise<void> {
-    console.log("🚨 CRITICAL: Mixed reality detected");
-    console.log("Initiating automatic quarantine...");
+    console.info("🚨 CRITICAL: Mixed reality detected");
+    console.info("Initiating automatic quarantine...");
 
     // Move to quarantine rather than delete
     const timestamp = Date.now();
@@ -107,35 +107,35 @@ export class AutomaticRemediation {
       await Bun.$`mv .env .env.quarantine.${timestamp} 2>/dev/null || true`;
       await Bun.$`cp .env.local .env 2>/dev/null || echo "NODE_ENV=development" > .env`;
 
-      console.log("✅ System reset to SIMULATED mode — re-run setup to configure");
+      console.info("✅ System reset to SIMULATED mode — re-run setup to configure");
 
       // Log quarantine action
       await this.dashboard.quarantineCredentials();
 
     } catch (error) {
-      console.log("⚠️  Quarantine failed, manual intervention required");
-      console.log(`Error: ${(error as Error).message}`);
+      console.info("⚠️  Quarantine failed, manual intervention required");
+      console.info(`Error: ${(error as Error).message}`);
     }
   }
 
   private async remediateR2Missing(): Promise<void> {
-    console.log("🔧 R2 Credential Setup Required");
-    console.log("Running guided setup...");
+    console.info("🔧 R2 Credential Setup Required");
+    console.info("Running guided setup...");
 
     try {
       // Launch interactive R2 setup
       await Bun.$`bun run setup:r2`.quiet();
 
-      console.log("✅ R2 setup completed");
+      console.info("✅ R2 setup completed");
 
     } catch (error) {
-      console.log("⚠️  Automatic R2 setup failed");
-      console.log("Please run manually: bun run setup:r2");
+      console.info("⚠️  Automatic R2 setup failed");
+      console.info("Please run manually: bun run setup:r2");
     }
   }
 
   private async remediateMcpMissing(): Promise<void> {
-    console.log("🔄 Installing missing MCP servers...");
+    console.info("🔄 Installing missing MCP servers...");
 
     const guard = new RealityGuard();
     const report = await guard.audit();
@@ -147,28 +147,28 @@ export class AutomaticRemediation {
 
         for (const server of missing) {
           try {
-            console.log(`Installing ${server}...`);
+            console.info(`Installing ${server}...`);
             await Bun.$`bun add -g @modelcontextprotocol/server-${server.trim()}`.quiet();
-            console.log(`✅ ${server} installed`);
+            console.info(`✅ ${server} installed`);
           } catch (error) {
-            console.log(`⚠️  Failed to install ${server}`);
+            console.info(`⚠️  Failed to install ${server}`);
           }
         }
       }
     }
 
-    console.log("✅ MCP server installation completed");
+    console.info("✅ MCP server installation completed");
   }
 
   private async remediateSecretsMissing(): Promise<void> {
-    console.log("🔐 Secrets Configuration Required");
-    console.log("Please configure secrets manually:");
-    console.log("  bun run secrets:enterprise:set R2_ACCESS_KEY_ID 'your-key'");
-    console.log("  bun run secrets:enterprise:set R2_SECRET_ACCESS_KEY 'your-secret'");
+    console.info("🔐 Secrets Configuration Required");
+    console.info("Please configure secrets manually:");
+    console.info("  bun run secrets:enterprise:set R2_ACCESS_KEY_ID 'your-key'");
+    console.info("  bun run secrets:enterprise:set R2_SECRET_ACCESS_KEY 'your-secret'");
   }
 
   async generateComplianceReport(): Promise<void> {
-    console.log("📊 Generating Tier-1380 Compliance Report...");
+    console.info("📊 Generating Tier-1380 Compliance Report...");
 
     const guard = new RealityGuard();
     const report = await guard.audit();
@@ -198,15 +198,15 @@ export class AutomaticRemediation {
     const reportFile = join(this.auditDir, `compliance-report-${Date.now()}.json`);
     writeFileSync(reportFile, JSON.stringify(complianceReport, null, 2));
 
-    console.log(`📄 Compliance report saved: ${reportFile}`);
+    console.info(`📄 Compliance report saved: ${reportFile}`);
 
     // Display summary
-    console.log("\n📋 Tier-1380 Compliance Summary:");
-    console.log(`   Status: ${complianceReport.tier1380.compliant ? '✅ Compliant' : '⚠️ Non-compliant'}`);
-    console.log(`   Governance: ${complianceReport.tier1380.governance ? '✅ Active' : '❌ Inactive'}`);
-    console.log(`   Audit Trail: ${complianceReport.tier1380.auditTrail ? '✅ Active' : '❌ Missing'}`);
-    console.log(`   Violations: ${complianceReport.audit.violationsLogged}`);
-    console.log(`   Quarantine: ${complianceReport.audit.quarantineActive ? '⚠️ Active' : '✅ Clear'}`);
+    console.info("\n📋 Tier-1380 Compliance Summary:");
+    console.info(`   Status: ${complianceReport.tier1380.compliant ? '✅ Compliant' : '⚠️ Non-compliant'}`);
+    console.info(`   Governance: ${complianceReport.tier1380.governance ? '✅ Active' : '❌ Inactive'}`);
+    console.info(`   Audit Trail: ${complianceReport.tier1380.auditTrail ? '✅ Active' : '❌ Missing'}`);
+    console.info(`   Violations: ${complianceReport.audit.violationsLogged}`);
+    console.info(`   Quarantine: ${complianceReport.audit.quarantineActive ? '⚠️ Active' : '✅ Clear'}`);
   }
 
   private async countViolations(): Promise<number> {
@@ -255,13 +255,13 @@ if (import.meta.main) {
       break;
 
     case "help":
-      console.log("Usage:");
-      console.log("  bun run fw-automatic-remediation.ts test        # Test remediation");
-      console.log("  bun run fw-automatic-remediation.ts compliance  # Generate compliance report");
+      console.info("Usage:");
+      console.info("  bun run fw-automatic-remediation.ts test        # Test remediation");
+      console.info("  bun run fw-automatic-remediation.ts compliance  # Generate compliance report");
       break;
 
     default:
-      console.log(`Unknown command: ${command}`);
-      console.log("Use 'help' for usage information");
+      console.info(`Unknown command: ${command}`);
+      console.info("Use 'help' for usage information");
   }
 }

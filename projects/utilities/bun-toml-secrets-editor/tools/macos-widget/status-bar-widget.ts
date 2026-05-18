@@ -40,7 +40,7 @@ class SecretsEditorWidget {
 			// Start monitoring
 			this.startMonitoring();
 
-			console.log("🍎 macOS Status Bar Widget initialized");
+			console.info("🍎 macOS Status Bar Widget initialized");
 		} catch (error) {
 			console.error("❌ Failed to initialize widget:", error);
 		}
@@ -178,7 +178,7 @@ class MacOSSystemWidget {
 		});
 
 		this.mb.on("ready", () => {
-			console.log("🍎 macOS Status Bar Widget ready");
+			console.info("🍎 macOS Status Bar Widget ready");
 			this.startMonitoring();
 			this.setupMenu();
 		});

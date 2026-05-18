@@ -96,8 +96,8 @@ export class SecurityAuditor {
     const scanId = `audit-${Date.now()}`;
     const startedAt = new Date().toISOString();
 
-    console.log(`🔍 Starting security audit: ${scanId}`);
-    console.log(`📋 Scope: ${options.scope} | Depth: ${options.depth}`);
+    console.info(`🔍 Starting security audit: ${scanId}`);
+    console.info(`📋 Scope: ${options.scope} | Depth: ${options.depth}`);
 
     const result: SecurityAuditResult = {
       scanId,
@@ -141,9 +141,9 @@ export class SecurityAuditor {
       // Update metrics
       this.updateSecurityMetrics(result);
 
-      console.log(`✅ Security audit completed: ${scanId}`);
-      console.log(`📊 Vulnerabilities found: ${result.summary.total}`);
-      console.log(`🎯 Risk Score: ${result.summary.riskScore}/100`);
+      console.info(`✅ Security audit completed: ${scanId}`);
+      console.info(`📊 Vulnerabilities found: ${result.summary.total}`);
+      console.info(`🎯 Risk Score: ${result.summary.riskScore}/100`);
 
       this.auditHistory.push(result);
 
@@ -171,14 +171,14 @@ export class SecurityAuditor {
   }> {
     const testId = `pentest-${Date.now()}`;
     
-    console.log(`🎯 Starting penetration test: ${testId}`);
-    console.log(`🔓 Type: ${options.type} | Duration: ${options.duration} days`);
+    console.info(`🎯 Starting penetration test: ${testId}`);
+    console.info(`🔓 Type: ${options.type} | Duration: ${options.duration} days`);
 
     const findings = await this.simulatePenTest(options);
     const report = await this.generatePenTestReport(testId, findings, options);
 
-    console.log(`✅ Penetration test completed: ${testId}`);
-    console.log(`🔍 Findings: ${findings.length}`);
+    console.info(`✅ Penetration test completed: ${testId}`);
+    console.info(`🔍 Findings: ${findings.length}`);
 
     return { testId, findings, report };
   }
@@ -193,10 +193,10 @@ export class SecurityAuditor {
   }> {
     const systemId = `ids-${Date.now()}`;
     
-    console.log(`🛡️ Setting up Intrusion Detection System: ${systemId}`);
-    console.log(`🔍 Anomaly Detection: ${options.enableAnomalyDetection ? 'Enabled' : 'Disabled'}`);
-    console.log(`📊 Threshold: ${options.threshold}`);
-    console.log(`📢 Alert Channels: ${options.alertChannels.join(', ')}`);
+    console.info(`🛡️ Setting up Intrusion Detection System: ${systemId}`);
+    console.info(`🔍 Anomaly Detection: ${options.enableAnomalyDetection ? 'Enabled' : 'Disabled'}`);
+    console.info(`📊 Threshold: ${options.threshold}`);
+    console.info(`📢 Alert Channels: ${options.alertChannels.join(', ')}`);
 
     const rules = await this.generateIDSRules(options);
     
@@ -213,8 +213,8 @@ export class SecurityAuditor {
       alerts: []
     });
 
-    console.log(`✅ IDS system active: ${systemId}`);
-    console.log(`📋 Rules loaded: ${rules.length}`);
+    console.info(`✅ IDS system active: ${systemId}`);
+    console.info(`📋 Rules loaded: ${rules.length}`);
 
     return system;
   }
@@ -232,7 +232,7 @@ export class SecurityAuditor {
     }>;
     alerts: string[];
   }> {
-    console.log(`🔍 Monitoring for security anomalies...`);
+    console.info(`🔍 Monitoring for security anomalies...`);
 
     const anomalies = await this.detectAnomalies(dataStream);
     const alerts = [];
@@ -241,7 +241,7 @@ export class SecurityAuditor {
       if (anomaly.confidence > 0.8) {
         const alert = `🚨 High-confidence anomaly detected: ${anomaly.type}`;
         alerts.push(alert);
-        console.log(alert);
+        console.info(alert);
       }
     }
 
@@ -260,8 +260,8 @@ export class SecurityAuditor {
     const reportId = `security-report-${Date.now()}`;
     const path = `/tmp/${reportId}.${format}`;
 
-    console.log(`📄 Generating security report: ${reportId}`);
-    console.log(`📋 Format: ${format}`);
+    console.info(`📄 Generating security report: ${reportId}`);
+    console.info(`📋 Format: ${format}`);
 
     const reportData = {
       reportId,
@@ -274,7 +274,7 @@ export class SecurityAuditor {
     // Mock report generation
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    console.log(`✅ Security report generated: ${path}`);
+    console.info(`✅ Security report generated: ${path}`);
 
     return {
       reportId,

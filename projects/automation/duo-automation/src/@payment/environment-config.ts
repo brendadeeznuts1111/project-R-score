@@ -342,7 +342,7 @@ LIGHTNING_FEE_SAT_MSAT=1000
         }
         
         writeFileSync(filePath, content, 'utf-8');
-        console.log(`✅ Updated domains in ${filePath}`);
+        console.info(`✅ Updated domains in ${filePath}`);
       }
     }
   }
@@ -365,7 +365,7 @@ LIGHTNING_FEE_SAT_MSAT=1000
    * 🚀 Setup environment for deployment
    */
   static setupEnvironment(env: 'development' | 'staging' | 'production'): void {
-    console.log(`🔧 Setting up ${env} environment...`);
+    console.info(`🔧 Setting up ${env} environment...`);
     
     // Validate environment
     const validation = this.validateEnvironment();
@@ -378,26 +378,26 @@ LIGHTNING_FEE_SAT_MSAT=1000
     
     // Show warnings
     if (validation.warnings.length > 0) {
-      console.log('⚠️  Environment warnings:');
-      validation.warnings.forEach(warning => console.log(`  - ${warning}`));
+      console.info('⚠️  Environment warnings:');
+      validation.warnings.forEach(warning => console.info(`  - ${warning}`));
     }
     
     // Replace placeholder domains
     if (env === 'production') {
-      console.log('🔄 Replacing placeholder domains...');
+      console.info('🔄 Replacing placeholder domains...');
       this.replacePlaceholderDomains();
     }
     
     // Generate .env file if it doesn't exist
     const envFile = `.env.${env}`;
     if (!existsSync(envFile)) {
-      console.log(`📝 Generating ${envFile}...`);
+      console.info(`📝 Generating ${envFile}...`);
       const template = this.generateEnvTemplate(env);
       writeFileSync(envFile, template, 'utf-8');
-      console.log(`✅ Created ${envFile}`);
+      console.info(`✅ Created ${envFile}`);
     }
     
-    console.log(`✅ ${env} environment setup complete!`);
+    console.info(`✅ ${env} environment setup complete!`);
   }
 
   /**
@@ -449,43 +449,43 @@ if (import.meta.main) {
       
     case 'validate':
       const validation = EnvironmentManager.validateEnvironment();
-      console.log('Environment Validation Results:');
-      console.log(`Valid: ${validation.valid}`);
+      console.info('Environment Validation Results:');
+      console.info(`Valid: ${validation.valid}`);
       
       if (validation.errors.length > 0) {
-        console.log('\nErrors:');
-        validation.errors.forEach(error => console.log(`  ❌ ${error}`));
+        console.info('\nErrors:');
+        validation.errors.forEach(error => console.info(`  ❌ ${error}`));
       }
       
       if (validation.warnings.length > 0) {
-        console.log('\nWarnings:');
-        validation.warnings.forEach(warning => console.log(`  ⚠️  ${warning}`));
+        console.info('\nWarnings:');
+        validation.warnings.forEach(warning => console.info(`  ⚠️  ${warning}`));
       }
       break;
       
     case 'summary':
       const summary = EnvironmentManager.getEnvironmentSummary();
-      console.log('Environment Summary:');
-      console.log(JSON.stringify(summary, null, 2));
+      console.info('Environment Summary:');
+      console.info(JSON.stringify(summary, null, 2));
       break;
       
     case 'generate-env':
       const template = EnvironmentManager.generateEnvTemplate(environment);
-      console.log(template);
+      console.info(template);
       break;
       
     case 'generate-secret':
       const secret = EnvironmentManager.generateSecureSecret(64);
-      console.log(`Generated secure secret: ${secret}`);
+      console.info(`Generated secure secret: ${secret}`);
       break;
       
     default:
-      console.log('Available commands:');
-      console.log('  setup [env]     - Setup environment configuration');
-      console.log('  validate        - Validate current environment');
-      console.log('  summary         - Show environment summary');
-      console.log('  generate-env    - Generate .env template');
-      console.log('  generate-secret - Generate secure secret');
+      console.info('Available commands:');
+      console.info('  setup [env]     - Setup environment configuration');
+      console.info('  validate        - Validate current environment');
+      console.info('  summary         - Show environment summary');
+      console.info('  generate-env    - Generate .env template');
+      console.info('  generate-secret - Generate secure secret');
       break;
   }
 }

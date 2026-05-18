@@ -786,7 +786,7 @@ async function cmdHealth(options: any, config: DiagnoseConfig) {
   const dce = options.dce || false;
   const perfFlag = options.performance || false;
 
-  console.log(`${c.cyan}Analyzing project health...${c.reset}\n`);
+  console.info(`${c.cyan}Analyzing project health...${c.reset}\n`);
 
   const git = await analyzeGitHealth();
   const code = await analyzeCodeHealth("src", config);
@@ -807,7 +807,7 @@ async function cmdHealth(options: any, config: DiagnoseConfig) {
 
   // StringWidth validation
   if (stringwidth) {
-    console.log(`\n${c.bold}StringWidth Validation${c.reset}\n`);
+    console.info(`\n${c.bold}StringWidth Validation${c.reset}\n`);
     try {
       const { safeStringWidth } = await import("../src/server/string-width");
       const testCases = [
@@ -823,18 +823,18 @@ async function cmdHealth(options: any, config: DiagnoseConfig) {
         const pass = actual === test.expected;
         if (pass) passed++;
         const status = pass ? `${c.green}✓${c.reset}` : `${c.red}✗${c.reset}`;
-        console.log(`  ${status} "${test.str.substring(0, 20)}" - Expected: ${test.expected}, Got: ${actual}`);
+        console.info(`  ${status} "${test.str.substring(0, 20)}" - Expected: ${test.expected}, Got: ${actual}`);
       }
-      console.log(`\n${passed}/${testCases.length} tests passed\n`);
+      console.info(`\n${passed}/${testCases.length} tests passed\n`);
     } catch (error) {
-      console.log(`${c.yellow}⚠️  StringWidth validation unavailable${c.reset}\n`);
+      console.info(`${c.yellow}⚠️  StringWidth validation unavailable${c.reset}\n`);
     }
   }
 
   // DCE (Dead Code Elimination) testing
   if (dce) {
-    console.log(`\n${c.bold}Dead Code Elimination Test${c.reset}\n`);
-    console.log(`${c.dim}Checking for unused exports...${c.reset}\n`);
+    console.info(`\n${c.bold}Dead Code Elimination Test${c.reset}\n`);
+    console.info(`${c.dim}Checking for unused exports...${c.reset}\n`);
     
     // Simple check: count exports vs imports
     const files = await findTypeScriptFiles("src", config.ignore || []);
@@ -855,10 +855,10 @@ async function cmdHealth(options: any, config: DiagnoseConfig) {
     }
     
     const ratio = totalExports > 0 ? (totalImports / totalExports) * 100 : 0;
-    console.log(`  Exports: ${totalExports}`);
-    console.log(`  Imports: ${totalImports}`);
-    console.log(`  Usage Ratio: ${ratio.toFixed(1)}%`);
-    console.log(`  ${ratio > 50 ? c.green + "✓" + c.reset : c.yellow + "⚠" + c.reset} ${ratio > 50 ? "Good code usage" : "Many unused exports"}\n`);
+    console.info(`  Exports: ${totalExports}`);
+    console.info(`  Imports: ${totalImports}`);
+    console.info(`  Usage Ratio: ${ratio.toFixed(1)}%`);
+    console.info(`  ${ratio > 50 ? c.green + "✓" + c.reset : c.yellow + "⚠" + c.reset} ${ratio > 50 ? "Good code usage" : "Many unused exports"}\n`);
   }
 
   // Performance benchmarks
@@ -868,10 +868,10 @@ async function cmdHealth(options: any, config: DiagnoseConfig) {
 
   switch (format) {
     case "json":
-      console.log(formatJSON(health));
+      console.info(formatJSON(health));
       break;
     case "markdown":
-      console.log(formatMarkdown(health));
+      console.info(formatMarkdown(health));
       break;
     case "html":
       const html = await formatHTML(health);
@@ -881,21 +881,21 @@ async function cmdHealth(options: any, config: DiagnoseConfig) {
         openInChrome(htmlFile, { user: options.user }).catch(() => {
           // Error already handled in openInChrome
         });
-        console.log(`${c.green}✓${c.reset} HTML report generated`);
-        console.log(`${c.dim}File: ${htmlFile}${c.reset}`);
-        console.log(`${c.dim}Opening in Chrome${options.user ? ` (user: ${options.user})` : ''}...${c.reset}`);
+        console.info(`${c.green}✓${c.reset} HTML report generated`);
+        console.info(`${c.dim}File: ${htmlFile}${c.reset}`);
+        console.info(`${c.dim}Opening in Chrome${options.user ? ` (user: ${options.user})` : ''}...${c.reset}`);
       } else {
-        console.log(html);
+        console.info(html);
       }
       break;
     case "chart":
-      console.log(formatChart(health));
+      console.info(formatChart(health));
       break;
     case "table":
-      console.log(formatTable(health));
+      console.info(formatTable(health));
       break;
     default:
-      console.log(formatBox(health));
+      console.info(formatBox(health));
   }
 }
 
@@ -904,20 +904,20 @@ async function cmdPainpoints(options: any, config: DiagnoseConfig) {
   const criticalOnly = options["critical-only"] || false;
   const format = options.format || "box";
 
-  console.log(`${c.cyan}Detecting painpoints...${c.reset}\n`);
+  console.info(`${c.cyan}Detecting painpoints...${c.reset}\n`);
 
   let painpoints = await detectPainpoints("src", config);
   if (criticalOnly) {
     painpoints = painpoints.filter((p) => p.severity >= 8);
   }
 
-  console.log(formatPainpoints(painpoints, top, format));
+  console.info(formatPainpoints(painpoints, top, format));
 }
 
 async function cmdGrade(options: any, config: DiagnoseConfig) {
   const format = options.format || "box";
 
-  console.log(`${c.cyan}Calculating project grade...${c.reset}\n`);
+  console.info(`${c.cyan}Calculating project grade...${c.reset}\n`);
 
   const git = await analyzeGitHealth();
   const code = await analyzeCodeHealth("src", config);
@@ -938,20 +938,20 @@ async function cmdGrade(options: any, config: DiagnoseConfig) {
   };
 
   if (format === "json") {
-    console.log(JSON.stringify(gradeDetails, null, 2));
+    console.info(JSON.stringify(gradeDetails, null, 2));
   } else {
-    console.log(formatBox(health));
-    console.log(`\n${c.bold}Grade Breakdown:${c.reset}`);
-    console.log(`  Git (25%):        ${git.score.toFixed(2)} → ${(git.score * 0.25).toFixed(2)}`);
-    console.log(`  Code (35%):      ${code.score.toFixed(2)} → ${(code.score * 0.35).toFixed(2)}`);
-    console.log(`  Performance (25%): ${performance.score.toFixed(2)} → ${(performance.score * 0.25).toFixed(2)}`);
-    console.log(`  Dependencies (15%): ${deps.score.toFixed(2)} → ${(deps.score * 0.15).toFixed(2)}`);
-    console.log(`  ${c.bold}Total: ${health.overall.toFixed(2)}/10.00 (${health.grade})${c.reset}`);
+    console.info(formatBox(health));
+    console.info(`\n${c.bold}Grade Breakdown:${c.reset}`);
+    console.info(`  Git (25%):        ${git.score.toFixed(2)} → ${(git.score * 0.25).toFixed(2)}`);
+    console.info(`  Code (35%):      ${code.score.toFixed(2)} → ${(code.score * 0.35).toFixed(2)}`);
+    console.info(`  Performance (25%): ${performance.score.toFixed(2)} → ${(performance.score * 0.25).toFixed(2)}`);
+    console.info(`  Dependencies (15%): ${deps.score.toFixed(2)} → ${(deps.score * 0.15).toFixed(2)}`);
+    console.info(`  ${c.bold}Total: ${health.overall.toFixed(2)}/10.00 (${health.grade})${c.reset}`);
   }
 }
 
 async function cmdBenchmark(options: any) {
-  console.log(`${c.cyan}Running performance benchmarks...${c.reset}\n`);
+  console.info(`${c.cyan}Running performance benchmarks...${c.reset}\n`);
 
   interface BenchmarkResult {
     name: string;
@@ -1010,18 +1010,18 @@ async function cmdBenchmark(options: any) {
   });
 
   // Display results
-  console.log(`${c.bold}Performance Benchmarks${c.reset}\n`);
-  console.log(`${"Benchmark".padEnd(25)} │ ${"Time (ms)".padEnd(12)} │ ${"Ops/sec".padEnd(10)}`);
-  console.log(`${"─".repeat(25)}─┼─${"─".repeat(12)}─┼─${"─".repeat(10)}`);
+  console.info(`${c.bold}Performance Benchmarks${c.reset}\n`);
+  console.info(`${"Benchmark".padEnd(25)} │ ${"Time (ms)".padEnd(12)} │ ${"Ops/sec".padEnd(10)}`);
+  console.info(`${"─".repeat(25)}─┼─${"─".repeat(12)}─┼─${"─".repeat(10)}`);
 
   for (const result of results) {
     const timeColor = result.avgMs < 10 ? c.green : result.avgMs < 100 ? c.yellow : c.red;
-    console.log(
+    console.info(
       `${result.name.padEnd(25)} │ ${timeColor}${result.avgMs.toFixed(2).padStart(10)}${c.reset} ms │ ${result.opsPerSec.toLocaleString().padStart(8)}`
     );
   }
 
-  console.log(`\n${c.dim}Total files analyzed: ${files.length}${c.reset}`);
+  console.info(`\n${c.dim}Total files analyzed: ${files.length}${c.reset}`);
 }
 
 // =============================================================================
@@ -1029,7 +1029,7 @@ async function cmdBenchmark(options: any) {
 // =============================================================================
 
 function printHelp() {
-  console.log(`
+  console.info(`
 ${c.bold}Project Health & Painpoint Detection${c.reset}
 
 ${c.bold}Commands:${c.reset}

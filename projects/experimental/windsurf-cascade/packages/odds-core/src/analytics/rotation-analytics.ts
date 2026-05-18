@@ -199,7 +199,7 @@ export class RotationAnalyticsEngine {
 
         if (volumeRatio >= 3.0) { // 3x volume spike
             // This would trigger a volume spike alert
-            console.log(`Volume spike detected: ${volumeRatio.toFixed(1)}x average volume`);
+            console.info(`Volume spike detected: ${volumeRatio.toFixed(1)}x average volume`);
         }
     }
 

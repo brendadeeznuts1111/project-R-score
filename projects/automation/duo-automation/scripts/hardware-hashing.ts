@@ -122,7 +122,7 @@ class HardwareAcceleratedHasher {
     throughput: number; // MB/s
     improvement: string;
   }> {
-    console.log(`🚀 Running CRC32 benchmark with ${iterations} iterations...`);
+    console.info(`🚀 Running CRC32 benchmark with ${iterations} iterations...`);
     
     const times: number[] = [];
     const startTime = performance.now();
@@ -187,7 +187,7 @@ class HardwareAcceleratedHasher {
   async findDuplicates(filePaths: string[]): Promise<Map<string, string[]>> {
     const hashMap = new Map<string, string[]>();
     
-    console.log(`🔍 Analyzing ${filePaths.length} files for duplicates...`);
+    console.info(`🔍 Analyzing ${filePaths.length} files for duplicates...`);
     
     for (const filePath of filePaths) {
       try {
@@ -259,7 +259,7 @@ class HardwareAcceleratedHasher {
       };
       
       await Bun.write(outputFile, JSON.stringify(manifestData, null, 2));
-      console.log(`📄 Manifest saved to: ${outputFile}`);
+      console.info(`📄 Manifest saved to: ${outputFile}`);
     }
 
     return { manifest, summary };
@@ -308,55 +308,55 @@ async function main() {
     case 'hash':
       if (args[1]) {
         const result = await hasher.hashFile(args[1]);
-        console.log('🔒 Hash Result:');
-        console.log(`  File: ${result.path}`);
-        console.log(`  CRC32: ${result.crc32}`);
-        console.log(`  Size: ${result.size} bytes`);
-        console.log(`  Duration: ${result.duration}ms`);
+        console.info('🔒 Hash Result:');
+        console.info(`  File: ${result.path}`);
+        console.info(`  CRC32: ${result.crc32}`);
+        console.info(`  Size: ${result.size} bytes`);
+        console.info(`  Duration: ${result.duration}ms`);
       } else {
-        console.log('Usage: hardware-hashing.ts hash <file>');
+        console.info('Usage: hardware-hashing.ts hash <file>');
       }
       break;
 
     case 'batch':
       if (args[1]) {
         const files = hasher.getAllFiles(args[1], ['.ts', '.js', '.json', '.md']);
-        console.log(`📦 Processing ${files.length} files...`);
+        console.info(`📦 Processing ${files.length} files...`);
         
         const result = await hasher.hashFiles(files, (progress, current) => {
           process.stdout.write(`\r⏳ Progress: ${progress}% - ${current}`);
         });
         
-        console.log('\n✅ Batch hashing complete:');
-        console.log(`  Files processed: ${result.totalFiles}`);
-        console.log(`  Total size: ${(result.totalSize / 1024 / 1024).toFixed(2)} MB`);
-        console.log(`  Duration: ${result.totalDuration}ms`);
-        console.log(`  Speed: ${result.averageSpeed} MB/s`);
+        console.info('\n✅ Batch hashing complete:');
+        console.info(`  Files processed: ${result.totalFiles}`);
+        console.info(`  Total size: ${(result.totalSize / 1024 / 1024).toFixed(2)} MB`);
+        console.info(`  Duration: ${result.totalDuration}ms`);
+        console.info(`  Speed: ${result.averageSpeed} MB/s`);
       } else {
-        console.log('Usage: hardware-hashing.ts batch <directory>');
+        console.info('Usage: hardware-hashing.ts batch <directory>');
       }
       break;
 
     case 'benchmark':
       const benchmark = await hasher.benchmark();
-      console.log('🚀 Hardware Acceleration Benchmark:');
-      console.log(`  Average time: ${benchmark.averageTime}ms`);
-      console.log(`  Total time: ${benchmark.totalTime}ms`);
-      console.log(`  Throughput: ${benchmark.throughput} MB/s`);
-      console.log(`  Improvement: ${benchmark.improvement}`);
+      console.info('🚀 Hardware Acceleration Benchmark:');
+      console.info(`  Average time: ${benchmark.averageTime}ms`);
+      console.info(`  Total time: ${benchmark.totalTime}ms`);
+      console.info(`  Throughput: ${benchmark.throughput} MB/s`);
+      console.info(`  Improvement: ${benchmark.improvement}`);
       break;
 
     case 'verify':
       if (args[1] && args[2]) {
         const result = await hasher.verifyIntegrity(args[1], args[2]);
-        console.log('🔍 Integrity Check:');
-        console.log(`  File: ${args[1]}`);
-        console.log(`  Valid: ${result.isValid ? '✅' : '❌'}`);
-        console.log(`  Expected: ${args[2]}`);
-        console.log(`  Actual: ${result.actualHash}`);
-        console.log(`  Duration: ${result.duration}ms`);
+        console.info('🔍 Integrity Check:');
+        console.info(`  File: ${args[1]}`);
+        console.info(`  Valid: ${result.isValid ? '✅' : '❌'}`);
+        console.info(`  Expected: ${args[2]}`);
+        console.info(`  Actual: ${result.actualHash}`);
+        console.info(`  Duration: ${result.duration}ms`);
       } else {
-        console.log('Usage: hardware-hashing.ts verify <file> <expected-hash>');
+        console.info('Usage: hardware-hashing.ts verify <file> <expected-hash>');
       }
       break;
 
@@ -365,17 +365,17 @@ async function main() {
         const files = hasher.getAllFiles(args[1]);
         const duplicates = await hasher.findDuplicates(files);
         
-        console.log('🔍 Duplicate Files Found:');
+        console.info('🔍 Duplicate Files Found:');
         if (duplicates.size === 0) {
-          console.log('  No duplicates found!');
+          console.info('  No duplicates found!');
         } else {
           for (const [hash, files] of duplicates.entries()) {
-            console.log(`\n  Hash: ${hash}`);
-            files.forEach(file => console.log(`    - ${file}`));
+            console.info(`\n  Hash: ${hash}`);
+            files.forEach(file => console.info(`    - ${file}`));
           }
         }
       } else {
-        console.log('Usage: hardware-hashing.ts duplicates <directory>');
+        console.info('Usage: hardware-hashing.ts duplicates <directory>');
       }
       break;
 
@@ -384,25 +384,25 @@ async function main() {
         const outputFile = args[2] || 'hash-manifest.json';
         const { manifest, summary } = await hasher.generateManifest(args[1], outputFile);
         
-        console.log('📄 Hash Manifest Generated:');
-        console.log(`  Total files: ${summary.totalFiles}`);
-        console.log(`  Total size: ${(summary.totalSize / 1024 / 1024).toFixed(2)} MB`);
-        console.log(`  Unique hashes: ${summary.uniqueHashes}`);
-        console.log(`  Duplicate sets: ${summary.duplicates}`);
-        console.log(`  Output: ${outputFile}`);
+        console.info('📄 Hash Manifest Generated:');
+        console.info(`  Total files: ${summary.totalFiles}`);
+        console.info(`  Total size: ${(summary.totalSize / 1024 / 1024).toFixed(2)} MB`);
+        console.info(`  Unique hashes: ${summary.uniqueHashes}`);
+        console.info(`  Duplicate sets: ${summary.duplicates}`);
+        console.info(`  Output: ${outputFile}`);
       } else {
-        console.log('Usage: hardware-hashing.ts manifest <directory> [output-file]');
+        console.info('Usage: hardware-hashing.ts manifest <directory> [output-file]');
       }
       break;
 
     default:
-      console.log(`Unknown command: ${command}`);
+      console.info(`Unknown command: ${command}`);
       showHelp();
   }
 }
 
 function showHelp(): void {
-  console.log(`
+  console.info(`
 🚀 Hardware-Accelerated Hashing CLI
 
 USAGE:

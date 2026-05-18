@@ -368,10 +368,10 @@ async function processBuildResult(result: Awaited<ReturnType<typeof Bun.build>>)
   // Run WCAG color validation in production
   if (process.env.NODE_ENV === "production") {
     try {
-      console.log("🎨 Running WCAG color validation...");
+      console.info("🎨 Running WCAG color validation...");
       const { validateTheme } = await import("./scripts/validate-colors.ts");
       validateTheme();
-      console.log("✅ WCAG validation passed");
+      console.info("✅ WCAG validation passed");
     } catch (error) {
       console.error("❌ WCAG validation failed:", error);
       throw error;
@@ -380,7 +380,7 @@ async function processBuildResult(result: Awaited<ReturnType<typeof Bun.build>>)
 
   // Log build metrics with colorful output
   const sizeMB = (totalSize / 1024 / 1024).toFixed(2);
-  console.log(
+  console.info(
     `📦 Build Complete: ${sizeMB} MB | ${Object.keys(result.metafile.outputs).length} files | ${Bun.version}`
   );
   
@@ -391,7 +391,7 @@ async function processBuildResult(result: Awaited<ReturnType<typeof Bun.build>>)
     error: Bun.color("hsl(0, 75%, 60%)", "hex"),
   };
   
-  console.log(
+  console.info(
     `🎨 Theme Generated: ${colors.primary} | ${colors.success} | ${colors.warning} | ${colors.error}`
   );
 
@@ -413,7 +413,7 @@ try {
   });
 } catch (error) {
   // Build hooks are optional, continue without them
-  console.log("ℹ️ Build hooks not available, continuing without them");
+  console.info("ℹ️ Build hooks not available, continuing without them");
 }
 
 // HMR-specific disposal (dev only)

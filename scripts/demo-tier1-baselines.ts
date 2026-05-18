@@ -215,5 +215,5 @@ if (import.meta.main) {
     for (const err of result.errors) console.error(`[demo-tier1][fail] ${err}`);
     process.exit(1);
   }
-  console.log(`[demo-tier1][pass] demos=${ids.length} providers=${new Set(Object.values(TIER1_SOURCES).map((s) => s.provider)).size}`);
+  console.info(`[demo-tier1][pass] demos=${ids.length} providers=${new Set(Object.values(TIER1_SOURCES).map((s) => s.provider)).size}`);
 }

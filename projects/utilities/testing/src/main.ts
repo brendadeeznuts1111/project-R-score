@@ -3,10 +3,10 @@ import { UploadProgressUI } from "./ui/upload-progress";
 import { feature } from "bun:bundle";
 
 async function runDemo() {
-  console.log("Starting Feature-Flagged Upload System...");
+  console.info("Starting Feature-Flagged Upload System...");
   
   if (feature("PREMIUM")) {
-    console.log("🌟 Premium Features Enabled");
+    console.info("🌟 Premium Features Enabled");
   }
 
   const engine = new UploadEngine();
@@ -23,7 +23,7 @@ async function runDemo() {
 
   // Demonstrate build-time exclusion
   if (feature("DEBUG")) {
-    console.log("[DEBUG] Engine initialized:", !!engine);
+    console.info("[DEBUG] Engine initialized:", !!engine);
   }
 }
 

@@ -80,7 +80,7 @@ export class YieldQuest extends EventEmitter {
     }
 
     await this.saveToDB();
-    console.log(`🎯 Initialized yield quest ${this.id}: ${this.amount} sats for ${this.duration}s`);
+    console.info(`🎯 Initialized yield quest ${this.id}: ${this.amount} sats for ${this.duration}s`);
   }
 
   async start(): Promise<void> {
@@ -91,7 +91,7 @@ export class YieldQuest extends EventEmitter {
     this.status = "active";
     this.startedAt = new Date();
 
-    console.log(`🚀 Starting yield quest ${this.id} with ${this.strategy} strategy`);
+    console.info(`🚀 Starting yield quest ${this.id} with ${this.strategy} strategy`);
 
     this.startYieldGeneration();
 
@@ -187,10 +187,10 @@ export class YieldQuest extends EventEmitter {
     const actualYield = this.currentYield;
     const annualizedYield = (actualYield / this.amount) * (365 * 24 * 60 * 60) / this.duration * 100;
 
-    console.log(`✅ Completed yield quest ${this.id}`);
-    console.log(`   Amount: ${this.amount} sats`);
-    console.log(`   Yield: ${actualYield.toFixed(0)} sats (${annualizedYield.toFixed(2)}% annualized)`);
-    console.log(`   Duration: ${this.duration}s`);
+    console.info(`✅ Completed yield quest ${this.id}`);
+    console.info(`   Amount: ${this.amount} sats`);
+    console.info(`   Yield: ${actualYield.toFixed(0)} sats (${annualizedYield.toFixed(2)}% annualized)`);
+    console.info(`   Duration: ${this.duration}s`);
 
     await this.saveToDB();
 
@@ -210,7 +210,7 @@ export class YieldQuest extends EventEmitter {
     this.completedAt = new Date();
     this.stopYieldGeneration();
 
-    console.log(`❌ Failed yield quest ${this.id}: ${reason}`);
+    console.info(`❌ Failed yield quest ${this.id}: ${reason}`);
 
     await this.saveToDB();
 

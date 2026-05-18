@@ -15,7 +15,7 @@ import type {
   APIResponse 
 } from './types.js';
 
-console.log("🌐 Nebula-Flow™ AI API - Starting");
+console.info("🌐 Nebula-Flow™ AI API - Starting");
 
 export class AIAPI {
   private engine: AnomalyEngine;
@@ -291,7 +291,7 @@ export function createRoutes(app: any) {
     }
   });
   
-  console.log('🔗 AI API routes registered');
+  console.info('🔗 AI API routes registered');
 }
 
 export default AIAPI;

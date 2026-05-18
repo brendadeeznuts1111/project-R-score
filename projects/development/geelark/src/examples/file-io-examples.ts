@@ -13,18 +13,18 @@ import { readdir } from "node:fs/promises";
 // ============================================================================
 
 async function basicReading() {
-  console.log("\n=== Example 1: Basic File Reading ===\n");
+  console.info("\n=== Example 1: Basic File Reading ===\n");
 
   // Create a lazy file reference (no disk read yet!)
   const file = Bun.file("package.json");
 
-  console.log("File metadata (no disk read yet!):");
-  console.log("  Size:", file.size, "bytes");
-  console.log("  Type:", file.type);
+  console.info("File metadata (no disk read yet!):");
+  console.info("  Size:", file.size, "bytes");
+  console.info("  Type:", file.type);
 
   // Read contents (now we read from disk)
   const text = await file.text();
-  console.log("\nFirst 100 chars:", text.slice(0, 100) + "...");
+  console.info("\nFirst 100 chars:", text.slice(0, 100) + "...");
 }
 
 // ============================================================================
@@ -32,24 +32,24 @@ async function basicReading() {
 // ============================================================================
 
 async function basicWriting() {
-  console.log("\n=== Example 2: Writing Files ===\n");
+  console.info("\n=== Example 2: Writing Files ===\n");
 
   const data = "Hello from Bun!\nThis is file I/O made simple.";
 
   // Write string to file
   await Bun.write("output.txt", data);
-  console.log("✅ Wrote to output.txt");
+  console.info("✅ Wrote to output.txt");
 
   // Write JSON
   const jsonData = { message: "Hello", timestamp: Date.now() };
   await Bun.write("output.json", JSON.stringify(jsonData, null, 2));
-  console.log("✅ Wrote to output.json");
+  console.info("✅ Wrote to output.json");
 
   // Write binary
   const encoder = new TextEncoder();
   const binaryData = encoder.encode("Binary data");
   await Bun.write("output.bin", binaryData);
-  console.log("✅ Wrote to output.bin");
+  console.info("✅ Wrote to output.bin");
 }
 
 // ============================================================================
@@ -57,7 +57,7 @@ async function basicWriting() {
 // ============================================================================
 
 async function fileCopying() {
-  console.log("\n=== Example 3: Copying Files ===\n");
+  console.info("\n=== Example 3: Copying Files ===\n");
 
   const input = Bun.file("output.json");
   const output = Bun.file("output-copy.json");
@@ -65,9 +65,9 @@ async function fileCopying() {
   // This uses optimized syscalls (copy_file_range on Linux, clonefile on macOS)
   await Bun.write(output, input);
 
-  console.log("✅ Copied file using optimized syscalls");
-  console.log("  Linux: copy_file_range");
-  console.log("  macOS: clonefile");
+  console.info("✅ Copied file using optimized syscalls");
+  console.info("  Linux: copy_file_range");
+  console.info("  macOS: clonefile");
 }
 
 // ============================================================================
@@ -75,7 +75,7 @@ async function fileCopying() {
 // ============================================================================
 
 async function httpToDisk() {
-  console.log("\n=== Example 4: HTTP Response to Disk ===\n");
+  console.info("\n=== Example 4: HTTP Response to Disk ===\n");
 
   // Fetch webpage
   const response = await fetch("https://bun.com");
@@ -83,9 +83,9 @@ async function httpToDisk() {
   // Write response body to disk
   await Bun.write("bun-homepage.html", response);
 
-  console.log("✅ Saved bun.com homepage to bun-homepage.html");
+  console.info("✅ Saved bun.com homepage to bun-homepage.html");
   const size = Bun.file("bun-homepage.html").size;
-  console.log(`  Size: ${size} bytes`);
+  console.info(`  Size: ${size} bytes`);
 }
 
 // ============================================================================
@@ -93,7 +93,7 @@ async function httpToDisk() {
 // ============================================================================
 
 async function incrementalWriting() {
-  console.log("\n=== Example 5: Incremental Writing ===\n");
+  console.info("\n=== Example 5: Incremental Writing ===\n");
 
   const file = Bun.file("incremental.txt");
   const writer = file.writer({ highWaterMark: 64 * 1024 }); // 64KB buffer
@@ -106,8 +106,8 @@ async function incrementalWriting() {
   // Flush and close
   await writer.end();
 
-  console.log("✅ Wrote 10 lines incrementally");
-  console.log("  Buffer auto-flushed when highWaterMark reached");
+  console.info("✅ Wrote 10 lines incrementally");
+  console.info("  Buffer auto-flushed when highWaterMark reached");
 }
 
 // ============================================================================
@@ -115,7 +115,7 @@ async function incrementalWriting() {
 // ============================================================================
 
 async function streamFiles() {
-  console.log("\n=== Example 6: Stream Large Files ===\n");
+  console.info("\n=== Example 6: Stream Large Files ===\n");
 
   // Create a large file for testing
   const writer = Bun.file("large.txt").writer();
@@ -132,9 +132,9 @@ async function streamFiles() {
   await Bun.write(output, input);
   const duration = performance.now() - startTime;
 
-  console.log("✅ Streamed large file");
-  console.log(`  Size: ${input.size} bytes`);
-  console.log(`  Time: ${duration.toFixed(2)}ms`);
+  console.info("✅ Streamed large file");
+  console.info(`  Size: ${input.size} bytes`);
+  console.info(`  Time: ${duration.toFixed(2)}ms`);
 }
 
 // ============================================================================
@@ -142,11 +142,11 @@ async function streamFiles() {
 // ============================================================================
 
 async function standardStreams() {
-  console.log("\n=== Example 7: Standard Streams ===\n");
+  console.info("\n=== Example 7: Standard Streams ===\n");
 
-  console.log("stdin size:", Bun.stdin.size);
-  console.log("stdout size:", Bun.stdout.size);
-  console.log("stderr size:", Bun.stderr.size);
+  console.info("stdin size:", Bun.stdin.size);
+  console.info("stdout size:", Bun.stdout.size);
+  console.info("stderr size:", Bun.stderr.size);
 
   // Write to stdout
   await Bun.write(Bun.stdout, "Hello to stdout!\n");
@@ -156,7 +156,7 @@ async function standardStreams() {
 
   // Copy file to stdout
   const file = Bun.file("output.json");
-  console.log("\n--- output.json contents ---");
+  console.info("\n--- output.json contents ---");
   await Bun.write(Bun.stdout, file);
 }
 
@@ -165,13 +165,13 @@ async function standardStreams() {
 // ============================================================================
 
 async function fileExistence() {
-  console.log("\n=== Example 8: File Existence ===\n");
+  console.info("\n=== Example 8: File Existence ===\n");
 
   const exists = Bun.file("output.json");
   const notExists = Bun.file("does-not-exist.txt");
 
-  console.log("output.json exists:", await exists.exists());
-  console.log("does-not-exist.txt exists:", await notExists.exists());
+  console.info("output.json exists:", await exists.exists());
+  console.info("does-not-exist.txt exists:", await notExists.exists());
 }
 
 // ============================================================================
@@ -179,19 +179,19 @@ async function fileExistence() {
 // ============================================================================
 
 async function deleteFile() {
-  console.log("\n=== Example 9: Delete File ===\n");
+  console.info("\n=== Example 9: Delete File ===\n");
 
   // Create a temp file
   await Bun.write("temp.txt", "Temporary data");
-  console.log("✅ Created temp.txt");
+  console.info("✅ Created temp.txt");
 
   // Delete it
   await Bun.file("temp.txt").delete();
-  console.log("✅ Deleted temp.txt");
+  console.info("✅ Deleted temp.txt");
 
   // Verify
   const exists = await Bun.file("temp.txt").exists();
-  console.log("temp.txt exists:", exists);
+  console.info("temp.txt exists:", exists);
 }
 
 // ============================================================================
@@ -199,13 +199,13 @@ async function deleteFile() {
 // ============================================================================
 
 async function readDirectory() {
-  console.log("\n=== Example 10: Read Directory ===\n");
+  console.info("\n=== Example 10: Read Directory ===\n");
 
   // Read current directory
   const files = await readdir(import.meta.dir);
-  console.log("Files in current directory:");
+  console.info("Files in current directory:");
   files.slice(0, 10).forEach((file, i) => {
-    console.log(`  ${i + 1}. ${file}`);
+    console.info(`  ${i + 1}. ${file}`);
   });
 
   // Read with metadata
@@ -220,9 +220,9 @@ async function readDirectory() {
     if (entry.isDirectory()) counts.directories++;
   });
 
-  console.log("\nDirectory stats:");
-  console.log("  Files:", counts.files);
-  console.log("  Directories:", counts.directories);
+  console.info("\nDirectory stats:");
+  console.info("  Files:", counts.files);
+  console.info("  Directories:", counts.directories);
 }
 
 // ============================================================================
@@ -230,7 +230,7 @@ async function readDirectory() {
 // ============================================================================
 
 async function jsonPipeline() {
-  console.log("\n=== Example 11: JSON Processing ===\n");
+  console.info("\n=== Example 11: JSON Processing ===\n");
 
   // Create sample data
   const inputData = Array.from({ length: 100 }, (_, i) => ({
@@ -253,9 +253,9 @@ async function jsonPipeline() {
 
   await Bun.write("output-processed.json", JSON.stringify(transformed, null, 2));
 
-  console.log("✅ Processed 100 items");
-  console.log("  Input: input.json");
-  console.log("  Output: output-processed.json");
+  console.info("✅ Processed 100 items");
+  console.info("  Input: input.json");
+  console.info("  Output: output-processed.json");
 }
 
 // ============================================================================
@@ -263,15 +263,15 @@ async function jsonPipeline() {
 // ============================================================================
 
 async function customMimeType() {
-  console.log("\n=== Example 12: Custom MIME Type ===\n");
+  console.info("\n=== Example 12: Custom MIME Type ===\n");
 
   // Default type
   const defaultFile = Bun.file("data.json");
-  console.log("Default type:", defaultFile.type);
+  console.info("Default type:", defaultFile.type);
 
   // Custom type
   const customFile = Bun.file("data.json", { type: "application/vnd.api+json" });
-  console.log("Custom type:", customFile.type);
+  console.info("Custom type:", customFile.type);
 }
 
 // ============================================================================
@@ -279,7 +279,7 @@ async function customMimeType() {
 // ============================================================================
 
 async function configLoader() {
-  console.log("\n=== Example 13: Config Loader ===\n");
+  console.info("\n=== Example 13: Config Loader ===\n");
 
   async function loadConfig<T>(path: string): Promise<T> {
     const file = Bun.file(path);
@@ -301,10 +301,10 @@ async function configLoader() {
   // Load it
   const config = await loadConfig<{ appName: string; version: string; features: string[] }>("config.json");
 
-  console.log("✅ Loaded config:");
-  console.log("  App:", config.appName);
-  console.log("  Version:", config.version);
-  console.log("  Features:", config.features.join(", "));
+  console.info("✅ Loaded config:");
+  console.info("  App:", config.appName);
+  console.info("  Version:", config.version);
+  console.info("  Features:", config.features.join(", "));
 }
 
 // ============================================================================
@@ -312,7 +312,7 @@ async function configLoader() {
 // ============================================================================
 
 async function streamToHTTP() {
-  console.log("\n=== Example 14: Stream to HTTP ===\n");
+  console.info("\n=== Example 14: Stream to HTTP ===\n");
 
   // Create a test file
   await Bun.write("test-upload.txt", "Content for upload");
@@ -332,9 +332,9 @@ async function streamToHTTP() {
     //   }
     // });
 
-    console.log("✅ Prepared file for streaming:");
-    console.log("  Size:", file.size);
-    console.log("  Type:", file.type);
+    console.info("✅ Prepared file for streaming:");
+    console.info("  Size:", file.size);
+    console.info("  Type:", file.type);
   } catch (error) {
     console.error("Upload failed:", error);
   }
@@ -345,7 +345,7 @@ async function streamToHTTP() {
 // ============================================================================
 
 async function logWriter() {
-  console.log("\n=== Example 15: Log Writer ===\n");
+  console.info("\n=== Example 15: Log Writer ===\n");
 
   class Logger {
     private writer: ReturnType<BunFile["writer"]>;
@@ -372,10 +372,10 @@ async function logWriter() {
 
   await logger.close();
 
-  console.log("✅ Wrote log file");
+  console.info("✅ Wrote log file");
   const logContents = await Bun.file("app.log").text();
-  console.log("\n--- app.log contents ---");
-  console.log(logContents);
+  console.info("\n--- app.log contents ---");
+  console.info(logContents);
 }
 
 // ============================================================================
@@ -383,9 +383,9 @@ async function logWriter() {
 // ============================================================================
 
 async function main() {
-  console.log("╔════════════════════════════════════════════════════════════════╗");
-  console.log("║  Bun File I/O Examples                                        ║");
-  console.log("╚════════════════════════════════════════════════════════════════╝");
+  console.info("╔════════════════════════════════════════════════════════════════╗");
+  console.info("║  Bun File I/O Examples                                        ║");
+  console.info("╚════════════════════════════════════════════════════════════════╝");
 
   try {
     await basicReading();
@@ -404,9 +404,9 @@ async function main() {
     await streamToHTTP();
     await logWriter();
 
-    console.log("\n╔════════════════════════════════════════════════════════════════╗");
-    console.log("║  ✅ All examples completed!                                   ║");
-    console.log("╚════════════════════════════════════════════════════════════════╝");
+    console.info("\n╔════════════════════════════════════════════════════════════════╗");
+    console.info("║  ✅ All examples completed!                                   ║");
+    console.info("╚════════════════════════════════════════════════════════════════╝");
   } catch (error) {
     console.error("\n❌ Error:", error);
     process.exit(1);

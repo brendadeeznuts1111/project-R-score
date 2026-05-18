@@ -50,7 +50,7 @@ export class PostgreSQLPool {
       await client.query('SELECT 1');
       client.release();
       
-      console.log('✅ PostgreSQL pool initialized');
+      console.info('✅ PostgreSQL pool initialized');
     } catch (error) {
       console.error('❌ PostgreSQL pool initialization failed:', error);
       throw error;
@@ -127,7 +127,7 @@ export class PostgreSQLPool {
   async close(): Promise<void> {
     if (this.pool) {
       await this.pool.end();
-      console.log('✅ PostgreSQL pool closed');
+      console.info('✅ PostgreSQL pool closed');
     }
   }
 }
@@ -172,7 +172,7 @@ export class MySQLPool {
       
       // Test connection
       const [rows] = await this.pool.execute('SELECT 1');
-      console.log('✅ MySQL pool initialized');
+      console.info('✅ MySQL pool initialized');
     } catch (error) {
       console.error('❌ MySQL pool initialization failed:', error);
       throw error;
@@ -248,7 +248,7 @@ export class MySQLPool {
   async close(): Promise<void> {
     if (this.pool) {
       await this.pool.end();
-      console.log('✅ MySQL pool closed');
+      console.info('✅ MySQL pool closed');
     }
   }
 }
@@ -277,7 +277,7 @@ export class PoolManager {
   async addPool(name: string, type: 'sqlite' | 'postgresql' | 'mysql', config: any): Promise<void> {
     const pool = DatabasePoolFactory.createPool(type, config);
     this.pools.set(name, pool);
-    console.log(`✅ Added pool '${name}' (${type})`);
+    console.info(`✅ Added pool '${name}' (${type})`);
   }
   
   getPool(name: string): any {
@@ -313,19 +313,19 @@ export class PoolManager {
   }
   
   async closeAll(): Promise<void> {
-    console.log(`🔒 Closing all pools...`);
+    console.info(`🔒 Closing all pools...`);
     
     for (const [name, pool] of this.pools) {
       try {
         await pool.close();
-        console.log(`✅ Closed pool '${name}'`);
+        console.info(`✅ Closed pool '${name}'`);
       } catch (error) {
         console.error(`❌ Error closing pool '${name}':`, error);
       }
     }
     
     this.pools.clear();
-    console.log(`✅ All pools closed`);
+    console.info(`✅ All pools closed`);
   }
 }
 

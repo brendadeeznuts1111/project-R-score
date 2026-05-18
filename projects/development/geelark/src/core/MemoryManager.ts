@@ -190,7 +190,7 @@ export class MemoryManager {
    * Cleanup all resources and stop monitoring
    */
   shutdown(): void {
-    console.log("🛑 Shutting down MemoryManager...");
+    console.info("🛑 Shutting down MemoryManager...");
     this.stopMemoryMonitoring();
 
     let cleaned = 0;
@@ -200,7 +200,7 @@ export class MemoryManager {
       }
     }
 
-    console.log(`✅ MemoryManager shutdown complete. Cleaned ${cleaned} resources.`);
+    console.info(`✅ MemoryManager shutdown complete. Cleaned ${cleaned} resources.`);
   }
 }
 

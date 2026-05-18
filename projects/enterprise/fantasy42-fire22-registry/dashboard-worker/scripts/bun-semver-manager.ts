@@ -235,26 +235,26 @@ export const versionManager = new BunVersionManager();
 
 // !==!==!===== CLI INTERFACE !==!==!=====
 if (import.meta.main) {
-  console.log('\n🔷 BUN SEMVER VERSION MANAGER 🔷\n');
-  console.log('='.repeat(50));
+  console.info('\n🔷 BUN SEMVER VERSION MANAGER 🔷\n');
+  console.info('='.repeat(50));
 
   // Display all constants
-  console.log('\n📦 **VERSION CONSTANTS**');
-  console.log('-'.repeat(50));
+  console.info('\n📦 **VERSION CONSTANTS**');
+  console.info('-'.repeat(50));
   Object.entries(VERSION_CONSTANTS).forEach(([key, value]) => {
-    console.log(`  ${key.padEnd(30)} = ${value}`);
+    console.info(`  ${key.padEnd(30)} = ${value}`);
   });
 
   // Display environment variables
-  console.log('\n🌍 **ENVIRONMENT VARIABLES**');
-  console.log('-'.repeat(50));
+  console.info('\n🌍 **ENVIRONMENT VARIABLES**');
+  console.info('-'.repeat(50));
   Object.entries(ENV_VARIABLES).forEach(([key, value]) => {
-    console.log(`  ${key.padEnd(30)} = ${value}`);
+    console.info(`  ${key.padEnd(30)} = ${value}`);
   });
 
   // Test version sorting
-  console.log('\n🔄 **VERSION SORTING TEST**');
-  console.log('-'.repeat(50));
+  console.info('\n🔄 **VERSION SORTING TEST**');
+  console.info('-'.repeat(50));
   const testVersions = [
     '2.0.0',
     '1.0.0',
@@ -266,13 +266,13 @@ if (import.meta.main) {
     '3.0.0-canary',
   ];
 
-  console.log('  Unsorted:', testVersions);
-  console.log('  Sorted:  ', versionManager.sortVersions(testVersions));
-  console.log('  Latest:  ', versionManager.getLatestVersion(testVersions));
+  console.info('  Unsorted:', testVersions);
+  console.info('  Sorted:  ', versionManager.sortVersions(testVersions));
+  console.info('  Latest:  ', versionManager.getLatestVersion(testVersions));
 
   // Test version comparison
-  console.log('\n⚖️  **VERSION COMPARISONS**');
-  console.log('-'.repeat(50));
+  console.info('\n⚖️  **VERSION COMPARISONS**');
+  console.info('-'.repeat(50));
   const comparisons = [
     ['2.0.0', '1.0.0'],
     ['1.0.0', '1.0.0'],
@@ -283,18 +283,18 @@ if (import.meta.main) {
   comparisons.forEach(([a, b]) => {
     const result = versionManager.compareVersions(a, b);
     const symbol = result === 1 ? '>' : result === -1 ? '<' : '=';
-    console.log(`  ${a.padEnd(15)} ${symbol} ${b}`);
+    console.info(`  ${a.padEnd(15)} ${symbol} ${b}`);
   });
 
   // Test log formatting
-  console.log('\n📝 **LOG FORMATTING**');
-  console.log('-'.repeat(50));
-  console.log(versionManager.formatLog('INFO', 'DASHBOARD', 'System initialized'));
-  console.log(versionManager.formatLog('ERROR', 'API', 'Connection failed', '2.0.1'));
+  console.info('\n📝 **LOG FORMATTING**');
+  console.info('-'.repeat(50));
+  console.info(versionManager.formatLog('INFO', 'DASHBOARD', 'System initialized'));
+  console.info(versionManager.formatLog('ERROR', 'API', 'Connection failed', '2.0.1'));
 
   // Test pattern matching
-  console.log('\n🔍 **PATTERN MATCHING**');
-  console.log('-'.repeat(50));
+  console.info('\n🔍 **PATTERN MATCHING**');
+  console.info('-'.repeat(50));
   const testLogs = [
     '[2024-03-15 10:30:45] [INFO] [DASHBOARD] [v2.0.0] Starting system',
     '[pk:@fire22/core@1.5.0] Package loaded',
@@ -305,23 +305,23 @@ if (import.meta.main) {
     const version = versionManager.extractVersionFromLog(log);
     const pkTag = log.match(VERSION_PATTERNS.PACKAGE_TAG)?.[0];
     if (version) {
-      console.log(`  Log version found: ${version}`);
+      console.info(`  Log version found: ${version}`);
     }
     if (pkTag) {
       const parsed = versionManager.parsePackageTag(pkTag);
       if (parsed) {
-        console.log(`  Package found: ${parsed.name}@${parsed.version}`);
+        console.info(`  Package found: ${parsed.name}@${parsed.version}`);
       }
     }
   });
 
   // Validate all versions
-  console.log('\n✅ **VERSION VALIDATION**');
-  console.log('-'.repeat(50));
+  console.info('\n✅ **VERSION VALIDATION**');
+  console.info('-'.repeat(50));
   const validation = versionManager.validateVersions();
-  console.log(`  Valid versions: ${validation.valid.length}`);
-  console.log(`  Invalid versions: ${validation.invalid.length}`);
+  console.info(`  Valid versions: ${validation.valid.length}`);
+  console.info(`  Invalid versions: ${validation.invalid.length}`);
 
-  console.log('\n' + '='.repeat(50));
-  console.log('Version manager initialized successfully!');
+  console.info('\n' + '='.repeat(50));
+  console.info('Version manager initialized successfully!');
 }

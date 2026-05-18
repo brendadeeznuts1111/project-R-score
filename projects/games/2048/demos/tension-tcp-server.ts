@@ -35,7 +35,7 @@ export const subscribeToAlerts = (callback: (msg: string) => void) => {
 };
 
 const udpMulticast = (group: string, message: string): void => {
-  console.log(`[UDP:${group}] ${message}`);
+  console.info(`[UDP:${group}] ${message}`);
   alertSubscribers.forEach((cb) => cb(message));
 };
 
@@ -100,12 +100,12 @@ export const benchmarkCRC32 = (
 ): BenchmarkResult[] => {
   const results: BenchmarkResult[] = [];
 
-  console.log("\n🧪 CRC32 Token-Graph Checksum Benchmark");
-  console.log("═".repeat(60));
-  console.log(
+  console.info("\n🧪 CRC32 Token-Graph Checksum Benchmark");
+  console.info("═".repeat(60));
+  console.info(
     "| Benchmark Scenario          | Buffer Size | Before (µs) | After (µs) | Speedup |"
   );
-  console.log("|".repeat(61));
+  console.info("|".repeat(61));
 
   for (const size of bufferSizes) {
     const buf = new ArrayBuffer(size);
@@ -149,7 +149,7 @@ export const benchmarkCRC32 = (
     // Print formatted table row
     const scenario = `Bun.hash.crc32 (${(size / 1024).toFixed(0)}KB buffer)`;
     const beforeUs = Math.round(baselineUsPerMB * (size / 1048576));
-    console.log(
+    console.info(
       `| ${scenario.padEnd(26)} | ${(size / 1024)
         .toFixed(0)
         .padEnd(10)}KB | ${beforeUs.toString().padEnd(10)} | ${afterUs
@@ -158,7 +158,7 @@ export const benchmarkCRC32 = (
     );
   }
 
-  console.log("═".repeat(60));
+  console.info("═".repeat(60));
 
   return results;
 };
@@ -398,25 +398,25 @@ export class TensionTCPServer {
   async start(): Promise<void> {
     this.running = true;
     this.startTime = Date.now();
-    console.log(`🚀 TensionTCPServer starting on ${this.host}:${this.port}`);
-    console.log("═".repeat(60));
+    console.info(`🚀 TensionTCPServer starting on ${this.host}:${this.port}`);
+    console.info("═".repeat(60));
 
     // Start health check interval
     this.healthCheckInterval = setInterval(() => this.healthCheck(), 30000);
 
-    console.log("✅ TensionTCPServer ready for connections");
-    console.log("📡 Routes registered:");
+    console.info("✅ TensionTCPServer ready for connections");
+    console.info("📡 Routes registered:");
     routePatterns.forEach((r) =>
-      console.log(`   ${r.pattern.source} -> ${r.handler}`)
+      console.info(`   ${r.pattern.source} -> ${r.handler}`)
     );
 
     // Log performance metrics
-    console.log("\n📊 Performance Metrics:");
-    console.log(
+    console.info("\n📊 Performance Metrics:");
+    console.info(
       `   CRC32 Speedup: ${performanceMetrics.crc32Speedup.toFixed(1)}x`
     );
-    console.log(`   Platform: ${performanceMetrics.platform}`);
-    console.log(`   Uptime monitoring: active`);
+    console.info(`   Platform: ${performanceMetrics.platform}`);
+    console.info(`   Uptime monitoring: active`);
   }
 
   private healthCheckInterval: any = null;
@@ -428,16 +428,16 @@ export class TensionTCPServer {
       (Date.now() - this.startTime) / 1000
     );
 
-    console.log("🛑 TensionTCPServer shutting down...");
-    console.log(`📈 Session Summary:`);
-    console.log(`   Uptime: ${performanceMetrics.uptimeSeconds}s`);
-    console.log(`   Total Checksums: ${performanceMetrics.totalChecksums}`);
-    console.log(
+    console.info("🛑 TensionTCPServer shutting down...");
+    console.info(`📈 Session Summary:`);
+    console.info(`   Uptime: ${performanceMetrics.uptimeSeconds}s`);
+    console.info(`   Total Checksums: ${performanceMetrics.totalChecksums}`);
+    console.info(
       `   CRC32 Speedup: ${performanceMetrics.crc32Speedup.toFixed(1)}x`
     );
 
     tcpConnections.forEach((conn, key) => {
-      console.log(
+      console.info(
         `   Closed: ${key} (${conn.uploadCount} uploads, ${conn.bytesUploaded} bytes, ${conn.checksumCount} checksums)`
       );
     });
@@ -448,7 +448,7 @@ export class TensionTCPServer {
       (c) => c.connected
     );
     const uptime = Math.floor((Date.now() - this.startTime) / 1000);
-    console.log(
+    console.info(
       `[Health] Active: ${active.length}, Uptime: ${uptime}s, Checksums: ${performanceMetrics.totalChecksums}`
     );
   }
@@ -472,14 +472,14 @@ export class TensionTCPServer {
   }
 
   async runBenchmark(): Promise<BenchmarkResult[]> {
-    console.log("\n🧪 CRC32 Token-Graph Checksum Benchmark");
-    console.log("═".repeat(60));
+    console.info("\n🧪 CRC32 Token-Graph Checksum Benchmark");
+    console.info("═".repeat(60));
     const results = benchmarkCRC32();
 
     // Generate aiSuggestColumns enriched table
     const table = generateBenchmarkTable(results);
-    console.log("\n📋 Benchmark Table:");
-    console.log(table);
+    console.info("\n📋 Benchmark Table:");
+    console.info(table);
 
     return results;
   }
@@ -514,14 +514,14 @@ if (import.meta.main) {
   server.start();
 
   // Subscribe to alerts
-  const unsub = subscribeToAlerts((msg) => console.log(`[Alert] ${msg}`));
+  const unsub = subscribeToAlerts((msg) => console.info(`[Alert] ${msg}`));
 
   // Run CRC32 benchmark
   setTimeout(async () => {
     await server.runBenchmark();
 
     // Test upload with CRC32 integrity
-    console.log("\n📤 Testing S3 Upload with CRC32 Integrity");
+    console.info("\n📤 Testing S3 Upload with CRC32 Integrity");
     const testData = new ArrayBuffer(10240);
     const view = new Uint8Array(testData);
     for (let i = 0; i < 10240; i++) view[i] = Math.floor(Math.random() * 256);
@@ -531,23 +531,23 @@ if (import.meta.main) {
       testData,
       "application/octet-stream"
     );
-    console.log("   Upload result:", JSON.stringify(uploadResult, null, 2));
+    console.info("   Upload result:", JSON.stringify(uploadResult, null, 2));
 
     // Test checksum verification
-    console.log("\n🔐 Testing Checksum Verification");
+    console.info("\n🔐 Testing Checksum Verification");
     const verifyResult = await server.handleChecksumVerify(
       testData,
       uploadResult.checksum
     );
-    console.log("   Verify result:", JSON.stringify(verifyResult, null, 2));
+    console.info("   Verify result:", JSON.stringify(verifyResult, null, 2));
 
     // Show status
-    console.log("\n📊 Server Status");
-    console.log(JSON.stringify(server.getStatus(), null, 2));
+    console.info("\n📊 Server Status");
+    console.info(JSON.stringify(server.getStatus(), null, 2));
 
     // Cleanup
     await server.stop();
     unsub();
-    console.log("✅ TensionTCPServer session complete");
+    console.info("✅ TensionTCPServer session complete");
   }, 1000);
 }

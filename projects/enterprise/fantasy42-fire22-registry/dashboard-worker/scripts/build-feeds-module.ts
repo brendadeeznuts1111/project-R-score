@@ -21,7 +21,7 @@ const feedFiles = [
   'index.html',
 ];
 
-console.log('📡 Building RSS feeds module for Cloudflare Workers...');
+console.info('📡 Building RSS feeds module for Cloudflare Workers...');
 
 // Generate the module content
 let moduleContent = `/**
@@ -36,7 +36,7 @@ export const feedsContent: Record<string, string> = {
 for (const file of feedFiles) {
   const filePath = join(feedsDir, file);
   if (existsSync(filePath)) {
-    console.log(`  ✅ Loading ${file}`);
+    console.info(`  ✅ Loading ${file}`);
     const content = readFileSync(filePath, 'utf-8');
     // Escape the content for JavaScript string
     const escapedContent = content
@@ -46,7 +46,7 @@ for (const file of feedFiles) {
 
     moduleContent += `  '${file}': \`${escapedContent}\`,\n`;
   } else {
-    console.log(`  ⚠️ File not found: ${file}`);
+    console.info(`  ⚠️ File not found: ${file}`);
   }
 }
 
@@ -63,5 +63,5 @@ export function getAvailableFeeds(): string[] {
 
 // Write the module
 writeFileSync(outputFile, moduleContent);
-console.log(`\n✅ Feeds module generated at: ${outputFile}`);
-console.log('📡 RSS feeds are ready for Cloudflare Workers deployment!');
+console.info(`\n✅ Feeds module generated at: ${outputFile}`);
+console.info('📡 RSS feeds are ready for Cloudflare Workers deployment!');

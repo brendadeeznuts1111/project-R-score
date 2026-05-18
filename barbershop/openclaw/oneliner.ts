@@ -100,7 +100,7 @@ async function main() {
   const { flags, command, args } = parseOneLinerFlags(argv);
   
   if (flags.help || !command) {
-    console.log(`
+    console.info(`
 ${c.cyan("╔════════════════════════════════════════════════════════╗")}
 ${c.cyan("║")}  OpenClaw One-Liner CLI v3.16                        ${c.cyan("║")}
 ${c.cyan("╠════════════════════════════════════════════════════════╣")}
@@ -148,13 +148,13 @@ ${c.bold("Environment:")}
   const allArgs = [...flagArgs, command, ...args];
   
   // Show context summary
-  console.log(c.gray("Context:"));
-  if (flags.cwd) console.log(c.gray(`  CWD:      ${flags.cwd}`));
-  if (flags.envFile) console.log(c.gray(`  Env:      ${flags.envFile.join(", ")}`));
-  if (flags.config) console.log(c.gray(`  Config:   ${flags.config}`));
-  if (flags.filter) console.log(c.gray(`  Filter:   ${flags.filter}`));
-  console.log(c.gray(`  Command:  ${command} ${args.join(" ")}`));
-  console.log();
+  console.info(c.gray("Context:"));
+  if (flags.cwd) console.info(c.gray(`  CWD:      ${flags.cwd}`));
+  if (flags.envFile) console.info(c.gray(`  Env:      ${flags.envFile.join(", ")}`));
+  if (flags.config) console.info(c.gray(`  Config:   ${flags.config}`));
+  if (flags.filter) console.info(c.gray(`  Filter:   ${flags.filter}`));
+  console.info(c.gray(`  Command:  ${command} ${args.join(" ")}`));
+  console.info();
   
   // Execute with context
   const startTime = performance.now();
@@ -164,10 +164,10 @@ ${c.bold("Environment:")}
     
     const duration = performance.now() - startTime;
     
-    console.log();
-    console.log(c.gray(`Context Hash: ${session.contextHash}`));
-    console.log(c.gray(`Duration: ${duration.toFixed(2)}ms`));
-    console.log(c.gray(`Status: ${session.status}`));
+    console.info();
+    console.info(c.gray(`Context Hash: ${session.contextHash}`));
+    console.info(c.gray(`Duration: ${duration.toFixed(2)}ms`));
+    console.info(c.gray(`Status: ${session.status}`));
     
     if (session.exitCode !== undefined && session.exitCode !== 0) {
       process.exit(session.exitCode);

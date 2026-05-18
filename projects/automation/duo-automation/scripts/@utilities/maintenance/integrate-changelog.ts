@@ -26,9 +26,9 @@ class DuoPlusIntegration {
    * Run complete integration workflow
    */
   async integrate(): Promise<void> {
-    console.log('🚀 DuoPlus Integration System');
-    console.log('============================');
-    console.log('');
+    console.info('🚀 DuoPlus Integration System');
+    console.info('============================');
+    console.info('');
 
     try {
       // 1. Generate changelog matrix
@@ -51,8 +51,8 @@ class DuoPlusIntegration {
         await this.exportResults();
       }
 
-      console.log('');
-      console.log('✅ DuoPlus integration completed successfully!');
+      console.info('');
+      console.info('✅ DuoPlus integration completed successfully!');
       
     } catch (error: any) {
       console.error('❌ Integration failed:', error.message);
@@ -64,7 +64,7 @@ class DuoPlusIntegration {
    * Generate changelog matrix
    */
   private async generateMatrix(): Promise<void> {
-    console.log('📊 Generating DuoPlus changelog matrix...');
+    console.info('📊 Generating DuoPlus changelog matrix...');
     
     const { parseLog, generateMatrix, generateStats } = await import('./parse-duoplus-log');
     
@@ -83,19 +83,19 @@ class DuoPlusIntegration {
     const output = `# DuoPlus Integration Matrix\n\n${matrix}\n${stats}`;
     await Bun.write('docs/changelogs/DUOPLUS_INTEGRATION.md', output);
     
-    console.log('✅ Changelog matrix generated');
+    console.info('✅ Changelog matrix generated');
   }
 
   /**
    * Run performance benchmarks
    */
   private async runBenchmarks(): Promise<void> {
-    console.log('🏃 Running DuoPlus performance benchmarks...');
+    console.info('🏃 Running DuoPlus performance benchmarks...');
     
     const { AndroidFingerprintBenchmark } = await import('../../perf/android-fingerprint');
     
     // Run quick benchmark for demo
-    console.log('📱 Running Android fingerprint benchmarks...');
+    console.info('📱 Running Android fingerprint benchmarks...');
     
     const benchmarkResults = ANDROID_VERSIONS.map(version => ({
       version,
@@ -104,7 +104,7 @@ class DuoPlusIntegration {
       memoryUsage: Math.random() * 1024 + 512
     }));
     
-    console.log('✅ Benchmarks completed');
+    console.info('✅ Benchmarks completed');
     // return benchmarkResults;
   }
 
@@ -112,7 +112,7 @@ class DuoPlusIntegration {
    * Update analytics dashboard with DuoPlus data
    */
   private async updateDashboard(): Promise<void> {
-    console.log('📈 Updating analytics dashboard with DuoPlus data...');
+    console.info('📈 Updating analytics dashboard with DuoPlus data...');
     
     const dashboardData = {
       duoplus: {
@@ -134,14 +134,14 @@ class DuoPlusIntegration {
     // Update dashboard data file
     await Bun.write('data/duoplus-integration.json', JSON.stringify(dashboardData, null, 2));
     
-    console.log('✅ Analytics dashboard updated');
+    console.info('✅ Analytics dashboard updated');
   }
 
   /**
    * Export integration results
    */
   private async exportResults(): Promise<void> {
-    console.log('💾 Exporting integration results...');
+    console.info('💾 Exporting integration results...');
     
     const integrationReport = {
       timestamp: new Date().toISOString(),
@@ -174,39 +174,39 @@ class DuoPlusIntegration {
     
     await Bun.write('reports/duoplus-integration-report.json', JSON.stringify(integrationReport, null, 2));
     
-    console.log('✅ Integration report exported');
+    console.info('✅ Integration report exported');
   }
 
   /**
    * Display integration summary
    */
   displaySummary(): void {
-    console.log('');
-    console.log('📊 DuoPlus Integration Summary');
-    console.log('===============================');
-    console.log('');
-    console.log('🔧 Components Implemented:');
-    console.log('  ✅ Changelog Parser & Matrix Generator');
-    console.log('  ✅ Performance Benchmark Suite');
-    console.log('  ✅ RPA Integration Framework');
-    console.log('  ✅ Anti-Detection Testing');
-    console.log('  ✅ Constants & Type Definitions');
-    console.log('  ✅ Git Hooks & Automation');
-    console.log('');
-    console.log('📈 Available Commands:');
-    console.log('  bun run duoplus-parse          # Parse changelogs');
-    console.log('  bun run duoplus-benchmark      # Run benchmarks');
-    console.log('  bun run duoplus-simulate       # Simulate anti-detection');
-    console.log('  bun run rpa-benchmark          # Test RPA performance');
-    console.log('  bun run changelog-parse        # Parse general changelogs');
-    console.log('');
-    console.log('📁 Documentation Structure:');
-    console.log('  docs/changelogs/               # Matrix and constants');
-    console.log('  scripts/maintenance/parse-duoplus-log.ts   # Auto-parser');
-    console.log('  src/core/rpa/                  # RPA integration');
-    console.log('  perf/android-fingerprint.ts    # Performance tests');
-    console.log('');
-    console.log('🚀 Ready for production use!');
+    console.info('');
+    console.info('📊 DuoPlus Integration Summary');
+    console.info('===============================');
+    console.info('');
+    console.info('🔧 Components Implemented:');
+    console.info('  ✅ Changelog Parser & Matrix Generator');
+    console.info('  ✅ Performance Benchmark Suite');
+    console.info('  ✅ RPA Integration Framework');
+    console.info('  ✅ Anti-Detection Testing');
+    console.info('  ✅ Constants & Type Definitions');
+    console.info('  ✅ Git Hooks & Automation');
+    console.info('');
+    console.info('📈 Available Commands:');
+    console.info('  bun run duoplus-parse          # Parse changelogs');
+    console.info('  bun run duoplus-benchmark      # Run benchmarks');
+    console.info('  bun run duoplus-simulate       # Simulate anti-detection');
+    console.info('  bun run rpa-benchmark          # Test RPA performance');
+    console.info('  bun run changelog-parse        # Parse general changelogs');
+    console.info('');
+    console.info('📁 Documentation Structure:');
+    console.info('  docs/changelogs/               # Matrix and constants');
+    console.info('  scripts/maintenance/parse-duoplus-log.ts   # Auto-parser');
+    console.info('  src/core/rpa/                  # RPA integration');
+    console.info('  perf/android-fingerprint.ts    # Performance tests');
+    console.info('');
+    console.info('🚀 Ready for production use!');
   }
 }
 
@@ -216,22 +216,22 @@ if (import.meta.main) {
     const args = process.argv.slice(2);
     
     if (args.includes('--help') || args.includes('-h')) {
-      console.log('🚀 DuoPlus Integration System');
-      console.log('');
-      console.log('Usage: bun scripts/integrate-changelog.ts [options]');
-      console.log('');
-      console.log('Options:');
-      console.log('  --benchmarks     Run performance benchmarks');
-      console.log('  --no-matrix       Skip matrix generation');
-      console.log('  --update-dashboard Update analytics dashboard');
-      console.log('  --no-export       Skip result export');
-      console.log('  --summary         Show integration summary');
-      console.log('  --help, -h        Show this help message');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun scripts/integrate-changelog.ts');
-      console.log('  bun scripts/integrate-changelog.ts --benchmarks');
-      console.log('  bun scripts/integrate-changelog.ts --summary');
+      console.info('🚀 DuoPlus Integration System');
+      console.info('');
+      console.info('Usage: bun scripts/integrate-changelog.ts [options]');
+      console.info('');
+      console.info('Options:');
+      console.info('  --benchmarks     Run performance benchmarks');
+      console.info('  --no-matrix       Skip matrix generation');
+      console.info('  --update-dashboard Update analytics dashboard');
+      console.info('  --no-export       Skip result export');
+      console.info('  --summary         Show integration summary');
+      console.info('  --help, -h        Show this help message');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun scripts/integrate-changelog.ts');
+      console.info('  bun scripts/integrate-changelog.ts --benchmarks');
+      console.info('  bun scripts/integrate-changelog.ts --summary');
       process.exit(0);
     }
 

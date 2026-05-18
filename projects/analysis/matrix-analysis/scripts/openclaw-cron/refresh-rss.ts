@@ -12,22 +12,22 @@ const RSS_FEEDS = [
 ];
 
 async function refreshRSS() {
-  console.log("📰 Refreshing RSS feeds...");
+  console.info("📰 Refreshing RSS feeds...");
   
   for (const feed of RSS_FEEDS) {
     try {
       const response = await fetch(feed);
       if (response.ok) {
-        console.log(`  ✅ ${feed}`);
+        console.info(`  ✅ ${feed}`);
       } else {
-        console.log(`  ⚠️  ${feed} - ${response.status}`);
+        console.info(`  ⚠️  ${feed} - ${response.status}`);
       }
     } catch (error) {
-      console.log(`  ❌ ${feed} - ${error.message}`);
+      console.info(`  ❌ ${feed} - ${error.message}`);
     }
   }
   
-  console.log("✅ RSS refresh complete");
+  console.info("✅ RSS refresh complete");
 }
 
 refreshRSS();

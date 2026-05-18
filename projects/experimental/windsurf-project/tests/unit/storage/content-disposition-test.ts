@@ -5,8 +5,8 @@ export {}; // Make this a module
 
 import { R2ContentManager } from '../src/storage/r2-content-manager';
 
-console.log('🧪 TESTING CONTENT-DISPOSITION BEHAVIOR');
-console.log('='.repeat(50));
+console.info('🧪 TESTING CONTENT-DISPOSITION BEHAVIOR');
+console.info('='.repeat(50));
 
 class ContentDispositionTester {
   private testResults: { test: string; status: string; details: string }[] = [];
@@ -17,13 +17,13 @@ class ContentDispositionTester {
 
   addResult(test: string, status: string, details: string) {
     this.testResults.push({ test, status, details });
-    console.log(`${status} ${test}`);
-    console.log(`   ${details}`);
+    console.info(`${status} ${test}`);
+    console.info(`   ${details}`);
   }
 
   async testSmartDisposition() {
-    console.log('\n📋 TEST 1: Smart Disposition Logic');
-    console.log('─'.repeat(40));
+    console.info('\n📋 TEST 1: Smart Disposition Logic');
+    console.info('─'.repeat(40));
 
     const manager = new R2ContentManager('test-bucket');
     
@@ -71,8 +71,8 @@ class ContentDispositionTester {
   }
 
   async testContentTypeMapping() {
-    console.log('\n📋 TEST 2: Content Type Mapping');
-    console.log('─'.repeat(40));
+    console.info('\n📋 TEST 2: Content Type Mapping');
+    console.info('─'.repeat(40));
 
     const contentTypeTests = [
       { ext: 'html', expected: 'text/html' },
@@ -121,8 +121,8 @@ class ContentDispositionTester {
   }
 
   async testCacheControlStrategy() {
-    console.log('\n📋 TEST 3: Cache Control Strategy');
-    console.log('─'.repeat(40));
+    console.info('\n📋 TEST 3: Cache Control Strategy');
+    console.info('─'.repeat(40));
 
     const cacheTests = [
       { ext: 'css', expected: 'public, max-age=31536000', reason: '1 year cache' },
@@ -158,8 +158,8 @@ class ContentDispositionTester {
   }
 
   async testCSVGeneration() {
-    console.log('\n📋 TEST 4: CSV Generation');
-    console.log('─'.repeat(40));
+    console.info('\n📋 TEST 4: CSV Generation');
+    console.info('─'.repeat(40));
 
     const testData = [
       { name: 'John Doe', age: 30, city: 'New York' },
@@ -214,8 +214,8 @@ class ContentDispositionTester {
   }
 
   async testReportGeneration() {
-    console.log('\n📋 TEST 5: Report Generation');
-    console.log('─'.repeat(40));
+    console.info('\n📋 TEST 5: Report Generation');
+    console.info('─'.repeat(40));
 
     const testData = {
       totalUsers: 1000,
@@ -254,7 +254,7 @@ class ContentDispositionTester {
   }
 
   async runAllTests() {
-    console.log('🚀 Running Content-Disposition Tests...\n');
+    console.info('🚀 Running Content-Disposition Tests...\n');
     
     await this.testSmartDisposition();
     await this.testContentTypeMapping();
@@ -266,28 +266,28 @@ class ContentDispositionTester {
   }
 
   printSummary() {
-    console.log('\n📊 TEST SUMMARY');
-    console.log('─'.repeat(50));
+    console.info('\n📊 TEST SUMMARY');
+    console.info('─'.repeat(50));
 
     const passed = this.testResults.filter(r => r.status === '✅').length;
     const failed = this.testResults.filter(r => r.status === '❌').length;
     const total = this.testResults.length;
 
-    console.log(`Total Tests: ${total}`);
-    console.log(`Passed: ${passed} ✅`);
-    console.log(`Failed: ${failed} ❌`);
-    console.log(`Success Rate: ${((passed / total) * 100).toFixed(1)}%`);
+    console.info(`Total Tests: ${total}`);
+    console.info(`Passed: ${passed} ✅`);
+    console.info(`Failed: ${failed} ❌`);
+    console.info(`Success Rate: ${((passed / total) * 100).toFixed(1)}%`);
 
     if (failed > 0) {
-      console.log('\n❌ Failed Tests:');
+      console.info('\n❌ Failed Tests:');
       this.testResults
         .filter(r => r.status === '❌')
-        .forEach(r => console.log(`   • ${r.test}: ${r.details}`));
+        .forEach(r => console.info(`   • ${r.test}: ${r.details}`));
     }
 
-    console.log('\n🎯 CONTENT-DISPOSITION TEST COMPLETE!');
-    console.log('✅ §Pattern:123.1 behavior verified');
-    console.log(`${failed === 0 ? '✅' : '⚠️'} All tests ${failed === 0 ? 'passed' : 'completed with issues'}`);
+    console.info('\n🎯 CONTENT-DISPOSITION TEST COMPLETE!');
+    console.info('✅ §Pattern:123.1 behavior verified');
+    console.info(`${failed === 0 ? '✅' : '⚠️'} All tests ${failed === 0 ? 'passed' : 'completed with issues'}`);
   }
 }
 

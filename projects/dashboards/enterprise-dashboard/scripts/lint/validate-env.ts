@@ -19,12 +19,12 @@ const ENV_FILE_PATTERNS = [
 ];
 
 async function main() {
-  console.log("🔍 Environment Validation");
-  console.log("=".repeat(60));
+  console.info("🔍 Environment Validation");
+  console.info("=".repeat(60));
 
   // Check .env files
-  console.log("\n📁 .env Files");
-  console.log("-".repeat(30));
+  console.info("\n📁 .env Files");
+  console.info("-".repeat(30));
 
   let foundAny = false;
   for (const pattern of ENV_FILE_PATTERNS) {
@@ -34,48 +34,48 @@ async function main() {
       foundAny = true;
       const content = await file.text();
       const lines = content.split("\n").filter((l) => l.trim() && !l.trim().startsWith("#"));
-      console.log(`  ✅ ${pattern} (${lines.length} variables)`);
+      console.info(`  ✅ ${pattern} (${lines.length} variables)`);
     }
   }
   
   if (!foundAny) {
-    console.log("  ⚠️  No .env files found");
-    console.log("  💡 Copy .env.example to .env and configure");
+    console.info("  ⚠️  No .env files found");
+    console.info("  💡 Copy .env.example to .env and configure");
   }
 
   // Validate environment
-  console.log("\n🔐 Environment Validation");
-  console.log("-".repeat(30));
+  console.info("\n🔐 Environment Validation");
+  console.info("-".repeat(30));
   
   const result = validateEnvironment();
   
   if (result.valid) {
-    console.log("  ✅ All critical checks passed");
+    console.info("  ✅ All critical checks passed");
   } else {
-    console.log(`  ❌ ${result.errors.length} error(s) found`);
+    console.info(`  ❌ ${result.errors.length} error(s) found`);
     for (const error of result.errors) {
-      console.log(`     - ${error}`);
+      console.info(`     - ${error}`);
     }
   }
   
   if (result.warnings.length > 0) {
-    console.log(`\n  ⚠️  ${result.warnings.length} warning(s):`);
+    console.info(`\n  ⚠️  ${result.warnings.length} warning(s):`);
     for (const warning of result.warnings) {
-      console.log(`     - ${warning}`);
+      console.info(`     - ${warning}`);
     }
   }
 
   // Print summary
-  console.log("");
+  console.info("");
   printEnvironmentSummary();
   
   // Exit code
   if (!result.valid) {
-    console.log("❌ Validation failed");
+    console.info("❌ Validation failed");
     process.exit(1);
   }
   
-  console.log("✅ Environment validation complete");
+  console.info("✅ Environment validation complete");
 }
 
 main().catch((error) => {

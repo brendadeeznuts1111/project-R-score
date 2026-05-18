@@ -5,7 +5,7 @@ async function runStringWidthBench() {
   const iterations = 100000;
   const testString = "🚀 Bun's Zig SIMD stringWidth Test! ⚡️";
   
-  console.log(`🚀 Benchmarking Bun.stringWidth (SIMD Zig) - ${iterations.toLocaleString()} iterations...`);
+  console.info(`🚀 Benchmarking Bun.stringWidth (SIMD Zig) - ${iterations.toLocaleString()} iterations...`);
 
   // 1. Native stringWidth
   const startNative = performance.now();
@@ -24,11 +24,11 @@ async function runStringWidthBench() {
   const endJs = performance.now();
   const timeJs = endJs - startJs;
 
-  console.log(`\n--- Results ---`);
-  console.log(`Native Zig SIMD: ${(timeNative * 1000 / iterations).toFixed(2)}ns per call`);
-  console.log(`JS Baseline: ${(timeJs * 1000 / iterations).toFixed(2)}ns per call`);
+  console.info(`\n--- Results ---`);
+  console.info(`Native Zig SIMD: ${(timeNative * 1000 / iterations).toFixed(2)}ns per call`);
+  console.info(`JS Baseline: ${(timeJs * 1000 / iterations).toFixed(2)}ns per call`);
   
-  console.log(`\n✅ Passes string-width's tests with Latin1, UTF-16, and UTF-8 support.`);
+  console.info(`\n✅ Passes string-width's tests with Latin1, UTF-16, and UTF-8 support.`);
 }
 
 runStringWidthBench();

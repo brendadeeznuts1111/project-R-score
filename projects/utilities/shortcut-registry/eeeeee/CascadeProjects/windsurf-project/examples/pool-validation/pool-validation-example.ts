@@ -87,23 +87,23 @@ export class PoolValidator {
     const validation = PoolValidator.validatePoolDetails(poolDetails);
     
     if (!validation.isValid) {
-      console.log("\n❌ Pool data validation failed:");
-      validation.errors.forEach((error: string) => console.log(`   • ${error}`));
+      console.info("\n❌ Pool data validation failed:");
+      validation.errors.forEach((error: string) => console.info(`   • ${error}`));
       return;
     }
 
     if (validation.warnings.length > 0) {
-      console.log("\n⚠️  Pool data warnings:");
-      validation.warnings.forEach((warning: string) => console.log(`   • ${warning}`));
+      console.info("\n⚠️  Pool data warnings:");
+      validation.warnings.forEach((warning: string) => console.info(`   • ${warning}`));
     }
 
-    console.log(`\n📊 Detailed Pool Analysis: ${poolDetails.poolName}`);
-    console.log(`  • Current APY: ${poolDetails.apy.toFixed(2)}%`);
-    console.log(`  • Balance: $${poolDetails.balance.toLocaleString()}`);
-    console.log(`  • Members: ${poolDetails.members}`);
-    console.log(`  • 24h Volume: $${poolDetails.volume24h.toLocaleString()}`);
-    console.log(`  • 30d Yield: $${poolDetails.yieldGenerated.toFixed(2)}`);
-    console.log(`  • Risk Score: ${poolDetails.riskScore}/100`);
-    console.log(`  • Tier: ${poolDetails.tier.toUpperCase()}`);
+    console.info(`\n📊 Detailed Pool Analysis: ${poolDetails.poolName}`);
+    console.info(`  • Current APY: ${poolDetails.apy.toFixed(2)}%`);
+    console.info(`  • Balance: $${poolDetails.balance.toLocaleString()}`);
+    console.info(`  • Members: ${poolDetails.members}`);
+    console.info(`  • 24h Volume: $${poolDetails.volume24h.toLocaleString()}`);
+    console.info(`  • 30d Yield: $${poolDetails.yieldGenerated.toFixed(2)}`);
+    console.info(`  • Risk Score: ${poolDetails.riskScore}/100`);
+    console.info(`  • Tier: ${poolDetails.tier.toUpperCase()}`);
   }
 }

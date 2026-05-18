@@ -45,10 +45,10 @@ export class HTMLServer {
    * Start the HTML server with automatic ETag caching
    */
   start(): void {
-    console.log('🚀 Starting HTML Template Server...');
-    console.log(`📍 Server: http://${this.config.hostname}:${this.config.port}`);
-    console.log(`🔄 Development Mode: ${this.config.development}`);
-    console.log(`📦 ETag Caching: ${this.config.enableCaching ? 'Enabled' : 'Disabled'}`);
+    console.info('🚀 Starting HTML Template Server...');
+    console.info(`📍 Server: http://${this.config.hostname}:${this.config.port}`);
+    console.info(`🔄 Development Mode: ${this.config.development}`);
+    console.info(`📦 ETag Caching: ${this.config.enableCaching ? 'Enabled' : 'Disabled'}`);
 
     const server = Bun.serve({
       port: this.config.port,
@@ -100,27 +100,27 @@ export class HTMLServer {
 
     // Setup graceful shutdown
     process.on('SIGINT', () => {
-      console.log('\n🛑 Shutting down HTML server...');
+      console.info('\n🛑 Shutting down HTML server...');
       server.stop();
       process.exit(0);
     });
 
-    console.log('✅ HTML Server started successfully!');
-    console.log('📋 Available endpoints:');
-    console.log(`   📊 Dashboard: http://${this.config.hostname}:${this.config.port}/`);
-    console.log(
+    console.info('✅ HTML Server started successfully!');
+    console.info('📋 Available endpoints:');
+    console.info(`   📊 Dashboard: http://${this.config.hostname}:${this.config.port}/`);
+    console.info(
       `   📈 Reports: http://${this.config.hostname}:${this.config.port}/reports/financial`
     );
-    console.log(
+    console.info(
       `   💳 Collections: http://${this.config.hostname}:${this.config.port}/reports/collections`
     );
-    console.log(
+    console.info(
       `   📋 Regulatory: http://${this.config.hostname}:${this.config.port}/reports/regulatory`
     );
-    console.log(
+    console.info(
       `   📊 Cache Stats: http://${this.config.hostname}:${this.config.port}/cache-stats`
     );
-    console.log(`   🔄 Auto-reload: ${this.config.development ? 'Enabled' : 'Disabled'}`);
+    console.info(`   🔄 Auto-reload: ${this.config.development ? 'Enabled' : 'Disabled'}`);
   }
 
   /**
@@ -395,12 +395,12 @@ export class HTMLServer {
    */
   private displayCacheInfo(): void {
     const stats = htmlTemplateManager.getCacheStats();
-    console.log('\n📊 Template Cache Status:');
-    console.log(`   📈 Hit Rate: ${stats.hitRate.toFixed(2)}%`);
-    console.log(`   📦 Entries: ${stats.entries}`);
-    console.log(`   💾 Size: ${(stats.totalSize / 1024).toFixed(2)} KB`);
-    console.log(`   🎯 Max Size: ${(stats.maxSize / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`   🏃 Auto-preload: ${envConfig.app.isProduction ? 'Enabled' : 'Disabled'}\n`);
+    console.info('\n📊 Template Cache Status:');
+    console.info(`   📈 Hit Rate: ${stats.hitRate.toFixed(2)}%`);
+    console.info(`   📦 Entries: ${stats.entries}`);
+    console.info(`   💾 Size: ${(stats.totalSize / 1024).toFixed(2)} KB`);
+    console.info(`   🎯 Max Size: ${(stats.maxSize / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`   🏃 Auto-preload: ${envConfig.app.isProduction ? 'Enabled' : 'Disabled'}\n`);
   }
 }
 
@@ -417,7 +417,7 @@ export function startHTMLServer(config?: ServerConfig): HTMLServer {
  * Demo server for testing ETag caching
  */
 export async function demoETagCaching(): Promise<void> {
-  console.log('🚀 Demonstrating Bun ETag Caching...\n');
+  console.info('🚀 Demonstrating Bun ETag Caching...\n');
 
   const server = new Bun.serve({
     port: 0, // Auto-assign port
@@ -445,42 +445,42 @@ export async function demoETagCaching(): Promise<void> {
   });
 
   const demoUrl = new URL('/demo', server.url);
-  console.log(`🌐 Demo URL: ${demoUrl.href}`);
+  console.info(`🌐 Demo URL: ${demoUrl.href}`);
 
   try {
     // First request - should get ETag
-    console.log('📡 First request (should get ETag)...');
+    console.info('📡 First request (should get ETag)...');
     const firstResponse = await fetch(demoUrl);
     const etag = firstResponse.headers.get('etag');
-    console.log(`   📋 Status: ${firstResponse.status}`);
-    console.log(`   🏷️  ETag: ${etag}`);
-    console.log(`   📊 Content-Length: ${firstResponse.headers.get('content-length')}`);
+    console.info(`   📋 Status: ${firstResponse.status}`);
+    console.info(`   🏷️  ETag: ${etag}`);
+    console.info(`   📊 Content-Length: ${firstResponse.headers.get('content-length')}`);
 
     if (etag) {
       // Second request with If-None-Match - should get 304
-      console.log('\n📡 Second request (with If-None-Match)...');
+      console.info('\n📡 Second request (with If-None-Match)...');
       const secondResponse = await fetch(demoUrl, {
         headers: {
           'If-None-Match': etag,
         },
       });
 
-      console.log(`   📋 Status: ${secondResponse.status}`);
-      console.log(
+      console.info(`   📋 Status: ${secondResponse.status}`);
+      console.info(
         `   📊 Content-Length: ${secondResponse.headers.get('content-length') || '0 (cached)'}`
       );
 
       if (secondResponse.status === 304) {
-        console.log('   ✅ ETag caching working! Server returned 304 Not Modified');
-        console.log('   💾 Bandwidth saved by not re-sending unchanged content');
+        console.info('   ✅ ETag caching working! Server returned 304 Not Modified');
+        console.info('   💾 Bandwidth saved by not re-sending unchanged content');
       } else {
-        console.log('   ⚠️  ETag caching may not be working as expected');
+        console.info('   ⚠️  ETag caching may not be working as expected');
       }
     }
   } catch (error) {
     console.error('❌ Error during ETag demo:', error);
   } finally {
     server.stop();
-    console.log('\n🏁 ETag caching demo completed!');
+    console.info('\n🏁 ETag caching demo completed!');
   }
 }

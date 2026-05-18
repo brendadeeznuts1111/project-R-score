@@ -14,24 +14,24 @@ import { validateShortcuts } from '../../../../wind/src/macros/validateShortcuts
 import { getBuildInfo } from '../../../../wind/src/macros/getBuildInfo.ts' with { type: 'macro' };
 import { getGitCommitHash, getShortCommitHash } from '../../../../wind/src/macros/getGitCommitHash.ts' with { type: 'macro' };
 
-console.log('🔨 Building WindSurf Project with ShortcutRegistry integration...\n');
+console.info('🔨 Building WindSurf Project with ShortcutRegistry integration...\n');
 
 try {
   // Validate shortcuts at build-time
-  console.log('✅ Validating shortcuts...');
+  console.info('✅ Validating shortcuts...');
   validateShortcuts();
-  console.log('   ✓ All shortcuts are valid\n');
+  console.info('   ✓ All shortcuts are valid\n');
 
   // Get build information
-  console.log('📦 Gathering build information...');
+  console.info('📦 Gathering build information...');
   const buildInfo = await getBuildInfo();
   const commitHash = getGitCommitHash();
   const shortCommit = getShortCommitHash();
   
-  console.log(`   Version: ${buildInfo.version}`);
-  console.log(`   Build Time: ${buildInfo.buildTime}`);
-  console.log(`   Git Commit: ${shortCommit}`);
-  console.log(`   Platform: ${buildInfo.platform}\n`);
+  console.info(`   Version: ${buildInfo.version}`);
+  console.info(`   Build Time: ${buildInfo.buildTime}`);
+  console.info(`   Git Commit: ${shortCommit}`);
+  console.info(`   Platform: ${buildInfo.platform}\n`);
 
   // Create build metadata
   const buildMetadata = {
@@ -49,11 +49,11 @@ try {
   // Write build metadata to file
   const metadataPath = './build-metadata.json';
   await Bun.write(metadataPath, JSON.stringify(buildMetadata, null, 2));
-  console.log(`📝 Build metadata written to ${metadataPath}\n`);
+  console.info(`📝 Build metadata written to ${metadataPath}\n`);
 
-  console.log('✅ Build completed successfully!');
-  console.log('   Shortcuts validated and embedded at build-time');
-  console.log('   Build metadata available in build-metadata.json\n');
+  console.info('✅ Build completed successfully!');
+  console.info('   Shortcuts validated and embedded at build-time');
+  console.info('   Build metadata available in build-metadata.json\n');
 
 } catch (error) {
   console.error('❌ Build failed:', error);

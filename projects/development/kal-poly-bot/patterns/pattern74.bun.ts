@@ -66,11 +66,11 @@ export class CrossBookProviderSyncKF {
       securityLevel: "HARDENED",
     };
 
-    console.log("🔧 Pattern #74: Cross-Book Provider Sync initialized");
-    console.log(
+    console.info("🔧 Pattern #74: Cross-Book Provider Sync initialized");
+    console.info(
       `   Security context: ${Object.keys(this.securityContext).length} globals`
     );
-    console.log(
+    console.info(
       `   Trusted providers: ${(this.providerConfig.trustedDependencies as string[]).length}`
     );
   }
@@ -236,8 +236,8 @@ export class CrossBookProviderSyncKF {
 
   // Performance monitoring
   benchmark(iterations: number = 10000): void {
-    console.log("🧪 Pattern #74: Security Hardening Benchmark");
-    console.log("===========================================");
+    console.info("🧪 Pattern #74: Security Hardening Benchmark");
+    console.info("===========================================");
 
     const testTick: BookTick = {
       price: 100.5,
@@ -262,20 +262,20 @@ export class CrossBookProviderSyncKF {
     }
     const fingerprintTime = performance.now() - fingerprintStart;
 
-    console.log(
+    console.info(
       `   Validation: ${validationTime.toFixed(2)}ms (${(validationTime / iterations).toFixed(4)}ms per call)`
     );
-    console.log(
+    console.info(
       `   Fingerprint: ${fingerprintTime.toFixed(2)}ms (${(fingerprintTime / iterations).toFixed(4)}ms per call)`
     );
-    console.log(`   Total: ${(validationTime + fingerprintTime).toFixed(2)}ms`);
-    console.log(`   Security: ✅ CVE-2024 mitigated`);
+    console.info(`   Total: ${(validationTime + fingerprintTime).toFixed(2)}ms`);
+    console.info(`   Security: ✅ CVE-2024 mitigated`);
   }
 
   // Demonstration function
   static demonstrate(): void {
-    console.log("🚀 Pattern #74: Cross-Book Provider Sync");
-    console.log("========================================");
+    console.info("🚀 Pattern #74: Cross-Book Provider Sync");
+    console.info("========================================");
 
     const detector = new CrossBookProviderSyncKF();
 
@@ -310,24 +310,24 @@ export class CrossBookProviderSyncKF {
     const alert = detector.detectProviderGlitch(bookA, bookB, bookC);
 
     if (alert) {
-      console.log(`🚨 Alert detected: ${alert.glitchType}`);
-      console.log(`   Action: ${alert.action}`);
-      console.log(`   Confidence: ${(alert.confidence * 100).toFixed(1)}%`);
+      console.info(`🚨 Alert detected: ${alert.glitchType}`);
+      console.info(`   Action: ${alert.action}`);
+      console.info(`   Confidence: ${(alert.confidence * 100).toFixed(1)}%`);
     } else {
-      console.log("✅ No provider glitches detected");
+      console.info("✅ No provider glitches detected");
     }
 
     // Security audit
     const audit = detector.auditSecurity();
-    console.log(`🔒 Security: ${audit.secure ? "✅" : "❌"}`);
+    console.info(`🔒 Security: ${audit.secure ? "✅" : "❌"}`);
     if (!audit.secure) {
-      audit.issues.forEach((issue) => console.log(`   ⚠️  ${issue}`));
+      audit.issues.forEach((issue) => console.info(`   ⚠️  ${issue}`));
     }
 
     // Performance benchmark
     detector.benchmark(1000);
 
-    console.log("\n✅ Pattern #74 demonstration complete");
+    console.info("\n✅ Pattern #74 demonstration complete");
   }
 }
 

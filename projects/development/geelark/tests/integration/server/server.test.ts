@@ -27,7 +27,7 @@ test("🌐 Bun.serve - Full Type Coverage", () => {
   expectTypeOf(server.hostname).toEqualTypeOf<string>();
   expectTypeOf(server.pendingRequests).toEqualTypeOf<number>();
 
-  console.log(
+  console.info(
     `✅ Server types: ${server.protocol}://${server.hostname}:${server.port}`
   );
 
@@ -51,13 +51,13 @@ test("🔒 HTTPS Server - Typed Protocol", () => {
     expectTypeOf(httpsServer.protocol).toEqualTypeOf<"http" | "https">();
     expect(httpsServer.protocol).toBe("https");
 
-    console.log(
+    console.info(
       `✅ HTTPS Server: ${httpsServer.protocol}://${httpsServer.hostname}:${httpsServer.port}`
     );
 
     httpsServer.stop();
   } catch (error) {
-    console.log("⚠️ HTTPS test skipped (invalid TLS certs)");
+    console.info("⚠️ HTTPS test skipped (invalid TLS certs)");
     expect(true).toBe(true); // Skip test gracefully
   }
 });
@@ -82,7 +82,7 @@ test("📡 Protocol Detection", () => {
   expect(httpServer.url.hostname).toBe("localhost");
   expect(httpServer.url.port).toBe(String(httpServer.port));
 
-  console.log(`✅ HTTP: ${httpServer.protocol} @ ${httpServer.port}`);
+  console.info(`✅ HTTP: ${httpServer.protocol} @ ${httpServer.port}`);
 
   httpServer.stop();
 });
@@ -110,7 +110,7 @@ test("🔄 Server Properties Consistency", () => {
   expectTypeOf(server.hostname).toEqualTypeOf<string>();
   expectTypeOf(server.pendingRequests).toEqualTypeOf<number>();
 
-  console.log(`✅ Consistent server: ${server.url.href}`);
+  console.info(`✅ Consistent server: ${server.url.href}`);
 
   server.stop();
 });
@@ -130,7 +130,7 @@ test("🚀 Production-like HTTP Setup", () => {
   expect(prodServer.hostname).toBe("0.0.0.0");
   expect(prodServer.url.href).toMatch(/^http:\/\//);
 
-  console.log(
+  console.info(
     `✅ Production server: ${prodServer.protocol}://${prodServer.hostname}:${prodServer.port}`
   );
 
@@ -161,7 +161,7 @@ test("🔍 Protocol Type Testing", () => {
     expect(server.url.protocol).toBe("https:");
   }
 
-  console.log(`✅ Protocol: ${server.protocol}, URL: ${server.url.href}`);
+  console.info(`✅ Protocol: ${server.protocol}, URL: ${server.url.href}`);
 
   server.stop();
 });
@@ -188,10 +188,10 @@ test("🔥 Bun.serve - EVERY Method Typed", async () => {
         ws.send(`Echo: ${message}`);
       },
       open(ws: WebSocket) {
-        console.log("WebSocket opened");
+        console.info("WebSocket opened");
       },
       close(ws: WebSocket) {
-        console.log("WebSocket closed");
+        console.info("WebSocket closed");
       },
     },
   });
@@ -257,7 +257,7 @@ test("🔥 Bun.serve - EVERY Method Typed", async () => {
   // Note: reload() requires routes object, skipping in test
   expectTypeOf(server.reload).toEqualTypeOf<(routes: any) => void>();
 
-  console.log(`✅ Full API test: ${server.url.href}`);
+  console.info(`✅ Full API test: ${server.url.href}`);
 
   server.stop();
 });
@@ -301,7 +301,7 @@ test("⚡ Advanced Method Return Types", async () => {
   expectTypeOf(publishStatus).toEqualTypeOf<any>(); // Use any since ServerWebSocketSendStatus isn't available
   expect(typeof publishStatus).toBe("number"); // publishStatus returns a number
 
-  console.log(`✅ Advanced return types validated`);
+  console.info(`✅ Advanced return types validated`);
 });
 
 test("🔌 WebSocket - Full Lifecycle", async () => {
@@ -321,10 +321,10 @@ test("🔌 WebSocket - Full Lifecycle", async () => {
         ws.send(`Echo: ${message}`);
       },
       open(ws) {
-        console.log("WebSocket opened");
+        console.info("WebSocket opened");
       },
       close(ws) {
-        console.log("WebSocket closed");
+        console.info("WebSocket closed");
       },
     },
   });
@@ -339,7 +339,7 @@ test("🔌 WebSocket - Full Lifecycle", async () => {
   expectTypeOf(server.subscriberCount).toBeFunction();
   expectTypeOf(server.pendingWebSockets).toBeNumber();
 
-  console.log(`✅ WebSocket server ready: ${wsUrl}`);
+  console.info(`✅ WebSocket server ready: ${wsUrl}`);
 
   server.stop();
 });
@@ -365,7 +365,7 @@ test("⚡ Server Performance Metrics", () => {
   expect(typeof server.id).toBe("string");
   expect(server.id.length).toBeGreaterThanOrEqual(0); // ID can be empty
 
-  console.log(
+  console.info(
     `✅ Performance metrics: ${server.pendingRequests} requests, ${server.pendingWebSockets} websockets`
   );
 
@@ -395,7 +395,7 @@ test("🔄 Server Lifecycle Management", () => {
   expect(typeof server.ref).toBe("function");
   expect(typeof server.unref).toBe("function");
 
-  console.log(`✅ Lifecycle: ${server.url.href} (ref/unref available)`);
+  console.info(`✅ Lifecycle: ${server.url.href} (ref/unref available)`);
 
   // Note: Don't actually call stop() here to allow other tests
   // server.stop();

@@ -68,11 +68,11 @@ class StreamingWidthDemo {
   }
 
   static async execute(): Promise<void> {
-    console.log('🌊 STREAMING WIDTH CALCULATION DEMO\n' + '═'.repeat(60));
+    console.info('🌊 STREAMING WIDTH CALCULATION DEMO\n' + '═'.repeat(60));
     
     const chunks = this.getComplexChunks();
     
-    console.log('\n📊 REAL-TIME WIDTH PROCESSING:\n');
+    console.info('\n📊 REAL-TIME WIDTH PROCESSING:\n');
     
     // Create async iterable stream
     const stream = this.createWidthStream(chunks);
@@ -82,12 +82,12 @@ class StreamingWidthDemo {
       // Simulate processing time
       await new Promise(resolve => setTimeout(resolve, 200));
       
-      console.log(`Chunk ${result.id}: ${result.description}`);
-      console.log(`  Content: ${result.content}`);
-      console.log(`  Raw length: ${result.rawLength} chars`);
-      console.log(`  Display width: ${result.displayWidth} columns`);
-      console.log(`  Efficiency: ${result.efficiency.toFixed(2)}x compression`);
-      console.log(`  Type: ${result.type}\n`);
+      console.info(`Chunk ${result.id}: ${result.description}`);
+      console.info(`  Content: ${result.content}`);
+      console.info(`  Raw length: ${result.rawLength} chars`);
+      console.info(`  Display width: ${result.displayWidth} columns`);
+      console.info(`  Efficiency: ${result.efficiency.toFixed(2)}x compression`);
+      console.info(`  Type: ${result.type}\n`);
     }
     
     // Summary statistics
@@ -121,7 +121,7 @@ class StreamingWidthDemo {
   }
 
   private static showSummary(chunks: StreamChunk[]): void {
-    console.log('📈 SUMMARY STATISTICS:');
+    console.info('📈 SUMMARY STATISTICS:');
     
     const totalRaw = chunks.reduce((sum, chunk) => sum + chunk.content.length, 0);
     const totalDisplay = chunks.reduce((sum, chunk) => 
@@ -141,14 +141,14 @@ class StreamingWidthDemo {
       return stats;
     }, {} as Record<string, { count: number; raw: number; display: number }>);
     
-    console.log(`  Total raw characters: ${totalRaw}`);
-    console.log(`  Total display columns: ${totalDisplay}`);
-    console.log(`  Overall efficiency: ${(totalRaw / totalDisplay).toFixed(2)}x`);
+    console.info(`  Total raw characters: ${totalRaw}`);
+    console.info(`  Total display columns: ${totalDisplay}`);
+    console.info(`  Overall efficiency: ${(totalRaw / totalDisplay).toFixed(2)}x`);
     
-    console.log('\n  By type:');
+    console.info('\n  By type:');
     Object.entries(typeStats).forEach(([type, stats]) => {
       const efficiency = stats.raw / stats.display;
-      console.log(`    ${type}: ${stats.count} chunks, ${efficiency.toFixed(2)}x efficiency`);
+      console.info(`    ${type}: ${stats.count} chunks, ${efficiency.toFixed(2)}x efficiency`);
     });
   }
 }

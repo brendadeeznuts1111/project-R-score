@@ -537,8 +537,8 @@ export class LatestBunFeaturesCLI {
       // Payment transaction logging
       loggingExamples.push({
         name: "Payment Transaction Logging",
-        before: "console.log('Payment data:', paymentData);",
-        after: "console.log('Processing payment: %j', paymentData);",
+        before: "console.info('Payment data:', paymentData);",
+        after: "console.info('Processing payment: %j', paymentData);",
         output: 'Processing payment: {"amount":25.5,"to":"alice","familyId":"FAM123"}',
         benefits: [
           "Clean JSON output",
@@ -552,8 +552,8 @@ export class LatestBunFeaturesCLI {
       // Artifact search logging
       loggingExamples.push({
         name: "Artifact Search Logging",
-        before: "console.log('Search results:', results);",
-        after: "console.log('Search completed: %j', results);",
+        before: "console.info('Search results:', results);",
+        after: "console.info('Search completed: %j', results);",
         output: 'Search completed: {"query":"security","count":5,"artifacts":["auth.ts","crypto.ts"]}',
         benefits: [
           "Structured logging",
@@ -567,8 +567,8 @@ export class LatestBunFeaturesCLI {
       // Error logging
       loggingExamples.push({
         name: "Error Logging",
-        before: "console.log('Error occurred:', error);",
-        after: "console.log('Error details: %j', { message: error.message, stack: error.stack });",
+        before: "console.info('Error occurred:', error);",
+        after: "console.info('Error details: %j', { message: error.message, stack: error.stack });",
         output: 'Error details: {"message":"Payment failed","stack":"Error: Payment failed\\n    at processPayment"}',
         benefits: [
           "Structured error reporting",
@@ -710,96 +710,96 @@ export class LatestBunIntegrationCLI {
    * Run complete latest Bun features demonstration
    */
   async runLatestFeaturesDemo(): Promise<void> {
-    console.log('🚀 Latest Bun Features Integration Demo');
-    console.log('='.repeat(70));
+    console.info('🚀 Latest Bun Features Integration Demo');
+    console.info('='.repeat(70));
     
     // Demonstrate URLPattern routing
-    console.log('\n🌐 URLPattern API Integration:');
+    console.info('\n🌐 URLPattern API Integration:');
     const routingResult = this.featuresCLI.demonstrateURLPatternRouting();
-    console.log(`   Routing patterns: ${Object.keys(routingResult.routingSystem.patterns).length}`);
-    console.log(`   Benefits: ${routingResult.routingSystem.benefits.length} improvements`);
-    console.log(`   Status: ✅ Web Platform standard compliance`);
+    console.info(`   Routing patterns: ${Object.keys(routingResult.routingSystem.patterns).length}`);
+    console.info(`   Benefits: ${routingResult.routingSystem.benefits.length} improvements`);
+    console.info(`   Status: ✅ Web Platform standard compliance`);
     
     // Demonstrate fake timers
-    console.log('\n⏱️ Fake Timers Integration:');
+    console.info('\n⏱️ Fake Timers Integration:');
     const timersResult = this.featuresCLI.demonstrateFakeTimers();
-    console.log(`   Test scenarios: ${timersResult.testExamples.length}`);
+    console.info(`   Test scenarios: ${timersResult.testExamples.length}`);
     timersResult.testExamples.forEach(example => {
-      console.log(`   ${example.name}: ${example.status}`);
+      console.info(`   ${example.name}: ${example.status}`);
     });
-    console.log(`   Status: ✅ Rock-solid payment tests`);
+    console.info(`   Status: ✅ Rock-solid payment tests`);
     
     // Demonstrate proxy headers
-    console.log('\n🌐 Custom Proxy Headers Integration:');
+    console.info('\n🌐 Custom Proxy Headers Integration:');
     const proxyResult = this.featuresCLI.demonstrateProxyHeaders();
-    console.log(`   Proxy configurations: ${proxyResult.proxyConfigurations.length}`);
+    console.info(`   Proxy configurations: ${proxyResult.proxyConfigurations.length}`);
     proxyResult.proxyConfigurations.forEach(config => {
-      console.log(`   ${config.name}: ${config.status}`);
+      console.info(`   ${config.name}: ${config.status}`);
     });
-    console.log(`   Status: ✅ Enterprise deployment ready`);
+    console.info(`   Status: ✅ Enterprise deployment ready`);
     
     // Demonstrate SQLite optimizations
-    console.log('\n🗃️ SQLite 3.51.1 Optimizations:');
+    console.info('\n🗃️ SQLite 3.51.1 Optimizations:');
     const sqliteResult = this.featuresCLI.demonstrateSQLiteOptimizations();
-    console.log(`   Optimization features: ${sqliteResult.optimizationFeatures.length}`);
+    console.info(`   Optimization features: ${sqliteResult.optimizationFeatures.length}`);
     sqliteResult.optimizationFeatures.forEach(feature => {
-      console.log(`   ${feature.name}: ${feature.status}`);
+      console.info(`   ${feature.name}: ${feature.status}`);
     });
-    console.log(`   Status: ✅ Faster offline payments`);
+    console.info(`   Status: ✅ Faster offline payments`);
     
     // Demonstrate standalone executables
-    console.log('\n📦 Standalone Executables Integration:');
+    console.info('\n📦 Standalone Executables Integration:');
     const executableResult = this.featuresCLI.demonstrateStandaloneExecutables();
-    console.log(`   Build configurations: ${executableResult.buildConfigurations.length}`);
+    console.info(`   Build configurations: ${executableResult.buildConfigurations.length}`);
     executableResult.buildConfigurations.forEach(config => {
-      console.log(`   ${config.name}: ${config.status}`);
+      console.info(`   ${config.name}: ${config.status}`);
     });
-    console.log(`   Status: ✅ ~40% faster startup`);
+    console.info(`   Status: ✅ ~40% faster startup`);
     
     // Demonstrate console logging
-    console.log('\n📝 Enhanced Console Logging:');
+    console.info('\n📝 Enhanced Console Logging:');
     const loggingResult = this.featuresCLI.demonstrateConsoleLogging();
-    console.log(`   Logging examples: ${loggingResult.loggingExamples.length}`);
+    console.info(`   Logging examples: ${loggingResult.loggingExamples.length}`);
     loggingResult.loggingExamples.forEach(example => {
-      console.log(`   ${example.name}: ${example.status}`);
+      console.info(`   ${example.name}: ${example.status}`);
     });
-    console.log(`   Status: ✅ Better debugging output`);
+    console.info(`   Status: ✅ Better debugging output`);
     
     // Demonstrate bug fixes
-    console.log('\n🛠️ Critical Bug Fixes Integration:');
+    console.info('\n🛠️ Critical Bug Fixes Integration:');
     const bugFixesResult = this.featuresCLI.demonstrateBugFixes();
-    console.log(`   Bug fixes: ${bugFixesResult.bugFixes.length}`);
+    console.info(`   Bug fixes: ${bugFixesResult.bugFixes.length}`);
     bugFixesResult.bugFixes.forEach(fix => {
-      console.log(`   ${fix.name}: ${fix.status}`);
+      console.info(`   ${fix.name}: ${fix.status}`);
     });
-    console.log(`   Status: ✅ Production stability`);
+    console.info(`   Status: ✅ Production stability`);
     
     // Show comprehensive metrics
-    console.log('\n📊 Integration Metrics:');
+    console.info('\n📊 Integration Metrics:');
     const metrics = this.featuresCLI.getIntegrationMetrics();
-    console.log(`   Total features integrated: ${metrics.totalFeaturesIntegrated}`);
-    console.log(`   Average performance improvements: ${metrics.averagePerformanceImprovements.toFixed(1)}`);
-    console.log(`   Average test coverage: ${metrics.averageTestCoverage.toFixed(1)}%`);
-    console.log(`   Average enterprise readiness: ${metrics.averageEnterpriseReadiness.toFixed(1)}%`);
+    console.info(`   Total features integrated: ${metrics.totalFeaturesIntegrated}`);
+    console.info(`   Average performance improvements: ${metrics.averagePerformanceImprovements.toFixed(1)}`);
+    console.info(`   Average test coverage: ${metrics.averageTestCoverage.toFixed(1)}%`);
+    console.info(`   Average enterprise readiness: ${metrics.averageEnterpriseReadiness.toFixed(1)}%`);
     
-    console.log('\n🎉 Latest Bun Features Integration Complete!');
-    console.log('\n💡 Integration Benefits:');
-    console.log('   🌐 URLPattern: Declarative, spec-compliant routing');
-    console.log('   ⏱️ Fake Timers: Rock-solid payment tests');
-    console.log('   🌐 Proxy Headers: Secure enterprise deployments');
-    console.log('   🗃️ SQLite 3.51.1: Faster offline payments');
-    console.log('   📦 Standalone Executables: ~40% faster startup');
-    console.log('   📝 Console Logging: Better debugging with %j');
-    console.log('   🛠️ Bug Fixes: Production stability improvements');
+    console.info('\n🎉 Latest Bun Features Integration Complete!');
+    console.info('\n💡 Integration Benefits:');
+    console.info('   🌐 URLPattern: Declarative, spec-compliant routing');
+    console.info('   ⏱️ Fake Timers: Rock-solid payment tests');
+    console.info('   🌐 Proxy Headers: Secure enterprise deployments');
+    console.info('   🗃️ SQLite 3.51.1: Faster offline payments');
+    console.info('   📦 Standalone Executables: ~40% faster startup');
+    console.info('   📝 Console Logging: Better debugging with %j');
+    console.info('   🛠️ Bug Fixes: Production stability improvements');
     
-    console.log('\n🚀 Action Plan for DuoPlus:');
-    console.log('   1. ✅ Upgrade Bun: bun upgrade');
-    console.log('   2. ✅ Replace path parsing with URLPattern');
-    console.log('   3. ✅ Add fake timer tests for payment logic');
-    console.log('   4. ✅ Enable proxy headers for enterprise deployment');
-    console.log('   5. ✅ Rebuild CLI with --compile for faster startup');
-    console.log('   6. ✅ Use %j in all debug logs');
-    console.log('   7. ✅ Apply critical bug fixes for stability');
+    console.info('\n🚀 Action Plan for DuoPlus:');
+    console.info('   1. ✅ Upgrade Bun: bun upgrade');
+    console.info('   2. ✅ Replace path parsing with URLPattern');
+    console.info('   3. ✅ Add fake timer tests for payment logic');
+    console.info('   4. ✅ Enable proxy headers for enterprise deployment');
+    console.info('   5. ✅ Rebuild CLI with --compile for faster startup');
+    console.info('   6. ✅ Use %j in all debug logs');
+    console.info('   7. ✅ Apply critical bug fixes for stability');
   }
 }
 

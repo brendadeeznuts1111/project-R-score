@@ -116,7 +116,7 @@ class CustomerDataGenerator {
   }
 
   private generateCustomers(): void {
-    console.log('👥 Generating customer records...');
+    console.info('👥 Generating customer records...');
 
     const names = this.generateCustomerNames();
     // Generate multiple variations per name for larger dataset
@@ -226,11 +226,11 @@ class CustomerDataGenerator {
       this.customers.push(customer);
     }
 
-    console.log(`✅ Generated ${this.customers.length} customer records`);
+    console.info(`✅ Generated ${this.customers.length} customer records`);
   }
 
   private generateTransactions(): void {
-    console.log('💰 Generating transaction records...');
+    console.info('💰 Generating transaction records...');
 
     let transactionId = 1;
     const sports = ['NFL', 'NBA', 'MLB', 'NHL', 'Soccer', 'Tennis', 'Golf', 'UFC'];
@@ -320,11 +320,11 @@ class CustomerDataGenerator {
       customer.balance = Math.max(0, currentBalance);
     }
 
-    console.log(`✅ Generated ${this.transactions.length} transaction records`);
+    console.info(`✅ Generated ${this.transactions.length} transaction records`);
   }
 
   private insertCustomers(): void {
-    console.log('📝 Inserting customer records into database...');
+    console.info('📝 Inserting customer records into database...');
 
     // Create customers table if it doesn't exist
     this.db.run(`
@@ -373,20 +373,20 @@ class CustomerDataGenerator {
             ]
           );
         } catch (error) {
-          console.log(`⚠️ Failed to insert customer ${customer.id}:`, error);
+          console.info(`⚠️ Failed to insert customer ${customer.id}:`, error);
         }
       }
 
-      console.log(
+      console.info(
         `  📦 Inserted customers ${i + 1}-${Math.min(i + batchSize, this.customers.length)}`
       );
     }
 
-    console.log(`✅ Successfully inserted ${this.customers.length} customer records`);
+    console.info(`✅ Successfully inserted ${this.customers.length} customer records`);
   }
 
   private insertTransactions(): void {
-    console.log('💳 Inserting transaction records into database...');
+    console.info('💳 Inserting transaction records into database...');
 
     // Create transactions table if it doesn't exist
     this.db.run(`
@@ -429,20 +429,20 @@ class CustomerDataGenerator {
             ]
           );
         } catch (error) {
-          console.log(`⚠️ Failed to insert transaction ${transaction.id}:`, error);
+          console.info(`⚠️ Failed to insert transaction ${transaction.id}:`, error);
         }
       }
 
-      console.log(
+      console.info(
         `  📦 Inserted transactions ${i + 1}-${Math.min(i + batchSize, this.transactions.length)}`
       );
     }
 
-    console.log(`✅ Successfully inserted ${this.transactions.length} transaction records`);
+    console.info(`✅ Successfully inserted ${this.transactions.length} transaction records`);
   }
 
   private updateReadinessFile(): void {
-    console.log('📊 Updating data extraction readiness file...');
+    console.info('📊 Updating data extraction readiness file...');
 
     const readinessData = {
       infrastructure: {
@@ -487,11 +487,11 @@ class CustomerDataGenerator {
     );
 
     await Bun.write(readinessPath, JSON.stringify(readinessData, null, 2));
-    console.log('✅ Updated data extraction readiness file');
+    console.info('✅ Updated data extraction readiness file');
   }
 
   private clearExistingData(): void {
-    console.log('🧹 Clearing existing customer and transaction data...');
+    console.info('🧹 Clearing existing customer and transaction data...');
 
     try {
       // Clear existing data
@@ -499,21 +499,21 @@ class CustomerDataGenerator {
       this.db.run('DELETE FROM customers');
       this.db.run('DELETE FROM sqlite_sequence WHERE name IN ("transactions", "customers")');
 
-      console.log('✅ Existing data cleared');
+      console.info('✅ Existing data cleared');
     } catch (error) {
-      console.log('⚠️ Could not clear existing data (tables may not exist yet)');
+      console.info('⚠️ Could not clear existing data (tables may not exist yet)');
     }
   }
 
   async generate(): Promise<void> {
-    console.log('🚀 Starting comprehensive customer data generation...');
-    console.log('🎯 Target: 15,000+ customer records with extensive transaction history');
-    console.log('📊 BASED ON REALISTIC SPORTS BETTING PLATFORM PATTERNS');
-    console.log('   - Average 50+ transactions per customer');
-    console.log('   - 25% deposits, 35% bets, 15% wins, 25% withdrawals');
-    console.log('   - $50-$1,000 deposit ranges');
-    console.log('   - $10-$1,000 bet amounts');
-    console.log('   - Realistic win/loss ratios');
+    console.info('🚀 Starting comprehensive customer data generation...');
+    console.info('🎯 Target: 15,000+ customer records with extensive transaction history');
+    console.info('📊 BASED ON REALISTIC SPORTS BETTING PLATFORM PATTERNS');
+    console.info('   - Average 50+ transactions per customer');
+    console.info('   - 25% deposits, 35% bets, 15% wins, 25% withdrawals');
+    console.info('   - $50-$1,000 deposit ranges');
+    console.info('   - $10-$1,000 bet amounts');
+    console.info('   - Realistic win/loss ratios');
 
     try {
       // Clear existing data first
@@ -530,41 +530,41 @@ class CustomerDataGenerator {
       // Update readiness file
       this.updateReadinessFile();
 
-      console.log('\\n🎉 COMPREHENSIVE CUSTOMER DATA GENERATION COMPLETED!');
-      console.log(`👥 Total customers: ${this.customers.length.toLocaleString()}`);
-      console.log(`💰 Total transactions: ${this.transactions.length.toLocaleString()}`);
-      console.log(
+      console.info('\\n🎉 COMPREHENSIVE CUSTOMER DATA GENERATION COMPLETED!');
+      console.info(`👥 Total customers: ${this.customers.length.toLocaleString()}`);
+      console.info(`💰 Total transactions: ${this.transactions.length.toLocaleString()}`);
+      console.info(
         `🎯 Average transactions per customer: ${Math.round(this.transactions.length / this.customers.length)}`
       );
-      console.log(
+      console.info(
         `💵 Total betting volume: $${this.transactions
           .filter(t => t.type === 'bet')
           .reduce((sum, t) => sum + t.amount, 0)
           .toLocaleString()}`
       );
-      console.log(
+      console.info(
         `🏆 Total winnings paid: $${this.transactions
           .filter(t => t.type === 'win')
           .reduce((sum, t) => sum + t.amount, 0)
           .toLocaleString()}`
       );
-      console.log(`📈 Readiness score: 100/100`);
+      console.info(`📈 Readiness score: 100/100`);
 
-      console.log('\\n📋 DATA VALIDATION SUMMARY:');
-      console.log(
+      console.info('\\n📋 DATA VALIDATION SUMMARY:');
+      console.info(
         `   ✅ Active customers: ${this.customers.filter(c => c.isActive).length.toLocaleString()} (${Math.round((this.customers.filter(c => c.isActive).length / this.customers.length) * 100)}%)`
       );
-      console.log(
+      console.info(
         `   ✅ High-risk customers: ${this.customers.filter(c => c.riskLevel === 'high').length.toLocaleString()} (${Math.round((this.customers.filter(c => c.riskLevel === 'high').length / this.customers.length) * 100)}%)`
       );
-      console.log(
+      console.info(
         `   ✅ Total account balance: $${this.customers.reduce((sum, c) => sum + c.balance, 0).toLocaleString()}`
       );
-      console.log(
+      console.info(
         `   ✅ Average balance: $${Math.round(this.customers.reduce((sum, c) => sum + c.balance, 0) / this.customers.length)}`
       );
 
-      console.log(
+      console.info(
         '\\n💡 Fantasy42-Fire22 revenue tracking system is now FULLY OPERATIONAL with enterprise-scale customer data!'
       );
     } catch (error) {
@@ -575,7 +575,7 @@ class CustomerDataGenerator {
 
   close(): void {
     this.db.close();
-    console.log('🔒 Database connection closed');
+    console.info('🔒 Database connection closed');
   }
 }
 

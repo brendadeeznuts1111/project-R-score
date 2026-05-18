@@ -91,7 +91,7 @@ function createWebSocketManager(): WebSocketManager {
 
       ws.onopen = () => {
         reconnectAttempts = 0;
-        console.log('[Dashboard] WebSocket connected');
+        console.info('[Dashboard] WebSocket connected');
       };
 
       ws.onmessage = event => {
@@ -104,13 +104,13 @@ function createWebSocketManager(): WebSocketManager {
       };
 
       ws.onclose = () => {
-        console.log('[Dashboard] WebSocket disconnected');
+        console.info('[Dashboard] WebSocket disconnected');
 
         // Attempt reconnection
         if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
           reconnectAttempts++;
           reconnectTimer = setTimeout(() => {
-            console.log(
+            console.info(
               `[Dashboard] Reconnecting... (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`
             );
             connect(url);

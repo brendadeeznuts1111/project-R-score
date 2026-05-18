@@ -18,12 +18,12 @@
 
 const WS_URL = process.env.AUDIT_WS_URL || "ws://localhost:3002/audit/ws";
 
-console.log(`🔌 Connecting to ${WS_URL}...`);
+console.info(`🔌 Connecting to ${WS_URL}...`);
 
 const socket = new WebSocket(WS_URL);
 
 socket.addEventListener("open", () => {
-	console.log("✅ Connected to audit server");
+	console.info("✅ Connected to audit server");
 
 	// Subscribe to audit topics
 	socket.send(
@@ -73,44 +73,44 @@ socket.addEventListener("message", (event) => {
 
 	switch (type) {
 		case "connected":
-			console.log(`✅ Connected as client: ${rest.clientId}`);
-			console.log(`📡 Subscribed to topics: ${rest.topics.join(", ")}`);
+			console.info(`✅ Connected as client: ${rest.clientId}`);
+			console.info(`📡 Subscribed to topics: ${rest.topics.join(", ")}`);
 			break;
 
 		case "subscribed":
-			console.log(`📡 Subscribed to: ${rest.topic}`);
+			console.info(`📡 Subscribed to: ${rest.topic}`);
 			break;
 
 		case "audit_started":
-			console.log(`🚀 Audit started: ${rest.auditId}`);
+			console.info(`🚀 Audit started: ${rest.auditId}`);
 			break;
 
 		case "progress":
-			console.log(`📊 Progress: ${rest.progress}% - ${rest.status || ""}`);
+			console.info(`📊 Progress: ${rest.progress}% - ${rest.status || ""}`);
 			break;
 
 		case "match":
-			console.log(`🔍 Match: ${rest.pattern} in ${rest.file}:${rest.line}`);
+			console.info(`🔍 Match: ${rest.pattern} in ${rest.file}:${rest.line}`);
 			break;
 
 		case "orphan":
-			console.log(`⚠️  Orphan: ${rest.docNumber} in ${rest.file}`);
+			console.info(`⚠️  Orphan: ${rest.docNumber} in ${rest.file}`);
 			break;
 
 		case "audit_completed":
-			console.log(`✅ Audit completed: ${rest.auditId}`);
-			console.log(`   Duration: ${rest.result.duration}ms`);
-			console.log(`   Matches: ${rest.result.totalMatches}`);
-			console.log(`   Orphans: ${rest.result.totalOrphans}`);
-			console.log(`   Undocumented: ${rest.result.totalUndocumented}`);
+			console.info(`✅ Audit completed: ${rest.auditId}`);
+			console.info(`   Duration: ${rest.result.duration}ms`);
+			console.info(`   Matches: ${rest.result.totalMatches}`);
+			console.info(`   Orphans: ${rest.result.totalOrphans}`);
+			console.info(`   Undocumented: ${rest.result.totalUndocumented}`);
 			break;
 
 		case "pong":
-			console.log(`🏓 Pong received`);
+			console.info(`🏓 Pong received`);
 			break;
 
 		default:
-			console.log(`📨 Message:`, data);
+			console.info(`📨 Message:`, data);
 	}
 });
 
@@ -119,13 +119,13 @@ socket.addEventListener("error", (error) => {
 });
 
 socket.addEventListener("close", (event) => {
-	console.log(`👋 Connection closed: Code ${event.code}, Reason: ${event.reason}`);
+	console.info(`👋 Connection closed: Code ${event.code}, Reason: ${event.reason}`);
 	process.exit(0);
 });
 
 // Keep process alive
 process.on("SIGINT", () => {
-	console.log("\n👋 Closing connection...");
+	console.info("\n👋 Closing connection...");
 	socket.close();
 	process.exit(0);
 });

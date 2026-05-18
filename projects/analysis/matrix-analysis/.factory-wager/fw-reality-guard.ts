@@ -261,10 +261,10 @@ export class RealityGuard {
     }
 
     if (expectedMode === "SIMULATED" && actualMode === "LIVE") {
-      console.log(`⚠️  WARNING: System is LIVE but SIMULATED mode requested. Consider using --mode=live for cloud operations.`);
+      console.info(`⚠️  WARNING: System is LIVE but SIMULATED mode requested. Consider using --mode=live for cloud operations.`);
     }
 
-    console.log(`✅ Reality enforcement passed: ${actualMode}`);
+    console.info(`✅ Reality enforcement passed: ${actualMode}`);
   }
 
   private detectMode(): SystemMode {
@@ -285,19 +285,19 @@ export class RealityGuard {
   }
 
   displayReport(report: RealityReport): void {
-    console.log(this.generateHeader(report));
+    console.info(this.generateHeader(report));
 
-    console.log("\n📊 Component Status:");
+    console.info("\n📊 Component Status:");
     console.table(report.components);
 
     if (report.risks.length > 0) {
-      console.log("\n⚠️  Risks:");
-      report.risks.forEach(risk => console.log(`   • ${risk}`));
+      console.info("\n⚠️  Risks:");
+      report.risks.forEach(risk => console.info(`   • ${risk}`));
     }
 
     if (report.recommendations.length > 0) {
-      console.log("\n💡 Recommendations:");
-      report.recommendations.forEach(rec => console.log(`   ${rec}`));
+      console.info("\n💡 Recommendations:");
+      report.recommendations.forEach(rec => console.info(`   ${rec}`));
     }
   }
 
@@ -326,7 +326,7 @@ if (import.meta.main) {
 
     // Exit with error code if mixed reality detected
     if (report.mode === "MIXED") {
-      console.log("\n🚨 EXITING DUE TO MIXED REALITY CONFIGURATION");
+      console.info("\n🚨 EXITING DUE TO MIXED REALITY CONFIGURATION");
       process.exit(1);
     }
 

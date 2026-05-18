@@ -67,7 +67,7 @@ function autoCorrectCommand(command: string) {
   };
   
   if (corrections[command]) {
-    console.log(`💡 Did you mean "${corrections[command]}"?`);
+    console.info(`💡 Did you mean "${corrections[command]}"?`);
     return corrections[command];
   }
   
@@ -85,7 +85,7 @@ function autoAddFlags(flags: string[], command: string) {
   };
   
   if (!flags.length && defaultFlags[command]) {
-    console.log(`⚡ Auto-adding default flags: ${defaultFlags[command].join(' ')}`);
+    console.info(`⚡ Auto-adding default flags: ${defaultFlags[command].join(' ')}`);
     return [...defaultFlags[command]];
   }
   
@@ -123,7 +123,7 @@ async function interactiveCommandBuilder() {
     const commandToRun = (response as any).command;
     const flagsToRun = (response as any).flags;
     
-    console.log(`🚀 Running: bun dev-hq-cli.ts ${commandToRun} ${flagsToRun.join(' ')}`);
+    console.info(`🚀 Running: bun dev-hq-cli.ts ${commandToRun} ${flagsToRun.join(' ')}`);
     // In a real implementation, this would spawn the process
   } catch (e) {
     console.error('Interactive mode requires "enquirer" to be installed.');
@@ -142,13 +142,13 @@ async function main() {
   if (isDevelopmentMode) {
     process.env.NODE_ENV = 'development';
     process.env.DEBUG = 'dev-hq:*';
-    console.log('💻 Running in local mode (full development suite)');
+    console.info('💻 Running in local mode (full development suite)');
   } else {
-    console.log('🌍 Running in global mode (production commands only)');
+    console.info('🌍 Running in global mode (production commands only)');
   }
 
   if (cliFlags.length === 0 || cliFlags.includes('--help')) {
-    console.log(`
+    console.info(`
 🚀 DEV-HQ CLI v2.0
 Usage: bun dev-hq-cli.ts [command] [flags]
 
@@ -198,27 +198,27 @@ Options:
   flags = autoAddFlags(flags, command);
 
   // 5. Execute Command (Mocking execution for now)
-  console.log(`[CLI] Executing: ${command} with flags: ${flags.join(', ')}`);
+  console.info(`[CLI] Executing: ${command} with flags: ${flags.join(', ')}`);
   
   switch(command) {
     case 'insights':
-      console.log('📊 Gathering insights from systems...');
+      console.info('📊 Gathering insights from systems...');
       const { analyzeCodebase } = await import('./core');
       const results = await analyzeCodebase();
       
       if (flags.includes('--json')) {
-        console.log(JSON.stringify(results, null, 2));
+        console.info(JSON.stringify(results, null, 2));
       } else {
-        console.log('\n--- SYSTEM HEALTH SCORE ---');
-        console.log(`Score: ${results.stats.healthScore}/100`);
-        console.log(`Files: ${results.stats.totalFiles}`);
-        console.log(`Complexity: ${results.stats.complexity}`);
+        console.info('\n--- SYSTEM HEALTH SCORE ---');
+        console.info(`Score: ${results.stats.healthScore}/100`);
+        console.info(`Files: ${results.stats.totalFiles}`);
+        console.info(`Complexity: ${results.stats.complexity}`);
         
         if (flags.includes('--trend')) {
-          console.log('Trend: ↔️ Stable');
+          console.info('Trend: ↔️ Stable');
         }
 
-        console.log('\n--- TOP HOTSPOTS ---');
+        console.info('\n--- TOP HOTSPOTS ---');
         const tableData = [
           ["File", "Health", "Complexity", "Lines"],
           ...results.files.map(f => [f.name, f.health, f.complexity, f.lines])
@@ -232,7 +232,7 @@ Options:
         console.error('❌ Please specify a file to analyze.');
         process.exit(1);
       }
-      console.log(`🔍 Analyzing ${targetFile}...`);
+      console.info(`🔍 Analyzing ${targetFile}...`);
       const core = await import('./core');
       const allResults = await core.analyzeCodebase();
       const fileData = allResults.files.find(f => f.name === targetFile);
@@ -242,38 +242,38 @@ Options:
         process.exit(1);
       }
 
-      console.log(`\n--- FILE ANALYSIS: ${targetFile} ---`);
-      console.log(`Health: ${fileData.health}`);
-      console.log(`Complexity: ${fileData.complexity}`);
-      console.log(`Size: ${fileData.size} bytes`);
-      console.log(`Lines: ${fileData.lines}`);
+      console.info(`\n--- FILE ANALYSIS: ${targetFile} ---`);
+      console.info(`Health: ${fileData.health}`);
+      console.info(`Complexity: ${fileData.complexity}`);
+      console.info(`Size: ${fileData.size} bytes`);
+      console.info(`Lines: ${fileData.lines}`);
       break;
     case 'health':
-      console.log('✅ System health is optimal.');
+      console.info('✅ System health is optimal.');
       const { AnomalyDashboard } = await import('./core');
       const ad = new AnomalyDashboard();
-      console.log(ad.displayRealTimeAnomalies());
+      console.info(ad.displayRealTimeAnomalies());
       break;
     case 'chaos':
       const { ChaosEngineering: CEClass } = await import('./core');
       const ce = new CEClass();
       const scenario = flags[0] || 'latency_simulation';
-      console.log(`🌀 Injecting chaos: ${scenario}...`);
+      console.info(`🌀 Injecting chaos: ${scenario}...`);
       const score = await ce.runChaosTest(scenario);
-      console.log('\n--- RESILIENCE REPORT ---');
-      console.log(`Resilience Score: ${score.score}/100`);
-      console.log(`Recovery Time: ${score.recoveryTime}ms`);
+      console.info('\n--- RESILIENCE REPORT ---');
+      console.info(`Resilience Score: ${score.score}/100`);
+      console.info(`Recovery Time: ${score.recoveryTime}ms`);
       if (score.recommendations.length > 0) {
-        console.log('💡 Recommendations:');
-        score.recommendations.forEach(r => console.log(`   - ${r}`));
+        console.info('💡 Recommendations:');
+        score.recommendations.forEach(r => console.info(`   - ${r}`));
       }
       break;
     case 'quality':
       const { AutomatedQualityGate } = await import('./core');
       const gatekeeper = new AutomatedQualityGate();
-      console.log('🛡️ Running quality gate checks...');
+      console.info('🛡️ Running quality gate checks...');
       const gateResults = await gatekeeper.checkAllGates();
-      console.log('\n--- QUALITY GATE RESULTS ---');
+      console.info('\n--- QUALITY GATE RESULTS ---');
       const gateTable = [
         ["Gate", "Status", "Message"],
         ...gateResults.map(r => [r.name, r.success ? '✅ PASSED' : '❌ FAILED', r.message])
@@ -283,24 +283,24 @@ Options:
     case 'scale':
       const { IntelligentAutoScaler } = await import('./systems/auto-scaler');
       // Mocked initialization
-      console.log('🤖 Triggering Intelligent Auto-Scaling...');
+      console.info('🤖 Triggering Intelligent Auto-Scaling...');
       const { IntelligentAutoScaler: Scaler } = await import('./systems/auto-scaler');
       const scaler = new Scaler(null as any, null as any);
       const decision = await scaler.analyzeAndScale();
-      console.log('\n--- SCALING DECISION ---');
-      console.log(`Action: ${decision.action}`);
-      console.log(`Confidence: ${Math.round(decision.confidence * 100)}%`);
-      console.log(`Reason: ${decision.reason}`);
+      console.info('\n--- SCALING DECISION ---');
+      console.info(`Action: ${decision.action}`);
+      console.info(`Confidence: ${Math.round(decision.confidence * 100)}%`);
+      console.info(`Reason: ${decision.reason}`);
       break;
     case 'predict':
       const { PredictiveFailureDetector } = await import('./systems/predictive-monitor');
       const pfd = new PredictiveFailureDetector();
-      console.log('🔮 Running predictive failure analysis...');
+      console.info('🔮 Running predictive failure analysis...');
       const pResults = await pfd.predictAndPreventFailures();
-      console.log('\n--- PREDICTIVE ANALYSIS ---');
-      console.log(`Risk Probability: ${Math.round(pResults.riskFactors.probability * 100)}%`);
-      console.log(`Identified Risk: ${pResults.riskFactors.reason}`);
-      console.log(`Critical Anomalies: ${pResults.anomalies.length}`);
+      console.info('\n--- PREDICTIVE ANALYSIS ---');
+      console.info(`Risk Probability: ${Math.round(pResults.riskFactors.probability * 100)}%`);
+      console.info(`Identified Risk: ${pResults.riskFactors.reason}`);
+      console.info(`Critical Anomalies: ${pResults.anomalies.length}`);
       break;
     case 'remediate':
       const { AnomalyDashboard: AD, AutomaticRemediator: AR } = await import('./core');
@@ -310,18 +310,18 @@ Options:
       const as = new (IAS as any)(null as any, null as any);
       const pf = new PFD();
       const ar = new AR(as, pf);
-      console.log('🛠️ Initiating automated remediation scan...');
+      console.info('🛠️ Initiating automated remediation scan...');
       const rAnomalies = adb.scanForAnomalies();
       const rActions = await ar.remediate(rAnomalies);
       if (rActions.length === 0) {
-        console.log('✅ No anomalies requiring immediate remediation found.');
+        console.info('✅ No anomalies requiring immediate remediation found.');
       } else {
-        console.log('\n--- REMEDIATION ACTIONS ---');
-        rActions.forEach(a => console.log(`   - ${a}`));
+        console.info('\n--- REMEDIATION ACTIONS ---');
+        rActions.forEach(a => console.info(`   - ${a}`));
       }
       break;
     default:
-      console.log(`⚠️ Unknown command: ${command}`);
+      console.info(`⚠️ Unknown command: ${command}`);
   }
 }
 

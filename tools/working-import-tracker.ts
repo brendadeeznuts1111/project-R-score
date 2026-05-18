@@ -12,7 +12,7 @@ plugin({
 
     // Track all TypeScript and JavaScript files
     build.onLoad({ filter: /\.(ts|js)$/ }, async ({ path }) => {
-      console.log(`🔍 Processing: ${path}`);
+      console.info(`🔍 Processing: ${path}`);
       processedFiles++;
 
       try {
@@ -22,14 +22,14 @@ plugin({
         for (const importInfo of imports) {
           const importPath = importInfo.path;
           trackedImports[importPath] = (trackedImports[importPath] || 0) + 1;
-          console.log(`   📦 ${importPath}`);
+          console.info(`   📦 ${importPath}`);
         }
 
         if (imports.length === 0) {
-          console.log(`   (no imports)`);
+          console.info(`   (no imports)`);
         }
       } catch (error) {
-        console.log(`❌ Error: ${error.message}`);
+        console.info(`❌ Error: ${error.message}`);
       }
 
       // Return undefined to let Bun handle the file normally
@@ -38,13 +38,13 @@ plugin({
 
     // Generate stats when requested - this uses defer()
     build.onLoad({ filter: /generate-stats\.ts$/ }, async ({ defer }) => {
-      console.log(`📊 Stats requested - waiting for ${processedFiles} files to complete...`);
+      console.info(`📊 Stats requested - waiting for ${processedFiles} files to complete...`);
 
       // CRITICAL: Wait for all other modules to be loaded first
       await defer();
 
-      console.log(`✅ All files processed! Generating final statistics...`);
-      console.log(`📋 Total unique imports tracked: ${Object.keys(trackedImports).length}`);
+      console.info(`✅ All files processed! Generating final statistics...`);
+      console.info(`📋 Total unique imports tracked: ${Object.keys(trackedImports).length}`);
 
       const statsContent = `
 // Generated Import Statistics
@@ -53,14 +53,14 @@ plugin({
 
 const importStats = ${JSON.stringify(trackedImports, null, 2)};
 
-console.log('🎯 IMPORT ANALYSIS REPORT');
-console.log('='.repeat(50));
-console.log(\`Files processed: \${importStats._filesProcessed || ${processedFiles}}\`);
-console.log(\`Unique imports: \${Object.keys(importStats).length}\`);
-console.log('');
-console.log('📊 Import Frequency:');
+console.info('🎯 IMPORT ANALYSIS REPORT');
+console.info('='.repeat(50));
+console.info(\`Files processed: \${importStats._filesProcessed || ${processedFiles}}\`);
+console.info(\`Unique imports: \${Object.keys(importStats).length}\`);
+console.info('');
+console.info('📊 Import Frequency:');
 Object.entries(importStats).forEach(([path, count]) => {
-  console.log(\`  \${path}: \${count} time\${count === 1 ? '' : 's'}\`);
+  console.info(\`  \${path}: \${count} time\${count === 1 ? '' : 's'}\`);
 });
 
 export default importStats;

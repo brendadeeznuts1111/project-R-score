@@ -162,13 +162,13 @@ const refactoringSummary = [
     }
 ];
 
-console.log("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
-console.log("║                    CSS REFACTORING SUMMARY - SEMANTIC NAMING                          ║");
-console.log("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
+console.info("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
+console.info("║                    CSS REFACTORING SUMMARY - SEMANTIC NAMING                          ║");
+console.info("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
 
 // Show all refactorings
-console.log("📋 Complete Refactoring Map:\n");
-console.log(Bun.inspect.table(refactoringSummary, undefined, { colors: true }));
+console.info("📋 Complete Refactoring Map:\n");
+console.info(Bun.inspect.table(refactoringSummary, undefined, { colors: true }));
 
 // Group by type
 const byType = {
@@ -177,7 +177,7 @@ const byType = {
     "Utility": refactoringSummary.filter(r => r.Type === "Utility")
 };
 
-console.log("\n\n📊 Summary by Type:\n");
+console.info("\n\n📊 Summary by Type:\n");
 const typeSummary = [
     {
         "Type": "Component",
@@ -195,10 +195,10 @@ const typeSummary = [
         "Examples": byType.Utility.slice(0, 3).map(c => c["New Class"]).join(", ")
     }
 ];
-console.log(Bun.inspect.table(typeSummary, undefined, { colors: true }));
+console.info(Bun.inspect.table(typeSummary, undefined, { colors: true }));
 
 // Show component hierarchy
-console.log("\n\n🏗️  Component Hierarchy Examples:\n");
+console.info("\n\n🏗️  Component Hierarchy Examples:\n");
 const hierarchy = [
     {
         "Level": "Block",
@@ -231,10 +231,10 @@ const hierarchy = [
         "Description": "Another child element"
     }
 ];
-console.log(Bun.inspect.table(hierarchy, undefined, { colors: true }));
+console.info(Bun.inspect.table(hierarchy, undefined, { colors: true }));
 
 // Show naming patterns
-console.log("\n\n📝 Naming Patterns:\n");
+console.info("\n\n📝 Naming Patterns:\n");
 const patterns = [
     {
         "Pattern": "Component Block",
@@ -267,6 +267,6 @@ const patterns = [
         "Usage": "Reusable utility classes"
     }
 ];
-console.log(Bun.inspect.table(patterns, undefined, { colors: true }));
+console.info(Bun.inspect.table(patterns, undefined, { colors: true }));
 
-console.log("\n✅ CSS refactoring complete! All classes now use semantic, BEM-style naming.\n");
+console.info("\n✅ CSS refactoring complete! All classes now use semantic, BEM-style naming.\n");

@@ -119,7 +119,7 @@ export interface BreachEvent {
 // Mock classes for compilation
 export class ThreatIntelligenceService {
   async reportThreat(data: any): Promise<void> {
-    console.log('Threat reported:', data);
+    console.info('Threat reported:', data);
   }
 }
 
@@ -286,7 +286,7 @@ export class CSRFProtector {
 
 export class S3SecureClient {
   async putObjectEncrypted(key: string, data: Uint8Array, options?: any): Promise<void> {
-    console.log('S3 upload:', key, data.length, options);
+    console.info('S3 upload:', key, data.length, options);
   }
 }
 

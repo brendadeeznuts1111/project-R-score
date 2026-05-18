@@ -131,7 +131,7 @@ export class OrcaStreamServer {
 		}, 60000);
 
 		if (process.env.NODE_ENV === "development") {
-			console.log(`
+			console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  ORCA Streaming Server                                   ║
 ║  WebSocket: ws://localhost:${this.config.port}                       ║
@@ -316,7 +316,7 @@ export class OrcaStreamServer {
 			const nativeSubscriptions = (
 				ws as unknown as { subscriptions: Set<string> }
 			).subscriptions;
-			console.log(
+			console.info(
 				`[ORCA] Client ${ws.data.key} subscribed. Native subscriptions:`,
 				Array.from(nativeSubscriptions || []),
 				`Manual tracking:`,
@@ -364,7 +364,7 @@ export class OrcaStreamServer {
 			const nativeSubscriptions = (
 				ws as unknown as { subscriptions: Set<string> }
 			).subscriptions;
-			console.log(
+			console.info(
 				`[ORCA] Client ${ws.data.key} unsubscribed. Native subscriptions:`,
 				Array.from(nativeSubscriptions || []),
 				`Manual tracking:`,
@@ -384,7 +384,7 @@ export class OrcaStreamServer {
 			const nativeSubscriptions = (
 				ws as unknown as { subscriptions: Set<string> }
 			).subscriptions;
-			console.log(
+			console.info(
 				`[ORCA] Client ${key} closing. Active native subscriptions:`,
 				Array.from(nativeSubscriptions || []),
 				`Manual tracking:`,

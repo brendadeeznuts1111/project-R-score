@@ -290,8 +290,8 @@ async function lintConfig(config: ConfigFile): Promise<LintResult> {
 }
 
 async function main() {
-  console.log(`\n${BOLD}${CYAN}🌌 COSMIC CONFIG LINT${RESET}`);
-  console.log(`${DIM}Bun ${Bun.version} • ${new Date().toISOString()}${RESET}\n`);
+  console.info(`\n${BOLD}${CYAN}🌌 COSMIC CONFIG LINT${RESET}`);
+  console.info(`${DIM}Bun ${Bun.version} • ${new Date().toISOString()}${RESET}\n`);
 
   const results: LintResult[] = [];
   let hasErrors = false;
@@ -309,43 +309,43 @@ async function main() {
       ? `${GREEN}✓ VALID${RESET}`
       : `${RED}✗ INVALID${RESET}`;
 
-    console.log(`${status} ${BOLD}${result.name}${RESET}`);
-    console.log(`   ${DIM}${result.file}${RESET}`);
+    console.info(`${status} ${BOLD}${result.name}${RESET}`);
+    console.info(`   ${DIM}${result.file}${RESET}`);
 
     if (result.crc32) {
-      console.log(`   ${DIM}CRC32: ${result.crc32}${RESET}`);
+      console.info(`   ${DIM}CRC32: ${result.crc32}${RESET}`);
     }
 
     // Print errors
     for (const err of result.errors) {
-      console.log(`   ${RED}ERROR: ${err}${RESET}`);
+      console.info(`   ${RED}ERROR: ${err}${RESET}`);
     }
 
     // Print warnings
     if (!NO_WARNINGS) {
       for (const warn of result.warnings) {
-        console.log(`   ${YELLOW}WARN: ${warn}${RESET}`);
+        console.info(`   ${YELLOW}WARN: ${warn}${RESET}`);
       }
     }
 
-    console.log();
+    console.info();
   }
 
   // Summary
-  console.log("─".repeat(60));
+  console.info("─".repeat(60));
   const validCount = results.filter((r) => r.valid).length;
   const totalCount = results.length;
 
   if (hasErrors) {
-    console.log(`${RED}${BOLD}✗ ${validCount}/${totalCount} configs valid${RESET}`);
+    console.info(`${RED}${BOLD}✗ ${validCount}/${totalCount} configs valid${RESET}`);
     if (totalWarnings > 0 && !NO_WARNINGS) {
-      console.log(`${YELLOW}  ${totalWarnings} warning(s)${RESET}`);
+      console.info(`${YELLOW}  ${totalWarnings} warning(s)${RESET}`);
     }
     process.exit(1);
   } else {
-    console.log(`${GREEN}${BOLD}✓ All ${totalCount} configs valid${RESET}`);
+    console.info(`${GREEN}${BOLD}✓ All ${totalCount} configs valid${RESET}`);
     if (totalWarnings > 0 && !NO_WARNINGS) {
-      console.log(`${YELLOW}  ${totalWarnings} warning(s)${RESET}`);
+      console.info(`${YELLOW}  ${totalWarnings} warning(s)${RESET}`);
     }
 
     // Print combined integrity
@@ -353,12 +353,12 @@ async function main() {
       .crc32(results.map((r) => r.crc32).join(""))
       .toString(16)
       .padStart(8, "0");
-    console.log(`${DIM}  Combined CRC32: ${combined}${RESET}`);
+    console.info(`${DIM}  Combined CRC32: ${combined}${RESET}`);
   }
 
   // JSON output mode
   if (JSON_OUTPUT) {
-    console.log("\n" + JSON.stringify(results, null, 2));
+    console.info("\n" + JSON.stringify(results, null, 2));
   }
 }
 

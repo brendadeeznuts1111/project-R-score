@@ -203,14 +203,14 @@ export class CookieManager {
   /** Log cookies with Bun.color */
   debug(label: string = "Cookies"): void {
     if (typeof Bun !== 'undefined' && Bun.color) {
-      console.log(
+      console.info(
         `%c${label} (${this.jar.size} cookies):`,
         `color: ${Bun.color("hsl(28, 80%, 52%)", "ansi")}; font-weight: bold` 
       );
 
       for (const [name, value] of this.jar.entries()) {
         const truncated = value.length > 20 ? value.slice(0, 20) + "..." : value;
-        console.log(
+        console.info(
           `  %c${name}%c = %c${truncated}`,
           `color: ${Bun.color("hsl(210, 90%, 55%)", "ansi")}`,
           "color: reset",
@@ -219,9 +219,9 @@ export class CookieManager {
       }
     } else {
       // Fallback for testing
-      console.log(`${label} (${this.jar.size} cookies):`);
+      console.info(`${label} (${this.jar.size} cookies):`);
       for (const [name, value] of this.jar.entries()) {
-        console.log(`  ${name} = ${value}`);
+        console.info(`  ${name} = ${value}`);
       }
     }
   }
@@ -265,12 +265,12 @@ if (import.meta.hot) {
   // Restore on HMR
   if (import.meta.hot.data.cookieManager) {
     if (typeof Bun !== 'undefined' && Bun.color) {
-      console.log(
+      console.info(
         "%c🔄 Restored cookies from HMR", 
         `color: ${Bun.color("hsl(25, 85%, 55%)", "ansi")}` 
       );
     } else {
-      console.log("🔄 Restored cookies from HMR");
+      console.info("🔄 Restored cookies from HMR");
     }
   }
 }

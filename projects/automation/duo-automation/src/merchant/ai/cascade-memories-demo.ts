@@ -12,13 +12,13 @@ import {
 } from './cascade-memories';
 
 async function demonstrateMemoryManager() {
-  console.log('🧠 Cascade Memory Manager Demo');
-  console.log('===============================');
+  console.info('🧠 Cascade Memory Manager Demo');
+  console.info('===============================');
   
   const memoryManager = new CascadeMemoryManager();
   
   // Example 1: Store Different Memory Types
-  console.log('\n📝 Storing Memory Examples');
+  console.info('\n📝 Storing Memory Examples');
   
   // Store Merchant Memory
   const merchantMemory: BaseMemory = {
@@ -61,7 +61,7 @@ async function demonstrateMemoryManager() {
   };
   
   const merchantId = await memoryManager.storeMemory(merchantMemory);
-  console.log(`✅ Stored merchant memory: ${merchantId}`);
+  console.info(`✅ Stored merchant memory: ${merchantId}`);
   
   // Store Device Memory
   const deviceMemory: BaseMemory = {
@@ -100,7 +100,7 @@ async function demonstrateMemoryManager() {
   };
   
   const deviceId = await memoryManager.storeMemory(deviceMemory);
-  console.log(`✅ Stored device memory: ${deviceId}`);
+  console.info(`✅ Stored device memory: ${deviceId}`);
   
   // Store Interaction Memory
   const interactionMemory: BaseMemory = {
@@ -137,7 +137,7 @@ async function demonstrateMemoryManager() {
   };
   
   const interactionId = await memoryManager.storeMemory(interactionMemory);
-  console.log(`✅ Stored interaction memory: ${interactionId}`);
+  console.info(`✅ Stored interaction memory: ${interactionId}`);
   
   // Store Performance Memory
   const performanceMemory: BaseMemory = {
@@ -171,10 +171,10 @@ async function demonstrateMemoryManager() {
   };
   
   const performanceId = await memoryManager.storeMemory(performanceMemory);
-  console.log(`✅ Stored performance memory: ${performanceId}`);
+  console.info(`✅ Stored performance memory: ${performanceId}`);
   
   // Example 2: Query Memories
-  console.log('\n🔍 Querying Memories');
+  console.info('\n🔍 Querying Memories');
   
   // Query by merchant
   const merchantContext: MemoryContext = {
@@ -182,7 +182,7 @@ async function demonstrateMemoryManager() {
   };
   
   const merchantMemories = await memoryManager.retrieveRelevantMemories(merchantContext);
-  console.log(`✅ Found ${merchantMemories.length} memories for merchant factory-wager`);
+  console.info(`✅ Found ${merchantMemories.length} memories for merchant factory-wager`);
   
   // Query by device type
   const deviceContext: MemoryContext = {
@@ -190,10 +190,10 @@ async function demonstrateMemoryManager() {
   };
   
   const deviceMemories = await memoryManager.retrieveRelevantMemories(deviceContext);
-  console.log(`✅ Found ${deviceMemories.length} memories for tablet devices`);
+  console.info(`✅ Found ${deviceMemories.length} memories for tablet devices`);
   
   // Example 3: Advanced Query with Filters
-  console.log('\n🎯 Advanced Query with Filters');
+  console.info('\n🎯 Advanced Query with Filters');
   
   const advancedQuery: MemoryQuery = {
     type: 'performance',
@@ -207,21 +207,21 @@ async function demonstrateMemoryManager() {
   };
   
   const queryResult = await memoryManager.queryMemories(advancedQuery);
-  console.log(`✅ Query results: ${queryResult.relevantCount}/${queryResult.totalFound} relevant memories`);
-  console.log(`⏱️ Query executed in ${queryResult.queryStats.executionTime}ms`);
+  console.info(`✅ Query results: ${queryResult.relevantCount}/${queryResult.totalFound} relevant memories`);
+  console.info(`⏱️ Query executed in ${queryResult.queryStats.executionTime}ms`);
   
   // Example 4: Memory Optimization
-  console.log('\n🔧 Memory Optimization');
+  console.info('\n🔧 Memory Optimization');
   
   const optimizationReport = await memoryManager.optimizeMemories();
-  console.log(`✅ Optimization complete:`);
-  console.log(`   - Memories analyzed: ${optimizationReport.memoriesAnalyzed}`);
-  console.log(`   - Optimizations applied: ${optimizationReport.optimizationsApplied}`);
-  console.log(`   - Space saved: ${optimizationReport.spaceSaved} bytes`);
-  console.log(`   - Performance improvement: ${optimizationReport.performanceImprovement}%`);
+  console.info(`✅ Optimization complete:`);
+  console.info(`   - Memories analyzed: ${optimizationReport.memoriesAnalyzed}`);
+  console.info(`   - Optimizations applied: ${optimizationReport.optimizationsApplied}`);
+  console.info(`   - Space saved: ${optimizationReport.spaceSaved} bytes`);
+  console.info(`   - Performance improvement: ${optimizationReport.performanceImprovement}%`);
   
   // Example 5: Import from Cursor
-  console.log('\n📥 Import from Cursor');
+  console.info('\n📥 Import from Cursor');
   
   const cursorData: CursorExport = {
     memories: [
@@ -254,21 +254,21 @@ async function demonstrateMemoryManager() {
   };
   
   await memoryManager.importFromCursor(cursorData);
-  console.log(`✅ Imported ${cursorData.memories.length} memories from Cursor`);
+  console.info(`✅ Imported ${cursorData.memories.length} memories from Cursor`);
   
   // Example 6: Memory Statistics
-  console.log('\n📊 Memory Statistics');
+  console.info('\n📊 Memory Statistics');
   
   const stats = await memoryManager.getMemoryStats();
-  console.log(`✅ Memory Statistics:`);
-  console.log(`   - Total memories: ${stats.totalMemories}`);
-  console.log(`   - By type:`, stats.byType);
-  console.log(`   - Oldest memory: ${stats.oldestMemory?.toISOString()}`);
-  console.log(`   - Newest memory: ${stats.newestMemory?.toISOString()}`);
-  console.log(`   - Total indices: ${stats.totalIndices}`);
+  console.info(`✅ Memory Statistics:`);
+  console.info(`   - Total memories: ${stats.totalMemories}`);
+  console.info(`   - By type:`, stats.byType);
+  console.info(`   - Oldest memory: ${stats.oldestMemory?.toISOString()}`);
+  console.info(`   - Newest memory: ${stats.newestMemory?.toISOString()}`);
+  console.info(`   - Total indices: ${stats.totalIndices}`);
   
   // Example 7: Learning Demonstration
-  console.log('\n🧠 Learning System Demonstration');
+  console.info('\n🧠 Learning System Demonstration');
   
   // Store more memories to build learning patterns
   for (let i = 0; i < 5; i++) {
@@ -304,7 +304,7 @@ async function demonstrateMemoryManager() {
     await memoryManager.storeMemory(testMemory);
   }
   
-  console.log('✅ Stored test memories for learning');
+  console.info('✅ Stored test memories for learning');
   
   // Demonstrate learning predictions
   const learningEngine = new DefaultLearningEngine();
@@ -313,13 +313,13 @@ async function demonstrateMemoryManager() {
     action: 'qr_scan'
   });
   
-  console.log(`✅ Learning prediction:`, prediction);
+  console.info(`✅ Learning prediction:`, prediction);
 }
 
 // Enterprise Dashboard Integration Example
 async function demonstrateEnterpriseIntegration() {
-  console.log('\n\n🏢 Enterprise Dashboard Integration');
-  console.log('=======================================');
+  console.info('\n\n🏢 Enterprise Dashboard Integration');
+  console.info('=======================================');
   
   const memoryManager = new CascadeMemoryManager();
   
@@ -391,7 +391,7 @@ async function demonstrateEnterpriseIntegration() {
   
   // Store enterprise scenario memories
   for (const scenario of enterpriseScenarios) {
-    console.log(`\n📊 Processing: ${scenario.name}`);
+    console.info(`\n📊 Processing: ${scenario.name}`);
     
     for (const memoryData of scenario.memories) {
       const memory: BaseMemory = {
@@ -407,12 +407,12 @@ async function demonstrateEnterpriseIntegration() {
       };
       
       const memoryId = await memoryManager.storeMemory(memory);
-      console.log(`   ✅ Stored ${memoryData.type} memory: ${memoryId}`);
+      console.info(`   ✅ Stored ${memoryData.type} memory: ${memoryId}`);
     }
   }
   
   // Analyze enterprise patterns
-  console.log('\n🔍 Analyzing Enterprise Patterns');
+  console.info('\n🔍 Analyzing Enterprise Patterns');
   
   const enterpriseContext: MemoryContext = {
     filters: {
@@ -421,19 +421,19 @@ async function demonstrateEnterpriseIntegration() {
   };
   
   const enterpriseMemories = await memoryManager.retrieveRelevantMemories(enterpriseContext);
-  console.log(`✅ Found ${enterpriseMemories.length} enterprise memories`);
+  console.info(`✅ Found ${enterpriseMemories.length} enterprise memories`);
   
   // Generate insights
   const insights = generateEnterpriseInsights(enterpriseMemories);
-  console.log('\n💡 Enterprise Insights:');
-  insights.forEach(insight => console.log(`   - ${insight}`));
+  console.info('\n💡 Enterprise Insights:');
+  insights.forEach(insight => console.info(`   - ${insight}`));
   
   // Optimize for enterprise performance
   const optimizationReport = await memoryManager.optimizeMemories();
-  console.log('\n🚀 Enterprise Optimization Results:');
-  console.log(`   - Performance improvement: ${optimizationReport.performanceImprovement}%`);
-  console.log(`   - Optimizations applied: ${optimizationReport.optimizationsApplied}`);
-  console.log(`   - Space efficiency: ${optimizationReport.spaceSaved} bytes saved`);
+  console.info('\n🚀 Enterprise Optimization Results:');
+  console.info(`   - Performance improvement: ${optimizationReport.performanceImprovement}%`);
+  console.info(`   - Optimizations applied: ${optimizationReport.optimizationsApplied}`);
+  console.info(`   - Space efficiency: ${optimizationReport.spaceSaved} bytes saved`);
 }
 
 function generateEnterpriseInsights(memories: BaseMemory[]): string[] {
@@ -475,7 +475,7 @@ if (isMainModule) {
   demonstrateMemoryManager()
     .then(() => demonstrateEnterpriseIntegration())
     .then(() => {
-      console.log('\n🎉 All memory demonstrations completed successfully!');
+      console.info('\n🎉 All memory demonstrations completed successfully!');
       // Exit process for non-browser environments
       if (globalProcess && globalProcess.exit) {
         globalProcess.exit(0);

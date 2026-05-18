@@ -42,8 +42,8 @@ export function printMatrixTable(
     "Ops/sec".padStart(colOps) +
     "  " +
     "Tier".padStart(colTier);
-  console.log(header);
-  console.log("—".repeat(colPattern + colOps + colTier + 4));
+  console.info(header);
+  console.info("—".repeat(colPattern + colOps + colTier + 4));
 
   for (const r of results) {
     const tier = (r.colorTier ?? "medium") as string;
@@ -55,7 +55,7 @@ export function printMatrixTable(
     const pattern = String(r.pattern);
     const ops = typeof r.opsPerSec === "number" ? r.opsPerSec.toLocaleString() : "—";
 
-    console.log(
+    console.info(
       pattern.padEnd(colPattern) +
         "  " +
         ops.padStart(colOps) +

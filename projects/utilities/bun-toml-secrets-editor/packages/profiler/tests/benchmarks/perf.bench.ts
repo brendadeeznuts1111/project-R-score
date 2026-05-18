@@ -459,11 +459,11 @@ async function runBenchmarks() {
 		colors: true,
 	});
 
-	console.log("\n🚀 Benchmark Summary:");
-	console.log("✅ All v1.3.7 optimizations validated");
-	console.log("✅ Governance overhead < 1ms per operation");
-	console.log("✅ Profiler impact < 5% on performance");
-	console.log("✅ Security operations constant-time");
+	console.info("\n🚀 Benchmark Summary:");
+	console.info("✅ All v1.3.7 optimizations validated");
+	console.info("✅ Governance overhead < 1ms per operation");
+	console.info("✅ Profiler impact < 5% on performance");
+	console.info("✅ Security operations constant-time");
 }
 
 // Run benchmarks

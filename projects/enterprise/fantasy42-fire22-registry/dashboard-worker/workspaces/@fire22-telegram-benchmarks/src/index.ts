@@ -54,7 +54,7 @@ export class BenchmarkRunner {
 
     // Warmup
     if (this.config.verbose) {
-      console.log(`⏳ Warming up ${name}...`);
+      console.info(`⏳ Warming up ${name}...`);
     }
 
     for (let i = 0; i < this.warmupIterations; i++) {
@@ -63,7 +63,7 @@ export class BenchmarkRunner {
 
     // Actual benchmark
     if (this.config.verbose) {
-      console.log(`🎯 Benchmarking ${name} (${testRuns} iterations)...`);
+      console.info(`🎯 Benchmarking ${name} (${testRuns} iterations)...`);
     }
 
     const times: number[] = [];
@@ -126,17 +126,17 @@ export class BenchmarkRunner {
   }
 
   printResults(): void {
-    console.log('\n🎯 BENCHMARK RESULTS\n' + '═'.repeat(50));
+    console.info('\n🎯 BENCHMARK RESULTS\n' + '═'.repeat(50));
 
     // Group by category
     const categories = new Set(this.results.map(r => r.category));
 
     for (const category of categories) {
       const categoryResults = this.results.filter(r => r.category === category);
-      console.log(`\n📁 ${category.toUpperCase()}`);
+      console.info(`\n📁 ${category.toUpperCase()}`);
 
       for (const result of categoryResults) {
-        console.log(this.formatResult(result));
+        console.info(this.formatResult(result));
       }
     }
 
@@ -144,19 +144,19 @@ export class BenchmarkRunner {
   }
 
   private printSummary(): void {
-    console.log('\n📈 SUMMARY\n' + '═'.repeat(50));
+    console.info('\n📈 SUMMARY\n' + '═'.repeat(50));
 
     // Find best and worst performers
     const sorted = [...this.results].sort((a, b) => a.averageTime - b.averageTime);
 
     if (sorted.length > 0) {
-      console.log('\n🏆 Fastest:', sorted[0].name);
-      console.log(`   ${(sorted[0].averageTime / 1_000_000).toFixed(3)} ms average`);
+      console.info('\n🏆 Fastest:', sorted[0].name);
+      console.info(`   ${(sorted[0].averageTime / 1_000_000).toFixed(3)} ms average`);
 
       if (sorted.length > 1) {
         const slowest = sorted[sorted.length - 1];
-        console.log('\n🐌 Slowest:', slowest.name);
-        console.log(`   ${(slowest.averageTime / 1_000_000).toFixed(3)} ms average`);
+        console.info('\n🐌 Slowest:', slowest.name);
+        console.info(`   ${(slowest.averageTime / 1_000_000).toFixed(3)} ms average`);
       }
     }
 
@@ -164,10 +164,10 @@ export class BenchmarkRunner {
     const totalTime = this.results.reduce((sum, r) => sum + r.totalTime, 0);
     const totalIterations = this.results.reduce((sum, r) => sum + r.iterations, 0);
 
-    console.log('\n📊 Total Statistics:');
-    console.log(`   Tests Run: ${this.results.length}`);
-    console.log(`   Total Iterations: ${totalIterations.toLocaleString()}`);
-    console.log(`   Total Time: ${(totalTime / 1_000_000_000).toFixed(2)} seconds`);
+    console.info('\n📊 Total Statistics:');
+    console.info(`   Tests Run: ${this.results.length}`);
+    console.info(`   Total Iterations: ${totalIterations.toLocaleString()}`);
+    console.info(`   Total Time: ${(totalTime / 1_000_000_000).toFixed(2)} seconds`);
   }
 
   getResults(): BenchmarkResult[] {
@@ -191,7 +191,7 @@ export class BenchmarkRunner {
     };
 
     Bun.write(filename, JSON.stringify(data, null, 2));
-    console.log(`\n💾 Results exported to ${filename}`);
+    console.info(`\n💾 Results exported to ${filename}`);
   }
 }
 
@@ -202,7 +202,7 @@ export class BenchmarkRunner {
 if (import.meta.main) {
   const runner = new BenchmarkRunner({ verbose: true });
 
-  console.log(`
+  console.info(`
 🔥📊 Fire22 Telegram System Benchmark Suite
 ════════════════════════════════════════════
 Platform: ${process.platform}

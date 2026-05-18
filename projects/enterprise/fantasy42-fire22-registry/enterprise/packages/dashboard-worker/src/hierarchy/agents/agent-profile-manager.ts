@@ -50,7 +50,7 @@ export class AgentProfileManager {
     // Update hierarchy
     this.updateHierarchy(agent);
 
-    console.log(`👤 Created agent: ${agent.login} (${agent.id})`);
+    console.info(`👤 Created agent: ${agent.login} (${agent.id})`);
     return agent;
   }
 
@@ -85,7 +85,7 @@ export class AgentProfileManager {
       this.updateHierarchy(updatedAgent);
     }
 
-    console.log(`📝 Updated agent: ${updatedAgent.login} (${agentId})`);
+    console.info(`📝 Updated agent: ${updatedAgent.login} (${agentId})`);
     return updatedAgent;
   }
 
@@ -184,7 +184,7 @@ export class AgentProfileManager {
 
     this.customerRelationships.get(customerId)!.push(relationship);
 
-    console.log(`🔗 Assigned customer ${customerId} to agent ${agentId} (${relationshipType})`);
+    console.info(`🔗 Assigned customer ${customerId} to agent ${agentId} (${relationshipType})`);
     return relationship;
   }
 

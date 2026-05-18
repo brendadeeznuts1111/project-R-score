@@ -55,8 +55,8 @@ class EnhancedCLI {
 
 	// Enhanced analytics commands
 	public async showAnalytics(options: any): Promise<void> {
-		console.log("📊 Advanced Analytics Dashboard");
-		console.log("==============================");
+		console.info("📊 Advanced Analytics Dashboard");
+		console.info("==============================");
 
 		// System Overview
 		await this.displaySystemOverview();
@@ -80,8 +80,8 @@ class EnhancedCLI {
 	}
 
 	private async displaySystemOverview(): Promise<void> {
-		console.log("\n🖥️  SYSTEM OVERVIEW");
-		console.log("-------------------");
+		console.info("\n🖥️  SYSTEM OVERVIEW");
+		console.info("-------------------");
 
 		const systemStatus = {
 			uptime: process.uptime(),
@@ -122,8 +122,8 @@ class EnhancedCLI {
 	}
 
 	private async displayPerformanceMetrics(): Promise<void> {
-		console.log("\n⚡ PERFORMANCE METRICS");
-		console.log("----------------------");
+		console.info("\n⚡ PERFORMANCE METRICS");
+		console.info("----------------------");
 
 		const aiModelStatus = this.aiModel.getModelStatus();
 		const networkMetrics = this.networkOptimizer.getNetworkMetrics();
@@ -159,7 +159,7 @@ class EnhancedCLI {
 		console.table(performanceTable);
 
 		// Performance trends
-		console.log("\n📈 PERFORMANCE TRENDS (Last Hour)");
+		console.info("\n📈 PERFORMANCE TRENDS (Last Hour)");
 		this.displayPerformanceTrends();
 	}
 
@@ -202,8 +202,8 @@ class EnhancedCLI {
 	}
 
 	private async displayFraudAnalytics(): Promise<void> {
-		console.log("\n🛡️  FRAUD DETECTION ANALYTICS");
-		console.log("----------------------------");
+		console.info("\n🛡️  FRAUD DETECTION ANALYTICS");
+		console.info("----------------------------");
 
 		const recentSignals: FraudSignal[] =
 			this.fraudDetector.getRecentSignals(20);
@@ -211,12 +211,12 @@ class EnhancedCLI {
 
 		// Risk Level Distribution
 		const riskDistribution = this.calculateRiskDistribution(recentSignals);
-		console.log("\n📊 Risk Level Distribution:");
+		console.info("\n📊 Risk Level Distribution:");
 		console.table(riskDistribution);
 
 		// Recent Fraud Signals
 		if (recentSignals.length > 0) {
-			console.log("\n🚨 Recent Fraud Signals:");
+			console.info("\n🚨 Recent Fraud Signals:");
 			const signalTable = recentSignals.slice(0, 10).map((signal) => ({
 				Time: new Date(signal.timestamp).toLocaleTimeString(),
 				Score: signal.score.toFixed(3),
@@ -229,7 +229,7 @@ class EnhancedCLI {
 		}
 
 		// Detection Patterns
-		console.log("\n🔍 Detection Patterns:");
+		console.info("\n🔍 Detection Patterns:");
 		this.displayDetectionPatterns(recentSignals);
 	}
 
@@ -308,8 +308,8 @@ class EnhancedCLI {
 	}
 
 	private async displayNetworkAnalytics(): Promise<void> {
-		console.log("\n🌐 NETWORK ANALYTICS");
-		console.log("-------------------");
+		console.info("\n🌐 NETWORK ANALYTICS");
+		console.info("-------------------");
 
 		const networkMetrics = this.networkOptimizer.getNetworkMetrics();
 		const hostStatus = this.networkOptimizer.getHostStatus();
@@ -347,7 +347,7 @@ class EnhancedCLI {
 		console.table(networkSummary);
 
 		// Top Hosts by Performance
-		console.log("\n🏆 Top Hosts by Performance:");
+		console.info("\n🏆 Top Hosts by Performance:");
 		const topHosts = hostStatus
 			.sort((a: any, b: any) => a.averageLatency - b.averageLatency)
 			.slice(0, 5)
@@ -362,13 +362,13 @@ class EnhancedCLI {
 	}
 
 	private async displayModelAnalytics(): Promise<void> {
-    console.log('\n🤖 MODEL ANALYTICS');
-    console.log('------------------');
+    console.info('\n🤖 MODEL ANALYTICS');
+    console.info('------------------');
     
     const modelStatus = this.aiModel.getModelStatus();
     
     // Ensemble Model Performance
-    console.log('\n📊 Ensemble Model Performance:');
+    console.info('\n📊 Ensemble Model Performance:');
     const modelPerformance = modelStatus?.models?.map((model: any) => ({
       'Model': model?.type?.replace('_', ' ')?.toUpperCase() || 'UNKNOWN',
       'Weight': model?.weight?.toFixed(2) || '0.00',
@@ -382,7 +382,7 @@ class EnhancedCLI {
     console.table(modelPerformance);
 
 		// Learning Metrics
-		console.log("\n🧠 Learning Metrics:");
+		console.info("\n🧠 Learning Metrics:");
 		const learningTable = [
 			{
 				Metric: "Samples Processed",
@@ -429,7 +429,7 @@ class EnhancedCLI {
 	public async generateVisualization(
 		config: VisualizationConfig,
 	): Promise<void> {
-		console.log(`🎨 Generating ${config.type} visualization...`);
+		console.info(`🎨 Generating ${config.type} visualization...`);
 
 		switch (config.type) {
 			case "chart":
@@ -445,13 +445,13 @@ class EnhancedCLI {
 				await this.generateDistribution(config);
 				break;
 			default:
-				console.log("❌ Unsupported visualization type");
+				console.info("❌ Unsupported visualization type");
 		}
 	}
 
 	private async generateChart(config: VisualizationConfig): Promise<void> {
-		console.log("📊 Performance Chart:");
-		console.log("====================");
+		console.info("📊 Performance Chart:");
+		console.info("====================");
 
 		// Generate ASCII chart for performance metrics
 		const data = this.generatePerformanceData();
@@ -459,8 +459,8 @@ class EnhancedCLI {
 	}
 
 	private async generateHeatmap(config: VisualizationConfig): Promise<void> {
-		console.log("🔥 Risk Level Heatmap:");
-		console.log("======================");
+		console.info("🔥 Risk Level Heatmap:");
+		console.info("======================");
 
 		// Generate ASCII heatmap for risk levels
 		const heatmapData = this.generateRiskHeatmap();
@@ -468,8 +468,8 @@ class EnhancedCLI {
 	}
 
 	private async generateTimeline(config: VisualizationConfig): Promise<void> {
-		console.log("⏰ Event Timeline:");
-		console.log("=================");
+		console.info("⏰ Event Timeline:");
+		console.info("=================");
 
 		const timelineData = this.generateTimelineData();
 		this.displayASCIITimeline(timelineData);
@@ -478,8 +478,8 @@ class EnhancedCLI {
 	private async generateDistribution(
 		config: VisualizationConfig,
 	): Promise<void> {
-		console.log("📈 Score Distribution:");
-		console.log("====================");
+		console.info("📈 Score Distribution:");
+		console.info("====================");
 
 		const distributionData = this.generateDistributionData();
 		this.displayASCIIDistribution(distributionData);
@@ -505,21 +505,21 @@ class EnhancedCLI {
 		data: Array<{ time: string; accuracy: number; latency: number }>,
 		title: string,
 	): void {
-		console.log(`\n${title}`);
-		console.log("─".repeat(50));
+		console.info(`\n${title}`);
+		console.info("─".repeat(50));
 
 		// Accuracy chart
-		console.log("\nAccuracy Trend:");
+		console.info("\nAccuracy Trend:");
 		data.forEach((item) => {
 			const bar = "█".repeat(Math.round(item.accuracy - 90));
-			console.log(`${item.time} |${bar}| ${item.accuracy}%`);
+			console.info(`${item.time} |${bar}| ${item.accuracy}%`);
 		});
 
 		// Latency chart
-		console.log("\nLatency Trend:");
+		console.info("\nLatency Trend:");
 		data.forEach((item) => {
 			const bar = "█".repeat(Math.round(item.latency / 2));
-			console.log(`${item.time} |${bar}| ${item.latency}ms`);
+			console.info(`${item.time} |${bar}| ${item.latency}ms`);
 		});
 	}
 
@@ -549,9 +549,9 @@ class EnhancedCLI {
 			critical: number;
 		}>,
 	): void {
-		console.log("\nRisk Level Distribution (Last 24 Hours):");
-		console.log("Hour    │ Low  Med  High Crit");
-		console.log("────────┼─────────────────");
+		console.info("\nRisk Level Distribution (Last 24 Hours):");
+		console.info("Hour    │ Low  Med  High Crit");
+		console.info("────────┼─────────────────");
 
 		data.forEach((row) => {
 			const lowBar = "░".repeat(Math.round(row.low / 10));
@@ -559,10 +559,10 @@ class EnhancedCLI {
 			const highBar = "▓".repeat(Math.round(row.high / 10));
 			const critBar = "█".repeat(Math.round(row.critical / 10));
 
-			console.log(`${row.hour} │ ${lowBar}${medBar}${highBar}${critBar}`);
+			console.info(`${row.hour} │ ${lowBar}${medBar}${highBar}${critBar}`);
 		});
 
-		console.log("\nLegend: ░ Low  ▒ Medium  ▓ High  █ Critical");
+		console.info("\nLegend: ░ Low  ▒ Medium  ▓ High  █ Critical");
 	}
 
 	private generateTimelineData(): Array<{
@@ -582,8 +582,8 @@ class EnhancedCLI {
 	private displayASCIITimeline(
 		data: Array<{ time: string; event: string; risk: string }>,
 	): void {
-		console.log("\nRecent Events Timeline:");
-		console.log("─".repeat(60));
+		console.info("\nRecent Events Timeline:");
+		console.info("─".repeat(60));
 
 		data.forEach((item, index) => {
 			const riskIcon =
@@ -594,11 +594,11 @@ class EnhancedCLI {
 						: item.risk === "MEDIUM"
 							? "🔍"
 							: "✅";
-			console.log(`${riskIcon} ${item.time} - ${item.event} (${item.risk})`);
+			console.info(`${riskIcon} ${item.time} - ${item.event} (${item.risk})`);
 
 			if (index < data.length - 1) {
-				console.log("│");
-				console.log("▼");
+				console.info("│");
+				console.info("▼");
 			}
 		});
 	}
@@ -620,25 +620,25 @@ class EnhancedCLI {
 	private displayASCIIDistribution(
 		data: Array<{ range: string; count: number; percentage: number }>,
 	): void {
-		console.log("\nFraud Score Distribution:");
-		console.log("─".repeat(40));
+		console.info("\nFraud Score Distribution:");
+		console.info("─".repeat(40));
 
 		data.forEach((item) => {
 			const bar = "█".repeat(Math.round(item.percentage / 2));
-			console.log(`${item.range} │${bar}│ ${item.count} (${item.percentage}%)`);
+			console.info(`${item.range} │${bar}│ ${item.count} (${item.percentage}%)`);
 		});
 	}
 
 	// Real-time monitoring
 	private async startRealTimeMonitoring(): Promise<void> {
 		if (this.isMonitoring) {
-			console.log("📊 Real-time monitoring is already active");
+			console.info("📊 Real-time monitoring is already active");
 			return;
 		}
 
 		this.isMonitoring = true;
-		console.log("📊 Starting real-time monitoring...");
-		console.log("Press Ctrl+C to stop monitoring\n");
+		console.info("📊 Starting real-time monitoring...");
+		console.info("Press Ctrl+C to stop monitoring\n");
 
 		const monitorInterval = setInterval(async () => {
 			if (!this.isMonitoring) {
@@ -648,28 +648,28 @@ class EnhancedCLI {
 
 			// Clear screen and show updated metrics
 			console.clear();
-			console.log("📊 REAL-TIME FRAUD DETECTION MONITOR");
-			console.log("=================================== ");
-			console.log(`Last Updated: ${new Date().toLocaleString()}\n`);
+			console.info("📊 REAL-TIME FRAUD DETECTION MONITOR");
+			console.info("=================================== ");
+			console.info(`Last Updated: ${new Date().toLocaleString()}\n`);
 
 			await this.displaySystemOverview();
 			await this.displayPerformanceMetrics();
 			await this.displayFraudAnalytics();
 
-			console.log("\n⏸️  Monitoring... (Press Ctrl+C to stop)");
+			console.info("\n⏸️  Monitoring... (Press Ctrl+C to stop)");
 		}, 5000); // Update every 5 seconds
 
 		// Handle cleanup on exit
 		process.on("SIGINT", () => {
 			this.isMonitoring = false;
-			console.log("\n📊 Real-time monitoring stopped");
+			console.info("\n📊 Real-time monitoring stopped");
 			process.exit(0);
 		});
 	}
 
 	// Report generation
 	public async generateReport(options: ReportOptions): Promise<void> {
-		console.log(`📄 Generating ${options.format.toUpperCase()} report...`);
+		console.info(`📄 Generating ${options.format.toUpperCase()} report...`);
 
 		const reportData = await this.collectReportData(options);
 
@@ -684,10 +684,10 @@ class EnhancedCLI {
 				this.generateHTMLReport(reportData, options);
 				break;
 			case "pdf":
-				console.log("❌ PDF generation not implemented in this demo");
+				console.info("❌ PDF generation not implemented in this demo");
 				break;
 			default:
-				console.log("❌ Unsupported report format");
+				console.info("❌ Unsupported report format");
 		}
 	}
 
@@ -728,22 +728,22 @@ class EnhancedCLI {
 			};
 		}
 
-		console.log(`📄 JSON report generated: ${filename}`);
-		console.log(`Data size: ${JSON.stringify(data).length} characters`);
+		console.info(`📄 JSON report generated: ${filename}`);
+		console.info(`Data size: ${JSON.stringify(data).length} characters`);
 	}
 
 	private generateCSVReport(data: any, options: ReportOptions): void {
 		const filename = `fraud-report-${Date.now()}.csv`;
 
-		console.log(`📄 CSV report generated: ${filename}`);
-		console.log(`Includes ${data.signals.length} signal records`);
+		console.info(`📄 CSV report generated: ${filename}`);
+		console.info(`Includes ${data.signals.length} signal records`);
 	}
 
 	private generateHTMLReport(data: any, options: ReportOptions): void {
 		const filename = `fraud-report-${Date.now()}.html`;
 
-		console.log(`📄 HTML report generated: ${filename}`);
-		console.log(
+		console.info(`📄 HTML report generated: ${filename}`);
+		console.info(
 			`Interactive visualization: ${options.includeCharts ? "Enabled" : "Disabled"}`,
 		);
 	}

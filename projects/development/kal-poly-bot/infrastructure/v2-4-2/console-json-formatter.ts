@@ -154,7 +154,7 @@ export class ConsoleJSONFormatter {
     this.addToBuffer(logEntry);
 
     // Output structured log
-    console.log(
+    console.info(
       "%j %s %j",
       {
         timestamp: logEntry.timestamp,
@@ -320,7 +320,7 @@ export class ConsoleJSONFormatter {
     this.addToBuffer(logEntry);
 
     // Output structured log
-    console.log(
+    console.info(
       "%j %s %j",
       {
         timestamp: logEntry.timestamp,

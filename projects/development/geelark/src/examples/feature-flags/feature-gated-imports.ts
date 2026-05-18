@@ -12,7 +12,7 @@ import { feature } from "bun:bundle";
 
 // Dummy implementations for builds without features
 const dummyAnalytics = {
-  track: () => console.log("Analytics not available"),
+  track: () => console.info("Analytics not available"),
   report: () => ({ data: "disabled" }),
 };
 
@@ -30,7 +30,7 @@ export async function initializePremiumFeatures() {
     // This import is tree-shaken away if FEAT_PREMIUM=false
     // const premiumModule = await import("./premium/analytics");
     // return premiumModule.initialize();
-    console.log("Premium features would be loaded here");
+    console.info("Premium features would be loaded here");
     return { status: "premium_loaded" };
   }
 
@@ -46,7 +46,7 @@ export async function loadAdvancedMonitoring() {
     // Heavy monitoring module only loaded in premium builds
     // const monitoringModule = await import("./monitoring/advanced");
     // return monitoringModule.createDashboard();
-    console.log("Advanced monitoring would be loaded here");
+    console.info("Advanced monitoring would be loaded here");
     return { status: "advanced_monitoring_loaded" };
   }
 
@@ -61,7 +61,7 @@ export async function createApiClient() {
   if (feature("INTEGRATION_GEELARK_API")) {
     // const { GeelarkApiClient } = await import("./integrations/geelark-api");
     // return new GeelarkApiClient();
-    console.log("Geelark API client would be created here");
+    console.info("Geelark API client would be created here");
     return { type: "geelark_api" };
   }
 
@@ -69,7 +69,7 @@ export async function createApiClient() {
   if (feature("INTEGRATION_PROXY_SERVICE")) {
     // const { ProxyApiClient } = await import("./integrations/proxy-api");
     // return new ProxyApiClient();
-    console.log("Proxy API client would be created here");
+    console.info("Proxy API client would be created here");
     return { type: "proxy_api" };
   }
 
@@ -77,7 +77,7 @@ export async function createApiClient() {
   if (feature("FEAT_MOCK_API")) {
     // const { MockApiClient } = await import("./mocks/api-client");
     // return new MockApiClient();
-    console.log("Mock API client would be created here");
+    console.info("Mock API client would be created here");
     return { type: "mock_api" };
   }
 
@@ -94,15 +94,15 @@ export async function createApiClient() {
  */
 export const FEATURES = {
   analytics: feature("FEAT_PREMIUM")
-    ? { track: () => console.log("Premium analytics tracking") }
+    ? { track: () => console.info("Premium analytics tracking") }
     : dummyAnalytics,
 
   notifications: feature("FEAT_NOTIFICATIONS")
-    ? { send: () => console.log("Notification sent") }
+    ? { send: () => console.info("Notification sent") }
     : null,
 
   batchProcessing: feature("FEAT_BATCH_PROCESSING")
-    ? { process: () => console.log("Batch processing started") }
+    ? { process: () => console.info("Batch processing started") }
     : null,
 };
 
@@ -186,7 +186,7 @@ export async function initializePlatformFeatures() {
     // const mobileFeatures = await import("./platform/mobile");
     // await mobileFeatures.setupGestures();
     // await mobileFeatures.initializeTouchEvents();
-    console.log("Mobile features would be initialized here");
+    console.info("Mobile features would be initialized here");
     return {
       platform: "mobile",
       features: ["gestures", "touch", "push-notifications"],
@@ -199,7 +199,7 @@ export async function initializePlatformFeatures() {
     // const webFeatures = await import("./platform/web");
     // await webFeatures.setupServiceWorker();
     // await webFeatures.initializeWebSockets();
-    console.log("Web features would be initialized here");
+    console.info("Web features would be initialized here");
     return {
       platform: "web",
       features: ["service-worker", "websockets", "pwa"],
@@ -212,7 +212,7 @@ export async function initializePlatformFeatures() {
     // const desktopFeatures = await import("./platform/desktop");
     // await desktopFeatures.setupNativeMenus();
     // await desktopFeatures.initializeFileSystem();
-    console.log("Desktop features would be initialized here");
+    console.info("Desktop features would be initialized here");
     return {
       platform: "desktop",
       features: ["native-menus", "file-system", "system-tray"],
@@ -235,7 +235,7 @@ export async function getTestUtilities() {
     // Mock data and test utilities
     // const testUtils = await import("./test/mock-data");
     // return testUtils;
-    console.log("Mock API utilities would be loaded here");
+    console.info("Mock API utilities would be loaded here");
     return { mockData: true, testUtils: true };
   }
 
@@ -251,7 +251,7 @@ export async function initializeDevTools() {
     // Verbose logging system
     // const logging = await import("./dev/verbose-logging");
     // return logging.enable();
-    console.log("Extended logging would be enabled here");
+    console.info("Extended logging would be enabled here");
     return { logging: "verbose", level: "debug" };
   }
 
@@ -277,7 +277,7 @@ export class FeatureGateLoader {
 
     // Lazy load if not already loaded
     if (!this.loadedModules.has(modulePath)) {
-      console.log(`Would load module: ${modulePath}`);
+      console.info(`Would load module: ${modulePath}`);
       // const module = await import(modulePath);
       const module = { loaded: true, path: modulePath };
       this.loadedModules.set(modulePath, module);
@@ -347,7 +347,7 @@ export async function initializeSecurityFeatures() {
   if (feature("FEAT_ENCRYPTION")) {
     // const encryption = await import("./security/encryption");
     // return encryption.initialize();
-    console.log("Encryption services would be initialized here");
+    console.info("Encryption services would be initialized here");
     return { encryption: "enabled", level: "AES-256" };
   }
 
@@ -355,7 +355,7 @@ export async function initializeSecurityFeatures() {
   if (feature("FEAT_VALIDATION_STRICT")) {
     // const validation = await import("./security/validation");
     // return validation.setup();
-    console.log("Strict validation would be enabled here");
+    console.info("Strict validation would be enabled here");
     return { validation: "strict", level: "high" };
   }
 

@@ -36,7 +36,7 @@ describe('Redis Integration', () => {
       }
 
       REDIS_CONNECTED = true;
-      console.log('Connected to Redis for integration tests');
+      console.info('Connected to Redis for integration tests');
     } catch (error) {
       console.error('Failed to connect to Redis:', error);
       // Don't throw - just skip
@@ -56,7 +56,7 @@ describe('Redis Integration', () => {
       }
 
       await client.quit();
-      console.log('Disconnected from Redis');
+      console.info('Disconnected from Redis');
     }
   });
 

@@ -180,7 +180,7 @@ export class GPUBackend {
     // Lose device reference
     if (this.device) {
       this.device.lost?.then(() => {
-        console.log('GPU device lost')
+        console.info('GPU device lost')
       })
       this.device = null
     }
@@ -217,7 +217,7 @@ export class GPUBackend {
         requiredLimits: this.getRequiredLimits()
       })
 
-      console.log('✅ WebGPU initialized:', {
+      console.info('✅ WebGPU initialized:', {
         adapter: this.adapter.info,
         device: this.device.limits
       })
@@ -252,7 +252,7 @@ export class GPUBackend {
 
   private initializeCPUFallback(): void {
     this.fallback = new CPUFallback()
-    console.log('🔄 Using CPU fallback for GPU operations')
+    console.info('🔄 Using CPU fallback for GPU operations')
   }
 
   /**
@@ -551,16 +551,16 @@ export class GraphicsEngine {
   async selectBackend(capabilities: EngineCapabilities): Promise<void> {
     if (capabilities.webgpu) {
       this.backend = new GPUBackend()
-      console.log('Using WebGPU backend')
+      console.info('Using WebGPU backend')
     } else if (capabilities.webgl2) {
       // this.backend = new WebGL2Backend()
-      console.log('Using WebGL2 backend (not implemented)')
+      console.info('Using WebGL2 backend (not implemented)')
     } else if (capabilities.webgl) {
       // this.backend = new WebGLBackend()
-      console.log('Using WebGL backend (not implemented)')
+      console.info('Using WebGL backend (not implemented)')
     } else {
       // this.backend = new Canvas2DBackend()
-      console.log('Using Canvas 2D fallback (not implemented)')
+      console.info('Using Canvas 2D fallback (not implemented)')
     }
 
     if (this.backend) {
@@ -587,12 +587,12 @@ export class GraphicsEngine {
 
   private async renderGPU(data: DashboardData): Promise<void> {
     // GPU-accelerated rendering would go here
-    console.log(`Rendering ${data.points} points with GPU`)
+    console.info(`Rendering ${data.points} points with GPU`)
   }
 
   private async renderCPU(data: DashboardData): Promise<void> {
     // CPU-optimized rendering
-    console.log(`Rendering ${data.points} points with CPU`)
+    console.info(`Rendering ${data.points} points with CPU`)
   }
 }
 

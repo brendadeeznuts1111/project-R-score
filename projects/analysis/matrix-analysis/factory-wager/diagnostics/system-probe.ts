@@ -120,8 +120,8 @@ export const quickProbe = () => ({
 // PERFORMANCE BENCHMARK SUITE
 // ═══════════════════════════════════════════════════════════════
 export async function runPerformanceBenchmark() {
-  console.log('🚀 FactoryWager v4.3 Performance Benchmark');
-  console.log('=' .repeat(50));
+  console.info('🚀 FactoryWager v4.3 Performance Benchmark');
+  console.info('=' .repeat(50));
 
   // Bun.color HSL→ANSI benchmark
   const colorStart = Bun.nanoseconds();
@@ -150,18 +150,18 @@ export async function runPerformanceBenchmark() {
   }
   const crcTime = (Bun.nanoseconds() - crcStart) / 1_000_000; // ms
 
-  console.log(`🎨 Bun.color HSL→ANSI: ${colorTime.toFixed(2)}ms (30k ops)`);
-  console.log(`🌐 Unicode padding: ${unicodeTime.toFixed(2)}ms (50k ops)`);
-  console.log(`🔐 CRC32 hashing: ${crcTime.toFixed(2)}ms (20k ops)`);
+  console.info(`🎨 Bun.color HSL→ANSI: ${colorTime.toFixed(2)}ms (30k ops)`);
+  console.info(`🌐 Unicode padding: ${unicodeTime.toFixed(2)}ms (50k ops)`);
+  console.info(`🔐 CRC32 hashing: ${crcTime.toFixed(2)}ms (20k ops)`);
 
   const avgColorPerOp = colorTime / 30000;
   const avgUnicodePerOp = unicodeTime / 50000;
   const avgCrcPerOp = crcTime / 20000;
 
-  console.log('\n📊 Per-operation metrics:');
-  console.log(`  • Color conversion: ${(avgColorPerOp * 1000).toFixed(2)}μs`);
-  console.log(`  • Unicode width: ${(avgUnicodePerOp * 1000).toFixed(2)}μs`);
-  console.log(`  • CRC32 hash: ${(avgCrcPerOp * 1000).toFixed(2)}μs`);
+  console.info('\n📊 Per-operation metrics:');
+  console.info(`  • Color conversion: ${(avgColorPerOp * 1000).toFixed(2)}μs`);
+  console.info(`  • Unicode width: ${(avgUnicodePerOp * 1000).toFixed(2)}μs`);
+  console.info(`  • CRC32 hash: ${(avgCrcPerOp * 1000).toFixed(2)}μs`);
 
   return {
     color: { total: colorTime, avg: avgColorPerOp },
@@ -174,40 +174,40 @@ export async function runPerformanceBenchmark() {
 // MAIN DIAGNOSTIC EXECUTION
 // ═══════════════════════════════════════════════════════════════
 async function main() {
-  console.log('🩺 FACTORYWAGER SYSTEM DIAGNOSTIC v4.3');
-  console.log('ARM64-Optimized • Bun-Native • Chromatic Ready');
-  console.log('=' .repeat(60));
+  console.info('🩺 FACTORYWAGER SYSTEM DIAGNOSTIC v4.3');
+  console.info('ARM64-Optimized • Bun-Native • Chromatic Ready');
+  console.info('=' .repeat(60));
 
   // Quick probe
   const probe = quickProbe();
-  console.log('\n🎯 Quick System Probe:');
-  console.log(`  • Bun: ${probe.bun} (${probe.optimal ? '✅ Optimal' : '⚠️ Suboptimal'})`);
-  console.log(`  • Architecture: ${probe.arch} (${probe.arch === 'arm64' ? '🚀 Native' : '💻 Emulated'})`);
-  console.log(`  • Color API: ${probe.color ? '✅ Available' : '❌ Missing'}`);
-  console.log(`  • CRC32: ${probe.crc32 ? '✅ Hardware' : '❌ Software'}`);
-  console.log(`  • Memory: ${probe.memoryMB}MB RSS, ${probe.heapKB}KB Heap`);
+  console.info('\n🎯 Quick System Probe:');
+  console.info(`  • Bun: ${probe.bun} (${probe.optimal ? '✅ Optimal' : '⚠️ Suboptimal'})`);
+  console.info(`  • Architecture: ${probe.arch} (${probe.arch === 'arm64' ? '🚀 Native' : '💻 Emulated'})`);
+  console.info(`  • Color API: ${probe.color ? '✅ Available' : '❌ Missing'}`);
+  console.info(`  • CRC32: ${probe.crc32 ? '✅ Hardware' : '❌ Software'}`);
+  console.info(`  • Memory: ${probe.memoryMB}MB RSS, ${probe.heapKB}KB Heap`);
 
   // Full system profile
   const profile = await getSystemProfile();
-  console.log('\n📊 Full System Profile:');
-  console.log(`  • Runtime: Bun ${profile.runtime.bun} (V8 ${profile.runtime.v8})`);
-  console.log(`  • Platform: ${profile.platform.os} ${profile.platform.arch} (${profile.platform.cpus} cores)`);
-  console.log(`  • Memory: ${(profile.memory.rss / 1024 / 1024).toFixed(1)}MB RSS, ${(profile.memory.heapUsed / 1024).toFixed(0)}KB Heap`);
-  console.log(`  • System Free: ${(profile.memory.systemFree / 1024 / 1024).toFixed(0)}MB`);
-  console.log(`  • Capabilities: Color=${profile.capabilities.color}, Crypto=${profile.capabilities.crypto}, SHA256=${profile.capabilities.sha256}, CRC32=${profile.capabilities.crc32}`);
+  console.info('\n📊 Full System Profile:');
+  console.info(`  • Runtime: Bun ${profile.runtime.bun} (V8 ${profile.runtime.v8})`);
+  console.info(`  • Platform: ${profile.platform.os} ${profile.platform.arch} (${profile.platform.cpus} cores)`);
+  console.info(`  • Memory: ${(profile.memory.rss / 1024 / 1024).toFixed(1)}MB RSS, ${(profile.memory.heapUsed / 1024).toFixed(0)}KB Heap`);
+  console.info(`  • System Free: ${(profile.memory.systemFree / 1024 / 1024).toFixed(0)}MB`);
+  console.info(`  • Capabilities: Color=${profile.capabilities.color}, Crypto=${profile.capabilities.crypto}, SHA256=${profile.capabilities.sha256}, CRC32=${profile.capabilities.crc32}`);
 
   // Performance benchmark
   const benchmark = await runPerformanceBenchmark();
 
   // v4.3 Performance projection
-  console.log('\n📈 v4.3 Performance Projection (10k rows):');
+  console.info('\n📈 v4.3 Performance Projection (10k rows):');
   const projectedTime = (benchmark.color.avg + benchmark.unicode.avg + benchmark.crc32.avg) * 10000;
-  console.log(`  • Projected render time: ${(projectedTime / 1000).toFixed(0)}ms`);
-  console.log(`  • Memory capacity: ~${Math.floor(50 * 1024 / probe.memoryMB)}k rows before pressure`);
-  console.log(`  • ARM64 speedup: 15-20x CRC32, 3-5x Unicode, baseline Color`);
+  console.info(`  • Projected render time: ${(projectedTime / 1000).toFixed(0)}ms`);
+  console.info(`  • Memory capacity: ~${Math.floor(50 * 1024 / probe.memoryMB)}k rows before pressure`);
+  console.info(`  • ARM64 speedup: 15-20x CRC32, 3-5x Unicode, baseline Color`);
 
-  console.log('\n🎉 FactoryWager v4.3 Diagnostic Complete!');
-  console.log(`Status: ${probe.optimal ? '✅ CHROMATICALLY OPTIMAL' : '⚠️ OPTIMIZATION RECOMMENDED'}`);
+  console.info('\n🎉 FactoryWager v4.3 Diagnostic Complete!');
+  console.info(`Status: ${probe.optimal ? '✅ CHROMATICALLY OPTIMAL' : '⚠️ OPTIMIZATION RECOMMENDED'}`);
 }
 
 // Execute if run directly

@@ -104,7 +104,7 @@ export class CircuitBreakerOpenError extends Error {
  * });
  * 
  * // Check statistics
- * console.log(breaker.getStats());
+ * console.info(breaker.getStats());
  * 
  * // Clean up when done
  * breaker.destroy();
@@ -254,7 +254,7 @@ export class CircuitBreaker {
         this.halfOpenCalls = 0;
       }
 
-      console.log(
+      console.info(
         `🔌 Circuit breaker "${this.serviceName}": ${oldState} → ${newState}`
       );
     }
@@ -355,7 +355,7 @@ export class CircuitBreaker {
     this.monitoringInterval = setInterval(() => {
       const stats = this.getStats();
       if (stats.totalCalls > 0) {
-        console.log(`📊 Circuit "${this.serviceName}" stats:`, {
+        console.info(`📊 Circuit "${this.serviceName}" stats:`, {
           state: stats.state,
           total: stats.totalCalls,
           rejected: stats.rejectedCalls,
@@ -495,7 +495,7 @@ export function getCircuitBreakerHealth(): ReturnType<
 
 // Entry guard for testing
 if (import.meta.main) {
-  console.log('🔧 Circuit Breaker Demo\n');
+  console.info('🔧 Circuit Breaker Demo\n');
 
   const breaker = new CircuitBreaker('test-service', {
     failureThreshold: 3,
@@ -504,49 +504,49 @@ if (import.meta.main) {
   });
 
   // Simulate failures
-  console.log('Simulating 3 failures...');
+  console.info('Simulating 3 failures...');
   for (let i = 0; i < 3; i++) {
     try {
       await breaker.execute(async () => {
         throw new Error('Service unavailable');
       });
     } catch (error) {
-      console.log(`  Attempt ${i + 1}: ${(error as Error).message}`);
+      console.info(`  Attempt ${i + 1}: ${(error as Error).message}`);
     }
   }
 
-  console.log('\nState:', breaker.getState());
-  console.log('Stats:', breaker.getStats());
+  console.info('\nState:', breaker.getState());
+  console.info('Stats:', breaker.getStats());
 
   // Try to call again (should be blocked)
-  console.log('\nTrying to call while OPEN...');
+  console.info('\nTrying to call while OPEN...');
   try {
     await breaker.execute(async () => 'success');
   } catch (error) {
-    console.log(`  Blocked: ${(error as Error).message}`);
+    console.info(`  Blocked: ${(error as Error).message}`);
   }
 
   // Wait for reset timeout
-  console.log('\nWaiting 5 seconds for reset timeout...');
+  console.info('\nWaiting 5 seconds for reset timeout...');
   await Bun.sleep(5000);
 
   // Now should be HALF_OPEN
-  console.log('\nState after timeout:', breaker.getState());
+  console.info('\nState after timeout:', breaker.getState());
 
   // Success in HALF_OPEN
-  console.log('\nSending 2 successful requests...');
+  console.info('\nSending 2 successful requests...');
   for (let i = 0; i < 2; i++) {
     try {
       const result = await breaker.execute(async () => 'success');
-      console.log(`  Attempt ${i + 1}: ${result}`);
+      console.info(`  Attempt ${i + 1}: ${result}`);
     } catch (error) {
-      console.log(`  Attempt ${i + 1}: ${(error as Error).message}`);
+      console.info(`  Attempt ${i + 1}: ${(error as Error).message}`);
     }
   }
 
-  console.log('\nFinal state:', breaker.getState());
-  console.log('Final stats:', breaker.getStats());
+  console.info('\nFinal state:', breaker.getState());
+  console.info('Final stats:', breaker.getStats());
 
   breaker.destroy();
-  console.log('\n✅ Demo complete!');
+  console.info('\n✅ Demo complete!');
 }

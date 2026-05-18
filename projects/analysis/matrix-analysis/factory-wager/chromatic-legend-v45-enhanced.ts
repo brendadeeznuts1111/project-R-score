@@ -3,10 +3,10 @@
  * Advanced color legend system for inheritance tracking visualization
  */
 
-console.log('🎨 CHROMATIC LEGEND v4.5 - VISUAL FOOTER ENHANCEMENT COMPLETE!')
-console.log('='.repeat(80))
+console.info('🎨 CHROMATIC LEGEND v4.5 - VISUAL FOOTER ENHANCEMENT COMPLETE!')
+console.info('='.repeat(80))
 
-console.log(`
+console.info(`
 🚀 ADVANCED COLOR LEGEND SYSTEM DEPLOYED!
 
 ✅ CHROMATIC LEGEND FOOTER ENHANCEMENT - COMPLETE:
@@ -58,18 +58,18 @@ Color Mapping System:
 
 Code Enhancement:
 // Add to renderInheritanceChain()
-console.log("\\n" + "─".repeat(70));
-console.log(
+console.info("\\n" + "─".repeat(70));
+console.info(
   \`\${c("hsl(145, 80%, 45%)"}████\${reset} Inherited   \` +
   \`\${c("hsl(10, 90%, 55%)"}████\${reset} Overridden   \` +
   \`\${c("hsl(220, 20%, 40%)"}████\${reset} Base Configuration\`
 );
-console.log(
+console.info(
   \`\${c("hsl(280, 60%, 60%)"}████\${reset} Merge Analysis   \` +
   \`\${c("hsl(48, 100%, 60%)"}████\${reset} Staging Level   \` +
   \`\${c("hsl(210, 20%, 50%)"}████\${reset} Summary Information\`
 );
-console.log("─".repeat(70) + "\\n");
+console.info("─".repeat(70) + "\\n");
 
 🎨 Color Psychology Applied:
 ===========================
@@ -207,9 +207,9 @@ The chromatic legend enhancement provides immediate visual context for inheritan
 🎨✅ CHROMATIC LEGEND v4.5 - VISUAL FOOTER ENHANCEMENT COMPLETE! ✅🎨
 `)
 
-console.log('🎨✅ CHROMATIC LEGEND v4.5 - VISUAL FOOTER ENHANCEMENT!')
-console.log('🌈 Professional color blocks - Visual reference system!')
-console.log('📊 Comprehensive mapping - All data types covered!')
-console.log('🎯 Enhanced UX - Instant color recognition!')
-console.log('🔧 Seamless integration - Zero breaking changes!')
-console.log('💎 FactoryWager v4.5 - Chromatic legend excellence complete!')
+console.info('🎨✅ CHROMATIC LEGEND v4.5 - VISUAL FOOTER ENHANCEMENT!')
+console.info('🌈 Professional color blocks - Visual reference system!')
+console.info('📊 Comprehensive mapping - All data types covered!')
+console.info('🎯 Enhanced UX - Instant color recognition!')
+console.info('🔧 Seamless integration - Zero breaking changes!')
+console.info('💎 FactoryWager v4.5 - Chromatic legend excellence complete!')

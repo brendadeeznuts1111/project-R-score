@@ -49,7 +49,7 @@ export async function benchmarkOdds(limit: number = 1000000): Promise<{
   integrity: boolean;
   checksums: number[];
 }> {
-  console.log(`🧪 Benchmarking ${limit.toLocaleString()} odds rows with CRC32...`);
+  console.info(`🧪 Benchmarking ${limit.toLocaleString()} odds rows with CRC32...`);
   
   const startTime = Date.now();
   const checksums: number[] = [];
@@ -72,7 +72,7 @@ export async function benchmarkOdds(limit: number = 1000000): Promise<{
     // Progress indicator
     if (b % 10 === 0) {
       const progress = ((b / batches) * 100).toFixed(1);
-      console.log(`   Progress: ${progress}% (${b * batchSize} rows)`);
+      console.info(`   Progress: ${progress}% (${b * batchSize} rows)`);
     }
   }
   
@@ -94,26 +94,26 @@ export async function benchmarkOdds(limit: number = 1000000): Promise<{
 // Main execution
 if (import.meta.main) {
   async function run() {
-    console.log('='.repeat(60));
-    console.log('🧪 Large-Odds Dataset CRC32 Benchmark v1.7.0');
-    console.log('='.repeat(60));
+    console.info('='.repeat(60));
+    console.info('🧪 Large-Odds Dataset CRC32 Benchmark v1.7.0');
+    console.info('='.repeat(60));
     
     const limit = parseInt(process.argv[2] || '100000');
-    console.log(`\n📊 Benchmark configuration:`);
-    console.log(`   Rows: ${limit.toLocaleString()}`);
-    console.log(`   CRC32: Bun.hash.crc32`);
+    console.info(`\n📊 Benchmark configuration:`);
+    console.info(`   Rows: ${limit.toLocaleString()}`);
+    console.info(`   CRC32: Bun.hash.crc32`);
     
     // Run benchmark
     const result = await benchmarkOdds(limit);
     
-    console.log(`\n📈 Benchmark Results:`);
-    console.log(`   Rows Processed: ${result.rowsProcessed.toLocaleString()}`);
-    console.log(`   Total Bytes: ${(result.totalBytes / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`   Total Time: ${result.totalTimeMs.toFixed(2)} ms`);
-    console.log(`   Throughput: ${result.throughputMBps.toFixed(2)} MB/s`);
-    console.log(`   Avg Latency: ${result.avgLatencyUs.toFixed(2)} µs/row`);
-    console.log(`   Integrity: ${result.integrity ? '✅' : '❌'}`);
-    console.log(`   Checksums: ${result.checksums.length} generated`);
+    console.info(`\n📈 Benchmark Results:`);
+    console.info(`   Rows Processed: ${result.rowsProcessed.toLocaleString()}`);
+    console.info(`   Total Bytes: ${(result.totalBytes / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`   Total Time: ${result.totalTimeMs.toFixed(2)} ms`);
+    console.info(`   Throughput: ${result.throughputMBps.toFixed(2)} MB/s`);
+    console.info(`   Avg Latency: ${result.avgLatencyUs.toFixed(2)} µs/row`);
+    console.info(`   Integrity: ${result.integrity ? '✅' : '❌'}`);
+    console.info(`   Checksums: ${result.checksums.length} generated`);
     
     // Generate KV-traceable metrics
     const kvMetrics = {
@@ -126,10 +126,10 @@ if (import.meta.main) {
       timestamp: new Date().toISOString(),
     };
     
-    console.log(`\n📦 KV-Traceable Metrics:`);
-    console.log(JSON.stringify(kvMetrics, null, 2));
+    console.info(`\n📦 KV-Traceable Metrics:`);
+    console.info(JSON.stringify(kvMetrics, null, 2));
     
-    console.log('\n✅ Large-Odds Dataset CRC32 Benchmark Complete');
+    console.info('\n✅ Large-Odds Dataset CRC32 Benchmark Complete');
   }
   
   run();

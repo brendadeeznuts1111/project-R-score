@@ -83,7 +83,7 @@ if (!globalThis.measure) {
       return await fn();
     } finally {
       const duration = performance.now() - start;
-      console.log(`⏱️  ${name}: ${duration.toFixed(2)}ms`);
+      console.info(`⏱️  ${name}: ${duration.toFixed(2)}ms`);
     }
   };
 }

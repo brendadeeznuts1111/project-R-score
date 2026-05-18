@@ -554,8 +554,8 @@ function displayBrowserWarning(warning: BrowserWarning): void {
                        warning.severity === 'medium' ? '\x1b[43m' : '\x1b[44m';
   const reset = '\x1b[0m';
 
-  console.log(`\n${severityColor} ${severityIcon} ${categoryIcon} BROWSER WARNING (${warning.severity.toUpperCase()}) ${reset}`);
-  console.log('='.repeat(80) + '\n');
+  console.info(`\n${severityColor} ${severityIcon} ${categoryIcon} BROWSER WARNING (${warning.severity.toUpperCase()}) ${reset}`);
+  console.info('='.repeat(80) + '\n');
 
   // Enhanced warning table with more details
   const warningTable = [
@@ -571,130 +571,130 @@ function displayBrowserWarning(warning: BrowserWarning): void {
     }
   ];
 
-  console.log(inspect.table(warningTable));
+  console.info(inspect.table(warningTable));
 
   // Enhanced details section
   if (warning.details || warning.remediation?.length > 0) {
-    console.log('\n📋 Detailed Analysis:');
+    console.info('\n📋 Detailed Analysis:');
 
     if (warning.details) {
       if (warning.details.directive) {
-        console.log(`  • Directive Violated: ${warning.details.directive}`);
+        console.info(`  • Directive Violated: ${warning.details.directive}`);
       }
       if (warning.details.blockedUri) {
-        console.log(`  • Blocked Resource: ${warning.details.blockedUri}`);
+        console.info(`  • Blocked Resource: ${warning.details.blockedUri}`);
       }
       if (warning.details.requiredAction) {
-        console.log(`  • Required Action: ${warning.details.requiredAction}`);
+        console.info(`  • Required Action: ${warning.details.requiredAction}`);
       }
       if (warning.details.hash) {
-        console.log(`  • Content Hash: ${warning.details.hash.substring(0, 16)}...`);
+        console.info(`  • Content Hash: ${warning.details.hash.substring(0, 16)}...`);
       }
       if (warning.details.line) {
-        console.log(`  • Location: Line ${warning.details.line}${warning.details.column ? `, Column ${warning.details.column}` : ''}`);
+        console.info(`  • Location: Line ${warning.details.line}${warning.details.column ? `, Column ${warning.details.column}` : ''}`);
       }
     }
 
     // Frequency analysis
     if (warning.frequency && warning.frequency > 1) {
-      console.log(`  • Occurrence Count: ${warning.frequency} times`);
+      console.info(`  • Occurrence Count: ${warning.frequency} times`);
       if (warning.frequency > 5) {
-        console.log(`    ⚠️ High frequency - may indicate systematic issue`);
+        console.info(`    ⚠️ High frequency - may indicate systematic issue`);
       }
     }
   }
 
   // Enhanced remediation section
   if (warning.remediation && warning.remediation.length > 0) {
-    console.log('\n🔧 Remediation Steps:');
+    console.info('\n🔧 Remediation Steps:');
     warning.remediation.forEach((step, index) => {
       const priority = index === 0 ? '🔴' : index === 1 ? '🟡' : '🟢';
-      console.log(`  ${priority} ${index + 1}. ${step}`);
+      console.info(`  ${priority} ${index + 1}. ${step}`);
     });
   }
 
   // Context-aware recommendations
-  console.log('\n� Recommendations:');
+  console.info('\n� Recommendations:');
   if (warning.type === 'webgl') {
-    console.log('  🎮 Graphics: Check GPU hardware acceleration in browser settings');
-    console.log('  📱 Fallback: Implement 2D canvas fallback for unsupported devices');
-    console.log('  🔧 Drivers: Update graphics drivers to latest version');
-    console.log('  📊 Analytics: Track WebGL support rates in your analytics');
+    console.info('  🎮 Graphics: Check GPU hardware acceleration in browser settings');
+    console.info('  📱 Fallback: Implement 2D canvas fallback for unsupported devices');
+    console.info('  🔧 Drivers: Update graphics drivers to latest version');
+    console.info('  📊 Analytics: Track WebGL support rates in your analytics');
   } else if (warning.type === 'csp') {
     if (warning.details?.directive === 'script-src') {
-      console.log('  🔒 Security: Use nonces or hashes instead of unsafe-inline');
-      console.log('  📦 Architecture: Move inline scripts to external files');
-      console.log('  🎯 Targeting: Apply CSP selectively per environment');
-      console.log('  🧪 Testing: Use CSP report-only mode in development');
+      console.info('  🔒 Security: Use nonces or hashes instead of unsafe-inline');
+      console.info('  📦 Architecture: Move inline scripts to external files');
+      console.info('  🎯 Targeting: Apply CSP selectively per environment');
+      console.info('  🧪 Testing: Use CSP report-only mode in development');
     } else if (warning.details?.directive === 'connect-src') {
-      console.log('  🌐 Network: Whitelist specific domains in connect-src');
-      console.log('  📍 URLs: Use relative URLs to avoid CSP violations');
-      console.log('  🔀 Proxy: Consider using a proxy for external APIs');
-      console.log('  📝 Documentation: Document all external endpoints');
+      console.info('  🌐 Network: Whitelist specific domains in connect-src');
+      console.info('  📍 URLs: Use relative URLs to avoid CSP violations');
+      console.info('  🔀 Proxy: Consider using a proxy for external APIs');
+      console.info('  📝 Documentation: Document all external endpoints');
     } else if (warning.details?.directive === 'default-src') {
-      console.log('  🛡️ Defense: Start with restrictive default-src policy');
-      console.log('  🎯 Scope: Narrow permissions to specific directives');
-      console.log('  📋 Inventory: Create an inventory of all external resources');
+      console.info('  🛡️ Defense: Start with restrictive default-src policy');
+      console.info('  🎯 Scope: Narrow permissions to specific directives');
+      console.info('  📋 Inventory: Create an inventory of all external resources');
     }
   } else if (warning.category === 'network') {
     if (warning.message.includes('DNS')) {
-      console.log('  🌍 DNS: Verify DNS configuration and propagation');
-      console.log('  🔍 Domain: Check if domain name is correct and active');
-      console.log('  🚫 Blocking: May be blocked by firewall or ad-blocker');
-      console.log('  ⏱️ Timeout: Implement retry logic with exponential backoff');
+      console.info('  🌍 DNS: Verify DNS configuration and propagation');
+      console.info('  🔍 Domain: Check if domain name is correct and active');
+      console.info('  🚫 Blocking: May be blocked by firewall or ad-blocker');
+      console.info('  ⏱️ Timeout: Implement retry logic with exponential backoff');
     } else if (warning.message.includes('timeout')) {
-      console.log('  ⏱️ Performance: Check network latency and server response times');
-      console.log('  🔄 Retry: Implement automatic retry with backoff strategy');
-      console.log('  📊 Monitoring: Add timeout metrics to monitoring dashboard');
-      console.log('  👥 UX: Show user-friendly timeout messages');
+      console.info('  ⏱️ Performance: Check network latency and server response times');
+      console.info('  🔄 Retry: Implement automatic retry with backoff strategy');
+      console.info('  📊 Monitoring: Add timeout metrics to monitoring dashboard');
+      console.info('  👥 UX: Show user-friendly timeout messages');
     } else if (warning.message.includes('certificate')) {
-      console.log('  🔐 Security: Update SSL/TLS certificates immediately');
-      console.log('  📅 Expiry: Set up certificate expiry monitoring');
-      console.log('  🔗 Chain: Verify full certificate chain is valid');
-      console.log('  🌐 CA: Ensure using trusted Certificate Authority');
+      console.info('  🔐 Security: Update SSL/TLS certificates immediately');
+      console.info('  📅 Expiry: Set up certificate expiry monitoring');
+      console.info('  🔗 Chain: Verify full certificate chain is valid');
+      console.info('  🌐 CA: Ensure using trusted Certificate Authority');
     }
   } else if (warning.category === 'performance') {
-    console.log('  ⚡ Optimization: Profile the long-running task');
-    console.log('  🧩 Code Splitting: Break down large JavaScript bundles');
-    console.log('  🧵 Web Workers: Move heavy computations to workers');
-    console.log('  📈 Metrics: Add performance monitoring and alerts');
+    console.info('  ⚡ Optimization: Profile the long-running task');
+    console.info('  🧩 Code Splitting: Break down large JavaScript bundles');
+    console.info('  🧵 Web Workers: Move heavy computations to workers');
+    console.info('  📈 Metrics: Add performance monitoring and alerts');
   }
 
   // Security implications
   if (warning.category === 'security' || warning.type === 'csp') {
-    console.log('\n🔒 Security Implications:');
+    console.info('\n🔒 Security Implications:');
     if (warning.severity === 'high') {
-      console.log('  🚨 Critical: This vulnerability could lead to code execution');
-      console.log('  🎯 Impact: Data breach or unauthorized access possible');
-      console.log('  ⏰ Timeline: Fix within 24 hours recommended');
+      console.info('  🚨 Critical: This vulnerability could lead to code execution');
+      console.info('  🎯 Impact: Data breach or unauthorized access possible');
+      console.info('  ⏰ Timeline: Fix within 24 hours recommended');
     } else if (warning.severity === 'medium') {
-      console.log('  ⚠️ Warning: Potential security risk exists');
-      console.log('  📊 Risk: Information disclosure possible');
-      console.log('  📅 Timeline: Address in next release cycle');
+      console.info('  ⚠️ Warning: Potential security risk exists');
+      console.info('  📊 Risk: Information disclosure possible');
+      console.info('  📅 Timeline: Address in next release cycle');
     } else {
-      console.log('  ℹ️ Info: Security best practice recommendation');
-      console.log('  📈 Benefit: Improves overall security posture');
-      console.log('  🎯 Priority: Implement when convenient');
+      console.info('  ℹ️ Info: Security best practice recommendation');
+      console.info('  📈 Benefit: Improves overall security posture');
+      console.info('  🎯 Priority: Implement when convenient');
     }
   }
 
   // Related warnings pattern
   if (warning.type === 'csp' && warning.details?.directive) {
-    console.log('\n🔗 Related Patterns:');
+    console.info('\n🔗 Related Patterns:');
     if (warning.details.directive.includes('script')) {
-      console.log('  • Check for: unsafe-inline, unsafe-eval, dynamic imports');
-      console.log('  • Also review: integrity attributes, SRI implementation');
+      console.info('  • Check for: unsafe-inline, unsafe-eval, dynamic imports');
+      console.info('  • Also review: integrity attributes, SRI implementation');
     }
     if (warning.details.directive.includes('connect')) {
-      console.log('  • Check for: API endpoints, CDN resources, WebSocket URLs');
-      console.log('  • Also review: CORS headers, authentication flows');
+      console.info('  • Check for: API endpoints, CDN resources, WebSocket URLs');
+      console.info('  • Also review: CORS headers, authentication flows');
     }
   }
 }
 
 function displayLogSummary(summary: DisplayLogSummary): void {
-  console.log('\n📊 Enhanced Log Processing Summary');
-  console.log('===================================\n');
+  console.info('\n📊 Enhanced Log Processing Summary');
+  console.info('===================================\n');
 
   const summaryTable = [
     {
@@ -734,11 +734,11 @@ function displayLogSummary(summary: DisplayLogSummary): void {
     }
   ];
 
-  console.log(inspect.table(summaryTable));
+  console.info(inspect.table(summaryTable));
 
   // Performance Metrics
   if (summary.performance) {
-    console.log('\n⚡ Performance Metrics:');
+    console.info('\n⚡ Performance Metrics:');
     const perfTable = [
       {
         'Metric': 'Total Parse Time',
@@ -765,12 +765,12 @@ function displayLogSummary(summary: DisplayLogSummary): void {
       });
     }
 
-    console.log(inspect.table(perfTable));
+    console.info(inspect.table(perfTable));
   }
 
   // Security Score
   if (summary.securityScore) {
-    console.log('\n🔒 Security Score:');
+    console.info('\n🔒 Security Score:');
     const score = summary.securityScore;
     const overallGrade = score.overall >= 80 ? '🟢 A' :
                          score.overall >= 60 ? '🟡 B' :
@@ -799,12 +799,12 @@ function displayLogSummary(summary: DisplayLogSummary): void {
       }
     ];
 
-    console.log(inspect.table(securityTable));
+    console.info(inspect.table(securityTable));
   }
 
   // Log Correlation Timeline
   if (summary.correlation && summary.correlation.timeline.length > 0) {
-    console.log('\n📅 Event Timeline:');
+    console.info('\n📅 Event Timeline:');
     const timelineTable = summary.correlation.timeline.map((event, index) => ({
       '#': (index + 1).toString(),
       'Time': new Date(event.timestamp).toLocaleTimeString(),
@@ -812,75 +812,75 @@ function displayLogSummary(summary: DisplayLogSummary): void {
       'Event': event.event.length > 40 ? event.event.substring(0, 37) + '...' : event.event
     }));
 
-    console.log(inspect.table(timelineTable));
-    console.log(`\n👤 Session: ${summary.correlation.sessionId} | User: ${summary.correlation.userId}`);
+    console.info(inspect.table(timelineTable));
+    console.info(`\n👤 Session: ${summary.correlation.sessionId} | User: ${summary.correlation.userId}`);
   }
 
   // Warnings by type
   if (Object.keys(summary.warningsByType).length > 0) {
-    console.log('\n📈 Warnings by Type:');
+    console.info('\n📈 Warnings by Type:');
     const typeTable = Object.entries(summary.warningsByType).map(([type, count]) => ({
       'Type': type.toUpperCase(),
       'Count': count.toString(),
       'Severity': count > 3 ? '🔴 High' : count > 1 ? '🟡 Medium' : '🟢 Low'
     }));
-    console.log(inspect.table(typeTable));
+    console.info(inspect.table(typeTable));
   }
 
   // Warnings by severity
   if (Object.keys(summary.warningsBySeverity).length > 0) {
-    console.log('\n🚨 Warnings by Severity:');
+    console.info('\n🚨 Warnings by Severity:');
     const severityTable = Object.entries(summary.warningsBySeverity).map(([severity, count]) => ({
       'Severity': severity.toUpperCase(),
       'Count': count.toString(),
       'Impact': severity === 'high' ? '🔴 Critical' : severity === 'medium' ? '🟡 Review' : '🟢 Info'
     }));
-    console.log(inspect.table(severityTable));
+    console.info(inspect.table(severityTable));
   }
 
   // Top issues
   if (summary.topIssues.length > 0) {
-    console.log('\n🔥 Top Issues (by frequency):');
+    console.info('\n🔥 Top Issues (by frequency):');
     const issuesTable = summary.topIssues.map((issue, index) => ({
       '#': (index + 1).toString(),
       'Issue': issue.message.length > 50 ? issue.message.substring(0, 47) + '...' : issue.message,
       'Count': issue.count.toString(),
       'Priority': issue.count > 2 ? '🔴 High' : issue.count > 1 ? '🟡 Medium' : '🟢 Low'
     }));
-    console.log(inspect.table(issuesTable));
+    console.info(inspect.table(issuesTable));
   }
 
-  console.log('\n🎯 Quick Actions:');
+  console.info('\n🎯 Quick Actions:');
   if (summary.sdkStatus === 'initializing') {
-    console.log('  • Wait for SDK ready message to confirm full initialization');
+    console.info('  • Wait for SDK ready message to confirm full initialization');
   }
   if (summary.warningsBySeverity.high > 0) {
-    console.log('  🚨 URGENT: Address high-severity warnings immediately');
+    console.info('  🚨 URGENT: Address high-severity warnings immediately');
   }
   if (summary.warningsBySeverity.medium > 0) {
-    console.log('  ⚠️ Review medium-severity warnings for optimization');
+    console.info('  ⚠️ Review medium-severity warnings for optimization');
   }
   if (summary.warningsByType.csp > 0) {
-    console.log('  🔒 Review CSP policy - consider adding necessary exceptions');
+    console.info('  🔒 Review CSP policy - consider adding necessary exceptions');
   }
   if (summary.warningsByType.network > 0) {
-    console.log('  🌐 Check network connectivity and DNS configuration');
+    console.info('  🌐 Check network connectivity and DNS configuration');
   }
   if (summary.uniqueUsers > 1) {
-    console.log('  👥 Multiple users detected - check for session mixing');
+    console.info('  👥 Multiple users detected - check for session mixing');
   }
 
   // Performance insights
   if (summary.processingTime > 100) {
-    console.log('  ⚡ Processing time is high - consider optimizing log parsing');
+    console.info('  ⚡ Processing time is high - consider optimizing log parsing');
   }
 
   // Security recommendations
   if (summary.securityScore) {
     if (summary.securityScore.overall < 60) {
-      console.log('  🔴 SECURITY: Review and strengthen security policies');
+      console.info('  🔴 SECURITY: Review and strengthen security policies');
     } else if (summary.securityScore.overall < 80) {
-      console.log('  🟡 SECURITY: Some security improvements recommended');
+      console.info('  🟡 SECURITY: Some security improvements recommended');
     }
   }
 }
@@ -890,8 +890,8 @@ function displayRangersLogData(data: RangersLogData): void {
                       data.logType === 'user_info' ? '👤' :
                       data.logType === 'device_info' ? '📱' :
                       data.logType === 'analytics_event' ? '📊' : '📋';
-  console.log(`\n${logTypeIcon} Rangers SDK Log Analysis (${data.logType})`);
-  console.log('==========================================\n');
+  console.info(`\n${logTypeIcon} Rangers SDK Log Analysis (${data.logType})`);
+  console.info('==========================================\n');
 
   if (data.logType === 'analytics_event' && data.analyticsData) {
     // Display analytics event information
@@ -928,36 +928,36 @@ function displayRangersLogData(data: RangersLogData): void {
       }
     ];
 
-    console.log(inspect.table(analyticsTable));
+    console.info(inspect.table(analyticsTable));
 
     // Show parsed params if available
     if (data.analyticsData.params) {
       try {
         const paramsParsed = JSON.parse(data.analyticsData.params);
-        console.log('\n📊 Event Parameters:');
-        console.log(JSON.stringify(paramsParsed, null, 2));
+        console.info('\n📊 Event Parameters:');
+        console.info(JSON.stringify(paramsParsed, null, 2));
 
         // Extract insights from params
         if (paramsParsed.url) {
-          console.log('\n🔍 Event Insights:');
-          console.log(`  🌐 URL: ${paramsParsed.url}`);
+          console.info('\n🔍 Event Insights:');
+          console.info(`  🌐 URL: ${paramsParsed.url}`);
           if (paramsParsed.title) {
-            console.log(`  📄 Title: ${paramsParsed.title}`);
+            console.info(`  📄 Title: ${paramsParsed.title}`);
           }
           if (paramsParsed.start_time && paramsParsed.end_time) {
             const duration = paramsParsed.end_time - paramsParsed.start_time;
-            console.log(`  ⏱️ Duration: ${duration}ms`);
+            console.info(`  ⏱️ Duration: ${duration}ms`);
           }
           if (paramsParsed.referrer) {
-            console.log(`  🔗 Referrer: ${paramsParsed.referrer}`);
+            console.info(`  🔗 Referrer: ${paramsParsed.referrer}`);
           }
           if (paramsParsed.event_index) {
-            console.log(`  📍 Event Index: ${paramsParsed.event_index}`);
+            console.info(`  📍 Event Index: ${paramsParsed.event_index}`);
           }
         }
       } catch (e) {
-        console.log('\n📊 Event Parameters (raw):');
-        console.log(data.analyticsData.params);
+        console.info('\n📊 Event Parameters (raw):');
+        console.info(data.analyticsData.params);
       }
     }
   } else if (data.logType === 'device_info' && data.deviceData) {
@@ -1005,32 +1005,32 @@ function displayRangersLogData(data: RangersLogData): void {
       }
     ];
 
-    console.log(inspect.table(deviceTable));
+    console.info(inspect.table(deviceTable));
 
     // Show parsed custom data if available
     if (data.deviceData.custom) {
       try {
         const customParsed = JSON.parse(data.deviceData.custom);
-        console.log('\n📋 Custom Data:');
-        console.log(JSON.stringify(customParsed, null, 2));
+        console.info('\n📋 Custom Data:');
+        console.info(JSON.stringify(customParsed, null, 2));
 
         // Extract insights from custom data
         if (customParsed.msh_web_host) {
-          console.log('\n🔍 Analysis Insights:');
-          console.log(`  🌐 Host: ${customParsed.msh_web_host}`);
+          console.info('\n🔍 Analysis Insights:');
+          console.info(`  🌐 Host: ${customParsed.msh_web_host}`);
           if (customParsed.msh_web_to_path) {
-            console.log(`  📍 To Path: ${customParsed.msh_web_to_path}`);
+            console.info(`  📍 To Path: ${customParsed.msh_web_to_path}`);
           }
           if (customParsed.msh_web_release) {
-            console.log(`  🏷️  Release: ${customParsed.msh_web_release}`);
+            console.info(`  🏷️  Release: ${customParsed.msh_web_release}`);
             if (customParsed.msh_web_release_date) {
-              console.log(`  📅 Release Date: ${customParsed.msh_web_release_date}`);
+              console.info(`  📅 Release Date: ${customParsed.msh_web_release_date}`);
             }
           }
         }
       } catch (e) {
-        console.log('\n📋 Custom Data (raw):');
-        console.log(data.deviceData.custom);
+        console.info('\n📋 Custom Data (raw):');
+        console.info(data.deviceData.custom);
       }
     }
   } else {
@@ -1078,31 +1078,31 @@ function displayRangersLogData(data: RangersLogData): void {
     }
   ];
 
-  console.log(inspect.table(logTable));
+  console.info(inspect.table(logTable));
 
   // Additional insights
-  console.log('\n🔍 Analysis Insights:');
+  console.info('\n🔍 Analysis Insights:');
   if (data.sdkReady) {
-    console.log('  ✅ SDK is fully initialized and ready to accept reports');
+    console.info('  ✅ SDK is fully initialized and ready to accept reports');
   }
   if (data.userInfo.user_unique_id && data.userInfo.web_id) {
     if (data.userInfo.user_unique_id === data.userInfo.web_id) {
-      console.log('  ℹ️  User ID and Web ID are identical (common for new users)');
+      console.info('  ℹ️  User ID and Web ID are identical (common for new users)');
     } else {
-      console.log('  👥 Different User ID and Web ID (returning user)');
+      console.info('  👥 Different User ID and Web ID (returning user)');
     }
   }
   if (data.sdkVersion?.includes('tob')) {
-    console.log('  🌾 Using TOB (ByteDance internal) build version');
+    console.info('  🌾 Using TOB (ByteDance internal) build version');
   }
   if (data.logType === 'user_info' && !data.userInfo.user_unique_id) {
-    console.log('  ⚠️  User info present but parsing failed');
+    console.info('  ⚠️  User info present but parsing failed');
   }
 
   // Show raw data if debugging needed
   if (process.env.DEBUG_RANGERS) {
-    console.log('\n🔧 Raw Log Data:');
-    console.log(data.rawData);
+    console.info('\n🔧 Raw Log Data:');
+    console.info(data.rawData);
   }
 }
 }
@@ -1182,7 +1182,7 @@ function displayTestResults(result: any, options: TestOptions): void {
     return;
   }
 
-  console.log(`
+  console.info(`
 🎯 TIER-1380 SECURE TEST RUN COMPLETE
 ┌─────────────────────────────────────────┐
 │ Context:       ${(options.config || 'local').padEnd(20)} │
@@ -1203,7 +1203,7 @@ ${result.bytecodeMetrics ? `│ JIT Score:     ${result.bytecodeMetrics.optimiza
 `);
 
   if (result.bytecodeMetrics) {
-    console.log(`🔥 BYTECODE PERFORMANCE:
+    console.info(`🔥 BYTECODE PERFORMANCE:
   • Optimization: ${result.bytecodeMetrics.optimizationScore.toFixed(0)}/100
   • FTL JIT:      ${result.bytecodeMetrics.tierBreakdown.ftl.toFixed(1)}%
   • DFG JIT:      ${result.bytecodeMetrics.tierBreakdown.dfg.toFixed(1)}%
@@ -1213,7 +1213,7 @@ ${result.bytecodeMetrics ? `│ JIT Score:     ${result.bytecodeMetrics.optimiza
 `);
   }
 
-  console.log(`🔒 SECURITY VALIDATIONS:
+  console.info(`🔒 SECURITY VALIDATIONS:
   ✅ Environment isolation verified
   ✅ No production secrets detected
   ✅ Registry token scope validated
@@ -1225,8 +1225,8 @@ ${result.bytecodeMetrics ? `│ JIT Score:     ${result.bytecodeMetrics.optimiza
 }
 
 function displayTestResultsAsTable(result: any, options: TestOptions): void {
-  console.log('\n📊 Test Results Table View');
-  console.log('========================\n');
+  console.info('\n📊 Test Results Table View');
+  console.info('========================\n');
 
   // Main results table
   const mainTable = [
@@ -1257,11 +1257,11 @@ function displayTestResultsAsTable(result: any, options: TestOptions): void {
     }
   ];
 
-  console.log(inspect.table(mainTable));
+  console.info(inspect.table(mainTable));
 
   // Bytecode metrics if available
   if (result.bytecodeMetrics) {
-    console.log('\n🔥 Bytecode Performance');
+    console.info('\n🔥 Bytecode Performance');
     const bytecodeTable = [
       {
         'JIT Tier': 'LLInt (Interpreter)',
@@ -1285,12 +1285,12 @@ function displayTestResultsAsTable(result: any, options: TestOptions): void {
       }
     ];
 
-    console.log(inspect.table(bytecodeTable));
+    console.info(inspect.table(bytecodeTable));
   }
 
   // Coverage details if available
   if (result.coverage) {
-    console.log('\n📈 Coverage Breakdown');
+    console.info('\n📈 Coverage Breakdown');
     const coverageTable = [
       {
         'Metric': 'Lines',
@@ -1314,7 +1314,7 @@ function displayTestResultsAsTable(result: any, options: TestOptions): void {
       }
     ];
 
-    console.log(inspect.table(coverageTable));
+    console.info(inspect.table(coverageTable));
   }
 }
 
@@ -1324,7 +1324,7 @@ async function testCommand(args: string[]): Promise<void> {
 
   // Handle Rangers log parsing
   if (options.parseRangersLog) {
-    console.log('📋 Reading Rangers SDK log from stdin...\n');
+    console.info('📋 Reading Rangers SDK log from stdin...\n');
 
     try {
       const startTime = Bun.nanoseconds();
@@ -1445,7 +1445,7 @@ async function testCommand(args: string[]): Promise<void> {
 
   // Handle help
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`🎯 Tier-1380 Secure Test Runner
+    console.info(`🎯 Tier-1380 Secure Test Runner
 
 USAGE:
   bun run cli/test.ts [options] [files...]
@@ -1490,7 +1490,7 @@ TIER-1380 TARGETS:
       const { bytecodeProfiler } = await import('../packages/test/bytecode-profiler');
       bytecodeProfiler.compareMetrics('test-run-' + (options.config || 'local'));
     } catch (error) {
-      console.log('⚠️ Bytecode profiler not available');
+      console.info('⚠️ Bytecode profiler not available');
     }
     return;
   }
@@ -1503,12 +1503,12 @@ TIER-1380 TARGETS:
 
   // Profile config loading if requested
   if (options.profileConfig) {
-    console.log('🔍 Profiling config loading...');
+    console.info('🔍 Profiling config loading...');
     const configMetrics = runner.profileConfigLoading();
     if (configMetrics) {
-      console.log(`Config load optimization: ${configMetrics.optimizationScore}/100`);
-      console.log(`LLInt: ${configMetrics.tierBreakdown.llint.toFixed(2)}%`);
-      console.log(`FTL: ${configMetrics.tierBreakdown.ftl.toFixed(2)}%`);
+      console.info(`Config load optimization: ${configMetrics.optimizationScore}/100`);
+      console.info(`LLInt: ${configMetrics.tierBreakdown.llint.toFixed(2)}%`);
+      console.info(`FTL: ${configMetrics.tierBreakdown.ftl.toFixed(2)}%`);
     }
   }
 
@@ -1516,12 +1516,12 @@ TIER-1380 TARGETS:
     // Enable bytecode profiling if requested
     if (options.bytecodeProfile) {
       try {
-        console.log('🔥 Bytecode profiling enabled');
+        console.info('🔥 Bytecode profiling enabled');
         if (options.profileInterval) {
-          console.log(`Profile interval: ${options.profileInterval}μs`);
+          console.info(`Profile interval: ${options.profileInterval}μs`);
         }
       } catch (error) {
-        console.log('⚠️ Bytecode profiling not available - continuing without profiling');
+        console.info('⚠️ Bytecode profiling not available - continuing without profiling');
         options.bytecodeProfile = false;
       }
     }
@@ -1538,8 +1538,8 @@ TIER-1380 TARGETS:
 
     // Show detailed bytecode analysis if profiled
     if (options.bytecodeProfile && result.bytecodeMetrics) {
-      console.log('\n📊 Detailed Bytecode Analysis:');
-      console.log('================================');
+      console.info('\n📊 Detailed Bytecode Analysis:');
+      console.info('================================');
 
       const bytecodeTable = [
         {
@@ -1564,12 +1564,12 @@ TIER-1380 TARGETS:
         }
       ];
 
-      console.log(inspect.table(bytecodeTable));
+      console.info(inspect.table(bytecodeTable));
     }
 
     // Coverage details if available
     if (result.coverage) {
-      console.log('\n📈 Coverage Breakdown');
+      console.info('\n📈 Coverage Breakdown');
       const coverageTable = [
         {
           'Metric': 'Lines',
@@ -1593,7 +1593,7 @@ TIER-1380 TARGETS:
         }
       ];
 
-      console.log(inspect.table(coverageTable));
+      console.info(inspect.table(coverageTable));
     }
 
   } catch (error: any) {

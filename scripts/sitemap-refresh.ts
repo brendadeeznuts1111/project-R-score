@@ -111,9 +111,9 @@ async function main(): Promise<void> {
   const indexXml = await buildSitemapIndexXml(domain);
   await writeFile(SITEMAP_INDEX_PATH, indexXml, 'utf8');
 
-  console.log(`[sitemap-refresh] domain=${domain}`);
-  console.log(`[sitemap-refresh] wrote ${SITEMAP_PAGES_PATH}`);
-  console.log(`[sitemap-refresh] wrote ${SITEMAP_INDEX_PATH}`);
+  console.info(`[sitemap-refresh] domain=${domain}`);
+  console.info(`[sitemap-refresh] wrote ${SITEMAP_PAGES_PATH}`);
+  console.info(`[sitemap-refresh] wrote ${SITEMAP_INDEX_PATH}`);
 }
 
 if (import.meta.main) {

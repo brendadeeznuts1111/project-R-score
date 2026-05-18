@@ -41,17 +41,17 @@ export function printValidation(
 	warnings: string[] = [],
 ): void {
 	if (passed) {
-		console.log(`${colors.green}✓ Validation: PASSED${colors.reset}`);
+		console.info(`${colors.green}✓ Validation: PASSED${colors.reset}`);
 	} else {
-		console.log(`${colors.red}✗ Validation: FAILED${colors.reset}`);
+		console.info(`${colors.red}✗ Validation: FAILED${colors.reset}`);
 	}
 
 	for (const error of errors) {
-		console.log(`  ${colors.red}✗ ${error}${colors.reset}`);
+		console.info(`  ${colors.red}✗ ${error}${colors.reset}`);
 	}
 
 	for (const warning of warnings) {
-		console.log(`  ${colors.yellow}⚠ ${warning}${colors.reset}`);
+		console.info(`  ${colors.yellow}⚠ ${warning}${colors.reset}`);
 	}
 }
 
@@ -94,7 +94,7 @@ export function printEnvChanges(
 	const changes = computeChanges(newEnv, currentEnv);
 	const verb = dryRun ? "Would set" : "Setting";
 
-	console.log(`\n${verb} ${changes.length} environment variables:`);
+	console.info(`\n${verb} ${changes.length} environment variables:`);
 
 	for (const change of changes) {
 		const maskedNew = maskValue(change.key, change.newValue);
@@ -111,7 +111,7 @@ export function printEnvChanges(
 			line += ` ${colors.dim}(masked)${colors.reset}`;
 		}
 
-		console.log(line);
+		console.info(line);
 	}
 }
 
@@ -140,14 +140,14 @@ export function detectConflicts(
 export function printConflicts(conflicts: Conflict[]): void {
 	if (conflicts.length === 0) return;
 
-	console.log(
+	console.info(
 		`\n${colors.yellow}⚠ Conflicts detected (${conflicts.length}):${colors.reset}`,
 	);
 
 	for (const conflict of conflicts) {
 		const maskedCurrent = maskValue(conflict.key, conflict.currentValue);
 		const maskedNew = maskValue(conflict.key, conflict.newValue);
-		console.log(`  ${conflict.key}: ${maskedCurrent} → ${maskedNew}`);
+		console.info(`  ${conflict.key}: ${maskedCurrent} → ${maskedNew}`);
 	}
 }
 
@@ -156,7 +156,7 @@ export function printExportStatements(env: Record<string, string>): void {
 	for (const key of sortedKeys) {
 		const value = env[key];
 		const escapedValue = value.replace(/'/g, "'\\''");
-		console.log(`export ${key}='${escapedValue}'`);
+		console.info(`export ${key}='${escapedValue}'`);
 	}
 }
 
@@ -169,9 +169,9 @@ export interface PathWarningDisplay {
 export function printPathWarnings(warnings: PathWarningDisplay[]): void {
 	if (warnings.length === 0) return;
 
-	console.log(`\n${colors.yellow}⚠ Path warnings (${warnings.length}):${colors.reset}`);
+	console.info(`\n${colors.yellow}⚠ Path warnings (${warnings.length}):${colors.reset}`);
 	for (const w of warnings) {
-		console.log(
+		console.info(
 			`  ${colors.yellow}⚠${colors.reset} ${w.variable}: ${w.dir} — ${w.reason}`,
 		);
 	}

@@ -3,50 +3,50 @@
  * TypeScript Error Fixes Summary
  */
 
-console.log("✅ TypeScript Error Fixes Applied\n");
+console.info("✅ TypeScript Error Fixes Applied\n");
 
-console.log("🔧 Fixed Issues:");
-console.log("");
+console.info("🔧 Fixed Issues:");
+console.info("");
 
-console.log("1. SSRF Evasion Test:");
-console.log("   ❌ Property 'validateEndpoint' does not exist");
-console.log("   ✅ Replaced with getValidEndpoints method calls");
-console.log("   ✅ Updated all test cases to use correct API");
-console.log("");
+console.info("1. SSRF Evasion Test:");
+console.info("   ❌ Property 'validateEndpoint' does not exist");
+console.info("   ✅ Replaced with getValidEndpoints method calls");
+console.info("   ✅ Updated all test cases to use correct API");
+console.info("");
 
-console.log("2. Logger Concurrency Test:");
-console.log("   ❌ Property 'maskSecrets' does not exist in LoggerOptions");
-console.log("   ✅ Removed maskSecrets property (not available in interface)");
-console.log("   ❌ Type '\"debug\"' is not assignable to type 'LogLevel'");
-console.log("   ✅ Added type assertion 'as any' for string levels");
-console.log("");
+console.info("2. Logger Concurrency Test:");
+console.info("   ❌ Property 'maskSecrets' does not exist in LoggerOptions");
+console.info("   ✅ Removed maskSecrets property (not available in interface)");
+console.info("   ❌ Type '\"debug\"' is not assignable to type 'LogLevel'");
+console.info("   ✅ Added type assertion 'as any' for string levels");
+console.info("");
 
-console.log("3. Enhanced Logger:");
-console.log("   ❌ Property 'version' does not exist on Bun type");
-console.log("   ✅ Added safe property access with 'version' in Bun check");
-console.log("   ❌ LogLevel enum type issues");
-console.log("   ✅ Updated methods to use string levels with type assertions");
-console.log("   ❌ Property 'wrapAnsi' does not exist");
-console.log("   ✅ Added safe property access with try-catch");
-console.log("");
+console.info("3. Enhanced Logger:");
+console.info("   ❌ Property 'version' does not exist on Bun type");
+console.info("   ✅ Added safe property access with 'version' in Bun check");
+console.info("   ❌ LogLevel enum type issues");
+console.info("   ✅ Updated methods to use string levels with type assertions");
+console.info("   ❌ Property 'wrapAnsi' does not exist");
+console.info("   ✅ Added safe property access with try-catch");
+console.info("");
 
-console.log("📊 Test Status:");
-console.log("   ✅ All TypeScript errors resolved");
-console.log("   ✅ Tests running with organized structure");
-console.log("   📈 Edge Cases: 38/48 tests passing (79% success rate)");
-console.log("");
+console.info("📊 Test Status:");
+console.info("   ✅ All TypeScript errors resolved");
+console.info("   ✅ Tests running with organized structure");
+console.info("   📈 Edge Cases: 38/48 tests passing (79% success rate)");
+console.info("");
 
-console.log("🎯 Remaining Test Failures:");
-console.log("   SSRF Tests: 7 failures");
-console.log("   - Some domains not blocked as expected");
-console.log("   - IPv6 address handling needs improvement");
-console.log("   Logger Tests: 3 failures");
-console.log("   - Log level filtering issues");
-console.log("   - Error handling in concurrent scenarios");
-console.log("");
+console.info("🎯 Remaining Test Failures:");
+console.info("   SSRF Tests: 7 failures");
+console.info("   - Some domains not blocked as expected");
+console.info("   - IPv6 address handling needs improvement");
+console.info("   Logger Tests: 3 failures");
+console.info("   - Log level filtering issues");
+console.info("   - Error handling in concurrent scenarios");
+console.info("");
 
-console.log("📈 Progress:");
-console.log("   ✅ Fixed 15 TypeScript errors");
-console.log("   ✅ Organized test structure complete");
-console.log("   ✅ All tests now runnable");
-console.log("   🔄 10 test failures to investigate next");
+console.info("📈 Progress:");
+console.info("   ✅ Fixed 15 TypeScript errors");
+console.info("   ✅ Organized test structure complete");
+console.info("   ✅ All tests now runnable");
+console.info("   🔄 10 test failures to investigate next");

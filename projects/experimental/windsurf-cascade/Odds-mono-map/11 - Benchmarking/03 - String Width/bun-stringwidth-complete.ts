@@ -7,16 +7,16 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.bold.magenta('🎯 Complete Bun.stringWidth() API Demonstration'));
-console.log(chalk.gray('Odds Protocol Vault - Full Parameter Coverage'));
-console.log(chalk.gray('='.repeat(80)));
+console.info(chalk.bold.magenta('🎯 Complete Bun.stringWidth() API Demonstration'));
+console.info(chalk.gray('Odds Protocol Vault - Full Parameter Coverage'));
+console.info(chalk.gray('='.repeat(80)));
 
 // =============================================================================
 // TYPESCRIPT DEFINITION REFERENCE
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📋 TypeScript Definition:'));
-console.log(chalk.white(`
+console.info(chalk.bold.cyan('\n📋 TypeScript Definition:'));
+console.info(chalk.white(`
 namespace Bun {
   export function stringWidth(
     input: string,
@@ -31,8 +31,8 @@ namespace Bun {
 // PARAMETER 1: input (string)
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔸 Parameter 1: input (string)'));
-console.log(chalk.gray('The string to measure visual width for'));
+console.info(chalk.bold.cyan('\n🔸 Parameter 1: input (string)'));
+console.info(chalk.gray('The string to measure visual width for'));
 
 const basicInputs = [
     'hello',
@@ -44,18 +44,18 @@ const basicInputs = [
     '\t tabbed'
 ];
 
-console.log(chalk.yellow('\nBasic string measurements:'));
+console.info(chalk.yellow('\nBasic string measurements:'));
 basicInputs.forEach(text => {
     const width = Bun.stringWidth(text);
-    console.log(`${chalk.cyan(text.padEnd(20))} → ${chalk.yellow(width.toString().padStart(3))} chars`);
+    console.info(`${chalk.cyan(text.padEnd(20))} → ${chalk.yellow(width.toString().padStart(3))} chars`);
 });
 
 // =============================================================================
 // PARAMETER 2: options.countAnsiEscapeCodes (boolean)
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔸 Parameter 2: countAnsiEscapeCodes (boolean)'));
-console.log(chalk.gray('Controls whether ANSI escape codes are included in width calculation'));
+console.info(chalk.bold.cyan('\n🔸 Parameter 2: countAnsiEscapeCodes (boolean)'));
+console.info(chalk.gray('Controls whether ANSI escape codes are included in width calculation'));
 
 const ansiExamples = [
     { text: 'hello', colored: chalk.red('hello') },
@@ -65,25 +65,25 @@ const ansiExamples = [
     { text: 'info', colored: chalk.blue('ℹ️ info') }
 ];
 
-console.log(chalk.yellow('\nANSI escape code comparison:'));
+console.info(chalk.yellow('\nANSI escape code comparison:'));
 ansiExamples.forEach(example => {
     const withoutAnsi = Bun.stringWidth(example.colored); // default: false
     const withAnsi = Bun.stringWidth(example.colored, { countAnsiEscapeCodes: true });
     const ansiOnly = withAnsi - withoutAnsi;
 
-    console.log(`${chalk.cyan(example.text.padEnd(10))}`);
-    console.log(`  Without ANSI: ${chalk.yellow(withoutAnsi.toString().padStart(3))} chars`);
-    console.log(`  With ANSI:    ${chalk.yellow(withAnsi.toString().padStart(3))} chars`);
-    console.log(`  ANSI codes:   ${chalk.magenta(ansiOnly.toString().padStart(3))} chars`);
-    console.log('');
+    console.info(`${chalk.cyan(example.text.padEnd(10))}`);
+    console.info(`  Without ANSI: ${chalk.yellow(withoutAnsi.toString().padStart(3))} chars`);
+    console.info(`  With ANSI:    ${chalk.yellow(withAnsi.toString().padStart(3))} chars`);
+    console.info(`  ANSI codes:   ${chalk.magenta(ansiOnly.toString().padStart(3))} chars`);
+    console.info('');
 });
 
 // =============================================================================
 // PARAMETER 3: options.ambiguousIsNarrow (boolean)
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔸 Parameter 3: ambiguousIsNarrow (boolean)'));
-console.log(chalk.gray('Controls how ambiguous width characters (like some emoji) are counted'));
+console.info(chalk.bold.cyan('\n🔸 Parameter 3: ambiguousIsNarrow (boolean)'));
+console.info(chalk.gray('Controls how ambiguous width characters (like some emoji) are counted'));
 
 const ambiguousExamples = [
     '🚀',           // Rocket emoji
@@ -98,20 +98,20 @@ const ambiguousExamples = [
     '🎪',           // Circus tent
 ];
 
-console.log(chalk.yellow('\nAmbiguous character width comparison:'));
+console.info(chalk.yellow('\nAmbiguous character width comparison:'));
 ambiguousExamples.forEach(char => {
     const narrow = Bun.stringWidth(char, { ambiguousIsNarrow: true });   // default: true
     const wide = Bun.stringWidth(char, { ambiguousIsNarrow: false });
     const difference = wide - narrow;
 
-    console.log(`${chalk.cyan(char.padEnd(4))} → Narrow: ${chalk.yellow(narrow.toString())}, Wide: ${chalk.yellow(wide.toString())}, Diff: ${chalk.magenta(difference.toString())}`);
+    console.info(`${chalk.cyan(char.padEnd(4))} → Narrow: ${chalk.yellow(narrow.toString())}, Wide: ${chalk.yellow(wide.toString())}, Diff: ${chalk.magenta(difference.toString())}`);
 });
 
 // =============================================================================
 // COMBINED OPTIONS DEMONSTRATION
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🎯 Combined Options Demonstration'));
+console.info(chalk.bold.cyan('\n🎯 Combined Options Demonstration'));
 
 const complexExamples = [
     {
@@ -136,7 +136,7 @@ const complexExamples = [
     }
 ];
 
-console.log(chalk.yellow('\nComplex string measurements with all options:'));
+console.info(chalk.yellow('\nComplex string measurements with all options:'));
 complexExamples.forEach(example => {
     const measurements = [
         { label: 'Default', options: {} },
@@ -145,13 +145,13 @@ complexExamples.forEach(example => {
         { label: 'Both Options', options: { countAnsiEscapeCodes: true, ambiguousIsNarrow: false } }
     ];
 
-    console.log(chalk.bold(`\n${example.name}: ${chalk.gray(example.description)}`));
+    console.info(chalk.bold(`\n${example.name}: ${chalk.gray(example.description)}`));
     measurements.forEach(measurement => {
         const width = Bun.stringWidth(example.text, measurement.options);
         const optionStr = Object.keys(measurement.options).length > 0 ?
             Object.entries(measurement.options).map(([k, v]) => `${k}=${v}`).join(', ') :
             'none';
-        console.log(`  ${chalk.cyan(optionStr.padEnd(20))} → ${chalk.yellow(width.toString().padStart(3))} chars`);
+        console.info(`  ${chalk.cyan(optionStr.padEnd(20))} → ${chalk.yellow(width.toString().padStart(3))} chars`);
     });
 });
 
@@ -159,7 +159,7 @@ complexExamples.forEach(example => {
 // VAULT-SPECIFIC APPLICATIONS
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📁 Vault-Specific Applications'));
+console.info(chalk.bold.cyan('\n📁 Vault-Specific Applications'));
 
 // Sample vault entries with complex formatting
 const vaultEntries = [
@@ -234,17 +234,17 @@ export function createPerfectTable(data: any[], columns: string[], options: {
         widths[key] += opts.padding;
     });
 
-    console.log(chalk.gray(`Table with countAnsi=${opts.countAnsi}, wideEmoji=${opts.wideEmoji}:`));
+    console.info(chalk.gray(`Table with countAnsi=${opts.countAnsi}, wideEmoji=${opts.wideEmoji}:`));
     Bun.inspect.table(data, columns);
 
-    console.log(chalk.cyan('\nCalculated column widths:'));
+    console.info(chalk.cyan('\nCalculated column widths:'));
     Object.entries(widths).forEach(([col, width]) => {
-        console.log(`  ${col}: ${width} chars`);
+        console.info(`  ${col}: ${width} chars`);
     });
 }
 
 // Demonstrate vault applications
-console.log(chalk.yellow('\n📊 Vault table with different width calculation options:'));
+console.info(chalk.yellow('\n📊 Vault table with different width calculation options:'));
 
 // Default options (visual width only)
 createPerfectTable(vaultEntries, ['name', 'status', 'size', 'tags'], {
@@ -268,7 +268,7 @@ createPerfectTable(vaultEntries, ['name', 'status'], {
 // ADVANCED TECHNICAL EXAMPLES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔧 Advanced Technical Examples'));
+console.info(chalk.bold.cyan('\n🔧 Advanced Technical Examples'));
 
 /**
  * Analyze string complexity for optimization
@@ -315,24 +315,24 @@ const testStrings = [
     chalk.bgGreen(`${chalk.yellow('⚡')} Mixed ${chalk.cyan('content')}`)
 ];
 
-console.log(chalk.yellow('\nString complexity analysis:'));
+console.info(chalk.yellow('\nString complexity analysis:'));
 testStrings.forEach(text => {
     const analysis = analyzeStringComplexity(text);
     const complexityColor = analysis.complexity === 'simple' ?
         chalk.green : analysis.complexity === 'moderate' ?
             chalk.yellow : chalk.red;
 
-    console.log(`${chalk.cyan('Text:'.padEnd(8))} ${text}`);
-    console.log(`  Visual: ${analysis.visualWidth}, ANSI: ${analysis.ansiWidth}, Overhead: ${analysis.ansiOverhead}`);
-    console.log(`  Emoji: ${analysis.hasEmoji}, Unicode: ${analysis.hasUnicode}, Complexity: ${complexityColor(analysis.complexity)}`);
-    console.log('');
+    console.info(`${chalk.cyan('Text:'.padEnd(8))} ${text}`);
+    console.info(`  Visual: ${analysis.visualWidth}, ANSI: ${analysis.ansiWidth}, Overhead: ${analysis.ansiOverhead}`);
+    console.info(`  Emoji: ${analysis.hasEmoji}, Unicode: ${analysis.hasUnicode}, Complexity: ${complexityColor(analysis.complexity)}`);
+    console.info('');
 });
 
 // =============================================================================
 // PERFORMANCE COMPARISON
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n⚡ Performance Comparison'));
+console.info(chalk.bold.cyan('\n⚡ Performance Comparison'));
 
 /**
  * Benchmark different stringWidth configurations
@@ -347,7 +347,7 @@ export function benchmarkStringWidth(iterations: number = 10000): void {
         { name: 'Both Options', options: { countAnsiEscapeCodes: true, ambiguousIsNarrow: false } }
     ];
 
-    console.log(chalk.yellow(`\nBenchmarking ${iterations.toLocaleString()} iterations:`));
+    console.info(chalk.yellow(`\nBenchmarking ${iterations.toLocaleString()} iterations:`));
 
     configs.forEach(config => {
         const start = Bun.nanoseconds();
@@ -359,7 +359,7 @@ export function benchmarkStringWidth(iterations: number = 10000): void {
         const end = Bun.nanoseconds();
         const duration = (end - start) / 1_000_000; // Convert to milliseconds
 
-        console.log(`  ${chalk.cyan(config.name.padEnd(15))}: ${chalk.yellow(duration.toFixed(2) + 'ms')}`);
+        console.info(`  ${chalk.cyan(config.name.padEnd(15))}: ${chalk.yellow(duration.toFixed(2) + 'ms')}`);
     });
 }
 
@@ -370,30 +370,30 @@ benchmarkStringWidth(50000);
 // QUICK REFERENCE
 // =============================================================================
 
-console.log(chalk.bold.magenta('\n🎯 Complete API Reference'));
-console.log(chalk.gray('='.repeat(50)));
+console.info(chalk.bold.magenta('\n🎯 Complete API Reference'));
+console.info(chalk.gray('='.repeat(50)));
 
-console.log(chalk.bold.cyan('\n📋 Function Signature:'));
-console.log(chalk.white('Bun.stringWidth(input: string, options?: Options): number'));
+console.info(chalk.bold.cyan('\n📋 Function Signature:'));
+console.info(chalk.white('Bun.stringWidth(input: string, options?: Options): number'));
 
-console.log(chalk.bold.cyan('\n⚙️ Options Interface:'));
-console.log(chalk.gray('interface Options {'));
-console.log(chalk.gray('  countAnsiEscapeCodes?: boolean;  // default: false'));
-console.log(chalk.gray('  ambiguousIsNarrow?: boolean;     // default: true'));
-console.log(chalk.gray('}'));
+console.info(chalk.bold.cyan('\n⚙️ Options Interface:'));
+console.info(chalk.gray('interface Options {'));
+console.info(chalk.gray('  countAnsiEscapeCodes?: boolean;  // default: false'));
+console.info(chalk.gray('  ambiguousIsNarrow?: boolean;     // default: true'));
+console.info(chalk.gray('}'));
 
-console.log(chalk.bold.cyan('\n🎯 Use Cases:'));
-console.log(chalk.gray('• Visual width measurement (default)'));
-console.log(chalk.gray('• ANSI code debugging (countAnsiEscapeCodes: true)'));
-console.log(chalk.gray('• Terminal compatibility (ambiguousIsNarrow: false)'));
-console.log(chalk.gray('• Complex string analysis (both options)'));
-console.log(chalk.gray('• Performance optimization (default fastest)'));
+console.info(chalk.bold.cyan('\n🎯 Use Cases:'));
+console.info(chalk.gray('• Visual width measurement (default)'));
+console.info(chalk.gray('• ANSI code debugging (countAnsiEscapeCodes: true)'));
+console.info(chalk.gray('• Terminal compatibility (ambiguousIsNarrow: false)'));
+console.info(chalk.gray('• Complex string analysis (both options)'));
+console.info(chalk.gray('• Performance optimization (default fastest)'));
 
-console.log(chalk.bold.cyan('\n✅ Best Practices:'));
-console.log(chalk.gray('• Use default for table layout (visual width only)'));
-console.log(chalk.gray('• Use countAnsiEscapeCodes for debugging'));
-console.log(chalk.gray('• Use ambiguousIsNarrow: false for wide terminals'));
-console.log(chalk.gray('• Cache results for repeated measurements'));
-console.log(chalk.gray('• Consider performance for large datasets'));
+console.info(chalk.bold.cyan('\n✅ Best Practices:'));
+console.info(chalk.gray('• Use default for table layout (visual width only)'));
+console.info(chalk.gray('• Use countAnsiEscapeCodes for debugging'));
+console.info(chalk.gray('• Use ambiguousIsNarrow: false for wide terminals'));
+console.info(chalk.gray('• Cache results for repeated measurements'));
+console.info(chalk.gray('• Consider performance for large datasets'));
 
-console.log(chalk.bold.green('\n🎉 Complete API Demonstration Finished!'));
+console.info(chalk.bold.green('\n🎉 Complete API Demonstration Finished!'));

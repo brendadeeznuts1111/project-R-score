@@ -9,10 +9,10 @@ import { $ } from 'bun';
 import * as fs from 'fs';
 import * as path from 'path';
 
-console.log('🚨 Fire22 Critical Issue Resolution Script');
-console.log('!==!==!==!==!==!==!==!==');
-console.log(`Time: ${new Date().toISOString()}`);
-console.log('');
+console.info('🚨 Fire22 Critical Issue Resolution Script');
+console.info('!==!==!==!==!==!==!==!==');
+console.info(`Time: ${new Date().toISOString()}`);
+console.info('');
 
 // Issue tracking
 const issues = {
@@ -23,7 +23,7 @@ const issues = {
 
 // 1. FIX E1001: SYSTEM_INIT_FAILED
 async function fixSystemInit() {
-  console.log('🔧 Fixing E1001: SYSTEM_INIT_FAILED...');
+  console.info('🔧 Fixing E1001: SYSTEM_INIT_FAILED...');
 
   try {
     // Check if worker.ts exists
@@ -57,7 +57,7 @@ export default {
 };`;
 
       fs.writeFileSync(workerPath, minimalWorker);
-      console.log('✅ Created fallback worker.ts');
+      console.info('✅ Created fallback worker.ts');
     }
 
     // Validate wrangler.toml
@@ -68,11 +68,11 @@ export default {
     }
 
     // Test build
-    console.log('📦 Testing build...');
+    console.info('📦 Testing build...');
     const buildResult = await $`bun run build`.quiet();
 
     if (buildResult.exitCode === 0) {
-      console.log('✅ Build successful');
+      console.info('✅ Build successful');
       issues.E1001.status = 'resolved';
       return true;
     } else {
@@ -87,7 +87,7 @@ export default {
 
 // 2. FIX E2001: DB_CONNECTION_FAILED
 async function fixDatabaseConnection() {
-  console.log('\n🔧 Fixing E2001: DB_CONNECTION_FAILED...');
+  console.info('\n🔧 Fixing E2001: DB_CONNECTION_FAILED...');
 
   try {
     // Create .env file with proper database config
@@ -115,11 +115,11 @@ SQLITE_DB_FILE=./data/fire22.db
 
     if (!fs.existsSync(envPath)) {
       fs.writeFileSync(envPath, envContent);
-      console.log('✅ Created .env with database configuration');
+      console.info('✅ Created .env with database configuration');
     }
 
     // Test database connection
-    console.log('🔗 Testing database connection...');
+    console.info('🔗 Testing database connection...');
 
     const testScript = `
 import { DatabaseManager } from './src/database/connection.ts';
@@ -134,7 +134,7 @@ const db = new DatabaseManager(config);
 try {
   await db.connect();
   const health = await db.healthCheck();
-  console.log('Database health:', health);
+  console.info('Database health:', health);
   
   if (health.status === 'healthy') {
     process.exit(0);
@@ -159,7 +159,7 @@ try {
     const testResult = await $`bun run test-db.ts`.quiet();
 
     if (testResult.exitCode === 0) {
-      console.log('✅ Database connection successful');
+      console.info('✅ Database connection successful');
       issues.E2001.status = 'resolved';
 
       // Clean up test file
@@ -177,7 +177,7 @@ try {
 
 // 3. FIX Fire22 Authentication
 async function fixFire22Auth() {
-  console.log('\n🔧 Fixing Fire22 Data Extraction Authentication...');
+  console.info('\n🔧 Fixing Fire22 Data Extraction Authentication...');
 
   try {
     // Create credentials file
@@ -204,10 +204,10 @@ async function fixFire22Auth() {
     }
 
     fs.writeFileSync(credsPath, JSON.stringify(credentials, null, 2));
-    console.log('✅ Generated new Fire22 credentials');
+    console.info('✅ Generated new Fire22 credentials');
 
     // Update wrangler secrets (simulation)
-    console.log('📝 Updating wrangler secrets...');
+    console.info('📝 Updating wrangler secrets...');
 
     const secretCommands = [
       `echo "${credentials.api.token}" | wrangler secret put FIRE22_TOKEN`,
@@ -216,11 +216,11 @@ async function fixFire22Auth() {
       `echo "${credentials.webhook.secret}" | wrangler secret put FIRE22_WEBHOOK_SECRET`,
     ];
 
-    console.log('✅ Secrets configured (run commands manually in production)');
-    secretCommands.forEach(cmd => console.log(`   $ ${cmd.split('|')[1].trim()}`));
+    console.info('✅ Secrets configured (run commands manually in production)');
+    secretCommands.forEach(cmd => console.info(`   $ ${cmd.split('|')[1].trim()}`));
 
     // Test API connection
-    console.log('🔗 Testing Fire22 API connection...');
+    console.info('🔗 Testing Fire22 API connection...');
 
     const testApiScript = `
 import { Fire22Integration } from './src/fire22-integration.ts';
@@ -234,9 +234,9 @@ const env = {
 const integration = new Fire22Integration(env);
 
 // Simulate successful auth
-console.log('✅ Fire22 authentication configured');
-console.log('   API URL:', env.FIRE22_API_URL);
-console.log('   Token:', env.FIRE22_TOKEN.substring(0, 10) + '...');
+console.info('✅ Fire22 authentication configured');
+console.info('   API URL:', env.FIRE22_API_URL);
+console.info('   Token:', env.FIRE22_TOKEN.substring(0, 10) + '...');
 process.exit(0);
 `;
 
@@ -244,7 +244,7 @@ process.exit(0);
     const apiResult = await $`bun run test-api.ts`.quiet();
 
     if (apiResult.exitCode === 0) {
-      console.log('✅ Fire22 authentication fixed');
+      console.info('✅ Fire22 authentication fixed');
       issues.AUTH.status = 'resolved';
 
       // Clean up
@@ -262,22 +262,22 @@ process.exit(0);
 
 // 4. Restart services
 async function restartServices() {
-  console.log('\n🔄 Restarting services...');
+  console.info('\n🔄 Restarting services...');
 
   try {
     // Kill any existing processes
     await $`pkill -f "wrangler dev"`.quiet().nothrow();
     await $`pkill -f "bun run dev"`.quiet().nothrow();
 
-    console.log('✅ Stopped existing services');
+    console.info('✅ Stopped existing services');
 
     // Start services in background
-    console.log('🚀 Starting services...');
+    console.info('🚀 Starting services...');
 
     // Start in development mode (non-blocking)
     $`bun run dev`.quiet().nothrow();
 
-    console.log('✅ Services restarted');
+    console.info('✅ Services restarted');
     return true;
   } catch (error) {
     console.error('⚠️  Service restart warning:', error);
@@ -287,17 +287,17 @@ async function restartServices() {
 
 // 5. Verify fixes
 async function verifyFixes() {
-  console.log('\n🔍 Verifying fixes...');
+  console.info('\n🔍 Verifying fixes...');
 
   const results = [];
 
   // Check each issue
   for (const [code, issue] of Object.entries(issues)) {
     if (issue.status === 'resolved') {
-      console.log(`✅ ${code}: ${issue.description} - RESOLVED`);
+      console.info(`✅ ${code}: ${issue.description} - RESOLVED`);
       results.push(true);
     } else {
-      console.log(`❌ ${code}: ${issue.description} - STILL OPEN`);
+      console.info(`❌ ${code}: ${issue.description} - STILL OPEN`);
       results.push(false);
     }
   }
@@ -307,7 +307,7 @@ async function verifyFixes() {
 
 // Main execution
 async function main() {
-  console.log('Starting critical issue resolution...\n');
+  console.info('Starting critical issue resolution...\n');
 
   // Run fixes in sequence
   await fixSystemInit();
@@ -318,14 +318,14 @@ async function main() {
   // Verify all fixes
   const allFixed = await verifyFixes();
 
-  console.log('\n' + '='.repeat(50));
+  console.info('\n' + '='.repeat(50));
 
   if (allFixed) {
-    console.log('✅ ALL CRITICAL ISSUES RESOLVED!');
-    console.log('\nNext steps:');
-    console.log('1. Deploy to Cloudflare: wrangler deploy');
-    console.log('2. Update secrets in production');
-    console.log('3. Monitor system health: curl http://localhost:8787/health');
+    console.info('✅ ALL CRITICAL ISSUES RESOLVED!');
+    console.info('\nNext steps:');
+    console.info('1. Deploy to Cloudflare: wrangler deploy');
+    console.info('2. Update secrets in production');
+    console.info('3. Monitor system health: curl http://localhost:8787/health');
 
     // Update issue status file
     const statusUpdate = {
@@ -339,8 +339,8 @@ async function main() {
 
     fs.writeFileSync('issue-resolution-status.json', JSON.stringify(statusUpdate, null, 2));
   } else {
-    console.log('⚠️  Some issues remain unresolved');
-    console.log('Please check the logs above and run manual fixes');
+    console.info('⚠️  Some issues remain unresolved');
+    console.info('Please check the logs above and run manual fixes');
   }
 
   process.exit(allFixed ? 0 : 1);

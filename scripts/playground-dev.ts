@@ -51,7 +51,7 @@ async function ensurePortOwnerSafe(port: number): Promise<void> {
     process.exit(1);
   }
 
-  console.log(`[playground:dev] Restarting existing playground process pid=${pid} on port ${port}.`);
+  console.info(`[playground:dev] Restarting existing playground process pid=${pid} on port ${port}.`);
   Bun.spawnSync({ cmd: ["kill", "-TERM", String(pid)], cwd: PROJECT_ROOT });
   const freed = await waitPortFree(port, 3000);
   if (!freed) {
@@ -92,7 +92,7 @@ async function main() {
   });
 
   const startedAt = new Date().toISOString();
-  console.log(
+  console.info(
     `[playground:dev] Started watch mode at ${startedAt} (host=${runtime.host}, port=${port}, fallback=${process.env.PLAYGROUND_ALLOW_PORT_FALLBACK}, range=${process.env.PLAYGROUND_PORT_RANGE})`
   );
 

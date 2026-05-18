@@ -47,7 +47,7 @@ export class LanguageCodeValidator {
     // Listen for pattern alerts related to language processing
     patternObservability.on('alert:created', (alert: PatternAlert) => {
       if (alert.pattern === 'SECURE' || alert.pattern === 'FILESYSTEM') {
-        console.log(`🔍 Pattern Weaver Alert for ${alert.pattern}: ${alert.message}`);
+        console.info(`🔍 Pattern Weaver Alert for ${alert.pattern}: ${alert.message}`);
       }
     });
 
@@ -66,7 +66,7 @@ export class LanguageCodeValidator {
       const results: ValidationResult[] = [];
       let filesProcessed = 0;
 
-      console.log('🔍 Scanning project for language codes with Pattern Weaver...');
+      console.info('🔍 Scanning project for language codes with Pattern Weaver...');
 
       // Enhanced HTML file scanning with FILESYSTEM pattern
       const htmlFiles = new Glob('**/*.html').scan({ cwd: process.cwd() });
@@ -104,7 +104,7 @@ export class LanguageCodeValidator {
         issuesFound,
       });
 
-      console.log(
+      console.info(
         `✅ Pattern Weaver validation complete: ${filesProcessed} files, ${issuesFound} issues, ${(duration / 1_000_000).toFixed(2)}ms`
       );
 
@@ -282,25 +282,25 @@ export class LanguageCodeValidator {
    * Generate enhanced validation report with Pattern Weaver metrics
    */
   generateReport(results: ValidationResult[]): void {
-    console.log('\n📊 FIRE22 LANGUAGE CODE VALIDATION REPORT (Pattern Weaver Enhanced)');
-    console.log('═'.repeat(80));
+    console.info('\n📊 FIRE22 LANGUAGE CODE VALIDATION REPORT (Pattern Weaver Enhanced)');
+    console.info('═'.repeat(80));
 
     // Pattern Weaver Performance Metrics
     const patternHealth = patternObservability.getHealthStatus();
     const patternMetrics = patternWeaver.getMetrics() as Map<string, any>;
 
-    console.log('\n🔍 Pattern Weaver Performance:');
-    console.log(
+    console.info('\n🔍 Pattern Weaver Performance:');
+    console.info(
       `   Overall Health: ${this.getHealthIcon(patternHealth.overall)} ${patternHealth.overall.toUpperCase()}`
     );
-    console.log(`   Total Validations: ${this.patternMetrics.get('totalValidations')}`);
-    console.log(
+    console.info(`   Total Validations: ${this.patternMetrics.get('totalValidations')}`);
+    console.info(
       `   Average Time: ${this.patternMetrics.get('averageValidationTime')?.toFixed(2)}ms`
     );
 
     if (this.validationHistory.length > 0) {
       const lastValidation = this.validationHistory[this.validationHistory.length - 1];
-      console.log(
+      console.info(
         `   Last Validation: ${lastValidation.filesProcessed} files in ${lastValidation.duration.toFixed(2)}ms`
       );
     }
@@ -309,12 +309,12 @@ export class LanguageCodeValidator {
     const totalIssues = results.reduce((sum, r) => sum + r.issues.length, 0);
     const filesWithIssues = results.length;
 
-    console.log(`\n📈 Summary:`);
-    console.log(`   Files scanned: ${this.usedCodes.size > 0 ? 'Multiple' : 'None'}`);
-    console.log(`   Files with issues: ${filesWithIssues}`);
-    console.log(`   Total issues: ${totalIssues}`);
-    console.log(`   Language codes used: ${this.usedCodes.size}`);
-    console.log(`   Language codes defined: ${this.definedCodes.size}`);
+    console.info(`\n📈 Summary:`);
+    console.info(`   Files scanned: ${this.usedCodes.size > 0 ? 'Multiple' : 'None'}`);
+    console.info(`   Files with issues: ${filesWithIssues}`);
+    console.info(`   Total issues: ${totalIssues}`);
+    console.info(`   Language codes used: ${this.usedCodes.size}`);
+    console.info(`   Language codes defined: ${this.definedCodes.size}`);
 
     // Missing codes
     const missingCodes = new Set<string>();
@@ -327,74 +327,74 @@ export class LanguageCodeValidator {
     });
 
     if (missingCodes.size > 0) {
-      console.log(`\n❌ Missing Language Codes (${missingCodes.size}):`);
+      console.info(`\n❌ Missing Language Codes (${missingCodes.size}):`);
       Array.from(missingCodes)
         .sort()
         .forEach(code => {
-          console.log(`   • ${code} - Needs to be added to translations`);
+          console.info(`   • ${code} - Needs to be added to translations`);
         });
     }
 
     // Unused codes
     const unused = this.findUnusedCodes();
     if (unused.length > 0) {
-      console.log(`\n⚠️  Unused Language Codes (${unused.length}):`);
+      console.info(`\n⚠️  Unused Language Codes (${unused.length}):`);
       unused.forEach(code => {
         const info = this.languageManager.getCodeInfo(code);
-        console.log(`   • ${code} - "${info?.en}" (${info?.context || 'No context'})`);
+        console.info(`   • ${code} - "${info?.en}" (${info?.context || 'No context'})`);
       });
     }
 
     // Translation completeness
     const incomplete = this.checkTranslationCompleteness();
     if (incomplete.length > 0) {
-      console.log(`\n🌐 Incomplete Translations (${incomplete.length}):`);
+      console.info(`\n🌐 Incomplete Translations (${incomplete.length}):`);
       incomplete.forEach(({ code, missingLanguages }) => {
         const info = this.languageManager.getCodeInfo(code);
-        console.log(`   • ${code} - "${info?.en}" missing: ${missingLanguages.join(', ')}`);
+        console.info(`   • ${code} - "${info?.en}" missing: ${missingLanguages.join(', ')}`);
       });
     }
 
     // File-specific issues
     if (results.length > 0) {
-      console.log(`\n📁 File-specific Issues:`);
+      console.info(`\n📁 File-specific Issues:`);
       results.forEach(result => {
-        console.log(`\n   📄 ${result.file}:`);
+        console.info(`\n   📄 ${result.file}:`);
         result.issues.forEach(issue => {
           const lineInfo = issue.line ? `:${issue.line}` : '';
-          console.log(`      ${this.getIssueIcon(issue.issue)} ${issue.message}${lineInfo}`);
+          console.info(`      ${this.getIssueIcon(issue.issue)} ${issue.message}${lineInfo}`);
         });
       });
     }
 
     // Statistics
     const stats = this.languageManager.getStatistics();
-    console.log(`\n📊 Translation Statistics:`);
-    console.log(`   Total codes: ${stats.totalCodes}`);
-    console.log(`   Supported languages: ${stats.supportedLanguages}`);
-    console.log(`   Completion rates:`);
+    console.info(`\n📊 Translation Statistics:`);
+    console.info(`   Total codes: ${stats.totalCodes}`);
+    console.info(`   Supported languages: ${stats.supportedLanguages}`);
+    console.info(`   Completion rates:`);
     Object.entries(stats.completionRates).forEach(([lang, rate]) => {
       const status = rate === 100 ? '✅' : rate > 80 ? '⚠️' : '❌';
-      console.log(`     ${status} ${lang.toUpperCase()}: ${rate}%`);
+      console.info(`     ${status} ${lang.toUpperCase()}: ${rate}%`);
     });
 
     // Recommendations
-    console.log(`\n💡 Recommendations:`);
+    console.info(`\n💡 Recommendations:`);
     if (missingCodes.size > 0) {
-      console.log(`   • Add ${missingCodes.size} missing language codes to translations`);
+      console.info(`   • Add ${missingCodes.size} missing language codes to translations`);
     }
     if (unused.length > 0) {
-      console.log(`   • Review ${unused.length} unused codes - remove or implement`);
+      console.info(`   • Review ${unused.length} unused codes - remove or implement`);
     }
     if (incomplete.length > 0) {
-      console.log(`   • Complete translations for ${incomplete.length} codes`);
+      console.info(`   • Complete translations for ${incomplete.length} codes`);
     }
     if (totalIssues === 0) {
-      console.log(`   🎉 All language codes are properly defined and used!`);
+      console.info(`   🎉 All language codes are properly defined and used!`);
     }
 
     // Pattern Weaver Recommendations
-    console.log('\n🔧 Pattern Weaver Insights:');
+    console.info('\n🔧 Pattern Weaver Insights:');
     if (this.validationHistory.length >= 5) {
       const recentAvg =
         this.validationHistory.slice(-3).reduce((sum, v) => sum + v.duration, 0) / 3;
@@ -402,20 +402,20 @@ export class LanguageCodeValidator {
         this.validationHistory.slice(-8, -5).reduce((sum, v) => sum + v.duration, 0) / 3;
 
       if (recentAvg < olderAvg * 0.8) {
-        console.log('   📈 Validation performance improving over time');
+        console.info('   📈 Validation performance improving over time');
       } else if (recentAvg > olderAvg * 1.2) {
-        console.log('   📉 Validation performance degrading - consider optimization');
+        console.info('   📉 Validation performance degrading - consider optimization');
       } else {
-        console.log('   📊 Validation performance stable');
+        console.info('   📊 Validation performance stable');
       }
     }
 
     // Pattern health summary
     const healthyPatterns = patternHealth.patterns.filter(p => p.status === 'healthy').length;
     const totalPatterns = patternHealth.patterns.length;
-    console.log(`   🏥 Pattern Health: ${healthyPatterns}/${totalPatterns} patterns healthy`);
+    console.info(`   🏥 Pattern Health: ${healthyPatterns}/${totalPatterns} patterns healthy`);
 
-    console.log(`\n${'═'.repeat(80)}\n`);
+    console.info(`\n${'═'.repeat(80)}\n`);
   }
 
   /**
@@ -481,7 +481,7 @@ export class LanguageCodeValidator {
     });
 
     if (missingCodes.size === 0) {
-      console.log('✅ No missing codes to export');
+      console.info('✅ No missing codes to export');
       return;
     }
 
@@ -511,7 +511,7 @@ export class LanguageCodeValidator {
     }
 
     await Bun.write(filename, content);
-    console.log(`📄 Exported ${missingCodes.size} missing codes to ${filename}`);
+    console.info(`📄 Exported ${missingCodes.size} missing codes to ${filename}`);
   }
 }
 
@@ -520,11 +520,11 @@ if (import.meta.main) {
   const validator = new LanguageCodeValidator();
   const args = process.argv.slice(2);
 
-  console.log('🔧 Pattern Weaver Enhanced Language Validator initialized');
-  console.log(`🕒 Starting at: ${new Date().toISOString()}`);
+  console.info('🔧 Pattern Weaver Enhanced Language Validator initialized');
+  console.info(`🕒 Starting at: ${new Date().toISOString()}`);
 
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🌐 Fire22 Language Code Validator
 
 Usage: bun run validate-language-codes.ts [options]
@@ -556,36 +556,36 @@ Examples:
 
     if (args.includes('--unused')) {
       const unused = validator.findUnusedCodes();
-      console.log(`\n⚠️  Unused Language Codes (${unused.length}):`);
-      unused.forEach(code => console.log(`   • ${code}`));
+      console.info(`\n⚠️  Unused Language Codes (${unused.length}):`);
+      unused.forEach(code => console.info(`   • ${code}`));
       return;
     }
 
     if (args.includes('--incomplete')) {
       const incomplete = validator.checkTranslationCompleteness();
-      console.log(`\n🌐 Incomplete Translations (${incomplete.length}):`);
+      console.info(`\n🌐 Incomplete Translations (${incomplete.length}):`);
       incomplete.forEach(({ code, missingLanguages }) => {
-        console.log(`   • ${code} missing: ${missingLanguages.join(', ')}`);
+        console.info(`   • ${code} missing: ${missingLanguages.join(', ')}`);
       });
       return;
     }
 
     // Full validation with Pattern Weaver integration
-    console.log('🌊 Starting comprehensive validation with Pattern Weaver...');
+    console.info('🌊 Starting comprehensive validation with Pattern Weaver...');
     const results = await validator.validateProject();
     validator.generateReport(results);
 
     // Show Pattern Weaver metrics summary
     const pwMetrics = validator.getPatternWeaverMetrics();
-    console.log('\n🔧 Pattern Weaver Session Summary:');
-    console.log(`   Validations: ${pwMetrics.totalValidations}`);
-    console.log(`   Avg Duration: ${pwMetrics.averageValidationTime?.toFixed(2)}ms`);
-    console.log(`   Active Alerts: ${pwMetrics.activeAlerts.length}`);
+    console.info('\n🔧 Pattern Weaver Session Summary:');
+    console.info(`   Validations: ${pwMetrics.totalValidations}`);
+    console.info(`   Avg Duration: ${pwMetrics.averageValidationTime?.toFixed(2)}ms`);
+    console.info(`   Active Alerts: ${pwMetrics.activeAlerts.length}`);
 
     if (pwMetrics.activeAlerts.length > 0) {
-      console.log('\n⚠️ Active Pattern Alerts:');
+      console.info('\n⚠️ Active Pattern Alerts:');
       pwMetrics.activeAlerts.slice(0, 3).forEach(alert => {
-        console.log(`   ${alert.pattern}: ${alert.message}`);
+        console.info(`   ${alert.pattern}: ${alert.message}`);
       });
     }
   }

@@ -5,8 +5,8 @@
 
 import type { Serve } from "bun";
 
-console.log('🚀 Advanced Bun Server Features Demo');
-console.log('=====================================\n');
+console.info('🚀 Advanced Bun Server Features Demo');
+console.info('=====================================\n');
 
 // Configuration for different server modes
 const config = {
@@ -74,7 +74,7 @@ const httpServer = Bun.serve({
     if (isSuspicious) {
       securityMetrics.suspiciousRequests++;
       securityMetrics.lastSecurityEvent = `Suspicious access: ${url.pathname} from ${clientIP?.address}`;
-      console.log(`🚨 Security Alert: ${securityMetrics.lastSecurityEvent}`);
+      console.info(`🚨 Security Alert: ${securityMetrics.lastSecurityEvent}`);
     }
     
     // Rate limiting check
@@ -145,12 +145,12 @@ const httpServer = Bun.serve({
     },
     
     open(ws) {
-      console.log('🔗 Security monitoring WebSocket connected');
+      console.info('🔗 Security monitoring WebSocket connected');
       ws.subscribe('security-alerts');
     },
     
     close(ws) {
-      console.log('🔌 Security monitoring WebSocket disconnected');
+      console.info('🔌 Security monitoring WebSocket disconnected');
     }
   }
 });
@@ -359,102 +359,102 @@ function getDashboardHTML(): string {
 
 // Demonstrate server lifecycle methods
 async function demonstrateServerLifecycle() {
-  console.log('\n🔄 Demonstrating Server Lifecycle Methods...\n');
+  console.info('\n🔄 Demonstrating Server Lifecycle Methods...\n');
   
   // Show initial metrics
-  console.log('📊 Initial Server Metrics:');
-  console.log(`   HTTP Server - Pending Requests: ${httpServer.pendingRequests}`);
-  console.log(`   HTTP Server - Pending WebSockets: ${httpServer.pendingWebSockets}`);
-  console.log(`   Unix Server - Pending Requests: ${unixServer.pendingRequests}`);
-  console.log(`   Abstract Server - Pending Requests: ${abstractServer.pendingRequests}`);
+  console.info('📊 Initial Server Metrics:');
+  console.info(`   HTTP Server - Pending Requests: ${httpServer.pendingRequests}`);
+  console.info(`   HTTP Server - Pending WebSockets: ${httpServer.pendingWebSockets}`);
+  console.info(`   Unix Server - Pending Requests: ${unixServer.pendingRequests}`);
+  console.info(`   Abstract Server - Pending Requests: ${abstractServer.pendingRequests}`);
   
   // Demonstrate hot reloading
-  console.log('\n🔥 Demonstrating Hot Reloading...');
+  console.info('\n🔥 Demonstrating Hot Reloading...');
   setTimeout(() => {
     httpServer.reload({
       fetch(req) {
         return new Response("Hot reloaded! " + new Date().toISOString());
       }
     });
-    console.log('✅ HTTP server routes reloaded');
+    console.info('✅ HTTP server routes reloaded');
   }, 5000);
   
   // Demonstrate timeout control
-  console.log('\n⏱️ Demonstrating Per-Request Timeout Control...');
+  console.info('\n⏱️ Demonstrating Per-Request Timeout Control...');
   
   // Show server information
-  console.log('\n📡 Server Information:');
-  console.log(`   HTTP Server: http://localhost:${config.httpPort}`);
-  console.log(`   Unix Socket: ${config.unixSocket}`);
-  console.log(`   Abstract Socket: ${config.abstractSocket}`);
-  console.log(`   Idle Timeout: ${config.idleTimeout} seconds`);
+  console.info('\n📡 Server Information:');
+  console.info(`   HTTP Server: http://localhost:${config.httpPort}`);
+  console.info(`   Unix Socket: ${config.unixSocket}`);
+  console.info(`   Abstract Socket: ${config.abstractSocket}`);
+  console.info(`   Idle Timeout: ${config.idleTimeout} seconds`);
 }
 
 // Test Unix domain socket communication
 async function testUnixSocket() {
-  console.log('\n🔌 Testing Unix Domain Socket Communication...');
+  console.info('\n🔌 Testing Unix Domain Socket Communication...');
   
   try {
     // Test the Unix socket
     const unixResponse = await fetch(`http://unix:${config.unixSocket}:/internal/metrics`);
     const unixData = await unixResponse.json();
-    console.log('✅ Unix Socket Response:', unixData);
+    console.info('✅ Unix Socket Response:', unixData);
     
     // Test the abstract socket
     const abstractResponse = await fetch(`http://unix:${config.abstractSocket}:/ipc/security-event`);
     const abstractData = await abstractResponse.json();
-    console.log('✅ Abstract Socket Response:', abstractData);
+    console.info('✅ Abstract Socket Response:', abstractData);
     
   } catch (error) {
-    console.log('❌ Socket communication failed:', error instanceof Error ? error.message : 'Unknown error');
+    console.info('❌ Socket communication failed:', error instanceof Error ? error.message : 'Unknown error');
   }
 }
 
 // Graceful shutdown handler
 process.on('SIGINT', async () => {
-  console.log('\n🛑 Shutting down servers gracefully...');
+  console.info('\n🛑 Shutting down servers gracefully...');
   
   try {
     await httpServer.stop();
     await unixServer.stop();
     await abstractServer.stop();
     
-    console.log('✅ All servers stopped successfully');
+    console.info('✅ All servers stopped successfully');
     
     // Clean up Unix socket file
     try {
       await Bun.file(config.unixSocket).delete();
-      console.log('✅ Unix socket file cleaned up');
+      console.info('✅ Unix socket file cleaned up');
     } catch (error) {
       // Ignore cleanup errors
     }
     
     process.exit(0);
   } catch (error) {
-    console.log('❌ Error during shutdown:', error instanceof Error ? error.message : 'Unknown error');
+    console.info('❌ Error during shutdown:', error instanceof Error ? error.message : 'Unknown error');
     process.exit(1);
   }
 });
 
 // Start demonstrations
-console.log('🚀 Starting Advanced Server Features Demo...\n');
+console.info('🚀 Starting Advanced Server Features Demo...\n');
 
 setTimeout(() => {
   demonstrateServerLifecycle();
   testUnixSocket();
 }, 1000);
 
-console.log(`\n🌐 Dashboard available at: http://localhost:${config.httpPort}`);
-console.log('🔌 Unix domain socket:', config.unixSocket);
-console.log('🔌 Abstract namespace socket:', config.abstractSocket);
-console.log('⏱️ Idle timeout:', config.idleTimeout, 'seconds');
-console.log('\n📊 Features demonstrated:');
-console.log('   • Unix Domain Sockets for secure internal communication');
-console.log('   • Abstract Namespace Sockets for high-performance IPC');
-console.log('   • Hot Reloading for zero-downtime updates');
-console.log('   • Per-Request timeout control');
-console.log('   • Server metrics and monitoring');
-console.log('   • WebSocket real-time security alerts');
-console.log('   • Rate limiting and security monitoring');
-console.log('   • Graceful shutdown handling');
-console.log('\n🛡️ Security monitoring active - watching for suspicious patterns...');
+console.info(`\n🌐 Dashboard available at: http://localhost:${config.httpPort}`);
+console.info('🔌 Unix domain socket:', config.unixSocket);
+console.info('🔌 Abstract namespace socket:', config.abstractSocket);
+console.info('⏱️ Idle timeout:', config.idleTimeout, 'seconds');
+console.info('\n📊 Features demonstrated:');
+console.info('   • Unix Domain Sockets for secure internal communication');
+console.info('   • Abstract Namespace Sockets for high-performance IPC');
+console.info('   • Hot Reloading for zero-downtime updates');
+console.info('   • Per-Request timeout control');
+console.info('   • Server metrics and monitoring');
+console.info('   • WebSocket real-time security alerts');
+console.info('   • Rate limiting and security monitoring');
+console.info('   • Graceful shutdown handling');
+console.info('\n🛡️ Security monitoring active - watching for suspicious patterns...');

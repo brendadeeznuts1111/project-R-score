@@ -158,7 +158,7 @@ function isLowRisk(profile: SuperProfile | null) {
 
 async function deposit(userId: string, amount: number) {
   // Placeholder: wire to PayPal Payouts API in prod.
-  console.log(`Deposited $${amount.toFixed(2)} to ${userId}`);
+  console.info(`Deposited $${amount.toFixed(2)} to ${userId}`);
   await redisPublish('DEPOSIT_SUCCESS', { userId, amount });
 }
 
@@ -230,4 +230,4 @@ Bun.serve({
   }
 });
 
-console.log(`Payment server running on http://localhost:${PORT}`);
+console.info(`Payment server running on http://localhost:${PORT}`);

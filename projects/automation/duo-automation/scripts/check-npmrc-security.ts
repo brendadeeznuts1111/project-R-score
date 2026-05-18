@@ -116,7 +116,7 @@ async function checkNpmrcSecurity(filePath: string = '.npmrc'): Promise<Security
   };
 
   if (!(await Bun.file(filePath).exists())) {
-    console.log(`ℹ️  .npmrc file not found at ${filePath}`);
+    console.info(`ℹ️  .npmrc file not found at ${filePath}`);
     return result;
   }
 
@@ -144,25 +144,25 @@ async function checkNpmrcSecurity(filePath: string = '.npmrc'): Promise<Security
  */
 function displayResults(result: SecurityCheckResult): void {
   if (!result.hasUnguardedPatterns) {
-    console.log('✅ .npmrc security check passed - no unguarded patterns found');
+    console.info('✅ .npmrc security check passed - no unguarded patterns found');
     return;
   }
 
-  console.log(`\n🚨 SECURITY VIOLATIONS FOUND in ${result.file}`);
-  console.log('═'.repeat(60));
+  console.info(`\n🚨 SECURITY VIOLATIONS FOUND in ${result.file}`);
+  console.info('═'.repeat(60));
   
   result.violations.forEach((violation, index) => {
-    console.log(`\n${index + 1}. Line ${violation.line}:`);
-    console.log(`   Current:  ${violation.content}`);
-    console.log(`   Issue:     Unguarded environment variable: ${violation.pattern}`);
-    console.log(`   Suggested: ${violation.suggestion}`);
+    console.info(`\n${index + 1}. Line ${violation.line}:`);
+    console.info(`   Current:  ${violation.content}`);
+    console.info(`   Issue:     Unguarded environment variable: ${violation.pattern}`);
+    console.info(`   Suggested: ${violation.suggestion}`);
   });
 
-  console.log('\n💡 SECURITY TIPS:');
-  console.log('   • Use ${#VARIABLE} for sensitive values (requires explicit substitution)');
-  console.log('   • Use ${VARIABLE} only for non-sensitive npm config values');
-  console.log('   • Consider using .npmrc.local for local development secrets');
-  console.log('   • Add sensitive patterns to .gitignore');
+  console.info('\n💡 SECURITY TIPS:');
+  console.info('   • Use ${#VARIABLE} for sensitive values (requires explicit substitution)');
+  console.info('   • Use ${VARIABLE} only for non-sensitive npm config values');
+  console.info('   • Consider using .npmrc.local for local development secrets');
+  console.info('   • Add sensitive patterns to .gitignore');
 }
 
 /**
@@ -193,15 +193,15 @@ function generateFix(result: SecurityCheckResult): string | null {
  * Main execution
  */
 async function main(): Promise<number> {
-  console.log('🔒 Checking .npmrc for unguarded environment variable patterns...');
+  console.info('🔒 Checking .npmrc for unguarded environment variable patterns...');
   
   const npmrcPath = process.argv[2] || '.npmrc';
   const autoFix = process.argv.includes('--fix');
   const verbose = process.argv.includes('--verbose');
 
   if (verbose) {
-    console.log(`📁 Checking file: ${npmrcPath}`);
-    console.log(`🔧 Auto-fix: ${autoFix ? 'Enabled' : 'Disabled'}`);
+    console.info(`📁 Checking file: ${npmrcPath}`);
+    console.info(`🔧 Auto-fix: ${autoFix ? 'Enabled' : 'Disabled'}`);
   }
 
   const result = await checkNpmrcSecurity(npmrcPath);
@@ -210,14 +210,14 @@ async function main(): Promise<number> {
     displayResults(result);
 
     if (autoFix) {
-      console.log('\n🔧 Attempting to fix automatically...');
+      console.info('\n🔧 Attempting to fix automatically...');
       const fixedContent = generateFix(result);
       
       if (fixedContent) {
         try {
           await Bun.write(npmrcPath, fixedContent);
-          console.log('✅ Automatic fix applied successfully');
-          console.log('💡 Please review the changes and run git add to include them');
+          console.info('✅ Automatic fix applied successfully');
+          console.info('💡 Please review the changes and run git add to include them');
           return 0;
         } catch (error) {
           console.error(`❌ Failed to apply fix: ${error}`);
@@ -229,16 +229,16 @@ async function main(): Promise<number> {
       }
     }
 
-    console.log('\n🛠️  To fix manually:');
-    console.log('   1. Add # prefix to sensitive variables: ${TOKEN} → ${#TOKEN}');
-    console.log('   2. Or run: bun scripts/check-npmrc-security.ts --fix');
-    console.log('   3. Then run: git add .npmrc');
+    console.info('\n🛠️  To fix manually:');
+    console.info('   1. Add # prefix to sensitive variables: ${TOKEN} → ${#TOKEN}');
+    console.info('   2. Or run: bun scripts/check-npmrc-security.ts --fix');
+    console.info('   3. Then run: git add .npmrc');
     
     return 1; // Fail the commit
   }
 
   if (verbose) {
-    console.log('✅ No security issues found');
+    console.info('✅ No security issues found');
   }
   
   return 0; // Success

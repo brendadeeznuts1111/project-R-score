@@ -87,7 +87,7 @@ class BundleAnalyzer {
   }
 
   async analyzeBundle(): Promise<BundleAnalysis> {
-    console.log("🔍 Analyzing bundle...");
+    console.info("🔍 Analyzing bundle...");
     
     const chunks = await this.analyzeChunks();
     const dependencies = await this.analyzeDependencies();
@@ -526,7 +526,7 @@ class BundleAnalyzer {
     
     if (outputPath) {
       writeFileSync(outputPath, report, 'utf-8');
-      console.log(`📄 Report saved to: ${outputPath}`);
+      console.info(`📄 Report saved to: ${outputPath}`);
     }
     
     return report;
@@ -595,18 +595,18 @@ async function main() {
   const outputPath = args.find(arg => arg.startsWith('--output='))?.split('=')[1];
   const format = args.find(arg => arg.startsWith('--format='))?.split('=')[1] || 'markdown';
 
-  console.log("🔍 Bundle Analyzer");
-  console.log(`📁 Analyzing: ${buildDir}`);
+  console.info("🔍 Bundle Analyzer");
+  console.info(`📁 Analyzing: ${buildDir}`);
   
   const analyzer = new BundleAnalyzer(buildDir);
   
   if (format === 'json') {
     const analysis = await analyzer.analyzeBundle();
-    console.log(JSON.stringify(analysis, null, 2));
+    console.info(JSON.stringify(analysis, null, 2));
   } else {
     const report = await analyzer.generateReport(outputPath);
     if (!outputPath) {
-      console.log(report);
+      console.info(report);
     }
   }
 }

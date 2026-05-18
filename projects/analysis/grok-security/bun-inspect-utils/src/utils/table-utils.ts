@@ -229,5 +229,5 @@ export async function exportTableToS3(
     contentDisposition:
       options.disposition ?? 'attachment; filename="enterprise-table.txt"',
   });
-  console.log(`✅ Exported: ${bucketKey} [KV subprotocol #REF-1.3.1.1]`);
+  console.info(`✅ Exported: ${bucketKey} [KV subprotocol #REF-1.3.1.1]`);
 }

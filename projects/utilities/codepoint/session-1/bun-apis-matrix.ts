@@ -44,7 +44,7 @@ const bunAPIMatrix: BunAPI[] = [
     module: "bun",
     performance: "🚀 Fast table formatting",
     useCase: "CLI output, data visualization",
-    example: "console.log(Bun.inspect.table(data));",
+    example: "console.info(Bun.inspect.table(data));",
     compatibility: ["Bun"],
   },
   {
@@ -54,7 +54,7 @@ const bunAPIMatrix: BunAPI[] = [
     module: "bun",
     performance: "⚡ Fast deep inspection",
     useCase: "Debugging, logging, development",
-    example: "console.log(Bun.inspect(obj));",
+    example: "console.info(Bun.inspect(obj));",
     compatibility: ["Bun"],
   },
 
@@ -290,8 +290,8 @@ const bunAPIMatrix: BunAPI[] = [
 ];
 
 function generateBunAPIMatrix() {
-  console.log("🔗 Comprehensive Bun APIs Cross-Reference Matrix");
-  console.log("=".repeat(80));
+  console.info("🔗 Comprehensive Bun APIs Cross-Reference Matrix");
+  console.info("=".repeat(80));
 
   // Group by category
   const categories = bunAPIMatrix.reduce(
@@ -306,8 +306,8 @@ function generateBunAPIMatrix() {
   );
 
   // Performance comparison table
-  console.log("\n📊 Performance Comparison:");
-  console.log("-".repeat(80));
+  console.info("\n📊 Performance Comparison:");
+  console.info("-".repeat(80));
 
   const performanceData = [
     {
@@ -364,23 +364,23 @@ function generateBunAPIMatrix() {
 
   // Category breakdown
   Object.entries(categories).forEach(([category, apis]) => {
-    console.log(`\n📂 ${category} APIs:`);
-    console.log("-".repeat(60));
+    console.info(`\n📂 ${category} APIs:`);
+    console.info("-".repeat(60));
 
     apis.forEach((api, index) => {
-      console.log(`\n${index + 1}. ${api.api}`);
-      console.log(`   Description: ${api.description}`);
-      console.log(`   Module: ${api.module}`);
-      console.log(`   Performance: ${api.performance}`);
-      console.log(`   Use Case: ${api.useCase}`);
-      console.log(`   Example: ${api.example}`);
-      console.log(`   Compatibility: ${api.compatibility.join(", ")}`);
+      console.info(`\n${index + 1}. ${api.api}`);
+      console.info(`   Description: ${api.description}`);
+      console.info(`   Module: ${api.module}`);
+      console.info(`   Performance: ${api.performance}`);
+      console.info(`   Use Case: ${api.useCase}`);
+      console.info(`   Example: ${api.example}`);
+      console.info(`   Compatibility: ${api.compatibility.join(", ")}`);
     });
   });
 
   // Use case matrix
-  console.log("\n🎯 Use Case Recommendations:");
-  console.log("-".repeat(80));
+  console.info("\n🎯 Use Case Recommendations:");
+  console.info("-".repeat(80));
 
   const useCaseMatrix = [
     {
@@ -436,8 +436,8 @@ function generateBunAPIMatrix() {
   console.table(useCaseMatrix);
 
   // Migration guide
-  console.log("\n🔄 Migration Guide (Node.js → Bun):");
-  console.log("-".repeat(80));
+  console.info("\n🔄 Migration Guide (Node.js → Bun):");
+  console.info("-".repeat(80));
 
   const migrationMatrix = [
     {
@@ -485,28 +485,28 @@ function generateBunAPIMatrix() {
   console.table(migrationMatrix);
 
   // Performance benchmarks
-  console.log("\n⚡ Performance Benchmarks:");
-  console.log("-".repeat(80));
+  console.info("\n⚡ Performance Benchmarks:");
+  console.info("-".repeat(80));
 
-  console.log("File Operations (1MB file, 1000 iterations):");
+  console.info("File Operations (1MB file, 1000 iterations):");
   console.time("Bun.write()");
   // Simulate benchmark
   console.timeEnd("Bun.write()");
 
-  console.log("HTTP Server (1000 requests):");
+  console.info("HTTP Server (1000 requests):");
   console.time("Bun.serve()");
   // Simulate benchmark
   console.timeEnd("Bun.serve()");
 
-  console.log("Database Operations (1000 queries):");
+  console.info("Database Operations (1000 queries):");
   console.time("Bun.sqlite()");
   // Simulate benchmark
   console.timeEnd("Bun.sqlite()");
 }
 
 function generateCompatibilityMatrix() {
-  console.log("\n🌐 Cross-Platform Compatibility:");
-  console.log("-".repeat(80));
+  console.info("\n🌐 Cross-Platform Compatibility:");
+  console.info("-".repeat(80));
 
   const compatibilityMatrix = [
     {
@@ -571,20 +571,20 @@ function generateCompatibilityMatrix() {
 }
 
 // Main execution
-console.log("🔗 Comprehensive Bun APIs Cross-Reference Matrix");
-console.log("=".repeat(80));
+console.info("🔗 Comprehensive Bun APIs Cross-Reference Matrix");
+console.info("=".repeat(80));
 generateBunAPIMatrix();
 generateCompatibilityMatrix();
 
-console.log("\n💡 Key Takeaways:");
-console.log("-".repeat(80));
-console.log("1. Use Bun-specific APIs for maximum performance");
-console.log(
+console.info("\n💡 Key Takeaways:");
+console.info("-".repeat(80));
+console.info("1. Use Bun-specific APIs for maximum performance");
+console.info(
   "2. Leverage built-in modules (SQLite, test runner) for simplicity"
 );
-console.log("3. Web APIs (fetch, Headers) work across platforms");
-console.log("4. File operations are 3x faster than Node.js");
-console.log("5. HTTP server includes WebSocket support");
-console.log("6. Consider compatibility requirements when choosing APIs");
-console.log("7. Many Bun APIs have no external dependencies");
-console.log("8. Performance gains are significant across all categories");
+console.info("3. Web APIs (fetch, Headers) work across platforms");
+console.info("4. File operations are 3x faster than Node.js");
+console.info("5. HTTP server includes WebSocket support");
+console.info("6. Consider compatibility requirements when choosing APIs");
+console.info("7. Many Bun APIs have no external dependencies");
+console.info("8. Performance gains are significant across all categories");

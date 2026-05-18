@@ -12,13 +12,13 @@ export function renderYAMLTableV45(rows: YAMLNode[], stats: DocStats) {
   const reset = "\x1b[0m";
 
   // Title block
-  console.log("\n" + "█".repeat(totalWidth));
-  console.log(`${c("hsl(48, 100%, 60%)")} ▵ FACTORYWAGER YAML-NATIVE TABULAR v4.5 ${reset}`);
-  console.log(`${c("hsl(210, 20%, 50%)")}  Infrastructure Nexus Integration • ${stats.totalDocs} docs • ${stats.totalNodes} nodes ${reset}`);
-  console.log("█".repeat(totalWidth));
+  console.info("\n" + "█".repeat(totalWidth));
+  console.info(`${c("hsl(48, 100%, 60%)")} ▵ FACTORYWAGER YAML-NATIVE TABULAR v4.5 ${reset}`);
+  console.info(`${c("hsl(210, 20%, 50%)")}  Infrastructure Nexus Integration • ${stats.totalDocs} docs • ${stats.totalNodes} nodes ${reset}`);
+  console.info("█".repeat(totalWidth));
 
   // Legend
-  console.log(`${c("hsl(0,0%,60%)")} Legend: &anchor  →alias  ⚠env-interp  …truncated  ${c("hsl(300,70%,65%)")}M${c("hsl(0,0%,60%)")}merge  →inheritance+ovrd${reset}`);
+  console.info(`${c("hsl(0,0%,60%)")} Legend: &anchor  →alias  ⚠env-interp  …truncated  ${c("hsl(300,70%,65%)")}M${c("hsl(0,0%,60%)")}merge  →inheritance+ovrd${reset}`);
 
   // Header
   const header = cols.map(col => {
@@ -26,9 +26,9 @@ export function renderYAMLTableV45(rows: YAMLNode[], stats: DocStats) {
     return color + col.name.padEnd(col.w, ' ') + reset;
   }).join(" │ ");
 
-  console.log("─".repeat(totalWidth));
-  console.log(header);
-  console.log("═".repeat(totalWidth));
+  console.info("─".repeat(totalWidth));
+  console.info(header);
+  console.info("═".repeat(totalWidth));
 
   // Rows with document separators
   let currentDoc = -1;
@@ -37,10 +37,10 @@ export function renderYAMLTableV45(rows: YAMLNode[], stats: DocStats) {
     // Document separator with metadata
     if (row.docIndex !== currentDoc) {
       currentDoc = row.docIndex;
-      console.log("─".repeat(totalWidth));
+      console.info("─".repeat(totalWidth));
       const docHeader = `${c("hsl(220, 60%, 70%)")}📄 Document ${row.docIndex}`;
-      console.log(docHeader.padEnd(totalWidth - 10) + reset + " ".repeat(10));
-      console.log("─".repeat(totalWidth));
+      console.info(docHeader.padEnd(totalWidth - 10) + reset + " ".repeat(10));
+      console.info("─".repeat(totalWidth));
     }
 
     // Indentation visual (depth)
@@ -97,15 +97,15 @@ export function renderYAMLTableV45(rows: YAMLNode[], stats: DocStats) {
       return colorCode + padded + reset;
     });
 
-    console.log(cells.join(" │ "));
+    console.info(cells.join(" │ "));
   });
 
   // Statistics footer
-  console.log("═".repeat(totalWidth));
-  console.log(`${c("hsl(180,60%,55%)")}📊 Statistics:${reset}`);
-  console.log(`  Anchors defined: ${c("hsl(120,40%,45%)")}${stats.anchorsDefined}${reset}  │  ` +
+  console.info("═".repeat(totalWidth));
+  console.info(`${c("hsl(180,60%,55%)")}📊 Statistics:${reset}`);
+  console.info(`  Anchors defined: ${c("hsl(120,40%,45%)")}${stats.anchorsDefined}${reset}  │  ` +
               `Aliases resolved: ${c("hsl(48,100%,60%)")}${stats.aliasesResolved}${reset}  │  ` +
               `Env vars: ${c("hsl(10,90%,55%)")}${stats.interpolated}${reset}  │  ` +
               `Max depth: ${c("hsl(280,60%,60%)")}${stats.maxDepth}${reset}`);
-  console.log("█".repeat(totalWidth) + "\n");
+  console.info("█".repeat(totalWidth) + "\n");
 }

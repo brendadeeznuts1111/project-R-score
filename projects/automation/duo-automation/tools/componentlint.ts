@@ -55,13 +55,13 @@ class ComponentLint {
   }
 
   async run() {
-    console.log('🔍 ComponentLint - Component Color Props Validator');
+    console.info('🔍 ComponentLint - Component Color Props Validator');
     
     const result = await this.validate();
     this.displayResults(result);
     
     if (this.config.strict && !result.valid) {
-      console.log('\n❌ Component validation failed in strict mode.');
+      console.info('\n❌ Component validation failed in strict mode.');
       process.exit(1);
     }
   }
@@ -325,21 +325,21 @@ class ComponentLint {
   }
 
   private displayResults(result: ComponentLintResult) {
-    console.log('\n📊 ComponentLint Results:');
-    console.log('==================================');
-    console.log(`🧩 Total Components: ${result.summary.totalComponents}`);
-    console.log(`✅ Valid Components: ${result.summary.totalComponents - result.summary.violations}`);
-    console.log(`❌ Violations: ${result.summary.violations}`);
+    console.info('\n📊 ComponentLint Results:');
+    console.info('==================================');
+    console.info(`🧩 Total Components: ${result.summary.totalComponents}`);
+    console.info(`✅ Valid Components: ${result.summary.totalComponents - result.summary.violations}`);
+    console.info(`❌ Violations: ${result.summary.violations}`);
     
     if (Object.keys(result.summary.frameworks).length > 0) {
-      console.log('\n📱 Frameworks:');
+      console.info('\n📱 Frameworks:');
       Object.entries(result.summary.frameworks).forEach(([framework, count]) => {
-        console.log(`   • ${framework.charAt(0).toUpperCase() + framework.slice(1)}: ${count} violations`);
+        console.info(`   • ${framework.charAt(0).toUpperCase() + framework.slice(1)}: ${count} violations`);
       });
     }
     
     if (result.violations.length > 0) {
-      console.log('\n🚨 Component Violations:');
+      console.info('\n🚨 Component Violations:');
       
       // Group violations by file
       const violationsByFile = result.violations.reduce((acc, v) => {
@@ -349,26 +349,26 @@ class ComponentLint {
       }, {} as { [key: string]: ComponentViolation[] });
       
       Object.entries(violationsByFile).forEach(([file, violations]) => {
-        console.log(`\n📄 ${file}:`);
+        console.info(`\n📄 ${file}:`);
         violations.forEach(v => {
-          console.log(`   • ${v.component} - ${v.prop}="${v.value}" (${v.issue})`);
+          console.info(`   • ${v.component} - ${v.prop}="${v.value}" (${v.issue})`);
           if (v.suggestion) {
-            console.log(`     Suggestion: ${v.suggestion}`);
+            console.info(`     Suggestion: ${v.suggestion}`);
           }
         });
       });
       
-      console.log('\n💡 Recommendations:');
-      console.log('   • Use approved hex colors from the DuoPlus palette');
-      console.log('   • Prefer CSS custom properties for consistency');
-      console.log('   • Define color tokens in your theme system');
-      console.log('   • Run with --fix to auto-correct common issues');
+      console.info('\n💡 Recommendations:');
+      console.info('   • Use approved hex colors from the DuoPlus palette');
+      console.info('   • Prefer CSS custom properties for consistency');
+      console.info('   • Define color tokens in your theme system');
+      console.info('   • Run with --fix to auto-correct common issues');
     }
     
     // Save detailed report
     const reportFile = this.config.output || 'componentlint-report.json';
     writeFileSync(reportFile, JSON.stringify(result, null, 2));
-    console.log(`\n📄 Detailed report saved to: ${reportFile}`);
+    console.info(`\n📄 Detailed report saved to: ${reportFile}`);
   }
 }
 

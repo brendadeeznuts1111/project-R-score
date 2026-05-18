@@ -19,8 +19,8 @@ import { R2MCPIntegration } from '../lib/mcp/r2-integration-fixed.ts';
  * Example 1: Basic URL Fragment Operations
  */
 async function basicFragmentExamples() {
-  console.log('🔗 Basic URL Fragment Examples');
-  console.log('='.repeat(50));
+  console.info('🔗 Basic URL Fragment Examples');
+  console.info('='.repeat(50));
 
   // Create URLs with fragments
   const dashboardURL = FactoryWagerURLUtils.createDashboardURL('analytics', {
@@ -29,35 +29,35 @@ async function basicFragmentExamples() {
     filter: 'errors'
   });
 
-  console.log('📊 Dashboard URL with fragment:');
-  console.log(`   ${dashboardURL}`);
+  console.info('📊 Dashboard URL with fragment:');
+  console.info(`   ${dashboardURL}`);
 
   // Parse the fragment
   const fragment = URLHandler.getFragment(dashboardURL);
   const parsedFragment = URLFragmentUtils.parseFragment(fragment);
   
-  console.log('\n🔍 Parsed fragment:');
-  console.log(`   Tab: ${parsedFragment.tab}`);
-  console.log(`   Period: ${parsedFragment.period}`);
-  console.log(`   Filter: ${parsedFragment.filter}`);
+  console.info('\n🔍 Parsed fragment:');
+  console.info(`   Tab: ${parsedFragment.tab}`);
+  console.info(`   Period: ${parsedFragment.period}`);
+  console.info(`   Filter: ${parsedFragment.filter}`);
 
   // Modify fragment
   const modifiedURL = URLFragmentUtils.setFragmentParam(dashboardURL, 'period', '30d');
-  console.log('\n✏️ Modified URL (30d period):');
-  console.log(`   ${modifiedURL}`);
+  console.info('\n✏️ Modified URL (30d period):');
+  console.info(`   ${modifiedURL}`);
 
   // Remove fragment parameter
   const cleanedURL = URLFragmentUtils.removeFragmentParam(modifiedURL, 'filter');
-  console.log('\n🧹 Cleaned URL (filter removed):');
-  console.log(`   ${cleanedURL}`);
+  console.info('\n🧹 Cleaned URL (filter removed):');
+  console.info(`   ${cleanedURL}`);
 }
 
 /**
  * Example 2: R2 Browser URL with Object Navigation
  */
 async function r2BrowserNavigation() {
-  console.log('\n🌐 R2 Browser URL Navigation');
-  console.log('='.repeat(50));
+  console.info('\n🌐 R2 Browser URL Navigation');
+  console.info('='.repeat(50));
 
   // Initialize R2 integration
   const r2 = new R2MCPIntegration();
@@ -68,31 +68,31 @@ async function r2BrowserNavigation() {
   const auditsURL = r2.getR2BrowserURL('audits', 'mcp/audits/session-456.json');
   const metricsURL = r2.getR2BrowserURL('metrics');
 
-  console.log('📂 R2 Browser URLs:');
-  console.log(`   Diagnoses: ${diagnosesURL}`);
-  console.log(`   Audits: ${auditsURL}`);
-  console.log(`   Metrics: ${metricsURL}`);
+  console.info('📂 R2 Browser URLs:');
+  console.info(`   Diagnoses: ${diagnosesURL}`);
+  console.info(`   Audits: ${auditsURL}`);
+  console.info(`   Metrics: ${metricsURL}`);
 
   // Parse R2 browser URL
   const parsedDiagnoses = r2.parseFactoryWagerURL(diagnosesURL);
   if (parsedDiagnoses.valid) {
-    console.log('\n🔍 Parsed Diagnoses URL:');
-    console.log(`   Service: ${parsedDiagnoses.service}`);
-    console.log(`   Fragment: ${JSON.stringify(parsedDiagnoses.fragment, null, 2)}`);
+    console.info('\n🔍 Parsed Diagnoses URL:');
+    console.info(`   Service: ${parsedDiagnoses.service}`);
+    console.info(`   Fragment: ${JSON.stringify(parsedDiagnoses.fragment, null, 2)}`);
   }
 
   // Generate shareable URL
   const shareableURL = await r2.createShareableURL('mcp/diagnoses/issue-123.json', 3600);
-  console.log('\n🔗 Shareable URL (1 hour expiry):');
-  console.log(`   ${shareableURL}`);
+  console.info('\n🔗 Shareable URL (1 hour expiry):');
+  console.info(`   ${shareableURL}`);
 }
 
 /**
  * Example 3: Dashboard Navigation with State
  */
 async function dashboardNavigation() {
-  console.log('\n📊 Dashboard Navigation with State');
-  console.log('='.repeat(50));
+  console.info('\n📊 Dashboard Navigation with State');
+  console.info('='.repeat(50));
 
   // Create dashboard URLs with different states
   const overviewURL = FactoryWagerURLUtils.createDashboardURL('overview', {
@@ -112,10 +112,10 @@ async function dashboardNavigation() {
     tab: 'api-keys'
   });
 
-  console.log('🎛️ Dashboard Navigation URLs:');
-  console.log(`   Overview: ${overviewURL}`);
-  console.log(`   Analytics: ${analyticsURL}`);
-  console.log(`   Settings: ${settingsURL}`);
+  console.info('🎛️ Dashboard Navigation URLs:');
+  console.info(`   Overview: ${overviewURL}`);
+  console.info(`   Analytics: ${analyticsURL}`);
+  console.info(`   Settings: ${settingsURL}`);
 
   // Simulate navigation state restoration
   function restoreNavigationState(url: string) {
@@ -129,17 +129,17 @@ async function dashboardNavigation() {
   }
 
   const restoredState = restoreNavigationState(analyticsURL);
-  console.log('\n🔄 Restored Navigation State:');
-  console.log(`   Section: ${restoredState.section}`);
-  console.log(`   State: ${JSON.stringify(restoredState.state, null, 2)}`);
+  console.info('\n🔄 Restored Navigation State:');
+  console.info(`   Section: ${restoredState.section}`);
+  console.info(`   State: ${JSON.stringify(restoredState.state, null, 2)}`);
 }
 
 /**
  * Example 4: API URL Generation with Parameters
  */
 async function apiURLGeneration() {
-  console.log('\n🔌 API URL Generation with Parameters');
-  console.log('='.repeat(50));
+  console.info('\n🔌 API URL Generation with Parameters');
+  console.info('='.repeat(50));
 
   // Generate API URLs with various parameters
   const diagnosesAPI = FactoryWagerURLUtils.createAPIURL('/diagnoses', {
@@ -162,10 +162,10 @@ async function apiURLGeneration() {
     order: 'desc'
   });
 
-  console.log('🔌 Generated API URLs:');
-  console.log(`   Diagnoses: ${diagnosesAPI}`);
-  console.log(`   Metrics: ${metricsAPI}`);
-  console.log(`   Search: ${searchAPI}`);
+  console.info('🔌 Generated API URLs:');
+  console.info(`   Diagnoses: ${diagnosesAPI}`);
+  console.info(`   Metrics: ${metricsAPI}`);
+  console.info(`   Search: ${searchAPI}`);
 
   // Parse API URLs
   function parseAPIURL(url: string) {
@@ -177,17 +177,17 @@ async function apiURLGeneration() {
   }
 
   const parsedDiagnosesAPI = parseAPIURL(diagnosesAPI);
-  console.log('\n🔍 Parsed Diagnoses API:');
-  console.log(`   Endpoint: ${parsedDiagnosesAPI.endpoint}`);
-  console.log(`   Parameters: ${JSON.stringify(parsedDiagnosesAPI.params, null, 2)}`);
+  console.info('\n🔍 Parsed Diagnoses API:');
+  console.info(`   Endpoint: ${parsedDiagnosesAPI.endpoint}`);
+  console.info(`   Parameters: ${JSON.stringify(parsedDiagnosesAPI.params, null, 2)}`);
 }
 
 /**
  * Example 5: URL Validation and Security
  */
 async function urlValidationSecurity() {
-  console.log('\n🔒 URL Validation and Security');
-  console.log('='.repeat(50));
+  console.info('\n🔒 URL Validation and Security');
+  console.info('='.repeat(50));
 
   const testURLs = [
     'https://docs.factory-wager.com/analytics#tab=overview&period=7d',
@@ -198,20 +198,20 @@ async function urlValidationSecurity() {
     'not-a-url'
   ];
 
-  console.log('🔍 URL Validation Results:');
+  console.info('🔍 URL Validation Results:');
   for (const url of testURLs) {
     try {
       const isValid = FactoryWagerURLUtils.validateFactoryWagerURL(url);
       const service = isValid ? FactoryWagerURLUtils.extractService(url) : 'invalid';
       
-      console.log(`   ${url}`);
-      console.log(`     Valid: ${isValid ? '✅' : '❌'}`);
-      console.log(`     Service: ${service}`);
+      console.info(`   ${url}`);
+      console.info(`     Valid: ${isValid ? '✅' : '❌'}`);
+      console.info(`     Service: ${service}`);
     } catch (error) {
-      console.log(`   ${url}`);
-      console.log(`     Valid: ❌ (Error: ${error instanceof Error ? error.message : 'Unknown'})`);
+      console.info(`   ${url}`);
+      console.info(`     Valid: ❌ (Error: ${error instanceof Error ? error.message : 'Unknown'})`);
     }
-    console.log('');
+    console.info('');
   }
 
   // Demonstrate secure URL parsing
@@ -221,10 +221,10 @@ async function urlValidationSecurity() {
     const parsed = URLHandler.parse(userProvidedURL);
     const fragment = parsed.hasFragment() ? URLFragmentUtils.parseFragment(parsed.fragment) : {};
     
-    console.log('🔒 Securely parsed user URL:');
-    console.log(`   Hostname: ${parsed.hostname}`);
-    console.log(`   Path: ${parsed.pathname}`);
-    console.log(`   Fragment: ${JSON.stringify(fragment, null, 2)}`);
+    console.info('🔒 Securely parsed user URL:');
+    console.info(`   Hostname: ${parsed.hostname}`);
+    console.info(`   Path: ${parsed.pathname}`);
+    console.info(`   Fragment: ${JSON.stringify(fragment, null, 2)}`);
   }
 }
 
@@ -232,8 +232,8 @@ async function urlValidationSecurity() {
  * Example 6: Complex Fragment Operations
  */
 async function complexFragmentOperations() {
-  console.log('\n🔧 Complex Fragment Operations');
-  console.log('='.repeat(50));
+  console.info('\n🔧 Complex Fragment Operations');
+  console.info('='.repeat(50));
 
   // Create a complex URL with multiple fragment parameters
   let url = 'https://docs.factory-wager.com/analytics';
@@ -245,49 +245,49 @@ async function complexFragmentOperations() {
   url = URLFragmentUtils.setFragmentParam(url, 'compare', 'previous');
   url = URLFragmentUtils.setFragmentParam(url, 'debug', 'true');
 
-  console.log('🔧 Built complex URL:');
-  console.log(`   ${url}`);
+  console.info('🔧 Built complex URL:');
+  console.info(`   ${url}`);
 
   // Parse and manipulate
   const fragment = URLHandler.getFragment(url);
   const params = URLFragmentUtils.parseFragment(fragment);
 
-  console.log('\n🔍 Parsed parameters:');
+  console.info('\n🔍 Parsed parameters:');
   Object.entries(params).forEach(([key, value]) => {
-    console.log(`   ${key}: ${value}`);
+    console.info(`   ${key}: ${value}`);
   });
 
   // Update specific parameters
   url = URLFragmentUtils.setFragmentParam(url, 'period', '7d');
   url = URLFragmentUtils.removeFragmentParam(url, 'debug');
 
-  console.log('\n✏️ After updates:');
-  console.log(`   ${url}`);
+  console.info('\n✏️ After updates:');
+  console.info(`   ${url}`);
 
   // Check for specific parameters
   const hasCompare = URLFragmentUtils.getFragmentParam(url, 'compare') !== null;
   const hasDebug = URLFragmentUtils.getFragmentParam(url, 'debug') !== null;
 
-  console.log('\n🔍 Parameter checks:');
-  console.log(`   Has compare: ${hasCompare ? '✅' : '❌'}`);
-  console.log(`   Has debug: ${hasDebug ? '✅' : '❌'}`);
+  console.info('\n🔍 Parameter checks:');
+  console.info(`   Has compare: ${hasCompare ? '✅' : '❌'}`);
+  console.info(`   Has debug: ${hasDebug ? '✅' : '❌'}`);
 
   // Demonstrate fragment comparison
   const url1 = URLFragmentUtils.setFragmentParam('https://example.com', 'a', '1');
   const url2 = URLFragmentUtils.setFragmentParam('https://example.com', 'b', '2');
   const url3 = URLFragmentUtils.setFragmentParam('https://example.com#other', 'a', '1');
 
-  console.log('\n🔍 URL comparison (ignoring fragments):');
-  console.log(`   url1 vs url2: ${URLHandler.compareWithoutFragment(url1, url2) ? '✅ Same' : '❌ Different'}`);
-  console.log(`   url1 vs url3: ${URLHandler.compareWithoutFragment(url1, url3) ? '✅ Same' : '❌ Different'}`);
+  console.info('\n🔍 URL comparison (ignoring fragments):');
+  console.info(`   url1 vs url2: ${URLHandler.compareWithoutFragment(url1, url2) ? '✅ Same' : '❌ Different'}`);
+  console.info(`   url1 vs url3: ${URLHandler.compareWithoutFragment(url1, url3) ? '✅ Same' : '❌ Different'}`);
 }
 
 /**
  * Example 7: Real-world Dashboard Integration
  */
 async function realWorldDashboardIntegration() {
-  console.log('\n🌍 Real-world Dashboard Integration');
-  console.log('='.repeat(50));
+  console.info('\n🌍 Real-world Dashboard Integration');
+  console.info('='.repeat(50));
 
   // Simulate dashboard initialization
   class DashboardApp {
@@ -300,13 +300,13 @@ async function realWorldDashboardIntegration() {
 
     async initialize() {
       await this.r2.initialize();
-      console.log('🚀 Dashboard initialized');
+      console.info('🚀 Dashboard initialized');
     }
 
     // Navigate to specific section with state
     navigate(section: string, state: Record<string, string> = {}) {
       this.currentURL = FactoryWagerURLUtils.createDashboardURL(section, state);
-      console.log(`📍 Navigated to: ${this.currentURL}`);
+      console.info(`📍 Navigated to: ${this.currentURL}`);
       return this.currentURL;
     }
 
@@ -322,27 +322,27 @@ async function realWorldDashboardIntegration() {
     // Generate shareable link for R2 object
     async shareR2Object(objectKey: string, expiresIn: number = 3600) {
       const shareableURL = await this.r2.createShareableURL(objectKey, expiresIn);
-      console.log(`🔗 Shareable URL created: ${shareableURL}`);
+      console.info(`🔗 Shareable URL created: ${shareableURL}`);
       return shareableURL;
     }
 
     // Handle deep linking
     handleDeepLink(url: string) {
       if (!FactoryWagerURLUtils.validateFactoryWagerURL(url)) {
-        console.log('❌ Invalid FactoryWager URL');
+        console.info('❌ Invalid FactoryWager URL');
         return false;
       }
 
       const parsed = this.r2.parseFactoryWagerURL(url);
       if (!parsed.valid) {
-        console.log('❌ Failed to parse URL');
+        console.info('❌ Failed to parse URL');
         return false;
       }
 
       this.currentURL = url;
-      console.log(`🔗 Deep link handled: ${url}`);
-      console.log(`   Service: ${parsed.service}`);
-      console.log(`   Fragment: ${JSON.stringify(parsed.fragment, null, 2)}`);
+      console.info(`🔗 Deep link handled: ${url}`);
+      console.info(`   Service: ${parsed.service}`);
+      console.info(`   Fragment: ${JSON.stringify(parsed.fragment, null, 2)}`);
       
       return true;
     }
@@ -358,9 +358,9 @@ async function realWorldDashboardIntegration() {
 
   // Get current state
   const currentState = dashboard.getCurrentState();
-  console.log('\n📍 Current state:');
-  console.log(`   Section: ${currentState.section}`);
-  console.log(`   Fragment: ${JSON.stringify(currentState.fragment, null, 2)}`);
+  console.info('\n📍 Current state:');
+  console.info(`   Section: ${currentState.section}`);
+  console.info(`   Fragment: ${JSON.stringify(currentState.fragment, null, 2)}`);
 
   // Create shareable link
   await dashboard.shareR2Object('mcp/diagnoses/critical-issue.json', 7200);
@@ -374,9 +374,9 @@ async function realWorldDashboardIntegration() {
  * Main demonstration function
  */
 async function main() {
-  console.log('🔗 URL Fragment Usage Examples for FactoryWager R2 Integration');
-  console.log('='.repeat(70));
-  console.log('');
+  console.info('🔗 URL Fragment Usage Examples for FactoryWager R2 Integration');
+  console.info('='.repeat(70));
+  console.info('');
 
   try {
     await basicFragmentExamples();
@@ -387,15 +387,15 @@ async function main() {
     await complexFragmentOperations();
     await realWorldDashboardIntegration();
 
-    console.log('\n✅ All URL fragment examples completed successfully!');
-    console.log('');
-    console.log('📋 Key Takeaways:');
-    console.log('   • Use fragments for client-side navigation state');
-    console.log('   • Validate all URLs before processing');
-    console.log('   • Sanitize user-provided URL fragments');
-    console.log('   • Use FactoryWagerURLUtils for consistent URL generation');
-    console.log('   • Leverage URLFragmentUtils for complex fragment operations');
-    console.log('   • Always check URL validity before parsing fragments');
+    console.info('\n✅ All URL fragment examples completed successfully!');
+    console.info('');
+    console.info('📋 Key Takeaways:');
+    console.info('   • Use fragments for client-side navigation state');
+    console.info('   • Validate all URLs before processing');
+    console.info('   • Sanitize user-provided URL fragments');
+    console.info('   • Use FactoryWagerURLUtils for consistent URL generation');
+    console.info('   • Leverage URLFragmentUtils for complex fragment operations');
+    console.info('   • Always check URL validity before parsing fragments');
 
   } catch (error) {
     console.error('❌ Error in URL fragment examples:', error);

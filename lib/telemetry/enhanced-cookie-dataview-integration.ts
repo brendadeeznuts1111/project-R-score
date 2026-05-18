@@ -141,7 +141,7 @@ export class UnifiedCookieDataViewManager {
         maxAge: 60 * 60 * 24 * 7
       });
       
-      console.log(`🆔 Creating unified session: ${sessionId}`);
+      console.info(`🆔 Creating unified session: ${sessionId}`);
     }
     
     // Get or create session metrics

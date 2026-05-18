@@ -62,7 +62,7 @@ class TagAuditor {
    * Run complete tag audit
    */
   async audit(options: AuditOptions = {}): Promise<TagAuditResult> {
-    console.log('🔍 Running comprehensive tag audit...');
+    console.info('🔍 Running comprehensive tag audit...');
     const startTime = Date.now();
 
     await this.collectTagData();
@@ -70,7 +70,7 @@ class TagAuditor {
     this.generateRecommendations();
 
     const elapsed = Date.now() - startTime;
-    console.log(`✅ Audit completed in ${elapsed}ms`);
+    console.info(`✅ Audit completed in ${elapsed}ms`);
 
     this.outputResults(options.output || 'table');
 
@@ -407,10 +407,10 @@ Recommendations: ${results.recommendations.length}
   private outputResults(format: string): void {
     switch (format) {
       case 'json':
-        console.log(JSON.stringify(this.results, null, 2));
+        console.info(JSON.stringify(this.results, null, 2));
         break;
       case 'summary':
-        console.log(this.getSummary());
+        console.info(this.getSummary());
         break;
       case 'table':
       default:
@@ -423,66 +423,66 @@ Recommendations: ${results.recommendations.length}
    * Output results as table
    */
   private outputTable(): void {
-    console.log('\n📊 Tag Audit Results');
-    console.log('='.repeat(80));
+    console.info('\n📊 Tag Audit Results');
+    console.info('='.repeat(80));
 
     // Basic metrics
-    console.log('\n📈 Basic Metrics:');
-    console.log(`  Total Artifacts: ${this.results.totalArtifacts}`);
-    console.log(`  Tagged Artifacts: ${this.results.taggedArtifacts}`);
-    console.log(`  Tag Coverage: ${this.results.tagCoverage}%`);
-    console.log(`  Unique Tags: ${this.results.uniqueTags}`);
-    console.log(`  Total Tag Usage: ${this.results.totalTagUsage}`);
+    console.info('\n📈 Basic Metrics:');
+    console.info(`  Total Artifacts: ${this.results.totalArtifacts}`);
+    console.info(`  Tagged Artifacts: ${this.results.taggedArtifacts}`);
+    console.info(`  Tag Coverage: ${this.results.tagCoverage}%`);
+    console.info(`  Unique Tags: ${this.results.uniqueTags}`);
+    console.info(`  Total Tag Usage: ${this.results.totalTagUsage}`);
 
     // Issues found
-    console.log('\n🚨 Issues Found:');
-    console.log(`  Deprecated Tags: ${this.results.deprecatedTags.length}`);
-    console.log(`  Orphaned Tags: ${this.results.orphanedTags.length}`);
-    console.log(`  Underused Tags: ${this.results.underusedTags.length}`);
-    console.log(`  Overused Tags: ${this.results.overusedTags.length}`);
-    console.log(`  Inconsistencies: ${this.results.inconsistentTags.length}`);
+    console.info('\n🚨 Issues Found:');
+    console.info(`  Deprecated Tags: ${this.results.deprecatedTags.length}`);
+    console.info(`  Orphaned Tags: ${this.results.orphanedTags.length}`);
+    console.info(`  Underused Tags: ${this.results.underusedTags.length}`);
+    console.info(`  Overused Tags: ${this.results.overusedTags.length}`);
+    console.info(`  Inconsistencies: ${this.results.inconsistentTags.length}`);
 
     // Category breakdown
-    console.log('\n📂 Category Breakdown:');
+    console.info('\n📂 Category Breakdown:');
     Object.entries(this.results.categoryStats).forEach(([category, stats]) => {
-      console.log(`  ${category}: ${stats.totalTags} tags, ${stats.totalUsage} usage`);
+      console.info(`  ${category}: ${stats.totalTags} tags, ${stats.totalUsage} usage`);
       if (stats.mostUsed) {
-        console.log(`    Most used: ${stats.mostUsed} (${this.results.tagStats[stats.mostUsed].count})`);
+        console.info(`    Most used: ${stats.mostUsed} (${this.results.tagStats[stats.mostUsed].count})`);
       }
     });
 
     // Top tags
-    console.log('\n🏷️  Top 10 Tags:');
+    console.info('\n🏷️  Top 10 Tags:');
     Object.entries(this.results.tagStats)
       .sort(([,a], [,b]) => b.count - a.count)
       .slice(0, 10)
       .forEach(([tag, stats], index) => {
-        console.log(`  ${index + 1}. ${tag}: ${stats.count} artifacts (${stats.percentage}%)`);
+        console.info(`  ${index + 1}. ${tag}: ${stats.count} artifacts (${stats.percentage}%)`);
       });
 
     // Issues details
     if (this.results.deprecatedTags.length > 0) {
-      console.log('\n⚠️  Deprecated Tags:');
+      console.info('\n⚠️  Deprecated Tags:');
       this.results.deprecatedTags.forEach(tag => {
-        console.log(`    ${tag} (${this.results.tagStats[tag].count} artifacts)`);
+        console.info(`    ${tag} (${this.results.tagStats[tag].count} artifacts)`);
       });
     }
 
     if (this.results.orphanedTags.length > 0) {
-      console.log('\n🏝️  Orphaned Tags:');
+      console.info('\n🏝️  Orphaned Tags:');
       this.results.orphanedTags.slice(0, 10).forEach(tag => {
-        console.log(`    ${tag}`);
+        console.info(`    ${tag}`);
       });
       if (this.results.orphanedTags.length > 10) {
-        console.log(`    ... and ${this.results.orphanedTags.length - 10} more`);
+        console.info(`    ... and ${this.results.orphanedTags.length - 10} more`);
       }
     }
 
     // Recommendations
     if (this.results.recommendations.length > 0) {
-      console.log('\n💡 Recommendations:');
+      console.info('\n💡 Recommendations:');
       this.results.recommendations.forEach((rec, index) => {
-        console.log(`  ${index + 1}. ${rec}`);
+        console.info(`  ${index + 1}. ${rec}`);
       });
     }
   }
@@ -513,7 +513,7 @@ async function main() {
         break;
       case '--help':
       case '-h':
-        console.log(`
+        console.info(`
 🔍 Tag Audit CLI
 
 Usage: bun run scripts/audit-tags.ts [options]

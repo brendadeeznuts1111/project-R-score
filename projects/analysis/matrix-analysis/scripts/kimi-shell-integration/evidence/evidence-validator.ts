@@ -258,10 +258,10 @@ export class EvidenceValidator {
     this.reviews.set(claimId, review);
     
     // Log escalation
-    console.log(`[COUNCIL ESCALATION] Claim ${claimId} escalated by ${challengedBy}`);
-    console.log(`  Reason: ${challengeReason}`);
-    console.log(`  Defense deadline: ${review.defenseDeadline.toISOString()}`);
-    console.log(`  Fallback: ${review.automaticFallback}`);
+    console.info(`[COUNCIL ESCALATION] Claim ${claimId} escalated by ${challengedBy}`);
+    console.info(`  Reason: ${challengeReason}`);
+    console.info(`  Defense deadline: ${review.defenseDeadline.toISOString()}`);
+    console.info(`  Fallback: ${review.automaticFallback}`);
     
     return review;
   }
@@ -420,7 +420,7 @@ if (import.meta.main) {
   };
   
   validator.validateClaim(exampleClaim).then((result) => {
-    console.log("\nValidation Result:");
-    console.log(JSON.stringify(result, null, 2));
+    console.info("\nValidation Result:");
+    console.info(JSON.stringify(result, null, 2));
   });
 }

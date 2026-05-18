@@ -50,7 +50,7 @@ export class KalmanTerminalClient {
       this.ws = new WebSocket(this.config.url);
 
       this.ws.onopen = () => {
-        console.log("🔌 Connected to Kalman Terminal Server");
+        console.info("🔌 Connected to Kalman Terminal Server");
 
         if (!this.config.sessionId) {
           // Create new session
@@ -76,7 +76,7 @@ export class KalmanTerminalClient {
       };
 
       this.ws.onclose = () => {
-        console.log("🔌 Disconnected from terminal server");
+        console.info("🔌 Disconnected from terminal server");
         this.emit("disconnected");
 
         if (
@@ -85,7 +85,7 @@ export class KalmanTerminalClient {
         ) {
           setTimeout(() => {
             this.reconnectAttempts++;
-            console.log(
+            console.info(
               `🔄 Reconnecting... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`
             );
             this.connect();
@@ -200,7 +200,7 @@ export class KalmanTerminalClient {
   private handleMessage(message: TerminalMessage): void {
     switch (message.type) {
       case "connected":
-        console.log("✅", message.message);
+        console.info("✅", message.message);
         this.emit("connected", message);
         break;
       case "terminal_output":
@@ -273,8 +273,8 @@ export class KalmanTerminalClient {
  * Interactive terminal demo
  */
 async function runTerminalDemo(): Promise<void> {
-  console.log("🎯 Kalman Filter Terminal Demo");
-  console.log("================================");
+  console.info("🎯 Kalman Filter Terminal Demo");
+  console.info("================================");
 
   const client = new KalmanTerminalClient();
 
@@ -284,7 +284,7 @@ async function runTerminalDemo(): Promise<void> {
   });
 
   client.on("connected", () => {
-    console.log(
+    console.info(
       '✅ Terminal ready! Type commands or "help" for available options.'
     );
   });
@@ -306,7 +306,7 @@ async function runTerminalDemo(): Promise<void> {
       // Handle special keys
       if (key === "\u0003") {
         // Ctrl+C
-        console.log("\n👋 Goodbye!");
+        console.info("\n👋 Goodbye!");
         client.disconnect();
         process.exit(0);
       }
@@ -317,18 +317,18 @@ async function runTerminalDemo(): Promise<void> {
 
     // Run some demo commands
     setTimeout(async () => {
-      console.log("\n🚀 Running demo commands...");
+      console.info("\n🚀 Running demo commands...");
 
       // Check Kalman status
       const status = await client.executeKalmanCommand("kalman-status");
-      console.log("\n📊 Kalman Status:");
-      console.log(status);
+      console.info("\n📊 Kalman Status:");
+      console.info(status);
 
       // Run test
       setTimeout(async () => {
         const test = await client.executeKalmanCommand("kalman-test");
-        console.log("\n🧪 Test Results:");
-        console.log(test);
+        console.info("\n🧪 Test Results:");
+        console.info(test);
       }, 2000);
     }, 3000);
   } catch (error) {

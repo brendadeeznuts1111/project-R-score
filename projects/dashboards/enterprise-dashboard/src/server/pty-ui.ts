@@ -23,10 +23,10 @@ function drawPTYHeader(projectName: string): void {
   const shellTitle = `${c.bold}SHELL: ${truncateToWidth(projectName, 60)}${c.reset}`;
   const shellHint = `${c.dim}Type 'exit' or Ctrl+D to return to dashboard${c.reset}`;
 
-  console.log(`${c.cyan}╔${"═".repeat(getBoxWidth())}╗${c.reset}`);
-  console.log(`${c.cyan}║${c.reset}  ${padRight(shellTitle, getBoxWidth() - 2)}${c.cyan}║${c.reset}`);
-  console.log(`${c.cyan}║${c.reset}  ${padRight(shellHint, getBoxWidth() - 2)}${c.cyan}║${c.reset}`);
-  console.log(`${c.cyan}╚${"═".repeat(getBoxWidth())}╝${c.reset}\n`);
+  console.info(`${c.cyan}╔${"═".repeat(getBoxWidth())}╗${c.reset}`);
+  console.info(`${c.cyan}║${c.reset}  ${padRight(shellTitle, getBoxWidth() - 2)}${c.cyan}║${c.reset}`);
+  console.info(`${c.cyan}║${c.reset}  ${padRight(shellHint, getBoxWidth() - 2)}${c.cyan}║${c.reset}`);
+  console.info(`${c.cyan}╚${"═".repeat(getBoxWidth())}╝${c.reset}\n`);
 }
 
 /**
@@ -35,7 +35,7 @@ function drawPTYHeader(projectName: string): void {
  */
 export async function openProjectShell(projectName: string, projectPath: string): Promise<void> {
   if (!process.stdin.isTTY) {
-    console.log(`${c.err}Cannot open shell in non-TTY mode${c.reset}`);
+    console.info(`${c.err}Cannot open shell in non-TTY mode${c.reset}`);
     return;
   }
 

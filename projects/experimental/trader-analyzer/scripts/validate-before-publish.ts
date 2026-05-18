@@ -44,14 +44,14 @@ function validateVersionFormat(version: string | undefined): void {
 		process.exit(1);
 	}
 
-	console.log(`✅ Version format valid: ${version}`);
+	console.info(`✅ Version format valid: ${version}`);
 }
 
 /**
  * Check 2: All packages have been built
  */
 async function validatePackagesBuilt(): Promise<void> {
-	console.log("\n🔍 Checking package builds...");
+	console.info("\n🔍 Checking package builds...");
 
 	const packagesDir = "packages";
 	if (!existsSync(packagesDir)) {
@@ -82,10 +82,10 @@ async function validatePackagesBuilt(): Promise<void> {
 					console.error(`❌ Package ${pkg.name} dist/index.js not found`);
 					process.exit(1);
 				}
-				console.log(`  ✅ ${pkg.name}: dist/ exists`);
+				console.info(`  ✅ ${pkg.name}: dist/ exists`);
 			} else if (existsSync(srcPath)) {
 				// TypeScript-only package (no build step)
-				console.log(`  ✅ ${pkg.name}: TypeScript-only (no build required)`);
+				console.info(`  ✅ ${pkg.name}: TypeScript-only (no build required)`);
 			} else {
 				console.error(`❌ Package ${pkg.name} has no dist/ or src/ directory`);
 				process.exit(1);
@@ -101,7 +101,7 @@ async function validatePackagesBuilt(): Promise<void> {
  * Check 3: Tests pass
  */
 async function validateTests(): Promise<void> {
-	console.log("\n🧪 Running test suite...");
+	console.info("\n🧪 Running test suite...");
 
 	try {
 		const result = await $`bun test`.quiet();
@@ -115,7 +115,7 @@ async function validateTests(): Promise<void> {
 			}
 			process.exit(1);
 		}
-		console.log("✅ All tests passed");
+		console.info("✅ All tests passed");
 	} catch (error) {
 		console.error(`❌ Error running tests: ${error}`);
 		process.exit(1);
@@ -126,7 +126,7 @@ async function validateTests(): Promise<void> {
  * Check 4: No benchmark regressions
  */
 async function validateBenchmarks(): Promise<void> {
-	console.log("\n📊 Checking performance benchmarks...");
+	console.info("\n📊 Checking performance benchmarks...");
 
 	try {
 		// Check if benchmark comparison script exists
@@ -151,7 +151,7 @@ async function validateBenchmarks(): Promise<void> {
 			console.error("\n💡 Fix performance regressions before publishing");
 			process.exit(1);
 		}
-		console.log("✅ No benchmark regressions detected");
+		console.info("✅ No benchmark regressions detected");
 	} catch (error) {
 		// Benchmark comparison might fail if main branch doesn't exist (e.g., first publish)
 		console.warn("⚠️  Could not compare benchmarks (this is OK for first publish)");
@@ -162,7 +162,7 @@ async function validateBenchmarks(): Promise<void> {
  * Check 5: Security audit passes
  */
 async function validateSecurity(): Promise<void> {
-	console.log("\n🔒 Running security audit...");
+	console.info("\n🔒 Running security audit...");
 
 	try {
 		const result = await $`bun audit`.quiet();
@@ -175,7 +175,7 @@ async function validateSecurity(): Promise<void> {
 			console.error("   bun audit --fix");
 			process.exit(1);
 		}
-		console.log("✅ Security audit passed");
+		console.info("✅ Security audit passed");
 	} catch (error) {
 		console.warn("⚠️  Could not run security audit (non-blocking)");
 	}
@@ -185,7 +185,7 @@ async function validateSecurity(): Promise<void> {
  * Check 6: Package.json structure is valid
  */
 async function validatePackageJson(): Promise<void> {
-	console.log("\n📦 Validating package.json structure...");
+	console.info("\n📦 Validating package.json structure...");
 
 	const rootPackageJsonPath = "package.json";
 	if (!existsSync(rootPackageJsonPath)) {
@@ -213,7 +213,7 @@ async function validatePackageJson(): Promise<void> {
 			console.warn("⚠️  No workspaces defined in package.json");
 		}
 
-		console.log("✅ package.json structure valid");
+		console.info("✅ package.json structure valid");
 	} catch (error) {
 		console.error(`❌ Error validating package.json: ${error}`);
 		process.exit(1);
@@ -224,8 +224,8 @@ async function validatePackageJson(): Promise<void> {
  * Main validation function
  */
 async function validateBeforePublish(): Promise<void> {
-	console.log("🔍 Pre-Publish Validation\n");
-	console.log("=".repeat(60));
+	console.info("🔍 Pre-Publish Validation\n");
+	console.info("=".repeat(60));
 
 	// Check 1: Version format
 	validateVersionFormat(VERSION);
@@ -245,11 +245,11 @@ async function validateBeforePublish(): Promise<void> {
 	// Check 6: Package.json structure
 	await validatePackageJson();
 
-	console.log("\n" + "=".repeat(60));
-	console.log("✅ All validation checks passed");
-	console.log(`\n📦 Ready to publish version ${VERSION}`);
-	console.log(`   Registry: ${RSS_REGISTRY_CONFIG.PRIVATE_REGISTRY}`);
-	console.log(`   Scope: ${RSS_REGISTRY_CONFIG.SCOPE}`);
+	console.info("\n" + "=".repeat(60));
+	console.info("✅ All validation checks passed");
+	console.info(`\n📦 Ready to publish version ${VERSION}`);
+	console.info(`   Registry: ${RSS_REGISTRY_CONFIG.PRIVATE_REGISTRY}`);
+	console.info(`   Scope: ${RSS_REGISTRY_CONFIG.SCOPE}`);
 }
 
 // Run if executed directly

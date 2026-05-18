@@ -69,7 +69,7 @@ export class CashAppVerificationHandler {
    * Generate complete CashApp profile with unique identifiers and address
    */
   async generateProfile(areaCode?: string): Promise<CashAppProfile & { address: CashAppAddress }> {
-    console.log("👤 Generating unique CashApp profile with address...");
+    console.info("👤 Generating unique CashApp profile with address...");
 
     // Generate basic profile
     const profile = await this.nameGenerator.generateProfile();
@@ -82,8 +82,8 @@ export class CashAppVerificationHandler {
     // Generate matching address
     const address = await this.addressGenerator.generateAddress(location);
 
-    console.log(`✅ Profile generated: ${profile.fullName} (${profile.cashtag})`);
-    console.log(`🏠 Address: ${address.fullAddress}`);
+    console.info(`✅ Profile generated: ${profile.fullName} (${profile.cashtag})`);
+    console.info(`🏠 Address: ${address.fullAddress}`);
 
     return {
       ...profile,
@@ -99,43 +99,43 @@ export class CashAppVerificationHandler {
     accountData: CashAppAccountData
   ): Promise<{ success: boolean; accountId?: string; error?: string }> {
     try {
-      console.log(`🚀 Starting CashApp account creation for ${accountData.cashtag}`);
+      console.info(`🚀 Starting CashApp account creation for ${accountData.cashtag}`);
 
       // Step 1: Create email account using selected provider
       const email = await this.emailManager.createCustomEmail(accountData.cashtag.replace("$", ""));
 
-      console.log(`📧 Email created: ${email}`);
+      console.info(`📧 Email created: ${email}`);
 
       // Step 2: Handle phone SMS verification (primary method)
-      console.log("📱 Attempting SMS verification...");
+      console.info("📱 Attempting SMS verification...");
       const phoneCode = await device.handleSmsVerification();
       if (!phoneCode) {
         throw new Error("Phone SMS verification failed");
       }
 
-      console.log(`✅ SMS code received: ${phoneCode}`);
+      console.info(`✅ SMS code received: ${phoneCode}`);
       await device.enterPhoneCode(phoneCode);
 
       // Step 3: Enter email in CashApp
-      console.log(`📧 Entering email: ${email}`);
+      console.info(`📧 Entering email: ${email}`);
       await device.enterEmail(email);
 
       // Step 4: Wait for email verification link
-      console.log("⏳ Waiting for email verification...");
+      console.info("⏳ Waiting for email verification...");
       const emailLink = await this.emailManager.waitForVerificationEmail(email, 120);
 
       if (!emailLink) {
         throw new Error("Email verification link not received within 2 minutes");
       }
 
-      console.log("✅ Email verification link received");
+      console.info("✅ Email verification link received");
 
       // Step 5: Click verification link in device
-      console.log("🔗 Opening verification link...");
+      console.info("🔗 Opening verification link...");
       await device.openVerificationLink(emailLink);
 
       // Step 6: Complete profile setup
-      console.log("👤 Completing profile setup...");
+      console.info("👤 Completing profile setup...");
       await device.completeProfile({
         cashtag: accountData.cashtag,
         displayName: accountData.displayName,
@@ -143,11 +143,11 @@ export class CashAppVerificationHandler {
       });
 
       // Step 7: Set up 2FA (CashApp requires it for sending)
-      console.log("🔐 Setting up 2FA...");
+      console.info("🔐 Setting up 2FA...");
       const backupCodes = await device.setupTwoFactorAuth();
 
       // Step 8: Store account data securely
-      console.log("💾 Storing account data...");
+      console.info("💾 Storing account data...");
       await this.storeAccount({
         deviceId: device.getDeviceId(),
         phoneNumber: device.getPhoneNumber(),
@@ -157,7 +157,7 @@ export class CashAppVerificationHandler {
         createdAt: new Date()
       });
 
-      console.log(`✅ CashApp account created successfully: ${accountData.cashtag}`);
+      console.info(`✅ CashApp account created successfully: ${accountData.cashtag}`);
       return { success: true, accountId: accountData.cashtag };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -171,7 +171,7 @@ export class CashAppVerificationHandler {
    */
   private async storeAccount(account: Partial<CashAppAccount>): Promise<void> {
     // In production, this would store in your database
-    console.log("💾 Storing account:", {
+    console.info("💾 Storing account:", {
       deviceId: account.deviceId,
       phoneNumber: account.phoneNumber,
       email: account.email,
@@ -241,7 +241,7 @@ export class CashAppProvisioner {
     error?: string;
   }> {
     try {
-      console.log(`🚀 Starting CashApp account provision #${index}`);
+      console.info(`🚀 Starting CashApp account provision #${index}`);
 
       // Step 1: Generate unique profile with address
       const profile = await this.verificationHandler.generateProfile(areaCode);
@@ -274,8 +274,8 @@ export class CashAppProvisioner {
         throw new Error(accountResult.error || "Account creation failed");
       }
 
-      console.log(`✅ CashApp account provisioned successfully: ${profile.cashtag}`);
-      console.log(`🏠 Address: ${profile.address.fullAddress}`);
+      console.info(`✅ CashApp account provisioned successfully: ${profile.cashtag}`);
+      console.info(`🏠 Address: ${profile.address.fullAddress}`);
 
       return {
         status: "success",
@@ -318,11 +318,11 @@ export class CashAppProvisioner {
       error?: string;
     }>
   > {
-    console.log(`🔄 Starting batch provision of ${count} accounts...`);
+    console.info(`🔄 Starting batch provision of ${count} accounts...`);
 
     const results = [];
     for (let i = 0; i < count; i++) {
-      console.log(`\n--- Provisioning Account ${i + 1}/${count} ---`);
+      console.info(`\n--- Provisioning Account ${i + 1}/${count} ---`);
       const result = await this.provisionCashAppAccount(i, emailProvider);
 
       // Convert to expected format
@@ -341,13 +341,13 @@ export class CashAppProvisioner {
 
       // Wait between accounts to avoid rate limits
       if (i < count - 1) {
-        console.log("⏳ Waiting 60 seconds to avoid rate limits...");
+        console.info("⏳ Waiting 60 seconds to avoid rate limits...");
         await new Promise((resolve) => setTimeout(resolve, 60000));
       }
     }
 
     const successCount = results.filter((r) => r.status === "success").length;
-    console.log(`\n✅ Batch provision complete: ${successCount}/${count} successful`);
+    console.info(`\n✅ Batch provision complete: ${successCount}/${count} successful`);
 
     return results;
   }
@@ -439,7 +439,7 @@ export class CashAppRiskMonitor {
       recommendedAction: "continue" | "pause" | "terminate";
     }>
   > {
-    console.log(`🔍 Starting batch health check for ${deviceIds.length} accounts...`);
+    console.info(`🔍 Starting batch health check for ${deviceIds.length} accounts...`);
 
     const results = [];
     for (const deviceId of deviceIds) {
@@ -453,7 +453,7 @@ export class CashAppRiskMonitor {
           : health.recommendedAction === "pause"
             ? "⚠️"
             : "❌";
-      console.log(
+      console.info(
         `${status} ${deviceId}: Risk ${health.riskScore}/100 - ${health.flags.join(", ")}`
       );
     }
@@ -518,7 +518,7 @@ export class CashAppAccountManager {
    * Check account health daily
    */
   async monitorAccounts(): Promise<void> {
-    console.log("🔍 Starting daily account health monitoring...");
+    console.info("🔍 Starting daily account health monitoring...");
 
     // Mock implementation - in production, query your database
     const deviceIds = ["device-1", "device-2", "device-3"]; // Get from DB
@@ -529,17 +529,17 @@ export class CashAppAccountManager {
     // Get risk summary
     const summary = this.riskMonitor.getRiskSummary(healthResults);
 
-    console.log("\n📊 Risk Assessment Summary:");
-    console.log(`Total Accounts: ${summary.totalAccounts}`);
-    console.log(`✅ Healthy: ${summary.healthyAccounts}`);
-    console.log(`⚠️ At Risk: ${summary.atRiskAccounts}`);
-    console.log(`❌ Critical: ${summary.criticalAccounts}`);
-    console.log(`Average Risk Score: ${summary.averageRiskScore}/100`);
+    console.info("\n📊 Risk Assessment Summary:");
+    console.info(`Total Accounts: ${summary.totalAccounts}`);
+    console.info(`✅ Healthy: ${summary.healthyAccounts}`);
+    console.info(`⚠️ At Risk: ${summary.atRiskAccounts}`);
+    console.info(`❌ Critical: ${summary.criticalAccounts}`);
+    console.info(`Average Risk Score: ${summary.averageRiskScore}/100`);
 
     if (Object.keys(summary.commonFlags).length > 0) {
-      console.log("\n🚨 Common Risk Flags:");
+      console.info("\n🚨 Common Risk Flags:");
       Object.entries(summary.commonFlags).forEach(([flag, count]) => {
-        console.log(`  ${flag}: ${count} accounts`);
+        console.info(`  ${flag}: ${count} accounts`);
       });
     }
 
@@ -558,22 +558,22 @@ export class CashAppAccountManager {
       recommendedAction: "continue" | "pause" | "terminate";
     }>
   ): Promise<void> {
-    console.log("\n🤖 Executing automated risk actions...");
+    console.info("\n🤖 Executing automated risk actions...");
 
     for (const result of healthResults) {
       switch (result.recommendedAction) {
         case "terminate":
-          console.log(`🛑 Terminating high-risk account: ${result.deviceId}`);
+          console.info(`🛑 Terminating high-risk account: ${result.deviceId}`);
           await this.terminateAccount(result.deviceId);
           break;
 
         case "pause":
-          console.log(`⏸️ Pausing at-risk account: ${result.deviceId}`);
+          console.info(`⏸️ Pausing at-risk account: ${result.deviceId}`);
           await this.pauseAccount(result.deviceId);
           break;
 
         case "continue":
-          console.log(`✅ Account healthy: ${result.deviceId}`);
+          console.info(`✅ Account healthy: ${result.deviceId}`);
           break;
       }
     }
@@ -585,17 +585,17 @@ export class CashAppAccountManager {
   private async terminateAccount(deviceId: string): Promise<void> {
     try {
       // Mock implementation - in production, use actual device control
-      console.log(`🛑 Stopping device ${deviceId} for termination...`);
+      console.info(`🛑 Stopping device ${deviceId} for termination...`);
 
       // Simulate device stop
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Clear sensitive data (mock)
-      console.log(`🗑️ Clearing sensitive data for ${deviceId}...`);
+      console.info(`🗑️ Clearing sensitive data for ${deviceId}...`);
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Log termination
-      console.log(`🗑️ Account ${deviceId} terminated and data cleared`);
+      console.info(`🗑️ Account ${deviceId} terminated and data cleared`);
 
       // In production, update database status
       // await db.accounts.updateOne({ deviceId }, { status: 'terminated', terminatedAt: new Date() });
@@ -610,13 +610,13 @@ export class CashAppAccountManager {
   private async pauseAccount(deviceId: string): Promise<void> {
     try {
       // Mock implementation - in production, use actual device control
-      console.log(`⏸️ Stopping device ${deviceId} for pause...`);
+      console.info(`⏸️ Stopping device ${deviceId} for pause...`);
 
       // Simulate device stop
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Log pause
-      console.log(`⏸️ Account ${deviceId} paused for review`);
+      console.info(`⏸️ Account ${deviceId} paused for review`);
 
       // In production, update database status
       // await db.accounts.updateOne({ deviceId }, { status: 'paused', pausedAt: new Date() });
@@ -655,7 +655,7 @@ export class CashAppAccountManager {
   async resumeAccount(deviceId: string): Promise<boolean> {
     try {
       // Mock implementation - in production, use actual device control
-      console.log(`▶️ Starting device ${deviceId} for resume...`);
+      console.info(`▶️ Starting device ${deviceId} for resume...`);
 
       // Simulate device start
       await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -664,7 +664,7 @@ export class CashAppAccountManager {
       const success = Math.random() > 0.1; // 90% success rate
 
       if (success) {
-        console.log(`▶️ Account ${deviceId} resumed successfully`);
+        console.info(`▶️ Account ${deviceId} resumed successfully`);
 
         // In production, update database status
         // await db.accounts.updateOne({ deviceId }, { status: 'active', resumedAt: new Date() });
@@ -706,7 +706,7 @@ export class CashAppScalingPipeline {
     };
 
     const strategy = strategies[phase];
-    console.log(`🚀 Executing ${phase} phase: ${strategy.count} accounts`);
+    console.info(`🚀 Executing ${phase} phase: ${strategy.count} accounts`);
 
     // Provision accounts
     const results = await this.provisioner.batchProvisionAccounts(
@@ -718,18 +718,18 @@ export class CashAppScalingPipeline {
     const successCount = results.filter((r) => r.status === "success").length;
     const successRate = (successCount / results.length) * 100;
 
-    console.log(`📊 ${phase} phase complete:`);
-    console.log(`   Success: ${successCount}/${results.length} (${successRate.toFixed(1)}%)`);
+    console.info(`📊 ${phase} phase complete:`);
+    console.info(`   Success: ${successCount}/${results.length} (${successRate.toFixed(1)}%)`);
 
     if (successRate < 90) {
-      console.log("⚠️ Success rate below 90%. Consider optimizing before scaling further.");
+      console.info("⚠️ Success rate below 90%. Consider optimizing before scaling further.");
     } else {
-      console.log("✅ Success rate acceptable. Ready for next phase.");
+      console.info("✅ Success rate acceptable. Ready for next phase.");
     }
 
     // Set up monitoring for successful accounts
     if (successCount > 0) {
-      console.log("🔍 Setting up account monitoring...");
+      console.info("🔍 Setting up account monitoring...");
       // In production, set up automated monitoring
     }
   }
@@ -738,16 +738,16 @@ export class CashAppScalingPipeline {
    * Demo the complete pipeline
    */
   async demonstratePipeline(): Promise<void> {
-    console.log("🎯 CashApp Scaling Pipeline Demonstration");
-    console.log("=".repeat(60));
+    console.info("🎯 CashApp Scaling Pipeline Demonstration");
+    console.info("=".repeat(60));
 
     // Phase 1: Testing (5 accounts)
     await this.executeScalingPhase("testing");
 
-    console.log("\n📋 Next phases would be executed manually after monitoring results:");
-    console.log("   - validation: 20 accounts");
-    console.log("   - scaling: 50 accounts");
-    console.log("   - full: 200 accounts");
+    console.info("\n📋 Next phases would be executed manually after monitoring results:");
+    console.info("   - validation: 20 accounts");
+    console.info("   - scaling: 50 accounts");
+    console.info("   - full: 200 accounts");
   }
 }
 

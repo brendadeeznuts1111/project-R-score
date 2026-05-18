@@ -9,7 +9,7 @@ import { secrets } from "bun";
 async function storeApiKey() {
   const serviceName = "empire-pro-config-empire";
   
-  console.log("🔐 Storing API keys in Bun Secrets...");
+  console.info("🔐 Storing API keys in Bun Secrets...");
   
   // Store different types of API keys
   await secrets.set({
@@ -30,11 +30,11 @@ async function storeApiKey() {
     value: "postgresql://user:pass@localhost:5432/db"
   });
   
-  console.log("✅ API keys stored securely in Bun Secrets");
-  console.log("🔒 Credentials are encrypted by your operating system");
-  console.log("");
-  console.log("To retrieve these keys, run:");
-  console.log("bun run get-api-key.ts OPENAI_API_KEY");
+  console.info("✅ API keys stored securely in Bun Secrets");
+  console.info("🔒 Credentials are encrypted by your operating system");
+  console.info("");
+  console.info("To retrieve these keys, run:");
+  console.info("bun run get-api-key.ts OPENAI_API_KEY");
 }
 
 storeApiKey().catch(console.error);

@@ -34,7 +34,7 @@ export const OddsWebSocketClient: React.FC<OddsWebSocketClientProps> = ({ onConn
         setIsConnected(true);
         setError(null);
         onConnectionChange(true);
-        console.log('WebSocket connected');
+        console.info('WebSocket connected');
       };
       
       ws.current.onmessage = (event: MessageEvent) => {
@@ -49,7 +49,7 @@ export const OddsWebSocketClient: React.FC<OddsWebSocketClientProps> = ({ onConn
       ws.current.onclose = (event: CloseEvent) => {
         setIsConnected(false);
         onConnectionChange(false);
-        console.log('WebSocket disconnected:', event.code, event.reason);
+        console.info('WebSocket disconnected:', event.code, event.reason);
         
         // Auto-reconnect after 3 seconds
         if (event.code !== 1000) {

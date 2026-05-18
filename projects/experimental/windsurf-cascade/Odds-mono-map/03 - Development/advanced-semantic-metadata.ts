@@ -11,8 +11,8 @@
  * @since 2025-11-18
  */
 
-console.log('🧠 Advanced Semantic Metadata Analysis System');
-console.log('='.repeat(55));
+console.info('🧠 Advanced Semantic Metadata Analysis System');
+console.info('='.repeat(55));
 
 // =============================================================================
 // ENHANCED METADATA INTERFACE SYSTEM
@@ -85,60 +85,60 @@ class SemanticAnalysisEngine {
      * Performs comprehensive semantic analysis on a canvas node
      */
     analyzeNode(node: CanvasNode): EnhancedCanvasMetadata {
-        console.log(`🔍 Analyzing node: ${node.id}`);
+        console.info(`🔍 Analyzing node: ${node.id}`);
 
         const analysis: Partial<EnhancedCanvasMetadata> = {};
 
         // Domain analysis
         analysis.domain = this.extractDomain(node);
-        console.log(`  📂 Domain: ${analysis.domain}`);
+        console.info(`  📂 Domain: ${analysis.domain}`);
 
         // Document type analysis
         analysis.documentType = this.extractDocumentType(node);
-        console.log(`  📄 Document Type: ${analysis.documentType}`);
+        console.info(`  📄 Document Type: ${analysis.documentType}`);
 
         // Complexity assessment
         analysis.complexity = this.assessComplexity(node);
-        console.log(`  📊 Complexity: ${analysis.complexity}`);
+        console.info(`  📊 Complexity: ${analysis.complexity}`);
 
         // Section identification
         analysis.section = this.identifySection(node);
-        console.log(`  🏷️ Section: ${analysis.section}`);
+        console.info(`  🏷️ Section: ${analysis.section}`);
 
         // Priority and status detection
         analysis.priority = this.extractPriority(node);
         analysis.status = this.extractStatus(node);
-        console.log(`  🎯 Priority: ${analysis.priority || 'none'}`);
-        console.log(`  ✅ Status: ${analysis.status || 'none'}`);
+        console.info(`  🎯 Priority: ${analysis.priority || 'none'}`);
+        console.info(`  ✅ Status: ${analysis.status || 'none'}`);
 
         // Environment detection
         analysis.environment = this.extractEnvironment(node);
-        console.log(`  🌍 Environment: ${analysis.environment || 'none'}`);
+        console.info(`  🌍 Environment: ${analysis.environment || 'none'}`);
 
         // Team identification
         analysis.team = this.extractTeam(node);
-        console.log(`  👥 Team: ${analysis.team || 'none'}`);
+        console.info(`  👥 Team: ${analysis.team || 'none'}`);
 
         // Content metrics
         analysis.wordCount = this.countWords(node.text);
         analysis.headingCount = this.countHeadings(node.text);
         analysis.linkCount = this.countLinks(node.text);
-        console.log(`  📝 Content: ${analysis.wordCount} words, ${analysis.headingCount} headings, ${analysis.linkCount} links`);
+        console.info(`  📝 Content: ${analysis.wordCount} words, ${analysis.headingCount} headings, ${analysis.linkCount} links`);
 
         // Health score calculation
         analysis.healthScore = this.calculateHealthScore(node, analysis as EnhancedCanvasMetadata);
-        console.log(`  🏥 Health Score: ${analysis.healthScore}/100`);
+        console.info(`  🏥 Health Score: ${analysis.healthScore}/100`);
 
         // Color information
         analysis.colorType = node.color && this.isHexColor(node.color) ? 'hex' : 'none';
         analysis.colorCategory = this.getColorCategory(node.color || '');
-        console.log(`  🎨 Color: ${analysis.colorType} (${analysis.colorCategory})`);
+        console.info(`  🎨 Color: ${analysis.colorType} (${analysis.colorCategory})`);
 
         // Analysis metadata
         analysis.lastAnalyzed = new Date().toISOString();
         analysis.analysisVersion = '2.1.0';
         analysis.confidence = this.calculateConfidence(analysis as EnhancedCanvasMetadata);
-        console.log(`  🔬 Confidence: ${analysis.confidence}%`);
+        console.info(`  🔬 Confidence: ${analysis.confidence}%`);
 
         return analysis as EnhancedCanvasMetadata;
     }
@@ -475,8 +475,8 @@ class SemanticAnalysisEngine {
 // DEMO: ADVANCED SEMANTIC ANALYSIS
 // =============================================================================
 
-console.log('\n🎯 1. Advanced Semantic Analysis Demo');
-console.log('─'.repeat(50));
+console.info('\n🎯 1. Advanced Semantic Analysis Demo');
+console.info('─'.repeat(50));
 
 const analysisEngine = new SemanticAnalysisEngine();
 
@@ -501,13 +501,13 @@ const exampleNode: CanvasNode = {
     }
 };
 
-console.log('\n📋 Analyzing Example Node:');
+console.info('\n📋 Analyzing Example Node:');
 const enhancedAnalysis = analysisEngine.analyzeNode(exampleNode);
 
-console.log('\n📊 Enhanced Analysis Results:');
+console.info('\n📊 Enhanced Analysis Results:');
 Object.entries(enhancedAnalysis).forEach(([key, value]) => {
     if (value !== undefined) {
-        console.log(`  ${key}: ${value}`);
+        console.info(`  ${key}: ${value}`);
     }
 });
 
@@ -515,8 +515,8 @@ Object.entries(enhancedAnalysis).forEach(([key, value]) => {
 // DEMO: COMPARATIVE ANALYSIS
 // =============================================================================
 
-console.log('\n🔍 2. Comparative Analysis Demo');
-console.log('─'.repeat(50));
+console.info('\n🔍 2. Comparative Analysis Demo');
+console.info('─'.repeat(50));
 
 const testNodes: CanvasNode[] = [
     {
@@ -539,26 +539,26 @@ const testNodes: CanvasNode[] = [
     }
 ];
 
-console.log('\n📈 Comparative Analysis Results:');
+console.info('\n📈 Comparative Analysis Results:');
 testNodes.forEach((node, index) => {
-    console.log(`\n🔸 Node ${index + 1}: ${node.id}`);
+    console.info(`\n🔸 Node ${index + 1}: ${node.id}`);
     const analysis = analysisEngine.analyzeNode(node);
 
     // Key metrics comparison
-    console.log(`  🎨 Color: ${node.color} (${analysis.colorCategory})`);
-    console.log(`  🏥 Health: ${analysis.healthScore}/100`);
-    console.log(`  🔬 Confidence: ${analysis.confidence}%`);
-    console.log(`  📊 Complexity: ${analysis.complexity}`);
-    console.log(`  📂 Domain: ${analysis.domain}`);
-    console.log(`  📄 Type: ${analysis.documentType}`);
+    console.info(`  🎨 Color: ${node.color} (${analysis.colorCategory})`);
+    console.info(`  🏥 Health: ${analysis.healthScore}/100`);
+    console.info(`  🔬 Confidence: ${analysis.confidence}%`);
+    console.info(`  📊 Complexity: ${analysis.complexity}`);
+    console.info(`  📂 Domain: ${analysis.domain}`);
+    console.info(`  📄 Type: ${analysis.documentType}`);
 });
 
 // =============================================================================
 // DEMO: METADATA ENHANCEMENT RECOMMENDATIONS
 // =============================================================================
 
-console.log('\n💡 3. Metadata Enhancement Recommendations');
-console.log('─'.repeat(50));
+console.info('\n💡 3. Metadata Enhancement Recommendations');
+console.info('─'.repeat(50));
 
 function generateEnhancementRecommendations(analysis: EnhancedCanvasMetadata): string[] {
     const recommendations: string[] = [];
@@ -597,17 +597,17 @@ function generateEnhancementRecommendations(analysis: EnhancedCanvasMetadata): s
     return recommendations;
 }
 
-console.log('\n💡 Enhancement Recommendations:');
+console.info('\n💡 Enhancement Recommendations:');
 testNodes.forEach((node, index) => {
     const analysis = analysisEngine.analyzeNode(node);
     const recommendations = generateEnhancementRecommendations(analysis);
 
-    console.log(`\n🔸 ${node.id}:`);
+    console.info(`\n🔸 ${node.id}:`);
     if (recommendations.length === 0) {
-        console.log('  ✅ No enhancements needed - excellent quality!');
+        console.info('  ✅ No enhancements needed - excellent quality!');
     } else {
         recommendations.forEach(rec => {
-            console.log(`  ${rec}`);
+            console.info(`  ${rec}`);
         });
     }
 });
@@ -616,43 +616,43 @@ testNodes.forEach((node, index) => {
 // SUMMARY
 // =============================================================================
 
-console.log('\n🎊 Advanced Semantic Metadata Analysis - Complete!');
-console.log('='.repeat(60));
+console.info('\n🎊 Advanced Semantic Metadata Analysis - Complete!');
+console.info('='.repeat(60));
 
-console.log('\n🏆 Advanced Features Achieved:');
-console.log('  ✅ Comprehensive semantic analysis engine');
-console.log('  ✅ Enhanced metadata interface with 20+ fields');
-console.log('  ✅ Multi-dimensional confidence scoring');
-console.log('  ✅ Intelligent content analysis and categorization');
-console.log('  ✅ Health score calculation with detailed metrics');
-console.log('  ✅ Enhancement recommendation system');
-console.log('  ✅ Comparative analysis capabilities');
-console.log('  ✅ Production-ready metadata enrichment');
+console.info('\n🏆 Advanced Features Achieved:');
+console.info('  ✅ Comprehensive semantic analysis engine');
+console.info('  ✅ Enhanced metadata interface with 20+ fields');
+console.info('  ✅ Multi-dimensional confidence scoring');
+console.info('  ✅ Intelligent content analysis and categorization');
+console.info('  ✅ Health score calculation with detailed metrics');
+console.info('  ✅ Enhancement recommendation system');
+console.info('  ✅ Comparative analysis capabilities');
+console.info('  ✅ Production-ready metadata enrichment');
 
-console.log('\n🧠 Intelligence Features:');
-console.log('  🎯 Domain detection with keyword mapping');
-console.log('  📄 Document type classification');
-console.log('  📊 Complexity assessment algorithms');
-console.log('  🏷️ Section identification from content');
-console.log('  👥 Team and environment extraction');
-console.log('  📈 Content metrics (words, headings, links)');
-console.log('  🔬 Confidence scoring for semantic assignments');
-console.log('  💡 Intelligent enhancement recommendations');
+console.info('\n🧠 Intelligence Features:');
+console.info('  🎯 Domain detection with keyword mapping');
+console.info('  📄 Document type classification');
+console.info('  📊 Complexity assessment algorithms');
+console.info('  🏷️ Section identification from content');
+console.info('  👥 Team and environment extraction');
+console.info('  📈 Content metrics (words, headings, links)');
+console.info('  🔬 Confidence scoring for semantic assignments');
+console.info('  💡 Intelligent enhancement recommendations');
 
-console.log('\n🚀 Production Benefits:');
-console.log('  📊 Rich metadata for advanced search and filtering');
-console.log('  🎯 Better content organization and navigation');
-console.log('  🏥 Continuous quality monitoring through health scores');
-console.log('  🔍 Improved content discovery through semantic analysis');
-console.log('  📈 Analytics capabilities for content optimization');
-console.log('  🛡️ Quality assurance through automated recommendations');
+console.info('\n🚀 Production Benefits:');
+console.info('  📊 Rich metadata for advanced search and filtering');
+console.info('  🎯 Better content organization and navigation');
+console.info('  🏥 Continuous quality monitoring through health scores');
+console.info('  🔍 Improved content discovery through semantic analysis');
+console.info('  📈 Analytics capabilities for content optimization');
+console.info('  🛡️ Quality assurance through automated recommendations');
 
-console.log('\n💡 Next Enhancement Opportunities:');
-console.log('  🤖 Machine learning for semantic classification');
-console.log('  📊 Advanced analytics and trend analysis');
-console.log('  🔄 Dynamic metadata updates based on usage patterns');
-console.log('  🌐 Multi-language semantic analysis support');
-console.log('  📱 User behavior analysis for personalization');
+console.info('\n💡 Next Enhancement Opportunities:');
+console.info('  🤖 Machine learning for semantic classification');
+console.info('  📊 Advanced analytics and trend analysis');
+console.info('  🔄 Dynamic metadata updates based on usage patterns');
+console.info('  🌐 Multi-language semantic analysis support');
+console.info('  📱 User behavior analysis for personalization');
 
-console.log('\n🎯 Your semantic metadata system now provides enterprise-grade');
-console.log('   content analysis with intelligent enhancement capabilities! 🧠✨📊');
+console.info('\n🎯 Your semantic metadata system now provides enterprise-grade');
+console.info('   content analysis with intelligent enhancement capabilities! 🧠✨📊');

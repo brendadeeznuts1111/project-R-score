@@ -260,41 +260,41 @@ class BasketballBinaryFactory {
 // Demo 1: ArrayBuffer + TypedArray Views
 // =============================================================================
 function demoArrayBufferViews() {
-	console.log("=".repeat(60));
-	console.log("1. ARRAYBUFFER + TYPED ARRAY VIEWS");
-	console.log("=".repeat(60));
+	console.info("=".repeat(60));
+	console.info("1. ARRAYBUFFER + TYPED ARRAY VIEWS");
+	console.info("=".repeat(60));
 
 	// Create buffer for 1000 markets
 	const marketCount = 1000;
 	const buffer = new ArrayBuffer(marketCount * MARKET_SIZE);
 
-	console.log(`\n📦 Created ArrayBuffer: ${(buffer.byteLength / 1024).toFixed(2)} KB`);
+	console.info(`\n📦 Created ArrayBuffer: ${(buffer.byteLength / 1024).toFixed(2)} KB`);
 
 	// Multiple views on same buffer (zero-copy!)
 	const uint8View = new Uint8Array(buffer);
 	const uint16View = new Uint16Array(buffer);
 	const float32View = new Float32Array(buffer);
 
-	console.log(`\n📊 TypedArray Views (Zero-copy!):`);
-	console.log(`   Uint8Array:   ${uint8View.length} elements`);
-	console.log(`   Uint16Array:  ${uint16View.length} elements`);
-	console.log(`   Float32Array: ${float32View.length} elements`);
+	console.info(`\n📊 TypedArray Views (Zero-copy!):`);
+	console.info(`   Uint8Array:   ${uint8View.length} elements`);
+	console.info(`   Uint16Array:  ${uint16View.length} elements`);
+	console.info(`   Float32Array: ${float32View.length} elements`);
 
 	// Demonstrate shared memory
 	uint8View[0] = 0xFF;
 	uint8View[1] = 0xFF;
-	console.log(`\n🔗 Shared Memory Demo:`);
-	console.log(`   uint8View[0,1] = 0xFF, 0xFF`);
-	console.log(`   uint16View[0] = ${uint16View[0]} (0xFFFF)`);
+	console.info(`\n🔗 Shared Memory Demo:`);
+	console.info(`   uint8View[0,1] = 0xFF, 0xFF`);
+	console.info(`   uint16View[0] = ${uint16View[0]} (0xFFFF)`);
 }
 
 // =============================================================================
 // Demo 2: DataView Protocol Parsing
 // =============================================================================
 function demoDataViewProtocol() {
-	console.log("\n" + "=".repeat(60));
-	console.log("2. DATAVIEW PROTOCOL PARSING");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("2. DATAVIEW PROTOCOL PARSING");
+	console.info("=".repeat(60));
 
 	const buffer = new ArrayBuffer(MARKET_SIZE);
 	const view = new DataView(buffer);
@@ -308,42 +308,42 @@ function demoDataViewProtocol() {
 	view.setFloat32(20, 218.5, true);          // Total
 	view.setBigUint64(24, BigInt(Date.now()), true); // Timestamp
 
-	console.log(`\n📋 Binary Market Record (${MARKET_SIZE} bytes):`);
-	console.log(`   Market ID: ${view.getBigUint64(0, true)}`);
-	console.log(`   Home Odds: ${view.getFloat32(8, true).toFixed(2)}`);
-	console.log(`   Away Odds: ${view.getFloat32(12, true).toFixed(2)}`);
-	console.log(`   Spread:    ${view.getFloat32(16, true)}`);
-	console.log(`   Total:     ${view.getFloat32(20, true)}`);
-	console.log(`   Timestamp: ${view.getBigUint64(24, true)}`);
+	console.info(`\n📋 Binary Market Record (${MARKET_SIZE} bytes):`);
+	console.info(`   Market ID: ${view.getBigUint64(0, true)}`);
+	console.info(`   Home Odds: ${view.getFloat32(8, true).toFixed(2)}`);
+	console.info(`   Away Odds: ${view.getFloat32(12, true).toFixed(2)}`);
+	console.info(`   Spread:    ${view.getFloat32(16, true)}`);
+	console.info(`   Total:     ${view.getFloat32(20, true)}`);
+	console.info(`   Timestamp: ${view.getBigUint64(24, true)}`);
 }
 
 // =============================================================================
 // Demo 3: Binary Factory - 25K Markets
 // =============================================================================
 function demoBinaryFactory() {
-	console.log("\n" + "=".repeat(60));
-	console.log("3. BINARY FACTORY - 25K MARKETS");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("3. BINARY FACTORY - 25K MARKETS");
+	console.info("=".repeat(60));
 
 	const factory = new BasketballBinaryFactory();
 
 	// Encode
-	console.log(`\n📦 Encoding ${NBA_MARKETS.length.toLocaleString()} markets...`);
+	console.info(`\n📦 Encoding ${NBA_MARKETS.length.toLocaleString()} markets...`);
 	const startEncode = performance.now();
 	const buffer = factory.encodeMarkets(NBA_MARKETS);
 	const encodeTime = performance.now() - startEncode;
 
-	console.log(`   Buffer size: ${(buffer.byteLength / 1024 / 1024).toFixed(2)} MB`);
-	console.log(`   Encode time: ${encodeTime.toFixed(2)}ms`);
-	console.log(`   Throughput:  ${((NBA_MARKETS.length / encodeTime) * 1000).toFixed(0)} markets/sec`);
+	console.info(`   Buffer size: ${(buffer.byteLength / 1024 / 1024).toFixed(2)} MB`);
+	console.info(`   Encode time: ${encodeTime.toFixed(2)}ms`);
+	console.info(`   Throughput:  ${((NBA_MARKETS.length / encodeTime) * 1000).toFixed(0)} markets/sec`);
 
 	// Decode sample
-	console.log(`\n📋 Decoding sample markets...`);
+	console.info(`\n📋 Decoding sample markets...`);
 	const startDecode = performance.now();
 	const decoded = factory.decodeMarkets(buffer.slice(0, MARKET_SIZE * 5));
 	const decodeTime = performance.now() - startDecode;
 
-	console.log(`   Decoded ${decoded.length} markets in ${decodeTime.toFixed(2)}ms`);
+	console.info(`   Decoded ${decoded.length} markets in ${decodeTime.toFixed(2)}ms`);
 	decoded.slice(0, 3).forEach(m => {
 		// Apply color from binary data
 		const [r, g, b] = m.color?.rgb ?? [128, 128, 128];
@@ -356,7 +356,7 @@ function demoBinaryFactory() {
 			flags?.isSharp ? '🎯' : '',
 		].filter(Boolean).join('');
 
-		console.log(`   ${coloredGame}: home=${m.homeOdds.toFixed(2)}, away=${m.awayOdds.toFixed(2)} ${flagStr}`);
+		console.info(`   ${coloredGame}: home=${m.homeOdds.toFixed(2)}, away=${m.awayOdds.toFixed(2)} ${flagStr}`);
 	});
 
 	return buffer;
@@ -366,15 +366,15 @@ function demoBinaryFactory() {
 // Demo 4: Zero-Copy Streams
 // =============================================================================
 async function demoZeroCopyStreams() {
-	console.log("\n" + "=".repeat(60));
-	console.log("4. ZERO-COPY STREAMS");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("4. ZERO-COPY STREAMS");
+	console.info("=".repeat(60));
 
 	const factory = new BasketballBinaryFactory();
 	const buffer = factory.encodeMarkets(NBA_MARKETS.slice(0, 1000));
 
 	// Zero-copy stream
-	console.log(`\n📡 Creating zero-copy stream...`);
+	console.info(`\n📡 Creating zero-copy stream...`);
 	const stream = factory.createStream(buffer);
 
 	const startRead = performance.now();
@@ -388,70 +388,70 @@ async function demoZeroCopyStreams() {
 	}
 
 	const readTime = performance.now() - startRead;
-	console.log(`   Streamed ${(totalBytes / 1024).toFixed(2)} KB in ${readTime.toFixed(2)}ms`);
-	console.log(`   Throughput: ${((totalBytes / readTime) * 1000 / 1024 / 1024).toFixed(2)} MB/s`);
+	console.info(`   Streamed ${(totalBytes / 1024).toFixed(2)} KB in ${readTime.toFixed(2)}ms`);
+	console.info(`   Throughput: ${((totalBytes / readTime) * 1000 / 1024 / 1024).toFixed(2)} MB/s`);
 }
 
 // =============================================================================
 // Demo 5: Blob Storage
 // =============================================================================
 async function demoBlobStorage() {
-	console.log("\n" + "=".repeat(60));
-	console.log("5. BLOB STORAGE");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("5. BLOB STORAGE");
+	console.info("=".repeat(60));
 
 	const factory = new BasketballBinaryFactory();
 	const buffer = factory.encodeMarkets(NBA_MARKETS.slice(0, 1000));
 
 	// Create blob
 	const blob = new Blob([buffer], { type: "application/octet-stream" });
-	console.log(`\n📦 Created Blob: ${(blob.size / 1024).toFixed(2)} KB`);
+	console.info(`\n📦 Created Blob: ${(blob.size / 1024).toFixed(2)} KB`);
 
 	// Blob → ArrayBuffer
 	const startRead = performance.now();
 	const readBuffer = await blob.arrayBuffer();
 	const readTime = performance.now() - startRead;
-	console.log(`   Blob → ArrayBuffer: ${readTime.toFixed(2)}ms`);
+	console.info(`   Blob → ArrayBuffer: ${readTime.toFixed(2)}ms`);
 
 	// Blob → Stream
 	const stream = blob.stream();
-	console.log(`   Blob → ReadableStream: ready`);
+	console.info(`   Blob → ReadableStream: ready`);
 
 	// Compression comparison
 	const compressed = gzipSync(new Uint8Array(buffer));
 	const ratio = ((1 - compressed.length / buffer.byteLength) * 100).toFixed(1);
-	console.log(`\n📊 Compression:`);
-	console.log(`   Original:   ${(buffer.byteLength / 1024).toFixed(2)} KB`);
-	console.log(`   Compressed: ${(compressed.length / 1024).toFixed(2)} KB`);
-	console.log(`   Ratio:      ${ratio}% smaller`);
+	console.info(`\n📊 Compression:`);
+	console.info(`   Original:   ${(buffer.byteLength / 1024).toFixed(2)} KB`);
+	console.info(`   Compressed: ${(compressed.length / 1024).toFixed(2)} KB`);
+	console.info(`   Ratio:      ${ratio}% smaller`);
 }
 
 // =============================================================================
 // Demo 6: Deep ANSI Colors
 // =============================================================================
 function demoDeepColors() {
-	console.log("\n" + "=".repeat(60));
-	console.log("6. DEEP ANSI COLORS");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("6. DEEP ANSI COLORS");
+	console.info("=".repeat(60));
 
 	// Bright colors showcase
-	console.log("\n🎨 BRIGHT Color Palette:");
-	console.log(`   ${BRIGHT.RED.ansi}RED${RESET}     ${BRIGHT.GREEN.ansi}GREEN${RESET}   ${BRIGHT.BLUE.ansi}BLUE${RESET}`);
-	console.log(`   ${BRIGHT.YELLOW.ansi}YELLOW${RESET}  ${BRIGHT.CYAN.ansi}CYAN${RESET}    ${BRIGHT.MAGENTA.ansi}MAGENTA${RESET}`);
-	console.log(`   ${BRIGHT.WHITE.ansi}WHITE${RESET}   ${BRIGHT.BLACK.ansi}BLACK${RESET}`);
+	console.info("\n🎨 BRIGHT Color Palette:");
+	console.info(`   ${BRIGHT.RED.ansi}RED${RESET}     ${BRIGHT.GREEN.ansi}GREEN${RESET}   ${BRIGHT.BLUE.ansi}BLUE${RESET}`);
+	console.info(`   ${BRIGHT.YELLOW.ansi}YELLOW${RESET}  ${BRIGHT.CYAN.ansi}CYAN${RESET}    ${BRIGHT.MAGENTA.ansi}MAGENTA${RESET}`);
+	console.info(`   ${BRIGHT.WHITE.ansi}WHITE${RESET}   ${BRIGHT.BLACK.ansi}BLACK${RESET}`);
 
 	// Edge gradient demo
-	console.log("\n📊 Edge Gradient (-5% to +5%):");
+	console.info("\n📊 Edge Gradient (-5% to +5%):");
 	const edges = [-0.05, -0.03, -0.01, 0, 0.01, 0.03, 0.05];
 	const gradientLine = edges.map(edge => {
 		const color = edgeGradient(edge);
 		const pct = (edge * 100).toFixed(0).padStart(3);
 		return color.ansi + `${pct}%` + RESET;
 	}).join(' ');
-	console.log(`   ${gradientLine}`);
+	console.info(`   ${gradientLine}`);
 
 	// Color blocks
-	console.log("\n🧱 Color Blocks (from binary):");
+	console.info("\n🧱 Color Blocks (from binary):");
 	const factory = new BasketballBinaryFactory();
 	const buffer = factory.encodeMarkets(NBA_MARKETS.slice(0, 20));
 	const markets = factory.decodeMarkets(buffer);
@@ -460,10 +460,10 @@ function demoDeepColors() {
 		const [r, g, b] = m.color?.rgb ?? [128, 128, 128];
 		return fgRGB(r, g, b) + '█' + RESET;
 	}).join('');
-	console.log(`   ${blocks}`);
+	console.info(`   ${blocks}`);
 
 	// Flag indicators
-	console.log("\n🚩 Color Flags Demo:");
+	console.info("\n🚩 Color Flags Demo:");
 	const flaggedMarkets = markets.filter(m => m.color?.flags?.isSteam || m.color?.flags?.isLive);
 	flaggedMarkets.slice(0, 5).forEach(m => {
 		const [r, g, b] = m.color?.rgb ?? [128, 128, 128];
@@ -475,17 +475,17 @@ function demoDeepColors() {
 			flags?.isSharp ? `${BRIGHT.CYAN.ansi}🎯SHARP${RESET}` : '',
 		].filter(Boolean).join(' ');
 
-		console.log(`   ${fgRGB(r, g, b)}${m.game}${RESET}: ${indicators}`);
+		console.info(`   ${fgRGB(r, g, b)}${m.game}${RESET}: ${indicators}`);
 	});
 
 	// Binary color extraction stats
-	console.log("\n📈 Binary Color Stats:");
+	console.info("\n📈 Binary Color Stats:");
 	const profitCount = markets.filter(m => m.color?.flags?.isProfit).length;
 	const steamCount = markets.filter(m => m.color?.flags?.isSteam).length;
 	const liveCount = markets.filter(m => m.color?.flags?.isLive).length;
-	console.log(`   Profitable: ${GREENS.BRIGHT.ansi}${profitCount}${RESET}/${markets.length}`);
-	console.log(`   Steam:      ${YELLOWS.ORANGE.ansi}${steamCount}${RESET}/${markets.length}`);
-	console.log(`   Live:       ${BRIGHT.RED.ansi}${liveCount}${RESET}/${markets.length}`);
+	console.info(`   Profitable: ${GREENS.BRIGHT.ansi}${profitCount}${RESET}/${markets.length}`);
+	console.info(`   Steam:      ${YELLOWS.ORANGE.ansi}${steamCount}${RESET}/${markets.length}`);
+	console.info(`   Live:       ${BRIGHT.RED.ansi}${liveCount}${RESET}/${markets.length}`);
 }
 
 // =============================================================================
@@ -565,15 +565,15 @@ function createBinaryServer(port: number) {
 // Benchmark
 // =============================================================================
 async function runBenchmark() {
-	console.log("\n" + "=".repeat(60));
-	console.log("🏁 BINARY FACTORY BENCHMARK");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("🏁 BINARY FACTORY BENCHMARK");
+	console.info("=".repeat(60));
 
 	const factory = new BasketballBinaryFactory();
 	const results: { name: string; ops: number; time: number; throughput: string }[] = [];
 
 	// Encode benchmark
-	console.log(`\n📊 Encoding ${NBA_MARKETS.length.toLocaleString()} markets...`);
+	console.info(`\n📊 Encoding ${NBA_MARKETS.length.toLocaleString()} markets...`);
 	const encodeStart = performance.now();
 	const buffer = factory.encodeMarkets(NBA_MARKETS);
 	const encodeTime = performance.now() - encodeStart;
@@ -585,7 +585,7 @@ async function runBenchmark() {
 	});
 
 	// Decode benchmark
-	console.log(`📊 Decoding ${NBA_MARKETS.length.toLocaleString()} markets...`);
+	console.info(`📊 Decoding ${NBA_MARKETS.length.toLocaleString()} markets...`);
 	const decodeStart = performance.now();
 	factory.decodeMarkets(buffer);
 	const decodeTime = performance.now() - decodeStart;
@@ -597,7 +597,7 @@ async function runBenchmark() {
 	});
 
 	// Compression benchmark
-	console.log(`📊 Compressing ${(buffer.byteLength / 1024 / 1024).toFixed(2)} MB...`);
+	console.info(`📊 Compressing ${(buffer.byteLength / 1024 / 1024).toFixed(2)} MB...`);
 	const compressStart = performance.now();
 	const compressed = gzipSync(new Uint8Array(buffer));
 	const compressTime = performance.now() - compressStart;
@@ -609,7 +609,7 @@ async function runBenchmark() {
 	});
 
 	// Hash benchmark
-	console.log(`📊 Hashing ${NBA_MARKETS.length.toLocaleString()} market IDs...`);
+	console.info(`📊 Hashing ${NBA_MARKETS.length.toLocaleString()} market IDs...`);
 	const hashStart = performance.now();
 	NBA_MARKETS.forEach(m => hash.rapidhash(m));
 	const hashTime = performance.now() - hashStart;
@@ -621,12 +621,12 @@ async function runBenchmark() {
 	});
 
 	// Print results
-	console.log("\n📊 Benchmark Results:\n");
-	console.log("Operation".padEnd(15) + "Ops".padStart(10) + "Time (ms)".padStart(12) + "Throughput".padStart(18));
-	console.log("-".repeat(55));
+	console.info("\n📊 Benchmark Results:\n");
+	console.info("Operation".padEnd(15) + "Ops".padStart(10) + "Time (ms)".padStart(12) + "Throughput".padStart(18));
+	console.info("-".repeat(55));
 
 	for (const r of results) {
-		console.log(
+		console.info(
 			r.name.padEnd(15) +
 			r.ops.toLocaleString().padStart(10) +
 			r.time.toFixed(2).padStart(12) +
@@ -634,18 +634,18 @@ async function runBenchmark() {
 		);
 	}
 
-	console.log(`\n📦 Buffer Stats:`);
-	console.log(`   Raw size:        ${(buffer.byteLength / 1024 / 1024).toFixed(2)} MB`);
-	console.log(`   Compressed:      ${(compressed.length / 1024).toFixed(2)} KB`);
-	console.log(`   Compression:     ${((1 - compressed.length / buffer.byteLength) * 100).toFixed(1)}%`);
+	console.info(`\n📦 Buffer Stats:`);
+	console.info(`   Raw size:        ${(buffer.byteLength / 1024 / 1024).toFixed(2)} MB`);
+	console.info(`   Compressed:      ${(compressed.length / 1024).toFixed(2)} KB`);
+	console.info(`   Compression:     ${((1 - compressed.length / buffer.byteLength) * 100).toFixed(1)}%`);
 }
 
 // =============================================================================
 // Main
 // =============================================================================
 async function main() {
-	console.log("\n⚡ @dynamic-spy/kit v8.0 - BINARY DATA FACTORY 🚀\n");
-	console.log(`Bun version: ${Bun.version}`);
+	console.info("\n⚡ @dynamic-spy/kit v8.0 - BINARY DATA FACTORY 🚀\n");
+	console.info(`Bun version: ${Bun.version}`);
 
 	const args = Bun.argv.slice(2);
 	const serverMode = args.includes("--server");
@@ -666,21 +666,21 @@ async function main() {
 	if (serverMode) {
 		const port = 3002;
 		const server = createBinaryServer(port);
-		console.log("\n" + "=".repeat(60));
-		console.log("7. BINARY SERVER");
-		console.log("=".repeat(60));
-		console.log(`\n🚀 Binary server running on http://localhost:${port}`);
-		console.log(`   Binary:  curl http://localhost:${port}/basketball/binary`);
-		console.log(`   Stream:  curl http://localhost:${port}/basketball/stream`);
-		console.log(`   Stats:   curl http://localhost:${port}/binary-stats`);
-		console.log(`\n📡 Server mode - press Ctrl+C to stop`);
+		console.info("\n" + "=".repeat(60));
+		console.info("7. BINARY SERVER");
+		console.info("=".repeat(60));
+		console.info(`\n🚀 Binary server running on http://localhost:${port}`);
+		console.info(`   Binary:  curl http://localhost:${port}/basketball/binary`);
+		console.info(`   Stream:  curl http://localhost:${port}/basketball/stream`);
+		console.info(`   Stats:   curl http://localhost:${port}/binary-stats`);
+		console.info(`\n📡 Server mode - press Ctrl+C to stop`);
 		return;
 	}
 
-	console.log("\n" + "=".repeat(60));
-	console.log("✅ BINARY SUPERPOWERS SUMMARY");
-	console.log("=".repeat(60));
-	console.log(`
+	console.info("\n" + "=".repeat(60));
+	console.info("✅ BINARY SUPERPOWERS SUMMARY");
+	console.info("=".repeat(60));
+	console.info(`
 | Format       | Use Case       | Speed      |
 |--------------|----------------|------------|
 | ArrayBuffer  | Raw storage    | Zero-copy  |

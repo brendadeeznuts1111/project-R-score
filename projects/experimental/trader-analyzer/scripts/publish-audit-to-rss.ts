@@ -136,7 +136,7 @@ export async function publishAuditToRSS(
 		'audit',
 	);
 
-	console.log(`💾 Audit results saved to registry database for ${team.name}`);
+	console.info(`💾 Audit results saved to registry database for ${team.name}`);
 
 	// Telegram notifications: BP-TELEGRAM-CLIENT@0.1.0
 	// Graceful error handling: BP-CIRCUIT-BREAKER@0.1.0
@@ -211,7 +211,7 @@ export async function publishAuditToRSS(
 		);
 
 		if (telegramResult.success) {
-			console.log(`📱 Notification sent to ${team.name} Telegram topic ${team.telegram_topic}`);
+			console.info(`📱 Notification sent to ${team.name} Telegram topic ${team.telegram_topic}`);
 		} else {
 			console.warn(`⚠️  Telegram notification failed after ${telegramResult.attempts} attempts: ${telegramResult.error}`);
 		}
@@ -224,7 +224,7 @@ export async function publishAuditToRSS(
 	// Blueprint: BP-CIRCUIT-BREAKER@0.1.0 - Circuit breaker + retry logic
 	const refreshResult = await refreshRSSCache({ team: teamId });
 	if (refreshResult.success) {
-		console.log(`🔄 RSS feed cache refreshed via ${refreshResult.endpoint}`);
+		console.info(`🔄 RSS feed cache refreshed via ${refreshResult.endpoint}`);
 	} else if (refreshResult.error) {
 		console.warn(`⚠️  RSS cache refresh failed: ${refreshResult.error}`);
 	}
@@ -365,7 +365,7 @@ if (import.meta.main) {
 		}
 
 		await publishAuditToRSS(teamId, auditResult);
-		console.log(`✅ Audit results published for ${RSS_TEAM_CATEGORIES[teamId].name}`);
+		console.info(`✅ Audit results published for ${RSS_TEAM_CATEGORIES[teamId].name}`);
 	} catch (error: any) {
 		console.error(`❌ Error publishing audit: ${error.message}`);
 		if (error.stack) {

@@ -28,14 +28,14 @@ class ThemeDemo {
 	}
 
 	async start() {
-		console.log("🎨 Starting Release Theme Demo Server...");
-		console.log(
+		console.info("🎨 Starting Release Theme Demo Server...");
+		console.info(
 			`📊 Dashboard will be available at: http://localhost:${this.port}`,
 		);
-		console.log(
+		console.info(
 			"🚀 Features: Real-time metrics, interactive charts, modern design",
 		);
-		console.log("");
+		console.info("");
 
 		this.server = serve({
 			port: this.port,
@@ -49,8 +49,8 @@ class ThemeDemo {
 		this.startMetricsSimulation();
 		this.startAlertSimulation();
 
-		console.log("✅ Theme demo server started successfully!");
-		console.log("🌟 Press Ctrl+C to stop the server");
+		console.info("✅ Theme demo server started successfully!");
+		console.info("🌟 Press Ctrl+C to stop the server");
 
 		// Setup graceful shutdown
 		process.on("SIGINT", () => this.shutdown());
@@ -256,7 +256,7 @@ class ThemeDemo {
 						const body = await req.json();
 						const profileId = `profile-${Date.now()}`;
 
-						console.log(
+						console.info(
 							`🔥 Started ${body.type || "cpu"} profile: ${profileId}`,
 						);
 
@@ -338,7 +338,7 @@ class ThemeDemo {
 			);
 		}, 2000);
 
-		console.log("📊 Metrics simulation started");
+		console.info("📊 Metrics simulation started");
 	}
 
 	startAlertSimulation() {
@@ -380,22 +380,22 @@ class ThemeDemo {
 					this.alerts = this.alerts.slice(0, 10);
 				}
 
-				console.log(`🚨 Alert generated: ${alert.type} - ${alert.message}`);
+				console.info(`🚨 Alert generated: ${alert.type} - ${alert.message}`);
 			}
 		}, 10000);
 
-		console.log("🚨 Alert simulation started");
+		console.info("🚨 Alert simulation started");
 	}
 
 	shutdown() {
-		console.log("\n🛑 Shutting down theme demo server...");
+		console.info("\n🛑 Shutting down theme demo server...");
 
 		if (this.server) {
 			this.server.stop();
-			console.log("✅ Server stopped");
+			console.info("✅ Server stopped");
 		}
 
-		console.log("👋 Theme demo server shut down complete");
+		console.info("👋 Theme demo server shut down complete");
 		process.exit(0);
 	}
 }

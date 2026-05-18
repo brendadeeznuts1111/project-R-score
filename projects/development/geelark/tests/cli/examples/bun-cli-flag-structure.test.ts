@@ -121,8 +121,8 @@ describe("🏗️ Bun CLI Flag Structure - bun [bun flags] run <script> [script 
   test("✅ Bun transpilation flags: bun --define run <script>", async () => {
     // Create TypeScript file
     const tsFile = `
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('Transpilation with --define flag');
+console.info('NODE_ENV:', process.env.NODE_ENV);
+console.info('Transpilation with --define flag');
 `;
 
     await Bun.write(`${tempDir}/define-test.ts`, tsFile);
@@ -148,7 +148,7 @@ console.log('Transpilation with --define flag');
 
   test("✅ Bun environment flags: bun --smol run <script>", async () => {
     // Create simple script
-    const simpleScript = "console.log('Running in --smol mode');";
+    const simpleScript = "console.info('Running in --smol mode');";
     await Bun.write(`${tempDir}/smol-test.js`, simpleScript);
 
     // Test with --smol flag
@@ -207,9 +207,9 @@ console.log('Transpilation with --define flag');
   test("✅ Complex flag combination", async () => {
     // Create test file
     const complexScript = `
-console.log('Complex flag test');
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('Timestamp:', new Date().toISOString());
+console.info('Complex flag test');
+console.info('NODE_ENV:', process.env.NODE_ENV);
+console.info('Timestamp:', new Date().toISOString());
 `;
 
     await Bun.write(`${tempDir}/complex.js`, complexScript);
@@ -245,8 +245,8 @@ console.log('Timestamp:', new Date().toISOString());
   test("✅ File execution with flags: bun [bun flags] <file> [flags]", async () => {
     // Create executable file
     const execFile = `
-console.log('Direct file execution with flags');
-console.log('Arguments:', process.argv.slice(2));
+console.info('Direct file execution with flags');
+console.info('Arguments:', process.argv.slice(2));
 `;
 
     await Bun.write(`${tempDir}/exec.js`, execFile);
@@ -287,8 +287,8 @@ console.log('Arguments:', process.argv.slice(2));
     // Create script that handles its own flags
     const flagScript = `
 const args = process.argv.slice(2);
-console.log('Script received args:', args);
-console.log('NODE_ENV from Bun define:', process.env.NODE_ENV);
+console.info('Script received args:', args);
+console.info('NODE_ENV from Bun define:', process.env.NODE_ENV);
 `;
 
     await Bun.write(`${tempDir}/flag-test.js`, flagScript);

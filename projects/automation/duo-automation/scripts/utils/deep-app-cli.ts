@@ -53,13 +53,13 @@ class ConfigEmpireCLI {
   }
 
   async dumpConfigs(env: string = 'dev', override?: string): Promise<ConfigDumpResult[]> {
-    console.log(`📊 Dumping Configuration Empire (${env} mode)...`);
-    console.log('===========================================');
+    console.info(`📊 Dumping Configuration Empire (${env} mode)...`);
+    console.info('===========================================');
 
     const projectsDir = join(this.projectRoot, 'projects');
     
     if (!existsSync(projectsDir)) {
-      console.log('⚠️ No projects/ directory found');
+      console.info('⚠️ No projects/ directory found');
       return [];
     }
 
@@ -67,7 +67,7 @@ class ConfigEmpireCLI {
       .filter(name => statSync(join(projectsDir, name)).isDirectory())
       .map(name => join(projectsDir, name));
 
-    console.log(`📁 Dumping configs for ${projects.length} projects...`);
+    console.info(`📁 Dumping configs for ${projects.length} projects...`);
 
     const results: ConfigDumpResult[] = [];
 
@@ -114,34 +114,34 @@ class ConfigEmpireCLI {
           env
         });
         
-        console.log(`  ✅ Dumped: ${projectName}`);
+        console.info(`  ✅ Dumped: ${projectName}`);
         
       } catch (error) {
-        console.log(`  ❌ Failed: ${projectName} - ${(error as Error).message}`);
+        console.info(`  ❌ Failed: ${projectName} - ${(error as Error).message}`);
       }
     }
 
-    console.log(`\n🎯 Config Dump Complete: ${results.length}/${projects.length} projects dumped`);
+    console.info(`\n🎯 Config Dump Complete: ${results.length}/${projects.length} projects dumped`);
     return results;
   }
 
   async syncConfigsToR2(): Promise<void> {
-    console.log('🔄 Config R2 Swarm: windsurf-project → Cloudflare R2');
-    console.log('==================================================');
+    console.info('🔄 Config R2 Swarm: windsurf-project → Cloudflare R2');
+    console.info('==================================================');
 
     try {
         // Initialize R2 manager with Bun Secrets
         const r2Config = await getR2Config();
         const r2Manager = new R2ConfigManager(r2Config);
         
-        console.log(`✅ Connected to R2: ${r2Config.endpoint}`);
-        console.log(`📦 Bucket: ${r2Config.bucket}`);
-        console.log(`🔐 Using Bun Secrets API for credentials`);
+        console.info(`✅ Connected to R2: ${r2Config.endpoint}`);
+        console.info(`📦 Bucket: ${r2Config.bucket}`);
+        console.info(`🔐 Using Bun Secrets API for credentials`);
 
         const projectsDir = join(this.projectRoot, 'projects');
         
         if (!existsSync(projectsDir)) {
-          console.log('⚠️ No projects/ directory found');
+          console.info('⚠️ No projects/ directory found');
           return;
         }
 
@@ -149,7 +149,7 @@ class ConfigEmpireCLI {
           .filter(name => statSync(join(projectsDir, name)).isDirectory())
           .map(name => join(projectsDir, name));
 
-        console.log(`📁 Syncing configs to R2 for ${projects.length} projects...`);
+        console.info(`📁 Syncing configs to R2 for ${projects.length} projects...`);
 
         let syncedCount = 0;
         let connectionError = false;
@@ -171,15 +171,15 @@ class ConfigEmpireCLI {
             
             // Show public URL
             const publicUrl = r2Manager.getPublicUrl(projectName);
-            console.log(`  ✅ ${projectName}: ${publicUrl}`);
+            console.info(`  ✅ ${projectName}: ${publicUrl}`);
             
           } catch (error) {
             if ((error as any).code === 'ECONNREFUSED' || (error as Error).message.includes('ECONNREFUSED')) {
-              console.log(`❌ Connection error for ${projectName}`);
+              console.info(`❌ Connection error for ${projectName}`);
               connectionError = true;
               break; // Exit loop on connection error
             }
-            console.log(`  ❌ Failed: ${projectName} - ${(error as Error).message}`);
+            console.info(`  ❌ Failed: ${projectName} - ${(error as Error).message}`);
           }
         }
 
@@ -187,30 +187,30 @@ class ConfigEmpireCLI {
           throw new Error('ECONNREFUSED');
         }
 
-        console.log(`\n🎯 R2 Sync Complete: ${syncedCount}/${projects.length} configs synced`);
-        console.log('✅ Cloudflare R2 Integration Active');
-        console.log('🔐 Credentials secured with Bun Secrets API');
+        console.info(`\n🎯 R2 Sync Complete: ${syncedCount}/${projects.length} configs synced`);
+        console.info('✅ Cloudflare R2 Integration Active');
+        console.info('🔐 Credentials secured with Bun Secrets API');
         
         // List all configs in R2
         const syncedProjects = await r2Manager.listConfigs();
-        console.log(`📊 Total configs in R2: ${syncedProjects.length}`);
+        console.info(`📊 Total configs in R2: ${syncedProjects.length}`);
         
       } catch (error) {
         if ((error as Error).message.includes('REQUIRED SECRETS MISSING')) {
-          console.log('❌ Configuration Error: All secrets must be stored in Bun Secrets');
-          console.log('');
-          console.log('🔒 SECRETS-ONLY CONFIGURATION REQUIRED');
-          console.log('🚫 NO environment variables, NO config files, NO simulation mode');
-          console.log('');
-          console.log('To configure ALL required secrets:');
-          console.log('  bun run secrets-setup-all');
-          console.log('');
-          console.log('To check current secrets:');
-          console.log('  bun run secrets-get-all');
-          console.log('');
-          console.log('To validate configuration:');
-          console.log('  bun run secrets-validate');
-          console.log('');
+          console.info('❌ Configuration Error: All secrets must be stored in Bun Secrets');
+          console.info('');
+          console.info('🔒 SECRETS-ONLY CONFIGURATION REQUIRED');
+          console.info('🚫 NO environment variables, NO config files, NO simulation mode');
+          console.info('');
+          console.info('To configure ALL required secrets:');
+          console.info('  bun run secrets-setup-all');
+          console.info('');
+          console.info('To check current secrets:');
+          console.info('  bun run secrets-get-all');
+          console.info('');
+          console.info('To validate configuration:');
+          console.info('  bun run secrets-validate');
+          console.info('');
           console.error('❌ R2 sync failed: All configuration must be in Bun Secrets');
           process.exit(1);
         } else {
@@ -221,13 +221,13 @@ class ConfigEmpireCLI {
   }
 
   private async simulateR2Sync(): Promise<void> {
-    console.log('🔄 Config R2 Swarm: windsurf-project → 30 Projs (Simulation)');
-    console.log('===============================================================');
+    console.info('🔄 Config R2 Swarm: windsurf-project → 30 Projs (Simulation)');
+    console.info('===============================================================');
 
     const projectsDir = join(this.projectRoot, 'projects');
     
     if (!existsSync(projectsDir)) {
-      console.log('⚠️ No projects/ directory found');
+      console.info('⚠️ No projects/ directory found');
       return;
     }
 
@@ -235,7 +235,7 @@ class ConfigEmpireCLI {
       .filter(name => statSync(join(projectsDir, name)).isDirectory())
       .map(name => join(projectsDir, name));
 
-    console.log(`📁 Simulating R2 sync for ${projects.length} projects...`);
+    console.info(`📁 Simulating R2 sync for ${projects.length} projects...`);
 
     let syncedCount = 0;
     for (const projectPath of projects) {
@@ -249,18 +249,18 @@ class ConfigEmpireCLI {
         
         // Simulate R2 upload
         const r2Path = `r2://factory-wager/configs/${projectName}/config.json`;
-        console.log(`  📤 Simulating: ${projectName} → ${r2Path}`);
+        console.info(`  📤 Simulating: ${projectName} → ${r2Path}`);
         
         process.chdir(originalCwd);
         syncedCount++;
         
       } catch (error) {
-        console.log(`  ❌ Failed: ${projectName} - ${(error as Error).message}`);
+        console.info(`  ❌ Failed: ${projectName} - ${(error as Error).message}`);
       }
     }
 
-    console.log(`\n🎯 R2 Simulation Complete: ${syncedCount}/${projects.length} configs synced`);
-    console.log('✅ 30 Configs Synced (simulation mode)');
+    console.info(`\n🎯 R2 Simulation Complete: ${syncedCount}/${projects.length} configs synced`);
+    console.info('✅ 30 Configs Synced (simulation mode)');
   }
 
   createHyperConfigDump(projs: ConfigDumpResult[]): string {
@@ -293,13 +293,13 @@ class ConfigEmpireCLI {
   }
 
   async configSync(): Promise<void> {
-    console.log('🔄 Configuration Sync Across Empire...');
-    console.log('=====================================');
+    console.info('🔄 Configuration Sync Across Empire...');
+    console.info('=====================================');
 
     const projectsDir = join(this.projectRoot, 'projects');
     
     if (!existsSync(projectsDir)) {
-      console.log('⚠️ No projects/ directory found');
+      console.info('⚠️ No projects/ directory found');
       return;
     }
 
@@ -307,7 +307,7 @@ class ConfigEmpireCLI {
       .filter(name => statSync(join(projectsDir, name)).isDirectory())
       .map(name => join(projectsDir, name));
 
-    console.log(`📁 Syncing configuration across ${projects.length} projects...`);
+    console.info(`📁 Syncing configuration across ${projects.length} projects...`);
 
     let syncedCount = 0;
     for (const projectPath of projects) {
@@ -335,21 +335,21 @@ export const projectConfig = {
 `;
 
       writeFileSync(configPath, configContent);
-      console.log(`  ✅ Synced: ${projectName}`);
+      console.info(`  ✅ Synced: ${projectName}`);
       syncedCount++;
     }
 
-    console.log(`\n🎯 Configuration Sync Complete: ${syncedCount}/${projects.length} projects synced`);
+    console.info(`\n🎯 Configuration Sync Complete: ${syncedCount}/${projects.length} projects synced`);
   }
 
   async scanBuilds(feature?: string): Promise<void> {
-    console.log('🏗️ Scanning Build Status Across Empire...');
-    console.log('=======================================');
+    console.info('🏗️ Scanning Build Status Across Empire...');
+    console.info('=======================================');
 
     const projectsDir = join(this.projectRoot, 'projects');
     
     if (!existsSync(projectsDir)) {
-      console.log('⚠️ No projects/ directory found');
+      console.info('⚠️ No projects/ directory found');
       return;
     }
 
@@ -357,7 +357,7 @@ export const projectConfig = {
       .filter(name => statSync(join(projectsDir, name)).isDirectory())
       .map(name => join(projectsDir, name));
 
-    console.log(`📁 Scanning builds for ${projects.length} projects...`);
+    console.info(`📁 Scanning builds for ${projects.length} projects...`);
 
     const buildResults: Array<{name: string, buildTime: number, status: string}> = [];
 
@@ -386,7 +386,7 @@ export const projectConfig = {
           status
         });
         
-        console.log(`  ${status === 'SUCCESS' ? '✅' : '❌'} ${projectName}: ${buildTime}ms`);
+        console.info(`  ${status === 'SUCCESS' ? '✅' : '❌'} ${projectName}: ${buildTime}ms`);
         
       } catch (error) {
         const buildTime = Date.now() - startTime;
@@ -396,7 +396,7 @@ export const projectConfig = {
           status: 'ERROR'
         });
         
-        console.log(`  ❌ ${projectName}: ${buildTime}ms (ERROR)`);
+        console.info(`  ❌ ${projectName}: ${buildTime}ms (ERROR)`);
       }
     }
 
@@ -404,21 +404,21 @@ export const projectConfig = {
       const avgBuildTime = buildResults.reduce((sum, r) => sum + r.buildTime, 0) / buildResults.length;
       const successfulBuilds = buildResults.filter(r => r.status === 'SUCCESS').length;
       
-      console.log(`\n📊 Build Statistics:`);
-      console.log(`  Average Build Time: ${avgBuildTime.toFixed(2)}ms`);
-      console.log(`  Successful Builds: ${successfulBuilds}/${buildResults.length}`);
-      console.log(`  Feature: ${feature || 'ALL'}`);
+      console.info(`\n📊 Build Statistics:`);
+      console.info(`  Average Build Time: ${avgBuildTime.toFixed(2)}ms`);
+      console.info(`  Successful Builds: ${successfulBuilds}/${buildResults.length}`);
+      console.info(`  Feature: ${feature || 'ALL'}`);
     }
   }
 
   async scanProjects(options: ScanOptions = {}): Promise<ConfigScanResult[]> {
-    console.log('🔍 Scanning Configuration Empire...');
-    console.log('=====================================');
+    console.info('🔍 Scanning Configuration Empire...');
+    console.info('=====================================');
 
     const projectsDir = join(this.projectRoot, 'projects');
     
     if (!existsSync(projectsDir)) {
-      console.log('⚠️ No projects/ directory found');
+      console.info('⚠️ No projects/ directory found');
       return [];
     }
 
@@ -426,7 +426,7 @@ export const projectConfig = {
       .filter(name => statSync(join(projectsDir, name)).isDirectory())
       .map(name => join(projectsDir, name));
 
-    console.log(`📁 Found ${projects.length} projects`);
+    console.info(`📁 Found ${projects.length} projects`);
 
     // Scan each project
     for (const projectPath of projects) {
@@ -510,24 +510,24 @@ export const projectConfig = {
       'NOT_CONFIGURED': '❌'
     }[result.status];
 
-    console.log(`${statusIcon} ${result.name}`);
-    console.log(`   Ports: ${result.ports}, Services: ${result.services}, Dashboards: ${result.dashboards}`);
-    console.log(`   Status: ${result.status}`);
+    console.info(`${statusIcon} ${result.name}`);
+    console.info(`   Ports: ${result.ports}, Services: ${result.services}, Dashboards: ${result.dashboards}`);
+    console.info(`   Status: ${result.status}`);
     
     if (result.validation) {
       const validationIcon = result.validation.valid ? '✅' : '❌';
-      console.log(`   Validation: ${validationIcon} ${result.validation.valid ? 'Passed' : 'Failed'}`);
+      console.info(`   Validation: ${validationIcon} ${result.validation.valid ? 'Passed' : 'Failed'}`);
     }
-    console.log('');
+    console.info('');
   }
 
   private printHyperTable(): void {
-    console.log('');
-    console.log('🏰 Empire Pro Config Empire - Hyper Configuration Table');
-    console.log('=========================================================');
-    console.log('');
-    console.log('| Project | Ports | Services | Dashboards | Status | R2 Config |');
-    console.log('|---------|-------|----------|------------|--------|-----------|');
+    console.info('');
+    console.info('🏰 Empire Pro Config Empire - Hyper Configuration Table');
+    console.info('=========================================================');
+    console.info('');
+    console.info('| Project | Ports | Services | Dashboards | Status | R2 Config |');
+    console.info('|---------|-------|----------|------------|--------|-----------|');
 
     let sharedCount = 0;
     let totalCount = this.results.length;
@@ -541,32 +541,32 @@ export const projectConfig = {
 
       const r2Config = result.status === 'SHARED' ? '[R2 Config]' : '❌';
       
-      console.log(`| ${result.name} | ${result.ports} | ${result.services} | ${result.dashboards} | ${statusIcon} ${result.status} | ${r2Config} |`);
+      console.info(`| ${result.name} | ${result.ports} | ${result.services} | ${result.dashboards} | ${statusIcon} ${result.status} | ${r2Config} |`);
       
       if (result.status === 'SHARED') {
         sharedCount++;
       }
     });
 
-    console.log('');
-    console.log(`🏆 **Config Empire: ${sharedCount}/${totalCount} Projects Shared** ${sharedCount === totalCount ? '✅' : '⚠️'}`);
+    console.info('');
+    console.info(`🏆 **Config Empire: ${sharedCount}/${totalCount} Projects Shared** ${sharedCount === totalCount ? '✅' : '⚠️'}`);
     
     // Statistics
     const totalPorts = this.results.reduce((sum, r) => sum + r.ports, 0);
     const totalServices = this.results.reduce((sum, r) => sum + r.services, 0);
     const totalDashboards = this.results.reduce((sum, r) => sum + r.dashboards, 0);
     
-    console.log('');
-    console.log('📊 Empire Statistics:');
-    console.log(`  Total Ports Configured: ${totalPorts}`);
-    console.log(`  Total Services Configured: ${totalServices}`);
-    console.log(`  Total Dashboards Configured: ${totalDashboards}`);
-    console.log(`  Configuration Coverage: ${Math.round((sharedCount / totalCount) * 100)}%`);
+    console.info('');
+    console.info('📊 Empire Statistics:');
+    console.info(`  Total Ports Configured: ${totalPorts}`);
+    console.info(`  Total Services Configured: ${totalServices}`);
+    console.info(`  Total Dashboards Configured: ${totalDashboards}`);
+    console.info(`  Configuration Coverage: ${Math.round((sharedCount / totalCount) * 100)}%`);
   }
 
   async validateParallel(): Promise<void> {
-    console.log('🧪 Parallel Validation Across Empire...');
-    console.log('=======================================');
+    console.info('🧪 Parallel Validation Across Empire...');
+    console.info('=======================================');
 
     const promises = this.results.map(async (result) => {
       if (result.status === 'SHARED') {
@@ -601,17 +601,17 @@ export const projectConfig = {
 
     const results = await Promise.all(promises);
     
-    console.log('📊 Validation Results:');
+    console.info('📊 Validation Results:');
     results.forEach(result => {
       const icon = result.valid ? '✅' : '❌';
-      console.log(`  ${icon} ${result.project}: ${result.valid ? 'Valid' : 'Invalid'}`);
+      console.info(`  ${icon} ${result.project}: ${result.valid ? 'Valid' : 'Invalid'}`);
       if (!result.valid && result.errors.length > 0) {
-        result.errors.forEach(error => console.log(`    - ${error}`));
+        result.errors.forEach(error => console.info(`    - ${error}`));
       }
     });
 
     const validCount = results.filter(r => r.valid).length;
-    console.log(`\n🎯 Summary: ${validCount}/${results.length} projects validated successfully`);
+    console.info(`\n🎯 Summary: ${validCount}/${results.length} projects validated successfully`);
   }
 }
 
@@ -684,19 +684,19 @@ async function main() {
     const s2 = similarityArgs.slice(similarityArgs.findIndex(arg => !arg.startsWith('--')) + 1).find(arg => !arg.startsWith('--')) || '';
     
     if (!s1 || !s2) {
-      console.log('🚀 Einstein Similarity - Empire Pro Duplicate Hunter');
-      console.log('Usage: bun run deep-app-cli.ts similarity "string1" "string2" [--code|--name] [--hyper]');
-      console.log('');
-      console.log('Options:');
-      console.log('  --code     Compare code snippets (tokenizes)');
-      console.log('  --name     Compare names (normalizes)');
-      console.log('  --hyper    Show hyper link to R2 visualization');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun run deep-app-cli.ts similarity "func()" "func2()"');
-      console.log('  bun run deep-app-cli.ts similarity --code "void func()" "void func2()"');
-      console.log('  bun run deep-app-cli.ts similarity --name "John Doe" "Jon Doh"');
-      console.log('  bun run deep-app-cli.ts similarity --hyper "Empire Pro" "Emp Pro"');
+      console.info('🚀 Einstein Similarity - Empire Pro Duplicate Hunter');
+      console.info('Usage: bun run deep-app-cli.ts similarity "string1" "string2" [--code|--name] [--hyper]');
+      console.info('');
+      console.info('Options:');
+      console.info('  --code     Compare code snippets (tokenizes)');
+      console.info('  --name     Compare names (normalizes)');
+      console.info('  --hyper    Show hyper link to R2 visualization');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun run deep-app-cli.ts similarity "func()" "func2()"');
+      console.info('  bun run deep-app-cli.ts similarity --code "void func()" "void func2()"');
+      console.info('  bun run deep-app-cli.ts similarity --name "John Doe" "Jon Doh"');
+      console.info('  bun run deep-app-cli.ts similarity --hyper "Empire Pro" "Emp Pro"');
       return;
     }
     
@@ -715,23 +715,23 @@ async function main() {
     
     const fast = fastSimilarity(s1, s2);
     
-    console.log(`🧬 Einstein Similarity (${comparisonType}): ${similarity.toFixed(1)}%`);
-    console.log(`⚡ Fast Similarity: ${fast.toFixed(3)}`);
+    console.info(`🧬 Einstein Similarity (${comparisonType}): ${similarity.toFixed(1)}%`);
+    console.info(`⚡ Fast Similarity: ${fast.toFixed(3)}`);
     
     if (similarityArgs.includes('--hyper')) {
       const r2Link = `\u001b]8;;https://r2.dev/sim?s1=${encodeURIComponent(s1)}&s2=${encodeURIComponent(s2)}\u001b\\Sim ${similarity.toFixed(1)}% [R2]\u001b[0m`;
-      console.log(`🔗 ${r2Link}`);
+      console.info(`🔗 ${r2Link}`);
     }
     
     // Interpretation
     if (similarity >= 90) {
-      console.log('🎯 VERY HIGH SIMILARITY - Likely duplicates or variations');
+      console.info('🎯 VERY HIGH SIMILARITY - Likely duplicates or variations');
     } else if (similarity >= 80) {
-      console.log('⚠️  HIGH SIMILARITY - Possible duplicates, review recommended');
+      console.info('⚠️  HIGH SIMILARITY - Possible duplicates, review recommended');
     } else if (similarity >= 70) {
-      console.log('📊 MODERATE SIMILARITY - Some similarity, probably distinct');
+      console.info('📊 MODERATE SIMILARITY - Some similarity, probably distinct');
     } else {
-      console.log('✅ LOW SIMILARITY - Likely distinct');
+      console.info('✅ LOW SIMILARITY - Likely distinct');
     }
     
     return;
@@ -741,15 +741,15 @@ async function main() {
   if (args.includes('--config-dump') || cmd === 'config') {
     const results = await cli.dumpConfigs(options.env, options.configOverride);
     if (options.hyper) {
-      console.log(cli.createHyperConfigDump(results));
+      console.info(cli.createHyperConfigDump(results));
     } else {
-      console.log(JSON.stringify(results, null, 2));
+      console.info(JSON.stringify(results, null, 2));
     }
     return;
   }
 
   if (cmd === 'config-sync') {
-    console.log('🔄 Config R2 Swarm: windsurf-project → 30 Projs');
+    console.info('🔄 Config R2 Swarm: windsurf-project → 30 Projs');
     await cli.syncConfigsToR2();
     return;
   }
@@ -769,36 +769,36 @@ async function main() {
   } else if (options.scan === 'build') {
     await cli.scanBuilds(options.feature);
   } else {
-    console.log('🏰 Deep App CLI v2.7 - Config Empire Extension');
-    console.log('🔒 ALL CONFIGURATION IN BUN SECRETS - NO FILES, NO ENV VARS');
-    console.log('Usage:');
-    console.log('');
-    console.log('🔐 Secrets-Only Configuration (ALL CONFIG):');
-    console.log('  bun run deep-app-cli.ts secrets-setup-all      # Setup ALL config in secrets');
-    console.log('  bun run deep-app-cli.ts secrets-get-all        # View ALL stored config');
-    console.log('  bun run deep-app-cli.ts secrets-validate       # Validate ALL config present');
-    console.log('  bun run deep-app-cli.ts secrets-export-all     # Export ALL as env vars');
-    console.log('  bun run deep-app-cli.ts secrets-delete-all     # Delete ALL config');
-    console.log('');
-    console.log('🌐 Legacy R2-Specific:');
-    console.log('  bun run deep-app-cli.ts secrets-r2-setup       # Setup R2 credentials only');
-    console.log('  bun run deep-app-cli.ts secrets-r2-export      # Export R2 as env vars');
-    console.log('');
-    console.log('🧬 Einstein Similarity - Duplicate Hunter:');
-    console.log('  bun run deep-app-cli.ts similarity "str1" "str2"           # Text similarity');
-    console.log('  bun run deep-app-cli.ts similarity --code "func()" "func2()" # Code similarity');
-    console.log('  bun run deep-app-cli.ts similarity --name "John" "Jon"     # Name similarity');
-    console.log('  bun run deep-app-cli.ts similarity --hyper "str1" "str2"   # With R2 link');
-    console.log('');
-    console.log('📊 Configuration Management:');
-    console.log('  bun run deep-app-cli.ts config --env=prod --hyper');
-    console.log('  bun run deep-app-cli.ts config --config-override=ports.webServer=3000 --hyper');
-    console.log('  bun run deep-app-cli.ts config-sync');
-    console.log('  bun run deep-app-cli.ts --projects --scan=config --hyper');
-    console.log('  bun run deep-app-cli.ts --projects --scan=build --feature=CONFIG_SHARED');
-    console.log('');
-    console.log('🚫 NO .env FILES, NO CONFIG FILES, NO ENVIRONMENT VARIABLES');
-    console.log('🔒 EVERYTHING STORED IN OS CREDENTIAL MANAGER VIA BUN SECRETS');
+    console.info('🏰 Deep App CLI v2.7 - Config Empire Extension');
+    console.info('🔒 ALL CONFIGURATION IN BUN SECRETS - NO FILES, NO ENV VARS');
+    console.info('Usage:');
+    console.info('');
+    console.info('🔐 Secrets-Only Configuration (ALL CONFIG):');
+    console.info('  bun run deep-app-cli.ts secrets-setup-all      # Setup ALL config in secrets');
+    console.info('  bun run deep-app-cli.ts secrets-get-all        # View ALL stored config');
+    console.info('  bun run deep-app-cli.ts secrets-validate       # Validate ALL config present');
+    console.info('  bun run deep-app-cli.ts secrets-export-all     # Export ALL as env vars');
+    console.info('  bun run deep-app-cli.ts secrets-delete-all     # Delete ALL config');
+    console.info('');
+    console.info('🌐 Legacy R2-Specific:');
+    console.info('  bun run deep-app-cli.ts secrets-r2-setup       # Setup R2 credentials only');
+    console.info('  bun run deep-app-cli.ts secrets-r2-export      # Export R2 as env vars');
+    console.info('');
+    console.info('🧬 Einstein Similarity - Duplicate Hunter:');
+    console.info('  bun run deep-app-cli.ts similarity "str1" "str2"           # Text similarity');
+    console.info('  bun run deep-app-cli.ts similarity --code "func()" "func2()" # Code similarity');
+    console.info('  bun run deep-app-cli.ts similarity --name "John" "Jon"     # Name similarity');
+    console.info('  bun run deep-app-cli.ts similarity --hyper "str1" "str2"   # With R2 link');
+    console.info('');
+    console.info('📊 Configuration Management:');
+    console.info('  bun run deep-app-cli.ts config --env=prod --hyper');
+    console.info('  bun run deep-app-cli.ts config --config-override=ports.webServer=3000 --hyper');
+    console.info('  bun run deep-app-cli.ts config-sync');
+    console.info('  bun run deep-app-cli.ts --projects --scan=config --hyper');
+    console.info('  bun run deep-app-cli.ts --projects --scan=build --feature=CONFIG_SHARED');
+    console.info('');
+    console.info('🚫 NO .env FILES, NO CONFIG FILES, NO ENVIRONMENT VARIABLES');
+    console.info('🔒 EVERYTHING STORED IN OS CREDENTIAL MANAGER VIA BUN SECRETS');
   }
 }
 

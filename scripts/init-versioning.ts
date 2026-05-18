@@ -20,13 +20,13 @@ async function main() {
   const backupR2 = args.includes('--backup-r2');
   const dryRun = args.includes('--dry-run');
 
-  console.log(styled('🚀 FactoryWager Versioning Initialization v5.1', 'accent'));
-  console.log(styled('================================================', 'muted'));
-  console.log('');
+  console.info(styled('🚀 FactoryWager Versioning Initialization v5.1', 'accent'));
+  console.info(styled('================================================', 'muted'));
+  console.info('');
 
   if (dryRun) {
-    console.log(styled('🔍 DRY RUN MODE - No changes will be made', 'warning'));
-    console.log('');
+    console.info(styled('🔍 DRY RUN MODE - No changes will be made', 'warning'));
+    console.info('');
   }
 
   try {
@@ -34,12 +34,12 @@ async function main() {
     const existingSecrets = await getExistingSecrets();
 
     if (existingSecrets.length === 0) {
-      console.log(styled('ℹ️  No existing secrets found', 'muted'));
+      console.info(styled('ℹ️  No existing secrets found', 'muted'));
       return;
     }
 
-    console.log(styled(`📋 Found ${existingSecrets.length} existing secrets`, 'primary'));
-    console.log('');
+    console.info(styled(`📋 Found ${existingSecrets.length} existing secrets`, 'primary'));
+    console.info('');
 
     let migrated = 0;
     let skipped = 0;
@@ -47,13 +47,13 @@ async function main() {
 
     for (const secret of existingSecrets) {
       try {
-        console.log(styled(`🔄 Processing ${secret.key}...`, 'primary'));
+        console.info(styled(`🔄 Processing ${secret.key}...`, 'primary'));
 
         // Check if already versioned
         const existingVersion = await versionedManager.getWithVersion(secret.key).catch(() => null);
 
         if (existingVersion) {
-          console.log(styled(`   ⏭️  Already versioned (v${existingVersion.version})`, 'muted'));
+          console.info(styled(`   ⏭️  Already versioned (v${existingVersion.version})`, 'muted'));
           skipped++;
           continue;
         }
@@ -71,36 +71,36 @@ async function main() {
             }
           });
 
-          console.log(styled(`   ✅ Migrated to v${result.version}`, 'success'));
+          console.info(styled(`   ✅ Migrated to v${result.version}`, 'success'));
 
           // Backup to R2 if requested
           if (backupR2) {
             await backupToR2(secret.key, secret.value, result.version);
-            console.log(styled(`   💾 Backed up to R2`, 'success'));
+            console.info(styled(`   💾 Backed up to R2`, 'success'));
           }
 
           migrated++;
         } else {
-          console.log(styled(`   🔍 Would migrate (dry run)`, 'warning'));
+          console.info(styled(`   🔍 Would migrate (dry run)`, 'warning'));
           migrated++;
         }
 
       } catch (error) {
-        console.log(styled(`   ❌ Error: ${error.message}`, 'error'));
+        console.info(styled(`   ❌ Error: ${error.message}`, 'error'));
         errors++;
       }
     }
 
-    console.log('');
-    console.log(styled('📊 Migration Summary:', 'accent'));
-    console.log(styled(`   Migrated: ${migrated}`, 'success'));
-    console.log(styled(`   Skipped: ${skipped}`, 'muted'));
-    console.log(styled(`   Errors: ${errors}`, 'error'));
+    console.info('');
+    console.info(styled('📊 Migration Summary:', 'accent'));
+    console.info(styled(`   Migrated: ${migrated}`, 'success'));
+    console.info(styled(`   Skipped: ${skipped}`, 'muted'));
+    console.info(styled(`   Errors: ${errors}`, 'error'));
 
     if (!dryRun && migrated > 0) {
-      console.log('');
-      console.log(styled('🎉 Versioning initialization complete!', 'success'));
-      console.log(styled('📖 Docs: https://bun.com/docs/runtime/secrets/versioning', 'accent'));
+      console.info('');
+      console.info(styled('🎉 Versioning initialization complete!', 'success'));
+      console.info(styled('📖 Docs: https://bun.com/docs/runtime/secrets/versioning', 'accent'));
     }
 
   } catch (error) {
@@ -128,7 +128,7 @@ async function backupToR2(key: string, value: string, version: string) {
   };
 
   // This would use env.R2_BUCKET.put() in a real implementation
-  console.log(styled(`   📤 Would backup to R2: ${backupKey}`, 'muted'));
+  console.info(styled(`   📤 Would backup to R2: ${backupKey}`, 'muted'));
 }
 
 main().catch(error => {

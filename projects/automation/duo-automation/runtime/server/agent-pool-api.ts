@@ -436,5 +436,5 @@ export function setupAgentPoolAPI(app: any) {
     }
   });
 
-  console.log('✅ Agent Pool API endpoints registered');
+  console.info('✅ Agent Pool API endpoints registered');
 }

@@ -23,7 +23,7 @@ export class WebSocketCookieDemo {
    * Start server demonstrating cookie handling in WebSocket upgrades
    */
   async startCookieDemo(): Promise<void> {
-    console.log('🍪 Starting WebSocket Cookie Handling Demo...');
+    console.info('🍪 Starting WebSocket Cookie Handling Demo...');
     
     this.server = serve({
       port: this.port,
@@ -37,7 +37,7 @@ export class WebSocketCookieDemo {
           req.cookies.set('userId', 'user-67890');
           req.cookies.set('authToken', 'secure-token-abcde');
           
-          console.log('🍪 Cookies set before upgrade:', {
+          console.info('🍪 Cookies set before upgrade:', {
             sessionId: req.cookies.get('sessionId'),
             userId: req.cookies.get('userId'),
             authToken: req.cookies.get('authToken')
@@ -56,7 +56,7 @@ export class WebSocketCookieDemo {
           });
 
           if (success) {
-            console.log('✅ WebSocket upgrade successful - cookies included in 101 response');
+            console.info('✅ WebSocket upgrade successful - cookies included in 101 response');
             return undefined; // WebSocket handles the response
           }
 
@@ -74,7 +74,7 @@ export class WebSocketCookieDemo {
 
       websocket: {
         message(ws, message) {
-          console.log('📨 Received message:', message.toString());
+          console.info('📨 Received message:', message.toString());
           
           // Echo back with cookie info
           const cookies = ws.data.cookies || {};
@@ -87,8 +87,8 @@ export class WebSocketCookieDemo {
         },
 
         open(ws) {
-          console.log('🔓 WebSocket connection opened');
-          console.log('🍪 Available cookies from upgrade:', ws.data.cookies || 'None');
+          console.info('🔓 WebSocket connection opened');
+          console.info('🍪 Available cookies from upgrade:', ws.data.cookies || 'None');
           
           ws.send(JSON.stringify({
             type: 'welcome',
@@ -99,7 +99,7 @@ export class WebSocketCookieDemo {
         },
 
         close(ws, code, message) {
-          console.log('🔒 WebSocket closed:', { code, message: message?.toString() });
+          console.info('🔒 WebSocket closed:', { code, message: message?.toString() });
         },
 
         error(ws, error) {
@@ -108,7 +108,7 @@ export class WebSocketCookieDemo {
       }
     });
 
-    console.log(`🚀 Cookie demo server running on http://localhost:${this.port}`);
+    console.info(`🚀 Cookie demo server running on http://localhost:${this.port}`);
   }
 
   private getCookieTestHTML(): string {
@@ -224,7 +224,7 @@ export class WebSocketCookieDemo {
   async stop(): Promise<void> {
     if (this.server) {
       this.server.stop();
-      console.log('🛑 Cookie demo server stopped');
+      console.info('🛑 Cookie demo server stopped');
     }
   }
 }
@@ -242,7 +242,7 @@ export class FragmentedCloseFrameDemo {
    * Start server demonstrating proper fragmented close frame handling
    */
   async startFragmentedDemo(): Promise<void> {
-    console.log('🔒 Starting Fragmented Close Frame Handling Demo...');
+    console.info('🔒 Starting Fragmented Close Frame Handling Demo...');
     
     this.server = serve({
       port: this.port,
@@ -258,7 +258,7 @@ export class FragmentedCloseFrameDemo {
           });
 
           if (success) {
-            console.log('✅ WebSocket upgrade successful for fragmented close frame test');
+            console.info('✅ WebSocket upgrade successful for fragmented close frame test');
             return undefined;
           }
 
@@ -277,7 +277,7 @@ export class FragmentedCloseFrameDemo {
       websocket: {
         message(ws, message) {
           const msgStr = message.toString();
-          console.log('📨 Received message:', msgStr);
+          console.info('📨 Received message:', msgStr);
           
           // Handle special test commands
           if (msgStr.startsWith('test:')) {
@@ -291,7 +291,7 @@ export class FragmentedCloseFrameDemo {
         },
 
         open(ws) {
-          console.log('🔓 Fragmented close frame test connection opened');
+          console.info('🔓 Fragmented close frame test connection opened');
           ws.send(JSON.stringify({
             type: 'welcome',
             message: 'Fragmented close frame test server ready',
@@ -300,7 +300,7 @@ export class FragmentedCloseFrameDemo {
         },
 
         close(ws, code, message) {
-          console.log('🔒 WebSocket closed safely:', { 
+          console.info('🔒 WebSocket closed safely:', { 
             code, 
             message: message?.toString(),
             connectionDuration: Date.now() - ws.data.startTime + 'ms'
@@ -308,7 +308,7 @@ export class FragmentedCloseFrameDemo {
           
           // 🎯 KEY FIX: Bun now properly handles fragmented close frames
           // No more panics when close frame payload is fragmented across TCP packets
-          console.log('✅ Close frame handled correctly - no panic!');
+          console.info('✅ Close frame handled correctly - no panic!');
         },
 
         error(ws, error) {
@@ -354,7 +354,7 @@ export class FragmentedCloseFrameDemo {
       }
     });
 
-    console.log(`🚀 Fragmented close frame demo server running on http://localhost:${this.port}`);
+    console.info(`🚀 Fragmented close frame demo server running on http://localhost:${this.port}`);
   }
 
   private getFragmentedTestHTML(): string {
@@ -507,15 +507,15 @@ export class FragmentedCloseFrameDemo {
   async stop(): Promise<void> {
     if (this.server) {
       this.server.stop();
-      console.log('🛑 Fragmented close frame demo server stopped');
+      console.info('🛑 Fragmented close frame demo server stopped');
     }
   }
 }
 
 // 🚀 MAIN DEMO RUNNER
 export async function runWebSocketFixesDemo() {
-  console.log('🚀 Bun WebSocket Fixes Demo');
-  console.log('=' .repeat(50));
+  console.info('🚀 Bun WebSocket Fixes Demo');
+  console.info('=' .repeat(50));
   
   const cookieDemo = new WebSocketCookieDemo(3001);
   const fragmentedDemo = new FragmentedCloseFrameDemo(3002);
@@ -525,22 +525,22 @@ export async function runWebSocketFixesDemo() {
     await cookieDemo.startCookieDemo();
     await fragmentedDemo.startFragmentedDemo();
     
-    console.log('\n🎯 Demo Servers Running:');
-    console.log('🍪 Cookie Handling: http://localhost:3001');
-    console.log('🔒 Fragmented Close Frames: http://localhost:3002');
+    console.info('\n🎯 Demo Servers Running:');
+    console.info('🍪 Cookie Handling: http://localhost:3001');
+    console.info('🔒 Fragmented Close Frames: http://localhost:3002');
     
-    console.log('\n📚 Key Improvements Demonstrated:');
-    console.log('1. ✅ Cookies set before upgrade now included in 101 response');
-    console.log('2. ✅ Fragmented close frames handled without panic');
-    console.log('3. ✅ Proper buffering of fragmented close payloads');
-    console.log('4. ✅ Enhanced WebSocket stability and reliability');
+    console.info('\n📚 Key Improvements Demonstrated:');
+    console.info('1. ✅ Cookies set before upgrade now included in 101 response');
+    console.info('2. ✅ Fragmented close frames handled without panic');
+    console.info('3. ✅ Proper buffering of fragmented close payloads');
+    console.info('4. ✅ Enhanced WebSocket stability and reliability');
     
-    console.log('\n🌐 Open the URLs in your browser to test the fixes!');
-    console.log('Press Ctrl+C to stop the demo servers...');
+    console.info('\n🌐 Open the URLs in your browser to test the fixes!');
+    console.info('Press Ctrl+C to stop the demo servers...');
     
     // Keep servers running
     process.on('SIGINT', async () => {
-      console.log('\n🛑 Shutting down demo servers...');
+      console.info('\n🛑 Shutting down demo servers...');
       await cookieDemo.stop();
       await fragmentedDemo.stop();
       process.exit(0);

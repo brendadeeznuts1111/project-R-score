@@ -73,9 +73,9 @@ export class EnhancedRealZenDashboard {
       }
     });
 
-    console.log('🎯 MIME Type Detection Initialized:');
+    console.info('🎯 MIME Type Detection Initialized:');
     this.metrics.supportedMimeTypes.forEach(({ extension, mimeType, description }) => {
-      console.log(`   ${extension} → ${mimeType} (${description})`);
+      console.info(`   ${extension} → ${mimeType} (${description})`);
     });
   }
 
@@ -83,7 +83,7 @@ export class EnhancedRealZenDashboard {
    * Start Enhanced REAL dashboard with MIME type support
    */
   async startEnhancedRealDashboard(): Promise<void> {
-    console.log('🎯 Starting Enhanced REAL Zen Dashboard with MIME Type Detection!');
+    console.info('🎯 Starting Enhanced REAL Zen Dashboard with MIME Type Detection!');
     
     // Start Bun server with enhanced MIME support
     this.server = (Bun as any).serve({
@@ -139,20 +139,20 @@ export class EnhancedRealZenDashboard {
       },
     });
 
-    console.log('🌐 Enhanced REAL Zen Dashboard Server Started!');
-    console.log('=' .repeat(70));
-    console.log(`📱 Dashboard: http://localhost:${this.server.port}/dashboard`);
-    console.log(`🔗 Bun Protocol: bun://localhost:${this.server.port}/dashboard`);
-    console.log(`📊 Real Metrics: http://localhost:${this.server.port}/api/real-metrics`);
-    console.log(`🎭 MIME Types: http://localhost:${this.server.port}/api/mime-types`);
-    console.log(`📁 File Analysis: http://localhost:${this.server.port}/api/analyze-file?file=package.json`);
-    console.log(`🔍 Live Search: http://localhost:${this.server.port}/api/search?query=zen`);
-    console.log('');
-    console.log('🎯 Enhanced Features:');
-    console.log('   ✅ Built-in MIME type detection');
-    console.log('   ✅ Intelligent file serving');
-    console.log('   ✅ Real-time performance metrics');
-    console.log('   ✅ Interactive file analysis');
+    console.info('🌐 Enhanced REAL Zen Dashboard Server Started!');
+    console.info('=' .repeat(70));
+    console.info(`📱 Dashboard: http://localhost:${this.server.port}/dashboard`);
+    console.info(`🔗 Bun Protocol: bun://localhost:${this.server.port}/dashboard`);
+    console.info(`📊 Real Metrics: http://localhost:${this.server.port}/api/real-metrics`);
+    console.info(`🎭 MIME Types: http://localhost:${this.server.port}/api/mime-types`);
+    console.info(`📁 File Analysis: http://localhost:${this.server.port}/api/analyze-file?file=package.json`);
+    console.info(`🔍 Live Search: http://localhost:${this.server.port}/api/search?query=zen`);
+    console.info('');
+    console.info('🎯 Enhanced Features:');
+    console.info('   ✅ Built-in MIME type detection');
+    console.info('   ✅ Intelligent file serving');
+    console.info('   ✅ Real-time performance metrics');
+    console.info('   ✅ Interactive file analysis');
     
     // Start performing real searches
     this.startRealSearches();
@@ -262,7 +262,7 @@ export class EnhancedRealZenDashboard {
    * Perform real search (same as before)
    */
   private async performRealSearch(query: string): Promise<any> {
-    console.log(`🔍 Performing REAL search: "${query}"`);
+    console.info(`🔍 Performing REAL search: "${query}"`);
     
     try {
       const startTime = performance.now();
@@ -289,7 +289,7 @@ export class EnhancedRealZenDashboard {
       this.updateSystemHealth();
       this.metrics.lastUpdate = new Date().toISOString();
 
-      console.log(`✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`);
+      console.info(`✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`);
       
       return {
         success: true,
@@ -563,7 +563,7 @@ export class EnhancedRealZenDashboard {
             try {
                 const response = await fetch('/api/mime-types');
                 const data = await response.json();
-                console.log('🎭 MIME Types:', data);
+                console.info('🎭 MIME Types:', data);
                 alert(\`Detected \${data.totalTypes} MIME types using Bun's built-in detection!\`);
             } catch (error) {
                 console.error('❌ Failed to refresh MIME types:', error);
@@ -639,7 +639,7 @@ export class EnhancedRealZenDashboard {
                     document.getElementById('searchHistory').innerHTML = historyHtml;
                 }
                 
-                console.log('✅ Enhanced real data refreshed!');
+                console.info('✅ Enhanced real data refreshed!');
                 
             } catch (error) {
                 console.error('❌ Failed to refresh real data:', error);
@@ -649,9 +649,9 @@ export class EnhancedRealZenDashboard {
         // Auto-refresh every 10 seconds
         setInterval(refreshRealData, 10000);
         
-        console.log('🎯 Enhanced REAL Zen Dashboard loaded!');
-        console.log('🎭 MIME Type Intelligence: Active');
-        console.log('📊 Showing 100% REAL search data with enhanced file handling!');
+        console.info('🎯 Enhanced REAL Zen Dashboard loaded!');
+        console.info('🎭 MIME Type Intelligence: Active');
+        console.info('📊 Showing 100% REAL search data with enhanced file handling!');
     </script>
 </body>
 </html>`;
@@ -667,8 +667,8 @@ export class EnhancedRealZenDashboard {
     const staticFile = (Bun as any).file('enhanced-real-zen-dashboard-mime.html', { type: 'text/html' });
     await Bun.write(staticFile, new TextEncoder().encode(html));
     
-    console.log('📄 Enhanced static dashboard saved: enhanced-real-zen-dashboard-mime.html');
-    console.log('🎯 Open with: open enhanced-real-zen-dashboard-mime.html');
+    console.info('📄 Enhanced static dashboard saved: enhanced-real-zen-dashboard-mime.html');
+    console.info('🎯 Open with: open enhanced-real-zen-dashboard-mime.html');
   }
 
   /**
@@ -683,7 +683,7 @@ export class EnhancedRealZenDashboard {
       this.server.stop();
       this.server = null;
     }
-    console.log('👋 Enhanced REAL Zen Dashboard stopped.');
+    console.info('👋 Enhanced REAL Zen Dashboard stopped.');
   }
 }
 
@@ -694,7 +694,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   enhancedDashboard.startEnhancedRealDashboard().catch(console.error);
   
   process.on('SIGINT', () => {
-    console.log('\n👋 Shutting down Enhanced REAL Zen Dashboard...');
+    console.info('\n👋 Shutting down Enhanced REAL Zen Dashboard...');
     enhancedDashboard.stopDashboard();
     process.exit(0);
   });

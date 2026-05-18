@@ -6,7 +6,7 @@
 // Tool management functions
 export async function refreshTools(): Promise<void> {
   try {
-    console.log('Refreshing tools...');
+    console.info('Refreshing tools...');
     // Implementation for refreshing tools
     alert('✅ Tools refreshed successfully!');
   } catch (error: any) {
@@ -17,7 +17,7 @@ export async function refreshTools(): Promise<void> {
 
 export async function openToolManager(): Promise<void> {
   try {
-    console.log('Opening tool manager...');
+    console.info('Opening tool manager...');
     // Implementation for opening tool manager
     alert(
       '🛠️ Tool Manager\\n\\nFeature coming soon!\\n\\n• Manage tool permissions\\n• Configure tool settings\\n• Monitor tool usage\\n• Update tool versions'

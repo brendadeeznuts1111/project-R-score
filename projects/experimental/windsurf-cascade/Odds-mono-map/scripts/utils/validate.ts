@@ -72,11 +72,11 @@ class VaultValidator {
 
     async validateAll(): Promise<ValidationResult> {
         const startTime = Date.now();
-        console.log(chalk.blue.bold('🔍 Enhanced Vault Validation...'));
-        console.log(chalk.gray(`📁 Vault Path: ${this.vaultPath}`));
-        console.log(chalk.gray(`🔧 Script: ${scriptPath}`));
-        console.log(chalk.gray(`⚡ Direct Execution: ${isDirectExecution}`));
-        console.log(chalk.gray(`🔧 Bun Version: ${Bun.version}`));
+        console.info(chalk.blue.bold('🔍 Enhanced Vault Validation...'));
+        console.info(chalk.gray(`📁 Vault Path: ${this.vaultPath}`));
+        console.info(chalk.gray(`🔧 Script: ${scriptPath}`));
+        console.info(chalk.gray(`⚡ Direct Execution: ${isDirectExecution}`));
+        console.info(chalk.gray(`🔧 Bun Version: ${Bun.version}`));
 
         // Clear previous issues
         this.issues = [];
@@ -87,7 +87,7 @@ class VaultValidator {
             ignore: ['**/.obsidian/**', '**/07 - Archive/**', '**/node_modules/**']
         });
 
-        console.log(chalk.gray(`Found ${files.length} files to validate\n`));
+        console.info(chalk.gray(`Found ${files.length} files to validate\n`));
 
         for (const file of files) {
             await this.validateFile(file);
@@ -335,22 +335,22 @@ class VaultValidator {
     }
 
     private displayResults(stats: ValidationResult, executionTime: number): void {
-        console.log(chalk.blue.bold('\n📊 Enhanced Validation Results:'));
-        console.log(chalk.gray(`Total files: ${stats.totalFiles}`));
-        console.log(chalk.green(`Valid files: ${stats.validFiles}`));
-        console.log(chalk.gray(`⚡ Execution time: ${executionTime}ms`));
+        console.info(chalk.blue.bold('\n📊 Enhanced Validation Results:'));
+        console.info(chalk.gray(`Total files: ${stats.totalFiles}`));
+        console.info(chalk.green(`Valid files: ${stats.validFiles}`));
+        console.info(chalk.gray(`⚡ Execution time: ${executionTime}ms`));
 
         if (stats.errors > 0) {
-            console.log(chalk.red(`❌ Errors: ${stats.errors}`));
+            console.info(chalk.red(`❌ Errors: ${stats.errors}`));
         }
 
         if (stats.warnings > 0) {
-            console.log(chalk.yellow(`⚠️  Warnings: ${stats.warnings}`));
+            console.info(chalk.yellow(`⚠️  Warnings: ${stats.warnings}`));
         }
 
         const complianceColor = stats.compliance >= 90 ? chalk.green :
             stats.compliance >= 70 ? chalk.yellow : chalk.red;
-        console.log(complianceColor(`📈 Compliance: ${stats.compliance}%`));
+        console.info(complianceColor(`📈 Compliance: ${stats.compliance}%`));
 
         // Show issues by file with enhanced info
         const issuesByFile = this.issues.reduce((acc, issue) => {
@@ -360,46 +360,46 @@ class VaultValidator {
         }, {} as Record<string, ValidationIssue[]>);
 
         if (Object.keys(issuesByFile).length > 0) {
-            console.log(chalk.blue.bold('\n🔍 Issues by File:'));
+            console.info(chalk.blue.bold('\n🔍 Issues by File:'));
 
             for (const [file, fileIssues] of Object.entries(issuesByFile)) {
                 const errorCount = fileIssues.filter(i => i.type === 'error').length;
                 const warningCount = fileIssues.filter(i => i.type === 'warning').length;
                 const firstIssue = fileIssues[0];
 
-                console.log(chalk.white(`\n📄 ${file}`));
-                console.log(chalk.gray(`   📍 Full path: ${firstIssue.fullPath}`));
-                console.log(chalk.gray(`   📂 Relative: ${firstIssue.relativePath}`));
+                console.info(chalk.white(`\n📄 ${file}`));
+                console.info(chalk.gray(`   📍 Full path: ${firstIssue.fullPath}`));
+                console.info(chalk.gray(`   📂 Relative: ${firstIssue.relativePath}`));
 
                 if (errorCount > 0) {
-                    console.log(chalk.red(`   ${errorCount} errors:`));
+                    console.info(chalk.red(`   ${errorCount} errors:`));
                     fileIssues.filter(i => i.type === 'error').forEach(issue => {
                         const lineInfo = issue.line ? ` (line ${issue.line})` : '';
-                        console.log(chalk.red(`     ❌ ${issue.message}${lineInfo}`));
+                        console.info(chalk.red(`     ❌ ${issue.message}${lineInfo}`));
                         if (issue.suggestion) {
-                            console.log(chalk.gray(`        💡 ${issue.suggestion}`));
+                            console.info(chalk.gray(`        💡 ${issue.suggestion}`));
                         }
                     });
                 }
 
                 if (warningCount > 0) {
-                    console.log(chalk.yellow(`   ${warningCount} warnings:`));
+                    console.info(chalk.yellow(`   ${warningCount} warnings:`));
                     fileIssues.filter(i => i.type === 'warning').forEach(issue => {
                         const lineInfo = issue.line ? ` (line ${issue.line})` : '';
-                        console.log(chalk.yellow(`     ⚠️  ${issue.message}${lineInfo}`));
+                        console.info(chalk.yellow(`     ⚠️  ${issue.message}${lineInfo}`));
                         if (issue.suggestion) {
-                            console.log(chalk.gray(`        💡 ${issue.suggestion}`));
+                            console.info(chalk.gray(`        💡 ${issue.suggestion}`));
                         }
                     });
                 }
             }
         }
 
-        console.log(chalk.blue.bold('\n🔧 Quick Actions:'));
-        console.log(chalk.gray('   📝 Open files in editor: Bun.openInEditor(file_path, {line: 10, column: 5})'));
-        console.log(chalk.gray('   🏃‍♂️ Run auto-fix: bun run vault:fix'));
-        console.log(chalk.gray('   📊 View detailed report: cat .vault-status.json'));
-        console.log(chalk.gray('   ⚙️  Configure editor: Edit bunfig.toml [debug] section'));
+        console.info(chalk.blue.bold('\n🔧 Quick Actions:'));
+        console.info(chalk.gray('   📝 Open files in editor: Bun.openInEditor(file_path, {line: 10, column: 5})'));
+        console.info(chalk.gray('   🏃‍♂️ Run auto-fix: bun run vault:fix'));
+        console.info(chalk.gray('   📊 View detailed report: cat .vault-status.json'));
+        console.info(chalk.gray('   ⚙️  Configure editor: Edit bunfig.toml [debug] section'));
 
         // Show error statistics
         const errorTypes = this.issues.filter(i => i.type === 'error').reduce((acc, issue) => {
@@ -415,41 +415,41 @@ class VaultValidator {
         }, {} as Record<string, number>);
 
         if (Object.keys(errorTypes).length > 0) {
-            console.log(chalk.yellow('\n🚨 Error Breakdown:'));
+            console.info(chalk.yellow('\n🚨 Error Breakdown:'));
             Object.entries(errorTypes).forEach(([type, count]) => {
-                console.log(chalk.red(`   ❌ ${type}: ${count}`));
+                console.info(chalk.red(`   ❌ ${type}: ${count}`));
             });
         }
 
         if (Object.keys(warningTypes).length > 0) {
-            console.log(chalk.yellow('\n⚠️  Warning Breakdown:'));
+            console.info(chalk.yellow('\n⚠️  Warning Breakdown:'));
             Object.entries(warningTypes).slice(0, 5).forEach(([type, count]) => {
-                console.log(chalk.yellow(`   ⚠️  ${type}: ${count}`));
+                console.info(chalk.yellow(`   ⚠️  ${type}: ${count}`));
             });
             if (Object.keys(warningTypes).length > 5) {
-                console.log(chalk.gray(`   ... and ${Object.keys(warningTypes).length - 5} more`));
+                console.info(chalk.gray(`   ... and ${Object.keys(warningTypes).length - 5} more`));
             }
         }
 
         if (stats.errors > 0) {
-            console.log(chalk.yellow('\n💡 Error Resolution Strategy:'));
-            console.log('1. Run: bun run vault:fix - Auto-fix common issues');
-            console.log('2. Use Bun.openInEditor() to open problematic files directly');
-            console.log('3. Check bunfig.toml for editor configuration');
+            console.info(chalk.yellow('\n💡 Error Resolution Strategy:'));
+            console.info('1. Run: bun run vault:fix - Auto-fix common issues');
+            console.info('2. Use Bun.openInEditor() to open problematic files directly');
+            console.info('3. Check bunfig.toml for editor configuration');
         }
         if (stats.warnings > 0) {
-            console.log('2. Review warnings and update files manually');
+            console.info('2. Review warnings and update files manually');
         }
         if (stats.compliance < 100) {
-            console.log('3. Run: bun run vault:organize - Fix file organization');
+            console.info('3. Run: bun run vault:organize - Fix file organization');
         }
 
         // Show debugging information
-        console.log(chalk.blue('\n🐛 Debugging Information:'));
-        console.log(chalk.gray('   🔍 To debug validation: bun --inspect scripts/validate.ts'));
-        console.log(chalk.gray('   📝 To create custom validation: cp scripts/validate.ts scripts/custom-validate.ts'));
-        console.log(chalk.gray('   ⚙️  To change editor: Edit bunfig.toml [debug] editor setting'));
-        console.log(chalk.gray('   🌍 To check environment: echo $EDITOR or echo $VISUAL'));
+        console.info(chalk.blue('\n🐛 Debugging Information:'));
+        console.info(chalk.gray('   🔍 To debug validation: bun --inspect scripts/validate.ts'));
+        console.info(chalk.gray('   📝 To create custom validation: cp scripts/validate.ts scripts/custom-validate.ts'));
+        console.info(chalk.gray('   ⚙️  To change editor: Edit bunfig.toml [debug] editor setting'));
+        console.info(chalk.gray('   🌍 To check environment: echo $EDITOR or echo $VISUAL'));
     }
 }
 
@@ -457,21 +457,21 @@ class VaultValidator {
 if (import.meta.main) {
     ErrorHandler.handleAsync(
         async () => {
-            console.log(chalk.blue.bold('🚀 Starting Enhanced Vault Validation...'));
-            console.log(chalk.gray(`🔧 Bun Version: ${Bun.version}`));
-            console.log(chalk.gray(`📊 PID: ${process.pid}`));
-            console.log(chalk.gray(`💾 Memory Usage: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`));
-            console.log(chalk.gray(`🏠 Main Entry: ${Bun.main}`));
-            console.log(chalk.gray(`📁 Script Path: ${import.meta.path}`));
+            console.info(chalk.blue.bold('🚀 Starting Enhanced Vault Validation...'));
+            console.info(chalk.gray(`🔧 Bun Version: ${Bun.version}`));
+            console.info(chalk.gray(`📊 PID: ${process.pid}`));
+            console.info(chalk.gray(`💾 Memory Usage: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`));
+            console.info(chalk.gray(`🏠 Main Entry: ${Bun.main}`));
+            console.info(chalk.gray(`📁 Script Path: ${import.meta.path}`));
 
             // Demonstrate direct execution detection
             const isDirectExecution = import.meta.path === Bun.main;
-            console.log(chalk.gray(`⚡ Direct Execution: ${isDirectExecution}`));
+            console.info(chalk.gray(`⚡ Direct Execution: ${isDirectExecution}`));
 
             if (isDirectExecution) {
-                console.log(chalk.green('   ✅ Script is being run directly'));
+                console.info(chalk.green('   ✅ Script is being run directly'));
             } else {
-                console.log(chalk.yellow('   ⚠️  Script is being imported from another script'));
+                console.info(chalk.yellow('   ⚠️  Script is being imported from another script'));
             }
 
             const startTime = Date.now();
@@ -479,192 +479,192 @@ if (import.meta.main) {
             const result = await validator.validateAll();
 
             // Add Bun utilities demonstration
-            console.log(chalk.blue.bold('\n🔧 Bun Utilities Available:'));
-            console.log(chalk.gray('   📝 Open in editor: Bun.openInEditor(file_path, {line: 10, column: 5})'));
-            console.log(chalk.gray('   ⏰ Sleep: await Bun.sleep(1000) or await Bun.sleep(new Date(Date.now() + 5000))'));
-            console.log(chalk.gray('   💤 Sleep sync: Bun.sleepSync(ms) (blocking)'));
-            console.log(chalk.gray('   🔍 Find executable: Bun.which("bin", { PATH: "/usr/bin", cwd: "/tmp" })'));
-            console.log(chalk.gray('   👀 Peek promise: Bun.peek(promise)'));
-            console.log(chalk.gray('   🌍 Environment: Bun.env.YOUR_VAR'));
-            console.log(chalk.gray('   ⚖️  Deep equals: Bun.deepEquals(obj1, obj2, strict?)'));
-            console.log(chalk.gray('   🛡️  Escape HTML: Bun.escapeHTML(unsafe_string)'));
-            console.log(chalk.gray('   📏 String width: Bun.stringWidth(text, { countAnsiEscapeCodes: true, ambiguousIsNarrow: false })'));
-            console.log(chalk.gray('   🕐 Nanoseconds: Bun.nanoseconds()'));
-            console.log(chalk.gray('   📊 Inspect: Bun.inspect(object)'));
-            console.log(chalk.gray('   🗂️  Path utilities: Bun.fileURLToPath(url), Bun.pathToFileURL(path)'));
-            console.log(chalk.gray('   🗜️  Compression: Bun.gzipSync(), Bun.deflateSync(), Bun.zstdCompressSync()'));
-            console.log(chalk.gray('   📊 Inspect: Bun.inspect(object), Bun.inspect.table(data, cols, { colors: true })'));
-            console.log(chalk.gray('   🕐 Nanoseconds: Bun.nanoseconds() (high-precision timing)'));
-            console.log(chalk.gray('   🗂️  Path utilities: Bun.fileURLToPath(url), Bun.pathToFileURL(path)'));
-            console.log(chalk.gray('   📖 Stream utilities: Bun.readableStreamToText(stream), toArrayBuffer(), toJSON()'));
-            console.log(chalk.gray('   🔧 Module resolve: Bun.resolveSync(module, root) (with import.meta.dir support)'));
-            console.log(chalk.gray('   🎨 Strip ANSI: Bun.stripANSI(colored_text) (6-57x faster than npm)'));
-            console.log(chalk.gray('   💾 Memory estimate: estimateShallowMemoryUsageOf(obj) from "bun:jsc"'));
-            console.log(chalk.gray('   🔄 Serialize: serialize(obj), deserialize(buf) from "bun:jsc"'));
-            console.log(chalk.gray('   📋 Version info: Bun.version, Bun.revision'));
-            console.log(chalk.gray('   🏠 Main entry: Bun.main (absolute path to executed file)'));
-            console.log(chalk.gray('   📁 Script path: import.meta.path (current file path)'));
-            console.log(chalk.gray('   ⚡ Execution check: import.meta.path === Bun.main'));
-            console.log(chalk.gray('   🛡️  HTML escape: Bun.escapeHTML(value) (480MB/s - 20GB/s performance)'));
-            console.log(chalk.gray('   ⏰ Sleep utilities: await Bun.sleep(ms|date), Bun.sleepSync(ms)'));
-            console.log(chalk.gray('   🔍 Find executable: Bun.which("bin", { PATH: "/usr/bin", cwd: "/tmp" })'));
+            console.info(chalk.blue.bold('\n🔧 Bun Utilities Available:'));
+            console.info(chalk.gray('   📝 Open in editor: Bun.openInEditor(file_path, {line: 10, column: 5})'));
+            console.info(chalk.gray('   ⏰ Sleep: await Bun.sleep(1000) or await Bun.sleep(new Date(Date.now() + 5000))'));
+            console.info(chalk.gray('   💤 Sleep sync: Bun.sleepSync(ms) (blocking)'));
+            console.info(chalk.gray('   🔍 Find executable: Bun.which("bin", { PATH: "/usr/bin", cwd: "/tmp" })'));
+            console.info(chalk.gray('   👀 Peek promise: Bun.peek(promise)'));
+            console.info(chalk.gray('   🌍 Environment: Bun.env.YOUR_VAR'));
+            console.info(chalk.gray('   ⚖️  Deep equals: Bun.deepEquals(obj1, obj2, strict?)'));
+            console.info(chalk.gray('   🛡️  Escape HTML: Bun.escapeHTML(unsafe_string)'));
+            console.info(chalk.gray('   📏 String width: Bun.stringWidth(text, { countAnsiEscapeCodes: true, ambiguousIsNarrow: false })'));
+            console.info(chalk.gray('   🕐 Nanoseconds: Bun.nanoseconds()'));
+            console.info(chalk.gray('   📊 Inspect: Bun.inspect(object)'));
+            console.info(chalk.gray('   🗂️  Path utilities: Bun.fileURLToPath(url), Bun.pathToFileURL(path)'));
+            console.info(chalk.gray('   🗜️  Compression: Bun.gzipSync(), Bun.deflateSync(), Bun.zstdCompressSync()'));
+            console.info(chalk.gray('   📊 Inspect: Bun.inspect(object), Bun.inspect.table(data, cols, { colors: true })'));
+            console.info(chalk.gray('   🕐 Nanoseconds: Bun.nanoseconds() (high-precision timing)'));
+            console.info(chalk.gray('   🗂️  Path utilities: Bun.fileURLToPath(url), Bun.pathToFileURL(path)'));
+            console.info(chalk.gray('   📖 Stream utilities: Bun.readableStreamToText(stream), toArrayBuffer(), toJSON()'));
+            console.info(chalk.gray('   🔧 Module resolve: Bun.resolveSync(module, root) (with import.meta.dir support)'));
+            console.info(chalk.gray('   🎨 Strip ANSI: Bun.stripANSI(colored_text) (6-57x faster than npm)'));
+            console.info(chalk.gray('   💾 Memory estimate: estimateShallowMemoryUsageOf(obj) from "bun:jsc"'));
+            console.info(chalk.gray('   🔄 Serialize: serialize(obj), deserialize(buf) from "bun:jsc"'));
+            console.info(chalk.gray('   📋 Version info: Bun.version, Bun.revision'));
+            console.info(chalk.gray('   🏠 Main entry: Bun.main (absolute path to executed file)'));
+            console.info(chalk.gray('   📁 Script path: import.meta.path (current file path)'));
+            console.info(chalk.gray('   ⚡ Execution check: import.meta.path === Bun.main'));
+            console.info(chalk.gray('   🛡️  HTML escape: Bun.escapeHTML(value) (480MB/s - 20GB/s performance)'));
+            console.info(chalk.gray('   ⏰ Sleep utilities: await Bun.sleep(ms|date), Bun.sleepSync(ms)'));
+            console.info(chalk.gray('   🔍 Find executable: Bun.which("bin", { PATH: "/usr/bin", cwd: "/tmp" })'));
 
             // Show environment variables info
-            console.log(chalk.blue.bold('\n🌍 Environment Variables Status:'));
-            console.log(chalk.gray(`   🎨 Colors enabled: ${Bun.env.NO_COLOR ? 'No (NO_COLOR=1)' : 'Yes'}`));
-            console.log(chalk.gray(`   🎨 Force colors: ${Bun.env.FORCE_COLOR ? 'Yes (FORCE_COLOR=1)' : 'No'}`));
-            console.log(chalk.gray(`   📊 Max HTTP requests: ${Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '256 (default)'}`));
-            console.log(chalk.gray(`   🌐 Verbose fetch: ${Bun.env.BUN_CONFIG_VERBOSE_FETCH || 'Disabled'}`));
-            console.log(chalk.gray(`   💾 Transpiler cache: ${Bun.env.BUN_RUNTIME_TRANSPILER_CACHE_PATH || 'Default location'}`));
-            console.log(chalk.gray(`   📁 Temp directory: ${Bun.env.TMPDIR || 'System default'}`));
-            console.log(chalk.gray(`   🚫 Do not track: ${Bun.env.DO_NOT_TRACK ? 'Enabled' : 'Disabled'}`));
-            console.log(chalk.gray(`   ⚙️  Bun options: ${Bun.env.BUN_OPTIONS || 'None'}`));
+            console.info(chalk.blue.bold('\n🌍 Environment Variables Status:'));
+            console.info(chalk.gray(`   🎨 Colors enabled: ${Bun.env.NO_COLOR ? 'No (NO_COLOR=1)' : 'Yes'}`));
+            console.info(chalk.gray(`   🎨 Force colors: ${Bun.env.FORCE_COLOR ? 'Yes (FORCE_COLOR=1)' : 'No'}`));
+            console.info(chalk.gray(`   📊 Max HTTP requests: ${Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '256 (default)'}`));
+            console.info(chalk.gray(`   🌐 Verbose fetch: ${Bun.env.BUN_CONFIG_VERBOSE_FETCH || 'Disabled'}`));
+            console.info(chalk.gray(`   💾 Transpiler cache: ${Bun.env.BUN_RUNTIME_TRANSPILER_CACHE_PATH || 'Default location'}`));
+            console.info(chalk.gray(`   📁 Temp directory: ${Bun.env.TMPDIR || 'System default'}`));
+            console.info(chalk.gray(`   🚫 Do not track: ${Bun.env.DO_NOT_TRACK ? 'Enabled' : 'Disabled'}`));
+            console.info(chalk.gray(`   ⚙️  Bun options: ${Bun.env.BUN_OPTIONS || 'None'}`));
 
             // Show bunfig configuration info
-            console.log(chalk.blue.bold('\n⚙️  Bun Configuration & Execution Context:'));
-            console.log(chalk.gray('   📝 Default editor: code (VS Code)'));
-            console.log(chalk.gray('   🔧 Configure in: bunfig.toml [debug] section'));
-            console.log(chalk.gray('   🌍 Environment fallback: $EDITOR or $VISUAL'));
-            console.log(chalk.gray('   📋 Available editors: vscode, subl, idea, nvim, vim, emacs'));
-            console.log(chalk.gray(`   🏠 Main entry point: ${Bun.main}`));
-            console.log(chalk.gray(`   📁 Current script path: ${import.meta.path}`));
-            console.log(chalk.gray(`   ⚡ Execution mode: ${import.meta.path === Bun.main ? 'direct' : 'imported'}`));
+            console.info(chalk.blue.bold('\n⚙️  Bun Configuration & Execution Context:'));
+            console.info(chalk.gray('   📝 Default editor: code (VS Code)'));
+            console.info(chalk.gray('   🔧 Configure in: bunfig.toml [debug] section'));
+            console.info(chalk.gray('   🌍 Environment fallback: $EDITOR or $VISUAL'));
+            console.info(chalk.gray('   📋 Available editors: vscode, subl, idea, nvim, vim, emacs'));
+            console.info(chalk.gray(`   🏠 Main entry point: ${Bun.main}`));
+            console.info(chalk.gray(`   📁 Current script path: ${import.meta.path}`));
+            console.info(chalk.gray(`   ⚡ Execution mode: ${import.meta.path === Bun.main ? 'direct' : 'imported'}`));
 
             // Check if bunfig exists and show status
             const bunfigPath = join(vaultPath, 'bunfig.toml');
             try {
                 const bunfigExists = statSync(bunfigPath).isFile();
                 if (bunfigExists) {
-                    console.log(chalk.green('   ✅ bunfig.toml detected in vault root'));
+                    console.info(chalk.green('   ✅ bunfig.toml detected in vault root'));
                 } else {
-                    console.log(chalk.yellow('   ⚠️  bunfig.toml not found (using defaults)'));
+                    console.info(chalk.yellow('   ⚠️  bunfig.toml not found (using defaults)'));
                 }
             } catch {
-                console.log(chalk.yellow('   ⚠️  bunfig.toml not found (using defaults)'));
+                console.info(chalk.yellow('   ⚠️  bunfig.toml not found (using defaults)'));
             }
 
             // Example of using Bun utilities for file operations
             if (result.stats.errors > 0) {
-                console.log(chalk.yellow('\n🔧 Quick Fix Helper:'));
-                console.log(chalk.gray('   You can open problematic files directly:'));
+                console.info(chalk.yellow('\n🔧 Quick Fix Helper:'));
+                console.info(chalk.gray('   You can open problematic files directly:'));
 
                 const errorFiles = [...new Set(result.issues.filter(i => i.type === 'error').map(i => i.file))];
                 errorFiles.slice(0, 3).forEach((file, index) => {
                     const issue = result.issues.find(i => i.file === file && i.type === 'error');
                     const lineInfo = issue?.line ? `, {line: ${issue.line}}` : '';
-                    console.log(chalk.gray(`   ${index + 1}. Bun.openInEditor('${file}'${lineInfo});`));
+                    console.info(chalk.gray(`   ${index + 1}. Bun.openInEditor('${file}'${lineInfo});`));
                 });
 
                 // Demonstrate other utilities
-                console.log(chalk.yellow('\n🔧 Other Utility Examples:'));
-                console.log(chalk.gray(`   🎲 Generate unique ID: const id = Bun.randomUUIDv7();`));
-                console.log(chalk.gray(`   📏 Measure text width: Bun.stringWidth("Your text")`));
-                console.log(chalk.gray(`   🛡️  Escape HTML: Bun.escapeHTML("<script>alert('xss')</script>")`));
-                console.log(chalk.gray(`   ⚖️  Compare objects: Bun.deepEquals(obj1, obj2, true)`));
-                console.log(chalk.gray(`   🕐 High-precision timing: const start = Bun.nanoseconds();`));
-                console.log(chalk.gray(`   🎨 Strip ANSI colors: const clean = Bun.stripANSI(coloredText);`));
-                console.log(chalk.gray(`   📦 Compress data: const compressed = Bun.gzipSync(buffer);`));
-                console.log(chalk.gray(`   🗂️  Convert paths: const path = Bun.fileURLToPath(url);`));
-                console.log(chalk.gray(`   📊 Format tables: const table = Bun.inspect.table(data, ['col1', 'col2']);`));
-                console.log(chalk.gray(`   🔧 Resolve modules: const resolved = Bun.resolveSync("./file", import.meta.dir);`));
-                console.log(chalk.gray(`   🗜️  Compress data: const compressed = Bun.gzipSync(buffer);`));
-                console.log(chalk.gray(`   📦 Decompress data: const original = Bun.gunzipSync(compressed);`));
-                console.log(chalk.gray(`   💾 Estimate memory: const usage = estimateShallowMemoryUsageOf(obj);`));
-                console.log(chalk.gray(`   🔄 Serialize data: const buf = serialize(object);`));
+                console.info(chalk.yellow('\n🔧 Other Utility Examples:'));
+                console.info(chalk.gray(`   🎲 Generate unique ID: const id = Bun.randomUUIDv7();`));
+                console.info(chalk.gray(`   📏 Measure text width: Bun.stringWidth("Your text")`));
+                console.info(chalk.gray(`   🛡️  Escape HTML: Bun.escapeHTML("<script>alert('xss')</script>")`));
+                console.info(chalk.gray(`   ⚖️  Compare objects: Bun.deepEquals(obj1, obj2, true)`));
+                console.info(chalk.gray(`   🕐 High-precision timing: const start = Bun.nanoseconds();`));
+                console.info(chalk.gray(`   🎨 Strip ANSI colors: const clean = Bun.stripANSI(coloredText);`));
+                console.info(chalk.gray(`   📦 Compress data: const compressed = Bun.gzipSync(buffer);`));
+                console.info(chalk.gray(`   🗂️  Convert paths: const path = Bun.fileURLToPath(url);`));
+                console.info(chalk.gray(`   📊 Format tables: const table = Bun.inspect.table(data, ['col1', 'col2']);`));
+                console.info(chalk.gray(`   🔧 Resolve modules: const resolved = Bun.resolveSync("./file", import.meta.dir);`));
+                console.info(chalk.gray(`   🗜️  Compress data: const compressed = Bun.gzipSync(buffer);`));
+                console.info(chalk.gray(`   📦 Decompress data: const original = Bun.gunzipSync(compressed);`));
+                console.info(chalk.gray(`   💾 Estimate memory: const usage = estimateShallowMemoryUsageOf(obj);`));
+                console.info(chalk.gray(`   🔄 Serialize data: const buf = serialize(object);`));
 
                 // Show error handling examples
-                console.log(chalk.yellow('\n🚨 Error Handling & Execution Examples:'));
-                console.log(chalk.gray(`   🔍 Check executable: const bunPath = Bun.which('bun');`));
-                console.log(chalk.gray(`   👀 Non-blocking promise check: const result = Bun.peek(myPromise);`));
-                console.log(chalk.gray(`   🌍 Access environment: const nodeEnv = Bun.env.NODE_ENV;`));
-                console.log(chalk.gray(`   ⏰ Add delay: await Bun.sleep(1000);`));
-                console.log(chalk.gray(`   💤 Block thread: Bun.sleepSync(1000);`));
-                console.log(chalk.gray(`   📅 Sleep until date: await Bun.sleep(new Date(Date.now() + 5000));`));
-                console.log(chalk.gray(`   🛠️  Find with custom PATH: Bun.which('node', { PATH: '/usr/bin' });`));
-                console.log(chalk.gray(`   📂 Find from directory: Bun.which('script', { cwd: '/tmp' });`));
-                console.log(chalk.gray(`   🏠 Check execution mode: if (import.meta.path === Bun.main) { /* direct */ }`));
-                console.log(chalk.gray(`   📁 Get current file: const currentFile = import.meta.path;`));
-                console.log(chalk.gray(`   🎯 Get main entry: const mainFile = Bun.main;`));
+                console.info(chalk.yellow('\n🚨 Error Handling & Execution Examples:'));
+                console.info(chalk.gray(`   🔍 Check executable: const bunPath = Bun.which('bun');`));
+                console.info(chalk.gray(`   👀 Non-blocking promise check: const result = Bun.peek(myPromise);`));
+                console.info(chalk.gray(`   🌍 Access environment: const nodeEnv = Bun.env.NODE_ENV;`));
+                console.info(chalk.gray(`   ⏰ Add delay: await Bun.sleep(1000);`));
+                console.info(chalk.gray(`   💤 Block thread: Bun.sleepSync(1000);`));
+                console.info(chalk.gray(`   📅 Sleep until date: await Bun.sleep(new Date(Date.now() + 5000));`));
+                console.info(chalk.gray(`   🛠️  Find with custom PATH: Bun.which('node', { PATH: '/usr/bin' });`));
+                console.info(chalk.gray(`   📂 Find from directory: Bun.which('script', { cwd: '/tmp' });`));
+                console.info(chalk.gray(`   🏠 Check execution mode: if (import.meta.path === Bun.main) { /* direct */ }`));
+                console.info(chalk.gray(`   📁 Get current file: const currentFile = import.meta.path;`));
+                console.info(chalk.gray(`   🎯 Get main entry: const mainFile = Bun.main;`));
             }
 
             // Show some practical examples of the new utilities
-            console.log(chalk.blue.bold('\n📊 Live Utility Examples:'));
+            console.info(chalk.blue.bold('\n📊 Live Utility Examples:'));
             const sampleId = Bun.randomUUIDv7();
             const nanoTime = Bun.nanoseconds();
-            console.log(chalk.gray(`   🎲 Generated UUID v7: ${sampleId}`));
-            console.log(chalk.gray(`   📏 Text width: Bun.stringWidth("Hello World") = ${Bun.stringWidth("Hello World")}`));
-            console.log(chalk.gray(`   🛡️  HTML escaped: ${Bun.escapeHTML('<div>Hello</div>')}`));
-            console.log(chalk.gray(`   🕐 Nanoseconds since start: ${Bun.nanoseconds()}`));
-            console.log(chalk.gray(`   📋 Bun version: ${Bun.version}`));
-            console.log(chalk.gray(`   🔖 Git revision: ${Bun.revision}`));
-            console.log(chalk.gray(`   🏠 Main entry: ${Bun.main}`));
+            console.info(chalk.gray(`   🎲 Generated UUID v7: ${sampleId}`));
+            console.info(chalk.gray(`   📏 Text width: Bun.stringWidth("Hello World") = ${Bun.stringWidth("Hello World")}`));
+            console.info(chalk.gray(`   🛡️  HTML escaped: ${Bun.escapeHTML('<div>Hello</div>')}`));
+            console.info(chalk.gray(`   🕐 Nanoseconds since start: ${Bun.nanoseconds()}`));
+            console.info(chalk.gray(`   📋 Bun version: ${Bun.version}`));
+            console.info(chalk.gray(`   🔖 Git revision: ${Bun.revision}`));
+            console.info(chalk.gray(`   🏠 Main entry: ${Bun.main}`));
 
             // Demonstrate system utilities
-            console.log(chalk.blue('\n🔧 System Utility Examples:'));
+            console.info(chalk.blue('\n🔧 System Utility Examples:'));
             const bunPath = Bun.which('bun');
             const nodePath = Bun.which('node');
             const codePath = Bun.which('code');
-            console.log(chalk.gray(`   🔍 Bun executable: ${bunPath || 'Not found'}`));
-            console.log(chalk.gray(`   🔍 Node executable: ${nodePath || 'Not found'}`));
-            console.log(chalk.gray(`   🔍 VS Code executable: ${codePath || 'Not found'}`));
+            console.info(chalk.gray(`   🔍 Bun executable: ${bunPath || 'Not found'}`));
+            console.info(chalk.gray(`   🔍 Node executable: ${nodePath || 'Not found'}`));
+            console.info(chalk.gray(`   🔍 VS Code executable: ${codePath || 'Not found'}`));
 
             // Demonstrate path utilities
             const currentFile = import.meta.path;
             const mainFile = Bun.main;
             const fileUrl = Bun.pathToFileURL(currentFile);
             const backToPath = Bun.fileURLToPath(fileUrl);
-            console.log(chalk.gray(`   📁 Current file: ${currentFile}`));
-            console.log(chalk.gray(`   🏠 Main entry: ${mainFile}`));
-            console.log(chalk.gray(`   🌐 File URL: ${fileUrl}`));
-            console.log(chalk.gray(`   🔄 Back to path: ${backToPath}`));
-            console.log(chalk.gray(`   ✅ Path conversion works: ${currentFile === backToPath}`));
+            console.info(chalk.gray(`   📁 Current file: ${currentFile}`));
+            console.info(chalk.gray(`   🏠 Main entry: ${mainFile}`));
+            console.info(chalk.gray(`   🌐 File URL: ${fileUrl}`));
+            console.info(chalk.gray(`   🔄 Back to path: ${backToPath}`));
+            console.info(chalk.gray(`   ✅ Path conversion works: ${currentFile === backToPath}`));
 
             // Demonstrate string utilities
             const coloredText = '\u001b[31mRed Text\u001b[0m';
             const plainText = Bun.stripANSI(coloredText);
             const ansiWidth = Bun.stringWidth(coloredText, { countAnsiEscapeCodes: true });
             const displayWidth = Bun.stringWidth(coloredText);
-            console.log(chalk.gray(`   🎨 ANSI stripped: "${coloredText}" → "${plainText}"`));
-            console.log(chalk.gray(`   📏 ANSI width (with codes): ${ansiWidth}`));
-            console.log(chalk.gray(`   📏 Display width (visual): ${displayWidth}`));
+            console.info(chalk.gray(`   🎨 ANSI stripped: "${coloredText}" → "${plainText}"`));
+            console.info(chalk.gray(`   📏 ANSI width (with codes): ${ansiWidth}`));
+            console.info(chalk.gray(`   📏 Display width (visual): ${displayWidth}`));
 
             // Demonstrate deep equals with validation results
             const quickCheck = { errors: result.stats.errors, warnings: result.stats.warnings };
             const sameCheck = { errors: result.stats.errors, warnings: result.stats.warnings };
-            console.log(chalk.gray(`   ⚖️  Deep equals test: ${Bun.deepEquals(quickCheck, sameCheck)}`));
+            console.info(chalk.gray(`   ⚖️  Deep equals test: ${Bun.deepEquals(quickCheck, sameCheck)}`));
 
             // Demonstrate compression utilities
-            console.log(chalk.blue('\n📦 Compression Utility Examples:'));
+            console.info(chalk.blue('\n📦 Compression Utility Examples:'));
             const testText = 'Hello World! '.repeat(50);
             const testBuffer = Buffer.from(testText);
 
             // GZIP compression
             const gzipped = Bun.gzipSync(testBuffer);
             const gunzipped = Bun.gunzipSync(gzipped);
-            console.log(chalk.gray(`   📊 Original: ${testBuffer.length} bytes`));
-            console.log(chalk.gray(`   🗜️  GZIP compressed: ${gzipped.length} bytes (${Math.round((1 - gzipped.length / testBuffer.length) * 100)}% reduction)`));
-            console.log(chalk.gray(`   ✅ GZIP decompressed: ${gunzipped.length} bytes`));
+            console.info(chalk.gray(`   📊 Original: ${testBuffer.length} bytes`));
+            console.info(chalk.gray(`   🗜️  GZIP compressed: ${gzipped.length} bytes (${Math.round((1 - gzipped.length / testBuffer.length) * 100)}% reduction)`));
+            console.info(chalk.gray(`   ✅ GZIP decompressed: ${gunzipped.length} bytes`));
 
             // DEFLATE compression
             const deflated = Bun.deflateSync(testBuffer);
             const inflated = Bun.inflateSync(deflated);
-            console.log(chalk.gray(`   🗜️  DEFLATE compressed: ${deflated.length} bytes (${Math.round((1 - deflated.length / testBuffer.length) * 100)}% reduction)`));
-            console.log(chalk.gray(`   ✅ DEFLATE decompressed: ${inflated.length} bytes`));
+            console.info(chalk.gray(`   🗜️  DEFLATE compressed: ${deflated.length} bytes (${Math.round((1 - deflated.length / testBuffer.length) * 100)}% reduction)`));
+            console.info(chalk.gray(`   ✅ DEFLATE decompressed: ${inflated.length} bytes`));
 
             // Zstandard compression
             const zstdCompressed = Bun.zstdCompressSync(testBuffer, { level: 6 });
             const zstdDecompressed = Bun.zstdDecompressSync(zstdCompressed);
-            console.log(chalk.gray(`   🗜️  ZSTD compressed: ${zstdCompressed.length} bytes (${Math.round((1 - zstdCompressed.length / testBuffer.length) * 100)}% reduction)`));
-            console.log(chalk.gray(`   ✅ ZSTD decompressed: ${zstdDecompressed.length} bytes`));
+            console.info(chalk.gray(`   🗜️  ZSTD compressed: ${zstdCompressed.length} bytes (${Math.round((1 - zstdCompressed.length / testBuffer.length) * 100)}% reduction)`));
+            console.info(chalk.gray(`   ✅ ZSTD decompressed: ${zstdDecompressed.length} bytes`));
 
             // Demonstrate inspect utilities
-            console.log(chalk.blue('\n📊 Inspect Utility Examples:'));
+            console.info(chalk.blue('\n📊 Inspect Utility Examples:'));
             const testObj = { name: 'Test', value: 42, nested: { active: true } };
             const testArray = new Uint8Array([1, 2, 3, 4, 5]);
 
-            console.log(chalk.gray('   📋 Object inspection:'));
-            console.log(chalk.gray(`      ${Bun.inspect(testObj).replace(/\n/g, '\n      ')}`));
-            console.log(chalk.gray(`   📋 Array inspection: ${Bun.inspect(testArray)}`));
+            console.info(chalk.gray('   📋 Object inspection:'));
+            console.info(chalk.gray(`      ${Bun.inspect(testObj).replace(/\n/g, '\n      ')}`));
+            console.info(chalk.gray(`   📋 Array inspection: ${Bun.inspect(testArray)}`));
 
             // Table formatting
             const tableData = [
@@ -673,37 +673,37 @@ if (import.meta.main) {
                 { file: 'test.js', errors: 1, warnings: 0, status: '❌' }
             ];
             const tableString = Bun.inspect.table(tableData, ['file', 'errors', 'warnings', 'status']);
-            console.log(chalk.gray('   📊 Table format example:'));
-            console.log(chalk.gray(`      ${tableString.replace(/\n/g, '\n      ')}`));
+            console.info(chalk.gray('   📊 Table format example:'));
+            console.info(chalk.gray(`      ${tableString.replace(/\n/g, '\n      ')}`));
 
             // Demonstrate stream utilities
-            console.log(chalk.blue('\n📖 Stream Utility Examples:'));
-            console.log(chalk.gray('   🔄 Stream conversions available:'));
-            console.log(chalk.gray('      • toArrayBuffer() - Convert to binary buffer'));
-            console.log(chalk.gray('      • toBytes() - Convert to Uint8Array'));
-            console.log(chalk.gray('      • toText() - Convert to string'));
-            console.log(chalk.gray('      • toJSON() - Parse as JSON'));
-            console.log(chalk.gray('      • toBlob() - Convert to Blob'));
-            console.log(chalk.gray('      • toArray() - Get all chunks'));
-            console.log(chalk.gray('      • toFormData() - Convert to form data'));
+            console.info(chalk.blue('\n📖 Stream Utility Examples:'));
+            console.info(chalk.gray('   🔄 Stream conversions available:'));
+            console.info(chalk.gray('      • toArrayBuffer() - Convert to binary buffer'));
+            console.info(chalk.gray('      • toBytes() - Convert to Uint8Array'));
+            console.info(chalk.gray('      • toText() - Convert to string'));
+            console.info(chalk.gray('      • toJSON() - Parse as JSON'));
+            console.info(chalk.gray('      • toBlob() - Convert to Blob'));
+            console.info(chalk.gray('      • toArray() - Get all chunks'));
+            console.info(chalk.gray('      • toFormData() - Convert to form data'));
 
             // Demonstrate memory utilities
-            console.log(chalk.blue('\n💾 Memory Utility Examples:'));
+            console.info(chalk.blue('\n💾 Memory Utility Examples:'));
             const smallObj = { test: 'data', number: 42 };
             const largeBuffer = Buffer.alloc(1024);
 
-            console.log(chalk.gray(`   📊 Small object memory: ~${estimateShallowMemoryUsageOf(smallObj)} bytes`));
-            console.log(chalk.gray(`   📊 Large buffer memory: ~${estimateShallowMemoryUsageOf(largeBuffer)} bytes`));
-            console.log(chalk.gray('   💡 Use Bun.generateHeapSnapshot() for accurate memory analysis'));
+            console.info(chalk.gray(`   📊 Small object memory: ~${estimateShallowMemoryUsageOf(smallObj)} bytes`));
+            console.info(chalk.gray(`   📊 Large buffer memory: ~${estimateShallowMemoryUsageOf(largeBuffer)} bytes`));
+            console.info(chalk.gray('   💡 Use Bun.generateHeapSnapshot() for accurate memory analysis'));
             // Demonstrate table formatting
             const sampleData = [
                 { file: 'test.md', errors: 2, warnings: 5 },
                 { file: 'demo.md', errors: 0, warnings: 1 }
             ];
-            console.log(chalk.gray(`   📊 Sample table format available (Bun.inspect.table)`));
+            console.info(chalk.gray(`   📊 Sample table format available (Bun.inspect.table)`));
 
             // Practical example: Generate a validation report using Bun utilities
-            console.log(chalk.blue.bold('\n📝 Generated Validation Report:'));
+            console.info(chalk.blue.bold('\n📝 Generated Validation Report:'));
             const reportId = Bun.randomUUIDv7();
             const reportData = {
                 id: reportId,
@@ -717,17 +717,17 @@ if (import.meta.main) {
             const sampleHtml = `<script>alert('Validation complete!')</script>`;
             const escapedHtml = Bun.escapeHTML(sampleHtml);
 
-            console.log(chalk.gray(`   📋 Report ID: ${reportId}`));
-            console.log(chalk.gray(`   🛡️  HTML Safety: ${escapedHtml}`));
-            console.log(chalk.gray(`   📏 Report width: ${Bun.stringWidth(JSON.stringify(reportData))} chars`));
+            console.info(chalk.gray(`   📋 Report ID: ${reportId}`));
+            console.info(chalk.gray(`   🛡️  HTML Safety: ${escapedHtml}`));
+            console.info(chalk.gray(`   📏 Report width: ${Bun.stringWidth(JSON.stringify(reportData))} chars`));
 
             // Show how to open the report in editor
-            console.log(chalk.yellow(`\n💾 To save this report, you could run:`));
-            console.log(chalk.gray(`   const reportPath = 'validation-report-${reportId}.json';`));
-            console.log(chalk.gray(`   Bun.write(reportPath, JSON.stringify(reportData, null, 2));`));
-            console.log(chalk.gray(`   Bun.openInEditor(reportPath);`));
+            console.info(chalk.yellow(`\n💾 To save this report, you could run:`));
+            console.info(chalk.gray(`   const reportPath = 'validation-report-${reportId}.json';`));
+            console.info(chalk.gray(`   Bun.write(reportPath, JSON.stringify(reportData, null, 2));`));
+            console.info(chalk.gray(`   Bun.openInEditor(reportPath);`));
 
-            console.log(chalk.green.bold('\n✅ Validation completed successfully!'));
+            console.info(chalk.green.bold('\n✅ Validation completed successfully!'));
         },
         ErrorSeverity.HIGH,
         ErrorCategory.VAULT,

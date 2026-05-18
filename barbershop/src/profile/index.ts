@@ -51,7 +51,7 @@ export async function quickCpuProfile(
     }
 
     engine.endSession();
-    console.log(`Profile complete: ${session.id}`);
+    console.info(`Profile complete: ${session.id}`);
   } catch (error) {
     engine.endSession(undefined, String(error));
     throw error;
@@ -74,7 +74,7 @@ export async function quickHeapProfile(options: { outputDir?: string } = {}): Pr
   }
 
   engine.endSession();
-  console.log(`Heap profile complete: ${session.id}`);
+  console.info(`Heap profile complete: ${session.id}`);
 }
 
 /**
@@ -103,7 +103,7 @@ export async function quickSamplingProfile(
     intervalUs: options.intervalUs || 100,
   });
 
-  console.log(engine.formatReport(report));
+  console.info(engine.formatReport(report));
 }
 
 // ==================== Version ====================

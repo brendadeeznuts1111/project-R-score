@@ -67,7 +67,7 @@ describe("R2 Storage and Secrets Performance Benchmarks", () => {
 			const avgTime = duration / iterations;
 			const opsPerSec = 1000 / avgTime;
 
-			console.log(
+			console.info(
 				`Secret Set: ${avgTime.toFixed(3)}ms avg, ${opsPerSec.toFixed(0)} ops/sec`,
 			);
 			expect(avgTime).toBeLessThan(25); // Under 25ms per operation
@@ -108,7 +108,7 @@ describe("R2 Storage and Secrets Performance Benchmarks", () => {
 			const avgTime = duration / iterations;
 			const opsPerSec = 1000 / avgTime;
 
-			console.log(
+			console.info(
 				`Secret Get: ${avgTime.toFixed(3)}ms avg, ${opsPerSec.toFixed(0)} ops/sec`,
 			);
 			expect(avgTime).toBeLessThan(5); // Under 5ms per operation
@@ -151,7 +151,7 @@ describe("R2 Storage and Secrets Performance Benchmarks", () => {
 			const avgTime = duration / totalOps;
 			const opsPerSec = 1000 / avgTime;
 
-			console.log(
+			console.info(
 				`Concurrent Ops: ${avgTime.toFixed(3)}ms avg, ${opsPerSec.toFixed(0)} ops/sec`,
 			);
 			expect(avgTime).toBeLessThan(30); // Under 30ms per operation
@@ -189,7 +189,7 @@ describe("R2 Storage and Secrets Performance Benchmarks", () => {
 			const avgTime = duration / iterations;
 			const opsPerSec = 1000 / avgTime;
 
-			console.log(
+			console.info(
 				`Key Generation: ${avgTime.toFixed(6)}ms avg, ${opsPerSec.toFixed(0)} ops/sec`,
 			);
 			expect(avgTime).toBeLessThan(0.1); // Under 0.1ms per operation
@@ -217,7 +217,7 @@ describe("R2 Storage and Secrets Performance Benchmarks", () => {
 			const avgTime = duration / iterations;
 			const opsPerSec = 1000 / avgTime;
 
-			console.log(
+			console.info(
 				`Report Key Generation: ${avgTime.toFixed(6)}ms avg, ${opsPerSec.toFixed(0)} ops/sec`,
 			);
 			expect(avgTime).toBeLessThan(0.2); // Under 0.2ms per operation
@@ -248,7 +248,7 @@ describe("R2 Storage and Secrets Performance Benchmarks", () => {
 			const avgTime = duration / iterations;
 			const opsPerSec = 1000 / avgTime;
 
-			console.log(
+			console.info(
 				`Signature Generation: ${avgTime.toFixed(3)}ms avg, ${opsPerSec.toFixed(0)} ops/sec`,
 			);
 			expect(avgTime).toBeLessThan(5); // Under 5ms per operation
@@ -286,7 +286,7 @@ describe("R2 Storage and Secrets Performance Benchmarks", () => {
 			const getMemoryIncrease =
 				afterGetMemory.heapUsed - afterSetMemory.heapUsed;
 
-			console.log(
+			console.info(
 				`Memory - Set: ${(setMemoryIncrease / 1024 / 1024).toFixed(2)}MB, Get: ${(getMemoryIncrease / 1024 / 1024).toFixed(2)}MB`,
 			);
 
@@ -323,7 +323,7 @@ describe("R2 Storage and Secrets Performance Benchmarks", () => {
 			const totalCPUTime = endCPU.user + endCPU.system;
 			const avgCPUTime = totalCPUTime / iterations;
 
-			console.log(
+			console.info(
 				`CPU Usage: ${(totalCPUTime / 1000).toFixed(2)}ms total, ${avgCPUTime.toFixed(3)}ms avg per operation`,
 			);
 
@@ -367,7 +367,7 @@ describe("R2 Storage and Secrets Performance Benchmarks", () => {
 
 			const retrieveTime = performance.now() - retrieveStart;
 
-			console.log(
+			console.info(
 				`Large Scale (${largeScaleCount} secrets): Create ${(createTime / 1000).toFixed(2)}s, Retrieve ${(retrieveTime / 1000).toFixed(2)}s`,
 			);
 
@@ -410,7 +410,7 @@ describe("R2 Storage and Secrets Performance Benchmarks", () => {
 			}
 
 			const opsPerSec = operations / (duration / 1000);
-			console.log(
+			console.info(
 				`Sustained Load: ${operations} operations in ${duration / 1000}s, ${opsPerSec.toFixed(1)} ops/sec`,
 			);
 

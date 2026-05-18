@@ -156,8 +156,8 @@ const result = await uploadWithSchema(file, 'documents/report.pdf', {
   validateIntegrity: true
 });
 
-console.log('File uploaded:', result.result.url);
-console.log('Schema:', result.schema);`}
+console.info('File uploaded:', result.result.url);
+console.info('Schema:', result.schema);`}
               </pre>
             </div>
 
@@ -170,7 +170,7 @@ const enhancedFile = await getEnhancedBunFile('documents/report.pdf');
 if (enhancedFile) {
   const content = await enhancedFile.text();
   const schema = await getFileSchema('documents/report.pdf');
-  console.log('File category:', schema?.category);
+  console.info('File category:', schema?.category);
 }`}
               </pre>
             </div>

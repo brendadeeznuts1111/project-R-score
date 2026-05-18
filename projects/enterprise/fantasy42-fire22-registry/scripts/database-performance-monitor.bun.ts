@@ -52,7 +52,7 @@ class DatabasePerformanceMonitor {
     };
 
     this.initializeMonitoring();
-    console.log('📊 Database Performance Monitor initialized');
+    console.info('📊 Database Performance Monitor initialized');
   }
 
   private initializeMonitoring(): void {
@@ -163,7 +163,7 @@ class DatabasePerformanceMonitor {
     }
 
     this.isMonitoring = true;
-    console.log(`📊 Starting performance monitoring (interval: ${intervalMs}ms)`);
+    console.info(`📊 Starting performance monitoring (interval: ${intervalMs}ms)`);
 
     this.monitoringInterval = setInterval(() => {
       this.collectSystemMetrics();
@@ -176,7 +176,7 @@ class DatabasePerformanceMonitor {
       this.monitoringInterval = undefined;
     }
     this.isMonitoring = false;
-    console.log('📊 Performance monitoring stopped');
+    console.info('📊 Performance monitoring stopped');
   }
 
   private collectSystemMetrics(): void {
@@ -353,7 +353,7 @@ class DatabasePerformanceMonitor {
 
       this.stats.lastBackup = Date.now();
 
-      console.log(`💾 Database backup created: ${backupPath}`);
+      console.info(`💾 Database backup created: ${backupPath}`);
       return backupPath;
     } catch (error) {
       console.error('❌ Backup failed:', error.message);
@@ -425,8 +425,8 @@ class DatabasePerformanceMonitor {
 
   public displayDashboard(): void {
     console.clear();
-    console.log('🚀 Fantasy42-Fire22 Database Performance Dashboard');
-    console.log('='.repeat(60));
+    console.info('🚀 Fantasy42-Fire22 Database Performance Dashboard');
+    console.info('='.repeat(60));
 
     const health = this.getHealthStatus();
     const report = this.getPerformanceReport(300000); // Last 5 minutes
@@ -434,58 +434,58 @@ class DatabasePerformanceMonitor {
     // Status indicator
     const statusEmoji =
       health.status === 'healthy' ? '🟢' : health.status === 'warning' ? '🟡' : '🔴';
-    console.log(`${statusEmoji} Status: ${health.status.toUpperCase()}`);
-    console.log(`⏱️  Uptime: ${health.uptime}`);
-    console.log('');
+    console.info(`${statusEmoji} Status: ${health.status.toUpperCase()}`);
+    console.info(`⏱️  Uptime: ${health.uptime}`);
+    console.info('');
 
     // Database stats
-    console.log('💾 Database Health:');
-    console.log(`   📊 Tables: ${health.database.tables}`);
-    console.log(`   📈 Records: ${health.database.records.toLocaleString()}`);
-    console.log(`   💽 Last Backup: ${health.database.lastBackup}`);
-    console.log('');
+    console.info('💾 Database Health:');
+    console.info(`   📊 Tables: ${health.database.tables}`);
+    console.info(`   📈 Records: ${health.database.records.toLocaleString()}`);
+    console.info(`   💽 Last Backup: ${health.database.lastBackup}`);
+    console.info('');
 
     // Performance metrics
     if (report.summary) {
-      console.log('⚡ Performance (Last 5 minutes):');
-      console.log(`   🔢 Queries: ${report.summary.totalQueries}`);
-      console.log(`   ❌ Errors: ${report.summary.totalErrors} (${report.summary.errorRate}%)`);
-      console.log(`   🕐 Avg Query Time: ${report.summary.avgQueryTime}ms`);
-      console.log(`   📈 Max Query Time: ${report.summary.maxQueryTime}ms`);
-      console.log(
+      console.info('⚡ Performance (Last 5 minutes):');
+      console.info(`   🔢 Queries: ${report.summary.totalQueries}`);
+      console.info(`   ❌ Errors: ${report.summary.totalErrors} (${report.summary.errorRate}%)`);
+      console.info(`   🕐 Avg Query Time: ${report.summary.avgQueryTime}ms`);
+      console.info(`   📈 Max Query Time: ${report.summary.maxQueryTime}ms`);
+      console.info(
         `   💾 Memory Usage: ${report.summary.avgMemoryUsage}MB (peak: ${report.summary.maxMemoryUsage}MB)`
       );
-      console.log('');
+      console.info('');
     }
 
     // Recommendations
     if (report.recommendations) {
-      console.log('💡 Recommendations:');
+      console.info('💡 Recommendations:');
       report.recommendations.forEach((rec: string) => {
-        console.log(`   ${rec}`);
+        console.info(`   ${rec}`);
       });
-      console.log('');
+      console.info('');
     }
 
     // Recent metrics
     if (health.recentMetrics && health.recentMetrics.length > 0) {
-      console.log('📊 Recent System Metrics:');
+      console.info('📊 Recent System Metrics:');
       health.recentMetrics.slice(0, 3).forEach((metric: any) => {
-        console.log(`   ${metric.metric_name}: ${metric.metric_value} (${metric.status})`);
+        console.info(`   ${metric.metric_name}: ${metric.metric_value} (${metric.status})`);
       });
     }
 
-    console.log('');
-    console.log('🔄 Monitoring: ' + (health.monitoring.active ? '🟢 Active' : '🔴 Inactive'));
-    console.log(`📈 Metrics in Memory: ${health.monitoring.metricsInMemory}`);
-    console.log('');
-    console.log('Press Ctrl+C to exit dashboard');
+    console.info('');
+    console.info('🔄 Monitoring: ' + (health.monitoring.active ? '🟢 Active' : '🔴 Inactive'));
+    console.info(`📈 Metrics in Memory: ${health.monitoring.metricsInMemory}`);
+    console.info('');
+    console.info('Press Ctrl+C to exit dashboard');
   }
 
   public close(): void {
     this.stopMonitoring();
     this.db.close();
-    console.log('🔒 Database Performance Monitor closed');
+    console.info('🔒 Database Performance Monitor closed');
   }
 
   // Utility methods for common monitoring scenarios
@@ -523,7 +523,7 @@ if (import.meta.main) {
   switch (command) {
     case 'start':
       monitor.startMonitoring(10000); // 10 second intervals
-      console.log('📊 Performance monitoring started. Press Ctrl+C to stop.');
+      console.info('📊 Performance monitoring started. Press Ctrl+C to stop.');
       // Keep running
       process.on('SIGINT', () => {
         monitor.stopMonitoring();
@@ -550,7 +550,7 @@ if (import.meta.main) {
     case 'report':
       const timeRange = parseInt(args[2] || '3600000'); // Default 1 hour
       const report = monitor.getPerformanceReport(timeRange);
-      console.log(JSON.stringify(report, null, 2));
+      console.info(JSON.stringify(report, null, 2));
       monitor.close();
       break;
 
@@ -558,7 +558,7 @@ if (import.meta.main) {
       monitor
         .createBackup()
         .then(path => {
-          console.log(`✅ Backup created: ${path}`);
+          console.info(`✅ Backup created: ${path}`);
           monitor.close();
         })
         .catch(error => {
@@ -570,23 +570,23 @@ if (import.meta.main) {
 
     case 'health':
       const health = monitor.getHealthStatus();
-      console.log(JSON.stringify(health, null, 2));
+      console.info(JSON.stringify(health, null, 2));
       monitor.close();
       break;
 
     default:
-      console.log('Usage: bun run scripts/database-performance-monitor.bun.ts [command] [db-path]');
-      console.log('');
-      console.log('Commands:');
-      console.log('  dashboard  - Interactive performance dashboard');
-      console.log('  start      - Start background monitoring');
-      console.log('  report     - Generate performance report');
-      console.log('  backup     - Create database backup');
-      console.log('  health     - Show system health status');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun run scripts/database-performance-monitor.bun.ts dashboard');
-      console.log(
+      console.info('Usage: bun run scripts/database-performance-monitor.bun.ts [command] [db-path]');
+      console.info('');
+      console.info('Commands:');
+      console.info('  dashboard  - Interactive performance dashboard');
+      console.info('  start      - Start background monitoring');
+      console.info('  report     - Generate performance report');
+      console.info('  backup     - Create database backup');
+      console.info('  health     - Show system health status');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun run scripts/database-performance-monitor.bun.ts dashboard');
+      console.info(
         '  bun run scripts/database-performance-monitor.bun.ts report 1800000  # 30 min report'
       );
       monitor.close();

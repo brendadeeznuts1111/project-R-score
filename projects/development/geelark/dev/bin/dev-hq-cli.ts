@@ -138,7 +138,7 @@ if (isDevelopmentMode) {
   if (!process.env.DEBUG) {
     process.env.DEBUG = 'dev-hq:*';
   }
-  console.log('🔧 Development mode enabled automatically');
+  console.info('🔧 Development mode enabled automatically');
 }
 
 // Flag separation layer
@@ -176,7 +176,7 @@ function parseFlags(args: string[]): ParsedFlags {
 // Auto-correct common mistakes
 function autoCorrectCommand(command: string): string {
   if (command in CONFIG.COMMAND_CORRECTIONS) {
-    console.log(`💡 Did you mean "${CONFIG.COMMAND_CORRECTIONS[command]}"?`);
+    console.info(`💡 Did you mean "${CONFIG.COMMAND_CORRECTIONS[command]}"?`);
     return CONFIG.COMMAND_CORRECTIONS[command];
   }
   return command;
@@ -190,7 +190,7 @@ function resolveCommand(command: string): string {
 // Auto-add missing default flags
 function autoAddFlags(flags: string[], command: string): string[] {
   if (!flags.length && command in CONFIG.DEFAULT_FLAGS) {
-    console.log(`⚡ Auto-adding default flags: ${CONFIG.DEFAULT_FLAGS[command].join(' ')}`);
+    console.info(`⚡ Auto-adding default flags: ${CONFIG.DEFAULT_FLAGS[command].join(' ')}`);
     return [...CONFIG.DEFAULT_FLAGS[command]];
   }
   return flags;
@@ -430,7 +430,7 @@ async function checkDependencies(): Promise<{
 
 // Display Bun-themed ASCII output
 function displayBunThemed(insights: CodebaseInsights) {
-  console.log(`
+  console.info(`
 ╔════════════════════════════════════════╗
 ║    🎯 Dev HQ Codebase Insights 🎯      ║
 ║         Powered by Bun 🚀               ║
@@ -613,14 +613,14 @@ program
       const outputFile = Bun.file(options.output);
       await Bun.write(outputFile, outputContent);
       if (!options.quiet) {
-        console.log(`✅ Output written to ${options.output} (${format})`);
+        console.info(`✅ Output written to ${options.output} (${format})`);
       }
       return;
     }
 
     // Display output
     if (output) {
-      console.log(output);
+      console.info(output);
     } else if (options.table) {
       const tableData = insights.files.slice(0, 20).map((f) => ({
         Path: f.path.length > 50 ? "..." + f.path.slice(-47) : f.path,
@@ -628,7 +628,7 @@ program
         Size: `${(f.size / 1024).toFixed(1)} KB`,
         Language: f.language,
       }));
-      console.log(inspect.table(tableData));
+      console.info(inspect.table(tableData));
 
       const statsTable = [
         { Metric: "Total Files", Value: insights.stats.totalFiles },
@@ -642,42 +642,42 @@ program
         },
         { Metric: "Health Score", Value: `${insights.stats.healthScore}%` },
       ];
-      console.log("\n📊 Statistics:");
-      console.log(inspect.table(statsTable));
+      console.info("\n📊 Statistics:");
+      console.info(inspect.table(statsTable));
     } else if (options.bun) {
       displayBunThemed(insights);
     } else {
       // Pretty format
-      console.log("\n🎯 Dev HQ Codebase Insights\n");
-      console.log(`📊 Total Files: ${insights.stats.totalFiles}`);
-      console.log(
+      console.info("\n🎯 Dev HQ Codebase Insights\n");
+      console.info(`📊 Total Files: ${insights.stats.totalFiles}`);
+      console.info(
         `📝 Total Lines: ${insights.stats.totalLines.toLocaleString()}`,
       );
-      console.log(
+      console.info(
         `💾 Total Size: ${(insights.stats.totalSize / 1024 / 1024).toFixed(2)} MB`,
       );
-      console.log(`❤️  Health Score: ${insights.stats.healthScore}%`);
-      console.log("\n📚 Languages:");
+      console.info(`❤️  Health Score: ${insights.stats.healthScore}%`);
+      console.info("\n📚 Languages:");
       for (const [lang, count] of Object.entries(insights.stats.languages)) {
-        console.log(`  ${lang}: ${count} files`);
+        console.info(`  ${lang}: ${count} files`);
       }
 
       if (insights.stats.dependencies) {
-        console.log("\n📦 Dependencies:");
-        console.log(
+        console.info("\n📦 Dependencies:");
+        console.info(
           `  Installed: ${insights.stats.dependencies.installed}, Missing: ${insights.stats.dependencies.missing}`,
         );
       }
 
       if (insights.performance) {
-        console.log("\n⚡ Performance:");
-        console.log(
+        console.info("\n⚡ Performance:");
+        console.info(
           `  Analysis Time: ${insights.performance.analysisTime.toFixed(2)}ms`,
         );
-        console.log(
+        console.info(
           `  Memory Used: ${(insights.performance.memoryUsed / 1024 / 1024).toFixed(2)} MB`,
         );
-        console.log(
+        console.info(
           `  Files/Second: ${insights.performance.filesPerSecond.toFixed(0)}`,
         );
       }
@@ -692,17 +692,17 @@ program
   .action(async () => {
     const options = program.opts();
     if (!options.quiet) {
-      console.log("📊 Analyzing Git repository...");
+      console.info("📊 Analyzing Git repository...");
     }
 
     const insights = await DevHQActions.gitInsights();
 
     if (options.json) {
-      console.log(JSON.stringify(insights, null, 2));
+      console.info(JSON.stringify(insights, null, 2));
     } else if (options.table) {
-      console.log(inspect.table(insights));
+      console.info(inspect.table(insights));
     } else {
-      console.log(inspect(insights, { colors: true }));
+      console.info(inspect(insights, { colors: true }));
     }
   });
 
@@ -714,17 +714,17 @@ program
   .action(async () => {
     const options = program.opts();
     if (!options.quiet) {
-      console.log("🔍 Analyzing code...");
+      console.info("🔍 Analyzing code...");
     }
 
     const cloc = await DevHQActions.analyzeWithCLOC();
 
     if (options.json) {
-      console.log(JSON.stringify(cloc, null, 2));
+      console.info(JSON.stringify(cloc, null, 2));
     } else if (options.table) {
-      console.log(inspect.table(cloc));
+      console.info(inspect.table(cloc));
     } else {
-      console.log(inspect(cloc, { colors: true }));
+      console.info(inspect(cloc, { colors: true }));
     }
   });
 
@@ -738,7 +738,7 @@ program
   .action(async (cmdOptions) => {
     const options = program.opts();
     if (!options.quiet) {
-      console.log("🧪 Running tests...");
+      console.info("🧪 Running tests...");
     }
 
     const testArgs = ["test"];
@@ -762,17 +762,17 @@ program
   .action(async () => {
     const options = program.opts();
     if (!options.quiet) {
-      console.log("🐳 Analyzing Docker containers...");
+      console.info("🐳 Analyzing Docker containers...");
     }
 
     const insights = await DevHQActions.dockerInsights();
 
     if (options.json) {
-      console.log(JSON.stringify(insights, null, 2));
+      console.info(JSON.stringify(insights, null, 2));
     } else if (options.table) {
-      console.log(inspect.table(insights));
+      console.info(inspect.table(insights));
     } else {
-      console.log(inspect(insights, { colors: true }));
+      console.info(inspect(insights, { colors: true }));
     }
   });
 
@@ -786,7 +786,7 @@ program
     const automation = DevHQAutomation;
 
     if (!options.quiet) {
-      console.log("🏥 Performing health check...");
+      console.info("🏥 Performing health check...");
     }
 
     const checks = {
@@ -814,16 +814,16 @@ program
     };
 
     if (options.json) {
-      console.log(JSON.stringify(health, null, 2));
+      console.info(JSON.stringify(health, null, 2));
     } else if (options.table) {
       const checksTable = Object.entries(health.checks).map(([key, value]) => ({
         Check: key,
         Status: value ? "✅" : "❌",
       }));
-      console.log(inspect.table(checksTable));
+      console.info(inspect.table(checksTable));
     } else {
-      console.log(`Status: ${health.status}`);
-      console.log(inspect(health.checks, { colors: true }));
+      console.info(`Status: ${health.status}`);
+      console.info(inspect(health.checks, { colors: true }));
     }
 
     process.exit(health.status === "healthy" ? 0 : 1);
@@ -838,15 +838,15 @@ program
   .action(async (cmdOptions) => {
     const options = program.opts();
     if (!options.quiet) {
-      console.log("🚀 Starting Dev HQ server...");
+      console.info("🚀 Starting Dev HQ server...");
     }
 
     const port = parseInt(cmdOptions.port) || 3000;
     const { server } = await import("../dev-hq/servers/api-server.js");
 
     if (!options.quiet) {
-      console.log(`✅ Server started on port ${port}`);
-      console.log(`📍 Visit http://localhost:${port} for API endpoints`);
+      console.info(`✅ Server started on port ${port}`);
+      console.info(`📍 Visit http://localhost:${port} for API endpoints`);
     }
   });
 
@@ -859,7 +859,7 @@ program
   .action(async (cmd: string[], cmdOptions) => {
     const options = program.opts();
     if (!options.quiet) {
-      console.log(`🏃‍♂️ Running: ${cmd.join(" ")}`);
+      console.info(`🏃‍♂️ Running: ${cmd.join(" ")}`);
     }
 
     const startTime = performance.now();
@@ -897,10 +897,10 @@ program
       };
 
       if (options.json) {
-        console.log(JSON.stringify(metrics, null, 2));
+        console.info(JSON.stringify(metrics, null, 2));
       } else {
-        console.log("\n📊 Dev HQ Metrics:");
-        console.log(inspect(metrics, { colors: true }));
+        console.info("\n📊 Dev HQ Metrics:");
+        console.info(inspect(metrics, { colors: true }));
       }
     }
 
@@ -963,8 +963,8 @@ try {
 } catch (error: unknown) {
   const err = error as Error & { code?: string };
   if (err.code === "ENOENT") {
-    console.log(`${theme.warning}⚠️  Project not initialized${theme.reset}`);
-    console.log(`${theme.info}Run: dev-hq init${theme.reset}`);
+    console.info(`${theme.warning}⚠️  Project not initialized${theme.reset}`);
+    console.info(`${theme.info}Run: dev-hq init${theme.reset}`);
   } else {
     handleCommandError(err);
   }

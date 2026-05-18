@@ -139,7 +139,7 @@ export class AnalyticsManager {
     // - Google Analytics
     // - Custom analytics dashboard
     
-    console.log(`Analytics Event: ${event}`, properties);
+    console.info(`Analytics Event: ${event}`, properties);
     
     // Example with Segment:
     /*
@@ -543,7 +543,7 @@ export class RealtimeDashboardUpdater {
       // WebSocket broadcast to connected clients
       // broadcastToClients('dashboard_update', dashboardData);
       
-      console.log('Dashboard updated:', dashboardData);
+      console.info('Dashboard updated:', dashboardData);
     } catch (error) {
       console.error('Error updating dashboard:', error);
     }
@@ -578,13 +578,13 @@ await analyticsManager.trackPayment({
 // Get family analytics:
 /*
 const familyAnalytics = await analyticsManager.getFamilyAnalytics('family_123');
-console.log('Family analytics:', familyAnalytics);
+console.info('Family analytics:', familyAnalytics);
 */
 
 // Get business intelligence report:
 /*
 const biReport = await analyticsManager.getBusinessIntelligenceReport(30);
-console.log('BI Report:', biReport);
+console.info('BI Report:', biReport);
 */
 
 // Start real-time dashboard:

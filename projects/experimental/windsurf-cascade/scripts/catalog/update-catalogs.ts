@@ -255,13 +255,13 @@ class CatalogUpdater {
     const result: UpdateResult = { updated: [], errors: [], warnings: [] };
     
     if (options.checkOutdated) {
-      console.log('🔍 Checking for outdated packages...\n');
+      console.info('🔍 Checking for outdated packages...\n');
       const outdated = await this.checkOutdatedPackages();
       
       if (outdated.length === 0) {
-        console.log('✅ All catalog packages are up to date!\n');
+        console.info('✅ All catalog packages are up to date!\n');
       } else {
-        console.log(`📦 Found ${outdated.length} outdated packages:\n`);
+        console.info(`📦 Found ${outdated.length} outdated packages:\n`);
         
         // Group by catalog
         const outdatedByCatalog = new Map<string, Array<{ package: string; current: string; latest: string }>>();
@@ -278,17 +278,17 @@ class CatalogUpdater {
         }
         
         for (const [catalogName, packages] of outdatedByCatalog.entries()) {
-          console.log(`\n📚 catalog:${catalogName}`);
-          console.log('| Package | Current | Latest |');
-          console.log('|---------|---------|--------|');
+          console.info(`\n📚 catalog:${catalogName}`);
+          console.info('| Package | Current | Latest |');
+          console.info('|---------|---------|--------|');
           
           packages.forEach(pkg => {
-            console.log(`| ${pkg.package} | ${pkg.current} | ${pkg.latest} |`);
+            console.info(`| ${pkg.package} | ${pkg.current} | ${pkg.latest} |`);
           });
         }
         
-        console.log('\n💡 To update all outdated packages, run:');
-        console.log('   bun run catalog:update --latest');
+        console.info('\n💡 To update all outdated packages, run:');
+        console.info('   bun run catalog:update --latest');
       }
       
       return result;
@@ -303,7 +303,7 @@ class CatalogUpdater {
       let newVersion = options.version || '';
       
       if (options.latest || !newVersion) {
-        console.log(`📡 Fetching latest version for ${options.package}...`);
+        console.info(`📡 Fetching latest version for ${options.package}...`);
         newVersion = await this.getLatestVersion(options.package);
         
         if (!newVersion) {
@@ -312,7 +312,7 @@ class CatalogUpdater {
         }
       }
       
-      console.log(`🔄 Updating ${options.package} in catalog:${options.catalog} to ${newVersion}`);
+      console.info(`🔄 Updating ${options.package} in catalog:${options.catalog} to ${newVersion}`);
       
       const updateResult = this.updateCatalogEntry(
         options.catalog,
@@ -329,14 +329,14 @@ class CatalogUpdater {
           newVersion
         });
         
-        console.log(`   ✅ Updated: ${updateResult.oldVersion} → ${newVersion}`);
+        console.info(`   ✅ Updated: ${updateResult.oldVersion} → ${newVersion}`);
       } else {
-        console.log(`   ℹ️ Already at version ${newVersion}`);
+        console.info(`   ℹ️ Already at version ${newVersion}`);
       }
     }
     
     if (options.latest) {
-      console.log('🔄 Updating all catalog packages to latest versions...\n');
+      console.info('🔄 Updating all catalog packages to latest versions...\n');
       
       const outdated = await this.checkOutdatedPackages();
       
@@ -356,7 +356,7 @@ class CatalogUpdater {
             newVersion: pkg.latest
           });
           
-          console.log(`✅ ${pkg.package} (catalog:${pkg.catalog}): ${updateResult.oldVersion} → ${pkg.latest}`);
+          console.info(`✅ ${pkg.package} (catalog:${pkg.catalog}): ${updateResult.oldVersion} → ${pkg.latest}`);
         }
       }
     }
@@ -365,12 +365,12 @@ class CatalogUpdater {
     if (!options.dryRun && result.updated.length > 0) {
       const rootPackagePath = join(process.cwd(), 'package.json');
       writeFileSync(rootPackagePath, JSON.stringify(this.rootPackageJson, null, 2) + '\n');
-      console.log(`\n💾 Updated package.json with ${result.updated.length} changes`);
+      console.info(`\n💾 Updated package.json with ${result.updated.length} changes`);
     }
     
     if (options.dryRun && result.updated.length > 0) {
-      console.log(`\n🔍 Dry run complete. ${result.updated.length} updates would be applied.`);
-      console.log('   Use --apply to apply these changes.');
+      console.info(`\n🔍 Dry run complete. ${result.updated.length} updates would be applied.`);
+      console.info('   Use --apply to apply these changes.');
     }
     
     return result;
@@ -462,25 +462,25 @@ async function main() {
   }
   
   try {
-    console.log('📦 Bun v1.3 Catalog Update Manager\n');
+    console.info('📦 Bun v1.3 Catalog Update Manager\n');
     
     const updater = new CatalogUpdater();
     const result = await updater.updateCatalog(options);
     
     if (result.errors.length > 0) {
-      console.log('\n❌ Errors:');
-      result.errors.forEach(error => console.log(`   ${error}`));
+      console.info('\n❌ Errors:');
+      result.errors.forEach(error => console.info(`   ${error}`));
     }
     
     if (result.warnings.length > 0) {
-      console.log('\n⚠️ Warnings:');
-      result.warnings.forEach(warning => console.log(`   ${warning}`));
+      console.info('\n⚠️ Warnings:');
+      result.warnings.forEach(warning => console.info(`   ${warning}`));
     }
     
     if (result.updated.length > 0) {
-      console.log(`\n✅ Updated ${result.updated.length} packages:`);
+      console.info(`\n✅ Updated ${result.updated.length} packages:`);
       result.updated.forEach(update => {
-        console.log(`   ${update.package} (catalog:${update.catalog}): ${update.oldVersion} → ${update.newVersion}`);
+        console.info(`   ${update.package} (catalog:${update.catalog}): ${update.oldVersion} → ${update.newVersion}`);
       });
     }
     

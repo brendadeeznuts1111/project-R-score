@@ -697,7 +697,7 @@ export async function main(): Promise<void> {
       const { profile } = await session.post('Profiler.stop');
       await session.post('Profiler.disable');
       await writeFile(resolve(options.cpuProfilePath), JSON.stringify(profile, null, 2));
-      console.log(`[search-bench:snapshot] wrote cpu profile ${resolve(options.cpuProfilePath)}`);
+      console.info(`[search-bench:snapshot] wrote cpu profile ${resolve(options.cpuProfilePath)}`);
       return result;
     } finally {
       session.disconnect();
@@ -864,16 +864,16 @@ export async function main(): Promise<void> {
   });
   await writeFile(rssPath, localRssText);
 
-  console.log(`[search-bench:snapshot] wrote ${snapshotJsonPath}`);
-  console.log(`[search-bench:snapshot] wrote ${summaryMdPath}`);
-  console.log(`[search-bench:snapshot] wrote ${latestJsonPath}`);
-  console.log(`[search-bench:snapshot] wrote ${indexPath}`);
-  console.log(`[search-bench:snapshot] wrote ${rssPath}`);
+  console.info(`[search-bench:snapshot] wrote ${snapshotJsonPath}`);
+  console.info(`[search-bench:snapshot] wrote ${summaryMdPath}`);
+  console.info(`[search-bench:snapshot] wrote ${latestJsonPath}`);
+  console.info(`[search-bench:snapshot] wrote ${indexPath}`);
+  console.info(`[search-bench:snapshot] wrote ${rssPath}`);
 
   if (!options.upload) {
     await writeFile(manifestPath, JSON.stringify(baseManifest, null, 2));
-    console.log(`[search-bench:snapshot] wrote ${manifestPath}`);
-    console.log('[search-bench:snapshot] upload disabled (--no-upload)');
+    console.info(`[search-bench:snapshot] wrote ${manifestPath}`);
+    console.info('[search-bench:snapshot] upload disabled (--no-upload)');
     return;
   }
 
@@ -890,9 +890,9 @@ export async function main(): Promise<void> {
         2
       )
     );
-    console.log(`[search-bench:snapshot] wrote ${manifestPath}`);
-    console.log('[search-bench:snapshot] R2 config missing; skipped upload');
-    console.log('[search-bench:snapshot] required: R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY and R2_BUCKET_NAME (or R2_BUCKET), plus R2_ACCOUNT_ID or R2_ENDPOINT');
+    console.info(`[search-bench:snapshot] wrote ${manifestPath}`);
+    console.info('[search-bench:snapshot] R2 config missing; skipped upload');
+    console.info('[search-bench:snapshot] required: R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY and R2_BUCKET_NAME (or R2_BUCKET), plus R2_ACCOUNT_ID or R2_ENDPOINT');
     return;
   }
 
@@ -1052,7 +1052,7 @@ export async function main(): Promise<void> {
     mode: 'uploaded',
   };
   await writeFile(manifestPath, JSON.stringify(manifest, null, 2));
-  console.log(`[search-bench:snapshot] wrote ${manifestPath}`);
+  console.info(`[search-bench:snapshot] wrote ${manifestPath}`);
 
   const manifestText = JSON.stringify(manifest, null, 2);
   const manifestStat = await uploadWithRetry(
@@ -1071,18 +1071,18 @@ export async function main(): Promise<void> {
 
   if (r2.publicBase) {
     const pub = r2.publicBase.replace(/\/+$/g, '');
-    console.log(`[search-bench:snapshot] uploaded ${pub}/${id}/snapshot.json`);
-    console.log(`[search-bench:snapshot] uploaded ${pub}/${id}/summary.md`);
-    console.log(`[search-bench:snapshot] latest ${pub}/latest.json`);
-    console.log(`[search-bench:snapshot] index ${pub}/index.json`);
+    console.info(`[search-bench:snapshot] uploaded ${pub}/${id}/snapshot.json`);
+    console.info(`[search-bench:snapshot] uploaded ${pub}/${id}/summary.md`);
+    console.info(`[search-bench:snapshot] latest ${pub}/latest.json`);
+    console.info(`[search-bench:snapshot] index ${pub}/index.json`);
   } else {
-    console.log(`[search-bench:snapshot] uploaded bucket=${r2.bucket}`);
-    console.log(`[search-bench:snapshot] snapshot key=${snapshotKey}`);
-    console.log(`[search-bench:snapshot] summary key=${summaryKey}`);
-    console.log(`[search-bench:snapshot] latest key=${latestJsonKey}`);
-    console.log(`[search-bench:snapshot] index key=${indexKey}`);
+    console.info(`[search-bench:snapshot] uploaded bucket=${r2.bucket}`);
+    console.info(`[search-bench:snapshot] snapshot key=${snapshotKey}`);
+    console.info(`[search-bench:snapshot] summary key=${summaryKey}`);
+    console.info(`[search-bench:snapshot] latest key=${latestJsonKey}`);
+    console.info(`[search-bench:snapshot] index key=${indexKey}`);
     if (options.gzip) {
-      console.log(`[search-bench:snapshot] gzip variants enabled (.gz)`);
+      console.info(`[search-bench:snapshot] gzip variants enabled (.gz)`);
     }
   }
 }

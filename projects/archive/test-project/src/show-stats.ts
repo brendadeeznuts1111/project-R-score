@@ -1,4 +1,4 @@
 import stats from './stats.json';
 
-console.log('📊 Import Tracking Results:');
-console.log(JSON.stringify(stats, null, 2));
+console.info('📊 Import Tracking Results:');
+console.info(JSON.stringify(stats, null, 2));

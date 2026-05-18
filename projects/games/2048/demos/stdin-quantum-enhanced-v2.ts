@@ -204,9 +204,9 @@ try {
   });
 
   /* 3. enhanced 6-col table -------------------------------- */
-  console.log("\n🚀 Enhanced Quantum stdin Analysis");
-  console.log("=====================================");
-  console.log(inspect.table(stats, { border: true, colors: true }));
+  console.info("\n🚀 Enhanced Quantum stdin Analysis");
+  console.info("=====================================");
+  console.info(inspect.table(stats, { border: true, colors: true }));
 
   /* 4. enhanced analytics --------------------------------- */
   const totalWords = lines.reduce(
@@ -239,9 +239,9 @@ try {
       "/tmp/stdin-snapshot-enhanced-v2.json",
       JSON.stringify(snap, null, 2)
     );
-    console.log("✅ Enhanced snapshot updated (strict mode)");
+    console.info("✅ Enhanced snapshot updated (strict mode)");
   } else {
-    console.log("📋 No changes detected (stable snapshot)");
+    console.info("📋 No changes detected (stable snapshot)");
   }
 
   /* 6. enhanced gzipped artefact --------------------------- */
@@ -267,14 +267,14 @@ try {
   const perfEnd = performance.now();
 
   await Bun.write("/tmp/stdin-quantum-enhanced-v2.json.gz", gz);
-  console.log(`📊 Enhanced gzipped report: ${gz.byteLength} bytes`);
-  console.log(
+  console.info(`📊 Enhanced gzipped report: ${gz.byteLength} bytes`);
+  console.info(
     `💾 Compression ratio: ${(
       (gz.byteLength / JSON.stringify(report).length) *
       100
     ).toFixed(1)}%`
   );
-  console.log(`⚡ Compression time: ${(perfEnd - perfStart).toFixed(2)}ms`);
+  console.info(`⚡ Compression time: ${(perfEnd - perfStart).toFixed(2)}ms`);
 
   /* 4. Refactored 18-column analytics display ---------------- */
   // Extended metrics for 18 columns with validation
@@ -369,14 +369,14 @@ try {
     )} │ ${pad(lattice)} │`;
   };
 
-  console.log("\n📊 Enhanced Analytics (18 Columns):");
-  console.log(
+  console.info("\n📊 Enhanced Analytics (18 Columns):");
+  console.info(
     "┌──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┐"
   );
-  console.log(
+  console.info(
     "│ Metric   │ Value    │ Min      │ Max      │ Std Dev  │ Ratio    │ Time(ms) │ L/s      │ Density  │ Complex  │ Efficien │ Through  │ Latency  │ Scalab   │ Consis   │ Version  │ Quantum  │ Lattice  │"
   );
-  console.log(
+  console.info(
     "├──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┤"
   );
 
@@ -386,7 +386,7 @@ try {
 
   // Generate table rows with proper error handling
   try {
-    console.log(
+    console.info(
       createTableRow(
         "Lines",
         lines.length.toString(),
@@ -409,7 +409,7 @@ try {
       )
     );
 
-    console.log(
+    console.info(
       createTableRow(
         "Words",
         totalWords.toString(),
@@ -432,7 +432,7 @@ try {
       )
     );
 
-    console.log(
+    console.info(
       createTableRow(
         "Chars",
         totalChars.toString(),
@@ -455,7 +455,7 @@ try {
       )
     );
 
-    console.log(
+    console.info(
       createTableRow(
         "Avg Len",
         avgLineLength,
@@ -478,7 +478,7 @@ try {
       )
     );
 
-    console.log(
+    console.info(
       createTableRow(
         "Avg W/L",
         avgWordsPerLine,
@@ -501,7 +501,7 @@ try {
       )
     );
 
-    console.log(
+    console.info(
       "└──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┘"
     );
   } catch (error) {
@@ -509,15 +509,15 @@ try {
   }
 
   /* 9. visual summary -------------------------------------- */
-  console.log("\n🎨 Visual Summary:");
+  console.info("\n🎨 Visual Summary:");
   const maxTension = Math.max(...stats.map((s) => parseFloat(s.tension)));
   const visualBar = "█".repeat(Math.round(maxTension / 10));
-  console.log(`Max tension: ${maxTension.toFixed(1)}% ${visualBar}`);
+  console.info(`Max tension: ${maxTension.toFixed(1)}% ${visualBar}`);
 
-  console.log("\n🎉 Enhanced Quantum Analysis Complete!");
-  console.log("📁 Generated files:");
-  console.log("  • /tmp/stdin-snapshot-enhanced-v2.json");
-  console.log("  • /tmp/stdin-quantum-enhanced-v2.json.gz");
+  console.info("\n🎉 Enhanced Quantum Analysis Complete!");
+  console.info("📁 Generated files:");
+  console.info("  • /tmp/stdin-snapshot-enhanced-v2.json");
+  console.info("  • /tmp/stdin-quantum-enhanced-v2.json.gz");
 } catch (error) {
   console.error("❌ Error during stdin analysis:", error);
   process.exit(1);

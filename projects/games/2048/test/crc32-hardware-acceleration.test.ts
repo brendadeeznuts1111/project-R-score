@@ -4,7 +4,7 @@ import { describe, expect, test } from "bun:test";
 
 describe("Bun v1.3.6 Hardware-Accelerated CRC32 Tests", () => {
   test("should demonstrate hardware-accelerated CRC32 performance", async () => {
-    console.log("⚡ Testing hardware-accelerated CRC32");
+    console.info("⚡ Testing hardware-accelerated CRC32");
 
     // Test different data sizes
     const sizes = [1024, 10240, 102400, 1048576]; // 1KB, 10KB, 100KB, 1MB
@@ -29,7 +29,7 @@ describe("Bun v1.3.6 Hardware-Accelerated CRC32 Tests", () => {
       const throughput =
         (size * iterations) / ((endTime - startTime) / 1000) / 1024 / 1024;
 
-      console.log(`📊 ${size} bytes: ${throughput.toFixed(2)} MB/s`);
+      console.info(`📊 ${size} bytes: ${throughput.toFixed(2)} MB/s`);
 
       // Verify we get consistent results
       const hash1 = Bun.hash.crc32(data);
@@ -42,7 +42,7 @@ describe("Bun v1.3.6 Hardware-Accelerated CRC32 Tests", () => {
   });
 
   test("should handle different data types correctly", () => {
-    console.log("🔧 Testing CRC32 with different data types");
+    console.info("🔧 Testing CRC32 with different data types");
 
     // Test with string data
     const stringData = "Hello, World!";
@@ -72,7 +72,7 @@ describe("Bun v1.3.6 Hardware-Accelerated CRC32 Tests", () => {
   });
 
   test("should be consistent across multiple calls", () => {
-    console.log("🔄 Testing CRC32 consistency");
+    console.info("🔄 Testing CRC32 consistency");
 
     const data = Buffer.from("consistency test data");
     const iterations = 1000;
@@ -93,7 +93,7 @@ describe("Bun v1.3.6 Hardware-Accelerated CRC32 Tests", () => {
   });
 
   test("should work with large data buffers", () => {
-    console.log("📊 Testing CRC32 with large data buffers");
+    console.info("📊 Testing CRC32 with large data buffers");
 
     // Test with 10MB buffer
     const largeData = Buffer.alloc(10 * 1024 * 1024);
@@ -109,7 +109,7 @@ describe("Bun v1.3.6 Hardware-Accelerated CRC32 Tests", () => {
 
     const timeTaken = endTime - startTime;
 
-    console.log(`🚀 10MB buffer processed in ${timeTaken.toFixed(2)}ms`);
+    console.info(`🚀 10MB buffer processed in ${timeTaken.toFixed(2)}ms`);
 
     expect(typeof hash).toBe("number");
     expect(hash).toBeGreaterThan(0);
@@ -119,7 +119,7 @@ describe("Bun v1.3.6 Hardware-Accelerated CRC32 Tests", () => {
   });
 
   test("should demonstrate real-world use cases", () => {
-    console.log("💼 Testing real-world CRC32 use cases");
+    console.info("💼 Testing real-world CRC32 use cases");
 
     // Use case 1: File integrity checking
     class FileIntegrityChecker {
@@ -182,7 +182,7 @@ describe("Bun v1.3.6 Hardware-Accelerated CRC32 Tests", () => {
   });
 
   test("should show performance improvement characteristics", async () => {
-    console.log("📈 Testing performance improvement characteristics");
+    console.info("📈 Testing performance improvement characteristics");
 
     const data = Buffer.alloc(1024 * 1024); // 1MB
     const iterations = 100;
@@ -205,10 +205,10 @@ describe("Bun v1.3.6 Hardware-Accelerated CRC32 Tests", () => {
     const minTime = Math.min(...times);
     const maxTime = Math.max(...times);
 
-    console.log(
+    console.info(
       `📊 Average time for ${iterations} CRC32 operations: ${avgTime.toFixed(2)}ms`,
     );
-    console.log(
+    console.info(
       `📊 Min time: ${minTime.toFixed(2)}ms, Max time: ${maxTime.toFixed(2)}ms`,
     );
 
@@ -221,7 +221,7 @@ describe("Bun v1.3.6 Hardware-Accelerated CRC32 Tests", () => {
   });
 
   test("should handle edge cases properly", () => {
-    console.log("🔧 Testing CRC32 edge cases");
+    console.info("🔧 Testing CRC32 edge cases");
 
     // Test with single byte
     const singleByte = Buffer.from([0x42]);
@@ -251,7 +251,7 @@ describe("Bun v1.3.6 Hardware-Accelerated CRC32 Tests", () => {
   });
 
   test("should demonstrate hardware acceleration benefits", () => {
-    console.log("⚡ Demonstrating hardware acceleration benefits");
+    console.info("⚡ Demonstrating hardware acceleration benefits");
 
     // Test that shows the speed advantage
     const testData = Buffer.alloc(1024 * 1024); // 1MB
@@ -268,8 +268,8 @@ describe("Bun v1.3.6 Hardware-Accelerated CRC32 Tests", () => {
     const throughput =
       (1024 * 1024 * iterations) / (totalTime / 1000) / 1024 / 1024;
 
-    console.log(`🚀 Processed ${iterations}MB in ${totalTime.toFixed(2)}ms`);
-    console.log(`🚀 Throughput: ${throughput.toFixed(2)} MB/s`);
+    console.info(`🚀 Processed ${iterations}MB in ${totalTime.toFixed(2)}ms`);
+    console.info(`🚀 Throughput: ${throughput.toFixed(2)} MB/s`);
 
     // Hardware acceleration should provide high throughput
     expect(throughput).toBeGreaterThan(1000); // At least 1 GB/s
@@ -281,7 +281,7 @@ describe("Bun v1.3.6 Hardware-Accelerated CRC32 Tests", () => {
 
 describe("CRC32 Hardware Acceleration Integration", () => {
   test("should integrate seamlessly with existing code", () => {
-    console.log("🔄 Testing seamless integration");
+    console.info("🔄 Testing seamless integration");
 
     // Simulate existing code that uses CRC32
     class LegacyDataProcessor {
@@ -307,7 +307,7 @@ describe("CRC32 Hardware Acceleration Integration", () => {
   });
 
   test("should work in concurrent scenarios", async () => {
-    console.log("🔀 Testing concurrent CRC32 operations");
+    console.info("🔀 Testing concurrent CRC32 operations");
 
     const testData = Buffer.alloc(1024 * 100); // 100KB
     const concurrentTasks = 10;
@@ -333,10 +333,10 @@ describe("CRC32 Hardware Acceleration Integration", () => {
     const times = results.map((r) => r.time);
     const avgTime = times.reduce((sum, time) => sum + time, 0) / times.length;
 
-    console.log(`📊 Concurrent operations avg time: ${avgTime.toFixed(2)}ms`);
+    console.info(`📊 Concurrent operations avg time: ${avgTime.toFixed(2)}ms`);
     expect(avgTime).toBeLessThan(10); // Should be very fast
   });
 });
 
-console.log("🧪 CRC32 Hardware Acceleration Tests Loaded!");
-console.log("Run with: bun test --grep 'CRC32'");
+console.info("🧪 CRC32 Hardware Acceleration Tests Loaded!");
+console.info("Run with: bun test --grep 'CRC32'");

@@ -2,8 +2,8 @@
 
 // Demo of package aliases with Bun
 async function runAliasDemo() {
-  console.log('🏷️ Package Aliases Demo');
-  console.log('========================');
+  console.info('🏷️ Package Aliases Demo');
+  console.info('========================');
 
   // Import packages using their aliases with type assertions
   try {
@@ -12,19 +12,19 @@ async function runAliasDemo() {
     // Use the original date-fns since date-helper alias has typing issues
     const dateHelper = await import('date-fns');
 
-    console.log('✅ All package aliases loaded successfully!');
+    console.info('✅ All package aliases loaded successfully!');
     
-    console.log('\n🔍 Alias Resolution:');
-    console.log('====================');
-    console.log('validation-lib → npm:zod');
-    console.log('utils-lib → npm:lodash');
-    console.log('date-helper → npm:date-fns@2.30.0');
+    console.info('\n🔍 Alias Resolution:');
+    console.info('====================');
+    console.info('validation-lib → npm:zod');
+    console.info('utils-lib → npm:lodash');
+    console.info('date-helper → npm:date-fns@2.30.0');
 
-    console.log('\n🧪 Testing Aliased Packages:');
-    console.log('===========================');
+    console.info('\n🧪 Testing Aliased Packages:');
+    console.info('===========================');
 
     // Test validation-lib (alias for zod)
-    console.log('\n1. validation-lib (Zod alias):');
+    console.info('\n1. validation-lib (Zod alias):');
     const UserSchema = z.object({
       name: z.string().min(2),
       email: z.string().email(),
@@ -34,69 +34,69 @@ async function runAliasDemo() {
     try {
       const testUser = { name: 'Alice', email: 'alice@example.com', age: 30 };
       const validated = UserSchema.parse(testUser);
-      console.log('   ✅ Validation successful:', validated);
+      console.info('   ✅ Validation successful:', validated);
     } catch (error) {
-      console.log('   ❌ Validation failed:', error instanceof Error ? error.message : String(error));
+      console.info('   ❌ Validation failed:', error instanceof Error ? error.message : String(error));
     }
 
     // Test utils-lib (alias for lodash)
-    console.log('\n2. utils-lib (Lodash alias):');
+    console.info('\n2. utils-lib (Lodash alias):');
     const numbers = [1, 2, 3, 4, 5];
     const doubled = utilsLib.default.map(numbers, (x: number) => x * 2);
     const shuffled = utilsLib.default.shuffle(numbers);
-    console.log('   ✅ Original:', numbers);
-    console.log('   ✅ Doubled:', doubled);
-    console.log('   ✅ Shuffled:', shuffled);
+    console.info('   ✅ Original:', numbers);
+    console.info('   ✅ Doubled:', doubled);
+    console.info('   ✅ Shuffled:', shuffled);
 
     // Test date-helper (alias for date-fns - using original for typing)
-    console.log('\n3. date-helper (Date-fns alias):');
+    console.info('\n3. date-helper (Date-fns alias):');
     const now = new Date();
     const formatted = dateHelper.format(now, 'yyyy-MM-dd HH:mm:ss');
     const relative = dateHelper.format(now, 'PPpp');
-    console.log('   ✅ ISO format:', formatted);
-    console.log('   ✅ Pretty format:', relative);
-    console.log('   📝 Note: Using original date-fns import due to typing issues with alias');
+    console.info('   ✅ ISO format:', formatted);
+    console.info('   ✅ Pretty format:', relative);
+    console.info('   📝 Note: Using original date-fns import due to typing issues with alias');
 
-    console.log('\n📦 Package Configuration:');
-    console.log('========================');
+    console.info('\n📦 Package Configuration:');
+    console.info('========================');
     
     // Read package.json to show aliases
     const packageJsonText = await Bun.file('./package.json').text();
     const packageJson = JSON.parse(packageJsonText);
     
-    console.log('Package aliases in package.json:');
+    console.info('Package aliases in package.json:');
     Object.entries(packageJson.dependencies).forEach(([name, version]) => {
       if (typeof version === 'string' && version.startsWith('npm:')) {
-        console.log(`   ${name}: ${version}`);
+        console.info(`   ${name}: ${version}`);
       }
     });
 
-    console.log('\n🎯 Alias Benefits:');
-    console.log('==================');
-    console.log('✅ Semantic naming - Use descriptive names for your domain');
-    console.log('✅ Version pinning - Lock specific versions under aliases');
-    console.log('✅ Conflict resolution - Use multiple versions of same package');
-    console.log('✅ Migration support - Gradually rename package imports');
-    console.log('✅ Abstraction layer - Hide implementation details');
+    console.info('\n🎯 Alias Benefits:');
+    console.info('==================');
+    console.info('✅ Semantic naming - Use descriptive names for your domain');
+    console.info('✅ Version pinning - Lock specific versions under aliases');
+    console.info('✅ Conflict resolution - Use multiple versions of same package');
+    console.info('✅ Migration support - Gradually rename package imports');
+    console.info('✅ Abstraction layer - Hide implementation details');
 
-    console.log('\n🛠️ Alias Patterns:');
-    console.log('==================');
-    console.log('bun add custom-name@npm:package              # Basic alias');
-    console.log('bun add custom-name@npm:package@1.2.3        # Version-specific alias');
-    console.log('bun add custom-name@npm:package@beta          # Tag-specific alias');
-    console.log('bun add custom-name@npm:package --exact       # Exact version alias');
+    console.info('\n🛠️ Alias Patterns:');
+    console.info('==================');
+    console.info('bun add custom-name@npm:package              # Basic alias');
+    console.info('bun add custom-name@npm:package@1.2.3        # Version-specific alias');
+    console.info('bun add custom-name@npm:package@beta          # Tag-specific alias');
+    console.info('bun add custom-name@npm:package --exact       # Exact version alias');
 
-    console.log('\n🔄 Migration Example:');
-    console.log('===================');
-    console.log('// Old: import { z } from "zod";');
-    console.log('// New: import { z } from "validation-lib";');
-    console.log('');
-    console.log('Benefits:');
-    console.log('- Domain-specific naming');
-    console.log('- Version control');
-    console.log('- Easy refactoring');
+    console.info('\n🔄 Migration Example:');
+    console.info('===================');
+    console.info('// Old: import { z } from "zod";');
+    console.info('// New: import { z } from "validation-lib";');
+    console.info('');
+    console.info('Benefits:');
+    console.info('- Domain-specific naming');
+    console.info('- Version control');
+    console.info('- Easy refactoring');
 
-    console.log('\n🎉 Package Aliases Demo Complete!');
+    console.info('\n🎉 Package Aliases Demo Complete!');
 
   } catch (error) {
     console.error('❌ Error loading package aliases:', error instanceof Error ? error.message : String(error));

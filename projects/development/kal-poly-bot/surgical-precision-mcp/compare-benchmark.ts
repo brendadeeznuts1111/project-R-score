@@ -100,29 +100,29 @@ function runBenchmarks(): ComparisonRun {
 }
 
 function printResults(run: ComparisonRun): void {
-  console.log(`\n🧪 ${run.label}`);
-  console.log('━'.repeat(50));
+  console.info(`\n🧪 ${run.label}`);
+  console.info('━'.repeat(50));
 
   run.results.forEach(result => {
-    console.log(`  ${result.name}:`);
-    console.log(`    Time: ${result.timeMs}ms`);
-    console.log(`    Ops: ${result.operations.toLocaleString()}`);
-    console.log(`    Avg/op: ${result.avgTimeUs}μs`);
-    console.log();
+    console.info(`  ${result.name}:`);
+    console.info(`    Time: ${result.timeMs}ms`);
+    console.info(`    Ops: ${result.operations.toLocaleString()}`);
+    console.info(`    Avg/op: ${result.avgTimeUs}μs`);
+    console.info();
   });
 
-  console.log(`📊 Summary - ${run.label}:`);
-  console.log(`  Total Operations: ${run.totalOperations.toLocaleString()}`);
-  console.log(`  Total Time: ${run.totalTimeMs}ms`);
-  console.log(`  Ops/sec: ${(run.totalOperations / (run.totalTimeMs / 1000)).toLocaleString()}`);
-  console.log();
+  console.info(`📊 Summary - ${run.label}:`);
+  console.info(`  Total Operations: ${run.totalOperations.toLocaleString()}`);
+  console.info(`  Total Time: ${run.totalTimeMs}ms`);
+  console.info(`  Ops/sec: ${(run.totalOperations / (run.totalTimeMs / 1000)).toLocaleString()}`);
+  console.info();
 }
 
 function compareRuns(run1: ComparisonRun, run2: ComparisonRun): void {
-  console.log('⚖️  PERFORMANCE COMPARISON');
-  console.log('━'.repeat(70));
-  console.log('Benchmark'.padEnd(35), '| Time 1'.padStart(8), '| Time 2'.padStart(8), '| Difference');
-  console.log('-'.repeat(70));
+  console.info('⚖️  PERFORMANCE COMPARISON');
+  console.info('━'.repeat(70));
+  console.info('Benchmark'.padEnd(35), '| Time 1'.padStart(8), '| Time 2'.padStart(8), '| Difference');
+  console.info('-'.repeat(70));
 
   run1.results.forEach((result1, index) => {
     const result2 = run2.results[index];
@@ -132,7 +132,7 @@ function compareRuns(run1: ComparisonRun, run2: ComparisonRun): void {
     const diffStr = diff > 0 ? `+${diff.toFixed(3)}ms` : `${diff.toFixed(3)}ms`;
     const factor = diff > 0 ? `${(result1.timeMs / result2.timeMs).toFixed(2)}x slower` : `${(result2.timeMs / result1.timeMs).toFixed(2)}x faster`;
 
-    console.log(
+    console.info(
       result1.name.padEnd(35),
       `${result1.timeMs}ms`.padStart(8),
       `${result2.timeMs}ms`.padStart(8),
@@ -144,43 +144,43 @@ function compareRuns(run1: ComparisonRun, run2: ComparisonRun): void {
   const totalFactor = totalDiff > 0 ? (run1.totalTimeMs / run2.totalTimeMs).toFixed(2) : (run2.totalTimeMs / run1.totalTimeMs).toFixed(2);
   const totalDiffStr = totalDiff > 0 ? `+${totalDiff.toFixed(3)}ms` : `${totalDiff.toFixed(3)}ms`;
 
-  console.log('-'.repeat(70));
-  console.log(
+  console.info('-'.repeat(70));
+  console.info(
     'TOTAL'.padEnd(35),
     `${run1.totalTimeMs}ms`.padStart(8),
     `${run2.totalTimeMs}ms`.padStart(8),
     `${totalDiffStr} (${totalFactor}x ${totalDiff > 0 ? 'slower' : 'faster'})`.padStart(12)
   );
 
-  console.log('\n📋 Feature Flags Tested:');
+  console.info('\n📋 Feature Flags Tested:');
   const flags = [
     'BUN_FEATURE_FLAG_DISABLE_NATIVE_DEPENDENCY_LINKER=1',
     'BUN_FEATURE_FLAG_DISABLE_IGNORE_SCRIPTS=1'
   ];
-  flags.forEach(flag => console.log(`  • ${flag}`));
+  flags.forEach(flag => console.info(`  • ${flag}`));
 
   if (process.env.BUN_FEATURE_FLAG_DISABLE_NATIVE_DEPENDENCY_LINKER &&
       process.env.BUN_FEATURE_FLAG_DISABLE_IGNORE_SCRIPTS) {
-    console.log('\nℹ️  Compatibility mode provides npm/yarn-like behavior');
-    console.log('   while maintaining Bun\'s runtime performance benefits.');
+    console.info('\nℹ️  Compatibility mode provides npm/yarn-like behavior');
+    console.info('   while maintaining Bun\'s runtime performance benefits.');
   } else {
-    console.log('\nℹ️  Optimized mode enables Bun\'s native performance enhancements.');
+    console.info('\nℹ️  Optimized mode enables Bun\'s native performance enhancements.');
   }
 }
 
 // Main execution
-console.log('🔬 BUN v1.3.2 FEATURE FLAG PERFORMANCE COMPARISON');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log('Comparing Bun\'s optimized execution vs compatibility mode');
-console.log();
+console.info('🔬 BUN v1.3.2 FEATURE FLAG PERFORMANCE COMPARISON');
+console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.info('Comparing Bun\'s optimized execution vs compatibility mode');
+console.info();
 
 // Wait to ensure clean execution state
 setTimeout(() => {
   const run1 = runBenchmarks();
   printResults(run1);
 
-  console.log('⏳ Running second benchmark pass...');
-  console.log();
+  console.info('⏳ Running second benchmark pass...');
+  console.info();
 
   setTimeout(() => {
     const run2 = runBenchmarks();
@@ -195,10 +195,10 @@ setTimeout(() => {
     if (compRun !== optRun) {
       compareRuns(optRun, compRun);
     } else {
-      console.log('⚠️  Unable to determine optimization mode difference');
-      console.log('   Run separately with/without flags to compare performance');
+      console.info('⚠️  Unable to determine optimization mode difference');
+      console.info('   Run separately with/without flags to compare performance');
     }
 
-    console.log('\n🏁 Benchmark complete - All precision constraints satisfied ✅');
+    console.info('\n🏁 Benchmark complete - All precision constraints satisfied ✅');
   }, 100);
 }, 100);

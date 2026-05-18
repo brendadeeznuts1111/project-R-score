@@ -24,9 +24,9 @@ import { DocumentationProvider, DocumentationCategory } from '../lib/docs/consta
 
 // Helper for formatted output
 function logSection(title: string) {
-  console.log(`\n${'='.repeat(60)}`);
-  console.log(`🧪 ${title}`);
-  console.log('='.repeat(60));
+  console.info(`\n${'='.repeat(60)}`);
+  console.info(`🧪 ${title}`);
+  console.info('='.repeat(60));
 }
 
 async function runComprehensiveExamples() {
@@ -44,13 +44,13 @@ async function runComprehensiveExamples() {
     cliBuild: docsURLBuilder.buildCLIDocumentationURL('build', 'options')
   };
   
-  console.log('📚 CLI Documentation URLs:');
+  console.info('📚 CLI Documentation URLs:');
   Object.entries(cliURLs).forEach(([key, url]) => {
-    console.log(`   ${key}: ${url}`);
+    console.info(`   ${key}: ${url}`);
   });
   
   // CLI command validation
-  console.log('\n🔍 CLI Command Validation:');
+  console.info('\n🔍 CLI Command Validation:');
   const cliCommands = [
     'bun run dev',
     'bun test --watch',
@@ -61,7 +61,7 @@ async function runComprehensiveExamples() {
   
   cliCommands.forEach((cmd, i) => {
     const isValid = EnhancedDocumentationURLValidator.isValidCLICommand(cmd);
-    console.log(`   ${i + 1}. ${isValid ? '✅' : '❌'} ${cmd}`);
+    console.info(`   ${i + 1}. ${isValid ? '✅' : '❌'} ${cmd}`);
   });
   
   logSection('2. Bun.utils Documentation Examples');
@@ -74,20 +74,20 @@ async function runComprehensiveExamples() {
     conversion: docsURLBuilder.buildUtilsDocumentationURL(undefined, 'conversion')
   };
   
-  console.log('📚 Bun.utils Documentation URLs:');
+  console.info('📚 Bun.utils Documentation URLs:');
   Object.entries(utilsURLs).forEach(([key, url]) => {
-    console.log(`   ${key}: ${url}`);
+    console.info(`   ${key}: ${url}`);
   });
   
   // Bun.utils function examples
-  console.log('\n💡 Bun.utils Function Examples:');
+  console.info('\n💡 Bun.utils Function Examples:');
   
   const utilsExamples = [
     {
       name: 'isTypedArray',
       code: `import { isTypedArray } from 'bun';
 const arr = new Uint8Array([1, 2, 3]);
-console.log(isTypedArray(arr)); // true`,
+console.info(isTypedArray(arr)); // true`,
       url: docsURLBuilder.buildUtilsDocumentationURL('isTypedArray')
     },
     {
@@ -105,9 +105,9 @@ await writeFile('output.txt', 'Hello, Bun!');`,
   ];
   
   utilsExamples.forEach(example => {
-    console.log(`\n   🔹 ${example.name}:`);
-    console.log(`      📖 Docs: ${example.url}`);
-    console.log(`      💻 Example:\n      ${example.code.split('\n').join('\n      ')}`);
+    console.info(`\n   🔹 ${example.name}:`);
+    console.info(`      📖 Docs: ${example.url}`);
+    console.info(`      💻 Example:\n      ${example.code.split('\n').join('\n      ')}`);
   });
   
   logSection('3. Comprehensive URL Validation Examples');
@@ -144,33 +144,33 @@ await writeFile('output.txt', 'Hello, Bun!');`,
     'https://github.com/oven-sh/bun/blob/main/packages/bun-types/bun.d.ts'
   ];
   
-  console.log('🔍 URL Validation Test Results:');
+  console.info('🔍 URL Validation Test Results:');
   
   for (const url of testURLs) {
     const validation = EnhancedDocumentationURLValidator.validateBunDocumentationURL(url);
     const isGitHub = EnhancedDocumentationURLValidator.parseGitHubURL(url);
     const hasTextFragment = EnhancedDocumentationURLValidator.extractTextFragment(url);
     
-    console.log(`\n   🔗 URL: ${url}`);
-    console.log(`      ✅ Valid: ${validation.isValid ? 'Yes' : 'No'}`);
+    console.info(`\n   🔗 URL: ${url}`);
+    console.info(`      ✅ Valid: ${validation.isValid ? 'Yes' : 'No'}`);
     
     if (validation.isValid) {
-      console.log(`      🏷️  Provider: ${validation.provider || 'Unknown'}`);
-      console.log(`      📁 Type: ${validation.type || 'Unknown'}`);
+      console.info(`      🏷️  Provider: ${validation.provider || 'Unknown'}`);
+      console.info(`      📁 Type: ${validation.type || 'Unknown'}`);
       if (validation.fragment) {
-        console.log(`      🔖 Fragment: ${validation.fragment}`);
+        console.info(`      🔖 Fragment: ${validation.fragment}`);
       }
     }
     
     if (isGitHub.isValid) {
-      console.log(`      🐙 GitHub Type: ${isGitHub.type}`);
+      console.info(`      🐙 GitHub Type: ${isGitHub.type}`);
       if (isGitHub.commitHash) {
-        console.log(`      🔐 Commit: ${isGitHub.commitHash.slice(0, 8)}...`);
+        console.info(`      🔐 Commit: ${isGitHub.commitHash.slice(0, 8)}...`);
       }
     }
     
     if (hasTextFragment.hasTextFragment) {
-      console.log(`      📝 Text Fragment: "${hasTextFragment.decodedText}"`);
+      console.info(`      📝 Text Fragment: "${hasTextFragment.decodedText}"`);
     }
   }
   
@@ -179,13 +179,13 @@ await writeFile('output.txt', 'Hello, Bun!');`,
   // Build CLI documentation URLs with fragments
   const cliFragments = docsURLBuilder.getCLIFragmentURLs();
   
-  console.log('🔨 CLI Command Documentation with Fragments:');
+  console.info('🔨 CLI Command Documentation with Fragments:');
   Object.entries(cliFragments).forEach(([key, url]) => {
-    console.log(`   ${key}: ${url}`);
+    console.info(`   ${key}: ${url}`);
   });
   
   // Generate CLI command examples with validation
-  console.log('\n🚀 CLI Command Generation:');
+  console.info('\n🚀 CLI Command Generation:');
   
   const commandExamples = [
     docsURLBuilder.buildCLICommandExample('run', { script: 'dev', watch: true }),
@@ -204,22 +204,22 @@ await writeFile('output.txt', 'Hello, Bun!');`,
   ];
   
   commandExamples.forEach((cmd, i) => {
-    console.log(`   ${i + 1}. ${cmd}`);
+    console.info(`   ${i + 1}. ${cmd}`);
     
     // Validate the command
     const validation = EnhancedDocumentationURLValidator.validateCLICommand(cmd);
     if (validation.isValid) {
-      console.log(`      ✅ Valid command`);
-      console.log(`      🔧 Command: ${validation.command}`);
-      console.log(`      🎯 Arguments: ${validation.args?.join(', ') || 'None'}`);
-      console.log(`      🏷️  Options: ${JSON.stringify(validation.options)}`);
+      console.info(`      ✅ Valid command`);
+      console.info(`      🔧 Command: ${validation.command}`);
+      console.info(`      🎯 Arguments: ${validation.args?.join(', ') || 'None'}`);
+      console.info(`      🏷️  Options: ${JSON.stringify(validation.options)}`);
     }
   });
   
   logSection('5. Bun.utils Validation Examples');
   
   // Test Bun.utils validation functions
-  console.log('🧪 Bun.utils Validation Function Tests:');
+  console.info('🧪 Bun.utils Validation Function Tests:');
   
   const validationTests = [
     {
@@ -251,17 +251,17 @@ await writeFile('output.txt', 'Hello, Bun!');`,
   // In a real scenario, we'd import and use the actual Bun.utils
   // For demonstration, we'll show the pattern
   validationTests.forEach(test => {
-    console.log(`\n   🔹 ${test.name}:`);
-    console.log(`      📖 Docs: ${test.docs}`);
-    console.log(`      🧪 Test: ${test.name}(${JSON.stringify(test.testValue)})`);
-    console.log(`      ✅ Expected: ${test.expected}`);
-    console.log(`      💡 Example: import { ${test.name} } from 'bun';`);
+    console.info(`\n   🔹 ${test.name}:`);
+    console.info(`      📖 Docs: ${test.docs}`);
+    console.info(`      🧪 Test: ${test.name}(${JSON.stringify(test.testValue)})`);
+    console.info(`      ✅ Expected: ${test.expected}`);
+    console.info(`      💡 Example: import { ${test.name} } from 'bun';`);
   });
   
   logSection('6. Integration: CLI + Utils + Documentation');
   
   // Show how CLI, utils, and documentation work together
-  console.log('🔄 Integrated Workflow Example:');
+  console.info('🔄 Integrated Workflow Example:');
   
   const integratedExample = {
     scenario: 'Create a new Bun project, add dependencies, and validate configuration',
@@ -297,49 +297,49 @@ if (isObject(config)) {
     ]
   };
   
-  console.log(`\n   📋 Scenario: ${integratedExample.scenario}`);
+  console.info(`\n   📋 Scenario: ${integratedExample.scenario}`);
   integratedExample.steps.forEach(step => {
-    console.log(`\n   🔸 Step ${step.step}: ${step.action}`);
+    console.info(`\n   🔸 Step ${step.step}: ${step.action}`);
     if (step.command) {
-      console.log(`      💻 Command: ${step.command}`);
+      console.info(`      💻 Command: ${step.command}`);
     }
     if (step.utils) {
-      console.log(`      🛠️  Utils: ${step.utils.split('\n').join('\n               ')}`);
+      console.info(`      🛠️  Utils: ${step.utils.split('\n').join('\n               ')}`);
     }
-    console.log(`      📚 Docs: ${step.docs}`);
+    console.info(`      📚 Docs: ${step.docs}`);
   });
   
   logSection('7. Quick Reference Cheatsheet');
   
   // Generate a quick reference cheatsheet
-  console.log('📋 Bun CLI & Utils Quick Reference:');
+  console.info('📋 Bun CLI & Utils Quick Reference:');
   
   const cheatsheet = docsURLBuilder.getCheatsheetURLs();
   
-  console.log('\n   🔗 Documentation Portals:');
-  console.log(`      📘 CLI Docs: ${cheatsheet.cli.main}`);
-  console.log(`      🛠️  Utils Docs: ${cheatsheet.utils.main}`);
-  console.log(`      🔗 API Reference: ${cheatsheet.api.main}`);
+  console.info('\n   🔗 Documentation Portals:');
+  console.info(`      📘 CLI Docs: ${cheatsheet.cli.main}`);
+  console.info(`      🛠️  Utils Docs: ${cheatsheet.utils.main}`);
+  console.info(`      🔗 API Reference: ${cheatsheet.api.main}`);
   
-  console.log('\n   🚀 Essential Commands:');
+  console.info('\n   🚀 Essential Commands:');
   cheatsheet.cli.commands.forEach((cmd: any) => {
-    console.log(`      ${cmd.name}: ${cmd.example} → ${cmd.docs}`);
+    console.info(`      ${cmd.name}: ${cmd.example} → ${cmd.docs}`);
   });
   
-  console.log('\n   🛠️  Essential Utils:');
+  console.info('\n   🛠️  Essential Utils:');
   cheatsheet.utils.functions.forEach((fn: any) => {
-    console.log(`      ${fn.name}: ${fn.example} → ${fn.docs}`);
+    console.info(`      ${fn.name}: ${fn.example} → ${fn.docs}`);
   });
   
-  console.log('\n   🔍 Validation Helpers:');
+  console.info('\n   🔍 Validation Helpers:');
   cheatsheet.utils.validation.forEach((val: any) => {
-    console.log(`      ${val.name}(${val.test}) → ${val.result}`);
+    console.info(`      ${val.name}(${val.test}) → ${val.result}`);
   });
   
   logSection('8. Advanced: GitHub Integration for CLI & Utils');
   
   // Show GitHub source integration
-  console.log('🔗 GitHub Source Integration:');
+  console.info('🔗 GitHub Source Integration:');
   
   const githubSources = {
     cliSource: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types/src/cli',
@@ -357,23 +357,23 @@ if (isObject(config)) {
     )
   };
   
-  console.log('\n   🐙 CLI Type Definitions:');
-  console.log(`      📁 Source: ${githubSources.cliSource}`);
-  console.log(`      📄 Raw Types: ${githubSources.rawCLITypes}`);
+  console.info('\n   🐙 CLI Type Definitions:');
+  console.info(`      📁 Source: ${githubSources.cliSource}`);
+  console.info(`      📄 Raw Types: ${githubSources.rawCLITypes}`);
   
-  console.log('\n   🛠️  Utils Type Definitions:');
-  console.log(`      📁 Source: ${githubSources.utilsSource}`);
-  console.log(`      📄 Raw Types: ${githubSources.rawUtilsTypes}`);
+  console.info('\n   🛠️  Utils Type Definitions:');
+  console.info(`      📁 Source: ${githubSources.utilsSource}`);
+  console.info(`      📄 Raw Types: ${githubSources.rawUtilsTypes}`);
   
-  console.log('\n   🔐 Specific Commit Example:');
-  console.log(`      🔗 URL: ${githubSources.specificCommit}`);
+  console.info('\n   🔐 Specific Commit Example:');
+  console.info(`      🔗 URL: ${githubSources.specificCommit}`);
   
   // Parse the commit URL
   const commitInfo = EnhancedDocumentationURLValidator.parseGitHubURL(githubSources.specificCommit);
   if (commitInfo.isValid) {
-    console.log(`      🏷️  Type: ${commitInfo.type}`);
-    console.log(`      🔐 Commit: ${commitInfo.commitHash?.slice(0, 8)}...`);
-    console.log(`      📁 Path: ${commitInfo.path}`);
+    console.info(`      🏷️  Type: ${commitInfo.type}`);
+    console.info(`      🔐 Commit: ${commitInfo.commitHash?.slice(0, 8)}...`);
+    console.info(`      📁 Path: ${commitInfo.path}`);
   }
   
   logSection('9. Validation Summary Report');
@@ -395,21 +395,21 @@ if (isObject(config)) {
     ).length
   };
   
-  console.log('📊 Validation Summary:');
-  console.log(`   Total URLs Tested: ${validationSummary.totalURLsTested}`);
-  console.log(`   ✅ Valid URLs: ${validationSummary.validURLs}`);
-  console.log(`   🐙 GitHub URLs: ${validationSummary.gitHubURLs}`);
-  console.log(`   📝 Text Fragment URLs: ${validationSummary.textFragmentURLs}`);
-  console.log(`   🔢 TypedArray URLs: ${validationSummary.typedArrayURLs}`);
+  console.info('📊 Validation Summary:');
+  console.info(`   Total URLs Tested: ${validationSummary.totalURLsTested}`);
+  console.info(`   ✅ Valid URLs: ${validationSummary.validURLs}`);
+  console.info(`   🐙 GitHub URLs: ${validationSummary.gitHubURLs}`);
+  console.info(`   📝 Text Fragment URLs: ${validationSummary.textFragmentURLs}`);
+  console.info(`   🔢 TypedArray URLs: ${validationSummary.typedArrayURLs}`);
   
   // Calculate percentages
   const percentValid = (validationSummary.validURLs / validationSummary.totalURLsTested * 100).toFixed(1);
-  console.log(`   📈 Success Rate: ${percentValid}%`);
+  console.info(`   📈 Success Rate: ${percentValid}%`);
   
   logSection('10. Practical Usage Example');
   
   // Show a complete practical example
-  console.log('🚀 Complete Example: CLI + Utils + Documentation');
+  console.info('🚀 Complete Example: CLI + Utils + Documentation');
   
   const completeExample = `
 // Import Bun utilities
@@ -441,18 +441,18 @@ const docs = {
   cliTest: '${docsURLBuilder.buildCLIDocumentationURL('test', 'options')}'
 };
 
-console.log('📚 Documentation:', docs);`;
+console.info('📚 Documentation:', docs);`;
   
-  console.log('\n💻 Code Example:');
-  console.log(completeExample);
+  console.info('\n💻 Code Example:');
+  console.info(completeExample);
   
-  console.log('\n📚 Documentation URLs Used:');
+  console.info('\n📚 Documentation URLs Used:');
   const urls = completeExample.match(/https:\/\/[^\s'"]+/g);
   urls?.forEach(url => {
     const validation = EnhancedDocumentationURLValidator.validateBunDocumentationURL(url);
-    console.log(`   ${validation.isValid ? '✅' : '❌'} ${url}`);
+    console.info(`   ${validation.isValid ? '✅' : '❌'} ${url}`);
     if (validation.provider) {
-      console.log(`     🏷️  ${validation.provider} - ${validation.type}`);
+      console.info(`     🏷️  ${validation.provider} - ${validation.type}`);
     }
   });
 }

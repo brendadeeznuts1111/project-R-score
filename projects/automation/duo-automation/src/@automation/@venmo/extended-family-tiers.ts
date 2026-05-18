@@ -225,7 +225,7 @@ class ExtendedFamilyTiers {
     };
 
     await this.saveMember(member);
-    console.log(`👥 Created family member: ${params.name} (${params.relationship}) in ${params.familyId}`);
+    console.info(`👥 Created family member: ${params.name} (${params.relationship}) in ${params.familyId}`);
 
     // Notify inviter if applicable
     if (params.invitedBy) {
@@ -275,7 +275,7 @@ class ExtendedFamilyTiers {
     await this.checkTierPromotion(member, adjustedBy);
 
     await this.saveMember(member);
-    console.log(`📈 Adjusted trust score for ${member.name}: ${previousScore} → ${newScore} (${reason})`);
+    console.info(`📈 Adjusted trust score for ${member.name}: ${previousScore} → ${newScore} (${reason})`);
 
     return member;
   }
@@ -408,7 +408,7 @@ class ExtendedFamilyTiers {
     await this.saveTierPromotion(promotion);
     await this.saveMember(member);
 
-    console.log(`🎉 Promoted ${member.name}: ${oldTier} → ${newTier}`);
+    console.info(`🎉 Promoted ${member.name}: ${oldTier} → ${newTier}`);
     
     // Trigger celebration
     await this.triggerPromotionCelebration(member, promotion);
@@ -568,7 +568,7 @@ class ExtendedFamilyTiers {
    * Trigger promotion celebration
    */
   private static async triggerPromotionCelebration(member: PoolMember, promotion: TierPromotion): Promise<void> {
-    console.log(`🎊 Promotion celebration for ${member.name}: ${promotion.fromTier} → ${promotion.toTier}`);
+    console.info(`🎊 Promotion celebration for ${member.name}: ${promotion.fromTier} → ${promotion.toTier}`);
     // Integration with celebration system
   }
 
@@ -576,7 +576,7 @@ class ExtendedFamilyTiers {
    * Notify family of promotion
    */
   private static async notifyFamilyOfPromotion(member: PoolMember, promotion: TierPromotion): Promise<void> {
-    console.log(`📢 Notifying family of ${member.name}'s promotion`);
+    console.info(`📢 Notifying family of ${member.name}'s promotion`);
     // Integration with notification system
   }
 
@@ -584,7 +584,7 @@ class ExtendedFamilyTiers {
    * Notify inviter of member activity
    */
   private static async notifyInviter(inviterId: string, member: PoolMember, action: string): Promise<void> {
-    console.log(`📱 Notifying inviter ${inviterId} of ${action} for ${member.name}`);
+    console.info(`📱 Notifying inviter ${inviterId} of ${action} for ${member.name}`);
     // Integration with notification system
   }
 
@@ -730,23 +730,23 @@ if (import.meta.main) {
         familyId,
         invitedBy: 'alice-cousin'
       }).then(member => {
-        console.log('✅ Created member:', member.name);
-        console.log(`Tier: ${member.relationship} (${member.trustScore} trust)`);
-        console.log(`Max Front: $${member.maxFrontAmount}`);
+        console.info('✅ Created member:', member.name);
+        console.info(`Tier: ${member.relationship} (${member.trustScore} trust)`);
+        console.info(`Max Front: $${member.maxFrontAmount}`);
       }).catch(error => console.error('❌ Error:', error.message));
       break;
 
     case 'stats':
       ExtendedFamilyTiers.getFamilyTierStatistics(familyId).then(stats => {
-        console.log('📊 Family Tier Statistics:');
-        console.log(`Total Members: ${stats.totalMembers}`);
-        console.log(`Average Trust: ${stats.averageTrustScore}`);
-        console.log(`Total Contribution: ${stats.totalContribution}`);
-        console.log(`Fronting Capacity: $${stats.frontingCapacity}`);
-        console.log('\nTiers:');
+        console.info('📊 Family Tier Statistics:');
+        console.info(`Total Members: ${stats.totalMembers}`);
+        console.info(`Average Trust: ${stats.averageTrustScore}`);
+        console.info(`Total Contribution: ${stats.totalContribution}`);
+        console.info(`Fronting Capacity: $${stats.frontingCapacity}`);
+        console.info('\nTiers:');
         for (const [tier, count] of Object.entries(stats.tiers)) {
           const config = ExtendedFamilyTiers.getTierConfig(tier as RelationshipTier);
-          console.log(`  ${config.icon} ${tier}: ${count} members`);
+          console.info(`  ${config.icon} ${tier}: ${count} members`);
         }
       }).catch(error => console.error('❌ Error:', error.message));
       break;
@@ -759,7 +759,7 @@ if (import.meta.main) {
       if (memberId) {
         ExtendedFamilyTiers.adjustTrustScore(memberId, adjustment, reason, 'system')
           .then(member => {
-            console.log(`📈 Adjusted trust for ${member.name}: ${member.trustScore}`);
+            console.info(`📈 Adjusted trust for ${member.name}: ${member.trustScore}`);
           })
           .catch(error => console.error('❌ Error:', error.message));
       }
@@ -767,17 +767,17 @@ if (import.meta.main) {
 
     case 'tiers':
       const configs = ExtendedFamilyTiers.getAllTierConfigs();
-      console.log('🏆 Extended Family Tiers:');
+      console.info('🏆 Extended Family Tiers:');
       for (const [tier, config] of Object.entries(configs)) {
-        console.log(`\n${config.icon} ${tier}:`);
-        console.log(`  Trust Score: ${config.baseTrustScore}`);
-        console.log(`  Max Front: $${config.maxFrontAmount}`);
-        console.log(`  Description: ${config.description}`);
+        console.info(`\n${config.icon} ${tier}:`);
+        console.info(`  Trust Score: ${config.baseTrustScore}`);
+        console.info(`  Max Front: $${config.maxFrontAmount}`);
+        console.info(`  Description: ${config.description}`);
       }
       break;
 
     default:
-      console.log(`
+      console.info(`
 👥 Extended Family Tiers - Trust-by-Degree System
 
 Usage:

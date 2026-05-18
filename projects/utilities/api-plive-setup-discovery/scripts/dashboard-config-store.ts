@@ -21,7 +21,7 @@ async function interpolateConfig(content: string): Promise<string> {
 
 async function syncToVault(secrets: Record<string, string>): Promise<void> {
   // TODO: Implement actual vault sync with Bun.secrets or external vault
-  console.log(`🔐 Syncing ${Object.keys(secrets).length} secrets to vault...`);
+  console.info(`🔐 Syncing ${Object.keys(secrets).length} secrets to vault...`);
   
   // Extract secrets from config (keys containing 'password', 'secret', 'key', 'token')
   const secretKeys = Object.keys(secrets).filter(key => 
@@ -29,15 +29,15 @@ async function syncToVault(secrets: Record<string, string>): Promise<void> {
   );
   
   if (secretKeys.length > 0) {
-    console.log(`   Found ${secretKeys.length} secret keys: ${secretKeys.join(', ')}`);
+    console.info(`   Found ${secretKeys.length} secret keys: ${secretKeys.join(', ')}`);
     // In production, this would sync to actual vault
   }
 }
 
 async function storeConfig(options: StoreOptions): Promise<void> {
-  console.log(`📦 Storing dashboard config: ${options.filePath}`);
-  console.log(`   Interpolate: ${options.interpolate ? '✅' : '❌'}`);
-  console.log(`   Vault Sync: ${options.vaultSync ? '✅' : '❌'}`);
+  console.info(`📦 Storing dashboard config: ${options.filePath}`);
+  console.info(`   Interpolate: ${options.interpolate ? '✅' : '❌'}`);
+  console.info(`   Vault Sync: ${options.vaultSync ? '✅' : '❌'}`);
 
   try {
     // Read file
@@ -47,7 +47,7 @@ async function storeConfig(options: StoreOptions): Promise<void> {
     let processedContent = content;
     if (options.interpolate) {
       processedContent = await interpolateConfig(content);
-      console.log('✅ Environment variables interpolated');
+      console.info('✅ Environment variables interpolated');
     }
 
     // Parse YAML to extract secrets for vault sync
@@ -80,18 +80,18 @@ async function storeConfig(options: StoreOptions): Promise<void> {
     const path = `configs/dashboard-${shortHash}.yaml`;
     await Bun.write(path, processedContent);
     
-    console.log(`\n✅ Config stored:`);
-    console.log(`   Hash: ${shortHash}`);
-    console.log(`   Path: ${path}`);
-    console.log(`   Size: ${processedContent.length} bytes`);
+    console.info(`\n✅ Config stored:`);
+    console.info(`   Hash: ${shortHash}`);
+    console.info(`   Path: ${path}`);
+    console.info(`   Size: ${processedContent.length} bytes`);
 
     // Sync to vault if requested
     if (options.vaultSync && Object.keys(secrets).length > 0) {
       await syncToVault(secrets);
     }
 
-    console.log(`\n💡 Retrieval:`);
-    console.log(`   bun run dashboard:config-get --hash=${shortHash}`);
+    console.info(`\n💡 Retrieval:`);
+    console.info(`   bun run dashboard:config-get --hash=${shortHash}`);
 
   } catch (error) {
     console.error('❌ Error:', error.message);

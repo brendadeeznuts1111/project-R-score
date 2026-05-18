@@ -23,7 +23,7 @@ export class RotationNumbersDemo {
      * Example 1: Create rotation numbers for NBA game
      */
     static createNBARotationNumbers(): RotationNumber[] {
-        console.log('🏀 Creating NBA Rotation Numbers\n');
+        console.info('🏀 Creating NBA Rotation Numbers\n');
 
         const gameId = 'NBA_2024_01_15_LAL_BOS';
         const eventDate = new Date('2024-01-15T20:00:00Z');
@@ -131,9 +131,9 @@ export class RotationNumbersDemo {
             }
         ];
 
-        console.log(`✅ Created ${rotationNumbers.length} rotation numbers for NBA game`);
+        console.info(`✅ Created ${rotationNumbers.length} rotation numbers for NBA game`);
         rotationNumbers.forEach(rn => {
-            console.log(`   ${rn.sportsbook}: Rotation ${rn.rotation} - ${rn.markets.length} markets`);
+            console.info(`   ${rn.sportsbook}: Rotation ${rn.rotation} - ${rn.markets.length} markets`);
         });
 
         return rotationNumbers;
@@ -143,7 +143,7 @@ export class RotationNumbersDemo {
      * Example 2: Rotation arbitrage detection
      */
     static async demonstrateRotationArbitrage(): Promise<void> {
-        console.log('\n🎯 Rotation Arbitrage Detection Demo\n');
+        console.info('\n🎯 Rotation Arbitrage Detection Demo\n');
 
         // Create rotation numbers
         const rotationNumbers = this.createNBARotationNumbers();
@@ -151,41 +151,41 @@ export class RotationNumbersDemo {
         // Create arbitrage detector
         const detector = RotationArbitrageDetectorFactory.createConservativeDetector();
 
-        console.log('🔍 Analyzing rotation numbers for arbitrage opportunities...');
+        console.info('🔍 Analyzing rotation numbers for arbitrage opportunities...');
 
         // Find opportunities
         const startTime = performance.now();
         const opportunities = await detector.findOpportunities(rotationNumbers);
         const detectionTime = performance.now() - startTime;
 
-        console.log(`\n🎯 Detection Results:`);
-        console.log(`   Processing Time: ${detectionTime.toFixed(2)}ms`);
-        console.log(`   Opportunities Found: ${opportunities.length}`);
+        console.info(`\n🎯 Detection Results:`);
+        console.info(`   Processing Time: ${detectionTime.toFixed(2)}ms`);
+        console.info(`   Opportunities Found: ${opportunities.length}`);
 
         if (opportunities.length > 0) {
-            console.log('\n🏆 Arbitrage Opportunities:');
+            console.info('\n🏆 Arbitrage Opportunities:');
             opportunities.forEach((opp, index) => {
-                console.log(`   ${index + 1}. ${opp.id}`);
-                console.log(`      Expected Return: ${opp.expectedReturn.percent.toFixed(3)}%`);
-                console.log(`      Confidence: ${(opp.confidence * 100).toFixed(1)}%`);
-                console.log(`      Sportsbooks: ${opp.sportsbooks.join(', ')}`);
-                console.log(`      Risk Score: ${opp.riskMetrics.riskScore.toFixed(2)}`);
-                console.log(`      Markets: ${opp.markets.length}`);
+                console.info(`   ${index + 1}. ${opp.id}`);
+                console.info(`      Expected Return: ${opp.expectedReturn.percent.toFixed(3)}%`);
+                console.info(`      Confidence: ${(opp.confidence * 100).toFixed(1)}%`);
+                console.info(`      Sportsbooks: ${opp.sportsbooks.join(', ')}`);
+                console.info(`      Risk Score: ${opp.riskMetrics.riskScore.toFixed(2)}`);
+                console.info(`      Markets: ${opp.markets.length}`);
             });
         } else {
-            console.log('   No arbitrage opportunities found with current criteria');
+            console.info('   No arbitrage opportunities found with current criteria');
         }
 
         // Demonstrate validation
         if (opportunities.length > 0) {
             const validation = detector.validateOpportunity(opportunities[0]);
-            console.log(`\n📋 Opportunity Validation:`);
-            console.log(`   Valid: ${validation.isValid}`);
+            console.info(`\n📋 Opportunity Validation:`);
+            console.info(`   Valid: ${validation.isValid}`);
             if (validation.errors.length > 0) {
-                console.log(`   Errors: ${validation.errors.join(', ')}`);
+                console.info(`   Errors: ${validation.errors.join(', ')}`);
             }
             if (validation.warnings.length > 0) {
-                console.log(`   Warnings: ${validation.warnings.join(', ')}`);
+                console.info(`   Warnings: ${validation.warnings.join(', ')}`);
             }
         }
     }
@@ -194,21 +194,21 @@ export class RotationNumbersDemo {
      * Example 3: Rotation analytics engine
      */
     static async demonstrateRotationAnalytics(): Promise<void> {
-        console.log('\n📊 Rotation Analytics Engine Demo\n');
+        console.info('\n📊 Rotation Analytics Engine Demo\n');
 
         // Create analytics engine
         const analyticsEngine = RotationAnalyticsEngineFactory.createDefaultEngine();
 
         // Create rotation number
         const rotationNumber = this.createNBARotationNumbers()[0];
-        console.log(`📈 Creating analytics for rotation ${rotationNumber.rotation} (${rotationNumber.sportsbook})`);
+        console.info(`📈 Creating analytics for rotation ${rotationNumber.rotation} (${rotationNumber.sportsbook})`);
 
         // Initialize analytics
         const analytics = analyticsEngine.createAnalytics(rotationNumber);
-        console.log('✅ Analytics initialized');
+        console.info('✅ Analytics initialized');
 
         // Simulate price updates
-        console.log('\n📈 Simulating price updates...');
+        console.info('\n📈 Simulating price updates...');
         for (let i = 0; i < 10; i++) {
             const pricePoint = {
                 timestamp: new Date(Date.now() - (9 - i) * 60000), // Last 10 minutes
@@ -221,7 +221,7 @@ export class RotationNumbersDemo {
         }
 
         // Simulate volume updates
-        console.log('📊 Simulating volume updates...');
+        console.info('📊 Simulating volume updates...');
         for (let i = 0; i < 10; i++) {
             const volumePoint = {
                 timestamp: new Date(Date.now() - (9 - i) * 60000),
@@ -236,38 +236,38 @@ export class RotationNumbersDemo {
         // Get current analytics
         const currentAnalytics = analyticsEngine.getAnalytics(rotationNumber.id);
         if (currentAnalytics) {
-            console.log('\n📊 Current Analytics:');
-            console.log(`   Price History Points: ${currentAnalytics.priceHistory.length}`);
-            console.log(`   Volume History Points: ${currentAnalytics.volumeHistory.length}`);
-            console.log(`   Sharp Movements: ${currentAnalytics.sharpMovement.length}`);
-            console.log(`   Price Efficiency: ${(currentAnalytics.efficiency.priceEfficiency * 100).toFixed(1)}%`);
-            console.log(`   Volume Efficiency: ${(currentAnalytics.efficiency.volumeEfficiency * 100).toFixed(1)}%`);
-            console.log(`   Arbitrage Frequency: ${currentAnalytics.efficiency.arbitrageFrequency.toFixed(1)} per hour`);
-            console.log(`   Market Impact: ${(currentAnalytics.efficiency.marketImpact * 100).toFixed(2)}%`);
+            console.info('\n📊 Current Analytics:');
+            console.info(`   Price History Points: ${currentAnalytics.priceHistory.length}`);
+            console.info(`   Volume History Points: ${currentAnalytics.volumeHistory.length}`);
+            console.info(`   Sharp Movements: ${currentAnalytics.sharpMovement.length}`);
+            console.info(`   Price Efficiency: ${(currentAnalytics.efficiency.priceEfficiency * 100).toFixed(1)}%`);
+            console.info(`   Volume Efficiency: ${(currentAnalytics.efficiency.volumeEfficiency * 100).toFixed(1)}%`);
+            console.info(`   Arbitrage Frequency: ${currentAnalytics.efficiency.arbitrageFrequency.toFixed(1)} per hour`);
+            console.info(`   Market Impact: ${(currentAnalytics.efficiency.marketImpact * 100).toFixed(2)}%`);
 
             if (currentAnalytics.sharpMovement.length > 0) {
-                console.log('\n⚡ Sharp Movements:');
+                console.info('\n⚡ Sharp Movements:');
                 currentAnalytics.sharpMovement.forEach(movement => {
-                    console.log(`   ${movement.timestamp.toISOString()}: ${movement.fromPrice} → ${movement.toPrice} (${movement.sportsbook})`);
+                    console.info(`   ${movement.timestamp.toISOString()}: ${movement.fromPrice} → ${movement.toPrice} (${movement.sportsbook})`);
                 });
             }
         }
 
         // Get analytics summary
         const summary = analyticsEngine.getAnalyticsSummary([rotationNumber.id]);
-        console.log('\n📋 Analytics Summary:');
-        console.log(`   Total Rotation Numbers: ${summary.totalRotationNumbers}`);
-        console.log(`   Average Price Efficiency: ${(summary.avgPriceEfficiency * 100).toFixed(1)}%`);
-        console.log(`   Average Volume Efficiency: ${(summary.avgVolumeEfficiency * 100).toFixed(1)}%`);
-        console.log(`   Total Arbitrage Opportunities: ${summary.totalArbitrageOpportunities}`);
-        console.log(`   Average Market Impact: ${(summary.avgMarketImpact * 100).toFixed(2)}%`);
+        console.info('\n📋 Analytics Summary:');
+        console.info(`   Total Rotation Numbers: ${summary.totalRotationNumbers}`);
+        console.info(`   Average Price Efficiency: ${(summary.avgPriceEfficiency * 100).toFixed(1)}%`);
+        console.info(`   Average Volume Efficiency: ${(summary.avgVolumeEfficiency * 100).toFixed(1)}%`);
+        console.info(`   Total Arbitrage Opportunities: ${summary.totalArbitrageOpportunities}`);
+        console.info(`   Average Market Impact: ${(summary.avgMarketImpact * 100).toFixed(2)}%`);
     }
 
     /**
      * Example 4: Multi-sportsbook arbitrage detection
      */
     static async demonstrateMultiSportsbookArbitrage(): Promise<void> {
-        console.log('\n🏪 Multi-Sportsbook Arbitrage Demo\n');
+        console.info('\n🏪 Multi-Sportsbook Arbitrage Demo\n');
 
         // Create rotation numbers for multiple sportsbooks
         const rotationNumbers = this.createMultiSportsbookRotationNumbers();
@@ -275,23 +275,23 @@ export class RotationNumbersDemo {
         // Create aggressive detector for more opportunities
         const detector = RotationArbitrageDetectorFactory.createAggressiveDetector();
 
-        console.log(`🔍 Analyzing ${rotationNumbers.length} rotation numbers across ${[...new Set(rotationNumbers.map(rn => rn.sportsbook))].length} sportsbooks...`);
+        console.info(`🔍 Analyzing ${rotationNumbers.length} rotation numbers across ${[...new Set(rotationNumbers.map(rn => rn.sportsbook))].length} sportsbooks...`);
 
         // Find opportunities
         const opportunities = await detector.findOpportunities(rotationNumbers);
 
-        console.log(`\n🎯 Multi-Sportsbook Results:`);
-        console.log(`   Sportsbooks Analyzed: ${[...new Set(rotationNumbers.map(rn => rn.sportsbook))].join(', ')}`);
-        console.log(`   Opportunities Found: ${opportunities.length}`);
+        console.info(`\n🎯 Multi-Sportsbook Results:`);
+        console.info(`   Sportsbooks Analyzed: ${[...new Set(rotationNumbers.map(rn => rn.sportsbook))].join(', ')}`);
+        console.info(`   Opportunities Found: ${opportunities.length}`);
 
         if (opportunities.length > 0) {
-            console.log('\n🏆 Top Opportunities:');
+            console.info('\n🏆 Top Opportunities:');
             opportunities.slice(0, 3).forEach((opp, index) => {
-                console.log(`   ${index + 1}. ${opp.id}`);
-                console.log(`      Expected Return: ${opp.expectedReturn.percent.toFixed(3)}%`);
-                console.log(`      Sportsbooks: ${opp.sportsbooks.join(' vs ')}`);
-                console.log(`      Markets: ${opp.markets.map(m => `${m.market.marketType} (${m.price})`).join(', ')}`);
-                console.log(`      Confidence: ${(opp.confidence * 100).toFixed(1)}%`);
+                console.info(`   ${index + 1}. ${opp.id}`);
+                console.info(`      Expected Return: ${opp.expectedReturn.percent.toFixed(3)}%`);
+                console.info(`      Sportsbooks: ${opp.sportsbooks.join(' vs ')}`);
+                console.info(`      Markets: ${opp.markets.map(m => `${m.market.marketType} (${m.price})`).join(', ')}`);
+                console.info(`      Confidence: ${(opp.confidence * 100).toFixed(1)}%`);
             });
         }
     }
@@ -300,7 +300,7 @@ export class RotationNumbersDemo {
      * Example 5: High-frequency rotation analytics
      */
     static async demonstrateHighFrequencyAnalytics(): Promise<void> {
-        console.log('\n⚡ High-Frequency Analytics Demo\n');
+        console.info('\n⚡ High-Frequency Analytics Demo\n');
 
         // Create HFT analytics engine
         const analyticsEngine = RotationAnalyticsEngineFactory.createHighFrequencyEngine();
@@ -309,7 +309,7 @@ export class RotationNumbersDemo {
         const rotationNumber = this.createNBARotationNumbers()[0];
         const analytics = analyticsEngine.createAnalytics(rotationNumber);
 
-        console.log('⚡ Simulating high-frequency price updates (1 per second)...');
+        console.info('⚡ Simulating high-frequency price updates (1 per second)...');
 
         // Simulate rapid price updates
         const startTime = performance.now();
@@ -328,19 +328,19 @@ export class RotationNumbersDemo {
         // Get updated analytics
         const updatedAnalytics = analyticsEngine.getAnalytics(rotationNumber.id);
         if (updatedAnalytics) {
-            console.log(`\n⚡ HFT Analytics Results:`);
-            console.log(`   Processing Time: ${processingTime.toFixed(2)}ms`);
-            console.log(`   Price Points Processed: ${updatedAnalytics.priceHistory.length}`);
-            console.log(`   Sharp Movements Detected: ${updatedAnalytics.sharpMovement.length}`);
-            console.log(`   Price Efficiency: ${(updatedAnalytics.efficiency.priceEfficiency * 100).toFixed(1)}%`);
-            console.log(`   Throughput: ${(100 / (processingTime / 1000)).toFixed(0)} updates/second`);
+            console.info(`\n⚡ HFT Analytics Results:`);
+            console.info(`   Processing Time: ${processingTime.toFixed(2)}ms`);
+            console.info(`   Price Points Processed: ${updatedAnalytics.priceHistory.length}`);
+            console.info(`   Sharp Movements Detected: ${updatedAnalytics.sharpMovement.length}`);
+            console.info(`   Price Efficiency: ${(updatedAnalytics.efficiency.priceEfficiency * 100).toFixed(1)}%`);
+            console.info(`   Throughput: ${(100 / (processingTime / 1000)).toFixed(0)} updates/second`);
         }
 
         // Get top arbitrage rotation numbers
         const topArbitrage = analyticsEngine.getTopArbitrageRotationNumbers(5);
-        console.log('\n🏆 Top Arbitrage Rotation Numbers:');
+        console.info('\n🏆 Top Arbitrage Rotation Numbers:');
         topArbitrage.forEach((item, index) => {
-            console.log(`   ${index + 1}. ${item.rotationNumberId}: ${item.arbitrageFrequency.toFixed(1)} opportunities/hour`);
+            console.info(`   ${index + 1}. ${item.rotationNumberId}: ${item.arbitrageFrequency.toFixed(1)} opportunities/hour`);
         });
     }
 
@@ -348,7 +348,7 @@ export class RotationNumbersDemo {
      * Example 6: Event-driven analytics
      */
     static async demonstrateEventDrivenAnalytics(): Promise<void> {
-        console.log('\n📡 Event-Driven Analytics Demo\n');
+        console.info('\n📡 Event-Driven Analytics Demo\n');
 
         // Create analytics engine
         const analyticsEngine = RotationAnalyticsEngineFactory.createDefaultEngine();
@@ -357,18 +357,18 @@ export class RotationNumbersDemo {
         let eventCount = 0;
         analyticsEngine.addEventListener('price_movement', (event: any) => {
             eventCount++;
-            console.log(`📡 Price Movement Event ${eventCount}: ${event.analytics.rotationNumber.sportsbook}`);
+            console.info(`📡 Price Movement Event ${eventCount}: ${event.analytics.rotationNumber.sportsbook}`);
         });
 
         analyticsEngine.addEventListener('volume_spike', (event: any) => {
-            console.log(`📊 Volume Spike Event: ${event.analytics.rotationNumber.sportsbook}`);
+            console.info(`📊 Volume Spike Event: ${event.analytics.rotationNumber.sportsbook}`);
         });
 
         // Create rotation number
         const rotationNumber = this.createNBARotationNumbers()[0];
         const analytics = analyticsEngine.createAnalytics(rotationNumber);
 
-        console.log('📡 Simulating events with listeners...');
+        console.info('📡 Simulating events with listeners...');
 
         // Simulate events that will trigger listeners
         for (let i = 0; i < 5; i++) {
@@ -382,7 +382,7 @@ export class RotationNumbersDemo {
             analyticsEngine.addPricePoint(rotationNumber.id, pricePoint);
         }
 
-        console.log(`\n✅ Event-driven demo completed with ${eventCount} events triggered`);
+        console.info(`\n✅ Event-driven demo completed with ${eventCount} events triggered`);
     }
 
     /**
@@ -423,49 +423,49 @@ export class RotationNumbersDemo {
      * Run all rotation number examples
      */
     static async runAllExamples(): Promise<void> {
-        console.log('🚀 Rotation Numbers System Examples\n');
-        console.log('='.repeat(80));
+        console.info('🚀 Rotation Numbers System Examples\n');
+        console.info('='.repeat(80));
 
         // Basic rotation numbers
         this.createNBARotationNumbers();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Arbitrage detection
         await this.demonstrateRotationArbitrage();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Analytics engine
         await this.demonstrateRotationAnalytics();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Multi-sportsbook arbitrage
         await this.demonstrateMultiSportsbookArbitrage();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // High-frequency analytics
         await this.demonstrateHighFrequencyAnalytics();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Event-driven analytics
         await this.demonstrateEventDrivenAnalytics();
 
-        console.log('\n✅ All rotation number examples completed!');
-        console.log('\n🎯 Key Capabilities Demonstrated:');
-        console.log('   • Rotation number creation and management');
-        console.log('   • Cross-sportsbook arbitrage detection');
-        console.log('   • Real-time price and volume analytics');
-        console.log('   • Sharp movement detection and alerts');
-        console.log('   • Efficiency metrics calculation');
-        console.log('   • High-frequency data processing');
-        console.log('   • Event-driven analytics architecture');
-        console.log('   • Multi-sportsbook opportunity analysis');
-        console.log('   • Risk assessment and validation');
-        console.log('   • Performance monitoring and optimization');
+        console.info('\n✅ All rotation number examples completed!');
+        console.info('\n🎯 Key Capabilities Demonstrated:');
+        console.info('   • Rotation number creation and management');
+        console.info('   • Cross-sportsbook arbitrage detection');
+        console.info('   • Real-time price and volume analytics');
+        console.info('   • Sharp movement detection and alerts');
+        console.info('   • Efficiency metrics calculation');
+        console.info('   • High-frequency data processing');
+        console.info('   • Event-driven analytics architecture');
+        console.info('   • Multi-sportsbook opportunity analysis');
+        console.info('   • Risk assessment and validation');
+        console.info('   • Performance monitoring and optimization');
     }
 }
 

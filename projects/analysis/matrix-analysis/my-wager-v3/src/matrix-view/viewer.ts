@@ -74,9 +74,9 @@ export class BunMatrixViewer {
       "Notifications": entry.homeFeatures?.notifications ? "✅" : "❌",
     }));
 
-    console.log("\n📊 Bun Min Version Matrix");
-    console.log("========================\n");
-    console.log(Bun.inspect.table(tableData, [
+    console.info("\n📊 Bun Min Version Matrix");
+    console.info("========================\n");
+    console.info(Bun.inspect.table(tableData, [
       "API", "Min Version", "Stability", "Platforms",
       "Perf", "Security", "Category", "Flags", "Updated",
       "Home Dir", "Service", "Local Server", "Auto Start",
@@ -105,48 +105,48 @@ export class BunMatrixViewer {
     const platforms = this.getPlatformStats(entries);
     const security = this.getSecurityStats(entries);
 
-    console.log("\n📈 Summary Report:");
-    console.log("================");
+    console.info("\n📈 Summary Report:");
+    console.info("================");
 
-    console.log("\n📊 Basic Statistics:");
-    console.log(`  • Total APIs: ${stats.total}`);
-    console.log(`  • ✅ Stable: ${stats.stable} (${percentage(stats.stable, stats.total)}%)`);
-    console.log(`  • 🧪 Experimental: ${stats.experimental} (${percentage(stats.experimental, stats.total)}%)`);
-    console.log(`  • ⚠️ Deprecated: ${stats.deprecated} (${percentage(stats.deprecated, stats.total)}%)`);
+    console.info("\n📊 Basic Statistics:");
+    console.info(`  • Total APIs: ${stats.total}`);
+    console.info(`  • ✅ Stable: ${stats.stable} (${percentage(stats.stable, stats.total)}%)`);
+    console.info(`  • 🧪 Experimental: ${stats.experimental} (${percentage(stats.experimental, stats.total)}%)`);
+    console.info(`  • ⚠️ Deprecated: ${stats.deprecated} (${percentage(stats.deprecated, stats.total)}%)`);
 
-    console.log("\n🏠 Thuis/Home Features:");
-    console.log(`  • APIs with Thuis support: ${stats.thuisEnabled} (${percentage(stats.thuisEnabled, stats.total)}%)`);
-    console.log(`  • Local servers: ${stats.localServers}`);
-    console.log(`  • Auto-start services: ${stats.autoStart}`);
+    console.info("\n🏠 Thuis/Home Features:");
+    console.info(`  • APIs with Thuis support: ${stats.thuisEnabled} (${percentage(stats.thuisEnabled, stats.total)}%)`);
+    console.info(`  • Local servers: ${stats.localServers}`);
+    console.info(`  • Auto-start services: ${stats.autoStart}`);
 
-    console.log("\n⚙️ Configuration:");
-    console.log(`  • Default configs: ${stats.defaultConfigs}`);
-    console.log(`  • Custom configs: ${stats.customConfigs}`);
-    console.log(`  • APIs with errors: ${stats.withErrors}`);
+    console.info("\n⚙️ Configuration:");
+    console.info(`  • Default configs: ${stats.defaultConfigs}`);
+    console.info(`  • Custom configs: ${stats.customConfigs}`);
+    console.info(`  • APIs with errors: ${stats.withErrors}`);
 
-    console.log("\n📂 Categories:");
+    console.info("\n📂 Categories:");
     for (const [category, count] of Object.entries(categories)) {
       const icon = getCategoryIcon(category);
-      console.log(`  • ${icon} ${category}: ${count}`);
+      console.info(`  • ${icon} ${category}: ${count}`);
     }
 
-    console.log("\n💻 Platform Support:");
+    console.info("\n💻 Platform Support:");
     for (const [platform, count] of Object.entries(platforms)) {
       const icon = getPlatformIcon(platform);
-      console.log(`  • ${icon} ${platform}: ${count} APIs`);
+      console.info(`  • ${icon} ${platform}: ${count} APIs`);
     }
 
-    console.log("\n🔒 Security Classification:");
-    console.log(`  • 🔴 High: ${security.high} (requires special handling)`);
-    console.log(`  • 🟡 Medium: ${security.medium} (standard security)`);
-    console.log(`  • 🟢 Low: ${security.low} (minimal security)`);
+    console.info("\n🔒 Security Classification:");
+    console.info(`  • 🔴 High: ${security.high} (requires special handling)`);
+    console.info(`  • 🟡 Medium: ${security.medium} (standard security)`);
+    console.info(`  • 🟢 Low: ${security.low} (minimal security)`);
 
     if (stats.withErrors > 0) {
-      console.log("\n⚠️ Errors Detected:");
+      console.info("\n⚠️ Errors Detected:");
       const errorEntries = entries.filter(e => hasErrors(e));
       for (const entry of errorEntries) {
         const errs = getErrors(entry);
-        console.log(`  • ${entry.term}: ${errs.join(", ")}`);
+        console.info(`  • ${entry.term}: ${errs.join(", ")}`);
       }
     }
 
@@ -181,8 +181,8 @@ export class BunMatrixViewer {
   }
 
   checkCompatibility(bunVersion: string = process.env.BUN_VERSION || "1.3.7"): void {
-    console.log(`\n🔍 Compatibility Check for Bun ${bunVersion}`);
-    console.log("=====================================\n");
+    console.info(`\n🔍 Compatibility Check for Bun ${bunVersion}`);
+    console.info("=====================================\n");
 
     const allEntries = this.store.getAll();
     const compatible = allEntries.filter(e =>
@@ -193,27 +193,27 @@ export class BunMatrixViewer {
     );
 
     if (incompatible.length > 0) {
-      console.log("⚠️ Incompatible APIs:\n");
+      console.info("⚠️ Incompatible APIs:\n");
       const tableData = incompatible.map(entry => ({
         "API": entry.term,
         "Required": entry.bunMinVersion,
         "Current": bunVersion,
         "Status": "❌ Upgrade Required",
       }));
-      console.log(Bun.inspect.table(tableData));
+      console.info(Bun.inspect.table(tableData));
     }
 
-    console.log(`\n✅ Compatible: ${compatible.length}/${allEntries.length} APIs`);
+    console.info(`\n✅ Compatible: ${compatible.length}/${allEntries.length} APIs`);
   }
 
   getBreakingChanges(targetVersion: string): void {
-    console.log(`\n💥 Breaking Changes for v${targetVersion}`);
-    console.log("===================================\n");
+    console.info(`\n💥 Breaking Changes for v${targetVersion}`);
+    console.info("===================================\n");
 
     const breaking = this.store.getBreakingChanges(targetVersion);
 
     if (breaking.length === 0) {
-      console.log("✅ No breaking changes detected");
+      console.info("✅ No breaking changes detected");
       return;
     }
 
@@ -227,11 +227,11 @@ export class BunMatrixViewer {
                 entry.deprecatedIn ? "DEPRECATED" : "Review",
     }));
 
-    console.log(Bun.inspect.table(tableData));
+    console.info(Bun.inspect.table(tableData));
   }
 
   async syncWithRSS(): Promise<void> {
-    console.log("🔄 Syncing matrix with RSS feeds...");
+    console.info("🔄 Syncing matrix with RSS feeds...");
 
     const feeds = [
       "https://bun.sh/blog/rss.xml",
@@ -243,166 +243,166 @@ export class BunMatrixViewer {
       await this.store.updateFromRSS(feed);
     }
 
-    console.log("✅ RSS sync complete");
+    console.info("✅ RSS sync complete");
   }
 
   displayMetrics(): void {
-    console.log("\n📊 Comprehensive Metrics Report");
-    console.log("==============================\n");
+    console.info("\n📊 Comprehensive Metrics Report");
+    console.info("==============================\n");
 
     const metrics = this.store.calculateMetrics();
 
-    console.log("🔢 Totals & Aggregates:");
-    console.log("---------------------");
-    console.log(`Total APIs: ${metrics.totals.apis}`);
-    console.log(`Platforms Supported: ${metrics.totals.platforms}`);
-    console.log(`Categories: ${metrics.totals.categories}`);
-    console.log(`Security Flags: ${metrics.totals.securityFlags}`);
-    console.log(`Zero Trust APIs: ${metrics.totals.zeroTrustApis}`);
-    console.log(`CLI Flags: ${metrics.totals.cliFlags}`);
-    console.log(`Related Terms: ${metrics.totals.relatedTerms}`);
-    console.log(`Average Version: ${metrics.totals.avgVersion}`);
-    console.log(`Total Ops/sec: ${metrics.totals.totalOpsPerSec.toLocaleString()}`);
-    console.log(`Home Automation APIs: ${metrics.totals.homeAutomationApis}`);
+    console.info("🔢 Totals & Aggregates:");
+    console.info("---------------------");
+    console.info(`Total APIs: ${metrics.totals.apis}`);
+    console.info(`Platforms Supported: ${metrics.totals.platforms}`);
+    console.info(`Categories: ${metrics.totals.categories}`);
+    console.info(`Security Flags: ${metrics.totals.securityFlags}`);
+    console.info(`Zero Trust APIs: ${metrics.totals.zeroTrustApis}`);
+    console.info(`CLI Flags: ${metrics.totals.cliFlags}`);
+    console.info(`Related Terms: ${metrics.totals.relatedTerms}`);
+    console.info(`Average Version: ${metrics.totals.avgVersion}`);
+    console.info(`Total Ops/sec: ${metrics.totals.totalOpsPerSec.toLocaleString()}`);
+    console.info(`Home Automation APIs: ${metrics.totals.homeAutomationApis}`);
 
-    console.log("\n⚡ Performance Metrics:");
-    console.log("-----------------------");
-    console.log(`Average Ops/sec: ${Math.round(metrics.performance.avgOpsPerSec).toLocaleString()}`);
-    console.log(`Maximum Ops/sec: ${metrics.performance.maxOpsPerSec.toLocaleString()}`);
-    console.log(`Minimum Ops/sec: ${metrics.performance.minOpsPerSec === Infinity ? "N/A" : metrics.performance.minOpsPerSec.toLocaleString()}`);
+    console.info("\n⚡ Performance Metrics:");
+    console.info("-----------------------");
+    console.info(`Average Ops/sec: ${Math.round(metrics.performance.avgOpsPerSec).toLocaleString()}`);
+    console.info(`Maximum Ops/sec: ${metrics.performance.maxOpsPerSec.toLocaleString()}`);
+    console.info(`Minimum Ops/sec: ${metrics.performance.minOpsPerSec === Infinity ? "N/A" : metrics.performance.minOpsPerSec.toLocaleString()}`);
 
-    console.log("\nTop Performers:");
+    console.info("\nTop Performers:");
     for (const performer of metrics.performance.topPerformers) {
-      console.log(`  • ${performer.api}: ${performer.ops?.toLocaleString()} ops/sec`);
+      console.info(`  • ${performer.api}: ${performer.ops?.toLocaleString()} ops/sec`);
     }
 
-    console.log("\nBaseline Improvements:");
-    console.log(`  APIs with improvements: ${metrics.performance.baselineImprovements.count}`);
-    console.log(`  Average improvement: ${metrics.performance.baselineImprovements.avgImprovement.toFixed(1)}x`);
+    console.info("\nBaseline Improvements:");
+    console.info(`  APIs with improvements: ${metrics.performance.baselineImprovements.count}`);
+    console.info(`  Average improvement: ${metrics.performance.baselineImprovements.avgImprovement.toFixed(1)}x`);
 
-    console.log("\n🔒 Security Overview:");
-    console.log("---------------------");
-    console.log(`High Security APIs: ${metrics.security.classificationDistribution.high}`);
-    console.log(`Medium Security APIs: ${metrics.security.classificationDistribution.medium}`);
-    console.log(`Low Security APIs: ${metrics.security.classificationDistribution.low}`);
-    console.log(`Root Required: ${metrics.security.rootRequired}`);
-    console.log(`Zero Trust Adoption: ${metrics.security.zeroTrustAdoption}`);
+    console.info("\n🔒 Security Overview:");
+    console.info("---------------------");
+    console.info(`High Security APIs: ${metrics.security.classificationDistribution.high}`);
+    console.info(`Medium Security APIs: ${metrics.security.classificationDistribution.medium}`);
+    console.info(`Low Security APIs: ${metrics.security.classificationDistribution.low}`);
+    console.info(`Root Required: ${metrics.security.rootRequired}`);
+    console.info(`Zero Trust Adoption: ${metrics.security.zeroTrustAdoption}`);
 
     if (metrics.security.highRiskApis.length > 0) {
-      console.log("\n⚠️ High-Risk APIs:");
+      console.info("\n⚠️ High-Risk APIs:");
       for (const api of metrics.security.highRiskApis) {
-        console.log(`  • ${api}`);
+        console.info(`  • ${api}`);
       }
     }
 
-    console.log("\n📈 Evolution Metrics:");
-    console.log("---------------------");
-    console.log(`Adoption Rate: ${(metrics.evolution.adoptionRate * 100).toFixed(1)}%`);
-    console.log(`Maturity Index: ${metrics.evolution.maturityIndex.toFixed(2)}`);
-    console.log(`Deprecation Rate: ${(metrics.evolution.deprecationRate * 100).toFixed(1)}%`);
-    console.log(`Experimental/Stable Ratio: ${metrics.evolution.experimentalToStableRatio.toFixed(2)}`);
+    console.info("\n📈 Evolution Metrics:");
+    console.info("---------------------");
+    console.info(`Adoption Rate: ${(metrics.evolution.adoptionRate * 100).toFixed(1)}%`);
+    console.info(`Maturity Index: ${metrics.evolution.maturityIndex.toFixed(2)}`);
+    console.info(`Deprecation Rate: ${(metrics.evolution.deprecationRate * 100).toFixed(1)}%`);
+    console.info(`Experimental/Stable Ratio: ${metrics.evolution.experimentalToStableRatio.toFixed(2)}`);
 
-    console.log("\n🏠 Home Automation Metrics:");
-    console.log("---------------------------");
-    console.log(`Total Thuis APIs: ${metrics.homeAutomation.totalApis}`);
-    console.log("Service Modes:");
+    console.info("\n🏠 Home Automation Metrics:");
+    console.info("---------------------------");
+    console.info(`Total Thuis APIs: ${metrics.homeAutomation.totalApis}`);
+    console.info("Service Modes:");
     for (const [mode, count] of Object.entries(metrics.homeAutomation.serviceModes)) {
-      console.log(`  • ${mode}: ${count}`);
+      console.info(`  • ${mode}: ${count}`);
     }
-    console.log("Feature Adoption:");
+    console.info("Feature Adoption:");
     for (const [feature, count] of Object.entries(metrics.homeAutomation.featureAdoption)) {
-      console.log(`  • ${feature}: ${count}`);
+      console.info(`  • ${feature}: ${count}`);
     }
   }
 
   displayPatterns(): void {
-    console.log("\n🔍 Pattern Analysis Report");
-    console.log("==========================\n");
+    console.info("\n🔍 Pattern Analysis Report");
+    console.info("==========================\n");
 
     const metrics = this.store.calculateMetrics();
 
-    console.log("📦 Version Distribution:");
-    console.log("------------------------");
+    console.info("📦 Version Distribution:");
+    console.info("------------------------");
     for (const [version, count] of Object.entries(metrics.patterns.versionDistribution)) {
       const countNum = count as number;
       const pct = ((countNum / metrics.totals.apis) * 100).toFixed(1);
-      console.log(`  ${version}: ${countNum} APIs (${pct}%)`);
+      console.info(`  ${version}: ${countNum} APIs (${pct}%)`);
     }
 
-    console.log("\n💻 Platform Popularity:");
-    console.log("------------------------");
+    console.info("\n💻 Platform Popularity:");
+    console.info("------------------------");
     const sortedPlatforms = Object.entries(metrics.patterns.platformPopularity)
       .sort(([, a], [, b]) => (b as number) - (a as number));
     for (const [platform, count] of sortedPlatforms) {
       const countNum = count as number;
       const pct = ((countNum / metrics.totals.apis) * 100).toFixed(1);
-      console.log(`  ${platform}: ${countNum} APIs (${pct}%)`);
+      console.info(`  ${platform}: ${countNum} APIs (${pct}%)`);
     }
 
-    console.log("\n📂 Category Distribution:");
-    console.log("-------------------------");
+    console.info("\n📂 Category Distribution:");
+    console.info("-------------------------");
     const sortedCategories = Object.entries(metrics.patterns.categoryDistribution)
       .sort(([, a], [, b]) => (b as number) - (a as number));
     for (const [category, count] of sortedCategories) {
       const countNum = count as number;
       const pct = ((countNum / metrics.totals.apis) * 100).toFixed(1);
-      console.log(`  ${category}: ${countNum} APIs (${pct}%)`);
+      console.info(`  ${category}: ${countNum} APIs (${pct}%)`);
     }
 
-    console.log("\n📝 Naming Patterns:");
-    console.log("-------------------");
-    console.log(`  With Bun prefix: ${metrics.patterns.namingPatterns.withBunPrefix}`);
-    console.log(`  With dot notation: ${metrics.patterns.namingPatterns.withDotNotation}`);
-    console.log(`  CamelCase: ${metrics.patterns.namingPatterns.camelCase}`);
-    console.log(`  With module suffix: ${metrics.patterns.namingPatterns.withModuleSuffix}`);
-    console.log(`  Average name length: ${metrics.patterns.namingPatterns.avgLength.toFixed(1)} characters`);
-    console.log(`  Most common prefix: ${metrics.patterns.namingPatterns.mostCommonPrefix}`);
+    console.info("\n📝 Naming Patterns:");
+    console.info("-------------------");
+    console.info(`  With Bun prefix: ${metrics.patterns.namingPatterns.withBunPrefix}`);
+    console.info(`  With dot notation: ${metrics.patterns.namingPatterns.withDotNotation}`);
+    console.info(`  CamelCase: ${metrics.patterns.namingPatterns.camelCase}`);
+    console.info(`  With module suffix: ${metrics.patterns.namingPatterns.withModuleSuffix}`);
+    console.info(`  Average name length: ${metrics.patterns.namingPatterns.avgLength.toFixed(1)} characters`);
+    console.info(`  Most common prefix: ${metrics.patterns.namingPatterns.mostCommonPrefix}`);
 
-    console.log("\n🔗 Dependency Patterns:");
-    console.log("----------------------");
-    console.log(`  Total related terms: ${metrics.patterns.dependencyPatterns.totalRelatedTerms}`);
-    console.log(`  Unique related terms: ${metrics.patterns.dependencyPatterns.uniqueRelatedTerms}`);
-    console.log(`  Average related terms per API: ${metrics.patterns.dependencyPatterns.avgRelatedTerms.toFixed(1)}`);
+    console.info("\n🔗 Dependency Patterns:");
+    console.info("----------------------");
+    console.info(`  Total related terms: ${metrics.patterns.dependencyPatterns.totalRelatedTerms}`);
+    console.info(`  Unique related terms: ${metrics.patterns.dependencyPatterns.uniqueRelatedTerms}`);
+    console.info(`  Average related terms per API: ${metrics.patterns.dependencyPatterns.avgRelatedTerms.toFixed(1)}`);
 
-    console.log("\n  Most Referenced APIs:");
+    console.info("\n  Most Referenced APIs:");
     for (const ref of metrics.patterns.dependencyPatterns.mostReferenced) {
-      console.log(`    • ${ref.term}: referenced ${ref.count} times`);
+      console.info(`    • ${ref.term}: referenced ${ref.count} times`);
     }
 
-    console.log("\n📊 Stability Progression:");
-    console.log("-------------------------");
-    console.log(`  Experimental: ${metrics.patterns.stabilityProgression.experimental}`);
-    console.log(`  Stable: ${metrics.patterns.stabilityProgression.stable}`);
-    console.log(`  Deprecated: ${metrics.patterns.stabilityProgression.deprecated}`);
-    console.log(`  Maturity ratio: ${metrics.patterns.stabilityProgression.maturityRatio.toFixed(2)}`);
+    console.info("\n📊 Stability Progression:");
+    console.info("-------------------------");
+    console.info(`  Experimental: ${metrics.patterns.stabilityProgression.experimental}`);
+    console.info(`  Stable: ${metrics.patterns.stabilityProgression.stable}`);
+    console.info(`  Deprecated: ${metrics.patterns.stabilityProgression.deprecated}`);
+    console.info(`  Maturity ratio: ${metrics.patterns.stabilityProgression.maturityRatio.toFixed(2)}`);
 
-    console.log("\n🔗 Key Correlations:");
-    console.log("--------------------");
+    console.info("\n🔗 Key Correlations:");
+    console.info("--------------------");
 
-    console.log("\n  Security vs Performance:");
+    console.info("\n  Security vs Performance:");
     for (const [level, data] of Object.entries(metrics.correlations.securityVsPerformance)) {
-      console.log(`    ${level}: ${Math.round(data.avg).toLocaleString()} avg ops/sec`);
+      console.info(`    ${level}: ${Math.round(data.avg).toLocaleString()} avg ops/sec`);
     }
 
-    console.log("\n  Platform vs Thuis Features:");
+    console.info("\n  Platform vs Thuis Features:");
     for (const [platform, data] of Object.entries(metrics.correlations.platformVsFeatures)) {
-      console.log(`    ${platform}: ${data.thuisPct}% with Thuis features`);
+      console.info(`    ${platform}: ${data.thuisPct}% with Thuis features`);
     }
 
-    console.log("\n  Version vs Feature Richness:");
+    console.info("\n  Version vs Feature Richness:");
     for (const [version, data] of Object.entries(metrics.correlations.versionVsFeatures)) {
-      console.log(`    v${version}: ${data.avgFeatures?.toFixed(1)} avg features`);
+      console.info(`    v${version}: ${data.avgFeatures?.toFixed(1)} avg features`);
     }
   }
 
   displayTotals(): void {
-    console.log("\n📊 Detailed Totals Report");
-    console.log("========================\n");
+    console.info("\n📊 Detailed Totals Report");
+    console.info("========================\n");
 
     const metrics = this.store.calculateMetrics();
 
-    console.log("📂 APIs by Category:");
-    console.log("---------------------");
+    console.info("📂 APIs by Category:");
+    console.info("---------------------");
     const categoryTotals: Record<string, { stable: number; experimental: number; deprecated: number }> = {};
 
     for (const entry of this.store.getAll()) {
@@ -415,38 +415,38 @@ export class BunMatrixViewer {
 
     for (const [category, totals] of Object.entries(categoryTotals)) {
       const total = totals.stable + totals.experimental + totals.deprecated;
-      console.log(`  ${category}:`);
-      console.log(`    Total: ${total}`);
-      console.log(`    ✅ Stable: ${totals.stable}`);
-      console.log(`    🧪 Experimental: ${totals.experimental}`);
-      console.log(`    ⚠️ Deprecated: ${totals.deprecated}`);
+      console.info(`  ${category}:`);
+      console.info(`    Total: ${total}`);
+      console.info(`    ✅ Stable: ${totals.stable}`);
+      console.info(`    🧪 Experimental: ${totals.experimental}`);
+      console.info(`    ⚠️ Deprecated: ${totals.deprecated}`);
     }
 
-    console.log("\n💻 Platform Coverage:");
-    console.log("---------------------");
+    console.info("\n💻 Platform Coverage:");
+    console.info("---------------------");
     for (const platform of ["darwin", "linux", "win32"] as const) {
       const count = this.store.getAll().filter(e => e.platforms.includes(platform)).length;
       const pct = ((count / metrics.totals.apis) * 100).toFixed(1);
-      console.log(`  ${platform}: ${count} APIs (${pct}%)`);
+      console.info(`  ${platform}: ${count} APIs (${pct}%)`);
     }
 
-    console.log("\n🔒 Security Breakdown:");
-    console.log("---------------------");
-    console.log(`  High Security: ${metrics.security.classificationDistribution.high} APIs`);
-    console.log(`  Medium Security: ${metrics.security.classificationDistribution.medium} APIs`);
-    console.log(`  Low Security: ${metrics.security.classificationDistribution.low} APIs`);
-    console.log(`  Requiring Root: ${metrics.security.rootRequired} APIs`);
-    console.log(`  Zero Trust Enabled: ${metrics.security.zeroTrustAdoption} APIs`);
+    console.info("\n🔒 Security Breakdown:");
+    console.info("---------------------");
+    console.info(`  High Security: ${metrics.security.classificationDistribution.high} APIs`);
+    console.info(`  Medium Security: ${metrics.security.classificationDistribution.medium} APIs`);
+    console.info(`  Low Security: ${metrics.security.classificationDistribution.low} APIs`);
+    console.info(`  Requiring Root: ${metrics.security.rootRequired} APIs`);
+    console.info(`  Zero Trust Enabled: ${metrics.security.zeroTrustAdoption} APIs`);
 
-    console.log("\n⚡ Performance Totals:");
-    console.log("----------------------");
+    console.info("\n⚡ Performance Totals:");
+    console.info("----------------------");
     const withPerf = this.store.getAll().filter(e => e.perfProfile?.opsSec);
-    console.log(`  APIs with performance data: ${withPerf.length}`);
-    console.log(`  Total throughput: ${metrics.totals.totalOpsPerSec.toLocaleString()} ops/sec`);
-    console.log(`  Average throughput: ${Math.round(metrics.performance.avgOpsPerSec).toLocaleString()} ops/sec`);
+    console.info(`  APIs with performance data: ${withPerf.length}`);
+    console.info(`  Total throughput: ${metrics.totals.totalOpsPerSec.toLocaleString()} ops/sec`);
+    console.info(`  Average throughput: ${Math.round(metrics.performance.avgOpsPerSec).toLocaleString()} ops/sec`);
 
-    console.log("\n📦 Version Distribution:");
-    console.log("------------------------");
+    console.info("\n📦 Version Distribution:");
+    console.info("------------------------");
     const versionGroups: Record<string, string[]> = {};
     for (const entry of this.store.getAll()) {
       const version = entry.bunMinVersion.split(".").slice(0, 2).join(".");
@@ -455,35 +455,35 @@ export class BunMatrixViewer {
     }
 
     for (const [version, apis] of Object.entries(versionGroups).sort()) {
-      console.log(`  ${version}: ${apis.length} APIs`);
+      console.info(`  ${version}: ${apis.length} APIs`);
       if (apis.length <= 5) {
-        console.log(`    ${apis.join(", ")}`);
+        console.info(`    ${apis.join(", ")}`);
       } else {
-        console.log(`    ${apis.slice(0, 3).join(", ")}, ... (+${apis.length - 3} more)`);
+        console.info(`    ${apis.slice(0, 3).join(", ")}, ... (+${apis.length - 3} more)`);
       }
     }
 
-    console.log("\n🌟 Feature Adoption:");
-    console.log("-------------------");
+    console.info("\n🌟 Feature Adoption:");
+    console.info("-------------------");
     const allEntries = this.store.getAll();
     const withFlags = allEntries.filter(e => e.cliFlags && e.cliFlags.length > 0);
     const withRelated = allEntries.filter(e => e.relatedTerms && e.relatedTerms.length > 0);
     const withPerfProfile = allEntries.filter(e => e.perfProfile);
     const withBreaking = allEntries.filter(e => e.breakingChanges && e.breakingChanges.length > 0);
 
-    console.log(`  APIs with CLI flags: ${withFlags.length}`);
-    console.log(`  APIs with related terms: ${withRelated.length}`);
-    console.log(`  APIs with performance profiles: ${withPerfProfile.length}`);
-    console.log(`  APIs with breaking changes: ${withBreaking.length}`);
+    console.info(`  APIs with CLI flags: ${withFlags.length}`);
+    console.info(`  APIs with related terms: ${withRelated.length}`);
+    console.info(`  APIs with performance profiles: ${withPerfProfile.length}`);
+    console.info(`  APIs with breaking changes: ${withBreaking.length}`);
 
-    console.log("\n🏠 Thuis Feature Totals:");
-    console.log("-----------------------");
+    console.info("\n🏠 Thuis Feature Totals:");
+    console.info("-----------------------");
     const thuisApis = allEntries.filter(e => e.thuisConfig || e.homeFeatures);
-    console.log(`  Total Thuis APIs: ${thuisApis.length}`);
-    console.log(`  With local server: ${thuisApis.filter(e => e.homeFeatures?.localServer).length}`);
-    console.log(`  With auto-start: ${thuisApis.filter(e => e.homeFeatures?.autoStart).length}`);
-    console.log(`  With tray icon: ${thuisApis.filter(e => e.homeFeatures?.trayIcon).length}`);
-    console.log(`  With notifications: ${thuisApis.filter(e => e.homeFeatures?.notifications).length}`);
+    console.info(`  Total Thuis APIs: ${thuisApis.length}`);
+    console.info(`  With local server: ${thuisApis.filter(e => e.homeFeatures?.localServer).length}`);
+    console.info(`  With auto-start: ${thuisApis.filter(e => e.homeFeatures?.autoStart).length}`);
+    console.info(`  With tray icon: ${thuisApis.filter(e => e.homeFeatures?.trayIcon).length}`);
+    console.info(`  With notifications: ${thuisApis.filter(e => e.homeFeatures?.notifications).length}`);
   }
 }
 
@@ -542,7 +542,7 @@ export async function runMatrixCLI(args: string[]): Promise<void> {
       break;
 
     default:
-      console.log(`
+      console.info(`
 📊 Bun Matrix CLI - Tier-1380 Infrastructure
 
 Usage:

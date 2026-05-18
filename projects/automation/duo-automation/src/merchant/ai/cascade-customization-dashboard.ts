@@ -103,7 +103,7 @@ export class CascadeCustomizationDashboard {
   }
   
   async renderDashboard(merchantId: string): Promise<DashboardView> {
-    console.log(`🎨 Rendering Cascade dashboard for merchant: ${merchantId}`);
+    console.info(`🎨 Rendering Cascade dashboard for merchant: ${merchantId}`);
     
     const [skills, memories, rules, performance] = await Promise.all([
       this.getSkillsForMerchant(merchantId),
@@ -184,7 +184,7 @@ export class CascadeCustomizationDashboard {
   }
   
   async handleCustomizationAction(action: CustomizationAction): Promise<ActionResult> {
-    console.log(`🔧 Handling customization action: ${action.type}`);
+    console.info(`🔧 Handling customization action: ${action.type}`);
     
     try {
       switch (action.type) {
@@ -216,7 +216,7 @@ export class CascadeCustomizationDashboard {
   
   // Import from Cursor functionality
   async importFromCursor(cursorData: any): Promise<ImportResult> {
-    console.log('🎯 Importing configuration from Cursor...');
+    console.info('🎯 Importing configuration from Cursor...');
     
     const importResults = {
       rulesImported: 0,
@@ -246,7 +246,7 @@ export class CascadeCustomizationDashboard {
         importResults.preferencesImported = prefResults.imported;
       }
       
-      console.log(`✅ Import complete: ${importResults.rulesImported} rules, ${importResults.skillsImported} skills imported`);
+      console.info(`✅ Import complete: ${importResults.rulesImported} rules, ${importResults.skillsImported} skills imported`);
       
       return {
         success: true,
@@ -621,7 +621,7 @@ export class CascadeCustomizationDashboard {
   private async enableSkill(skillId: string, merchantId: string): Promise<ActionResult> {
     try {
       // Simulate enabling skill - would integrate with actual skills manager
-      console.log(`Enabling skill ${skillId} for merchant ${merchantId}`);
+      console.info(`Enabling skill ${skillId} for merchant ${merchantId}`);
       
       return {
         success: true,
@@ -639,7 +639,7 @@ export class CascadeCustomizationDashboard {
   private async addCustomRule(rule: Rule, merchantId: string): Promise<ActionResult> {
     try {
       // Simulate adding custom rule - would integrate with actual rules engine
-      console.log(`Adding custom rule ${rule.name} for merchant ${merchantId}`);
+      console.info(`Adding custom rule ${rule.name} for merchant ${merchantId}`);
       
       return {
         success: true,

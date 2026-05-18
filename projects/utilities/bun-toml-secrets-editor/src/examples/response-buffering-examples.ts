@@ -12,7 +12,7 @@ export async function fetchConfig(url: string) {
       maxRetries: 2
     });
     
-    console.log(`Config fetched: ${result.size} bytes, status: ${result.status}`);
+    console.info(`Config fetched: ${result.size} bytes, status: ${result.status}`);
     return result.data;
   } catch (error) {
     console.error('Failed to fetch config:', error);
@@ -70,7 +70,7 @@ export async function getCachedConfig(url: string) {
     ttl: 600000 // 10 minutes
   });
   
-  console.log(`Config ${result.cached ? 'from cache' : 'fetched fresh'}`);
+  console.info(`Config ${result.cached ? 'from cache' : 'fetched fresh'}`);
   return result.data;
 }
 
@@ -79,10 +79,10 @@ export async function downloadSecretsFile(url: string, filename: string) {
   try {
     await downloadWithProgress(url, filename, (loaded, total) => {
       const progress = total > 0 ? (loaded / total * 100).toFixed(1) : '0.0';
-      console.log(`Download progress: ${progress}% (${loaded}/${total} bytes)`);
+      console.info(`Download progress: ${progress}% (${loaded}/${total} bytes)`);
     });
     
-    console.log(`Secrets file downloaded to: ${filename}`);
+    console.info(`Secrets file downloaded to: ${filename}`);
     return filename;
   } catch (error) {
     console.error('Download failed:', error);
@@ -100,7 +100,7 @@ export function initializeNetworking() {
   ];
   
   preconnectHosts(frequentHosts);
-  console.log('Network optimizations initialized');
+  console.info('Network optimizations initialized');
 }
 
 // Example 7: Error handling with fallback

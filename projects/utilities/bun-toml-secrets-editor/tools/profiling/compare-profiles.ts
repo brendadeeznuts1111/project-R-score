@@ -144,13 +144,13 @@ class ProfileComparator {
 
 	async compare(baselinePath, currentPath, outputPath) {
 		try {
-			console.log("📊 Loading baseline profile...");
+			console.info("📊 Loading baseline profile...");
 			const baseline = this.parseProfile(baselinePath);
 
-			console.log("📊 Loading current profile...");
+			console.info("📊 Loading current profile...");
 			const current = this.parseProfile(currentPath);
 
-			console.log("🔍 Analyzing performance changes...");
+			console.info("🔍 Analyzing performance changes...");
 			const comparison = this.compareMetrics(baseline, current);
 			comparison.baseline = baselinePath;
 			comparison.current = currentPath;
@@ -159,9 +159,9 @@ class ProfileComparator {
 
 			if (outputPath) {
 				await Bun.write(outputPath, report);
-				console.log(`✅ Comparison report saved to: ${outputPath}`);
+				console.info(`✅ Comparison report saved to: ${outputPath}`);
 			} else {
-				console.log(`\n${report}`);
+				console.info(`\n${report}`);
 			}
 		} catch (error) {
 			console.error(`❌ Profile comparison failed: ${error.message}`);
@@ -190,7 +190,7 @@ async function main() {
 			outputPath = args[i + 1];
 			i++;
 		} else if (arg === "--help") {
-			console.log(`
+			console.info(`
 📊 Smart Profile Comparator - Compare performance profiles
 
 USAGE:

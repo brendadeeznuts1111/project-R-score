@@ -106,7 +106,7 @@ class CLILogger {
   }
 
   static success(message: string): void {
-    console.log(this.colorize(CLI_CONFIG.COLORS.GREEN, `✅ ${message}`));
+    console.info(this.colorize(CLI_CONFIG.COLORS.GREEN, `✅ ${message}`));
   }
 
   static error(message: string): void {
@@ -118,18 +118,18 @@ class CLILogger {
   }
 
   static info(message: string): void {
-    console.log(this.colorize(CLI_CONFIG.COLORS.BLUE, `ℹ️ ${message}`));
+    console.info(this.colorize(CLI_CONFIG.COLORS.BLUE, `ℹ️ ${message}`));
   }
 
   static highlight(message: string): void {
-    console.log(this.colorize(CLI_CONFIG.COLORS.CYAN, `🔥 ${message}`));
+    console.info(this.colorize(CLI_CONFIG.COLORS.CYAN, `🔥 ${message}`));
   }
 
   static banner(): void {
-    console.log(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '╔════════════════════════════════════════════════════════════════════════════════╗'));
-    console.log(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '║                        SURGICAL PRECISION PLATFORM                         ║'));
-    console.log(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '║                 Enterprise Microservices - Bun-native Architecture         ║'));
-    console.log(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '╚════════════════════════════════════════════════════════════════════════════════╝'));
+    console.info(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '╔════════════════════════════════════════════════════════════════════════════════╗'));
+    console.info(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '║                        SURGICAL PRECISION PLATFORM                         ║'));
+    console.info(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '║                 Enterprise Microservices - Bun-native Architecture         ║'));
+    console.info(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '╚════════════════════════════════════════════════════════════════════════════════╝'));
   }
 }
 
@@ -156,7 +156,7 @@ class CLICommands {
         if (result.endpoints && Object.keys(result.endpoints).length > 0) {
           CLILogger.info('\nPlatform endpoints:');
           Object.entries(result.endpoints).forEach(([component, endpoint]) => {
-            console.log(`  ${component}: ${endpoint}`);
+            console.info(`  ${component}: ${endpoint}`);
           });
         }
       } else {
@@ -181,10 +181,10 @@ class CLICommands {
       CLILogger.info(`Active Regions: ${status.activeRegions}`);
       CLILogger.info(`Components: ${status.components.length}`);
 
-      console.log('\nComponent Details:');
+      console.info('\nComponent Details:');
       status.components.forEach(comp => {
         const statusIcon = comp.healthy ? '✅' : '❌';
-        console.log(`  ${statusIcon} ${comp.name}: ${comp.status}`);
+        console.info(`  ${statusIcon} ${comp.name}: ${comp.status}`);
       });
 
       platform.cleanup();
@@ -202,9 +202,9 @@ class CLICommands {
       await platform.demonstratePlatformCapabilities();
 
       const status = platform.getPlatformStatus();
-      console.log('\nHealth Summary:');
-      console.log(`  Overall Status: ${status.status === 'OPERATIONAL' ? '✅ HEALTHY' : '❌ DEGRADED'}`);
-      console.log(`  Components: ${status.components.filter(c => c.healthy).length}/${status.components.length} healthy`);
+      console.info('\nHealth Summary:');
+      console.info(`  Overall Status: ${status.status === 'OPERATIONAL' ? '✅ HEALTHY' : '❌ DEGRADED'}`);
+      console.info(`  Components: ${status.components.filter(c => c.healthy).length}/${status.components.length} healthy`);
 
       platform.cleanup();
     } catch (error) {
@@ -223,7 +223,7 @@ class CLICommands {
 
       if (testResult.success) {
         CLILogger.success('All integration tests passed! ✅');
-        console.log(testResult.stdout);
+        console.info(testResult.stdout);
       } else {
         CLILogger.error('Integration tests failed! ❌');
         console.error(testResult.stderr);
@@ -251,7 +251,7 @@ class CLICommands {
         CLILogger.highlight('Expected results validate 20-38% performance improvement targets');
       } else {
         CLILogger.warning('Benchmarks encountered issues (possibly expected in test environment)');
-        console.log('This is normal in environments without full Kubernetes setup');
+        console.info('This is normal in environments without full Kubernetes setup');
       }
     } catch (error) {
       CLILogger.error(`Benchmark execution failed: ${error instanceof Error ? error.message : String(error)}`);
@@ -261,35 +261,35 @@ class CLICommands {
 
   static version(args: CLIArgs): void {
     CLILogger.banner();
-    console.log(`Version: ${CLI_CONFIG.VERSION}`);
-    console.log(`Performance: ${PLATFORM_CONSTANTS.PERFORMANCE_IMPROVEMENT_PERCENT}% improvement`);
-    console.log(`Memorandum Compliant: ${PLATFORM_CONSTANTS.MEMORANDUM_COMPLIANT ? 'YES' : 'NO'}`);
-    console.log(`Zero Dependencies: ${PLATFORM_CONSTANTS.ZERO_DEPENDENCIES ? 'YES' : 'NO'}`);
-    console.log(`Bun-native: ${PLATFORM_CONSTANTS.BUN_NATIVE ? 'YES' : 'NO'}`);
+    console.info(`Version: ${CLI_CONFIG.VERSION}`);
+    console.info(`Performance: ${PLATFORM_CONSTANTS.PERFORMANCE_IMPROVEMENT_PERCENT}% improvement`);
+    console.info(`Memorandum Compliant: ${PLATFORM_CONSTANTS.MEMORANDUM_COMPLIANT ? 'YES' : 'NO'}`);
+    console.info(`Zero Dependencies: ${PLATFORM_CONSTANTS.ZERO_DEPENDENCIES ? 'YES' : 'NO'}`);
+    console.info(`Bun-native: ${PLATFORM_CONSTANTS.BUN_NATIVE ? 'YES' : 'NO'}`);
   }
 
   static help(args: CLIArgs): void {
     CLILogger.banner();
-    console.log(CLI_CONFIG.DESCRIPTION);
-    console.log('\n📋 Available Commands:');
-    console.log(`  ${CLI_CONFIG.COMMANDS.DEPLOY}    Deploy the complete Surgical Precision Platform`);
-    console.log(`  ${CLI_CONFIG.COMMANDS.STATUS}    Check platform status and component health`);
-    console.log(`  ${CLI_CONFIG.COMMANDS.HEALTH}    Run comprehensive platform health check`);
-    console.log(`  ${CLI_CONFIG.COMMANDS.TEST}      Run integration test suite`);
-    console.log(`  ${CLI_CONFIG.COMMANDS.BENCH}     Run performance benchmarks`);
-    console.log(`  ${CLI_CONFIG.COMMANDS.VERSION}   Show version and platform information`);
-    console.log(`  ${CLI_CONFIG.COMMANDS.HELP}      Show this help message`);
-    console.log('\n🔧 Usage Examples:');
-    console.log('  surgical-precision deploy          # Deploy platform');
-    console.log('  surgical-precision status          # Check status');
-    console.log('  surgical-precision health          # Health check');
-    console.log('  surgical-precision test            # Run tests');
-    console.log('  sp deploy                         # Short command alias');
-    console.log('\n⚙️ Options:');
-    console.log('  --help, -h    Show help');
-    console.log('  --version, -v Show version');
-    console.log('\n📦 Installation: bun add @surgical-precision/platform');
-    console.log('🌟 Repository: https://github.com/brendadeeznuts1111/kal-poly-bot');
+    console.info(CLI_CONFIG.DESCRIPTION);
+    console.info('\n📋 Available Commands:');
+    console.info(`  ${CLI_CONFIG.COMMANDS.DEPLOY}    Deploy the complete Surgical Precision Platform`);
+    console.info(`  ${CLI_CONFIG.COMMANDS.STATUS}    Check platform status and component health`);
+    console.info(`  ${CLI_CONFIG.COMMANDS.HEALTH}    Run comprehensive platform health check`);
+    console.info(`  ${CLI_CONFIG.COMMANDS.TEST}      Run integration test suite`);
+    console.info(`  ${CLI_CONFIG.COMMANDS.BENCH}     Run performance benchmarks`);
+    console.info(`  ${CLI_CONFIG.COMMANDS.VERSION}   Show version and platform information`);
+    console.info(`  ${CLI_CONFIG.COMMANDS.HELP}      Show this help message`);
+    console.info('\n🔧 Usage Examples:');
+    console.info('  surgical-precision deploy          # Deploy platform');
+    console.info('  surgical-precision status          # Check status');
+    console.info('  surgical-precision health          # Health check');
+    console.info('  surgical-precision test            # Run tests');
+    console.info('  sp deploy                         # Short command alias');
+    console.info('\n⚙️ Options:');
+    console.info('  --help, -h    Show help');
+    console.info('  --version, -v Show version');
+    console.info('\n📦 Installation: bun add @surgical-precision/platform');
+    console.info('🌟 Repository: https://github.com/brendadeeznuts1111/kal-poly-bot');
   }
 }
 

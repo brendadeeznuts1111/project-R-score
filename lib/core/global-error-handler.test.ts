@@ -212,7 +212,7 @@ describe('Global Error Scenarios', () => {
 
 // Entry guard test
 if (import.meta.main) {
-  console.log('🧪 Running Global Error Handler Tests...\n');
+  console.info('🧪 Running Global Error Handler Tests...\n');
   
   // Run a quick smoke test
   const handler = initializeGlobalErrorHandling({
@@ -220,13 +220,13 @@ if (import.meta.main) {
     exitOnUnhandledRejection: false,
   });
   
-  console.log('✅ Handler initialized successfully');
-  console.log('Statistics:', getGlobalErrorStatistics());
-  console.log('State:', handler.getState());
+  console.info('✅ Handler initialized successfully');
+  console.info('Statistics:', getGlobalErrorStatistics());
+  console.info('State:', handler.getState());
   
   onShutdown(async () => {
-    console.log('🧹 Test cleanup executed');
+    console.info('🧹 Test cleanup executed');
   });
   
-  console.log('\n✅ All smoke tests passed!');
+  console.info('\n✅ All smoke tests passed!');
 }

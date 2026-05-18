@@ -60,12 +60,12 @@ class WindowsInstallerPackager {
   }
 
   async createInstallers(): Promise<void> {
-    console.log('📦 Fantasy42-Fire22 Windows Installer Packager');
-    console.log('==============================================');
-    console.log(`📋 Mode: ${this.config.mode.toUpperCase()}`);
-    console.log(`📁 Input: ${this.config.inputDir}`);
-    console.log(`📁 Output: ${this.config.outputDir}`);
-    console.log('');
+    console.info('📦 Fantasy42-Fire22 Windows Installer Packager');
+    console.info('==============================================');
+    console.info(`📋 Mode: ${this.config.mode.toUpperCase()}`);
+    console.info(`📁 Input: ${this.config.inputDir}`);
+    console.info(`📁 Output: ${this.config.outputDir}`);
+    console.info('');
 
     try {
       // Prepare packaging environment
@@ -87,7 +87,7 @@ class WindowsInstallerPackager {
       // Generate packaging report
       await this.generatePackagingReport();
 
-      console.log('\n🎉 Windows installer packaging completed!');
+      console.info('\n🎉 Windows installer packaging completed!');
     } catch (error) {
       console.error('❌ Installer packaging failed:', error);
       throw error;
@@ -113,7 +113,7 @@ class WindowsInstallerPackager {
   }
 
   private async preparePackagingEnvironment(): Promise<void> {
-    console.log('🔧 Preparing packaging environment...');
+    console.info('🔧 Preparing packaging environment...');
 
     // Create output directory
     if (!existsSync(this.config.outputDir)) {
@@ -134,11 +134,11 @@ class WindowsInstallerPackager {
       throw new Error('No executable files found in input directory');
     }
 
-    console.log(`✅ Found ${executables.length} executable(s) to package`);
+    console.info(`✅ Found ${executables.length} executable(s) to package`);
   }
 
   private async createNSISInstaller(): Promise<void> {
-    console.log('\n🔧 Creating NSIS installer...');
+    console.info('\n🔧 Creating NSIS installer...');
 
     try {
       // Generate NSIS script
@@ -168,10 +168,10 @@ class WindowsInstallerPackager {
         await this.signInstaller(installerPath);
       }
 
-      console.log(`✅ NSIS installer created: ${basename(installerPath)}`);
+      console.info(`✅ NSIS installer created: ${basename(installerPath)}`);
     } catch (error) {
       console.error('❌ NSIS installer creation failed:', error);
-      console.log('💡 Install NSIS (Nullsoft Scriptable Install System) to create NSIS installers');
+      console.info('💡 Install NSIS (Nullsoft Scriptable Install System) to create NSIS installers');
     }
   }
 
@@ -311,7 +311,7 @@ SectionEnd
   }
 
   private async createMSIPackage(): Promise<void> {
-    console.log('\n🔧 Creating MSI package...');
+    console.info('\n🔧 Creating MSI package...');
 
     try {
       // Generate WiX source file
@@ -345,10 +345,10 @@ SectionEnd
         await this.signInstaller(msiPath);
       }
 
-      console.log(`✅ MSI package created: ${basename(msiPath)}`);
+      console.info(`✅ MSI package created: ${basename(msiPath)}`);
     } catch (error) {
       console.error('❌ MSI package creation failed:', error);
-      console.log('💡 Install WiX Toolset to create MSI packages');
+      console.info('💡 Install WiX Toolset to create MSI packages');
     }
   }
 
@@ -418,7 +418,7 @@ SectionEnd
   }
 
   private async createPortablePackage(): Promise<void> {
-    console.log('\n🔧 Creating portable package...');
+    console.info('\n🔧 Creating portable package...');
 
     try {
       const portableDir = join(this.config.outputDir, 'portable');
@@ -491,7 +491,7 @@ ${this.metadata.appCopyright}
         stdio: this.config.verbose ? 'inherit' : 'pipe',
       });
 
-      console.log(`✅ Portable package created: ${basename(zipPath)}`);
+      console.info(`✅ Portable package created: ${basename(zipPath)}`);
     } catch (error) {
       console.error('❌ Portable package creation failed:', error);
     }
@@ -543,12 +543,12 @@ For licensing information, contact: ${this.metadata.appPublisher}
     if (existsSync(iconSrc)) {
       copyFileSync(iconSrc, iconDest);
     } else {
-      console.log(`⚠️ Icon file not found: ${iconSrc}`);
+      console.info(`⚠️ Icon file not found: ${iconSrc}`);
     }
   }
 
   private async signInstaller(installerPath: string): Promise<void> {
-    console.log(`🔐 Signing installer: ${basename(installerPath)}`);
+    console.info(`🔐 Signing installer: ${basename(installerPath)}`);
 
     try {
       // Use the Windows code signer
@@ -564,7 +564,7 @@ For licensing information, contact: ${this.metadata.appPublisher}
       });
 
       await signer.signExecutables([installerPath]);
-      console.log(`✅ Installer signed: ${basename(installerPath)}`);
+      console.info(`✅ Installer signed: ${basename(installerPath)}`);
     } catch (error) {
       console.error(`❌ Installer signing failed: ${error}`);
     }
@@ -616,7 +616,7 @@ For licensing information, contact: ${this.metadata.appPublisher}
     };
 
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`📊 Packaging report: ${basename(reportPath)}`);
+    console.info(`📊 Packaging report: ${basename(reportPath)}`);
   }
 }
 
@@ -666,7 +666,7 @@ async function main() {
 }
 
 function showHelp() {
-  console.log(`
+  console.info(`
 📦 Fantasy42-Fire22 Windows Installer Packager
 
 Usage: bun run scripts/package-windows-installer.ts [options]

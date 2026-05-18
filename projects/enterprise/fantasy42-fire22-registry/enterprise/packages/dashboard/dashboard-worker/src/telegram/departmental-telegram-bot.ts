@@ -204,7 +204,7 @@ export class DepartmentalTelegramBot extends MultilingualTelegramBot {
     // Forward to department channel (simulation)
     await this.forwardToDepartment(inquiry, departmentConfig);
 
-    console.log(
+    console.info(
       `📱 Routed inquiry ${inquiryId} from @${user.username} to ${department} department`
     );
 
@@ -342,7 +342,7 @@ React with ✅ to claim this inquiry
     `;
 
     // In real implementation, this would send to Telegram channel
-    console.log(`📤 Forwarded to ${config.channel}:\n${forwardMessage}`);
+    console.info(`📤 Forwarded to ${config.channel}:\n${forwardMessage}`);
   }
 
   /**
@@ -404,7 +404,7 @@ URGENT ATTENTION REQUIRED
     `;
 
     // Forward to escalation channel
-    console.log(`🚨 Escalated to @fire22_escalation:\n${escalationMessage}`);
+    console.info(`🚨 Escalated to @fire22_escalation:\n${escalationMessage}`);
   }
 
   /**
@@ -429,7 +429,7 @@ URGENT ATTENTION REQUIRED
 
     // Send resolution notification to customer
     const resolutionMessage = await this.generateResolutionMessage(inquiry, resolutionNotes);
-    console.log(`✅ Resolved inquiry ${inquiryId} - notification sent to customer`);
+    console.info(`✅ Resolved inquiry ${inquiryId} - notification sent to customer`);
   }
 
   /**

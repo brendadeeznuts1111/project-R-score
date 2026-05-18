@@ -52,7 +52,7 @@ function withPerformanceTracking(handler: (req: Request, cookies: CookieMap, ses
         endpoint: new URL(request.url).pathname
       });
       
-      console.log(`⚡ ${new URL(request.url).pathname} processed in ${duration.toFixed(2)}ms`);
+      console.info(`⚡ ${new URL(request.url).pathname} processed in ${duration.toFixed(2)}ms`);
       
       return finalResponse;
     } catch (error) {
@@ -320,5 +320,5 @@ const server = (Bun as any).serve({
   }
 });
 
-console.log(`🚀 DataView + CookieMap Server v3.24 started on port ${server.port}`);
-console.log(`📊 Open http://localhost:${server.port} to see the demo`);
+console.info(`🚀 DataView + CookieMap Server v3.24 started on port ${server.port}`);
+console.info(`📊 Open http://localhost:${server.port} to see the demo`);

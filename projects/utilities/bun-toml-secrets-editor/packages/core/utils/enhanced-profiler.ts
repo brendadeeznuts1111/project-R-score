@@ -86,9 +86,9 @@ export class EnhancedProfiler {
 		};
 
 		EnhancedProfiler.activeSessions.set(sessionId, session);
-		console.log(`🔍 Started profiling session: ${sessionId}`);
-		console.log(`   Output directory: ${sessionOptions.outputDir}`);
-		console.log(`   Duration: ${sessionOptions.duration}ms`);
+		console.info(`🔍 Started profiling session: ${sessionId}`);
+		console.info(`   Output directory: ${sessionOptions.outputDir}`);
+		console.info(`   Duration: ${sessionOptions.duration}ms`);
 
 		return sessionId;
 	}
@@ -103,8 +103,8 @@ export class EnhancedProfiler {
 		}
 
 		const actualDuration = Date.now() - session.startTime;
-		console.log(`⏹️  Stopping profiling session: ${sessionId}`);
-		console.log(`   Actual duration: ${actualDuration}ms`);
+		console.info(`⏹️  Stopping profiling session: ${sessionId}`);
+		console.info(`   Actual duration: ${actualDuration}ms`);
 
 		const results: ProfileResult[] = [];
 
@@ -128,10 +128,10 @@ export class EnhancedProfiler {
 		// Clean up session
 		EnhancedProfiler.activeSessions.delete(sessionId);
 
-		console.log(`✅ Profile generation complete:`);
+		console.info(`✅ Profile generation complete:`);
 		results.forEach((result) => {
 			const sizeKB = (result.size / 1024).toFixed(1);
-			console.log(
+			console.info(
 				`   ${result.type.toUpperCase()}: ${result.filePath} (${sizeKB}KB)`,
 			);
 		});
@@ -243,7 +243,7 @@ export class EnhancedProfiler {
 		const report = EnhancedProfiler.generateCombinedReport(session, results);
 		writeFileSync(reportPath, report);
 
-		console.log(`📊 Combined report: ${reportPath}`);
+		console.info(`📊 Combined report: ${reportPath}`);
 	}
 
 	/**

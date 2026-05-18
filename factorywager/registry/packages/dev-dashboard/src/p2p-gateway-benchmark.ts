@@ -615,8 +615,8 @@ export class P2PGatewayBenchmark {
   }
   
   printResults() {
-    console.log('\n📊 P2P Gateway Benchmark Results');
-    console.log('='.repeat(50));
+    console.info('\n📊 P2P Gateway Benchmark Results');
+    console.info('='.repeat(50));
     
     // Group results by gateway
     const byGateway: Record<string, P2PBenchmarkResult[]> = {};
@@ -629,8 +629,8 @@ export class P2PGatewayBenchmark {
     }
     
     for (const [gateway, results] of Object.entries(byGateway)) {
-      console.log(`\n${gateway.toUpperCase()}:`);
-      console.log('-'.repeat(30));
+      console.info(`\n${gateway.toUpperCase()}:`);
+      console.info('-'.repeat(30));
       
       // Group by operation
       const byOperation: Record<string, P2PBenchmarkResult[]> = {};
@@ -647,20 +647,20 @@ export class P2PGatewayBenchmark {
         const successRate = (successful / total) * 100;
         const avgDuration = opResults.reduce((sum, r) => sum + r.durationMs, 0) / total;
         
-        console.log(`  ${operation}:`);
-        console.log(`    Success Rate: ${successRate.toFixed(1)}% (${successful}/${total})`);
-        console.log(`    Avg Duration: ${avgDuration.toFixed(2)}ms`);
-        console.log(`    Min/Max: ${Math.min(...opResults.map(r => r.durationMs)).toFixed(2)}ms / ${Math.max(...opResults.map(r => r.durationMs)).toFixed(2)}ms`);
+        console.info(`  ${operation}:`);
+        console.info(`    Success Rate: ${successRate.toFixed(1)}% (${successful}/${total})`);
+        console.info(`    Avg Duration: ${avgDuration.toFixed(2)}ms`);
+        console.info(`    Min/Max: ${Math.min(...opResults.map(r => r.durationMs)).toFixed(2)}ms / ${Math.max(...opResults.map(r => r.durationMs)).toFixed(2)}ms`);
       }
     }
     
     // Overall summary
-    console.log('\n📈 Overall Summary:');
-    console.log('-'.repeat(30));
-    console.log(`Total Operations: ${this.results.length}`);
-    console.log(`Successful: ${this.results.filter(r => r.success).length}`);
-    console.log(`Failed: ${this.results.filter(r => !r.success).length}`);
-    console.log(`Overall Success Rate: ${((this.results.filter(r => r.success).length / this.results.length) * 100).toFixed(1)}%`);
+    console.info('\n📈 Overall Summary:');
+    console.info('-'.repeat(30));
+    console.info(`Total Operations: ${this.results.length}`);
+    console.info(`Successful: ${this.results.filter(r => r.success).length}`);
+    console.info(`Failed: ${this.results.filter(r => !r.success).length}`);
+    console.info(`Overall Success Rate: ${((this.results.filter(r => r.success).length / this.results.length) * 100).toFixed(1)}%`);
   }
 }
 
@@ -669,7 +669,7 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.length === 0 || args.includes('--help')) {
-    console.log(`
+    console.info(`
 P2P Gateway Benchmark Tool
 ──────────────────────────
 
@@ -743,28 +743,28 @@ Examples:
   
   // Output results
   if (args.includes('--json')) {
-    console.log(JSON.stringify({ results, summary }, null, 2));
+    console.info(JSON.stringify({ results, summary }, null, 2));
   } else if (args.includes('--compare')) {
     benchmark.printResults();
   } else {
-    console.log('\n🎯 P2P Benchmark Complete!');
-    console.log('='.repeat(50));
-    console.log(`Total operations: ${results.length}`);
-    console.log(`Gateways tested: ${gateways.length}`);
-    console.log(`Operations tested: ${operations.length}`);
-    console.log(`Overall success rate: ${summary.successRate.toFixed(1)}%`);
+    console.info('\n🎯 P2P Benchmark Complete!');
+    console.info('='.repeat(50));
+    console.info(`Total operations: ${results.length}`);
+    console.info(`Gateways tested: ${gateways.length}`);
+    console.info(`Operations tested: ${operations.length}`);
+    console.info(`Overall success rate: ${summary.successRate.toFixed(1)}%`);
     
     // Show fastest gateway
     const fastestGateway = Object.entries(summary.gateways)
       .sort(([, a], [, b]) => a.avgDuration - b.avgDuration)[0];
     
     if (fastestGateway) {
-      console.log(`🏆 Fastest gateway: ${fastestGateway[0]} (${fastestGateway[1].avgDuration.toFixed(2)}ms)`);
+      console.info(`🏆 Fastest gateway: ${fastestGateway[0]} (${fastestGateway[1].avgDuration.toFixed(2)}ms)`);
     }
     
     if (args.includes('--summary')) {
-      console.log('\n📊 Summary:');
-      console.log(JSON.stringify(summary, null, 2));
+      console.info('\n📊 Summary:');
+      console.info(JSON.stringify(summary, null, 2));
     }
   }
   
@@ -772,7 +772,7 @@ Examples:
   if (args.includes('--output')) {
     const outputFile = args[args.indexOf('--output') + 1];
     await Bun.write(outputFile, JSON.stringify({ results, summary }, null, 2));
-    console.log(`\n💾 Results saved to ${outputFile}`);
+    console.info(`\n💾 Results saved to ${outputFile}`);
   }
 }
 

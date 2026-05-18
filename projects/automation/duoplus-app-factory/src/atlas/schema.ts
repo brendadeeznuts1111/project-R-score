@@ -96,7 +96,7 @@ export class AtlasSchema {
       )
     `);
 
-    console.log('✅ Atlas schema initialized');
+    console.info('✅ Atlas schema initialized');
   }
 
   static async registerDevice(record: StarlightRecord): Promise<void> {

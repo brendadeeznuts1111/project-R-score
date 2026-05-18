@@ -10,7 +10,7 @@ export class RegistryListKernel {
    * List dependencies using bun pm ls
    */
   static async listDependencies(showAll: boolean = false) {
-    console.log(`📋 Inspecting ${showAll ? "TOTAL " : ""}dependency tree...`);
+    console.info(`📋 Inspecting ${showAll ? "TOTAL " : ""}dependency tree...`);
     
     try {
       // Use bun pm ls for high-speed dependency listing
@@ -29,7 +29,7 @@ export class RegistryListKernel {
         throw new Error(error || "Failed to list dependencies");
       }
 
-      console.log(output);
+      console.info(output);
       return output;
     } catch (e) {
       console.error(`❌ Error listing dependencies:`, e.message);

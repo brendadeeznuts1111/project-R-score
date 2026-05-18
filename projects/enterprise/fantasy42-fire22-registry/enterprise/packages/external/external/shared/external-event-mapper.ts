@@ -197,7 +197,7 @@ export class ExternalEventMapper {
         );
       }
 
-      console.log(
+      console.info(
         `✅ Processed external event: ${externalEvent.eventType} -> ${internalEvents.length} internal events`
       );
     } catch (error) {

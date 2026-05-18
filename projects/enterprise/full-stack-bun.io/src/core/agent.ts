@@ -170,7 +170,7 @@ export class Agent {
       await this.initializeCapabilities();
 
       this.state.status = AgentStatus.ACTIVE;
-      console.log(`Agent ${this.state.config.name} started successfully`);
+      console.info(`Agent ${this.state.config.name} started successfully`);
     } catch (error) {
       this.state.status = AgentStatus.ERROR;
       throw error;
@@ -184,11 +184,11 @@ export class Agent {
     // Cancel all active tasks
     for (const [taskId, task] of this.activeTasks) {
       // In a real implementation, we'd have cancellation tokens
-      console.log(`Cancelling task ${taskId}`);
+      console.info(`Cancelling task ${taskId}`);
     }
 
     this.activeTasks.clear();
-    console.log(`Agent ${this.state.config.name} stopped`);
+    console.info(`Agent ${this.state.config.name} stopped`);
   }
 
   // Execute task
@@ -266,19 +266,19 @@ export class Agent {
     // Check file system access
     if (capabilities.fileSystem.read || capabilities.fileSystem.write) {
       // Verify file system permissions
-      console.log('Initializing file system capabilities');
+      console.info('Initializing file system capabilities');
     }
 
     // Check network access
     if (capabilities.network.http || capabilities.network.websockets) {
       // Verify network connectivity
-      console.log('Initializing network capabilities');
+      console.info('Initializing network capabilities');
     }
 
     // Check process execution
     if (capabilities.process.spawn || capabilities.process.shell) {
       // Verify process execution permissions
-      console.log('Initializing process capabilities');
+      console.info('Initializing process capabilities');
     }
 
     // Additional capability checks...
@@ -287,7 +287,7 @@ export class Agent {
   private validateCapabilities(context: ExecutionContext): void {
     // Validate that agent has required capabilities for this task
     // This would check the task requirements against agent capabilities
-    console.log(`Validating capabilities for task ${context.taskId}`);
+    console.info(`Validating capabilities for task ${context.taskId}`);
   }
 
   private async performTask(context: ExecutionContext): Promise<any> {

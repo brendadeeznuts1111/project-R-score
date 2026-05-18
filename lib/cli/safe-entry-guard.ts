@@ -15,7 +15,7 @@ export function isDirectExecution(): boolean {
  */
 export function ensureDirectExecution(): void {
   if (!import.meta.main) {
-    console.log('ℹ️  Script was imported, not executed directly');
+    console.info('ℹ️  Script was imported, not executed directly');
     return; // 🛡️ SAFE: Return instead of process.exit(0)
   }
 }
@@ -36,7 +36,7 @@ export function runIfMain(mainFunction: () => void | Promise<void>): void {
       }
     }
   } else {
-    console.log('ℹ️  Script was imported, not executed directly');
+    console.info('ℹ️  Script was imported, not executed directly');
   }
 }
 
@@ -71,13 +71,13 @@ ensureDirectExecution();
 import { runIfMain } from '../shared/tools/entry-guard';
 runIfMain(async () => {
   // Your async code here...
-  console.log('Running safely!');
+  console.info('Running safely!');
 });
 
 // ✅ SAFE PATTERN 3:
 if (import.meta.main) {
   main().catch(console.error);
 } else {
-  console.log('Imported, not executed');
+  console.info('Imported, not executed');
 }
 */

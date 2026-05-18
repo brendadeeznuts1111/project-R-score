@@ -305,7 +305,7 @@ describe('Empire Pro Performance Tests', () => {
         }
       } catch (error) {
         // Expected to fail with mock endpoint, but performance test still valid
-        console.log('Expected error with mock endpoint:', error);
+        console.info('Expected error with mock endpoint:', error);
       }
       
       const endTime = performance.now();

@@ -104,11 +104,11 @@ async function deleteSnapshots(
 ): Promise<void> {
 	for (const s of snapshots) {
 		if (dryRun) {
-			console.log(`  [DRY RUN] Would delete: ${s.filename}`);
+			console.info(`  [DRY RUN] Would delete: ${s.filename}`);
 		} else {
 			try {
 				await $`rm ${s.path}`.quiet();
-				console.log(`  🗑️  Deleted: ${s.filename}`);
+				console.info(`  🗑️  Deleted: ${s.filename}`);
 			} catch (_error) {
 				console.error(`  ❌ Failed to delete: ${s.filename}`);
 			}
@@ -135,50 +135,50 @@ if (import.meta.main) {
 	);
 	const dryRun = args.includes("--dry-run");
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Snapshot Retention Policy          ║");
-	console.log(`${`║     Mode: ${dryRun ? "DRY RUN" : "LIVE"}`.padEnd(55)}║`);
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
-	console.log(`Snapshot Directory: ${snapshotDir}`);
-	console.log(`Max Age: ${maxAgeDays} days`);
-	console.log(`Max Count: ${maxCount} per tenant`);
-	console.log(`Min Keep: ${minKeep} per tenant`);
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Snapshot Retention Policy          ║");
+	console.info(`${`║     Mode: ${dryRun ? "DRY RUN" : "LIVE"}`.padEnd(55)}║`);
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
+	console.info(`Snapshot Directory: ${snapshotDir}`);
+	console.info(`Max Age: ${maxAgeDays} days`);
+	console.info(`Max Count: ${maxCount} per tenant`);
+	console.info(`Min Keep: ${minKeep} per tenant`);
+	console.info();
 
 	const snapshots = await listSnapshots(snapshotDir);
 
 	if (snapshots.length === 0) {
-		console.log("No snapshots found.");
+		console.info("No snapshots found.");
 		process.exit(0);
 	}
 
-	console.log(`Found ${snapshots.length} snapshots`);
-	console.log();
+	console.info(`Found ${snapshots.length} snapshots`);
+	console.info();
 
 	const policy: RetentionPolicy = { maxAgeDays, maxCount, minKeep, dryRun };
 	const { keep, remove } = applyRetentionPolicy(snapshots, policy);
 
-	console.log(`Retention Policy:`);
-	console.log(`  Keep: ${keep.length} snapshots`);
-	console.log(`  Remove: ${remove.length} snapshots`);
-	console.log();
+	console.info(`Retention Policy:`);
+	console.info(`  Keep: ${keep.length} snapshots`);
+	console.info(`  Remove: ${remove.length} snapshots`);
+	console.info();
 
 	if (remove.length > 0) {
-		console.log("Deleting old snapshots...");
+		console.info("Deleting old snapshots...");
 		await deleteSnapshots(remove, dryRun);
-		console.log();
+		console.info();
 	}
 
 	const totalSize = keep.reduce((sum, s) => sum + s.size, 0);
-	console.log(`Storage Summary:`);
-	console.log(`  Remaining snapshots: ${keep.length}`);
-	console.log(`  Total size: ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
+	console.info(`Storage Summary:`);
+	console.info(`  Remaining snapshots: ${keep.length}`);
+	console.info(`  Total size: ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
 
 	if (dryRun) {
-		console.log();
-		console.log("This was a dry run. No files were deleted.");
-		console.log("Run without --dry-run to apply changes.");
+		console.info();
+		console.info("This was a dry run. No files were deleted.");
+		console.info("Run without --dry-run to apply changes.");
 	}
 }
 

@@ -21,7 +21,7 @@ redisSub.subscribe('p2p:payment', 'PERSONALIZED_DEPOSIT', 'receipt:created', (er
   if (err) {
     console.error('Redis subscription error:', err);
   } else {
-    console.log('✅ Subscribed to payment channels');
+    console.info('✅ Subscribed to payment channels');
   }
 });
 
@@ -377,7 +377,7 @@ const server = serve({
   websocket: {
     open(ws) {
       clients.add(ws);
-      console.log(`👤 Client connected (${clients.size} total)`);
+      console.info(`👤 Client connected (${clients.size} total)`);
       
       // Send welcome
       ws.send(JSON.stringify({
@@ -388,22 +388,22 @@ const server = serve({
     },
     message(ws, message) {
       // Handle client messages
-      console.log('Client message:', message);
+      console.info('Client message:', message);
     },
     close(ws) {
       clients.delete(ws);
-      console.log(`👤 Client disconnected (${clients.size} remaining)`);
+      console.info(`👤 Client disconnected (${clients.size} remaining)`);
     },
   },
 });
 
-console.log('');
-console.log('╔════════════════════════════════════════════════════════════╗');
-console.log('║  📊 P2P Real-Time Dashboard                                ║');
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log(`║  URL: http://localhost:${PORT}/dashboard                        ║`);
-console.log(`║  WebSocket: ws://localhost:${PORT}/ws                           ║`);
-console.log('╚════════════════════════════════════════════════════════════╝');
-console.log('');
+console.info('');
+console.info('╔════════════════════════════════════════════════════════════╗');
+console.info('║  📊 P2P Real-Time Dashboard                                ║');
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info(`║  URL: http://localhost:${PORT}/dashboard                        ║`);
+console.info(`║  WebSocket: ws://localhost:${PORT}/ws                           ║`);
+console.info('╚════════════════════════════════════════════════════════════╝');
+console.info('');
 
 export default server;

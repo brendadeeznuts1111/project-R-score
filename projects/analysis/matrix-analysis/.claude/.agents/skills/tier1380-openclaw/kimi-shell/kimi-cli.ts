@@ -185,47 +185,47 @@ const COLORS = {
 };
 
 function printBanner(): void {
-	console.log(`${COLORS.bold}${COLORS.cyan}`);
-	console.log("╔══════════════════════════════════════════════════════════════════╗");
-	console.log("║           🐚 Kimi CLI v2.0 (Tier-1380 OMEGA)                      ║");
-	console.log("║           Unified Shell Interface for Matrix Agent                ║");
-	console.log("╚══════════════════════════════════════════════════════════════════╝");
-	console.log(`${COLORS.reset}`);
+	console.info(`${COLORS.bold}${COLORS.cyan}`);
+	console.info("╔══════════════════════════════════════════════════════════════════╗");
+	console.info("║           🐚 Kimi CLI v2.0 (Tier-1380 OMEGA)                      ║");
+	console.info("║           Unified Shell Interface for Matrix Agent                ║");
+	console.info("╚══════════════════════════════════════════════════════════════════╝");
+	console.info(`${COLORS.reset}`);
 }
 
 function printHelp(): void {
 	printBanner();
-	console.log("\nUsage: kimi-cli.ts <command> [args...]");
-	console.log("       kimi-cli.ts interactive           # Start interactive mode");
-	console.log("\nCommands:");
+	console.info("\nUsage: kimi-cli.ts <command> [args...]");
+	console.info("       kimi-cli.ts interactive           # Start interactive mode");
+	console.info("\nCommands:");
 
 	for (const [name, config] of Object.entries(COMMANDS)) {
 		const status =
 			name === "interactive" || name === "monitor"
 				? `${COLORS.green}[NEW]${COLORS.reset}`
 				: "     ";
-		console.log(`  ${status} ${name.padEnd(12)} ${config.description}`);
+		console.info(`  ${status} ${name.padEnd(12)} ${config.description}`);
 		if (config.subcommands.length > 0) {
-			console.log(
+			console.info(
 				`             ${COLORS.gray}Sub: ${config.subcommands.join(", ")}${COLORS.reset}`,
 			);
 		}
 	}
 
-	console.log("\nExamples:");
-	console.log(
+	console.info("\nExamples:");
+	console.info(
 		`  ${COLORS.cyan}kimi-cli.ts interactive${COLORS.reset}           # Interactive shell mode`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}kimi-cli.ts monitor watch${COLORS.reset}         # Real-time performance monitor`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}kimi-cli.ts metrics dashboard${COLORS.reset}     # Metrics dashboard`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}kimi-cli.ts shell status${COLORS.reset}          # Shell status`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}kimi-cli.ts vault health${COLORS.reset}          # Vault health check`,
 	);
 }
@@ -266,8 +266,8 @@ async function main(): Promise<void> {
 
 	// Handle version
 	if (args[0] === "--version" || args[0] === "-v") {
-		console.log("🐚 Kimi CLI v2.0.0 (Tier-1380 OMEGA)");
-		console.log(`   Bun v${Bun.version}`);
+		console.info("🐚 Kimi CLI v2.0.0 (Tier-1380 OMEGA)");
+		console.info(`   Bun v${Bun.version}`);
 		return;
 	}
 

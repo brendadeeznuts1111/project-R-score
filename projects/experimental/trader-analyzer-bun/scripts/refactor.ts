@@ -153,21 +153,21 @@ export class PatternRefactorer {
    * Print results
    */
   printResults(): void {
-    console.log(`\n🔧 Refactoring Results:\n`);
-    console.log(`Total files: ${this.results.length}`);
-    console.log(`Total replacements: ${this.results.reduce((sum, r) => sum + r.replacements, 0)}\n`);
+    console.info(`\n🔧 Refactoring Results:\n`);
+    console.info(`Total files: ${this.results.length}`);
+    console.info(`Total replacements: ${this.results.reduce((sum, r) => sum + r.replacements, 0)}\n`);
 
     for (const result of this.results) {
-      console.log(`📄 ${result.file} (${result.replacements} replacements)`);
+      console.info(`📄 ${result.file} (${result.replacements} replacements)`);
       for (const change of result.changes.slice(0, 5)) {
-        console.log(`   Line ${change.line}:`);
-        console.log(`   - ${change.before.trim()}`);
-        console.log(`   + ${change.after.trim()}`);
+        console.info(`   Line ${change.line}:`);
+        console.info(`   - ${change.before.trim()}`);
+        console.info(`   + ${change.after.trim()}`);
       }
       if (result.changes.length > 5) {
-        console.log(`   ... and ${result.changes.length - 5} more`);
+        console.info(`   ... and ${result.changes.length - 5} more`);
       }
-      console.log();
+      console.info();
     }
   }
 }
@@ -192,7 +192,7 @@ if (import.meta.main) {
   await refactorer.refactor();
 
   if (options.test) {
-    console.log("🧪 Test mode - no changes made");
+    console.info("🧪 Test mode - no changes made");
   }
 
   refactorer.printResults();

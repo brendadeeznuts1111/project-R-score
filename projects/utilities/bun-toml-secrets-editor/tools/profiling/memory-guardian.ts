@@ -31,7 +31,7 @@ class MemoryGuardian {
 		const profileName = `auto-profile-${reason}-${timestamp}`;
 		const profileDir = "./profiles/auto-memory";
 
-		console.log(
+		console.info(
 			`🚨 Memory threshold exceeded! Triggering auto-profile: ${profileName}`,
 		);
 
@@ -76,7 +76,7 @@ class MemoryGuardian {
 			await Promise.all([cpuProc.exited, heapProc.exited]);
 
 			this.profileCount++;
-			console.log(
+			console.info(
 				`✅ Auto-profile #${this.profileCount} completed: ${profileDir}/${profileName}.md`,
 			);
 		} catch (error) {
@@ -94,7 +94,7 @@ class MemoryGuardian {
 		else if (heapUsed >= this.thresholds.critical) status = "🟠";
 		else if (heapUsed >= this.thresholds.warning) status = "🟡";
 
-		console.log(
+		console.info(
 			`${status} Memory: ${this.formatBytes(usage.heapUsed)} | RSS: ${this.formatBytes(usage.rss)} | External: ${this.formatBytes(usage.external)}`,
 		);
 
@@ -102,28 +102,28 @@ class MemoryGuardian {
 		if (heapUsed >= this.thresholds.profiling) {
 			await this.triggerAutoProfile("memory-profiling-threshold");
 		} else if (heapUsed >= this.thresholds.critical) {
-			console.log(
+			console.info(
 				`⚠️  Critical memory usage: ${this.formatBytes(usage.heapUsed)} (threshold: ${this.thresholds.critical}MB)`,
 			);
 			// Force garbage collection if available
 			if (global.gc) {
 				global.gc();
-				console.log("🧹 Forced garbage collection");
+				console.info("🧹 Forced garbage collection");
 			}
 		} else if (heapUsed >= this.thresholds.warning) {
-			console.log(
+			console.info(
 				`⚠️  High memory usage: ${this.formatBytes(usage.heapUsed)} (threshold: ${this.thresholds.warning}MB)`,
 			);
 		}
 	}
 
 	start() {
-		console.log(`🛡️  Memory Guardian started`);
-		console.log(`   Warning threshold: ${this.thresholds.warning}MB`);
-		console.log(`   Critical threshold: ${this.thresholds.critical}MB`);
-		console.log(`   Profiling threshold: ${this.thresholds.profiling}MB`);
-		console.log(`   Check interval: ${this.checkInterval}ms`);
-		console.log("---");
+		console.info(`🛡️  Memory Guardian started`);
+		console.info(`   Warning threshold: ${this.thresholds.warning}MB`);
+		console.info(`   Critical threshold: ${this.thresholds.critical}MB`);
+		console.info(`   Profiling threshold: ${this.thresholds.profiling}MB`);
+		console.info(`   Check interval: ${this.checkInterval}ms`);
+		console.info("---");
 
 		// Initial check
 		this.checkMemory();
@@ -136,17 +136,17 @@ class MemoryGuardian {
 
 	enableProfiling() {
 		this.profilingEnabled = true;
-		console.log("✅ Auto-profiling enabled");
+		console.info("✅ Auto-profiling enabled");
 	}
 
 	disableProfiling() {
 		this.profilingEnabled = false;
-		console.log("❌ Auto-profiling disabled");
+		console.info("❌ Auto-profiling disabled");
 	}
 
 	setThresholds(thresholds) {
 		this.thresholds = { ...this.thresholds, ...thresholds };
-		console.log("📊 Memory thresholds updated:", this.thresholds);
+		console.info("📊 Memory thresholds updated:", this.thresholds);
 	}
 
 	getStats() {
@@ -177,12 +177,12 @@ async function main() {
 			i++;
 		} else if (arg === "--interval") {
 			// Note: This would require recreating the guardian with new interval
-			console.log(`Interval setting not yet implemented`);
+			console.info(`Interval setting not yet implemented`);
 			i++;
 		} else if (arg === "--no-profiling") {
 			guardian.disableProfiling();
 		} else if (arg === "--help") {
-			console.log(`
+			console.info(`
 🛡️  Memory Guardian - Automatic Memory Monitoring & Profiling
 
 USAGE:
@@ -222,9 +222,9 @@ FEATURES:
 
 	// Handle graceful shutdown
 	process.on("SIGINT", () => {
-		console.log("\n👋 Memory Guardian shutting down...");
+		console.info("\n👋 Memory Guardian shutting down...");
 		const stats = guardian.getStats();
-		console.log(
+		console.info(
 			`📊 Final stats: ${stats.profileCount} auto-profiles generated`,
 		);
 		process.exit(0);

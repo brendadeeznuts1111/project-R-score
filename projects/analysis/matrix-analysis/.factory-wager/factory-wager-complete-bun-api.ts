@@ -77,15 +77,15 @@ ${audit.riskScore <= 50 ?
 `;
 }
 
-console.log('🏭 FactoryWager + Complete Bun v1.3.8 Markdown API');
-console.log('===================================================');
-console.log();
+console.info('🏭 FactoryWager + Complete Bun v1.3.8 Markdown API');
+console.info('===================================================');
+console.info();
 
 const markdownContent = generateFactoryWagerMarkdown(sampleAudit);
 
 // Method 1: Bun.markdown.render() - Your original pattern for terminal output
-console.log('📋 Method 1: Bun.markdown.render() - Terminal Output');
-console.log('=====================================================');
+console.info('📋 Method 1: Bun.markdown.render() - Terminal Output');
+console.info('=====================================================');
 
 const terminalOutput = Bun.markdown.render(markdownContent, {
   heading: (children: string, { level }: { level: number }) => {
@@ -117,24 +117,24 @@ const terminalOutput = Bun.markdown.render(markdownContent, {
   codespan: (children: string) => `\x1b[36m${children}\x1b[0m`
 });
 
-console.log(terminalOutput);
+console.info(terminalOutput);
 
 // Method 2: Bun.markdown.html() - HTML output with options
-console.log('🌐 Method 2: Bun.markdown.html() - HTML Output');
-console.log('==============================================');
+console.info('🌐 Method 2: Bun.markdown.html() - HTML Output');
+console.info('==============================================');
 
 const htmlOutput = Bun.markdown.html(markdownContent, { 
   headingIds: true,
   allowHtml: true 
 });
 
-console.log('HTML Output (first 200 chars):');
-console.log(htmlOutput.substring(0, 200) + '...');
+console.info('HTML Output (first 200 chars):');
+console.info(htmlOutput.substring(0, 200) + '...');
 
 // Method 3: Bun.markdown.react() - React elements
-console.log();
-console.log('⚛️  Method 3: Bun.markdown.react() - React Elements');
-console.log('===================================================');
+console.info();
+console.info('⚛️  Method 3: Bun.markdown.react() - React Elements');
+console.info('===================================================');
 
 try {
   const reactElement = Bun.markdown.react(markdownContent, {
@@ -145,19 +145,19 @@ try {
     reactVersion: 18
   });
   
-  console.log('React element generated successfully');
-  console.log('Type:', typeof reactElement);
+  console.info('React element generated successfully');
+  console.info('Type:', typeof reactElement);
 } catch (error) {
-  console.log('React elements require React runtime - available in React applications');
+  console.info('React elements require React runtime - available in React applications');
 }
 
-console.log();
-console.log('🎯 FactoryWager + Bun Integration Summary:');
-console.log('==========================================');
-console.log('✅ Method 1: Terminal output with ANSI colors');
-console.log('✅ Method 2: HTML output with heading IDs');
-console.log('✅ Method 3: React elements for web applications');
-console.log();
-console.log('🚀 Your original code pattern works perfectly with the official Bun API!');
+console.info();
+console.info('🎯 FactoryWager + Bun Integration Summary:');
+console.info('==========================================');
+console.info('✅ Method 1: Terminal output with ANSI colors');
+console.info('✅ Method 2: HTML output with heading IDs');
+console.info('✅ Method 3: React elements for web applications');
+console.info();
+console.info('🚀 Your original code pattern works perfectly with the official Bun API!');
 
 export { generateFactoryWagerMarkdown, type FactoryWagerAudit };

@@ -87,9 +87,9 @@ export class DataViewCookieManager {
     
     if (!sessionId) {
       sessionId = crypto.randomUUID();
-      console.log(`🆔 Creating new session: ${sessionId}`);
+      console.info(`🆔 Creating new session: ${sessionId}`);
     } else {
-      console.log(`🔄 Existing session: ${sessionId}`);
+      console.info(`🔄 Existing session: ${sessionId}`);
     }
     
     // Extract request metadata
@@ -155,7 +155,7 @@ export class DataViewCookieManager {
     ]);
     
     const dbTime = performance.now() - startTime;
-    console.log(`💾 Session stored in ${dbTime.toFixed(2)}ms`);
+    console.info(`💾 Session stored in ${dbTime.toFixed(2)}ms`);
     
     return sessionData;
   }
@@ -262,7 +262,7 @@ export class DataViewCookieManager {
       (Bun as any).gc(true);
     }
     
-    console.log(`🧹 Cleaned up ${result.changes} expired sessions`);
+    console.info(`🧹 Cleaned up ${result.changes} expired sessions`);
     return result.changes;
   }
   

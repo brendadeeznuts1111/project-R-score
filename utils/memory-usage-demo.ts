@@ -57,13 +57,13 @@ class MemoryUsageDemo {
 
   // 🚀 Run memory-intensive test scenarios
   async demonstrateMemoryUsage(): Promise<void> {
-    console.log('🧠 Bun Test Memory Usage Analysis');
-    console.log('=================================');
-    console.log('📊 Analyzing memory patterns across different test scenarios...\n');
+    console.info('🧠 Bun Test Memory Usage Analysis');
+    console.info('=================================');
+    console.info('📊 Analyzing memory patterns across different test scenarios...\n');
 
     // Establish baseline
     this.baselineMemory = this.getMemorySnapshot();
-    console.log(`📈 Baseline Memory: ${this.formatMemory(this.baselineMemory.heapUsed)}`);
+    console.info(`📈 Baseline Memory: ${this.formatMemory(this.baselineMemory.heapUsed)}`);
 
     // Create test files for different memory scenarios
     await this.createMemoryTestFiles();
@@ -107,7 +107,7 @@ class MemoryUsageDemo {
 
   // 📁 Create memory test files
   private async createMemoryTestFiles(): Promise<void> {
-    console.log('📁 Creating memory test files...');
+    console.info('📁 Creating memory test files...');
 
     // Basic tests
     writeFileSync('memory-basic.test.ts', `
@@ -188,7 +188,7 @@ describe('Memory Leak Tests', () => {
     const events = new Map();
     for (let i = 0; i < 1000; i++) {
       events.set(\`event-\${i}\`, () => {
-        console.log('Event', i);
+        console.info('Event', i);
       });
     }
     expect(events.size).toBe(1000);
@@ -255,12 +255,12 @@ describe('Memory Cleanup Tests', () => {
 });
 `);
 
-    console.log('✅ Memory test files created\n');
+    console.info('✅ Memory test files created\n');
   }
 
   // 🧪 Run individual memory test with monitoring
   private async runMemoryTest(testName: string, description: string, testFile: string): Promise<void> {
-    console.log(`🧪 Testing ${testName}: ${description}`);
+    console.info(`🧪 Testing ${testName}: ${description}`);
 
     const snapshots: MemorySnapshot[] = [];
     const startTime = performance.now();
@@ -306,11 +306,11 @@ describe('Memory Cleanup Tests', () => {
           recommendations: analysis.recommendations
         });
 
-        console.log(`   Peak Memory: ${this.formatMemory(analysis.peakMemory)}`);
-        console.log(`   Memory Growth: ${this.formatMemory(analysis.memoryGrowth)}`);
-        console.log(`   Execution Time: ${executionTime.toFixed(2)}ms`);
-        console.log(`   Potential Leaks: ${analysis.leaks}`);
-        console.log('');
+        console.info(`   Peak Memory: ${this.formatMemory(analysis.peakMemory)}`);
+        console.info(`   Memory Growth: ${this.formatMemory(analysis.memoryGrowth)}`);
+        console.info(`   Execution Time: ${executionTime.toFixed(2)}ms`);
+        console.info(`   Potential Leaks: ${analysis.leaks}`);
+        console.info('');
 
         resolve();
       });
@@ -395,11 +395,11 @@ describe('Memory Cleanup Tests', () => {
 
   // 📈 Generate comprehensive memory analysis
   private generateMemoryAnalysis(): void {
-    console.log('📈 Memory Usage Analysis Report');
-    console.log('==============================');
+    console.info('📈 Memory Usage Analysis Report');
+    console.info('==============================');
 
     // Summary table
-    console.log('\n📊 Memory Usage Summary:');
+    console.info('\n📊 Memory Usage Summary:');
     console.table(this.results.map(r => ({
       Test: r.testName,
       'Peak Memory': this.formatMemory(r.peakMemory),
@@ -409,66 +409,66 @@ describe('Memory Cleanup Tests', () => {
     })));
 
     // Detailed analysis
-    console.log('\n🔍 Detailed Memory Analysis:');
+    console.info('\n🔍 Detailed Memory Analysis:');
     
     this.results.forEach(result => {
-      console.log(`\n${result.testName}:`);
-      console.log(`  Description: ${result.description}`);
-      console.log(`  Peak Memory: ${this.formatMemory(result.peakMemory)}`);
-      console.log(`  Memory Growth: ${this.formatMemory(result.memoryGrowth)}`);
-      console.log(`  Execution Time: ${result.executionTime.toFixed(2)}ms`);
-      console.log(`  Potential Leaks: ${result.leaks}`);
+      console.info(`\n${result.testName}:`);
+      console.info(`  Description: ${result.description}`);
+      console.info(`  Peak Memory: ${this.formatMemory(result.peakMemory)}`);
+      console.info(`  Memory Growth: ${this.formatMemory(result.memoryGrowth)}`);
+      console.info(`  Execution Time: ${result.executionTime.toFixed(2)}ms`);
+      console.info(`  Potential Leaks: ${result.leaks}`);
       
       if (result.recommendations.length > 0) {
-        console.log(`  Recommendations:`);
+        console.info(`  Recommendations:`);
         result.recommendations.forEach(rec => {
-          console.log(`    • ${rec}`);
+          console.info(`    • ${rec}`);
         });
       }
     });
 
     // Overall statistics
-    console.log('\n📊 Overall Statistics:');
+    console.info('\n📊 Overall Statistics:');
     const totalPeakMemory = this.results.reduce((sum, r) => sum + r.peakMemory, 0);
     const avgPeakMemory = totalPeakMemory / this.results.length;
     const maxPeakMemory = Math.max(...this.results.map(r => r.peakMemory));
     const totalLeaks = this.results.reduce((sum, r) => sum + r.leaks, 0);
 
-    console.log(`  Average Peak Memory: ${this.formatMemory(avgPeakMemory)}`);
-    console.log(`  Maximum Peak Memory: ${this.formatMemory(maxPeakMemory)}`);
-    console.log(`  Total Potential Leaks: ${totalLeaks}`);
+    console.info(`  Average Peak Memory: ${this.formatMemory(avgPeakMemory)}`);
+    console.info(`  Maximum Peak Memory: ${this.formatMemory(maxPeakMemory)}`);
+    console.info(`  Total Potential Leaks: ${totalLeaks}`);
     
     if (this.baselineMemory) {
       const totalGrowth = this.results.reduce((sum, r) => sum + r.memoryGrowth, 0);
-      console.log(`  Total Memory Growth: ${this.formatMemory(totalGrowth)}`);
-      console.log(`  Baseline Memory: ${this.formatMemory(this.baselineMemory.heapUsed)}`);
+      console.info(`  Total Memory Growth: ${this.formatMemory(totalGrowth)}`);
+      console.info(`  Baseline Memory: ${this.formatMemory(this.baselineMemory.heapUsed)}`);
     }
 
     // Memory optimization recommendations
-    console.log('\n💡 Memory Optimization Recommendations:');
+    console.info('\n💡 Memory Optimization Recommendations:');
     
     const highMemoryTests = this.results.filter(r => r.peakMemory > 50 * 1024 * 1024);
     if (highMemoryTests.length > 0) {
-      console.log('  🔍 High Memory Usage Tests:');
+      console.info('  🔍 High Memory Usage Tests:');
       highMemoryTests.forEach(test => {
-        console.log(`    • ${test.testName}: ${this.formatMemory(test.peakMemory)}`);
+        console.info(`    • ${test.testName}: ${this.formatMemory(test.peakMemory)}`);
       });
     }
 
     const leakyTests = this.results.filter(r => r.leaks > 0);
     if (leakyTests.length > 0) {
-      console.log('  🚨 Tests with Potential Leaks:');
+      console.info('  🚨 Tests with Potential Leaks:');
       leakyTests.forEach(test => {
-        console.log(`    • ${test.testName}: ${test.leaks} leaks`);
+        console.info(`    • ${test.testName}: ${test.leaks} leaks`);
       });
     }
 
-    console.log('\n  📋 General Best Practices:');
-    console.log('    • Clean up large objects after use');
-    console.log('    • Avoid global variables for temporary data');
-    console.log('    • Use scoped variables to enable GC');
-    console.log('    • Clear Maps and Sets when no longer needed');
-    console.log('    • Monitor memory usage in CI/CD pipelines');
+    console.info('\n  📋 General Best Practices:');
+    console.info('    • Clean up large objects after use');
+    console.info('    • Avoid global variables for temporary data');
+    console.info('    • Use scoped variables to enable GC');
+    console.info('    • Clear Maps and Sets when no longer needed');
+    console.info('    • Monitor memory usage in CI/CD pipelines');
 
     // Save detailed report
     this.saveMemoryReport();
@@ -576,12 +576,12 @@ describe('Memory Cleanup Tests', () => {
     report += '*Generated by Memory Usage Analysis Demo v2.8*';
 
     Bun.write('memory-usage-analysis-report.md', report);
-    console.log('\n📄 Detailed memory report saved to: memory-usage-analysis-report.md');
+    console.info('\n📄 Detailed memory report saved to: memory-usage-analysis-report.md');
   }
 
   // 🧹 Cleanup test files
   async cleanup(): Promise<void> {
-    console.log('🧹 Cleaning up test files...');
+    console.info('🧹 Cleaning up test files...');
     
     const files = [
       'memory-basic.test.ts',
@@ -599,7 +599,7 @@ describe('Memory Cleanup Tests', () => {
       }
     }
     
-    console.log('✅ Cleanup complete');
+    console.info('✅ Cleanup complete');
   }
 }
 
@@ -608,17 +608,17 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log('Memory Usage Analysis Demo v2.8');
-    console.log('');
-    console.log('Analyzes memory usage patterns in Bun test execution:');
-    console.log('• Memory monitoring during test execution');
-    console.log('• Peak memory usage detection');
-    console.log('• Memory leak identification');
-    console.log('• Cleanup pattern analysis');
-    console.log('• Performance optimization recommendations');
-    console.log('');
-    console.log('Usage:');
-    console.log('  bun run memory-usage-demo.ts');
+    console.info('Memory Usage Analysis Demo v2.8');
+    console.info('');
+    console.info('Analyzes memory usage patterns in Bun test execution:');
+    console.info('• Memory monitoring during test execution');
+    console.info('• Peak memory usage detection');
+    console.info('• Memory leak identification');
+    console.info('• Cleanup pattern analysis');
+    console.info('• Performance optimization recommendations');
+    console.info('');
+    console.info('Usage:');
+    console.info('  bun run memory-usage-demo.ts');
     return;
   }
 
@@ -627,7 +627,7 @@ async function main() {
   try {
     await demo.demonstrateMemoryUsage();
     await demo.cleanup();
-    console.log('\n✅ Memory usage analysis complete!');
+    console.info('\n✅ Memory usage analysis complete!');
   } catch (error: any) {
     console.error('❌ Analysis failed:', error.message);
     await demo.cleanup();

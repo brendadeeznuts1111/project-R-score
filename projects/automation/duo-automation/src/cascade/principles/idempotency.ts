@@ -85,7 +85,7 @@ export class IdempotencyManager {
       switch (existing.status) {
         case 'completed':
           if (existing.result) {
-            console.log(`🔄 Returning cached result for ${operation}`);
+            console.info(`🔄 Returning cached result for ${operation}`);
             return JSON.parse(existing.result);
           }
           break;
@@ -95,7 +95,7 @@ export class IdempotencyManager {
           
         case 'failed':
           // Allow retry for failed operations
-          console.log(`🔄 Retrying failed operation ${operation}`);
+          console.info(`🔄 Retrying failed operation ${operation}`);
           break;
           
         case 'pending':
@@ -129,7 +129,7 @@ export class IdempotencyManager {
         retryCount: 0
       });
       
-      console.log(`✅ Completed operation ${operation} with idempotency`);
+      console.info(`✅ Completed operation ${operation} with idempotency`);
       return result;
       
     } catch (error) {
@@ -196,7 +196,7 @@ export class IdempotencyManager {
     );
     
     if (result.changes > 0) {
-      console.log(`🧹 Cleaned up ${result.changes} expired idempotency keys`);
+      console.info(`🧹 Cleaned up ${result.changes} expired idempotency keys`);
     }
     
     return result.changes;
@@ -295,7 +295,7 @@ export class CascadeWorkflowExecutor {
   
   private async runWorkflowSteps(workflowId: string, context: any): Promise<any> {
     // Placeholder workflow execution
-    console.log(`🔄 Executing workflow ${workflowId} for merchant ${context.merchantId}`);
+    console.info(`🔄 Executing workflow ${workflowId} for merchant ${context.merchantId}`);
     
     // Simulate workflow steps
     await new Promise(resolve => setTimeout(resolve, 100));

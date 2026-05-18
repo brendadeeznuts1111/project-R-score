@@ -2,7 +2,7 @@
 import { DomainContext } from "./contexts/DomainContext";
 import * as config from "./config/scope.config";
 
-console.log("Starting minimal server...");
+console.info("Starting minimal server...");
 
 const domainCtx = new DomainContext(config.DOMAIN);
 
@@ -17,4 +17,4 @@ const server = Bun.serve({
   }
 });
 
-console.log(`🚀 Minimal server running on http://localhost:${server.port}`);
+console.info(`🚀 Minimal server running on http://localhost:${server.port}`);

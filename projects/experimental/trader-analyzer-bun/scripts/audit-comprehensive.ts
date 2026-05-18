@@ -57,26 +57,26 @@ async function main() {
  * Run comprehensive audit
  */
 async function runAudit(orchestrator: ComprehensiveAuditOrchestrator, config: AuditConfig) {
-	console.log("🔍 Running comprehensive documentation audit...\n");
+	console.info("🔍 Running comprehensive documentation audit...\n");
 
 	try {
 		const results = await orchestrator.hybridAudit();
 
-		console.log(`\n📊 Audit Results:`);
-		console.log(`  Scanned Files: ${results.scannedFiles}`);
-		console.log(`  Total Matches: ${results.totalMatches}`);
-		console.log(`  Orphaned Docs: ${results.totalOrphans}`);
-		console.log(`  Execution Time: ${results.executionTimeMs}ms\n`);
+		console.info(`\n📊 Audit Results:`);
+		console.info(`  Scanned Files: ${results.scannedFiles}`);
+		console.info(`  Total Matches: ${results.totalMatches}`);
+		console.info(`  Orphaned Docs: ${results.totalOrphans}`);
+		console.info(`  Execution Time: ${results.executionTimeMs}ms\n`);
 
 		if (results.orphans.length > 0) {
-			console.log(`⚠️  Orphaned Documentation Numbers:\n`);
+			console.info(`⚠️  Orphaned Documentation Numbers:\n`);
 			results.orphans.forEach((orphan) => {
-				console.log(`  ${orphan.number} - ${orphan.type}`);
+				console.info(`  ${orphan.number} - ${orphan.type}`);
 				if (orphan.location) {
-					console.log(`    Location: ${orphan.location}`);
+					console.info(`    Location: ${orphan.location}`);
 				}
 			});
-			console.log();
+			console.info();
 		}
 
 		// Cleanup
@@ -91,15 +91,15 @@ async function runAudit(orchestrator: ComprehensiveAuditOrchestrator, config: Au
  * Run watch mode
  */
 async function runWatchMode(orchestrator: ComprehensiveAuditOrchestrator, config: AuditConfig) {
-	console.log("👀 Starting real-time monitoring...\n");
-	console.log("Press Ctrl+C to stop\n");
+	console.info("👀 Starting real-time monitoring...\n");
+	console.info("Press Ctrl+C to stop\n");
 
 	try {
 		const cleanup = await orchestrator.startRealTimeMonitoring(config);
 
 		// Graceful shutdown
 		process.on("SIGINT", async () => {
-			console.log("\n\n🛑 Shutting down monitor...");
+			console.info("\n\n🛑 Shutting down monitor...");
 			await cleanup();
 			process.exit(0);
 		});
@@ -117,11 +117,11 @@ async function runWatchMode(orchestrator: ComprehensiveAuditOrchestrator, config
  */
 function setupEventListeners(orchestrator: ComprehensiveAuditOrchestrator) {
 	orchestrator.on("auditStart", (data) => {
-		console.log("🚀 Audit started...");
+		console.info("🚀 Audit started...");
 	});
 
 	orchestrator.on("auditComplete", (results: AuditResult) => {
-		console.log("✅ Audit completed");
+		console.info("✅ Audit completed");
 	});
 
 	orchestrator.on("audit-error", (error) => {
@@ -129,21 +129,21 @@ function setupEventListeners(orchestrator: ComprehensiveAuditOrchestrator) {
 	});
 
 	orchestrator.on("fileChange", (event) => {
-		console.log(`📝 File changed: ${event.file} (${event.type})`);
+		console.info(`📝 File changed: ${event.file} (${event.type})`);
 	});
 
 	orchestrator.on("real-time-match", (match) => {
-		console.log(
+		console.info(
 			`📌 Real-time match: ${match.pattern} in ${match.file}:${match.line}:${match.column}`,
 		);
 	});
 
 	orchestrator.on("watchModeStarted", () => {
-		console.log("✅ Watch mode active");
+		console.info("✅ Watch mode active");
 	});
 
 	orchestrator.on("watchModeStopped", () => {
-		console.log("🛑 Watch mode stopped");
+		console.info("🛑 Watch mode stopped");
 	});
 
 	orchestrator.on("file-read-error", (data) => {
@@ -159,7 +159,7 @@ function setupEventListeners(orchestrator: ComprehensiveAuditOrchestrator) {
  * Show help message
  */
 function showHelp() {
-	console.log(`
+	console.info(`
 🔍 Comprehensive Documentation Audit CLI
 
 Usage: bun run scripts/audit-comprehensive.ts <command>

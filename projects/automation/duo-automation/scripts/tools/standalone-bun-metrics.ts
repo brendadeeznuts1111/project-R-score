@@ -308,17 +308,17 @@ class TrackedBunAPIs {
  * Demonstrate the comprehensive BunNativeAPIMetrics integration
  */
 async function demonstrateBunNativeMetricsIntegration(): Promise<void> {
-  console.log('🔍 BUN NATIVE METRICS INTEGRATION DEMONSTRATION');
-  console.log('============================================================');
+  console.info('🔍 BUN NATIVE METRICS INTEGRATION DEMONSTRATION');
+  console.info('============================================================');
   
   // Create tracker and tracked APIs
   const tracker = new BunNativeAPITracker();
   const trackedAPIs = new TrackedBunAPIs(tracker);
   
-  console.log('\n📊 TRACKED API CALLS IN ACTION:');
+  console.info('\n📊 TRACKED API CALLS IN ACTION:');
   
   // 1. Tracked fetch calls
-  console.log('  🌐 Fetch operations:');
+  console.info('  🌐 Fetch operations:');
   await trackedAPIs.trackedFetch('https://example.com');
   await trackedAPIs.trackedFetch('https://example.com', { 
     method: 'POST',
@@ -327,17 +327,17 @@ async function demonstrateBunNativeMetricsIntegration(): Promise<void> {
   });
   
   // 2. Tracked file operations
-  console.log('  📁 File operations:');
+  console.info('  📁 File operations:');
   const testFile = 'integration-test.json';
   const testData = { message: 'Bun Native Metrics Integration', timestamp: new Date().toISOString() };
   
   await trackedAPIs.trackedWrite(testFile, JSON.stringify(testData, null, 2));
   const file = trackedAPIs.trackedFile(testFile);
   const content = await file.text();
-  console.log(`    File written and read: ${JSON.parse(content).message}`);
+  console.info(`    File written and read: ${JSON.parse(content).message}`);
   
   // 3. Tracked cookie operations
-  console.log('  🍪 Cookie operations:');
+  console.info('  🍪 Cookie operations:');
   const cookieMap = trackedAPIs.trackedCookieMap('session=abc123; theme=dark');
   const cookie = trackedAPIs.trackedCookie('user', 'john', { 
     httpOnly: true, 
@@ -345,11 +345,11 @@ async function demonstrateBunNativeMetricsIntegration(): Promise<void> {
     sameSite: 'strict' 
   });
   
-  console.log(`    CookieMap size: ${cookieMap.size}`);
-  console.log(`    Cookie created: ${cookie.name}=${cookie.value}`);
+  console.info(`    CookieMap size: ${cookieMap.size}`);
+  console.info(`    Cookie created: ${cookie.name}=${cookie.value}`);
   
   // 4. Manual tracking examples
-  console.log('  🔧 Manual tracking examples:');
+  console.info('  🔧 Manual tracking examples:');
   tracker.trackCallSync('custom-operation', () => {
     // Simulate some work
     const start = Date.now();
@@ -364,31 +364,31 @@ async function demonstrateBunNativeMetricsIntegration(): Promise<void> {
   }, 'custom', { operation: 'test', type: 'async' });
   
   // Get comprehensive metrics
-  console.log('\n📈 COMPREHENSIVE METRICS ANALYSIS:');
+  console.info('\n📈 COMPREHENSIVE METRICS ANALYSIS:');
   const allMetrics = tracker.getAllMetrics();
   const summary = tracker.getSummary();
   
-  console.log(`  Total APIs Tracked: ${summary.totalAPIs}`);
-  console.log(`  Total Calls: ${summary.totalCalls}`);
-  console.log(`  Average Duration: ${summary.averageCallDuration.toFixed(2)}ms`);
-  console.log(`  Error Rate: ${summary.errorRate.toFixed(1)}%`);
-  console.log(`  Native Implementation Rate: ${summary.nativeRate.toFixed(1)}%`);
+  console.info(`  Total APIs Tracked: ${summary.totalAPIs}`);
+  console.info(`  Total Calls: ${summary.totalCalls}`);
+  console.info(`  Average Duration: ${summary.averageCallDuration.toFixed(2)}ms`);
+  console.info(`  Error Rate: ${summary.errorRate.toFixed(1)}%`);
+  console.info(`  Native Implementation Rate: ${summary.nativeRate.toFixed(1)}%`);
   
-  console.log('\n🔝 DETAILED API METRICS:');
+  console.info('\n🔝 DETAILED API METRICS:');
   allMetrics.forEach((metric, index) => {
-    console.log(`  ${index + 1}. ${metric.apiName}`);
-    console.log(`     Domain: ${metric.domain}`);
-    console.log(`     Implementation: ${metric.implementation} (${metric.implementationSource.source})`);
-    console.log(`     Performance: ${metric.callCount} calls, ${metric.averageDuration.toFixed(2)}ms avg`);
-    console.log(`     Source: ${metric.implementationSource.source}, Tier: ${metric.implementationSource.performanceTier}`);
-    console.log(`     Memory: ${metric.implementationSource.memoryEfficiency}, Success: ${((metric.successCount / metric.callCount) * 100).toFixed(1)}%`);
+    console.info(`  ${index + 1}. ${metric.apiName}`);
+    console.info(`     Domain: ${metric.domain}`);
+    console.info(`     Implementation: ${metric.implementation} (${metric.implementationSource.source})`);
+    console.info(`     Performance: ${metric.callCount} calls, ${metric.averageDuration.toFixed(2)}ms avg`);
+    console.info(`     Source: ${metric.implementationSource.source}, Tier: ${metric.implementationSource.performanceTier}`);
+    console.info(`     Memory: ${metric.implementationSource.memoryEfficiency}, Success: ${((metric.successCount / metric.callCount) * 100).toFixed(1)}%`);
     if (metric.metadata) {
-      console.log(`     Metadata: ${JSON.stringify(metric.metadata)}`);
+      console.info(`     Metadata: ${JSON.stringify(metric.metadata)}`);
     }
   });
   
   // Domain analysis
-  console.log('\n🌐 DOMAIN-BASED ANALYSIS:');
+  console.info('\n🌐 DOMAIN-BASED ANALYSIS:');
   const domainGroups = allMetrics.reduce((acc, metric) => {
     if (!acc[metric.domain]) acc[metric.domain] = [];
     acc[metric.domain].push(metric);
@@ -400,11 +400,11 @@ async function demonstrateBunNativeMetricsIntegration(): Promise<void> {
     const avgDuration = metrics.reduce((sum, m) => sum + m.averageDuration, 0) / metrics.length;
     const nativeCount = metrics.filter(m => m.implementation === 'native').length;
     
-    console.log(`  ${domain}: ${metrics.length} APIs, ${totalCalls} calls, ${avgDuration.toFixed(2)}ms avg, ${(nativeCount/metrics.length*100).toFixed(1)}% native`);
+    console.info(`  ${domain}: ${metrics.length} APIs, ${totalCalls} calls, ${avgDuration.toFixed(2)}ms avg, ${(nativeCount/metrics.length*100).toFixed(1)}% native`);
   });
   
   // Implementation analysis
-  console.log('\n🔧 IMPLEMENTATION ANALYSIS:');
+  console.info('\n🔧 IMPLEMENTATION ANALYSIS:');
   const implGroups = allMetrics.reduce((acc, metric) => {
     if (!acc[metric.implementation]) acc[metric.implementation] = [];
     acc[metric.implementation].push(metric);
@@ -415,41 +415,41 @@ async function demonstrateBunNativeMetricsIntegration(): Promise<void> {
     const totalCalls = metrics.reduce((sum, m) => sum + m.callCount, 0);
     const sources = [...new Set(metrics.map(m => m.implementationSource.source))];
     
-    console.log(`  ${impl}: ${metrics.length} APIs, ${totalCalls} calls, sources: ${sources.join(', ')}`);
+    console.info(`  ${impl}: ${metrics.length} APIs, ${totalCalls} calls, sources: ${sources.join(', ')}`);
   });
   
   // Export functionality
-  console.log('\n📤 EXPORT CAPABILITIES:');
+  console.info('\n📤 EXPORT CAPABILITIES:');
   const exportData = tracker.export();
-  console.log(`  Export timestamp: ${exportData.timestamp}`);
-  console.log(`  Summary: ${exportData.summary.totalAPIs} APIs, ${exportData.summary.totalCalls} calls`);
-  console.log(`  Metrics included: ${exportData.metrics.length} detailed entries`);
+  console.info(`  Export timestamp: ${exportData.timestamp}`);
+  console.info(`  Summary: ${exportData.summary.totalAPIs} APIs, ${exportData.summary.totalCalls} calls`);
+  console.info(`  Metrics included: ${exportData.metrics.length} detailed entries`);
   
   // Enable/disable demonstration
-  console.log('\n⚙️ TRACKING CONTROL:');
-  console.log('  Disabling tracking...');
+  console.info('\n⚙️ TRACKING CONTROL:');
+  console.info('  Disabling tracking...');
   tracker.setEnabled(false);
   
   await trackedAPIs.trackedFetch('https://example.com'); // This won't be tracked
   const metricsAfterDisable = tracker.getAllMetrics();
-  console.log(`  Metrics after disable: ${metricsAfterDisable.length} (unchanged)`);
+  console.info(`  Metrics after disable: ${metricsAfterDisable.length} (unchanged)`);
   
-  console.log('  Re-enabling tracking...');
+  console.info('  Re-enabling tracking...');
   tracker.setEnabled(true);
   
   await trackedAPIs.trackedFetch('https://example.com'); // This will be tracked
   const metricsAfterEnable = tracker.getAllMetrics();
-  console.log(`  Metrics after re-enable: ${metricsAfterEnable.length} (updated)`);
+  console.info(`  Metrics after re-enable: ${metricsAfterEnable.length} (updated)`);
   
   // Reset demonstration
-  console.log('\n🔄 RESET FUNCTIONALITY:');
-  console.log('  Resetting all metrics...');
+  console.info('\n🔄 RESET FUNCTIONALITY:');
+  console.info('  Resetting all metrics...');
   tracker.reset();
   
   const metricsAfterReset = tracker.getAllMetrics();
   const summaryAfterReset = tracker.getSummary();
-  console.log(`  Metrics after reset: ${metricsAfterReset.length}`);
-  console.log(`  Summary after reset: ${summaryAfterReset.totalAPIs} APIs, ${summaryAfterReset.totalCalls} calls`);
+  console.info(`  Metrics after reset: ${metricsAfterReset.length}`);
+  console.info(`  Summary after reset: ${summaryAfterReset.totalAPIs} APIs, ${summaryAfterReset.totalCalls} calls`);
   
   // Cleanup
   await Bun.write(testFile, JSON.stringify({
@@ -458,32 +458,32 @@ async function demonstrateBunNativeMetricsIntegration(): Promise<void> {
     finalMetrics: exportData.summary
   }, null, 2));
   
-  console.log('\n🎯 INTEGRATION SUMMARY:');
-  console.log('  ✅ BunNativeAPIMetrics interface fully implemented');
-  console.log('  ✅ Comprehensive tracker with domain and implementation detection');
-  console.log('  ✅ Tracked API wrappers for all major Bun APIs');
-  console.log('  ✅ Real-time metrics collection and analysis');
-  console.log('  ✅ Export functionality for external monitoring');
-  console.log('  ✅ Enable/disable tracking control');
-  console.log('  ✅ Reset functionality for clean testing');
-  console.log('  ✅ Domain-based performance analysis');
-  console.log('  ✅ Implementation source tracking');
-  console.log('  ✅ Memory and performance tier classification');
+  console.info('\n🎯 INTEGRATION SUMMARY:');
+  console.info('  ✅ BunNativeAPIMetrics interface fully implemented');
+  console.info('  ✅ Comprehensive tracker with domain and implementation detection');
+  console.info('  ✅ Tracked API wrappers for all major Bun APIs');
+  console.info('  ✅ Real-time metrics collection and analysis');
+  console.info('  ✅ Export functionality for external monitoring');
+  console.info('  ✅ Enable/disable tracking control');
+  console.info('  ✅ Reset functionality for clean testing');
+  console.info('  ✅ Domain-based performance analysis');
+  console.info('  ✅ Implementation source tracking');
+  console.info('  ✅ Memory and performance tier classification');
   
-  console.log('\n💡 USAGE EXAMPLES:');
-  console.log('  // Basic usage');
-  console.log('  const tracker = new BunNativeAPITracker();');
-  console.log('  const trackedAPIs = new TrackedBunAPIs(tracker);');
-  console.log('  ');
-  console.log('  // Tracked API calls');
-  console.log('  await trackedAPIs.trackedFetch("https://example.com");');
-  console.log('  const file = trackedAPIs.trackedFile("data.json");');
-  console.log('  await trackedAPIs.trackedWrite("output.json", data);');
-  console.log('  ');
-  console.log('  // Get metrics');
-  console.log('  const metrics = tracker.getAllMetrics();');
-  console.log('  const summary = tracker.getSummary();');
-  console.log('  const exportData = tracker.export();');
+  console.info('\n💡 USAGE EXAMPLES:');
+  console.info('  // Basic usage');
+  console.info('  const tracker = new BunNativeAPITracker();');
+  console.info('  const trackedAPIs = new TrackedBunAPIs(tracker);');
+  console.info('  ');
+  console.info('  // Tracked API calls');
+  console.info('  await trackedAPIs.trackedFetch("https://example.com");');
+  console.info('  const file = trackedAPIs.trackedFile("data.json");');
+  console.info('  await trackedAPIs.trackedWrite("output.json", data);');
+  console.info('  ');
+  console.info('  // Get metrics');
+  console.info('  const metrics = tracker.getAllMetrics();');
+  console.info('  const summary = tracker.getSummary();');
+  console.info('  const exportData = tracker.export();');
 }
 
 // Start the integration demonstration

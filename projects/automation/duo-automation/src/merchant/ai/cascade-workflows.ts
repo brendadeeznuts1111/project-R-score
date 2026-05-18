@@ -372,7 +372,7 @@ export class CascadeWorkflowEngine {
           });
           
           if (step.retry && step.retry > 0) {
-            console.log(`🔄 Retrying step ${step.id} (${step.retry} attempts remaining)`);
+            console.info(`🔄 Retrying step ${step.id} (${step.retry} attempts remaining)`);
             step.retry--;
             i--; // Retry current step
             continue;
@@ -389,7 +389,7 @@ export class CascadeWorkflowEngine {
       execution.metrics.successRate = execution.completedSteps.length / workflow.steps.length;
       
       await this.storeWorkflowMemory(execution, 'completed');
-      console.log(`✅ Workflow ${workflowId} completed successfully`);
+      console.info(`✅ Workflow ${workflowId} completed successfully`);
       
     } catch (error) {
       execution.status = 'failed';
@@ -406,7 +406,7 @@ export class CascadeWorkflowEngine {
   }
   
   private async executeStep(step: WorkflowStep, execution: WorkflowExecution, workflow: Workflow): Promise<void> {
-    console.log(`🔄 Executing step: ${step.name}`);
+    console.info(`🔄 Executing step: ${step.name}`);
     
     const stepStartTime = Date.now();
     const timeoutMs = this.parseTimeout(step.timeout);
@@ -466,7 +466,7 @@ export class CascadeWorkflowEngine {
     await this.executeStepAction(step.action, stepContext, execution);
     
     const stepDuration = Date.now() - stepStartTime;
-    console.log(`✅ Step ${step.name} completed in ${stepDuration}ms`);
+    console.info(`✅ Step ${step.name} completed in ${stepDuration}ms`);
   }
   
   private async executeStepAction(action: string, context: SkillContext, execution: WorkflowExecution): Promise<void> {
@@ -538,25 +538,25 @@ export class CascadeWorkflowEngine {
   private async validateQRToken(context: SkillContext): Promise<void> {
     // Simulate QR token validation
     await this.delay(100);
-    console.log(`🔐 Validating QR token for ${context.merchantId}`);
+    console.info(`🔐 Validating QR token for ${context.merchantId}`);
   }
   
   private async runHealthChecks(context: SkillContext): Promise<void> {
     // Simulate device health checks
     await this.delay(200);
-    console.log(`🏥 Running health checks for device ${context.deviceId}`);
+    console.info(`🏥 Running health checks for device ${context.deviceId}`);
   }
   
   private async performMTLSHandshake(context: SkillContext): Promise<void> {
     // Simulate mTLS handshake
     await this.delay(150);
-    console.log(`🤝 Performing mTLS handshake for ${context.merchantId}`);
+    console.info(`🤝 Performing mTLS handshake for ${context.merchantId}`);
   }
   
   private async pushDeviceConfiguration(context: SkillContext): Promise<void> {
     // Simulate configuration push
     await this.delay(180);
-    console.log(`⚙️ Pushing configuration to device ${context.deviceId}`);
+    console.info(`⚙️ Pushing configuration to device ${context.deviceId}`);
   }
   
   private async calculateReadiness(context: SkillContext, execution: WorkflowExecution): Promise<void> {
@@ -564,13 +564,13 @@ export class CascadeWorkflowEngine {
     await this.delay(50);
     const readinessScore = Math.random() * 0.3 + 0.7; // 70-100%
     execution.context.readinessScore = readinessScore;
-    console.log(`📊 Production readiness: ${(readinessScore * 100).toFixed(1)}%`);
+    console.info(`📊 Production readiness: ${(readinessScore * 100).toFixed(1)}%`);
   }
   
   private async updateDashboard(context: SkillContext): Promise<void> {
     // Update dashboard with latest data
     await this.delay(30);
-    console.log(`📈 Updating dashboard for ${context.merchantId}`);
+    console.info(`📈 Updating dashboard for ${context.merchantId}`);
   }
   
   private async scanDeviceInventory(context: SkillContext, execution: WorkflowExecution): Promise<void> {
@@ -578,14 +578,14 @@ export class CascadeWorkflowEngine {
     await this.delay(200);
     const deviceCount = Math.floor(Math.random() * 20) + 5;
     execution.context.deviceCount = deviceCount;
-    console.log(`📱 Found ${deviceCount} devices in inventory`);
+    console.info(`📱 Found ${deviceCount} devices in inventory`);
   }
   
   private async parallelHealthChecks(context: SkillContext, execution: WorkflowExecution): Promise<void> {
     // Run parallel health checks
     const deviceCount = execution.context.deviceCount || 10;
     const promises = Array.from({ length: deviceCount }, (_, i) => 
-      this.delay(100).then(() => console.log(`🏥 Health check completed for device ${i + 1}`))
+      this.delay(100).then(() => console.info(`🏥 Health check completed for device ${i + 1}`))
     );
     await Promise.all(promises);
   }
@@ -597,7 +597,7 @@ export class CascadeWorkflowEngine {
     
     for (let i = 0; i < deviceCount; i += chunkSize) {
       await this.delay(150);
-      console.log(`⚙️ Configured devices ${i + 1}-${Math.min(i + chunkSize, deviceCount)}`);
+      console.info(`⚙️ Configured devices ${i + 1}-${Math.min(i + chunkSize, deviceCount)}`);
     }
   }
   
@@ -607,25 +607,25 @@ export class CascadeWorkflowEngine {
     const deviceCount = execution.context.deviceCount || 10;
     const mrrImpact = deviceCount * 4800; // $4,800 per device per month
     execution.context.mrrImpact = mrrImpact;
-    console.log(`💰 Bulk ROI impact: +$${mrrImpact.toLocaleString()}/month`);
+    console.info(`💰 Bulk ROI impact: +$${mrrImpact.toLocaleString()}/month`);
   }
   
   private async configureBrandColors(context: SkillContext): Promise<void> {
     // Configure brand colors
     await this.delay(120);
-    console.log(`🎨 Configuring brand colors for ${context.merchantId}`);
+    console.info(`🎨 Configuring brand colors for ${context.merchantId}`);
   }
   
   private async setupQRGeneration(context: SkillContext): Promise<void> {
     // Setup QR generation system
     await this.delay(180);
-    console.log(`📱 Setting up QR generation for ${context.merchantId}`);
+    console.info(`📱 Setting up QR generation for ${context.merchantId}`);
   }
   
   private async deployMerchantDashboard(context: SkillContext): Promise<void> {
     // Deploy merchant dashboard
     await this.delay(200);
-    console.log(`🚀 Deploying dashboard for ${context.merchantId}`);
+    console.info(`🚀 Deploying dashboard for ${context.merchantId}`);
   }
   
   private async trainMerchantStaff(context: SkillContext, execution: WorkflowExecution): Promise<void> {
@@ -635,16 +635,16 @@ export class CascadeWorkflowEngine {
     
     if (trainingNeeded) {
       await this.delay(300);
-      console.log(`🎓 Training staff for ${context.merchantId}`);
+      console.info(`🎓 Training staff for ${context.merchantId}`);
     } else {
-      console.log(`✅ ${context.merchantId} staff already trained`);
+      console.info(`✅ ${context.merchantId} staff already trained`);
     }
   }
   
   private async analyzeOnboardingMetrics(context: SkillContext): Promise<void> {
     // Analyze onboarding metrics
     await this.delay(300);
-    console.log(`📊 Analyzing onboarding metrics for ${context.merchantId}`);
+    console.info(`📊 Analyzing onboarding metrics for ${context.merchantId}`);
   }
   
   private async identifyBottlenecks(context: SkillContext): Promise<void> {
@@ -653,19 +653,19 @@ export class CascadeWorkflowEngine {
       throw new Error('Context is required for bottleneck identification');
     }
     await this.delay(150);
-    console.log(`🔍 Identifying bottlenecks in onboarding process`);
+    console.info(`🔍 Identifying bottlenecks in onboarding process`);
   }
   
   private async designABTests(context: SkillContext): Promise<void> {
     // Design A/B tests
     await this.delay(200);
-    console.log(`🧪 Designing A/B tests for optimization`);
+    console.info(`🧪 Designing A/B tests for optimization`);
   }
   
   private async implementOptimizations(context: SkillContext): Promise<void> {
     // Implement optimizations
     await this.delay(250);
-    console.log(`⚡ Implementing optimizations`);
+    console.info(`⚡ Implementing optimizations`);
   }
   
   private async measureROIImpact(context: SkillContext, execution: WorkflowExecution): Promise<void> {
@@ -673,7 +673,7 @@ export class CascadeWorkflowEngine {
     await this.delay(120);
     const improvement = Math.random() * 0.15 + 0.08; // 8-23% improvement
     execution.context.roiImprovement = improvement;
-    console.log(`💰 Measured ROI improvement: ${(improvement * 100).toFixed(1)}%`);
+    console.info(`💰 Measured ROI improvement: ${(improvement * 100).toFixed(1)}%`);
   }
   
   // Utility Methods

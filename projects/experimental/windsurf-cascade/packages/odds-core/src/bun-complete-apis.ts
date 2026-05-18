@@ -323,11 +323,11 @@ export class BunCompleteAPIsIntegration {
     
     describe('Odds Protocol Market Data Tests', () => {
       beforeAll(() => {
-        console.log('🧪 Setting up market data test environment');
+        console.info('🧪 Setting up market data test environment');
       });
       
       afterAll(() => {
-        console.log('🧹 Cleaning up market data test environment');
+        console.info('🧹 Cleaning up market data test environment');
       });
       
       Object.entries(tests).forEach(([name, testFn]) => {
@@ -727,10 +727,10 @@ export class BunCompleteAPIsIntegration {
               );
             } else if (output.type === 'database') {
               // Store in database (implementation depends on database type)
-              console.log(`Storing ${processedData.length} records to database`);
+              console.info(`Storing ${processedData.length} records to database`);
             } else if (output.type === 'stream') {
               // Send to stream endpoint
-              console.log(`Streaming ${processedData.length} records to ${output.destination}`);
+              console.info(`Streaming ${processedData.length} records to ${output.destination}`);
             }
             
             processed += processedData.length;

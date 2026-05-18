@@ -80,7 +80,7 @@ export async function hashPassword(
  * ```typescript
  * const isValid = await verifyPassword("myPassword123", hash);
  * if (isValid) {
- *   console.log("Password is correct!");
+ *   console.info("Password is correct!");
  * }
  * ```
  */

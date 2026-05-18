@@ -257,12 +257,12 @@ export class HttpAgentConnectionPool {
 
     if (agent.maxSockets !== optimalMaxSockets) {
       agent.maxSockets = optimalMaxSockets;
-      console.log(`Optimized maxSockets to ${optimalMaxSockets}`);
+      console.info(`Optimized maxSockets to ${optimalMaxSockets}`);
     }
 
     if (agent.maxFreeSockets !== optimalMaxFreeSockets) {
       agent.maxFreeSockets = optimalMaxFreeSockets;
-      console.log(`Optimized maxFreeSockets to ${optimalMaxFreeSockets}`);
+      console.info(`Optimized maxFreeSockets to ${optimalMaxFreeSockets}`);
     }
   }
 

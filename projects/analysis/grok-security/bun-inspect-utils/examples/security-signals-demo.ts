@@ -5,11 +5,11 @@
 import { safeOpenInEditor, isPathSafe, getEditorConfig } from "../src/security/editorGuard";
 import { tensionSignal } from "../src/signals/tensionSignal";
 
-console.log("\n🔐 [1.0.0.0] SECURITY + SIGNALS DEMO\n");
+console.info("\n🔐 [1.0.0.0] SECURITY + SIGNALS DEMO\n");
 
 // [1.1.0.0] Editor Guard Demo
-console.log("📋 [1.1.0.0] Editor Guard - Path Safety Validation");
-console.log("─".repeat(50));
+console.info("📋 [1.1.0.0] Editor Guard - Path Safety Validation");
+console.info("─".repeat(50));
 
 const testPaths = [
   "/Users/test/file.ts",
@@ -20,69 +20,69 @@ const testPaths = [
 
 for (const path of testPaths) {
   const safe = isPathSafe(path);
-  console.log(`  ${safe ? "✅" : "❌"} ${path}`);
+  console.info(`  ${safe ? "✅" : "❌"} ${path}`);
 }
-console.log();
+console.info();
 
 // [1.2.0.0] Editor Configuration
-console.log("⚙️  [1.2.0.0] Editor Configuration");
-console.log("─".repeat(50));
+console.info("⚙️  [1.2.0.0] Editor Configuration");
+console.info("─".repeat(50));
 const config = getEditorConfig();
-console.log(`  Allowed editors: ${config.allowedEditors.join(", ")}`);
-console.log(`  Block production: ${config.blockProduction}`);
-console.log(`  Sanitize paths: ${config.sanitizePaths}`);
-console.log();
+console.info(`  Allowed editors: ${config.allowedEditors.join(", ")}`);
+console.info(`  Block production: ${config.blockProduction}`);
+console.info(`  Sanitize paths: ${config.sanitizePaths}`);
+console.info();
 
 // [2.0.0.0] Tension Signal Demo
-console.log("📊 [2.0.0.0] Tension Signal - State Management");
-console.log("─".repeat(50));
+console.info("📊 [2.0.0.0] Tension Signal - State Management");
+console.info("─".repeat(50));
 
 // Setup callbacks
 tensionSignal.onStateChange = (state) => {
-  console.log(`  📈 State: tension=${state.value}, errors=${state.errorCount}, healthy=${state.isHealthy}`);
+  console.info(`  📈 State: tension=${state.value}, errors=${state.errorCount}, healthy=${state.isHealthy}`);
 };
 
 tensionSignal.onWarning = (msg) => {
-  console.log(`  ⚠️  ${msg}`);
+  console.info(`  ⚠️  ${msg}`);
 };
 
 tensionSignal.onError = (error) => {
-  console.log(`  🔥 Error: ${error.message} (severity: ${error.severity})`);
+  console.info(`  🔥 Error: ${error.message} (severity: ${error.severity})`);
 };
 
 // [2.1.0.0] Normal operation
-console.log("\n🟢 Normal Operation:");
+console.info("\n🟢 Normal Operation:");
 tensionSignal.set(30);
 tensionSignal.set(45);
 
 // [2.2.0.0] Warning state
-console.log("\n🟡 Warning State:");
+console.info("\n🟡 Warning State:");
 tensionSignal.set(60);
 tensionSignal.set(75);
 
 // [2.3.0.0] Critical state
-console.log("\n🔴 Critical State:");
+console.info("\n🔴 Critical State:");
 tensionSignal.set(85);
 
 // [2.4.0.0] Error handling
-console.log("\n⚠️  Error Handling:");
+console.info("\n⚠️  Error Handling:");
 const error = new Error("Financial validation failed");
 (error as any).severity = "high";
 tensionSignal.triggerError(error);
 
 // [2.5.0.0] Health status
-console.log("\n💊 Health Status:");
+console.info("\n💊 Health Status:");
 const health = tensionSignal.getHealth();
-console.log(`  Status: ${health.status.toUpperCase()}`);
-console.log(`  Tension: ${health.tension}/100`);
-console.log(`  Errors: ${health.errors}`);
+console.info(`  Status: ${health.status.toUpperCase()}`);
+console.info(`  Tension: ${health.tension}/100`);
+console.info(`  Errors: ${health.errors}`);
 
 // [2.6.0.0] Reset
-console.log("\n🔄 Reset to Healthy:");
+console.info("\n🔄 Reset to Healthy:");
 tensionSignal.reset();
 const resetHealth = tensionSignal.getHealth();
-console.log(`  Status: ${resetHealth.status.toUpperCase()}`);
-console.log(`  Tension: ${resetHealth.tension}/100`);
+console.info(`  Status: ${resetHealth.status.toUpperCase()}`);
+console.info(`  Tension: ${resetHealth.tension}/100`);
 
-console.log("\n✅ Demo complete! Security + Signals ready for production.\n");
+console.info("\n✅ Demo complete! Security + Signals ready for production.\n");
 

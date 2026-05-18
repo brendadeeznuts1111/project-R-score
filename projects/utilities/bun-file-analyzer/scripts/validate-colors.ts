@@ -110,8 +110,8 @@ function formatResult(result: ValidationResult): string {
 
 // Main validation function
 function validateTheme(): void {
-  console.log("🎨 WCAG Color Contrast Validation\n");
-  console.log("Testing colors against primary backgrounds...\n");
+  console.info("🎨 WCAG Color Contrast Validation\n");
+  console.info("Testing colors against primary backgrounds...\n");
   
   let hasFailures = false;
   const results: ValidationResult[] = [];
@@ -133,21 +133,21 @@ function validateTheme(): void {
       const isFinancialColor = ['profit', 'loss'].includes(colorName);
       
       if (bgName === 'white' && (isCriticalText || isFinancialColor) && !result.passesAA) {
-        console.log(`❌ ${formatResult(result)}`);
+        console.info(`❌ ${formatResult(result)}`);
         hasFailures = true;
       } else if (result.passesAA) {
-        console.log(`✅ ${formatResult(result)}`);
+        console.info(`✅ ${formatResult(result)}`);
       } else if (result.isLargeText) {
-        console.log(`⚠️ ${formatResult(result)}`);
+        console.info(`⚠️ ${formatResult(result)}`);
       } else {
-        console.log(`❌ ${formatResult(result)}`);
+        console.info(`❌ ${formatResult(result)}`);
       }
     }
   }
   
-  console.log("\n" + "=".repeat(60));
-  console.log("📊 Summary Report");
-  console.log("=".repeat(60));
+  console.info("\n" + "=".repeat(60));
+  console.info("📊 Summary Report");
+  console.info("=".repeat(60));
   
   // Count results by category
   const aaaCount = results.filter(r => r.passesAAA).length;
@@ -155,13 +155,13 @@ function validateTheme(): void {
   const largeOnlyCount = results.filter(r => r.isLargeText && !r.passesAA).length;
   const failCount = results.filter(r => !r.isLargeText).length;
   
-  console.log(`✅ AAA Compliant: ${aaaCount}/${results.length}`);
-  console.log(`✅ AA Compliant: ${aaCount}/${results.length}`);
-  console.log(`⚠️ Large Text Only: ${largeOnlyCount}/${results.length}`);
-  console.log(`❌ Non-Compliant: ${failCount}/${results.length}`);
+  console.info(`✅ AAA Compliant: ${aaaCount}/${results.length}`);
+  console.info(`✅ AA Compliant: ${aaCount}/${results.length}`);
+  console.info(`⚠️ Large Text Only: ${largeOnlyCount}/${results.length}`);
+  console.info(`❌ Non-Compliant: ${failCount}/${results.length}`);
   
   // Critical text color validation
-  console.log("\n🔍 Critical Text Colors (White Background):");
+  console.info("\n🔍 Critical Text Colors (White Background):");
   const criticalColors = ['textPrimary', 'textSecondary', 'textMuted'];
   
   for (const colorName of criticalColors) {
@@ -169,11 +169,11 @@ function validateTheme(): void {
     const ratio = contrastRatio(colorHex, criticalBackgrounds.white);
     const passes = ratio >= WCAG_LEVELS.AA_NORMAL;
     
-    console.log(`${passes ? '✅' : '❌'} ${colorName}: ${ratio.toFixed(2)}:1`);
+    console.info(`${passes ? '✅' : '❌'} ${colorName}: ${ratio.toFixed(2)}:1`);
   }
   
   // Financial colors validation
-  console.log("\n💰 Financial Colors (White Background):");
+  console.info("\n💰 Financial Colors (White Background):");
   const financialColors = ['profit', 'loss'];
   
   for (const colorName of financialColors) {
@@ -181,18 +181,18 @@ function validateTheme(): void {
     const ratio = contrastRatio(colorHex, criticalBackgrounds.white);
     const passes = ratio >= WCAG_LEVELS.AA_NORMAL;
     
-    console.log(`${passes ? '✅' : '❌'} ${colorName}: ${ratio.toFixed(2)}:1`);
+    console.info(`${passes ? '✅' : '❌'} ${colorName}: ${ratio.toFixed(2)}:1`);
   }
   
   // Final verdict
-  console.log("\n" + "=".repeat(60));
+  console.info("\n" + "=".repeat(60));
   if (hasFailures) {
-    console.log("❌ VALIDATION FAILED - Critical colors don't meet WCAG AA standards");
-    console.log("Please adjust the color palette and re-run validation");
+    console.info("❌ VALIDATION FAILED - Critical colors don't meet WCAG AA standards");
+    console.info("Please adjust the color palette and re-run validation");
     process.exit(1);
   } else {
-    console.log("✅ VALIDATION PASSED - Critical colors meet WCAG AA standards");
-    console.log("🎨 Your theme is accessibility compliant for primary use cases!");
+    console.info("✅ VALIDATION PASSED - Critical colors meet WCAG AA standards");
+    console.info("🎨 Your theme is accessibility compliant for primary use cases!");
   }
 }
 

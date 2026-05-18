@@ -57,7 +57,7 @@ describe("Quantum URLPattern - 250+ patterns", () => {
 		}
 
 		const matchRate = matches / totalTests;
-		console.log(`Total Match Tests: ${totalTests}, Successful Matches: ${matches}, Match Rate: ${(matchRate * 100).toFixed(2)}%`);
+		console.info(`Total Match Tests: ${totalTests}, Successful Matches: ${matches}, Match Rate: ${(matchRate * 100).toFixed(2)}%`);
 		expect(matchRate).toBeGreaterThan(0.9999); // 99.99%
 	});
 });

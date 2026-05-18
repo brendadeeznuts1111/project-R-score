@@ -174,33 +174,33 @@ export function renderStatus(profile: SystemProfile): void {
   const gold = (Bun as any).color ? (Bun as any).color("hsl(48, 100%, 60%)", "ansi-16m") : "\x1b[33m";
   const reset = "\x1b[0m";
 
-  console.log(`${gray}═══════════════════════════════════════════════════════════════${reset}`);
-  console.log(`${gold}  FactoryWager System Probe v4.3.1${reset}`);
-  console.log(`${gray}  ${profile.platform.os} ${profile.platform.arch} • ${profile.platform.cpus} cores${reset}`);
-  console.log(`${gray}═══════════════════════════════════════════════════════════════${reset}`);
+  console.info(`${gray}═══════════════════════════════════════════════════════════════${reset}`);
+  console.info(`${gold}  FactoryWager System Probe v4.3.1${reset}`);
+  console.info(`${gray}  ${profile.platform.os} ${profile.platform.arch} • ${profile.platform.cpus} cores${reset}`);
+  console.info(`${gray}═══════════════════════════════════════════════════════════════${reset}`);
   
-  console.log(`  Bun: ${green}${profile.runtime.bun}${reset} | PID: ${profile.runtime.pid}`);
-  console.log(`  Memory: ${Math.round(profile.memory.rss / 1024 / 1024)}MB RSS | ${Math.round(profile.memory.heapUsed / 1024)}KB heap`);
+  console.info(`  Bun: ${green}${profile.runtime.bun}${reset} | PID: ${profile.runtime.pid}`);
+  console.info(`  Memory: ${Math.round(profile.memory.rss / 1024 / 1024)}MB RSS | ${Math.round(profile.memory.heapUsed / 1024)}KB heap`);
   
-  console.log(`${gray}  Capabilities:${reset}`);
+  console.info(`${gray}  Capabilities:${reset}`);
   Object.entries(profile.capabilities).forEach(([key, val]) => {
     const icon = val ? `${green}✓${reset}` : `${gray}○${reset}`;
-    console.log(`    ${icon} ${key}`);
+    console.info(`    ${icon} ${key}`);
   });
   
   const status = profile.capabilities.crc32 && profile.capabilities.color 
     ? `${green}OPTIMAL${reset}` 
     : `${gray}DEGRADED${reset}`;
-  console.log(`\n  Status: ${status}`);
-  console.log(`${gray}═══════════════════════════════════════════════════════════════${reset}`);
+  console.info(`\n  Status: ${status}`);
+  console.info(`${gray}═══════════════════════════════════════════════════════════════${reset}`);
 }
 
 // ═══════════════════════════════════════════════════════════════
 // PERFORMANCE BENCHMARK SUITE
 // ═══════════════════════════════════════════════════════════════
 export async function runPerformanceBenchmark() {
-  console.log('🚀 FactoryWager v4.3.1 Performance Benchmark');
-  console.log('=' .repeat(50));
+  console.info('🚀 FactoryWager v4.3.1 Performance Benchmark');
+  console.info('=' .repeat(50));
 
   const caps = detectCapabilities();
 
@@ -240,9 +240,9 @@ export async function runPerformanceBenchmark() {
     crcTime = (Bun.nanoseconds() - crcStart) / 1_000_000;
   }
 
-  if (colorTime > 0) console.log(`🎨 Bun.color HSL→ANSI: ${colorTime.toFixed(2)}ms (30k ops)`);
-  if (unicodeTime > 0) console.log(`🌐 Unicode padding: ${unicodeTime.toFixed(2)}ms (50k ops)`);
-  if (crcTime > 0) console.log(`🔐 CRC32 hashing: ${crcTime.toFixed(2)}ms (20k ops)`);
+  if (colorTime > 0) console.info(`🎨 Bun.color HSL→ANSI: ${colorTime.toFixed(2)}ms (30k ops)`);
+  if (unicodeTime > 0) console.info(`🌐 Unicode padding: ${unicodeTime.toFixed(2)}ms (50k ops)`);
+  if (crcTime > 0) console.info(`🔐 CRC32 hashing: ${crcTime.toFixed(2)}ms (20k ops)`);
   
   return {
     color: { total: colorTime, avg: colorTime / 30000 },
@@ -271,7 +271,7 @@ async function main() {
   renderStatus(profile);
   
   if (args.includes('--benchmark-full')) {
-    console.log();
+    console.info();
     await runPerformanceBenchmark();
   }
 }

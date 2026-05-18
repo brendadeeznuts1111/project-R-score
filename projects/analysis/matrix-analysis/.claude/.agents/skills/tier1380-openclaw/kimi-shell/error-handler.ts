@@ -296,26 +296,26 @@ async function main() {
 		}
 
 		case "retry": {
-			console.log(`${COLORS.cyan}Retrying last command...${COLORS.reset}`);
+			console.info(`${COLORS.cyan}Retrying last command...${COLORS.reset}`);
 			// Would retry last command from session
 			break;
 		}
 
 		case "logs": {
 			const errors = errorHandler.getRecentErrors(5);
-			console.log(`${COLORS.bold}Recent Errors:${COLORS.reset}\n`);
+			console.info(`${COLORS.bold}Recent Errors:${COLORS.reset}\n`);
 			for (const err of errors) {
-				console.log(`[${err.code}] ${err.message}`);
+				console.info(`[${err.code}] ${err.message}`);
 			}
 			break;
 		}
 
 		default: {
-			console.log(`${COLORS.bold}🐚 Kimi Error Handler${COLORS.reset}\n`);
-			console.log("Usage:");
-			console.log("  error-handler.ts test    Test error display");
-			console.log("  error-handler.ts retry   Retry last command");
-			console.log("  error-handler.ts logs    Show recent errors");
+			console.info(`${COLORS.bold}🐚 Kimi Error Handler${COLORS.reset}\n`);
+			console.info("Usage:");
+			console.info("  error-handler.ts test    Test error display");
+			console.info("  error-handler.ts retry   Retry last command");
+			console.info("  error-handler.ts logs    Show recent errors");
 		}
 	}
 }

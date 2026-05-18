@@ -37,14 +37,14 @@ async function initializeAdvancedAuditSystem() {
 		timeout: 60000,
 	});
 
-	console.log("📊 Audit Results:", {
+	console.info("📊 Audit Results:", {
 		phases: results.phases.length,
 		totalExecutionTime: results.totalExecutionTime,
 		success: results.success,
 	});
 
 	// 3. Generate reports
-	console.log("📄 Generating reports...");
+	console.info("📄 Generating reports...");
 	// await orchestrator.generateReport(results, {
 	//   format: 'html',
 	//   includeVisualizations: true,
@@ -52,7 +52,7 @@ async function initializeAdvancedAuditSystem() {
 	// });
 
 	// 4. Start real-time monitoring
-	console.log("👀 Starting real-time monitoring...");
+	console.info("👀 Starting real-time monitoring...");
 	// const cleanup = await orchestrator.startRealTimeMonitoring({
 	//   webhookUrl: process.env.WEBHOOK_URL,
 	//   webSocketPort: 8080,
@@ -66,7 +66,7 @@ async function initializeAdvancedAuditSystem() {
 	// 5. System health monitoring
 	setInterval(async () => {
 		const metrics = orchestrator.getMetrics();
-		console.log("💚 System Health:", {
+		console.info("💚 System Health:", {
 			totalScans: metrics.totalScans,
 			totalMatches: metrics.totalMatches,
 			averageScanTime: metrics.averageScanTime,
@@ -80,7 +80,7 @@ async function initializeAdvancedAuditSystem() {
 if (import.meta.main) {
 	initializeAdvancedAuditSystem()
 		.then(() => {
-			console.log("✅ Audit system initialized successfully");
+			console.info("✅ Audit system initialized successfully");
 		})
 		.catch((error) => {
 			console.error("❌ Failed to initialize audit system:", error);

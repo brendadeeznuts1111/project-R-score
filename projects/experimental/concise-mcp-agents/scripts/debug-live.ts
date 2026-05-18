@@ -10,7 +10,7 @@ if (!cookie) {
   process.exit(1);
 }
 
-console.log("🔍 Fetching live data for analysis...");
+console.info("🔍 Fetching live data for analysis...");
 
 // Fetch the data
 const response = await fetch('https://plive.sportswidgets.pro/live/data?countries=true&leagues=true&sports=true', {
@@ -29,35 +29,35 @@ if (!response.ok) {
 }
 
 const rawData = await response.text();
-console.log(`📦 Response size: ${rawData.length} bytes`);
+console.info(`📦 Response size: ${rawData.length} bytes`);
 
 let data;
 try {
   data = JSON.parse(rawData);
 } catch (error) {
   console.error("❌ Not valid JSON");
-  console.log("First 200 chars:", rawData.substring(0, 200));
+  console.info("First 200 chars:", rawData.substring(0, 200));
   process.exit(1);
 }
 
-console.log("📊 Response type:", typeof data);
-console.log("🔍 Top-level keys:", Object.keys(data));
+console.info("📊 Response type:", typeof data);
+console.info("🔍 Top-level keys:", Object.keys(data));
 
 if (Array.isArray(data)) {
-  console.log(`📋 Array with ${data.length} items`);
+  console.info(`📋 Array with ${data.length} items`);
   if (data.length > 0) {
-    console.log("📋 First item keys:", Object.keys(data[0]));
-    console.log("📋 First item:", JSON.stringify(data[0], null, 2));
+    console.info("📋 First item keys:", Object.keys(data[0]));
+    console.info("📋 First item:", JSON.stringify(data[0], null, 2));
   }
 } else if (typeof data === 'object') {
   // Check for common data structures
-  if (data.countries) console.log(`🌍 Countries: ${data.countries.length}`);
-  if (data.leagues) console.log(`🏆 Leagues: ${data.leagues.length}`);
-  if (data.sports) console.log(`⚽ Sports: ${data.sports.length}`);
-  if (data.events) console.log(`📅 Events: ${data.events.length}`);
-  if (data.bets) console.log(`💰 Bets: ${data.bets.length}`);
+  if (data.countries) console.info(`🌍 Countries: ${data.countries.length}`);
+  if (data.leagues) console.info(`🏆 Leagues: ${data.leagues.length}`);
+  if (data.sports) console.info(`⚽ Sports: ${data.sports.length}`);
+  if (data.events) console.info(`📅 Events: ${data.events.length}`);
+  if (data.bets) console.info(`💰 Bets: ${data.bets.length}`);
   
   // Show structure
-  console.log("🏗️  Structure preview:");
-  console.log(JSON.stringify(data, null, 2).substring(0, 1000));
+  console.info("🏗️  Structure preview:");
+  console.info(JSON.stringify(data, null, 2).substring(0, 1000));
 }

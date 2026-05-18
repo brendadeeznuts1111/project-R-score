@@ -1318,9 +1318,9 @@ class DevDashboardServerV3 {
 		// Initialize Kimi
 		try {
 			this.kimiClient = await createKimiClient();
-			console.log("✅ Kimi client initialized");
+			console.info("✅ Kimi client initialized");
 		} catch (e) {
-			console.log("⚠️ Kimi not available:", (e as Error).message);
+			console.info("⚠️ Kimi not available:", (e as Error).message);
 		}
 
 		// Add RSS feeds
@@ -1351,12 +1351,12 @@ class DevDashboardServerV3 {
 			fetch: (req, server) => this.onRequest(req, server),
 		});
 
-		console.log(`\n🚀 Dev Dashboard V3: http://localhost:${this.port}`);
-		console.log(
+		console.info(`\n🚀 Dev Dashboard V3: http://localhost:${this.port}`);
+		console.info(
 			`📊 Features: Theme toggle · Export · Keyboard shortcuts · Reconnect`,
 		);
-		console.log(`⌨️  Shortcuts: T=Theme, E=Export, F=Focus, ?=Help`);
-		console.log(`\nPress Ctrl+C to stop\n`);
+		console.info(`⌨️  Shortcuts: T=Theme, E=Export, F=Focus, ?=Help`);
+		console.info(`\nPress Ctrl+C to stop\n`);
 
 		process.on("SIGINT", () => this.shutdown());
 		process.on("SIGTERM", () => this.shutdown());
@@ -1416,7 +1416,7 @@ class DevDashboardServerV3 {
 	private onOpen(ws: any): void {
 		const { connectionId } = ws.data;
 		this.clients.set(connectionId, { ws, connectedAt: new Date() });
-		console.log(`[${new Date().toLocaleTimeString()}] Client connected`);
+		console.info(`[${new Date().toLocaleTimeString()}] Client connected`);
 	}
 
 	private async onMessage(ws: any, message: string | Buffer): Promise<void> {
@@ -1561,12 +1561,12 @@ class DevDashboardServerV3 {
 	}
 
 	private shutdown(): void {
-		console.log("\n🛑 Shutting down...");
+		console.info("\n🛑 Shutting down...");
 		if (this.metricsInterval) clearInterval(this.metricsInterval);
 		this.driftMonitor.stopAll();
 		this.metricsCollector.stop();
 		for (const client of this.clients.values()) client.ws.close();
-		console.log("✅ Dashboard stopped");
+		console.info("✅ Dashboard stopped");
 		process.exit(0);
 	}
 }

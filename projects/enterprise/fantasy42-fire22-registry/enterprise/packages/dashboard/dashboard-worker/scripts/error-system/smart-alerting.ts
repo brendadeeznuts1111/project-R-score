@@ -124,7 +124,7 @@ class SmartAlertingSystem {
           this.alertRules.set(rule.id, rule);
         });
 
-        console.log(`✅ Loaded ${rules.length} alert rules`);
+        console.info(`✅ Loaded ${rules.length} alert rules`);
       } catch (error) {
         console.warn(`⚠️ Failed to load alert rules: ${error.message}`);
         this.createDefaultAlertRules();
@@ -154,7 +154,7 @@ class SmartAlertingSystem {
           );
         }
 
-        console.log(
+        console.info(
           `✅ Loaded historical occurrence data for ${this.occurrences.size} error codes`
         );
       } catch (error) {
@@ -321,7 +321,7 @@ class SmartAlertingSystem {
     });
 
     this.saveAlertRules();
-    console.log(`✅ Created ${defaultRules.length} default alert rules`);
+    console.info(`✅ Created ${defaultRules.length} default alert rules`);
   }
 
   /**
@@ -532,10 +532,10 @@ class SmartAlertingSystem {
     this.activeAlerts.set(alertId, alert);
     rule.lastTriggered = new Date();
 
-    console.log(color('#ef4444', 'css') + `🚨 ALERT TRIGGERED: ${rule.name}`);
-    console.log(`   Error Code: ${occurrence.errorCode}`);
-    console.log(`   Occurrences: ${recentOccurrences.length} in ${rule.timeWindow}`);
-    console.log(`   Severity: ${occurrence.severity}`);
+    console.info(color('#ef4444', 'css') + `🚨 ALERT TRIGGERED: ${rule.name}`);
+    console.info(`   Error Code: ${occurrence.errorCode}`);
+    console.info(`   Occurrences: ${recentOccurrences.length} in ${rule.timeWindow}`);
+    console.info(`   Severity: ${occurrence.severity}`);
 
     // Execute alert actions
     this.executeAlertActions(alert, rule.actions);
@@ -621,8 +621,8 @@ ${alert.context.recentOccurrences
    * Send Slack alert (mock implementation)
    */
   private sendSlackAlert(channel: string, message: string, priority: string): void {
-    console.log(color('#0088cc', 'css') + `📱 SLACK ALERT to ${channel} (${priority}):`);
-    console.log('   ' + message.split('\n')[0]);
+    console.info(color('#0088cc', 'css') + `📱 SLACK ALERT to ${channel} (${priority}):`);
+    console.info('   ' + message.split('\n')[0]);
 
     // In production: integrate with Slack API
     // await fetch('https://hooks.slack.com/...', {
@@ -635,8 +635,8 @@ ${alert.context.recentOccurrences
    * Send email alert (mock implementation)
    */
   private sendEmailAlert(recipient: string, message: string, priority: string): void {
-    console.log(color('#f59e0b', 'css') + `📧 EMAIL ALERT to ${recipient} (${priority}):`);
-    console.log('   ' + message.split('\n')[0]);
+    console.info(color('#f59e0b', 'css') + `📧 EMAIL ALERT to ${recipient} (${priority}):`);
+    console.info('   ' + message.split('\n')[0]);
 
     // In production: integrate with email service
   }
@@ -645,7 +645,7 @@ ${alert.context.recentOccurrences
    * Send webhook alert (mock implementation)
    */
   private sendWebhookAlert(url: string, alert: AlertEvent, priority: string): void {
-    console.log(color('#8b5cf6', 'css') + `🔗 WEBHOOK ALERT to ${url} (${priority})`);
+    console.info(color('#8b5cf6', 'css') + `🔗 WEBHOOK ALERT to ${url} (${priority})`);
 
     // In production: send HTTP POST to webhook
     // await fetch(url, {
@@ -659,8 +659,8 @@ ${alert.context.recentOccurrences
    * Send page alert (mock implementation)
    */
   private sendPageAlert(target: string, message: string, priority: string): void {
-    console.log(color('#ef4444', 'css') + `📟 PAGE ALERT to ${target} (${priority}):`);
-    console.log('   ' + message.split('\n')[0]);
+    console.info(color('#ef4444', 'css') + `📟 PAGE ALERT to ${target} (${priority}):`);
+    console.info('   ' + message.split('\n')[0]);
 
     // In production: integrate with PagerDuty, etc.
   }
@@ -669,8 +669,8 @@ ${alert.context.recentOccurrences
    * Create ticket (mock implementation)
    */
   private createTicket(team: string, alert: AlertEvent, priority: string): void {
-    console.log(color('#10b981', 'css') + `🎫 TICKET CREATED for ${team} (${priority})`);
-    console.log(`   Title: ${alert.errorCode} - ${alert.context.errorDetails?.name}`);
+    console.info(color('#10b981', 'css') + `🎫 TICKET CREATED for ${team} (${priority})`);
+    console.info(`   Title: ${alert.errorCode} - ${alert.context.errorDetails?.name}`);
 
     // In production: integrate with Jira, GitHub Issues, etc.
   }
@@ -679,8 +679,8 @@ ${alert.context.recentOccurrences
    * Send SMS alert (mock implementation)
    */
   private sendSmsAlert(phoneNumber: string, message: string, priority: string): void {
-    console.log(color('#06b6d4', 'css') + `📱 SMS ALERT to ${phoneNumber} (${priority})`);
-    console.log('   ' + message.split('\n')[0].substring(0, 160));
+    console.info(color('#06b6d4', 'css') + `📱 SMS ALERT to ${phoneNumber} (${priority})`);
+    console.info('   ' + message.split('\n')[0].substring(0, 160));
 
     // In production: integrate with Twilio, etc.
   }
@@ -693,7 +693,7 @@ ${alert.context.recentOccurrences
       setTimeout(
         () => {
           if (!alert.resolved) {
-            console.log(
+            console.info(
               color('#dc2626', 'css') +
                 `🔥 ESCALATING ALERT: ${alert.id} after ${rule.afterMinutes} minutes`
             );
@@ -715,7 +715,7 @@ ${alert.context.recentOccurrences
       alert.resolved = true;
       alert.resolvedAt = new Date();
 
-      console.log(color('#10b981', 'css') + `✅ ALERT RESOLVED: ${alertId}`);
+      console.info(color('#10b981', 'css') + `✅ ALERT RESOLVED: ${alertId}`);
 
       // Mark related occurrences as resolved
       const occurrences = this.occurrences.get(alert.errorCode) || [];
@@ -779,23 +779,23 @@ ${alert.context.recentOccurrences
   displayDashboard(): void {
     const stats = this.getStatistics();
 
-    console.log('\n🚨 SMART ALERTING DASHBOARD');
-    console.log('='.repeat(80));
+    console.info('\n🚨 SMART ALERTING DASHBOARD');
+    console.info('='.repeat(80));
 
-    console.log('\n📊 Overview:');
-    console.log(`   Total Error Occurrences: ${stats.totalOccurrences}`);
-    console.log(`   Active Alerts: ${stats.activeAlerts}`);
-    console.log(`   Alert Rules: ${this.alertRules.size}`);
+    console.info('\n📊 Overview:');
+    console.info(`   Total Error Occurrences: ${stats.totalOccurrences}`);
+    console.info(`   Active Alerts: ${stats.activeAlerts}`);
+    console.info(`   Alert Rules: ${this.alertRules.size}`);
 
     if (Object.keys(stats.alertsByCategory).length > 0) {
-      console.log('\n🏷️ Active Alerts by Category:');
+      console.info('\n🏷️ Active Alerts by Category:');
       Object.entries(stats.alertsByCategory).forEach(([category, count]) => {
-        console.log(`   ${category}: ${count}`);
+        console.info(`   ${category}: ${count}`);
       });
     }
 
     if (Object.keys(stats.alertsBySeverity).length > 0) {
-      console.log('\n⚠️ Active Alerts by Severity:');
+      console.info('\n⚠️ Active Alerts by Severity:');
       Object.entries(stats.alertsBySeverity).forEach(([severity, count]) => {
         const severityColor =
           severity === 'CRITICAL'
@@ -805,18 +805,18 @@ ${alert.context.recentOccurrences
               : severity === 'WARNING'
                 ? color('#f59e0b', 'css')
                 : color('#10b981', 'css');
-        console.log(`   ${severityColor}${severity}${color('#ffffff', 'css')}: ${count}`);
+        console.info(`   ${severityColor}${severity}${color('#ffffff', 'css')}: ${count}`);
       });
     }
 
     if (stats.topErrorCodes.length > 0) {
-      console.log('\n🔥 Top Error Codes:');
+      console.info('\n🔥 Top Error Codes:');
       stats.topErrorCodes.forEach((error, index) => {
-        console.log(`   ${index + 1}. ${error.code}: ${error.count} occurrences`);
+        console.info(`   ${index + 1}. ${error.code}: ${error.count} occurrences`);
       });
     }
 
-    console.log('\n' + '='.repeat(80));
+    console.info('\n' + '='.repeat(80));
   }
 }
 
@@ -825,7 +825,7 @@ if (import.meta.main) {
   const alerting = new SmartAlertingSystem();
 
   // Demo error occurrences
-  console.log('🔥 DEMO: Simulating error occurrences...\n');
+  console.info('🔥 DEMO: Simulating error occurrences...\n');
 
   // Simulate database failures (should trigger alert)
   for (let i = 0; i < 4; i++) {

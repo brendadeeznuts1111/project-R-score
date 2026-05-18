@@ -19,9 +19,9 @@ interface DemoDispute {
 class DisputeMatrixIntegrationDemo {
   
   async runCompleteDemo(): Promise<void> {
-    console.log('🔗 DuoPlus Dispute Matrix + Merchant Dashboard Integration Demo');
-    console.log('='.repeat(75));
-    console.log('');
+    console.info('🔗 DuoPlus Dispute Matrix + Merchant Dashboard Integration Demo');
+    console.info('='.repeat(75));
+    console.info('');
     
     try {
       // Initialize demo data
@@ -35,7 +35,7 @@ class DisputeMatrixIntegrationDemo {
       await this.demonstrateTimelinePredictions();
       await this.demonstrateRealTimeStatus();
       
-      console.log('✅ Complete integration demo finished successfully!');
+      console.info('✅ Complete integration demo finished successfully!');
       
     } catch (error) {
       console.error('❌ Integration demo failed:', error);
@@ -44,7 +44,7 @@ class DisputeMatrixIntegrationDemo {
   }
   
   private async initializeDemoData(): Promise<void> {
-    console.log('🔧 Initializing dispute matrix integration demo...');
+    console.info('🔧 Initializing dispute matrix integration demo...');
     
     // Create demo disputes with different statuses
     const demoDisputes: DemoDispute[] = [
@@ -77,54 +77,54 @@ class DisputeMatrixIntegrationDemo {
       }
     ];
     
-    console.log('✅ Demo data initialized');
-    console.log(`   - ${demoDisputes.length} demo disputes created`);
-    console.log(`   - Dispute matrix integration ready`);
-    console.log('');
+    console.info('✅ Demo data initialized');
+    console.info(`   - ${demoDisputes.length} demo disputes created`);
+    console.info(`   - Dispute matrix integration ready`);
+    console.info('');
   }
   
   private async demonstrateEnhancedMatrix(): Promise<void> {
-    console.log('📊 ENHANCED DISPUTE MATRIX DEMONSTRATION');
-    console.log('─'.repeat(55));
+    console.info('📊 ENHANCED DISPUTE MATRIX DEMONSTRATION');
+    console.info('─'.repeat(55));
     
     const disputeId = 'DSP_MATRIX_001';
     
     try {
-      console.log(`🔍 Getting enhanced dispute matrix for ${disputeId}...`);
+      console.info(`🔍 Getting enhanced dispute matrix for ${disputeId}...`);
       
       // Get enhanced matrix with AI insights
       const enhancedMatrix = await disputeMatrixIntegration.getEnhancedDisputeMatrix(disputeId);
       
-      console.log('📈 Enhanced Dispute Matrix:');
-      console.log('');
+      console.info('📈 Enhanced Dispute Matrix:');
+      console.info('');
       
       enhancedMatrix.forEach((row, index) => {
-        console.log(`${index + 1}. ${row.icon} ${row.status.replace(/_/g, ' ')}`);
-        console.log(`   📝 Description: ${row.description}`);
-        console.log(`   ⏱️ Timeline: ${row.timeline}`);
-        console.log(`   🎯 Priority: ${row.priorityLevel}`);
+        console.info(`${index + 1}. ${row.icon} ${row.status.replace(/_/g, ' ')}`);
+        console.info(`   📝 Description: ${row.description}`);
+        console.info(`   ⏱️ Timeline: ${row.timeline}`);
+        console.info(`   🎯 Priority: ${row.priorityLevel}`);
         
         if (row.aiAnalysis) {
-          console.log(`   🤖 AI Analysis:`);
-          console.log(`      Risk Score: ${(row.aiAnalysis.riskScore * 100).toFixed(1)}%`);
-          console.log(`      Confidence: ${(row.aiAnalysis.confidence * 100).toFixed(1)}%`);
-          console.log(`      Est. Resolution: ${row.aiAnalysis.estimatedResolutionTime.toFixed(0)}h`);
-          console.log(`      Recommendations: ${row.aiAnalysis.recommendations.slice(0, 2).join(', ')}`);
+          console.info(`   🤖 AI Analysis:`);
+          console.info(`      Risk Score: ${(row.aiAnalysis.riskScore * 100).toFixed(1)}%`);
+          console.info(`      Confidence: ${(row.aiAnalysis.confidence * 100).toFixed(1)}%`);
+          console.info(`      Est. Resolution: ${row.aiAnalysis.estimatedResolutionTime.toFixed(0)}h`);
+          console.info(`      Recommendations: ${row.aiAnalysis.recommendations.slice(0, 2).join(', ')}`);
         }
         
         if (row.merchantMetrics) {
-          console.log(`   📊 Merchant Metrics:`);
-          console.log(`      Avg Response: ${row.merchantMetrics.averageResponseTime}h`);
-          console.log(`      Win Rate: ${row.merchantMetrics.winRate.toFixed(1)}%`);
-          console.log(`      Similar Cases: ${row.merchantMetrics.similarCases}`);
+          console.info(`   📊 Merchant Metrics:`);
+          console.info(`      Avg Response: ${row.merchantMetrics.averageResponseTime}h`);
+          console.info(`      Win Rate: ${row.merchantMetrics.winRate.toFixed(1)}%`);
+          console.info(`      Similar Cases: ${row.merchantMetrics.similarCases}`);
         }
         
         if (row.automationSuggestions.length > 0) {
-          console.log(`   ⚡ Automation: ${row.automationSuggestions.join(', ')}`);
+          console.info(`   ⚡ Automation: ${row.automationSuggestions.join(', ')}`);
         }
         
-        console.log(`   🔗 Deep Link: ${row.deepLink}`);
-        console.log('');
+        console.info(`   🔗 Deep Link: ${row.deepLink}`);
+        console.info('');
       });
       
       // Show customer/merchant/system actions for current status
@@ -132,20 +132,20 @@ class DisputeMatrixIntegrationDemo {
       const currentRow = enhancedMatrix.find(row => row.status === currentStatus);
       
       if (currentRow) {
-        console.log(`📋 Current Status Actions (${currentStatus}):`);
-        console.log('   👤 Customer Actions:');
+        console.info(`📋 Current Status Actions (${currentStatus}):`);
+        console.info('   👤 Customer Actions:');
         currentRow.customerActions.forEach(action => {
-          console.log(`      • ${action}`);
+          console.info(`      • ${action}`);
         });
-        console.log('   🏪 Merchant Actions:');
+        console.info('   🏪 Merchant Actions:');
         currentRow.merchantActions.forEach(action => {
-          console.log(`      • ${action}`);
+          console.info(`      • ${action}`);
         });
-        console.log('   🤖 System Actions:');
+        console.info('   🤖 System Actions:');
         currentRow.systemActions.forEach(action => {
-          console.log(`      • ${action}`);
+          console.info(`      • ${action}`);
         });
-        console.log('');
+        console.info('');
       }
       
     } catch (error) {
@@ -154,83 +154,83 @@ class DisputeMatrixIntegrationDemo {
   }
   
   private async demonstrateResolutionPlan(): Promise<void> {
-    console.log('📋 RESOLUTION PLAN DEMONSTRATION');
-    console.log('─'.repeat(55));
+    console.info('📋 RESOLUTION PLAN DEMONSTRATION');
+    console.info('─'.repeat(55));
     
     const disputeId = 'DSP_MATRIX_002';
     
     try {
-      console.log(`🎯 Generating comprehensive resolution plan for ${disputeId}...`);
+      console.info(`🎯 Generating comprehensive resolution plan for ${disputeId}...`);
       
       const resolutionPlan = await disputeMatrixIntegration.generateResolutionPlan(disputeId);
       
-      console.log('📊 Dispute Resolution Plan:');
-      console.log(`   Dispute ID: ${resolutionPlan.disputeId}`);
-      console.log(`   Current Status: ${resolutionPlan.currentStatus}`);
-      console.log(`   Target Resolution: ${resolutionPlan.targetResolution}`);
-      console.log(`   Est. Completion: ${resolutionPlan.estimatedCompletion.toLocaleString()}`);
-      console.log('');
+      console.info('📊 Dispute Resolution Plan:');
+      console.info(`   Dispute ID: ${resolutionPlan.disputeId}`);
+      console.info(`   Current Status: ${resolutionPlan.currentStatus}`);
+      console.info(`   Target Resolution: ${resolutionPlan.targetResolution}`);
+      console.info(`   Est. Completion: ${resolutionPlan.estimatedCompletion.toLocaleString()}`);
+      console.info('');
       
       // Display workflow steps
-      console.log('🔄 Workflow Steps:');
+      console.info('🔄 Workflow Steps:');
       resolutionPlan.steps.forEach((step, index) => {
         const statusIcon = step.status === 'completed' ? '✅' : 
                           step.status === 'active' ? '🔄' : 
                           step.status === 'skipped' ? '⏭️' : '⏳';
         
-        console.log(`   ${index + 1}. ${statusIcon} ${step.title}`);
-        console.log(`      📝 ${step.description}`);
-        console.log(`      👤 Assigned to: ${step.assignedTo}`);
-        console.log(`      ⏰ Due: ${step.dueDate?.toLocaleDateString() || 'Not set'}`);
+        console.info(`   ${index + 1}. ${statusIcon} ${step.title}`);
+        console.info(`      📝 ${step.description}`);
+        console.info(`      👤 Assigned to: ${step.assignedTo}`);
+        console.info(`      ⏰ Due: ${step.dueDate?.toLocaleDateString() || 'Not set'}`);
         
         if (step.aiAssistance) {
-          console.log(`      🤖 AI Assistance:`);
-          console.log(`         Suggestions: ${step.aiAssistance.suggestions.slice(0, 2).join(', ')}`);
-          console.log(`         Auto Actions: ${step.aiAssistance.autoActions.join(', ')}`);
-          console.log(`         Confidence: ${(step.aiAssistance.confidence * 100).toFixed(1)}%`);
+          console.info(`      🤖 AI Assistance:`);
+          console.info(`         Suggestions: ${step.aiAssistance.suggestions.slice(0, 2).join(', ')}`);
+          console.info(`         Auto Actions: ${step.aiAssistance.autoActions.join(', ')}`);
+          console.info(`         Confidence: ${(step.aiAssistance.confidence * 100).toFixed(1)}%`);
         }
         
         if (step.actions.length > 0) {
-          console.log(`      ⚡ Available Actions: ${step.actions.length} actions`);
+          console.info(`      ⚡ Available Actions: ${step.actions.length} actions`);
         }
-        console.log('');
+        console.info('');
       });
       
       // Display risk assessment
-      console.log('⚠️ Risk Assessment:');
-      console.log(`   Overall Risk: ${(resolutionPlan.riskAssessment.overall * 100).toFixed(1)}%`);
-      console.log('   Risk Factors:');
+      console.info('⚠️ Risk Assessment:');
+      console.info(`   Overall Risk: ${(resolutionPlan.riskAssessment.overall * 100).toFixed(1)}%`);
+      console.info('   Risk Factors:');
       resolutionPlan.riskAssessment.factors.forEach(factor => {
-        console.log(`      • ${factor}`);
+        console.info(`      • ${factor}`);
       });
-      console.log('   Mitigation Strategies:');
+      console.info('   Mitigation Strategies:');
       resolutionPlan.riskAssessment.mitigation.forEach(strategy => {
-        console.log(`      • ${strategy}`);
+        console.info(`      • ${strategy}`);
       });
-      console.log('');
+      console.info('');
       
       // Display required actions
-      console.log('📋 Required Actions:');
-      console.log(`   👤 Customer (${resolutionPlan.requiredActions.customer.length}):`);
+      console.info('📋 Required Actions:');
+      console.info(`   👤 Customer (${resolutionPlan.requiredActions.customer.length}):`);
       resolutionPlan.requiredActions.customer.forEach(action => {
-        console.log(`      • ${action}`);
+        console.info(`      • ${action}`);
       });
-      console.log(`   🏪 Merchant (${resolutionPlan.requiredActions.merchant.length}):`);
+      console.info(`   🏪 Merchant (${resolutionPlan.requiredActions.merchant.length}):`);
       resolutionPlan.requiredActions.merchant.forEach(action => {
-        console.log(`      • ${action}`);
+        console.info(`      • ${action}`);
       });
-      console.log(`   🤖 System (${resolutionPlan.requiredActions.system.length}):`);
+      console.info(`   🤖 System (${resolutionPlan.requiredActions.system.length}):`);
       resolutionPlan.requiredActions.system.forEach(action => {
-        console.log(`      • ${action}`);
+        console.info(`      • ${action}`);
       });
-      console.log('');
+      console.info('');
       
       // Display AI recommendations
-      console.log('🤖 AI Recommendations:');
+      console.info('🤖 AI Recommendations:');
       resolutionPlan.aiRecommendations.forEach((rec, index) => {
-        console.log(`   ${index + 1}. ${rec}`);
+        console.info(`   ${index + 1}. ${rec}`);
       });
-      console.log('');
+      console.info('');
       
     } catch (error) {
       console.error('❌ Resolution plan demo failed:', error);
@@ -238,53 +238,53 @@ class DisputeMatrixIntegrationDemo {
   }
   
   private async demonstrateAutomatedActions(): Promise<void> {
-    console.log('⚡ AUTOMATED ACTIONS DEMONSTRATION');
-    console.log('─'.repeat(55));
+    console.info('⚡ AUTOMATED ACTIONS DEMONSTRATION');
+    console.info('─'.repeat(55));
     
     const disputeId = 'DSP_MATRIX_003';
     
     try {
-      console.log(`🤖 Executing automated actions for ${disputeId}...`);
+      console.info(`🤖 Executing automated actions for ${disputeId}...`);
       
       const results = await disputeMatrixIntegration.executeAutomatedActions(disputeId);
       
-      console.log('📊 Automation Results:');
-      console.log(`   ✅ Executed: ${results.executed.length} actions`);
-      console.log(`   ❌ Failed: ${results.failed.length} actions`);
-      console.log(`   ⏭️ Skipped: ${results.skipped.length} actions`);
-      console.log('');
+      console.info('📊 Automation Results:');
+      console.info(`   ✅ Executed: ${results.executed.length} actions`);
+      console.info(`   ❌ Failed: ${results.failed.length} actions`);
+      console.info(`   ⏭️ Skipped: ${results.skipped.length} actions`);
+      console.info('');
       
       if (results.executed.length > 0) {
-        console.log('✅ Successfully Executed:');
+        console.info('✅ Successfully Executed:');
         results.executed.forEach(action => {
-          console.log(`   • ${action}`);
+          console.info(`   • ${action}`);
         });
-        console.log('');
+        console.info('');
       }
       
       if (results.failed.length > 0) {
-        console.log('❌ Failed Actions:');
+        console.info('❌ Failed Actions:');
         results.failed.forEach(action => {
-          console.log(`   • ${action}`);
+          console.info(`   • ${action}`);
         });
-        console.log('');
+        console.info('');
       }
       
       if (results.skipped.length > 0) {
-        console.log('⏭️ Skipped Actions:');
+        console.info('⏭️ Skipped Actions:');
         results.skipped.forEach(action => {
-          console.log(`   • ${action}`);
+          console.info(`   • ${action}`);
         });
-        console.log('');
+        console.info('');
       }
       
       // Simulate automation benefits
-      console.log('📈 Automation Benefits:');
-      console.log('   ⚡ Reduced manual processing time by 70%');
-      console.log('   🎯 Improved accuracy with AI assistance');
-      console.log('   📧 Automated notifications sent to all parties');
-      console.log('   🔄 Status updates applied automatically');
-      console.log('');
+      console.info('📈 Automation Benefits:');
+      console.info('   ⚡ Reduced manual processing time by 70%');
+      console.info('   🎯 Improved accuracy with AI assistance');
+      console.info('   📧 Automated notifications sent to all parties');
+      console.info('   🔄 Status updates applied automatically');
+      console.info('');
       
     } catch (error) {
       console.error('❌ Automated actions demo failed:', error);
@@ -292,63 +292,63 @@ class DisputeMatrixIntegrationDemo {
   }
   
   private async demonstrateAIWorkflow(): Promise<void> {
-    console.log('🤖 AI-POWERED WORKFLOW DEMONSTRATION');
-    console.log('─'.repeat(55));
+    console.info('🤖 AI-POWERED WORKFLOW DEMONSTRATION');
+    console.info('─'.repeat(55));
     
     const disputeId = 'DSP_MATRIX_001';
     
     try {
-      console.log(`🧠 Running AI-powered workflow analysis for ${disputeId}...`);
+      console.info(`🧠 Running AI-powered workflow analysis for ${disputeId}...`);
       
       const statusWithAI = await disputeMatrixIntegration.getDisputeStatusWithAI(disputeId);
       
-      console.log('🤖 AI-Enhanced Dispute Status:');
-      console.log(`   📊 Status: ${statusWithAI.status}`);
-      console.log(`   🎯 Priority: ${statusWithAI.matrixRow.priorityLevel}`);
-      console.log(`   ⏱️ Time to Resolution: ${statusWithAI.timeToResolution.toFixed(0)}h`);
-      console.log('');
+      console.info('🤖 AI-Enhanced Dispute Status:');
+      console.info(`   📊 Status: ${statusWithAI.status}`);
+      console.info(`   🎯 Priority: ${statusWithAI.matrixRow.priorityLevel}`);
+      console.info(`   ⏱️ Time to Resolution: ${statusWithAI.timeToResolution.toFixed(0)}h`);
+      console.info('');
       
       // Display AI insights
-      console.log('🧠 AI Insights:');
+      console.info('🧠 AI Insights:');
       if (statusWithAI.aiInsights) {
-        console.log(`   Risk Score: ${(statusWithAI.aiInsights.riskScore * 100).toFixed(1)}%`);
-        console.log(`   Confidence: ${(statusWithAI.aiInsights.confidence * 100).toFixed(1)}%`);
-        console.log(`   Evidence Items: ${statusWithAI.aiInsights.evidenceSummary?.totalItems || 0}`);
-        console.log(`   Red Flags: ${statusWithAI.aiInsights.evidenceSummary?.redFlagCount || 0}`);
-        console.log('');
+        console.info(`   Risk Score: ${(statusWithAI.aiInsights.riskScore * 100).toFixed(1)}%`);
+        console.info(`   Confidence: ${(statusWithAI.aiInsights.confidence * 100).toFixed(1)}%`);
+        console.info(`   Evidence Items: ${statusWithAI.aiInsights.evidenceSummary?.totalItems || 0}`);
+        console.info(`   Red Flags: ${statusWithAI.aiInsights.evidenceSummary?.redFlagCount || 0}`);
+        console.info('');
       }
       
       // Display next actions with AI prioritization
-      console.log('⚡ Next Actions (AI-Prioritized):');
+      console.info('⚡ Next Actions (AI-Prioritized):');
       statusWithAI.nextActions.forEach((action, index) => {
         const priorityIcon = action.priority === 'high' ? '🔴' : 
                            action.priority === 'medium' ? '🟡' : '🟢';
-        console.log(`   ${index + 1}. ${priorityIcon} ${action.title}`);
-        console.log(`      📝 ${action.description}`);
-        console.log(`      🔗 ${action.deepLink}`);
+        console.info(`   ${index + 1}. ${priorityIcon} ${action.title}`);
+        console.info(`      📝 ${action.description}`);
+        console.info(`      🔗 ${action.deepLink}`);
       });
-      console.log('');
+      console.info('');
       
       // Display automation opportunities
-      console.log('🤖 Automation Opportunities:');
+      console.info('🤖 Automation Opportunities:');
       if (statusWithAI.automationAvailable.length > 0) {
         statusWithAI.automationAvailable.forEach(automation => {
-          console.log(`   • ${automation}`);
+          console.info(`   • ${automation}`);
         });
       } else {
-        console.log('   No automation available for current status');
+        console.info('   No automation available for current status');
       }
-      console.log('');
+      console.info('');
       
       // Display matrix row details
-      console.log('📋 Current Matrix Row Details:');
+      console.info('📋 Current Matrix Row Details:');
       const row = statusWithAI.matrixRow;
-      console.log(`   🎨 Color: ${row.color}`);
-      console.log(`   📅 Timeline: ${row.timeline}`);
-      console.log(`   👥 Customer Actions: ${row.customerActions.length}`);
-      console.log(`   🏪 Merchant Actions: ${row.merchantActions.length}`);
-      console.log(`   🤖 System Actions: ${row.systemActions.length}`);
-      console.log('');
+      console.info(`   🎨 Color: ${row.color}`);
+      console.info(`   📅 Timeline: ${row.timeline}`);
+      console.info(`   👥 Customer Actions: ${row.customerActions.length}`);
+      console.info(`   🏪 Merchant Actions: ${row.merchantActions.length}`);
+      console.info(`   🤖 System Actions: ${row.systemActions.length}`);
+      console.info('');
       
     } catch (error) {
       console.error('❌ AI workflow demo failed:', error);
@@ -356,58 +356,58 @@ class DisputeMatrixIntegrationDemo {
   }
   
   private async demonstrateTimelinePredictions(): Promise<void> {
-    console.log('📈 TIMELINE PREDICTIONS DEMONSTRATION');
-    console.log('─'.repeat(55));
+    console.info('📈 TIMELINE PREDICTIONS DEMONSTRATION');
+    console.info('─'.repeat(55));
     
     const disputeId = 'DSP_MATRIX_002';
     
     try {
-      console.log(`🔮 Generating AI-powered timeline predictions for ${disputeId}...`);
+      console.info(`🔮 Generating AI-powered timeline predictions for ${disputeId}...`);
       
       const timeline = await disputeMatrixIntegration.generateDisputeTimeline(disputeId);
       
-      console.log('📊 Dispute Timeline with AI Predictions:');
-      console.log(`   Current Step: ${timeline.currentStep}/${timeline.totalSteps}`);
-      console.log(`   Progress: ${Math.round((timeline.currentStep / timeline.totalSteps) * 100)}%`);
-      console.log('');
+      console.info('📊 Dispute Timeline with AI Predictions:');
+      console.info(`   Current Step: ${timeline.currentStep}/${timeline.totalSteps}`);
+      console.info(`   Progress: ${Math.round((timeline.currentStep / timeline.totalSteps) * 100)}%`);
+      console.info('');
       
       // Display timeline steps
-      console.log('🔄 Timeline Steps:');
+      console.info('🔄 Timeline Steps:');
       timeline.steps.forEach((step, index) => {
         const statusIcon = step.status === 'completed' ? '✅' : 
                           step.status === 'active' ? '🔄' : '⏳';
         
-        console.log(`   ${index + 1}. ${statusIcon} ${step.title}`);
-        console.log(`      📝 ${step.description}`);
-        console.log(`      🎯 Confidence: ${(step.confidence * 100).toFixed(1)}%`);
+        console.info(`   ${index + 1}. ${statusIcon} ${step.title}`);
+        console.info(`      📝 ${step.description}`);
+        console.info(`      🎯 Confidence: ${(step.confidence * 100).toFixed(1)}%`);
         
         if (step.estimatedDate) {
-          console.log(`      📅 Est. Date: ${step.estimatedDate.toLocaleDateString()}`);
+          console.info(`      📅 Est. Date: ${step.estimatedDate.toLocaleDateString()}`);
         }
         
         if (step.actualDate) {
-          console.log(`      ✅ Actual Date: ${step.actualDate.toLocaleDateString()}`);
+          console.info(`      ✅ Actual Date: ${step.actualDate.toLocaleDateString()}`);
         }
         
         if (step.aiNotes) {
-          console.log(`      🤖 AI Notes: ${step.aiNotes}`);
+          console.info(`      🤖 AI Notes: ${step.aiNotes}`);
         }
-        console.log('');
+        console.info('');
       });
       
       // Display AI predictions
-      console.log('🔮 AI Predictions:');
+      console.info('🔮 AI Predictions:');
       const predictions = timeline.predictions;
-      console.log(`   🎯 Likely Outcome: ${predictions.likelyOutcome}`);
-      console.log(`   📊 Confidence: ${(predictions.confidence * 100).toFixed(1)}%`);
-      console.log(`   📅 Est. Completion: ${predictions.estimatedCompletion.toLocaleDateString()}`);
-      console.log('');
+      console.info(`   🎯 Likely Outcome: ${predictions.likelyOutcome}`);
+      console.info(`   📊 Confidence: ${(predictions.confidence * 100).toFixed(1)}%`);
+      console.info(`   📅 Est. Completion: ${predictions.estimatedCompletion.toLocaleDateString()}`);
+      console.info('');
       
-      console.log('⚠️ Risk Factors:');
+      console.info('⚠️ Risk Factors:');
       predictions.riskFactors.forEach(factor => {
-        console.log(`   • ${factor}`);
+        console.info(`   • ${factor}`);
       });
-      console.log('');
+      console.info('');
       
     } catch (error) {
       console.error('❌ Timeline predictions demo failed:', error);
@@ -415,13 +415,13 @@ class DisputeMatrixIntegrationDemo {
   }
   
   private async demonstrateRealTimeStatus(): Promise<void> {
-    console.log('📡 REAL-TIME STATUS DEMONSTRATION');
-    console.log('─'.repeat(55));
+    console.info('📡 REAL-TIME STATUS DEMONSTRATION');
+    console.info('─'.repeat(55));
     
     const disputeId = 'DSP_MATRIX_003';
     
     try {
-      console.log(`🔄 Getting real-time status with AI insights for ${disputeId}...`);
+      console.info(`🔄 Getting real-time status with AI insights for ${disputeId}...`);
       
       // Simulate real-time updates
       const statuses = [
@@ -432,39 +432,39 @@ class DisputeMatrixIntegrationDemo {
       ];
       
       for (const status of statuses) {
-        console.log(`📊 Real-Time Update: ${status}`);
-        console.log('─'.repeat(30));
+        console.info(`📊 Real-Time Update: ${status}`);
+        console.info('─'.repeat(30));
         
         // Get status with AI insights
         const statusData = await disputeMatrixIntegration.getDisputeStatusWithAI(disputeId);
         
-        console.log(`   🎯 Status: ${statusData.status}`);
-        console.log(`   🎨 Priority: ${statusData.matrixRow.priorityLevel}`);
-        console.log(`   ⏱️ Resolution Time: ${statusData.timeToResolution.toFixed(0)}h`);
-        console.log(`   🤖 AI Confidence: ${(statusData.aiInsights.confidence * 100).toFixed(1)}%`);
+        console.info(`   🎯 Status: ${statusData.status}`);
+        console.info(`   🎨 Priority: ${statusData.matrixRow.priorityLevel}`);
+        console.info(`   ⏱️ Resolution Time: ${statusData.timeToResolution.toFixed(0)}h`);
+        console.info(`   🤖 AI Confidence: ${(statusData.aiInsights.confidence * 100).toFixed(1)}%`);
         
         // Show immediate next actions
         const immediateActions = statusData.nextActions.filter(a => a.priority === 'high');
         if (immediateActions.length > 0) {
-          console.log(`   ⚡ Immediate Actions:`);
+          console.info(`   ⚡ Immediate Actions:`);
           immediateActions.forEach(action => {
-            console.log(`      • ${action.title}`);
+            console.info(`      • ${action.title}`);
           });
         }
         
         // Show automation opportunities
         if (statusData.automationAvailable.length > 0) {
-          console.log(`   🤖 Automation: ${statusData.automationAvailable.join(', ')}`);
+          console.info(`   🤖 Automation: ${statusData.automationAvailable.join(', ')}`);
         }
         
-        console.log('');
+        console.info('');
         
         // Simulate time passing
         await new Promise(resolve => setTimeout(resolve, 500));
       }
       
-      console.log('✅ Real-time status demonstration completed');
-      console.log('');
+      console.info('✅ Real-time status demonstration completed');
+      console.info('');
       
     } catch (error) {
       console.error('❌ Real-time status demo failed:', error);
@@ -479,32 +479,32 @@ async function runDisputeMatrixIntegrationDemo(): Promise<void> {
   try {
     await demo.runCompleteDemo();
     
-    console.log('🎉 Dispute Matrix Integration Demo Summary');
-    console.log('='.repeat(65));
-    console.log('');
-    console.log('✅ Integration Features Demonstrated:');
-    console.log('   📊 Enhanced dispute matrix with AI insights');
-    console.log('   📋 Comprehensive resolution planning');
-    console.log('   ⚡ Automated action execution');
-    console.log('   🤖 AI-powered workflow analysis');
-    console.log('   📈 Timeline predictions with confidence scores');
-    console.log('   📡 Real-time status updates');
-    console.log('');
-    console.log('🔗 Integration Benefits:');
-    console.log('   • Seamless connection between dispute matrix and merchant dashboard');
-    console.log('   • AI-enhanced decision making at each step');
-    console.log('   • Automated workflows reduce manual effort by 70%');
-    console.log('   • Predictive analytics improve accuracy by 35%');
-    console.log('   • Real-time insights enable proactive management');
-    console.log('');
-    console.log('🛠️ Technical Integration:');
-    console.log('   • DisputeMatrix class provides status-based workflows');
-    console.log('   • AI Evidence Analyzer adds intelligence to each step');
-    console.log('   • Merchant Dashboard serves as the central interface');
-    console.log('   • Notification Service enables real-time updates');
-    console.log('   • Deep linking provides seamless mobile experience');
-    console.log('');
-    console.log('🚀 Production Ready Integration! 🎉');
+    console.info('🎉 Dispute Matrix Integration Demo Summary');
+    console.info('='.repeat(65));
+    console.info('');
+    console.info('✅ Integration Features Demonstrated:');
+    console.info('   📊 Enhanced dispute matrix with AI insights');
+    console.info('   📋 Comprehensive resolution planning');
+    console.info('   ⚡ Automated action execution');
+    console.info('   🤖 AI-powered workflow analysis');
+    console.info('   📈 Timeline predictions with confidence scores');
+    console.info('   📡 Real-time status updates');
+    console.info('');
+    console.info('🔗 Integration Benefits:');
+    console.info('   • Seamless connection between dispute matrix and merchant dashboard');
+    console.info('   • AI-enhanced decision making at each step');
+    console.info('   • Automated workflows reduce manual effort by 70%');
+    console.info('   • Predictive analytics improve accuracy by 35%');
+    console.info('   • Real-time insights enable proactive management');
+    console.info('');
+    console.info('🛠️ Technical Integration:');
+    console.info('   • DisputeMatrix class provides status-based workflows');
+    console.info('   • AI Evidence Analyzer adds intelligence to each step');
+    console.info('   • Merchant Dashboard serves as the central interface');
+    console.info('   • Notification Service enables real-time updates');
+    console.info('   • Deep linking provides seamless mobile experience');
+    console.info('');
+    console.info('🚀 Production Ready Integration! 🎉');
     
   } catch (error) {
     console.error('❌ Integration demo failed to complete:', error);

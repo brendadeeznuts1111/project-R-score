@@ -100,78 +100,78 @@ class TopicManager {
 	listTopics(): void {
 		if (!this.config) return;
 
-		console.log(`\n${COLORS.bold}📋 Telegram Topics${COLORS.reset}`);
-		console.log(`${COLORS.gray}Bot: ${this.config.bot.username}${COLORS.reset}\n`);
+		console.info(`\n${COLORS.bold}📋 Telegram Topics${COLORS.reset}`);
+		console.info(`${COLORS.gray}Bot: ${this.config.bot.username}${COLORS.reset}\n`);
 
 		for (const [id, topic] of Object.entries(this.config.topics)) {
 			const topicId = parseInt(id);
 			const isDefault = topicId === this.config.bot.default_topic;
 			const defaultMarker = isDefault ? `${COLORS.yellow} [default]${COLORS.reset}` : "";
 
-			console.log(
+			console.info(
 				`  ${topic.icon} ${COLORS.bold}${topic.name}${COLORS.reset} (ID: ${id})${defaultMarker}`,
 			);
-			console.log(`     ${COLORS.gray}${topic.description}${COLORS.reset}`);
-			console.log(
+			console.info(`     ${COLORS.gray}${topic.description}${COLORS.reset}`);
+			console.info(
 				`     Priority: ${topic.priority} | Commands: ${topic.allow_commands ? "✓" : "✗"} | Files: ${topic.allow_files ? "✓" : "✗"}`,
 			);
-			console.log();
+			console.info();
 		}
 	}
 
 	listSuperTopics(): void {
 		if (!this.config) return;
 
-		console.log(`\n${COLORS.bold}📁 Super Topics (Topic Groups)${COLORS.reset}\n`);
+		console.info(`\n${COLORS.bold}📁 Super Topics (Topic Groups)${COLORS.reset}\n`);
 
 		for (const [key, superTopic] of Object.entries(this.config.super_topics)) {
-			console.log(
+			console.info(
 				`  ${superTopic.icon} ${COLORS.bold}${superTopic.name}${COLORS.reset} (${key})`,
 			);
-			console.log(`     ${COLORS.gray}${superTopic.description}${COLORS.reset}`);
-			console.log(`     Topics: ${superTopic.topics.join(", ")}`);
-			console.log();
+			console.info(`     ${COLORS.gray}${superTopic.description}${COLORS.reset}`);
+			console.info(`     Topics: ${superTopic.topics.join(", ")}`);
+			console.info();
 		}
 	}
 
 	listChannels(): void {
 		if (!this.config) return;
 
-		console.log(`\n${COLORS.bold}📡 Channels${COLORS.reset}\n`);
+		console.info(`\n${COLORS.bold}📡 Channels${COLORS.reset}\n`);
 
 		for (const [key, channel] of Object.entries(this.config.channels)) {
-			console.log(`  ${COLORS.bold}${key}${COLORS.reset} (${channel.type})`);
-			console.log(`     Topic ID: ${channel.topic_id}`);
+			console.info(`  ${COLORS.bold}${key}${COLORS.reset} (${channel.type})`);
+			console.info(`     Topic ID: ${channel.topic_id}`);
 			if (channel.update_frequency) {
-				console.log(`     Update: ${channel.update_frequency}`);
+				console.info(`     Update: ${channel.update_frequency}`);
 			}
 			if (channel.retention) {
-				console.log(`     Retention: ${channel.retention}`);
+				console.info(`     Retention: ${channel.retention}`);
 			}
-			console.log();
+			console.info();
 		}
 	}
 
 	showRoutingRules(): void {
 		if (!this.config) return;
 
-		console.log(`\n${COLORS.bold}🔄 Routing Rules${COLORS.reset}\n`);
+		console.info(`\n${COLORS.bold}🔄 Routing Rules${COLORS.reset}\n`);
 
-		console.log("Content Patterns:");
+		console.info("Content Patterns:");
 		for (const rule of this.config.routing.content_rules) {
-			console.log(
+			console.info(
 				`  ${COLORS.cyan}${rule.pattern}${COLORS.reset} → Topic ${rule.topic} (${rule.priority})`,
 			);
 		}
 
-		console.log("\nCommand Routing:");
+		console.info("\nCommand Routing:");
 		for (const [cmd, topic] of Object.entries(this.config.routing.command_routing)) {
-			console.log(`  /${cmd} → Topic ${topic}`);
+			console.info(`  /${cmd} → Topic ${topic}`);
 		}
 
-		console.log("\nFile Type Routing:");
+		console.info("\nFile Type Routing:");
 		for (const [type, topic] of Object.entries(this.config.routing.file_routing)) {
-			console.log(`  .${type} → Topic ${topic}`);
+			console.info(`  .${type} → Topic ${topic}`);
 		}
 	}
 
@@ -205,13 +205,13 @@ class TopicManager {
 	testRouting(message: string): void {
 		const result = this.routeMessage(message);
 		if (result) {
-			console.log(`\n${COLORS.bold}Message:${COLORS.reset} ${message}`);
-			console.log(`${COLORS.bold}Route to:${COLORS.reset} Topic ${result.topic}`);
-			console.log(`${COLORS.bold}Reason:${COLORS.reset} ${result.reason}`);
+			console.info(`\n${COLORS.bold}Message:${COLORS.reset} ${message}`);
+			console.info(`${COLORS.bold}Route to:${COLORS.reset} Topic ${result.topic}`);
+			console.info(`${COLORS.bold}Reason:${COLORS.reset} ${result.reason}`);
 
 			const topic = this.config?.topics[result.topic];
 			if (topic) {
-				console.log(
+				console.info(
 					`${COLORS.bold}Topic Name:${COLORS.reset} ${topic.icon} ${topic.name}`,
 				);
 			}
@@ -263,15 +263,15 @@ async function main() {
 			break;
 
 		default:
-			console.log(`${COLORS.bold}📋 Telegram Topic Manager${COLORS.reset}\n`);
-			console.log("Usage:");
-			console.log("  topic-manager.ts list        List all topics");
-			console.log("  topic-manager.ts super       List super topics");
-			console.log("  topic-manager.ts channels    List channels");
-			console.log("  topic-manager.ts routing     Show routing rules");
-			console.log("  topic-manager.ts route <msg> Test message routing");
-			console.log("  topic-manager.ts all         Show everything");
-			console.log("\nTopics: 1=General, 2=Alerts, 5=Logs, 7=Development");
+			console.info(`${COLORS.bold}📋 Telegram Topic Manager${COLORS.reset}\n`);
+			console.info("Usage:");
+			console.info("  topic-manager.ts list        List all topics");
+			console.info("  topic-manager.ts super       List super topics");
+			console.info("  topic-manager.ts channels    List channels");
+			console.info("  topic-manager.ts routing     Show routing rules");
+			console.info("  topic-manager.ts route <msg> Test message routing");
+			console.info("  topic-manager.ts all         Show everything");
+			console.info("\nTopics: 1=General, 2=Alerts, 5=Logs, 7=Development");
 	}
 }
 

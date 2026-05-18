@@ -184,8 +184,8 @@ class CustomerConfigDemo {
   }
 
   async runDemo() {
-    console.log('🔥 Fire22 Customer Configuration Demo');
-    console.log('!==!==!==!==!==!==!==\n');
+    console.info('🔥 Fire22 Customer Configuration Demo');
+    console.info('!==!==!==!==!==!==!==\n');
 
     try {
       // Test customer configuration creation
@@ -203,7 +203,7 @@ class CustomerConfigDemo {
       // Test error handling
       await this.testErrorHandling();
 
-      console.log('\n✅ All customer configuration tests completed successfully!');
+      console.info('\n✅ All customer configuration tests completed successfully!');
     } catch (error) {
       console.error('❌ Demo failed:', error);
       process.exit(1);
@@ -211,7 +211,7 @@ class CustomerConfigDemo {
   }
 
   async testCustomerConfigCreation() {
-    console.log('📝 Testing Customer Configuration Creation...');
+    console.info('📝 Testing Customer Configuration Creation...');
 
     for (const customer of this.testCustomers) {
       try {
@@ -224,22 +224,22 @@ class CustomerConfigDemo {
         const result = await response.json();
 
         if (result.success) {
-          console.log(`✅ Created config for customer ${customer.customer_id}`);
+          console.info(`✅ Created config for customer ${customer.customer_id}`);
         } else {
-          console.log(
+          console.info(
             `❌ Failed to create config for customer ${customer.customer_id}:`,
             result.error
           );
         }
       } catch (error) {
-        console.log(`❌ Error creating config for customer ${customer.customer_id}:`, error);
+        console.info(`❌ Error creating config for customer ${customer.customer_id}:`, error);
       }
     }
-    console.log('');
+    console.info('');
   }
 
   async testCustomerConfigListing() {
-    console.log('📋 Testing Customer Configuration Listing...');
+    console.info('📋 Testing Customer Configuration Listing...');
 
     try {
       // Test listing all customers
@@ -247,10 +247,10 @@ class CustomerConfigDemo {
       const result = await response.json();
 
       if (result.success) {
-        console.log(`✅ Listed ${result.data.totalCustomers} customer configurations`);
-        console.log(`   Filters: ${JSON.stringify(result.data.filters)}`);
+        console.info(`✅ Listed ${result.data.totalCustomers} customer configurations`);
+        console.info(`   Filters: ${JSON.stringify(result.data.filters)}`);
       } else {
-        console.log('❌ Failed to list customer configurations:', result.error);
+        console.info('❌ Failed to list customer configurations:', result.error);
       }
 
       // Test listing by agent
@@ -260,18 +260,18 @@ class CustomerConfigDemo {
       const agentResult = await agentResponse.json();
 
       if (agentResult.success) {
-        console.log(`✅ Listed ${agentResult.data.totalCustomers} customers for agent BLAKEPPH`);
+        console.info(`✅ Listed ${agentResult.data.totalCustomers} customers for agent BLAKEPPH`);
       } else {
-        console.log('❌ Failed to list customers by agent:', agentResult.error);
+        console.info('❌ Failed to list customers by agent:', agentResult.error);
       }
     } catch (error) {
-      console.log('❌ Error listing customer configurations:', error);
+      console.info('❌ Error listing customer configurations:', error);
     }
-    console.log('');
+    console.info('');
   }
 
   async testCustomerConfigUpdates() {
-    console.log('🔄 Testing Customer Configuration Updates...');
+    console.info('🔄 Testing Customer Configuration Updates...');
 
     try {
       const updates = {
@@ -303,20 +303,20 @@ class CustomerConfigDemo {
       const result = await response.json();
 
       if (result.success) {
-        console.log('✅ Updated customer configuration successfully');
-        console.log(`   Customer: ${result.data.customer_id}`);
-        console.log(`   Updated: ${result.data.updated_at}`);
+        console.info('✅ Updated customer configuration successfully');
+        console.info(`   Customer: ${result.data.customer_id}`);
+        console.info(`   Updated: ${result.data.updated_at}`);
       } else {
-        console.log('❌ Failed to update customer configuration:', result.error);
+        console.info('❌ Failed to update customer configuration:', result.error);
       }
     } catch (error) {
-      console.log('❌ Error updating customer configuration:', error);
+      console.info('❌ Error updating customer configuration:', error);
     }
-    console.log('');
+    console.info('');
   }
 
   async testCustomerConfigRetrieval() {
-    console.log('🔍 Testing Customer Configuration Retrieval...');
+    console.info('🔍 Testing Customer Configuration Retrieval...');
 
     try {
       const response = await fetch(`${this.baseUrl}/api/customer-config?customerId=CUST001`);
@@ -324,25 +324,25 @@ class CustomerConfigDemo {
 
       if (result.success) {
         const config = result.data;
-        console.log('✅ Retrieved customer configuration:');
-        console.log(`   Customer ID: ${config.customer_id}`);
-        console.log(`   Agent ID: ${config.agent_id}`);
-        console.log(`   VIP Level: ${config.vip_status.level}`);
-        console.log(`   Risk Level: ${config.risk_profile.risk_level}`);
-        console.log(`   Max Single Bet: $${config.betting_limits.max_single_bet.toLocaleString()}`);
-        console.log(`   Can Place Bets: ${config.permissions.can_place_bets ? 'Yes' : 'No'}`);
-        console.log(`   Status: ${config.status}`);
+        console.info('✅ Retrieved customer configuration:');
+        console.info(`   Customer ID: ${config.customer_id}`);
+        console.info(`   Agent ID: ${config.agent_id}`);
+        console.info(`   VIP Level: ${config.vip_status.level}`);
+        console.info(`   Risk Level: ${config.risk_profile.risk_level}`);
+        console.info(`   Max Single Bet: $${config.betting_limits.max_single_bet.toLocaleString()}`);
+        console.info(`   Can Place Bets: ${config.permissions.can_place_bets ? 'Yes' : 'No'}`);
+        console.info(`   Status: ${config.status}`);
       } else {
-        console.log('❌ Failed to retrieve customer configuration:', result.error);
+        console.info('❌ Failed to retrieve customer configuration:', result.error);
       }
     } catch (error) {
-      console.log('❌ Error retrieving customer configuration:', error);
+      console.info('❌ Error retrieving customer configuration:', error);
     }
-    console.log('');
+    console.info('');
   }
 
   async testErrorHandling() {
-    console.log('⚠️ Testing Error Handling...');
+    console.info('⚠️ Testing Error Handling...');
 
     try {
       // Test missing customer ID
@@ -350,9 +350,9 @@ class CustomerConfigDemo {
       const result = await response.json();
 
       if (!result.success && result.error === 'Customer ID is required') {
-        console.log('✅ Properly handled missing customer ID error');
+        console.info('✅ Properly handled missing customer ID error');
       } else {
-        console.log('❌ Failed to handle missing customer ID error');
+        console.info('❌ Failed to handle missing customer ID error');
       }
 
       // Test non-existent customer
@@ -362,18 +362,18 @@ class CustomerConfigDemo {
       const notFoundResult = await notFoundResponse.json();
 
       if (!notFoundResult.success && notFoundResult.error === 'Customer configuration not found') {
-        console.log('✅ Properly handled non-existent customer error');
+        console.info('✅ Properly handled non-existent customer error');
       } else {
-        console.log('❌ Failed to handle non-existent customer error');
+        console.info('❌ Failed to handle non-existent customer error');
       }
     } catch (error) {
-      console.log('❌ Error testing error handling:', error);
+      console.info('❌ Error testing error handling:', error);
     }
-    console.log('');
+    console.info('');
   }
 
   async createCustomerConfig() {
-    console.log('📝 Creating Customer Configuration...');
+    console.info('📝 Creating Customer Configuration...');
 
     const newCustomer: CustomerConfig = {
       customer_id: 'CUST003',
@@ -438,48 +438,48 @@ class CustomerConfigDemo {
       const result = await response.json();
 
       if (result.success) {
-        console.log('✅ Created new customer configuration for CUST003');
-        console.log(`   Agent: ${result.data.agent_id}`);
-        console.log(`   Created: ${result.data.created_at}`);
+        console.info('✅ Created new customer configuration for CUST003');
+        console.info(`   Agent: ${result.data.agent_id}`);
+        console.info(`   Created: ${result.data.created_at}`);
       } else {
-        console.log('❌ Failed to create customer configuration:', result.error);
+        console.info('❌ Failed to create customer configuration:', result.error);
       }
     } catch (error) {
-      console.log('❌ Error creating customer configuration:', error);
+      console.info('❌ Error creating customer configuration:', error);
     }
   }
 
   async listCustomerConfigs() {
-    console.log('📋 Listing Customer Configurations...');
+    console.info('📋 Listing Customer Configurations...');
 
     try {
       const response = await fetch(`${this.baseUrl}/api/customer-config/list`);
       const result = await response.json();
 
       if (result.success) {
-        console.log(`📊 Found ${result.data.totalCustomers} customer configurations:`);
+        console.info(`📊 Found ${result.data.totalCustomers} customer configurations:`);
 
         result.data.customerConfigs.forEach((config: CustomerConfig, index: number) => {
-          console.log(`\n   ${index + 1}. Customer: ${config.customer_id}`);
-          console.log(`      Agent: ${config.agent_id}`);
-          console.log(`      VIP Level: ${config.vip_status.level}`);
-          console.log(`      Risk Level: ${config.risk_profile.risk_level}`);
-          console.log(`      Status: ${config.status}`);
-          console.log(`      Max Bet: $${config.betting_limits.max_single_bet.toLocaleString()}`);
-          console.log(
+          console.info(`\n   ${index + 1}. Customer: ${config.customer_id}`);
+          console.info(`      Agent: ${config.agent_id}`);
+          console.info(`      VIP Level: ${config.vip_status.level}`);
+          console.info(`      Risk Level: ${config.risk_profile.risk_level}`);
+          console.info(`      Status: ${config.status}`);
+          console.info(`      Max Bet: $${config.betting_limits.max_single_bet.toLocaleString()}`);
+          console.info(
             `      Permissions: ${Object.values(config.permissions).filter(Boolean).length}/8 enabled`
           );
         });
       } else {
-        console.log('❌ Failed to list customer configurations:', result.error);
+        console.info('❌ Failed to list customer configurations:', result.error);
       }
     } catch (error) {
-      console.log('❌ Error listing customer configurations:', error);
+      console.info('❌ Error listing customer configurations:', error);
     }
   }
 
   async updateCustomerConfig() {
-    console.log('🔄 Updating Customer Configuration...');
+    console.info('🔄 Updating Customer Configuration...');
 
     const updates = {
       vip_status: {
@@ -518,23 +518,23 @@ class CustomerConfigDemo {
       const result = await response.json();
 
       if (result.success) {
-        console.log('✅ Updated customer configuration successfully');
-        console.log(`   Customer: ${result.data.customer_id}`);
-        console.log(`   Updated: ${result.data.updated_at}`);
-        console.log('   Changes:');
-        console.log('     - Upgraded to Diamond VIP');
-        console.log('     - Enhanced betting limits');
-        console.log('     - Added personal manager benefit');
+        console.info('✅ Updated customer configuration successfully');
+        console.info(`   Customer: ${result.data.customer_id}`);
+        console.info(`   Updated: ${result.data.updated_at}`);
+        console.info('   Changes:');
+        console.info('     - Upgraded to Diamond VIP');
+        console.info('     - Enhanced betting limits');
+        console.info('     - Added personal manager benefit');
       } else {
-        console.log('❌ Failed to update customer configuration:', result.error);
+        console.info('❌ Failed to update customer configuration:', result.error);
       }
     } catch (error) {
-      console.log('❌ Error updating customer configuration:', error);
+      console.info('❌ Error updating customer configuration:', error);
     }
   }
 
   async testCustomerConfig() {
-    console.log('🧪 Testing Customer Configuration Endpoints...');
+    console.info('🧪 Testing Customer Configuration Endpoints...');
 
     try {
       // Test all endpoints
@@ -544,9 +544,9 @@ class CustomerConfigDemo {
       await this.testCustomerConfigRetrieval();
       await this.testErrorHandling();
 
-      console.log('✅ All customer configuration tests passed!');
+      console.info('✅ All customer configuration tests passed!');
     } catch (error) {
-      console.log('❌ Customer configuration tests failed:', error);
+      console.info('❌ Customer configuration tests failed:', error);
     }
   }
 }

@@ -45,39 +45,39 @@ export class CloudflareIntegration {
   }
 
   async importMetrics(): Promise<CloudflareMetrics> {
-    console.log('🌐 CLOUDFLARE METRICS IMPORT');
-    console.log('===============================');
-    console.log(`📍 Zone ID: ${this.config.zoneId}`);
-    console.log(`🏢 Account ID: ${this.config.accountId}`);
-    console.log(`🌐 Domain: ${this.config.domain}`);
-    console.log('');
+    console.info('🌐 CLOUDFLARE METRICS IMPORT');
+    console.info('===============================');
+    console.info(`📍 Zone ID: ${this.config.zoneId}`);
+    console.info(`🏢 Account ID: ${this.config.accountId}`);
+    console.info(`🌐 Domain: ${this.config.domain}`);
+    console.info('');
 
     try {
       // Simulate Cloudflare API call
-      console.log('🔄 Fetching analytics from Cloudflare API...');
+      console.info('🔄 Fetching analytics from Cloudflare API...');
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Display metrics
-      console.log('📊 CLOUDFLARE ANALYTICS');
-      console.log('=======================');
-      console.log(`👥 Unique Visitors: ${this.metrics.uniqueVisitors} (24h) 📈 +12%`);
-      console.log(`🔄 Total Requests: ${this.metrics.totalRequests} (24h) 📈 +8%`);
-      console.log(`💾 Cache Hit Rate: ${this.metrics.cacheHitRate}% ⚠️ Optimize`);
-      console.log(`📊 Data Served: ${this.metrics.dataServed} ✅ Efficient`);
-      console.log(`📅 Domain Expires: ${this.metrics.expires}`);
-      console.log('');
+      console.info('📊 CLOUDFLARE ANALYTICS');
+      console.info('=======================');
+      console.info(`👥 Unique Visitors: ${this.metrics.uniqueVisitors} (24h) 📈 +12%`);
+      console.info(`🔄 Total Requests: ${this.metrics.totalRequests} (24h) 📈 +8%`);
+      console.info(`💾 Cache Hit Rate: ${this.metrics.cacheHitRate}% ⚠️ Optimize`);
+      console.info(`📊 Data Served: ${this.metrics.dataServed} ✅ Efficient`);
+      console.info(`📅 Domain Expires: ${this.metrics.expires}`);
+      console.info('');
 
       // Calculate revenue correlation
       const developerRevenue = this.metrics.uniqueVisitors * 49; // $49 Pro tier
       const sdkConversion = Math.floor(this.metrics.totalRequests * 0.1); // 10% conversion
       const projectedMRR = developerRevenue + (sdkConversion * 49);
 
-      console.log('💰 REVENUE CORRELATION');
-      console.log('=====================');
-      console.log(`👥 ${this.metrics.uniqueVisitors} developers × $49 Pro tier = $${developerRevenue} MRR potential`);
-      console.log(`🔄 ${this.metrics.totalRequests} requests × 10% conversion = ${sdkConversion} Pro users`);
-      console.log(`📈 Projected MRR: $${projectedMRR}`);
-      console.log(`📊 Annual Projection: $${(projectedMRR * 12).toLocaleString()} ARR`);
+      console.info('💰 REVENUE CORRELATION');
+      console.info('=====================');
+      console.info(`👥 ${this.metrics.uniqueVisitors} developers × $49 Pro tier = $${developerRevenue} MRR potential`);
+      console.info(`🔄 ${this.metrics.totalRequests} requests × 10% conversion = ${sdkConversion} Pro users`);
+      console.info(`📈 Projected MRR: $${projectedMRR}`);
+      console.info(`📊 Annual Projection: $${(projectedMRR * 12).toLocaleString()} ARR`);
 
       return this.metrics;
     } catch (error) {
@@ -87,16 +87,16 @@ export class CloudflareIntegration {
   }
 
   async enableDevMode(): Promise<void> {
-    console.log('🛠️ ENABLING DEVELOPER MODE');
-    console.log('===========================');
+    console.info('🛠️ ENABLING DEVELOPER MODE');
+    console.info('===========================');
     
     try {
-      console.log('🔄 Bypassing cache for development...');
+      console.info('🔄 Bypassing cache for development...');
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      console.log('⚡ Developer mode enabled (TTL: 0)');
-      console.log('🌐 Cache bypassed for all requests');
-      console.log('🔧 Real-time testing enabled');
+      console.info('⚡ Developer mode enabled (TTL: 0)');
+      console.info('🌐 Cache bypassed for all requests');
+      console.info('🔧 Real-time testing enabled');
     } catch (error) {
       console.error('❌ Failed to enable dev mode:', error);
       throw error;
@@ -104,16 +104,16 @@ export class CloudflareIntegration {
   }
 
   async enableSecurity(): Promise<void> {
-    console.log('🛡️ ENABLING SECURITY FEATURES');
-    console.log('=============================');
+    console.info('🛡️ ENABLING SECURITY FEATURES');
+    console.info('=============================');
     
     try {
-      console.log('🤖 Configuring AI crawler blockers...');
+      console.info('🤖 Configuring AI crawler blockers...');
       await new Promise(resolve => setTimeout(resolve, 800));
       
-      console.log('🔒 AI training bots blocked');
-      console.log('🛡️ WAF rules updated');
-      console.log('🔐 Enhanced security enabled');
+      console.info('🔒 AI training bots blocked');
+      console.info('🛡️ WAF rules updated');
+      console.info('🔐 Enhanced security enabled');
     } catch (error) {
       console.error('❌ Failed to enable security:', error);
       throw error;
@@ -121,23 +121,23 @@ export class CloudflareIntegration {
   }
 
   async optimizeAssets(): Promise<void> {
-    console.log('⚡ OPTIMIZING ASSETS & CDN');
-    console.log('===========================');
+    console.info('⚡ OPTIMIZING ASSETS & CDN');
+    console.info('===========================');
     
     try {
-      console.log('🖼️ Enabling image optimization...');
+      console.info('🖼️ Enabling image optimization...');
       await new Promise(resolve => setTimeout(resolve, 600));
       
-      console.log('💾 Configuring cache rules for SDK docs...');
+      console.info('💾 Configuring cache rules for SDK docs...');
       await new Promise(resolve => setTimeout(resolve, 400));
       
-      console.log('🚀 Enabling auto-minification...');
+      console.info('🚀 Enabling auto-minification...');
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      console.log('✅ Image optimization: ENABLED');
-      console.log('✅ SDK docs cache: 90 days');
-      console.log('✅ Auto-minification: ACTIVE');
-      console.log('📊 Expected cache hit improvement: 2.95% → 85%');
+      console.info('✅ Image optimization: ENABLED');
+      console.info('✅ SDK docs cache: 90 days');
+      console.info('✅ Auto-minification: ACTIVE');
+      console.info('📊 Expected cache hit improvement: 2.95% → 85%');
     } catch (error) {
       console.error('❌ Failed to optimize assets:', error);
       throw error;
@@ -145,8 +145,8 @@ export class CloudflareIntegration {
   }
 
   async addMonitoringEndpoints(): Promise<void> {
-    console.log('📊 ADDING MONITORING ENDPOINTS');
-    console.log('===============================');
+    console.info('📊 ADDING MONITORING ENDPOINTS');
+    console.info('===============================');
     
     const endpoints = [
       'api.duoplus.com',
@@ -156,13 +156,13 @@ export class CloudflareIntegration {
     
     try {
       for (const endpoint of endpoints) {
-        console.log(`📈 Adding ${endpoint} to analytics...`);
+        console.info(`📈 Adding ${endpoint} to analytics...`);
         await new Promise(resolve => setTimeout(resolve, 300));
-        console.log(`✅ ${endpoint} - tracking enabled`);
+        console.info(`✅ ${endpoint} - tracking enabled`);
       }
       
-      console.log('📊 All endpoints added to Cloudflare Analytics');
-      console.log('🔄 Real-time monitoring active');
+      console.info('📊 All endpoints added to Cloudflare Analytics');
+      console.info('🔄 Real-time monitoring active');
     } catch (error) {
       console.error('❌ Failed to add monitoring endpoints:', error);
       throw error;
@@ -170,8 +170,8 @@ export class CloudflareIntegration {
   }
 
   async generateDashboardData(): Promise<any> {
-    console.log('📊 GENERATING DASHBOARD DATA');
-    console.log('===========================');
+    console.info('📊 GENERATING DASHBOARD DATA');
+    console.info('===========================');
     
     const dashboardData = {
       cloudflare: {
@@ -198,7 +198,7 @@ export class CloudflareIntegration {
       }
     };
 
-    console.log('✅ Dashboard data generated');
+    console.info('✅ Dashboard data generated');
     return dashboardData;
   }
 
@@ -212,21 +212,21 @@ export class CloudflareIntegration {
   }
 
   async enableEnterprise(): Promise<void> {
-    console.log('🏢 ENABLING ENTERPRISE FEATURES');
-    console.log('===============================');
+    console.info('🏢 ENABLING ENTERPRISE FEATURES');
+    console.info('===============================');
     
     try {
-      console.log('🖼️ Enabling advanced image resizing...');
+      console.info('🖼️ Enabling advanced image resizing...');
       await this.optimizeAssets();
       
-      console.log('🤖 Enabling AI protection...');
+      console.info('🤖 Enabling AI protection...');
       await this.enableSecurity();
       
-      console.log('📊 Enabling advanced analytics...');
+      console.info('📊 Enabling advanced analytics...');
       await this.addMonitoringEndpoints();
       
-      console.log('✅ Enterprise features enabled');
-      console.log('🚀 Production optimization complete');
+      console.info('✅ Enterprise features enabled');
+      console.info('🚀 Production optimization complete');
     } catch (error) {
       console.error('❌ Failed to enable enterprise features:', error);
       throw error;
@@ -282,21 +282,21 @@ async function main() {
         break;
         
       default:
-        console.log('🌐 Cloudflare Integration CLI');
-        console.log('=============================');
-        console.log('');
-        console.log('Available commands:');
-        console.log('  cloudflare:import --zone=<zoneId>     Import Cloudflare metrics');
-        console.log('  cloudflare:dev-mode --enable           Enable developer mode');
-        console.log('  cloudflare:security --ai-blockers=true Enable AI blockers');
-        console.log('  cloudflare:optimize                    Optimize assets & CDN');
-        console.log('  monitoring:cloudflare --endpoints=<domains> Add monitoring endpoints');
-        console.log('  cloudflare:enterprise --image-resizing --ai-protection Enable enterprise features');
-        console.log('');
-        console.log('Examples:');
-        console.log('  bun run scripts/cloudflare-integration.ts cloudflare:import --zone="a3b7ba4bb62cb1b177b04b8675250674"');
-        console.log('  bun run scripts/cloudflare-integration.ts cloudflare:dev-mode --enable');
-        console.log('  bun run scripts/cloudflare-integration.ts cloudflare:security --ai-blockers=true');
+        console.info('🌐 Cloudflare Integration CLI');
+        console.info('=============================');
+        console.info('');
+        console.info('Available commands:');
+        console.info('  cloudflare:import --zone=<zoneId>     Import Cloudflare metrics');
+        console.info('  cloudflare:dev-mode --enable           Enable developer mode');
+        console.info('  cloudflare:security --ai-blockers=true Enable AI blockers');
+        console.info('  cloudflare:optimize                    Optimize assets & CDN');
+        console.info('  monitoring:cloudflare --endpoints=<domains> Add monitoring endpoints');
+        console.info('  cloudflare:enterprise --image-resizing --ai-protection Enable enterprise features');
+        console.info('');
+        console.info('Examples:');
+        console.info('  bun run scripts/cloudflare-integration.ts cloudflare:import --zone="a3b7ba4bb62cb1b177b04b8675250674"');
+        console.info('  bun run scripts/cloudflare-integration.ts cloudflare:dev-mode --enable');
+        console.info('  bun run scripts/cloudflare-integration.ts cloudflare:security --ai-blockers=true');
     }
   } catch (error) {
     console.error('❌ Cloudflare integration failed:', error);

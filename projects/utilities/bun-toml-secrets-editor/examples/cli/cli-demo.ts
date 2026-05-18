@@ -4,8 +4,8 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { MatrixCLICommands } from "../../src/cli/commands";
 
 async function demonstrateCLICommands() {
-	console.log("🚀 Enhanced Matrix CLI Commands Demo");
-	console.log("=".repeat(50));
+	console.info("🚀 Enhanced Matrix CLI Commands Demo");
+	console.info("=".repeat(50));
 
 	const commands = new MatrixCLICommands();
 
@@ -69,7 +69,7 @@ async function demonstrateCLICommands() {
 		"./profiles/production-api.json",
 		JSON.stringify(productionProfile, null, 2),
 	);
-	console.log("📁 Created demo profile: ./profiles/production-api.json");
+	console.info("📁 Created demo profile: ./profiles/production-api.json");
 
 	// Create a demo profile with issues for validation testing
 	const problematicProfile = {
@@ -114,12 +114,12 @@ async function demonstrateCLICommands() {
 		"./profiles/problematic-api.json",
 		JSON.stringify(problematicProfile, null, 2),
 	);
-	console.log(
+	console.info(
 		"📁 Created problematic profile for validation testing: ./profiles/problematic-api.json",
 	);
 
-	console.log("\n🎯 Demo 1: Apply Production Profile with Rule Validation");
-	console.log("-".repeat(60));
+	console.info("\n🎯 Demo 1: Apply Production Profile with Rule Validation");
+	console.info("-".repeat(60));
 
 	try {
 		await commands.applyProfileWithValidation("production-api", {
@@ -127,13 +127,13 @@ async function demonstrateCLICommands() {
 			environment: "production",
 		});
 	} catch (_error) {
-		console.log("Expected error for demo purposes");
+		console.info("Expected error for demo purposes");
 	}
 
-	console.log(
+	console.info(
 		"\n🎯 Demo 2: Apply Problematic Profile (Should Fail Validation)",
 	);
-	console.log("-".repeat(60));
+	console.info("-".repeat(60));
 
 	try {
 		await commands.applyProfileWithValidation("problematic-api", {
@@ -141,11 +141,11 @@ async function demonstrateCLICommands() {
 			environment: "production",
 		});
 	} catch (_error) {
-		console.log("✅ Validation correctly caught the issues");
+		console.info("✅ Validation correctly caught the issues");
 	}
 
-	console.log("\n🎯 Demo 3: Force Apply Problematic Profile (With Warnings)");
-	console.log("-".repeat(60));
+	console.info("\n🎯 Demo 3: Force Apply Problematic Profile (With Warnings)");
+	console.info("-".repeat(60));
 
 	try {
 		await commands.applyProfileWithValidation("problematic-api", {
@@ -153,16 +153,16 @@ async function demonstrateCLICommands() {
 			environment: "production",
 			force: true,
 		});
-		console.log("✅ Profile applied despite validation issues (force mode)");
+		console.info("✅ Profile applied despite validation issues (force mode)");
 	} catch (error) {
-		console.log(
+		console.info(
 			"❌ Unexpected error:",
 			error instanceof Error ? error.message : String(error),
 		);
 	}
 
-	console.log("\n🎯 Demo 4: Generate Configuration from Production Template");
-	console.log("-".repeat(60));
+	console.info("\n🎯 Demo 4: Generate Configuration from Production Template");
+	console.info("-".repeat(60));
 
 	try {
 		await commands.generateConfigFromTemplate({
@@ -181,14 +181,14 @@ async function demonstrateCLICommands() {
 			validate: true,
 		});
 	} catch (error) {
-		console.log(
+		console.info(
 			"❌ Configuration generation failed:",
 			error instanceof Error ? error.message : String(error),
 		);
 	}
 
-	console.log("\n🎯 Demo 5: Generate Configuration with Invalid Variables");
-	console.log("-".repeat(60));
+	console.info("\n🎯 Demo 5: Generate Configuration with Invalid Variables");
+	console.info("-".repeat(60));
 
 	try {
 		await commands.generateConfigFromTemplate({
@@ -202,11 +202,11 @@ async function demonstrateCLICommands() {
 			validate: true,
 		});
 	} catch (_error) {
-		console.log("✅ Template validation correctly caught the issues");
+		console.info("✅ Template validation correctly caught the issues");
 	}
 
-	console.log("\n🎯 Demo 6: Generate Development Configuration");
-	console.log("-".repeat(60));
+	console.info("\n🎯 Demo 6: Generate Development Configuration");
+	console.info("-".repeat(60));
 
 	try {
 		await commands.generateConfigFromTemplate({
@@ -221,55 +221,55 @@ async function demonstrateCLICommands() {
 			validate: true,
 		});
 	} catch (error) {
-		console.log(
+		console.info(
 			"❌ Development configuration generation failed:",
 			error instanceof Error ? error.message : String(error),
 		);
 	}
 
-	console.log("\n🎯 Demo 7: Show Available Templates");
-	console.log("-".repeat(60));
+	console.info("\n🎯 Demo 7: Show Available Templates");
+	console.info("-".repeat(60));
 
 	try {
 		// This would show available templates in a real implementation
-		console.log("📋 Available Templates:");
-		console.log(
+		console.info("📋 Available Templates:");
+		console.info(
 			"   • production-api - Secure configuration for production API environments",
 		);
-		console.log(
+		console.info(
 			"   • development-api - Configuration for development API environments",
 		);
-		console.log(
+		console.info(
 			"   • staging-api - Configuration for staging API environments",
 		);
-		console.log(
+		console.info(
 			"   • microservice - Configuration for microservice deployments",
 		);
-		console.log("   • serverless - Configuration for serverless functions");
+		console.info("   • serverless - Configuration for serverless functions");
 	} catch (error) {
-		console.log(
+		console.info(
 			"❌ Failed to list templates:",
 			error instanceof Error ? error.message : String(error),
 		);
 	}
 
-	console.log("\n✅ Enhanced Matrix CLI Commands Demo Completed!");
-	console.log("\n📚 Generated Files:");
-	console.log("   • ./profiles/production-api.json - Valid production profile");
-	console.log(
+	console.info("\n✅ Enhanced Matrix CLI Commands Demo Completed!");
+	console.info("\n📚 Generated Files:");
+	console.info("   • ./profiles/production-api.json - Valid production profile");
+	console.info(
 		"   • ./profiles/problematic-api.json - Profile with validation issues",
 	);
-	console.log("   • .env.production-demo - Generated production configuration");
-	console.log(
+	console.info("   • .env.production-demo - Generated production configuration");
+	console.info(
 		"   • .env.development-demo - Generated development configuration",
 	);
 
-	console.log("\n🎯 CLI Commands Usage:");
-	console.log("   matrix profile use production-api --validate-rules");
-	console.log(
+	console.info("\n🎯 CLI Commands Usage:");
+	console.info("   matrix profile use production-api --validate-rules");
+	console.info(
 		"   matrix config generate --template=production-api --output=.env.production",
 	);
-	console.log("   matrix profile use problematic-api --validate-rules --force");
+	console.info("   matrix profile use problematic-api --validate-rules --force");
 }
 
 // Run the demo

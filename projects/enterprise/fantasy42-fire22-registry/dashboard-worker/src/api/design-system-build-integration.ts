@@ -46,7 +46,7 @@ export class DesignSystemBuildIntegration {
    * Create coordination tasks with the design team
    */
   async createDesignSystemCoordinationTasks() {
-    console.log('🎨 Creating design system coordination tasks...');
+    console.info('🎨 Creating design system coordination tasks...');
 
     try {
       // Task 1: Design System Audit
@@ -206,7 +206,7 @@ Deliverables:
         configuratorTask.success &&
         docsTask.success
       ) {
-        console.log('✅ Design system coordination tasks created successfully');
+        console.info('✅ Design system coordination tasks created successfully');
 
         // Create cross-references between tasks
         await this.createTaskDependencies([
@@ -254,7 +254,7 @@ Deliverables:
    * Analyze current design system integration status
    */
   async analyzeDesignSystemIntegration() {
-    console.log('🔍 Analyzing current design system integration...');
+    console.info('🔍 Analyzing current design system integration...');
 
     const analysis = {
       buildSystemStatus: this.analyzeBuildSystem(),
@@ -296,7 +296,7 @@ Deliverables:
    * Request design review for build system integration
    */
   async requestBuildSystemDesignReview() {
-    console.log('🎨 Requesting design review for build system integration...');
+    console.info('🎨 Requesting design review for build system integration...');
 
     const reviewRequest = await this.designService.requestDesignReview({
       taskUuid: 'build-system-integration',

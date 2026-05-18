@@ -128,7 +128,7 @@ function metricFromSync(
 
   if (!options.quiet) {
     const tag = shutdown?.requested ? ' [interrupted]' : '';
-    console.log(`${name}: ${metric.opsPerSec.toFixed(0)} ops/sec (p95=${metric.p95Ms.toFixed(4)}ms)${tag}`);
+    console.info(`${name}: ${metric.opsPerSec.toFixed(0)} ops/sec (p95=${metric.p95Ms.toFixed(4)}ms)${tag}`);
   }
   return metric;
 }
@@ -176,7 +176,7 @@ async function metricFromAsync(
 
   if (!options.quiet) {
     const tag = shutdown?.requested ? ' [interrupted]' : '';
-    console.log(`${name}: ${metric.opsPerSec.toFixed(0)} ops/sec (p95=${metric.p95Ms.toFixed(4)}ms)${tag}`);
+    console.info(`${name}: ${metric.opsPerSec.toFixed(0)} ops/sec (p95=${metric.p95Ms.toFixed(4)}ms)${tag}`);
   }
   return metric;
 }
@@ -340,7 +340,7 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
 
   if (!options.quiet) {
     // Print operations table
-    console.log('\n📊 Brand Bench Results:');
+    console.info('\n📊 Brand Bench Results:');
     const opsTable = Object.entries(operations).map(([name, metric]) => ({
       operation: name,
       'ops/sec': metric.opsPerSec.toFixed(0),
@@ -348,10 +348,10 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
       p95: `${metric.p95Ms.toFixed(3)}ms`,
       rating: metric.opsPerSec > 2_000_000 ? '🔥 Fast' : metric.opsPerSec > 1_000_000 ? '⚡ Good' : '✅ OK'
     }));
-    console.log(Bun.inspect.table(opsTable, ['operation', 'ops/sec', 'p50', 'p95', 'rating'], { colors: true }));
+    console.info(Bun.inspect.table(opsTable, ['operation', 'ops/sec', 'p50', 'p95', 'rating'], { colors: true }));
     
-    console.log(`\nbrand-bench report: ${runPath}`);
-    console.log(`brand-bench latest: ${latestPath}`);
+    console.info(`\nbrand-bench report: ${runPath}`);
+    console.info(`brand-bench latest: ${latestPath}`);
   }
 
   return report;
@@ -363,7 +363,7 @@ if (import.meta.main) {
   const report = await runBrandBench(options);
   shutdown.dispose();
   if (options.quiet) {
-    console.log(JSON.stringify(report, null, 2));
+    console.info(JSON.stringify(report, null, 2));
   }
   process.exit(report.status === 'fail' ? 1 : 0);
 }

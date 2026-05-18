@@ -642,7 +642,7 @@ ${UI_ELEMENTS.EMOJIS.CLOCK} Expected response: 15-30 minutes
   // !==!==!==!==!==!==!==!==!==!==!==!==!==!====
 
   public async start(): Promise<void> {
-    console.log('🔥📱 Fire22 Telegram Workflow Orchestrator starting...');
+    console.info('🔥📱 Fire22 Telegram Workflow Orchestrator starting...');
 
     const validation = this.environment.validateRequiredSecrets();
     if (!validation.valid) {
@@ -650,12 +650,12 @@ ${UI_ELEMENTS.EMOJIS.CLOCK} Expected response: 15-30 minutes
     }
 
     await this.bot.start();
-    console.log('✅ Telegram bot started successfully!');
+    console.info('✅ Telegram bot started successfully!');
   }
 
   public async stop(): Promise<void> {
     await this.bot.stop();
-    console.log('🛑 Telegram bot stopped');
+    console.info('🛑 Telegram bot stopped');
   }
 
   public getActiveWorkflows(): number {

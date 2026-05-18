@@ -15,10 +15,10 @@ export class VirtualDeviceDashboard {
    */
   start(intervalMs: number = 10000): void {
     console.clear();
-    console.log('📱 VIRTUAL DEVICE DASHBOARD - DuoPlus Agent Containers');
-    console.log('='.repeat(100));
-    console.log('🤖 Android/iOS Simulators | 💳 CashApp Integration | 📱 Messaging | 📧 Email');
-    console.log('='.repeat(100));
+    console.info('📱 VIRTUAL DEVICE DASHBOARD - DuoPlus Agent Containers');
+    console.info('='.repeat(100));
+    console.info('🤖 Android/iOS Simulators | 💳 CashApp Integration | 📱 Messaging | 📧 Email');
+    console.info('='.repeat(100));
     
     this.updateInterval = setInterval(async () => {
       await this.updateDashboard();
@@ -38,45 +38,45 @@ export class VirtualDeviceDashboard {
     console.clear();
     
     // Header
-    console.log('📱 VIRTUAL DEVICE DASHBOARD - DuoPlus Agent Containers');
-    console.log('='.repeat(100));
-    console.log(`📅 ${new Date().toLocaleString()} | Auto-refresh every 10s | PID: ${process.pid}`);
-    console.log();
+    console.info('📱 VIRTUAL DEVICE DASHBOARD - DuoPlus Agent Containers');
+    console.info('='.repeat(100));
+    console.info(`📅 ${new Date().toLocaleString()} | Auto-refresh every 10s | PID: ${process.pid}`);
+    console.info();
     
     // 1. Device Status
     await this.displayDeviceStatus();
-    console.log();
+    console.info();
     
     // 2. Task Queue Overview
     await this.displayTaskQueues();
-    console.log();
+    console.info();
     
     // 3. Recent Tasks
     await this.displayRecentTasks();
-    console.log();
+    console.info();
     
     // 4. Integration Status
     await this.displayIntegrationStatus();
-    console.log();
+    console.info();
     
     // 5. Performance Metrics
     await this.displayPerformanceMetrics();
-    console.log();
+    console.info();
     
     // Footer
-    console.log('='.repeat(100));
-    console.log('🔁 Auto-refreshing | Press Ctrl+C to stop | Demo tasks running');
+    console.info('='.repeat(100));
+    console.info('🔁 Auto-refreshing | Press Ctrl+C to stop | Demo tasks running');
   }
   
   private async displayDeviceStatus(): Promise<void> {
-    console.log('🤖 VIRTUAL DEVICE STATUS');
-    console.log('─'.repeat(40));
+    console.info('🤖 VIRTUAL DEVICE STATUS');
+    console.info('─'.repeat(40));
     
     try {
       const devices = await this.tracker.getDevices();
       
       if (devices.length === 0) {
-        console.log('📭 No virtual devices found');
+        console.info('📭 No virtual devices found');
         return;
       }
       
@@ -91,20 +91,20 @@ export class VirtualDeviceDashboard {
         Uptime: this.formatUptime(device.uptime)
       }));
       
-      console.log(Bun.inspect.table(deviceData, {
+      console.info(Bun.inspect.table(deviceData, {
         colors: true,
         indent: 2,
         maxWidth: 90
       }));
       
     } catch (error) {
-      console.log('⚠️  Device status unavailable');
+      console.info('⚠️  Device status unavailable');
     }
   }
   
   private async displayTaskQueues(): Promise<void> {
-    console.log('📋 TASK QUEUES');
-    console.log('─'.repeat(40));
+    console.info('📋 TASK QUEUES');
+    console.info('─'.repeat(40));
     
     try {
       const devices = await this.tracker.getDevices();
@@ -149,20 +149,20 @@ export class VirtualDeviceDashboard {
         }
       ];
       
-      console.log(Bun.inspect.table(queueData, {
+      console.info(Bun.inspect.table(queueData, {
         colors: true,
         indent: 2,
         maxWidth: 80
       }));
       
     } catch (error) {
-      console.log('⚠️  Task queue data unavailable');
+      console.info('⚠️  Task queue data unavailable');
     }
   }
   
   private async displayRecentTasks(): Promise<void> {
-    console.log('📝 RECENT TASKS');
-    console.log('─'.repeat(40));
+    console.info('📝 RECENT TASKS');
+    console.info('─'.repeat(40));
     
     try {
       const tasks = await this.tracker.getTasks({ 
@@ -171,7 +171,7 @@ export class VirtualDeviceDashboard {
       });
       
       if (tasks.length === 0) {
-        console.log('📭 No recent tasks');
+        console.info('📭 No recent tasks');
         return;
       }
       
@@ -185,20 +185,20 @@ export class VirtualDeviceDashboard {
         'Start Time': new Date(task.startTime).toLocaleTimeString()
       }));
       
-      console.log(Bun.inspect.table(taskData, {
+      console.info(Bun.inspect.table(taskData, {
         colors: true,
         indent: 2,
         maxWidth: 90
       }));
       
     } catch (error) {
-      console.log('⚠️  Recent tasks unavailable');
+      console.info('⚠️  Recent tasks unavailable');
     }
   }
   
   private async displayIntegrationStatus(): Promise<void> {
-    console.log('🔗 INTEGRATION STATUS');
-    console.log('─'.repeat(40));
+    console.info('🔗 INTEGRATION STATUS');
+    console.info('─'.repeat(40));
     
     try {
       const integrationData = [
@@ -236,20 +236,20 @@ export class VirtualDeviceDashboard {
         }
       ];
       
-      console.log(Bun.inspect.table(integrationData, {
+      console.info(Bun.inspect.table(integrationData, {
         colors: true,
         indent: 2,
         maxWidth: 90
       }));
       
     } catch (error) {
-      console.log('⚠️  Integration status unavailable');
+      console.info('⚠️  Integration status unavailable');
     }
   }
   
   private async displayPerformanceMetrics(): Promise<void> {
-    console.log('📊 PERFORMANCE METRICS');
-    console.log('─'.repeat(40));
+    console.info('📊 PERFORMANCE METRICS');
+    console.info('─'.repeat(40));
     
     try {
       const stats = await this.tracker.getTaskStatistics('1h');
@@ -275,14 +275,14 @@ export class VirtualDeviceDashboard {
         }
       ];
       
-      console.log(Bun.inspect.table(performanceData, {
+      console.info(Bun.inspect.table(performanceData, {
         colors: true,
         indent: 2,
         maxWidth: 70
       }));
         
     } catch (error) {
-      console.log('⚠️  Performance metrics unavailable');
+      console.info('⚠️  Performance metrics unavailable');
     }
   }
   
@@ -424,7 +424,7 @@ export class VirtualDeviceDashboard {
         const filePath = `${reportsDir}/${reportInfo.filename}`;
         try {
           await Bun.file(filePath).delete();
-          console.log(`🗑️  Removed old report: ${reportInfo.filename}`);
+          console.info(`🗑️  Removed old report: ${reportInfo.filename}`);
         } catch (e) {
           console.warn(`⚠️  Could not delete ${reportInfo.filename}:`, e);
         }
@@ -438,7 +438,7 @@ export class VirtualDeviceDashboard {
       await Bun.write(manifestPath, JSON.stringify(updatedManifest, null, 2));
       
       if (filesToDelete.length === 0) {
-        console.log(`✨ No old reports to clean up (keeping ${sortedReports.length} reports)`);
+        console.info(`✨ No old reports to clean up (keeping ${sortedReports.length} reports)`);
       }
     } catch (error) {
       console.warn('⚠️  Could not cleanup reports:', error);
@@ -469,7 +469,7 @@ export class VirtualDeviceDashboard {
       // Write updated manifest
       await Bun.write(manifestPath, JSON.stringify(manifest, null, 2));
       
-      console.log(`📝 Registered report in manifest: ${filename}`);
+      console.info(`📝 Registered report in manifest: ${filename}`);
     } catch (error) {
       console.warn('⚠️  Could not register report in manifest:', error);
     }

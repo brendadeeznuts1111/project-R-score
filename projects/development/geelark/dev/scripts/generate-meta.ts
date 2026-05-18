@@ -69,7 +69,7 @@ interface MetaManifest {
 }
 
 async function generateMetaJson(): Promise<void> {
-  console.log('🔧 Generating meta.json manifest...');
+  console.info('🔧 Generating meta.json manifest...');
 
   const meta: MetaManifest = {
     $schema: './schemas/meta.schema.json',
@@ -680,9 +680,9 @@ async function generateMetaJson(): Promise<void> {
 
   // Write to file
   writeFileSync('./meta.json', jsonString);
-  console.log('✅ meta.json generated successfully');
-  console.log(`📄 Checksum: ${meta.meta.checksum}`);
-  console.log(`📊 Features documented: ${Object.keys(meta.featureFlags.flags).length}`);
+  console.info('✅ meta.json generated successfully');
+  console.info(`📄 Checksum: ${meta.meta.checksum}`);
+  console.info(`📊 Features documented: ${Object.keys(meta.featureFlags.flags).length}`);
 }
 
 generateMetaJson().catch(console.error);

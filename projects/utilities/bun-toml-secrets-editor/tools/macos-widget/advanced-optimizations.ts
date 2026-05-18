@@ -47,7 +47,7 @@ class WebSocketOptimizedWidget {
 	}
 
 	private handleOpen(): void {
-		console.log(`WebSocket connected for widget ${this.widgetId}`);
+		console.info(`WebSocket connected for widget ${this.widgetId}`);
 		this.reconnectAttempts = 0;
 
 		// Send initial handshake with optimized buffer
@@ -136,7 +136,7 @@ class WebSocketOptimizedWidget {
 		const delay = this.reconnectDelay * 2 ** (this.reconnectAttempts - 1);
 
 		setTimeout(() => {
-			console.log(
+			console.info(
 				`Reconnecting WebSocket (attempt ${this.reconnectAttempts})...`,
 			);
 			this.connect();
@@ -144,7 +144,7 @@ class WebSocketOptimizedWidget {
 	}
 
 	private handleClose(): void {
-		console.log("WebSocket connection closed");
+		console.info("WebSocket connection closed");
 		this.scheduleReconnect();
 	}
 
@@ -154,17 +154,17 @@ class WebSocketOptimizedWidget {
 
 	private updateStatus(status: any): void {
 		// Update widget status
-		console.log(`Status update: ${JSON.stringify(status)}`);
+		console.info(`Status update: ${JSON.stringify(status)}`);
 	}
 
 	private updateMetrics(metrics: any): void {
 		// Update performance metrics
-		console.log(`Metrics update: ${JSON.stringify(metrics)}`);
+		console.info(`Metrics update: ${JSON.stringify(metrics)}`);
 	}
 
 	private handleAlert(alert: any): void {
 		// Handle critical alerts
-		console.log(`Alert: ${JSON.stringify(alert)}`);
+		console.info(`Alert: ${JSON.stringify(alert)}`);
 	}
 
 	public disconnect(): void {
@@ -261,7 +261,7 @@ class SIMDDataProcessor {
 	private readonly USE_SIMD = this.checkSIMDSupport();
 
 	constructor() {
-		console.log(
+		console.info(
 			`SIMD optimizations: ${this.USE_SIMD ? "Enabled" : "Disabled"}`,
 		);
 	}
@@ -591,20 +591,20 @@ class WidgetTelemetry {
 
 	logMetrics(): void {
 		const metrics = this.getMetrics();
-		console.log("📊 Performance Metrics:");
-		console.log(
+		console.info("📊 Performance Metrics:");
+		console.info(
 			`   Buffer Operations: ${metrics.bufferOps.avgTime.toFixed(2)}ms avg, ${metrics.bufferOps.p95.toFixed(2)}ms p95`,
 		);
-		console.log(
+		console.info(
 			`   Async Operations: ${metrics.asyncOps.avgLatency.toFixed(2)}ms avg, ${metrics.asyncOps.throughput.toFixed(2)} ops/sec`,
 		);
-		console.log(
+		console.info(
 			`   Memory Usage: ${(metrics.memory.heapUsed / 1024 / 1024).toFixed(2)}MB heap, ${metrics.memory.poolEfficiency.toFixed(1)}% pool efficiency`,
 		);
-		console.log(
+		console.info(
 			`   WebSocket: ${metrics.websocket.messagesSent} sent, ${metrics.websocket.messagesReceived} received`,
 		);
-		console.log(
+		console.info(
 			`   SIMD: ${metrics.simd.enabled ? "Enabled" : "Disabled"}, ${metrics.simd.chunksProcessed} chunks, ${metrics.simd.speedup.toFixed(2)}x speedup`,
 		);
 	}

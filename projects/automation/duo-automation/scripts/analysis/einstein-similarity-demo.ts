@@ -7,8 +7,8 @@
 
 import { einsteinSimilarity, fastSimilarity, codeSimilarity, nameSimilarity, findSimilarPairs } from '../src/utils/einstein-similarity.js';
 
-console.log('🧬 Einstein Similarity - Empire Pro Duplicate Hunter Demo');
-console.log('==========================================================\n');
+console.info('🧬 Einstein Similarity - Empire Pro Duplicate Hunter Demo');
+console.info('==========================================================\n');
 
 // Test Cases from the Matrix
 const testCases = [
@@ -52,33 +52,33 @@ const testCases = [
 
 // Run all test cases
 testCases.forEach(({ category, tests }) => {
-  console.log(`${category}`);
-  console.log('-'.repeat(category.length));
+  console.info(`${category}`);
+  console.info('-'.repeat(category.length));
   
   tests.forEach(([s1, s2]) => {
     const textSim = einsteinSimilarity(s1, s2);
     const nameSim = nameSimilarity(s1, s2);
     const fastSim = fastSimilarity(s1, s2);
     
-    console.log(`"${s1}" vs "${s2}"`);
-    console.log(`  Text: ${textSim.toFixed(1)}% | Name: ${nameSim.toFixed(1)}% | Fast: ${fastSim.toFixed(3)}`);
+    console.info(`"${s1}" vs "${s2}"`);
+    console.info(`  Text: ${textSim.toFixed(1)}% | Name: ${nameSim.toFixed(1)}% | Fast: ${fastSim.toFixed(3)}`);
     
     if (textSim >= 90) {
-      console.log(`  🎯 VERY HIGH - Likely duplicates!`);
+      console.info(`  🎯 VERY HIGH - Likely duplicates!`);
     } else if (textSim >= 80) {
-      console.log(`  ⚠️  HIGH - Review recommended`);
+      console.info(`  ⚠️  HIGH - Review recommended`);
     } else if (textSim >= 70) {
-      console.log(`  📊 MODERATE - Some similarity`);
+      console.info(`  📊 MODERATE - Some similarity`);
     } else {
-      console.log(`  ✅ LOW - Probably distinct`);
+      console.info(`  ✅ LOW - Probably distinct`);
     }
-    console.log('');
+    console.info('');
   });
 });
 
 // Batch Processing Demo
-console.log('🔄 Batch Processing - Find Similar Pairs');
-console.log('==========================================');
+console.info('🔄 Batch Processing - Find Similar Pairs');
+console.info('==========================================');
 
 const codeSnippets = [
   'function calculateTotal(items) { return items.reduce((sum, item) => sum + item.price, 0); }',
@@ -88,19 +88,19 @@ const codeSnippets = [
   'function processPayment(amount) { return stripe.charges.create({ amount }); }'
 ];
 
-console.log('Scanning for duplicate code patterns...\n');
+console.info('Scanning for duplicate code patterns...\n');
 const similarCode = findSimilarPairs(codeSnippets, 80);
 
 similarCode.forEach((pair, index) => {
-  console.log(`${index + 1}. Similarity: ${pair.similarity.toFixed(1)}%`);
-  console.log(`   Code 1: ${pair.a.substring(0, 50)}...`);
-  console.log(`   Code 2: ${pair.b.substring(0, 50)}...`);
-  console.log('');
+  console.info(`${index + 1}. Similarity: ${pair.similarity.toFixed(1)}%`);
+  console.info(`   Code 1: ${pair.a.substring(0, 50)}...`);
+  console.info(`   Code 2: ${pair.b.substring(0, 50)}...`);
+  console.info('');
 });
 
 // Performance Benchmark
-console.log('⚡ Performance Benchmark');
-console.log('========================');
+console.info('⚡ Performance Benchmark');
+console.info('========================');
 
 const performanceTests = [
   ['Short strings', 'Hello', 'Hello2'],
@@ -113,37 +113,37 @@ performanceTests.forEach(([name, s1, s2]) => {
   const similarity = einsteinSimilarity(s1, s2);
   const end = performance.now();
   
-  console.log(`${name}: ${similarity.toFixed(1)}% in ${(end - start).toFixed(3)}ms`);
+  console.info(`${name}: ${similarity.toFixed(1)}% in ${(end - start).toFixed(3)}ms`);
 });
 
 // Empire Pro Integration Examples
-console.log('\n🏰 Empire Pro Integration Examples');
-console.log('===================================');
+console.info('\n🏰 Empire Pro Integration Examples');
+console.info('===================================');
 
-console.log('📊 Configuration Similarity:');
+console.info('📊 Configuration Similarity:');
 const config1 = 'R2_ENDPOINT=https://example.com R2_ACCESS_KEY=abc123';
 const config2 = 'R2_ENDPOINT=https://example.com R2_ACCESS_KEY=def456';
-console.log(`Config similarity: ${einsteinSimilarity(config1, config2).toFixed(1)}%`);
+console.info(`Config similarity: ${einsteinSimilarity(config1, config2).toFixed(1)}%`);
 
-console.log('\n🌐 API Endpoint Similarity:');
+console.info('\n🌐 API Endpoint Similarity:');
 const endpoint1 = 'GET /api/config - Get all configuration';
 const endpoint2 = 'GET /api/config2 - Get all configuration';
-console.log(`Endpoint similarity: ${einsteinSimilarity(endpoint1, endpoint2).toFixed(1)}%`);
+console.info(`Endpoint similarity: ${einsteinSimilarity(endpoint1, endpoint2).toFixed(1)}%`);
 
-console.log('\n🔐 Secret Key Similarity:');
+console.info('\n🔐 Secret Key Similarity:');
 const secret1 = 'sk_live_1234567890abcdef';
 const secret2 = 'sk_live_1234567890abcxyz';
-console.log(`Secret similarity: ${einsteinSimilarity(secret1, secret2).toFixed(1)}%`);
+console.info(`Secret similarity: ${einsteinSimilarity(secret1, secret2).toFixed(1)}%`);
 
-console.log('\n🎯 Use Cases for Empire Pro:');
-console.log('  • Detect duplicate configuration across projects');
-console.log('  • Find similar API endpoints for consolidation');
-console.log('  • Identify similar secret keys for rotation');
-console.log('  • Match user names across systems (CashApp vs DuoPlus)');
-console.log('  • Find duplicate code patterns for refactoring');
-console.log('  • Validate data consistency across services');
+console.info('\n🎯 Use Cases for Empire Pro:');
+console.info('  • Detect duplicate configuration across projects');
+console.info('  • Find similar API endpoints for consolidation');
+console.info('  • Identify similar secret keys for rotation');
+console.info('  • Match user names across systems (CashApp vs DuoPlus)');
+console.info('  • Find duplicate code patterns for refactoring');
+console.info('  • Validate data consistency across services');
 
-console.log('\n✅ Einstein Similarity - Ready for Empire Pro!');
-console.log('🚀 Performance: <1ms per comparison');
-console.log('🎯 Accuracy: 95%+ for meaningful duplicates');
-console.log('🔧 Integration: CLI, API, and direct imports available');
+console.info('\n✅ Einstein Similarity - Ready for Empire Pro!');
+console.info('🚀 Performance: <1ms per comparison');
+console.info('🎯 Accuracy: 95%+ for meaningful duplicates');
+console.info('🔧 Integration: CLI, API, and direct imports available');

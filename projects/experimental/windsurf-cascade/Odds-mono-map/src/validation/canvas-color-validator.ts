@@ -199,7 +199,7 @@ export class CanvasColorValidator {
      * Bulk validate colors in entire canvas
      */
     async validateAllColors(canvasPath: string): Promise<ColorValidationReport> {
-        console.log(`🔍 Validating colors in: ${canvasPath}`);
+        console.info(`🔍 Validating colors in: ${canvasPath}`);
 
         const content = await readFile(canvasPath, 'utf8');
         const canvas: CanvasFile = JSON.parse(content);
@@ -215,7 +215,7 @@ export class CanvasColorValidator {
             details: []
         };
 
-        console.log(`📊 Analyzing ${canvas.nodes.length} nodes...`);
+        console.info(`📊 Analyzing ${canvas.nodes.length} nodes...`);
 
         for (const node of canvas.nodes) {
             if (!node.color) {
@@ -262,16 +262,16 @@ export class CanvasColorValidator {
             // Log validation result
             const status = result.valid ? '✅' : '❌';
             const colorType = isHexColor(node.color) ? 'HEX' : 'Legacy';
-            console.log(`  ${status} ${node.id}: ${colorType} ${node.color}`);
+            console.info(`  ${status} ${node.id}: ${colorType} ${node.color}`);
         }
 
-        console.log(`📈 Validation Summary:`);
-        console.log(`   Total nodes: ${report.totalNodes}`);
-        console.log(`   Colored nodes: ${report.coloredNodes}`);
-        console.log(`   Legacy colors: ${report.legacyColors}`);
-        console.log(`   HEX colors: ${report.hexColors}`);
-        console.log(`   Brand colors: ${report.brandColors}`);
-        console.log(`   Accessibility issues: ${report.accessibilityIssues}`);
+        console.info(`📈 Validation Summary:`);
+        console.info(`   Total nodes: ${report.totalNodes}`);
+        console.info(`   Colored nodes: ${report.coloredNodes}`);
+        console.info(`   Legacy colors: ${report.legacyColors}`);
+        console.info(`   HEX colors: ${report.hexColors}`);
+        console.info(`   Brand colors: ${report.brandColors}`);
+        console.info(`   Accessibility issues: ${report.accessibilityIssues}`);
 
         return report;
     }

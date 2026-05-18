@@ -131,9 +131,9 @@ function computeStats(values: number[], zThreshold = 3, iqrMultiplier = 1.5): Me
 
 async function train(): Promise<void> {
   const startTime = performance.now();
-  console.log(`\n[TRAIN] Anomaly Detection Model Training`);
-  console.log(`        Training window: ${TRAINING_DAYS} days`);
-  console.log(`        Output: ${OUTPUT_PATH}\n`);
+  console.info(`\n[TRAIN] Anomaly Detection Model Training`);
+  console.info(`        Training window: ${TRAINING_DAYS} days`);
+  console.info(`        Output: ${OUTPUT_PATH}\n`);
 
   // Connect to database
   const DATA_DIR = process.env.DATA_DIR || join(import.meta.dir, "../data");
@@ -162,9 +162,9 @@ async function train(): Promise<void> {
     process.exit(1);
   }
 
-  console.log(`[DATA]  Found ${records.length} metric samples`);
-  console.log(`        Timespan: ${new Date(records[0].timestamp * 1000).toISOString()}`);
-  console.log(`              to: ${new Date(records[records.length - 1].timestamp * 1000).toISOString()}\n`);
+  console.info(`[DATA]  Found ${records.length} metric samples`);
+  console.info(`        Timespan: ${new Date(records[0].timestamp * 1000).toISOString()}`);
+  console.info(`              to: ${new Date(records[records.length - 1].timestamp * 1000).toISOString()}\n`);
 
   // Extract metric arrays (filter nulls for cpu/memory)
   const metricArrays: Record<string, number[]> = {
@@ -186,7 +186,7 @@ async function train(): Promise<void> {
 
   for (const [name, values] of Object.entries(metricArrays)) {
     if (values.length < 10) {
-      console.log(`[SKIP]  ${name}: insufficient data (${values.length} samples)`);
+      console.info(`[SKIP]  ${name}: insufficient data (${values.length} samples)`);
       continue;
     }
     metrics[name] = computeStats(values, Z_THRESHOLD, IQR_MULTIPLIER);
@@ -217,7 +217,7 @@ async function train(): Promise<void> {
   const elapsed = (performance.now() - startTime).toFixed(2);
 
   // Summary output
-  console.log(`[MODEL] Trained thresholds:`);
+  console.info(`[MODEL] Trained thresholds:`);
   if (VERBOSE) {
     const tableData = Object.entries(metrics).map(([name, stats]) => ({
       Metric: name,
@@ -226,10 +226,10 @@ async function train(): Promise<void> {
       "IQR Lower": stats.lowerBound.toFixed(2),
       "IQR Upper": stats.upperBound.toFixed(2),
     }));
-    console.log(Bun.inspect.table(tableData, { colors: true }));
+    console.info(Bun.inspect.table(tableData, { colors: true }));
   } else {
     for (const [name, stats] of Object.entries(metrics)) {
-      console.log(
+      console.info(
         `        ${name.padEnd(16)} mean=${stats.mean.toFixed(2).padStart(8)} ` +
           `stdDev=${stats.stdDev.toFixed(2).padStart(8)} ` +
           `bounds=[${stats.lowerBound.toFixed(2)}, ${stats.upperBound.toFixed(2)}]`
@@ -237,8 +237,8 @@ async function train(): Promise<void> {
     }
   }
 
-  console.log(`\n[DONE]  Model saved to ${outputPath}`);
-  console.log(`        Training completed in ${elapsed}ms\n`);
+  console.info(`\n[DONE]  Model saved to ${outputPath}`);
+  console.info(`        Training completed in ${elapsed}ms\n`);
 }
 
 // =============================================================================

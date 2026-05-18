@@ -11,15 +11,15 @@ import { createServer } from "node:http2";
 const server = createServer((req, res) => {
   // Enhanced flow control in v1.3.6
   res.stream.on('drain', () => {
-    console.log('Stream drained, ready for more data');
+    console.info('Stream drained, ready for more data');
   });
 
   res.stream.on('error', (error) => {
-    console.log('Stream error:', error.message);
+    console.info('Stream error:', error.message);
   });
 
   res.stream.on('close', () => {
-    console.log('Stream closed, resources cleaned up');
+    console.info('Stream closed, resources cleaned up');
   });
 
   res.writeHead(200, { 'content-type': 'application/json' });
@@ -52,11 +52,11 @@ client.on('connect', () => {
   });
 
   req.on('drain', () => {
-    console.log('Client stream drained');
+    console.info('Client stream drained');
   });
 
   req.on('response', (headers) => {
-    console.log('Response status:', headers[':status']);
+    console.info('Response status:', headers[':status']);
   });
 
   req.on('data', (chunk) => {
@@ -64,7 +64,7 @@ client.on('connect', () => {
   });
 
   req.on('end', () => {
-    console.log('Request completed');
+    console.info('Request completed');
   });
 
   req.end();
@@ -98,12 +98,12 @@ const server = createServer((req, res) => {
   res.stream.on('drain', () => {
     drainCount++;
     const elapsed = performance.now() - startTime;
-    console.log(\`Write rate: \${(bytesWritten / elapsed * 1000).toFixed(2)} bytes/sec\`);
+    console.info(\`Write rate: \${(bytesWritten / elapsed * 1000).toFixed(2)} bytes/sec\`);
   });
 
   res.stream.on('finish', () => {
     const totalTime = performance.now() - startTime;
-    console.log(\`Average rate: \${(bytesWritten / totalTime * 1000).toFixed(2)} bytes/sec\`);
+    console.info(\`Average rate: \${(bytesWritten / totalTime * 1000).toFixed(2)} bytes/sec\`);
   });
 
   res.writeHead(200, { 'content-type': 'application/json' });
@@ -161,11 +161,11 @@ client.on('error', (error) => {
 });
 
 client.on('goaway', (errorCode, lastStreamID, opaqueData) => {
-  console.log('HTTP/2 GOAWAY:', errorCode);
+  console.info('HTTP/2 GOAWAY:', errorCode);
 });
 
 client.on('frameError', (frameType, errorCode, streamID) => {
-  console.log('HTTP/2 frame error:', { frameType, errorCode, streamID });
+  console.info('HTTP/2 frame error:', { frameType, errorCode, streamID });
 });
 
 const req = client.request({ ':method': 'GET', ':path': '/test' });
@@ -215,7 +215,7 @@ const server = createServer((req, res) => {
         setImmediate(writeChunk);
       } else {
         // Wait for drain event - improved flow control in v1.3.6
-        console.log('Waiting for stream to drain...');
+        console.info('Waiting for stream to drain...');
       }
     } else {
       res.end();
@@ -335,5 +335,5 @@ const server = createServer((req, res) => {
   });
 });
 
-console.log("🚀 HTTP/2 Flow Control Tests Loaded!");
-console.log("   Run with: bun test --grep 'HTTP/2 Flow Control'");
+console.info("🚀 HTTP/2 Flow Control Tests Loaded!");
+console.info("   Run with: bun test --grep 'HTTP/2 Flow Control'");

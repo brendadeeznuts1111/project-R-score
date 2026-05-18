@@ -322,11 +322,11 @@ export class ColorfulTypeContext {
  * Demonstrate the enhanced ColorfulTypeContext
  */
 async function demonstrateColorfulTypeContext(): Promise<void> {
-  console.log('🎨 Enhanced ColorfulTypeContext Demonstration');
-  console.log('='.repeat(50));
+  console.info('🎨 Enhanced ColorfulTypeContext Demonstration');
+  console.info('='.repeat(50));
   
   // Create different contexts with realistic system data
-  console.log('\n📦 Creating contexts...');
+  console.info('\n📦 Creating contexts...');
   
   const storageContext = new ColorfulTypeContext('STORAGE', 'ENTERPRISE', 'duoplus', {
     errorRate: 0.02,
@@ -357,72 +357,72 @@ async function demonstrateColorfulTypeContext(): Promise<void> {
   
   const contexts = [storageContext, secretsContext, serviceContext];
   
-  console.log(`✅ Created ${contexts.length} contexts`);
+  console.info(`✅ Created ${contexts.length} contexts`);
   
   // Display context information
-  console.log('\n📊 Context Information:');
+  console.info('\n📊 Context Information:');
   
   contexts.forEach(context => {
-    console.log(`\n${context.type} (${context.scope}):`);
-    console.log(`  Tension: ${context.tension}% (${context.trend})`);
-    console.log(`  Status: ${context.getTensionLevel()} ${context.getTensionEmoji()}`);
-    console.log(`  HSL: ${context.hslColor}`);
-    console.log(`  HEX: ${context.hexColor}`);
-    console.log(`  Backend: ${context.getBackend().type}`);
-    console.log(`  Contributors: ${context.tensionMetrics.contributors.length}`);
-    console.log(`  Confidence: ${context.tensionMetrics.metadata.analysisConfidence}%`);
-    console.log(`  Description: ${context.colorInfo.description}`);
+    console.info(`\n${context.type} (${context.scope}):`);
+    console.info(`  Tension: ${context.tension}% (${context.trend})`);
+    console.info(`  Status: ${context.getTensionLevel()} ${context.getTensionEmoji()}`);
+    console.info(`  HSL: ${context.hslColor}`);
+    console.info(`  HEX: ${context.hexColor}`);
+    console.info(`  Backend: ${context.getBackend().type}`);
+    console.info(`  Contributors: ${context.tensionMetrics.contributors.length}`);
+    console.info(`  Confidence: ${context.tensionMetrics.metadata.analysisConfidence}%`);
+    console.info(`  Description: ${context.colorInfo.description}`);
   });
   
   // Display color information
-  console.log('\n🎨 Color Information:');
+  console.info('\n🎨 Color Information:');
   
   contexts.forEach(context => {
     const colors = context.colorInfo;
-    console.log(`\n${context.type} Colors:`);
-    console.log(`  Primary: ${colors.colorScheme.primary}`);
-    console.log(`  Secondary: ${colors.colorScheme.secondary}`);
-    console.log(`  Accent: ${colors.colorScheme.accent}`);
-    console.log(`  Background: ${colors.colorScheme.background}`);
-    console.log(`  Text: ${colors.colorScheme.text}`);
-    console.log(`  RGB: ${colors.rgb.r}, ${colors.rgb.g}, ${colors.rgb.b}`);
-    console.log(`  Palette: ${Object.keys(colors.palette).length} shades`);
+    console.info(`\n${context.type} Colors:`);
+    console.info(`  Primary: ${colors.colorScheme.primary}`);
+    console.info(`  Secondary: ${colors.colorScheme.secondary}`);
+    console.info(`  Accent: ${colors.colorScheme.accent}`);
+    console.info(`  Background: ${colors.colorScheme.background}`);
+    console.info(`  Text: ${colors.colorScheme.text}`);
+    console.info(`  RGB: ${colors.rgb.r}, ${colors.rgb.g}, ${colors.rgb.b}`);
+    console.info(`  Palette: ${Object.keys(colors.palette).length} shades`);
   });
   
   // Display CSS generation
-  console.log('\n📱 CSS Generation:');
+  console.info('\n📱 CSS Generation:');
   
   contexts.forEach(context => {
-    console.log(`\n${context.type} CSS:`);
+    console.info(`\n${context.type} CSS:`);
     const css = context.colorInfo.css;
-    console.log(css.substring(0, 300) + '...');
+    console.info(css.substring(0, 300) + '...');
   });
   
   // Display recommendations
-  console.log('\n💡 Recommendations:');
+  console.info('\n💡 Recommendations:');
   
   contexts.forEach(context => {
     const recommendations = context.colorInfo.recommendations;
-    console.log(`\n${context.type}:`);
+    console.info(`\n${context.type}:`);
     recommendations.slice(0, 2).forEach(rec => {
-      console.log(`  • ${rec}`);
+      console.info(`  • ${rec}`);
     });
   });
   
   // Display Bun.inspect output
-  console.log('\n🔍 Bun.inspect output:');
-  console.log(storageContext);
+  console.info('\n🔍 Bun.inspect output:');
+  console.info(storageContext);
   
-  console.log('\n✅ Demonstration complete!');
-  console.log('\n📋 Key Features Demonstrated:');
-  console.log('  ✅ Tension-based color generation');
-  console.log('  ✅ Trend-aware color adjustments');
-  console.log('  ✅ Comprehensive color information');
-  console.log('  ✅ CSS variable generation');
-  console.log('  ✅ Intelligent recommendations');
-  console.log('  ✅ Visual indicators and progress bars');
-  console.log('  ✅ Backend configuration tracking');
-  console.log('  ✅ Enhanced CLI display with Bun.inspect');
+  console.info('\n✅ Demonstration complete!');
+  console.info('\n📋 Key Features Demonstrated:');
+  console.info('  ✅ Tension-based color generation');
+  console.info('  ✅ Trend-aware color adjustments');
+  console.info('  ✅ Comprehensive color information');
+  console.info('  ✅ CSS variable generation');
+  console.info('  ✅ Intelligent recommendations');
+  console.info('  ✅ Visual indicators and progress bars');
+  console.info('  ✅ Backend configuration tracking');
+  console.info('  ✅ Enhanced CLI display with Bun.inspect');
 }
 
 // Run demonstration if this file is executed directly

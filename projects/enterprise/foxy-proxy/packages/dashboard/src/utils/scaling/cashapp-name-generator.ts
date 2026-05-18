@@ -362,7 +362,7 @@ export class CashAppNameGenerator {
   // Persistence methods (mock implementation)
   private async loadUsedData() {
     // In production, load from database
-    console.log("📝 Loading used identifiers from database...");
+    console.info("📝 Loading used identifiers from database...");
   }
 
   private async persistData(data: {
@@ -372,7 +372,7 @@ export class CashAppNameGenerator {
     phoneNumber: string;
   }) {
     // In production, save to database
-    console.log(`💾 Saving profile: ${data.fullName} (${data.cashtag})`);
+    console.info(`💾 Saving profile: ${data.fullName} (${data.cashtag})`);
   }
 }
 

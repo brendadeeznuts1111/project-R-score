@@ -35,7 +35,7 @@ class ConfigVersionStabilizer {
     const lockfile = Bun.file(lockfilePath);
 
     if (!(await lockfile.exists())) {
-      console.log("[STABILITY] Creating new lockfile with configVersion: 1");
+      console.info("[STABILITY] Creating new lockfile with configVersion: 1");
       const initialConfig: LockfileConfig = {
         lockfileVersion: 1,
         configVersion: this.VERSIONS.V1,
@@ -47,7 +47,7 @@ class ConfigVersionStabilizer {
       // Ensure configVersion is set to 1 for stability
       const content = JSON.parse(await lockfile.text());
       if (content.configVersion !== this.VERSIONS.V1) {
-        console.log(`[STABILITY] Updating configVersion from ${content.configVersion} to ${this.VERSIONS.V1}`);
+        console.info(`[STABILITY] Updating configVersion from ${content.configVersion} to ${this.VERSIONS.V1}`);
         content.configVersion = this.VERSIONS.V1;
         await Bun.write(lockfilePath, JSON.stringify(content, null, 2));
       }
@@ -86,7 +86,7 @@ class CPUProfilerEngine {
       (Bun as any).profile(profilePath, { sampleInterval: options.sampleInterval });
       this.activeProfile = profilePath;
 
-      console.log(`[CPU-PROFILE] Started: ${profilePath}`);
+      console.info(`[CPU-PROFILE] Started: ${profilePath}`);
     } else {
       console.warn("[CPU-PROFILE] Bun.profile() not available");
     }
@@ -98,7 +98,7 @@ class CPUProfilerEngine {
       const profile = this.activeProfile;
       this.activeProfile = null;
 
-      console.log(`[CPU-PROFILE] Stopped: ${profile}`);
+      console.info(`[CPU-PROFILE] Stopped: ${profile}`);
       return profile || "";
     }
 
@@ -108,7 +108,7 @@ class CPUProfilerEngine {
 
   static cpuProfCLIHelper(command: string, args: string[]): void {
     // Helper for CLI: bun --cpu-prof --cpu-prof-name=profile.cpuprofile <command>
-    console.log(`[CPU-PROFILE] CLI usage: bun --cpu-prof --cpu-prof-name=${args[0] || 'profile.cpuprofile'} ${command}`);
+    console.info(`[CPU-PROFILE] CLI usage: bun --cpu-prof --cpu-prof-name=${args[0] || 'profile.cpuprofile'} ${command}`);
   }
 }
 
@@ -169,7 +169,7 @@ class WebSocketSubscriptionTracker {
       // Store in weak map for cleanup
       this.connections.set(server, wsData);
 
-      console.log(`[WS-TRACKER] Connection upgraded with subscription tracking`);
+      console.info(`[WS-TRACKER] Connection upgraded with subscription tracking`);
       return true;
     }
 
@@ -187,9 +187,9 @@ class WebSocketSubscriptionTracker {
     if (!data.subscriptions.has(topic)) {
       data.subscriptions.add(topic);
       data.lastActivity = Date.now();
-      console.log(`[WS-TRACKER] Subscribed to: ${topic} (total: ${data.subscriptions.size})`);
+      console.info(`[WS-TRACKER] Subscribed to: ${topic} (total: ${data.subscriptions.size})`);
     } else {
-      console.log(`[WS-TRACKER] Deduplicated subscription: ${topic}`);
+      console.info(`[WS-TRACKER] Deduplicated subscription: ${topic}`);
     }
   }
 
@@ -211,7 +211,7 @@ class WebSocketSubscriptionTracker {
   static closeConnection(ws: any): void {
     const data = this.connections.get(ws);
     if (data) {
-      console.log(`[WS-TRACKER] Cleaning up ${data.subscriptions.size} subscriptions`);
+      console.info(`[WS-TRACKER] Cleaning up ${data.subscriptions.size} subscriptions`);
       this.connections.delete(ws);
     }
   }
@@ -282,7 +282,7 @@ class GitDependencySecurityLayer {
 
   static validateDependencySignature(spec: string, signature: string): boolean {
     // In production, this would verify cryptographic signatures
-    console.log(`[GIT-SECURITY] Validating signature for: ${spec}`);
+    console.info(`[GIT-SECURITY] Validating signature for: ${spec}`);
     return true; // Placeholder
   }
 }
@@ -314,7 +314,7 @@ class SpawnSyncIsolatedLoop {
       return this.legacySpawnSync(command, args, options);
     }
 
-    console.log(`[ISOLATED] Spawning: ${command} ${args.join(" ")}`);
+    console.info(`[ISOLATED] Spawning: ${command} ${args.join(" ")}`);
 
     const start = Date.now();
     const proc = Bun.spawnSync([command, ...args], {
@@ -328,7 +328,7 @@ class SpawnSyncIsolatedLoop {
     if (proc.exitCode !== 0) {
       console.warn(`[ISOLATED] Command failed after ${duration}ms: exit code ${proc.exitCode}`);
     } else {
-      console.log(`[ISOLATED] Command succeeded in ${duration}ms`);
+      console.info(`[ISOLATED] Command succeeded in ${duration}ms`);
     }
 
     return {
@@ -397,7 +397,7 @@ class ConfigLoadingPatch {
   static async loadConfig(path: string): Promise<any> {
     // Check if already loaded
     if (this.loadedConfigs.has(path)) {
-      console.log(`[CONFIG-PATCH] Deduplicated load: ${path}`);
+      console.info(`[CONFIG-PATCH] Deduplicated load: ${path}`);
       return this.configCache.get(path);
     }
 
@@ -429,7 +429,7 @@ class ConfigLoadingPatch {
       this.loadedConfigs.add(path);
       this.configCache.set(path, config);
 
-      console.log(`[CONFIG-PATCH] Loaded config: ${path}`);
+      console.info(`[CONFIG-PATCH] Loaded config: ${path}`);
       return config;
 
     } catch (error) {
@@ -441,7 +441,7 @@ class ConfigLoadingPatch {
   static clearCache(): void {
     this.loadedConfigs.clear();
     this.configCache.clear();
-    console.log("[CONFIG-PATCH] Cache cleared");
+    console.info("[CONFIG-PATCH] Cache cleared");
   }
 }
 
@@ -451,7 +451,7 @@ class HoistedInstallRestorer {
     const bunfig = Bun.file("bunfig.toml");
 
     if (!(await bunfig.exists())) {
-      console.log("[HOISTED] Creating bunfig.toml with selective hoisting");
+      console.info("[HOISTED] Creating bunfig.toml with selective hoisting");
       const config = `
 [install]
 linker = "isolated"
@@ -471,7 +471,7 @@ peerDependencies = false
     const content = await bunfig.text();
 
     if (!content.includes("linker = \"isolated\"")) {
-      console.log("[HOISTED] Upgrading to isolated linker with selective hoisting");
+      console.info("[HOISTED] Upgrading to isolated linker with selective hoisting");
       const updated = content + `
 [install]
 linker = "isolated"
@@ -480,7 +480,7 @@ hoistPattern = ["@types*", "*eslint*"]
       `;
       await Bun.write("bunfig.toml", updated);
     } else {
-      console.log("[HOISTED] Isolated linker with selective hoisting already configured");
+      console.info("[HOISTED] Isolated linker with selective hoisting already configured");
     }
   }
 
@@ -497,8 +497,8 @@ hoistPattern = ["@types*", "*eslint*"]
     const hasWorkspaces = pkg.workspaces && Array.isArray(pkg.workspaces);
 
     if (hasWorkspaces) {
-      console.log(`[HOISTED] Workspace detected with ${pkg.workspaces.length} packages`);
-      console.log(`[HOISTED] Self-referencing workspace deps will be correctly linked`);
+      console.info(`[HOISTED] Workspace detected with ${pkg.workspaces.length} packages`);
+      console.info(`[HOISTED] Self-referencing workspace deps will be correctly linked`);
     }
 
     return hasWorkspaces;
@@ -517,7 +517,7 @@ export class KalmanStabilityIntegration {
     await ConfigVersionStabilizer.initializeLockfile();
 
     const linker = await ConfigVersionStabilizer.getDefaultLinker();
-    console.log(`[STABILITY] Kalman linker: ${linker} (configVersion: 1)`);
+    console.info(`[STABILITY] Kalman linker: ${linker} (configVersion: 1)`);
   }
 
   // Component #57: CPU profiling for hot path analysis
@@ -549,7 +549,7 @@ export class KalmanStabilityIntegration {
 
     return withFinalizers(async () => {
       onTestFinished(() => {
-        console.log(`[TEST] Cleaning up Pattern #${patternId} state`);
+        console.info(`[TEST] Cleaning up Pattern #${patternId} state`);
         this.clearPatternState(patternId);
       });
 
@@ -575,7 +575,7 @@ export class KalmanStabilityIntegration {
     const resolved = GitDependencySecurityLayer.resolveGitDependency(spec);
 
     if (resolved.isGitHub) {
-      console.log(`[SECURITY] Using GitHub tarball for: ${spec}`);
+      console.info(`[SECURITY] Using GitHub tarball for: ${spec}`);
     }
 
     return resolved;
@@ -598,12 +598,12 @@ export class KalmanStabilityIntegration {
   // Component #62: Dependency inspection
   static inspectKalmanDependencies(): void {
     if (!this.featureEnabled("BUN_LIST_ALIAS")) {
-      console.log('Use: bun pm ls --all to see Kalman dependencies');
+      console.info('Use: bun pm ls --all to see Kalman dependencies');
       return;
     }
 
     const { command, args } = BunListAlias.executeAlias(['list', '--all']);
-    console.log(`[DEPS] Running: ${command} ${args.join(' ')}`);
+    console.info(`[DEPS] Running: ${command} ${args.join(' ')}`);
 
     const result = Bun.spawnSync([command, ...args], {
       stdio: ['inherit', 'inherit', 'inherit']
@@ -625,7 +625,7 @@ export class KalmanStabilityIntegration {
     const config = await ConfigLoadingPatch.loadConfig(path);
 
     if (config) {
-      console.log(`[CONFIG] Loaded: ${path} (deduplicated)`);
+      console.info(`[CONFIG] Loaded: ${path} (deduplicated)`);
     }
 
     return config;
@@ -642,7 +642,7 @@ export class KalmanStabilityIntegration {
       const content = await packageJson.text();
       const hasKalmanPackage = content.includes('kalman-arbitrage');
       if (hasKalmanPackage) {
-        console.log('[WORKSPACE] Kalman system workspace detected - ensuring hoisted compatibility');
+        console.info('[WORKSPACE] Kalman system workspace detected - ensuring hoisted compatibility');
       }
     }
   }
@@ -743,7 +743,7 @@ export class KalmanStabilityIntegration {
     const msgWidth = this.measureDashboardWidth(message);
     const padding = 20 - catWidth;
 
-    console.log(
+    console.info(
       `${category.padEnd(padding, " ")} | ${message.padEnd(msgWidth + 5, " ")}`
     );
   }
@@ -801,7 +801,7 @@ export class KalmanStabilityIntegration {
     ], 5000);
 
     if (result.exitCode === 0) {
-      console.log('[FEED] Provider health check passed (isolated execution)');
+      console.info('[FEED] Provider health check passed (isolated execution)');
     }
   }
 
@@ -815,45 +815,45 @@ export class KalmanStabilityIntegration {
 
 // Demonstration function
 export async function demonstrateKalmanIntegration(): Promise<void> {
-  console.log("🚀 Kalman Infrastructure Integration: v1.3.3 Golden Matrix");
-  console.log("=============================================================");
+  console.info("🚀 Kalman Infrastructure Integration: v1.3.3 Golden Matrix");
+  console.info("=============================================================");
 
   // Test all components
-  console.log("\n📦 Component #56: Package Manager Stability");
+  console.info("\n📦 Component #56: Package Manager Stability");
   await KalmanStabilityIntegration.stabilizeKalmanDependencies();
 
-  console.log("\n🔍 Component #57: CPU Profiling");
+  console.info("\n🔍 Component #57: CPU Profiling");
   const profiler = KalmanStabilityIntegration.profilePattern(74);
   profiler.start();
   setTimeout(() => {
     const profile = profiler.stop();
-    console.log(`Profile saved: ${profile}`);
+    console.info(`Profile saved: ${profile}`);
   }, 100);
 
-  console.log("\n🔒 Component #60: Git Security");
+  console.info("\n🔒 Component #60: Git Security");
   const gitResult = KalmanStabilityIntegration.resolveIndicatorDependency('owner/repo#v1.0.0');
-  console.log(`Resolved: ${gitResult.url} (GitHub: ${gitResult.isGitHub})`);
+  console.info(`Resolved: ${gitResult.url} (GitHub: ${gitResult.isGitHub})`);
 
-  console.log("\n⚡ Component #61: Isolated Spawn");
+  console.info("\n⚡ Component #61: Isolated Spawn");
   const spawnResult = KalmanStabilityIntegration.spawnDataFetcher('echo', ['test'], 5000);
-  console.log(`Spawn exit code: ${spawnResult.exitCode}`);
+  console.info(`Spawn exit code: ${spawnResult.exitCode}`);
 
-  console.log("\n📋 Component #63: Config Loading");
+  console.info("\n📋 Component #63: Config Loading");
   const config = await KalmanStabilityIntegration.loadKalmanConfig('package.json');
-  console.log(`Config loaded: ${config ? '✅' : '❌'}`);
+  console.info(`Config loaded: ${config ? '✅' : '❌'}`);
 
-  console.log("\n🛠️  Component #64: Workspace Compatibility");
+  console.info("\n🛠️  Component #64: Workspace Compatibility");
   await KalmanStabilityIntegration.ensureKalmanWorkspaceCompatibility();
 
-  console.log("\n📊 Combined v2.4.2 + v1.3.3 Features:");
+  console.info("\n📊 Combined v2.4.2 + v1.3.3 Features:");
   const width = KalmanStabilityIntegration.measureDashboardWidth("Test Dashboard");
-  console.log(`Unicode width: ${width}`);
+  console.info(`Unicode width: ${width}`);
 
   const state = { price: 100, timestamp: Date.now() };
   const valid = KalmanStabilityIntegration.validateKalmanState(state);
-  console.log(`State validation: ${valid ? '✅' : '❌'}`);
+  console.info(`State validation: ${valid ? '✅' : '❌'}`);
 
-  console.log("\n✅ All v1.3.3 Golden Matrix components operational!");
+  console.info("\n✅ All v1.3.3 Golden Matrix components operational!");
 }
 
 // Run demonstration if called directly

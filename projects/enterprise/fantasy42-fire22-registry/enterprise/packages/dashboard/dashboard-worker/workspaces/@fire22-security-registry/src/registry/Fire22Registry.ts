@@ -317,7 +317,7 @@ export class Fire22Registry {
     await Bun.write(file, arrayBuffer);
 
     // Extract package (would use tar library in real implementation)
-    console.log(`Package ${packageName}@${version} downloaded and extracted`);
+    console.info(`Package ${packageName}@${version} downloaded and extracted`);
   }
 
   /**

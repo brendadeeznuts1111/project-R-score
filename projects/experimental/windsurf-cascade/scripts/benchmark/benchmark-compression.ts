@@ -76,12 +76,12 @@ class CompressionBenchmark {
    * Run comprehensive benchmarks
    */
   async runBenchmarks(): Promise<void> {
-    console.log('🚀 Zstandard Compression Benchmarks\n');
+    console.info('🚀 Zstandard Compression Benchmarks\n');
     
     const testSizes = [100, 1000, 10000, 100000];
     
     for (const size of testSizes) {
-      console.log(`📊 Testing ${size} ticks:`);
+      console.info(`📊 Testing ${size} ticks:`);
       
       const testData = this.generateTestData(size);
       
@@ -99,17 +99,17 @@ class CompressionBenchmark {
         `Decompress ${size} ticks`
       );
       
-      console.log(`   Original Size: ${(compressResult.originalSize / 1024).toFixed(2)} KB`);
-      console.log(`   Compressed Size: ${(compressResult.compressedSize / 1024).toFixed(2)} KB`);
-      console.log(`   Compression Ratio: ${compressResult.compressionRatio.toFixed(2)}x`);
-      console.log(`   Compression Time: ${compressResult.duration.toFixed(2)}ms`);
-      console.log(`   Decompression Time: ${decompressDuration.toFixed(2)}ms`);
-      console.log(`   Throughput: ${(compressResult.originalSize / 1024 / (compressResult.duration / 1000)).toFixed(2)} KB/s`);
-      console.log('');
+      console.info(`   Original Size: ${(compressResult.originalSize / 1024).toFixed(2)} KB`);
+      console.info(`   Compressed Size: ${(compressResult.compressedSize / 1024).toFixed(2)} KB`);
+      console.info(`   Compression Ratio: ${compressResult.compressionRatio.toFixed(2)}x`);
+      console.info(`   Compression Time: ${compressResult.duration.toFixed(2)}ms`);
+      console.info(`   Decompression Time: ${decompressDuration.toFixed(2)}ms`);
+      console.info(`   Throughput: ${(compressResult.originalSize / 1024 / (compressResult.duration / 1000)).toFixed(2)} KB/s`);
+      console.info('');
     }
     
     // Test WebSocket message compression
-    console.log('🔗 WebSocket Message Compression:');
+    console.info('🔗 WebSocket Message Compression:');
     const wsMessage = {
       type: 'tick_update',
       data: this.generateTestData(1000),
@@ -119,10 +119,10 @@ class CompressionBenchmark {
     const wsCompressed = await compressionService.compressWebSocketMessage(wsMessage);
     const wsDecompressed = await compressionService.decompressWebSocketMessage(wsCompressed);
     
-    console.log(`   Message Size: ${(JSON.stringify(wsMessage).length / 1024).toFixed(2)} KB`);
-    console.log(`   Compressed Size: ${(wsCompressed.length / 1024).toFixed(2)} KB`);
-    console.log(`   WebSocket Compression: ✅ Working`);
-    console.log('');
+    console.info(`   Message Size: ${(JSON.stringify(wsMessage).length / 1024).toFixed(2)} KB`);
+    console.info(`   Compressed Size: ${(wsCompressed.length / 1024).toFixed(2)} KB`);
+    console.info(`   WebSocket Compression: ✅ Working`);
+    console.info('');
     
     // Generate summary report
     this.generateSummary();
@@ -132,8 +132,8 @@ class CompressionBenchmark {
    * Generate benchmark summary
    */
   private generateSummary(): void {
-    console.log('📈 Benchmark Summary:');
-    console.log('================================');
+    console.info('📈 Benchmark Summary:');
+    console.info('================================');
     
     const avgCompressionRatio = this.results.reduce(
       (sum, result) => sum + result.compressionRatio, 0
@@ -143,24 +143,24 @@ class CompressionBenchmark {
       (sum, result) => sum + (result.originalSize / 1024 / (result.duration / 1000)), 0
     ) / this.results.length;
     
-    console.log(`Average Compression Ratio: ${avgCompressionRatio.toFixed(2)}x`);
-    console.log(`Average Compression Speed: ${avgCompressionSpeed.toFixed(2)} KB/s`);
-    console.log(`Total Tests: ${this.results.length}`);
+    console.info(`Average Compression Ratio: ${avgCompressionRatio.toFixed(2)}x`);
+    console.info(`Average Compression Speed: ${avgCompressionSpeed.toFixed(2)} KB/s`);
+    console.info(`Total Tests: ${this.results.length}`);
     
     // Performance classification
     if (avgCompressionRatio > 3.0) {
-      console.log('🏆 Excellent compression performance!');
+      console.info('🏆 Excellent compression performance!');
     } else if (avgCompressionRatio > 2.0) {
-      console.log('✅ Good compression performance');
+      console.info('✅ Good compression performance');
     } else {
-      console.log('⚠️  Moderate compression performance');
+      console.info('⚠️  Moderate compression performance');
     }
     
-    console.log('\n🎯 Zstandard Compression Benefits:');
-    console.log('• 20-30% better compression than gzip');
-    console.log('• Faster compression/decompression speeds');
-    console.log('• Ideal for real-time data transfer');
-    console.log('• Perfect for WebSocket message compression');
+    console.info('\n🎯 Zstandard Compression Benefits:');
+    console.info('• 20-30% better compression than gzip');
+    console.info('• Faster compression/decompression speeds');
+    console.info('• Ideal for real-time data transfer');
+    console.info('• Perfect for WebSocket message compression');
   }
 }
 

@@ -12,12 +12,12 @@ function bench(name: string, fn: () => void, n: number): { name: string; opsPerS
 }
 
 function print(result: { name: string; opsPerSec: number; ms: number }): void {
-  console.log(`${result.name}: ${result.opsPerSec.toFixed(0)} ops/sec (${result.ms.toFixed(1)} ms)`);
+  console.info(`${result.name}: ${result.opsPerSec.toFixed(0)} ops/sec (${result.ms.toFixed(1)} ms)`);
 }
 
 function printTable(results: { name: string; opsPerSec: number; ms: number }[]): void {
-  console.log('\n📊 Benchmark Results:');
-  console.log(Bun.inspect.table(
+  console.info('\n📊 Benchmark Results:');
+  console.info(Bun.inspect.table(
     results.map(r => ({
       operation: r.name,
       'ops/sec': r.opsPerSec.toFixed(0),
@@ -59,7 +59,7 @@ function main(): void {
   printTable(results);
 
   const best = results.reduce((a, b) => (a.opsPerSec > b.opsPerSec ? a : b));
-  console.log(`\n🏆 Best: ${best.name} (${best.opsPerSec.toFixed(0)} ops/sec)`);
+  console.info(`\n🏆 Best: ${best.name} (${best.opsPerSec.toFixed(0)} ops/sec)`);
 }
 
 if (import.meta.main) {

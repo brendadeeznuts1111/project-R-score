@@ -15,8 +15,8 @@
 import { readdirSync, statSync, existsSync, readFileSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
 
-console.log('🚀 Fantasy42 Deployment Orchestrator');
-console.log('==================================');
+console.info('🚀 Fantasy42 Deployment Orchestrator');
+console.info('==================================');
 
 // ============================================================================
 // DEPLOYMENT CONFIGURATION
@@ -116,7 +116,7 @@ class Fantasy42DeploymentOrchestrator {
     skipPostVerification?: boolean;
     verbose?: boolean;
   }): Promise<DeploymentResult> {
-    console.log(`🚀 Starting Fantasy42 deployment to ${options.environment}...`);
+    console.info(`🚀 Starting Fantasy42 deployment to ${options.environment}...`);
 
     this.deploymentStatus.environment = options.environment;
     const envConfig = DEPLOYMENT_CONFIG.environments[options.environment];
@@ -159,13 +159,13 @@ class Fantasy42DeploymentOrchestrator {
       this.deploymentStatus.metrics.deploymentTime =
         this.deploymentStatus.endTime.getTime() - this.deploymentStatus.startTime.getTime();
 
-      console.log('\n🎉 Deployment completed successfully!');
-      console.log('====================================');
-      console.log(
+      console.info('\n🎉 Deployment completed successfully!');
+      console.info('====================================');
+      console.info(
         `⏱️  Total time: ${(this.deploymentStatus.metrics.deploymentTime / 1000).toFixed(2)}s`
       );
-      console.log(`📦 Packages deployed: ${this.deploymentStatus.metrics.deployedPackages}`);
-      console.log(`🩺 Health checks passed: ${this.deploymentStatus.metrics.passedHealthChecks}`);
+      console.info(`📦 Packages deployed: ${this.deploymentStatus.metrics.deployedPackages}`);
+      console.info(`🩺 Health checks passed: ${this.deploymentStatus.metrics.passedHealthChecks}`);
 
       return {
         success: true,
@@ -181,7 +181,7 @@ class Fantasy42DeploymentOrchestrator {
       try {
         await this.rollbackDeployment(envConfig);
         this.deploymentStatus.status = 'rolled_back';
-        console.log('✅ Rollback completed');
+        console.info('✅ Rollback completed');
       } catch (rollbackError) {
         console.error('❌ Rollback failed:', rollbackError);
       }
@@ -197,7 +197,7 @@ class Fantasy42DeploymentOrchestrator {
   }
 
   private async runStage(stageName: string, stageFunction: () => Promise<void>): Promise<void> {
-    console.log(`\n📋 Stage: ${stageName}`);
+    console.info(`\n📋 Stage: ${stageName}`);
     this.deploymentStatus.currentStage = stageName;
 
     const stage: DeploymentStage = {
@@ -212,22 +212,22 @@ class Fantasy42DeploymentOrchestrator {
       await stageFunction();
       stage.status = 'completed';
       stage.endTime = new Date();
-      console.log(`✅ ${stageName} completed`);
+      console.info(`✅ ${stageName} completed`);
     } catch (error) {
       stage.status = 'failed';
       stage.endTime = new Date();
       stage.error = error instanceof Error ? error.message : String(error);
-      console.log(`❌ ${stageName} failed: ${stage.error}`);
+      console.info(`❌ ${stageName} failed: ${stage.error}`);
       throw error;
     }
   }
 
   private async preDeploymentChecks(options: any): Promise<void> {
-    console.log('🔍 Running pre-deployment checks...');
+    console.info('🔍 Running pre-deployment checks...');
 
     // Security audit
     if (DEPLOYMENT_CONFIG.security.preDeployChecks) {
-      console.log('🔒 Running security audit...');
+      console.info('🔒 Running security audit...');
       const securityPassed = await this.runSecurityAudit();
       if (!securityPassed) {
         throw new Error('Security audit failed - deployment blocked');
@@ -236,7 +236,7 @@ class Fantasy42DeploymentOrchestrator {
 
     // Compliance check
     if (options.environment === 'enterprise') {
-      console.log('⚖️ Running compliance check...');
+      console.info('⚖️ Running compliance check...');
       const compliancePassed = await this.runComplianceCheck();
       if (!compliancePassed) {
         throw new Error('Compliance check failed - deployment blocked');
@@ -244,24 +244,24 @@ class Fantasy42DeploymentOrchestrator {
     }
 
     // Build verification
-    console.log('🏗️ Verifying build artifacts...');
+    console.info('🏗️ Verifying build artifacts...');
     await this.verifyBuildArtifacts();
 
     // Environment validation
-    console.log('🌍 Validating deployment environment...');
+    console.info('🌍 Validating deployment environment...');
     await this.validateEnvironment(options.environment);
 
-    console.log('✅ Pre-deployment checks passed');
+    console.info('✅ Pre-deployment checks passed');
   }
 
   private async buildAndPackage(options: any): Promise<void> {
-    console.log('🏗️ Building and packaging...');
+    console.info('🏗️ Building and packaging...');
 
     // Discover packages to deploy
     const packages = options.packages || (await this.discoverDeployablePackages());
     this.deploymentStatus.metrics.totalPackages = packages.length;
 
-    console.log(`📦 Building ${packages.length} packages...`);
+    console.info(`📦 Building ${packages.length} packages...`);
 
     // Build each package
     for (const packagePath of packages) {
@@ -270,14 +270,14 @@ class Fantasy42DeploymentOrchestrator {
     }
 
     // Create deployment package
-    console.log('📦 Creating deployment package...');
+    console.info('📦 Creating deployment package...');
     await this.createDeploymentPackage(packages, options.environment);
 
-    console.log('✅ Build and packaging completed');
+    console.info('✅ Build and packaging completed');
   }
 
   private async deployToEnvironment(envConfig: any, options: any): Promise<void> {
-    console.log(`🚀 Deploying to ${options.environment}...`);
+    console.info(`🚀 Deploying to ${options.environment}...`);
 
     const strategy = options.strategy || DEPLOYMENT_CONFIG.deployment.strategy;
 
@@ -295,17 +295,17 @@ class Fantasy42DeploymentOrchestrator {
         throw new Error(`Unknown deployment strategy: ${strategy}`);
     }
 
-    console.log('✅ Deployment completed');
+    console.info('✅ Deployment completed');
   }
 
   private async rollingDeployment(envConfig: any, options: any): Promise<void> {
-    console.log('🔄 Performing rolling deployment...');
+    console.info('🔄 Performing rolling deployment...');
 
     // Deploy packages incrementally
     const deploymentPackage = await this.loadDeploymentPackage();
 
     for (const pkg of deploymentPackage.packages) {
-      console.log(`📦 Deploying ${pkg.name}...`);
+      console.info(`📦 Deploying ${pkg.name}...`);
 
       // Deploy to Cloudflare
       await this.deployToCloudflare(pkg, envConfig);
@@ -316,23 +316,23 @@ class Fantasy42DeploymentOrchestrator {
         throw new Error(`Health check failed for ${pkg.name}`);
       }
 
-      console.log(`✅ ${pkg.name} deployed successfully`);
+      console.info(`✅ ${pkg.name} deployed successfully`);
     }
   }
 
   private async blueGreenDeployment(envConfig: any, options: any): Promise<void> {
-    console.log('🔵🔷 Performing blue-green deployment...');
+    console.info('🔵🔷 Performing blue-green deployment...');
 
     // Deploy to green environment
     const deploymentPackage = await this.loadDeploymentPackage();
 
-    console.log('🔷 Deploying to green environment...');
+    console.info('🔷 Deploying to green environment...');
     for (const pkg of deploymentPackage.packages) {
       await this.deployToCloudflare(pkg, envConfig, 'green');
     }
 
     // Run comprehensive health checks
-    console.log('🩺 Running comprehensive health checks...');
+    console.info('🩺 Running comprehensive health checks...');
     const allHealthy = await this.checkAllPackagesHealth(
       deploymentPackage.packages,
       envConfig,
@@ -343,23 +343,23 @@ class Fantasy42DeploymentOrchestrator {
     }
 
     // Switch traffic to green
-    console.log('🔄 Switching traffic to green environment...');
+    console.info('🔄 Switching traffic to green environment...');
     await this.switchTraffic(envConfig, 'green');
 
     // Monitor for a period
-    console.log('👀 Monitoring deployment...');
+    console.info('👀 Monitoring deployment...');
     await this.monitorDeployment(envConfig, 300); // 5 minutes
 
-    console.log('✅ Blue-green deployment completed');
+    console.info('✅ Blue-green deployment completed');
   }
 
   private async canaryDeployment(envConfig: any, options: any): Promise<void> {
-    console.log('🐦 Performing canary deployment...');
+    console.info('🐦 Performing canary deployment...');
 
     const canaryPercentage = DEPLOYMENT_CONFIG.deployment.canaryPercentage;
     const deploymentPackage = await this.loadDeploymentPackage();
 
-    console.log(`🐦 Deploying ${canaryPercentage}% canary...`);
+    console.info(`🐦 Deploying ${canaryPercentage}% canary...`);
 
     // Deploy canary version
     for (const pkg of deploymentPackage.packages) {
@@ -367,21 +367,21 @@ class Fantasy42DeploymentOrchestrator {
     }
 
     // Monitor canary performance
-    console.log('📊 Monitoring canary performance...');
+    console.info('📊 Monitoring canary performance...');
     const canaryHealthy = await this.monitorCanaryPerformance(envConfig, 600); // 10 minutes
 
     if (canaryHealthy) {
-      console.log('✅ Canary deployment successful, rolling out to 100%...');
+      console.info('✅ Canary deployment successful, rolling out to 100%...');
       await this.rolloutTo100(envConfig);
     } else {
-      console.log('❌ Canary deployment failed, rolling back...');
+      console.info('❌ Canary deployment failed, rolling back...');
       await this.rollbackCanary(envConfig);
       throw new Error('Canary deployment failed');
     }
   }
 
   private async runHealthChecks(envConfig: any): Promise<void> {
-    console.log('🩺 Running health checks...');
+    console.info('🩺 Running health checks...');
 
     const healthChecks = [
       { name: 'API Health', url: `https://${envConfig.domain}/api/health`, timeout: 30 },
@@ -399,44 +399,44 @@ class Fantasy42DeploymentOrchestrator {
     ];
 
     for (const check of healthChecks) {
-      console.log(`🔍 Checking ${check.name}...`);
+      console.info(`🔍 Checking ${check.name}...`);
 
       const healthy = await this.performHealthCheck(check);
       this.deploymentStatus.metrics.healthChecks++;
 
       if (healthy) {
         this.deploymentStatus.metrics.passedHealthChecks++;
-        console.log(`✅ ${check.name} is healthy`);
+        console.info(`✅ ${check.name} is healthy`);
       } else {
         this.deploymentStatus.metrics.failedHealthChecks++;
-        console.log(`❌ ${check.name} is unhealthy`);
+        console.info(`❌ ${check.name} is unhealthy`);
         throw new Error(`${check.name} health check failed`);
       }
     }
 
-    console.log('✅ All health checks passed');
+    console.info('✅ All health checks passed');
   }
 
   private async postDeploymentVerification(envConfig: any): Promise<void> {
-    console.log('🔍 Running post-deployment verification...');
+    console.info('🔍 Running post-deployment verification...');
 
     // Run integration tests
-    console.log('🧪 Running integration tests...');
+    console.info('🧪 Running integration tests...');
     await this.runIntegrationTests(envConfig);
 
     // Verify security
-    console.log('🔒 Verifying security...');
+    console.info('🔒 Verifying security...');
     await this.verifySecurityPostDeployment(envConfig);
 
     // Check performance
-    console.log('⚡ Checking performance...');
+    console.info('⚡ Checking performance...');
     await this.checkPerformanceMetrics(envConfig);
 
-    console.log('✅ Post-deployment verification completed');
+    console.info('✅ Post-deployment verification completed');
   }
 
   private async setupMonitoring(envConfig: any): Promise<void> {
-    console.log('📊 Setting up monitoring...');
+    console.info('📊 Setting up monitoring...');
 
     // Setup Cloudflare monitoring
     await this.setupCloudflareMonitoring(envConfig);
@@ -447,11 +447,11 @@ class Fantasy42DeploymentOrchestrator {
     // Setup alerting
     await this.setupAlerting(envConfig);
 
-    console.log('✅ Monitoring setup completed');
+    console.info('✅ Monitoring setup completed');
   }
 
   private async rollbackDeployment(envConfig: any): Promise<void> {
-    console.log('🔄 Rolling back deployment...');
+    console.info('🔄 Rolling back deployment...');
 
     const startTime = Date.now();
 
@@ -466,7 +466,7 @@ class Fantasy42DeploymentOrchestrator {
       await this.runHealthChecks(envConfig);
 
       this.deploymentStatus.metrics.rollbackTime = Date.now() - startTime;
-      console.log('✅ Rollback completed successfully');
+      console.info('✅ Rollback completed successfully');
     } catch (error) {
       console.error('❌ Rollback failed:', error);
       throw error;
@@ -518,7 +518,7 @@ class Fantasy42DeploymentOrchestrator {
       throw new Error('No build artifacts found');
     }
 
-    console.log(`📦 Found ${entries.length} build artifacts`);
+    console.info(`📦 Found ${entries.length} build artifacts`);
   }
 
   private async validateEnvironment(environment: string): Promise<void> {
@@ -534,7 +534,7 @@ class Fantasy42DeploymentOrchestrator {
       throw new Error(`Missing Cloudflare credentials for ${environment}`);
     }
 
-    console.log(`✅ Environment ${environment} validated`);
+    console.info(`✅ Environment ${environment} validated`);
   }
 
   private async discoverDeployablePackages(): Promise<string[]> {
@@ -616,13 +616,13 @@ class Fantasy42DeploymentOrchestrator {
   // Placeholder implementations for deployment methods
   private async deployToCloudflare(pkg: any, envConfig: any, environment?: string): Promise<void> {
     // Implement Cloudflare deployment
-    console.log(`Deploying ${pkg.name} to Cloudflare...`);
+    console.info(`Deploying ${pkg.name} to Cloudflare...`);
     await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate deployment
   }
 
   private async checkPackageHealth(pkg: any, envConfig: any): Promise<boolean> {
     // Implement health check
-    console.log(`Checking health of ${pkg.name}...`);
+    console.info(`Checking health of ${pkg.name}...`);
     return true; // Simulate healthy
   }
 
@@ -637,35 +637,35 @@ class Fantasy42DeploymentOrchestrator {
 
   private async switchTraffic(envConfig: any, environment: string): Promise<void> {
     // Implement traffic switching
-    console.log(`Switching traffic to ${environment}...`);
+    console.info(`Switching traffic to ${environment}...`);
   }
 
   private async monitorDeployment(envConfig: any, duration: number): Promise<void> {
     // Implement deployment monitoring
-    console.log(`Monitoring deployment for ${duration} seconds...`);
+    console.info(`Monitoring deployment for ${duration} seconds...`);
     await new Promise(resolve => setTimeout(resolve, duration * 100));
   }
 
   private async deployCanaryVersion(pkg: any, envConfig: any, percentage: number): Promise<void> {
     // Implement canary deployment
-    console.log(`Deploying ${pkg.name} as canary (${percentage}%)...`);
+    console.info(`Deploying ${pkg.name} as canary (${percentage}%)...`);
   }
 
   private async monitorCanaryPerformance(envConfig: any, duration: number): Promise<boolean> {
     // Implement canary monitoring
-    console.log(`Monitoring canary performance for ${duration} seconds...`);
+    console.info(`Monitoring canary performance for ${duration} seconds...`);
     await new Promise(resolve => setTimeout(resolve, duration * 100));
     return true; // Simulate success
   }
 
   private async rolloutTo100(envConfig: any): Promise<void> {
     // Implement full rollout
-    console.log('Rolling out to 100% traffic...');
+    console.info('Rolling out to 100% traffic...');
   }
 
   private async rollbackCanary(envConfig: any): Promise<void> {
     // Implement canary rollback
-    console.log('Rolling back canary deployment...');
+    console.info('Rolling back canary deployment...');
   }
 
   private async performHealthCheck(check: any): Promise<boolean> {
@@ -682,37 +682,37 @@ class Fantasy42DeploymentOrchestrator {
 
   private async runIntegrationTests(envConfig: any): Promise<void> {
     // Implement integration tests
-    console.log('Running integration tests...');
+    console.info('Running integration tests...');
   }
 
   private async verifySecurityPostDeployment(envConfig: any): Promise<void> {
     // Implement security verification
-    console.log('Verifying security post-deployment...');
+    console.info('Verifying security post-deployment...');
   }
 
   private async checkPerformanceMetrics(envConfig: any): Promise<void> {
     // Implement performance checking
-    console.log('Checking performance metrics...');
+    console.info('Checking performance metrics...');
   }
 
   private async setupCloudflareMonitoring(envConfig: any): Promise<void> {
     // Implement Cloudflare monitoring
-    console.log('Setting up Cloudflare monitoring...');
+    console.info('Setting up Cloudflare monitoring...');
   }
 
   private async setupApplicationMonitoring(envConfig: any): Promise<void> {
     // Implement application monitoring
-    console.log('Setting up application monitoring...');
+    console.info('Setting up application monitoring...');
   }
 
   private async setupAlerting(envConfig: any): Promise<void> {
     // Implement alerting
-    console.log('Setting up alerting...');
+    console.info('Setting up alerting...');
   }
 
   private async restorePreviousVersion(envConfig: any): Promise<void> {
     // Implement version restoration
-    console.log('Restoring previous version...');
+    console.info('Restoring previous version...');
   }
 
   private async loadDeploymentPackage(): Promise<any> {
@@ -786,10 +786,10 @@ async function main() {
     });
 
     if (result.success) {
-      console.log('\n🎉 Deployment completed successfully!');
-      console.log(`📋 Deployment ID: ${result.deploymentId}`);
-      console.log(`🌍 Environment: ${result.environment}`);
-      console.log(`⏱️  Deployment Time: ${(result.metrics.deploymentTime / 1000).toFixed(2)}s`);
+      console.info('\n🎉 Deployment completed successfully!');
+      console.info(`📋 Deployment ID: ${result.deploymentId}`);
+      console.info(`🌍 Environment: ${result.environment}`);
+      console.info(`⏱️  Deployment Time: ${(result.metrics.deploymentTime / 1000).toFixed(2)}s`);
     } else {
       console.error('\n❌ Deployment failed!');
       console.error(`📋 Deployment ID: ${result.deploymentId}`);
@@ -817,15 +817,15 @@ if (import.meta.main) {
       break;
 
     case 'status':
-      console.log('📊 Deployment status not implemented yet');
+      console.info('📊 Deployment status not implemented yet');
       break;
 
     case 'rollback':
-      console.log('🔄 Rollback not implemented yet');
+      console.info('🔄 Rollback not implemented yet');
       break;
 
     default:
-      console.log(`
+      console.info(`
 🚀 Fantasy42 Deployment Orchestrator
 
 Usage:

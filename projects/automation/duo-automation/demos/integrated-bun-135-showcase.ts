@@ -1,7 +1,7 @@
 // demo/integrated-bun-135-showcase.ts
 import { s3 } from "bun";
 
-console.log(`
+console.info(`
 🚀 **INTEGRATED BUN v1.3.5 ULTIMATE SHOWCASE**
 ═══════════════════════════════════════════════════════════════════
 
@@ -23,7 +23,7 @@ class AuthManager {
   private cookies: Map<string, string> = new Map();
   
   constructor() {
-    console.log("🔐 Initializing Authentication Manager...");
+    console.info("🔐 Initializing Authentication Manager...");
     this.setupAuthCookies();
   }
   
@@ -40,9 +40,9 @@ class AuthManager {
     this.cookies.set("build_timestamp", new Date().toISOString());
     this.cookies.set("environment", Bun.env.NODE_ENV || "development");
     
-    console.log("🍪 Authentication cookies configured:");
+    console.info("🍪 Authentication cookies configured:");
     this.cookies.forEach((value, key) => {
-      console.log(`   ${key}: ${value}`);
+      console.info(`   ${key}: ${value}`);
     });
   }
   
@@ -92,11 +92,11 @@ class S3FileManager {
   
   constructor(authManager: AuthManager) {
     this.authManager = authManager;
-    console.log("📎 Initializing S3 File Manager with authentication...");
+    console.info("📎 Initializing S3 File Manager with authentication...");
   }
   
   async uploadFileWithAuth(filename: string, data: string | Buffer, forceDownload = true) {
-    console.log(`📤 Uploading file: ${filename}`);
+    console.info(`📤 Uploading file: ${filename}`);
     
     if (!this.authManager.verifyAuth()) {
       throw new Error("Authentication required for file upload");
@@ -117,17 +117,17 @@ class S3FileManager {
       }
     });
     
-    console.log(`✅ File uploaded successfully:`);
-    console.log(`   Filename: ${filename}`);
-    console.log(`   Content-Disposition: ${disposition}`);
-    console.log(`   Authenticated by: ${this.authManager.getCookie("user_id")}`);
-    console.log(`   Session: ${this.authManager.getCookie("session_id")}`);
+    console.info(`✅ File uploaded successfully:`);
+    console.info(`   Filename: ${filename}`);
+    console.info(`   Content-Disposition: ${disposition}`);
+    console.info(`   Authenticated by: ${this.authManager.getCookie("user_id")}`);
+    console.info(`   Session: ${this.authManager.getCookie("session_id")}`);
     
     return file;
   }
   
   async demonstrateFileOperations() {
-    console.log(`
+    console.info(`
 📎 **S3 CONTENT-DISPOSITION WITH AUTHENTICATION DEMO**
 ═══════════════════════════════════════════════════════════════════
 `);
@@ -164,8 +164,8 @@ class S3FileManager {
     ];
     
     for (const operation of fileOperations) {
-      console.log(`\n📄 Processing: ${operation.name}`);
-      console.log(`   Description: ${operation.description}`);
+      console.info(`\n📄 Processing: ${operation.name}`);
+      console.info(`   Description: ${operation.description}`);
       
       try {
         const file = await this.uploadFileWithAuth(
@@ -174,8 +174,8 @@ class S3FileManager {
           operation.download
         );
         
-        console.log(`   ✅ Success: ${operation.filename}`);
-        console.log(`   📋 Content-Disposition: ${file.contentDisposition}`);
+        console.info(`   ✅ Success: ${operation.filename}`);
+        console.info(`   📋 Content-Disposition: ${file.contentDisposition}`);
         
       } catch (error) {
         console.error(`   ❌ Error: ${error}`);
@@ -193,11 +193,11 @@ class TerminalManager {
   
   constructor(authManager: AuthManager) {
     this.authManager = authManager;
-    console.log("🖥️ Initializing Terminal Manager with environment...");
+    console.info("🖥️ Initializing Terminal Manager with environment...");
   }
   
   async createAuthenticatedTerminal() {
-    console.log(`
+    console.info(`
 🖥️ **BUN TERMINAL API VIA BUN.SPAWN DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -221,11 +221,11 @@ Creating PTY terminal with:
       NODE_ENV: "production"
     };
     
-    console.log("🌍 Environment variables configured:");
+    console.info("🌍 Environment variables configured:");
     Object.entries(terminalEnv).forEach(([key, value]) => {
       if (key.startsWith("AUTH_") || key.startsWith("USER_") || key.startsWith("SESSION_") || 
           key.startsWith("CLIENT_") || key.startsWith("BUILD_") || key.startsWith("BUN_")) {
-        console.log(`   ${key}: ${value}`);
+        console.info(`   ${key}: ${value}`);
       }
     });
     
@@ -239,7 +239,7 @@ Creating PTY terminal with:
     });
     
     try {
-      console.log("🚀 Starting authenticated terminal session...");
+      console.info("🚀 Starting authenticated terminal session...");
       
       const proc = Bun.spawn(["bash"], {
         terminal,
@@ -271,7 +271,7 @@ Creating PTY terminal with:
       
       // Handle terminal completion
       proc.exited.then((code: number) => {
-        console.log(`\n🖥️ Terminal session completed with exit code: ${code}`);
+        console.info(`\n🖥️ Terminal session completed with exit code: ${code}`);
       });
       
       await proc.exited;
@@ -282,7 +282,7 @@ Creating PTY terminal with:
   }
   
   async demonstrateTerminalFeatures() {
-    console.log(`
+    console.info(`
 🎮 **ADVANCED TERMINAL FEATURES DEMO**
 ═══════════════════════════════════════════════════════════════════
 `);
@@ -352,11 +352,11 @@ class InlineServer {
   constructor(authManager: AuthManager, s3Manager: S3FileManager) {
     this.authManager = authManager;
     this.s3Manager = s3Manager;
-    console.log("🌐 Initializing Inline Server with authentication...");
+    console.info("🌐 Initializing Inline Server with authentication...");
   }
   
   async startServer() {
-    console.log(`
+    console.info(`
 🌐 **INLINE SERVING WITH AUTHENTICATION DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -373,7 +373,7 @@ Starting integrated server with:
       async fetch(req) {
         const url = new URL(req.url);
         
-        console.log(`📥 ${req.method} ${url.pathname}`);
+        console.info(`📥 ${req.method} ${url.pathname}`);
         
         // Authentication middleware
         const authCookie = req.headers.get("Cookie");
@@ -419,14 +419,14 @@ Starting integrated server with:
       }
     });
     
-    console.log(`🚀 Server started at http://localhost:${server.port}`);
-    console.log("📋 Available endpoints:");
-    console.log("   GET  /                 - Home page");
-    console.log("   GET  /files            - File list");
-    console.log("   POST /upload           - Upload file");
-    console.log("   GET  /download/:file   - Download file");
-    console.log("   GET  /auth/status      - Authentication status");
-    console.log("   GET  /environment      - Environment info");
+    console.info(`🚀 Server started at http://localhost:${server.port}`);
+    console.info("📋 Available endpoints:");
+    console.info("   GET  /                 - Home page");
+    console.info("   GET  /files            - File list");
+    console.info("   POST /upload           - Upload file");
+    console.info("   GET  /download/:file   - Download file");
+    console.info("   GET  /auth/status      - Authentication status");
+    console.info("   GET  /environment      - Environment info");
     
     return server;
   }
@@ -589,7 +589,7 @@ Starting integrated server with:
 // ============================================================================
 
 const runIntegratedShowcase = async () => {
-  console.log(`
+  console.info(`
 🚀 **STARTING INTEGRATED BUN v1.3.5 SHOWCASE**
 ═══════════════════════════════════════════════════════════════════
 
@@ -605,29 +605,29 @@ Let's explore the complete integration! 🎯
   
   try {
     // 1. Initialize Authentication
-    console.log("\n🔐 Step 1: Initializing Authentication System");
+    console.info("\n🔐 Step 1: Initializing Authentication System");
     const authManager = new AuthManager();
     
     // 2. Initialize S3 File Manager
-    console.log("\n📎 Step 2: Initializing S3 File Manager");
+    console.info("\n📎 Step 2: Initializing S3 File Manager");
     const s3Manager = new S3FileManager(authManager);
     await s3Manager.demonstrateFileOperations();
     
     // 3. Initialize Terminal Manager
-    console.log("\n🖥️ Step 3: Initializing Terminal Manager");
+    console.info("\n🖥️ Step 3: Initializing Terminal Manager");
     const terminalManager = new TerminalManager(authManager);
     await terminalManager.createAuthenticatedTerminal();
     
     // 4. Demonstrate Advanced Terminal Features
-    console.log("\n🎮 Step 4: Advanced Terminal Features");
+    console.info("\n🎮 Step 4: Advanced Terminal Features");
     await terminalManager.demonstrateTerminalFeatures();
     
     // 5. Initialize Inline Server
-    console.log("\n🌐 Step 5: Starting Inline Server");
+    console.info("\n🌐 Step 5: Starting Inline Server");
     const serverManager = new InlineServer(authManager, s3Manager);
     const server = await serverManager.startServer();
     
-    console.log(`
+    console.info(`
 🎉 **INTEGRATED SHOWCASE COMPLETED!**
 ═══════════════════════════════════════════════════════════════════
 
@@ -655,7 +655,7 @@ Let's explore the complete integration! 🎯
 `);
     
     // Keep server running for demonstration
-    console.log("\n⏳ Server running... Press Ctrl+C to stop");
+    console.info("\n⏳ Server running... Press Ctrl+C to stop");
     
   } catch (error) {
     console.error("❌ Integrated showcase failed:", error);

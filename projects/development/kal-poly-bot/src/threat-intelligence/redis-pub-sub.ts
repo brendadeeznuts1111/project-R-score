@@ -52,7 +52,7 @@ export class ThreatIntelligenceRedisPubSub {
       // In a real implementation, this would use a Redis client library
       this.redisClient = {
         publish: async (channel: string, message: string) => {
-          console.log(
+          console.info(
             `[Redis Pub/Sub] Publishing to ${channel}:`,
             message.substring(0, 100) + "..."
           );
@@ -62,7 +62,7 @@ export class ThreatIntelligenceRedisPubSub {
           channel: string,
           callback: (message: string) => void
         ) => {
-          console.log(`[Redis Pub/Sub] Subscribed to ${channel}`);
+          console.info(`[Redis Pub/Sub] Subscribed to ${channel}`);
           // Simulate receiving messages
           setTimeout(() => {
             callback(
@@ -256,7 +256,7 @@ export class ThreatIntelligenceRedisPubSub {
         return;
       }
 
-      console.log(
+      console.info(
         `[Cross-Region] Received threat intelligence from ${threatEvent.region}:`,
         threatEvent.type
       );
@@ -279,7 +279,7 @@ export class ThreatIntelligenceRedisPubSub {
         return;
       }
 
-      console.log(
+      console.info(
         `[Cross-Region] Received threat signature from ${threatEvent.region}:`,
         threatEvent.signature
       );
@@ -301,7 +301,7 @@ export class ThreatIntelligenceRedisPubSub {
         return;
       }
 
-      console.log(
+      console.info(
         `[Cross-Region] Received anomaly from ${threatEvent.region}:`,
         threatEvent.signature
       );
@@ -323,7 +323,7 @@ export class ThreatIntelligenceRedisPubSub {
         return;
       }
 
-      console.log(
+      console.info(
         `[Cross-Region] Received compliance event from ${threatEvent.region}:`,
         threatEvent.type
       );
@@ -366,7 +366,7 @@ export class ThreatIntelligenceRedisPubSub {
     threatEvent: ThreatEvent
   ): Promise<void> {
     // In a real implementation, this would update the local SQLite database
-    console.log(
+    console.info(
       `Updating local threat database with signature: ${threatEvent.signature}`
     );
   }
@@ -379,7 +379,7 @@ export class ThreatIntelligenceRedisPubSub {
 
       if (localAnomalies > 50) {
         // High correlation threshold
-        console.log(
+        console.info(
           `High correlation detected for ${metadata.userId} across regions`
         );
 
@@ -468,6 +468,6 @@ export class ThreatIntelligenceRedisPubSub {
   async disconnect(): Promise<void> {
     // Clean up Redis connections
     this.subscribers.clear();
-    console.log("Redis Pub/Sub disconnected");
+    console.info("Redis Pub/Sub disconnected");
   }
 }

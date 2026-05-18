@@ -19,8 +19,8 @@ import { MerchantDashboardManager } from '../merchant/dashboard/merchant-dashboa
 import { AIEvidenceAnalyzer } from '../ai/evidence-analyzer.ts';
 import { createHealthCheck } from '../index.ts';
 
-console.log('🔗 EVIDENCE PIPELINE INTEGRATION SHOWCASE');
-console.log('='.repeat(60));
+console.info('🔗 EVIDENCE PIPELINE INTEGRATION SHOWCASE');
+console.info('='.repeat(60));
 
 // ============================================================================
 // INTEGRATED PIPELINE INSPECTOR
@@ -43,7 +43,7 @@ class EvidencePipelineInspector {
   }
 
   async inspectFullPipeline() {
-    console.log('🚀 Starting full Evidence Integrity Pipeline inspection...\n');
+    console.info('🚀 Starting full Evidence Integrity Pipeline inspection...\n');
 
     // 1. Health Check Inspection
     await this.inspectHealthCheck();
@@ -68,8 +68,8 @@ class EvidencePipelineInspector {
   }
 
   private async inspectHealthCheck() {
-    console.log('🏥 HEALTH CHECK INSPECTION');
-    console.log('-'.repeat(40));
+    console.info('🏥 HEALTH CHECK INSPECTION');
+    console.info('-'.repeat(40));
 
     const health = createHealthCheck();
     
@@ -86,13 +86,13 @@ class EvidencePipelineInspector {
       }
     );
 
-    console.log(healthCheck[INSPECT_CUSTOM]());
+    console.info(healthCheck[INSPECT_CUSTOM]());
     this.metrics.securityChecks++;
   }
 
   private async inspectDatabaseLayer() {
-    console.log('\n🗄️  DATABASE LAYER INSPECTION');
-    console.log('-'.repeat(40));
+    console.info('\n🗄️  DATABASE LAYER INSPECTION');
+    console.info('-'.repeat(40));
 
     // Simulate database connections
     const connections = [
@@ -134,7 +134,7 @@ class EvidencePipelineInspector {
     ];
 
     connections.forEach((conn, index) => {
-      console.log(`${index + 1}. ${conn[INSPECT_CUSTOM]()}`);
+      console.info(`${index + 1}. ${conn[INSPECT_CUSTOM]()}`);
     });
 
     // Connection statistics
@@ -148,12 +148,12 @@ class EvidencePipelineInspector {
       new Date()
     );
 
-    console.log(`\n📊 Connection Statistics:\n${stats[INSPECT_CUSTOM]()}`);
+    console.info(`\n📊 Connection Statistics:\n${stats[INSPECT_CUSTOM]()}`);
   }
 
   private async inspectAIAnalysis() {
-    console.log('\n🤖 AI ANALYSIS INSPECTION');
-    console.log('-'.repeat(40));
+    console.info('\n🤖 AI ANALYSIS INSPECTION');
+    console.info('-'.repeat(40));
 
     // Simulate AI analysis results
     const aiChecks = [
@@ -195,15 +195,15 @@ class EvidencePipelineInspector {
     ];
 
     aiChecks.forEach((check, index) => {
-      console.log(`${index + 1}. ${check[INSPECT_CUSTOM]()}`);
+      console.info(`${index + 1}. ${check[INSPECT_CUSTOM]()}`);
     });
 
     this.metrics.evidenceProcessed += 147;
   }
 
   private async inspectMerchantDashboard() {
-    console.log('\n🏪 MERCHANT DASHBOARD INSPECTION');
-    console.log('-'.repeat(40));
+    console.info('\n🏪 MERCHANT DASHBOARD INSPECTION');
+    console.info('-'.repeat(40));
 
     try {
       // Get dashboard data
@@ -223,16 +223,16 @@ class EvidencePipelineInspector {
         }
       );
 
-      console.log(dashboardCheck[INSPECT_CUSTOM]());
+      console.info(dashboardCheck[INSPECT_CUSTOM]());
 
       // Show overview metrics
-      console.log('\n📊 Dashboard Overview:');
-      console.log(`  💰 Total Transactions: ${dashboard.overview.totalTransactions.toLocaleString()}`);
-      console.log(`  💵 Total Volume: $${dashboard.overview.totalVolume.toLocaleString()}`);
-      console.log(`  ⚖️  Active Disputes: ${dashboard.overview.activeDisputes}`);
-      console.log(`  📈 Dispute Rate: ${dashboard.overview.disputeRate.toFixed(2)}%`);
-      console.log(`  🏆 Win Rate: ${dashboard.overview.winRate.toFixed(1)}%`);
-      console.log(`  🚨 Risk Level: ${dashboard.overview.riskLevel}`);
+      console.info('\n📊 Dashboard Overview:');
+      console.info(`  💰 Total Transactions: ${dashboard.overview.totalTransactions.toLocaleString()}`);
+      console.info(`  💵 Total Volume: $${dashboard.overview.totalVolume.toLocaleString()}`);
+      console.info(`  ⚖️  Active Disputes: ${dashboard.overview.activeDisputes}`);
+      console.info(`  📈 Dispute Rate: ${dashboard.overview.disputeRate.toFixed(2)}%`);
+      console.info(`  🏆 Win Rate: ${dashboard.overview.winRate.toFixed(1)}%`);
+      console.info(`  🚨 Risk Level: ${dashboard.overview.riskLevel}`);
 
     } catch (error) {
       const errorCheck = new SecurityCheckInspectable(
@@ -241,13 +241,13 @@ class EvidencePipelineInspector {
         `Dashboard load failed: ${error.message}`,
         { error: error.toString() }
       );
-      console.log(errorCheck[INSPECT_CUSTOM]());
+      console.info(errorCheck[INSPECT_CUSTOM]());
     }
   }
 
   private async inspectSecurityLayer() {
-    console.log('\n🛡️  SECURITY LAYER INSPECTION');
-    console.log('-'.repeat(40));
+    console.info('\n🛡️  SECURITY LAYER INSPECTION');
+    console.info('-'.repeat(40));
 
     const securityChecks = [
       new SecurityCheckInspectable(
@@ -301,15 +301,15 @@ class EvidencePipelineInspector {
     ];
 
     securityChecks.forEach((check, index) => {
-      console.log(`${index + 1}. ${check[INSPECT_CUSTOM]()}`);
+      console.info(`${index + 1}. ${check[INSPECT_CUSTOM]()}`);
     });
 
     this.metrics.securityChecks += 4;
   }
 
   private async inspectPaymentProcessing() {
-    console.log('\n💳 PAYMENT PROCESSING INSPECTION');
-    console.log('-'.repeat(40));
+    console.info('\n💳 PAYMENT PROCESSING INSPECTION');
+    console.info('-'.repeat(40));
 
     const payments = [
       new PaymentRequestInspectable(
@@ -378,25 +378,25 @@ class EvidencePipelineInspector {
     ];
 
     payments.forEach((payment, index) => {
-      console.log(`${index + 1}. ${payment[INSPECT_CUSTOM]()}`);
+      console.info(`${index + 1}. ${payment[INSPECT_CUSTOM]()}`);
     });
 
     this.metrics.paymentsProcessed += payments.length;
   }
 
   private showIntegrationSummary() {
-    console.log('\n📊 INTEGRATION SUMMARY');
-    console.log('-'.repeat(40));
+    console.info('\n📊 INTEGRATION SUMMARY');
+    console.info('-'.repeat(40));
 
     const uptime = ((Date.now() - this.metrics.startTime) / 1000).toFixed(1);
     const inspectionRate = (this.metrics.inspections / parseFloat(uptime)).toFixed(1);
 
-    console.log(`⏱️  Inspection Time: ${uptime}s`);
-    console.log(`📊 Total Inspections: ${this.metrics.inspections}`);
-    console.log(`🚀 Inspection Rate: ${inspectionRate}/sec`);
-    console.log(`🔍 Evidence Processed: ${this.metrics.evidenceProcessed}`);
-    console.log(`🛡️  Security Checks: ${this.metrics.securityChecks}`);
-    console.log(`💳 Payments Processed: ${this.metrics.paymentsProcessed}`);
+    console.info(`⏱️  Inspection Time: ${uptime}s`);
+    console.info(`📊 Total Inspections: ${this.metrics.inspections}`);
+    console.info(`🚀 Inspection Rate: ${inspectionRate}/sec`);
+    console.info(`🔍 Evidence Processed: ${this.metrics.evidenceProcessed}`);
+    console.info(`🛡️  Security Checks: ${this.metrics.securityChecks}`);
+    console.info(`💳 Payments Processed: ${this.metrics.paymentsProcessed}`);
 
     // Create integration status
     const integrationStatus = [
@@ -427,22 +427,22 @@ class EvidencePipelineInspector {
       )
     ];
 
-    console.log('\n🔗 INTEGRATION STATUS');
-    console.log('-'.repeat(40));
+    console.info('\n🔗 INTEGRATION STATUS');
+    console.info('-'.repeat(40));
     integrationStatus.forEach((status, index) => {
-      console.log(`${index + 1}. ${status[INSPECT_CUSTOM]()}`);
+      console.info(`${index + 1}. ${status[INSPECT_CUSTOM]()}`);
     });
 
-    console.log('\n✅ Evidence Pipeline Integration Complete!');
-    console.log('\n🎯 Integration Features Demonstrated:');
-    console.log('  • Health check system integration');
-    console.log('  • Database layer monitoring');
-    console.log('  • AI analysis pipeline inspection');
-    console.log('  • Merchant dashboard connectivity');
-    console.log('  • Security layer validation');
-    console.log('  • Payment processing verification');
-    console.log('  • Real-time metrics collection');
-    console.log('  • End-to-end pipeline testing');
+    console.info('\n✅ Evidence Pipeline Integration Complete!');
+    console.info('\n🎯 Integration Features Demonstrated:');
+    console.info('  • Health check system integration');
+    console.info('  • Database layer monitoring');
+    console.info('  • AI analysis pipeline inspection');
+    console.info('  • Merchant dashboard connectivity');
+    console.info('  • Security layer validation');
+    console.info('  • Payment processing verification');
+    console.info('  • Real-time metrics collection');
+    console.info('  • End-to-end pipeline testing');
   }
 }
 
@@ -451,7 +451,7 @@ class EvidencePipelineInspector {
 // ============================================================================
 
 async function runIntegrationDemo() {
-  console.log('🔗 Starting Evidence Pipeline Integration Demo...\n');
+  console.info('🔗 Starting Evidence Pipeline Integration Demo...\n');
 
   const inspector = new EvidencePipelineInspector();
   await inspector.inspectFullPipeline();

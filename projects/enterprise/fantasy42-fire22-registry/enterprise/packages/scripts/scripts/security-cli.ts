@@ -73,7 +73,7 @@ async function main() {
 }
 
 async function runSecurityCheck() {
-  console.log('🔍 Running Fantasy42 Security Check...');
+  console.info('🔍 Running Fantasy42 Security Check...');
 
   // Create User-Agent for this operation
   const userAgent =
@@ -86,7 +86,7 @@ async function runSecurityCheck() {
       compliance: values.compliance,
     });
 
-  console.log(`🛡️ Using User-Agent: ${userAgent}`);
+  console.info(`🛡️ Using User-Agent: ${userAgent}`);
 
   // Create appropriate client based on package type
   let client: Fantasy42SecureClient;
@@ -131,12 +131,12 @@ async function runSecurityCheck() {
       timeout: 10000,
     });
 
-    console.log('✅ Security check completed successfully');
-    console.log(`📊 Status: ${response.status}`);
-    console.log(`🆔 Request ID: ${response.requestId}`);
+    console.info('✅ Security check completed successfully');
+    console.info(`📊 Status: ${response.status}`);
+    console.info(`🆔 Request ID: ${response.requestId}`);
 
     if (values.verbose) {
-      console.log(`📋 Response:`, JSON.stringify(response.data, null, 2));
+      console.info(`📋 Response:`, JSON.stringify(response.data, null, 2));
     }
 
     // Log to compliance if enabled
@@ -166,17 +166,17 @@ async function runSecurityCheck() {
 }
 
 async function runMonitoring() {
-  console.log('📊 Starting Fantasy42 Security Monitoring...');
+  console.info('📊 Starting Fantasy42 Security Monitoring...');
 
   const monitor = new Fantasy42AgentMonitor(values.environment as any);
 
   if (values.monitor) {
-    console.log('🔄 Starting real-time monitoring...');
+    console.info('🔄 Starting real-time monitoring...');
     monitor.startMonitoring(30000); // Monitor every 30 seconds
 
     // Run for specified duration or indefinitely
     const duration = 300000; // 5 minutes default
-    console.log(`⏱️ Monitoring for ${duration / 1000} seconds...`);
+    console.info(`⏱️ Monitoring for ${duration / 1000} seconds...`);
 
     await new Promise(resolve => setTimeout(resolve, duration));
 
@@ -186,29 +186,29 @@ async function runMonitoring() {
   // Get current metrics
   const metrics = await monitor.getMetrics();
 
-  console.log('\n📈 Current Security Metrics:');
-  console.log('='.repeat(50));
-  console.log(`Total Requests: ${metrics.totalRequests}`);
-  console.log(`Unique Agents: ${metrics.uniqueAgents}`);
-  console.log(`Compliance Rate: ${(metrics.complianceRate * 100).toFixed(1)}%`);
-  console.log(`Suspicious Agents: ${metrics.suspiciousAgents}`);
-  console.log(`Blocked Agents: ${metrics.blockedAgents}`);
+  console.info('\n📈 Current Security Metrics:');
+  console.info('='.repeat(50));
+  console.info(`Total Requests: ${metrics.totalRequests}`);
+  console.info(`Unique Agents: ${metrics.uniqueAgents}`);
+  console.info(`Compliance Rate: ${(metrics.complianceRate * 100).toFixed(1)}%`);
+  console.info(`Suspicious Agents: ${metrics.suspiciousAgents}`);
+  console.info(`Blocked Agents: ${metrics.blockedAgents}`);
 
   if (metrics.topAgents.length > 0) {
-    console.log('\n🏆 Top User-Agents:');
+    console.info('\n🏆 Top User-Agents:');
     metrics.topAgents.slice(0, 5).forEach((agent, index) => {
-      console.log(`${index + 1}. ${agent.agent} (${agent.count} requests)`);
+      console.info(`${index + 1}. ${agent.agent} (${agent.count} requests)`);
     });
   }
 
   // Generate security report
   const report = UserAgentMonitor.generateSecurityReport();
-  console.log('\n📋 Security Report:');
-  console.log(report);
+  console.info('\n📋 Security Report:');
+  console.info(report);
 }
 
 async function runAudit() {
-  console.log('📋 Running Fantasy42 Compliance Audit...');
+  console.info('📋 Running Fantasy42 Compliance Audit...');
 
   const logger = Fantasy42ComplianceLogger.getInstance(values.environment as any);
 
@@ -218,39 +218,39 @@ async function runAudit() {
 
   const report = await logger.generateComplianceReport(startDate, endDate);
 
-  console.log('\n📊 Compliance Audit Report');
-  console.log('='.repeat(50));
-  console.log(`Period: ${startDate} to ${endDate}`);
-  console.log(`Total Entries: ${report.summary.totalEntries}`);
-  console.log(`Compliance Rate: ${(report.summary.complianceRate * 100).toFixed(1)}%`);
-  console.log(`Critical Violations: ${report.summary.criticalViolations}`);
-  console.log(`High Violations: ${report.summary.highViolations}`);
-  console.log(`Medium Violations: ${report.summary.mediumViolations}`);
-  console.log(`Low Violations: ${report.summary.lowViolations}`);
+  console.info('\n📊 Compliance Audit Report');
+  console.info('='.repeat(50));
+  console.info(`Period: ${startDate} to ${endDate}`);
+  console.info(`Total Entries: ${report.summary.totalEntries}`);
+  console.info(`Compliance Rate: ${(report.summary.complianceRate * 100).toFixed(1)}%`);
+  console.info(`Critical Violations: ${report.summary.criticalViolations}`);
+  console.info(`High Violations: ${report.summary.highViolations}`);
+  console.info(`Medium Violations: ${report.summary.mediumViolations}`);
+  console.info(`Low Violations: ${report.summary.lowViolations}`);
 
-  console.log('\n🏛️ Framework Compliance:');
-  console.log(`GDPR: ${report.compliance.gdpr.status} (${report.compliance.gdpr.score}%)`);
-  console.log(`PCI: ${report.compliance.pci.status} (${report.compliance.pci.score}%)`);
-  console.log(`AML: ${report.compliance.aml.status} (${report.compliance.aml.score}%)`);
-  console.log(`Overall: ${report.compliance.overall.status} (${report.compliance.overall.score}%)`);
+  console.info('\n🏛️ Framework Compliance:');
+  console.info(`GDPR: ${report.compliance.gdpr.status} (${report.compliance.gdpr.score}%)`);
+  console.info(`PCI: ${report.compliance.pci.status} (${report.compliance.pci.score}%)`);
+  console.info(`AML: ${report.compliance.aml.status} (${report.compliance.aml.score}%)`);
+  console.info(`Overall: ${report.compliance.overall.status} (${report.compliance.overall.score}%)`);
 
   if (report.recommendations.length > 0) {
-    console.log('\n💡 Recommendations:');
+    console.info('\n💡 Recommendations:');
     report.recommendations.forEach((rec, index) => {
-      console.log(`${index + 1}. ${rec}`);
+      console.info(`${index + 1}. ${rec}`);
     });
   }
 
   if (report.violations.length > 0 && values.verbose) {
-    console.log('\n🚨 Recent Violations:');
+    console.info('\n🚨 Recent Violations:');
     report.violations.slice(0, 5).forEach((violation, index) => {
-      console.log(`${index + 1}. [${violation.level}] ${violation.event}: ${violation.action}`);
+      console.info(`${index + 1}. [${violation.level}] ${violation.event}: ${violation.action}`);
     });
   }
 }
 
 async function showAgentInfo() {
-  console.log('🛡️ Fantasy42 User-Agent Information');
+  console.info('🛡️ Fantasy42 User-Agent Information');
 
   // Generate User-Agent for current configuration
   const userAgent =
@@ -263,33 +263,33 @@ async function showAgentInfo() {
       compliance: values.compliance,
     });
 
-  console.log('\n🔧 Current Configuration:');
-  console.log(`Package: ${values.package}`);
-  console.log(`Environment: ${values.environment}`);
-  console.log(`Geo Region: ${values['geo-region']}`);
-  console.log(`Build Version: ${values['build-version']}`);
-  console.log(`Compliance: ${values.compliance ? 'Enabled' : 'Disabled'}`);
+  console.info('\n🔧 Current Configuration:');
+  console.info(`Package: ${values.package}`);
+  console.info(`Environment: ${values.environment}`);
+  console.info(`Geo Region: ${values['geo-region']}`);
+  console.info(`Build Version: ${values['build-version']}`);
+  console.info(`Compliance: ${values.compliance ? 'Enabled' : 'Disabled'}`);
 
-  console.log('\n🛡️ Generated User-Agent:');
-  console.log(userAgent);
+  console.info('\n🛡️ Generated User-Agent:');
+  console.info(userAgent);
 
-  console.log('\n📊 User-Agent Analysis:');
-  console.log(`Length: ${userAgent.length} characters`);
-  console.log(`Compliance Markers: ${userAgent.includes('GDPR') ? '✅' : '❌'} GDPR`);
-  console.log(
+  console.info('\n📊 User-Agent Analysis:');
+  console.info(`Length: ${userAgent.length} characters`);
+  console.info(`Compliance Markers: ${userAgent.includes('GDPR') ? '✅' : '❌'} GDPR`);
+  console.info(
     `Security Level: ${userAgent.includes('Sec:Maximum') ? '✅ Maximum' : '❓ Standard'}`
   );
-  console.log(
+  console.info(
     `Geo Compliance: ${userAgent.includes('GDPR') || userAgent.includes('Market') ? '✅' : '❌'}`
   );
 
   // Check if it's suspicious
   UserAgentMonitor.trackAgent(userAgent);
   const isSuspicious = UserAgentMonitor.isSuspicious(userAgent);
-  console.log(`Suspicious: ${isSuspicious ? '⚠️ Yes' : '✅ No'}`);
+  console.info(`Suspicious: ${isSuspicious ? '⚠️ Yes' : '✅ No'}`);
 
   // Show available package types
-  console.log('\n📦 Available Package Types:');
+  console.info('\n📦 Available Package Types:');
   const packages = [
     'FRAUD_DETECTION',
     'PAYMENT_SECURITY',
@@ -305,11 +305,11 @@ async function showAgentInfo() {
 
   packages.forEach(pkg => {
     const agent = Fantasy42UserAgents.getEnvironmentAgent(pkg as any, values.environment as any);
-    console.log(`  ${pkg}: ${agent}`);
+    console.info(`  ${pkg}: ${agent}`);
   });
 
   // Show environment configurations
-  console.log('\n🌍 Environment Configurations:');
+  console.info('\n🌍 Environment Configurations:');
   const environments = ['production', 'staging', 'development', 'enterprise'];
 
   environments.forEach(env => {
@@ -318,17 +318,17 @@ async function showAgentInfo() {
       env as any
     );
     const isCurrent = env === values.environment ? ' ← Current' : '';
-    console.log(`  ${env}: ${envUserAgent}${isCurrent}`);
+    console.info(`  ${env}: ${envUserAgent}${isCurrent}`);
   });
 }
 
 async function runTest() {
-  console.log('🧪 Running Fantasy42 Security Tests...');
+  console.info('🧪 Running Fantasy42 Security Tests...');
 
   // Run the test suite
   const testCommand = 'bun test tests/user-agent-tests.ts';
 
-  console.log(`Executing: ${testCommand}`);
+  console.info(`Executing: ${testCommand}`);
 
   const process = Bun.spawn(testCommand.split(' '), {
     stdio: 'inherit',
@@ -337,15 +337,15 @@ async function runTest() {
   const exitCode = await process.exited;
 
   if (exitCode === 0) {
-    console.log('✅ All security tests passed!');
+    console.info('✅ All security tests passed!');
   } else {
-    console.log('❌ Some security tests failed!');
+    console.info('❌ Some security tests failed!');
     process.exit(exitCode);
   }
 }
 
 function showHelp() {
-  console.log(`
+  console.info(`
 🛡️ Fantasy42 Security CLI Tool
 
 Usage:
@@ -393,12 +393,12 @@ Environment Variables:
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down Fantasy42 Security CLI...');
+  console.info('\n🛑 Shutting down Fantasy42 Security CLI...');
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n🛑 Received SIGTERM, shutting down...');
+  console.info('\n🛑 Received SIGTERM, shutting down...');
   process.exit(0);
 });
 

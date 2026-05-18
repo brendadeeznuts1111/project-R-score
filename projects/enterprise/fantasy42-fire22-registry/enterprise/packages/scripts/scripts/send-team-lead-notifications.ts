@@ -38,13 +38,13 @@ class TeamLeadNotificationSystem {
    * 📧 Send notifications to all team leads
    */
   async sendAllNotifications(): Promise<void> {
-    console.log('📧 FIRE22 TEAM LEAD NOTIFICATION SYSTEM');
-    console.log('!==!==!==!==!==!==!===');
-    console.log(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
-    console.log(`⏰ Time: ${new Date().toLocaleTimeString()}`);
-    console.log(`🎯 Operation: SECURE-COMM-22\n`);
+    console.info('📧 FIRE22 TEAM LEAD NOTIFICATION SYSTEM');
+    console.info('!==!==!==!==!==!==!===');
+    console.info(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
+    console.info(`⏰ Time: ${new Date().toLocaleTimeString()}`);
+    console.info(`🎯 Operation: SECURE-COMM-22\n`);
 
-    console.log('🚀 Sending security update notifications to all team leads...\n');
+    console.info('🚀 Sending security update notifications to all team leads...\n');
 
     for (const teamLead of this.teamLeads) {
       await this.sendIndividualNotification(teamLead);
@@ -52,17 +52,17 @@ class TeamLeadNotificationSystem {
 
     await this.generateNotificationSummary();
 
-    console.log('\n✅ ALL TEAM LEAD NOTIFICATIONS SENT');
-    console.log('📧 10 department heads notified');
-    console.log('🔒 Security onboarding packages delivered');
-    console.log('📋 Deployment timeline communicated');
+    console.info('\n✅ ALL TEAM LEAD NOTIFICATIONS SENT');
+    console.info('📧 10 department heads notified');
+    console.info('🔒 Security onboarding packages delivered');
+    console.info('📋 Deployment timeline communicated');
   }
 
   /**
    * 📨 Send individual notification to team lead
    */
   private async sendIndividualNotification(teamLead: TeamLead): Promise<void> {
-    console.log(`📨 Sending notification to ${teamLead.name} (${teamLead.department})...`);
+    console.info(`📨 Sending notification to ${teamLead.name} (${teamLead.department})...`);
 
     const notification = this.generateIndividualNotification(teamLead);
     const filename = `${teamLead.departmentId}-security-notification.md`;
@@ -71,10 +71,10 @@ class TeamLeadNotificationSystem {
     writeFileSync(filepath, notification);
 
     // Simulate email sending
-    console.log(`  ✅ Email sent to: ${teamLead.email}`);
-    console.log(`  📦 Onboarding package: /communications/onboarding/${teamLead.departmentId}/`);
-    console.log(`  🗓️ Deployment phase: Phase ${teamLead.phase} (${teamLead.week})`);
-    console.log(`  🛡️ Security level: ${teamLead.securityLevel}`);
+    console.info(`  ✅ Email sent to: ${teamLead.email}`);
+    console.info(`  📦 Onboarding package: /communications/onboarding/${teamLead.departmentId}/`);
+    console.info(`  🗓️ Deployment phase: Phase ${teamLead.phase} (${teamLead.week})`);
+    console.info(`  🛡️ Security level: ${teamLead.securityLevel}`);
   }
 
   /**
@@ -303,7 +303,7 @@ ${teamLead.name}, your leadership is crucial for the successful deployment of th
    * 📊 Generate notification summary
    */
   private async generateNotificationSummary(): Promise<void> {
-    console.log('\n📊 Generating notification summary...');
+    console.info('\n📊 Generating notification summary...');
 
     const summary = `# 📧 Team Lead Notification Summary
 **FIRE22 SECURITY UPDATE DISTRIBUTION**
@@ -381,7 +381,7 @@ ${this.teamLeads
     const summaryPath = join(this.notificationDir, 'notification-summary.md');
     writeFileSync(summaryPath, summary);
 
-    console.log('  ✅ Notification summary generated');
+    console.info('  ✅ Notification summary generated');
   }
 
   // Helper methods
@@ -549,18 +549,18 @@ async function main() {
     const notificationSystem = new TeamLeadNotificationSystem();
     await notificationSystem.sendAllNotifications();
 
-    console.log('\n🎉 ALL TEAM LEAD NOTIFICATIONS COMPLETED!');
-    console.log('!==!==!==!==!==!==!=====');
-    console.log('✅ 10 department heads notified');
-    console.log('✅ Individual security packages delivered');
-    console.log('✅ Deployment timeline communicated');
-    console.log('✅ Response tracking initiated');
+    console.info('\n🎉 ALL TEAM LEAD NOTIFICATIONS COMPLETED!');
+    console.info('!==!==!==!==!==!==!=====');
+    console.info('✅ 10 department heads notified');
+    console.info('✅ Individual security packages delivered');
+    console.info('✅ Deployment timeline communicated');
+    console.info('✅ Response tracking initiated');
 
-    console.log('\n📋 Next Steps:');
-    console.log('1. Monitor team lead acknowledgment responses');
-    console.log('2. Follow up with non-responders within 24 hours');
-    console.log('3. Schedule security briefings based on responses');
-    console.log('4. Begin Phase 1 department onboarding');
+    console.info('\n📋 Next Steps:');
+    console.info('1. Monitor team lead acknowledgment responses');
+    console.info('2. Follow up with non-responders within 24 hours');
+    console.info('3. Schedule security briefings based on responses');
+    console.info('4. Begin Phase 1 department onboarding');
   } catch (error) {
     console.error('❌ Team lead notification failed:', error);
     process.exit(1);

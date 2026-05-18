@@ -1,14 +1,14 @@
 #!/usr/bin/env bun
 
 // Demonstration of Bun v1.3.6 WebSocket and security improvements
-console.log("🌐 Bun v1.3.6 WebSocket & Security Improvements");
-console.log("=".repeat(55));
+console.info("🌐 Bun v1.3.6 WebSocket & Security Improvements");
+console.info("=".repeat(55));
 
 // Test 1: HTTP/HTTPS Proxy Support for WebSocket
-console.log("\n1️⃣ WebSocket Proxy Support:");
+console.info("\n1️⃣ WebSocket Proxy Support:");
 
 function demonstrateWebSocketProxySupport() {
-  console.log("✅ WebSocket now supports HTTP/HTTPS proxies:");
+  console.info("✅ WebSocket now supports HTTP/HTTPS proxies:");
 
   const examples = [
     {
@@ -42,27 +42,27 @@ function demonstrateWebSocketProxySupport() {
   ];
 
   examples.forEach((example) => {
-    console.log(`   ${example.name}:`);
-    console.log(`   ${example.code}`);
+    console.info(`   ${example.name}:`);
+    console.info(`   ${example.code}`);
   });
 
-  console.log(
+  console.info(
     "\n   🚀 Enables WebSocket connections in corporate environments",
   );
-  console.log("   🔒 Supports ws:// and wss:// through HTTP/HTTPS proxies");
-  console.log(
+  console.info("   🔒 Supports ws:// and wss:// through HTTP/HTTPS proxies");
+  console.info(
     "   🔐 Full TLS configuration support (ca, cert, key, passphrase)",
   );
 }
 
 // Test 2: WebSocket Security - Decompression Bomb Protection
-console.log("\n2️⃣ WebSocket Security - Decompression Bomb Protection:");
+console.info("\n2️⃣ WebSocket Security - Decompression Bomb Protection:");
 
 function demonstrateWebSocketSecurity() {
-  console.log("✅ WebSocket now enforces 128MB decompression limit:");
-  console.log("   🛡️  Prevents memory exhaustion attacks");
-  console.log("   💥 Blocks decompression bombs");
-  console.log("   🔒 Configurable limit for custom requirements");
+  console.info("✅ WebSocket now enforces 128MB decompression limit:");
+  console.info("   🛡️  Prevents memory exhaustion attacks");
+  console.info("   💥 Blocks decompression bombs");
+  console.info("   🔒 Configurable limit for custom requirements");
 
   // Example of secure WebSocket usage
   const secureWebSocketExample = `
@@ -78,18 +78,18 @@ const ws = new WebSocket("wss://api.example.com", {
 
 ws.onmessage = (event) => {
   // Messages larger than 128MB decompressed will be rejected
-  console.log("Received safe message:", event.data);
+  console.info("Received safe message:", event.data);
 };
   `;
 
-  console.log(secureWebSocketExample);
+  console.info(secureWebSocketExample);
 }
 
 // Test 3: File I/O Security - Null Byte Prevention
-console.log("\n3️⃣ Security: Null Byte Injection Prevention:");
+console.info("\n3️⃣ Security: Null Byte Injection Prevention:");
 
 function demonstrateNullBytePrevention() {
-  console.log("✅ Bun now prevents null byte injection attacks (CWE-158):");
+  console.info("✅ Bun now prevents null byte injection attacks (CWE-158):");
 
   const dangerousInputs = [
     "filename\\x00.txt",
@@ -98,28 +98,28 @@ function demonstrateNullBytePrevention() {
     "shell\\x00command",
   ];
 
-  console.log("   🚫 Blocked in:");
-  console.log("     - Bun.spawn() arguments");
-  console.log("     - Bun.spawnSync() arguments");
-  console.log("     - Environment variables");
-  console.log("     - Shell template literals");
+  console.info("   🚫 Blocked in:");
+  console.info("     - Bun.spawn() arguments");
+  console.info("     - Bun.spawnSync() arguments");
+  console.info("     - Environment variables");
+  console.info("     - Shell template literals");
 
   dangerousInputs.forEach((input, index) => {
     const hasNullByte = input.includes("\\x00") || input.includes("\x00");
-    console.log(
+    console.info(
       `   ${index + 1}. "${input}" -> ${hasNullByte ? "🚫 REJECTED" : "✅ ALLOWED"}`,
     );
   });
 
-  console.log("\n   🔒 Prevents command injection and path traversal");
-  console.log("   🛡️  Follows security best practices");
+  console.info("\n   🔒 Prevents command injection and path traversal");
+  console.info("   🛡️  Follows security best practices");
 }
 
 // Test 4: TLS/SSL Security Improvements
-console.log("\n4️⃣ TLS/SSL Security Improvements:");
+console.info("\n4️⃣ TLS/SSL Security Improvements:");
 
 function demonstrateTLSImprovements() {
-  console.log("✅ Stricter wildcard certificate matching (RFC 6125):");
+  console.info("✅ Stricter wildcard certificate matching (RFC 6125):");
 
   const certificateTests = [
     { pattern: "*.example.com", domain: "foo.example.com", valid: true },
@@ -130,21 +130,21 @@ function demonstrateTLSImprovements() {
     { pattern: "example.com", domain: "foo.example.com", valid: false },
   ];
 
-  console.log("   📋 Certificate validation examples:");
+  console.info("   📋 Certificate validation examples:");
   certificateTests.forEach((test) => {
     const status = test.valid ? "✅ VALID" : "❌ INVALID";
-    console.log(`     "${test.pattern}" vs "${test.domain}" -> ${status}`);
+    console.info(`     "${test.pattern}" vs "${test.domain}" -> ${status}`);
   });
 
-  console.log("\n   🔒 Improved security against certificate spoofing");
-  console.log("   📚 Follows RFC 6125 Section 6.4.3 standards");
+  console.info("\n   🔒 Improved security against certificate spoofing");
+  console.info("   📚 Follows RFC 6125 Section 6.4.3 standards");
 }
 
 // Test 5: Archive Security - Path Traversal Prevention
-console.log("\n5️⃣ Archive Security - Path Traversal Prevention:");
+console.info("\n5️⃣ Archive Security - Path Traversal Prevention:");
 
 function demonstrateArchiveSecurity() {
-  console.log("✅ Path traversal prevention in tarball extraction:");
+  console.info("✅ Path traversal prevention in tarball extraction:");
 
   const maliciousPaths = [
     "/etc/passwd", // Absolute path - blocked
@@ -155,7 +155,7 @@ function demonstrateArchiveSecurity() {
     "folder/subfolder/file.txt", // Normal nested path - allowed
   ];
 
-  console.log("   📁 Path validation examples:");
+  console.info("   📁 Path validation examples:");
   maliciousPaths.forEach((path) => {
     const isAbsolute = path.startsWith("/");
     const hasTraversal = path.includes("../");
@@ -167,21 +167,21 @@ function demonstrateArchiveSecurity() {
         ? "relative traversal"
         : "normal path";
 
-    console.log(
+    console.info(
       `     "${path}" -> ${isBlocked ? "🚫 BLOCKED" : "✅ ALLOWED"} (${reason})`,
     );
   });
 
-  console.log("\n   🛡️  Prevents escaping extraction directory");
-  console.log("   🔒 Blocks symlink attacks");
-  console.log("   📦 Secures bun install and archive extraction");
+  console.info("\n   🛡️  Prevents escaping extraction directory");
+  console.info("   🔒 Blocks symlink attacks");
+  console.info("   📦 Secures bun install and archive extraction");
 }
 
 // Test 6: Memory Leak Fixes
-console.log("\n6️⃣ Memory Leak Fixes:");
+console.info("\n6️⃣ Memory Leak Fixes:");
 
 function demonstrateMemoryLeakFixes() {
-  console.log("✅ Fixed memory leaks in node:zlib compression streams:");
+  console.info("✅ Fixed memory leaks in node:zlib compression streams:");
 
   const leakFixes = [
     {
@@ -207,20 +207,20 @@ function demonstrateMemoryLeakFixes() {
   ];
 
   leakFixes.forEach((fix) => {
-    console.log(`   🔧 ${fix.component}:`);
-    console.log(`      Issue: ${fix.issue}`);
-    console.log(`      Fix: ${fix.fix}`);
+    console.info(`   🔧 ${fix.component}:`);
+    console.info(`      Issue: ${fix.issue}`);
+    console.info(`      Fix: ${fix.fix}`);
   });
 
-  console.log("\n   📈 Improved stability for long-running applications");
-  console.log("   🚀 Better memory efficiency");
+  console.info("\n   📈 Improved stability for long-running applications");
+  console.info("   🚀 Better memory efficiency");
 }
 
 // Test 7: File I/O Improvements
-console.log("\n7️⃣ File I/O Improvements:");
+console.info("\n7️⃣ File I/O Improvements:");
 
 function demonstrateFileIOImprovements() {
-  console.log("✅ Bun.write() mode option fix:");
+  console.info("✅ Bun.write() mode option fix:");
 
   const fileIOExample = `
 // Bun v1.3.6 now properly respects file mode
@@ -232,34 +232,34 @@ await Bun.write("output.txt", "content", {
 // After: Mode is properly applied to the created file
   `;
 
-  console.log(fileIOExample);
+  console.info(fileIOExample);
 
-  console.log("✅ Fixed data corruption in files > 2GB:");
-  console.log("   🔧 Large file writes now work correctly");
-  console.log("   📊 Improved reliability for big data processing");
+  console.info("✅ Fixed data corruption in files > 2GB:");
+  console.info("   🔧 Large file writes now work correctly");
+  console.info("   📊 Improved reliability for big data processing");
 
-  console.log("✅ Better temp directory resolution:");
-  console.log("   📁 Now checks TMPDIR, TMP, TEMP in order");
-  console.log("   🔄 Matches Node.js os.tmpdir() behavior");
+  console.info("✅ Better temp directory resolution:");
+  console.info("   📁 Now checks TMPDIR, TMP, TEMP in order");
+  console.info("   🔄 Matches Node.js os.tmpdir() behavior");
 }
 
 // Test 8: Network and Proxy Improvements
-console.log("\n8️⃣ Network and Proxy Improvements:");
+console.info("\n8️⃣ Network and Proxy Improvements:");
 
 function demonstrateNetworkImprovements() {
-  console.log("✅ HTTP client proxy authentication fix:");
-  console.log("   🔧 Fixed hanging on 407 proxy auth failures");
-  console.log(
+  console.info("✅ HTTP client proxy authentication fix:");
+  console.info("   🔧 Fixed hanging on 407 proxy auth failures");
+  console.info(
     "   🌐 Now falls back to direct connections when proxy auth fails",
   );
 
-  console.log("✅ NO_PROXY environment variable fix:");
-  console.log("   🔧 Fixed parsing with empty entries");
-  console.log("   🚫 Better proxy bypass handling");
+  console.info("✅ NO_PROXY environment variable fix:");
+  console.info("   🔧 Fixed parsing with empty entries");
+  console.info("   🚫 Better proxy bypass handling");
 
-  console.log("✅ WebSocket proxy support:");
-  console.log("   🌐 Enables corporate network connectivity");
-  console.log("   🔐 Full authentication and TLS support");
+  console.info("✅ WebSocket proxy support:");
+  console.info("   🌐 Enables corporate network connectivity");
+  console.info("   🔐 Full authentication and TLS support");
 }
 
 // Main demonstration function
@@ -274,24 +274,24 @@ async function main() {
     demonstrateFileIOImprovements();
     demonstrateNetworkImprovements();
 
-    console.log(
+    console.info(
       "\n🎯 Summary of Bun v1.3.6 Security & Stability Improvements:",
     );
-    console.log(
+    console.info(
       "   🌐 WebSocket: HTTP/HTTPS proxy support + 128MB decompression limit",
     );
-    console.log(
+    console.info(
       "   🔒 Security: Null byte prevention + stricter certificate matching",
     );
-    console.log(
+    console.info(
       "   📦 Archive: Path traversal prevention in tarball extraction",
     );
-    console.log("   🧠 Memory: Fixed leaks in zlib + fetch() stream cleanup");
-    console.log("   📁 File I/O: Proper mode handling + >2GB file support");
-    console.log("   🌐 Network: Proxy auth fixes + NO_PROXY parsing");
-    console.log("   🔧 TLS: RFC 6125 compliant wildcard matching");
+    console.info("   🧠 Memory: Fixed leaks in zlib + fetch() stream cleanup");
+    console.info("   📁 File I/O: Proper mode handling + >2GB file support");
+    console.info("   🌐 Network: Proxy auth fixes + NO_PROXY parsing");
+    console.info("   🔧 TLS: RFC 6125 compliant wildcard matching");
 
-    console.log(
+    console.info(
       "\n🚀 These improvements make Bun more secure, stable, and enterprise-ready!",
     );
   } catch (error) {

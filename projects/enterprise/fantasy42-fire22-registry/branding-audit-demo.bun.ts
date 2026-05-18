@@ -128,14 +128,14 @@ async function auditFile(filePath: string): Promise<{
 
 // Main demo execution
 async function main() {
-  console.log('🎨 Fire22 Branding Audit Demo');
-  console.log('==============================\n');
+  console.info('🎨 Fire22 Branding Audit Demo');
+  console.info('==============================\n');
 
-  console.log('🔧 Brand Colors:');
+  console.info('🔧 Brand Colors:');
   Object.entries(BRAND_COLORS).forEach(([name, hex]) => {
-    console.log(`  ${name}: ${hex}`);
+    console.info(`  ${name}: ${hex}`);
   });
-  console.log();
+  console.info();
 
   // Find CSS files to audit
   const cssFiles = await Array.fromAsync(
@@ -145,26 +145,26 @@ async function main() {
   );
 
   if (cssFiles.length === 0) {
-    console.log('❌ No CSS files found to audit');
+    console.info('❌ No CSS files found to audit');
     return;
   }
 
-  console.log(`📁 Found ${cssFiles.length} CSS files to audit:\n`);
+  console.info(`📁 Found ${cssFiles.length} CSS files to audit:\n`);
 
   for (const file of cssFiles.slice(0, 3)) {
     // Limit to first 3 files for demo
     try {
       const result = await auditFile(file);
 
-      console.log(`📄 ${result.file}:`);
-      console.log(`   Colors found: ${result.summary.totalColors}`);
-      console.log(`   ✅ Compliant: ${result.summary.compliantColors}`);
-      console.log(`   🎯 Perfect matches: ${result.summary.perfectMatches}`);
-      console.log(`   📏 Close matches: ${result.summary.closeMatches}`);
-      console.log(`   ❌ Non-compliant: ${result.summary.nonCompliantColors}`);
+      console.info(`📄 ${result.file}:`);
+      console.info(`   Colors found: ${result.summary.totalColors}`);
+      console.info(`   ✅ Compliant: ${result.summary.compliantColors}`);
+      console.info(`   🎯 Perfect matches: ${result.summary.perfectMatches}`);
+      console.info(`   📏 Close matches: ${result.summary.closeMatches}`);
+      console.info(`   ❌ Non-compliant: ${result.summary.nonCompliantColors}`);
 
       if (result.colors.length > 0) {
-        console.log('   Color breakdown:');
+        console.info('   Color breakdown:');
         result.colors.slice(0, 5).forEach(({ color, validation }) => {
           const status =
             validation.compliance === 'perfect'
@@ -172,33 +172,33 @@ async function main() {
               : validation.compliance === 'close'
                 ? '📏'
                 : '❌';
-          console.log(
+          console.info(
             `     ${status} ${color} → ${validation.closestBrandColor} (${validation.distance})`
           );
         });
       }
 
-      console.log();
+      console.info();
     } catch (error) {
-      console.log(`❌ Failed to audit ${file}: ${error.message}\n`);
+      console.info(`❌ Failed to audit ${file}: ${error.message}\n`);
     }
   }
 
-  console.log('🎯 Branding Audit Demo Complete!');
-  console.log('\n💡 Key Features Demonstrated:');
-  console.log('  • Color extraction from CSS files');
-  console.log('  • Brand color validation');
-  console.log('  • Compliance scoring');
-  console.log('  • Distance-based matching');
-  console.log('  • Bun-native file operations');
-  console.log('  • Async iteration with Array.fromAsync()');
+  console.info('🎯 Branding Audit Demo Complete!');
+  console.info('\n💡 Key Features Demonstrated:');
+  console.info('  • Color extraction from CSS files');
+  console.info('  • Brand color validation');
+  console.info('  • Compliance scoring');
+  console.info('  • Distance-based matching');
+  console.info('  • Bun-native file operations');
+  console.info('  • Async iteration with Array.fromAsync()');
 
-  console.log('\n🚀 The full @fire22/branding-audit package provides:');
-  console.log('  • WCAG AA/AAA accessibility validation');
-  console.log('  • HTML, JSON, and Markdown reporting');
-  console.log('  • CI/CD integration');
-  console.log('  • Comprehensive error handling');
-  console.log('  • Cross-platform compatibility');
+  console.info('\n🚀 The full @fire22/branding-audit package provides:');
+  console.info('  • WCAG AA/AAA accessibility validation');
+  console.info('  • HTML, JSON, and Markdown reporting');
+  console.info('  • CI/CD integration');
+  console.info('  • Comprehensive error handling');
+  console.info('  • Cross-platform compatibility');
 }
 
 main().catch(console.error);

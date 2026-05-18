@@ -136,7 +136,7 @@ async function validatePatternsParallel(patterns: any[], concurrency: number): P
 		chunks.push(patterns.slice(i, i + chunkSize));
 	}
 	
-	console.log(`\n🔄 Validating ${patterns.length} patterns in ${chunks.length} parallel chunks...\n`);
+	console.info(`\n🔄 Validating ${patterns.length} patterns in ${chunks.length} parallel chunks...\n`);
 	
 	// Process chunks in parallel
 	const chunkPromises = chunks.map(async (chunk, index) => {
@@ -148,7 +148,7 @@ async function validatePatternsParallel(patterns: any[], concurrency: number): P
 			
 			if (verbose) {
 				const status = result.valid ? '✅' : '❌';
-				console.log(`${status} ${result.patternId} (${result.processingTimeMs.toFixed(2)}ms)`);
+				console.info(`${status} ${result.patternId} (${result.processingTimeMs.toFixed(2)}ms)`);
 			}
 		}
 		
@@ -163,7 +163,7 @@ async function validatePatternsParallel(patterns: any[], concurrency: number): P
  * Run validation using Bun.spawn for subprocess
  */
 async function runSubprocessValidation(patternFile: string): Promise<void> {
-	console.log(`\n🚀 Running subprocess validation with Bun.spawn()...\n`);
+	console.info(`\n🚀 Running subprocess validation with Bun.spawn()...\n`);
 	
 	const proc = spawn({
 		cmd: ['bun', 'run', import.meta.path, '--file', patternFile, '--verbose'],
@@ -174,7 +174,7 @@ async function runSubprocessValidation(patternFile: string): Promise<void> {
 	const stdout = await Bun.readableStreamToText(proc.stdout);
 	const stderr = await Bun.readableStreamToText(proc.stderr);
 	
-	console.log(stdout);
+	console.info(stdout);
 	if (stderr) {
 		console.error(stderr);
 	}
@@ -186,10 +186,10 @@ async function runSubprocessValidation(patternFile: string): Promise<void> {
  * Main validation function
  */
 async function main() {
-	console.log('🧪 Feed Pattern Validation Script\n');
-	console.log(`📁 Pattern file: ${patternFile}`);
-	console.log(`🔢 Parallel chunks: ${parallelCount}`);
-	console.log(`📝 Verbose: ${verbose}`);
+	console.info('🧪 Feed Pattern Validation Script\n');
+	console.info(`📁 Pattern file: ${patternFile}`);
+	console.info(`🔢 Parallel chunks: ${parallelCount}`);
+	console.info(`📝 Verbose: ${verbose}`);
 	
 	const startTime = performance.now();
 	
@@ -206,7 +206,7 @@ async function main() {
 		process.exit(1);
 	}
 	
-	console.log(`\n📊 Loaded ${patterns.length} patterns\n`);
+	console.info(`\n📊 Loaded ${patterns.length} patterns\n`);
 	
 	// Validate patterns
 	const results = await validatePatternsParallel(patterns, parallelCount);
@@ -216,26 +216,26 @@ async function main() {
 	const invalidCount = results.filter(r => !r.valid).length;
 	const totalTime = performance.now() - startTime;
 	
-	console.log('\n' + '='.repeat(60));
-	console.log('📋 VALIDATION SUMMARY');
-	console.log('='.repeat(60));
-	console.log(`✅ Valid patterns:   ${validCount}`);
-	console.log(`❌ Invalid patterns: ${invalidCount}`);
-	console.log(`📊 Total patterns:   ${patterns.length}`);
-	console.log(`⏱️  Total time:       ${totalTime.toFixed(2)}ms`);
-	console.log(`⚡ Avg per pattern:  ${(totalTime / patterns.length).toFixed(2)}ms`);
+	console.info('\n' + '='.repeat(60));
+	console.info('📋 VALIDATION SUMMARY');
+	console.info('='.repeat(60));
+	console.info(`✅ Valid patterns:   ${validCount}`);
+	console.info(`❌ Invalid patterns: ${invalidCount}`);
+	console.info(`📊 Total patterns:   ${patterns.length}`);
+	console.info(`⏱️  Total time:       ${totalTime.toFixed(2)}ms`);
+	console.info(`⚡ Avg per pattern:  ${(totalTime / patterns.length).toFixed(2)}ms`);
 	
 	// Show errors
 	const failedResults = results.filter(r => !r.valid);
 	if (failedResults.length > 0) {
-		console.log('\n' + '='.repeat(60));
-		console.log('❌ VALIDATION ERRORS');
-		console.log('='.repeat(60));
+		console.info('\n' + '='.repeat(60));
+		console.info('❌ VALIDATION ERRORS');
+		console.info('='.repeat(60));
 		
 		for (const result of failedResults) {
-			console.log(`\n📛 ${result.patternId}:`);
+			console.info(`\n📛 ${result.patternId}:`);
 			for (const error of result.errors) {
-				console.log(`   • ${error}`);
+				console.info(`   • ${error}`);
 			}
 		}
 	}
@@ -244,22 +244,22 @@ async function main() {
 	if (verbose) {
 		const matchedResults = results.filter(r => r.matchedUrls.length > 0);
 		if (matchedResults.length > 0) {
-			console.log('\n' + '='.repeat(60));
-			console.log('✅ MATCHED EXAMPLE URLs');
-			console.log('='.repeat(60));
+			console.info('\n' + '='.repeat(60));
+			console.info('✅ MATCHED EXAMPLE URLs');
+			console.info('='.repeat(60));
 			
 			for (const result of matchedResults) {
-				console.log(`\n🔗 ${result.patternId}:`);
+				console.info(`\n🔗 ${result.patternId}:`);
 				for (const url of result.matchedUrls) {
-					console.log(`   ✓ ${url}`);
+					console.info(`   ✓ ${url}`);
 				}
 			}
 		}
 	}
 	
-	console.log('\n' + '='.repeat(60));
-	console.log(invalidCount === 0 ? '✅ All patterns valid!' : `❌ ${invalidCount} patterns need fixes`);
-	console.log('='.repeat(60) + '\n');
+	console.info('\n' + '='.repeat(60));
+	console.info(invalidCount === 0 ? '✅ All patterns valid!' : `❌ ${invalidCount} patterns need fixes`);
+	console.info('='.repeat(60) + '\n');
 	
 	// Exit with error code if there are failures
 	if (invalidCount > 0) {

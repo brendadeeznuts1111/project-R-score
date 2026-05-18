@@ -32,17 +32,17 @@ class CaseSensitivityFixer {
    * Main execution method
    */
   async run(): Promise<void> {
-    console.log('🔧 Case Sensitivity Standardization');
-    console.log('='.repeat(50));
+    console.info('🔧 Case Sensitivity Standardization');
+    console.info('='.repeat(50));
     
     if (this.dryRun) {
-      console.log('🔍 DRY RUN MODE - No files will be modified\n');
+      console.info('🔍 DRY RUN MODE - No files will be modified\n');
     }
 
     try {
       // Find all TypeScript files
       const tsFiles = await this.findTypeScriptFiles();
-      console.log(`📁 Found ${tsFiles.length} TypeScript files\n`);
+      console.info(`📁 Found ${tsFiles.length} TypeScript files\n`);
 
       // Process each file
       for (const file of tsFiles) {
@@ -117,9 +117,9 @@ class CaseSensitivityFixer {
       // Write changes if any
       if (result.changes > 0 && !this.dryRun) {
         await writeFile(filePath, fixedContent);
-        console.log(`✅ Fixed ${result.changes} issues in ${relativePath}`);
+        console.info(`✅ Fixed ${result.changes} issues in ${relativePath}`);
       } else if (result.changes > 0) {
-        console.log(`🔍 Would fix ${result.changes} issues in ${relativePath}`);
+        console.info(`🔍 Would fix ${result.changes} issues in ${relativePath}`);
       }
 
       if (result.issues.length > 0) {
@@ -248,23 +248,23 @@ class CaseSensitivityFixer {
    * Generate comprehensive report
    */
   private generateReport(): void {
-    console.log('\n📊 CASE SENSITIVITY REPORT');
-    console.log('='.repeat(50));
+    console.info('\n📊 CASE SENSITIVITY REPORT');
+    console.info('='.repeat(50));
     
     const totalFiles = this.results.length;
     const totalChanges = this.results.reduce((sum, r) => sum + r.changes, 0);
     const totalIssues = this.results.reduce((sum, r) => sum + r.issues.length, 0);
     
-    console.log(`📁 Files processed: ${totalFiles}`);
-    console.log(`🔧 Total changes: ${totalChanges}`);
-    console.log(`⚠️  Total issues: ${totalIssues}`);
+    console.info(`📁 Files processed: ${totalFiles}`);
+    console.info(`🔧 Total changes: ${totalChanges}`);
+    console.info(`⚠️  Total issues: ${totalIssues}`);
     
     if (this.results.length > 0) {
-      console.log('\n📋 Detailed Issues:');
+      console.info('\n📋 Detailed Issues:');
       this.results.forEach(result => {
-        console.log(`\n📄 ${result.file}`);
+        console.info(`\n📄 ${result.file}`);
         result.issues.forEach(issue => {
-          console.log(`   • ${issue}`);
+          console.info(`   • ${issue}`);
         });
       });
     }
@@ -274,18 +274,18 @@ class CaseSensitivityFixer {
    * Suggest global fixes and best practices
    */
   private suggestGlobalFixes(): void {
-    console.log('\n💡 RECOMMENDATIONS');
-    console.log('='.repeat(50));
+    console.info('\n💡 RECOMMENDATIONS');
+    console.info('='.repeat(50));
     
-    console.log('\n1. 📝 Establish Naming Conventions:');
-    console.log('   • Exported constants: UPPER_CASE (e.g., API_BASE_URL)');
-    console.log('   • Local variables: camelCase (e.g., fetchUserData)');
-    console.log('   • Classes/Types: PascalCase (e.g., UserService)');
-    console.log('   • Enums: PascalCase with UPPER_CASE members');
+    console.info('\n1. 📝 Establish Naming Conventions:');
+    console.info('   • Exported constants: UPPER_CASE (e.g., API_BASE_URL)');
+    console.info('   • Local variables: camelCase (e.g., fetchUserData)');
+    console.info('   • Classes/Types: PascalCase (e.g., UserService)');
+    console.info('   • Enums: PascalCase with UPPER_CASE members');
     
-    console.log('\n2. 🔧 ESLint Configuration:');
-    console.log('   Add these rules to .eslintrc.js:');
-    console.log(`
+    console.info('\n2. 🔧 ESLint Configuration:');
+    console.info('   Add these rules to .eslintrc.js:');
+    console.info(`
    {
      rules: {
        '@typescript-eslint/naming-convention': [
@@ -308,20 +308,20 @@ class CaseSensitivityFixer {
      }
    }`);
     
-    console.log('\n3. 🧪 Manual Review Required:');
-    console.log('   • Import statements may need updating');
-    console.log('   • Cross-file references should be checked');
-    console.log('   • Test files may reference old names');
+    console.info('\n3. 🧪 Manual Review Required:');
+    console.info('   • Import statements may need updating');
+    console.info('   • Cross-file references should be checked');
+    console.info('   • Test files may reference old names');
     
-    console.log('\n4. 🚀 Next Steps:');
+    console.info('\n4. 🚀 Next Steps:');
     if (this.dryRun) {
-      console.log('   • Run without --dry-run to apply fixes');
-      console.log('   • Review changes with git diff');
-      console.log('   • Run tests to ensure functionality');
+      console.info('   • Run without --dry-run to apply fixes');
+      console.info('   • Review changes with git diff');
+      console.info('   • Run tests to ensure functionality');
     } else {
-      console.log('   • Review applied changes');
-      console.log('   • Update any remaining import statements');
-      console.log('   • Run full test suite');
+      console.info('   • Review applied changes');
+      console.info('   • Update any remaining import statements');
+      console.info('   • Run full test suite');
     }
   }
 }

@@ -198,37 +198,37 @@ if (feature("PREMIUM") && feature("DUOPLUS_RPA")) {
         </div>
         
         <div className="button-group">
-          <button onClick={() => console.log('Batch update triggered')}>
+          <button onClick={() => console.info('Batch update triggered')}>
             ⚡ Batch Modify Parameters
           </button>
-          <button onClick={() => console.log('RPA workflow created')}>
+          <button onClick={() => console.info('RPA workflow created')}>
             🎨 Create RPA Workflow
           </button>
-          <button onClick={() => console.log('Scheduled task set')}>
+          <button onClick={() => console.info('Scheduled task set')}>
             ⏰ Scheduled Task (Cron)
           </button>
-          <button onClick={() => console.log('Loop task started')}>
+          <button onClick={() => console.info('Loop task started')}>
             🔁 Loop Task (Infinite)
           </button>
-          <button onClick={() => console.log('Plug-in registered')}>
+          <button onClick={() => console.info('Plug-in registered')}>
             🔌 Register Plug-in
           </button>
-          <button onClick={() => console.log('Google verification strategy')}>
+          <button onClick={() => console.info('Google verification strategy')}>
             🛡️ Google Bypass Strategy
           </button>
-          <button onClick={() => console.log('ADB command executed')}>
+          <button onClick={() => console.info('ADB command executed')}>
             📱 ADB Command
           </button>
-          <button onClick={() => console.log('Accessibility granted')}>
+          <button onClick={() => console.info('Accessibility granted')}>
             ♿ Accessibility Permission
           </button>
-          <button className="secondary" onClick={() => console.log('Guardian recovery RPA')}>
+          <button className="secondary" onClick={() => console.info('Guardian recovery RPA')}>
             🔄 Guardian Recovery RPA
           </button>
-          <button className="secondary" onClick={() => console.log('Batch wallet sync')}>
+          <button className="secondary" onClick={() => console.info('Batch wallet sync')}>
             💰 Batch Wallet Sync
           </button>
-          <button className="secondary" onClick={() => console.log('Tension field trigger')}>
+          <button className="secondary" onClick={() => console.info('Tension field trigger')}>
             ⚠️ Tension Field Trigger
           </button>
         </div>
@@ -379,5 +379,5 @@ if (feature("PREMIUM") && feature("DUOPLUS_RPA")) {
   };
 } else {
   // Compile-time elimination for non-premium tiers
-  console.log("DUOPLUS_RPA features not available in free/beta/debug tiers");
+  console.info("DUOPLUS_RPA features not available in free/beta/debug tiers");
 }

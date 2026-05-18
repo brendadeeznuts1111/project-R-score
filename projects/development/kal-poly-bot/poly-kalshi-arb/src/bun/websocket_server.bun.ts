@@ -64,14 +64,14 @@ const server = serve({
     },
 
     open(ws: any) {
-      console.log(`WebSocket client connected`);
+      console.info(`WebSocket client connected`);
       ws.send(
         JSON.stringify({ status: "connected", server: "Kalman Filter Suite" })
       );
     },
 
     close(ws: any, code: number, message: string) {
-      console.log(`WebSocket client disconnected: ${code} ${message}`);
+      console.info(`WebSocket client disconnected: ${code} ${message}`);
     },
   },
 
@@ -174,7 +174,7 @@ const server = serve({
   },
 });
 
-console.log(`🚀 Kalman Filter WebSocket Server started on port ${server.port}`);
+console.info(`🚀 Kalman Filter WebSocket Server started on port ${server.port}`);
 
 /**
  * Optimized binary parser for low latency
@@ -245,7 +245,7 @@ function updateMetrics(latency: number): void {
     const avgLatency = totalLatency / totalTicks;
     const slowRate = (slowTicks / totalTicks) * 100;
 
-    console.log(
+    console.info(
       `📊 Metrics: Ticks=${totalTicks}, Avg=${avgLatency.toFixed(2)}ms, Max=${maxLatency.toFixed(2)}ms, Slow=${slowRate.toFixed(1)}%`
     );
   }
@@ -255,17 +255,17 @@ function updateMetrics(latency: number): void {
  * Graceful shutdown handler
  */
 process.on("SIGINT", async () => {
-  console.log("\n🛑 Shutting down WebSocket server...");
+  console.info("\n🛑 Shutting down WebSocket server...");
 
   // Log final metrics
   if (totalTicks > 0) {
-    console.log(`📊 Final Metrics:`);
-    console.log(`   Total ticks: ${totalTicks}`);
-    console.log(
+    console.info(`📊 Final Metrics:`);
+    console.info(`   Total ticks: ${totalTicks}`);
+    console.info(
       `   Average latency: ${(totalLatency / totalTicks).toFixed(2)}ms`
     );
-    console.log(`   Max latency: ${maxLatency.toFixed(2)}ms`);
-    console.log(
+    console.info(`   Max latency: ${maxLatency.toFixed(2)}ms`);
+    console.info(
       `   Slow ticks: ${slowTicks} (${((slowTicks / totalTicks) * 100).toFixed(2)}%)`
     );
   }

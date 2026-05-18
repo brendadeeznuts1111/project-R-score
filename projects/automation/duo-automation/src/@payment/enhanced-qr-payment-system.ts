@@ -515,7 +515,7 @@ class EnhancedQRPaymentSystem {
    */
   private static async savePaymentIntent(intent: PaymentIntent): Promise<void> {
     // Implementation would save to database
-    console.log(`Saving payment intent: ${intent.id}`);
+    console.info(`Saving payment intent: ${intent.id}`);
   }
 
   private static async getPaymentIntent(intentId: string): Promise<PaymentIntent | null> {
@@ -525,7 +525,7 @@ class EnhancedQRPaymentSystem {
 
   private static async updatePaymentIntent(intent: PaymentIntent): Promise<void> {
     // Implementation would update in database
-    console.log(`Updating payment intent: ${intent.id}`);
+    console.info(`Updating payment intent: ${intent.id}`);
   }
 
   private static async getRecipientName(recipientId: string): Promise<string> {
@@ -544,7 +544,7 @@ class EnhancedQRPaymentSystem {
 
   private static async handlePaymentCompletion(intent: PaymentIntent): Promise<void> {
     // Implementation would handle post-payment workflows
-    console.log(`Payment completed for intent: ${intent.id}`);
+    console.info(`Payment completed for intent: ${intent.id}`);
   }
 
   private static async generateQRCodeSVG(data: string, options?: QRCodeOptions): Promise<string> {

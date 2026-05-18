@@ -92,12 +92,12 @@ class WikiModeBarbershopDemo {
   }
 
   async initialize(): Promise<void> {
-    console.log(styled('\n🚀 Initializing Enhanced WikiMode + Barbershop Demo', 'enterprise'));
-    console.log(colorBar('enterprise', 70));
+    console.info(styled('\n🚀 Initializing Enhanced WikiMode + Barbershop Demo', 'enterprise'));
+    console.info(colorBar('enterprise', 70));
 
     try {
       // Initialize Enhanced WikiMode
-      console.log(styled('📝 Initializing Enhanced WikiMode...', 'info'));
+      console.info(styled('📝 Initializing Enhanced WikiMode...', 'info'));
       this.wikiMode = await EnhancedWikiMode.create({
         profileMode: this.config.wikiMode.profileMode,
         barbershopMode: this.config.wikiMode.barbershopMode,
@@ -109,7 +109,7 @@ class WikiModeBarbershopDemo {
       });
 
       // Initialize Barbershop Integration
-      console.log(styled('🏗️ Initializing Barbershop Integration...', 'info'));
+      console.info(styled('🏗️ Initializing Barbershop Integration...', 'info'));
       this.barbershopIntegration = new BarbershopWikiIntegration({
         endpoint: this.config.barbershop.endpoint,
         dashboardWidgets: this.config.barbershop.dashboardWidgets,
@@ -120,8 +120,8 @@ class WikiModeBarbershopDemo {
 
       await this.barbershopIntegration.initialize();
 
-      console.log(styled('✅ Demo initialization complete!', 'success'));
-      console.log('');
+      console.info(styled('✅ Demo initialization complete!', 'success'));
+      console.info('');
 
     } catch (error) {
       console.error(styled('❌ Demo initialization failed:', 'error'), error);
@@ -130,8 +130,8 @@ class WikiModeBarbershopDemo {
   }
 
   async runCompleteDemo(): Promise<void> {
-    console.log(styled('🎯 Running Complete Enhanced WikiMode + Barbershop Demo', 'enterprise'));
-    console.log(colorBar('success', 70));
+    console.info(styled('🎯 Running Complete Enhanced WikiMode + Barbershop Demo', 'enterprise'));
+    console.info(colorBar('success', 70));
 
     // Demo 1: Display Enhanced Matrix
     await this.demoEnhancedMatrix();
@@ -154,23 +154,23 @@ class WikiModeBarbershopDemo {
     // Demo 7: Export and Reporting
     await this.demoExportReporting();
 
-    console.log(styled('\n🎉 Demo Complete! Enhanced WikiMode + Barbershop Integration showcased successfully!', 'success'));
-    console.log(colorBar('success', 70));
+    console.info(styled('\n🎉 Demo Complete! Enhanced WikiMode + Barbershop Integration showcased successfully!', 'success'));
+    console.info(colorBar('success', 70));
   }
 
   private async demoEnhancedMatrix(): Promise<void> {
-    console.log(styled('\n📊 Demo 1: Enhanced Template Matrix', 'info'));
-    console.log(colorBar('info', 50));
+    console.info(styled('\n📊 Demo 1: Enhanced Template Matrix', 'info'));
+    console.info(colorBar('info', 50));
 
     await this.wikiMode.displayEnhancedMatrix();
     
-    console.log(styled('✨ Enhanced matrix displayed with Barbershop integration indicators', 'success'));
-    console.log('');
+    console.info(styled('✨ Enhanced matrix displayed with Barbershop integration indicators', 'success'));
+    console.info('');
   }
 
   private async demoBasicWikiGeneration(): Promise<void> {
-    console.log(styled('📝 Demo 2: Basic Wiki Generation', 'info'));
-    console.log(colorBar('info', 50));
+    console.info(styled('📝 Demo 2: Basic Wiki Generation', 'info'));
+    console.info(colorBar('info', 50));
 
     try {
       const result = await this.wikiMode.generateWiki('Confluence Integration', {
@@ -179,18 +179,18 @@ class WikiModeBarbershopDemo {
         author: 'WikiMode Demo',
       });
 
-      console.log(styled('✅ Basic wiki generation completed', 'success'));
-      console.log(`   Generation Time: ${result.metadata.generationTime.toFixed(2)}ms`);
-      console.log(`   Barbershop Integration: ${result.metadata.barbershopIntegration ? 'Enabled' : 'Disabled'}`);
-      console.log('');
+      console.info(styled('✅ Basic wiki generation completed', 'success'));
+      console.info(`   Generation Time: ${result.metadata.generationTime.toFixed(2)}ms`);
+      console.info(`   Barbershop Integration: ${result.metadata.barbershopIntegration ? 'Enabled' : 'Disabled'}`);
+      console.info('');
 
       // Process through Barbershop integration
       if (this.config.wikiMode.barbershopMode) {
         const barbershopResult = await this.barbershopIntegration.processWikiResult(result);
-        console.log(styled('🏗️ Barbershop integration processed successfully', 'success'));
-        console.log(`   Dashboard Widgets: ${barbershopResult.dashboardWidgets.length}`);
-        console.log(`   Analytics Data: ${Object.keys(barbershopResult.analyticsData).length} categories`);
-        console.log('');
+        console.info(styled('🏗️ Barbershop integration processed successfully', 'success'));
+        console.info(`   Dashboard Widgets: ${barbershopResult.dashboardWidgets.length}`);
+        console.info(`   Analytics Data: ${Object.keys(barbershopResult.analyticsData).length} categories`);
+        console.info('');
       }
 
     } catch (error) {
@@ -199,8 +199,8 @@ class WikiModeBarbershopDemo {
   }
 
   private async demoAdvancedWikiGeneration(): Promise<void> {
-    console.log(styled('⚡ Demo 3: Advanced Wiki Generation with Profiling', 'info'));
-    console.log(colorBar('info', 50));
+    console.info(styled('⚡ Demo 3: Advanced Wiki Generation with Profiling', 'info'));
+    console.info(colorBar('info', 50));
 
     try {
       const result = await this.wikiMode.generateWiki('GitHub Wiki', {
@@ -210,17 +210,17 @@ class WikiModeBarbershopDemo {
         complexity: 'advanced',
       });
 
-      console.log(styled('✅ Advanced wiki generation completed', 'success'));
-      console.log(`   Generation Time: ${result.metadata.generationTime.toFixed(2)}ms`);
+      console.info(styled('✅ Advanced wiki generation completed', 'success'));
+      console.info(`   Generation Time: ${result.metadata.generationTime.toFixed(2)}ms`);
       
       if (result.performance) {
-        console.log(`   Optimization Score: ${result.performance.optimizationScore}%`);
-        console.log(`   Recommendations: ${result.performance.recommendations.length}`);
+        console.info(`   Optimization Score: ${result.performance.optimizationScore}%`);
+        console.info(`   Recommendations: ${result.performance.recommendations.length}`);
         
         if (result.performance.recommendations.length > 0) {
-          console.log(styled('💡 Performance Recommendations:', 'warning'));
+          console.info(styled('💡 Performance Recommendations:', 'warning'));
           result.performance.recommendations.forEach(rec => {
-            console.log(`   • ${rec}`);
+            console.info(`   • ${rec}`);
           });
         }
       }
@@ -229,14 +229,14 @@ class WikiModeBarbershopDemo {
       if (this.config.wikiMode.barbershopMode) {
         const barbershopResult = await this.barbershopIntegration.processWikiResult(result);
         
-        console.log(styled('🏗️ Full Barbershop integration completed', 'success'));
-        console.log(`   Dashboard Widgets: ${barbershopResult.dashboardWidgets.length}`);
-        console.log(`   Analytics Categories: ${Object.keys(barbershopResult.analyticsData).length}`);
-        console.log(`   Collaboration Metrics: ${Object.keys(barbershopResult.collaborationMetrics).length}`);
-        console.log(`   Performance Insights: ${Object.keys(barbershopResult.performanceInsights).length}`);
+        console.info(styled('🏗️ Full Barbershop integration completed', 'success'));
+        console.info(`   Dashboard Widgets: ${barbershopResult.dashboardWidgets.length}`);
+        console.info(`   Analytics Categories: ${Object.keys(barbershopResult.analyticsData).length}`);
+        console.info(`   Collaboration Metrics: ${Object.keys(barbershopResult.collaborationMetrics).length}`);
+        console.info(`   Performance Insights: ${Object.keys(barbershopResult.performanceInsights).length}`);
       }
 
-      console.log('');
+      console.info('');
 
     } catch (error) {
       console.error(styled('❌ Advanced wiki generation failed:', 'error'), error);
@@ -244,16 +244,16 @@ class WikiModeBarbershopDemo {
   }
 
   private async demoBarbershopIntegration(): Promise<void> {
-    console.log(styled('🏗️ Demo 4: Barbershop Integration Showcase', 'info'));
-    console.log(colorBar('info', 50));
+    console.info(styled('🏗️ Demo 4: Barbershop Integration Showcase', 'info'));
+    console.info(colorBar('info', 50));
 
     // Show connection status
     const connectionStatus = this.barbershopIntegration.getConnectionStatus();
-    console.log(styled('📡 Connection Status:', 'muted'));
-    console.log(`   Connected: ${connectionStatus.connected ? styled('✅', 'success') : styled('❌', 'error')}`);
-    console.log(`   Health: ${connectionStatus.health}`);
-    console.log(`   Endpoint: ${connectionStatus.endpoint}`);
-    console.log('');
+    console.info(styled('📡 Connection Status:', 'muted'));
+    console.info(`   Connected: ${connectionStatus.connected ? styled('✅', 'success') : styled('❌', 'error')}`);
+    console.info(`   Health: ${connectionStatus.health}`);
+    console.info(`   Endpoint: ${connectionStatus.endpoint}`);
+    console.info('');
 
     // Generate content for integration demo
     try {
@@ -266,30 +266,30 @@ class WikiModeBarbershopDemo {
       const barbershopResult = await this.barbershopIntegration.processWikiResult(result);
 
       // Display dashboard widgets
-      console.log(styled('📊 Dashboard Widgets Generated:', 'success'));
+      console.info(styled('📊 Dashboard Widgets Generated:', 'success'));
       barbershopResult.dashboardWidgets.forEach((widget, index) => {
-        console.log(`   ${index + 1}. ${widget.title} (${widget.type})`);
-        console.log(`      Position: (${widget.position.x}, ${widget.position.y}) - ${widget.position.width}x${widget.position.height}`);
+        console.info(`   ${index + 1}. ${widget.title} (${widget.type})`);
+        console.info(`      Position: (${widget.position.x}, ${widget.position.y}) - ${widget.position.width}x${widget.position.height}`);
       });
 
-      console.log('');
+      console.info('');
 
       // Display analytics summary
       if (this.config.demo.showAnalytics) {
-        console.log(styled('📈 Analytics Summary:', 'success'));
+        console.info(styled('📈 Analytics Summary:', 'success'));
         const analytics = barbershopResult.analyticsData;
         
         if (analytics.contentAnalytics) {
-          console.log(`   Content Words: ${analytics.contentAnalytics.totalWords}`);
-          console.log(`   Reading Time: ${analytics.contentAnalytics.readingTime} min`);
-          console.log(`   Complexity: ${analytics.contentAnalytics.complexity}`);
+          console.info(`   Content Words: ${analytics.contentAnalytics.totalWords}`);
+          console.info(`   Reading Time: ${analytics.contentAnalytics.readingTime} min`);
+          console.info(`   Complexity: ${analytics.contentAnalytics.complexity}`);
         }
         
         if (analytics.performanceAnalytics) {
-          console.log(`   Efficiency: ${analytics.performanceAnalytics.efficiency.toFixed(1)}%`);
+          console.info(`   Efficiency: ${analytics.performanceAnalytics.efficiency.toFixed(1)}%`);
         }
         
-        console.log('');
+        console.info('');
       }
 
     } catch (error) {
@@ -298,12 +298,12 @@ class WikiModeBarbershopDemo {
   }
 
   private async demoCollaborativeFeatures(): Promise<void> {
-    console.log(styled('👥 Demo 5: Collaborative Features', 'info'));
-    console.log(colorBar('info', 50));
+    console.info(styled('👥 Demo 5: Collaborative Features', 'info'));
+    console.info(colorBar('info', 50));
 
     if (!this.config.demo.showCollaboration) {
-      console.log(styled('Collaborative features disabled in demo config', 'muted'));
-      console.log('');
+      console.info(styled('Collaborative features disabled in demo config', 'muted'));
+      console.info('');
       return;
     }
 
@@ -317,26 +317,26 @@ class WikiModeBarbershopDemo {
 
       const barbershopResult = await this.barbershopIntegration.processWikiResult(result);
 
-      console.log(styled('🤝 Collaborative Features Enabled:', 'success'));
+      console.info(styled('🤝 Collaborative Features Enabled:', 'success'));
       
       const collaboration = barbershopResult.collaborationMetrics;
       if (collaboration.editingMetrics) {
-        console.log(`   Active Contributors: ${collaboration.editingMetrics.activeContributors}`);
-        console.log(`   Average Edit Time: ${collaboration.editingMetrics.averageEditTime} min`);
-        console.log(`   Edit Frequency: ${collaboration.editingMetrics.editFrequency} per day`);
+        console.info(`   Active Contributors: ${collaboration.editingMetrics.activeContributors}`);
+        console.info(`   Average Edit Time: ${collaboration.editingMetrics.averageEditTime} min`);
+        console.info(`   Edit Frequency: ${collaboration.editingMetrics.editFrequency} per day`);
       }
       
       if (collaboration.reviewMetrics) {
-        console.log(`   Pending Reviews: ${collaboration.reviewMetrics.pendingReviews}`);
-        console.log(`   Approval Rate: ${collaboration.reviewMetrics.approvalRate}%`);
+        console.info(`   Pending Reviews: ${collaboration.reviewMetrics.pendingReviews}`);
+        console.info(`   Approval Rate: ${collaboration.reviewMetrics.approvalRate}%`);
       }
       
       if (collaboration.communicationMetrics) {
-        console.log(`   Comments Count: ${collaboration.communicationMetrics.commentsCount}`);
-        console.log(`   Discussions Count: ${collaboration.communicationMetrics.discussionsCount}`);
+        console.info(`   Comments Count: ${collaboration.communicationMetrics.commentsCount}`);
+        console.info(`   Discussions Count: ${collaboration.communicationMetrics.discussionsCount}`);
       }
 
-      console.log('');
+      console.info('');
 
     } catch (error) {
       console.error(styled('❌ Collaborative features demo failed:', 'error'), error);
@@ -344,12 +344,12 @@ class WikiModeBarbershopDemo {
   }
 
   private async demoAnalyticsInsights(): Promise<void> {
-    console.log(styled('🔍 Demo 6: Analytics and Insights', 'info'));
-    console.log(colorBar('info', 50));
+    console.info(styled('🔍 Demo 6: Analytics and Insights', 'info'));
+    console.info(colorBar('info', 50));
 
     if (!this.config.demo.showAnalytics) {
-      console.log(styled('Analytics features disabled in demo config', 'muted'));
-      console.log('');
+      console.info(styled('Analytics features disabled in demo config', 'muted'));
+      console.info('');
       return;
     }
 
@@ -364,42 +364,42 @@ class WikiModeBarbershopDemo {
       const barbershopResult = await this.barbershopIntegration.processWikiResult(result);
 
       // Display performance insights
-      console.log(styled('⚡ Performance Insights:', 'success'));
+      console.info(styled('⚡ Performance Insights:', 'success'));
       const insights = barbershopResult.performanceInsights;
       
       if (insights.generationInsights) {
         const genInsights = insights.generationInsights;
-        console.log(`   Generation Percentile: ${genInsights.timeAnalysis.percentile}%`);
-        console.log(`   Trend: ${genInsights.timeAnalysis.trend}`);
-        console.log(`   Target Score: ${genInsights.optimizationInsights.targetScore}%`);
+        console.info(`   Generation Percentile: ${genInsights.timeAnalysis.percentile}%`);
+        console.info(`   Trend: ${genInsights.timeAnalysis.trend}`);
+        console.info(`   Target Score: ${genInsights.optimizationInsights.targetScore}%`);
         
         if (genInsights.optimizationInsights.improvementAreas.length > 0) {
-          console.log(styled('   Improvement Areas:', 'warning'));
+          console.info(styled('   Improvement Areas:', 'warning'));
           genInsights.optimizationInsights.improvementAreas.forEach(area => {
-            console.log(`     • ${area}`);
+            console.info(`     • ${area}`);
           });
         }
       }
 
-      console.log('');
+      console.info('');
 
       // Display content insights
-      console.log(styled('📄 Content Insights:', 'success'));
+      console.info(styled('📄 Content Insights:', 'success'));
       if (insights.contentInsights) {
         const contentInsights = insights.contentInsights;
-        console.log(`   Sections: ${contentInsights.structureAnalysis.sections}`);
-        console.log(`   Balance Score: ${contentInsights.structureAnalysis.balanceScore}%`);
-        console.log(`   Overall Quality: ${contentInsights.qualityMetrics.overallScore}%`);
+        console.info(`   Sections: ${contentInsights.structureAnalysis.sections}`);
+        console.info(`   Balance Score: ${contentInsights.structureAnalysis.balanceScore}%`);
+        console.info(`   Overall Quality: ${contentInsights.qualityMetrics.overallScore}%`);
         
         if (contentInsights.optimizationSuggestions.length > 0) {
-          console.log(styled('   Content Suggestions:', 'warning'));
+          console.info(styled('   Content Suggestions:', 'warning'));
           contentInsights.optimizationSuggestions.forEach(suggestion => {
-            console.log(`     • ${suggestion}`);
+            console.info(`     • ${suggestion}`);
           });
         }
       }
 
-      console.log('');
+      console.info('');
 
     } catch (error) {
       console.error(styled('❌ Analytics insights demo failed:', 'error'), error);
@@ -407,12 +407,12 @@ class WikiModeBarbershopDemo {
   }
 
   private async demoExportReporting(): Promise<void> {
-    console.log(styled('📤 Demo 7: Export and Reporting', 'info'));
-    console.log(colorBar('info', 50));
+    console.info(styled('📤 Demo 7: Export and Reporting', 'info'));
+    console.info(colorBar('info', 50));
 
     if (!this.config.demo.exportResults) {
-      console.log(styled('Export features disabled in demo config', 'muted'));
-      console.log('');
+      console.info(styled('Export features disabled in demo config', 'muted'));
+      console.info('');
       return;
     }
 
@@ -429,23 +429,23 @@ class WikiModeBarbershopDemo {
       });
 
       // Export in different formats
-      console.log(styled('📄 Exporting Results in Multiple Formats:', 'success'));
+      console.info(styled('📄 Exporting Results in Multiple Formats:', 'success'));
 
       // JSON Export
-      console.log('   Exporting to JSON...');
+      console.info('   Exporting to JSON...');
       await this.wikiMode.exportResults('json');
 
       // Markdown Export
-      console.log('   Exporting to Markdown...');
+      console.info('   Exporting to Markdown...');
       await this.wikiMode.exportResults('markdown');
 
       // HTML Export
-      console.log('   Exporting to HTML...');
+      console.info('   Exporting to HTML...');
       await this.wikiMode.exportResults('html');
 
-      console.log(styled('✅ All exports completed successfully', 'success'));
-      console.log('   Check the output directory for exported files');
-      console.log('');
+      console.info(styled('✅ All exports completed successfully', 'success'));
+      console.info('   Check the output directory for exported files');
+      console.info('');
 
     } catch (error) {
       console.error(styled('❌ Export and reporting demo failed:', 'error'), error);
@@ -453,8 +453,8 @@ class WikiModeBarbershopDemo {
   }
 
   async runInteractiveDemo(): Promise<void> {
-    console.log(styled('\n🎮 Interactive Demo Mode', 'enterprise'));
-    console.log(styled('Choose which demo to run or "all" for complete demo', 'muted'));
+    console.info(styled('\n🎮 Interactive Demo Mode', 'enterprise'));
+    console.info(styled('Choose which demo to run or "all" for complete demo', 'muted'));
 
     while (true) {
       try {
@@ -508,13 +508,13 @@ class WikiModeBarbershopDemo {
 
           case 'exit':
           case 'quit':
-            console.log(styled('👋 Exiting interactive demo mode', 'muted'));
+            console.info(styled('👋 Exiting interactive demo mode', 'muted'));
             return;
 
           default:
             if (command) {
-              console.log(styled(`Unknown demo: ${command}`, 'error'));
-              console.log(styled('Type "help" for available demos', 'muted'));
+              console.info(styled(`Unknown demo: ${command}`, 'error'));
+              console.info(styled('Type "help" for available demos', 'muted'));
             }
         }
       } catch (error) {
@@ -524,18 +524,18 @@ class WikiModeBarbershopDemo {
   }
 
   private showDemoHelp(): void {
-    console.log(styled('\n📚 Available Demos:', 'info'));
-    console.log(styled('  all              Run complete demo suite', 'muted'));
-    console.log(styled('  matrix           Show enhanced template matrix', 'muted'));
-    console.log(styled('  basic            Basic wiki generation demo', 'muted'));
-    console.log(styled('  advanced         Advanced wiki generation with profiling', 'muted'));
-    console.log(styled('  barbershop       Barbershop integration showcase', 'muted'));
-    console.log(styled('  collaboration    Collaborative features demo', 'muted'));
-    console.log(styled('  analytics        Analytics and insights demo', 'muted'));
-    console.log(styled('  export           Export and reporting demo', 'muted'));
-    console.log(styled('  help             Show this help message', 'muted'));
-    console.log(styled('  exit             Exit interactive demo mode', 'muted'));
-    console.log('');
+    console.info(styled('\n📚 Available Demos:', 'info'));
+    console.info(styled('  all              Run complete demo suite', 'muted'));
+    console.info(styled('  matrix           Show enhanced template matrix', 'muted'));
+    console.info(styled('  basic            Basic wiki generation demo', 'muted'));
+    console.info(styled('  advanced         Advanced wiki generation with profiling', 'muted'));
+    console.info(styled('  barbershop       Barbershop integration showcase', 'muted'));
+    console.info(styled('  collaboration    Collaborative features demo', 'muted'));
+    console.info(styled('  analytics        Analytics and insights demo', 'muted'));
+    console.info(styled('  export           Export and reporting demo', 'muted'));
+    console.info(styled('  help             Show this help message', 'muted'));
+    console.info(styled('  exit             Exit interactive demo mode', 'muted'));
+    console.info('');
   }
 }
 
@@ -561,21 +561,21 @@ async function main() {
 
       case 'help':
       case 'h':
-        console.log(styled('🎯 Enhanced WikiMode + Barbershop Demo', 'enterprise'));
-        console.log('');
-        console.log(styled('Usage:', 'info'));
-        console.log('  bun run wikimode-barbershop-demo.ts <command>');
-        console.log('');
-        console.log(styled('Commands:', 'info'));
-        console.log('  interactive, i         Start interactive demo mode');
-        console.log('  complete, all           Run complete demo suite');
-        console.log('  help, h                 Show this help');
-        console.log('');
+        console.info(styled('🎯 Enhanced WikiMode + Barbershop Demo', 'enterprise'));
+        console.info('');
+        console.info(styled('Usage:', 'info'));
+        console.info('  bun run wikimode-barbershop-demo.ts <command>');
+        console.info('');
+        console.info(styled('Commands:', 'info'));
+        console.info('  interactive, i         Start interactive demo mode');
+        console.info('  complete, all           Run complete demo suite');
+        console.info('  help, h                 Show this help');
+        console.info('');
         break;
 
       default:
-        console.log(styled('🎯 Enhanced WikiMode + Barbershop Demo', 'enterprise'));
-        console.log(styled('Starting complete demo...', 'info'));
+        console.info(styled('🎯 Enhanced WikiMode + Barbershop Demo', 'enterprise'));
+        console.info(styled('Starting complete demo...', 'info'));
         await demo.runCompleteDemo();
         break;
     }

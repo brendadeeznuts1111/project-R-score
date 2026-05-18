@@ -3,10 +3,10 @@
  * Shows ahead-of-time bundling with Bun
  */
 
-console.log('🏗️  Production Build Demo');
-console.log('=========================\n');
+console.info('🏗️  Production Build Demo');
+console.info('=========================\n');
 
-console.log('📦 Building complete integration app...\n');
+console.info('📦 Building complete integration app...\n');
 
 const buildCommand = `
 bun build \\
@@ -16,30 +16,30 @@ bun build \\
   ./complete-integration-app.ts
 `;
 
-console.log('Build Command:');
-console.log(buildCommand);
-console.log('');
+console.info('Build Command:');
+console.info(buildCommand);
+console.info('');
 
-console.log('This will create:');
-console.log('✅ Production bundle with minification');
-console.log('✅ Optimized HTML imports');
-console.log('✅ Automatic ETag generation');
-console.log('✅ Reduced startup time');
-console.log('✅ Self-contained executable');
-console.log('');
+console.info('This will create:');
+console.info('✅ Production bundle with minification');
+console.info('✅ Optimized HTML imports');
+console.info('✅ Automatic ETag generation');
+console.info('✅ Reduced startup time');
+console.info('✅ Self-contained executable');
+console.info('');
 
-console.log('To build and run:');
-console.log('1. bun build --target=bun --production --outdir=dist ./complete-integration-app.ts');
-console.log('2. bun run ./dist/complete-integration-app.js');
-console.log('');
+console.info('To build and run:');
+console.info('1. bun build --target=bun --production --outdir=dist ./complete-integration-app.ts');
+console.info('2. bun run ./dist/complete-integration-app.js');
+console.info('');
 
-console.log('🎯 Production Features:');
-console.log('   • Zero external dependencies');
-console.log('   • Native SQLite integration');
-console.log('   • Built-in YAML parsing');
-console.log('   • OS keychain secrets');
-console.log('   • Automatic HTTP caching');
-console.log('   • Domain-driven architecture');
-console.log('');
+console.info('🎯 Production Features:');
+console.info('   • Zero external dependencies');
+console.info('   • Native SQLite integration');
+console.info('   • Built-in YAML parsing');
+console.info('   • OS keychain secrets');
+console.info('   • Automatic HTTP caching');
+console.info('   • Domain-driven architecture');
+console.info('');
 
-console.log('🚀 Ready for deployment!');
+console.info('🚀 Ready for deployment!');

@@ -409,7 +409,7 @@ export class PaymentIdempotencyHandler {
       transactionId,
       async () => {
         // Actual payment processing logic
-        console.log(`Processing payment ${transactionId} for ${provider}`);
+        console.info(`Processing payment ${transactionId} for ${provider}`);
         
         // Simulate payment processing
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -439,7 +439,7 @@ export class PaymentIdempotencyHandler {
       messageId,
       async () => {
         // Email processing logic
-        console.log(`Processing email ${messageId} from ${provider}`);
+        console.info(`Processing email ${messageId} from ${provider}`);
         
         // Parse email and extract payment information
         const parsedPayment = this.parseEmailPayment(emailData);
@@ -469,7 +469,7 @@ export class PaymentIdempotencyHandler {
       messageId,
       async () => {
         // SMS processing logic
-        console.log(`Processing SMS ${messageId} from ${provider}`);
+        console.info(`Processing SMS ${messageId} from ${provider}`);
         
         // Parse SMS command and execute
         const result = this.parseSMSCommand(smsData);
@@ -535,9 +535,9 @@ const result = await paymentIdempotency.processPayment(
 );
 
 if (result.isDuplicate) {
-  console.log('Payment already processed:', result.data);
+  console.info('Payment already processed:', result.data);
 } else if (result.status === 'completed') {
-  console.log('Payment processed:', result.data);
+  console.info('Payment processed:', result.data);
 } else {
   console.error('Payment failed:', result.error);
 }

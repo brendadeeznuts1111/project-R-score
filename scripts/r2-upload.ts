@@ -302,19 +302,19 @@ async function main(): Promise<void> {
   const analyticsKey = `${ctx.prefix}/analytics/${options.date}.json`;
   const sessionStateKey = `domains/${ctx.namespace}/sessions/${options.sessionId}/state.zst`;
 
-  console.log(`[r2-upload] domain=${ctx.domain} zone=${ctx.zone} account=${accountMasked || 'n/a'}`);
-  console.log(`[r2-upload] bucket=${r2.bucket} endpoint=${r2.endpoint}`);
-  console.log(`[r2-upload] prefix=${ctx.prefix}`);
-  console.log(`[r2-upload] dnsChecked=${checked} dnsResolved=${resolved} cacheTtlSec=${options.cacheTtlSec}`);
-  console.log(`[r2-upload] key health=${healthKey}`);
-  console.log(`[r2-upload] key ssl=${sslKey}`);
-  console.log(`[r2-upload] key analytics=${analyticsKey}`);
+  console.info(`[r2-upload] domain=${ctx.domain} zone=${ctx.zone} account=${accountMasked || 'n/a'}`);
+  console.info(`[r2-upload] bucket=${r2.bucket} endpoint=${r2.endpoint}`);
+  console.info(`[r2-upload] prefix=${ctx.prefix}`);
+  console.info(`[r2-upload] dnsChecked=${checked} dnsResolved=${resolved} cacheTtlSec=${options.cacheTtlSec}`);
+  console.info(`[r2-upload] key health=${healthKey}`);
+  console.info(`[r2-upload] key ssl=${sslKey}`);
+  console.info(`[r2-upload] key analytics=${analyticsKey}`);
   if (options.writeSessionState) {
-    console.log(`[r2-upload] key sessionState=${sessionStateKey}`);
+    console.info(`[r2-upload] key sessionState=${sessionStateKey}`);
   }
 
   if (!options.apply) {
-    console.log('[r2-upload] dry-run mode (no upload). Use --apply to write objects.');
+    console.info('[r2-upload] dry-run mode (no upload). Use --apply to write objects.');
     return;
   }
 
@@ -343,10 +343,10 @@ async function main(): Promise<void> {
         unresolvedSubdomains: checks.filter((c) => !c.dnsResolved).map((c) => c.fullDomain),
       },
     });
-    console.log('[r2-upload] uploaded compressed session bridge state');
+    console.info('[r2-upload] uploaded compressed session bridge state');
   }
 
-  console.log('[r2-upload] uploaded 3 objects successfully');
+  console.info('[r2-upload] uploaded 3 objects successfully');
 }
 
 await main();

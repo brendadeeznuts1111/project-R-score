@@ -12,11 +12,11 @@ import {
   type DNSResolutionResult,
 } from "../src/networking/dns-resolver";
 
-console.log("\n🌐 [1.0.0.0] DNS Resolution Examples\n");
+console.info("\n🌐 [1.0.0.0] DNS Resolution Examples\n");
 
 // [1.1.0.0] IPv4 Validation Examples
-console.log("📋 [1.1.0.0] IPv4 Address Validation");
-console.log("─".repeat(50));
+console.info("📋 [1.1.0.0] IPv4 Address Validation");
+console.info("─".repeat(50));
 
 const ipv4Examples = [
   { address: "127.0.0.1", expected: true, desc: "Localhost" },
@@ -29,12 +29,12 @@ const ipv4Examples = [
 for (const { address, expected, desc } of ipv4Examples) {
   const result = isValidIPv4(address);
   const status = result === expected ? "✅" : "❌";
-  console.log(`  ${status} "${address}" → ${result} (${desc})`);
+  console.info(`  ${status} "${address}" → ${result} (${desc})`);
 }
 
 // [1.2.0.0] IPv6 Validation Examples
-console.log("\n📋 [1.2.0.0] IPv6 Address Validation");
-console.log("─".repeat(50));
+console.info("\n📋 [1.2.0.0] IPv6 Address Validation");
+console.info("─".repeat(50));
 
 const ipv6Examples = [
   { address: "::1", expected: true, desc: "Localhost" },
@@ -47,12 +47,12 @@ const ipv6Examples = [
 for (const { address, expected, desc } of ipv6Examples) {
   const result = isValidIPv6(address);
   const status = result === expected ? "✅" : "❌";
-  console.log(`  ${status} "${address}" → ${result} (${desc})`);
+  console.info(`  ${status} "${address}" → ${result} (${desc})`);
 }
 
 // [1.3.0.0] Family Detection Examples
-console.log("\n📋 [1.3.0.0] Automatic IP Family Detection");
-console.log("─".repeat(50));
+console.info("\n📋 [1.3.0.0] Automatic IP Family Detection");
+console.info("─".repeat(50));
 
 const detectionExamples = [
   { address: "127.0.0.1", expected: 4 },
@@ -65,15 +65,15 @@ for (const { address, expected } of detectionExamples) {
   try {
     const family = detectIPFamily(address);
     const status = family === expected ? "✅" : "❌";
-    console.log(`  ${status} "${address}" → family ${family}`);
+    console.info(`  ${status} "${address}" → family ${family}`);
   } catch (error) {
-    console.log(`  ❌ "${address}" → Error: ${(error as Error).message}`);
+    console.info(`  ❌ "${address}" → Error: ${(error as Error).message}`);
   }
 }
 
 // [1.4.0.0] DNS Result Validation Examples
-console.log("\n📋 [1.4.0.0] DNS Resolution Result Validation");
-console.log("─".repeat(50));
+console.info("\n📋 [1.4.0.0] DNS Resolution Result Validation");
+console.info("─".repeat(50));
 
 const validResults: DNSResolutionResult[] = [
   { address: "127.0.0.1", family: 4, ttl: 300 },
@@ -82,20 +82,20 @@ const validResults: DNSResolutionResult[] = [
   { address: "2001:db8::1", family: 6, ttl: 7200 },
 ];
 
-console.log("\n✅ Valid Results:");
+console.info("\n✅ Valid Results:");
 for (const result of validResults) {
   try {
     validateDNSResult(result);
-    console.log(
+    console.info(
       `  ✅ ${result.address} (family: ${result.family}, ttl: ${result.ttl}s)`
     );
   } catch (error) {
-    console.log(`  ❌ Error: ${(error as Error).message}`);
+    console.info(`  ❌ Error: ${(error as Error).message}`);
   }
 }
 
 // [1.5.0.0] Invalid Results (Error Handling)
-console.log("\n❌ Invalid Results (Error Handling):");
+console.info("\n❌ Invalid Results (Error Handling):");
 
 const invalidResults = [
   {
@@ -115,16 +115,16 @@ const invalidResults = [
 for (const { result, desc } of invalidResults) {
   try {
     validateDNSResult(result as DNSResolutionResult);
-    console.log(`  ❌ Should have thrown: ${desc}`);
+    console.info(`  ❌ Should have thrown: ${desc}`);
   } catch (error) {
-    console.log(`  ✅ ${desc}`);
-    console.log(`     Error: ${(error as Error).message}`);
+    console.info(`  ✅ ${desc}`);
+    console.info(`     Error: ${(error as Error).message}`);
   }
 }
 
 // [1.6.0.0] Performance Metrics
-console.log("\n📊 [1.6.0.0] Performance Metrics");
-console.log("─".repeat(50));
+console.info("\n📊 [1.6.0.0] Performance Metrics");
+console.info("─".repeat(50));
 
 const iterations = 10000;
 const addresses = [
@@ -144,10 +144,10 @@ const end = performance.now();
 const duration = end - start;
 const opsPerSecond = (iterations * addresses.length) / (duration / 1000);
 
-console.log(`  Iterations: ${iterations * addresses.length}`);
-console.log(`  Duration: ${duration.toFixed(2)}ms`);
-console.log(`  Ops/sec: ${opsPerSecond.toFixed(0)}`);
-console.log(`  Per-op: ${(duration / (iterations * addresses.length)).toFixed(3)}ms`);
+console.info(`  Iterations: ${iterations * addresses.length}`);
+console.info(`  Duration: ${duration.toFixed(2)}ms`);
+console.info(`  Ops/sec: ${opsPerSecond.toFixed(0)}`);
+console.info(`  Per-op: ${(duration / (iterations * addresses.length)).toFixed(3)}ms`);
 
-console.log("\n✅ DNS Resolution examples complete!\n");
+console.info("\n✅ DNS Resolution examples complete!\n");
 

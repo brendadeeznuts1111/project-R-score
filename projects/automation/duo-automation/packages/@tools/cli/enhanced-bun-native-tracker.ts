@@ -526,9 +526,9 @@ export class EnhancedBunNativeAPITracker {
       const filename = `bun-native-metrics-${timestamp}.json`;
       const filepath = `${this.config.reportsDirectory}/${filename}`;
       
-      console.log(`🔍 DRYRUN: Would save report to: ${filepath}`);
-      console.log(`🔍 DRYRUN: Report contains ${report.summary.totalAPIs} APIs, ${report.summary.totalCalls} calls`);
-      console.log(`🔍 DRYRUN: Native implementation rate: ${report.summary.nativeImplementationRate.toFixed(1)}%`);
+      console.info(`🔍 DRYRUN: Would save report to: ${filepath}`);
+      console.info(`🔍 DRYRUN: Report contains ${report.summary.totalAPIs} APIs, ${report.summary.totalCalls} calls`);
+      console.info(`🔍 DRYRUN: Native implementation rate: ${report.summary.nativeImplementationRate.toFixed(1)}%`);
       
       this.lastReportPath = filepath;
       return filepath;
@@ -541,7 +541,7 @@ export class EnhancedBunNativeAPITracker {
 
     await Bun.write(filepath, JSON.stringify(report, null, 2));
     this.lastReportPath = filepath;
-    console.log(`💾 Report saved to: ${filepath}`);
+    console.info(`💾 Report saved to: ${filepath}`);
 
     // Clean up old reports if garbage collection is enabled
     if (this.config.enableGarbageCollection) {
@@ -556,8 +556,8 @@ export class EnhancedBunNativeAPITracker {
    */
   public async performGarbageCollection(): Promise<void> {
     if (this.config.dryRun) {
-      console.log(`🔍 DRYRUN: Would perform garbage collection in ${this.config.reportsDirectory}`);
-      console.log(`🔍 DRYRUN: Would clean up files older than ${this.config.maxReportAgeHours} hours`);
+      console.info(`🔍 DRYRUN: Would perform garbage collection in ${this.config.reportsDirectory}`);
+      console.info(`🔍 DRYRUN: Would clean up files older than ${this.config.maxReportAgeHours} hours`);
       return;
     }
 
@@ -577,15 +577,15 @@ export class EnhancedBunNativeAPITracker {
           if (stats.mtime.getTime() < cutoffTime) {
             await Bun.write(filepath, ''); // effectively delete by emptying
             cleanedCount++;
-            console.log(`🗑️  Cleaned up old report: ${file}`);
+            console.info(`🗑️  Cleaned up old report: ${file}`);
           }
         }
       }
 
       if (cleanedCount === 0) {
-        console.log(`✅ No old reports to clean up`);
+        console.info(`✅ No old reports to clean up`);
       } else {
-        console.log(`🧹 Garbage collection completed: ${cleanedCount} files removed`);
+        console.info(`🧹 Garbage collection completed: ${cleanedCount} files removed`);
       }
     } catch (error) {
       console.error('❌ Error during garbage collection:', error);
@@ -623,7 +623,7 @@ export class EnhancedBunNativeAPITracker {
     this.subscribers.clear();
     this.setTrackingEnabled(false);
     
-    console.log('Enhanced Bun Native API Tracker shutdown complete');
+    console.info('Enhanced Bun Native API Tracker shutdown complete');
   }
 
   /**
@@ -633,7 +633,7 @@ export class EnhancedBunNativeAPITracker {
     this.shutdown();
     this.enabled = true;
     this.startRealTimeUpdates();
-    console.log('Enhanced Bun Native API Tracker restarted');
+    console.info('Enhanced Bun Native API Tracker restarted');
   }
 }
 

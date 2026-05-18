@@ -321,26 +321,26 @@ if (import.meta.main) {
     }
   ];
   
-  console.log('🎉 FactoryWager Unicode Table Renderer v4.3 - Governance Demo');
-  console.log('');
+  console.info('🎉 FactoryWager Unicode Table Renderer v4.3 - Governance Demo');
+  console.info('');
   
   const renderer = new UnicodeTableRendererV43();
   
   // Show configuration
-  console.log('📋 Current Configuration:');
-  console.log(JSON.stringify(renderer.getConfig(), null, 2));
-  console.log('');
+  console.info('📋 Current Configuration:');
+  console.info(JSON.stringify(renderer.getConfig(), null, 2));
+  console.info('');
   
   // Validate configuration
   const validation = renderer.validateConfig();
-  console.log(`🔍 Configuration Validation: ${validation.valid ? '✅ Valid' : '❌ Invalid'}`);
+  console.info(`🔍 Configuration Validation: ${validation.valid ? '✅ Valid' : '❌ Invalid'}`);
   if (!validation.valid) {
-    validation.errors.forEach(error => console.log(`   - ${error}`));
+    validation.errors.forEach(error => console.info(`   - ${error}`));
   }
-  console.log('');
+  console.info('');
   
   // Render demo table
-  console.log(renderer.render(demoData, {
+  console.info(renderer.render(demoData, {
     title: '🛡️ Unicode Governance v4.3 - Triple Strike Demo',
     footer: 'Per-column override • Auto-language detection • Pre-commit verification'
   }));

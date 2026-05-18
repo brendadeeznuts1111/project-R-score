@@ -85,7 +85,7 @@ class BuildAutomation {
   }
 
   async run(): Promise<BuildResult> {
-    console.log('🔥 Fire22 Build Automation Starting...\n');
+    console.info('🔥 Fire22 Build Automation Starting...\n');
 
     try {
       // Step 1: Pre-build validation
@@ -141,7 +141,7 @@ class BuildAutomation {
       this.result.success = true;
       this.result.duration = Date.now() - this.startTime;
 
-      console.log('\n✅ Build completed successfully!');
+      console.info('\n✅ Build completed successfully!');
       this.printSummary();
     } catch (error) {
       this.result.success = false;
@@ -165,13 +165,13 @@ class BuildAutomation {
     this.result.steps.push(step);
     const stepStartTime = Date.now();
 
-    console.log(`\n🔄 ${name}...`);
+    console.info(`\n🔄 ${name}...`);
 
     try {
       await fn();
       step.status = 'completed';
       step.duration = Date.now() - stepStartTime;
-      console.log(`✅ ${name} completed in ${step.duration}ms`);
+      console.info(`✅ ${name} completed in ${step.duration}ms`);
     } catch (error) {
       step.status = 'failed';
       step.duration = Date.now() - stepStartTime;
@@ -191,12 +191,12 @@ class BuildAutomation {
 
     // Check required tools
     const bunVersion = await $`bun --version`.text();
-    console.log(`📦 Bun version: ${bunVersion.trim()}`);
+    console.info(`📦 Bun version: ${bunVersion.trim()}`);
 
     // Check if packages directory exists
     const packagesPath = 'packages';
     const currentDir = await $`pwd`.text();
-    console.log(`📍 Current directory: ${currentDir.trim()}`);
+    console.info(`📍 Current directory: ${currentDir.trim()}`);
 
     // Try different path approaches
     let packagesFound = false;
@@ -206,12 +206,12 @@ class BuildAutomation {
       try {
         const stat = await Bun.file(path).stat();
         if (stat.isDirectory) {
-          console.log(`✅ Found packages at: ${path}`);
+          console.info(`✅ Found packages at: ${path}`);
           packagesFound = true;
           break;
         }
       } catch (error) {
-        console.log(`❌ Path ${path} not accessible:`, error.message);
+        console.info(`❌ Path ${path} not accessible:`, error.message);
       }
     }
 
@@ -220,11 +220,11 @@ class BuildAutomation {
       try {
         const result = await $`ls -d packages`.text();
         if (result.trim()) {
-          console.log(`✅ Found packages using shell command`);
+          console.info(`✅ Found packages using shell command`);
           packagesFound = true;
         }
       } catch (error) {
-        console.log(`❌ Shell command also failed:`, error.message);
+        console.info(`❌ Shell command also failed:`, error.message);
       }
     }
 
@@ -236,7 +236,7 @@ class BuildAutomation {
 
     // List packages for verification
     const packageDirs = await $`ls packages`.text();
-    console.log(`📦 Found packages: ${packageDirs.trim()}`);
+    console.info(`📦 Found packages: ${packageDirs.trim()}`);
   }
 
   private async manageVersion(): Promise<void> {
@@ -268,7 +268,7 @@ class BuildAutomation {
     }
 
     this.result.version = newVersion;
-    console.log(`📈 Version updated: ${currentVersion} → ${newVersion}`);
+    console.info(`📈 Version updated: ${currentVersion} → ${newVersion}`);
   }
 
   private async incrementVersion(
@@ -305,31 +305,31 @@ class BuildAutomation {
 
   private async manageDependencies(): Promise<void> {
     if (this.config.dependencies.analyze) {
-      console.log('🔍 Analyzing dependencies...');
+      console.info('🔍 Analyzing dependencies...');
       const outdated = await $`bun outdated`.text();
-      console.log('📊 Outdated packages:', outdated);
+      console.info('📊 Outdated packages:', outdated);
     }
 
     if (this.config.dependencies.update) {
-      console.log('🔄 Updating dependencies...');
+      console.info('🔄 Updating dependencies...');
       await $`bun update`;
-      console.log('✅ Dependencies updated');
+      console.info('✅ Dependencies updated');
     }
 
     if (this.config.dependencies.audit) {
-      console.log('🔒 Auditing dependencies...');
+      console.info('🔒 Auditing dependencies...');
       try {
         const audit = await $`bun audit`.text();
-        console.log('🔒 Audit results:', audit);
+        console.info('🔒 Audit results:', audit);
       } catch (error) {
         console.warn('⚠️ Dependency audit failed (non-blocking):', error.message);
-        console.log('🔒 Continuing build despite audit issues...');
+        console.info('🔒 Continuing build despite audit issues...');
       }
     }
   }
 
   private async generateDocumentation(): Promise<void> {
-    console.log('📚 Generating documentation...');
+    console.info('📚 Generating documentation...');
 
     // Generate API documentation
     if (this.config.documentation.formats.includes('html')) {
@@ -344,7 +344,7 @@ class BuildAutomation {
       await this.generateJsonDocs();
     }
 
-    console.log('✅ Documentation generated');
+    console.info('✅ Documentation generated');
   }
 
   private async generateHtmlDocs(): Promise<void> {
@@ -366,7 +366,7 @@ class BuildAutomation {
   }
 
   private async generateMetadata(): Promise<void> {
-    console.log('🏷️ Generating metadata...');
+    console.info('🏷️ Generating metadata...');
 
     const packageJson = await Bun.file('package.json').json();
 
@@ -394,7 +394,7 @@ class BuildAutomation {
     };
 
     await Bun.write('package.json', JSON.stringify(packageJson, null, 2));
-    console.log('✅ Metadata generated and updated');
+    console.info('✅ Metadata generated and updated');
   }
 
   private async analyzePackages(): Promise<any> {
@@ -466,7 +466,7 @@ class BuildAutomation {
   }
 
   private async buildPackages(): Promise<void> {
-    console.log('🏗️ Building packages...');
+    console.info('🏗️ Building packages...');
 
     const packageDirs = await $`ls packages`.text();
     const packageList = packageDirs.trim().split('\n');
@@ -476,10 +476,10 @@ class BuildAutomation {
       const packageJsonPath = `${packagePath}/package.json`;
 
       if (await Bun.file(packageJsonPath).exists()) {
-        console.log(`  📦 Building ${pkg}...`);
+        console.info(`  📦 Building ${pkg}...`);
         try {
           await $`cd ${packagePath} && bun run build`.quiet();
-          console.log(`  ✅ ${pkg} built successfully`);
+          console.info(`  ✅ ${pkg} built successfully`);
         } catch (error) {
           console.error(`  ❌ ${pkg} build failed:`, error);
           throw error;
@@ -489,79 +489,79 @@ class BuildAutomation {
   }
 
   private async embedPackages(): Promise<void> {
-    console.log('🔗 Embedding packages...');
+    console.info('🔗 Embedding packages...');
 
     // Create embedded packages file
     const embeddedPackages = await this.createEmbeddedPackages();
     await Bun.write('src/embedded-packages.ts', embeddedPackages);
 
-    console.log('✅ Packages embedded');
+    console.info('✅ Packages embedded');
   }
 
   private async buildMain(): Promise<void> {
-    console.log('🏗️ Building main application...');
+    console.info('🏗️ Building main application...');
 
     // Run the main build using manual build command
     await $`bun build ./src/index.ts --target=bun --outdir ./dist`;
 
-    console.log('✅ Main application built');
+    console.info('✅ Main application built');
   }
 
   private async runQualityChecks(): Promise<void> {
-    console.log('🧪 Running quality checks...');
+    console.info('🧪 Running quality checks...');
 
     if (this.config.quality.lint) {
-      console.log('  🔍 Running linting...');
+      console.info('  🔍 Running linting...');
       try {
         await $`bun run lint:check`.quiet();
-        console.log('  ✅ Linting passed');
+        console.info('  ✅ Linting passed');
       } catch (error) {
         console.warn('  ⚠️ Linting failed (non-blocking):', error.message);
       }
     }
 
     if (this.config.quality.test) {
-      console.log('  🧪 Running tests...');
+      console.info('  🧪 Running tests...');
       try {
         await $`bun run test:quick`.quiet();
-        console.log('  ✅ Tests passed');
+        console.info('  ✅ Tests passed');
       } catch (error) {
         console.warn('  ⚠️ Tests failed (non-blocking):', error.message);
       }
     }
 
     if (this.config.quality.coverage) {
-      console.log('  📊 Running coverage...');
+      console.info('  📊 Running coverage...');
       try {
         await $`bun run test:coverage`.quiet();
-        console.log('  ✅ Coverage generated');
+        console.info('  ✅ Coverage generated');
       } catch (error) {
         console.warn('  ⚠️ Coverage failed (non-blocking):', error.message);
       }
     }
 
-    console.log('✅ Quality checks completed');
+    console.info('✅ Quality checks completed');
   }
 
   private async embedDocumentation(): Promise<void> {
-    console.log('📚 Embedding documentation...');
+    console.info('📚 Embedding documentation...');
 
     // Embed documentation into the build
     const embeddedDocs = await this.createEmbeddedDocumentation();
     await Bun.write('src/embedded-documentation.ts', embeddedDocs);
 
-    console.log('✅ Documentation embedded');
+    console.info('✅ Documentation embedded');
   }
 
   private async validateBuild(): Promise<void> {
-    console.log('✅ Validating build...');
+    console.info('✅ Validating build...');
 
     // Check current directory and list contents
     const currentDir = await $`pwd`.text();
-    console.log(`📍 Validation directory: ${currentDir.trim()}`);
+    console.info(`📍 Validation directory: ${currentDir.trim()}`);
 
     const lsResult = await $`ls -la`.text();
-    console.log('📁 Directory contents:', lsResult);
+    console.info('📁 Directory contents:', lsResult);
 
     // Check if dist directory exists and has content using shell commands
     try {
@@ -572,7 +572,7 @@ class BuildAutomation {
       }
 
       const distFiles = await $`ls -la dist`.text();
-      console.log('📁 Build output:', distFiles);
+      console.info('📁 Build output:', distFiles);
 
       // Validate package builds
       const packageDirs = await $`ls packages`.text();
@@ -587,16 +587,16 @@ class BuildAutomation {
             await $`test -d ${distPath} && echo "exists" || echo "not found"`.text();
           if (pkgDistCheck.trim() === 'exists') {
             const files = await $`ls ${distPath}`.text();
-            console.log(`  📦 ${pkg} dist files:`, files.trim());
+            console.info(`  📦 ${pkg} dist files:`, files.trim());
           } else {
-            console.log(`  ⚠️ ${pkg} has no dist directory`);
+            console.info(`  ⚠️ ${pkg} has no dist directory`);
           }
         } catch (error) {
-          console.log(`  ❌ Error checking ${pkg}:`, error.message);
+          console.info(`  ❌ Error checking ${pkg}:`, error.message);
         }
       }
 
-      console.log('✅ Build validation passed');
+      console.info('✅ Build validation passed');
     } catch (error) {
       console.error('❌ Validation error:', error);
       throw error;
@@ -604,7 +604,7 @@ class BuildAutomation {
   }
 
   private async postBuildTasks(): Promise<void> {
-    console.log('🚀 Running post-build tasks...');
+    console.info('🚀 Running post-build tasks...');
 
     // Generate build report
     const buildReport = await this.generateBuildReport();
@@ -616,7 +616,7 @@ class BuildAutomation {
     // Clean up temporary files
     await this.cleanup();
 
-    console.log('✅ Post-build tasks completed');
+    console.info('✅ Post-build tasks completed');
   }
 
   private async generateBuildReport(): Promise<string> {
@@ -694,7 +694,7 @@ ${Object.entries(await this.analyzePackages())
   }
 
   private async cleanup(): Promise<void> {
-    console.log('🧹 Cleaning up...');
+    console.info('🧹 Cleaning up...');
 
     // Remove temporary files
     try {
@@ -704,7 +704,7 @@ ${Object.entries(await this.analyzePackages())
       // Ignore cleanup errors
     }
 
-    console.log('✅ Cleanup completed');
+    console.info('✅ Cleanup completed');
   }
 
   private async calculatePackageSize(packagePath: string): Promise<string> {
@@ -954,23 +954,23 @@ This build system integrates with:
   }
 
   private printSummary(): void {
-    console.log('\n📊 Build Summary');
-    console.log('!==!==!==');
-    console.log(`Status: ${this.result.success ? '✅ SUCCESS' : '❌ FAILED'}`);
-    console.log(`Version: ${this.result.version}`);
-    console.log(`Duration: ${this.result.duration}ms`);
-    console.log(`Steps: ${this.result.steps.length}`);
-    console.log(`Errors: ${this.result.errors.length}`);
-    console.log(`Warnings: ${this.result.warnings.length}`);
+    console.info('\n📊 Build Summary');
+    console.info('!==!==!==');
+    console.info(`Status: ${this.result.success ? '✅ SUCCESS' : '❌ FAILED'}`);
+    console.info(`Version: ${this.result.version}`);
+    console.info(`Duration: ${this.result.duration}ms`);
+    console.info(`Steps: ${this.result.steps.length}`);
+    console.info(`Errors: ${this.result.errors.length}`);
+    console.info(`Warnings: ${this.result.warnings.length}`);
 
     if (this.result.errors.length > 0) {
-      console.log('\n❌ Errors:');
-      this.result.errors.forEach(error => console.log(`  - ${error}`));
+      console.info('\n❌ Errors:');
+      this.result.errors.forEach(error => console.info(`  - ${error}`));
     }
 
     if (this.result.warnings.length > 0) {
-      console.log('\n⚠️ Warnings:');
-      this.result.warnings.forEach(warning => console.log(`  - ${warning}`));
+      console.info('\n⚠️ Warnings:');
+      this.result.warnings.forEach(warning => console.info(`  - ${warning}`));
     }
   }
 }

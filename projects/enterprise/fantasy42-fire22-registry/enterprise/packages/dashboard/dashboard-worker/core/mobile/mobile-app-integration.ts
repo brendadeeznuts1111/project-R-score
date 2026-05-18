@@ -540,7 +540,7 @@ export class MobileAppIntegration {
     paymentData: any
   ): Promise<{ success: boolean; error?: string }> {
     // Simulate Apple Pay processing
-    console.log(`Processing Apple Pay payment: ${intent.amount} ${intent.currency}`);
+    console.info(`Processing Apple Pay payment: ${intent.amount} ${intent.currency}`);
 
     // In real implementation, would decrypt token and process with Apple Pay servers
     return {
@@ -554,7 +554,7 @@ export class MobileAppIntegration {
     paymentData: any
   ): Promise<{ success: boolean; error?: string }> {
     // Simulate Google Pay processing
-    console.log(`Processing Google Pay payment: ${intent.amount} ${intent.currency}`);
+    console.info(`Processing Google Pay payment: ${intent.amount} ${intent.currency}`);
 
     // In real implementation, would validate token and process with Google Pay
     return {
@@ -569,7 +569,7 @@ export class MobileAppIntegration {
     }
 
     // In real implementation, would send via APNS
-    console.log(`Sending push notification via APNS to ${device.deviceToken}`);
+    console.info(`Sending push notification via APNS to ${device.deviceToken}`);
 
     notification.status = 'sent';
     notification.deliveredAt = new Date().toISOString();
@@ -581,7 +581,7 @@ export class MobileAppIntegration {
     }
 
     // In real implementation, would send via FCM
-    console.log(`Sending push notification via FCM to ${device.deviceToken}`);
+    console.info(`Sending push notification via FCM to ${device.deviceToken}`);
 
     notification.status = 'sent';
     notification.deliveredAt = new Date().toISOString();

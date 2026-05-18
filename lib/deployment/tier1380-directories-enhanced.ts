@@ -260,13 +260,13 @@ function flattenTree(entries: TreeEntry[]): TreeEntry[] {
 // RENDER MATRIX
 // ═══════════════════════════════════════════════════════════════════════════════
 function renderTreeMatrix(tree: TreeEntry[], metrics: TreeMetrics): void {
-  console.log(
+  console.info(
     `\n\x1b[36m▵⟂⥂══════════════════════════════════════════════════════════════════════════════════════▵⟂⥂\x1b[0m`
   );
-  console.log(
+  console.info(
     `\x1b[36m  📁  DIRECTORY TREE SCAN — Bun-Optimized (node:fs + Bun.Glob + Bun.file)\x1b[0m`
   );
-  console.log(
+  console.info(
     `\x1b[36m▵⟂⥂══════════════════════════════════════════════════════════════════════════════════════▵⟂⥸\x1b[0m\n`
   );
 
@@ -281,24 +281,24 @@ function renderTreeMatrix(tree: TreeEntry[], metrics: TreeMetrics): void {
     API: '\x1b[33mnode:fs\x1b[0m',
   }));
 
-  console.log(Bun.inspect.table(table, { colors: true }));
+  console.info(Bun.inspect.table(table, { colors: true }));
 
-  console.log(
+  console.info(
     `\n\x1b[36m◉ Summary:\x1b[0m ${metrics.totalDirs} dirs │ ${metrics.totalFiles} files │ ${metrics.totalPackageJsons} package.json │ depth ${metrics.maxDepth}`
   );
-  console.log(
+  console.info(
     `\x1b[36m◉ Latency:\x1b[0m ${(metrics.latencyNs / 1e6).toFixed(2)}ms │ \x1b[36mAPI:\x1b[0m ${metrics.api} │ \x1b[36mRisk:\x1b[0m ${metrics.riskScore.toFixed(9)}`
   );
 }
 
 function renderGlobMatrix(metrics: GlobMetrics): void {
-  console.log(
+  console.info(
     `\n\x1b[36m◉ Bun.Glob:\x1b[0m "${metrics.pattern}" │ ${metrics.matches} matches │ ${(metrics.latencyNs / 1e6).toFixed(2)}ms │ \x1b[32mRisk: ${metrics.riskScore.toFixed(9)}\x1b[0m`
   );
 }
 
 function renderComparisonTable(dirMetrics: TreeMetrics, globMetrics: GlobMetrics): void {
-  console.log(
+  console.info(
     Bun.inspect.table(
       [
         {

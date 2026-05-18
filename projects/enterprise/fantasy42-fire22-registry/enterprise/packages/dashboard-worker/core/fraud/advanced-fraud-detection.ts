@@ -424,7 +424,7 @@ export class AdvancedFraudDetection {
     feedback: any
   ): Promise<void> {
     // Store feedback for model retraining
-    console.log(`Updating model with feedback for transaction ${transactionId}: ${actualOutcome}`);
+    console.info(`Updating model with feedback for transaction ${transactionId}: ${actualOutcome}`);
   }
 
   /**

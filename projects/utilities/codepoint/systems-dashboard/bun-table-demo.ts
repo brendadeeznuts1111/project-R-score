@@ -73,8 +73,8 @@ const serverData: ServerData[] = [
 ];
 
 // 1. Basic table with Bun's auto-formatting
-console.log("\n🖥️  Basic Server Overview");
-console.log(
+console.info("\n🖥️  Basic Server Overview");
+console.info(
   inspect.table(serverData, [
     "name",
     "region",
@@ -86,7 +86,7 @@ console.log(
 );
 
 // 2. Custom formatted table using data transformation
-console.log("\n📊 Advanced Metrics with Custom Formatting");
+console.info("\n📊 Advanced Metrics with Custom Formatting");
 const formattedServerData = serverData.map((server: ServerData) => ({
   "🖥️  Server": server.name.toUpperCase(),
   "💻 CPU":
@@ -100,7 +100,7 @@ const formattedServerData = serverData.map((server: ServerData) => ({
   "🔗 Connections": server.connections.toLocaleString(),
 }));
 
-console.log(inspect.table(formattedServerData));
+console.info(inspect.table(formattedServerData));
 
 // 3. Performance metrics with trend analysis
 const performanceData: PerformanceData[] = [
@@ -146,7 +146,7 @@ const performanceData: PerformanceData[] = [
   },
 ];
 
-console.log("\n📈 Performance Metrics Dashboard");
+console.info("\n📈 Performance Metrics Dashboard");
 const formattedPerformanceData = performanceData.map(
   (metric: PerformanceData) => ({
     Metric: metric.metric.padEnd(16),
@@ -157,7 +157,7 @@ const formattedPerformanceData = performanceData.map(
   })
 );
 
-console.log(inspect.table(formattedPerformanceData));
+console.info(inspect.table(formattedPerformanceData));
 
 // Helper functions for formatting
 function getColoredTrend(trend: string): string {
@@ -189,7 +189,7 @@ function generateRealtimeData(): ProcessData[] {
   }));
 }
 
-console.log("\n⚡ Real-time Process Monitor");
+console.info("\n⚡ Real-time Process Monitor");
 const realtimeData = generateRealtimeData();
 const formattedRealtimeData = realtimeData.map((process: ProcessData) => ({
   ID: process.id,
@@ -203,14 +203,14 @@ const formattedRealtimeData = realtimeData.map((process: ProcessData) => ({
       : process.errors.toString(),
 }));
 
-console.log(inspect.table(formattedRealtimeData));
+console.info(inspect.table(formattedRealtimeData));
 
 // 5. Export functionality using Bun's file system
 export function exportTable(data: any[], filename: string): void {
   const tableOutput = inspect.table(data, ["name", "cpu", "memory", "status"]);
 
   Bun.write(filename, tableOutput);
-  console.log(`📁 Table exported to ${filename}`);
+  console.info(`📁 Table exported to ${filename}`);
 }
 
 // 6. Advanced sorting and filtering
@@ -227,7 +227,7 @@ function filterAndSort<T>(
   });
 }
 
-console.log("\n🔍 High CPU Usage Servers (Sorted by CPU)");
+console.info("\n🔍 High CPU Usage Servers (Sorted by CPU)");
 const highCpuServers = filterAndSort(
   serverData,
   "cpu",
@@ -240,18 +240,18 @@ const formattedHighCpuData = highCpuServers.map((server: ServerData) => ({
   Status: server.status,
 }));
 
-console.log(inspect.table(formattedHighCpuData));
+console.info(inspect.table(formattedHighCpuData));
 
 // 7. JSON export with Bun's fast JSON handling
-console.log("\n📄 Export Options");
+console.info("\n📄 Export Options");
 const jsonData = JSON.stringify(serverData, null, 2);
-console.log(`📊 JSON data ready (${jsonData.length} characters)`);
+console.info(`📊 JSON data ready (${jsonData.length} characters)`);
 
 // Export to file using Bun's native file system
 exportTable(serverData, "servers-report-fixed.txt");
 
 // 8. Advanced table with custom data transformation
-console.log("\n🎨 Custom Data Transformation");
+console.info("\n🎨 Custom Data Transformation");
 const transformedData = serverData.map((server: ServerData) => {
   const healthScore = calculateHealthScore(server);
   return {
@@ -263,7 +263,7 @@ const transformedData = serverData.map((server: ServerData) => {
   };
 });
 
-console.log(inspect.table(transformedData));
+console.info(inspect.table(transformedData));
 
 function calculateHealthScore(server: ServerData): number {
   const cpuScore = Math.max(0, 100 - server.cpu);
@@ -282,7 +282,7 @@ function getPerformanceGrade(cpu: number, memory: number): string {
 
 // 9. Demonstrate Bun's fast file operations
 async function demonstrateFileOperations() {
-  console.log("\n📁 Fast File Operations with Bun");
+  console.info("\n📁 Fast File Operations with Bun");
 
   // Write large dataset quickly
   const largeDataset = Array.from({ length: 1000 }, (_, i: number) => ({
@@ -297,7 +297,7 @@ async function demonstrateFileOperations() {
   await Bun.write("large-dataset.json", JSON.stringify(largeDataset, null, 2));
   const endTime = Date.now();
 
-  console.log(`✅ Wrote 1000 records to file in ${endTime - startTime}ms`);
+  console.info(`✅ Wrote 1000 records to file in ${endTime - startTime}ms`);
 
   // Read and process quickly
   const readStartTime = Date.now();
@@ -305,7 +305,7 @@ async function demonstrateFileOperations() {
   const data = await file.json();
   const readEndTime = Date.now();
 
-  console.log(
+  console.info(
     `✅ Read and parsed ${data.length} records in ${readEndTime - readStartTime}ms`
   );
 
@@ -314,21 +314,21 @@ async function demonstrateFileOperations() {
 }
 
 // 10. Performance comparison
-console.log("\n⚡ Performance Comparison");
-console.log("Bun Native Features:");
-console.log("  • No external dependencies");
-console.log("  • Built-in JSON handling");
-console.log("  • Fast file operations");
-console.log("  • Native table formatting");
-console.log("  • TypeScript support");
+console.info("\n⚡ Performance Comparison");
+console.info("Bun Native Features:");
+console.info("  • No external dependencies");
+console.info("  • Built-in JSON handling");
+console.info("  • Fast file operations");
+console.info("  • Native table formatting");
+console.info("  • TypeScript support");
 
-console.log("\n✅ Advanced Bun Table Demo Complete!");
-console.log("💡 Key Benefits Demonstrated:");
-console.log("   • Native table formatting");
-console.log("   • Custom data transformation");
-console.log("   • Fast file operations");
-console.log("   • Type-safe implementations");
-console.log("   • Performance optimizations");
+console.info("\n✅ Advanced Bun Table Demo Complete!");
+console.info("💡 Key Benefits Demonstrated:");
+console.info("   • Native table formatting");
+console.info("   • Custom data transformation");
+console.info("   • Fast file operations");
+console.info("   • Type-safe implementations");
+console.info("   • Performance optimizations");
 
 // Run the file operations demo
 await demonstrateFileOperations();

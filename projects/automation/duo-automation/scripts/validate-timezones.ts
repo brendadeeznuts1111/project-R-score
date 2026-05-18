@@ -194,25 +194,25 @@ function validateTimezoneMatrix(): ValidationReport {
 // ═══════════════════════════════════════════════════════════
 
 function printReport(report: ValidationReport): void {
-  console.log('\n' + '═'.repeat(70));
-  console.log('🌍 Timezone Validation Report (IANA tzdb 2025c)');
-  console.log('═'.repeat(70));
-  console.log(`📅 Timestamp: ${report.timestamp}`);
-  console.log(`📊 Total Zones: ${report.totalZones}`);
-  console.log(`✅ Valid: ${report.validZones}`);
-  console.log(`❌ Invalid: ${report.invalidZones}`);
-  console.log(`⚠️  Deprecated: ${report.deprecatedZones}`);
-  console.log('─'.repeat(70));
+  console.info('\n' + '═'.repeat(70));
+  console.info('🌍 Timezone Validation Report (IANA tzdb 2025c)');
+  console.info('═'.repeat(70));
+  console.info(`📅 Timestamp: ${report.timestamp}`);
+  console.info(`📊 Total Zones: ${report.totalZones}`);
+  console.info(`✅ Valid: ${report.validZones}`);
+  console.info(`❌ Invalid: ${report.invalidZones}`);
+  console.info(`⚠️  Deprecated: ${report.deprecatedZones}`);
+  console.info('─'.repeat(70));
 
   // Print invalid results first
   const invalidResults = report.results.filter(r => !r.valid);
   if (invalidResults.length > 0) {
-    console.log('\n🚨 COMPLIANCE FAILURES:\n');
+    console.info('\n🚨 COMPLIANCE FAILURES:\n');
     for (const result of invalidResults) {
-      console.log(`  ${result.message}`);
+      console.info(`  ${result.message}`);
       if (result.suggestion) {
-        console.log(`     → Required fix: Use canonical zone "${result.suggestion}"`);
-        console.log(`     → Reference: IANA tzdb 2025c zone1970.tab`);
+        console.info(`     → Required fix: Use canonical zone "${result.suggestion}"`);
+        console.info(`     → Reference: IANA tzdb 2025c zone1970.tab`);
       }
     }
   }
@@ -220,76 +220,76 @@ function printReport(report: ValidationReport): void {
   // Print valid results summary
   const validResults = report.results.filter(r => r.valid);
   if (validResults.length > 0) {
-    console.log('\n✅ VALID ZONES:\n');
+    console.info('\n✅ VALID ZONES:\n');
     for (const result of validResults) {
-      console.log(`  ${result.message}`);
+      console.info(`  ${result.message}`);
     }
   }
 
-  console.log('\n' + '═'.repeat(70));
+  console.info('\n' + '═'.repeat(70));
 
   if (report.passed) {
-    console.log('✅ All timezones canonical-compliant (tzdb 2025c)');
+    console.info('✅ All timezones canonical-compliant (tzdb 2025c)');
   } else {
-    console.log('❌ COMPLIANCE FAILURE: Fix invalid timezones before deployment');
+    console.info('❌ COMPLIANCE FAILURE: Fix invalid timezones before deployment');
   }
 
-  console.log('═'.repeat(70) + '\n');
+  console.info('═'.repeat(70) + '\n');
 }
 
 function printMatrix(): void {
-  console.log('\n' + '═'.repeat(80));
-  console.log('📊 Timezone Validation Matrix');
-  console.log('═'.repeat(80));
-  console.log(
+  console.info('\n' + '═'.repeat(80));
+  console.info('📊 Timezone Validation Matrix');
+  console.info('═'.repeat(80));
+  console.info(
     '| ' +
     'Zone Type'.padEnd(18) + ' | ' +
     'Example'.padEnd(25) + ' | ' +
     'Action'.padEnd(28) + ' |'
   );
-  console.log('|' + '-'.repeat(20) + '|' + '-'.repeat(27) + '|' + '-'.repeat(30) + '|');
-  console.log(
+  console.info('|' + '-'.repeat(20) + '|' + '-'.repeat(27) + '|' + '-'.repeat(30) + '|');
+  console.info(
     '| ' +
     'IANA Canonical'.padEnd(18) + ' | ' +
     'America/New_York'.padEnd(25) + ' | ' +
     '✅ Accept'.padEnd(28) + ' |'
   );
-  console.log(
+  console.info(
     '| ' +
     'Deprecated Link'.padEnd(18) + ' | ' +
     'US/Eastern'.padEnd(25) + ' | ' +
     '❌ Reject + suggest'.padEnd(28) + ' |'
   );
-  console.log(
+  console.info(
     '| ' +
     'Custom offset'.padEnd(18) + ' | ' +
     'GMT+5'.padEnd(25) + ' | ' +
     '❌ Reject'.padEnd(28) + ' |'
   );
-  console.log(
+  console.info(
     '| ' +
     'UTC'.padEnd(18) + ' | ' +
     'UTC'.padEnd(25) + ' | ' +
     '✅ Accept (fallback)'.padEnd(28) + ' |'
   );
-  console.log('═'.repeat(80));
+  console.info('═'.repeat(80));
 
-  console.log('\n📋 Scope-to-Timezone Matrix');
-  console.log('─'.repeat(60));
+  console.info('\n📋 Scope-to-Timezone Matrix');
+  console.info('─'.repeat(60));
 
   if (TIMEZONE_MATRIX.SCOPE_TIMEZONES) {
-    console.log(
+    console.info(
       '| ' +
       'Scope'.padEnd(20) + ' | ' +
       'Timezone'.padEnd(25) + ' | ' +
       'Status'.padEnd(8) + ' |'
     );
-    console.log('|' + '-'.repeat(22) + '|' + '-'.repeat(27) + '|' + '-'.repeat(10) + '|');
+    console.info('|' + '-'.repeat(22) + '|' + '-'.repeat(27) + '|' + '-'.repeat(10) + '|');
 
     for (const [scope, zone] of Object.entries(TIMEZONE_MATRIX.SCOPE_TIMEZONES)) {
       const result = validateZone(zone as string);
       const status = result.valid ? '✅' : '❌';
-      console.log(
+      console.info(
         '| ' +
         scope.padEnd(20) + ' | ' +
         (zone as string).padEnd(25) + ' | ' +
@@ -298,7 +298,7 @@ function printMatrix(): void {
     }
   }
 
-  console.log('═'.repeat(60) + '\n');
+  console.info('═'.repeat(60) + '\n');
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -327,34 +327,34 @@ async function main() {
     case 'check':
       const zone = args[1];
       if (!zone) {
-        console.log('Usage: bun run validate:timezones --check <zone>');
+        console.info('Usage: bun run validate:timezones --check <zone>');
         process.exit(1);
       }
       const result = validateZone(zone);
-      console.log(result.message);
+      console.info(result.message);
       if (result.suggestion) {
-        console.log(`Suggestion: Use "${result.suggestion}"`);
+        console.info(`Suggestion: Use "${result.suggestion}"`);
       }
       process.exit(result.valid ? 0 : 1);
       break;
 
     case '--list':
     case 'list':
-      console.log('\n📋 Canonical IANA Zones (tzdb 2025c)\n');
+      console.info('\n📋 Canonical IANA Zones (tzdb 2025c)\n');
       const zones = Array.from(CANONICAL_ZONES).sort();
       let count = 0;
       for (const z of zones) {
         process.stdout.write(z.padEnd(35));
         count++;
-        if (count % 3 === 0) console.log();
+        if (count % 3 === 0) console.info();
       }
-      console.log(`\n\nTotal: ${zones.length} canonical zones\n`);
+      console.info(`\n\nTotal: ${zones.length} canonical zones\n`);
       break;
 
     case '--help':
     case 'help':
     default:
-      console.log(`
+      console.info(`
 🌍 Timezone Validation Script v1.0
 
 Validates timezones against IANA tzdb 2025c canonical list.

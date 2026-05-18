@@ -547,7 +547,7 @@ class LightningNetworkAPIServer {
         await this.handleInvoiceExpired(event.data);
         break;
       default:
-        console.log(`Unknown webhook event: ${event.type}`);
+        console.info(`Unknown webhook event: ${event.type}`);
     }
   }
 
@@ -555,7 +555,7 @@ class LightningNetworkAPIServer {
    * ✅ Handle payment settled
    */
   private async handlePaymentSettled(data: any): Promise<void> {
-    console.log(`💰 Payment settled: ${data.paymentRequest}`);
+    console.info(`💰 Payment settled: ${data.paymentRequest}`);
     
     // Find and update payment
     for (const [paymentId, payment] of this.payments.entries()) {
@@ -594,7 +594,7 @@ class LightningNetworkAPIServer {
    * ⏰ Handle invoice expired
    */
   private async handleInvoiceExpired(data: any): Promise<void> {
-    console.log(`⏰ Invoice expired: ${data.paymentRequest}`);
+    console.info(`⏰ Invoice expired: ${data.paymentRequest}`);
     
     // Find and update payment
     for (const [paymentId, payment] of this.payments.entries()) {
@@ -610,17 +610,17 @@ class LightningNetworkAPIServer {
    * 🚀 Start the Lightning Network API server
    */
   async start(port: number = 3001): Promise<void> {
-    console.log(`⚡ Lightning Network API Server starting...`);
-    console.log(`🔌 Node URL: ${process.env.LND_REST_URL}`);
-    console.log(`💰 Savings Enabled: ${process.env.SAVINGS_ENABLED === 'true'}`);
-    console.log(`📊 Monitoring: Enabled`);
+    console.info(`⚡ Lightning Network API Server starting...`);
+    console.info(`🔌 Node URL: ${process.env.LND_REST_URL}`);
+    console.info(`💰 Savings Enabled: ${process.env.SAVINGS_ENABLED === 'true'}`);
+    console.info(`📊 Monitoring: Enabled`);
     
     await this.app.listen(port);
     
-    console.log(`✅ Lightning Network API Server started on port ${port}`);
-    console.log(`🌐 API URL: http://localhost:${port}`);
-    console.log(`📊 Metrics: http://localhost:${port}/metrics`);
-    console.log(`📈 Prometheus: http://localhost:${port}/metrics/prometheus`);
+    console.info(`✅ Lightning Network API Server started on port ${port}`);
+    console.info(`🌐 API URL: http://localhost:${port}`);
+    console.info(`📊 Metrics: http://localhost:${port}/metrics`);
+    console.info(`📈 Prometheus: http://localhost:${port}/metrics/prometheus`);
   }
 }
 

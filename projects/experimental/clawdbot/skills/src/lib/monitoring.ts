@@ -171,7 +171,7 @@ export class SkillMonitor {
       this.startLagMonitor();
     }
 
-    console.log(`SkillMonitor started: ${this.config.skillId} v${this.config.version}`);
+    console.info(`SkillMonitor started: ${this.config.skillId} v${this.config.version}`);
   }
 
   /**
@@ -192,7 +192,7 @@ export class SkillMonitor {
       this.lagCheckTimer = null;
     }
 
-    console.log("SkillMonitor stopped");
+    console.info("SkillMonitor stopped");
   }
 
   /**

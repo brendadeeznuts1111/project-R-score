@@ -48,16 +48,16 @@ async function processMarketsParallel(markets: string[], concurrency = 1000): Pr
 	const duration = performance.now() - startTime;
 	const processed = results.filter(r => r.processed).length;
 	
-	console.log(`\n⚡ Parallel Processing Complete!`);
-	console.log(`📊 Markets: ${markets.length.toLocaleString()}`);
-	console.log(`✅ Processed: ${processed.toLocaleString()}`);
-	console.log(`⏱️  Duration: ${duration.toFixed(2)}ms`);
-	console.log(`🚀 Throughput: ${((markets.length / duration) * 1000).toFixed(0)} markets/sec`);
+	console.info(`\n⚡ Parallel Processing Complete!`);
+	console.info(`📊 Markets: ${markets.length.toLocaleString()}`);
+	console.info(`✅ Processed: ${processed.toLocaleString()}`);
+	console.info(`⏱️  Duration: ${duration.toFixed(2)}ms`);
+	console.info(`🚀 Throughput: ${((markets.length / duration) * 1000).toFixed(0)} markets/sec`);
 }
 
 // ==================== MAIN ====================
 async function main() {
-	console.log('🏀 Parallel Basketball Market Processing\n');
+	console.info('🏀 Parallel Basketball Market Processing\n');
 	
 	// Initialize 25K markets
 	const markets = [
@@ -73,24 +73,24 @@ async function main() {
 		...Array.from({ length: 24993 }, (_, i) => `NCAA-Game-${i + 1}`)
 	];
 	
-	console.log(`📊 Generating ${markets.length.toLocaleString()} markets...`);
+	console.info(`📊 Generating ${markets.length.toLocaleString()} markets...`);
 	
 	// Process in parallel
 	await processMarketsParallel(markets, 1000);
 	
 	// Also demonstrate with BasketballMarketSpies
-	console.log('\n🔍 Initializing Basketball Market Spies...');
+	console.info('\n🔍 Initializing Basketball Market Spies...');
 	const spyEngine = new BasketballMarketSpies();
 	spyEngine.initSpies();
 	
 	const stats = spyEngine.getStats();
-	console.log(`\n✅ Spy Engine Stats:`);
-	console.log(`   Total Spies: ${stats.totalSpies.toLocaleString()}`);
-	console.log(`   Active Markets: ${stats.activeMarkets.toLocaleString()}`);
-	console.log(`   Throughput: ${stats.spyThroughput}`);
-	console.log(`   Health: ${stats.health}`);
+	console.info(`\n✅ Spy Engine Stats:`);
+	console.info(`   Total Spies: ${stats.totalSpies.toLocaleString()}`);
+	console.info(`   Active Markets: ${stats.activeMarkets.toLocaleString()}`);
+	console.info(`   Throughput: ${stats.spyThroughput}`);
+	console.info(`   Health: ${stats.health}`);
 	
-	console.log('\n🎉 Parallel processing complete!');
+	console.info('\n🎉 Parallel processing complete!');
 }
 
 if (import.meta.main) {

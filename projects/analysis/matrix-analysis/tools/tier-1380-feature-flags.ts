@@ -7,8 +7,8 @@
 
 import { write } from "bun";
 
-console.log("🚀 TIER-1380 Feature Flag Implementation");
-console.log("======================================\n");
+console.info("🚀 TIER-1380 Feature Flag Implementation");
+console.info("======================================\n");
 
 // Type definitions
 interface RSSItem {
@@ -124,7 +124,7 @@ class Tier1380FeatureManager {
 	// Initialize features from build configuration
 	static initialize(features: Partial<FeatureRegistry>): void {
 		Tier1380FeatureManager.features = features;
-		console.log(`🔧 Initialized with ${Object.keys(features).length} features`);
+		console.info(`🔧 Initialized with ${Object.keys(features).length} features`);
 	}
 
 	// Compile-time feature check
@@ -210,7 +210,7 @@ class QuantumStorage {
 			return;
 		}
 		this.quantumKey = crypto.randomUUID();
-		console.log("🔒 Quantum storage initialized with quantum key");
+		console.info("🔒 Quantum storage initialized with quantum key");
 	}
 
 	async sealData(data: string): Promise<string> {
@@ -220,7 +220,7 @@ class QuantumStorage {
 
 		// Simulate quantum sealing
 		const sealed = btoa(data + ":" + this.quantumKey);
-		console.log("🔐 Data quantum-sealed");
+		console.info("🔐 Data quantum-sealed");
 		return sealed;
 	}
 
@@ -234,7 +234,7 @@ class QuantumStorage {
 		if (key !== this.quantumKey) {
 			throw new Error("Invalid quantum seal");
 		}
-		console.log("🔓 Data quantum-unsealed");
+		console.info("🔓 Data quantum-unsealed");
 		return data;
 	}
 }
@@ -249,28 +249,28 @@ class R2Storage {
 			return;
 		}
 		this.bucket = bucket;
-		console.log(`📦 R2 storage initialized for bucket: ${bucket}`);
+		console.info(`📦 R2 storage initialized for bucket: ${bucket}`);
 	}
 
 	async store(key: string, data: string): Promise<void> {
 		if (!Tier1380FeatureManager.isEnabled("R2_STORAGE")) {
-			console.log("📁 Storing locally (R2 not available)");
+			console.info("📁 Storing locally (R2 not available)");
 			await Bun.write(`./local-storage/${key}`, data);
 			return;
 		}
 
-		console.log(`☁️ Storing to R2: ${this.bucket}/${key}`);
+		console.info(`☁️ Storing to R2: ${this.bucket}/${key}`);
 		// Simulate R2 storage
 		await Bun.write(`./r2-simulation/${this.bucket}/${key}`, data);
 	}
 
 	async retrieve(key: string): Promise<string> {
 		if (!Tier1380FeatureManager.isEnabled("R2_STORAGE")) {
-			console.log("📁 Retrieving locally (R2 not available)");
+			console.info("📁 Retrieving locally (R2 not available)");
 			return await Bun.file(`./local-storage/${key}`).text();
 		}
 
-		console.log(`☁️ Retrieving from R2: ${this.bucket}/${key}`);
+		console.info(`☁️ Retrieving from R2: ${this.bucket}/${key}`);
 		// Simulate R2 retrieval
 		return await Bun.file(`./r2-simulation/${this.bucket}/${key}`).text();
 	}
@@ -285,12 +285,12 @@ class RSSFeedSystem {
 			console.warn("⚠️ RSS feeds not enabled in this build");
 			return;
 		}
-		console.log("📡 RSS feed system initialized");
+		console.info("📡 RSS feed system initialized");
 	}
 
 	async publishToFeed(feedName: string, item: RSSItem): Promise<void> {
 		if (!Tier1380FeatureManager.isEnabled("RSS_FEEDS")) {
-			console.log("📝 RSS publishing disabled");
+			console.info("📝 RSS publishing disabled");
 			return;
 		}
 
@@ -308,7 +308,7 @@ class RSSFeedSystem {
 		}
 
 		feed.push(item);
-		console.log(`📡 Published to RSS feed: ${feedName}`);
+		console.info(`📡 Published to RSS feed: ${feedName}`);
 
 		// Generate RSS XML
 		await this.generateRSSXML(feedName);
@@ -335,7 +335,7 @@ class RSSFeedSystem {
 </rss>`;
 
 		await Bun.write(`./feeds/${feedName}.xml`, xml);
-		console.log(`📄 Generated RSS XML: ${feedName}.xml`);
+		console.info(`📄 Generated RSS XML: ${feedName}.xml`);
 	}
 }
 
@@ -348,7 +348,7 @@ class TeamRegistry {
 			console.warn("⚠️ Team registry not enabled in this build");
 			return;
 		}
-		console.log("👥 Team registry initialized");
+		console.info("👥 Team registry initialized");
 	}
 
 	async createTeam(name: string): Promise<Team> {
@@ -381,13 +381,13 @@ class TeamRegistry {
 		}
 
 		this.teams.set(team.id, team);
-		console.log(`👥 Created team: ${name} (Tier ${team.tier})`);
+		console.info(`👥 Created team: ${name} (Tier ${team.tier})`);
 
 		return team;
 	}
 
 	private async initializeSecretStore(teamId: string): Promise<SecretStore> {
-		console.log(`🔐 Initializing secret store for team: ${teamId}`);
+		console.info(`🔐 Initializing secret store for team: ${teamId}`);
 		return {
 			teamId,
 			secrets: new Map(),
@@ -396,7 +396,7 @@ class TeamRegistry {
 	}
 
 	private async createDefaultProfiles(teamId: string): Promise<Profile[]> {
-		console.log(`📋 Creating default profiles for team: ${teamId}`);
+		console.info(`📋 Creating default profiles for team: ${teamId}`);
 		return [
 			{ id: crypto.randomUUID(), name: "Development", config: {} },
 			{ id: crypto.randomUUID(), name: "Staging", config: {} },
@@ -492,37 +492,37 @@ function generateFeatureMatrix(): string {
 
 // ===== Demonstration =====
 async function demonstrateFeatureFlags(): Promise<void> {
-	console.log("🚀 Demonstrating TIER-1380 Feature Flags\n");
+	console.info("🚀 Demonstrating TIER-1380 Feature Flags\n");
 
 	// Test different build profiles
 	for (const [profileName, features] of Object.entries(buildProfiles)) {
-		console.log(`\n${"=".repeat(60)}`);
-		console.log(`📦 Build Profile: ${profileName}`);
-		console.log(`${"=".repeat(60)}`);
+		console.info(`\n${"=".repeat(60)}`);
+		console.info(`📦 Build Profile: ${profileName}`);
+		console.info(`${"=".repeat(60)}`);
 
 		// Initialize with profile
 		Tier1380FeatureManager.initialize(features);
 
 		// Show configuration
 		const config = Tier1380FeatureManager.getBuildConfiguration();
-		console.log(`\n🔧 Configuration:`);
-		console.log(`  Tier: ${config.tier}`);
-		console.log(`  Environment: ${config.environment}`);
-		console.log(
+		console.info(`\n🔧 Configuration:`);
+		console.info(`  Tier: ${config.tier}`);
+		console.info(`  Environment: ${config.environment}`);
+		console.info(
 			`  Active Features: ${Tier1380FeatureManager.getActiveFeatures().join(", ")}`,
 		);
 
 		// Demonstrate feature-gated functionality
-		console.log(`\n🎯 Feature-Gated Demonstrations:`);
+		console.info(`\n🎯 Feature-Gated Demonstrations:`);
 
 		// Quantum Storage
 		Tier1380FeatureManager.executeIfEnabled(
 			"QUANTUM_SEAL",
 			() => {
-				console.log("  🔒 Quantum Seal: ENABLED");
+				console.info("  🔒 Quantum Seal: ENABLED");
 			},
 			() => {
-				console.log("  🔒 Quantum Seal: DISABLED");
+				console.info("  🔒 Quantum Seal: DISABLED");
 			},
 		);
 
@@ -530,10 +530,10 @@ async function demonstrateFeatureFlags(): Promise<void> {
 		Tier1380FeatureManager.executeIfEnabled(
 			"R2_STORAGE",
 			() => {
-				console.log("  ☁️ R2 Storage: ENABLED");
+				console.info("  ☁️ R2 Storage: ENABLED");
 			},
 			() => {
-				console.log("  ☁️ R2 Storage: DISABLED");
+				console.info("  ☁️ R2 Storage: DISABLED");
 			},
 		);
 
@@ -541,10 +541,10 @@ async function demonstrateFeatureFlags(): Promise<void> {
 		Tier1380FeatureManager.executeIfEnabled(
 			"RSS_FEEDS",
 			() => {
-				console.log("  📡 RSS Feeds: ENABLED");
+				console.info("  📡 RSS Feeds: ENABLED");
 			},
 			() => {
-				console.log("  📡 RSS Feeds: DISABLED");
+				console.info("  📡 RSS Feeds: DISABLED");
 			},
 		);
 
@@ -552,30 +552,30 @@ async function demonstrateFeatureFlags(): Promise<void> {
 		Tier1380FeatureManager.executeIfEnabled(
 			"TEAM_REGISTRY",
 			() => {
-				console.log("  👥 Team Registry: ENABLED");
+				console.info("  👥 Team Registry: ENABLED");
 			},
 			() => {
-				console.log("  👥 Team Registry: DISABLED");
+				console.info("  👥 Team Registry: DISABLED");
 			},
 		);
 
 		// Test actual implementations
 		if (profileName === "tier-1380-production") {
-			console.log(`\n🧪 Testing Implementations:`);
+			console.info(`\n🧪 Testing Implementations:`);
 
 			// Test Quantum Storage
 			const quantum = new QuantumStorage();
 			if (Tier1380FeatureManager.isEnabled("QUANTUM_SEAL")) {
 				const sealed = await quantum.sealData("Secret data");
 				const unsealed = await quantum.unsealData(sealed);
-				console.log(`  ✅ Quantum sealing test passed`);
+				console.info(`  ✅ Quantum sealing test passed`);
 			}
 
 			// Test R2 Storage
 			const r2 = new R2Storage("test-bucket");
 			await r2.store("test-key", "Test data");
 			const retrieved = await r2.retrieve("test-key");
-			console.log(`  ✅ R2 storage test passed`);
+			console.info(`  ✅ R2 storage test passed`);
 
 			// Test RSS Feeds
 			const rss = new RSSFeedSystem();
@@ -586,16 +586,16 @@ async function demonstrateFeatureFlags(): Promise<void> {
 				pubDate: new Date(),
 				quantumSealed: false,
 			});
-			console.log(`  ✅ RSS feed test passed`);
+			console.info(`  ✅ RSS feed test passed`);
 
 			// Test Team Registry
 			const registry = new TeamRegistry();
 			const team = await registry.createTeam("Test Team");
-			console.log(`  ✅ Team registry test passed`);
+			console.info(`  ✅ Team registry test passed`);
 		}
 
 		// Generate feature matrix
-		console.log(`\n${generateFeatureMatrix()}`);
+		console.info(`\n${generateFeatureMatrix()}`);
 	}
 }
 
@@ -650,15 +650,15 @@ class FeatureFlagTranspiler {
 
 // ===== Main Execution =====
 async function main(): Promise<void> {
-	console.log("🚀 TIER-1380 Feature Flag System with Bun.Transpiler\n");
+	console.info("🚀 TIER-1380 Feature Flag System with Bun.Transpiler\n");
 
 	// Run demonstration
 	await demonstrateFeatureFlags();
 
 	// Show transpiler integration
-	console.log(`\n${"=".repeat(60)}`);
-	console.log("🔧 Bun.Transpiler Integration");
-	console.log(`${"=".repeat(60)}`);
+	console.info(`\n${"=".repeat(60)}`);
+	console.info("🔧 Bun.Transpiler Integration");
+	console.info(`${"=".repeat(60)}`);
 
 	const transpiler = new FeatureFlagTranspiler();
 
@@ -666,13 +666,13 @@ async function main(): Promise<void> {
 	const exampleCode = `
 // Example feature-gated code
 if (feature("QUANTUM_SEAL")) {
-  console.log("Quantum sealing enabled");
+  console.info("Quantum sealing enabled");
   const quantum = new QuantumStorage();
   await quantum.sealData("secret");
 }
 
 if (feature("R2_STORAGE")) {
-  console.log("R2 storage enabled");
+  console.info("R2 storage enabled");
   const r2 = new R2Storage("bucket");
   await r2.store("key", "data");
 }
@@ -687,11 +687,11 @@ export function gatedFunction() {
 
 	// Analyze feature usage
 	const usage = transpiler.analyzeFeatureUsage(exampleCode);
-	console.log("\n📊 Feature Usage Analysis:");
-	console.log(`  Used Features: ${usage.usedFeatures.join(", ")}`);
-	console.log(`  Imports: ${usage.imports.join(", ")}`);
-	console.log(`  Exports: ${usage.exports.join(", ")}`);
-	console.log(`  Code Size: ${usage.size} bytes`);
+	console.info("\n📊 Feature Usage Analysis:");
+	console.info(`  Used Features: ${usage.usedFeatures.join(", ")}`);
+	console.info(`  Imports: ${usage.imports.join(", ")}`);
+	console.info(`  Exports: ${usage.exports.join(", ")}`);
+	console.info(`  Code Size: ${usage.size} bytes`);
 
 	// Transform with features
 	const transformed = await transpiler.transformWithFeatureFlags(
@@ -699,8 +699,8 @@ export function gatedFunction() {
 		buildProfiles["tier-1380-production"],
 	);
 
-	console.log("\n🔄 Transformed Code (with feature flags):");
-	console.log(transformed.substring(0, 500) + "...");
+	console.info("\n🔄 Transformed Code (with feature flags):");
+	console.info(transformed.substring(0, 500) + "...");
 
 	// Save results
 	const results = {
@@ -718,20 +718,20 @@ export function gatedFunction() {
 		"./tier-1380-feature-flags-results.json",
 		JSON.stringify(results, null, 2),
 	);
-	console.log("\n💾 Results saved to ./tier-1380-feature-flags-results.json");
+	console.info("\n💾 Results saved to ./tier-1380-feature-flags-results.json");
 
-	console.log("\n🎉 TIER-1380 Feature Flag System Complete!");
-	console.log("\n🚀 Key Features:");
-	console.log("• ✅ Compile-time feature detection");
-	console.log("• ✅ Dead code elimination");
-	console.log("• ✅ Feature-gated implementations");
-	console.log("• ✅ Build profiles");
-	console.log("• ✅ Quantum security integration");
-	console.log("• ✅ R2 storage integration");
-	console.log("• ✅ RSS feed system");
-	console.log("• ✅ Team registry");
-	console.log("• ✅ Performance optimization");
-	console.log("• ✅ Bun.Transpiler integration");
+	console.info("\n🎉 TIER-1380 Feature Flag System Complete!");
+	console.info("\n🚀 Key Features:");
+	console.info("• ✅ Compile-time feature detection");
+	console.info("• ✅ Dead code elimination");
+	console.info("• ✅ Feature-gated implementations");
+	console.info("• ✅ Build profiles");
+	console.info("• ✅ Quantum security integration");
+	console.info("• ✅ R2 storage integration");
+	console.info("• ✅ RSS feed system");
+	console.info("• ✅ Team registry");
+	console.info("• ✅ Performance optimization");
+	console.info("• ✅ Bun.Transpiler integration");
 }
 
 // Run the demonstration

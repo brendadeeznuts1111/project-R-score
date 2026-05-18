@@ -298,7 +298,7 @@ export class EnhancedOutput {
       Checksum: (result.metadata.checksum || "").slice(0, 8),
     }));
 
-    console.log(
+    console.info(
       this.table(tableData, {
         columns: [
           { key: "#", width: 3, align: "right" },
@@ -340,7 +340,7 @@ export class EnhancedOutput {
         : "Never",
     }));
 
-    console.log(
+    console.info(
       this.table(tableData, {
         columns: [
           { key: "Name", width: 20 },
@@ -367,8 +367,8 @@ export class EnhancedOutput {
     const avgHealth =
       skills.reduce((sum, s) => sum + (s.health || 100), 0) / skills.length;
 
-    console.log("\n\x1b[1m Summary:\x1b[0m");
-    console.log(`  Total: ${skills.length}  |  Enabled: ${enabled}  |  Disabled: ${skills.length - enabled}  |  Avg Health: ${avgHealth.toFixed(1)}%`);
+    console.info("\n\x1b[1m Summary:\x1b[0m");
+    console.info(`  Total: ${skills.length}  |  Enabled: ${enabled}  |  Disabled: ${skills.length - enabled}  |  Avg Health: ${avgHealth.toFixed(1)}%`);
   }
 
   /**
@@ -383,7 +383,7 @@ export class EnhancedOutput {
       Status: this.checkDependencyStatus(version),
     }));
 
-    console.log(
+    console.info(
       this.table(tree, {
         columns: [
           { key: "Dependency", width: 30 },
@@ -512,37 +512,37 @@ export class EnhancedOutput {
   static printHeader(title: string, width: number = 60): void {
     const line = "═".repeat(width);
     const paddedTitle = this.padString(` ${title} `, width - 2, "center");
-    console.log(`\n╔${line}╗`);
-    console.log(`║${paddedTitle}║`);
-    console.log(`╚${line}╝\n`);
+    console.info(`\n╔${line}╗`);
+    console.info(`║${paddedTitle}║`);
+    console.info(`╚${line}╝\n`);
   }
 
   /**
    * Print a success message
    */
   static success(message: string): void {
-    console.log(`\x1b[32m✓\x1b[0m ${message}`);
+    console.info(`\x1b[32m✓\x1b[0m ${message}`);
   }
 
   /**
    * Print an error message
    */
   static error(message: string): void {
-    console.log(`\x1b[31m✗\x1b[0m ${message}`);
+    console.info(`\x1b[31m✗\x1b[0m ${message}`);
   }
 
   /**
    * Print a warning message
    */
   static warn(message: string): void {
-    console.log(`\x1b[33m⚠\x1b[0m ${message}`);
+    console.info(`\x1b[33m⚠\x1b[0m ${message}`);
   }
 
   /**
    * Print an info message
    */
   static info(message: string): void {
-    console.log(`\x1b[36mℹ\x1b[0m ${message}`);
+    console.info(`\x1b[36mℹ\x1b[0m ${message}`);
   }
 }
 

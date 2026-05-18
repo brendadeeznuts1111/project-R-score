@@ -26,7 +26,7 @@ const ProxyMiddlewareLogger = {
   },
   
   logInfo(domain: string, message: string, data?: any): void {
-    console.log(`ℹ️ [${domain}] ${message}`, data || '');
+    console.info(`ℹ️ [${domain}] ${message}`, data || '');
   },
   
   logDebug(domain: string, message: string, data?: any): void {

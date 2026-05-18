@@ -20,7 +20,7 @@ interface DatabaseStatus {
 
 class Fire22DatabaseVerifier {
   async verifyDatabaseStatus(): Promise<DatabaseStatus> {
-    console.log('🔍 Verifying Fire22 Database Status...\n');
+    console.info('🔍 Verifying Fire22 Database Status...\n');
 
     const status: DatabaseStatus = {
       connected: false,
@@ -33,28 +33,28 @@ class Fire22DatabaseVerifier {
 
     try {
       // 1. Test database connection
-      console.log('📡 Testing database connection...');
+      console.info('📡 Testing database connection...');
       await databaseService.connect('./dashboard.db');
 
       const healthCheck = await databaseService.healthCheck();
       status.connected = healthCheck.connected;
-      console.log(`   ${status.connected ? '✅' : '❌'} Database connected: ${status.connected}`);
+      console.info(`   ${status.connected ? '✅' : '❌'} Database connected: ${status.connected}`);
 
       if (!status.connected) {
         return status;
       }
 
       // 2. Check schema info
-      console.log('\n🗄️ Checking database schema...');
+      console.info('\n🗄️ Checking database schema...');
       const schemaInfo = await databaseService.getSchemaInfo();
       status.schemaExists = schemaInfo.tableCount > 0;
       status.tableCount = schemaInfo.tableCount;
 
-      console.log(`   📊 Total tables: ${status.tableCount}`);
-      console.log(`   📋 Tables found: ${schemaInfo.tables.join(', ')}`);
+      console.info(`   📊 Total tables: ${status.tableCount}`);
+      console.info(`   📋 Tables found: ${schemaInfo.tables.join(', ')}`);
 
       // 3. Check Fire22 specific tables
-      console.log('\n🏈 Checking Fire22 tables...');
+      console.info('\n🏈 Checking Fire22 tables...');
       const requiredTables = [
         'fire22_customers',
         'fire22_agents',
@@ -67,32 +67,32 @@ class Fire22DatabaseVerifier {
 
       if (missingTables.length === 0) {
         status.fire22TablesExist = true;
-        console.log('   ✅ All Fire22 tables exist');
+        console.info('   ✅ All Fire22 tables exist');
       } else {
-        console.log(`   ⚠️ Missing tables: ${missingTables.join(', ')}`);
+        console.info(`   ⚠️ Missing tables: ${missingTables.join(', ')}`);
         // Create missing tables
         await this.createMissingTables(missingTables);
         status.fire22TablesExist = true;
       }
 
       // 4. Check data population
-      console.log('\n📊 Checking data population...');
+      console.info('\n📊 Checking data population...');
       const dataStats = await this.checkDataStats();
       status.dataPopulated = dataStats.totalRecords > 0;
 
-      console.log(`   👥 Customers: ${dataStats.customers}`);
-      console.log(`   🎯 Agents: ${dataStats.agents}`);
-      console.log(`   💰 Transactions: ${dataStats.transactions}`);
-      console.log(`   🎲 Bets: ${dataStats.bets}`);
-      console.log(`   📈 Total Records: ${dataStats.totalRecords}`);
+      console.info(`   👥 Customers: ${dataStats.customers}`);
+      console.info(`   🎯 Agents: ${dataStats.agents}`);
+      console.info(`   💰 Transactions: ${dataStats.transactions}`);
+      console.info(`   🎲 Bets: ${dataStats.bets}`);
+      console.info(`   📈 Total Records: ${dataStats.totalRecords}`);
 
       // 5. Populate fresh test data if needed
       if (!status.dataPopulated) {
-        console.log('\n🔄 Populating fresh test data...');
+        console.info('\n🔄 Populating fresh test data...');
         await this.populateTestData();
 
         const newStats = await this.checkDataStats();
-        console.log(`   ✅ Populated ${newStats.totalRecords} records`);
+        console.info(`   ✅ Populated ${newStats.totalRecords} records`);
         status.dataPopulated = true;
       }
 
@@ -104,12 +104,12 @@ class Fire22DatabaseVerifier {
   }
 
   async createMissingTables(missingTables: string[]): Promise<void> {
-    console.log('🔨 Creating missing Fire22 tables...');
+    console.info('🔨 Creating missing Fire22 tables...');
 
     const db = databaseService.getDatabase();
 
     for (const table of missingTables) {
-      console.log(`   Creating ${table}...`);
+      console.info(`   Creating ${table}...`);
 
       switch (table) {
         case 'fire22_customers':
@@ -260,7 +260,7 @@ class Fire22DatabaseVerifier {
       CREATE INDEX IF NOT EXISTS idx_fire22_bets_status ON fire22_bets(status);
     `);
 
-    console.log('   ✅ Fire22 tables created successfully');
+    console.info('   ✅ Fire22 tables created successfully');
   }
 
   async checkDataStats(): Promise<{
@@ -307,7 +307,7 @@ class Fire22DatabaseVerifier {
   }
 
   async populateTestData(): Promise<void> {
-    console.log('🌱 Creating fresh Fire22 test data...');
+    console.info('🌱 Creating fresh Fire22 test data...');
 
     // Create test agents first
     const testAgents = [
@@ -352,7 +352,7 @@ class Fire22DatabaseVerifier {
     for (const agentData of testAgents) {
       const agent = Fire22AgentEntity.createNew(agentData);
       await agentRepository.create(agent.toJSON());
-      console.log(`   👤 Created agent: ${agentData.agent_name} (${agentData.agent_id})`);
+      console.info(`   👤 Created agent: ${agentData.agent_name} (${agentData.agent_id})`);
     }
 
     // Create test customers
@@ -422,7 +422,7 @@ class Fire22DatabaseVerifier {
     for (const customerData of testCustomers) {
       const customer = Fire22CustomerEntity.createNew(customerData);
       await customerRepository.create(customer.toJSON());
-      console.log(
+      console.info(
         `   👥 Created customer: ${customerData.first_name} ${customerData.last_name} (${customerData.tier})`
       );
     }
@@ -476,7 +476,7 @@ class Fire22DatabaseVerifier {
         )
         .run();
 
-      console.log(
+      console.info(
         `   💰 Created transaction: ${txnData.type} $${txnData.amount} (${txnData.transaction_id})`
       );
     }
@@ -541,77 +541,77 @@ class Fire22DatabaseVerifier {
         )
         .run();
 
-      console.log(`   🎲 Created bet: ${betData.sport} $${betData.amount} (${betData.status})`);
+      console.info(`   🎲 Created bet: ${betData.sport} $${betData.amount} (${betData.status})`);
     }
 
-    console.log('   ✅ Fresh test data populated successfully');
+    console.info('   ✅ Fresh test data populated successfully');
   }
 
   async demonstrateRepositoryOperations(): Promise<void> {
-    console.log('\n🔧 Demonstrating Fire22 Repository Operations...\n');
+    console.info('\n🔧 Demonstrating Fire22 Repository Operations...\n');
 
     // Test customer repository
-    console.log('👥 Customer Repository Tests:');
+    console.info('👥 Customer Repository Tests:');
 
     // Find VIP customers
     const vipCustomers = await customerRepository.findVipCustomers();
-    console.log(`   ✨ VIP Customers: ${vipCustomers.data?.length || 0}`);
+    console.info(`   ✨ VIP Customers: ${vipCustomers.data?.length || 0}`);
 
     if (vipCustomers.data && vipCustomers.data.length > 0) {
       const vip = vipCustomers.data[0];
-      console.log(`   🎯 First VIP: ${vip.login} - Balance: $${vip.balance.toLocaleString()}`);
+      console.info(`   🎯 First VIP: ${vip.login} - Balance: $${vip.balance.toLocaleString()}`);
     }
 
     // Get customer metrics
     const customerMetrics = await customerRepository.getCustomerMetrics();
     if (customerMetrics.success && customerMetrics.data) {
       const metrics = customerMetrics.data;
-      console.log(`   📊 Total Customers: ${metrics.total_customers}`);
-      console.log(`   💰 Total Balance: $${metrics.total_balance.toLocaleString()}`);
-      console.log(
+      console.info(`   📊 Total Customers: ${metrics.total_customers}`);
+      console.info(`   💰 Total Balance: $${metrics.total_balance.toLocaleString()}`);
+      console.info(
         `   📈 Tier Distribution: Bronze:${metrics.by_tier.bronze}, Silver:${metrics.by_tier.silver}, Gold:${metrics.by_tier.gold}, VIP:${metrics.by_tier.vip}`
       );
     }
 
     // Test agent repository
-    console.log('\n🎯 Agent Repository Tests:');
+    console.info('\n🎯 Agent Repository Tests:');
 
     // Get agent hierarchy
     const hierarchy = await agentRepository.getAgentHierarchy();
-    console.log(`   🌳 Hierarchy Levels: ${hierarchy.data?.length || 0}`);
+    console.info(`   🌳 Hierarchy Levels: ${hierarchy.data?.length || 0}`);
 
     // Get agent metrics
     const agentMetrics = await agentRepository.getAgentMetrics();
     if (agentMetrics.success && agentMetrics.data) {
       const metrics = agentMetrics.data;
-      console.log(`   👤 Total Agents: ${metrics.total_agents}`);
-      console.log(`   💼 Active Agents: ${metrics.active_agents}`);
-      console.log(`   💰 Total Volume: $${metrics.total_volume.toLocaleString()}`);
-      console.log(`   🏆 Avg Performance: ${metrics.average_performance_score.toFixed(1)}/100`);
+      console.info(`   👤 Total Agents: ${metrics.total_agents}`);
+      console.info(`   💼 Active Agents: ${metrics.active_agents}`);
+      console.info(`   💰 Total Volume: $${metrics.total_volume.toLocaleString()}`);
+      console.info(`   🏆 Avg Performance: ${metrics.average_performance_score.toFixed(1)}/100`);
     }
   }
 
   async generateStatusReport(): Promise<void> {
-    console.log('\n📋 Fire22 Database Status Report');
-    console.log('═'.repeat(50));
+    console.info('\n📋 Fire22 Database Status Report');
+    console.info('═'.repeat(50));
 
     const status = await this.verifyDatabaseStatus();
 
-    console.log('\n🔍 Connection Status:');
-    console.log(`   Database Connected: ${status.connected ? '✅' : '❌'}`);
-    console.log(`   Schema Exists: ${status.schemaExists ? '✅' : '❌'}`);
-    console.log(`   Fire22 Tables: ${status.fire22TablesExist ? '✅' : '❌'}`);
-    console.log(`   Data Populated: ${status.dataPopulated ? '✅' : '❌'}`);
+    console.info('\n🔍 Connection Status:');
+    console.info(`   Database Connected: ${status.connected ? '✅' : '❌'}`);
+    console.info(`   Schema Exists: ${status.schemaExists ? '✅' : '❌'}`);
+    console.info(`   Fire22 Tables: ${status.fire22TablesExist ? '✅' : '❌'}`);
+    console.info(`   Data Populated: ${status.dataPopulated ? '✅' : '❌'}`);
 
-    console.log('\n📊 Cache Status:');
-    console.log(`   Last Verification: ${new Date().toLocaleString()}`);
-    console.log(`   Total Tables: ${status.tableCount}`);
+    console.info('\n📊 Cache Status:');
+    console.info(`   Last Verification: ${new Date().toLocaleString()}`);
+    console.info(`   Total Tables: ${status.tableCount}`);
 
     if (status.connected && status.dataPopulated) {
       await this.demonstrateRepositoryOperations();
     }
 
-    console.log('\n✅ Fire22 database verification completed successfully!');
+    console.info('\n✅ Fire22 database verification completed successfully!');
   }
 }
 

@@ -27,8 +27,8 @@ function fmtDuration(ms: number): string {
 
 async function runStep(step: Step): Promise<StepResult> {
   const started = Date.now();
-  console.log(`\n[preflight] start ${step.id}`);
-  console.log(`[preflight] cmd   ${step.command.join(' ')}`);
+  console.info(`\n[preflight] start ${step.id}`);
+  console.info(`[preflight] cmd   ${step.command.join(' ')}`);
 
   const proc = Bun.spawn(step.command, {
     cwd: process.cwd(),
@@ -39,7 +39,7 @@ async function runStep(step: Step): Promise<StepResult> {
   const durationMs = Date.now() - started;
 
   if (code === 0) {
-    console.log(`[preflight] pass  ${step.id} (${fmtDuration(durationMs)})`);
+    console.info(`[preflight] pass  ${step.id} (${fmtDuration(durationMs)})`);
   } else {
     console.error(`[preflight] fail  ${step.id} exit=${code} (${fmtDuration(durationMs)})`);
   }
@@ -48,8 +48,8 @@ async function runStep(step: Step): Promise<StepResult> {
 
 async function main(): Promise<void> {
   const started = new Date().toISOString();
-  console.log(`[preflight] startedAt=${started}`);
-  console.log(`[preflight] cwd=${process.cwd()}`);
+  console.info(`[preflight] startedAt=${started}`);
+  console.info(`[preflight] cwd=${process.cwd()}`);
 
   const results: StepResult[] = [];
   for (const step of STEPS) {
@@ -61,17 +61,17 @@ async function main(): Promise<void> {
   }
 
   const failed = results.find((r) => r.code !== 0) || null;
-  console.log('\n[preflight] summary');
+  console.info('\n[preflight] summary');
   for (const r of results) {
     const status = r.code === 0 ? 'PASS' : `FAIL(${r.code})`;
-    console.log(`- ${r.id}: ${status} in ${fmtDuration(r.durationMs)}`);
+    console.info(`- ${r.id}: ${status} in ${fmtDuration(r.durationMs)}`);
   }
 
   if (failed) {
     console.error(`[preflight] blocked by ${failed.id}`);
     process.exit(1);
   }
-  console.log('[preflight] all checks passed');
+  console.info('[preflight] all checks passed');
 }
 
 if (import.meta.main) {

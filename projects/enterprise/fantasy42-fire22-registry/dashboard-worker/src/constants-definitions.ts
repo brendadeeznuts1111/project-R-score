@@ -813,7 +813,7 @@ export const verifyConstants = (): void => {
     }
   }
 
-  console.log('✅ All constants verified and properly defined');
+  console.info('✅ All constants verified and properly defined');
 };
 
 // === CONSTANT GROUPS FOR EASY ACCESS ===

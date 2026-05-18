@@ -120,14 +120,14 @@ export default PROCESS_MANAGEMENT_CONFIG;
 
 // CLI Output
 if (import.meta.main) {
-  console.log('⚙️  Process Management Configuration\n');
-  console.log('=====================================\n');
-  console.log('Signal Handling:');
-  console.log(`  Timeout: ${DEFAULT_SIGNAL_CONFIG.gracefulShutdownTimeoutMs}ms`);
-  console.log(`  Force exit: ${DEFAULT_SIGNAL_CONFIG.forceExitAfterTimeout}`);
-  console.log('');
-  console.log('Benchmarks:');
-  console.log(`  Signal dispatch: ${SIGNAL_BENCHMARKS.dispatchLatencyMs}ms`);
-  console.log(`  Command latency: ${COMMAND_BENCHMARKS.avgLatencyMs}ms`);
-  console.log(`  Memory base: ${MEMORY_BENCHMARKS.baseMB}MB`);
+  console.info('⚙️  Process Management Configuration\n');
+  console.info('=====================================\n');
+  console.info('Signal Handling:');
+  console.info(`  Timeout: ${DEFAULT_SIGNAL_CONFIG.gracefulShutdownTimeoutMs}ms`);
+  console.info(`  Force exit: ${DEFAULT_SIGNAL_CONFIG.forceExitAfterTimeout}`);
+  console.info('');
+  console.info('Benchmarks:');
+  console.info(`  Signal dispatch: ${SIGNAL_BENCHMARKS.dispatchLatencyMs}ms`);
+  console.info(`  Command latency: ${COMMAND_BENCHMARKS.avgLatencyMs}ms`);
+  console.info(`  Memory base: ${MEMORY_BENCHMARKS.baseMB}MB`);
 }

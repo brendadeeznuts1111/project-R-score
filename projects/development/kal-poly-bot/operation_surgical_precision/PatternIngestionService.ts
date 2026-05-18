@@ -75,7 +75,7 @@ export class PatternIngestionService {
     this.active_streams.set(sessionId, session);
     this.ingestion_stats.active_streams++;
 
-    console.log(`[INGESTION] Created stream session ${sessionId} (${this.active_streams.size} active)`);
+    console.info(`[INGESTION] Created stream session ${sessionId} (${this.active_streams.size} active)`);
     return session;
   }
 
@@ -86,7 +86,7 @@ export class PatternIngestionService {
       session.close();
       this.active_streams.delete(sessionId);
       this.ingestion_stats.active_streams--;
-      console.log(`[INGESTION] Closed stream session ${sessionId} (${this.active_streams.size} active)`);
+      console.info(`[INGESTION] Closed stream session ${sessionId} (${this.active_streams.size} active)`);
     }
   }
 
@@ -119,7 +119,7 @@ export class PatternIngestionService {
     // Recalculate metrics
     this.updateIngestionMetrics();
 
-    console.log(`[INGESTION] Processed batch ${batch.batch_id}: ${batch.patterns.length} patterns from session ${sessionId}`);
+    console.info(`[INGESTION] Processed batch ${batch.batch_id}: ${batch.patterns.length} patterns from session ${sessionId}`);
   }
 
   /// Validate pattern batch

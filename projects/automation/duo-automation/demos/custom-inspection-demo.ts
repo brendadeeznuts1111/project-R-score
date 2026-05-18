@@ -22,9 +22,9 @@ import {
 class CustomInspectionDemo {
   
   async runCompleteDemo(): Promise<void> {
-    console.log('🎨 Custom Inspection System v1.0 Demo');
-    console.log('='.repeat(60));
-    console.log('');
+    console.info('🎨 Custom Inspection System v1.0 Demo');
+    console.info('='.repeat(60));
+    console.info('');
     
     try {
       // Initialize the inspection system
@@ -42,7 +42,7 @@ class CustomInspectionDemo {
       this.demonstrateCustomDecorator();
       this.demonstratePerformanceMonitoring();
       
-      console.log('✅ Custom inspection demo completed successfully!');
+      console.info('✅ Custom inspection demo completed successfully!');
       
     } catch (error) {
       console.error('❌ Demo failed:', error);
@@ -51,8 +51,8 @@ class CustomInspectionDemo {
   }
   
   private demonstrateScopeInspection(): void {
-    console.log('🏢 SCOPE INSPECTION DEMONSTRATION');
-    console.log('─'.repeat(45));
+    console.info('🏢 SCOPE INSPECTION DEMONSTRATION');
+    console.info('─'.repeat(45));
     
     const enterpriseScope = new ScopeInspectable(
       'ENTERPRISE',
@@ -72,15 +72,15 @@ class CustomInspectionDemo {
       { activeConnections: 1, totalRequests: 25, averageResponseTime: 89.3 }
     );
     
-    console.log(enterpriseScope);
-    console.log('');
-    console.log(developmentScope);
-    console.log('');
+    console.info(enterpriseScope);
+    console.info('');
+    console.info(developmentScope);
+    console.info('');
   }
   
   private demonstrateConnectionStats(): void {
-    console.log('🔗 CONNECTION STATISTICS DEMONSTRATION');
-    console.log('─'.repeat(45));
+    console.info('🔗 CONNECTION STATISTICS DEMONSTRATION');
+    console.info('─'.repeat(45));
     
     const connections = [
       new ConnectionStatsInspectable('api.service1.com', 2, 5, 450, 120.5, 1, new Date()),
@@ -90,14 +90,14 @@ class CustomInspectionDemo {
     ];
     
     connections.forEach(conn => {
-      console.log(conn);
-      console.log('');
+      console.info(conn);
+      console.info('');
     });
   }
   
   private demonstrateSecurityChecks(): void {
-    console.log('🛡️ SECURITY CHECKS DEMONSTRATION');
-    console.log('─'.repeat(45));
+    console.info('🛡️ SECURITY CHECKS DEMONSTRATION');
+    console.info('─'.repeat(45));
     
     const securityChecks = [
       new SecurityCheckInspectable('TLS Certificate', 'PASS', 'Certificate is valid and not expired', {
@@ -121,14 +121,14 @@ class CustomInspectionDemo {
     ];
     
     securityChecks.forEach(check => {
-      console.log(check);
-      console.log('');
+      console.info(check);
+      console.info('');
     });
   }
   
   private demonstrateDatabaseConnections(): void {
-    console.log('🗄️ DATABASE CONNECTIONS DEMONSTRATION');
-    console.log('─'.repeat(45));
+    console.info('🗄️ DATABASE CONNECTIONS DEMONSTRATION');
+    console.info('─'.repeat(45));
     
     const databaseConnections = [
       new DatabaseConnectionInspectable('primary-db', 'connected', 20, 8, 10, 2),
@@ -138,14 +138,14 @@ class CustomInspectionDemo {
     ];
     
     databaseConnections.forEach(db => {
-      console.log(db);
-      console.log('');
+      console.info(db);
+      console.info('');
     });
   }
   
   private demonstratePaymentRequests(): void {
-    console.log('💳 PAYMENT REQUESTS DEMONSTRATION');
-    console.log('─'.repeat(45));
+    console.info('💳 PAYMENT REQUESTS DEMONSTRATION');
+    console.info('─'.repeat(45));
     
     const payments = [
       new PaymentRequestInspectable(
@@ -183,14 +183,14 @@ class CustomInspectionDemo {
     ];
     
     payments.forEach(payment => {
-      console.log(payment);
-      console.log('');
+      console.info(payment);
+      console.info('');
     });
   }
   
   private demonstrateFamilyMembers(): void {
-    console.log('👥 FAMILY MEMBERS DEMONSTRATION');
-    console.log('─'.repeat(45));
+    console.info('👥 FAMILY MEMBERS DEMONSTRATION');
+    console.info('─'.repeat(45));
     
     const familyMembers = [
       new FamilyMemberInspectable('user-001', 'Alice', 'host', true, 25.50, 150.00, 95, 500),
@@ -200,14 +200,14 @@ class CustomInspectionDemo {
     ];
     
     familyMembers.forEach(member => {
-      console.log(member);
-      console.log('');
+      console.info(member);
+      console.info('');
     });
   }
   
   private demonstrateListFormatting(): void {
-    console.log('📝 LIST FORMATTING DEMONSTRATION');
-    console.log('─'.repeat(45));
+    console.info('📝 LIST FORMATTING DEMONSTRATION');
+    console.info('─'.repeat(45));
     
     const connections = [
       new ConnectionStatsInspectable('api.service1.com', 2, 5, 450, 120.5, 1, new Date()),
@@ -215,14 +215,14 @@ class CustomInspectionDemo {
       new ConnectionStatsInspectable('api.service3.com', 0, 10, 300, 210.8, 5, new Date()),
     ];
     
-    console.log('📋 Formatted List:');
-    console.log(InspectionUtils.formatList(connections));
-    console.log('');
+    console.info('📋 Formatted List:');
+    console.info(InspectionUtils.formatList(connections));
+    console.info('');
   }
   
   private demonstrateSummaryCards(): void {
-    console.log('📋 SUMMARY CARDS DEMONSTRATION');
-    console.log('─'.repeat(45));
+    console.info('📋 SUMMARY CARDS DEMONSTRATION');
+    console.info('─'.repeat(45));
     
     const connections = [
       new ConnectionStatsInspectable('api.service1.com', 2, 5, 450, 120.5, 1, new Date()),
@@ -231,21 +231,21 @@ class CustomInspectionDemo {
     ];
     
     const summary = InspectionUtils.createSummaryCard('Connection Summary', connections);
-    console.log(summary);
-    console.log('');
+    console.info(summary);
+    console.info('');
     
     const securitySummary = InspectionUtils.createSummaryCard('Security Audit', [
       new SecurityCheckInspectable('TLS Certificate', 'PASS', 'Valid'),
       new SecurityCheckInspectable('CORS Policy', 'FAIL', 'Issue detected'),
       new SecurityCheckInspectable('Rate Limiting', 'WARN', 'Threshold exceeded'),
     ]);
-    console.log(securitySummary);
-    console.log('');
+    console.info(securitySummary);
+    console.info('');
   }
   
   private demonstrateCustomDecorator(): void {
-    console.log('🎨 CUSTOM DECORATOR DEMONSTRATION');
-    console.log('─'.repeat(45));
+    console.info('🎨 CUSTOM DECORATOR DEMONSTRATION');
+    console.info('─'.repeat(45));
     
     @InspectableClass('🔧', '\x1b[1;33m')
     class ToolConfig {
@@ -260,15 +260,15 @@ class CustomInspectionDemo {
     const wrench = new ToolConfig('wrench', '1.0.0', true, { torque: 'high' });
     const hammer = new ToolConfig('hammer', '2.1.0', false);
     
-    console.log(wrench);
-    console.log('');
-    console.log(hammer);
-    console.log('');
+    console.info(wrench);
+    console.info('');
+    console.info(hammer);
+    console.info('');
   }
   
   private demonstratePerformanceMonitoring(): void {
-    console.log('⚡ PERFORMANCE MONITORING DEMONSTRATION');
-    console.log('─'.repeat(45));
+    console.info('⚡ PERFORMANCE MONITORING DEMONSTRATION');
+    console.info('─'.repeat(45));
     
     const stats = InspectionStats.getInstance();
     
@@ -283,17 +283,17 @@ class CustomInspectionDemo {
       const startTime = Date.now();
       
       // Simulate inspection work
-      console.log(`🔍 Inspecting object ${index + 1}...`);
-      console.log(obj[Symbol.for("Bun.inspect.custom")]());
+      console.info(`🔍 Inspecting object ${index + 1}...`);
+      console.info(obj[Symbol.for("Bun.inspect.custom")]());
       
       const duration = Date.now() - startTime;
       stats.recordInspection(obj, duration, false);
     });
     
-    console.log('');
-    console.log('📊 Performance Statistics:');
+    console.info('');
+    console.info('📊 Performance Statistics:');
     stats.printStats();
-    console.log('');
+    console.info('');
   }
 }
 
@@ -304,31 +304,31 @@ async function runCustomInspectionDemo(): Promise<void> {
   try {
     await demo.runCompleteDemo();
     
-    console.log('🎉 Custom Inspection System v1.0 Demo Summary');
-    console.log('='.repeat(55));
-    console.log('');
-    console.log('✅ Features Demonstrated:');
-    console.log('   🏢 Scope inspection with feature flags and stats');
-    console.log('   🔗 Connection statistics with utilization bars');
-    console.log('   🛡️ Security checks with status indicators');
-    console.log('   🗄️ Database connection pool monitoring');
-    console.log('   💳 Payment request tracking');
-    console.log('   👥 Family member management with trust scores');
-    console.log('   📝 List formatting with numbered bullets');
-    console.log('   📋 Summary cards with boxed layout');
-    console.log('   🎨 Custom decorators for automatic inspection');
-    console.log('   ⚡ Performance monitoring and statistics');
-    console.log('');
-    console.log('🎯 Key Benefits:');
-    console.log('   • Beautiful visual output with emojis and colors');
-    console.log('   • Type-safe inspection with TypeScript');
-    console.log('   • Performance optimized with sub-millisecond times');
-    console.log('   • Extensible architecture for custom types');
-    console.log('   • Integration ready with existing systems');
-    console.log('   • Unicode-safe text handling');
-    console.log('   • Built-in benchmarking and monitoring');
-    console.log('');
-    console.log('🚀 Production Ready! 🎉');
+    console.info('🎉 Custom Inspection System v1.0 Demo Summary');
+    console.info('='.repeat(55));
+    console.info('');
+    console.info('✅ Features Demonstrated:');
+    console.info('   🏢 Scope inspection with feature flags and stats');
+    console.info('   🔗 Connection statistics with utilization bars');
+    console.info('   🛡️ Security checks with status indicators');
+    console.info('   🗄️ Database connection pool monitoring');
+    console.info('   💳 Payment request tracking');
+    console.info('   👥 Family member management with trust scores');
+    console.info('   📝 List formatting with numbered bullets');
+    console.info('   📋 Summary cards with boxed layout');
+    console.info('   🎨 Custom decorators for automatic inspection');
+    console.info('   ⚡ Performance monitoring and statistics');
+    console.info('');
+    console.info('🎯 Key Benefits:');
+    console.info('   • Beautiful visual output with emojis and colors');
+    console.info('   • Type-safe inspection with TypeScript');
+    console.info('   • Performance optimized with sub-millisecond times');
+    console.info('   • Extensible architecture for custom types');
+    console.info('   • Integration ready with existing systems');
+    console.info('   • Unicode-safe text handling');
+    console.info('   • Built-in benchmarking and monitoring');
+    console.info('');
+    console.info('🚀 Production Ready! 🎉');
     
   } catch (error) {
     console.error('❌ Custom inspection demo failed to complete:', error);

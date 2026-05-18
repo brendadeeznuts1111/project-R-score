@@ -3,11 +3,11 @@
 
 import { EnhancedTable } from "./EnhancedTable";
 
-console.log("🎯 EnhancedTable Advanced Features Demo");
-console.log("=====================================");
+console.info("🎯 EnhancedTable Advanced Features Demo");
+console.info("=====================================");
 
 // 1. Basic Table Demo
-console.log("\n📊 1. Basic Table Demo:");
+console.info("\n📊 1. Basic Table Demo:");
 
 const basicData = [
   { id: "user1", name: "Alice", score: 95, active: true },
@@ -15,7 +15,7 @@ const basicData = [
   { id: "user3", name: "Charlie", score: 92, active: false },
 ];
 
-console.log(
+console.info(
   EnhancedTable.table(basicData, ["id", "name", "score", "active"], {
     borderStyle: "rounded",
     headerColor: { h: 200, s: 70, l: 45 },
@@ -26,8 +26,8 @@ console.log(
 );
 
 // 2. 13-byte Table Demo
-console.log("\n🔢 2. 13-byte Optimized Table Demo:");
-console.log(
+console.info("\n🔢 2. 13-byte Optimized Table Demo:");
+console.info(
   EnhancedTable.table13([42, "hello", true, 3.14159, "world"], {
     showBits: true,
     showHex: true,
@@ -37,7 +37,7 @@ console.log(
 );
 
 // 3. Performance Matrix Demo
-console.log("\n⚡ 3. Performance Matrix Demo:");
+console.info("\n⚡ 3. Performance Matrix Demo:");
 
 const metrics = [
   { operation: "API Call", time: "45ms", ops: "1000/s", status: "✅ Success" },
@@ -47,7 +47,7 @@ const metrics = [
   { operation: "Network", time: "250ms", ops: "200/s", status: "⚠️ Warning" },
 ];
 
-console.log(
+console.info(
   EnhancedTable.performanceMatrix(metrics, {
     warning: 100,
     critical: 500,
@@ -55,7 +55,7 @@ console.log(
 );
 
 // 4. Tree Table Demo
-console.log("\n🌳 4. Tree Structure Demo:");
+console.info("\n🌳 4. Tree Structure Demo:");
 
 const treeData = [
   {
@@ -80,7 +80,7 @@ const treeData = [
   { name: "package.json", type: "config", size: "567B" },
 ];
 
-console.log(
+console.info(
   EnhancedTable.treeTable(treeData, {
     showIcons: true,
     indentSize: 2,
@@ -89,7 +89,7 @@ console.log(
 );
 
 // 5. Progress Table Demo
-console.log("\n📈 5. Progress Tracking Demo:");
+console.info("\n📈 5. Progress Tracking Demo:");
 
 const progressData = [
   { name: "File Upload", current: 75, total: 100, status: "running" as const },
@@ -109,7 +109,7 @@ const progressData = [
   { name: "Cache Clear", current: 60, total: 100, status: "running" as const },
 ];
 
-console.log(
+console.info(
   EnhancedTable.progressTable(progressData, {
     showPercentage: true,
     showBar: true,
@@ -118,7 +118,7 @@ console.log(
 );
 
 // 6. Different Border Styles Demo
-console.log("\n🎨 6. Border Styles Demo:");
+console.info("\n🎨 6. Border Styles Demo:");
 
 const styleData = [
   { style: "single", description: "Basic Unicode borders" },
@@ -134,8 +134,8 @@ const borderStyles: Array<
 > = ["single", "double", "rounded", "bold", "minimal", "ascii"];
 
 borderStyles.forEach((borderStyle, index) => {
-  console.log(`\n${borderStyle.toUpperCase()} Style:`);
-  console.log(
+  console.info(`\n${borderStyle.toUpperCase()} Style:`);
+  console.info(
     EnhancedTable.table([styleData[index]], ["style", "description"], {
       borderStyle,
       headerColor: { h: 200, s: 70, l: 45 },
@@ -147,7 +147,7 @@ borderStyles.forEach((borderStyle, index) => {
 });
 
 // 7. Color Themes Demo
-console.log("\n🌈 7. Color Themes Demo:");
+console.info("\n🌈 7. Color Themes Demo:");
 
 const colorData = [
   { name: "Success", value: 100, status: "✅" },
@@ -156,8 +156,8 @@ const colorData = [
   { name: "Info", value: 75, status: "ℹ️" },
 ];
 
-console.log("Green Theme (Success):");
-console.log(
+console.info("Green Theme (Success):");
+console.info(
   EnhancedTable.table(colorData, ["name", "value", "status"], {
     borderStyle: "single",
     borderColor: { h: 120, s: 70, l: 45 },
@@ -167,8 +167,8 @@ console.log(
   })
 );
 
-console.log("\nBlue Theme (Info):");
-console.log(
+console.info("\nBlue Theme (Info):");
+console.info(
   EnhancedTable.table(colorData, ["name", "value", "status"], {
     borderStyle: "single",
     borderColor: { h: 210, s: 70, l: 45 },
@@ -178,8 +178,8 @@ console.log(
   })
 );
 
-console.log("\nRed Theme (Error):");
-console.log(
+console.info("\nRed Theme (Error):");
+console.info(
   EnhancedTable.table(colorData, ["name", "value", "status"], {
     borderStyle: "single",
     borderColor: { h: 0, s: 70, l: 45 },
@@ -190,7 +190,7 @@ console.log(
 );
 
 // 8. Advanced Alignment Demo
-console.log("\n📐 8. Text Alignment Demo:");
+console.info("\n📐 8. Text Alignment Demo:");
 
 const alignmentData = [
   { left: "Left-aligned", center: "Center", right: "Right", number: 42.5 },
@@ -203,7 +203,7 @@ const alignmentData = [
   { left: "A", center: "B", right: "C", number: 1000 },
 ];
 
-console.log(
+console.info(
   EnhancedTable.table(alignmentData, ["left", "center", "right", "number"], {
     borderStyle: "double",
     headerColor: { h: 280, s: 70, l: 45 },
@@ -220,7 +220,7 @@ console.log(
 );
 
 // 9. Unicode Art Styles Demo
-console.log("\n🎭 9. Unicode Art Styles Demo:");
+console.info("\n🎭 9. Unicode Art Styles Demo:");
 
 const artData = [
   { feature: "Tables", count: 100, status: "✅ Complete" },
@@ -229,8 +229,8 @@ const artData = [
   { feature: "Progress", count: 1, status: "✅ Complete" },
 ];
 
-console.log("Simple Art Style:");
-console.log(
+console.info("Simple Art Style:");
+console.info(
   EnhancedTable.table(artData, ["feature", "count", "status"], {
     borderStyle: "rounded",
     headerColor: { h: 200, s: 70, l: 45 },
@@ -240,8 +240,8 @@ console.log(
   })
 );
 
-console.log("\nDetailed Art Style:");
-console.log(
+console.info("\nDetailed Art Style:");
+console.info(
   EnhancedTable.table(artData, ["feature", "count", "status"], {
     borderStyle: "double",
     headerColor: { h: 200, s: 70, l: 45 },
@@ -251,8 +251,8 @@ console.log(
   })
 );
 
-console.log("\nBlock Art Style:");
-console.log(
+console.info("\nBlock Art Style:");
+console.info(
   EnhancedTable.table(artData, ["feature", "count", "status"], {
     borderStyle: "bold",
     headerColor: { h: 200, s: 70, l: 45 },
@@ -262,16 +262,16 @@ console.log(
   })
 );
 
-console.log("\n🎉 EnhancedTable Demo Complete!");
-console.log("=====================================");
-console.log("Features demonstrated:");
-console.log("✅ Basic table formatting");
-console.log("✅ 13-byte optimization");
-console.log("✅ Performance matrices");
-console.log("✅ Tree structures");
-console.log("✅ Progress tracking");
-console.log("✅ Multiple border styles");
-console.log("✅ Color themes");
-console.log("✅ Text alignment");
-console.log("✅ Unicode art styles");
-console.log("✅ HSL color system");
+console.info("\n🎉 EnhancedTable Demo Complete!");
+console.info("=====================================");
+console.info("Features demonstrated:");
+console.info("✅ Basic table formatting");
+console.info("✅ 13-byte optimization");
+console.info("✅ Performance matrices");
+console.info("✅ Tree structures");
+console.info("✅ Progress tracking");
+console.info("✅ Multiple border styles");
+console.info("✅ Color themes");
+console.info("✅ Text alignment");
+console.info("✅ Unicode art styles");
+console.info("✅ HSL color system");

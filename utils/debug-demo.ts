@@ -22,9 +22,9 @@ class DebugDemo {
 
   // 🐛 Demonstrate all debugging scenarios
   async demonstrateDebugging(): Promise<void> {
-    console.log('🐛 Bun Test Debugging Demonstration');
-    console.log('===================================');
-    console.log('🔍 Exploring --inspect and --inspect-brk capabilities...\n');
+    console.info('🐛 Bun Test Debugging Demonstration');
+    console.info('===================================');
+    console.info('🔍 Exploring --inspect and --inspect-brk capabilities...\n');
 
     // Create test files for debugging scenarios
     await this.createDebugTestFiles();
@@ -78,7 +78,7 @@ class DebugDemo {
 
   // 📁 Create debug test files
   private async createDebugTestFiles(): Promise<void> {
-    console.log('📁 Creating debug test files...');
+    console.info('📁 Creating debug test files...');
 
     // Basic debugging test
     writeFileSync('debug-basic.test.ts', `
@@ -86,7 +86,7 @@ import { test, describe, expect } from 'bun:test';
 
 describe('Basic Debugging', () => {
   test('debuggable function', () => {
-    console.log('🐛 Starting basic debug test');
+    console.info('🐛 Starting basic debug test');
     
     const data = {
       id: 1,
@@ -95,34 +95,34 @@ describe('Basic Debugging', () => {
     };
     
     // Debug point: inspect data structure
-    console.log('🔍 Data structure:', JSON.stringify(data, null, 2));
+    console.info('🔍 Data structure:', JSON.stringify(data, null, 2));
     
     const result = processData(data);
     expect(result).toBe('processed: Debug Test');
     
-    console.log('✅ Basic debug test completed');
+    console.info('✅ Basic debug test completed');
   });
   
   test('loop debugging', () => {
-    console.log('🐛 Starting loop debug test');
+    console.info('🐛 Starting loop debug test');
     
     const numbers = [1, 2, 3, 4, 5];
     let sum = 0;
     
     for (let i = 0; i < numbers.length; i++) {
       // Debug point: inspect each iteration
-      console.log(\`🔍 Iteration \${i}: number=\${numbers[i]}, sum=\${sum}\`);
+      console.info(\`🔍 Iteration \${i}: number=\${numbers[i]}, sum=\${sum}\`);
       sum += numbers[i];
     }
     
     expect(sum).toBe(15);
-    console.log('✅ Loop debug test completed');
+    console.info('✅ Loop debug test completed');
   });
 });
 
 function processData(data: any): string {
   // Debug point: inspect processing
-  console.log('🔍 Processing data:', data.name);
+  console.info('🔍 Processing data:', data.name);
   return \`processed: \${data.name}\`;
 }
 `);
@@ -133,7 +133,7 @@ import { test, describe, expect } from 'bun:test';
 
 describe('Breakpoint Debugging', () => {
   test('step-through debugging', () => {
-    console.log('🐛 Starting step-through debug test');
+    console.info('🐛 Starting step-through debug test');
     
     const calculator = {
       value: 0,
@@ -158,23 +158,23 @@ describe('Breakpoint Debugging', () => {
     };
     
     // Breakpoint: Inspect initial state
-    console.log('🔍 Initial calculator state:', calculator.value);
+    console.info('🔍 Initial calculator state:', calculator.value);
     
     const result1 = calculator.add(5);  // Breakpoint here
-    console.log('🔍 After add(5):', calculator.value);
+    console.info('🔍 After add(5):', calculator.value);
     
     const result2 = calculator.multiply(2);  // Breakpoint here
-    console.log('🔍 After multiply(2):', calculator.value);
+    console.info('🔍 After multiply(2):', calculator.value);
     
     const result3 = calculator.reset();  // Breakpoint here
-    console.log('🔍 After reset():', calculator.value);
+    console.info('🔍 After reset():', calculator.value);
     
     expect(result3).toBe(0);
-    console.log('✅ Step-through debug test completed');
+    console.info('✅ Step-through debug test completed');
   });
   
   test('conditional breakpoint', () => {
-    console.log('🐛 Starting conditional breakpoint test');
+    console.info('🐛 Starting conditional breakpoint test');
     
     const users = [
       { id: 1, name: 'Alice', active: true },
@@ -185,13 +185,13 @@ describe('Breakpoint Debugging', () => {
     const activeUsers = users.filter(user => {
       // Conditional breakpoint: Only break when user.active is true
       if (user.active) {
-        console.log('🔍 Active user found:', user.name);
+        console.info('🔍 Active user found:', user.name);
       }
       return user.active;
     });
     
     expect(activeUsers.length).toBe(2);
-    console.log('✅ Conditional breakpoint test completed');
+    console.info('✅ Conditional breakpoint test completed');
   });
 });
 `);
@@ -202,16 +202,16 @@ import { test, describe, expect } from 'bun:test';
 
 describe('Async Debugging', () => {
   test('async/await debugging', async () => {
-    console.log('🐛 Starting async debug test');
+    console.info('🐛 Starting async debug test');
     
     try {
       // Breakpoint: Before async operation
-      console.log('🔍 About to start async operation');
+      console.info('🔍 About to start async operation');
       
       const result = await asyncOperation();
       
       // Breakpoint: After async operation completes
-      console.log('🔍 Async operation result:', result);
+      console.info('🔍 Async operation result:', result);
       
       expect(result).toBe('async success');
     } catch (error) {
@@ -219,21 +219,21 @@ describe('Async Debugging', () => {
       throw error;
     }
     
-    console.log('✅ Async debug test completed');
+    console.info('✅ Async debug test completed');
   });
   
   test('promise chaining debugging', async () => {
-    console.log('🐛 Starting promise chain debug test');
+    console.info('🐛 Starting promise chain debug test');
     
     const result = await Promise.resolve('initial')
       .then(value => {
         // Breakpoint: First then block
-        console.log('🔍 First then block:', value);
+        console.info('🔍 First then block:', value);
         return value + '-modified';
       })
       .then(value => {
         // Breakpoint: Second then block
-        console.log('🔍 Second then block:', value);
+        console.info('🔍 Second then block:', value);
         return value + '-final';
       })
       .catch(error => {
@@ -243,11 +243,11 @@ describe('Async Debugging', () => {
       });
     
     expect(result).toBe('initial-modified-final');
-    console.log('✅ Promise chain debug test completed');
+    console.info('✅ Promise chain debug test completed');
   });
   
   test('concurrent async debugging', async () => {
-    console.log('🐛 Starting concurrent async debug test');
+    console.info('🐛 Starting concurrent async debug test');
     
     const operations = [
       asyncOperation('op1', 100),
@@ -256,26 +256,26 @@ describe('Async Debugging', () => {
     ];
     
     // Breakpoint: Before Promise.all
-    console.log('🔍 Starting concurrent operations');
+    console.info('🔍 Starting concurrent operations');
     
     const results = await Promise.all(operations);
     
     // Breakpoint: After all operations complete
-    console.log('🔍 All operations completed:', results);
+    console.info('🔍 All operations completed:', results);
     
     expect(results).toHaveLength(3);
-    console.log('✅ Concurrent async debug test completed');
+    console.info('✅ Concurrent async debug test completed');
   });
 });
 
 async function asyncOperation(name: string = 'default', delay: number = 50): Promise<string> {
   // Breakpoint: Inside async function
-  console.log(\`🔍 Async operation '\${name}' starting\`);
+  console.info(\`🔍 Async operation '\${name}' starting\`);
   
   await new Promise(resolve => setTimeout(resolve, delay));
   
   const result = \`async success: \${name}\`;
-  console.log(\`🔍 Async operation '\${name}' completed\`);
+  console.info(\`🔍 Async operation '\${name}' completed\`);
   
   return result;
 }
@@ -287,72 +287,72 @@ import { test, describe, expect } from 'bun:test';
 
 describe('Error Debugging', () => {
   test('debugging thrown errors', () => {
-    console.log('🐛 Starting error debug test');
+    console.info('🐛 Starting error debug test');
     
     try {
       // Breakpoint: Before error occurs
-      console.log('🔍 About to trigger error');
+      console.info('🔍 About to trigger error');
       
       riskyOperation();
       
       // This line should not be reached
-      console.log('🔍 This should not appear');
+      console.info('🔍 This should not appear');
     } catch (error) {
       // Breakpoint: In error handler
-      console.log('🔍 Error caught:', error.message);
-      console.log('🔍 Error stack:', error.stack);
+      console.info('🔍 Error caught:', error.message);
+      console.info('🔍 Error stack:', error.stack);
       
       expect(error.message).toBe('Intentional error for debugging');
     }
     
-    console.log('✅ Error debug test completed');
+    console.info('✅ Error debug test completed');
   });
   
   test('debugging assertion failures', () => {
-    console.log('🐛 Starting assertion failure debug test');
+    console.info('🐛 Starting assertion failure debug test');
     
     const data = { value: 42 };
     
     // Breakpoint: Before assertion
-    console.log('🔍 About to check assertion');
-    console.log('🔍 Data value:', data.value);
+    console.info('🔍 About to check assertion');
+    console.info('🔍 Data value:', data.value);
     
     // This assertion will fail - good for debugging
     expect(data.value).toBe(100);  // This will fail
     
-    console.log('🔍 This should not appear');
+    console.info('🔍 This should not appear');
   });
   
   test('debugging async errors', async () => {
-    console.log('🐛 Starting async error debug test');
+    console.info('🐛 Starting async error debug test');
     
     try {
       // Breakpoint: Before async error
-      console.log('🔍 About to trigger async error');
+      console.info('🔍 About to trigger async error');
       
       await asyncErrorOperation();
       
-      console.log('🔍 This should not appear');
+      console.info('🔍 This should not appear');
     } catch (error) {
       // Breakpoint: In async error handler
-      console.log('🔍 Async error caught:', error.message);
+      console.info('🔍 Async error caught:', error.message);
       
       expect(error.message).toBe('Async error for debugging');
     }
     
-    console.log('✅ Async error debug test completed');
+    console.info('✅ Async error debug test completed');
   });
 });
 
 function riskyOperation(): never {
   // Breakpoint: Inside function that throws
-  console.log('🔍 Inside risky operation');
+  console.info('🔍 Inside risky operation');
   throw new Error('Intentional error for debugging');
 }
 
 async function asyncErrorOperation(): Promise<never> {
   // Breakpoint: Inside async function that throws
-  console.log('🔍 Inside async error operation');
+  console.info('🔍 Inside async error operation');
   
   await new Promise(resolve => setTimeout(resolve, 50));
   
@@ -366,12 +366,12 @@ import { test, describe, expect } from 'bun:test';
 
 describe('Performance Debugging', () => {
   test('debugging slow operations', () => {
-    console.log('🐛 Starting performance debug test');
+    console.info('🐛 Starting performance debug test');
     
     const startTime = performance.now();
     
     // Breakpoint: Before slow operation
-    console.log('🔍 Starting slow operation');
+    console.info('🔍 Starting slow operation');
     
     slowOperation();
     
@@ -379,18 +379,18 @@ describe('Performance Debugging', () => {
     const duration = endTime - startTime;
     
     // Breakpoint: After slow operation
-    console.log(\`🔍 Slow operation completed in \${duration.toFixed(2)}ms\`);
+    console.info(\`🔍 Slow operation completed in \${duration.toFixed(2)}ms\`);
     
     expect(duration).toBeGreaterThan(50);
-    console.log('✅ Performance debug test completed');
+    console.info('✅ Performance debug test completed');
   });
   
   test('debugging memory usage', () => {
-    console.log('🐛 Starting memory debug test');
+    console.info('🐛 Starting memory debug test');
     
     // Breakpoint: Before memory allocation
     const initialMemory = process.memoryUsage();
-    console.log('🔍 Initial memory:', {
+    console.info('🔍 Initial memory:', {
       rss: Math.round(initialMemory.rss / 1024 / 1024 * 100) / 100,
       heapUsed: Math.round(initialMemory.heapUsed / 1024 / 1024 * 100) / 100
     });
@@ -404,25 +404,25 @@ describe('Performance Debugging', () => {
     
     // Breakpoint: After memory allocation
     const afterMemory = process.memoryUsage();
-    console.log('🔍 After allocation memory:', {
+    console.info('🔍 After allocation memory:', {
       rss: Math.round(afterMemory.rss / 1024 / 1024 * 100) / 100,
       heapUsed: Math.round(afterMemory.heapUsed / 1024 / 1024 * 100) / 100
     });
     
     const memoryGrowth = afterMemory.heapUsed - initialMemory.heapUsed;
-    console.log(\`🔍 Memory growth: \${Math.round(memoryGrowth / 1024 / 1024 * 100) / 100}MB\`);
+    console.info(\`🔍 Memory growth: \${Math.round(memoryGrowth / 1024 / 1024 * 100) / 100}MB\`);
     
     expect(largeArray.length).toBe(10000);
-    console.log('✅ Memory debug test completed');
+    console.info('✅ Memory debug test completed');
   });
   
   test('debugging function calls', () => {
-    console.log('🐛 Starting function call debug test');
+    console.info('🐛 Starting function call debug test');
     
     const tracer = new FunctionTracer();
     
     // Breakpoint: Before function calls
-    console.log('🔍 Starting traced function calls');
+    console.info('🔍 Starting traced function calls');
     
     const result1 = tracer.traceFunction('func1', () => 'result1');
     const result2 = tracer.traceFunction('func2', () => 'result2');
@@ -431,18 +431,18 @@ describe('Performance Debugging', () => {
     });
     
     // Breakpoint: After function calls
-    console.log('🔍 Function call trace:', tracer.getTrace());
+    console.info('🔍 Function call trace:', tracer.getTrace());
     
     expect(result1).toBe('result1');
     expect(result2).toBe('result2');
     expect(result3).toBe('nested-result');
-    console.log('✅ Function call debug test completed');
+    console.info('✅ Function call debug test completed');
   });
 });
 
 function slowOperation(): void {
   // Breakpoint: Inside slow operation
-  console.log('🔍 Inside slow operation - simulating work');
+  console.info('🔍 Inside slow operation - simulating work');
   
   // Simulate CPU-intensive work
   let sum = 0;
@@ -450,7 +450,7 @@ function slowOperation(): void {
     sum += Math.random();
   }
   
-  console.log('🔍 Slow operation completed, sum:', sum);
+  console.info('🔍 Slow operation completed, sum:', sum);
 }
 
 class FunctionTracer {
@@ -459,13 +459,13 @@ class FunctionTracer {
   traceFunction(name: string, fn: () => string): string {
     // Breakpoint: Function entry
     this.trace.push(\`Entering \${name}\`);
-    console.log(\`🔍 Entering function: \${name}\`);
+    console.info(\`🔍 Entering function: \${name}\`);
     
     const result = fn();
     
     // Breakpoint: Function exit
     this.trace.push(\`Exiting \${name} with result: \${result}\`);
-    console.log(\`🔍 Exiting function: \${name} with result: \${result}\`);
+    console.info(\`🔍 Exiting function: \${name} with result: \${result}\`);
     
     return result;
   }
@@ -476,7 +476,7 @@ class FunctionTracer {
 }
 `);
 
-    console.log('✅ Debug test files created\n');
+    console.info('✅ Debug test files created\n');
   }
 
   // 🧪 Run individual debug test
@@ -487,9 +487,9 @@ class FunctionTracer {
     testFile: string, 
     breakOnStart: boolean
   ): Promise<void> {
-    console.log(`🧪 Testing ${testName}: ${description}`);
-    console.log(`   Flag: ${debugFlag}`);
-    console.log(`   Break on start: ${breakOnStart}`);
+    console.info(`🧪 Testing ${testName}: ${description}`);
+    console.info(`   Flag: ${debugFlag}`);
+    console.info(`   Break on start: ${breakOnStart}`);
 
     return new Promise((resolve) => {
       const port = this.debugPort++;
@@ -539,9 +539,9 @@ class FunctionTracer {
           recommendations
         });
 
-        console.log(`   Debug Session: ${debugSession ? '✅ Active' : '❌ Inactive'}`);
-        console.log(`   Breakpoints Detected: ${breakpoints}`);
-        console.log('');
+        console.info(`   Debug Session: ${debugSession ? '✅ Active' : '❌ Inactive'}`);
+        console.info(`   Breakpoints Detected: ${breakpoints}`);
+        console.info('');
 
         resolve();
       });
@@ -549,7 +549,7 @@ class FunctionTracer {
       // Safety timeout - debug sessions can hang
       setTimeout(() => {
         if (!testProcess.killed) {
-          console.log(`   ⏰ Timeout reached for ${testName}`);
+          console.info(`   ⏰ Timeout reached for ${testName}`);
           testProcess.kill('SIGTERM');
         }
       }, breakOnStart ? 5000 : 10000);
@@ -595,11 +595,11 @@ class FunctionTracer {
 
   // 📚 Generate comprehensive debugging guide
   private generateDebuggingGuide(): void {
-    console.log('📚 Debugging Capabilities Analysis');
-    console.log('===================================');
+    console.info('📚 Debugging Capabilities Analysis');
+    console.info('===================================');
 
     // Summary table
-    console.log('\n📋 Debug Test Summary:');
+    console.info('\n📋 Debug Test Summary:');
     console.table(this.results.map(r => ({
       Test: r.testName,
       Flag: r.debugFlag,
@@ -610,34 +610,34 @@ class FunctionTracer {
     })));
 
     // Detailed analysis
-    console.log('\n🔍 Detailed Analysis:');
+    console.info('\n🔍 Detailed Analysis:');
     
     this.results.forEach(result => {
-      console.log(`\n${result.testName}:`);
-      console.log(`  Description: ${result.description}`);
-      console.log(`  Debug Flag: ${result.debugFlag}`);
-      console.log(`  Port: ${result.port}`);
-      console.log(`  Break on Start: ${result.breakOnStart}`);
-      console.log(`  Debug Session: ${result.debugSession ? 'Active' : 'Inactive'}`);
-      console.log(`  Breakpoints Detected: ${result.breakpoints}`);
+      console.info(`\n${result.testName}:`);
+      console.info(`  Description: ${result.description}`);
+      console.info(`  Debug Flag: ${result.debugFlag}`);
+      console.info(`  Port: ${result.port}`);
+      console.info(`  Break on Start: ${result.breakOnStart}`);
+      console.info(`  Debug Session: ${result.debugSession ? 'Active' : 'Inactive'}`);
+      console.info(`  Breakpoints Detected: ${result.breakpoints}`);
       
       if (result.recommendations.length > 0) {
-        console.log(`  Recommendations:`);
+        console.info(`  Recommendations:`);
         result.recommendations.forEach(rec => {
-          console.log(`    • ${rec}`);
+          console.info(`    • ${rec}`);
         });
       }
     });
 
     // Debugging best practices
-    console.log('\n💡 Debugging Best Practices:');
-    console.log('  • Use --inspect-brk for step-through debugging');
-    console.log('  • Use --inspect for non-blocking debugging');
-    console.log('  • Connect Chrome DevTools to ws://localhost:9229');
-    console.log('  • Set breakpoints in test code before running');
-    console.log('  • Use console.log for quick debugging');
-    console.log('  • Inspect variables in the debugger');
-    console.log('  • Use call stack to trace execution flow');
+    console.info('\n💡 Debugging Best Practices:');
+    console.info('  • Use --inspect-brk for step-through debugging');
+    console.info('  • Use --inspect for non-blocking debugging');
+    console.info('  • Connect Chrome DevTools to ws://localhost:9229');
+    console.info('  • Set breakpoints in test code before running');
+    console.info('  • Use console.log for quick debugging');
+    console.info('  • Inspect variables in the debugger');
+    console.info('  • Use call stack to trace execution flow');
 
     // Save detailed guide
     this.saveDebuggingGuide();
@@ -794,12 +794,12 @@ class FunctionTracer {
     guide += '*Generated by Bun Test Debugging Demo v2.8*';
 
     Bun.write('bun-test-debugging-guide.md', guide);
-    console.log('\n📄 Comprehensive debugging guide saved to: bun-test-debugging-guide.md');
+    console.info('\n📄 Comprehensive debugging guide saved to: bun-test-debugging-guide.md');
   }
 
   // 🧹 Cleanup test files
   async cleanup(): Promise<void> {
-    console.log('🧹 Cleaning up debug test files...');
+    console.info('🧹 Cleaning up debug test files...');
     
     const files = [
       'debug-basic.test.ts',
@@ -817,7 +817,7 @@ class FunctionTracer {
       }
     }
     
-    console.log('✅ Cleanup complete');
+    console.info('✅ Cleanup complete');
   }
 }
 
@@ -826,17 +826,17 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log('Bun Test Debugging Demo v2.8');
-    console.log('');
-    console.log('Demonstrates Bun test debugging capabilities:');
-    console.log('• --inspect flag for non-blocking debugging');
-    console.log('• --inspect-brk flag for step-through debugging');
-    console.log('• Chrome DevTools integration');
-    console.log('• VS Code debugging setup');
-    console.log('• Error and performance debugging scenarios');
-    console.log('');
-    console.log('Usage:');
-    console.log('  bun run debug-demo.ts');
+    console.info('Bun Test Debugging Demo v2.8');
+    console.info('');
+    console.info('Demonstrates Bun test debugging capabilities:');
+    console.info('• --inspect flag for non-blocking debugging');
+    console.info('• --inspect-brk flag for step-through debugging');
+    console.info('• Chrome DevTools integration');
+    console.info('• VS Code debugging setup');
+    console.info('• Error and performance debugging scenarios');
+    console.info('');
+    console.info('Usage:');
+    console.info('  bun run debug-demo.ts');
     return;
   }
 
@@ -845,10 +845,10 @@ async function main() {
   try {
     await demo.demonstrateDebugging();
     await demo.cleanup();
-    console.log('\n✅ Debugging demonstration complete!');
-    console.log('\n🔗 To try debugging yourself:');
-    console.log('  bun test --inspect-brk your-test-file.ts');
-    console.log('  Then open Chrome and go to chrome://inspect');
+    console.info('\n✅ Debugging demonstration complete!');
+    console.info('\n🔗 To try debugging yourself:');
+    console.info('  bun test --inspect-brk your-test-file.ts');
+    console.info('  Then open Chrome and go to chrome://inspect');
   } catch (error: any) {
     console.error('❌ Demonstration failed:', error.message);
     await demo.cleanup();

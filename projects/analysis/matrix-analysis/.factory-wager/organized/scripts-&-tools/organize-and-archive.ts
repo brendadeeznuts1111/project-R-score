@@ -142,8 +142,8 @@ class FileOrganizer {
   ];
 
   async organizeAndArchive(): Promise<void> {
-    console.log("🗂️ FactoryWager File Organization & Archive System");
-    console.log("=" .repeat(55));
+    console.info("🗂️ FactoryWager File Organization & Archive System");
+    console.info("=" .repeat(55));
 
     const startTime = Date.now();
     const results = {
@@ -156,20 +156,20 @@ class FileOrganizer {
 
     // Get all untracked files
     const untrackedFiles = await this.getUntrackedFiles();
-    console.log(`📊 Found ${untrackedFiles.length} untracked files\n`);
+    console.info(`📊 Found ${untrackedFiles.length} untracked files\n`);
 
     // Process each category
     for (const category of this.categories) {
-      console.log(`\n📁 Processing: ${category.name} (${category.action})`);
+      console.info(`\n📁 Processing: ${category.name} (${category.action})`);
       
       const categoryFiles = this.filterFilesByCategory(untrackedFiles, category);
       
       if (categoryFiles.length === 0) {
-        console.log("   No files found");
+        console.info("   No files found");
         continue;
       }
 
-      console.log(`   Found ${categoryFiles.length} files`);
+      console.info(`   Found ${categoryFiles.length} files`);
 
       switch (category.action) {
         case 'commit':
@@ -190,15 +190,15 @@ class FileOrganizer {
     // Create summary report
     await this.createSummaryReport(results, Date.now() - startTime);
     
-    console.log("\n✅ Organization complete!");
-    console.log(`   Organized: ${results.organized}`);
-    console.log(`   Archived: ${results.archived}`);
-    console.log(`   Cleaned: ${results.cleaned}`);
-    console.log(`   Committed: ${results.committed}`);
+    console.info("\n✅ Organization complete!");
+    console.info(`   Organized: ${results.organized}`);
+    console.info(`   Archived: ${results.archived}`);
+    console.info(`   Cleaned: ${results.cleaned}`);
+    console.info(`   Committed: ${results.committed}`);
     
     if (results.errors.length > 0) {
-      console.log(`\n⚠️ Errors: ${results.errors.length}`);
-      results.errors.forEach(error => console.log(`   ${error}`));
+      console.info(`\n⚠️ Errors: ${results.errors.length}`);
+      results.errors.forEach(error => console.info(`   ${error}`));
     }
   }
 
@@ -233,7 +233,7 @@ class FileOrganizer {
   }
 
   private async commitFiles(files: string[], category: FileCategory, results: any): Promise<void> {
-    console.log("   📝 Staging for commit...");
+    console.info("   📝 Staging for commit...");
     
     try {
       const { execSync } = require('child_process');
@@ -241,7 +241,7 @@ class FileOrganizer {
       for (const file of files) {
         if (existsSync(file)) {
           execSync(`git add "${file}"`, { encoding: 'utf8' });
-          console.log(`   ✅ Staged: ${file}`);
+          console.info(`   ✅ Staged: ${file}`);
           results.committed++;
         }
       }
@@ -268,7 +268,7 @@ class FileOrganizer {
           // Write to organized location
           writeFileSync(targetPath, content);
           
-          console.log(`   📁 Organized: ${file} → ${category.name}`);
+          console.info(`   📁 Organized: ${file} → ${category.name}`);
           results.organized++;
         }
       } catch (error) {
@@ -315,7 +315,7 @@ class FileOrganizer {
             hash
           });
           
-          console.log(`   📦 Archived: ${file}`);
+          console.info(`   📦 Archived: ${file}`);
           results.archived++;
         }
       } catch (error) {
@@ -352,7 +352,7 @@ class FileOrganizer {
           require('fs').renameSync(file, cleanupPath);
           
           deleted = true;
-          console.log(`   🗑️ Cleaned: ${file}`);
+          console.info(`   🗑️ Cleaned: ${file}`);
           results.cleaned++;
         }
         
@@ -385,9 +385,9 @@ class FileOrganizer {
       const archivePath = join(this.archiveDir, `${archiveName}.tar.gz`);
       await Bun.write(archivePath, archive);
       
-      console.log(`   📦 Created compressed archive: ${archiveName}.tar.gz`);
+      console.info(`   📦 Created compressed archive: ${archiveName}.tar.gz`);
     } catch (error) {
-      console.log(`   ⚠️ Archive creation failed: ${(error as Error).message}`);
+      console.info(`   ⚠️ Archive creation failed: ${(error as Error).message}`);
     }
   }
 
@@ -406,7 +406,7 @@ class FileOrganizer {
     const reportPath = join(this.archiveDir, `organization-report-${Date.now()}.json`);
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
     
-    console.log(`\n📄 Report saved: ${reportPath}`);
+    console.info(`\n📄 Report saved: ${reportPath}`);
   }
 }
 

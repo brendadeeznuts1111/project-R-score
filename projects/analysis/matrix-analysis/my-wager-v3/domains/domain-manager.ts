@@ -195,7 +195,7 @@ export class DomainManager {
   
   private async validateDomain(domain: string): Promise<void> {
     // Simulate domain validation
-    console.log(`Validating domain: ${domain}`);
+    console.info(`Validating domain: ${domain}`);
   }
   
   private async generateDomainQuantumSeal(domain: string): Promise<string> {
@@ -228,17 +228,17 @@ export class DomainManager {
     };
     
     config.dns.records.push(cnameRecord);
-    console.log(`Configured Cloudflare DNS for ${config.domain}`);
+    console.info(`Configured Cloudflare DNS for ${config.domain}`);
   }
   
   private async configureRoute53DNS(config: DomainConfig): Promise<void> {
     // Simulate Route53 DNS configuration
-    console.log(`Configured Route53 DNS for ${config.domain}`);
+    console.info(`Configured Route53 DNS for ${config.domain}`);
   }
   
   private async configureGoogleDNS(config: DomainConfig): Promise<void> {
     // Simulate Google Cloud DNS configuration
-    console.log(`Configured Google DNS for ${config.domain}`);
+    console.info(`Configured Google DNS for ${config.domain}`);
   }
   
   private async issueSSLCertificate(config: DomainConfig): Promise<SSLResult> {
@@ -257,7 +257,7 @@ export class DomainManager {
     const expires = Date.now() + (90 * 24 * 60 * 60 * 1000); // 90 days
     const quantumSeal = await this.generateDomainQuantumSeal(config.domain);
     
-    console.log(`Issued Cloudflare SSL certificate for ${config.domain}`);
+    console.info(`Issued Cloudflare SSL certificate for ${config.domain}`);
     
     return {
       success: true,
@@ -273,7 +273,7 @@ export class DomainManager {
     const expires = Date.now() + (90 * 24 * 60 * 60 * 1000); // 90 days
     const quantumSeal = await this.generateDomainQuantumSeal(config.domain);
     
-    console.log(`Issued Let's Encrypt SSL certificate for ${config.domain}`);
+    console.info(`Issued Let's Encrypt SSL certificate for ${config.domain}`);
     
     return {
       success: true,

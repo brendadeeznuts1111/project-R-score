@@ -6,40 +6,40 @@ class BunV137Benchmark {
 	private results: { [key: string]: any } = {};
 
 	async runAllBenchmarks() {
-		console.log("🚀 Bun v1.3.7 Comprehensive Performance Benchmark");
-		console.log("==================================================");
-		console.log(`📱 Platform: ${process.platform} (${process.arch})`);
-		console.log(`🚀 Bun Version: ${process.version}`);
-		console.log("");
+		console.info("🚀 Bun v1.3.7 Comprehensive Performance Benchmark");
+		console.info("==================================================");
+		console.info(`📱 Platform: ${process.platform} (${process.arch})`);
+		console.info(`🚀 Bun Version: ${process.version}`);
+		console.info("");
 
 		await this.benchmarkBufferFrom();
-		console.log("");
+		console.info("");
 
 		await this.benchmarkAsyncAwait();
-		console.log("");
+		console.info("");
 
 		this.benchmarkArrayFrom();
-		console.log("");
+		console.info("");
 
 		this.benchmarkStringPadding();
-		console.log("");
+		console.info("");
 
 		this.benchmarkArrayFlat();
-		console.log("");
+		console.info("");
 
 		await this.benchmarkCompoundBooleans();
-		console.log("");
+		console.info("");
 
 		this.benchmarkFloatingPoint();
-		console.log("");
+		console.info("");
 
 		this.showSummary();
 	}
 
 	// Buffer.from() optimization (up to 50% faster)
 	async benchmarkBufferFrom() {
-		console.log("🧪 Buffer.from() Performance Test");
-		console.log("===============================");
+		console.info("🧪 Buffer.from() Performance Test");
+		console.info("===============================");
 
 		const sizes = [
 			{ size: 8, improvement: "~50%" },
@@ -68,7 +68,7 @@ class BunV137Benchmark {
 			}
 			const typedTime = performance.now() - typedStart;
 
-			console.log(
+			console.info(
 				`📊 ${size.toString().padStart(4)} elements: ${arrayTime.toFixed(2)}ms | Typed: ${typedTime.toFixed(2)}ms (${improvement} faster)`,
 			);
 		}
@@ -78,8 +78,8 @@ class BunV137Benchmark {
 
 	// Faster async/await execution
 	async benchmarkAsyncAwait() {
-		console.log("⚡ Async/Await Performance Test");
-		console.log("==============================");
+		console.info("⚡ Async/Await Performance Test");
+		console.info("==============================");
 
 		const iterations = 1000;
 
@@ -98,17 +98,17 @@ class BunV137Benchmark {
 		await Promise.all(promises);
 		const parallelTime = performance.now() - parallelStart;
 
-		console.log(`📊 Sequential async: ${sequentialTime.toFixed(2)}ms`);
-		console.log(`📊 Parallel async:   ${parallelTime.toFixed(2)}ms`);
-		console.log(`🚀 Speedup: ${(sequentialTime / parallelTime).toFixed(2)}x`);
+		console.info(`📊 Sequential async: ${sequentialTime.toFixed(2)}ms`);
+		console.info(`📊 Parallel async:   ${parallelTime.toFixed(2)}ms`);
+		console.info(`🚀 Speedup: ${(sequentialTime / parallelTime).toFixed(2)}x`);
 
 		this.results.asyncAwait = `${(sequentialTime / parallelTime).toFixed(2)}x speedup with parallel execution`;
 	}
 
 	// Faster Array.from(arguments)
 	benchmarkArrayFrom() {
-		console.log("🔢 Array.from(arguments) Performance Test");
-		console.log("=========================================");
+		console.info("🔢 Array.from(arguments) Performance Test");
+		console.info("=========================================");
 
 		const iterations = 100000;
 
@@ -143,17 +143,17 @@ class BunV137Benchmark {
 		const improvement =
 			((traditionalTime - optimizedTime) / traditionalTime) * 100;
 
-		console.log(`📊 Traditional: ${traditionalTime.toFixed(2)}ms`);
-		console.log(`📊 Optimized:   ${optimizedTime.toFixed(2)}ms`);
-		console.log(`🚀 Improvement: ${improvement.toFixed(1)}%`);
+		console.info(`📊 Traditional: ${traditionalTime.toFixed(2)}ms`);
+		console.info(`📊 Optimized:   ${optimizedTime.toFixed(2)}ms`);
+		console.info(`🚀 Improvement: ${improvement.toFixed(1)}%`);
 
 		this.results.arrayFrom = `${improvement.toFixed(1)}% faster with Array.from()`;
 	}
 
 	// Faster string.padStart/padEnd
 	benchmarkStringPadding() {
-		console.log("📝 String Padding Performance Test");
-		console.log("===================================");
+		console.info("📝 String Padding Performance Test");
+		console.info("===================================");
 
 		const iterations = 100000;
 		const strings = [
@@ -180,17 +180,17 @@ class BunV137Benchmark {
 		}
 		const padEndTime = performance.now() - padEndStart;
 
-		console.log(`📊 padStart: ${padStartTime.toFixed(2)}ms`);
-		console.log(`📊 padEnd:   ${padEndTime.toFixed(2)}ms`);
-		console.log(`🚀 Total:   ${(padStartTime + padEndTime).toFixed(2)}ms`);
+		console.info(`📊 padStart: ${padStartTime.toFixed(2)}ms`);
+		console.info(`📊 padEnd:   ${padEndTime.toFixed(2)}ms`);
+		console.info(`🚀 Total:   ${(padStartTime + padEndTime).toFixed(2)}ms`);
 
 		this.results.stringPadding = `Optimized padStart/padEnd in ${(padStartTime + padEndTime).toFixed(2)}ms`;
 	}
 
 	// Enhanced array.flat() performance
 	benchmarkArrayFlat() {
-		console.log("📋 Array.flat() Performance Test");
-		console.log("=================================");
+		console.info("📋 Array.flat() Performance Test");
+		console.info("=================================");
 
 		const iterations = 10000;
 
@@ -215,17 +215,17 @@ class BunV137Benchmark {
 
 		const improvement = ((manualTime - flatTime) / manualTime) * 100;
 
-		console.log(`📊 array.flat(): ${flatTime.toFixed(2)}ms`);
-		console.log(`📊 Manual flat:  ${manualTime.toFixed(2)}ms`);
-		console.log(`🚀 Improvement: ${improvement.toFixed(1)}%`);
+		console.info(`📊 array.flat(): ${flatTime.toFixed(2)}ms`);
+		console.info(`📊 Manual flat:  ${manualTime.toFixed(2)}ms`);
+		console.info(`🚀 Improvement: ${improvement.toFixed(1)}%`);
 
 		this.results.arrayFlat = `${improvement.toFixed(1)}% faster with array.flat()`;
 	}
 
 	// ARM64 compound boolean expressions
 	async benchmarkCompoundBooleans() {
-		console.log("🔗 Compound Boolean Expressions Test (ARM64)");
-		console.log("============================================");
+		console.info("🔗 Compound Boolean Expressions Test (ARM64)");
+		console.info("============================================");
 
 		const iterations = 1000000;
 		const values = Array.from({ length: 1000 }, () => ({
@@ -262,18 +262,18 @@ class BunV137Benchmark {
 
 		const improvement = ((multiIfTime - compoundTime) / multiIfTime) * 100;
 
-		console.log(`📊 Multiple if: ${multiIfTime.toFixed(2)}ms`);
-		console.log(`📊 Compound bool: ${compoundTime.toFixed(2)}ms`);
-		console.log(`🚀 Improvement: ${improvement.toFixed(1)}%`);
-		console.log(`✅ Results match: ${multiIfResult === compoundResult}`);
+		console.info(`📊 Multiple if: ${multiIfTime.toFixed(2)}ms`);
+		console.info(`📊 Compound bool: ${compoundTime.toFixed(2)}ms`);
+		console.info(`🚀 Improvement: ${improvement.toFixed(1)}%`);
+		console.info(`✅ Results match: ${multiIfResult === compoundResult}`);
 
 		this.results.compoundBooleans = `${improvement.toFixed(1)}% faster with compound booleans`;
 	}
 
 	// Floating-point register materialization
 	benchmarkFloatingPoint() {
-		console.log("🔬 Floating-Point Operations Test (ARM64)");
-		console.log("========================================");
+		console.info("🔬 Floating-Point Operations Test (ARM64)");
+		console.info("========================================");
 
 		const iterations = 1000000;
 		const constants = [1.5, 2.25, 3.14159, 0.707, 1.414];
@@ -301,10 +301,10 @@ class BunV137Benchmark {
 
 		const improvement = ((standardTime - optimizedTime) / standardTime) * 100;
 
-		console.log(`📊 Standard FP: ${standardTime.toFixed(2)}ms`);
-		console.log(`📊 Optimized FP: ${optimizedTime.toFixed(2)}ms`);
-		console.log(`🚀 Improvement: ${improvement.toFixed(1)}%`);
-		console.log(
+		console.info(`📊 Standard FP: ${standardTime.toFixed(2)}ms`);
+		console.info(`📊 Optimized FP: ${optimizedTime.toFixed(2)}ms`);
+		console.info(`🚀 Improvement: ${improvement.toFixed(1)}%`);
+		console.info(
 			`✅ Results similar: ${Math.abs(standardResult - optimizedResult) < standardResult * 0.01}`,
 		);
 
@@ -313,24 +313,24 @@ class BunV137Benchmark {
 
 	// Show comprehensive summary
 	private showSummary() {
-		console.log("📊 Comprehensive Performance Summary");
-		console.log("====================================");
+		console.info("📊 Comprehensive Performance Summary");
+		console.info("====================================");
 
 		Object.entries(this.results).forEach(([test, result]) => {
-			console.log(`✅ ${test}: ${result}`);
+			console.info(`✅ ${test}: ${result}`);
 		});
 
-		console.log("");
-		console.log("🚀 Bun v1.3.7 Performance Improvements:");
-		console.log("   • Buffer.from() up to 50% faster");
-		console.log("   • ARM64 compound boolean expressions");
-		console.log("   • Floating-point register materialization");
-		console.log("   • Faster async/await execution");
-		console.log("   • Optimized Array.from(arguments)");
-		console.log("   • Enhanced string.padStart/padEnd");
-		console.log("   • Improved array.flat() performance");
-		console.log("   • JavaScriptCore engine upgrade");
-		console.log("====================================");
+		console.info("");
+		console.info("🚀 Bun v1.3.7 Performance Improvements:");
+		console.info("   • Buffer.from() up to 50% faster");
+		console.info("   • ARM64 compound boolean expressions");
+		console.info("   • Floating-point register materialization");
+		console.info("   • Faster async/await execution");
+		console.info("   • Optimized Array.from(arguments)");
+		console.info("   • Enhanced string.padStart/padEnd");
+		console.info("   • Improved array.flat() performance");
+		console.info("   • JavaScriptCore engine upgrade");
+		console.info("====================================");
 	}
 
 	// Helper async operation

@@ -5,41 +5,41 @@
  * Troubleshooting SIGINT signal handling
  */
 
-console.log("🔍 Debugging SIGINT Signal Handler");
-console.log("===============================");
+console.info("🔍 Debugging SIGINT Signal Handler");
+console.info("===============================");
 
 // Check if we're in a TTY
-console.log("📊 Environment Info:");
-console.log("   isTTY:", process.stdout.isTTY);
-console.log("   platform:", process.platform);
-console.log("   pid:", process.pid);
+console.info("📊 Environment Info:");
+console.info("   isTTY:", process.stdout.isTTY);
+console.info("   platform:", process.platform);
+console.info("   pid:", process.pid);
 
 // Set up multiple signal handlers for debugging
-console.log("\n🔧 Registering signal handlers...");
+console.info("\n🔧 Registering signal handlers...");
 
 process.on("SIGINT", () => {
-	console.log("\n✅ SIGINT handler triggered!");
-	console.log("Ctrl-C was pressed");
+	console.info("\n✅ SIGINT handler triggered!");
+	console.info("Ctrl-C was pressed");
 	process.exit(0);
 });
 
 process.on("SIGTERM", () => {
-	console.log("\n✅ SIGTERM handler triggered!");
+	console.info("\n✅ SIGTERM handler triggered!");
 	process.exit(0);
 });
 
 // Also try alternative approach
 process.on("SIGINT", () => {
-	console.log("\n✅ Alternative SIGINT handler!");
+	console.info("\n✅ Alternative SIGINT handler!");
 	process.exit(0);
 });
 
-console.log("✅ Signal handlers registered");
+console.info("✅ Signal handlers registered");
 
 // Test immediate signal sending
-console.log("\n⚡ Testing immediate signal to self...");
+console.info("\n⚡ Testing immediate signal to self...");
 setTimeout(() => {
-	console.log("📤 Sending SIGINT to process...");
+	console.info("📤 Sending SIGINT to process...");
 	process.kill(process.pid, "SIGINT");
 }, 2000);
 
@@ -47,10 +47,10 @@ setTimeout(() => {
 let tickCount = 0;
 const interval = setInterval(() => {
 	tickCount++;
-	console.log(`💓 Tick ${tickCount} - Process running...`);
+	console.info(`💓 Tick ${tickCount} - Process running...`);
 
 	if (tickCount >= 10) {
-		console.log("⏰ Timeout reached, exiting...");
+		console.info("⏰ Timeout reached, exiting...");
 		clearInterval(interval);
 		process.exit(1);
 	}
@@ -58,12 +58,12 @@ const interval = setInterval(() => {
 
 // Additional debugging
 process.on("exit", (code) => {
-	console.log(`🏁 Process exiting with code: ${code}`);
+	console.info(`🏁 Process exiting with code: ${code}`);
 });
 
 // Test manual signal handling
-console.log("\n📝 Manual test options:");
-console.log("   1. Wait for auto-signal (2 seconds)");
-console.log("   2. Press Ctrl+C manually");
-console.log("   3. Send signal from another terminal:");
-console.log(`      kill -SIGINT ${process.pid}`);
+console.info("\n📝 Manual test options:");
+console.info("   1. Wait for auto-signal (2 seconds)");
+console.info("   2. Press Ctrl+C manually");
+console.info("   3. Send signal from another terminal:");
+console.info(`      kill -SIGINT ${process.pid}`);

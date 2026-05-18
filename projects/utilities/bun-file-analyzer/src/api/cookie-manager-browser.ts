@@ -185,17 +185,17 @@ class BrowserCookieManager {
 
   // Debug methods with color logging (browser console)
   debugCookies(): void {
-    console.log("%c🍪 Browser Cookie Manager Debug", "color: #e67e22; font-size: 14px; font-weight: bold");
-    console.log(`%cTotal cookies: ${this.size}`, "color: #e67e22");
+    console.info("%c🍪 Browser Cookie Manager Debug", "color: #e67e22; font-size: 14px; font-weight: bold");
+    console.info(`%cTotal cookies: ${this.size}`, "color: #e67e22");
     
     if (this.size === 0) {
-      console.log("%cNo cookies set", "color: #e67e22; font-style: italic");
+      console.info("%cNo cookies set", "color: #e67e22; font-style: italic");
       return;
     }
 
     this.forEach((cookie, name) => {
       const color = name === "sessionId" ? "#e67e22" : name === "analytics" ? "#3498db" : "#95a5a6";
-      console.log(
+      console.info(
         `%c${name}: ${cookie.value}`,
         `color: ${color}; background: ${color}20; padding: 2px 6px; border-radius: 3px;`
       );

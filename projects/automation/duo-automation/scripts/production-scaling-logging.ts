@@ -106,59 +106,59 @@ class ProductionScalingAndLogging {
    * Configure auto-scaling triggers
    */
   configureAutoScaling(): void {
-    console.log('🚀 Configuring Auto-Scaling Triggers');
-    console.log('==================================');
+    console.info('🚀 Configuring Auto-Scaling Triggers');
+    console.info('==================================');
     
-    console.log('\n📊 Throughput Scaling:');
-    console.log(`   • Baseline: ${this.scalingConfig.throughput.threshold} KB/s`);
-    console.log(`   • Scale Up: >${this.scalingConfig.throughput.scaleUpThreshold} KB/s`);
-    console.log(`   • Scale Down: <${this.scalingConfig.throughput.scaleDownThreshold} KB/s`);
-    console.log(`   • Instance Range: ${this.scalingConfig.throughput.minInstances}-${this.scalingConfig.throughput.maxInstances}`);
+    console.info('\n📊 Throughput Scaling:');
+    console.info(`   • Baseline: ${this.scalingConfig.throughput.threshold} KB/s`);
+    console.info(`   • Scale Up: >${this.scalingConfig.throughput.scaleUpThreshold} KB/s`);
+    console.info(`   • Scale Down: <${this.scalingConfig.throughput.scaleDownThreshold} KB/s`);
+    console.info(`   • Instance Range: ${this.scalingConfig.throughput.minInstances}-${this.scalingConfig.throughput.maxInstances}`);
     
-    console.log('\n💾 Memory Scaling:');
-    console.log(`   • Threshold: ${this.scalingConfig.memory.threshold} MB/instance`);
-    console.log(`   • Scale Up: >${this.scalingConfig.memory.scaleUpThreshold} MB`);
-    console.log(`   • Scale Down: <${this.scalingConfig.memory.scaleDownThreshold} MB`);
+    console.info('\n💾 Memory Scaling:');
+    console.info(`   • Threshold: ${this.scalingConfig.memory.threshold} MB/instance`);
+    console.info(`   • Scale Up: >${this.scalingConfig.memory.scaleUpThreshold} MB`);
+    console.info(`   • Scale Down: <${this.scalingConfig.memory.scaleDownThreshold} MB`);
     
-    console.log('\n🔥 CPU Scaling:');
-    console.log(`   • Threshold: ${this.scalingConfig.cpu.threshold}%`);
-    console.log(`   • Scale Up: >${this.scalingConfig.cpu.scaleUpThreshold}%`);
-    console.log(`   • Scale Down: <${this.scalingConfig.cpu.scaleDownThreshold}%`);
+    console.info('\n🔥 CPU Scaling:');
+    console.info(`   • Threshold: ${this.scalingConfig.cpu.threshold}%`);
+    console.info(`   • Scale Up: >${this.scalingConfig.cpu.scaleUpThreshold}%`);
+    console.info(`   • Scale Down: <${this.scalingConfig.cpu.scaleDownThreshold}%`);
     
-    console.log('\n✅ Auto-scaling configuration complete');
+    console.info('\n✅ Auto-scaling configuration complete');
   }
 
   /**
    * Configure long-term audit trail logging
    */
   configureAuditTrail(): void {
-    console.log('\n📝 Configuring Long-Term Audit Trail');
-    console.log('===================================');
+    console.info('\n📝 Configuring Long-Term Audit Trail');
+    console.info('===================================');
     
     const audit = this.loggingConfig.auditTrail;
     
-    console.log(`\n🗂️ Storage Configuration:`);
-    console.log(`   • Provider: ${audit.storageProvider.toUpperCase()}`);
-    console.log(`   • Bucket: ${audit.bucket}`);
-    console.log(`   • Retention: ${audit.retention} days (${audit.retention/365} years)`);
-    console.log(`   • Compression: ${audit.compression ? '✅ Enabled' : '❌ Disabled'}`);
-    console.log(`   • Encryption: ${audit.encryption ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info(`\n🗂️ Storage Configuration:`);
+    console.info(`   • Provider: ${audit.storageProvider.toUpperCase()}`);
+    console.info(`   • Bucket: ${audit.bucket}`);
+    console.info(`   • Retention: ${audit.retention} days (${audit.retention/365} years)`);
+    console.info(`   • Compression: ${audit.compression ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info(`   • Encryption: ${audit.encryption ? '✅ Enabled' : '❌ Disabled'}`);
     
-    console.log(`\n📊 Metrics Configuration:`);
-    console.log(`   • Collection: ${this.loggingConfig.metrics.enabled ? '✅ Enabled' : '❌ Disabled'}`);
-    console.log(`   • Interval: ${this.loggingConfig.metrics.interval}s`);
-    console.log(`   • Retention: ${this.loggingConfig.metrics.retention} days`);
-    console.log(`   • Aggregation: ${this.loggingConfig.metrics.aggregation ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info(`\n📊 Metrics Configuration:`);
+    console.info(`   • Collection: ${this.loggingConfig.metrics.enabled ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info(`   • Interval: ${this.loggingConfig.metrics.interval}s`);
+    console.info(`   • Retention: ${this.loggingConfig.metrics.retention} days`);
+    console.info(`   • Aggregation: ${this.loggingConfig.metrics.aggregation ? '✅ Enabled' : '❌ Disabled'}`);
     
-    console.log(`\n🚨 Alert Configuration:`);
-    console.log(`   • Status: ${this.loggingConfig.alerts.enabled ? '✅ Enabled' : '❌ Disabled'}`);
-    console.log(`   • Channels: ${this.loggingConfig.alerts.channels.join(', ')}`);
+    console.info(`\n🚨 Alert Configuration:`);
+    console.info(`   • Status: ${this.loggingConfig.alerts.enabled ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info(`   • Channels: ${this.loggingConfig.alerts.channels.join(', ')}`);
     
     Object.entries(this.loggingConfig.alerts.thresholds).forEach(([metric, threshold]) => {
-      console.log(`   • ${metric}: ${threshold}${metric === 'errorRate' ? '%' : metric === 'cpu' ? '%' : metric === 'memory' ? 'MB' : 'KB/s'}`);
+      console.info(`   • ${metric}: ${threshold}${metric === 'errorRate' ? '%' : metric === 'cpu' ? '%' : metric === 'memory' ? 'MB' : 'KB/s'}`);
     });
     
-    console.log('\n✅ Audit trail configuration complete');
+    console.info('\n✅ Audit trail configuration complete');
   }
 
   /**
@@ -264,8 +264,8 @@ ALERT_ERROR_RATE_THRESHOLD=${this.loggingConfig.alerts.thresholds.errorRate}
    * Deploy configurations
    */
   async deploy(): Promise<void> {
-    console.log('🚀 Deploying Production Scaling & Logging');
-    console.log('========================================');
+    console.info('🚀 Deploying Production Scaling & Logging');
+    console.info('========================================');
     
     try {
       // Configure auto-scaling
@@ -275,7 +275,7 @@ ALERT_ERROR_RATE_THRESHOLD=${this.loggingConfig.alerts.thresholds.errorRate}
       this.configureAuditTrail();
       
       // Generate configurations
-      console.log('\n📄 Generating Configuration Files...');
+      console.info('\n📄 Generating Configuration Files...');
       
       const hpaConfig = this.generateKubernetesHPA();
       const auditConfig = this.generateAuditTrailConfig();
@@ -284,22 +284,22 @@ ALERT_ERROR_RATE_THRESHOLD=${this.loggingConfig.alerts.thresholds.errorRate}
       await Bun.write('./k8s/evidence-integrity-hpa.yaml', hpaConfig);
       await Bun.write('./config/audit-trail.env', auditConfig);
       
-      console.log('   ✅ Kubernetes HPA: ./k8s/evidence-integrity-hpa.yaml');
-      console.log('   ✅ Audit Trail Config: ./config/audit-trail.env');
+      console.info('   ✅ Kubernetes HPA: ./k8s/evidence-integrity-hpa.yaml');
+      console.info('   ✅ Audit Trail Config: ./config/audit-trail.env');
       
-      console.log('\n🎯 Deployment Summary:');
-      console.log('   • Auto-scaling: Configured with 800 KB/s baseline');
-      console.log('   • Audit Trail: 7-year retention with encryption');
-      console.log('   • Monitoring: Real-time metrics and alerts');
-      console.log('   • Storage: S3 with compression and encryption');
+      console.info('\n🎯 Deployment Summary:');
+      console.info('   • Auto-scaling: Configured with 800 KB/s baseline');
+      console.info('   • Audit Trail: 7-year retention with encryption');
+      console.info('   • Monitoring: Real-time metrics and alerts');
+      console.info('   • Storage: S3 with compression and encryption');
       
-      console.log('\n📈 Expected Scaling Behavior:');
-      console.log('   • Scale Up: When throughput > 1,200 KB/s');
-      console.log('   • Scale Down: When throughput < 400 KB/s');
-      console.log('   • Max Instances: 10 pods');
-      console.log('   • Min Instances: 2 pods');
+      console.info('\n📈 Expected Scaling Behavior:');
+      console.info('   • Scale Up: When throughput > 1,200 KB/s');
+      console.info('   • Scale Down: When throughput < 400 KB/s');
+      console.info('   • Max Instances: 10 pods');
+      console.info('   • Min Instances: 2 pods');
       
-      console.log('\n✅ Production scaling and logging deployment complete!');
+      console.info('\n✅ Production scaling and logging deployment complete!');
       
     } catch (error) {
       console.error(`❌ Deployment failed: ${error.message}`);
@@ -312,21 +312,21 @@ ALERT_ERROR_RATE_THRESHOLD=${this.loggingConfig.alerts.thresholds.errorRate}
 if (import.meta.main) {
   const scaling = new ProductionScalingAndLogging();
   
-  console.log('🚀 Production Scaling & Logging Configuration');
-  console.log('============================================\n');
+  console.info('🚀 Production Scaling & Logging Configuration');
+  console.info('============================================\n');
   
   scaling.deploy()
     .then(() => {
-      console.log('\n🎉 PRODUCTION SCALING & LOGGING COMPLETE!');
-      console.log('📊 Auto-scaling: ✅ Configured');
-      console.log('📝 Audit Trail: ✅ Configured');
-      console.log('🚨 Monitoring: ✅ Active');
-      console.log('💾 Storage: ✅ Ready');
-      console.log('\n💡 Next Steps:');
-      console.log('   • Apply Kubernetes HPA: kubectl apply -f ./k8s/evidence-integrity-hpa.yaml');
-      console.log('   • Configure audit trail: source ./config/audit-trail.env');
-      console.log('   • Monitor scaling events: kubectl get hpa evidence-integrity-hpa');
-      console.log('   • Review audit logs: aws s3 ls duoplus-evidence-audit-trail');
+      console.info('\n🎉 PRODUCTION SCALING & LOGGING COMPLETE!');
+      console.info('📊 Auto-scaling: ✅ Configured');
+      console.info('📝 Audit Trail: ✅ Configured');
+      console.info('🚨 Monitoring: ✅ Active');
+      console.info('💾 Storage: ✅ Ready');
+      console.info('\n💡 Next Steps:');
+      console.info('   • Apply Kubernetes HPA: kubectl apply -f ./k8s/evidence-integrity-hpa.yaml');
+      console.info('   • Configure audit trail: source ./config/audit-trail.env');
+      console.info('   • Monitor scaling events: kubectl get hpa evidence-integrity-hpa');
+      console.info('   • Review audit logs: aws s3 ls duoplus-evidence-audit-trail');
     })
     .catch((error) => {
       console.error('\n❌ Configuration failed:', error);

@@ -11,9 +11,9 @@ const [hash, subject, author, date] = lastCommit.trim().split('|');
 const stats = await $`cd /Users/nolarose/wind/eeeeee/CascadeProjects/windsurf-project && git show --stat --oneline HEAD`.text();
 const statLines = stats.split('\n').filter(l => l.includes('|'));
 
-console.log("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
-console.log("║                         ✅ COMMIT SUCCESSFUL                                           ║");
-console.log("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
+console.info("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
+console.info("║                         ✅ COMMIT SUCCESSFUL                                           ║");
+console.info("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
 
 const commitInfo = [
     {
@@ -38,10 +38,10 @@ const commitInfo = [
     }
 ];
 
-console.log(Bun.inspect.table(commitInfo, undefined, { colors: true }));
+console.info(Bun.inspect.table(commitInfo, undefined, { colors: true }));
 
 if (statLines.length > 0) {
-    console.log("\n📊 Files Changed:\n");
+    console.info("\n📊 Files Changed:\n");
     const fileStats = statLines.map(line => {
         const parts = line.trim().split('|');
         const file = parts[0].trim();
@@ -57,7 +57,7 @@ if (statLines.length > 0) {
             "Net": additions - deletions > 0 ? `+${additions - deletions}` : `${additions - deletions}`
         };
     });
-    console.log(Bun.inspect.table(fileStats, undefined, { colors: true }));
+    console.info(Bun.inspect.table(fileStats, undefined, { colors: true }));
 }
 
 // Calculate totals
@@ -75,7 +75,7 @@ const totals = statLines.reduce((acc, line) => {
     };
 }, { additions: 0, deletions: 0, files: 0 });
 
-console.log("\n📈 Summary:\n");
+console.info("\n📈 Summary:\n");
 const summary = [
     {
         "Metric": "Files Changed",
@@ -99,9 +99,9 @@ const summary = [
     }
 ];
 
-console.log(Bun.inspect.table(summary, undefined, { colors: true }));
+console.info(Bun.inspect.table(summary, undefined, { colors: true }));
 
-console.log("\n🎯 Key Changes:\n");
+console.info("\n🎯 Key Changes:\n");
 const keyChanges = [
     {
         "Component": "CSS Refactoring",
@@ -125,7 +125,7 @@ const keyChanges = [
     }
 ];
 
-console.log(Bun.inspect.table(keyChanges, undefined, { colors: true }));
+console.info(Bun.inspect.table(keyChanges, undefined, { colors: true }));
 
-console.log("\n✅ Commit created successfully!\n");
-console.log("💡 Next step: git push\n");
+console.info("\n✅ Commit created successfully!\n");
+console.info("💡 Next step: git push\n");

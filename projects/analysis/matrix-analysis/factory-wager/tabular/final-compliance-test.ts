@@ -4,8 +4,8 @@
  */
 
 async function finalComplianceTest() {
-  console.log('🔍 FactoryWager Tabular v4.2.1 - Final TypeScript Compliance Test');
-  console.log('=' .repeat(70));
+  console.info('🔍 FactoryWager Tabular v4.2.1 - Final TypeScript Compliance Test');
+  console.info('=' .repeat(70));
   
   const implementations = [
     { name: 'frontmatter-table-v421.ts', path: './factory-wager/tabular/frontmatter-table-v421.ts' },
@@ -18,8 +18,8 @@ async function finalComplianceTest() {
   let allPassed = true;
 
   for (const impl of implementations) {
-    console.log(`\n📦 Testing: ${impl.name}`);
-    console.log('-' .repeat(40));
+    console.info(`\n📦 Testing: ${impl.name}`);
+    console.info('-' .repeat(40));
     
     try {
       // Test TypeScript compilation
@@ -29,7 +29,7 @@ async function finalComplianceTest() {
       });
       
       await buildResult;
-      console.log('✅ TypeScript compilation: PASSED');
+      console.info('✅ TypeScript compilation: PASSED');
       
       // Test functionality if it's a demo file
       if (impl.name.includes('demo') || impl.name.includes('simple')) {
@@ -42,38 +42,38 @@ async function finalComplianceTest() {
         const error = await new Response(runResult.stderr).text();
         
         if (runResult.exitCode === 0) {
-          console.log('✅ Functionality test: PASSED');
+          console.info('✅ Functionality test: PASSED');
           // Show first few lines of output
           const lines = output.split('\n').slice(0, 3);
-          lines.forEach(line => console.log(`   ${line}`));
+          lines.forEach(line => console.info(`   ${line}`));
         } else {
-          console.log('❌ Functionality test: FAILED');
-          console.log(`   Error: ${error}`);
+          console.info('❌ Functionality test: FAILED');
+          console.info(`   Error: ${error}`);
           allPassed = false;
         }
       } else {
-        console.log('⏭️  Functionality test: SKIPPED (not a demo file)');
+        console.info('⏭️  Functionality test: SKIPPED (not a demo file)');
       }
       
     } catch (error: any) {
-      console.log(`❌ Compilation failed: ${error.message}`);
+      console.info(`❌ Compilation failed: ${error.message}`);
       allPassed = false;
     }
   }
 
-  console.log('\n🎯 Final Compliance Results');
-  console.log('=' .repeat(30));
+  console.info('\n🎯 Final Compliance Results');
+  console.info('=' .repeat(30));
   
   if (allPassed) {
-    console.log('🎉 ALL IMPLEMENTATIONS PASSED!');
-    console.log('✅ TypeScript compliance: 100%');
-    console.log('✅ Default value enforcement: ACTIVE');
-    console.log('✅ Null/undefined prevention: ACTIVE');
-    console.log('✅ Performance: OPTIMIZED');
-    console.log('✅ Production readiness: CONFIRMED');
+    console.info('🎉 ALL IMPLEMENTATIONS PASSED!');
+    console.info('✅ TypeScript compliance: 100%');
+    console.info('✅ Default value enforcement: ACTIVE');
+    console.info('✅ Null/undefined prevention: ACTIVE');
+    console.info('✅ Performance: OPTIMIZED');
+    console.info('✅ Production readiness: CONFIRMED');
   } else {
-    console.log('⚠️  Some implementations failed');
-    console.log('❌ Review errors above for details');
+    console.info('⚠️  Some implementations failed');
+    console.info('❌ Review errors above for details');
   }
 
   return allPassed;

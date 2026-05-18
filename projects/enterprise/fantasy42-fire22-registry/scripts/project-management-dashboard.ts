@@ -175,7 +175,7 @@ class ProjectManagementDashboard {
       try {
         await this.loadExistingData();
         if (this.config.verbose) {
-          console.log('🔄 Auto-refreshed project data');
+          console.info('🔄 Auto-refreshed project data');
         }
       } catch (error) {
         console.warn('⚠️ Auto-refresh failed:', error.message);
@@ -359,7 +359,7 @@ class ProjectManagementDashboard {
   }
 
   private async scanForTasks(): Promise<void> {
-    console.log('🔍 Scanning for tasks (TODO/FIXME/XXX/HACK)...');
+    console.info('🔍 Scanning for tasks (TODO/FIXME/XXX/HACK)...');
 
     const patterns = [
       '**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx',
@@ -419,11 +419,11 @@ class ProjectManagementDashboard {
       }
     }
 
-    console.log(`✅ Found ${this.tasks.length} tasks`);
+    console.info(`✅ Found ${this.tasks.length} tasks`);
   }
 
   private async scanForRSSFeeds(): Promise<void> {
-    console.log('📡 Scanning for RSS feeds...');
+    console.info('📡 Scanning for RSS feeds...');
 
     const feedFiles = [
       'feeds/technology.rss', 'feeds/technology.atom',
@@ -475,11 +475,11 @@ class ProjectManagementDashboard {
       }
     }
 
-    console.log(`✅ Found ${this.rssFeeds.length} RSS feeds`);
+    console.info(`✅ Found ${this.rssFeeds.length} RSS feeds`);
   }
 
   private async scanForIssues(): Promise<void> {
-    console.log('🔧 Scanning for issues and error reports...');
+    console.info('🔧 Scanning for issues and error reports...');
 
     // Look for common issue patterns
     const issueFiles = [
@@ -503,11 +503,11 @@ class ProjectManagementDashboard {
       }
     }
 
-    console.log(`✅ Found ${this.issues.length} tracked issues`);
+    console.info(`✅ Found ${this.issues.length} tracked issues`);
   }
 
   private async scanForErrorCodes(): Promise<void> {
-    console.log('🔍 Scanning for error codes and security issues...');
+    console.info('🔍 Scanning for error codes and security issues...');
 
     // Look for error code files
     const errorCodeFiles = [
@@ -529,7 +529,7 @@ class ProjectManagementDashboard {
       }
     }
 
-    console.log(`✅ Found ${this.errorCodes.length} error codes`);
+    console.info(`✅ Found ${this.errorCodes.length} error codes`);
   }
 
   private extractErrorCodesFromFile(filePath: string, content: string): ErrorCode[] {
@@ -1006,25 +1006,25 @@ if (import.meta.main) {
         case 'dashboard':
           // Ensure all data is loaded before generating report
           await dashboard.initialize();
-          console.log(dashboard.generateDashboardReport());
+          console.info(dashboard.generateDashboardReport());
           break;
 
         case 'tasks':
           const status = args[1] as Task['status'];
           await dashboard.initialize();
           const tasks = dashboard.getTasks(status ? { status } : {});
-          console.log(`📋 Tasks (${tasks.length}):`);
+          console.info(`📋 Tasks (${tasks.length}):`);
           tasks.forEach(task => {
-            console.log(`  • ${task.priority.toUpperCase()}: ${task.title} (${task.file_path}:${task.line_number})`);
+            console.info(`  • ${task.priority.toUpperCase()}: ${task.title} (${task.file_path}:${task.line_number})`);
           });
           break;
 
         case 'feeds':
           await dashboard.initialize();
           const feeds = dashboard.getRSSFeeds();
-          console.log(`📡 RSS Feeds (${feeds.length}):`);
+          console.info(`📡 RSS Feeds (${feeds.length}):`);
           feeds.forEach(feed => {
-            console.log(`  • ${feed.department}: ${feed.item_count} items (${feed.status})`);
+            console.info(`  • ${feed.department}: ${feed.item_count} items (${feed.status})`);
           });
           break;
 
@@ -1032,9 +1032,9 @@ if (import.meta.main) {
           const severity = args[1] as Issue['severity'];
           await dashboard.initialize();
           const issues = dashboard.getIssues(severity ? { severity } : {});
-          console.log(`🚨 Issues (${issues.length}):`);
+          console.info(`🚨 Issues (${issues.length}):`);
           issues.forEach(issue => {
-            console.log(`  • ${issue.severity.toUpperCase()}: ${issue.title} (${issue.category})`);
+            console.info(`  • ${issue.severity.toUpperCase()}: ${issue.title} (${issue.category})`);
           });
           break;
 
@@ -1043,7 +1043,7 @@ if (import.meta.main) {
           const report = dashboard.generateDashboardReport();
           const filename = `project-management-report-${new Date().toISOString().slice(0, 10)}.md`;
           await Bun.write(filename, report);
-          console.log(`📄 Report saved: ${filename}`);
+          console.info(`📄 Report saved: ${filename}`);
           break;
 
         case 'complete':
@@ -1051,11 +1051,11 @@ if (import.meta.main) {
           const taskId = args[1];
           const assignee = args[2];
           if (!taskId) {
-            console.log('❌ Please provide a task ID to complete');
+            console.info('❌ Please provide a task ID to complete');
             break;
           }
           const completed = dashboard.completeTask(taskId, assignee);
-          console.log(completed ? `✅ Task ${taskId} marked as completed` : `❌ Task ${taskId} not found`);
+          console.info(completed ? `✅ Task ${taskId} marked as completed` : `❌ Task ${taskId} not found`);
           break;
 
         case 'assign':
@@ -1063,81 +1063,81 @@ if (import.meta.main) {
           const assignTaskId = args[1];
           const assignAssignee = args[2];
           if (!assignTaskId || !assignAssignee) {
-            console.log('❌ Please provide task ID and assignee name');
+            console.info('❌ Please provide task ID and assignee name');
             break;
           }
           const assigned = dashboard.assignTask(assignTaskId, assignAssignee);
-          console.log(assigned ? `✅ Task ${assignTaskId} assigned to ${assignAssignee}` : `❌ Task ${assignTaskId} not found`);
+          console.info(assigned ? `✅ Task ${assignTaskId} assigned to ${assignAssignee}` : `❌ Task ${assignTaskId} not found`);
           break;
 
         case 'resolve':
           await dashboard.initialize();
           const issueId = args[1];
           if (!issueId) {
-            console.log('❌ Please provide an issue ID to resolve');
+            console.info('❌ Please provide an issue ID to resolve');
             break;
           }
           const resolved = dashboard.resolveIssue(issueId);
-          console.log(resolved ? `✅ Issue ${issueId} marked as resolved` : `❌ Issue ${issueId} not found`);
+          console.info(resolved ? `✅ Issue ${issueId} marked as resolved` : `❌ Issue ${issueId} not found`);
           break;
 
         case 'stats':
           await dashboard.initialize();
           const stats = dashboard.getDashboardStats();
-          console.log('📊 Project Statistics:');
-          console.log('\n🔧 Tasks by Priority:', stats.tasksByPriority);
-          console.log('📂 Tasks by Category:', stats.tasksByCategory);
-          console.log('📋 Tasks by Status:', stats.tasksByStatus);
-          console.log('🚨 Issues by Severity:', stats.issuesBySeverity);
-          console.log('📊 Issues by Status:', stats.issuesByStatus);
-          console.log('📡 RSS Feeds by Status:', stats.rssFeedStats);
-          console.log('\n⚡ Performance Metrics:');
-          console.log(`   Total Scans: ${stats.performanceMetrics.totalScans}`);
-          console.log(`   Average Scan Time: ${stats.performanceMetrics.averageScanTime.toFixed(2)}ms`);
-          console.log(`   Cache Hits: ${stats.performanceMetrics.cacheHits}`);
-          console.log(`   Cache Misses: ${stats.performanceMetrics.cacheMisses}`);
-          console.log(`   Errors: ${stats.performanceMetrics.errors}`);
+          console.info('📊 Project Statistics:');
+          console.info('\n🔧 Tasks by Priority:', stats.tasksByPriority);
+          console.info('📂 Tasks by Category:', stats.tasksByCategory);
+          console.info('📋 Tasks by Status:', stats.tasksByStatus);
+          console.info('🚨 Issues by Severity:', stats.issuesBySeverity);
+          console.info('📊 Issues by Status:', stats.issuesByStatus);
+          console.info('📡 RSS Feeds by Status:', stats.rssFeedStats);
+          console.info('\n⚡ Performance Metrics:');
+          console.info(`   Total Scans: ${stats.performanceMetrics.totalScans}`);
+          console.info(`   Average Scan Time: ${stats.performanceMetrics.averageScanTime.toFixed(2)}ms`);
+          console.info(`   Cache Hits: ${stats.performanceMetrics.cacheHits}`);
+          console.info(`   Cache Misses: ${stats.performanceMetrics.cacheMisses}`);
+          console.info(`   Errors: ${stats.performanceMetrics.errors}`);
           break;
 
         case 'metrics':
           await dashboard.initialize();
           const metrics = dashboard.getMetrics();
-          console.log('⚡ Performance Metrics:');
-          console.log(`   Total Scans: ${metrics.totalScans}`);
-          console.log(`   Average Scan Time: ${metrics.averageScanTime.toFixed(2)}ms`);
-          console.log(`   Cache Hits: ${metrics.cacheHits}`);
-          console.log(`   Cache Misses: ${metrics.cacheMisses}`);
-          console.log(`   Cache Hit Rate: ${metrics.cacheHits + metrics.cacheMisses > 0 ? ((metrics.cacheHits / (metrics.cacheHits + metrics.cacheMisses)) * 100).toFixed(1) : 0}%`);
-          console.log(`   Errors: ${metrics.errors}`);
+          console.info('⚡ Performance Metrics:');
+          console.info(`   Total Scans: ${metrics.totalScans}`);
+          console.info(`   Average Scan Time: ${metrics.averageScanTime.toFixed(2)}ms`);
+          console.info(`   Cache Hits: ${metrics.cacheHits}`);
+          console.info(`   Cache Misses: ${metrics.cacheMisses}`);
+          console.info(`   Cache Hit Rate: ${metrics.cacheHits + metrics.cacheMisses > 0 ? ((metrics.cacheHits / (metrics.cacheHits + metrics.cacheMisses)) * 100).toFixed(1) : 0}%`);
+          console.info(`   Errors: ${metrics.errors}`);
           break;
 
         case 'refresh':
           await dashboard.initialize();
-          console.log('🔄 Data refreshed successfully');
+          console.info('🔄 Data refreshed successfully');
           break;
 
         default:
-          console.log('Usage: bun run scripts/project-management-dashboard.ts [command] [options]');
-          console.log('');
-          console.log('Commands:');
-          console.log('  dashboard    - Show full project management dashboard');
-          console.log('  tasks [status] - List all tasks (optionally filter by status)');
-          console.log('  feeds        - List all RSS feeds');
-          console.log('  issues [severity] - List all issues (optionally filter by severity)');
-          console.log('  report       - Generate and save detailed report');
-          console.log('  complete <taskId> [assignee] - Mark task as completed');
-          console.log('  assign <taskId> <assignee> - Assign task to user');
-          console.log('  resolve <issueId> - Mark issue as resolved');
-          console.log('  stats        - Show detailed project statistics');
-          console.log('  metrics      - Show performance metrics');
-          console.log('  refresh      - Refresh all data from sources');
-          console.log('');
-          console.log('Examples:');
-          console.log('  bun run scripts/project-management-dashboard.ts dashboard');
-          console.log('  bun run scripts/project-management-dashboard.ts tasks todo');
-          console.log('  bun run scripts/project-management-dashboard.ts complete TASK_001');
-          console.log('  bun run scripts/project-management-dashboard.ts assign TASK_001 john.doe');
-          console.log('  bun run scripts/project-management-dashboard.ts stats');
+          console.info('Usage: bun run scripts/project-management-dashboard.ts [command] [options]');
+          console.info('');
+          console.info('Commands:');
+          console.info('  dashboard    - Show full project management dashboard');
+          console.info('  tasks [status] - List all tasks (optionally filter by status)');
+          console.info('  feeds        - List all RSS feeds');
+          console.info('  issues [severity] - List all issues (optionally filter by severity)');
+          console.info('  report       - Generate and save detailed report');
+          console.info('  complete <taskId> [assignee] - Mark task as completed');
+          console.info('  assign <taskId> <assignee> - Assign task to user');
+          console.info('  resolve <issueId> - Mark issue as resolved');
+          console.info('  stats        - Show detailed project statistics');
+          console.info('  metrics      - Show performance metrics');
+          console.info('  refresh      - Refresh all data from sources');
+          console.info('');
+          console.info('Examples:');
+          console.info('  bun run scripts/project-management-dashboard.ts dashboard');
+          console.info('  bun run scripts/project-management-dashboard.ts tasks todo');
+          console.info('  bun run scripts/project-management-dashboard.ts complete TASK_001');
+          console.info('  bun run scripts/project-management-dashboard.ts assign TASK_001 john.doe');
+          console.info('  bun run scripts/project-management-dashboard.ts stats');
           break;
       }
     } catch (error) {

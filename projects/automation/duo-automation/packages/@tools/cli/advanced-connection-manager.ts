@@ -995,8 +995,8 @@ export class ConnectedEcosystem extends UnifiedColorTensionEcosystem {
  * Demonstrate advanced connection management
  */
 async function demonstrateConnectionManagement(): Promise<void> {
-  console.log('🌐 ADVANCED CONNECTION MANAGEMENT DEMONSTRATION');
-  console.log('=' .repeat(60));
+  console.info('🌐 ADVANCED CONNECTION MANAGEMENT DEMONSTRATION');
+  console.info('=' .repeat(60));
 
   // Create connection manager with custom configuration
   const connectionConfig: Partial<ConnectionConfig> = {
@@ -1034,14 +1034,14 @@ async function demonstrateConnectionManagement(): Promise<void> {
 
   const connectionManager = new AdvancedConnectionManager(connectionConfig);
 
-  console.log('\n📊 CONNECTION MANAGER INITIALIZED:');
-  console.log(`  Pool: ${connectionConfig.pool?.maxConnections} max, ${connectionConfig.pool?.minConnections} min connections`);
-  console.log(`  Keep-Alive: ${connectionConfig.keepAlive?.enabled ? 'Enabled' : 'Disabled'}`);
-  console.log(`  Cookies: ${connectionConfig.cookies?.enabled ? 'Enabled' : 'Disabled'}`);
-  console.log(`  Retries: ${connectionConfig.resilience?.maxRetries} max`);
+  console.info('\n📊 CONNECTION MANAGER INITIALIZED:');
+  console.info(`  Pool: ${connectionConfig.pool?.maxConnections} max, ${connectionConfig.pool?.minConnections} min connections`);
+  console.info(`  Keep-Alive: ${connectionConfig.keepAlive?.enabled ? 'Enabled' : 'Disabled'}`);
+  console.info(`  Cookies: ${connectionConfig.cookies?.enabled ? 'Enabled' : 'Disabled'}`);
+  console.info(`  Retries: ${connectionConfig.resilience?.maxRetries} max`);
 
   // Demonstrate connection pooling
-  console.log('\n🔄 TESTING CONNECTION POOLING:');
+  console.info('\n🔄 TESTING CONNECTION POOLING:');
   
   const requests = [];
   for (let i = 0; i < 10; i++) {
@@ -1056,33 +1056,33 @@ async function demonstrateConnectionManagement(): Promise<void> {
 
   const responses = await Promise.allSettled(requests);
   
-  console.log(`  Sent 10 concurrent requests`);
-  console.log(`  Successful: ${responses.filter(r => r.status === 'fulfilled').length}`);
-  console.log(`  Failed: ${responses.filter(r => r.status === 'rejected').length}`);
+  console.info(`  Sent 10 concurrent requests`);
+  console.info(`  Successful: ${responses.filter(r => r.status === 'fulfilled').length}`);
+  console.info(`  Failed: ${responses.filter(r => r.status === 'rejected').length}`);
 
   // Show metrics
-  console.log('\n📈 CONNECTION METRICS:');
+  console.info('\n📈 CONNECTION METRICS:');
   const metrics = connectionManager.getMetrics();
-  console.log(`  Total Requests: ${metrics.totalRequests}`);
-  console.log(`  Successful: ${metrics.successfulRequests}`);
-  console.log(`  Failed: ${metrics.failedRequests}`);
-  console.log(`  Pool Hits: ${metrics.poolHits}`);
-  console.log(`  Pool Misses: ${metrics.poolMisses}`);
-  console.log(`  Average Response Time: ${Math.round(metrics.averageResponseTime)}ms`);
-  console.log(`  Circuit Breaker Activations: ${metrics.circuitBreakerActivations}`);
-  console.log(`  Pool Utilization: ${Math.round(metrics.poolUtilization * 100)}%`);
+  console.info(`  Total Requests: ${metrics.totalRequests}`);
+  console.info(`  Successful: ${metrics.successfulRequests}`);
+  console.info(`  Failed: ${metrics.failedRequests}`);
+  console.info(`  Pool Hits: ${metrics.poolHits}`);
+  console.info(`  Pool Misses: ${metrics.poolMisses}`);
+  console.info(`  Average Response Time: ${Math.round(metrics.averageResponseTime)}ms`);
+  console.info(`  Circuit Breaker Activations: ${metrics.circuitBreakerActivations}`);
+  console.info(`  Pool Utilization: ${Math.round(metrics.poolUtilization * 100)}%`);
 
   // Show pool statistics
-  console.log('\n🏊 POOL STATISTICS:');
+  console.info('\n🏊 POOL STATISTICS:');
   const poolStats = connectionManager.getPoolStatistics();
-  console.log(`  Total Hosts: ${poolStats.totalHosts}`);
-  console.log(`  Total Connections: ${poolStats.totalConnections}`);
-  console.log(`  Active Connections: ${poolStats.activeConnections}`);
-  console.log(`  Average Health Score: ${Math.round(poolStats.averageHealthScore)}%`);
-  console.log('  Connections by Host:', poolStats.connectionsByHost);
+  console.info(`  Total Hosts: ${poolStats.totalHosts}`);
+  console.info(`  Total Connections: ${poolStats.totalConnections}`);
+  console.info(`  Active Connections: ${poolStats.activeConnections}`);
+  console.info(`  Average Health Score: ${Math.round(poolStats.averageHealthScore)}%`);
+  console.info('  Connections by Host:', poolStats.connectionsByHost);
 
   // Demonstrate cookie management
-  console.log('\n🍪 COOKIE MANAGEMENT:');
+  console.info('\n🍪 COOKIE MANAGEMENT:');
   
   // Add some cookies
   connectionManager['cookieStore'].set({
@@ -1102,17 +1102,17 @@ async function demonstrateConnectionManagement(): Promise<void> {
   });
 
   const cookieInfo = connectionManager.getCookies();
-  console.log(`  Total Cookies: ${cookieInfo.total}`);
-  console.log(`  Secure Cookies: ${cookieInfo.secure}`);
-  console.log(`  Expired Cookies: ${cookieInfo.expired}`);
-  console.log('  Cookies by Domain:', cookieInfo.byDomain);
+  console.info(`  Total Cookies: ${cookieInfo.total}`);
+  console.info(`  Secure Cookies: ${cookieInfo.secure}`);
+  console.info(`  Expired Cookies: ${cookieInfo.expired}`);
+  console.info('  Cookies by Domain:', cookieInfo.byDomain);
 
   // Demonstrate ecosystem integration
-  console.log('\n🌟 ECOSYSTEM INTEGRATION:');
+  console.info('\n🌟 ECOSYSTEM INTEGRATION:');
   
   const ecosystem = new ConnectedEcosystem(undefined, connectionConfig);
   
-  console.log('  Making monitored requests...');
+  console.info('  Making monitored requests...');
   
   try {
     const response = await ecosystem.makeMonitoredRequest({
@@ -1121,67 +1121,67 @@ async function demonstrateConnectionManagement(): Promise<void> {
       systemId: 'STORAGE-ENTERPRISE-duoplus'
     });
     
-    console.log(`  Response Status: ${response.status}`);
-    console.log(`  Response Time: ${response.metrics.responseTime}ms`);
-    console.log(`  Connection ID: ${response.metrics.connectionId}`);
-    console.log(`  From Pool: ${response.metrics.fromPool}`);
-    console.log(`  Retries: ${response.metrics.retries}`);
+    console.info(`  Response Status: ${response.status}`);
+    console.info(`  Response Time: ${response.metrics.responseTime}ms`);
+    console.info(`  Connection ID: ${response.metrics.connectionId}`);
+    console.info(`  From Pool: ${response.metrics.fromPool}`);
+    console.info(`  Retries: ${response.metrics.retries}`);
     
   } catch (error) {
-    console.log(`  Request failed: ${(error as Error).message}`);
+    console.info(`  Request failed: ${(error as Error).message}`);
   }
 
   // Get ecosystem metrics
-  console.log('\n📊 ECOSYSTEM METRICS:');
+  console.info('\n📊 ECOSYSTEM METRICS:');
   const ecosystemMetrics = ecosystem.getConnectionMetrics();
   const ecosystemPoolStats = ecosystem.getPoolStatistics();
   const ecosystemCookies = ecosystem.getConnectionCookies();
   
-  console.log(`  Connection Metrics: ${ecosystemMetrics.totalRequests} requests`);
-  console.log(`  Pool Statistics: ${ecosystemPoolStats.totalConnections} connections`);
-  console.log(`  Cookie Management: ${ecosystemCookies.total} cookies`);
+  console.info(`  Connection Metrics: ${ecosystemMetrics.totalRequests} requests`);
+  console.info(`  Pool Statistics: ${ecosystemPoolStats.totalConnections} connections`);
+  console.info(`  Cookie Management: ${ecosystemCookies.total} cookies`);
 
   // Cleanup
-  console.log('\n🧹 CLEANING UP...');
+  console.info('\n🧹 CLEANING UP...');
   await connectionManager.close();
   await ecosystem.close();
 
-  console.log('\n✅ ADVANCED CONNECTION MANAGEMENT DEMONSTRATION COMPLETE!');
-  console.log('\n📋 CONNECTION MANAGEMENT FEATURES:');
-  console.log('  🌐 HTTP Keep-Alive for connection reuse');
-  console.log('  🏊 Connection pooling with health monitoring');
-  console.log('  🍪 Persistent cookie management');
-  console.log('  🔧 Dedicated headers with request tracking');
-  console.log('  ⚡ Circuit breaker pattern for resilience');
-  console.log('  🔄 Retry logic with exponential backoff');
-  console.log('  📊 Comprehensive metrics and monitoring');
-  console.log('  🔒 Secure cookie handling');
-  console.log('  🎯 Ecosystem integration with monitoring');
+  console.info('\n✅ ADVANCED CONNECTION MANAGEMENT DEMONSTRATION COMPLETE!');
+  console.info('\n📋 CONNECTION MANAGEMENT FEATURES:');
+  console.info('  🌐 HTTP Keep-Alive for connection reuse');
+  console.info('  🏊 Connection pooling with health monitoring');
+  console.info('  🍪 Persistent cookie management');
+  console.info('  🔧 Dedicated headers with request tracking');
+  console.info('  ⚡ Circuit breaker pattern for resilience');
+  console.info('  🔄 Retry logic with exponential backoff');
+  console.info('  📊 Comprehensive metrics and monitoring');
+  console.info('  🔒 Secure cookie handling');
+  console.info('  🎯 Ecosystem integration with monitoring');
 
-  console.log('\n🔧 USAGE EXAMPLES:');
-  console.log('  // Create connection manager');
-  console.log('  const manager = new AdvancedConnectionManager({');
-  console.log('    pool: { maxConnections: 10, minConnections: 2 },');
-  console.log('    keepAlive: { enabled: true, timeout: 60000 },');
-  console.log('    headers: { custom: { "X-API-Version": "1.0" } },');
-  console.log('    cookies: { enabled: true, store: new FileCookieStore() }');
-  console.log('  });');
-  console.log('');
-  console.log('  // Make request with pooling');
-  console.log('  const response = await manager.request({');
-  console.log('    method: "GET",');
-  console.log('    url: "https://api.example.com/data",');
-  console.log('    headers: { "Authorization": "Bearer token" }');
-  console.log('  });');
-  console.log('');
-  console.log('  // Use with ecosystem');
-  console.log('  const ecosystem = new ConnectedEcosystem(undefined, connectionConfig);');
-  console.log('  const response = await ecosystem.makeMonitoredRequest({');
-  console.log('    method: "POST",');
-  console.log('    url: "https://api.example.com/metrics",');
-  console.log('    systemId: "STORAGE-ENTERPRISE-duoplus",');
-  console.log('    body: { metrics: data }');
-  console.log('  });');
+  console.info('\n🔧 USAGE EXAMPLES:');
+  console.info('  // Create connection manager');
+  console.info('  const manager = new AdvancedConnectionManager({');
+  console.info('    pool: { maxConnections: 10, minConnections: 2 },');
+  console.info('    keepAlive: { enabled: true, timeout: 60000 },');
+  console.info('    headers: { custom: { "X-API-Version": "1.0" } },');
+  console.info('    cookies: { enabled: true, store: new FileCookieStore() }');
+  console.info('  });');
+  console.info('');
+  console.info('  // Make request with pooling');
+  console.info('  const response = await manager.request({');
+  console.info('    method: "GET",');
+  console.info('    url: "https://api.example.com/data",');
+  console.info('    headers: { "Authorization": "Bearer token" }');
+  console.info('  });');
+  console.info('');
+  console.info('  // Use with ecosystem');
+  console.info('  const ecosystem = new ConnectedEcosystem(undefined, connectionConfig);');
+  console.info('  const response = await ecosystem.makeMonitoredRequest({');
+  console.info('    method: "POST",');
+  console.info('    url: "https://api.example.com/metrics",');
+  console.info('    systemId: "STORAGE-ENTERPRISE-duoplus",');
+  console.info('    body: { metrics: data }');
+  console.info('  });');
 }
 
 // Run demonstration if this file is executed directly

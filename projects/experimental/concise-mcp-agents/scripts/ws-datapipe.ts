@@ -33,7 +33,7 @@ const server = Bun.serve<{ id: string }>({
 
   websocket: {
     open(ws) {
-      console.log(`🔗 Client connected: ${ws.data.id} from ${ws.remoteAddress}:${ws.remotePort}`);
+      console.info(`🔗 Client connected: ${ws.data.id} from ${ws.remoteAddress}:${ws.remotePort}`);
       ws.subscribe("syndicate-live");
 
       // Send welcome message with compression info
@@ -50,7 +50,7 @@ const server = Bun.serve<{ id: string }>({
     message(ws, message) {
       try {
         const data = JSON.parse(message as string);
-        console.log(`📨 Message from ${ws.data.id}:`, data.type);
+        console.info(`📨 Message from ${ws.data.id}:`, data.type);
 
         switch (data.type) {
           case "ping":
@@ -80,14 +80,14 @@ const server = Bun.serve<{ id: string }>({
     },
 
     close(ws, code, reason) {
-      console.log(`🔌 Client disconnected: ${ws.data.id} from ${ws.remoteAddress}:${ws.remotePort} (${code})`);
+      console.info(`🔌 Client disconnected: ${ws.data.id} from ${ws.remoteAddress}:${ws.remotePort} (${code})`);
     },
   },
 });
 
 async function handleFetchRequest(ws: any) {
   try {
-    console.log("🔄 Fetching latest data...");
+    console.info("🔄 Fetching latest data...");
 
     // Fetch and process data
     const rawData = await fetchData();
@@ -115,7 +115,7 @@ async function handleFetchRequest(ws: any) {
     };
 
     const published = server.publish("syndicate-live", JSON.stringify(broadcastData));
-    console.log(`📡 Broadcasted to ${published} clients`);
+    console.info(`📡 Broadcasted to ${published} clients`);
 
   } catch (error) {
     console.error(`❌ Fetch error: ${error}`);
@@ -173,28 +173,28 @@ setInterval(async () => {
 
     const published = server.publish("syndicate-live", JSON.stringify(statusData));
     if (published > 0) {
-      console.log(`📊 Status broadcast to ${published} clients (${bets.length} bets, ${agents.length} agents)`);
+      console.info(`📊 Status broadcast to ${published} clients (${bets.length} bets, ${agents.length} agents)`);
     }
   } catch (error) {
     console.error(`❌ Status broadcast error: ${error}`);
   }
 }, 30000);
 
-console.log(`🌐 WebSocket Live Server on ws://localhost:3001`);
-console.log(`🔐 Subprotocol: syndicate-live`);
-console.log(`🗜️  Compression: permessage-deflate`);
-console.log(`📡 Broadcasting every 30s`);
-console.log(`✅ Ready for live updates!`);
+console.info(`🌐 WebSocket Live Server on ws://localhost:3001`);
+console.info(`🔐 Subprotocol: syndicate-live`);
+console.info(`🗜️  Compression: permessage-deflate`);
+console.info(`📡 Broadcasting every 30s`);
+console.info(`✅ Ready for live updates!`);
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down WebSocket server...');
+  console.info('\n🛑 Shutting down WebSocket server...');
   server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n🛑 Shutting down WebSocket server...');
+  console.info('\n🛑 Shutting down WebSocket server...');
   server.stop();
   process.exit(0);
 });

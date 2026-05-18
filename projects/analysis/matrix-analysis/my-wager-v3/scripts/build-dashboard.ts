@@ -37,7 +37,7 @@ async function verifyNoSecrets(bundleContent: string): Promise<boolean> {
 }
 
 async function buildDashboard() {
-  console.log('🏗️ Building Tier-1380 Dashboard with PUBLIC_ env injection...');
+  console.info('🏗️ Building Tier-1380 Dashboard with PUBLIC_ env injection...');
 
   const buildStart = Date.now();
   const checksum = getHardwareChecksum();
@@ -68,7 +68,7 @@ async function buildDashboard() {
 
   // Verify output files
   const outputFiles = await readdir('./dist/dashboard');
-  console.log(`📦 Built ${outputFiles.length} files`);
+  console.info(`📦 Built ${outputFiles.length} files`);
 
   // Check each bundle for secrets
   for (const file of outputFiles) {
@@ -83,7 +83,7 @@ async function buildDashboard() {
       // Calculate CRC32 for integrity
       const buffer = await Bun.file(`./dist/dashboard/${file}`).arrayBuffer();
       const crc32 = hash.crc32(new Uint8Array(buffer)).toString(16);
-      console.log(`🔒 ${file}: CRC32 ${crc32}`);
+      console.info(`🔒 ${file}: CRC32 ${crc32}`);
     }
   }
 
@@ -99,10 +99,10 @@ async function buildDashboard() {
 
   await Bun.write('./dist/dashboard/build-metadata.json', JSON.stringify(metadata, null, 2));
 
-  console.log('✅ Dashboard build complete');
-  console.log(`📊 Build time: ${metadata.buildTime}ms`);
-  console.log(`🌐 PUBLIC_ vars injected: ${metadata.publicEnvVars.length}`);
-  console.log(`🔒 Tier-1380 checksum: ${metadata.tier1380Checksum}`);
+  console.info('✅ Dashboard build complete');
+  console.info(`📊 Build time: ${metadata.buildTime}ms`);
+  console.info(`🌐 PUBLIC_ vars injected: ${metadata.publicEnvVars.length}`);
+  console.info(`🔒 Tier-1380 checksum: ${metadata.tier1380Checksum}`);
 
   return metadata;
 }

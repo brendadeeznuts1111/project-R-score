@@ -104,7 +104,7 @@ export class WorkerThreadSafetyEngine {
       if (event.data?.type === "napi_module_loaded") {
         tracking.loadedModules.add(event.data.module);
         this.metrics.napiModulesLoaded++;
-        console.log(
+        console.info(
           `[WORKER-SAFETY] Worker ${workerId} loaded N-API module: ${event.data.module}`
         );
       }
@@ -122,7 +122,7 @@ export class WorkerThreadSafetyEngine {
       tracking.cleanupInProgress = true;
 
       if (tracking.loadedModules.size > 0) {
-        console.log(
+        console.info(
           `[WORKER-SAFETY] Worker ${workerId} has ${tracking.loadedModules.size} N-API modules, initiating cleanup`
         );
 
@@ -146,7 +146,7 @@ export class WorkerThreadSafetyEngine {
       try {
         await originalTerminate();
         this.metrics.successfulTerminations++;
-        console.log(
+        console.info(
           `[WORKER-SAFETY] Worker ${workerId} terminated successfully`
         );
       } catch (error) {
@@ -185,7 +185,7 @@ export class WorkerThreadSafetyEngine {
         if (event.data?.type === "napi_cleanup_complete") {
           clearTimeout(cleanupTimeout);
           worker.removeEventListener("message", cleanupListener);
-          console.log(
+          console.info(
             `[WORKER-SAFETY] Worker ${workerId} N-API cleanup completed`
           );
           resolve(true);
@@ -213,7 +213,7 @@ export class WorkerThreadSafetyEngine {
     // Monitor for unexpected termination
     worker.addEventListener("message", (event: any) => {
       if (event.data?.type === "worker_termination_request") {
-        console.log(`[WORKER-SAFETY] Worker ${workerId} requested termination`);
+        console.info(`[WORKER-SAFETY] Worker ${workerId} requested termination`);
       }
     });
   }
@@ -275,7 +275,7 @@ export class WorkerThreadSafetyEngine {
 
     this.trackedWorkers.clear();
     this.metrics.activeWorkers = 0;
-    console.log("[WORKER-SAFETY] Cleaned up all workers");
+    console.info("[WORKER-SAFETY] Cleaned up all workers");
   }
 
   // Generate unique worker ID

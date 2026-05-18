@@ -57,11 +57,11 @@ class LocalDatabaseSetup {
     }
 
     this.db = new Database(dbPath);
-    console.log(`🗄️ Database initialized at: ${dbPath}`);
+    console.info(`🗄️ Database initialized at: ${dbPath}`);
   }
 
   private async runMigrations(): Promise<void> {
-    console.log('🏗️ Running database migrations...');
+    console.info('🏗️ Running database migrations...');
 
     // Create migrations table
     this.db.run(`
@@ -79,7 +79,7 @@ class LocalDatabaseSetup {
         .get(migration) as any;
 
       if (existing) {
-        console.log(`✅ Migration ${migration} already executed`);
+        console.info(`✅ Migration ${migration} already executed`);
         continue;
       }
 
@@ -92,15 +92,15 @@ class LocalDatabaseSetup {
 
         // Record migration
         this.db.run('INSERT INTO migrations (name) VALUES (?)', migration);
-        console.log(`✅ Migration ${migration} executed`);
+        console.info(`✅ Migration ${migration} executed`);
       } else {
-        console.log(`⚠️ Migration file not found: ${migrationPath}`);
+        console.info(`⚠️ Migration file not found: ${migrationPath}`);
       }
     }
   }
 
   private async runSeeds(): Promise<void> {
-    console.log('🌱 Running database seeds...');
+    console.info('🌱 Running database seeds...');
 
     for (const seed of this.config.seeds) {
       const seedPath = join(process.cwd(), 'database', 'seeds', `${seed}.sql`);
@@ -108,15 +108,15 @@ class LocalDatabaseSetup {
       if (existsSync(seedPath)) {
         const sql = readFileSync(seedPath, 'utf-8');
         this.db.run(sql);
-        console.log(`✅ Seed ${seed} executed`);
+        console.info(`✅ Seed ${seed} executed`);
       } else {
-        console.log(`⚠️ Seed file not found: ${seedPath}`);
+        console.info(`⚠️ Seed file not found: ${seedPath}`);
       }
     }
   }
 
   private createDefaultTables(): void {
-    console.log('📋 Creating default tables...');
+    console.info('📋 Creating default tables...');
 
     // Users table
     this.db.run(`
@@ -168,7 +168,7 @@ class LocalDatabaseSetup {
       )
     `);
 
-    console.log('✅ Default tables created');
+    console.info('✅ Default tables created');
   }
 
   private async syncWithRemote(): Promise<void> {
@@ -176,22 +176,22 @@ class LocalDatabaseSetup {
       return;
     }
 
-    console.log('🔄 Syncing with remote database...');
+    console.info('🔄 Syncing with remote database...');
 
     try {
       for (const table of this.config.sync.tables) {
         // This would implement actual sync logic
-        console.log(`🔄 Syncing table: ${table}`);
+        console.info(`🔄 Syncing table: ${table}`);
       }
 
-      console.log('✅ Remote sync completed');
+      console.info('✅ Remote sync completed');
     } catch (error) {
-      console.log(`⚠️ Remote sync failed: ${error}`);
+      console.info(`⚠️ Remote sync failed: ${error}`);
     }
   }
 
   private createSampleData(): void {
-    console.log('🎲 Creating sample data...');
+    console.info('🎲 Creating sample data...');
 
     // Insert sample sports
     const sports = [
@@ -216,11 +216,11 @@ class LocalDatabaseSetup {
       VALUES ('admin', 'admin@apexodds.net', '$2b$10$dummy.hash.for.dev', 'admin')
     `);
 
-    console.log('✅ Sample data created');
+    console.info('✅ Sample data created');
   }
 
   async setup(): Promise<void> {
-    console.log('🚀 Setting up local database...\n');
+    console.info('🚀 Setting up local database...\n');
 
     try {
       // Create tables
@@ -238,8 +238,8 @@ class LocalDatabaseSetup {
       // Sync with remote if enabled
       await this.syncWithRemote();
 
-      console.log('\n🎉 Database setup completed successfully!');
-      console.log(`📍 Database location: ${this.config.path}`);
+      console.info('\n🎉 Database setup completed successfully!');
+      console.info(`📍 Database location: ${this.config.path}`);
 
       // Show database stats
       this.showStats();
@@ -250,7 +250,7 @@ class LocalDatabaseSetup {
   }
 
   private showStats(): void {
-    console.log('\n📊 Database Statistics:');
+    console.info('\n📊 Database Statistics:');
 
     try {
       const tables = this.db
@@ -264,15 +264,15 @@ class LocalDatabaseSetup {
 
       for (const table of tables) {
         const count = this.db.query(`SELECT COUNT(*) as count FROM ${table.name}`).get() as any;
-        console.log(`  📋 ${table.name}: ${count.count} records`);
+        console.info(`  📋 ${table.name}: ${count.count} records`);
       }
 
       const dbSize = this.db
         .query('SELECT page_count * page_size as size FROM pragma_page_count(), pragma_page_size()')
         .get() as any;
-      console.log(`  💾 Database size: ${(dbSize.size / 1024 / 1024).toFixed(2)} MB`);
+      console.info(`  💾 Database size: ${(dbSize.size / 1024 / 1024).toFixed(2)} MB`);
     } catch (error) {
-      console.log('  ⚠️ Could not retrieve statistics');
+      console.info('  ⚠️ Could not retrieve statistics');
     }
   }
 
@@ -289,11 +289,11 @@ class LocalDatabaseSetup {
     const fs = await import('fs');
     await fs.promises.copyFile(this.config.path, backupPath);
 
-    console.log(`💾 Database backup created: ${backupPath}`);
+    console.info(`💾 Database backup created: ${backupPath}`);
   }
 
   async reset(): Promise<void> {
-    console.log('⚠️ Resetting database...');
+    console.info('⚠️ Resetting database...');
 
     // Close current connection
     this.db.close();
@@ -304,7 +304,7 @@ class LocalDatabaseSetup {
       await fs.promises.unlink(this.config.path);
     }
 
-    console.log('✅ Database reset complete');
+    console.info('✅ Database reset complete');
 
     // Reinitialize
     this.initializeDatabase();
@@ -316,7 +316,7 @@ class LocalDatabaseSetup {
 
   close(): void {
     this.db.close();
-    console.log('🔒 Database connection closed');
+    console.info('🔒 Database connection closed');
   }
 }
 
@@ -352,7 +352,7 @@ if (import.meta.main) {
       break;
 
     default:
-      console.log('Usage: bun run scripts/local-db-setup.bun.ts [setup|backup|reset|stats]');
+      console.info('Usage: bun run scripts/local-db-setup.bun.ts [setup|backup|reset|stats]');
       break;
   }
 

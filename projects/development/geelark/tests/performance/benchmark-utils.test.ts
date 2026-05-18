@@ -360,8 +360,8 @@ describe("🌐 Bun-Specific Performance Tests", () => {
     expect(avgTimeout).toBeGreaterThan(8);
     expect(avgTimeout).toBeLessThan(20);
 
-    console.log(`📊 Average Bun.sleep: ${avgSleep.toFixed(2)}ms`);
-    console.log(`📊 Average setTimeout: ${avgTimeout.toFixed(2)}ms`);
+    console.info(`📊 Average Bun.sleep: ${avgSleep.toFixed(2)}ms`);
+    console.info(`📊 Average setTimeout: ${avgTimeout.toFixed(2)}ms`);
   });
 
   it("should test Bun garbage collection", () => {
@@ -379,7 +379,7 @@ describe("🌐 Bun-Specific Performance Tests", () => {
 
     // If heapStats is not available (fallback returns 0), skip the memory check
     if (beforeMemory === 0 && afterAllocation === 0) {
-      console.log("⚠️ heapStats not available, skipping memory allocation check");
+      console.info("⚠️ heapStats not available, skipping memory allocation check");
     } else {
       expect(afterAllocation).toBeGreaterThan(beforeMemory);
     }
@@ -392,9 +392,9 @@ describe("🌐 Bun-Specific Performance Tests", () => {
     const afterGC = heapStats().heapSize;
 
     // Memory should decrease after GC (though not necessarily to original level)
-    console.log(`🧠 Memory before: ${(beforeMemory / 1024).toFixed(2)}KB`);
-    console.log(`🧠 Memory after allocation: ${(afterAllocation / 1024).toFixed(2)}KB`);
-    console.log(`🧠 Memory after GC: ${(afterGC / 1024).toFixed(2)}KB`);
+    console.info(`🧠 Memory before: ${(beforeMemory / 1024).toFixed(2)}KB`);
+    console.info(`🧠 Memory after allocation: ${(afterAllocation / 1024).toFixed(2)}KB`);
+    console.info(`🧠 Memory after GC: ${(afterGC / 1024).toFixed(2)}KB`);
 
     // Just verify that GC ran (memory should not increase after cleanup)
     if (beforeMemory > 0) {

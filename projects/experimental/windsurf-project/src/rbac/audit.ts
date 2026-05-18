@@ -24,7 +24,7 @@ export class AuditLogger {
     const filePath = join(this.logDir, fileName);
     
     appendFileSync(filePath, JSON.stringify(entry) + '\n');
-    console.log(`🔍 [AUDIT] ${timestamp} | ${userId} | ${action} | ${resource}`);
+    console.info(`🔍 [AUDIT] ${timestamp} | ${userId} | ${action} | ${resource}`);
   }
 }
 

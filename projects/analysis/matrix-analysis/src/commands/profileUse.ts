@@ -38,7 +38,7 @@ export async function profileUse(
 		}
 
 		if (result.warnings.length > 0 && !options.force) {
-			console.log("\n\x1b[33mUse --force to continue with warnings\x1b[0m");
+			console.info("\n\x1b[33mUse --force to continue with warnings\x1b[0m");
 			if (!options.dryRun) {
 				process.exit(EXIT_CODES.VALIDATION_ERROR);
 			}
@@ -80,8 +80,8 @@ export async function profileUse(
 
 	if (options.dryRun) {
 		printEnvChanges(envVars, Bun.env, true);
-		console.log("\n\x1b[90mRun without --dry-run to apply, then use:\x1b[0m");
-		console.log(`\x1b[90m  eval $(bun run matrix:profile:use ${name})\x1b[0m`);
+		console.info("\n\x1b[90mRun without --dry-run to apply, then use:\x1b[0m");
+		console.info(`\x1b[90m  eval $(bun run matrix:profile:use ${name})\x1b[0m`);
 	} else {
 		printExportStatements(envVars);
 	}

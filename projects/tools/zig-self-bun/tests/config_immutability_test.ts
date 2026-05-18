@@ -129,7 +129,7 @@ test("Lockfile write is 45ns", async () => {
     const duration = nanoseconds() - start;
     
     expect(duration).toBeLessThan(50); // 45ns SLA (allowing some margin)
-    console.log(`Lockfile write: ${duration}ns`);
+    console.info(`Lockfile write: ${duration}ns`);
   } finally {
     if (existsSync(testLockfile)) {
       unlinkSync(testLockfile);
@@ -150,6 +150,6 @@ test("Config is 13 bytes (core)", () => {
   // Core config is 12 bytes (bytes 4-15, excluding CRC64)
   const coreConfig = header.slice(4, 16);
   expect(coreConfig.length).toBe(12);
-  console.log(`Config size: ${coreConfig.length} bytes`);
+  console.info(`Config size: ${coreConfig.length} bytes`);
 });
 

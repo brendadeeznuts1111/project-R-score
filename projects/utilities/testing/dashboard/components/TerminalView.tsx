@@ -15,7 +15,7 @@ export const TerminalView: React.FC = () => {
     const socket = new WebSocket(`${protocol}//${host}`);
 
     socket.onopen = () => {
-      console.log('[WS] Connected to system terminal');
+      console.info('[WS] Connected to system terminal');
       socket.send(JSON.stringify({ 
         type: 'spawn', 
         command: 'bun', 

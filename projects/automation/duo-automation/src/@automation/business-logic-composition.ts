@@ -337,7 +337,7 @@ export class ChurnPredictor extends Pattern {
 
   private async adjustCampaignBids(adjustment: number): Promise<void> {
     // Adjust campaign bids based on churn risk
-    console.log(`Adjusting campaign bids by ${adjustment}`);
+    console.info(`Adjusting campaign bids by ${adjustment}`);
   }
 }
 
@@ -414,7 +414,7 @@ export class ComplianceAudit extends Pattern {
 
   private async alertComplianceTeam(enriched: any): Promise<void> {
     // Alert compliance team for sensitive operations
-    console.log(`ALERT: Sensitive operation ${enriched.operation} on ${enriched.e164}`);
+    console.info(`ALERT: Sensitive operation ${enriched.operation} on ${enriched.e164}`);
   }
 
   async generateReport(tenantId: string, dateRange: DateRange): Promise<ComplianceReport> {
@@ -496,7 +496,7 @@ class PredictiveCampaignRouter {
   constructor(private config: any) {}
   
   async exec(phone: string, campaign: any): Promise<void> {
-    console.log(`Routing ${phone} to campaign ${campaign.type}`);
+    console.info(`Routing ${phone} to campaign ${campaign.type}`);
   }
 }
 

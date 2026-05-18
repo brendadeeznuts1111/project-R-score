@@ -7,26 +7,26 @@ config({ path: './.env' });
 import { BunR2AppleManager } from '../../src/storage/r2-apple-manager.js';
 
 async function liveURLPatternR2Demo() {
-  console.log('🔗 **Live URLPattern + R2 Integration** 🔗');
-  console.log('='.repeat(50));
+  console.info('🔗 **Live URLPattern + R2 Integration** 🔗');
+  console.info('='.repeat(50));
 
   const { URLPattern } = globalThis as any;
   const manager = new BunR2AppleManager({}, Bun.env.R2_BUCKET!);
 
   // Pattern definition
   const appleIdPattern = new URLPattern({ pathname: 'apple-ids/:userId.json' });
-  console.log(`📋 Pattern: ${appleIdPattern.pathname}`);
+  console.info(`📋 Pattern: ${appleIdPattern.pathname}`);
 
   // Test file path
   const filePath = 'apple-ids/demo-user.json';
-  console.log(`📁 File: ${filePath}`);
+  console.info(`📁 File: ${filePath}`);
 
   // Pattern matching + parameter extraction
   const result = appleIdPattern.exec({ pathname: filePath });
-  console.log(`🎯 Match: ${result ? '✅' : '❌'}`);
+  console.info(`🎯 Match: ${result ? '✅' : '❌'}`);
   
   if (result) {
-    console.log(`📊 Extracted: ${JSON.stringify(result.pathname.groups)}`);
+    console.info(`📊 Extracted: ${JSON.stringify(result.pathname.groups)}`);
     
     // Create user data with extracted metadata
     const userData = {
@@ -36,39 +36,39 @@ async function liveURLPatternR2Demo() {
       source: 'urlpattern-integration'
     };
     
-    console.log(`👤 User Data: ${JSON.stringify(userData)}`);
+    console.info(`👤 User Data: ${JSON.stringify(userData)}`);
 
     // R2 upload with metadata
-    console.log(`\n🚀 Uploading to R2...`);
+    console.info(`\n🚀 Uploading to R2...`);
     try {
       const uploadResult = await manager.uploadAppleID(userData, filePath);
       
       if (uploadResult.success) {
-        console.log(`✅ Upload Success!`);
-        console.log(`📦 Size: ${uploadResult.size} bytes`);
-        console.log(`🗜️ Compression: ${uploadResult.savings.toFixed(1)}%`);
-        console.log(`🔗 Public URL: https://pub-295f9061822d480cbe2b81318d88d774.r2.dev/${filePath}`);
+        console.info(`✅ Upload Success!`);
+        console.info(`📦 Size: ${uploadResult.size} bytes`);
+        console.info(`🗜️ Compression: ${uploadResult.savings.toFixed(1)}%`);
+        console.info(`🔗 Public URL: https://pub-295f9061822d480cbe2b81318d88d774.r2.dev/${filePath}`);
         
         // Verify the upload by reading back
-        console.log(`\n📥 Verifying upload...`);
+        console.info(`\n📥 Verifying upload...`);
         const downloaded = await manager.readAsText(filePath);
         const parsed = JSON.parse(downloaded);
         
-        console.log(`✅ Verification Success!`);
-        console.log(`👤 Downloaded User: ${parsed.userId}`);
-        console.log(`📧 Email: ${parsed.email}`);
-        console.log(`⏰ Timestamp: ${parsed.timestamp}`);
+        console.info(`✅ Verification Success!`);
+        console.info(`👤 Downloaded User: ${parsed.userId}`);
+        console.info(`📧 Email: ${parsed.email}`);
+        console.info(`⏰ Timestamp: ${parsed.timestamp}`);
         
       } else {
-        console.log(`❌ Upload Failed`);
+        console.info(`❌ Upload Failed`);
       }
     } catch (error: any) {
-      console.log(`❌ Error: ${error.message}`);
+      console.info(`❌ Error: ${error.message}`);
     }
   }
 
   // Show multiple patterns working together
-  console.log(`\n🔧 **Multiple Pattern Example**`);
+  console.info(`\n🔧 **Multiple Pattern Example**`);
   
   const patterns = {
     users: new URLPattern({ pathname: 'apple-ids/:userId.json' }),
@@ -86,17 +86,17 @@ async function liveURLPatternR2Demo() {
     for (const [name, pattern] of Object.entries(patterns)) {
       if (pattern.test({ pathname: file })) {
         const result = pattern.exec({ pathname: file });
-        console.log(`📄 ${name}: ${file} → ${JSON.stringify(result?.pathname.groups)}`);
+        console.info(`📄 ${name}: ${file} → ${JSON.stringify(result?.pathname.groups)}`);
         break;
       }
     }
   });
 
-  console.log(`\n🎉 **Live Demo Complete!**`);
-  console.log(`✅ URLPattern working perfectly`);
-  console.log(`✅ R2 integration successful`);
-  console.log(`✅ Parameter extraction functional`);
-  console.log(`✅ File upload & verification complete`);
+  console.info(`\n🎉 **Live Demo Complete!**`);
+  console.info(`✅ URLPattern working perfectly`);
+  console.info(`✅ R2 integration successful`);
+  console.info(`✅ Parameter extraction functional`);
+  console.info(`✅ File upload & verification complete`);
 }
 
 // Run the live demo

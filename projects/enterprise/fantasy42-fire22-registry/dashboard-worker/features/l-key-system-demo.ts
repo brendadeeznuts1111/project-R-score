@@ -50,7 +50,7 @@ export class LKeySystemDemo {
    * Run complete L-Key system demonstration
    */
   public async runCompleteDemo(): Promise<void> {
-    console.log('\n🔥🔥🔥 FIRE22 L-KEY SYSTEM DEMONSTRATION 🔥🔥🔥\n');
+    console.info('\n🔥🔥🔥 FIRE22 L-KEY SYSTEM DEMONSTRATION 🔥🔥🔥\n');
 
     // Demo 1: L-Key Mapping Basics
     await this.demonstrateLKeyMappingBasics();
@@ -76,14 +76,14 @@ export class LKeySystemDemo {
     // Demo 8: System Analytics
     await this.demonstrateSystemAnalytics();
 
-    console.log('\n✅ L-KEY SYSTEM DEMONSTRATION COMPLETE!\n');
+    console.info('\n✅ L-KEY SYSTEM DEMONSTRATION COMPLETE!\n');
   }
 
   /**
    * Demo 1: L-Key Mapping Basics
    */
   private async demonstrateLKeyMappingBasics(): Promise<void> {
-    console.log('📋 === DEMO 1: L-KEY MAPPING BASICS ===\n');
+    console.info('📋 === DEMO 1: L-KEY MAPPING BASICS ===\n');
 
     // Show L-Key mappings for different categories
     const examples = [
@@ -94,30 +94,30 @@ export class LKeySystemDemo {
       { value: ORDER_CONSTANTS.STATUS.FILLED, category: 'Status' },
     ];
 
-    console.log('🗂️  L-Key Mappings:');
+    console.info('🗂️  L-Key Mappings:');
     for (const example of examples) {
       const lKey = getLKeyForValue(example.value);
       const category = getLKeyCategoryPrefix(lKey!);
-      console.log(`   ${example.category}: ${example.value} → ${lKey} (${category})`);
+      console.info(`   ${example.category}: ${example.value} → ${lKey} (${category})`);
     }
 
     // Show reverse mapping
-    console.log('\n🔄 Reverse L-Key Lookups:');
+    console.info('\n🔄 Reverse L-Key Lookups:');
     const lKeyExamples = ['L2003', 'L3001', 'L4002', 'L5004', 'L6004'];
     for (const lKey of lKeyExamples) {
       const value = getValueForLKey(lKey);
       const category = getLKeyCategoryPrefix(lKey);
-      console.log(`   ${lKey} (${category}) → ${value}`);
+      console.info(`   ${lKey} (${category}) → ${value}`);
     }
 
-    console.log('\n');
+    console.info('\n');
   }
 
   /**
    * Demo 2: Customer Entity Mapping
    */
   private async demonstrateCustomerMapping(): Promise<void> {
-    console.log('👥 === DEMO 2: CUSTOMER ENTITY MAPPING ===\n');
+    console.info('👥 === DEMO 2: CUSTOMER ENTITY MAPPING ===\n');
 
     // Create sample customers
     const customers = [
@@ -144,7 +144,7 @@ export class LKeySystemDemo {
       },
     ];
 
-    console.log('👤 Creating Customer Entities:');
+    console.info('👤 Creating Customer Entities:');
     for (const customer of customers) {
       const entity = entityMapper.mapCustomer({
         id: customer.id,
@@ -158,18 +158,18 @@ export class LKeySystemDemo {
         },
       });
 
-      console.log(`   ${customer.username}: ${entity.id} → ${entity.lKey} (${entity.type})`);
-      console.log(`     Service Tier: ${customer.serviceTier}, Category: ${entity.category}`);
+      console.info(`   ${customer.username}: ${entity.id} → ${entity.lKey} (${entity.type})`);
+      console.info(`     Service Tier: ${customer.serviceTier}, Category: ${entity.category}`);
     }
 
-    console.log('\n');
+    console.info('\n');
   }
 
   /**
    * Demo 3: P2P Transaction Flow
    */
   private async demonstrateP2PTransactionFlow(): Promise<void> {
-    console.log('💸 === DEMO 3: P2P TRANSACTION FLOW ===\n');
+    console.info('💸 === DEMO 3: P2P TRANSACTION FLOW ===\n');
 
     // Create P2P transaction request
     const p2pRequest = {
@@ -191,35 +191,35 @@ export class LKeySystemDemo {
       description: 'High-value P2P transfer with tier 3 benefits',
     };
 
-    console.log('🔄 Processing P2P Transaction:');
-    console.log(`   From: ${p2pRequest.fromUsername} (${p2pRequest.fromCustomerType})`);
-    console.log(`   To: ${p2pRequest.toUsername} (${p2pRequest.toCustomerType})`);
-    console.log(`   Amount: $${p2pRequest.amount.toLocaleString()}`);
-    console.log(`   Payment Method: ${p2pRequest.paymentMethod}`);
+    console.info('🔄 Processing P2P Transaction:');
+    console.info(`   From: ${p2pRequest.fromUsername} (${p2pRequest.fromCustomerType})`);
+    console.info(`   To: ${p2pRequest.toUsername} (${p2pRequest.toCustomerType})`);
+    console.info(`   Amount: $${p2pRequest.amount.toLocaleString()}`);
+    console.info(`   Payment Method: ${p2pRequest.paymentMethod}`);
 
     const processedTx = await this.transactionProcessor.processTransaction(p2pRequest);
 
-    console.log('\n📊 Transaction Results:');
-    console.log(`   Status: ${processedTx.status} (${processedTx.statusLKey})`);
-    console.log(
+    console.info('\n📊 Transaction Results:');
+    console.info(`   Status: ${processedTx.status} (${processedTx.statusLKey})`);
+    console.info(
       `   Total Fee: $${processedTx.fees.totalFee.toFixed(2)} (${(processedTx.fees.effectiveRate * 100).toFixed(3)}%)`
     );
-    console.log(`   Tier Discount: -$${processedTx.fees.tierDiscount.toFixed(2)}`);
-    console.log(`   Volume Discount: -$${processedTx.fees.volumeDiscount.toFixed(2)}`);
-    console.log(`   Risk Score: ${processedTx.riskScore}/100`);
-    console.log(`   Settlement Hash: ${processedTx.settlementHash}`);
+    console.info(`   Tier Discount: -$${processedTx.fees.tierDiscount.toFixed(2)}`);
+    console.info(`   Volume Discount: -$${processedTx.fees.volumeDiscount.toFixed(2)}`);
+    console.info(`   Risk Score: ${processedTx.riskScore}/100`);
+    console.info(`   Settlement Hash: ${processedTx.settlementHash}`);
 
-    console.log('\n🔗 L-Key Flow Sequence:');
-    console.log(`   ${processedTx.flowSequence.join(' → ')}`);
+    console.info('\n🔗 L-Key Flow Sequence:');
+    console.info(`   ${processedTx.flowSequence.join(' → ')}`);
 
-    console.log('\n');
+    console.info('\n');
   }
 
   /**
    * Demo 4: OTC Trading Flow
    */
   private async demonstrateOTCTradingFlow(): Promise<void> {
-    console.log('💎 === DEMO 4: OTC TRADING FLOW ===\n');
+    console.info('💎 === DEMO 4: OTC TRADING FLOW ===\n');
 
     // Create OTC order request
     const otcRequest = {
@@ -240,39 +240,39 @@ export class LKeySystemDemo {
       isIceberg: false,
     };
 
-    console.log('📈 Placing OTC Block Order:');
-    console.log(`   Trader: ${otcRequest.telegramUsername} (${otcRequest.customerType})`);
-    console.log(
+    console.info('📈 Placing OTC Block Order:');
+    console.info(`   Trader: ${otcRequest.telegramUsername} (${otcRequest.customerType})`);
+    console.info(
       `   Order: ${otcRequest.side} ${otcRequest.amount.toLocaleString()} USD of ${otcRequest.asset}`
     );
-    console.log(`   Type: ${otcRequest.type}`);
-    console.log(`   Target Price: $${otcRequest.targetPrice?.toLocaleString()}`);
+    console.info(`   Type: ${otcRequest.type}`);
+    console.info(`   Target Price: $${otcRequest.targetPrice?.toLocaleString()}`);
 
     try {
       const placedOrder = await this.otcEngine.placeOrder(otcRequest);
 
-      console.log('\n✅ Order Placed Successfully:');
-      console.log(`   Order ID: ${placedOrder.id}`);
-      console.log(`   Order L-Key: ${placedOrder.orderLKey}`);
-      console.log(`   Customer L-Key: ${placedOrder.customerLKey}`);
-      console.log(`   Status: ${placedOrder.status} (${placedOrder.statusLKey})`);
-      console.log(`   Priority: ${placedOrder.priority}`);
-      console.log(`   Commission Rate: ${(placedOrder.commissionRate * 100).toFixed(3)}%`);
+      console.info('\n✅ Order Placed Successfully:');
+      console.info(`   Order ID: ${placedOrder.id}`);
+      console.info(`   Order L-Key: ${placedOrder.orderLKey}`);
+      console.info(`   Customer L-Key: ${placedOrder.customerLKey}`);
+      console.info(`   Status: ${placedOrder.status} (${placedOrder.statusLKey})`);
+      console.info(`   Priority: ${placedOrder.priority}`);
+      console.info(`   Commission Rate: ${(placedOrder.commissionRate * 100).toFixed(3)}%`);
 
-      console.log('\n🔍 Audit Trail:');
-      console.log(`   L-Keys: ${placedOrder.auditTrail.join(', ')}`);
+      console.info('\n🔍 Audit Trail:');
+      console.info(`   L-Keys: ${placedOrder.auditTrail.join(', ')}`);
     } catch (error: any) {
-      console.log(`\n❌ Order Failed: ${error.message}`);
+      console.info(`\n❌ Order Failed: ${error.message}`);
     }
 
-    console.log('\n');
+    console.info('\n');
   }
 
   /**
    * Demo 5: Complex Multi-Party Transaction
    */
   private async demonstrateComplexTransaction(): Promise<void> {
-    console.log('🔗 === DEMO 5: COMPLEX MULTI-PARTY TRANSACTION ===\n');
+    console.info('🔗 === DEMO 5: COMPLEX MULTI-PARTY TRANSACTION ===\n');
 
     // Simulate affiliate commission transaction
     const affiliateRequest = {
@@ -301,41 +301,41 @@ export class LKeySystemDemo {
       },
     };
 
-    console.log('💰 Processing Affiliate Commission:');
-    console.log(`   From: Platform → ${affiliateRequest.toUsername}`);
-    console.log(`   Commission: $${affiliateRequest.amount.toLocaleString()}`);
-    console.log(`   Affiliate Tier: ${affiliateRequest.metadata?.affiliateTier}`);
-    console.log(
+    console.info('💰 Processing Affiliate Commission:');
+    console.info(`   From: Platform → ${affiliateRequest.toUsername}`);
+    console.info(`   Commission: $${affiliateRequest.amount.toLocaleString()}`);
+    console.info(`   Affiliate Tier: ${affiliateRequest.metadata?.affiliateTier}`);
+    console.info(
       `   Referral Volume: $${affiliateRequest.metadata?.referralVolume.toLocaleString()}`
     );
 
     const affiliateTx = await this.transactionProcessor.processTransaction(affiliateRequest);
 
-    console.log('\n📋 Commission Transaction Results:');
-    console.log(`   Status: ${affiliateTx.status}`);
-    console.log(`   Platform Fee: $${affiliateTx.fees.totalFee.toFixed(2)} (Platform absorbs)`);
-    console.log(`   Net Payment: $${(affiliateTx.amount - affiliateTx.fees.totalFee).toFixed(2)}`);
+    console.info('\n📋 Commission Transaction Results:');
+    console.info(`   Status: ${affiliateTx.status}`);
+    console.info(`   Platform Fee: $${affiliateTx.fees.totalFee.toFixed(2)} (Platform absorbs)`);
+    console.info(`   Net Payment: $${(affiliateTx.amount - affiliateTx.fees.totalFee).toFixed(2)}`);
 
     // Show how this connects to the original customer transaction
     const originalTx = this.transactionProcessor.getTransaction('TXN_P2P_001');
     if (originalTx) {
       const commissionAmount = originalTx.fees.totalFee * 0.3; // 30% affiliate rate
-      console.log('\n🔗 Connection to Original Transaction:');
-      console.log(`   Original P2P Fee: $${originalTx.fees.totalFee.toFixed(2)}`);
-      console.log(`   Affiliate Commission (30%): $${commissionAmount.toFixed(2)}`);
-      console.log(
+      console.info('\n🔗 Connection to Original Transaction:');
+      console.info(`   Original P2P Fee: $${originalTx.fees.totalFee.toFixed(2)}`);
+      console.info(`   Affiliate Commission (30%): $${commissionAmount.toFixed(2)}`);
+      console.info(
         `   Platform Revenue: $${(originalTx.fees.totalFee - commissionAmount).toFixed(2)}`
       );
     }
 
-    console.log('\n');
+    console.info('\n');
   }
 
   /**
    * Demo 6: Fee Calculation with All Discounts
    */
   private async demonstrateFeeCalculation(): Promise<void> {
-    console.log('💳 === DEMO 6: COMPREHENSIVE FEE CALCULATION ===\n');
+    console.info('💳 === DEMO 6: COMPREHENSIVE FEE CALCULATION ===\n');
 
     const testCases = [
       {
@@ -372,26 +372,26 @@ export class LKeySystemDemo {
       },
     ];
 
-    console.log('📊 Fee Calculation Examples:\n');
+    console.info('📊 Fee Calculation Examples:\n');
 
     for (const testCase of testCases) {
-      console.log(`   ${testCase.name}:`);
-      console.log(`     Amount: $${testCase.amount.toLocaleString()}`);
-      console.log(`     Customer: ${testCase.customerType} (Tier ${testCase.serviceTier})`);
-      console.log(`     Payment: ${testCase.paymentMethod}`);
-      console.log(`     Monthly Volume: $${testCase.monthlyVolume.toLocaleString()}`);
+      console.info(`   ${testCase.name}:`);
+      console.info(`     Amount: $${testCase.amount.toLocaleString()}`);
+      console.info(`     Customer: ${testCase.customerType} (Tier ${testCase.serviceTier})`);
+      console.info(`     Payment: ${testCase.paymentMethod}`);
+      console.info(`     Monthly Volume: $${testCase.monthlyVolume.toLocaleString()}`);
 
       const fees = calculateTotalFee(testCase);
 
-      console.log(`     Results:`);
-      console.log(`       Base Fee: $${fees.baseFee.toFixed(2)}`);
-      console.log(`       Tier Discount: -$${fees.tierDiscount.toFixed(2)}`);
-      console.log(`       Volume Discount: -$${fees.volumeDiscount.toFixed(2)}`);
-      console.log(`       Payment Surcharge: $${fees.paymentSurcharge.toFixed(2)}`);
-      console.log(
+      console.info(`     Results:`);
+      console.info(`       Base Fee: $${fees.baseFee.toFixed(2)}`);
+      console.info(`       Tier Discount: -$${fees.tierDiscount.toFixed(2)}`);
+      console.info(`       Volume Discount: -$${fees.volumeDiscount.toFixed(2)}`);
+      console.info(`       Payment Surcharge: $${fees.paymentSurcharge.toFixed(2)}`);
+      console.info(
         `       Total Fee: $${fees.totalFee.toFixed(2)} (${(fees.effectiveRate * 100).toFixed(3)}%)`
       );
-      console.log(`       Savings vs Base: $${(fees.baseFee - fees.totalFee).toFixed(2)}\n`);
+      console.info(`       Savings vs Base: $${(fees.baseFee - fees.totalFee).toFixed(2)}\n`);
     }
   }
 
@@ -399,7 +399,7 @@ export class LKeySystemDemo {
    * Demo 7: Audit Trail and Reporting
    */
   private async demonstrateAuditTrailReporting(): Promise<void> {
-    console.log('📋 === DEMO 7: AUDIT TRAIL & REPORTING ===\n');
+    console.info('📋 === DEMO 7: AUDIT TRAIL & REPORTING ===\n');
 
     // Generate audit report
     const startDate = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours ago
@@ -407,15 +407,15 @@ export class LKeySystemDemo {
 
     const auditReport = auditTrailMapper.generateAuditReport(startDate, endDate);
 
-    console.log('📈 System Audit Report (Last 24 Hours):');
-    console.log(`   Total Audit Entries: ${auditReport.totalEntries}`);
+    console.info('📈 System Audit Report (Last 24 Hours):');
+    console.info(`   Total Audit Entries: ${auditReport.totalEntries}`);
 
-    console.log('\n   📊 Actions Breakdown:');
+    console.info('\n   📊 Actions Breakdown:');
     for (const [action, count] of Object.entries(auditReport.byAction)) {
-      console.log(`     ${action}: ${count}`);
+      console.info(`     ${action}: ${count}`);
     }
 
-    console.log('\n   🔑 L-Key Usage:');
+    console.info('\n   🔑 L-Key Usage:');
     const sortedLKeys = Object.entries(auditReport.byLKey)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 10);
@@ -423,49 +423,49 @@ export class LKeySystemDemo {
     for (const [lKey, count] of sortedLKeys) {
       const value = getValueForLKey(lKey);
       const category = getLKeyCategoryPrefix(lKey);
-      console.log(`     ${lKey} (${category}): ${value} - ${count} uses`);
+      console.info(`     ${lKey} (${category}): ${value} - ${count} uses`);
     }
 
-    console.log('\n   🕒 Recent Activity:');
+    console.info('\n   🕒 Recent Activity:');
     const recentEntries = auditReport.timeline.slice(-5);
     for (const entry of recentEntries) {
-      console.log(`     ${entry.timestamp.toISOString()}: ${entry.action} (${entry.lKey})`);
+      console.info(`     ${entry.timestamp.toISOString()}: ${entry.action} (${entry.lKey})`);
     }
 
-    console.log('\n');
+    console.info('\n');
   }
 
   /**
    * Demo 8: System Analytics
    */
   private async demonstrateSystemAnalytics(): Promise<void> {
-    console.log('📊 === DEMO 8: SYSTEM ANALYTICS ===\n');
+    console.info('📊 === DEMO 8: SYSTEM ANALYTICS ===\n');
 
     // Generate transaction processor report
     const txReport = this.transactionProcessor.generateReport();
 
-    console.log('💼 Transaction Processing Analytics:');
-    console.log(`   Total Transactions: ${txReport.totalTransactions}`);
-    console.log(`   Total Volume: $${txReport.totalVolume.toLocaleString()}`);
-    console.log(`   Total Fees Collected: $${txReport.totalFees.toLocaleString()}`);
-    console.log(`   Average Risk Score: ${txReport.averageRiskScore.toFixed(1)}/100`);
-    console.log(
+    console.info('💼 Transaction Processing Analytics:');
+    console.info(`   Total Transactions: ${txReport.totalTransactions}`);
+    console.info(`   Total Volume: $${txReport.totalVolume.toLocaleString()}`);
+    console.info(`   Total Fees Collected: $${txReport.totalFees.toLocaleString()}`);
+    console.info(`   Average Risk Score: ${txReport.averageRiskScore.toFixed(1)}/100`);
+    console.info(
       `   Average Transaction Size: $${(txReport.totalVolume / txReport.totalTransactions).toLocaleString()}`
     );
 
-    console.log('\n   📈 Status Distribution:');
+    console.info('\n   📈 Status Distribution:');
     for (const [status, count] of Object.entries(txReport.byStatus)) {
       const percentage = ((count / txReport.totalTransactions) * 100).toFixed(1);
-      console.log(`     ${status}: ${count} (${percentage}%)`);
+      console.info(`     ${status}: ${count} (${percentage}%)`);
     }
 
-    console.log('\n   🔄 Transaction Types:');
+    console.info('\n   🔄 Transaction Types:');
     for (const [type, count] of Object.entries(txReport.byType)) {
       const percentage = ((count / txReport.totalTransactions) * 100).toFixed(1);
-      console.log(`     ${type}: ${count} (${percentage}%)`);
+      console.info(`     ${type}: ${count} (${percentage}%)`);
     }
 
-    console.log('\n   🔑 Most Used L-Keys:');
+    console.info('\n   🔑 Most Used L-Keys:');
     const sortedLKeys = Object.entries(txReport.byLKey)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 8);
@@ -473,14 +473,14 @@ export class LKeySystemDemo {
     for (const [lKey, count] of sortedLKeys) {
       const value = getValueForLKey(lKey);
       const category = getLKeyCategoryPrefix(lKey);
-      console.log(`     ${lKey} (${category}): ${value} - ${count} uses`);
+      console.info(`     ${lKey} (${category}): ${value} - ${count} uses`);
     }
 
     // Entity mapper summary
     const entityExport = entityMapper.exportMappings();
 
-    console.log(`\n   👥 Entity Mapping Summary:`);
-    console.log(`     Total Entities: ${entityExport.entities.length}`);
+    console.info(`\n   👥 Entity Mapping Summary:`);
+    console.info(`     Total Entities: ${entityExport.entities.length}`);
 
     const categoryCount: Record<string, number> = {};
     for (const entity of entityExport.entities) {
@@ -488,10 +488,10 @@ export class LKeySystemDemo {
     }
 
     for (const [category, count] of Object.entries(categoryCount)) {
-      console.log(`     ${category}s: ${count}`);
+      console.info(`     ${category}s: ${count}`);
     }
 
-    console.log('\n');
+    console.info('\n');
   }
 }
 

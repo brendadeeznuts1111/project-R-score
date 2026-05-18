@@ -149,22 +149,22 @@ function processSimpleFile(filename: string, content: unknown): SimpleFileInfo {
 
 // Demo execution
 function runDemo() {
-  console.log('🎯 Pattern Matching Demo');
-  console.log('='.repeat(50));
+  console.info('🎯 Pattern Matching Demo');
+  console.info('='.repeat(50));
   
   // Demo 1: Basic Pattern Matching
-  console.log('\n📝 Basic Pattern Matching:');
+  console.info('\n📝 Basic Pattern Matching:');
   const testValues = [
     "hello", "123", "45.67", [1, 2, 3], 
     { status: "active" }, { age: 25 }, { age: 15 }, 42
   ];
   
   testValues.forEach(value => {
-    console.log(`  ${JSON.stringify(value)} → ${analyzeValue(value)}`);
+    console.info(`  ${JSON.stringify(value)} → ${analyzeValue(value)}`);
   });
   
   // Demo 2: Network States
-  console.log('\n🌐 Network State Matching:');
+  console.info('\n🌐 Network State Matching:');
   const networkStates: NetworkState[] = [
     { type: 'idle' },
     { type: 'loading', progress: 45 },
@@ -173,11 +173,11 @@ function runDemo() {
   ];
   
   networkStates.forEach(state => {
-    console.log(`  ${state.type} → ${getNetworkStatus(state)}`);
+    console.info(`  ${state.type} → ${getNetworkStatus(state)}`);
   });
   
   // Demo 3: User Validation
-  console.log('\n👤 User Validation:');
+  console.info('\n👤 User Validation:');
   const testUsers = [
     { id: 1, name: 'John Doe', email: 'john@example.com', role: 'admin' as const },
     { id: -1, name: 'A', email: 'invalid', role: 'invalid' as const },
@@ -186,14 +186,14 @@ function runDemo() {
   
   testUsers.forEach(user => {
     const validation = validateUser(user);
-    console.log(`  ${JSON.stringify(user)} → ${validation.valid ? '✅ Valid' : '❌ Invalid'}`);
+    console.info(`  ${JSON.stringify(user)} → ${validation.valid ? '✅ Valid' : '❌ Invalid'}`);
     if (!validation.valid) {
-      validation.errors.forEach(error => console.log(`    - ${error}`));
+      validation.errors.forEach(error => console.info(`    - ${error}`));
     }
   });
   
   // Demo 4: Simple Event Handling
-  console.log('\n⚡ Simple Event Handling:');
+  console.info('\n⚡ Simple Event Handling:');
   const events: SimpleEvent[] = [
     { type: 'click', x: 100, y: 200 },
     { type: 'keydown', key: 'Enter' },
@@ -202,11 +202,11 @@ function runDemo() {
   ];
   
   events.forEach(event => {
-    console.log(`  ${event.type} → ${handleSimpleEvent(event)}`);
+    console.info(`  ${event.type} → ${handleSimpleEvent(event)}`);
   });
   
   // Demo 5: Simple File Processing
-  console.log('\n📁 Simple File Processing:');
+  console.info('\n📁 Simple File Processing:');
   const files = [
     ['test.txt', 'Hello\nWorld\nBun!'],
     ['config.json', '{"debug": true, "port": 3000}'],
@@ -217,15 +217,15 @@ function runDemo() {
   
   files.forEach(([filename, content]) => {
     const result = processSimpleFile(filename as string, content);
-    console.log(`  ${filename} → ${result.type}${result.type === 'error' ? `: ${result.message}` : ''}`);
+    console.info(`  ${filename} → ${result.type}${result.type === 'error' ? `: ${result.message}` : ''}`);
   });
   
-  console.log('\n✨ Demo completed!');
+  console.info('\n✨ Demo completed!');
 }
 
 // Handle graceful shutdown
 process.on("SIGINT", () => {
-  console.log("\n👋 Shutting down demo...");
+  console.info("\n👋 Shutting down demo...");
   process.exit(0);
 });
 

@@ -402,12 +402,12 @@ function generateReport(result: AnalysisResult): string {
  */
 async function main() {
   try {
-    console.log('🔍 Finding profile.md files...\n');
+    console.info('🔍 Finding profile.md files...\n');
     
     const profiles = findProfileFiles(ROOT_DIR);
-    console.log(`Found ${profiles.length} profile.md files\n`);
+    console.info(`Found ${profiles.length} profile.md files\n`);
 
-    console.log('📊 Analyzing bottlenecks...\n');
+    console.info('📊 Analyzing bottlenecks...\n');
 
     const stats: BottleneckStats[] = [];
 
@@ -420,21 +420,21 @@ async function main() {
         stats.push(stat);
 
         if (stat.profileExists) {
-          console.log(`  ✅ ${projectName}:`);
+          console.info(`  ✅ ${projectName}:`);
           if (stat.totalHeapSize) {
             const heapMB = (stat.totalHeapSize / 1024 / 1024).toFixed(2);
-            console.log(`     Heap Size: ${heapMB} MB`);
+            console.info(`     Heap Size: ${heapMB} MB`);
           }
           if (stat.totalObjects) {
-            console.log(`     Total Objects: ${stat.totalObjects.toLocaleString()}`);
+            console.info(`     Total Objects: ${stat.totalObjects.toLocaleString()}`);
           }
-          console.log(`     Functions: ${stat.functionCount.toLocaleString()}`);
+          console.info(`     Functions: ${stat.functionCount.toLocaleString()}`);
           if (stat.topFunctionRetainedSize) {
             const funcMB = (stat.topFunctionRetainedSize / 1024 / 1024).toFixed(2);
-            console.log(`     Function Retained Size: ${funcMB} MB`);
+            console.info(`     Function Retained Size: ${funcMB} MB`);
           }
-          console.log(`     Large objects: ${stat.largeObjects.length}`);
-          console.log(`     GC roots: ${stat.gcRootCount.toLocaleString()}`);
+          console.info(`     Large objects: ${stat.largeObjects.length}`);
+          console.info(`     GC roots: ${stat.gcRootCount.toLocaleString()}`);
         }
       } catch (error) {
         // Fail safely - continue with next profile
@@ -519,12 +519,12 @@ async function main() {
       process.exit(1);
     }
     
-    console.log(`\n✅ Analysis complete!`);
-    console.log(`📄 Report saved to: ${reportPath}`);
-    console.log(`\n📈 Summary:`);
-    console.log(`   Total Functions: ${summary.totalFunctions.toLocaleString()}`);
-    console.log(`   Large Objects: ${summary.totalLargeObjects}`);
-    console.log(`   GC Roots: ${summary.totalGCRoots.toLocaleString()}`);
+    console.info(`\n✅ Analysis complete!`);
+    console.info(`📄 Report saved to: ${reportPath}`);
+    console.info(`\n📈 Summary:`);
+    console.info(`   Total Functions: ${summary.totalFunctions.toLocaleString()}`);
+    console.info(`   Large Objects: ${summary.totalLargeObjects}`);
+    console.info(`   GC Roots: ${summary.totalGCRoots.toLocaleString()}`);
   } catch (error) {
     const profilingError = handleProfilingError(
       error,

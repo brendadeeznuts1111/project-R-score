@@ -9,7 +9,7 @@ describe("globals", () => {
   });
 
   it("toggles verbose flag and logs when enabled", () => {
-    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const logSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
     setVerbose(false);
     logVerbose("hidden");
     expect(logSpy).not.toHaveBeenCalled();

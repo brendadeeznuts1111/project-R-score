@@ -42,7 +42,7 @@ export class CashierInterface extends EventEmitter {
   async initialize(): Promise<void> {
     if (this.isInitialized) return;
 
-    console.log('🏪 Initializing Cashier Interface...');
+    console.info('🏪 Initializing Cashier Interface...');
 
     // Initialize cashier service
     await this.cashierService.initialize();
@@ -54,7 +54,7 @@ export class CashierInterface extends EventEmitter {
     this.render();
 
     this.isInitialized = true;
-    console.log('✅ Cashier Interface initialized');
+    console.info('✅ Cashier Interface initialized');
   }
 
   /**
@@ -693,7 +693,7 @@ export class CashierInterface extends EventEmitter {
    */
   private initializeComponents(): void {
     // Initialize any additional components if needed
-    console.log('🔧 Cashier interface components initialized');
+    console.info('🔧 Cashier interface components initialized');
   }
 
   /**
@@ -1113,7 +1113,7 @@ export class CashierInterface extends EventEmitter {
   // Event handlers
 
   private onTransactionCreated(transaction: CashierTransaction): void {
-    console.log(`📝 Transaction created: ${transaction.id}`);
+    console.info(`📝 Transaction created: ${transaction.id}`);
     this.updateDisplay();
 
     if (this.options.enableRealTimeUpdates) {
@@ -1126,7 +1126,7 @@ export class CashierInterface extends EventEmitter {
   }
 
   private onTransactionUpdated(transaction: CashierTransaction): void {
-    console.log(`📝 Transaction updated: ${transaction.id} - ${transaction.status}`);
+    console.info(`📝 Transaction updated: ${transaction.id} - ${transaction.status}`);
     this.updateDisplay();
 
     if (this.options.enableRealTimeUpdates) {
@@ -1139,13 +1139,13 @@ export class CashierInterface extends EventEmitter {
   }
 
   private onSessionStarted(session: CashierSession): void {
-    console.log(`💰 Session started: ${session.sessionId}`);
+    console.info(`💰 Session started: ${session.sessionId}`);
     this.updateDisplay();
     this.refreshDashboardView();
   }
 
   private onSessionClosed(session: CashierSession): void {
-    console.log(`💰 Session closed: ${session.sessionId}`);
+    console.info(`💰 Session closed: ${session.sessionId}`);
     this.updateDisplay();
     this.refreshDashboardView();
   }

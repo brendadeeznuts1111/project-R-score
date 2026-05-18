@@ -10,30 +10,30 @@ export {}; // Make this file a module to enable top-level await
  * and inheriting from parent processes.
  */
 
-console.log("🌍 Environment Variables Examples\n");
+console.info("🌍 Environment Variables Examples\n");
 
 // Example 1: Reading environment variables
-console.log("1. Reading environment variables:");
-console.log(`  Current NODE_ENV: ${process.env.NODE_ENV || 'undefined'}`);
-console.log(`  Current PATH length: ${process.env.PATH?.length || 0} characters`);
-console.log(`  Current HOME: ${process.env.HOME || 'undefined'}`);
-console.log(`  Current USER: ${process.env.USER || 'undefined'}`);
-console.log("");
+console.info("1. Reading environment variables:");
+console.info(`  Current NODE_ENV: ${process.env.NODE_ENV || 'undefined'}`);
+console.info(`  Current PATH length: ${process.env.PATH?.length || 0} characters`);
+console.info(`  Current HOME: ${process.env.HOME || 'undefined'}`);
+console.info(`  Current USER: ${process.env.USER || 'undefined'}`);
+console.info("");
 
 // Example 2: Using Bun.env for Bun-specific environment handling
-console.log("2. Using Bun.env:");
+console.info("2. Using Bun.env:");
 try {
   // Bun.env provides optimized access to environment variables
-  console.log(`  Via Bun.env: ${Bun.env.NODE_ENV || 'undefined'}`);
-  console.log(`  Via Bun.env.PATH length: ${Bun.env.PATH?.length || 0} characters`);
-  console.log("  Bun.env is a special object with efficient access");
+  console.info(`  Via Bun.env: ${Bun.env.NODE_ENV || 'undefined'}`);
+  console.info(`  Via Bun.env.PATH length: ${Bun.env.PATH?.length || 0} characters`);
+  console.info("  Bun.env is a special object with efficient access");
 } catch (error) {
-  console.log(`  Error accessing Bun.env: ${error.message}`);
+  console.info(`  Error accessing Bun.env: ${error.message}`);
 }
-console.log("");
+console.info("");
 
 // Example 3: Setting environment variables for child processes
-console.log("3. Setting custom environment for child process:");
+console.info("3. Setting custom environment for child process:");
 const proc1 = Bun.spawn(["env"], {
   env: {
     ...process.env,
@@ -44,11 +44,11 @@ const proc1 = Bun.spawn(["env"], {
 });
 
 await proc1.exited;
-console.log("  Child process used custom environment variables");
-console.log("");
+console.info("  Child process used custom environment variables");
+console.info("");
 
 // Example 4: Environment inheritance demonstration
-console.log("4. Environment variable inheritance:");
+console.info("4. Environment variable inheritance:");
 try {
   // First set a variable and spawn a child that verifies it exists
   const uniqueVar = `BUN_TEST_${Date.now()}`;
@@ -62,12 +62,12 @@ try {
 
   await proc2.exited;
 } catch (error) {
-  console.log(`  Shell not available, but concept demonstrated above`);
+  console.info(`  Shell not available, but concept demonstrated above`);
 }
-console.log("");
+console.info("");
 
 // Example 5: Working with environment files
-console.log("5. Simulating environment file loading:");
+console.info("5. Simulating environment file loading:");
 const mockEnvVars = {
   API_URL: "https://api.example.com",
   DEBUG_MODE: "true",
@@ -81,10 +81,10 @@ for (const [key, value] of Object.entries(mockEnvVars)) {
   process.env[key] = value;
 }
 
-console.log("  Applied mock environment variables:");
-console.log(`    API_URL: ${process.env.API_URL}`);
-console.log(`    DEBUG_MODE: ${process.env.DEBUG_MODE}`);
-console.log(`    MAX_RETRIES: ${process.env.MAX_RETRIES}`);
+console.info("  Applied mock environment variables:");
+console.info(`    API_URL: ${process.env.API_URL}`);
+console.info(`    DEBUG_MODE: ${process.env.DEBUG_MODE}`);
+console.info(`    MAX_RETRIES: ${process.env.MAX_RETRIES}`);
 
 // Spawn a process that can access these variables
 const proc3 = Bun.spawn(["env"], {
@@ -95,6 +95,6 @@ await proc3.exited;
 
 // Restore original environment
 Object.assign(process.env, originalEnv);
-console.log("");
+console.info("");
 
-console.log("✅ Environment variables examples completed!");
+console.info("✅ Environment variables examples completed!");

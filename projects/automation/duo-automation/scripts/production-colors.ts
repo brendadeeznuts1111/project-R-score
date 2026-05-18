@@ -21,7 +21,7 @@ class ProductionColorEnforcement {
   }
 
   async enforce() {
-    console.log('🌍 Enforcing Color System in Production...');
+    console.info('🌍 Enforcing Color System in Production...');
     
     for (const domain of this.config.domains) {
       await this.enforceDomain(domain);
@@ -33,11 +33,11 @@ class ProductionColorEnforcement {
     
     await this.generateReport();
     
-    console.log('✅ Production color enforcement complete!');
+    console.info('✅ Production color enforcement complete!');
   }
 
   private async enforceDomain(domain: string) {
-    console.log(`🏢 Enforcing colors on ${domain}...`);
+    console.info(`🏢 Enforcing colors on ${domain}...`);
     
     const enforcementSteps = [
       `🔍 Analyzing current color usage on ${domain}`,
@@ -49,7 +49,7 @@ class ProductionColorEnforcement {
     ];
     
     for (const step of enforcementSteps) {
-      console.log(`   ${step}`);
+      console.info(`   ${step}`);
       await new Promise(resolve => setTimeout(resolve, 300));
     }
     
@@ -63,11 +63,11 @@ class ProductionColorEnforcement {
       status: 'SUCCESS'
     };
     
-    console.log(`   ✅ ${domain} - ${domainDeployment.colorsDeployed} colors deployed`);
+    console.info(`   ✅ ${domain} - ${domainDeployment.colorsDeployed} colors deployed`);
   }
 
   private async setupMonitoring() {
-    console.log('📊 Setting up color system monitoring...');
+    console.info('📊 Setting up color system monitoring...');
     
     const monitoringConfig = {
       endpoints: this.config.domains.map(domain => `https://${domain}/api/colors/status`),
@@ -86,11 +86,11 @@ class ProductionColorEnforcement {
     
     writeFileSync('color-monitoring.json', JSON.stringify(monitoringConfig, null, 2));
     
-    console.log('✅ Color monitoring system active.');
+    console.info('✅ Color monitoring system active.');
   }
 
   private async generateReport() {
-    console.log('📋 Generating production enforcement report...');
+    console.info('📋 Generating production enforcement report...');
     
     const enforcementReport = {
       timestamp: new Date().toISOString(),
@@ -125,11 +125,11 @@ class ProductionColorEnforcement {
     
     writeFileSync('production-color-report.json', JSON.stringify(enforcementReport, null, 2));
     
-    console.log('📊 Production Enforcement Summary:');
-    console.log(`   • Domains: ${enforcementReport.summary.totalDomains}`);
-    console.log(`   • Colors Enforced: ${enforcementReport.summary.colorsEnforced}`);
-    console.log(`   • Average Compliance: ${enforcementReport.summary.averageCompliance}%`);
-    console.log(`   • Status: ${enforcementReport.summary.status}`);
+    console.info('📊 Production Enforcement Summary:');
+    console.info(`   • Domains: ${enforcementReport.summary.totalDomains}`);
+    console.info(`   • Colors Enforced: ${enforcementReport.summary.colorsEnforced}`);
+    console.info(`   • Average Compliance: ${enforcementReport.summary.averageCompliance}%`);
+    console.info(`   • Status: ${enforcementReport.summary.status}`);
   }
 }
 

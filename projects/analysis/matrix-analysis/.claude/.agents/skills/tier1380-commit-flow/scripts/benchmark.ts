@@ -112,14 +112,14 @@ async function benchmarkTableRender(): Promise<BenchmarkResult> {
 
 // Main
 if (import.meta.main) {
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Benchmark                          ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Benchmark                          ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	const results: BenchmarkResult[] = [];
 
-	console.log("Running benchmarks...\n");
+	console.info("Running benchmarks...\n");
 
 	results.push(await benchmarkCol89Check());
 	results.push(await benchmarkHashCalculation());
@@ -127,9 +127,9 @@ if (import.meta.main) {
 	results.push(await benchmarkColorize());
 	results.push(await benchmarkTableRender());
 
-	console.log("Results:");
-	console.log();
-	console.log(
+	console.info("Results:");
+	console.info();
+	console.info(
 		Bun.inspect.table(results, [
 			"name",
 			"iterations",
@@ -139,11 +139,11 @@ if (import.meta.main) {
 		]),
 	);
 
-	console.log();
-	console.log("System Info:");
-	console.log(`  Bun: ${Bun.version}`);
-	console.log(`  Platform: ${process.platform}`);
-	console.log(`  Arch: ${process.arch}`);
+	console.info();
+	console.info("System Info:");
+	console.info(`  Bun: ${Bun.version}`);
+	console.info(`  Platform: ${process.platform}`);
+	console.info(`  Arch: ${process.arch}`);
 }
 
 export { runBenchmark, benchmarkCol89Check, benchmarkHashCalculation };

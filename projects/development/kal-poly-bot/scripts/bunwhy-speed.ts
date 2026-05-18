@@ -3,7 +3,7 @@
 import { SuperRipgrep } from '../utils/super-ripgrep.ts';
 
 async function benchmarkRipgrep() {
-  console.log('🚀 #bunwhy = Speed → Proving ripgrep supremacy on YOUR codebase\n');
+  console.info('🚀 #bunwhy = Speed → Proving ripgrep supremacy on YOUR codebase\n');
 
   // Common queries in Bun/TypeScript projects
   const queries = [
@@ -20,11 +20,11 @@ async function benchmarkRipgrep() {
   const rg = new SuperRipgrep();
   const results = await rg.benchmarkQueries(queries);
 
-  console.log('\n📊 **Speed Results:**\n');
+  console.info('\n📊 **Speed Results:**\n');
 
   // Show individual results
   results.forEach(result => {
-    console.log(`⚡ ${result.query.padEnd(18)} → ${result.durationMs.toFixed(1).padStart(6)}ms | ${result.matches.toString().padStart(3)} matches | ${result.speedup.padStart(4)} faster`);
+    console.info(`⚡ ${result.query.padEnd(18)} → ${result.durationMs.toFixed(1).padStart(6)}ms | ${result.matches.toString().padStart(3)} matches | ${result.speedup.padStart(4)} faster`);
   });
 
   // Calculate summary statistics
@@ -36,20 +36,20 @@ async function benchmarkRipgrep() {
   const totalMatches = results.reduce((sum, r) => sum + r.matches, 0);
   const avgDuration = results.reduce((sum, r) => sum + r.durationMs, 0) / results.length;
 
-  console.log('\n🏆 **SUMMARY:**');
-  console.log(`   Average Speedup: ${avgSpeed.toFixed(0)}x faster than grep!`);
-  console.log(`   Total Matches Found: ${totalMatches}`);
-  console.log(`   Average Query Time: ${avgDuration.toFixed(1)}ms`);
-  console.log(`   Peak Throughput: ${Math.max(...results.map(r => r.throughput)).toFixed(0)} matches/sec`);
+  console.info('\n🏆 **SUMMARY:**');
+  console.info(`   Average Speedup: ${avgSpeed.toFixed(0)}x faster than grep!`);
+  console.info(`   Total Matches Found: ${totalMatches}`);
+  console.info(`   Average Query Time: ${avgDuration.toFixed(1)}ms`);
+  console.info(`   Peak Throughput: ${Math.max(...results.map(r => r.throughput)).toFixed(0)} matches/sec`);
 
-  console.log('\n💡 **Why #bunwhy = Speed:**');
-  console.log('   • 8-thread parallelism vs grep\'s single thread');
-  console.log('   • Hyperscan regex engine vs basic regex');
-  console.log('   • Smart file type filtering (no node_modules)');
-  console.log('   • Memory-efficient streaming JSON output');
-  console.log('   • Native Bun.spawn integration');
+  console.info('\n💡 **Why #bunwhy = Speed:**');
+  console.info('   • 8-thread parallelism vs grep\'s single thread');
+  console.info('   • Hyperscan regex engine vs basic regex');
+  console.info('   • Smart file type filtering (no node_modules)');
+  console.info('   • Memory-efficient streaming JSON output');
+  console.info('   • Native Bun.spawn integration');
 
-  console.log('\n🚀 **Your codebase is now AI-searchable at lightning speed!**');
+  console.info('\n🚀 **Your codebase is now AI-searchable at lightning speed!**');
 }
 
 // Run if called directly

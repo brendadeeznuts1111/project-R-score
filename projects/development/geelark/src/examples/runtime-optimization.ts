@@ -22,11 +22,11 @@ const exposeGc = process.argv.includes('--expose-gc');
 const consoleDepthMatch = process.argv.find(arg => arg.startsWith('--console-depth='));
 const consoleDepth = consoleDepthMatch ? parseInt(consoleDepthMatch.split('=')[1]) : 2;
 
-console.log('🔧 Runtime Optimization Examples\n');
-console.log(`Configuration:`);
-console.log(`  --smol: ${isSmol ? '✅ enabled' : '❌ disabled'}`);
-console.log(`  --expose-gc: ${exposeGc ? '✅ enabled' : '❌ disabled'}`);
-console.log(`  --console-depth: ${consoleDepth}\n`);
+console.info('🔧 Runtime Optimization Examples\n');
+console.info(`Configuration:`);
+console.info(`  --smol: ${isSmol ? '✅ enabled' : '❌ disabled'}`);
+console.info(`  --expose-gc: ${exposeGc ? '✅ enabled' : '❌ disabled'}`);
+console.info(`  --console-depth: ${consoleDepth}\n`);
 
 // Initialize optimizer
 const optimizer = new RuntimeOptimization({
@@ -36,7 +36,7 @@ const optimizer = new RuntimeOptimization({
 
 // Example 1: Memory-optimized data processing
 async function example1_MemoryOptimizedProcessing() {
-  console.log('📊 Example 1: Memory-Optimized Processing');
+  console.info('📊 Example 1: Memory-Optimized Processing');
 
   const memBefore = getMemoryStats();
 
@@ -56,7 +56,7 @@ async function example1_MemoryOptimizedProcessing() {
 
       // Periodic GC in memory-optimized mode
       if (isSmol && i % 5000 === 0) {
-        console.log(`  → GC at batch ${i / 1000}`);
+        console.info(`  → GC at batch ${i / 1000}`);
         Bun.gc(false); // Non-blocking GC
       }
     }
@@ -67,14 +67,14 @@ async function example1_MemoryOptimizedProcessing() {
   const memAfter = getMemoryStats();
   const delta = (memAfter.heapUsed - memBefore.heapUsed) / 1024 / 1024;
 
-  console.log(`  Processed: ${result.length} items`);
-  console.log(`  Memory delta: ${delta.toFixed(2)} MB`);
-  console.log();
+  console.info(`  Processed: ${result.length} items`);
+  console.info(`  Memory delta: ${delta.toFixed(2)} MB`);
+  console.info();
 }
 
 // Example 2: Measuring memory impact
 async function example2_MeasureMemoryImpact() {
-  console.log('📈 Example 2: Measuring Memory Impact');
+  console.info('📈 Example 2: Measuring Memory Impact');
 
   const { memoryDelta, before, after } = await optimizer.measureMemoryUsage(() => {
     // Create temporary objects
@@ -85,15 +85,15 @@ async function example2_MeasureMemoryImpact() {
     return temp.length;
   });
 
-  console.log(`  Memory before: ${(before.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`  Memory after: ${(after.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`  Memory delta: ${(memoryDelta / 1024 / 1024).toFixed(2)} MB`);
-  console.log();
+  console.info(`  Memory before: ${(before.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`  Memory after: ${(after.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`  Memory delta: ${(memoryDelta / 1024 / 1024).toFixed(2)} MB`);
+  console.info();
 }
 
 // Example 3: Console depth demonstration
 function example3_ConsoleDepth() {
-  console.log('📊 Example 3: Console Depth Control');
+  console.info('📊 Example 3: Console Depth Control');
 
   const deepObject = {
     level1: {
@@ -109,35 +109,35 @@ function example3_ConsoleDepth() {
     },
   };
 
-  console.log(`  With console-depth=${consoleDepth}:`);
+  console.info(`  With console-depth=${consoleDepth}:`);
   optimizer.logWithDepth(deepObject);
-  console.log();
+  console.info();
 }
 
 // Example 4: Garbage collection
 function example4_GarbageCollection() {
-  console.log('🗑️  Example 4: Garbage Collection');
+  console.info('🗑️  Example 4: Garbage Collection');
 
-  console.log('  Creating temporary objects...');
+  console.info('  Creating temporary objects...');
   const temp = Array.from({ length: 10000 }, () => ({ data: 'temp' }));
 
   const memBefore = getMemoryStats();
-  console.log(`  Memory before GC: ${(memBefore.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`  Memory before GC: ${(memBefore.heapUsed / 1024 / 1024).toFixed(2)} MB`);
 
   // Force garbage collection
   optimizer.forceGC(true); // Blocking GC
 
   const memAfter = getMemoryStats();
-  console.log(`  Memory after GC: ${(memAfter.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`  Memory freed: ${((memBefore.heapUsed - memAfter.heapUsed) / 1024 / 1024).toFixed(2)} MB`);
-  console.log();
+  console.info(`  Memory after GC: ${(memAfter.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`  Memory freed: ${((memBefore.heapUsed - memAfter.heapUsed) / 1024 / 1024).toFixed(2)} MB`);
+  console.info();
 }
 
 // Example 5: Runtime configuration display
 function example5_DisplayConfig() {
-  console.log('⚙️  Example 5: Runtime Configuration');
+  console.info('⚙️  Example 5: Runtime Configuration');
   optimizer.displayConfig();
-  console.log();
+  console.info();
 }
 
 // Run all examples
@@ -149,12 +149,12 @@ async function main() {
     example4_GarbageCollection();
     example5_DisplayConfig();
 
-    console.log('✅ All examples completed successfully!');
-    console.log('\n💡 Tips:');
-    console.log('  • Use --smol for memory-constrained environments');
-    console.log('  • Use --expose-gc for Node.js compatibility');
-    console.log('  • Use --console-depth=N to control object inspection depth');
-    console.log('  • Bun.gc() is always available (better than global gc())');
+    console.info('✅ All examples completed successfully!');
+    console.info('\n💡 Tips:');
+    console.info('  • Use --smol for memory-constrained environments');
+    console.info('  • Use --expose-gc for Node.js compatibility');
+    console.info('  • Use --console-depth=N to control object inspection depth');
+    console.info('  • Bun.gc() is always available (better than global gc())');
   } catch (error) {
     console.error('❌ Error:', error instanceof Error ? error.message : String(error));
     process.exit(1);

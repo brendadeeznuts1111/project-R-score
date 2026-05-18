@@ -181,8 +181,8 @@ export async function batchExtractFrontmatter(
 		writeFileSync(outputFile, JSON.stringify(index, null, 2));
 
 		const duration = Date.now() - startTime;
-		console.log(`✅ Processed ${results.length} files in ${duration}ms`);
-		console.log(`📊 Average: ${(duration / results.length).toFixed(2)}ms per file`);
+		console.info(`✅ Processed ${results.length} files in ${duration}ms`);
+		console.info(`📊 Average: ${(duration / results.length).toFixed(2)}ms per file`);
 	} catch (error: any) {
 		console.error("❌ Batch processing failed:", error.message);
 	}
@@ -193,7 +193,7 @@ async function main() {
 	const args = process.argv.slice(2);
 
 	if (args.includes("--help") || args.includes("-h")) {
-		console.log(`
+		console.info(`
 🏭 FactoryWager Frontmatter Engine v1.0
 
 Usage:
@@ -225,13 +225,13 @@ Examples:
 			const result = extractFrontmatter(content);
 			const normalized = normalizeFrontmatter(result.data);
 
-			console.log("📋 Frontmatter Result:");
-			console.log(`Format: ${result.format}`);
-			console.log(`Data:`, JSON.stringify(normalized, null, 2));
-			console.log(`Content length: ${result.content.length} chars`);
+			console.info("📋 Frontmatter Result:");
+			console.info(`Format: ${result.format}`);
+			console.info(`Data:`, JSON.stringify(normalized, null, 2));
+			console.info(`Content length: ${result.content.length} chars`);
 
 			if (result.errors) {
-				console.log(`Errors:`, result.errors);
+				console.info(`Errors:`, result.errors);
 			}
 		} catch (error: any) {
 			console.error("❌ Failed to process file:", error.message);

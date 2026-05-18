@@ -10,7 +10,7 @@ try {
   const swc = await import('@swc/core');
   parse = swc.parse;
 } catch {
-  console.log('ℹ️  @swc/core not available, using regex-based fallback');
+  console.info('ℹ️  @swc/core not available, using regex-based fallback');
 }
 import { join } from 'node:path';
 import { validateMeta, type Meta } from './meta-schema';
@@ -313,18 +313,18 @@ export class AITagger {
 
   // Training methods
   async train(trainingDataPath: string): Promise<void> {
-    console.log('🎯 Training AI Tagger...');
+    console.info('🎯 Training AI Tagger...');
     
     try {
       const trainingContent = await readFile(trainingDataPath, 'utf-8');
       this.trainingData = JSON.parse(trainingContent);
       
-      console.log(`📚 Loaded ${this.trainingData.length} training examples from ${fileLink(trainingDataPath)}`);
+      console.info(`📚 Loaded ${this.trainingData.length} training examples from ${fileLink(trainingDataPath)}`);
 
       // Update heuristics based on training data
       this.updateHeuristicsFromTraining();
 
-      console.log('✅ Training completed successfully');
+      console.info('✅ Training completed successfully');
     } catch (error) {
       console.error('❌ Training failed:', error);
     }
@@ -336,13 +336,13 @@ export class AITagger {
       if (example.expectedTags.DOMAIN) {
         // Learn domain patterns
         const fileName = example.filePath.split('/').pop() || '';
-        console.log(`📖 Learned: ${fileName} → ${example.expectedTags.DOMAIN}`);
+        console.info(`📖 Learned: ${fileName} → ${example.expectedTags.DOMAIN}`);
       }
     }
   }
 
   async benchmark(testFiles: string[]): Promise<void> {
-    console.log('🎯 Running benchmark...');
+    console.info('🎯 Running benchmark...');
 
     let correct = 0;
     let total = 0;
@@ -351,7 +351,7 @@ export class AITagger {
       try {
         const aiTags = await this.autoTag(filePath);
         // In real implementation, would compare with human-reviewed tags
-        console.log(`📁 ${fileLink(filePath)}: ${aiTags.DOMAIN} | ${aiTags.SCOPE} | ${aiTags.TYPE}`);
+        console.info(`📁 ${fileLink(filePath)}: ${aiTags.DOMAIN} | ${aiTags.SCOPE} | ${aiTags.TYPE}`);
         total++;
       } catch (error) {
         console.error(`❌ Error processing ${fileLink(filePath)}:`, error);
@@ -359,17 +359,17 @@ export class AITagger {
     }
 
     const accuracy = total > 0 ? (correct / total) * 100 : 0;
-    console.log(`📊 Benchmark completed: ${accuracy.toFixed(1)}% accuracy`);
+    console.info(`📊 Benchmark completed: ${accuracy.toFixed(1)}% accuracy`);
   }
 
   async benchmarkWithGroundTruth(groundTruthPath: string): Promise<BenchmarkResult> {
-    console.log('🎯 Running benchmark with ground truth...');
-    console.log(`📄 Loading ground truth from: ${fileLink(groundTruthPath)}`);
+    console.info('🎯 Running benchmark with ground truth...');
+    console.info(`📄 Loading ground truth from: ${fileLink(groundTruthPath)}`);
 
     const groundTruthContent = await readFile(groundTruthPath, 'utf-8');
     const groundTruth: GroundTruthEntry[] = JSON.parse(groundTruthContent);
 
-    console.log(`📚 Loaded ${groundTruth.length} ground truth examples`);
+    console.info(`📚 Loaded ${groundTruth.length} ground truth examples`);
 
     const details: BenchmarkResult['details'] = [];
     let domainCorrect = 0;
@@ -402,7 +402,7 @@ export class AITagger {
 
         // Show progress
         const status = isDomainCorrect && isScopeCorrect && isTypeCorrect ? '✅' : '❌';
-        console.log(`${status} ${fileLink(entry.filePath)}: AI[${aiTags.DOMAIN}|${aiTags.SCOPE}|${aiTags.TYPE}] vs Human[${entry.humanTags.DOMAIN}|${entry.humanTags.SCOPE}|${entry.humanTags.TYPE}]`);
+        console.info(`${status} ${fileLink(entry.filePath)}: AI[${aiTags.DOMAIN}|${aiTags.SCOPE}|${aiTags.TYPE}] vs Human[${entry.humanTags.DOMAIN}|${entry.humanTags.SCOPE}|${entry.humanTags.TYPE}]`);
       } catch (error) {
         console.error(`⚠️ Skipping ${fileLink(entry.filePath)}: File not found or error`);
       }
@@ -417,27 +417,27 @@ export class AITagger {
       details,
     };
 
-    console.log('\n📊 BENCHMARK RESULTS');
-    console.log('═'.repeat(50));
-    console.log(`📁 Sample Size:      ${result.sampleSize} files`);
-    console.log(`🏷️  Domain Accuracy:  ${(result.domainAccuracy * 100).toFixed(1)}%`);
-    console.log(`📂 Scope Accuracy:   ${(result.scopeAccuracy * 100).toFixed(1)}%`);
-    console.log(`📝 Type Accuracy:    ${(result.typeAccuracy * 100).toFixed(1)}%`);
-    console.log(`🎯 Overall Accuracy: ${(result.overallAccuracy * 100).toFixed(1)}%`);
-    console.log('═'.repeat(50));
+    console.info('\n📊 BENCHMARK RESULTS');
+    console.info('═'.repeat(50));
+    console.info(`📁 Sample Size:      ${result.sampleSize} files`);
+    console.info(`🏷️  Domain Accuracy:  ${(result.domainAccuracy * 100).toFixed(1)}%`);
+    console.info(`📂 Scope Accuracy:   ${(result.scopeAccuracy * 100).toFixed(1)}%`);
+    console.info(`📝 Type Accuracy:    ${(result.typeAccuracy * 100).toFixed(1)}%`);
+    console.info(`🎯 Overall Accuracy: ${(result.overallAccuracy * 100).toFixed(1)}%`);
+    console.info('═'.repeat(50));
 
     // Target: 75-85% accuracy is realistic
     if (result.overallAccuracy >= 0.75) {
-      console.log('✅ Accuracy meets v4.1 target (75%+)');
+      console.info('✅ Accuracy meets v4.1 target (75%+)');
     } else {
-      console.log('⚠️ Accuracy below v4.1 target (75%+) - consider improving heuristics');
+      console.info('⚠️ Accuracy below v4.1 target (75%+) - consider improving heuristics');
     }
 
     return result;
   }
 
   async exportTags(outputPath: string): Promise<void> {
-    console.log('📤 Exporting tags...');
+    console.info('📤 Exporting tags...');
 
     const allTags: { filePath: string; tags: TagSet }[] = [];
 
@@ -454,7 +454,7 @@ export class AITagger {
     }
 
     await writeFile(outputPath, JSON.stringify(allTags, null, 2));
-    console.log(`✅ Exported ${allTags.length} tags to ${fileLink(outputPath)}`);
+    console.info(`✅ Exported ${allTags.length} tags to ${fileLink(outputPath)}`);
   }
 
   private async getAllTypeScriptFiles(dir: string): Promise<string[]> {
@@ -492,7 +492,7 @@ async function main() {
       break;
       
     case '--onboarding':
-      console.log('🚀 Setting up AI Tagger for onboarding...');
+      console.info('🚀 Setting up AI Tagger for onboarding...');
       // Create training data template
       const trainingTemplate = {
         examples: [
@@ -507,7 +507,7 @@ async function main() {
         ]
       };
       await writeFile('./training-data.json', JSON.stringify(trainingTemplate, null, 2));
-      console.log(`✅ Created ${fileLink('./training-data.json')} template`);
+      console.info(`✅ Created ${fileLink('./training-data.json')} template`);
       break;
       
     case '--benchmark':
@@ -518,7 +518,7 @@ async function main() {
       } else {
         const testFiles = process.argv.slice(3);
         if (testFiles.length === 0) {
-          console.log('❌ Please provide test files or use --ground-truth [path]');
+          console.info('❌ Please provide test files or use --ground-truth [path]');
           process.exit(1);
         }
         await aiTagger.benchmark(testFiles);
@@ -531,7 +531,7 @@ async function main() {
       break;
       
     default:
-      console.log(`
+      console.info(`
 🏷️  DUOPLUS AI Tagger v4.1
 
 Usage:

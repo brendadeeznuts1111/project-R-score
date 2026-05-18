@@ -22,12 +22,12 @@ console.log = (...args: any[]) => {
 };
 
 function benchmarkLogging(iterations: number = 10000) {
-  console.log('\n🔬 Running Logging Performance Benchmark...\n');
+  console.info('\n🔬 Running Logging Performance Benchmark...\n');
 
   // Benchmark console.log
   const consoleStart = performance.now();
   for (let i = 0; i < iterations; i++) {
-    console.log(`Test message ${i}`, { data: `test-data-${i}` });
+    console.info(`Test message ${i}`, { data: `test-data-${i}` });
   }
   const consoleEnd = performance.now();
   const consoleTotal = consoleEnd - consoleStart;
@@ -48,17 +48,17 @@ function benchmarkLogging(iterations: number = 10000) {
   const loggerAvg = loggerTotal / iterations;
   const improvement = ((consoleAvg - loggerAvg) / consoleAvg) * 100;
 
-  console.log('\n📊 Logging Performance Results:');
-  console.log('━'.repeat(60));
-  console.log(`Iterations: ${iterations.toLocaleString()}`);
-  console.log(
+  console.info('\n📊 Logging Performance Results:');
+  console.info('━'.repeat(60));
+  console.info(`Iterations: ${iterations.toLocaleString()}`);
+  console.info(
     `Console.log: ${consoleAvg.toFixed(4)}ms per call (${consoleTotal.toFixed(2)}ms total)`
   );
-  console.log(
+  console.info(
     `Structured Log: ${loggerAvg.toFixed(4)}ms per call (${loggerTotal.toFixed(2)}ms total)`
   );
-  console.log(`Performance Improvement: ${improvement.toFixed(1)}% faster`);
-  console.log(`Speed Ratio: ${(consoleAvg / loggerAvg).toFixed(1)}x faster`);
+  console.info(`Performance Improvement: ${improvement.toFixed(1)}% faster`);
+  console.info(`Speed Ratio: ${(consoleAvg / loggerAvg).toFixed(1)}x faster`);
 
   return {
     consoleAvg,
@@ -69,7 +69,7 @@ function benchmarkLogging(iterations: number = 10000) {
 }
 
 function benchmarkMemoryUsage() {
-  console.log('\n💾 Memory Usage Benchmark...');
+  console.info('\n💾 Memory Usage Benchmark...');
 
   const initialMemory = process.memoryUsage();
 
@@ -98,13 +98,13 @@ function benchmarkMemoryUsage() {
   const memoryIncrease = afterLogging.heapUsed - initialMemory.heapUsed;
   const memoryAfterGC = afterGC.heapUsed - initialMemory.heapUsed;
 
-  console.log('\n📈 Memory Usage Results:');
-  console.log('━'.repeat(60));
-  console.log(`Initial Heap: ${(initialMemory.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`After Logging: ${(afterLogging.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`After GC: ${(afterGC.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`Memory Increase: ${(memoryIncrease / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`Memory Retained: ${(memoryAfterGC / 1024 / 1024).toFixed(2)} MB`);
+  console.info('\n📈 Memory Usage Results:');
+  console.info('━'.repeat(60));
+  console.info(`Initial Heap: ${(initialMemory.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`After Logging: ${(afterLogging.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`After GC: ${(afterGC.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`Memory Increase: ${(memoryIncrease / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`Memory Retained: ${(memoryAfterGC / 1024 / 1024).toFixed(2)} MB`);
 
   return {
     initialMemory: initialMemory.heapUsed,
@@ -114,7 +114,7 @@ function benchmarkMemoryUsage() {
 }
 
 function benchmarkLogFiltering() {
-  console.log('\n🔍 Log Filtering Benchmark...');
+  console.info('\n🔍 Log Filtering Benchmark...');
 
   // Generate logs with different components
   const components = ['SERVER', 'DASHBOARD', 'TICKETS', 'FUSION'];
@@ -133,12 +133,12 @@ function benchmarkLogFiltering() {
   const serverLogs = logEntries.filter(log => log.includes('[SERVER]'));
   const filterTime = performance.now() - filterStart;
 
-  console.log('\n🔎 Filtering Performance Results:');
-  console.log('━'.repeat(60));
-  console.log(`Generated: ${logEntries.length} entries in ${generationTime.toFixed(2)}ms`);
-  console.log(`Filtered: ${serverLogs.length} SERVER entries in ${filterTime.toFixed(2)}ms`);
-  console.log(`Filter Speed: ${((logEntries.length / filterTime) * 1000).toFixed(0)} entries/sec`);
-  console.log(`Component-based filtering: 10x faster than regex parsing`);
+  console.info('\n🔎 Filtering Performance Results:');
+  console.info('━'.repeat(60));
+  console.info(`Generated: ${logEntries.length} entries in ${generationTime.toFixed(2)}ms`);
+  console.info(`Filtered: ${serverLogs.length} SERVER entries in ${filterTime.toFixed(2)}ms`);
+  console.info(`Filter Speed: ${((logEntries.length / filterTime) * 1000).toFixed(0)} entries/sec`);
+  console.info(`Component-based filtering: 10x faster than regex parsing`);
 
   return {
     generationTime,
@@ -148,8 +148,8 @@ function benchmarkLogFiltering() {
 }
 
 async function runFullBenchmark() {
-  console.log('🚀 Barbershop Performance Benchmark Suite');
-  console.log('━'.repeat(60));
+  console.info('🚀 Barbershop Performance Benchmark Suite');
+  console.info('━'.repeat(60));
 
   // Run all benchmarks
   const loggingResults = benchmarkLogging(10000);
@@ -157,20 +157,20 @@ async function runFullBenchmark() {
   const filteringResults = benchmarkLogFiltering();
 
   // Summary
-  console.log('\n🎯 Performance Summary');
-  console.log('━'.repeat(60));
-  console.log(`✅ Logging Speed: ${loggingResults.speedRatio.toFixed(1)}x faster`);
-  console.log(
+  console.info('\n🎯 Performance Summary');
+  console.info('━'.repeat(60));
+  console.info(`✅ Logging Speed: ${loggingResults.speedRatio.toFixed(1)}x faster`);
+  console.info(
     `✅ Memory Efficiency: ${(((memoryResults.memoryIncrease - memoryResults.memoryAfterGC) / memoryResults.memoryIncrease) * 100).toFixed(1)}% reduction`
   );
-  console.log(
+  console.info(
     `✅ Filtering Performance: ${filteringResults.entriesPerSecond.toFixed(0)} entries/sec`
   );
-  console.log(`✅ Overall Improvement: ${loggingResults.improvement.toFixed(1)}% performance gain`);
+  console.info(`✅ Overall Improvement: ${loggingResults.improvement.toFixed(1)}% performance gain`);
 
-  console.log('\n🏆 Benchmark Complete!');
-  console.log('The barbershop demo demonstrates significant performance improvements');
-  console.log('through structured logging and optimized resource management.');
+  console.info('\n🏆 Benchmark Complete!');
+  console.info('The barbershop demo demonstrates significant performance improvements');
+  console.info('through structured logging and optimized resource management.');
 
   return {
     logging: loggingResults,

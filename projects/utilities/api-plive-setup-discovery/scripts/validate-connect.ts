@@ -5,7 +5,7 @@ import { file, YAML } from 'bun';
 import { spawn } from 'child_process';
 
 async function validateConnectivity() {
-  console.log('🔍 Validating WebSocket connectivity...');
+  console.info('🔍 Validating WebSocket connectivity...');
 
   const config = YAML.parse(await file('bun.yaml').text());
   const { connectivity } = config.api;
@@ -15,7 +15,7 @@ async function validateConnectivity() {
 
   // Check WS handler files
   const wsFiles = ['routes/ws/telemetry.ts', 'routes/ws/config-broadcast.ts', 'src/api/websocket/persistent-server.ts'];
-  console.log(`📄 Found ${wsFiles.length} WebSocket files`);
+  console.info(`📄 Found ${wsFiles.length} WebSocket files`);
 
   for (const filePath of wsFiles) {
     try {
@@ -60,7 +60,7 @@ async function validateConnectivity() {
       }
 
       valid++;
-      console.log(`🟢 ${filePath}: Full WS + Telemetry [${connectivity.ws.dataTypes.join(', ')}]`);
+      console.info(`🟢 ${filePath}: Full WS + Telemetry [${connectivity.ws.dataTypes.join(', ')}]`);
     } catch (error) {
       // File might not exist yet, skip
       if (error.code !== 'ENOENT') {
@@ -71,7 +71,7 @@ async function validateConnectivity() {
 
   // Check telemetry stream utilities
   const telemetryFiles = ['utils/telemetry-stream.ts'];
-  console.log(`📄 Found ${telemetryFiles.length} telemetry utility files`);
+  console.info(`📄 Found ${telemetryFiles.length} telemetry utility files`);
 
   for (const filePath of telemetryFiles) {
     try {
@@ -95,7 +95,7 @@ async function validateConnectivity() {
         warnings.push(`⚠️  ${filePath}: Missing receiveTelemetry function`);
       }
 
-      console.log(`🟢 ${filePath}: Telemetry streaming utilities validated`);
+      console.info(`🟢 ${filePath}: Telemetry streaming utilities validated`);
     } catch (error) {
       errors.push(`❌ ${filePath}: ${error.message}`);
     }
@@ -103,7 +103,7 @@ async function validateConnectivity() {
 
   // Check client reconnection utilities
   const clientFiles = ['utils/client-reconnect.ts'];
-  console.log(`📄 Found ${clientFiles.length} client utility files`);
+  console.info(`📄 Found ${clientFiles.length} client utility files`);
 
   for (const filePath of clientFiles) {
     try {
@@ -119,22 +119,22 @@ async function validateConnectivity() {
         warnings.push(`⚠️  ${filePath}: Missing max retries logic`);
       }
 
-      console.log(`🟢 ${filePath}: Client reconnection utilities validated`);
+      console.info(`🟢 ${filePath}: Client reconnection utilities validated`);
     } catch (error) {
       errors.push(`❌ ${filePath}: ${error.message}`);
     }
   }
 
   // Build telemetry index using ripgrep
-  console.log('📄 Building telemetry index...');
+  console.info('📄 Building telemetry index...');
   try {
     const rgResult = await runRipgrep('sendTelemetry', '.', ['--files-with-matches']);
     const foundTelemetryHandlers = rgResult.trim().split('\n').filter(Boolean);
-    console.log(`📄 Found ${foundTelemetryHandlers.length} telemetry handlers in index`);
+    console.info(`📄 Found ${foundTelemetryHandlers.length} telemetry handlers in index`);
 
     // Write to .telemetry.index
     await file('.telemetry.index').write(foundTelemetryHandlers.join('\n'));
-    console.log('🟢 Telemetry index built: .telemetry.index');
+    console.info('🟢 Telemetry index built: .telemetry.index');
   } catch (error) {
     warnings.push(`⚠️  Failed to build telemetry index: ${error.message}`);
   }
@@ -165,7 +165,7 @@ async function validateConnectivity() {
   }
 
   if (errors.length === 0) {
-    console.log(`\n🎉 All ${valid} connections valid & telemetry-ready!`);
+    console.info(`\n🎉 All ${valid} connections valid & telemetry-ready!`);
   }
 }
 

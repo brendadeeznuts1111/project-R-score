@@ -699,7 +699,7 @@ export class BunR2BatchClient extends BunR2Client {
       });
 
       // Progress callback
-      console.log(`Uploaded ${Math.min(i + concurrency, files.length)}/${files.length} files`);
+      console.info(`Uploaded ${Math.min(i + concurrency, files.length)}/${files.length} files`);
     }
 
     return results;
@@ -737,12 +737,12 @@ export class BunR2BatchClient extends BunR2Client {
       const { exists, metadata } = await this.headObject(r2Key);
 
       if (!exists || metadata?.hash !== localHash.toString()) {
-        console.log(`Uploading ${relativePath}...`);
+        console.info(`Uploading ${relativePath}...`);
         await this.putObject(r2Key, await localFile.arrayBuffer(), {
           metadata: { hash: localHash.toString() },
         });
       } else {
-        console.log(`Skipping ${relativePath} (unchanged)`);
+        console.info(`Skipping ${relativePath} (unchanged)`);
       }
     }
   }

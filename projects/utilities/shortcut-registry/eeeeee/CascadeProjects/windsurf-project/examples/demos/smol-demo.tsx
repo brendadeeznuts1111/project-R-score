@@ -44,26 +44,26 @@ const memoryIntensiveData = {
 	},
 };
 
-console.log("=== --smol Flag Demonstration ===");
-console.log("Memory-intensive data created with:");
-console.log(
+console.info("=== --smol Flag Demonstration ===");
+console.info("Memory-intensive data created with:");
+console.info(
 	`- Large dataset: ${memoryIntensiveData.largeDataset.length} items`,
 );
-console.log(
+console.info(
 	`- ML models: ${memoryIntensiveData.fraudDetectionModels.ensemble.models.length} models`,
 );
-console.log(
+console.info(
 	`- Network metrics: ${memoryIntensiveData.networkMetrics.connections.length} connections`,
 );
 
-console.log("\n📊 Memory Usage Information:");
-console.log("- Process ID:", process.pid);
-console.log("- Platform:", process.platform);
-console.log("- Node version:", process.version);
-console.log("- Memory usage (approximate):");
+console.info("\n📊 Memory Usage Information:");
+console.info("- Process ID:", process.pid);
+console.info("- Platform:", process.platform);
+console.info("- Node version:", process.version);
+console.info("- Memory usage (approximate):");
 
 // Simulate some processing
-console.log("\n🔄 Processing data...");
+console.info("\n🔄 Processing data...");
 const processedData = {
 	filteredModels:
 		memoryIntensiveData.fraudDetectionModels.ensemble.models.filter(
@@ -79,30 +79,30 @@ const processedData = {
 	),
 };
 
-console.log(
+console.info(
 	`✅ Processed ${processedData.filteredModels.length} high-accuracy models`,
 );
-console.log(
+console.info(
 	`✅ Average network latency: ${processedData.avgLatency.toFixed(2)}ms`,
 );
-console.log(`✅ Found ${processedData.highRiskItems.length} high-risk items`);
+console.info(`✅ Found ${processedData.highRiskItems.length} high-risk items`);
 
-console.log("\n🎯 --smol Flag Benefits:");
-console.log("- Reduced memory footprint");
-console.log("- More frequent garbage collection");
-console.log("- Better performance on memory-constrained systems");
-console.log("- Ideal for CI/CD and testing environments");
+console.info("\n🎯 --smol Flag Benefits:");
+console.info("- Reduced memory footprint");
+console.info("- More frequent garbage collection");
+console.info("- Better performance on memory-constrained systems");
+console.info("- Ideal for CI/CD and testing environments");
 
-console.log("\n💡 Usage Examples:");
-console.log("bun --smol run index.tsx          # Memory-optimized execution");
-console.log("bun --smol run build.tsx          # Memory-optimized builds");
-console.log("bun --smol run test.tsx           # Memory-optimized testing");
+console.info("\n💡 Usage Examples:");
+console.info("bun --smol run index.tsx          # Memory-optimized execution");
+console.info("bun --smol run build.tsx          # Memory-optimized builds");
+console.info("bun --smol run test.tsx           # Memory-optimized testing");
 
-console.log("\n✅ --smol demonstration complete!");
+console.info("\n✅ --smol demonstration complete!");
 
 // Trigger garbage collection if available
 if (global.gc) {
-	console.log("\n🗑️ Triggering garbage collection...");
+	console.info("\n🗑️ Triggering garbage collection...");
 	global.gc();
-	console.log("✅ Garbage collection completed");
+	console.info("✅ Garbage collection completed");
 }

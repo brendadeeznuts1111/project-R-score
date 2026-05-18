@@ -48,14 +48,14 @@ class SecurityReportGenerator {
    * Generate comprehensive security report
    */
   async generateReport(): Promise<SecurityReport> {
-    console.log('📊 Generating Security Report...');
-    console.log('-'.repeat(40));
+    console.info('📊 Generating Security Report...');
+    console.info('-'.repeat(40));
 
     const scanFiles = this.getScanFiles();
     const scanData = this.loadScanData(scanFiles);
 
     if (scanData.length === 0) {
-      console.log('⚠️  No security scan data found');
+      console.info('⚠️  No security scan data found');
       return this.createEmptyReport();
     }
 
@@ -68,7 +68,7 @@ class SecurityReportGenerator {
 
   private getScanFiles(): string[] {
     if (!existsSync(this.logDirectory)) {
-      console.log(`⚠️  Log directory not found: ${this.logDirectory}`);
+      console.info(`⚠️  Log directory not found: ${this.logDirectory}`);
       return [];
     }
 
@@ -310,40 +310,40 @@ class SecurityReportGenerator {
     await Bun.write(reportFile, reportData);
     await Bun.write(timestampedFile, reportData);
 
-    console.log(`📝 Report saved to: ${reportFile}`);
+    console.info(`📝 Report saved to: ${reportFile}`);
   }
 
   private displayReport(report: SecurityReport): void {
-    console.log('\n📊 Security Report Summary');
-    console.log('='.repeat(50));
+    console.info('\n📊 Security Report Summary');
+    console.info('='.repeat(50));
 
-    console.log(`📅 Generated: ${report.generatedAt.toISOString()}`);
-    console.log(
+    console.info(`📅 Generated: ${report.generatedAt.toISOString()}`);
+    console.info(
       `📆 Time Range: ${report.timeRange.start.toISOString().split('T')[0]} to ${report.timeRange.end.toISOString().split('T')[0]}`
     );
 
-    console.log('\n📈 Summary:');
-    console.log(`   🔍 Total Scans: ${report.summary.totalScans}`);
-    console.log(`   🌍 Environments: ${report.summary.environments.join(', ')}`);
-    console.log(`   📊 Compliance Rate: ${report.summary.complianceRate}%`);
-    console.log(`   📈 Average Risk Score: ${report.summary.averageRiskScore}/100`);
+    console.info('\n📈 Summary:');
+    console.info(`   🔍 Total Scans: ${report.summary.totalScans}`);
+    console.info(`   🌍 Environments: ${report.summary.environments.join(', ')}`);
+    console.info(`   📊 Compliance Rate: ${report.summary.complianceRate}%`);
+    console.info(`   📈 Average Risk Score: ${report.summary.averageRiskScore}/100`);
 
-    console.log('\n📋 Recommendations:');
+    console.info('\n📋 Recommendations:');
     report.recommendations.forEach((rec, index) => {
-      console.log(`   ${index + 1}. ${rec}`);
+      console.info(`   ${index + 1}. ${rec}`);
     });
 
     if (report.criticalIssues.length > 0) {
-      console.log('\n🚨 Recent Critical Issues:');
+      console.info('\n🚨 Recent Critical Issues:');
       report.criticalIssues.slice(0, 5).forEach((issue, index) => {
-        console.log(`   ${index + 1}. ${issue.date}: ${issue.package} - ${issue.issue}`);
+        console.info(`   ${index + 1}. ${issue.date}: ${issue.package} - ${issue.issue}`);
       });
     }
 
-    console.log('\n📊 Trends:');
+    console.info('\n📊 Trends:');
     if (report.trends.issuesOverTime.length > 0) {
       const latest = report.trends.issuesOverTime[report.trends.issuesOverTime.length - 1];
-      console.log(
+      console.info(
         `   📅 Latest: ${latest.date} - Fatal: ${latest.fatal}, Warnings: ${latest.warnings}`
       );
     }
@@ -352,7 +352,7 @@ class SecurityReportGenerator {
       const unhealthyCount = Object.values(report.trends.packageHealth).filter(
         health => health < 60
       ).length;
-      console.log(`   📦 Unhealthy Packages: ${unhealthyCount}`);
+      console.info(`   📦 Unhealthy Packages: ${unhealthyCount}`);
     }
   }
 }

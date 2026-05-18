@@ -727,7 +727,7 @@ async function main() {
 }
 
 function printUsage() {
-  console.log(`
+  console.info(`
 🏭 Factory-Form Specification Generator
 
 Usage:
@@ -742,15 +742,15 @@ Examples:
 }
 
 function listSpecs() {
-  console.log('\n📋 Available Specifications:\n');
+  console.info('\n📋 Available Specifications:\n');
 
   for (const [id, spec] of Object.entries(ALL_SPECS)) {
-    console.log(`  📌 ${id.toUpperCase()}`);
-    console.log(`     Name: ${spec.name}`);
-    console.log(`     Phase: ${spec.phase}`);
-    console.log(`     Files: ${spec.files.length}`);
-    console.log(`     Guardrails: ${spec.guardrails.length}`);
-    console.log(`     Tests: ${spec.tests.length}\n`);
+    console.info(`  📌 ${id.toUpperCase()}`);
+    console.info(`     Name: ${spec.name}`);
+    console.info(`     Phase: ${spec.phase}`);
+    console.info(`     Files: ${spec.files.length}`);
+    console.info(`     Guardrails: ${spec.guardrails.length}`);
+    console.info(`     Tests: ${spec.tests.length}\n`);
   }
 }
 
@@ -762,7 +762,7 @@ function generateSpec(specId: string) {
     process.exit(1);
   }
 
-  console.log(`\n🏭 Generating: ${spec.name}\n`);
+  console.info(`\n🏭 Generating: ${spec.name}\n`);
 
   // Generate files
   for (const file of spec.files) {
@@ -775,11 +775,11 @@ function generateSpec(specId: string) {
 
     const fullPath = join(process.cwd(), file.path);
     writeFileSync(fullPath, file.content);
-    console.log(`  ✅ Created: ${file.path}`);
+    console.info(`  ✅ Created: ${file.path}`);
   }
 
   // Validate guardrails
-  console.log(`\n🛡️  Guardrails Check:\n`);
+  console.info(`\n🛡️  Guardrails Check:\n`);
 
   for (const guardrail of spec.guardrails) {
     // Validate against all files
@@ -792,32 +792,32 @@ function generateSpec(specId: string) {
     }
 
     if (valid) {
-      console.log(`  ✅ ${guardrail.name}`);
+      console.info(`  ✅ ${guardrail.name}`);
     } else {
       const icon = guardrail.severity === 'error' ? '❌' : '⚠️ ';
-      console.log(`  ${icon} ${guardrail.name}`);
-      console.log(`     Rule: ${guardrail.rule}`);
+      console.info(`  ${icon} ${guardrail.name}`);
+      console.info(`     Rule: ${guardrail.rule}`);
     }
   }
 
   // Summary
-  console.log(`\n📊 Summary:\n`);
-  console.log(`  Files: ${spec.files.length}`);
-  console.log(`  Guardrails: ${spec.guardrails.length}`);
-  console.log(`  Tests: ${spec.tests.length}`);
-  console.log(`  Phase: ${spec.phase}\n`);
+  console.info(`\n📊 Summary:\n`);
+  console.info(`  Files: ${spec.files.length}`);
+  console.info(`  Guardrails: ${spec.guardrails.length}`);
+  console.info(`  Tests: ${spec.tests.length}`);
+  console.info(`  Phase: ${spec.phase}\n`);
 
-  console.log(`✅ Specification generated: ${spec.id}\n`);
+  console.info(`✅ Specification generated: ${spec.id}\n`);
 }
 
 function generateAllSpecs() {
-  console.log('\n🏭 Generating all specifications...\n');
+  console.info('\n🏭 Generating all specifications...\n');
 
   for (const [id, spec] of Object.entries(ALL_SPECS)) {
-    console.log(`  📌 ${spec.name}...`);
+    console.info(`  📌 ${spec.name}...`);
   }
 
-  console.log('\n✅ All specifications generated.\n');
+  console.info('\n✅ All specifications generated.\n');
 }
 
 if (import.meta.main) {

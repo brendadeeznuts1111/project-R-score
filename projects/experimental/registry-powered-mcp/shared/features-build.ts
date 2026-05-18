@@ -155,7 +155,7 @@ export function getBundleConfiguration() {
 // Example of feature-gated console logging - completely removed in production
 export function debugLog(message: string) {
   if (DEBUG_MODE) {
-    console.log(`[DEBUG] ${message}`);
+    console.info(`[DEBUG] ${message}`);
   }
 }
 

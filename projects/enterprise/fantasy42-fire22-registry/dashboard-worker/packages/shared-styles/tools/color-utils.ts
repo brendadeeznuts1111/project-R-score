@@ -260,11 +260,11 @@ export async function main() {
 
   switch (command) {
     case 'generate-css':
-      console.log(generateCSSCustomProperties());
+      console.info(generateCSSCustomProperties());
       break;
 
     case 'generate-enum':
-      console.log(generateTypescriptEnum());
+      console.info(generateTypescriptEnum());
       break;
 
     case 'palette':
@@ -275,7 +275,7 @@ export async function main() {
       Object.entries(FIRE22_STATUS_COLORS).forEach(([name, color]) => {
         const lightValid = validateWCAGCompliance(color.oklch, 'light');
         const darkValid = validateWCAGCompliance(color.oklch, 'dark');
-        console.log(
+        console.info(
           `${name}: Light BG: ${lightValid ? '✅' : '❌'}, Dark BG: ${darkValid ? '✅' : '❌'}`
         );
       });
@@ -297,12 +297,12 @@ export async function main() {
         descParts.join(' '),
         'Custom status color'
       );
-      console.log(`Created color: ${name} = ${oklchToCSS(customColor.oklch)}`);
-      console.log(`WCAG Compliant: ${customColor.wcagCompliant ? '✅' : '❌'}`);
+      console.info(`Created color: ${name} = ${oklchToCSS(customColor.oklch)}`);
+      console.info(`WCAG Compliant: ${customColor.wcagCompliant ? '✅' : '❌'}`);
       break;
 
     default:
-      console.log(`
+      console.info(`
 🔥 Fire22 Color Utilities v1.00.10-ALPHA
 
 Usage:

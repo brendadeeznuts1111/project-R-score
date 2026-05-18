@@ -62,8 +62,8 @@ class UnifiedAPI {
                     if (err) {
                         reject(err);
                     } else {
-                        console.log(`🚀 Unified API started on port ${this.config.port}`);
-                        console.log(`📊 Dashboard available at: http://localhost:${this.config.port}`);
+                        console.info(`🚀 Unified API started on port ${this.config.port}`);
+                        console.info(`📊 Dashboard available at: http://localhost:${this.config.port}`);
                         resolve();
                     }
                 });
@@ -78,7 +78,7 @@ class UnifiedAPI {
         return new Promise((resolve) => {
             if (this.server) {
                 this.server.close(() => {
-                    console.log('🛑 Unified API stopped');
+                    console.info('🛑 Unified API stopped');
                     resolve();
                 });
             } else {

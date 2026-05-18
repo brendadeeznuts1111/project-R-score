@@ -177,7 +177,7 @@ async function migrateR2Files(filePath: string): Promise<MigrationResult> {
  * Main migration function
  */
 async function main() {
-  console.log('🚀 Starting AWS SDK to Bun migration...\n');
+  console.info('🚀 Starting AWS SDK to Bun migration...\n');
 
   // Find relevant files manually
   const files = [
@@ -189,14 +189,14 @@ async function main() {
     'bench/storage/bench-r2-super.ts'
   ];
 
-  console.log(`📁 Found ${files.length} files to analyze\n`);
+  console.info(`📁 Found ${files.length} files to analyze\n`);
 
   const results: MigrationResult[] = [];
 
   // Migrate AWS SDK usage
   for (const file of files) {
     if (file.includes('aws') || file.includes('s3') || file.includes('r2') || file.includes('storage')) {
-      console.log(`🔄 Migrating ${file}...`);
+      console.info(`🔄 Migrating ${file}...`);
       
       const awsResult = await migrateAWSImports(file);
       const r2Result = await migrateR2Files(file);
@@ -207,7 +207,7 @@ async function main() {
           migrated: true,
           changes: awsResult.changes + r2Result.changes
         });
-        console.log(`  ✅ Migrated ${awsResult.changes + r2Result.changes} changes`);
+        console.info(`  ✅ Migrated ${awsResult.changes + r2Result.changes} changes`);
       } else if (awsResult.error || r2Result.error) {
         results.push({
           file,
@@ -215,35 +215,35 @@ async function main() {
           changes: 0,
           error: awsResult.error || r2Result.error
         });
-        console.log(`  ❌ Error: ${awsResult.error || r2Result.error}`);
+        console.info(`  ❌ Error: ${awsResult.error || r2Result.error}`);
       }
     }
   }
 
   // Summary
-  console.log('\n📊 Migration Summary:');
-  console.log('='.repeat(50));
+  console.info('\n📊 Migration Summary:');
+  console.info('='.repeat(50));
   
   const successful = results.filter(r => r.migrated).length;
   const failed = results.filter(r => !r.migrated && r.error).length;
   const totalChanges = results.reduce((sum, r) => sum + r.changes, 0);
 
-  console.log(`✅ Successfully migrated: ${successful} files`);
-  console.log(`❌ Failed migrations: ${failed} files`);
-  console.log(`🔄 Total changes made: ${totalChanges}`);
+  console.info(`✅ Successfully migrated: ${successful} files`);
+  console.info(`❌ Failed migrations: ${failed} files`);
+  console.info(`🔄 Total changes made: ${totalChanges}`);
 
   if (successful > 0) {
-    console.log('\n🎉 Migration completed successfully!');
-    console.log('\n📋 Next steps:');
-    console.log('1. Run tests to verify functionality');
-    console.log('2. Update package.json to remove AWS SDK dependencies');
-    console.log('3. Commit changes and test performance improvements');
+    console.info('\n🎉 Migration completed successfully!');
+    console.info('\n📋 Next steps:');
+    console.info('1. Run tests to verify functionality');
+    console.info('2. Update package.json to remove AWS SDK dependencies');
+    console.info('3. Commit changes and test performance improvements');
   }
 
   if (failed > 0) {
-    console.log('\n⚠️ Some files failed to migrate:');
+    console.info('\n⚠️ Some files failed to migrate:');
     results.filter(r => !r.migrated && r.error).forEach(r => {
-      console.log(`  - ${r.file}: ${r.error}`);
+      console.info(`  - ${r.file}: ${r.error}`);
     });
   }
 }

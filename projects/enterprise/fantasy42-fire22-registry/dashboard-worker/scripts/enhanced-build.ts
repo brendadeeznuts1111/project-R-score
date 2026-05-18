@@ -396,7 +396,7 @@ function parseArgs(): BuildOptions {
  * Show help information
  */
 function showHelp(): void {
-  console.log(`
+  console.info(`
 🚀 Enhanced Build Script with New Bun Features
 
 Usage: bun run enhanced-build [environment] [options]

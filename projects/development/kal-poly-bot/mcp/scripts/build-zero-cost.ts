@@ -51,10 +51,10 @@ class ZeroCostBuilder {
   }
 
   async build(): Promise<void> {
-    console.log(
+    console.info(
       "🔨 Building Component #41 MCP Server with Zero-Cost Optimization"
     );
-    console.log("=".repeat(60));
+    console.info("=".repeat(60));
 
     // Create dist directory
     if (!existsSync("dist")) {
@@ -63,11 +63,11 @@ class ZeroCostBuilder {
 
     // Build with feature flags
     const buildCommand = this.buildCommand();
-    console.log(`📦 Running: ${buildCommand}`);
+    console.info(`📦 Running: ${buildCommand}`);
 
     try {
       execSync(buildCommand, { stdio: "inherit" });
-      console.log("✅ Build completed successfully");
+      console.info("✅ Build completed successfully");
     } catch (error) {
       console.error("❌ Build failed:", error);
       process.exit(1);
@@ -103,14 +103,14 @@ class ZeroCostBuilder {
   }
 
   private async analyzeBundle(): Promise<void> {
-    console.log("\n📊 Analyzing Bundle Size");
-    console.log("-".repeat(30));
+    console.info("\n📊 Analyzing Bundle Size");
+    console.info("-".repeat(30));
 
     try {
       const stats = execSync(`ls -lh ${this.config.output}`, {
         encoding: "utf8",
       });
-      console.log(stats);
+      console.info(stats);
 
       // Calculate dead code elimination
       const fileSize = this.getFileSize();
@@ -121,7 +121,7 @@ class ZeroCostBuilder {
         100
       ).toFixed(1);
 
-      console.log(
+      console.info(
         `📈 Dead Code Eliminated: ${deadCodeEliminated}KB (${eliminationPercentage}%)`
       );
     } catch (error) {
@@ -141,8 +141,8 @@ class ZeroCostBuilder {
   }
 
   private async generateBuildReport(): Promise<void> {
-    console.log("\n📋 Generating Build Report");
-    console.log("-".repeat(30));
+    console.info("\n📋 Generating Build Report");
+    console.info("-".repeat(30));
 
     const report = {
       buildTime: new Date().toISOString(),
@@ -167,21 +167,21 @@ class ZeroCostBuilder {
 
     const reportPath = "dist/build-report.json";
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`📄 Build report saved to: ${reportPath}`);
+    console.info(`📄 Build report saved to: ${reportPath}`);
 
     // Display summary
-    console.log("\n📊 Build Summary:");
-    console.log(`   Version: ${report.version}`);
-    console.log(`   Component: #${report.component}`);
-    console.log(`   Bundle Size: ${report.bundleSize}`);
-    console.log(`   Active Features: ${report.features.length}`);
-    console.log(`   Dead Code Eliminated: ${report.deadCodeElimination}`);
-    console.log(`   Runtime Cost: ${report.runtimeCost}`);
+    console.info("\n📊 Build Summary:");
+    console.info(`   Version: ${report.version}`);
+    console.info(`   Component: #${report.component}`);
+    console.info(`   Bundle Size: ${report.bundleSize}`);
+    console.info(`   Active Features: ${report.features.length}`);
+    console.info(`   Dead Code Eliminated: ${report.deadCodeElimination}`);
+    console.info(`   Runtime Cost: ${report.runtimeCost}`);
   }
 
   private async verifySecurity(): Promise<void> {
-    console.log("\n🔒 Verifying Security Configuration");
-    console.log("-".repeat(40));
+    console.info("\n🔒 Verifying Security Configuration");
+    console.info("-".repeat(40));
 
     const securityChecks = [
       {
@@ -214,20 +214,20 @@ class ZeroCostBuilder {
     let allPassed = true;
     for (const check of securityChecks) {
       const status = check.check ? check.status : "❌";
-      console.log(`   ${status} ${check.name}`);
+      console.info(`   ${status} ${check.name}`);
       if (!check.check) allPassed = false;
     }
 
     if (allPassed) {
-      console.log("\n✅ All security checks passed");
+      console.info("\n✅ All security checks passed");
     } else {
-      console.log("\n⚠️  Some security checks failed - review configuration");
+      console.info("\n⚠️  Some security checks failed - review configuration");
     }
   }
 
   // Build with minimal features (demonstrates zero-cost)
   async buildMinimal(): Promise<void> {
-    console.log("🪶 Building Minimal Version (Zero-Cost Demo)");
+    console.info("🪶 Building Minimal Version (Zero-Cost Demo)");
 
     const minimalConfig = {
       ...this.config,
@@ -238,10 +238,10 @@ class ZeroCostBuilder {
     const minimalBuilder = new ZeroCostBuilder(minimalConfig);
     await minimalBuilder.build();
 
-    console.log("\n📊 Minimal Build Analysis:");
-    console.log(`   Bundle Size: ${minimalBuilder.getFileSize()}KB`);
-    console.log(`   Active Features: 0 (all disabled)`);
-    console.log(`   Runtime Cost: O(0) - immediate 404 response`);
+    console.info("\n📊 Minimal Build Analysis:");
+    console.info(`   Bundle Size: ${minimalBuilder.getFileSize()}KB`);
+    console.info(`   Active Features: 0 (all disabled)`);
+    console.info(`   Runtime Cost: O(0) - immediate 404 response`);
   }
 }
 

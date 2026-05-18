@@ -36,7 +36,7 @@ if (envCookie) {
 		cookie: envCookie,
 		sessionId: envSessionId,
 	});
-	console.log("Stored PLIVE session from environment variables.");
+	console.info("Stored PLIVE session from environment variables.");
 }
 
 const proof: ProofReport = {
@@ -151,9 +151,9 @@ ${proof.fetchPreview}
 `,
 );
 
-console.log(`Proof written: ${proofJson}`);
-console.log(`Proof written: ${proofMd}`);
-console.log(
+console.info(`Proof written: ${proofJson}`);
+console.info(`Proof written: ${proofMd}`);
+console.info(
 	proof.authTestOk
 		? "Bootstrap auth test passed."
 		: "Bootstrap auth test did not pass. Load a real session and rerun.",

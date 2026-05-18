@@ -111,7 +111,7 @@ test("ANSI color per-stream", () => {
 	
 	// Test stdout (should be green/info)
 	expect(() => {
-		console.log('%j', { info: 'test' });   // stdout green
+		console.info('%j', { info: 'test' });   // stdout green
 	}).not.toThrow();
 
 	// Test stderr (should be red/error)
@@ -127,7 +127,7 @@ test("ANSI color per-stream", () => {
 test("console.log uses stdout", () => {
 	// Verify console.log works
 	expect(() => {
-		console.log('info message');
+		console.info('info message');
 	}).not.toThrow();
 	
 	expect(typeof console.log).toBe('function');
@@ -167,7 +167,7 @@ test("console.error with %j JSON logging (stderr red)", () => {
 test("console.log with %j JSON logging (stdout green)", () => {
 	// ✅ Green (stdout)
 	expect(() => {
-		console.log('%j', { INFO: '47 bookies live' });
+		console.info('%j', { INFO: '47 bookies live' });
 	}).not.toThrow();
 	
 	// Verify JSON logging works
@@ -212,7 +212,7 @@ test("ANSI color JSON logging format", () => {
 	// Verify JSON serialization
 	expect(() => {
 		console.error('%j', { ERROR: testData.ERROR });
-		console.log('%j', { INFO: testData.INFO });
+		console.info('%j', { INFO: testData.INFO });
 		console.warn('%j', { WARN: testData.WARN });
 	}).not.toThrow();
 	
@@ -317,7 +317,7 @@ test("enterprise health endpoint structure", async () => {
 		}
 	} catch {
 		// Server may not be running - skip test
-		console.log('Health endpoint test skipped (server not running)');
+		console.info('Health endpoint test skipped (server not running)');
 	}
 }, 5000);
 
@@ -334,7 +334,7 @@ test("diagnostics endpoint structure", async () => {
 		}
 	} catch {
 		// Server may not be running - skip test
-		console.log('Diagnostics endpoint test skipped (server not running)');
+		console.info('Diagnostics endpoint test skipped (server not running)');
 	}
 }, 5000);
 
@@ -351,7 +351,7 @@ test("MySQL bookies endpoint", async () => {
 		}
 	} catch {
 		// Server may not be running - skip test
-		console.log('MySQL bookies endpoint test skipped (server not running)');
+		console.info('MySQL bookies endpoint test skipped (server not running)');
 	}
 }, 5000);
 

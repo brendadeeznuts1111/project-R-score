@@ -381,7 +381,7 @@ export class SecureR2Client extends BunR2Client {
    */
   private async sendSecurityAlert(alert: any): Promise<void> {
     // In production, this would send to monitoring system
-    console.log('🚨 Security Alert:', alert);
+    console.info('🚨 Security Alert:', alert);
 
     // Log to database
     await this.logSecurityEvent({

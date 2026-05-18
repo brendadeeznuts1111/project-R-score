@@ -61,7 +61,7 @@ async function initializeLockfile() {
   try {
     const existing = Bun.file(lockfilePath);
     if (await existing.exists()) {
-      console.log("📁 Existing lockfile found, reading config...");
+      console.info("📁 Existing lockfile found, reading config...");
       const buffer = new Uint8Array(await existing.arrayBuffer());
       const configBytes = buffer.slice(4, 17);
       if (configBytes.byteLength === 13) {
@@ -90,7 +90,7 @@ async function initializeLockfile() {
     config[16] = 0;   // reserved
     
     await existing.write(config);
-    console.log("✅ Created new lockfile with 13-byte config");
+    console.info("✅ Created new lockfile with 13-byte config");
   } catch (error) {
     console.error("❌ Failed to initialize lockfile:", error);
   }
@@ -731,7 +731,7 @@ const websocketHandler = {
       }
     }, 100);
     
-    console.log(`📡 Client connected via ${SUBPROTOCOL} (total: ${wsClients.size})`);
+    console.info(`📡 Client connected via ${SUBPROTOCOL} (total: ${wsClients.size})`);
   },
   
   message(ws: any, msg: any) {
@@ -842,7 +842,7 @@ const websocketHandler = {
   async applyConfigUpdate(field: string, value: number) {
     try {
       await updateLockfileByte(getOffset(field), value);
-      console.log(`⚡ Config update: ${field} = ${value}`);
+      console.info(`⚡ Config update: ${field} = ${value}`);
     } catch (error) {
       console.error(`Failed to update ${field}:`, error);
     }
@@ -870,7 +870,7 @@ const websocketHandler = {
       await updateLockfileByte(11, (newFlags >> 16) & 0xFF);
       await updateLockfileByte(12, (newFlags >> 24) & 0xFF);
       
-      console.log(`⚡ Feature toggle: ${feature} = ${enabled}`);
+      console.info(`⚡ Feature toggle: ${feature} = ${enabled}`);
     } catch (error) {
       console.error(`Failed to toggle ${feature}:`, error);
     }
@@ -915,7 +915,7 @@ const websocketHandler = {
       clearInterval(ws.heartbeatInterval);
     }
     
-    console.log(`📡 Client disconnected (total: ${wsClients.size})`);
+    console.info(`📡 Client disconnected (total: ${wsClients.size})`);
   }
 };
 
@@ -1234,13 +1234,13 @@ const server = serve({
 async function start() {
   await initializeLockfile();
   
-  console.log(`🚀 Local registry running at http://localhost:4873`);
-  console.log(`📊 Dashboard: http://localhost:4873/_dashboard`);
-  console.log(`💻 Terminal: bun registry/terminal/term-native.ts`);
-  console.log(`📦 Publish: bun publish ./pkg --registry http://localhost:4873`);
+  console.info(`🚀 Local registry running at http://localhost:4873`);
+  console.info(`📊 Dashboard: http://localhost:4873/_dashboard`);
+  console.info(`💻 Terminal: bun registry/terminal/term-native.ts`);
+  console.info(`📦 Publish: bun publish ./pkg --registry http://localhost:4873`);
   
   // Performance metrics
-  console.log(`⚡ Performance: 50µs per request + 45ns config updates`);
+  console.info(`⚡ Performance: 50µs per request + 45ns config updates`);
 }
 
 // Keep alive

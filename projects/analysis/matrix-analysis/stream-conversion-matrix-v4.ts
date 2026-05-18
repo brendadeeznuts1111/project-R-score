@@ -309,12 +309,12 @@ export class EnhancedStreamScanner {
           const regex = new RegExp(pattern.regex.source, pattern.regex.flags);
           if (regex.test(code)) {
             if (dryRun) {
-              console.log(`[DRY-RUN] ${file}:${op.line} - ${op.id}`);
+              console.info(`[DRY-RUN] ${file}:${op.line} - ${op.id}`);
               result.applied++;
             } else {
               code = code.replace(regex, op.fix);
               modified = true;
-              console.log(`[APPLIED] ${file}:${op.line} - ${op.id}`);
+              console.info(`[APPLIED] ${file}:${op.line} - ${op.id}`);
               result.applied++;
             }
           } else {
@@ -447,7 +447,7 @@ if (import.meta.path === Bun.main) {
       const target = process.argv[3] || ".";
       const output = process.argv[5] || "stream-conversion-report.md";
       
-      console.log(`🔍 Scanning ${target} for stream conversion opportunities...`);
+      console.info(`🔍 Scanning ${target} for stream conversion opportunities...`);
       
       // In a real implementation, this would recursively scan the directory
       const opportunities: StreamConversionOpportunity[] = [];
@@ -455,37 +455,37 @@ if (import.meta.path === Bun.main) {
       const report = scanner.generateReport(opportunities);
       writeFileSync(output, report);
       
-      console.log(`📊 Report generated: ${output}`);
-      console.log(`🎯 Found ${opportunities.length} opportunities`);
+      console.info(`📊 Report generated: ${output}`);
+      console.info(`🎯 Found ${opportunities.length} opportunities`);
       break;
     }
 
     case "migrate": {
       const dryRun = !process.argv.includes("--apply");
-      console.log(dryRun ? "🔍 Previewing migrations..." : "🚀 Applying migrations...");
+      console.info(dryRun ? "🔍 Previewing migrations..." : "🚀 Applying migrations...");
       
       const result = await scanner.applyMigrations([], dryRun);
       
-      console.log(`\n📈 Results:`);
-      console.log(`- Applied: ${result.applied}`);
-      console.log(`- Failed: ${result.failed}`);
-      console.log(`- Skipped: ${result.skipped}`);
+      console.info(`\n📈 Results:`);
+      console.info(`- Applied: ${result.applied}`);
+      console.info(`- Failed: ${result.failed}`);
+      console.info(`- Skipped: ${result.skipped}`);
       break;
     }
 
     case "benchmark": {
-      console.log(`🏃 Running stream converter benchmarks...`);
+      console.info(`🏃 Running stream converter benchmarks...`);
       
       const results: BenchmarkResult[] = [];
       const report = benchmark.generateBenchmarkReport(results);
       writeFileSync("stream-benchmark-report.md", report);
       
-      console.log(`📊 Benchmark report generated: stream-benchmark-report.md`);
+      console.info(`📊 Benchmark report generated: stream-benchmark-report.md`);
       break;
     }
 
     default: {
-      console.log(`
+      console.info(`
 🌊 Stream Conversion Annihilation Matrix v4.1
 
 Usage:

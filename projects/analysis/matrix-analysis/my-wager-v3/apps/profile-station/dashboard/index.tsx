@@ -40,9 +40,9 @@ function TensionDashboard() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    console.log(`🚀 Profile Station v${PROFILE_VERSION} initializing`);
-    console.log(`📡 Connecting to: ${WS_URL}`);
-    console.log(`⚡ Anomaly threshold: ${ANOMALY_THRESHOLD}`);
+    console.info(`🚀 Profile Station v${PROFILE_VERSION} initializing`);
+    console.info(`📡 Connecting to: ${WS_URL}`);
+    console.info(`⚡ Anomaly threshold: ${ANOMALY_THRESHOLD}`);
 
     // Connect to tension stream
     ws.current = new WebSocket(WS_URL);
@@ -50,7 +50,7 @@ function TensionDashboard() {
     // Set headers after connection (WebSocket doesn't support headers in constructor)
     ws.current.onopen = () => {
       setConnected(true);
-      console.log("✅ Connected to tension stream");
+      console.info("✅ Connected to tension stream");
 
       // Send client info as first message
       ws.current?.send(JSON.stringify({
@@ -85,7 +85,7 @@ function TensionDashboard() {
 
     ws.current.onclose = () => {
       setConnected(false);
-      console.log("❌ Disconnected from tension stream");
+      console.info("❌ Disconnected from tension stream");
     };
 
     // Cleanup
@@ -95,7 +95,7 @@ function TensionDashboard() {
   }, []);
 
   const triggerAnomalyVisual = (nodeIds: string[]) => {
-    console.log(`🚨 Anomaly detected in nodes: ${nodeIds.join(", ")}`);
+    console.info(`🚨 Anomaly detected in nodes: ${nodeIds.join(", ")}`);
 
     // Flash affected nodes
     const canvas = canvasRef.current;
@@ -150,7 +150,7 @@ function TensionDashboard() {
 
   const update3DVisualization = (data: PropagationResult) => {
     // 3D visualization implementation
-    console.log(`🎮 3D viz update: ${data.nodes?.length} nodes`);
+    console.info(`🎮 3D viz update: ${data.nodes?.length} nodes`);
   };
 
   return (
@@ -232,6 +232,6 @@ if (container) {
 // HMR support
 if (import.meta.hot) {
   import.meta.hot.accept(() => {
-    console.log("🔥 Dashboard hot reloaded - PUBLIC_ env preserved");
+    console.info("🔥 Dashboard hot reloaded - PUBLIC_ env preserved");
   });
 }

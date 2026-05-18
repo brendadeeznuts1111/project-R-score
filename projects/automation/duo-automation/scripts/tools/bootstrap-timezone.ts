@@ -66,7 +66,7 @@ export function validateAndSetTimezone(): TimezoneConfig {
 
   _activeTimezoneConfig = config;
 
-  console.log(`🌍 Timezone initialized: ${config.displayName} | DST: ${observesDst ? 'yes' : 'no'}`);
+  console.info(`🌍 Timezone initialized: ${config.displayName} | DST: ${observesDst ? 'yes' : 'no'}`);
 
   return config;
 }

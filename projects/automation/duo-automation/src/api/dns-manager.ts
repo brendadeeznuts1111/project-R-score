@@ -542,16 +542,16 @@ export const dnsManager = new DNSManager();
 
 // Run demo if this is the main module
 if (import.meta.main) {
-  console.log('🌐 DNS MANAGER DEMO');
-  console.log('='.repeat(30));
+  console.info('🌐 DNS MANAGER DEMO');
+  console.info('='.repeat(30));
   
-  console.log(dnsManager.generateReport());
+  console.info(dnsManager.generateReport());
   
   // Check propagation
   dnsManager.checkPropagation('factory-wager.com').then(status => {
-    console.log('\n📡 Propagation Status:');
+    console.info('\n📡 Propagation Status:');
     status.forEach(region => {
-      console.log(`  ${region.region}: ${region.status}`);
+      console.info(`  ${region.region}: ${region.status}`);
     });
   });
 }

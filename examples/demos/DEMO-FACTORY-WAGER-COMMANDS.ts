@@ -31,10 +31,10 @@ class FactoryWagerCommandDemo {
     if (!existsSync(this.outputDir)) {
       mkdirSync(this.outputDir, { recursive: true });
     }
-    console.log("🚀 Factory-Wager.com Command Suite Demo");
-    console.log("=======================================");
-    console.log("Demonstrating enterprise A/B testing, R2 storage, CDN operations, and real-time sync");
-    console.log("");
+    console.info("🚀 Factory-Wager.com Command Suite Demo");
+    console.info("=======================================");
+    console.info("Demonstrating enterprise A/B testing, R2 storage, CDN operations, and real-time sync");
+    console.info("");
   }
 
   private async executeCommand(command: string, category: string, expectedPattern?: string): Promise<CommandResult> {
@@ -87,15 +87,15 @@ class FactoryWagerCommandDemo {
     const status = result.success ? "✅" : "❌";
     const duration = this.formatDuration(result.duration);
     
-    console.log(`${status} ${result.command}`);
-    console.log(`   📊 Result: ${result.result}`);
-    console.log(`   ⏱️  Duration: ${duration}`);
-    console.log("");
+    console.info(`${status} ${result.command}`);
+    console.info(`   📊 Result: ${result.result}`);
+    console.info(`   ⏱️  Duration: ${duration}`);
+    console.info("");
   }
 
   async demonstrateABTesting(): Promise<void> {
-    console.log("🎯 A/B Testing & Cookie Management");
-    console.log("==================================");
+    console.info("🎯 A/B Testing & Cookie Management");
+    console.info("==================================");
 
     // Test Cookie A - Admin UI
     const result1 = await this.executeCommand(
@@ -123,8 +123,8 @@ class FactoryWagerCommandDemo {
   }
 
   async demonstrateR2Storage(): Promise<void> {
-    console.log("☁️ Cloudflare R2 Storage Operations");
-    console.log("===================================");
+    console.info("☁️ Cloudflare R2 Storage Operations");
+    console.info("===================================");
 
     // R2 Upload Profile
     const result1 = await this.executeCommand(
@@ -160,12 +160,12 @@ class FactoryWagerCommandDemo {
   }
 
   async demonstrateCDNOperations(): Promise<void> {
-    console.log("🌐 CDN & Cache Management");
-    console.log("========================");
+    console.info("🌐 CDN & Cache Management");
+    console.info("========================");
 
     // CDN ETag Generation
     const result1 = await this.executeCommand(
-      'bun -e \'console.log(new Bun.CryptoHasher("sha256").update("html-content").digest("hex"))\'',
+      'bun -e \'console.info(new Bun.CryptoHasher("sha256").update("html-content").digest("hex"))\'',
       "CDN Operations",
       "hash"
     );
@@ -189,8 +189,8 @@ class FactoryWagerCommandDemo {
   }
 
   async demonstrateSubdomainRouting(): Promise<void> {
-    console.log("🏢 Multi-Tenant Subdomain Routing");
-    console.log("=================================");
+    console.info("🏢 Multi-Tenant Subdomain Routing");
+    console.info("=================================");
 
     // Subdomain Admin
     const result1 = await this.executeCommand(
@@ -218,8 +218,8 @@ class FactoryWagerCommandDemo {
   }
 
   async demonstrateRealTimeOperations(): Promise<void> {
-    console.log("⚡ Real-Time Operations");
-    console.log("======================");
+    console.info("⚡ Real-Time Operations");
+    console.info("======================");
 
     // JuniorRunner POST
     const result1 = await this.executeCommand(
@@ -244,16 +244,16 @@ Content: This is a synchronized document
 Status: Ready for live updates`;
 
     writeFileSync(join(this.outputDir, "test.md"), testContent);
-    console.log(`📝 Created test file: ${join(this.outputDir, "test.md")}`);
-    console.log("");
+    console.info(`📝 Created test file: ${join(this.outputDir, "test.md")}`);
+    console.info("");
   }
 
   async demonstrateComplexWorkflows(): Promise<void> {
-    console.log("🔧 Complex Workflow Integration");
-    console.log("===============================");
+    console.info("🔧 Complex Workflow Integration");
+    console.info("===============================");
 
     // Workflow 1: User Registration + Profile Setup + A/B Test
-    console.log("📋 Workflow 1: Complete User Onboarding");
+    console.info("📋 Workflow 1: Complete User Onboarding");
     
     const workflow1 = [
       'echo "Step 1: Create user session"',
@@ -269,7 +269,7 @@ Status: Ready for live updates`;
     }
 
     // Workflow 2: Content Management + CDN + Sync
-    console.log("📋 Workflow 2: Content Publishing Pipeline");
+    console.info("📋 Workflow 2: Content Publishing Pipeline");
     
     const workflow2 = [
       'echo "Step 1: Generate content hash"',
@@ -320,19 +320,19 @@ Status: Ready for live updates`;
   }
 
   printPerformanceReport(): void {
-    console.log("📊 Performance Analysis Report");
-    console.log("=============================");
+    console.info("📊 Performance Analysis Report");
+    console.info("=============================");
 
     const metrics = this.calculatePerformanceMetrics();
 
-    console.log(`📈 Total Commands Executed: ${metrics.totalCommands}`);
-    console.log(`✅ Success Rate: ${metrics.successRate.toFixed(1)}%`);
-    console.log(`⚡ Average Response Time: ${this.formatDuration(metrics.averageResponseTime)}`);
-    console.log(`🏆 Fastest Command: ${metrics.fastestCommand.name} (${this.formatDuration(metrics.fastestCommand.time)})`);
-    console.log(`🐌 Slowest Command: ${metrics.slowestCommand.name} (${this.formatDuration(metrics.slowestCommand.time)})`);
+    console.info(`📈 Total Commands Executed: ${metrics.totalCommands}`);
+    console.info(`✅ Success Rate: ${metrics.successRate.toFixed(1)}%`);
+    console.info(`⚡ Average Response Time: ${this.formatDuration(metrics.averageResponseTime)}`);
+    console.info(`🏆 Fastest Command: ${metrics.fastestCommand.name} (${this.formatDuration(metrics.fastestCommand.time)})`);
+    console.info(`🐌 Slowest Command: ${metrics.slowestCommand.name} (${this.formatDuration(metrics.slowestCommand.time)})`);
 
     // Category breakdown
-    console.log("\n📋 Performance by Category:");
+    console.info("\n📋 Performance by Category:");
     const categories = [...new Set(this.results.map(r => r.category))];
     
     for (const category of categories) {
@@ -342,13 +342,13 @@ Status: Ready for live updates`;
         ? categorySuccess.reduce((sum, r) => sum + r.duration, 0) / categorySuccess.length
         : 0;
       
-      console.log(`   ${category}: ${categorySuccess.length}/${categoryResults.length} successful, avg ${this.formatDuration(avgDuration)}`);
+      console.info(`   ${category}: ${categorySuccess.length}/${categoryResults.length} successful, avg ${this.formatDuration(avgDuration)}`);
     }
   }
 
   generateIntegrationReport(): void {
-    console.log("🔗 System Integration Analysis");
-    console.log("=============================");
+    console.info("🔗 System Integration Analysis");
+    console.info("=============================");
 
     const integrationPoints = [
       {
@@ -382,11 +382,11 @@ Status: Ready for live updates`;
       const totalCount = point.commands.length;
       const status = successCount === totalCount ? "✅" : "⚠️";
       
-      console.log(`${status} ${point.name}`);
-      console.log(`   📝 ${point.description}`);
-      console.log(`   📊 ${successCount}/${totalCount} commands successful`);
-      console.log(`   🏷️  Status: ${point.status}`);
-      console.log("");
+      console.info(`${status} ${point.name}`);
+      console.info(`   📝 ${point.description}`);
+      console.info(`   📊 ${successCount}/${totalCount} commands successful`);
+      console.info(`   🏷️  Status: ${point.status}`);
+      console.info("");
     });
   }
 
@@ -401,7 +401,7 @@ Status: Ready for live updates`;
 
     const reportPath = join(this.outputDir, "command-demo-report.json");
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`💾 Detailed report saved to: ${reportPath}`);
+    console.info(`💾 Detailed report saved to: ${reportPath}`);
   }
 
   private analyzeIntegrationPatterns(): any {
@@ -468,10 +468,10 @@ Status: Ready for live updates`;
       this.generateIntegrationReport();
       this.saveDetailedReport();
 
-      console.log("✨ Demo Complete!");
-      console.log("===============");
-      console.log("All factory-wager.com command categories demonstrated successfully.");
-      console.log("Check the output directory for detailed reports and test files.");
+      console.info("✨ Demo Complete!");
+      console.info("===============");
+      console.info("All factory-wager.com command categories demonstrated successfully.");
+      console.info("Check the output directory for detailed reports and test files.");
 
     } catch (error) {
       console.error("❌ Demo execution failed:", error);

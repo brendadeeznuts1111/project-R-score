@@ -93,22 +93,22 @@ if (import.meta.main) {
 	const head = args[1] || "HEAD";
 
 	if (!base) {
-		console.log("Usage: validate-commits.ts <base-ref> [head-ref]");
-		console.log();
-		console.log("Examples:");
-		console.log("  validate-commits.ts origin/main HEAD");
-		console.log(
+		console.info("Usage: validate-commits.ts <base-ref> [head-ref]");
+		console.info();
+		console.info("Examples:");
+		console.info("  validate-commits.ts origin/main HEAD");
+		console.info(
 			"  validate-commits.ts ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}",
 		);
 		process.exit(1);
 	}
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Commit Range Validator             ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
-	console.log(`Validating commits from ${base} to ${head}...`);
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Commit Range Validator             ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
+	console.info(`Validating commits from ${base} to ${head}...`);
+	console.info();
 
 	const results = await validateCommits(base, head);
 
@@ -118,11 +118,11 @@ if (import.meta.main) {
 
 	for (const result of results) {
 		const icon = result.valid ? "✅" : "❌";
-		console.log(`${icon} ${result.hash.slice(0, 7)} ${result.message.slice(0, 60)}`);
+		console.info(`${icon} ${result.hash.slice(0, 7)} ${result.message.slice(0, 60)}`);
 
 		if (!result.valid) {
 			for (const error of result.errors) {
-				console.log(`   ${error}`);
+				console.info(`   ${error}`);
 			}
 			invalidCount++;
 		} else {
@@ -130,15 +130,15 @@ if (import.meta.main) {
 		}
 	}
 
-	console.log();
-	console.log(`Results: ${validCount} valid, ${invalidCount} invalid`);
+	console.info();
+	console.info(`Results: ${validCount} valid, ${invalidCount} invalid`);
 
 	// Generate report for CI
 	if (process.env.CI) {
 		const report = generateReport(results);
 		await Bun.write("commit-validation-report.md", report);
-		console.log();
-		console.log("Report saved to: commit-validation-report.md");
+		console.info();
+		console.info("Report saved to: commit-validation-report.md");
 	}
 
 	process.exit(invalidCount > 0 ? 1 : 0);

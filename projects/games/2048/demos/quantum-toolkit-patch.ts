@@ -53,6 +53,6 @@ export const rgbaLattice = (base = 1) =>
 
 /* 8. one-liner test --------------------------------------- */
 if (import.meta.main) {
-  console.log(rgbaLattice());
-  console.log("Toolkit loaded – zero breaking changes.");
+  console.info(rgbaLattice());
+  console.info("Toolkit loaded – zero breaking changes.");
 }

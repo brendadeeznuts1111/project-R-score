@@ -50,7 +50,7 @@ class MonitoringDashboard extends EventEmitter {
   }
 
   async start(): Promise<void> {
-    console.log(`🚀 Starting monitoring dashboard on port ${this.port}...`);
+    console.info(`🚀 Starting monitoring dashboard on port ${this.port}...`);
 
     this.server = serve({
       port: this.port,
@@ -59,19 +59,19 @@ class MonitoringDashboard extends EventEmitter {
         message: (ws, message) => this.handleWebSocketMessage(ws, message),
         open: (ws) => this.handleWebSocket(ws),
         close: (ws) => {
-          console.log("📡 WebSocket client disconnected");
+          console.info("📡 WebSocket client disconnected");
         },
       },
     });
 
-    console.log(`✅ Monitoring dashboard started at http://localhost:${this.port}`);
-    console.log(`📊 Available endpoints:`);
-    console.log(`   - GET /  (dashboard)`);
-    console.log(`   - GET /api/health (health status)`);
-    console.log(`   - GET /api/metrics (all metrics)`);
-    console.log(`   - GET /api/tests (test metrics)`);
-    console.log(`   - GET /api/performance (performance metrics)`);
-    console.log(`   - WS /ws (real-time updates)`);
+    console.info(`✅ Monitoring dashboard started at http://localhost:${this.port}`);
+    console.info(`📊 Available endpoints:`);
+    console.info(`   - GET /  (dashboard)`);
+    console.info(`   - GET /api/health (health status)`);
+    console.info(`   - GET /api/metrics (all metrics)`);
+    console.info(`   - GET /api/tests (test metrics)`);
+    console.info(`   - GET /api/performance (performance metrics)`);
+    console.info(`   - WS /ws (real-time updates)`);
 
     this.emit("started");
   }
@@ -79,7 +79,7 @@ class MonitoringDashboard extends EventEmitter {
   async stop(): Promise<void> {
     if (this.server) {
       this.server.stop();
-      console.log("✅ Monitoring dashboard stopped");
+      console.info("✅ Monitoring dashboard stopped");
       this.emit("stopped");
     }
   }
@@ -115,7 +115,7 @@ class MonitoringDashboard extends EventEmitter {
   }
 
   private handleWebSocket(ws: WebSocket): void {
-    console.log("📡 WebSocket client connected");
+    console.info("📡 WebSocket client connected");
 
     // Send initial data
     ws.send(JSON.stringify({
@@ -151,7 +151,7 @@ class MonitoringDashboard extends EventEmitter {
       
       switch (data.type) {
         case "subscribe":
-          console.log(`Client subscribed to: ${data.channel}`);
+          console.info(`Client subscribed to: ${data.channel}`);
           break;
         case "get-metrics":
           ws.send(JSON.stringify({
@@ -466,7 +466,7 @@ class MonitoringDashboard extends EventEmitter {
             ws = new WebSocket(\`\${protocol}//\${window.location.host}/ws\`);
             
             ws.onopen = () => {
-                console.log('WebSocket connected');
+                console.info('WebSocket connected');
                 addEvent('WebSocket connected', 'success');
             };
             
@@ -476,7 +476,7 @@ class MonitoringDashboard extends EventEmitter {
             };
             
             ws.onclose = () => {
-                console.log('WebSocket disconnected');
+                console.info('WebSocket disconnected');
                 addEvent('WebSocket disconnected', 'warning');
                 // Reconnect after 5 seconds
                 setTimeout(connectWebSocket, 5000);
@@ -649,7 +649,7 @@ class MonitoringDashboard extends EventEmitter {
   private getDashboardJS(): string {
     return `
 // Dashboard JavaScript
-console.log("Dashboard loaded");
+console.info("Dashboard loaded");
     `;
   }
 
@@ -705,7 +705,7 @@ console.log("Dashboard loaded");
         this.metrics.set(key, values as MetricData[]);
       }
     } catch (error: any) {
-      console.log("No stored metrics found, starting fresh");
+      console.info("No stored metrics found, starting fresh");
     }
   }
 
@@ -732,7 +732,7 @@ if (import.meta.main) {
       port = parseInt(arg.split("=")[1]);
     }
     if (arg === "--help") {
-      console.log(`
+      console.info(`
 Usage: bun run monitoring-dashboard.ts [options]
 
 Options:
@@ -751,13 +751,13 @@ Examples:
 
   // Handle graceful shutdown
   process.on("SIGINT", async () => {
-    console.log("\\n🛑 Received SIGINT, stopping dashboard...");
+    console.info("\\n🛑 Received SIGINT, stopping dashboard...");
     await dashboard.stop();
     process.exit(0);
   });
 
   process.on("SIGTERM", async () => {
-    console.log("\\n🛑 Received SIGTERM, stopping dashboard...");
+    console.info("\\n🛑 Received SIGTERM, stopping dashboard...");
     await dashboard.stop();
     process.exit(0);
   });

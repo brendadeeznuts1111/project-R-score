@@ -436,19 +436,19 @@ const familyRequirements: PaymentRequirements = {
 };
 
 const recommendations = SmartPaymentSelector.selectBestMethods(familyRequirements);
-console.log('Best family payment methods:', recommendations);
+console.info('Best family payment methods:', recommendations);
 */
 
 // Example 2: Get single best recommendation
 /*
 const bestMethod = SmartPaymentSelector.getBestRecommendation(familyRequirements);
-console.log('Best method:', bestMethod?.method, 'Score:', bestMethod?.score);
+console.info('Best method:', bestMethod?.method, 'Score:', bestMethod?.score);
 */
 
 // Example 3: Compare specific methods
 /*
 const comparison = SmartPaymentSelector.getMethodComparison(['cashapp', 'venmo', 'btc', 'eth']);
-console.log('Method comparison:', comparison);
+console.info('Method comparison:', comparison);
 */
 
 // Example 4: Get scenario-based recommendations
@@ -456,6 +456,6 @@ console.log('Method comparison:', comparison);
 const scenarios = SmartPaymentSelector.getScenarioRecommendations();
 for (const [scenario, requirements] of Object.entries(scenarios)) {
   const best = SmartPaymentSelector.getBestRecommendation(requirements);
-  console.log(`${scenario}: ${best?.method} (score: ${best?.score})`);
+  console.info(`${scenario}: ${best?.method} (score: ${best?.score})`);
 }
 */

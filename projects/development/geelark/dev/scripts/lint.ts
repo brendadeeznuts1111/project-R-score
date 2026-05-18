@@ -10,7 +10,7 @@ import { spawn } from 'bun';
 const args = process.argv.slice(2);
 const shouldFix = args.includes('--fix');
 
-console.log('🔍 Running type check and linting...');
+console.info('🔍 Running type check and linting...');
 
 try {
   // Run TypeScript compiler
@@ -28,12 +28,12 @@ try {
 
   // If --fix flag is provided, run additional formatting/fixing
   if (shouldFix) {
-    console.log('🔧 Running auto-fix...');
+    console.info('🔧 Running auto-fix...');
     // Add any auto-fixing logic here if needed
-    console.log('✅ Auto-fix complete');
+    console.info('✅ Auto-fix complete');
   }
 
-  console.log('✅ No linting errors found');
+  console.info('✅ No linting errors found');
 } catch (error) {
   console.error('❌ Linting failed:', error);
   process.exit(1);

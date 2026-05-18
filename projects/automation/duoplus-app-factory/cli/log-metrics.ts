@@ -27,7 +27,7 @@ async function main() {
     });
 
     process.stdin.setEncoding('utf8');
-    console.log('📝 Paste your operational metrics report below (Ctrl+D to finish):');
+    console.info('📝 Paste your operational metrics report below (Ctrl+D to finish):');
   } else {
     // Process provided arguments as metrics
     const metricsText = args.join(' ');
@@ -36,7 +36,7 @@ async function main() {
 }
 
 function showUsage() {
-  console.log(`
+  console.info(`
 🌌 Nebula-Flow™ Operational Metrics Logger
 
 Usage:

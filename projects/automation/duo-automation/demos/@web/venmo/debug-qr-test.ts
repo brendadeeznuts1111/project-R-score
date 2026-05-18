@@ -7,7 +7,7 @@
 import { VenmoFamilyAccountSystem } from '../../src/venmo/family-account-system';
 
 async function debugQRTest() {
-  console.log('🐛 Debug QR Code Test');
+  console.info('🐛 Debug QR Code Test');
   
   const familySystem = new VenmoFamilyAccountSystem('debug-token');
   
@@ -19,7 +19,7 @@ async function debugQRTest() {
       [{ email: 'child@example.com', name: 'Child' }]
     );
     
-    console.log(`✅ Family created: ${family.familyId}`);
+    console.info(`✅ Family created: ${family.familyId}`);
     
     // Generate QR code
     const qrResult = await familySystem.generatePaymentQRCode(
@@ -29,20 +29,20 @@ async function debugQRTest() {
       'Test payment'
     );
     
-    console.log('✅ QR Code generated:');
-    console.log(`   Data: ${qrResult.qrCodeData}`);
-    console.log(`   Amount: ${qrResult.amount}`);
-    console.log(`   Recipient: ${qrResult.recipient}`);
+    console.info('✅ QR Code generated:');
+    console.info(`   Data: ${qrResult.qrCodeData}`);
+    console.info(`   Amount: ${qrResult.amount}`);
+    console.info(`   Recipient: ${qrResult.recipient}`);
     
     // Try to process the QR payment
-    console.log('\n📷 Processing QR payment...');
+    console.info('\n📷 Processing QR payment...');
     const transaction = await familySystem.processQRPayment(
       qrResult.qrCodeData,
       'test@example.com',
       'Test User'
     );
     
-    console.log(`✅ Payment processed: ${transaction.transactionId}`);
+    console.info(`✅ Payment processed: ${transaction.transactionId}`);
     
   } catch (error) {
     console.error('❌ Debug test failed:', error);

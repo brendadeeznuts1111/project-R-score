@@ -184,7 +184,7 @@ describe('🛡️ Workspace Edge Cases', () => {
       const cycles = circular.detectCircular();
 
       expect(cycles.length).toBeGreaterThan(0);
-      console.log('🔍 Detected circular dependencies:', cycles);
+      console.info('🔍 Detected circular dependencies:', cycles);
 
       // Should detect the main circular dependency
       const hasMainCycle = cycles.some(
@@ -243,7 +243,7 @@ describe('🛡️ Workspace Edge Cases', () => {
 
       const detectedCycles = detectCycles();
       expect(detectedCycles.length).toBeGreaterThan(0);
-      console.log('🔍 Complex circular dependencies:', detectedCycles);
+      console.info('🔍 Complex circular dependencies:', detectedCycles);
 
       // Should detect multiple cycles
       expect(detectedCycles.length).toBeGreaterThanOrEqual(2);
@@ -447,7 +447,7 @@ describe('🛡️ Workspace Edge Cases', () => {
       expect(failed.length).toBeGreaterThan(0); // Should have some failures
       expect(successful.length).toBeGreaterThan(0); // Should have some successes
 
-      console.log(
+      console.info(
         `📊 Partial split results: ${successful.length} succeeded, ${failed.length} failed`
       );
     });
@@ -550,7 +550,7 @@ describe('🛡️ Workspace Edge Cases', () => {
         }
       }
 
-      console.log(
+      console.info(
         `📊 State consistency check: ${completedCount} completed, ${failedCount} failed, total: ${totalPackages}`
       );
     });

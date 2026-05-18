@@ -5,10 +5,10 @@ import { mkdirSync } from 'fs';
 
 // Build script that follows Bun's native patterns
 async function build() {
-  console.log('🚀 Building Bun TypedArray Documentation Portal...\n');
+  console.info('🚀 Building Bun TypedArray Documentation Portal...\n');
   
   // 1. Fetch all documentation URLs to verify they exist
-  console.log('📋 Validating documentation URLs...');
+  console.info('📋 Validating documentation URLs...');
   
   const urlsToCheck = [
     `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`,
@@ -26,14 +26,14 @@ async function build() {
   
   results.forEach((result, i) => {
     if (result.status === 'fulfilled') {
-      console.log(`  ${result.value.ok ? '✅' : '❌'} ${urlsToCheck[i]} - ${result.value.status}`);
+      console.info(`  ${result.value.ok ? '✅' : '❌'} ${urlsToCheck[i]} - ${result.value.status}`);
     } else {
-      console.log(`  ❌ ${urlsToCheck[i]} - Failed to fetch`);
+      console.info(`  ❌ ${urlsToCheck[i]} - Failed to fetch`);
     }
   });
   
   // 2. Generate URL manifest
-  console.log('\n📄 Generating URL manifest...');
+  console.info('\n📄 Generating URL manifest...');
   
   const manifest = {
     generated: new Date().toISOString(),
@@ -64,10 +64,10 @@ async function build() {
   // Create public directory if it doesn't exist
   mkdirSync('public', { recursive: true });
   await Bun.write('public/manifest.json', JSON.stringify(manifest, null, 2));
-  console.log('  ✅ Generated public/manifest.json');
+  console.info('  ✅ Generated public/manifest.json');
   
   // 3. Create example script
-  console.log('\n📝 Creating example script...');
+  console.info('\n📝 Creating example script...');
   
   const exampleScript = `// Example: Fetching Bun TypedArray Documentation
 // Generated: ${new Date().toISOString()}
@@ -78,12 +78,12 @@ const TYPED_ARRAY_BASE = "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}";
 // Fetch example following Bun's documentation pattern
 async function fetchTypedArrayDocs() {
   const response = await fetch(TYPED_ARRAY_BASE);
-  console.log(\`Status: \${response.status}\`);
+  console.info(\`Status: \${response.status}\`);
   
   if (response.ok) {
     // Get the documentation content
     const text = await response.text();
-    console.log(\`Fetched \${text.length} bytes\`);
+    console.info(\`Fetched \${text.length} bytes\`);
     return text;
   }
   
@@ -106,17 +106,17 @@ async function fetchAllDocs() {
 }
 
 // Test the fetch
-console.log("Testing Bun TypedArray documentation fetch...");
+console.info("Testing Bun TypedArray documentation fetch...");
 fetchTypedArrayDocs().catch(console.error);
 `;
   
   // Create examples directory if it doesn't exist
   mkdirSync('examples', { recursive: true });
   await Bun.write('examples/fetch-example.js', exampleScript);
-  console.log('  ✅ Generated examples/fetch-example.js');
+  console.info('  ✅ Generated examples/fetch-example.js');
   
   // 4. Create README with fetch examples
-  console.log('\n📖 Creating README...');
+  console.info('\n📖 Creating README...');
   
   const readme = `# Bun TypedArray Documentation Portal
 
@@ -144,13 +144,13 @@ curl http://example.com/api/typedarray/urls
 \`\`\`javascript
 // Example 1: Basic fetch (from Bun docs)
 const response = await fetch("${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}");
-console.log(response.status); // => 200
+console.info(response.status); // => 200
 const text = await response.text();
 
 // Example 2: Fetch JSON data
 const urlResponse = await fetch("http://example.com/api/typedarray/urls");
 const data = await urlResponse.json();
-console.log(data.base); // => "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}"
+console.info(data.base); // => "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}"
 
 // Example 3: Fetch RSS feed
 const rssResponse = await fetch("http://example.com/feed/rss");
@@ -180,12 +180,12 @@ bun run build
 `;
   
   await Bun.write('README.md', readme);
-  console.log('  ✅ Generated README.md');
+  console.info('  ✅ Generated README.md');
   
-  console.log('\n✨ Build complete!');
-  console.log('\n🚀 Start the server:');
-  console.log('   bun run dev');
-  console.log('\n🌐 Then visit: http://example.com');
+  console.info('\n✨ Build complete!');
+  console.info('\n🚀 Start the server:');
+  console.info('   bun run dev');
+  console.info('\n🌐 Then visit: http://example.com');
 }
 
 // Run the build

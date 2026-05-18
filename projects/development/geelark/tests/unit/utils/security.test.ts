@@ -55,9 +55,9 @@ describe("Security Tests", () => {
 import { feature } from "bun:bundle";
 
 if (feature("FEAT_MOCK_API")) {
-  console.log("MOCK API ENABLED - SECURITY VIOLATION");
+  console.info("MOCK API ENABLED - SECURITY VIOLATION");
 } else {
-  console.log("SECURE BUILD - NO MOCK API");
+  console.info("SECURE BUILD - NO MOCK API");
 }
 `;
 
@@ -88,9 +88,9 @@ import { feature } from "bun:bundle";
 
 if (feature("FEAT_ENCRYPTION")) {
   const encryptionKey = "secure-key-" + Math.random();
-  console.log("ENCRYPTION ENABLED");
+  console.info("ENCRYPTION ENABLED");
 } else {
-  console.log("NO ENCRYPTION - SECURITY RISK");
+  console.info("NO ENCRYPTION - SECURITY RISK");
 }
 `;
 

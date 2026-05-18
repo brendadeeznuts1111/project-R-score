@@ -87,21 +87,21 @@ if (import.meta.main) {
   try {
     if (command === 'restore' && args[1]) {
       restoreDatabase(args[1]);
-      console.log('\n✓ Database restored');
+      console.info('\n✓ Database restored');
     } else if (command === 'list') {
       const backups = listBackups();
-      console.log('\nAvailable backups:');
+      console.info('\nAvailable backups:');
       if (backups.length === 0) {
-        console.log('  No backups found');
+        console.info('  No backups found');
       } else {
         backups.forEach(backup => {
           const stats = statSync(backup);
-          console.log(`  ${backup} (${(stats.size / 1024).toFixed(2)} KB)`);
+          console.info(`  ${backup} (${(stats.size / 1024).toFixed(2)} KB)`);
         });
       }
     } else {
       const backupPath = backupDatabase();
-      console.log(`\n✓ Backup created: ${backupPath}`);
+      console.info(`\n✓ Backup created: ${backupPath}`);
     }
   } catch (error) {
     console.error('\n✗ Operation failed:', error);

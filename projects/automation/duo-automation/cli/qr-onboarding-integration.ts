@@ -268,9 +268,9 @@ class QROnboardingDashboard {
       fetch: this.handleRequest.bind(this)
     });
 
-    console.log(`🚀 FactoryWager QR Onboarding Dashboard`);
-    console.log(`📱 http://localhost:${this.port}/qr-onboard`);
-    console.log(`⏱️  Target: 28-second onboarding`);
+    console.info(`🚀 FactoryWager QR Onboarding Dashboard`);
+    console.info(`📱 http://localhost:${this.port}/qr-onboard`);
+    console.info(`⏱️  Target: 28-second onboarding`);
   }
 
   private async handleRequest(request: Request): Promise<Response> {
@@ -431,7 +431,7 @@ class QROnboardingDashboard {
                 });
                 
                 currentSession = await response.json();
-                console.log('Session created:', currentSession);
+                console.info('Session created:', currentSession);
                 
                 // Run health checks
                 runHealthChecks(currentSession.id);

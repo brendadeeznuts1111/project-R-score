@@ -221,7 +221,7 @@ class HealthChecker {
   }
 
   public async run(): Promise<HealthCheckResult> {
-    console.log('🔍 Running comprehensive health check...');
+    console.info('🔍 Running comprehensive health check...');
 
     // Run all checks concurrently
     const checks = await Promise.allSettled([
@@ -240,36 +240,36 @@ class HealthChecker {
     this.calculateOverallStatus();
 
     const duration = performance.now() - this.startTime;
-    console.log(`✅ Health check completed in ${duration.toFixed(2)}ms`);
+    console.info(`✅ Health check completed in ${duration.toFixed(2)}ms`);
 
     return this.results as HealthCheckResult;
   }
 
   public printResults(result: HealthCheckResult): void {
-    console.log('\n🏥 Health Check Results');
-    console.log('='.repeat(50));
-    console.log(`Status: ${result.status.toUpperCase()}`);
-    console.log(`Timestamp: ${result.timestamp}`);
-    console.log(`Version: ${result.version}`);
+    console.info('\n🏥 Health Check Results');
+    console.info('='.repeat(50));
+    console.info(`Status: ${result.status.toUpperCase()}`);
+    console.info(`Timestamp: ${result.timestamp}`);
+    console.info(`Version: ${result.version}`);
 
-    console.log('\n📊 Checks:');
+    console.info('\n📊 Checks:');
     Object.entries(result.checks).forEach(([check, status]) => {
       const icon = status ? '✅' : '❌';
-      console.log(`  ${icon} ${check}: ${status ? 'PASS' : 'FAIL'}`);
+      console.info(`  ${icon} ${check}: ${status ? 'PASS' : 'FAIL'}`);
     });
 
-    console.log('\n📈 Metrics:');
-    console.log(`  Uptime: ${result.metrics.uptime.toFixed(2)}s`);
-    console.log(`  Memory Usage: ${result.metrics.memory_usage.toFixed(1)}%`);
-    console.log(`  CPU Usage: ${result.metrics.cpu_usage.toFixed(1)}%`);
-    console.log(`  Response Time: ${result.metrics.response_time.toFixed(2)}ms`);
+    console.info('\n📈 Metrics:');
+    console.info(`  Uptime: ${result.metrics.uptime.toFixed(2)}s`);
+    console.info(`  Memory Usage: ${result.metrics.memory_usage.toFixed(1)}%`);
+    console.info(`  CPU Usage: ${result.metrics.cpu_usage.toFixed(1)}%`);
+    console.info(`  Response Time: ${result.metrics.response_time.toFixed(2)}ms`);
 
-    console.log('\n🚀 Performance:');
-    console.log(`  Throughput: ${result.performance.throughput} req/sec`);
-    console.log(`  Avg Response Time: ${result.performance.average_response_time}ms`);
-    console.log(`  P95 Response Time: ${result.performance.p95_response_time}ms`);
-    console.log(`  P99 Response Time: ${result.performance.p99_response_time}ms`);
-    console.log(`  Error Rate: ${result.performance.error_rate}%`);
+    console.info('\n🚀 Performance:');
+    console.info(`  Throughput: ${result.performance.throughput} req/sec`);
+    console.info(`  Avg Response Time: ${result.performance.average_response_time}ms`);
+    console.info(`  P95 Response Time: ${result.performance.p95_response_time}ms`);
+    console.info(`  P99 Response Time: ${result.performance.p99_response_time}ms`);
+    console.info(`  Error Rate: ${result.performance.error_rate}%`);
   }
 }
 

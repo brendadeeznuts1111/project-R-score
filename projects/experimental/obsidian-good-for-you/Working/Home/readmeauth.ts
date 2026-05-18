@@ -361,13 +361,13 @@ export class APIAppleIDCreator {
     // Log the detected configuration if logging is enabled
     if (this.config.enableLogging) {
       if (this.config.deviceProfile) {
-        console.log(`📱 Device Profile: ${this.config.deviceProfile.deviceModel} (${this.config.deviceProfile.region})`);
-        console.log(`🌍 Timezone: ${this.config.deviceProfile.timezone}`);
-        console.log(`📡 Carrier: ${this.config.deviceProfile.carrier}`);
+        console.info(`📱 Device Profile: ${this.config.deviceProfile.deviceModel} (${this.config.deviceProfile.region})`);
+        console.info(`🌍 Timezone: ${this.config.deviceProfile.timezone}`);
+        console.info(`📡 Carrier: ${this.config.deviceProfile.carrier}`);
       }
       if (this.config.ateProfile) {
-        console.log(`🧪 ATE Environment: ${this.config.ateProfile.environment}`);
-        console.log(`🌐 IP: ${this.config.ateProfile.networkProfile.ip}`);
+        console.info(`🧪 ATE Environment: ${this.config.ateProfile.environment}`);
+        console.info(`🌐 IP: ${this.config.ateProfile.networkProfile.ip}`);
       }
     }
   }
@@ -1183,7 +1183,7 @@ export class APIAppleIDCreator {
         if (attempt === maxRetries) throw error;
         
         const delay = baseDelay * Math.pow(2, attempt - 1);
-        console.log(`Attempt ${attempt} failed, retrying in ${delay}ms...`);
+        console.info(`Attempt ${attempt} failed, retrying in ${delay}ms...`);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
@@ -1195,7 +1195,7 @@ export class APIAppleIDCreator {
     if (!this.config.enableLogging) return;
     
     const timestamp = new Date().toISOString();
-    console.log(`[${timestamp}] [${level.toUpperCase()}] AppleIDCreator: ${message}`);
+    console.info(`[${timestamp}] [${level.toUpperCase()}] AppleIDCreator: ${message}`);
   }
   
   // Metrics and monitoring
@@ -1252,7 +1252,7 @@ async function exampleUsage() {
   ];
 
   for (const example of examples) {
-    console.log(`\n🌍 Testing with ${example.description} IP: ${example.ip}`);
+    console.info(`\n🌍 Testing with ${example.description} IP: ${example.ip}`);
     
     // Initialize with IP-based configuration
     const creator = new APIAppleIDCreator({
@@ -1302,19 +1302,19 @@ async function exampleUsage() {
         }
       };
       
-      console.log('Creating Apple ID...');
+      console.info('Creating Apple ID...');
       const appleID = await creator.createViaAPI(profile);
       
-      console.log('✅ Apple ID created successfully!');
-      console.log(`Apple ID: ${appleID.appleId}`);
-      console.log(`Status: ${appleID.status}`);
+      console.info('✅ Apple ID created successfully!');
+      console.info(`Apple ID: ${appleID.appleId}`);
+      console.info(`Status: ${appleID.status}`);
       
       // Show metrics
       const metrics = creator.getMetrics();
-      console.log('\n📊 Metrics:');
-      console.log(`Success Rate: ${metrics.successRate.toFixed(2)}%`);
-      console.log(`Average Response Time: ${metrics.averageResponseTime.toFixed(0)}ms`);
-      console.log(`Cache Size: ${metrics.cacheSize}`);
+      console.info('\n📊 Metrics:');
+      console.info(`Success Rate: ${metrics.successRate.toFixed(2)}%`);
+      console.info(`Average Response Time: ${metrics.averageResponseTime.toFixed(0)}ms`);
+      console.info(`Cache Size: ${metrics.cacheSize}`);
       
     } catch (error) {
       console.error('❌ Failed to create Apple ID:', error instanceof Error ? error.message : String(error));
@@ -1355,19 +1355,19 @@ async function advancedUsage() {
     }
   ];
   
-  console.log('Starting batch Apple ID creation...');
+  console.info('Starting batch Apple ID creation...');
   
   for (const profile of profiles) {
     try {
       const appleID = await creator.createViaAPI(profile);
-      console.log(`✅ Created: ${appleID.appleId}`);
+      console.info(`✅ Created: ${appleID.appleId}`);
     } catch (error) {
       console.error(`❌ Failed for ${profile.firstName} ${profile.lastName}:`, error instanceof Error ? error.message : String(error));
     }
   }
   
   // Final metrics
-  console.log('\n📊 Final Metrics:', creator.getMetrics());
+  console.info('\n📊 Final Metrics:', creator.getMetrics());
 }
 
 // Export for use in other modules

@@ -575,48 +575,48 @@ if (import.meta.main) {
 
 			if (options.report) {
 				const report = generateReport(results);
-				console.log(report);
+				console.info(report);
 				
 				// Save report to file
 				const reportFile = Bun.file('team-organization-verification-report.md');
 				await Bun.write(reportFile, report);
-				console.log(`\n📄 Report saved to: team-organization-verification-report.md`);
+				console.info(`\n📄 Report saved to: team-organization-verification-report.md`);
 			} else {
 				// Print summary
 				const totalIssues = results.reduce((sum, r) => sum + r.summary.total, 0);
 				const totalErrors = results.reduce((sum, r) => sum + r.summary.errors, 0);
 				const totalWarnings = results.reduce((sum, r) => sum + r.summary.warnings, 0);
 
-				console.log('\n📊 Team Organization Verification Results\n');
-				console.log(`Total Issues: ${totalIssues}`);
-				console.log(`  🔴 Errors: ${totalErrors}`);
-				console.log(`  🟡 Warnings: ${totalWarnings}`);
-				console.log(`  ℹ️  Info: ${results.reduce((sum, r) => sum + r.summary.info, 0)}\n`);
+				console.info('\n📊 Team Organization Verification Results\n');
+				console.info(`Total Issues: ${totalIssues}`);
+				console.info(`  🔴 Errors: ${totalErrors}`);
+				console.info(`  🟡 Warnings: ${totalWarnings}`);
+				console.info(`  ℹ️  Info: ${results.reduce((sum, r) => sum + r.summary.info, 0)}\n`);
 
 				if (totalIssues > 0) {
-					console.log('Issues found:\n');
+					console.info('Issues found:\n');
 					for (const result of results) {
 						if (result.issues.length > 0) {
 							const source = result.team || 'RSS_TEAM_CATEGORIES';
-							console.log(`${source}:`);
+							console.info(`${source}:`);
 							result.issues.forEach(issue => {
 								const emoji = issue.severity === 'error' ? '🔴' : issue.severity === 'warning' ? '🟡' : 'ℹ️';
-								console.log(`  ${emoji} ${issue.field}: ${issue.type}`);
-								if (issue.expected) console.log(`     Expected: ${issue.expected}`);
-								if (issue.actual) console.log(`     Actual: ${issue.actual}`);
+								console.info(`  ${emoji} ${issue.field}: ${issue.type}`);
+								if (issue.expected) console.info(`     Expected: ${issue.expected}`);
+								if (issue.actual) console.info(`     Actual: ${issue.actual}`);
 							});
-							console.log('');
+							console.info('');
 						}
 					}
-					console.log('Run with --report to generate detailed markdown report');
+					console.info('Run with --report to generate detailed markdown report');
 				} else {
-					console.log('✅ All verifications passed!');
+					console.info('✅ All verifications passed!');
 				}
 			}
 
 			if (options.sync) {
-				console.log('\n🔄 Synchronization not yet implemented');
-				console.log('Use --report to see what needs to be synchronized');
+				console.info('\n🔄 Synchronization not yet implemented');
+				console.info('Use --report to see what needs to be synchronized');
 			}
 
 			const totalErrors = results.reduce((sum, r) => sum + r.summary.errors, 0);

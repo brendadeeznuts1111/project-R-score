@@ -500,11 +500,11 @@ export class UnifiedCloudflareService {
       // Stop profiling
       const profile = await this.stopProfiling('deploy-stack');
 
-      console.log(`✅ Stack deployed in ${(performance.now() - startTime).toFixed(2)}ms`);
-      console.log(`   Version: ${newVersion}`);
+      console.info(`✅ Stack deployed in ${(performance.now() - startTime).toFixed(2)}ms`);
+      console.info(`   Version: ${newVersion}`);
       if (profile) {
-        console.log(`   Peak CPU: ${profile.summary.peakCpu.toFixed(1)}%`);
-        console.log(`   Peak Memory: ${(profile.summary.peakMemory / 1024 / 1024).toFixed(1)}MB`);
+        console.info(`   Peak CPU: ${profile.summary.peakCpu.toFixed(1)}%`);
+        console.info(`   Peak Memory: ${(profile.summary.peakMemory / 1024 / 1024).toFixed(1)}MB`);
       }
 
       return { zone, worker, presignedUrls, deploymentVersion: newVersion };

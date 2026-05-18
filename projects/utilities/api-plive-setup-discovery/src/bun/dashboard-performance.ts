@@ -233,7 +233,7 @@ export class DashboardPerformanceMonitor {
       this.performanceHistory = this.performanceHistory.slice(-25);
     }
 
-    console.log("🧹 Performance monitor optimized");
+    console.info("🧹 Performance monitor optimized");
   }
 
   // Export methods
@@ -321,7 +321,7 @@ export class DashboardPerformanceMonitor {
     }
 
     if (removed > 0) {
-      console.log(`🧹 Cleaned up ${removed} old alerts`);
+      console.info(`🧹 Cleaned up ${removed} old alerts`);
     }
 
     return removed;
@@ -333,7 +333,7 @@ export class DashboardPerformanceMonitor {
     this.alerts.clear();
     this.performanceHistory.length = 0;
     this.startTime = performance.now();
-    console.log("🔄 Performance monitor reset");
+    console.info("🔄 Performance monitor reset");
   }
 }
 

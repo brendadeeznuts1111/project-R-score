@@ -125,7 +125,7 @@ class OnboardingSetup {
   }
 
   private async installDependencies(): Promise<void> {
-    console.log('📦 Installing dependencies...');
+    console.info('📦 Installing dependencies...');
     await $`bun install`;
   }
 
@@ -135,12 +135,12 @@ class OnboardingSetup {
   }
 
   private async setupEnvironment(): Promise<void> {
-    console.log('🔧 Setting up environment configuration...');
+    console.info('🔧 Setting up environment configuration...');
 
     if (existsSync('config/env.example')) {
       await $`cp config/env.example .env.local`;
-      console.log('✅ Created .env.local from template');
-      console.log('⚠️  Please edit .env.local with your configuration values');
+      console.info('✅ Created .env.local from template');
+      console.info('⚠️  Please edit .env.local with your configuration values');
     }
   }
 
@@ -150,14 +150,14 @@ class OnboardingSetup {
   }
 
   private async setupDatabase(): Promise<void> {
-    console.log('🗄️ Setting up database...');
+    console.info('🗄️ Setting up database...');
 
     if (!existsSync('domain-data.sqlite') && !existsSync('dev.db')) {
       // Run database setup if available
       try {
         await $`bun run db:setup`.quiet();
       } catch {
-        console.log('ℹ️  Database setup script not found - manual setup may be required');
+        console.info('ℹ️  Database setup script not found - manual setup may be required');
       }
     }
   }
@@ -190,31 +190,31 @@ class OnboardingSetup {
   }
 
   private async setupDevelopmentTools(): Promise<void> {
-    console.log('🛠️ Setting up development tools...');
+    console.info('🛠️ Setting up development tools...');
 
     // Run development setup script if available
     try {
       await $`bun run dev:setup`.quiet();
-      console.log('✅ Development tools setup completed');
+      console.info('✅ Development tools setup completed');
     } catch {
-      console.log('ℹ️  Development setup script not found');
+      console.info('ℹ️  Development setup script not found');
     }
   }
 
   private async runCheck(check: OnboardingCheck): Promise<void> {
-    console.log(`🔍 Checking: ${check.description}`);
+    console.info(`🔍 Checking: ${check.description}`);
 
     try {
       const passed = await check.check();
 
       if (passed) {
-        console.log(`✅ ${check.name}: PASSED`);
+        console.info(`✅ ${check.name}: PASSED`);
         this.passedChecks.push(check.name);
       } else {
-        console.log(`❌ ${check.name}: FAILED`);
+        console.info(`❌ ${check.name}: FAILED`);
 
         if (check.fix && check.required) {
-          console.log(`🔧 Attempting to fix: ${check.name}`);
+          console.info(`🔧 Attempting to fix: ${check.name}`);
           await check.fix();
         }
 
@@ -223,7 +223,7 @@ class OnboardingSetup {
         }
       }
     } catch (error) {
-      console.log(`❌ ${check.name}: ERROR - ${error}`);
+      console.info(`❌ ${check.name}: ERROR - ${error}`);
       if (check.required) {
         this.failedChecks.push(check.name);
       }
@@ -231,64 +231,64 @@ class OnboardingSetup {
   }
 
   public async runOnboarding(): Promise<void> {
-    console.log('🚀 Fantasy42-Fire22 Developer Onboarding Setup');
-    console.log('==============================================');
-    console.log('');
+    console.info('🚀 Fantasy42-Fire22 Developer Onboarding Setup');
+    console.info('==============================================');
+    console.info('');
 
     for (const check of this.checks) {
       await this.runCheck(check);
-      console.log('');
+      console.info('');
     }
 
     this.printSummary();
   }
 
   private printSummary(): void {
-    console.log('📊 Onboarding Setup Summary');
-    console.log('===========================');
+    console.info('📊 Onboarding Setup Summary');
+    console.info('===========================');
 
-    console.log(`✅ Passed checks: ${this.passedChecks.length}`);
-    this.passedChecks.forEach(check => console.log(`   • ${check}`));
+    console.info(`✅ Passed checks: ${this.passedChecks.length}`);
+    this.passedChecks.forEach(check => console.info(`   • ${check}`));
 
     if (this.failedChecks.length > 0) {
-      console.log(`❌ Failed checks: ${this.failedChecks.length}`);
-      this.failedChecks.forEach(check => console.log(`   • ${check}`));
+      console.info(`❌ Failed checks: ${this.failedChecks.length}`);
+      this.failedChecks.forEach(check => console.info(`   • ${check}`));
     }
 
-    console.log('');
-    console.log('🎯 Next Steps:');
+    console.info('');
+    console.info('🎯 Next Steps:');
 
     if (this.failedChecks.length === 0) {
-      console.log("🎉 All checks passed! You're ready to start developing.");
-      console.log('   Run: bun run dashboard:dev');
+      console.info("🎉 All checks passed! You're ready to start developing.");
+      console.info('   Run: bun run dashboard:dev');
     } else {
-      console.log('⚠️  Some issues need attention:');
+      console.info('⚠️  Some issues need attention:');
       if (this.failedChecks.includes('bun-version')) {
-        console.log('   • Install Bun: https://bun.sh');
+        console.info('   • Install Bun: https://bun.sh');
       }
       if (this.failedChecks.includes('node-version')) {
-        console.log('   • Install Node.js >= 18: https://nodejs.org');
+        console.info('   • Install Node.js >= 18: https://nodejs.org');
       }
       if (this.failedChecks.includes('git-version')) {
-        console.log('   • Update Git: https://git-scm.com');
+        console.info('   • Update Git: https://git-scm.com');
       }
       if (this.failedChecks.includes('environment')) {
-        console.log('   • Configure .env.local file');
+        console.info('   • Configure .env.local file');
       }
       if (this.failedChecks.includes('github-access')) {
-        console.log('   • Check GitHub repository access');
+        console.info('   • Check GitHub repository access');
       }
     }
 
-    console.log('');
-    console.log('📚 Resources:');
-    console.log('   • Onboarding Guide: ONBOARDING.md');
-    console.log('   • Contributing Guide: CONTRIBUTING.md');
-    console.log('   • Documentation: docs/');
-    console.log('');
-    console.log('🆘 Need help? Contact:');
-    console.log('   • Slack: #engineering or #help');
-    console.log('   • Email: engineering@fire22.com');
+    console.info('');
+    console.info('📚 Resources:');
+    console.info('   • Onboarding Guide: ONBOARDING.md');
+    console.info('   • Contributing Guide: CONTRIBUTING.md');
+    console.info('   • Documentation: docs/');
+    console.info('');
+    console.info('🆘 Need help? Contact:');
+    console.info('   • Slack: #engineering or #help');
+    console.info('   • Email: engineering@fire22.com');
   }
 }
 

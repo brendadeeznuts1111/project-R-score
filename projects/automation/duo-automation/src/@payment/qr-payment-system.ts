@@ -324,7 +324,7 @@ class QRPaymentSystem {
    */
   private static async storePaymentIntent(intent: PaymentIntent): Promise<void> {
     // In production, this would store in your database
-    console.log(`🔒 Storing payment intent: ${intent.id}`);
+    console.info(`🔒 Storing payment intent: ${intent.id}`);
     
     // For demo purposes, we could store in a file
     const intents = this.loadStoredIntents();
@@ -346,7 +346,7 @@ class QRPaymentSystem {
    */
   private static async updatePaymentIntent(intent: PaymentIntent): Promise<void> {
     // In production, this would update your database
-    console.log(`🔄 Updating payment intent: ${intent.id}`);
+    console.info(`🔄 Updating payment intent: ${intent.id}`);
     
     const intents = this.loadStoredIntents();
     intents[intent.id] = intent;
@@ -357,7 +357,7 @@ class QRPaymentSystem {
    * Handle payment completion workflows
    */
   private static async handlePaymentCompletion(intent: PaymentIntent): Promise<void> {
-    console.log(`✅ Payment completed: ${intent.id} - $${intent.amount} to ${intent.recipientName}`);
+    console.info(`✅ Payment completed: ${intent.id} - $${intent.amount} to ${intent.recipientName}`);
     
     // Trigger notifications, accounting, etc.
     // This would integrate with your existing payment workflows
@@ -404,7 +404,7 @@ class QRPaymentSystem {
 
     if (cleaned > 0) {
       this.saveStoredIntents(intents);
-      console.log(`🧹 Cleaned up ${cleaned} expired payment intents`);
+      console.info(`🧹 Cleaned up ${cleaned} expired payment intents`);
     }
 
     return cleaned;
@@ -451,13 +451,13 @@ if (import.meta.main) {
     case 'generate':
       QRPaymentSystem.generatePaymentQR(familyId, amount, description, 'alice', 'Alice')
         .then(qr => {
-          console.log('🔲 Generated QR Code:');
-          console.log(`Intent ID: ${qr.intentId}`);
-          console.log(`Deep Link: ${qr.deepLink}`);
-          console.log(`Expires: ${qr.expiresAt.toISOString()}`);
-          console.log(`Payment Methods: ${qr.paymentMethods.map(m => m.type).join(', ')}`);
-          console.log('\n📱 QR SVG:');
-          console.log(qr.svg);
+          console.info('🔲 Generated QR Code:');
+          console.info(`Intent ID: ${qr.intentId}`);
+          console.info(`Deep Link: ${qr.deepLink}`);
+          console.info(`Expires: ${qr.expiresAt.toISOString()}`);
+          console.info(`Payment Methods: ${qr.paymentMethods.map(m => m.type).join(', ')}`);
+          console.info('\n📱 QR SVG:');
+          console.info(qr.svg);
         })
         .catch(error => console.error('❌ Error:', error.message));
       break;
@@ -467,12 +467,12 @@ if (import.meta.main) {
       if (intentId) {
         QRPaymentSystem.resolvePaymentIntent(intentId)
           .then(result => {
-            console.log('🔍 Payment Intent:');
-            console.log(`Valid: ${result.valid}`);
-            console.log(`Expired: ${result.expired}`);
-            console.log(`Status: ${result.intent.status}`);
-            console.log(`Amount: $${result.intent.amount}`);
-            console.log(`Recipient: ${result.intent.recipientName}`);
+            console.info('🔍 Payment Intent:');
+            console.info(`Valid: ${result.valid}`);
+            console.info(`Expired: ${result.expired}`);
+            console.info(`Status: ${result.intent.status}`);
+            console.info(`Amount: $${result.intent.amount}`);
+            console.info(`Recipient: ${result.intent.recipientName}`);
           })
           .catch(error => console.error('❌ Error:', error.message));
       }
@@ -480,25 +480,25 @@ if (import.meta.main) {
 
     case 'cleanup':
       QRPaymentSystem.cleanupExpiredIntents()
-        .then(cleaned => console.log(`🧹 Cleaned ${cleaned} expired intents`))
+        .then(cleaned => console.info(`🧹 Cleaned ${cleaned} expired intents`))
         .catch(error => console.error('❌ Error:', error.message));
       break;
 
     case 'stats':
       QRPaymentSystem.getStatistics()
         .then(stats => {
-          console.log('📊 Payment Statistics:');
-          console.log(`Total: ${stats.total}`);
-          console.log(`Pending: ${stats.pending}`);
-          console.log(`Completed: ${stats.completed}`);
-          console.log(`Expired: ${stats.expired}`);
-          console.log(`Total Amount: $${stats.totalAmount.toFixed(2)}`);
+          console.info('📊 Payment Statistics:');
+          console.info(`Total: ${stats.total}`);
+          console.info(`Pending: ${stats.pending}`);
+          console.info(`Completed: ${stats.completed}`);
+          console.info(`Expired: ${stats.expired}`);
+          console.info(`Total Amount: $${stats.totalAmount.toFixed(2)}`);
         })
         .catch(error => console.error('❌ Error:', error.message));
       break;
 
     default:
-      console.log(`
+      console.info(`
 🔲 FactoryWager QR Payment System
 
 Usage:

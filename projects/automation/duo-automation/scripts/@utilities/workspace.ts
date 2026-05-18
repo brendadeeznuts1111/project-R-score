@@ -6,7 +6,7 @@ import { spawn } from 'bun';
 const workspaces = ['cli', 'components', 'utils', 'modules'];
 
 async function buildWorkspace(name: string) {
-  console.log(`🔨 Building ${name} workspace...`);
+  console.info(`🔨 Building ${name} workspace...`);
   
   try {
     const result = await Bun.spawn({
@@ -22,7 +22,7 @@ async function buildWorkspace(name: string) {
     ]);
 
     if (await result.exited === 0) {
-      console.log(`✅ ${name} built successfully`);
+      console.info(`✅ ${name} built successfully`);
     } else {
       console.error(`❌ ${name} build failed:`, stderr);
       return false;
@@ -39,7 +39,7 @@ async function main() {
   const command = process.argv[2];
   
   if (command === 'build') {
-    console.log('🚀 Building all workspaces...');
+    console.info('🚀 Building all workspaces...');
     
     for (const workspace of workspaces) {
       const success = await buildWorkspace(workspace);
@@ -48,18 +48,18 @@ async function main() {
       }
     }
     
-    console.log('🎉 All workspaces built successfully!');
+    console.info('🎉 All workspaces built successfully!');
   } else if (command === 'clean') {
-    console.log('🧹 Cleaning all workspaces...');
+    console.info('🧹 Cleaning all workspaces...');
     
     for (const workspace of workspaces) {
       await Bun.$`rm -rf ${workspace}/dist`.quiet().nothrow();
     }
     
     await Bun.$`rm -rf .bun-cache`.quiet().nothrow();
-    console.log('✅ All workspaces cleaned!');
+    console.info('✅ All workspaces cleaned!');
   } else {
-    console.log('Usage: bun run scripts/workspace.ts [build|clean]');
+    console.info('Usage: bun run scripts/workspace.ts [build|clean]');
   }
 }
 

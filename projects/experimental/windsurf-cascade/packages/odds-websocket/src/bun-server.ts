@@ -306,7 +306,7 @@ const server = await apiTracker.track('Bun.serve', () => Bun.serve<OddsTick>({
             await handleExport(ws, parsedMessage);
             break;
           default:
-            console.log(`Unknown message type: ${parsedMessage.type}`);
+            console.info(`Unknown message type: ${parsedMessage.type}`);
         }
         
       } catch (error) {
@@ -372,7 +372,7 @@ const server = await apiTracker.track('Bun.serve', () => Bun.serve<OddsTick>({
       
       ws.send(JSON.stringify(welcomeMessage));
       
-      console.log(`🔗 Connection opened: ${connectionId} (session: ${sessionId})`);
+      console.info(`🔗 Connection opened: ${connectionId} (session: ${sessionId})`);
       
       // Broadcast connection event
       server.publish('system-events', JSON.stringify({
@@ -397,7 +397,7 @@ const server = await apiTracker.track('Bun.serve', () => Bun.serve<OddsTick>({
         
         const sessionDuration = Date.now() - connectionData.connectedAt;
         
-        console.log(`❌ Connection closed: ${connectionData.id} (session: ${connectionData.sessionId}, duration: ${sessionDuration}ms, messages: ${connectionData.messageCount})`);
+        console.info(`❌ Connection closed: ${connectionData.id} (session: ${connectionData.sessionId}, duration: ${sessionDuration}ms, messages: ${connectionData.messageCount})`);
         
         server.publish('system-events', JSON.stringify({
           type: 'client-disconnected',
@@ -478,7 +478,7 @@ async function handleBatchTicks(ws: any, message: WebSocketMessage): Promise<voi
   
   // Process through market processor
   marketProcessor.processBatch(validTicks).then(result => {
-    console.log(`Batch processed: ${result.processed}/${validTicks.length} in ${result.duration.toFixed(2)}ms`);
+    console.info(`Batch processed: ${result.processed}/${validTicks.length} in ${result.duration.toFixed(2)}ms`);
   });
   
   const batchMessage: WebSocketMessage = {
@@ -735,12 +735,12 @@ export function getServerStats() {
   };
 }
 
-console.log(`🚀 Odds WebSocket Server (Bun Native APIs v${Bun.version}) running on ${server.port}`);
-console.log(`📊 Metrics: http://localhost:${server.port}/metrics`);
-console.log(`🔍 Debug: http://localhost:${server.port}/debug`);
-console.log(`🌐 API: http://localhost:${server.port}/api/market-data?symbols=AAPL,GOOGL&limit=100`);
-console.log(`📡 Native Feeds: TCP on 8080, UDP on 8081`);
-console.log(`💾 Database: SQLite at ./market-data.db`);
+console.info(`🚀 Odds WebSocket Server (Bun Native APIs v${Bun.version}) running on ${server.port}`);
+console.info(`📊 Metrics: http://localhost:${server.port}/metrics`);
+console.info(`🔍 Debug: http://localhost:${server.port}/debug`);
+console.info(`🌐 API: http://localhost:${server.port}/api/market-data?symbols=AAPL,GOOGL&limit=100`);
+console.info(`📡 Native Feeds: TCP on 8080, UDP on 8081`);
+console.info(`💾 Database: SQLite at ./market-data.db`);
 
 // Cleanup on exit
 process.on('exit', () => {

@@ -4,8 +4,8 @@
 const { spawn } = require('child_process');
 const http = require('http');
 
-console.log("🚀 Starting Tier-1380 OMEGA Dashboard...");
-console.log("=" .repeat(50));
+console.info("🚀 Starting Tier-1380 OMEGA Dashboard...");
+console.info("=" .repeat(50));
 
 async function checkPort(port: number, name: string): Promise<boolean> {
     return new Promise((resolve) => {
@@ -32,7 +32,7 @@ async function startServers() {
     // Check if API server is running
     const apiRunning = await checkPort(3333, 'API');
     if (!apiRunning) {
-        console.log("🔧 Starting API server...");
+        console.info("🔧 Starting API server...");
         spawn('bun', ['api-server.ts'], {
             cwd: process.cwd(),
             stdio: 'inherit',
@@ -40,16 +40,16 @@ async function startServers() {
         });
 
         // Wait for API to start
-        console.log("⏳ Waiting for API server...");
+        console.info("⏳ Waiting for API server...");
         await new Promise(resolve => setTimeout(resolve, 3000));
     } else {
-        console.log("✅ API server already running on port 3333");
+        console.info("✅ API server already running on port 3333");
     }
 
     // Check if dashboard server is running
     const dashboardRunning = await checkPort(3001, 'Dashboard');
     if (!dashboardRunning) {
-        console.log("🔧 Starting dashboard server...");
+        console.info("🔧 Starting dashboard server...");
         spawn('python3', ['-m', 'http.server', '3001'], {
             cwd: process.cwd(),
             stdio: 'inherit',
@@ -57,10 +57,10 @@ async function startServers() {
         });
 
         // Wait for dashboard to start
-        console.log("⏳ Waiting for dashboard server...");
+        console.info("⏳ Waiting for dashboard server...");
         await new Promise(resolve => setTimeout(resolve, 2000));
     } else {
-        console.log("✅ Dashboard server already running on port 3001");
+        console.info("✅ Dashboard server already running on port 3001");
     }
 
     // Verify both servers are running
@@ -68,21 +68,21 @@ async function startServers() {
     const dashboardOk = await checkPort(3001, 'Dashboard');
 
     if (apiOk && dashboardOk) {
-        console.log("\n🎉 SUCCESS: All servers running!");
-        console.log("📊 API Server: http://localhost:3333");
-        console.log("🌐 Dashboard: http://localhost:3001/multi-tenant-dashboard.html");
-        console.log("🧪 Test Page: http://localhost:3001/dashboard-test.html");
-        console.log("\n✨ Enhanced Features:");
-        console.log("   • Multi-tenant filtering");
-        console.log("   • Enhanced spinners and loading states");
-        console.log("   • Data export (CSV/JSON)");
-        console.log("   • Auto-refresh capabilities");
-        console.log("   • Quick filters and date ranges");
-        console.log("\n🚀 Dashboard is ready for use!");
+        console.info("\n🎉 SUCCESS: All servers running!");
+        console.info("📊 API Server: http://localhost:3333");
+        console.info("🌐 Dashboard: http://localhost:3001/multi-tenant-dashboard.html");
+        console.info("🧪 Test Page: http://localhost:3001/dashboard-test.html");
+        console.info("\n✨ Enhanced Features:");
+        console.info("   • Multi-tenant filtering");
+        console.info("   • Enhanced spinners and loading states");
+        console.info("   • Data export (CSV/JSON)");
+        console.info("   • Auto-refresh capabilities");
+        console.info("   • Quick filters and date ranges");
+        console.info("\n🚀 Dashboard is ready for use!");
     } else {
-        console.log("\n❌ ERROR: Failed to start servers");
-        console.log(`API Server: ${apiOk ? '✅' : '❌'}`);
-        console.log(`Dashboard: ${dashboardOk ? '✅' : '❌'}`);
+        console.info("\n❌ ERROR: Failed to start servers");
+        console.info(`API Server: ${apiOk ? '✅' : '❌'}`);
+        console.info(`Dashboard: ${dashboardOk ? '✅' : '❌'}`);
     }
 }
 

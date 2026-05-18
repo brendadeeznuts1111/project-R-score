@@ -147,7 +147,7 @@ export const enforceTable = (
 const udpMulticastGroups = new Map<string, string[]>();
 export const udpMulticast = (group: string, message: string): void => {
   const groups = udpMulticastGroups.get(group) || [];
-  console.log(`[UDP:${group}] ${message} → ${groups.length} subscribers`);
+  console.info(`[UDP:${group}] ${message} → ${groups.length} subscribers`);
 };
 
 // Universal color kit (fallback for bun:inspect)
@@ -306,21 +306,21 @@ export const rgbaLattice = (base = 1) => {
   );
 
   // Render as ASCII table
-  console.log("\n┌" + "──────────┬".repeat(10) + "──────────┐");
-  console.log("│" + enrichedHeaders.map((h) => `   ${h}   `).join("│") + "│");
-  console.log("├" + "──────────┼".repeat(10) + "──────────┤");
+  console.info("\n┌" + "──────────┬".repeat(10) + "──────────┐");
+  console.info("│" + enrichedHeaders.map((h) => `   ${h}   `).join("│") + "│");
+  console.info("├" + "──────────┼".repeat(10) + "──────────┤");
   enrichedRows.slice(1).forEach((row) => {
-    console.log("│" + row.join("│") + "│");
+    console.info("│" + row.join("│") + "│");
   });
-  console.log("└" + "──────────┴".repeat(10) + "──────────┘");
+  console.info("└" + "──────────┴".repeat(10) + "──────────┘");
 };
 
 /* 11. one-liner test -------------------------------------- */
 if (import.meta.main) {
   // Cross-ref: validateConfig() passes true (version 1.5.0, no regressions, additive only)
   const config = { version: "1.5.0", regressions: false, additive: true };
-  console.log("Config validated:", config);
+  console.info("Config validated:", config);
 
   rgbaLattice();
-  console.log("Quantum 1.5.x toolkit loaded – zero breaking changes.");
+  console.info("Quantum 1.5.x toolkit loaded – zero breaking changes.");
 }

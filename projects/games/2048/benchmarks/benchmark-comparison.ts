@@ -3,8 +3,8 @@ import { optimizedProcessor } from "./workers/crc32-optimized";
 import { simdProcessor } from "./workers/crc32-simd-batch";
 
 async function runComparisonBenchmark() {
-  console.log("🏁 CRC32 Implementation Comparison");
-  console.log("=".repeat(50));
+  console.info("🏁 CRC32 Implementation Comparison");
+  console.info("=".repeat(50));
 
   // Generate test data
   const testSizes = [1024, 4096, 16384, 65536, 262144]; // 1KB to 256KB
@@ -16,19 +16,19 @@ async function runComparisonBenchmark() {
     return data;
   });
 
-  console.log(
+  console.info(
     `\n📊 Testing ${testDatasets.length} datasets (${
       testDatasets.reduce((sum, d) => sum + d.length, 0) / 1024
     }KB total)`
   );
 
   // Test 1: Direct Bun.hash.crc32 (baseline)
-  console.log("\n🔍 1. Direct Bun.hash.crc32:");
+  console.info("\n🔍 1. Direct Bun.hash.crc32:");
   const baselineStart = performance.now();
   const baselineResults = testDatasets.map((data) => Bun.hash.crc32(data));
   const baselineTime = performance.now() - baselineStart;
-  console.log(`   Time: ${baselineTime.toFixed(2)}ms`);
-  console.log(
+  console.info(`   Time: ${baselineTime.toFixed(2)}ms`);
+  console.info(
     `   Throughput: ${(
       testDatasets.reduce((sum, d) => sum + d.length, 0) /
       baselineTime /
@@ -37,12 +37,12 @@ async function runComparisonBenchmark() {
   );
 
   // Test 2: SIMD batch processor
-  console.log("\n⚡ 2. SIMD batch processor:");
+  console.info("\n⚡ 2. SIMD batch processor:");
   const simdStart = performance.now();
   const simdResults = await simdProcessor.processBatch(testDatasets);
   const simdTime = performance.now() - simdStart;
-  console.log(`   Time: ${simdTime.toFixed(2)}ms`);
-  console.log(
+  console.info(`   Time: ${simdTime.toFixed(2)}ms`);
+  console.info(
     `   Throughput: ${(
       testDatasets.reduce((sum, d) => sum + d.length, 0) /
       simdTime /
@@ -51,12 +51,12 @@ async function runComparisonBenchmark() {
   );
 
   // Test 3: Optimized processor
-  console.log("\n🚀 3. Optimized processor:");
+  console.info("\n🚀 3. Optimized processor:");
   const optimizedStart = performance.now();
   const optimizedResults = await optimizedProcessor.processBatch(testDatasets);
   const optimizedTime = performance.now() - optimizedStart;
-  console.log(`   Time: ${optimizedTime.toFixed(2)}ms`);
-  console.log(
+  console.info(`   Time: ${optimizedTime.toFixed(2)}ms`);
+  console.info(
     `   Throughput: ${(
       testDatasets.reduce((sum, d) => sum + d.length, 0) /
       optimizedTime /
@@ -65,14 +65,14 @@ async function runComparisonBenchmark() {
   );
 
   // Test 4: Adaptive processing
-  console.log("\n🎯 4. Adaptive processing:");
+  console.info("\n🎯 4. Adaptive processing:");
   const adaptiveStart = performance.now();
   const adaptiveResults = await optimizedProcessor.adaptiveProcess(
     testDatasets
   );
   const adaptiveTime = performance.now() - adaptiveStart;
-  console.log(`   Time: ${adaptiveTime.toFixed(2)}ms`);
-  console.log(
+  console.info(`   Time: ${adaptiveTime.toFixed(2)}ms`);
+  console.info(
     `   Throughput: ${(
       testDatasets.reduce((sum, d) => sum + d.length, 0) /
       adaptiveTime /
@@ -81,7 +81,7 @@ async function runComparisonBenchmark() {
   );
 
   // Verify results
-  console.log("\n✅ Results verification:");
+  console.info("\n✅ Results verification:");
   const baselineCorrect = baselineResults;
   const simdCorrect = simdResults.every((crc, i) => crc === baselineCorrect[i]);
   const optimizedCorrect = optimizedResults.every(
@@ -91,23 +91,23 @@ async function runComparisonBenchmark() {
     (crc, i) => crc === baselineCorrect[i]
   );
 
-  console.log(`   Baseline: ✅ Reference`);
-  console.log(`   SIMD: ${simdCorrect ? "✅" : "❌"} Match`);
-  console.log(`   Optimized: ${optimizedCorrect ? "✅" : "❌"} Match`);
-  console.log(`   Adaptive: ${adaptiveCorrect ? "✅" : "❌"} Match`);
+  console.info(`   Baseline: ✅ Reference`);
+  console.info(`   SIMD: ${simdCorrect ? "✅" : "❌"} Match`);
+  console.info(`   Optimized: ${optimizedCorrect ? "✅" : "❌"} Match`);
+  console.info(`   Adaptive: ${adaptiveCorrect ? "✅" : "❌"} Match`);
 
   // Performance comparison
-  console.log("\n📈 Performance comparison:");
-  console.log(`   SIMD vs Baseline: ${(baselineTime / simdTime).toFixed(2)}x`);
-  console.log(
+  console.info("\n📈 Performance comparison:");
+  console.info(`   SIMD vs Baseline: ${(baselineTime / simdTime).toFixed(2)}x`);
+  console.info(
     `   Optimized vs Baseline: ${(baselineTime / optimizedTime).toFixed(2)}x`
   );
-  console.log(
+  console.info(
     `   Adaptive vs Baseline: ${(baselineTime / adaptiveTime).toFixed(2)}x`
   );
 
   // Large dataset test
-  console.log("\n🎯 Large dataset test (1000 files):");
+  console.info("\n🎯 Large dataset test (1000 files):");
   const largeDatasets = Array(1000)
     .fill(null)
     .map((_, i) => {
@@ -119,7 +119,7 @@ async function runComparisonBenchmark() {
       return data;
     });
 
-  console.log(
+  console.info(
     `   Total size: ${(
       largeDatasets.reduce((sum, d) => sum + d.length, 0) /
       1024 /
@@ -134,8 +134,8 @@ async function runComparisonBenchmark() {
   );
   const largeTime = performance.now() - largeStart;
 
-  console.log(`   Time: ${largeTime.toFixed(2)}ms`);
-  console.log(
+  console.info(`   Time: ${largeTime.toFixed(2)}ms`);
+  console.info(
     `   Throughput: ${(
       largeResult.bytesProcessed /
       largeTime /
@@ -143,13 +143,13 @@ async function runComparisonBenchmark() {
       1024
     ).toFixed(2)} MB/s`
   );
-  console.log(`   Chunks: ${largeResult.chunks}`);
-  console.log(
+  console.info(`   Chunks: ${largeResult.chunks}`);
+  console.info(
     `   Final CRC32: 0x${largeResult.hash.toString(16).padStart(8, "0")}`
   );
 
   // Recommendations
-  console.log("\n🎯 Recommendations:");
+  console.info("\n🎯 Recommendations:");
 
   const fastestTime = Math.min(
     baselineTime,
@@ -166,22 +166,22 @@ async function runComparisonBenchmark() {
       ? "Optimized"
       : "Adaptive";
 
-  console.log(`   🏆 Fastest method: ${fastestMethod}`);
+  console.info(`   🏆 Fastest method: ${fastestMethod}`);
 
   if (optimizedCorrect && adaptiveCorrect) {
-    console.log("   ✅ Use optimized processor for reliable performance");
+    console.info("   ✅ Use optimized processor for reliable performance");
   } else if (simdCorrect) {
-    console.log("   ⚠️  SIMD works but verify correctness");
+    console.info("   ⚠️  SIMD works but verify correctness");
   } else {
-    console.log("   🐌 Stick with direct Bun.hash.crc32 for correctness");
+    console.info("   🐌 Stick with direct Bun.hash.crc32 for correctness");
   }
 
   if (largeTime < 1000) {
-    console.log("   🚀 Excellent performance for large datasets");
+    console.info("   🚀 Excellent performance for large datasets");
   } else if (largeTime < 5000) {
-    console.log("   👍 Good performance for large datasets");
+    console.info("   👍 Good performance for large datasets");
   } else {
-    console.log("   🐌 Consider further optimization for large datasets");
+    console.info("   🐌 Consider further optimization for large datasets");
   }
 }
 

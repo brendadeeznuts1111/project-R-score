@@ -25,8 +25,8 @@ class PreCommitCheck {
    * Run essential pre-commit checks
    */
   async runPreCommitChecks(): Promise<boolean> {
-    console.log('🔍 Fire22 Pre-Commit Quality Gate');
-    console.log('!==!==!==!==!==!====\n');
+    console.info('🔍 Fire22 Pre-Commit Quality Gate');
+    console.info('!==!==!==!==!==!====\n');
 
     const checks = [
       { name: 'format-check', fn: this.checkFormatting.bind(this), required: true },
@@ -38,16 +38,16 @@ class PreCommitCheck {
     let allPassed = true;
 
     for (const check of checks) {
-      console.log(`🔄 Running ${check.name}...`);
+      console.info(`🔄 Running ${check.name}...`);
       const result = await check.fn();
       this.results.push(result);
 
       const statusIcon = result.status === 'pass' ? '✅' : result.status === 'fail' ? '❌' : '⏭️';
 
-      console.log(
+      console.info(
         `${statusIcon} ${check.name} - ${result.status.toUpperCase()} (${result.duration.toFixed(0)}ms)`
       );
-      console.log(`   💬 ${result.message}\n`);
+      console.info(`   💬 ${result.message}\n`);
 
       if (result.status === 'fail' && check.required) {
         allPassed = false;
@@ -198,24 +198,24 @@ class PreCommitCheck {
     const skipped = this.results.filter(r => r.status === 'skip').length;
     const totalDuration = this.results.reduce((sum, r) => sum + r.duration, 0);
 
-    console.log('📊 Pre-Commit Summary');
-    console.log('!==!==!=====');
-    console.log(`🎯 Status: ${allPassed ? '✅ PASSED' : '❌ FAILED'}`);
-    console.log(`⏱️  Duration: ${(totalDuration / 1000).toFixed(1)}s`);
-    console.log(`✅ Passed: ${passed}`);
-    console.log(`❌ Failed: ${failed}`);
-    console.log(`⏭️ Skipped: ${skipped}`);
-    console.log('');
+    console.info('📊 Pre-Commit Summary');
+    console.info('!==!==!=====');
+    console.info(`🎯 Status: ${allPassed ? '✅ PASSED' : '❌ FAILED'}`);
+    console.info(`⏱️  Duration: ${(totalDuration / 1000).toFixed(1)}s`);
+    console.info(`✅ Passed: ${passed}`);
+    console.info(`❌ Failed: ${failed}`);
+    console.info(`⏭️ Skipped: ${skipped}`);
+    console.info('');
 
     if (allPassed) {
-      console.log('🎉 All quality checks passed! Commit can proceed.');
+      console.info('🎉 All quality checks passed! Commit can proceed.');
     } else {
-      console.log('🚫 Quality checks failed. Please fix issues before committing.');
-      console.log('');
-      console.log('💡 Quick fixes:');
-      console.log('   • Format code: fire22 format');
-      console.log('   • Fix linting: fire22 lint --fix');
-      console.log('   • Check types: fire22 typecheck');
+      console.info('🚫 Quality checks failed. Please fix issues before committing.');
+      console.info('');
+      console.info('💡 Quick fixes:');
+      console.info('   • Format code: fire22 format');
+      console.info('   • Fix linting: fire22 lint --fix');
+      console.info('   • Check types: fire22 typecheck');
     }
   }
 }

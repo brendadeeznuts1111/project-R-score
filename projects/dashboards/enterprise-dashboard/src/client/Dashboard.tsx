@@ -436,7 +436,7 @@ Generated: ${new Date().toISOString()}`;
         showGlobalToast(`${project.name} - git ${action}:\n${lines}`, "success");
         // Log full output for debugging (only in development)
         if (import.meta.env.DEV) {
-          console.log(`[${project.name}] git ${action}:\n${output}`);
+          console.info(`[${project.name}] git ${action}:\n${output}`);
         }
       }
     } catch {
@@ -528,7 +528,7 @@ Generated: ${new Date().toISOString()}`;
       const data = await res.json();
       // Log snapshot data for debugging (only in development)
       if (import.meta.env.DEV) {
-        console.log("Snapshot preview:", data);
+        console.info("Snapshot preview:", data);
       }
       showGlobalToast(`Snapshot has ${data.data?.projectCount || 0} projects`, "info");
     } catch {

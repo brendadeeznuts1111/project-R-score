@@ -50,7 +50,7 @@ async function main() {
   ].join("\n");
 
   await Bun.write(output, markdown);
-  console.log(JSON.stringify({ ok: true, output, entrypoint: analysis.entrypoint }, null, 2));
+  console.info(JSON.stringify({ ok: true, output, entrypoint: analysis.entrypoint }, null, 2));
 }
 
 await main();

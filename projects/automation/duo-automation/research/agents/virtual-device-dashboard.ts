@@ -64,10 +64,10 @@ export class VirtualDeviceDashboard {
    */
   async updateDashboard(): Promise<void> {
     console.clear();
-    console.log('📱 Virtual Device Tracker Dashboard');
-    console.log('═'.repeat(60));
-    console.log(`📅 ${new Date().toLocaleString()}`);
-    console.log('');
+    console.info('📱 Virtual Device Tracker Dashboard');
+    console.info('═'.repeat(60));
+    console.info(`📅 ${new Date().toLocaleString()}`);
+    console.info('');
 
     await this.displaySystemStatus();
     await this.displayTaskMetrics();
@@ -77,16 +77,16 @@ export class VirtualDeviceDashboard {
     await this.displayPerformanceMetrics();
     await this.displayIntegrationStatus();
 
-    console.log('\n' + '═'.repeat(60));
-    console.log('💡 Press Ctrl+C to exit • Dashboard refreshes every 30 seconds');
+    console.info('\n' + '═'.repeat(60));
+    console.info('💡 Press Ctrl+C to exit • Dashboard refreshes every 30 seconds');
   }
 
   /**
    * 🟢 Display system status
    */
   private async displaySystemStatus(): Promise<void> {
-    console.log('🟢 SYSTEM STATUS');
-    console.log('─'.repeat(40));
+    console.info('🟢 SYSTEM STATUS');
+    console.info('─'.repeat(40));
     
     const taskMetrics = await this.tracker.getTaskMetrics();
     const subMetrics = await this.tracker.getSubscriptionMetrics();
@@ -98,16 +98,16 @@ export class VirtualDeviceDashboard {
       { Component: 'Scheduler', Status: '🟢 Running', Interval: '1 minute' }
     ];
     
-    console.log(UnicodeTableFormatter.generateTable(statusData, { maxWidth: 60, compact: true }));
-    console.log('');
+    console.info(UnicodeTableFormatter.generateTable(statusData, { maxWidth: 60, compact: true }));
+    console.info('');
   }
 
   /**
    * 📋 Display task metrics
    */
   private async displayTaskMetrics(): Promise<void> {
-    console.log('📋 TASK METRICS');
-    console.log('─'.repeat(40));
+    console.info('📋 TASK METRICS');
+    console.info('─'.repeat(40));
     
     const metrics = await this.tracker.getTaskMetrics();
     
@@ -119,27 +119,27 @@ export class VirtualDeviceDashboard {
       { Metric: 'Avg Duration', Value: `${Math.round(metrics.avgDuration)}ms` }
     ];
     
-    console.log(UnicodeTableFormatter.generateTable(metricsData, { maxWidth: 60, compact: true }));
+    console.info(UnicodeTableFormatter.generateTable(metricsData, { maxWidth: 60, compact: true }));
     
     // Task type breakdown
     if (Object.keys(metrics.byType).length > 0) {
-      console.log('\n📊 By Type:');
+      console.info('\n📊 By Type:');
       Object.entries(metrics.byType).forEach(([type, count]) => {
         const icon = type === 'transaction' ? '💳' : 
                     type === 'monitoring' ? '📊' : 
                     type === 'automation' ? '🔧' : '⚙️';
-        console.log(`   ${icon} ${type}: ${count}`);
+        console.info(`   ${icon} ${type}: ${count}`);
       });
     }
-    console.log('');
+    console.info('');
   }
 
   /**
    * 🔁 Display subscription metrics
    */
   private async displaySubscriptions(): Promise<void> {
-    console.log('🔁 SUBSCRIPTIONS');
-    console.log('─'.repeat(40));
+    console.info('🔁 SUBSCRIPTIONS');
+    console.info('─'.repeat(40));
     
     try {
       const metrics = await this.tracker.getSubscriptionMetrics();
@@ -151,18 +151,18 @@ export class VirtualDeviceDashboard {
         { Metric: 'Success Rate', Value: `${metrics.successRate.toFixed(1)}%` },
         { Metric: 'Avg Latency', Value: `${metrics.avgLatency}ms` }
       ];
-      console.log(UnicodeTableFormatter.generateTable(data, { maxWidth: 60, compact: true }));
+      console.info(UnicodeTableFormatter.generateTable(data, { maxWidth: 60, compact: true }));
 
       if (subs.length > 0) {
-        console.log('\n📅 Active Recurrences:');
+        console.info('\n📅 Active Recurrences:');
         subs.slice(0, 3).forEach(sub => {
-          console.log(`   • ${sub.recurrence.interval} → ${sub.taskTemplate.taskType} (next: ${new Date(sub.recurrence.nextRunAt).toLocaleTimeString()})`);
+          console.info(`   • ${sub.recurrence.interval} → ${sub.taskTemplate.taskType} (next: ${new Date(sub.recurrence.nextRunAt).toLocaleTimeString()})`);
         });
       }
     } catch (err) {
-      console.log('⚠️ Subscription data unavailable');
+      console.info('⚠️ Subscription data unavailable');
     }
-    console.log('');
+    console.info('');
   }
 
   /**
@@ -176,15 +176,15 @@ export class VirtualDeviceDashboard {
    * 📋 Display active subscriptions
    */
   private async displayActiveSubscriptions(): Promise<void> {
-    console.log('📋 ACTIVE SUBSCRIPTIONS');
-    console.log('─'.repeat(40));
+    console.info('📋 ACTIVE SUBSCRIPTIONS');
+    console.info('─'.repeat(40));
     
     try {
       const activeSubs = await this.tracker.listSubscriptions({ status: 'active' });
       
       if (activeSubs.length === 0) {
-        console.log('📭 No active subscriptions');
-        console.log('');
+        console.info('📭 No active subscriptions');
+        console.info('');
         return;
       }
 
@@ -196,30 +196,30 @@ export class VirtualDeviceDashboard {
         Next: new Date(sub.recurrence.nextRunAt).toLocaleTimeString()
       }));
       
-      console.log(UnicodeTableFormatter.generateTable(subscriptionData, { maxWidth: 70, compact: true }));
+      console.info(UnicodeTableFormatter.generateTable(subscriptionData, { maxWidth: 70, compact: true }));
       
       if (activeSubs.length > 5) {
-        console.log(`\n   ... and ${activeSubs.length - 5} more active subscriptions`);
+        console.info(`\n   ... and ${activeSubs.length - 5} more active subscriptions`);
       }
     } catch (err) {
-      console.log('⚠️ Unable to load active subscriptions');
+      console.info('⚠️ Unable to load active subscriptions');
     }
-    console.log('');
+    console.info('');
   }
 
   /**
    * 📋 Display recent tasks
    */
   private async displayRecentTasks(): Promise<void> {
-    console.log('📋 RECENT TASKS');
-    console.log('─'.repeat(40));
+    console.info('📋 RECENT TASKS');
+    console.info('─'.repeat(40));
     
     try {
       const recentTasks = await this.tracker.listTasks({});
       
       if (recentTasks.length === 0) {
-        console.log('📭 No tasks found');
-        console.log('');
+        console.info('📭 No tasks found');
+        console.info('');
         return;
       }
 
@@ -231,23 +231,23 @@ export class VirtualDeviceDashboard {
         Time: new Date(task.createdAt).toLocaleTimeString()
       }));
       
-      console.log(UnicodeTableFormatter.generateTable(taskData, { maxWidth: 70, compact: true }));
+      console.info(UnicodeTableFormatter.generateTable(taskData, { maxWidth: 70, compact: true }));
       
       if (recentTasks.length > 5) {
-        console.log(`\n   ... and ${recentTasks.length - 5} more tasks`);
+        console.info(`\n   ... and ${recentTasks.length - 5} more tasks`);
       }
     } catch (err) {
-      console.log('⚠️ Unable to load recent tasks');
+      console.info('⚠️ Unable to load recent tasks');
     }
-    console.log('');
+    console.info('');
   }
 
   /**
    * ⚡ Display performance metrics
    */
   private async displayPerformanceMetrics(): Promise<void> {
-    console.log('⚡ PERFORMANCE METRICS');
-    console.log('─'.repeat(40));
+    console.info('⚡ PERFORMANCE METRICS');
+    console.info('─'.repeat(40));
     
     const perfMetrics = this.tracker.getPerformanceMetrics();
     
@@ -258,16 +258,16 @@ export class VirtualDeviceDashboard {
       { Metric: 'Memory Usage', Value: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB` }
     ];
     
-    console.log(UnicodeTableFormatter.generateTable(performanceData, { maxWidth: 60, compact: true }));
-    console.log('');
+    console.info(UnicodeTableFormatter.generateTable(performanceData, { maxWidth: 60, compact: true }));
+    console.info('');
   }
 
   /**
    * 🔗 Display integration status
    */
   private async displayIntegrationStatus(): Promise<void> {
-    console.log('🔗 INTEGRATION STATUS');
-    console.log('─'.repeat(40));
+    console.info('🔗 INTEGRATION STATUS');
+    console.info('─'.repeat(40));
     
     const integrations = this.tracker['cashAppIntegrations'];
     
@@ -278,14 +278,14 @@ export class VirtualDeviceDashboard {
       { Service: 'Logging', Status: '🟢 Console', Count: 'Enabled' }
     ];
     
-    console.log(UnicodeTableFormatter.generateTable(integrationData, { maxWidth: 60, compact: true }));
+    console.info(UnicodeTableFormatter.generateTable(integrationData, { maxWidth: 60, compact: true }));
   }
 
   /**
    * 🔄 Start dashboard refresh loop
    */
   startRefreshLoop(intervalMs: number = 30000): void {
-    console.log('🔄 Starting dashboard refresh loop...');
+    console.info('🔄 Starting dashboard refresh loop...');
     
     setInterval(async () => {
       try {
@@ -300,24 +300,24 @@ export class VirtualDeviceDashboard {
    * 📊 Display detailed subscription report
    */
   async displaySubscriptionReport(): Promise<void> {
-    console.log('📊 DETAILED SUBSCRIPTION REPORT');
-    console.log('═'.repeat(60));
+    console.info('📊 DETAILED SUBSCRIPTION REPORT');
+    console.info('═'.repeat(60));
     
     const metrics = await this.tracker.getSubscriptionMetrics();
     const allSubs = await this.tracker.listSubscriptions({});
     
-    console.log('\n📈 Overall Metrics:');
-    console.log(`   Total Subscriptions: ${metrics.total}`);
-    console.log(`   Active: ${metrics.active} (${((metrics.active / metrics.total) * 100).toFixed(1)}%)`);
-    console.log(`   Success Rate: ${metrics.successRate.toFixed(2)}%`);
-    console.log(`   Average Latency: ${metrics.avgLatency}ms`);
+    console.info('\n📈 Overall Metrics:');
+    console.info(`   Total Subscriptions: ${metrics.total}`);
+    console.info(`   Active: ${metrics.active} (${((metrics.active / metrics.total) * 100).toFixed(1)}%)`);
+    console.info(`   Success Rate: ${metrics.successRate.toFixed(2)}%`);
+    console.info(`   Average Latency: ${metrics.avgLatency}ms`);
     
-    console.log('\n📅 By Interval:');
+    console.info('\n📅 By Interval:');
     Object.entries(metrics.byInterval).forEach(([interval, count]) => {
-      console.log(`   ${interval}: ${count} subscriptions`);
+      console.info(`   ${interval}: ${count} subscriptions`);
     });
     
-    console.log('\n📋 Subscription Details:');
+    console.info('\n📋 Subscription Details:');
     const subDetails = allSubs.map(sub => ({
       ID: sub.subscriptionId,
       Agent: sub.agentId,
@@ -329,7 +329,7 @@ export class VirtualDeviceDashboard {
       Billing: sub.billing ? `$${sub.billing.amount}/${sub.billing.currency}` : 'No billing'
     }));
     
-    console.log(UnicodeTableFormatter.generateTable(subDetails, { maxWidth: 100 }));
+    console.info(UnicodeTableFormatter.generateTable(subDetails, { maxWidth: 100 }));
   }
 }
 

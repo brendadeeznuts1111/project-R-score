@@ -24,8 +24,8 @@ const c = {
  * Test Context Engine v3.17 Core Features
  */
 async function testContextEngineV317(): Promise<void> {
-  console.log(c.bold('🎯 Context Engine v3.17 - Core Features Test'));
-  console.log(c.magenta('Testing Metafile + JSONC integration capabilities\n'));
+  console.info(c.bold('🎯 Context Engine v3.17 - Core Features Test'));
+  console.info(c.magenta('Testing Metafile + JSONC integration capabilities\n'));
   
   const flags = {
     cwd: './utils',
@@ -35,18 +35,18 @@ async function testContextEngineV317(): Promise<void> {
   
   try {
     // Test 1: Load Global Configuration
-    console.log(c.yellow('\n--- Test 1: Global Configuration Loading ---'));
+    console.info(c.yellow('\n--- Test 1: Global Configuration Loading ---'));
     const globalConfig = await loadGlobalConfig(flags);
     
-    console.log(c.green('✅ Global Config Loaded Successfully:'));
-    console.log(c.gray(`  CWD: ${globalConfig.cwd}`));
-    console.log(c.gray(`  Env Files: ${globalConfig.envFile?.length || 0}`));
-    console.log(c.gray(`  Config: ${globalConfig.config || 'none'}`));
-    console.log(c.gray(`  TSConfig Options: ${Object.keys(globalConfig.tsconfig?.compilerOptions || {}).length}`));
-    console.log(c.gray(`  Virtual Files: ${Object.keys(globalConfig.virtualFiles || {}).length}`));
+    console.info(c.green('✅ Global Config Loaded Successfully:'));
+    console.info(c.gray(`  CWD: ${globalConfig.cwd}`));
+    console.info(c.gray(`  Env Files: ${globalConfig.envFile?.length || 0}`));
+    console.info(c.gray(`  Config: ${globalConfig.config || 'none'}`));
+    console.info(c.gray(`  TSConfig Options: ${Object.keys(globalConfig.tsconfig?.compilerOptions || {}).length}`));
+    console.info(c.gray(`  Virtual Files: ${Object.keys(globalConfig.virtualFiles || {}).length}`));
     
     // Test 2: JSONC Parsing
-    console.log(c.yellow('\n--- Test 2: JSONC Parsing Test ---'));
+    console.info(c.yellow('\n--- Test 2: JSONC Parsing Test ---'));
     const jsoncTest = `{
       // This is a comment
       "compilerOptions": {
@@ -59,26 +59,26 @@ async function testContextEngineV317(): Promise<void> {
     
     try {
       const parsed = JSON.parse(jsoncTest);
-      console.log(c.green('✅ JSONC Parsed Successfully:'));
-      console.log(c.gray(`  Target: ${parsed.compilerOptions.target}`));
-      console.log(c.gray(`  Module: ${parsed.compilerOptions.module}`));
-      console.log(c.gray(`  Include: ${parsed.include.join(', ')}`));
+      console.info(c.green('✅ JSONC Parsed Successfully:'));
+      console.info(c.gray(`  Target: ${parsed.compilerOptions.target}`));
+      console.info(c.gray(`  Module: ${parsed.compilerOptions.module}`));
+      console.info(c.gray(`  Include: ${parsed.include.join(', ')}`));
     } catch (error) {
-      console.log(c.red(`❌ JSONC Parse Failed: ${error}`));
+      console.info(c.red(`❌ JSONC Parse Failed: ${error}`));
     }
     
     // Test 3: Virtual File System
-    console.log(c.yellow('\n--- Test 3: Virtual File System ---'));
+    console.info(c.yellow('\n--- Test 3: Virtual File System ---'));
     if (globalConfig.virtualFiles) {
-      console.log(c.green('✅ Virtual Files Available:'));
+      console.info(c.green('✅ Virtual Files Available:'));
       Object.entries(globalConfig.virtualFiles).forEach(([path, content]) => {
         const preview = content.substring(0, 50) + (content.length > 50 ? '...' : '');
-        console.log(c.gray(`  ${path}: ${preview}`));
+        console.info(c.gray(`  ${path}: ${preview}`));
       });
     }
     
     // Test 4: Context Build Simulation
-    console.log(c.yellow('\n--- Test 4: Context Build Simulation ---'));
+    console.info(c.yellow('\n--- Test 4: Context Build Simulation ---'));
     const mockMetafile = {
       inputs: {
         './utils/junior-runner.ts': {
@@ -110,13 +110,13 @@ async function testContextEngineV317(): Promise<void> {
     const outputs = Object.keys(mockMetafile.outputs);
     const bundleSize = Object.values(mockMetafile.outputs).reduce((sum: number, output: any) => sum + output.bytes, 0);
     
-    console.log(c.green('✅ Mock Build Analysis Complete:'));
-    console.log(c.gray(`  Inputs: ${inputs.length}`));
-    console.log(c.gray(`  Outputs: ${outputs.length}`));
-    console.log(c.gray(`  Bundle Size: ${(bundleSize / 1024).toFixed(1)}KB`));
+    console.info(c.green('✅ Mock Build Analysis Complete:'));
+    console.info(c.gray(`  Inputs: ${inputs.length}`));
+    console.info(c.gray(`  Outputs: ${outputs.length}`));
+    console.info(c.gray(`  Bundle Size: ${(bundleSize / 1024).toFixed(1)}KB`));
     
     // Metafile Dashboard Table!
-    console.log(c.bold('\n📊 Metafile Dashboard'));
+    console.info(c.bold('\n📊 Metafile Dashboard'));
     console.table({
       'Inputs Total': inputs.length,
       'Outputs Total': outputs.length,
@@ -128,7 +128,7 @@ async function testContextEngineV317(): Promise<void> {
     });
     
     // Test 5: Enhanced Profile with Metafile
-    console.log(c.yellow('\n--- Test 5: Enhanced Profile with Metafile ---'));
+    console.info(c.yellow('\n--- Test 5: Enhanced Profile with Metafile ---'));
     const enhancedProfile = {
       id: crypto.randomUUID(),
       name: 'Junior Profile - test.md',
@@ -139,13 +139,13 @@ async function testContextEngineV317(): Promise<void> {
       metafile: mockMetafile
     };
     
-    console.log(c.green('✅ Enhanced Profile Created:'));
-    console.log(c.gray(`  Profile ID: ${enhancedProfile.id.substring(0, 8)}...`));
-    console.log(c.gray(`  Bundle Size: ${(enhancedProfile.bundleSize / 1024).toFixed(1)}KB`));
-    console.log(c.gray(`  Dependencies: ${enhancedProfile.dependencies.length}`));
-    console.log(c.gray(`  Metafile Inputs: ${Object.keys(enhancedProfile.metafile.inputs).length}`));
+    console.info(c.green('✅ Enhanced Profile Created:'));
+    console.info(c.gray(`  Profile ID: ${enhancedProfile.id.substring(0, 8)}...`));
+    console.info(c.gray(`  Bundle Size: ${(enhancedProfile.bundleSize / 1024).toFixed(1)}KB`));
+    console.info(c.gray(`  Dependencies: ${enhancedProfile.dependencies.length}`));
+    console.info(c.gray(`  Metafile Inputs: ${Object.keys(enhancedProfile.metafile.inputs).length}`));
     
-    console.log(c.bold('\n📈 Enhanced Profile Summary'));
+    console.info(c.bold('\n📈 Enhanced Profile Summary'));
     console.table({
       'Profile ID': enhancedProfile.id.substring(0, 8) + '...',
       'Name': enhancedProfile.name,
@@ -156,15 +156,15 @@ async function testContextEngineV317(): Promise<void> {
       'Metafile Build ms': '12.5'
     });
     
-    console.log(c.green('\n✅ Context Engine v3.17 Core Test Completed Successfully!'));
-    console.log(c.gray('All core features tested and verified.\n'));
+    console.info(c.green('\n✅ Context Engine v3.17 Core Test Completed Successfully!'));
+    console.info(c.gray('All core features tested and verified.\n'));
     
-    console.log(c.bold('🎯 Key Achievements:'));
-    console.log(c.cyan('  • JSONC tsconfig parsing with comments'));
-    console.log(c.cyan('  • Virtual file system integration'));
-    console.log(c.cyan('  • Metafile analysis and dashboard'));
-    console.log(c.cyan('  • Enhanced profile with metafile integration'));
-    console.log(c.cyan('  • Context-aware build simulation'));
+    console.info(c.bold('🎯 Key Achievements:'));
+    console.info(c.cyan('  • JSONC tsconfig parsing with comments'));
+    console.info(c.cyan('  • Virtual file system integration'));
+    console.info(c.cyan('  • Metafile analysis and dashboard'));
+    console.info(c.cyan('  • Enhanced profile with metafile integration'));
+    console.info(c.cyan('  • Context-aware build simulation'));
     
   } catch (error) {
     console.error(c.red(`❌ Test failed: ${error}`));

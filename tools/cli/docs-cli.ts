@@ -86,19 +86,19 @@ class EnhancedDocsCLI {
     const results = await this.fetcher.search(query, domain)
 
     if (results.length === 0) {
-      console.log('No results found')
+      console.info('No results found')
       return
     }
 
-    console.log(`Found ${results.length} results:\n`)
+    console.info(`Found ${results.length} results:\n`)
 
     results.forEach((result, i) => {
-      console.log(`${i + 1}. ${result.topic}`)
-      console.log(`   APIs: ${result.apis.join(', ')}`)
-      console.log(`   Category: ${result.category}`)
-      console.log(`   bun.sh: ${result.domains.sh}`)
-      console.log(`   bun.com: ${result.domains.com}`)
-      console.log()
+      console.info(`${i + 1}. ${result.topic}`)
+      console.info(`   APIs: ${result.apis.join(', ')}`)
+      console.info(`   Category: ${result.category}`)
+      console.info(`   bun.sh: ${result.domains.sh}`)
+      console.info(`   bun.com: ${result.domains.com}`)
+      console.info()
     })
   }
 
@@ -111,31 +111,31 @@ class EnhancedDocsCLI {
   }
 
   private async updateIndex() {
-    console.log('Updating documentation index...')
+    console.info('Updating documentation index...')
     await this.fetcher.updateFallbackData()
-    console.log('✅ Index updated')
+    console.info('✅ Index updated')
   }
 
   private async cacheInfo() {
     const stats = (this.fetcher as any).cache.getStats()
-    console.log('📊 Enhanced Cache Statistics')
-    console.log('='.repeat(35))
-    console.log(`📦 Entries: ${stats.entries}/${stats.maxEntries}`)
-    console.log(`💾 Total Size: ${stats.totalSize}`)
-    console.log(`📏 Avg Size: ${stats.avgSize}`)
-    console.log(`⏰ TTL: ${stats.ttl}`)
-    console.log(`🌐 Offline Mode: ${stats.offlineMode}`)
-    console.log(`🗜️  Compression: ${stats.compression}`)
-    console.log(`🎯 Priority: ${stats.priority}`)
-    console.log(`📁 Directory: ${stats.cacheDir}`)
-    console.log()
+    console.info('📊 Enhanced Cache Statistics')
+    console.info('='.repeat(35))
+    console.info(`📦 Entries: ${stats.entries}/${stats.maxEntries}`)
+    console.info(`💾 Total Size: ${stats.totalSize}`)
+    console.info(`📏 Avg Size: ${stats.avgSize}`)
+    console.info(`⏰ TTL: ${stats.ttl}`)
+    console.info(`🌐 Offline Mode: ${stats.offlineMode}`)
+    console.info(`🗜️  Compression: ${stats.compression}`)
+    console.info(`🎯 Priority: ${stats.priority}`)
+    console.info(`📁 Directory: ${stats.cacheDir}`)
+    console.info()
 
     const accessStats = stats.accessStats
-    console.log('🔍 Access Statistics:')
-    console.log(`   Total Requests: ${accessStats.totalRequests}`)
-    console.log(`   Cache Hits: ${accessStats.cacheHits}`)
-    console.log(`   Cache Misses: ${accessStats.cacheMisses}`)
-    console.log(`   Hit Rate: ${accessStats.hitRate}`)
+    console.info('🔍 Access Statistics:')
+    console.info(`   Total Requests: ${accessStats.totalRequests}`)
+    console.info(`   Cache Hits: ${accessStats.cacheHits}`)
+    console.info(`   Cache Misses: ${accessStats.cacheMisses}`)
+    console.info(`   Hit Rate: ${accessStats.hitRate}`)
   }
 
   private async interactiveMode(args: string[]) {
@@ -147,7 +147,7 @@ class EnhancedDocsCLI {
 
   private async clearCache() {
     this.fetcher.cache.clear()
-    console.log('✅ Cache cleared successfully')
+    console.info('✅ Cache cleared successfully')
   }
 
   private async showCategories(args: string[]) {
@@ -164,38 +164,38 @@ class EnhancedDocsCLI {
       const cacheStats = (this.fetcher as any).cache.getStats()
       const recentCount = (await (this.fetcher as any).cache.get<any[]>('recent_searches') || []).length
 
-      console.log('📊 Documentation System Statistics')
-      console.log('='.repeat(40))
-      console.log(`📦 Entries: ${cacheStats.entries}/${cacheStats.maxEntries}`)
-      console.log(`💾 Total Size: ${cacheStats.totalSize}`)
-      console.log(`📏 Avg Size: ${cacheStats.avgSize}`)
-      console.log(`⏰ TTL: ${cacheStats.ttl}`)
-      console.log(`🌐 Offline Mode: ${cacheStats.offlineMode}`)
-      console.log(`🗜️  Compression: ${cacheStats.compression}`)
-      console.log(`🎯 Priority: ${cacheStats.priority}`)
-      console.log(`🕒 Recent Searches: ${recentCount}`)
+      console.info('📊 Documentation System Statistics')
+      console.info('='.repeat(40))
+      console.info(`📦 Entries: ${cacheStats.entries}/${cacheStats.maxEntries}`)
+      console.info(`💾 Total Size: ${cacheStats.totalSize}`)
+      console.info(`📏 Avg Size: ${cacheStats.avgSize}`)
+      console.info(`⏰ TTL: ${cacheStats.ttl}`)
+      console.info(`🌐 Offline Mode: ${cacheStats.offlineMode}`)
+      console.info(`🗜️  Compression: ${cacheStats.compression}`)
+      console.info(`🎯 Priority: ${cacheStats.priority}`)
+      console.info(`🕒 Recent Searches: ${recentCount}`)
 
       const accessStats = cacheStats.accessStats
-      console.log(`🔍 Access Stats: ${accessStats.hitRate} hit rate (${accessStats.totalRequests} requests)`)
+      console.info(`🔍 Access Stats: ${accessStats.hitRate} hit rate (${accessStats.totalRequests} requests)`)
 
-      console.log(`🔍 Total API Count: ${(await this.fetcher.fetchIndex('com')).length}`)
+      console.info(`🔍 Total API Count: ${(await this.fetcher.fetchIndex('com')).length}`)
     } catch (error) {
-      console.log('❌ Error getting stats:', error.message)
+      console.info('❌ Error getting stats:', error.message)
       // Fallback basic stats
-      console.log('📊 Basic Statistics')
-      console.log('='.repeat(20))
-      console.log(`🔍 Total API Count: ${(await this.fetcher.fetchIndex('com')).length}`)
+      console.info('📊 Basic Statistics')
+      console.info('='.repeat(20))
+      console.info(`🔍 Total API Count: ${(await this.fetcher.fetchIndex('com')).length}`)
     }
   }
 
   private async createChromeApp(args: string[]) {
     const domain = args.includes('--sh') ? 'sh' : 'com'
     const result = await this.chromeManager.createApp(domain)
-    console.log(result.message)
+    console.info(result.message)
   }
 
   private showHelp() {
-    console.log(`
+    console.info(`
 🎯 Enhanced Bun Documentation CLI v2.0
 Usage: bun docs <command> [options]
 

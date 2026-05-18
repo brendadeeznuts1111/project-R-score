@@ -410,12 +410,12 @@ const encryptedBackup = BunSecurityEngine.SecretManager.encryptWithRotation(back
 // 🚀 GENERATE CHECKLIST REPORT
 export function generateSecurityChecklist(): void {
   const report = SecurityIntegrationChecklist.generateMarkdownReport();
-  console.log(report);
+  console.info(report);
   
   // Also write to file
   // 🔒 BUN FIX: Bun.write() now properly handles files >2GB without corruption
   Bun.write('./SECURITY_CHECKLIST.md', new TextEncoder().encode(report));
-  console.log('\n📄 Checklist saved to SECURITY_CHECKLIST.md');
+  console.info('\n📄 Checklist saved to SECURITY_CHECKLIST.md');
 }
 
 // Run if executed directly

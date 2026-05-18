@@ -322,7 +322,7 @@ async function displaySystemStatus(): Promise<void> {
   const status = await getSystemStatus();
   const activeProfile = profileManager.getActiveProfileName();
 
-  console.log(`
+  console.info(`
 🏭 ═══════════════════════════════════════════════════════════════════════════════
     FactoryWager System Status
     ═══════════════════════════════════════════════════════════════════════════════
@@ -396,7 +396,7 @@ async function execCommand(cmd: string): Promise<void> {
 
 // Helper function to show help
 function showHelp(): void {
-  console.log(`
+  console.info(`
 🏭 ═══════════════════════════════════════════════════════════════════════════════
     FactoryWager CLI - Single Point of Entry (Bun Native)
     ═══════════════════════════════════════════════════════════════════════════════
@@ -490,20 +490,20 @@ async function main(): Promise<void> {
           case "cur":
             const current = profileManager.getActiveProfileName();
             if (current) {
-              console.log(`📋 Current profile: ${current}`);
+              console.info(`📋 Current profile: ${current}`);
               const profile = profileManager.getActiveProfile();
               if (profile) {
-                console.log(`📝 Description: ${profile.description}`);
-                console.log(`🔧 Mode: ${profile.factoryWager.mode}`);
-                console.log(`🎨 Theme: ${profile.terminal.theme}`);
+                console.info(`📝 Description: ${profile.description}`);
+                console.info(`🔧 Mode: ${profile.factoryWager.mode}`);
+                console.info(`🎨 Theme: ${profile.terminal.theme}`);
               }
             } else {
-              console.log("❌ No active profile set");
+              console.info("❌ No active profile set");
             }
             break;
           default:
             console.error("❌ Unknown profile subcommand");
-            console.log("Available: list, switch, current");
+            console.info("Available: list, switch, current");
             process.exit(1);
         }
         break;
@@ -521,7 +521,7 @@ async function main(): Promise<void> {
             break;
           default:
             console.error("❌ Unknown report subcommand");
-            console.log("Available: markdown, demo");
+            console.info("Available: markdown, demo");
             process.exit(1);
         }
         break;
@@ -531,55 +531,55 @@ async function main(): Promise<void> {
         switch (subCommand) {
           case "show":
           case "sh":
-            console.log("🔧 FactoryWager Configuration:");
-            console.log(`📁 Config Directory: ${PATHS.CONFIG_DIR}`);
-            console.log(`📋 Report Config: ${PATHS.REPORT_CONFIG}`);
+            console.info("🔧 FactoryWager Configuration:");
+            console.info(`📁 Config Directory: ${PATHS.CONFIG_DIR}`);
+            console.info(`📋 Report Config: ${PATHS.REPORT_CONFIG}`);
             break;
           case "paths":
           case "p":
-            console.log("🛤️ FactoryWager Paths:");
+            console.info("🛤️ FactoryWager Paths:");
             Object.entries(PATHS).forEach(([key, value]) => {
-              console.log(`${key}: ${value}`);
+              console.info(`${key}: ${value}`);
             });
             break;
           case "env":
           case "environment":
-            console.log("🌍 Environment Configuration:");
-            console.log("\n🥟 Bun Configuration (Official Variables from bun.com/docs):");
-            console.log("  Core Configuration:");
-            console.log(`    VERBOSE_FETCH: ${BUN_CONFIG.VERBOSE_FETCH || "disabled"} - Logs fetch requests with headers for debugging`);
-            console.log(`    MAX_HTTP_REQUESTS: ${BUN_CONFIG.MAX_HTTP_REQUESTS} (default: 256) - Control concurrent HTTP requests for fetch and bun install`);
-            console.log(`    NO_CLEAR_TERMINAL: ${BUN_CONFIG.NO_CLEAR_TERMINAL ? "enabled" : "disabled"} - Prevents console clearing on bun --watch reload`);
-            console.log(`    TRANSPILER_CACHE_PATH: ${BUN_CONFIG.TRANSPILER_CACHE_PATH || "default"} - Cache directory for transpiled output (>50kb files)`);
-            console.log(`    BUN_OPTIONS: ${BUN_CONFIG.BUN_OPTIONS || "none"} - Prepended command-line arguments to any Bun execution`);
-            console.log("\n  Color & Output Control:");
-            console.log(`    FORCE_COLOR: ${BUN_CONFIG.FORCE_COLOR ? "enabled" : "disabled"} - Force ANSI color output, even if NO_COLOR is set`);
-            console.log(`    NO_COLOR: ${BUN_CONFIG.NO_COLOR ? "enabled" : "disabled"} - Disable ANSI color output`);
-            console.log("\n  Security & Networking:");
+            console.info("🌍 Environment Configuration:");
+            console.info("\n🥟 Bun Configuration (Official Variables from bun.com/docs):");
+            console.info("  Core Configuration:");
+            console.info(`    VERBOSE_FETCH: ${BUN_CONFIG.VERBOSE_FETCH || "disabled"} - Logs fetch requests with headers for debugging`);
+            console.info(`    MAX_HTTP_REQUESTS: ${BUN_CONFIG.MAX_HTTP_REQUESTS} (default: 256) - Control concurrent HTTP requests for fetch and bun install`);
+            console.info(`    NO_CLEAR_TERMINAL: ${BUN_CONFIG.NO_CLEAR_TERMINAL ? "enabled" : "disabled"} - Prevents console clearing on bun --watch reload`);
+            console.info(`    TRANSPILER_CACHE_PATH: ${BUN_CONFIG.TRANSPILER_CACHE_PATH || "default"} - Cache directory for transpiled output (>50kb files)`);
+            console.info(`    BUN_OPTIONS: ${BUN_CONFIG.BUN_OPTIONS || "none"} - Prepended command-line arguments to any Bun execution`);
+            console.info("\n  Color & Output Control:");
+            console.info(`    FORCE_COLOR: ${BUN_CONFIG.FORCE_COLOR ? "enabled" : "disabled"} - Force ANSI color output, even if NO_COLOR is set`);
+            console.info(`    NO_COLOR: ${BUN_CONFIG.NO_COLOR ? "enabled" : "disabled"} - Disable ANSI color output`);
+            console.info("\n  Security & Networking:");
             const tlsStatus = BUN_CONFIG.NODE_TLS_REJECT_UNAUTHORIZED || "1";
             const tlsWarning = tlsStatus === "0" ? " ⚠️ SECURITY RISK - SSL validation disabled" : " ✅ Secure";
-            console.log(`    NODE_TLS_REJECT_UNAUTHORIZED: ${tlsStatus}${tlsWarning} - Disables SSL certificate validation (testing only)`);
-            console.log("\n  Telemetry & Tracking:");
-            console.log(`    DO_NOT_TRACK: ${BUN_CONFIG.DO_NOT_TRACK ? "enabled" : "disabled"} - Disable crash reports and telemetry uploads to bun.report`);
-            console.log("\n  System Integration:");
-            console.log(`    TMPDIR: ${BUN_CONFIG.TMPDIR || "system default"} - Directory for intermediate assets during bundling operations`);
+            console.info(`    NODE_TLS_REJECT_UNAUTHORIZED: ${tlsStatus}${tlsWarning} - Disables SSL certificate validation (testing only)`);
+            console.info("\n  Telemetry & Tracking:");
+            console.info(`    DO_NOT_TRACK: ${BUN_CONFIG.DO_NOT_TRACK ? "enabled" : "disabled"} - Disable crash reports and telemetry uploads to bun.report`);
+            console.info("\n  System Integration:");
+            console.info(`    TMPDIR: ${BUN_CONFIG.TMPDIR || "system default"} - Directory for intermediate assets during bundling operations`);
 
-            console.log("\n🏭 FactoryWager Configuration:");
-            console.log("  Core Settings:");
-            console.log(`    MODE: ${FW_CONFIG.mode} - Operating mode (development/production/testing/audit/demo)`);
-            console.log(`    LOG_LEVEL: ${FW_CONFIG.logLevel} - Logging level (debug/info/warn/error)`);
-            console.log(`    PROFILE: ${FW_CONFIG.profile || "auto"} - Active profile name`);
-            console.log("\n  Output Configuration:");
-            console.log(`    REPORT_FORMAT: ${FW_CONFIG.reportFormat} - Default report format (html/ansi/markdown/react)`);
-            console.log(`    OUTPUT_DIR: ${FW_CONFIG.outputDir} - Reports output directory`);
-            console.log(`    CONFIG_DIR: ${FW_CONFIG.configDir} - Configuration directory`);
-            console.log("\n  Feature Flags:");
-            console.log(`    AUDIT_MODE: ${FW_CONFIG.auditMode ? "enabled" : "disabled"} - Enable audit mode features`);
-            console.log(`    DEBUG: ${FW_CONFIG.debug ? "enabled" : "disabled"} - Enable debug output`);
+            console.info("\n🏭 FactoryWager Configuration:");
+            console.info("  Core Settings:");
+            console.info(`    MODE: ${FW_CONFIG.mode} - Operating mode (development/production/testing/audit/demo)`);
+            console.info(`    LOG_LEVEL: ${FW_CONFIG.logLevel} - Logging level (debug/info/warn/error)`);
+            console.info(`    PROFILE: ${FW_CONFIG.profile || "auto"} - Active profile name`);
+            console.info("\n  Output Configuration:");
+            console.info(`    REPORT_FORMAT: ${FW_CONFIG.reportFormat} - Default report format (html/ansi/markdown/react)`);
+            console.info(`    OUTPUT_DIR: ${FW_CONFIG.outputDir} - Reports output directory`);
+            console.info(`    CONFIG_DIR: ${FW_CONFIG.configDir} - Configuration directory`);
+            console.info("\n  Feature Flags:");
+            console.info(`    AUDIT_MODE: ${FW_CONFIG.auditMode ? "enabled" : "disabled"} - Enable audit mode features`);
+            console.info(`    DEBUG: ${FW_CONFIG.debug ? "enabled" : "disabled"} - Enable debug output`);
             break;
           default:
             console.error("❌ Unknown config subcommand");
-            console.log("Available: show, paths, env");
+            console.info("Available: show, paths, env");
             process.exit(1);
         }
         break;
@@ -592,22 +592,22 @@ async function main(): Promise<void> {
             await displaySystemStatus();
             break;
           case "health":
-            console.log("🏥 FactoryWager Health Check:");
+            console.info("🏥 FactoryWager Health Check:");
             const status = await getSystemStatus();
             const enabledFeatures = Object.values(status.features).filter(Boolean).length;
             const totalFeatures = Object.keys(status.features).length;
             const existingConfigs = Object.values(status.configStatus).filter(Boolean).length;
             const totalConfigs = Object.keys(status.configStatus).length;
 
-            console.log(`✅ Features: ${enabledFeatures}/${totalFeatures} enabled`);
-            console.log(`✅ Configuration: ${existingConfigs}/${totalConfigs} files found`);
-            console.log(`✅ Version: ${status.version}`);
-            console.log(`✅ Environment: ${status.environment}`);
-            console.log("🎯 Overall Health: GOOD");
+            console.info(`✅ Features: ${enabledFeatures}/${totalFeatures} enabled`);
+            console.info(`✅ Configuration: ${existingConfigs}/${totalConfigs} files found`);
+            console.info(`✅ Version: ${status.version}`);
+            console.info(`✅ Environment: ${status.environment}`);
+            console.info("🎯 Overall Health: GOOD");
             break;
           default:
             console.error("❌ Unknown status subcommand");
-            console.log("Available: system, health");
+            console.info("Available: system, health");
             process.exit(1);
         }
         break;
@@ -616,22 +616,22 @@ async function main(): Promise<void> {
       case "u":
         switch (subCommand) {
           case "setup":
-            console.log("🚀 FactoryWager Initial Setup:");
+            console.info("🚀 FactoryWager Initial Setup:");
             ProfileUtils.init();
             try {
               ProfileUtils.switchProfile("development");
-              console.log("✅ Default profile set to development");
+              console.info("✅ Default profile set to development");
             } catch (error) {
-              console.log("❌ Failed to set default profile");
+              console.info("❌ Failed to set default profile");
             }
-            console.log("✅ Setup completed");
+            console.info("✅ Setup completed");
             break;
           case "version":
           case "v":
             const gitInfo = await getGitInfo();
             const activeProfile = profileManager.getActiveProfileName();
 
-            console.log(`
+            console.info(`
 🏭 ═══════════════════════════════════════════════════════════════════════════════
     FactoryWager Version Information
     ═══════════════════════════════════════════════════════════════════════════════
@@ -663,7 +663,7 @@ async function main(): Promise<void> {
             break;
           default:
             console.error("❌ Unknown util subcommand");
-            console.log("Available: setup, version");
+            console.info("Available: setup, version");
             process.exit(1);
         }
         break;
@@ -689,21 +689,21 @@ async function main(): Promise<void> {
         const status = await getSystemStatus();
         const activeProfile = profileManager.getActiveProfileName();
 
-        console.log("🏭 FactoryWager Quick Info:");
-        console.log(`👤 Profile: ${activeProfile || "None"}`);
-        console.log(`📋 Version: ${status.version}`);
-        console.log(`📁 Directory: ${process.cwd()}`);
-        console.log(`🔧 Mode: ${process.env.FW_MODE || "Unknown"}`);
-        console.log(`🌍 Environment: ${status.environment}`);
-        console.log(`🥟 Bun: ${status.bunVersion}`);
+        console.info("🏭 FactoryWager Quick Info:");
+        console.info(`👤 Profile: ${activeProfile || "None"}`);
+        console.info(`📋 Version: ${status.version}`);
+        console.info(`📁 Directory: ${process.cwd()}`);
+        console.info(`🔧 Mode: ${process.env.FW_MODE || "Unknown"}`);
+        console.info(`🌍 Environment: ${status.environment}`);
+        console.info(`🥟 Bun: ${status.bunVersion}`);
 
         if (status.gitInfo.commit) {
-          console.log(`🔗 Git: ${status.gitInfo.commit.substring(0, 8)}`);
+          console.info(`🔗 Git: ${status.gitInfo.commit.substring(0, 8)}`);
         }
         break;
 
       case "welcome":
-        console.log(`
+        console.info(`
 🏭 ═══════════════════════════════════════════════════════════════════════════════
     FactoryWager CLI - Single Point of Entry
     ═══════════════════════════════════════════════════════════════════════════════

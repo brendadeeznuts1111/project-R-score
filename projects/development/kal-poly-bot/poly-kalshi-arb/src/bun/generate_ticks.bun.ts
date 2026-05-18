@@ -78,7 +78,7 @@ export class TickGenerator {
   private async *generatePattern75Scenario(
     startTick: number
   ): AsyncGenerator<GeneratedTick> {
-    console.log(`Generating Pattern 75 scenario at tick ${startTick}`);
+    console.info(`Generating Pattern 75 scenario at tick ${startTick}`);
 
     // Simulate last 5 minutes of game
     for (let t = 0; t < 300; t += 5) {
@@ -110,7 +110,7 @@ export class TickGenerator {
   private async *generatePattern56Scenario(
     startTick: number
   ): AsyncGenerator<GeneratedTick> {
-    console.log(`Generating Pattern 56 scenario at tick ${startTick}`);
+    console.info(`Generating Pattern 56 scenario at tick ${startTick}`);
 
     // Simulate suspension across books
     const suspensionOrder = ["betfair", "draftkings", "pinnacle", "fan_duel"];
@@ -148,7 +148,7 @@ export class TickGenerator {
   private async *generatePattern51Scenario(
     startTick: number
   ): AsyncGenerator<GeneratedTick> {
-    console.log(`Generating Pattern 51 scenario at tick ${startTick}`);
+    console.info(`Generating Pattern 51 scenario at tick ${startTick}`);
 
     // Simulate half-time line movement
     const htDelta = (Math.random() - 0.5) * 2.0; // ±1 point HT move
@@ -209,7 +209,7 @@ export class TickGenerator {
    * Generate stress test scenario with high frequency
    */
   async *generateStressTest(): AsyncGenerator<GeneratedTick> {
-    console.log("Generating stress test scenario (1000 ticks/second)");
+    console.info("Generating stress test scenario (1000 ticks/second)");
 
     for (let i = 0; i < 10000; i++) {
       // 10 seconds at 1000 ticks/sec
@@ -278,7 +278,7 @@ export class TickGenerator {
     avgLatency: number;
     patternCounts: Record<number, number>;
   }> {
-    console.log("Starting backtest with generated ticks...");
+    console.info("Starting backtest with generated ticks...");
 
     const tickProcessor = new MicrostructuralTickProcessor();
     const startTime = performance.now();
@@ -313,7 +313,7 @@ export class TickGenerator {
       if (totalTicks % 100 === 0) {
         const avgLatency =
           latencies.reduce((a, b) => a + b, 0) / latencies.length;
-        console.log(
+        console.info(
           `Processed ${totalTicks} ticks, avg latency: ${avgLatency.toFixed(2)}ms`
         );
       }
@@ -342,21 +342,21 @@ if (import.meta.main) {
     patterns: [51, 75, 56, 68],
   });
 
-  console.log("🚀 Starting tick generation and backtest...");
+  console.info("🚀 Starting tick generation and backtest...");
 
   const results = await generator.runBacktest();
 
-  console.log("\n📊 Backtest Results:");
-  console.log(`   Total ticks: ${results.totalTicks}`);
-  console.log(`   Total signals: ${results.totalSignals}`);
-  console.log(`   Processing time: ${results.processingTime.toFixed(2)}ms`);
-  console.log(`   Average latency: ${results.avgLatency.toFixed(2)}ms`);
-  console.log(
+  console.info("\n📊 Backtest Results:");
+  console.info(`   Total ticks: ${results.totalTicks}`);
+  console.info(`   Total signals: ${results.totalSignals}`);
+  console.info(`   Processing time: ${results.processingTime.toFixed(2)}ms`);
+  console.info(`   Average latency: ${results.avgLatency.toFixed(2)}ms`);
+  console.info(
     `   Throughput: ${(results.totalTicks / (results.processingTime / 1000)).toFixed(1)} ticks/sec`
   );
-  console.log("   Pattern counts:", results.patternCounts);
+  console.info("   Pattern counts:", results.patternCounts);
 
-  console.log("\n✅ Backtest completed!");
+  console.info("\n✅ Backtest completed!");
 }
 
 export default TickGenerator;

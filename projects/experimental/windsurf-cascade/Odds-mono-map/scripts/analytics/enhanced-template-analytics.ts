@@ -67,12 +67,12 @@ class EnhancedTemplateAnalytics {
      * Run comprehensive template usage analytics with beautiful table output
      */
     async runEnhancedAnalytics(): Promise<AnalyticsReport> {
-        console.log(chalk.blue.bold('📊 Enhanced Template Usage Analytics'));
-        console.log(chalk.gray('Powered by Bun.inspect.table() for beautiful formatting\n'));
+        console.info(chalk.blue.bold('📊 Enhanced Template Usage Analytics'));
+        console.info(chalk.gray('Powered by Bun.inspect.table() for beautiful formatting\n'));
 
         try {
             const files = await this.getAllTemplateFiles();
-            console.log(chalk.cyan(`🔍 Analyzing ${files.length} templates for usage patterns...`));
+            console.info(chalk.cyan(`🔍 Analyzing ${files.length} templates for usage patterns...`));
 
             for (const filePath of files) {
                 await this.analyzeTemplate(filePath);
@@ -93,8 +93,8 @@ class EnhancedTemplateAnalytics {
      * Display beautiful tables using Bun.inspect.table()
      */
     private displayTable(title: string, data: any[], properties: string[] | object = {}): void {
-        console.log(chalk.blue.bold(`\n${title}`));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.blue.bold(`\n${title}`));
+        console.info(chalk.gray('─'.repeat(80)));
 
         const tableOutput = Bun.inspect.table(data, properties, {
             colors: true,
@@ -102,7 +102,7 @@ class EnhancedTemplateAnalytics {
             maxStringLength: 50
         });
 
-        console.log(tableOutput);
+        console.info(tableOutput);
     }
 
     /**
@@ -184,15 +184,15 @@ class EnhancedTemplateAnalytics {
         this.displayTable('📊 Usage Score Distribution', distributionData);
 
         // Recommendations summary
-        console.log(chalk.blue.bold('\n💡 Recommendations Summary'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.blue.bold('\n💡 Recommendations Summary'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         for (const [category, recommendations] of Object.entries(report.recommendationsByCategory)) {
             if (recommendations.length > 0) {
-                console.log(chalk.cyan(`\n📂 ${category} (${recommendations.length} recommendations):`));
+                console.info(chalk.cyan(`\n📂 ${category} (${recommendations.length} recommendations):`));
                 const uniqueRecommendations = [...new Set(recommendations)].slice(0, 3);
                 for (const rec of uniqueRecommendations) {
-                    console.log(chalk.gray(`   ${rec}`));
+                    console.info(chalk.gray(`   ${rec}`));
                 }
             }
         }
@@ -562,11 +562,11 @@ async function main(): Promise<void> {
     const vaultPath = process.cwd();
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('📊 Enhanced Template Analytics (Bun.inspect.table())'));
-        console.log(chalk.gray('Usage: bun enhanced-template-analytics.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
-        console.log(chalk.gray('\nFeatures beautiful tabular output powered by Bun.inspect.table()'));
+        console.info(chalk.blue.bold('📊 Enhanced Template Analytics (Bun.inspect.table())'));
+        console.info(chalk.gray('Usage: bun enhanced-template-analytics.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.gray('\nFeatures beautiful tabular output powered by Bun.inspect.table()'));
         process.exit(0);
     }
 

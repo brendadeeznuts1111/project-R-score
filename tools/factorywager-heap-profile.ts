@@ -102,10 +102,10 @@ async function runHeapProfile() {
 
   // Color-coded output based on severity
   const emoji = severity === "error" ? "🚨" : severity === "warning" ? "⚠️" : "✅";
-  console.log(styled(`${emoji} Heap profile uploaded`, severity));
-  console.log(styled("   🔗 URL: ", "muted") + styled(signed, "primary"));
-  console.log(styled("   🎨 Visual tag: ", "muted") + styled(themeTag, severity));
-  console.log(styled("   📊 Metadata: ", "muted") + styled(Bun.color(dominantColor, "hex"), "accent"));
+  console.info(styled(`${emoji} Heap profile uploaded`, severity));
+  console.info(styled("   🔗 URL: ", "muted") + styled(signed, "primary"));
+  console.info(styled("   🎨 Visual tag: ", "muted") + styled(themeTag, severity));
+  console.info(styled("   📊 Metadata: ", "muted") + styled(Bun.color(dominantColor, "hex"), "accent"));
 
   // Display compression info
   log.metric('Original size', Utils.Performance.formatBytes(md.length), 'muted');
@@ -117,7 +117,7 @@ async function runHeapProfile() {
   await Bun.write(profileFile, md);
   log.metric('Local copy', profileFile, 'muted');
 
-  console.log('\n' + styled('✅ Heap profiling complete!', severity));
+  console.info('\n' + styled('✅ Heap profiling complete!', severity));
 }
 
 // Run if called directly

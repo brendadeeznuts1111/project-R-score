@@ -16,7 +16,7 @@ const {
 
 // Call the C function
 const result = hello();
-console.log(`C function returned: ${result}`);
+console.info(`C function returned: ${result}`);
 
 // On NixOS, set C_INCLUDE_PATH and LIBRARY_PATH to point to your Nix store paths:
 // C_INCLUDE_PATH=/nix/store/...-gcc-.../include LIBRARY_PATH=/nix/store/...-gcc-.../lib bun run examples/bun-ffi-env-vars.ts

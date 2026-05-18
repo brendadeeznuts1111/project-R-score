@@ -280,8 +280,8 @@ class Doctor {
   }
 
   printReport(): void {
-    console.log('🩺 Bun.spawn Architecture Health Check');
-    console.log('=====================================\n');
+    console.info('🩺 Bun.spawn Architecture Health Check');
+    console.info('=====================================\n');
     
     const passed = this.checks.filter(c => c.status === 'pass').length;
     const failed = this.checks.filter(c => c.status === 'fail').length;
@@ -290,29 +290,29 @@ class Doctor {
     // Print individual checks
     this.checks.forEach(check => {
       const icon = check.status === 'pass' ? '✅' : check.status === 'fail' ? '❌' : '⚠️';
-      console.log(`${icon} ${check.name}: ${check.message}`);
+      console.info(`${icon} ${check.name}: ${check.message}`);
       
       if (check.details && (check.status === 'fail' || process.argv.includes('--verbose'))) {
-        console.log(`   Details:`, check.details);
+        console.info(`   Details:`, check.details);
       }
-      console.log('');
+      console.info('');
     });
     
     // Summary
-    console.log('📊 Summary');
-    console.log('=========');
-    console.log(`✅ Passed: ${passed}`);
-    console.log(`⚠️  Warnings: ${warnings}`);
-    console.log(`❌ Failed: ${failed}`);
+    console.info('📊 Summary');
+    console.info('=========');
+    console.info(`✅ Passed: ${passed}`);
+    console.info(`⚠️  Warnings: ${warnings}`);
+    console.info(`❌ Failed: ${failed}`);
     
     if (failed === 0) {
-      console.log('\n🎉 All critical checks passed! Your Bun.spawn architecture is ready.');
+      console.info('\n🎉 All critical checks passed! Your Bun.spawn architecture is ready.');
     } else {
-      console.log('\n⚠️ Some checks failed. Please address the issues above.');
+      console.info('\n⚠️ Some checks failed. Please address the issues above.');
     }
     
     if (warnings > 0) {
-      console.log('\n💡 Consider addressing the warnings for optimal performance.');
+      console.info('\n💡 Consider addressing the warnings for optimal performance.');
     }
   }
 

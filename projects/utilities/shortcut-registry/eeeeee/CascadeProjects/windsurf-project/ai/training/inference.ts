@@ -3,7 +3,7 @@
 // ai/inference.ts - WebAssembly ONNX Runtime for Nebula-Flow™
 // High-performance inference with fallback scoring
 
-console.log("⚡ ONNX WebAssembly Runtime - Loading");
+console.info("⚡ ONNX WebAssembly Runtime - Loading");
 
 // Mock ONNX Runtime for development
 // In production, replace with: import * as ORT from 'onnxruntime-web';
@@ -24,7 +24,7 @@ let session: MockInferenceSession | null = null;
 export async function initializeModel(modelPath: string = '/models/anomaly.onnx'): Promise<MockInferenceSession> {
   if (!session) {
     try {
-      console.log(`🔄 Loading ONNX model: ${modelPath}`);
+      console.info(`🔄 Loading ONNX model: ${modelPath}`);
       
       // Mock session for development
       session = {
@@ -57,7 +57,7 @@ export async function initializeModel(modelPath: string = '/models/anomaly.onnx'
         }
       };
       
-      console.log(`✅ ONNX Model loaded: ${session.inputNames.join(', ')} → ${session.outputNames.join(', ')}`);
+      console.info(`✅ ONNX Model loaded: ${session.inputNames.join(', ')} → ${session.outputNames.join(', ')}`);
     } catch (error) {
       console.error('Failed to load ONNX model:', error);
       throw error;
@@ -110,7 +110,7 @@ export async function infer(features: Float32Array): Promise<number> {
 }
 
 function fallbackScoring(features: Float32Array): number {
-  console.log('🔄 Using fallback scoring due to inference failure');
+  console.info('🔄 Using fallback scoring due to inference failure');
   
   // Simple weighted average fallback
   const weights = [0.15, 0.20, 0.25, 0.10, 0.10, 0.10, 0.05, 0.02, 0.02, 0.01];

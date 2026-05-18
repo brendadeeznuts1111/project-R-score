@@ -3,9 +3,9 @@
  * Final Validation Summary with Fixes
  */
 
-console.log("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
-console.log("║                    PRODUCTION CONFIGURATION VALIDATION - FINAL STATUS                 ║");
-console.log("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
+console.info("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
+console.info("║                    PRODUCTION CONFIGURATION VALIDATION - FINAL STATUS                 ║");
+console.info("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
 
 const status = [
     {
@@ -34,9 +34,9 @@ const status = [
     }
 ];
 
-console.log(Bun.inspect.table(status, undefined, { colors: true }));
+console.info(Bun.inspect.table(status, undefined, { colors: true }));
 
-console.log("\n🔧 Configuration Fixes Applied:\n");
+console.info("\n🔧 Configuration Fixes Applied:\n");
 
 const fixes = [
     {
@@ -66,9 +66,9 @@ const fixes = [
     }
 ];
 
-console.log(Bun.inspect.table(fixes, undefined, { colors: true }));
+console.info(Bun.inspect.table(fixes, undefined, { colors: true }));
 
-console.log("\n📝 To Resolve Production Validation Errors:\n");
+console.info("\n📝 To Resolve Production Validation Errors:\n");
 
 const resolution = [
     {
@@ -109,8 +109,8 @@ const resolution = [
     }
 ];
 
-console.log(Bun.inspect.table(resolution, undefined, { colors: true }));
+console.info(Bun.inspect.table(resolution, undefined, { colors: true }));
 
-console.log("\n✅ All configuration fixes have been applied!\n");
-console.log("💡 The validation errors are now configuration requirements, not syntax errors.\n");
-console.log("📋 Next: Set environment variables and re-run validation.\n");
+console.info("\n✅ All configuration fixes have been applied!\n");
+console.info("💡 The validation errors are now configuration requirements, not syntax errors.\n");
+console.info("📋 Next: Set environment variables and re-run validation.\n");

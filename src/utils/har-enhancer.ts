@@ -838,10 +838,10 @@ export async function exportEnhancedHar(
   const protocol = server.protocol ?? 'unknown';
   const perf = server.performance as ServerPerformance | undefined;
   
-  console.log(`📄 Enhanced HAR exported to: ${filename}`);
-  console.log(`   Protocol: ${protocol}`);
-  console.log(`   Requests/sec: ${perf?.requestsPerSecond?.toFixed(2) ?? 'N/A'}`);
-  console.log(`   Compression ratio: ${((perf?.bytesTransferred?.compressionRatio || 0) * 100).toFixed(1)}%`);
+  console.info(`📄 Enhanced HAR exported to: ${filename}`);
+  console.info(`   Protocol: ${protocol}`);
+  console.info(`   Requests/sec: ${perf?.requestsPerSecond?.toFixed(2) ?? 'N/A'}`);
+  console.info(`   Compression ratio: ${((perf?.bytesTransferred?.compressionRatio || 0) * 100).toFixed(1)}%`);
 }
 
 /**
@@ -861,7 +861,7 @@ export async function exportHarStats(
   };
 
   await (globalThis as any).Bun.write(filename, JSON.stringify(exportable, null, 2));
-  console.log(`📊 HAR statistics exported to: ${filename}`);
+  console.info(`📊 HAR statistics exported to: ${filename}`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

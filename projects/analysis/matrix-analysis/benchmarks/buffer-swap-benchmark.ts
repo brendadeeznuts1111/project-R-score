@@ -30,4 +30,4 @@ for (let i = 0; i < iterations; i++) {
 const end = performance.now();
 const opsPerSec = (iterations / (end - start)) * 1000;
 
-console.log(`\nswap64() performance: ${opsPerSec.toLocaleString()} ops/sec`);
+console.info(`\nswap64() performance: ${opsPerSec.toLocaleString()} ops/sec`);

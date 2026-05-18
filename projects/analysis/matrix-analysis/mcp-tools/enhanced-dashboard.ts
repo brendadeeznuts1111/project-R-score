@@ -370,9 +370,9 @@ class EnhancedDashboardServer {
   }
 
   async start(): Promise<void> {
-    console.log(`🚀 Starting Enhanced Multi-Tenant Dashboard`);
-    console.log(`📡 Server: http://${this.config.server.host}:${this.config.server.port}`);
-    console.log(`🔧 Features: Caching=${this.config.features.caching.enabled}, WebSockets=${this.config.features.websockets}, Metrics=${this.config.features.metrics}`);
+    console.info(`🚀 Starting Enhanced Multi-Tenant Dashboard`);
+    console.info(`📡 Server: http://${this.config.server.host}:${this.config.server.port}`);
+    console.info(`🔧 Features: Caching=${this.config.features.caching.enabled}, WebSockets=${this.config.features.websockets}, Metrics=${this.config.features.metrics}`);
 
     // Start server with enhanced features
     const serverOptions: any = {
@@ -394,7 +394,7 @@ class EnhancedDashboardServer {
     // Start background tasks
     this.startBackgroundTasks();
 
-    console.log(`✅ Enhanced Dashboard ready!`);
+    console.info(`✅ Enhanced Dashboard ready!`);
   }
 
   private async handleRequest(req: Request): Promise<Response> {
@@ -702,8 +702,8 @@ class EnhancedDashboardServer {
 
 // Demo and usage
 async function demonstrateEnhancedDashboard() {
-  console.log("🎯 Enhanced Multi-Tenant Dashboard Demo");
-  console.log("=" .repeat(50));
+  console.info("🎯 Enhanced Multi-Tenant Dashboard Demo");
+  console.info("=" .repeat(50));
 
   const config: EnhancedDashboardConfig = {
     server: {
@@ -760,35 +760,35 @@ async function demonstrateEnhancedDashboard() {
 
   const server = new EnhancedDashboardServer(config);
 
-  console.log("\n🚀 Enhanced Features:");
-  console.log("  ✅ Advanced caching with TTL and cleanup");
-  console.log("  ✅ Real-time WebSocket updates");
-  console.log("  ✅ Performance analytics and metrics");
-  console.log("  ✅ Alert system with multiple channels");
-  console.log("  ✅ Enhanced tenant management");
-  console.log("  ✅ AI-powered violation analysis");
-  console.log("  ✅ Encrypted snapshots with compression");
-  console.log("  ✅ Background task automation");
-  console.log("  ✅ Rate limiting and security");
-  console.log("  ✅ Health checks and monitoring");
+  console.info("\n🚀 Enhanced Features:");
+  console.info("  ✅ Advanced caching with TTL and cleanup");
+  console.info("  ✅ Real-time WebSocket updates");
+  console.info("  ✅ Performance analytics and metrics");
+  console.info("  ✅ Alert system with multiple channels");
+  console.info("  ✅ Enhanced tenant management");
+  console.info("  ✅ AI-powered violation analysis");
+  console.info("  ✅ Encrypted snapshots with compression");
+  console.info("  ✅ Background task automation");
+  console.info("  ✅ Rate limiting and security");
+  console.info("  ✅ Health checks and monitoring");
 
-  console.log("\n📊 New API Endpoints:");
-  console.log("  • GET /api/tenants/enhanced - Rich tenant data");
-  console.log("  • GET /api/violations/advanced - AI-analyzed violations");
-  console.log("  • GET /api/snapshots/enhanced - Encrypted snapshots");
-  console.log("  • GET /api/analytics/performance - Performance metrics");
-  console.log("  • GET|POST /api/alerts - Alert management");
-  console.log("  • GET /api/cache/stats - Cache statistics");
-  console.log("  • GET /api/realtime/stats - WebSocket stats");
-  console.log("  • GET /metrics - Prometheus-style metrics");
-  console.log("  • GET /health - System health check");
+  console.info("\n📊 New API Endpoints:");
+  console.info("  • GET /api/tenants/enhanced - Rich tenant data");
+  console.info("  • GET /api/violations/advanced - AI-analyzed violations");
+  console.info("  • GET /api/snapshots/enhanced - Encrypted snapshots");
+  console.info("  • GET /api/analytics/performance - Performance metrics");
+  console.info("  • GET|POST /api/alerts - Alert management");
+  console.info("  • GET /api/cache/stats - Cache statistics");
+  console.info("  • GET /api/realtime/stats - WebSocket stats");
+  console.info("  • GET /metrics - Prometheus-style metrics");
+  console.info("  • GET /health - System health check");
 
-  console.log("\n🔧 Configuration Options:");
-  console.log("  • Server: HTTPS, rate limiting, compression");
-  console.log("  • Database: backups, optimization, retention");
-  console.log("  • Features: caching, websockets, metrics, alerts");
-  console.log("  • Security: API keys, JWT, audit logging");
-  console.log("  • Monitoring: health checks, metrics, profiling");
+  console.info("\n🔧 Configuration Options:");
+  console.info("  • Server: HTTPS, rate limiting, compression");
+  console.info("  • Database: backups, optimization, retention");
+  console.info("  • Features: caching, websockets, metrics, alerts");
+  console.info("  • Security: API keys, JWT, audit logging");
+  console.info("  • Monitoring: health checks, metrics, profiling");
 
   // Uncomment to start the server
   // await server.start();

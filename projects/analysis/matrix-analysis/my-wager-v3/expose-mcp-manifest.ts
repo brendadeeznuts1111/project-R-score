@@ -106,7 +106,7 @@ async function main() {
   filtered = filterByResource(filtered, args.resource);
   
   // Output
-  console.log(formatOutput(filtered, args.format));
+  console.info(formatOutput(filtered, args.format));
 }
 
 if (import.meta.main) {

@@ -261,7 +261,7 @@ class InteractiveTUI {
   }
   
   private showHeader() {
-    console.log(`
+    console.info(`
 ┌─ FACTORYWAGER INSPECTOR TUI ───────────────────────────────┐
 │ ${this.currentUrl}                                                   │
 ├─ 📊 Analytics 🛡️ Security 💰 Revenue 🔍 Patterns ├─[F1]─┤
@@ -278,11 +278,11 @@ class InteractiveTUI {
       uptime: 99.9
     };
     
-    console.log(
+    console.info(
       `│ Metrics: ${metrics.visitors} visitors | ${metrics.requests} req | ${metrics.cacheHit}% cache | $${(metrics.mrr/1000).toFixed(1)}K MRR    │`
     );
     
-    console.log(
+    console.info(
       `│ Patterns Found:                                            │
 │   🟢 $[REDACTED_USER] (CashApp)                           │
 │   🟢 +1-***-***-4567 (Phone)                              │
@@ -290,12 +290,12 @@ class InteractiveTUI {
 │                                                            │`
     );
     
-    console.log(
+    console.info(
       `│ [Enter]=Inspect [Tab]=Autocomplete [F2]=Redact [q]=Quit   │
 └────────────────────────────────────────────────────────────┘`
     );
     
-    console.log('\n> TUI Mode - Press q to quit');
+    console.info('\n> TUI Mode - Press q to quit');
   }
 }
 
@@ -354,8 +354,8 @@ class FactoryWagerInspector {
     const url = args[0] || 'factory-wager.com';
     const options = this.parseOptions(args);
     
-    console.log('🔍 FactoryWager Inspector v2.0');
-    console.log(`📯 Target: ${url}`);
+    console.info('🔍 FactoryWager Inspector v2.0');
+    console.info(`📯 Target: ${url}`);
     
     if (options.tui) {
       const tui = new InteractiveTUI();
@@ -372,23 +372,23 @@ class FactoryWagerInspector {
     const result = await inspectURL(url, inspectOptions);
     
     if (options.json) {
-      console.log(JSON.stringify(result, null, 2));
+      console.info(JSON.stringify(result, null, 2));
     } else {
-      console.log('\n📊 Inspection Results');
-      console.log(`├─ URL: ${result.url}`);
-      console.log(`├─ Patterns: ${result.patterns.financial} found, ${result.patterns.redacted} redacted`);
-      console.log(`├─ Compliance: ${result.patterns.compliance}%`);
-      console.log(`├─ Violations: ${result.compliance.violations.length}`);
-      console.log(`├─ Timing: dns=${result.timing.dns}ms connect=${result.timing.connect}ms tls=${result.timing.tls}ms response=${result.timing.response}ms`);
-      console.log(`├─ Tags: ${result.tags.join(" ")}`);
-      console.log(`├─ Metrics: ${result.metrics.requests} req | ${result.metrics.visitors} visitors | ${result.metrics.cacheHit}% cache`);
-      console.log(`├─ MRR: $${(result.metrics.mrr/1000).toFixed(1)}K | Uptime: ${result.metrics.uptime}%`);
-      console.log(`└─ Generated: ${result.timestamp.toLocaleString()} | © DuoPlus Enterprise`);
+      console.info('\n📊 Inspection Results');
+      console.info(`├─ URL: ${result.url}`);
+      console.info(`├─ Patterns: ${result.patterns.financial} found, ${result.patterns.redacted} redacted`);
+      console.info(`├─ Compliance: ${result.patterns.compliance}%`);
+      console.info(`├─ Violations: ${result.compliance.violations.length}`);
+      console.info(`├─ Timing: dns=${result.timing.dns}ms connect=${result.timing.connect}ms tls=${result.timing.tls}ms response=${result.timing.response}ms`);
+      console.info(`├─ Tags: ${result.tags.join(" ")}`);
+      console.info(`├─ Metrics: ${result.metrics.requests} req | ${result.metrics.visitors} visitors | ${result.metrics.cacheHit}% cache`);
+      console.info(`├─ MRR: $${(result.metrics.mrr/1000).toFixed(1)}K | Uptime: ${result.metrics.uptime}%`);
+      console.info(`└─ Generated: ${result.timestamp.toLocaleString()} | © DuoPlus Enterprise`);
     }
   }
   
   private showHelp() {
-    console.log(`
+    console.info(`
 FactoryWager CLI Inspector v2.0 - Enterprise Edition
 
 Usage: factorywager <command> [options]
@@ -419,42 +419,42 @@ Examples:
   private async handleCompliance(args: string[]) {
     const options = this.parseOptions(args);
     
-    console.log('🛡️ Compliance Engine');
-    console.log(`📋 Standards: ${options.standards || 'pci,gdpr,aml5'}`);
-    console.log('✅ Compliance checks:');
-    console.log(`   • PCI: 99.8% compliant`);
-    console.log(`   • GDPR: 99.8% compliant`);
-    console.log(`   • AML5: 99.8% compliant`);
+    console.info('🛡️ Compliance Engine');
+    console.info(`📋 Standards: ${options.standards || 'pci,gdpr,aml5'}`);
+    console.info('✅ Compliance checks:');
+    console.info(`   • PCI: 99.8% compliant`);
+    console.info(`   • GDPR: 99.8% compliant`);
+    console.info(`   • AML5: 99.8% compliant`);
     
     if (options.audit) {
-      console.log('📄 Audit report generated');
-      console.log('   • PCI DSS v4.0: Compliant');
-      console.log('   • GDPR Article 32: Compliant');
-      console.log('   • AML5 Directive: Compliant');
+      console.info('📄 Audit report generated');
+      console.info('   • PCI DSS v4.0: Compliant');
+      console.info('   • GDPR Article 32: Compliant');
+      console.info('   • AML5 Directive: Compliant');
     }
   }
   
   private async handlePatterns(args: string[]) {
-    console.log('🔍 Pattern Extraction Engine');
-    console.log('✅ Extracting patterns...');
-    console.log('   • Financial patterns: 1,892 found');
-    console.log('   • Redacted patterns: 1,784 masked');
-    console.log('   • Compliance score: 99.8%');
+    console.info('🔍 Pattern Extraction Engine');
+    console.info('✅ Extracting patterns...');
+    console.info('   • Financial patterns: 1,892 found');
+    console.info('   • Redacted patterns: 1,784 masked');
+    console.info('   • Compliance score: 99.8%');
   }
   
   private async handleDashboard(args: string[]) {
     const options = this.parseOptions(args);
     const port = parseInt(options.port) || 8090;
     
-    console.log('🌐 FactoryWager Dashboard');
-    console.log(`🚀 Starting dashboard on port ${port}`);
-    console.log('✅ Dashboard routes:');
-    console.log(`   http://localhost:${port}/inspector - Main interface`);
-    console.log(`   http://localhost:${port}/inspector/query - Query engine`);
-    console.log(`   http://localhost:${port}/inspector/redact - PCI/GDPR masking`);
+    console.info('🌐 FactoryWager Dashboard');
+    console.info(`🚀 Starting dashboard on port ${port}`);
+    console.info('✅ Dashboard routes:');
+    console.info(`   http://localhost:${port}/inspector - Main interface`);
+    console.info(`   http://localhost:${port}/inspector/query - Query engine`);
+    console.info(`   http://localhost:${port}/inspector/redact - PCI/GDPR masking`);
     
     // Note: Dashboard would start here in full implementation
-    console.log('⚠️ Dashboard server requires additional setup');
+    console.info('⚠️ Dashboard server requires additional setup');
   }
 }
 

@@ -24,7 +24,7 @@ async function enhancedFetch(url: string, options?: RequestInit): Promise<Respon
   // Your original logic - now using real scheduler
   if (rolloutPhase < 3 && Math.random() > phases[rolloutPhase] / 100) {
     // Return 404 for requests not in rollout phase
-    console.log(`🚫 Request to ${url} blocked - Phase ${rolloutPhase} (${phases[rolloutPhase]}% rollout)`);
+    console.info(`🚫 Request to ${url} blocked - Phase ${rolloutPhase} (${phases[rolloutPhase]}% rollout)`);
     return new Response('Feature not available', { status: 404 });
   }
 
@@ -39,7 +39,7 @@ async function enhancedFetch(url: string, options?: RequestInit): Promise<Respon
     // Record successful request
     scheduler.recordRequest(response.ok, responseTime);
     
-    console.log(`✅ Request to ${url} succeeded in ${responseTime}ms - Phase ${rolloutPhase}`);
+    console.info(`✅ Request to ${url} succeeded in ${responseTime}ms - Phase ${rolloutPhase}`);
     return response;
     
   } catch (error) {
@@ -48,7 +48,7 @@ async function enhancedFetch(url: string, options?: RequestInit): Promise<Respon
     // Record failed request
     scheduler.recordRequest(false, responseTime);
     
-    console.log(`❌ Request to ${url} failed in ${responseTime}ms - Phase ${rolloutPhase}`);
+    console.info(`❌ Request to ${url} failed in ${responseTime}ms - Phase ${rolloutPhase}`);
     throw error;
   }
 }
@@ -92,13 +92,13 @@ simulateAPIUsage();
 // Display status
 setInterval(() => {
   const metrics = scheduler.getMetrics();
-  console.log(`\n📊 Rollout Status: Phase ${metrics.phase} | Risk: ${metrics.risk}/100 | Health: ${metrics.health}%`);
-  console.log(`📈 Requests: ${metrics.requests} | Errors: ${metrics.errors}`);
+  console.info(`\n📊 Rollout Status: Phase ${metrics.phase} | Risk: ${metrics.risk}/100 | Health: ${metrics.health}%`);
+  console.info(`📈 Requests: ${metrics.requests} | Errors: ${metrics.errors}`);
 }, 10000); // Status update every 10 seconds
 
-console.log('🎬 Fetch Integration Example Started');
-console.log('===================================');
-console.log('🌐 Simulating API calls with rollout logic');
-console.log('📊 Phase progression: 5% → 25% → 50% → 100%');
-console.log('📡 Real-time metrics: http://localhost:3003/status');
-console.log('');
+console.info('🎬 Fetch Integration Example Started');
+console.info('===================================');
+console.info('🌐 Simulating API calls with rollout logic');
+console.info('📊 Phase progression: 5% → 25% → 50% → 100%');
+console.info('📡 Real-time metrics: http://localhost:3003/status');
+console.info('');

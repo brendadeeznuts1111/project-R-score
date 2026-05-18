@@ -16,7 +16,7 @@ const IS_CI = !!process.env.CI || process.argv.includes('--ci');
 const THRESHOLD = IS_CI ? 0.90 : 0.85;
 
 async function enforceCoverage() {
-  console.log(`📊 Enforcing Coverage (Threshold: ${THRESHOLD * 100}%) [CI: ${IS_CI}]`);
+  console.info(`📊 Enforcing Coverage (Threshold: ${THRESHOLD * 100}%) [CI: ${IS_CI}]`);
   
   const coverageFile = './coverage/lcov.info';
   const file = Bun.file(coverageFile);
@@ -48,7 +48,7 @@ async function enforceCoverage() {
     process.exit(1);
   }
 
-  console.log('✅ Coverage thresholds met. Quality gates passed.');
+  console.info('✅ Coverage thresholds met. Quality gates passed.');
 }
 
 async function getCoverageSummary(): Promise<CoverageSummary> {

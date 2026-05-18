@@ -77,98 +77,98 @@ const sampleMetafile: BuildMetafile = {
 
 // Demo 1: Basic Metafile Analysis
 async function demoBasicAnalysis() {
-  console.log('🔍 Demo 1: Basic Metafile Analysis');
-  console.log('=====================================');
+  console.info('🔍 Demo 1: Basic Metafile Analysis');
+  console.info('=====================================');
   
   const analyzer = new MetafileAnalyzer(sampleMetafile);
   
   // Input analysis
   const inputAnalysis = analyzer.getInputAnalysis();
-  console.log('📁 Input Analysis:');
-  console.log(`   Total files: ${inputAnalysis.totalFiles}`);
-  console.log(`   Total bytes: ${inputAnalysis.totalBytes}`);
-  console.log(`   Average file size: ${inputAnalysis.averageFileSize.toFixed(0)} bytes`);
+  console.info('📁 Input Analysis:');
+  console.info(`   Total files: ${inputAnalysis.totalFiles}`);
+  console.info(`   Total bytes: ${inputAnalysis.totalBytes}`);
+  console.info(`   Average file size: ${inputAnalysis.averageFileSize.toFixed(0)} bytes`);
   
-  console.log('\n📊 Format Breakdown:');
+  console.info('\n📊 Format Breakdown:');
   Object.entries(inputAnalysis.formatBreakdown).forEach(([format, data]: [string, any]) => {
-    console.log(`   ${format}: ${data.count} files, ${data.bytes} bytes`);
+    console.info(`   ${format}: ${data.count} files, ${data.bytes} bytes`);
   });
   
   // Output analysis
   const outputAnalysis = analyzer.getOutputAnalysis();
-  console.log('\n📦 Output Analysis:');
-  console.log(`   Total bundles: ${outputAnalysis.totalFiles}`);
-  console.log(`   Total bytes: ${outputAnalysis.totalBytes}`);
-  console.log(`   Entry points: ${outputAnalysis.entryPoints.length}`);
+  console.info('\n📦 Output Analysis:');
+  console.info(`   Total bundles: ${outputAnalysis.totalFiles}`);
+  console.info(`   Total bytes: ${outputAnalysis.totalBytes}`);
+  console.info(`   Entry points: ${outputAnalysis.entryPoints.length}`);
   
-  console.log('\n✅ Basic analysis complete!\n');
+  console.info('\n✅ Basic analysis complete!\n');
 }
 
 // Demo 2: Advanced Analysis Features
 async function demoAdvancedAnalysis() {
-  console.log('🚀 Demo 2: Advanced Analysis Features');
-  console.log('=====================================');
+  console.info('🚀 Demo 2: Advanced Analysis Features');
+  console.info('=====================================');
   
   const analyzer = new MetafileAnalyzer(sampleMetafile);
   
   // Size analysis
   const sizeAnalysis = analyzer.getSizeAnalysis();
-  console.log('📏 Size Analysis:');
-  console.log(`   Compression ratio: ${(sizeAnalysis.compressionRatio * 100).toFixed(1)}%`);
-  console.log(`   Input size: ${sizeAnalysis.sizeBreakdown.inputs} bytes`);
-  console.log(`   Output size: ${sizeAnalysis.sizeBreakdown.outputs} bytes`);
-  console.log(`   Savings: ${sizeAnalysis.sizeBreakdown.savings} bytes`);
+  console.info('📏 Size Analysis:');
+  console.info(`   Compression ratio: ${(sizeAnalysis.compressionRatio * 100).toFixed(1)}%`);
+  console.info(`   Input size: ${sizeAnalysis.sizeBreakdown.inputs} bytes`);
+  console.info(`   Output size: ${sizeAnalysis.sizeBreakdown.outputs} bytes`);
+  console.info(`   Savings: ${sizeAnalysis.sizeBreakdown.savings} bytes`);
   
   // Dependency graph
   const dependencyGraph = analyzer.getDependencyGraph();
-  console.log('\n🔗 Dependency Graph:');
-  console.log(`   Nodes: ${dependencyGraph.nodes.length}`);
-  console.log(`   Edges: ${dependencyGraph.edges.length}`);
+  console.info('\n🔗 Dependency Graph:');
+  console.info(`   Nodes: ${dependencyGraph.nodes.length}`);
+  console.info(`   Edges: ${dependencyGraph.edges.length}`);
   
   // Import frequency
   const importFrequency = analyzer.getImportFrequency();
-  console.log('\n📈 Import Frequency:');
+  console.info('\n📈 Import Frequency:');
   importFrequency.slice(0, 5).forEach(imp => {
-    console.log(`   ${imp.path}: ${imp.count} times`);
+    console.info(`   ${imp.path}: ${imp.count} times`);
   });
   
   // Optimization opportunities
   const opportunities = analyzer.findOptimizationOpportunities();
-  console.log('\n💡 Optimization Opportunities:');
+  console.info('\n💡 Optimization Opportunities:');
   if (opportunities.length === 0) {
-    console.log('   ✅ No optimization opportunities detected');
+    console.info('   ✅ No optimization opportunities detected');
   } else {
     opportunities.forEach(opp => {
-      console.log(`   ⚠️  ${opp}`);
+      console.info(`   ⚠️  ${opp}`);
     });
   }
   
-  console.log('\n✅ Advanced analysis complete!\n');
+  console.info('\n✅ Advanced analysis complete!\n');
 }
 
 // Demo 3: Markdown Report Generation
 async function demoMarkdownGeneration() {
-  console.log('📝 Demo 3: Markdown Report Generation');
-  console.log('=====================================');
+  console.info('📝 Demo 3: Markdown Report Generation');
+  console.info('=====================================');
   
   const markdown = generateMarkdownReport(sampleMetafile);
   
-  console.log('📄 Generated Markdown Report (first 500 chars):');
-  console.log('─'.repeat(50));
-  console.log(markdown.substring(0, 500) + '...');
-  console.log('─'.repeat(50));
+  console.info('📄 Generated Markdown Report (first 500 chars):');
+  console.info('─'.repeat(50));
+  console.info(markdown.substring(0, 500) + '...');
+  console.info('─'.repeat(50));
   
   // Save full report
   await Bun.write('demo-metafile-report.md', markdown);
-  console.log('💾 Full report saved to: demo-metafile-report.md');
+  console.info('💾 Full report saved to: demo-metafile-report.md');
   
-  console.log('\n✅ Markdown generation complete!\n');
+  console.info('\n✅ Markdown generation complete!\n');
 }
 
 // Demo 4: Enhanced Builder Usage
 async function demoEnhancedBuilder() {
-  console.log('🏗️  Demo 4: Enhanced Builder Usage');
-  console.log('=====================================');
+  console.info('🏗️  Demo 4: Enhanced Builder Usage');
+  console.info('=====================================');
   
   try {
     // Simulate a build with metafile analysis
@@ -184,15 +184,15 @@ async function demoEnhancedBuilder() {
       }
     );
     
-    console.log('🔧 Builder configured with:');
-    console.log('   ✅ Metafile generation');
-    console.log('   ✅ Analysis enabled');
-    console.log('   ✅ JSON output: demo-metafile.json');
-    console.log('   ✅ Markdown output: demo-build-report.md');
+    console.info('🔧 Builder configured with:');
+    console.info('   ✅ Metafile generation');
+    console.info('   ✅ Analysis enabled');
+    console.info('   ✅ JSON output: demo-metafile.json');
+    console.info('   ✅ Markdown output: demo-build-report.md');
     
     // Note: In real usage, this would execute an actual build
     // For demo purposes, we'll simulate the result
-    console.log('\n⚡ Simulating build execution...');
+    console.info('\n⚡ Simulating build execution...');
     
     const simulatedResult = {
       outputs: ['dist/index.js', 'dist/styles.css'],
@@ -211,27 +211,27 @@ async function demoEnhancedBuilder() {
       },
     };
     
-    console.log('✅ Build completed!');
-    console.log(`⚡ Total time: ${simulatedResult.performance.totalBuildTime}ms`);
-    console.log(`📊 Analysis time: ${simulatedResult.performance.analysisTime}ms`);
+    console.info('✅ Build completed!');
+    console.info(`⚡ Total time: ${simulatedResult.performance.totalBuildTime}ms`);
+    console.info(`📊 Analysis time: ${simulatedResult.performance.analysisTime}ms`);
     
   } catch (error) {
-    console.log('ℹ️  Demo mode: Build simulation (would execute real build in production)');
+    console.info('ℹ️  Demo mode: Build simulation (would execute real build in production)');
   }
   
-  console.log('\n✅ Enhanced builder demo complete!\n');
+  console.info('\n✅ Enhanced builder demo complete!\n');
 }
 
 // Demo 5: Performance Benchmarking
 async function demoPerformanceBenchmarking() {
-  console.log('⚡ Demo 5: Performance Benchmarking');
-  console.log('=====================================');
+  console.info('⚡ Demo 5: Performance Benchmarking');
+  console.info('=====================================');
   
   const analyzer = new MetafileAnalyzer(sampleMetafile);
   
   // Benchmark analysis operations
   const iterations = 1000;
-  console.log(`🏃 Running ${iterations} analysis iterations...`);
+  console.info(`🏃 Running ${iterations} analysis iterations...`);
   
   const startTime = performance.now();
   
@@ -246,29 +246,29 @@ async function demoPerformanceBenchmarking() {
   const totalTime = endTime - startTime;
   const avgTime = totalTime / iterations;
   
-  console.log('📊 Performance Results:');
-  console.log(`   Total time: ${totalTime.toFixed(2)}ms`);
-  console.log(`   Average per iteration: ${avgTime.toFixed(3)}ms`);
-  console.log(`   Iterations per second: ${(1000 / avgTime).toFixed(0)}`);
+  console.info('📊 Performance Results:');
+  console.info(`   Total time: ${totalTime.toFixed(2)}ms`);
+  console.info(`   Average per iteration: ${avgTime.toFixed(3)}ms`);
+  console.info(`   Iterations per second: ${(1000 / avgTime).toFixed(0)}`);
   
   // Memory usage estimation
   const memUsage = process.memoryUsage();
-  console.log('\n💾 Memory Usage:');
-  console.log(`   RSS: ${(memUsage.rss / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`   Heap Used: ${(memUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  console.info('\n💾 Memory Usage:');
+  console.info(`   RSS: ${(memUsage.rss / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`   Heap Used: ${(memUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`);
   
-  console.log('\n✅ Performance benchmarking complete!\n');
+  console.info('\n✅ Performance benchmarking complete!\n');
 }
 
 // Demo 6: Real-world Integration Patterns
 async function demoRealWorldIntegration() {
-  console.log('🌍 Demo 6: Real-world Integration Patterns');
-  console.log('=====================================');
+  console.info('🌍 Demo 6: Real-world Integration Patterns');
+  console.info('=====================================');
   
-  console.log('📋 Common Integration Patterns:');
+  console.info('📋 Common Integration Patterns:');
   
-  console.log('\n1️⃣  CI/CD Integration:');
-  console.log(`
+  console.info('\n1️⃣  CI/CD Integration:');
+  console.info(`
    # GitHub Actions example
    - name: Build and Analyze
      run: |
@@ -279,8 +279,8 @@ async function demoRealWorldIntegration() {
          --analyze
    `);
   
-  console.log('\n2️⃣  Development Workflow:');
-  console.log(`
+  console.info('\n2️⃣  Development Workflow:');
+  console.info(`
    # Package.json scripts
    {
      "scripts": {
@@ -291,8 +291,8 @@ async function demoRealWorldIntegration() {
    }
    `);
   
-  console.log('\n3️⃣  Programmatic Usage:');
-  console.log(`
+  console.info('\n3️⃣  Programmatic Usage:');
+  console.info(`
    // TypeScript/JavaScript
    import { buildAndAnalyze } from '../src/build/enhanced-builder';
    
@@ -303,11 +303,11 @@ async function demoRealWorldIntegration() {
      'report.md'
    );
    
-   console.log('Analysis:', result.analysis);
+   console.info('Analysis:', result.analysis);
    `);
   
-  console.log('\n4️⃣  Performance Monitoring:');
-  console.log(`
+  console.info('\n4️⃣  Performance Monitoring:');
+  console.info(`
    // Track bundle size over time
    const analyzer = new MetafileAnalyzer(metafile);
    const sizeAnalysis = analyzer.getSizeAnalysis();
@@ -320,16 +320,16 @@ async function demoRealWorldIntegration() {
    });
    `);
   
-  console.log('\n✅ Integration patterns demonstrated!\n');
+  console.info('\n✅ Integration patterns demonstrated!\n');
 }
 
 // Main demonstration runner
 async function runMetafileShowcase() {
-  console.log('🚀 Bun Build Metafile Apocalypse v4.0 Showcase');
-  console.log('='.repeat(50));
-  console.log('📅 February 06, 2026 - Metafile Supernova Day');
-  console.log('⚡ World\'s fastest build analysis system');
-  console.log('');
+  console.info('🚀 Bun Build Metafile Apocalypse v4.0 Showcase');
+  console.info('='.repeat(50));
+  console.info('📅 February 06, 2026 - Metafile Supernova Day');
+  console.info('⚡ World\'s fastest build analysis system');
+  console.info('');
   
   try {
     await demoBasicAnalysis();
@@ -339,15 +339,15 @@ async function runMetafileShowcase() {
     await demoPerformanceBenchmarking();
     await demoRealWorldIntegration();
     
-    console.log('🎆 Metafile Apocalypse Showcase Complete!');
-    console.log('='.repeat(50));
-    console.log('✅ All demonstrations completed successfully');
-    console.log('📊 Performance metrics collected');
-    console.log('📝 Reports generated');
-    console.log('🔍 Analysis patterns demonstrated');
-    console.log('🌍 Integration examples provided');
-    console.log('');
-    console.log('🚀 Ready for production deployment!');
+    console.info('🎆 Metafile Apocalypse Showcase Complete!');
+    console.info('='.repeat(50));
+    console.info('✅ All demonstrations completed successfully');
+    console.info('📊 Performance metrics collected');
+    console.info('📝 Reports generated');
+    console.info('🔍 Analysis patterns demonstrated');
+    console.info('🌍 Integration examples provided');
+    console.info('');
+    console.info('🚀 Ready for production deployment!');
     
   } catch (error) {
     console.error('❌ Showcase failed:', error.message);

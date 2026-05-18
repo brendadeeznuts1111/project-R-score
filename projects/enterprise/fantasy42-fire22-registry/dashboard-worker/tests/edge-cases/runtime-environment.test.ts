@@ -59,7 +59,7 @@ describe('🛡️ Runtime Environment Edge Cases', () => {
         spawn: typeof Bun.spawn === 'function',
       };
 
-      console.log('📊 Available Bun features:', features);
+      console.info('📊 Available Bun features:', features);
 
       // Should have at least basic features
       expect(features.spawn).toBe(true);
@@ -156,7 +156,7 @@ describe('🛡️ Runtime Environment Edge Cases', () => {
       const finalMemory = process.memoryUsage().heapUsed;
       const netGrowth = finalMemory - initialMemory;
 
-      console.log(
+      console.info(
         `📊 Memory usage: initial=${(initialMemory / 1024 / 1024).toFixed(1)}MB, peak=${(midMemory / 1024 / 1024).toFixed(1)}MB, final=${(finalMemory / 1024 / 1024).toFixed(1)}MB`
       );
 
@@ -232,11 +232,11 @@ describe('🛡️ Runtime Environment Edge Cases', () => {
       expect(sharedResource.operations).toHaveLength(10);
 
       // Counter might be less than 10 due to race conditions
-      console.log(`🔄 Race condition test: expected=10, actual counter=${sharedResource.counter}`);
+      console.info(`🔄 Race condition test: expected=10, actual counter=${sharedResource.counter}`);
 
       // This test demonstrates race conditions exist
       if (sharedResource.counter < 10) {
-        console.log('⚠️ Race condition detected (expected behavior for this test)');
+        console.info('⚠️ Race condition detected (expected behavior for this test)');
       }
     });
 
@@ -267,7 +267,7 @@ describe('🛡️ Runtime Environment Edge Cases', () => {
       const successes = results.filter(r => r.status === 'fulfilled').length;
       const failures = results.filter(r => r.status === 'rejected').length;
 
-      console.log(`🔄 Resource contention: ${successes} successes, ${failures} failures`);
+      console.info(`🔄 Resource contention: ${successes} successes, ${failures} failures`);
 
       expect(successes).toBeGreaterThan(0);
 

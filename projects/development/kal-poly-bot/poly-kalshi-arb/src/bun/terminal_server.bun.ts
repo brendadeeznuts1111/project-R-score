@@ -95,7 +95,7 @@ export class KalmanTerminalServer {
     // Handle session cleanup
     proc.exited.then(() => {
       this.sessions.delete(sessionId);
-      console.log(`Terminal session ${sessionId} ended`);
+      console.info(`Terminal session ${sessionId} ended`);
     });
 
     return session;
@@ -143,7 +143,7 @@ export class KalmanTerminalServer {
       });
 
       // Log for monitoring
-      console.log(`[Terminal ${sessionId}] ${output.trim()}`);
+      console.info(`[Terminal ${sessionId}] ${output.trim()}`);
     }
   }
 
@@ -207,7 +207,7 @@ export class KalmanTerminalServer {
     const now = Date.now();
     for (const [sessionId, session] of this.sessions.entries()) {
       if (now - session.lastActivity > this.config.timeout) {
-        console.log(`Cleaning up expired session ${sessionId}`);
+        console.info(`Cleaning up expired session ${sessionId}`);
         this.closeSession(sessionId);
       }
     }
@@ -219,7 +219,7 @@ export class KalmanTerminalServer {
   private broadcastToSession(sessionId: string, message: any): void {
     // This would integrate with WebSocket server
     // For now, just log the message
-    console.log(`Broadcast to ${sessionId}:`, message);
+    console.info(`Broadcast to ${sessionId}:`, message);
   }
 
   /**
@@ -479,7 +479,7 @@ export function createTerminalServer(terminalServer: KalmanTerminalServer) {
       },
 
       open(ws) {
-        console.log("Terminal WebSocket client connected");
+        console.info("Terminal WebSocket client connected");
         ws.send(
           JSON.stringify({
             type: "connected",
@@ -489,20 +489,20 @@ export function createTerminalServer(terminalServer: KalmanTerminalServer) {
       },
 
       close(ws) {
-        console.log("Terminal WebSocket client disconnected");
+        console.info("Terminal WebSocket client disconnected");
       },
     },
   });
 
-  console.log("🎯 Kalman Terminal Server running on http://localhost:3001");
-  console.log("📊 WebSocket endpoint: ws://localhost:3001");
-  console.log("🔧 API endpoints:");
-  console.log("  POST /terminal - Create session");
-  console.log("  POST /terminal/input - Send input");
-  console.log("  POST /terminal/resize - Resize terminal");
-  console.log("  GET /terminal/sessions - List sessions");
-  console.log("  POST /terminal/close - Close session");
-  console.log("  POST /terminal/kalman - Execute Kalman command");
+  console.info("🎯 Kalman Terminal Server running on http://localhost:3001");
+  console.info("📊 WebSocket endpoint: ws://localhost:3001");
+  console.info("🔧 API endpoints:");
+  console.info("  POST /terminal - Create session");
+  console.info("  POST /terminal/input - Send input");
+  console.info("  POST /terminal/resize - Resize terminal");
+  console.info("  GET /terminal/sessions - List sessions");
+  console.info("  POST /terminal/close - Close session");
+  console.info("  POST /terminal/kalman - Execute Kalman command");
 
   return server;
 }
@@ -519,7 +519,7 @@ if (import.meta.main) {
 
   // Graceful shutdown
   process.on("SIGINT", async () => {
-    console.log("\n🛑 Shutting down terminal server...");
+    console.info("\n🛑 Shutting down terminal server...");
 
     // Close all sessions
     for (const session of terminalServer.listSessions()) {

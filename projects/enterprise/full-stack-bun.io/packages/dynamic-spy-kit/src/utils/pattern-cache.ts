@@ -82,7 +82,7 @@ export class PatternCache {
 		`);
 
 		this.initialized = true;
-		console.log('✅ PatternCache initialized (Bun.sqlite)');
+		console.info('✅ PatternCache initialized (Bun.sqlite)');
 	}
 
 	/**
@@ -150,7 +150,7 @@ export class PatternCache {
 		});
 
 		insertMany(patterns);
-		console.log(`✅ Stored ${patterns.length} patterns in cache (Bun.sqlite transaction)`);
+		console.info(`✅ Stored ${patterns.length} patterns in cache (Bun.sqlite transaction)`);
 	}
 
 	/**

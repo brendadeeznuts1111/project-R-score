@@ -118,12 +118,12 @@ export class SmartProxyGateway {
    */
   private loadPatterns(): void {
     const rules = this.db.query('SELECT id, pattern FROM proxy_rules WHERE is_active = true').all() as any[];
-    console.log(`[SmartProxyGateway] Loading ${rules.length} URL patterns`);
+    console.info(`[SmartProxyGateway] Loading ${rules.length} URL patterns`);
     for (const rule of rules) {
       try {
         const pattern = new URLPattern(rule.pattern);
         this.urlPatterns.set(rule.id, pattern);
-        console.log(`[SmartProxyGateway] Loaded pattern for rule ${rule.id}: ${rule.pattern}`);
+        console.info(`[SmartProxyGateway] Loaded pattern for rule ${rule.id}: ${rule.pattern}`);
       } catch (error) {
         console.warn(`[SmartProxyGateway] Invalid URLPattern for rule ${rule.id}: ${rule.pattern}`, error);
       }
@@ -156,19 +156,19 @@ export class SmartProxyGateway {
       ORDER BY r.priority DESC
     `).all(request.timestamp || new Date(), request.timestamp || new Date()) as any[];
 
-    console.log(`[SmartProxyGateway] Found ${candidateRules.length} candidate rules for ${request.url}`);
+    console.info(`[SmartProxyGateway] Found ${candidateRules.length} candidate rules for ${request.url}`);
 
     // Check URLPattern matches for candidate rules
     for (const ruleRow of candidateRules) {
       const pattern = this.urlPatterns.get(ruleRow.id);
       if (!pattern) {
-        console.log(`[SmartProxyGateway] No pattern cached for rule ${ruleRow.id}`);
+        console.info(`[SmartProxyGateway] No pattern cached for rule ${ruleRow.id}`);
         continue;
       }
 
       try {
         const match = pattern.exec(request.url);
-        console.log(`[SmartProxyGateway] Testing rule ${ruleRow.id} (${ruleRow.pattern}) against ${request.url}: ${!!match}`);
+        console.info(`[SmartProxyGateway] Testing rule ${ruleRow.id} (${ruleRow.pattern}) against ${request.url}: ${!!match}`);
         if (match) {
           // Parse conditions
           const conditions: RuleCondition[] = [];

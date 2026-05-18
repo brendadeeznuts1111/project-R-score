@@ -35,11 +35,11 @@ describe("Bun Proxy API - Enhanced Naming Tests", () => {
   let proxyServerConfiguration: ProxyServerConfig;
 
   beforeAll(async () => {
-    console.log("🚀 Setting up test environment...");
+    console.info("🚀 Setting up test environment...");
   });
 
   afterAll(async () => {
-    console.log("🧹 Cleaning up test environment...");
+    console.info("🧹 Cleaning up test environment...");
     if (webSocketProxyServer?.isRunning()) {
       await webSocketProxyServer.stop();
     }
@@ -260,4 +260,4 @@ describe("Bun Isolated Installs Integration", () => {
   });
 });
 
-console.log("✅ Enhanced naming test suite completed successfully!");
+console.info("✅ Enhanced naming test suite completed successfully!");

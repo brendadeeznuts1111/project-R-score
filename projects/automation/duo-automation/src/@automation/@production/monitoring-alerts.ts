@@ -74,7 +74,7 @@ export class AlertManager {
       
       // Check cooldown
       if (this.isInCooldown(alertKey)) {
-        console.log(`Alert ${alertKey} is in cooldown, skipping`);
+        console.info(`Alert ${alertKey} is in cooldown, skipping`);
         return;
       }
 
@@ -225,7 +225,7 @@ export class AlertManager {
    */
   private async sendEmail(alert: any): Promise<void> {
     // Email implementation would go here
-    console.log('Email alert would be sent:', alert);
+    console.info('Email alert would be sent:', alert);
   }
 
   /**
@@ -563,5 +563,5 @@ await alertManager.sendAlert({
 // Get system health:
 /*
 const health = await webhookMonitor.getWebhookHealth();
-console.log('System health:', health);
+console.info('System health:', health);
 */

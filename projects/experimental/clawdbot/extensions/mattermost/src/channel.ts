@@ -70,7 +70,7 @@ export const mattermostPlugin: ChannelPlugin<ResolvedMattermostAccount> = {
     idLabel: "mattermostUserId",
     normalizeAllowEntry: (entry) => normalizeAllowEntry(entry),
     notifyApproval: async ({ id }) => {
-      console.log(`[mattermost] User ${id} approved for pairing`);
+      console.info(`[mattermost] User ${id} approved for pairing`);
     },
   },
   capabilities: {

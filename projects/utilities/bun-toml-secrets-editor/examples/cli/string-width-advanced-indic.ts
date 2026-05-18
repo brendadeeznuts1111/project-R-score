@@ -7,11 +7,11 @@
  * regional variations across major Indian languages.
  */
 
-console.log("🌏 Advanced Indic Scripts - Comprehensive GB9c Examples");
-console.log("=".repeat(70));
+console.info("🌏 Advanced Indic Scripts - Comprehensive GB9c Examples");
+console.info("=".repeat(70));
 
 // Complex Devanagari examples
-console.log("\n📝 Complex Devanagari Conjuncts and Ligatures:");
+console.info("\n📝 Complex Devanagari Conjuncts and Ligatures:");
 
 const complexDevanagari = [
 	{
@@ -39,14 +39,14 @@ complexDevanagari.forEach((example, index) => {
 		)
 		.join(" ");
 
-	console.log(
+	console.info(
 		`${(index + 1).toString().padStart(2)}. ${example.description.padEnd(25)} [${example.type}]`,
 	);
-	console.log(`   "${example.text}" | Width: ${width} | ${codePoints}`);
+	console.info(`   "${example.text}" | Width: ${width} | ${codePoints}`);
 });
 
 // Regional language variations
-console.log("\n🌍 Regional Language Variations:");
+console.info("\n🌍 Regional Language Variations:");
 
 const regionalExamples = [
 	// Hindi (Devanagari)
@@ -142,14 +142,14 @@ const regionalExamples = [
 
 regionalExamples.forEach((example, index) => {
 	const width = Bun.stringWidth(example.text);
-	console.log(
+	console.info(
 		`${(index + 1).toString().padStart(2)}. ${example.language.padEnd(8)} (${example.script.padEnd(9)})`,
 	);
-	console.log(`   "${example.text}" = "${example.english}" | Width: ${width}`);
+	console.info(`   "${example.text}" = "${example.english}" | Width: ${width}`);
 });
 
 // Numbers and digits in different scripts
-console.log("\n🔢 Numbers and Digits in Indic Scripts:");
+console.info("\n🔢 Numbers and Digits in Indic Scripts:");
 
 const numberExamples = [
 	{ script: "Devanagari", numbers: "०१२३४५६७८९", english: "0123456789" },
@@ -167,14 +167,14 @@ numberExamples.forEach((example, index) => {
 	const indicWidth = Bun.stringWidth(example.numbers);
 	const latinWidth = Bun.stringWidth(example.english);
 
-	console.log(
+	console.info(
 		`${(index + 1).toString().padStart(2)}. ${example.script.padEnd(10)} | Width: ${indicWidth} vs ${latinWidth}`,
 	);
-	console.log(`   "${example.numbers}" vs "${example.english}"`);
+	console.info(`   "${example.numbers}" vs "${example.english}"`);
 });
 
 // Complex words with multiple conjuncts
-console.log("\n🔗 Complex Words with Multiple Conjuncts:");
+console.info("\n🔗 Complex Words with Multiple Conjuncts:");
 
 const complexWords = [
 	{
@@ -228,16 +228,16 @@ complexWords.forEach((example, index) => {
 		[]
 	).length;
 
-	console.log(
+	console.info(
 		`${(index + 1).toString().padStart(2)}. ${example.language.padEnd(10)}: "${example.meaning}"`,
 	);
-	console.log(
+	console.info(
 		`   "${example.text}" | Width: ${width} | Conjuncts: ${conjunctCount} | ${example.breakdown}`,
 	);
 });
 
 // Mixed script examples (common in modern usage)
-console.log("\n🌐 Mixed Script Examples (Modern Usage):");
+console.info("\n🌐 Mixed Script Examples (Modern Usage):");
 
 const mixedScriptExamples = [
 	{ text: "India भारत 🇮🇳", description: "Country name in English and Hindi" },
@@ -257,16 +257,16 @@ mixedScriptExamples.forEach((example, index) => {
 	const width = Bun.stringWidth(example.text);
 	const scripts = detectScripts(example.text);
 
-	console.log(
+	console.info(
 		`${(index + 1).toString().padStart(2)}. ${example.description.padEnd(35)}`,
 	);
-	console.log(
+	console.info(
 		`   "${example.text}" | Width: ${width} | Scripts: ${scripts.join(", ")}`,
 	);
 });
 
 // Emoji and Indic text combinations
-console.log("\n😀 Emoji and Indic Text Combinations:");
+console.info("\n😀 Emoji and Indic Text Combinations:");
 
 const emojiExamples = [
 	{ text: "🇮🇳 भारत", description: "India flag with Hindi name" },
@@ -288,16 +288,16 @@ emojiExamples.forEach((example, index) => {
 		) || []
 	).length;
 
-	console.log(
+	console.info(
 		`${(index + 1).toString().padStart(2)}. ${example.description.padEnd(25)}`,
 	);
-	console.log(
+	console.info(
 		`   "${example.text}" | Width: ${width} | Emoji: ${emojiCount} | Indic: ${indicCount}`,
 	);
 });
 
 // Performance stress test with complex Indic text
-console.log("\n⚡ Performance Stress Test with Complex Indic Text:");
+console.info("\n⚡ Performance Stress Test with Complex Indic Text:");
 
 const stressTestTexts = [
 	"संस्कृतम् देवनागरी लिपि में जटिल संयुक्ताक्षरों के साथ",
@@ -322,14 +322,14 @@ const performanceTest = () => {
 	const time = end - start;
 	const totalCalls = iterations * stressTestTexts.length;
 
-	console.log(
+	console.info(
 		`   Processed ${totalCalls.toLocaleString()} complex Indic text calculations`,
 	);
-	console.log(`   Time: ${time.toFixed(2)}ms`);
-	console.log(
+	console.info(`   Time: ${time.toFixed(2)}ms`);
+	console.info(
 		`   Average: ${((time / totalCalls) * 1000).toFixed(3)}μs per call`,
 	);
-	console.log(
+	console.info(
 		`   Performance: ${((totalCalls / time) * 1000).toFixed(0)} calls/second`,
 	);
 };
@@ -363,7 +363,7 @@ function detectScripts(text: string) {
 }
 
 // Practical application examples
-console.log("\n💼 Practical Application Examples:");
+console.info("\n💼 Practical Application Examples:");
 
 const practicalExamples = [
 	{
@@ -376,10 +376,10 @@ const practicalExamples = [
 				"4. बाहर निकलें (Exit)",
 			];
 
-			console.log("   CLI Menu:");
+			console.info("   CLI Menu:");
 			menu.forEach((item) => {
 				const width = Bun.stringWidth(item);
-				console.log(`   ${item.padEnd(40)} | Width: ${width}`);
+				console.info(`   ${item.padEnd(40)} | Width: ${width}`);
 			});
 		},
 	},
@@ -393,10 +393,10 @@ const practicalExamples = [
 				"देश (Country):",
 			];
 
-			console.log("   Form Labels:");
+			console.info("   Form Labels:");
 			formFields.forEach((field) => {
 				const width = Bun.stringWidth(field);
-				console.log(`   ${field.padEnd(25)} | Width: ${width}`);
+				console.info(`   ${field.padEnd(25)} | Width: ${width}`);
 			});
 		},
 	},
@@ -410,25 +410,25 @@ const practicalExamples = [
 				"🔄 प्रक्रिया में (In Progress)",
 			];
 
-			console.log("   Status Messages:");
+			console.info("   Status Messages:");
 			statuses.forEach((status) => {
 				const width = Bun.stringWidth(status);
-				console.log(`   ${status.padEnd(50)} | Width: ${width}`);
+				console.info(`   ${status.padEnd(50)} | Width: ${width}`);
 			});
 		},
 	},
 ];
 
 practicalExamples.forEach((example, index) => {
-	console.log(`\n   ${index + 1}. ${example.title}:`);
+	console.info(`\n   ${index + 1}. ${example.title}:`);
 	example.demo();
 });
 
-console.log("\n🎉 Advanced Indic Script Examples Complete!");
-console.log(
+console.info("\n🎉 Advanced Indic Script Examples Complete!");
+console.info(
 	"   • Comprehensive script coverage across 9 major Indic languages",
 );
-console.log("   • Complex conjuncts and ligatures properly handled");
-console.log("   • Mixed script and emoji combinations supported");
-console.log("   • Performance optimized for real-world applications");
-console.log("   • Practical examples for CLI, forms, and user interfaces");
+console.info("   • Complex conjuncts and ligatures properly handled");
+console.info("   • Mixed script and emoji combinations supported");
+console.info("   • Performance optimized for real-world applications");
+console.info("   • Practical examples for CLI, forms, and user interfaces");

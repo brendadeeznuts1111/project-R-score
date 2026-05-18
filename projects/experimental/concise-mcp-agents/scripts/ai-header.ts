@@ -267,12 +267,12 @@ export async function generateAIHeader(prompt: string): Promise<string> {
   // Calculate overall confidence
   const avgConfidence = (domain.confidence + scope.confidence + type.confidence + meta.confidence + status.confidence) / 5;
 
-  console.log(`🤖 Fuzzy matching confidence: ${(avgConfidence * 100).toFixed(1)}%`);
-  console.log(`   Domain: ${domain.key} (${(domain.confidence * 100).toFixed(1)}%)`);
-  console.log(`   Scope: ${scope.key} (${(scope.confidence * 100).toFixed(1)}%)`);
-  console.log(`   Type: ${type.key} (${(type.confidence * 100).toFixed(1)}%)`);
-  console.log(`   Meta: ${meta.key} (${(meta.confidence * 100).toFixed(1)}%)`);
-  console.log(`   Status: ${status.key} (${(status.confidence * 100).toFixed(1)}%)`);
+  console.info(`🤖 Fuzzy matching confidence: ${(avgConfidence * 100).toFixed(1)}%`);
+  console.info(`   Domain: ${domain.key} (${(domain.confidence * 100).toFixed(1)}%)`);
+  console.info(`   Scope: ${scope.key} (${(scope.confidence * 100).toFixed(1)}%)`);
+  console.info(`   Type: ${type.key} (${(type.confidence * 100).toFixed(1)}%)`);
+  console.info(`   Meta: ${meta.key} (${(meta.confidence * 100).toFixed(1)}%)`);
+  console.info(`   Status: ${status.key} (${(status.confidence * 100).toFixed(1)}%)`);
 
   // Capitalize appropriately
   const domainUpper = domain.key.toUpperCase();
@@ -331,12 +331,12 @@ async function main() {
       process.exit(1);
     }
 
-    console.log('🤖 Analyzing prompt...');
+    console.info('🤖 Analyzing prompt...');
     const header = await generateAIHeader(prompt);
 
-    console.log('✅ Generated header:');
-    console.log(header);
-    console.log('');
+    console.info('✅ Generated header:');
+    console.info(header);
+    console.info('');
 
     // Copy to clipboard if available
     try {
@@ -344,7 +344,7 @@ async function main() {
         stdin: 'pipe',
         stdout: 'ignore'
       }).stdin?.write(header);
-      console.log('📋 Header copied to clipboard!');
+      console.info('📋 Header copied to clipboard!');
     } catch (e) {
       // Clipboard not available, just show the header
     }

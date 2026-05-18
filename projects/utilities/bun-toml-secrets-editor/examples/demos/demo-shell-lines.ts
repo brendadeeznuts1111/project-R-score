@@ -8,12 +8,12 @@
 import { $ } from "bun";
 
 async function main() {
-	console.log("🔧 Bun Shell Line Processing Demo");
-	console.log("==================================");
+	console.info("🔧 Bun Shell Line Processing Demo");
+	console.info("==================================");
 
 	// Demo 1: Basic ls -l processing
-	console.log("\n1️⃣ Basic directory listing:");
-	console.log("Processing ls -l output line by line...\n");
+	console.info("\n1️⃣ Basic directory listing:");
+	console.info("Processing ls -l output line by line...\n");
 
 	try {
 		let fileCount = 0;
@@ -22,7 +22,7 @@ async function main() {
 		for await (const line of $`ls -l`.lines()) {
 			// Skip header lines
 			if (line.startsWith("total")) {
-				console.log(`📊 ${line}`);
+				console.info(`📊 ${line}`);
 				continue;
 			}
 
@@ -42,20 +42,20 @@ async function main() {
 				if (permissions.startsWith("l")) icon = "🔗";
 				if (permissions.startsWith("-") && parts[0].includes("x")) icon = "⚡";
 
-				console.log(
+				console.info(
 					`${icon} ${filename.padEnd(20)} ${size.toString().padStart(10)} bytes`,
 				);
 			}
 		}
 
-		console.log(`\n📈 Summary: ${fileCount} items, ${totalSize} total bytes`);
+		console.info(`\n📈 Summary: ${fileCount} items, ${totalSize} total bytes`);
 	} catch (error: any) {
 		console.error("❌ Error processing directory listing:", error.message);
 	}
 
 	// Demo 2: Process monitoring
-	console.log("\n2️⃣ Process monitoring (ps aux):");
-	console.log("Finding Node.js/Bun processes...\n");
+	console.info("\n2️⃣ Process monitoring (ps aux):");
+	console.info("Finding Node.js/Bun processes...\n");
 
 	try {
 		let processCount = 0;
@@ -74,21 +74,21 @@ async function main() {
 					const mem = parts[3];
 					const command = parts.slice(10).join(" ");
 
-					console.log(
+					console.info(
 						`🔧 PID ${pid.padStart(6)} CPU ${cpu.padStart(5)}% MEM ${mem.padStart(5)}% ${command}`,
 					);
 				}
 			}
 		}
 
-		console.log(`\n🔍 Found ${processCount} Node.js/Bun processes`);
+		console.info(`\n🔍 Found ${processCount} Node.js/Bun processes`);
 	} catch (error: any) {
 		console.error("❌ Error monitoring processes:", error.message);
 	}
 
 	// Demo 3: Git log processing
-	console.log("\n3️⃣ Git log processing:");
-	console.log("Recent commit history...\n");
+	console.info("\n3️⃣ Git log processing:");
+	console.info("Recent commit history...\n");
 
 	try {
 		let commitCount = 0;
@@ -98,15 +98,15 @@ async function main() {
 			const [hash, ...messageParts] = line.split(" ");
 			const message = messageParts.join(" ");
 
-			console.log(`📝 ${hash.padEnd(8)} ${message}`);
+			console.info(`📝 ${hash.padEnd(8)} ${message}`);
 		}
 
-		console.log(`\n📚 Showing ${commitCount} recent commits`);
+		console.info(`\n📚 Showing ${commitCount} recent commits`);
 	} catch (_error: any) {
-		console.log("ℹ️  Not a git repository or git not available");
+		console.info("ℹ️  Not a git repository or git not available");
 	}
 
-	console.log("\n✅ Bun Shell line processing demo complete!");
+	console.info("\n✅ Bun Shell line processing demo complete!");
 }
 
 // Run the demo

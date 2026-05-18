@@ -275,7 +275,7 @@ export class ArchiveCompressionEngine {
 	 * Benchmark all compression strategies for given data
 	 */
 	async benchmark(data: Uint8Array): Promise<CompressionBenchmark> {
-		console.log(
+		console.info(
 			`🏁 Running compression benchmark on ${(data.length / 1024).toFixed(1)}KB data...`,
 		);
 
@@ -284,7 +284,7 @@ export class ArchiveCompressionEngine {
 
 		for (const strategyName of strategyNames) {
 			try {
-				console.log(`  Testing ${strategyName}...`);
+				console.info(`  Testing ${strategyName}...`);
 
 				// Compression
 				const compressResult = await this.compress(data, strategyName, undefined, false);
@@ -305,7 +305,7 @@ export class ArchiveCompressionEngine {
 					decompressionTime: decompressResult.metrics.decompressionTime || 0,
 				};
 
-				console.log(
+				console.info(
 					`    ✅ ${strategyName}: ${(compressResult.metrics.compressionRatio * 100).toFixed(1)}% ratio, ${compressResult.metrics.compressionTime.toFixed(2)}ms`,
 				);
 			} catch (error) {

@@ -53,9 +53,9 @@ class InspectorDashboard {
       error: this.handleError.bind(this)
     });
     
-    console.log(`🌐 FactoryWager Inspector Dashboard LIVE`);
-    console.log(`🚀 http://localhost:${this.port}/inspector`);
-    console.log(`📡 Live mode: ${this.liveMode ? 'ON' : 'OFF'}`);
+    console.info(`🌐 FactoryWager Inspector Dashboard LIVE`);
+    console.info(`🚀 http://localhost:${this.port}/inspector`);
+    console.info(`📡 Live mode: ${this.liveMode ? 'ON' : 'OFF'}`);
     
     if (this.liveMode) {
       this.startMetricsUpdater();

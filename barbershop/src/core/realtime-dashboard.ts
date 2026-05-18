@@ -541,7 +541,7 @@ class EliteDatabase {
     
     // Log slow queries
     if (elapsedNs > 1e6) { // > 1ms
-      console.log(`[SLOW QUERY] ${(elapsedNs / 1e6).toFixed(2)}ms: ${sql.slice(0, 100)}`);
+      console.info(`[SLOW QUERY] ${(elapsedNs / 1e6).toFixed(2)}ms: ${sql.slice(0, 100)}`);
     }
     
     return result;
@@ -3534,7 +3534,7 @@ const ELITE_ADMIN_DASHBOARD = `<!DOCTYPE html>
         this.ws = new WebSocket(this.url);
         
         this.ws.onopen = () => {
-          console.log('🔌 ELITE connection established');
+          console.info('🔌 ELITE connection established');
           this.reconnectDelay = 1000;
         };
         
@@ -4158,7 +4158,7 @@ The Barber Platform Team
   // return;
   
   // For now, log the email (development mode)
-  console.log(`
+  console.info(`
 ╔════════════════════════════════════════════════════════════════╗
 ║  📧 WELCOME EMAIL (Development Mode)                          ║
 ╠════════════════════════════════════════════════════════════════╣
@@ -5671,14 +5671,14 @@ setInterval(() => {
     }
     
     if (cleanedCount > 0) {
-      console.log(`[Home Places] Cleaned up ${cleanedCount} expired home places`);
+      console.info(`[Home Places] Cleaned up ${cleanedCount} expired home places`);
     }
   } catch (error) {
     console.error('[Home Places] Error cleaning up expired home places:', error);
   }
 }, 60 * 60 * 1000); // Every hour
 
-console.log(`
+console.info(`
 ╔════════════════════════════════════════════════════════════════╗
 ║  🚀 BARBERSHOP ELITE v${ELITE_VERSION} - ${ELITE_CODENAME.padEnd(23)}║
 ╠════════════════════════════════════════════════════════════════╣

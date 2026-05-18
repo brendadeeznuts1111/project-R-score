@@ -3,10 +3,10 @@
  * Documents all fixes applied to resolve TypeScript errors in color and tabular systems
  */
 
-console.log('🔧 FactoryWager Registry v4.0 - TypeScript Compliance Summary')
-console.log('=' .repeat(70))
+console.info('🔧 FactoryWager Registry v4.0 - TypeScript Compliance Summary')
+console.info('=' .repeat(70))
 
-console.log(`
+console.info(`
 🎨 COLOR FORMATTING SYSTEM - ALL ERRORS RESOLVED ✅
 
 1️⃣ Bun.color() API Understanding
@@ -77,5 +77,5 @@ Tabular System:
 - Overall Production Readiness: CONFIRMED ✅
 `)
 
-console.log('🎉 FactoryWager Registry v4.0 - TypeScript Compliance Complete!')
-console.log('🚀 All critical errors resolved - Ready for production!')
+console.info('🎉 FactoryWager Registry v4.0 - TypeScript Compliance Complete!')
+console.info('🚀 All critical errors resolved - Ready for production!')

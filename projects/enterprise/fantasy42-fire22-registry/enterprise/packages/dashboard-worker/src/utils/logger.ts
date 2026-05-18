@@ -20,7 +20,7 @@ export class EnhancedLogger {
     // Simple logger implementation
     return {
       info: (message: string, meta?: any) => {
-        console.log(`[INFO] ${new Date().toISOString()} - ${message}`, meta || '');
+        console.info(`[INFO] ${new Date().toISOString()} - ${message}`, meta || '');
       },
       warn: (message: string, meta?: any) => {
         console.warn(`[WARN] ${new Date().toISOString()} - ${message}`, meta || '');
@@ -35,7 +35,7 @@ export class EnhancedLogger {
       },
       verbose: (message: string, meta?: any) => {
         if (this.config.logLevel === 'debug' || this.config.logLevel === 'verbose') {
-          console.log(`[VERBOSE] ${new Date().toISOString()} - ${message}`, meta || '');
+          console.info(`[VERBOSE] ${new Date().toISOString()} - ${message}`, meta || '');
         }
       },
       child: (context: Record<string, any>) => {

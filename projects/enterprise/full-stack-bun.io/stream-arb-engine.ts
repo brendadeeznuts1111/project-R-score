@@ -351,7 +351,7 @@ const server = Bun.serve({
 
 			ws.subscribe('nfl-q4');
 			
-			console.log('%j', {
+			console.info('%j', {
 				ws_connected: ws.remote,
 				emitter_listeners: arbEmitter.listenerCount('arb-edge'),
 				cookies_included: true // ✅ Cookies from req.cookies.set() are included
@@ -378,14 +378,14 @@ const server = Bun.serve({
 			if (ws.data?.arbHandler) {
 				arbEmitter.removeListener('arb-edge', ws.data.arbHandler);
 			}
-			console.log('%j', { ws_closed: ws.remote });
+			console.info('%j', { ws_closed: ws.remote });
 		}
 	}
 });
 
 // ==================== STREAM EVENTS ====================
 arbEmitter.on('arb-edge', (edge: ArbEdge) => {
-	console.log('%j', {
+	console.info('%j', {
 		stream_event: 'ARB_EDGE',
 		profit_pct: edge.profit_pct,
 		value_usd: edge.value_usd,
@@ -429,7 +429,7 @@ process.on('SIGINT', () => {
 	process.nextTick(() => process.exit(0)); // ✅ Safe override
 });
 
-console.log('%j', {
+console.info('%j', {
 	streamEngine: 'NODE-PARITY-LIVE',
 	port: server.port,
 	emitterSafe: true,

@@ -86,7 +86,7 @@ export class VersionManager extends EventEmitter {
   }
 
   private initializeVersioning(): void {
-    console.log(`📦 Initializing Version Manager v${this.currentVersion.raw}`);
+    console.info(`📦 Initializing Version Manager v${this.currentVersion.raw}`);
 
     // Initialize version manifest
     this.versionManifest = {
@@ -112,7 +112,7 @@ export class VersionManager extends EventEmitter {
     // Setup version validation
     this.setupVersionValidation();
 
-    console.log('✅ Version Manager initialized');
+    console.info('✅ Version Manager initialized');
   }
 
   // ============================================================================
@@ -321,7 +321,7 @@ export class VersionManager extends EventEmitter {
         type: update.type,
       });
 
-      console.log(`✅ Updated to version ${newVersion}`);
+      console.info(`✅ Updated to version ${newVersion}`);
       return true;
     } catch (error) {
       console.error('❌ Version update failed:', error);
@@ -350,7 +350,7 @@ export class VersionManager extends EventEmitter {
         throw new Error(`Cannot rollback to incompatible version ${rollbackTarget.version}`);
       }
 
-      console.log(`🔄 Rolling back to version ${rollbackTarget.version}`);
+      console.info(`🔄 Rolling back to version ${rollbackTarget.version}`);
 
       // Find rollback update in history
       const rollbackUpdate = this.versionHistory.find(
@@ -372,7 +372,7 @@ export class VersionManager extends EventEmitter {
         to: rollbackTarget.version,
       });
 
-      console.log(`✅ Rolled back to version ${rollbackTarget.version}`);
+      console.info(`✅ Rolled back to version ${rollbackTarget.version}`);
       return true;
     } catch (error) {
       console.error('❌ Version rollback failed:', error);
@@ -421,7 +421,7 @@ export class VersionManager extends EventEmitter {
     if (!this.updateCheckUrl) return;
 
     try {
-      console.log('🔍 Checking for updates...');
+      console.info('🔍 Checking for updates...');
 
       const response = await fetch(this.updateCheckUrl, {
         headers: {
@@ -445,9 +445,9 @@ export class VersionManager extends EventEmitter {
           downloadUrl: updateInfo.downloadUrl,
         });
 
-        console.log(`📦 Update available: ${updateInfo.latestVersion}`);
+        console.info(`📦 Update available: ${updateInfo.latestVersion}`);
       } else {
-        console.log('✅ Version is up to date');
+        console.info('✅ Version is up to date');
       }
     } catch (error) {
       console.error('❌ Update check failed:', error);
@@ -460,7 +460,7 @@ export class VersionManager extends EventEmitter {
    */
   async downloadUpdate(version: string, downloadUrl: string): Promise<boolean> {
     try {
-      console.log(`📥 Downloading update to version ${version}...`);
+      console.info(`📥 Downloading update to version ${version}...`);
 
       const response = await fetch(downloadUrl);
       if (!response.ok) {
@@ -472,7 +472,7 @@ export class VersionManager extends EventEmitter {
       // Here you would typically save the update and trigger installation
       // For demo purposes, we'll simulate the update process
 
-      console.log(`✅ Update downloaded successfully`);
+      console.info(`✅ Update downloaded successfully`);
 
       // Trigger update installation
       return await this.installUpdate(version, updateData);
@@ -488,7 +488,7 @@ export class VersionManager extends EventEmitter {
    */
   private async installUpdate(version: string, updateData: Blob): Promise<boolean> {
     try {
-      console.log(`🔧 Installing update to version ${version}...`);
+      console.info(`🔧 Installing update to version ${version}...`);
 
       // Simulate installation process
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -501,7 +501,7 @@ export class VersionManager extends EventEmitter {
 
       if (success) {
         this.emit('update-installed', { version });
-        console.log(`✅ Update to version ${version} installed successfully`);
+        console.info(`✅ Update to version ${version} installed successfully`);
       }
 
       return success;
@@ -549,7 +549,7 @@ export class VersionManager extends EventEmitter {
           this.versionManifest = data.versionManifest;
         }
 
-        console.log('💾 Loaded persisted version data');
+        console.info('💾 Loaded persisted version data');
       }
     } catch (error) {
       console.warn('⚠️ Failed to load persisted version data:', error);
@@ -586,7 +586,7 @@ export class VersionManager extends EventEmitter {
       };
 
       // In a real application, this would be sent to a server
-      console.log('💾 Version change persisted:', changeLog);
+      console.info('💾 Version change persisted:', changeLog);
     } catch (error) {
       console.warn('⚠️ Failed to persist version change:', error);
     }
@@ -618,7 +618,7 @@ export class VersionManager extends EventEmitter {
         throw new Error(`Invalid current version: ${this.currentVersion.version}`);
       }
 
-      console.log(`✅ Current version ${this.currentVersion.version} is valid`);
+      console.info(`✅ Current version ${this.currentVersion.version} is valid`);
     } catch (error) {
       console.error('❌ Version validation failed:', error);
       this.emit('version-validation-failed', { error: error.message });
@@ -651,7 +651,7 @@ export class VersionManager extends EventEmitter {
    * Validate version change
    */
   private validateVersionChange(change: any): void {
-    console.log(`🔍 Validating version change: ${change.from} → ${change.to}`);
+    console.info(`🔍 Validating version change: ${change.from} → ${change.to}`);
 
     // Additional validation logic can be added here
     // For example, checking system requirements, dependencies, etc.
@@ -756,7 +756,7 @@ export class VersionManager extends EventEmitter {
     }
 
     this.removeAllListeners();
-    console.log('🗑️ Version Manager destroyed');
+    console.info('🗑️ Version Manager destroyed');
   }
 
   // ============================================================================
@@ -765,7 +765,7 @@ export class VersionManager extends EventEmitter {
 
   private async executeUpdate(update: VersionUpdate): Promise<void> {
     // Simulate update execution
-    console.log(`🔧 Executing update to version ${update.toVersion}...`);
+    console.info(`🔧 Executing update to version ${update.toVersion}...`);
 
     // Here you would implement the actual update logic
     // For example: downloading files, updating database schema, etc.
@@ -775,7 +775,7 @@ export class VersionManager extends EventEmitter {
 
   private async executeRollback(update: VersionUpdate): Promise<void> {
     // Simulate rollback execution
-    console.log(`🔄 Executing rollback to version ${update.fromVersion}...`);
+    console.info(`🔄 Executing rollback to version ${update.fromVersion}...`);
 
     // Here you would implement the actual rollback logic
 

@@ -112,7 +112,7 @@ class MerkleAudit {
       sequence: this.auditCount
     };
 
-    console.log(`📋 Audit #${this.auditCount}: ${leaf.substring(0, 8)}... → ${this.merkleRoot.substring(0, 8)}...`);
+    console.info(`📋 Audit #${this.auditCount}: ${leaf.substring(0, 8)}... → ${this.merkleRoot.substring(0, 8)}...`);
 
     return auditEntry;
   }
@@ -178,17 +178,17 @@ class DeltaHedger {
   async hedgeExposure(marketId: string, currentLiability: number, maxLiab: number) {
     // Circuit breaker - prevent run-away hedging loops
     if (this.circuitOpen) {
-      console.log(`🚫 Circuit breaker open - skipping hedge for ${marketId}`);
+      console.info(`🚫 Circuit breaker open - skipping hedge for ${marketId}`);
       return { status: 'circuit-open' };
     }
 
     const now = Date.now();
     if (now - this.lastHedge < 100) { // Max 10 ops/sec
       this.circuitOpen = true;
-      console.log(`🚫 Rate limit exceeded - opening circuit breaker for 5 seconds`);
+      console.info(`🚫 Rate limit exceeded - opening circuit breaker for 5 seconds`);
       setTimeout(() => {
         this.circuitOpen = false;
-        console.log(`✅ Circuit breaker reset`);
+        console.info(`✅ Circuit breaker reset`);
       }, 5_000);
       return { status: 'throttled' };
     }
@@ -200,14 +200,14 @@ class DeltaHedger {
     this.exposure.set(exposureKey, currentLiability);
 
     if (currentLiability > maxLiab * this.offloadThreshold) {
-      console.log(`🚨 High liability on market ${marketId}: $${currentLiability}/${maxLiab}`);
+      console.info(`🚨 High liability on market ${marketId}: $${currentLiability}/${maxLiab}`);
 
       // Calculate hedge amount
       const excessAmount = currentLiability - (maxLiab * 0.6);
       const hedgeAmount = Math.min(excessAmount * this.hedgeRatio, currentLiability * 0.5);
 
       if (hedgeAmount > 10) { // Minimum hedge threshold
-        console.log(`📤 Executing delta hedge: $${hedgeAmount}`);
+        console.info(`📤 Executing delta hedge: $${hedgeAmount}`);
 
         // Get best external prices (simulated)
         const externalPrice = await this.getBestExternalPrice(marketId);
@@ -217,7 +217,7 @@ class DeltaHedger {
         const newExposure = this.exposure.get(exposureKey)! - hedgeAmount;
         this.exposure.set(exposureKey, newExposure);
 
-        console.log(`✅ Hedge executed. New exposure: $${newExposure}`);
+        console.info(`✅ Hedge executed. New exposure: $${newExposure}`);
       }
     }
   }
@@ -248,7 +248,7 @@ class DeltaHedger {
     await new Promise(resolve => setTimeout(resolve, 50));
 
     // In production: integrate with actual exchange APIs
-    console.log(`🔄 Placed hedge order: ${marketId} @ ${price} for $${amount}`);
+    console.info(`🔄 Placed hedge order: ${marketId} @ ${price} for $${amount}`);
   }
 
   getTotalExposure(): number {
@@ -529,7 +529,7 @@ class VoiceTradingAssistant {
   }
 
   processVoiceCommand(transcript: string): VoiceCommandResult {
-    console.log(`🎤 Processing: "${transcript}"`);
+    console.info(`🎤 Processing: "${transcript}"`);
 
     for (const [id, command] of this.activeCommands) {
       const match = transcript.match(command.compiled);
@@ -683,8 +683,8 @@ interface ParsedCommand {
 const voiceAssistant = new VoiceTradingAssistant();
 
 function initVoiceBridge(wsClients: Set<WebSocket>) {
-  console.log("🎤 Advanced voice trading assistant ready");
-  console.log("🎤 Supports: market ops, risk management, hedging, trading");
+  console.info("🎤 Advanced voice trading assistant ready");
+  console.info("🎤 Supports: market ops, risk management, hedging, trading");
 }
 
 // =====================================================================================
@@ -865,7 +865,7 @@ class TradingService implements Service {
     this.lastActivity = Date.now();
     // Process accepted bet
     bets.push(bet);
-    console.log(`✅ Bet accepted: ${bet.id}`);
+    console.info(`✅ Bet accepted: ${bet.id}`);
   }
 
   handleMarketOperation(params: any) {
@@ -1358,14 +1358,14 @@ function createWebSocketServer() {
     websocket: {
       open(ws) {
         wsClients.add(ws);
-        console.log(`🔗 Client connected (${wsClients.size} total)`);
+        console.info(`🔗 Client connected (${wsClients.size} total)`);
 
         // Send initial ladder state
         sendLadderUpdate();
       },
       async message(ws, message) {
         const msg = message.toString();
-        console.log(`📨 Command: ${msg}`);
+        console.info(`📨 Command: ${msg}`);
 
         if (msg.startsWith("/")) {
           await handleSlashCommand(msg, ws);
@@ -1373,12 +1373,12 @@ function createWebSocketServer() {
       },
       close(ws) {
         wsClients.delete(ws);
-        console.log(`🔌 Client disconnected (${wsClients.size} remaining)`);
+        console.info(`🔌 Client disconnected (${wsClients.size} remaining)`);
       }
     }
   });
 
-  console.log(`🎯 Sportsbook server running at ${server.url}`);
+  console.info(`🎯 Sportsbook server running at ${server.url}`);
   return server;
 }
 
@@ -1716,16 +1716,16 @@ function sendLadderUpdate() {
 // MAIN EXECUTION - Ultra-Enhanced Living House Architecture
 // =====================================================================================
 
-console.log("🚀 Initializing Production-Ready Cursor Sportsbook...");
-console.log("🏆 The Living House is ENTERPRISE-LIVE! 🏆");
-console.log("🔄 Microservices: Risk • Hedging • Trading • Compliance • Analytics • Audit");
-console.log("🧠 AI Features: Smart Cash-Out • Predictive Analytics • Voice Trading");
-console.log("⚡ Performance: Zero-Copy Sorting • Circuit-Breaker Hedging • Event-Driven");
-console.log("🔒 Security: SHA-256 Merkle Audit • Cryptographic Integrity • Rate Limiting");
+console.info("🚀 Initializing Production-Ready Cursor Sportsbook...");
+console.info("🏆 The Living House is ENTERPRISE-LIVE! 🏆");
+console.info("🔄 Microservices: Risk • Hedging • Trading • Compliance • Analytics • Audit");
+console.info("🧠 AI Features: Smart Cash-Out • Predictive Analytics • Voice Trading");
+console.info("⚡ Performance: Zero-Copy Sorting • Circuit-Breaker Hedging • Event-Driven");
+console.info("🔒 Security: SHA-256 Merkle Audit • Cryptographic Integrity • Rate Limiting");
 
 // Initialize microservices orchestrator
-console.log("🎭 Starting microservices orchestrator...");
-console.log(`📊 Services loaded: ${orchestrator.getServiceStatus().length}`);
+console.info("🎭 Starting microservices orchestrator...");
+console.info(`📊 Services loaded: ${orchestrator.getServiceStatus().length}`);
 
 // Start the WebSocket server
 const server = createWebSocketServer();
@@ -1738,62 +1738,62 @@ startLiveOddsLoop();
 
 // Add a sample market to bootstrap the system
 setTimeout(() => {
-  console.log("🎯 Bootstrapping with sample market...");
+  console.info("🎯 Bootstrapping with sample market...");
   wsClients.forEach(ws => ws.send('/market add'));
 }, 1000);
 
 // Display enhanced command set
-console.log("\n🎮 Enhanced Command System:");
-console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-console.log("🏛️  MARKET OPERATIONS:");
-console.log("  /market add                    - Create new betting market");
-console.log("  /market suspend <id>           - Emergency market suspension");
-console.log("🎯 BETTING & TRADING:");
-console.log("  /bet <market> <outcome> <stake> - Place intelligent bet");
-console.log("  /cashout <betId>               - AI-powered cash-out quote");
-console.log("🛡️  RISK MANAGEMENT:");
-console.log("  /hedge [market|all] [amount]   - Execute delta hedging");
-console.log("  /dashboard                     - Operator risk dashboard");
-console.log("📊 ANALYTICS & MONITORING:");
-console.log("  /analytics                     - Real-time analytics data");
-console.log("  /audit                         - Cryptographic audit trail");
-console.log("  /ladder                        - Live market ladder");
-console.log("🎤 VOICE COMMANDS (Browser):");
-console.log("  Hold SPACE → 'suspend market X' | 'hedge exposure' | 'check risk'");
-console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+console.info("\n🎮 Enhanced Command System:");
+console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+console.info("🏛️  MARKET OPERATIONS:");
+console.info("  /market add                    - Create new betting market");
+console.info("  /market suspend <id>           - Emergency market suspension");
+console.info("🎯 BETTING & TRADING:");
+console.info("  /bet <market> <outcome> <stake> - Place intelligent bet");
+console.info("  /cashout <betId>               - AI-powered cash-out quote");
+console.info("🛡️  RISK MANAGEMENT:");
+console.info("  /hedge [market|all] [amount]   - Execute delta hedging");
+console.info("  /dashboard                     - Operator risk dashboard");
+console.info("📊 ANALYTICS & MONITORING:");
+console.info("  /analytics                     - Real-time analytics data");
+console.info("  /audit                         - Cryptographic audit trail");
+console.info("  /ladder                        - Live market ladder");
+console.info("🎤 VOICE COMMANDS (Browser):");
+console.info("  Hold SPACE → 'suspend market X' | 'hedge exposure' | 'check risk'");
+console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
-console.log("\n🔄 PRODUCTION SYSTEMS STATUS:");
-console.log("✅ Microservices orchestrator: ACTIVE");
-console.log("✅ Real-time odds simulation: RUNNING");
-console.log("✅ WebSocket command server: LISTENING");
-console.log("✅ Voice trading assistant: READY");
-console.log("✅ AI cash-out engine: ANALYZING");
-console.log("✅ Predictive risk dashboard: MONITORING");
-console.log("✅ SHA-256 Merkle audit system: LOGGING");
-console.log("✅ Circuit-breaker hedging: PROTECTED");
-console.log("✅ Rate limiting: ENFORCED");
+console.info("\n🔄 PRODUCTION SYSTEMS STATUS:");
+console.info("✅ Microservices orchestrator: ACTIVE");
+console.info("✅ Real-time odds simulation: RUNNING");
+console.info("✅ WebSocket command server: LISTENING");
+console.info("✅ Voice trading assistant: READY");
+console.info("✅ AI cash-out engine: ANALYZING");
+console.info("✅ Predictive risk dashboard: MONITORING");
+console.info("✅ SHA-256 Merkle audit system: LOGGING");
+console.info("✅ Circuit-breaker hedging: PROTECTED");
+console.info("✅ Rate limiting: ENFORCED");
 
-console.log("\n🏢 ENTERPRISE PRODUCTION FEATURES:");
-console.log("🛡️ Circuit Breaker: Prevents run-away hedging loops");
-console.log("🔐 SHA-256 Merkle Tree: Cryptographic audit integrity");
-console.log("⚡ Rate Limiting: 10 hedges/sec maximum");
-console.log("🔒 Zero-Trust Architecture: Every operation verified");
-console.log("📊 Regulatory Compliance: Full audit trail");
-console.log("🚀 Production Ready: Canary deployment capable");
+console.info("\n🏢 ENTERPRISE PRODUCTION FEATURES:");
+console.info("🛡️ Circuit Breaker: Prevents run-away hedging loops");
+console.info("🔐 SHA-256 Merkle Tree: Cryptographic audit integrity");
+console.info("⚡ Rate Limiting: 10 hedges/sec maximum");
+console.info("🔒 Zero-Trust Architecture: Every operation verified");
+console.info("📊 Regulatory Compliance: Full audit trail");
+console.info("🚀 Production Ready: Canary deployment capable");
 
-console.log("\n🎯 The Living House is PRODUCTION-DEPLOYABLE:");
-console.log("🏆 Enterprise-grade sportsbook with AI intelligence");
-console.log("⚡ Zero-downtime, zero-copy, zero-trust architecture");
-console.log("🔒 Cryptographically auditable, regulatorily compliant");
-console.log("🎤 Voice-driven, real-time, microservices-powered");
-console.log("📈 10× performance advantage over legacy systems");
+console.info("\n🎯 The Living House is PRODUCTION-DEPLOYABLE:");
+console.info("🏆 Enterprise-grade sportsbook with AI intelligence");
+console.info("⚡ Zero-downtime, zero-copy, zero-trust architecture");
+console.info("🔒 Cryptographically auditable, regulatorily compliant");
+console.info("🎤 Voice-driven, real-time, microservices-powered");
+console.info("📈 10× performance advantage over legacy systems");
 
-console.log("\n🏆 READY FOR CANARY DEPLOYMENT!");
+console.info("\n🏆 READY FOR CANARY DEPLOYMENT!");
 
 // Keep the process alive with enhanced monitoring
 process.on('SIGINT', () => {
-  console.log("\n🏁 Shutting down Ultra-Enhanced Sportsbook...");
-  console.log("🔄 Final service status:", orchestrator.getServiceStatus());
+  console.info("\n🏁 Shutting down Ultra-Enhanced Sportsbook...");
+  console.info("🔄 Final service status:", orchestrator.getServiceStatus());
   server.stop();
   process.exit(0);
 });

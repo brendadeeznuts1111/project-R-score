@@ -12,18 +12,18 @@
 import { $ } from 'bun';
 import { DashboardBridge } from './dashboard-bridge';
 
-console.log('🔥 Fire22 Dashboard Launch Script');
-console.log('!==!==!==!==!==!====');
+console.info('🔥 Fire22 Dashboard Launch Script');
+console.info('!==!==!==!==!==!====');
 
 async function launchDashboard() {
   try {
     // Check if DashboardBridge is already running
-    console.log('🔍 Checking if DashboardBridge is already running...');
+    console.info('🔍 Checking if DashboardBridge is already running...');
 
     try {
       const response = await fetch('http://localhost:3001/api/status');
       if (response.ok) {
-        console.log('✅ DashboardBridge is already running on port 3001');
+        console.info('✅ DashboardBridge is already running on port 3001');
         openDashboard();
         return;
       }
@@ -32,7 +32,7 @@ async function launchDashboard() {
     }
 
     // Start DashboardBridge
-    console.log('🚀 Starting DashboardBridge...');
+    console.info('🚀 Starting DashboardBridge...');
 
     // Start the bridge in the background
     const bridgeProcess = Bun.spawn(['bun', 'run', 'scripts/dashboard-bridge.ts'], {
@@ -41,7 +41,7 @@ async function launchDashboard() {
     });
 
     // Wait a moment for the bridge to start
-    console.log('⏳ Waiting for DashboardBridge to start...');
+    console.info('⏳ Waiting for DashboardBridge to start...');
     await new Promise(resolve => setTimeout(resolve, 3000));
 
     // Check if bridge started successfully
@@ -52,7 +52,7 @@ async function launchDashboard() {
       try {
         const response = await fetch('http://localhost:3001/api/status');
         if (response.ok) {
-          console.log('✅ DashboardBridge started successfully!');
+          console.info('✅ DashboardBridge started successfully!');
           break;
         }
       } catch (error) {
@@ -61,14 +61,14 @@ async function launchDashboard() {
 
       retries++;
       if (retries < maxRetries) {
-        console.log(`⏳ Waiting for bridge to start... (${retries}/${maxRetries})`);
+        console.info(`⏳ Waiting for bridge to start... (${retries}/${maxRetries})`);
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
 
     if (retries >= maxRetries) {
-      console.log('❌ Failed to start DashboardBridge after multiple attempts');
-      console.log('💡 Try running manually: bun run scripts/dashboard-bridge.ts');
+      console.info('❌ Failed to start DashboardBridge after multiple attempts');
+      console.info('💡 Try running manually: bun run scripts/dashboard-bridge.ts');
       return;
     }
 
@@ -79,62 +79,62 @@ async function launchDashboard() {
     showStatus();
   } catch (error) {
     console.error('❌ Error launching dashboard:', error);
-    console.log('💡 Try running manually: bun run scripts/dashboard-bridge.ts');
+    console.info('💡 Try running manually: bun run scripts/dashboard-bridge.ts');
   }
 }
 
 function openDashboard() {
-  console.log('🌐 Opening real-time dashboard...');
+  console.info('🌐 Opening real-time dashboard...');
 
   // Open the enhanced dashboard
   try {
     $`open docs/real-time-dashboard.html`;
-    console.log('✅ Dashboard opened in browser');
+    console.info('✅ Dashboard opened in browser');
   } catch (error) {
-    console.log('⚠️  Could not auto-open dashboard, please open manually:');
-    console.log('   📁 docs/real-time-dashboard.html');
+    console.info('⚠️  Could not auto-open dashboard, please open manually:');
+    console.info('   📁 docs/real-time-dashboard.html');
   }
 }
 
 async function showStatus() {
-  console.log('\n📊 Dashboard System Status:');
-  console.log('!==!==!==!==!===');
+  console.info('\n📊 Dashboard System Status:');
+  console.info('!==!==!==!==!===');
 
   try {
     const response = await fetch('http://localhost:3001/api/status');
     if (response.ok) {
       const status = await response.json();
-      console.log(`🔌 Bridge Status: ${status.integrationStatus}`);
-      console.log(`🏗️  Build Status: ${status.buildStatus}`);
-      console.log(`🌐 WebSocket: ws://localhost:3001/dashboard`);
-      console.log(`🌐 HTTP API: http://localhost:3001/api/*`);
+      console.info(`🔌 Bridge Status: ${status.integrationStatus}`);
+      console.info(`🏗️  Build Status: ${status.buildStatus}`);
+      console.info(`🌐 WebSocket: ws://localhost:3001/dashboard`);
+      console.info(`🌐 HTTP API: http://localhost:3001/api/*`);
     }
   } catch (error) {
-    console.log('❌ Could not fetch status');
+    console.info('❌ Could not fetch status');
   }
 
-  console.log('\n🎯 Next Steps:');
-  console.log('   1. Dashboard should be open in your browser');
-  console.log('   2. Click "Start Real Build" to test the system');
-  console.log('   3. Monitor real-time updates in the terminal');
-  console.log('   4. Use the dashboard to control your builds');
+  console.info('\n🎯 Next Steps:');
+  console.info('   1. Dashboard should be open in your browser');
+  console.info('   2. Click "Start Real Build" to test the system');
+  console.info('   3. Monitor real-time updates in the terminal');
+  console.info('   4. Use the dashboard to control your builds');
 
-  console.log('\n🛑 To stop the dashboard:');
-  console.log('   - Close the browser tab');
-  console.log('   - Press Ctrl+C in this terminal');
-  console.log('   - Or kill the bridge process manually');
+  console.info('\n🛑 To stop the dashboard:');
+  console.info('   - Close the browser tab');
+  console.info('   - Press Ctrl+C in this terminal');
+  console.info('   - Or kill the bridge process manually');
 }
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down dashboard...');
-  console.log('💡 DashboardBridge will continue running in background');
-  console.log('   To stop it completely, find and kill the process');
+  console.info('\n🛑 Shutting down dashboard...');
+  console.info('💡 DashboardBridge will continue running in background');
+  console.info('   To stop it completely, find and kill the process');
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n🛑 Shutting down dashboard...');
+  console.info('\n🛑 Shutting down dashboard...');
   process.exit(0);
 });
 

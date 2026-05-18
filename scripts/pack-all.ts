@@ -38,7 +38,7 @@ const R2_BUCKET_URL = process.env.R2_BUCKET_URL ||
  */
 async function packPackage(dir: string, name: string): Promise<boolean> {
   try {
-    console.log(`Packing ${name}...`);
+    console.info(`Packing ${name}...`);
     await $`cd ${dir} && bun pm pack --destination ../../dist/packs`;
     return true;
   } catch (error) {
@@ -51,10 +51,10 @@ async function packPackage(dir: string, name: string): Promise<boolean> {
  * Main pack function
  */
 async function main(): Promise<void> {
-  console.log("📦 Packing all workspace packages...\n");
-  console.log(`   Registry: ${REGISTRY_URL}`);
-  console.log(`   R2 Store: ${R2_BUCKET_URL}`);
-  console.log(`   Output:   ${PACKS_DIR}\n`);
+  console.info("📦 Packing all workspace packages...\n");
+  console.info(`   Registry: ${REGISTRY_URL}`);
+  console.info(`   R2 Store: ${R2_BUCKET_URL}`);
+  console.info(`   Output:   ${PACKS_DIR}\n`);
 
   await mkdir(PACKS_DIR, { recursive: true });
 
@@ -65,7 +65,7 @@ async function main(): Promise<void> {
 
   // Pack root package first
   try {
-    console.log("Packing root package...");
+    console.info("Packing root package...");
     await $`bun pm pack --destination ${PACKS_DIR}`;
     packedCount++;
   } catch (error) {
@@ -87,11 +87,11 @@ async function main(): Promise<void> {
     }
   }
 
-  console.log(`\n✅ Packed ${packedCount} packages to ${PACKS_DIR}/`);
-  console.log(`\n🚀 Next steps:`);
-  console.log(`   1. Verify packages: ls -la ${PACKS_DIR}/`);
-  console.log(`   2. Publish to registry: npm publish ${PACKS_DIR}/*.tgz --registry=${REGISTRY_URL}`);
-  console.log(`   3. Upload to R2: bun run r2:sync`);
+  console.info(`\n✅ Packed ${packedCount} packages to ${PACKS_DIR}/`);
+  console.info(`\n🚀 Next steps:`);
+  console.info(`   1. Verify packages: ls -la ${PACKS_DIR}/`);
+  console.info(`   2. Publish to registry: npm publish ${PACKS_DIR}/*.tgz --registry=${REGISTRY_URL}`);
+  console.info(`   3. Upload to R2: bun run r2:sync`);
 }
 
 await main();

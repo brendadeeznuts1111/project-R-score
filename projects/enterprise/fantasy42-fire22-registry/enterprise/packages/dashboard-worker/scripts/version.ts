@@ -48,8 +48,8 @@ class VersionManager {
   private versionRcPath = '.versionrc';
 
   constructor() {
-    console.log('🚀 Fire22 Dashboard Worker Version Manager');
-    console.log('Following Bun.semver standards\n');
+    console.info('🚀 Fire22 Dashboard Worker Version Manager');
+    console.info('Following Bun.semver standards\n');
   }
 
   /**
@@ -173,14 +173,14 @@ class VersionManager {
    */
   private executeGitCommands(newVersion: string): void {
     try {
-      console.log('📝 Committing version change...');
+      console.info('📝 Committing version change...');
       execSync('git add package.json', { stdio: 'inherit' });
       execSync(`git commit -m "chore: bump version to ${newVersion}"`, { stdio: 'inherit' });
 
-      console.log('🏷️  Creating Git tag...');
+      console.info('🏷️  Creating Git tag...');
       execSync(`git tag -a v${newVersion} -m "Release ${newVersion}"`, { stdio: 'inherit' });
 
-      console.log('🚀 Pushing changes...');
+      console.info('🚀 Pushing changes...');
       execSync('git push', { stdio: 'inherit' });
       execSync(`git push origin v${newVersion}`, { stdio: 'inherit' });
     } catch (error) {
@@ -215,7 +215,7 @@ class VersionManager {
       }
 
       writeFileSync(this.changelogPath, changelog);
-      console.log(`📝 Changelog updated: ${this.changelogPath}`);
+      console.info(`📝 Changelog updated: ${this.changelogPath}`);
     } catch (error) {
       console.warn('⚠️  Failed to update changelog');
       console.warn(`Error: ${error.message}`);
@@ -244,7 +244,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    * Initialize versioning system
    */
   private initializeVersioning(): void {
-    console.log('🔧 Initializing versioning system...');
+    console.info('🔧 Initializing versioning system...');
 
     // Create .versionrc
     const versionRc = {
@@ -268,12 +268,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     };
 
     writeFileSync(this.versionRcPath, JSON.stringify(versionRc, null, 2));
-    console.log(`✅ Created ${this.versionRcPath}`);
+    console.info(`✅ Created ${this.versionRcPath}`);
 
     // Create CHANGELOG.md
     if (!existsSync(this.changelogPath)) {
       writeFileSync(this.changelogPath, this.getDefaultChangelog());
-      console.log(`✅ Created ${this.changelogPath}`);
+      console.info(`✅ Created ${this.changelogPath}`);
     }
 
     // Update package.json scripts
@@ -293,10 +293,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     Object.assign(packageJson.scripts, versionScripts);
     this.writePackageJson(packageJson);
 
-    console.log('✅ Versioning system initialized!');
-    console.log('📝 Added version scripts to package.json');
-    console.log('🔧 Created .versionrc configuration');
-    console.log('📋 Created CHANGELOG.md template');
+    console.info('✅ Versioning system initialized!');
+    console.info('📝 Added version scripts to package.json');
+    console.info('🔧 Created .versionrc configuration');
+    console.info('📋 Created CHANGELOG.md template');
   }
 
   /**
@@ -307,24 +307,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     const currentVersion = packageJson.version;
     const versionInfo = this.parseVersion(currentVersion);
 
-    console.log('📦 Current Version Information:');
-    console.log(`   Package: ${packageJson.name}`);
-    console.log(`   Version: ${currentVersion}`);
-    console.log(`   Major: ${versionInfo.major}`);
-    console.log(`   Minor: ${versionInfo.minor}`);
-    console.log(`   Patch: ${versionInfo.patch}`);
+    console.info('📦 Current Version Information:');
+    console.info(`   Package: ${packageJson.name}`);
+    console.info(`   Version: ${currentVersion}`);
+    console.info(`   Major: ${versionInfo.major}`);
+    console.info(`   Minor: ${versionInfo.minor}`);
+    console.info(`   Patch: ${versionInfo.patch}`);
 
     if (packageJson.metadata?.versioning) {
-      console.log(`   Last Release: ${packageJson.metadata.versioning.lastRelease || 'N/A'}`);
-      console.log(`   Next Release: ${packageJson.metadata.versioning.nextRelease || 'N/A'}`);
+      console.info(`   Last Release: ${packageJson.metadata.versioning.lastRelease || 'N/A'}`);
+      console.info(`   Next Release: ${packageJson.metadata.versioning.nextRelease || 'N/A'}`);
     }
 
-    console.log('\n🚀 Available Commands:');
-    console.log('   bun run version:patch  # Bump patch version');
-    console.log('   bun run version:minor  # Bump minor version');
-    console.log('   bun run version:major  # Bump major version');
-    console.log('   bun run version:show   # Show version info');
-    console.log('   bun run version:init   # Initialize versioning');
+    console.info('\n🚀 Available Commands:');
+    console.info('   bun run version:patch  # Bump patch version');
+    console.info('   bun run version:minor  # Bump minor version');
+    console.info('   bun run version:major  # Bump major version');
+    console.info('   bun run version:show   # Show version info');
+    console.info('   bun run version:init   # Initialize versioning');
   }
 
   /**
@@ -332,19 +332,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    */
   private bumpVersion(type: 'major' | 'minor' | 'patch'): void {
     const currentVersion = this.getCurrentVersion();
-    console.log(`🔄 Bumping ${type} version...`);
-    console.log(`   Current: ${currentVersion}`);
+    console.info(`🔄 Bumping ${type} version...`);
+    console.info(`   Current: ${currentVersion}`);
 
     const newVersion = this.updateVersion(type);
-    console.log(`   New: ${newVersion}`);
+    console.info(`   New: ${newVersion}`);
 
     this.executeGitCommands(newVersion);
     this.generateChangelogEntry(newVersion, type);
 
-    console.log('\n🎉 Version bump completed successfully!');
-    console.log(`✅ Version: ${currentVersion} → ${newVersion}`);
-    console.log(`✅ Git tag: v${newVersion}`);
-    console.log(`✅ Changelog: Updated`);
+    console.info('\n🎉 Version bump completed successfully!');
+    console.info(`✅ Version: ${currentVersion} → ${newVersion}`);
+    console.info(`✅ Git tag: v${newVersion}`);
+    console.info(`✅ Changelog: Updated`);
   }
 
   /**
@@ -372,14 +372,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
           this.initializeVersioning();
           break;
         default:
-          console.log('❌ Invalid command. Usage:');
-          console.log('   bun run scripts/version.ts [patch|minor|major|show|init]');
-          console.log('\nExamples:');
-          console.log('   bun run scripts/version.ts patch    # 1.0.0 → 1.0.1');
-          console.log('   bun run scripts/version.ts minor    # 1.0.0 → 1.1.0');
-          console.log('   bun run scripts/version.ts major    # 1.0.0 → 2.0.0');
-          console.log('   bun run scripts/version.ts show     # Display current version');
-          console.log('   bun run scripts/version.ts init     # Initialize versioning');
+          console.info('❌ Invalid command. Usage:');
+          console.info('   bun run scripts/version.ts [patch|minor|major|show|init]');
+          console.info('\nExamples:');
+          console.info('   bun run scripts/version.ts patch    # 1.0.0 → 1.0.1');
+          console.info('   bun run scripts/version.ts minor    # 1.0.0 → 1.1.0');
+          console.info('   bun run scripts/version.ts major    # 1.0.0 → 2.0.0');
+          console.info('   bun run scripts/version.ts show     # Display current version');
+          console.info('   bun run scripts/version.ts init     # Initialize versioning');
           process.exit(1);
       }
     } catch (error) {

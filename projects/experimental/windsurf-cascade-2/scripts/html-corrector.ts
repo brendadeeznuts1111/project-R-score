@@ -194,7 +194,7 @@ $1`,
 
     public correctFile(filePath: string): boolean {
         if (!existsSync(filePath)) {
-            console.log(`❌ File not found: ${filePath}`);
+            console.info(`❌ File not found: ${filePath}`);
             return false;
         }
 
@@ -214,18 +214,18 @@ $1`,
                 if (content !== originalContent) {
                     modified = true;
                     appliedRules.push(rule.name);
-                    console.log(`✅ Applied: ${rule.name}`);
+                    console.info(`✅ Applied: ${rule.name}`);
                 }
             }
 
             if (modified) {
                 writeFileSync(filePath, content);
                 this.correctedFiles.push(filePath);
-                console.log(`🎉 Corrected: ${filePath}`);
-                console.log(`   Rules applied: ${appliedRules.join(', ')}`);
+                console.info(`🎉 Corrected: ${filePath}`);
+                console.info(`   Rules applied: ${appliedRules.join(', ')}`);
                 return true;
             } else {
-                console.log(`✅ Already optimized: ${filePath}`);
+                console.info(`✅ Already optimized: ${filePath}`);
                 return false;
             }
         } catch (error) {
@@ -235,13 +235,13 @@ $1`,
     }
 
     public correctFiles(filePaths: string[]): void {
-        console.log('🔧 Starting HTML Correction...\n');
+        console.info('🔧 Starting HTML Correction...\n');
 
         let correctedCount = 0;
         let alreadyOptimizedCount = 0;
 
         for (const filePath of filePaths) {
-            console.log(`\n📄 Processing: ${filePath}`);
+            console.info(`\n📄 Processing: ${filePath}`);
             if (this.correctFile(filePath)) {
                 correctedCount++;
             } else {
@@ -249,21 +249,21 @@ $1`,
             }
         }
 
-        console.log('\n' + '='.repeat(60));
-        console.log('📊 HTML CORRECTION SUMMARY');
-        console.log('='.repeat(60));
-        console.log(`Files processed: ${filePaths.length}`);
-        console.log(`Files corrected: ${correctedCount} 🎉`);
-        console.log(`Already optimized: ${alreadyOptimizedCount} ✅`);
-        console.log(`Total corrections applied: ${this.correctedFiles.length}`);
+        console.info('\n' + '='.repeat(60));
+        console.info('📊 HTML CORRECTION SUMMARY');
+        console.info('='.repeat(60));
+        console.info(`Files processed: ${filePaths.length}`);
+        console.info(`Files corrected: ${correctedCount} 🎉`);
+        console.info(`Already optimized: ${alreadyOptimizedCount} ✅`);
+        console.info(`Total corrections applied: ${this.correctedFiles.length}`);
         
         if (correctedCount > 0) {
-            console.log('\n🎉 HTML files have been optimized for:');
-            console.log('   • Structure (DOCTYPE, charset, viewport)');
-            console.log('   • SEO (meta tags, Open Graph, structured data)');
-            console.log('   • Accessibility (ARIA labels, landmarks, skip links)');
-            console.log('   • Security (CSP, HTTPS)');
-            console.log('   • Performance (lazy loading, preconnect)');
+            console.info('\n🎉 HTML files have been optimized for:');
+            console.info('   • Structure (DOCTYPE, charset, viewport)');
+            console.info('   • SEO (meta tags, Open Graph, structured data)');
+            console.info('   • Accessibility (ARIA labels, landmarks, skip links)');
+            console.info('   • Security (CSP, HTTPS)');
+            console.info('   • Performance (lazy loading, preconnect)');
         }
     }
 
@@ -282,7 +282,7 @@ async function main(): Promise<void> {
     const args = process.argv.slice(2);
     
     if (args.length === 0) {
-        console.log(`
+        console.info(`
 🔧 HTML Correction Tool
 
 Usage: bun html-corrector.ts [files...]

@@ -106,7 +106,7 @@ export class DatabaseManager {
     this.connectionAttempts++;
 
     try {
-      console.log(
+      console.info(
         `🔗 Connecting to ${this.config.adapter} database (attempt ${this.connectionAttempts})`
       );
 
@@ -142,13 +142,13 @@ export class DatabaseManager {
       this.isConnected = true;
       this.connectionAttempts = 0;
 
-      console.log(`✅ Connected to ${this.config.adapter} database successfully`);
+      console.info(`✅ Connected to ${this.config.adapter} database successfully`);
     } catch (error) {
       console.error(`❌ Database connection failed:`, error);
 
       if (this.connectionAttempts < this.maxRetries) {
         const delay = Math.pow(2, this.connectionAttempts) * 1000; // Exponential backoff
-        console.log(`⏳ Retrying connection in ${delay}ms...`);
+        console.info(`⏳ Retrying connection in ${delay}ms...`);
 
         await new Promise(resolve => setTimeout(resolve, delay));
         return this.connect();
@@ -223,7 +223,7 @@ export class DatabaseManager {
       // Bun.SQL connections are automatically managed
       this.sql = null;
       this.isConnected = false;
-      console.log(`🔌 Disconnected from ${this.config.adapter} database`);
+      console.info(`🔌 Disconnected from ${this.config.adapter} database`);
     }
   }
 

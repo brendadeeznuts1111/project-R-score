@@ -5,8 +5,8 @@
 
 import { Terminal } from "bun";
 
-console.log("🚀 Ultra-Enhanced 50-Column Matrix - Bun API Integration");
-console.log("=" .repeat(70));
+console.info("🚀 Ultra-Enhanced 50-Column Matrix - Bun API Integration");
+console.info("=" .repeat(70));
 
 // Enhanced configuration with new Bun-specific features
 interface UltraEnhancedConfig {
@@ -609,7 +609,7 @@ function generateRow(pattern: string, config: UltraEnhancedConfig): string[] {
 // Format table with enhanced Bun Terminal support
 function formatTable(headers: string[], rows: string[][]): void {
   if (!process.stdout.isTTY) {
-    console.log("⚠️ Terminal not detected - using basic table format");
+    console.info("⚠️ Terminal not detected - using basic table format");
     console.table(rows);
     return;
   }
@@ -624,16 +624,16 @@ function formatTable(headers: string[], rows: string[][]): void {
   const separator = "+" + colWidths.map(width => "-".repeat(width + 2)).join("+") + "+";
   
   // Print header
-  console.log(separator);
-  console.log("| " + headers.map((header, i) => header.padEnd(colWidths[i])).join(" | ") + " |");
-  console.log(separator);
+  console.info(separator);
+  console.info("| " + headers.map((header, i) => header.padEnd(colWidths[i])).join(" | ") + " |");
+  console.info(separator);
   
   // Print rows
   rows.forEach(row => {
-    console.log("| " + row.map((cell, i) => cell.padEnd(colWidths[i])).join(" | ") + " |");
+    console.info("| " + row.map((cell, i) => cell.padEnd(colWidths[i])).join(" | ") + " |");
   });
   
-  console.log(separator);
+  console.info(separator);
 }
 
 // Main execution
@@ -642,64 +642,64 @@ async function main() {
     const config = parseArgs();
     const patterns = ULTRA_ENHANCED_PATTERNS.slice(0, config.count);
     
-    console.log(`🔧 Configuration:`);
-    console.log(`   Selected features: ${Object.entries(config).filter(([k, v]) => v && k !== 'count' && k !== 'all').map(([k]) => k).join(', ') || 'none'}`);
-    console.log(`   Total columns: ${generateHeaders(config).length}`);
-    console.log(`   Pattern count: ${patterns.length}`);
-    console.log(`   Terminal support: ${process.stdout.isTTY ? '✓' : '✗'}`);
-    console.log(`   Bun stringWidth: ${typeof Bun.stringWidth === 'function' ? '✓' : '✗'}`);
-    console.log("");
+    console.info(`🔧 Configuration:`);
+    console.info(`   Selected features: ${Object.entries(config).filter(([k, v]) => v && k !== 'count' && k !== 'all').map(([k]) => k).join(', ') || 'none'}`);
+    console.info(`   Total columns: ${generateHeaders(config).length}`);
+    console.info(`   Pattern count: ${patterns.length}`);
+    console.info(`   Terminal support: ${process.stdout.isTTY ? '✓' : '✗'}`);
+    console.info(`   Bun stringWidth: ${typeof Bun.stringWidth === 'function' ? '✓' : '✗'}`);
+    console.info("");
     
     // Generate headers and rows
     const headers = generateHeaders(config);
     const rows = patterns.map(pattern => generateRow(pattern, config));
     
     // Display results
-    console.log(`📊 Ultra-Enhanced Analysis Results (${headers.length} columns):`);
-    console.log("");
+    console.info(`📊 Ultra-Enhanced Analysis Results (${headers.length} columns):`);
+    console.info("");
     
     if (headers.length > 20) {
-      console.log(`🌐 Large table detected (${headers.length} columns). Terminal formatting optimized for readability.`);
-      console.log("");
+      console.info(`🌐 Large table detected (${headers.length} columns). Terminal formatting optimized for readability.`);
+      console.info("");
     }
     
     formatTable(headers, rows);
     
-    console.log("");
-    console.log(`🎯 Analysis Complete!`);
-    console.log(`   Patterns analyzed: ${patterns.length}`);
-    console.log(`   Columns displayed: ${headers.length}`);
-    console.log(`   Bun API features: ${config.bunApi || config.all ? '✓' : '✗'}`);
-    console.log(`   Unicode analysis: ${config.unicode || config.all ? '✓' : '✗'}`);
-    console.log(`   Bundle analysis: ${config.bundleCompile || config.all ? '✓' : '✗'}`);
+    console.info("");
+    console.info(`🎯 Analysis Complete!`);
+    console.info(`   Patterns analyzed: ${patterns.length}`);
+    console.info(`   Columns displayed: ${headers.length}`);
+    console.info(`   Bun API features: ${config.bunApi || config.all ? '✓' : '✗'}`);
+    console.info(`   Unicode analysis: ${config.unicode || config.all ? '✓' : '✗'}`);
+    console.info(`   Bundle analysis: ${config.bundleCompile || config.all ? '✓' : '✗'}`);
     
     // Show feature summary
     if (config.bunApi || config.all) {
-      console.log("");
-      console.log(`🚀 Bun API Integration Summary:`);
+      console.info("");
+      console.info(`🚀 Bun API Integration Summary:`);
       const bunRows = rows.map(row => row.slice(headers.indexOf("BunVer"), headers.indexOf("NPMRC") + 1));
       const terminalPatterns = bunRows.filter(row => row[1] === "✓").length;
       const featurePatterns = bunRows.filter(row => row[2] === "✓").length;
-      console.log(`   Terminal API usage: ${terminalPatterns}/${patterns.length} patterns`);
-      console.log(`   Feature flag usage: ${featurePatterns}/${patterns.length} patterns`);
+      console.info(`   Terminal API usage: ${terminalPatterns}/${patterns.length} patterns`);
+      console.info(`   Feature flag usage: ${featurePatterns}/${patterns.length} patterns`);
     }
     
     if (config.unicode || config.all) {
-      console.log("");
-      console.log(`🌐 Unicode Analysis Summary:`);
+      console.info("");
+      console.info(`🌐 Unicode Analysis Summary:`);
       const unicodeRows = rows.map(row => row.slice(headers.indexOf("Width"), headers.indexOf("WCWidth") + 1));
       const emojiPatterns = unicodeRows.filter(row => row[1] === "✓").length;
-      console.log(`   Emoji patterns: ${emojiPatterns}/${patterns.length}`);
-      console.log(`   Average string width: ${(unicodeRows.reduce((sum, row) => sum + parseInt(row[0]), 0) / unicodeRows.length).toFixed(1)}`);
+      console.info(`   Emoji patterns: ${emojiPatterns}/${patterns.length}`);
+      console.info(`   Average string width: ${(unicodeRows.reduce((sum, row) => sum + parseInt(row[0]), 0) / unicodeRows.length).toFixed(1)}`);
     }
     
     if (config.bundleCompile || config.all) {
-      console.log("");
-      console.log(`📦 Bundle Analysis Summary:`);
+      console.info("");
+      console.info(`📦 Bundle Analysis Summary:`);
       const bundleRows = rows.map(row => row.slice(headers.indexOf("Features"), headers.indexOf("FeatCond") + 1));
       const optimizedPatterns = bundleRows.filter(row => parseInt(row[1]) > 50).length;
-      console.log(`   Optimized patterns: ${optimizedPatterns}/${patterns.length}`);
-      console.log(`   Average DCE: ${(bundleRows.reduce((sum, row) => sum + parseInt(row[1]), 0) / bundleRows.length).toFixed(1)}%`);
+      console.info(`   Optimized patterns: ${optimizedPatterns}/${patterns.length}`);
+      console.info(`   Average DCE: ${(bundleRows.reduce((sum, row) => sum + parseInt(row[1]), 0) / bundleRows.length).toFixed(1)}%`);
     }
     
   } catch (error) {

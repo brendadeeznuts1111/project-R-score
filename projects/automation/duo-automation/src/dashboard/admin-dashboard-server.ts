@@ -651,7 +651,7 @@ function getAdminDashboardHTML(): string {
                 const result = await response.json();
                 if (result.success) {
                     alert('Propagation check completed. Check console for details.');
-                    console.log('Propagation status:', result.propagation);
+                    console.info('Propagation status:', result.propagation);
                 }
             } catch (error) {
                 console.error('Error checking propagation:', error);
@@ -739,22 +739,22 @@ function getAdminDashboardHTML(): string {
   `;
 }
 
-console.log('🏭 Factory-Wager Admin Dashboard running on http://localhost:3000');
-console.log('📊 Available routes:');
-console.log('  GET  /              - Admin dashboard');
-console.log('  GET  /admin         - Admin dashboard');
-console.log('  GET  /dashboard     - Admin dashboard');
-console.log('  GET  /api/system/status - System status');
-console.log('  GET  /api/domains   - Domain information');
-console.log('  GET  /api/dns/records - DNS records');
-console.log('  POST /api/dns/records - Add DNS record');
-console.log('  PUT  /api/dns/records/:id - Update DNS record');
-console.log('  DELETE /api/dns/records/:id - Delete DNS record');
-console.log('  GET  /api/dns/propagation - DNS propagation');
-console.log('  POST /api/domains/:domain/check - Check domain');
-console.log('  GET  /api/metrics   - System metrics');
-console.log('  GET  /api/logs      - System logs');
-console.log('  POST /api/system/restart - Restart system');
-console.log('  POST /api/ssl/renew - Renew SSL certificates');
+console.info('🏭 Factory-Wager Admin Dashboard running on http://localhost:3000');
+console.info('📊 Available routes:');
+console.info('  GET  /              - Admin dashboard');
+console.info('  GET  /admin         - Admin dashboard');
+console.info('  GET  /dashboard     - Admin dashboard');
+console.info('  GET  /api/system/status - System status');
+console.info('  GET  /api/domains   - Domain information');
+console.info('  GET  /api/dns/records - DNS records');
+console.info('  POST /api/dns/records - Add DNS record');
+console.info('  PUT  /api/dns/records/:id - Update DNS record');
+console.info('  DELETE /api/dns/records/:id - Delete DNS record');
+console.info('  GET  /api/dns/propagation - DNS propagation');
+console.info('  POST /api/domains/:domain/check - Check domain');
+console.info('  GET  /api/metrics   - System metrics');
+console.info('  GET  /api/logs      - System logs');
+console.info('  POST /api/system/restart - Restart system');
+console.info('  POST /api/ssl/renew - Renew SSL certificates');
 
 export default app;

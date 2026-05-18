@@ -214,16 +214,16 @@ beforeAll(async () => {
       );
     }
 
-    console.log('✅ Test configuration validated successfully');
-    console.log(`   Base URL: ${testConfig.baseURL}`);
-    console.log(`   Port: ${testConfig.port}`);
-    console.log(`   Timeout: ${testConfig.timeout}ms`);
-    console.log(`   Concurrent Requests: ${testConfig.concurrentRequests}\n`);
+    console.info('✅ Test configuration validated successfully');
+    console.info(`   Base URL: ${testConfig.baseURL}`);
+    console.info(`   Port: ${testConfig.port}`);
+    console.info(`   Timeout: ${testConfig.timeout}ms`);
+    console.info(`   Concurrent Requests: ${testConfig.concurrentRequests}\n`);
 
     // Initialize test server
     const initResult = await initializeTestServer();
     if (initResult.data) {
-      console.log('🚀 Test server initialized successfully');
+      console.info('🚀 Test server initialized successfully');
     }
   } catch (error) {
     await handleError(error, {
@@ -238,7 +238,7 @@ beforeAll(async () => {
 afterAll(async () => {
   try {
     await cleanupTestServer();
-    console.log('🧹 Test server cleaned up successfully');
+    console.info('🧹 Test server cleaned up successfully');
   } catch (error) {
     await handleError(error, {
       scriptName: 'enhanced-api-test',
@@ -466,9 +466,9 @@ describe('⚡ Enhanced Performance Tests', () => {
     expect(result.data.responseTime).toBeLessThan(100); // Should respond within 100ms
 
     // Log performance metrics
-    console.log(`📊 Health endpoint performance:`);
-    console.log(`   Response time: ${result.data.responseTime}ms`);
-    console.log(`   Status: ${result.data.status}`);
+    console.info(`📊 Health endpoint performance:`);
+    console.info(`   Response time: ${result.data.responseTime}ms`);
+    console.info(`   Status: ${result.data.status}`);
   });
 
   test('concurrent requests handling with enhanced monitoring', async () => {
@@ -485,10 +485,10 @@ describe('⚡ Enhanced Performance Tests', () => {
     expect(result.data.failureCount).toBe(0);
 
     // Log performance metrics
-    console.log(`📊 Concurrent requests performance:`);
-    console.log(`   Total time: ${result.data.totalTime}ms`);
-    console.log(`   Average time: ${result.data.averageTime.toFixed(2)}ms`);
-    console.log(
+    console.info(`📊 Concurrent requests performance:`);
+    console.info(`   Total time: ${result.data.totalTime}ms`);
+    console.info(`   Average time: ${result.data.averageTime.toFixed(2)}ms`);
+    console.info(
       `   Success rate: ${((result.data.successCount / testConfig.concurrentRequests) * 100).toFixed(1)}%`
     );
   });
@@ -502,9 +502,9 @@ describe('⚡ Enhanced Performance Tests', () => {
       expect(result.data.successCount).toBe(load);
       expect(result.data.failureCount).toBe(0);
 
-      console.log(`📊 Load test (${load} requests):`);
-      console.log(`   Total time: ${result.data.totalTime}ms`);
-      console.log(`   Average time: ${result.data.averageTime.toFixed(2)}ms`);
+      console.info(`📊 Load test (${load} requests):`);
+      console.info(`   Total time: ${result.data.totalTime}ms`);
+      console.info(`   Average time: ${result.data.averageTime.toFixed(2)}ms`);
     }
   });
 });
@@ -554,10 +554,10 @@ describe('🔗 Enhanced Integration Tests', () => {
     expect(result.data.verify.response.status).toBe(200);
     expect(result.data.totalTime).toBeLessThan(500); // Full flow should complete within 500ms
 
-    console.log(`📊 Full auth flow performance:`);
-    console.log(`   Login time: ${result.data.login.time}ms`);
-    console.log(`   Verify time: ${result.data.verify.time}ms`);
-    console.log(`   Total time: ${result.data.totalTime}ms`);
+    console.info(`📊 Full auth flow performance:`);
+    console.info(`   Login time: ${result.data.login.time}ms`);
+    console.info(`   Verify time: ${result.data.verify.time}ms`);
+    console.info(`   Total time: ${result.data.totalTime}ms`);
   });
 });
 
@@ -580,9 +580,9 @@ describe('📊 Enhanced Test Reporting', () => {
     expect(result.data.report).toContain('Fire22 Script Performance Report');
     expect(result.data.timestamp).toBeDefined();
 
-    console.log('\n📈 Enhanced API Test Performance Report:');
-    console.log('!==!==!==!==!==!==!==!==');
-    console.log(result.data.report);
+    console.info('\n📈 Enhanced API Test Performance Report:');
+    console.info('!==!==!==!==!==!==!==!==');
+    console.info(result.data.report);
   });
 });
 

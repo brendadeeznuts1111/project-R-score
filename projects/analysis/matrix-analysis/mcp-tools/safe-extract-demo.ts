@@ -25,8 +25,8 @@ class MockArchive {
   }
 
   async extract(targetDir: string, options?: { glob?: string }): Promise<number> {
-    console.log(`📁 Extracting to: ${targetDir}`);
-    console.log(`🔍 Glob pattern: ${options?.glob || "**/*"}`);
+    console.info(`📁 Extracting to: ${targetDir}`);
+    console.info(`🔍 Glob pattern: ${options?.glob || "**/*"}`);
 
     let count = 0;
     const fs = require('fs');
@@ -54,7 +54,7 @@ class MockArchive {
 
       fs.writeFileSync(fullPath, content);
       count++;
-      console.log(`  ✅ Extracted: ${path}`);
+      console.info(`  ✅ Extracted: ${path}`);
     }
 
     return count;
@@ -65,8 +65,8 @@ class MockArchive {
 (Bun as any).Archive = MockArchive;
 
 async function safeExtractSnapshot(path: string, targetDir: string) {
-  console.log(`🔐 Starting secure extraction of: ${path}`);
-  console.log(`📂 Target directory: ${targetDir}`);
+  console.info(`🔐 Starting secure extraction of: ${path}`);
+  console.info(`📂 Target directory: ${targetDir}`);
 
   // Security validation
   if (!path.startsWith("./snapshots/") || !path.endsWith(".tar.gz")) {
@@ -78,7 +78,7 @@ async function safeExtractSnapshot(path: string, targetDir: string) {
 
   // Security: reject dangerous paths
   const files = await archive.files();
-  console.log(`📋 Found ${files.size} files in archive`);
+  console.info(`📋 Found ${files.size} files in archive`);
 
   const dangerousPaths: string[] = [];
   for (const [filePath] of files) {
@@ -88,7 +88,7 @@ async function safeExtractSnapshot(path: string, targetDir: string) {
   }
 
   if (dangerousPaths.length > 0) {
-    console.log(`⚠️  Blocked dangerous paths: ${dangerousPaths.join(", ")}`);
+    console.info(`⚠️  Blocked dangerous paths: ${dangerousPaths.join(", ")}`);
     throw new Error(`Unsafe path in archive: ${dangerousPaths[0]}`);
   }
 
@@ -96,7 +96,7 @@ async function safeExtractSnapshot(path: string, targetDir: string) {
   const count = await archive.extract(targetDir, { glob: "**/*.{json,jsonl}" });
 
   // Audit extraction
-  console.log(`✅ Extracted ${count} files from ${path} to ${targetDir}`);
+  console.info(`✅ Extracted ${count} files from ${path} to ${targetDir}`);
 
   return count;
 }
@@ -104,14 +104,14 @@ async function safeExtractSnapshot(path: string, targetDir: string) {
 // Enhanced extraction with validation
 async function extractAndValidate(path: string, targetDir: string) {
   try {
-    console.log("🎯 Safe Extract & Validate Demo");
-    console.log("=" .repeat(40));
+    console.info("🎯 Safe Extract & Validate Demo");
+    console.info("=" .repeat(40));
 
     // Step 1: Safe extraction
     const count = await safeExtractSnapshot(path, targetDir);
 
     // Step 2: Validate extracted files
-    console.log("\n🔍 Validating extracted files...");
+    console.info("\n🔍 Validating extracted files...");
 
     const fs = require('fs');
     const extractedFiles = fs.readdirSync(targetDir);
@@ -126,7 +126,7 @@ async function extractAndValidate(path: string, targetDir: string) {
       try {
         if (file.endsWith('.json')) {
           JSON.parse(content); // Validate JSON
-          console.log(`  ✅ Valid JSON: ${file}`);
+          console.info(`  ✅ Valid JSON: ${file}`);
           validFiles++;
         } else if (file.endsWith('.jsonl')) {
           // Validate JSONL (each line should be valid JSON)
@@ -138,24 +138,24 @@ async function extractAndValidate(path: string, targetDir: string) {
               validLines++;
             }
           }
-          console.log(`  ✅ Valid JSONL: ${file} (${validLines}/${lines.length} lines)`);
+          console.info(`  ✅ Valid JSONL: ${file} (${validLines}/${lines.length} lines)`);
           validFiles++;
         } else {
-          console.log(`  ⚠️  Unexpected file type: ${file}`);
+          console.info(`  ⚠️  Unexpected file type: ${file}`);
           invalidFiles++;
         }
       } catch (error) {
-        console.log(`  ❌ Invalid file: ${file} - ${error instanceof Error ? error.message : String(error)}`);
+        console.info(`  ❌ Invalid file: ${file} - ${error instanceof Error ? error.message : String(error)}`);
         invalidFiles++;
       }
     }
 
     // Step 3: Summary
-    console.log(`\n📊 Extraction Summary:`);
-    console.log(`   • Files extracted: ${count}`);
-    console.log(`   • Valid files: ${validFiles}`);
-    console.log(`   • Invalid files: ${invalidFiles}`);
-    console.log(`   • Success rate: ${Math.round(validFiles/(validFiles+invalidFiles)*100)}%`);
+    console.info(`\n📊 Extraction Summary:`);
+    console.info(`   • Files extracted: ${count}`);
+    console.info(`   • Valid files: ${validFiles}`);
+    console.info(`   • Invalid files: ${invalidFiles}`);
+    console.info(`   • Success rate: ${Math.round(validFiles/(validFiles+invalidFiles)*100)}%`);
 
     return { count, validFiles, invalidFiles };
 
@@ -167,40 +167,40 @@ async function extractAndValidate(path: string, targetDir: string) {
 
 // Demo with security tests
 async function demonstrateSecurityFeatures() {
-  console.log("🛡️  Security Features Demonstration");
-  console.log("=" .repeat(45));
+  console.info("🛡️  Security Features Demonstration");
+  console.info("=" .repeat(45));
 
   // Test 1: Valid path
-  console.log("\n📋 Test 1: Valid snapshot path");
+  console.info("\n📋 Test 1: Valid snapshot path");
   try {
     await safeExtractSnapshot("./snapshots/tenant-a-2026-01-31T23-45-00.tar.gz", "./audit-review/tenant-a");
   } catch (error) {
-    console.log(`Expected behavior: ${error instanceof Error ? error.message : String(error)}`);
+    console.info(`Expected behavior: ${error instanceof Error ? error.message : String(error)}`);
   }
 
   // Test 2: Invalid path - doesn't start with ./snapshots/
-  console.log("\n📋 Test 2: Invalid path (wrong directory)");
+  console.info("\n📋 Test 2: Invalid path (wrong directory)");
   try {
     await safeExtractSnapshot("/tmp/snapshot.tar.gz", "./target");
   } catch (error) {
-    console.log(`✅ Blocked: ${error instanceof Error ? error.message : String(error)}`);
+    console.info(`✅ Blocked: ${error instanceof Error ? error.message : String(error)}`);
   }
 
   // Test 3: Invalid path - wrong extension
-  console.log("\n📋 Test 3: Invalid path (wrong extension)");
+  console.info("\n📋 Test 3: Invalid path (wrong extension)");
   try {
     await safeExtractSnapshot("./snapshots/suspicious.exe", "./target");
   } catch (error) {
-    console.log(`✅ Blocked: ${error instanceof Error ? error.message : String(error)}`);
+    console.info(`✅ Blocked: ${error instanceof Error ? error.message : String(error)}`);
   }
 
   // Test 4: Dangerous paths in archive (simulated)
-  console.log("\n📋 Test 4: Archive with dangerous paths");
+  console.info("\n📋 Test 4: Archive with dangerous paths");
   try {
     // This would fail in real implementation due to dangerous paths
-    console.log("✅ Archive validation blocked dangerous paths (../, /, \\)");
+    console.info("✅ Archive validation blocked dangerous paths (../, /, \\)");
   } catch (error) {
-    console.log(`✅ Security working: ${error instanceof Error ? error.message : String(error)}`);
+    console.info(`✅ Security working: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -241,17 +241,17 @@ async function demonstrateExtraction() {
     // Show security features
     await demonstrateSecurityFeatures();
 
-    console.log("\n🔗 Dashboard Integration:");
-    console.log("  • POST /api/extract/snapshot - Extract with validation");
-    console.log("  • GET /api/extract/status/{jobId} - Track progress");
-    console.log("  • WebSocket events for real-time updates");
-    console.log("  • Automatic cleanup after review");
+    console.info("\n🔗 Dashboard Integration:");
+    console.info("  • POST /api/extract/snapshot - Extract with validation");
+    console.info("  • GET /api/extract/status/{jobId} - Track progress");
+    console.info("  • WebSocket events for real-time updates");
+    console.info("  • Automatic cleanup after review");
 
-    console.log("\n🛡️  Security Benefits:");
-    console.log("  • Path traversal protection");
-    console.log("  • File type validation");
-    console.log("  • Content format verification");
-    console.log("  • Audit trail of all extractions");
+    console.info("\n🛡️  Security Benefits:");
+    console.info("  • Path traversal protection");
+    console.info("  • File type validation");
+    console.info("  • Content format verification");
+    console.info("  • Audit trail of all extractions");
 
   } catch (error) {
     console.error("❌ Demo failed:", error);

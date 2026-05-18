@@ -3,26 +3,26 @@
 // Comprehensive Bun Fetch Debugging Demo
 // Shows the full richness of verbose fetch output including all headers
 
-console.log('🔍 Comprehensive Bun Verbose Fetch Debugging');
-console.log('==============================================\n');
+console.info('🔍 Comprehensive Bun Verbose Fetch Debugging');
+console.info('==============================================\n');
 
 // Enable verbose fetch logging to show complete request/response headers
 process.env.BUN_CONFIG_VERBOSE_FETCH = "curl";
 
-console.log('✅ BUN_CONFIG_VERBOSE_FETCH = "curl"');
-console.log('📡 Showing complete request/response headers including ETags, Cache-Control, Server info, etc.\n');
+console.info('✅ BUN_CONFIG_VERBOSE_FETCH = "curl"');
+console.info('📡 Showing complete request/response headers including ETags, Cache-Control, Server info, etc.\n');
 
 // Test different types of requests to show various header combinations
 async function demonstrateComprehensiveFetchDebugging() {
-  console.log('--- 1. Example.com (Basic HTTP/1.1 with ETags) ---');
+  console.info('--- 1. Example.com (Basic HTTP/1.1 with ETags) ---');
   try {
     const response = await fetch('https://example.com');
-    console.log('✅ Basic request completed');
+    console.info('✅ Basic request completed');
   } catch (error) {
-    console.log('❌ Basic request failed:', error instanceof Error ? error.message : 'Unknown error');
+    console.info('❌ Basic request failed:', error instanceof Error ? error.message : 'Unknown error');
   }
 
-  console.log('\n--- 2. HTTPBin.org (JSON API with CORS headers) ---');
+  console.info('\n--- 2. HTTPBin.org (JSON API with CORS headers) ---');
   try {
     const response = await fetch('https://httpbin.org/json', {
       headers: {
@@ -31,12 +31,12 @@ async function demonstrateComprehensiveFetchDebugging() {
         'User-Agent': 'Bun-Comprehensive-Demo/1.0'
       }
     });
-    console.log('✅ JSON API request completed');
+    console.info('✅ JSON API request completed');
   } catch (error) {
-    console.log('❌ JSON API request failed:', error instanceof Error ? error.message : 'Unknown error');
+    console.info('❌ JSON API request failed:', error instanceof Error ? error.message : 'Unknown error');
   }
 
-  console.log('\n--- 3. GitHub API (Authentication, Rate Limiting, ETags) ---');
+  console.info('\n--- 3. GitHub API (Authentication, Rate Limiting, ETags) ---');
   try {
     const response = await fetch('https://api.github.com/users/bun-sh', {
       headers: {
@@ -45,12 +45,12 @@ async function demonstrateComprehensiveFetchDebugging() {
         'If-None-Match': 'W/"some-etag-value"'  // Test conditional request
       }
     });
-    console.log('✅ GitHub API request completed');
+    console.info('✅ GitHub API request completed');
   } catch (error) {
-    console.log('❌ GitHub API request failed:', error instanceof Error ? error.message : 'Unknown error');
+    console.info('❌ GitHub API request failed:', error instanceof Error ? error.message : 'Unknown error');
   }
 
-  console.log('\n--- 4. POST with JSON body (Content-Length, Content-Type) ---');
+  console.info('\n--- 4. POST with JSON body (Content-Length, Content-Type) ---');
   try {
     const response = await fetch('https://httpbin.org/post', {
       method: 'POST',
@@ -70,12 +70,12 @@ async function demonstrateComprehensiveFetchDebugging() {
         }
       })
     });
-    console.log('✅ POST with JSON completed');
+    console.info('✅ POST with JSON completed');
   } catch (error: any) {
-    console.log('❌ POST with JSON failed:', error instanceof Error ? error.message : 'Unknown error');
+    console.info('❌ POST with JSON failed:', error instanceof Error ? error.message : 'Unknown error');
   }
 
-  console.log('\n--- 5. PUT with conditional headers (If-Match, If-Modified-Since) ---');
+  console.info('\n--- 5. PUT with conditional headers (If-Match, If-Modified-Since) ---');
   try {
     const response: Response = await fetch('https://httpbin.org/put', {
       method: 'PUT',
@@ -91,12 +91,12 @@ async function demonstrateComprehensiveFetchDebugging() {
         timestamp: Date.now()
       })
     });
-    console.log('✅ Conditional PUT completed');
+    console.info('✅ Conditional PUT completed');
   } catch (error) {
-    console.log('❌ Conditional PUT failed:', error instanceof Error ? error.message : 'Unknown error');
+    console.info('❌ Conditional PUT failed:', error instanceof Error ? error.message : 'Unknown error');
   }
 
-  console.log('\n--- 6. DELETE with authentication and custom headers ---');
+  console.info('\n--- 6. DELETE with authentication and custom headers ---');
   try {
     const response = await fetch('https://httpbin.org/delete', {
       method: 'DELETE',
@@ -107,12 +107,12 @@ async function demonstrateComprehensiveFetchDebugging() {
         'X-Correlation-ID': 'corr-' + Math.random().toString(36).substr(2, 9)
       }
     });
-    console.log('✅ DELETE request completed');
+    console.info('✅ DELETE request completed');
   } catch (error) {
-    console.log('❌ DELETE request failed:', error instanceof Error ? error.message : 'Unknown error');
+    console.info('❌ DELETE request failed:', error instanceof Error ? error.message : 'Unknown error');
   }
 
-  console.log('\n--- 7. PATCH with partial update and optimistic locking ---');
+  console.info('\n--- 7. PATCH with partial update and optimistic locking ---');
   try {
     const response = await fetch('https://httpbin.org/patch', {
       method: 'PATCH',
@@ -127,12 +127,12 @@ async function demonstrateComprehensiveFetchDebugging() {
         { op: 'add', path: '/updatedAt', value: new Date().toISOString() }
       ])
     });
-    console.log('✅ PATCH request completed');
+    console.info('✅ PATCH request completed');
   } catch (error) {
-    console.log('❌ PATCH request failed:', error instanceof Error ? error.message : 'Unknown error');
+    console.info('❌ PATCH request failed:', error instanceof Error ? error.message : 'Unknown error');
   }
 
-  console.log('\n--- 8. HEAD request (headers only, no body) ---');
+  console.info('\n--- 8. HEAD request (headers only, no body) ---');
   try {
     const response = await fetch('https://httpbin.org/headers', {
       method: 'HEAD',
@@ -141,12 +141,12 @@ async function demonstrateComprehensiveFetchDebugging() {
         'X-Debug-Mode': 'headers-inspection'
       }
     });
-    console.log('✅ HEAD request completed');
+    console.info('✅ HEAD request completed');
   } catch (error) {
-    console.log('❌ HEAD request failed:', error instanceof Error ? error.message : 'Unknown error');
+    console.info('❌ HEAD request failed:', error instanceof Error ? error.message : 'Unknown error');
   }
 
-  console.log('\n--- 9. OPTIONS request (CORS preflight) ---');
+  console.info('\n--- 9. OPTIONS request (CORS preflight) ---');
   try {
     const response = await fetch('https://httpbin.org/options', {
       method: 'OPTIONS',
@@ -156,12 +156,12 @@ async function demonstrateComprehensiveFetchDebugging() {
         'Access-Control-Request-Headers': 'Content-Type, Authorization'
       }
     });
-    console.log('✅ OPTIONS request completed');
+    console.info('✅ OPTIONS request completed');
   } catch (error) {
-    console.log('❌ OPTIONS request failed:', error instanceof Error ? error.message : 'Unknown error');
+    console.info('❌ OPTIONS request failed:', error instanceof Error ? error.message : 'Unknown error');
   }
 
-  console.log('\n--- 10. File upload with multipart/form-data ---');
+  console.info('\n--- 10. File upload with multipart/form-data ---');
   try {
     const formData = new FormData();
     formData.append('file', new Blob(['Sample file content for upload demo'], { type: 'text/plain' }), 'sample.txt');
@@ -180,12 +180,12 @@ async function demonstrateComprehensiveFetchDebugging() {
         'X-File-Purpose': 'debug-demonstration'
       }
     });
-    console.log('✅ File upload completed');
+    console.info('✅ File upload completed');
   } catch (error) {
-    console.log('❌ File upload failed:', error instanceof Error ? error.message : 'Unknown error');
+    console.info('❌ File upload failed:', error instanceof Error ? error.message : 'Unknown error');
   }
 
-  console.log('\n--- 11. Request with caching headers (Cache-Control, Pragma, ETag handling) ---');
+  console.info('\n--- 11. Request with caching headers (Cache-Control, Pragma, ETag handling) ---');
   try {
     const response = await fetch('https://httpbin.org/cache', {
       headers: {
@@ -196,12 +196,12 @@ async function demonstrateComprehensiveFetchDebugging() {
         'If-Modified-Since': new Date(Date.now() - 3600000).toUTCString()
       }
     });
-    console.log('✅ Cache control request completed');
+    console.info('✅ Cache control request completed');
   } catch (error) {
-    console.log('❌ Cache control request failed:', error instanceof Error ? error.message : 'Unknown error');
+    console.info('❌ Cache control request failed:', error instanceof Error ? error.message : 'Unknown error');
   }
 
-  console.log('\n--- 12. Request with compression and encoding headers ---');
+  console.info('\n--- 12. Request with compression and encoding headers ---');
   try {
     const response = await fetch('https://httpbin.org/gzip', {
       headers: {
@@ -211,18 +211,18 @@ async function demonstrateComprehensiveFetchDebugging() {
         'Content-Encoding': 'identity'
       }
     });
-    console.log('✅ Encoding request completed');
+    console.info('✅ Encoding request completed');
   } catch (error) {
-    console.log('❌ Encoding request failed:', error instanceof Error ? error.message : 'Unknown error');
+    console.info('❌ Encoding request failed:', error instanceof Error ? error.message : 'Unknown error');
   }
 
-  console.log('\n🎉 Comprehensive fetch debugging demonstration complete!');
-  console.log('📝 Above you should see complete curl commands with ALL headers including:');
-  console.log('   • Request headers: Content-Type, Authorization, Custom headers, etc.');
-  console.log('   • Response headers: ETag, Cache-Control, Server, Content-Length, etc.');
-  console.log('   • HTTP version info, status codes, timestamps');
-  console.log('   • CORS headers, caching directives, compression info');
-  console.log('🔧 Each curl command is fully copy-pasteable for replication!');
+  console.info('\n🎉 Comprehensive fetch debugging demonstration complete!');
+  console.info('📝 Above you should see complete curl commands with ALL headers including:');
+  console.info('   • Request headers: Content-Type, Authorization, Custom headers, etc.');
+  console.info('   • Response headers: ETag, Cache-Control, Server, Content-Length, etc.');
+  console.info('   • HTTP version info, status codes, timestamps');
+  console.info('   • CORS headers, caching directives, compression info');
+  console.info('🔧 Each curl command is fully copy-pasteable for replication!');
 }
 
 // Run the comprehensive demonstration

@@ -188,58 +188,58 @@ class MCPMonitor {
   
   displayHealthDashboard(health: MCPHealth) {
     console.clear();
-    console.log(colorize('📊 MCP HEALTH DASHBOARD', 'bright') + colorize('', 'cyan'));
-    console.log(colorize('═'.repeat(80), 'gray'));
+    console.info(colorize('📊 MCP HEALTH DASHBOARD', 'bright') + colorize('', 'cyan'));
+    console.info(colorize('═'.repeat(80), 'gray'));
     
     // Overall Status
     const overallColor = this.getHealthColor(health.overall.score);
     const statusIcon = this.getStatusIcon(health.overall.status);
     
-    console.log(colorize('\n🏥 OVERALL SYSTEM HEALTH', 'white', 'bold'));
-    console.log(`${colorize('Status:', 'gray')} ${statusIcon} ${colorize(health.overall.status.toUpperCase(), overallColor)}`);
-    console.log(`${colorize('Score:', 'gray')} ${colorize(health.overall.score.toFixed(1), overallColor)}/100`);
-    console.log(`${colorize('Uptime:', 'gray')} ${colorize(this.formatUptime(health.overall.uptime), 'cyan')}`);
-    console.log(`${colorize('Last Update:', 'gray')} ${colorize(new Date(health.timestamp).toLocaleTimeString(), 'cyan')}`);
+    console.info(colorize('\n🏥 OVERALL SYSTEM HEALTH', 'white', 'bold'));
+    console.info(`${colorize('Status:', 'gray')} ${statusIcon} ${colorize(health.overall.status.toUpperCase(), overallColor)}`);
+    console.info(`${colorize('Score:', 'gray')} ${colorize(health.overall.score.toFixed(1), overallColor)}/100`);
+    console.info(`${colorize('Uptime:', 'gray')} ${colorize(this.formatUptime(health.overall.uptime), 'cyan')}`);
+    console.info(`${colorize('Last Update:', 'gray')} ${colorize(new Date(health.timestamp).toLocaleTimeString(), 'cyan')}`);
     
     // AI Operations
-    console.log(colorize('\n🤖 AI OPERATIONS', 'yellow', 'bold'));
-    console.log(colorize('─'.repeat(40), 'gray'));
-    console.log(`${colorize('Commands Processed:', 'gray')} ${colorize(health.systems.ai.commandsProcessed.toString(), 'cyan')}`);
-    console.log(`${colorize('Insights Generated:', 'gray')} ${colorize(health.systems.ai.insightsGenerated.toString(), 'cyan')}`);
-    console.log(`${colorize('Prediction Accuracy:', 'gray')} ${colorize(`${health.systems.ai.predictionsAccuracy.toFixed(1)}%`, this.getHealthColor(health.systems.ai.predictionsAccuracy))}`);
-    console.log(`${colorize('Avg Response Time:', 'gray')} ${colorize(`${health.systems.ai.averageResponseTime}ms`, 'cyan')}`);
-    console.log(`${colorize('Active Optimizations:', 'gray')} ${colorize(health.systems.ai.activeOptimizations.toString(), 'cyan')}`);
+    console.info(colorize('\n🤖 AI OPERATIONS', 'yellow', 'bold'));
+    console.info(colorize('─'.repeat(40), 'gray'));
+    console.info(`${colorize('Commands Processed:', 'gray')} ${colorize(health.systems.ai.commandsProcessed.toString(), 'cyan')}`);
+    console.info(`${colorize('Insights Generated:', 'gray')} ${colorize(health.systems.ai.insightsGenerated.toString(), 'cyan')}`);
+    console.info(`${colorize('Prediction Accuracy:', 'gray')} ${colorize(`${health.systems.ai.predictionsAccuracy.toFixed(1)}%`, this.getHealthColor(health.systems.ai.predictionsAccuracy))}`);
+    console.info(`${colorize('Avg Response Time:', 'gray')} ${colorize(`${health.systems.ai.averageResponseTime}ms`, 'cyan')}`);
+    console.info(`${colorize('Active Optimizations:', 'gray')} ${colorize(health.systems.ai.activeOptimizations.toString(), 'cyan')}`);
     
     // Security
-    console.log(colorize('\n🔒 SECURITY SYSTEM', 'yellow', 'bold'));
-    console.log(colorize('─'.repeat(40), 'gray'));
-    console.log(`${colorize('Auth Success Rate:', 'gray')} ${colorize(`${health.systems.security.authenticationSuccess.toFixed(1)}%`, this.getHealthColor(health.systems.security.authenticationSuccess))}`);
-    console.log(`${colorize('Threats Blocked:', 'gray')} ${colorize(health.systems.security.threatsBlocked.toString(), 'cyan')}`);
-    console.log(`${colorize('Risk Score:', 'gray')} ${colorize(health.systems.security.riskScore.toString(), this.getHealthColor(100 - health.systems.security.riskScore))}`);
-    console.log(`${colorize('Active Identities:', 'gray')} ${colorize(health.systems.security.activeIdentities.toString(), 'cyan')}`);
-    console.log(`${colorize('Policies Enforced:', 'gray')} ${colorize(health.systems.security.policiesEnforced.toString(), 'cyan')}`);
+    console.info(colorize('\n🔒 SECURITY SYSTEM', 'yellow', 'bold'));
+    console.info(colorize('─'.repeat(40), 'gray'));
+    console.info(`${colorize('Auth Success Rate:', 'gray')} ${colorize(`${health.systems.security.authenticationSuccess.toFixed(1)}%`, this.getHealthColor(health.systems.security.authenticationSuccess))}`);
+    console.info(`${colorize('Threats Blocked:', 'gray')} ${colorize(health.systems.security.threatsBlocked.toString(), 'cyan')}`);
+    console.info(`${colorize('Risk Score:', 'gray')} ${colorize(health.systems.security.riskScore.toString(), this.getHealthColor(100 - health.systems.security.riskScore))}`);
+    console.info(`${colorize('Active Identities:', 'gray')} ${colorize(health.systems.security.activeIdentities.toString(), 'cyan')}`);
+    console.info(`${colorize('Policies Enforced:', 'gray')} ${colorize(health.systems.security.policiesEnforced.toString(), 'cyan')}`);
     
     // Cache Performance
-    console.log(colorize('\n🗄️  CACHE PERFORMANCE', 'yellow', 'bold'));
-    console.log(colorize('─'.repeat(40), 'gray'));
-    console.log(`${colorize('Hit Rate:', 'gray')} ${colorize(`${(health.systems.cache.hitRate * 100).toFixed(1)}%`, this.getHealthColor(health.systems.cache.hitRate * 100))}`);
-    console.log(`${colorize('Memory Usage:', 'gray')} ${colorize(`${health.systems.cache.memoryUsage.toFixed(1)}%`, this.getHealthColor(100 - health.systems.cache.memoryUsage))}`);
-    console.log(`${colorize('Eviction Rate:', 'gray')} ${colorize(`${(health.systems.cache.evictionRate * 100).toFixed(1)}%`, 'cyan')}`);
-    console.log(`${colorize('Total Operations:', 'gray')} ${colorize(health.systems.cache.totalOperations.toLocaleString(), 'cyan')}`);
-    console.log(`${colorize('Smart Optimizations:', 'gray')} ${colorize(health.systems.cache.intelligentOptimizations.toString(), 'cyan')}`);
+    console.info(colorize('\n🗄️  CACHE PERFORMANCE', 'yellow', 'bold'));
+    console.info(colorize('─'.repeat(40), 'gray'));
+    console.info(`${colorize('Hit Rate:', 'gray')} ${colorize(`${(health.systems.cache.hitRate * 100).toFixed(1)}%`, this.getHealthColor(health.systems.cache.hitRate * 100))}`);
+    console.info(`${colorize('Memory Usage:', 'gray')} ${colorize(`${health.systems.cache.memoryUsage.toFixed(1)}%`, this.getHealthColor(100 - health.systems.cache.memoryUsage))}`);
+    console.info(`${colorize('Eviction Rate:', 'gray')} ${colorize(`${(health.systems.cache.evictionRate * 100).toFixed(1)}%`, 'cyan')}`);
+    console.info(`${colorize('Total Operations:', 'gray')} ${colorize(health.systems.cache.totalOperations.toLocaleString(), 'cyan')}`);
+    console.info(`${colorize('Smart Optimizations:', 'gray')} ${colorize(health.systems.cache.intelligentOptimizations.toString(), 'cyan')}`);
     
     // Anomaly Detection
-    console.log(colorize('\n🛡️  ANOMALY DETECTION', 'yellow', 'bold'));
-    console.log(colorize('─'.repeat(40), 'gray'));
-    console.log(`${colorize('Anomalies Detected:', 'gray')} ${colorize(health.systems.anomalies.anomaliesDetected.toString(), 'cyan')}`);
-    console.log(`${colorize('False Positive Rate:', 'gray')} ${colorize(`${(health.systems.anomalies.falsePositiveRate * 100).toFixed(1)}%`, this.getHealthColor(100 - health.systems.anomalies.falsePositiveRate * 100))}`);
-    console.log(`${colorize('Avg Detection Time:', 'gray')} ${colorize(`${health.systems.anomalies.averageDetectionTime}ms`, 'cyan')}`);
-    console.log(`${colorize('Active Rules:', 'gray')} ${colorize(health.systems.anomalies.activeRules.toString(), 'cyan')}`);
-    console.log(`${colorize('Automated Responses:', 'gray')} ${colorize(health.systems.anomalies.automatedResponses.toString(), 'cyan')}`);
+    console.info(colorize('\n🛡️  ANOMALY DETECTION', 'yellow', 'bold'));
+    console.info(colorize('─'.repeat(40), 'gray'));
+    console.info(`${colorize('Anomalies Detected:', 'gray')} ${colorize(health.systems.anomalies.anomaliesDetected.toString(), 'cyan')}`);
+    console.info(`${colorize('False Positive Rate:', 'gray')} ${colorize(`${(health.systems.anomalies.falsePositiveRate * 100).toFixed(1)}%`, this.getHealthColor(100 - health.systems.anomalies.falsePositiveRate * 100))}`);
+    console.info(`${colorize('Avg Detection Time:', 'gray')} ${colorize(`${health.systems.anomalies.averageDetectionTime}ms`, 'cyan')}`);
+    console.info(`${colorize('Active Rules:', 'gray')} ${colorize(health.systems.anomalies.activeRules.toString(), 'cyan')}`);
+    console.info(`${colorize('Automated Responses:', 'gray')} ${colorize(health.systems.anomalies.automatedResponses.toString(), 'cyan')}`);
     
     // AI Recommendations
-    console.log(colorize('\n💡 AI RECOMMENDATIONS', 'magenta', 'bold'));
-    console.log(colorize('─'.repeat(40), 'gray'));
+    console.info(colorize('\n💡 AI RECOMMENDATIONS', 'magenta', 'bold'));
+    console.info(colorize('─'.repeat(40), 'gray'));
     
     const criticalInsights = aiOperations.getInsights({ 
       impact: 'critical', 
@@ -248,25 +248,25 @@ class MCPMonitor {
     
     if (criticalInsights.length > 0) {
       criticalInsights.forEach((insight, i) => {
-        console.log(`${colorize(`${i + 1}.`, 'magenta')} ${colorize(insight.title, 'white')} (${colorize(`${(insight.confidence * 100).toFixed(0)}%`, 'cyan')} confidence)`);
+        console.info(`${colorize(`${i + 1}.`, 'magenta')} ${colorize(insight.title, 'white')} (${colorize(`${(insight.confidence * 100).toFixed(0)}%`, 'cyan')} confidence)`);
       });
     } else {
-      console.log(colorize('   No critical recommendations at this time', 'green'));
+      console.info(colorize('   No critical recommendations at this time', 'green'));
     }
     
     // Footer
-    console.log(colorize('\n' + '═'.repeat(80), 'gray'));
-    console.log(colorize('Press Ctrl+C to exit monitoring | Updates every 5 seconds', 'gray'));
+    console.info(colorize('\n' + '═'.repeat(80), 'gray'));
+    console.info(colorize('Press Ctrl+C to exit monitoring | Updates every 5 seconds', 'gray'));
   }
   
   async startMonitoring(interval: number = 5000) {
     if (this.isRunning) {
-      console.log(colorize('⚠️  Monitoring already running', 'yellow'));
+      console.info(colorize('⚠️  Monitoring already running', 'yellow'));
       return;
     }
     
     this.isRunning = true;
-    console.log(colorize('🚀 Starting MCP Health Monitor...', 'cyan'));
+    console.info(colorize('🚀 Starting MCP Health Monitor...', 'cyan'));
     
     // Initial display
     const health = await this.collectHealthMetrics();
@@ -289,7 +289,7 @@ class MCPMonitor {
       this.monitorInterval = undefined;
     }
     this.isRunning = false;
-    console.log(colorize('\n🛑 Monitoring stopped', 'yellow'));
+    console.info(colorize('\n🛑 Monitoring stopped', 'yellow'));
   }
 }
 

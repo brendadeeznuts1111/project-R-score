@@ -232,12 +232,12 @@ async function benchmarkStreaming(fileSize: number, chunkSize: number): Promise<
 // ============================================================================
 
 function printReport(results: StorageResult[]): void {
-  console.log("\n" + "=".repeat(70));
-  console.log("Storage Throughput Benchmark Results");
-  console.log("=".repeat(70));
-  console.log(`Bun version: ${Bun.version}`);
-  console.log(`Platform: ${process.platform} ${process.arch}`);
-  console.log("=".repeat(70));
+  console.info("\n" + "=".repeat(70));
+  console.info("Storage Throughput Benchmark Results");
+  console.info("=".repeat(70));
+  console.info(`Bun version: ${Bun.version}`);
+  console.info(`Platform: ${process.platform} ${process.arch}`);
+  console.info("=".repeat(70));
   
   // Group by file size
   const bySize = new Map<number, StorageResult[]>();
@@ -248,19 +248,19 @@ function printReport(results: StorageResult[]): void {
   }
   
   for (const [size, sizeResults] of bySize) {
-    console.log(`\n📦 File Size: ${formatBytes(size)}`);
-    console.log("-".repeat(70));
+    console.info(`\n📦 File Size: ${formatBytes(size)}`);
+    console.info("-".repeat(70));
     
     for (const result of sizeResults) {
-      console.log(`\n  ${result.protocol} (chunk: ${formatBytes(result.chunkSize)})`);
-      console.log(`    Read Time:    ${result.readTimeMs.toFixed(2)}ms`);
-      console.log(`    Write Time:   ${result.writeTimeMs.toFixed(2)}ms`);
-      console.log(`    Throughput:   ${formatThroughput(result.throughputMBps * 1024 * 1024)}`);
-      console.log(`    Peak Memory:  ${result.peakMemoryMB.toFixed(2)}MB`);
+      console.info(`\n  ${result.protocol} (chunk: ${formatBytes(result.chunkSize)})`);
+      console.info(`    Read Time:    ${result.readTimeMs.toFixed(2)}ms`);
+      console.info(`    Write Time:   ${result.writeTimeMs.toFixed(2)}ms`);
+      console.info(`    Throughput:   ${formatThroughput(result.throughputMBps * 1024 * 1024)}`);
+      console.info(`    Peak Memory:  ${result.peakMemoryMB.toFixed(2)}MB`);
       
       // Council validation
       if (result.peakMemoryMB > 512) {
-        console.log(`    ⚠️  WARNING: Memory > 512MB threshold`);
+        console.info(`    ⚠️  WARNING: Memory > 512MB threshold`);
       }
     }
     
@@ -273,18 +273,18 @@ function printReport(results: StorageResult[]): void {
       const streamAvg = streamResults.reduce((a, b) => a + b.throughputMBps, 0) / streamResults.length;
       const ratio = streamAvg / fileAvg;
       
-      console.log(`\n  📊 Comparison:`);
-      console.log(`    Streaming vs File: ${ratio.toFixed(2)}x`);
+      console.info(`\n  📊 Comparison:`);
+      console.info(`    Streaming vs File: ${ratio.toFixed(2)}x`);
       
       if (size >= 100 * 1024 * 1024 && streamAvg > fileAvg) {
-        console.log(`    ✅ Council Claim Validated: S3 faster at >100MB`);
+        console.info(`    ✅ Council Claim Validated: S3 faster at >100MB`);
       } else if (size >= 100 * 1024 * 1024) {
-        console.log(`    ⚠️  Council Claim QUESTIONED: File faster at >100MB`);
+        console.info(`    ⚠️  Council Claim QUESTIONED: File faster at >100MB`);
       }
     }
   }
   
-  console.log("\n" + "=".repeat(70));
+  console.info("\n" + "=".repeat(70));
 }
 
 // ============================================================================
@@ -292,29 +292,29 @@ function printReport(results: StorageResult[]): void {
 // ============================================================================
 
 async function main(): Promise<void> {
-  console.log("💾 Storage Throughput Benchmark");
-  console.log("===============================\n");
-  console.log("⚠️  This benchmark creates large temporary files");
-  console.log("   Estimated disk usage: ~600MB\n");
+  console.info("💾 Storage Throughput Benchmark");
+  console.info("===============================\n");
+  console.info("⚠️  This benchmark creates large temporary files");
+  console.info("   Estimated disk usage: ~600MB\n");
   
   for (const fileSize of CONFIG.fileSizes) {
-    console.log(`Testing ${formatBytes(fileSize)} files...`);
+    console.info(`Testing ${formatBytes(fileSize)} files...`);
     
     for (const chunkSize of CONFIG.chunkSizes) {
       // Bun.file
       try {
         results.push(await benchmarkBunFile(fileSize, chunkSize));
-        console.log(`  ✅ Bun.file (${formatBytes(chunkSize)} chunks) complete`);
+        console.info(`  ✅ Bun.file (${formatBytes(chunkSize)} chunks) complete`);
       } catch (e) {
-        console.log(`  ❌ Bun.file failed: ${e}`);
+        console.info(`  ❌ Bun.file failed: ${e}`);
       }
       
       // Streaming
       try {
         results.push(await benchmarkStreaming(fileSize, chunkSize));
-        console.log(`  ✅ Streaming (${formatBytes(chunkSize)} chunks) complete`);
+        console.info(`  ✅ Streaming (${formatBytes(chunkSize)} chunks) complete`);
       } catch (e) {
-        console.log(`  ❌ Streaming failed: ${e}`);
+        console.info(`  ❌ Streaming failed: ${e}`);
       }
     }
   }
@@ -332,7 +332,7 @@ async function main(): Promise<void> {
   
   const reportPath = `./reports/storage-${Date.now()}.json`;
   await Bun.write(reportPath, JSON.stringify(evidenceData, null, 2));
-  console.log(`\n📄 Evidence saved: ${reportPath}`);
+  console.info(`\n📄 Evidence saved: ${reportPath}`);
 }
 
 if (import.meta.main) {

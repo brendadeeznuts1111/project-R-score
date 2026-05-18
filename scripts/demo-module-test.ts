@@ -71,7 +71,7 @@ function main() {
     process.exit(1);
   }
 
-  console.log(
+  console.info(
     `[demo-test][pass] id=${id} language=${meta.language} flags=${meta.flags.length} tier1Sources=${tier1.baseline.sourceIds.length}`
   );
 }

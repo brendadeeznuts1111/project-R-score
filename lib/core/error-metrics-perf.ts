@@ -229,7 +229,7 @@ interface BucketData {
 
 // Performance comparison utility
 export function comparePerformance(): void {
-  console.log('🔬 Performance Comparison: Original vs Optimized\n');
+  console.info('🔬 Performance Comparison: Original vs Optimized\n');
   
   // Simulate high load
   const metrics = new ErrorMetricsCollector();
@@ -252,9 +252,9 @@ export function comparePerformance(): void {
   optimized.exportMetricsOptimized(60 * 60 * 1000);
   const time2 = performance.now() - start2;
   
-  console.log(`Original exportMetrics:  ${time1.toFixed(2)}ms`);
-  console.log(`Optimized exportMetrics: ${time2.toFixed(2)}ms`);
-  console.log(`Speedup: ${(time1 / time2).toFixed(1)}x`);
+  console.info(`Original exportMetrics:  ${time1.toFixed(2)}ms`);
+  console.info(`Optimized exportMetrics: ${time2.toFixed(2)}ms`);
+  console.info(`Speedup: ${(time1 / time2).toFixed(1)}x`);
   
   metrics.destroy();
   optimized.destroy();

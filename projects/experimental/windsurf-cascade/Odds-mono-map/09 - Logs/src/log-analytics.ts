@@ -451,7 +451,7 @@ export class LogAnalytics {
     private log = {
         info: async (message: string, context?: Record<string, any>) => {
             // Would use the enhanced logger here
-            console.log(`[Analytics] ${message}`, context);
+            console.info(`[Analytics] ${message}`, context);
         },
         error: async (message: string, context?: Record<string, any>) => {
             console.error(`[Analytics] ${message}`, context);

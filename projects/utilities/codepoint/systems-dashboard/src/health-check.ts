@@ -344,17 +344,17 @@ export type {
 if (import.meta.main) {
   const healthService = new HealthCheckService();
 
-  console.log("🏥 Systems Dashboard Health Check");
-  console.log("================================");
+  console.info("🏥 Systems Dashboard Health Check");
+  console.info("================================");
 
   const health = await healthService.performHealthCheck();
 
-  console.log(`Status: ${health.status}`);
-  console.log(`Uptime: ${Math.round(health.uptime / 1000)}s`);
-  console.log(`Version: ${health.version}`);
-  console.log(`Timestamp: ${health.timestamp}`);
+  console.info(`Status: ${health.status}`);
+  console.info(`Uptime: ${Math.round(health.uptime / 1000)}s`);
+  console.info(`Version: ${health.version}`);
+  console.info(`Timestamp: ${health.timestamp}`);
 
-  console.log("\n📊 Services:");
+  console.info("\n📊 Services:");
   health.services.forEach((service) => {
     const icon =
       service.status === "healthy"
@@ -362,22 +362,22 @@ if (import.meta.main) {
         : service.status === "degraded"
           ? "⚠️"
           : "❌";
-    console.log(`  ${icon} ${service.name}: ${service.status}`);
+    console.info(`  ${icon} ${service.name}: ${service.status}`);
     if (service.responseTime) {
-      console.log(`     Response time: ${service.responseTime}ms`);
+      console.info(`     Response time: ${service.responseTime}ms`);
     }
     if (service.error) {
-      console.log(`     Error: ${service.error}`);
+      console.info(`     Error: ${service.error}`);
     }
   });
 
-  console.log("\n💻 System Resources:");
-  console.log(`  Memory: ${health.system.memory.percentage.toFixed(1)}%`);
-  console.log(`  CPU: ${health.system.cpu.usage.toFixed(2)}s`);
-  console.log(`  Disk: ${health.system.disk.percentage.toFixed(1)}%`);
+  console.info("\n💻 System Resources:");
+  console.info(`  Memory: ${health.system.memory.percentage.toFixed(1)}%`);
+  console.info(`  CPU: ${health.system.cpu.usage.toFixed(2)}s`);
+  console.info(`  Disk: ${health.system.disk.percentage.toFixed(1)}%`);
 
   if (health.errors.length > 0) {
-    console.log("\n❌ Recent Errors:");
+    console.info("\n❌ Recent Errors:");
     health.errors.forEach((error) => {
       const icon =
         error.level === "error"
@@ -385,17 +385,17 @@ if (import.meta.main) {
           : error.level === "warning"
             ? "🟡"
             : "🔵";
-      console.log(
+      console.info(
         `  ${icon} ${error.message} (${new Date(error.timestamp).toLocaleTimeString()})`
       );
     });
   }
 
-  console.log("\n📈 Metrics:");
-  console.log(`  Total Requests: ${health.metrics.totalRequests}`);
-  console.log(`  Error Rate: ${(health.metrics.errorRate * 100).toFixed(2)}%`);
-  console.log(
+  console.info("\n📈 Metrics:");
+  console.info(`  Total Requests: ${health.metrics.totalRequests}`);
+  console.info(`  Error Rate: ${(health.metrics.errorRate * 100).toFixed(2)}%`);
+  console.info(
     `  Avg Response Time: ${health.metrics.averageResponseTime.toFixed(2)}ms`
   );
-  console.log(`  Active Connections: ${health.metrics.activeConnections}`);
+  console.info(`  Active Connections: ${health.metrics.activeConnections}`);
 }

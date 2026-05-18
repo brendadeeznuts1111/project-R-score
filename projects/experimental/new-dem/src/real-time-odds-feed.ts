@@ -443,7 +443,7 @@ export class RealTimeOddsFeedManager {
 
   // Start real-time polling for all providers
   public startRealTimeFeed(pollIntervalMs: number = 1000): void {
-    console.log("🔄 Starting real-time odds feed...");
+    console.info("🔄 Starting real-time odds feed...");
 
     // Start polling for each provider
     for (const provider of Object.keys(API_PROVIDERS)) {
@@ -453,7 +453,7 @@ export class RealTimeOddsFeedManager {
 
   // Stop real-time feed
   public stopRealTimeFeed(): void {
-    console.log("⏹️ Stopping real-time odds feed...");
+    console.info("⏹️ Stopping real-time odds feed...");
 
     for (const interval of this.pollingIntervals.values()) {
       clearInterval(interval);

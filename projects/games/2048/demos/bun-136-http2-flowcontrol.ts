@@ -8,18 +8,18 @@
 // - gRPC NGHTTP2_FRAME_SIZE_ERROR with non-default maxFrameSize fixed
 // - Settings validation (no truncation of large values)
 // - maxHeaderListSize checking per RFC 7540 Section 6.5.2
-console.log("🚀 Bun v1.3.6+ HTTP/2 Flow Control & Protocol Fixes");
-console.log("=".repeat(55));
+console.info("🚀 Bun v1.3.6+ HTTP/2 Flow Control & Protocol Fixes");
+console.info("=".repeat(55));
 
 // Test 1: HTTP/2 Flow Control Overview
-console.log("\n1️⃣ HTTP/2 Flow Control Improvements:");
+console.info("\n1️⃣ HTTP/2 Flow Control Improvements:");
 
 function demonstrateHTTP2FlowControl() {
-  console.log("✅ Improved node:http2 module flow control");
-  console.log("🔧 Better stream management and backpressure handling");
-  console.log("🚀 Enhanced performance for HTTP/2 connections");
+  console.info("✅ Improved node:http2 module flow control");
+  console.info("🔧 Better stream management and backpressure handling");
+  console.info("🚀 Enhanced performance for HTTP/2 connections");
 
-  console.log("\n   📋 Key improvements:");
+  console.info("\n   📋 Key improvements:");
   const improvements = [
     {
       area: "Stream Management",
@@ -44,17 +44,17 @@ function demonstrateHTTP2FlowControl() {
   ];
 
   improvements.forEach((item, index) => {
-    console.log(`   ${index + 1}. ${item.area}:`);
-    console.log(`      Improvement: ${item.improvement}`);
-    console.log(`      Benefit: ${item.benefit}`);
+    console.info(`   ${index + 1}. ${item.area}:`);
+    console.info(`      Improvement: ${item.improvement}`);
+    console.info(`      Benefit: ${item.benefit}`);
   });
 }
 
 // Test 2: HTTP/2 Server Implementation
-console.log("\n2️⃣ HTTP/2 Server Implementation:");
+console.info("\n2️⃣ HTTP/2 Server Implementation:");
 
 function demonstrateHTTP2Server() {
-  console.log("✅ Enhanced HTTP/2 server with improved flow control");
+  console.info("✅ Enhanced HTTP/2 server with improved flow control");
 
   const serverExample = `
 import { createServer } from "node:http2";
@@ -63,12 +63,12 @@ import { createServer } from "node:http2";
 const server = createServer((req, res) => {
   // Improved flow control in v1.3.6
   res.stream.on('drain', () => {
-    console.log('Stream drained, ready for more data');
+    console.info('Stream drained, ready for more data');
     // Better backpressure handling
   });
 
   res.stream.on('error', (error) => {
-    console.log('Stream error:', error);
+    console.info('Stream error:', error);
     // Enhanced error recovery
   });
 
@@ -103,18 +103,18 @@ server.on('streamError', (stream, err) => {
 });
 
 server.listen(8443);
-console.log('HTTP/2 server running on port 8443');
+console.info('HTTP/2 server running on port 8443');
   `;
 
-  console.log("   💡 Enhanced HTTP/2 server example:");
-  console.log(serverExample);
+  console.info("   💡 Enhanced HTTP/2 server example:");
+  console.info(serverExample);
 }
 
 // Test 3: HTTP/2 Client Implementation
-console.log("\n3️⃣ HTTP/2 Client Implementation:");
+console.info("\n3️⃣ HTTP/2 Client Implementation:");
 
 function demonstrateHTTP2Client() {
-  console.log("✅ Enhanced HTTP/2 client with improved flow control");
+  console.info("✅ Enhanced HTTP/2 client with improved flow control");
 
   const clientExample = `
 import { connect } from "node:http2";
@@ -123,7 +123,7 @@ import { connect } from "node:http2";
 const client = connect('https://http2.example.com:8443');
 
 client.on('connect', () => {
-  console.log('HTTP/2 connection established');
+  console.info('HTTP/2 connection established');
 
   // Create multiple concurrent streams
   for (let i = 0; i < 5; i++) {
@@ -135,11 +135,11 @@ client.on('connect', () => {
 
     // Improved flow control handling
     req.on('drain', () => {
-      console.log(\`Request \${i} drained\`);
+      console.info(\`Request \${i} drained\`);
     });
 
     req.on('response', (headers) => {
-      console.log(\`Request \${i} response:\`, headers[':status']);
+      console.info(\`Request \${i} response:\`, headers[':status']);
     });
 
     req.setEncoding('utf8');
@@ -150,7 +150,7 @@ client.on('connect', () => {
     });
 
     req.on('end', () => {
-      console.log(\`Request \${i} completed:\`, data.length);
+      console.info(\`Request \${i} completed:\`, data.length);
     });
 
     req.end();
@@ -163,20 +163,20 @@ client.on('error', (error) => {
 });
 
 client.on('goaway', (errorCode, lastStreamID, opaqueData) => {
-  console.log('HTTP/2 GOAWAY received:', errorCode);
+  console.info('HTTP/2 GOAWAY received:', errorCode);
   // Better connection cleanup in v1.3.6
 });
   `;
 
-  console.log("   💡 Enhanced HTTP/2 client example:");
-  console.log(clientExample);
+  console.info("   💡 Enhanced HTTP/2 client example:");
+  console.info(clientExample);
 }
 
 // Test 4: Flow Control Scenarios
-console.log("\n4️⃣ Flow Control Scenarios:");
+console.info("\n4️⃣ Flow Control Scenarios:");
 
 function demonstrateFlowControlScenarios() {
-  console.log("✅ Real-world HTTP/2 flow control scenarios");
+  console.info("✅ Real-world HTTP/2 flow control scenarios");
 
   const scenarios = [
     {
@@ -206,18 +206,18 @@ function demonstrateFlowControlScenarios() {
   ];
 
   scenarios.forEach((scenario, index) => {
-    console.log(`\n   ${index + 1}. ${scenario.scenario}:`);
-    console.log(`      Description: ${scenario.description}`);
-    console.log(`      Improvement: ${scenario.improvement}`);
-    console.log(`      Use cases: ${scenario.example}`);
+    console.info(`\n   ${index + 1}. ${scenario.scenario}:`);
+    console.info(`      Description: ${scenario.description}`);
+    console.info(`      Improvement: ${scenario.improvement}`);
+    console.info(`      Use cases: ${scenario.example}`);
   });
 }
 
 // Test 5: Performance Benefits
-console.log("\n5️⃣ Performance Benefits:");
+console.info("\n5️⃣ Performance Benefits:");
 
 function demonstratePerformanceBenefits() {
-  console.log("✅ Performance improvements from HTTP/2 flow control");
+  console.info("✅ Performance improvements from HTTP/2 flow control");
 
   const benefits = [
     {
@@ -246,20 +246,20 @@ function demonstratePerformanceBenefits() {
     },
   ];
 
-  console.log("   📊 Performance improvements:");
+  console.info("   📊 Performance improvements:");
   benefits.forEach((benefit, index) => {
-    console.log(`\n   ${index + 1}. ${benefit.metric}:`);
-    console.log(`      Before: ${benefit.before}`);
-    console.log(`      After: ${benefit.after}`);
-    console.log(`      Improvement: ${benefit.improvement}`);
+    console.info(`\n   ${index + 1}. ${benefit.metric}:`);
+    console.info(`      Before: ${benefit.before}`);
+    console.info(`      After: ${benefit.after}`);
+    console.info(`      Improvement: ${benefit.improvement}`);
   });
 }
 
 // Test 6: Migration Guide
-console.log("\n6️⃣ Migration Guide:");
+console.info("\n6️⃣ Migration Guide:");
 
 function demonstrateMigrationGuide() {
-  console.log("✅ Migrating to improved HTTP/2 flow control");
+  console.info("✅ Migrating to improved HTTP/2 flow control");
 
   const migrationTips = [
     {
@@ -270,32 +270,32 @@ function demonstrateMigrationGuide() {
     {
       area: "Stream Monitoring",
       tip: "Add stream event listeners for better visibility",
-      code: "stream.on('drain', () => console.log('Stream ready for more data'));",
+      code: "stream.on('drain', () => console.info('Stream ready for more data'));",
     },
     {
       area: "Error Handling",
       tip: "Enhance error handling for better reliability",
-      code: "stream.on('error', (err) => console.log('Stream error:', err));",
+      code: "stream.on('error', (err) => console.info('Stream error:', err));",
     },
     {
       area: "Performance Monitoring",
       tip: "Monitor memory usage and throughput improvements",
-      code: "console.log('Memory usage:', process.memoryUsage());",
+      code: "console.info('Memory usage:', process.memoryUsage());",
     },
   ];
 
   migrationTips.forEach((tip, index) => {
-    console.log(`\n   ${index + 1}. ${tip.area}:`);
-    console.log(`      💡 ${tip.tip}`);
-    console.log(`      📄 ${tip.code}`);
+    console.info(`\n   ${index + 1}. ${tip.area}:`);
+    console.info(`      💡 ${tip.tip}`);
+    console.info(`      📄 ${tip.code}`);
   });
 }
 
 // Test 7: Compatibility and Integration
-console.log("\n7️⃣ Compatibility and Integration:");
+console.info("\n7️⃣ Compatibility and Integration:");
 
 function demonstrateCompatibility() {
-  console.log("✅ HTTP/2 flow control improvements compatibility");
+  console.info("✅ HTTP/2 flow control improvements compatibility");
 
   const compatibility = [
     {
@@ -321,9 +321,9 @@ function demonstrateCompatibility() {
   ];
 
   compatibility.forEach((item) => {
-    console.log(`\n   📋 ${item.feature}:`);
-    console.log(`      Status: ${item.status}`);
-    console.log(`      Benefit: ${item.benefit}`);
+    console.info(`\n   📋 ${item.feature}:`);
+    console.info(`      Status: ${item.status}`);
+    console.info(`      Benefit: ${item.benefit}`);
   });
 }
 
@@ -338,15 +338,15 @@ async function main() {
     demonstrateMigrationGuide();
     demonstrateCompatibility();
 
-    console.log("\n🎯 Summary of Bun v1.3.6 HTTP/2 Flow Control Improvements:");
-    console.log("   🚀 Enhanced stream management and backpressure handling");
-    console.log("   🧠 Improved memory usage for large data transfers");
-    console.log("   📈 Higher throughput and better connection stability");
-    console.log("   🔧 Better error recovery and congestion control");
-    console.log("   🌐 Enhanced browser and proxy compatibility");
-    console.log("   ⚡ Automatic improvements - no code changes required");
+    console.info("\n🎯 Summary of Bun v1.3.6 HTTP/2 Flow Control Improvements:");
+    console.info("   🚀 Enhanced stream management and backpressure handling");
+    console.info("   🧠 Improved memory usage for large data transfers");
+    console.info("   📈 Higher throughput and better connection stability");
+    console.info("   🔧 Better error recovery and congestion control");
+    console.info("   🌐 Enhanced browser and proxy compatibility");
+    console.info("   ⚡ Automatic improvements - no code changes required");
 
-    console.log("\n💨 HTTP/2 connections are now more efficient and reliable!");
+    console.info("\n💨 HTTP/2 connections are now more efficient and reliable!");
   } catch (error) {
     console.error("❌ Demonstration failed:", error);
   }

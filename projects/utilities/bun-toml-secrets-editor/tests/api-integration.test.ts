@@ -289,7 +289,7 @@ describe("API Integration Tests", () => {
 			const duration = performance.now() - start;
 			const avgTime = duration / iterations;
 
-			console.log(`Average health check time: ${avgTime.toFixed(3)}ms`);
+			console.info(`Average health check time: ${avgTime.toFixed(3)}ms`);
 			expect(avgTime).toBeLessThan(100); // Should be under 100ms per call
 		});
 
@@ -305,7 +305,7 @@ describe("API Integration Tests", () => {
 			const duration = performance.now() - start;
 			const avgTime = duration / (iterations * 2);
 
-			console.log(`Average URL operation time: ${avgTime.toFixed(6)}ms`);
+			console.info(`Average URL operation time: ${avgTime.toFixed(6)}ms`);
 			expect(avgTime).toBeLessThan(0.01); // Should be under 0.01ms per operation
 		});
 	});

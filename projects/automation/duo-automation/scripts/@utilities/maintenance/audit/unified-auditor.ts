@@ -16,7 +16,7 @@ import { secrets } from "bun";
 
 class UnifiedAuditor {
   async runSystemAudit() {
-    console.log("🚀 Running system audit...");
+    console.info("🚀 Running system audit...");
     const matrix = PatternMatrix.getInstance();
     const rows = matrix.getRows();
     const qualifier = new PhoneIntelQualifier();
@@ -25,12 +25,12 @@ class UnifiedAuditor {
     const qValid = PatternValidator.validate(qualifier, PatternValidator.generateLSPInfo(qualifier));
     const cValid = PatternValidator.validate(controller, PatternValidator.generateLSPInfo(controller));
 
-    console.log(`PhoneIntelQualifier: ${qValid.valid ? "✅" : "❌"}`);
-    console.log(`AutonomicController: ${cValid.valid ? "✅" : "❌"}`);
+    console.info(`PhoneIntelQualifier: ${qValid.valid ? "✅" : "❌"}`);
+    console.info(`AutonomicController: ${cValid.valid ? "✅" : "❌"}`);
 
     const patternScore = Math.min(25, (rows.length / 20) * 25);
     const totalScore = patternScore + (qValid.valid && cValid.valid ? 25 : 15) + 25 + 20;
-    console.log(`\nFinal Audit Score: ${totalScore.toFixed(0)}/100`);
+    console.info(`\nFinal Audit Score: ${totalScore.toFixed(0)}/100`);
 
     let report = `# Audit Report | Score: ${totalScore.toFixed(0)}/100\n\n## 1. Patterns\n`;
     rows.forEach((r: PatternRow) => {
@@ -40,18 +40,18 @@ class UnifiedAuditor {
   }
 
   async auditSecrets() {
-    console.log("🔍 Auditing Bun Secrets...");
+    console.info("🔍 Auditing Bun Secrets...");
     const service = "empire-pro-config-empire";
     const secretNames = ["OPENAI_API_KEY", "STRIPE_SECRET_KEY", "DATABASE_URL", "R2_ENDPOINT"];
 
     for (const name of secretNames) {
       const value = await secrets.get({ service, name });
-      console.log(value ? `✅ ${name}: PRESENT` : `❌ ${name}: MISSING`);
+      console.info(value ? `✅ ${name}: PRESENT` : `❌ ${name}: MISSING`);
     }
   }
 
   async auditStorage() {
-    console.log("📦 Running storage compliance audit...");
+    console.info("📦 Running storage compliance audit...");
     AuthManager.setUser(DEFAULT_CLI_ADMIN);
     if (!AuthManager.hasPermission(PERMISSIONS.STORAGE.READ)) {
       throw new Error("STORAGE.READ permission required");
@@ -59,7 +59,7 @@ class UnifiedAuditor {
     const manager = new BunR2AppleManager();
     const scopes = ['ENTERPRISE', 'DEVELOPMENT'] as const;
     for (const scope of scopes) {
-      console.log(`[SCOPE: ${scope}] PASS`);
+      console.info(`[SCOPE: ${scope}] PASS`);
     }
   }
 }
@@ -78,7 +78,7 @@ async function main() {
       await auditor.auditStorage();
       break;
     default:
-      console.log("Usage: bun run scripts/maintenance/audit/unified-auditor.ts [system|secrets|storage|all]");
+      console.info("Usage: bun run scripts/maintenance/audit/unified-auditor.ts [system|secrets|storage|all]");
   }
 }
 

@@ -32,4 +32,4 @@ if (!payload) {
   process.exit(1);
 }
 
-console.log(JSON.stringify({ generatedAt: ts, ...payload }, null, 2));
+console.info(JSON.stringify({ generatedAt: ts, ...payload }, null, 2));

@@ -9,8 +9,8 @@ import { CascadeCustomizationDashboard, cascadeDashboard } from './cascade-custo
 import { CascadeWorkflowEngine, workflowEngine } from './cascade-workflows';
 
 async function demonstrateCascadeCustomizationSystem() {
-  console.log('🎯 CASCADE CUSTOMIZATION SYSTEM DEMO');
-  console.log('====================================');
+  console.info('🎯 CASCADE CUSTOMIZATION SYSTEM DEMO');
+  console.info('====================================');
   
   // Initialize all components
   const skillsManager = new CascadeSkillsManager();
@@ -22,13 +22,13 @@ async function demonstrateCascadeCustomizationSystem() {
   const dashboard = new CascadeCustomizationDashboard();
   const workflowEngine = new CascadeWorkflowEngine(skillsManager, memoryManager);
   
-  console.log('\\n🔧 System Components Initialized:');
-  console.log('   ✅ Rules Engine - Security-first, device-health, color consistency');
-  console.log('   ✅ Skills Manager - QR generation, health prediction, ROI analysis');
-  console.log('   ✅ Memory System - Merchant, device, interaction, performance memories');
-  console.log('   ✅ Performance Optimizer - Continuous learning and optimization');
-  console.log('   ✅ Customization Dashboard - Interactive management interface');
-  console.log('   ✅ Workflow Engine - Orchestrated onboarding processes');
+  console.info('\\n🔧 System Components Initialized:');
+  console.info('   ✅ Rules Engine - Security-first, device-health, color consistency');
+  console.info('   ✅ Skills Manager - QR generation, health prediction, ROI analysis');
+  console.info('   ✅ Memory System - Merchant, device, interaction, performance memories');
+  console.info('   ✅ Performance Optimizer - Continuous learning and optimization');
+  console.info('   ✅ Customization Dashboard - Interactive management interface');
+  console.info('   ✅ Workflow Engine - Orchestrated onboarding processes');
   
   // Demonstrate Rules Engine
   await demonstrateRulesEngine(rulesEngine);
@@ -53,11 +53,11 @@ async function demonstrateCascadeCustomizationSystem() {
 }
 
 async function demonstrateRulesEngine(rulesEngine: CascadeRulesEngine) {
-  console.log('\\n📋 RULES ENGINE DEMONSTRATION');
-  console.log('===============================');
+  console.info('\\n📋 RULES ENGINE DEMONSTRATION');
+  console.info('===============================');
   
   // Test security-first rule
-  console.log('\\n🔐 Testing Security-First Rule:');
+  console.info('\\n🔐 Testing Security-First Rule:');
   const securityContext = {
     merchantId: 'factory-wager',
     deviceId: 'device-001',
@@ -68,13 +68,13 @@ async function demonstrateRulesEngine(rulesEngine: CascadeRulesEngine) {
   };
   
   const securityExecutions = await rulesEngine.evaluateRules(securityContext);
-  console.log(`   ✅ Executed ${securityExecutions.length} security rules`);
+  console.info(`   ✅ Executed ${securityExecutions.length} security rules`);
   securityExecutions.forEach(exec => {
-    console.log(`      - ${exec.ruleId}: ${exec.actionsTaken.join(', ')}`);
+    console.info(`      - ${exec.ruleId}: ${exec.actionsTaken.join(', ')}`);
   });
   
   // Test device health validation rule
-  console.log('\\n🏥 Testing Device Health Validation Rule:');
+  console.info('\\n🏥 Testing Device Health Validation Rule:');
   const healthContext = {
     merchantId: 'factory-wager',
     deviceId: 'device-002',
@@ -86,13 +86,13 @@ async function demonstrateRulesEngine(rulesEngine: CascadeRulesEngine) {
   };
   
   const healthExecutions = await rulesEngine.evaluateRules(healthContext);
-  console.log(`   ✅ Executed ${healthExecutions.length} health validation rules`);
+  console.info(`   ✅ Executed ${healthExecutions.length} health validation rules`);
   healthExecutions.forEach(exec => {
-    console.log(`      - ${exec.ruleId}: ${exec.actionsTaken.length} actions`);
+    console.info(`      - ${exec.ruleId}: ${exec.actionsTaken.length} actions`);
   });
   
   // Test hex color consistency rule
-  console.log('\\n🎨 Testing Hex Color Consistency Rule:');
+  console.info('\\n🎨 Testing Hex Color Consistency Rule:');
   const colorContext = {
     merchantId: 'factory-wager',
     action: 'dashboard_render',
@@ -103,24 +103,24 @@ async function demonstrateRulesEngine(rulesEngine: CascadeRulesEngine) {
   };
   
   const colorExecutions = await rulesEngine.evaluateRules(colorContext);
-  console.log(`   ✅ Executed ${colorExecutions.length} color consistency rules`);
+  console.info(`   ✅ Executed ${colorExecutions.length} color consistency rules`);
   
   // Show rule metrics
   const ruleMetrics = rulesEngine.getRuleMetrics();
-  console.log('\\n📊 Rule Engine Metrics:');
-  console.log(`   - Total Rules: ${ruleMetrics.totalRules}`);
-  console.log(`   - Active Rules: ${ruleMetrics.activeRules}`);
-  console.log(`   - Total Executions: ${ruleMetrics.totalExecutions}`);
-  console.log(`   - Avg Execution Time: ${ruleMetrics.avgExecutionTime.toFixed(2)}ms`);
-  console.log(`   - Most Executed Rule: ${ruleMetrics.mostExecutedRule}`);
+  console.info('\\n📊 Rule Engine Metrics:');
+  console.info(`   - Total Rules: ${ruleMetrics.totalRules}`);
+  console.info(`   - Active Rules: ${ruleMetrics.activeRules}`);
+  console.info(`   - Total Executions: ${ruleMetrics.totalExecutions}`);
+  console.info(`   - Avg Execution Time: ${ruleMetrics.avgExecutionTime.toFixed(2)}ms`);
+  console.info(`   - Most Executed Rule: ${ruleMetrics.mostExecutedRule}`);
 }
 
 async function demonstrateSkillsManager(skillsManager: CascadeSkillsManager) {
-  console.log('\\n🧠 SKILLS MANAGER DEMONSTRATION');
-  console.log('================================');
+  console.info('\\n🧠 SKILLS MANAGER DEMONSTRATION');
+  console.info('================================');
   
   // Test QR generation skill
-  console.log('\\n📱 Testing QR Generation Skill:');
+  console.info('\\n📱 Testing QR Generation Skill:');
   const qrContext = {
     merchantId: 'factory-wager',
     deviceId: 'device-001',
@@ -140,13 +140,13 @@ async function demonstrateSkillsManager(skillsManager: CascadeSkillsManager) {
   };
   
   const qrResult = await skillsManager.executeSkill('skill-qr-generation', qrContext);
-  console.log('   ✅ QR Generation Skill executed successfully');
-  console.log(`      - QR Payload Optimized: ${qrResult.learningApplied ? 'Yes' : 'No'}`);
-  console.log(`      - Recommended Size: ${qrResult.recommendedSize}`);
-  console.log(`      - Color Scheme: Optimized for merchant`);
+  console.info('   ✅ QR Generation Skill executed successfully');
+  console.info(`      - QR Payload Optimized: ${qrResult.learningApplied ? 'Yes' : 'No'}`);
+  console.info(`      - Recommended Size: ${qrResult.recommendedSize}`);
+  console.info(`      - Color Scheme: Optimized for merchant`);
   
   // Test device health prediction skill
-  console.log('\\n🏥 Testing Device Health Prediction Skill:');
+  console.info('\\n🏥 Testing Device Health Prediction Skill:');
   const healthContext = {
     merchantId: 'factory-wager',
     deviceId: 'device-002',
@@ -166,13 +166,13 @@ async function demonstrateSkillsManager(skillsManager: CascadeSkillsManager) {
   };
   
   const healthResult = await skillsManager.executeSkill('skill-device-health-prediction', healthContext);
-  console.log('   ✅ Health Prediction Skill executed successfully');
-  console.log(`      - Predicted Issues: ${healthResult.predictedIssues?.length || 0}`);
-  console.log(`      - Confidence: ${(healthResult.confidence * 100).toFixed(1)}%`);
-  console.log(`      - Preemptive Fixes: ${healthResult.preemptiveFixes?.length || 0}`);
+  console.info('   ✅ Health Prediction Skill executed successfully');
+  console.info(`      - Predicted Issues: ${healthResult.predictedIssues?.length || 0}`);
+  console.info(`      - Confidence: ${(healthResult.confidence * 100).toFixed(1)}%`);
+  console.info(`      - Preemptive Fixes: ${healthResult.preemptiveFixes?.length || 0}`);
   
   // Test ROI prediction skill
-  console.log('\\n💰 Testing ROI Prediction Skill:');
+  console.info('\\n💰 Testing ROI Prediction Skill:');
   const roiContext = {
     merchantId: 'factory-wager',
     deviceId: 'device-003',
@@ -192,14 +192,14 @@ async function demonstrateSkillsManager(skillsManager: CascadeSkillsManager) {
   };
   
   const roiResult = await skillsManager.executeSkill('skill-roi-prediction', roiContext);
-  console.log('   ✅ ROI Prediction Skill executed successfully');
-  console.log(`      - Immediate MRR: $${roiResult.predictions?.immediateMRR?.toLocaleString() || '0'}`);
-  console.log(`      - 30-Day MRR: $${roiResult.predictions?.thirtyDayMRR?.toLocaleString() || '0'}`);
-  console.log(`      - Annual Projection: $${roiResult.predictions?.annualProjection?.toLocaleString() || '0'}`);
-  console.log(`      - Confidence: ${(roiResult.predictions?.confidence * 100).toFixed(1)}%`);
+  console.info('   ✅ ROI Prediction Skill executed successfully');
+  console.info(`      - Immediate MRR: $${roiResult.predictions?.immediateMRR?.toLocaleString() || '0'}`);
+  console.info(`      - 30-Day MRR: $${roiResult.predictions?.thirtyDayMRR?.toLocaleString() || '0'}`);
+  console.info(`      - Annual Projection: $${roiResult.predictions?.annualProjection?.toLocaleString() || '0'}`);
+  console.info(`      - Confidence: ${(roiResult.predictions?.confidence * 100).toFixed(1)}%`);
   
   // Test color optimization skill
-  console.log('\\n🎨 Testing Color Optimization Skill:');
+  console.info('\\n🎨 Testing Color Optimization Skill:');
   const colorContext = {
     merchantId: 'factory-wager',
     userId: 'user-001',
@@ -219,18 +219,18 @@ async function demonstrateSkillsManager(skillsManager: CascadeSkillsManager) {
   };
   
   const colorResult = await skillsManager.executeSkill('skill-color-optimization', colorContext);
-  console.log('   ✅ Color Optimization Skill executed successfully');
-  console.log(`      - Primary Color: ${colorResult.primary}`);
-  console.log(`      - Success Color: ${colorResult.success}`);
-  console.log(`      - Accessibility Score: ${(colorResult.accessibilityScore * 100).toFixed(1)}%`);
+  console.info('   ✅ Color Optimization Skill executed successfully');
+  console.info(`      - Primary Color: ${colorResult.primary}`);
+  console.info(`      - Success Color: ${colorResult.success}`);
+  console.info(`      - Accessibility Score: ${(colorResult.accessibilityScore * 100).toFixed(1)}%`);
 }
 
 async function demonstrateMemorySystem(memoryManager: CascadeMemoryManager) {
-  console.log('\\n💾 MEMORY SYSTEM DEMONSTRATION');
-  console.log('===============================');
+  console.info('\\n💾 MEMORY SYSTEM DEMONSTRATION');
+  console.info('===============================');
   
   // Store different types of memories
-  console.log('\\n📝 Storing Sample Memories:');
+  console.info('\\n📝 Storing Sample Memories:');
   
   // Store merchant memory
   const merchantMemory = {
@@ -273,7 +273,7 @@ async function demonstrateMemorySystem(memoryManager: CascadeMemoryManager) {
   };
   
   const merchantMemoryId = await memoryManager.storeMemory(merchantMemory);
-  console.log(`   ✅ Stored merchant memory: ${merchantMemoryId}`);
+  console.info(`   ✅ Stored merchant memory: ${merchantMemoryId}`);
   
   // Store device memory
   const deviceMemory = {
@@ -312,7 +312,7 @@ async function demonstrateMemorySystem(memoryManager: CascadeMemoryManager) {
   };
   
   const deviceMemoryId = await memoryManager.storeMemory(deviceMemory);
-  console.log(`   ✅ Stored device memory: ${deviceMemoryId}`);
+  console.info(`   ✅ Stored device memory: ${deviceMemoryId}`);
   
   // Store interaction memory
   const interactionMemory = {
@@ -349,119 +349,119 @@ async function demonstrateMemorySystem(memoryManager: CascadeMemoryManager) {
   };
   
   const interactionMemoryId = await memoryManager.storeMemory(interactionMemory);
-  console.log(`   ✅ Stored interaction memory: ${interactionMemoryId}`);
+  console.info(`   ✅ Stored interaction memory: ${interactionMemoryId}`);
   
   // Retrieve relevant memories
-  console.log('\\n🔍 Retrieving Relevant Memories:');
+  console.info('\\n🔍 Retrieving Relevant Memories:');
   const relevantMemories = await memoryManager.retrieveRelevantMemories({
     merchantId: 'factory-wager',
     deviceId: 'device-001'
   });
   
-  console.log(`   ✅ Retrieved ${relevantMemories.length} relevant memories`);
+  console.info(`   ✅ Retrieved ${relevantMemories.length} relevant memories`);
   relevantMemories.forEach(memory => {
-    console.log(`      - ${memory.type}: ${memory.id}`);
+    console.info(`      - ${memory.type}: ${memory.id}`);
   });
   
   // Query memories
-  console.log('\\n📊 Querying Memories:');
+  console.info('\\n📊 Querying Memories:');
   const queryResult = await memoryManager.queryMemories({
     startTime: Date.now() - 86400000, // Last 24 hours
     filters: { merchantId: 'factory-wager' },
     minRelevance: 0.7
   });
   
-  console.log(`   ✅ Query completed: ${queryResult.relevantCount}/${queryResult.totalFound} relevant memories`);
-  console.log(`      - Execution time: ${queryResult.queryStats.executionTime}ms`);
-  console.log(`      - Indices used: ${queryResult.queryStats.indicesUsed.join(', ')}`);
+  console.info(`   ✅ Query completed: ${queryResult.relevantCount}/${queryResult.totalFound} relevant memories`);
+  console.info(`      - Execution time: ${queryResult.queryStats.executionTime}ms`);
+  console.info(`      - Indices used: ${queryResult.queryStats.indicesUsed.join(', ')}`);
   
   // Optimize memories
-  console.log('\\n🔧 Optimizing Memory Storage:');
+  console.info('\\n🔧 Optimizing Memory Storage:');
   const optimizationReport = await memoryManager.optimizeMemories();
-  console.log(`   ✅ Memory optimization completed`);
-  console.log(`      - Memories analyzed: ${optimizationReport.memoriesAnalyzed}`);
-  console.log(`      - Optimizations applied: ${optimizationReport.optimizationsApplied}`);
-  console.log(`      - Space saved: ${optimizationReport.spaceSaved} bytes`);
-  console.log(`      - Performance improvement: ${optimizationReport.performanceImprovement.toFixed(1)}%`);
+  console.info(`   ✅ Memory optimization completed`);
+  console.info(`      - Memories analyzed: ${optimizationReport.memoriesAnalyzed}`);
+  console.info(`      - Optimizations applied: ${optimizationReport.optimizationsApplied}`);
+  console.info(`      - Space saved: ${optimizationReport.spaceSaved} bytes`);
+  console.info(`      - Performance improvement: ${optimizationReport.performanceImprovement.toFixed(1)}%`);
 }
 
 async function demonstratePerformanceOptimizer(performanceOptimizer: CascadePerformanceOptimizer) {
-  console.log('\\n⚡ PERFORMANCE OPTIMIZER DEMONSTRATION');
-  console.log('=======================================');
+  console.info('\\n⚡ PERFORMANCE OPTIMIZER DEMONSTRATION');
+  console.info('=======================================');
   
   // Measure baseline performance
-  console.log('\\n📊 Measuring Baseline Performance:');
+  console.info('\\n📊 Measuring Baseline Performance:');
   const baselineMetrics = performanceOptimizer.getCurrentMetrics();
-  console.log(`   ✅ Collected ${baselineMetrics.length} performance metrics`);
+  console.info(`   ✅ Collected ${baselineMetrics.length} performance metrics`);
   
   baselineMetrics.forEach(metric => {
-    console.log(`      - ${metric.name}: ${metric.value}${metric.unit} (target: ${metric.target}${metric.unit})`);
+    console.info(`      - ${metric.name}: ${metric.value}${metric.unit} (target: ${metric.target}${metric.unit})`);
   });
   
   // Identify optimization opportunities
-  console.log('\\n🔍 Identifying Optimization Opportunities:');
+  console.info('\\n🔍 Identifying Optimization Opportunities:');
   const optimizationReport = await performanceOptimizer.optimizeSystem();
   
-  console.log(`   ✅ Optimization completed`);
-  console.log(`      - Overall improvement: ${optimizationReport.performanceImprovement.overall.toFixed(1)}%`);
+  console.info(`   ✅ Optimization completed`);
+  console.info(`      - Overall improvement: ${optimizationReport.performanceImprovement.overall.toFixed(1)}%`);
   
   Object.entries(optimizationReport.performanceImprovement.byCategory).forEach(([category, improvement]) => {
-    console.log(`      - ${category}: ${improvement.toFixed(1)}%`);
+    console.info(`      - ${category}: ${improvement.toFixed(1)}%`);
   });
   
-  console.log(`   📋 Optimizations Applied:`);
+  console.info(`   📋 Optimizations Applied:`);
   optimizationReport.optimizationsApplied.forEach(opt => {
     const status = typeof opt.result === 'object' && opt.result.success ? '✅' : '❌';
-    console.log(`      ${status} ${opt.name}: ${opt.appliedAt.toLocaleTimeString()}`);
+    console.info(`      ${status} ${opt.name}: ${opt.appliedAt.toLocaleTimeString()}`);
   });
   
   // Show optimization history
-  console.log('\\n📈 Optimization History:');
+  console.info('\\n📈 Optimization History:');
   const history = performanceOptimizer.getOptimizationHistory();
-  console.log(`   ✅ Total optimization cycles: ${history.length}`);
+  console.info(`   ✅ Total optimization cycles: ${history.length}`);
   
   if (history.length > 0) {
     const latest = history[history.length - 1];
     if (latest) {
-      console.log(`      - Latest cycle: ${latest.timestamp.toLocaleString()}`);
-      console.log(`      - Latest improvement: ${latest.overallImprovement.toFixed(1)}%`);
+      console.info(`      - Latest cycle: ${latest.timestamp.toLocaleString()}`);
+      console.info(`      - Latest improvement: ${latest.overallImprovement.toFixed(1)}%`);
     }
   }
 }
 
 async function demonstrateCustomizationDashboard(dashboard: CascadeCustomizationDashboard) {
-  console.log('\\n🎨 CUSTOMIZATION DASHBOARD DEMONSTRATION');
-  console.log('========================================');
+  console.info('\\n🎨 CUSTOMIZATION DASHBOARD DEMONSTRATION');
+  console.info('========================================');
   
   // Render dashboard for factory-wager merchant
-  console.log('\\n🖥️ Rendering Dashboard for factory-wager:');
+  console.info('\\n🖥️ Rendering Dashboard for factory-wager:');
   const dashboardView = await dashboard.renderDashboard('factory-wager');
   
-  console.log(`   ✅ Dashboard rendered: ${dashboardView.title}`);
-  console.log(`      - Version: ${dashboardView.version}`);
-  console.log(`      - Sections: ${dashboardView.sections.length}`);
-  console.log(`      - Quick actions: ${dashboardView.quickActions.length}`);
+  console.info(`   ✅ Dashboard rendered: ${dashboardView.title}`);
+  console.info(`      - Version: ${dashboardView.version}`);
+  console.info(`      - Sections: ${dashboardView.sections.length}`);
+  console.info(`      - Quick actions: ${dashboardView.quickActions.length}`);
   
   // Show dashboard sections
   dashboardView.sections.forEach(section => {
-    console.log(`\\n   📋 ${section.title}:`);
-    console.log(`      - ${section.description}`);
-    console.log(`      - Type: ${section.type}`);
-    console.log(`      - Actions: ${section.actions.join(', ')}`);
+    console.info(`\\n   📋 ${section.title}:`);
+    console.info(`      - ${section.description}`);
+    console.info(`      - Type: ${section.type}`);
+    console.info(`      - Actions: ${section.actions.join(', ')}`);
     
     if (section.type === 'skills' && section.data.activeSkills) {
-      console.log(`      - Active Skills: ${section.data.activeSkills.length}`);
+      console.info(`      - Active Skills: ${section.data.activeSkills.length}`);
       section.data.activeSkills.forEach((skill: any) => {
-        console.log(`         * ${skill.name}: ${skill.performance}`);
+        console.info(`         * ${skill.name}: ${skill.performance}`);
       });
     }
   });
   
   // Demonstrate quick actions
-  console.log('\\n⚡ Testing Quick Actions:');
+  console.info('\\n⚡ Testing Quick Actions:');
   
   // Test import from Cursor
-  console.log('\\n🔄 Testing Import from Cursor:');
+  console.info('\\n🔄 Testing Import from Cursor:');
   const cursorData = {
     rules: [
       {
@@ -493,50 +493,50 @@ async function demonstrateCustomizationDashboard(dashboard: CascadeCustomization
   
   if (importResult.success) {
     const resultData = importResult.data as any;
-    console.log(`   ✅ Import successful`);
-    console.log(`      - Rules imported: ${resultData?.rulesImported || 0}`);
-    console.log(`      - Skills imported: ${resultData?.skillsImported || 0}`);
-    console.log(`      - Preferences imported: ${resultData?.preferencesImported || 0}`);
-    console.log(`      - Conflicts resolved: ${resultData?.conflictsResolved || 0}`);
-    console.log(`      - Next steps: ${importResult.nextSteps?.join(', ') || 'None'}`);
+    console.info(`   ✅ Import successful`);
+    console.info(`      - Rules imported: ${resultData?.rulesImported || 0}`);
+    console.info(`      - Skills imported: ${resultData?.skillsImported || 0}`);
+    console.info(`      - Preferences imported: ${resultData?.preferencesImported || 0}`);
+    console.info(`      - Conflicts resolved: ${resultData?.conflictsResolved || 0}`);
+    console.info(`      - Next steps: ${importResult.nextSteps?.join(', ') || 'None'}`);
   } else {
-    console.log(`   ❌ Import failed: ${importResult.error}`);
+    console.info(`   ❌ Import failed: ${importResult.error}`);
   }
   
   // Test export configuration
-  console.log('\\n📤 Testing Configuration Export:');
+  console.info('\\n📤 Testing Configuration Export:');
   const exportResult = await dashboard.handleCustomizationAction({
     type: 'export_configuration',
     merchantId: 'factory-wager'
   });
   
   if (exportResult.success) {
-    console.log(`   ✅ Export successful`);
-    console.log(`      - Version: ${exportResult.data.version}`);
-    console.log(`      - System: ${exportResult.data.system}`);
-    console.log(`      - Total size: ${exportResult.data.metadata.totalSize} bytes`);
-    console.log(`      - Compatible with: ${exportResult.data.metadata.compatibleWith.join(', ')}`);
+    console.info(`   ✅ Export successful`);
+    console.info(`      - Version: ${exportResult.data.version}`);
+    console.info(`      - System: ${exportResult.data.system}`);
+    console.info(`      - Total size: ${exportResult.data.metadata.totalSize} bytes`);
+    console.info(`      - Compatible with: ${exportResult.data.metadata.compatibleWith.join(', ')}`);
   } else {
-    console.log(`   ❌ Export failed: ${exportResult.error}`);
+    console.info(`   ❌ Export failed: ${exportResult.error}`);
   }
   
   // Show customization options
-  console.log('\\n⚙️ Customization Options:');
+  console.info('\\n⚙️ Customization Options:');
   const options = dashboardView.customizationOptions;
   
   Object.entries(options).forEach(([key, option]) => {
-    console.log(`   📋 ${option.label}:`);
-    console.log(`      - Current value: ${option.value}`);
-    console.log(`      - Options: ${option.options.join(', ')}`);
+    console.info(`   📋 ${option.label}:`);
+    console.info(`      - Current value: ${option.value}`);
+    console.info(`      - Options: ${option.options.join(', ')}`);
   });
 }
 
 async function demonstrateWorkflowIntegration(workflowEngine: CascadeWorkflowEngine) {
-  console.log('\\n🔄 WORKFLOW INTEGRATION DEMONSTRATION');
-  console.log('====================================');
+  console.info('\\n🔄 WORKFLOW INTEGRATION DEMONSTRATION');
+  console.info('====================================');
   
   // Test device onboarding workflow
-  console.log('\\n📱 Testing Device Onboarding Workflow:');
+  console.info('\\n📱 Testing Device Onboarding Workflow:');
   
   const deviceContext = {
     merchantId: 'factory-wager',
@@ -553,15 +553,15 @@ async function demonstrateWorkflowIntegration(workflowEngine: CascadeWorkflowEng
   
   const deviceExecution = await workflowEngine.executeWorkflow('device-onboarding', deviceContext, deviceTrigger);
   
-  console.log(`   ✅ Device onboarding workflow completed`);
-  console.log(`      - Status: ${deviceExecution.status}`);
-  console.log(`      - Execution time: ${deviceExecution.metrics.executionTime}ms`);
-  console.log(`      - Steps completed: ${deviceExecution.metrics.stepsCompleted}/6`);
-  console.log(`      - Success rate: ${(deviceExecution.metrics.successRate * 100).toFixed(1)}%`);
-  console.log(`      - MRR impact: $${deviceExecution.context.mrrImpact?.toLocaleString() || '0'}/month`);
+  console.info(`   ✅ Device onboarding workflow completed`);
+  console.info(`      - Status: ${deviceExecution.status}`);
+  console.info(`      - Execution time: ${deviceExecution.metrics.executionTime}ms`);
+  console.info(`      - Steps completed: ${deviceExecution.metrics.stepsCompleted}/6`);
+  console.info(`      - Success rate: ${(deviceExecution.metrics.successRate * 100).toFixed(1)}%`);
+  console.info(`      - MRR impact: $${deviceExecution.context.mrrImpact?.toLocaleString() || '0'}/month`);
   
   // Test bulk onboarding workflow
-  console.log('\\n📊 Testing Bulk Device Onboarding Workflow:');
+  console.info('\\n📊 Testing Bulk Device Onboarding Workflow:');
   
   const bulkContext = {
     merchantId: 'factory-wager',
@@ -577,14 +577,14 @@ async function demonstrateWorkflowIntegration(workflowEngine: CascadeWorkflowEng
   
   const bulkExecution = await workflowEngine.executeWorkflow('bulk-device-onboarding', bulkContext, bulkTrigger);
   
-  console.log(`   ✅ Bulk onboarding workflow completed`);
-  console.log(`      - Status: ${bulkExecution.status}`);
-  console.log(`      - Devices processed: ${bulkExecution.context.deviceCount || 25}`);
-  console.log(`      - Execution time: ${bulkExecution.metrics.executionTime}ms`);
-  console.log(`      - MRR impact: $${(bulkExecution.context.mrrImpact || 0).toLocaleString()}/month`);
+  console.info(`   ✅ Bulk onboarding workflow completed`);
+  console.info(`      - Status: ${bulkExecution.status}`);
+  console.info(`      - Devices processed: ${bulkExecution.context.deviceCount || 25}`);
+  console.info(`      - Execution time: ${bulkExecution.metrics.executionTime}ms`);
+  console.info(`      - MRR impact: $${(bulkExecution.context.mrrImpact || 0).toLocaleString()}/month`);
   
   // Test merchant activation workflow
-  console.log('\\n🏢 Testing Merchant Activation Workflow:');
+  console.info('\\n🏢 Testing Merchant Activation Workflow:');
   
   const merchantContext = {
     merchantId: 'new-merchant',
@@ -604,21 +604,21 @@ async function demonstrateWorkflowIntegration(workflowEngine: CascadeWorkflowEng
   
   const merchantExecution = await workflowEngine.executeWorkflow('merchant-activation', merchantContext, merchantTrigger);
   
-  console.log(`   ✅ Merchant activation workflow completed`);
-  console.log(`      - Status: ${merchantExecution.status}`);
-  console.log(`      - Execution time: ${merchantExecution.metrics.executionTime}ms`);
-  console.log(`      - Training needed: ${merchantExecution.context.trainingNeeded ? 'Yes' : 'No'}`);
+  console.info(`   ✅ Merchant activation workflow completed`);
+  console.info(`      - Status: ${merchantExecution.status}`);
+  console.info(`      - Execution time: ${merchantExecution.metrics.executionTime}ms`);
+  console.info(`      - Training needed: ${merchantExecution.context.trainingNeeded ? 'Yes' : 'No'}`);
   
   // Show workflow metrics
-  console.log('\\n📊 Workflow Metrics:');
+  console.info('\\n📊 Workflow Metrics:');
   const workflowMetrics = await workflowEngine.getAllWorkflowMetrics();
   
   Object.entries(workflowMetrics).forEach(([workflowId, metrics]) => {
     const metricsData = metrics as any;
-    console.log(`   📋 ${workflowId}:`);
-    console.log(`      - Total executions: ${metricsData.totalExecutions}`);
-    console.log(`      - Success rate: ${(metricsData.successRate * 100).toFixed(1)}%`);
-    console.log(`      - Avg execution time: ${metricsData.avgExecutionTime.toFixed(0)}ms`);
+    console.info(`   📋 ${workflowId}:`);
+    console.info(`      - Total executions: ${metricsData.totalExecutions}`);
+    console.info(`      - Success rate: ${(metricsData.successRate * 100).toFixed(1)}%`);
+    console.info(`      - Avg execution time: ${metricsData.avgExecutionTime.toFixed(0)}ms`);
   });
 }
 
@@ -628,8 +628,8 @@ async function demonstrateSystemMetrics(
   rulesEngine: CascadeRulesEngine,
   performanceOptimizer: CascadePerformanceOptimizer
 ) {
-  console.log('\\n📈 COMPREHENSIVE SYSTEM METRICS');
-  console.log('=================================');
+  console.info('\\n📈 COMPREHENSIVE SYSTEM METRICS');
+  console.info('=================================');
   
   // Collect metrics from all components
   const [memoryStats, ruleMetrics, performanceMetrics] = await Promise.all([
@@ -638,74 +638,74 @@ async function demonstrateSystemMetrics(
     Promise.resolve(performanceOptimizer.getCurrentMetrics())
   ]);
   
-  console.log('\\n💾 Memory System Metrics:');
-  console.log(`   - Total memories: ${memoryStats.totalMemories}`);
-  console.log(`   - Memory types: ${Object.keys(memoryStats.byType).length}`);
-  console.log(`   - Total indices: ${memoryStats.totalIndices}`);
-  console.log(`   - Oldest memory: ${memoryStats.oldestMemory?.toLocaleDateString() || 'N/A'}`);
-  console.log(`   - Newest memory: ${memoryStats.newestMemory?.toLocaleDateString() || 'N/A'}`);
+  console.info('\\n💾 Memory System Metrics:');
+  console.info(`   - Total memories: ${memoryStats.totalMemories}`);
+  console.info(`   - Memory types: ${Object.keys(memoryStats.byType).length}`);
+  console.info(`   - Total indices: ${memoryStats.totalIndices}`);
+  console.info(`   - Oldest memory: ${memoryStats.oldestMemory?.toLocaleDateString() || 'N/A'}`);
+  console.info(`   - Newest memory: ${memoryStats.newestMemory?.toLocaleDateString() || 'N/A'}`);
   
-  console.log('\\n📋 Rules Engine Metrics:');
-  console.log(`   - Total rules: ${ruleMetrics.totalRules}`);
-  console.log(`   - Active rules: ${ruleMetrics.activeRules}`);
-  console.log(`   - Total executions: ${ruleMetrics.totalExecutions}`);
-  console.log(`   - Avg execution time: ${ruleMetrics.avgExecutionTime.toFixed(2)}ms`);
-  console.log(`   - Most executed rule: ${ruleMetrics.mostExecutedRule || 'N/A'}`);
+  console.info('\\n📋 Rules Engine Metrics:');
+  console.info(`   - Total rules: ${ruleMetrics.totalRules}`);
+  console.info(`   - Active rules: ${ruleMetrics.activeRules}`);
+  console.info(`   - Total executions: ${ruleMetrics.totalExecutions}`);
+  console.info(`   - Avg execution time: ${ruleMetrics.avgExecutionTime.toFixed(2)}ms`);
+  console.info(`   - Most executed rule: ${ruleMetrics.mostExecutedRule || 'N/A'}`);
   
-  console.log('\\n⚡ Performance Metrics:');
-  console.log(`   - Metrics collected: ${performanceMetrics.length}`);
-  console.log(`   - Categories: ${[...new Set(performanceMetrics.map(m => m.category))].join(', ')}`);
+  console.info('\\n⚡ Performance Metrics:');
+  console.info(`   - Metrics collected: ${performanceMetrics.length}`);
+  console.info(`   - Categories: ${[...new Set(performanceMetrics.map(m => m.category))].join(', ')}`);
   
   performanceMetrics.forEach(metric => {
     const status = metric.value <= (metric.target || metric.threshold || Infinity) ? '✅' : '⚠️';
-    console.log(`   ${status} ${metric.name}: ${metric.value}${metric.unit} (target: ${metric.target || 'N/A'}${metric.unit})`);
+    console.info(`   ${status} ${metric.name}: ${metric.value}${metric.unit} (target: ${metric.target || 'N/A'}${metric.unit})`);
   });
   
   // Calculate overall system health
   const healthyMetrics = performanceMetrics.filter(m => m.value <= (m.target || m.threshold || Infinity)).length;
   const systemHealth = (healthyMetrics / performanceMetrics.length) * 100;
   
-  console.log('\\n🏥 Overall System Health:');
-  console.log(`   - System health score: ${systemHealth.toFixed(1)}%`);
-  console.log(`   - Healthy metrics: ${healthyMetrics}/${performanceMetrics.length}`);
+  console.info('\\n🏥 Overall System Health:');
+  console.info(`   - System health score: ${systemHealth.toFixed(1)}%`);
+  console.info(`   - Healthy metrics: ${healthyMetrics}/${performanceMetrics.length}`);
   
   if (systemHealth >= 90) {
-    console.log('   🟢 System Status: Excellent');
+    console.info('   🟢 System Status: Excellent');
   } else if (systemHealth >= 75) {
-    console.log('   🟡 System Status: Good');
+    console.info('   🟡 System Status: Good');
   } else {
-    console.log('   🔴 System Status: Needs Attention');
+    console.info('   🔴 System Status: Needs Attention');
   }
   
   // Performance impact summary
-  console.log('\\n💰 Performance Impact Summary:');
-  console.log('   🎯 QR Generation Speed: +42% (100ms → 58ms)');
-  console.log('   🏥 Health Check Time: -35% (45s → 29s)');
-  console.log('   ⚙️ Configuration Push: +28% reliability');
-  console.log('   💰 ROI Prediction: 91% accuracy (+15%)');
-  console.log('   💾 Memory Retrieval: 87% faster');
-  console.log('   🧠 Skill Execution: 2.3x more efficient');
+  console.info('\\n💰 Performance Impact Summary:');
+  console.info('   🎯 QR Generation Speed: +42% (100ms → 58ms)');
+  console.info('   🏥 Health Check Time: -35% (45s → 29s)');
+  console.info('   ⚙️ Configuration Push: +28% reliability');
+  console.info('   💰 ROI Prediction: 91% accuracy (+15%)');
+  console.info('   💾 Memory Retrieval: 87% faster');
+  console.info('   🧠 Skill Execution: 2.3x more efficient');
   
-  console.log('\\n🚀 Business Impact:');
-  console.log('   📈 Onboarding Success: 89.4% → 94.7% (+5.3%)');
-  console.log('   ⏱️ Time to Value: 28s average (target achieved)');
-  console.log('   😊 Merchant Satisfaction: 92% (+17%)');
-  console.log('   🎫 Support Tickets: -67%');
-  console.log('   💰 MRR Impact: Confirmed +65%');
+  console.info('\\n🚀 Business Impact:');
+  console.info('   📈 Onboarding Success: 89.4% → 94.7% (+5.3%)');
+  console.info('   ⏱️ Time to Value: 28s average (target achieved)');
+  console.info('   😊 Merchant Satisfaction: 92% (+17%)');
+  console.info('   🎫 Support Tickets: -67%');
+  console.info('   💰 MRR Impact: Confirmed +65%');
   
-  console.log('\\n🎯 Ready for Production:');
-  console.log('   ✅ Rules Engine: Deployed and active');
-  console.log('   ✅ Skills Manager: Learning and adapting');
-  console.log('   ✅ Memory System: Optimized and efficient');
-  console.log('   ✅ Performance Optimizer: Continuously improving');
-  console.log('   ✅ Customization Dashboard: Interactive and live');
-  console.log('   ✅ Workflow Engine: Orchestrating complex processes');
+  console.info('\\n🎯 Ready for Production:');
+  console.info('   ✅ Rules Engine: Deployed and active');
+  console.info('   ✅ Skills Manager: Learning and adapting');
+  console.info('   ✅ Memory System: Optimized and efficient');
+  console.info('   ✅ Performance Optimizer: Continuously improving');
+  console.info('   ✅ Customization Dashboard: Interactive and live');
+  console.info('   ✅ Workflow Engine: Orchestrating complex processes');
   
-  console.log('\\n🔗 Access Points:');
-  console.log('   📊 Dashboard: monitor.factory-wager.com/cascade-customization');
-  console.log('   📈 Benchmarks: monitor.factory-wager.com/cascade-benchmarks');
-  console.log('   🔧 Configuration: monitor.factory-wager.com/cascade-config');
-  console.log('   📚 Documentation: docs.factory-wager.com/cascade');
+  console.info('\\n🔗 Access Points:');
+  console.info('   📊 Dashboard: monitor.factory-wager.com/cascade-customization');
+  console.info('   📈 Benchmarks: monitor.factory-wager.com/cascade-benchmarks');
+  console.info('   🔧 Configuration: monitor.factory-wager.com/cascade-config');
+  console.info('   📚 Documentation: docs.factory-wager.com/cascade');
 }
 
 // Run the demonstration
@@ -718,20 +718,20 @@ const isMainModule = typeof globalProcess !== 'undefined' &&
 if (isMainModule) {
   demonstrateCascadeCustomizationSystem()
     .then(() => {
-      console.log('\\n🎉 CASCADE CUSTOMIZATION SYSTEM DEMO COMPLETED SUCCESSFULLY!');
-      console.log('\\n📋 Summary:');
-      console.log('   - ✅ Rules Engine: Security-first, device-health, color consistency');
-      console.log('   - ✅ Skills Manager: QR generation, health prediction, ROI analysis');
-      console.log('   - ✅ Memory System: Merchant, device, interaction, performance memories');
-      console.log('   - ✅ Performance Optimizer: Continuous learning and optimization');
-      console.log('   - ✅ Customization Dashboard: Interactive management interface');
-      console.log('   - ✅ Workflow Engine: Orchestrated onboarding processes');
-      console.log('   - ✅ Enterprise Integration: Complete factory-wager.com optimization');
+      console.info('\\n🎉 CASCADE CUSTOMIZATION SYSTEM DEMO COMPLETED SUCCESSFULLY!');
+      console.info('\\n📋 Summary:');
+      console.info('   - ✅ Rules Engine: Security-first, device-health, color consistency');
+      console.info('   - ✅ Skills Manager: QR generation, health prediction, ROI analysis');
+      console.info('   - ✅ Memory System: Merchant, device, interaction, performance memories');
+      console.info('   - ✅ Performance Optimizer: Continuous learning and optimization');
+      console.info('   - ✅ Customization Dashboard: Interactive management interface');
+      console.info('   - ✅ Workflow Engine: Orchestrated onboarding processes');
+      console.info('   - ✅ Enterprise Integration: Complete factory-wager.com optimization');
       
-      console.log('\\n🚀 The Cascade Customization System is ready for enterprise deployment!');
-      console.log('💰 Expected MRR Impact: +65%');
-      console.log('⏱️ Target Onboarding Time: 28 seconds');
-      console.log('📈 Success Rate: 94.7%');
+      console.info('\\n🚀 The Cascade Customization System is ready for enterprise deployment!');
+      console.info('💰 Expected MRR Impact: +65%');
+      console.info('⏱️ Target Onboarding Time: 28 seconds');
+      console.info('📈 Success Rate: 94.7%');
       
       // Exit process for non-browser environments
       if (globalProcess && globalProcess.exit) {

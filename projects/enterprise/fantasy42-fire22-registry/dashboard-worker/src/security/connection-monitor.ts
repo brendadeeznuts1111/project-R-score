@@ -260,7 +260,7 @@ export class ConnectionSecurityMonitor {
     );
 
     // Immediate notification (in production, this would trigger alerts)
-    console.log(`🚨 CRITICAL SECURITY ALERT: ${alert.reason}`);
+    console.info(`🚨 CRITICAL SECURITY ALERT: ${alert.reason}`);
   }
 
   /**
@@ -560,8 +560,8 @@ export const packageTracker = new PackageReferenceTracker();
 
 // !==!==!===== DEMO USAGE !==!==!=====
 if (import.meta.main) {
-  console.log('🔐 **CONNECTION SECURITY MONITOR DEMO** 🔐');
-  console.log('='.repeat(60));
+  console.info('🔐 **CONNECTION SECURITY MONITOR DEMO** 🔐');
+  console.info('='.repeat(60));
 
   // Demo connection monitoring
   const demoConnection: ConnectionInfo = {
@@ -590,11 +590,11 @@ if (import.meta.main) {
     packageTracker.trackPackageReferences(message);
   });
 
-  console.log('\n📊 Security Status:');
-  console.log(connectionMonitor.getSecurityStatus());
+  console.info('\n📊 Security Status:');
+  console.info(connectionMonitor.getSecurityStatus());
 
-  console.log('\n📦 Tracked Packages:');
-  console.log(Array.from(packageTracker.getTrackedPackages()));
+  console.info('\n📦 Tracked Packages:');
+  console.info(Array.from(packageTracker.getTrackedPackages()));
 
-  console.log('\n✅ Connection Security Monitor ready!');
+  console.info('\n✅ Connection Security Monitor ready!');
 }

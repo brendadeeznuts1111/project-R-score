@@ -496,52 +496,52 @@ if (import.meta.main) {
   if (args[0] === 'resolve' && args.length > 1) {
     const modules = args.slice(1);
     const result = BunModuleResolver.generateModuleReport(modules);
-    console.log(result);
+    console.info(result);
   } else if (args[0] === 'duoplus') {
     const modules = BunModuleResolver.findDuoPlusModules();
-    console.log(`Found ${modules.length} DuoPlus modules:`);
+    console.info(`Found ${modules.length} DuoPlus modules:`);
     for (const module of modules.slice(0, 20)) {
-      console.log(`  ${module}`);
+      console.info(`  ${module}`);
     }
     if (modules.length > 20) {
-      console.log(`  ... and ${modules.length - 20} more`);
+      console.info(`  ... and ${modules.length - 20} more`);
     }
   } else if (args[0] === 'typescript') {
     const files = BunModuleResolver.findTsFiles();
-    console.log(`Found ${files.length} TypeScript files:`);
+    console.info(`Found ${files.length} TypeScript files:`);
     for (const file of files.slice(0, 20)) {
-      console.log(`  ${file}`);
+      console.info(`  ${file}`);
     }
     if (files.length > 20) {
-      console.log(`  ... and ${files.length - 20} more`);
+      console.info(`  ... and ${files.length - 20} more`);
     }
   } else if (args[0] === 'duplicates') {
     const modules = ['elysia', 'bun:sqlite', 'duoplus-sdk', 'express', 'axios'];
     const duplicates = BunModuleResolver.findDuplicateModules(modules);
-    console.log(`Found ${duplicates.size} duplicate module groups`);
+    console.info(`Found ${duplicates.size} duplicate module groups`);
     for (const [path, moduleIds] of duplicates) {
-      console.log(`${path}: ${moduleIds.join(', ')}`);
+      console.info(`${path}: ${moduleIds.join(', ')}`);
     }
   } else if (args[0] === 'analyze' && args[1]) {
     const filePath = args[1];
     const analysis = BunModuleResolver.analyzeDependencies(filePath);
-    console.log(`=== Module Analysis: ${filePath} ===`);
-    console.log(`Imports: ${analysis.imports.length}`);
+    console.info(`=== Module Analysis: ${filePath} ===`);
+    console.info(`Imports: ${analysis.imports.length}`);
     for (const imp of analysis.imports) {
-      console.log(`  - ${imp}`);
+      console.info(`  - ${imp}`);
     }
-    console.log(`Exports: ${analysis.exports.length}`);
+    console.info(`Exports: ${analysis.exports.length}`);
     for (const exp of analysis.exports) {
-      console.log(`  - ${exp}`);
+      console.info(`  - ${exp}`);
     }
-    console.log(`Size: ${analysis.size} bytes`);
-    console.log(`Lines: ${analysis.lines}`);
+    console.info(`Size: ${analysis.size} bytes`);
+    console.info(`Lines: ${analysis.lines}`);
   } else {
-    console.log('Usage:');
-    console.log('  bun module-resolver.ts resolve <module1> <module2> ...');
-    console.log('  bun module-resolver.ts duoplus');
-    console.log('  bun module-resolver.ts typescript');
-    console.log('  bun module-resolver.ts duplicates');
-    console.log('  bun module-resolver.ts analyze <file>');
+    console.info('Usage:');
+    console.info('  bun module-resolver.ts resolve <module1> <module2> ...');
+    console.info('  bun module-resolver.ts duoplus');
+    console.info('  bun module-resolver.ts typescript');
+    console.info('  bun module-resolver.ts duplicates');
+    console.info('  bun module-resolver.ts analyze <file>');
   }
 }

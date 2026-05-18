@@ -38,14 +38,14 @@ const section = [
     heatmapFooter
 ];
 
-console.log("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
-console.log("║              REAL-TIME RISK HEATMAP SECTION - SEMANTIC CLASS VERIFICATION             ║");
-console.log("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
+console.info("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
+console.info("║              REAL-TIME RISK HEATMAP SECTION - SEMANTIC CLASS VERIFICATION             ║");
+console.info("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
 
-console.log(Bun.inspect.table(section, undefined, { colors: true }));
+console.info(Bun.inspect.table(section, undefined, { colors: true }));
 
-console.log("\n📋 Expected HTML Structure:\n");
-console.log(`
+console.info("\n📋 Expected HTML Structure:\n");
+console.info(`
 <article class="visualization-panel">
   <h3 class="visualization-panel__title">Real-Time Risk Heatmap</h3>
   <canvas id="riskHeatmap" class="visualization-panel__canvas" width="400" height="300"></canvas>
@@ -56,4 +56,4 @@ console.log(`
 </article>
 `);
 
-console.log("\n✅ All elements in the Real-Time Risk Heatmap section use semantic BEM-style classes!\n");
+console.info("\n✅ All elements in the Real-Time Risk Heatmap section use semantic BEM-style classes!\n");

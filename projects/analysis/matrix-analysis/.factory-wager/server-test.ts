@@ -19,110 +19,110 @@ const testResults: { [key: string]: boolean } = {};
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function testHttpEndpoints(): Promise<void> {
-  console.log("🌐 Testing HTTP Endpoints");
-  console.log("==========================");
+  console.info("🌐 Testing HTTP Endpoints");
+  console.info("==========================");
 
   try {
     // Test health endpoint
-    console.log("Testing /health...");
+    console.info("Testing /health...");
     const healthResponse = await fetch(`${SERVER_URL}/health`);
     const healthData = await healthResponse.json();
     
     if (healthData.status === "ok" && healthData.service === "FactoryWager") {
-      console.log("✅ /health endpoint working");
+      console.info("✅ /health endpoint working");
       testResults.health = true;
-      console.log(`   Status: ${healthData.status}`);
-      console.log(`   Version: ${healthData.version}`);
-      console.log(`   Uptime: ${healthData.uptime}ms`);
+      console.info(`   Status: ${healthData.status}`);
+      console.info(`   Version: ${healthData.version}`);
+      console.info(`   Uptime: ${healthData.uptime}ms`);
     } else {
-      console.log("❌ /health endpoint failed");
+      console.info("❌ /health endpoint failed");
       testResults.health = false;
     }
 
     // Test env endpoint
-    console.log("\nTesting /env...");
+    console.info("\nTesting /env...");
     const envResponse = await fetch(`${SERVER_URL}/env`);
     const envData = await envResponse.json();
     
     if (envData.factoryWager && envData.bun) {
-      console.log("✅ /env endpoint working");
+      console.info("✅ /env endpoint working");
       testResults.env = true;
-      console.log(`   FW Mode: ${envData.factoryWager.mode}`);
-      console.log(`   FW Debug: ${envData.factoryWager.debug}`);
-      console.log(`   Bun TLS: ${envData.bun.tlsRejectUnauthorized ? "Secure" : "Disabled"}`);
+      console.info(`   FW Mode: ${envData.factoryWager.mode}`);
+      console.info(`   FW Debug: ${envData.factoryWager.debug}`);
+      console.info(`   Bun TLS: ${envData.bun.tlsRejectUnauthorized ? "Secure" : "Disabled"}`);
     } else {
-      console.log("❌ /env endpoint failed");
+      console.info("❌ /env endpoint failed");
       testResults.env = false;
     }
 
     // Test config endpoint
-    console.log("\nTesting /config...");
+    console.info("\nTesting /config...");
     const configResponse = await fetch(`${SERVER_URL}/config`);
     const configData = await configResponse.json();
     
     if (configData.factoryWager && configData.bun && configData.security) {
-      console.log("✅ /config endpoint working");
+      console.info("✅ /config endpoint working");
       testResults.config = true;
-      console.log(`   Security Warnings: ${configData.security.warnings.length}`);
+      console.info(`   Security Warnings: ${configData.security.warnings.length}`);
     } else {
-      console.log("❌ /config endpoint failed");
+      console.info("❌ /config endpoint failed");
       testResults.config = false;
     }
 
     // Test status endpoint
-    console.log("\nTesting /status...");
+    console.info("\nTesting /status...");
     const statusResponse = await fetch(`${SERVER_URL}/status`);
     const statusData = await statusResponse.json();
     
     if (statusData.system && statusData.factoryWager && statusData.security) {
-      console.log("✅ /status endpoint working");
+      console.info("✅ /status endpoint working");
       testResults.status = true;
-      console.log(`   Platform: ${statusData.system.platform}`);
-      console.log(`   Memory: ${Math.round(statusData.system.memory.heapUsed / 1024 / 1024)}MB`);
+      console.info(`   Platform: ${statusData.system.platform}`);
+      console.info(`   Memory: ${Math.round(statusData.system.memory.heapUsed / 1024 / 1024)}MB`);
     } else {
-      console.log("❌ /status endpoint failed");
+      console.info("❌ /status endpoint failed");
       testResults.status = false;
     }
 
     // Test metrics endpoint
-    console.log("\nTesting /metrics...");
+    console.info("\nTesting /metrics...");
     const metricsResponse = await fetch(`${SERVER_URL}/metrics`);
     const metricsData = await metricsResponse.json();
     
     if (metricsData.server && metricsData.memory && metricsData.process) {
-      console.log("✅ /metrics endpoint working");
+      console.info("✅ /metrics endpoint working");
       testResults.metrics = true;
-      console.log(`   Uptime: ${metricsData.server.uptimeHuman}`);
-      console.log(`   Memory: ${metricsData.memory.heapUsedHuman}`);
+      console.info(`   Uptime: ${metricsData.server.uptimeHuman}`);
+      console.info(`   Memory: ${metricsData.memory.heapUsedHuman}`);
     } else {
-      console.log("❌ /metrics endpoint failed");
+      console.info("❌ /metrics endpoint failed");
       testResults.metrics = false;
     }
 
     // Test security endpoint
-    console.log("\nTesting /security...");
+    console.info("\nTesting /security...");
     const securityResponse = await fetch(`${SERVER_URL}/security`);
     const securityData = await securityResponse.json();
     
     if (securityData.security && securityData.recommendations) {
-      console.log("✅ /security endpoint working");
+      console.info("✅ /security endpoint working");
       testResults.security = true;
-      console.log(`   SSL Status: ${securityData.security.sslValidation.status}`);
-      console.log(`   Risk Level: ${securityData.security.sslValidation.risk}`);
-      console.log(`   Recommendations: ${securityData.recommendations.length}`);
+      console.info(`   SSL Status: ${securityData.security.sslValidation.status}`);
+      console.info(`   Risk Level: ${securityData.security.sslValidation.risk}`);
+      console.info(`   Recommendations: ${securityData.recommendations.length}`);
     } else {
-      console.log("❌ /security endpoint failed");
+      console.info("❌ /security endpoint failed");
       testResults.security = false;
     }
 
     // Test 404 handling
-    console.log("\nTesting 404 handling...");
+    console.info("\nTesting 404 handling...");
     const notFoundResponse = await fetch(`${SERVER_URL}/nonexistent`);
     if (notFoundResponse.status === 404) {
-      console.log("✅ 404 handling working");
+      console.info("✅ 404 handling working");
       testResults.notFound = true;
     } else {
-      console.log("❌ 404 handling failed");
+      console.info("❌ 404 handling failed");
       testResults.notFound = false;
     }
 
@@ -136,8 +136,8 @@ async function testHttpEndpoints(): Promise<void> {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function testWebSocket(): Promise<void> {
-  console.log("\n🔌 Testing WebSocket Communication");
-  console.log("==================================");
+  console.info("\n🔌 Testing WebSocket Communication");
+  console.info("==================================");
 
   return new Promise((resolve) => {
     try {
@@ -146,7 +146,7 @@ async function testWebSocket(): Promise<void> {
       const expectedMessages = 4; // welcome + echo_response + config_response + status_response
 
       ws.onopen = () => {
-        console.log("✅ WebSocket connected");
+        console.info("✅ WebSocket connected");
         testResults.websocketConnect = true;
 
         // Send echo message
@@ -179,40 +179,40 @@ async function testWebSocket(): Promise<void> {
 
           switch (data.type) {
             case "welcome":
-              console.log("✅ Welcome message received");
-              console.log(`   Server: ${data.server.version}`);
-              console.log(`   Mode: ${data.server.mode}`);
+              console.info("✅ Welcome message received");
+              console.info(`   Server: ${data.server.version}`);
+              console.info(`   Mode: ${data.server.mode}`);
               testResults.welcomeMessage = true;
               break;
 
             case "echo_response":
-              console.log("✅ Echo response received");
-              console.log(`   Message: ${data.data}`);
+              console.info("✅ Echo response received");
+              console.info(`   Message: ${data.data}`);
               testResults.echoResponse = true;
               break;
 
             case "config_response":
-              console.log("✅ Config response received");
-              console.log(`   FW Mode: ${data.data.factoryWager.mode}`);
-              console.log(`   Bun TLS: ${data.data.bun.tlsRejectUnauthorized ? "Secure" : "Disabled"}`);
+              console.info("✅ Config response received");
+              console.info(`   FW Mode: ${data.data.factoryWager.mode}`);
+              console.info(`   Bun TLS: ${data.data.bun.tlsRejectUnauthorized ? "Secure" : "Disabled"}`);
               testResults.configResponse = true;
               break;
 
             case "status_response":
-              console.log("✅ Status response received");
-              console.log(`   Platform: ${data.data.system.platform}`);
-              console.log(`   Memory: ${Math.round(data.data.system.memory.heapUsed / 1024 / 1024)}MB`);
+              console.info("✅ Status response received");
+              console.info(`   Platform: ${data.data.system.platform}`);
+              console.info(`   Memory: ${Math.round(data.data.system.memory.heapUsed / 1024 / 1024)}MB`);
               testResults.statusResponse = true;
               break;
 
             case "error":
-              console.log("✅ Error handling working");
-              console.log(`   Error: ${data.message}`);
+              console.info("✅ Error handling working");
+              console.info(`   Error: ${data.message}`);
               testResults.errorHandling = true;
               break;
 
             default:
-              console.log(`ℹ️  Unknown message type: ${data.type}`);
+              console.info(`ℹ️  Unknown message type: ${data.type}`);
           }
 
           if (messageCount >= expectedMessages) {
@@ -224,7 +224,7 @@ async function testWebSocket(): Promise<void> {
       };
 
       ws.onclose = () => {
-        console.log("✅ WebSocket disconnected");
+        console.info("✅ WebSocket disconnected");
         testResults.websocketDisconnect = true;
         resolve();
       };
@@ -253,12 +253,12 @@ async function testWebSocket(): Promise<void> {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function runTests(): Promise<void> {
-  console.log("🧪 FactoryWager Server Test Suite");
-  console.log("=================================");
-  console.log(`Testing server on port ${TEST_PORT}\n`);
+  console.info("🧪 FactoryWager Server Test Suite");
+  console.info("=================================");
+  console.info(`Testing server on port ${TEST_PORT}\n`);
 
   // Start server
-  console.log("🚀 Starting FactoryWager server...");
+  console.info("🚀 Starting FactoryWager server...");
   const server = new FactoryWagerServer();
   
   try {
@@ -275,23 +275,23 @@ async function runTests(): Promise<void> {
     await testWebSocket();
     
     // Display results
-    console.log("\n📊 Test Results");
-    console.log("================");
+    console.info("\n📊 Test Results");
+    console.info("================");
     
     const passedTests = Object.values(testResults).filter(Boolean).length;
     const totalTests = Object.keys(testResults).length;
     
     Object.entries(testResults).forEach(([test, passed]) => {
       const status = passed ? "✅ PASS" : "❌ FAIL";
-      console.log(`${status} ${test}`);
+      console.info(`${status} ${test}`);
     });
     
-    console.log(`\n🎯 Summary: ${passedTests}/${totalTests} tests passed`);
+    console.info(`\n🎯 Summary: ${passedTests}/${totalTests} tests passed`);
     
     if (passedTests === totalTests) {
-      console.log("🎉 All tests passed! FactoryWager server is working correctly.");
+      console.info("🎉 All tests passed! FactoryWager server is working correctly.");
     } else {
-      console.log("⚠️  Some tests failed. Please check the server configuration.");
+      console.info("⚠️  Some tests failed. Please check the server configuration.");
     }
     
   } catch (error) {

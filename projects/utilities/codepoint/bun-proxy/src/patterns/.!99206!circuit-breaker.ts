@@ -172,7 +172,7 @@ export class CircuitBreaker extends EventEmitter {
         reason: 'failure_threshold_exceeded'
       });
 
-      console.log(`=4 Circuit breaker ${this.config.name} opened`);
+      console.info(`=4 Circuit breaker ${this.config.name} opened`);
     }
   }
 

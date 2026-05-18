@@ -29,7 +29,7 @@ class SQLiteBenchmark {
   }
 
   private setupBenchmarkDatabase(): void {
-    console.log('📋 Setting up benchmark database...');
+    console.info('📋 Setting up benchmark database...');
 
     // Create comprehensive test schema
     this.db.run(`
@@ -79,7 +79,7 @@ class SQLiteBenchmark {
     this.db.run('CREATE INDEX idx_posts_user_id ON posts(user_id)');
     this.db.run('CREATE INDEX idx_comments_post_id ON comments(post_id)');
 
-    console.log('✅ Benchmark database setup complete');
+    console.info('✅ Benchmark database setup complete');
   }
 
   private generateTestData(): any {
@@ -130,7 +130,7 @@ class SQLiteBenchmark {
   }
 
   private runBenchmark(operation: string, iterations: number, fn: () => void): BenchmarkResult {
-    console.log(`\n🏃 Running ${operation} benchmark (${iterations} iterations)...`);
+    console.info(`\n🏃 Running ${operation} benchmark (${iterations} iterations)...`);
 
     const startTime = performance.now();
     const startMemory = this.measureMemoryUsage();
@@ -291,7 +291,7 @@ class SQLiteBenchmark {
   }
 
   public async runFullBenchmark(): Promise<void> {
-    console.log('🚀 Starting comprehensive SQLite performance benchmark...\n');
+    console.info('🚀 Starting comprehensive SQLite performance benchmark...\n');
 
     const startTime = Date.now();
 
@@ -311,12 +311,12 @@ class SQLiteBenchmark {
   }
 
   private displayResults(totalTime: number): void {
-    console.log('\n' + '='.repeat(80));
-    console.log('📊 BENCHMARK RESULTS - Bun Native SQLite Performance');
-    console.log('='.repeat(80));
+    console.info('\n' + '='.repeat(80));
+    console.info('📊 BENCHMARK RESULTS - Bun Native SQLite Performance');
+    console.info('='.repeat(80));
 
-    console.log(`\n⏱️  Total Benchmark Time: ${Math.round(totalTime / 1000)}s`);
-    console.log(
+    console.info(`\n⏱️  Total Benchmark Time: ${Math.round(totalTime / 1000)}s`);
+    console.info(
       `📈 Total Operations: ${this.results.reduce((sum, r) => sum + r.operations, 0).toLocaleString()}`
     );
 
@@ -325,15 +325,15 @@ class SQLiteBenchmark {
     const totalTimeMs = this.results.reduce((sum, r) => sum + r.totalTime, 0);
     const avgOpsPerSecond = Math.round(totalOps / (totalTimeMs / 1000));
 
-    console.log(`🚀 Average Performance: ${avgOpsPerSecond.toLocaleString()} ops/sec`);
-    console.log(
+    console.info(`🚀 Average Performance: ${avgOpsPerSecond.toLocaleString()} ops/sec`);
+    console.info(
       `💾 Memory Usage: ${this.results.reduce((sum, r) => sum + r.memoryUsage, 0).toFixed(2)} MB`
     );
 
-    console.log('\n📋 Detailed Results:');
-    console.log('-'.repeat(80));
-    console.log('Operation                    | Ops  | Total Time | Avg Time | Ops/Sec | Memory');
-    console.log('-'.repeat(80));
+    console.info('\n📋 Detailed Results:');
+    console.info('-'.repeat(80));
+    console.info('Operation                    | Ops  | Total Time | Avg Time | Ops/Sec | Memory');
+    console.info('-'.repeat(80));
 
     for (const result of this.results) {
       const opName = result.operation.padEnd(28);
@@ -343,31 +343,31 @@ class SQLiteBenchmark {
       const opsSec = result.opsPerSecond.toString().padStart(7);
       const mem = `${result.memoryUsage}MB`.padStart(6);
 
-      console.log(`${opName} | ${ops} | ${total} | ${avg} | ${opsSec} | ${mem}`);
+      console.info(`${opName} | ${ops} | ${total} | ${avg} | ${opsSec} | ${mem}`);
     }
 
-    console.log('\n' + '='.repeat(80));
-    console.log('🎯 PERFORMANCE VALIDATION:');
-    console.log(
+    console.info('\n' + '='.repeat(80));
+    console.info('🎯 PERFORMANCE VALIDATION:');
+    console.info(
       `   ✅ Bun SQLite demonstrated ${avgOpsPerSecond.toLocaleString()} operations/second`
     );
-    console.log('   ✅ Memory usage remained stable throughout benchmark');
-    console.log('   ✅ Complex queries with joins performed efficiently');
-    console.log('   ✅ Transactions completed successfully');
-    console.log("   ✅ All operations used Bun's native SQLite implementation");
-    console.log('='.repeat(80));
+    console.info('   ✅ Memory usage remained stable throughout benchmark');
+    console.info('   ✅ Complex queries with joins performed efficiently');
+    console.info('   ✅ Transactions completed successfully');
+    console.info("   ✅ All operations used Bun's native SQLite implementation");
+    console.info('='.repeat(80));
 
     // Performance comparison notes
-    console.log('\n🔬 COMPARISON NOTES:');
-    console.log('   📊 Traditional better-sqlite3: ~10,000-50,000 ops/sec');
-    console.log('   🚀 Bun Native SQLite: Demonstrated above performance levels');
-    console.log("   💡 Bun's native implementation provides significant performance gains");
-    console.log('   🎯 Zero external dependencies = enhanced security and maintainability');
+    console.info('\n🔬 COMPARISON NOTES:');
+    console.info('   📊 Traditional better-sqlite3: ~10,000-50,000 ops/sec');
+    console.info('   🚀 Bun Native SQLite: Demonstrated above performance levels');
+    console.info("   💡 Bun's native implementation provides significant performance gains");
+    console.info('   🎯 Zero external dependencies = enhanced security and maintainability');
   }
 
   public close(): void {
     this.db.close();
-    console.log('\n🔒 Benchmark database closed');
+    console.info('\n🔒 Benchmark database closed');
   }
 }
 

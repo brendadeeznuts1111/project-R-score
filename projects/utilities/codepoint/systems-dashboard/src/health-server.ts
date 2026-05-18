@@ -559,21 +559,21 @@ async function runPerformanceBenchmark() {
   return { message: "Use gradePerformance() from performance-benchmark.ts" };
 }
 
-console.log("🚀 Enhanced Health API Server running on http://localhost:3001");
-console.log("📊 Enhanced endpoints available:");
-console.log("  GET  /api/health - Enhanced health check with caching");
-console.log("  GET  /api/health/services - Services with dependency info");
-console.log("  GET  /api/health/system - System with historical data");
-console.log("  GET  /api/health/errors - Errors with filtering");
-console.log("  POST /api/health/test-error - Enhanced error testing");
-console.log("  POST /api/health/errors/batch - Batch error operations");
-console.log("  DELETE /api/health/errors - Clear errors with confirmation");
-console.log("  GET  /api/health/metrics - Metrics with trends");
-console.log("  GET  /api/health/recommendations - Health recommendations");
-console.log("  POST /api/health/score - Enhanced geometric mean scoring");
-console.log("  POST /api/health/benchmark - Performance grading (A+ to C)");
-console.log(
+console.info("🚀 Enhanced Health API Server running on http://localhost:3001");
+console.info("📊 Enhanced endpoints available:");
+console.info("  GET  /api/health - Enhanced health check with caching");
+console.info("  GET  /api/health/services - Services with dependency info");
+console.info("  GET  /api/health/system - System with historical data");
+console.info("  GET  /api/health/errors - Errors with filtering");
+console.info("  POST /api/health/test-error - Enhanced error testing");
+console.info("  POST /api/health/errors/batch - Batch error operations");
+console.info("  DELETE /api/health/errors - Clear errors with confirmation");
+console.info("  GET  /api/health/metrics - Metrics with trends");
+console.info("  GET  /api/health/recommendations - Health recommendations");
+console.info("  POST /api/health/score - Enhanced geometric mean scoring");
+console.info("  POST /api/health/benchmark - Performance grading (A+ to C)");
+console.info(
   "🛡️ Features: Rate limiting, caching, request tracing, enhanced security"
 );
-console.log("🏆 Performance: Bun runtime grading with geometric mean scoring");
-console.log("📐 Scoring: Production-ready geometric mean with NaN protection");
+console.info("🏆 Performance: Bun runtime grading with geometric mean scoring");
+console.info("📐 Scoring: Production-ready geometric mean with NaN protection");

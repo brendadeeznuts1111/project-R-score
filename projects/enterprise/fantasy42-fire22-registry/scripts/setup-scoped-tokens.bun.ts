@@ -103,13 +103,13 @@ class ScopedTokenSetup {
   }
 
   public async setupTokens(): Promise<void> {
-    console.log('🔐 Fantasy42-Fire22 Scoped Registry Token Setup');
-    console.log('==============================================');
-    console.log('');
+    console.info('🔐 Fantasy42-Fire22 Scoped Registry Token Setup');
+    console.info('==============================================');
+    console.info('');
 
-    console.log('🎯 Principle of Least Privilege Implementation');
-    console.log('This setup creates minimal-permission tokens for each use case.');
-    console.log('');
+    console.info('🎯 Principle of Least Privilege Implementation');
+    console.info('This setup creates minimal-permission tokens for each use case.');
+    console.info('');
 
     await this.displayTokenMatrix();
     await this.createNpmrcTemplate();
@@ -117,32 +117,32 @@ class ScopedTokenSetup {
     await this.createGitHubSecretsTemplate();
     await this.validateSetup();
 
-    console.log('✅ Scoped token setup completed!');
-    console.log('');
-    console.log('📚 Next Steps:');
-    console.log('1. Create tokens in npm registry dashboard');
-    console.log('2. Add tokens to CI/CD environment variables');
-    console.log('3. Update .npmrc with actual token values');
-    console.log('4. Test with: bun run test:scoped-registry');
+    console.info('✅ Scoped token setup completed!');
+    console.info('');
+    console.info('📚 Next Steps:');
+    console.info('1. Create tokens in npm registry dashboard');
+    console.info('2. Add tokens to CI/CD environment variables');
+    console.info('3. Update .npmrc with actual token values');
+    console.info('4. Test with: bun run test:scoped-registry');
   }
 
   private async displayTokenMatrix(): Promise<void> {
-    console.log('🔑 Token Matrix - Principle of Least Privilege');
-    console.log('===========================================');
+    console.info('🔑 Token Matrix - Principle of Least Privilege');
+    console.info('===========================================');
 
-    console.log('| Token Name | Scope | Permissions | Environment |');
-    console.log('|------------|-------|-------------|-------------|');
+    console.info('| Token Name | Scope | Permissions | Environment |');
+    console.info('|------------|-------|-------------|-------------|');
 
     for (const token of this.tokens) {
       const perms = token.permissions.join('+');
-      console.log(`| ${token.name} | ${token.scope} | ${perms} | ${token.environment} |`);
+      console.info(`| ${token.name} | ${token.scope} | ${perms} | ${token.environment} |`);
     }
 
-    console.log('');
+    console.info('');
   }
 
   private async createNpmrcTemplate(): Promise<void> {
-    console.log('📝 Creating .npmrc template...');
+    console.info('📝 Creating .npmrc template...');
 
     let npmrc = '# 🔥 Fantasy42-Fire22 Scoped Registry Configuration\n';
     npmrc += '# Principle of Least Privilege - Scoped Tokens Only\n\n';
@@ -165,11 +165,11 @@ class ScopedTokenSetup {
     npmrc += '# - Rotate tokens regularly for security\n';
 
     writeFileSync('.npmrc.template', npmrc);
-    console.log('✅ Created .npmrc.template');
+    console.info('✅ Created .npmrc.template');
   }
 
   private async createEnvironmentTemplate(): Promise<void> {
-    console.log('🌍 Creating environment template...');
+    console.info('🌍 Creating environment template...');
 
     let env = '# 🔥 Fantasy42-Fire22 Scoped Registry Environment Variables\n';
     env += '# Principle of Least Privilege - Minimal Permission Tokens\n\n';
@@ -187,11 +187,11 @@ class ScopedTokenSetup {
     env += '# FIRE22_PRIVATE_REGISTRY_URL=https://private.fire22.com\n';
 
     writeFileSync('.env.registry.template', env);
-    console.log('✅ Created .env.registry.template');
+    console.info('✅ Created .env.registry.template');
   }
 
   private async createGitHubSecretsTemplate(): Promise<void> {
-    console.log('🔐 Creating GitHub secrets template...');
+    console.info('🔐 Creating GitHub secrets template...');
 
     let secrets = '# 🔥 Fantasy42-Fire22 GitHub Repository Secrets\n';
     secrets += '# Required for CI/CD with Scoped Registry Tokens\n\n';
@@ -235,11 +235,11 @@ class ScopedTokenSetup {
     secrets += '3. Copy token to GitHub secret\n\n';
 
     writeFileSync('GITHUB_SECRETS_SETUP.md', secrets);
-    console.log('✅ Created GITHUB_SECRETS_SETUP.md');
+    console.info('✅ Created GITHUB_SECRETS_SETUP.md');
   }
 
   private async validateSetup(): Promise<void> {
-    console.log('🔍 Validating scoped token setup...');
+    console.info('🔍 Validating scoped token setup...');
 
     const checks = [
       {
@@ -264,37 +264,37 @@ class ScopedTokenSetup {
       },
     ];
 
-    console.log('📋 Validation Results:');
+    console.info('📋 Validation Results:');
     for (const check of checks) {
       const passed = check.check();
       const status = passed ? '✅' : '❌';
-      console.log(`${status} ${check.name}: ${check.message}`);
+      console.info(`${status} ${check.name}: ${check.message}`);
     }
 
-    console.log('');
+    console.info('');
   }
 
   public async testScopedRegistry(): Promise<void> {
-    console.log('🧪 Testing scoped registry configuration...');
+    console.info('🧪 Testing scoped registry configuration...');
 
     try {
       // Test basic connectivity
-      console.log('📡 Testing registry connectivity...');
+      console.info('📡 Testing registry connectivity...');
       const result = await $`bun pm ping`.quiet();
-      console.log('✅ Registry connectivity: OK');
+      console.info('✅ Registry connectivity: OK');
 
       // Test user agent
-      console.log('🤖 Testing user agent...');
+      console.info('🤖 Testing user agent...');
       const uaResult = await $`bun --version`.quiet();
-      console.log(`✅ User Agent: ${uaResult.stdout.toString().trim()}`);
+      console.info(`✅ User Agent: ${uaResult.stdout.toString().trim()}`);
 
       // Test package resolution
-      console.log('📦 Testing package resolution...');
+      console.info('📦 Testing package resolution...');
       await $`bun pm view @fire22/security-scanner version`.quiet();
-      console.log('✅ Package resolution: OK');
+      console.info('✅ Package resolution: OK');
     } catch (error) {
-      console.log(`❌ Test failed: ${error}`);
-      console.log('💡 Make sure tokens are properly configured in environment');
+      console.info(`❌ Test failed: ${error}`);
+      console.info('💡 Make sure tokens are properly configured in environment');
     }
   }
 }

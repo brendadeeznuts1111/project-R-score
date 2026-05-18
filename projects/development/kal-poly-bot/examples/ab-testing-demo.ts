@@ -4,31 +4,31 @@
 import { ABTesting, abTestConfig, calculateTradingStrategy } from '../src/ab-testing-config.ts';
 
 async function demonstrateABTesting() {
-  console.log('🎯 A/B Testing Demo - Surgical Precision Platform\n');
+  console.info('🎯 A/B Testing Demo - Surgical Precision Platform\n');
 
   // 1. Configuration Overview
-  console.log('📋 Current Configuration:');
-  console.log(`   Variant: ${abTestConfig.variant}`);
-  console.log(`   Algorithm: ${abTestConfig.algorithm}`);
-  console.log(`   Risk Threshold: ${abTestConfig.riskThreshold}`);
-  console.log(`   UI Theme: ${abTestConfig.uiTheme}`);
-  console.log(`   Features: ${abTestConfig.features.join(', ')}`);
-  console.log('');
+  console.info('📋 Current Configuration:');
+  console.info(`   Variant: ${abTestConfig.variant}`);
+  console.info(`   Algorithm: ${abTestConfig.algorithm}`);
+  console.info(`   Risk Threshold: ${abTestConfig.riskThreshold}`);
+  console.info(`   UI Theme: ${abTestConfig.uiTheme}`);
+  console.info(`   Features: ${abTestConfig.features.join(', ')}`);
+  console.info('');
 
   // 2. Feature Flag Usage
-  console.log('🔧 Feature Flag Examples:');
+  console.info('🔧 Feature Flag Examples:');
 
   if (ABTesting.isVariant('A')) {
-    console.log('   📊 Running conservative trading strategy');
-    console.log('   🛡️  Low-risk approach with safety margins');
+    console.info('   📊 Running conservative trading strategy');
+    console.info('   🛡️  Low-risk approach with safety margins');
   } else {
-    console.log('   📈 Running aggressive trading strategy');
-    console.log('   ⚡ High-risk approach for maximum returns');
+    console.info('   📈 Running aggressive trading strategy');
+    console.info('   ⚡ High-risk approach for maximum returns');
   }
-  console.log('');
+  console.info('');
 
   // 3. Business Logic Demo
-  console.log('💼 Business Logic Demo:');
+  console.info('💼 Business Logic Demo:');
   const marketData = {
     trend: 'up',
     volatility: 0.15,
@@ -36,39 +36,39 @@ async function demonstrateABTesting() {
   };
 
   const strategy = calculateTradingStrategy(marketData);
-  console.log(`   Market Trend: ${marketData.trend.toUpperCase()}`);
-  console.log(`   Recommended Action: ${strategy.action.toUpperCase()}`);
-  console.log(`   Confidence: ${(strategy.confidence * 100).toFixed(1)}%`);
-  console.log(`   Risk Level: ${strategy.riskLevel}`);
-  console.log(`   Strategy Type: ${strategy.strategy}`);
-  console.log('');
+  console.info(`   Market Trend: ${marketData.trend.toUpperCase()}`);
+  console.info(`   Recommended Action: ${strategy.action.toUpperCase()}`);
+  console.info(`   Confidence: ${(strategy.confidence * 100).toFixed(1)}%`);
+  console.info(`   Risk Level: ${strategy.riskLevel}`);
+  console.info(`   Strategy Type: ${strategy.strategy}`);
+  console.info('');
 
   // 4. Utility Functions
-  console.log('🛠️  Utility Functions:');
-  console.log(`   Has risk analysis: ${ABTesting.hasFeature('risk-analysis')}`);
-  console.log(`   Has advanced analytics: ${ABTesting.hasFeature('advanced-analytics')}`);
-  console.log(`   Risk threshold: ${ABTesting.getRiskThreshold()}`);
-  console.log(`   Algorithm: ${ABTesting.getAlgorithm()}`);
-  console.log('');
+  console.info('🛠️  Utility Functions:');
+  console.info(`   Has risk analysis: ${ABTesting.hasFeature('risk-analysis')}`);
+  console.info(`   Has advanced analytics: ${ABTesting.hasFeature('advanced-analytics')}`);
+  console.info(`   Risk threshold: ${ABTesting.getRiskThreshold()}`);
+  console.info(`   Algorithm: ${ABTesting.getAlgorithm()}`);
+  console.info('');
 
   // 5. Variant-Specific Rendering
-  console.log('🎨 Variant-Specific Rendering:');
+  console.info('🎨 Variant-Specific Rendering:');
   const uiElement = ABTesting.renderVariant(
     '🛡️ Conservative UI (Variant A)',
     '⚡ Aggressive UI (Variant B)'
   );
-  console.log(`   UI Component: ${uiElement}`);
-  console.log('');
+  console.info(`   UI Component: ${uiElement}`);
+  console.info('');
 
   // 6. Analytics Tracking
-  console.log('📊 Analytics Tracking:');
-  console.log('   Tracking user behavior...');
-  console.log('   Event: strategy_applied');
-  console.log('   Data: { action: "' + strategy.action + '", confidence: ' + strategy.confidence + ' }');
-  console.log('');
+  console.info('📊 Analytics Tracking:');
+  console.info('   Tracking user behavior...');
+  console.info('   Event: strategy_applied');
+  console.info('   Data: { action: "' + strategy.action + '", confidence: ' + strategy.confidence + ' }');
+  console.info('');
 
   // 7. Performance Settings
-  console.log('⚡ Performance Settings:');
+  console.info('⚡ Performance Settings:');
   const perfSettings = {
     caching: true,
     compression: true,
@@ -79,39 +79,39 @@ async function demonstrateABTesting() {
       memoryPool: true
     } : {})
   };
-  console.log(`   Mode: ${abTestConfig.performanceMode}`);
-  console.log(`   Features: ${Object.keys(perfSettings).join(', ')}`);
-  console.log('');
+  console.info(`   Mode: ${abTestConfig.performanceMode}`);
+  console.info(`   Features: ${Object.keys(perfSettings).join(', ')}`);
+  console.info('');
 
   // 8. Deployment Recommendations
-  console.log('🚀 Deployment Recommendations:');
+  console.info('🚀 Deployment Recommendations:');
   if (abTestConfig.variant === 'A') {
-    console.log('   📈 Deploy to: Risk-averse user segments');
-    console.log('   🎯 Target: Conservative investors');
-    console.log('   📊 Expected outcome: Steady, predictable returns');
+    console.info('   📈 Deploy to: Risk-averse user segments');
+    console.info('   🎯 Target: Conservative investors');
+    console.info('   📊 Expected outcome: Steady, predictable returns');
   } else {
-    console.log('   📈 Deploy to: Risk-tolerant user segments');
-    console.log('   🎯 Target: Active traders');
-    console.log('   📊 Expected outcome: Higher potential returns');
+    console.info('   📈 Deploy to: Risk-tolerant user segments');
+    console.info('   🎯 Target: Active traders');
+    console.info('   📊 Expected outcome: Higher potential returns');
   }
-  console.log('');
+  console.info('');
 
   // 9. Build Information
-  console.log('🔨 Build Information:');
-  console.log('   This bundle was compiled with:');
-  console.log(`   • A_TEST_VARIANT=${abTestConfig.variant === 'A' ? '1' : '2'}`);
-  console.log(`   • UI_VARIANT=${abTestConfig.uiTheme}`);
-  console.log(`   • PERF_MODE=${abTestConfig.performanceMode}`);
-  console.log('');
+  console.info('🔨 Build Information:');
+  console.info('   This bundle was compiled with:');
+  console.info(`   • A_TEST_VARIANT=${abTestConfig.variant === 'A' ? '1' : '2'}`);
+  console.info(`   • UI_VARIANT=${abTestConfig.uiTheme}`);
+  console.info(`   • PERF_MODE=${abTestConfig.performanceMode}`);
+  console.info('');
 
-  console.log('🎉 A/B Testing Demo Complete!');
-  console.log('');
-  console.log('💡 To build different variants:');
-  console.log('   bun run build:ab-variant-a    # Conservative variant');
-  console.log('   bun run build:ab-variant-b    # Aggressive variant');
-  console.log('   bun run build:ab-test         # Build both variants');
-  console.log('   bun run compare:bundles       # Compare bundle sizes');
-  console.log('   bun run test:ab-validation    # Validate A/B setup');
+  console.info('🎉 A/B Testing Demo Complete!');
+  console.info('');
+  console.info('💡 To build different variants:');
+  console.info('   bun run build:ab-variant-a    # Conservative variant');
+  console.info('   bun run build:ab-variant-b    # Aggressive variant');
+  console.info('   bun run build:ab-test         # Build both variants');
+  console.info('   bun run compare:bundles       # Compare bundle sizes');
+  console.info('   bun run test:ab-validation    # Validate A/B setup');
 }
 
 // Run if called directly

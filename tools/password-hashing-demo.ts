@@ -28,14 +28,14 @@ async function demonstratePasswordHashing() {
               strength.score > 80 ? 'success' : strength.score > 50 ? 'warning' : 'error');
 
   if (strength.issues.length > 0) {
-    console.log(styled('\nIssues:', 'warning'));
+    console.info(styled('\nIssues:', 'warning'));
     strength.issues.forEach(issue => {
-      console.log(styled(`• ${issue}`, 'muted'));
+      console.info(styled(`• ${issue}`, 'muted'));
     });
   }
 
   // Hash with different algorithms
-  console.log(styled('\nHashing with different algorithms:', 'primary'));
+  console.info(styled('\nHashing with different algorithms:', 'primary'));
 
   // Argon2id (default)
   const argon2Hash = await SecurityUtils.hashPassword(password, {
@@ -61,7 +61,7 @@ async function demonstratePasswordHashing() {
   log.metric('bcrypt', bcryptHash.substring(0, 50) + '...', 'accent');
 
   // Verify passwords
-  console.log(styled('\nVerification:', 'primary'));
+  console.info(styled('\nVerification:', 'primary'));
 
   const argon2Valid = await SecurityUtils.verifyPassword(password, argon2Hash);
   log.metric('Argon2id verification', argon2Valid.toString(), argon2Valid ? 'success' : 'error');
@@ -75,7 +75,7 @@ async function demonstratePasswordHashing() {
   log.metric('Wrong password verification', wrongValid.toString(), 'error');
 
   // Synchronous hashing
-  console.log(styled('\nSynchronous hashing:', 'primary'));
+  console.info(styled('\nSynchronous hashing:', 'primary'));
 
   const syncHash = SecurityUtils.hashPasswordSync(password, {
     algorithm: 'bcrypt',
@@ -87,7 +87,7 @@ async function demonstratePasswordHashing() {
   log.metric('Sync verification', syncValid.toString(), syncValid ? 'success' : 'error');
 
   // Performance comparison
-  console.log(styled('\nPerformance comparison:', 'primary'));
+  console.info(styled('\nPerformance comparison:', 'primary'));
 
   const iterations = 100;
 
@@ -111,8 +111,8 @@ async function demonstratePasswordHashing() {
   const diff = ((asyncTime - syncTime) / syncTime * 100).toFixed(1);
   log.metric('Performance difference', `${diff}%`, 'muted');
 
-  console.log(styled('\n✅ Password hashing demo complete!', 'success'));
-  console.log(styled('\n📖 Reference: https://bun.com/docs/runtime/hashing#bun-password', 'accent'));
+  console.info(styled('\n✅ Password hashing demo complete!', 'success'));
+  console.info(styled('\n📖 Reference: https://bun.com/docs/runtime/hashing#bun-password', 'accent'));
 }
 
 // Run if called directly

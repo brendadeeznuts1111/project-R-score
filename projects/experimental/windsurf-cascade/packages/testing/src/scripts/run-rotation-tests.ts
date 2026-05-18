@@ -42,7 +42,7 @@ class RotationTestRunner {
                 console.error(`❌ ${args.join(' ')} failed:`);
                 console.error(stderr);
             } else {
-                console.log(`✅ ${args.join(' ')} passed in ${duration}ms`);
+                console.info(`✅ ${args.join(' ')} passed in ${duration}ms`);
             }
 
             return result;
@@ -63,7 +63,7 @@ class RotationTestRunner {
     }
 
     async runAllTests(): Promise<void> {
-        console.log('🚀 Starting Comprehensive Rotation Number Test Suite\n');
+        console.info('🚀 Starting Comprehensive Rotation Number Test Suite\n');
 
         const testCommands = [
             // Basic rotation number tests
@@ -93,7 +93,7 @@ class RotationTestRunner {
 
         for (const command of testCommands) {
             await this.runCommand(command[0], command.slice(1));
-            console.log(''); // Add spacing between tests
+            console.info(''); // Add spacing between tests
         }
 
         this.printSummary();
@@ -109,30 +109,30 @@ class RotationTestRunner {
     }
 
     private printSummary(): void {
-        console.log('📊 Test Execution Summary');
-        console.log('='.repeat(50));
+        console.info('📊 Test Execution Summary');
+        console.info('='.repeat(50));
 
         const passed = this.results.filter(r => r.passed).length;
         const failed = this.results.filter(r => !r.passed).length;
         const totalDuration = this.results.reduce((sum, r) => sum + r.duration, 0);
 
-        console.log(`Total Tests: ${this.results.length}`);
-        console.log(`Passed: ${passed} ✅`);
-        console.log(`Failed: ${failed} ${failed > 0 ? '❌' : '✅'}`);
-        console.log(`Total Duration: ${totalDuration}ms`);
-        console.log(`Average Duration: ${Math.round(totalDuration / this.results.length)}ms`);
+        console.info(`Total Tests: ${this.results.length}`);
+        console.info(`Passed: ${passed} ✅`);
+        console.info(`Failed: ${failed} ${failed > 0 ? '❌' : '✅'}`);
+        console.info(`Total Duration: ${totalDuration}ms`);
+        console.info(`Average Duration: ${Math.round(totalDuration / this.results.length)}ms`);
 
         if (failed > 0) {
-            console.log('\n❌ Failed Tests:');
+            console.info('\n❌ Failed Tests:');
             this.results.filter(r => !r.passed).forEach(r => {
-                console.log(`  - ${r.name}`);
+                console.info(`  - ${r.name}`);
             });
         }
     }
 
     private validateSuccessMetrics(): void {
-        console.log('\n🎯 Success Metrics Validation');
-        console.log('='.repeat(50));
+        console.info('\n🎯 Success Metrics Validation');
+        console.info('='.repeat(50));
 
         const metrics = [
             {
@@ -157,19 +157,19 @@ class RotationTestRunner {
 
         metrics.forEach(metric => {
             const status = metric.passed ? '✅' : '❌';
-            console.log(`${status} ${metric.name}: ${metric.actual} (Target: ${metric.target})`);
+            console.info(`${status} ${metric.name}: ${metric.actual} (Target: ${metric.target})`);
         });
 
         const allPassed = metrics.every(m => m.passed);
         if (allPassed) {
-            console.log('\n🎉 All success metrics achieved!');
+            console.info('\n🎉 All success metrics achieved!');
         } else {
-            console.log('\n⚠️  Some success metrics not met. Review results above.');
+            console.info('\n⚠️  Some success metrics not met. Review results above.');
         }
     }
 
     async runPropertyTestsOnly(): Promise<void> {
-        console.log('🧪 Running Property Tests Only\n');
+        console.info('🧪 Running Property Tests Only\n');
 
         await this.runCommand('bun', [
             'test',
@@ -182,7 +182,7 @@ class RotationTestRunner {
     }
 
     async runBenchmarksOnly(): Promise<void> {
-        console.log('📈 Running Benchmarks Only\n');
+        console.info('📈 Running Benchmarks Only\n');
 
         await this.runCommand('bun', [
             'test',
@@ -194,7 +194,7 @@ class RotationTestRunner {
     }
 
     async runCI(): Promise<void> {
-        console.log('🤖 Running CI Mode (Strict)\n');
+        console.info('🤖 Running CI Mode (Strict)\n');
 
         await this.ensureDirectory('test-results');
 

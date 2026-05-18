@@ -3,10 +3,10 @@
  * TypeScript errors: 0 | Runtime errors: 0 | Chromatic perfection: 100%
  */
 
-console.log('🛡️ FACTORYWAGER SYSTEM PROBE v4.3.1 - BULLETPROOF IMPLEMENTATION COMPLETE')
-console.log('=' .repeat(80))
+console.info('🛡️ FACTORYWAGER SYSTEM PROBE v4.3.1 - BULLETPROOF IMPLEMENTATION COMPLETE')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 🎯 TYPESCRIPT BULLETPROOF ACHIEVED!
 
 ✅ ZERO TYPE ERRORS GUARANTEE
@@ -143,7 +143,7 @@ fw-sysinfo --benchmark-full   # Full status + benchmarks
 Type errors: 0 | Runtime errors: 0 | Chromatic perfection: 100% | ARM64 optimization: MAXIMUM
 `)
 
-console.log('🛡️✨ FACTORYWAGER SYSTEM PROBE v4.3.1 - ABSOLUTELY BULLETPROOF! ✨🛡️')
-console.log('🚀 TypeScript errors: 0 | Runtime errors: 0 | Chromatic perfection: 100%')
-console.log('💎 ARM64 maximum performance with comprehensive fallbacks!')
-console.log('🎨 HSL semantic chromatics with bulletproof type safety!')
+console.info('🛡️✨ FACTORYWAGER SYSTEM PROBE v4.3.1 - ABSOLUTELY BULLETPROOF! ✨🛡️')
+console.info('🚀 TypeScript errors: 0 | Runtime errors: 0 | Chromatic perfection: 100%')
+console.info('💎 ARM64 maximum performance with comprehensive fallbacks!')
+console.info('🎨 HSL semantic chromatics with bulletproof type safety!')

@@ -83,9 +83,9 @@ if (import.meta.main) {
   const ignoreArg = args.find(a => a.startsWith("--ignore="))?.split("=")[1]?.split(",");
   
   SecurityAudit.run({ level: levelArg, ignore: ignoreArg }).then(result => {
-    console.log("T3-Lattice Security Audit");
-    console.log("=========================");
-    console.log(result.report);
+    console.info("T3-Lattice Security Audit");
+    console.info("=========================");
+    console.info(result.report);
     process.exit(result.success ? 0 : 1);
   });
 }

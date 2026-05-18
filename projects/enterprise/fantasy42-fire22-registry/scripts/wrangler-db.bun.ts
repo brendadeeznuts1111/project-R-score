@@ -7,13 +7,13 @@
 import { $ } from 'bun';
 
 async function runCommand(cmd: string, description: string) {
-  console.log(`🔧 ${description}`);
-  console.log(`📝 Running: ${cmd}`);
-  console.log('─'.repeat(60));
+  console.info(`🔧 ${description}`);
+  console.info(`📝 Running: ${cmd}`);
+  console.info('─'.repeat(60));
 
   try {
     const result = await $`${{ raw: cmd }}`.quiet();
-    console.log(result.stdout);
+    console.info(result.stdout);
     if (result.stderr) {
       console.warn(`⚠️  Warning:`, result.stderr);
     }
@@ -25,7 +25,7 @@ async function runCommand(cmd: string, description: string) {
 }
 
 async function createDatabase(env: string) {
-  console.log(`🗄️ Creating D1 database for ${env}`);
+  console.info(`🗄️ Creating D1 database for ${env}`);
   const cloudflareDir = 'enterprise/packages/cloudflare';
 
   await runCommand(
@@ -35,7 +35,7 @@ async function createDatabase(env: string) {
 }
 
 async function createMigration(name: string) {
-  console.log(`📄 Creating database migration: ${name}`);
+  console.info(`📄 Creating database migration: ${name}`);
   const cloudflareDir = 'enterprise/packages/cloudflare';
 
   await runCommand(
@@ -45,7 +45,7 @@ async function createMigration(name: string) {
 }
 
 async function applyMigrations(env: string) {
-  console.log(`⬆️ Applying database migrations for ${env}`);
+  console.info(`⬆️ Applying database migrations for ${env}`);
   const cloudflareDir = 'enterprise/packages/cloudflare';
 
   await runCommand(
@@ -55,7 +55,7 @@ async function applyMigrations(env: string) {
 }
 
 async function listMigrations(env: string) {
-  console.log(`📋 Listing database migrations for ${env}`);
+  console.info(`📋 Listing database migrations for ${env}`);
   const cloudflareDir = 'enterprise/packages/cloudflare';
 
   await runCommand(
@@ -65,7 +65,7 @@ async function listMigrations(env: string) {
 }
 
 async function queryDatabase(env: string, query: string) {
-  console.log(`🔍 Running query on ${env} database`);
+  console.info(`🔍 Running query on ${env} database`);
   const cloudflareDir = 'enterprise/packages/cloudflare';
 
   await runCommand(
@@ -75,7 +75,7 @@ async function queryDatabase(env: string, query: string) {
 }
 
 async function seedDatabase(env: string) {
-  console.log(`🌱 Seeding database for ${env}`);
+  console.info(`🌱 Seeding database for ${env}`);
   const cloudflareDir = 'enterprise/packages/cloudflare';
 
   // Create initial schema
@@ -125,7 +125,7 @@ async function seedDatabase(env: string) {
 }
 
 async function backupDatabase(env: string) {
-  console.log(`💾 Creating database backup for ${env}`);
+  console.info(`💾 Creating database backup for ${env}`);
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const backupFile = `backup-${env}-${timestamp}.sql`;
 
@@ -136,11 +136,11 @@ async function backupDatabase(env: string) {
     `Creating backup ${backupFile} for ${env} database`
   );
 
-  console.log(`✅ Backup saved to: enterprise/packages/cloudflare/${backupFile}`);
+  console.info(`✅ Backup saved to: enterprise/packages/cloudflare/${backupFile}`);
 }
 
 async function showStats(env: string) {
-  console.log(`📊 Database statistics for ${env}`);
+  console.info(`📊 Database statistics for ${env}`);
   const cloudflareDir = 'enterprise/packages/cloudflare';
 
   const statsQuery = `
@@ -167,7 +167,7 @@ async function showStats(env: string) {
 }
 
 async function showHelp() {
-  console.log(`
+  console.info(`
 🗄️ Fantasy42-Fire22 Wrangler Database CLI
 Easy database management for Cloudflare D1
 
@@ -219,7 +219,7 @@ async function main() {
   const validEnvs = ['development', 'staging', 'production'];
   if (!validEnvs.includes(env) && command !== 'migrate') {
     console.error(`❌ Invalid environment: ${env}`);
-    console.log(`Valid environments: ${validEnvs.join(', ')}`);
+    console.info(`Valid environments: ${validEnvs.join(', ')}`);
     return;
   }
 

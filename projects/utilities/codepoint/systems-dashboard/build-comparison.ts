@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 // build-comparison.ts - Enhanced build configuration comparison with advanced analysis
 
-console.log("🔍 Enhanced Build Configuration Comparison");
-console.log("=".repeat(50));
+console.info("🔍 Enhanced Build Configuration Comparison");
+console.info("=".repeat(50));
 
 // Set comprehensive test environment variables
 process.env.PUBLIC_API_URL = "https://api.example.com";
@@ -87,14 +87,14 @@ async function measureBuildPerformance(buildFn: () => Promise<any>): Promise<{
 }
 
 async function compareBuilds(): Promise<void> {
-  console.log("📦 Building with different environment configurations...\n");
+  console.info("📦 Building with different environment configurations...\n");
 
   const buildResults: BuildResult[] = [];
   const securityAnalyses: SecurityAnalysis[] = [];
   const performanceMetrics: PerformanceMetrics[] = [];
 
   // 1. Inline build (all env vars)
-  console.log("1️⃣ INLINE Build (all environment variables):");
+  console.info("1️⃣ INLINE Build (all environment variables):");
   const { result: inlineResult, buildTime: inlineTime } =
     await measureBuildPerformance(async () =>
       Bun.build({
@@ -118,17 +118,17 @@ async function compareBuilds(): Promise<void> {
     buildTime: inlineTime,
   });
 
-  console.log(`   ✅ Built: ${inlineResult.outputs.length} files`);
-  console.log(`   📊 Size: ${inlineResult.outputs[0].size} bytes`);
-  console.log(`   ⚡ Build Time: ${inlineTime}ms`);
-  console.log(
+  console.info(`   ✅ Built: ${inlineResult.outputs.length} files`);
+  console.info(`   📊 Size: ${inlineResult.outputs[0].size} bytes`);
+  console.info(`   ⚡ Build Time: ${inlineTime}ms`);
+  console.info(
     `   🔐 SECRET_KEY inlined: ${inlineAnalysis.hasSecrets ? "❌ YES (unsafe)" : "✅ NO"}`
   );
-  console.log(`   🔗 process.env refs: ${inlineAnalysis.processEnvRefs}`);
-  console.log("");
+  console.info(`   🔗 process.env refs: ${inlineAnalysis.processEnvRefs}`);
+  console.info("");
 
   // 2. Public prefix build (secure)
-  console.log("2️⃣ PUBLIC_* Build (only public variables):");
+  console.info("2️⃣ PUBLIC_* Build (only public variables):");
   const { result: publicResult, buildTime: publicTime } =
     await measureBuildPerformance(async () =>
       Bun.build({
@@ -152,20 +152,20 @@ async function compareBuilds(): Promise<void> {
     buildTime: publicTime,
   });
 
-  console.log(`   ✅ Built: ${publicResult.outputs.length} files`);
-  console.log(`   📊 Size: ${publicResult.outputs[0].size} bytes`);
-  console.log(`   ⚡ Build Time: ${publicTime}ms`);
-  console.log(
+  console.info(`   ✅ Built: ${publicResult.outputs.length} files`);
+  console.info(`   📊 Size: ${publicResult.outputs[0].size} bytes`);
+  console.info(`   ⚡ Build Time: ${publicTime}ms`);
+  console.info(
     `   🔐 SECRET_KEY inlined: ${publicAnalysis.hasSecrets ? "❌ YES (unsafe)" : "✅ NO"}`
   );
-  console.log(`   � process.env refs: ${publicAnalysis.processEnvRefs}`);
-  console.log(
+  console.info(`   � process.env refs: ${publicAnalysis.processEnvRefs}`);
+  console.info(
     `   🛡️ Private vars protected: ${publicAnalysis.privateVarsProtected}`
   );
-  console.log("");
+  console.info("");
 
   // 3. Disabled build (no injection)
-  console.log("3️⃣ DISABLED Build (no environment injection):");
+  console.info("3️⃣ DISABLED Build (no environment injection):");
   const { result: disabledResult, buildTime: disabledTime } =
     await measureBuildPerformance(async () =>
       Bun.build({
@@ -189,17 +189,17 @@ async function compareBuilds(): Promise<void> {
     buildTime: disabledTime,
   });
 
-  console.log(`   ✅ Built: ${disabledResult.outputs.length} files`);
-  console.log(`   📊 Size: ${disabledResult.outputs[0].size} bytes`);
-  console.log(`   ⚡ Build Time: ${disabledTime}ms`);
-  console.log(
+  console.info(`   ✅ Built: ${disabledResult.outputs.length} files`);
+  console.info(`   📊 Size: ${disabledResult.outputs[0].size} bytes`);
+  console.info(`   ⚡ Build Time: ${disabledTime}ms`);
+  console.info(
     `   🔐 All env vars runtime: ${disabledAnalysis.hasProcessEnv ? "✅ YES (safe)" : "❌ NO"}`
   );
-  console.log(`   🔗 process.env refs: ${disabledAnalysis.processEnvRefs}`);
-  console.log("");
+  console.info(`   🔗 process.env refs: ${disabledAnalysis.processEnvRefs}`);
+  console.info("");
 
   // 4. Minified builds comparison
-  console.log("4️⃣ MINIFIED Builds Comparison:");
+  console.info("4️⃣ MINIFIED Builds Comparison:");
   const { result: minifiedResult, buildTime: minifiedTime } =
     await measureBuildPerformance(async () =>
       Bun.build({
@@ -219,19 +219,19 @@ async function compareBuilds(): Promise<void> {
       inlineResult.outputs[0].size) *
     100;
 
-  console.log(`   ✅ Built: ${minifiedResult.outputs.length} files`);
-  console.log(`   📊 Size: ${minifiedResult.outputs[0].size} bytes`);
-  console.log(`   ⚡ Build Time: ${minifiedTime}ms`);
-  console.log(
+  console.info(`   ✅ Built: ${minifiedResult.outputs.length} files`);
+  console.info(`   📊 Size: ${minifiedResult.outputs[0].size} bytes`);
+  console.info(`   ⚡ Build Time: ${minifiedTime}ms`);
+  console.info(
     `   �️ Compression: ${compressionRatio.toFixed(1)}% smaller than inline`
   );
-  console.log(
+  console.info(
     `   🔐 Security: ${minifiedAnalysis.hasSecrets ? "❌ Compromised" : "✅ Secure"}`
   );
-  console.log("");
+  console.info("");
 
   // 5. Source maps comparison
-  console.log("5️⃣ SOURCE MAPS Comparison:");
+  console.info("5️⃣ SOURCE MAPS Comparison:");
   const { result: sourcemapResult } = await measureBuildPerformance(async () =>
     Bun.build({
       entrypoints: ["env-test.ts"],
@@ -242,80 +242,80 @@ async function compareBuilds(): Promise<void> {
     })
   );
 
-  console.log(`   ✅ Built: ${sourcemapResult.outputs.length} files`);
-  console.log(`   📊 Bundle Size: ${sourcemapResult.outputs[0].size} bytes`);
-  console.log(`   🗺️ Source Map: ${sourcemapResult.outputs[1].size} bytes`);
-  console.log(
+  console.info(`   ✅ Built: ${sourcemapResult.outputs.length} files`);
+  console.info(`   📊 Bundle Size: ${sourcemapResult.outputs[0].size} bytes`);
+  console.info(`   🗺️ Source Map: ${sourcemapResult.outputs[1].size} bytes`);
+  console.info(
     `   📈 Total Size: ${sourcemapResult.outputs[0].size + sourcemapResult.outputs[1].size} bytes`
   );
-  console.log("");
+  console.info("");
 
   // Comprehensive Analysis Section
-  console.log("� COMPREHENSIVE ANALYSIS");
-  console.log("─".repeat(50));
+  console.info("� COMPREHENSIVE ANALYSIS");
+  console.info("─".repeat(50));
 
   // Size Analysis
-  console.log("\n📏 Size Analysis:");
+  console.info("\n📏 Size Analysis:");
   buildResults.forEach((build) => {
     const sizeDiff = build.size - buildResults[0].size;
-    console.log(
+    console.info(
       `   ${build.name.padEnd(10)}: ${build.size} bytes (${sizeDiff >= 0 ? "+" : ""}${sizeDiff})`
     );
   });
 
   // Performance Analysis
-  console.log("\n⚡ Performance Analysis:");
+  console.info("\n⚡ Performance Analysis:");
   buildResults.forEach((build) => {
     const timeDiff = build.buildTime - buildResults[0].buildTime;
-    console.log(
+    console.info(
       `   ${build.name.padEnd(10)}: ${build.buildTime}ms (${timeDiff >= 0 ? "+" : ""}${timeDiff}ms)`
     );
   });
 
   // Security Analysis
-  console.log("\n🔒 Security Analysis:");
+  console.info("\n🔒 Security Analysis:");
   buildResults.forEach((build) => {
     const security = build.hasSecrets
       ? "❌ VULNERABLE"
       : build.hasProcessEnv
         ? "✅ SECURE"
         : "⚠️ MIXED";
-    console.log(`   ${build.name.padEnd(10)}: ${security}`);
+    console.info(`   ${build.name.padEnd(10)}: ${security}`);
   });
 
   // Recommendations Matrix
-  console.log("\n💡 Recommendations Matrix:");
-  console.log("   ┌─────────────┬──────────┬──────────┬──────────┬──────────┐");
-  console.log("   │ Environment │ Inline  │ PUBLIC_* │ Disabled │ Minified │");
-  console.log("   ├─────────────┼──────────┼──────────┼──────────┼──────────┤");
-  console.log("   │ Development │ ✅ BEST  │ ✅ GOOD  │ ❌ NO    │ ❌ NO    │");
-  console.log("   │ Staging     │ ⚠️ RISKY │ ✅ BEST  │ ✅ GOOD  │ ✅ GOOD  │");
-  console.log("   │ Production  │ ❌ NEVER │ ✅ BEST  │ ✅ GOOD  │ ✅ BEST  │");
-  console.log("   │ CI/CD       │ ❌ NEVER │ ⚠️ RISKY │ ✅ BEST  │ ✅ GOOD  │");
-  console.log("   └─────────────┴──────────┴──────────┴──────────┴──────────┘");
+  console.info("\n💡 Recommendations Matrix:");
+  console.info("   ┌─────────────┬──────────┬──────────┬──────────┬──────────┐");
+  console.info("   │ Environment │ Inline  │ PUBLIC_* │ Disabled │ Minified │");
+  console.info("   ├─────────────┼──────────┼──────────┼──────────┼──────────┤");
+  console.info("   │ Development │ ✅ BEST  │ ✅ GOOD  │ ❌ NO    │ ❌ NO    │");
+  console.info("   │ Staging     │ ⚠️ RISKY │ ✅ BEST  │ ✅ GOOD  │ ✅ GOOD  │");
+  console.info("   │ Production  │ ❌ NEVER │ ✅ BEST  │ ✅ GOOD  │ ✅ BEST  │");
+  console.info("   │ CI/CD       │ ❌ NEVER │ ⚠️ RISKY │ ✅ BEST  │ ✅ GOOD  │");
+  console.info("   └─────────────┴──────────┴──────────┴──────────┴──────────┘");
 
   // Security Best Practices
-  console.log("\n🛡️ Security Best Practices:");
-  console.log("   ✅ Use PUBLIC_* prefix for client-side variables");
-  console.log("   ✅ Keep secrets (API keys, passwords) as runtime env vars");
-  console.log("   ✅ Use different configs per environment");
-  console.log("   ✅ Validate environment variables at startup");
-  console.log("   ❌ Never inline secrets in production builds");
-  console.log("   ❌ Don't use inline mode for production deployments");
+  console.info("\n🛡️ Security Best Practices:");
+  console.info("   ✅ Use PUBLIC_* prefix for client-side variables");
+  console.info("   ✅ Keep secrets (API keys, passwords) as runtime env vars");
+  console.info("   ✅ Use different configs per environment");
+  console.info("   ✅ Validate environment variables at startup");
+  console.info("   ❌ Never inline secrets in production builds");
+  console.info("   ❌ Don't use inline mode for production deployments");
 
   // Performance Optimization Tips
-  console.log("\n� Performance Optimization Tips:");
-  console.log(
+  console.info("\n� Performance Optimization Tips:");
+  console.info(
     "   🗜️ Enable minification for production (~20-40% size reduction)"
   );
-  console.log("   🗺️ Use external source maps for debugging");
-  console.log("   � Consider code splitting for large applications");
-  console.log("   ⚡ Use tree shaking to remove unused code");
-  console.log(
+  console.info("   🗺️ Use external source maps for debugging");
+  console.info("   � Consider code splitting for large applications");
+  console.info("   ⚡ Use tree shaking to remove unused code");
+  console.info(
     "   🎯 Target specific browsers/platforms for better optimization"
   );
 
-  console.log("\n✅ Enhanced Build Comparison Complete!");
+  console.info("\n✅ Enhanced Build Comparison Complete!");
 }
 
 // Run enhanced comparison

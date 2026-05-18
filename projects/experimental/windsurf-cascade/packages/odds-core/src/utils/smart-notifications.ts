@@ -42,7 +42,7 @@ export class SmartNotificationsEngine extends EventEmitter {
     this.startRecommendationEngine();
 
     this.emit('engineStarted', { timestamp: Date.now() });
-    console.log('🔔 Smart notifications engine started');
+    console.info('🔔 Smart notifications engine started');
   }
 
   /**
@@ -55,7 +55,7 @@ export class SmartNotificationsEngine extends EventEmitter {
 
     this.isRunning = false;
     this.emit('engineStopped', { timestamp: Date.now() });
-    console.log('🛑 Smart notifications engine stopped');
+    console.info('🛑 Smart notifications engine stopped');
   }
 
   /**
@@ -156,7 +156,7 @@ export class SmartNotificationsEngine extends EventEmitter {
     try {
       // Execute implementation steps
       for (const step of recommendation.implementation.steps) {
-        console.log(`🔧 Executing: ${step}`);
+        console.info(`🔧 Executing: ${step}`);
         // In a real implementation, this would execute the actual steps
         await new Promise(resolve => setTimeout(resolve, 100));
       }

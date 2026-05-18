@@ -294,13 +294,13 @@ export function registerTypeDefinitions(): void {
     verified: '✅'
   });
 
-  console.log('✅ Type definitions registered: Bun 1.1+ Turbocharged.');
+  console.info('✅ Type definitions registered: Bun 1.1+ Turbocharged.');
 }
 
 // Watch function for Hot Reload
 export function watchMatrixChanges(callback: () => void) {
   return watch('utils/pattern-matrix.ts', (event, filename) => {
-    console.log('🔄 Pattern Matrix changed. Triggering hot reload...');
+    console.info('🔄 Pattern Matrix changed. Triggering hot reload...');
     callback();
   });
 }

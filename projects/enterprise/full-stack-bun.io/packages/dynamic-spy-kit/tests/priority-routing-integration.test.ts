@@ -36,7 +36,7 @@ test("Priority 110 - P_ASIA_ZH (Fastest ~0.3ms)", async () => {
 	
 	// Should be fast (priority routing)
 	expect(duration).toBeLessThan(10); // <10ms in test environment
-	console.log(`Priority 110: ${duration.toFixed(2)}ms`);
+	console.info(`Priority 110: ${duration.toFixed(2)}ms`);
 });
 
 test("Priority 95 - B365_EU_LOCAL (Normal ~0.7ms)", async () => {
@@ -63,7 +63,7 @@ test("Priority 95 - B365_EU_LOCAL (Normal ~0.7ms)", async () => {
 		expect(result.priority).toBeGreaterThanOrEqual(90);
 	}
 	
-	console.log(`Priority 95: ${duration.toFixed(2)}ms`);
+	console.info(`Priority 95: ${duration.toFixed(2)}ms`);
 });
 
 test("Priority 10 - Generic Fallback (~1.2ms)", async () => {
@@ -91,7 +91,7 @@ test("Priority 10 - Generic Fallback (~1.2ms)", async () => {
 	
 	// Fallback should still work
 	expect(result.confidence).toBeGreaterThan(0);
-	console.log(`Priority 10 (Fallback): ${duration.toFixed(2)}ms`);
+	console.info(`Priority 10 (Fallback): ${duration.toFixed(2)}ms`);
 });
 
 test("Priority routing order - highest priority first", async () => {

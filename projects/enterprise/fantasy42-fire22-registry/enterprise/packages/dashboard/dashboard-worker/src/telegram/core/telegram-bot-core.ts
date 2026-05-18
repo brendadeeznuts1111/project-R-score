@@ -43,7 +43,7 @@ export class TelegramBotCore {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🤖 Initializing Telegram Bot Core...');
+      console.info('🤖 Initializing Telegram Bot Core...');
 
       // Validate configuration
       if (!this.config.token) {
@@ -56,7 +56,7 @@ export class TelegramBotCore {
       // Start analytics tracking
       this.startAnalyticsTracking();
 
-      console.log('✅ Telegram Bot Core initialized successfully');
+      console.info('✅ Telegram Bot Core initialized successfully');
       return true;
     } catch (error) {
       console.error('❌ Failed to initialize Telegram Bot Core:', error);
@@ -74,7 +74,7 @@ export class TelegramBotCore {
     }
 
     try {
-      console.log('🚀 Starting Telegram Bot...');
+      console.info('🚀 Starting Telegram Bot...');
 
       this.isRunning = true;
 
@@ -84,7 +84,7 @@ export class TelegramBotCore {
         await this.startPolling();
       }
 
-      console.log('✅ Telegram Bot started successfully');
+      console.info('✅ Telegram Bot started successfully');
     } catch (error) {
       console.error('❌ Failed to start Telegram Bot:', error);
       this.isRunning = false;
@@ -100,7 +100,7 @@ export class TelegramBotCore {
       return;
     }
 
-    console.log('🛑 Stopping Telegram Bot...');
+    console.info('🛑 Stopping Telegram Bot...');
 
     this.isRunning = false;
 
@@ -112,14 +112,14 @@ export class TelegramBotCore {
     // Clean up sessions
     this.sessions.clear();
 
-    console.log('✅ Telegram Bot stopped');
+    console.info('✅ Telegram Bot stopped');
   }
 
   /**
    * Start polling for messages
    */
   private async startPolling(): Promise<void> {
-    console.log('📡 Starting message polling...');
+    console.info('📡 Starting message polling...');
 
     const interval = this.config.pollingInterval || 1000;
 
@@ -137,11 +137,11 @@ export class TelegramBotCore {
    * Start webhook mode
    */
   private async startWebhook(): Promise<void> {
-    console.log('🔗 Starting webhook mode...');
+    console.info('🔗 Starting webhook mode...');
 
     // Webhook implementation would go here
     // This would set up HTTP endpoints to receive messages from Telegram
-    console.log(`📡 Webhook configured for: ${this.config.webhookUrl}`);
+    console.info(`📡 Webhook configured for: ${this.config.webhookUrl}`);
   }
 
   /**
@@ -196,14 +196,14 @@ export class TelegramBotCore {
     // Find command handler
     const handler = this.commandHandlers.get(commandName);
     if (!handler) {
-      console.log(`⚠️ Unknown command: ${commandName}`);
+      console.info(`⚠️ Unknown command: ${commandName}`);
       return;
     }
 
     // Check permissions
     const command = this.commands.get(commandName);
     if (command?.adminOnly && !this.isAdmin(message.from)) {
-      console.log(`🚫 Unauthorized admin command: ${commandName}`);
+      console.info(`🚫 Unauthorized admin command: ${commandName}`);
       return;
     }
 
@@ -236,7 +236,7 @@ export class TelegramBotCore {
    */
   private async handleRegularMessage(message: TelegramMessage): Promise<void> {
     // Regular message handling logic
-    console.log(`💬 Regular message from ${message.from.username || message.from.id}`);
+    console.info(`💬 Regular message from ${message.from.username || message.from.id}`);
   }
 
   /**
@@ -253,7 +253,7 @@ export class TelegramBotCore {
       });
     }
 
-    console.log(`📝 Registered command: /${command.name}`);
+    console.info(`📝 Registered command: /${command.name}`);
   }
 
   /**
@@ -261,7 +261,7 @@ export class TelegramBotCore {
    */
   private initializeCommandHandlers(): void {
     // This will be populated by command modules
-    console.log('📋 Command handlers initialized');
+    console.info('📋 Command handlers initialized');
   }
 
   /**
@@ -321,7 +321,7 @@ export class TelegramBotCore {
   private updatePopularCommands(): void {
     // This would track command usage statistics
     // For now, just log that analytics are being updated
-    console.log('📊 Analytics updated');
+    console.info('📊 Analytics updated');
   }
 
   /**

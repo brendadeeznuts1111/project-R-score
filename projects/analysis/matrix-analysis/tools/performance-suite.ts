@@ -16,7 +16,7 @@ const colors = {
 };
 
 function colorLog(color: keyof typeof colors, message: string) {
-	console.log(`${colors[color]}${message}${colors.reset}`);
+	console.info(`${colors[color]}${message}${colors.reset}`);
 }
 
 // 1. Col-89 Gate (file agnostic)
@@ -36,7 +36,7 @@ async function checkCol89(filePath: string = Bun.main) {
 			violations.forEach((line, idx) => {
 				const lineNum = lines.indexOf(line) + 1;
 				const width = Bun.stringWidth(line, { countAnsiEscapeCodes: false });
-				console.log(`   Line ${lineNum}: ${width} chars`);
+				console.info(`   Line ${lineNum}: ${width} chars`);
 			});
 			return { violations: violations.length, status: "fail" };
 		}
@@ -66,8 +66,8 @@ async function benchmarkCRC32() {
 	const duration = endTime - startTime;
 	const throughput = Math.round((iterations / duration) * 1000);
 
-	console.log(`📊 CRC32 throughput: ${throughput.toLocaleString()} MB/s`);
-	console.log(`⏱️  Duration: ${duration.toFixed(2)}ms for ${iterations} iterations`);
+	console.info(`📊 CRC32 throughput: ${throughput.toLocaleString()} MB/s`);
+	console.info(`⏱️  Duration: ${duration.toFixed(2)}ms for ${iterations} iterations`);
 
 	return {
 		throughput,
@@ -98,9 +98,9 @@ async function getViolationCount() {
 			)
 			.get() as { c: number };
 
-		console.log(`📈 Total violations: ${result.c}`);
-		console.log(`⏰ Last hour: ${recent.c}`);
-		console.log(`📅 Today: ${today.c}`);
+		console.info(`📈 Total violations: ${result.c}`);
+		console.info(`⏰ Last hour: ${recent.c}`);
+		console.info(`📅 Today: ${today.c}`);
 
 		db.close();
 		return { total: result.c, recent: recent.c, today: today.c };
@@ -147,9 +147,9 @@ async function optimizeCSS(cssFile: string = "app.css") {
 			100
 		).toFixed(1);
 
-		console.log(`📊 Original: ${originalSize.toLocaleString()} bytes`);
-		console.log(`🗜️  Minified: ${minifiedSize.toLocaleString()} bytes`);
-		console.log(`💾 Saved: ${savedPercentage}%`);
+		console.info(`📊 Original: ${originalSize.toLocaleString()} bytes`);
+		console.info(`🗜️  Minified: ${minifiedSize.toLocaleString()} bytes`);
+		console.info(`💾 Saved: ${savedPercentage}%`);
 
 		return {
 			original: originalSize,
@@ -196,9 +196,9 @@ async function parseRSS(feedUrl: string = "https://bun.sh/rss.xml") {
 		const channel = xml.rss?.channel;
 		const itemCount = channel?.item?.length || 0;
 
-		console.log(`📝 Feed: ${channel?.title || "Unknown"}`);
-		console.log(`📦 Items: ${itemCount}`);
-		console.log(`🔧 Method: ${method}`);
+		console.info(`📝 Feed: ${channel?.title || "Unknown"}`);
+		console.info(`📦 Items: ${itemCount}`);
+		console.info(`🔧 Method: ${method}`);
 
 		return {
 			title: channel?.title || "Unknown Feed",
@@ -231,19 +231,19 @@ async function runSuite() {
 	colorLog("magenta", "\n📋 Summary Report");
 	colorLog("white", "=".repeat(50));
 
-	console.log(
+	console.info(
 		`🔍 Col-89: ${results.col89.violations === 0 ? "✅ PASS" : "❌ FAIL"} (${results.col89.violations} violations)`,
 	);
-	console.log(
+	console.info(
 		`🚀 Hardware: ${results.hardware.throughput.toLocaleString()} MB/s (${results.hardware.status})`,
 	);
-	console.log(
+	console.info(
 		`📊 Violations: ${results.violations.total} total, ${results.violations.recent} recent`,
 	);
-	console.log(
+	console.info(
 		`🎨 CSS: ${results.css.status === "success" ? `✅ ${results.css.saved}% saved` : "⚠️  " + results.css.status}`,
 	);
-	console.log(
+	console.info(
 		`📰 RSS: ${results.rss.status === "success" ? `✅ ${results.rss.itemCount} items` : "❌ " + results.rss.status}`,
 	);
 

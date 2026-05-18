@@ -141,19 +141,19 @@ export function resolveBatch(
 
 // CLI
 if (import.meta.main) {
-	console.log("🔥 Tier-1380 OMEGA: DEFAULT Value Resolver\n");
+	console.info("🔥 Tier-1380 OMEGA: DEFAULT Value Resolver\n");
 
-	console.log("Default Values by Zone:\n");
+	console.info("Default Values by Zone:\n");
 	for (const [zone, defs] of Object.entries(DEFAULT_VALUES)) {
-		console.log(`  ${zone.padEnd(15)} number: ${defs.number}, string: "${defs.string}"`);
-		console.log(`                 ${defs.description}`);
-		console.log();
+		console.info(`  ${zone.padEnd(15)} number: ${defs.number}, string: "${defs.string}"`);
+		console.info(`                 ${defs.description}`);
+		console.info();
 	}
 
-	console.log("\nExamples:");
-	console.log(`  resolveTension(undefined)        → ${resolveTension(undefined)}`);
-	console.log(`  resolveValidation(undefined)     → "${resolveValidation(undefined)}"`);
-	console.log(`  resolveSecurity(undefined)       → ${resolveSecurity(undefined)}`);
-	console.log(`  resolveIntegrity(undefined)      → "${resolveIntegrity(undefined)}"`);
-	console.log(`  resolveTension(0.75)             → ${resolveTension(0.75)}`);
+	console.info("\nExamples:");
+	console.info(`  resolveTension(undefined)        → ${resolveTension(undefined)}`);
+	console.info(`  resolveValidation(undefined)     → "${resolveValidation(undefined)}"`);
+	console.info(`  resolveSecurity(undefined)       → ${resolveSecurity(undefined)}`);
+	console.info(`  resolveIntegrity(undefined)      → "${resolveIntegrity(undefined)}"`);
+	console.info(`  resolveTension(0.75)             → ${resolveTension(0.75)}`);
 }

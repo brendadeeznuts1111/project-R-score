@@ -146,10 +146,10 @@ async function getDomainStats() {
 }
 
 // 6. Initialize demo data
-console.log('🏗️  Initializing domain data...');
+console.info('🏗️  Initializing domain data...');
 const demoAccount = await createDemoAccount();
 const demoBet = await createDemoBet(demoAccount.getId());
-console.log('✅ Demo data created');
+console.info('✅ Demo data created');
 
 // 7. Domain server with Bun's native integrations
 Bun.serve({
@@ -244,27 +244,27 @@ Bun.serve({
   },
 });
 
-console.log('🚀 Domain Integration Server Started!');
-console.log(`📍 Server: http://localhost:${cfg.server?.port ?? 3000}`);
-console.log('🔧 Features:');
-console.log('   ✅ SQLite database with domain entities');
-console.log('   ✅ YAML configuration management');
-console.log('   ✅ Bun.secrets for secure credentials');
-console.log('   ✅ HTML templates with automatic ETags');
-console.log('   ✅ Hot-reload development');
-console.log('   ✅ Domain-driven API endpoints');
-console.log('   ✅ Console log streaming from browser');
-console.log('');
-console.log('📊 Available endpoints:');
-console.log('   🌐 / - Main dashboard');
-console.log('   📈 /api/domain/stats - Domain statistics');
-console.log('   💳 /api/domain/accounts - Account data');
-console.log('   🎯 /api/domain/bets - Bet data');
-console.log('   ⚙️  /api/domain/config - Safe configuration');
-console.log('   🔧 /api/domain/operations/* - Domain operations');
-console.log('');
-console.log('🎯 Try these commands:');
-console.log('   curl http://localhost:3000/api/domain/stats');
-console.log('   curl -X POST http://localhost:3000/api/domain/operations/create-bet');
-console.log('');
-console.log('🔥 Hot-reload enabled - edit files and see changes instantly!');
+console.info('🚀 Domain Integration Server Started!');
+console.info(`📍 Server: http://localhost:${cfg.server?.port ?? 3000}`);
+console.info('🔧 Features:');
+console.info('   ✅ SQLite database with domain entities');
+console.info('   ✅ YAML configuration management');
+console.info('   ✅ Bun.secrets for secure credentials');
+console.info('   ✅ HTML templates with automatic ETags');
+console.info('   ✅ Hot-reload development');
+console.info('   ✅ Domain-driven API endpoints');
+console.info('   ✅ Console log streaming from browser');
+console.info('');
+console.info('📊 Available endpoints:');
+console.info('   🌐 / - Main dashboard');
+console.info('   📈 /api/domain/stats - Domain statistics');
+console.info('   💳 /api/domain/accounts - Account data');
+console.info('   🎯 /api/domain/bets - Bet data');
+console.info('   ⚙️  /api/domain/config - Safe configuration');
+console.info('   🔧 /api/domain/operations/* - Domain operations');
+console.info('');
+console.info('🎯 Try these commands:');
+console.info('   curl http://localhost:3000/api/domain/stats');
+console.info('   curl -X POST http://localhost:3000/api/domain/operations/create-bet');
+console.info('');
+console.info('🔥 Hot-reload enabled - edit files and see changes instantly!');

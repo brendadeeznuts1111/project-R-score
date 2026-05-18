@@ -7,6 +7,6 @@ import { z } from "my-custom-name";
 const schema = z.string();
 const result = schema.parse("Hello from custom alias!");
 
-console.log('✅ Package alias working!');
-console.log('Result:', result);
-console.log('Type:', typeof result);
+console.info('✅ Package alias working!');
+console.info('Result:', result);
+console.info('Type:', typeof result);

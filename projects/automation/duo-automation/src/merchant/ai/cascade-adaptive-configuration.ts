@@ -144,7 +144,7 @@ export class ConfigManager {
         this.watchConfigFile(configPath);
       }
       
-      console.log(`✅ Configuration loaded: ${this.config.version} (${this.config.environment})`);
+      console.info(`✅ Configuration loaded: ${this.config.version} (${this.config.environment})`);
     } catch (error) {
       console.error('❌ Config load failed:', error);
       this.config = this.getDefaultConfig();
@@ -179,7 +179,7 @@ export class ConfigManager {
       this.emitConfigChangeEvent(updates);
     });
     
-    console.log('✅ Configuration updated successfully');
+    console.info('✅ Configuration updated successfully');
   }
   
   // Hook: Extension point for config change listeners
@@ -260,13 +260,13 @@ export class ConfigManager {
   private async notifyComponents(updates: Partial<CascadeConfig>): Promise<void> {
     // Notify relevant components about config changes
     if (updates.engine) {
-      console.log('🔧 Engine configuration updated');
+      console.info('🔧 Engine configuration updated');
     }
     if (updates.observability) {
-      console.log('📊 Observability configuration updated');
+      console.info('📊 Observability configuration updated');
     }
     if (updates.integrations) {
-      console.log('🔗 Integration configuration updated');
+      console.info('🔗 Integration configuration updated');
     }
   }
   
@@ -276,10 +276,10 @@ export class ConfigManager {
   }
   
   private watchConfigFile(configPath: string): void {
-    console.log(`👀 Watching config file: ${configPath}`);
+    console.info(`👀 Watching config file: ${configPath}`);
     // In a real implementation, this would use Bun.file().watch()
     setInterval(() => {
-      console.log('🔄 Config file check (simulated)');
+      console.info('🔄 Config file check (simulated)');
     }, 5000);
   }
   

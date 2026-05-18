@@ -2308,23 +2308,23 @@ if (import.meta.main) {
     case 'live':
     case 'stats':
       const liveStats = govEngine.getLiveStats();
-      console.log(JSON.stringify(liveStats, null, 2));
+      console.info(JSON.stringify(liveStats, null, 2));
       break;
 
     case 'validate':
-      console.log('🔍 Running GOV validation...');
+      console.info('🔍 Running GOV validation...');
       const results = await govEngine.validateAllRules();
       const summary = govEngine.getValidationSummary();
-      console.log(`✅ ${summary.passed}/${summary.total} rules passed (${summary.compliance}% compliance)`);
+      console.info(`✅ ${summary.passed}/${summary.total} rules passed (${summary.compliance}% compliance)`);
       if (summary.criticalFailures.length > 0) {
-        console.log('❌ Critical failures:', summary.criticalFailures.join(', '));
+        console.info('❌ Critical failures:', summary.criticalFailures.join(', '));
       }
       break;
 
     default:
-      console.log('GOV Engine Commands:');
-      console.log('  live    - Get live stats for dashboard');
-      console.log('  stats   - Get detailed statistics');
-      console.log('  validate - Run validation');
+      console.info('GOV Engine Commands:');
+      console.info('  live    - Get live stats for dashboard');
+      console.info('  stats   - Get detailed statistics');
+      console.info('  validate - Run validation');
   }
 }

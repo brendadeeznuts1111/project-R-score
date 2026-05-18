@@ -1,12 +1,12 @@
 #!/usr/bin/env bun
 // tools/inspect-demo.ts — Demo of Bun.inspect tabular data visualization
 
-console.log("╔═══════════════════════════════════════════════════════════════╗");
-console.log("║           Bun.inspect - Tabular Data Visualization            ║");
-console.log("╚═══════════════════════════════════════════════════════════════╝\n");
+console.info("╔═══════════════════════════════════════════════════════════════╗");
+console.info("║           Bun.inspect - Tabular Data Visualization            ║");
+console.info("╚═══════════════════════════════════════════════════════════════╝\n");
 
 // Example 1: Project Matrix (matches your table from the original request)
-console.log("1️⃣  PROJECT MATRIX (from your spec)\n");
+console.info("1️⃣  PROJECT MATRIX (from your spec)\n");
 
 const projects = [
   {
@@ -40,10 +40,10 @@ const projects = [
 ];
 
 // Bun.inspect with tabular format (automatic when array of objects with same keys)
-console.log(Bun.inspect(projects, { columns: true }));
+console.info(Bun.inspect(projects, { columns: true }));
 
 // Example 2: Process Information
-console.log("\n\n2️⃣  SYSTEM PROCESS INFO\n");
+console.info("\n\n2️⃣  SYSTEM PROCESS INFO\n");
 
 const processInfo = [
   { pid: process.pid, platform: Bun.platform, arch: Bun.arch, cpuCount: Bun.cpuCount() },
@@ -51,13 +51,13 @@ const processInfo = [
   { pid: 67890, platform: "linux", arch: "x64", cpuCount: 16 }
 ];
 
-console.log(Bun.inspect(processInfo, {
+console.info(Bun.inspect(processInfo, {
   columns: true,
   sort: (a, b) => a.pid - b.pid
 }));
 
 // Example 3: Custom Data with Headers
-console.log("\n\n3️⃣  CUSTOM TABLE WITH HEADERS\n");
+console.info("\n\n3️⃣  CUSTOM TABLE WITH HEADERS\n");
 
 const stats = [
   { metric: "Uptime", value: process.uptime(), unit: "seconds" },
@@ -66,13 +66,13 @@ const stats = [
   { metric: "External", value: process.memoryUsage().external / 1024 / 1024, unit: "MB" }
 ];
 
-console.log(Bun.inspect(stats, {
+console.info(Bun.inspect(stats, {
   columns: true,
   sort: (a, b) => a.value - b.value
 }));
 
 // Example 4: Using colors and properties
-console.log("\n\n4️⃣  NESTED DATA (with properties option)\n");
+console.info("\n\n4️⃣  NESTED DATA (with properties option)\n");
 
 const projectDetails = {
   platformHome: "/Users/ashley/PROJECTS",
@@ -82,44 +82,44 @@ const projectDetails = {
 };
 
 // Show all properties including nested objects
-console.log(Bun.inspect(projectDetails, {
+console.info(Bun.inspect(projectDetails, {
   depth: 2,           // How deep to nest
   colors: true,       // ANSI colors (automatically true in terminal)
   maxArrayLength: 10  // Limit array display
 }));
 
 // Example 5: Table with specific property selection
-console.log("\n\n5️⃣  FILTERED COLUMNS (only name + path)\n");
+console.info("\n\n5️⃣  FILTERED COLUMNS (only name + path)\n");
 
 const simpleProjects = projects.map(p => ({
   name: p.name,
   path: p.path
 }));
 
-console.log(Bun.inspect(simpleProjects, { columns: true }));
+console.info(Bun.inspect(simpleProjects, { columns: true }));
 
 // Example 6: Sorting and custom comparison
-console.log("\n\n6️⃣  SORTED BY DESCRIPTION LENGTH\n");
+console.info("\n\n6️⃣  SORTED BY DESCRIPTION LENGTH\n");
 
 const sortedByDescLength = [...projects].sort((a, b) =>
   a.description.length - b.description.length
 );
 
-console.log(Bun.inspect(sortedByDescLength, { columns: true }));
+console.info(Bun.inspect(sortedByDescLength, { columns: true }));
 
 // Example 7: Different output formats
-console.log("\n\n7️⃣  JSON FORMAT (for programmatic use)\n");
+console.info("\n\n7️⃣  JSON FORMAT (for programmatic use)\n");
 
 const jsonOutput = JSON.stringify(projects, null, 2);
-console.log("JSON string (first 500 chars):");
-console.log(jsonOutput.slice(0, 500) + "...");
+console.info("JSON string (first 500 chars):");
+console.info(jsonOutput.slice(0, 500) + "...");
 
 // But Bun.inspect can also output JSON-like format with special option
-console.log("\nBun.inspect with { depth: null } (unlimited depth):");
-console.log(Bun.inspect(projects[0], { depth: null }));
+console.info("\nBun.inspect with { depth: null } (unlimited depth):");
+console.info(Bun.inspect(projects[0], { depth: null }));
 
 // Example 8: Real-time dashboard simulation
-console.log("\n\n8️⃣  DASHBOARD-STYLE TABLE (live data simulation)\n");
+console.info("\n\n8️⃣  DASHBOARD-STYLE TABLE (live data simulation)\n");
 
 const liveMetrics = [
   { metric: "Active Connections", value: 42, status: "healthy" },
@@ -129,13 +129,13 @@ const liveMetrics = [
   { metric: "Memory Usage", value: 156, status: "healthy", unit: "MB" }
 ];
 
-console.log(Bun.inspect(liveMetrics, {
+console.info(Bun.inspect(liveMetrics, {
   columns: true,
   sort: (a, b) => b.value - a.value  // Descending by value
 }));
 
-console.log("\n╔═══════════════════════════════════════════════════════════════╗");
-console.log("║  Summary: Bun.inspect() with { columns: true } auto-formats  ║");
-console.log("║  arrays of objects into readable tables with aligned cols.   ║");
-console.log("║  Perfect for project matrices, metrics, and structured logs.║");
-console.log("╚═══════════════════════════════════════════════════════════════╝");
+console.info("\n╔═══════════════════════════════════════════════════════════════╗");
+console.info("║  Summary: Bun.inspect() with { columns: true } auto-formats  ║");
+console.info("║  arrays of objects into readable tables with aligned cols.   ║");
+console.info("║  Perfect for project matrices, metrics, and structured logs.║");
+console.info("╚═══════════════════════════════════════════════════════════════╝");

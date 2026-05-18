@@ -174,7 +174,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
     this.enableCache = config.enableCache ?? true;
     this.userAgent = config.userAgent || 'DuoPlusSDK/1.0.0';
     
-    console.log(`🚀 DuoPlus SDK Initialized: ${this.baseUrl}`);
+    console.info(`🚀 DuoPlus SDK Initialized: ${this.baseUrl}`);
   }
 
   // ========== TASK MANAGEMENT ==========
@@ -190,7 +190,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
     }
   ): Promise<RPATaskResult> {
     try {
-      console.log(`🖼️ Creating RPA task with embed: ${screenshotKey}`);
+      console.info(`🖼️ Creating RPA task with embed: ${screenshotKey}`);
       
       // Validate screenshot exists if S3 manager available
       if (this.s3Manager && options?.validateScreenshot) {
@@ -241,7 +241,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
    */
   async createRPATaskWithPattern(task: RPATask): Promise<RPATaskResult> {
     try {
-      console.log(`🤖 DuoPlus RPA with URLPattern Metadata`);
+      console.info(`🤖 DuoPlus RPA with URLPattern Metadata`);
       
       const taskId = this.generateTaskId(task.type);
       const metadata: TaskMetadata = { ...task.metadata };
@@ -256,7 +256,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
           metadata.r2Path = task.r2Path;
           metadata.classifiedAt = new Date().toISOString();
           
-          console.log(`📊 Pattern classified: ${classification.pattern}`);
+          console.info(`📊 Pattern classified: ${classification.pattern}`);
         }
       }
       
@@ -280,7 +280,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
       // Simulate API call
       const result = await this.simulateApiCall('createTask', taskResult, timeout);
       
-      console.log(`✅ RPA Task Created: ${taskId}`);
+      console.info(`✅ RPA Task Created: ${taskId}`);
       this.emit('task:created', result);
       
       return result;
@@ -313,7 +313,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
    * Empire Pro: Real-time Identity Resolution
    */
   async resolveIdentity(phone: string, r2Path?: string): Promise<RPATaskResult> {
-    console.log(`🔍 **Empire Pro: Resolving Identity for ${phone}**`);
+    console.info(`🔍 **Empire Pro: Resolving Identity for ${phone}**`);
     return this.createRPATask({
       type: 'empire-id-resolve',
       r2Path,
@@ -326,7 +326,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
    * CashApp Integration: Sync & Fraud Check
    */
   async syncCashApp(accountID: string, riskScore: number): Promise<RPATaskResult> {
-    console.log(`💸 **CashApp Integration: Syncing Account ${accountID}**`);
+    console.info(`💸 **CashApp Integration: Syncing Account ${accountID}**`);
     return this.createRPATask({
       type: 'cashapp-sync',
       metadata: { accountID },
@@ -342,13 +342,13 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
     if (this.enableCache) {
       const cached = this.taskCache.get(taskId);
       if (cached && cached.expires > Date.now()) {
-        console.log(`🔍 Cache hit for task: ${taskId}`);
+        console.info(`🔍 Cache hit for task: ${taskId}`);
         return cached.task;
       }
     }
     
     try {
-      console.log(`🔍 Checking task status: ${taskId}`);
+      console.info(`🔍 Checking task status: ${taskId}`);
       
       const task = await this.simulateApiCall('getTaskStatus', { taskId });
       
@@ -373,7 +373,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
   }
 
   async deleteTask(taskId: string): Promise<boolean> {
-    console.log(`🗑️ Deleting task: ${taskId}`);
+    console.info(`🗑️ Deleting task: ${taskId}`);
     this.taskCache.delete(taskId);
     return true;
   }
@@ -383,7 +383,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
    * Deploy an RPA template to the DuoPlus infrastructure
    */
   async deployRPATemplate(template: any): Promise<{ success: boolean; templateId: string }> {
-    console.log(`🚀 Deploying RPA Template: ${template.name || 'unnamed'}`);
+    console.info(`🚀 Deploying RPA Template: ${template.name || 'unnamed'}`);
     return { success: true, templateId: `tpl-${Date.now()}` };
   }
 
@@ -391,7 +391,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
    * Monitor the status of a deployed RPA template
    */
   async monitorRPATemplate(templateId: string): Promise<{ status: string; health: number }> {
-    console.log(`📊 Monitoring RPA Template: ${templateId}`);
+    console.info(`📊 Monitoring RPA Template: ${templateId}`);
     return { status: 'active', health: 100 };
   }
 
@@ -399,7 +399,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
    * List available RPA templates
    */
   async listRPATemplates(): Promise<any[]> {
-    console.log(`📋 Listing RPA Templates`);
+    console.info(`📋 Listing RPA Templates`);
     return [{ id: 'tpl-1', name: 'Apple ID Registration' }];
   }
 
@@ -407,7 +407,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
    * List available cloud numbers
    */
   async listCloudNumbers(): Promise<any[]> {
-    console.log(`📱 Listing Cloud Numbers`);
+    console.info(`📱 Listing Cloud Numbers`);
     return [{ id: 'num-1', number: '+14155550000', status: 'available' }];
   }
 
@@ -422,7 +422,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
       status?: TaskStatus[];
     }
   ): Promise<{ tasks: RPATaskResult[]; total: number; hasMore: boolean }> {
-    console.log(`📋 Listing tasks for pattern: ${pattern}`);
+    console.info(`📋 Listing tasks for pattern: ${pattern}`);
     
     const tasks: RPATaskResult[] = [
       {
@@ -461,7 +461,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
     }
   ): Promise<BatchOperationResult> {
     const startTime = Date.now();
-    console.log(`🚀 Bulk RPA Task Creation: ${paths.length} paths`);
+    console.info(`🚀 Bulk RPA Task Creation: ${paths.length} paths`);
     
     const successful: RPATaskResult[] = [];
     const failed: Array<{ task: RPATask; error: string }> = [];
@@ -518,7 +518,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
     poolIds: string[],
     options?: PushToPhonesOptions
   ): Promise<PhonePushResult> {
-    console.log(`📱 DuoPlus Phone Push Orchestration`);
+    console.info(`📱 DuoPlus Phone Push Orchestration`);
     
     const results: PhonePushResult['results'] = [];
     const uniquePools = Array.from(new Set(poolIds));
@@ -557,7 +557,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
       includeMetadata?: boolean;
     }
   ): Promise<{ filePath: string; size: number }> {
-    console.log(`💾 Exporting ${results.length} results to ${options.filePath}`);
+    console.info(`💾 Exporting ${results.length} results to ${options.filePath}`);
     
     let content: string;
     switch (options.format) {
@@ -631,7 +631,7 @@ export class DuoPlusSDK extends EventEmitter<SDKEvents> {
 
 // ========== DEMONSTRATION ==========
 async function demonstrateDuoPlusIntegration() {
-  console.log(`🤖 **DuoPlus Production SDK Demo** 🤖\n`);
+  console.info(`🤖 **DuoPlus Production SDK Demo** 🤖\n`);
   
   const sdk = new DuoPlusSDK({
     baseUrl: 'https://api.duoplus.com',
@@ -639,37 +639,37 @@ async function demonstrateDuoPlusIntegration() {
     enableCache: true
   });
   
-  sdk.on('task:created', (task) => console.log(`📫 Task Created: ${task.id}`));
-  sdk.on('task:completed', (task) => console.log(`🎉 Task Completed: ${task.id}`));
+  sdk.on('task:created', (task) => console.info(`📫 Task Created: ${task.id}`));
+  sdk.on('task:completed', (task) => console.info(`🎉 Task Completed: ${task.id}`));
   
   // 1. Test Embed + Classification
-  console.log('\n--- 1. Testing Embed + Classification ---');
+  console.info('\n--- 1. Testing Embed + Classification ---');
   const regTask = await sdk.createRPATaskWithEmbed(
     { type: 'apple-reg', phoneID: 'phone123', r2Path: 'accounts/apple-id/user-123.json' },
     'screenshots/reg-phone123.png'
   );
-  console.log(`📝 Metadata: ${JSON.stringify(regTask.metadata, null, 2)}`);
+  console.info(`📝 Metadata: ${JSON.stringify(regTask.metadata, null, 2)}`);
 
   // 2. Test Empire Pro: Identity Resolution
-  console.log('\n--- 2. Testing Empire Pro: Identity Resolution ---');
+  console.info('\n--- 2. Testing Empire Pro: Identity Resolution ---');
   const empireTask = await sdk.resolveIdentity('+14155551234', 'accounts/apple-id/empire-user.json');
-  console.log(`📝 Empire Metadata: ${JSON.stringify(empireTask.metadata, null, 2)}`);
+  console.info(`📝 Empire Metadata: ${JSON.stringify(empireTask.metadata, null, 2)}`);
 
   // 3. Test CashApp Integration: Sync + Fraud
-  console.log('\n--- 3. Testing CashApp Integration: Sync + Fraud ---');
+  console.info('\n--- 3. Testing CashApp Integration: Sync + Fraud ---');
   const cashTask = await sdk.syncCashApp('CASH-9988', 15);
-  console.log(`📝 CashApp Metadata: ${JSON.stringify(cashTask.metadata, null, 2)}`);
+  console.info(`📝 CashApp Metadata: ${JSON.stringify(cashTask.metadata, null, 2)}`);
 
   // 4. Test Bulk Operations
-  console.log('\n--- 4. Testing Bulk Operations ---');
+  console.info('\n--- 4. Testing Bulk Operations ---');
   const batchResult = await sdk.bulkCreateTasks(
     ['user1.json', 'user2.json'], 
     'whatsapp-setup',
-    { onProgress: (c, t) => console.log(`📊 Progress: ${c}/${t}`) }
+    { onProgress: (c, t) => console.info(`📊 Progress: ${c}/${t}`) }
   );
-  console.log(`✅ Bulk complete: ${batchResult.successful.length} tasks created.`);
+  console.info(`✅ Bulk complete: ${batchResult.successful.length} tasks created.`);
 
-  console.log(`\n🎉 **DuoPlus Integration Complete!**`);
+  console.info(`\n🎉 **DuoPlus Integration Complete!**`);
 }
 
 if (import.meta.main) {

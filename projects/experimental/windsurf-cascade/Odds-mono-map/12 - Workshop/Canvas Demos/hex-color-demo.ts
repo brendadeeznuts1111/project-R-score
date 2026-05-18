@@ -11,8 +11,8 @@
  * @since 2025-11-18
  */
 
-console.log('🎨 HEX Color Integration Demo - Odds Protocol Canvas System');
-console.log('='.repeat(65));
+console.info('🎨 HEX Color Integration Demo - Odds Protocol Canvas System');
+console.info('='.repeat(65));
 
 // =============================================================================
 // COLOR TYPE SYSTEM
@@ -108,8 +108,8 @@ function getSemanticColor(node: {
 // DEMO 1: COLOR TYPE SYSTEM
 // =============================================================================
 
-console.log('\n📊 1. Color Type System Demonstration');
-console.log('─'.repeat(50));
+console.info('\n📊 1. Color Type System Demonstration');
+console.info('─'.repeat(50));
 
 const demoColors: CanvasColor[] = [
     "1",  // Legacy blue
@@ -120,48 +120,48 @@ const demoColors: CanvasColor[] = [
     "#EF4444"   // Status deprecated
 ];
 
-console.log('\n🎯 Color Type Detection:');
+console.info('\n🎯 Color Type Detection:');
 demoColors.forEach(color => {
     const isHex = isHexColor(color);
     const isLegacy = isLegacyColor(color);
     const hexColor = toHexColor(color);
 
-    console.log(`  ${color.padEnd(10)} → HEX: ${isHex ? '✅' : '❌'} | Legacy: ${isLegacy ? '✅' : '❌'} → ${hexColor}`);
+    console.info(`  ${color.padEnd(10)} → HEX: ${isHex ? '✅' : '❌'} | Legacy: ${isLegacy ? '✅' : '❌'} → ${hexColor}`);
 });
 
 // =============================================================================
 // DEMO 2: BRAND COLOR PALETTE
 // =============================================================================
 
-console.log('\n🎨 2. Brand Color Palette');
-console.log('─'.repeat(50));
+console.info('\n🎨 2. Brand Color Palette');
+console.info('─'.repeat(50));
 
-console.log('\n🌟 Brand Colors:');
+console.info('\n🌟 Brand Colors:');
 Object.entries(ODDS_PROTOCOL_COLORS.brand).forEach(([key, color]) => {
-    console.log(`  ${key.padEnd(12)}: ${color}`);
+    console.info(`  ${key.padEnd(12)}: ${color}`);
 });
 
-console.log('\n📊 Status Colors:');
+console.info('\n📊 Status Colors:');
 Object.entries(ODDS_PROTOCOL_COLORS.status).forEach(([key, color]) => {
-    console.log(`  ${key.padEnd(12)}: ${color}`);
+    console.info(`  ${key.padEnd(12)}: ${color}`);
 });
 
-console.log('\n🔧 Domain Colors:');
+console.info('\n🔧 Domain Colors:');
 Object.entries(ODDS_PROTOCOL_COLORS.domain).forEach(([key, color]) => {
-    console.log(`  ${key.padEnd(12)}: ${color}`);
+    console.info(`  ${key.padEnd(12)}: ${color}`);
 });
 
-console.log('\n⚡ Priority Colors:');
+console.info('\n⚡ Priority Colors:');
 Object.entries(ODDS_PROTOCOL_COLORS.priority).forEach(([key, color]) => {
-    console.log(`  ${key.padEnd(12)}: ${color}`);
+    console.info(`  ${key.padEnd(12)}: ${color}`);
 });
 
 // =============================================================================
 // DEMO 3: SEMANTIC COLOR ASSIGNMENT
 // =============================================================================
 
-console.log('\n🎯 3. Semantic Color Assignment');
-console.log('─'.repeat(50));
+console.info('\n🎯 3. Semantic Color Assignment');
+console.info('─'.repeat(50));
 
 const demoNodes = [
     {
@@ -186,20 +186,20 @@ const demoNodes = [
     }
 ];
 
-console.log('\n🎨 Semantic Color Assignment:');
+console.info('\n🎨 Semantic Color Assignment:');
 demoNodes.forEach(node => {
     const semanticColor = getSemanticColor(node);
-    console.log(`  ${node.id.padEnd(30)} → ${semanticColor}`);
-    console.log(`    Status: ${node.metadata?.status || 'none'}`);
-    console.log(`    Priority: ${node.metadata?.priority || 'none'}`);
+    console.info(`  ${node.id.padEnd(30)} → ${semanticColor}`);
+    console.info(`    Status: ${node.metadata?.status || 'none'}`);
+    console.info(`    Priority: ${node.metadata?.priority || 'none'}`);
 });
 
 // =============================================================================
 // DEMO 4: SAMPLE CANVAS FILE WITH HEX COLORS
 // =============================================================================
 
-console.log('\n📄 4. Sample Canvas File with HEX Colors');
-console.log('─'.repeat(50));
+console.info('\n📄 4. Sample Canvas File with HEX Colors');
+console.info('─'.repeat(50));
 
 const sampleCanvas = {
     version: "1.0.0",
@@ -266,12 +266,12 @@ const sampleCanvas = {
     }
 };
 
-console.log('\n📋 Canvas Structure:');
-console.log(`  Total Nodes: ${sampleCanvas.nodes.length}`);
-console.log(`  Total Edges: ${sampleCanvas.edges.length}`);
-console.log(`  Complexity: ${sampleCanvas.metadata.complexity}`);
+console.info('\n📋 Canvas Structure:');
+console.info(`  Total Nodes: ${sampleCanvas.nodes.length}`);
+console.info(`  Total Edges: ${sampleCanvas.edges.length}`);
+console.info(`  Complexity: ${sampleCanvas.metadata.complexity}`);
 
-console.log('\n🎨 Node Color Distribution:');
+console.info('\n🎨 Node Color Distribution:');
 const colorDistribution: Record<string, number> = {};
 sampleCanvas.nodes.forEach((node: any) => {
     if (node.color) {
@@ -282,15 +282,15 @@ sampleCanvas.nodes.forEach((node: any) => {
 Object.entries(colorDistribution).forEach(([color, count]) => {
     const isLegacy = isLegacyColor(color);
     const type = isLegacy ? 'Legacy' : 'HEX';
-    console.log(`  ${color.padEnd(15)} (${type}): ${count} nodes`);
+    console.info(`  ${color.padEnd(15)} (${type}): ${count} nodes`);
 });
 
 // =============================================================================
 // DEMO 5: COLOR VALIDATION
 // =============================================================================
 
-console.log('\n🔍 5. Color Validation Demonstration');
-console.log('─'.repeat(50));
+console.info('\n🔍 5. Color Validation Demonstration');
+console.info('─'.repeat(50));
 
 function validateColor(color: unknown, nodeId: string): { valid: boolean; issues: string[]; warnings: string[] } {
     const issues: string[] = [];
@@ -324,21 +324,21 @@ function validateColor(color: unknown, nodeId: string): { valid: boolean; issues
     return { valid: false, issues, warnings };
 }
 
-console.log('\n✅ Validating Sample Canvas Colors:');
+console.info('\n✅ Validating Sample Canvas Colors:');
 sampleCanvas.nodes.forEach((node: any) => {
     if (node.color) {
         const result = validateColor(node.color, node.id);
         const status = result.valid ? '✅' : '❌';
         const type = isHexColor(node.color) ? 'HEX' : 'Legacy';
 
-        console.log(`  ${status} ${node.id.padEnd(25)} (${type}) ${node.color}`);
+        console.info(`  ${status} ${node.id.padEnd(25)} (${type}) ${node.color}`);
 
         result.warnings.forEach(warning => {
-            console.log(`    ⚠️  ${warning}`);
+            console.info(`    ⚠️  ${warning}`);
         });
 
         result.issues.forEach(issue => {
-            console.log(`    ❌ ${issue}`);
+            console.info(`    ❌ ${issue}`);
         });
     }
 });
@@ -347,8 +347,8 @@ sampleCanvas.nodes.forEach((node: any) => {
 // DEMO 6: MIGRATION SIMULATION
 // =============================================================================
 
-console.log('\n🔄 6. Migration Simulation');
-console.log('─'.repeat(50));
+console.info('\n🔄 6. Migration Simulation');
+console.info('─'.repeat(50));
 
 const legacyCanvas = {
     version: "1.0.0",
@@ -374,28 +374,28 @@ const legacyCanvas = {
     }
 };
 
-console.log('\n📊 Pre-Migration Analysis:');
+console.info('\n📊 Pre-Migration Analysis:');
 const legacyNodes = legacyCanvas.nodes.filter((node: any) => node.color && isLegacyColor(node.color));
 const hexNodes = legacyCanvas.nodes.filter((node: any) => node.color && isHexColor(node.color));
 
-console.log(`  Legacy nodes: ${legacyNodes.length}`);
-console.log(`  HEX nodes: ${hexNodes.length}`);
+console.info(`  Legacy nodes: ${legacyNodes.length}`);
+console.info(`  HEX nodes: ${hexNodes.length}`);
 
-console.log('\n🔄 Migration Process:');
+console.info('\n🔄 Migration Process:');
 legacyNodes.forEach((node: any) => {
     const oldColor = node.color as string;
     const newColor = LEGACY_COLOR_MAP[oldColor as keyof typeof LEGACY_COLOR_MAP];
-    console.log(`  ${node.id.padEnd(20)}: ${oldColor} → ${newColor}`);
+    console.info(`  ${node.id.padEnd(20)}: ${oldColor} → ${newColor}`);
 });
 
 // =============================================================================
 // DEMO 7: PERFORMANCE STATISTICS
 // =============================================================================
 
-console.log('\n📈 7. Performance Statistics');
-console.log('─'.repeat(50));
+console.info('\n📈 7. Performance Statistics');
+console.info('─'.repeat(50));
 
-console.log('\n⚡ Color Processing Performance:');
+console.info('\n⚡ Color Processing Performance:');
 const startTime = performance.now();
 
 // Process 1000 color conversions
@@ -407,55 +407,55 @@ for (let i = 0; i < 1000; i++) {
 const endTime = performance.now();
 const processingTime = endTime - startTime;
 
-console.log(`  1000 color conversions: ${processingTime.toFixed(2)}ms`);
-console.log(`  Average per conversion: ${(processingTime / 1000).toFixed(4)}ms`);
-console.log(`  Performance rating: ${processingTime < 10 ? '🟢 Excellent' : '🟡 Good'}`);
+console.info(`  1000 color conversions: ${processingTime.toFixed(2)}ms`);
+console.info(`  Average per conversion: ${(processingTime / 1000).toFixed(4)}ms`);
+console.info(`  Performance rating: ${processingTime < 10 ? '🟢 Excellent' : '🟡 Good'}`);
 
-console.log('\n💾 Memory Efficiency:');
-console.log(`  HEX color storage: 7 characters per color`);
-console.log(`  Legacy storage: 1 character per color`);
-console.log(`  Storage overhead: +600% (negligible for typical canvases)`);
-console.log(`  Memory benefit: Rich color palette and semantics`);
+console.info('\n💾 Memory Efficiency:');
+console.info(`  HEX color storage: 7 characters per color`);
+console.info(`  Legacy storage: 1 character per color`);
+console.info(`  Storage overhead: +600% (negligible for typical canvases)`);
+console.info(`  Memory benefit: Rich color palette and semantics`);
 
 // =============================================================================
 // SUMMARY
 // =============================================================================
 
-console.log('\n🎊 HEX Color Integration - Complete Success!');
-console.log('='.repeat(65));
+console.info('\n🎊 HEX Color Integration - Complete Success!');
+console.info('='.repeat(65));
 
-console.log('\n🏆 Achievements Summary:');
-console.log('  ✅ Extended color type system with backward compatibility');
-console.log('  ✅ Comprehensive brand color palette implementation');
-console.log('  ✅ Semantic color assignment based on metadata');
-console.log('  ✅ Advanced validation with accessibility checking');
-console.log('  ✅ Complete migration system with backup and rollback');
-console.log('  ✅ Full Obsidian integration with interactive features');
-console.log('  ✅ Performance optimization for large-scale canvases');
-console.log('  ✅ Enterprise-grade color management system');
+console.info('\n🏆 Achievements Summary:');
+console.info('  ✅ Extended color type system with backward compatibility');
+console.info('  ✅ Comprehensive brand color palette implementation');
+console.info('  ✅ Semantic color assignment based on metadata');
+console.info('  ✅ Advanced validation with accessibility checking');
+console.info('  ✅ Complete migration system with backup and rollback');
+console.info('  ✅ Full Obsidian integration with interactive features');
+console.info('  ✅ Performance optimization for large-scale canvases');
+console.info('  ✅ Enterprise-grade color management system');
 
-console.log('\n📊 Technical Excellence:');
-console.log('  🎨 Unlimited color palette vs 6 legacy colors');
-console.log('  🔍 WCAG accessibility compliance with contrast checking');
-console.log('  🔄 Seamless migration path with automatic conversion');
-console.log('  📱 Theme-aware rendering with dynamic contrast');
-console.log('  🛡️ Type-safe implementation with TypeScript');
-console.log('  📈 Analytics and reporting capabilities');
+console.info('\n📊 Technical Excellence:');
+console.info('  🎨 Unlimited color palette vs 6 legacy colors');
+console.info('  🔍 WCAG accessibility compliance with contrast checking');
+console.info('  🔄 Seamless migration path with automatic conversion');
+console.info('  📱 Theme-aware rendering with dynamic contrast');
+console.info('  🛡️ Type-safe implementation with TypeScript');
+console.info('  📈 Analytics and reporting capabilities');
 
-console.log('\n🚀 Production Ready Features:');
-console.log('  🌐 Real-time color validation and suggestions');
-console.log('  📊 Comprehensive color usage analytics');
-console.log('  🎯 Domain-specific semantic color coding');
-console.log('  🔧 Interactive color management tools');
-console.log('  📋 Professional export capabilities');
-console.log('  🎨 Brand consistency enforcement');
+console.info('\n🚀 Production Ready Features:');
+console.info('  🌐 Real-time color validation and suggestions');
+console.info('  📊 Comprehensive color usage analytics');
+console.info('  🎯 Domain-specific semantic color coding');
+console.info('  🔧 Interactive color management tools');
+console.info('  📋 Professional export capabilities');
+console.info('  🎨 Brand consistency enforcement');
 
-console.log('\n💡 Next Steps:');
-console.log('  1. Deploy migration script to existing canvas files');
-console.log('  2. Configure brand color palette for organization');
-console.log('  3. Set up automated color validation in CI/CD');
-console.log('  4. Train team on semantic color usage guidelines');
-console.log('  5. Monitor color usage analytics and optimize');
+console.info('\n💡 Next Steps:');
+console.info('  1. Deploy migration script to existing canvas files');
+console.info('  2. Configure brand color palette for organization');
+console.info('  3. Set up automated color validation in CI/CD');
+console.info('  4. Train team on semantic color usage guidelines');
+console.info('  5. Monitor color usage analytics and optimize');
 
-console.log('\n🎯 Your canvas system now supports production-ready HEX colors with');
-console.log('   full validation, migration tools, and Obsidian integration! 🎨🔧✨');
+console.info('\n🎯 Your canvas system now supports production-ready HEX colors with');
+console.info('   full validation, migration tools, and Obsidian integration! 🎨🔧✨');

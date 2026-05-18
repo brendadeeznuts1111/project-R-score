@@ -344,9 +344,9 @@ class AlertSystem {
     this.alerts.set(alertId, alert);
     this.sendNotifications(alert, rule.channels);
 
-    console.log(`🚨 Alert Triggered: ${alert.title} [${alert.severity.toUpperCase()}]`);
-    console.log(`   Value: ${value}, Threshold: ${rule.threshold}`);
-    console.log(`   Alert ID: ${alertId}`);
+    console.info(`🚨 Alert Triggered: ${alert.title} [${alert.severity.toUpperCase()}]`);
+    console.info(`   Value: ${value}, Threshold: ${rule.threshold}`);
+    console.info(`   Alert ID: ${alertId}`);
   }
 
   private sendNotifications(alert: Alert, channels: NotificationChannel[]): void {
@@ -355,27 +355,27 @@ class AlertSystem {
 
       switch (channel.type) {
         case 'slack':
-          console.log(`📱 Slack notification sent to ${channel.config.target}`);
-          console.log(`   Message: ${alert.description}`);
+          console.info(`📱 Slack notification sent to ${channel.config.target}`);
+          console.info(`   Message: ${alert.description}`);
           break;
 
         case 'email':
-          console.log(`📧 Email sent to ${channel.config.target}`);
-          console.log(`   Subject: [${alert.severity.toUpperCase()}] ${alert.title}`);
+          console.info(`📧 Email sent to ${channel.config.target}`);
+          console.info(`   Subject: [${alert.severity.toUpperCase()}] ${alert.title}`);
           break;
 
         case 'sms':
-          console.log(`📞 SMS sent to ${channel.config.target}`);
-          console.log(`   Message: ${alert.title} - ${alert.severity}`);
+          console.info(`📞 SMS sent to ${channel.config.target}`);
+          console.info(`   Message: ${alert.title} - ${alert.severity}`);
           break;
 
         case 'pagerduty':
-          console.log(`📟 PagerDuty incident created for ${channel.config.target}`);
-          console.log(`   Priority: ${channel.config.priority}`);
+          console.info(`📟 PagerDuty incident created for ${channel.config.target}`);
+          console.info(`   Priority: ${channel.config.priority}`);
           break;
 
         case 'webhook':
-          console.log(`🌐 Webhook called: ${channel.config.target}`);
+          console.info(`🌐 Webhook called: ${channel.config.target}`);
           break;
       }
 
@@ -410,7 +410,7 @@ class AlertSystem {
             }) ?? true;
 
           if (shouldEscalate) {
-            console.log(`⬆️  Escalating alert ${alert.id} to level ${level.level}`);
+            console.info(`⬆️  Escalating alert ${alert.id} to level ${level.level}`);
             this.sendNotifications(alert, level.channels);
             alert.escalationLevel = level.level;
           }
@@ -459,9 +459,9 @@ class AlertSystem {
           alert.correlationId = correlationId;
         });
 
-        console.log(`🔗 Correlation detected: ${correlation.reason}`);
-        console.log(`   Alerts: ${alerts.map(a => a.title).join(', ')}`);
-        console.log(`   Confidence: ${correlation.confidence}%`);
+        console.info(`🔗 Correlation detected: ${correlation.reason}`);
+        console.info(`   Alerts: ${alerts.map(a => a.title).join(', ')}`);
+        console.info(`   Confidence: ${correlation.confidence}%`);
       }
     });
   }
@@ -541,7 +541,7 @@ class AlertSystem {
     alert.acknowledgedAt = Date.now();
     alert.acknowledgedBy = user;
 
-    console.log(`✅ Alert ${alertId} acknowledged by ${user}`);
+    console.info(`✅ Alert ${alertId} acknowledged by ${user}`);
     return true;
   }
 
@@ -553,7 +553,7 @@ class AlertSystem {
     alert.resolvedAt = Date.now();
     alert.resolvedBy = user;
 
-    console.log(`🔒 Alert ${alertId} resolved by ${user}`);
+    console.info(`🔒 Alert ${alertId} resolved by ${user}`);
     return true;
   }
 
@@ -594,11 +594,11 @@ class AlertSystem {
 // Demo execution
 const alertSystem = new AlertSystem();
 
-console.log('🚨 Fire22 Advanced Alert System Demo\n');
-console.log('═'.repeat(70));
+console.info('🚨 Fire22 Advanced Alert System Demo\n');
+console.info('═'.repeat(70));
 
 // Simulate some metrics that would trigger alerts
-console.log('\n📊 Simulating Metric Evaluations...\n');
+console.info('\n📊 Simulating Metric Evaluations...\n');
 
 // Trigger CPU warning
 alertSystem.evaluateMetric('cpu_usage', 92, {
@@ -624,42 +624,42 @@ alertSystem.evaluateMetric('error_rate', 7.5, {
   service: 'fire22-api',
 });
 
-console.log('\n📈 Alert Statistics:');
-console.log('─'.repeat(40));
+console.info('\n📈 Alert Statistics:');
+console.info('─'.repeat(40));
 const stats = alertSystem.getAlertStatistics();
-console.log(`Total Alerts: ${stats.total}`);
-console.log(
+console.info(`Total Alerts: ${stats.total}`);
+console.info(
   `Active: ${stats.active}, Acknowledged: ${stats.acknowledged}, Resolved: ${stats.resolved}`
 );
-console.log(
+console.info(
   `Critical: ${stats.bySeverity.critical}, Warning: ${stats.bySeverity.warning}, Info: ${stats.bySeverity.info}`
 );
-console.log(`Correlations: ${stats.correlations}, Active Suppressions: ${stats.suppressions}`);
+console.info(`Correlations: ${stats.correlations}, Active Suppressions: ${stats.suppressions}`);
 
-console.log('\n🔥 Active Alerts:');
-console.log('─'.repeat(40));
+console.info('\n🔥 Active Alerts:');
+console.info('─'.repeat(40));
 const activeAlerts = alertSystem.getActiveAlerts();
 activeAlerts.forEach(alert => {
   const age = Math.floor((Date.now() - alert.triggeredAt) / 1000);
-  console.log(`${alert.severity === 'critical' ? '🔴' : '🟡'} ${alert.title} (${age}s ago)`);
-  console.log(`   Value: ${alert.metadata.value}, Threshold: ${alert.metadata.threshold}`);
+  console.info(`${alert.severity === 'critical' ? '🔴' : '🟡'} ${alert.title} (${age}s ago)`);
+  console.info(`   Value: ${alert.metadata.value}, Threshold: ${alert.metadata.threshold}`);
   if (alert.correlationId) {
-    console.log(`   🔗 Correlated with other alerts`);
+    console.info(`   🔗 Correlated with other alerts`);
   }
 });
 
 // Simulate acknowledgment
 if (activeAlerts.length > 0) {
-  console.log('\n✅ Simulating Alert Acknowledgment...');
+  console.info('\n✅ Simulating Alert Acknowledgment...');
   alertSystem.acknowledgeAlert(activeAlerts[0].id, 'ops-team');
 }
 
-console.log('\n' + '═'.repeat(70));
-console.log('\n🎯 Alert System Features Demonstrated:');
-console.log('  ✓ Multi-channel notifications (Slack, Email, SMS, PagerDuty)');
-console.log('  ✓ Intelligent alert correlation');
-console.log('  ✓ Escalation policies with multiple levels');
-console.log('  ✓ Alert suppression and deduplication');
-console.log('  ✓ Real-time metric evaluation');
-console.log('  ✓ Statistical analysis and reporting');
-console.log('\n✨ Advanced alert system demonstration complete!');
+console.info('\n' + '═'.repeat(70));
+console.info('\n🎯 Alert System Features Demonstrated:');
+console.info('  ✓ Multi-channel notifications (Slack, Email, SMS, PagerDuty)');
+console.info('  ✓ Intelligent alert correlation');
+console.info('  ✓ Escalation policies with multiple levels');
+console.info('  ✓ Alert suppression and deduplication');
+console.info('  ✓ Real-time metric evaluation');
+console.info('  ✓ Statistical analysis and reporting');
+console.info('\n✨ Advanced alert system demonstration complete!');

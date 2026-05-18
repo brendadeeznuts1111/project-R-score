@@ -115,7 +115,7 @@ describe("Layer4 Performance Benchmarks", () => {
 		const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
 		const minTime = Math.min(...times);
 		const maxTime = Math.max(...times);
-		console.log(`  ⏱️  Avg: ${avgTime.toFixed(2)}ms, Min: ${minTime.toFixed(2)}ms, Max: ${maxTime.toFixed(2)}ms`);
+		console.info(`  ⏱️  Avg: ${avgTime.toFixed(2)}ms, Min: ${minTime.toFixed(2)}ms, Max: ${maxTime.toFixed(2)}ms`);
 	});
 
 	test("Anomaly detection with 500 correlations", () => {
@@ -152,7 +152,7 @@ describe("Layer4 Performance Benchmarks", () => {
 		const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
 		const minTime = Math.min(...times);
 		const maxTime = Math.max(...times);
-		console.log(`  ⏱️  Avg: ${avgTime.toFixed(2)}ms, Min: ${minTime.toFixed(2)}ms, Max: ${maxTime.toFixed(2)}ms`);
+		console.info(`  ⏱️  Avg: ${avgTime.toFixed(2)}ms, Min: ${minTime.toFixed(2)}ms, Max: ${maxTime.toFixed(2)}ms`);
 	});
 
 	test("Time-series alignment performance", () => {
@@ -197,7 +197,7 @@ describe("Layer4 Performance Benchmarks", () => {
 		const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
 		const minTime = Math.min(...times);
 		const maxTime = Math.max(...times);
-		console.log(`  ⏱️  Avg: ${avgTime.toFixed(2)}ms, Min: ${minTime.toFixed(2)}ms, Max: ${maxTime.toFixed(2)}ms`);
+		console.info(`  ⏱️  Avg: ${avgTime.toFixed(2)}ms, Min: ${minTime.toFixed(2)}ms, Max: ${maxTime.toFixed(2)}ms`);
 	});
 
 	test("Multi-layer graph construction", async () => {
@@ -223,7 +223,7 @@ describe("Layer4 Performance Benchmarks", () => {
 		const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
 		const minTime = Math.min(...times);
 		const maxTime = Math.max(...times);
-		console.log(`  ⏱️  Avg: ${avgTime.toFixed(2)}ms, Min: ${minTime.toFixed(2)}ms, Max: ${maxTime.toFixed(2)}ms`);
+		console.info(`  ⏱️  Avg: ${avgTime.toFixed(2)}ms, Min: ${minTime.toFixed(2)}ms, Max: ${maxTime.toFixed(2)}ms`);
 	});
 
 	test("Cross-sport correlation calculation", () => {
@@ -268,6 +268,6 @@ describe("Layer4 Performance Benchmarks", () => {
 		const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
 		const minTime = Math.min(...times);
 		const maxTime = Math.max(...times);
-		console.log(`  ⏱️  Avg: ${avgTime.toFixed(2)}ms, Min: ${minTime.toFixed(2)}ms, Max: ${maxTime.toFixed(2)}ms`);
+		console.info(`  ⏱️  Avg: ${avgTime.toFixed(2)}ms, Min: ${minTime.toFixed(2)}ms, Max: ${maxTime.toFixed(2)}ms`);
 	});
 });

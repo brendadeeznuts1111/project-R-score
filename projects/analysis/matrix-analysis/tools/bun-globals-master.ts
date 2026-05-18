@@ -197,7 +197,7 @@ const APIS = {
 		{
 			name: "Bun.inspect()",
 			signature: "Bun.inspect(obj: any)",
-			description: "Pretty-print as console.log().",
+			description: "Pretty-print as console.info().",
 			returns: "string",
 			params: "N/A",
 			example: "'{ foo: \"bar\" }'",
@@ -592,12 +592,12 @@ import { estimateShallowMemoryUsageOf, serialize } from 'bun:jsc';
 const whichData = [
   { tool: 'sqlite3', path: which('sqlite3'), cwd: Bun.main!, mem: estimateShallowMemoryUsageOf(pools) },
 ];
-console.log(inspect.table(whichData, ['tool', 'path'], { colors: true }));
+console.info(inspect.table(whichData, ['tool', 'path'], { colors: true }));
 
 // Perf + compress pool snapshot
 const startNs = nanoseconds();
 const snapshot = zstdCompressSync(serialize(pools));  // Zstd + JSC
-console.log(\`Snapshot: \${nanoseconds() - startNs} ns, size: \${snapshot.byteLength}, Bun: \${version}\`);
+console.info(\`Snapshot: \${nanoseconds() - startNs} ns, size: \${snapshot.byteLength}, Bun: \${version}\`);
 
 // Sleep + env fallback
 await Bun.sleep(100);  // Rate limit
@@ -624,43 +624,43 @@ function generateJSON(): string {
 
 // Interactive mode
 async function interactiveMode() {
-	console.log("\n🚀 Bun Globals & Utils Master Reference Generator");
-	console.log("==================================================\n");
+	console.info("\n🚀 Bun Globals & Utils Master Reference Generator");
+	console.info("==================================================\n");
 
 	// Display which() demo table
-	console.log("📋 Demo: which() Mega-Table");
+	console.info("📋 Demo: which() Mega-Table");
 	const whichData = [
 		{ tool: "sqlite3", path: Bun.which("sqlite3"), available: !!Bun.which("sqlite3") },
 		{ tool: "bun", path: Bun.which("bun"), available: !!Bun.which("bun") },
 		{ tool: "node", path: Bun.which("node"), available: !!Bun.which("node") },
 		{ tool: "code", path: Bun.which("code"), available: !!Bun.which("code") },
 	];
-	console.log(
+	console.info(
 		Bun.inspect.table(whichData, ["tool", "path", "available"], { colors: true }),
 	);
 
 	// Performance demo
-	console.log("\n⚡ Performance Demo");
+	console.info("\n⚡ Performance Demo");
 	const start = nanoseconds();
 	await Bun.sleep(10);
 	const elapsed = nanoseconds() - start;
-	console.log(`Bun.sleep(10) took: ${elapsed} nanoseconds`);
+	console.info(`Bun.sleep(10) took: ${elapsed} nanoseconds`);
 
 	// UUID demo
-	console.log("\n🔑 UUID v7 Demo");
+	console.info("\n🔑 UUID v7 Demo");
 	const uuid = Bun.randomUUIDv7();
-	console.log(`Generated UUIDv7: ${uuid}`);
+	console.info(`Generated UUIDv7: ${uuid}`);
 
 	// Compression demo
-	console.log("\n📦 Compression Demo");
+	console.info("\n📦 Compression Demo");
 	const testData = "Hello, Bun! ".repeat(1000);
 	const compressed = Bun.gzipSync(testData);
 	const compressionRatio = (1 - compressed.byteLength / testData.length) * 100;
-	console.log(`Original: ${testData.length} bytes`);
-	console.log(`Compressed: ${compressed.byteLength} bytes`);
-	console.log(`Compression ratio: ${compressionRatio.toFixed(1)}%`);
+	console.info(`Original: ${testData.length} bytes`);
+	console.info(`Compressed: ${compressed.byteLength} bytes`);
+	console.info(`Compression ratio: ${compressionRatio.toFixed(1)}%`);
 
-	console.log("\n✨ Interactive demo complete!");
+	console.info("\n✨ Interactive demo complete!");
 }
 
 // Main execution
@@ -690,7 +690,7 @@ async function main() {
 			// For Excel, we generate CSV and note it can be imported
 			content = generateCSV();
 			defaultExt = ".csv";
-			console.log("📊 Excel format: CSV generated - import directly into Excel");
+			console.info("📊 Excel format: CSV generated - import directly into Excel");
 			break;
 		case "md":
 		default:
@@ -703,13 +703,13 @@ async function main() {
 
 	try {
 		await write(outputPath, content);
-		console.log(`✅ Generated ${format.toUpperCase()} reference: ${outputPath}`);
+		console.info(`✅ Generated ${format.toUpperCase()} reference: ${outputPath}`);
 
 		// Show stats
 		const stats = await file(outputPath).stat();
-		console.log(`📊 Size: ${(stats.size / 1024).toFixed(1)} KB`);
-		console.log(`🚀 APIs covered: ${Object.values(APIS).flat().length}`);
-		console.log(`📝 Categories: ${Object.keys(APIS).length}`);
+		console.info(`📊 Size: ${(stats.size / 1024).toFixed(1)} KB`);
+		console.info(`🚀 APIs covered: ${Object.values(APIS).flat().length}`);
+		console.info(`📝 Categories: ${Object.keys(APIS).length}`);
 	} catch (error) {
 		console.error("❌ Error writing file:", error);
 		process.exit(1);

@@ -65,15 +65,15 @@ async function buildSecurityHardened(configName: string): Promise<void> {
     process.exit(1);
   }
 
-  console.log(`🔒 Building MASTER_PERF with ${configName} configuration...`);
-  console.log(`📊 Features: ${config.features.join(', ')}`);
-  console.log(`🛡️ Security: ${JSON.stringify(config.security, null, 2)}`);
+  console.info(`🔒 Building MASTER_PERF with ${configName} configuration...`);
+  console.info(`📊 Features: ${config.features.join(', ')}`);
+  console.info(`🛡️ Security: ${JSON.stringify(config.security, null, 2)}`);
 
   // Build command with feature flags
   const featureFlags = config.features.map(f => `--feature=${f}`).join(' ');
   const buildCmd = `bun build --outdir ./dist-${configName} ${featureFlags} src/main.ts`;
 
-  console.log(`🚀 Running: ${buildCmd}`);
+  console.info(`🚀 Running: ${buildCmd}`);
 
   try {
     const proc = spawn({
@@ -87,7 +87,7 @@ async function buildSecurityHardened(configName: string): Promise<void> {
       throw new Error(`Build failed with exit code ${exitCode}`);
     }
 
-    console.log(`✅ Build completed successfully for ${configName}`);
+    console.info(`✅ Build completed successfully for ${configName}`);
     
     // Run security tests
     await runSecurityTests();
@@ -102,7 +102,7 @@ async function buildSecurityHardened(configName: string): Promise<void> {
 }
 
 async function runSecurityTests(): Promise<void> {
-  console.log('🧪 Running security tests...');
+  console.info('🧪 Running security tests...');
   
   try {
     const proc = spawn({
@@ -116,7 +116,7 @@ async function runSecurityTests(): Promise<void> {
       throw new Error(`Security tests failed with exit code ${exitCode}`);
     }
 
-    console.log('✅ All security tests passed');
+    console.info('✅ All security tests passed');
   } catch (error) {
     console.error(`❌ Security tests failed: ${error}`);
     process.exit(1);
@@ -124,7 +124,7 @@ async function runSecurityTests(): Promise<void> {
 }
 
 async function generateSecurityReport(config: BuildConfig): Promise<void> {
-  console.log('📋 Generating security report...');
+  console.info('📋 Generating security report...');
   
   const report = {
     timestamp: new Date().toISOString(),
@@ -173,7 +173,7 @@ async function generateSecurityReport(config: BuildConfig): Promise<void> {
   const reportPath = `./security-report-${config.environment}-${Date.now()}.json`;
   await Bun.write(reportPath, JSON.stringify(report, null, 2));
   
-  console.log(`📊 Security report generated: ${reportPath}`);
+  console.info(`📊 Security report generated: ${reportPath}`);
 }
 
 // CLI interface
@@ -182,7 +182,7 @@ async function main() {
   const configName = args[0] || 'production';
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🔒 MASTER_PERF Security-Hardened Build Script
 
 Usage: bun scripts/security-hardened-build.ts [CONFIG]

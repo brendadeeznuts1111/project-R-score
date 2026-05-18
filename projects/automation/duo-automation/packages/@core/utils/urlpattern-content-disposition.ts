@@ -139,7 +139,7 @@ export async function bulkUploadWithDisposition(
   });
   
   await Promise.all(workers);
-  if (options.reportProgress) console.log('\n✅ Bulk upload completed');
+  if (options.reportProgress) console.info('\n✅ Bulk upload completed');
   
   const successful = results.filter(r => r.status === 'fulfilled').length;
   const failed = results.filter(r => r.status === 'rejected').length;
@@ -178,10 +178,10 @@ if (import.meta.main) {
         path
       );
       
-      console.log('✅ Upload successful:');
-      console.log(`   Path: ${result.path}`);
-      console.log(`   Content-Disposition: ${result.contentDisposition}`);
-      console.log(`   Pattern: ${result.classification?.pattern}`);
+      console.info('✅ Upload successful:');
+      console.info(`   Path: ${result.path}`);
+      console.info(`   Content-Disposition: ${result.contentDisposition}`);
+      console.info(`   Pattern: ${result.classification?.pattern}`);
       break;
       
     case 'bulk':
@@ -195,10 +195,10 @@ if (import.meta.main) {
         reportProgress: true
       });
       
-      console.log(`\n📊 Bulk upload results:`);
-      console.log(`   Total: ${bulkResult.total}`);
-      console.log(`   Successful: ${bulkResult.successful}`);
-      console.log(`   Failed: ${bulkResult.failed}`);
+      console.info(`\n📊 Bulk upload results:`);
+      console.info(`   Total: ${bulkResult.total}`);
+      console.info(`   Successful: ${bulkResult.successful}`);
+      console.info(`   Failed: ${bulkResult.failed}`);
       break;
       
     case 'analyze':
@@ -206,17 +206,17 @@ if (import.meta.main) {
       const disposition = getContentDispositionByPath(analyzePath);
       const classified = classifyPath(analyzePath);
       
-      console.log(`🔍 Analysis for: ${analyzePath}`);
-      console.log(`   Pattern: ${classified?.pattern || 'none'}`);
-      console.log(`   Parameters:`, classified?.metadata || {});
-      console.log(`   Content-Disposition:`, disposition);
+      console.info(`🔍 Analysis for: ${analyzePath}`);
+      console.info(`   Pattern: ${classified?.pattern || 'none'}`);
+      console.info(`   Parameters:`, classified?.metadata || {});
+      console.info(`   Content-Disposition:`, disposition);
       break;
       
     default:
-      console.log('Commands:');
-      console.log('  upload <path> [json]  - Upload with pattern-aware disposition');
-      console.log('  bulk [count]          - Bulk upload test');
-      console.log('  analyze <path>        - Analyze path for content-disposition');
+      console.info('Commands:');
+      console.info('  upload <path> [json]  - Upload with pattern-aware disposition');
+      console.info('  bulk [count]          - Bulk upload test');
+      console.info('  analyze <path>        - Analyze path for content-disposition');
       break;
   }
 }

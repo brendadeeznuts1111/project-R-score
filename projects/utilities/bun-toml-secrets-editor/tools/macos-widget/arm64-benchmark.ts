@@ -112,10 +112,10 @@ class PerformanceBenchmark {
 		const standard = new StandardStatusChecker();
 		const optimized = new ARM64OptimizedStatusChecker();
 
-		console.log(
+		console.info(
 			`🚀 ARM64 Status Checking Benchmark (${iterations} iterations)`,
 		);
-		console.log("=====================================================");
+		console.info("=====================================================");
 
 		// Benchmark standard implementation
 		const standardStart = performance.now();
@@ -135,11 +135,11 @@ class PerformanceBenchmark {
 		const improvement = ((standardTime - optimizedTime) / standardTime) * 100;
 		const speedup = standardTime / optimizedTime;
 
-		console.log(`📊 Standard Implementation: ${standardTime.toFixed(2)}ms`);
-		console.log(`⚡ Optimized Implementation: ${optimizedTime.toFixed(2)}ms`);
-		console.log(`🚀 Performance Improvement: ${improvement.toFixed(1)}%`);
-		console.log(`🔥 Speedup Factor: ${speedup.toFixed(2)}x`);
-		console.log("=====================================================");
+		console.info(`📊 Standard Implementation: ${standardTime.toFixed(2)}ms`);
+		console.info(`⚡ Optimized Implementation: ${optimizedTime.toFixed(2)}ms`);
+		console.info(`🚀 Performance Improvement: ${improvement.toFixed(1)}%`);
+		console.info(`🔥 Speedup Factor: ${speedup.toFixed(2)}x`);
+		console.info("=====================================================");
 
 		return {
 			standardTime,
@@ -161,8 +161,8 @@ class PerformanceBenchmark {
 			"unknown",
 		];
 
-		console.log(`🎨 Icon Generation Benchmark (${iterations} iterations)`);
-		console.log("=====================================================");
+		console.info(`🎨 Icon Generation Benchmark (${iterations} iterations)`);
+		console.info("=====================================================");
 
 		// Benchmark standard icon generation
 		const standardStart = performance.now();
@@ -182,11 +182,11 @@ class PerformanceBenchmark {
 		const improvement = ((standardTime - optimizedTime) / standardTime) * 100;
 		const speedup = standardTime / optimizedTime;
 
-		console.log(`📊 Standard Implementation: ${standardTime.toFixed(2)}ms`);
-		console.log(`⚡ Optimized Implementation: ${optimizedTime.toFixed(2)}ms`);
-		console.log(`🚀 Performance Improvement: ${improvement.toFixed(1)}%`);
-		console.log(`🔥 Speedup Factor: ${speedup.toFixed(2)}x`);
-		console.log("=====================================================");
+		console.info(`📊 Standard Implementation: ${standardTime.toFixed(2)}ms`);
+		console.info(`⚡ Optimized Implementation: ${optimizedTime.toFixed(2)}ms`);
+		console.info(`🚀 Performance Improvement: ${improvement.toFixed(1)}%`);
+		console.info(`🔥 Speedup Factor: ${speedup.toFixed(2)}x`);
+		console.info("=====================================================");
 
 		return {
 			standardTime,
@@ -197,10 +197,10 @@ class PerformanceBenchmark {
 	}
 
 	static async benchmarkFloatingPointOperations(iterations: number = 1000000) {
-		console.log(
+		console.info(
 			`🔬 Floating-Point Operations Benchmark (${iterations} iterations)`,
 		);
-		console.log("=====================================================");
+		console.info("=====================================================");
 
 		// Test floating-point register materialization
 		const values = Array.from({ length: 100 }, () => Math.random() * 100);
@@ -226,13 +226,13 @@ class PerformanceBenchmark {
 
 		const improvement = ((standardTime - optimizedTime) / standardTime) * 100;
 
-		console.log(`📊 Standard Implementation: ${standardTime.toFixed(2)}ms`);
-		console.log(`⚡ Optimized Implementation: ${optimizedTime.toFixed(2)}ms`);
-		console.log(`🚀 Performance Improvement: ${improvement.toFixed(1)}%`);
-		console.log(
+		console.info(`📊 Standard Implementation: ${standardTime.toFixed(2)}ms`);
+		console.info(`⚡ Optimized Implementation: ${optimizedTime.toFixed(2)}ms`);
+		console.info(`🚀 Performance Improvement: ${improvement.toFixed(1)}%`);
+		console.info(
 			`✅ Results match: ${Math.abs(standardResult - optimizedResult) < 0.001}`,
 		);
-		console.log("=====================================================");
+		console.info("=====================================================");
 
 		return {
 			standardTime,
@@ -245,37 +245,37 @@ class PerformanceBenchmark {
 
 // Main execution
 async function main() {
-	console.log("🔬 ARM64 Performance Benchmark Suite");
-	console.log("===================================");
-	console.log(`📱 Platform: ${process.platform} (${process.arch})`);
-	console.log(`🚀 Bun Version: ${process.version}`);
-	console.log(`🔬 Node Version: ${process.versions.node}`);
-	console.log("");
+	console.info("🔬 ARM64 Performance Benchmark Suite");
+	console.info("===================================");
+	console.info(`📱 Platform: ${process.platform} (${process.arch})`);
+	console.info(`🚀 Bun Version: ${process.version}`);
+	console.info(`🔬 Node Version: ${process.versions.node}`);
+	console.info("");
 
 	// Run all benchmarks
-	console.log("🏃‍♂️ Running performance benchmarks...\n");
+	console.info("🏃‍♂️ Running performance benchmarks...\n");
 
 	await PerformanceBenchmark.benchmarkStatusChecking(50);
-	console.log("");
+	console.info("");
 
 	PerformanceBenchmark.benchmarkIconGeneration(500000);
-	console.log("");
+	console.info("");
 
 	await PerformanceBenchmark.benchmarkFloatingPointOperations(1000000);
-	console.log("");
+	console.info("");
 
-	console.log("✅ ARM64 Performance Benchmarks Complete!");
-	console.log("");
-	console.log("💡 Key ARM64 Optimizations Demonstrated:");
-	console.log("   🔄 Parallel async operations (Promise.allSettled)");
-	console.log("   🔗 Compound boolean expressions (ccmp/ccmn)");
-	console.log("   🎯 Reduced branching and mispredictions");
-	console.log("   🔬 Floating-point register materialization");
-	console.log("   ⚡ Optimized memory access patterns");
-	console.log("   🚀 Vector instruction utilization");
-	console.log("");
-	console.log("🎯 Performance improvements will be more significant");
-	console.log("   on actual ARM64 hardware with real network operations.");
+	console.info("✅ ARM64 Performance Benchmarks Complete!");
+	console.info("");
+	console.info("💡 Key ARM64 Optimizations Demonstrated:");
+	console.info("   🔄 Parallel async operations (Promise.allSettled)");
+	console.info("   🔗 Compound boolean expressions (ccmp/ccmn)");
+	console.info("   🎯 Reduced branching and mispredictions");
+	console.info("   🔬 Floating-point register materialization");
+	console.info("   ⚡ Optimized memory access patterns");
+	console.info("   🚀 Vector instruction utilization");
+	console.info("");
+	console.info("🎯 Performance improvements will be more significant");
+	console.info("   on actual ARM64 hardware with real network operations.");
 }
 
 // Run benchmarks

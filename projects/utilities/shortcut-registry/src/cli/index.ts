@@ -39,72 +39,72 @@ const commands: CLICommand[] = [
     name: 'info',
     description: 'Display build information',
     handler: () => {
-      console.log('\n📦 ShortcutRegistry Build Information\n');
-      console.log(`  Version:      ${buildInfo.version}`);
-      console.log(`  Build Time:   ${buildInfo.buildTime}`);
-      console.log(`  Git Commit:   ${commitHash}`);
-      console.log(`  Short Commit: ${shortCommit}`);
-      console.log(`  Platform:     ${buildInfo.platform}`);
-      console.log(`  Node Env:      ${buildInfo.nodeEnv}`);
-      console.log(`  Build Version: ${buildVersion}`);
-      console.log('');
+      console.info('\n📦 ShortcutRegistry Build Information\n');
+      console.info(`  Version:      ${buildInfo.version}`);
+      console.info(`  Build Time:   ${buildInfo.buildTime}`);
+      console.info(`  Git Commit:   ${commitHash}`);
+      console.info(`  Short Commit: ${shortCommit}`);
+      console.info(`  Platform:     ${buildInfo.platform}`);
+      console.info(`  Node Env:      ${buildInfo.nodeEnv}`);
+      console.info(`  Build Version: ${buildVersion}`);
+      console.info('');
     },
   },
   {
     name: 'shortcuts',
     description: 'List all available shortcuts',
     handler: () => {
-      console.log(`\n⌨️  Available Shortcuts (${shortcuts.length} total)\n`);
+      console.info(`\n⌨️  Available Shortcuts (${shortcuts.length} total)\n`);
       shortcuts.forEach((shortcut, index) => {
         const key = shortcut.default.macOS || shortcut.default.primary;
-        console.log(`  ${(index + 1).toString().padStart(2)}. ${shortcut.id.padEnd(20)} ${key.padEnd(15)} ${shortcut.description}`);
+        console.info(`  ${(index + 1).toString().padStart(2)}. ${shortcut.id.padEnd(20)} ${key.padEnd(15)} ${shortcut.description}`);
       });
-      console.log('');
+      console.info('');
     },
   },
   {
     name: 'stats',
     description: 'Display shortcut statistics',
     handler: () => {
-      console.log('\n📊 Shortcut Statistics\n');
-      console.log(`  Total Shortcuts: ${stats.total}`);
-      console.log('\n  By Category:');
+      console.info('\n📊 Shortcut Statistics\n');
+      console.info(`  Total Shortcuts: ${stats.total}`);
+      console.info('\n  By Category:');
       Object.entries(stats.byCategory).forEach(([category, count]) => {
-        console.log(`    ${category.padEnd(15)} ${count}`);
+        console.info(`    ${category.padEnd(15)} ${count}`);
       });
-      console.log('\n  By Scope:');
+      console.info('\n  By Scope:');
       Object.entries(stats.byScope).forEach(([scope, count]) => {
-        console.log(`    ${scope.padEnd(15)} ${count}`);
+        console.info(`    ${scope.padEnd(15)} ${count}`);
       });
-      console.log('');
+      console.info('');
     },
   },
   {
     name: 'git',
     description: 'Display Git commit information',
     handler: () => {
-      console.log('\n🔀 Git Commit Information\n');
-      console.log(`  Full Hash:    ${commitHash}`);
-      console.log(`  Short Hash:   ${shortCommit}`);
-      console.log(`  Timestamp:    ${commitInfo.timestamp}`);
-      console.log('');
+      console.info('\n🔀 Git Commit Information\n');
+      console.info(`  Full Hash:    ${commitHash}`);
+      console.info(`  Short Hash:   ${shortCommit}`);
+      console.info(`  Timestamp:    ${commitInfo.timestamp}`);
+      console.info('');
     },
   },
   {
     name: 'validate',
     description: 'Validate shortcuts configuration',
     handler: () => {
-      console.log('\n✅ Validating Shortcuts...\n');
+      console.info('\n✅ Validating Shortcuts...\n');
       try {
         validateShortcuts();
-        console.log('  ✓ All shortcuts are valid!');
-        console.log(`  ✓ No conflicts detected`);
-        console.log(`  ✓ ${shortcuts.length} shortcuts validated`);
+        console.info('  ✓ All shortcuts are valid!');
+        console.info(`  ✓ No conflicts detected`);
+        console.info(`  ✓ ${shortcuts.length} shortcuts validated`);
       } catch (error) {
         console.error('  ✗ Validation failed:', error);
         process.exit(1);
       }
-      console.log('');
+      console.info('');
     },
   },
   {
@@ -114,7 +114,7 @@ const commands: CLICommand[] = [
       const keyword = process.argv[3];
       if (!keyword) {
         console.error('\n❌ Error: Please provide a search keyword\n');
-        console.log('Usage: bun run cli search <keyword>\n');
+        console.info('Usage: bun run cli search <keyword>\n');
         return;
       }
       
@@ -125,17 +125,17 @@ const commands: CLICommand[] = [
           s.action.toLowerCase().includes(keyword.toLowerCase())
       );
       
-      console.log(`\n🔍 Search Results for "${keyword}" (${results.length} found)\n`);
+      console.info(`\n🔍 Search Results for "${keyword}" (${results.length} found)\n`);
       if (results.length === 0) {
-        console.log('  No shortcuts found matching your search.\n');
+        console.info('  No shortcuts found matching your search.\n');
         return;
       }
       
       results.forEach((shortcut) => {
         const key = shortcut.default.macOS || shortcut.default.primary;
-        console.log(`  ${shortcut.id.padEnd(20)} ${key.padEnd(15)} ${shortcut.description}`);
+        console.info(`  ${shortcut.id.padEnd(20)} ${key.padEnd(15)} ${shortcut.description}`);
       });
-      console.log('');
+      console.info('');
     },
   },
   {
@@ -145,29 +145,29 @@ const commands: CLICommand[] = [
       const category = process.argv[3];
       if (!category) {
         console.error('\n❌ Error: Please provide a category\n');
-        console.log('Usage: bun run cli category <category>\n');
-        console.log('Available categories:');
+        console.info('Usage: bun run cli category <category>\n');
+        console.info('Available categories:');
         Object.keys(stats.byCategory).forEach((cat) => {
-          console.log(`  - ${cat}`);
+          console.info(`  - ${cat}`);
         });
-        console.log('');
+        console.info('');
         return;
       }
       
       // Filter at runtime since category is dynamic (macros need static values)
       const categoryShortcuts = shortcuts.filter((s) => s.category === category);
-      console.log(`\n📁 Shortcuts in "${category}" category (${categoryShortcuts.length} total)\n`);
+      console.info(`\n📁 Shortcuts in "${category}" category (${categoryShortcuts.length} total)\n`);
       
       if (categoryShortcuts.length === 0) {
-        console.log(`  No shortcuts found in category "${category}".\n`);
+        console.info(`  No shortcuts found in category "${category}".\n`);
         return;
       }
       
       categoryShortcuts.forEach((shortcut) => {
         const key = shortcut.default.macOS || shortcut.default.primary;
-        console.log(`  ${shortcut.id.padEnd(20)} ${key.padEnd(15)} ${shortcut.description}`);
+        console.info(`  ${shortcut.id.padEnd(20)} ${key.padEnd(15)} ${shortcut.description}`);
       });
-      console.log('');
+      console.info('');
     },
   },
   {
@@ -181,14 +181,14 @@ const commands: CLICommand[] = [
         shortcuts: shortcuts,
         stats: stats,
       };
-      console.log(JSON.stringify(output, null, 2));
+      console.info(JSON.stringify(output, null, 2));
     },
   },
   {
     name: 'version',
     description: 'Display version information',
     handler: () => {
-      console.log(`\n${buildInfo.version} (${shortCommit})\n`);
+      console.info(`\n${buildInfo.version} (${shortCommit})\n`);
     },
   },
   {
@@ -206,19 +206,19 @@ const commands: CLICommand[] = [
 ];
 
 function printHelp() {
-  console.log('\n🚀 ShortcutRegistry CLI\n');
-  console.log('Usage: bun run cli [command]\n');
-  console.log('Commands:');
+  console.info('\n🚀 ShortcutRegistry CLI\n');
+  console.info('Usage: bun run cli [command]\n');
+  console.info('Commands:');
   commands.forEach((cmd) => {
-    console.log(`  ${cmd.name.padEnd(15)} ${cmd.description}`);
+    console.info(`  ${cmd.name.padEnd(15)} ${cmd.description}`);
   });
-  console.log('\nExamples:');
-  console.log('  bun run cli info');
-  console.log('  bun run cli shortcuts');
-  console.log('  bun run cli search save');
-  console.log('  bun run cli category general');
-  console.log('  bun run cli all');
-  console.log('');
+  console.info('\nExamples:');
+  console.info('  bun run cli info');
+  console.info('  bun run cli shortcuts');
+  console.info('  bun run cli search save');
+  console.info('  bun run cli category general');
+  console.info('  bun run cli all');
+  console.info('');
 }
 
 function main() {

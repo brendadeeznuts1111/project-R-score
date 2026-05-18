@@ -114,23 +114,23 @@ function diffObjects(oldObj: any, newObj: any, path = ''): DiffChange[] {
 }
 
 async function diffConfigs(options: DiffOptions): Promise<void> {
-  console.log(`🔍 Diffing configs:`);
-  console.log(`   From: ${options.fromHash}`);
-  console.log(`   To: ${options.toHash}`);
+  console.info(`🔍 Diffing configs:`);
+  console.info(`   From: ${options.fromHash}`);
+  console.info(`   To: ${options.toHash}`);
 
   try {
     const fromConfig = await loadConfig(options.fromHash);
     const toConfig = await loadConfig(options.toHash);
 
-    console.log('✅ Both configs loaded');
+    console.info('✅ Both configs loaded');
 
     const changes = diffObjects(fromConfig, toConfig);
 
-    console.log(`\n📊 Diff Results:`);
-    console.log(`   Total Changes: ${changes.length}`);
+    console.info(`\n📊 Diff Results:`);
+    console.info(`   Total Changes: ${changes.length}`);
 
     if (changes.length === 0) {
-      console.log('✅ No differences found');
+      console.info('✅ No differences found');
       return;
     }
 
@@ -138,23 +138,23 @@ async function diffConfigs(options: DiffOptions): Promise<void> {
     const updated = changes.filter(c => c.operation === 'update').length;
     const deleted = changes.filter(c => c.operation === 'delete').length;
 
-    console.log(`   Added: ${added}`);
-    console.log(`   Updated: ${updated}`);
-    console.log(`   Deleted: ${deleted}`);
+    console.info(`   Added: ${added}`);
+    console.info(`   Updated: ${updated}`);
+    console.info(`   Deleted: ${deleted}`);
 
-    console.log(`\n📋 Changes:`);
+    console.info(`\n📋 Changes:`);
     changes.forEach((change, index) => {
       const icon = change.operation === 'add' ? '➕' : 
                    change.operation === 'update' ? '🔄' : '➖';
-      console.log(`\n${index + 1}. ${icon} ${change.path} (${change.operation})`);
+      console.info(`\n${index + 1}. ${icon} ${change.path} (${change.operation})`);
       
       if (change.operation === 'add') {
-        console.log(`   New: ${JSON.stringify(change.newValue)}`);
+        console.info(`   New: ${JSON.stringify(change.newValue)}`);
       } else if (change.operation === 'delete') {
-        console.log(`   Old: ${JSON.stringify(change.oldValue)}`);
+        console.info(`   Old: ${JSON.stringify(change.oldValue)}`);
       } else {
-        console.log(`   Old: ${JSON.stringify(change.oldValue)}`);
-        console.log(`   New: ${JSON.stringify(change.newValue)}`);
+        console.info(`   Old: ${JSON.stringify(change.oldValue)}`);
+        console.info(`   New: ${JSON.stringify(change.newValue)}`);
       }
     });
 
@@ -169,7 +169,7 @@ async function diffConfigs(options: DiffOptions): Promise<void> {
     const diffPath = `diffs/config-diff-${options.fromHash}-${options.toHash}.json`;
     await Bun.write(diffPath, JSON.stringify(diffOutput, null, 2));
 
-    console.log(`\n💾 Diff saved to: ${diffPath}`);
+    console.info(`\n💾 Diff saved to: ${diffPath}`);
 
   } catch (error) {
     console.error('❌ Error:', error.message);

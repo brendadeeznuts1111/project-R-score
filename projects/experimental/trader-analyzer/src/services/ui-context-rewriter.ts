@@ -800,7 +800,7 @@ export class UIContextRewriter {
 	 * const rewriter = new UIContextRewriter(context, { enableMetrics: true });
 	 * rewriter.transform(htmlContent);
 	 * const metrics = rewriter.getMetrics();
-	 * console.log(`Transformation took ${metrics.transformationTimeNs / 1_000_000}ms`);
+	 * console.info(`Transformation took ${metrics.transformationTimeNs / 1_000_000}ms`);
 	 * ```
 	 */
 	getMetrics(): TransformationMetrics | null {
@@ -909,7 +909,7 @@ export class UIContextRewriter {
 	 * const rewriter = new UIContextRewriter(context, { enableMetrics: true });
 	 * rewriter.transform(htmlContent);
 	 * const debugInfo = rewriter.getDebugInfo();
-	 * console.log(debugInfo);
+	 * console.info(debugInfo);
 	 * ```
 	 */
 	getDebugInfo(): {

@@ -348,7 +348,7 @@ if (import.meta.main) {
       parseInt(args[4]) || 1000
     );
     
-    console.log(BunPerfBenchmark.formatComparison(result));
+    console.info(BunPerfBenchmark.formatComparison(result));
   } else if (args[0] === 'sms') {
     // SMS extraction benchmark
     const result = BunPerfBenchmark.benchmark(
@@ -357,7 +357,7 @@ if (import.meta.main) {
       parseInt(args[1]) || 10000
     );
     
-    console.log(BunPerfBenchmark.formatResult(result));
+    console.info(BunPerfBenchmark.formatResult(result));
   } else if (args[0] === 'suite') {
     // Run example suite
     const suite = BunPerfBenchmark.runSuite('Example Suite', [
@@ -367,11 +367,11 @@ if (import.meta.main) {
       { name: 'array-push', fn: () => { const arr = []; arr.push(1); } }
     ]);
     
-    console.log(BunPerfBenchmark.formatSuite(suite));
+    console.info(BunPerfBenchmark.formatSuite(suite));
   } else {
-    console.log('Usage:');
-    console.log('  bun benchmark.ts compare <nameA> <nameB> [iterations]');
-    console.log('  bun benchmark.ts sms [iterations]');
-    console.log('  bun benchmark.ts suite');
+    console.info('Usage:');
+    console.info('  bun benchmark.ts compare <nameA> <nameB> [iterations]');
+    console.info('  bun benchmark.ts sms [iterations]');
+    console.info('  bun benchmark.ts suite');
   }
 }

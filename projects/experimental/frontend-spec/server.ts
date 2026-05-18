@@ -11,4 +11,4 @@ Bun.serve({
   },
 });
 
-console.log("Quantum Dashboard running at http://localhost:3000");
+console.info("Quantum Dashboard running at http://localhost:3000");

@@ -230,7 +230,7 @@ export class CascadeMemoryManager {
   
   // Import from Cursor (migration utility)
   async importFromCursor(cursorData: CursorExport): Promise<void> {
-    console.log('🔄 Importing data from Cursor...');
+    console.info('🔄 Importing data from Cursor...');
     
     const memories = this.transformCursorData(cursorData);
     
@@ -242,7 +242,7 @@ export class CascadeMemoryManager {
     // Rebuild indices
     await this.rebuildIndices();
     
-    console.log(`✅ Imported ${memories.length} memories from Cursor`);
+    console.info(`✅ Imported ${memories.length} memories from Cursor`);
   }
   
   // Store and Retrieve Memories
@@ -325,7 +325,7 @@ export class CascadeMemoryManager {
   
   // Memory Optimization
   async optimizeMemories(): Promise<OptimizationReport> {
-    console.log('🔧 Optimizing memory storage...');
+    console.info('🔧 Optimizing memory storage...');
     
     const report: OptimizationReport = {
       startTime: new Date(),
@@ -356,7 +356,7 @@ export class CascadeMemoryManager {
     report.performanceImprovement = await this.measurePerformanceImprovement();
     report.endTime = new Date();
     
-    console.log(`✅ Memory optimization complete: ${report.optimizationsApplied} optimizations applied`);
+    console.info(`✅ Memory optimization complete: ${report.optimizationsApplied} optimizations applied`);
     
     return report;
   }
@@ -831,7 +831,7 @@ export class DefaultLearningEngine implements LearningEngine {
   
   async updateModels(): Promise<void> {
     // Update learning models (simplified)
-    console.log(`🧠 Updated learning models with ${this.patterns.length} patterns`);
+    console.info(`🧠 Updated learning models with ${this.patterns.length} patterns`);
   }
   
   private isPatternRelevant(pattern: any, context: any): boolean {

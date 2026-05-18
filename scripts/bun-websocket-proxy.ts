@@ -102,7 +102,7 @@ class ProxyWebSocketClient {
         }
         wsOptions.proxy = proxy.headers ? { url: proxyUrl, headers: proxy.headers } : proxyUrl;
       }
-      console.log(
+      console.info(
         `🌐 Connecting through proxy: ${typeof wsOptions.proxy === 'string' ? wsOptions.proxy.replace(/:\/\/[^:]+:[^@]+@/, '://***@') : '[configured]'}`
       );
     }
@@ -136,7 +136,7 @@ class ProxyWebSocketClient {
       }, 10000);
       ws.onopen = () => {
         clearTimeout(timeout);
-        console.log(`✅ WebSocket ${id} connected${proxy ? ' via proxy' : ''}`);
+        console.info(`✅ WebSocket ${id} connected${proxy ? ' via proxy' : ''}`);
         redis.publish('ws:connected', JSON.stringify({ id, url, proxy: !!proxy }));
         resolve();
       };
@@ -145,7 +145,7 @@ class ProxyWebSocketClient {
         this.handleMessage(id, event.data);
       };
       ws.onclose = event => {
-        console.log(`❌ WebSocket ${id} closed: ${event.code} ${event.reason}`);
+        console.info(`❌ WebSocket ${id} closed: ${event.code} ${event.reason}`);
         this.connections.delete(id);
         redis.publish('ws:disconnected', JSON.stringify({ id, code: event.code }));
       };
@@ -165,7 +165,7 @@ class ProxyWebSocketClient {
   }
 
   private handleMessage(connId: string, data: any): void {
-    console.log(`📨 ${connId}: ${data.toString().substring(0, 100)}`);
+    console.info(`📨 ${connId}: ${data.toString().substring(0, 100)}`);
   }
 
   send(connId: string, message: string | object): void {
@@ -205,13 +205,13 @@ const wss = serve({
   port: 3006,
   websocket: {
     open(ws) {
-      console.log('🔌 Client connected to server');
+      console.info('🔌 Client connected to server');
       ws.subscribe('broadcast');
       ws.send(JSON.stringify({ type: 'welcome', message: 'Connected to Bun WebSocket server' }));
     },
     message(ws, message) {
       const data = JSON.parse(message.toString());
-      console.log('📥 Server received:', data);
+      console.info('📥 Server received:', data);
 
       // Echo back
       ws.send(JSON.stringify({ type: 'echo', received: data, timestamp: Date.now() }));
@@ -223,7 +223,7 @@ const wss = serve({
       );
     },
     close(ws, code, reason) {
-      console.log('🔌 Client disconnected:', code, reason);
+      console.info('🔌 Client disconnected:', code, reason);
     },
   },
   fetch(req, server) {
@@ -277,7 +277,7 @@ const wss = serve({
 // ==================== DEMO ====================
 async function runDemo() {
   const defaults = loadProxyDefaults();
-  console.log(`
+  console.info(`
 🌐 Bun v1.3.6 WebSocket Proxy Support Demo
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Server: ws://localhost:${wss.port}/ws
@@ -316,14 +316,14 @@ Usage:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 `);
   if (defaults.proxy) {
-    console.log(`Env proxy default detected: ${defaults.proxy.url}`);
+    console.info(`Env proxy default detected: ${defaults.proxy.url}`);
   }
 
   // Create proxy client
   const client = new ProxyWebSocketClient();
 
   // Test 1: Direct connection (no proxy)
-  console.log('\n--- Test 1: Direct Connection ---');
+  console.info('\n--- Test 1: Direct Connection ---');
   try {
     const direct = await client.connect('ws://localhost:3006/ws');
     client.send(direct.id, { type: 'test', msg: 'Direct connection works!' });
@@ -335,7 +335,7 @@ Usage:
   }
 
   // Test 2: Simulated proxy connection (would need actual proxy)
-  console.log('\n--- Test 2: Proxy Configuration Demo ---');
+  console.info('\n--- Test 2: Proxy Configuration Demo ---');
   if (defaults.proxy) {
     try {
       const proxied = await client.connect(
@@ -351,16 +351,16 @@ Usage:
       console.error('Proxy demo connection failed (check WS_PROXY_URL):', err);
     }
   } else {
-    console.log('To use proxy:');
-    console.log('  export WS_PROXY_URL="http://proxy.company.com:8080"');
-    console.log('  export WS_PROXY_USERNAME="user"');
-    console.log('  export WS_PROXY_PASSWORD="pass"');
-    console.log('  export WS_TLS_INSECURE="true"   # optional');
+    console.info('To use proxy:');
+    console.info('  export WS_PROXY_URL="http://proxy.company.com:8080"');
+    console.info('  export WS_PROXY_USERNAME="user"');
+    console.info('  export WS_PROXY_PASSWORD="pass"');
+    console.info('  export WS_TLS_INSECURE="true"   # optional');
   }
 
   // Show current stats
-  console.log('\n--- Connection Stats ---');
-  console.log(client.getStats());
+  console.info('\n--- Connection Stats ---');
+  console.info(client.getStats());
 }
 
 runDemo().catch(console.error);

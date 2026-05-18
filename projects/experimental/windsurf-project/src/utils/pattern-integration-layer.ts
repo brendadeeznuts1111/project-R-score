@@ -42,7 +42,7 @@ export class PatternIntegrationLayer {
       });
     });
 
-    console.log(`🧠 Loaded ${this.patterns.size} patterns into integration layer`);
+    console.info(`🧠 Loaded ${this.patterns.size} patterns into integration layer`);
   }
 
   private getPatternCategory(section: string): string {
@@ -354,7 +354,7 @@ export class PatternIntegrationLayer {
       }))
     };
 
-    console.log('📊 Pattern Report Generated:', report);
+    console.info('📊 Pattern Report Generated:', report);
     this.addActivity('📊 Pattern report generated and logged to console', 'success');
     
     // Show summary

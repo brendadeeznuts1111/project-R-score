@@ -33,7 +33,7 @@ class ErrorRecoverySystem {
         description: 'Reset graph state and retry',
         severity: 'medium',
         execute: async () => {
-          console.log('🔧 Resetting graph state...');
+          console.info('🔧 Resetting graph state...');
           // Implementation would reset the propagator state
         }
       },
@@ -42,7 +42,7 @@ class ErrorRecoverySystem {
         description: 'Restart propagation service',
         severity: 'high',
         execute: async () => {
-          console.log('🔄 Restarting propagation service...');
+          console.info('🔄 Restarting propagation service...');
           // Implementation would restart the service
         }
       }
@@ -55,7 +55,7 @@ class ErrorRecoverySystem {
         description: 'Reconnect to database',
         severity: 'high',
         execute: async () => {
-          console.log('🔌 Attempting database reconnection...');
+          console.info('🔌 Attempting database reconnection...');
           // Implementation would reconnect to DB
         }
       },
@@ -64,7 +64,7 @@ class ErrorRecoverySystem {
         description: 'Cleanup and recreate database',
         severity: 'critical',
         execute: async () => {
-          console.log('🧹 Cleaning up database...');
+          console.info('🧹 Cleaning up database...');
           // Implementation would cleanup DB
         }
       }
@@ -77,7 +77,7 @@ class ErrorRecoverySystem {
         description: 'Force garbage collection',
         severity: 'medium',
         execute: async () => {
-          console.log('🗑️ Forcing garbage collection...');
+          console.info('🗑️ Forcing garbage collection...');
           if (typeof Bun !== 'undefined' && 'gc' in Bun) {
             (Bun as any).gc(true);
           }
@@ -88,7 +88,7 @@ class ErrorRecoverySystem {
         description: 'Restart process to free memory',
         severity: 'high',
         execute: async () => {
-          console.log('🔄 Process restart required for memory recovery');
+          console.info('🔄 Process restart required for memory recovery');
           process.exit(EXIT_CODES.GENERIC_ERROR);
         }
       }
@@ -108,24 +108,24 @@ class ErrorRecoverySystem {
       ORDER BY count DESC
     `).all(cutoffTime) as any[];
 
-    console.log('\n📊 Error Analysis Report');
-    console.log('========================');
+    console.info('\n📊 Error Analysis Report');
+    console.info('========================');
 
     if (errors.length === 0) {
-      console.log('✅ No unresolved errors found in the specified time range');
+      console.info('✅ No unresolved errors found in the specified time range');
       return;
     }
 
     for (const error of errors) {
-      console.log(`\n❌ ${error.code} (${error.severity})`);
-      console.log(`   Count: ${error.count}`);
-      console.log(`   Last: ${new Date(error.last_occurrence).toLocaleString()}`);
+      console.info(`\n❌ ${error.code} (${error.severity})`);
+      console.info(`   Count: ${error.count}`);
+      console.info(`   Last: ${new Date(error.last_occurrence).toLocaleString()}`);
 
       const actions = this.recoveryActions.get(error.code);
       if (actions) {
-        console.log('   Recovery Actions:');
+        console.info('   Recovery Actions:');
         actions.forEach((action, index) => {
-          console.log(`   ${index + 1}. [${action.type.toUpperCase()}] ${action.description}`);
+          console.info(`   ${index + 1}. [${action.type.toUpperCase()}] ${action.description}`);
         });
       }
     }
@@ -136,19 +136,19 @@ class ErrorRecoverySystem {
     const actions = this.recoveryActions.get(errorCode);
 
     if (!actions || actions.length === 0) {
-      console.log(`⚠️ No recovery actions available for ${errorCode}`);
+      console.info(`⚠️ No recovery actions available for ${errorCode}`);
       return;
     }
 
-    console.log(`\n🔧 Executing recovery for ${errorCode}`);
-    console.log('=====================================');
+    console.info(`\n🔧 Executing recovery for ${errorCode}`);
+    console.info('=====================================');
 
     for (const action of actions) {
-      console.log(`\nExecuting: ${action.description}`);
+      console.info(`\nExecuting: ${action.description}`);
 
       try {
         await action.execute();
-        console.log(`✅ Success: ${action.type} action completed`);
+        console.info(`✅ Success: ${action.type} action completed`);
       } catch (e: any) {
         console.error(`❌ Failed: ${e.message}`);
         await errorHandler.handleError(e, {
@@ -162,7 +162,7 @@ class ErrorRecoverySystem {
 
   // Auto-recovery based on error patterns
   async autoRecovery(): Promise<void> {
-    console.log('\n🤖 Starting auto-recovery process...');
+    console.info('\n🤖 Starting auto-recovery process...');
 
     // Check for critical errors that need immediate attention
     const criticalErrors = this.db.prepare(`
@@ -173,7 +173,7 @@ class ErrorRecoverySystem {
     `).all(Date.now() - 300000) as any[]; // Last 5 minutes
 
     for (const error of criticalErrors) {
-      console.log(`🚨 Critical error detected: ${error.code}`);
+      console.info(`🚨 Critical error detected: ${error.code}`);
       await this.executeRecovery(error.code);
     }
 
@@ -187,7 +187,7 @@ class ErrorRecoverySystem {
     `).all(Date.now() - 3600000) as any[]; // Last hour
 
     for (const error of repeatedErrors) {
-      console.log(`⚠️ Repeated error detected: ${error.code} (${error.count} times)`);
+      console.info(`⚠️ Repeated error detected: ${error.code} (${error.count} times)`);
       await this.executeRecovery(error.code);
     }
   }
@@ -209,7 +209,7 @@ class ErrorRecoverySystem {
     };
 
     await write(outputPath, JSON.stringify(report, null, 2));
-    console.log(`\n📄 Error report generated: ${outputPath}`);
+    console.info(`\n📄 Error report generated: ${outputPath}`);
   }
 
   private async getErrorSummary() {
@@ -267,7 +267,7 @@ if (import.meta.main) {
       break;
 
     default:
-      console.log(`
+      console.info(`
 Error Recovery Commands:
   analyze [hours]     - Analyze errors from last N hours (default: 1)
   recover <code>      - Execute recovery for specific error code

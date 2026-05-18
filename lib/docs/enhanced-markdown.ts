@@ -661,23 +661,23 @@ if (import.meta.main) {
 
     switch (format) {
       case 'ansi':
-        console.log(renderANSI(markdown));
+        console.info(renderANSI(markdown));
         break;
       case 'html':
-        console.log(renderHTML(markdown));
+        console.info(renderHTML(markdown));
         break;
       case 'links':
         const links = extractLinks(markdown);
-        console.log('Links found:');
-        links.forEach((link, i) => console.log(`${i + 1}. ${link.text} -> ${link.href}`));
+        console.info('Links found:');
+        links.forEach((link, i) => console.info(`${i + 1}. ${link.text} -> ${link.href}`));
         break;
       case 'headings':
         const headings = extractHeadings(markdown);
-        console.log('Headings found:');
-        headings.forEach(h => console.log(`${'#'.repeat(h.level)} ${h.text}`));
+        console.info('Headings found:');
+        headings.forEach(h => console.info(`${'#'.repeat(h.level)} ${h.text}`));
         break;
       case 'plain':
-        console.log(stripFormatting(markdown));
+        console.info(stripFormatting(markdown));
         break;
       default:
         console.error('Unknown format. Use: ansi, html, links, headings, plain');

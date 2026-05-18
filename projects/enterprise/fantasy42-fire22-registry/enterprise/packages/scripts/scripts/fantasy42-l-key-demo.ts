@@ -19,12 +19,12 @@ import {
 import { fantasy42Integration } from '../src/domains/external/fantasy402/l-key-mapper';
 
 async function main() {
-  console.log('🎯 Fantasy42 L-Key Integration Demo');
-  console.log('====================================\n');
+  console.info('🎯 Fantasy42 L-Key Integration Demo');
+  console.info('====================================\n');
 
   try {
     // Create sample Fantasy42 entities
-    console.log('🏗️ Creating sample Fantasy42 entities...\n');
+    console.info('🏗️ Creating sample Fantasy42 entities...\n');
 
     // 1. Create Fantasy42 Account
     const account = new FantasyAccount(
@@ -99,52 +99,52 @@ async function main() {
       new Date()
     );
 
-    console.log('✅ Sample entities created\n');
+    console.info('✅ Sample entities created\n');
 
     // Demo 1: Map individual entities
-    console.log('🔄 Demo 1: Individual Entity L-Key Mapping');
-    console.log('-------------------------------------------');
+    console.info('🔄 Demo 1: Individual Entity L-Key Mapping');
+    console.info('-------------------------------------------');
 
     const accountMapping = await fantasy42LKeyService.mapAccount(account);
-    console.log(`📊 Account Mapping:`);
-    console.log(`   Entity ID: ${accountMapping.entity.id}`);
-    console.log(`   L-Key: ${accountMapping.lKey}`);
-    console.log(`   Category: ${accountMapping.category}`);
-    console.log(`   Agent ID: ${accountMapping.metadata.agentId}`);
-    console.log(`   Balance: $${accountMapping.metadata.currentBalance}`);
-    console.log();
+    console.info(`📊 Account Mapping:`);
+    console.info(`   Entity ID: ${accountMapping.entity.id}`);
+    console.info(`   L-Key: ${accountMapping.lKey}`);
+    console.info(`   Category: ${accountMapping.category}`);
+    console.info(`   Agent ID: ${accountMapping.metadata.agentId}`);
+    console.info(`   Balance: $${accountMapping.metadata.currentBalance}`);
+    console.info();
 
     const agentMapping = await fantasy42LKeyService.mapAgent(agent);
-    console.log(`👤 Agent Mapping:`);
-    console.log(`   Entity ID: ${agentMapping.entity.id}`);
-    console.log(`   L-Key: ${agentMapping.lKey}`);
-    console.log(`   Category: ${agentMapping.category}`);
-    console.log(`   Agent Type: ${agentMapping.metadata.type}`);
-    console.log(`   Office: ${agentMapping.metadata.office}`);
-    console.log();
+    console.info(`👤 Agent Mapping:`);
+    console.info(`   Entity ID: ${agentMapping.entity.id}`);
+    console.info(`   L-Key: ${agentMapping.lKey}`);
+    console.info(`   Category: ${agentMapping.category}`);
+    console.info(`   Agent Type: ${agentMapping.metadata.type}`);
+    console.info(`   Office: ${agentMapping.metadata.office}`);
+    console.info();
 
     const betMapping = await fantasy42LKeyService.mapBet(bet);
-    console.log(`🎯 Bet Mapping:`);
-    console.log(`   Entity ID: ${betMapping.entity.id}`);
-    console.log(`   L-Key: ${betMapping.lKey}`);
-    console.log(`   Category: ${betMapping.category}`);
-    console.log(`   Amount: $${betMapping.metadata.amount}`);
-    console.log(`   Odds: ${betMapping.metadata.odds}`);
-    console.log(`   Selection: ${betMapping.metadata.selection}`);
-    console.log();
+    console.info(`🎯 Bet Mapping:`);
+    console.info(`   Entity ID: ${betMapping.entity.id}`);
+    console.info(`   L-Key: ${betMapping.lKey}`);
+    console.info(`   Category: ${betMapping.category}`);
+    console.info(`   Amount: $${betMapping.metadata.amount}`);
+    console.info(`   Odds: ${betMapping.metadata.odds}`);
+    console.info(`   Selection: ${betMapping.metadata.selection}`);
+    console.info();
 
     const eventMapping = await fantasy42LKeyService.mapEvent(event);
-    console.log(`🏀 Event Mapping:`);
-    console.log(`   Entity ID: ${eventMapping.entity.id}`);
-    console.log(`   L-Key: ${eventMapping.lKey}`);
-    console.log(`   Category: ${eventMapping.category}`);
-    console.log(`   Sport: ${eventMapping.metadata.sport}`);
-    console.log(`   Match: ${eventMapping.metadata.homeTeam} vs ${eventMapping.metadata.awayTeam}`);
-    console.log();
+    console.info(`🏀 Event Mapping:`);
+    console.info(`   Entity ID: ${eventMapping.entity.id}`);
+    console.info(`   L-Key: ${eventMapping.lKey}`);
+    console.info(`   Category: ${eventMapping.category}`);
+    console.info(`   Sport: ${eventMapping.metadata.sport}`);
+    console.info(`   Match: ${eventMapping.metadata.homeTeam} vs ${eventMapping.metadata.awayTeam}`);
+    console.info();
 
     // Demo 2: Map complete betting flow
-    console.log('🔄 Demo 2: Complete Betting Flow L-Key Mapping');
-    console.log('-------------------------------------------------');
+    console.info('🔄 Demo 2: Complete Betting Flow L-Key Mapping');
+    console.info('-------------------------------------------------');
 
     const flowResult = await fantasy42LKeyService.mapBettingFlow({
       bet,
@@ -153,18 +153,18 @@ async function main() {
       event,
     });
 
-    console.log(`🎯 Betting Flow Mapped:`);
-    console.log(`   Entities Processed: ${flowResult.entities.length}`);
-    console.log(`   Flow L-Keys: ${flowResult.flow?.join(' → ')}`);
-    console.log(
+    console.info(`🎯 Betting Flow Mapped:`);
+    console.info(`   Entities Processed: ${flowResult.entities.length}`);
+    console.info(`   Flow L-Keys: ${flowResult.flow?.join(' → ')}`);
+    console.info(
       `   Success Rate: ${flowResult.statistics.successCount}/${flowResult.statistics.totalProcessed}`
     );
-    console.log(`   Categories:`, flowResult.statistics.categories);
-    console.log();
+    console.info(`   Categories:`, flowResult.statistics.categories);
+    console.info();
 
     // Demo 3: Batch processing
-    console.log('🔄 Demo 3: Batch Entity Processing');
-    console.log('-----------------------------------');
+    console.info('🔄 Demo 3: Batch Entity Processing');
+    console.info('-----------------------------------');
 
     // Create additional entities for batch processing
     const account2 = new FantasyAccount(
@@ -207,65 +207,65 @@ async function main() {
       events: [event],
     });
 
-    console.log(`📦 Batch Processing Results:`);
-    console.log(`   Total Processed: ${batchResult.statistics.totalProcessed}`);
-    console.log(`   Success: ${batchResult.statistics.successCount}`);
-    console.log(`   Errors: ${batchResult.statistics.errorCount}`);
-    console.log(`   Categories:`, batchResult.statistics.categories);
-    console.log();
+    console.info(`📦 Batch Processing Results:`);
+    console.info(`   Total Processed: ${batchResult.statistics.totalProcessed}`);
+    console.info(`   Success: ${batchResult.statistics.successCount}`);
+    console.info(`   Errors: ${batchResult.statistics.errorCount}`);
+    console.info(`   Categories:`, batchResult.statistics.categories);
+    console.info();
 
     // Demo 4: L-Key lookups and utilities
-    console.log('🔄 Demo 4: L-Key Lookups and Utilities');
-    console.log('---------------------------------------');
+    console.info('🔄 Demo 4: L-Key Lookups and Utilities');
+    console.info('---------------------------------------');
 
     // Test L-Key lookups
     const accountLKey = fantasy42LKeyService.getLKeyById(account.getId());
-    console.log(`🔍 L-Key for Account ${account.getId()}: ${accountLKey}`);
+    console.info(`🔍 L-Key for Account ${account.getId()}: ${accountLKey}`);
 
     const entityByLKey = fantasy42LKeyService.getEntityByLKey(accountLKey!);
-    console.log(`🔍 Entity for L-Key ${accountLKey}: ${entityByLKey?.id}`);
+    console.info(`🔍 Entity for L-Key ${accountLKey}: ${entityByLKey?.id}`);
 
     // Test category lookups
     const agentLKeys = fantasy42LKeyService.getLKeysByCategory('AGENT');
-    console.log(`👥 Agent L-Keys: ${agentLKeys.join(', ')}`);
+    console.info(`👥 Agent L-Keys: ${agentLKeys.join(', ')}`);
 
     // Test L-Key utilities
-    console.log(`🛠️ L-Key Utilities:`);
-    console.log(`   Test L-Key: ${Fantasy42LKeyUtils.generateTestLKey('ACCOUNT', 1)}`);
-    console.log(`   Formatted: ${Fantasy42LKeyUtils.formatLKey('L1001')}`);
-    console.log(`   Sequence: ${Fantasy42LKeyUtils.extractSequenceNumber('L1001')}`);
-    console.log(`   Valid Category: ${Fantasy42LKeyUtils.validateLKeyCategory('L2001', 'AGENT')}`);
-    console.log();
+    console.info(`🛠️ L-Key Utilities:`);
+    console.info(`   Test L-Key: ${Fantasy42LKeyUtils.generateTestLKey('ACCOUNT', 1)}`);
+    console.info(`   Formatted: ${Fantasy42LKeyUtils.formatLKey('L1001')}`);
+    console.info(`   Sequence: ${Fantasy42LKeyUtils.extractSequenceNumber('L1001')}`);
+    console.info(`   Valid Category: ${Fantasy42LKeyUtils.validateLKeyCategory('L2001', 'AGENT')}`);
+    console.info();
 
     // Demo 5: Statistics and export
-    console.log('🔄 Demo 5: Statistics and Export');
-    console.log('---------------------------------');
+    console.info('🔄 Demo 5: Statistics and Export');
+    console.info('---------------------------------');
 
     const statistics = fantasy42LKeyService.getStatistics();
-    console.log(`📊 Fantasy42 L-Key Statistics:`);
-    console.log(`   Total Entities: ${statistics.totalEntities}`);
-    console.log(`   By Category:`, statistics.entitiesByCategory);
-    console.log(`   Recent Mappings: ${statistics.recentMappings.length} entities`);
-    console.log();
+    console.info(`📊 Fantasy42 L-Key Statistics:`);
+    console.info(`   Total Entities: ${statistics.totalEntities}`);
+    console.info(`   By Category:`, statistics.entitiesByCategory);
+    console.info(`   Recent Mappings: ${statistics.recentMappings.length} entities`);
+    console.info();
 
     const exportData = fantasy42LKeyService.exportMappings();
-    console.log(`💾 Export Data:`);
-    console.log(`   Entities: ${exportData.entities.length}`);
-    console.log(`   Audit Entries: ${exportData.auditTrail.length}`);
-    console.log(`   Statistics:`, exportData.statistics.totalEntities);
-    console.log();
+    console.info(`💾 Export Data:`);
+    console.info(`   Entities: ${exportData.entities.length}`);
+    console.info(`   Audit Entries: ${exportData.auditTrail.length}`);
+    console.info(`   Statistics:`, exportData.statistics.totalEntities);
+    console.info();
 
-    console.log('🎊 Fantasy42 L-Key Integration Demo Complete!');
-    console.log('===============================================');
-    console.log();
-    console.log('Key Features Demonstrated:');
-    console.log('✅ Individual entity L-Key mapping');
-    console.log('✅ Complete betting flow mapping');
-    console.log('✅ Batch processing capabilities');
-    console.log('✅ L-Key lookups and utilities');
-    console.log('✅ Statistics and data export');
-    console.log('✅ Audit trail integration');
-    console.log('✅ Error handling and validation');
+    console.info('🎊 Fantasy42 L-Key Integration Demo Complete!');
+    console.info('===============================================');
+    console.info();
+    console.info('Key Features Demonstrated:');
+    console.info('✅ Individual entity L-Key mapping');
+    console.info('✅ Complete betting flow mapping');
+    console.info('✅ Batch processing capabilities');
+    console.info('✅ L-Key lookups and utilities');
+    console.info('✅ Statistics and data export');
+    console.info('✅ Audit trail integration');
+    console.info('✅ Error handling and validation');
   } catch (error) {
     console.error('❌ Demo failed:', error);
     process.exit(1);

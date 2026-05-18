@@ -259,7 +259,7 @@ export class AdvancedRegistryBenchmarkOrchestrator {
   private results: AdvancedBenchmarkResult[] = [];
 
   async runAnalysis(): Promise<void> {
-    console.log('🔬 Advanced Registry Analysis Starting...\n');
+    console.info('🔬 Advanced Registry Analysis Starting...\n');
 
     // Analyze packages
     await this.analyzePackages();
@@ -272,7 +272,7 @@ export class AdvancedRegistryBenchmarkOrchestrator {
   }
 
   private async analyzePackages(): Promise<void> {
-    console.log('🔍 Deep Package Analysis...\n');
+    console.info('🔍 Deep Package Analysis...\n');
 
     const packagesDir = join(dirname(__dirname), 'packages');
     const packageDirs = readdirSync(packagesDir).filter(
@@ -297,15 +297,15 @@ export class AdvancedRegistryBenchmarkOrchestrator {
         optionalDependencies: packageJson.optionalDependencies || {},
       });
 
-      console.log(`📦 Analyzed: ${packageJson.name}@${packageJson.version}`);
+      console.info(`📦 Analyzed: ${packageJson.name}@${packageJson.version}`);
     }
   }
 
   private async runAdvancedBenchmarks(): Promise<void> {
-    console.log('\n⚡ Running Advanced Benchmarks...\n');
+    console.info('\n⚡ Running Advanced Benchmarks...\n');
 
     for (const pkg of this.packages) {
-      console.log(`🔬 Benchmarking ${pkg.name}...`);
+      console.info(`🔬 Benchmarking ${pkg.name}...`);
 
       const result: AdvancedBenchmarkResult = {
         package: pkg.name,
@@ -399,17 +399,17 @@ export class AdvancedRegistryBenchmarkOrchestrator {
 
       this.results.push(result);
 
-      console.log(`   📊 Overall Score: ${result.metrics.overallScore}/100`);
-      console.log(`      🔒 Security: ${result.metrics.securityScore.toFixed(1)}/100`);
-      console.log(`      ⚡ Performance: ${result.metrics.performanceScore.toFixed(1)}/100`);
-      console.log(
+      console.info(`   📊 Overall Score: ${result.metrics.overallScore}/100`);
+      console.info(`      🔒 Security: ${result.metrics.securityScore.toFixed(1)}/100`);
+      console.info(`      ⚡ Performance: ${result.metrics.performanceScore.toFixed(1)}/100`);
+      console.info(
         `      🛠️  Maintainability: ${result.metrics.maintainabilityScore.toFixed(1)}/100`
       );
-      console.log(`      🎯 Reliability: ${result.metrics.reliabilityScore.toFixed(1)}/100`);
-      console.log(
+      console.info(`      🎯 Reliability: ${result.metrics.reliabilityScore.toFixed(1)}/100`);
+      console.info(
         `   📦 Bundle: ${(result.metrics.bundleSize / 1024).toFixed(2)} KB, Build: ${result.metrics.buildTime}ms`
       );
-      console.log(
+      console.info(
         `   📋 Deps: ${result.dependencies.total} total, ${result.dependencies.withExactVersions} exact\n`
       );
     }
@@ -477,35 +477,35 @@ export class AdvancedRegistryBenchmarkOrchestrator {
     }
 
     await Bun.write(reportPath, JSON.stringify(report, null, 2));
-    console.log(`💾 Advanced report saved: ${reportPath}`);
+    console.info(`💾 Advanced report saved: ${reportPath}`);
 
     // Print summary
-    console.log('\n🎯 Advanced Benchmark Summary:');
-    console.log(`   📦 Packages: ${report.analysis.totalPackages}`);
-    console.log(
+    console.info('\n🎯 Advanced Benchmark Summary:');
+    console.info(`   📦 Packages: ${report.analysis.totalPackages}`);
+    console.info(
       `   🏆 Average Overall Score: ${report.analysis.averageOverallScore.toFixed(1)}/100`
     );
-    console.log(
+    console.info(
       `   🔒 Average Security Score: ${report.analysis.averageSecurityScore.toFixed(1)}/100`
     );
-    console.log(
+    console.info(
       `   ⚡ Average Performance Score: ${report.analysis.averagePerformanceScore.toFixed(1)}/100`
     );
-    console.log(
+    console.info(
       `   🛠️  Average Maintainability Score: ${report.analysis.averageMaintainabilityScore.toFixed(1)}/100`
     );
-    console.log(
+    console.info(
       `   🎯 Average Reliability Score: ${report.analysis.averageReliabilityScore.toFixed(1)}/100`
     );
-    console.log(`   📋 Dependencies: ${report.analysis.totalDependencies} total`);
-    console.log(
+    console.info(`   📋 Dependencies: ${report.analysis.totalDependencies} total`);
+    console.info(
       `   ✅ Exact Versions: ${report.analysis.totalExactVersions} (${(report.analysis.exactVersionRatio * 100).toFixed(1)}%)`
     );
 
     if (report.recommendations.length > 0) {
-      console.log(`\n💡 Recommendations:`);
+      console.info(`\n💡 Recommendations:`);
       report.recommendations.forEach(rec => {
-        console.log(`   ${rec.priority === 'high' ? '🔴' : '🟡'} ${rec.category}: ${rec.message}`);
+        console.info(`   ${rec.priority === 'high' ? '🔴' : '🟡'} ${rec.category}: ${rec.message}`);
       });
     }
   }

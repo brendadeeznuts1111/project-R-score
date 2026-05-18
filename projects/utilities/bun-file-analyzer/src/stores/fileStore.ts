@@ -43,6 +43,6 @@ if (import.meta.hot) {
     import.meta.hot.data.fileStore = useFileStore.getState();
   });
   import.meta.hot.accept(() => {
-    console.log("[HMR] Store updated");
+    console.info("[HMR] Store updated");
   });
 }

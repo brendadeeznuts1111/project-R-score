@@ -241,7 +241,7 @@ async function generateTagsIndex(): Promise<void> {
     });
 
     fs.writeFileSync(TAGS_INDEX_PATH, JSON.stringify(indexData, null, 2));
-    console.log('✅ Tags index generated successfully');
+    console.info('✅ Tags index generated successfully');
   } catch (error) {
     console.error('❌ Error generating tags index:', (error as Error).message);
     process.exit(1);
@@ -281,13 +281,13 @@ async function displayStatus(): Promise<void> {
     const enabled = config.filter((p: any) => p.enabled).length;
     const production = config.filter((p: any) => p.profile.includes('production')).length;
 
-    console.log('📊 Nebula Flow Configuration Status');
-    console.log('==================================');
-    console.log(`Total Projects:    ${total}`);
-    console.log(`Enabled Projects:  ${enabled}`);
-    console.log(`Production Profiles: ${production}`);
-    console.log();
-    console.log('Projects by Severity Level:');
+    console.info('📊 Nebula Flow Configuration Status');
+    console.info('==================================');
+    console.info(`Total Projects:    ${total}`);
+    console.info(`Enabled Projects:  ${enabled}`);
+    console.info(`Production Profiles: ${production}`);
+    console.info();
+    console.info('Projects by Severity Level:');
     
     const severityCount: Record<string, number> = {};
     VALIDATION_SCHEMA.severityLevels.forEach(severity => {
@@ -302,19 +302,19 @@ async function displayStatus(): Promise<void> {
 
     Object.entries(severityCount).forEach(([severity, count]) => {
       if (count > 0) {
-        console.log(`  ${severity}: ${count}`);
+        console.info(`  ${severity}: ${count}`);
       }
     });
 
-    console.log();
-    console.log('Projects by Group:');
+    console.info();
+    console.info('Projects by Group:');
     const groupCount: Record<string, number> = {};
     config.forEach((p: any) => {
       groupCount[p.group] = (groupCount[p.group] || 0) + 1;
     });
 
     Object.entries(groupCount).forEach(([group, count]) => {
-      console.log(`  ${group}: ${count}`);
+      console.info(`  ${group}: ${count}`);
     });
   } catch (error) {
     console.error('❌ Error displaying status:', (error as Error).message);
@@ -388,9 +388,9 @@ async function generateProfileStub(options: { profile: string; name: string; gro
     }
   };
 
-  console.log('Generated Profile Stub:');
-  console.log('======================');
-  console.log(JSON.stringify(stub, null, 2));
+  console.info('Generated Profile Stub:');
+  console.info('======================');
+  console.info(JSON.stringify(stub, null, 2));
 }
 
 /**
@@ -468,7 +468,7 @@ async function exportToYaml(outputPath: string = 'nebula-profiles.yaml'): Promis
     });
 
     fs.writeFileSync(outputPath, yaml);
-    console.log(`✅ Configuration exported to ${outputPath}`);
+    console.info(`✅ Configuration exported to ${outputPath}`);
   } catch (error) {
     console.error('❌ Error exporting to YAML:', (error as Error).message);
     process.exit(1);
@@ -488,7 +488,7 @@ async function main() {
         const validation = await validateConfiguration();
         
         if (validation.valid) {
-          console.log('✅ Configuration valid');
+          console.info('✅ Configuration valid');
         } else {
           console.error('❌ Configuration invalid:');
           validation.errors.forEach(error => console.error(`  - ${error}`));
@@ -513,10 +513,10 @@ async function main() {
         
         const results = await grepProjects(query);
         if (results.length === 0) {
-          console.log('No matches found');
+          console.info('No matches found');
         } else {
-          console.log(`Found ${results.length} match${results.length > 1 ? 'es' : ''}:`);
-          results.forEach(result => console.log(`  ${result}`));
+          console.info(`Found ${results.length} match${results.length > 1 ? 'es' : ''}:`);
+          results.forEach(result => console.info(`  ${result}`));
         }
       }
       break;
@@ -541,7 +541,7 @@ async function main() {
           await exportToYaml(outputPath);
         } else if (format === 'json') {
           fs.copyFileSync(CONFIG_PATH, outputPath);
-          console.log(`✅ Configuration exported to ${outputPath}`);
+          console.info(`✅ Configuration exported to ${outputPath}`);
         } else {
           console.error('❌ Unsupported format. Use "yaml" or "json".');
           process.exit(1);
@@ -604,26 +604,26 @@ function parseGenerateOptions(options: string[]): { profile: string; name: strin
  * Display help information
  */
 function displayHelp(): void {
-  console.log('Nebula Flow Configuration Manager');
-  console.log('==================================');
-  console.log();
-  console.log('Usage:');
-  console.log('  bun nebula:validate        - Validate configuration schema');
-  console.log('  bun nebula:grep <query>    - Search projects by keyword');
-  console.log('  bun nebula:status          - Display configuration status');
-  console.log('  bun nebula:generate        - Generate profile stub');
-  console.log('  bun nebula:export <format> - Export configuration');
-  console.log('  bun nebula:index           - Generate tags index');
-  console.log('  bun nebula:help            - Show this help');
-  console.log();
-  console.log('Examples:');
-  console.log('  bun nebula:grep production core');
-  console.log('  bun nebula:generate --profile nebula-production --name "New Core Feature"');
-  console.log('  bun nebula:export yaml nebula-config.yaml');
-  console.log();
-  console.log('Profiles available:');
+  console.info('Nebula Flow Configuration Manager');
+  console.info('==================================');
+  console.info();
+  console.info('Usage:');
+  console.info('  bun nebula:validate        - Validate configuration schema');
+  console.info('  bun nebula:grep <query>    - Search projects by keyword');
+  console.info('  bun nebula:status          - Display configuration status');
+  console.info('  bun nebula:generate        - Generate profile stub');
+  console.info('  bun nebula:export <format> - Export configuration');
+  console.info('  bun nebula:index           - Generate tags index');
+  console.info('  bun nebula:help            - Show this help');
+  console.info();
+  console.info('Examples:');
+  console.info('  bun nebula:grep production core');
+  console.info('  bun nebula:generate --profile nebula-production --name "New Core Feature"');
+  console.info('  bun nebula:export yaml nebula-config.yaml');
+  console.info();
+  console.info('Profiles available:');
   VALIDATION_SCHEMA.validProfiles.forEach(profile => {
-    console.log(`  - ${profile}`);
+    console.info(`  - ${profile}`);
   });
 }
 

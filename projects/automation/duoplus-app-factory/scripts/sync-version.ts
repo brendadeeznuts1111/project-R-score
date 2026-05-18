@@ -8,7 +8,7 @@ import { readFile, writeFile } from 'fs/promises';
 import { VERSION_INFO, NEBULA_VERSION } from '../src/utils/version.js';
 
 async function syncVersions() {
-  console.log(`🔄 Syncing version ${NEBULA_VERSION} across codebase...\n`);
+  console.info(`🔄 Syncing version ${NEBULA_VERSION} across codebase...\n`);
 
   // Update package.json
   try {
@@ -16,9 +16,9 @@ async function syncVersions() {
     if (packageJson.version !== NEBULA_VERSION) {
       packageJson.version = NEBULA_VERSION;
       await writeFile('package.json', JSON.stringify(packageJson, null, 2) + '\n', 'utf-8');
-      console.log(`✅ Updated package.json: ${NEBULA_VERSION}`);
+      console.info(`✅ Updated package.json: ${NEBULA_VERSION}`);
     } else {
-      console.log(`✓ package.json already at ${NEBULA_VERSION}`);
+      console.info(`✓ package.json already at ${NEBULA_VERSION}`);
     }
   } catch (error) {
     console.error('❌ Error updating package.json:', error);
@@ -43,18 +43,18 @@ async function syncVersions() {
     );
     
     await writeFile('web-app/version.js', finalContent, 'utf-8');
-    console.log(`✅ Updated web-app/version.js: ${NEBULA_VERSION}`);
+    console.info(`✅ Updated web-app/version.js: ${NEBULA_VERSION}`);
   } catch (error) {
     console.error('❌ Error updating web-app/version.js:', error);
   }
 
-  console.log(`\n✨ Version sync complete!`);
-  console.log(`📦 Current version: ${NEBULA_VERSION}`);
-  console.log(`📊 Version info:`);
-  console.log(`   • API Version: ${VERSION_INFO.apiVersion}`);
-  console.log(`   • Dashboard Version: ${VERSION_INFO.dashboardVersion}`);
-  console.log(`   • Schema Version: ${VERSION_INFO.schemaVersion}`);
-  console.log(`   • Release Type: ${VERSION_INFO.releaseType}`);
+  console.info(`\n✨ Version sync complete!`);
+  console.info(`📦 Current version: ${NEBULA_VERSION}`);
+  console.info(`📊 Version info:`);
+  console.info(`   • API Version: ${VERSION_INFO.apiVersion}`);
+  console.info(`   • Dashboard Version: ${VERSION_INFO.dashboardVersion}`);
+  console.info(`   • Schema Version: ${VERSION_INFO.schemaVersion}`);
+  console.info(`   • Release Type: ${VERSION_INFO.releaseType}`);
 }
 
 syncVersions().catch(console.error);

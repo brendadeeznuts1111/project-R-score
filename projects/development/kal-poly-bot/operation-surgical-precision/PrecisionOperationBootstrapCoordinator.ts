@@ -340,7 +340,7 @@ export class BunShellExecutor {
    */
   public static async execute(cmd: string): Promise<{ success: boolean; stdout: string; stderr: string; exitCode: number }> {
     try {
-      console.log(`🔧 Executing: ${cmd}`);
+      console.info(`🔧 Executing: ${cmd}`);
 
       // Use sh -c to allow executing full command strings with arguments
       const result = await $`sh -c ${cmd}`.throws(false);
@@ -406,7 +406,7 @@ export class PrecisionHotReloader {
    */
   public configureHotReload(): void {
     if (import.meta.hot) {
-      console.log('🔄 Configured hot reload for surgical precision components');
+      console.info('🔄 Configured hot reload for surgical precision components');
 
       // Watch for component file changes
       this.setupFileWatcher();
@@ -419,16 +419,16 @@ export class PrecisionHotReloader {
   private setupFileWatcher(): void {
     // In production implementation, would use Bun's file watching APIs
     // For now, log that hot reload is configured per memorandum standards
-    console.log('📁 File watcher configured for component hot reload');
-    console.log('  - Watched: service_mesh/**/*.ts, observability/**/*.ts, disaster_recovery/**/*.ts');
-    console.log('  - Reload mode: instant (memorandum-aligned)');
+    console.info('📁 File watcher configured for component hot reload');
+    console.info('  - Watched: service_mesh/**/*.ts, observability/**/*.ts, disaster_recovery/**/*.ts');
+    console.info('  - Reload mode: instant (memorandum-aligned)');
   }
 
   /**
    * Handle hot reload event
    */
   private handleHotReload(componentName: string): void {
-    console.log(`🔄 Hot reload triggered for ${componentName}`);
+    console.info(`🔄 Hot reload triggered for ${componentName}`);
 
     // Update component status
     this.coordinator.updateComponentStatus(componentName, {
@@ -445,14 +445,14 @@ export class PrecisionHotReloader {
  * Demonstrate Bun-native component coordination
  */
 export async function demonstrateComponentCoordination(): Promise<void> {
-  console.log('🎯 SURGICAL PRECISION - Component Coordination Demo');
-  console.log('═'.repeat(60));
+  console.info('🎯 SURGICAL PRECISION - Component Coordination Demo');
+  console.info('═'.repeat(60));
 
   const coordinator = new ComponentCoordinator();
 
   try {
     // Register precision components
-    console.log('📋 Registering precision components...');
+    console.info('📋 Registering precision components...');
 
     coordinator.registerComponent('service-mesh', {
       componentName: 'service-mesh',
@@ -494,30 +494,30 @@ export async function demonstrateComponentCoordination(): Promise<void> {
     });
 
     // Demonstrate Bun-native shell execution
-    console.log('🔧 Demonstrating Bun-native shell execution...');
+    console.info('🔧 Demonstrating Bun-native shell execution...');
     const shellResult = await BunShellExecutor.execute('echo "Surgical Precision - Bun Native Coordination"');
-    console.log(`  Shell Result: ${shellResult.success ? 'SUCCESS' : shellResult.stderr.includes('command not found') ? 'EXPECTED (echo not available)' : 'FAILED'}`);
-    console.log(`  Output: ${shellResult.stdout.trim() || shellResult.stderr.trim()}`);
+    console.info(`  Shell Result: ${shellResult.success ? 'SUCCESS' : shellResult.stderr.includes('command not found') ? 'EXPECTED (echo not available)' : 'FAILED'}`);
+    console.info(`  Output: ${shellResult.stdout.trim() || shellResult.stderr.trim()}`);
 
     // Demonstrate kubectl execution (expected to fail without k8s)
-    console.log('⚙️ Demonstrating kubectl execution capability...');
+    console.info('⚙️ Demonstrating kubectl execution capability...');
     const kubectlResult = await BunShellExecutor.kubectl('version --client --short');
-    console.log(`  kubectl Result: ${kubectlResult.success ? 'SUCCESS' : 'EXPECTED (kubectl not installed - platform ready for deployment)'}`);
+    console.info(`  kubectl Result: ${kubectlResult.success ? 'SUCCESS' : 'EXPECTED (kubectl not installed - platform ready for deployment)'}`);
 
     // Show system health
-    console.log('🏥 System health status:');
+    console.info('🏥 System health status:');
     const health = coordinator.checkSystemHealth();
-    console.log(`  System Healthy: ${health.healthy}`);
-    console.log(`  Degraded Components: ${health.degradedComponents.length}`);
+    console.info(`  System Healthy: ${health.healthy}`);
+    console.info(`  Degraded Components: ${health.degradedComponents.length}`);
     health.components.forEach(comp => {
-      console.log(`  - ${comp.name}: ${comp.status} (${comp.healthy ? '✅' : '❌'})`);
+      console.info(`  - ${comp.name}: ${comp.status} (${comp.healthy ? '✅' : '❌'})`);
     });
 
     // Show startup order
     const startupOrder = coordinator.getStartupOrder();
-    console.log('📋 Component startup order:', startupOrder);
+    console.info('📋 Component startup order:', startupOrder);
 
-    console.log('✅ Component coordination demonstration complete');
+    console.info('✅ Component coordination demonstration complete');
 
   } finally {
     // Cleanup

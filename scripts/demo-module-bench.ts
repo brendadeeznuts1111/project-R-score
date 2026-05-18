@@ -68,7 +68,7 @@ function main() {
   const opsPerSec = Math.round((iterations / elapsedMs) * 1000);
   const status = opsPerSec >= minOpsPerSec ? "pass" : "fail";
 
-  console.log(
+  console.info(
     JSON.stringify(
       {
         id,

@@ -30,7 +30,7 @@ class MockWebSocket {
 
     send(data: string) {
         if (this.readyState === MockWebSocket.readyStates.OPEN) {
-            console.log(`📤 Sending: ${data.substring(0, 50)}...`);
+            console.info(`📤 Sending: ${data.substring(0, 50)}...`);
             // Simulate echo back
             setTimeout(() => {
                 if (this.onmessage) {
@@ -66,7 +66,7 @@ const mockOddsData = {
 describe.concurrent("WebSocket Concurrent Testing Demo", () => {
 
     test.concurrent("handles multiple concurrent connections", async () => {
-        console.log("🚀 Testing concurrent connections...");
+        console.info("🚀 Testing concurrent connections...");
 
         const connections = Array.from({ length: 5 }, (_, i) =>
             new MockWebSocket(`ws://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}`)
@@ -86,14 +86,14 @@ describe.concurrent("WebSocket Concurrent Testing Demo", () => {
             expect(ws.readyState).toBe(MockWebSocket.readyStates.OPEN);
         });
 
-        console.log("✅ All 5 concurrent connections established");
+        console.info("✅ All 5 concurrent connections established");
 
         // Close all connections
         connections.forEach(ws => ws.close());
     });
 
     test.concurrent("concurrent message broadcasting", async () => {
-        console.log("📡 Testing concurrent message broadcasting...");
+        console.info("📡 Testing concurrent message broadcasting...");
 
         const client1 = new MockWebSocket(`ws://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}`);
         const client2 = new MockWebSocket(`ws://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}`);
@@ -142,7 +142,7 @@ describe.concurrent("WebSocket Concurrent Testing Demo", () => {
         expect(messages2.length).toBeGreaterThan(0);
         expect(messages3.length).toBeGreaterThan(0);
 
-        console.log(`✅ Broadcasting complete: ${messages1.length} messages received`);
+        console.info(`✅ Broadcasting complete: ${messages1.length} messages received`);
 
         // Close connections
         client1.close();
@@ -151,7 +151,7 @@ describe.concurrent("WebSocket Concurrent Testing Demo", () => {
     });
 
     test.concurrent("concurrent subscription management", async () => {
-        console.log("📋 Testing concurrent subscription management...");
+        console.info("📋 Testing concurrent subscription management...");
 
         const clients = Array.from({ length: 3 }, () =>
             new MockWebSocket(`ws://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}`)
@@ -182,14 +182,14 @@ describe.concurrent("WebSocket Concurrent Testing Demo", () => {
             expect(ws.readyState).toBe(MockWebSocket.readyStates.OPEN);
         });
 
-        console.log("✅ All concurrent subscriptions completed");
+        console.info("✅ All concurrent subscriptions completed");
 
         // Close connections
         clients.forEach(ws => ws.close());
     });
 
     test.concurrent("high-frequency message processing", async () => {
-        console.log("⚡ Testing high-frequency message processing...");
+        console.info("⚡ Testing high-frequency message processing...");
 
         const client = new MockWebSocket(`ws://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}`);
 
@@ -203,7 +203,7 @@ describe.concurrent("WebSocket Concurrent Testing Demo", () => {
             if (messageCount >= 100) {
                 const duration = performance.now() - startTime;
                 expect(duration).toBeLessThan(1000); // Should process 100 messages quickly
-                console.log(`📡 Processed 100 messages in ${duration.toFixed(2)}ms`);
+                console.info(`📡 Processed 100 messages in ${duration.toFixed(2)}ms`);
                 client.close();
             }
         };
@@ -223,7 +223,7 @@ describe.concurrent("WebSocket Concurrent Testing Demo", () => {
     });
 
     test.concurrent("handles connection drops gracefully", async () => {
-        console.log("🔌 Testing connection drop handling...");
+        console.info("🔌 Testing connection drop handling...");
 
         const clients = Array.from({ length: 3 }, () =>
             new MockWebSocket(`ws://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}`)
@@ -239,7 +239,7 @@ describe.concurrent("WebSocket Concurrent Testing Demo", () => {
             return new Promise<void>((resolve) => {
                 setTimeout(() => {
                     ws.close();
-                    console.log(`🔌 Client ${index} disconnected`);
+                    console.info(`🔌 Client ${index} disconnected`);
                     resolve();
                 }, Math.random() * 100);
             });
@@ -252,14 +252,14 @@ describe.concurrent("WebSocket Concurrent Testing Demo", () => {
             expect(ws.readyState).toBe(MockWebSocket.readyStates.CLOSED);
         });
 
-        console.log("✅ Connection drops handled gracefully");
+        console.info("✅ Connection drops handled gracefully");
     });
 });
 
 describe.concurrent("Performance Benchmarks", () => {
 
     test.concurrent("concurrent client stress test", async () => {
-        console.log("💪 Running concurrent client stress test...");
+        console.info("💪 Running concurrent client stress test...");
 
         const clientCount = 10;
         const messagesPerClient = 20;
@@ -298,7 +298,7 @@ describe.concurrent("Performance Benchmarks", () => {
         await Promise.all(sendPromises);
 
         const duration = performance.now() - startTime;
-        console.log(`💪 Stress test: ${totalMessages} messages in ${duration.toFixed(2)}ms`);
+        console.info(`💪 Stress test: ${totalMessages} messages in ${duration.toFixed(2)}ms`);
 
         // Performance assertion
         expect(duration).toBeLessThan(2000); // Should complete within 2 seconds

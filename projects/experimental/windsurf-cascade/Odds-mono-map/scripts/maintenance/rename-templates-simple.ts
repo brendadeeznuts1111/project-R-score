@@ -52,17 +52,17 @@ class SimpleTemplateRenamer {
      * Scan templates directory for files that need renaming
      */
     async scanTemplates(): Promise<void> {
-        console.log(chalk.blue.bold('🔍 Scanning templates for naming issues...'));
+        console.info(chalk.blue.bold('🔍 Scanning templates for naming issues...'));
 
         try {
             const files = await this.getAllTemplateFiles();
-            console.log(chalk.cyan(`Found ${files.length} template files to analyze`));
+            console.info(chalk.cyan(`Found ${files.length} template files to analyze`));
 
             for (const filePath of files) {
                 await this.analyzeFile(filePath);
             }
 
-            console.log(chalk.green(`\n✅ Analysis complete: ${this.operations.length} files need renaming`));
+            console.info(chalk.green(`\n✅ Analysis complete: ${this.operations.length} files need renaming`));
         } catch (error) {
             console.error(chalk.red(`❌ Error scanning templates: ${error.message}`));
             throw error;
@@ -189,11 +189,11 @@ class SimpleTemplateRenamer {
      */
     async executeRenames(): Promise<void> {
         if (this.operations.length === 0) {
-            console.log(chalk.green('✅ No files need renaming!'));
+            console.info(chalk.green('✅ No files need renaming!'));
             return;
         }
 
-        console.log(chalk.blue.bold(`\n🔄 ${this.dryRun ? 'DRY RUN: Would rename' : 'Renaming'} ${this.operations.length} files...`));
+        console.info(chalk.blue.bold(`\n🔄 ${this.dryRun ? 'DRY RUN: Would rename' : 'Renaming'} ${this.operations.length} files...`));
 
         const results = {
             success: 0,
@@ -204,13 +204,13 @@ class SimpleTemplateRenamer {
         for (const operation of this.operations) {
             try {
                 if (this.dryRun) {
-                    console.log(chalk.cyan(`   ${operation.oldName} → ${operation.newName}`));
+                    console.info(chalk.cyan(`   ${operation.oldName} → ${operation.newName}`));
                     results.success++;
                 } else {
                     // Check if target file already exists
                     try {
                         await stat(operation.newPath);
-                        console.log(chalk.yellow(`   ⚠️  Skipping ${operation.oldName} - target already exists`));
+                        console.info(chalk.yellow(`   ⚠️  Skipping ${operation.oldName} - target already exists`));
                         results.skipped++;
                         continue;
                     } catch {
@@ -218,19 +218,19 @@ class SimpleTemplateRenamer {
                     }
 
                     await rename(operation.oldPath, operation.newPath);
-                    console.log(chalk.green(`   ✅ ${operation.oldName} → ${operation.newName}`));
+                    console.info(chalk.green(`   ✅ ${operation.oldName} → ${operation.newName}`));
                     results.success++;
                 }
             } catch (error) {
-                console.log(chalk.red(`   ❌ Failed to rename ${operation.oldName}: ${error.message}`));
+                console.info(chalk.red(`   ❌ Failed to rename ${operation.oldName}: ${error.message}`));
                 results.failed++;
             }
         }
 
-        console.log(chalk.blue.bold(`\n📊 Results:`));
-        console.log(chalk.green(`   ✅ Success: ${results.success}`));
-        console.log(chalk.yellow(`   ⚠️  Skipped: ${results.skipped}`));
-        console.log(chalk.red(`   ❌ Failed: ${results.failed}`));
+        console.info(chalk.blue.bold(`\n📊 Results:`));
+        console.info(chalk.green(`   ✅ Success: ${results.success}`));
+        console.info(chalk.yellow(`   ⚠️  Skipped: ${results.skipped}`));
+        console.info(chalk.red(`   ❌ Failed: ${results.failed}`));
     }
 
     /**
@@ -238,12 +238,12 @@ class SimpleTemplateRenamer {
      */
     displayReport(): void {
         if (this.operations.length === 0) {
-            console.log(chalk.green('✅ All template files follow naming conventions!'));
+            console.info(chalk.green('✅ All template files follow naming conventions!'));
             return;
         }
 
-        console.log(chalk.blue.bold('\n📋 Renaming Report:'));
-        console.log(chalk.gray('='.repeat(80)));
+        console.info(chalk.blue.bold('\n📋 Renaming Report:'));
+        console.info(chalk.gray('='.repeat(80)));
 
         // Group by directory
         const byDirectory = this.operations.reduce((acc, op) => {
@@ -254,15 +254,15 @@ class SimpleTemplateRenamer {
         }, {} as Record<string, RenameOperation[]>);
 
         for (const [dir, ops] of Object.entries(byDirectory)) {
-            console.log(chalk.cyan(`\n📁 ${dir}:`));
+            console.info(chalk.cyan(`\n📁 ${dir}:`));
             for (const op of ops) {
-                console.log(chalk.gray(`   ${op.oldName}`));
-                console.log(chalk.green(`   → ${op.newName}`));
-                console.log(chalk.gray('   ' + '-'.repeat(50)));
+                console.info(chalk.gray(`   ${op.oldName}`));
+                console.info(chalk.green(`   → ${op.newName}`));
+                console.info(chalk.gray('   ' + '-'.repeat(50)));
             }
         }
 
-        console.log(chalk.blue.bold(`\n📊 Summary: ${this.operations.length} files need renaming`));
+        console.info(chalk.blue.bold(`\n📊 Summary: ${this.operations.length} files need renaming`));
     }
 
     /**
@@ -270,18 +270,18 @@ class SimpleTemplateRenamer {
      */
     generateCommands(): void {
         if (this.operations.length === 0) {
-            console.log(chalk.green('✅ No commands needed!'));
+            console.info(chalk.green('✅ No commands needed!'));
             return;
         }
 
-        console.log(chalk.blue.bold('\n🔧 Generated Commands:'));
-        console.log(chalk.gray('#!/bin/bash'));
-        console.log(chalk.gray('# Template renaming commands'));
+        console.info(chalk.blue.bold('\n🔧 Generated Commands:'));
+        console.info(chalk.gray('#!/bin/bash'));
+        console.info(chalk.gray('# Template renaming commands'));
 
         for (const op of this.operations) {
             const relativeOld = op.oldPath.replace(this.vaultPath + '/', '');
             const relativeNew = op.newPath.replace(this.vaultPath + '/', '');
-            console.log(chalk.cyan(`mv "${relativeOld}" "${relativeNew}"`));
+            console.info(chalk.cyan(`mv "${relativeOld}" "${relativeNew}"`));
         }
     }
 }
@@ -301,13 +301,13 @@ async function main(): Promise<void> {
     };
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('📋 Simple Template Renaming Script'));
-        console.log(chalk.gray('Usage: bun rename-templates-simple.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --dry-run    Show what would be renamed without doing it'));
-        console.log(chalk.gray('  --report     Show detailed report of planned changes'));
-        console.log(chalk.gray('  --commands   Generate shell commands for manual execution'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.blue.bold('📋 Simple Template Renaming Script'));
+        console.info(chalk.gray('Usage: bun rename-templates-simple.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --dry-run    Show what would be renamed without doing it'));
+        console.info(chalk.gray('  --report     Show detailed report of planned changes'));
+        console.info(chalk.gray('  --commands   Generate shell commands for manual execution'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
         process.exit(0);
     }
 

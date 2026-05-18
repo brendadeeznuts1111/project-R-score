@@ -102,7 +102,7 @@ const client = new Client({
 });
 
 const result = await client.fetchData();
-console.log(result);
+console.info(result);
 \`\`\`
 
 #### Advanced Configuration
@@ -164,18 +164,18 @@ function formatBytes(bytes: number): string {
 }
 
 async function main() {
-  console.log("=".repeat(70));
-  console.log("🚀 Bun v1.3.9 SIMD-Accelerated Markdown Rendering");
-  console.log("=".repeat(70));
-  console.log();
+  console.info("=".repeat(70));
+  console.info("🚀 Bun v1.3.9 SIMD-Accelerated Markdown Rendering");
+  console.info("=".repeat(70));
+  console.info();
   
-  console.log("📊 Content Sizes:");
+  console.info("📊 Content Sizes:");
   for (const [name, content] of Object.entries(testContent)) {
-    console.log(`  ${name.padEnd(10)}: ${formatBytes(content.length)}`);
+    console.info(`  ${name.padEnd(10)}: ${formatBytes(content.length)}`);
   }
-  console.log();
+  console.info();
   
-  console.log("⏱ Benchmarking (1000 iterations each)...\n");
+  console.info("⏱ Benchmarking (1000 iterations each)...\n");
   
   const results: Array<{ name: string; size: number; avgTime: number }> = [];
   
@@ -183,38 +183,38 @@ async function main() {
     const avgTime = benchmarkMarkdown(content);
     results.push({ name, size: content.length, avgTime });
     
-    console.log(`${name.padEnd(10)}: ${avgTime.toFixed(3).padStart(8)} ms/op`);
-    console.log(`           ${formatBytes(content.length).padStart(8)} | ~${(1000 / avgTime).toFixed(0)} ops/sec`);
-    console.log();
+    console.info(`${name.padEnd(10)}: ${avgTime.toFixed(3).padStart(8)} ms/op`);
+    console.info(`           ${formatBytes(content.length).padStart(8)} | ~${(1000 / avgTime).toFixed(0)} ops/sec`);
+    console.info();
   }
   
-  console.log("=".repeat(70));
-  console.log("💡 Key Improvements in v1.3.9:");
-  console.log("=".repeat(70));
-  console.log();
-  console.log("1. SIMD Character Scanning");
-  console.log("   - Scans 16+ bytes at once for special characters");
-  console.log("   - Escapes: &, <, >, \"");
-  console.log("   - Uses CPU vector instructions (SSE/AVX/NEON)");
-  console.log();
-  console.log("2. Cache Optimization");
-  console.log("   - HTML tag strings cached (div, p, h1-h6)");
-  console.log("   - 40% fewer string allocations");
-  console.log("   - 6% smaller heap size");
-  console.log();
-  console.log("3. Performance Gains");
-  console.log("   - Small docs (121 chars): ~28% faster");
-  console.log("   - Medium docs (1K chars): ~7-15% faster");
-  console.log("   - Large docs (20K chars): ~7% faster");
-  console.log();
-  console.log("=".repeat(70));
-  console.log("📝 Usage Example:");
-  console.log("=".repeat(70));
-  console.log();
-  console.log("const markdown = await Bun.file('doc.md').text();");
-  console.log("const html = Bun.Markdown.render(markdown);  // 3-15% faster!");
-  console.log("const react = Bun.markdown.react(markdown);    // 7-28% faster!");
-  console.log();
+  console.info("=".repeat(70));
+  console.info("💡 Key Improvements in v1.3.9:");
+  console.info("=".repeat(70));
+  console.info();
+  console.info("1. SIMD Character Scanning");
+  console.info("   - Scans 16+ bytes at once for special characters");
+  console.info("   - Escapes: &, <, >, \"");
+  console.info("   - Uses CPU vector instructions (SSE/AVX/NEON)");
+  console.info();
+  console.info("2. Cache Optimization");
+  console.info("   - HTML tag strings cached (div, p, h1-h6)");
+  console.info("   - 40% fewer string allocations");
+  console.info("   - 6% smaller heap size");
+  console.info();
+  console.info("3. Performance Gains");
+  console.info("   - Small docs (121 chars): ~28% faster");
+  console.info("   - Medium docs (1K chars): ~7-15% faster");
+  console.info("   - Large docs (20K chars): ~7% faster");
+  console.info();
+  console.info("=".repeat(70));
+  console.info("📝 Usage Example:");
+  console.info("=".repeat(70));
+  console.info();
+  console.info("const markdown = await Bun.file('doc.md').text();");
+  console.info("const html = Bun.Markdown.render(markdown);  // 3-15% faster!");
+  console.info("const react = Bun.markdown.react(markdown);    // 7-28% faster!");
+  console.info();
 }
 
 main().catch(console.error);

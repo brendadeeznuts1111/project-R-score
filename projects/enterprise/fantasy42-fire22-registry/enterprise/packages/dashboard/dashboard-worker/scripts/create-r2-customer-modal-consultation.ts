@@ -22,7 +22,7 @@ class R2CustomerModalConsultationCreator {
    * Create comprehensive consultation request
    */
   async createConsultationRequest(): Promise<void> {
-    console.log('🚀 Creating R2 Error Monitoring + Customer Modal Integration Consultation...\n');
+    console.info('🚀 Creating R2 Error Monitoring + Customer Modal Integration Consultation...\n');
 
     const consultationRequest: ConsultationRequest = {
       projectId: 'r2-error-customer-modal-integration',
@@ -195,42 +195,42 @@ viewCustomerDetails(customerID) → API Success → Modal Display
       const result = await this.consultationService.createConsultation(consultationRequest);
 
       if (result.success && result.data) {
-        console.log('✅ Consultation request created successfully!');
-        console.log('\n📊 Consultation Status:');
-        console.log(`  Project: ${result.data.projectId}`);
-        console.log(`  Overall Status: ${result.data.overallStatus}`);
-        console.log(`  Teams Required: ${result.data.totalTeams}`);
-        console.log(`  Approvals: ${result.data.approvalCount}/${result.data.totalTeams}`);
+        console.info('✅ Consultation request created successfully!');
+        console.info('\n📊 Consultation Status:');
+        console.info(`  Project: ${result.data.projectId}`);
+        console.info(`  Overall Status: ${result.data.overallStatus}`);
+        console.info(`  Teams Required: ${result.data.totalTeams}`);
+        console.info(`  Approvals: ${result.data.approvalCount}/${result.data.totalTeams}`);
 
-        console.log('\n👥 Team Consultation Status:');
+        console.info('\n👥 Team Consultation Status:');
         for (const [teamName, teamStatus] of result.data.teamStatuses) {
-          console.log(`  • ${teamName}: ${teamStatus.status}`);
+          console.info(`  • ${teamName}: ${teamStatus.status}`);
           if (teamStatus.requirements.length > 0) {
-            console.log(`    Requirements: ${teamStatus.requirements.length} items`);
+            console.info(`    Requirements: ${teamStatus.requirements.length} items`);
           }
           if (teamStatus.deliverables.length > 0) {
-            console.log(`    Deliverables: ${teamStatus.deliverables.length} expected`);
+            console.info(`    Deliverables: ${teamStatus.deliverables.length} expected`);
           }
         }
 
-        console.log('\n📧 Team Notifications Sent:');
-        console.log('  • Design Team (Isabella Martinez, Ethan Cooper)');
-        console.log('  • Cloudflare Team (R2, Workers, Edge specialists)');
-        console.log('  • Special Operations Team (Security review)');
+        console.info('\n📧 Team Notifications Sent:');
+        console.info('  • Design Team (Isabella Martinez, Ethan Cooper)');
+        console.info('  • Cloudflare Team (R2, Workers, Edge specialists)');
+        console.info('  • Special Operations Team (Security review)');
 
-        console.log('\n📋 Next Steps:');
-        console.log('  1. Teams will receive consultation requests via task assignments');
-        console.log('  2. Each team will review requirements and provide deliverables');
-        console.log(
+        console.info('\n📋 Next Steps:');
+        console.info('  1. Teams will receive consultation requests via task assignments');
+        console.info('  2. Each team will review requirements and provide deliverables');
+        console.info(
           '  3. Monitor consultation status via /api/consultations/status/r2-error-customer-modal-integration'
         );
-        console.log('  4. Schedule cross-team coordination meeting once all approvals received');
-        console.log('  5. Implementation can proceed after full team sign-off');
+        console.info('  4. Schedule cross-team coordination meeting once all approvals received');
+        console.info('  5. Implementation can proceed after full team sign-off');
 
-        console.log('\n🔗 Consultation Tracking:');
-        console.log(`  Project ID: ${consultationRequest.projectId}`);
-        console.log(`  Deadline: ${consultationRequest.deadline}`);
-        console.log(`  Security Level: ${consultationRequest.securityLevel}`);
+        console.info('\n🔗 Consultation Tracking:');
+        console.info(`  Project ID: ${consultationRequest.projectId}`);
+        console.info(`  Deadline: ${consultationRequest.deadline}`);
+        console.info(`  Security Level: ${consultationRequest.securityLevel}`);
       } else {
         console.error('❌ Failed to create consultation request:', result.error);
         process.exit(1);
@@ -245,19 +245,19 @@ viewCustomerDetails(customerID) → API Success → Modal Display
    * Check consultation status
    */
   async checkConsultationStatus(): Promise<void> {
-    console.log('\n🔍 Checking consultation status...');
+    console.info('\n🔍 Checking consultation status...');
 
     const status = await this.consultationService.getConsultationStatus(
       'r2-error-customer-modal-integration'
     );
 
     if (status) {
-      console.log(`\n📊 Project: ${status.projectId}`);
-      console.log(`Overall Status: ${status.overallStatus}`);
-      console.log(`Progress: ${status.approvalCount}/${status.totalTeams} teams approved`);
-      console.log(`Last Updated: ${status.updatedAt}`);
+      console.info(`\n📊 Project: ${status.projectId}`);
+      console.info(`Overall Status: ${status.overallStatus}`);
+      console.info(`Progress: ${status.approvalCount}/${status.totalTeams} teams approved`);
+      console.info(`Last Updated: ${status.updatedAt}`);
 
-      console.log('\n👥 Team Status Details:');
+      console.info('\n👥 Team Status Details:');
       for (const [teamName, teamStatus] of status.teamStatuses) {
         const statusEmoji =
           teamStatus.status === 'approved'
@@ -268,25 +268,25 @@ viewCustomerDetails(customerID) → API Success → Modal Display
                 ? '❌'
                 : '⏳';
 
-        console.log(`  ${statusEmoji} ${teamName}: ${teamStatus.status}`);
+        console.info(`  ${statusEmoji} ${teamName}: ${teamStatus.status}`);
         if (teamStatus.reviewer) {
-          console.log(`    👤 Reviewer: ${teamStatus.reviewer}`);
+          console.info(`    👤 Reviewer: ${teamStatus.reviewer}`);
         }
         if (teamStatus.approvedAt) {
-          console.log(`    📅 Approved: ${teamStatus.approvedAt}`);
+          console.info(`    📅 Approved: ${teamStatus.approvedAt}`);
         }
         if (teamStatus.comments && teamStatus.comments.length > 0) {
-          console.log(`    💬 Comments: ${teamStatus.comments.length} items`);
+          console.info(`    💬 Comments: ${teamStatus.comments.length} items`);
         }
       }
 
       if (status.overallStatus === 'approved') {
-        console.log('\n🎉 All teams have approved! Ready to proceed with implementation.');
+        console.info('\n🎉 All teams have approved! Ready to proceed with implementation.');
       } else if (status.overallStatus === 'partial_approval') {
-        console.log('\n⏳ Waiting for remaining team approvals before implementation can begin.');
+        console.info('\n⏳ Waiting for remaining team approvals before implementation can begin.');
       }
     } else {
-      console.log('❌ Consultation not found or failed to retrieve status.');
+      console.info('❌ Consultation not found or failed to retrieve status.');
     }
   }
 }

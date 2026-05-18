@@ -10,54 +10,54 @@ import { scan, runDemo } from '../packages/fire22-security-scanner/src/index';
 // BUN SECURITY SCANNER API DEMONSTRATION
 // ============================================================================
 
-console.log('🛡️  Bun Security Scanner API Demo');
-console.log('='.repeat(60));
+console.info('🛡️  Bun Security Scanner API Demo');
+console.info('='.repeat(60));
 
-console.log('📚 Based on Bun Security Scanner API Documentation:');
-console.log('   🔗 https://bun.com/docs/install/security-scanner-api');
-console.log('   📦 Configured in bunfig.toml [install.security]');
-console.log('   🎯 Scans packages before installation');
+console.info('📚 Based on Bun Security Scanner API Documentation:');
+console.info('   🔗 https://bun.com/docs/install/security-scanner-api');
+console.info('   📦 Configured in bunfig.toml [install.security]');
+console.info('   🎯 Scans packages before installation');
 
 // ============================================================================
 // CONFIGURATION OVERVIEW
 // ============================================================================
 
-console.log('\n⚙️  Current Configuration (bunfig.toml):');
-console.log('   [install.security]');
-console.log('   scanner = "packages/fire22-security-scanner/src/index.ts"');
-console.log('   level = "fatal"');
-console.log('   enable = true');
+console.info('\n⚙️  Current Configuration (bunfig.toml):');
+console.info('   [install.security]');
+console.info('   scanner = "packages/fire22-security-scanner/src/index.ts"');
+console.info('   level = "fatal"');
+console.info('   enable = true');
 
 // ============================================================================
 // SECURITY LEVELS EXPLANATION
 // ============================================================================
 
-console.log('\n📊 Security Levels:');
-console.log('   🚨 fatal  → Installation stops immediately');
-console.log('   ⚠️  warn   → Shows warnings, may continue');
-console.log('   ✅ pass   → No issues found');
+console.info('\n📊 Security Levels:');
+console.info('   🚨 fatal  → Installation stops immediately');
+console.info('   ⚠️  warn   → Shows warnings, may continue');
+console.info('   ✅ pass   → No issues found');
 
 // ============================================================================
 // HOW IT WORKS
 // ============================================================================
 
-console.log('\n🔧 How the Security Scanner Works:');
-console.log('   1. 📦 Package installation initiated (bun install, bun add)');
-console.log('   2. 🔍 Security scanner called with package list');
-console.log('   3. 🛡️  Scanner analyzes each package:');
-console.log('      • Known vulnerabilities (CVEs)');
-console.log('      • Malicious package detection');
-console.log('      • License compliance');
-console.log('      • Registry validation');
-console.log('   4. 📋 Results displayed with severity levels');
-console.log('   5. 🚫 Installation blocked on fatal issues');
+console.info('\n🔧 How the Security Scanner Works:');
+console.info('   1. 📦 Package installation initiated (bun install, bun add)');
+console.info('   2. 🔍 Security scanner called with package list');
+console.info('   3. 🛡️  Scanner analyzes each package:');
+console.info('      • Known vulnerabilities (CVEs)');
+console.info('      • Malicious package detection');
+console.info('      • License compliance');
+console.info('      • Registry validation');
+console.info('   4. 📋 Results displayed with severity levels');
+console.info('   5. 🚫 Installation blocked on fatal issues');
 
 // ============================================================================
 // RUNNING THE DEMO
 // ============================================================================
 
-console.log('\n🚀 Running Security Scanner Demo:');
-console.log('   This will scan sample packages with known issues...');
+console.info('\n🚀 Running Security Scanner Demo:');
+console.info('   This will scan sample packages with known issues...');
 
 // Run the demo
 await runDemo();
@@ -66,29 +66,29 @@ await runDemo();
 // CONFIGURATION EXAMPLES
 // ============================================================================
 
-console.log('\n📝 Configuration Examples:');
+console.info('\n📝 Configuration Examples:');
 
-console.log('\n   🔧 Basic Configuration:');
-console.log('   [install.security]');
-console.log('   scanner = "@acme/bun-security-scanner"');
-console.log('   level = "fatal"');
+console.info('\n   🔧 Basic Configuration:');
+console.info('   [install.security]');
+console.info('   scanner = "@acme/bun-security-scanner"');
+console.info('   level = "fatal"');
 
-console.log('\n   🏢 Enterprise Configuration:');
-console.log('   [install.security]');
-console.log('   scanner = "packages/fire22-security-scanner/src/index.ts"');
-console.log('   level = "fatal"');
-console.log('   enable = true');
+console.info('\n   🏢 Enterprise Configuration:');
+console.info('   [install.security]');
+console.info('   scanner = "packages/fire22-security-scanner/src/index.ts"');
+console.info('   level = "fatal"');
+console.info('   enable = true');
 
-console.log('\n   🔐 With Authentication:');
-console.log('   # Environment variables for enterprise scanners');
-console.log('   export SECURITY_API_KEY="your-api-key"');
-console.log('   export FIRE22_SECURITY_LEVEL="fatal"');
+console.info('\n   🔐 With Authentication:');
+console.info('   # Environment variables for enterprise scanners');
+console.info('   export SECURITY_API_KEY="your-api-key"');
+console.info('   export FIRE22_SECURITY_LEVEL="fatal"');
 
 // ============================================================================
 // PRACTICAL USAGE SCENARIOS
 // ============================================================================
 
-console.log('\n🎯 Practical Usage Scenarios:');
+console.info('\n🎯 Practical Usage Scenarios:');
 
 const scenarios = [
   {
@@ -124,17 +124,17 @@ const scenarios = [
 ];
 
 scenarios.forEach((scenario, index) => {
-  console.log(`\n   ${index + 1}. ${scenario.scenario}`);
-  console.log(`      💻 ${scenario.command}`);
-  console.log(`      🔍 ${scenario.behavior}`);
-  console.log(`      ✅ ${scenario.benefit}`);
+  console.info(`\n   ${index + 1}. ${scenario.scenario}`);
+  console.info(`      💻 ${scenario.command}`);
+  console.info(`      🔍 ${scenario.behavior}`);
+  console.info(`      ✅ ${scenario.benefit}`);
 });
 
 // ============================================================================
 // SECURITY FEATURES OVERVIEW
 // ============================================================================
 
-console.log('\n🛡️  Security Features Covered:');
+console.info('\n🛡️  Security Features Covered:');
 
 const securityFeatures = [
   '🔍 Vulnerability Scanning - Detects known CVEs',
@@ -148,32 +148,32 @@ const securityFeatures = [
 ];
 
 securityFeatures.forEach(feature => {
-  console.log(`   ${feature}`);
+  console.info(`   ${feature}`);
 });
 
 // ============================================================================
 // ENTERPRISE INTEGRATION
 // ============================================================================
 
-console.log('\n🏢 Enterprise Integration:');
+console.info('\n🏢 Enterprise Integration:');
 
-console.log('   🔧 Environment Variables:');
-console.log('   export FIRE22_SECURITY_LEVEL="fatal"');
-console.log('   export FIRE22_DISABLE_VULN_SCAN="false"');
-console.log('   export FIRE22_ADDITIONAL_REGISTRIES="https://npm.company.com"');
+console.info('   🔧 Environment Variables:');
+console.info('   export FIRE22_SECURITY_LEVEL="fatal"');
+console.info('   export FIRE22_DISABLE_VULN_SCAN="false"');
+console.info('   export FIRE22_ADDITIONAL_REGISTRIES="https://npm.company.com"');
 
-console.log('\n   📊 Integration Points:');
-console.log('   • CI/CD security gates');
-console.log('   • Enterprise policy enforcement');
-console.log('   • Audit logging and reporting');
-console.log('   • Compliance monitoring');
-console.log('   • Automated remediation');
+console.info('\n   📊 Integration Points:');
+console.info('   • CI/CD security gates');
+console.info('   • Enterprise policy enforcement');
+console.info('   • Audit logging and reporting');
+console.info('   • Compliance monitoring');
+console.info('   • Automated remediation');
 
 // ============================================================================
 // BEST PRACTICES
 // ============================================================================
 
-console.log('\n📚 Best Practices:');
+console.info('\n📚 Best Practices:');
 
 const bestPractices = [
   "🔐 Set security level to 'fatal' for production",
@@ -187,38 +187,38 @@ const bestPractices = [
 ];
 
 bestPractices.forEach(practice => {
-  console.log(`   ${practice}`);
+  console.info(`   ${practice}`);
 });
 
 // ============================================================================
 // QUICK START GUIDE
 // ============================================================================
 
-console.log('\n🚀 Quick Start Guide:');
+console.info('\n🚀 Quick Start Guide:');
 
-console.log('   1. 📦 Install security scanner:');
-console.log('      bun add -d packages/fire22-security-scanner');
+console.info('   1. 📦 Install security scanner:');
+console.info('      bun add -d packages/fire22-security-scanner');
 
-console.log('\n   2. 🔧 Configure in bunfig.toml:');
-console.log('      [install.security]');
-console.log('      scanner = "packages/fire22-security-scanner/src/index.ts"');
-console.log('      level = "fatal"');
-console.log('      enable = true');
+console.info('\n   2. 🔧 Configure in bunfig.toml:');
+console.info('      [install.security]');
+console.info('      scanner = "packages/fire22-security-scanner/src/index.ts"');
+console.info('      level = "fatal"');
+console.info('      enable = true');
 
-console.log('\n   3. 🧪 Test the scanner:');
-console.log('      bun run scripts/security-scanner-demo.ts');
+console.info('\n   3. 🧪 Test the scanner:');
+console.info('      bun run scripts/security-scanner-demo.ts');
 
-console.log('\n   4. 🚀 Use in development:');
-console.log('      bun install  # Automatically scans all packages');
+console.info('\n   4. 🚀 Use in development:');
+console.info('      bun install  # Automatically scans all packages');
 
-console.log('\n   5. 🏭 Deploy to production:');
-console.log('      bun install --production --frozen-lockfile');
+console.info('\n   5. 🏭 Deploy to production:');
+console.info('      bun install --production --frozen-lockfile');
 
 // ============================================================================
 // CONCLUSION
 // ============================================================================
 
-console.log('\n🎉 Bun Security Scanner API Demo Complete!');
-console.log('   Your Fire22 project now has enterprise-grade security scanning!');
-console.log('   🔒 Protected against vulnerabilities, malware, and compliance issues!');
-console.log('   🛡️  Ready for secure package management across all environments!');
+console.info('\n🎉 Bun Security Scanner API Demo Complete!');
+console.info('   Your Fire22 project now has enterprise-grade security scanning!');
+console.info('   🔒 Protected against vulnerabilities, malware, and compliance issues!');
+console.info('   🛡️  Ready for secure package management across all environments!');

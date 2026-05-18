@@ -13,7 +13,7 @@ interface ServerMetrics {
 }
 
 // 1. Native HTTP Server with Advanced Features
-console.log("🚀 Starting Advanced Bun Native Server...");
+console.info("🚀 Starting Advanced Bun Native Server...");
 
 const server = serve({
   port: 3000,
@@ -61,23 +61,23 @@ const server = serve({
   // WebSocket support for real-time updates
   websocket: {
     message(ws, message) {
-      console.log(`📨 Received: ${message}`);
+      console.info(`📨 Received: ${message}`);
       ws.send(`Echo: ${message}`);
     },
     open(ws) {
-      console.log("🔌 WebSocket connection opened");
+      console.info("🔌 WebSocket connection opened");
       ws.send("👋 Connected to Systems Dashboard");
     },
     close(ws) {
-      console.log("🔌 WebSocket connection closed");
+      console.info("🔌 WebSocket connection closed");
     },
   },
 });
 
-console.log(`✅ Server running at http://localhost:3000`);
-console.log(`📊 Metrics API: http://localhost:3000/api/metrics`);
-console.log(`📋 Table View: http://localhost:3000/api/table`);
-console.log(`🔌 WebSocket: ws://localhost:3000`);
+console.info(`✅ Server running at http://localhost:3000`);
+console.info(`📊 Metrics API: http://localhost:3000/api/metrics`);
+console.info(`📋 Table View: http://localhost:3000/api/table`);
+console.info(`🔌 WebSocket: ws://localhost:3000`);
 
 // 2. Advanced Metrics Collection
 let metrics: ServerMetrics[] = [];
@@ -194,14 +194,14 @@ async function getHomePage(): Promise<string> {
         const ws = new WebSocket('ws://localhost:3000');
         ws.onopen = () => {
             Alpine.store().connected = true;
-            console.log('WebSocket connected');
+            console.info('WebSocket connected');
         };
         ws.onmessage = (event) => {
-            console.log('WebSocket message:', event.data);
+            console.info('WebSocket message:', event.data);
         };
         ws.onclose = () => {
             Alpine.store().connected = false;
-            console.log('WebSocket disconnected');
+            console.info('WebSocket disconnected');
         };
 
         // Fetch metrics periodically
@@ -233,36 +233,36 @@ async function getHomePage(): Promise<string> {
 setInterval(() => {
   // Manual garbage collection demonstration
   if (metrics.length > 50) {
-    console.log("🧹 Running manual garbage collection...");
+    console.info("🧹 Running manual garbage collection...");
     gc();
   }
 }, 30000); // Every 30 seconds
 
 // 6. Graceful shutdown handling
 process.on("SIGINT", () => {
-  console.log("\n🛑 Shutting down gracefully...");
+  console.info("\n🛑 Shutting down gracefully...");
   server.stop();
   process.exit(0);
 });
 
 process.on("SIGTERM", () => {
-  console.log("\n🛑 Received SIGTERM, shutting down...");
+  console.info("\n🛑 Received SIGTERM, shutting down...");
   server.stop();
   process.exit(0);
 });
 
 // 7. Performance monitoring
-console.log("📊 Performance Features Enabled:");
-console.log("  • Native HTTP server with WebSocket support");
-console.log("  • Real-time metrics collection");
-console.log("  • Advanced table formatting");
-console.log("  • Manual garbage collection");
-console.log("  • Graceful shutdown handling");
-console.log("  • Zero external dependencies");
+console.info("📊 Performance Features Enabled:");
+console.info("  • Native HTTP server with WebSocket support");
+console.info("  • Real-time metrics collection");
+console.info("  • Advanced table formatting");
+console.info("  • Manual garbage collection");
+console.info("  • Graceful shutdown handling");
+console.info("  • Zero external dependencies");
 
 // Start metrics collection
 setInterval(() => {
   getMetrics();
 }, 1000);
 
-console.log("✅ Advanced Bun Native Server initialized successfully!");
+console.info("✅ Advanced Bun Native Server initialized successfully!");

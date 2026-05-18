@@ -222,8 +222,8 @@ if (typeof globalThis !== "undefined") {
 	(globalThis as any).server = server;
 }
 
-console.log(`🚀 RSS Optimizer v${bunVersion} running on http://localhost:3000`);
-console.log(
+console.info(`🚀 RSS Optimizer v${bunVersion} running on http://localhost:3000`);
+console.info(
 	"Endpoints: /feed, /cli, /batch, /stats, /footer, /footer/stats, /footer/rss-status, /cli/*",
 );
 

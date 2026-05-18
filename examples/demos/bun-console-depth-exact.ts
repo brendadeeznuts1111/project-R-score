@@ -43,13 +43,13 @@ const nestedWikiTemplate = {
   }
 };
 
-console.log('🎯 Exact Bun --console-depth Demo');
-console.log('==============================');
-console.log('');
-console.log('📋 Nested Wiki Template Structure:');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log(nestedWikiTemplate);
-console.log('');
+console.info('🎯 Exact Bun --console-depth Demo');
+console.info('==============================');
+console.info('');
+console.info('📋 Nested Wiki Template Structure:');
+console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.info(nestedWikiTemplate);
+console.info('');
 
 // Show the exact example from Bun docs with wiki data
 const nested = { 
@@ -62,10 +62,10 @@ const nested = {
   } 
 };
 
-console.log('📖 Original Bun Docs Example (with wiki data):');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log(nested);
-console.log('');
+console.info('📖 Original Bun Docs Example (with wiki data):');
+console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.info(nested);
+console.info('');
 
 // Create a more complex nested structure
 const complexNested = {
@@ -108,22 +108,22 @@ const complexNested = {
   }
 };
 
-console.log('🔧 Complex Wiki System Configuration:');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log(complexNested);
-console.log('');
+console.info('🔧 Complex Wiki System Configuration:');
+console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.info(complexNested);
+console.info('');
 
-console.log('💡 Console Depth Comparison:');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log('Default (depth 2): Shows basic structure');
-console.log('Depth 3: Reveals intermediate nested objects');
-console.log('Depth 5: Shows deep configuration details');
-console.log('Depth 10: Complete visibility of all nested properties');
-console.log('');
+console.info('💡 Console Depth Comparison:');
+console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.info('Default (depth 2): Shows basic structure');
+console.info('Depth 3: Reveals intermediate nested objects');
+console.info('Depth 5: Shows deep configuration details');
+console.info('Depth 10: Complete visibility of all nested properties');
+console.info('');
 
-console.log('🚀 Try these commands:');
-console.log('   bun --console-depth 1 examples/bun-console-depth-exact.ts');
-console.log('   bun --console-depth 2 examples/bun-console-depth-exact.ts  # (default)');
-console.log('   bun --console-depth 3 examples/bun-console-depth-exact.ts');
-console.log('   bun --console-depth 5 examples/bun-console-depth-exact.ts');
-console.log('   bun --console-depth 10 examples/bun-console-depth-exact.ts');
+console.info('🚀 Try these commands:');
+console.info('   bun --console-depth 1 examples/bun-console-depth-exact.ts');
+console.info('   bun --console-depth 2 examples/bun-console-depth-exact.ts  # (default)');
+console.info('   bun --console-depth 3 examples/bun-console-depth-exact.ts');
+console.info('   bun --console-depth 5 examples/bun-console-depth-exact.ts');
+console.info('   bun --console-depth 10 examples/bun-console-depth-exact.ts');

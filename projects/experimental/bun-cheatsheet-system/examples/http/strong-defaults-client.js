@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 
 export async function demoStrongDefaultsClient() {
-  console.log('🛡️ Strong Defaults HTTP Client');
-  console.log('='.repeat(40));
+  console.info('🛡️ Strong Defaults HTTP Client');
+  console.info('='.repeat(40));
   
   // Strong defaults configuration
   const defaultConfig = {
@@ -46,7 +46,7 @@ export async function demoStrongDefaultsClient() {
         return response;
       } catch (error) {
         lastError = error;
-        console.log(`   Attempt ${attempt} failed: ${error.message}`);
+        console.info(`   Attempt ${attempt} failed: ${error.message}`);
         
         if (attempt === config.retries) {
           throw lastError;
@@ -61,18 +61,18 @@ export async function demoStrongDefaultsClient() {
   }
   
   // Example 1: Secure API call
-  console.log('\n1. 🔒 Secure API call with defaults:');
+  console.info('\n1. 🔒 Secure API call with defaults:');
   try {
     const response = await strongFetch('https://httpbin.org/json');
     const data = await response.json();
-    console.log('   ✅ Secure call successful');
-    console.log(`   Response type: ${response.headers.get('content-type')}`);
+    console.info('   ✅ Secure call successful');
+    console.info(`   Response type: ${response.headers.get('content-type')}`);
   } catch (error) {
-    console.log(`   ❌ Error: ${error.message}`);
+    console.info(`   ❌ Error: ${error.message}`);
   }
   
   // Example 2: Override defaults
-  console.log('\n2. ⚙️ Override defaults:');
+  console.info('\n2. ⚙️ Override defaults:');
   try {
     const response = await strongFetch('https://httpbin.org/anything', {
       method: 'POST',
@@ -83,23 +83,23 @@ export async function demoStrongDefaultsClient() {
     });
     
     const data = await response.json();
-    console.log('   ✅ Override successful');
-    console.log(`   Custom header: ${data.headers['x-custom-header']}`);
+    console.info('   ✅ Override successful');
+    console.info(`   Custom header: ${data.headers['x-custom-header']}`);
   } catch (error) {
-    console.log(`   ❌ Error: ${error.message}`);
+    console.info(`   ❌ Error: ${error.message}`);
   }
   
   // Example 3: Retry demonstration
-  console.log('\n3. 🔄 Retry mechanism:');
+  console.info('\n3. 🔄 Retry mechanism:');
   try {
     // This will fail and retry
     const response = await strongFetch('https://httpbin.org/status/500');
-    console.log('   ✅ Unexpected success');
+    console.info('   ✅ Unexpected success');
   } catch (error) {
-    console.log(`   ✅ Retry mechanism working: ${error.message}`);
+    console.info(`   ✅ Retry mechanism working: ${error.message}`);
   }
   
-  console.log('\n✅ Strong defaults demo completed!');
+  console.info('\n✅ Strong defaults demo completed!');
 }
 
 if (import.meta.main) {

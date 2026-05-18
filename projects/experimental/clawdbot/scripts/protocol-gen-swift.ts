@@ -235,7 +235,7 @@ async function generate() {
   for (const outPath of outPaths) {
     await fs.mkdir(path.dirname(outPath), { recursive: true });
     await fs.writeFile(outPath, content);
-    console.log(`wrote ${outPath}`);
+    console.info(`wrote ${outPath}`);
   }
 }
 

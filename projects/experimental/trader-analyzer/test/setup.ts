@@ -109,7 +109,7 @@ export const createMockCorrelation = (
  * Global setup before all tests
  */
 beforeAll(() => {
-	console.log("🏗️  Setting up Layer4 test environment...");
+	console.info("🏗️  Setting up Layer4 test environment...");
 
 	// Initialize test environment variables
 	process.env.TEST_ENV = "true";
@@ -132,7 +132,7 @@ beforeAll(() => {
  * Global cleanup after all tests
  */
 afterAll(() => {
-	console.log("🧹 Cleaning up Layer4 test environment...");
+	console.info("🧹 Cleaning up Layer4 test environment...");
 
 	// Clean up resources
 	if ((globalThis as any).mockGraphDatabase) {

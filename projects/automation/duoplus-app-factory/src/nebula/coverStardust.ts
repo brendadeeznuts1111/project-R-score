@@ -86,7 +86,7 @@ export class CoverStardust {
   async generateCover(params: StardustParams): Promise<{
     coverStories: CoverStory[];
   }> {
-    console.log(`✨ Cover-Stardust™: Generating stories for ${params.targetGood}`);
+    console.info(`✨ Cover-Stardust™: Generating stories for ${params.targetGood}`);
 
     const coverStories: CoverStory[] = [];
     
@@ -98,7 +98,7 @@ export class CoverStardust {
       coverStories.push(story);
     }
 
-    console.log(`🌟 Generated ${coverStories.length} cover stories with avg stardust level: ${this.calculateAverageStardust(coverStories)}`);
+    console.info(`🌟 Generated ${coverStories.length} cover stories with avg stardust level: ${this.calculateAverageStardust(coverStories)}`);
     
     return { coverStories };
   }

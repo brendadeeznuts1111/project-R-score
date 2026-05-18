@@ -739,7 +739,7 @@ function generateLatticeFinderDashboard(view: keyof typeof VIEWS = "overview"): 
       wsConnection = new WebSocket('ws://localhost:8080/ws');
 
       wsConnection.onopen = function() {
-        console.log('WebSocket connected for real-time fractal analysis');
+        console.info('WebSocket connected for real-time fractal analysis');
         document.getElementById('analysis-status').textContent = 'Analysis: CONNECTED';
       };
 
@@ -749,14 +749,14 @@ function generateLatticeFinderDashboard(view: keyof typeof VIEWS = "overview"): 
 
           switch (message.type) {
             case 'welcome':
-              console.log('WebSocket welcome:', message.message);
+              console.info('WebSocket welcome:', message.message);
               break;
             case 'analysis':
             case 'realtime_update':
               updateFractalAnalysis(message.data);
               break;
             default:
-              console.log('Unknown message type:', message.type);
+              console.info('Unknown message type:', message.type);
           }
         } catch (error) {
           console.error('WebSocket message parsing error:', error);
@@ -764,12 +764,12 @@ function generateLatticeFinderDashboard(view: keyof typeof VIEWS = "overview"): 
       };
 
       wsConnection.onclose = function() {
-        console.log('WebSocket connection closed');
+        console.info('WebSocket connection closed');
         document.getElementById('analysis-status').textContent = 'Analysis: DISCONNECTED';
 
         // Attempt to reconnect after 3 seconds
         setTimeout(() => {
-          console.log('Attempting to reconnect WebSocket...');
+          console.info('Attempting to reconnect WebSocket...');
           startWebSocketConnection();
         }, 3000);
       };
@@ -801,7 +801,7 @@ function generateLatticeFinderDashboard(view: keyof typeof VIEWS = "overview"): 
     // Fallback to polling if WebSocket doesn't connect within 5 seconds
     setTimeout(() => {
       if (!wsConnection || wsConnection.readyState !== WebSocket.OPEN) {
-        console.log('WebSocket failed to connect, falling back to polling');
+        console.info('WebSocket failed to connect, falling back to polling');
         startPollingAnalysis();
       }
     }, 5000);
@@ -846,7 +846,7 @@ interface EdgeRecommendation {
 // Fractal Edge Finder Server
 function startLatticeFinderSystem(runtimeConfig: any = {}): void {
   // Load configuration
-  bunConfig.YAML.parse().catch(() => console.log('Using default configuration'));
+  bunConfig.YAML.parse().catch(() => console.info('Using default configuration'));
 
   // Initialize components
   const client = new LatticeRegistryClient();
@@ -951,7 +951,7 @@ function startLatticeFinderSystem(runtimeConfig: any = {}): void {
       message(ws, message) {
         try {
           const data = JSON.parse(message);
-          console.log('Fractal WebSocket message received:', data);
+          console.info('Fractal WebSocket message received:', data);
 
           // Handle client requests for specific analysis
           if (data.type === 'analyze') {
@@ -968,7 +968,7 @@ function startLatticeFinderSystem(runtimeConfig: any = {}): void {
       },
 
       open(ws) {
-        console.log('Fractal WebSocket connection opened');
+        console.info('Fractal WebSocket connection opened');
 
         // Send welcome message
         ws.send(JSON.stringify({
@@ -1003,7 +1003,7 @@ function startLatticeFinderSystem(runtimeConfig: any = {}): void {
       },
 
       close(ws) {
-        console.log('Fractal WebSocket connection closed');
+        console.info('Fractal WebSocket connection closed');
 
         // Clean up real-time updates
         if ((ws as any).updateInterval) {
@@ -1013,7 +1013,7 @@ function startLatticeFinderSystem(runtimeConfig: any = {}): void {
     }
   });
 
-  console.log(`
+  console.info(`
 ╔══════════════════════════════════════════════════════════════════════════════════════════════╗
 ║  🌀 T3-LATTICE FRACTAL EDGE FINDER PERSONA - REAL-TIME FRACTAL DIMENSION ANALYSIS          ║
 ║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   ║

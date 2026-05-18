@@ -19,7 +19,7 @@ export async function streamVideoToR2(outputPath: string) {
   
   const s3 = new S3R2NativeManager(r2Config);
   
-  console.log(`🎬 Initializing video capture for: ${outputPath}`);
+  console.info(`🎬 Initializing video capture for: ${outputPath}`);
 
   // Example FFmpeg command: Screen capture (macOS)
   const ffmpeg = spawn("ffmpeg", [
@@ -38,7 +38,7 @@ export async function streamVideoToR2(outputPath: string) {
   // Convert Node Readable to Blob for zero-copy upload
   const blob = await new Response(stream as any).blob();
 
-  console.log(`🚀 Uploading video blob (${(blob.size / 1024).toFixed(1)}KB) to R2...`);
+  console.info(`🚀 Uploading video blob (${(blob.size / 1024).toFixed(1)}KB) to R2...`);
 
   const result = await s3.uploadPublicFile(
     outputPath,
@@ -47,7 +47,7 @@ export async function streamVideoToR2(outputPath: string) {
   );
 
   if (result.success) {
-    console.log(`✅ Video proof stored: ${result.url}`);
+    console.info(`✅ Video proof stored: ${result.url}`);
   }
 
   return result;
@@ -56,7 +56,7 @@ export async function streamVideoToR2(outputPath: string) {
 // Integration demo
 if (import.meta.main) {
   if (process.env.PRODUCTION_SIM === "1") {
-    console.log("🛠️ Simulation Mode: Skipping real FFmpeg capture.");
+    console.info("🛠️ Simulation Mode: Skipping real FFmpeg capture.");
     const mockBlob = new Blob(["mock-video-content"], { type: "video/mp4" });
     
     // Mock config for sim
@@ -68,7 +68,7 @@ if (import.meta.main) {
     });
     
     const res = await s3.uploadPublicFile("proofs/sim-video.mp4", mockBlob, "video/mp4");
-    console.log(`✅ Sim video URL: ${res.url}`);
+    console.info(`✅ Sim video URL: ${res.url}`);
   } else {
     await streamVideoToR2(`proofs/reg-proof-${Date.now()}.mp4`);
   }

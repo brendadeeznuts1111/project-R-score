@@ -449,17 +449,17 @@ class UnifiedNetworkServer {
         : networkInfo.ipv6.join(", ")
       : "None";
 
-    console.log("🚀 Starting Unified Network Server");
-    console.log(`📡 Hostname: ${networkInfo.hostname}`);
-    console.log(`🔷 IPv4: ${ipv4Display}`);
-    console.log(`🔶 IPv6: ${ipv6Display}`);
-    console.log(`🌐 WebSocket: ws://${networkInfo.hostname}:${this.port}`);
-    console.log(`💾 Database: Connected`);
-    console.log(`🔍 DNS Cache TTL: ${ttlDisplay}`);
+    console.info("🚀 Starting Unified Network Server");
+    console.info(`📡 Hostname: ${networkInfo.hostname}`);
+    console.info(`🔷 IPv4: ${ipv4Display}`);
+    console.info(`🔶 IPv6: ${ipv6Display}`);
+    console.info(`🌐 WebSocket: ws://${networkInfo.hostname}:${this.port}`);
+    console.info(`💾 Database: Connected`);
+    console.info(`🔍 DNS Cache TTL: ${ttlDisplay}`);
     if (!dnsConfig.ttl) {
-      console.log(`   💡 Set BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS to customize (default: 30s)`);
+      console.info(`   💡 Set BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS to customize (default: 30s)`);
     }
-    console.log();
+    console.info();
 
     try {
       this.server = serve({
@@ -577,10 +577,10 @@ class UnifiedNetworkServer {
           this.clients.set(clientId, client);
           (ws as any).clientId = clientId;
 
-          console.log(`🔌 Client connected: ${clientId}`);
-          console.log(`   Hostname: ${hostname}`);
-          console.log(`   IPv4: ${ipv4 || "N/A"}`);
-          console.log(`   IPv6: ${ipv6 || "N/A"}\n`);
+          console.info(`🔌 Client connected: ${clientId}`);
+          console.info(`   Hostname: ${hostname}`);
+          console.info(`   IPv4: ${ipv4 || "N/A"}`);
+          console.info(`   IPv6: ${ipv6 || "N/A"}\n`);
 
           // Send welcome message with network info
           ws.send(JSON.stringify({
@@ -646,7 +646,7 @@ class UnifiedNetworkServer {
           );
           this.database.logEvent("disconnection", client.hostname, client.ipv4 || client.ipv6);
 
-          console.log(`🔌 Client disconnected: ${clientId} (${client.hostname})`);
+          console.info(`🔌 Client disconnected: ${clientId} (${client.hostname})`);
           this.clients.delete(clientId);
         },
 
@@ -662,7 +662,7 @@ class UnifiedNetworkServer {
       },
     });
 
-      console.log(`✅ Server running on port ${this.port}\n`);
+      console.info(`✅ Server running on port ${this.port}\n`);
     } catch (error: any) {
       if (error.code === "EADDRINUSE") {
         console.error(`\n❌ Port ${this.port} is already in use`);
@@ -787,7 +787,7 @@ class UnifiedNetworkServer {
     if (this.server) {
       this.server.stop();
       this.database.close();
-      console.log("🛑 Server stopped");
+      console.info("🛑 Server stopped");
     }
   }
 }
@@ -811,14 +811,14 @@ if (import.meta.main) {
   } catch (error: any) {
     if (error.code === "EADDRINUSE") {
       // Try alternative ports
-      console.log(`\n🔄 Trying alternative ports...\n`);
+      console.info(`\n🔄 Trying alternative ports...\n`);
       let started = false;
       
       for (let altPort = port + 1; altPort <= port + 10; altPort++) {
         try {
           server = new UnifiedNetworkServer(altPort, dbPath);
           server.start();
-          console.log(`\n✅ Started on alternative port ${altPort} instead of ${port}\n`);
+          console.info(`\n✅ Started on alternative port ${altPort} instead of ${port}\n`);
           started = true;
           break;
         } catch {
@@ -839,7 +839,7 @@ if (import.meta.main) {
   // Graceful shutdown (only if server started successfully)
   if (server) {
     process.on("SIGINT", () => {
-      console.log("\n🛑 Shutting down...");
+      console.info("\n🛑 Shutting down...");
       server!.stop();
       process.exit(0);
     });

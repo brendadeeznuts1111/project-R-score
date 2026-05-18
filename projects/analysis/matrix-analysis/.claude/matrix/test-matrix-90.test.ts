@@ -31,7 +31,7 @@ const TEST_ENV = {
 	VALIDATION_STRICT: process.env.VALIDATION_STRICT === "true",
 };
 
-console.log("Test Environment:", TEST_ENV);
+console.info("Test Environment:", TEST_ENV);
 
 // ═════════════════════════════════════════════════════════════════════════════
 // COLUMN STANDARDS TESTS

@@ -98,7 +98,7 @@ async function prewarmExternalConnections() {
 	// Bun's dns and fetch are global APIs
 	const { dns } = Bun;
 	
-	console.log("🔥 Pre-warming external API connections...");
+	console.info("🔥 Pre-warming external API connections...");
 	
 	// Pre-warm all external API domains
 	const externalDomains = new Set<string>();
@@ -117,7 +117,7 @@ async function prewarmExternalConnections() {
 	for (const domain of externalDomains) {
 		try {
 			dns.prefetch(domain, 443); // Port 443 for HTTPS
-			console.log(`  📍 DNS prefetch: ${domain}`);
+			console.info(`  📍 DNS prefetch: ${domain}`);
 		} catch (err) {
 			console.warn(`  ⚠️  DNS prefetch failed for ${domain}:`, err);
 		}
@@ -134,13 +134,13 @@ async function prewarmExternalConnections() {
 	for (const url of criticalServices) {
 		try {
 			await fetch.preconnect(url);
-			console.log(`  🔗 Preconnected: ${url}`);
+			console.info(`  🔗 Preconnected: ${url}`);
 		} catch (err) {
 			console.warn(`  ⚠️  Preconnect failed for ${url}:`, err);
 		}
 	}
 	
-	console.log("✅ External connections pre-warmed");
+	console.info("✅ External connections pre-warmed");
 }
 
 // Pre-warm connections at module load (before server starts)
@@ -174,7 +174,7 @@ async function runGNNInference(
 	score = Math.max(0, Math.min(1, score));
 
 	const inferenceTime = performance.now() - start;
-	console.log(
+	console.info(
 		`🧠 GNN Inference: ${inferenceTime.toFixed(2)}ms | Score: ${score.toFixed(3)}`,
 	);
 
@@ -191,7 +191,7 @@ function applyGhostDeWeighting(
 	// De-weight privacy.com routing
 	if (sessionId.includes("privacy") || sessionId.includes("ghost")) {
 		adjusted.proxy_hop_count = Math.max(0, adjusted.proxy_hop_count - 2);
-		console.log(`👻 Ghost de-weighting applied for privacy.com routing`);
+		console.info(`👻 Ghost de-weighting applied for privacy.com routing`);
 	}
 
 	// De-weight DuoPlus family accounts
@@ -199,7 +199,7 @@ function applyGhostDeWeighting(
 		GHOST_WHITELIST.duoplus_vm_fingerprints.some((fp) => sessionId.includes(fp))
 	) {
 		adjusted.vpn_active = Math.min(1, adjusted.vpn_active * 0.5);
-		console.log(`👻 DuoPlus family account de-weighting applied`);
+		console.info(`👻 DuoPlus family account de-weighting applied`);
 	}
 
 	return adjusted;
@@ -268,7 +268,7 @@ export async function predictRisk(
 	}
 
 	const processingTime = performance.now() - startTime;
-	console.log(
+	console.info(
 		`⚡ Risk Prediction Complete: ${processingTime.toFixed(2)}ms | ${riskLevel.toUpperCase()} | Score: ${score.toFixed(3)}`,
 	);
 
@@ -304,7 +304,7 @@ async function blockSessionAction(
 	score: number,
 	reason: string,
 ): Promise<void> {
-	console.log(
+	console.info(
 		`🚫 SESSION BLOCKED: ${sessionId} | Score: ${score.toFixed(3)} | Reason: ${reason}`,
 	);
 
@@ -342,7 +342,7 @@ function broadcastFraudAlert(session: FraudSession): void {
 		}
 	});
 
-	console.log(`📡 Fraud alert broadcasted to ${websocketClients.size} clients`);
+	console.info(`📡 Fraud alert broadcasted to ${websocketClients.size} clients`);
 }
 
 // Legacy feature interface for backward compatibility
@@ -369,7 +369,7 @@ interface AnomalyPrediction {
 class AnomalyPredictionModel {
 	constructor() {
 		// Legacy constructor for compatibility
-		console.log(
+		console.info(
 			"🤖 Legacy AnomalyPredictionModel initialized for compatibility",
 		);
 	}
@@ -432,7 +432,7 @@ const server = serve({
 	websocket: {
 		open(ws: ServerWebSocket<any>) {
 			websocketClients.add(ws);
-			console.log(
+			console.info(
 				`� WebSocket client connected. Total: ${websocketClients.size}`,
 			);
 
@@ -481,7 +481,7 @@ const server = serve({
 		},
 		close(ws: ServerWebSocket<any>) {
 			websocketClients.delete(ws);
-			console.log(
+			console.info(
 				`❌ WebSocket client disconnected. Total: ${websocketClients.size}`,
 			);
 		},
@@ -755,7 +755,7 @@ export async function fetchExternalData(
 		};
 
 		const duration = performance.now() - startTime;
-		console.log(`🌐 External data fetched in ${duration.toFixed(2)}ms`);
+		console.info(`🌐 External data fetched in ${duration.toFixed(2)}ms`);
 
 		return externalData;
 	} catch (error) {
@@ -1015,26 +1015,26 @@ setInterval(() => {
 		(s) => s.blocked,
 	).length;
 
-	console.log(
+	console.info(
 		`📊 Performance Monitor: ${activeCount} active | ${blockedCount} blocked | Avg Score: ${avgScore.toFixed(3)}`,
 	);
 }, 10000); // Every 10 seconds
 
-console.log(`🚀 Anomaly Prediction Engine Started`);
-console.log(`🎯 0.92 Block Threshold Active`);
-console.log(`⚡ 5-Feature Weighted Oracle Ready`);
-console.log(`🔥 External Connections Pre-warmed`);
-console.log("");
-console.log("📊 Server Configuration (per Bun documentation):");
-console.log(`   🔗 Server URL: ${server.url}`);
-console.log(`   🌐 Server Port: ${server.port}`);
-console.log("");
-console.log("🌐 Available Endpoints:");
-console.log(`   📡 WebSocket: ${server.url}/ws/risk-live`);
-console.log(`   🔗 Risk API: ${server.url}/api/risk/score`);
-console.log(`   📈 Health: ${server.url}/api/health`);
-console.log(`   📊 Metrics: ${server.url}/api/network/metrics`);
-console.log("");
-console.log(
+console.info(`🚀 Anomaly Prediction Engine Started`);
+console.info(`🎯 0.92 Block Threshold Active`);
+console.info(`⚡ 5-Feature Weighted Oracle Ready`);
+console.info(`🔥 External Connections Pre-warmed`);
+console.info("");
+console.info("📊 Server Configuration (per Bun documentation):");
+console.info(`   🔗 Server URL: ${server.url}`);
+console.info(`   🌐 Server Port: ${server.port}`);
+console.info("");
+console.info("🌐 Available Endpoints:");
+console.info(`   📡 WebSocket: ${server.url}/ws/risk-live`);
+console.info(`   🔗 Risk API: ${server.url}/api/risk/score`);
+console.info(`   📈 Health: ${server.url}/api/health`);
+console.info(`   📊 Metrics: ${server.url}/api/network/metrics`);
+console.info("");
+console.info(
 	"💡 Port and URL accessed via server.port and server.url properties",
 );

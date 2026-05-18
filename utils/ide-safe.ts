@@ -11,7 +11,7 @@ async function generateIDESafe(inputFile: string, outputFile: string = ''): Prom
     outputFile = inputFile.replace(/\\.md$/, '-ide-safe.md');
   }
   
-  console.log(`🛡️ Generating IDE-safe version: ${inputFile} → ${outputFile}`);
+  console.info(`🛡️ Generating IDE-safe version: ${inputFile} → ${outputFile}`);
   
   const md = await Bun.file(inputFile).text();
   let safeMd = md;
@@ -55,8 +55,8 @@ async function generateIDESafe(inputFile: string, outputFile: string = ''): Prom
   safeMd = header + safeMd;
   
   await Bun.write(outputFile, safeMd);
-  console.log(`✅ IDE-safe version created: ${outputFile}`);
-  console.log(`📊 Original: ${md.length} chars → Safe: ${safeMd.length} chars`);
+  console.info(`✅ IDE-safe version created: ${outputFile}`);
+  console.info(`📊 Original: ${md.length} chars → Safe: ${safeMd.length} chars`);
 }
 
 // CLI interface
@@ -64,9 +64,9 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.length === 0) {
-    console.log('❌ Usage: ide-safe <input-file> [output-file]');
-    console.log('Example: ide-safe huge-50col.md');
-    console.log('Example: ide-safe massive-tables.md safe-version.md');
+    console.info('❌ Usage: ide-safe <input-file> [output-file]');
+    console.info('Example: ide-safe huge-50col.md');
+    console.info('Example: ide-safe massive-tables.md safe-version.md');
     process.exit(1);
   }
   

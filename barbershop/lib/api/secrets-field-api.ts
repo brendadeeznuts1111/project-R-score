@@ -81,7 +81,7 @@ export class SecretsFieldAPI {
   static async getField3D(systemId?: string): Promise<Field3DData> {
     try {
       const targetSystemId = systemId || (await this.getDefaultSystemId());
-      console.log(`📊 Generating 3D field for system: ${targetSystemId}`);
+      console.info(`📊 Generating 3D field for system: ${targetSystemId}`);
 
       // Get system state
       const state = await this.getSystemState(targetSystemId);
@@ -134,7 +134,7 @@ export class SecretsFieldAPI {
     const errors: string[] = [];
 
     try {
-      console.log(`🔄 Starting secret rotation: ${JSON.stringify(request)}`);
+      console.info(`🔄 Starting secret rotation: ${JSON.stringify(request)}`);
 
       // Log rotation request
       await integratedSecretManager.setSecret(
@@ -207,7 +207,7 @@ export class SecretsFieldAPI {
         }
       );
 
-      console.log(`✅ Rotation completed: ${rotated.length} rotated, ${errors.length} errors`);
+      console.info(`✅ Rotation completed: ${rotated.length} rotated, ${errors.length} errors`);
       return response;
     } catch (error: any) {
       console.error('❌ Rotation failed:', error.message);

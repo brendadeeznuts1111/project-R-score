@@ -42,21 +42,21 @@ export namespace BunTemplateAPI {
   ): Promise<void> {
     const { dir, name, variant = 'default' } = options;
 
-    console.log(`🚀 Creating project: ${name}`);
-    console.log(`📁 Directory: ${dir}`);
-    console.log(`🎯 Template: ${template.name} (${template.version})`);
-    console.log(`📝 Variant: ${variant}`);
-    console.log('');
+    console.info(`🚀 Creating project: ${name}`);
+    console.info(`📁 Directory: ${dir}`);
+    console.info(`🎯 Template: ${template.name} (${template.version})`);
+    console.info(`📝 Variant: ${variant}`);
+    console.info('');
 
     await template.scaffoldProject(dir, name, variant);
 
-    console.log('');
-    console.log('✅ Project created successfully!');
-    console.log('');
-    console.log('🚀 Next steps:');
-    console.log(`   cd ${dir}`);
-    console.log('   bun install');
-    console.log('   bun run dev');
+    console.info('');
+    console.info('✅ Project created successfully!');
+    console.info('');
+    console.info('🚀 Next steps:');
+    console.info(`   cd ${dir}`);
+    console.info('   bun install');
+    console.info('   bun run dev');
   }
 
   /**
@@ -93,7 +93,7 @@ export namespace BunTemplateAPI {
       }
     }
 
-    console.log('✅ Template structure is valid');
+    console.info('✅ Template structure is valid');
     return true;
   }
 
@@ -102,18 +102,18 @@ export namespace BunTemplateAPI {
    */
   export function listVariants(config: TemplateConfig): void {
     if (!config.variants) {
-      console.log('No variants available for this template.');
+      console.info('No variants available for this template.');
       return;
     }
 
-    console.log(`📋 Available variants for ${config.name}:`);
-    console.log('');
+    console.info(`📋 Available variants for ${config.name}:`);
+    console.info('');
 
     for (const [key, variant] of Object.entries(config.variants)) {
-      console.log(`🎯 ${key}`);
-      console.log(`   ${variant.description}`);
-      console.log(`   Features: ${variant.features.join(', ')}`);
-      console.log('');
+      console.info(`🎯 ${key}`);
+      console.info(`   ${variant.description}`);
+      console.info(`   Features: ${variant.features.join(', ')}`);
+      console.info('');
     }
   }
 
@@ -121,16 +121,16 @@ export namespace BunTemplateAPI {
    * Interactive template selection
    */
   export async function interactiveScaffold(template: Template, config: TemplateConfig): Promise<void> {
-    console.log(`🖥️  ${template.name} Template Creator`);
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('');
-    console.log(template.description);
-    console.log('');
+    console.info(`🖥️  ${template.name} Template Creator`);
+    console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.info('');
+    console.info(template.description);
+    console.info('');
 
     // Get project name
     const projectName = await prompt('Project name:');
     if (!projectName) {
-      console.log('❌ Project name is required');
+      console.info('❌ Project name is required');
       return;
     }
 
@@ -140,8 +140,8 @@ export namespace BunTemplateAPI {
     // Select variant
     let variant = 'default';
     if (config.variants && Object.keys(config.variants).length > 0) {
-      console.log('');
-      console.log('📋 Available variants:');
+      console.info('');
+      console.info('📋 Available variants:');
       listVariants(config);
 
       const variantInput = await prompt('Select variant (default: full-platform):', 'full-platform');
@@ -151,15 +151,15 @@ export namespace BunTemplateAPI {
     }
 
     // Confirm
-    console.log('');
-    console.log('📋 Configuration:');
-    console.log(`   Name: ${projectName}`);
-    console.log(`   Directory: ${directory}`);
-    console.log(`   Variant: ${variant}`);
+    console.info('');
+    console.info('📋 Configuration:');
+    console.info(`   Name: ${projectName}`);
+    console.info(`   Directory: ${directory}`);
+    console.info(`   Variant: ${variant}`);
 
     const confirm = await prompt('Proceed? (y/N):', 'y');
     if (confirm.toLowerCase() !== 'y' && confirm.toLowerCase() !== 'yes') {
-      console.log('❌ Operation cancelled');
+      console.info('❌ Operation cancelled');
       return;
     }
 

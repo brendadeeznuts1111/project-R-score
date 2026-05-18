@@ -34,7 +34,7 @@ const auditDB = {
 };
 
 async function snapshotTenantAudit(tenant: string) {
-  console.log(`📸 Creating audit snapshot for tenant: ${tenant}`);
+  console.info(`📸 Creating audit snapshot for tenant: ${tenant}`);
 
   // Fetch tenant-specific violations (last 30 days)
   const violations = await auditDB.query(`
@@ -81,7 +81,7 @@ async function snapshotTenantAudit(tenant: string) {
 
   // Audit log (Col-89 safe)
   const logLine = `Snapshot: ${filename} | Size: ${Math.round(bytes.byteLength/1024)} KiB | SHA-256: ${sha256.slice(0,16)}…`;
-  console.log(Bun.stringWidth(logLine) > 89
+  console.info(Bun.stringWidth(logLine) > 89
     ? Bun.escapeHTML(logLine.slice(0,86)) + "…"
     : logLine);
 
@@ -105,7 +105,7 @@ async function snapshotAllTenants() {
 
   // Summary log (Col-89 safe)
   const summary = `Bulk snapshot complete: ${results.length} tenants`;
-  console.log(summary);
+  console.info(summary);
 
   return results;
 }
@@ -130,7 +130,7 @@ async function safeExtractSnapshot(path: string, targetDir: string) {
   const count = await archive.extract(targetDir, { glob: "**/*.{json,jsonl}" }); // only data files
 
   // Audit extraction
-  console.log(`Extracted ${count} files from ${path} to ${targetDir}`);
+  console.info(`Extracted ${count} files from ${path} to ${targetDir}`);
 
   return count;
 }
@@ -145,9 +145,9 @@ if (import.meta.main) {
   } else if (command === "bulk") {
     await snapshotAllTenants();
   } else {
-    console.log("Usage:");
-    console.log("  bun tenant-archiver.ts snapshot <tenant>");
-    console.log("  bun tenant-archiver.ts bulk");
+    console.info("Usage:");
+    console.info("  bun tenant-archiver.ts snapshot <tenant>");
+    console.info("  bun tenant-archiver.ts bulk");
   }
 }
 

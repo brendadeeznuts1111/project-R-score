@@ -228,7 +228,7 @@ class R2BackupSystem {
 
       // For demo purposes, we'll simulate the R2 upload
       // In a real implementation, you'd use the Cloudflare R2 SDK
-      console.log(`📤 Uploading ${item.name} (${(item.size / 1024).toFixed(1)}KB) to R2...`);
+      console.info(`📤 Uploading ${item.name} (${(item.size / 1024).toFixed(1)}KB) to R2...`);
 
       // Simulate upload delay
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -274,10 +274,10 @@ class R2BackupSystem {
   }
 
   public async performFullBackup(): Promise<BackupResult[]> {
-    console.log('☁️ Starting R2 Backup Process...\n');
+    console.info('☁️ Starting R2 Backup Process...\n');
 
     const items = await this.discoverBackupItems();
-    console.log(`📦 Found ${items.length} items to backup\n`);
+    console.info(`📦 Found ${items.length} items to backup\n`);
 
     // Sort by priority (critical first)
     const priorityOrder = { critical: 3, important: 2, optional: 1 };
@@ -288,17 +288,17 @@ class R2BackupSystem {
       this.results.push(result);
 
       if (result.success) {
-        console.log(`✅ ${item.name} (${item.priority}) - ${(result.uploadTime / 1000).toFixed(1)}s`);
+        console.info(`✅ ${item.name} (${item.priority}) - ${(result.uploadTime / 1000).toFixed(1)}s`);
       } else {
-        console.log(`❌ ${item.name} - ${result.error}`);
+        console.info(`❌ ${item.name} - ${result.error}`);
       }
     }
 
-    console.log(`\n📊 Backup Summary:`);
-    console.log(`   📤 Total items: ${items.length}`);
-    console.log(`   ✅ Successful: ${this.results.filter(r => r.success).length}`);
-    console.log(`   ❌ Failed: ${this.results.filter(r => !r.success).length}`);
-    console.log(`   📊 Total size: ${(this.results.reduce((sum, r) => sum + r.size, 0) / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`\n📊 Backup Summary:`);
+    console.info(`   📤 Total items: ${items.length}`);
+    console.info(`   ✅ Successful: ${this.results.filter(r => r.success).length}`);
+    console.info(`   ❌ Failed: ${this.results.filter(r => !r.success).length}`);
+    console.info(`   📊 Total size: ${(this.results.reduce((sum, r) => sum + r.size, 0) / 1024 / 1024).toFixed(2)} MB`);
 
     return this.results;
   }
@@ -386,7 +386,7 @@ class R2BackupSystem {
   }
 
   public async cleanupOldBackups(retentionDays: number = 30): Promise<void> {
-    console.log(`🧹 Cleaning up backups older than ${retentionDays} days...`);
+    console.info(`🧹 Cleaning up backups older than ${retentionDays} days...`);
 
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
@@ -398,7 +398,7 @@ class R2BackupSystem {
       [cutoffDate.toISOString()]
     ).changes;
 
-    console.log(`🗑️ Cleaned up ${deletedCount} old backup records`);
+    console.info(`🗑️ Cleaned up ${deletedCount} old backup records`);
   }
 
   private async findFilesByPattern(pattern: string): Promise<string[]> {
@@ -470,24 +470,24 @@ if (import.meta.main) {
     case 'report':
       await backupSystem.performFullBackup();
       const report = backupSystem.generateBackupReport();
-      console.log(report);
+      console.info(report);
       break;
 
     case 'history':
       const type = args[1];
       const limit = parseInt(args[2] || '10');
       const history = backupSystem.getBackupHistory(type, limit);
-      console.log('📚 Backup History:');
+      console.info('📚 Backup History:');
       for (const item of history) {
-        console.log(`  ${new Date(item.created_at).toLocaleString()} - ${item.item_type}: ${item.item_path} (${item.success ? '✅' : '❌'})`);
+        console.info(`  ${new Date(item.created_at).toLocaleString()} - ${item.item_type}: ${item.item_path} (${item.success ? '✅' : '❌'})`);
       }
       break;
 
     case 'schedule':
       const schedule = backupSystem.getBackupSchedule();
-      console.log('📅 Backup Schedule:');
+      console.info('📅 Backup Schedule:');
       for (const item of schedule) {
-        console.log(`  ${item.item_type}: ${item.pattern} (every ${item.frequency_hours}h)`);
+        console.info(`  ${item.item_type}: ${item.pattern} (every ${item.frequency_hours}h)`);
       }
       break;
 
@@ -497,19 +497,19 @@ if (import.meta.main) {
       break;
 
     default:
-      console.log('Usage: bun run scripts/r2-backup-system.bun.ts [backup|report|history|schedule|cleanup]');
-      console.log('');
-      console.log('Commands:');
-      console.log('  backup     - Perform full backup to R2');
-      console.log('  report     - Generate backup report');
-      console.log('  history    - Show backup history');
-      console.log('  schedule   - Show backup schedule');
-      console.log('  cleanup    - Clean up old backups');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun run scripts/r2-backup-system.bun.ts backup');
-      console.log('  bun run scripts/r2-backup-system.bun.ts history database 5');
-      console.log('  bun run scripts/r2-backup-system.bun.ts cleanup 7');
+      console.info('Usage: bun run scripts/r2-backup-system.bun.ts [backup|report|history|schedule|cleanup]');
+      console.info('');
+      console.info('Commands:');
+      console.info('  backup     - Perform full backup to R2');
+      console.info('  report     - Generate backup report');
+      console.info('  history    - Show backup history');
+      console.info('  schedule   - Show backup schedule');
+      console.info('  cleanup    - Clean up old backups');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun run scripts/r2-backup-system.bun.ts backup');
+      console.info('  bun run scripts/r2-backup-system.bun.ts history database 5');
+      console.info('  bun run scripts/r2-backup-system.bun.ts cleanup 7');
       break;
   }
 

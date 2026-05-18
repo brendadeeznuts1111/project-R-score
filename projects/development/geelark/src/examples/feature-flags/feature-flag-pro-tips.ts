@@ -21,7 +21,7 @@ import { feature } from "bun:bundle";
 
 // ✅ Valid feature names
 if (feature("FEAT_EXTENDED_LOGGING")) {
-  console.log("Debug mode enabled");
+  console.info("Debug mode enabled");
 }
 
 // ============================================================================
@@ -31,14 +31,14 @@ if (feature("FEAT_EXTENDED_LOGGING")) {
 // COMPILE-TIME: Eliminated from bundle when feature is disabled
 if (feature("FEAT_MOCK_API")) {
   // This entire block is removed from production builds
-  console.log("Using mock API");
+  console.info("Using mock API");
   // useMockData(); // ← Removed from production builds
 }
 
 // RUNTIME: Stays in bundle, toggle at startup
 if (process.env.ENABLE_FEATURE_X) {
   // This code stays in bundle but is conditionally executed
-  console.log("Feature X enabled via environment variable");
+  console.info("Feature X enabled via environment variable");
 }
 
 // ============================================================================
@@ -172,7 +172,7 @@ export function badPatterns() {
   // ✅ DO: Move declarations outside
   const importantValue = "computed"; // Always runs
   if (feature("FEAT_EXTENDED_LOGGING")) {
-    console.log("Value:", importantValue); // Only logs in debug
+    console.info("Value:", importantValue); // Only logs in debug
   }
 }
 

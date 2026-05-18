@@ -68,7 +68,7 @@ class EnhancedDevServer {
   private log(message: string, level: 'info' | 'warn' | 'error' = 'info') {
     const timestamp = new Date().toISOString();
     const prefix = level === 'info' ? '🔥' : level === 'warn' ? '⚠️' : '❌';
-    console.log(`${prefix} [${timestamp}] ${message}`);
+    console.info(`${prefix} [${timestamp}] ${message}`);
   }
 
   private async handleRequest(request: Request): Promise<Response> {
@@ -397,7 +397,7 @@ class EnhancedDevServer {
                 document.getElementById('uptime').textContent = Math.floor(data.uptime / 60) + 'm ' + (data.uptime % 60) + 's';
                 document.getElementById('memory').textContent = (data.memory.heapUsed / 1024 / 1024).toFixed(1) + ' MB';
             } catch (e) {
-                console.log('Metrics update failed:', e);
+                console.info('Metrics update failed:', e);
             }
         }, 1000);
 
@@ -422,12 +422,12 @@ class EnhancedDevServer {
         const ws = new WebSocket('ws://localhost:${this.config.port + 1}');
         ws.onmessage = (event) => {
             if (event.data === 'reload') {
-                console.log('🔥 Hot reload triggered');
+                console.info('🔥 Hot reload triggered');
                 window.location.reload();
             }
         };
-        ws.onopen = () => console.log('🔥 Hot reload connected');
-        ws.onclose = () => console.log('🔥 Hot reload disconnected');
+        ws.onopen = () => console.info('🔥 Hot reload connected');
+        ws.onclose = () => console.info('🔥 Hot reload disconnected');
         ` : ''}
     </script>
 </body>
@@ -636,13 +636,13 @@ if (import.meta.main) {
 
   // Handle graceful shutdown
   process.on('SIGINT', async () => {
-    console.log('\n🛑 Received SIGINT, shutting down gracefully...');
+    console.info('\n🛑 Received SIGINT, shutting down gracefully...');
     await server.stop();
     process.exit(0);
   });
 
   process.on('SIGTERM', async () => {
-    console.log('\n🛑 Received SIGTERM, shutting down gracefully...');
+    console.info('\n🛑 Received SIGTERM, shutting down gracefully...');
     await server.stop();
     process.exit(0);
   });

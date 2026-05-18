@@ -6,20 +6,20 @@
 
 import { CustomTypedArray } from '../src/types/custom-typed-array';
 
-console.log('=== CUSTOM TYPED ARRAY BENCHMARK SUITE ===\n');
+console.info('=== CUSTOM TYPED ARRAY BENCHMARK SUITE ===\n');
 
 // Test 1: Memory allocation performance
-console.log('📊 1. Memory Allocation & Security:');
+console.info('📊 1. Memory Allocation & Security:');
 const startAlloc = performance.now();
 for (let i = 0; i < 1000; i++) {
   new CustomTypedArray(1024, 'bench');
 }
 const allocTime = performance.now() - startAlloc;
-console.log(`   ✓ 1000 x 1KB allocations: ${allocTime.toFixed(2)}ms`);
-console.log(`   ✓ Per allocation: ${(allocTime / 1000).toFixed(4)}ms`);
+console.info(`   ✓ 1000 x 1KB allocations: ${allocTime.toFixed(2)}ms`);
+console.info(`   ✓ Per allocation: ${(allocTime / 1000).toFixed(4)}ms`);
 
 // Test 2: Depth-aware inspection performance
-console.log('\n📊 2. Depth-Aware Inspection Performance:');
+console.info('\n📊 2. Depth-Aware Inspection Performance:');
 const arr = new CustomTypedArray(256, 'test');
 arr.fill(0xAB);
 
@@ -32,7 +32,7 @@ if (BunInspect) {
     BunInspect(arr, { depth: 0 });
   }
   time0 = performance.now() - start0;
-  console.log(`   ✓ Depth 0 (1000x): ${time0.toFixed(2)}ms - ${time0 < 100 ? '✅' : '⚠️'} <100ms target`);
+  console.info(`   ✓ Depth 0 (1000x): ${time0.toFixed(2)}ms - ${time0 < 100 ? '✅' : '⚠️'} <100ms target`);
   
   // Depth 1 (preview) - direct inspection
   const start1 = performance.now();
@@ -40,7 +40,7 @@ if (BunInspect) {
     BunInspect(arr, { depth: 1 });
   }
   time1 = performance.now() - start1;
-  console.log(`   ✓ Depth 1 (1000x): ${time1.toFixed(2)}ms - ${time1 < 100 ? '✅' : '⚠️'} <100ms target`);
+  console.info(`   ✓ Depth 1 (1000x): ${time1.toFixed(2)}ms - ${time1 < 100 ? '✅' : '⚠️'} <100ms target`);
   
   // Depth 2+ (full dump) - debugging mode
   const start2 = performance.now();
@@ -48,11 +48,11 @@ if (BunInspect) {
     BunInspect(arr, { depth: 2 });
   }
   time2 = performance.now() - start2;
-  console.log(`   ✓ Depth 2 (100x): ${time2.toFixed(2)}ms - ${time2 < 50 ? '✅' : '⚠️'} <50ms target`);
+  console.info(`   ✓ Depth 2 (100x): ${time2.toFixed(2)}ms - ${time2 < 50 ? '✅' : '⚠️'} <50ms target`);
 }
 
 // Test 3: Subarray performance
-console.log('\n📊 3. Subarray Operations:');
+console.info('\n📊 3. Subarray Operations:');
 const parent = new CustomTypedArray(1024, 'parent');
 const startSub = performance.now();
 for (let i = 0; i < 100; i++) {
@@ -60,11 +60,11 @@ for (let i = 0; i < 100; i++) {
   sub.toHex();
 }
 const subTime = performance.now() - startSub;
-console.log(`   ✓ 100 subarray operations: ${subTime.toFixed(2)}ms`);
-console.log(`   ✓ Per operation: ${(subTime / 100).toFixed(4)}ms`);
+console.info(`   ✓ 100 subarray operations: ${subTime.toFixed(2)}ms`);
+console.info(`   ✓ Per operation: ${(subTime / 100).toFixed(4)}ms`);
 
 // Test 4: Security validation
-console.log('\n📊 4. Security Validation:');
+console.info('\n📊 4. Security Validation:');
 const startSecurity = performance.now();
 const consoleWarnSpy = console.warn;
 let warnCount = 0;
@@ -72,11 +72,11 @@ console.warn = (...args: any[]) => { warnCount++; };
 new CustomTypedArray(11 * 1024 * 1024, 'large');
 console.warn = consoleWarnSpy;
 const securityTime = performance.now() - startSecurity;
-console.log(`   ✓ Large allocation detection: ${securityTime.toFixed(2)}ms`);
-console.log(`   ✓ Warnings triggered: ${warnCount}`);
+console.info(`   ✓ Large allocation detection: ${securityTime.toFixed(2)}ms`);
+console.info(`   ✓ Warnings triggered: ${warnCount}`);
 
 // Test 5: Real-world scenario - Odds Feed Processing
-console.log('\n📊 5. Real-World Scenario (Odds Feed):');
+console.info('\n📊 5. Real-World Scenario (Odds Feed):');
 const feedData = new Uint8Array(256);
 const view = new DataView(feedData.buffer);
 view.setUint32(0, 0x42554655, true); // Magic
@@ -97,11 +97,11 @@ for (let i = 0; i < 100; i++) {
   };
 }
 const realTime = performance.now() - startReal;
-console.log(`   ✓ 100 feed processing cycles: ${realTime.toFixed(2)}ms`);
-console.log(`   ✓ Per cycle: ${(realTime / 100).toFixed(4)}ms`);
+console.info(`   ✓ 100 feed processing cycles: ${realTime.toFixed(2)}ms`);
+console.info(`   ✓ Per cycle: ${(realTime / 100).toFixed(4)}ms`);
 
 // Test 6: Factory methods
-console.log('\n📊 6. Factory Methods:');
+console.info('\n📊 6. Factory Methods:');
 const sourceArray = new Uint8Array([1, 2, 3, 4, 5]);
 const sourceBuffer = new ArrayBuffer(10);
 new Uint8Array(sourceBuffer).set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
@@ -112,11 +112,11 @@ for (let i = 0; i < 1000; i++) {
   CustomTypedArray.fromBuffer(sourceBuffer, 2, 5, 'buffer-test');
 }
 const factoryTime = performance.now() - startFactory;
-console.log(`   ✓ 1000 factory conversions: ${factoryTime.toFixed(2)}ms`);
-console.log(`   ✓ Per conversion: ${(factoryTime / 1000).toFixed(4)}ms`);
+console.info(`   ✓ 1000 factory conversions: ${factoryTime.toFixed(2)}ms`);
+console.info(`   ✓ Per conversion: ${(factoryTime / 1000).toFixed(4)}ms`);
 
 // Test 7: Hex conversion performance
-console.log('\n📊 7. Hex Conversion:');
+console.info('\n📊 7. Hex Conversion:');
 const hexArray = new CustomTypedArray(64, 'hex-test');
 hexArray.fill(0xAB);
 
@@ -125,11 +125,11 @@ for (let i = 0; i < 1000; i++) {
   hexArray.toHex();
 }
 const hexTime = performance.now() - startHex;
-console.log(`   ✓ 1000 hex conversions: ${hexTime.toFixed(2)}ms`);
-console.log(`   ✓ Per conversion: ${(hexTime / 1000).toFixed(4)}ms`);
+console.info(`   ✓ 1000 hex conversions: ${hexTime.toFixed(2)}ms`);
+console.info(`   ✓ Per conversion: ${(hexTime / 1000).toFixed(4)}ms`);
 
 // Summary
-console.log('\n📈 SUMMARY:');
+console.info('\n📈 SUMMARY:');
 const allTimes = [allocTime, subTime, securityTime, realTime, factoryTime, hexTime];
 if (typeof time0 !== 'undefined') allTimes.push(time0);
 if (typeof time1 !== 'undefined') allTimes.push(time1);
@@ -138,16 +138,16 @@ if (typeof time2 !== 'undefined') allTimes.push(time2);
 const avgTime = allTimes.reduce((a, b) => a + b, 0) / allTimes.length;
 const maxTime = Math.max(...allTimes);
 
-console.log(`   Average operation time: ${avgTime.toFixed(2)}ms`);
-console.log(`   Slowest operation: ${maxTime.toFixed(2)}ms`);
-console.log(`   All operations < 100ms: ${maxTime < 100 ? '✅ PASS' : '⚠️ REVIEW'}`);
+console.info(`   Average operation time: ${avgTime.toFixed(2)}ms`);
+console.info(`   Slowest operation: ${maxTime.toFixed(2)}ms`);
+console.info(`   All operations < 100ms: ${maxTime < 100 ? '✅ PASS' : '⚠️ REVIEW'}`);
 
 // Memory usage
 if (globalThis.process && globalThis.process.memoryUsage) {
   const mem = globalThis.process.memoryUsage();
-  console.log(`\n💾 Memory Usage:`);
-  console.log(`   RSS: ${(mem.rss / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`   Heap: ${(mem.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`\n💾 Memory Usage:`);
+  console.info(`   RSS: ${(mem.rss / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`   Heap: ${(mem.heapUsed / 1024 / 1024).toFixed(2)} MB`);
 }
 
-console.log('\n✅ Benchmark completed successfully!');
+console.info('\n✅ Benchmark completed successfully!');

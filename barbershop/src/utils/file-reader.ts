@@ -204,7 +204,7 @@ export async function* followFile(
 
 // Example usage and demo
 if (import.meta.main) {
-  console.log('📁 File Reader Utilities Demo\n');
+  console.info('📁 File Reader Utilities Demo\n');
 
   // Create a test file
   const testFile = '/tmp/test-file-reader.txt';
@@ -219,26 +219,26 @@ if (import.meta.main) {
 
   await Bun.write(testFile, lines.join('\n'));
 
-  console.log('1. Reading file line by line:');
+  console.info('1. Reading file line by line:');
   for await (const line of readLines(testFile)) {
-    console.log(`   ${line}`);
+    console.info(`   ${line}`);
   }
 
-  console.log('\n2. Searching for ERROR lines:');
+  console.info('\n2. Searching for ERROR lines:');
   for await (const result of grepFile(testFile, /ERROR/)) {
-    console.log(`   Line ${result.lineNumber}: ${result.line}`);
+    console.info(`   Line ${result.lineNumber}: ${result.line}`);
   }
 
-  console.log('\n3. Counting total lines:');
+  console.info('\n3. Counting total lines:');
   const count = await countLines(testFile);
-  console.log(`   Total: ${count} lines`);
+  console.info(`   Total: ${count} lines`);
 
-  console.log('\n4. Getting last 3 lines:');
+  console.info('\n4. Getting last 3 lines:');
   const lastLines = await tailFile(testFile, 3);
-  lastLines.forEach(line => console.log(`   ${line}`));
+  lastLines.forEach(line => console.info(`   ${line}`));
 
   // Cleanup
   await Bun.file(testFile).delete();
 
-  console.log('\n✅ Demo complete!');
+  console.info('\n✅ Demo complete!');
 }

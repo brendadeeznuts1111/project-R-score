@@ -8,14 +8,14 @@ import {
 
 // Simple test implementation without Jest
 const describe = (name: string, fn: () => void) => {
-  console.log(`\n=== ${name} ===`);
+  console.info(`\n=== ${name} ===`);
   fn();
 };
 
 const it = (name: string, fn: () => void) => {
   try {
     fn();
-    console.log(`✓ ${name}`);
+    console.info(`✓ ${name}`);
   } catch (error) {
     console.error(`✗ ${name}:`, error);
   }
@@ -569,9 +569,9 @@ describe('MetricsAggregator', () => {
 });
 
 // Run the tests
-console.log('Running Monitoring Utils Tests...');
+console.info('Running Monitoring Utils Tests...');
 describe('Monitoring Utils Tests Suite', () => {
   it('All tests completed', () => {
-    console.log('Monitoring utils tests completed successfully!');
+    console.info('Monitoring utils tests completed successfully!');
   });
 });

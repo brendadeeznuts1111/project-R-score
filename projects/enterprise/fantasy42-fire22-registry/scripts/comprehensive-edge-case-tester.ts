@@ -60,7 +60,7 @@ class ComprehensiveEdgeCaseTester {
   }
 
   async runFullTestSuite(): Promise<void> {
-    console.log('🚀 Starting Comprehensive Edge Case Testing Suite\n');
+    console.info('🚀 Starting Comprehensive Edge Case Testing Suite\n');
 
     // Run all test suites
     await this.testPlaybookCompliance();
@@ -626,7 +626,7 @@ class ComprehensiveEdgeCaseTester {
 
     try {
       if (this.verbose) {
-        console.log(`🧪 Running: ${testName} - ${description}`);
+        console.info(`🧪 Running: ${testName} - ${description}`);
       }
 
       const status = await testFn();
@@ -646,19 +646,19 @@ class ComprehensiveEdgeCaseTester {
       switch (status) {
         case 'PASS':
           suite.summary.passed++;
-          if (this.verbose) console.log(`✅ ${testName}: PASSED (${duration}ms)`);
+          if (this.verbose) console.info(`✅ ${testName}: PASSED (${duration}ms)`);
           break;
         case 'FAIL':
           suite.summary.failed++;
-          console.log(`❌ ${testName}: FAILED (${duration}ms)`);
+          console.info(`❌ ${testName}: FAILED (${duration}ms)`);
           break;
         case 'SKIP':
           suite.summary.skipped++;
-          if (this.verbose) console.log(`⏭️  ${testName}: SKIPPED (${duration}ms)`);
+          if (this.verbose) console.info(`⏭️  ${testName}: SKIPPED (${duration}ms)`);
           break;
         case 'ERROR':
           suite.summary.errors++;
-          console.log(`🚨 ${testName}: ERROR (${duration}ms)`);
+          console.info(`🚨 ${testName}: ERROR (${duration}ms)`);
           break;
       }
 
@@ -677,7 +677,7 @@ class ComprehensiveEdgeCaseTester {
       };
 
       suite.tests.push(testResult);
-      console.log(`🚨 ${testName}: ERROR - ${error.message} (${duration}ms)`);
+      console.info(`🚨 ${testName}: ERROR - ${error.message} (${duration}ms)`);
     }
   }
 
@@ -723,23 +723,23 @@ class ComprehensiveEdgeCaseTester {
     const overallScore = overallStats.total > 0 ? ((overallStats.passed / overallStats.total) * 100) : 0;
 
     // Generate console report
-    console.log('\n' + '='.repeat(80));
-    console.log('🏆 COMPREHENSIVE EDGE CASE TESTING REPORT');
-    console.log('='.repeat(80));
-    console.log(`📊 Overall Score: ${overallScore.toFixed(1)}%`);
-    console.log(`🧪 Total Tests: ${overallStats.total}`);
-    console.log(`✅ Passed: ${overallStats.passed}`);
-    console.log(`❌ Failed: ${overallStats.failed}`);
-    console.log(`⏭️  Skipped: ${overallStats.skipped}`);
-    console.log(`🚨 Errors: ${overallStats.errors}`);
-    console.log(`⏱️  Duration: ${(totalDuration / 1000).toFixed(1)}s`);
-    console.log('');
+    console.info('\n' + '='.repeat(80));
+    console.info('🏆 COMPREHENSIVE EDGE CASE TESTING REPORT');
+    console.info('='.repeat(80));
+    console.info(`📊 Overall Score: ${overallScore.toFixed(1)}%`);
+    console.info(`🧪 Total Tests: ${overallStats.total}`);
+    console.info(`✅ Passed: ${overallStats.passed}`);
+    console.info(`❌ Failed: ${overallStats.failed}`);
+    console.info(`⏭️  Skipped: ${overallStats.skipped}`);
+    console.info(`🚨 Errors: ${overallStats.errors}`);
+    console.info(`⏱️  Duration: ${(totalDuration / 1000).toFixed(1)}s`);
+    console.info('');
 
     // Suite breakdown
-    console.log('📋 Suite Breakdown:');
+    console.info('📋 Suite Breakdown:');
     this.results.forEach(suite => {
       const suiteScore = suite.summary.total > 0 ? ((suite.summary.passed / suite.summary.total) * 100) : 0;
-      console.log(`  ${suite.name}: ${suiteScore.toFixed(1)}% (${suite.summary.passed}/${suite.summary.total})`);
+      console.info(`  ${suite.name}: ${suiteScore.toFixed(1)}% (${suite.summary.passed}/${suite.summary.total})`);
     });
 
     // Failed tests summary
@@ -748,25 +748,25 @@ class ComprehensiveEdgeCaseTester {
     );
 
     if (failedTests.length > 0) {
-      console.log('\n🚨 Failed Tests:');
+      console.info('\n🚨 Failed Tests:');
       failedTests.forEach(test => {
-        console.log(`  ❌ ${test.category}: ${test.testName}`);
-        console.log(`     ${test.message}`);
+        console.info(`  ❌ ${test.category}: ${test.testName}`);
+        console.info(`     ${test.message}`);
         if (test.details) {
-          console.log(`     Details: ${test.details}`);
+          console.info(`     Details: ${test.details}`);
         }
       });
     }
 
     // Recommendations
-    console.log('\n💡 Recommendations:');
+    console.info('\n💡 Recommendations:');
     if (overallScore >= 90) {
-      console.log('  🎉 Excellent! All systems are performing well.');
+      console.info('  🎉 Excellent! All systems are performing well.');
     } else if (overallScore >= 75) {
-      console.log('  ✅ Good performance. Minor improvements needed.');
+      console.info('  ✅ Good performance. Minor improvements needed.');
     } else {
-      console.log('  ⚠️  Significant improvements required.');
-      console.log('  🔧 Focus on fixing failed tests and error conditions.');
+      console.info('  ⚠️  Significant improvements required.');
+      console.info('  🔧 Focus on fixing failed tests and error conditions.');
     }
 
     // Save detailed report
@@ -792,7 +792,7 @@ class ComprehensiveEdgeCaseTester {
     // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file writing
     const filename = `comprehensive-edge-case-report-${new Date().toISOString().slice(0, 10)}.json`;
     await Bun.write(filename, JSON.stringify(report, null, 2));
-    console.log(`💾 Detailed report saved: ${filename}`);
+    console.info(`💾 Detailed report saved: ${filename}`);
   }
 
   private generateRecommendations(stats: any): string[] {
@@ -910,7 +910,7 @@ async function main() {
       await tester.runEdgeCasesTestSuite();
     }
 
-    console.log('\n✅ Comprehensive edge case testing completed!');
+    console.info('\n✅ Comprehensive edge case testing completed!');
     process.exit(0);
 
   } catch (error) {

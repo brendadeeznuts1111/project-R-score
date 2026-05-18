@@ -261,8 +261,8 @@ function generateTemplateUsage(): TemplateUsage[] {
 // =============================================================================
 
 function demonstrateVaultFileTable(): void {
-    console.log(chalk.bold.blue('\n📁 Vault File Inventory (Advanced Formatting)'));
-    console.log(chalk.gray('='.repeat(80)));
+    console.info(chalk.bold.blue('\n📁 Vault File Inventory (Advanced Formatting)'));
+    console.info(chalk.gray('='.repeat(80)));
 
     const rawFiles = generateSampleVaultFiles();
 
@@ -288,8 +288,8 @@ function demonstrateVaultFileTable(): void {
 }
 
 function demonstrateValidationIssuesTable(): void {
-    console.log(chalk.bold.red('\n⚠️ Validation Issues Report (with maxEntryWidth)'));
-    console.log(chalk.gray('='.repeat(90)));
+    console.info(chalk.bold.red('\n⚠️ Validation Issues Report (with maxEntryWidth)'));
+    console.info(chalk.gray('='.repeat(90)));
 
     const issues = generateValidationIssues();
 
@@ -318,8 +318,8 @@ function demonstrateValidationIssuesTable(): void {
 }
 
 function demonstratePerformanceMetricsTable(): void {
-    console.log(chalk.bold.green('\n🚀 Performance Metrics Analysis'));
-    console.log(chalk.gray('='.repeat(70)));
+    console.info(chalk.bold.green('\n🚀 Performance Metrics Analysis'));
+    console.info(chalk.gray('='.repeat(70)));
 
     const metrics = generatePerformanceMetrics();
 
@@ -353,8 +353,8 @@ function demonstratePerformanceMetricsTable(): void {
 }
 
 function demonstrateTemplateUsageTable(): void {
-    console.log(chalk.bold.magenta('\n📋 Template Usage Analytics (with maxLines)'));
-    console.log(chalk.gray('='.repeat(75)));
+    console.info(chalk.bold.magenta('\n📋 Template Usage Analytics (with maxLines)'));
+    console.info(chalk.gray('='.repeat(75)));
 
     const templates = generateTemplateUsage();
 
@@ -379,8 +379,8 @@ function demonstrateTemplateUsageTable(): void {
 }
 
 function demonstrateCompactVsFull(): void {
-    console.log(chalk.bold.cyan('\n📊 Compact vs Full Table Comparison'));
-    console.log(chalk.gray('='.repeat(70)));
+    console.info(chalk.bold.cyan('\n📊 Compact vs Full Table Comparison'));
+    console.info(chalk.gray('='.repeat(70)));
 
     const sampleData = [
         { name: 'Very Long File Name That Demonstrates Truncation', size: '15.2 KB', type: 'markdown' },
@@ -388,13 +388,13 @@ function demonstrateCompactVsFull(): void {
         { name: 'Medium Length File Name Here', size: '8.7 KB', type: 'markdown' }
     ];
 
-    console.log(chalk.yellow('\n🔸 FULL TABLE (more spacing):'));
+    console.info(chalk.yellow('\n🔸 FULL TABLE (more spacing):'));
     Bun.inspect.table(
         sampleData,
         ['name', 'size', 'type']
     );
 
-    console.log(chalk.yellow('\n🔸 COMPACT TABLE (less spacing):'));
+    console.info(chalk.yellow('\n🔸 COMPACT TABLE (less spacing):'));
     Bun.inspect.table(
         sampleData,
         ['name', 'size', 'type'],
@@ -403,8 +403,8 @@ function demonstrateCompactVsFull(): void {
 }
 
 function demonstrateRealWorldVaultReport(): void {
-    console.log(chalk.bold.blue('\n📊 Real-World Vault Status Report'));
-    console.log(chalk.gray('='.repeat(80)));
+    console.info(chalk.bold.blue('\n📊 Real-World Vault Status Report'));
+    console.info(chalk.gray('='.repeat(80)));
 
     // Combine multiple data sources for a comprehensive report
     const files = generateSampleVaultFiles();
@@ -457,9 +457,9 @@ function demonstrateRealWorldVaultReport(): void {
 // =============================================================================
 
 async function main(): Promise<void> {
-    console.log(chalk.bold.magenta('🎪 Enhanced Bun.inspect.table() Demonstration'));
-    console.log(chalk.gray('Odds Protocol Vault - Advanced Data Visualization'));
-    console.log(chalk.gray('='.repeat(80)));
+    console.info(chalk.bold.magenta('🎪 Enhanced Bun.inspect.table() Demonstration'));
+    console.info(chalk.gray('Odds Protocol Vault - Advanced Data Visualization'));
+    console.info(chalk.gray('='.repeat(80)));
 
     // Run all demonstrations
     demonstrateVaultFileTable();
@@ -469,15 +469,15 @@ async function main(): Promise<void> {
     demonstrateCompactVsFull();
     demonstrateRealWorldVaultReport();
 
-    console.log(chalk.bold.green('\n🎉 Enhanced Demonstration Complete!'));
-    console.log(chalk.gray('Key features demonstrated:'));
-    console.log(chalk.gray('• Advanced data pre-processing and formatting'));
-    console.log(chalk.gray('• Color-coded status indicators with chalk'));
-    console.log(chalk.gray('• maxEntryWidth for text truncation'));
-    console.log(chalk.gray('• maxLines for large dataset limiting'));
-    console.log(chalk.gray('• compact option for space optimization'));
-    console.log(chalk.gray('• Real-world vault reporting integration'));
-    console.log(chalk.gray('• Multiple data source combination'));
+    console.info(chalk.bold.green('\n🎉 Enhanced Demonstration Complete!'));
+    console.info(chalk.gray('Key features demonstrated:'));
+    console.info(chalk.gray('• Advanced data pre-processing and formatting'));
+    console.info(chalk.gray('• Color-coded status indicators with chalk'));
+    console.info(chalk.gray('• maxEntryWidth for text truncation'));
+    console.info(chalk.gray('• maxLines for large dataset limiting'));
+    console.info(chalk.gray('• compact option for space optimization'));
+    console.info(chalk.gray('• Real-world vault reporting integration'));
+    console.info(chalk.gray('• Multiple data source combination'));
 }
 
 // Execute if run directly

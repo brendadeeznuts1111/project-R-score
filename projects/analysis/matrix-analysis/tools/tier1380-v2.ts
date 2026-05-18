@@ -34,7 +34,7 @@ async function scanCol89(file) {
 		if (w > COL_LIMIT) {
 			violations++;
 			const preview = Bun.escapeHTML(Bun.stripANSI(lines[i]).slice(0, 60)) + "…";
-			console.log(`${GLYPH.fail} Line ${i + 1}: ${w} cols → ${preview}`);
+			console.info(`${GLYPH.fail} Line ${i + 1}: ${w} cols → ${preview}`);
 		}
 	}
 
@@ -157,7 +157,7 @@ function initDB() {
 
 // ─── Main Execution ───────────────────────────────
 async function main() {
-	console.log("🎯 Tier-1380 Performance Suite v2.0\n");
+	console.info("🎯 Tier-1380 Performance Suite v2.0\n");
 
 	const db = initDB();
 	const target = process.argv[3] || "src/index.ts";
@@ -178,42 +178,42 @@ async function main() {
 	);
 
 	// ─── Report (All lines < 89 cols) ───────────────
-	console.log(`\n📊 Results for: ${target}`);
-	console.log(`${"=".repeat(60)}`);
+	console.info(`\n📊 Results for: ${target}`);
+	console.info(`${"=".repeat(60)}`);
 
 	// Col-89 status
 	const colStatus = col89.violations === 0 ? GLYPH.pass : GLYPH.fail;
-	console.log(
+	console.info(
 		`${colStatus} Col-89: ${col89.violations} violations ` +
 			`(max ${col89.maxWidth}, avg ${col89.avgWidth})`,
 	);
 
 	// Hardware
-	console.log(
+	console.info(
 		`${GLYPH.info} Hardware: ${Math.round(hardware.throughput).toLocaleString()} ` +
 			`${hardware.unit} (${hardware.duration.toFixed(2)}ms)`,
 	);
 
 	// RSS
-	console.log(
+	console.info(
 		`${rss.error ? GLYPH.fail : GLYPH.pass} RSS: ${rss.items} items ` +
 			`(${rss.method}) [${rss.fetchTime?.toFixed(1) || 0}ms]`,
 	);
 
 	// CSS
 	if (css.status === "success") {
-		console.log(
+		console.info(
 			`${GLYPH.pass} CSS: ${css.saved} reduction ` +
 				`(${css.minified}/${css.original} bytes)`,
 		);
 	} else {
-		console.log(`${GLYPH.warn} CSS: ${css.reason || css.message}`);
+		console.info(`${GLYPH.warn} CSS: ${css.reason || css.message}`);
 	}
 
 	// Health score
 	const score = Math.max(0, 100 - col89.violations * 2);
 	const color = score >= 80 ? "32" : score >= 60 ? "33" : "31";
-	console.log(`\n\x1b[${color}m🏥 Health Score: ${score}%\x1b[0m`);
+	console.info(`\n\x1b[${color}m🏥 Health Score: ${score}%\x1b[0m`);
 
 	db.close();
 }

@@ -196,7 +196,7 @@ class BunReleaseDetector {
    * Start monitoring all sources for new releases
    */
   async startMonitoring(): Promise<void> {
-    console.log('🚀 Starting Bun Release Detector...');
+    console.info('🚀 Starting Bun Release Detector...');
     
     // Initialize last check times
     this.sources.forEach(source => {
@@ -208,7 +208,7 @@ class BunReleaseDetector {
       this.monitorSource(source);
     });
 
-    console.log(`📡 Monitoring ${this.sources.length} sources for new releases`);
+    console.info(`📡 Monitoring ${this.sources.length} sources for new releases`);
   }
 
   /**
@@ -219,7 +219,7 @@ class BunReleaseDetector {
 
     const check = async () => {
       try {
-        console.log(`🔍 Checking ${source.name}...`);
+        console.info(`🔍 Checking ${source.name}...`);
         
         let newRelease: ReleaseData | null = null;
         
@@ -489,9 +489,9 @@ class BunReleaseDetector {
    * Process a newly detected release
    */
   private async processNewRelease(release: ReleaseData): Promise<void> {
-    console.log(`🎉 New Bun release detected: ${release.version}`);
-    console.log(`📋 Title: ${release.title}`);
-    console.log(`📅 Published: ${release.publicationDate.toISOString()}`);
+    console.info(`🎉 New Bun release detected: ${release.version}`);
+    console.info(`📋 Title: ${release.title}`);
+    console.info(`📅 Published: ${release.publicationDate.toISOString()}`);
 
     // Enhance release data from all sources
     await this.enhanceReleaseData(release);
@@ -513,7 +513,7 @@ class BunReleaseDetector {
    * Enhance release data by fetching from all sources
    */
   private async enhanceReleaseData(release: ReleaseData): Promise<void> {
-    console.log(`🔧 Enhancing release data for ${release.version}...`);
+    console.info(`🔧 Enhancing release data for ${release.version}...`);
 
     // Fetch blog content if not already available
     if (!release.sources.blogPost) {
@@ -525,7 +525,7 @@ class BunReleaseDetector {
         release.codeExamples.push(...blogContent.codeBlocks);
         release.performanceMetrics.push(...blogContent.performanceMetrics);
       } catch (error) {
-        console.log(`📝 Blog post not found for v${release.version}`);
+        console.info(`📝 Blog post not found for v${release.version}`);
       }
     }
 
@@ -557,7 +557,7 @@ class BunReleaseDetector {
           }
         }
       } catch (error) {
-        console.log(`📦 GitHub release not found for v${release.version}`);
+        console.info(`📦 GitHub release not found for v${release.version}`);
       }
     }
 
@@ -579,7 +579,7 @@ class BunReleaseDetector {
           }
         }
       } catch (error) {
-        console.log(`🔍 Release commit not found for v${release.version}`);
+        console.info(`🔍 Release commit not found for v${release.version}`);
       }
     }
   }
@@ -588,7 +588,7 @@ class BunReleaseDetector {
    * Generate Factory-Wager patterns from release data
    */
   private async generatePatternsFromRelease(release: ReleaseData): Promise<any[]> {
-    console.log(`🏗️ Generating patterns from ${release.version}...`);
+    console.info(`🏗️ Generating patterns from ${release.version}...`);
 
     const patterns: any[] = [];
 
@@ -671,7 +671,7 @@ class BunReleaseDetector {
   private async saveReleaseData(release: ReleaseData): Promise<void> {
     const filename = `bun-release-v${release.version}.json`;
     await Bun.write(filename, JSON.stringify(release, null, 2));
-    console.log(`💾 Release data saved to ${filename}`);
+    console.info(`💾 Release data saved to ${filename}`);
   }
 
   /**
@@ -688,20 +688,20 @@ class BunReleaseDetector {
 
     const filename = `BUN-V${release.version}-RELEASE-SUMMARY.md`;
     await Bun.write(filename, readme);
-    console.log(`📚 Documentation updated: ${filename}`);
+    console.info(`📚 Documentation updated: ${filename}`);
   }
 
   /**
    * Send notifications about new release
    */
   private async sendNotifications(release: ReleaseData): Promise<void> {
-    console.log(`📢 Sending notifications for Bun v${release.version}...`);
+    console.info(`📢 Sending notifications for Bun v${release.version}...`);
     
     // Log notification (in real implementation, send to Slack, Discord, etc.)
-    console.log(`🔔 New Release: Bun v${release.version}`);
-    console.log(`📋 ${release.title}`);
-    console.log(`🔗 View: https://github.com/oven-sh/bun/releases/tag/bun-v${release.version}`);
-    console.log(`📖 Blog: https://bun.com/blog/bun-v${release.version}`);
+    console.info(`🔔 New Release: Bun v${release.version}`);
+    console.info(`📋 ${release.title}`);
+    console.info(`🔗 View: https://github.com/oven-sh/bun/releases/tag/bun-v${release.version}`);
+    console.info(`📖 Blog: https://bun.com/blog/bun-v${release.version}`);
   }
 
   // Helper methods for parsing and processing
@@ -848,7 +848,7 @@ class BunReleaseDetector {
   }
 
   private generatePerformanceCommand(metric: PerformanceMetric): string {
-    return `bun -e "console.log('${metric.operation} performance test')"`;
+    return `bun -e "console.info('${metric.operation} performance test')"`;
   }
 
   private generatePerformanceTemplate(metric: PerformanceMetric): string {

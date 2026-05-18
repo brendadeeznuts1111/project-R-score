@@ -4,10 +4,10 @@
 import { parseArgs } from "util";
 import { colourKit, pad } from "./quantum-toolkit-patch.ts";
 
-console.log(
+console.info(
   colourKit(0.8).ansi + "🖥️ Complete Bun System & Process Demo" + "\x1b[0m"
 );
-console.log("=".repeat(60));
+console.info("=".repeat(60));
 
 // Parse command line arguments
 const { values, positionals } = parseArgs({
@@ -24,7 +24,7 @@ const { values, positionals } = parseArgs({
 
 // 1. Spawn child process with stdout/stderr
 async function spawnChildProcess() {
-  console.log("\n🚀 Spawn Child Process:");
+  console.info("\n🚀 Spawn Child Process:");
 
   const proc = Bun.spawn(["echo", "hello from child"], {
     stdout: "pipe",
@@ -35,17 +35,17 @@ async function spawnChildProcess() {
   const stderr = await proc.stderr.text();
   const exitCode = await proc.exited;
 
-  console.log(`Exit code: ${exitCode}`);
-  console.log(`stdout: ${stdout.trim()}`);
-  if (stderr) console.log(`stderr: ${stderr.trim()}`);
+  console.info(`Exit code: ${exitCode}`);
+  console.info(`stdout: ${stdout.trim()}`);
+  if (stderr) console.info(`stderr: ${stderr.trim()}`);
 }
 
 // 2. Run shell command
 async function runShellCommand(command?: string) {
-  console.log("\n🐚 Shell Command:");
+  console.info("\n🐚 Shell Command:");
 
   const cmd = command || "date '+%Y-%m-%d %H:%M:%S'";
-  console.log(`Running: ${cmd}`);
+  console.info(`Running: ${cmd}`);
 
   const proc = Bun.spawn(["bash", "-c", cmd], {
     stdout: "pipe",
@@ -55,13 +55,13 @@ async function runShellCommand(command?: string) {
   const stdout = await proc.stdout.text();
   const stderr = await proc.stderr.text();
 
-  if (stdout) console.log(`Output: ${stdout.trim()}`);
-  if (stderr) console.log(`Error: ${stderr.trim()}`);
+  if (stdout) console.info(`Output: ${stdout.trim()}`);
+  if (stderr) console.info(`Error: ${stderr.trim()}`);
 }
 
 // 3. Set and read environment variables
 function demonstrateEnvVars(envVar?: string) {
-  console.log("\n🌍 Environment Variables:");
+  console.info("\n🌍 Environment Variables:");
 
   // Set a custom env var
   process.env.DEMO_VAR = "Hello from Bun!";
@@ -69,7 +69,7 @@ function demonstrateEnvVars(envVar?: string) {
 
   if (envVar) {
     process.env.USER_VAR = envVar;
-    console.log(`Set USER_VAR = ${envVar}`);
+    console.info(`Set USER_VAR = ${envVar}`);
   }
 
   // Display key env vars
@@ -82,36 +82,36 @@ function demonstrateEnvVars(envVar?: string) {
     "SHELL",
   ];
 
-  console.log("┌─────────────┬────────────────────────────────────┐");
-  console.log("│ Variable    │ Value                              │");
-  console.log("├─────────────┼────────────────────────────────────┤");
+  console.info("┌─────────────┬────────────────────────────────────┐");
+  console.info("│ Variable    │ Value                              │");
+  console.info("├─────────────┼────────────────────────────────────┤");
 
   keyVars.forEach((key) => {
     const value = process.env[key] || "undefined";
     const display = value.length > 35 ? value.slice(0, 32) + "..." : value;
-    console.log(`│ ${pad(key, 11)} │ ${pad(display, 36)} │`);
+    console.info(`│ ${pad(key, 11)} │ ${pad(display, 36)} │`);
   });
 
-  console.log("└─────────────┴────────────────────────────────────┘");
+  console.info("└─────────────┴────────────────────────────────────┘");
 }
 
 // 4. Set timezone (if supported)
 function setTimezone(tz?: string) {
-  console.log("\n🌍 Timezone:");
+  console.info("\n🌍 Timezone:");
 
   const timezone = tz || process.env.TZ || "UTC";
-  console.log(`Current timezone: ${timezone}`);
-  console.log(`Current time: ${new Date().toLocaleString()}`);
+  console.info(`Current timezone: ${timezone}`);
+  console.info(`Current time: ${new Date().toLocaleString()}`);
 
   // Note: Actually changing TZ requires process restart in most cases
-  console.log(
+  console.info(
     "💡 To change timezone, set TZ environment variable before starting"
   );
 }
 
 // 5. Process uptime
 function showProcessUptime() {
-  console.log("\n⏰ Process Uptime:");
+  console.info("\n⏰ Process Uptime:");
 
   const uptime = process.uptime();
   const days = Math.floor(uptime / 86400);
@@ -119,46 +119,46 @@ function showProcessUptime() {
   const minutes = Math.floor((uptime % 3600) / 60);
   const seconds = Math.floor(uptime % 60);
 
-  console.log(`Uptime: ${days}d ${hours}h ${minutes}m ${seconds}s`);
-  console.log(`Total seconds: ${uptime.toFixed(2)}`);
-  console.log(
+  console.info(`Uptime: ${days}d ${hours}h ${minutes}m ${seconds}s`);
+  console.info(`Total seconds: ${uptime.toFixed(2)}`);
+  console.info(
     `Process start: ${new Date(Date.now() - uptime * 1000).toISOString()}`
   );
 }
 
 // 6. OS signals and CTRL+C handling
 function setupSignalHandlers() {
-  console.log("\n📡 Signal Handlers:");
+  console.info("\n📡 Signal Handlers:");
 
   // Handle CTRL+C (SIGINT)
   process.on("SIGINT", () => {
-    console.log("\n🛑 Received SIGINT (CTRL+C)");
-    console.log("🧹 Cleaning up...");
-    console.log("👋 Graceful shutdown!");
+    console.info("\n🛑 Received SIGINT (CTRL+C)");
+    console.info("🧹 Cleaning up...");
+    console.info("👋 Graceful shutdown!");
     process.exit(0);
   });
 
   // Handle SIGTERM
   process.on("SIGTERM", () => {
-    console.log("\n🛑 Received SIGTERM");
+    console.info("\n🛑 Received SIGTERM");
     process.exit(0);
   });
 
   // Handle SIGUSR1 (custom signal)
   process.on("SIGUSR1", () => {
-    console.log("\n📊 Received SIGUSR1 - Showing stats...");
+    console.info("\n📊 Received SIGUSR1 - Showing stats...");
     const memUsage = process.memoryUsage();
-    console.log(`Memory: ${(memUsage.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`Memory: ${(memUsage.heapUsed / 1024 / 1024).toFixed(2)}MB`);
   });
 
-  console.log("✅ Signal handlers configured");
-  console.log("💡 Try: CTRL+C (SIGINT) or kill -SIGUSR1 <PID>");
+  console.info("✅ Signal handlers configured");
+  console.info("💡 Try: CTRL+C (SIGINT) or kill -SIGUSR1 <PID>");
 }
 
 // 7. Read from stdin
 async function readFromStdin() {
-  console.log("\n📥 Stdin Reading Demo:");
-  console.log('Type messages and press Enter (type "quit" to exit)');
+  console.info("\n📥 Stdin Reading Demo:");
+  console.info('Type messages and press Enter (type "quit" to exit)');
 
   // Create a simple stdin reader
   const stdin = Bun.stdin.stream();
@@ -170,31 +170,31 @@ async function readFromStdin() {
       const line = text.trim();
 
       if (line === "quit" || line === "exit") {
-        console.log("👋 Exiting stdin demo");
+        console.info("👋 Exiting stdin demo");
         break;
       }
 
       if (line) {
         const color = colourKit(Math.random()).ansi;
-        console.log(`Echo: ${color}${line}\x1b[0m`);
-        console.log("Length: " + line.length + " characters");
+        console.info(`Echo: ${color}${line}\x1b[0m`);
+        console.info("Length: " + line.length + " characters");
       }
 
       process.stdout.write("> ");
     }
   } catch (error) {
-    console.log("Stdin demo ended");
+    console.info("Stdin demo ended");
   }
 }
 
 // 8. Spawn child process with IPC
 async function spawnWithIPC() {
-  console.log("\n📨 IPC (Inter-Process Communication):");
+  console.info("\n📨 IPC (Inter-Process Communication):");
 
   // Create a simple worker script
   const workerCode = `
     process.on('message', (msg) => {
-      console.log('Worker received:', msg);
+      console.info('Worker received:', msg);
       process.send({
         id: msg.id,
         result: msg.data * 2,
@@ -217,7 +217,7 @@ async function spawnWithIPC() {
     ipc: true,
   });
 
-  console.log("📤 Sending messages to worker...");
+  console.info("📤 Sending messages to worker...");
 
   // Send messages
   worker.send({ id: 1, data: 21 });
@@ -229,53 +229,53 @@ async function spawnWithIPC() {
   const stderr = await worker.stderr.text();
 
   if (stdout) {
-    console.log("📥 Worker responses:");
+    console.info("📥 Worker responses:");
     stdout
       .trim()
       .split("\n")
       .forEach((line) => {
-        if (line) console.log(`  ${line}`);
+        if (line) console.info(`  ${line}`);
       });
   }
 
-  if (stderr) console.log(`Worker errors: ${stderr}`);
+  if (stderr) console.info(`Worker errors: ${stderr}`);
 
   await worker.exited;
-  console.log("✅ IPC demo completed");
+  console.info("✅ IPC demo completed");
 }
 
 // 9. System information
 function showSystemInfo() {
-  console.log("\n💻 System Information:");
+  console.info("\n💻 System Information:");
 
-  console.log("┌─────────────────┬──────────────────────────────┐");
-  console.log("│ Property        │ Value                        │");
-  console.log("├─────────────────┼──────────────────────────────┤");
-  console.log(`│ ${pad("Platform", 15)} │ ${pad(process.platform, 28)} │`);
-  console.log(`│ ${pad("Architecture", 15)} │ ${pad(process.arch, 28)} │`);
-  console.log(
+  console.info("┌─────────────────┬──────────────────────────────┐");
+  console.info("│ Property        │ Value                        │");
+  console.info("├─────────────────┼──────────────────────────────┤");
+  console.info(`│ ${pad("Platform", 15)} │ ${pad(process.platform, 28)} │`);
+  console.info(`│ ${pad("Architecture", 15)} │ ${pad(process.arch, 28)} │`);
+  console.info(
     `│ ${pad("Node Version", 15)} │ ${pad(process.versions.node, 28)} │`
   );
-  console.log(
+  console.info(
     `│ ${pad("Bun Version", 15)} │ ${pad(process.versions.bun, 28)} │`
   );
-  console.log(
+  console.info(
     `│ ${pad("Process ID", 15)} │ ${pad(process.pid.toString(), 28)} │`
   );
-  console.log(
+  console.info(
     `│ ${pad("Parent PID", 15)} │ ${pad(
       process.ppid?.toString() || "N/A",
       28
     )} │`
   );
-  console.log("└─────────────────┴──────────────────────────────┘");
+  console.info("└─────────────────┴──────────────────────────────┘");
 }
 
 // Main execution
 async function main() {
-  console.log("🎯 Command line arguments:");
-  console.log("Values:", JSON.stringify(values, null, 2));
-  console.log("Positionals:", positionals);
+  console.info("🎯 Command line arguments:");
+  console.info("Values:", JSON.stringify(values, null, 2));
+  console.info("Positionals:", positionals);
 
   await spawnChildProcess();
   await runShellCommand(values.command);
@@ -293,8 +293,8 @@ async function main() {
     await runShellCommand("uname -a && uptime");
   }
 
-  console.log("\n🎉 System demo completed!");
-  console.log(
+  console.info("\n🎉 System demo completed!");
+  console.info(
     "💡 Process will continue running. Try CTRL+C to test signal handling."
   );
 
@@ -312,7 +312,7 @@ async function main() {
 
 // Handle signals
 process.on("SIGINT", () => {
-  console.log("\n\n👋 System demo completed successfully!");
+  console.info("\n\n👋 System demo completed successfully!");
   process.exit(0);
 });
 

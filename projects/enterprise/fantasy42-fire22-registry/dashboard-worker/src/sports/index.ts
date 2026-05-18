@@ -29,12 +29,12 @@ export class SportsBettingSystem {
    * Initialize the sports betting system
    */
   private async initializeSystem(): Promise<void> {
-    console.log('🏈 Initializing Sports Betting System...');
+    console.info('🏈 Initializing Sports Betting System...');
 
     // Initialize default events
     this.eventManager.initializeDefaultEvents();
 
-    console.log('✅ Sports Betting System initialized');
+    console.info('✅ Sports Betting System initialized');
   }
 
   // Event Management Methods

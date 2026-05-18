@@ -85,7 +85,7 @@ function rel(absPath: string): string {
 }
 
 async function main() {
-  console.log('\n🔍 .claude/ health check\n');
+  console.info('\n🔍 .claude/ health check\n');
 
   // 1. commands/ directory exists
   const commandsDir = join(CLAUDE_DIR, 'commands');
@@ -166,9 +166,9 @@ async function main() {
   const total = passed_n + failed_n;
 
   if (failed_n === 0) {
-    console.log(`✅ ${passed_n}/${total} checks passed\n`);
+    console.info(`✅ ${passed_n}/${total} checks passed\n`);
   } else {
-    console.log(`❌ ${failed_n}/${total} checks failed\n`);
+    console.info(`❌ ${failed_n}/${total} checks failed\n`);
   }
   process.exit(failed_n > 0 ? 1 : 0);
 }

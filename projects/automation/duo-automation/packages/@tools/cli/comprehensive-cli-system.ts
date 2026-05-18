@@ -506,26 +506,26 @@ async function main() {
     }
   }
 
-  console.log(EmpireProDashboard.generateHeader(
+  console.info(EmpireProDashboard.generateHeader(
     'EMPIRE PRO v3.7 CLI - COMPREHENSIVE SYSTEM',
     'Documentation, Flags, Benchmarking, Testing, Seed, Matrix Integration'
   ));
 
   // Handle help flag
   if (flags['--help']) {
-    console.log(generateHelpDocumentation());
+    console.info(generateHelpDocumentation());
     return;
   }
 
   // Handle version flag
   if (flags['--version']) {
-    console.log(UnicodeTableFormatter.colorize(`Empire Pro CLI v${CLI_CONFIG.version}`, DesignSystem.text.accent.blue));
+    console.info(UnicodeTableFormatter.colorize(`Empire Pro CLI v${CLI_CONFIG.version}`, DesignSystem.text.accent.blue));
     return;
   }
 
   // Handle benchmark flag
   if (flags['--benchmark']) {
-    console.log(EmpireProDashboard.generateSection('PERFORMANCE BENCHMARKS', '📊'));
+    console.info(EmpireProDashboard.generateSection('PERFORMANCE BENCHMARKS', '📊'));
     
     const benchmark = new BenchmarkRunner();
     
@@ -545,13 +545,13 @@ async function main() {
       await new Promise(resolve => setTimeout(resolve, 0.5));
     }, 2000);
     
-    console.log(benchmark.generateReport());
+    console.info(benchmark.generateReport());
     return;
   }
 
   // Handle test flag
   if (flags['--test']) {
-    console.log(EmpireProDashboard.generateSection('TEST SUITE', '🧪'));
+    console.info(EmpireProDashboard.generateSection('TEST SUITE', '🧪'));
     
     const testRunner = new TestRunner();
     
@@ -571,43 +571,43 @@ async function main() {
       return true;
     });
     
-    console.log(testRunner.generateReport());
+    console.info(testRunner.generateReport());
     
     const summary = testRunner.getSummary();
-    console.log(UnicodeTableFormatter.colorize(`\n✅ Passed: ${summary.passed} | ❌ Failed: ${summary.failed} | 📊 Total: ${summary.total}`, 
+    console.info(UnicodeTableFormatter.colorize(`\n✅ Passed: ${summary.passed} | ❌ Failed: ${summary.failed} | 📊 Total: ${summary.total}`, 
       summary.failed === 0 ? DesignSystem.status.operational : DesignSystem.status.downtime));
     return;
   }
 
   // Handle seed flag
   if (flags['--seed']) {
-    console.log(EmpireProDashboard.generateSection('SEED DATA GENERATION', '🌱'));
+    console.info(EmpireProDashboard.generateSection('SEED DATA GENERATION', '🌱'));
     
     const seedManager = new SeedDataManager();
     const seedType = flags['--seed'] || 'default';
     const seedData = seedManager.getSeedData(seedType);
     
-    console.log(UnicodeTableFormatter.colorize(`📊 Generated seed data: ${seedType}`, DesignSystem.text.accent.blue));
-    console.log(seedManager.generateSeedTable(seedData));
+    console.info(UnicodeTableFormatter.colorize(`📊 Generated seed data: ${seedType}`, DesignSystem.text.accent.blue));
+    console.info(seedManager.generateSeedTable(seedData));
     return;
   }
 
   // Handle matrix flag
   if (flags['--matrix']) {
-    console.log(EmpireProDashboard.generateSection('SYSTEM MATRIX', '📋'));
+    console.info(EmpireProDashboard.generateSection('SYSTEM MATRIX', '📋'));
     
     const matrixManager = new MatrixManager();
     const scope = flags['--scope'] as string | undefined;
     const matrixEntries = matrixManager.getMatrix(scope);
     
-    console.log(UnicodeTableFormatter.colorize(`🔍 Matrix entries: ${matrixEntries.length}`, DesignSystem.text.accent.blue));
-    console.log(matrixManager.generateMatrixTable(matrixEntries));
+    console.info(UnicodeTableFormatter.colorize(`🔍 Matrix entries: ${matrixEntries.length}`, DesignSystem.text.accent.blue));
+    console.info(matrixManager.generateMatrixTable(matrixEntries));
     return;
   }
 
   // Handle bun-native flag
   if (flags['--bun-native']) {
-    console.log(EmpireProDashboard.generateSection('BUN NATIVE API METRICS', '🔥'));
+    console.info(EmpireProDashboard.generateSection('BUN NATIVE API METRICS', '🔥'));
     
     const tracker = new BunNativeAPITracker();
     const trackedAPIs = new TrackedBunAPIs(tracker);
@@ -620,18 +620,18 @@ async function main() {
     const metrics = tracker.getAllMetrics();
     const summary = tracker.getSummary();
     
-    console.log(UnicodeTableFormatter.colorize(`📊 Total APIs Tracked: ${summary.totalAPIs}`, DesignSystem.text.accent.blue));
-    console.log(UnicodeTableFormatter.colorize(`📈 Total Calls: ${summary.totalCalls}`, DesignSystem.text.accent.green));
-    console.log(UnicodeTableFormatter.colorize(`⚡ Average Duration: ${summary.averageCallDuration.toFixed(2)}ms`, DesignSystem.text.accent.yellow));
-    console.log(UnicodeTableFormatter.colorize(`✅ Native Rate: ${summary.nativeRate.toFixed(1)}%`, DesignSystem.text.accent.purple));
+    console.info(UnicodeTableFormatter.colorize(`📊 Total APIs Tracked: ${summary.totalAPIs}`, DesignSystem.text.accent.blue));
+    console.info(UnicodeTableFormatter.colorize(`📈 Total Calls: ${summary.totalCalls}`, DesignSystem.text.accent.green));
+    console.info(UnicodeTableFormatter.colorize(`⚡ Average Duration: ${summary.averageCallDuration.toFixed(2)}ms`, DesignSystem.text.accent.yellow));
+    console.info(UnicodeTableFormatter.colorize(`✅ Native Rate: ${summary.nativeRate.toFixed(1)}%`, DesignSystem.text.accent.purple));
     
     if (metrics.length > 0) {
-      console.log('\n🔝 Top Performing APIs:');
+      console.info('\n🔝 Top Performing APIs:');
       metrics.slice(0, 5).forEach((metric, index) => {
         const domainColor = getDomainColor(metric.domain);
-        console.log(`  ${index + 1}. ${UnicodeTableFormatter.colorize(metric.apiName, domainColor)}`);
-        console.log(`     Domain: ${metric.domain} | Calls: ${metric.callCount} | Avg: ${metric.averageDuration.toFixed(2)}ms`);
-        console.log(`     Implementation: ${metric.implementation} (${metric.implementationSource.source})`);
+        console.info(`  ${index + 1}. ${UnicodeTableFormatter.colorize(metric.apiName, domainColor)}`);
+        console.info(`     Domain: ${metric.domain} | Calls: ${metric.callCount} | Avg: ${metric.averageDuration.toFixed(2)}ms`);
+        console.info(`     Implementation: ${metric.implementation} (${metric.implementationSource.source})`);
       });
     }
     
@@ -640,14 +640,14 @@ async function main() {
 
   // Handle metrics flag
   if (flags['--metrics']) {
-    console.log(EmpireProDashboard.generateSection('COMPREHENSIVE METRICS DASHBOARD', '📊'));
+    console.info(EmpireProDashboard.generateSection('COMPREHENSIVE METRICS DASHBOARD', '📊'));
     
     const tracker = new BunNativeAPITracker();
     const trackedAPIs = new TrackedBunAPIs(tracker);
     
     // Enable tracking if requested
     if (flags['--tracking']) {
-      console.log(UnicodeTableFormatter.colorize('🔄 Enabling real-time tracking...', DesignSystem.text.accent.blue));
+      console.info(UnicodeTableFormatter.colorize('🔄 Enabling real-time tracking...', DesignSystem.text.accent.blue));
       // Generate some activity
       for (let i = 0; i < 5; i++) {
         await trackedAPIs.trackedHash(`metrics-test-${i}`);
@@ -667,26 +667,26 @@ async function main() {
       filteredMetrics = metrics.filter(m => 
         requestedDomains.includes(m.domain.toLowerCase())
       );
-      console.log(UnicodeTableFormatter.colorize(`🔍 Filtered by domains: ${flags['--domains']}`, DesignSystem.text.accent.orange));
+      console.info(UnicodeTableFormatter.colorize(`🔍 Filtered by domains: ${flags['--domains']}`, DesignSystem.text.accent.orange));
     }
     
     // Display hex colors if requested
     if (flags['--hex-colors']) {
       const hexColor = health === 'healthy' ? '#3b82f6' : health === 'degraded' ? '#3b82f6' : '#3b82f6';
-      console.log(UnicodeTableFormatter.colorize(`🎨 Health Status: ${health.toUpperCase()}`, healthColor));
-      console.log(UnicodeTableFormatter.colorize(`🌈 Hex Color: ${hexColor}`, DesignSystem.text.accent.purple));
+      console.info(UnicodeTableFormatter.colorize(`🎨 Health Status: ${health.toUpperCase()}`, healthColor));
+      console.info(UnicodeTableFormatter.colorize(`🌈 Hex Color: ${hexColor}`, DesignSystem.text.accent.purple));
     }
     
-    console.log('\n📈 Metrics Summary:');
-    console.log(`  APIs Tracked: ${summary.totalAPIs}`);
-    console.log(`  Total Calls: ${summary.totalCalls}`);
-    console.log(`  Error Rate: ${summary.errorRate.toFixed(1)}%`);
-    console.log(`  Native Implementation: ${summary.nativeRate.toFixed(1)}%`);
-    console.log(`  Health Status: ${health}`);
+    console.info('\n📈 Metrics Summary:');
+    console.info(`  APIs Tracked: ${summary.totalAPIs}`);
+    console.info(`  Total Calls: ${summary.totalCalls}`);
+    console.info(`  Error Rate: ${summary.errorRate.toFixed(1)}%`);
+    console.info(`  Native Implementation: ${summary.nativeRate.toFixed(1)}%`);
+    console.info(`  Health Status: ${health}`);
     
     // Domain breakdown
     const domainBreakdown = tracker.getMetricsByDomain();
-    console.log('\n🌐 Domain Performance:');
+    console.info('\n🌐 Domain Performance:');
     Object.entries(domainBreakdown).forEach(([domain, perf]) => {
       // Apply domain filtering to breakdown as well
       const domainPerfFiltered = flags['--domains'] 
@@ -702,7 +702,7 @@ async function main() {
       const totalCalls = domainPerfFiltered.reduce((sum: number, m: any) => sum + m.callCount, 0);
       const nativeCount = domainPerfFiltered.filter((m: any) => m.implementation === 'native').length;
       const nativeRate = domainPerfFiltered.length > 0 ? (nativeCount / domainPerfFiltered.length) * 100 : 0;
-      console.log(`  ${UnicodeTableFormatter.colorize(domain, domainColor)}: ${domainPerfFiltered.length} APIs, ${totalCalls} calls, ${nativeRate.toFixed(1)}% native`);
+      console.info(`  ${UnicodeTableFormatter.colorize(domain, domainColor)}: ${domainPerfFiltered.length} APIs, ${totalCalls} calls, ${nativeRate.toFixed(1)}% native`);
     });
     
     return;
@@ -710,27 +710,27 @@ async function main() {
 
   // Handle api-status flag
   if (flags['--api-status']) {
-    console.log(EmpireProDashboard.generateSection('API STATUS ENDPOINT INTEGRATION', '🌐'));
+    console.info(EmpireProDashboard.generateSection('API STATUS ENDPOINT INTEGRATION', '🌐'));
     
-    console.log(UnicodeTableFormatter.colorize('🔗 Status Endpoints Available:', DesignSystem.text.accent.blue));
-    console.log('  GET /status - Enhanced status page with Bun Native Metrics');
-    console.log('  GET /status/api/data - Complete status data including Bun metrics');
-    console.log('  GET /status/api/bun-native-metrics - Dedicated Bun metrics endpoint');
-    console.log('  GET /status/api/badge - System status badge');
-    console.log('  GET /status/api/bun-native-badge - Bun metrics badge with hex color');
+    console.info(UnicodeTableFormatter.colorize('🔗 Status Endpoints Available:', DesignSystem.text.accent.blue));
+    console.info('  GET /status - Enhanced status page with Bun Native Metrics');
+    console.info('  GET /status/api/data - Complete status data including Bun metrics');
+    console.info('  GET /status/api/bun-native-metrics - Dedicated Bun metrics endpoint');
+    console.info('  GET /status/api/badge - System status badge');
+    console.info('  GET /status/api/bun-native-badge - Bun metrics badge with hex color');
     
     if (flags['--hex-colors']) {
-      console.log('\n🎨 Hex Color Status Integration:');
-      console.log('  ✅ Healthy: #3b82f6 (green)');
-      console.log('  ⚠️ Degraded: #3b82f6 (yellow)');
-      console.log('  ❌ Unhealthy: #3b82f6 (red)');
+      console.info('\n🎨 Hex Color Status Integration:');
+      console.info('  ✅ Healthy: #3b82f6 (green)');
+      console.info('  ⚠️ Degraded: #3b82f6 (yellow)');
+      console.info('  ❌ Unhealthy: #3b82f6 (red)');
     }
     
-    console.log('\n📊 Real-time Status Features:');
-    console.log('  🔥 Bun Native APIs service card with hex colors');
-    console.log('  📈 Dedicated metrics dashboard with 4 key indicators');
-    console.log('  🎯 Top performing APIs with color-coded borders');
-    console.log('  🌈 Dynamic status badges with hex color backgrounds');
+    console.info('\n📊 Real-time Status Features:');
+    console.info('  🔥 Bun Native APIs service card with hex colors');
+    console.info('  📈 Dedicated metrics dashboard with 4 key indicators');
+    console.info('  🎯 Top performing APIs with color-coded borders');
+    console.info('  🌈 Dynamic status badges with hex color backgrounds');
     
     return;
   }
@@ -761,7 +761,7 @@ async function main() {
   }
 
   // Default: Show status
-  console.log(EmpireProDashboard.generateSection('SYSTEM STATUS', '🚀'));
+  console.info(EmpireProDashboard.generateSection('SYSTEM STATUS', '🚀'));
   
   const statusData = [
     {
@@ -790,14 +790,14 @@ async function main() {
     }
   ];
   
-  console.log(UnicodeTableFormatter.generateTable(statusData, { maxWidth: 120 }));
+  console.info(UnicodeTableFormatter.generateTable(statusData, { maxWidth: 120 }));
   
-  console.log(EmpireProDashboard.generateFooter());
+  console.info(EmpireProDashboard.generateFooter());
   
-  console.log('\n🎉 EMPIRE PRO v3.7 CLI - COMPREHENSIVE SYSTEM READY!');
-  console.log('✅ Documentation, Flags, Benchmarking, Testing, Seed, Matrix Integration');
-  console.log('✅ Use --help for detailed documentation');
-  console.log('✅ All systems operational with Empire Pro v3.7 colors');
+  console.info('\n🎉 EMPIRE PRO v3.7 CLI - COMPREHENSIVE SYSTEM READY!');
+  console.info('✅ Documentation, Flags, Benchmarking, Testing, Seed, Matrix Integration');
+  console.info('✅ Use --help for detailed documentation');
+  console.info('✅ All systems operational with Empire Pro v3.7 colors');
 }
 
 // Error handling

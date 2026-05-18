@@ -154,90 +154,90 @@ class DeploymentStatus {
   }
 
   displayStatus(): void {
-    console.log('🎯 EMPIRE PRO DEPLOYMENT STATUS');
-    console.log('═'.repeat(60));
+    console.info('🎯 EMPIRE PRO DEPLOYMENT STATUS');
+    console.info('═'.repeat(60));
     
     let readyCount = 0;
     let warningCount = 0;
     let errorCount = 0;
     
     this.checks.forEach(check => {
-      console.log(`${check.status} ${check.name}`);
-      console.log(`   ${check.description}`);
+      console.info(`${check.status} ${check.name}`);
+      console.info(`   ${check.description}`);
       
       if (check.action) {
-        console.log(`   📝 Action: ${check.action}`);
+        console.info(`   📝 Action: ${check.action}`);
       }
       
       if (check.status === '✅') readyCount++;
       else if (check.status === '⚠️') warningCount++;
       else errorCount++;
       
-      console.log('');
+      console.info('');
     });
 
     // Summary
-    console.log('📊 DEPLOYMENT SUMMARY:');
-    console.log(`   ✅ Ready: ${readyCount}`);
-    console.log(`   ⚠️  Warnings: ${warningCount}`);
-    console.log(`   ❌ Errors: ${errorCount}`);
+    console.info('📊 DEPLOYMENT SUMMARY:');
+    console.info(`   ✅ Ready: ${readyCount}`);
+    console.info(`   ⚠️  Warnings: ${warningCount}`);
+    console.info(`   ❌ Errors: ${errorCount}`);
     
     const totalChecks = this.checks.length;
     const completionRate = Math.round((readyCount / totalChecks) * 100);
     
-    console.log(`   Completion: ${completionRate}%`);
+    console.info(`   Completion: ${completionRate}%`);
     
     if (completionRate === 100) {
-      console.log('\n🚀 DEPLOYMENT READY!');
-      console.log('   All systems operational and ready for production');
+      console.info('\n🚀 DEPLOYMENT READY!');
+      console.info('   All systems operational and ready for production');
     } else if (completionRate >= 66) {
-      console.log('\n⚡ DEPLOYMENT NEARLY READY');
-      console.log('   Most systems operational, address warnings to complete');
+      console.info('\n⚡ DEPLOYMENT NEARLY READY');
+      console.info('   Most systems operational, address warnings to complete');
     } else {
-      console.log('\n🔧 DEPLOYMENT SETUP NEEDED');
-      console.log('   Configure required components before deployment');
+      console.info('\n🔧 DEPLOYMENT SETUP NEEDED');
+      console.info('   Configure required components before deployment');
     }
 
     // Next steps
-    console.log('\n🎯 NEXT STEPS:');
+    console.info('\n🎯 NEXT STEPS:');
     if (errorCount > 0) {
-      console.log('   1. Fix all ❌ error items above');
+      console.info('   1. Fix all ❌ error items above');
     }
     if (warningCount > 0) {
-      console.log('   2. Address ⚠️ warning items');
+      console.info('   2. Address ⚠️ warning items');
     }
     if (readyCount === totalChecks) {
-      console.log('   1. Run: ./deploy-phone-intelligence.sh all');
-      console.log('   2. Configure DNS records');
-      console.log('   3. Verify with: bun run scripts/dns-validation.ts');
+      console.info('   1. Run: ./deploy-phone-intelligence.sh all');
+      console.info('   2. Configure DNS records');
+      console.info('   3. Verify with: bun run scripts/dns-validation.ts');
     }
     
-    console.log('═'.repeat(60));
+    console.info('═'.repeat(60));
   }
 
   async testPhoneSystem(): Promise<void> {
-    console.log('\n🧪 TESTING PHONE INTELLIGENCE SYSTEM...');
+    console.info('\n🧪 TESTING PHONE INTELLIGENCE SYSTEM...');
     
     try {
       registerPhoneIntelligencePatterns();
       const system = new PhoneIntelligenceSystem();
       const result = await system.process('+14155552671');
       
-      console.log('✅ Phone Intelligence Test Results:');
-      console.log(`   Duration: ${result.duration.toFixed(2)}ms`);
-      console.log(`   Trust Score: ${result.trustScore}/100`);
-      console.log(`   Provider: ${result.recommendedProvider.name}`);
-      console.log(`   Cost: $${result.recommendedProvider.cost.toFixed(4)}`);
-      console.log(`   Patterns: ${result.matrixRows.length}/8`);
-      console.log(`   Compliant: ${result.compliance.compliant ? '✅' : '❌'}`);
+      console.info('✅ Phone Intelligence Test Results:');
+      console.info(`   Duration: ${result.duration.toFixed(2)}ms`);
+      console.info(`   Trust Score: ${result.trustScore}/100`);
+      console.info(`   Provider: ${result.recommendedProvider.name}`);
+      console.info(`   Cost: $${result.recommendedProvider.cost.toFixed(4)}`);
+      console.info(`   Patterns: ${result.matrixRows.length}/8`);
+      console.info(`   Compliant: ${result.compliance.compliant ? '✅' : '❌'}`);
       
       // Performance evaluation
       if (result.duration <= 2.5) {
-        console.log('   🚀 Performance: EXCELLENT (<2.5ms)');
+        console.info('   🚀 Performance: EXCELLENT (<2.5ms)');
       } else if (result.duration <= 5) {
-        console.log('   ⚠️  Performance: ACCEPTABLE (<5ms)');
+        console.info('   ⚠️  Performance: ACCEPTABLE (<5ms)');
       } else {
-        console.log('   ❌ Performance: NEEDS OPTIMIZATION (>5ms)');
+        console.info('   ❌ Performance: NEEDS OPTIMIZATION (>5ms)');
       }
       
     } catch (error) {

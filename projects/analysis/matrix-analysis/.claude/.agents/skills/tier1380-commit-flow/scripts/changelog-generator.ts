@@ -100,7 +100,7 @@ async function generateChangelog(options: {
 		.filter((c) => c.parsed !== null);
 
 	if (parsed.length === 0) {
-		console.log("No Tier-1380 formatted commits found.");
+		console.info("No Tier-1380 formatted commits found.");
 		return;
 	}
 
@@ -135,9 +135,9 @@ async function generateChangelog(options: {
 
 	if (options.output) {
 		await Bun.write(options.output, changelog);
-		console.log(`Changelog written to ${options.output}`);
+		console.info(`Changelog written to ${options.output}`);
 	} else {
-		console.log(changelog);
+		console.info(changelog);
 	}
 }
 
@@ -148,10 +148,10 @@ if (import.meta.main) {
 	const version = args.find((a) => a.startsWith("--version="))?.split("=")[1];
 	const output = args.find((a) => a.startsWith("--output="))?.split("=")[1];
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Changelog Generator                ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Changelog Generator                ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	await generateChangelog({ since, version, output });
 }

@@ -68,12 +68,12 @@ async function validateDocsLinks(): Promise<void> {
 			tab => tab.groups?.flatMap(group => group.pages ?? []) ?? [],
 		);
 
-		console.log(`📄 Found ${pages.length} pages in navigation`);
-		console.log(`🔍 Checking links against ${baseUrl}...\n`);
+		console.info(`📄 Found ${pages.length} pages in navigation`);
+		console.info(`🔍 Checking links against ${baseUrl}...\n`);
 
 		// Check pages (limit if specified)
 		const pagesToCheck: string[] = checkLimit ? pages.slice(0, checkLimit) : pages;
-		console.log(`Checking ${pagesToCheck.length} of ${pages.length} pages...\n`);
+		console.info(`Checking ${pagesToCheck.length} of ${pages.length} pages...\n`);
 
 		const results: LinkResult[] = await Promise.all(
 			pagesToCheck.map(async (path: string): Promise<LinkResult> => {
@@ -121,16 +121,16 @@ async function validateDocsLinks(): Promise<void> {
 		const broken: LinkResult[] = results.filter(r => r.ok === false);
 		const redirects: LinkResult[] = results.filter(r => r.status >= 300 && r.status < 400);
 
-		console.log(`\n📊 Summary:`);
-		console.log(`   Total checked: ${total}`);
-		console.log(`   ✅ OK (200-299): ${ok}`);
+		console.info(`\n📊 Summary:`);
+		console.info(`   Total checked: ${total}`);
+		console.info(`   ✅ OK (200-299): ${ok}`);
 		if (redirects.length > 0) {
-			console.log(`   🔄 Redirects (300-399): ${redirects.length}`);
+			console.info(`   🔄 Redirects (300-399): ${redirects.length}`);
 		}
-		console.log(`   ❌ Broken: ${broken.length}`);
+		console.info(`   ❌ Broken: ${broken.length}`);
 
 		if (broken.length > 0) {
-			console.log(`\n🔴 Broken links:`);
+			console.info(`\n🔴 Broken links:`);
 			console.table(
 				broken.map(r => ({
 					path: r.path,
@@ -140,9 +140,9 @@ async function validateDocsLinks(): Promise<void> {
 			);
 			process.exit(1);
 		} else {
-			console.log(`\n✅ All checked links are valid!`);
+			console.info(`\n✅ All checked links are valid!`);
 			if (checkLimit !== undefined && pages.length > checkLimit) {
-				console.log(`   Note: Only checked ${checkLimit} of ${pages.length} total pages`);
+				console.info(`   Note: Only checked ${checkLimit} of ${pages.length} total pages`);
 			}
 			process.exit(0);
 		}

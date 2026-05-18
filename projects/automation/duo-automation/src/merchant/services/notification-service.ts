@@ -63,7 +63,7 @@ export class MerchantNotificationService {
     // Send WebSocket update
     await this.sendWebSocketUpdate(fullNotification);
     
-    console.log(`📧 Notification sent: ${notification.title} to merchant ${notification.merchantId}`);
+    console.info(`📧 Notification sent: ${notification.title} to merchant ${notification.merchantId}`);
     return id;
   }
   
@@ -88,7 +88,7 @@ export class MerchantNotificationService {
   // Mark notification as read
   async markMerchantNotificationAsRead(notificationId: string, merchantId: string): Promise<void> {
     // Mock implementation - would update database
-    console.log(`📖 Marked notification ${notificationId} as read`);
+    console.info(`📖 Marked notification ${notificationId} as read`);
   }
   
   // Register push token
@@ -97,7 +97,7 @@ export class MerchantNotificationService {
     merchantTokens.push(token);
     this.pushTokens.set(token.merchantId, merchantTokens);
     
-    console.log(`📱 Registered push token for merchant ${token.merchantId}`);
+    console.info(`📱 Registered push token for merchant ${token.merchantId}`);
   }
   
   // Unregister push token
@@ -106,18 +106,18 @@ export class MerchantNotificationService {
     const filtered = merchantTokens.filter(t => t.token !== token);
     this.pushTokens.set(merchantId, filtered);
     
-    console.log(`📱 Unregistered push token for merchant ${merchantId}`);
+    console.info(`📱 Unregistered push token for merchant ${merchantId}`);
   }
   
   // Configure email settings
   async configureMerchantEmailSettings(merchantId: string, settings: MerchantEmailSettings): Promise<void> {
     this.emailSettings.set(merchantId, settings);
-    console.log(`⚙️ Configured email settings for merchant ${merchantId}`);
+    console.info(`⚙️ Configured email settings for merchant ${merchantId}`);
   }
   
   private async storeNotification(notification: MerchantNotificationMessage): Promise<void> {
     // Mock database storage
-    console.log(`💾 Storing notification: ${notification.id}`);
+    console.info(`💾 Storing notification: ${notification.id}`);
   }
   
   private async sendPushNotifications(notification: MerchantNotificationMessage): Promise<void> {
@@ -148,7 +148,7 @@ export class MerchantNotificationService {
     };
     
     // Mock push notification sending
-    console.log(`📱 Sending push to ${token.platform}:`, payload);
+    console.info(`📱 Sending push to ${token.platform}:`, payload);
   }
   
   private async sendEmailNotification(notification: MerchantNotificationMessage): Promise<void> {
@@ -175,12 +175,12 @@ export class MerchantNotificationService {
   
   private async sendEmail(email: MerchantEmailNotification): Promise<void> {
     // Mock email sending
-    console.log(`📧 Sending email to ${email.to}:`, email);
+    console.info(`📧 Sending email to ${email.to}:`, email);
   }
   
   private async sendWebSocketUpdate(notification: MerchantNotificationMessage): Promise<void> {
     // Mock WebSocket broadcast
-    console.log(`🔌 Broadcasting WebSocket update for notification ${notification.id}`);
+    console.info(`🔌 Broadcasting WebSocket update for notification ${notification.id}`);
   }
   
   private getEmailTemplate(type: string): string {
@@ -195,11 +195,11 @@ export class MerchantNotificationService {
   }
   
   private setupPushService(): void {
-    console.log('🔧 Setting up push notification service');
+    console.info('🔧 Setting up push notification service');
   }
   
   private setupEmailService(): void {
-    console.log('🔧 Setting up email service');
+    console.info('🔧 Setting up email service');
   }
   
   private generateNotificationId(): string {

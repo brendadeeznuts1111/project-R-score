@@ -345,7 +345,7 @@ export class EnhancedDocsFetcher {
         JSON.stringify(this.fallbackData, null, 2)
       );
 
-      console.log('✅ Fallback data updated:', this.fallbackData.length, 'APIs');
+      console.info('✅ Fallback data updated:', this.fallbackData.length, 'APIs');
     } catch (error) {
       console.error('Failed to update fallback data:', error);
     }

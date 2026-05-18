@@ -37,7 +37,7 @@ This contains: & ampersand, < less-than, > greater-than, "quotes"
       
       expect(html).toBeTruthy();
       expect(html.length).toBeGreaterThan(largeDoc.length);
-      console.log(`Large doc render time: ${(end - start).toFixed(2)}ms`);
+      console.info(`Large doc render time: ${(end - start).toFixed(2)}ms`);
     });
 
     test("Document with many special characters", () => {
@@ -49,7 +49,7 @@ This contains: & ampersand, < less-than, > greater-than, "quotes"
       
       expect(html).toContain("&amp;");
       expect(html).toContain("&lt;");
-      console.log(`Special chars render time: ${(end - start).toFixed(2)}ms`);
+      console.info(`Special chars render time: ${(end - start).toFixed(2)}ms`);
     });
   });
 
@@ -74,7 +74,7 @@ This contains: & ampersand, < less-than, > greater-than, "quotes"
       const end = performance.now();
       
       expect(result).toBeTruthy();
-      console.log(`React render time: ${(end - start).toFixed(2)}ms`);
+      console.info(`React render time: ${(end - start).toFixed(2)}ms`);
     });
   });
 
@@ -90,7 +90,7 @@ This contains: & ampersand, < less-than, > greater-than, "quotes"
       const end = performance.now();
       
       expect(result).toContain("Universe");
-      console.log(`10,000 replacements: ${(end - start).toFixed(2)}ms`);
+      console.info(`10,000 replacements: ${(end - start).toFixed(2)}ms`);
     });
   });
 
@@ -106,7 +106,7 @@ This contains: & ampersand, < less-than, > greater-than, "quotes"
       const end = performance.now();
       
       const timePerCall = ((end - start) / iterations) * 1000;
-      console.log(`AbortSignal.abort() without listeners: ${timePerCall.toFixed(3)}µs per call`);
+      console.info(`AbortSignal.abort() without listeners: ${timePerCall.toFixed(3)}µs per call`);
       expect(timePerCall).toBeLessThan(5);
     });
   });
@@ -122,7 +122,7 @@ This contains: & ampersand, < less-than, > greater-than, "quotes"
       }
       const end = performance.now();
       
-      console.log(`SIMD regex: ${(end - start).toFixed(2)}ms`);
+      console.info(`SIMD regex: ${(end - start).toFixed(2)}ms`);
       expect(regex.test(text)).toBe(true);
     });
 
@@ -138,7 +138,7 @@ This contains: & ampersand, < less-than, > greater-than, "quotes"
       const end = performance.now();
       
       expect(matches).toBe(1000);
-      console.log(`Fixed-count JIT: ${(end - start).toFixed(2)}ms`);
+      console.info(`Fixed-count JIT: ${(end - start).toFixed(2)}ms`);
     });
   });
 
@@ -157,7 +157,7 @@ This contains: & ampersand, < less-than, > greater-than, "quotes"
       
       expect(result).toBe(true);
       const timePerCall = ((end - start) / iterations) * 1000;
-      console.log(`startsWith: ${timePerCall.toFixed(4)}µs per call`);
+      console.info(`startsWith: ${timePerCall.toFixed(4)}µs per call`);
     });
   });
 
@@ -175,7 +175,7 @@ This contains: & ampersand, < less-than, > greater-than, "quotes"
       
       expect(size).toBe(1000);
       const timePerCall = ((end - start) / iterations) * 1000;
-      console.log(`Set.size: ${timePerCall.toFixed(4)}µs per call`);
+      console.info(`Set.size: ${timePerCall.toFixed(4)}µs per call`);
     });
 
     test("Map.size is optimized", () => {
@@ -191,7 +191,7 @@ This contains: & ampersand, < less-than, > greater-than, "quotes"
       
       expect(size).toBe(1000);
       const timePerCall = ((end - start) / iterations) * 1000;
-      console.log(`Map.size: ${timePerCall.toFixed(4)}µs per call`);
+      console.info(`Map.size: ${timePerCall.toFixed(4)}µs per call`);
     });
   });
 
@@ -205,7 +205,7 @@ This contains: & ampersand, < less-than, > greater-than, "quotes"
       const end = performance.now();
       
       const timePerCall = ((end - start) / iterations) * 1000;
-      console.log(`String.trim: ${timePerCall.toFixed(4)}µs per call`);
+      console.info(`String.trim: ${timePerCall.toFixed(4)}µs per call`);
       expect(str.trim()).toBe("content".repeat(100));
     });
   });
@@ -249,4 +249,4 @@ Paragraph with & < > "special" characters
   });
 });
 
-console.log("\n=== Bun v1.3.7 Feature Verification ===\n");
+console.info("\n=== Bun v1.3.7 Feature Verification ===\n");

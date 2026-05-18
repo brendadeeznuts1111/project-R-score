@@ -15,16 +15,16 @@ program
   .option('--parallel', 'Enable parallel processing', false)
   .option('--dry-run', 'Simulate cleanup without deleting', false)
   .action(async (options) => {
-    console.log(`🔄 Restarting cache: ${options.type}...`);
+    console.info(`🔄 Restarting cache: ${options.type}...`);
     
     try {
       // Step 1: Stop cache services
-      console.log('   Stopping cache services...');
+      console.info('   Stopping cache services...');
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Step 2: Deep cleanup if requested
       if (options.deepCleanup) {
-        console.log('   🧹 Running deep filesystem cleanup...');
+        console.info('   🧹 Running deep filesystem cleanup...');
         const healOptions = {
           dryRun: options.dryRun,
           backupBeforeDelete: options.backup,
@@ -35,34 +35,34 @@ program
         };
         
         const metrics = await heal(healOptions);
-        console.log(`   📊 Cleanup completed: ${metrics.filesDeleted} files deleted, ${metrics.filesBackedUp} backed up`);
+        console.info(`   📊 Cleanup completed: ${metrics.filesDeleted} files deleted, ${metrics.filesBackedUp} backed up`);
         if (options.dryRun) {
-          console.log('   🔍 DRY RUN MODE');
+          console.info('   🔍 DRY RUN MODE');
         }
       } else {
-        console.log('   Clearing memory...');
+        console.info('   Clearing memory...');
         await new Promise(resolve => setTimeout(resolve, 500));
       }
       
       // Step 3: Restart services
-      console.log('   Restarting services...');
+      console.info('   Restarting services...');
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Step 4: Health check
-      console.log('   Running health checks...');
+      console.info('   Running health checks...');
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      console.log('✅ Cache restarted successfully');
-      console.log('   Cache hit rate: 95%');
-      console.log('   Memory usage: 128MB');
-      console.log('   Services: ONLINE');
+      console.info('✅ Cache restarted successfully');
+      console.info('   Cache hit rate: 95%');
+      console.info('   Memory usage: 128MB');
+      console.info('   Services: ONLINE');
       
       if (options.deepCleanup) {
-        console.log('   🧹 Deep cleanup: COMPLETED');
-        console.log('   📋 Metrics: ENABLED');
-        console.log('   🔒 Integrity: VERIFIED');
+        console.info('   🧹 Deep cleanup: COMPLETED');
+        console.info('   📋 Metrics: ENABLED');
+        console.info('   🔒 Integrity: VERIFIED');
         if (options.dryRun) {
-          console.log('   🔍 DRY RUN MODE');
+          console.info('   🔍 DRY RUN MODE');
         }
       }
       
@@ -86,8 +86,8 @@ program
   .option('--max-size <bytes>', 'Maximum file size', '104857600')
   .option('--min-age <ms>', 'Minimum file age', '60000')
   .action(async (options) => {
-    console.log('🧹 Advanced Cache Cleanup v2.01.05');
-    console.log(`📁 Target: ${options.targetDir}`);
+    console.info('🧹 Advanced Cache Cleanup v2.01.05');
+    console.info(`📁 Target: ${options.targetDir}`);
     
     try {
       const healOptions = {
@@ -105,18 +105,18 @@ program
       
       const metrics = await heal(healOptions);
       
-      console.log('\n✅ Cleanup completed successfully');
-      console.log(`📊 Files processed: ${metrics.filesFound}`);
-      console.log(`🗑️  Files deleted: ${metrics.filesDeleted}`);
-      console.log(`📋 Files backed up: ${metrics.filesBackedUp}`);
-      console.log(`⏭️  Files skipped: ${metrics.filesSkipped}`);
-      console.log(`💾 Bytes processed: ${(metrics.totalBytesProcessed / 1024 / 1024).toFixed(2)}MB`);
-      console.log(`🔐 Hashes generated: ${metrics.hashesGenerated}`);
-      console.log(`🚀 Parallel operations: ${metrics.parallelOperations}`);
-      console.log(`📝 Audit entries: ${metrics.auditLogEntries}`);
-      console.log(`⏱️  Duration: ${metrics.endTime - metrics.startTime}ms`);
+      console.info('\n✅ Cleanup completed successfully');
+      console.info(`📊 Files processed: ${metrics.filesFound}`);
+      console.info(`🗑️  Files deleted: ${metrics.filesDeleted}`);
+      console.info(`📋 Files backed up: ${metrics.filesBackedUp}`);
+      console.info(`⏭️  Files skipped: ${metrics.filesSkipped}`);
+      console.info(`💾 Bytes processed: ${(metrics.totalBytesProcessed / 1024 / 1024).toFixed(2)}MB`);
+      console.info(`🔐 Hashes generated: ${metrics.hashesGenerated}`);
+      console.info(`🚀 Parallel operations: ${metrics.parallelOperations}`);
+      console.info(`📝 Audit entries: ${metrics.auditLogEntries}`);
+      console.info(`⏱️  Duration: ${metrics.endTime - metrics.startTime}ms`);
       if (options.dryRun) {
-        console.log('🔍 DRY RUN MODE');
+        console.info('🔍 DRY RUN MODE');
       }
       
     } catch (error) {
@@ -131,7 +131,7 @@ program
   .description('Check cache system health')
   .option('--detailed', 'Show detailed health information', false)
   .action(async (options) => {
-    console.log('🏥 Cache System Health Check');
+    console.info('🏥 Cache System Health Check');
     
     try {
       // Simulate health checks
@@ -145,25 +145,25 @@ program
       
       let healthyCount = 0;
       
-      console.log('\n📊 Health Check Results:');
+      console.info('\n📊 Health Check Results:');
       checks.forEach(check => {
         const status = check.status === 'HEALTHY' ? '✅' : '⚠️';
-        console.log(`   ${status} ${check.name.padEnd(16)}: ${check.value.padEnd(12)} (threshold: ${check.threshold})`);
+        console.info(`   ${status} ${check.name.padEnd(16)}: ${check.value.padEnd(12)} (threshold: ${check.threshold})`);
         if (check.status === 'HEALTHY') healthyCount++;
       });
       
       const healthScore = Math.round((healthyCount / checks.length) * 100);
-      console.log(`\n🎯 Overall Health Score: ${healthScore}% (${healthyCount}/${checks.length} systems healthy)`);
+      console.info(`\n🎯 Overall Health Score: ${healthScore}% (${healthyCount}/${checks.length} systems healthy)`);
       
       if (options.detailed) {
-        console.log('\n🔍 Detailed Information:');
-        console.log('   • Cache services: ONLINE');
-        console.log('   • Last cleanup: 2 hours ago');
-        console.log('   • Uptime: 3 days, 14 hours');
-        console.log('   • Total requests: 1,247,892');
-        console.log('   • Error rate: 0.02%');
-        console.log('   • Memory efficiency: 87%');
-        console.log('   • Disk I/O: 45MB/s read, 23MB/s write');
+        console.info('\n🔍 Detailed Information:');
+        console.info('   • Cache services: ONLINE');
+        console.info('   • Last cleanup: 2 hours ago');
+        console.info('   • Uptime: 3 days, 14 hours');
+        console.info('   • Total requests: 1,247,892');
+        console.info('   • Error rate: 0.02%');
+        console.info('   • Memory efficiency: 87%');
+        console.info('   • Disk I/O: 45MB/s read, 23MB/s write');
       }
       
     } catch (error) {

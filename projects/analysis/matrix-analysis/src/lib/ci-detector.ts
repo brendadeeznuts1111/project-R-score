@@ -534,17 +534,17 @@ class CIDetector {
 			// Remove trailing comma
 			annotation = annotation.replace(/,$/, "");
 
-			console.log(`${annotation}::${message}`);
+			console.info(`${annotation}::${message}`);
 		} else {
 			// Generic annotation format
-			console.log(`[${type.toUpperCase()}] ${message}`);
+			console.info(`[${type.toUpperCase()}] ${message}`);
 
 			if (options?.file) {
-				console.log(`  File: ${options.file}${options.line ? `:${options.line}` : ""}`);
+				console.info(`  File: ${options.file}${options.line ? `:${options.line}` : ""}`);
 			}
 
 			if (options?.title) {
-				console.log(`  Title: ${options.title}`);
+				console.info(`  Title: ${options.title}`);
 			}
 		}
 	}
@@ -556,9 +556,9 @@ class CIDetector {
 		const ci = this.detectSync();
 
 		if (ci.isGitHubActions) {
-			console.log(`::group::${name}`);
+			console.info(`::group::${name}`);
 		} else {
-			console.log(`--- ${name} ---`);
+			console.info(`--- ${name} ---`);
 		}
 	}
 
@@ -569,9 +569,9 @@ class CIDetector {
 		const ci = this.detectSync();
 
 		if (ci.isGitHubActions) {
-			console.log("::endgroup::");
+			console.info("::endgroup::");
 		} else {
-			console.log("--- End group ---");
+			console.info("--- End group ---");
 		}
 	}
 }

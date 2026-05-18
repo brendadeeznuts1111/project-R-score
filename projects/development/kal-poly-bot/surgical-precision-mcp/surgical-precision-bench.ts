@@ -54,22 +54,22 @@ function recordResult(result: BenchmarkResult): void {
   
   const status = result.success ? '✅' : '❌';
   const typeTag = result.featureType === 'bun-v1.3.5' ? '🔷' : result.featureType === 'io' ? '📀' : result.featureType === 'transform' ? '🔄' : '⚙️';
-  console.log(`  ${status} ${result.operations.toLocaleString()} ops in ${(result.timeMs / 1000).toFixed(3)}s`);
-  console.log(`     ${typeTag} ${result.featureType.toUpperCase()} | ${result.property}`);
-  console.log(`     ${result.opsPerSec.toLocaleString()} ops/sec | ${result.notes}`);
-  console.log();
+  console.info(`  ${status} ${result.operations.toLocaleString()} ops in ${(result.timeMs / 1000).toFixed(3)}s`);
+  console.info(`     ${typeTag} ${result.featureType.toUpperCase()} | ${result.property}`);
+  console.info(`     ${result.opsPerSec.toLocaleString()} ops/sec | ${result.notes}`);
+  console.info();
 }
 
-console.log('🧪 SURGICAL PRECISION MCP - Comprehensive Performance Benchmarks');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log(`Target: ${TARGET_CATEGORIES}+ benchmark categories with 98%+ success rate`);
-console.log('Reference: https://bun.com/blog/bun-v1.3.5');
-console.log();
+console.info('🧪 SURGICAL PRECISION MCP - Comprehensive Performance Benchmarks');
+console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.info(`Target: ${TARGET_CATEGORIES}+ benchmark categories with 98%+ success rate`);
+console.info('Reference: https://bun.com/blog/bun-v1.3.5');
+console.info();
 
 // ============================================================================
 // CATEGORY 1: Decimal Arithmetic Performance
 // ============================================================================
-console.log('📊 CATEGORY 1: Decimal Arithmetic Performance');
+console.info('📊 CATEGORY 1: Decimal Arithmetic Performance');
 {
   const ops = 10000;
   const start = performance.now();
@@ -97,7 +97,7 @@ console.log('📊 CATEGORY 1: Decimal Arithmetic Performance');
 // ============================================================================
 // CATEGORY 2: Target Validation Performance
 // ============================================================================
-console.log('🎯 CATEGORY 2: Target Validation Performance');
+console.info('🎯 CATEGORY 2: Target Validation Performance');
 {
   const ops = 1000;
   const start = performance.now();
@@ -132,7 +132,7 @@ console.log('🎯 CATEGORY 2: Target Validation Performance');
 // ============================================================================
 // CATEGORY 3: Zero-Collateral Operations
 // ============================================================================
-console.log('🛡️ CATEGORY 3: Zero-Collateral Operations');
+console.info('🛡️ CATEGORY 3: Zero-Collateral Operations');
 {
   const ops = 50000;
   const start = performance.now();
@@ -159,7 +159,7 @@ console.log('🛡️ CATEGORY 3: Zero-Collateral Operations');
 // ============================================================================
 // CATEGORY 4: V8 Type Checking APIs (Bun v1.3.5+)
 // ============================================================================
-console.log('🔍 CATEGORY 4: V8 Type Checking APIs (Bun v1.3.5+)');
+console.info('🔍 CATEGORY 4: V8 Type Checking APIs (Bun v1.3.5+)');
 {
   const ops = 100000;
   const testValues = [
@@ -205,7 +205,7 @@ console.log('🔍 CATEGORY 4: V8 Type Checking APIs (Bun v1.3.5+)');
 // ============================================================================
 // CATEGORY 5: Bun.stringWidth Performance (Bun v1.3.5+)
 // ============================================================================
-console.log('📏 CATEGORY 5: Bun.stringWidth Performance (Bun v1.3.5+)');
+console.info('📏 CATEGORY 5: Bun.stringWidth Performance (Bun v1.3.5+)');
 {
   const ops = 10000;
   const testStrings = [
@@ -246,7 +246,7 @@ console.log('📏 CATEGORY 5: Bun.stringWidth Performance (Bun v1.3.5+)');
 
 // ============================================================================
 // CATEGORY 6: Bun.Semaphore Concurrency (PLANNED for future Bun version)
-console.log('🔒 CATEGORY 6: Bun.Semaphore Concurrency (Planned for future Bun version)');
+console.info('🔒 CATEGORY 6: Bun.Semaphore Concurrency (Planned for future Bun version)');
 {
   const semaphoreAvailable = typeof globalThis.Bun !== 'undefined' && 'Semaphore' in globalThis.Bun;
   const iterations = 1000;
@@ -282,7 +282,7 @@ console.log('🔒 CATEGORY 6: Bun.Semaphore Concurrency (Planned for future Bun 
 
 // ============================================================================
 // CATEGORY 7: Bun.RWLock Performance (PLANNED for future Bun version)
-console.log('🔐 CATEGORY 7: Bun.RWLock Performance (Planned for future Bun version)');
+console.info('🔐 CATEGORY 7: Bun.RWLock Performance (Planned for future Bun version)');
 {
   const rwlockAvailable = typeof globalThis.Bun !== 'undefined' && 'RWLock' in globalThis.Bun;
   const rwlockIterations = 500;
@@ -341,7 +341,7 @@ console.log('🔐 CATEGORY 7: Bun.RWLock Performance (Planned for future Bun ver
 // ============================================================================
 // CATEGORY 8: Terminal PTY Availability (Bun v1.3.5+)
 // ============================================================================
-console.log('🖥️ CATEGORY 8: Terminal PTY Availability (Bun v1.3.5+)');
+console.info('🖥️ CATEGORY 8: Terminal PTY Availability (Bun v1.3.5+)');
 const terminalAvailable = typeof Bun !== 'undefined' && typeof Bun.Terminal === 'function';
 {
   const start = performance.now();
@@ -368,7 +368,7 @@ const terminalAvailable = typeof Bun !== 'undefined' && typeof Bun.Terminal === 
 // ============================================================================
 // CATEGORY 9: File I/O Operations
 // ============================================================================
-console.log('📁 CATEGORY 9: File I/O Operations');
+console.info('📁 CATEGORY 9: File I/O Operations');
 {
   const ops = 100;
   const start = performance.now();
@@ -400,7 +400,7 @@ console.log('📁 CATEGORY 9: File I/O Operations');
 // ============================================================================
 // CATEGORY 10: Compression Performance (deflate/gzip)
 // ============================================================================
-console.log('🗜️ CATEGORY 10: Compression Performance');
+console.info('🗜️ CATEGORY 10: Compression Performance');
 {
   const ops = 100;
   const testData = 'SURGICAL PRECISION MCP - Zero Collateral Operations '.repeat(100);
@@ -441,7 +441,7 @@ console.log('🗜️ CATEGORY 10: Compression Performance');
 // ============================================================================
 // CATEGORY 11: HTMLRewriter Streaming Parser
 // ============================================================================
-console.log('🌐 CATEGORY 11: HTMLRewriter Streaming Parser');
+console.info('🌐 CATEGORY 11: HTMLRewriter Streaming Parser');
 {
   const ops = 50;
   const testHtml = `
@@ -485,7 +485,7 @@ console.log('🌐 CATEGORY 11: HTMLRewriter Streaming Parser');
 // ============================================================================
 // CATEGORY 12: DNS Resolution Baseline
 // ============================================================================
-console.log('🌍 CATEGORY 12: DNS Resolution Baseline');
+console.info('🌍 CATEGORY 12: DNS Resolution Baseline');
 {
   const ops = 10;
   const hosts = ['localhost', '127.0.0.1'];
@@ -518,7 +518,7 @@ console.log('🌍 CATEGORY 12: DNS Resolution Baseline');
 // ============================================================================
 // CATEGORY 13: JSON Serialization Performance
 // ============================================================================
-console.log('📝 CATEGORY 13: JSON Serialization Performance');
+console.info('📝 CATEGORY 13: JSON Serialization Performance');
 {
   const ops = 10000;
   const testObject = {
@@ -563,17 +563,17 @@ const throughput = Math.round((totalOperations / totalTimeMs) * 1000);
 // ============================================================================
 // SUMMARY REPORT with TableUtils + Team Colors
 // ============================================================================
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log(TableUtils.color.bold('🏆 SURGICAL PRECISION BENCHMARK SUMMARY'));
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log();
+console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.info(TableUtils.color.bold('🏆 SURGICAL PRECISION BENCHMARK SUMMARY'));
+console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.info();
 
-console.log(TableUtils.color.alice(`📊 Categories: ${results.length}/${TARGET_CATEGORIES}+ (98.5%+ target)`));
-console.log(TableUtils.color.bob(`✅ Passed: ${passedCategories}/${results.length} (${successRate.toFixed(1)}% success)`));
-console.log(TableUtils.color.carol(`⏱️  Total Time: ${(totalTimeMs / 1000).toFixed(3)}s`));
-console.log(TableUtils.color.dave(`⚡ Throughput: ${throughput.toLocaleString()} ops/sec`));
-console.log(TableUtils.color.green(`🎯 Zero-Collateral: CONFIRMED`));
-console.log();
+console.info(TableUtils.color.alice(`📊 Categories: ${results.length}/${TARGET_CATEGORIES}+ (98.5%+ target)`));
+console.info(TableUtils.color.bob(`✅ Passed: ${passedCategories}/${results.length} (${successRate.toFixed(1)}% success)`));
+console.info(TableUtils.color.carol(`⏱️  Total Time: ${(totalTimeMs / 1000).toFixed(3)}s`));
+console.info(TableUtils.color.dave(`⚡ Throughput: ${throughput.toLocaleString()} ops/sec`));
+console.info(TableUtils.color.green(`🎯 Zero-Collateral: CONFIRMED`));
+console.info();
 
 const categoryTableData = results.map(r => [
   TableUtils.color.alice(r.category),
@@ -582,12 +582,12 @@ const categoryTableData = results.map(r => [
   r.success ? TableUtils.color.dave('✅') : TableUtils.color.red('❌')
 ]);
 
-console.log('📋 Category Results (Team Color Coded):');
-console.log(TableUtils.formatTableWithHeader(
+console.info('📋 Category Results (Team Color Coded):');
+console.info(TableUtils.formatTableWithHeader(
   ['Category', 'Type', 'Property', 'Status'],
   categoryTableData
 ));
-console.log();
+console.info();
 
 const perfTableData = results.map(r => [
   TableUtils.color.alice(r.category),
@@ -595,29 +595,29 @@ const perfTableData = results.map(r => [
   TableUtils.color.bob(r.opsPerSec.toLocaleString())
 ]);
 
-console.log('⚡ Performance Metrics (Team Color Coded):');
-console.log(TableUtils.formatTableWithHeader(
+console.info('⚡ Performance Metrics (Team Color Coded):');
+console.info(TableUtils.formatTableWithHeader(
   ['Category', 'Operations', 'Ops/Sec'],
   perfTableData
 ));
-console.log();
+console.info();
 
 const featureTypeSummary = results.reduce((acc, r) => {
   acc[r.featureType] = (acc[r.featureType] || 0) + 1;
   return acc;
 }, {} as Record<string, number>);
 
-console.log('📊 Feature Type Distribution (Team Coded):');
+console.info('📊 Feature Type Distribution (Team Coded):');
 for (const [type, count] of Object.entries(featureTypeSummary)) {
   const icon = type === 'bun-v1.3.5' ? '🔷' : type === 'io' ? '📀' : type === 'transform' ? '🔄' : '⚙️';
   const colorFn = type === 'bun-v1.3.5' ? TableUtils.color.bob : 
                    type === 'io' ? TableUtils.color.dave : 
                    type === 'transform' ? TableUtils.color.carol : TableUtils.color.alice;
-  console.log(`  ${icon} ${colorFn(type.toUpperCase())}: ${count} categories`);
+  console.info(`  ${icon} ${colorFn(type.toUpperCase())}: ${count} categories`);
 }
-console.log();
+console.info();
 
-console.log('🔷 Bun v1.3.5+ Feature Status (TableUtils Enhanced):');
+console.info('🔷 Bun v1.3.5+ Feature Status (TableUtils Enhanced):');
 const bunAvailable = typeof globalThis.Bun !== 'undefined';
 
 const featureStatusTable = [
@@ -630,21 +630,21 @@ const featureStatusTable = [
   ['Compile Flags', '✅ feature("NAME") Active']
 ];
 
-console.log(TableUtils.formatTableWithHeader(['Feature', 'Status'], featureStatusTable));
-console.log();
+console.info(TableUtils.formatTableWithHeader(['Feature', 'Status'], featureStatusTable));
+console.info();
 
 const passed = successRate >= 98.5 && results.length >= TARGET_CATEGORIES;
 if (passed) {
-  console.log(TableUtils.color.bold(TableUtils.color.green('🎯 VERDICT: SURGICAL PRECISION BENCHMARKS MET ✅ 98.5%+')));
-  console.log(TableUtils.color.dave(`${results.length}/${TARGET_CATEGORIES}+ categories | ${successRate.toFixed(1)}% success rate`));
-  console.log(TableUtils.color.alice('Zero-collateral operations: CONFIRMED'));
-  console.log(TableUtils.color.bob('Team color coding: ACTIVE'));
+  console.info(TableUtils.color.bold(TableUtils.color.green('🎯 VERDICT: SURGICAL PRECISION BENCHMARKS MET ✅ 98.5%+')));
+  console.info(TableUtils.color.dave(`${results.length}/${TARGET_CATEGORIES}+ categories | ${successRate.toFixed(1)}% success rate`));
+  console.info(TableUtils.color.alice('Zero-collateral operations: CONFIRMED'));
+  console.info(TableUtils.color.bob('Team color coding: ACTIVE'));
 } else {
-  console.log(TableUtils.color.yellow('⚠️ VERDICT: STANDARDS NOT FULLY MET'));
-  console.log(TableUtils.color.carol(`Categories: ${results.length}/${TARGET_CATEGORIES}+ | Success: ${successRate.toFixed(1)}%`));
+  console.info(TableUtils.color.yellow('⚠️ VERDICT: STANDARDS NOT FULLY MET'));
+  console.info(TableUtils.color.carol(`Categories: ${results.length}/${TARGET_CATEGORIES}+ | Success: ${successRate.toFixed(1)}%`));
 }
 
-console.log();
-console.log(TableUtils.color.cyan('📋 Reference: https://bun.sh/blog/bun-v1.3.5'));
-console.log(TableUtils.color.magenta('🎯 Endeavor with surgical precision. #BunWhy #ZeroCollateral'));
+console.info();
+console.info(TableUtils.color.cyan('📋 Reference: https://bun.sh/blog/bun-v1.3.5'));
+console.info(TableUtils.color.magenta('🎯 Endeavor with surgical precision. #BunWhy #ZeroCollateral'));
 }

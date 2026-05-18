@@ -60,7 +60,7 @@ export class CascadeDocumentationGenerator {
   }
   
   async generateDocumentation(): Promise<DocumentationSet> {
-    console.log('📚 Generating Cascade documentation...');
+    console.info('📚 Generating Cascade documentation...');
     
     const docs: DocumentationSet = {
       generatedAt: new Date(),
@@ -99,7 +99,7 @@ export class CascadeDocumentationGenerator {
     // Write to file
     await this.writeDocumentation(docs);
     
-    console.log(`✅ Documentation generated: ${docs.metadata.totalPages} pages`);
+    console.info(`✅ Documentation generated: ${docs.metadata.totalPages} pages`);
     
     return docs;
   }
@@ -545,7 +545,7 @@ const context = {
 };
 
 const result = await engine.evaluateRule(rule, context);
-console.log('Rule matched:', result.matched);
+console.info('Rule matched:', result.matched);
 \`\`\`
 
 ### Custom Skill Development
@@ -597,7 +597,7 @@ await ConfigManager.getInstance().updateConfig({
   }
   
   private async generatePerformanceBenchmarks(): Promise<any> {
-    console.log('📊 Generating performance benchmarks...');
+    console.info('📊 Generating performance benchmarks...');
     return {
       timestamp: new Date(),
       benchmarks: [
@@ -857,7 +857,7 @@ ${sub.content}
   }
   
   private async writeFile(path: string, content: string): Promise<void> {
-    console.log(`📝 Writing documentation: ${path}`);
+    console.info(`📝 Writing documentation: ${path}`);
     // In a real implementation, this would use Bun.write()
   }
 }
@@ -877,7 +877,7 @@ hookRegistry.register({
   type: 'post',
   priority: 50,
   handler: async (context: any) => {
-    console.log('📚 Regenerating documentation due to config change...');
+    console.info('📚 Regenerating documentation due to config change...');
     await generateCascadeDocumentation();
   },
   condition: (context: any) => context.event === 'config:change'

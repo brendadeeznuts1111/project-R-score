@@ -545,7 +545,7 @@ export class FinancialReportingService {
         // Collections data gathering failed, but continue with other data sources
       }
     } else if (request.includeCollections !== false) {
-      console.log('Collections service not available, skipping collections data');
+      console.info('Collections service not available, skipping collections data');
     }
 
     // Gather settlements data

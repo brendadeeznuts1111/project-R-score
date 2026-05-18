@@ -158,10 +158,10 @@ export async function batchCheck(
 if (import.meta.main) {
 	loadWidthData()
 		.then((data) => {
-			console.log("Width Data Loaded:");
-			console.log(`  Files: ${data.stats.totalFiles}`);
-			console.log(`  Violations: ${data.stats.violationCount}`);
-			console.log(`  Compliance: ${data.stats.complianceRate.toFixed(1)}%`);
+			console.info("Width Data Loaded:");
+			console.info(`  Files: ${data.stats.totalFiles}`);
+			console.info(`  Violations: ${data.stats.violationCount}`);
+			console.info(`  Compliance: ${data.stats.complianceRate.toFixed(1)}%`);
 		})
 		.catch((error) => {
 			console.error("Error:", error.message);

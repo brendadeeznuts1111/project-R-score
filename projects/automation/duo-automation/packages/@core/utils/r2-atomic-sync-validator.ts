@@ -25,7 +25,7 @@ class R2AtomicSyncValidator {
    * Validate local dist/ against R2 registry
    */
   public async validateSync(distDir: string = "dist"): Promise<boolean> {
-    console.log(`🔐 R2AtomicSyncValidator: Validating '${distDir}' against Cloudflare...`);
+    console.info(`🔐 R2AtomicSyncValidator: Validating '${distDir}' against Cloudflare...`);
 
     try {
       const localFiles = await this.getLocalFiles(distDir);
@@ -43,7 +43,7 @@ class R2AtomicSyncValidator {
         if (r2Object) {
           // In a real scenario, ETag might be the hash
           // For this validator, we assume a metadata field or checksum comparison
-          console.log(`🔍 Comparing hash for ${file.key}...`);
+          console.info(`🔍 Comparing hash for ${file.key}...`);
           
           // Logic: If content is same but no version bump, that's fine.
           // BUT: If content matches exactly and we ARE trying to publish, it's redundant.

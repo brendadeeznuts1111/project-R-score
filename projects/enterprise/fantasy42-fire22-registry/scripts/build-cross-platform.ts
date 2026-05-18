@@ -62,12 +62,12 @@ class CrossPlatformBuilder {
   }
 
   async build(): Promise<void> {
-    console.log('🌍 Fantasy42-Fire22 Cross-Platform Builder');
-    console.log('==========================================');
-    console.log(`📋 Mode: ${this.config.mode.toUpperCase()}`);
-    console.log(`🎯 Platforms: ${this.config.platforms.join(', ')}`);
-    console.log(`🔐 Signing: ${this.config.sign ? 'Enabled' : 'Disabled'}`);
-    console.log('');
+    console.info('🌍 Fantasy42-Fire22 Cross-Platform Builder');
+    console.info('==========================================');
+    console.info(`📋 Mode: ${this.config.mode.toUpperCase()}`);
+    console.info(`🎯 Platforms: ${this.config.platforms.join(', ')}`);
+    console.info(`🔐 Signing: ${this.config.sign ? 'Enabled' : 'Disabled'}`);
+    console.info('');
 
     try {
       // Prepare build environment
@@ -75,7 +75,7 @@ class CrossPlatformBuilder {
 
       // Get targets to build
       const targets = this.getTargetsForPlatforms();
-      console.log(`🏗️ Building ${targets.length} targets...`);
+      console.info(`🏗️ Building ${targets.length} targets...`);
 
       // Build for each target
       for (const target of targets) {
@@ -94,7 +94,7 @@ class CrossPlatformBuilder {
   }
 
   private async prepareBuildEnvironment(): Promise<void> {
-    console.log('🔧 Preparing cross-platform build environment...');
+    console.info('🔧 Preparing cross-platform build environment...');
 
     // Create output directory structure
     if (!existsSync(this.config.outputDir)) {
@@ -111,7 +111,7 @@ class CrossPlatformBuilder {
 
     // Clean if requested
     if (this.config.clean) {
-      console.log('🧹 Cleaning previous builds...');
+      console.info('🧹 Cleaning previous builds...');
       try {
         execSync(`rm -rf "${this.config.outputDir}"`, { stdio: 'ignore' });
         mkdirSync(this.config.outputDir, { recursive: true });
@@ -120,7 +120,7 @@ class CrossPlatformBuilder {
       }
     }
 
-    console.log('✅ Cross-platform build environment ready');
+    console.info('✅ Cross-platform build environment ready');
   }
 
   private getTargetsForPlatforms(): string[] {
@@ -146,7 +146,7 @@ class CrossPlatformBuilder {
       this.buildStats.platforms[platformName] = { built: 0, failed: 0 };
     }
 
-    console.log(`\n🏗️ Building for ${target}...`);
+    console.info(`\n🏗️ Building for ${target}...`);
 
     try {
       const buildConfig = this.getBuildConfigForTarget(target);
@@ -155,7 +155,7 @@ class CrossPlatformBuilder {
       // Execute build
       await Bun.build(buildConfig);
 
-      console.log(`✅ Built: ${basename(outputPath)}`);
+      console.info(`✅ Built: ${basename(outputPath)}`);
       this.buildStats.built++;
       this.buildStats.platforms[platformName].built++;
 
@@ -335,7 +335,7 @@ class CrossPlatformBuilder {
       } else if (platformName === 'macos') {
         await this.signMacOSExecutable(executablePath);
       } else {
-        console.log(`ℹ️ Signing not supported for ${platformName}`);
+        console.info(`ℹ️ Signing not supported for ${platformName}`);
       }
     } catch (error) {
       console.error(`❌ Signing failed for ${basename(executablePath)}:`, error);
@@ -347,7 +347,7 @@ class CrossPlatformBuilder {
     const certPassword = process.env.FIRE22_WINDOWS_CERT_PASSWORD;
 
     if (!certPath || !certPassword) {
-      console.log('⚠️ Windows signing certificate not configured');
+      console.info('⚠️ Windows signing certificate not configured');
       return;
     }
 
@@ -357,7 +357,7 @@ class CrossPlatformBuilder {
         : `osslsigncode sign -pkcs12 "${certPath}" -pass "${certPassword}" -t "http://timestamp.digicert.com" -in "${executablePath}" -out "${executablePath}.signed" && mv "${executablePath}.signed" "${executablePath}"`;
 
     execSync(signCommand, { stdio: this.config.verbose ? 'inherit' : 'pipe' });
-    console.log(`🔐 Signed Windows executable: ${basename(executablePath)}`);
+    console.info(`🔐 Signed Windows executable: ${basename(executablePath)}`);
     this.buildStats.signed++;
   }
 
@@ -368,10 +368,10 @@ class CrossPlatformBuilder {
       execSync(`codesign --sign "${identity}" --timestamp "${executablePath}"`, {
         stdio: this.config.verbose ? 'inherit' : 'pipe',
       });
-      console.log(`🔐 Signed macOS executable: ${basename(executablePath)}`);
+      console.info(`🔐 Signed macOS executable: ${basename(executablePath)}`);
       this.buildStats.signed++;
     } catch (error) {
-      console.log('⚠️ macOS code signing failed - ensure valid certificate is installed');
+      console.info('⚠️ macOS code signing failed - ensure valid certificate is installed');
     }
   }
 
@@ -434,7 +434,7 @@ class CrossPlatformBuilder {
     };
 
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`📊 Cross-platform build report: ${basename(reportPath)}`);
+    console.info(`📊 Cross-platform build report: ${basename(reportPath)}`);
   }
 
   private getOutputSummary(): Record<string, string[]> {
@@ -474,30 +474,30 @@ class CrossPlatformBuilder {
   }
 
   private showBuildSummary(): void {
-    console.log('\n🏆 Cross-Platform Build Summary');
-    console.log('===============================');
-    console.log(`✅ Total Built: ${this.buildStats.built}`);
-    console.log(`❌ Total Failed: ${this.buildStats.failed}`);
-    console.log(`🔐 Total Signed: ${this.buildStats.signed}`);
+    console.info('\n🏆 Cross-Platform Build Summary');
+    console.info('===============================');
+    console.info(`✅ Total Built: ${this.buildStats.built}`);
+    console.info(`❌ Total Failed: ${this.buildStats.failed}`);
+    console.info(`🔐 Total Signed: ${this.buildStats.signed}`);
 
     if (this.buildStats.endTime) {
       const duration = (this.buildStats.endTime - this.buildStats.startTime) / 1000;
-      console.log(`⏱️ Total Duration: ${duration.toFixed(2)}s`);
+      console.info(`⏱️ Total Duration: ${duration.toFixed(2)}s`);
     }
 
-    console.log('\n📊 Platform Breakdown:');
+    console.info('\n📊 Platform Breakdown:');
     for (const [platform, stats] of Object.entries(this.buildStats.platforms)) {
-      console.log(`  ${platform}: ✅ ${stats.built} ❌ ${stats.failed}`);
+      console.info(`  ${platform}: ✅ ${stats.built} ❌ ${stats.failed}`);
     }
 
-    console.log(`\n📁 Output Directory: ${this.config.outputDir}`);
+    console.info(`\n📁 Output Directory: ${this.config.outputDir}`);
 
     if (this.buildStats.built > 0) {
-      console.log('\n🚀 Next Steps:');
-      console.log('1. Test executables on target platforms');
-      console.log('2. Verify platform-specific metadata');
-      console.log('3. Check digital signatures (if enabled)');
-      console.log('4. Create platform-specific distribution packages');
+      console.info('\n🚀 Next Steps:');
+      console.info('1. Test executables on target platforms');
+      console.info('2. Verify platform-specific metadata');
+      console.info('3. Check digital signatures (if enabled)');
+      console.info('4. Create platform-specific distribution packages');
     }
   }
 }
@@ -545,7 +545,7 @@ async function main() {
 }
 
 function showHelp() {
-  console.log(`
+  console.info(`
 🌍 Fantasy42-Fire22 Cross-Platform Builder
 
 Usage: bun run scripts/build-cross-platform.ts [options]

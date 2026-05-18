@@ -284,7 +284,7 @@ Internal ID: ${department.internalId}`;
   }
 
   async sendAuditRequests(): Promise<NotificationResult[]> {
-    console.log('🚀 Starting Department Communications Audit Outreach...\n');
+    console.info('🚀 Starting Department Communications Audit Outreach...\n');
 
     const results: NotificationResult[] = [];
 
@@ -292,12 +292,12 @@ Internal ID: ${department.internalId}`;
     for (const department of this.departments) {
       const email = this.generatePersonalizedAuditEmail(department);
 
-      console.log(
+      console.info(
         `📧 Sending ${email.priority.toUpperCase()} audit request to: ${department.name} Department`
       );
-      console.log(`   └─ Head: ${department.head}`);
-      console.log(`   └─ Email: ${email.to}`);
-      console.log(`   └─ Status: ${department.status}`);
+      console.info(`   └─ Head: ${department.head}`);
+      console.info(`   └─ Email: ${email.to}`);
+      console.info(`   └─ Status: ${department.status}`);
 
       // Simulate sending (in real environment, integrate with email service)
       const result: NotificationResult = {
@@ -309,28 +309,28 @@ Internal ID: ${department.internalId}`;
       };
 
       results.push(result);
-      console.log(`   ✅ ${email.priority === 'immediate' ? 'CRITICAL' : 'SENT'}\n`);
+      console.info(`   ✅ ${email.priority === 'immediate' ? 'CRITICAL' : 'SENT'}\n`);
     }
 
     // Summary
-    console.log('📊 **Audit Request Summary**:');
-    console.log(`   └─ Total Departments: ${this.departments.length}`);
-    console.log(
+    console.info('📊 **Audit Request Summary**:');
+    console.info(`   └─ Total Departments: ${this.departments.length}`);
+    console.info(
       `   └─ Active Departments: ${this.departments.filter(d => d.status === 'active').length}`
     );
-    console.log(
+    console.info(
       `   └─ Pending Assignments: ${this.departments.filter(d => d.status === 'pending').length}`
     );
-    console.log(
+    console.info(
       `   └─ Critical Priority: ${results.filter(r => r.priority === 'immediate').length}`
     );
-    console.log(`   └─ High Priority: ${results.filter(r => r.priority === 'high').length}`);
-    console.log(
+    console.info(`   └─ High Priority: ${results.filter(r => r.priority === 'high').length}`);
+    console.info(
       `   └─ Standard Priority: ${results.filter(r => r.priority === 'standard').length}\n`
     );
 
-    console.log('✅ All department head audit requests have been sent successfully!');
-    console.log(
+    console.info('✅ All department head audit requests have been sent successfully!');
+    console.info(
       '📋 Next: Monitor responses and process feedback for communications enhancement.\n'
     );
 
@@ -351,7 +351,7 @@ async function main() {
       JSON.stringify(results, null, 2)
     );
 
-    console.log(
+    console.info(
       `📁 Results saved to: ./src/communications/audit-outreach-results-${timestamp}.json`
     );
   } catch (error) {

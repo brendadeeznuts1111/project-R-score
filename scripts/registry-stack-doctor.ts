@@ -206,15 +206,15 @@ if (import.meta.main) {
   const options = parseArgs(process.argv.slice(2));
   const result = await runDoctor(options);
   if (options.json) {
-    console.log(JSON.stringify(result, null, 2));
+    console.info(JSON.stringify(result, null, 2));
   } else {
-    console.log(`Registry Stack Doctor (fix=${options.fix ? 'on' : 'off'})`);
+    console.info(`Registry Stack Doctor (fix=${options.fix ? 'on' : 'off'})`);
     for (const check of result.checks) {
-      console.log(`- [${check.ok ? 'ok' : 'fail'}] ${check.id}: ${check.detail}`);
+      console.info(`- [${check.ok ? 'ok' : 'fail'}] ${check.id}: ${check.detail}`);
     }
     if (!result.ok) {
-      console.log('- next:');
-      for (const step of result.nextSteps) console.log(`  - ${step}`);
+      console.info('- next:');
+      for (const step of result.nextSteps) console.info(`  - ${step}`);
     }
   }
   process.exit(result.ok ? 0 : 2);

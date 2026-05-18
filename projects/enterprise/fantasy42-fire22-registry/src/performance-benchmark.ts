@@ -65,7 +65,7 @@ class PerformanceBenchmark {
   }
 
   async runAllBenchmarks(): Promise<void> {
-    console.log('🚀 Running Performance Benchmarks...\n');
+    console.info('🚀 Running Performance Benchmarks...\n');
 
     await this.benchmarkBasicQueries();
     await this.benchmarkCachedQueries();
@@ -77,7 +77,7 @@ class PerformanceBenchmark {
   }
 
   private async benchmarkBasicQueries(): Promise<void> {
-    console.log('📊 Benchmarking Basic Queries...');
+    console.info('📊 Benchmarking Basic Queries...');
 
     const iterations = 100;
     const startTime = Date.now();
@@ -99,7 +99,7 @@ class PerformanceBenchmark {
   }
 
   private async benchmarkCachedQueries(): Promise<void> {
-    console.log('📊 Benchmarking Cached Queries...');
+    console.info('📊 Benchmarking Cached Queries...');
 
     // Clear cache first
     queryCache.clear();
@@ -127,7 +127,7 @@ class PerformanceBenchmark {
   }
 
   private async benchmarkBatchOperations(): Promise<void> {
-    console.log('📊 Benchmarking Batch Operations...');
+    console.info('📊 Benchmarking Batch Operations...');
 
     const batchSize = 100;
     const iterations = 10;
@@ -156,7 +156,7 @@ class PerformanceBenchmark {
   }
 
   private async benchmarkParallelProcessing(): Promise<void> {
-    console.log('📊 Benchmarking Parallel Processing...');
+    console.info('📊 Benchmarking Parallel Processing...');
 
     const items = Array.from({ length: 50 }, (_, i) => i);
     const startTime = Date.now();
@@ -182,7 +182,7 @@ class PerformanceBenchmark {
   }
 
   private async benchmarkConcurrentOperations(): Promise<void> {
-    console.log('📊 Benchmarking Concurrent Operations...');
+    console.info('📊 Benchmarking Concurrent Operations...');
 
     const processor = new ConcurrentProcessor(5); // Limit to 5 concurrent
     const items = Array.from({ length: 100 }, (_, i) => i);
@@ -205,29 +205,29 @@ class PerformanceBenchmark {
   }
 
   private displayResults(): void {
-    console.log('\n' + '='.repeat(80));
-    console.log('🎯 PERFORMANCE BENCHMARK RESULTS');
-    console.log('='.repeat(80));
+    console.info('\n' + '='.repeat(80));
+    console.info('🎯 PERFORMANCE BENCHMARK RESULTS');
+    console.info('='.repeat(80));
 
-    console.log('\n📈 Performance Improvements Achieved:');
-    console.log('- ✅ Async Database Operations');
-    console.log('- ✅ Query Result Caching');
-    console.log('- ✅ Batch Processing');
-    console.log('- ✅ Parallel Processing');
-    console.log('- ✅ Connection Pooling');
-    console.log('- ✅ Prepared Statement Caching');
+    console.info('\n📈 Performance Improvements Achieved:');
+    console.info('- ✅ Async Database Operations');
+    console.info('- ✅ Query Result Caching');
+    console.info('- ✅ Batch Processing');
+    console.info('- ✅ Parallel Processing');
+    console.info('- ✅ Connection Pooling');
+    console.info('- ✅ Prepared Statement Caching');
 
-    console.log('\n📊 Detailed Results:');
+    console.info('\n📊 Detailed Results:');
 
     this.results.forEach(result => {
-      console.log(`\n🔹 ${result.operation}`);
-      console.log(`   Iterations: ${result.iterations}`);
-      console.log(`   Total Time: ${result.totalTime}ms`);
-      console.log(`   Avg Time: ${result.avgTime.toFixed(2)}ms`);
-      console.log(`   Throughput: ${result.throughput.toFixed(1)} ops/sec`);
+      console.info(`\n🔹 ${result.operation}`);
+      console.info(`   Iterations: ${result.iterations}`);
+      console.info(`   Total Time: ${result.totalTime}ms`);
+      console.info(`   Avg Time: ${result.avgTime.toFixed(2)}ms`);
+      console.info(`   Throughput: ${result.throughput.toFixed(1)} ops/sec`);
 
       if (result.improvement) {
-        console.log(`   Cache Hit Rate: ${result.improvement.toFixed(1)}%`);
+        console.info(`   Cache Hit Rate: ${result.improvement.toFixed(1)}%`);
       }
     });
 
@@ -237,7 +237,7 @@ class PerformanceBenchmark {
 
     if (cachedQuery && basicQuery) {
       const improvement = ((basicQuery.avgTime - cachedQuery.avgTime) / basicQuery.avgTime) * 100;
-      console.log(`\n🎉 Cache Performance Improvement: ${improvement.toFixed(1)}% faster queries`);
+      console.info(`\n🎉 Cache Performance Improvement: ${improvement.toFixed(1)}% faster queries`);
     }
 
     const batchOp = this.results.find(r => r.operation.includes('Batch'));
@@ -245,15 +245,15 @@ class PerformanceBenchmark {
 
     if (batchOp && parallelOp) {
       const combinedThroughput = batchOp.throughput + parallelOp.throughput;
-      console.log(`🚀 Combined Throughput: ${combinedThroughput.toFixed(1)} ops/sec`);
+      console.info(`🚀 Combined Throughput: ${combinedThroughput.toFixed(1)} ops/sec`);
     }
 
-    console.log('\n' + '='.repeat(80));
-    console.log('✅ PERFORMANCE OPTIMIZATION COMPLETE');
-    console.log('   - 2x-3x speed improvements achieved');
-    console.log('   - Resource utilization optimized');
-    console.log('   - Scalability significantly enhanced');
-    console.log('='.repeat(80));
+    console.info('\n' + '='.repeat(80));
+    console.info('✅ PERFORMANCE OPTIMIZATION COMPLETE');
+    console.info('   - 2x-3x speed improvements achieved');
+    console.info('   - Resource utilization optimized');
+    console.info('   - Scalability significantly enhanced');
+    console.info('='.repeat(80));
   }
 
   async cleanup(): Promise<void> {
@@ -275,7 +275,7 @@ if (import.meta.main) {
     .then(() => benchmark.runAllBenchmarks())
     .then(() => benchmark.cleanup())
     .then(() => {
-      console.log('\n🎯 Benchmark completed successfully!');
+      console.info('\n🎯 Benchmark completed successfully!');
       process.exit(0);
     })
     .catch(error => {

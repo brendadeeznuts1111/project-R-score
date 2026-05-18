@@ -522,7 +522,7 @@ export class PredictionModels {
     return new Promise(resolve => {
       // Simulate training time
       setTimeout(() => {
-        console.log(`Trained model ${model.id} with ${data.length} samples`);
+        console.info(`Trained model ${model.id} with ${data.length} samples`);
         resolve();
       }, 100);
     });

@@ -275,7 +275,7 @@ class RSSFeedManager {
   }
 
   async saveFeeds(): Promise<void> {
-    console.log('💾 Saving RSS feeds...');
+    console.info('💾 Saving RSS feeds...');
 
     for (const department of Object.keys(this.feedConfigs)) {
       try {
@@ -289,7 +289,7 @@ class RSSFeedManager {
         const atomPath = join(process.cwd(), 'feeds', `${department}.atom`);
         await Bun.write(atomPath, atomContent);
 
-        console.log(`✅ Generated feeds for ${department}`);
+        console.info(`✅ Generated feeds for ${department}`);
       } catch (error) {
         console.error(`❌ Failed to generate feeds for ${department}:`, error);
       }
@@ -297,7 +297,7 @@ class RSSFeedManager {
   }
 
   async addSampleData(): Promise<void> {
-    console.log('📝 Adding sample RSS data...');
+    console.info('📝 Adding sample RSS data...');
 
     const sampleItems = [
       {
@@ -333,7 +333,7 @@ class RSSFeedManager {
       });
     }
 
-    console.log('✅ Added sample RSS items');
+    console.info('✅ Added sample RSS items');
   }
 
   getFeedStats(): Record<string, { itemCount: number; lastUpdated: string }> {
@@ -368,13 +368,13 @@ if (import.meta.main) {
   switch (command) {
     case 'generate':
       await feedManager.saveFeeds();
-      console.log('✅ RSS feeds generated successfully');
+      console.info('✅ RSS feeds generated successfully');
       break;
 
     case 'sample':
       await feedManager.addSampleData();
       await feedManager.saveFeeds();
-      console.log('✅ Sample data added and feeds generated');
+      console.info('✅ Sample data added and feeds generated');
       break;
 
     case 'add-item':
@@ -395,27 +395,27 @@ if (import.meta.main) {
       });
 
       await feedManager.saveFeeds();
-      console.log('✅ RSS item added successfully');
+      console.info('✅ RSS item added successfully');
       break;
 
     case 'status':
       const stats = feedManager.getFeedStats();
-      console.log('📊 RSS Feed Status:');
-      console.log('');
+      console.info('📊 RSS Feed Status:');
+      console.info('');
 
       for (const [department, data] of Object.entries(stats)) {
-        console.log(`${department.padEnd(12)}: ${data.itemCount.toString().padStart(3)} items, updated ${data.lastUpdated}`);
+        console.info(`${department.padEnd(12)}: ${data.itemCount.toString().padStart(3)} items, updated ${data.lastUpdated}`);
       }
       break;
 
     default:
-      console.log('Usage: bun run scripts/rss-feed-manager.ts [generate|sample|add-item|status]');
-      console.log('');
-      console.log('Commands:');
-      console.log('  generate    - Generate all RSS/Atom feeds');
-      console.log('  sample      - Add sample data and generate feeds');
-      console.log('  add-item    - Add a new RSS item');
-      console.log('  status      - Show feed statistics');
+      console.info('Usage: bun run scripts/rss-feed-manager.ts [generate|sample|add-item|status]');
+      console.info('');
+      console.info('Commands:');
+      console.info('  generate    - Generate all RSS/Atom feeds');
+      console.info('  sample      - Add sample data and generate feeds');
+      console.info('  add-item    - Add a new RSS item');
+      console.info('  status      - Show feed statistics');
       break;
   }
 

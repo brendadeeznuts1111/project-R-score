@@ -14,7 +14,7 @@ export function useBunWebSocket(url: string = 'ws://localhost:3001/ws') {
   useEffect(() => {
     // Simulate WebSocket connection
     // In real Bun: const ws = new WebSocket(url)
-    console.log('Connecting to Bun WebSocket server...');
+    console.info('Connecting to Bun WebSocket server...');
     
     // Simulate connection
     setTimeout(() => {
@@ -24,7 +24,7 @@ export function useBunWebSocket(url: string = 'ws://localhost:3001/ws') {
 
     return () => {
       // Cleanup WebSocket connection
-      console.log('Disconnecting WebSocket...');
+      console.info('Disconnecting WebSocket...');
     };
   }, [url]);
 
@@ -69,7 +69,7 @@ export function useBunWebSocket(url: string = 'ws://localhost:3001/ws') {
 
       // Simulate sending message
       // In real Bun: ws.send(JSON.stringify(message))
-      console.log('Sending WebSocket message:', message);
+      console.info('Sending WebSocket message:', message);
       
       // Add to local messages for simulation
       setMessages(prev => [...prev, message]);
@@ -86,9 +86,9 @@ export function useBunWebSocket(url: string = 'ws://localhost:3001/ws') {
     };
 
     // Set up subscription
-    console.log('Subscribed to search updates');
+    console.info('Subscribed to search updates');
     return () => {
-      console.log('Unsubscribed from search updates');
+      console.info('Unsubscribed from search updates');
     };
   };
 
@@ -99,9 +99,9 @@ export function useBunWebSocket(url: string = 'ws://localhost:3001/ws') {
       }
     };
 
-    console.log('Subscribed to favorites updates');
+    console.info('Subscribed to favorites updates');
     return () => {
-      console.log('Unsubscribed from favorites updates');
+      console.info('Unsubscribed from favorites updates');
     };
   };
 
@@ -112,9 +112,9 @@ export function useBunWebSocket(url: string = 'ws://localhost:3001/ws') {
       }
     };
 
-    console.log('Subscribed to analytics updates');
+    console.info('Subscribed to analytics updates');
     return () => {
-      console.log('Unsubscribed from analytics updates');
+      console.info('Unsubscribed from analytics updates');
     };
   };
 

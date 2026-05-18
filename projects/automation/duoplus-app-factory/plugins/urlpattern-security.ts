@@ -65,7 +65,7 @@ export const urlPatternGuardPlugin = (opts: any = {}) => ({
   version: '1.1.0',
   
   async setup(build) {
-    console.log('🔒 [URLPattern Guard] Initializing multi-format security plugin v1.1.0');
+    console.info('🔒 [URLPattern Guard] Initializing multi-format security plugin v1.1.0');
     
     const db = await initializeCache(opts.cacheDb || CACHE_DB_PATH);
     const analyzedFiles = new Set<string>();
@@ -87,7 +87,7 @@ export const urlPatternGuardPlugin = (opts: any = {}) => ({
     });
 
     build.onDispose(() => {
-      console.log('🔒 [URLPattern Guard] Closing cache database');
+      console.info('🔒 [URLPattern Guard] Closing cache database');
       db.close();
     });
   }
@@ -138,7 +138,7 @@ async function analyzeFile(filePath: string, source: 'code', db: Database, opts:
     return { contents: content, loader: 'ts' as const };
   }
 
-  console.log(`🔒 [URLPattern Guard] Analyzing ${patterns.length} patterns in ${filePath}`);
+  console.info(`🔒 [URLPattern Guard] Analyzing ${patterns.length} patterns in ${filePath}`);
 
   // Run security analysis
   const analyses = await Promise.all(
@@ -166,7 +166,7 @@ async function analyzeFile(filePath: string, source: 'code', db: Database, opts:
     const icon = a.securityRisk === 'critical' ? '🚨' : 
                 a.securityRisk === 'high' ? '⚠️' : 
                 a.securityRisk === 'medium' ? '⚡' : '✅';
-    console.log(`${icon} [URLPattern Guard] ${a.pattern} - ${a.securityRisk} (${a.issues.join(', ')})`);
+    console.info(`${icon} [URLPattern Guard] ${a.pattern} - ${a.securityRisk} (${a.issues.join(', ')})`);
   });
 
   return { contents: content, loader: 'ts' as const };
@@ -184,17 +184,17 @@ async function analyzeConfigFile(filePath: string, db: Database, opts: any) {
   try {
     switch (ext) {
       case 'toml':
-        console.log(`📄 [URLPattern Guard] Parsing TOML config: ${filePath}`);
+        console.info(`📄 [URLPattern Guard] Parsing TOML config: ${filePath}`);
         patterns = extractFromToml(parseToml(content), filePath);
         break;
       case 'yaml':
       case 'yml':
-        console.log(`📄 [URLPattern Guard] Parsing YAML config: ${filePath}`);
+        console.info(`📄 [URLPattern Guard] Parsing YAML config: ${filePath}`);
         patterns = extractFromYaml(parseYaml(content), filePath);
         break;
       case 'json':
       case 'jsonc':
-        console.log(`📄 [URLPattern Guard] Parsing JSON config: ${filePath}`);
+        console.info(`📄 [URLPattern Guard] Parsing JSON config: ${filePath}`);
         patterns = extractFromJson(JSON.parse(content), filePath);
         break;
     }
@@ -203,11 +203,11 @@ async function analyzeConfigFile(filePath: string, db: Database, opts: any) {
   }
   
   if (patterns.length === 0) {
-    console.log(`✅ [URLPattern Guard] No URLPatterns found in ${filePath}`);
+    console.info(`✅ [URLPattern Guard] No URLPatterns found in ${filePath}`);
     return { contents: content, loader: 'file' as const };
   }
 
-  console.log(`🔒 [URLPattern Guard] Analyzing ${patterns.length} config patterns in ${filePath}`);
+  console.info(`🔒 [URLPattern Guard] Analyzing ${patterns.length} config patterns in ${filePath}`);
 
   // Run security analysis
   const analyses = await Promise.all(
@@ -235,12 +235,12 @@ async function analyzeConfigFile(filePath: string, db: Database, opts: any) {
     const icon = a.securityRisk === 'critical' ? '🚨' : 
                 a.securityRisk === 'high' ? '⚠️' : 
                 a.securityRisk === 'medium' ? '⚡' : '✅';
-    console.log(`${icon} [URLPattern Guard] ${a.keyPath}: ${a.pattern} - ${a.securityRisk}`);
+    console.info(`${icon} [URLPattern Guard] ${a.keyPath}: ${a.pattern} - ${a.securityRisk}`);
   });
 
   // Inject guards into config (if dynamic)
   if (opts.autoInjectGuards) {
-    console.log(`💉 [URLPattern Guard] Injecting runtime guards into ${filePath}`);
+    console.info(`💉 [URLPattern Guard] Injecting runtime guards into ${filePath}`);
     const guardedConfig = injectGuardRefs(content, patterns, analyses, ext);
     return { contents: guardedConfig, loader: 'file' as const };
   }
@@ -631,7 +631,7 @@ export function checkCache(db: Database, filePath: string): SecurityAnalysis[] |
 export function clearCache(db: Database): void {
   try {
     db.exec('DELETE FROM pattern_cache');
-    console.log('✅ [URLPattern Guard] Cache cleared');
+    console.info('✅ [URLPattern Guard] Cache cleared');
   } catch (error) {
     console.error('❌ [URLPattern Guard] Cache clear failed:', error);
   }

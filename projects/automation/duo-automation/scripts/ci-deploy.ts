@@ -21,7 +21,7 @@ class CIColorDeployment {
   }
 
   async deploy() {
-    console.log('🚀 Starting CI/CD Pipeline with Color Audit...');
+    console.info('🚀 Starting CI/CD Pipeline with Color Audit...');
     
     if (this.config.colorAudit) {
       await this.runColorAudit();
@@ -30,11 +30,11 @@ class CIColorDeployment {
     await this.setupCIPipeline();
     await this.deployWithValidation();
     
-    console.log('✅ CI/CD pipeline integrated with color audit!');
+    console.info('✅ CI/CD pipeline integrated with color audit!');
   }
 
   private async runColorAudit() {
-    console.log(`🔍 Running color audit with ${this.config.coverage}% coverage requirement...`);
+    console.info(`🔍 Running color audit with ${this.config.coverage}% coverage requirement...`);
     
     // Simulate color audit process
     const auditResults = {
@@ -48,16 +48,16 @@ class CIColorDeployment {
       status: 'PASS'
     };
     
-    console.log('📊 Color Audit Results:');
-    console.log(`   • Total Files: ${auditResults.totalFiles}`);
-    console.log(`   • Compliant Files: ${auditResults.compliantFiles}`);
-    console.log(`   • Coverage: ${auditResults.coverage}%`);
-    console.log(`   • Status: ${auditResults.status}`);
+    console.info('📊 Color Audit Results:');
+    console.info(`   • Total Files: ${auditResults.totalFiles}`);
+    console.info(`   • Compliant Files: ${auditResults.compliantFiles}`);
+    console.info(`   • Coverage: ${auditResults.coverage}%`);
+    console.info(`   • Status: ${auditResults.status}`);
     
     if (auditResults.coverage >= this.config.coverage) {
-      console.log('✅ Color audit passed!');
+      console.info('✅ Color audit passed!');
     } else {
-      console.log(`❌ Color audit failed. Required: ${this.config.coverage}%, Actual: ${auditResults.coverage}%`);
+      console.info(`❌ Color audit failed. Required: ${this.config.coverage}%, Actual: ${auditResults.coverage}%`);
       process.exit(1);
     }
     
@@ -74,7 +74,7 @@ class CIColorDeployment {
   }
 
   private async setupCIPipeline() {
-    console.log('⚙️ Setting up CI/CD pipeline integration...');
+    console.info('⚙️ Setting up CI/CD pipeline integration...');
     
     const githubWorkflow = `name: Color System CI/CD
 
@@ -123,11 +123,11 @@ jobs:
     execSync(`mkdir -p ${workflowDir}`, { stdio: 'inherit' });
     writeFileSync(`${workflowDir}/color-ci.yml`, githubWorkflow);
     
-    console.log('✅ GitHub Actions workflow configured.');
+    console.info('✅ GitHub Actions workflow configured.');
   }
 
   private async deployWithValidation() {
-    console.log('🌍 Deploying with color system validation...');
+    console.info('🌍 Deploying with color system validation...');
     
     const deploymentSteps = [
       '🔍 Pre-deployment color validation',
@@ -138,7 +138,7 @@ jobs:
     ];
     
     for (const step of deploymentSteps) {
-      console.log(`   ${step}`);
+      console.info(`   ${step}`);
       await new Promise(resolve => setTimeout(resolve, 500));
     }
     

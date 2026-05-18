@@ -385,7 +385,7 @@ class UnifiedDashboard {
 
   constructor() {
     this.data = this.generateDashboardData();
-    console.log('🚀 MCP Registry Dashboard with Integrated Telemetry Analysis');
+    console.info('🚀 MCP Registry Dashboard with Integrated Telemetry Analysis');
   }
 
   private generateDashboardData() {
@@ -684,10 +684,10 @@ class UnifiedDashboard {
       },
     });
 
-    console.log(\`🚀 Dashboard server running on http://localhost:\${this.port}\`);
-    console.log(\`📊 Telemetry Analysis: http://localhost:\${this.port}/api/telemetry/analysis\`);
-    console.log(\`🔄 Live Telemetry: http://localhost:\${this.port}/api/telemetry\`);
-    console.log(\`🧪 Binary Processing: http://localhost:\${this.port}/api/binary/encode\`);
+    console.info(\`🚀 Dashboard server running on http://localhost:\${this.port}\`);
+    console.info(\`📊 Telemetry Analysis: http://localhost:\${this.port}/api/telemetry/analysis\`);
+    console.info(\`🔄 Live Telemetry: http://localhost:\${this.port}/api/telemetry\`);
+    console.info(\`🧪 Binary Processing: http://localhost:\${this.port}/api/binary/encode\`);
   }
 
   async start() {

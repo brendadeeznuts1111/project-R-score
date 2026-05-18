@@ -26,7 +26,7 @@ async function cleanBuildDir() {
     // Directory doesn't exist, that's fine
   }
   await mkdir(DASHBOARD_DIST, { recursive: true });
-  console.log('🧹 Cleaned build directory');
+  console.info('🧹 Cleaned build directory');
 }
 
 /**
@@ -57,10 +57,10 @@ async function copyStaticAssets() {
           .trim();
         
         await writeFile(destPath, optimizedHtml);
-        console.log(`📄 Optimized: ${file}`);
+        console.info(`📄 Optimized: ${file}`);
       } else {
         await writeFile(destPath, content);
-        console.log(`📁 Copied: ${file}`);
+        console.info(`📁 Copied: ${file}`);
       }
     } catch (error) {
       console.warn(`⚠️  Failed to process ${file}: ${error.message}`);
@@ -162,12 +162,12 @@ async function bundleJavaScript() {
     });
     
     if (bundled.successes.length > 0) {
-      console.log('✅ JavaScript bundled and minified');
+      console.info('✅ JavaScript bundled and minified');
       
       // Generate source map reference
       const sourceMapPath = join(DASHBOARD_DIST, 'multi-layer-graph.js.map');
       await writeFile(sourceMapPath, '// Source map for debugging\n');
-      console.log('🗺️  Source map generated');
+      console.info('🗺️  Source map generated');
     } else {
       console.error('❌ JavaScript bundling failed:', bundled.errors);
     }
@@ -198,12 +198,12 @@ async function optimizeCSS() {
       
       const minifiedPath = cssPath.replace('.css', '.min.css');
       await writeFile(minifiedPath, minifiedCSS);
-      console.log(`🎨 CSS optimized: ${minifiedPath}`);
+      console.info(`🎨 CSS optimized: ${minifiedPath}`);
       
       // Create symlink for dashboard
       const dashboardCSS = join(DASHBOARD_DIST, 'dashboard.min.css');
       await Bun.$`ln -sf ${minifiedPath} ${dashboardCSS}`;
-      console.log('🔗 CSS symlink created');
+      console.info('🔗 CSS symlink created');
       
     } catch (error) {
       console.warn(`⚠️  Failed to optimize CSS ${cssPath}: ${error.message}`);
@@ -273,7 +273,7 @@ async function generateManifest() {
   
   await writeFile(htmlPath, html);
   
-  console.log('📦 Production manifest generated');
+  console.info('📦 Production manifest generated');
 }
 
 /**
@@ -302,7 +302,7 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('📦 Caching dashboard assets');
+        console.info('📦 Caching dashboard assets');
         return cache.addAll(CACHE_URLS);
       })
   );
@@ -386,7 +386,7 @@ self.addEventListener('activate', (event) => {
             window.addEventListener('load', () => {
               navigator.serviceWorker.register('/sw.js')
                 .then((registration) => {
-                  console.log('✅ Service Worker registered:', registration);
+                  console.info('✅ Service Worker registered:', registration);
                 })
                 .catch((error) => {
                   console.warn('⚠️  Service Worker registration failed:', error);
@@ -400,7 +400,7 @@ self.addEventListener('activate', (event) => {
     await writeFile(htmlPath, html);
   }
   
-  console.log('🌐 Service Worker generated for offline support');
+  console.info('🌐 Service Worker generated for offline support');
 }
 
 /**
@@ -458,17 +458,17 @@ async function generatePerformanceReport() {
   const reportPath = join(DASHBOARD_DIST, 'build-report.json');
   await writeFile(reportPath, JSON.stringify(report, null, 2));
   
-  console.log(`📊 Performance report: ${totalSize} bytes total`);
+  console.info(`📊 Performance report: ${totalSize} bytes total`);
 }
 
 /**
  * Main build function
  */
 async function buildDashboard() {
-  console.log('🚀 Building Trader Analyzer Dashboard v0.2.0');
-  console.log(`📁 Source: ${DASHBOARD_SRC}`);
-  console.log(`📦 Output: ${DASHBOARD_DIST}`);
-  console.log(`🌐 Preview: http://localhost:${PORT}\n`);
+  console.info('🚀 Building Trader Analyzer Dashboard v0.2.0');
+  console.info(`📁 Source: ${DASHBOARD_SRC}`);
+  console.info(`📦 Output: ${DASHBOARD_DIST}`);
+  console.info(`🌐 Preview: http://localhost:${PORT}\n`);
   
   await cleanBuildDir();
   await copyStaticAssets();
@@ -478,9 +478,9 @@ async function buildDashboard() {
   await generateServiceWorker();
   await generatePerformanceReport();
   
-  console.log('\n✅ Dashboard build completed successfully!');
-  console.log(`🌐 Preview at: http://localhost:${PORT}/multi-layer-graph.html`);
-  console.log(`📋 Build report: ${join(DASHBOARD_DIST, 'build-report.json')}`);
+  console.info('\n✅ Dashboard build completed successfully!');
+  console.info(`🌐 Preview at: http://localhost:${PORT}/multi-layer-graph.html`);
+  console.info(`📋 Build report: ${join(DASHBOARD_DIST, 'build-report.json')}`);
   
   // Start preview server
   const preview = Bun.spawn(['bun', 'run', 'scripts/dashboard-server.ts'], {
@@ -489,7 +489,7 @@ async function buildDashboard() {
     stderr: 'inherit',
   });
   
-  console.log(`\n🎬 Preview server started - press Ctrl+C to stop\n`);
+  console.info(`\n🎬 Preview server started - press Ctrl+C to stop\n`);
   
   // Wait for server process
   process.on('SIGINT', () => {

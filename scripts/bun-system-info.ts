@@ -168,9 +168,9 @@ async function getGitStatus(): Promise<{ label: string; value: string; status: '
 async function runSystemAnalysis(): Promise<void> {
   const filename = process.argv[2];
 
-  console.log(colorize('🔍 Bun System Info & Project Analysis', 'bright'));
-  console.log(colorize('=====================================', 'cyan'));
-  console.log();
+  console.info(colorize('🔍 Bun System Info & Project Analysis', 'bright'));
+  console.info(colorize('=====================================', 'cyan'));
+  console.info();
 
   const systemInfo: SystemInfo[] = [
     {
@@ -193,22 +193,22 @@ async function runSystemAnalysis(): Promise<void> {
   ];
 
   for (const category of systemInfo) {
-    console.log(colorize(`📊 ${category.category}:`, 'bright'));
+    console.info(colorize(`📊 ${category.category}:`, 'bright'));
     for (const item of category.items) {
       const statusColor = getStatusColor(item.status);
-      console.log(`  ${colorize(item.label + ':', 'cyan')} ${colorize(item.value, statusColor)}`);
+      console.info(`  ${colorize(item.label + ':', 'cyan')} ${colorize(item.value, statusColor)}`);
     }
-    console.log();
+    console.info();
   }
 
   // Quick actions
-  console.log(colorize('🚀 Quick Actions:', 'bright'));
-  console.log(`  Update Bun: ${colorize('bun upgrade', 'yellow')}`);
-  console.log(`  Check all URLs: ${colorize('bun run validate:bun-urls', 'yellow')}`);
-  console.log(`  Advanced validation: ${colorize('bun run validate:github', 'yellow')}`);
-  console.log();
+  console.info(colorize('🚀 Quick Actions:', 'bright'));
+  console.info(`  Update Bun: ${colorize('bun upgrade', 'yellow')}`);
+  console.info(`  Check all URLs: ${colorize('bun run validate:bun-urls', 'yellow')}`);
+  console.info(`  Advanced validation: ${colorize('bun run validate:github', 'yellow')}`);
+  console.info();
 
-  console.log(colorize('✨ System analysis complete!', 'green'));
+  console.info(colorize('✨ System analysis complete!', 'green'));
 }
 
 // Run the analysis

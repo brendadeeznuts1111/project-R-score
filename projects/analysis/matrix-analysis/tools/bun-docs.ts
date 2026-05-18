@@ -52,7 +52,7 @@ const cmd = args[0];
 const rest = args.slice(1);
 
 function usage(): void {
-	console.log(`Bun docs CLI (mcp-bun-docs integration)
+	console.info(`Bun docs CLI (mcp-bun-docs integration)
 Usage:
   bun tools/bun-docs.ts search <query>   Search Bun docs, output markdown
   bun tools/bun-docs.ts entry <term>     Get curated entry (JSON or --url)
@@ -96,7 +96,7 @@ async function main(): Promise<void> {
 		case "search": {
 			const query = rest.join(" ").trim() || "Bun";
 			const markdown = await searchBunDocs(query);
-			console.log(markdown);
+			console.info(markdown);
 			break;
 		}
 		case "entry": {
@@ -112,18 +112,18 @@ async function main(): Promise<void> {
 				process.exit(1);
 			}
 			if (urlOnly) {
-				console.log(buildDocUrl(entry.path));
+				console.info(buildDocUrl(entry.path));
 			} else {
-				console.log(JSON.stringify(entry, null, 2));
+				console.info(JSON.stringify(entry, null, 2));
 			}
 			break;
 		}
 		case "link": {
 			const key = rest[0];
 			if (!key) {
-				console.log("Reference link keys:");
+				console.info("Reference link keys:");
 				for (const k of BUN_REFERENCE_KEYS) {
-					console.log(`  ${k} → ${BUN_REFERENCE_LINKS[k]}`);
+					console.info(`  ${k} → ${BUN_REFERENCE_LINKS[k]}`);
 				}
 				break;
 			}
@@ -132,7 +132,7 @@ async function main(): Promise<void> {
 				console.error(`Unknown key: ${key}. Known: ${BUN_REFERENCE_KEYS.join(", ")}`);
 				process.exit(1);
 			}
-			console.log(getReferenceUrl(k));
+			console.info(getReferenceUrl(k));
 			break;
 		}
 		case "terms": {
@@ -140,23 +140,23 @@ async function main(): Promise<void> {
 			const limit = countArg ? Number.parseInt(countArg.split("=")[1] ?? "0", 10) : 0;
 			const list = limit > 0 ? BUN_DOC_ENTRIES.slice(0, limit) : BUN_DOC_ENTRIES;
 			for (const e of list) {
-				console.log(`${e.term}\t${e.path}\t${e.bunMinVersion}\t${e.stability}`);
+				console.info(`${e.term}\t${e.path}\t${e.bunMinVersion}\t${e.stability}`);
 			}
 			if (limit > 0) {
-				console.log(`... (${BUN_DOC_ENTRIES.length} total, showing ${list.length})`);
+				console.info(`... (${BUN_DOC_ENTRIES.length} total, showing ${list.length})`);
 			} else {
-				console.log(`(${BUN_DOC_ENTRIES.length} terms)`);
+				console.info(`(${BUN_DOC_ENTRIES.length} terms)`);
 			}
 			break;
 		}
 		case "globals": {
-			console.log("Bun top-level globals (name → path):");
+			console.info("Bun top-level globals (name → path):");
 			for (const g of BUN_GLOBALS) {
-				console.log(
+				console.info(
 					`  ${g.name}\t${buildDocUrl(g.path)}\t${g.description.slice(0, 50)}…`,
 				);
 			}
-			console.log(`\nBun.* API (full list): ${BUN_GLOBALS_API_URL}`);
+			console.info(`\nBun.* API (full list): ${BUN_GLOBALS_API_URL}`);
 			break;
 		}
 		case "xrefs": {
@@ -172,64 +172,64 @@ async function main(): Promise<void> {
 					console.error(`No entry and no cross-refs for term: ${term}`);
 					process.exit(1);
 				}
-				console.log(`No relatedTerms for "${term}". Doc: ${buildDocUrl(e.path)}`);
+				console.info(`No relatedTerms for "${term}". Doc: ${buildDocUrl(e.path)}`);
 			} else {
-				console.log(`Cross-references for "${term}":`);
+				console.info(`Cross-references for "${term}":`);
 				for (const x of xrefs) {
-					console.log(`  ${x.term}\t${x.url}`);
+					console.info(`  ${x.term}\t${x.url}`);
 				}
 			}
 			break;
 		}
 		case "feedback": {
-			console.log(BUN_FEEDBACK_UPGRADE_FIRST);
-			console.log(`\nDocs: ${BUN_FEEDBACK_URL}`);
+			console.info(BUN_FEEDBACK_UPGRADE_FIRST);
+			console.info(`\nDocs: ${BUN_FEEDBACK_URL}`);
 			break;
 		}
 		case "shop": {
-			console.log(BUN_SHOP_URL);
+			console.info(BUN_SHOP_URL);
 			break;
 		}
 		case "blog": {
-			console.log(BUN_BLOG_URL);
+			console.info(BUN_BLOG_URL);
 			break;
 		}
 		case "guides": {
-			console.log(BUN_GUIDES_URL);
+			console.info(BUN_GUIDES_URL);
 			break;
 		}
 		case "rss": {
-			console.log("Changelog/releases:", BUN_CHANGELOG_RSS);
-			console.log("Blog (optional #tag= filter):", BUN_BLOG_RSS_URL);
+			console.info("Changelog/releases:", BUN_CHANGELOG_RSS);
+			console.info("Blog (optional #tag= filter):", BUN_BLOG_RSS_URL);
 			break;
 		}
 		case "repo": {
-			console.log("Repo:", BUN_REPO_URL);
-			console.log("Releases:", BUN_REPO_RELEASES_URL);
+			console.info("Repo:", BUN_REPO_URL);
+			console.info("Releases:", BUN_REPO_RELEASES_URL);
 			break;
 		}
 		case "deps": {
-			console.log("Package manager:", BUN_PM_URL);
-			console.log("Add dependency guide:", BUN_INSTALL_ADD_URL);
+			console.info("Package manager:", BUN_PM_URL);
+			console.info("Add dependency guide:", BUN_INSTALL_ADD_URL);
 			break;
 		}
 		case "compat": {
-			console.log(BUN_NODE_COMPAT_URL);
+			console.info(BUN_NODE_COMPAT_URL);
 			break;
 		}
 		case "reference": {
-			console.log(BUN_REFERENCE_URL);
+			console.info(BUN_REFERENCE_URL);
 			break;
 		}
 		case "latest": {
 			const title = await getLatestBunReleaseTitleFromRss();
-			console.log(title ?? "(fetch failed or no item title)");
+			console.info(title ?? "(fetch failed or no item title)");
 			break;
 		}
 		case "version": {
-			console.log(`BUN_DOCS_VERSION=${BUN_DOCS_VERSION}`);
-			console.log(`BUN_DOCS_MIN_VERSION=${BUN_DOCS_MIN_VERSION}`);
-			console.log(`BUN_DOCS_BASE=${BUN_DOCS_BASE}`);
+			console.info(`BUN_DOCS_VERSION=${BUN_DOCS_VERSION}`);
+			console.info(`BUN_DOCS_MIN_VERSION=${BUN_DOCS_MIN_VERSION}`);
+			console.info(`BUN_DOCS_BASE=${BUN_DOCS_BASE}`);
 			break;
 		}
 		case "-h":

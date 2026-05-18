@@ -99,9 +99,9 @@ class CanvasMonitorSystem {
      */
     async startCanvasMonitoring(): Promise<void> {
         console.clear();
-        console.log(chalk.magenta.bold('🎨 Canvas Visual Monitoring System'));
-        console.log(chalk.gray('Powered by Bun Utilities Mastery - Visual Canvas Analytics & Health Tracking'));
-        console.log(chalk.gray('═'.repeat(120)));
+        console.info(chalk.magenta.bold('🎨 Canvas Visual Monitoring System'));
+        console.info(chalk.gray('Powered by Bun Utilities Mastery - Visual Canvas Analytics & Health Tracking'));
+        console.info(chalk.gray('═'.repeat(120)));
 
         // Scan for canvas files
         await this.scanCanvasFiles();
@@ -224,8 +224,8 @@ class CanvasMonitorSystem {
      * Display canvas overview with key metrics
      */
     private displayCanvasOverview(): void {
-        console.log(chalk.cyan.bold('\n📊 Canvas Overview'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.cyan.bold('\n📊 Canvas Overview'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const overviewData = [
             {
@@ -262,7 +262,7 @@ class CanvasMonitorSystem {
             }
         ];
 
-        console.log(Bun.inspect.table(overviewData, {}, {
+        console.info(Bun.inspect.table(overviewData, {}, {
             colors: true,
             maxStringLength: 18,
             compact: false
@@ -273,8 +273,8 @@ class CanvasMonitorSystem {
      * Display visual analytics
      */
     private displayVisualAnalytics(): void {
-        console.log(chalk.magenta.bold('\n🎨 Visual Analytics'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.magenta.bold('\n🎨 Visual Analytics'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const analyticsData = [
             {
@@ -315,7 +315,7 @@ class CanvasMonitorSystem {
             }
         ];
 
-        console.log(Bun.inspect.table(analyticsData, {}, {
+        console.info(Bun.inspect.table(analyticsData, {}, {
             colors: true,
             maxStringLength: 20,
             compact: false
@@ -326,8 +326,8 @@ class CanvasMonitorSystem {
      * Display directory breakdown
      */
     private displayDirectoryBreakdown(): void {
-        console.log(chalk.blue.bold('\n📁 Directory Breakdown'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.blue.bold('\n📁 Directory Breakdown'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const directoryMap = new Map<string, CanvasFile[]>();
 
@@ -350,7 +350,7 @@ class CanvasMonitorSystem {
             'Priority': this.getDirectoryPriority(canvases)
         }));
 
-        console.log(Bun.inspect.table(directoryData, {}, {
+        console.info(Bun.inspect.table(directoryData, {}, {
             colors: true,
             maxStringLength: 18,
             compact: false
@@ -361,8 +361,8 @@ class CanvasMonitorSystem {
      * Display complexity analysis
      */
     private displayComplexityAnalysis(): void {
-        console.log(chalk.yellow.bold('\n🧩 Complexity Analysis'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.yellow.bold('\n🧩 Complexity Analysis'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const complexityCategories = {
             'Simple': { min: 0, max: 10 },
@@ -389,7 +389,7 @@ class CanvasMonitorSystem {
             };
         });
 
-        console.log(Bun.inspect.table(complexityData, {}, {
+        console.info(Bun.inspect.table(complexityData, {}, {
             colors: true,
             maxStringLength: 16,
             compact: false
@@ -400,8 +400,8 @@ class CanvasMonitorSystem {
      * Display size distribution
      */
     private displaySizeDistribution(): void {
-        console.log(chalk.green.bold('\n📦 Size Distribution'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.green.bold('\n📦 Size Distribution'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const sizeCategories = {
             'Small': { max: 10 * 1024 }, // < 10KB
@@ -429,7 +429,7 @@ class CanvasMonitorSystem {
             };
         });
 
-        console.log(Bun.inspect.table(sizeData, {}, {
+        console.info(Bun.inspect.table(sizeData, {}, {
             colors: true,
             maxStringLength: 16,
             compact: false
@@ -440,8 +440,8 @@ class CanvasMonitorSystem {
      * Display detailed canvas information
      */
     private displayCanvasDetails(): void {
-        console.log(chalk.cyan.bold('\n🎨 Canvas Details'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.cyan.bold('\n🎨 Canvas Details'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const canvasData = this.canvasFiles.map(canvas => ({
             'Name': canvas.name,
@@ -457,7 +457,7 @@ class CanvasMonitorSystem {
             'Priority': this.getCanvasPriority(canvas)
         }));
 
-        console.log(Bun.inspect.table(canvasData, {}, {
+        console.info(Bun.inspect.table(canvasData, {}, {
             colors: true,
             maxStringLength: 15,
             compact: false
@@ -468,8 +468,8 @@ class CanvasMonitorSystem {
      * Display health assessment
      */
     private displayHealthAssessment(): void {
-        console.log(chalk.red.bold('\n🏥 Canvas Health Assessment'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.red.bold('\n🏥 Canvas Health Assessment'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const healthData = [
             {
@@ -510,7 +510,7 @@ class CanvasMonitorSystem {
             }
         ];
 
-        console.log(Bun.inspect.table(healthData, {}, {
+        console.info(Bun.inspect.table(healthData, {}, {
             colors: true,
             maxStringLength: 18,
             compact: false
@@ -904,14 +904,14 @@ class CanvasMonitorSystem {
     }
 
     private displayHeader(): void {
-        console.log(chalk.magenta.bold(`🎨 Canvas Visual Monitoring System - ${this.metrics.totalCanvases} Canvases Found`));
-        console.log(chalk.gray('═'.repeat(120)));
+        console.info(chalk.magenta.bold(`🎨 Canvas Visual Monitoring System - ${this.metrics.totalCanvases} Canvases Found`));
+        console.info(chalk.gray('═'.repeat(120)));
     }
 
     private displayFooter(): void {
-        console.log(chalk.gray('─'.repeat(120)));
-        console.log(chalk.blue('Controls: [Ctrl+C] Exit | [Space] Refresh | [D] Deep Analysis | [E] Export Report'));
-        console.log(chalk.gray(`Last Scan: ${this.metrics.lastUpdated.toLocaleTimeString()} | Total Nodes: ${this.metrics.totalNodes} | Total Connections: ${this.metrics.totalConnections}`));
+        console.info(chalk.gray('─'.repeat(120)));
+        console.info(chalk.blue('Controls: [Ctrl+C] Exit | [Space] Refresh | [D] Deep Analysis | [E] Export Report'));
+        console.info(chalk.gray(`Last Scan: ${this.metrics.lastUpdated.toLocaleTimeString()} | Total Nodes: ${this.metrics.totalNodes} | Total Connections: ${this.metrics.totalConnections}`));
     }
 }
 
@@ -923,13 +923,13 @@ async function main(): Promise<void> {
     const args = process.argv.slice(2);
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.magenta.bold('🎨 Canvas Visual Monitoring System'));
-        console.log(chalk.gray('Usage: bun canvas-monitor.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
-        console.log(chalk.gray('  --demo       Run demo mode with sample data'));
-        console.log(chalk.gray('  --scan-only  Perform single scan and exit'));
-        console.log(chalk.gray('\nFeatures: Canvas file analysis, visual analytics, complexity assessment'));
+        console.info(chalk.magenta.bold('🎨 Canvas Visual Monitoring System'));
+        console.info(chalk.gray('Usage: bun canvas-monitor.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.gray('  --demo       Run demo mode with sample data'));
+        console.info(chalk.gray('  --scan-only  Perform single scan and exit'));
+        console.info(chalk.gray('\nFeatures: Canvas file analysis, visual analytics, complexity assessment'));
         process.exit(0);
     }
 
@@ -943,7 +943,7 @@ async function main(): Promise<void> {
         } else if (args.includes('--scan-only')) {
             // Scan only mode
             await monitor.scanCanvasFiles();
-            console.log(chalk.green('✅ Canvas scan completed'));
+            console.info(chalk.green('✅ Canvas scan completed'));
         } else {
             // Full monitoring mode
             await monitor.startCanvasMonitoring();

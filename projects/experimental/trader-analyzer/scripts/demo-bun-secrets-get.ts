@@ -29,26 +29,26 @@ async function getBunApiKey() {
 				? `${apiKey.slice(0, 4)}${"*".repeat(apiKey.length - 8)}${apiKey.slice(-4)}`
 				: "*".repeat(apiKey.length);
 
-			console.log("✅ Bun MCP API key retrieved successfully!");
-			console.log(`   Masked: ${masked}`);
-			console.log(`   Length: ${apiKey.length} characters`);
-			console.log(`\n   Retrieved using:`);
-			console.log(`   Bun.secrets.get({`);
-			console.log(`     service: "${SERVICE}",`);
-			console.log(`     name: "${SECRET_NAME}"`);
-			console.log(`   })`);
+			console.info("✅ Bun MCP API key retrieved successfully!");
+			console.info(`   Masked: ${masked}`);
+			console.info(`   Length: ${apiKey.length} characters`);
+			console.info(`\n   Retrieved using:`);
+			console.info(`   Bun.secrets.get({`);
+			console.info(`     service: "${SERVICE}",`);
+			console.info(`     name: "${SECRET_NAME}"`);
+			console.info(`   })`);
 			
 			return apiKey;
 		} else {
-			console.log("ℹ️  No API key found");
-			console.log(`\n   To set an API key:`);
-			console.log(`   await secrets.set(`);
-			console.log(`     {`);
-			console.log(`       service: "${SERVICE}",`);
-			console.log(`       name: "${SECRET_NAME}"`);
-			console.log(`     },`);
-			console.log(`     "your-api-key-here"`);
-			console.log(`   );`);
+			console.info("ℹ️  No API key found");
+			console.info(`\n   To set an API key:`);
+			console.info(`   await secrets.set(`);
+			console.info(`     {`);
+			console.info(`       service: "${SERVICE}",`);
+			console.info(`       name: "${SECRET_NAME}"`);
+			console.info(`     },`);
+			console.info(`     "your-api-key-here"`);
+			console.info(`   );`);
 			return null;
 		}
 	} catch (error) {
@@ -59,7 +59,7 @@ async function getBunApiKey() {
 
 // Run demo
 if (import.meta.main) {
-	console.log("🔐 Demo: Using Bun.secrets.get() to retrieve Bun MCP API key\n");
+	console.info("🔐 Demo: Using Bun.secrets.get() to retrieve Bun MCP API key\n");
 	getBunApiKey().catch((error) => {
 		console.error("❌ Error:", error);
 		process.exit(1);

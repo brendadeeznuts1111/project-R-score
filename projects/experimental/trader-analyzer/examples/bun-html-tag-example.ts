@@ -34,9 +34,9 @@ function example1_BasicHTML() {
 		</html>
 	`;
 
-	console.log("Example 1: Basic HTML");
-	console.log(htmlContent);
-	console.log("\n");
+	console.info("Example 1: Basic HTML");
+	console.info(htmlContent);
+	console.info("\n");
 }
 
 /**
@@ -84,9 +84,9 @@ function example2_DynamicContent() {
 		</html>
 	`;
 
-	console.log("Example 2: Dynamic Content");
-	console.log(htmlContent);
-	console.log("\n");
+	console.info("Example 2: Dynamic Content");
+	console.info(htmlContent);
+	console.info("\n");
 }
 
 /**
@@ -119,9 +119,9 @@ function example3_NestedTemplates() {
 		</html>
 	`;
 
-	console.log("Example 3: Nested Templates");
-	console.log(htmlContent);
-	console.log("\n");
+	console.info("Example 3: Nested Templates");
+	console.info(htmlContent);
+	console.info("\n");
 }
 
 /**
@@ -148,9 +148,9 @@ function example4_ConditionalRendering() {
 		</html>
 	`;
 
-	console.log("Example 4: Conditional Rendering");
-	console.log(htmlContent);
-	console.log("\n");
+	console.info("Example 4: Conditional Rendering");
+	console.info(htmlContent);
+	console.info("\n");
 }
 
 /**
@@ -161,8 +161,8 @@ function example5_XSSPrevention() {
 	const maliciousInput = '<script>alert("XSS Attack!")</script>';
 	const maliciousAttribute = 'class" onclick="alert(1)"';
 
-	console.log("Example 5: XSS Prevention");
-	console.log("Malicious input:", maliciousInput);
+	console.info("Example 5: XSS Prevention");
+	console.info("Malicious input:", maliciousInput);
 
 	// Safe HTML generation (automatically escaped)
 	const safeHTML = html`
@@ -171,9 +171,9 @@ function example5_XSSPrevention() {
 		</div>
 	`;
 
-	console.log("Safe HTML (escaped):");
-	console.log(safeHTML);
-	console.log("\n");
+	console.info("Safe HTML (escaped):");
+	console.info(safeHTML);
+	console.info("\n");
 }
 
 // ============================================================================
@@ -239,10 +239,10 @@ function example6_HonoIntegration() {
 		return c.html(htmlContent);
 	});
 
-	console.log("Example 6: Hono Integration");
-	console.log("Route handler created: GET /dashboard");
-	console.log("Use with: const server = Bun.serve({ fetch: app.fetch });");
-	console.log("\n");
+	console.info("Example 6: Hono Integration");
+	console.info("Route handler created: GET /dashboard");
+	console.info("Use with: const server = Bun.serve({ fetch: app.fetch });");
+	console.info("\n");
 }
 
 /**
@@ -307,9 +307,9 @@ function example7_ComplexTable() {
 		</html>
 	`;
 
-	console.log("Example 7: Complex Table");
-	console.log(htmlContent);
-	console.log("\n");
+	console.info("Example 7: Complex Table");
+	console.info(htmlContent);
+	console.info("\n");
 }
 
 // ============================================================================
@@ -317,10 +317,10 @@ function example7_ComplexTable() {
 // ============================================================================
 
 if (import.meta.main) {
-	console.log("=".repeat(60));
-	console.log("Bun 1.3 HTML Tag Examples");
-	console.log("=".repeat(60));
-	console.log("\n");
+	console.info("=".repeat(60));
+	console.info("Bun 1.3 HTML Tag Examples");
+	console.info("=".repeat(60));
+	console.info("\n");
 
 	example1_BasicHTML();
 	example2_DynamicContent();
@@ -330,9 +330,9 @@ if (import.meta.main) {
 	example6_HonoIntegration();
 	example7_ComplexTable();
 
-	console.log("=".repeat(60));
-	console.log("All examples completed!");
-	console.log("=".repeat(60));
+	console.info("=".repeat(60));
+	console.info("All examples completed!");
+	console.info("=".repeat(60));
 }
 
 export {

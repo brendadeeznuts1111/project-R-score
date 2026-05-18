@@ -29,7 +29,7 @@ interface CLIOptions {
 }
 
 function printUsage(): void {
-	console.log(`
+	console.info(`
 RSS Secrets CLI - Standalone Demo
 
 Usage:
@@ -89,7 +89,7 @@ function parseCLIOptions(): CLIOptions {
 }
 
 async function runDemo(): Promise<void> {
-	console.log(`
+	console.info(`
 ╔════════════════════════════════════════════════════════════════╗
 ║     RSS Secrets Integration Demo                               ║
 ║     (Hybrid Config + Template Engine)                          ║
@@ -97,14 +97,14 @@ async function runDemo(): Promise<void> {
 `);
 
 	// Show current configuration
-	console.log("📋 Configuration Context:");
-	console.log(
+	console.info("📋 Configuration Context:");
+	console.info(
 		formatConfigSummary(resolveAllConfig({ args: process.argv.slice(2) })),
 	);
 
 	// Load example config
 	const configPath = "./config/rss-example.toml";
-	console.log(`\n📰 Loading: ${configPath}`);
+	console.info(`\n📰 Loading: ${configPath}`);
 
 	const manager = new RSSSecretsManager();
 
@@ -112,48 +112,48 @@ async function runDemo(): Promise<void> {
 		await manager.loadConfig(configPath, { verbose: false, strict: false });
 
 		const summary = manager.getSummary();
-		console.log(`\n✅ Loaded:`);
-		console.log(`   • ${summary.feeds} feeds`);
-		console.log(`   • ${summary.apis} APIs`);
-		console.log(`   • Profile: ${summary.profile}`);
-		console.log(`   • Source: ${summary.contextSource}`);
+		console.info(`\n✅ Loaded:`);
+		console.info(`   • ${summary.feeds} feeds`);
+		console.info(`   • ${summary.apis} APIs`);
+		console.info(`   • Profile: ${summary.profile}`);
+		console.info(`   • Source: ${summary.contextSource}`);
 
 		// List feeds
-		console.log(`\n📋 Feeds:`);
+		console.info(`\n📋 Feeds:`);
 		manager.getFeeds().forEach((feed, i) => {
 			const auth = feed.api_key_ref ? "🔐" : "🔓";
 			const cats = feed.categories?.join(", ") ?? "none";
-			console.log(`   ${i + 1}. ${auth} ${feed.name} (${cats})`);
+			console.info(`   ${i + 1}. ${auth} ${feed.name} (${cats})`);
 		});
 
 		// Show APIs
-		console.log(`\n🔑 APIs:`);
+		console.info(`\n🔑 APIs:`);
 		const apis = ["newsapi", "feedly"];
 		apis.forEach((name) => {
 			const api = manager.getAPI(name);
 			if (api) {
-				console.log(`   • ${name}: ${api.endpoint}`);
-				console.log(`     Rate limit: ${api.rate_limit ?? "unlimited"}/min`);
+				console.info(`   • ${name}: ${api.endpoint}`);
+				console.info(`     Rate limit: ${api.rate_limit ?? "unlimited"}/min`);
 			}
 		});
 
 		// Show categories
-		console.log(`\n🏷️  By Category:`);
+		console.info(`\n🏷️  By Category:`);
 		const categories = new Set(
 			manager.getFeeds().flatMap((f) => f.categories ?? []),
 		);
 		for (const category of categories) {
 			const count = manager.getFeedsByCategory(category).length;
-			console.log(`   • ${category}: ${count} feed(s)`);
+			console.info(`   • ${category}: ${count} feed(s)`);
 		}
 
-		console.log(`\n✨ Demo complete!`);
+		console.info(`\n✨ Demo complete!`);
 	} catch (error: any) {
 		console.error(`\n❌ Error: ${error.message}`);
-		console.log("\n💡 The example config uses secret placeholders like:");
-		console.log("   ${secrets:production:NEWSAPI_KEY}");
-		console.log("\n   These show as '[MISSING:...]' when secrets aren't set.");
-		console.log("   This is expected behavior for the demo!");
+		console.info("\n💡 The example config uses secret placeholders like:");
+		console.info("   ${secrets:production:NEWSAPI_KEY}");
+		console.info("\n   These show as '[MISSING:...]' when secrets aren't set.");
+		console.info("   This is expected behavior for the demo!");
 	}
 }
 

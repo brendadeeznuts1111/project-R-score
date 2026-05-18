@@ -27,7 +27,7 @@ const doNotTrack = EnvManager.getBoolean("DO_NOT_TRACK");    // boolean
 // Validation – throws if missing
 try {
   EnvManager.validateRequired(["FW_MODE", "FW_LOG_LEVEL"]);
-  console.log("✅ Required environment variables validated");
+  console.info("✅ Required environment variables validated");
 } catch (error) {
   console.error("❌ Validation failed:", (error as Error).message);
 }
@@ -36,36 +36,36 @@ try {
 const fwConfig = EnvManager.getFactoryWagerConfig();
 const bunConfig = EnvManager.getBunConfig();
 
-console.log("🔧 EnvManager Usage Examples");
-console.log("============================");
+console.info("🔧 EnvManager Usage Examples");
+console.info("============================");
 
-console.log("\n📋 Basic Usage:");
-console.log(`  Profile: ${session || "None"}`);
-console.log(`  Mode: ${mode}`);
-console.log(`  Max Rows: ${rows}`);
-console.log(`  Debug: ${debug ? "enabled" : "disabled"}`);
+console.info("\n📋 Basic Usage:");
+console.info(`  Profile: ${session || "None"}`);
+console.info(`  Mode: ${mode}`);
+console.info(`  Max Rows: ${rows}`);
+console.info(`  Debug: ${debug ? "enabled" : "disabled"}`);
 
-console.log("\n🏭 FactoryWager Configuration:");
-console.log(`  Mode: ${fwConfig.mode}`);
-console.log(`  Log Level: ${fwConfig.logLevel}`);
-console.log(`  Report Format: ${fwConfig.reportFormat}`);
-console.log(`  Output Dir: ${fwConfig.outputDir}`);
-console.log(`  Config Dir: ${fwConfig.configDir}`);
-console.log(`  Audit Mode: ${fwConfig.auditMode ? "enabled" : "disabled"}`);
-console.log(`  Debug: ${fwConfig.debug ? "enabled" : "disabled"}`);
+console.info("\n🏭 FactoryWager Configuration:");
+console.info(`  Mode: ${fwConfig.mode}`);
+console.info(`  Log Level: ${fwConfig.logLevel}`);
+console.info(`  Report Format: ${fwConfig.reportFormat}`);
+console.info(`  Output Dir: ${fwConfig.outputDir}`);
+console.info(`  Config Dir: ${fwConfig.configDir}`);
+console.info(`  Audit Mode: ${fwConfig.auditMode ? "enabled" : "disabled"}`);
+console.info(`  Debug: ${fwConfig.debug ? "enabled" : "disabled"}`);
 
-console.log("\n🥟 Bun Configuration:");
-console.log(`  TLS Reject Unauthorized: ${bunConfig.tlsRejectUnauthorized ? "enabled" : "disabled"}`);
-console.log(`  Verbose Fetch: ${bunConfig.verboseFetch}`);
-console.log(`  Max HTTP Requests: ${bunConfig.maxHttpRequests}`);
-console.log(`  No Clear Terminal: ${bunConfig.noClearTerminalOnReload ? "enabled" : "disabled"}`);
-console.log(`  Do Not Track: ${bunConfig.doNotTrack ? "enabled" : "disabled"}`);
-console.log(`  Force Color: ${bunConfig.forceColor ? "enabled" : "disabled"}`);
-console.log(`  No Color: ${bunConfig.noColor ? "enabled" : "disabled"}`);
+console.info("\n🥟 Bun Configuration:");
+console.info(`  TLS Reject Unauthorized: ${bunConfig.tlsRejectUnauthorized ? "enabled" : "disabled"}`);
+console.info(`  Verbose Fetch: ${bunConfig.verboseFetch}`);
+console.info(`  Max HTTP Requests: ${bunConfig.maxHttpRequests}`);
+console.info(`  No Clear Terminal: ${bunConfig.noClearTerminalOnReload ? "enabled" : "disabled"}`);
+console.info(`  Do Not Track: ${bunConfig.doNotTrack ? "enabled" : "disabled"}`);
+console.info(`  Force Color: ${bunConfig.forceColor ? "enabled" : "disabled"}`);
+console.info(`  No Color: ${bunConfig.noColor ? "enabled" : "disabled"}`);
 
 // Type safety demonstration
 function demonstrateTypeSafety() {
-  console.log("\n🎯 Type Safety Demonstration:");
+  console.info("\n🎯 Type Safety Demonstration:");
 
   // These are all fully typed - no 'any' anywhere
   const typedMode: "development" | "production" | "testing" | "audit" | "demo" = mode;
@@ -74,44 +74,44 @@ function demonstrateTypeSafety() {
   const typedLogLevel: "debug" | "info" | "warn" | "error" = logLevel || "info";
   const typedReportFormat: "html" | "ansi" | "markdown" | "react" = reportFormat || "html";
 
-  console.log(`  ✅ Mode type: ${typedMode} (${typeof typedMode})`);
-  console.log(`  ✅ Rows type: ${typedRows} (${typeof typedRows})`);
-  console.log(`  ✅ Debug type: ${typedDebug} (${typeof typedDebug})`);
-  console.log(`  ✅ Log Level type: ${typedLogLevel} (${typeof typedLogLevel})`);
-  console.log(`  ✅ Report Format type: ${typedReportFormat} (${typeof typedReportFormat})`);
+  console.info(`  ✅ Mode type: ${typedMode} (${typeof typedMode})`);
+  console.info(`  ✅ Rows type: ${typedRows} (${typeof typedRows})`);
+  console.info(`  ✅ Debug type: ${typedDebug} (${typeof typedDebug})`);
+  console.info(`  ✅ Log Level type: ${typedLogLevel} (${typeof typedLogLevel})`);
+  console.info(`  ✅ Report Format type: ${typedReportFormat} (${typeof typedReportFormat})`);
 
   // Union type safety
   if (tlsRejectUnauthorized === "0") {
-    console.log(`  ⚠️  SSL validation disabled (type: ${typeof tlsRejectUnauthorized})`);
+    console.info(`  ⚠️  SSL validation disabled (type: ${typeof tlsRejectUnauthorized})`);
   } else if (tlsRejectUnauthorized === "1") {
-    console.log(`  ✅ SSL validation enabled (type: ${typeof tlsRejectUnauthorized})`);
+    console.info(`  ✅ SSL validation enabled (type: ${typeof tlsRejectUnauthorized})`);
   } else {
-    console.log(`  ❓ SSL validation not set (type: ${typeof tlsRejectUnauthorized})`);
+    console.info(`  ❓ SSL validation not set (type: ${typeof tlsRejectUnauthorized})`);
   }
 }
 
 // Runtime validation demonstration
 function demonstrateRuntimeValidation() {
-  console.log("\n🛡️ Runtime Validation:");
+  console.info("\n🛡️ Runtime Validation:");
 
   try {
     // This will throw if required variables are missing
     EnvManager.validateRequired(["FW_MODE", "FW_LOG_LEVEL"]);
-    console.log("  ✅ Required variables present");
+    console.info("  ✅ Required variables present");
   } catch (error) {
-    console.log(`  ❌ Validation error: ${(error as Error).message}`);
+    console.info(`  ❌ Validation error: ${(error as Error).message}`);
   }
 
   // Safe number parsing
   const parsedTimeout = EnvManager.getNumber("FW_TIMEOUT");
   const safeTimeout = EnvManager.getNumberOrDefault("FW_TIMEOUT", 30000);
-  console.log(`  ✅ Parsed timeout: ${parsedTimeout || "undefined"} (${typeof parsedTimeout})`);
-  console.log(`  ✅ Safe timeout: ${safeTimeout} (${typeof safeTimeout})`);
+  console.info(`  ✅ Parsed timeout: ${parsedTimeout || "undefined"} (${typeof parsedTimeout})`);
+  console.info(`  ✅ Safe timeout: ${safeTimeout} (${typeof safeTimeout})`);
 }
 
 // Advanced usage demonstration
 function demonstrateAdvancedUsage() {
-  console.log("\n🚀 Advanced Usage:");
+  console.info("\n🚀 Advanced Usage:");
 
   // Complex configuration object
   const complexConfig = {
@@ -136,13 +136,13 @@ function demonstrateAdvancedUsage() {
     }
   };
 
-  console.log(`  ✅ Is Production: ${complexConfig.factoryWager.computed.isProduction}`);
-  console.log(`  ✅ Is Debug Mode: ${complexConfig.factoryWager.computed.isDebugMode}`);
-  console.log(`  ✅ Has Profile: ${complexConfig.factoryWager.computed.hasProfile}`);
-  console.log(`  ✅ Has Verbose Fetch: ${complexConfig.bun.computed.hasVerboseFetch}`);
-  console.log(`  ✅ Is Secure: ${complexConfig.bun.computed.isSecure}`);
-  console.log(`  ✅ Has Telemetry: ${complexConfig.bun.computed.hasTelemetry}`);
-  console.log(`  ✅ Color Enabled: ${complexConfig.bun.computed.colorEnabled}`);
+  console.info(`  ✅ Is Production: ${complexConfig.factoryWager.computed.isProduction}`);
+  console.info(`  ✅ Is Debug Mode: ${complexConfig.factoryWager.computed.isDebugMode}`);
+  console.info(`  ✅ Has Profile: ${complexConfig.factoryWager.computed.hasProfile}`);
+  console.info(`  ✅ Has Verbose Fetch: ${complexConfig.bun.computed.hasVerboseFetch}`);
+  console.info(`  ✅ Is Secure: ${complexConfig.bun.computed.isSecure}`);
+  console.info(`  ✅ Has Telemetry: ${complexConfig.bun.computed.hasTelemetry}`);
+  console.info(`  ✅ Color Enabled: ${complexConfig.bun.computed.colorEnabled}`);
 }
 
 // Run all demonstrations
@@ -150,9 +150,9 @@ demonstrateTypeSafety();
 demonstrateRuntimeValidation();
 demonstrateAdvancedUsage();
 
-console.log("\n🎉 EnvManager Test Complete!");
-console.log("✅ All operations fully typed with zero 'any' usage");
-console.log("✅ Runtime validation working correctly");
-console.log("✅ Type safety maintained throughout");
+console.info("\n🎉 EnvManager Test Complete!");
+console.info("✅ All operations fully typed with zero 'any' usage");
+console.info("✅ Runtime validation working correctly");
+console.info("✅ Type safety maintained throughout");
 
 export { EnvManager };

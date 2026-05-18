@@ -32,11 +32,11 @@ export interface ParsedID {
  * const id1 = generator.next();
  * const id2 = generator.next();
  * 
- * console.log('Generated ID 1:', id1);
- * console.log('Generated ID 2:', id2);
+ * console.info('Generated ID 1:', id1);
+ * console.info('Generated ID 2:', id2);
  * 
  * const parsed = generator.parse(id1);
- * console.log('Parsed ID:', parsed);
+ * console.info('Parsed ID:', parsed);
  * // { timestamp: 1234567890123, nodeId: 42, sequence: 0, uuid: '...' }
  * ```
  */

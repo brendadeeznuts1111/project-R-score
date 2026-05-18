@@ -181,7 +181,7 @@ class ProductionValidator {
   }
 
   public async validate(): Promise<ValidationResult[]> {
-    console.log('🔍 Validating production readiness...');
+    console.info('🔍 Validating production readiness...');
 
     this.checkConfiguration();
     this.checkDocker();
@@ -196,8 +196,8 @@ class ProductionValidator {
   public printResults(results: ValidationResult[]): void {
     const categories = [...new Set(results.map(r => r.category))];
 
-    console.log('\n🏭 Production Readiness Validation Results');
-    console.log('='.repeat(60));
+    console.info('\n🏭 Production Readiness Validation Results');
+    console.info('='.repeat(60));
 
     let totalChecks = 0;
     let passedChecks = 0;
@@ -205,7 +205,7 @@ class ProductionValidator {
     let failedChecks = 0;
 
     for (const category of categories) {
-      console.log(`\n📂 ${category}:`);
+      console.info(`\n📂 ${category}:`);
       const categoryResults = results.filter(r => r.category === category);
 
       for (const result of categoryResults) {
@@ -226,26 +226,26 @@ class ProductionValidator {
             break;
         }
 
-        console.log(`  ${icon} ${result.check}: ${result.message}`);
+        console.info(`  ${icon} ${result.check}: ${result.message}`);
         if (result.details) {
-          console.log(`    💡 ${result.details}`);
+          console.info(`    💡 ${result.details}`);
         }
       }
     }
 
-    console.log('\n📊 Summary:');
-    console.log(`  Total checks: ${totalChecks}`);
-    console.log(`  ✅ Passed: ${passedChecks}`);
-    console.log(`  ⚠️  Warnings: ${warningChecks}`);
-    console.log(`  ❌ Failed: ${failedChecks}`);
+    console.info('\n📊 Summary:');
+    console.info(`  Total checks: ${totalChecks}`);
+    console.info(`  ✅ Passed: ${passedChecks}`);
+    console.info(`  ⚠️  Warnings: ${warningChecks}`);
+    console.info(`  ❌ Failed: ${failedChecks}`);
 
     const ready = failedChecks === 0 && warningChecks <= 2;
-    console.log(`\n🎯 Production Ready: ${ready ? 'YES' : 'NO'}`);
+    console.info(`\n🎯 Production Ready: ${ready ? 'YES' : 'NO'}`);
 
     if (!ready) {
-      console.log('\n🔧 Recommended actions:');
+      console.info('\n🔧 Recommended actions:');
       results.filter(r => r.status !== 'pass').forEach(result => {
-        console.log(`  - ${result.check}: ${result.details || result.message}`);
+        console.info(`  - ${result.check}: ${result.details || result.message}`);
       });
     }
   }

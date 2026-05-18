@@ -42,10 +42,10 @@ class WikiPageBuilder {
   }
 
   async build(): Promise<void> {
-    console.log('🏗️ Building Wiki Pages');
-    console.log('!==!==!==!==');
-    console.log(`📂 Source: ${this.source}`);
-    console.log(`📂 Output: ${this.output}`);
+    console.info('🏗️ Building Wiki Pages');
+    console.info('!==!==!==!==');
+    console.info(`📂 Source: ${this.source}`);
+    console.info(`📂 Output: ${this.output}`);
 
     try {
       // Setup output directory
@@ -63,7 +63,7 @@ class WikiPageBuilder {
       // Generate sitemap
       await this.generateSitemap();
 
-      console.log(`\n✅ Built ${this.pages.size} wiki pages successfully!`);
+      console.info(`\n✅ Built ${this.pages.size} wiki pages successfully!`);
     } catch (error) {
       console.error('❌ Wiki build failed:', error);
       process.exit(1);
@@ -86,7 +86,7 @@ class WikiPageBuilder {
   }
 
   private async processWikiFiles(): Promise<void> {
-    console.log('\n📄 Processing wiki files...');
+    console.info('\n📄 Processing wiki files...');
 
     if (!existsSync(this.source)) {
       console.error(`❌ Source directory not found: ${this.source}`);
@@ -117,7 +117,7 @@ class WikiPageBuilder {
     const outputPath = join(subdir, `${filename}.html`);
 
     if (this.options.verbose) {
-      console.log(`  📝 Processing: ${join(subdir, filename)}.md`);
+      console.info(`  📝 Processing: ${join(subdir, filename)}.md`);
     }
 
     // Parse metadata and content
@@ -414,7 +414,7 @@ class WikiPageBuilder {
   }
 
   private async generateNavigation(): Promise<void> {
-    console.log('\n🧭 Generating navigation...');
+    console.info('\n🧭 Generating navigation...');
 
     const nav = {
       sections: [
@@ -438,11 +438,11 @@ class WikiPageBuilder {
     // Save navigation JSON
     writeFileSync(join(this.output, 'navigation.json'), JSON.stringify(nav, null, 2));
 
-    console.log('✅ Navigation generated');
+    console.info('✅ Navigation generated');
   }
 
   private async copyAssets(): Promise<void> {
-    console.log('\n📦 Copying assets...');
+    console.info('\n📦 Copying assets...');
 
     // Create CSS files
     const wikiCss = `
@@ -481,11 +481,11 @@ class WikiPageBuilder {
 
     writeFileSync(join(this.output, 'assets', 'highlight.css'), highlightCss);
 
-    console.log('✅ Assets copied');
+    console.info('✅ Assets copied');
   }
 
   private async generateSitemap(): Promise<void> {
-    console.log('\n🗺️ Generating sitemap...');
+    console.info('\n🗺️ Generating sitemap...');
 
     const baseUrl = 'https://brendadeeznuts1111.github.io/fire22-dashboard-worker';
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -503,7 +503,7 @@ ${Array.from(this.pages.entries())
 </urlset>`;
 
     writeFileSync(join(this.output, 'sitemap.xml'), sitemap);
-    console.log('✅ Sitemap generated');
+    console.info('✅ Sitemap generated');
   }
 }
 

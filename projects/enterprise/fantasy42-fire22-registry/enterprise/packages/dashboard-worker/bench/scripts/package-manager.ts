@@ -54,7 +54,7 @@ export class PackageManager {
       args.push('--save');
     }
 
-    console.log(`🔗 Running: bun ${args.join(' ')}`);
+    console.info(`🔗 Running: bun ${args.join(' ')}`);
     await $`bun ${args}`.cwd(options.cwd || process.cwd());
   }
 
@@ -68,7 +68,7 @@ export class PackageManager {
       args.push(packageName);
     }
 
-    console.log(`🔓 Running: bun ${args.join(' ')}`);
+    console.info(`🔓 Running: bun ${args.join(' ')}`);
     await $`bun ${args}`;
   }
 
@@ -87,7 +87,7 @@ export class PackageManager {
     }
     if (options.quiet) args.push('--quiet');
 
-    console.log(`📦 Running: bun ${args.join(' ')}`);
+    console.info(`📦 Running: bun ${args.join(' ')}`);
     const result = await $`bun ${args}`.text();
 
     if (options.quiet) {
@@ -118,7 +118,7 @@ export class PackageManager {
     const args = ['pm', 'ls'];
     if (all) args.push('--all');
 
-    console.log(`📋 Running: bun ${args.join(' ')}`);
+    console.info(`📋 Running: bun ${args.join(' ')}`);
     await $`bun ${args}`;
   }
 
@@ -159,9 +159,9 @@ export class PackageManager {
 
     if (operation === 'clear') {
       args.push('rm');
-      console.log('🗑️  Clearing cache...');
+      console.info('🗑️  Clearing cache...');
       await $`bun ${args}`;
-      console.log('✅ Cache cleared');
+      console.info('✅ Cache cleared');
       return;
     }
 
@@ -173,16 +173,16 @@ export class PackageManager {
    * Migrate from another package manager's lockfile
    */
   async migrate(): Promise<void> {
-    console.log('🔄 Migrating lockfile...');
+    console.info('🔄 Migrating lockfile...');
     await $`bun pm migrate`;
-    console.log('✅ Migration complete');
+    console.info('✅ Migration complete');
   }
 
   /**
    * Trust/untrusted dependency operations
    */
   async untrusted(): Promise<void> {
-    console.log('🔒 Untrusted dependencies:');
+    console.info('🔒 Untrusted dependencies:');
     await $`bun pm untrusted`;
   }
 
@@ -195,12 +195,12 @@ export class PackageManager {
       args.push(...packages);
     }
 
-    console.log(`🔓 Running: bun ${args.join(' ')}`);
+    console.info(`🔓 Running: bun ${args.join(' ')}`);
     await $`bun ${args}`;
   }
 
   async defaultTrusted(): Promise<void> {
-    console.log('📋 Default trusted dependencies:');
+    console.info('📋 Default trusted dependencies:');
     await $`bun pm default-trusted`;
   }
 
@@ -220,7 +220,7 @@ export class PackageManager {
     if (options.preid) args.push('--preid', options.preid);
     if (options.force) args.push('--force');
 
-    console.log(`📝 Running: bun ${args.join(' ')}`);
+    console.info(`📝 Running: bun ${args.join(' ')}`);
     const result = await $`bun ${args}`.text();
     return result.trim();
   }
@@ -261,7 +261,7 @@ export class PackageManager {
         break;
     }
 
-    console.log(`📋 Running: bun ${args.join(' ')}`);
+    console.info(`📋 Running: bun ${args.join(' ')}`);
     await $`bun ${args}`;
   }
 
@@ -269,8 +269,8 @@ export class PackageManager {
    * Link workflow for workspace packages
    */
   async linkWorkspacePackages(): Promise<void> {
-    console.log('\n🔗 Linking Workspace Packages');
-    console.log('='.repeat(50));
+    console.info('\n🔗 Linking Workspace Packages');
+    console.info('='.repeat(50));
 
     const packages = [
       '@fire22/benchmark-suite',
@@ -284,7 +284,7 @@ export class PackageManager {
     for (const pkg of packages) {
       const pkgPath = join(process.cwd(), 'packages', pkg.replace('@fire22/', ''));
       if (existsSync(pkgPath)) {
-        console.log(`\n📦 Registering ${pkg}...`);
+        console.info(`\n📦 Registering ${pkg}...`);
         await $`bun link`.cwd(pkgPath);
       }
     }
@@ -292,21 +292,21 @@ export class PackageManager {
     // Then link them in the bench directory
     const benchPath = join(process.cwd(), 'bench');
     if (existsSync(benchPath)) {
-      console.log('\n🎯 Linking packages in bench directory...');
+      console.info('\n🎯 Linking packages in bench directory...');
       for (const pkg of packages) {
         await $`bun link ${pkg} --save`.cwd(benchPath);
       }
     }
 
-    console.log('\n✅ All workspace packages linked!');
+    console.info('\n✅ All workspace packages linked!');
   }
 
   /**
    * Create distribution packages
    */
   async createDistribution(): Promise<void> {
-    console.log('\n📦 Creating Distribution Packages');
-    console.log('='.repeat(50));
+    console.info('\n📦 Creating Distribution Packages');
+    console.info('='.repeat(50));
 
     const distDir = join(process.cwd(), 'bench', 'dist');
     if (!existsSync(distDir)) {
@@ -314,12 +314,12 @@ export class PackageManager {
     }
 
     // Pack main bench package
-    console.log('\n📦 Packing bench package...');
+    console.info('\n📦 Packing bench package...');
     const benchTarball = await this.pack({
       destination: distDir,
       gzipLevel: 9,
     });
-    console.log(`   Created: ${benchTarball}`);
+    console.info(`   Created: ${benchTarball}`);
 
     // Pack each workspace package
     const packages = [
@@ -333,24 +333,24 @@ export class PackageManager {
     for (const pkg of packages) {
       const pkgPath = join(process.cwd(), 'packages', pkg);
       if (existsSync(pkgPath)) {
-        console.log(`\n📦 Packing ${pkg}...`);
+        console.info(`\n📦 Packing ${pkg}...`);
         process.chdir(pkgPath);
         const tarball = await this.pack({
           destination: distDir,
           gzipLevel: 9,
         });
-        console.log(`   Created: ${tarball}`);
+        console.info(`   Created: ${tarball}`);
       }
     }
 
-    console.log(`\n✅ All packages created in ${distDir}`);
+    console.info(`\n✅ All packages created in ${distDir}`);
   }
 
   /**
    * Show all pm commands with examples
    */
   showCommands(): void {
-    console.log(`
+    console.info(`
 📦 Bun Package Manager Commands
 !==!==!==!==!==!==
 
@@ -443,9 +443,9 @@ if (import.meta.main) {
 
         const tarball = await pm.pack(packOptions);
         if (!packOptions.quiet) {
-          console.log(`\n📦 Tarball created: ${tarball}`);
+          console.info(`\n📦 Tarball created: ${tarball}`);
         } else {
-          console.log(tarball);
+          console.info(tarball);
         }
         break;
 
@@ -455,7 +455,7 @@ if (import.meta.main) {
 
       case 'bin':
         const binPath = await pm.getBinPath(args.includes('-g'));
-        console.log(binPath);
+        console.info(binPath);
         break;
 
       case 'ls':
@@ -468,7 +468,7 @@ if (import.meta.main) {
           await pm.cache('clear');
         } else {
           const cachePath = await pm.cache('path');
-          console.log(cachePath);
+          console.info(cachePath);
         }
         break;
 
@@ -489,7 +489,7 @@ if (import.meta.main) {
           noGitTagVersion: args.includes('--no-git-tag-version'),
           force: args.includes('--force') || args.includes('-f'),
         });
-        console.log(version);
+        console.info(version);
         break;
 
       case 'pkg':
@@ -518,7 +518,7 @@ if (import.meta.main) {
 
       case 'whoami':
         const username = await pm.whoami();
-        console.log(username);
+        console.info(username);
         break;
 
       case 'commands':
@@ -527,7 +527,7 @@ if (import.meta.main) {
         break;
 
       default:
-        console.log(`
+        console.info(`
 🚀 Fire22 Package Manager
 !==!==!==!=====
 

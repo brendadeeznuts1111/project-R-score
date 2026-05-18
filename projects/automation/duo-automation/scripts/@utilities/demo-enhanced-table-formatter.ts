@@ -8,11 +8,11 @@ import { initializeScopeTimezone } from '../bootstrap-timezone.ts';
 // Initialize timezone for the demo
 initializeScopeTimezone('DEVELOPMENT');
 
-console.log('🚀 Empire Pro v3.7 - Enhanced Table Formatter Demo\n');
+console.info('🚀 Empire Pro v3.7 - Enhanced Table Formatter Demo\n');
 
 // Example 1: Multi-column sort with deep paths
-console.log('📊 Example 1: Security Metrics with Deep Sorting');
-console.log('='.repeat(60));
+console.info('📊 Example 1: Security Metrics with Deep Sorting');
+console.info('='.repeat(60));
 
 const securityMetrics = [
   { 
@@ -61,7 +61,7 @@ const securityMetrics = [
   }
 ];
 
-console.log(UnicodeTableFormatter.generateTable(securityMetrics, {
+console.info(UnicodeTableFormatter.generateTable(securityMetrics, {
   sortBy: [
     { column: 'scope', direction: 'asc' },
     { column: 'score', direction: 'desc', type: 'number' }
@@ -70,10 +70,10 @@ console.log(UnicodeTableFormatter.generateTable(securityMetrics, {
 }));
 
 // Example 2: Filtering with nested paths
-console.log('\n📋 Example 2: Filtered by Scope = ENTERPRISE');
-console.log('='.repeat(60));
+console.info('\n📋 Example 2: Filtered by Scope = ENTERPRISE');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(securityMetrics, {
+console.info(UnicodeTableFormatter.generateTable(securityMetrics, {
   filter: { scope: 'ENTERPRISE' },
   sortBy: [
     { column: 'metadata.region', direction: 'asc' },
@@ -82,8 +82,8 @@ console.log(UnicodeTableFormatter.generateTable(securityMetrics, {
 }));
 
 // Example 3: Complex data with emojis and Unicode
-console.log('\n🌍 Example 3: Global Infrastructure with Unicode');
-console.log('='.repeat(60));
+console.info('\n🌍 Example 3: Global Infrastructure with Unicode');
+console.info('='.repeat(60));
 
 const globalInfrastructure = [
   {
@@ -132,7 +132,7 @@ const globalInfrastructure = [
   }
 ];
 
-console.log(UnicodeTableFormatter.generateTable(globalInfrastructure, {
+console.info(UnicodeTableFormatter.generateTable(globalInfrastructure, {
   sortBy: [
     { column: 'load', direction: 'desc', type: 'number' },
     { column: 'name', direction: 'asc' }
@@ -141,8 +141,8 @@ console.log(UnicodeTableFormatter.generateTable(globalInfrastructure, {
 }));
 
 // Example 4: Custom comparator for complex sorting
-console.log('\n🎯 Example 4: Custom Status Priority Sorting');
-console.log('='.repeat(60));
+console.info('\n🎯 Example 4: Custom Status Priority Sorting');
+console.info('='.repeat(60));
 
 const statusPriority: Record<string, number> = {
   '🔴 Critical': 4,
@@ -151,7 +151,7 @@ const statusPriority: Record<string, number> = {
   '🔵 Maintenance': 1
 };
 
-console.log(UnicodeTableFormatter.generateTable(globalInfrastructure, {
+console.info(UnicodeTableFormatter.generateTable(globalInfrastructure, {
   sortBy: [
     { 
       column: 'status', 
@@ -167,10 +167,10 @@ console.log(UnicodeTableFormatter.generateTable(globalInfrastructure, {
 }));
 
 // Example 5: Date sorting with timezone awareness
-console.log('\n📅 Example 5: Date Sorting (Newest First)');
-console.log('='.repeat(60));
+console.info('\n📅 Example 5: Date Sorting (Newest First)');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(globalInfrastructure, {
+console.info(UnicodeTableFormatter.generateTable(globalInfrastructure, {
   sortBy: [
     { column: 'metadata.established', direction: 'desc', type: 'date' },
     { column: 'load', direction: 'asc', type: 'number' }
@@ -178,8 +178,8 @@ console.log(UnicodeTableFormatter.generateTable(globalInfrastructure, {
 }));
 
 // Example 6: Multi-dimensional analysis
-console.log('\n🔍 Example 6: Multi-dimensional Analysis');
-console.log('='.repeat(60));
+console.info('\n🔍 Example 6: Multi-dimensional Analysis');
+console.info('='.repeat(60));
 
 const analysisData = [
   {
@@ -211,7 +211,7 @@ const analysisData = [
   }
 ];
 
-console.log(UnicodeTableFormatter.generateTable(analysisData, {
+console.info(UnicodeTableFormatter.generateTable(analysisData, {
   sortBy: [
     { column: 'user.department', direction: 'asc' },
     { column: 'performance.score', direction: 'desc', type: 'number' },
@@ -221,14 +221,14 @@ console.log(UnicodeTableFormatter.generateTable(analysisData, {
 }));
 
 // Generate summary
-console.log(UnicodeTableFormatter.generateSummary(securityMetrics, 'scope'));
+console.info(UnicodeTableFormatter.generateSummary(securityMetrics, 'scope'));
 
-console.log('\n✅ Enhanced Table Formatter Demo Completed!');
-console.log('🎯 Features demonstrated:');
-console.log('  • Multi-key stable sorting with type inference');
-console.log('  • Deep path access (metadata.created, user.name)');
-console.log('  • Filtering with exact match');
-console.log('  • Custom comparators for complex logic');
-console.log('  • Date sorting with timezone awareness');
-console.log('  • Unicode/emoji preservation throughout');
-console.log('  • Bun.stringWidth optimization for perfect alignment');
+console.info('\n✅ Enhanced Table Formatter Demo Completed!');
+console.info('🎯 Features demonstrated:');
+console.info('  • Multi-key stable sorting with type inference');
+console.info('  • Deep path access (metadata.created, user.name)');
+console.info('  • Filtering with exact match');
+console.info('  • Custom comparators for complex logic');
+console.info('  • Date sorting with timezone awareness');
+console.info('  • Unicode/emoji preservation throughout');
+console.info('  • Bun.stringWidth optimization for perfect alignment');

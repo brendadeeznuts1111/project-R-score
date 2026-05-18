@@ -17,7 +17,7 @@ if (!validEnvs.includes(environment)) {
   process.exit(1);
 }
 
-console.log(`🚀 Deploying to ${environment}...`);
+console.info(`🚀 Deploying to ${environment}...`);
 
 try {
   // Check if wrangler is installed
@@ -28,7 +28,7 @@ try {
   }
 
   // Build worker
-  console.log('📦 Building worker...');
+  console.info('📦 Building worker...');
   const buildResult = await $`bun run build:worker`.quiet();
   if (buildResult.exitCode !== 0) {
     console.error('❌ Build failed');
@@ -36,7 +36,7 @@ try {
   }
 
   // Deploy
-  console.log(`🚀 Deploying to ${environment}...`);
+  console.info(`🚀 Deploying to ${environment}...`);
   const deployCmd =
     environment === 'preview'
       ? ['wrangler', 'deploy', '--env', environment]
@@ -50,7 +50,7 @@ try {
   const exitCode = await deploy.exited;
 
   if (exitCode === 0) {
-    console.log(`✅ Successfully deployed to ${environment}`);
+    console.info(`✅ Successfully deployed to ${environment}`);
   } else {
     console.error(`❌ Deployment failed with exit code ${exitCode}`);
     process.exit(exitCode);

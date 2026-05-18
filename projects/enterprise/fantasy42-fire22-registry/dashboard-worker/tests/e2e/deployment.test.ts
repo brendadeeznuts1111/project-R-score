@@ -4,10 +4,10 @@
  * Test Fire22 Dashboard Integration with Consolidated API and Security Registry
  */
 
-console.log('🚀 Testing Fire22 Dashboard Integration...\n');
+console.info('🚀 Testing Fire22 Dashboard Integration...\n');
 
 async function testConsolidatedAPI() {
-  console.log('📋 Testing Consolidated API Integration...');
+  console.info('📋 Testing Consolidated API Integration...');
 
   try {
     // Test v2 API endpoints (should route to consolidated API)
@@ -31,21 +31,21 @@ async function testConsolidatedAPI() {
             : undefined,
         });
 
-        console.log(`  ✅ ${endpoint}: ${response.status} ${response.statusText}`);
+        console.info(`  ✅ ${endpoint}: ${response.status} ${response.statusText}`);
       } catch (error) {
-        console.log(`  ⚠️  ${endpoint}: ${error.message} (expected - server not running)`);
+        console.info(`  ⚠️  ${endpoint}: ${error.message} (expected - server not running)`);
       }
     }
 
     return true;
   } catch (error) {
-    console.log(`  ❌ Consolidated API test failed: ${error.message}`);
+    console.info(`  ❌ Consolidated API test failed: ${error.message}`);
     return false;
   }
 }
 
 async function testSecurityRegistry() {
-  console.log('🛡️ Testing Security Registry Integration...');
+  console.info('🛡️ Testing Security Registry Integration...');
 
   try {
     const baseUrl = 'http://localhost:8787';
@@ -55,59 +55,59 @@ async function testSecurityRegistry() {
     for (const endpoint of endpoints) {
       try {
         const response = await fetch(`${baseUrl}${endpoint}`);
-        console.log(`  ✅ ${endpoint}: ${response.status} ${response.statusText}`);
+        console.info(`  ✅ ${endpoint}: ${response.status} ${response.statusText}`);
       } catch (error) {
-        console.log(`  ⚠️  ${endpoint}: ${error.message} (expected - server not running)`);
+        console.info(`  ⚠️  ${endpoint}: ${error.message} (expected - server not running)`);
       }
     }
 
     return true;
   } catch (error) {
-    console.log(`  ❌ Security Registry test failed: ${error.message}`);
+    console.info(`  ❌ Security Registry test failed: ${error.message}`);
     return false;
   }
 }
 
 async function testWorkspaceIntegration() {
-  console.log('🔧 Testing Workspace Package Integration...');
+  console.info('🔧 Testing Workspace Package Integration...');
 
   try {
     // Test importing workspace packages
-    console.log('  📦 Testing package imports...');
+    console.info('  📦 Testing package imports...');
 
     // Test validator package
     try {
       const validator = await import('./packages/fire22-validator/src/index');
-      console.log('  ✅ @fire22/validator imported successfully');
+      console.info('  ✅ @fire22/validator imported successfully');
     } catch (error) {
-      console.log(`  ⚠️  @fire22/validator import: ${error.message}`);
+      console.info(`  ⚠️  @fire22/validator import: ${error.message}`);
     }
 
     // Test consolidated API package
     try {
       const api = await import('./workspaces/@fire22-api-consolidated/src/index');
-      console.log('  ✅ @fire22/api-consolidated imported successfully');
+      console.info('  ✅ @fire22/api-consolidated imported successfully');
     } catch (error) {
-      console.log(`  ⚠️  @fire22/api-consolidated import: ${error.message}`);
+      console.info(`  ⚠️  @fire22/api-consolidated import: ${error.message}`);
     }
 
     // Test security registry package
     try {
       const security = await import('./workspaces/@fire22-security-registry/src/index');
-      console.log('  ✅ @fire22/security-registry imported successfully');
+      console.info('  ✅ @fire22/security-registry imported successfully');
     } catch (error) {
-      console.log(`  ⚠️  @fire22/security-registry import: ${error.message}`);
+      console.info(`  ⚠️  @fire22/security-registry import: ${error.message}`);
     }
 
     return true;
   } catch (error) {
-    console.log(`  ❌ Workspace integration test failed: ${error.message}`);
+    console.info(`  ❌ Workspace integration test failed: ${error.message}`);
     return false;
   }
 }
 
 async function testDatabaseSchema() {
-  console.log('🗄️ Testing Database Schema...');
+  console.info('🗄️ Testing Database Schema...');
 
   try {
     // Check if schema files exist and are valid
@@ -119,24 +119,24 @@ async function testDatabaseSchema() {
         const content = await file.text();
 
         if (content.includes('CREATE TABLE')) {
-          console.log(`  ✅ ${schemaFile}: Valid SQL schema`);
+          console.info(`  ✅ ${schemaFile}: Valid SQL schema`);
         } else {
-          console.log(`  ⚠️  ${schemaFile}: No CREATE TABLE statements found`);
+          console.info(`  ⚠️  ${schemaFile}: No CREATE TABLE statements found`);
         }
       } catch (error) {
-        console.log(`  ❌ ${schemaFile}: ${error.message}`);
+        console.info(`  ❌ ${schemaFile}: ${error.message}`);
       }
     }
 
     return true;
   } catch (error) {
-    console.log(`  ❌ Database schema test failed: ${error.message}`);
+    console.info(`  ❌ Database schema test failed: ${error.message}`);
     return false;
   }
 }
 
 async function testWranglerConfig() {
-  console.log('⚙️ Testing Wrangler Configuration...');
+  console.info('⚙️ Testing Wrangler Configuration...');
 
   try {
     const wranglerFile = Bun.file('./wrangler.toml');
@@ -151,21 +151,21 @@ async function testWranglerConfig() {
 
     for (const binding of requiredBindings) {
       if (content.includes(binding)) {
-        console.log(`  ✅ ${binding}: Configured`);
+        console.info(`  ✅ ${binding}: Configured`);
       } else {
-        console.log(`  ⚠️  ${binding}: Not found in wrangler.toml`);
+        console.info(`  ⚠️  ${binding}: Not found in wrangler.toml`);
       }
     }
 
     return true;
   } catch (error) {
-    console.log(`  ❌ Wrangler config test failed: ${error.message}`);
+    console.info(`  ❌ Wrangler config test failed: ${error.message}`);
     return false;
   }
 }
 
 async function generateDeploymentReport() {
-  console.log('\n📊 Generating Deployment Report...\n');
+  console.info('\n📊 Generating Deployment Report...\n');
 
   const report = {
     timestamp: new Date().toISOString(),
@@ -200,33 +200,33 @@ async function generateDeploymentReport() {
     ],
   };
 
-  console.log('🎯 Deployment Status:', report.status);
-  console.log('\n🧩 Components:');
+  console.info('🎯 Deployment Status:', report.status);
+  console.info('\n🧩 Components:');
   for (const [component, status] of Object.entries(report.components)) {
-    console.log(`  ${status} ${component}`);
+    console.info(`  ${status} ${component}`);
   }
 
-  console.log('\n🌐 Available Endpoints:');
+  console.info('\n🌐 Available Endpoints:');
   for (const [name, endpoint] of Object.entries(report.endpoints)) {
-    console.log(`  📍 ${name}: ${endpoint}`);
+    console.info(`  📍 ${name}: ${endpoint}`);
   }
 
-  console.log('\n🚀 Deployment Steps:');
-  report.deploymentSteps.forEach(step => console.log(`  ${step}`));
+  console.info('\n🚀 Deployment Steps:');
+  report.deploymentSteps.forEach(step => console.info(`  ${step}`));
 
-  console.log('\n⏭️  Next Steps:');
-  report.nextSteps.forEach(step => console.log(`  • ${step}`));
+  console.info('\n⏭️  Next Steps:');
+  report.nextSteps.forEach(step => console.info(`  • ${step}`));
 
   // Save report to file
   const reportPath = './deployment-report.json';
   await Bun.write(reportPath, JSON.stringify(report, null, 2));
-  console.log(`\n📄 Full report saved to: ${reportPath}`);
+  console.info(`\n📄 Full report saved to: ${reportPath}`);
 
   return report;
 }
 
 async function runDeploymentTests() {
-  console.log('🧪 Running Fire22 Dashboard Deployment Tests...\n');
+  console.info('🧪 Running Fire22 Dashboard Deployment Tests...\n');
 
   const results = [];
 
@@ -239,12 +239,12 @@ async function runDeploymentTests() {
   const passed = results.filter(Boolean).length;
   const total = results.length;
 
-  console.log(`\n📊 Deployment Test Results: ${passed}/${total} tests passed`);
+  console.info(`\n📊 Deployment Test Results: ${passed}/${total} tests passed`);
 
   if (passed === total) {
-    console.log('🎉 All deployment tests passed! Ready for production deployment.');
+    console.info('🎉 All deployment tests passed! Ready for production deployment.');
   } else {
-    console.log('⚠️  Some tests had issues, but core functionality is ready.');
+    console.info('⚠️  Some tests had issues, but core functionality is ready.');
   }
 
   // Generate detailed deployment report

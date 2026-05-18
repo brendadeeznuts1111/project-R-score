@@ -52,48 +52,48 @@ function parseArgs(): { key: string; options: ScheduleOptions } {
 }
 
 function showHelp() {
-  console.log('🔄 Secret Rotation Scheduler');
-  console.log('=============================');
-  console.log();
-  console.log('Schedule automatic rotation for secrets with lifecycle management.');
-  console.log();
-  console.log('Usage:');
-  console.log('  bun schedule-rotation.ts <key> [options]');
-  console.log();
-  console.log('Options:');
-  console.log('  --schedule <cron>    Cron expression (default: "0 2 * * 0")');
-  console.log('  --reason <text>      Reason for rotation (default: "Scheduled rotation")');
-  console.log('  --notify <emails>    Comma-separated notification emails');
-  console.log('  --severity <level>   Severity level: LOW|MEDIUM|HIGH|CRITICAL');
-  console.log('  --dry-run            Show what would be scheduled without doing it');
-  console.log('  --help, -h           Show this help');
-  console.log();
-  console.log('Environment Variables:');
-  console.log('  R2_BUCKET            R2 bucket name (optional, uses default if not set)');
-  console.log();
-  console.log('Examples:');
-  console.log('  # Monthly rotation');
-  console.log(
+  console.info('🔄 Secret Rotation Scheduler');
+  console.info('=============================');
+  console.info();
+  console.info('Schedule automatic rotation for secrets with lifecycle management.');
+  console.info();
+  console.info('Usage:');
+  console.info('  bun schedule-rotation.ts <key> [options]');
+  console.info();
+  console.info('Options:');
+  console.info('  --schedule <cron>    Cron expression (default: "0 2 * * 0")');
+  console.info('  --reason <text>      Reason for rotation (default: "Scheduled rotation")');
+  console.info('  --notify <emails>    Comma-separated notification emails');
+  console.info('  --severity <level>   Severity level: LOW|MEDIUM|HIGH|CRITICAL');
+  console.info('  --dry-run            Show what would be scheduled without doing it');
+  console.info('  --help, -h           Show this help');
+  console.info();
+  console.info('Environment Variables:');
+  console.info('  R2_BUCKET            R2 bucket name (optional, uses default if not set)');
+  console.info();
+  console.info('Examples:');
+  console.info('  # Monthly rotation');
+  console.info(
     '  bun schedule-rotation.ts API_KEY --schedule "0 0 1 * *" --reason "Monthly security rotation"'
   );
-  console.log();
-  console.log('  # Weekly rotation with notifications');
-  console.log(
+  console.info();
+  console.info('  # Weekly rotation with notifications');
+  console.info(
     '  bun schedule-rotation.ts DATABASE_URL --schedule "0 2 * * 0" --notify "admin@company.com,dev@company.com"'
   );
-  console.log();
-  console.log('  # High-security rotation');
-  console.log(
+  console.info();
+  console.info('  # High-security rotation');
+  console.info(
     '  bun schedule-rotation.ts JWT_SECRET --schedule "0 6 * * *" --severity HIGH --notify "security@company.com"'
   );
-  console.log();
-  console.log('Cron Examples:');
-  console.log('  "0 2 * * *"      Daily at 2 AM');
-  console.log('  "0 2 * * 0"      Weekly on Sunday at 2 AM');
-  console.log('  "0 0 1 * *"      Monthly on 1st at midnight');
-  console.log('  "0 */6 * * *"     Every 6 hours');
-  console.log();
-  console.log(`📖 Documentation: ${BUN_DOCS.secrets.lifecycle}`);
+  console.info();
+  console.info('Cron Examples:');
+  console.info('  "0 2 * * *"      Daily at 2 AM');
+  console.info('  "0 2 * * 0"      Weekly on Sunday at 2 AM');
+  console.info('  "0 0 1 * *"      Monthly on 1st at midnight');
+  console.info('  "0 */6 * * *"     Every 6 hours');
+  console.info();
+  console.info(`📖 Documentation: ${BUN_DOCS.secrets.lifecycle}`);
 }
 
 function validateCronExpression(cron: string): boolean {
@@ -123,9 +123,9 @@ async function main() {
   try {
     const { key, options } = parseArgs();
 
-    console.log(styled('🔄 Secret Rotation Scheduler', 'primary'));
-    console.log(styled('=============================', 'muted'));
-    console.log();
+    console.info(styled('🔄 Secret Rotation Scheduler', 'primary'));
+    console.info(styled('=============================', 'muted'));
+    console.info();
 
     // Validate cron expression
     if (!validateCronExpression(options.schedule)) {
@@ -138,45 +138,45 @@ async function main() {
     }
 
     // Show configuration
-    console.log(styled('📋 Configuration:', 'info'));
-    console.log(styled(`   Secret: ${key}`, 'primary'));
-    console.log(styled(`   Schedule: ${options.schedule}`, 'success'));
-    console.log(styled(`   Reason: ${options.reason}`, 'muted'));
+    console.info(styled('📋 Configuration:', 'info'));
+    console.info(styled(`   Secret: ${key}`, 'primary'));
+    console.info(styled(`   Schedule: ${options.schedule}`, 'success'));
+    console.info(styled(`   Reason: ${options.reason}`, 'muted'));
 
     if (options.notifyEmails && options.notifyEmails.length > 0) {
-      console.log(styled(`   Notifications: ${options.notifyEmails.join(', ')}`, 'info'));
+      console.info(styled(`   Notifications: ${options.notifyEmails.join(', ')}`, 'info'));
     }
 
     if (options.severity) {
-      console.log(styled(`   Severity: ${options.severity}`, 'warning'));
+      console.info(styled(`   Severity: ${options.severity}`, 'warning'));
     }
 
     if (options.dryRun) {
-      console.log();
-      console.log(styled('🔍 DRY RUN MODE - No changes will be made', 'warning'));
+      console.info();
+      console.info(styled('🔍 DRY RUN MODE - No changes will be made', 'warning'));
     }
 
-    console.log();
+    console.info();
 
     if (options.dryRun) {
-      console.log(styled('✅ Would schedule rotation successfully', 'success'));
-      console.log();
-      console.log(styled('Next rotation times (next 30 days):', 'info'));
+      console.info(styled('✅ Would schedule rotation successfully', 'success'));
+      console.info();
+      console.info(styled('Next rotation times (next 30 days):', 'info'));
 
       // Show next few rotation times
       const now = new Date();
       for (let i = 0; i < 4; i++) {
         const nextTime = calculateNextCronRun(options.schedule, now, i);
-        console.log(styled(`   • ${nextTime.toLocaleString()}`, 'muted'));
+        console.info(styled(`   • ${nextTime.toLocaleString()}`, 'muted'));
       }
 
-      console.log();
-      console.log(styled('💡 Remove --dry-run to actually schedule the rotation', 'info'));
+      console.info();
+      console.info(styled('💡 Remove --dry-run to actually schedule the rotation', 'info'));
       return;
     }
 
     // Schedule the rotation
-    console.log(styled('⏰ Scheduling rotation...', 'warning'));
+    console.info(styled('⏰ Scheduling rotation...', 'warning'));
 
     const result = await secretLifecycleManager.scheduleRotation(key, {
       key,
@@ -194,22 +194,22 @@ async function main() {
       },
     });
 
-    console.log();
-    console.log(styled('✅ Rotation scheduled successfully!', 'success'));
-    console.log();
-    console.log(styled('📊 Details:', 'info'));
-    console.log(styled(`   Rule ID: ${result.ruleId}`, 'primary'));
-    console.log(styled(`   Next rotation: ${result.nextRotation}`, 'success'));
-    console.log(styled(`   Status: Active`, 'success'));
+    console.info();
+    console.info(styled('✅ Rotation scheduled successfully!', 'success'));
+    console.info();
+    console.info(styled('📊 Details:', 'info'));
+    console.info(styled(`   Rule ID: ${result.ruleId}`, 'primary'));
+    console.info(styled(`   Next rotation: ${result.nextRotation}`, 'success'));
+    console.info(styled(`   Status: Active`, 'success'));
 
     // Show next few rotations
-    console.log();
-    console.log(styled('📅 Upcoming rotations:', 'info'));
+    console.info();
+    console.info(styled('📅 Upcoming rotations:', 'info'));
     const now = new Date();
     for (let i = 0; i < 3; i++) {
       const nextTime = calculateNextCronRun(options.schedule, now, i);
       const isNext = i === 0;
-      console.log(
+      console.info(
         styled(
           `   ${isNext ? '→' : ' '} ${nextTime.toLocaleString()}`,
           isNext ? 'success' : 'muted'
@@ -217,13 +217,13 @@ async function main() {
       );
     }
 
-    console.log();
-    console.log(styled('🔧 Management:', 'info'));
-    console.log(styled(`   View rules: bun secret-version-cli.ts stats`, 'muted'));
-    console.log(styled(`   Rotate now: bun secret-version-cli.ts rotate ${key}`, 'muted'));
-    console.log(styled(`   View history: bun secret-version-cli.ts history ${key}`, 'muted'));
-    console.log();
-    console.log(styled(`📖 Documentation: ${BUN_DOCS.secrets.lifecycle}`, 'accent'));
+    console.info();
+    console.info(styled('🔧 Management:', 'info'));
+    console.info(styled(`   View rules: bun secret-version-cli.ts stats`, 'muted'));
+    console.info(styled(`   Rotate now: bun secret-version-cli.ts rotate ${key}`, 'muted'));
+    console.info(styled(`   View history: bun secret-version-cli.ts history ${key}`, 'muted'));
+    console.info();
+    console.info(styled(`📖 Documentation: ${BUN_DOCS.secrets.lifecycle}`, 'accent'));
   } catch (error) {
     console.error(styled(`❌ Error: ${error.message}`, 'error'));
     process.exit(1);

@@ -119,8 +119,8 @@ export async function debugFetch(
  *   'https://api.example.com',
  *   { method: 'POST', body: JSON.stringify({ data: 'test' }) }
  * );
- * console.log('Status:', metadata.status);
- * console.log('Duration:', metadata.durationMs, 'ms');
+ * console.info('Status:', metadata.status);
+ * console.info('Duration:', metadata.durationMs, 'ms');
  * ```
  */
 export async function debugFetchWithInspection(
@@ -166,12 +166,12 @@ export async function debugFetchWithInspection(
 		};
 
 		if (logResponse) {
-			console.log("\n📡 Fetch Debug Info:");
-			console.log(`  URL: ${metadata.url}`);
-			console.log(`  Method: ${metadata.method}`);
-			console.log(`  Status: ${metadata.status} ${metadata.statusText}`);
-			console.log(`  Duration: ${metadata.durationMs.toFixed(2)}ms`);
-			console.log(
+			console.info("\n📡 Fetch Debug Info:");
+			console.info(`  URL: ${metadata.url}`);
+			console.info(`  Method: ${metadata.method}`);
+			console.info(`  Status: ${metadata.status} ${metadata.statusText}`);
+			console.info(`  Duration: ${metadata.durationMs.toFixed(2)}ms`);
+			console.info(
 				`  Headers:`,
 				Bun.inspect(headers, { colors: true, compact: true }),
 			);
@@ -206,7 +206,7 @@ export function configureVerboseFetch(): void {
 
 	if (nodeEnv === "development" || debugFetch) {
 		enableVerboseFetch();
-		console.log("🔍 Verbose fetch logging enabled");
+		console.info("🔍 Verbose fetch logging enabled");
 	} else {
 		disableVerboseFetch();
 	}
@@ -257,7 +257,7 @@ export function createVerboseFetch(): (
  *   headers: { 'Content-Type': 'application/json' },
  *   body: JSON.stringify({ foo: 'bar' })
  * });
- * console.log(curl);
+ * console.info(curl);
  * // curl -X POST https://api.example.com \
  * //   -H "Content-Type: application/json" \
  * //   -d '{"foo":"bar"}'

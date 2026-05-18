@@ -127,14 +127,14 @@ class VersionSyncManager {
       report.main = targetVersion;
     }
 
-    console.log('🔄 Synchronizing versions to:', report.main);
+    console.info('🔄 Synchronizing versions to:', report.main);
 
     // Update dashboard package.json
     if (report.dashboard !== report.main) {
       const dashboardPkg = JSON.parse(readFileSync(this.dashboardPackagePath, 'utf-8'));
       dashboardPkg.version = report.main;
       writeFileSync(this.dashboardPackagePath, JSON.stringify(dashboardPkg, null, 2));
-      console.log('✅ Updated dashboard-worker/package.json');
+      console.info('✅ Updated dashboard-worker/package.json');
     }
 
     // Update bunfig.toml
@@ -161,46 +161,46 @@ class VersionSyncManager {
     }
 
     writeFileSync(this.bunfigPath, bunfigContent);
-    console.log('✅ Updated bunfig.toml');
+    console.info('✅ Updated bunfig.toml');
 
-    console.log('🎉 Version synchronization complete!');
+    console.info('🎉 Version synchronization complete!');
   }
 
   async generateReport(): Promise<void> {
     const report = await this.auditVersions();
 
-    console.log('\n📊 Version Audit Report');
-    console.log('=======================');
+    console.info('\n📊 Version Audit Report');
+    console.info('=======================');
 
-    console.log(`Main Package: ${report.main}`);
-    console.log(`Dashboard Worker: ${report.dashboard}`);
-    console.log(`Bunfig Dashboard: ${report.bunfig.dashboard}`);
+    console.info(`Main Package: ${report.main}`);
+    console.info(`Dashboard Worker: ${report.dashboard}`);
+    console.info(`Bunfig Dashboard: ${report.bunfig.dashboard}`);
 
-    console.log('\n📦 Domain Versions:');
+    console.info('\n📦 Domain Versions:');
     Object.entries(report.bunfig.domains).forEach(([domain, version]) => {
-      console.log(`  ${domain}: ${version}`);
+      console.info(`  ${domain}: ${version}`);
     });
 
-    console.log('\n🏗️ Architecture Versions:');
+    console.info('\n🏗️ Architecture Versions:');
     Object.entries(report.bunfig.architecture).forEach(([component, version]) => {
-      console.log(`  ${component}: ${version}`);
+      console.info(`  ${component}: ${version}`);
     });
 
     if (report.conflicts.length > 0) {
-      console.log('\n❌ Conflicts Found:');
-      report.conflicts.forEach(conflict => console.log(`  • ${conflict}`));
+      console.info('\n❌ Conflicts Found:');
+      report.conflicts.forEach(conflict => console.info(`  • ${conflict}`));
     }
 
     if (report.recommendations.length > 0) {
-      console.log('\n💡 Recommendations:');
-      report.recommendations.forEach(rec => console.log(`  • ${rec}`));
+      console.info('\n💡 Recommendations:');
+      report.recommendations.forEach(rec => console.info(`  • ${rec}`));
     }
 
     const status =
       report.conflicts.length === 0
         ? '✅ All versions synchronized'
         : '⚠️ Version conflicts detected';
-    console.log(`\n${status}`);
+    console.info(`\n${status}`);
   }
 }
 
@@ -227,10 +227,10 @@ async function main() {
       break;
 
     default:
-      console.log('Usage:');
-      console.log('  bun run scripts/version-sync.ts report  # Show version report');
-      console.log('  bun run scripts/version-sync.ts sync [version]  # Sync to specific version');
-      console.log('  bun run scripts/version-sync.ts fix     # Fix conflicts automatically');
+      console.info('Usage:');
+      console.info('  bun run scripts/version-sync.ts report  # Show version report');
+      console.info('  bun run scripts/version-sync.ts sync [version]  # Sync to specific version');
+      console.info('  bun run scripts/version-sync.ts fix     # Fix conflicts automatically');
       break;
   }
 }

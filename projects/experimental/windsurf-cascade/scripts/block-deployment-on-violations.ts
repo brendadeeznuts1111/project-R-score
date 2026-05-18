@@ -155,8 +155,8 @@ function generateQuickCommand(violation: any): string {
 }
 
 async function checkDeploymentBlock(): Promise<DeploymentBlockStatus> {
-  console.log('🚦 Enhanced Deployment Block Status Check v3.0\n');
-  console.log('⏱️  Running comprehensive validation with automation analysis...');
+  console.info('🚦 Enhanced Deployment Block Status Check v3.0\n');
+  console.info('⏱️  Running comprehensive validation with automation analysis...');
   
   const startTime = Date.now();
   const previousStatus = await loadPreviousStatus();
@@ -204,96 +204,96 @@ async function checkDeploymentBlock(): Promise<DeploymentBlockStatus> {
   await writeFile('./scripts/auto-fix-violations.sh', automationScript);
   
   // Enhanced console output
-  console.log('\n📊 VALIDATION RESULTS');
-  console.log('─'.repeat(60));
-  console.log(`⏱️  Validation completed in: ${validationTime}ms`);
-  console.log(`🚦 Deployment Status: ${blocked ? '🚫 BLOCKED' : '✅ ALLOWED'}`);
-  console.log(`🔴 Critical Violations: ${criticalViolations}`);
-  console.log(`📈 Total Violations: ${totalViolations}`);
-  console.log(`🤖 Auto-fixable: ${automation.autoFixable} (${Math.round(automation.autoFixable/criticalViolations*100)}%)`);
-  console.log(`⚡ Estimated fix time: ${automation.estimatedTime} minutes`);
+  console.info('\n📊 VALIDATION RESULTS');
+  console.info('─'.repeat(60));
+  console.info(`⏱️  Validation completed in: ${validationTime}ms`);
+  console.info(`🚦 Deployment Status: ${blocked ? '🚫 BLOCKED' : '✅ ALLOWED'}`);
+  console.info(`🔴 Critical Violations: ${criticalViolations}`);
+  console.info(`📈 Total Violations: ${totalViolations}`);
+  console.info(`🤖 Auto-fixable: ${automation.autoFixable} (${Math.round(automation.autoFixable/criticalViolations*100)}%)`);
+  console.info(`⚡ Estimated fix time: ${automation.estimatedTime} minutes`);
   
   if (previousStatus) {
     const trendIcon = progress.trend === 'improving' ? '📈' : progress.trend === 'declining' ? '📉' : '➡️';
-    console.log(`${trendIcon} Progress Trend: ${progress.trend.toUpperCase()} (${progress.rate.toFixed(1)}/hr)`);
+    console.info(`${trendIcon} Progress Trend: ${progress.trend.toUpperCase()} (${progress.rate.toFixed(1)}/hr)`);
     if (progress.criticalFixed > 0) {
-      console.log(`✅ Critical violations fixed: ${progress.criticalFixed}`);
+      console.info(`✅ Critical violations fixed: ${progress.criticalFixed}`);
     }
     if (progress.totalFixed > 0) {
-      console.log(`✅ Total violations fixed: ${progress.totalFixed}`);
+      console.info(`✅ Total violations fixed: ${progress.totalFixed}`);
     }
   }
   
   if (blocked && topIssues.length > 0) {
-    console.log('\n🎯 TOP CRITICAL ISSUES');
-    console.log('─'.repeat(60));
+    console.info('\n🎯 TOP CRITICAL ISSUES');
+    console.info('─'.repeat(60));
     topIssues.forEach((issue, i) => {
       const impactIcon = issue.impact === 'high' ? '🔥' : issue.impact === 'medium' ? '⚠️' : '📝';
       const autoFixIcon = issue.quickWins.length > 0 ? '🤖' : '🔧';
-      console.log(`${i + 1}. ${impactIcon} ${autoFixIcon} **${issue.rule}**: ${issue.count} violations (${issue.impact} impact)`);
-      console.log(`   📁 Files: ${issue.files.slice(0, 3).join(', ')}${issue.files.length > 3 ? ` +${issue.files.length - 3} more` : ''}`);
+      console.info(`${i + 1}. ${impactIcon} ${autoFixIcon} **${issue.rule}**: ${issue.count} violations (${issue.impact} impact)`);
+      console.info(`   📁 Files: ${issue.files.slice(0, 3).join(', ')}${issue.files.length > 3 ? ` +${issue.files.length - 3} more` : ''}`);
       if (issue.quickWins.length > 0) {
-        console.log(`   ⚡ Quick wins: ${issue.quickWins.length} auto-fixable`);
+        console.info(`   ⚡ Quick wins: ${issue.quickWins.length} auto-fixable`);
       }
     });
   }
   
-  console.log('\n🤖 AUTOMATION READY');
-  console.log('─'.repeat(60));
-  console.log(`📜 Auto-fix script generated: ./scripts/auto-fix-violations.sh`);
-  console.log(`🎯 Auto-fixable violations: ${automation.autoFixable}/${criticalViolations}`);
-  console.log(`⚡ Time savings: ~${Math.round(automation.estimatedTime * 0.7)} minutes with automation`);
+  console.info('\n🤖 AUTOMATION READY');
+  console.info('─'.repeat(60));
+  console.info(`📜 Auto-fix script generated: ./scripts/auto-fix-violations.sh`);
+  console.info(`🎯 Auto-fixable violations: ${automation.autoFixable}/${criticalViolations}`);
+  console.info(`⚡ Time savings: ~${Math.round(automation.estimatedTime * 0.7)} minutes with automation`);
   
-  console.log('\n📋 NEXT ACTIONS');
-  console.log('─'.repeat(60));
+  console.info('\n📋 NEXT ACTIONS');
+  console.info('─'.repeat(60));
   
   if (blocked) {
-    console.log('🚨 DEPLOYMENT BLOCKED!');
-    console.log('❌ Critical violations must be resolved before deployment');
-    console.log('🤖 AUTOMATION AVAILABLE: Run auto-fix script for quick wins');
+    console.info('🚨 DEPLOYMENT BLOCKED!');
+    console.info('❌ Critical violations must be resolved before deployment');
+    console.info('🤖 AUTOMATION AVAILABLE: Run auto-fix script for quick wins');
     
     if (automation.autoFixable > 0) {
-      console.log('\n🎯 AUTOMATION-FIRST APPROACH:');
-      console.log('1. Run auto-fix script: ./scripts/auto-fix-violations.sh');
-      console.log('2. Re-check status: bun run rules:block');
-      console.log('3. Manual fix remaining violations');
+      console.info('\n🎯 AUTOMATION-FIRST APPROACH:');
+      console.info('1. Run auto-fix script: ./scripts/auto-fix-violations.sh');
+      console.info('2. Re-check status: bun run rules:block');
+      console.info('3. Manual fix remaining violations');
     }
     
     if (topIssues.length > 0) {
-      console.log('\n🎯 MANUAL FIX PRIORITY:');
+      console.info('\n🎯 MANUAL FIX PRIORITY:');
       topIssues.slice(0, 3).forEach((issue, i) => {
-        console.log(`${i + 1}. ${issue.rule} (${issue.count} violations) - ${issue.quickWins.length > 0 ? 'Partial automation available' : 'Manual fix required'}`);
+        console.info(`${i + 1}. ${issue.rule} (${issue.count} violations) - ${issue.quickWins.length > 0 ? 'Partial automation available' : 'Manual fix required'}`);
       });
     }
     
-    console.log('\n📞 QUICK COMMANDS:');
-    console.log('```bash');
-    console.log('# 🤖 Run automation (recommended first)');
-    console.log('chmod +x ./scripts/auto-fix-violations.sh');
-    console.log('./scripts/auto-fix-violations.sh');
-    console.log('');
-    console.log('# 📊 View detailed report');
-    console.log('cat reports/deployment-block-report.md');
-    console.log('');
-    console.log('# 🔄 Re-check status');
-    console.log('bun run rules:block');
-    console.log('```');
+    console.info('\n📞 QUICK COMMANDS:');
+    console.info('```bash');
+    console.info('# 🤖 Run automation (recommended first)');
+    console.info('chmod +x ./scripts/auto-fix-violations.sh');
+    console.info('./scripts/auto-fix-violations.sh');
+    console.info('');
+    console.info('# 📊 View detailed report');
+    console.info('cat reports/deployment-block-report.md');
+    console.info('');
+    console.info('# 🔄 Re-check status');
+    console.info('bun run rules:block');
+    console.info('```');
     
-    console.log('\n📈 ENHANCED TARGETS:');
-    console.log(`• Critical violations: < 10 (currently ${criticalViolations})`);
-    console.log(`• Automation coverage: ${Math.round(automation.autoFixable/criticalViolations*100)}% (${automation.autoFixable} auto-fixable)`);
-    console.log(`• Time to target: ${automation.estimatedTime} minutes (${Math.round(automation.estimatedTime * 0.3)} with automation)`);
+    console.info('\n📈 ENHANCED TARGETS:');
+    console.info(`• Critical violations: < 10 (currently ${criticalViolations})`);
+    console.info(`• Automation coverage: ${Math.round(automation.autoFixable/criticalViolations*100)}% (${automation.autoFixable} auto-fixable)`);
+    console.info(`• Time to target: ${automation.estimatedTime} minutes (${Math.round(automation.estimatedTime * 0.3)} with automation)`);
     
     process.exit(1);
   } else {
-    console.log('✅ DEPLOYMENT APPROVED!');
-    console.log('🎉 No critical violations detected');
+    console.info('✅ DEPLOYMENT APPROVED!');
+    console.info('🎉 No critical violations detected');
     
     if (totalViolations > 50) {
-      console.log(`💡 Consider addressing ${totalViolations} warning violations in next sprint`);
+      console.info(`💡 Consider addressing ${totalViolations} warning violations in next sprint`);
     }
     
-    console.log('\n🚀 Ready for deployment!');
+    console.info('\n🚀 Ready for deployment!');
     process.exit(0);
   }
 }

@@ -156,7 +156,7 @@ for (let i = 0; i < args.length; i++) {
 
 // Show help
 if (flags.help) {
-  console.log(`
+  console.info(`
 🚀 Bun Enhanced File Analyzer - Cross-Compilation CLI
 
 USAGE:
@@ -217,15 +217,15 @@ For more information, see: https://github.com/brendadeeznuts1111/bun-enhanced-fi
 // Show version
 if (flags.version) {
   const packageJson = await Bun.file("./package.json").json();
-  console.log(`Bun Enhanced File Analyzer v${packageJson.version}`);
-  console.log(`Bun v${Bun.version}`);
-  console.log(`Cross-Compilation CLI v1.3.6+`);
+  console.info(`Bun Enhanced File Analyzer v${packageJson.version}`);
+  console.info(`Bun v${Bun.version}`);
+  console.info(`Cross-Compilation CLI v1.3.6+`);
   process.exit(0);
 }
 
 // List targets
 if (flags.listTargets) {
-  console.log(`
+  console.info(`
 🎯 Available Compilation Targets:
 
   bun-linux-x64           Linux x64 (most common servers)
@@ -258,38 +258,38 @@ PERFORMANCE NOTES:
 
 // Clean build artifacts
 if (flags.clean) {
-  if (flags.verbose) console.log("🧹 Cleaning build artifacts...");
+  if (flags.verbose) console.info("🧹 Cleaning build artifacts...");
   await Bun.$`rm -rf ./dist ./public`.quiet();
-  if (flags.verbose) console.log("✅ Build artifacts cleaned");
+  if (flags.verbose) console.info("✅ Build artifacts cleaned");
 }
 
 // Verbose logging
 if (flags.verbose) {
-  console.log("🔧 Configuration:");
-  console.log(`  Target: ${flags.target}`);
-  console.log(`  Output: ${flags.output}`);
-  console.log(`  Minify: ${flags.minify}`);
-  console.log(`  Sourcemap: ${flags.sourcemap}`);
-  console.log(`  Metafile: ${flags.metafile}`);
-  console.log(`  Compression: ${flags.compression}`);
-  console.log(`  Level: ${flags.level}`);
-  console.log(`  Define: ${JSON.stringify(flags.define)}`);
-  console.log(`  External: ${flags.external.join(", ")}`);
+  console.info("🔧 Configuration:");
+  console.info(`  Target: ${flags.target}`);
+  console.info(`  Output: ${flags.output}`);
+  console.info(`  Minify: ${flags.minify}`);
+  console.info(`  Sourcemap: ${flags.sourcemap}`);
+  console.info(`  Metafile: ${flags.metafile}`);
+  console.info(`  Compression: ${flags.compression}`);
+  console.info(`  Level: ${flags.level}`);
+  console.info(`  Define: ${JSON.stringify(flags.define)}`);
+  console.info(`  External: ${flags.external.join(", ")}`);
 }
 
 // Dry run mode
 if (flags.dryRun) {
-  console.log("🔍 Dry run - would execute:");
-  console.log(`  Target: ${flags.target}`);
-  console.log(`  Output: ${flags.output}${flags.target.includes("windows") ? ".exe" : ""}`);
-  console.log(`  Minify: ${flags.minify}`);
-  console.log(`  Compression: ${flags.compression} (level ${flags.level})`);
-  console.log(`  Build time: ~${flags.minify ? "30-60s" : "10-20s"}`);
-  console.log(`  Estimated size: ~${flags.target.includes("arm64") ? "28" : "30"}KB`);
+  console.info("🔍 Dry run - would execute:");
+  console.info(`  Target: ${flags.target}`);
+  console.info(`  Output: ${flags.output}${flags.target.includes("windows") ? ".exe" : ""}`);
+  console.info(`  Minify: ${flags.minify}`);
+  console.info(`  Compression: ${flags.compression} (level ${flags.level})`);
+  console.info(`  Build time: ~${flags.minify ? "30-60s" : "10-20s"}`);
+  console.info(`  Estimated size: ~${flags.target.includes("arm64") ? "28" : "30"}KB`);
   process.exit(0);
 }
 
-console.log(`🔨 Cross-compiling for ${flags.target}...`);
+console.info(`🔨 Cross-compiling for ${flags.target}...`);
 
 // Create CLI entry point for compilation
 const cliCode = `#!/usr/bin/env bun
@@ -298,9 +298,9 @@ import { Bun } from "bun";
 
 // CLI commands
 if (process.argv.includes("--version")) {
-  console.log("Bun Enhanced File Analyzer v1.3.6+");
-  console.log(\`Target: \${process.env.TARGET || "unknown"}\`);
-  console.log(\`Compiled: \${new Date().toISOString()}\`);
+  console.info("Bun Enhanced File Analyzer v1.3.6+");
+  console.info(\`Target: \${process.env.TARGET || "unknown"}\`);
+  console.info(\`Compiled: \${new Date().toISOString()}\`);
   process.exit(0);
 }
 
@@ -309,7 +309,7 @@ if (process.argv.includes("--archive")) {
   const pattern = process.argv[fileIndex];
   
   if (pattern) {
-    console.log(\`Creating archive for: \${pattern}\`);
+    console.info(\`Creating archive for: \${pattern}\`);
     const archive = new Bun.Archive();
     
     // Add files matching pattern
@@ -320,7 +320,7 @@ if (process.argv.includes("--archive")) {
     
     const archiveBytes = archive.bytes();
     await Bun.write("archive.tar.gz", archiveBytes);
-    console.log(\`Archive created: archive.tar.gz (\${archiveBytes.length} bytes)\`);
+    console.info(\`Archive created: archive.tar.gz (\${archiveBytes.length} bytes)\`);
   }
   process.exit(0);
 }
@@ -330,19 +330,19 @@ if (process.argv.includes("--color")) {
   const colorSpec = process.argv[colorIndex];
   
   if (colorSpec) {
-    console.log(\`Color: \${colorSpec}\`);
-    console.log(\`Hex: \${Bun.color(colorSpec, "hex")}\`);
-    console.log(\`RGB: \${Bun.color(colorSpec, "rgb")}\`);
-    console.log(\`ANSI: \${Bun.color(colorSpec, "ansi")}\`);
+    console.info(\`Color: \${colorSpec}\`);
+    console.info(\`Hex: \${Bun.color(colorSpec, "hex")}\`);
+    console.info(\`RGB: \${Bun.color(colorSpec, "rgb")}\`);
+    console.info(\`ANSI: \${Bun.color(colorSpec, "ansi")}\`);
   }
   process.exit(0);
 }
 
 // Default: start server
-console.log("🚀 Starting Bun Enhanced File Analyzer Server...");
-console.log(\`📊 Version: \${process.env.npm_package_version || "1.0.0"}\`);
-console.log(\`🎯 Target: \${process.env.TARGET || "browser"}\`);
-console.log(\`🔧 Compiled: \${process.env.IS_COMPILED === "true" ? "Yes" : "No"}\`);
+console.info("🚀 Starting Bun Enhanced File Analyzer Server...");
+console.info(\`📊 Version: \${process.env.npm_package_version || "1.0.0"}\`);
+console.info(\`🎯 Target: \${process.env.TARGET || "browser"}\`);
+console.info(\`🔧 Compiled: \${process.env.IS_COMPILED === "true" ? "Yes" : "No"}\`);
 
 // Import and start server
 await import("../api/index.ts");
@@ -397,8 +397,8 @@ const buildConfig = {
 };
 
 if (flags.verbose) {
-  console.log("🔨 Building with configuration:");
-  console.log(JSON.stringify(buildConfig, null, 2));
+  console.info("🔨 Building with configuration:");
+  console.info(JSON.stringify(buildConfig, null, 2));
 }
 
 const result = await Bun.build(buildConfig);
@@ -419,7 +419,7 @@ if (result.success) {
   const size = (await Bun.file(exePath).size);
   const sizeMB = (size / 1024 / 1024).toFixed(2);
   
-  console.log(`✅ Compiled: ${exePath} (${sizeMB} MB)`);
+  console.info(`✅ Compiled: ${exePath} (${sizeMB} MB)`);
   
   // Generate metafile analysis
   if (flags.metafile && result.metafile) {
@@ -427,37 +427,37 @@ if (result.success) {
     await Bun.write(metafilePath, JSON.stringify(result.metafile, null, 2));
     
     if (flags.verbose) {
-      console.log("📊 Bundle Analysis:");
+      console.info("📊 Bundle Analysis:");
       Object.entries(result.metafile.outputs).forEach(([path, meta]: [string, any]) => {
         const sizeKB = meta.bytes / 1024;
-        console.log(`  ${path}: ${sizeKB.toFixed(2)} KB`);
+        console.info(`  ${path}: ${sizeKB.toFixed(2)} KB`);
       });
     }
   }
   
   // Test executable
-  if (flags.verbose) console.log("🧪 Testing executable...");
+  if (flags.verbose) console.info("🧪 Testing executable...");
   
   const test = await Bun.$`${exePath} --version`.quiet();
   if (test.exitCode === 0) {
-    console.log("✅ Executable works!");
+    console.info("✅ Executable works!");
     
     // Show usage
-    console.log("📋 Usage:");
-    console.log(`  ${exePath} --version     # Show version`);
-    console.log(`  ${exePath} --archive "*.bin"    # Create archive`);
-    console.log(`  ${exePath} --color "hsl(210, 90%, 55%)"  # Test colors`);
-    console.log(`  ${exePath}               # Start server`);
+    console.info("📋 Usage:");
+    console.info(`  ${exePath} --version     # Show version`);
+    console.info(`  ${exePath} --archive "*.bin"    # Create archive`);
+    console.info(`  ${exePath} --color "hsl(210, 90%, 55%)"  # Test colors`);
+    console.info(`  ${exePath}               # Start server`);
     
     // Performance summary
     if (flags.verbose) {
-      console.log("📈 Performance Summary:");
-      console.log(`  Target: ${flags.target}`);
-      console.log(`  Size: ${sizeMB} MB`);
-      console.log(`  Compression: ${flags.compression} (level ${flags.level})`);
-      console.log(`  Minify: ${flags.minify}`);
-      console.log(`  Architecture: ${flags.arch}`);
-      console.log(`  OS: ${flags.os}`);
+      console.info("📈 Performance Summary:");
+      console.info(`  Target: ${flags.target}`);
+      console.info(`  Size: ${sizeMB} MB`);
+      console.info(`  Compression: ${flags.compression} (level ${flags.level})`);
+      console.info(`  Minify: ${flags.minify}`);
+      console.info(`  Architecture: ${flags.arch}`);
+      console.info(`  OS: ${flags.os}`);
     }
   } else {
     console.error("❌ Executable test failed");

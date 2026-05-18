@@ -59,11 +59,11 @@ async function runSmoke(): Promise<number> {
   }
 
   for (const check of checks) {
-    console.log(`[${check.ok ? "PASS" : "FAIL"}] ${check.name} :: ${check.detail}`);
+    console.info(`[${check.ok ? "PASS" : "FAIL"}] ${check.name} :: ${check.detail}`);
   }
 
   const failed = checks.filter((check) => !check.ok).length;
-  console.log(`Checked ${checks.length} smoke assertions against ${base}`);
+  console.info(`Checked ${checks.length} smoke assertions against ${base}`);
   return failed === 0 ? 0 : 1;
 }
 

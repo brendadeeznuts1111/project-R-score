@@ -188,16 +188,16 @@ class SimplePatternProcessor {
 }
 
 async function runTensionTest(config: TestConfig) {
-  console.log(`\n🧪 Running Tension Test:`);
-  console.log(`   Guardian: ${config.guardian}`);
-  console.log(`   Target Score: ${config.score}`);
-  console.log(`   Event Count: ${config.eventCount || 100}`);
+  console.info(`\n🧪 Running Tension Test:`);
+  console.info(`   Guardian: ${config.guardian}`);
+  console.info(`   Target Score: ${config.score}`);
+  console.info(`   Event Count: ${config.eventCount || 100}`);
 
   const processor = new SimplePatternProcessor();
   const events = generateTestEvents(config.eventCount || 100, config);
   const batchSize = config.batchSize || 50;
 
-  console.log(`\n📊 Processing ${events.length} events in batches of ${batchSize}...`);
+  console.info(`\n📊 Processing ${events.length} events in batches of ${batchSize}...`);
 
   const startTime = Date.now();
   let totalProcessed = 0;
@@ -214,7 +214,7 @@ async function runTensionTest(config: TestConfig) {
       totalMatches += result.matches;
       allResults.push(...result.results);
 
-      console.log(`   Batch ${Math.floor(i/batchSize) + 1}: ${result.processed} processed, ${result.matches} matches (${result.duration}ms)`);
+      console.info(`   Batch ${Math.floor(i/batchSize) + 1}: ${result.processed} processed, ${result.matches} matches (${result.duration}ms)`);
     } catch (error) {
       console.error(`   Batch ${Math.floor(i/batchSize) + 1} failed:`, error.message);
     }
@@ -223,22 +223,22 @@ async function runTensionTest(config: TestConfig) {
   const totalDuration = Date.now() - startTime;
   const throughput = Math.round((totalProcessed / totalDuration) * 1000);
 
-  console.log(`\n📈 Results:`);
-  console.log(`   Total Events: ${totalProcessed}`);
-  console.log(`   Total Matches: ${totalMatches}`);
-  console.log(`   Throughput: ${throughput} events/sec`);
-  console.log(`   Duration: ${totalDuration}ms`);
+  console.info(`\n📈 Results:`);
+  console.info(`   Total Events: ${totalProcessed}`);
+  console.info(`   Total Matches: ${totalMatches}`);
+  console.info(`   Throughput: ${throughput} events/sec`);
+  console.info(`   Duration: ${totalDuration}ms`);
 
   // Log tension revoke events
   if (allResults.length > 0) {
-    console.log(`\n🚨 TENSION REVOKE EVENTS:`);
+    console.info(`\n🚨 TENSION REVOKE EVENTS:`);
     allResults.forEach((result, idx) => {
       const timestamp = new Date(result.timestamp).toISOString();
-      console.log(`   [${timestamp}] ${result.guardian.toUpperCase()} - Score: ${(result.score * 100).toFixed(1)}%`);
-      console.log(`      Actions: ${result.actions.join(', ')}`);
-      console.log(`      Buffer: ${result.bufferTime}ms`);
-      console.log(`      Event ID: ${result.eventId}`);
-      console.log('');
+      console.info(`   [${timestamp}] ${result.guardian.toUpperCase()} - Score: ${(result.score * 100).toFixed(1)}%`);
+      console.info(`      Actions: ${result.actions.join(', ')}`);
+      console.info(`      Buffer: ${result.bufferTime}ms`);
+      console.info(`      Event ID: ${result.eventId}`);
+      console.info('');
     });
 
     // Save to log file
@@ -254,7 +254,7 @@ async function runTensionTest(config: TestConfig) {
     }).join('\n');
 
     fs.appendFileSync(logFile, '\n' + logEntries + '\n');
-    console.log(`📝 Events logged to ${logFile}`);
+    console.info(`📝 Events logged to ${logFile}`);
   }
 
   return {
@@ -271,15 +271,15 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log('Usage:');
-    console.log('  bun run tension-test.ts --guardian=parent_highrisk --score=0.95');
-    console.log('  bun run tension-test.ts --guardian=parent_medium --score=0.87');
-    console.log('');
-    console.log('Options:');
-    console.log('  --guardian=<type>    Guardian type (parent_highrisk, parent_medium, parent_low)');
-    console.log('  --score=<number>     Target tension score (0.0-1.0)');
-    console.log('  --count=<number>     Number of test events (default: 100)');
-    console.log('  --batch=<number>     Batch size for processing (default: 50)');
+    console.info('Usage:');
+    console.info('  bun run tension-test.ts --guardian=parent_highrisk --score=0.95');
+    console.info('  bun run tension-test.ts --guardian=parent_medium --score=0.87');
+    console.info('');
+    console.info('Options:');
+    console.info('  --guardian=<type>    Guardian type (parent_highrisk, parent_medium, parent_low)');
+    console.info('  --score=<number>     Target tension score (0.0-1.0)');
+    console.info('  --count=<number>     Number of test events (default: 100)');
+    console.info('  --batch=<number>     Batch size for processing (default: 50)');
     return;
   }
 

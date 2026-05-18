@@ -106,8 +106,8 @@ const quickWins: QuickWin[] = [
  * @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options
  */
 function displayTable(): void {
-  console.log(styled`{bold}{cyan}🚀 BUN QUICK WINS MIGRATION TABLE{/cyan}{/bold}`);
-  console.log();
+  console.info(styled`{bold}{cyan}🚀 BUN QUICK WINS MIGRATION TABLE{/cyan}{/bold}`);
+  console.info();
 
   // Bun.inspect.table() with options
   const tableOutput = Bun.inspect.table(quickWins, {
@@ -126,26 +126,26 @@ function displayTable(): void {
     },
   });
 
-  console.log(tableOutput);
+  console.info(tableOutput);
 
   // Summary statistics
-  console.log();
-  console.log(colorBar(FW_COLORS.info));
-  console.log(styled`{bold}📊 SUMMARY{/bold}`);
-  console.log(`Total Opportunities: ${quickWins.filter(w => !w.priority.includes('OPTIMIZED')).length}`);
-  console.log(`Critical Priority: ${quickWins.filter(w => w.priority.includes('CRITICAL')).length}`);
-  console.log(`Medium Priority: ${quickWins.filter(w => w.priority.includes('MEDIUM')).length}`);
-  console.log(`Already Optimized: ${quickWins.filter(w => w.priority.includes('OPTIMIZED')).length}`);
-  console.log();
-  console.log(styled`{gray}Documentation:{/gray} docs/QUICK_WINS_BUN_NATIVE.md`);
-  console.log(styled`{gray}Examples:{/gray} docs/BUN_MIGRATION_EXAMPLES.ts`);
+  console.info();
+  console.info(colorBar(FW_COLORS.info));
+  console.info(styled`{bold}📊 SUMMARY{/bold}`);
+  console.info(`Total Opportunities: ${quickWins.filter(w => !w.priority.includes('OPTIMIZED')).length}`);
+  console.info(`Critical Priority: ${quickWins.filter(w => w.priority.includes('CRITICAL')).length}`);
+  console.info(`Medium Priority: ${quickWins.filter(w => w.priority.includes('MEDIUM')).length}`);
+  console.info(`Already Optimized: ${quickWins.filter(w => w.priority.includes('OPTIMIZED')).length}`);
+  console.info();
+  console.info(styled`{gray}Documentation:{/gray} docs/QUICK_WINS_BUN_NATIVE.md`);
+  console.info(styled`{gray}Examples:{/gray} docs/BUN_MIGRATION_EXAMPLES.ts`);
 }
 
 /**
  * Display compact table for quick overview
  */
 function displayCompactTable(): void {
-  console.log(styled`{bold}{cyan}🚀 QUICK WINS (Compact){/cyan}{/bold}\n`);
+  console.info(styled`{bold}{cyan}🚀 QUICK WINS (Compact){/cyan}{/bold}\n`);
 
   const criticalWins = quickWins.filter(w => w.priority.includes('CRITICAL'));
 
@@ -156,14 +156,14 @@ function displayCompactTable(): void {
     columns: ['pattern', 'replacement', 'path'],
   });
 
-  console.log(compactOutput);
+  console.info(compactOutput);
 }
 
 /**
  * Display detailed view with full paths
  */
 function displayDetailedTable(): void {
-  console.log(styled`{bold}{cyan}🚀 DETAILED QUICK WINS VIEW{/cyan}{/bold}\n`);
+  console.info(styled`{bold}{cyan}🚀 DETAILED QUICK WINS VIEW{/cyan}{/bold}\n`);
 
   // Create enhanced rows with colors
   const enhancedWins = quickWins.map(win => ({
@@ -184,7 +184,7 @@ function displayDetailedTable(): void {
     },
   });
 
-  console.log(detailedOutput);
+  console.info(detailedOutput);
 }
 
 /**
@@ -221,10 +221,10 @@ if (import.meta.main) {
       displayDetailedTable();
       break;
     case 'markdown':
-      console.log(generateMarkdownTable());
+      console.info(generateMarkdownTable());
       break;
     case 'json':
-      console.log(JSON.stringify(quickWins, null, 2));
+      console.info(JSON.stringify(quickWins, null, 2));
       break;
     default:
       displayTable();

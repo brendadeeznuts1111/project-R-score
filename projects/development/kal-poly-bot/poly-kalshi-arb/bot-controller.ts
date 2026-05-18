@@ -70,7 +70,7 @@ class EnvironmentManager {
     const envFilePath = '.env';
 
     if (!existsSync(envFilePath)) {
-      console.log('ℹ️  No .env file found, using system environment variables');
+      console.info('ℹ️  No .env file found, using system environment variables');
       return;
     }
 
@@ -100,7 +100,7 @@ class EnvironmentManager {
         process.env[key] = value;
       }
 
-      console.log('✅ Environment variables loaded from .env file');
+      console.info('✅ Environment variables loaded from .env file');
     } catch (error) {
       console.error('❌ Failed to load .env file:', error);
     }
@@ -124,7 +124,7 @@ class TelegramNotificationService {
     const topicsJson = process.env.TELEGRAM_TOPICS || '{}';
 
     if (!botToken || !chatId) {
-      console.log('⚠️  Telegram notifications disabled - missing credentials in .env');
+      console.info('⚠️  Telegram notifications disabled - missing credentials in .env');
     }
 
     let topicMapping: Record<string, number> = {};
@@ -143,7 +143,7 @@ class TelegramNotificationService {
 
   async sendMessage(content: string, category: LogCategory = 'general'): Promise<void> {
     if (!this.credentials.botToken || !this.credentials.chatId) {
-      console.log('📱 Telegram: Service disabled');
+      console.info('📱 Telegram: Service disabled');
       return;
     }
 
@@ -169,7 +169,7 @@ class TelegramNotificationService {
         const errorText = await response.text();
         console.error('📱 Telegram API error:', errorText);
       } else {
-        console.log(`📱 Telegram notification sent to '${category}' (thread ${messageThreadId})`);
+        console.info(`📱 Telegram notification sent to '${category}' (thread ${messageThreadId})`);
       }
     } catch (error: any) {
       console.error('📱 Telegram network error:', error.message);
@@ -381,7 +381,7 @@ class LogProcessingService {
       ? trimmedLine.substring(0, this.maxLineLength) + '...'
       : trimmedLine;
 
-    console.log(displayLine);
+    console.info(displayLine);
 
     // Send notification for significant events
     await this.sendNotificationForEvent(event, trimmedLine);
@@ -429,7 +429,7 @@ class LogProcessingService {
 
       // Log successful notification with priority
       if (event.priority === 'high' || event.priority === 'critical') {
-        console.log(`🔥 High-priority notification sent: ${event.category}`);
+        console.info(`🔥 High-priority notification sent: ${event.category}`);
       }
     } catch (error) {
       console.error(`Failed to send ${event.category} notification:`, error);
@@ -541,21 +541,21 @@ class ArbitrageBotProcessController {
 
   async startProcess(): Promise<void> {
     if (this.botProcess) {
-      console.log("❌ Arbitrage bot already running (PID: %d)", this.botProcess.pid);
+      console.info("❌ Arbitrage bot already running (PID: %d)", this.botProcess.pid);
       return;
     }
 
     if (!existsSync(CONFIG.BOT_BINARY_PATH)) {
       console.error("❌ Bot binary not found: %s", CONFIG.BOT_BINARY_PATH);
-      console.log("   Run: cargo build --release --bin arb-bot");
+      console.info("   Run: cargo build --release --bin arb-bot");
       process.exit(1);
     }
 
     this.startTimestamp = Date.now();
     this.botProcess = Bun.spawn([CONFIG.BOT_BINARY_PATH]);
 
-    console.log("✅ Arbitrage bot started successfully (PID: %d)", this.botProcess.pid);
-    console.log("📊 Monitoring output with real-time notifications...\n");
+    console.info("✅ Arbitrage bot started successfully (PID: %d)", this.botProcess.pid);
+    console.info("📊 Monitoring output with real-time notifications...\n");
 
     // Stream stdout and process logs
     this.processOutputStreams();
@@ -565,19 +565,19 @@ class ArbitrageBotProcessController {
 
   async stopProcess(): Promise<void> {
     if (!this.botProcess) {
-      console.log("❌ Bot process not currently running");
+      console.info("❌ Bot process not currently running");
       return;
     }
 
     this.botProcess.kill();
     this.botProcess = null;
-    console.log("✅ Bot process stopped");
+    console.info("✅ Bot process stopped");
 
     await this.telegramService.sendMessage("*🛑 Bot Stopped:* Process has been terminated", 'general');
   }
 
   async restartProcess(): Promise<void> {
-    console.log("🔄 Restarting arbitrage bot...");
+    console.info("🔄 Restarting arbitrage bot...");
     await this.stopProcess();
     await new Promise(resolve => setTimeout(resolve, 1000));
     await this.startProcess();
@@ -674,7 +674,7 @@ class RiskManagementService {
     try {
       this.riskLimits = { ...this.riskLimits, ...limits };
       await Bun.write(RiskManagementService.CONFIG_FILE, JSON.stringify(this.riskLimits, null, 2));
-      console.log('✅ Risk limits saved to', RiskManagementService.CONFIG_FILE);
+      console.info('✅ Risk limits saved to', RiskManagementService.CONFIG_FILE);
     } catch (error) {
       console.error('❌ Failed to save risk limits:', error);
       throw error;
@@ -754,7 +754,7 @@ class ArbitrageBotWebApiServer {
   }
 
   start(): void {
-    console.log(`🌐 Starting Arbitrage Bot Web API Server on port ${CONFIG.CONTROL_PANEL_PORT}...`);
+    console.info(`🌐 Starting Arbitrage Bot Web API Server on port ${CONFIG.CONTROL_PANEL_PORT}...`);
 
     Bun.serve({
       port: CONFIG.CONTROL_PANEL_PORT,
@@ -763,15 +763,15 @@ class ArbitrageBotWebApiServer {
       }
     });
 
-    console.log(`✅ Web API Server started successfully`);
-    console.log(`🌐 Control Panel: http://localhost:${CONFIG.CONTROL_PANEL_PORT}`);
-    console.log(`📡 API Endpoints:`);
-    console.log(`   POST /api/start          - Start bot process`);
-    console.log(`   POST /api/stop           - Stop bot process`);
-    console.log(`   POST /api/restart        - Restart bot process`);
-    console.log(`   GET  /api/status         - Get bot status`);
-    console.log(`   GET  /api/metrics        - Get trading metrics`);
-    console.log(`   POST /api/test-telegram  - Send test Telegram message`);
+    console.info(`✅ Web API Server started successfully`);
+    console.info(`🌐 Control Panel: http://localhost:${CONFIG.CONTROL_PANEL_PORT}`);
+    console.info(`📡 API Endpoints:`);
+    console.info(`   POST /api/start          - Start bot process`);
+    console.info(`   POST /api/stop           - Stop bot process`);
+    console.info(`   POST /api/restart        - Restart bot process`);
+    console.info(`   GET  /api/status         - Get bot status`);
+    console.info(`   GET  /api/metrics        - Get trading metrics`);
+    console.info(`   POST /api/test-telegram  - Send test Telegram message`);
 
     // Start periodic metrics reporting
     this.startPeriodicMetricsReporting();
@@ -1437,7 +1437,7 @@ class ArbitrageBotWebApiServer {
 // =============================================================================
 
 async function main(): Promise<void> {
-  console.log('🚀 Starting Enhanced Arbitrage Bot Controller...\n');
+  console.info('🚀 Starting Enhanced Arbitrage Bot Controller...\n');
 
   try {
     // Load environment configuration
@@ -1449,9 +1449,9 @@ async function main(): Promise<void> {
     const botController = new ArbitrageBotProcessController(telegramService);
 
     // Report configuration status
-    console.log('✅ Configuration loaded');
-    console.log(`📱 Telegram: ${telegramService.isConfigured() ? 'Enabled' : 'Disabled'}`);
-    console.log('');
+    console.info('✅ Configuration loaded');
+    console.info(`📱 Telegram: ${telegramService.isConfigured() ? 'Enabled' : 'Disabled'}`);
+    console.info('');
 
     // Start web API server
     const webServer = new ArbitrageBotWebApiServer(
@@ -1463,21 +1463,21 @@ async function main(): Promise<void> {
 
     // Handle graceful shutdown
     process.on('SIGINT', async () => {
-      console.log('\n🛑 Shutting down gracefully...');
+      console.info('\n🛑 Shutting down gracefully...');
 
       try {
         await botController.stopProcess();
-        console.log('✅ Bot processes stopped');
+        console.info('✅ Bot processes stopped');
       } catch (error) {
         console.error('Error stopping bot:', error);
       }
 
-      console.log('👋 Shutdown complete');
+      console.info('👋 Shutdown complete');
       process.exit(0);
     });
 
-    console.log('\n🎯 Enhanced Arbitrage Bot Controller is ready!');
-    console.log('💡 Use the web interface or REST API to control your bot\n');
+    console.info('\n🎯 Enhanced Arbitrage Bot Controller is ready!');
+    console.info('💡 Use the web interface or REST API to control your bot\n');
 
   } catch (error) {
     console.error('❌ Failed to start application:', error);

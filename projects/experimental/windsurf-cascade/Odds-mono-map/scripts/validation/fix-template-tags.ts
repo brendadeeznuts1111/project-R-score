@@ -27,7 +27,7 @@ class TemplateTagFixer {
 
     async fixAllTags(): Promise<void> {
         const files = await this.getTemplateFiles();
-        console.log(`🏷️ Fixing tags in ${files.length} templates...`);
+        console.info(`🏷️ Fixing tags in ${files.length} templates...`);
 
         const results: TagFixResult[] = [];
 
@@ -59,7 +59,7 @@ class TemplateTagFixer {
             if (result.fixes.length > 0) {
                 const fixedContent = this.updateTagsInContent(content, result.newTags);
                 await writeFile(filePath, fixedContent, 'utf-8');
-                console.log(`  ✅ Fixed: ${fileName} (${result.fixes.length} fixes)`);
+                console.info(`  ✅ Fixed: ${fileName} (${result.fixes.length} fixes)`);
                 return result;
             }
 
@@ -270,12 +270,12 @@ class TemplateTagFixer {
     }
 
     private printSummary(results: TagFixResult[]): void {
-        console.log('');
-        console.log('📊 Tag Fixing Summary:');
-        console.log(`  Files processed: ${results.length}`);
+        console.info('');
+        console.info('📊 Tag Fixing Summary:');
+        console.info(`  Files processed: ${results.length}`);
 
         const totalFixes = results.reduce((sum, r) => sum + r.fixes.length, 0);
-        console.log(`  Total fixes: ${totalFixes}`);
+        console.info(`  Total fixes: ${totalFixes}`);
 
         const fixTypes = new Map<string, number>();
         for (const result of results) {
@@ -285,25 +285,25 @@ class TemplateTagFixer {
             }
         }
 
-        console.log('');
-        console.log('🔧 Fix Types:');
+        console.info('');
+        console.info('🔧 Fix Types:');
         for (const [type, count] of fixTypes) {
-            console.log(`  ${type}: ${count}`);
+            console.info(`  ${type}: ${count}`);
         }
 
-        console.log('');
-        console.log('🏷️ Final Tag Statistics:');
+        console.info('');
+        console.info('🏷️ Final Tag Statistics:');
         const allTags = new Set<string>();
         for (const result of results) {
             for (const tag of result.newTags) {
                 allTags.add(tag);
             }
         }
-        console.log(`  Unique tags: ${allTags.size}`);
-        console.log(`  Average tags per file: ${Math.round(results.reduce((sum, r) => sum + r.newTags.length, 0) / results.length)}`);
+        console.info(`  Unique tags: ${allTags.size}`);
+        console.info(`  Average tags per file: ${Math.round(results.reduce((sum, r) => sum + r.newTags.length, 0) / results.length)}`);
 
-        console.log('');
-        console.log('✅ All template tags fixed and standardized!');
+        console.info('');
+        console.info('✅ All template tags fixed and standardized!');
     }
 }
 
@@ -312,14 +312,14 @@ async function main(): Promise<void> {
     const templatesPath = process.argv[2] || join(process.cwd(), '06 - Templates');
 
     if (process.argv.includes('--help') || process.argv.includes('-h')) {
-        console.log('🏷️ Template Tag Fixer');
-        console.log('Usage: bun fix-template-tags.ts [templates-path]');
-        console.log('');
-        console.log('Fixes:');
-        console.log('  - Removes malformed tags (priority: "high", status: "TODO", etc.)');
-        console.log('  - Ensures consistent core tag usage');
-        console.log('  - Adds missing category-specific tags');
-        console.log('  - Standardizes tag format and ordering');
+        console.info('🏷️ Template Tag Fixer');
+        console.info('Usage: bun fix-template-tags.ts [templates-path]');
+        console.info('');
+        console.info('Fixes:');
+        console.info('  - Removes malformed tags (priority: "high", status: "TODO", etc.)');
+        console.info('  - Ensures consistent core tag usage');
+        console.info('  - Adds missing category-specific tags');
+        console.info('  - Standardizes tag format and ordering');
         process.exit(0);
     }
 

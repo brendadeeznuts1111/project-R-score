@@ -137,7 +137,7 @@ export class R2BackupManager {
    * Initialize backup manager
    */
   async initialize(): Promise<void> {
-    console.log(styled('💾 Initializing R2 Backup Manager', 'accent'));
+    console.info(styled('💾 Initializing R2 Backup Manager', 'accent'));
 
     // Restore saved jobs and snapshots
     await this.restoreState();
@@ -149,7 +149,7 @@ export class R2BackupManager {
       }
     }
 
-    console.log(styled(`✅ Backup manager initialized (${this.jobs.size} jobs)`, 'success'));
+    console.info(styled(`✅ Backup manager initialized (${this.jobs.size} jobs)`, 'success'));
   }
 
   /**
@@ -177,7 +177,7 @@ export class R2BackupManager {
       this.scheduleJob(job);
     }
 
-    console.log(styled(`📋 Created backup job: ${job.name} (${job.id})`, 'success'));
+    console.info(styled(`📋 Created backup job: ${job.name} (${job.id})`, 'success'));
     return job;
   }
 
@@ -193,7 +193,7 @@ export class R2BackupManager {
     job.status = 'running';
     job.startedAt = new Date().toISOString();
 
-    console.log(styled(`🚀 Starting backup: ${job.name}`, 'info'));
+    console.info(styled(`🚀 Starting backup: ${job.name}`, 'info'));
     const startTime = Date.now();
 
     // Emit event
@@ -280,7 +280,7 @@ export class R2BackupManager {
         },
       });
 
-      console.log(
+      console.info(
         styled(
           `✅ Backup completed: ${snapshot.id} (${objectsToBackup.length} objects, ${(snapshot.size / 1024 / 1024).toFixed(2)} MB)`,
           'success'
@@ -331,7 +331,7 @@ export class R2BackupManager {
       startedAt: new Date().toISOString(),
     };
 
-    console.log(styled(`🔄 Starting restore: ${snapshotId} → ${target.bucket}`, 'info'));
+    console.info(styled(`🔄 Starting restore: ${snapshotId} → ${target.bucket}`, 'info'));
 
     try {
       let objectsToRestore = snapshot.manifest.objects;
@@ -361,7 +361,7 @@ export class R2BackupManager {
       job.status = job.progress.failedObjects > 0 ? 'completed' : 'completed';
       job.completedAt = new Date().toISOString();
 
-      console.log(
+      console.info(
         styled(`✅ Restore completed: ${job.progress.restoredObjects} objects restored`, 'success')
       );
 
@@ -384,7 +384,7 @@ export class R2BackupManager {
     const snapshot = this.snapshots.get(snapshotId);
     if (!snapshot) throw new Error(`Snapshot not found: ${snapshotId}`);
 
-    console.log(styled(`🔍 Verifying backup: ${snapshotId}`, 'info'));
+    console.info(styled(`🔍 Verifying backup: ${snapshotId}`, 'info'));
 
     const result = {
       valid: true,
@@ -406,7 +406,7 @@ export class R2BackupManager {
     }
 
     const status = result.valid ? 'success' : 'error';
-    console.log(
+    console.info(
       styled(
         `Verification ${result.valid ? 'passed' : 'failed'}: ${result.checkedObjects} checked, ${result.failedObjects} failed`,
         status
@@ -476,27 +476,27 @@ export class R2BackupManager {
    * Display backup status
    */
   displayStatus(): void {
-    console.log(styled('\n💾 R2 Backup Manager Status', 'accent'));
-    console.log(styled('===========================', 'accent'));
+    console.info(styled('\n💾 R2 Backup Manager Status', 'accent'));
+    console.info(styled('===========================', 'accent'));
 
     const stats = this.getStats();
-    console.log(styled('\n📊 Statistics:', 'info'));
-    console.log(styled(`  Total Jobs: ${stats.totalJobs}`, 'muted'));
-    console.log(styled(`  Active Backups: ${stats.activeBackups}`, 'muted'));
-    console.log(styled(`  Total Snapshots: ${stats.totalSnapshots}`, 'muted'));
-    console.log(
+    console.info(styled('\n📊 Statistics:', 'info'));
+    console.info(styled(`  Total Jobs: ${stats.totalJobs}`, 'muted'));
+    console.info(styled(`  Active Backups: ${stats.activeBackups}`, 'muted'));
+    console.info(styled(`  Total Snapshots: ${stats.totalSnapshots}`, 'muted'));
+    console.info(
       styled(
         `  Data Protected: ${(stats.totalDataProtected / 1024 / 1024 / 1024).toFixed(2)} GB`,
         'muted'
       )
     );
     if (stats.lastBackupTime) {
-      console.log(
+      console.info(
         styled(`  Last Backup: ${new Date(stats.lastBackupTime).toLocaleString()}`, 'muted')
       );
     }
 
-    console.log(styled('\n📋 Backup Jobs:', 'info'));
+    console.info(styled('\n📋 Backup Jobs:', 'info'));
     for (const job of this.jobs.values()) {
       const typeIcon = job.type === 'full' ? '📦' : job.type === 'incremental' ? '📈' : '📊';
       const statusIcon = {
@@ -507,24 +507,24 @@ export class R2BackupManager {
         verifying: '🔍',
       }[job.status];
 
-      console.log(styled(`  ${typeIcon} ${statusIcon} ${job.name}`, 'muted'));
-      console.log(styled(`     Source: ${job.source.bucket}/${job.source.prefix || ''}`, 'muted'));
-      console.log(
+      console.info(styled(`  ${typeIcon} ${statusIcon} ${job.name}`, 'muted'));
+      console.info(styled(`     Source: ${job.source.bucket}/${job.source.prefix || ''}`, 'muted'));
+      console.info(
         styled(`     Destination: ${job.destination.bucket}/${job.destination.prefix}`, 'muted')
       );
       if (job.schedule) {
-        console.log(styled(`     Schedule: ${job.schedule.type}`, 'muted'));
+        console.info(styled(`     Schedule: ${job.schedule.type}`, 'muted'));
       }
     }
 
-    console.log(styled('\n💾 Recent Snapshots:', 'info'));
+    console.info(styled('\n💾 Recent Snapshots:', 'info'));
     const recentSnapshots = this.listSnapshots().slice(0, 5);
     for (const snapshot of recentSnapshots) {
       const job = this.jobs.get(snapshot.jobId);
-      console.log(styled(`  📸 ${snapshot.id} (${snapshot.type})`, 'muted'));
-      console.log(styled(`     Job: ${job?.name || snapshot.jobId}`, 'muted'));
-      console.log(styled(`     Time: ${new Date(snapshot.timestamp).toLocaleString()}`, 'muted'));
-      console.log(styled(`     Size: ${(snapshot.size / 1024 / 1024).toFixed(2)} MB`, 'muted'));
+      console.info(styled(`  📸 ${snapshot.id} (${snapshot.type})`, 'muted'));
+      console.info(styled(`     Job: ${job?.name || snapshot.jobId}`, 'muted'));
+      console.info(styled(`     Time: ${new Date(snapshot.timestamp).toLocaleString()}`, 'muted'));
+      console.info(styled(`     Size: ${(snapshot.size / 1024 / 1024).toFixed(2)} MB`, 'muted'));
     }
   }
 
@@ -609,7 +609,7 @@ export class R2BackupManager {
 
     // Store manifest
     const manifestKey = `${job.destination.prefix}/${manifest.createdAt}/manifest.json`;
-    console.log(styled(`  Writing manifest: ${manifestKey}`, 'muted'));
+    console.info(styled(`  Writing manifest: ${manifestKey}`, 'muted'));
   }
 
   private async restoreObject(
@@ -619,7 +619,7 @@ export class R2BackupManager {
     options: RestoreOptions
   ): Promise<void> {
     // In production, would copy from backup to target
-    console.log(styled(`  Restoring: ${obj.key}`, 'muted'));
+    console.info(styled(`  Restoring: ${obj.key}`, 'muted'));
   }
 
   private async verifyObjectExists(
@@ -688,7 +688,7 @@ export class R2BackupManager {
     }
 
     if (toDelete.length > 0) {
-      console.log(
+      console.info(
         styled(`🗑️ Cleaned up ${toDelete.length} old snapshots per retention policy`, 'info')
       );
     }
@@ -703,8 +703,8 @@ if (import.meta.main) {
   const backup = r2BackupManager;
   await backup.initialize();
 
-  console.log(styled('💾 R2 Backup Manager Demo', 'accent'));
-  console.log(styled('=========================', 'accent'));
+  console.info(styled('💾 R2 Backup Manager Demo', 'accent'));
+  console.info(styled('=========================', 'accent'));
 
   // Create a backup job
   const job = backup.createJob({
@@ -730,17 +730,17 @@ if (import.meta.main) {
     },
   });
 
-  console.log(styled(`\n📋 Created backup job: ${job.name}`, 'success'));
+  console.info(styled(`\n📋 Created backup job: ${job.name}`, 'success'));
 
   // Display status
   backup.displayStatus();
 
   // Show stats
   const stats = backup.getStats();
-  console.log(styled('\n📊 Backup Stats:', 'info'));
-  console.log(styled(`  Jobs: ${stats.totalJobs}`, 'muted'));
-  console.log(styled(`  Snapshots: ${stats.totalSnapshots}`, 'muted'));
-  console.log(
+  console.info(styled('\n📊 Backup Stats:', 'info'));
+  console.info(styled(`  Jobs: ${stats.totalJobs}`, 'muted'));
+  console.info(styled(`  Snapshots: ${stats.totalSnapshots}`, 'muted'));
+  console.info(
     styled(`  Data Protected: ${(stats.totalDataProtected / 1024 / 1024).toFixed(2)} MB`, 'muted')
   );
 }

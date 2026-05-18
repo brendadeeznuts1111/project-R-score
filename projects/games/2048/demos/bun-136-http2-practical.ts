@@ -1,16 +1,16 @@
 #!/usr/bin/env bun
 
 // Practical demonstration of Bun v1.3.6 HTTP/2 flow control improvements
-console.log("🚀 Bun v1.3.6 HTTP/2 Flow Control - Practical Demo");
-console.log("=".repeat(58));
+console.info("🚀 Bun v1.3.6 HTTP/2 Flow Control - Practical Demo");
+console.info("=".repeat(58));
 
 // Test 1: HTTP/2 Server with Flow Control
 async function demonstrateHTTP2Server() {
-  console.log("\n1️⃣ HTTP/2 Server with Enhanced Flow Control:");
+  console.info("\n1️⃣ HTTP/2 Server with Enhanced Flow Control:");
 
-  console.log("   ✅ Improved stream management and backpressure handling");
-  console.log("   🔧 Better memory usage for large responses");
-  console.log("   🚀 Enhanced error recovery and connection stability");
+  console.info("   ✅ Improved stream management and backpressure handling");
+  console.info("   🔧 Better memory usage for large responses");
+  console.info("   🚀 Enhanced error recovery and connection stability");
 
   const serverCode = `
 // v1.3.6: HTTP/2 server with improved flow control
@@ -23,19 +23,19 @@ const server = createServer((req, res) => {
 
   // Stream drain event - improved in v1.3.6
   res.stream.on('drain', () => {
-    console.log(\`Stream drained: \${bytesWritten}/\${totalSize} bytes written\`);
+    console.info(\`Stream drained: \${bytesWritten}/\${totalSize} bytes written\`);
     // Better backpressure handling
   });
 
   // Stream error handling - enhanced in v1.3.6
   res.stream.on('error', (error) => {
-    console.log('Stream error:', error.message);
+    console.info('Stream error:', error.message);
     // Improved error recovery
   });
 
   // Stream close event - better cleanup in v1.3.6
   res.stream.on('close', () => {
-    console.log('Stream closed, resources cleaned up');
+    console.info('Stream closed, resources cleaned up');
   });
 
   res.writeHead(200, {
@@ -62,7 +62,7 @@ const server = createServer((req, res) => {
         setImmediate(writeChunk);
       } else {
         // Wait for drain event - improved flow control in v1.3.6
-        console.log('Waiting for stream to drain...');
+        console.info('Waiting for stream to drain...');
       }
     } else {
       res.end();
@@ -73,20 +73,20 @@ const server = createServer((req, res) => {
 });
 
 server.listen(8443);
-console.log('HTTP/2 server with enhanced flow control on port 8443');
+console.info('HTTP/2 server with enhanced flow control on port 8443');
   `;
 
-  console.log("   💡 Enhanced HTTP/2 server implementation:");
-  console.log(serverCode);
+  console.info("   💡 Enhanced HTTP/2 server implementation:");
+  console.info(serverCode);
 }
 
 // Test 2: HTTP/2 Client with Flow Control
 async function demonstrateHTTP2Client() {
-  console.log("\n2️⃣ HTTP/2 Client with Enhanced Flow Control:");
+  console.info("\n2️⃣ HTTP/2 Client with Enhanced Flow Control:");
 
-  console.log("   ✅ Better concurrent stream handling");
-  console.log("   🔧 Improved connection multiplexing");
-  console.log("   🚀 Enhanced error handling and recovery");
+  console.info("   ✅ Better concurrent stream handling");
+  console.info("   🔧 Improved connection multiplexing");
+  console.info("   🚀 Enhanced error handling and recovery");
 
   const clientCode = `
 // v1.3.6: HTTP/2 client with improved flow control
@@ -99,7 +99,7 @@ const client = connect('https://localhost:8443', {
 });
 
 client.on('connect', () => {
-  console.log('HTTP/2 connection established with enhanced flow control');
+  console.info('HTTP/2 connection established with enhanced flow control');
 
   // Create multiple concurrent streams to test flow control
   const streamCount = 10;
@@ -115,11 +115,11 @@ client.on('connect', () => {
 
     // Enhanced flow control monitoring
     req.on('drain', () => {
-      console.log(\`Client stream \${i} drained\`);
+      console.info(\`Client stream \${i} drained\`);
     });
 
     req.on('response', (headers) => {
-      console.log(\`Stream \${i} response: \${headers[':status']}\`);
+      console.info(\`Stream \${i} response: \${headers[':status']}\`);
     });
 
     let receivedBytes = 0;
@@ -128,13 +128,13 @@ client.on('connect', () => {
       // Better backpressure handling in v1.3.6
 
       if (receivedBytes % 50000 === 0) {
-        console.log(\`Stream \${i}: Received \${receivedBytes} bytes\`);
+        console.info(\`Stream \${i}: Received \${receivedBytes} bytes\`);
       }
     });
 
     req.on('end', () => {
       completedStreams++;
-      console.log(\`Stream \${i} completed (\${completedStreams}/\${streamCount})\`);
+      console.info(\`Stream \${i} completed (\${completedStreams}/\${streamCount})\`);
 
       if (completedStreams === streamCount) {
         client.close();
@@ -156,27 +156,27 @@ client.on('error', (error) => {
 });
 
 client.on('goaway', (errorCode, lastStreamID, opaqueData) => {
-  console.log('HTTP/2 GOAWAY:', errorCode);
+  console.info('HTTP/2 GOAWAY:', errorCode);
   // Better connection cleanup in v1.3.6
 });
 
 client.on('frameError', (frameType, errorCode, streamID) => {
-  console.log('HTTP/2 frame error:', { frameType, errorCode, streamID });
+  console.info('HTTP/2 frame error:', { frameType, errorCode, streamID });
   // Enhanced frame error handling
 });
   `;
 
-  console.log("   💡 Enhanced HTTP/2 client implementation:");
-  console.log(clientCode);
+  console.info("   💡 Enhanced HTTP/2 client implementation:");
+  console.info(clientCode);
 }
 
 // Test 3: Flow Control Metrics
 function demonstrateFlowControlMetrics() {
-  console.log("\n3️⃣ HTTP/2 Flow Control Metrics:");
+  console.info("\n3️⃣ HTTP/2 Flow Control Metrics:");
 
-  console.log("   ✅ Enhanced monitoring and diagnostics");
-  console.log("   🔧 Better visibility into stream performance");
-  console.log("   🚀 Improved resource utilization tracking");
+  console.info("   ✅ Enhanced monitoring and diagnostics");
+  console.info("   🔧 Better visibility into stream performance");
+  console.info("   🚀 Improved resource utilization tracking");
 
   const metricsCode = `
 // v1.3.6: HTTP/2 flow control metrics
@@ -201,11 +201,11 @@ const server = createServer((req, res) => {
     const currentTime = performance.now();
     const elapsed = currentTime - startTime;
 
-    console.log(\`Flow Control Metrics:\`);
-    console.log(\`  Elapsed: \${elapsed.toFixed(2)}ms\`);
-    console.log(\`  Bytes written: \${bytesWritten}\`);
-    console.log(\`  Drain events: \${drainCount}\`);
-    console.log(\`  Write rate: \${(bytesWritten / elapsed * 1000).toFixed(2)} bytes/sec\`);
+    console.info(\`Flow Control Metrics:\`);
+    console.info(\`  Elapsed: \${elapsed.toFixed(2)}ms\`);
+    console.info(\`  Bytes written: \${bytesWritten}\`);
+    console.info(\`  Drain events: \${drainCount}\`);
+    console.info(\`  Write rate: \${(bytesWritten / elapsed * 1000).toFixed(2)} bytes/sec\`);
 
     // Enhanced backpressure tracking in v1.3.6
     const backpressure = res.stream.writableLength;
@@ -216,12 +216,12 @@ const server = createServer((req, res) => {
     const endTime = performance.now();
     const totalTime = endTime - startTime;
 
-    console.log(\`Stream completed:\`);
-    console.log(\`  Total time: \${totalTime.toFixed(2)}ms\`);
-    console.log(\`  Total bytes: \${bytesWritten}\`);
-    console.log(\`  Average rate: \${(bytesWritten / totalTime * 1000).toFixed(2)} bytes/sec\`);
-    console.log(\`  Max backpressure: \${metrics.maxBackpressure}\`);
-    console.log(\`  Drain efficiency: \${(drainCount / totalTime * 1000).toFixed(2)} drains/sec\`);
+    console.info(\`Stream completed:\`);
+    console.info(\`  Total time: \${totalTime.toFixed(2)}ms\`);
+    console.info(\`  Total bytes: \${bytesWritten}\`);
+    console.info(\`  Average rate: \${(bytesWritten / totalTime * 1000).toFixed(2)} bytes/sec\`);
+    console.info(\`  Max backpressure: \${metrics.maxBackpressure}\`);
+    console.info(\`  Drain efficiency: \${(drainCount / totalTime * 1000).toFixed(2)} drains/sec\`);
   });
 
   res.writeHead(200, { 'content-type': 'application/json' });
@@ -237,16 +237,16 @@ const server = createServer((req, res) => {
 });
 
 server.listen(8443);
-console.log('HTTP/2 metrics server on port 8443');
+console.info('HTTP/2 metrics server on port 8443');
   `;
 
-  console.log("   💡 Enhanced flow control metrics:");
-  console.log(metricsCode);
+  console.info("   💡 Enhanced flow control metrics:");
+  console.info(metricsCode);
 }
 
 // Test 4: Performance Comparison
 function demonstratePerformanceComparison() {
-  console.log("\n4️⃣ Performance Comparison - Before vs After v1.3.6:");
+  console.info("\n4️⃣ Performance Comparison - Before vs After v1.3.6:");
 
   const comparison = [
     {
@@ -281,18 +281,18 @@ function demonstratePerformanceComparison() {
     },
   ];
 
-  console.log("   📊 Performance improvements:");
+  console.info("   📊 Performance improvements:");
   comparison.forEach((item, index) => {
-    console.log(`\n   ${index + 1}. ${item.metric}:`);
-    console.log(`      Before: ${item.before}`);
-    console.log(`      After: ${item.after}`);
-    console.log(`      Use case: ${item.scenario}`);
+    console.info(`\n   ${index + 1}. ${item.metric}:`);
+    console.info(`      Before: ${item.before}`);
+    console.info(`      After: ${item.after}`);
+    console.info(`      Use case: ${item.scenario}`);
   });
 }
 
 // Test 5: Real-World Use Cases
 function demonstrateRealWorldUseCases() {
-  console.log("\n5️⃣ Real-World HTTP/2 Flow Control Use Cases:");
+  console.info("\n5️⃣ Real-World HTTP/2 Flow Control Use Cases:");
 
   const useCases = [
     {
@@ -328,10 +328,10 @@ function demonstrateRealWorldUseCases() {
   ];
 
   useCases.forEach((useCase, index) => {
-    console.log(`\n   ${index + 1}. ${useCase.useCase}:`);
-    console.log(`      Description: ${useCase.description}`);
-    console.log(`      Flow Control Benefit: ${useCase.flowControlBenefit}`);
-    console.log(`      Implementation: ${useCase.implementation}`);
+    console.info(`\n   ${index + 1}. ${useCase.useCase}:`);
+    console.info(`      Description: ${useCase.description}`);
+    console.info(`      Flow Control Benefit: ${useCase.flowControlBenefit}`);
+    console.info(`      Implementation: ${useCase.implementation}`);
   });
 }
 
@@ -344,16 +344,16 @@ async function main() {
     demonstratePerformanceComparison();
     demonstrateRealWorldUseCases();
 
-    console.log("\n🎯 Summary of Bun v1.3.6 HTTP/2 Flow Control Improvements:");
-    console.log("   🚀 Enhanced stream management and backpressure handling");
-    console.log("   🧠 30-50% reduction in memory usage for large transfers");
-    console.log("   📈 20-40% increase in sustained throughput");
-    console.log("   🔧 90% reduction in connection errors");
-    console.log("   ⚡ 15-25% reduction in response latency");
-    console.log("   🌐 Better compatibility with browsers and proxies");
-    console.log("   🔄 Automatic improvements - no code changes needed");
+    console.info("\n🎯 Summary of Bun v1.3.6 HTTP/2 Flow Control Improvements:");
+    console.info("   🚀 Enhanced stream management and backpressure handling");
+    console.info("   🧠 30-50% reduction in memory usage for large transfers");
+    console.info("   📈 20-40% increase in sustained throughput");
+    console.info("   🔧 90% reduction in connection errors");
+    console.info("   ⚡ 15-25% reduction in response latency");
+    console.info("   🌐 Better compatibility with browsers and proxies");
+    console.info("   🔄 Automatic improvements - no code changes needed");
 
-    console.log(
+    console.info(
       "\n💨 HTTP/2 connections are now significantly more efficient!",
     );
   } catch (error) {

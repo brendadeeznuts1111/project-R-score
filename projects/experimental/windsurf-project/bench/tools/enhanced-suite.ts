@@ -4,66 +4,66 @@
 import { config } from 'dotenv';
 config({ path: './.env' });
 
-console.log('🚀 **ENHANCED R2 BENCHMARK SUITE** 🚀');
-console.log('='.repeat(60));
+console.info('🚀 **ENHANCED R2 BENCHMARK SUITE** 🚀');
+console.info('='.repeat(60));
 
 async function runEnhancedSuite() {
-  console.log('📋 Suite Configuration:');
-  console.log('  ✅ Real-time monitoring dashboard');
-  console.log('  ✅ Advanced compression comparison');
-  console.log('  ✅ Automated HTML report generation');
-  console.log('  ✅ Modern Bun S3 API integration');
-  console.log('  ✅ Node SDK performance comparison');
-  console.log('  ✅ Cost analysis and optimization');
-  console.log('');
+  console.info('📋 Suite Configuration:');
+  console.info('  ✅ Real-time monitoring dashboard');
+  console.info('  ✅ Advanced compression comparison');
+  console.info('  ✅ Automated HTML report generation');
+  console.info('  ✅ Modern Bun S3 API integration');
+  console.info('  ✅ Node SDK performance comparison');
+  console.info('  ✅ Cost analysis and optimization');
+  console.info('');
 
-  console.log('🎯 **Available Commands**:');
-  console.log('');
-  console.log('📊 **Core Benchmark**:');
-  console.log('  bun bench-r2-super.ts                    # Basic benchmark');
-  console.log('  bun bench-r2-super.ts --fail             # Fail-fast mode');
-  console.log('');
-  console.log('🔍 **Enhanced Features**:');
-  console.log('  bun bench-r2-super.ts --monitor          # With live monitoring');
-  console.log('  bun bench-r2-super.ts --compression      # With compression tests');
-  console.log('  bun bench-r2-super.ts --report           # With HTML report');
-  console.log('  bun bench-r2-super.ts --all              # All features combined');
-  console.log('');
-  console.log('🛠️ **Standalone Tools**:');
-  console.log('  bun monitor-dashboard.ts                 # Real-time monitoring');
-  console.log('  bun compression-compare.ts               # Compression analysis');
-  console.log('  bun report-generator.ts                  # Report generation');
-  console.log('  bun blog-demo.ts                         # Connectivity demo');
-  console.log('');
-  console.log('🔗 **Connectivity**:');
-  console.log('  bun verify-dev-url.ts                    # Test R2 access');
-  console.log('');
+  console.info('🎯 **Available Commands**:');
+  console.info('');
+  console.info('📊 **Core Benchmark**:');
+  console.info('  bun bench-r2-super.ts                    # Basic benchmark');
+  console.info('  bun bench-r2-super.ts --fail             # Fail-fast mode');
+  console.info('');
+  console.info('🔍 **Enhanced Features**:');
+  console.info('  bun bench-r2-super.ts --monitor          # With live monitoring');
+  console.info('  bun bench-r2-super.ts --compression      # With compression tests');
+  console.info('  bun bench-r2-super.ts --report           # With HTML report');
+  console.info('  bun bench-r2-super.ts --all              # All features combined');
+  console.info('');
+  console.info('🛠️ **Standalone Tools**:');
+  console.info('  bun monitor-dashboard.ts                 # Real-time monitoring');
+  console.info('  bun compression-compare.ts               # Compression analysis');
+  console.info('  bun report-generator.ts                  # Report generation');
+  console.info('  bun blog-demo.ts                         # Connectivity demo');
+  console.info('');
+  console.info('🔗 **Connectivity**:');
+  console.info('  bun verify-dev-url.ts                    # Test R2 access');
+  console.info('');
 
-  console.log('📈 **Performance Expectations**:');
-  console.log('  • Throughput: 1,900+ IDs/s at 1k scale');
-  console.log('  • Speedup: 7-11x vs Node.js SDK');
-  console.log('  • Compression: 80%+ space savings');
-  console.log('  • Cost: Micro-cost tracking enabled');
-  console.log('  • Latency: Sub-500ms at scale');
-  console.log('');
+  console.info('📈 **Performance Expectations**:');
+  console.info('  • Throughput: 1,900+ IDs/s at 1k scale');
+  console.info('  • Speedup: 7-11x vs Node.js SDK');
+  console.info('  • Compression: 80%+ space savings');
+  console.info('  • Cost: Micro-cost tracking enabled');
+  console.info('  • Latency: Sub-500ms at scale');
+  console.info('');
 
-  console.log('🌐 **R2 Integration**:');
-  console.log(`  • Bucket: ${Bun.env.R2_BUCKET || 'apple-ids-bucket'}`);
-  console.log(`  • Endpoint: ${Bun.env.S3_ENDPOINT || 'Cloudflare R2'}`);
-  console.log(`  • Public URL: https://pub-295f9061822d480cbe2b81318d88d774.r2.dev`);
-  console.log('');
+  console.info('🌐 **R2 Integration**:');
+  console.info(`  • Bucket: ${Bun.env.R2_BUCKET || 'apple-ids-bucket'}`);
+  console.info(`  • Endpoint: ${Bun.env.S3_ENDPOINT || 'Cloudflare R2'}`);
+  console.info(`  • Public URL: https://pub-295f9061822d480cbe2b81318d88d774.r2.dev`);
+  console.info('');
 
-  console.log('🎉 **Enhancement Complete!**');
-  console.log('The R2 benchmark suite is now enterprise-ready with:');
-  console.log('  📊 Real-time performance monitoring');
-  console.log('  🗜️ Advanced compression analysis');
-  console.log('  📈 Automated HTML reports');
-  console.log('  🚀 Modern Bun S3 API optimization');
-  console.log('  💰 Cost tracking and optimization');
-  console.log('  🔗 Production-grade connectivity');
-  console.log('');
+  console.info('🎉 **Enhancement Complete!**');
+  console.info('The R2 benchmark suite is now enterprise-ready with:');
+  console.info('  📊 Real-time performance monitoring');
+  console.info('  🗜️ Advanced compression analysis');
+  console.info('  📈 Automated HTML reports');
+  console.info('  🚀 Modern Bun S3 API optimization');
+  console.info('  💰 Cost tracking and optimization');
+  console.info('  🔗 Production-grade connectivity');
+  console.info('');
   
-  console.log('🚀 **Ready for production deployment!**');
+  console.info('🚀 **Ready for production deployment!**');
 }
 
 // Add the --all flag to main benchmark

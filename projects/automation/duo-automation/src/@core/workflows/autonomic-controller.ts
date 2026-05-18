@@ -118,13 +118,13 @@ export class AutonomicController implements WorkflowPattern<string, HealingResul
   }
 
   async startAutonomicLoop(): Promise<void> {
-    console.log('🚀 Starting Autonomic Self-Healing Loop (§100.HEAL)...');
+    console.info('🚀 Starting Autonomic Self-Healing Loop (§100.HEAL)...');
     setInterval(async () => {
       const subsystems = ['latency', 'cache', 'pool'];
       for (const sub of subsystems) {
         const result = await this.exec(sub);
         if (result.result.healed) {
-          console.log(`🛠️ Autonomic: ${sub} HEALED (${result.result.action}) in ${result.duration.toFixed(2)}ms`);
+          console.info(`🛠️ Autonomic: ${sub} HEALED (${result.result.action}) in ${result.duration.toFixed(2)}ms`);
         }
       }
     }, 30000);

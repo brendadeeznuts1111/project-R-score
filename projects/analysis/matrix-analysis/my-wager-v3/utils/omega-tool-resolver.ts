@@ -167,32 +167,32 @@ export function getToolStats(): {
 
 // Demo function
 export async function demoToolResolution(): Promise<void> {
-  console.log("🔥 Omega Tool Resolver Demo");
-  console.log("========================\n");
+  console.info("🔥 Omega Tool Resolver Demo");
+  console.info("========================\n");
 
   const projectRoot = await getProjectRoot();
-  console.log(`Project root: ${projectRoot}\n`);
+  console.info(`Project root: ${projectRoot}\n`);
 
   // Test tools
   const testTools = ['bun', 'git', 'node', 'npm', 'ls', 'eslint'];
 
-  console.log("Tool Resolution Results:");
-  console.log("======================");
+  console.info("Tool Resolution Results:");
+  console.info("======================");
 
   for (const tool of testTools) {
     const local = await resolveLocalTool(tool);
     const system = resolveSystemTool(tool);
     const omega = await resolveOmegaTool(tool);
 
-    console.log(`\n${tool}:`);
-    console.log(`  Local (project): ${local || 'not found'}`);
-    console.log(`  System: ${system || 'not found'}`);
-    console.log(`  Omega (best): ${omega || 'not found'}`);
+    console.info(`\n${tool}:`);
+    console.info(`  Local (project): ${local || 'not found'}`);
+    console.info(`  System: ${system || 'not found'}`);
+    console.info(`  Omega (best): ${omega || 'not found'}`);
   }
 
   // Performance test
-  console.log("\n\nPerformance Test:");
-  console.log("================");
+  console.info("\n\nPerformance Test:");
+  console.info("================");
 
   const iterations = 1000;
 
@@ -214,21 +214,21 @@ export async function demoToolResolution(): Promise<void> {
 
   // Cache stats
   const stats = getToolStats();
-  console.log(`\nCache size: ${stats.cacheSize} tools`);
+  console.info(`\nCache size: ${stats.cacheSize} tools`);
 
   // Validate required tools
-  console.log("\n\nRequired Tools Validation:");
-  console.log("==========================");
+  console.info("\n\nRequired Tools Validation:");
+  console.info("==========================");
 
   const required = ['bun', 'git'];
   const validation = await validateRequiredTools(required);
 
-  console.log(`Valid: ${validation.valid ? '✅' : '❌'}`);
+  console.info(`Valid: ${validation.valid ? '✅' : '❌'}`);
   if (!validation.valid) {
-    console.log(`Missing: ${validation.missing.join(', ')}`);
+    console.info(`Missing: ${validation.missing.join(', ')}`);
   }
 
-  console.log("\n✅ Demo completed!");
+  console.info("\n✅ Demo completed!");
 }
 
 // Export for direct execution

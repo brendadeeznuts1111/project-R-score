@@ -13,7 +13,7 @@ describe.concurrent("Concurrent Testing Basics", () => {
     
     expect(response.status).toBe(200);
     expect(duration).toBeGreaterThan(0);
-    console.log(`User 1 fetched in ${duration}ms`);
+    console.info(`User 1 fetched in ${duration}ms`);
   });
 
   test.concurrent("fetch user 2", async () => {
@@ -23,7 +23,7 @@ describe.concurrent("Concurrent Testing Basics", () => {
     
     expect(response.status).toBe(200);
     expect(duration).toBeGreaterThan(0);
-    console.log(`User 2 fetched in ${duration}ms`);
+    console.info(`User 2 fetched in ${duration}ms`);
   });
 
   test.concurrent("fetch user 3", async () => {
@@ -33,15 +33,15 @@ describe.concurrent("Concurrent Testing Basics", () => {
     
     expect(response.status).toBe(200);
     expect(duration).toBeGreaterThan(0);
-    console.log(`User 3 fetched in ${duration}ms`);
+    console.info(`User 3 fetched in ${duration}ms`);
   });
 
   // Serial test within concurrent describe
   test.serial("validation test", () => {
-    console.log("Serial test executing...");
+    console.info("Serial test executing...");
     expect(1 + 1).toBe(2);
     expect(2 + 2).toBe(4);
-    console.log("Serial test completed");
+    console.info("Serial test completed");
   });
 });
 
@@ -53,40 +53,40 @@ describe.concurrent("Database Operations", () => {
     queryCount++;
     await new Promise(resolve => setTimeout(resolve, 100));
     expect(queryCount).toBeGreaterThanOrEqual(1);
-    console.log(`Database query 1 completed (count: ${queryCount})`);
+    console.info(`Database query 1 completed (count: ${queryCount})`);
   });
 
   test.concurrent("simulates database query 2", async () => {
     queryCount++;
     await new Promise(resolve => setTimeout(resolve, 100));
     expect(queryCount).toBeGreaterThanOrEqual(1);
-    console.log(`Database query 2 completed (count: ${queryCount})`);
+    console.info(`Database query 2 completed (count: ${queryCount})`);
   });
 
   test.concurrent("simulates database query 3", async () => {
     queryCount++;
     await new Promise(resolve => setTimeout(resolve, 100));
     expect(queryCount).toBeGreaterThanOrEqual(1);
-    console.log(`Database query 3 completed (count: ${queryCount})`);
+    console.info(`Database query 3 completed (count: ${queryCount})`);
   });
 
   test.concurrent("simulates database query 4", async () => {
     queryCount++;
     await new Promise(resolve => setTimeout(resolve, 100));
     expect(queryCount).toBeGreaterThanOrEqual(1);
-    console.log(`Database query 4 completed (count: ${queryCount})`);
+    console.info(`Database query 4 completed (count: ${queryCount})`);
   });
 
   test.concurrent("simulates database query 5", async () => {
     queryCount++;
     await new Promise(resolve => setTimeout(resolve, 100));
     expect(queryCount).toBeGreaterThanOrEqual(1);
-    console.log(`Database query 5 completed (count: ${queryCount})`);
+    console.info(`Database query 5 completed (count: ${queryCount})`);
   });
 
   test.serial("validates all queries completed", () => {
     expect(queryCount).toBe(5);
-    console.log(`All ${queryCount} database queries validated`);
+    console.info(`All ${queryCount} database queries validated`);
   });
 });
 
@@ -210,7 +210,7 @@ describe("Performance Comparison", () => {
 
   test("measures concurrent performance", () => {
     const concurrentDuration = Date.now() - concurrentStartTime;
-    console.log(`Concurrent execution time: ${concurrentDuration}ms`);
+    console.info(`Concurrent execution time: ${concurrentDuration}ms`);
     
     // With 5 concurrent 50ms operations, total should be much less than 250ms
     expect(concurrentDuration).toBeGreaterThan(50);
@@ -268,8 +268,8 @@ describe.concurrent("Shared State Management", () => {
   });
 
   test("validates execution order and state", () => {
-    console.log("Operation log:", operationLog);
-    console.log("Final counter:", sharedCounter);
+    console.info("Operation log:", operationLog);
+    console.info("Final counter:", sharedCounter);
     
     // Sequential operations should maintain order
     const seq1Index = operationLog.indexOf("sequential1");
@@ -368,6 +368,6 @@ describe.concurrent("Real-World API Testing", () => {
     expect(types).toContain('comment');
     expect(types).toContain('album');
     
-    console.log("API Results:", apiResults);
+    console.info("API Results:", apiResults);
   });
 });

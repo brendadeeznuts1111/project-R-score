@@ -483,15 +483,15 @@ class ComprehensivePackageAudit {
   }
 
   public async runFullAudit(): Promise<void> {
-    console.log('🔍 Starting Comprehensive Package Audit...\n');
+    console.info('🔍 Starting Comprehensive Package Audit...\n');
 
     const startTime = Date.now();
     const packages = await this.findAllPackages();
 
-    console.log(`📦 Found ${packages.length} packages to audit\n`);
+    console.info(`📦 Found ${packages.length} packages to audit\n`);
 
     for (const packageInfo of packages) {
-      console.log(`🔍 Auditing: ${packageInfo.name}@${packageInfo.version}`);
+      console.info(`🔍 Auditing: ${packageInfo.name}@${packageInfo.version}`);
 
       const security = this.auditPackageSecurity(packageInfo);
       const dependencies = this.auditPackageDependencies(packageInfo);
@@ -546,7 +546,7 @@ class ComprehensivePackageAudit {
         );
       }
 
-      console.log(
+      console.info(
         `   ✅ Score: ${score}/100 (${security.length} security, ${dependencies.length} deps, ${compliance.length} compliance issues)\n`
       );
     }
@@ -556,9 +556,9 @@ class ComprehensivePackageAudit {
   }
 
   private displayAuditReport(totalTime: number): void {
-    console.log('\n' + '='.repeat(80));
-    console.log('📊 COMPREHENSIVE PACKAGE AUDIT REPORT');
-    console.log('='.repeat(80));
+    console.info('\n' + '='.repeat(80));
+    console.info('📊 COMPREHENSIVE PACKAGE AUDIT REPORT');
+    console.info('='.repeat(80));
 
     const totalPackages = this.auditResults.length;
     const averageScore = Math.round(
@@ -574,13 +574,13 @@ class ComprehensivePackageAudit {
       0
     );
 
-    console.log(`\n📈 Audit Summary:`);
-    console.log(`   ⏱️  Total Audit Time: ${Math.round(totalTime / 1000)}s`);
-    console.log(`   📦 Packages Audited: ${totalPackages}`);
-    console.log(`   🎯 Average Score: ${averageScore}/100`);
-    console.log(`   🔒 Security Issues: ${totalSecurityIssues}`);
-    console.log(`   📦 Dependency Issues: ${totalDependencyIssues}`);
-    console.log(`   📋 Compliance Issues: ${totalComplianceIssues}`);
+    console.info(`\n📈 Audit Summary:`);
+    console.info(`   ⏱️  Total Audit Time: ${Math.round(totalTime / 1000)}s`);
+    console.info(`   📦 Packages Audited: ${totalPackages}`);
+    console.info(`   🎯 Average Score: ${averageScore}/100`);
+    console.info(`   🔒 Security Issues: ${totalSecurityIssues}`);
+    console.info(`   📦 Dependency Issues: ${totalDependencyIssues}`);
+    console.info(`   📋 Compliance Issues: ${totalComplianceIssues}`);
 
     // Score distribution
     const scoreRanges = {
@@ -590,15 +590,15 @@ class ComprehensivePackageAudit {
       poor: this.auditResults.filter(r => r.score < 50).length,
     };
 
-    console.log(`\n📊 Score Distribution:`);
-    console.log(`   🟢 Excellent (90-100): ${scoreRanges.excellent} packages`);
-    console.log(`   🟡 Good (70-89): ${scoreRanges.good} packages`);
-    console.log(`   🟠 Fair (50-69): ${scoreRanges.fair} packages`);
-    console.log(`   🔴 Poor (<50): ${scoreRanges.poor} packages`);
+    console.info(`\n📊 Score Distribution:`);
+    console.info(`   🟢 Excellent (90-100): ${scoreRanges.excellent} packages`);
+    console.info(`   🟡 Good (70-89): ${scoreRanges.good} packages`);
+    console.info(`   🟠 Fair (50-69): ${scoreRanges.fair} packages`);
+    console.info(`   🔴 Poor (<50): ${scoreRanges.poor} packages`);
 
     // Top security issues
     if (totalSecurityIssues > 0) {
-      console.log(`\n🚨 Top Security Issues:`);
+      console.info(`\n🚨 Top Security Issues:`);
       const allSecurityIssues = this.auditResults.flatMap(r => r.security);
       const issueCounts = allSecurityIssues.reduce(
         (acc, issue) => {
@@ -612,7 +612,7 @@ class ComprehensivePackageAudit {
         .sort(([, a], [, b]) => b - a)
         .slice(0, 5)
         .forEach(([title, count]) => {
-          console.log(`   • ${title}: ${count} occurrences`);
+          console.info(`   • ${title}: ${count} occurrences`);
         });
     }
 
@@ -620,34 +620,34 @@ class ComprehensivePackageAudit {
     const totalSize = this.auditResults.reduce((sum, r) => sum + r.package.size, 0);
     const avgSize = Math.round((totalSize / totalPackages / (1024 * 1024)) * 100) / 100;
 
-    console.log(`\n💾 Package Size Analysis:`);
-    console.log(`   📊 Total Size: ${Math.round(totalSize / (1024 * 1024))} MB`);
-    console.log(`   📈 Average Size: ${avgSize} MB per package`);
+    console.info(`\n💾 Package Size Analysis:`);
+    console.info(`   📊 Total Size: ${Math.round(totalSize / (1024 * 1024))} MB`);
+    console.info(`   📈 Average Size: ${avgSize} MB per package`);
 
     // Recommendations
-    console.log(`\n💡 Recommendations:`);
+    console.info(`\n💡 Recommendations:`);
 
     if (averageScore >= 80) {
-      console.log(`   ✅ Overall package health is excellent`);
+      console.info(`   ✅ Overall package health is excellent`);
     } else if (averageScore >= 60) {
-      console.log(`   ⚠️  Consider addressing security and dependency issues`);
+      console.info(`   ⚠️  Consider addressing security and dependency issues`);
     } else {
-      console.log(`   🚨 Critical: Immediate attention required for security issues`);
+      console.info(`   🚨 Critical: Immediate attention required for security issues`);
     }
 
     if (totalSecurityIssues > 0) {
-      console.log(`   🔒 Review and fix ${totalSecurityIssues} security issues`);
+      console.info(`   🔒 Review and fix ${totalSecurityIssues} security issues`);
     }
 
     if (totalDependencyIssues > 0) {
-      console.log(`   📦 Audit ${totalDependencyIssues} dependency issues`);
+      console.info(`   📦 Audit ${totalDependencyIssues} dependency issues`);
     }
 
     if (totalComplianceIssues > 0) {
-      console.log(`   📋 Address ${totalComplianceIssues} compliance issues`);
+      console.info(`   📋 Address ${totalComplianceIssues} compliance issues`);
     }
 
-    console.log('='.repeat(80));
+    console.info('='.repeat(80));
   }
 
   public getAuditResults(): AuditResult[] {
@@ -714,7 +714,7 @@ if (import.meta.main) {
       const ext = format === 'json' ? 'json' : 'csv';
       const filename = `package-audit-report-${new Date().toISOString().split('T')[0]}.${ext}`;
       await Bun.write(filename, report);
-      console.log(`📄 Report exported to: ${filename}`);
+      console.info(`📄 Report exported to: ${filename}`);
       auditor.close();
       break;
 
@@ -732,28 +732,28 @@ if (import.meta.main) {
         { total: 0, excellent: 0, good: 0, fair: 0, poor: 0 }
       );
 
-      console.log('\n📊 Quick Summary:');
-      console.log(`   Total Packages: ${summary.total}`);
-      console.log(`   🟢 Excellent: ${summary.excellent}`);
-      console.log(`   🟡 Good: ${summary.good}`);
-      console.log(`   🟠 Fair: ${summary.fair}`);
-      console.log(`   🔴 Poor: ${summary.poor}`);
+      console.info('\n📊 Quick Summary:');
+      console.info(`   Total Packages: ${summary.total}`);
+      console.info(`   🟢 Excellent: ${summary.excellent}`);
+      console.info(`   🟡 Good: ${summary.good}`);
+      console.info(`   🟠 Fair: ${summary.fair}`);
+      console.info(`   🔴 Poor: ${summary.poor}`);
       auditor.close();
       break;
 
     default:
-      console.log(
+      console.info(
         'Usage: bun run scripts/comprehensive-package-audit.bun.ts [audit|export|quick] [format]'
       );
-      console.log('');
-      console.log('Commands:');
-      console.log('  audit     - Run full comprehensive audit');
-      console.log('  export    - Run audit and export report (json/csv)');
-      console.log('  quick     - Run audit and show quick summary');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun run scripts/comprehensive-package-audit.bun.ts audit');
-      console.log('  bun run scripts/comprehensive-package-audit.bun.ts export csv');
+      console.info('');
+      console.info('Commands:');
+      console.info('  audit     - Run full comprehensive audit');
+      console.info('  export    - Run audit and export report (json/csv)');
+      console.info('  quick     - Run audit and show quick summary');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun run scripts/comprehensive-package-audit.bun.ts audit');
+      console.info('  bun run scripts/comprehensive-package-audit.bun.ts export csv');
       auditor.close();
       break;
   }

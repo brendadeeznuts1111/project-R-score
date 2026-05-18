@@ -100,7 +100,7 @@ const performanceFeatures: PerformanceFeature[] = [
         category: "CLI",
         gain: "88x faster",
         api: "Bun.wrapAnsi()",
-        oneliner: "bunx -e \"console.log(Bun.wrapAnsi('\\x1b[32m🚀\\x1b[0m',{width:40}))\"",
+        oneliner: "bunx -e \"console.info(Bun.wrapAnsi('\\x1b[32m🚀\\x1b[0m',{width:40}))\"",
         useCase: "Terminal output",
         arm64: "⚪ Neutral",
         status: "✅ Stable",
@@ -121,7 +121,7 @@ const performanceFeatures: PerformanceFeature[] = [
         category: "JSON",
         gain: "Native",
         api: "Bun.JSON5.parse()",
-        oneliner: "bunx -e \"console.log(Bun.JSON5.parse('{foo:1,//comment\\nbar:2,}'))\"",
+        oneliner: "bunx -e \"console.info(Bun.JSON5.parse('{foo:1,//comment\\nbar:2,}'))\"",
         useCase: "Config files",
         arm64: "⚪ Neutral",
         status: "✅ Stable",
@@ -204,12 +204,12 @@ const performanceFeatures: PerformanceFeature[] = [
 
 // Custom console inspection function
 function inspectPerformanceTable(): void {
-    console.log('\n' + '🚀'.repeat(30));
-    console.log('   Bun v1.3.7 Performance Table - Custom Inspection');
-    console.log('🚀'.repeat(30));
-    console.log(`Bun version: ${Bun.version}`);
-    console.log(`Platform: ${process.platform} ${process.arch}`);
-    console.log(`Timestamp: ${new Date().toISOString()}`);
+    console.info('\n' + '🚀'.repeat(30));
+    console.info('   Bun v1.3.7 Performance Table - Custom Inspection');
+    console.info('🚀'.repeat(30));
+    console.info(`Bun version: ${Bun.version}`);
+    console.info(`Platform: ${process.platform} ${process.arch}`);
+    console.info(`Timestamp: ${new Date().toISOString()}`);
     
     // Display summary statistics
     const totalFeatures = performanceFeatures.length;
@@ -217,14 +217,14 @@ function inspectPerformanceTable(): void {
     const nativeAPIs = performanceFeatures.filter(f => f.gain === 'Native').length;
     const arm64Optimized = performanceFeatures.filter(f => f.arm64.includes('✅')).length;
     
-    console.log('\n📊 Summary Statistics:');
-    console.log(`  Total Features: ${totalFeatures}`);
-    console.log(`  Performance Gains: ${withGains}`);
-    console.log(`  Native APIs: ${nativeAPIs}`);
-    console.log(`  ARM64 Optimized: ${arm64Optimized}`);
+    console.info('\n📊 Summary Statistics:');
+    console.info(`  Total Features: ${totalFeatures}`);
+    console.info(`  Performance Gains: ${withGains}`);
+    console.info(`  Native APIs: ${nativeAPIs}`);
+    console.info(`  ARM64 Optimized: ${arm64Optimized}`);
     
     // Display top performance winners
-    console.log('\n🏆 Top Performance Winners:');
+    console.info('\n🏆 Top Performance Winners:');
     const sortedByGain = performanceFeatures
         .filter(f => f.gain !== 'Native' && f.gain !== 'Compatibility')
         .sort((a, b) => {
@@ -234,18 +234,18 @@ function inspectPerformanceTable(): void {
         });
     
     sortedByGain.slice(0, 5).forEach((feature, index) => {
-        console.log(`  ${index + 1}. ${feature.feature} - ${feature.gain} (${feature.useCase})`);
+        console.info(`  ${index + 1}. ${feature.feature} - ${feature.gain} (${feature.useCase})`);
     });
     
     // Create custom table display
-    console.log('\n📋 Performance Features Table:');
-    console.log('─'.repeat(120));
+    console.info('\n📋 Performance Features Table:');
+    console.info('─'.repeat(120));
     
     // Table headers
     const headers = ['Feature', 'Category', 'Gain', 'API', 'Use Case', 'ARM64', 'Status'];
     const headerRow = headers.map(h => h.padEnd(12)).join(' | ');
-    console.log(headerRow);
-    console.log('─'.repeat(120));
+    console.info(headerRow);
+    console.info('─'.repeat(120));
     
     // Table rows
     performanceFeatures.forEach(feature => {
@@ -258,32 +258,32 @@ function inspectPerformanceTable(): void {
             feature.arm64.padEnd(12),
             feature.status.padEnd(12)
         ].join(' | ');
-        console.log(row);
+        console.info(row);
     });
     
-    console.log('─'.repeat(120));
+    console.info('─'.repeat(120));
     
     // Detailed inspection for top features
-    console.log('\n🔍 Detailed Inspection - Top 3 Features:');
+    console.info('\n🔍 Detailed Inspection - Top 3 Features:');
     
     sortedByGain.slice(0, 3).forEach((feature, index) => {
-        console.log(`\n${index + 1}. ${feature.feature}`);
-        console.log('   ' + '─'.repeat(50));
-        console.log(`   📈 Performance Gain: ${feature.gain}`);
-        console.log(`   🔧 API Method: ${feature.api}`);
-        console.log(`   💡 Use Case: ${feature.useCase}`);
-        console.log(`   📊 Benchmark: ${feature.benchmark}`);
-        console.log(`   💾 Memory Impact: ${feature.memory}`);
-        console.log(`   🛡️ Type Safety: ${feature.typeSafety}`);
-        console.log(`   📚 Documentation: ${feature.documentation}`);
-        console.log(`   🧪 Test Coverage: ${feature.testCoverage}`);
-        console.log(`   📝 One-Liner: ${feature.oneliner.substring(0, 60)}...`);
-        console.log(`   💻 Example: ${feature.example}`);
+        console.info(`\n${index + 1}. ${feature.feature}`);
+        console.info('   ' + '─'.repeat(50));
+        console.info(`   📈 Performance Gain: ${feature.gain}`);
+        console.info(`   🔧 API Method: ${feature.api}`);
+        console.info(`   💡 Use Case: ${feature.useCase}`);
+        console.info(`   📊 Benchmark: ${feature.benchmark}`);
+        console.info(`   💾 Memory Impact: ${feature.memory}`);
+        console.info(`   🛡️ Type Safety: ${feature.typeSafety}`);
+        console.info(`   📚 Documentation: ${feature.documentation}`);
+        console.info(`   🧪 Test Coverage: ${feature.testCoverage}`);
+        console.info(`   📝 One-Liner: ${feature.oneliner.substring(0, 60)}...`);
+        console.info(`   💻 Example: ${feature.example}`);
     });
     
     // Custom inspection with Bun.inspect
-    console.log('\n🔬 Bun.inspect Custom View:');
-    console.log('─'.repeat(50));
+    console.info('\n🔬 Bun.inspect Custom View:');
+    console.info('─'.repeat(50));
     
     // Create a custom object for inspection
     const inspectionObject = {
@@ -315,8 +315,8 @@ function inspectPerformanceTable(): void {
     });
     
     // Performance comparison
-    console.log('\n⚡ Performance Comparison Matrix:');
-    console.log('─'.repeat(80));
+    console.info('\n⚡ Performance Comparison Matrix:');
+    console.info('─'.repeat(80));
     
     const comparisonMatrix = performanceFeatures.map(f => ({
         feature: f.feature,
@@ -327,70 +327,70 @@ function inspectPerformanceTable(): void {
     
     console.table(comparisonMatrix);
     
-    console.log('\n✨ Custom inspection complete!');
-    console.log('💡 Run individual one-liners to test performance:');
-    console.log('   bun run run-performance-table.ts --test');
-    console.log('   bun run cli:v1.3.7 demo');
-    console.log('   bun run cli:v1.3.7 bench');
+    console.info('\n✨ Custom inspection complete!');
+    console.info('💡 Run individual one-liners to test performance:');
+    console.info('   bun run run-performance-table.ts --test');
+    console.info('   bun run cli:v1.3.7 demo');
+    console.info('   bun run cli:v1.3.7 bench');
 }
 
 // Test individual features
 async function testFeatures(): Promise<void> {
-    console.log('\n🧪 Testing Individual Features...');
-    console.log('─'.repeat(50));
+    console.info('\n🧪 Testing Individual Features...');
+    console.info('─'.repeat(50));
     
     // Test Buffer.from performance
-    console.log('🔄 Testing Buffer.from(array)...');
+    console.info('🔄 Testing Buffer.from(array)...');
     const start1 = performance.now();
     for(let i = 0; i < 1e5; i++) {
         Buffer.from([i % 256, (i+1) % 256]);
     }
     const end1 = performance.now();
-    console.log(`   ✅ Buffer.from test: ${(end1 - start1).toFixed(2)}ms`);
+    console.info(`   ✅ Buffer.from test: ${(end1 - start1).toFixed(2)}ms`);
     
     // Test string padding
-    console.log('🔄 Testing padStart...');
+    console.info('🔄 Testing padStart...');
     const start2 = performance.now();
     for(let i = 0; i < 1e5; i++) {
         '2026'.padStart(20, '0');
     }
     const end2 = performance.now();
-    console.log(`   ✅ padStart test: ${(end2 - start2).toFixed(2)}ms`);
+    console.info(`   ✅ padStart test: ${(end2 - start2).toFixed(2)}ms`);
     
     // Test array.flat
-    console.log('🔄 Testing array.flat...');
+    console.info('🔄 Testing array.flat...');
     const nested = Array(100).fill(0).map((_, i) => [i, [i+1, [i+2, i+3]]]);
     const start3 = performance.now();
     for(let i = 0; i < 1e3; i++) {
         nested.flat(3);
     }
     const end3 = performance.now();
-    console.log(`   ✅ array.flat test: ${(end3 - start3).toFixed(2)}ms`);
+    console.info(`   ✅ array.flat test: ${(end3 - start3).toFixed(2)}ms`);
     
     // Test JSON5 if available
     if ('JSON5' in Bun) {
-        console.log('🔄 Testing JSON5...');
+        console.info('🔄 Testing JSON5...');
         const start4 = performance.now();
         for(let i = 0; i < 1e4; i++) {
             (Bun as any).JSON5.parse('{name:"app",version:"1.0.0",enabled:true,}');
         }
         const end4 = performance.now();
-        console.log(`   ✅ JSON5 test: ${(end4 - start4).toFixed(2)}ms`);
+        console.info(`   ✅ JSON5 test: ${(end4 - start4).toFixed(2)}ms`);
     }
     
     // Test wrapAnsi if available
     if ('wrapAnsi' in Bun) {
-        console.log('🔄 Testing wrapAnsi...');
+        console.info('🔄 Testing wrapAnsi...');
         const coloredText = '\x1b[32m🚀 Bun v1.3.7\x1b[0m';
         const start5 = performance.now();
         for(let i = 0; i < 1e4; i++) {
             (Bun as any).wrapAnsi(coloredText, { width: 40 });
         }
         const end5 = performance.now();
-        console.log(`   ✅ wrapAnsi test: ${(end5 - start5).toFixed(2)}ms`);
+        console.info(`   ✅ wrapAnsi test: ${(end5 - start5).toFixed(2)}ms`);
     }
     
-    console.log('✅ Feature tests completed!');
+    console.info('✅ Feature tests completed!');
 }
 
 // Main execution

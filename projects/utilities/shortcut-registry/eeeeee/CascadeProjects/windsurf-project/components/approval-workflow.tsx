@@ -266,7 +266,7 @@ export const ApprovalWorkflowModal = feature("PREMIUM") ? function() {
         );
         
         // In a real implementation, this would open the consent form
-        console.log('COPPA consent form generated:', consentResult);
+        console.info('COPPA consent form generated:', consentResult);
         
         // Mock consent completion
         setCoppaConsent({
@@ -342,7 +342,7 @@ export const ApprovalWorkflowModal = feature("PREMIUM") ? function() {
           conditions: action === 'approve' ? ['parental_monitoring', 'spend_limits'] : undefined
         });
         
-        console.log('Approval processed:', result);
+        console.info('Approval processed:', result);
         closeModal();
       } catch (error) {
         console.error('Failed to process approval:', error);

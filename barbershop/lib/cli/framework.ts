@@ -405,7 +405,7 @@ export class UnifiedCLI {
   // ==================== Output Helpers ====================
 
   log(message: string): void {
-    console.log(message);
+    console.info(message);
   }
 
   styled(text: string, color: ColorName): string {
@@ -413,7 +413,7 @@ export class UnifiedCLI {
   }
 
   success(message: string): void {
-    console.log(`${COLORS.green}✓${COLORS.reset} ${message}`);
+    console.info(`${COLORS.green}✓${COLORS.reset} ${message}`);
   }
 
   error(message: string): void {
@@ -421,45 +421,45 @@ export class UnifiedCLI {
   }
 
   warning(message: string): void {
-    console.log(`${COLORS.yellow}⚠${COLORS.reset} ${message}`);
+    console.info(`${COLORS.yellow}⚠${COLORS.reset} ${message}`);
   }
 
   info(message: string): void {
-    console.log(`${COLORS.blue}ℹ${COLORS.reset} ${message}`);
+    console.info(`${COLORS.blue}ℹ${COLORS.reset} ${message}`);
   }
 
   header(title: string): void {
-    console.log();
-    console.log(`${COLORS.bright}${COLORS.cyan}${title}${COLORS.reset}`);
-    console.log(COLORS.dim + '─'.repeat(title.length) + COLORS.reset);
+    console.info();
+    console.info(`${COLORS.bright}${COLORS.cyan}${title}${COLORS.reset}`);
+    console.info(COLORS.dim + '─'.repeat(title.length) + COLORS.reset);
   }
 
   // ==================== Help ====================
 
   showHelp(): void {
-    console.log();
-    console.log(`${COLORS.bright}${this.config.name}${COLORS.reset} v${this.config.version}`);
-    console.log(`${COLORS.dim}${this.config.description}${COLORS.reset}`);
-    console.log();
+    console.info();
+    console.info(`${COLORS.bright}${this.config.name}${COLORS.reset} v${this.config.version}`);
+    console.info(`${COLORS.dim}${this.config.description}${COLORS.reset}`);
+    console.info();
 
-    console.log(`${COLORS.cyan}Usage:${COLORS.reset}`);
-    console.log(`  ${this.config.name} <command> [options]`);
-    console.log();
+    console.info(`${COLORS.cyan}Usage:${COLORS.reset}`);
+    console.info(`  ${this.config.name} <command> [options]`);
+    console.info();
 
-    console.log(`${COLORS.cyan}Commands:${COLORS.reset}`);
+    console.info(`${COLORS.cyan}Commands:${COLORS.reset}`);
     for (const cmd of this.config.commands) {
       const aliases = cmd.aliases ? ` (${cmd.aliases.join(', ')})` : '';
-      console.log(`  ${cmd.name.padEnd(15)}${aliases.padEnd(15)} ${cmd.description}`);
+      console.info(`  ${cmd.name.padEnd(15)}${aliases.padEnd(15)} ${cmd.description}`);
     }
-    console.log();
+    console.info();
 
     if (this.config.globalOptions?.length) {
-      console.log(`${COLORS.cyan}Global Options:${COLORS.reset}`);
+      console.info(`${COLORS.cyan}Global Options:${COLORS.reset}`);
       for (const opt of this.config.globalOptions) {
         const short = opt.short ? `-${opt.short}, ` : '    ';
-        console.log(`  ${short}--${opt.name.padEnd(15)} ${opt.description}`);
+        console.info(`  ${short}--${opt.name.padEnd(15)} ${opt.description}`);
       }
-      console.log();
+      console.info();
     }
   }
 
@@ -467,18 +467,18 @@ export class UnifiedCLI {
     const cmd = this.findCommand(command);
     if (!cmd) return;
 
-    console.log();
-    console.log(`${COLORS.bright}${command}${COLORS.reset} - ${cmd.description}`);
-    console.log();
+    console.info();
+    console.info(`${COLORS.bright}${command}${COLORS.reset} - ${cmd.description}`);
+    console.info();
 
     if (cmd.options?.length) {
-      console.log(`${COLORS.cyan}Options:${COLORS.reset}`);
+      console.info(`${COLORS.cyan}Options:${COLORS.reset}`);
       for (const opt of cmd.options) {
         const short = opt.short ? `-${opt.short}, ` : '    ';
         const defaultStr = opt.default !== undefined ? ` [default: ${opt.default}]` : '';
-        console.log(`  ${short}--${opt.name.padEnd(15)} ${opt.description}${defaultStr}`);
+        console.info(`  ${short}--${opt.name.padEnd(15)} ${opt.description}${defaultStr}`);
       }
-      console.log();
+      console.info();
     }
   }
 }

@@ -109,13 +109,13 @@ export function useRealtimeData<T = unknown>(options: UseRealtimeOptions = {}) {
     if (wsRef.current?.readyState === WebSocket.OPEN) return;
 
     const wsUrl = getWsUrl();
-    console.log(`[Realtime] Connecting to ${wsUrl}`);
+    console.info(`[Realtime] Connecting to ${wsUrl}`);
 
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
     ws.onopen = () => {
-      console.log("[Realtime] Connected");
+      console.info("[Realtime] Connected");
       setConnectionState((prev) => ({
         ...prev,
         connected: true,
@@ -177,7 +177,7 @@ export function useRealtimeData<T = unknown>(options: UseRealtimeOptions = {}) {
     };
 
     ws.onclose = (event) => {
-      console.log(`[Realtime] Disconnected (code: ${event.code})`);
+      console.info(`[Realtime] Disconnected (code: ${event.code})`);
       setConnectionState((prev) => ({ ...prev, connected: false }));
 
       // Clear heartbeat
@@ -189,7 +189,7 @@ export function useRealtimeData<T = unknown>(options: UseRealtimeOptions = {}) {
       // Auto-reconnect
       if (autoReconnect && connectionState.reconnectAttempt < maxReconnectAttempts) {
         const delay = getReconnectDelay(connectionState.reconnectAttempt);
-        console.log(`[Realtime] Reconnecting in ${delay}ms (attempt ${connectionState.reconnectAttempt + 1})`);
+        console.info(`[Realtime] Reconnecting in ${delay}ms (attempt ${connectionState.reconnectAttempt + 1})`);
 
         setConnectionState((prev) => ({
           ...prev,

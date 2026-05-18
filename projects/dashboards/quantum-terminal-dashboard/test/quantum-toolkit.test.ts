@@ -159,7 +159,7 @@ describe("Toolkit Performance Gates", () => {
     for (let i = 0; i < 100; i++) Bun.escapeHTML(input);
     const ms = performance.now() - t0;
     const mbps = (bytes * 100) / (ms * 1000);
-    console.log(`  escapeHTML: ${mbps.toFixed(0)} MB/s`);
+    console.info(`  escapeHTML: ${mbps.toFixed(0)} MB/s`);
     expect(mbps).toBeGreaterThan(100);
   });
 
@@ -169,7 +169,7 @@ describe("Toolkit Performance Gates", () => {
     Bun.gzipSync(input);
     const ms = performance.now() - t0;
     const mbps = 1 / (ms / 1000);
-    console.log(`  gzipSync: ${mbps.toFixed(0)} MB/s`);
+    console.info(`  gzipSync: ${mbps.toFixed(0)} MB/s`);
     expect(mbps).toBeGreaterThan(50);
   });
 });

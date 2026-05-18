@@ -83,16 +83,16 @@ export function cleanViolationReport(violations: Array<{
 
 // Demo usage
 if (import.meta.main) {
-  console.log("🧪 ANSI Utilities Demo for Multi-Tenant Dashboard");
-  console.log("=" .repeat(55));
+  console.info("🧪 ANSI Utilities Demo for Multi-Tenant Dashboard");
+  console.info("=" .repeat(55));
   
   // Test audit entry creation
-  console.log("\n📋 Audit Entry Creation:");
+  console.info("\n📋 Audit Entry Creation:");
   const auditEntry = createAuditEntry("ERROR", "tenant-a", "Critical violation detected", { width: 95, line: 42 });
-  console.log("Clean audit entry:", auditEntry);
+  console.info("Clean audit entry:", auditEntry);
   
   // Test dashboard status cleaning
-  console.log("\n📊 Dashboard Status:");
+  console.info("\n📊 Dashboard Status:");
   const status = {
     apiServer: true,
     dashboard: true,
@@ -100,29 +100,29 @@ if (import.meta.main) {
     criticalViolations: 12
   };
   const cleanStatus = cleanDashboardStatus(status);
-  console.log(cleanStatus);
+  console.info(cleanStatus);
   
   // Test snapshot log cleaning
-  console.log("\n📸 Snapshot Log:");
+  console.info("\n📸 Snapshot Log:");
   const snapshotLog = cleanSnapshotLog("tenant-a", "audit-snapshot-tenant-a-2026-02-01.tar.gz", 10240, "abc123def456");
-  console.log(snapshotLog);
+  console.info(snapshotLog);
   
   // Test violation report cleaning
-  console.log("\n⚠️  Violation Report:");
+  console.info("\n⚠️  Violation Report:");
   const violations = [
     { tenant: "tenant-a", severity: "critical" as const, message: "Line exceeds 88 characters", width: 95 },
     { tenant: "tenant-b", severity: "warning" as const, message: "Indentation issue", width: 45 },
     { tenant: "tenant-c", severity: "info" as const, message: "Style suggestion", width: 80 }
   ];
   const report = cleanViolationReport(violations);
-  console.log(report);
+  console.info(report);
   
-  console.log("\n💡 Integration Benefits:");
-  console.log("  • Clean log files for storage and analysis");
-  console.log("  • Remove terminal colors from audit trails");
-  console.log("  • Prepare output for non-ANSI consumers");
-  console.log("  • Strip formatting for API responses");
-  console.log("  • Generate clean export files");
+  console.info("\n💡 Integration Benefits:");
+  console.info("  • Clean log files for storage and analysis");
+  console.info("  • Remove terminal colors from audit trails");
+  console.info("  • Prepare output for non-ANSI consumers");
+  console.info("  • Strip formatting for API responses");
+  console.info("  • Generate clean export files");
 }
 
 export { Bun };

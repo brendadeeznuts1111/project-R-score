@@ -43,16 +43,16 @@ async function checkTopicsAndPins(): Promise<void> {
 
 	const api = new TelegramBotApi(botToken);
 
-	console.log("📊 Checking Golden Supergroup Status\n");
-	console.log(`Chat ID: ${chatId}\n`);
+	console.info("📊 Checking Golden Supergroup Status\n");
+	console.info(`Chat ID: ${chatId}\n`);
 
 	// Get topics
-	console.log("📋 Topics:");
+	console.info("📋 Topics:");
 	const topicsResult = await api.getForumTopics(chatId);
 
 	if (topicsResult.ok && topicsResult.result?.topics) {
 		const topics = topicsResult.result.topics;
-		console.log(`\n✅ Found ${topics.length} topics:\n`);
+		console.info(`\n✅ Found ${topics.length} topics:\n`);
 
 		for (const topic of topics) {
 			const icon =
@@ -66,40 +66,40 @@ async function checkTopicsAndPins(): Promise<void> {
 			const isClosed = topic.is_closed ? " 🔒" : "";
 			const isGeneral = topic.is_general ? " (General)" : "";
 
-			console.log(`  ${icon} ${name}${isGeneral}`);
-			console.log(`     Thread ID: ${threadId}${isClosed}`);
+			console.info(`  ${icon} ${name}${isGeneral}`);
+			console.info(`     Thread ID: ${threadId}${isClosed}`);
 
 			// Try to get pinned messages count for this topic
 			// Note: Telegram API doesn't directly provide pinned message count
 			// We'd need to check each topic's messages, which is rate-limited
-			console.log();
+			console.info();
 		}
 
-		console.log(`\n📊 Summary:`);
-		console.log(`   Total Topics: ${topics.length}`);
-		console.log(
+		console.info(`\n📊 Summary:`);
+		console.info(`   Total Topics: ${topics.length}`);
+		console.info(
 			`   General Topic: ${topics.filter((t) => t.is_general).length}`,
 		);
-		console.log(
+		console.info(
 			`   Closed Topics: ${topics.filter((t) => t.is_closed).length}`,
 		);
-		console.log(`   Open Topics: ${topics.filter((t) => !t.is_closed).length}`);
+		console.info(`   Open Topics: ${topics.filter((t) => !t.is_closed).length}`);
 	} else {
-		console.log(
+		console.info(
 			`❌ Could not fetch topics: ${topicsResult.description || "Unknown error"}`,
 		);
 	}
 
 	// Note: Telegram Bot API doesn't provide a direct way to count pinned messages
 	// We would need to check each topic individually, which is rate-limited
-	console.log(`\n📌 Pinned Messages:`);
-	console.log(
+	console.info(`\n📌 Pinned Messages:`);
+	console.info(
 		`   Note: Telegram Bot API doesn't provide direct pinned message count.`,
 	);
-	console.log(
+	console.info(
 		`   To check pinned messages, you would need to check each topic individually.`,
 	);
-	console.log(`   This is rate-limited and may take time for many topics.`);
+	console.info(`   This is rate-limited and may take time for many topics.`);
 }
 
 if (import.meta.main) {

@@ -23,14 +23,14 @@ class SimpleStatusWidget {
 	private isRunning = true;
 
 	constructor() {
-		console.log("🍎 Bun TOML Secrets Editor Status Widget");
-		console.log("==========================================");
+		console.info("🍎 Bun TOML Secrets Editor Status Widget");
+		console.info("==========================================");
 		this.startMonitoring();
 		this.setupGracefulShutdown();
 	}
 
 	private async startMonitoring() {
-		console.log("📊 Starting status monitoring...");
+		console.info("📊 Starting status monitoring...");
 
 		while (this.isRunning) {
 			await this.checkStatus();
@@ -92,29 +92,29 @@ class SimpleStatusWidget {
 		const bucketIcon = this.getStatusIcon(this.status.bucket);
 		const lastUpdate = new Date(this.status.lastUpdate).toLocaleTimeString();
 
-		console.log("🍎 Bun TOML Secrets Editor Status Widget");
-		console.log("==========================================");
-		console.log("");
-		console.log(
+		console.info("🍎 Bun TOML Secrets Editor Status Widget");
+		console.info("==========================================");
+		console.info("");
+		console.info(
 			`📊 Status: ${apiIcon} API  ${bucketIcon} R2 Bucket  📁 ${this.status.profiles} Profiles`,
 		);
-		console.log("");
-		console.log("🔗 Services:");
-		console.log(`   API:     ${this.getStatusText(this.status.api)}`);
-		console.log(`   R2:      ${this.getStatusText(this.status.bucket)}`);
-		console.log(`   Profiles: ${this.status.profiles} files organized`);
-		console.log("");
-		console.log("⚡ Quick Actions:");
-		console.log("   [1] Open Dashboard    http://localhost:3001");
-		console.log("   [2] Open API Docs     http://localhost:3001/api");
-		console.log(
+		console.info("");
+		console.info("🔗 Services:");
+		console.info(`   API:     ${this.getStatusText(this.status.api)}`);
+		console.info(`   R2:      ${this.getStatusText(this.status.bucket)}`);
+		console.info(`   Profiles: ${this.status.profiles} files organized`);
+		console.info("");
+		console.info("⚡ Quick Actions:");
+		console.info("   [1] Open Dashboard    http://localhost:3001");
+		console.info("   [2] Open API Docs     http://localhost:3001/api");
+		console.info(
 			"   [3] Open R2 Bucket    https://pub-a471e86af24446498311933a2eca2454.r2.dev",
 		);
-		console.log("   [4] View Profiles     ./profiles/");
-		console.log("   [q] Quit Widget");
-		console.log("");
-		console.log(`🕐 Last Update: ${lastUpdate}`);
-		console.log("==========================================");
+		console.info("   [4] View Profiles     ./profiles/");
+		console.info("   [q] Quit Widget");
+		console.info("");
+		console.info(`🕐 Last Update: ${lastUpdate}`);
+		console.info("==========================================");
 	}
 
 	private getStatusIcon(status: string): string {
@@ -149,12 +149,12 @@ class SimpleStatusWidget {
 
 	private setupGracefulShutdown() {
 		// Simple control setup for Bun environment
-		console.log("💡 Controls: Press Ctrl+C to quit");
-		console.log("💡 Quick Actions: 1=Dashboard, 2=API Docs, 3=R2 Bucket");
+		console.info("💡 Controls: Press Ctrl+C to quit");
+		console.info("💡 Quick Actions: 1=Dashboard, 2=API Docs, 3=R2 Bucket");
 
 		// Set up basic signal handling
 		process.on("SIGINT", () => {
-			console.log("\n👋 Shutting down...");
+			console.info("\n👋 Shutting down...");
 			this.isRunning = false;
 			process.exit(0);
 		});
@@ -176,7 +176,7 @@ class SimpleStatusWidget {
 				break;
 			case "q":
 			case "\u0003": // Ctrl+C
-				console.log("\n👋 Shutting down widget...");
+				console.info("\n👋 Shutting down widget...");
 				this.isRunning = false;
 				process.exit(0);
 				break;
@@ -192,7 +192,7 @@ class SimpleStatusWidget {
 					: "xdg-open";
 
 		spawn(command, [url], { detached: true, stdio: "ignore" });
-		console.log(`🌐 Opening: ${url}`);
+		console.info(`🌐 Opening: ${url}`);
 	}
 
 	private sleep(ms: number): Promise<void> {

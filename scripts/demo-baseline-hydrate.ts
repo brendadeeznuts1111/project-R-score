@@ -43,7 +43,7 @@ function main() {
   }
   contract.generatedAt = new Date().toISOString();
   Bun.write(CONTRACT_PATH, `${JSON.stringify(contract, null, 2)}\n`);
-  console.log(`[demo-baseline-hydrate] updated benchmarkBaseline for ${updated} demos`);
+  console.info(`[demo-baseline-hydrate] updated benchmarkBaseline for ${updated} demos`);
 }
 
 main();

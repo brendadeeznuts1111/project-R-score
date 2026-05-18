@@ -181,7 +181,7 @@ export class ProviderDivergenceKF {
         const width = UnicodeStringWidthEngine.calculateWidth(message);
         const catWidth = UnicodeStringWidthEngine.calculateWidth(category);
         const padding = 15 - catWidth;
-        console.log(`${category.padEnd(padding, ' ')} | ${message.padEnd(width + 5, ' ')}`);
+        console.info(`${category.padEnd(padding, ' ')} | ${message.padEnd(width + 5, ' ')}`);
       }
     };
   }
@@ -246,7 +246,7 @@ maxOrderBookDepth: 10
     const cancellationRate = this.calculateCancellationRate(orderBook);
 
     if (cancellationRate > (this.config.minCancellationRate || 0.4)) {
-      console.log(`[SECURITY] High cancellation rate detected: ${cancellationRate} - possible mirage attack`);
+      console.info(`[SECURITY] High cancellation rate detected: ${cancellationRate} - possible mirage attack`);
       return true;
     }
 
@@ -311,7 +311,7 @@ export class VelocityConvexityKF {
 
   setupWebSocketTracking(): void {
     // Track subscriptions for velocity data feeds
-    console.log('[WS] Pattern #75: Setting up WebSocket subscription tracking');
+    console.info('[WS] Pattern #75: Setting up WebSocket subscription tracking');
   }
 
   async detectVelocityConvexity(tick: MarketTick, timeRemaining: number): Promise<Trigger | null> {
@@ -348,7 +348,7 @@ export class VelocityConvexityKF {
       const topic = `${provider}-tick-10ms`;
       if (!this.wsSubscriptions.has(topic)) {
         this.wsSubscriptions.add(topic);
-        console.log(`[WS] Pattern #75 subscribed to ${topic} (priority: 100)`);
+        console.info(`[WS] Pattern #75 subscribed to ${topic} (priority: 100)`);
       }
     }
   }
@@ -504,7 +504,7 @@ export class AltLinesKF {
       const indicator = context.eval(`(${indicatorCode})`);
 
       this.customIndicators.set(gitSpec, indicator);
-      console.log(`[ALT-LINES] Loaded custom indicator: ${gitSpec}`);
+      console.info(`[ALT-LINES] Loaded custom indicator: ${gitSpec}`);
     }
   }
 
@@ -641,8 +641,8 @@ export class KalmanSystemV2_4_2 {
   private stabilityMonitor: any;
 
   constructor() {
-    console.log('🚀 Kalman System v2.4.2 + v1.3.3 Golden Matrix');
-    console.log('================================================');
+    console.info('🚀 Kalman System v2.4.2 + v1.3.3 Golden Matrix');
+    console.info('================================================');
 
     // Initialize all patterns with combined infrastructure
     this.initializePatterns();
@@ -657,7 +657,7 @@ export class KalmanSystemV2_4_2 {
       this.setupWebSocketMonitoring();
     }
 
-    console.log('✅ All patterns initialized with zero-collateral infrastructure');
+    console.info('✅ All patterns initialized with zero-collateral infrastructure');
   }
 
   private initializePatterns(): void {
@@ -686,7 +686,7 @@ export class KalmanSystemV2_4_2 {
         KalmanStabilityIntegration.enhancePatternStability(parseInt(id));
       }
 
-      console.log(`[INIT] Pattern #${id} loaded with combined infrastructure`);
+      console.info(`[INIT] Pattern #${id} loaded with combined infrastructure`);
     }
   }
 
@@ -780,7 +780,7 @@ export class KalmanSystemV2_4_2 {
     } finally {
       if (KALMAN_FEATURES.CPU_PROFILING && profiler) {
         const profilePath = profiler.stop();
-        console.log(`[PROFILE] Tick processing profile: ${profilePath}`);
+        console.info(`[PROFILE] Tick processing profile: ${profilePath}`);
       }
     }
   }
@@ -802,16 +802,16 @@ export class KalmanSystemV2_4_2 {
   }
 
   private setupCPUProfiling(): void {
-    console.log('[CPU] Continuous profiling enabled for hot path analysis');
+    console.info('[CPU] Continuous profiling enabled for hot path analysis');
   }
 
   private setupWebSocketMonitoring(): void {
-    console.log('[WS] Subscription tracking enabled for tick data feeds');
+    console.info('[WS] Subscription tracking enabled for tick data feeds');
   }
 
   // Production deployment helper
   async deployProduction(): Promise<void> {
-    console.log('🚀 Deploying Kalman System to Production...');
+    console.info('🚀 Deploying Kalman System to Production...');
 
     // Component #56: Stabilize dependencies
     if (KALMAN_FEATURES.CONFIG_STABILITY) {
@@ -826,7 +826,7 @@ export class KalmanSystemV2_4_2 {
     // Component #63: Load production config
     const config = KalmanStabilityIntegration.loadKalmanConfig('./config/production.json');
     if (config) {
-      console.log('[PROD] Configuration loaded successfully');
+      console.info('[PROD] Configuration loaded successfully');
     }
 
     // Component #62: Show dependency tree
@@ -834,7 +834,7 @@ export class KalmanSystemV2_4_2 {
       KalmanStabilityIntegration.inspectKalmanDependencies();
     }
 
-    console.log('✅ Production deployment complete with v1.3.3 stability');
+    console.info('✅ Production deployment complete with v1.3.3 stability');
   }
 }
 
@@ -849,15 +849,15 @@ export {
 
 // CLI helper
 if (import.meta.main) {
-  console.log('Kalman Features v2.4.2 + v1.3.3 Golden Matrix');
-  console.log('=============================================');
-  console.log('\nEnabled Features:');
+  console.info('Kalman Features v2.4.2 + v1.3.3 Golden Matrix');
+  console.info('=============================================');
+  console.info('\nEnabled Features:');
   for (const [key, value] of Object.entries(KALMAN_FEATURES)) {
-    console.log(`  ${key}: ${value ? '✅' : '❌'}`);
+    console.info(`  ${key}: ${value ? '✅' : '❌'}`);
   }
 
-  console.log('\nUsage:');
-  console.log('  import { KalmanSystemV2_4_2 } from "./features/kalman-features.bun.ts"');
-  console.log('  const system = new KalmanSystemV2_4_2()');
-  console.log('  const triggers = await system.processTick(tick, reference)');
+  console.info('\nUsage:');
+  console.info('  import { KalmanSystemV2_4_2 } from "./features/kalman-features.bun.ts"');
+  console.info('  const system = new KalmanSystemV2_4_2()');
+  console.info('  const triggers = await system.processTick(tick, reference)');
 }

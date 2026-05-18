@@ -22,10 +22,10 @@ class BunTestWorkflow {
     };
 
     async runFullSuite(): Promise<void> {
-        console.log("🚀 Running full test suite with Bun 1.3 optimizations...\n");
+        console.info("🚀 Running full test suite with Bun 1.3 optimizations...\n");
 
         // 1. Run unit tests sequentially for reliability
-        console.log("📋 Running unit tests...");
+        console.info("📋 Running unit tests...");
         await this.runTests("packages/*/src/**/*.test.ts", {
             ...this.config,
             concurrent: false,
@@ -33,14 +33,14 @@ class BunTestWorkflow {
         });
 
         // 2. Run integration tests concurrently
-        console.log("\n🔗 Running integration tests concurrently...");
+        console.info("\n🔗 Running integration tests concurrently...");
         await this.runTests("packages/*/src/integration/**/*.test.ts", {
             ...this.config,
             maxConcurrency: 10
         });
 
         // 3. Run property tests with high concurrency
-        console.log("\n🎲 Running property tests with maximum concurrency...");
+        console.info("\n🎲 Running property tests with maximum concurrency...");
         await this.runTests("property-tests/**/*.property.test.ts", {
             ...this.config,
             maxConcurrency: 50,
@@ -48,14 +48,14 @@ class BunTestWorkflow {
         });
 
         // 4. Run type tests
-        console.log("\n🔍 Running type tests...");
+        console.info("\n🔍 Running type tests...");
         await this.runTypeTests();
 
-        console.log("\n✅ Full test suite completed!");
+        console.info("\n✅ Full test suite completed!");
     }
 
     async runQuickTests(): Promise<void> {
-        console.log("⚡ Running quick tests (unit + integration)...\n");
+        console.info("⚡ Running quick tests (unit + integration)...\n");
 
         await this.runTests("packages/*/src/**/*.test.ts", {
             ...this.config,
@@ -70,11 +70,11 @@ class BunTestWorkflow {
             coverage: false
         });
 
-        console.log("\n✅ Quick tests completed!");
+        console.info("\n✅ Quick tests completed!");
     }
 
     async runPropertyTests(): Promise<void> {
-        console.log("🎲 Running property tests with maximum performance...\n");
+        console.info("🎲 Running property tests with maximum performance...\n");
 
         await this.runTests("property-tests/**/*.property.test.ts", {
             ...this.config,
@@ -83,11 +83,11 @@ class BunTestWorkflow {
             randomize: true
         });
 
-        console.log("\n✅ Property tests completed!");
+        console.info("\n✅ Property tests completed!");
     }
 
     async runDebugTests(pattern: string): Promise<void> {
-        console.log(`🐛 Running debug tests for pattern: ${pattern}\n`);
+        console.info(`🐛 Running debug tests for pattern: ${pattern}\n`);
 
         await this.runTests(pattern, {
             ...this.config,
@@ -97,11 +97,11 @@ class BunTestWorkflow {
             coverage: false
         });
 
-        console.log("\n✅ Debug tests completed!");
+        console.info("\n✅ Debug tests completed!");
     }
 
     async runPerformanceTests(): Promise<void> {
-        console.log("📊 Running performance benchmarks...\n");
+        console.info("📊 Running performance benchmarks...\n");
 
         const startTime = Date.now();
 
@@ -113,14 +113,14 @@ class BunTestWorkflow {
         });
 
         const duration = Date.now() - startTime;
-        console.log(`\n⏱️ Performance test completed in ${duration}ms`);
+        console.info(`\n⏱️ Performance test completed in ${duration}ms`);
 
         // Log performance metrics
         await this.logPerformanceMetrics(duration);
     }
 
     async runCI(): Promise<void> {
-        console.log("🔄 Running CI tests with strict settings...\n");
+        console.info("🔄 Running CI tests with strict settings...\n");
 
         // CI environment - stricter settings
         const ciConfig = {
@@ -132,16 +132,16 @@ class BunTestWorkflow {
         };
 
         // Check for test.only (Bun 1.3 will fail automatically)
-        console.log("🔍 Checking for test.only usage...");
+        console.info("🔍 Checking for test.only usage...");
         await this.checkForTestOnly();
 
         // Run tests with seed for reproducibility
         const seed = Math.floor(Math.random() * 1000000);
-        console.log(`🎲 Using random seed: ${seed}`);
+        console.info(`🎲 Using random seed: ${seed}`);
 
         await this.runTests("packages/**/*.test.ts", ciConfig, [`--seed=${seed}`]);
 
-        console.log("\n✅ CI tests completed successfully!");
+        console.info("\n✅ CI tests completed successfully!");
     }
 
     private async runTests(
@@ -152,7 +152,7 @@ class BunTestWorkflow {
         const args = this.buildTestArgs(config, extraArgs);
         const command = ["bun", "test", pattern, ...args];
 
-        console.log(`Running: ${command.join(" ")}`);
+        console.info(`Running: ${command.join(" ")}`);
 
         const proc = spawn({
             cmd: command,
@@ -168,7 +168,7 @@ class BunTestWorkflow {
     }
 
     private async runTypeTests(): Promise<void> {
-        console.log("Running TypeScript type verification...");
+        console.info("Running TypeScript type verification...");
 
         const proc = spawn({
             cmd: ["bunx", "tsc", "--noEmit", "packages/odds-core/src/__tests__/type-testing-verification.ts"],
@@ -196,7 +196,7 @@ class BunTestWorkflow {
             console.error(output);
             throw new Error("test.only found in codebase");
         } else {
-            console.log("✅ No test.only usage found");
+            console.info("✅ No test.only usage found");
         }
     }
 
@@ -234,7 +234,7 @@ class BunTestWorkflow {
             performance: duration < 10000 ? "excellent" : duration < 30000 ? "good" : "needs-improvement"
         };
 
-        console.log("📊 Performance Metrics:", JSON.stringify(metrics, null, 2));
+        console.info("📊 Performance Metrics:", JSON.stringify(metrics, null, 2));
 
         // Could write to performance tracking system
         await Bun.write("./performance-metrics.json", JSON.stringify(metrics, null, 2));
@@ -268,7 +268,7 @@ async function main() {
                 await workflow.runCI();
                 break;
             default:
-                console.log(`
+                console.info(`
 🚀 Bun 1.3 Test Workflow
 
 Usage: bun scripts/test/bun-13-test-workflow.ts <command>

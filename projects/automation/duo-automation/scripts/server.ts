@@ -168,23 +168,23 @@ const server = serve({
   }
 });
 
-console.log(`🛡️ UNIFIED ARCHITECTURE SERVER STARTED`);
-console.log(`🌐 Server: http://${HOST}:${PORT}`);
-console.log(`📊 System Monitor: http://127.0.0.1:8081/demos/@web/system-monitor.html`);
-console.log(`🏥 Health Check: http://127.0.0.1:8081/health`);
-console.log(`📈 Metrics: http://127.0.0.1:8081/metrics`);
-console.log(`📋 Logs: http://127.0.0.1:8081/logs`);
-console.log(`✅ DUOPLUS AUTOMATION - MISSION COMPLETE`);
+console.info(`🛡️ UNIFIED ARCHITECTURE SERVER STARTED`);
+console.info(`🌐 Server: http://${HOST}:${PORT}`);
+console.info(`📊 System Monitor: http://127.0.0.1:8081/demos/@web/system-monitor.html`);
+console.info(`🏥 Health Check: http://127.0.0.1:8081/health`);
+console.info(`📈 Metrics: http://127.0.0.1:8081/metrics`);
+console.info(`📋 Logs: http://127.0.0.1:8081/logs`);
+console.info(`✅ DUOPLUS AUTOMATION - MISSION COMPLETE`);
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('🛑 Received SIGTERM, shutting down gracefully...');
+  console.info('🛑 Received SIGTERM, shutting down gracefully...');
   server.stop();
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
-  console.log('🛑 Received SIGINT, shutting down gracefully...');
+  console.info('🛑 Received SIGINT, shutting down gracefully...');
   server.stop();
   process.exit(0);
 });

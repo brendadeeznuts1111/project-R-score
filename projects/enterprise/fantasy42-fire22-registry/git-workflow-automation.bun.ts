@@ -115,7 +115,7 @@ class EnterpriseGitManager {
     uncommitted: string[];
     lastCommit: string;
   }> {
-    console.log('🔍 Analyzing repository status...');
+    console.info('🔍 Analyzing repository status...');
 
     const branch = this.runCommand('git rev-parse --abbrev-ref HEAD');
     const remote = this.runCommand('git remote get-url origin');
@@ -149,7 +149,7 @@ class EnterpriseGitManager {
     issues: string[];
     recommendations: string[];
   }> {
-    console.log(`🔍 Validating branch compliance: ${branchName}`);
+    console.info(`🔍 Validating branch compliance: ${branchName}`);
 
     const issues: string[] = [];
     const recommendations: string[] = [];
@@ -200,7 +200,7 @@ class EnterpriseGitManager {
     success: boolean;
     pullRequestUrl?: string;
   }> {
-    console.log(`🌿 Creating feature branch for: ${featureName}`);
+    console.info(`🌿 Creating feature branch for: ${featureName}`);
 
     const branchName = `${this.config.branching.prefixes.feature}${featureName.toLowerCase().replace(/\s+/g, '-')}`;
     const baseBranch = this.config.repository.developBranch;
@@ -229,7 +229,7 @@ class EnterpriseGitManager {
     // Push to remote
     this.runCommand(`git push -u ${this.config.repository.remote} ${branchName}`);
 
-    console.log(`✅ Feature branch created: ${branchName}`);
+    console.info(`✅ Feature branch created: ${branchName}`);
 
     return {
       branchName,
@@ -243,7 +243,7 @@ class EnterpriseGitManager {
     success: boolean;
     tag?: string;
   }> {
-    console.log(`🚀 Creating release branch for v${version}`);
+    console.info(`🚀 Creating release branch for v${version}`);
 
     const branchName = `${this.config.branching.prefixes.release}v${version}`;
     const baseBranch = this.config.repository.developBranch;
@@ -267,7 +267,7 @@ class EnterpriseGitManager {
     // Push to remote
     this.runCommand(`git push -u ${this.config.repository.remote} ${branchName}`);
 
-    console.log(`✅ Release branch created: ${branchName}`);
+    console.info(`✅ Release branch created: ${branchName}`);
 
     return {
       branchName,
@@ -284,7 +284,7 @@ class EnterpriseGitManager {
     conflicts: boolean;
     merged: boolean;
   }> {
-    console.log(`🔀 Merging ${sourceBranch} into ${targetBranch}`);
+    console.info(`🔀 Merging ${sourceBranch} into ${targetBranch}`);
 
     // Switch to target branch
     this.runCommand(`git checkout ${targetBranch}`);
@@ -297,10 +297,10 @@ class EnterpriseGitManager {
       );
       this.runCommand(`git push ${this.config.repository.remote} ${targetBranch}`);
 
-      console.log(`✅ Successfully merged ${sourceBranch} into ${targetBranch}`);
+      console.info(`✅ Successfully merged ${sourceBranch} into ${targetBranch}`);
       return { success: true, conflicts: false, merged: true };
     } catch (error) {
-      console.log('⚠️ Merge conflicts detected');
+      console.info('⚠️ Merge conflicts detected');
 
       // Abort merge and return conflict status
       try {
@@ -322,14 +322,14 @@ class EnterpriseGitManager {
     prNumber?: number;
     url?: string;
   }> {
-    console.log(`📝 Creating pull request for ${branchName}`);
+    console.info(`📝 Creating pull request for ${branchName}`);
 
     // Push branch if not already pushed
     this.runCommand(`git push ${this.config.repository.remote} ${branchName}`);
 
     // Note: In a real implementation, you would use GitHub API or CLI tools
     // For this example, we'll simulate the PR creation
-    console.log(`✅ Pull request created: ${title}`);
+    console.info(`✅ Pull request created: ${title}`);
 
     return {
       success: true,
@@ -346,7 +346,7 @@ class EnterpriseGitManager {
     tag: string;
     commit: string;
   }> {
-    console.log(`🏷️ Creating release tag: v${version}`);
+    console.info(`🏷️ Creating release tag: v${version}`);
 
     const commit = this.runCommand('git rev-parse HEAD');
     const tagMessage = message || `Release version ${version}`;
@@ -357,7 +357,7 @@ class EnterpriseGitManager {
     // Push tag to remote
     this.runCommand(`git push ${this.config.repository.remote} v${version}`);
 
-    console.log(`✅ Release tag created: v${version}`);
+    console.info(`✅ Release tag created: v${version}`);
 
     return {
       success: true,
@@ -387,16 +387,16 @@ class EnterpriseReleaseManager {
     tag: string;
     changelog?: string;
   }> {
-    console.log(`🚀 Executing release process for v${version}`);
+    console.info(`🚀 Executing release process for v${version}`);
 
     try {
       // 1. Create release branch
       const releaseResult = await this.gitManager.createReleaseBranch(version);
-      console.log(`📋 Release branch created: ${releaseResult.branchName}`);
+      console.info(`📋 Release branch created: ${releaseResult.branchName}`);
 
       // 2. Generate changelog
       const changelog = this.generateChangelog(version, changes);
-      console.log('📝 Changelog generated');
+      console.info('📝 Changelog generated');
 
       // 3. Validate release
       const validation = await this.validateRelease(version);
@@ -406,7 +406,7 @@ class EnterpriseReleaseManager {
 
       // 4. Create release tag
       const tagResult = await this.gitManager.tagRelease(version, changelog);
-      console.log(`🏷️ Release tag created: ${tagResult.tag}`);
+      console.info(`🏷️ Release tag created: ${tagResult.tag}`);
 
       // 5. Merge to main
       const mergeResult = await this.gitManager.mergeBranch(
@@ -468,7 +468,7 @@ class EnterpriseReleaseManager {
     valid: boolean;
     errors: string[];
   }> {
-    console.log('🔍 Validating release...');
+    console.info('🔍 Validating release...');
 
     const errors: string[] = [];
 
@@ -523,43 +523,43 @@ async function runGitWorkflowCLI() {
   const args = process.argv.slice(2);
   const command = args[0];
 
-  console.log('🚀 Fantasy42-Fire22 Git Workflow Automation');
-  console.log('==========================================\n');
+  console.info('🚀 Fantasy42-Fire22 Git Workflow Automation');
+  console.info('==========================================\n');
 
   const gitManager = new EnterpriseGitManager();
   const releaseManager = new EnterpriseReleaseManager(gitManager);
 
   const repoStatus = await gitManager.getRepositoryStatus();
-  console.log(`📋 Current branch: ${repoStatus.branch}`);
-  console.log(`🔗 Last commit: ${repoStatus.lastCommit}`);
-  console.log('');
+  console.info(`📋 Current branch: ${repoStatus.branch}`);
+  console.info(`🔗 Last commit: ${repoStatus.lastCommit}`);
+  console.info('');
 
   try {
     switch (command) {
       case 'status':
-        console.log('📊 Repository Status:');
-        console.log(`  Branch: ${repoStatus.branch}`);
-        console.log(`  Remote: ${repoStatus.remote}`);
-        console.log(`  Ahead: ${repoStatus.ahead} commits`);
-        console.log(`  Behind: ${repoStatus.behind} commits`);
-        console.log(`  Uncommitted: ${repoStatus.uncommitted.length} files`);
+        console.info('📊 Repository Status:');
+        console.info(`  Branch: ${repoStatus.branch}`);
+        console.info(`  Remote: ${repoStatus.remote}`);
+        console.info(`  Ahead: ${repoStatus.ahead} commits`);
+        console.info(`  Behind: ${repoStatus.behind} commits`);
+        console.info(`  Uncommitted: ${repoStatus.uncommitted.length} files`);
         if (repoStatus.uncommitted.length > 0) {
-          console.log('  Files:');
-          repoStatus.uncommitted.forEach(file => console.log(`    - ${file}`));
+          console.info('  Files:');
+          repoStatus.uncommitted.forEach(file => console.info(`    - ${file}`));
         }
         break;
 
       case 'validate':
         const branchName = args[1] || repoStatus.branch;
         const validation = await gitManager.validateBranchCompliance(branchName);
-        console.log(`✅ Branch validation ${validation.compliant ? 'PASSED' : 'FAILED'}`);
+        console.info(`✅ Branch validation ${validation.compliant ? 'PASSED' : 'FAILED'}`);
         if (validation.issues.length > 0) {
-          console.log('❌ Issues:');
-          validation.issues.forEach(issue => console.log(`  - ${issue}`));
+          console.info('❌ Issues:');
+          validation.issues.forEach(issue => console.info(`  - ${issue}`));
         }
         if (validation.recommendations.length > 0) {
-          console.log('💡 Recommendations:');
-          validation.recommendations.forEach(rec => console.log(`  - ${rec}`));
+          console.info('💡 Recommendations:');
+          validation.recommendations.forEach(rec => console.info(`  - ${rec}`));
         }
         break;
 
@@ -568,12 +568,12 @@ async function runGitWorkflowCLI() {
         const featureDesc = args.slice(2).join(' ');
         if (featureName) {
           const result = await gitManager.createFeatureBranch(featureName, featureDesc);
-          console.log(`✅ Feature branch created: ${result.branchName}`);
+          console.info(`✅ Feature branch created: ${result.branchName}`);
           if (result.pullRequestUrl) {
-            console.log(`🔗 Pull Request: ${result.pullRequestUrl}`);
+            console.info(`🔗 Pull Request: ${result.pullRequestUrl}`);
           }
         } else {
-          console.log('Usage: bun run git-workflow-automation.bun.ts feature <name> [description]');
+          console.info('Usage: bun run git-workflow-automation.bun.ts feature <name> [description]');
         }
         break;
 
@@ -583,13 +583,13 @@ async function runGitWorkflowCLI() {
         if (version) {
           const result = await releaseManager.executeReleaseProcess(version, changes);
           if (result.success) {
-            console.log(`✅ Release completed: ${result.tag}`);
-            console.log(`📋 Release branch: ${result.releaseBranch}`);
+            console.info(`✅ Release completed: ${result.tag}`);
+            console.info(`📋 Release branch: ${result.releaseBranch}`);
           } else {
-            console.log('❌ Release failed');
+            console.info('❌ Release failed');
           }
         } else {
-          console.log(
+          console.info(
             'Usage: bun run git-workflow-automation.bun.ts release <version> [changes...]'
           );
         }
@@ -601,14 +601,14 @@ async function runGitWorkflowCLI() {
         if (sourceBranch) {
           const result = await gitManager.mergeBranch(sourceBranch, targetBranch);
           if (result.merged) {
-            console.log(`✅ Successfully merged ${sourceBranch} into ${targetBranch}`);
+            console.info(`✅ Successfully merged ${sourceBranch} into ${targetBranch}`);
           } else if (result.conflicts) {
-            console.log('❌ Merge conflicts detected - please resolve manually');
+            console.info('❌ Merge conflicts detected - please resolve manually');
           } else {
-            console.log('❌ Merge failed');
+            console.info('❌ Merge failed');
           }
         } else {
-          console.log('Usage: bun run git-workflow-automation.bun.ts merge <source> [target]');
+          console.info('Usage: bun run git-workflow-automation.bun.ts merge <source> [target]');
         }
         break;
 
@@ -617,10 +617,10 @@ async function runGitWorkflowCLI() {
         const tagMessage = args.slice(2).join(' ');
         if (tagVersion) {
           const result = await gitManager.tagRelease(tagVersion, tagMessage);
-          console.log(`✅ Tag created: ${result.tag}`);
-          console.log(`🔗 Commit: ${result.commit}`);
+          console.info(`✅ Tag created: ${result.tag}`);
+          console.info(`🔗 Commit: ${result.commit}`);
         } else {
-          console.log('Usage: bun run git-workflow-automation.bun.ts tag <version> [message]');
+          console.info('Usage: bun run git-workflow-automation.bun.ts tag <version> [message]');
         }
         break;
 
@@ -631,43 +631,43 @@ async function runGitWorkflowCLI() {
         if (prBranch !== gitConfig.repository.mainBranch) {
           const result = await gitManager.createPullRequest(prBranch, prTitle, prDesc);
           if (result.success) {
-            console.log(`✅ Pull request created: ${result.url}`);
+            console.info(`✅ Pull request created: ${result.url}`);
           }
         } else {
-          console.log('❌ Cannot create PR for main branch');
+          console.info('❌ Cannot create PR for main branch');
         }
         break;
 
       default:
-        console.log('🎯 Fantasy42-Fire22 Git Workflow Commands:');
-        console.log('');
-        console.log('📊 Repository Management:');
-        console.log('  status                    - Show repository status');
-        console.log('  validate [branch]         - Validate branch compliance');
-        console.log('');
-        console.log('🌿 Branch Management:');
-        console.log('  feature <name> [desc]     - Create feature branch');
-        console.log('  merge <source> [target]   - Merge branches');
-        console.log('');
-        console.log('🚀 Release Management:');
-        console.log('  release <version> [changes...] - Execute release process');
-        console.log('  tag <version> [message]   - Create release tag');
-        console.log('');
-        console.log('📝 Pull Request Management:');
-        console.log('  pr [branch] [title] [desc] - Create pull request');
-        console.log('');
-        console.log('📚 Help:');
-        console.log('  (run without args to see this help)');
-        console.log('');
+        console.info('🎯 Fantasy42-Fire22 Git Workflow Commands:');
+        console.info('');
+        console.info('📊 Repository Management:');
+        console.info('  status                    - Show repository status');
+        console.info('  validate [branch]         - Validate branch compliance');
+        console.info('');
+        console.info('🌿 Branch Management:');
+        console.info('  feature <name> [desc]     - Create feature branch');
+        console.info('  merge <source> [target]   - Merge branches');
+        console.info('');
+        console.info('🚀 Release Management:');
+        console.info('  release <version> [changes...] - Execute release process');
+        console.info('  tag <version> [message]   - Create release tag');
+        console.info('');
+        console.info('📝 Pull Request Management:');
+        console.info('  pr [branch] [title] [desc] - Create pull request');
+        console.info('');
+        console.info('📚 Help:');
+        console.info('  (run without args to see this help)');
+        console.info('');
 
         if (!command) {
           // Show current repository status
-          console.log('📋 Current Repository Information:');
-          console.log(`  Repository: ${gitConfig.repository.name}`);
-          console.log(`  Remote: ${repoStatus.remote}`);
-          console.log(`  Main Branch: ${gitConfig.repository.mainBranch}`);
-          console.log(`  Develop Branch: ${gitConfig.repository.developBranch}`);
-          console.log(`  Enterprise Branch: ${gitConfig.repository.enterpriseBranch}`);
+          console.info('📋 Current Repository Information:');
+          console.info(`  Repository: ${gitConfig.repository.name}`);
+          console.info(`  Remote: ${repoStatus.remote}`);
+          console.info(`  Main Branch: ${gitConfig.repository.mainBranch}`);
+          console.info(`  Develop Branch: ${gitConfig.repository.developBranch}`);
+          console.info(`  Enterprise Branch: ${gitConfig.repository.enterpriseBranch}`);
         }
     }
   } catch (error) {
@@ -675,9 +675,9 @@ async function runGitWorkflowCLI() {
     process.exit(1);
   }
 
-  console.log('');
-  console.log('🎉 Git Workflow Automation Complete!');
-  console.log('===================================');
+  console.info('');
+  console.info('🎉 Git Workflow Automation Complete!');
+  console.info('===================================');
 }
 
 // ============================================================================

@@ -501,9 +501,9 @@ const server = serve({
  },
 });
 
-console.log(\`🚀 Bun HTTP Server running on http://${validation.hostname}:${validation.port}\`);
-console.log("Routes:", ${JSON.stringify(validation.routes?.map(r => `${r.method} ${r.path}`) || ["GET / (default)"])});
-${validation.staticDir ? `console.log("Static files served from: ${validation.staticDir}");` : ""}`;
+console.info(\`🚀 Bun HTTP Server running on http://${validation.hostname}:${validation.port}\`);
+console.info("Routes:", ${JSON.stringify(validation.routes?.map(r => `${r.method} ${r.path}`) || ["GET / (default)"])});
+${validation.staticDir ? `console.info("Static files served from: ${validation.staticDir}");` : ""}`;
 
      return {
        content: [

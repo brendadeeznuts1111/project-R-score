@@ -18,7 +18,7 @@
  * const { cookie, report } = cookieSecurity.parseAndValidate(
  *   'session=abc; Secure; HttpOnly; SameSite=Strict'
  * );
- * console.log(report.grade); // 'A+'
+ * console.info(report.grade); // 'A+'
  * 
  * // Create secure session cookie
  * const { cookie: sessionCookie, report } = cookieSecurity.createSecure(
@@ -101,7 +101,7 @@ const debug = {
   enabled: Bun.env.DEBUG_COOKIE_SECURITY === 'true',
   log: (msg: string, ...args: unknown[]) => {
     if (debug.enabled) {
-      console.log(`[🍪 CookieSecurity] ${msg}`, ...args);
+      console.info(`[🍪 CookieSecurity] ${msg}`, ...args);
     }
   },
   error: (msg: string, ...args: unknown[]) => {
@@ -153,7 +153,7 @@ export class Tier1380CookieSecurity {
    * );
    * 
    * if (report.grade === 'A+') {
-   *   console.log('Excellent security!');
+   *   console.info('Excellent security!');
    * }
    * ```
    */
@@ -585,7 +585,7 @@ export class Tier1380CookieSecurity {
  * // Validate on subsequent requests
  * const result = variantManager.validateVariant(cookieValue, 'user_123');
  * if (result.valid) {
- *   console.log('User is in variant:', result.variant); // 'A'
+ *   console.info('User is in variant:', result.variant); // 'A'
  * }
  * ```
  */

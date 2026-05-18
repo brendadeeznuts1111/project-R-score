@@ -159,7 +159,7 @@ export class ProxyDetector {
 
 		const processingTime = performance.now() - startTime;
 
-		console.log(
+		console.info(
 			`🔍 Proxy Detection: ${proxyAssessment.type} | Hops: ${hopAnalysis.hopCount} | Risk: ${riskScore.toFixed(3)} | ${processingTime.toFixed(2)}ms`,
 		);
 
@@ -643,7 +643,7 @@ export class ProxyDetector {
 			this.suspiciousASNs.add(asn);
 		});
 
-		console.log(
+		console.info(
 			`🔍 Proxy Detector initialized with ${this.suspiciousASNs.size} suspicious ASNs`,
 		);
 	}

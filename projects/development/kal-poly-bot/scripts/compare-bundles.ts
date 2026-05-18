@@ -11,7 +11,7 @@ interface BundleInfo {
 }
 
 async function compareBundles() {
-  console.log('🔬 A/B Testing Bundle Comparison\n');
+  console.info('🔬 A/B Testing Bundle Comparison\n');
 
   const distDir = resolve('dist');
   const bundleDirs = ['ab-test-a', 'ab-test-b'];
@@ -23,7 +23,7 @@ async function compareBundles() {
     const bundlePath = join(distDir, dir);
 
     if (!existsSync(bundlePath)) {
-      console.log(`❌ Bundle ${dir} not found. Run 'bun run build:ab-test' first.`);
+      console.info(`❌ Bundle ${dir} not found. Run 'bun run build:ab-test' first.`);
       continue;
     }
 
@@ -32,7 +32,7 @@ async function compareBundles() {
       const mainBundle = files.find(f => f.endsWith('.js') && !f.endsWith('.js.map'));
 
       if (!mainBundle) {
-        console.log(`⚠️  No main bundle found in ${dir}`);
+        console.info(`⚠️  No main bundle found in ${dir}`);
         continue;
       }
 
@@ -47,11 +47,11 @@ async function compareBundles() {
         variant: dir
       });
 
-      console.log(`📦 ${dir}:`);
-      console.log(`   Size: ${(bundleStat.size / 1024).toFixed(1)} KB`);
-      console.log(`   Files: ${files.length}`);
-      console.log(`   Source map: ${sourceMap ? (sourceMapSize / 1024).toFixed(1) + ' KB' : 'none'}`);
-      console.log('');
+      console.info(`📦 ${dir}:`);
+      console.info(`   Size: ${(bundleStat.size / 1024).toFixed(1)} KB`);
+      console.info(`   Files: ${files.length}`);
+      console.info(`   Source map: ${sourceMap ? (sourceMapSize / 1024).toFixed(1) + ' KB' : 'none'}`);
+      console.info('');
 
     } catch (error) {
       console.error(`Error analyzing ${dir}:`, error);
@@ -59,35 +59,35 @@ async function compareBundles() {
   }
 
   if (bundles.length < 2) {
-    console.log('Need at least 2 bundles to compare. Run both variant builds first.');
+    console.info('Need at least 2 bundles to compare. Run both variant builds first.');
     return;
   }
 
   // Compare bundles
-  console.log('📊 Bundle Comparison:\n');
+  console.info('📊 Bundle Comparison:\n');
 
   const [bundleA, bundleB] = bundles;
   const sizeDiff = bundleB.size - bundleA.size;
   const sizePercent = ((sizeDiff / bundleA.size) * 100).toFixed(1);
 
-  console.log(`Size difference: ${sizeDiff > 0 ? '+' : ''}${(sizeDiff / 1024).toFixed(1)} KB (${sizePercent}%)`);
-  console.log(`Bundle A (${bundleA.variant}): ${(bundleA.size / 1024).toFixed(1)} KB`);
-  console.log(`Bundle B (${bundleB.variant}): ${(bundleB.size / 1024).toFixed(1)} KB`);
+  console.info(`Size difference: ${sizeDiff > 0 ? '+' : ''}${(sizeDiff / 1024).toFixed(1)} KB (${sizePercent}%)`);
+  console.info(`Bundle A (${bundleA.variant}): ${(bundleA.size / 1024).toFixed(1)} KB`);
+  console.info(`Bundle B (${bundleB.variant}): ${(bundleB.size / 1024).toFixed(1)} KB`);
 
   if (Math.abs(sizeDiff) > 1024) { // More than 1KB difference
-    console.log(`\n💡 Significant size difference detected. ${sizeDiff > 0 ? 'Variant B' : 'Variant A'} is larger.`);
+    console.info(`\n💡 Significant size difference detected. ${sizeDiff > 0 ? 'Variant B' : 'Variant A'} is larger.`);
   } else {
-    console.log(`\n✅ Bundle sizes are similar (within 1KB).`);
+    console.info(`\n✅ Bundle sizes are similar (within 1KB).`);
   }
 
   // Performance recommendations
-  console.log('\n🚀 Performance Recommendations:');
-  console.log('• Deploy smaller bundle to faster regions');
-  console.log('• Monitor user engagement metrics for each variant');
-  console.log('• Consider caching strategies for larger bundles');
+  console.info('\n🚀 Performance Recommendations:');
+  console.info('• Deploy smaller bundle to faster regions');
+  console.info('• Monitor user engagement metrics for each variant');
+  console.info('• Consider caching strategies for larger bundles');
 
   // Validation checks
-  console.log('\n🔍 Validation Results:');
+  console.info('\n🔍 Validation Results:');
 
   const checks = [
     {
@@ -108,19 +108,19 @@ async function compareBundles() {
   ];
 
   checks.forEach(check => {
-    console.log(`${check.status ? '✅' : '❌'} ${check.name}: ${check.message}`);
+    console.info(`${check.status ? '✅' : '❌'} ${check.name}: ${check.message}`);
   });
 
-  console.log('\n🎯 Next Steps:');
-  console.log('1. Deploy variants to different user segments');
-  console.log('2. Monitor performance and conversion metrics');
-  console.log('3. Run statistical significance tests');
-  console.log('4. Scale winning variant to 100% of users');
+  console.info('\n🎯 Next Steps:');
+  console.info('1. Deploy variants to different user segments');
+  console.info('2. Monitor performance and conversion metrics');
+  console.info('3. Run statistical significance tests');
+  console.info('4. Scale winning variant to 100% of users');
 
-  console.log('\n📈 A/B Testing Summary:');
-  console.log(`   Variants compared: ${bundles.length}`);
-  console.log(`   Size difference: ${Math.abs(sizePercent)}%`);
-  console.log(`   Ready for deployment: ✅`);
+  console.info('\n📈 A/B Testing Summary:');
+  console.info(`   Variants compared: ${bundles.length}`);
+  console.info(`   Size difference: ${Math.abs(sizePercent)}%`);
+  console.info(`   Ready for deployment: ✅`);
 }
 
 // Run if called directly

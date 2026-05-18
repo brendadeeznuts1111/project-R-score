@@ -408,43 +408,43 @@ const app = new Elysia()
 
 // CLI Health Check Demo
 async function demonstrateHealthEndpoint() {
-  console.log(EmpireProDashboard.generateHeader(
+  console.info(EmpireProDashboard.generateHeader(
     'HEALTH ENDPOINT DEMO',
     'Secrets Backend Connectivity Check with Empire Pro Integration'
   ));
 
   // Test basic health endpoint
-  console.log(UnicodeTableFormatter.colorize('🔍 Testing Basic Health Endpoint:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('🔍 Testing Basic Health Endpoint:', DesignSystem.text.accent.blue));
   
   try {
     const healthResponse = await app.handle(new Request('http://localhost:3000/health')).then(r => r.json()) as HealthResponse;
     
-    console.log(UnicodeTableFormatter.colorize(`✅ Overall Status: ${healthResponse.overall.status}`, 
+    console.info(UnicodeTableFormatter.colorize(`✅ Overall Status: ${healthResponse.overall.status}`, 
       healthResponse.overall.status === 'healthy' ? DesignSystem.status.operational :
       healthResponse.overall.status === 'degraded' ? DesignSystem.status.degraded :
       DesignSystem.status.downtime));
     
-    console.log(UnicodeTableFormatter.colorize(`🌍 Scope: ${healthResponse.overall.scope}`, DesignSystem.text.accent.blue));
-    console.log(UnicodeTableFormatter.colorize(`🏢 Environment: ${healthResponse.overall.environment}`, DesignSystem.text.secondary));
-    console.log(UnicodeTableFormatter.colorize(`⏱️  Uptime: ${Math.floor(healthResponse.overall.uptime)}s`, DesignSystem.text.accent.green));
+    console.info(UnicodeTableFormatter.colorize(`🌍 Scope: ${healthResponse.overall.scope}`, DesignSystem.text.accent.blue));
+    console.info(UnicodeTableFormatter.colorize(`🏢 Environment: ${healthResponse.overall.environment}`, DesignSystem.text.secondary));
+    console.info(UnicodeTableFormatter.colorize(`⏱️  Uptime: ${Math.floor(healthResponse.overall.uptime)}s`, DesignSystem.text.accent.green));
     
     // Secrets health check
-    console.log('\n' + UnicodeTableFormatter.colorize('🔐 Secrets Backend Connectivity:', DesignSystem.text.accent.blue));
+    console.info('\n' + UnicodeTableFormatter.colorize('🔐 Secrets Backend Connectivity:', DesignSystem.text.accent.blue));
     const secrets = healthResponse.secrets;
-    console.log(UnicodeTableFormatter.colorize(`🗄️  Backend: ${secrets.backend}`, DesignSystem.text.accent.purple));
-    console.log(UnicodeTableFormatter.colorize(`🏢 Service: ${secrets.serviceName}`, DesignSystem.text.accent.green));
-    console.log(UnicodeTableFormatter.colorize(`🔗 Connected: ${secrets.connected ? 'Yes' : 'No'}`, 
+    console.info(UnicodeTableFormatter.colorize(`🗄️  Backend: ${secrets.backend}`, DesignSystem.text.accent.purple));
+    console.info(UnicodeTableFormatter.colorize(`🏢 Service: ${secrets.serviceName}`, DesignSystem.text.accent.green));
+    console.info(UnicodeTableFormatter.colorize(`🔗 Connected: ${secrets.connected ? 'Yes' : 'No'}`, 
       secrets.connected ? DesignSystem.status.operational : DesignSystem.status.downtime));
-    console.log(UnicodeTableFormatter.colorize(`⚡ Response Time: ${secrets.responseTime}ms`, 
+    console.info(UnicodeTableFormatter.colorize(`⚡ Response Time: ${secrets.responseTime}ms`, 
       secrets.responseTime < 1000 ? DesignSystem.status.operational : DesignSystem.status.degraded));
-    console.log(UnicodeTableFormatter.colorize(`🔢 Secrets Count: ${secrets.secretsCount}`, DesignSystem.text.accent.blue));
-    console.log(UnicodeTableFormatter.colorize(`🔒 Encryption: ${secrets.encryptionLevel}`, 
+    console.info(UnicodeTableFormatter.colorize(`🔢 Secrets Count: ${secrets.secretsCount}`, DesignSystem.text.accent.blue));
+    console.info(UnicodeTableFormatter.colorize(`🔒 Encryption: ${secrets.encryptionLevel}`, 
       secrets.encryptionLevel === 'maximum' ? DesignSystem.status.operational :
       secrets.encryptionLevel === 'enhanced' ? DesignSystem.status.degraded :
       DesignSystem.text.muted));
     
     // System health check
-    console.log('\n' + UnicodeTableFormatter.colorize('📊 System Components Health:', DesignSystem.text.accent.blue));
+    console.info('\n' + UnicodeTableFormatter.colorize('📊 System Components Health:', DesignSystem.text.accent.blue));
     
     const systemTableData = healthResponse.systems.map(system => ({
       Component: UnicodeTableFormatter.colorize(system.component, DesignSystem.text.primary),
@@ -456,21 +456,21 @@ async function demonstrateHealthEndpoint() {
       Details: UnicodeTableFormatter.colorize(system.details || 'N/A', DesignSystem.text.secondary)
     }));
     
-    console.log(UnicodeTableFormatter.generateTable(systemTableData, { maxWidth: 120 }));
+    console.info(UnicodeTableFormatter.generateTable(systemTableData, { maxWidth: 120 }));
     
     // Summary
-    console.log('\n' + UnicodeTableFormatter.colorize('📋 Health Summary:', DesignSystem.text.accent.blue));
+    console.info('\n' + UnicodeTableFormatter.colorize('📋 Health Summary:', DesignSystem.text.accent.blue));
     const summary = healthResponse.summary;
-    console.log(UnicodeTableFormatter.colorize(`📊 Total Checks: ${summary.total}`, DesignSystem.text.primary));
-    console.log(UnicodeTableFormatter.colorize(`✅ Passed: ${summary.passed}`, DesignSystem.status.operational));
-    console.log(UnicodeTableFormatter.colorize(`⚠️  Degraded: ${summary.degraded}`, DesignSystem.status.degraded));
-    console.log(UnicodeTableFormatter.colorize(`❌ Failed: ${summary.failed}`, DesignSystem.status.downtime));
+    console.info(UnicodeTableFormatter.colorize(`📊 Total Checks: ${summary.total}`, DesignSystem.text.primary));
+    console.info(UnicodeTableFormatter.colorize(`✅ Passed: ${summary.passed}`, DesignSystem.status.operational));
+    console.info(UnicodeTableFormatter.colorize(`⚠️  Degraded: ${summary.degraded}`, DesignSystem.status.degraded));
+    console.info(UnicodeTableFormatter.colorize(`❌ Failed: ${summary.failed}`, DesignSystem.status.downtime));
     
     // Recommendations
     if (healthResponse.recommendations.length > 0) {
-      console.log('\n' + UnicodeTableFormatter.colorize('💡 Recommendations:', DesignSystem.text.accent.blue));
+      console.info('\n' + UnicodeTableFormatter.colorize('💡 Recommendations:', DesignSystem.text.accent.blue));
       healthResponse.recommendations.forEach((rec, index) => {
-        console.log(`${index + 1}. ${UnicodeTableFormatter.colorize(rec, DesignSystem.text.secondary)}`);
+        console.info(`${index + 1}. ${UnicodeTableFormatter.colorize(rec, DesignSystem.text.secondary)}`);
       });
     }
     
@@ -478,29 +478,29 @@ async function demonstrateHealthEndpoint() {
     console.error(UnicodeTableFormatter.colorize(`❌ Health check failed: ${error}`, DesignSystem.status.downtime));
   }
   
-  console.log(EmpireProDashboard.generateFooter());
+  console.info(EmpireProDashboard.generateFooter());
 }
 
 // Start server and run demo
 const server = app.listen(3000);
-console.log(UnicodeTableFormatter.colorize('🚀 Health endpoint server started on http://localhost:3000', DesignSystem.status.operational));
+console.info(UnicodeTableFormatter.colorize('🚀 Health endpoint server started on http://localhost:3000', DesignSystem.status.operational));
 
 // Run demonstration
 demonstrateHealthEndpoint().then(() => {
-  console.log('\n🎉 HEALTH ENDPOINT DEMO COMPLETE!');
-  console.log('✅ Secrets backend connectivity check implemented');
-  console.log('✅ System health monitoring with Empire Pro integration');
-  console.log('✅ Comprehensive health reporting with recommendations');
-  console.log('✅ Multiple endpoint variations (/health, /health/verbose, /health/secrets, /health/systems)');
-  console.log('\n📋 AVAILABLE ENDPOINTS:');
-  console.log('  GET /health           - Basic health check');
-  console.log('  GET /health/verbose   - Detailed health with colors');
-  console.log('  GET /health/secrets   - Secrets backend connectivity');
-  console.log('  GET /health/systems   - System components health');
-  console.log('\n🔧 INTEGRATION READY FOR PRODUCTION!');
+  console.info('\n🎉 HEALTH ENDPOINT DEMO COMPLETE!');
+  console.info('✅ Secrets backend connectivity check implemented');
+  console.info('✅ System health monitoring with Empire Pro integration');
+  console.info('✅ Comprehensive health reporting with recommendations');
+  console.info('✅ Multiple endpoint variations (/health, /health/verbose, /health/secrets, /health/systems)');
+  console.info('\n📋 AVAILABLE ENDPOINTS:');
+  console.info('  GET /health           - Basic health check');
+  console.info('  GET /health/verbose   - Detailed health with colors');
+  console.info('  GET /health/secrets   - Secrets backend connectivity');
+  console.info('  GET /health/systems   - System components health');
+  console.info('\n🔧 INTEGRATION READY FOR PRODUCTION!');
   
   // Keep server running for manual testing
-  console.log('\n🌐 Server running... Press Ctrl+C to stop');
+  console.info('\n🌐 Server running... Press Ctrl+C to stop');
 }).catch(error => {
   console.error(UnicodeTableFormatter.colorize(`❌ Demo failed: ${error}`, DesignSystem.status.downtime));
   process.exit(1);

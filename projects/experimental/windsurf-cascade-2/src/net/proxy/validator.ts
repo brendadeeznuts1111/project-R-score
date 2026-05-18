@@ -34,7 +34,7 @@ const logError = (domain: string, message: string, data?: any) => {
 };
 
 const logInfo = (domain: string, message: string, data?: any) => {
-  console.log(`ℹ️ [${domain}] ${message}`, data || '');
+  console.info(`ℹ️ [${domain}] ${message}`, data || '');
 };
 
 const logDebug = (domain: string, message: string, data?: any) => {

@@ -69,7 +69,7 @@ export class JWTAuthService {
     }
 
     this.nextSigningKey = privateKey;
-    console.log("✅ New signing key prepared for rotation");
+    console.info("✅ New signing key prepared for rotation");
   }
 
   /**
@@ -84,7 +84,7 @@ export class JWTAuthService {
     this.signingKey = this.nextSigningKey;
     this.nextSigningKey = null;
 
-    console.log("✅ Signing keys rotated (zero downtime)");
+    console.info("✅ Signing keys rotated (zero downtime)");
   }
 
   /**
@@ -128,7 +128,7 @@ export class RateLimitedAPIService {
       // Rotate keys to reset rate limits (zero downtime)
       this.keyManager.rotateKeys();
       this.requestCounts.clear();
-      console.log("🔄 Rate limit reached, keys rotated");
+      console.info("🔄 Rate limit reached, keys rotated");
     }
 
     this.requestCounts.set(apiKey, count + 1);
@@ -172,9 +172,9 @@ export class DistributedAPIService {
       throw new Error("Worker key initialization failed");
     }
 
-    console.log("✅ Worker initialized with cloned keys");
-    console.log(`   Public key class: ${workerPublicKey.constructor.name}`);
-    console.log(`   Private key class: ${workerPrivateKey.constructor.name}`);
+    console.info("✅ Worker initialized with cloned keys");
+    console.info(`   Public key class: ${workerPublicKey.constructor.name}`);
+    console.info(`   Private key class: ${workerPrivateKey.constructor.name}`);
 
     return {
       publicKey: workerPublicKey,
@@ -212,7 +212,7 @@ export class TypeSafeAPIConfig {
       throw new Error("Invalid API_PORT configuration");
     }
 
-    console.log(`✅ API configuration valid (port: ${port})`);
+    console.info(`✅ API configuration valid (port: ${port})`);
     return true;
   }
 
@@ -225,7 +225,7 @@ export class TypeSafeAPIConfig {
     await this.shell`bun run test`;
     await this.shell`bun run deploy`;
 
-    console.log("✅ API deployed successfully");
+    console.info("✅ API deployed successfully");
   }
 }
 
@@ -234,41 +234,41 @@ export class TypeSafeAPIConfig {
 // ═══════════════════════════════════════════════════════════════
 
 async function main() {
-  console.log("🎯 Bun v1.2.11 API Integration Examples\n");
-  console.log("=" .repeat(60));
+  console.info("🎯 Bun v1.2.11 API Integration Examples\n");
+  console.info("=" .repeat(60));
 
   // Example 1: JWT Auth with Key Rotation
-  console.log("\n1️⃣  JWT Authentication with Rotating Keys");
-  console.log("-".repeat(60));
+  console.info("\n1️⃣  JWT Authentication with Rotating Keys");
+  console.info("-".repeat(60));
   const authService = new JWTAuthService();
   authService.prepareKeyRotation();
   authService.rotateKeys();
 
   // Example 2: Rate Limiting
-  console.log("\n2️⃣  Rate-Limited API Service");
-  console.log("-".repeat(60));
+  console.info("\n2️⃣  Rate-Limited API Service");
+  console.info("-".repeat(60));
   const rateLimitedAPI = new RateLimitedAPIService();
-  console.log("   ✅ Zero-downtime key rotation for rate limiting");
+  console.info("   ✅ Zero-downtime key rotation for rate limiting");
 
   // Example 3: Distributed Workers
-  console.log("\n3️⃣  Distributed API Workers");
-  console.log("-".repeat(60));
+  console.info("\n3️⃣  Distributed API Workers");
+  console.info("-".repeat(60));
   await DistributedAPIService.initializeWorker();
 
   // Example 4: Type-Safe Configuration
-  console.log("\n4️⃣  Type-Safe API Configuration");
-  console.log("-".repeat(60));
+  console.info("\n4️⃣  Type-Safe API Configuration");
+  console.info("-".repeat(60));
   const config = new TypeSafeAPIConfig();
-  console.log("   ✅ Type-safe shell operations for API deployment");
+  console.info("   ✅ Type-safe shell operations for API deployment");
 
-  console.log("\n" + "=" .repeat(60));
-  console.log("✨ All API examples demonstrate real-world value!");
-  console.log("\n💡 Key Benefits:");
-  console.log("   • Zero-downtime key rotation");
-  console.log("   • Better security with frequent rotations");
-  console.log("   • Type safety catches errors early");
-  console.log("   • Distributed systems support");
-  console.log("\n📚 See docs/BUN-1.2.11-IMPROVEMENTS.md for details");
+  console.info("\n" + "=" .repeat(60));
+  console.info("✨ All API examples demonstrate real-world value!");
+  console.info("\n💡 Key Benefits:");
+  console.info("   • Zero-downtime key rotation");
+  console.info("   • Better security with frequent rotations");
+  console.info("   • Type safety catches errors early");
+  console.info("   • Distributed systems support");
+  console.info("\n📚 See docs/BUN-1.2.11-IMPROVEMENTS.md for details");
 }
 
 // Run if executed directly

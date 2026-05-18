@@ -13,17 +13,17 @@ if (!deployId) {
 }
 
 async function main() {
-  console.log(`🔄 Rolling back deployment: ${deployId}\n`);
+  console.info(`🔄 Rolling back deployment: ${deployId}\n`);
 
   const result = await rollbackDeploy(deployId);
 
   if (result.success) {
-    console.log(`✅ Successfully rolled back:`);
-    console.log(`   From: ${result.rolledBackFrom}`);
-    console.log(`   To: ${result.rolledBackTo}`);
-    console.log(`   Target: ${result.target}`);
-    console.log(`   Previous Version: ${result.previousVersion}`);
-    console.log(`   Timestamp: ${result.timestamp}\n`);
+    console.info(`✅ Successfully rolled back:`);
+    console.info(`   From: ${result.rolledBackFrom}`);
+    console.info(`   To: ${result.rolledBackTo}`);
+    console.info(`   Target: ${result.target}`);
+    console.info(`   Previous Version: ${result.previousVersion}`);
+    console.info(`   Timestamp: ${result.timestamp}\n`);
   } else {
     console.error(`❌ Rollback failed: ${result.error}\n`);
     process.exit(1);

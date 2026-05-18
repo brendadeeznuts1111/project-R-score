@@ -52,14 +52,14 @@ plugin({
 
 const importStats = ${JSON.stringify(trackedImports, null, 2)};
 
-console.log('🎯 IMPORT ANALYSIS REPORT');
-console.log('='.repeat(50));
-console.log(\`Files processed: \${importStats._filesProcessed || ${processedFiles}}\`);
-console.log(\`Unique imports: \${Object.keys(importStats).length}\`);
-console.log('');
-console.log('📊 Import Frequency:');
+console.info('🎯 IMPORT ANALYSIS REPORT');
+console.info('='.repeat(50));
+console.info(\`Files processed: \${importStats._filesProcessed || ${processedFiles}}\`);
+console.info(\`Unique imports: \${Object.keys(importStats).length}\`);
+console.info('');
+console.info('📊 Import Frequency:');
 Object.entries(importStats).forEach(([path, count]) => {
-  console.log(\`  \${path}: \${count} time\${count === 1 ? '' : 's'}\`);
+  console.info(\`  \${path}: \${count} time\${count === 1 ? '' : 's'}\`);
 });
 
 export default importStats;

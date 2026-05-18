@@ -157,7 +157,7 @@ async function executeFilteredScript(
   
   const maxLines = flags.filterOutputLines ?? 10;
   
-  console.log(c.bold(`\n🔍 Filter: ${pattern} → ${matched.length} packages\n`));
+  console.info(c.bold(`\n🔍 Filter: ${pattern} → ${matched.length} packages\n`));
   
   const executionMode = flags.parallel ? 'parallel' : 
                         flags.sequential ? 'sequential' : 'parallel';
@@ -218,14 +218,14 @@ async function runPackageWithOutputLimit(
       
       for (const line of lines) {
         if (maxLines > 0 && lineCount >= maxLines) {
-          console.log(`${prefix} ${c.gray('... (truncated)')}`);
+          console.info(`${prefix} ${c.gray('... (truncated)')}`);
           output += '... (truncated)\n';
           proc.kill();
           return { success: true, output };
         }
         
         if (line.trim()) {
-          console.log(`${prefix} ${line}`);
+          console.info(`${prefix} ${line}`);
           output += line + '\n';
           lineCount++;
         }
@@ -263,16 +263,16 @@ async function watchMode(
   const watcher = watch(file, { recursive: false }, async (event) => {
     if (!flags.noClear) console.clear();
     
-    console.log(c.cyan(`[${fmtTime()}] ${event} → ${file}`));
+    console.info(c.cyan(`[${fmtTime()}] ${event} → ${file}`));
     const exitCode = await runOnce(file, args, flags);
-    console.log(c.gray('Waiting for changes... (Ctrl+C to stop)\n'));
+    console.info(c.gray('Waiting for changes... (Ctrl+C to stop)\n'));
   });
 
   // Initial run
   const exitCode = await runOnce(file, args, flags);
   session.exitCode = exitCode;
   
-  console.log(c.gray('Watching for changes... (Ctrl+C to stop)\n'));
+  console.info(c.gray('Watching for changes... (Ctrl+C to stop)\n'));
   
   // Keep alive
   await new Promise(() => {});
@@ -471,10 +471,10 @@ export function parseOfficialFlags(args: string[]): { flags: BunCLIFlags; comman
 
 function renderCLIResult(session: CLISession): void {
   const status = session.exitCode === 0 ? c.green('✓') : c.red('✗');
-  console.log(`\n${status} ${c.bold(session.command)} ${session.args.join(' ')}`);
-  console.log(c.gray(`  Duration: ${(session.durationMs || 0).toFixed(2)}ms`));
+  console.info(`\n${status} ${c.bold(session.command)} ${session.args.join(' ')}`);
+  console.info(c.gray(`  Duration: ${(session.durationMs || 0).toFixed(2)}ms`));
   if (session.error) {
-    console.log(c.red(`  Error: ${session.error}`));
+    console.info(c.red(`  Error: ${session.error}`));
   }
 }
 

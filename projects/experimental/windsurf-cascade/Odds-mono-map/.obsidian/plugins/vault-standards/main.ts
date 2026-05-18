@@ -93,7 +93,7 @@ export default class VaultStandardsPlugin extends Plugin {
     private fileWatcher: any = null;
 
     async onload() {
-        console.log('🚀 Loading Vault Standards Plugin v3.0');
+        console.info('🚀 Loading Vault Standards Plugin v3.0');
 
         await this.loadSettings();
 
@@ -118,11 +118,11 @@ export default class VaultStandardsPlugin extends Plugin {
             this.initializeBunIntegration();
         }
 
-        console.log('✅ Vault Standards Plugin loaded successfully');
+        console.info('✅ Vault Standards Plugin loaded successfully');
     }
 
     onunload() {
-        console.log('🛑 Unloading Vault Standards Plugin');
+        console.info('🛑 Unloading Vault Standards Plugin');
 
         if (this.validationInterval) {
             clearInterval(this.validationInterval);
@@ -353,14 +353,14 @@ ${result.errors.slice(0, 5).map(error => `- ${error.message}`).join('\n')}
 
     private initializeBunIntegration() {
         // Initialize Bun API integrations
-        console.log('🍞 Initializing Bun integration...');
+        console.info('🍞 Initializing Bun integration...');
 
         // Check if Bun APIs are available (check global scope)
         if (typeof globalThis !== 'undefined' && 'Bun' in globalThis) {
-            console.log('✅ Bun runtime detected');
+            console.info('✅ Bun runtime detected');
             this.showNotice('🍞 Bun integration active');
         } else {
-            console.log('⚠️ Bun runtime not detected');
+            console.info('⚠️ Bun runtime not detected');
             this.showNotice('⚠️ Bun runtime not available');
         }
     }
@@ -424,7 +424,7 @@ ${result.errors.slice(0, 5).map(error => `- ${error.message}`).join('\n')}
 📈 Monitoring: ${this.settings.enableMonitoring ? 'Active' : 'Inactive'}
     `.trim();
 
-        console.log(message);
+        console.info(message);
         this.showNotice('📊 Status logged to console');
     }
 

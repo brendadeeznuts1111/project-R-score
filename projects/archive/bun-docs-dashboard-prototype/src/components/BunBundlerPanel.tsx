@@ -21,7 +21,7 @@ export default function BunBundlerPanel() {
   const handleOptimize = async () => {
     if (bundleResult?.output) {
       const optimized = await optimizeBundle(bundleResult.output);
-      console.log('Optimized bundle:', optimized);
+      console.info('Optimized bundle:', optimized);
     }
   };
 

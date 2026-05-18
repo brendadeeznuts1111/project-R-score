@@ -7,13 +7,13 @@
 import { $ } from 'bun';
 
 async function runCommand(cmd: string, description: string) {
-  console.log(`🔧 ${description}`);
-  console.log(`📝 Running: ${cmd}`);
-  console.log('─'.repeat(60));
+  console.info(`🔧 ${description}`);
+  console.info(`📝 Running: ${cmd}`);
+  console.info('─'.repeat(60));
 
   try {
     const result = await $`${{ raw: cmd }}`.quiet();
-    console.log(result.stdout);
+    console.info(result.stdout);
     if (result.stderr) {
       console.warn(`⚠️  Warning:`, result.stderr);
     }
@@ -25,13 +25,13 @@ async function runCommand(cmd: string, description: string) {
 }
 
 async function deployToEnvironment(env: string) {
-  console.log(`🚀 Deploying Fantasy42-Fire22 Registry to ${env}`);
-  console.log('═'.repeat(60));
+  console.info(`🚀 Deploying Fantasy42-Fire22 Registry to ${env}`);
+  console.info('═'.repeat(60));
 
   const cloudflareDir = 'enterprise/packages/cloudflare';
 
   // Pre-deployment checks
-  console.log(`🔍 Running pre-deployment checks for ${env}...`);
+  console.info(`🔍 Running pre-deployment checks for ${env}...`);
 
   // Build the project
   await runCommand(`cd ${cloudflareDir} && bun run build`, `Building project for ${env}`);
@@ -46,10 +46,10 @@ async function deployToEnvironment(env: string) {
   );
 
   if (deployResult) {
-    console.log(`✅ Deployment to ${env} completed successfully!`);
+    console.info(`✅ Deployment to ${env} completed successfully!`);
 
     // Post-deployment health check
-    console.log(`🏥 Running health check for ${env}...`);
+    console.info(`🏥 Running health check for ${env}...`);
     try {
       const healthUrl =
         env === 'production'
@@ -60,8 +60,8 @@ async function deployToEnvironment(env: string) {
       const health = await response.json();
 
       if (health.status === 'healthy') {
-        console.log(`✅ Health check passed for ${env}`);
-        console.log(`🌐 ${env} URL: ${healthUrl}`);
+        console.info(`✅ Health check passed for ${env}`);
+        console.info(`🌐 ${env} URL: ${healthUrl}`);
       } else {
         console.warn(`⚠️  Health check warning for ${env}:`, health);
       }
@@ -77,8 +77,8 @@ async function deployToEnvironment(env: string) {
 }
 
 async function setupDatabase(env: string) {
-  console.log(`🗄️ Setting up D1 database for ${env}`);
-  console.log('═'.repeat(60));
+  console.info(`🗄️ Setting up D1 database for ${env}`);
+  console.info('═'.repeat(60));
 
   const cloudflareDir = 'enterprise/packages/cloudflare';
 
@@ -94,12 +94,12 @@ async function setupDatabase(env: string) {
     `Applying database migrations for ${env}`
   );
 
-  console.log(`✅ Database setup completed for ${env}`);
+  console.info(`✅ Database setup completed for ${env}`);
 }
 
 async function setupKV(env: string) {
-  console.log(`📦 Setting up KV namespaces for ${env}`);
-  console.log('═'.repeat(60));
+  console.info(`📦 Setting up KV namespaces for ${env}`);
+  console.info('═'.repeat(60));
 
   const cloudflareDir = 'enterprise/packages/cloudflare';
 
@@ -109,12 +109,12 @@ async function setupKV(env: string) {
     `Creating KV namespace for cache in ${env}`
   );
 
-  console.log(`✅ KV setup completed for ${env}`);
+  console.info(`✅ KV setup completed for ${env}`);
 }
 
 async function setupR2(env: string) {
-  console.log(`☁️ Setting up R2 buckets for ${env}`);
-  console.log('═'.repeat(60));
+  console.info(`☁️ Setting up R2 buckets for ${env}`);
+  console.info('═'.repeat(60));
 
   const cloudflareDir = 'enterprise/packages/cloudflare';
 
@@ -124,22 +124,22 @@ async function setupR2(env: string) {
     `Creating R2 bucket for packages in ${env}`
   );
 
-  console.log(`✅ R2 setup completed for ${env}`);
+  console.info(`✅ R2 setup completed for ${env}`);
 }
 
 async function fullSetup(env: string) {
-  console.log(`🔧 Running full infrastructure setup for ${env}`);
-  console.log('═'.repeat(60));
+  console.info(`🔧 Running full infrastructure setup for ${env}`);
+  console.info('═'.repeat(60));
 
   await setupDatabase(env);
   await setupKV(env);
   await setupR2(env);
 
-  console.log(`✅ Full infrastructure setup completed for ${env}`);
+  console.info(`✅ Full infrastructure setup completed for ${env}`);
 }
 
 async function showHelp() {
-  console.log(`
+  console.info(`
 🚀 Fantasy42-Fire22 Wrangler Deployment CLI
 Automated deployment and infrastructure management
 
@@ -173,16 +173,16 @@ NOTES:
 }
 
 async function promoteStagingToProduction() {
-  console.log(`⬆️ Promoting staging to production`);
-  console.log('═'.repeat(60));
+  console.info(`⬆️ Promoting staging to production`);
+  console.info('═'.repeat(60));
 
-  console.log(`🔄 This will deploy the current staging build to production...`);
+  console.info(`🔄 This will deploy the current staging build to production...`);
 
   // Deploy staging configuration to production
   const success = await deployToEnvironment('production');
 
   if (success) {
-    console.log(`✅ Staging successfully promoted to production!`);
+    console.info(`✅ Staging successfully promoted to production!`);
   } else {
     console.error(`❌ Promotion failed!`);
   }
@@ -201,7 +201,7 @@ async function main() {
   const validEnvs = ['development', 'staging', 'production'];
   if (!validEnvs.includes(env)) {
     console.error(`❌ Invalid environment: ${env}`);
-    console.log(`Valid environments: ${validEnvs.join(', ')}`);
+    console.info(`Valid environments: ${validEnvs.join(', ')}`);
     return;
   }
 

@@ -112,7 +112,7 @@ describe("Build Benchmarks", () => {
     await $`cd ${ROOT} && bun run css:build 2>&1`.quiet();
     const elapsed = performance.now() - start;
 
-    console.log(`CSS build: ${elapsed.toFixed(2)}ms`);
+    console.info(`CSS build: ${elapsed.toFixed(2)}ms`);
     expect(elapsed).toBeLessThan(1000); // Increased for variable load
   });
 
@@ -123,7 +123,7 @@ describe("Build Benchmarks", () => {
     await $`cd ${ROOT} && bun x tsc --noEmit 2>&1 || true`.quiet();
     const elapsed = performance.now() - start;
 
-    console.log(`TypeScript check: ${elapsed.toFixed(2)}ms`);
+    console.info(`TypeScript check: ${elapsed.toFixed(2)}ms`);
     expect(elapsed).toBeLessThan(8000);
   }, 10000); // 10s timeout
 
@@ -133,7 +133,7 @@ describe("Build Benchmarks", () => {
     await $`cd ${ROOT} && bun test 2>&1`.quiet();
     const elapsed = performance.now() - start;
 
-    console.log(`Test suite: ${elapsed.toFixed(2)}ms`);
+    console.info(`Test suite: ${elapsed.toFixed(2)}ms`);
     expect(elapsed).toBeLessThan(2000);
   });
 });
@@ -180,9 +180,9 @@ describe("Bun.build API", () => {
     const devSize = (await devResult.outputs[0].text()).length;
     const prodSize = (await prodResult.outputs[0].text()).length;
 
-    console.log(`Dev build: ${devSize} bytes`);
-    console.log(`Prod build: ${prodSize} bytes`);
-    console.log(`Reduction: ${((1 - prodSize / devSize) * 100).toFixed(1)}%`);
+    console.info(`Dev build: ${devSize} bytes`);
+    console.info(`Prod build: ${prodSize} bytes`);
+    console.info(`Reduction: ${((1 - prodSize / devSize) * 100).toFixed(1)}%`);
 
     expect(prodSize).toBeLessThan(devSize);
   });
@@ -211,8 +211,8 @@ describe("Response.json Performance", () => {
     const elapsed = performance.now() - start;
     const perOp = elapsed / iterations;
 
-    console.log(`Response.json: ${perOp.toFixed(3)}ms per operation`);
-    console.log(`Total for ${iterations} iterations: ${elapsed.toFixed(2)}ms`);
+    console.info(`Response.json: ${perOp.toFixed(3)}ms per operation`);
+    console.info(`Total for ${iterations} iterations: ${elapsed.toFixed(2)}ms`);
 
     // Should be fast (< 0.5ms per operation with SIMD)
     expect(perOp).toBeLessThan(0.5);
@@ -241,8 +241,8 @@ describe("Bun.hash.crc32 Performance", () => {
     const perMB = elapsed / iterations;
     const throughput = (1000 / perMB).toFixed(0); // MB/s
 
-    console.log(`CRC32 (1MB): ${perMB.toFixed(3)}ms per hash`);
-    console.log(`Throughput: ~${throughput} MB/s`);
+    console.info(`CRC32 (1MB): ${perMB.toFixed(3)}ms per hash`);
+    console.info(`Throughput: ~${throughput} MB/s`);
 
     // Should be very fast with hardware acceleration (< 5ms per MB)
     expect(perMB).toBeLessThan(5);

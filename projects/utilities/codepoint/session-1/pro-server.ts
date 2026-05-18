@@ -8,10 +8,10 @@ class HighPerformanceProxyServer extends CustomProxyServer {
   static batchTableDisplay(servers: CustomProxyServer[], chunkSize = 50) {
     for (let i = 0; i < servers.length; i += chunkSize) {
       const chunk = servers.slice(i, i + chunkSize);
-      console.log(
+      console.info(
         `📋 Chunk ${i / chunkSize + 1}/${Math.ceil(servers.length / chunkSize)}`
       );
-      console.log(Bun.inspect.table(chunk.map((s) => this.minimalRow(s))));
+      console.info(Bun.inspect.table(chunk.map((s) => this.minimalRow(s))));
     }
   }
 
@@ -60,8 +60,8 @@ const liveDashboard = (servers: CustomProxyServer[], updateMs = 1000) => {
 
     if (frame !== lastFrame) {
       console.clear();
-      console.log(`🕒 ${new Date().toLocaleTimeString()}`);
-      console.log(frame);
+      console.info(`🕒 ${new Date().toLocaleTimeString()}`);
+      console.info(frame);
       lastFrame = frame;
     }
   }, updateMs);
@@ -171,7 +171,7 @@ const compareConfigs = (servers: CustomProxyServer[]) => {
 
 // MONITORING ONE-LINERS
 const pulse = (servers: CustomProxyServer[]) =>
-  console.log(
+  console.info(
     `❤️ ${servers.reduce(
       (a, s) => a + s.connections,
       0
@@ -197,7 +197,7 @@ const watch = (servers: CustomProxyServer[], event: HMREventNames) => {
       s.hmrEvents
         .filter((e) => e.name === event)
         .forEach((e) =>
-          console.log(
+          console.info(
             `👁️ ${s.name}: ${e.name} @ ${e.timestamp.toLocaleTimeString()}`
           )
         );
@@ -207,7 +207,7 @@ const watch = (servers: CustomProxyServer[], event: HMREventNames) => {
 
 // DEBUG ONE-LINERS
 const dump = (server: CustomProxyServer) =>
-  console.log(
+  console.info(
     JSON.stringify(
       {
         ...server,
@@ -222,9 +222,9 @@ const dump = (server: CustomProxyServer) =>
     )
   );
 const trace = (server: CustomProxyServer) =>
-  console.log(Bun.inspect(server, { colors: true, depth: 4 }));
+  console.info(Bun.inspect(server, { colors: true, depth: 4 }));
 const stats = (servers: CustomProxyServer[]) =>
-  console.log(
+  console.info(
     `📊 ${servers.length} servers | ${servers
       .reduce((a, s) => a + s.connections, 0)
       .toLocaleString()} connections | ${servers.reduce(
@@ -251,11 +251,11 @@ const snapshot = async (
         2
       )
     );
-    console.log(`📸 Snapshot saved to ${filename}`);
+    console.info(`📸 Snapshot saved to ${filename}`);
   }
 };
 const csv = (servers: CustomProxyServer[]) =>
-  console.log(
+  console.info(
     "name,connections,hmrEvents\n" +
       servers
         .map((s) => `${s.name},${s.connections},${s.hmrEvents.length}`)
@@ -295,12 +295,12 @@ const bulletproofTable = (data: any[]) => {
 
 // 2. TIME TRAVEL DEBUGGER (Replay HMR events)
 const replayEvents = (server: CustomProxyServer, speed = 1) => {
-  console.log(
+  console.info(
     `🕰️ Replaying ${server.hmrEvents.length} events at ${speed}x speed...`
   );
   server.hmrEvents.forEach((event, i) => {
     setTimeout(() => {
-      console.log(
+      console.info(
         `${i + 1}. [${event.timestamp.toLocaleTimeString()}] ${event.name} ${
           event.module ? `on ${event.module}` : ""
         }`
@@ -339,7 +339,7 @@ class InteractiveCLI {
   }
 
   private cmdTop() {
-    console.log(
+    console.info(
       Bun.inspect.table(
         this.servers
           .sort((a, b) => b.connections - a.connections)
@@ -357,7 +357,7 @@ class InteractiveCLI {
 
   private cmdHMR() {
     this.servers.forEach((s) =>
-      console.log(
+      console.info(
         `${s.name}: ${
           s.hmrEvents
             .slice(-5)
@@ -369,10 +369,10 @@ class InteractiveCLI {
   }
 
   private cmdWatch() {
-    console.log(
+    console.info(
       "👁️ Watching for HMR events... (type commands, Ctrl+C to stop)"
     );
-    console.log("Available commands: " + Object.keys(this.commands).join(", "));
+    console.info("Available commands: " + Object.keys(this.commands).join(", "));
   }
 
   private cmdPulse() {
@@ -390,9 +390,9 @@ class InteractiveCLI {
   }
 
   private cmdHelp() {
-    console.log("Available commands:");
+    console.info("Available commands:");
     Object.keys(this.commands).forEach((cmd) => {
-      console.log(`  ${cmd} - ${this.getCommandDescription(cmd)}`);
+      console.info(`  ${cmd} - ${this.getCommandDescription(cmd)}`);
     });
   }
 
@@ -411,8 +411,8 @@ class InteractiveCLI {
   }
 
   start() {
-    console.log("🎮 Interactive CLI Mode");
-    console.log('Type "help" for commands or Ctrl+C to exit\n');
+    console.info("🎮 Interactive CLI Mode");
+    console.info('Type "help" for commands or Ctrl+C to exit\n');
 
     // Simulate command processing
     this.cmdWatch();
@@ -420,11 +420,11 @@ class InteractiveCLI {
     // In a real implementation, you'd set up process.stdin
     // For demo purposes, we'll just show available commands
     setTimeout(() => {
-      console.log("\n💡 Demo mode - showing sample command outputs:\n");
+      console.info("\n💡 Demo mode - showing sample command outputs:\n");
       this.cmdList();
-      console.log();
+      console.info();
       this.cmdTop();
-      console.log();
+      console.info();
       this.cmdPulse();
     }, 1000);
   }
@@ -442,14 +442,14 @@ class ServerTelemetry {
         (server.connections / server.config.maxConnections) * 100
       );
       if (load > this.alertThreshold) {
-        console.log(`🚨 ${server.name} at ${load}% load!`);
+        console.info(`🚨 ${server.name} at ${load}% load!`);
         // Send to Slack/Discord/Email in real implementation
       }
     });
   }
 
   static startMonitoring(servers: CustomProxyServer[], intervalMs = 30000) {
-    console.log(
+    console.info(
       `📡 Telemetry monitoring started (threshold: ${this.alertThreshold}% load)`
     );
     return setInterval(() => this.checkAlerts(servers), intervalMs);
@@ -467,7 +467,7 @@ function tracePerformance(
     const start = performance.now();
     const result = original.apply(this, args);
     const end = performance.now();
-    console.log(`⏱️ ${key} took ${(end - start).toFixed(2)}ms`);
+    console.info(`⏱️ ${key} took ${(end - start).toFixed(2)}ms`);
     return result;
   };
   return descriptor;
@@ -484,13 +484,13 @@ const takeSnapshot = async (servers: CustomProxyServer[], label: string) => {
 
   const filename = `snapshots/${label}-${Date.now()}.json`;
   await Bun.write(filename, JSON.stringify(snapshot, null, 2));
-  console.log(`📸 Snapshot saved: ${filename}`);
+  console.info(`📸 Snapshot saved: ${filename}`);
 };
 
 // Demo setup and execution
 async function runDemo() {
-  console.log("🚀 PRO-Grade CustomProxyServer Demo");
-  console.log("==================================\n");
+  console.info("🚀 PRO-Grade CustomProxyServer Demo");
+  console.info("==================================\n");
 
   // Create test servers
   const servers = [
@@ -538,10 +538,10 @@ async function runDemo() {
   });
 
   // Demonstrate PRO features
-  console.log("1. 🎯 ONE-LINERS FOR QUICK WINS:");
-  console.log("================================");
+  console.info("1. 🎯 ONE-LINERS FOR QUICK WINS:");
+  console.info("================================");
 
-  console.log("\n📊 Instant Server Status:");
+  console.info("\n📊 Instant Server Status:");
   console.table(
     servers.map((s) => ({
       Name: s.name,
@@ -550,17 +550,17 @@ async function runDemo() {
     }))
   );
 
-  console.log("\n🔥 Quick HMR Event Sniff:");
+  console.info("\n🔥 Quick HMR Event Sniff:");
   const recentHMR = servers[0].hmrEvents
     .filter((e) => e.timestamp.getTime() > Date.now() - 60000)
     .map((e) => `${e.name}(${e.module})`)
     .join(" → ");
-  console.log(`🔥 HMR Flow: ${recentHMR || "No recent activity"}`);
+  console.info(`🔥 HMR Flow: ${recentHMR || "No recent activity"}`);
 
-  console.log("\n📈 Live Connection Trend (3 samples):");
+  console.info("\n📈 Live Connection Trend (3 samples):");
   for (let i = 0; i < 3; i++) {
     setTimeout(() => {
-      console.log(
+      console.info(
         `📈 ${new Date().toLocaleTimeString()} | ${servers
           .map((s) => `${s.name}: ${s.connections}↑`)
           .join(" | ")}`
@@ -568,8 +568,8 @@ async function runDemo() {
     }, i * 1000);
   }
 
-  console.log("\n📤 JSON Diagnostics Pipe:");
-  console.log(
+  console.info("\n📤 JSON Diagnostics Pipe:");
+  console.info(
     JSON.stringify(
       servers.map((s) => ({
         n: s.name,
@@ -581,82 +581,82 @@ async function runDemo() {
     )
   );
 
-  console.log("\n2. 🎯 PRO-LEVEL ENHANCEMENTS:");
-  console.log("===============================");
+  console.info("\n2. 🎯 PRO-LEVEL ENHANCEMENTS:");
+  console.info("===============================");
 
-  console.log("\n📋 Batch Table Display (High Performance):");
+  console.info("\n📋 Batch Table Display (High Performance):");
   HighPerformanceProxyServer.batchTableDisplay(servers.slice(0, 3), 2);
 
-  console.log("\n🛡️ Safe Table (Null/Undefined Protected):");
+  console.info("\n🛡️ Safe Table (Null/Undefined Protected):");
   const testData = [
     { name: "Server1", connections: 100 },
     { name: null, connections: undefined },
     { name: "Server3", connections: 200 },
   ];
-  console.log(safeTable(testData));
+  console.info(safeTable(testData));
 
-  console.log("\n📱 Responsive Table (Auto-adaptive):");
-  console.log(responsiveTable(servers, 80)); // Compact mode
+  console.info("\n📱 Responsive Table (Auto-adaptive):");
+  console.info(responsiveTable(servers, 80)); // Compact mode
 
-  console.log("\n🧠 Smart Columns (Adaptive):");
-  console.log("Dynamic columns detected:", smartColumns(servers));
+  console.info("\n🧠 Smart Columns (Adaptive):");
+  console.info("Dynamic columns detected:", smartColumns(servers));
 
-  console.log("\n3. 🎯 NESTED OBJECTS - PRO DISPLAY PATTERNS:");
-  console.log("===========================================");
+  console.info("\n3. 🎯 NESTED OBJECTS - PRO DISPLAY PATTERNS:");
+  console.info("===========================================");
 
-  console.log("\n⚙️ Config Table (Key-Value Pairs):");
-  console.log(configTable(servers[0]));
+  console.info("\n⚙️ Config Table (Key-Value Pairs):");
+  console.info(configTable(servers[0]));
 
-  console.log("\n🔍 Compare Configs (Multiple Servers):");
-  console.log(compareConfigs(servers.slice(0, 2)));
+  console.info("\n🔍 Compare Configs (Multiple Servers):");
+  console.info(compareConfigs(servers.slice(0, 2)));
 
-  console.log("\n4. 🎯 ULTIMATE PRO ONE-LINER COLLECTION:");
-  console.log("======================================");
+  console.info("\n4. 🎯 ULTIMATE PRO ONE-LINER COLLECTION:");
+  console.info("======================================");
 
-  console.log("\n❤️ Pulse:");
+  console.info("\n❤️ Pulse:");
   pulse(servers);
 
-  console.log("\n🏆 Top Servers:");
+  console.info("\n🏆 Top Servers:");
   top(servers);
 
-  console.log("\n👁️ Watch Errors:");
+  console.info("\n👁️ Watch Errors:");
   watch(servers, "error");
 
-  console.log("\n📊 Stats:");
+  console.info("\n📊 Stats:");
   stats(servers);
 
-  console.log("\n5. 🎯 EDGE CASE WARRIORS:");
-  console.log("========================");
+  console.info("\n5. 🎯 EDGE CASE WARRIORS:");
+  console.info("========================");
 
-  console.log("\n🛡️ Bulletproof Table (Corrupt Data Handler):");
+  console.info("\n🛡️ Bulletproof Table (Corrupt Data Handler):");
   const corruptData = [
     { name: "Good", connections: 100 },
     { name: undefined, connections: null },
     null,
     { bad: "data" },
   ];
-  console.log(bulletproofTable(corruptData));
+  console.info(bulletproofTable(corruptData));
 
-  console.log("\n🕰️ Time Travel Debugger (Replay Events):");
+  console.info("\n🕰️ Time Travel Debugger (Replay Events):");
   replayEvents(servers[0], 2); // 2x speed
 
-  console.log("\n6. 🎮 INTERACTIVE CLI COMMANDS:");
-  console.log("==============================");
+  console.info("\n6. 🎮 INTERACTIVE CLI COMMANDS:");
+  console.info("==============================");
 
   const cli = new InteractiveCLI(servers);
   cli.start();
 
-  console.log("\n7. 📊 PRODUCTION-READY FEATURES:");
-  console.log("==============================");
+  console.info("\n7. 📊 PRODUCTION-READY FEATURES:");
+  console.info("==============================");
 
-  console.log("\n📡 Telemetry Check:");
+  console.info("\n📡 Telemetry Check:");
   ServerTelemetry.checkAlerts(servers);
 
-  console.log("\n📸 Automated Snapshot:");
+  console.info("\n📸 Automated Snapshot:");
   await takeSnapshot(servers, "demo");
 
-  console.log("\n✨ PRO-Grade Demo Complete!");
-  console.log("💡 All features demonstrated - ready for production use!");
+  console.info("\n✨ PRO-Grade Demo Complete!");
+  console.info("💡 All features demonstrated - ready for production use!");
 }
 
 runDemo();

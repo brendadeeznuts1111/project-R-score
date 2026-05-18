@@ -368,7 +368,7 @@ if (import.meta.main) {
   
   if (args[0] === 'demo') {
     // Demo with SMS extraction
-    console.log('=== Peek Orchestration Demo ===');
+    console.info('=== Peek Orchestration Demo ===');
     
     const phoneNumbers = [
       '+15005551234',
@@ -387,21 +387,21 @@ if (import.meta.main) {
     const results = await orchestrator.batchProcess(phoneNumbers, processor);
     const endTime = Bun.nanoseconds();
     
-    console.log(`Processed: ${results.size} unique numbers in ${((endTime - startTime) / 1e6).toFixed(2)}ms`);
+    console.info(`Processed: ${results.size} unique numbers in ${((endTime - startTime) / 1e6).toFixed(2)}ms`);
     
     for (const [phone, result] of results) {
-      console.log(`${phone} -> ${result}`);
+      console.info(`${phone} -> ${result}`);
     }
     
     const stats = orchestrator.getStats();
-    console.log('\n=== Statistics ===');
-    console.log(`Total tasks: ${stats.totalTasks}`);
-    console.log(`Cached tasks: ${stats.cachedTasks}`);
-    console.log(`Cache hit rate: ${stats.cacheHitRate.toFixed(1)}%`);
-    console.log(`Average execution time: ${stats.averageExecutionTime.toFixed(2)}ms`);
+    console.info('\n=== Statistics ===');
+    console.info(`Total tasks: ${stats.totalTasks}`);
+    console.info(`Cached tasks: ${stats.cachedTasks}`);
+    console.info(`Cache hit rate: ${stats.cacheHitRate.toFixed(1)}%`);
+    console.info(`Average execution time: ${stats.averageExecutionTime.toFixed(2)}ms`);
   } else if (args[0] === 'concurrent') {
     // Concurrent demo
-    console.log('=== Concurrent Processing Demo ===');
+    console.info('=== Concurrent Processing Demo ===');
     
     const items = Array.from({ length: 20 }, (_, i) => `item-${i}`);
     const processor = async (item: string) => {
@@ -410,13 +410,13 @@ if (import.meta.main) {
     };
     
     const results = await orchestrator.concurrentBatch(items, processor, 5);
-    console.log(`Processed ${results.size} items concurrently`);
+    console.info(`Processed ${results.size} items concurrently`);
     
     const stats = orchestrator.getStats();
-    console.log(`Cache hit rate: ${stats.cacheHitRate.toFixed(1)}%`);
+    console.info(`Cache hit rate: ${stats.cacheHitRate.toFixed(1)}%`);
   } else {
-    console.log('Usage:');
-    console.log('  bun peek-orchestrator.ts demo');
-    console.log('  bun peek-orchestrator.ts concurrent');
+    console.info('Usage:');
+    console.info('  bun peek-orchestrator.ts demo');
+    console.info('  bun peek-orchestrator.ts concurrent');
   }
 }

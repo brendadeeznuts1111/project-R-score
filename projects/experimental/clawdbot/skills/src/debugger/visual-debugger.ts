@@ -51,13 +51,13 @@ export class VisualDebugger {
     const skillPath = `./skills/${skillId}`;
     const debugOutDir = `${skillPath}/.debug`;
 
-    console.log(`Starting visual debug session for: ${skillId}`);
-    console.log(`Debug port: ${port}`);
-    console.log("");
+    console.info(`Starting visual debug session for: ${skillId}`);
+    console.info(`Debug port: ${port}`);
+    console.info("");
 
     // Build with source maps
     if (sourceMaps) {
-      console.log("Building with source maps...");
+      console.info("Building with source maps...");
       await this.buildWithSourceMaps(skillId, debugOutDir);
     }
 
@@ -71,8 +71,8 @@ export class VisualDebugger {
     // Entry point (relative to skillPath since cwd is skillPath)
     const entryPoint = sourceMaps ? `.debug/index.js` : `src/index.ts`;
 
-    console.log(`Entry point: ${skillPath}/${entryPoint}`);
-    console.log("");
+    console.info(`Entry point: ${skillPath}/${entryPoint}`);
+    console.info("");
 
     // Create standalone terminal (Bun v1.3.5+ API)
     const terminal = new (Bun as any).Terminal({
@@ -88,7 +88,7 @@ export class VisualDebugger {
           )?.[0];
 
           if (wsUrl && autoOpen) {
-            console.log("\nOpening Chrome DevTools...");
+            console.info("\nOpening Chrome DevTools...");
             this.openChromeDevTools(wsUrl);
           }
         }
@@ -113,9 +113,9 @@ export class VisualDebugger {
     if (autoBreak) {
       setTimeout(async () => {
         const breakpoints = await this.findRecommendedBreakpoints(skillId);
-        console.log("\nRecommended breakpoints:");
+        console.info("\nRecommended breakpoints:");
         for (const bp of breakpoints) {
-          console.log(`  ${bp.file}:${bp.line} - ${bp.reason}`);
+          console.info(`  ${bp.file}:${bp.line} - ${bp.reason}`);
         }
       }, 2000);
     }
@@ -147,7 +147,7 @@ export class VisualDebugger {
     process.stdout.removeListener("resize", resizeHandler);
     terminal.close();
 
-    console.log("\nDebug session ended");
+    console.info("\nDebug session ended");
   }
 
   /**
@@ -178,7 +178,7 @@ export class VisualDebugger {
       throw new Error("Build failed");
     }
 
-    console.log("Build complete with source maps");
+    console.info("Build complete with source maps");
   }
 
   /**
@@ -187,7 +187,7 @@ export class VisualDebugger {
   private static openChromeDevTools(wsUrl: string): void {
     const devtoolsUrl = `devtools://devtools/bundled/inspector.html?experiments=true&v8only=true&ws=${wsUrl.replace("ws://", "")}`;
 
-    console.log(`DevTools URL: ${devtoolsUrl}`);
+    console.info(`DevTools URL: ${devtoolsUrl}`);
 
     // Platform-specific browser launch
     const platform = process.platform;
@@ -227,8 +227,8 @@ export class VisualDebugger {
         });
       }
     } catch (error) {
-      console.log("Could not auto-open browser. Please open manually:");
-      console.log(devtoolsUrl);
+      console.info("Could not auto-open browser. Please open manually:");
+      console.info(devtoolsUrl);
     }
   }
 

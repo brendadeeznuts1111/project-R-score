@@ -79,28 +79,28 @@ function parseTOML(content: string): any {
 
 // Main build function
 async function buildWithConfig() {
-  console.log('🔨 Build Script with Bunfig Configuration');
-  console.log('==========================================');
+  console.info('🔨 Build Script with Bunfig Configuration');
+  console.info('==========================================');
 
   const config = loadBunfig();
   const bundleConfig = config.bundle || {};
   const performanceConfig = config.performance || {};
   const analyticsConfig = config.analytics || {};
 
-  console.log('📊 Configuration loaded:');
-  console.log(`   Target: ${bundleConfig.target || 'browser'}`);
-  console.log(`   Format: ${bundleConfig.format || 'esm'}`);
-  console.log(`   Minify: ${bundleConfig.minify ? 'Enabled' : 'Disabled'}`);
-  console.log(`   Source Maps: ${bundleConfig.sourcemap || 'none'}`);
-  console.log(`   Performance: ${performanceConfig.optimizations ? 'Optimized' : 'Standard'}`);
-  console.log(`   Analytics: ${analyticsConfig.enabled ? 'Enabled' : 'Disabled'}`);
-  console.log('');
+  console.info('📊 Configuration loaded:');
+  console.info(`   Target: ${bundleConfig.target || 'browser'}`);
+  console.info(`   Format: ${bundleConfig.format || 'esm'}`);
+  console.info(`   Minify: ${bundleConfig.minify ? 'Enabled' : 'Disabled'}`);
+  console.info(`   Source Maps: ${bundleConfig.sourcemap || 'none'}`);
+  console.info(`   Performance: ${performanceConfig.optimizations ? 'Optimized' : 'Standard'}`);
+  console.info(`   Analytics: ${analyticsConfig.enabled ? 'Enabled' : 'Disabled'}`);
+  console.info('');
 
   // Create build output directory
   const outputDir = bundleConfig.output_dir || './dist';
   if (!existsSync(outputDir)) {
     mkdirSync(outputDir, { recursive: true });
-    console.log(`📁 Created output directory: ${outputDir}`);
+    console.info(`📁 Created output directory: ${outputDir}`);
   }
 
   // Create analytics directory if enabled
@@ -108,12 +108,12 @@ async function buildWithConfig() {
     const analyticsDir = analyticsConfig.output_dir || './analytics';
     if (!existsSync(analyticsDir)) {
       mkdirSync(analyticsDir, { recursive: true });
-      console.log(`📊 Created analytics directory: ${analyticsDir}`);
+      console.info(`📊 Created analytics directory: ${analyticsDir}`);
     }
   }
 
   // Simulate build process
-  console.log('🏗️  Building application...');
+  console.info('🏗️  Building application...');
 
   // Create a sample build output
   const buildOutput = {
@@ -140,7 +140,7 @@ async function buildWithConfig() {
   // Write build manifest
   const manifestPath = join(outputDir, 'build-manifest.json');
   writeFileSync(manifestPath, JSON.stringify(buildOutput, null, 2));
-  console.log(`📄 Generated build manifest: ${manifestPath}`);
+  console.info(`📄 Generated build manifest: ${manifestPath}`);
 
   // Create analytics report if enabled
   if (analyticsConfig.enabled) {
@@ -155,41 +155,41 @@ async function buildWithConfig() {
     };
 
     writeFileSync(analyticsPath, JSON.stringify(analyticsReport, null, 2));
-    console.log(`📊 Generated analytics report: ${analyticsPath}`);
+    console.info(`📊 Generated analytics report: ${analyticsPath}`);
   }
 
   // Create performance report
   if (performanceConfig.optimizations) {
-    console.log('⚡ Performance optimizations applied:');
-    console.log('   ✅ Code splitting enabled');
-    console.log('   ✅ Tree shaking applied');
-    console.log('   ✅ Minification completed');
-    console.log('   ✅ Compression enabled');
+    console.info('⚡ Performance optimizations applied:');
+    console.info('   ✅ Code splitting enabled');
+    console.info('   ✅ Tree shaking applied');
+    console.info('   ✅ Minification completed');
+    console.info('   ✅ Compression enabled');
 
     if (performanceConfig.preload && performanceConfig.preload.length > 0) {
-      console.log('   ✅ Critical resources preloaded:');
+      console.info('   ✅ Critical resources preloaded:');
       performanceConfig.preload.forEach((resource: string) => {
-        console.log(`      • ${resource}`);
+        console.info(`      • ${resource}`);
       });
     }
   }
 
-  console.log('');
-  console.log('✅ Build completed successfully!');
-  console.log(`📦 Output directory: ${outputDir}`);
-  console.log(`📊 Bundle size: ${buildOutput.size}`);
-  console.log(`🔢 Total chunks: ${buildOutput.chunks}`);
-  console.log(`🎯 Target: ${buildOutput.config.target}`);
-  console.log(`📄 Format: ${buildOutput.config.format}`);
+  console.info('');
+  console.info('✅ Build completed successfully!');
+  console.info(`📦 Output directory: ${outputDir}`);
+  console.info(`📊 Bundle size: ${buildOutput.size}`);
+  console.info(`🔢 Total chunks: ${buildOutput.chunks}`);
+  console.info(`🎯 Target: ${buildOutput.config.target}`);
+  console.info(`📄 Format: ${buildOutput.config.format}`);
 
   if (analyticsConfig.enabled) {
-    console.log('');
-    console.log('📈 Analytics enabled - Reports generated in:');
-    console.log(`   ${analyticsConfig.output_dir || './analytics'}`);
+    console.info('');
+    console.info('📈 Analytics enabled - Reports generated in:');
+    console.info(`   ${analyticsConfig.output_dir || './analytics'}`);
   }
 
-  console.log('');
-  console.log('🚀 Ready for deployment!');
+  console.info('');
+  console.info('🚀 Ready for deployment!');
 }
 
 // Run the build

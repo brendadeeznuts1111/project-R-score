@@ -115,7 +115,7 @@ export class SecurityMonitor {
   private logToConsole(event: SecurityEvent): void {
     const emoji = { session_blocked: '🚫', challenge_required: '🔐', anomaly_detected: '⚠️', session_created: '✅', session_validated: '✔️' }[event.type];
     const timestamp = new Date(event.timestamp).toISOString();
-    console.log(`${emoji} [${timestamp}] ${event.type.toUpperCase()}: ${event.userId} (Risk: ${(event.riskScore * 100).toFixed(1)}%)`);
+    console.info(`${emoji} [${timestamp}] ${event.type.toUpperCase()}: ${event.userId} (Risk: ${(event.riskScore * 100).toFixed(1)}%)`);
   }
 }
 
@@ -124,6 +124,6 @@ export const securityMonitor = new SecurityMonitor();
 setInterval(() => {
   const cleaned = securityMonitor.cleanupOldEvents();
   if (cleaned > 0) {
-    console.log(`🧹 Cleaned up ${cleaned} old security events`);
+    console.info(`🧹 Cleaned up ${cleaned} old security events`);
   }
 }, 60 * 60 * 1000);

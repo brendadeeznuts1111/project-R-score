@@ -52,12 +52,12 @@ export class S3DispositionManager implements PathPattern {
     let finalKey = components.key;
     if (!isPremium) {
       finalKey = finalKey.replace(/\.(json|pdf)$/, '.txt');
-      console.log(`⚠️  [FREE_TIER] Down-grading report to .txt`);
+      console.info(`⚠️  [FREE_TIER] Down-grading report to .txt`);
     }
 
     // Simulation of Bun.write to S3/R2 with tiered disposition
-    console.log(`📝 [S3.WRITE] ${components.bucket}/${finalKey}`);
-    console.log(`📑 Header: Content-Disposition: ${components.disposition}`);
+    console.info(`📝 [S3.WRITE] ${components.bucket}/${finalKey}`);
+    console.info(`📑 Header: Content-Disposition: ${components.disposition}`);
     
     return { success: true, path: `https://${components.bucket}/${finalKey}`, tier: isPremium ? 'PREMIUM' : 'FREE' };
   }

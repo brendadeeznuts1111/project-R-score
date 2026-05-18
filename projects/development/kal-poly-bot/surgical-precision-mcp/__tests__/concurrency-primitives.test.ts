@@ -172,7 +172,7 @@ describe('Semaphore Performance', () => {
     const opsPerSec = totalOps / (elapsed / 1000);
     
     expect(opsPerSec).toBeGreaterThan(1000); // > 1000 ops/sec
-    console.log(`Semaphore throughput: ${opsPerSec.toFixed(0)} ops/sec`);
+    console.info(`Semaphore throughput: ${opsPerSec.toFixed(0)} ops/sec`);
   });
 });
 
@@ -495,7 +495,7 @@ describe('Test Suite Summary', () => {
     ];
     
     expect(groups.length).toBe(8);
-    console.log(`\n✅ Concurrency primitives: ${groups.length} test groups complete`);
-    console.log('📋 Polyfill ready for Bun v1.3.5+');
+    console.info(`\n✅ Concurrency primitives: ${groups.length} test groups complete`);
+    console.info('📋 Polyfill ready for Bun v1.3.5+');
   });
 });

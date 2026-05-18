@@ -47,9 +47,9 @@ async function auditUrlPatterns(options: AuditOptions) {
 	const days = options.days || 7;
 	const hours = days * 24;
 
-	console.log(`🔍 Auditing URL anomaly patterns`);
-	console.log(`   Sport: ${sport}`);
-	console.log(`   Period: ${days} days (${hours} hours)\n`);
+	console.info(`🔍 Auditing URL anomaly patterns`);
+	console.info(`   Sport: ${sport}`);
+	console.info(`   Period: ${days} days (${hours} hours)\n`);
 
 	// Discover patterns
 	const patterns = await engine.discoverAnomalyPatterns(sport, hours);
@@ -98,12 +98,12 @@ async function auditUrlPatterns(options: AuditOptions) {
 	const outputPath = options.output || join(process.cwd(), `url-patterns-audit-${Date.now()}.json`);
 	await writeFile(outputPath, JSON.stringify(report, null, 2));
 
-	console.log(`✅ Audit complete`);
-	console.log(`   Total Patterns: ${patterns.length}`);
-	console.log(`   By Bookmaker: ${Object.entries(byBookmaker).map(([bm, count]) => `${bm}: ${count}`).join(", ")}`);
-	console.log(`   By Type: ${Object.entries(byType).map(([type, count]) => `${type}: ${count}`).join(", ")}`);
-	console.log(`   Avg False Steam Rate: ${(avgFalseSteamRate * 100).toFixed(2)}%`);
-	console.log(`   Report saved to: ${outputPath}\n`);
+	console.info(`✅ Audit complete`);
+	console.info(`   Total Patterns: ${patterns.length}`);
+	console.info(`   By Bookmaker: ${Object.entries(byBookmaker).map(([bm, count]) => `${bm}: ${count}`).join(", ")}`);
+	console.info(`   By Type: ${Object.entries(byType).map(([type, count]) => `${type}: ${count}`).join(", ")}`);
+	console.info(`   Avg False Steam Rate: ${(avgFalseSteamRate * 100).toFixed(2)}%`);
+	console.info(`   Report saved to: ${outputPath}\n`);
 
 	engine.close();
 	db.close();
@@ -130,7 +130,7 @@ for (let i = 0; i < args.length; i++) {
 			break;
 		case "--help":
 		case "-h":
-			console.log(`
+			console.info(`
 Usage: bun run scripts/audit-url-patterns.ts [options]
 
 Options:

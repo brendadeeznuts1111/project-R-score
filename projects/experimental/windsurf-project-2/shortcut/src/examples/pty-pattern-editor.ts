@@ -41,7 +41,7 @@ export class InteractivePatternEditor {
   }
 
   async editPatternFile(filePath: string, patternLine: number) {
-    console.log(`🔧 Opening ${filePath} at line ${patternLine} for pattern editing...`);
+    console.info(`🔧 Opening ${filePath} at line ${patternLine} for pattern editing...`);
     
     const proc = spawn(["vim", `+${patternLine}`, filePath], {
       terminal: this.terminal,
@@ -112,7 +112,7 @@ export class InteractivePatternEditor {
   }
 
   async interactivePatternTest() {
-    console.log('🧪 Starting interactive pattern test...');
+    console.info('🧪 Starting interactive pattern test...');
     
     const testREPL = spawn(["node"], {
       terminal: this.terminal,
@@ -188,7 +188,7 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help')) {
-    console.log(`
+    console.info(`
 PTY Pattern Editor - Interactive Security Terminal
 
 Usage:
@@ -223,21 +223,21 @@ Examples:
         break;
         
       case 'demo':
-        console.log('🚀 PTY Pattern Editor Demo');
-        console.log('===========================');
-        console.log('✅ Terminal initialized');
-        console.log('✅ Pattern analyzer ready');
-        console.log('✅ Live validation enabled');
-        console.log('\n📝 Features:');
-        console.log('   • Real-time pattern validation');
-        console.log('   • ANSI color-coded risk levels');
-        console.log('   • Bun.stringWidth alignment');
-        console.log('   • PTY-powered editing');
-        console.log('   • Terminal resize handling');
+        console.info('🚀 PTY Pattern Editor Demo');
+        console.info('===========================');
+        console.info('✅ Terminal initialized');
+        console.info('✅ Pattern analyzer ready');
+        console.info('✅ Live validation enabled');
+        console.info('\n📝 Features:');
+        console.info('   • Real-time pattern validation');
+        console.info('   • ANSI color-coded risk levels');
+        console.info('   • Bun.stringWidth alignment');
+        console.info('   • PTY-powered editing');
+        console.info('   • Terminal resize handling');
         break;
         
       default:
-        console.log('❌ Unknown command. Use --help for usage.');
+        console.info('❌ Unknown command. Use --help for usage.');
         process.exit(1);
     }
   } catch (error) {

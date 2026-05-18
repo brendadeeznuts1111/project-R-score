@@ -137,37 +137,37 @@ class DNSVerifier {
       },
     ];
 
-    console.log(`🔍 Starting comprehensive DNS verification for apexodds.net`);
-    console.log('═'.repeat(70));
-    console.log(`Total records to verify: ${records.length}`);
-    console.log('');
+    console.info(`🔍 Starting comprehensive DNS verification for apexodds.net`);
+    console.info('═'.repeat(70));
+    console.info(`Total records to verify: ${records.length}`);
+    console.info('');
 
     for (const record of records) {
-      console.log(`🔍 Verifying ${record.type} ${record.name}...`);
+      console.info(`🔍 Verifying ${record.type} ${record.name}...`);
       const result = await this.verifyRecord(record);
 
       if (result.success) {
-        console.log(`   ✅ ${record.type} ${record.name} - VERIFIED (${result.responseTime}ms)`);
+        console.info(`   ✅ ${record.type} ${record.name} - VERIFIED (${result.responseTime}ms)`);
         if (result.record.actual) {
-          console.log(`      └─ ${result.record.actual}`);
+          console.info(`      └─ ${result.record.actual}`);
         }
       } else {
-        console.log(`   ❌ ${record.type} ${record.name} - FAILED (${result.responseTime}ms)`);
-        console.log(`      ├─ Expected: ${record.expected}`);
-        console.log(`      └─ Actual: ${result.record.actual || 'No response'}`);
+        console.info(`   ❌ ${record.type} ${record.name} - FAILED (${result.responseTime}ms)`);
+        console.info(`      ├─ Expected: ${record.expected}`);
+        console.info(`      └─ Actual: ${result.record.actual || 'No response'}`);
         if (result.error) {
-          console.log(`      └─ Error: ${result.error}`);
+          console.info(`      └─ Error: ${result.error}`);
         }
       }
-      console.log('');
+      console.info('');
     }
 
     this.printSummary();
   }
 
   async verifyHTTPConnectivity(): Promise<void> {
-    console.log(`🌐 Verifying HTTP connectivity for subdomains`);
-    console.log('═'.repeat(70));
+    console.info(`🌐 Verifying HTTP connectivity for subdomains`);
+    console.info('═'.repeat(70));
 
     const subdomains = [
       'https://dev.apexodds.net',
@@ -180,26 +180,26 @@ class DNSVerifier {
 
     for (const url of subdomains) {
       try {
-        console.log(`🔗 Testing ${url}...`);
+        console.info(`🔗 Testing ${url}...`);
         const response = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
 
         if (response.ok) {
-          console.log(`   ✅ ${url} - CONNECTED (${response.status})`);
-          console.log(`      └─ Server: ${response.headers.get('server') || 'Unknown'}`);
+          console.info(`   ✅ ${url} - CONNECTED (${response.status})`);
+          console.info(`      └─ Server: ${response.headers.get('server') || 'Unknown'}`);
         } else {
-          console.log(`   ⚠️  ${url} - HTTP ${response.status}`);
+          console.info(`   ⚠️  ${url} - HTTP ${response.status}`);
         }
       } catch (error) {
-        console.log(`   ❌ ${url} - FAILED`);
-        console.log(`      └─ Error: ${error.message}`);
+        console.info(`   ❌ ${url} - FAILED`);
+        console.info(`      └─ Error: ${error.message}`);
       }
-      console.log('');
+      console.info('');
     }
   }
 
   async verifySSL(): Promise<void> {
-    console.log(`🔒 Verifying SSL certificates`);
-    console.log('═'.repeat(70));
+    console.info(`🔒 Verifying SSL certificates`);
+    console.info('═'.repeat(70));
 
     const domains = [
       'dev.apexodds.net',
@@ -212,66 +212,66 @@ class DNSVerifier {
 
     for (const domain of domains) {
       try {
-        console.log(`🔐 Checking SSL for ${domain}...`);
+        console.info(`🔐 Checking SSL for ${domain}...`);
 
         // Use openssl to check certificate
         const certCheck =
           await Bun.$`echo | openssl s_client -servername ${domain} -connect ${domain}:443 2>/dev/null | openssl x509 -noout -dates 2>/dev/null`.quiet();
 
         if (certCheck.stdout) {
-          console.log(`   ✅ ${domain} - SSL VALID`);
-          console.log(`      └─ Certificate details available`);
+          console.info(`   ✅ ${domain} - SSL VALID`);
+          console.info(`      └─ Certificate details available`);
         } else {
-          console.log(`   ⚠️  ${domain} - SSL check inconclusive`);
+          console.info(`   ⚠️  ${domain} - SSL check inconclusive`);
         }
       } catch (error) {
-        console.log(`   ❌ ${domain} - SSL verification failed`);
-        console.log(`      └─ Error: ${error.message}`);
+        console.info(`   ❌ ${domain} - SSL verification failed`);
+        console.info(`      └─ Error: ${error.message}`);
       }
-      console.log('');
+      console.info('');
     }
   }
 
   private printSummary(): void {
-    console.log(`📊 DNS Verification Summary`);
-    console.log('═'.repeat(70));
+    console.info(`📊 DNS Verification Summary`);
+    console.info('═'.repeat(70));
 
     const successful = this.results.filter(r => r.success).length;
     const failed = this.results.filter(r => !r.success).length;
     const total = this.results.length;
 
-    console.log(`Total Records: ${total}`);
-    console.log(`✅ Successful: ${successful}`);
-    console.log(`❌ Failed: ${failed}`);
-    console.log(`📈 Success Rate: ${((successful / total) * 100).toFixed(1)}%`);
-    console.log('');
+    console.info(`Total Records: ${total}`);
+    console.info(`✅ Successful: ${successful}`);
+    console.info(`❌ Failed: ${failed}`);
+    console.info(`📈 Success Rate: ${((successful / total) * 100).toFixed(1)}%`);
+    console.info('');
 
     if (failed > 0) {
-      console.log(`❌ Failed Records:`);
+      console.info(`❌ Failed Records:`);
       this.results
         .filter(r => !r.success)
         .forEach(result => {
-          console.log(`   - ${result.record.type} ${result.record.name}`);
+          console.info(`   - ${result.record.type} ${result.record.name}`);
         });
-      console.log('');
+      console.info('');
     }
 
     const avgResponseTime = this.results.reduce((sum, r) => sum + r.responseTime, 0) / total;
-    console.log(`⏱️  Average Response Time: ${avgResponseTime.toFixed(0)}ms`);
+    console.info(`⏱️  Average Response Time: ${avgResponseTime.toFixed(0)}ms`);
 
     if (successful === total) {
-      console.log(`\n🎉 All DNS records verified successfully!`);
-      console.log(`🚀 Your domain apexodds.net is ready for production!`);
+      console.info(`\n🎉 All DNS records verified successfully!`);
+      console.info(`🚀 Your domain apexodds.net is ready for production!`);
     } else {
-      console.log(`\n⚠️  Some DNS records need attention.`);
-      console.log(`💡 DNS changes may take up to 24 hours to propagate globally.`);
-      console.log(`🔄 Run this verification again in a few hours if records were recently added.`);
+      console.info(`\n⚠️  Some DNS records need attention.`);
+      console.info(`💡 DNS changes may take up to 24 hours to propagate globally.`);
+      console.info(`🔄 Run this verification again in a few hours if records were recently added.`);
     }
   }
 }
 
 async function showHelp() {
-  console.log(`
+  console.info(`
 🌐 Fantasy42-Fire22 DNS Verification Suite
 Comprehensive DNS record verification and health checking
 
@@ -333,9 +333,9 @@ async function main() {
 
     case 'all':
       await verifier.verifyAllRecords();
-      console.log('');
+      console.info('');
       await verifier.verifyHTTPConnectivity();
-      console.log('');
+      console.info('');
       await verifier.verifySSL();
       break;
 

@@ -60,14 +60,14 @@ class Fire22DiagramTooling {
    * 🎨 Generate Mermaid Diagram
    */
   async generateMermaidDiagram(): Promise<string> {
-    console.log(chalk.blue('🔧 Generating Mermaid diagram...'));
+    console.info(chalk.blue('🔧 Generating Mermaid diagram...'));
 
     const mermaidTemplate = this.createMermaidTemplate();
     const tempFile = join(process.cwd(), 'temp-diagram.mmd');
 
     try {
       writeFileSync(tempFile, mermaidTemplate, 'utf8');
-      console.log(chalk.green('✅ Mermaid diagram generated successfully'));
+      console.info(chalk.green('✅ Mermaid diagram generated successfully'));
       return mermaidTemplate;
     } catch (error) {
       console.error(chalk.red('❌ Error generating Mermaid diagram:'), error);
@@ -79,12 +79,12 @@ class Fire22DiagramTooling {
    * 🎭 Translate to ANSI ASCII Art
    */
   translateToAnsiArt(mermaidOutput: string): string {
-    console.log(chalk.blue('🎭 Translating to ANSI ASCII art...'));
+    console.info(chalk.blue('🎭 Translating to ANSI ASCII art...'));
 
     const asciiArt = this.convertMermaidToAscii(mermaidOutput);
     const coloredAscii = this.applyAnsiColors(asciiArt);
 
-    console.log(chalk.green('✅ ANSI ASCII art generated successfully'));
+    console.info(chalk.green('✅ ANSI ASCII art generated successfully'));
     return coloredAscii;
   }
 
@@ -93,14 +93,14 @@ class Fire22DiagramTooling {
    */
   displayInConsole(asciiArt: string): void {
     console.clear();
-    console.log(chalk.yellow('🔥 Fire22 Diagram Tooling System'));
-    console.log(chalk.gray('='.repeat(50)));
-    console.log();
-    console.log(asciiArt);
-    console.log();
-    console.log(chalk.gray('='.repeat(50)));
-    console.log(chalk.blue(`📊 Diagram: ${this.config.title}`));
-    console.log(chalk.gray(`Type: ${this.config.type} | Format: ${this.config.outputFormat}`));
+    console.info(chalk.yellow('🔥 Fire22 Diagram Tooling System'));
+    console.info(chalk.gray('='.repeat(50)));
+    console.info();
+    console.info(asciiArt);
+    console.info();
+    console.info(chalk.gray('='.repeat(50)));
+    console.info(chalk.blue(`📊 Diagram: ${this.config.title}`));
+    console.info(chalk.gray(`Type: ${this.config.type} | Format: ${this.config.outputFormat}`));
   }
 
   /**
@@ -319,7 +319,7 @@ ${mermaidCode}`;
    */
   async run(): Promise<void> {
     try {
-      console.log(chalk.blue('🚀 Starting Fire22 Diagram Tooling System...'));
+      console.info(chalk.blue('🚀 Starting Fire22 Diagram Tooling System...'));
 
       // Generate Mermaid diagram
       const mermaidOutput = await this.generateMermaidDiagram();
@@ -330,7 +330,7 @@ ${mermaidCode}`;
       // Display in console
       this.displayInConsole(asciiArt);
 
-      console.log(chalk.green('🎉 Diagram tooling workflow completed successfully!'));
+      console.info(chalk.green('🎉 Diagram tooling workflow completed successfully!'));
     } catch (error) {
       console.error(chalk.red('💥 Error in diagram tooling workflow:'), error);
       process.exit(1);

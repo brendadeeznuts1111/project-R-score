@@ -14,12 +14,12 @@
 import { patternOptimizer } from '../src/api/routers/pattern-optimizer';
 import { URLPatternRouter } from '../src/api/routers/urlpattern-router';
 
-console.log('🔬 URLPattern Performance Benchmark\n');
+console.info('🔬 URLPattern Performance Benchmark\n');
 
 const ITERATIONS = 100_000;
 
 // Test 1: Native URLPattern vs Regex
-console.log('Test 1: Pattern Matching Performance\n');
+console.info('Test 1: Pattern Matching Performance\n');
 
 const urlPattern = new URLPattern({ pathname: '/api/v1/graph/:eventId' });
 const regex = /^\/api\/v1\/graph\/([^\/]+)$/;
@@ -39,7 +39,7 @@ for (let i = 0; i < ITERATIONS; i++) {
 console.timeEnd('Regex.exec');
 
 // Test 2: Router throughput
-console.log('\nTest 2: Router Throughput\n');
+console.info('\nTest 2: Router Throughput\n');
 
 const router = new URLPatternRouter();
 
@@ -66,7 +66,7 @@ for (let i = 0; i < ITERATIONS; i++) {
 console.timeEnd(`Router.match x${ITERATIONS}`);
 
 // Test 3: Pattern optimizer cache efficiency
-console.log('\nTest 3: Pattern Optimizer Cache\n');
+console.info('\nTest 3: Pattern Optimizer Cache\n');
 
 const patterns = ['/api/v1/graph/:eventId', '/api/v1/logs/:level?', '/static/*'];
 
@@ -78,7 +78,7 @@ patterns.forEach(pattern => {
 	const duration = performance.now() - start;
 	
 	const stats = patternOptimizer.getStats();
-	console.log(`${pattern}: ${(duration / 1000).toFixed(4)}µs/op (cache hits: ${stats.totalHits})`);
+	console.info(`${pattern}: ${(duration / 1000).toFixed(4)}µs/op (cache hits: ${stats.totalHits})`);
 });
 
-console.log('\n✅ All benchmarks complete');
+console.info('\n✅ All benchmarks complete');

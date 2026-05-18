@@ -55,7 +55,7 @@ function hslToRgb(h: number, s: number, l: number): [number, number, number] {
 }
 
 /* ---------- 10-column quantum table ---------------------- */
-console.log(
+console.info(
   inspect.table(stats, {
     border: true,
     header: true,
@@ -70,7 +70,7 @@ const prev = await Bun.file("/tmp/stdin-snapshot.json")
   .catch(() => ({}));
 if (!Bun.deepEquals(snapshot, prev, true)) {
   await Bun.write("/tmp/stdin-snapshot.json", JSON.stringify(snapshot));
-  console.log("✅ Snapshot updated (strict mode)");
+  console.info("✅ Snapshot updated (strict mode)");
 }
 
 /* ---------- XSS-safe + gzipped artefact ------------------ */
@@ -81,4 +81,4 @@ const report = {
 const safe = JSON.stringify(report);
 const gz = gzipSync(new TextEncoder().encode(safe), { level: 9 });
 await Bun.write("/tmp/stdin-quantum.json.gz", gz);
-console.log("📊 Gzipped report:", gz.byteLength, "bytes");
+console.info("📊 Gzipped report:", gz.byteLength, "bytes");

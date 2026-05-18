@@ -121,7 +121,7 @@ export class CrossVenueArbitrageDetector {
   async detectArbitrageOpportunities(
     markets: MarketFeed[]
   ): Promise<ArbitrageOpportunity[]> {
-    console.log(
+    console.info(
       `🔍 Scanning ${markets.length} markets for arbitrage opportunities...`
     );
 
@@ -149,7 +149,7 @@ export class CrossVenueArbitrageDetector {
       // 6. Update active opportunities cache
       this.updateActiveOpportunities(filteredOpportunities);
 
-      console.log(
+      console.info(
         `✅ Found ${filteredOpportunities.length} viable arbitrage opportunities`
       );
       return filteredOpportunities;
@@ -245,7 +245,7 @@ export class CrossVenueArbitrageDetector {
    * Solve arbitrage linear programming problem
    */
   private solveArbitrageLP(matrix: number[][]): ArbitrageSet {
-    console.log("📊 Solving arbitrage linear programming problem...");
+    console.info("📊 Solving arbitrage linear programming problem...");
 
     const opportunities: ArbitrageOpportunity[] = [];
 
@@ -618,7 +618,7 @@ export class CrossVenueArbitrageDetector {
 
     try {
       // Simulate execution across venues
-      console.log(`🚀 Executing arbitrage: ${opportunityId}`);
+      console.info(`🚀 Executing arbitrage: ${opportunityId}`);
 
       // Parallel execution across venues
       const executionPromises = opportunity.outcomes.map((outcome) =>
@@ -629,7 +629,7 @@ export class CrossVenueArbitrageDetector {
       const successful = results.filter((r) => r.status === "fulfilled").length;
 
       if (successful === opportunity.outcomes.length) {
-        console.log(`✅ Arbitrage executed successfully: ${opportunityId}`);
+        console.info(`✅ Arbitrage executed successfully: ${opportunityId}`);
         this.activeOpportunities.delete(opportunityId);
         return true;
       } else {

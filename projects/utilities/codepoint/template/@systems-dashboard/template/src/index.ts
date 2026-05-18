@@ -122,7 +122,7 @@ const cliArgs = {
 // Configure console based on CLI args
 if (cliArgs.consoleDepth > 2) {
   console.debug = (...args: any[]) => {
-    console.log(
+    console.info(
       ...args.map((arg) =>
         typeof arg === "object"
           ? Bun.inspect(arg, { depth: cliArgs.consoleDepth })
@@ -148,7 +148,7 @@ if (cliArgs.unhandledRejections) {
 
 // Expose GC if requested
 if (cliArgs.exposeGc && global.gc) {
-  console.log("🗑️  GC exposed globally");
+  console.info("🗑️  GC exposed globally");
 }
 
 // File I/O utilities
@@ -169,7 +169,7 @@ class FileManager {
   static async writeFile(filePath: string, content: string): Promise<number> {
     try {
       const bytes = await Bun.write(filePath, content);
-      console.log(`✅ Wrote ${bytes} bytes to ${filePath}`);
+      console.info(`✅ Wrote ${bytes} bytes to ${filePath}`);
       return bytes;
     } catch (error) {
       console.error(`❌ Error writing file ${filePath}:`, error.message);
@@ -184,7 +184,7 @@ class FileManager {
         throw new Error(`Source file not found: ${sourcePath}`);
       }
       const bytes = await Bun.write(destPath, sourceFile);
-      console.log(`✅ Copied ${bytes} bytes from ${sourcePath} to ${destPath}`);
+      console.info(`✅ Copied ${bytes} bytes from ${sourcePath} to ${destPath}`);
       return bytes;
     } catch (error) {
       console.error(`❌ Error copying file:`, error.message);
@@ -220,9 +220,9 @@ class StdinProcessor {
       const content = await stdin.text();
 
       if (cliArgs.verbose) {
-        console.log("📥 Stdin input received:");
-        console.log(`Length: ${content.length} characters`);
-        console.log(`Type: ${typeof content}`);
+        console.info("📥 Stdin input received:");
+        console.info(`Length: ${content.length} characters`);
+        console.info(`Type: ${typeof content}`);
       }
 
       return content;
@@ -249,7 +249,7 @@ class StdinProcessor {
 
 // CLI Help and Version
 function showHelp() {
-  console.log(`
+  console.info(`
 ${cliArgs.title} - Enhanced Systems Dashboard
 
 Usage: bun run src/index.ts [options]
@@ -342,10 +342,10 @@ Performance Examples:
 }
 
 function showVersion() {
-  console.log(`${cliArgs.title} v1.0.0`);
-  console.log(`Bun: ${Bun.version}`);
-  console.log(`Platform: ${process.platform}`);
-  console.log(`Node: ${process.version}`);
+  console.info(`${cliArgs.title} v1.0.0`);
+  console.info(`Bun: ${Bun.version}`);
+  console.info(`Platform: ${process.platform}`);
+  console.info(`Node: ${process.version}`);
 }
 
 // Main application startup
@@ -365,19 +365,19 @@ async function main() {
   if (cliArgs.stdin) {
     try {
       const stdinContent = await StdinProcessor.processStdin();
-      console.log("📥 Stdin processed successfully");
+      console.info("📥 Stdin processed successfully");
 
       // Try to parse as JSON
       try {
         const jsonData = JSON.parse(stdinContent);
-        console.log("📋 JSON data received:", jsonData);
+        console.info("📋 JSON data received:", jsonData);
 
         // Use JSON data as configuration
         if (jsonData.port) cliArgs.port = jsonData.port;
         if (jsonData.hostname) cliArgs.hostname = jsonData.hostname;
         if (jsonData.title) cliArgs.title = jsonData.title;
       } catch (e) {
-        console.log("📝 Plain text stdin received");
+        console.info("📝 Plain text stdin received");
       }
     } catch (error) {
       console.error("❌ Failed to process stdin:", error.message);
@@ -389,37 +389,37 @@ async function main() {
 
   // Log startup information
   if (!cliArgs.silent) {
-    console.log(`🚀 Starting ${cliArgs.title} with:`);
-    console.log(`   • Bun ${Bun.version}`);
-    console.log(`   • Port: ${cliArgs.port}`);
-    console.log(`   • Host: ${cliArgs.hostname}`);
-    console.log(`   • Watch mode: ${cliArgs.watch}`);
-    console.log(`   • Hot reload: ${cliArgs.hot}`);
-    console.log(`   • Memory mode: ${cliArgs.smol ? "smol" : "normal"}`);
-    console.log(`   • Console depth: ${cliArgs.consoleDepth}`);
-    console.log(`   • Platform: ${cliArgs.platform}`);
-    console.log(
+    console.info(`🚀 Starting ${cliArgs.title} with:`);
+    console.info(`   • Bun ${Bun.version}`);
+    console.info(`   • Port: ${cliArgs.port}`);
+    console.info(`   • Host: ${cliArgs.hostname}`);
+    console.info(`   • Watch mode: ${cliArgs.watch}`);
+    console.info(`   • Hot reload: ${cliArgs.hot}`);
+    console.info(`   • Memory mode: ${cliArgs.smol ? "smol" : "normal"}`);
+    console.info(`   • Console depth: ${cliArgs.consoleDepth}`);
+    console.info(`   • Platform: ${cliArgs.platform}`);
+    console.info(
       `   • Environment: ${cliArgs.production ? "production" : cliArgs.development ? "development" : "default"}`
     );
 
     if (cliArgs.define) {
-      console.log(`   • Defines: ${cliArgs.define}`);
+      console.info(`   • Defines: ${cliArgs.define}`);
     }
 
     if (cliArgs.envFile) {
-      console.log(`   • Env file: ${cliArgs.envFile}`);
+      console.info(`   • Env file: ${cliArgs.envFile}`);
     }
 
     if (cliArgs.external) {
-      console.log(`   • External: ${cliArgs.external}`);
+      console.info(`   • External: ${cliArgs.external}`);
     }
 
     if (cliArgs.sqlPreconnect) {
-      console.log(`   • SQL preconnect: enabled`);
+      console.info(`   • SQL preconnect: enabled`);
     }
 
     if (cliArgs.redisPreconnect) {
-      console.log(`   • Redis preconnect: enabled`);
+      console.info(`   • Redis preconnect: enabled`);
     }
   }
 
@@ -556,40 +556,40 @@ async function main() {
 
   // Enhanced startup logging
   if (!cliArgs.silent) {
-    console.log(`✅ ${cliArgs.title} running at ${app.server?.url}`);
-    console.log(`📖 Swagger docs available at ${app.server?.url}/swagger`);
+    console.info(`✅ ${cliArgs.title} running at ${app.server?.url}`);
+    console.info(`📖 Swagger docs available at ${app.server?.url}/swagger`);
 
     if (cliArgs.inspect || cliArgs.inspectWait || cliArgs.inspectBrk) {
-      console.log(
+      console.info(
         `🔍 Debugging enabled - Open Chrome DevTools at chrome://inspect`
       );
     }
 
     if (cliArgs.watch || cliArgs.hot) {
-      console.log(`🔄 Auto-reload enabled - File changes will trigger restart`);
+      console.info(`🔄 Auto-reload enabled - File changes will trigger restart`);
     }
 
     if (cliArgs.smol) {
-      console.log(`📦 Memory optimization enabled - Running in smol mode`);
+      console.info(`📦 Memory optimization enabled - Running in smol mode`);
     }
 
     if (cliArgs.exposeGc) {
-      console.log(`🗑️  Garbage collection exposed - Call global.gc() manually`);
+      console.info(`🗑️  Garbage collection exposed - Call global.gc() manually`);
     }
 
-    console.log(`📊 Dashboard: ${app.server?.url}`);
-    console.log(`🏥 Health: ${app.server?.url}/health`);
-    console.log(`⚙️  Config: ${app.server?.url}/config`);
-    console.log(`📁 Files: ${app.server?.url}/files`);
-    console.log(`🔍 Debug: ${app.server?.url}/debug`);
+    console.info(`📊 Dashboard: ${app.server?.url}`);
+    console.info(`🏥 Health: ${app.server?.url}/health`);
+    console.info(`⚙️  Config: ${app.server?.url}/config`);
+    console.info(`📁 Files: ${app.server?.url}/files`);
+    console.info(`🔍 Debug: ${app.server?.url}/debug`);
   }
 
   // Handle graceful shutdown
   const gracefulShutdown = (signal: string) => {
-    console.log(`\n🛑 Received ${signal} - Shutting down gracefully...`);
+    console.info(`\n🛑 Received ${signal} - Shutting down gracefully...`);
 
     if (cliArgs.exposeGc && global.gc) {
-      console.log("🗑️  Running garbage collection...");
+      console.info("🗑️  Running garbage collection...");
       global.gc();
     }
 

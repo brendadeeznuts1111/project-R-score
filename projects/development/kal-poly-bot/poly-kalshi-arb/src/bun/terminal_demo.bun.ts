@@ -45,12 +45,12 @@ export class KalmanTerminalDemo {
    * Run comprehensive terminal demo
    */
   async runDemo(): Promise<void> {
-    console.log("🎯 Kalman Filter Terminal Demo Starting...");
-    console.log("==========================================");
+    console.info("🎯 Kalman Filter Terminal Demo Starting...");
+    console.info("==========================================");
 
     // Create demo session
     const session = await this.terminalServer.createSession("demo-user");
-    console.log(`📡 Created terminal session: ${session.id}`);
+    console.info(`📡 Created terminal session: ${session.id}`);
 
     // Connect client
     const client = new KalmanTerminalClient();
@@ -66,14 +66,14 @@ export class KalmanTerminalDemo {
     await this.terminalServer.closeSession(session.id);
     client.disconnect();
 
-    console.log("✅ Demo completed successfully!");
+    console.info("✅ Demo completed successfully!");
   }
 
   /**
    * Demonstrate basic terminal commands
    */
   private async runBasicCommands(client: KalmanTerminalClient): Promise<void> {
-    console.log("\n🔧 Testing Basic Commands...");
+    console.info("\n🔧 Testing Basic Commands...");
 
     const commands = [
       'echo "Testing terminal functionality"',
@@ -84,7 +84,7 @@ export class KalmanTerminalDemo {
     ];
 
     for (const cmd of commands) {
-      console.log(`> ${cmd}`);
+      console.info(`> ${cmd}`);
       client.sendInput(cmd);
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
@@ -94,7 +94,7 @@ export class KalmanTerminalDemo {
    * Demonstrate real-time monitoring capabilities
    */
   private async runMonitoringDemo(client: KalmanTerminalClient): Promise<void> {
-    console.log("\n📊 Running Monitoring Demo...");
+    console.info("\n📊 Running Monitoring Demo...");
 
     // Start monitoring
     client.sendInput("kalman-monitor\n");
@@ -107,7 +107,7 @@ export class KalmanTerminalDemo {
       patterns: [75],
     });
 
-    console.log("📈 Simulating market activity...");
+    console.info("📈 Simulating market activity...");
 
     // Start tick generation in background
     const tickPromise = (async () => {
@@ -131,7 +131,7 @@ export class KalmanTerminalDemo {
    * Demonstrate automation capabilities
    */
   private async runAutomationDemo(client: KalmanTerminalClient): Promise<void> {
-    console.log("\n🤖 Running Automation Demo...");
+    console.info("\n🤖 Running Automation Demo...");
 
     // Create automation script
     const automationScript = `
@@ -163,15 +163,15 @@ echo "✅ Automation complete"
    * Demonstrate debugging capabilities
    */
   private async runDebuggingDemo(client: KalmanTerminalClient): Promise<void> {
-    console.log("\n🐛 Running Debugging Demo...");
+    console.info("\n🐛 Running Debugging Demo...");
 
     // Show configuration
     const config = await client.executeKalmanCommand("kalman-config");
-    console.log("Configuration:", config);
+    console.info("Configuration:", config);
 
     // Run performance test
     const testResults = await client.executeKalmanCommand("kalman-test");
-    console.log("Test Results:", testResults);
+    console.info("Test Results:", testResults);
 
     // Debug individual patterns
     for (const pattern of [51, 56, 68, 75]) {
@@ -185,7 +185,7 @@ echo "✅ Automation complete"
    * Advanced PTY automation with multiple sessions
    */
   async runMultiSessionDemo(): Promise<void> {
-    console.log("\n🎭 Running Multi-Session Demo...");
+    console.info("\n🎭 Running Multi-Session Demo...");
 
     // Create multiple sessions for different tasks
     const sessions = {
@@ -203,7 +203,7 @@ echo "✅ Automation complete"
     // Connect all clients
     for (const [name, client] of Object.entries(clients)) {
       await client.connect();
-      console.log(`✅ Connected ${name} session`);
+      console.info(`✅ Connected ${name} session`);
     }
 
     // Assign different tasks
@@ -218,7 +218,7 @@ echo "✅ Automation complete"
     for (const [name, sessionId] of Object.entries(sessions)) {
       await this.terminalServer.closeSession(sessionId.id);
       clients[name as keyof typeof clients].disconnect();
-      console.log(`🧹 Cleaned up ${name} session`);
+      console.info(`🧹 Cleaned up ${name} session`);
     }
   }
 
@@ -226,7 +226,7 @@ echo "✅ Automation complete"
    * Performance benchmarking with PTY
    */
   async runPerformanceBenchmark(): Promise<void> {
-    console.log("\n⚡ Running Performance Benchmark...");
+    console.info("\n⚡ Running Performance Benchmark...");
 
     const session = await this.terminalServer.createSession("benchmark");
     const client = new KalmanTerminalClient();
@@ -240,13 +240,13 @@ echo "✅ Automation complete"
     ];
 
     for (const benchmark of benchmarks) {
-      console.log(`🏃 Benchmarking: ${benchmark.name}`);
+      console.info(`🏃 Benchmarking: ${benchmark.name}`);
       const start = performance.now();
 
       await client.executeKalmanCommand(benchmark.cmd);
 
       const duration = performance.now() - start;
-      console.log(`⏱️  ${benchmark.name}: ${duration.toFixed(2)}ms`);
+      console.info(`⏱️  ${benchmark.name}: ${duration.toFixed(2)}ms`);
     }
 
     await this.terminalServer.closeSession(session.id);
@@ -257,7 +257,7 @@ echo "✅ Automation complete"
    * Cleanup resources
    */
   async cleanup(): Promise<void> {
-    console.log("\n🧹 Cleaning up demo resources...");
+    console.info("\n🧹 Cleaning up demo resources...");
 
     // Close all sessions
     for (const session of this.terminalServer.listSessions()) {
@@ -267,7 +267,7 @@ echo "✅ Automation complete"
     // Stop HTTP server
     this.httpServer.stop();
 
-    console.log("✅ Cleanup complete");
+    console.info("✅ Cleanup complete");
   }
 }
 
@@ -275,16 +275,16 @@ echo "✅ Automation complete"
  * Interactive terminal playground
  */
 async function runInteractivePlayground(): Promise<void> {
-  console.log("🎮 Kalman Terminal Playground");
-  console.log("===============================");
-  console.log("Available commands:");
-  console.log("  demo         - Run full demo");
-  console.log("  monitor      - Start monitoring mode");
-  console.log("  debug        - Debug patterns");
-  console.log("  benchmark    - Performance test");
-  console.log("  help         - Show help");
-  console.log("  exit         - Exit playground");
-  console.log();
+  console.info("🎮 Kalman Terminal Playground");
+  console.info("===============================");
+  console.info("Available commands:");
+  console.info("  demo         - Run full demo");
+  console.info("  monitor      - Start monitoring mode");
+  console.info("  debug        - Debug patterns");
+  console.info("  benchmark    - Performance test");
+  console.info("  help         - Show help");
+  console.info("  exit         - Exit playground");
+  console.info();
 
   const demo = new KalmanTerminalDemo();
 
@@ -307,29 +307,29 @@ async function runInteractivePlayground(): Promise<void> {
         await demo.runDemo();
         break;
       case "monitor":
-        console.log("🔍 Starting monitoring mode...");
+        console.info("🔍 Starting monitoring mode...");
         // Start monitoring logic
         break;
       case "debug":
-        console.log("🐛 Starting debug mode...");
+        console.info("🐛 Starting debug mode...");
         // Start debugging logic
         break;
       case "benchmark":
         await demo.runPerformanceBenchmark();
         break;
       case "help":
-        console.log("📚 Help - Available commands listed above");
+        console.info("📚 Help - Available commands listed above");
         break;
       case "exit":
         await demo.cleanup();
         process.exit(0);
       default:
         if (command) {
-          console.log(`❓ Unknown command: ${command}`);
+          console.info(`❓ Unknown command: ${command}`);
         }
     }
 
-    console.log("\n🎮 Ready for next command...");
+    console.info("\n🎮 Ready for next command...");
   });
 }
 
@@ -337,7 +337,7 @@ async function runInteractivePlayground(): Promise<void> {
  * Production deployment example
  */
 export function deployProductionTerminal(): void {
-  console.log("🚀 Deploying Kalman Terminal to Production...");
+  console.info("🚀 Deploying Kalman Terminal to Production...");
 
   const terminalServer = new KalmanTerminalServer({
     maxSessions: 50,
@@ -351,12 +351,12 @@ export function deployProductionTerminal(): void {
   // Production monitoring
   setInterval(() => {
     const sessions = terminalServer.listSessions();
-    console.log(`📊 Active sessions: ${sessions.length}`);
+    console.info(`📊 Active sessions: ${sessions.length}`);
 
     // Log performance metrics
     sessions.forEach((session) => {
       const uptime = Date.now() - session.createdAt;
-      console.log(
+      console.info(
         `  Session ${session.id.slice(0, 8)}: ${Math.round(uptime / 1000)}s`
       );
     });
@@ -364,7 +364,7 @@ export function deployProductionTerminal(): void {
 
   // Graceful shutdown
   process.on("SIGTERM", async () => {
-    console.log("🛑 SIGTERM received, shutting down gracefully...");
+    console.info("🛑 SIGTERM received, shutting down gracefully...");
 
     for (const session of terminalServer.listSessions()) {
       await terminalServer.closeSession(session.id);
@@ -374,7 +374,7 @@ export function deployProductionTerminal(): void {
     process.exit(0);
   });
 
-  console.log("✅ Production terminal deployed successfully!");
+  console.info("✅ Production terminal deployed successfully!");
 }
 
 // CLI interface
@@ -393,12 +393,12 @@ if (import.meta.main) {
       deployProductionTerminal();
       break;
     default:
-      console.log(
+      console.info(
         "Usage: bun terminal_demo.bun.ts [demo|playground|production]"
       );
-      console.log("  demo       - Run comprehensive demo");
-      console.log("  playground - Interactive playground");
-      console.log("  production - Deploy to production");
+      console.info("  demo       - Run comprehensive demo");
+      console.info("  playground - Interactive playground");
+      console.info("  production - Deploy to production");
   }
 }
 

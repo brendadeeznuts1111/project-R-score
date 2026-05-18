@@ -203,13 +203,13 @@ export class DedicatedTerminalManager {
       ['bash', '--restricted'], // Restricted mode for security
       {
         onResize: (cols: number, rows: number) => {
-          console.log(`\n[Terminal resized to ${cols}x${rows}]`);
+          console.info(`\n[Terminal resized to ${cols}x${rows}]`);
         }
       }
     );
 
     // Automatic cleanup via await using
-    console.log(`\n🔒 Terminal sealed with exit code ${result.exitCode}`);
+    console.info(`\n🔒 Terminal sealed with exit code ${result.exitCode}`);
   }
 
   // Helper methods
@@ -233,11 +233,11 @@ export class DedicatedTerminalManager {
   }
 
   private async sealTerminalArtifacts(terminalId: string): Promise<void> {
-    console.log(`Sealing artifacts for terminal: ${terminalId}`);
+    console.info(`Sealing artifacts for terminal: ${terminalId}`);
   }
 
   private async sealSession(terminalId: string): Promise<boolean> {
-    console.log(`Sealing session: ${terminalId}`);
+    console.info(`Sealing session: ${terminalId}`);
     return true;
   }
 
@@ -250,7 +250,7 @@ export class DedicatedTerminalManager {
   }
 
   private async sealTerminalSession(terminal: any): Promise<void> {
-    console.log('Sealing terminal session');
+    console.info('Sealing terminal session');
   }
 }
 

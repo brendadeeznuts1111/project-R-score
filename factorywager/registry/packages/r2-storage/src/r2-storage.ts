@@ -105,7 +105,7 @@ export class R2StorageAdapter {
         throw new Error(`Failed to store manifest: ${response.status} ${response.statusText}`);
       }
 
-      console.log(styled(`✅ Stored manifest: ${manifest.name}`, 'success'));
+      console.info(styled(`✅ Stored manifest: ${manifest.name}`, 'success'));
     } catch (error) {
       console.error(styled(`❌ Failed to store manifest: ${error.message}`, 'error'));
       throw error;
@@ -193,7 +193,7 @@ export class R2StorageAdapter {
       }
 
       const url = `${this.publicUrl}/${this.config.bucketName}/${key}`;
-      console.log(styled(`✅ Stored tarball: ${key} (${(data.length / 1024).toFixed(2)} KB)`, 'success'));
+      console.info(styled(`✅ Stored tarball: ${key} (${(data.length / 1024).toFixed(2)} KB)`, 'success'));
       
       return { 
         url, 
@@ -292,7 +292,7 @@ export class R2StorageAdapter {
         await this.storeManifest(manifest);
       }
 
-      console.log(styled(`✅ Deleted version: ${packageName}@${version}`, 'success'));
+      console.info(styled(`✅ Deleted version: ${packageName}@${version}`, 'success'));
     } catch (error) {
       console.error(styled(`❌ Failed to delete version: ${error.message}`, 'error'));
       throw error;
@@ -333,7 +333,7 @@ export class R2StorageAdapter {
         });
       }
 
-      console.log(styled(`✅ Deleted package: ${packageName}`, 'success'));
+      console.info(styled(`✅ Deleted package: ${packageName}`, 'success'));
     } catch (error) {
       console.error(styled(`❌ Failed to delete package: ${error.message}`, 'error'));
       throw error;
@@ -517,21 +517,21 @@ export const r2Storage = new R2StorageAdapter();
 if (import.meta.main) {
   const storage = new R2StorageAdapter();
   
-  console.log(styled('🪣 R2 Storage Adapter Test (Bun v1.3.7+)', 'accent'));
-  console.log(styled('=========================================', 'accent'));
+  console.info(styled('🪣 R2 Storage Adapter Test (Bun v1.3.7+)', 'accent'));
+  console.info(styled('=========================================', 'accent'));
   
   const status = storage.getConfigStatus();
-  console.log(styled(`\nConfiguration:`, 'info'));
-  console.log(styled(`  Bucket: ${status.bucket}`, 'muted'));
-  console.log(styled(`  Compression: ${status.compression || 'none'}`, 'muted'));
-  console.log(styled(`  Configured: ${status.configured ? '✅' : '❌'}`, status.configured ? 'success' : 'error'));
+  console.info(styled(`\nConfiguration:`, 'info'));
+  console.info(styled(`  Bucket: ${status.bucket}`, 'muted'));
+  console.info(styled(`  Compression: ${status.compression || 'none'}`, 'muted'));
+  console.info(styled(`  Configured: ${status.configured ? '✅' : '❌'}`, status.configured ? 'success' : 'error'));
   
   if (status.missing.length > 0) {
-    console.log(styled(`\nMissing:`, 'warning'));
-    status.missing.forEach(v => console.log(styled(`  - ${v}`, 'warning')));
+    console.info(styled(`\nMissing:`, 'warning'));
+    status.missing.forEach(v => console.info(styled(`  - ${v}`, 'warning')));
   } else {
-    console.log(styled(`\nTesting connection...`, 'info'));
+    console.info(styled(`\nTesting connection...`, 'info'));
     const connected = await storage.testConnection();
-    console.log(styled(`  Connection: ${connected ? '✅ OK' : '❌ Failed'}`, connected ? 'success' : 'error'));
+    console.info(styled(`  Connection: ${connected ? '✅ OK' : '❌ Failed'}`, connected ? 'success' : 'error'));
   }
 }

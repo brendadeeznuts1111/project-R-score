@@ -35,22 +35,22 @@ export class IncrementalSyntheticArbitrageExamples {
      * Example 1: Basic NBA 1Q vs Full Game Synthetic Arbitrage (V1)
      */
     static createBasicNBAExample(): SyntheticArbitrageV1 {
-        console.log('🏀 Creating V1 NBA Synthetic Arbitrage...');
+        console.info('🏀 Creating V1 NBA Synthetic Arbitrage...');
 
         const arbitrage = SyntheticArbitrageV1Factory.createNBAExample();
 
-        console.log('✅ V1 Synthetic Arbitrage Created:');
-        console.log(`   ID: ${arbitrage.id}`);
-        console.log(`   Markets: ${arbitrage.markets[0].period} vs ${arbitrage.markets[1].period}`);
-        console.log(`   Expected Value: ${(arbitrage.expectedValue * 100).toFixed(2)}%`);
-        console.log(`   Hedge Ratio: ${(arbitrage.hedgeRatio * 100).toFixed(1)}%`);
-        console.log(`   Confidence: ${(arbitrage.confidence * 100).toFixed(1)}%`);
+        console.info('✅ V1 Synthetic Arbitrage Created:');
+        console.info(`   ID: ${arbitrage.id}`);
+        console.info(`   Markets: ${arbitrage.markets[0].period} vs ${arbitrage.markets[1].period}`);
+        console.info(`   Expected Value: ${(arbitrage.expectedValue * 100).toFixed(2)}%`);
+        console.info(`   Hedge Ratio: ${(arbitrage.hedgeRatio * 100).toFixed(1)}%`);
+        console.info(`   Confidence: ${(arbitrage.confidence * 100).toFixed(1)}%`);
 
         // Validate V1
         const validation = validateSyntheticArbitrageComplete(arbitrage, 'v1');
-        console.log(`   Validation: ${validation.isValid ? '✅ PASS' : '❌ FAIL'}`);
+        console.info(`   Validation: ${validation.isValid ? '✅ PASS' : '❌ FAIL'}`);
         if (!validation.isValid) {
-            console.log(`   Errors: ${validation.businessErrors.join(', ')}`);
+            console.info(`   Errors: ${validation.businessErrors.join(', ')}`);
         }
 
         return arbitrage;
@@ -60,13 +60,13 @@ export class IncrementalSyntheticArbitrageExamples {
      * Example 2: Profitable V1 Synthetic Arbitrage Batch
      */
     static createProfitableV1Batch(): SyntheticArbitrageV1[] {
-        console.log('📊 Creating Profitable V1 Batch...');
+        console.info('📊 Creating Profitable V1 Batch...');
 
         const batch = SyntheticArbitrageBatchFactory.createV1Batch(5, true);
 
-        console.log(`✅ Created ${batch.length} profitable V1 opportunities:`);
+        console.info(`✅ Created ${batch.length} profitable V1 opportunities:`);
         batch.forEach((arb, index) => {
-            console.log(`   ${index + 1}. EV: ${(arb.expectedValue * 100).toFixed(2)}%, Confidence: ${(arb.confidence * 100).toFixed(1)}%`);
+            console.info(`   ${index + 1}. EV: ${(arb.expectedValue * 100).toFixed(2)}%, Confidence: ${(arb.confidence * 100).toFixed(1)}%`);
         });
 
         return batch;
@@ -76,16 +76,16 @@ export class IncrementalSyntheticArbitrageExamples {
      * Example 3: V1 Market Compatibility Validation
      */
     static demonstrateV1Validation(): void {
-        console.log('🔍 Demonstrating V1 Validation...');
+        console.info('🔍 Demonstrating V1 Validation...');
 
         // Create valid example
         const validArb = SyntheticArbitrageV1Factory.createProfitable();
         const validValidation = validateSyntheticArbitrageComplete(validArb, 'v1');
 
-        console.log('✅ Valid V1 Example:');
-        console.log(`   Is Valid: ${validValidation.isValid}`);
-        console.log(`   Schema Errors: ${validValidation.schemaErrors.length}`);
-        console.log(`   Business Errors: ${validValidation.businessErrors.length}`);
+        console.info('✅ Valid V1 Example:');
+        console.info(`   Is Valid: ${validValidation.isValid}`);
+        console.info(`   Schema Errors: ${validValidation.schemaErrors.length}`);
+        console.info(`   Business Errors: ${validValidation.businessErrors.length}`);
 
         // Create invalid example (same exchange)
         const invalidArb = SyntheticArbitrageV1Factory.create({
@@ -97,9 +97,9 @@ export class IncrementalSyntheticArbitrageExamples {
 
         const invalidValidation = validateSyntheticArbitrageComplete(invalidArb, 'v1');
 
-        console.log('❌ Invalid V1 Example (same exchange):');
-        console.log(`   Is Valid: ${invalidValidation.isValid}`);
-        console.log(`   Business Errors: ${invalidValidation.businessErrors.join(', ')}`);
+        console.info('❌ Invalid V1 Example (same exchange):');
+        console.info(`   Is Valid: ${invalidValidation.isValid}`);
+        console.info(`   Business Errors: ${invalidValidation.businessErrors.join(', ')}`);
     }
 
     // ===== V2 EXAMPLES: RISK MANAGEMENT =====
@@ -108,23 +108,23 @@ export class IncrementalSyntheticArbitrageExamples {
      * Example 4: V2 Synthetic Arbitrage with Risk Metrics
      */
     static createRiskManagedV2Example(): SyntheticArbitrageV2 {
-        console.log('⚠️ Creating V2 Risk-Managed Synthetic Arbitrage...');
+        console.info('⚠️ Creating V2 Risk-Managed Synthetic Arbitrage...');
 
         const arbitrage = SyntheticArbitrageV2Factory.createConservative();
 
-        console.log('✅ V2 Synthetic Arbitrage with Risk Management:');
-        console.log(`   Position Size: $${arbitrage.positionSize.toLocaleString()}`);
-        console.log(`   Stop Loss: $${arbitrage.stopLoss.toLocaleString()}`);
-        console.log(`   Target Profit: $${arbitrage.targetProfit.toLocaleString()}`);
-        console.log(`   VaR95: ${(arbitrage.riskMetrics.var95 * 100).toFixed(2)}%`);
-        console.log(`   Sharpe Ratio: ${arbitrage.riskMetrics.sharpeRatio.toFixed(2)}`);
-        console.log(`   Kelly Fraction: ${(arbitrage.riskMetrics.positionMetrics.kellyFraction * 100).toFixed(1)}%`);
+        console.info('✅ V2 Synthetic Arbitrage with Risk Management:');
+        console.info(`   Position Size: $${arbitrage.positionSize.toLocaleString()}`);
+        console.info(`   Stop Loss: $${arbitrage.stopLoss.toLocaleString()}`);
+        console.info(`   Target Profit: $${arbitrage.targetProfit.toLocaleString()}`);
+        console.info(`   VaR95: ${(arbitrage.riskMetrics.var95 * 100).toFixed(2)}%`);
+        console.info(`   Sharpe Ratio: ${arbitrage.riskMetrics.sharpeRatio.toFixed(2)}`);
+        console.info(`   Kelly Fraction: ${(arbitrage.riskMetrics.positionMetrics.kellyFraction * 100).toFixed(1)}%`);
 
         // Validate V2
         const validation = validateSyntheticArbitrageComplete(arbitrage, 'v2');
-        console.log(`   Validation: ${validation.isValid ? '✅ PASS' : '❌ FAIL'}`);
+        console.info(`   Validation: ${validation.isValid ? '✅ PASS' : '❌ FAIL'}`);
         if (validation.warnings.length > 0) {
-            console.log(`   Warnings: ${validation.warnings.join(', ')}`);
+            console.info(`   Warnings: ${validation.warnings.join(', ')}`);
         }
 
         return arbitrage;
@@ -134,42 +134,42 @@ export class IncrementalSyntheticArbitrageExamples {
      * Example 5: V2 Risk Profile Comparison
      */
     static compareRiskProfiles(): void {
-        console.log('📈 Comparing V2 Risk Profiles...');
+        console.info('📈 Comparing V2 Risk Profiles...');
 
         const conservative = SyntheticArbitrageV2Factory.createConservative();
         const normal = SyntheticArbitrageV2Factory.create();
         const aggressive = SyntheticArbitrageV2Factory.createAggressive();
 
-        console.log('Risk Profile Comparison:');
-        console.log('                    Conservative    Normal      Aggressive');
-        console.log(`Expected Value:     ${(conservative.expectedValue * 100).toFixed(2)}%       ${(normal.expectedValue * 100).toFixed(2)}%        ${(aggressive.expectedValue * 100).toFixed(2)}%`);
-        console.log(`Position Size:      $${conservative.positionSize.toLocaleString().padStart(8)}   $${normal.positionSize.toLocaleString().padStart(8)}    $${aggressive.positionSize.toLocaleString().padStart(8)}`);
-        console.log(`VaR95:              ${(conservative.riskMetrics.var95 * 100).toFixed(2)}%        ${(normal.riskMetrics.var95 * 100).toFixed(2)}%        ${(aggressive.riskMetrics.var95 * 100).toFixed(2)}%`);
-        console.log(`Sharpe Ratio:       ${conservative.riskMetrics.sharpeRatio.toFixed(2).padStart(8)}     ${normal.riskMetrics.sharpeRatio.toFixed(2).padStart(8)}      ${aggressive.riskMetrics.sharpeRatio.toFixed(2).padStart(8)}`);
-        console.log(`Max Leverage:       ${conservative.maxLeverage.toFixed(1).padStart(8)}x      ${normal.maxLeverage.toFixed(1).padStart(8)}x       ${aggressive.maxLeverage.toFixed(1).padStart(8)}x`);
+        console.info('Risk Profile Comparison:');
+        console.info('                    Conservative    Normal      Aggressive');
+        console.info(`Expected Value:     ${(conservative.expectedValue * 100).toFixed(2)}%       ${(normal.expectedValue * 100).toFixed(2)}%        ${(aggressive.expectedValue * 100).toFixed(2)}%`);
+        console.info(`Position Size:      $${conservative.positionSize.toLocaleString().padStart(8)}   $${normal.positionSize.toLocaleString().padStart(8)}    $${aggressive.positionSize.toLocaleString().padStart(8)}`);
+        console.info(`VaR95:              ${(conservative.riskMetrics.var95 * 100).toFixed(2)}%        ${(normal.riskMetrics.var95 * 100).toFixed(2)}%        ${(aggressive.riskMetrics.var95 * 100).toFixed(2)}%`);
+        console.info(`Sharpe Ratio:       ${conservative.riskMetrics.sharpeRatio.toFixed(2).padStart(8)}     ${normal.riskMetrics.sharpeRatio.toFixed(2).padStart(8)}      ${aggressive.riskMetrics.sharpeRatio.toFixed(2).padStart(8)}`);
+        console.info(`Max Leverage:       ${conservative.maxLeverage.toFixed(1).padStart(8)}x      ${normal.maxLeverage.toFixed(1).padStart(8)}x       ${aggressive.maxLeverage.toFixed(1).padStart(8)}x`);
     }
 
     /**
      * Example 6: V2 NBA with Comprehensive Risk Analysis
      */
     static createNBAV2WithRiskAnalysis(): SyntheticArbitrageV2 {
-        console.log('🏀 Creating NBA V2 with Risk Analysis...');
+        console.info('🏀 Creating NBA V2 with Risk Analysis...');
 
         const nbaArb = SyntheticArbitrageV2Factory.createNBAV2Example();
 
-        console.log('📊 NBA V2 Risk Analysis:');
-        console.log(`   Game: ${nbaArb.markets[0].gameId}`);
-        console.log(`   Markets: ${nbaArb.markets[0].period} (${nbaArb.markets[0].exchange}) vs ${nbaArb.markets[1].period} (${nbaArb.markets[1].exchange})`);
-        console.log(`   Expected Return: ${(nbaArb.expectedValue * 100).toFixed(2)}%`);
-        console.log(`   Risk-Adjusted Return: ${nbaArb.riskMetrics.positionMetrics.riskAdjustedReturn.toFixed(3)}`);
-        console.log(`   Risk Metrics:`);
-        console.log(`     VaR95: ${(nbaArb.riskMetrics.var95 * 100).toFixed(2)}%`);
-        console.log(`     VaR99: ${(nbaArb.riskMetrics.var99 * 100).toFixed(2)}%`);
-        console.log(`     Max Drawdown: $${nbaArb.riskMetrics.maxDrawdown.toLocaleString()}`);
-        console.log(`   Execution Risk:`);
-        console.log(`     Liquidity Risk: ${(nbaArb.riskMetrics.executionRisk.liquidityRisk * 100).toFixed(1)}%`);
-        console.log(`     Execution Risk: ${(nbaArb.riskMetrics.executionRisk.executionRisk * 100).toFixed(1)}%`);
-        console.log(`     Slippage Risk: ${(nbaArb.riskMetrics.executionRisk.slippageRisk * 100).toFixed(1)}%`);
+        console.info('📊 NBA V2 Risk Analysis:');
+        console.info(`   Game: ${nbaArb.markets[0].gameId}`);
+        console.info(`   Markets: ${nbaArb.markets[0].period} (${nbaArb.markets[0].exchange}) vs ${nbaArb.markets[1].period} (${nbaArb.markets[1].exchange})`);
+        console.info(`   Expected Return: ${(nbaArb.expectedValue * 100).toFixed(2)}%`);
+        console.info(`   Risk-Adjusted Return: ${nbaArb.riskMetrics.positionMetrics.riskAdjustedReturn.toFixed(3)}`);
+        console.info(`   Risk Metrics:`);
+        console.info(`     VaR95: ${(nbaArb.riskMetrics.var95 * 100).toFixed(2)}%`);
+        console.info(`     VaR99: ${(nbaArb.riskMetrics.var99 * 100).toFixed(2)}%`);
+        console.info(`     Max Drawdown: $${nbaArb.riskMetrics.maxDrawdown.toLocaleString()}`);
+        console.info(`   Execution Risk:`);
+        console.info(`     Liquidity Risk: ${(nbaArb.riskMetrics.executionRisk.liquidityRisk * 100).toFixed(1)}%`);
+        console.info(`     Execution Risk: ${(nbaArb.riskMetrics.executionRisk.executionRisk * 100).toFixed(1)}%`);
+        console.info(`     Slippage Risk: ${(nbaArb.riskMetrics.executionRisk.slippageRisk * 100).toFixed(1)}%`);
 
         return nbaArb;
     }
@@ -180,24 +180,24 @@ export class IncrementalSyntheticArbitrageExamples {
      * Example 7: V3 Multi-Market Synthetic Arbitrage
      */
     static createMultiMarketV3Example(): SyntheticArbitrageV3 {
-        console.log('🔄 Creating V3 Multi-Market Synthetic Arbitrage...');
+        console.info('🔄 Creating V3 Multi-Market Synthetic Arbitrage...');
 
         const arbitrage = SyntheticArbitrageV3Factory.create();
 
-        console.log('✅ V3 Multi-Market Synthetic Arbitrage:');
-        console.log(`   Markets: ${arbitrage.markets.length} markets`);
+        console.info('✅ V3 Multi-Market Synthetic Arbitrage:');
+        console.info(`   Markets: ${arbitrage.markets.length} markets`);
         arbitrage.markets.forEach((market, index) => {
-            console.log(`     ${index + 1}. ${market.period} (${market.exchange}) - Line: ${market.line}`);
+            console.info(`     ${index + 1}. ${market.period} (${market.exchange}) - Line: ${market.line}`);
         });
-        console.log(`   Optimal Weights: [${arbitrage.optimalWeights.map(w => (w * 100).toFixed(1)).join('%, ')}%]`);
-        console.log(`   Diversification Ratio: ${arbitrage.diversificationRatio.toFixed(3)}`);
-        console.log(`   Concentration Risk: ${(arbitrage.concentrationRisk * 100).toFixed(1)}%`);
-        console.log(`   Efficient Frontier Points: ${arbitrage.efficientFrontier.length}`);
+        console.info(`   Optimal Weights: [${arbitrage.optimalWeights.map(w => (w * 100).toFixed(1)).join('%, ')}%]`);
+        console.info(`   Diversification Ratio: ${arbitrage.diversificationRatio.toFixed(3)}`);
+        console.info(`   Concentration Risk: ${(arbitrage.concentrationRisk * 100).toFixed(1)}%`);
+        console.info(`   Efficient Frontier Points: ${arbitrage.efficientFrontier.length}`);
 
         // Show correlation matrix
-        console.log('   Correlation Matrix:');
+        console.info('   Correlation Matrix:');
         arbitrage.correlationMatrix.matrix.forEach((row, i) => {
-            console.log(`     ${arbitrage.correlationMatrix.symbols[i]}: [${row.map(c => c.toFixed(2)).join(', ')}]`);
+            console.info(`     ${arbitrage.correlationMatrix.symbols[i]}: [${row.map(c => c.toFixed(2)).join(', ')}]`);
         });
 
         return arbitrage;
@@ -207,31 +207,31 @@ export class IncrementalSyntheticArbitrageExamples {
      * Example 8: V3 Execution Plan and Monitoring
      */
     static demonstrateV3Execution(): SyntheticArbitrageV3 {
-        console.log('⚡ Demonstrating V3 Execution and Monitoring...');
+        console.info('⚡ Demonstrating V3 Execution and Monitoring...');
 
         const arbitrage = SyntheticArbitrageV3Factory.createMultiMarketNBAExample();
 
-        console.log('📋 Execution Plan:');
-        console.log(`   Status: ${arbitrage.executionPlan.status}`);
-        console.log(`   Orders: ${arbitrage.executionPlan.orders.length}`);
-        console.log(`   Total Size: $${arbitrage.executionPlan.totalSize.toLocaleString()}`);
-        console.log(`   Execution Timeout: ${arbitrage.executionPlan.executionTimeout}ms`);
-        console.log(`   Retry Policy: Max ${arbitrage.executionPlan.retryPolicy.maxRetries} retries`);
+        console.info('📋 Execution Plan:');
+        console.info(`   Status: ${arbitrage.executionPlan.status}`);
+        console.info(`   Orders: ${arbitrage.executionPlan.orders.length}`);
+        console.info(`   Total Size: $${arbitrage.executionPlan.totalSize.toLocaleString()}`);
+        console.info(`   Execution Timeout: ${arbitrage.executionPlan.executionTimeout}ms`);
+        console.info(`   Retry Policy: Max ${arbitrage.executionPlan.retryPolicy.maxRetries} retries`);
 
         arbitrage.executionPlan.orders.forEach((order, index) => {
-            console.log(`   Order ${index + 1}: ${order.side.toUpperCase()} ${order.size} @ $${order.price} (${order.market.exchange})`);
+            console.info(`   Order ${index + 1}: ${order.side.toUpperCase()} ${order.size} @ $${order.price} (${order.market.exchange})`);
         });
 
-        console.log('📊 Real-time Monitoring:');
-        console.log(`   Current P&L: $${arbitrage.monitoring.currentPnL.toLocaleString()}`);
-        console.log(`   Execution Progress: ${(arbitrage.monitoring.executionProgress * 100).toFixed(1)}%`);
-        console.log(`   Market Conditions: ${arbitrage.monitoring.marketConditions.volatility} volatility, ${arbitrage.monitoring.marketConditions.liquidity} liquidity`);
+        console.info('📊 Real-time Monitoring:');
+        console.info(`   Current P&L: $${arbitrage.monitoring.currentPnL.toLocaleString()}`);
+        console.info(`   Execution Progress: ${(arbitrage.monitoring.executionProgress * 100).toFixed(1)}%`);
+        console.info(`   Market Conditions: ${arbitrage.monitoring.marketConditions.volatility} volatility, ${arbitrage.monitoring.marketConditions.liquidity} liquidity`);
 
-        console.log('📈 Performance Tracking:');
-        console.log(`   Total Trades: ${arbitrage.performance.totalTrades}`);
-        console.log(`   Win Rate: ${(arbitrage.performance.winRate * 100).toFixed(1)}%`);
-        console.log(`   Sharpe Ratio: ${arbitrage.performance.sharpeRatio.toFixed(2)}`);
-        console.log(`   Total Return: ${(arbitrage.performance.totalReturn * 100).toFixed(2)}%`);
+        console.info('📈 Performance Tracking:');
+        console.info(`   Total Trades: ${arbitrage.performance.totalTrades}`);
+        console.info(`   Win Rate: ${(arbitrage.performance.winRate * 100).toFixed(1)}%`);
+        console.info(`   Sharpe Ratio: ${arbitrage.performance.sharpeRatio.toFixed(2)}`);
+        console.info(`   Total Return: ${(arbitrage.performance.totalReturn * 100).toFixed(2)}%`);
 
         return arbitrage;
     }
@@ -240,20 +240,20 @@ export class IncrementalSyntheticArbitrageExamples {
      * Example 9: V3 Alert System and History
      */
     static demonstrateV3Alerts(): SyntheticArbitrageV3 {
-        console.log('🚨 Demonstrating V3 Alert System...');
+        console.info('🚨 Demonstrating V3 Alert System...');
 
         const arbitrage = SyntheticArbitrageV3Factory.createMultiMarketNBAExample();
 
         // Simulate adding alerts
-        console.log('Adding alerts to synthetic arbitrage...');
+        console.info('Adding alerts to synthetic arbitrage...');
 
         // This would be done through the actual V3 methods in a real implementation
-        console.log('📢 Alert System:');
-        console.log(`   Active Alerts: ${arbitrage.alerts.length}`);
-        console.log(`   History Entries: ${arbitrage.history.length}`);
+        console.info('📢 Alert System:');
+        console.info(`   Active Alerts: ${arbitrage.alerts.length}`);
+        console.info(`   History Entries: ${arbitrage.history.length}`);
 
         arbitrage.history.forEach((entry, index) => {
-            console.log(`   ${index + 1}. ${entry.action} at ${entry.timestamp.toISOString()}`);
+            console.info(`   ${index + 1}. ${entry.action} at ${entry.timestamp.toISOString()}`);
         });
 
         return arbitrage;
@@ -265,40 +265,40 @@ export class IncrementalSyntheticArbitrageExamples {
      * Example 10: Complete V1→V2→V3 Evolution Workflow
      */
     static demonstrateCompleteEvolution(): void {
-        console.log('🚀 Demonstrating Complete V1→V2→V3 Evolution...');
+        console.info('🚀 Demonstrating Complete V1→V2→V3 Evolution...');
 
         // Step 1: V1 Core Detection
-        console.log('\n📊 Step 1: V1 Core Detection');
+        console.info('\n📊 Step 1: V1 Core Detection');
         const v1Arb = this.createBasicNBAExample();
 
         // Step 2: V2 Risk Management
-        console.log('\n⚠️ Step 2: V2 Risk Management');
+        console.info('\n⚠️ Step 2: V2 Risk Management');
         const v2Arb = this.createRiskManagedV2Example();
 
         // Step 3: V3 Advanced Features
-        console.log('\n🔄 Step 3: V3 Advanced Features');
+        console.info('\n🔄 Step 3: V3 Advanced Features');
         const v3Arb = this.createMultiMarketV3Example();
 
         // Comparison
-        console.log('\n📈 Evolution Summary:');
-        console.log('Version   Markets   Risk Metrics   Execution   Monitoring');
-        console.log(`V1        2         ❌             ❌          ❌`);
-        console.log(`V2        2         ✅             ❌          ❌`);
-        console.log(`V3        3+        ✅             ✅          ✅`);
+        console.info('\n📈 Evolution Summary:');
+        console.info('Version   Markets   Risk Metrics   Execution   Monitoring');
+        console.info(`V1        2         ❌             ❌          ❌`);
+        console.info(`V2        2         ✅             ❌          ❌`);
+        console.info(`V3        3+        ✅             ✅          ✅`);
 
-        console.log('\n✅ Evolution Complete: From basic detection to comprehensive execution system');
+        console.info('\n✅ Evolution Complete: From basic detection to comprehensive execution system');
     }
 
     /**
      * Example 11: Performance Benchmarking
      */
     static demonstratePerformanceBenchmarking(): void {
-        console.log('⚡ Performance Benchmarking...');
+        console.info('⚡ Performance Benchmarking...');
 
         const iterations = 1000;
 
         // V1 Performance
-        console.log('\n📊 V1 Performance Test:');
+        console.info('\n📊 V1 Performance Test:');
         const v1Start = performance.now();
         for (let i = 0; i < iterations; i++) {
             const arb = SyntheticArbitrageV1Factory.createProfitable();
@@ -306,10 +306,10 @@ export class IncrementalSyntheticArbitrageExamples {
         }
         const v1End = performance.now();
         const v1AvgTime = (v1End - v1Start) / iterations;
-        console.log(`   Average time per V1 creation+validation: ${v1AvgTime.toFixed(3)}ms`);
+        console.info(`   Average time per V1 creation+validation: ${v1AvgTime.toFixed(3)}ms`);
 
         // V2 Performance
-        console.log('\n⚠️ V2 Performance Test:');
+        console.info('\n⚠️ V2 Performance Test:');
         const v2Start = performance.now();
         for (let i = 0; i < iterations; i++) {
             const arb = SyntheticArbitrageV2Factory.create();
@@ -317,10 +317,10 @@ export class IncrementalSyntheticArbitrageExamples {
         }
         const v2End = performance.now();
         const v2AvgTime = (v2End - v2Start) / iterations;
-        console.log(`   Average time per V2 creation+validation: ${v2AvgTime.toFixed(3)}ms`);
+        console.info(`   Average time per V2 creation+validation: ${v2AvgTime.toFixed(3)}ms`);
 
         // V3 Performance
-        console.log('\n🔄 V3 Performance Test:');
+        console.info('\n🔄 V3 Performance Test:');
         const v3Start = performance.now();
         for (let i = 0; i < iterations; i++) {
             const arb = SyntheticArbitrageV3Factory.create();
@@ -328,12 +328,12 @@ export class IncrementalSyntheticArbitrageExamples {
         }
         const v3End = performance.now();
         const v3AvgTime = (v3End - v3Start) / iterations;
-        console.log(`   Average time per V3 creation+validation: ${v3AvgTime.toFixed(3)}ms`);
+        console.info(`   Average time per V3 creation+validation: ${v3AvgTime.toFixed(3)}ms`);
 
-        console.log('\n📈 Performance Summary:');
-        console.log(`   V1 (Core): ${v1AvgTime.toFixed(3)}ms - ✅ Sub-millisecond`);
-        console.log(`   V2 (Risk): ${v2AvgTime.toFixed(3)}ms - ✅ Sub-millisecond`);
-        console.log(`   V3 (Advanced): ${v3AvgTime.toFixed(3)}ms - ${v3AvgTime < 1 ? '✅' : '⚠️'} ${v3AvgTime < 1 ? 'Sub-millisecond' : 'Above target'}`);
+        console.info('\n📈 Performance Summary:');
+        console.info(`   V1 (Core): ${v1AvgTime.toFixed(3)}ms - ✅ Sub-millisecond`);
+        console.info(`   V2 (Risk): ${v2AvgTime.toFixed(3)}ms - ✅ Sub-millisecond`);
+        console.info(`   V3 (Advanced): ${v3AvgTime.toFixed(3)}ms - ${v3AvgTime < 1 ? '✅' : '⚠️'} ${v3AvgTime < 1 ? 'Sub-millisecond' : 'Above target'}`);
     }
 
     /**
@@ -344,24 +344,24 @@ export class IncrementalSyntheticArbitrageExamples {
         v2RiskAnalysis: SyntheticArbitrageV2;
         v3ExecutionPlan: SyntheticArbitrageV3;
     } {
-        console.log('🏀 Real-world NBA Scenario: Lakers vs Celtics');
+        console.info('🏀 Real-world NBA Scenario: Lakers vs Celtics');
 
         // V1: Initial detection
-        console.log('\n📊 Step 1: Opportunity Detection (V1)');
+        console.info('\n📊 Step 1: Opportunity Detection (V1)');
         const v1Detection = SyntheticArbitrageV1Factory.createNBAExample();
-        console.log(`   ✅ Opportunity detected: ${(v1Detection.expectedValue * 100).toFixed(2)}% expected value`);
+        console.info(`   ✅ Opportunity detected: ${(v1Detection.expectedValue * 100).toFixed(2)}% expected value`);
 
         // V2: Risk analysis
-        console.log('\n⚠️ Step 2: Risk Analysis (V2)');
+        console.info('\n⚠️ Step 2: Risk Analysis (V2)');
         const v2RiskAnalysis = SyntheticArbitrageV2Factory.createNBAV2Example();
-        console.log(`   ✅ Risk assessment complete: ${v2RiskAnalysis.riskMetrics.sharpeRatio.toFixed(2)} Sharpe ratio`);
-        console.log(`   💰 Recommended position: $${v2RiskAnalysis.positionSize.toLocaleString()}`);
+        console.info(`   ✅ Risk assessment complete: ${v2RiskAnalysis.riskMetrics.sharpeRatio.toFixed(2)} Sharpe ratio`);
+        console.info(`   💰 Recommended position: $${v2RiskAnalysis.positionSize.toLocaleString()}`);
 
         // V3: Execution planning
-        console.log('\n🔄 Step 3: Execution Planning (V3)');
+        console.info('\n🔄 Step 3: Execution Planning (V3)');
         const v3ExecutionPlan = SyntheticArbitrageV3Factory.createMultiMarketNBAExample();
-        console.log(`   ✅ Execution plan ready: ${v3ExecutionPlan.executionPlan.orders.length} orders`);
-        console.log(`   ⏱️  Estimated execution time: ${v3ExecutionPlan.executionPlan.executionTimeout}ms`);
+        console.info(`   ✅ Execution plan ready: ${v3ExecutionPlan.executionPlan.orders.length} orders`);
+        console.info(`   ⏱️  Estimated execution time: ${v3ExecutionPlan.executionPlan.executionTimeout}ms`);
 
         return {
             v1Detection,
@@ -376,45 +376,45 @@ export class IncrementalSyntheticArbitrageExamples {
      * Run all examples in sequence
      */
     static runAllExamples(): void {
-        console.log('🚀 Running All Incremental Synthetic Arbitrage Examples\n');
+        console.info('🚀 Running All Incremental Synthetic Arbitrage Examples\n');
 
         try {
             this.createBasicNBAExample();
-            console.log('\n' + '='.repeat(60));
+            console.info('\n' + '='.repeat(60));
 
             this.createProfitableV1Batch();
-            console.log('\n' + '='.repeat(60));
+            console.info('\n' + '='.repeat(60));
 
             this.demonstrateV1Validation();
-            console.log('\n' + '='.repeat(60));
+            console.info('\n' + '='.repeat(60));
 
             this.createRiskManagedV2Example();
-            console.log('\n' + '='.repeat(60));
+            console.info('\n' + '='.repeat(60));
 
             this.compareRiskProfiles();
-            console.log('\n' + '='.repeat(60));
+            console.info('\n' + '='.repeat(60));
 
             this.createNBAV2WithRiskAnalysis();
-            console.log('\n' + '='.repeat(60));
+            console.info('\n' + '='.repeat(60));
 
             this.createMultiMarketV3Example();
-            console.log('\n' + '='.repeat(60));
+            console.info('\n' + '='.repeat(60));
 
             this.demonstrateV3Execution();
-            console.log('\n' + '='.repeat(60));
+            console.info('\n' + '='.repeat(60));
 
             this.demonstrateV3Alerts();
-            console.log('\n' + '='.repeat(60));
+            console.info('\n' + '='.repeat(60));
 
             this.demonstrateCompleteEvolution();
-            console.log('\n' + '='.repeat(60));
+            console.info('\n' + '='.repeat(60));
 
             this.demonstratePerformanceBenchmarking();
-            console.log('\n' + '='.repeat(60));
+            console.info('\n' + '='.repeat(60));
 
             this.createRealWorldNBAScenario();
 
-            console.log('\n✅ All examples completed successfully!');
+            console.info('\n✅ All examples completed successfully!');
 
         } catch (error) {
             console.error('❌ Error running examples:', error);

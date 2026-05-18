@@ -23,11 +23,11 @@ export class HierarchySystem {
    * Initialize the hierarchy system
    */
   private async initializeSystem(): Promise<void> {
-    console.log('👑 Initializing Hierarchy System...');
+    console.info('👑 Initializing Hierarchy System...');
 
     // Any additional initialization would go here
 
-    console.log('✅ Hierarchy System initialized successfully');
+    console.info('✅ Hierarchy System initialized successfully');
   }
 
   // Agent Profile Management Methods

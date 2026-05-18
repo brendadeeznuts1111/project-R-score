@@ -23,7 +23,7 @@ import {
 const COMMANDS = {
 	// Test commands
 	test: async (_args: string[]) => {
-		console.log("🔥 Running Matrix Tests...\n");
+		console.info("🔥 Running Matrix Tests...\n");
 		const { spawn } = await import("bun");
 		const proc = spawn(["bun", "test", "matrix/test-matrix-90.test.ts"], {
 			stdout: "inherit",
@@ -34,13 +34,13 @@ const COMMANDS = {
 
 	// Benchmark commands
 	bench: async (args: string[]) => {
-		console.log("🔥 Running Matrix Benchmarks...\n");
+		console.info("🔥 Running Matrix Benchmarks...\n");
 		const { spawn } = await import("bun");
 
 		const env = { ...process.env };
 		if (args.includes("--cpu-prof")) {
 			env.ENABLE_CPU_PROF = "true";
-			console.log("📝 CPU profiling enabled\n");
+			console.info("📝 CPU profiling enabled\n");
 		}
 
 		const iterations =
@@ -57,7 +57,7 @@ const COMMANDS = {
 
 	// CPU Profile command
 	"cpu-prof": async (_args: string[]) => {
-		console.log("🔥 Running with CPU Profile...\n");
+		console.info("🔥 Running with CPU Profile...\n");
 		const { spawn } = await import("bun");
 
 		const proc = spawn(
@@ -72,8 +72,8 @@ const COMMANDS = {
 		const exitCode = await proc.exited;
 
 		if (exitCode === 0) {
-			console.log("\n✅ CPU Profile generated");
-			console.log("📄 Look for: *.cpuprofile and *.md files");
+			console.info("\n✅ CPU Profile generated");
+			console.info("📄 Look for: *.cpuprofile and *.md files");
 		}
 	},
 
@@ -82,8 +82,8 @@ const COMMANDS = {
 		const full = args.includes("--full");
 		const zone = args.find((a) => a.startsWith("--zone="))?.split("=")[1];
 
-		console.log("\n🔥 Tier-1380 OMEGA Matrix Grid\n");
-		console.log("═".repeat(80));
+		console.info("\n🔥 Tier-1380 OMEGA Matrix Grid\n");
+		console.info("═".repeat(80));
 
 		const startCol = full ? 0 : 1;
 		const endCol = full ? 91 : 90;
@@ -107,15 +107,15 @@ const COMMANDS = {
 				}
 			}
 
-			console.log(
+			console.info(
 				`${rowStart.toString().padStart(2)}-${rowEnd.toString().padStart(2)} │ ${cells.join(" ")}`,
 			);
 		}
 
-		console.log("═".repeat(80));
-		console.log("\nZones:");
+		console.info("═".repeat(80));
+		console.info("\nZones:");
 		for (const [name, meta] of Object.entries(ZONES)) {
-			console.log(`  ${meta.emoji} ${name.padEnd(13)} ${meta.start}-${meta.end}`);
+			console.info(`  ${meta.emoji} ${name.padEnd(13)} ${meta.start}-${meta.end}`);
 		}
 	},
 
@@ -123,42 +123,42 @@ const COMMANDS = {
 	col: (args: string[]) => {
 		const idx = Number(args[0]);
 		if (Number.isNaN(idx)) {
-			console.log("Usage: matrix-cli col <index>");
+			console.info("Usage: matrix-cli col <index>");
 			return;
 		}
 
 		const col = getColumn(idx);
 		if (!col) {
-			console.log(`Column ${idx} not found`);
+			console.info(`Column ${idx} not found`);
 			return;
 		}
 
-		console.log(`\n🔥 Column ${idx}: ${col.name}\n`);
-		console.log(Bun.inspect(col, { colors: true, depth: 3 }));
+		console.info(`\n🔥 Column ${idx}: ${col.name}\n`);
+		console.info(Bun.inspect(col, { colors: true, depth: 3 }));
 	},
 
 	// Team info
 	team: (args: string[]) => {
 		const teamId = args[0] as keyof typeof TEAMS;
 		if (!teamId || !TEAMS[teamId]) {
-			console.log("Teams:", Object.keys(TEAMS).join(", "));
+			console.info("Teams:", Object.keys(TEAMS).join(", "));
 			return;
 		}
 
 		const team = TEAMS[teamId];
 		const cols = getColumnsByTeam(teamId);
 
-		console.log(`\n${team.emoji} ${team.name}\n`);
-		console.log(`Tier: ${team.tier}`);
-		console.log(`Columns: ${cols.length}`);
-		console.log(`Responsibilities: ${team.responsibilities.join(", ")}`);
-		console.log("\nColumn ranges:");
+		console.info(`\n${team.emoji} ${team.name}\n`);
+		console.info(`Tier: ${team.tier}`);
+		console.info(`Columns: ${cols.length}`);
+		console.info(`Responsibilities: ${team.responsibilities.join(", ")}`);
+		console.info("\nColumn ranges:");
 
 		for (const col of cols.slice(0, 10)) {
-			console.log(`  ${col.index}: ${col.name}`);
+			console.info(`  ${col.index}: ${col.name}`);
 		}
 		if (cols.length > 10) {
-			console.log(`  ... and ${cols.length - 10} more`);
+			console.info(`  ... and ${cols.length - 10} more`);
 		}
 	},
 
@@ -166,68 +166,68 @@ const COMMANDS = {
 	zone: (args: string[]) => {
 		const zoneName = args[0];
 		if (!zoneName) {
-			console.log("Zones:", Object.keys(ZONES).join(", "));
+			console.info("Zones:", Object.keys(ZONES).join(", "));
 			return;
 		}
 
 		const cols = getColumnsByZone(zoneName);
 		if (cols.length === 0) {
-			console.log(`Zone "${zoneName}" not found`);
+			console.info(`Zone "${zoneName}" not found`);
 			return;
 		}
 
 		const meta = ZONES[zoneName as keyof typeof ZONES];
-		console.log(`\n${meta?.emoji || "📊"} ${zoneName} Zone\n`);
-		console.log(`Range: ${meta?.start}-${meta?.end}`);
-		console.log(`Columns: ${cols.length}`);
+		console.info(`\n${meta?.emoji || "📊"} ${zoneName} Zone\n`);
+		console.info(`Range: ${meta?.start}-${meta?.end}`);
+		console.info(`Columns: ${cols.length}`);
 
 		for (const col of cols) {
 			const profile = col.profileLink ? " 🔗" : "";
-			console.log(`  ${col.index}: ${col.name}${profile}`);
+			console.info(`  ${col.index}: ${col.name}${profile}`);
 		}
 	},
 
 	// Environment info
 	env: () => {
-		console.log("\n🔥 Matrix Environment\n");
-		console.log(`Bun version: ${Bun.version}`);
-		console.log(`Node ENV: ${process.env.NODE_ENV || "not set"}`);
-		console.log(`Matrix Tier: ${process.env.MATRIX_TIER || "1380"}`);
-		console.log(`Enable Cache: ${process.env.ENABLE_CACHE !== "false"}`);
-		console.log(`Validation Strict: ${process.env.VALIDATION_STRICT === "true"}`);
+		console.info("\n🔥 Matrix Environment\n");
+		console.info(`Bun version: ${Bun.version}`);
+		console.info(`Node ENV: ${process.env.NODE_ENV || "not set"}`);
+		console.info(`Matrix Tier: ${process.env.MATRIX_TIER || "1380"}`);
+		console.info(`Enable Cache: ${process.env.ENABLE_CACHE !== "false"}`);
+		console.info(`Validation Strict: ${process.env.VALIDATION_STRICT === "true"}`);
 	},
 
 	// Grep Cloudflare columns
 	"grep:cf": () => {
-		console.log("\n🔥 Cloudflare Zone Columns (21-30)\n");
+		console.info("\n🔥 Cloudflare Zone Columns (21-30)\n");
 		const cfCols = Object.values(ALL_COLUMNS_91).filter((c) => c.zone === "cloudflare");
 		for (const col of cfCols) {
 			const owner = col.owner === "security" ? "🔴" : "🟣";
 			const profile = col.profileLink ? " 🔗" : "";
-			console.log(
+			console.info(
 				`  ${owner} ${col.index.toString().padStart(2)} ${col.name}${profile}`,
 			);
-			console.log(`     Type: ${col.type} | Owner: ${col.owner}`);
-			if (col.description) console.log(`     ${col.description}`);
-			console.log();
+			console.info(`     Type: ${col.type} | Owner: ${col.owner}`);
+			if (col.description) console.info(`     ${col.description}`);
+			console.info();
 		}
 	},
 
 	// Grep DEFAULT column
 	"grep:default": async () => {
-		console.log("\n⚪ DEFAULT Column (0) - Zone Fallback Values\n");
+		console.info("\n⚪ DEFAULT Column (0) - Zone Fallback Values\n");
 		const defCol = getColumn(0);
 		if (defCol) {
-			console.log(`  ${defCol.index}: ${defCol.name}`);
-			console.log(`  Type: ${defCol.type} | Owner: ${defCol.owner}`);
-			console.log(`  Description: ${defCol.description}`);
-			console.log("\n  Zone-specific defaults:");
+			console.info(`  ${defCol.index}: ${defCol.name}`);
+			console.info(`  Type: ${defCol.type} | Owner: ${defCol.owner}`);
+			console.info(`  Description: ${defCol.description}`);
+			console.info("\n  Zone-specific defaults:");
 			const { getDefaultValue } = await import("./default-value-resolver");
 			const zones = ["tension", "validation", "security", "integrity", "core"] as const;
 			for (const zone of zones) {
 				const num = getDefaultValue(zone, "number");
 				const str = getDefaultValue(zone, "string");
-				console.log(`    ${zone.padEnd(12)} number: ${num}, string: "${str}"`);
+				console.info(`    ${zone.padEnd(12)} number: ${num}, string: "${str}"`);
 			}
 		}
 	},
@@ -269,23 +269,23 @@ const COMMANDS = {
 		};
 
 		if (jsonOutput) {
-			console.log(JSON.stringify(result, null, 2));
+			console.info(JSON.stringify(result, null, 2));
 		} else {
-			console.log("\n🔥 Matrix Query\n");
-			console.log(
+			console.info("\n🔥 Matrix Query\n");
+			console.info(
 				`  Filters: columns=${colIdx || "all"}, team=${team || "all"}, min-value=${minVal || "none"}`,
 			);
-			console.log(`  Results: ${cols.length} columns\n`);
+			console.info(`  Results: ${cols.length} columns\n`);
 
 			for (const col of cols.slice(0, 10)) {
-				console.log(`  ${col.index}: ${col.name} (${col.owner}, ${col.type})`);
+				console.info(`  ${col.index}: ${col.name} (${col.owner}, ${col.type})`);
 			}
 		}
 	},
 
 	// Help
 	help: () => {
-		console.log(`
+		console.info(`
 🔥 Tier-1380 OMEGA Matrix CLI
 
 Commands:
@@ -329,6 +329,6 @@ const args = Bun.argv.slice(3);
 if (command in COMMANDS) {
 	await COMMANDS[command as keyof typeof COMMANDS](args);
 } else {
-	console.log(`Unknown command: ${command}`);
+	console.info(`Unknown command: ${command}`);
 	COMMANDS.help([]);
 }

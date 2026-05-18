@@ -1,7 +1,7 @@
 // demo/working-pty-demo.ts
 import { feature } from "bun:bundle";
 
-console.log(`
+console.info(`
 🖥️ **WORKING PTY DEMONSTRATION WITH BUN v1.3.5**
 ═══════════════════════════════════════════════════════════════════
 
@@ -23,7 +23,7 @@ Features demonstrated:
 // ============================================================================
 
 const demonstrateBasicPTY = async () => {
-  console.log("🚀 Starting basic PTY demonstration...");
+  console.info("🚀 Starting basic PTY demonstration...");
   
   const commands = [
     "echo '🎉 Hello from Bun PTY!'",
@@ -57,7 +57,7 @@ const demonstrateBasicPTY = async () => {
   await proc.exited;
   proc.terminal.close();
   
-  console.log("✅ Basic PTY demonstration completed!\n");
+  console.info("✅ Basic PTY demonstration completed!\n");
 };
 
 // ============================================================================
@@ -65,7 +65,7 @@ const demonstrateBasicPTY = async () => {
 // ============================================================================
 
 const demonstrateReusableTerminal = async () => {
-  console.log("🔄 Demonstrating reusable terminal...");
+  console.info("🔄 Demonstrating reusable terminal...");
   
   const terminal = new Bun.Terminal({
     cols: 80,
@@ -77,23 +77,23 @@ const demonstrateReusableTerminal = async () => {
   
   try {
     // First process
-    console.log("📝 Running first process...");
+    console.info("📝 Running first process...");
     const proc1 = Bun.spawn(["echo", "🥇 First process completed"], { terminal });
     await proc1.exited;
     
     // Second process
-    console.log("📝 Running second process...");
+    console.info("📝 Running second process...");
     const proc2 = Bun.spawn(["echo", "🥈 Second process completed"], { terminal });
     await proc2.exited;
     
     // Third process with Unicode
-    console.log("📝 Running Unicode process...");
+    console.info("📝 Running Unicode process...");
     const proc3 = Bun.spawn(["echo", "🌍 Unicode test: 🇺🇸 👋🏽 🎉"], { terminal });
     await proc3.exited;
     
   } finally {
     terminal.close();
-    console.log("✅ Reusable terminal demonstration completed!\n");
+    console.info("✅ Reusable terminal demonstration completed!\n");
   }
 };
 
@@ -102,7 +102,7 @@ const demonstrateReusableTerminal = async () => {
 // ============================================================================
 
 const demonstrateInteractivePrograms = async () => {
-  console.log("🎮 Demonstrating interactive program support...");
+  console.info("🎮 Demonstrating interactive program support...");
   
   // Use built-in commands instead of script
   const terminal = new Bun.Terminal({
@@ -114,7 +114,7 @@ const demonstrateInteractivePrograms = async () => {
   });
   
   try {
-    console.log("🎮 Running interactive program with colors and Unicode...");
+    console.info("🎮 Running interactive program with colors and Unicode...");
     
     const proc = Bun.spawn(["bash"], {
       terminal,
@@ -167,7 +167,7 @@ const demonstrateInteractivePrograms = async () => {
     
   } finally {
     terminal.close();
-    console.log("✅ Interactive program demonstration completed!\n");
+    console.info("✅ Interactive program demonstration completed!\n");
   }
 };
 
@@ -176,7 +176,7 @@ const demonstrateInteractivePrograms = async () => {
 // ============================================================================
 
 const demonstrateFeatureGatedPTY = async () => {
-  console.log("🚩 Demonstrating feature-gated PTY functionality...");
+  console.info("🚩 Demonstrating feature-gated PTY functionality...");
   
   class EnhancedPTY {
     private debugMode: boolean;
@@ -205,27 +205,27 @@ const demonstrateFeatureGatedPTY = async () => {
     }
     
     async startSession() {
-      console.log(`🔧 Debug mode: ${this.debugMode ? "✅" : "❌"}`);
-      console.log(`🚀 Advanced features: ${this.advancedFeatures ? "✅" : "❌"}`);
-      console.log(`🌍 Unicode enhanced: ${this.unicodeSupport ? "✅" : "❌"}`);
+      console.info(`🔧 Debug mode: ${this.debugMode ? "✅" : "❌"}`);
+      console.info(`🚀 Advanced features: ${this.advancedFeatures ? "✅" : "❌"}`);
+      console.info(`🌍 Unicode enhanced: ${this.unicodeSupport ? "✅" : "❌"}`);
       
       const terminal = new Bun.Terminal({
         cols: 80,
         rows: 24,
         data: (term: any, data: string) => {
           if (this.debugMode) {
-            console.log(`🐛 PTY data: ${data.replace(/\n/g, '\\n')}`);
+            console.info(`🐛 PTY data: ${data.replace(/\n/g, '\\n')}`);
           }
           process.stdout.write(data);
         },
       });
       
       if (this.advancedFeatures) {
-        console.log("🚀 Advanced PTY features enabled...");
+        console.info("🚀 Advanced PTY features enabled...");
       }
       
       if (this.unicodeSupport) {
-        console.log("🌍 Unicode enhancements active...");
+        console.info("🌍 Unicode enhancements active...");
       }
       
       return terminal;
@@ -262,7 +262,7 @@ const demonstrateFeatureGatedPTY = async () => {
     
   } finally {
     terminal.close();
-    console.log("✅ Feature-gated PTY demonstration completed!\n");
+    console.info("✅ Feature-gated PTY demonstration completed!\n");
   }
 };
 
@@ -271,7 +271,7 @@ const demonstrateFeatureGatedPTY = async () => {
 // ============================================================================
 
 const demonstrateUnicodeTerminal = async () => {
-  console.log("📏 Demonstrating Unicode-aware terminal handling...");
+  console.info("📏 Demonstrating Unicode-aware terminal handling...");
   
   // Test Unicode string width
   const testStrings = [
@@ -282,11 +282,11 @@ const demonstrateUnicodeTerminal = async () => {
     { str: "Normal text", expected: 11 }
   ];
   
-  console.log("📏 Unicode width tests:");
+  console.info("📏 Unicode width tests:");
   testStrings.forEach(({ str, expected }) => {
     const actual = Bun.stringWidth(str);
     const status = actual === expected ? "✅" : "❌";
-    console.log(`  ${status} "${str}" → ${actual} (expected: ${expected})`);
+    console.info(`  ${status} "${str}" → ${actual} (expected: ${expected})`);
   });
   
   // Create Unicode-aware box
@@ -307,11 +307,11 @@ const demonstrateUnicodeTerminal = async () => {
     "🇺🇸 👋🏽 👨‍👩‍👧 🎉"
   );
   
-  console.log("\n📦 Unicode-aware box:");
-  console.log(unicodeBox);
+  console.info("\n📦 Unicode-aware box:");
+  console.info(unicodeBox);
   
   // Test with PTY
-  console.log("🖥️ Testing Unicode in PTY...");
+  console.info("🖥️ Testing Unicode in PTY...");
   
   const terminal = new Bun.Terminal({
     cols: 80,
@@ -348,7 +348,7 @@ const demonstrateUnicodeTerminal = async () => {
     
   } finally {
     terminal.close();
-    console.log("✅ Unicode-aware terminal demonstration completed!\n");
+    console.info("✅ Unicode-aware terminal demonstration completed!\n");
   }
 };
 
@@ -357,7 +357,7 @@ const demonstrateUnicodeTerminal = async () => {
 // ============================================================================
 
 const demonstrateAdvancedPTY = async () => {
-  console.log("🔧 Demonstrating advanced PTY features...");
+  console.info("🔧 Demonstrating advanced PTY features...");
   
   const terminal = new Bun.Terminal({
     cols: 80,
@@ -368,8 +368,8 @@ const demonstrateAdvancedPTY = async () => {
   });
   
   // Show terminal info
-  console.log(`📐 Terminal dimensions: ${terminal.cols}x${terminal.rows}`);
-  console.log(`🖥️ Process terminal: ${process.stdout.columns}x${process.stdout.rows}`);
+  console.info(`📐 Terminal dimensions: ${terminal.cols}x${terminal.rows}`);
+  console.info(`🖥️ Process terminal: ${process.stdout.columns}x${process.stdout.rows}`);
   
   try {
     // Demonstrate environment variables
@@ -416,7 +416,7 @@ const demonstrateAdvancedPTY = async () => {
     
   } finally {
     terminal.close();
-    console.log("✅ Advanced PTY features demonstration completed!\n");
+    console.info("✅ Advanced PTY features demonstration completed!\n");
   }
 };
 
@@ -425,7 +425,7 @@ const demonstrateAdvancedPTY = async () => {
 // ============================================================================
 
 const demonstrateVimLikeEditor = async () => {
-  console.log("🎯 Demonstrating vim-like editor simulation...");
+  console.info("🎯 Demonstrating vim-like editor simulation...");
   
   const terminal = new Bun.Terminal({
     cols: 80,
@@ -490,7 +490,7 @@ const demonstrateVimLikeEditor = async () => {
     
   } finally {
     terminal.close();
-    console.log("✅ Vim-like editor demonstration completed!\n");
+    console.info("✅ Vim-like editor demonstration completed!\n");
   }
 };
 
@@ -499,12 +499,12 @@ const demonstrateVimLikeEditor = async () => {
 // ============================================================================
 
 const runAllDemonstrations = async () => {
-  console.log("🚀 Starting comprehensive PTY demonstration...\n");
+  console.info("🚀 Starting comprehensive PTY demonstration...\n");
   
   try {
     // Check if PTY is supported
     if (process.platform === 'win32') {
-      console.log("⚠️ PTY support is not available on Windows (POSIX only)");
+      console.info("⚠️ PTY support is not available on Windows (POSIX only)");
       return;
     }
     
@@ -517,7 +517,7 @@ const runAllDemonstrations = async () => {
     await demonstrateAdvancedPTY();
     await demonstrateVimLikeEditor();
     
-    console.log("🎉 All PTY demonstrations completed successfully!");
+    console.info("🎉 All PTY demonstrations completed successfully!");
     
   } catch (error) {
     console.error("❌ Error during demonstration:", error);
@@ -528,7 +528,7 @@ const runAllDemonstrations = async () => {
 // 📚 USAGE EXAMPLES AND BEST PRACTICES
 // ============================================================================
 
-console.log(`
+console.info(`
 📚 **USAGE EXAMPLES AND BEST PRACTICES**
 ═══════════════════════════════════════════════════════════════════
 
@@ -564,7 +564,7 @@ class PTYManager {
   createTerminal() {
     return new Bun.Terminal({
       data: (term, data) => {
-        if (this.debugMode) console.log(data);
+        if (this.debugMode) console.info(data);
         process.stdout.write(data);
       }
     });

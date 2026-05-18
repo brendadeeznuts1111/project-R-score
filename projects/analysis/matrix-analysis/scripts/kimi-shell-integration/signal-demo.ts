@@ -19,33 +19,33 @@
 
 import { onCleanup, getHealthStatus, executeCommand } from "./unified-shell-bridge";
 
-console.log("🚀 Kimi Shell Signal Handling Demo");
-console.log("===================================\n");
-console.log(`PID: ${process.pid}`);
-console.log(`Bun version: ${Bun.version}`);
-console.log(`\nSend signals to this process to test handling:`);
-console.log(`  kill -INT  ${process.pid}  # Same as Ctrl+C`);
-console.log(`  kill -TERM ${process.pid}  # Termination request`);
-console.log(`  kill -HUP  ${process.pid}  # Terminal closed`);
-console.log(`\nPress Ctrl+C to trigger graceful shutdown.\n`);
+console.info("🚀 Kimi Shell Signal Handling Demo");
+console.info("===================================\n");
+console.info(`PID: ${process.pid}`);
+console.info(`Bun version: ${Bun.version}`);
+console.info(`\nSend signals to this process to test handling:`);
+console.info(`  kill -INT  ${process.pid}  # Same as Ctrl+C`);
+console.info(`  kill -TERM ${process.pid}  # Termination request`);
+console.info(`  kill -HUP  ${process.pid}  # Terminal closed`);
+console.info(`\nPress Ctrl+C to trigger graceful shutdown.\n`);
 
 // Register cleanup handlers
 onCleanup(async () => {
-  console.log("\n🧹 Cleanup Handler 1: Saving state...");
+  console.info("\n🧹 Cleanup Handler 1: Saving state...");
   await Bun.sleep(100);
-  console.log("   ✅ State saved");
+  console.info("   ✅ State saved");
 });
 
 onCleanup(async () => {
-  console.log("🧹 Cleanup Handler 2: Closing connections...");
+  console.info("🧹 Cleanup Handler 2: Closing connections...");
   await Bun.sleep(100);
-  console.log("   ✅ Connections closed");
+  console.info("   ✅ Connections closed");
 });
 
 onCleanup(async () => {
-  console.log("🧹 Cleanup Handler 3: Flushing logs...");
+  console.info("🧹 Cleanup Handler 3: Flushing logs...");
   await Bun.sleep(50);
-  console.log("   ✅ Logs flushed");
+  console.info("   ✅ Logs flushed");
 });
 
 // Track received signals
@@ -53,22 +53,22 @@ const receivedSignals: string[] = [];
 
 process.on("SIGINT", () => {
   receivedSignals.push("SIGINT");
-  console.log("\n📥 SIGINT received (Ctrl+C)");
+  console.info("\n📥 SIGINT received (Ctrl+C)");
 });
 
 process.on("SIGTERM", () => {
   receivedSignals.push("SIGTERM");
-  console.log("\n📥 SIGTERM received");
+  console.info("\n📥 SIGTERM received");
 });
 
 process.on("SIGHUP", () => {
   receivedSignals.push("SIGHUP");
-  console.log("\n📥 SIGHUP received (terminal closed)");
+  console.info("\n📥 SIGHUP received (terminal closed)");
 });
 
 process.on("exit", (code) => {
-  console.log(`\n🚪 Exiting with code ${code}`);
-  console.log(`📊 Signals received: ${receivedSignals.join(", ") || "none"}`);
+  console.info(`\n🚪 Exiting with code ${code}`);
+  console.info(`📊 Signals received: ${receivedSignals.join(", ") || "none"}`);
 });
 
 // Simulate some work
@@ -79,14 +79,14 @@ const interval = setInterval(async () => {
   if (counter % 5 === 0) {
     // Show health status every 5 seconds
     const health = await getHealthStatus();
-    console.log(`💓 Health check: ${(health as any).status} | Uptime: ${((health as any).uptime / 1000).toFixed(1)}s`);
+    console.info(`💓 Health check: ${(health as any).status} | Uptime: ${((health as any).uptime / 1000).toFixed(1)}s`);
   } else {
-    console.log(`⏱️  Running... (${counter}s)`);
+    console.info(`⏱️  Running... (${counter}s)`);
   }
   
   // Auto-exit after 60 seconds
   if (counter >= 60) {
-    console.log("\n⏰ Auto-exit after 60 seconds");
+    console.info("\n⏰ Auto-exit after 60 seconds");
     clearInterval(interval);
     process.exit(0);
   }
@@ -98,4 +98,4 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-console.log("✅ Demo running. Waiting for signals...\n");
+console.info("✅ Demo running. Waiting for signals...\n");

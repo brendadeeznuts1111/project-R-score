@@ -19,17 +19,17 @@ async function main() {
     const manager = new BunVersionManager({ current: '4.0.0-staging' });
     const currentVersion = manager.getCurrentVersion();
 
-    console.log('🚀 Fire22 Version Bump');
-    console.log('='.repeat(40));
-    console.log(`📦 Current Version: ${currentVersion}`);
-    console.log(`📈 Bump Strategy: ${strategy}`);
-    console.log(`📝 Reason: ${reason}`);
-    console.log(`🔍 Dry Run: ${dryRun ? 'YES' : 'NO'}`);
+    console.info('🚀 Fire22 Version Bump');
+    console.info('='.repeat(40));
+    console.info(`📦 Current Version: ${currentVersion}`);
+    console.info(`📈 Bump Strategy: ${strategy}`);
+    console.info(`📝 Reason: ${reason}`);
+    console.info(`🔍 Dry Run: ${dryRun ? 'YES' : 'NO'}`);
 
     if (dryRun) {
       const nextVersion = manager.increment(strategy as any);
-      console.log(`\n🔮 Preview: ${currentVersion} → ${nextVersion}`);
-      console.log('👆 Use without --dry-run to apply changes');
+      console.info(`\n🔮 Preview: ${currentVersion} → ${nextVersion}`);
+      console.info('👆 Use without --dry-run to apply changes');
       return;
     }
 
@@ -45,38 +45,38 @@ async function main() {
 
     const bumpTime = Number(Bun.nanoseconds() - start) / 1000000;
 
-    console.log(`\n✅ Version bumped successfully!`);
-    console.log(`🏷️ New Version: ${newVersion}`);
-    console.log(`⚡ Bump Time: ${bumpTime.toFixed(2)}ms`);
+    console.info(`\n✅ Version bumped successfully!`);
+    console.info(`🏷️ New Version: ${newVersion}`);
+    console.info(`⚡ Bump Time: ${bumpTime.toFixed(2)}ms`);
 
     // Git operations
     if (tag) {
-      console.log(`\n🏷️ Creating git tag: v${newVersion}`);
+      console.info(`\n🏷️ Creating git tag: v${newVersion}`);
       await manager.createGitTag(newVersion, `Release version ${newVersion}`);
-      console.log('✅ Git tag created');
+      console.info('✅ Git tag created');
     }
 
     if (commit) {
-      console.log(`\n📝 Creating git commit...`);
+      console.info(`\n📝 Creating git commit...`);
       // Note: This would need actual git integration
-      console.log(`✅ Committed: "Bump version to ${newVersion}"`);
+      console.info(`✅ Committed: "Bump version to ${newVersion}"`);
     }
 
     // Show updated status
-    console.log('\n📊 Updated Version Status:');
+    console.info('\n📊 Updated Version Status:');
     const suggestions = manager.getNextVersionSuggestions();
-    console.log(`Next Patch: ${suggestions.patch}`);
-    console.log(`Next Minor: ${suggestions.minor}`);
-    console.log(`Next Major: ${suggestions.major}`);
+    console.info(`Next Patch: ${suggestions.patch}`);
+    console.info(`Next Minor: ${suggestions.minor}`);
+    console.info(`Next Major: ${suggestions.major}`);
 
-    console.log(
+    console.info(
       `\n🎉 Version bump complete! Use bunx -p @fire22/version-manager fire22-version-status for details.`
     );
   } catch (error) {
     console.error('❌ Bump failed:', error.message);
 
     // Show usage help on error
-    console.log(`
+    console.info(`
 📚 Usage Examples:
   bunx -p @fire22/version-manager fire22-version-bump patch
   bunx -p @fire22/version-manager fire22-version-bump --strategy minor --reason "Add new features"

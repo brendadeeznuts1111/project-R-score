@@ -290,8 +290,8 @@ export class IntegratedRiskEngine extends RiskManagementEngine {
         2 // Full depth for forensic analysis
       );
       
-      console.log(`💰 Arbitrage: ${result.profitPercentage.toFixed(2)}% profit`);
-      console.log(`   Combinations: ${result.combinations.length}`);
+      console.info(`💰 Arbitrage: ${result.profitPercentage.toFixed(2)}% profit`);
+      console.info(`   Combinations: ${result.combinations.length}`);
     }
     
     return result;

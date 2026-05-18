@@ -355,11 +355,11 @@ class UltimateCustomInspectionDashboard {
 
         const basicInspection = new EnhancedCustomInspection(basicData);
 
-        console.log('\n🔍 Basic Custom Inspection Output:');
-        console.log(basicInspection);
+        console.info('\n🔍 Basic Custom Inspection Output:');
+        console.info(basicInspection);
 
         // Show the metadata
-        console.log('\n📊 Inspection Metadata:');
+        console.info('\n📊 Inspection Metadata:');
         const metadataData = [
             {
                 property: "Inspection ID",
@@ -383,7 +383,7 @@ class UltimateCustomInspectionDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(metadataData, ["property", "value", "type"], {
+        console.info(Bun.inspect.table(metadataData, ["property", "value", "type"], {
             colors: true,
             compact: true,
             minWidth: 8,
@@ -423,17 +423,17 @@ class UltimateCustomInspectionDashboard {
 
         const depthInspection = new ProductInspection(depthData);
 
-        console.log('\n🔬 Depth-Aware Inspection Examples:');
+        console.info('\n🔬 Depth-Aware Inspection Examples:');
 
         // Simulate different depth levels
-        console.log('\n📦 Depth 0 (Compact):');
-        console.log(depthInspection[Bun.inspect.custom](0, { compact: true }));
+        console.info('\n📦 Depth 0 (Compact):');
+        console.info(depthInspection[Bun.inspect.custom](0, { compact: true }));
 
-        console.log('\n📋 Depth 1 (Normal):');
-        console.log(depthInspection[Bun.inspect.custom](1, { compact: false }));
+        console.info('\n📋 Depth 1 (Normal):');
+        console.info(depthInspection[Bun.inspect.custom](1, { compact: false }));
 
-        console.log('\n🏷️ Depth 3 (Detailed):');
-        console.log(depthInspection[Bun.inspect.custom](3, { compact: false, stylize: (text: string, type: string) => text }));
+        console.info('\n🏷️ Depth 3 (Detailed):');
+        console.info(depthInspection[Bun.inspect.custom](3, { compact: false, stylize: (text: string, type: string) => text }));
 
         // Show depth analysis
         const depthAnalysisData = [
@@ -457,8 +457,8 @@ class UltimateCustomInspectionDashboard {
             }
         ];
 
-        console.log('\n📊 Depth Level Analysis:');
-        console.log(Bun.inspect.table(depthAnalysisData, ["depth", "output", "use", "performance"], {
+        console.info('\n📊 Depth Level Analysis:');
+        console.info(Bun.inspect.table(depthAnalysisData, ["depth", "output", "use", "performance"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",
@@ -498,20 +498,20 @@ class UltimateCustomInspectionDashboard {
 
         const contextInspection = new UserInspection(contextData);
 
-        console.log('\n🎭 Context-Aware Inspection Examples:');
+        console.info('\n🎭 Context-Aware Inspection Examples:');
 
         // Simulate different contexts
-        console.log('\n🖥️  Console Context:');
-        console.log(contextInspection[Bun.inspect.custom](2, { stylize: (text: string, type: string) => text }, () => { }));
+        console.info('\n🖥️  Console Context:');
+        console.info(contextInspection[Bun.inspect.custom](2, { stylize: (text: string, type: string) => text }, () => { }));
 
-        console.log('\n📝 Log Context:');
-        console.log(contextInspection[Bun.inspect.custom](2, { compact: true }, () => { }));
+        console.info('\n📝 Log Context:');
+        console.info(contextInspection[Bun.inspect.custom](2, { compact: true }, () => { }));
 
-        console.log('\n🐛 Debug Context:');
-        console.log(contextInspection[Bun.inspect.custom](3, { stylize: (text: string, type: string) => text }, () => { }));
+        console.info('\n🐛 Debug Context:');
+        console.info(contextInspection[Bun.inspect.custom](3, { stylize: (text: string, type: string) => text }, () => { }));
 
-        console.log('\n📊 Table Context:');
-        console.log(contextInspection[Bun.inspect.custom](2, { compact: false }, () => { }));
+        console.info('\n📊 Table Context:');
+        console.info(contextInspection[Bun.inspect.custom](2, { compact: false }, () => { }));
 
         // Show context analysis
         const contextAnalysisData = [
@@ -541,8 +541,8 @@ class UltimateCustomInspectionDashboard {
             }
         ];
 
-        console.log('\n📊 Context Analysis:');
-        console.log(Bun.inspect.table(contextAnalysisData, ["context", "purpose", "format", "features"], {
+        console.info('\n📊 Context Analysis:');
+        console.info(Bun.inspect.table(contextAnalysisData, ["context", "purpose", "format", "features"], {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -577,8 +577,8 @@ class UltimateCustomInspectionDashboard {
 
         const productInspection = new ProductInspection(productData);
 
-        console.log('\n🛍️  Product Inspection:');
-        console.log(productInspection[Bun.inspect.custom](2, { compact: false, stylize: (text: string, type: string) => text }, () => { }));
+        console.info('\n🛍️  Product Inspection:');
+        console.info(productInspection[Bun.inspect.custom](2, { compact: false, stylize: (text: string, type: string) => text }, () => { }));
 
         // System Metrics Inspection
         const metricsData = [
@@ -590,8 +590,8 @@ class UltimateCustomInspectionDashboard {
 
         const metricsInspection = new SystemMetricsInspection(metricsData);
 
-        console.log('\n📊 System Metrics Inspection:');
-        console.log(metricsInspection[Bun.inspect.custom](2, { compact: false, stylize: (text: string, type: string) => text }, () => { }));
+        console.info('\n📊 System Metrics Inspection:');
+        console.info(metricsInspection[Bun.inspect.custom](2, { compact: false, stylize: (text: string, type: string) => text }, () => { }));
 
         // Specialized class comparison
         const classComparisonData = [
@@ -615,8 +615,8 @@ class UltimateCustomInspectionDashboard {
             }
         ];
 
-        console.log('\n📋 Specialized Class Comparison:');
-        console.log(Bun.inspect.table(classComparisonData, ["class", "specialization", "formatter", "use"], {
+        console.info('\n📋 Specialized Class Comparison:');
+        console.info(Bun.inspect.table(classComparisonData, ["class", "specialization", "formatter", "use"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",
@@ -676,7 +676,7 @@ class UltimateCustomInspectionDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(performanceData, ["method", "complexity", "flexibility", "performance", "features"], {
+        console.info(Bun.inspect.table(performanceData, ["method", "complexity", "flexibility", "performance", "features"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",
@@ -711,7 +711,7 @@ class UltimateCustomInspectionDashboard {
         }));
 
         // Best practices
-        console.log('\n💡 Custom Inspection Best Practices:');
+        console.info('\n💡 Custom Inspection Best Practices:');
         const bestPracticesData = [
             {
                 practice: "Method Overloading",
@@ -740,7 +740,7 @@ class UltimateCustomInspectionDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(bestPracticesData, ["practice", "recommendation", "benefit"], {
+        console.info(Bun.inspect.table(bestPracticesData, ["practice", "recommendation", "benefit"], {
             colors: true,
             compact: false,
             minWidth: 10,
@@ -795,7 +795,7 @@ class UltimateCustomInspectionDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(summaryData, ["feature", "implemented", "flexibility", "performance"], {
+        console.info(Bun.inspect.table(summaryData, ["feature", "implemented", "flexibility", "performance"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",
@@ -853,8 +853,8 @@ class UltimateCustomInspectionDashboard {
             }
         ];
 
-        console.log('\n📊 System Metrics:');
-        console.log(Bun.inspect.table(metricsData, ["metric", "value", "category", "status"], {
+        console.info('\n📊 System Metrics:');
+        console.info(Bun.inspect.table(metricsData, ["metric", "value", "category", "status"], {
             colors: true,
             compact: true,
             minWidth: 8,

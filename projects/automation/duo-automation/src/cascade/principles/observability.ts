@@ -292,11 +292,11 @@ class ConsoleSpanExporter implements SpanExporter {
   async export(data: TelemetrySpanData): Promise<void> {
     if (process.env?.NODE_ENV !== 'development') return;
     
-    console.log(`📊 Exporting ${data.spans.length} spans to console`);
+    console.info(`📊 Exporting ${data.spans.length} spans to console`);
     
     for (const span of data.spans.slice(-5)) { // Show last 5 spans
       const status = span.error ? '❌' : span.metadata?.slow ? '⚠️' : '✅';
-      console.log(
+      console.info(
         `${status} ${span.operation}: ${span.duration || 'N/A'}ms ` +
         (span.error ? `(${span.error.message})` : '')
       );
@@ -323,11 +323,11 @@ class FileSpanExporter implements SpanExporter {
         await Bun.write(filename, line, { createPathIfMissing: true });
       } else {
         // Fallback: use fs module if available
-        console.log(`📝 Would export telemetry to ${filename}`);
+        console.info(`📝 Would export telemetry to ${filename}`);
       }
       
       this.lastExport = now;
-      console.log(`📝 Exported telemetry to ${filename}`);
+      console.info(`📝 Exported telemetry to ${filename}`);
     } catch (error) {
       console.error('❌ Failed to export telemetry:', error);
     }

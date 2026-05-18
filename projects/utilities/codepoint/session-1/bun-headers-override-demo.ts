@@ -9,23 +9,23 @@ const headers = new Headers({
   "Set-Cookie": "session=abc123; HttpOnly",
 });
 
-console.log("Original Headers object:", headers);
+console.info("Original Headers object:", headers);
 
 // Using toJSON directly (Bun's optimized method)
-console.log("\nUsing toJSON():");
+console.info("\nUsing toJSON():");
 const jsonResult = headers.toJSON();
-console.log(jsonResult);
+console.info(jsonResult);
 
 // Using JSON.stringify (automatically calls toJSON)
-console.log("\nUsing JSON.stringify():");
+console.info("\nUsing JSON.stringify():");
 const stringified = JSON.stringify(headers, null, 2);
-console.log(stringified);
+console.info(stringified);
 
 // Practical use case: Filter headers using entries()
-console.log("\n Practical use cases with Headers.entries():");
+console.info("\n Practical use cases with Headers.entries():");
 
 // 1. Filter authorization headers
-console.log("\n1. Filter authorization headers:");
+console.info("\n1. Filter authorization headers:");
 const authHeaders = Object.fromEntries(
   Array.from(headers.entries()).filter(
     ([key]) =>
@@ -33,20 +33,20 @@ const authHeaders = Object.fromEntries(
       key.toLowerCase().includes("authorization")
   )
 );
-console.log(authHeaders);
+console.info(authHeaders);
 
 // 2. Transform headers to different format
-console.log("\n2. Transform to HTTP request format:");
+console.info("\n2. Transform to HTTP request format:");
 const httpRequestFormat = Array.from(headers.entries())
   .map(
     ([key, value]) =>
       `${key}: ${Array.isArray(value) ? value.join("; ") : value}`
   )
   .join("\n");
-console.log(httpRequestFormat);
+console.info(httpRequestFormat);
 
 // 3. Count header values
-console.log("\n3. Header statistics:");
+console.info("\n3. Header statistics:");
 const headerStats = {
   totalHeaders: 0,
   totalValues: 0,
@@ -61,21 +61,21 @@ for (const [key, value] of headers.entries()) {
     headerStats.totalValues++;
   }
 }
-console.log(headerStats);
+console.info(headerStats);
 
 // 4. Create header lookup map
-console.log("\n4. Fast header lookup map:");
+console.info("\n4. Fast header lookup map:");
 const headerMap = new Map(
   Array.from(headers.entries()).map(([key, value]) => [
     key.toLowerCase(),
     value,
   ])
 );
-console.log("Content-Type lookup:", headerMap.get("content-type"));
-console.log("User-Agent lookup:", headerMap.get("user-agent"));
+console.info("Content-Type lookup:", headerMap.get("content-type"));
+console.info("User-Agent lookup:", headerMap.get("user-agent"));
 
 // Performance comparison (Bun's toJSON vs standard Object.fromEntries)
-console.log("\n Performance comparison:");
+console.info("\n Performance comparison:");
 const iterations = 100000;
 
 // Bun's toJSON method
@@ -103,16 +103,16 @@ for (let i = 0; i < iterations / 10; i++) {
 console.timeEnd("Headers.entries() iteration");
 
 // Note: Well-known headers are lowercased, custom headers preserve case
-console.log("\n Header name handling:");
-console.log(
+console.info("\n Header name handling:");
+console.info(
   "Content-Type becomes:",
   Object.keys(jsonResult).find((k) => k.toLowerCase() === "content-type")
 );
-console.log(
+console.info(
   "USER-AGENT becomes:",
   Object.keys(jsonResult).find((k) => k.toLowerCase() === "user-agent")
 );
-console.log(
+console.info(
   "X-Custom-Header becomes:",
   Object.keys(jsonResult).find((k) => k.toLowerCase() === "x-custom-header")
 );

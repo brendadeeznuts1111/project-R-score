@@ -924,12 +924,12 @@ Coverage Summary:
 
   private async generateLcovReport(): Promise<void> {
     // Mock LCOV generation
-    console.log('📊 Generating LCOV report...')
+    console.info('📊 Generating LCOV report...')
   }
 
   private async generateHtmlReport(): Promise<void> {
     // Mock HTML report generation
-    console.log('🌐 Generating HTML coverage report...')
+    console.info('🌐 Generating HTML coverage report...')
   }
 
   private async generateQuantumSeal(data: Uint8Array): Promise<Uint8Array> {

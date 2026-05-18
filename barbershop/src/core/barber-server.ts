@@ -156,7 +156,7 @@ function requestId() {
 
 function logInfo(event: string, details: Record<string, unknown>) {
   const payload = { event, ...details };
-  console.log(JSON.stringify(payload));
+  console.info(JSON.stringify(payload));
 }
 
 function parseCookie(header: string) {

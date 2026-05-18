@@ -129,13 +129,13 @@ async function getPR(owner: string, repo: string, pr: number): Promise<void> {
   lines.push('');
   lines.push(`${c.dim}${data.html_url}${c.reset}`);
 
-  console.log('\n' + box(lines, `${owner}/${repo}`) + '\n');
+  console.info('\n' + box(lines, `${owner}/${repo}`) + '\n');
 }
 
 async function listPRs(owner: string, repo: string, state = 'all'): Promise<void> {
   const data = await ghFetch<PR[]>(`/repos/${owner}/${repo}/pulls?state=${state}&per_page=10`);
 
-  console.log(`\n${c.cyan}${c.bold}PRs for ${owner}/${repo}${c.reset}\n`);
+  console.info(`\n${c.cyan}${c.bold}PRs for ${owner}/${repo}${c.reset}\n`);
 
   // Custom table with Bun-native formatting
   const rows = data.map(pr => ({
@@ -152,13 +152,13 @@ async function listPRs(owner: string, repo: string, state = 'all'): Promise<void
 async function getCommits(owner: string, repo: string, limit = 5): Promise<void> {
   const data = await ghFetch<Commit[]>(`/repos/${owner}/${repo}/commits?per_page=${limit}`);
 
-  console.log(`\n${c.cyan}${c.bold}Recent commits for ${owner}/${repo}${c.reset}\n`);
+  console.info(`\n${c.cyan}${c.bold}Recent commits for ${owner}/${repo}${c.reset}\n`);
 
   const lines = data.map(commit =>
     `${c.yellow}${commit.sha.slice(0, 7)}${c.reset} ${commit.commit.message.split('\n')[0].slice(0, 50)} ${c.dim}(${commit.commit.author.name})${c.reset}`
   );
 
-  console.log(box(lines, 'COMMITS'));
+  console.info(box(lines, 'COMMITS'));
 }
 
 async function mergePR(owner: string, repo: string, pr: number, method: 'merge' | 'squash' | 'rebase' = 'squash'): Promise<void> {
@@ -171,8 +171,8 @@ async function mergePR(owner: string, repo: string, pr: number, method: 'merge' 
   );
 
   if (data.merged) {
-    console.log(`\n${c.green}${c.bold}PR #${pr} merged successfully${c.reset}`);
-    console.log(`${c.dim}Commit: ${data.sha.slice(0, 7)}${c.reset}\n`);
+    console.info(`\n${c.green}${c.bold}PR #${pr} merged successfully${c.reset}`);
+    console.info(`${c.dim}Commit: ${data.sha.slice(0, 7)}${c.reset}\n`);
   }
 }
 
@@ -210,7 +210,7 @@ async function main() {
       await mergePR(args[0], args[1], parseInt(args[2]));
       break;
     default:
-      console.log(usage);
+      console.info(usage);
   }
 }
 

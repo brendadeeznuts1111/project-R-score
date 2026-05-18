@@ -10,18 +10,18 @@ import { BunColorFormatter } from "./src/utils/color-api";
 import { ScoringAPIRouter, URLPatternValidator, demonstrateURLPattern } from "./src/utils/urlpattern-api";
 
 // Demonstrate Bun Color API (Color Conversion)
-console.log("🎨 === BUN COLOR API (Color Conversion) ===\n");
+console.info("🎨 === BUN COLOR API (Color Conversion) ===\n");
 
 // Color format conversions
-console.log("Color Format Conversions:");
-console.log("RGB to Hex:", Bun.color([255, 0, 0], "hex"));        // #ff0000
-console.log("Hex to RGB:", Bun.color("#00ff00", "rgb"));           // rgb(0, 255, 0)
-console.log("Named to Hex:", Bun.color("blue", "hex"));            // #0000ff
-console.log("RGB to HSL:", Bun.color([255, 0, 0], "hsl"));         // hsl(0, 100%, 50%)
-console.log("Hex to ANSI:", Bun.color("#ff0000", "ansi"));         // 31 (red)
+console.info("Color Format Conversions:");
+console.info("RGB to Hex:", Bun.color([255, 0, 0], "hex"));        // #ff0000
+console.info("Hex to RGB:", Bun.color("#00ff00", "rgb"));           // rgb(0, 255, 0)
+console.info("Named to Hex:", Bun.color("blue", "hex"));            // #0000ff
+console.info("RGB to HSL:", Bun.color([255, 0, 0], "hsl"));         // hsl(0, 100%, 50%)
+console.info("Hex to ANSI:", Bun.color("#ff0000", "ansi"));         // 31 (red)
 
 // Demonstrate Terminal Coloring (using ANSI escape sequences)
-console.log("\n🖥️  === TERMINAL COLORING (ANSI Escape Sequences) ===\n");
+console.info("\n🖥️  === TERMINAL COLORING (ANSI Escape Sequences) ===\n");
 
 // ANSI color codes (standard terminal colors)
 const colors = {
@@ -34,38 +34,38 @@ const colors = {
   reset: "\x1b[0m"
 };
 
-console.log("Basic ANSI Colors:");
-console.log(`${colors.red}Red text${colors.reset}`);
-console.log(`${colors.green}Green text${colors.reset}`);
-console.log(`${colors.blue}Blue text${colors.reset}`);
-console.log(`${colors.yellow}Yellow text${colors.reset}`);
-console.log(`${colors.magenta}Magenta text${colors.reset}`);
-console.log(`${colors.cyan}Cyan text${colors.reset}`);
+console.info("Basic ANSI Colors:");
+console.info(`${colors.red}Red text${colors.reset}`);
+console.info(`${colors.green}Green text${colors.reset}`);
+console.info(`${colors.blue}Blue text${colors.reset}`);
+console.info(`${colors.yellow}Yellow text${colors.reset}`);
+console.info(`${colors.magenta}Magenta text${colors.reset}`);
+console.info(`${colors.cyan}Cyan text${colors.reset}`);
 
 // ANSI Colors setting
-console.log("\nANSI Colors Setting:");
-console.log(BunColorFormatter.info(`Bun.enableANSIColors: ${Bun.enableANSIColors}`));
+console.info("\nANSI Colors Setting:");
+console.info(BunColorFormatter.info(`Bun.enableANSIColors: ${Bun.enableANSIColors}`));
 
 // Bun.stripANSI demonstration
 const ansiText = `${colors.red}Red${colors.reset} and ${colors.blue}Blue${colors.reset}`;
-console.log(`\nANSI text: "${ansiText}"`);
-console.log(`Stripped: "${Bun.stripANSI(ansiText)}"`);
+console.info(`\nANSI text: "${ansiText}"`);
+console.info(`Stripped: "${Bun.stripANSI(ansiText)}"`);
 
 // Formatted messages
-console.log("\nFormatted Messages:");
-console.log(BunColorFormatter.success("Operation completed successfully"));
-console.log(BunColorFormatter.error("An error occurred"));
-console.log(BunColorFormatter.warning("This is a warning"));
-console.log(BunColorFormatter.info("This is informational"));
+console.info("\nFormatted Messages:");
+console.info(BunColorFormatter.success("Operation completed successfully"));
+console.info(BunColorFormatter.error("An error occurred"));
+console.info(BunColorFormatter.warning("This is a warning"));
+console.info(BunColorFormatter.info("This is informational"));
 
 // Demonstrate URLPattern API
-console.log("\n🔗 === URLPATTERN API DEMONSTRATION ===\n");
+console.info("\n🔗 === URLPATTERN API DEMONSTRATION ===\n");
 
 // Basic URLPattern examples
 demonstrateURLPattern();
 
 // Create Scoring API Router
-console.log("\n🎯 === SCORING API ROUTER ===\n");
+console.info("\n🎯 === SCORING API ROUTER ===\n");
 
 const router = new ScoringAPIRouter();
 
@@ -82,14 +82,14 @@ const testUrls = [
 testUrls.forEach(url => {
   const result = router.handle(url);
   if (result) {
-    console.log(BunColorFormatter.success(`${result.type}: ${JSON.stringify(result, null, 0)}`));
+    console.info(BunColorFormatter.success(`${result.type}: ${JSON.stringify(result, null, 0)}`));
   } else {
-    console.log(BunColorFormatter.error(`No match for: ${url}`));
+    console.info(BunColorFormatter.error(`No match for: ${url}`));
   }
 });
 
 // URLPattern Validation Examples
-console.log("\n✅ === URLPATTERN VALIDATION ===\n");
+console.info("\n✅ === URLPATTERN VALIDATION ===\n");
 
 const scorePattern = new URLPattern({ pathname: "/api/score/:id" });
 const validUrls = [
@@ -104,21 +104,21 @@ const invalidUrls = [
   "https://example.com/api/scores/123"
 ];
 
-console.log("Valid URLs:");
+console.info("Valid URLs:");
 validUrls.forEach(url => {
   const isValid = URLPatternValidator.validateRoute(url, scorePattern);
   const params = URLPatternValidator.extractParams(url, scorePattern);
-  console.log(`${isValid ? BunColorFormatter.success("✓") : BunColorFormatter.error("✗")} ${url} -> ${JSON.stringify(params)}`);
+  console.info(`${isValid ? BunColorFormatter.success("✓") : BunColorFormatter.error("✗")} ${url} -> ${JSON.stringify(params)}`);
 });
 
-console.log("\nInvalid URLs:");
+console.info("\nInvalid URLs:");
 invalidUrls.forEach(url => {
   const isValid = URLPatternValidator.validateRoute(url, scorePattern);
-  console.log(`${isValid ? BunColorFormatter.success("✓") : BunColorFormatter.error("✗")} ${url}`);
+  console.info(`${isValid ? BunColorFormatter.success("✓") : BunColorFormatter.error("✗")} ${url}`);
 });
 
 // Advanced URLPattern with search params
-console.log("\n🔍 === ADVANCED URLPATTERN (Search Params) ===\n");
+console.info("\n🔍 === ADVANCED URLPATTERN (Search Params) ===\n");
 
 const searchPattern = new URLPattern({
   pathname: "/search",
@@ -132,11 +132,11 @@ const searchUrls = [
 
 searchUrls.forEach(url => {
   const params = URLPatternValidator.extractParams(url, searchPattern);
-  console.log(BunColorFormatter.info(`Search: ${JSON.stringify(params)}`));
+  console.info(BunColorFormatter.info(`Search: ${JSON.stringify(params)}`));
 });
 
 // Performance comparison with traditional routing
-console.log("\n⚡ === PERFORMANCE COMPARISON ===\n");
+console.info("\n⚡ === PERFORMANCE COMPARISON ===\n");
 
 const startTime = performance.now();
 
@@ -167,17 +167,17 @@ for (let i = 0; i < 10000; i++) {
 
 const regexTime = performance.now() - regexStartTime;
 
-console.log(BunColorFormatter.info(`URLPattern: ${patternTime.toFixed(2)}ms (${patternMatches} matches)`));
-console.log(BunColorFormatter.info(`RegExp: ${regexTime.toFixed(2)}ms (${regexMatches} matches)`));
-console.log(BunColorFormatter.success(`URLPattern is ${(regexTime / patternTime).toFixed(1)}x faster!`));
+console.info(BunColorFormatter.info(`URLPattern: ${patternTime.toFixed(2)}ms (${patternMatches} matches)`));
+console.info(BunColorFormatter.info(`RegExp: ${regexTime.toFixed(2)}ms (${regexMatches} matches)`));
+console.info(BunColorFormatter.success(`URLPattern is ${(regexTime / patternTime).toFixed(1)}x faster!`));
 
 // Summary
-console.log("\n🎉 === SUMMARY ===\n");
-console.log(BunColorFormatter.success("✅ Bun.color() - Simple, fast terminal colors"));
-console.log(BunColorFormatter.success("✅ Bun.enableANSIColors - ANSI color control"));
-console.log(BunColorFormatter.success("✅ URLPattern - Web-standard URL matching"));
-console.log(BunColorFormatter.success("✅ Full Node.js compatibility"));
-console.log(BunColorFormatter.success("✅ High-performance routing"));
-console.log(BunColorFormatter.success("✅ TypeScript support"));
+console.info("\n🎉 === SUMMARY ===\n");
+console.info(BunColorFormatter.success("✅ Bun.color() - Simple, fast terminal colors"));
+console.info(BunColorFormatter.success("✅ Bun.enableANSIColors - ANSI color control"));
+console.info(BunColorFormatter.success("✅ URLPattern - Web-standard URL matching"));
+console.info(BunColorFormatter.success("✅ Full Node.js compatibility"));
+console.info(BunColorFormatter.success("✅ High-performance routing"));
+console.info(BunColorFormatter.success("✅ TypeScript support"));
 
-console.log("\n🚀 Both APIs are production-ready and integrated into Bun's runtime!");
+console.info("\n🚀 Both APIs are production-ready and integrated into Bun's runtime!");

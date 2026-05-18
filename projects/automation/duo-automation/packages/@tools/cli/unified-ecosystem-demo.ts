@@ -724,8 +724,8 @@ export class UnifiedColorTensionEcosystem {
  * Demonstrate the unified ecosystem
  */
 async function demonstrateUnifiedEcosystem(): Promise<void> {
-  console.log('🌟 UNIFIED COLOR & TENSION ECOSYSTEM DEMONSTRATION');
-  console.log('=' .repeat(60));
+  console.info('🌟 UNIFIED COLOR & TENSION ECOSYSTEM DEMONSTRATION');
+  console.info('=' .repeat(60));
 
   // Create ecosystem with custom thresholds
   const ecosystem = new UnifiedColorTensionEcosystem({
@@ -737,114 +737,114 @@ async function demonstrateUnifiedEcosystem(): Promise<void> {
     errorRateCritical: 0.08
   });
 
-  console.log('\n📊 SYSTEM OVERVIEW:');
+  console.info('\n📊 SYSTEM OVERVIEW:');
   const overview = ecosystem.getSystemOverview();
-  console.log(`  Total Systems: ${overview.total}`);
-  console.log(`  Critical: ${overview.critical} 🔴`);
-  console.log(`  Warning: ${overview.warning} 🟡`);
-  console.log(`  Healthy: ${overview.healthy} 🟢`);
-  console.log(`  Average Tension: ${overview.averageTension}%`);
-  console.log(`  Average Response Time: ${overview.averageResponseTime}ms`);
-  console.log(`  Average Throughput: ${overview.averageThroughput} ops/s`);
-  console.log(`  Total Error Rate: ${overview.totalErrors.toFixed(2)}%`);
-  console.log(`  System Uptime: ${overview.uptime}%`);
+  console.info(`  Total Systems: ${overview.total}`);
+  console.info(`  Critical: ${overview.critical} 🔴`);
+  console.info(`  Warning: ${overview.warning} 🟡`);
+  console.info(`  Healthy: ${overview.healthy} 🟢`);
+  console.info(`  Average Tension: ${overview.averageTension}%`);
+  console.info(`  Average Response Time: ${overview.averageResponseTime}ms`);
+  console.info(`  Average Throughput: ${overview.averageThroughput} ops/s`);
+  console.info(`  Total Error Rate: ${overview.totalErrors.toFixed(2)}%`);
+  console.info(`  System Uptime: ${overview.uptime}%`);
 
   // Display system details
-  console.log('\n🖥️ SYSTEM DETAILS:');
+  console.info('\n🖥️ SYSTEM DETAILS:');
   const allSystems = ecosystem.getAllSystemStates();
   
   allSystems.forEach((system, index) => {
-    console.log(`\n${index + 1}. ${system.systemId}`);
-    console.log(`   Tension: ${system.tensionMetrics.value}% (${system.tensionMetrics.trend})`);
-    console.log(`   Classification: ${system.colorSystem.classification}`);
-    console.log(`   Description: ${system.colorSystem.description}`);
-    console.log(`   Primary Color: ${system.colorSystem.scheme.primary}`);
-    console.log(`   Response Time: ${system.performance.responseTime}ms`);
-    console.log(`   Throughput: ${system.performance.throughput} ops/s`);
-    console.log(`   Error Rate: ${system.performance.errorRate}%`);
-    console.log(`   Recommendations: ${system.recommendations.length}`);
+    console.info(`\n${index + 1}. ${system.systemId}`);
+    console.info(`   Tension: ${system.tensionMetrics.value}% (${system.tensionMetrics.trend})`);
+    console.info(`   Classification: ${system.colorSystem.classification}`);
+    console.info(`   Description: ${system.colorSystem.description}`);
+    console.info(`   Primary Color: ${system.colorSystem.scheme.primary}`);
+    console.info(`   Response Time: ${system.performance.responseTime}ms`);
+    console.info(`   Throughput: ${system.performance.throughput} ops/s`);
+    console.info(`   Error Rate: ${system.performance.errorRate}%`);
+    console.info(`   Recommendations: ${system.recommendations.length}`);
     
     if (system.recommendations.length > 0) {
-      console.log(`   Top Recommendation: ${system.recommendations[0]}`);
+      console.info(`   Top Recommendation: ${system.recommendations[0]}`);
     }
   });
 
   // Display critical systems
-  console.log('\n🚨 CRITICAL SYSTEMS:');
+  console.info('\n🚨 CRITICAL SYSTEMS:');
   const criticalSystems = ecosystem.getCriticalSystems();
   if (criticalSystems.length > 0) {
     criticalSystems.forEach(system => {
-      console.log(`  ❌ ${system.systemId}: ${system.tensionMetrics.value}% tension`);
+      console.info(`  ❌ ${system.systemId}: ${system.tensionMetrics.value}% tension`);
       system.recommendations.slice(0, 2).forEach(rec => {
-        console.log(`     • ${rec}`);
+        console.info(`     • ${rec}`);
       });
     });
   } else {
-    console.log('  ✅ No critical systems detected');
+    console.info('  ✅ No critical systems detected');
   }
 
   // Display systems by type
-  console.log('\n📋 SYSTEMS BY TYPE:');
+  console.info('\n📋 SYSTEMS BY TYPE:');
   const types = ['STORAGE', 'SECRETS', 'SERVICE'];
   types.forEach(type => {
     const systems = ecosystem.getSystemsByType(type);
     const avgTension = Math.round(
       systems.reduce((sum, s) => sum + s.tensionMetrics.value, 0) / systems.length
     );
-    console.log(`  ${type}: ${systems.length} systems, avg tension: ${avgTension}%`);
+    console.info(`  ${type}: ${systems.length} systems, avg tension: ${avgTension}%`);
   });
 
   // Subscribe to updates
-  console.log('\n🔔 SUBSCRIBING TO REAL-TIME UPDATES...');
+  console.info('\n🔔 SUBSCRIBING TO REAL-TIME UPDATES...');
   const unsubscribe = ecosystem.subscribe((update) => {
     if (update.tensionMetrics.value > 70) {
-      console.log(`🚨 ALERT: ${update.systemId} tension increased to ${update.tensionMetrics.value}%`);
+      console.info(`🚨 ALERT: ${update.systemId} tension increased to ${update.tensionMetrics.value}%`);
     }
   });
 
   // Let it run for a few seconds to show updates
-  console.log('\n⏱️ MONITORING FOR UPDATES...');
+  console.info('\n⏱️ MONITORING FOR UPDATES...');
   await new Promise(resolve => setTimeout(resolve, 6000));
 
   // Generate CSS
-  console.log('\n🎨 GENERATING UNIFIED CSS...');
+  console.info('\n🎨 GENERATING UNIFIED CSS...');
   const css = ecosystem.generateUnifiedCSS();
-  console.log(`Generated ${css.length} characters of unified CSS`);
+  console.info(`Generated ${css.length} characters of unified CSS`);
 
   // Cleanup
-  console.log('\n🧹 CLEANING UP...');
+  console.info('\n🧹 CLEANING UP...');
   unsubscribe();
   ecosystem.stop();
 
-  console.log('\n✅ UNIFIED ECOSYSTEM DEMONSTRATION COMPLETE!');
-  console.log('\n📋 ECOSYSTEM FEATURES:');
-  console.log('  🌟 Unified system state combining color and tension');
-  console.log('  📊 Real-time monitoring with configurable thresholds');
-  console.log('  🎨 Advanced color management with mathematical precision');
-  console.log('  📈 Tension analysis with weighted contributors');
-  console.log('  🔔 Intelligent recommendations based on system state');
-  console.log('  🎯 Performance metrics and trend analysis');
-  console.log('  📱 Comprehensive CSS generation for all systems');
-  console.log('  🔧 TypeScript interfaces with full type safety');
-  console.log('  🌐 Real-time subscription system for updates');
+  console.info('\n✅ UNIFIED ECOSYSTEM DEMONSTRATION COMPLETE!');
+  console.info('\n📋 ECOSYSTEM FEATURES:');
+  console.info('  🌟 Unified system state combining color and tension');
+  console.info('  📊 Real-time monitoring with configurable thresholds');
+  console.info('  🎨 Advanced color management with mathematical precision');
+  console.info('  📈 Tension analysis with weighted contributors');
+  console.info('  🔔 Intelligent recommendations based on system state');
+  console.info('  🎯 Performance metrics and trend analysis');
+  console.info('  📱 Comprehensive CSS generation for all systems');
+  console.info('  🔧 TypeScript interfaces with full type safety');
+  console.info('  🌐 Real-time subscription system for updates');
 
-  console.log('\n🔧 USAGE EXAMPLES:');
-  console.log('  // Create ecosystem');
-  console.log('  const ecosystem = new UnifiedColorTensionEcosystem();');
-  console.log('');
-  console.log('  // Get system overview');
-  console.log('  const overview = ecosystem.getSystemOverview();');
-  console.log('');
-  console.log('  // Get critical systems');
-  console.log('  const critical = ecosystem.getCriticalSystems();');
-  console.log('');
-  console.log('  // Subscribe to updates');
-  console.log('  ecosystem.subscribe((update) => {');
-  console.log('    console.log(`System ${update.systemId} updated`);');
-  console.log('  });');
-  console.log('');
-  console.log('  // Generate unified CSS');
-  console.log('  const css = ecosystem.generateUnifiedCSS();');
+  console.info('\n🔧 USAGE EXAMPLES:');
+  console.info('  // Create ecosystem');
+  console.info('  const ecosystem = new UnifiedColorTensionEcosystem();');
+  console.info('');
+  console.info('  // Get system overview');
+  console.info('  const overview = ecosystem.getSystemOverview();');
+  console.info('');
+  console.info('  // Get critical systems');
+  console.info('  const critical = ecosystem.getCriticalSystems();');
+  console.info('');
+  console.info('  // Subscribe to updates');
+  console.info('  ecosystem.subscribe((update) => {');
+  console.info('    console.info(`System ${update.systemId} updated`);');
+  console.info('  });');
+  console.info('');
+  console.info('  // Generate unified CSS');
+  console.info('  const css = ecosystem.generateUnifiedCSS();');
 }
 
 // Run demonstration if this file is executed directly

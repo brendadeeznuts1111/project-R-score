@@ -46,7 +46,7 @@ class HealthCheckpoint {
       ...config,
     };
 
-    console.log("🩺 Running CRC32 System Health Check...\n");
+    console.info("🩺 Running CRC32 System Health Check...\n");
 
     if (options.checkDatabase) {
       await this.checkDatabase();
@@ -196,13 +196,13 @@ class HealthCheckpoint {
   }
 
   printReport(status: HealthStatus): void {
-    console.log("═".repeat(60));
-    console.log("🩺 CRC32 System Health Report");
-    console.log("═".repeat(60));
-    console.log(`📅 Timestamp: ${new Date(status.timestamp).toISOString()}`);
-    console.log(`⏱️  Uptime: ${status.uptime.toFixed(2)}ms`);
-    console.log(`🔢 Version: ${status.version}`);
-    console.log("");
+    console.info("═".repeat(60));
+    console.info("🩺 CRC32 System Health Report");
+    console.info("═".repeat(60));
+    console.info(`📅 Timestamp: ${new Date(status.timestamp).toISOString()}`);
+    console.info(`⏱️  Uptime: ${status.uptime.toFixed(2)}ms`);
+    console.info(`🔢 Version: ${status.version}`);
+    console.info("");
 
     const statusIcon =
       status.status === "healthy"
@@ -210,28 +210,28 @@ class HealthCheckpoint {
         : status.status === "degraded"
           ? "⚠️"
           : "❌";
-    console.log(`${statusIcon} Overall Status: ${status.status.toUpperCase()}`);
-    console.log("");
+    console.info(`${statusIcon} Overall Status: ${status.status.toUpperCase()}`);
+    console.info("");
 
-    console.log("Checks:");
-    console.log("-".repeat(60));
+    console.info("Checks:");
+    console.info("-".repeat(60));
 
     for (const check of status.checks) {
       const icon =
         check.status === "pass" ? "✅" : check.status === "warn" ? "⚠️" : "❌";
-      console.log(`${icon} ${check.name}: ${check.message}`);
-      console.log(`   Duration: ${check.duration.toFixed(2)}ms`);
+      console.info(`${icon} ${check.name}: ${check.message}`);
+      console.info(`   Duration: ${check.duration.toFixed(2)}ms`);
     }
 
-    console.log("");
-    console.log("-".repeat(60));
+    console.info("");
+    console.info("-".repeat(60));
     const passCount = status.checks.filter((c) => c.status === "pass").length;
     const failCount = status.checks.filter((c) => c.status === "fail").length;
     const warnCount = status.checks.filter((c) => c.status === "warn").length;
-    console.log(
+    console.info(
       `📊 Summary: ${passCount} pass, ${warnCount} warn, ${failCount} fail`,
     );
-    console.log("═".repeat(60));
+    console.info("═".repeat(60));
   }
 }
 

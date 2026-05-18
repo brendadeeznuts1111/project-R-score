@@ -9,11 +9,11 @@
  * multiple grapheme clusters. Now they're handled correctly.
  */
 
-console.log("🔤 Bun.stringWidth() with GB9c Support for Indic Scripts");
-console.log("=".repeat(60));
+console.info("🔤 Bun.stringWidth() with GB9c Support for Indic Scripts");
+console.info("=".repeat(60));
 
 // Devanagari conjunct examples
-console.log("\n📝 Devanagari Conjunct Break Examples:");
+console.info("\n📝 Devanagari Conjunct Break Examples:");
 
 const devanagariExamples = [
 	// Basic conjuncts (Ka+Virama+Ssa)
@@ -39,16 +39,16 @@ devanagariExamples.forEach((example, index) => {
 		.map((c) => c.codePointAt(0).toString(16).toUpperCase().padStart(4, "0"))
 		.join(" ");
 
-	console.log(
+	console.info(
 		`${(index + 1).toString().padStart(2)}. ${example.description.padEnd(25)}`,
 	);
-	console.log(
+	console.info(
 		`   Text: "${example.text}" | Width: ${width} | Code Points: ${codePoints}`,
 	);
 });
 
 // Other Indic scripts
-console.log("\n🌍 Other Indic Script Examples:");
+console.info("\n🌍 Other Indic Script Examples:");
 
 const indicExamples = [
 	{ script: "Bengali", text: "স্বাধীনতা", description: "independence" },
@@ -63,13 +63,13 @@ const indicExamples = [
 
 indicExamples.forEach((example, index) => {
 	const width = Bun.stringWidth(example.text);
-	console.log(
+	console.info(
 		`${(index + 1).toString().padStart(2)}. ${example.script.padEnd(10)}: "${example.text}" | Width: ${width} | ${example.description}`,
 	);
 });
 
 // Performance comparison
-console.log("\n⚡ Performance Comparison:");
+console.info("\n⚡ Performance Comparison:");
 
 const performanceTest = () => {
 	const testStrings = [
@@ -95,11 +95,11 @@ const performanceTest = () => {
 	const end = performance.now();
 	const time = end - start;
 
-	console.log(
+	console.info(
 		`   Processed ${iterations * testStrings.length} stringWidth() calls`,
 	);
-	console.log(`   Time: ${time.toFixed(2)}ms`);
-	console.log(
+	console.info(`   Time: ${time.toFixed(2)}ms`);
+	console.info(
 		`   Average: ${((time / (iterations * testStrings.length)) * 1000).toFixed(3)}μs per call`,
 	);
 };
@@ -107,7 +107,7 @@ const performanceTest = () => {
 performanceTest();
 
 // Unicode normalization effects
-console.log("\n🔧 Unicode Normalization Effects:");
+console.info("\n🔧 Unicode Normalization Effects:");
 
 const normalizationExamples = [
 	{ text: "क्ष", form: "NFC", description: "Canonical Composition" },
@@ -123,13 +123,13 @@ normalizationExamples.forEach((example) => {
 		.map((c) => c.codePointAt(0).toString(16).toUpperCase().padStart(4, "0"))
 		.join(" ");
 
-	console.log(
+	console.info(
 		`   ${example.form.padEnd(4)}: "${normalized}" | Width: ${width} | ${codePoints} | ${example.description}`,
 	);
 });
 
 // Edge cases and special sequences
-console.log("\n🧪 Edge Cases and Special Sequences:");
+console.info("\n🧪 Edge Cases and Special Sequences:");
 
 const edgeCases = [
 	{ text: "क्", description: "Ka+Virama (incomplete conjunct)" },
@@ -147,14 +147,14 @@ edgeCases.forEach((example, index) => {
 		.map((c) => c.codePointAt(0).toString(16).toUpperCase().padStart(4, "0"))
 		.join(" ");
 
-	console.log(
+	console.info(
 		`${(index + 1).toString().padStart(2)}. ${example.description.padEnd(30)}`,
 	);
-	console.log(`   "${example.text}" | Width: ${width} | ${codePoints}`);
+	console.info(`   "${example.text}" | Width: ${width} | ${codePoints}`);
 });
 
 // Practical usage examples
-console.log("\n💡 Practical Usage Examples:");
+console.info("\n💡 Practical Usage Examples:");
 
 const practicalExamples = [
 	{
@@ -163,10 +163,10 @@ const practicalExamples = [
 			const words = ["स्वतंत्र", "विकास", "ज्ञान", "त्रिपुटा"];
 			const maxWidth = Math.max(...words.map((w) => Bun.stringWidth(w)));
 
-			console.log("   Aligned text:");
+			console.info("   Aligned text:");
 			words.forEach((word) => {
 				const padding = " ".repeat(maxWidth - Bun.stringWidth(word));
-				console.log(`   "${word}"${padding} | width: ${Bun.stringWidth(word)}`);
+				console.info(`   "${word}"${padding} | width: ${Bun.stringWidth(word)}`);
 			});
 		},
 	},
@@ -176,8 +176,8 @@ const practicalExamples = [
 			const longText = "स्वतंत्रता और विकास के लिए ज्ञान आवश्यक है";
 			const maxWidth = 20;
 
-			console.log(`   Original: "${longText}"`);
-			console.log(`   Max width: ${maxWidth}`);
+			console.info(`   Original: "${longText}"`);
+			console.info(`   Max width: ${maxWidth}`);
 
 			let truncated = "";
 			let currentWidth = 0;
@@ -189,7 +189,7 @@ const practicalExamples = [
 				currentWidth += charWidth;
 			}
 
-			console.log(`   Truncated: "${truncated}" (width: ${currentWidth})`);
+			console.info(`   Truncated: "${truncated}" (width: ${currentWidth})`);
 		},
 	},
 	{
@@ -202,20 +202,20 @@ const practicalExamples = [
 			const empty = barWidth - filled;
 
 			const bar = "█".repeat(filled) + "░".repeat(empty);
-			console.log(`   ${text}: [${bar}] ${Math.round(progress * 100)}%`);
+			console.info(`   ${text}: [${bar}] ${Math.round(progress * 100)}%`);
 		},
 	},
 ];
 
 practicalExamples.forEach((example, index) => {
-	console.log(`\n   ${index + 1}. ${example.title}:`);
+	console.info(`\n   ${index + 1}. ${example.title}:`);
 	example.demo();
 });
 
-console.log("\n✅ GB9c Support Verification Complete!");
-console.log("   • Indic conjuncts now properly form single grapheme clusters");
-console.log("   • Devanagari, Bengali, Gujarati, and other scripts supported");
-console.log(
+console.info("\n✅ GB9c Support Verification Complete!");
+console.info("   • Indic conjuncts now properly form single grapheme clusters");
+console.info("   • Devanagari, Bengali, Gujarati, and other scripts supported");
+console.info(
 	"   • Performance optimized with reduced table size (~51KB vs ~70KB)",
 );
-console.log("   • Backward compatible with existing code");
+console.info("   • Backward compatible with existing code");

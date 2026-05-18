@@ -58,7 +58,7 @@ function parseArgs(args: string[]): { filePath?: string; options: CLIOptions } {
 }
 
 function showHelp(): void {
-	console.log(`
+	console.info(`
 Safe TOML Parser CLI - Stack Overflow Protection
 
 USAGE:
@@ -120,21 +120,21 @@ async function main(): Promise<void> {
 	// Handle cache operations
 	if (options.clearCache) {
 		clearTomlParseCache();
-		console.log("✅ Cache cleared");
+		console.info("✅ Cache cleared");
 	}
 
 	if (options.stats) {
 		const stats = getTomlParseCacheStats();
-		console.log(`📊 Cache Statistics:`);
-		console.log(`   Size: ${stats.size}/${stats.maxSize} entries`);
+		console.info(`📊 Cache Statistics:`);
+		console.info(`   Size: ${stats.size}/${stats.maxSize} entries`);
 		if (stats.entries.length > 0) {
-			console.log(`   Entries:`);
+			console.info(`   Entries:`);
 			stats.entries.forEach((entry) => {
 				const age =
 					entry.age < 60000
 						? `${Math.round(entry.age / 1000)}s`
 						: `${Math.round(entry.age / 60000)}m`;
-				console.log(
+				console.info(
 					`     - Key: ${entry.key.substring(0, 12)}... | Age: ${age} | Depth: ${entry.depth}`,
 				);
 			});
@@ -159,28 +159,28 @@ async function main(): Promise<void> {
 	};
 
 	if (options.verbose) {
-		console.log(`🔍 Parsing: ${filePath}`);
-		console.log(`   Options:`, parseOptions);
+		console.info(`🔍 Parsing: ${filePath}`);
+		console.info(`   Options:`, parseOptions);
 	}
 
 	const result = await safeParseTomlFile(filePath, parseOptions);
 
 	if (result.success) {
-		console.log("✅ TOML parsed successfully!");
+		console.info("✅ TOML parsed successfully!");
 
 		if (options.verbose && result.metadata) {
-			console.log(`📈 Metadata:`);
-			console.log(`   Size: ${formatBytes(result.metadata.size)}`);
-			console.log(`   Parse time: ${formatTime(result.metadata.parseTime)}`);
-			console.log(`   Object depth: ${result.metadata.depth}`);
-			console.log(`   From cache: ${result.metadata.fromCache ? "Yes" : "No"}`);
+			console.info(`📈 Metadata:`);
+			console.info(`   Size: ${formatBytes(result.metadata.size)}`);
+			console.info(`   Parse time: ${formatTime(result.metadata.parseTime)}`);
+			console.info(`   Object depth: ${result.metadata.depth}`);
+			console.info(`   From cache: ${result.metadata.fromCache ? "Yes" : "No"}`);
 		}
 
 		if (options.verbose) {
-			console.log(`📄 Content preview:`);
-			console.log(JSON.stringify(result.data, null, 2));
+			console.info(`📄 Content preview:`);
+			console.info(JSON.stringify(result.data, null, 2));
 		} else {
-			console.log(
+			console.info(
 				`   Parsed ${Object.keys(result.data).length} top-level sections`,
 			);
 		}

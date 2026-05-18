@@ -28,12 +28,12 @@ const REGISTRIES = {
 } as const;
 
 async function setupRegistry() {
-  console.log('🔧 Fire22 Private Registry Setup');
-  console.log('================================\n');
+  console.info('🔧 Fire22 Private Registry Setup');
+  console.info('================================\n');
 
   // Check if .env exists
   if (!existsSync('.env')) {
-    console.log('❌ .env file not found. Creating template...');
+    console.info('❌ .env file not found. Creating template...');
     createEnvTemplate();
     return;
   }
@@ -42,40 +42,40 @@ async function setupRegistry() {
   const envContent = readFileSync('.env', 'utf-8');
   const envLines = envContent.split('\n');
 
-  console.log('🔍 Checking registry configuration...\n');
+  console.info('🔍 Checking registry configuration...\n');
 
   // Check each registry
   for (const [key, config] of Object.entries(REGISTRIES)) {
-    console.log(`📦 Checking ${config.scope} registry...`);
+    console.info(`📦 Checking ${config.scope} registry...`);
 
     const hasToken = checkEnvVar(envLines, getTokenVarName(key));
     const hasUrl = checkEnvVar(envLines, getUrlVarName(key));
 
     if (hasToken && hasUrl) {
-      console.log(`  ✅ ${config.scope} registry configured`);
+      console.info(`  ✅ ${config.scope} registry configured`);
 
       // Test connection
       const testResult = await testRegistryConnection(config);
       if (testResult.success) {
-        console.log(`  ✅ Connection successful`);
+        console.info(`  ✅ Connection successful`);
       } else {
-        console.log(`  ❌ Connection failed: ${testResult.error}`);
+        console.info(`  ❌ Connection failed: ${testResult.error}`);
       }
     } else {
-      console.log(`  ⚠️  ${config.scope} registry not configured`);
-      console.log(
+      console.info(`  ⚠️  ${config.scope} registry not configured`);
+      console.info(
         `     Missing: ${!hasToken ? getTokenVarName(key) + ' ' : ''}${!hasUrl ? getUrlVarName(key) : ''}`
       );
     }
 
-    console.log('');
+    console.info('');
   }
 
-  console.log('🔧 Registry setup complete!');
-  console.log('\nTo configure your registries:');
-  console.log('1. Edit your .env file with actual credentials');
-  console.log('2. Run this script again to test connections');
-  console.log("3. Run 'bun install' to install dependencies");
+  console.info('🔧 Registry setup complete!');
+  console.info('\nTo configure your registries:');
+  console.info('1. Edit your .env file with actual credentials');
+  console.info('2. Run this script again to test connections');
+  console.info("3. Run 'bun install' to install dependencies");
 }
 
 function checkEnvVar(envLines: string[], varName: string): boolean {
@@ -149,8 +149,8 @@ FIRE22_PRIVATE_REGISTRY_URL=https://npm.private.com
 `;
 
   writeFileSync('.env', template);
-  console.log('✅ Created .env template file');
-  console.log('📝 Please edit .env with your actual credentials and run this script again');
+  console.info('✅ Created .env template file');
+  console.info('📝 Please edit .env with your actual credentials and run this script again');
 }
 
 // Run the setup

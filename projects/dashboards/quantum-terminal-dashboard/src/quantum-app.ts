@@ -45,15 +45,15 @@ const CONFIG = {
  * Initialize the application
  */
 async function initializeApp() {
-  console.log('Quantum Terminal Dashboard');
-  console.log('='.repeat(40));
-  console.log(`Version: ${CONFIG.VERSION}`);
-  console.log(`Features enabled:`);
-  console.log(`  - Terminal: ${CONFIG.TERMINAL_ENABLED ? 'Yes' : 'No'}`);
-  console.log(`  - WebGL: ${CONFIG.WEBGL_ENABLED ? 'Yes' : 'No'}`);
-  console.log(`  - Premium: ${CONFIG.PREMIUM_ENABLED ? 'Yes' : 'No'}`);
-  console.log(`  - PTY Support: ${CONFIG.PTY_SUPPORT ? 'Yes' : 'No'}`);
-  console.log('='.repeat(40));
+  console.info('Quantum Terminal Dashboard');
+  console.info('='.repeat(40));
+  console.info(`Version: ${CONFIG.VERSION}`);
+  console.info(`Features enabled:`);
+  console.info(`  - Terminal: ${CONFIG.TERMINAL_ENABLED ? 'Yes' : 'No'}`);
+  console.info(`  - WebGL: ${CONFIG.WEBGL_ENABLED ? 'Yes' : 'No'}`);
+  console.info(`  - Premium: ${CONFIG.PREMIUM_ENABLED ? 'Yes' : 'No'}`);
+  console.info(`  - PTY Support: ${CONFIG.PTY_SUPPORT ? 'Yes' : 'No'}`);
+  console.info('='.repeat(40));
 
   // Check if we're in browser or server context
   const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
@@ -88,7 +88,7 @@ async function initializeBrowserApp() {
     )
   );
 
-  console.log('Browser application initialized');
+  console.info('Browser application initialized');
 }
 
 /**
@@ -99,8 +99,8 @@ async function initializeServerApp() {
 
   await startServers(CONFIG.HTTP_PORT, CONFIG.WS_PORT);
 
-  console.log('\nQuantum Terminal Dashboard is running!');
-  console.log(`Open https://app.example.com in your browser`);
+  console.info('\nQuantum Terminal Dashboard is running!');
+  console.info(`Open https://app.example.com in your browser`);
 }
 
 /**
@@ -115,7 +115,7 @@ async function main() {
   }
 
   if (args.includes('--version') || args.includes('-v')) {
-    console.log(CONFIG.VERSION);
+    console.info(CONFIG.VERSION);
     return;
   }
 
@@ -145,7 +145,7 @@ async function main() {
  * Print help message
  */
 function printHelp() {
-  console.log(`
+  console.info(`
 Quantum Terminal Dashboard v${CONFIG.VERSION}
 PTY-Enabled Financial Dashboard with Feature Flags
 

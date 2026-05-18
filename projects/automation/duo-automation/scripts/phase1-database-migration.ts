@@ -33,8 +33,8 @@ class EvidenceDatabaseMigration {
    * Execute Phase 1 database migration
    */
   async executeMigration(): Promise<void> {
-    console.log('🎯 Phase 1 Database Migration - Evidence Integrity Pipeline');
-    console.log('='.repeat(60));
+    console.info('🎯 Phase 1 Database Migration - Evidence Integrity Pipeline');
+    console.info('='.repeat(60));
     
     try {
       // Step 1: Add crc32_hash column
@@ -49,12 +49,12 @@ class EvidenceDatabaseMigration {
       // Step 4: Validate migration
       await this.validateMigration();
       
-      console.log('\n✅ Phase 1 database migration complete!');
-      console.log('📊 Migration Summary:');
-      console.log(`   • Table: ${this.config.tableName}`);
-      console.log(`   • Batch size: ${this.config.batchSize}`);
-      console.log(`   • Backfill rate: ${this.config.backfillHourlyRate.toLocaleString()} records/hour`);
-      console.log(`   • Off-peak window: ${this.config.offPeakStart}:00 - ${this.config.offPeakEnd}:00 EST`);
+      console.info('\n✅ Phase 1 database migration complete!');
+      console.info('📊 Migration Summary:');
+      console.info(`   • Table: ${this.config.tableName}`);
+      console.info(`   • Batch size: ${this.config.batchSize}`);
+      console.info(`   • Backfill rate: ${this.config.backfillHourlyRate.toLocaleString()} records/hour`);
+      console.info(`   • Off-peak window: ${this.config.offPeakStart}:00 - ${this.config.offPeakEnd}:00 EST`);
       
     } catch (error) {
       console.error(`❌ Migration failed: ${error.message}`);
@@ -66,7 +66,7 @@ class EvidenceDatabaseMigration {
    * Add crc32_hash column to evidence_metadata table
    */
   private async addCRC32Column(): Promise<void> {
-    console.log('\n🔧 Adding crc32_hash column to evidence_metadata table...');
+    console.info('\n🔧 Adding crc32_hash column to evidence_metadata table...');
     
     const migrationSQL = `
 -- Phase 1: Add CRC32 hash column for quantum acceleration
@@ -113,24 +113,24 @@ CREATE TABLE IF NOT EXISTS evidence_backfill_tracking (
 ) COMMENT='Tracking table for evidence metadata backfill process';
     `.trim();
 
-    console.log('   📝 Generated migration SQL:');
-    console.log('   • ALTER TABLE evidence_metadata ADD COLUMN crc32_hash');
-    console.log('   • CREATE INDEX idx_evidence_metadata_crc32_hash');
-    console.log('   • ADD quantum_hashed, schema_version, last_activity columns');
-    console.log('   • CREATE evidence_backfill_tracking table');
+    console.info('   📝 Generated migration SQL:');
+    console.info('   • ALTER TABLE evidence_metadata ADD COLUMN crc32_hash');
+    console.info('   • CREATE INDEX idx_evidence_metadata_crc32_hash');
+    console.info('   • ADD quantum_hashed, schema_version, last_activity columns');
+    console.info('   • CREATE evidence_backfill_tracking table');
     
     // Simulate execution
-    console.log('   🔒 Executing migration...');
+    console.info('   🔒 Executing migration...');
     // await this.db.execute(migrationSQL);
     
-    console.log('   ✅ crc32_hash column added successfully');
+    console.info('   ✅ crc32_hash column added successfully');
   }
 
   /**
    * Create backfill job for existing records
    */
   private async createBackfillJob(): Promise<void> {
-    console.log('\n📦 Creating backfill job for existing records...');
+    console.info('\n📦 Creating backfill job for existing records...');
     
     const backfillJob = `
 -- Backfill job for existing evidence records
@@ -248,35 +248,35 @@ END;
 SET GLOBAL event_scheduler = ON;
     `.trim();
 
-    console.log('   📝 Generated backfill job:');
-    console.log('   • Stored procedure: backfill_evidence_crc32()');
-    console.log('   • Batch size: 1,000 records');
-    console.log('   • Runtime limit: 55 minutes per batch');
-    console.log('   • Event scheduler: Off-peak hours only');
-    console.log('   • Tracking table: evidence_backfill_tracking');
+    console.info('   📝 Generated backfill job:');
+    console.info('   • Stored procedure: backfill_evidence_crc32()');
+    console.info('   • Batch size: 1,000 records');
+    console.info('   • Runtime limit: 55 minutes per batch');
+    console.info('   • Event scheduler: Off-peak hours only');
+    console.info('   • Tracking table: evidence_backfill_tracking');
     
     // Simulate execution
-    console.log('   🔒 Creating backfill job...');
+    console.info('   🔒 Creating backfill job...');
     // await this.db.execute(backfillJob);
     
-    console.log('   ✅ Backfill job created successfully');
+    console.info('   ✅ Backfill job created successfully');
   }
 
   /**
    * Schedule backfill execution
    */
   private async scheduleBackfill(): Promise<void> {
-    console.log('\n⏰ Scheduling backfill execution...');
+    console.info('\n⏰ Scheduling backfill execution...');
     
     const currentHour = new Date().getHours();
     const isOffPeak = currentHour >= this.config.offPeakStart || currentHour <= this.config.offPeakEnd;
     
-    console.log(`   🕐 Current time: ${currentHour}:00`);
-    console.log(`   🌙 Off-peak window: ${this.config.offPeakStart}:00 - ${this.config.offPeakEnd}:00 EST`);
-    console.log(`   📊 Status: ${isOffPeak ? '✅ Off-peak - Backfill active' : '⏸️ Peak hours - Backfill paused'}`);
+    console.info(`   🕐 Current time: ${currentHour}:00`);
+    console.info(`   🌙 Off-peak window: ${this.config.offPeakStart}:00 - ${this.config.offPeakEnd}:00 EST`);
+    console.info(`   📊 Status: ${isOffPeak ? '✅ Off-peak - Backfill active' : '⏸️ Peak hours - Backfill paused'}`);
     
     if (isOffPeak) {
-      console.log('   🚀 Starting immediate backfill execution...');
+      console.info('   🚀 Starting immediate backfill execution...');
       // await this.startBackfillExecution();
     } else {
       const nextOffPeak = currentHour < this.config.offPeakStart ? 
@@ -284,43 +284,43 @@ SET GLOBAL event_scheduler = ON;
         this.config.offPeakStart + 24;
       const hoursUntilOffPeak = nextOffPeak - currentHour;
       
-      console.log(`   ⏰ Next backfill starts in: ${hoursUntilOffPeak} hours`);
+      console.info(`   ⏰ Next backfill starts in: ${hoursUntilOffPeak} hours`);
     }
     
-    console.log('   ✅ Backfill scheduling configured');
+    console.info('   ✅ Backfill scheduling configured');
   }
 
   /**
    * Validate migration
    */
   private async validateMigration(): Promise<void> {
-    console.log('\n✅ Validating migration...');
+    console.info('\n✅ Validating migration...');
     
     // Check table structure
-    console.log('   🔍 Checking table structure...');
+    console.info('   🔍 Checking table structure...');
     // const tableInfo = await this.db.query('DESCRIBE evidence_metadata');
     
-    console.log('   ✅ Table structure validated');
+    console.info('   ✅ Table structure validated');
     
     // Check indexes
-    console.log('   🔍 Checking indexes...');
+    console.info('   🔍 Checking indexes...');
     // const indexes = await this.db.query('SHOW INDEX FROM evidence_metadata');
     
-    console.log('   ✅ Indexes validated');
+    console.info('   ✅ Indexes validated');
     
     // Check backfill tracking
-    console.log('   🔍 Checking backfill tracking...');
+    console.info('   🔍 Checking backfill tracking...');
     // const trackingTable = await this.db.query('DESCRIBE evidence_backfill_tracking');
     
-    console.log('   ✅ Backfill tracking validated');
+    console.info('   ✅ Backfill tracking validated');
     
     // Check event scheduler
-    console.log('   🔍 Checking event scheduler...');
+    console.info('   🔍 Checking event scheduler...');
     // const events = await this.db.query('SHOW EVENTS LIKE "evidence_backfill_scheduler"');
     
-    console.log('   ✅ Event scheduler validated');
+    console.info('   ✅ Event scheduler validated');
     
-    console.log('   ✅ Migration validation complete');
+    console.info('   ✅ Migration validation complete');
   }
 
   /**
@@ -334,7 +334,7 @@ SET GLOBAL event_scheduler = ON;
     processingRate: number;
     estimatedCompletion: Date | null;
   }> {
-    console.log('📊 Getting migration status...');
+    console.info('📊 Getting migration status...');
     
     // Simulate status check
     const totalRecords = 850000; // Estimated total records
@@ -358,13 +358,13 @@ SET GLOBAL event_scheduler = ON;
       estimatedCompletion
     };
     
-    console.log('📊 Migration Status:');
-    console.log(`   Total records: ${totalRecords.toLocaleString()}`);
-    console.log(`   Processed: ${processedRecords.toLocaleString()}`);
-    console.log(`   Pending: ${pendingRecords.toLocaleString()}`);
-    console.log(`   Processing rate: ${processingRate.toLocaleString()}/hour`);
-    console.log(`   Estimated completion: ${estimatedCompletion ? estimatedCompletion.toLocaleString() : 'Complete'}`);
-    console.log(`   Status: ${status.migrationComplete ? '✅ Complete' : '🔄 In progress'}`);
+    console.info('📊 Migration Status:');
+    console.info(`   Total records: ${totalRecords.toLocaleString()}`);
+    console.info(`   Processed: ${processedRecords.toLocaleString()}`);
+    console.info(`   Pending: ${pendingRecords.toLocaleString()}`);
+    console.info(`   Processing rate: ${processingRate.toLocaleString()}/hour`);
+    console.info(`   Estimated completion: ${estimatedCompletion ? estimatedCompletion.toLocaleString() : 'Complete'}`);
+    console.info(`   Status: ${status.migrationComplete ? '✅ Complete' : '🔄 In progress'}`);
     
     return status;
   }
@@ -373,12 +373,12 @@ SET GLOBAL event_scheduler = ON;
    * Test hardware acceleration on staging
    */
   async testHardwareAcceleration(): Promise<boolean> {
-    console.log('🔍 Testing hardware acceleration on staging...');
+    console.info('🔍 Testing hardware acceleration on staging...');
     
     try {
       // Test command
-      const testCommand = 'docker run --rm oven/bun:1.0 bun -e "console.log(Bun.env.BUN_ENABLE_CRC32_HW)"';
-      console.log(`   🔒 Running: ${testCommand}`);
+      const testCommand = 'docker run --rm oven/bun:1.0 bun -e "console.info(Bun.env.BUN_ENABLE_CRC32_HW)"';
+      console.info(`   🔒 Running: ${testCommand}`);
       
       // const result = execSync(testCommand, { encoding: 'utf8' });
       // const hwEnabled = result.trim() === 'true';
@@ -386,11 +386,11 @@ SET GLOBAL event_scheduler = ON;
       // Simulate test result
       const hwEnabled = true;
       
-      console.log(`   📊 Hardware acceleration: ${hwEnabled ? '✅ Enabled' : '❌ Disabled'}`);
+      console.info(`   📊 Hardware acceleration: ${hwEnabled ? '✅ Enabled' : '❌ Disabled'}`);
       
       if (!hwEnabled) {
-        console.log('   ⚠️  WARNING: Hardware acceleration not available');
-        console.log('   💡 Software fallback will be used');
+        console.info('   ⚠️  WARNING: Hardware acceleration not available');
+        console.info('   💡 Software fallback will be used');
       }
       
       return hwEnabled;
@@ -406,13 +406,13 @@ SET GLOBAL event_scheduler = ON;
 if (import.meta.main) {
   const migration = new EvidenceDatabaseMigration();
   
-  console.log('🎯 Phase 1 Database Migration - Evidence Integrity Pipeline');
-  console.log('==========================================================\n');
+  console.info('🎯 Phase 1 Database Migration - Evidence Integrity Pipeline');
+  console.info('==========================================================\n');
   
   // Test hardware acceleration first
   migration.testHardwareAcceleration()
     .then((hwEnabled) => {
-      console.log(`🔒 Hardware acceleration: ${hwEnabled ? '✅' : '❌'}\n`);
+      console.info(`🔒 Hardware acceleration: ${hwEnabled ? '✅' : '❌'}\n`);
       
       // Execute migration
       return migration.executeMigration();
@@ -422,8 +422,8 @@ if (import.meta.main) {
       return migration.getMigrationStatus();
     })
     .then((status) => {
-      console.log('\n🎉 Phase 1 migration ready for production deployment!');
-      console.log(`📊 Estimated completion: ${status.estimatedCompletion?.toLocaleString() || 'Immediate'}`);
+      console.info('\n🎉 Phase 1 migration ready for production deployment!');
+      console.info(`📊 Estimated completion: ${status.estimatedCompletion?.toLocaleString() || 'Immediate'}`);
     })
     .catch(console.error);
 }

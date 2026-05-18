@@ -8,7 +8,7 @@ import { AnomalyEngine, type LegSignal } from '../ai/anomalyEngine.js';
 import { trainModel, getTrainingHistory } from '../ai/train.js';
 import { AIAPI } from '../ai/api.js';
 
-console.log("🧪 Nebula-Flow™ AI Test Suite - Loading");
+console.info("🧪 Nebula-Flow™ AI Test Suite - Loading");
 
 describe('AnomalyEngine - Core Detection Logic', () => {
     let engine: AnomalyEngine;
@@ -515,4 +515,4 @@ describe('Integration Tests', () => {
     });
 });
 
-console.log("🧪 Nebula-Flow™ AI Test Suite - Complete");
+console.info("🧪 Nebula-Flow™ AI Test Suite - Complete");

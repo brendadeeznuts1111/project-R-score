@@ -85,35 +85,35 @@ async function showRules(projectName?: string) {
 			return;
 		}
 
-		console.log(`🔔 Notification Rules: ${projectName}`);
-		console.log("=".repeat(60));
+		console.info(`🔔 Notification Rules: ${projectName}`);
+		console.info("=".repeat(60));
 
 		const rules = getProjectRules(project);
 		for (const [rule, enabled] of Object.entries(rules)) {
 			const status = enabled ? "✅ ON" : "❌ OFF";
 			const desc = RULE_DESCRIPTIONS[rule] || rule;
-			console.log(`  ${status}  ${desc}`);
+			console.info(`  ${status}  ${desc}`);
 		}
 
 		// Show channel mappings
 		if (project.channels) {
-			console.log("\n📡 Channel Mappings:");
+			console.info("\n📡 Channel Mappings:");
 			for (const [channel, config] of Object.entries(project.channels)) {
-				console.log(`  ${channel} → Topic ${config.topic}`);
-				console.log(`     Patterns: ${config.patterns.join(", ")}`);
+				console.info(`  ${channel} → Topic ${config.topic}`);
+				console.info(`     Patterns: ${config.patterns.join(", ")}`);
 			}
 		}
 	} else {
 		// Show all projects summary
-		console.log("🔔 Notification Rules Summary");
-		console.log("=".repeat(80));
-		console.log(
+		console.info("🔔 Notification Rules Summary");
+		console.info("=".repeat(80));
+		console.info(
 			"Project".padEnd(25) +
 				Object.keys(RULE_DESCRIPTIONS)
 					.map((r) => r.replace("on_", "").substring(0, 4).toUpperCase())
 					.join(" "),
 		);
-		console.log("-".repeat(80));
+		console.info("-".repeat(80));
 
 		for (const [name, project] of Object.entries(config.projects)) {
 			const rules = getProjectRules(project);
@@ -123,10 +123,10 @@ async function showRules(projectName?: string) {
 					return enabled ? "●" : "○";
 				})
 				.join("  ");
-			console.log(name.padEnd(25) + indicators);
+			console.info(name.padEnd(25) + indicators);
 		}
 
-		console.log("\nLegend: ● = Enabled, ○ = Disabled");
+		console.info("\nLegend: ● = Enabled, ○ = Disabled");
 	}
 }
 
@@ -141,7 +141,7 @@ async function setRule(projectName: string, rule: string, enabled: boolean) {
 
 	if (!RULE_DESCRIPTIONS[rule]) {
 		console.error(`❌ Unknown rule: ${rule}`);
-		console.log(`Available rules: ${Object.keys(RULE_DESCRIPTIONS).join(", ")}`);
+		console.info(`Available rules: ${Object.keys(RULE_DESCRIPTIONS).join(", ")}`);
 		return;
 	}
 
@@ -151,7 +151,7 @@ async function setRule(projectName: string, rule: string, enabled: boolean) {
 	await saveConfig(config);
 
 	const status = enabled ? "enabled" : "disabled";
-	console.log(`✅ ${RULE_DESCRIPTIONS[rule]} ${status} for ${projectName}`);
+	console.info(`✅ ${RULE_DESCRIPTIONS[rule]} ${status} for ${projectName}`);
 }
 
 async function enableAll(projectName: string) {
@@ -169,7 +169,7 @@ async function enableAll(projectName: string) {
 	}
 
 	await saveConfig(config);
-	console.log(`✅ All notifications enabled for ${projectName}`);
+	console.info(`✅ All notifications enabled for ${projectName}`);
 }
 
 async function disableAll(projectName: string) {
@@ -187,7 +187,7 @@ async function disableAll(projectName: string) {
 	}
 
 	await saveConfig(config);
-	console.log(`✅ All notifications disabled for ${projectName}`);
+	console.info(`✅ All notifications disabled for ${projectName}`);
 }
 
 async function testNotification(projectName: string, eventType: string) {
@@ -210,14 +210,14 @@ async function testNotification(projectName: string, eventType: string) {
 		7: "Development 💻",
 	};
 
-	console.log(`🧪 Testing ${eventType} notification for ${projectName}`);
-	console.log(`   Enabled: ${isEnabled ? "✅ Yes" : "❌ No"}`);
-	console.log(
+	console.info(`🧪 Testing ${eventType} notification for ${projectName}`);
+	console.info(`   Enabled: ${isEnabled ? "✅ Yes" : "❌ No"}`);
+	console.info(
 		`   Default Topic: ${project.default_topic} (${topicNames[project.default_topic]})`,
 	);
 
 	if (isEnabled) {
-		console.log(`\n📨 Would send to Topic ${project.default_topic}:`);
+		console.info(`\n📨 Would send to Topic ${project.default_topic}:`);
 
 		const messages: Record<string, string> = {
 			commit: `📝 New commit in ${projectName}\n   abc123: feat: add new feature`,
@@ -231,7 +231,7 @@ async function testNotification(projectName: string, eventType: string) {
 			deploy: `🚀 Deployment completed\n   Production v1.2.0 deployed`,
 		};
 
-		console.log(`   ${messages[eventType] || "Test message"}`);
+		console.info(`   ${messages[eventType] || "Test message"}`);
 
 		// Log test
 		const logEntry = {
@@ -254,8 +254,8 @@ async function testNotification(projectName: string, eventType: string) {
 async function showStats() {
 	const logFile = `${import.meta.dir}/../logs/notifications.jsonl`;
 
-	console.log("📊 Notification Statistics");
-	console.log("=".repeat(60));
+	console.info("📊 Notification Statistics");
+	console.info("=".repeat(60));
 
 	try {
 		const stats: Record<string, number> = {};
@@ -275,16 +275,16 @@ async function showStats() {
 			}
 		}
 
-		console.log(`Total notifications: ${total}`);
-		console.log("\nBy Project/Event:");
+		console.info(`Total notifications: ${total}`);
+		console.info("\nBy Project/Event:");
 
 		const sorted = Object.entries(stats).sort((a, b) => b[1] - a[1]);
 		for (const [key, count] of sorted.slice(0, 20)) {
 			const [project, event] = key.split(":");
-			console.log(`  ${project.padEnd(20)} ${event.padEnd(15)} ${count}`);
+			console.info(`  ${project.padEnd(20)} ${event.padEnd(15)} ${count}`);
 		}
 	} catch {
-		console.log("No notification history found");
+		console.info("No notification history found");
 	}
 }
 
@@ -302,8 +302,8 @@ switch (command) {
 		} else if (args[0] && args[1]) {
 			await setRule(args[0], `on_${args[1]}`, true);
 		} else {
-			console.log("Usage: notify enable <project> <event>");
-			console.log("       notify enable all <project>");
+			console.info("Usage: notify enable <project> <event>");
+			console.info("       notify enable all <project>");
 		}
 		break;
 
@@ -313,8 +313,8 @@ switch (command) {
 		} else if (args[0] && args[1]) {
 			await setRule(args[0], `on_${args[1]}`, false);
 		} else {
-			console.log("Usage: notify disable <project> <event>");
-			console.log("       notify disable all <project>");
+			console.info("Usage: notify disable <project> <event>");
+			console.info("       notify disable all <project>");
 		}
 		break;
 
@@ -322,8 +322,8 @@ switch (command) {
 		if (args[0] && args[1]) {
 			await testNotification(args[0], args[1]);
 		} else {
-			console.log("Usage: notify test <project> <event>");
-			console.log(
+			console.info("Usage: notify test <project> <event>");
+			console.info(
 				"Events: commit, push, merge, pr, issue, release, file_change, test_failure, deploy",
 			);
 		}
@@ -334,7 +334,7 @@ switch (command) {
 		break;
 
 	default:
-		console.log(`
+		console.info(`
 Notification Manager
 
 Usage:

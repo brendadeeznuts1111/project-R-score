@@ -425,12 +425,12 @@ describe('Unicode Intelligence Vector Utilities', () => {
 
 // Performance benchmark example (run separately)
 export function runBenchmarks() {
-  console.log('=== Unicode Intelligence Vector Benchmarks ===\n');
+  console.info('=== Unicode Intelligence Vector Benchmarks ===\n');
 
   const table = createMockTable();
   
   // Benchmark 1: Scalar vs Batch
-  console.log('1. Scalar vs Batch Lookup (16 elements):');
+  console.info('1. Scalar vs Batch Lookup (16 elements):');
   const testArray = new Uint32Array(16);
   for (let i = 0; i < 16; i++) {
     testArray[i] = 0x41 + (i % 26);
@@ -455,12 +455,12 @@ export function runBenchmarks() {
   }
   const batchTime = performance.now() - batchStart;
 
-  console.log(`   Scalar: ${scalarTime.toFixed(2)}ms (${scalarMatches} matches)`);
-  console.log(`   Batch:  ${batchTime.toFixed(2)}ms (${batchMatches} matches)`);
-  console.log(`   Speedup: ${(scalarTime / batchTime).toFixed(2)}x\n`);
+  console.info(`   Scalar: ${scalarTime.toFixed(2)}ms (${scalarMatches} matches)`);
+  console.info(`   Batch:  ${batchTime.toFixed(2)}ms (${batchMatches} matches)`);
+  console.info(`   Speedup: ${(scalarTime / batchTime).toFixed(2)}x\n`);
 
   // Benchmark 2: Fast scan vs naive search
-  console.log('2. Fast Scan vs Naive Search:');
+  console.info('2. Fast Scan vs Naive Search:');
   const largeData = new Uint32Array(10000);
   largeData.fill(0x30);
   largeData[7500] = 0x41; // Match at 7500
@@ -486,9 +486,9 @@ export function runBenchmarks() {
   }
   const naiveTime = performance.now() - naiveStart;
 
-  console.log(`   Fast Scan: ${fastTime.toFixed(2)}ms (result: ${fastResult})`);
-  console.log(`   Naive:     ${naiveTime.toFixed(2)}ms (result: ${naiveResult})`);
-  console.log(`   Speedup: ${(naiveTime / fastTime).toFixed(2)}x\n`);
+  console.info(`   Fast Scan: ${fastTime.toFixed(2)}ms (result: ${fastResult})`);
+  console.info(`   Naive:     ${naiveTime.toFixed(2)}ms (result: ${naiveResult})`);
+  console.info(`   Speedup: ${(naiveTime / fastTime).toFixed(2)}x\n`);
 
-  console.log('=== Benchmarks Complete ===');
+  console.info('=== Benchmarks Complete ===');
 }

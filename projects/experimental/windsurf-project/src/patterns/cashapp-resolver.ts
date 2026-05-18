@@ -168,7 +168,7 @@ export class CashAppIntegration {
   private async cacheToR2(profile: CashAppProfile): Promise<void> {
     try {
       // Simulate R2 caching for production
-      console.log(`📁 Caching CashApp profile for ${profile.phone} to R2`);
+      console.info(`📁 Caching CashApp profile for ${profile.phone} to R2`);
     } catch (error) {
       console.error('Failed to cache to R2:', error);
     }

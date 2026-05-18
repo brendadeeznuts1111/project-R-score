@@ -177,7 +177,7 @@ describe('Financial Reporting Domain Integration', () => {
   describe('End-to-End Payment to Report Flow', () => {
     it('should track complete payment lifecycle through to financial reporting', async () => {
       // 1. Setup initial data
-      console.log('🏗️ Setting up test data...');
+      console.info('🏗️ Setting up test data...');
 
       // Create customer balances
       await balanceService.createBalance({
@@ -193,7 +193,7 @@ describe('Financial Reporting Domain Integration', () => {
       });
 
       // Process payments
-      console.log('💳 Processing payments...');
+      console.info('💳 Processing payments...');
       const payments = [
         await collectionsService.processPayment({
           amount: 200,
@@ -222,7 +222,7 @@ describe('Financial Reporting Domain Integration', () => {
       ];
 
       // Process settlements
-      console.log('💰 Processing settlements...');
+      console.info('💰 Processing settlements...');
       const settlements = [
         await settlementsService.processSettlement({
           paymentId: payments[0].id,
@@ -245,12 +245,12 @@ describe('Financial Reporting Domain Integration', () => {
       ];
 
       // Update balances
-      console.log('🏦 Updating balances...');
+      console.info('🏦 Updating balances...');
       await balanceService.updateBalance('customer_1', 200, 'debit');
       await balanceService.updateBalance('customer_2', 150, 'debit');
 
       // 2. Generate financial report
-      console.log('📊 Generating financial report...');
+      console.info('📊 Generating financial report...');
       const reportResponse = await controller.generateReport({
         reportType: ReportType.DAILY,
         periodStart: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
@@ -266,7 +266,7 @@ describe('Financial Reporting Domain Integration', () => {
       const report = reportResponse.data.report;
 
       // 3. Verify report accuracy
-      console.log('✅ Verifying report data...');
+      console.info('✅ Verifying report data...');
 
       // Collections data
       expect(report.collections.totalCollections).toBe(3);
@@ -292,7 +292,7 @@ describe('Financial Reporting Domain Integration', () => {
       expect(report.summary.totalSettlements).toBe(2);
       expect(report.summary.netProfit).toBe(643); // 650 - 7
 
-      console.log('🎉 End-to-end flow verification complete!');
+      console.info('🎉 End-to-end flow verification complete!');
     });
   });
 
@@ -443,7 +443,7 @@ describe('Financial Reporting Domain Integration', () => {
       const numPayments = 100;
       const payments = [];
 
-      console.log(`📊 Generating ${numPayments} test payments...`);
+      console.info(`📊 Generating ${numPayments} test payments...`);
 
       for (let i = 0; i < numPayments; i++) {
         const payment = await collectionsService.processPayment({
@@ -481,7 +481,7 @@ describe('Financial Reporting Domain Integration', () => {
       const expectedTotal = payments.reduce((sum, p) => sum + p.amount, 0);
       expect(report.collections.totalAmount).toBe(expectedTotal);
 
-      console.log(`⚡ Generated report with ${numPayments} payments in ${generationTime}ms`);
+      console.info(`⚡ Generated report with ${numPayments} payments in ${generationTime}ms`);
     });
   });
 
@@ -543,5 +543,5 @@ describe('Financial Reporting Domain Integration', () => {
   });
 });
 
-console.log('🔗 Financial Reporting Domain Integration Tests Loaded');
-console.log('Run tests with: bun test financial-reporting-integration.test.ts');
+console.info('🔗 Financial Reporting Domain Integration Tests Loaded');
+console.info('Run tests with: bun test financial-reporting-integration.test.ts');

@@ -97,13 +97,13 @@ const PACKAGE_BENCHMARKS: Record<string, string> = {
 };
 
 async function runCommand(command: string, description: string): Promise<string> {
-	console.log(`\n📌 ${description}`);
-	console.log(`   Running: ${command}`);
+	console.info(`\n📌 ${description}`);
+	console.info(`   Running: ${command}`);
 	try {
 		const result = await $`${command}`.quiet();
 		const output = result.stdout.toString().trim();
 		if (output) {
-			console.log(`   ✅ Complete`);
+			console.info(`   ✅ Complete`);
 		}
 		return output;
 	} catch (error) {
@@ -113,10 +113,10 @@ async function runCommand(command: string, description: string): Promise<string>
 }
 
 async function step1ListPRs(team: string, assignee: string, repo: string, label?: string): Promise<void> {
-	console.log(`\n📋 Step 1: List PRs for Review`);
-	console.log(`   Team: ${team}`);
-	console.log(`   Assignee: ${assignee}`);
-	console.log(`   Repo: ${repo}`);
+	console.info(`\n📋 Step 1: List PRs for Review`);
+	console.info(`   Team: ${team}`);
+	console.info(`   Assignee: ${assignee}`);
+	console.info(`   Repo: ${repo}`);
 
 	let command = `gh pr list --repo ${repo} --assignee ${assignee}`;
 	if (label) {
@@ -126,11 +126,11 @@ async function step1ListPRs(team: string, assignee: string, repo: string, label?
 	}
 
 	const output = await runCommand(command, "Listing PRs");
-	console.log(`\n   PRs:\n${output}`);
+	console.info(`\n   PRs:\n${output}`);
 }
 
 async function step2CheckBenchmarkResults(pr: string, repo: string): Promise<string | null> {
-	console.log(`\n📊 Step 2: Check benchmark results in PR`);
+	console.info(`\n📊 Step 2: Check benchmark results in PR`);
 
 	const prBody = await runCommand(
 		`gh pr view ${pr} --repo ${repo} --json body`,
@@ -148,20 +148,20 @@ async function step2CheckBenchmarkResults(pr: string, repo: string): Promise<str
 		);
 
 		if (benchmarkMatch && benchmarkMatch.trim()) {
-			console.log(`\n   Benchmark Results Found:\n${benchmarkMatch}`);
+			console.info(`\n   Benchmark Results Found:\n${benchmarkMatch}`);
 			return benchmarkMatch;
 		} else {
-			console.log(`   ⚠️  No benchmark results found in PR body`);
+			console.info(`   ⚠️  No benchmark results found in PR body`);
 			return null;
 		}
 	} catch (error) {
-		console.log(`   ⚠️  Could not parse PR body: ${error}`);
+		console.info(`   ⚠️  Could not parse PR body: ${error}`);
 		return null;
 	}
 }
 
 async function step3CheckoutPR(pr: string, repo: string): Promise<void> {
-	console.log(`\n🔀 Step 3: Checkout PR branch`);
+	console.info(`\n🔀 Step 3: Checkout PR branch`);
 
 	await runCommand(`gh pr checkout ${pr} --repo ${repo}`, "Checking out PR branch");
 }
@@ -169,13 +169,13 @@ async function step3CheckoutPR(pr: string, repo: string): Promise<void> {
 async function step4RunBenchmark(packageName: string): Promise<void> {
 	const benchName = PACKAGE_BENCHMARKS[packageName];
 	if (!benchName) {
-		console.log(`   ⚠️  No benchmark found for ${packageName}, skipping`);
+		console.info(`   ⚠️  No benchmark found for ${packageName}, skipping`);
 		return;
 	}
 
-	console.log(`\n⚡ Step 4: Run benchmark locally to verify`);
-	console.log(`   Package: ${packageName}`);
-	console.log(`   Benchmark: bench:${benchName}`);
+	console.info(`\n⚡ Step 4: Run benchmark locally to verify`);
+	console.info(`   Package: ${packageName}`);
+	console.info(`   Benchmark: bench:${benchName}`);
 
 	await runCommand(`bun run bench:${benchName}`, `Running benchmark for ${packageName}`);
 }
@@ -186,7 +186,7 @@ async function step5ReviewPR(
 	comment?: string,
 	repo?: string
 ): Promise<void> {
-	console.log(`\n👀 Step 5: Review PR`);
+	console.info(`\n👀 Step 5: Review PR`);
 
 	const defaultComment =
 		action === "approve"
@@ -201,7 +201,7 @@ async function step5ReviewPR(
 }
 
 async function step6MergePR(pr: string, repo: string, squash: boolean = true): Promise<void> {
-	console.log(`\n🔀 Step 6: Merge PR`);
+	console.info(`\n🔀 Step 6: Merge PR`);
 
 	const command = `gh pr merge ${pr} --${squash ? "squash" : "merge"} --delete-branch${repo ? ` --repo ${repo}` : ""}`;
 
@@ -217,7 +217,7 @@ async function step7NotifyTeam(
 ): Promise<void> {
 	const teamConfig = TEAMS[team as keyof typeof TEAMS];
 	if (!teamConfig) {
-		console.log(`   ⚠️  Team ${team} not found, skipping notification`);
+		console.info(`   ⚠️  Team ${team} not found, skipping notification`);
 		return;
 	}
 
@@ -226,16 +226,16 @@ async function step7NotifyTeam(
 		? `✅ ${packageName} ${version} published with ${improvement} performance improvement`
 		: `✅ ${packageName} ${version} published`;
 
-	console.log(`\n📢 Step 7: Notify team`);
-	console.log(`   Channel: ${slackChannel}`);
-	console.log(`   Message: ${message}`);
+	console.info(`\n📢 Step 7: Notify team`);
+	console.info(`   Channel: ${slackChannel}`);
+	console.info(`   Message: ${message}`);
 
 	// Check if slack-notify command exists
 	try {
 		await runCommand(`slack-notify "${slackChannel}" "${message}"`, "Sending Slack notification");
 	} catch {
-		console.log(`   ⚠️  slack-notify command not found, skipping notification`);
-		console.log(`   💡 Run manually: slack-notify "${slackChannel}" "${message}"`);
+		console.info(`   ⚠️  slack-notify command not found, skipping notification`);
+		console.info(`   💡 Run manually: slack-notify "${slackChannel}" "${message}"`);
 	}
 }
 
@@ -292,10 +292,10 @@ async function runReviewWorkflow(options: ReviewOptions): Promise<void> {
 		throw new Error("PR number is required for review workflow");
 	}
 
-	console.log(`\n🚀 Starting Team Lead Review Workflow`);
-	console.log(`   PR: #${pr}`);
-	console.log(`   Team: ${team || "auto-detect"}`);
-	console.log(`   Repo: ${repo}\n`);
+	console.info(`\n🚀 Starting Team Lead Review Workflow`);
+	console.info(`   PR: #${pr}`);
+	console.info(`   Team: ${team || "auto-detect"}`);
+	console.info(`   Repo: ${repo}\n`);
 
 	// Step 1: Check benchmark results
 	const benchmarkResults = await step2CheckBenchmarkResults(pr, repo);
@@ -309,7 +309,7 @@ async function runReviewWorkflow(options: ReviewOptions): Promise<void> {
 		if (packageName) {
 			await step4RunBenchmark(packageName);
 		} else {
-			console.log(`   ⚠️  Could not detect package from PR, skipping benchmark`);
+			console.info(`   ⚠️  Could not detect package from PR, skipping benchmark`);
 		}
 	}
 
@@ -332,7 +332,7 @@ async function runReviewWorkflow(options: ReviewOptions): Promise<void> {
 		}
 	}
 
-	console.log(`\n✅ Review workflow complete!`);
+	console.info(`\n✅ Review workflow complete!`);
 }
 
 async function runListWorkflow(options: ReviewOptions): Promise<void> {
@@ -409,15 +409,15 @@ async function main() {
 			await runReviewWorkflow(options);
 		} else {
 			console.error("❌ Error: --pr or --list is required");
-			console.log("\nUsage:");
-			console.log("  # List PRs for review");
-			console.log("  bun run scripts/team-lead-review.ts --list --team=sports-correlation --assignee=alex.chen");
-			console.log("");
-			console.log("  # Review PR");
-			console.log("  bun run scripts/team-lead-review.ts --pr=42 --team=sports-correlation --verify-benchmark");
-			console.log("");
-			console.log("  # Approve and merge");
-			console.log("  bun run scripts/team-lead-review.ts --pr=42 --team=sports-correlation --action=approve --auto-merge");
+			console.info("\nUsage:");
+			console.info("  # List PRs for review");
+			console.info("  bun run scripts/team-lead-review.ts --list --team=sports-correlation --assignee=alex.chen");
+			console.info("");
+			console.info("  # Review PR");
+			console.info("  bun run scripts/team-lead-review.ts --pr=42 --team=sports-correlation --verify-benchmark");
+			console.info("");
+			console.info("  # Approve and merge");
+			console.info("  bun run scripts/team-lead-review.ts --pr=42 --team=sports-correlation --action=approve --auto-merge");
 			process.exit(1);
 		}
 	} catch (error) {

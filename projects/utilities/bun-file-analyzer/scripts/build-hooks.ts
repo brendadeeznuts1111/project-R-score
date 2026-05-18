@@ -39,7 +39,7 @@ async function runPostBuildHooks(buildResult: any, options: BuildOptions = {
   createReports: true,
 }) {
   const startTime = Date.now();
-  console.log("🔧 Running post-build hooks...");
+  console.info("🔧 Running post-build hooks...");
   
   try {
     // Calculate build metrics
@@ -64,7 +64,7 @@ async function runPostBuildHooks(buildResult: any, options: BuildOptions = {
     // Update build cache
     await updateBuildCache(metrics);
     
-    console.log("✅ Post-build hooks completed successfully");
+    console.info("✅ Post-build hooks completed successfully");
     return metrics;
     
   } catch (error) {
@@ -139,7 +139,7 @@ if (typeof fetch !== 'undefined') {
   } catch {
     // Ignore header generation errors in test environment
   }
-  console.log("📋 Generated version headers");
+  console.info("📋 Generated version headers");
 }
 
 /**
@@ -192,19 +192,19 @@ function logBundleSize(totalSize: number, delta: BundleDelta) {
   const sizeMB = (totalSize / 1024 / 1024).toFixed(2);
   const sizeKB = (totalSize / 1024).toFixed(0);
   
-  console.log(`📦 Bundle size: ${sizeMB} MB (${sizeKB} KB)`);
+  console.info(`📦 Bundle size: ${sizeMB} MB (${sizeKB} KB)`);
   
   if (delta.previousSize > 0) {
     const trend = delta.trend === "increase" ? "📈" : delta.trend === "decrease" ? "📉" : "➡️";
     const sign = delta.deltaBytes >= 0 ? "+" : "";
-    console.log(`${trend} Size change: ${sign}${delta.deltaPercent}% (${sign}${(delta.deltaBytes / 1024).toFixed(1)} KB)`);
+    console.info(`${trend} Size change: ${sign}${delta.deltaPercent}% (${sign}${(delta.deltaBytes / 1024).toFixed(1)} KB)`);
   }
   
   // Performance warnings
   if (totalSize > 5 * 1024 * 1024) { // > 5MB
-    console.log("⚠️  Warning: Bundle size exceeds 5MB");
+    console.info("⚠️  Warning: Bundle size exceeds 5MB");
   } else if (totalSize < 100 * 1024) { // < 100KB
-    console.log("🎉 Excellent: Bundle size under 100KB");
+    console.info("🎉 Excellent: Bundle size under 100KB");
   }
 }
 
@@ -234,7 +234,7 @@ async function createBuildReports(metrics: BuildMetrics, outputDir: string) {
     // Ignore report generation errors in test environment
   }
   
-  console.log("📊 Build reports generated");
+  console.info("📊 Build reports generated");
 }
 
 /**
@@ -490,7 +490,7 @@ if (import.meta.main) {
     createReports: !args.includes('--no-reports'),
   };
   
-  console.log("🔧 Running post-build hooks with options:", options);
+  console.info("🔧 Running post-build hooks with options:", options);
   
   // Mock build result for standalone usage
   let mockBuildResult: any = { outputs: [] };
@@ -498,7 +498,7 @@ if (import.meta.main) {
   try {
     // For CLI usage, we'll just create a simple mock build result
     // In a real scenario, this would analyze the actual build output
-    console.log("📁 CLI mode - using mock build result");
+    console.info("📁 CLI mode - using mock build result");
     mockBuildResult.outputs = [
       { path: `${options.outputDir}/app.js`, size: 1000 }
     ];
@@ -508,8 +508,8 @@ if (import.meta.main) {
   
   runPostBuildHooks(mockBuildResult, options)
     .then((metrics) => {
-      console.log("✅ Build hooks completed successfully");
-      console.log(`📊 Final metrics: ${(metrics.totalSize / 1024 / 1024).toFixed(2)} MB, ${metrics.bundleCount} bundles, ${metrics.buildTime}ms`);
+      console.info("✅ Build hooks completed successfully");
+      console.info(`📊 Final metrics: ${(metrics.totalSize / 1024 / 1024).toFixed(2)} MB, ${metrics.bundleCount} bundles, ${metrics.buildTime}ms`);
     })
     .catch((error) => {
       console.error("❌ Build hooks failed:", error);

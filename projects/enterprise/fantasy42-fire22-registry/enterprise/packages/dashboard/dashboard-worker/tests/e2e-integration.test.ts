@@ -27,7 +27,7 @@ describe('End-to-End Integration Tests', () => {
           resolve();
         });
       });
-      console.log(`Cleaned up any existing process on port ${PORT}`);
+      console.info(`Cleaned up any existing process on port ${PORT}`);
     } catch (error) {
       console.error(`Failed to clean up port ${PORT}:`, error);
     }

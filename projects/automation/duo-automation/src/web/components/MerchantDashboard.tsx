@@ -56,7 +56,7 @@ const MerchantDashboard: React.FC<MerchantDashboardProps> = ({ merchantId }) => 
     const ws = new WebSocket(`wss://factory-wager.com/ws/merchant/${merchantId}`);
     
     ws.onopen = () => {
-      console.log('🔌 WebSocket connected for merchant updates');
+      console.info('🔌 WebSocket connected for merchant updates');
     };
     
     ws.onmessage = (event) => {
@@ -73,7 +73,7 @@ const MerchantDashboard: React.FC<MerchantDashboardProps> = ({ merchantId }) => 
     };
     
     ws.onclose = () => {
-      console.log('🔌 WebSocket disconnected');
+      console.info('🔌 WebSocket disconnected');
       // Attempt to reconnect after 5 seconds
       setTimeout(() => {
         setupRealTimeUpdates();
@@ -85,7 +85,7 @@ const MerchantDashboard: React.FC<MerchantDashboardProps> = ({ merchantId }) => 
 
   // Handle real-time updates
   const handleRealtimeUpdate = useCallback((update: RealtimeUpdate) => {
-    console.log('📡 Real-time update received:', update.type);
+    console.info('📡 Real-time update received:', update.type);
     
     switch (update.type) {
       case 'NEW_DISPUTE':
@@ -149,7 +149,7 @@ const MerchantDashboard: React.FC<MerchantDashboardProps> = ({ merchantId }) => 
   // Show notification (toast)
   const showNotification = useCallback((message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
     // This would integrate with your toast/notification system
-    console.log(`🔔 Notification [${type}]: ${message}`);
+    console.info(`🔔 Notification [${type}]: ${message}`);
     
     // For now, just use browser notification if available
     if ('Notification' in window && Notification.permission === 'granted') {

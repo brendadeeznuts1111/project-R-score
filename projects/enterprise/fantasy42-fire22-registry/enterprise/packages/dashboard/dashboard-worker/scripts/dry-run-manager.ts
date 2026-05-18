@@ -169,8 +169,8 @@ class DryRunManager {
       throw new Error(`Unknown dry run type: ${type}`);
     }
 
-    console.log(`🚀 Running ${config.operation} Dry Run...`);
-    console.log(`📝 ${config.description}\n`);
+    console.info(`🚀 Running ${config.operation} Dry Run...`);
+    console.info(`📝 ${config.description}\n`);
 
     const result: DryRunResult = {
       operation: config.operation,
@@ -186,13 +186,13 @@ class DryRunManager {
     try {
       // Run validation rules
       for (const rule of config.validationRules) {
-        console.log(`✅ Validating: ${rule}`);
+        console.info(`✅ Validating: ${rule}`);
         await this.simulateValidation(rule);
         result.changes.push(`Validated: ${rule}`);
       }
 
       // Test with test data
-      console.log(`🧪 Testing with sample data...`);
+      console.info(`🧪 Testing with sample data...`);
       await this.simulateOperation(config.testData);
       result.changes.push('Operation simulation completed');
 
@@ -207,7 +207,7 @@ class DryRunManager {
         result.estimatedImpact = 'low';
       }
 
-      console.log(`✅ ${config.operation} dry run completed successfully!`);
+      console.info(`✅ ${config.operation} dry run completed successfully!`);
     } catch (error) {
       result.success = false;
       result.errors.push(error.message);
@@ -244,32 +244,32 @@ class DryRunManager {
 
     // Simulate different operation types
     if (testData.endpoints) {
-      console.log(`🌐 Testing ${testData.endpoints.length} API endpoints...`);
+      console.info(`🌐 Testing ${testData.endpoints.length} API endpoints...`);
       for (const endpoint of testData.endpoints) {
-        console.log(`  📡 ${endpoint}`);
+        console.info(`  📡 ${endpoint}`);
         await new Promise(resolve => setTimeout(resolve, 50));
       }
     }
 
     if (testData.queries) {
-      console.log(`🗄️ Testing ${testData.queries.length} database queries...`);
+      console.info(`🗄️ Testing ${testData.queries.length} database queries...`);
       for (const query of testData.queries) {
-        console.log(`  🔍 ${query}`);
+        console.info(`  🔍 ${query}`);
         await new Promise(resolve => setTimeout(resolve, 50));
       }
     }
 
     if (testData.buildSteps) {
-      console.log(`🏗️ Testing ${testData.buildSteps.length} build steps...`);
+      console.info(`🏗️ Testing ${testData.buildSteps.length} build steps...`);
       for (const step of testData.buildSteps) {
-        console.log(`  ⚙️ ${step}`);
+        console.info(`  ⚙️ ${step}`);
         await new Promise(resolve => setTimeout(resolve, 100));
       }
     }
   }
 
   async runAllDryRuns(): Promise<DryRunResult[]> {
-    console.log('🚀 Running All Dry Run Tests...\n');
+    console.info('🚀 Running All Dry Run Tests...\n');
 
     const types = ['config', 'api', 'db', 'deploy'];
     const results: DryRunResult[] = [];
@@ -278,7 +278,7 @@ class DryRunManager {
       try {
         const result = await this.runDryRun(type);
         results.push(result);
-        console.log(''); // Add spacing between tests
+        console.info(''); // Add spacing between tests
       } catch (error) {
         console.error(`❌ Failed to run ${type} dry run:`, error.message);
       }
@@ -333,20 +333,20 @@ ${result.rollbackPlan.map(r => `  🔄 ${r}`).join('\n')}
       case 'json':
         const jsonFile = `dry-run-results-${timestamp}.json`;
         await Bun.write(jsonFile, JSON.stringify(this.results, null, 2));
-        console.log(`📄 Results exported to ${jsonFile}`);
+        console.info(`📄 Results exported to ${jsonFile}`);
         break;
 
       case 'html':
         const htmlFile = `dry-run-results-${timestamp}.html`;
         const htmlContent = this.generateHTMLReport();
         await Bun.write(htmlFile, htmlContent);
-        console.log(`📄 Results exported to ${htmlFile}`);
+        console.info(`📄 Results exported to ${htmlFile}`);
         break;
 
       case 'markdown':
         const mdFile = `dry-run-results-${timestamp}.md`;
         await Bun.write(mdFile, this.generateReport());
-        console.log(`📄 Results exported to ${mdFile}`);
+        console.info(`📄 Results exported to ${mdFile}`);
         break;
     }
   }
@@ -446,7 +446,7 @@ async function main() {
         break;
 
       case 'report':
-        console.log(manager.generateReport());
+        console.info(manager.generateReport());
         break;
 
       case 'export':
@@ -454,25 +454,25 @@ async function main() {
         break;
 
       default:
-        console.log('🚀 Fire22 Dashboard Dry Run Manager\n');
-        console.log('Usage:');
-        console.log('  bun run dry-run:config     # Test configuration changes');
-        console.log('  bun run dry-run:api        # Test API operations');
-        console.log('  bun run dry-run:db         # Test database operations');
-        console.log('  bun run dry-run:deploy     # Test deployment process');
-        console.log('  bun run dry-run:all        # Run all dry run tests');
-        console.log('  bun run dry-run:report     # Generate report');
-        console.log('  bun run dry-run:export     # Export results');
-        console.log('\nExamples:');
-        console.log('  bun run dry-run:config     # Test customer/agent config changes');
-        console.log('  bun run dry-run:api        # Test all API endpoints');
-        console.log('  bun run dry-run:all        # Comprehensive testing');
+        console.info('🚀 Fire22 Dashboard Dry Run Manager\n');
+        console.info('Usage:');
+        console.info('  bun run dry-run:config     # Test configuration changes');
+        console.info('  bun run dry-run:api        # Test API operations');
+        console.info('  bun run dry-run:db         # Test database operations');
+        console.info('  bun run dry-run:deploy     # Test deployment process');
+        console.info('  bun run dry-run:all        # Run all dry run tests');
+        console.info('  bun run dry-run:report     # Generate report');
+        console.info('  bun run dry-run:export     # Export results');
+        console.info('\nExamples:');
+        console.info('  bun run dry-run:config     # Test customer/agent config changes');
+        console.info('  bun run dry-run:api        # Test all API endpoints');
+        console.info('  bun run dry-run:all        # Comprehensive testing');
         process.exit(1);
     }
 
     // Generate and display report
     if (command !== 'report' && command !== 'export') {
-      console.log('\n' + manager.generateReport());
+      console.info('\n' + manager.generateReport());
     }
   } catch (error) {
     console.error('❌ Dry run error:', error.message);

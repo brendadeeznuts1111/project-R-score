@@ -13,8 +13,8 @@ import { inspect } from "bun";
 // 🎯 BASIC OBJECT INSPECTION
 // =============================================================================
 
-console.log("🎯 BASIC OBJECT INSPECTION");
-console.log("=".repeat(50));
+console.info("🎯 BASIC OBJECT INSPECTION");
+console.info("=".repeat(50));
 
 // Simple object inspection
 const user = {
@@ -28,20 +28,20 @@ const user = {
   }
 };
 
-console.log("User object:");
-console.log(inspect(user, { colors: true, depth: 3 }));
+console.info("User object:");
+console.info(inspect(user, { colors: true, depth: 3 }));
 
 // Binary data inspection
 const buffer = new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]);
-console.log("\nBinary data:");
-console.log(inspect(buffer));
+console.info("\nBinary data:");
+console.info(inspect(buffer));
 
 // =============================================================================
 // 🎭 CUSTOM INSPECTION WITH SYMBOL
 // =============================================================================
 
-console.log("\n\n🎭 CUSTOM INSPECTION");
-console.log("=".repeat(50));
+console.info("\n\n🎭 CUSTOM INSPECTION");
+console.info("=".repeat(50));
 
 /**
  * CustomProxyServer - Production-ready implementation with comprehensive custom object inspection
@@ -227,27 +227,27 @@ for (let i = 0; i < 1200; i++) {
   servers[0].connect();
 }
 
-console.log("Enhanced Custom inspection:");
-console.log("Simple format:");
-console.log(servers[0]); // Uses custom inspect
+console.info("Enhanced Custom inspection:");
+console.info("Simple format:");
+console.info(servers[0]); // Uses custom inspect
 
-console.log("\nColored format:");
-console.log(inspect(servers[0], { colors: true, depth: 3 })); // Colored, deeper
+console.info("\nColored format:");
+console.info(inspect(servers[0], { colors: true, depth: 3 })); // Colored, deeper
 
-console.log("\nJSON serialization:");
-console.log(JSON.stringify(servers[0], null, 2)); // JSON serialization
+console.info("\nJSON serialization:");
+console.info(JSON.stringify(servers[0], null, 2)); // JSON serialization
 
-console.log("\nDepth-limited inspection:");
-console.log(inspect(servers[0], { depth: 0 })); // Limited depth
+console.info("\nDepth-limited inspection:");
+console.info(inspect(servers[0], { depth: 0 })); // Limited depth
 
-console.log("\nCompact format:");
-console.log(inspect(servers[0], { compact: true })); // Compact format
+console.info("\nCompact format:");
+console.info(inspect(servers[0], { compact: true })); // Compact format
 
-console.log("\nMonochrome format:");
-console.log(inspect(servers[0], { colors: false })); // No colors
+console.info("\nMonochrome format:");
+console.info(inspect(servers[0], { colors: false })); // No colors
 
-console.log("\nString representation:");
-console.log(servers[0].toString()); // toString method
+console.info("\nString representation:");
+console.info(servers[0].toString()); // toString method
 
 // ============================================================================
 // UTILITY FUNCTIONS DEMONSTRATION
@@ -294,25 +294,25 @@ function generateServerReport(serverList: CustomProxyServer[]) {
   return report;
 }
 
-console.log("\n📊 Formatted Server Status:");
-console.log('─'.repeat(50));
-servers.forEach(server => console.log(formatServerStatus(server)));
+console.info("\n📊 Formatted Server Status:");
+console.info('─'.repeat(50));
+servers.forEach(server => console.info(formatServerStatus(server)));
 
-console.log("\n📈 Server Summary Report:");
-console.log('─'.repeat(50));
+console.info("\n📈 Server Summary Report:");
+console.info('─'.repeat(50));
 const report = generateServerReport(servers);
-console.log(inspect(report, { depth: 3, colors: true }));
+console.info(inspect(report, { depth: 3, colors: true }));
 
-console.log("\n📋 Array of Servers:");
-console.log('─'.repeat(50));
-console.log(inspect(servers, { depth: 2 }));
+console.info("\n📋 Array of Servers:");
+console.info('─'.repeat(50));
+console.info(inspect(servers, { depth: 2 }));
 
 // =============================================================================
 // 📊 TABLE EXAMPLES
 // =============================================================================
 
-console.log("\n\n📊 TABLE EXAMPLES");
-console.log("=".repeat(50));
+console.info("\n\n📊 TABLE EXAMPLES");
+console.info("=".repeat(50));
 
 // 1. Simple array of objects
 const users = [
@@ -322,8 +322,8 @@ const users = [
   { id: 4, name: "Diana", role: "moderator", status: "active" }
 ];
 
-console.log("Simple table:");
-console.log(inspect.table(users));
+console.info("Simple table:");
+console.info(inspect.table(users));
 
 // 2. Custom column definitions with formatting
 const metrics = {
@@ -342,8 +342,8 @@ const metrics = {
   ]
 };
 
-console.log("\nCustom formatted table:");
-console.log(inspect.table(metrics, {
+console.info("\nCustom formatted table:");
+console.info(inspect.table(metrics, {
   theme: "dark",
   showBorder: true,
   caption: "System Metrics Dashboard"
@@ -353,8 +353,8 @@ console.log(inspect.table(metrics, {
 // 🔄 REAL-TIME MONITORING EXAMPLE
 // =============================================================================
 
-console.log("\n\n🔄 REAL-TIME MONITORING");
-console.log("=".repeat(50));
+console.info("\n\n🔄 REAL-TIME MONITORING");
+console.info("=".repeat(50));
 
 class SystemMonitor {
   private metrics = {
@@ -409,7 +409,7 @@ class SystemMonitor {
     };
 
     console.clear();
-    console.log(inspect.table(dashboard, {
+    console.info(inspect.table(dashboard, {
       theme: "dark",
       showBorder: true,
       compact: true,
@@ -439,8 +439,8 @@ class SystemMonitor {
 // 🧪 TESTING WITH INSPECT
 // =============================================================================
 
-console.log("\n\n🧪 TESTING EXAMPLES");
-console.log("=".repeat(50));
+console.info("\n\n🧪 TESTING EXAMPLES");
+console.info("=".repeat(50));
 
 // Enhanced debug utilities with multiple output formats
 global.debug = (value: any, label?: string, options: any = {}) => {
@@ -453,11 +453,11 @@ global.debug = (value: any, label?: string, options: any = {}) => {
     ...options
   };
 
-  console.log(`🔍 ${label || "Debug"}:`, inspect(value, opts));
+  console.info(`🔍 ${label || "Debug"}:`, inspect(value, opts));
 };
 
 global.debugTable = (data: any, options: any = {}) => {
-  console.log(inspect.table(data, {
+  console.info(inspect.table(data, {
     theme: "dark",
     compact: true,
     showBorder: true,
@@ -467,7 +467,7 @@ global.debugTable = (data: any, options: any = {}) => {
 
 // Advanced debug utilities
 global.debugJSON = (value: any, label?: string, indent: number = 2) => {
-  console.log(`📄 ${label || "JSON"}:`, JSON.stringify(value, null, indent));
+  console.info(`📄 ${label || "JSON"}:`, JSON.stringify(value, null, indent));
 };
 
 global.debugInspect = (value: any, label?: string, inspectOptions: any = {}) => {
@@ -479,7 +479,7 @@ global.debugInspect = (value: any, label?: string, inspectOptions: any = {}) => 
     ...inspectOptions
   };
 
-  console.log(`🔎 ${label || "Inspect"}:`, inspect(value, opts));
+  console.info(`🔎 ${label || "Inspect"}:`, inspect(value, opts));
 };
 
 global.debugPerformance = (fn: () => any, label?: string, iterations: number = 100) => {
@@ -494,7 +494,7 @@ global.debugPerformance = (fn: () => any, label?: string, iterations: number = 1
   const totalTime = end - start;
   const avgTime = totalTime / iterations;
 
-  console.log(`⚡ ${label || "Performance"}:`, {
+  console.info(`⚡ ${label || "Performance"}:`, {
     iterations,
     totalTime: `${totalTime.toFixed(2)}ms`,
     avgTime: `${avgTime.toFixed(4)}ms`,
@@ -505,7 +505,7 @@ global.debugPerformance = (fn: () => any, label?: string, iterations: number = 1
 };
 
 global.debugCompare = (values: any[], labels?: string[], options: any = {}) => {
-  console.log("📊 Comparison:");
+  console.info("📊 Comparison:");
 
   values.forEach((value, index) => {
     const label = labels?.[index] || `Item ${index + 1}`;
@@ -514,31 +514,31 @@ global.debugCompare = (values: any[], labels?: string[], options: any = {}) => {
 };
 
 // Example usage with enhanced utilities
-console.log("Enhanced Debug utility examples:");
+console.info("Enhanced Debug utility examples:");
 debug(user, "User data");
 
-console.log("\nDebug table example:");
+console.info("\nDebug table example:");
 debugTable(users, { caption: "User List" });
 
-console.log("\nJSON debug example:");
+console.info("\nJSON debug example:");
 debugJSON(user, "User as JSON");
 
-console.log("\nDeep inspection example:");
+console.info("\nDeep inspection example:");
 debugInspect(servers[0], "Server deep inspection", { depth: 2 });
 
-console.log("\nPerformance comparison:");
+console.info("\nPerformance comparison:");
 debugPerformance(() => inspect(user), "User inspection", 1000);
 debugPerformance(() => JSON.stringify(user), "User JSON stringify", 1000);
 
-console.log("\nComparison example:");
+console.info("\nComparison example:");
 debugCompare([user, servers[0]], ["User Object", "Server Object"], { depth: 1 });
 
 // =============================================================================
 // 🚀 PERFORMANCE COMPARISON
 // =============================================================================
 
-console.log("\n\n🚀 PERFORMANCE COMPARISON");
-console.log("=".repeat(50));
+console.info("\n\n🚀 PERFORMANCE COMPARISON");
+console.info("=".repeat(50));
 
 function benchmark(fn: () => void, name: string, iterations: number = 1000): { name: string, time: number, avg: number } {
   const start = performance.now();
@@ -582,8 +582,8 @@ const perfTable = {
   rows: results
 };
 
-console.log("Performance benchmark results:");
-console.log(inspect.table(perfTable, {
+console.info("Performance benchmark results:");
+console.info(inspect.table(perfTable, {
   theme: "dark",
   caption: `Performance Test (${results[0].time < results[1].time ? 'Bun.inspect is faster!' : 'JSON.stringify is faster'})`
 }));
@@ -592,15 +592,15 @@ console.log(inspect.table(perfTable, {
 // 🔗 INTEGRATION WITH BUN APIs
 // =============================================================================
 
-console.log("\n\n🔗 BUN API INTEGRATION");
-console.log("=".repeat(50));
+console.info("\n\n🔗 BUN API INTEGRATION");
+console.info("=".repeat(50));
 
 // Example with Bun.serve
 const exampleServer = Bun.serve({
   port: 3001,
   async fetch(req) {
     // Log request with inspect
-    console.log("📨 Incoming request:", inspect({
+    console.info("📨 Incoming request:", inspect({
       method: req.method,
       url: req.url,
       headers: Object.fromEntries(req.headers.entries())
@@ -617,7 +617,7 @@ const exampleServer = Bun.serve({
   }
 });
 
-console.log("🚀 Server started:", inspect(exampleServer, { colors: true }));
+console.info("🚀 Server started:", inspect(exampleServer, { colors: true }));
 
 // Example with Bun.build
 async function buildExample() {
@@ -628,7 +628,7 @@ async function buildExample() {
       minify: true
     });
 
-    console.log("🏗️ Build result:", inspect(result, { colors: true, depth: 2 }));
+    console.info("🏗️ Build result:", inspect(result, { colors: true, depth: 2 }));
 
     if (result.outputs) {
       const buildTable = {
@@ -642,7 +642,7 @@ async function buildExample() {
         }))
       };
 
-      console.log(inspect.table(buildTable, {
+      console.info(inspect.table(buildTable, {
         theme: "dark",
         caption: "Build Outputs"
       }));
@@ -659,8 +659,8 @@ async function buildExample() {
 // 🎨 ADVANCED FORMATTING
 // =============================================================================
 
-console.log("\n\n🎨 ADVANCED FORMATTING");
-console.log("=".repeat(50));
+console.info("\n\n🎨 ADVANCED FORMATTING");
+console.info("=".repeat(50));
 
 // Complex data with custom formatting
 const complexData = {
@@ -712,16 +712,16 @@ const complexData = {
   ]
 };
 
-console.log("Advanced formatted table:");
-console.log(inspect.table(complexData, {
+console.info("Advanced formatted table:");
+console.info(inspect.table(complexData, {
   theme: "dark",
   showBorder: true,
   zebra: true,
   caption: "Application Logs"
 }));
 
-console.log("\n🎉 Bun.inspect() examples completed!");
-console.log("Run this file with: bun run bun-inspect-example.ts");
+console.info("\n🎉 Bun.inspect() examples completed!");
+console.info("Run this file with: bun run bun-inspect-example.ts");
 
 // Cleanup
 exampleServer.stop();

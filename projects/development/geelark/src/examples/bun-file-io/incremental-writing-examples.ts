@@ -10,7 +10,7 @@
 import { writeFile } from 'fs/promises';
 
 // Example 1: Basic incremental writing
-console.log('📝 Example 1: Basic Incremental Writing');
+console.info('📝 Example 1: Basic Incremental Writing');
 
 async function basicIncrementalWriting() {
   const file = Bun.file('./output/basic-example.txt');
@@ -25,7 +25,7 @@ async function basicIncrementalWriting() {
 
     // Flush to disk
     writer.flush();
-    console.log('✅ Basic writing completed and flushed');
+    console.info('✅ Basic writing completed and flushed');
 
     // Continue writing more data
     writer.write('consectetur adipiscing elit\n');
@@ -34,7 +34,7 @@ async function basicIncrementalWriting() {
 
     // End the writer (auto-flushes and closes)
     writer.end();
-    console.log('✅ Writer ended successfully');
+    console.info('✅ Writer ended successfully');
 
   } catch (error) {
     console.error('❌ Error in basic writing:', error);
@@ -43,7 +43,7 @@ async function basicIncrementalWriting() {
 }
 
 // Example 2: Writing different data types
-console.log('\n🔄 Example 2: Writing Different Data Types');
+console.info('\n🔄 Example 2: Writing Different Data Types');
 
 async function writingDataTypes() {
   const file = Bun.file('./output/data-types-example.bin');
@@ -67,7 +67,7 @@ async function writingDataTypes() {
 
     writer.flush();
     writer.end();
-    console.log('✅ Different data types written successfully');
+    console.info('✅ Different data types written successfully');
 
   } catch (error) {
     console.error('❌ Error writing data types:', error);
@@ -76,7 +76,7 @@ async function writingDataTypes() {
 }
 
 // Example 3: Large file writing with buffering
-console.log('\n📊 Example 3: Large File Writing with Buffering');
+console.info('\n📊 Example 3: Large File Writing with Buffering');
 
 async function largeFileWriting() {
   const file = Bun.file('./output/large-file.txt');
@@ -85,7 +85,7 @@ async function largeFileWriting() {
   const writer = file.writer({ highWaterMark: 1024 * 1024 });
 
   try {
-    console.log('🔄 Writing large dataset...');
+    console.info('🔄 Writing large dataset...');
 
     // Simulate writing large amounts of data
     const lines = [];
@@ -101,13 +101,13 @@ async function largeFileWriting() {
 
       // Progress indicator
       if ((i + chunkSize) % 5000 === 0) {
-        console.log(`📈 Written ${i + chunkSize} lines...`);
+        console.info(`📈 Written ${i + chunkSize} lines...`);
         writer.flush(); // Manual flush at intervals
       }
     }
 
     writer.end();
-    console.log('✅ Large file writing completed');
+    console.info('✅ Large file writing completed');
 
   } catch (error) {
     console.error('❌ Error writing large file:', error);
@@ -116,14 +116,14 @@ async function largeFileWriting() {
 }
 
 // Example 4: Stream-like writing with real-time data
-console.log('\n🌊 Example 4: Stream-like Writing with Real-time Data');
+console.info('\n🌊 Example 4: Stream-like Writing with Real-time Data');
 
 async function streamLikeWriting() {
   const file = Bun.file('./output/stream-example.txt');
   const writer = file.writer({ highWaterMark: 64 * 1024 }); // 64KB buffer
 
   try {
-    console.log('🔄 Simulating real-time data stream...');
+    console.info('🔄 Simulating real-time data stream...');
 
     // Simulate receiving data chunks over time
     const dataChunks = [
@@ -141,7 +141,7 @@ async function streamLikeWriting() {
     // Write chunks with delays to simulate real-time streaming
     for (let i = 0; i < dataChunks.length; i++) {
       writer.write(dataChunks[i]);
-      console.log(`📝 Wrote chunk ${i + 1}/${dataChunks.length}`);
+      console.info(`📝 Wrote chunk ${i + 1}/${dataChunks.length}`);
 
       // Simulate processing delay
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -149,12 +149,12 @@ async function streamLikeWriting() {
       // Flush every few chunks
       if ((i + 1) % 3 === 0) {
         writer.flush();
-        console.log('💾 Buffer flushed');
+        console.info('💾 Buffer flushed');
       }
     }
 
     writer.end();
-    console.log('✅ Stream writing completed');
+    console.info('✅ Stream writing completed');
 
   } catch (error) {
     console.error('❌ Error in stream writing:', error);
@@ -163,7 +163,7 @@ async function streamLikeWriting() {
 }
 
 // Example 5: Error handling and resource management
-console.log('\n🛡️ Example 5: Error Handling and Resource Management');
+console.info('\n🛡️ Example 5: Error Handling and Resource Management');
 
 async function errorHandlingExample() {
   const file = Bun.file('./output/error-handling-example.txt');
@@ -182,7 +182,7 @@ async function errorHandlingExample() {
     writer.write('Success: No errors occurred\n');
     writer.flush();
     writer.end();
-    console.log('✅ Error handling example completed successfully');
+    console.info('✅ Error handling example completed successfully');
 
   } catch (error) {
     console.error('❌ Caught error:', error.message);
@@ -192,29 +192,29 @@ async function errorHandlingExample() {
     } catch (cleanupError) {
       console.error('❌ Error during cleanup:', cleanupError);
     }
-    console.log('✅ Resources cleaned up despite error');
+    console.info('✅ Resources cleaned up despite error');
   }
 }
 
 // Example 6: Performance comparison
-console.log('\n⚡ Example 6: Performance Comparison');
+console.info('\n⚡ Example 6: Performance Comparison');
 
 async function performanceComparison() {
   const testData = 'x'.repeat(1000); // 1KB of data
   const iterations = 1000;
 
   // Test 1: Traditional writeFile (all at once)
-  console.log('🔄 Testing traditional writeFile...');
+  console.info('🔄 Testing traditional writeFile...');
   const start1 = performance.now();
 
   const allData = testData.repeat(iterations);
   await writeFile('./output/traditional-write.txt', allData);
 
   const time1 = performance.now() - start1;
-  console.log(`⏱️ Traditional writeFile: ${time1.toFixed(2)}ms`);
+  console.info(`⏱️ Traditional writeFile: ${time1.toFixed(2)}ms`);
 
   // Test 2: Incremental writing with FileSink
-  console.log('🔄 testing incremental FileSink writing...');
+  console.info('🔄 testing incremental FileSink writing...');
   const start2 = performance.now();
 
   const file = Bun.file('./output/incremental-write.txt');
@@ -226,15 +226,15 @@ async function performanceComparison() {
 
   writer.end();
   const time2 = performance.now() - start2;
-  console.log(`⏱️ Incremental FileSink: ${time2.toFixed(2)}ms`);
+  console.info(`⏱️ Incremental FileSink: ${time2.toFixed(2)}ms`);
 
-  console.log(`📊 Performance ratio: ${(time1 / time2).toFixed(2)}x`);
+  console.info(`📊 Performance ratio: ${(time1 / time2).toFixed(2)}x`);
 }
 
 // Main execution function
 async function runAllExamples() {
-  console.log('🚀 Bun Incremental File Writing Examples');
-  console.log('==========================================\n');
+  console.info('🚀 Bun Incremental File Writing Examples');
+  console.info('==========================================\n');
 
   try {
     // Ensure output directory exists
@@ -251,8 +251,8 @@ async function runAllExamples() {
     await errorHandlingExample();
     await performanceComparison();
 
-    console.log('\n🎉 All examples completed successfully!');
-    console.log('📁 Check the ./output/ directory for generated files');
+    console.info('\n🎉 All examples completed successfully!');
+    console.info('📁 Check the ./output/ directory for generated files');
 
   } catch (error) {
     console.error('\n❌ Error running examples:', error);

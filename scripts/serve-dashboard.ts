@@ -21,13 +21,13 @@ async function main() {
   const port = parseInt(args.find(arg => arg.startsWith('--port='))?.split('=')[1] || '8080');
   const liveUpdates = args.includes('--live-updates');
 
-  console.log(styled('📊 FactoryWager Secrets Dashboard v5.1', 'accent'));
-  console.log(styled('=========================================', 'muted'));
-  console.log('');
+  console.info(styled('📊 FactoryWager Secrets Dashboard v5.1', 'accent'));
+  console.info(styled('=========================================', 'muted'));
+  console.info('');
 
-  console.log(styled(`🌐 Starting dashboard on port ${port}`, 'primary'));
-  console.log(styled(`🔄 Live updates: ${liveUpdates ? 'enabled' : 'disabled'}`, 'muted'));
-  console.log('');
+  console.info(styled(`🌐 Starting dashboard on port ${port}`, 'primary'));
+  console.info(styled(`🔄 Live updates: ${liveUpdates ? 'enabled' : 'disabled'}`, 'muted'));
+  console.info('');
 
   const server = Bun.serve({
     port,
@@ -55,12 +55,12 @@ async function main() {
     }
   });
 
-  console.log(styled(`✅ Dashboard running at http://localhost:${port}`, 'success'));
-  console.log(styled(`📖 Visit the dashboard to view secret analytics`, 'primary'));
-  console.log('');
+  console.info(styled(`✅ Dashboard running at http://localhost:${port}`, 'success'));
+  console.info(styled(`📖 Visit the dashboard to view secret analytics`, 'primary'));
+  console.info('');
 
   if (liveUpdates) {
-    console.log(styled('🔄 Live updates enabled - dashboard will refresh automatically', 'success'));
+    console.info(styled('🔄 Live updates enabled - dashboard will refresh automatically', 'success'));
   }
 }
 
@@ -322,7 +322,7 @@ async function loadDashboard() {
     // Mock recent changes (replace with real API call)
     document.getElementById('recent-changes').innerHTML = '<p>Recent version changes will appear here</p>';
 
-    console.log('Dashboard loaded successfully');
+    console.info('Dashboard loaded successfully');
   } catch (error) {
     console.error('Failed to load dashboard:', error);
   }

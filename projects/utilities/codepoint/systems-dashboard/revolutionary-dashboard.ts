@@ -108,7 +108,7 @@ class RevolutionaryDashboard {
   }
 
   private displayRevolutionaryHeader() {
-    console.log(`${ANSI.bright}${ANSI.purple}
+    console.info(`${ANSI.bright}${ANSI.purple}
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
 ║  🚀 REVOLUTIONARY DASHBOARD - WORLD'S FIRST EVERYTHING        ║
@@ -118,7 +118,7 @@ class RevolutionaryDashboard {
 ╚══════════════════════════════════════════════════════════════╝${ANSI.reset}
     `);
 
-    console.log(`${ANSI.bright}${ANSI.cyan}
+    console.info(`${ANSI.bright}${ANSI.cyan}
 ┌──────────────────────────────────────────────────────────────┐
 │  💎 Codepoints Styling • 🌈 HSL Gradients • ⚡ ANSI Colors  │
 │                                                              │
@@ -129,10 +129,10 @@ class RevolutionaryDashboard {
   }
 
   private displayRevolutionaryCapabilities() {
-    console.log(
+    console.info(
       `\n${ANSI.bright}${ANSI.magenta}🌍 WORLD'S FIRST IMPLEMENTATIONS:${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.cyan}═══════════════════════════════════════════════════════════════${ANSI.reset}`
     );
 
@@ -181,13 +181,13 @@ class RevolutionaryDashboard {
       const number = `${ANSI.bright}${ANSI.gold}${(index + 1).toString().padStart(2, "0")}${ANSI.reset}`;
       const icon = `${ANSI.bright}${achievement.color}${achievement.icon}${ANSI.reset}`;
       const title = `${ANSI.bright}${achievement.color}${achievement.title}${ANSI.reset}`;
-      console.log(`${ANSI.dim}│${ANSI.reset} ${number} ${icon} ${title}`);
+      console.info(`${ANSI.dim}│${ANSI.reset} ${number} ${icon} ${title}`);
     });
 
-    console.log(
+    console.info(
       `\n${ANSI.bright}${ANSI.orange}⚡ BUN REVOLUTIONARY CAPABILITIES:${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.cyan}═══════════════════════════════════════════════════════════════${ANSI.reset}`
     );
 
@@ -259,15 +259,15 @@ class RevolutionaryDashboard {
       const icon = `${ANSI.bright}${capability.color}${capability.icon}${ANSI.reset}`;
       const name = `${ANSI.bright}${capability.color}${capability.name}${ANSI.reset}`;
       const speed = `${ANSI.dim}${ANSI.cyan}${capability.speed}${ANSI.reset}`;
-      console.log(
+      console.info(
         `${ANSI.dim}│${ANSI.reset} ${number} ${icon} ${name.padEnd(22)} ${speed}`
       );
     });
 
-    console.log(
+    console.info(
       `\n${ANSI.bright}${ANSI.green}🎨 BEAUTIFUL VISUAL ENHANCEMENTS:${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.cyan}═══════════════════════════════════════════════════════════════${ANSI.reset}`
     );
 
@@ -308,7 +308,7 @@ class RevolutionaryDashboard {
       const icon = index % 2 === 0 ? "💎" : "✨";
       const feature = `${ANSI.bright}${enhancement.color}${enhancement.feature}${ANSI.reset}`;
       const description = `${ANSI.dim}${enhancement.description}${ANSI.reset}`;
-      console.log(
+      console.info(
         `${ANSI.dim}│${ANSI.reset} ${icon} ${feature.padEnd(25)} ${description}`
       );
     });
@@ -373,13 +373,13 @@ class RevolutionaryDashboard {
       fetch: (req) => this.handleRequest(req),
     });
 
-    console.log(
+    console.info(
       `\n${ANSI.bright}${ANSI.cyan}🌐 Revolutionary Dashboard running at: http://localhost:${this.port}${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.bright}${ANSI.purple}🎮 Experience the future of JavaScript development!${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.bright}${ANSI.green}📊 See the world's first implementations in action!${ANSI.reset}`
     );
 
@@ -388,10 +388,10 @@ class RevolutionaryDashboard {
   }
 
   private async demonstrateBunNetworking() {
-    console.log(
+    console.info(
       `\n${ANSI.bright}${ANSI.orange}🌍 BUN ADVANCED NETWORKING DEMONSTRATION:${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.cyan}═══════════════════════════════════════════════════════════════${ANSI.reset}`
     );
 
@@ -472,14 +472,14 @@ class RevolutionaryDashboard {
       const icon = `${ANSI.bright}${feature.color}${feature.icon}${ANSI.reset}`;
       const name = `${ANSI.bright}${feature.color}${feature.name}${ANSI.reset}`;
       const description = `${ANSI.dim}${feature.description}${ANSI.reset}`;
-      console.log(
+      console.info(
         `${ANSI.dim}│${ANSI.reset} ${icon} ${name.padEnd(25)} ${description}`
       );
 
       try {
         await feature.demo();
       } catch (error: unknown) {
-        console.log(
+        console.info(
           `${ANSI.dim}│${ANSI.reset}   ${ANSI.red}✗ Demo failed: ${error instanceof Error ? error.message : String(error)}${ANSI.reset}`
         );
       }
@@ -487,55 +487,55 @@ class RevolutionaryDashboard {
   }
 
   private async demoFileProtocol() {
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.lime}📁 File Protocol support...${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.cyan}📁 Local file fetching with file://${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.lime}✓ file:// option supported${ANSI.reset}`
     );
   }
 
   private async demoDataURLs() {
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.orange}📊 Data URL support...${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.cyan}📊 Inline data with data:// scheme${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.lime}✓ data:// option supported${ANSI.reset}`
     );
   }
 
   private async demoFetchExtensions() {
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.magenta}🔧 Fetch extensions...${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.cyan}🔧 decompress, keepalive, verbose options${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.lime}✓ decompress, keepalive, verbose options supported${ANSI.reset}`
     );
   }
 
   private async demoPerformanceOptimizations() {
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.red}⚡ Performance optimizations...${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.cyan}⚡ DNS prefetch, preconnect, connection pooling${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.lime}✓ DNS prefetch, preconnect, connection pooling supported${ANSI.reset}`
     );
   }
 
   private async demoStreamingResponse() {
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.green}🔄 Testing streaming response...${ANSI.reset}`
     );
 
@@ -567,7 +567,7 @@ class RevolutionaryDashboard {
         headers: { "Content-Type": "text/plain" },
       });
 
-      console.log(
+      console.info(
         `${ANSI.dim}│${ANSI.reset}   ${ANSI.cyan}📦 Streaming chunks:${ANSI.reset}`
       );
 
@@ -575,7 +575,7 @@ class RevolutionaryDashboard {
       const reader = response.body!.getReader();
       const decoder = new TextDecoder();
 
-      console.log(
+      console.info(
         `${ANSI.dim}│${ANSI.reset}   ${ANSI.cyan}📦 Streaming chunks:${ANSI.reset}`
       );
 
@@ -584,23 +584,23 @@ class RevolutionaryDashboard {
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
-        console.log(
+        console.info(
           `${ANSI.dim}│${ANSI.reset}     ${ANSI.lime}→${ANSI.reset} ${chunk.trim()}`
         );
       }
 
-      console.log(
+      console.info(
         `${ANSI.dim}│${ANSI.reset}   ${ANSI.green}✅ Streaming demo completed${ANSI.reset}`
       );
     } catch (error: unknown) {
-      console.log(
+      console.info(
         `${ANSI.dim}│${ANSI.reset}   ${ANSI.red}✗ Streaming failed: ${error instanceof Error ? error.message : String(error)}${ANSI.reset}`
       );
     }
   }
 
   private async demoTimeout() {
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.blue}⏱️ Testing request timeout...${ANSI.reset}`
     );
 
@@ -613,7 +613,7 @@ class RevolutionaryDashboard {
         slowController.abort();
       }, 2000); // This will be too late
 
-      console.log(
+      console.info(
         `${ANSI.dim}│${ANSI.reset}   ${ANSI.gold}⏰ Request will timeout in 1 second...${ANSI.reset}`
       );
 
@@ -633,7 +633,7 @@ class RevolutionaryDashboard {
         ]);
       } catch (error) {
         if (error instanceof Error && error.message === "Request timeout") {
-          console.log(
+          console.info(
             `${ANSI.dim}│${ANSI.reset}   ${ANSI.green}✅ Timeout working correctly${ANSI.reset}`
           );
         } else {
@@ -641,14 +641,14 @@ class RevolutionaryDashboard {
         }
       }
     } catch (error: unknown) {
-      console.log(
+      console.info(
         `${ANSI.dim}│${ANSI.reset}   ${ANSI.red}✗ Timeout demo failed: ${error instanceof Error ? error.message : String(error)}${ANSI.reset}`
       );
     }
   }
 
   private async demoCancellation() {
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.pink}🚫 Testing request cancellation...${ANSI.reset}`
     );
 
@@ -669,7 +669,7 @@ class RevolutionaryDashboard {
 
       // Cancel after 500ms
       setTimeout(() => {
-        console.log(
+        console.info(
           `${ANSI.dim}│${ANSI.reset}   ${ANSI.orange}🛑 Cancelling request...${ANSI.reset}`
         );
         controller.abort();
@@ -679,7 +679,7 @@ class RevolutionaryDashboard {
         await promise;
       } catch (error) {
         if (error instanceof Error && error.message === "Request cancelled") {
-          console.log(
+          console.info(
             `${ANSI.dim}│${ANSI.reset}   ${ANSI.green}✅ Cancellation working correctly${ANSI.reset}`
           );
         } else {
@@ -687,47 +687,47 @@ class RevolutionaryDashboard {
         }
       }
     } catch (error: unknown) {
-      console.log(
+      console.info(
         `${ANSI.dim}│${ANSI.reset}   ${ANSI.red}✗ Cancellation demo failed: ${error instanceof Error ? error.message : String(error)}${ANSI.reset}`
       );
     }
   }
 
   private async demoUnixSockets() {
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.green}🔌 Unix Domain Sockets support...${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.cyan}📁 Available for direct socket communication${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.lime}✓ Unix: /path/to/socket.sock option supported${ANSI.reset}`
     );
   }
 
   private async demoTLS() {
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.gold}🔒 TLS Client Certificate support...${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.cyan}🔐 Custom certificate authentication available${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.lime}✓ TLS options: key, cert, ca, checkServerIdentity${ANSI.reset}`
     );
   }
 
   private async demoS3() {
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.cyan}☁️ S3 Protocol support...${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.blue}📦 Direct S3 bucket fetching supported${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.lime}✓ s3://bucket/object URLs supported${ANSI.reset}`
     );
-    console.log(
+    console.info(
       `${ANSI.dim}│${ANSI.reset}   ${ANSI.lime}✓ Automatic multipart upload for large files${ANSI.reset}`
     );
   }
@@ -1132,7 +1132,7 @@ class RevolutionaryDashboard {
 📝 Usage Example:
    const response = await fetch('/api/data');
    const text = await response.text();
-   console.log(text); // String content
+   console.info(text); // String content
 
 🌟 Revolutionary Benefits:
    • Zero dependencies - pure Bun implementation

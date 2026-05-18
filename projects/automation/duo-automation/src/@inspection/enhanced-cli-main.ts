@@ -17,7 +17,7 @@ async function main(): Promise<void> {
   const [, , cmd, ...args] = Bun.argv;
   
   if (!cmd) {
-    console.log(help);
+    console.info(help);
     process.exit(1);
   }
   
@@ -27,12 +27,12 @@ async function main(): Promise<void> {
   }
   
   if (cmd === "help" || cmd === "--help" || cmd === "-h") {
-    console.log(help);
+    console.info(help);
     return;
   }
   
   console.error(`Unknown command: ${cmd}`);
-  console.log("Use 'factory-wager help' for available commands.");
+  console.info("Use 'factory-wager help' for available commands.");
   process.exit(1);
 }
 
@@ -80,8 +80,8 @@ async function handleOtherScopeCommands(args: string[]): Promise<void> {
       break;
       
     default:
-      console.log("Use --inspect to enable inspection mode");
-      console.log("Available commands: status, info, debug, validate");
+      console.info("Use --inspect to enable inspection mode");
+      console.info("Available commands: status, info, debug, validate");
       process.exit(1);
   }
 }
@@ -93,15 +93,15 @@ async function showScopeStatus(): Promise<void> {
   const domainContext = new EnhancedDomainContext("localhost");
   const summary = domainContext.getInspectionSummary();
   
-  console.log("🔍 FactoryWager Scope Status");
-  console.log("======================");
-  console.log(`Domain: ${summary.domain}`);
-  console.log(`Scope: ${summary.scope}`);
-  console.log(`Platform: ${summary.platform}`);
-  console.log(`Debug Mode: ${summary.debugMode ? "enabled" : "disabled"}`);
-  console.log(`User Context: ${summary.hasUserContext ? "present" : "none"}`);
-  console.log(`Total Scopes: ${summary.totalScopes}`);
-  console.log(`Timestamp: ${summary.timestamp}`);
+  console.info("🔍 FactoryWager Scope Status");
+  console.info("======================");
+  console.info(`Domain: ${summary.domain}`);
+  console.info(`Scope: ${summary.scope}`);
+  console.info(`Platform: ${summary.platform}`);
+  console.info(`Debug Mode: ${summary.debugMode ? "enabled" : "disabled"}`);
+  console.info(`User Context: ${summary.hasUserContext ? "present" : "none"}`);
+  console.info(`Total Scopes: ${summary.totalScopes}`);
+  console.info(`Timestamp: ${summary.timestamp}`);
 }
 
 /**
@@ -110,32 +110,32 @@ async function showScopeStatus(): Promise<void> {
 async function showScopeInfo(): Promise<void> {
   const domainContext = new EnhancedDomainContext("localhost");
   
-  console.log("📋 FactoryWager Scope Information");
-  console.log("============================");
+  console.info("📋 FactoryWager Scope Information");
+  console.info("============================");
   
   // Basic info
-  console.log(`Domain: ${domainContext.domain}`);
-  console.log(`Available Scopes: ${domainContext.getScopeNames().join(", ")}`);
+  console.info(`Domain: ${domainContext.domain}`);
+  console.info(`Available Scopes: ${domainContext.getScopeNames().join(", ")}`);
   
   // Metadata
   const metadata = domainContext.metadata;
-  console.log(`Platform: ${metadata.platform}`);
-  console.log(`Secrets Backend: ${metadata.secretsBackend}`);
-  console.log(`Inspectable: ${metadata.inspectable}`);
-  console.log(`Debug Mode: ${metadata.debugMode}`);
+  console.info(`Platform: ${metadata.platform}`);
+  console.info(`Secrets Backend: ${metadata.secretsBackend}`);
+  console.info(`Inspectable: ${metadata.inspectable}`);
+  console.info(`Debug Mode: ${metadata.debugMode}`);
   
   // User context
   const userContext = domainContext.getUserContext();
   if (userContext) {
-    console.log("\n👤 User Context:");
-    console.log(`  User ID: ${userContext.userId}`);
-    console.log(`  Username: ${userContext.username}`);
-    console.log(`  Email: ${userContext.email}`);
-    console.log(`  Account Type: ${userContext.accountType}`);
-    console.log(`  Family ID: ${userContext.familyId}`);
-    console.log(`  Last Active: ${userContext.lastActive.toISOString()}`);
+    console.info("\n👤 User Context:");
+    console.info(`  User ID: ${userContext.userId}`);
+    console.info(`  Username: ${userContext.username}`);
+    console.info(`  Email: ${userContext.email}`);
+    console.info(`  Account Type: ${userContext.accountType}`);
+    console.info(`  Family ID: ${userContext.familyId}`);
+    console.info(`  Last Active: ${userContext.lastActive.toISOString()}`);
   } else {
-    console.log("\n👤 User Context: None");
+    console.info("\n👤 User Context: None");
   }
 }
 
@@ -145,18 +145,18 @@ async function showScopeInfo(): Promise<void> {
 async function enableDebugMode(): Promise<void> {
   const domainContext = new EnhancedDomainContext("localhost");
   
-  console.log("🐛 Enabling debug mode...");
+  console.info("🐛 Enabling debug mode...");
   
   domainContext.enableDebugMode();
   
   const userContext = domainContext.getUserContext();
   if (userContext) {
-    console.log("✅ Debug mode enabled");
-    console.log(`   User ID: ${userContext.userId}`);
-    console.log(`   Session: ${userContext.metadata?.sessionId}`);
-    console.log("\n🔍 Now run: factory-wager scope --inspect --include-user");
+    console.info("✅ Debug mode enabled");
+    console.info(`   User ID: ${userContext.userId}`);
+    console.info(`   Session: ${userContext.metadata?.sessionId}`);
+    console.info("\n🔍 Now run: factory-wager scope --inspect --include-user");
   } else {
-    console.log("❌ Failed to enable debug mode");
+    console.info("❌ Failed to enable debug mode");
     process.exit(1);
   }
 }
@@ -167,22 +167,22 @@ async function enableDebugMode(): Promise<void> {
 async function validateScope(): Promise<void> {
   const domainContext = new EnhancedDomainContext("localhost");
   
-  console.log("🔍 Validating scope configuration...");
+  console.info("🔍 Validating scope configuration...");
   
   const validation = domainContext.validate();
   
   if (validation.valid) {
-    console.log("✅ Scope configuration is valid");
+    console.info("✅ Scope configuration is valid");
   } else {
-    console.log("❌ Scope configuration has errors:");
+    console.info("❌ Scope configuration has errors:");
     validation.errors.forEach(error => {
-      console.log(`   - ${error}`);
+      console.info(`   - ${error}`);
     });
     
     if (validation.warnings.length > 0) {
-      console.log("\n⚠️  Warnings:");
+      console.info("\n⚠️  Warnings:");
       validation.warnings.forEach(warning => {
-        console.log(`   - ${warning}`);
+        console.info(`   - ${warning}`);
       });
     }
     
@@ -194,12 +194,12 @@ async function validateScope(): Promise<void> {
  * Handle process termination gracefully
  */
 process.on("SIGINT", () => {
-  console.log("\n👋 FactoryWager CLI terminated");
+  console.info("\n👋 FactoryWager CLI terminated");
   process.exit(0);
 });
 
 process.on("SIGTERM", () => {
-  console.log("\n👋 FactoryWager CLI terminated");
+  console.info("\n👋 FactoryWager CLI terminated");
   process.exit(0);
 });
 

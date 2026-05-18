@@ -4,21 +4,21 @@
  * Shows how Bun merges global and local configurations
  */
 
-console.log('🔄 Global vs Local Configuration Demo');
-console.log('='.repeat(60));
+console.info('🔄 Global vs Local Configuration Demo');
+console.info('='.repeat(60));
 
 // ============================================================================
 // CONFIGURATION FILES OVERVIEW
 // ============================================================================
-console.log('\n📁 Configuration Files:');
-console.log('   🌍 Global: ~/.bunfig.toml (all projects)');
-console.log('   📂 Local: ./bunfig.toml (current project only)');
-console.log('   ⚡ CLI: Command line flags (highest priority)');
+console.info('\n📁 Configuration Files:');
+console.info('   🌍 Global: ~/.bunfig.toml (all projects)');
+console.info('   📂 Local: ./bunfig.toml (current project only)');
+console.info('   ⚡ CLI: Command line flags (highest priority)');
 
 // ============================================================================
 // GLOBAL CONFIGURATION (THEORETICAL)
 // ============================================================================
-console.log('\n🌍 Global Configuration (~/.bunfig.toml):');
+console.info('\n🌍 Global Configuration (~/.bunfig.toml):');
 const globalConfig = {
   logLevel: 'warn',
   telemetry: false,
@@ -40,32 +40,32 @@ const globalConfig = {
   },
 };
 
-console.log('   Core Settings:');
+console.info('   Core Settings:');
 Object.entries(globalConfig).forEach(([section, config]) => {
   if (typeof config === 'object' && config !== null) {
-    console.log(`   📋 ${section}:`);
+    console.info(`   📋 ${section}:`);
     if (section === 'define') {
       Object.entries(config).forEach(([key, value]) => {
-        console.log(`      🔧 ${key} = "${value}"`);
+        console.info(`      🔧 ${key} = "${value}"`);
       });
     } else {
       Object.entries(config).forEach(([key, value]) => {
         if (typeof value === 'object') {
-          console.log(`      📊 ${key}: ${JSON.stringify(value)}`);
+          console.info(`      📊 ${key}: ${JSON.stringify(value)}`);
         } else {
-          console.log(`      📊 ${key}: ${value}`);
+          console.info(`      📊 ${key}: ${value}`);
         }
       });
     }
   } else {
-    console.log(`   📋 ${section}: ${config}`);
+    console.info(`   📋 ${section}: ${config}`);
   }
 });
 
 // ============================================================================
 // LOCAL CONFIGURATION (ACTUAL)
 // ============================================================================
-console.log('\n📂 Local Configuration (./bunfig.toml):');
+console.info('\n📂 Local Configuration (./bunfig.toml):');
 const localConfig = {
   logLevel: 'warn',
   telemetry: false,
@@ -107,42 +107,42 @@ const localConfig = {
   },
 };
 
-console.log('   Project-Specific Settings:');
+console.info('   Project-Specific Settings:');
 Object.entries(localConfig).forEach(([section, config]) => {
   if (typeof config === 'object' && config !== null) {
-    console.log(`   📋 ${section}:`);
+    console.info(`   📋 ${section}:`);
     if (section === 'define') {
       Object.entries(config).forEach(([key, value]) => {
         const displayValue = typeof value === 'string' ? `"${value}"` : value;
-        console.log(`      🔧 ${key} = ${displayValue}`);
+        console.info(`      🔧 ${key} = ${displayValue}`);
       });
     } else if (section === 'resolve' && config.aliases) {
-      console.log('      🛣️  aliases:');
+      console.info('      🛣️  aliases:');
       Object.entries(config.aliases).forEach(([alias, path]) => {
-        console.log(`         ${alias} → ${path}`);
+        console.info(`         ${alias} → ${path}`);
       });
     } else {
       Object.entries(config).forEach(([key, value]) => {
         if (typeof value === 'object') {
-          console.log(`      📊 ${key}: ${JSON.stringify(value)}`);
+          console.info(`      📊 ${key}: ${JSON.stringify(value)}`);
         } else if (Array.isArray(value)) {
-          console.log(`      📊 ${key}: [${value.join(', ')}]`);
+          console.info(`      📊 ${key}: [${value.join(', ')}]`);
         } else {
-          console.log(`      📊 ${key}: ${value}`);
+          console.info(`      📊 ${key}: ${value}`);
         }
       });
     }
   } else {
-    console.log(`   📋 ${section}: ${config}`);
+    console.info(`   📋 ${section}: ${config}`);
   }
 });
 
 // ============================================================================
 // MERGE STRATEGY DEMONSTRATION
 // ============================================================================
-console.log('\n🔀 Configuration Merge Strategy:');
-console.log('   📊 Shallow merge: Local overrides Global');
-console.log('   📊 Section-level override (not property-level)');
+console.info('\n🔀 Configuration Merge Strategy:');
+console.info('   📊 Shallow merge: Local overrides Global');
+console.info('   📊 Section-level override (not property-level)');
 
 const mergeExamples = [
   {
@@ -175,19 +175,19 @@ const mergeExamples = [
   },
 ];
 
-console.log('\n   Merge Examples:');
+console.info('\n   Merge Examples:');
 mergeExamples.forEach(({ section, global, local, result, explanation }, index) => {
-  console.log(`   ${index + 1}. ${section}:`);
-  console.log(`      🌍 Global: ${global}`);
-  console.log(`      📂 Local: ${local}`);
-  console.log(`      ✅ Result: ${result}`);
-  console.log(`      📝 ${explanation}`);
+  console.info(`   ${index + 1}. ${section}:`);
+  console.info(`      🌍 Global: ${global}`);
+  console.info(`      📂 Local: ${local}`);
+  console.info(`      ✅ Result: ${result}`);
+  console.info(`      📝 ${explanation}`);
 });
 
 // ============================================================================
 // CLI OVERRIDE EXAMPLES
 // ============================================================================
-console.log('\n⚡ CLI Override Examples:');
+console.info('\n⚡ CLI Override Examples:');
 const cliExamples = [
   {
     command: 'bun install --production',
@@ -217,15 +217,15 @@ const cliExamples = [
 ];
 
 cliExamples.forEach(({ command, override, explanation }, index) => {
-  console.log(`   ${index + 1}. ${command}`);
-  console.log(`      🎯 Overrides: ${override}`);
-  console.log(`      📝 ${explanation}`);
+  console.info(`   ${index + 1}. ${command}`);
+  console.info(`      🎯 Overrides: ${override}`);
+  console.info(`      📝 ${explanation}`);
 });
 
 // ============================================================================
 // PRACTICAL SCENARIOS
 // ============================================================================
-console.log('\n🎯 Practical Configuration Scenarios:');
+console.info('\n🎯 Practical Configuration Scenarios:');
 
 const scenarios = [
   {
@@ -259,17 +259,17 @@ const scenarios = [
 ];
 
 scenarios.forEach(({ name, global, local, cli, result }, index) => {
-  console.log(`\n   ${index + 1}. ${name}:`);
-  console.log(`      🌍 Global: ${global}`);
-  console.log(`      📂 Local: ${local}`);
-  console.log(`      ⚡ CLI: ${cli}`);
-  console.log(`      ✅ Result: ${result}`);
+  console.info(`\n   ${index + 1}. ${name}:`);
+  console.info(`      🌍 Global: ${global}`);
+  console.info(`      📂 Local: ${local}`);
+  console.info(`      ⚡ CLI: ${cli}`);
+  console.info(`      ✅ Result: ${result}`);
 });
 
 // ============================================================================
 // CONFIGURATION VALIDATION
 // ============================================================================
-console.log('\n✅ Configuration Validation:');
+console.info('\n✅ Configuration Validation:');
 
 const validationChecks = [
   { check: 'TOML syntax is valid', status: true, icon: '✅' },
@@ -281,36 +281,36 @@ const validationChecks = [
 ];
 
 validationChecks.forEach(({ check, status, icon }) => {
-  console.log(`   ${icon} ${check}`);
+  console.info(`   ${icon} ${check}`);
 });
 
 // ============================================================================
 // RECOMMENDED CONFIGURATION STRUCTURE
 // ============================================================================
-console.log('\n📋 Recommended Configuration Structure:');
+console.info('\n📋 Recommended Configuration Structure:');
 
-console.log('\n   🌍 Global (~/.bunfig.toml):');
-console.log('   • Organization-wide defaults');
-console.log('   • Security policies');
-console.log('   • Performance settings');
-console.log('   • Development tooling');
+console.info('\n   🌍 Global (~/.bunfig.toml):');
+console.info('   • Organization-wide defaults');
+console.info('   • Security policies');
+console.info('   • Performance settings');
+console.info('   • Development tooling');
 
-console.log('\n   📂 Local (./bunfig.toml):');
-console.log('   • Project-specific settings');
-console.log('   • Custom aliases and paths');
-console.log('   • Test configurations');
-console.log('   • Build optimizations');
+console.info('\n   📂 Local (./bunfig.toml):');
+console.info('   • Project-specific settings');
+console.info('   • Custom aliases and paths');
+console.info('   • Test configurations');
+console.info('   • Build optimizations');
 
-console.log('\n   ⚡ CLI Flags:');
-console.log('   • Environment overrides');
-console.log('   • One-off changes');
-console.log('   • Debug settings');
-console.log('   • CI/CD customizations');
+console.info('\n   ⚡ CLI Flags:');
+console.info('   • Environment overrides');
+console.info('   • One-off changes');
+console.info('   • Debug settings');
+console.info('   • CI/CD customizations');
 
 // ============================================================================
 // ENTERPRISE BEST PRACTICES
 // ============================================================================
-console.log('\n🏢 Enterprise Configuration Best Practices:');
+console.info('\n🏢 Enterprise Configuration Best Practices:');
 
 const bestPractices = [
   'Use global config for organization standards',
@@ -324,8 +324,8 @@ const bestPractices = [
 ];
 
 bestPractices.forEach((practice, index) => {
-  console.log(`   ${index + 1}. ${practice}`);
+  console.info(`   ${index + 1}. ${practice}`);
 });
 
-console.log('\n🎉 Global vs Local Configuration Demo Complete!');
-console.log('   Your Fire22 project now has enterprise-grade configuration management!');
+console.info('\n🎉 Global vs Local Configuration Demo Complete!');
+console.info('   Your Fire22 project now has enterprise-grade configuration management!');

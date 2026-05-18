@@ -1,7 +1,7 @@
 // cli/lightning-dashboard.ts
 import { LightningService } from "../src/services/lightningService.js";
 
-console.log(`
+console.info(`
 ⚡ **DUOPLUS LIGHTNING DASHBOARD v1.0**
 ═══════════════════════════════════════════════════════════════════
 
@@ -21,7 +21,7 @@ export async function startLightningDashboard() {
   const lightning = LightningService.getInstance();
   
   console.clear();
-  console.log(`
+  console.info(`
 ╔════════════════════════════════════════╗
 ║  ⚡ DuoPlus Lightning Dashboard v1.0  ║
 ║    ACME Systems - Production Ready     ║
@@ -55,7 +55,7 @@ export async function startLightningDashboard() {
 
   // Handle keyboard input
   process.stdin.setRawMode(true);
-  console.log("📮 Dashboard controls: [r]ebalance | [c]onsolidate | [i]nvoice | [s]tatus | [q]uit");
+  console.info("📮 Dashboard controls: [r]ebalance | [c]onsolidate | [i]nvoice | [s]tatus | [q]uit");
   
   for await (const chunk of process.stdin) {
     const key = chunk.toString().toLowerCase();
@@ -74,7 +74,7 @@ export async function startLightningDashboard() {
         await handleStatusCheck(proc.terminal, lightning);
         break;
       case "q":
-        console.log("\n👋 Shutting down Lightning dashboard...");
+        console.info("\n👋 Shutting down Lightning dashboard...");
         clearInterval(metricsInterval);
         proc.terminal.close();
         process.exit(0);
@@ -382,7 +382,7 @@ async function getNetworkInfo(): Promise<{
 // ============================================================================
 
 async function demonstrateLightningDashboard() {
-  console.log(`
+  console.info(`
 🎮 **LIGHTNING DASHBOARD DEMONSTRATION**
 ═══════════════════════════════════════════════════════════════════
 
@@ -395,15 +395,15 @@ async function demonstrateLightningDashboard() {
 `);
   
   try {
-    console.log("🚀 Starting Lightning dashboard demo...");
-    console.log("📮 Controls: [r]ebalance | [c]onsolidate | [i]nvoice | [s]tatus | [q]uit");
-    console.log("⚠️  Demo will run for 30 seconds, then exit automatically");
+    console.info("🚀 Starting Lightning dashboard demo...");
+    console.info("📮 Controls: [r]ebalance | [c]onsolidate | [i]nvoice | [s]tatus | [q]uit");
+    console.info("⚠️  Demo will run for 30 seconds, then exit automatically");
     
     // Start dashboard with auto-exit
     const lightning = LightningService.getInstance();
     
     console.clear();
-    console.log(`
+    console.info(`
 ╔════════════════════════════════════════╗
 ║  ⚡ DuoPlus Lightning Dashboard v1.0  ║
 ║    ACME Systems - Production Ready     ║
@@ -451,12 +451,12 @@ Demo Update ${i + 1}/6 - Press Ctrl+C to exit
 `;
       
       console.clear();
-      console.log(dashboard);
+      console.info(dashboard);
       
       await new Promise(resolve => setTimeout(resolve, 5000));
     }
     
-    console.log(`
+    console.info(`
 🎉 **LIGHTNING DASHBOARD DEMO COMPLETED!**
 ═══════════════════════════════════════════════════════════════════
 

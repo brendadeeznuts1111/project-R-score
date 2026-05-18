@@ -137,30 +137,30 @@ type Command = keyof typeof COMMANDS;
 const SCRIPT_DIR = `${import.meta.dir}/scripts`;
 
 function printHelp(): void {
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Commit Flow CLI                    ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
-	console.log("Usage: bun cli.ts <command> [options]");
-	console.log();
-	console.log("Commands:");
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Commit Flow CLI                    ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
+	console.info("Usage: bun cli.ts <command> [options]");
+	console.info();
+	console.info("Commands:");
+	console.info();
 
 	const maxCmdLen = Math.max(...Object.keys(COMMANDS).map((c) => c.length));
 
 	for (const [name, cmd] of Object.entries(COMMANDS)) {
 		const paddedName = name.padEnd(maxCmdLen);
-		console.log(`  ${paddedName}  ${cmd.description}`);
-		console.log(`  ${" ".repeat(maxCmdLen)}  ${cmd.args}`);
-		console.log();
+		console.info(`  ${paddedName}  ${cmd.description}`);
+		console.info(`  ${" ".repeat(maxCmdLen)}  ${cmd.args}`);
+		console.info();
 	}
 
-	console.log("Examples:");
-	console.log('  bun cli.ts commit "[RUNTIME][CHROME][TIER:1380] Fix entropy"');
-	console.log("  bun cli.ts generate-msg");
-	console.log("  bun cli.ts check --fix");
-	console.log("  bun cli.ts hooks install --auto-fix");
-	console.log("  bun cli.ts dashboard");
+	console.info("Examples:");
+	console.info('  bun cli.ts commit "[RUNTIME][CHROME][TIER:1380] Fix entropy"');
+	console.info("  bun cli.ts generate-msg");
+	console.info("  bun cli.ts check --fix");
+	console.info("  bun cli.ts hooks install --auto-fix");
+	console.info("  bun cli.ts dashboard");
 }
 
 async function runCommand(command: Command, args: string[]): Promise<number> {
@@ -200,7 +200,7 @@ _tier1380_complete() {
 
 complete -F _tier1380_complete tier1380
 `;
-	console.log(completions);
+	console.info(completions);
 }
 
 if (import.meta.main) {
@@ -218,7 +218,7 @@ if (import.meta.main) {
 	}
 
 	if (command === "--version" || command === "-v") {
-		console.log("Tier-1380 OMEGA Commit Flow CLI v2.0.0");
+		console.info("Tier-1380 OMEGA Commit Flow CLI v2.0.0");
 		process.exit(0);
 	}
 
@@ -253,7 +253,7 @@ if (import.meta.main) {
 
 	if (!(resolvedCommand in COMMANDS)) {
 		console.error(`Unknown command: ${command}`);
-		console.log();
+		console.info();
 		printHelp();
 		process.exit(1);
 	}

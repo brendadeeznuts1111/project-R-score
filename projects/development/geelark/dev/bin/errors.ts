@@ -71,21 +71,21 @@ export function setBunErrorHandler(options: BunErrorHandlerOptions = {}): void {
 export function handleCommandError(error: Error & { code?: string }): void {
   switch (error.code) {
     case ErrorCodes.ENOENT:
-      console.log(`${theme.warning}⚠️  Project not initialized${theme.reset}`);
-      console.log(`${theme.info}Run: dev-hq init${theme.reset}`);
+      console.info(`${theme.warning}⚠️  Project not initialized${theme.reset}`);
+      console.info(`${theme.info}Run: dev-hq init${theme.reset}`);
       break;
 
     case ErrorCodes.EACCES:
-      console.log(`${theme.error}❌ Permission denied${theme.reset}`);
-      console.log(`${theme.info}Try running with elevated privileges${theme.reset}`);
+      console.info(`${theme.error}❌ Permission denied${theme.reset}`);
+      console.info(`${theme.info}Try running with elevated privileges${theme.reset}`);
       break;
 
     case ErrorCodes.EEXIST:
-      console.log(`${theme.warning}⚠️  File or directory already exists${theme.reset}`);
+      console.info(`${theme.warning}⚠️  File or directory already exists${theme.reset}`);
       break;
 
     default:
-      console.log(`${theme.error}❌ Error: ${error.message}${theme.reset}`);
+      console.info(`${theme.error}❌ Error: ${error.message}${theme.reset}`);
       break;
   }
 
@@ -122,7 +122,7 @@ export class RecoverableError extends Error {
   }
 
   display(): void {
-    console.log(`${theme.warning}⚠️  ${this.message}${theme.reset}`);
-    console.log(`${theme.info}${this.recovery}${theme.reset}`);
+    console.info(`${theme.warning}⚠️  ${this.message}${theme.reset}`);
+    console.info(`${theme.info}${this.recovery}${theme.reset}`);
   }
 }

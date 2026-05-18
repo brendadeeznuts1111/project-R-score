@@ -77,7 +77,7 @@ export class AuditLogger {
     this.cleanOldEntries();
 
     // In production, would write to persistent storage
-    console.log(`📝 AUDIT: ${entry.action} at ${new Date(entry.timestamp).toISOString()}`);
+    console.info(`📝 AUDIT: ${entry.action} at ${new Date(entry.timestamp).toISOString()}`);
   }
 
   /**
@@ -278,7 +278,7 @@ export class AuditLogger {
     this.logs = this.logs.filter(log => log.timestamp >= cutoffTime);
     
     if (this.logs.length < originalLength) {
-      console.log(`🧹 Cleaned ${originalLength - this.logs.length} old audit entries`);
+      console.info(`🧹 Cleaned ${originalLength - this.logs.length} old audit entries`);
     }
   }
 

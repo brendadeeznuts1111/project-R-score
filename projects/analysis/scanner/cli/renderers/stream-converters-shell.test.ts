@@ -7,7 +7,7 @@ describe('Shell Pipeline Integration (Bun.$)', () => {
 	test('text() via shell pipe', async () => {
 		const start = Bun.nanoseconds();
 		const result =
-			await $`echo "hello world" | ${Bun.which('bun')!} -e 'console.log(await Bun.readableStreamToText(Bun.stdin.stream()))'`.text();
+			await $`echo "hello world" | ${Bun.which('bun')!} -e 'console.info(await Bun.readableStreamToText(Bun.stdin.stream()))'`.text();
 		const latency = (Bun.nanoseconds() - start) / 1e6; // ms
 
 		expect(result.trim()).toBe('hello world');
@@ -29,7 +29,7 @@ describe('Shell Pipeline Integration (Bun.$)', () => {
       try {
         await Bun.readableStreamToJSON(Bun.stdin.stream());
       } catch (e) {
-        console.log("ERROR");
+        console.info("ERROR");
       }
     '`.text();
 

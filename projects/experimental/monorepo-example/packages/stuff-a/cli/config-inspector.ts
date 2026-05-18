@@ -26,36 +26,36 @@ function formatValue(value: any): string {
 }
 
 function displayTable(sectionName?: string) {
-  console.log(`\n🔧 Configuration Inspection (${values.env})\n`);
+  console.info(`\n🔧 Configuration Inspection (${values.env})\n`);
 
   const targetSections = sectionName
     ? { [sectionName]: sections[sectionName as keyof typeof sections] }
     : sections;
 
   for (const [name, config] of Object.entries(targetSections)) {
-    console.log(`\x1b[1m\x1b[36m${name}\x1b[0m`);
-    console.log('─'.repeat(50));
+    console.info(`\x1b[1m\x1b[36m${name}\x1b[0m`);
+    console.info('─'.repeat(50));
 
     for (const [key, value] of Object.entries(config)) {
       const formatted = formatValue(value);
       const truncated = formatted.length > 40
         ? formatted.slice(0, 37) + '...'
         : formatted;
-      console.log(`  \x1b[33m${key}\x1b[0m: ${truncated}`);
+      console.info(`  \x1b[33m${key}\x1b[0m: ${truncated}`);
     }
   }
 
   // Network config
-  console.log(`\n\x1b[1m\x1b[36mNETWORK\x1b[0m`);
-  console.log('─'.repeat(50));
-  console.log(`  \x1b[33mDEFAULT_PORT\x1b[0m: ${DEFAULT_PORT}`);
-  console.log(`  \x1b[33mDEFAULT_TEST_PORT\x1b[0m: ${DEFAULT_TEST_PORT}`);
-  console.log(`  \x1b[33mDEFAULT_HOSTNAME\x1b[0m: ${DEFAULT_HOSTNAME}`);
-  console.log(`  \x1b[33mServer URL\x1b[0m: http://${DEFAULT_HOSTNAME}:${DEFAULT_PORT}`);
+  console.info(`\n\x1b[1m\x1b[36mNETWORK\x1b[0m`);
+  console.info('─'.repeat(50));
+  console.info(`  \x1b[33mDEFAULT_PORT\x1b[0m: ${DEFAULT_PORT}`);
+  console.info(`  \x1b[33mDEFAULT_TEST_PORT\x1b[0m: ${DEFAULT_TEST_PORT}`);
+  console.info(`  \x1b[33mDEFAULT_HOSTNAME\x1b[0m: ${DEFAULT_HOSTNAME}`);
+  console.info(`  \x1b[33mServer URL\x1b[0m: http://${DEFAULT_HOSTNAME}:${DEFAULT_PORT}`);
 }
 
 function validateFull() {
-  console.log('\n🔍 Running Full Validation...\n');
+  console.info('\n🔍 Running Full Validation...\n');
 
   const checks = [
     { name: 'Port Collision', test: () => DEFAULT_PORT !== DEFAULT_TEST_PORT },
@@ -73,11 +73,11 @@ function validateFull() {
   for (const check of checks) {
     const result = check.test();
     const icon = result ? '✅' : '❌';
-    console.log(`${icon} ${check.name}`);
+    console.info(`${icon} ${check.name}`);
     if (result) passed++;
   }
 
-  console.log(`\n${passed}/${checks.length} checks passed`);
+  console.info(`\n${passed}/${checks.length} checks passed`);
   process.exit(passed === checks.length ? 0 : 1);
 }
 

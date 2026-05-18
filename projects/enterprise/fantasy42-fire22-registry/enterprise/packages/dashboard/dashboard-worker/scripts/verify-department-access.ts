@@ -34,7 +34,7 @@ class DepartmentAccessVerifier {
   private sseUrl = 'http://localhost:3000/api/departments/stream';
 
   async verify(): Promise<AccessibilityReport> {
-    console.log('🔍 Verifying changelog and RSS accessibility for department heads...\n');
+    console.info('🔍 Verifying changelog and RSS accessibility for department heads...\n');
 
     const report: AccessibilityReport = {
       changelog: await this.verifyChangelog(),
@@ -63,18 +63,18 @@ class DepartmentAccessVerifier {
         changelog.hasMikeHunt =
           content.includes('Mike Hunt') && content.includes('Technology Department Head');
 
-        console.log(`✅ Changelog is accessible at: ${this.changelogPath}`);
+        console.info(`✅ Changelog is accessible at: ${this.changelogPath}`);
 
         if (changelog.hasMikeHunt) {
-          console.log('✅ Mike Hunt assignment documented in changelog');
+          console.info('✅ Mike Hunt assignment documented in changelog');
         } else {
-          console.log('⚠️  Mike Hunt assignment not found in changelog - consider updating');
+          console.info('⚠️  Mike Hunt assignment not found in changelog - consider updating');
         }
       } catch (error) {
-        console.log(`❌ Error reading changelog: ${error}`);
+        console.info(`❌ Error reading changelog: ${error}`);
       }
     } else {
-      console.log(`❌ Changelog not found at: ${this.changelogPath}`);
+      console.info(`❌ Changelog not found at: ${this.changelogPath}`);
     }
 
     return changelog;
@@ -97,23 +97,23 @@ class DepartmentAccessVerifier {
         // Validate JSON format
         const jsonData = JSON.parse(content);
         rss.validJson = true;
-        console.log('✅ RSS feed has valid JSON format');
+        console.info('✅ RSS feed has valid JSON format');
 
         rss.hasMikeHunt =
           content.includes('Mike Hunt') && content.includes('Technology Department Head');
 
-        console.log(`✅ RSS feed is accessible at: ${this.rssPath}`);
+        console.info(`✅ RSS feed is accessible at: ${this.rssPath}`);
 
         if (rss.hasMikeHunt) {
-          console.log('✅ Mike Hunt assignment included in RSS feed');
+          console.info('✅ Mike Hunt assignment included in RSS feed');
         } else {
-          console.log('⚠️  Mike Hunt assignment not found in RSS feed - consider updating');
+          console.info('⚠️  Mike Hunt assignment not found in RSS feed - consider updating');
         }
       } catch (error) {
-        console.log(`❌ RSS feed has invalid JSON format or read error: ${error}`);
+        console.info(`❌ RSS feed has invalid JSON format or read error: ${error}`);
       }
     } else {
-      console.log(`❌ RSS feed not found at: ${this.rssPath}`);
+      console.info(`❌ RSS feed not found at: ${this.rssPath}`);
     }
 
     return rss;
@@ -125,7 +125,7 @@ class DepartmentAccessVerifier {
       url: this.sseUrl,
     };
 
-    console.log('\n🌐 Testing SSE endpoint /api/departments/stream...');
+    console.info('\n🌐 Testing SSE endpoint /api/departments/stream...');
 
     try {
       // Test SSE endpoint with timeout
@@ -144,12 +144,12 @@ class DepartmentAccessVerifier {
       sse.accessible = response.ok;
 
       if (sse.accessible) {
-        console.log('✅ SSE endpoint is accessible');
+        console.info('✅ SSE endpoint is accessible');
       } else {
-        console.log(`⚠️  SSE endpoint returned status: ${response.status}`);
+        console.info(`⚠️  SSE endpoint returned status: ${response.status}`);
       }
     } catch (error) {
-      console.log(
+      console.info(
         '⚠️  Could not connect to SSE endpoint (might be expected if server not running)'
       );
     }
@@ -158,22 +158,22 @@ class DepartmentAccessVerifier {
   }
 
   private printReport(report: AccessibilityReport) {
-    console.log('\n📊 ACCESSIBILITY SUMMARY:');
-    console.log('!==!==!==!=====');
-    console.log(`Changelog: ${report.changelog.exists ? '✅ Accessible' : '❌ Missing'}`);
-    console.log(`RSS Feed: ${report.rssFeed.exists ? '✅ Accessible' : '❌ Missing'}`);
-    console.log(
+    console.info('\n📊 ACCESSIBILITY SUMMARY:');
+    console.info('!==!==!==!=====');
+    console.info(`Changelog: ${report.changelog.exists ? '✅ Accessible' : '❌ Missing'}`);
+    console.info(`RSS Feed: ${report.rssFeed.exists ? '✅ Accessible' : '❌ Missing'}`);
+    console.info(
       `Mike Hunt in Changelog: ${report.changelog.hasMikeHunt ? '✅ Found' : '❌ Missing'}`
     );
-    console.log(`Mike Hunt in RSS: ${report.rssFeed.hasMikeHunt ? '✅ Found' : '❌ Missing'}`);
-    console.log(
+    console.info(`Mike Hunt in RSS: ${report.rssFeed.hasMikeHunt ? '✅ Found' : '❌ Missing'}`);
+    console.info(
       `SSE Endpoint: ${report.sseEndpoint.accessible ? '✅ Accessible' : '❌ Not accessible'}`
     );
   }
 
   private generateRecommendations(report: AccessibilityReport) {
-    console.log('\n📋 RECOMMENDED ACTIONS:');
-    console.log('!==!==!==!====');
+    console.info('\n📋 RECOMMENDED ACTIONS:');
+    console.info('!==!==!==!====');
 
     const actions = [];
 
@@ -198,20 +198,20 @@ class DepartmentAccessVerifier {
     }
 
     if (actions.length === 0) {
-      console.log('🎉 All systems are properly configured!');
+      console.info('🎉 All systems are properly configured!');
     } else {
-      actions.forEach(action => console.log(action));
+      actions.forEach(action => console.info(action));
     }
 
-    console.log('\n6. Notify department heads about the updates via:');
-    console.log('   - Email with links to changelog and RSS feed');
-    console.log('   - Slack/Teams message with update highlights');
-    console.log('   - Direct message to Technology Department Head (Mike Hunt)');
+    console.info('\n6. Notify department heads about the updates via:');
+    console.info('   - Email with links to changelog and RSS feed');
+    console.info('   - Slack/Teams message with update highlights');
+    console.info('   - Direct message to Technology Department Head (Mike Hunt)');
 
-    console.log('\nTo manually test the SSE endpoint, run:');
-    console.log(`  curl -N ${this.sseUrl}`);
+    console.info('\nTo manually test the SSE endpoint, run:');
+    console.info(`  curl -N ${this.sseUrl}`);
 
-    console.log('\n🚀 Verification completed!');
+    console.info('\n🚀 Verification completed!');
   }
 
   async generateNotificationTemplate() {
@@ -247,17 +247,17 @@ Platform Team`,
       },
     };
 
-    console.log('\n📧 NOTIFICATION TEMPLATE:');
-    console.log('!==!==!==!=====');
-    console.log('Email:');
-    console.log(`To: ${template.email.to}`);
-    console.log(`Cc: ${template.email.cc}`);
-    console.log(`Subject: ${template.email.subject}`);
-    console.log(`\n${template.email.body}`);
+    console.info('\n📧 NOTIFICATION TEMPLATE:');
+    console.info('!==!==!==!=====');
+    console.info('Email:');
+    console.info(`To: ${template.email.to}`);
+    console.info(`Cc: ${template.email.cc}`);
+    console.info(`Subject: ${template.email.subject}`);
+    console.info(`\n${template.email.body}`);
 
-    console.log('\nSlack/Teams:');
-    console.log(`Channel: ${template.slack.channel}`);
-    console.log(`Message: ${template.slack.message}`);
+    console.info('\nSlack/Teams:');
+    console.info(`Channel: ${template.slack.channel}`);
+    console.info(`Message: ${template.slack.message}`);
 
     return template;
   }

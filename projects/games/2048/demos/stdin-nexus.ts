@@ -256,9 +256,9 @@ function assessDataQuality(text: string): string {
 }
 
 /* ---------- nexus quantum table -------------------------- */
-console.log("\n🌌 Nexus Quantum stdin Analysis");
-console.log("===================================");
-console.log(
+console.info("\n🌌 Nexus Quantum stdin Analysis");
+console.info("===================================");
+console.info(
   inspect.table(stats, {
     border: true,
     header: true,
@@ -301,28 +301,28 @@ const avgComplexity =
 const avgReadability =
   stats.reduce((sum, s) => sum + parseFloat(s.readability), 0) / stats.length;
 
-console.log("\n📊 Nexus Comprehensive Analytics:");
-console.log("┌─────────────────┬──────────┐");
-console.log("│ Metric          │ Value    │");
-console.log("├─────────────────┼──────────┤");
-console.log(`│ Total lines     │ ${lines.length.toString().padEnd(8)} │`);
-console.log(`│ Total words     │ ${totalWords.toString().padEnd(8)} │`);
-console.log(`│ Total chars     │ ${totalChars.toString().padEnd(8)} │`);
-console.log(`│ Total vowels    │ ${totalVowels.toString().padEnd(8)} │`);
-console.log(`│ Total consonants│ ${totalConsonants.toString().padEnd(8)} │`);
-console.log(`│ Total numbers   │ ${totalNumbers.toString().padEnd(8)} │`);
-console.log(`│ Total special   │ ${totalSpecial.toString().padEnd(8)} │`);
-console.log(`│ Total uppercase │ ${totalUpper.toString().padEnd(8)} │`);
-console.log(`│ Total lowercase │ ${totalLower.toString().padEnd(8)} │`);
-console.log(`│ Avg complexity  │ ${avgComplexity.toFixed(1).padEnd(8)} │`);
-console.log(`│ Avg readability │ ${avgReadability.toFixed(1).padEnd(8)} │`);
-console.log("└─────────────────┴──────────┘");
+console.info("\n📊 Nexus Comprehensive Analytics:");
+console.info("┌─────────────────┬──────────┐");
+console.info("│ Metric          │ Value    │");
+console.info("├─────────────────┼──────────┤");
+console.info(`│ Total lines     │ ${lines.length.toString().padEnd(8)} │`);
+console.info(`│ Total words     │ ${totalWords.toString().padEnd(8)} │`);
+console.info(`│ Total chars     │ ${totalChars.toString().padEnd(8)} │`);
+console.info(`│ Total vowels    │ ${totalVowels.toString().padEnd(8)} │`);
+console.info(`│ Total consonants│ ${totalConsonants.toString().padEnd(8)} │`);
+console.info(`│ Total numbers   │ ${totalNumbers.toString().padEnd(8)} │`);
+console.info(`│ Total special   │ ${totalSpecial.toString().padEnd(8)} │`);
+console.info(`│ Total uppercase │ ${totalUpper.toString().padEnd(8)} │`);
+console.info(`│ Total lowercase │ ${totalLower.toString().padEnd(8)} │`);
+console.info(`│ Avg complexity  │ ${avgComplexity.toFixed(1).padEnd(8)} │`);
+console.info(`│ Avg readability │ ${avgReadability.toFixed(1).padEnd(8)} │`);
+console.info("└─────────────────┴──────────┘");
 
 /* ---------- AI-powered insights ------------------------- */
-console.log("\n🤖 AI-Powered Insights:");
+console.info("\n🤖 AI-Powered Insights:");
 const insights = generateInsights(stats, lines);
 insights.forEach((insight, i) => {
-  console.log(`${i + 1}. ${insight}`);
+  console.info(`${i + 1}. ${insight}`);
 });
 
 /* ---------- nexus strict snapshot ----------------------- */
@@ -352,9 +352,9 @@ if (!Bun.deepEquals(snapshot, prev, true)) {
     "/tmp/stdin-snapshot-nexus.json",
     JSON.stringify(snapshot, null, 2)
   );
-  console.log("✅ Nexus snapshot updated (strict mode)");
+  console.info("✅ Nexus snapshot updated (strict mode)");
 } else {
-  console.log("📋 No changes detected (stable snapshot)");
+  console.info("📋 No changes detected (stable snapshot)");
 }
 
 /* ---------- nexus compressed artefacts ----------------- */
@@ -406,8 +406,8 @@ const safe = JSON.stringify(report);
 const gz = gzipSync(new TextEncoder().encode(safe), { level: 9 });
 await Bun.write("/tmp/stdin-nexus.json.gz", gz);
 
-console.log(`📊 Nexus gzipped report: ${gz.byteLength} bytes`);
-console.log(
+console.info(`📊 Nexus gzipped report: ${gz.byteLength} bytes`);
+console.info(
   `💾 Compression ratio: ${((gz.byteLength / safe.length) * 100).toFixed(1)}%`
 );
 
@@ -418,10 +418,10 @@ const decompressed = new TextDecoder().decode(decompressedBuffer);
 const parsed = JSON.parse(decompressed);
 const perfEnd = performance.now();
 
-console.log(`⚡ Decompression + parse: ${(perfEnd - perfStart).toFixed(2)}ms`);
+console.info(`⚡ Decompression + parse: ${(perfEnd - perfStart).toFixed(2)}ms`);
 
 /* ---------- nexus visual summary ------------------------ */
-console.log("\n🎨 Nexus Visual Summary:");
+console.info("\n🎨 Nexus Visual Summary:");
 const maxTension = Math.max(...stats.map((s) => parseFloat(s.tension)));
 const maxComplexity = Math.max(...stats.map((s) => parseFloat(s.complexity)));
 const maxReadability = Math.max(...stats.map((s) => parseFloat(s.readability)));
@@ -429,20 +429,20 @@ const tensionBar = "█".repeat(Math.round(maxTension / 4));
 const complexityBar = "█".repeat(Math.round(maxComplexity / 10));
 const readabilityBar = "█".repeat(Math.round(maxReadability / 10));
 
-console.log(`Max tension: ${maxTension.toFixed(1)}% ${tensionBar}`);
-console.log(`Max complexity: ${maxComplexity.toFixed(1)}/100 ${complexityBar}`);
-console.log(
+console.info(`Max tension: ${maxTension.toFixed(1)}% ${tensionBar}`);
+console.info(`Max complexity: ${maxComplexity.toFixed(1)}/100 ${complexityBar}`);
+console.info(
   `Max readability: ${maxReadability.toFixed(1)}/100 ${readabilityBar}`
 );
 
 /* ---------- entropy calculation -------------------------- */
 const entropy = calculateEntropy(text);
-console.log(`🔢 Text entropy: ${entropy.toFixed(3)} bits/char`);
+console.info(`🔢 Text entropy: ${entropy.toFixed(3)} bits/char`);
 
-console.log("\n🌌 Nexus Quantum Analysis Complete!");
-console.log("📁 Generated files:");
-console.log("  • /tmp/stdin-snapshot-nexus.json");
-console.log("  • /tmp/stdin-nexus.json.gz");
+console.info("\n🌌 Nexus Quantum Analysis Complete!");
+console.info("📁 Generated files:");
+console.info("  • /tmp/stdin-snapshot-nexus.json");
+console.info("  • /tmp/stdin-nexus.json.gz");
 
 /* ---------- AI insights generator ----------------------- */
 function generateInsights(stats: any[], lines: string[]): string[] {

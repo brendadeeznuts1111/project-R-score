@@ -42,12 +42,12 @@ export class BunConsoleExporter implements SpanExporter {
     for (const span of data.spans) {
       const duration = span.endTime ? span.endTime - span.startTime : 'incomplete';
       const status = span.status === 'error' ? `❌ ${span.error?.message}` : '✅';
-      console.log(`[${span.operation}] ${duration}ms | ${status} | ${span.metadata.result || 'running'}`);
+      console.info(`[${span.operation}] ${duration}ms | ${status} | ${span.metadata.result || 'running'}`);
     }
     
     for (const metric of data.metrics) {
       const tagsStr = Object.entries(metric.tags).map(([k, v]) => `${k}=${v}`).join(',');
-      console.log(`📊 METRIC: ${metric.name} = ${metric.value} [${tagsStr}]`);
+      console.info(`📊 METRIC: ${metric.name} = ${metric.value} [${tagsStr}]`);
     }
   }
 }
@@ -135,7 +135,7 @@ export class ObservabilityManager {
     // Also emit to console for local development
     if (process.env.NODE_ENV === 'development') {
       const tagsStr = Object.entries(tags).map(([k, v]) => `${k}=${v}`).join(',');
-      console.log(`📊 METRIC: ${name} = ${value} [${tagsStr}]`);
+      console.info(`📊 METRIC: ${name} = ${value} [${tagsStr}]`);
     }
   }
   

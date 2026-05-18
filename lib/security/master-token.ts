@@ -430,10 +430,10 @@ if (import.meta.main) {
         case 'create':
           const permissions = args[0]?.split(',') || ['mcp:read'];
           const token = await masterTokenManager.createToken(permissions);
-          console.log('🔑 Generated Master Token:');
-          console.log(token);
-          console.log(`\n📋 Permissions: ${permissions.join(', ')}`);
-          console.log(`⏰ Expires: ${new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString()}`);
+          console.info('🔑 Generated Master Token:');
+          console.info(token);
+          console.info(`\n📋 Permissions: ${permissions.join(', ')}`);
+          console.info(`⏰ Expires: ${new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString()}`);
           break;
 
         case 'validate':
@@ -444,24 +444,24 @@ if (import.meta.main) {
           }
           const validation = await masterTokenManager.validateToken(tokenToValidate);
           if (validation.valid) {
-            console.log('✅ Token is valid');
-            console.log(`🆔 Token ID: ${validation.tokenId}`);
-            console.log(`🔑 Permissions: ${validation.permissions?.join(', ')}`);
-            console.log(`⏰ Expires: ${validation.expiresAt?.toLocaleString()}`);
+            console.info('✅ Token is valid');
+            console.info(`🆔 Token ID: ${validation.tokenId}`);
+            console.info(`🔑 Permissions: ${validation.permissions?.join(', ')}`);
+            console.info(`⏰ Expires: ${validation.expiresAt?.toLocaleString()}`);
           } else {
-            console.log(`❌ Token invalid: ${validation.reason}`);
+            console.info(`❌ Token invalid: ${validation.reason}`);
           }
           break;
 
         case 'list':
           const tokens = masterTokenManager.listTokens();
-          console.log(`📋 Active Tokens (${tokens.length}):`);
+          console.info(`📋 Active Tokens (${tokens.length}):`);
           tokens.forEach(token => {
-            console.log(`\n🆔 ${token.tokenId}`);
-            console.log(`🔑 Permissions: ${token.permissions.join(', ')}`);
-            console.log(`⏰ Expires: ${token.expiresAt.toLocaleString()}`);
+            console.info(`\n🆔 ${token.tokenId}`);
+            console.info(`🔑 Permissions: ${token.permissions.join(', ')}`);
+            console.info(`⏰ Expires: ${token.expiresAt.toLocaleString()}`);
             if (token.metadata) {
-              console.log(`📝 Metadata: ${JSON.stringify(token.metadata, null, 2)}`);
+              console.info(`📝 Metadata: ${JSON.stringify(token.metadata, null, 2)}`);
             }
           });
           break;
@@ -474,9 +474,9 @@ if (import.meta.main) {
           }
           const revoked = await masterTokenManager.revokeToken(tokenIdToRevoke);
           if (revoked) {
-            console.log('✅ Token revoked successfully');
+            console.info('✅ Token revoked successfully');
           } else {
-            console.log('❌ Token not found');
+            console.info('❌ Token not found');
           }
           break;
 
@@ -487,43 +487,43 @@ if (import.meta.main) {
             process.exit(1);
           }
           const newToken = await masterTokenManager.rotateToken(oldToken);
-          console.log('🔄 Token rotated successfully');
-          console.log('🔑 New Token:');
-          console.log(newToken);
+          console.info('🔄 Token rotated successfully');
+          console.info('🔑 New Token:');
+          console.info(newToken);
           break;
 
         case 'audit':
           const limit = parseInt(args[0]) || 10;
           const logs = masterTokenManager.getAuditLogs(limit);
-          console.log(`📋 Audit Logs (Last ${limit}):`);
+          console.info(`📋 Audit Logs (Last ${limit}):`);
           logs.forEach(log => {
             const status = log.success ? '✅' : '❌';
-            console.log(`${status} ${log.timestamp} - ${log.action} - ${log.tokenId}`);
-            if (log.reason) console.log(`   Reason: ${log.reason}`);
-            if (log.ip) console.log(`   IP: ${log.ip}`);
+            console.info(`${status} ${log.timestamp} - ${log.action} - ${log.tokenId}`);
+            if (log.reason) console.info(`   Reason: ${log.reason}`);
+            if (log.ip) console.info(`   IP: ${log.ip}`);
           });
           break;
 
         case 'cleanup':
           const cleaned = await masterTokenManager.cleanupExpiredTokens();
-          console.log(`🧹 Cleaned up ${cleaned} expired tokens`);
+          console.info(`🧹 Cleaned up ${cleaned} expired tokens`);
           break;
 
         default:
-          console.log('🔐 FactoryWager Master Token Manager');
-          console.log('');
-          console.log('Commands:');
-          console.log('  create [permissions]  - Create a new token');
-          console.log('  validate <token>      - Validate a token');
-          console.log('  list                 - List active tokens');
-          console.log('  revoke <tokenId>      - Revoke a token');
-          console.log('  rotate <token>       - Rotate a token');
-          console.log('  audit [limit]        - Show audit logs');
-          console.log('  cleanup              - Clean up expired tokens');
-          console.log('');
-          console.log('Default Permissions:');
+          console.info('🔐 FactoryWager Master Token Manager');
+          console.info('');
+          console.info('Commands:');
+          console.info('  create [permissions]  - Create a new token');
+          console.info('  validate <token>      - Validate a token');
+          console.info('  list                 - List active tokens');
+          console.info('  revoke <tokenId>      - Revoke a token');
+          console.info('  rotate <token>       - Rotate a token');
+          console.info('  audit [limit]        - Show audit logs');
+          console.info('  cleanup              - Clean up expired tokens');
+          console.info('');
+          console.info('Default Permissions:');
           Object.entries(DEFAULT_PERMISSIONS).forEach(([key, perms]) => {
-            console.log(`  ${key}: ${perms.join(', ')}`);
+            console.info(`  ${key}: ${perms.join(', ')}`);
           });
       }
     } catch (error) {

@@ -55,14 +55,14 @@ describe('Payment API Integration Tests', () => {
     try {
       const health = await fetch(`${API_BASE}/health`);
       if (health.ok) {
-        console.log('Using existing server');
+        console.info('Using existing server');
         return;
       }
     } catch {
       // Server not running, start it
     }
     
-    console.log('Starting payment server for integration tests...');
+    console.info('Starting payment server for integration tests...');
     
     serverProcess = spawn('bun', [
       'run',
@@ -104,7 +104,7 @@ describe('Payment API Integration Tests', () => {
       try {
         const health = await fetch(`${API_BASE}/health`);
         if (health.ok) {
-          console.log('Server ready');
+          console.info('Server ready');
           break;
         }
       } catch {
@@ -512,4 +512,4 @@ describe('Payment API Integration Tests', () => {
   });
 });
 
-console.log('✅ Integration tests loaded. Run with: bun test tests/payment-api.integration.test.ts');
+console.info('✅ Integration tests loaded. Run with: bun test tests/payment-api.integration.test.ts');

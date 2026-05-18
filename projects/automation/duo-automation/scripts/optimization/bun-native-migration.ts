@@ -61,7 +61,7 @@ async function scanFiles(dir: string): Promise<string[]> {
 }
 
 async function analyzeDependencies() {
-  console.log('🔍 Analyzing dependency usage...');
+  console.info('🔍 Analyzing dependency usage...');
   
   const files = await scanFiles('./src');
   const results: Record<string, string[]> = {};
@@ -86,24 +86,24 @@ async function analyzeDependencies() {
 }
 
 function generateMigrationPlan(analysis: Record<string, string[]>) {
-  console.log('\n📋 Migration Plan:');
-  console.log('==================');
+  console.info('\n📋 Migration Plan:');
+  console.info('==================');
   
   for (const [dependency, files] of Object.entries(analysis)) {
     if (files.length > 0) {
-      console.log(`\n🔄 ${dependency} → Bun Native`);
-      console.log(`   Files to update: ${files.length}`);
-      console.log(`   Size reduction: ~${(files.length * 2.5).toFixed(1)}MB`);
+      console.info(`\n🔄 ${dependency} → Bun Native`);
+      console.info(`   Files to update: ${files.length}`);
+      console.info(`   Size reduction: ~${(files.length * 2.5).toFixed(1)}MB`);
       
       files.forEach(file => {
-        console.log(`     - ${file.replace(process.cwd() + '/', '')}`);
+        console.info(`     - ${file.replace(process.cwd() + '/', '')}`);
       });
     }
   }
 }
 
 async function createBunNativeReplacements() {
-  console.log('\n🛠️  Creating Bun Native Replacements...');
+  console.info('\n🛠️  Creating Bun Native Replacements...');
   
   // Create Bun HTTP client replacement
   const bunHttpClient = `
@@ -224,26 +224,26 @@ export const createServer = () => new BunServer();
   
   await Bun.write('./utils/bun-server.ts', bunServer);
   
-  console.log('✅ Created Bun native replacements');
+  console.info('✅ Created Bun native replacements');
 }
 
 async function main() {
-  console.log('🚀 Bun Native Migration Tool');
-  console.log('============================\n');
+  console.info('🚀 Bun Native Migration Tool');
+  console.info('============================\n');
   
   const analysis = await analyzeDependencies();
   generateMigrationPlan(analysis);
   await createBunNativeReplacements();
   
-  console.log('\n📊 Next Steps:');
-  console.log('1. Review the migration plan above');
-  console.log('2. Update package.json to remove heavy dependencies');
-  console.log('3. Replace imports in identified files');
-  console.log('4. Test functionality with Bun natives');
-  console.log('5. Commit changes');
+  console.info('\n📊 Next Steps:');
+  console.info('1. Review the migration plan above');
+  console.info('2. Update package.json to remove heavy dependencies');
+  console.info('3. Replace imports in identified files');
+  console.info('4. Test functionality with Bun natives');
+  console.info('5. Commit changes');
   
-  console.log('\n💾 Estimated bundle size reduction: ~15MB');
-  console.log('⚡ Estimated performance improvement: 40-60%');
+  console.info('\n💾 Estimated bundle size reduction: ~15MB');
+  console.info('⚡ Estimated performance improvement: 40-60%');
 }
 
 main().catch(console.error);

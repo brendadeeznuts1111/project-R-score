@@ -52,7 +52,7 @@ const tradeExecutions = executions.filter(
   (e) => e.execType === "Trade" && e.side && e.lastQty > 0
 );
 
-console.log(`Loaded ${executions.length} executions, ${tradeExecutions.length} trades`);
+console.info(`Loaded ${executions.length} executions, ${tradeExecutions.length} trades`);
 
 group("Execution filtering", () => {
   bench("filter trades", () => {

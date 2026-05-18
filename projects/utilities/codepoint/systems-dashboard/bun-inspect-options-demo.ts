@@ -1,7 +1,7 @@
 // bun-inspect-options-demo.ts - Complete BunInspectOptions demonstration
 
-console.log("🎯 BunInspectOptions Complete Demo");
-console.log("==================================");
+console.info("🎯 BunInspectOptions Complete Demo");
+console.info("==================================");
 
 // Test data for demonstrating all options
 const complexObj = {
@@ -28,52 +28,52 @@ const complexObj = {
 };
 
 // 1. Default Bun.inspect() (no options)
-console.log("\n📋 1. Default Bun.inspect() (no options):");
-console.log(Bun.inspect(complexObj));
+console.info("\n📋 1. Default Bun.inspect() (no options):");
+console.info(Bun.inspect(complexObj));
 
 // 2. colors: true (default)
-console.log("\n🎨 2. colors: true (default):");
-console.log(Bun.inspect(complexObj, { colors: true }));
+console.info("\n🎨 2. colors: true (default):");
+console.info(Bun.inspect(complexObj, { colors: true }));
 
 // 3. colors: false
-console.log("\n⚫ 3. colors: false:");
-console.log(Bun.inspect(complexObj, { colors: false }));
+console.info("\n⚫ 3. colors: false:");
+console.info(Bun.inspect(complexObj, { colors: false }));
 
 // 4. compact: true
-console.log("\n📦 4. compact: true:");
-console.log(Bun.inspect(complexObj, { compact: true }));
+console.info("\n📦 4. compact: true:");
+console.info(Bun.inspect(complexObj, { compact: true }));
 
 // 5. compact: false (default)
-console.log("\n📖 5. compact: false (default):");
-console.log(Bun.inspect(complexObj, { compact: false }));
+console.info("\n📖 5. compact: false (default):");
+console.info(Bun.inspect(complexObj, { compact: false }));
 
 // 6. depth: 0 (no nesting)
-console.log("\n🔍 6. depth: 0 (no nesting):");
-console.log(Bun.inspect(complexObj, { depth: 0 }));
+console.info("\n🔍 6. depth: 0 (no nesting):");
+console.info(Bun.inspect(complexObj, { depth: 0 }));
 
 // 7. depth: 1 (one level of nesting)
-console.log("\n📊 7. depth: 1 (one level of nesting):");
-console.log(Bun.inspect(complexObj, { depth: 1 }));
+console.info("\n📊 7. depth: 1 (one level of nesting):");
+console.info(Bun.inspect(complexObj, { depth: 1 }));
 
 // 8. depth: 2 (two levels of nesting)
-console.log("\n📈 8. depth: 2 (two levels of nesting):");
-console.log(Bun.inspect(complexObj, { depth: 2 }));
+console.info("\n📈 8. depth: 2 (two levels of nesting):");
+console.info(Bun.inspect(complexObj, { depth: 2 }));
 
 // 9. depth: 3 (three levels of nesting)
-console.log("\n📉 9. depth: 3 (three levels of nesting):");
-console.log(Bun.inspect(complexObj, { depth: 3 }));
+console.info("\n📉 9. depth: 3 (three levels of nesting):");
+console.info(Bun.inspect(complexObj, { depth: 3 }));
 
 // 10. sorted: true
-console.log("\n🔤 10. sorted: true:");
-console.log(Bun.inspect(complexObj, { sorted: true }));
+console.info("\n🔤 10. sorted: true:");
+console.info(Bun.inspect(complexObj, { sorted: true }));
 
 // 11. sorted: false (default)
-console.log("\n📝 11. sorted: false (default):");
-console.log(Bun.inspect(complexObj, { sorted: false }));
+console.info("\n📝 11. sorted: false (default):");
+console.info(Bun.inspect(complexObj, { sorted: false }));
 
 // 12. Combined options: colors: false, compact: true, sorted: true
-console.log("\n🎯 12. Combined: colors: false, compact: true, sorted: true:");
-console.log(
+console.info("\n🎯 12. Combined: colors: false, compact: true, sorted: true:");
+console.info(
   Bun.inspect(complexObj, {
     colors: false,
     compact: true,
@@ -82,10 +82,10 @@ console.log(
 );
 
 // 13. Combined options: colors: true, compact: false, depth: 2, sorted: true
-console.log(
+console.info(
   "\n🌈 13. Combined: colors: true, compact: false, depth: 2, sorted: true:"
 );
-console.log(
+console.info(
   Bun.inspect(complexObj, {
     colors: true,
     compact: false,
@@ -95,10 +95,10 @@ console.log(
 );
 
 // 14. Combined options: colors: false, compact: true, depth: 1, sorted: false
-console.log(
+console.info(
   "\n⚡ 14. Combined: colors: false, compact: true, depth: 1, sorted: false:"
 );
-console.log(
+console.info(
   Bun.inspect(complexObj, {
     colors: false,
     compact: true,
@@ -108,24 +108,24 @@ console.log(
 );
 
 // 15. Test with array data
-console.log("\n📋 15. Array Data with Options:");
+console.info("\n📋 15. Array Data with Options:");
 const arrayData = [
   { id: 3, name: "Charlie", score: 85 },
   { id: 1, name: "Alice", score: 95 },
   { id: 2, name: "Bob", score: 88 },
 ];
 
-console.log("Default array:");
-console.log(Bun.inspect(arrayData));
+console.info("Default array:");
+console.info(Bun.inspect(arrayData));
 
-console.log("\nSorted array:");
-console.log(Bun.inspect(arrayData, { sorted: true }));
+console.info("\nSorted array:");
+console.info(Bun.inspect(arrayData, { sorted: true }));
 
-console.log("\nCompact array:");
-console.log(Bun.inspect(arrayData, { compact: true }));
+console.info("\nCompact array:");
+console.info(Bun.inspect(arrayData, { compact: true }));
 
 // 16. Test with deeply nested object
-console.log("\n🏗️ 16. Deeply Nested Object:");
+console.info("\n🏗️ 16. Deeply Nested Object:");
 const deepNested = {
   level1: {
     level2: {
@@ -141,32 +141,32 @@ const deepNested = {
   },
 };
 
-console.log("Default deep nested:");
-console.log(Bun.inspect(deepNested));
+console.info("Default deep nested:");
+console.info(Bun.inspect(deepNested));
 
-console.log("\nDepth 2:");
-console.log(Bun.inspect(deepNested, { depth: 2 }));
+console.info("\nDepth 2:");
+console.info(Bun.inspect(deepNested, { depth: 2 }));
 
-console.log("\nDepth 4:");
-console.log(Bun.inspect(deepNested, { depth: 4 }));
+console.info("\nDepth 4:");
+console.info(Bun.inspect(deepNested, { depth: 4 }));
 
 // 17. Test with circular references
-console.log("\n🔄 17. Circular References:");
+console.info("\n🔄 17. Circular References:");
 const circularObj: any = { name: "circular" };
 circularObj.self = circularObj;
 circularObj.nested = { parent: circularObj };
 
-console.log("Default circular:");
-console.log(Bun.inspect(circularObj));
+console.info("Default circular:");
+console.info(Bun.inspect(circularObj));
 
-console.log("\nCircular with depth 1:");
-console.log(Bun.inspect(circularObj, { depth: 1 }));
+console.info("\nCircular with depth 1:");
+console.info(Bun.inspect(circularObj, { depth: 1 }));
 
-console.log("\nCircular with compact:");
-console.log(Bun.inspect(circularObj, { compact: true }));
+console.info("\nCircular with compact:");
+console.info(Bun.inspect(circularObj, { compact: true }));
 
 // 18. Test with large object
-console.log("\n📊 18. Large Object:");
+console.info("\n📊 18. Large Object:");
 const largeObj = {};
 for (let i = 0; i < 20; i++) {
   largeObj[`property${i}`] = {
@@ -179,17 +179,17 @@ for (let i = 0; i < 20; i++) {
   };
 }
 
-console.log("Default large object:");
-console.log(Bun.inspect(largeObj));
+console.info("Default large object:");
+console.info(Bun.inspect(largeObj));
 
-console.log("\nLarge object with compact:");
-console.log(Bun.inspect(largeObj, { compact: true }));
+console.info("\nLarge object with compact:");
+console.info(Bun.inspect(largeObj, { compact: true }));
 
-console.log("\nLarge object with depth 1:");
-console.log(Bun.inspect(largeObj, { depth: 1 }));
+console.info("\nLarge object with depth 1:");
+console.info(Bun.inspect(largeObj, { depth: 1 }));
 
 // 19. Test with different data types
-console.log("\n🎨 19. Different Data Types:");
+console.info("\n🎨 19. Different Data Types:");
 const mixedTypes = {
   string: "Hello World",
   number: 42,
@@ -214,17 +214,17 @@ const mixedTypes = {
   buffer: Buffer.from("hello"),
 };
 
-console.log("Default mixed types:");
-console.log(Bun.inspect(mixedTypes));
+console.info("Default mixed types:");
+console.info(Bun.inspect(mixedTypes));
 
-console.log("\nMixed types with compact:");
-console.log(Bun.inspect(mixedTypes, { compact: true }));
+console.info("\nMixed types with compact:");
+console.info(Bun.inspect(mixedTypes, { compact: true }));
 
-console.log("\nMixed types with depth 1:");
-console.log(Bun.inspect(mixedTypes, { depth: 1 }));
+console.info("\nMixed types with depth 1:");
+console.info(Bun.inspect(mixedTypes, { depth: 1 }));
 
 // 20. Performance comparison
-console.log("\n⚡ 20. Performance Comparison:");
+console.info("\n⚡ 20. Performance Comparison:");
 const perfObj = {
   data: Array.from({ length: 100 }, (_, i) => ({
     id: i,
@@ -249,21 +249,21 @@ const depthResult = Bun.inspect(perfObj, { depth: 1 });
 console.timeEnd("Depth limited inspection");
 
 // 21. Table options demonstration
-console.log("\n📊 21. Bun.inspect.table() with Options:");
+console.info("\n📊 21. Bun.inspect.table() with Options:");
 const tableData = [
   { z: 3, a: 1, m: 2 },
   { z: 6, a: 4, m: 5 },
   { z: 9, a: 7, m: 8 },
 ];
 
-console.log("Default table:");
-console.log(Bun.inspect.table(tableData));
+console.info("Default table:");
+console.info(Bun.inspect.table(tableData));
 
-console.log("\nTable with colors: false:");
-console.log(Bun.inspect.table(tableData, null, { colors: false }));
+console.info("\nTable with colors: false:");
+console.info(Bun.inspect.table(tableData, null, { colors: false }));
 
 // 22. Custom class with options
-console.log("\n🎨 22. Custom Class with Options:");
+console.info("\n🎨 22. Custom Class with Options:");
 class CustomWithOptions {
   constructor(data) {
     this.data = data;
@@ -278,21 +278,21 @@ class CustomWithOptions {
 
 const customInstance = new CustomWithOptions({ name: "test", value: 42 });
 
-console.log("Default custom class:");
-console.log(Bun.inspect(customInstance));
+console.info("Default custom class:");
+console.info(Bun.inspect(customInstance));
 
-console.log("\nCustom class with colors: false:");
-console.log(Bun.inspect(customInstance, { colors: false }));
+console.info("\nCustom class with colors: false:");
+console.info(Bun.inspect(customInstance, { colors: false }));
 
-console.log("\nCustom class with compact:");
-console.log(Bun.inspect(customInstance, { compact: true }));
+console.info("\nCustom class with compact:");
+console.info(Bun.inspect(customInstance, { compact: true }));
 
-console.log("\n✅ BunInspectOptions demo completed!");
-console.log("\n📋 Options Demonstrated:");
-console.log("   • colors: boolean - Enable/disable ANSI colors");
-console.log("   • compact: boolean - Compact vs verbose output");
-console.log("   • depth: number - Control nesting depth");
-console.log("   • sorted: boolean - Sort object properties");
-console.log("   • Combined options - Multiple options together");
-console.log("   • Performance impact - Different option combinations");
-console.log("   • Edge cases - Circular refs, large objects, mixed types");
+console.info("\n✅ BunInspectOptions demo completed!");
+console.info("\n📋 Options Demonstrated:");
+console.info("   • colors: boolean - Enable/disable ANSI colors");
+console.info("   • compact: boolean - Compact vs verbose output");
+console.info("   • depth: number - Control nesting depth");
+console.info("   • sorted: boolean - Sort object properties");
+console.info("   • Combined options - Multiple options together");
+console.info("   • Performance impact - Different option combinations");
+console.info("   • Edge cases - Circular refs, large objects, mixed types");

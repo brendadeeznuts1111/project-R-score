@@ -36,10 +36,10 @@ async function benchmarkOperations(): Promise<BenchmarkResult[]> {
   const testData = new ArrayBuffer(1024 * 1024); // 1MB test data
   const testKey = `benchmark-${Date.now()}.bin`;
 
-  console.log('🚀 Running AWS SDK vs Bun Native Benchmark...\n');
+  console.info('🚀 Running AWS SDK vs Bun Native Benchmark...\n');
 
   // 1. Upload Performance Test
-  console.log('📤 Testing upload performance...');
+  console.info('📤 Testing upload performance...');
   
   try {
     const uploadStart = performance.now();
@@ -57,7 +57,7 @@ async function benchmarkOperations(): Promise<BenchmarkResult[]> {
       success: true
     });
     
-    console.log(`  ✅ Upload completed in ${uploadTime.toFixed(2)}ms`);
+    console.info(`  ✅ Upload completed in ${uploadTime.toFixed(2)}ms`);
   } catch (error) {
     results.push({
       operation: 'Upload (1MB)',
@@ -65,11 +65,11 @@ async function benchmarkOperations(): Promise<BenchmarkResult[]> {
       improvement: 'Failed',
       success: false
     });
-    console.log(`  ❌ Upload failed: ${error}`);
+    console.info(`  ❌ Upload failed: ${error}`);
   }
 
   // 2. Download Performance Test
-  console.log('📥 Testing download performance...');
+  console.info('📥 Testing download performance...');
   
   try {
     const downloadStart = performance.now();
@@ -87,7 +87,7 @@ async function benchmarkOperations(): Promise<BenchmarkResult[]> {
       success: true
     });
     
-    console.log(`  ✅ Download completed in ${downloadTime.toFixed(2)}ms`);
+    console.info(`  ✅ Download completed in ${downloadTime.toFixed(2)}ms`);
   } catch (error) {
     results.push({
       operation: 'Download (1MB)',
@@ -95,11 +95,11 @@ async function benchmarkOperations(): Promise<BenchmarkResult[]> {
       improvement: 'Failed',
       success: false
     });
-    console.log(`  ❌ Download failed: ${error}`);
+    console.info(`  ❌ Download failed: ${error}`);
   }
 
   // 3. List Objects Performance Test
-  console.log('📋 Testing list performance...');
+  console.info('📋 Testing list performance...');
   
   try {
     const listStart = performance.now();
@@ -117,7 +117,7 @@ async function benchmarkOperations(): Promise<BenchmarkResult[]> {
       success: true
     });
     
-    console.log(`  ✅ List completed in ${listTime.toFixed(2)}ms`);
+    console.info(`  ✅ List completed in ${listTime.toFixed(2)}ms`);
   } catch (error) {
     results.push({
       operation: 'List Objects',
@@ -125,11 +125,11 @@ async function benchmarkOperations(): Promise<BenchmarkResult[]> {
       improvement: 'Failed',
       success: false
     });
-    console.log(`  ❌ List failed: ${error}`);
+    console.info(`  ❌ List failed: ${error}`);
   }
 
   // 4. Presigned URL Generation Test
-  console.log('🔗 Testing presigned URL generation...');
+  console.info('🔗 Testing presigned URL generation...');
   
   try {
     const presignStart = performance.now();
@@ -147,8 +147,8 @@ async function benchmarkOperations(): Promise<BenchmarkResult[]> {
       success: true
     });
     
-    console.log(`  ✅ Presigned URL generated in ${presignTime.toFixed(2)}ms`);
-    console.log(`  🔗 URL length: ${signedUrl.length} characters`);
+    console.info(`  ✅ Presigned URL generated in ${presignTime.toFixed(2)}ms`);
+    console.info(`  🔗 URL length: ${signedUrl.length} characters`);
   } catch (error) {
     results.push({
       operation: 'Presigned URL',
@@ -156,11 +156,11 @@ async function benchmarkOperations(): Promise<BenchmarkResult[]> {
       improvement: 'Failed',
       success: false
     });
-    console.log(`  ❌ Presigned URL failed: ${error}`);
+    console.info(`  ❌ Presigned URL failed: ${error}`);
   }
 
   // 5. Batch Operations Test
-  console.log('📦 Testing batch operations...');
+  console.info('📦 Testing batch operations...');
   
   try {
     const batchStart = performance.now();
@@ -186,7 +186,7 @@ async function benchmarkOperations(): Promise<BenchmarkResult[]> {
       success: true
     });
     
-    console.log(`  ✅ Batch upload completed in ${batchTime.toFixed(2)}ms`);
+    console.info(`  ✅ Batch upload completed in ${batchTime.toFixed(2)}ms`);
   } catch (error) {
     results.push({
       operation: 'Batch Upload (10x 1KB)',
@@ -194,7 +194,7 @@ async function benchmarkOperations(): Promise<BenchmarkResult[]> {
       improvement: 'Failed',
       success: false
     });
-    console.log(`  ❌ Batch upload failed: ${error}`);
+    console.info(`  ❌ Batch upload failed: ${error}`);
   }
 
   return results;
@@ -204,52 +204,52 @@ async function benchmarkOperations(): Promise<BenchmarkResult[]> {
  * Generate performance report
  */
 function generateReport(results: BenchmarkResult[]): void {
-  console.log('\n📊 Performance Benchmark Results');
-  console.log('='.repeat(60));
+  console.info('\n📊 Performance Benchmark Results');
+  console.info('='.repeat(60));
   
   const successful = results.filter(r => r.success);
   const totalOperations = successful.reduce((sum, r) => sum + r.bunTime, 0);
   
-  console.log(`\n✅ Successful Operations: ${successful.length}/${results.length}`);
-  console.log(`⚡ Total Time: ${totalOperations.toFixed(2)}ms`);
-  console.log(`🚀 Average Time: ${(totalOperations / successful.length).toFixed(2)}ms`);
+  console.info(`\n✅ Successful Operations: ${successful.length}/${results.length}`);
+  console.info(`⚡ Total Time: ${totalOperations.toFixed(2)}ms`);
+  console.info(`🚀 Average Time: ${(totalOperations / successful.length).toFixed(2)}ms`);
   
-  console.log('\n📈 Detailed Results:');
-  console.log('-'.repeat(60));
+  console.info('\n📈 Detailed Results:');
+  console.info('-'.repeat(60));
   
   results.forEach(result => {
     const status = result.success ? '✅' : '❌';
     const time = result.success ? `${result.bunTime.toFixed(2)}ms` : 'Failed';
     
-    console.log(`${status} ${result.operation.padEnd(25)} ${time.padEnd(10)} ${result.improvement}`);
+    console.info(`${status} ${result.operation.padEnd(25)} ${time.padEnd(10)} ${result.improvement}`);
   });
   
-  console.log('\n🎯 Key Benefits of Bun Native HTTP Client:');
-  console.log('  • 2-3x faster than AWS SDK');
-  console.log('  • Zero external dependencies');
-  console.log('  • Native Bun performance optimizations');
-  console.log('  • Reduced memory footprint');
-  console.log('  • Built-in connection pooling');
-  console.log('  • Automatic compression support');
+  console.info('\n🎯 Key Benefits of Bun Native HTTP Client:');
+  console.info('  • 2-3x faster than AWS SDK');
+  console.info('  • Zero external dependencies');
+  console.info('  • Native Bun performance optimizations');
+  console.info('  • Reduced memory footprint');
+  console.info('  • Built-in connection pooling');
+  console.info('  • Automatic compression support');
   
-  console.log('\n📦 Bundle Size Impact:');
-  console.log('  • AWS SDK removed: ~15MB');
-  console.log('  • Bun native client: ~5KB');
-  console.log('  • Total reduction: ~15MB (99.9% smaller)');
+  console.info('\n📦 Bundle Size Impact:');
+  console.info('  • AWS SDK removed: ~15MB');
+  console.info('  • Bun native client: ~5KB');
+  console.info('  • Total reduction: ~15MB (99.9% smaller)');
 }
 
 /**
  * Main benchmark function
  */
 async function main() {
-  console.log('🔥 Empire Pro AWS SDK Optimization Benchmark');
-  console.log('Testing Bun Native HTTP Client vs Traditional AWS SDK\n');
+  console.info('🔥 Empire Pro AWS SDK Optimization Benchmark');
+  console.info('Testing Bun Native HTTP Client vs Traditional AWS SDK\n');
   
   const results = await benchmarkOperations();
   generateReport(results);
   
-  console.log('\n🎉 Benchmark completed!');
-  console.log('Ready for production deployment with 2-3x performance improvement! 🚀');
+  console.info('\n🎉 Benchmark completed!');
+  console.info('Ready for production deployment with 2-3x performance improvement! 🚀');
 }
 
 // Run benchmark

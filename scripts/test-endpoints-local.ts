@@ -25,8 +25,8 @@ const checks: EndpointCheck[] = [
 ];
 
 let failures = 0;
-console.log(`Endpoint smoke target: ${baseUrl}`);
-console.log(`Timeout: ${timeoutMs}ms`);
+console.info(`Endpoint smoke target: ${baseUrl}`);
+console.info(`Timeout: ${timeoutMs}ms`);
 
 for (const check of checks) {
   const url = `${baseUrl}${check.path}`;
@@ -41,14 +41,14 @@ for (const check of checks) {
     const elapsed = Date.now() - start;
     if (res.status !== check.expectedStatus) {
       failures++;
-      console.log(`FAIL ${check.name} ${res.status} expected=${check.expectedStatus} ${elapsed}ms ${check.path}`);
+      console.info(`FAIL ${check.name} ${res.status} expected=${check.expectedStatus} ${elapsed}ms ${check.path}`);
       continue;
     }
-    console.log(`PASS ${check.name} ${res.status} ${elapsed}ms ${check.path}`);
+    console.info(`PASS ${check.name} ${res.status} ${elapsed}ms ${check.path}`);
   } catch (error) {
     failures++;
     const message = error instanceof Error ? error.message : String(error);
-    console.log(`FAIL ${check.name} error=${message} ${check.path}`);
+    console.info(`FAIL ${check.name} error=${message} ${check.path}`);
   }
 }
 
@@ -57,4 +57,4 @@ if (failures > 0) {
   process.exit(1);
 }
 
-console.log(`Endpoint smoke passed: ${checks.length}/${checks.length} checks`);
+console.info(`Endpoint smoke passed: ${checks.length}/${checks.length} checks`);

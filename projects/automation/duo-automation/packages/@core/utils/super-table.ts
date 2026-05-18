@@ -24,8 +24,8 @@ export function alignedTable(data: TableData[], columns: string[]): void {
   const header = columns.map(col => col.padEnd(widths[col] !)).join(' | ');
   const separator = columns.map(col => '-'.repeat(widths[col]!)).join('-+-');
   
-  console.log(header);
-  console.log(separator);
+  console.info(header);
+  console.info(separator);
   
   // Print data rows
   data.forEach(row => {
@@ -33,7 +33,7 @@ export function alignedTable(data: TableData[], columns: string[]): void {
       const value = String(row[col] || '');
       return value.padEnd(widths[col]!);
     }).join(' | ');
-    console.log(dataRow);
+    console.info(dataRow);
   });
 }
 

@@ -248,31 +248,31 @@ export class ANSIProcessor {
     // 🖱️ CURSOR MOVEMENT (Excluded from width)
     switch (final) {
       case 64: // '@' - ICH - Insert Characters
-        console.log(`CSI Insert: [${params.join(';')}]@`);
+        console.info(`CSI Insert: [${params.join(';')}]@`);
         break;
       case 72: // 'H' - CUP - Cursor Position
-        console.log(`CSI Cursor Home: [${params.join(';')}]H`);
+        console.info(`CSI Cursor Home: [${params.join(';')}]H`);
         break;
       case 74: // 'J' - ED - Erase Display
-        console.log(`CSI Erase: [${params.join(';')}]J`);
+        console.info(`CSI Erase: [${params.join(';')}]J`);
         break;
       case 75: // 'K' - EL - Erase Line
-        console.log(`CSI Erase Line: [${params.join(';')}]K`);
+        console.info(`CSI Erase Line: [${params.join(';')}]K`);
         break;
       case 108: // 'l' - RM - Reset Mode
-        console.log(`CSI Reset Mode: [${params.join(';')}]l`);
+        console.info(`CSI Reset Mode: [${params.join(';')}]l`);
         break;
       case 109: // 'm' - SGR - Select Graphic Rendition (Colors)
         this.handleSGR(params);
         break;
       case 115: // 's' - SCPRC - Save Cursor
-        console.log(`CSI Save Cursor`);
+        console.info(`CSI Save Cursor`);
         break;
       case 117: // 'u' - RCPRC - Restore Cursor
-        console.log(`CSI Restore Cursor`);
+        console.info(`CSI Restore Cursor`);
         break;
       default:
-        console.log(`CSI Unknown: [${params.join(';')}]${finalChar}`);
+        console.info(`CSI Unknown: [${params.join(';')}]${finalChar}`);
     }
   }
 
@@ -359,7 +359,7 @@ export class ANSIProcessor {
       const uri = parts[2] || "";
 
       this.currentHyperlink = { id, uri };
-      console.log(`🔗 Hyperlink: ID=${id}, URI=${uri}`);
+      console.info(`🔗 Hyperlink: ID=${id}, URI=${uri}`);
     } else if (data === "8;;") {
       // End hyperlink
       if (this.currentHyperlink.uri) {
@@ -375,12 +375,12 @@ export class ANSIProcessor {
     // 📺 OSC 0 - Window Title
     if (data.startsWith("0;")) {
       const title = data.substring(2);
-      console.log(`📺 Window Title: ${title}`);
+      console.info(`📺 Window Title: ${title}`);
     }
 
     // 🖼️ OSC 1337 - File/Clipboard
     if (data.startsWith("1337;")) {
-      console.log(` File/Clipboard: ${data}`);
+      console.info(` File/Clipboard: ${data}`);
     }
   }
 

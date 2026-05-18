@@ -44,26 +44,26 @@ export class UltimateInspectCLI {
         result = redaction.redacted;
         
         if (options.verbose) {
-          console.log(`🛡️  Applied redaction: ${redaction.summary.totalRedactions} items`);
-          console.log(`   Categories: ${Object.keys(redaction.summary.byCategory).join(', ')}`);
+          console.info(`🛡️  Applied redaction: ${redaction.summary.totalRedactions} items`);
+          console.info(`   Categories: ${Object.keys(redaction.summary.byCategory).join(', ')}`);
         }
       }
       
       // Apply smart JSONPath with enhanced engine selection
       if (options.jsonPath) {
         result = EnhancedQueryEngine.applyJsonPath(result, options.jsonPath);
-        console.log(`🔍 Applied JSONPath: ${options.jsonPath}`);
+        console.info(`🔍 Applied JSONPath: ${options.jsonPath}`);
       }
       
       // Apply enhanced JQ filtering
       if (options.jqFilter) {
         if (options.jqFull) {
-          console.log('🔧 Using full JQ engine...');
+          console.info('🔧 Using full JQ engine...');
         } else {
-          console.log('⚡ Using JQ-lite engine...');
+          console.info('⚡ Using JQ-lite engine...');
         }
         result = EnhancedQueryEngine.applyJqFilter(result, options.jqFilter);
-        console.log(`🔧 Applied JQ filter: ${options.jqFilter}`);
+        console.info(`🔧 Applied JQ filter: ${options.jqFilter}`);
       }
       
       // Apply smart regex with context
@@ -75,7 +75,7 @@ export class UltimateInspectCLI {
           contextLines: options.contextLines || 0,
           highlightMatches: options.highlight
         });
-        console.log(`🎯 Applied filter: ${options.filter}`);
+        console.info(`🎯 Applied filter: ${options.filter}`);
       }
       
       // Enhanced interactive mode
@@ -91,18 +91,18 @@ export class UltimateInspectCLI {
       // Generate comprehensive analytics
       if (options.analytics) {
         const stats = ScopeAnalytics.generateStats(result);
-        console.log('\n📊 Enhanced Analytics Report:');
-        console.log('═════════════════════════════════════════');
-        console.log(ScopeAnalytics.generateVisualReport(stats));
+        console.info('\n📊 Enhanced Analytics Report:');
+        console.info('═════════════════════════════════════════');
+        console.info(ScopeAnalytics.generateVisualReport(stats));
         
         // Show recommendations
         const recommendations = ScopeAnalytics.generateRecommendations(stats);
         if (recommendations.performance.length > 0) {
-          console.log('\n💡 Performance Recommendations:');
+          console.info('\n💡 Performance Recommendations:');
           recommendations.performance.slice(0, 3).forEach((rec, i) => {
-            console.log(`\n${i + 1}. ${rec.recommendation} [${rec.priority.toUpperCase()}]`);
-            console.log(`   Impact: ${rec.impact}`);
-            console.log(`   Implementation: ${rec.implementation}`);
+            console.info(`\n${i + 1}. ${rec.recommendation} [${rec.priority.toUpperCase()}]`);
+            console.info(`   Impact: ${rec.impact}`);
+            console.info(`   Implementation: ${rec.implementation}`);
           });
         }
       }
@@ -110,20 +110,20 @@ export class UltimateInspectCLI {
       // Enhanced security analysis
       if (options.security) {
         const analysis = AdvancedScopeInspector.securityAnalysis(result);
-        console.log('\n🛡️ Enhanced Security Analysis:');
-        console.log('═════════════════════════════════════════');
-        console.log(`Risk Level: ${analysis.riskLevel.toUpperCase()}`);
-        console.log(`Total Findings: ${analysis.findings.length}`);
+        console.info('\n🛡️ Enhanced Security Analysis:');
+        console.info('═════════════════════════════════════════');
+        console.info(`Risk Level: ${analysis.riskLevel.toUpperCase()}`);
+        console.info(`Total Findings: ${analysis.findings.length}`);
         
         if (analysis.findings.length > 0) {
-          console.log('\n🚨 Critical Findings:');
+          console.info('\n🚨 Critical Findings:');
           analysis.findings
             .filter(f => f.severity === 'critical')
             .forEach((finding, i) => {
-              console.log(`\n${i + 1}. ${finding.type.toUpperCase()}`);
-              console.log(`   Path: ${finding.path}`);
-              console.log(`   Description: ${finding.description}`);
-              console.log(`   Recommendation: ${finding.recommendation}`);
+              console.info(`\n${i + 1}. ${finding.type.toUpperCase()}`);
+              console.info(`   Path: ${finding.path}`);
+              console.info(`   Description: ${finding.description}`);
+              console.info(`   Recommendation: ${finding.recommendation}`);
             });
         }
         
@@ -135,13 +135,13 @@ export class UltimateInspectCLI {
           });
           
           const compliance = SecurityRedactionEngine.generateComplianceReport(redacted.summary);
-          console.log('\n📋 Compliance Report:');
-          console.log(`Status: ${compliance.compliance.toUpperCase()}`);
-          console.log(`Score: ${compliance.score}/100`);
+          console.info('\n📋 Compliance Report:');
+          console.info(`Status: ${compliance.compliance.toUpperCase()}`);
+          console.info(`Score: ${compliance.score}/100`);
           
           if (compliance.risks.length > 0) {
-            console.log('\n⚠️  Risks:');
-            compliance.risks.forEach(risk => console.log(`   • ${risk}`));
+            console.info('\n⚠️  Risks:');
+            compliance.risks.forEach(risk => console.info(`   • ${risk}`));
           }
         }
       }
@@ -149,8 +149,8 @@ export class UltimateInspectCLI {
       // Enhanced pattern extraction
       if (options.patterns) {
         const patterns = AdvancedScopeInspector.extractPatterns(result);
-        console.log('\n🔍 Enhanced Pattern Extraction:');
-        console.log('══════════════════════════════════════════');
+        console.info('\n🔍 Enhanced Pattern Extraction:');
+        console.info('══════════════════════════════════════════');
         
         // Group patterns by category
         const categorized = {
@@ -164,14 +164,14 @@ export class UltimateInspectCLI {
         Object.entries(categorized).forEach(([category, types]) => {
           const categoryTotal = types.reduce((sum, type) => sum + patterns[type as keyof typeof patterns].length, 0);
           if (categoryTotal > 0) {
-            console.log(`\n${category.toUpperCase()} (${categoryTotal}):`);
+            console.info(`\n${category.toUpperCase()} (${categoryTotal}):`);
             types.forEach(type => {
               const count = patterns[type as keyof typeof patterns].length;
               if (count > 0) {
-                console.log(`  ${type}: ${count}`);
+                console.info(`  ${type}: ${count}`);
                 if (options.verbose && count <= 5) {
                   patterns[type as keyof typeof patterns].forEach((pattern: string) => {
-                    console.log(`    • ${pattern}`);
+                    console.info(`    • ${pattern}`);
                   });
                 }
               }
@@ -182,12 +182,12 @@ export class UltimateInspectCLI {
       
       // Enhanced output formatting
       const output = await this.formatOutput(result, options);
-      console.log(output);
+      console.info(output);
       
       // Save with enhanced metadata
       if (options.outputFile) {
         await this.saveEnhancedOutput(options.outputFile, result, options, inspectionData);
-        console.log(`💾 Saved to ${options.outputFile}`);
+        console.info(`💾 Saved to ${options.outputFile}`);
       }
       
       // Show performance metrics if requested
@@ -346,8 +346,8 @@ export class UltimateInspectCLI {
    * Start watch mode for real-time monitoring
    */
   private async startWatchMode(options: any): Promise<void> {
-    console.log(`👁️  Starting watch mode (interval: ${options.watchInterval}ms)`);
-    console.log('Press Ctrl+C to stop watching\n');
+    console.info(`👁️  Starting watch mode (interval: ${options.watchInterval}ms)`);
+    console.info('Press Ctrl+C to stop watching\n');
     
     let previousData: any = null;
     
@@ -359,13 +359,13 @@ export class UltimateInspectCLI {
           const comparison = ScopeAnalytics.compareScopes(previousData, currentData);
           
           if (comparison.summary.added > 0 || comparison.summary.removed > 0 || comparison.summary.modified > 0) {
-            console.log(`\n🔄 Changes detected at ${new Date().toLocaleTimeString()}`);
-            console.log(`   Added: ${comparison.summary.added}, Removed: ${comparison.summary.removed}, Modified: ${comparison.summary.modified}`);
+            console.info(`\n🔄 Changes detected at ${new Date().toLocaleTimeString()}`);
+            console.info(`   Added: ${comparison.summary.added}, Removed: ${comparison.summary.removed}, Modified: ${comparison.summary.modified}`);
             
             if (options.verbose && comparison.changes.modified.length > 0) {
-              console.log('   Recent changes:');
+              console.info('   Recent changes:');
               comparison.changes.modified.slice(0, 3).forEach(change => {
-                console.log(`     • ${change.path}: ${change.changeType}`);
+                console.info(`     • ${change.path}: ${change.changeType}`);
               });
             }
           }
@@ -388,7 +388,7 @@ export class UltimateInspectCLI {
       if (this.watchTimer) {
         clearInterval(this.watchTimer);
       }
-      console.log('\n👁️  Watch mode stopped');
+      console.info('\n👁️  Watch mode stopped');
       process.exit(0);
     });
   }
@@ -631,22 +631,22 @@ export class UltimateInspectCLI {
     const size = JSON.stringify(data).length;
     const endTime = Date.now();
     
-    console.log('\n⚡ Performance Metrics:');
-    console.log('═════════════════════════════');
-    console.log(`Processing time: ${endTime - startTime}ms`);
-    console.log(`Data size: ${(size / 1024).toFixed(2)} KB`);
-    console.log(`Memory usage: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`);
+    console.info('\n⚡ Performance Metrics:');
+    console.info('═════════════════════════════');
+    console.info(`Processing time: ${endTime - startTime}ms`);
+    console.info(`Data size: ${(size / 1024).toFixed(2)} KB`);
+    console.info(`Memory usage: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`);
     
     if (options.jsonPath) {
-      console.log(`Query engine: Enhanced JSONPath`);
+      console.info(`Query engine: Enhanced JSONPath`);
     }
     
     if (options.jqFilter) {
-      console.log(`JQ engine: ${options.jqFull ? 'Full JQ' : 'JQ-lite'}`);
+      console.info(`JQ engine: ${options.jqFull ? 'Full JQ' : 'JQ-lite'}`);
     }
     
     if (options.redact) {
-      console.log(`Redaction: ENABLED (${options.redactCategories.join(', ')})`);
+      console.info(`Redaction: ENABLED (${options.redactCategories.join(', ')})`);
     }
   }
   
@@ -654,7 +654,7 @@ export class UltimateInspectCLI {
    * Show comprehensive help
    */
   static showHelp(): void {
-    console.log(`
+    console.info(`
 🚀 Ultimate FactoryWager CLI Inspection System
 ═════════════════════════════════════════════════
 

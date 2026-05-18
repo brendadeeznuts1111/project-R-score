@@ -108,7 +108,7 @@ class URLCLI {
     };
 
     if (options.format === 'json') {
-      console.log(JSON.stringify(matrix, null, 2));
+      console.info(JSON.stringify(matrix, null, 2));
     } else {
       this.printMatrixTable(matrix);
     }
@@ -121,7 +121,7 @@ class URLCLI {
     const urls = this.collectAllURLs();
     const results: any[] = [];
 
-    console.log('🔍 Validating URLs...\n');
+    console.info('🔍 Validating URLs...\n');
 
     for (const urlInfo of urls) {
       try {
@@ -135,12 +135,12 @@ class URLCLI {
         });
 
         if (options.verbose) {
-          console.log(`${validation.isValid ? '✅' : '❌'} ${urlInfo.url}`);
+          console.info(`${validation.isValid ? '✅' : '❌'} ${urlInfo.url}`);
           if (validation.errors.length > 0) {
-            console.log(`   Errors: ${validation.errors.join(', ')}`);
+            console.info(`   Errors: ${validation.errors.join(', ')}`);
           }
           if (validation.warnings.length > 0) {
-            console.log(`   Warnings: ${validation.warnings.join(', ')}`);
+            console.info(`   Warnings: ${validation.warnings.join(', ')}`);
           }
         }
       } catch (error) {
@@ -158,15 +158,15 @@ class URLCLI {
     const valid = results.filter(r => r.valid).length;
     const invalid = results.filter(r => !r.valid).length;
     
-    console.log(`\n📊 Validation Summary:`);
-    console.log(`   Total: ${results.length}`);
-    console.log(`   Valid: ${valid}`);
-    console.log(`   Invalid: ${invalid}`);
-    console.log(`   Success Rate: ${((valid / results.length) * 100).toFixed(1)}%`);
+    console.info(`\n📊 Validation Summary:`);
+    console.info(`   Total: ${results.length}`);
+    console.info(`   Valid: ${valid}`);
+    console.info(`   Invalid: ${invalid}`);
+    console.info(`   Success Rate: ${((valid / results.length) * 100).toFixed(1)}%`);
 
     if (options.format === 'json') {
-      console.log('\n📄 Detailed Results:');
-      console.log(JSON.stringify(results, null, 2));
+      console.info('\n📄 Detailed Results:');
+      console.info(JSON.stringify(results, null, 2));
     }
   }
 
@@ -177,7 +177,7 @@ class URLCLI {
     const urls = this.collectAllURLs().map(u => u.url);
     const uniqueUrls = [...new Set(urls)];
     
-    console.log(`🏥 Checking health of ${uniqueUrls.length} URLs...\n`);
+    console.info(`🏥 Checking health of ${uniqueUrls.length} URLs...\n`);
     
     const results = await this.monitor.checkMultipleHealth(uniqueUrls);
     
@@ -185,24 +185,24 @@ class URLCLI {
     const healthy = results.filter(r => r.status === 'healthy');
     const unhealthy = results.filter(r => r.status === 'unhealthy');
     
-    console.log(`✅ Healthy URLs (${healthy.length}):`);
+    console.info(`✅ Healthy URLs (${healthy.length}):`);
     healthy.forEach(result => {
-      console.log(`   ✓ ${result.url} (${result.responseTime}ms)`);
+      console.info(`   ✓ ${result.url} (${result.responseTime}ms)`);
     });
     
     if (unhealthy.length > 0) {
-      console.log(`\n❌ Unhealthy URLs (${unhealthy.length}):`);
+      console.info(`\n❌ Unhealthy URLs (${unhealthy.length}):`);
       unhealthy.forEach(result => {
-        console.log(`   ✗ ${result.url}`);
-        console.log(`     Error: ${result.error}`);
+        console.info(`   ✗ ${result.url}`);
+        console.info(`     Error: ${result.error}`);
       });
     }
     
-    console.log(`\n📊 Health Summary:`);
-    console.log(`   Total: ${results.length}`);
-    console.log(`   Healthy: ${healthy.length}`);
-    console.log(`   Unhealthy: ${unhealthy.length}`);
-    console.log(`   Success Rate: ${((healthy.length / results.length) * 100).toFixed(1)}%`);
+    console.info(`\n📊 Health Summary:`);
+    console.info(`   Total: ${results.length}`);
+    console.info(`   Healthy: ${healthy.length}`);
+    console.info(`   Unhealthy: ${unhealthy.length}`);
+    console.info(`   Success Rate: ${((healthy.length / results.length) * 100).toFixed(1)}%`);
   }
 
   /**
@@ -327,7 +327,7 @@ class URLCLI {
     };
 
     if (options.format === 'json') {
-      console.log(JSON.stringify(stats, null, 2));
+      console.info(JSON.stringify(stats, null, 2));
     } else {
       this.printStats(stats);
     }
@@ -338,8 +338,8 @@ class URLCLI {
    */
   private async buildURL(options: CLIOptions): Promise<void> {
     if (!options.filter) {
-      console.log('❌ Please specify a URL pattern to build');
-      console.log('Example: bun run urls:cli build --filter="search:@duoplus/core"');
+      console.info('❌ Please specify a URL pattern to build');
+      console.info('Example: bun run urls:cli build --filter="search:@duoplus/core"');
       return;
     }
 
@@ -355,21 +355,21 @@ class URLCLI {
             .path('-', 'v1', 'search')
             .query('text', query)
             .build();
-          console.log(`🔍 Search URL: ${searchUrl}`);
+          console.info(`🔍 Search URL: ${searchUrl}`);
           break;
 
         case 'package':
           const packageName = params[0] || 'core';
           const version = params[1];
           const packageUrl = RegistryURLBuilder.package(packageName, version);
-          console.log(`📦 Package URL: ${packageUrl}`);
+          console.info(`📦 Package URL: ${packageUrl}`);
           break;
 
         case 'api':
           const endpoint = params[0] || 'health';
           const apiVersion = params[1] || 'v1';
           const apiUrl = APIURLBuilder.endpoint(endpoint, apiVersion);
-          console.log(`🔧 API URL: ${apiUrl}`);
+          console.info(`🔧 API URL: ${apiUrl}`);
           break;
 
         case 'custom':
@@ -378,15 +378,15 @@ class URLCLI {
           const customUrl = URLBuilder.create(baseUrl)
             .path(...path)
             .build();
-          console.log(`🔗 Custom URL: ${customUrl}`);
+          console.info(`🔗 Custom URL: ${customUrl}`);
           break;
 
         default:
-          console.log(`❌ Unknown build type: ${type}`);
-          console.log('Available types: search, package, api, custom');
+          console.info(`❌ Unknown build type: ${type}`);
+          console.info('Available types: search, package, api, custom');
       }
     } catch (error) {
-      console.log(`❌ Error building URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.info(`❌ Error building URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -399,29 +399,29 @@ class URLCLI {
     switch (operation) {
       case 'stats':
         const stats = CachedURLHelper.getCacheStats();
-        console.log('💾 Cache Statistics:');
-        console.log(`   Total Entries: ${stats.totalEntries}`);
-        console.log(`   Valid Entries: ${stats.validEntries}`);
-        console.log(`   Expired Entries: ${stats.expiredEntries}`);
-        console.log(`   Hit Rate: ${(stats.hitRate * 100).toFixed(1)}%`);
-        console.log(`   Max Size: ${stats.maxSize}`);
-        console.log(`   TTL: ${stats.ttl}ms`);
+        console.info('💾 Cache Statistics:');
+        console.info(`   Total Entries: ${stats.totalEntries}`);
+        console.info(`   Valid Entries: ${stats.validEntries}`);
+        console.info(`   Expired Entries: ${stats.expiredEntries}`);
+        console.info(`   Hit Rate: ${(stats.hitRate * 100).toFixed(1)}%`);
+        console.info(`   Max Size: ${stats.maxSize}`);
+        console.info(`   TTL: ${stats.ttl}ms`);
         break;
 
       case 'clear':
         CachedURLHelper.clearCache();
-        console.log('✅ Cache cleared');
+        console.info('✅ Cache cleared');
         break;
 
       case 'warmup':
-        console.log('🔥 Warming up cache...');
+        console.info('🔥 Warming up cache...');
         await CachedURLHelper.warmupCache();
-        console.log('✅ Cache warmed up');
+        console.info('✅ Cache warmed up');
         break;
 
       default:
-        console.log('❌ Unknown cache operation');
-        console.log('Available operations: stats, clear, warmup');
+        console.info('❌ Unknown cache operation');
+        console.info('Available operations: stats, clear, warmup');
     }
   }
 
@@ -434,25 +434,25 @@ class URLCLI {
 
     switch (format) {
       case 'json':
-        console.log(JSON.stringify(urls, null, 2));
+        console.info(JSON.stringify(urls, null, 2));
         break;
       case 'csv':
-        console.log('Category,URL,Type,Environment,Status');
+        console.info('Category,URL,Type,Environment,Status');
         urls.forEach(url => {
-          console.log(`"${url.category}","${url.url}","${url.type}","${url.environment}","${url.status}"`);
+          console.info(`"${url.category}","${url.url}","${url.type}","${url.environment}","${url.status}"`);
         });
         break;
       case 'markdown':
-        console.log('# URL Organization Export\n\n');
-        console.log('| Category | URL | Type | Environment | Status |');
-        console.log('|----------|-----|------|-------------|--------|');
+        console.info('# URL Organization Export\n\n');
+        console.info('| Category | URL | Type | Environment | Status |');
+        console.info('|----------|-----|------|-------------|--------|');
         urls.forEach(url => {
-          console.log(`| ${url.category} | ${url.url} | ${url.type} | ${url.environment} | ${url.status} |`);
+          console.info(`| ${url.category} | ${url.url} | ${url.type} | ${url.environment} | ${url.status} |`);
         });
         break;
       default:
-        console.log('❌ Unsupported export format');
-        console.log('Available formats: json, csv, markdown');
+        console.info('❌ Unsupported export format');
+        console.info('Available formats: json, csv, markdown');
     }
   }
 
@@ -462,8 +462,8 @@ class URLCLI {
   private async searchURLs(options: CLIOptions): Promise<void> {
     const query = options.filter;
     if (!query) {
-      console.log('❌ Please specify a search query');
-      console.log('Example: bun run urls:cli search --filter="registry"');
+      console.info('❌ Please specify a search query');
+      console.info('Example: bun run urls:cli search --filter="registry"');
       return;
     }
 
@@ -474,7 +474,7 @@ class URLCLI {
       url.type.toLowerCase().includes(query.toLowerCase())
     );
 
-    console.log(`🔍 Search results for "${query}":\n`);
+    console.info(`🔍 Search results for "${query}":\n`);
     this.outputData(results, 'table');
   }
 
@@ -482,7 +482,7 @@ class URLCLI {
    * Show help information
    */
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🌐 DuoPlus URL Organization CLI
 
 Usage: bun run urls:cli <command> [options]
@@ -590,24 +590,24 @@ Examples:
   private outputData(data: any[], format: string): void {
     switch (format) {
       case 'json':
-        console.log(JSON.stringify(data, null, 2));
+        console.info(JSON.stringify(data, null, 2));
         break;
       case 'csv':
         if (data.length > 0) {
           const headers = Object.keys(data[0]);
-          console.log(headers.join(','));
+          console.info(headers.join(','));
           data.forEach(row => {
-            console.log(headers.map(h => row[h]).join(','));
+            console.info(headers.map(h => row[h]).join(','));
           });
         }
         break;
       case 'markdown':
         if (data.length > 0) {
           const headers = Object.keys(data[0]);
-          console.log('| ' + headers.join(' | ') + ' |');
-          console.log('| ' + headers.map(() => '---').join(' | ') + ' |');
+          console.info('| ' + headers.join(' | ') + ' |');
+          console.info('| ' + headers.map(() => '---').join(' | ') + ' |');
           data.forEach(row => {
-            console.log('| ' + headers.map(h => row[h]).join(' | ') + ' |');
+            console.info('| ' + headers.map(h => row[h]).join(' | ') + ' |');
           });
         }
         break;
@@ -668,19 +668,19 @@ Examples:
   }
 
   private printMatrixTable(matrix: any): void {
-    console.log('📊 URL Organization Matrix');
-    console.log('========================');
+    console.info('📊 URL Organization Matrix');
+    console.info('========================');
     // Implementation for printing matrix table
   }
 
   private printStats(stats: any): void {
-    console.log('📊 System Statistics');
-    console.log('===================');
-    console.log(`🌐 URLs: ${stats.urls.total} total`);
-    console.log(`🏗️ Patterns: ${stats.patterns.active}/${stats.patterns.total} active`);
-    console.log(`🌍 Environments: ${stats.environments.configured.length}/${stats.environments.total} configured`);
-    console.log(`🛠️ Helpers: ${stats.helpers.total} total`);
-    console.log(`💾 Cache: ${stats.cache.validEntries}/${stats.cache.totalEntries} valid entries`);
+    console.info('📊 System Statistics');
+    console.info('===================');
+    console.info(`🌐 URLs: ${stats.urls.total} total`);
+    console.info(`🏗️ Patterns: ${stats.patterns.active}/${stats.patterns.total} active`);
+    console.info(`🌍 Environments: ${stats.environments.configured.length}/${stats.environments.total} configured`);
+    console.info(`🛠️ Helpers: ${stats.helpers.total} total`);
+    console.info(`💾 Cache: ${stats.cache.validEntries}/${stats.cache.totalEntries} valid entries`);
   }
 }
 

@@ -26,7 +26,7 @@ for (let i = 0; i < iterations; i++) {
 }
 
 const durationMs = Math.round((performance.now() - started) * 1000) / 1000;
-console.log(`[profile-workload] target=${target}`);
-console.log(
+console.info(`[profile-workload] target=${target}`);
+console.info(
   `[profile-workload] method=${method} iterations=${iterations} ok=${ok} fail=${fail} durationMs=${durationMs}`
 );

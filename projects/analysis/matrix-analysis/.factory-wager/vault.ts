@@ -55,10 +55,10 @@ export class FactoryWagerVault {
       for (const [name, cred] of this.credentials) {
         cred.healthy = true;
         cred.lastChecked = new Date();
-        console.log(`✅ ${name}`);
+        console.info(`✅ ${name}`);
         results.push({ ...cred });
       }
-      console.log(`🔐 All vault credentials healthy`);
+      console.info(`🔐 All vault credentials healthy`);
       return {
         healthy: true,
         credentials: results,
@@ -77,12 +77,12 @@ export class FactoryWagerVault {
         cred.lastChecked = new Date();
 
         const status = cred.healthy ? "✅" : "❌";
-        console.log(`${status} ${name}`);
+        console.info(`${status} ${name}`);
       } catch (error) {
         cred.healthy = false;
         cred.lastChecked = new Date();
         allHealthy = false;
-        console.log(`❌ ${name}`);
+        console.info(`❌ ${name}`);
       }
 
       results.push({ ...cred });
@@ -91,7 +91,7 @@ export class FactoryWagerVault {
 
     const emoji = allHealthy ? "🔐" : "⚠️";
     const message = allHealthy ? "All vault credentials healthy" : "Some credentials missing";
-    console.log(`${emoji} ${message}`);
+    console.info(`${emoji} ${message}`);
 
     return {
       healthy: allHealthy,
@@ -155,14 +155,14 @@ if (import.meta.main) {
       await vault.healthCheck();
       break;
     case "list":
-      console.log("Vault credentials:");
+      console.info("Vault credentials:");
       for (const cred of vault.listCredentials()) {
-        console.log(`  • ${cred.name} (${cred.service})`);
+        console.info(`  • ${cred.name} (${cred.service})`);
       }
       break;
     default:
-      console.log("FactoryWager Vault");
-      console.log("Usage: vault.ts <health|list>");
+      console.info("FactoryWager Vault");
+      console.info("Usage: vault.ts <health|list>");
       break;
   }
 }

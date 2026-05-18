@@ -138,8 +138,8 @@ async function checkEndpoint(endpoint: Endpoint, timeout = 5000): Promise<Endpoi
  * Check all endpoints concurrently
  */
 async function checkAllEndpoints(endpoints: Endpoint[]): Promise<EndpointResult[]> {
-  console.log(colorize('🔍 Checking endpoints...', 'cyan'));
-  console.log();
+  console.info(colorize('🔍 Checking endpoints...', 'cyan'));
+  console.info();
 
   const results = await Promise.all(endpoints.map(ep => checkEndpoint(ep)));
 
@@ -150,23 +150,23 @@ async function checkAllEndpoints(endpoints: Endpoint[]): Promise<EndpointResult[
  * Display endpoint results with HSL color coding
  */
 function displayEndpointResults(results: EndpointResult[], context: ContextType = 'dark'): void {
-  console.log();
-  console.log(colorize('═'.repeat(90), 'gray'));
-  console.log(
+  console.info();
+  console.info(colorize('═'.repeat(90), 'gray'));
+  console.info(
     colorize(
       swPad('  ENDPOINT STATUS', 30) + swPad('CODE', 8) + swPad('TIME', 10) + 'STATUS',
       'white',
       true
     )
   );
-  console.log(colorize('═'.repeat(90), 'gray'));
+  console.info(colorize('═'.repeat(90), 'gray'));
 
   // Group by category
   const categories = [...new Set(results.map(r => r.endpoint.category))];
 
   for (const category of categories) {
-    console.log();
-    console.log(styled`{bold}{magenta}${category.toUpperCase()}{/magenta}{/bold}`);
+    console.info();
+    console.info(styled`{bold}{magenta}${category.toUpperCase()}{/magenta}{/bold}`);
 
     const categoryResults = results.filter(r => r.endpoint.category === category);
 
@@ -182,12 +182,12 @@ function displayEndpointResults(results: EndpointResult[], context: ContextType 
       const code = swPad(result.statusCode.toString(), 8);
       const time = swPad(`${result.responseTime}ms`, 10);
 
-      console.log(`  ${name}${code}${time}${statusDisplay.ansi}`);
+      console.info(`  ${name}${code}${time}${statusDisplay.ansi}`);
     }
   }
 
-  console.log();
-  console.log(colorize('═'.repeat(90), 'gray'));
+  console.info();
+  console.info(colorize('═'.repeat(90), 'gray'));
 
   // Summary
   const total = results.length;
@@ -196,28 +196,28 @@ function displayEndpointResults(results: EndpointResult[], context: ContextType 
   const error = results.filter(r => r.status === 'error').length;
   const critical = results.filter(r => r.severity === 'critical').length;
 
-  console.log();
-  console.log(colorize('📊 SUMMARY', 'cyan', true));
-  console.log(
+  console.info();
+  console.info(colorize('📊 SUMMARY', 'cyan', true));
+  console.info(
     `  Total: ${total} | ✅ Success: ${success} | ⚠️  Warning: ${warning} | ❌ Error: ${error}`
   );
 
   if (critical > 0) {
-    console.log(styled`{bold}{red}  🔴 Critical Issues: ${critical}{/red}{/bold}`);
+    console.info(styled`{bold}{red}  🔴 Critical Issues: ${critical}{/red}{/bold}`);
   }
 
   const avgResponseTime = Math.round(results.reduce((sum, r) => sum + r.responseTime, 0) / total);
-  console.log(`  ⏱️  Average Response: ${avgResponseTime}ms`);
+  console.info(`  ⏱️  Average Response: ${avgResponseTime}ms`);
 }
 
 /**
  * Display detailed endpoint info
  */
 function displayEndpointDetails(result: EndpointResult, context: ContextType = 'dark'): void {
-  console.log();
-  console.log(colorize('═'.repeat(60), 'gray'));
-  console.log(colorize('ENDPOINT DETAILS', 'cyan', true));
-  console.log(colorize('═'.repeat(60), 'gray'));
+  console.info();
+  console.info(colorize('═'.repeat(60), 'gray'));
+  console.info(colorize('ENDPOINT DETAILS', 'cyan', true));
+  console.info(colorize('═'.repeat(60), 'gray'));
 
   const statusDisplay = createEnhancedStatus({
     status: result.status,
@@ -226,17 +226,17 @@ function displayEndpointDetails(result: EndpointResult, context: ContextType = '
     ensureWCAG: false,
   });
 
-  console.log(`Name:    ${result.endpoint.name}`);
-  console.log(`URL:     ${result.endpoint.url}`);
-  console.log(`Method:  ${result.endpoint.method}`);
-  console.log(`Status:  ${statusDisplay.ansi}`);
-  console.log(`Code:    ${result.statusCode}`);
-  console.log(`Time:    ${result.responseTime}ms`);
-  console.log(`Message: ${result.message}`);
-  console.log(`HSL:     ${statusDisplay.hsl}`);
-  console.log(`Hex:     ${statusDisplay.hex}`);
-  console.log(`Brightness: ${(statusDisplay.brightness * 100).toFixed(1)}%`);
-  console.log(colorize('═'.repeat(60), 'gray'));
+  console.info(`Name:    ${result.endpoint.name}`);
+  console.info(`URL:     ${result.endpoint.url}`);
+  console.info(`Method:  ${result.endpoint.method}`);
+  console.info(`Status:  ${statusDisplay.ansi}`);
+  console.info(`Code:    ${result.statusCode}`);
+  console.info(`Time:    ${result.responseTime}ms`);
+  console.info(`Message: ${result.message}`);
+  console.info(`HSL:     ${statusDisplay.hsl}`);
+  console.info(`Hex:     ${statusDisplay.hex}`);
+  console.info(`Brightness: ${(statusDisplay.brightness * 100).toFixed(1)}%`);
+  console.info(colorize('═'.repeat(60), 'gray'));
 }
 
 /**
@@ -247,16 +247,16 @@ async function watchEndpoints(
   interval = 5000,
   context: ContextType = 'dark'
 ): Promise<void> {
-  console.log(colorize('👁️  WATCH MODE', 'cyan', true));
-  console.log(colorize(`Checking every ${interval}ms. Press Ctrl+C to stop.`, 'gray'));
-  console.log();
+  console.info(colorize('👁️  WATCH MODE', 'cyan', true));
+  console.info(colorize(`Checking every ${interval}ms. Press Ctrl+C to stop.`, 'gray'));
+  console.info();
 
   let checkCount = 0;
 
   while (true) {
     checkCount++;
     console.clear();
-    console.log(colorize(`🔄 Check #${checkCount} - ${new Date().toLocaleTimeString()}`, 'cyan'));
+    console.info(colorize(`🔄 Check #${checkCount} - ${new Date().toLocaleTimeString()}`, 'cyan'));
 
     const results = await checkAllEndpoints(endpoints);
     displayEndpointResults(results, context);
@@ -269,25 +269,25 @@ async function watchEndpoints(
  * Show help
  */
 function showHelp(): void {
-  console.log(colorize('🎯 Endpoint Status CLI', 'cyan', true));
-  console.log();
-  console.log('Commands:');
-  console.log('  check [url]           Check a single endpoint or all defaults');
-  console.log('  watch                 Continuously monitor endpoints');
-  console.log('  matrix                Display HSL status matrix');
-  console.log('  json                  Output results as JSON');
-  console.log();
-  console.log('Options:');
-  console.log('  --light               Use light context colors');
-  console.log('  --dark                Use dark context colors (default)');
-  console.log('  --interval <ms>       Watch interval in milliseconds');
-  console.log('  --timeout <ms>        Request timeout in milliseconds');
-  console.log();
-  console.log('Examples:');
-  console.log('  bun run cli/endpoint-status.ts check');
-  console.log('  bun run cli/endpoint-status.ts check http://localhost:3000/health');
-  console.log('  bun run cli/endpoint-status.ts watch --interval 10000');
-  console.log('  bun run cli/endpoint-status.ts matrix --light');
+  console.info(colorize('🎯 Endpoint Status CLI', 'cyan', true));
+  console.info();
+  console.info('Commands:');
+  console.info('  check [url]           Check a single endpoint or all defaults');
+  console.info('  watch                 Continuously monitor endpoints');
+  console.info('  matrix                Display HSL status matrix');
+  console.info('  json                  Output results as JSON');
+  console.info();
+  console.info('Options:');
+  console.info('  --light               Use light context colors');
+  console.info('  --dark                Use dark context colors (default)');
+  console.info('  --interval <ms>       Watch interval in milliseconds');
+  console.info('  --timeout <ms>        Request timeout in milliseconds');
+  console.info();
+  console.info('Examples:');
+  console.info('  bun run cli/endpoint-status.ts check');
+  console.info('  bun run cli/endpoint-status.ts check http://localhost:3000/health');
+  console.info('  bun run cli/endpoint-status.ts watch --interval 10000');
+  console.info('  bun run cli/endpoint-status.ts matrix --light');
 }
 
 /**
@@ -318,7 +318,7 @@ async function main(): Promise<void> {
         const result = await checkEndpoint(endpoint, timeout);
 
         if (args.includes('--json')) {
-          console.log(JSON.stringify(result, null, 2));
+          console.info(JSON.stringify(result, null, 2));
         } else {
           displayEndpointDetails(result, context);
         }
@@ -327,7 +327,7 @@ async function main(): Promise<void> {
         const results = await checkAllEndpoints(DEFAULT_ENDPOINTS);
 
         if (args.includes('--json')) {
-          console.log(JSON.stringify(results, null, 2));
+          console.info(JSON.stringify(results, null, 2));
         } else {
           displayEndpointResults(results, context);
         }

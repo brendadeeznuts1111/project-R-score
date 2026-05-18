@@ -34,127 +34,127 @@ const config = {
  * Main demonstration function
  */
 async function runDemo(): Promise<void> {
-  console.log('🦌 Bun Documentation Integration Demo');
-  console.log('='.repeat(50));
+  console.info('🦌 Bun Documentation Integration Demo');
+  console.info('='.repeat(50));
 
   try {
     // 1. Initialize Bun Documentation Integration
-    console.log('\n📚 Initializing Bun Documentation Integration...');
+    console.info('\n📚 Initializing Bun Documentation Integration...');
     const bunDocIntegration = new BunDocumentationIntegration(config.r2Storage);
     await bunDocIntegration.initialize();
-    console.log('✅ Bun Documentation Integration initialized');
+    console.info('✅ Bun Documentation Integration initialized');
 
     // 2. Get documentation index
-    console.log('\n📋 Getting Documentation Index...');
+    console.info('\n📋 Getting Documentation Index...');
     const docIndex = await bunDocIntegration.getDocumentationIndex();
-    console.log(`📊 Found ${docIndex.categories.length} categories with ${docIndex.totalPages} pages`);
-    console.log(`🔢 Version: ${docIndex.version}, Updated: ${new Date(docIndex.lastUpdated).toLocaleDateString()}`);
+    console.info(`📊 Found ${docIndex.categories.length} categories with ${docIndex.totalPages} pages`);
+    console.info(`🔢 Version: ${docIndex.version}, Updated: ${new Date(docIndex.lastUpdated).toLocaleDateString()}`);
 
     // Display categories
-    console.log('\n📂 Documentation Categories:');
+    console.info('\n📂 Documentation Categories:');
     docIndex.categories.forEach(category => {
-      console.log(`  📁 ${category.name}: ${category.pages.length} pages`);
-      console.log(`     ${category.description}`);
+      console.info(`  📁 ${category.name}: ${category.pages.length} pages`);
+      console.info(`     ${category.description}`);
     });
 
     // 3. Search documentation
-    console.log('\n🔍 Searching Documentation...');
+    console.info('\n🔍 Searching Documentation...');
     const searchResults = await bunDocIntegration.searchDocumentation('server');
-    console.log(`🎯 Found ${searchResults.length} results for "server":`);
+    console.info(`🎯 Found ${searchResults.length} results for "server":`);
     searchResults.slice(0, 3).forEach((page, index) => {
-      console.log(`  ${index + 1}. ${page.title} (${page.category})`);
-      console.log(`     ${page.description}`);
+      console.info(`  ${index + 1}. ${page.title} (${page.category})`);
+      console.info(`     ${page.description}`);
     });
 
     // 4. Get specific page with metrics examples
-    console.log('\n📊 Getting Server Metrics Documentation...');
+    console.info('\n📊 Getting Server Metrics Documentation...');
     const metricsPage = await bunDocIntegration.getDocumentationPage('/docs/runtime/http/metrics.md');
     if (metricsPage?.examples) {
-      console.log(`✅ Found ${metricsPage.examples.length} examples:`);
+      console.info(`✅ Found ${metricsPage.examples.length} examples:`);
       metricsPage.examples.forEach((example, index) => {
-        console.log(`\n  ${index + 1}. ${example.title}`);
-        console.log(`     ${example.description}`);
-        console.log(`     Language: ${example.language}, Runnable: ${example.runnable ? 'Yes' : 'No'}`);
+        console.info(`\n  ${index + 1}. ${example.title}`);
+        console.info(`     ${example.description}`);
+        console.info(`     Language: ${example.language}, Runnable: ${example.runnable ? 'Yes' : 'No'}`);
         if (example.code.length < 200) {
-          console.log(`     Code: ${example.code.substring(0, 100)}...`);
+          console.info(`     Code: ${example.code.substring(0, 100)}...`);
         }
       });
     }
 
     // 5. Get API recommendations
-    console.log('\n💡 Getting API Recommendations...');
+    console.info('\n💡 Getting API Recommendations...');
     const recommendations = await bunDocIntegration.getAPIRecommendations();
-    console.log('🚀 Recommendations:');
+    console.info('🚀 Recommendations:');
     recommendations.slice(0, 5).forEach((rec, index) => {
-      console.log(`  ${index + 1}. ${rec}`);
+      console.info(`  ${index + 1}. ${rec}`);
     });
 
     // 6. Initialize Wiki Integration
-    console.log('\n📖 Initializing Wiki Integration...');
+    console.info('\n📖 Initializing Wiki Integration...');
     const wikiIntegration = new BunWikiIntegration(bunDocIntegration, config.wiki);
     await wikiIntegration.initialize();
-    console.log('✅ Wiki Integration initialized');
+    console.info('✅ Wiki Integration initialized');
 
     // 7. Generate wiki pages
-    console.log('\n📝 Generating Wiki Pages...');
+    console.info('\n📝 Generating Wiki Pages...');
     const wikiCategories = await wikiIntegration.generateWikiPages();
-    console.log(`📊 Generated ${wikiCategories.length} wiki categories`);
+    console.info(`📊 Generated ${wikiCategories.length} wiki categories`);
     
     let totalWikiPages = 0;
     wikiCategories.forEach(category => {
       totalWikiPages += category.pages.length;
-      console.log(`  📁 ${category.name}: ${category.pages.length} pages`);
+      console.info(`  📁 ${category.name}: ${category.pages.length} pages`);
     });
-    console.log(`📈 Total wiki pages: ${totalWikiPages}`);
+    console.info(`📈 Total wiki pages: ${totalWikiPages}`);
 
     // 8. Search wiki
-    console.log('\n🔍 Searching Wiki...');
+    console.info('\n🔍 Searching Wiki...');
     const wikiResults = await wikiIntegration.searchWiki('metrics');
-    console.log(`🎯 Found ${wikiResults.length} wiki results for "metrics":`);
+    console.info(`🎯 Found ${wikiResults.length} wiki results for "metrics":`);
     wikiResults.slice(0, 3).forEach((page, index) => {
-      console.log(`  ${index + 1}. ${page.title} (${page.category})`);
-      console.log(`     Tags: ${page.tags.join(', ')}`);
+      console.info(`  ${index + 1}. ${page.title} (${page.category})`);
+      console.info(`     Tags: ${page.tags.join(', ')}`);
     });
 
     // 9. Get wiki statistics
-    console.log('\n📊 Wiki Statistics:');
+    console.info('\n📊 Wiki Statistics:');
     const wikiStats = await wikiIntegration.getWikiStats();
-    console.log(`  📁 Categories: ${wikiStats.totalCategories}`);
-    console.log(`  📄 Pages: ${wikiStats.totalPages}`);
-    console.log(`  💡 Examples: ${wikiStats.totalExamples}`);
-    console.log(`  🕐 Last Sync: ${new Date(wikiStats.lastSync).toLocaleString()}`);
+    console.info(`  📁 Categories: ${wikiStats.totalCategories}`);
+    console.info(`  📄 Pages: ${wikiStats.totalPages}`);
+    console.info(`  💡 Examples: ${wikiStats.totalExamples}`);
+    console.info(`  🕐 Last Sync: ${new Date(wikiStats.lastSync).toLocaleString()}`);
 
     // 10. Export documentation
-    console.log('\n📤 Exporting Documentation...');
+    console.info('\n📤 Exporting Documentation...');
     const markdownExport = await bunDocIntegration.exportDocumentation('markdown');
-    console.log(`📝 Markdown export: ${markdownExport.length} characters`);
+    console.info(`📝 Markdown export: ${markdownExport.length} characters`);
     
     const wikiMarkdown = await wikiIntegration.exportWiki('markdown');
-    console.log(`📖 Wiki Markdown: ${wikiMarkdown.length} characters`);
+    console.info(`📖 Wiki Markdown: ${wikiMarkdown.length} characters`);
 
     // 11. Demonstrate package analysis
-    console.log('\n📦 Analyzing Package...');
+    console.info('\n📦 Analyzing Package...');
     const packageManager = new PackageManager();
     const packageAnalysis = await packageManager.analyzePackage();
-    console.log(`🔍 Found ${packageAnalysis.bunDocs?.length || 0} Bun APIs used`);
-    console.log(`📊 Dependencies: ${Object.keys(packageAnalysis.dependencies || {}).length || 0}`);
+    console.info(`🔍 Found ${packageAnalysis.bunDocs?.length || 0} Bun APIs used`);
+    console.info(`📊 Dependencies: ${Object.keys(packageAnalysis.dependencies || {}).length || 0}`);
 
     // 12. Summary
-    console.log('\n🎉 Integration Demo Complete!');
-    console.log('='.repeat(50));
-    console.log('✅ Features Demonstrated:');
-    console.log('  📚 Bun Documentation Integration');
-    console.log('  📖 Wiki Integration & Generation');
-    console.log('  🔍 Search Functionality');
-    console.log('  📊 Metrics & Examples');
-    console.log('  💡 API Recommendations');
-    console.log('  📤 Export Capabilities');
-    console.log('  📦 Package Analysis');
-    console.log('  🔄 Auto-sync & Caching');
+    console.info('\n🎉 Integration Demo Complete!');
+    console.info('='.repeat(50));
+    console.info('✅ Features Demonstrated:');
+    console.info('  📚 Bun Documentation Integration');
+    console.info('  📖 Wiki Integration & Generation');
+    console.info('  🔍 Search Functionality');
+    console.info('  📊 Metrics & Examples');
+    console.info('  💡 API Recommendations');
+    console.info('  📤 Export Capabilities');
+    console.info('  📦 Package Analysis');
+    console.info('  🔄 Auto-sync & Caching');
 
     // Cleanup
     await wikiIntegration.cleanup();
-    console.log('\n🧹 Cleanup complete');
+    console.info('\n🧹 Cleanup complete');
 
   } catch (error) {
     console.error('❌ Demo failed:', error);
@@ -166,8 +166,8 @@ async function runDemo(): Promise<void> {
  * Demonstrate specific Bun metrics examples
  */
 async function demonstrateMetricsExamples(): Promise<void> {
-  console.log('\n🎯 Bun Metrics Examples Demonstration');
-  console.log('-'.repeat(40));
+  console.info('\n🎯 Bun Metrics Examples Demonstration');
+  console.info('-'.repeat(40));
 
   const bunDocIntegration = new BunDocumentationIntegration();
   await bunDocIntegration.initialize();
@@ -175,24 +175,24 @@ async function demonstrateMetricsExamples(): Promise<void> {
   const metricsPage = await bunDocIntegration.getDocumentationPage('/docs/runtime/http/metrics.md');
   
   if (metricsPage?.examples) {
-    console.log(`📊 Found ${metricsPage.examples.length} metrics examples:\n`);
+    console.info(`📊 Found ${metricsPage.examples.length} metrics examples:\n`);
     
     for (const example of metricsPage.examples) {
-      console.log(`🔹 ${example.title}`);
-      console.log(`   ${example.description}`);
-      console.log(`   Language: ${example.language}`);
+      console.info(`🔹 ${example.title}`);
+      console.info(`   ${example.description}`);
+      console.info(`   Language: ${example.language}`);
       
       if (example.runnable) {
-        console.log('   ✅ This example is runnable!');
+        console.info('   ✅ This example is runnable!');
         
         // Show a preview of the code
         const codeLines = example.code.split('\n').slice(0, 5);
-        console.log('   📝 Code preview:');
-        codeLines.forEach(line => console.log(`     ${line}`));
-        console.log('     ...');
+        console.info('   📝 Code preview:');
+        codeLines.forEach(line => console.info(`     ${line}`));
+        console.info('     ...');
       }
       
-      console.log('');
+      console.info('');
     }
   }
 }
@@ -201,14 +201,14 @@ async function demonstrateMetricsExamples(): Promise<void> {
  * Interactive demo mode
  */
 async function interactiveDemo(): Promise<void> {
-  console.log('\n🎮 Interactive Demo Mode');
-  console.log('Type commands to explore the integration:');
-  console.log('  search <query> - Search documentation');
-  console.log('  wiki <query>   - Search wiki');
-  console.log('  metrics        - Show metrics examples');
-  console.log('  export <format> - Export documentation (json/markdown/html)');
-  console.log('  stats          - Show statistics');
-  console.log('  quit           - Exit demo');
+  console.info('\n🎮 Interactive Demo Mode');
+  console.info('Type commands to explore the integration:');
+  console.info('  search <query> - Search documentation');
+  console.info('  wiki <query>   - Search wiki');
+  console.info('  metrics        - Show metrics examples');
+  console.info('  export <format> - Export documentation (json/markdown/html)');
+  console.info('  stats          - Show statistics');
+  console.info('  quit           - Exit demo');
 
   const bunDocIntegration = new BunDocumentationIntegration();
   await bunDocIntegration.initialize();
@@ -221,11 +221,11 @@ async function interactiveDemo(): Promise<void> {
   await wikiIntegration.initialize();
 
   // Simple interactive loop (in a real demo, you'd use a proper readline interface)
-  console.log('\nDemo completed. In a real interactive mode, you would be able to:');
-  console.log('- Search for specific Bun APIs');
-  console.log('- Explore wiki pages');
-  console.log('- Export documentation in different formats');
-  console.log('- View real-time metrics and examples');
+  console.info('\nDemo completed. In a real interactive mode, you would be able to:');
+  console.info('- Search for specific Bun APIs');
+  console.info('- Explore wiki pages');
+  console.info('- Export documentation in different formats');
+  console.info('- View real-time metrics and examples');
 
   await wikiIntegration.cleanup();
 }

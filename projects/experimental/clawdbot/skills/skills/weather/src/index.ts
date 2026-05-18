@@ -149,41 +149,41 @@ function parseForecast(data: any, days: number): ForecastDay[] {
 // =============================================================================
 
 function displayCurrentWeather(weather: WeatherData): void {
-  console.log("\n" + "=".repeat(50));
-  console.log(`  Weather for ${weather.location}`);
-  console.log("=".repeat(50));
-  console.log(`  Condition:   ${weather.condition}`);
-  console.log(`  Temperature: ${weather.temperature}`);
-  console.log(`  Feels Like:  ${weather.feelsLike}`);
-  console.log(`  Humidity:    ${weather.humidity}`);
-  console.log(`  Wind:        ${weather.wind}`);
-  console.log(`  UV Index:    ${weather.uvIndex}`);
-  console.log(`  Visibility:  ${weather.visibility}`);
-  console.log(`  Pressure:    ${weather.pressure}`);
-  console.log("=".repeat(50) + "\n");
+  console.info("\n" + "=".repeat(50));
+  console.info(`  Weather for ${weather.location}`);
+  console.info("=".repeat(50));
+  console.info(`  Condition:   ${weather.condition}`);
+  console.info(`  Temperature: ${weather.temperature}`);
+  console.info(`  Feels Like:  ${weather.feelsLike}`);
+  console.info(`  Humidity:    ${weather.humidity}`);
+  console.info(`  Wind:        ${weather.wind}`);
+  console.info(`  UV Index:    ${weather.uvIndex}`);
+  console.info(`  Visibility:  ${weather.visibility}`);
+  console.info(`  Pressure:    ${weather.pressure}`);
+  console.info("=".repeat(50) + "\n");
 }
 
 function displayForecast(location: string, forecast: ForecastDay[]): void {
-  console.log("\n" + "=".repeat(60));
-  console.log(`  ${forecast.length}-Day Forecast for ${location}`);
-  console.log("=".repeat(60));
+  console.info("\n" + "=".repeat(60));
+  console.info(`  ${forecast.length}-Day Forecast for ${location}`);
+  console.info("=".repeat(60));
 
   for (const day of forecast) {
-    console.log(`\n  ${day.date}`);
-    console.log("  " + "-".repeat(40));
-    console.log(`    Condition:     ${day.condition}`);
-    console.log(`    High:          ${day.maxTemp}`);
-    console.log(`    Low:           ${day.minTemp}`);
-    console.log(`    Rain Chance:   ${day.chanceOfRain}`);
-    console.log(`    Sunrise:       ${day.sunrise}`);
-    console.log(`    Sunset:        ${day.sunset}`);
+    console.info(`\n  ${day.date}`);
+    console.info("  " + "-".repeat(40));
+    console.info(`    Condition:     ${day.condition}`);
+    console.info(`    High:          ${day.maxTemp}`);
+    console.info(`    Low:           ${day.minTemp}`);
+    console.info(`    Rain Chance:   ${day.chanceOfRain}`);
+    console.info(`    Sunrise:       ${day.sunrise}`);
+    console.info(`    Sunset:        ${day.sunset}`);
   }
 
-  console.log("\n" + "=".repeat(60) + "\n");
+  console.info("\n" + "=".repeat(60) + "\n");
 }
 
 function displaySimple(weather: WeatherData): void {
-  console.log(`${weather.location}: ${weather.condition}, ${weather.temperature}`);
+  console.info(`${weather.location}: ${weather.condition}, ${weather.temperature}`);
 }
 
 // =============================================================================
@@ -196,7 +196,7 @@ async function currentCommand(location: string, options: { json?: boolean }): Pr
     const weather = parseCurrentWeather(data);
 
     if (options.json) {
-      console.log(JSON.stringify(weather, null, 2));
+      console.info(JSON.stringify(weather, null, 2));
     } else {
       displayCurrentWeather(weather);
     }
@@ -218,7 +218,7 @@ async function forecastCommand(
     const locationName = `${area.areaName[0].value}, ${area.country[0].value}`;
 
     if (options.json) {
-      console.log(JSON.stringify({ location: locationName, forecast }, null, 2));
+      console.info(JSON.stringify({ location: locationName, forecast }, null, 2));
     } else {
       displayForecast(locationName, forecast);
     }
@@ -234,7 +234,7 @@ async function simpleCommand(location: string, options: { json?: boolean }): Pro
     const weather = parseCurrentWeather(data);
 
     if (options.json) {
-      console.log(JSON.stringify({ location: weather.location, condition: weather.condition, temperature: weather.temperature }));
+      console.info(JSON.stringify({ location: weather.location, condition: weather.condition, temperature: weather.temperature }));
     } else {
       displaySimple(weather);
     }
@@ -264,12 +264,12 @@ async function main(): Promise<void> {
   );
 
   if (options.help || positionals.length === 0) {
-    console.log(HELP);
+    console.info(HELP);
     process.exit(0);
   }
 
   if (options.version) {
-    console.log(VERSION);
+    console.info(VERSION);
     process.exit(0);
   }
 
@@ -278,7 +278,7 @@ async function main(): Promise<void> {
 
   if (!location && command !== "help") {
     console.error("Error: Location is required");
-    console.log(HELP);
+    console.info(HELP);
     process.exit(1);
   }
 

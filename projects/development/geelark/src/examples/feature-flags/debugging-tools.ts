@@ -115,27 +115,27 @@ export class FeatureFlagDebugger {
   static printDebugInfo() {
     const status = this.getFeatureStatus();
 
-    console.log("\n🔍 FEATURE FLAG DEBUG INFORMATION");
-    console.log("=".repeat(50));
+    console.info("\n🔍 FEATURE FLAG DEBUG INFORMATION");
+    console.info("=".repeat(50));
 
-    console.log(`\n📊 SUMMARY:`);
-    console.log(`  • Total Features: ${status.totalFeatures}`);
-    console.log(
+    console.info(`\n📊 SUMMARY:`);
+    console.info(`  • Total Features: ${status.totalFeatures}`);
+    console.info(
       `  • Active Features: ${status.activeFeatures} (${status.activePercentage}%)`
     );
-    console.log(`  • Inactive Features: ${status.inactiveFeatures}`);
-    console.log(`  • Environment: ${status.environment}`);
-    console.log(`  • Tier: ${status.tier}`);
-    console.log(`  • Platform: ${status.platform}`);
+    console.info(`  • Inactive Features: ${status.inactiveFeatures}`);
+    console.info(`  • Environment: ${status.environment}`);
+    console.info(`  • Tier: ${status.tier}`);
+    console.info(`  • Platform: ${status.platform}`);
 
-    console.log(`\n✅ ACTIVE FEATURES:`);
+    console.info(`\n✅ ACTIVE FEATURES:`);
     status.activeList.forEach((feature, index) => {
-      console.log(`  ${index + 1}. ${feature}`);
+      console.info(`  ${index + 1}. ${feature}`);
     });
 
     // Feature group analysis
-    console.log(`\n🎯 FEATURE GROUPS:`);
-    console.log(
+    console.info(`\n🎯 FEATURE GROUPS:`);
+    console.info(
       `  • Environment: ${this.getGroupStatus([
         "ENV_DEVELOPMENT",
         "ENV_PRODUCTION",
@@ -143,35 +143,35 @@ export class FeatureFlagDebugger {
         "ENV_TEST",
       ])}`
     );
-    console.log(
+    console.info(
       `  • Tier: ${this.getGroupStatus([
         "FEAT_FREE",
         "FEAT_PREMIUM",
         "FEAT_ENTERPRISE",
       ])}`
     );
-    console.log(
+    console.info(
       `  • Security: ${this.getGroupStatus([
         "FEAT_ENCRYPTION",
         "FEAT_VALIDATION_STRICT",
         "FEAT_AUDIT_LOGGING",
       ])}`
     );
-    console.log(
+    console.info(
       `  • Performance: ${this.getGroupStatus([
         "FEAT_BATCH_PROCESSING",
         "FEAT_CACHE_OPTIMIZED",
         "FEAT_COMPRESSION",
       ])}`
     );
-    console.log(
+    console.info(
       `  • Monitoring: ${this.getGroupStatus([
         "FEAT_NOTIFICATIONS",
         "FEAT_ADVANCED_MONITORING",
         "FEAT_REAL_TIME_DASHBOARD",
       ])}`
     );
-    console.log(
+    console.info(
       `  • Development: ${this.getGroupStatus([
         "FEAT_MOCK_API",
         "FEAT_EXTENDED_LOGGING",
@@ -198,8 +198,8 @@ export class BundleAnalyzer {
   static analyzeBundleImpact() {
     const status = FeatureFlagDebugger.getFeatureStatus();
 
-    console.log("\n📦 BUNDLE IMPACT ANALYSIS");
-    console.log("=".repeat(40));
+    console.info("\n📦 BUNDLE IMPACT ANALYSIS");
+    console.info("=".repeat(40));
 
     // Base bundle size estimation
     let baseSize = 150; // KB
@@ -216,25 +216,25 @@ export class BundleAnalyzer {
     // Calculate eliminated features
     const eliminatedSize = this.calculateEliminatedSize(status.activeList);
 
-    console.log(`\n📏 SIZE ANALYSIS:`);
-    console.log(`  • Base Bundle: ${baseSize}KB`);
-    console.log(`  • Feature Additions: ${totalSize - baseSize}KB`);
-    console.log(`  • Total Estimated: ${totalSize}KB`);
-    console.log(`  • Eliminated Code: ${eliminatedSize}KB`);
-    console.log(
+    console.info(`\n📏 SIZE ANALYSIS:`);
+    console.info(`  • Base Bundle: ${baseSize}KB`);
+    console.info(`  • Feature Additions: ${totalSize - baseSize}KB`);
+    console.info(`  • Total Estimated: ${totalSize}KB`);
+    console.info(`  • Eliminated Code: ${eliminatedSize}KB`);
+    console.info(
       `  • Net Reduction: ${Math.max(
         0,
         eliminatedSize - (totalSize - baseSize)
       )}KB`
     );
 
-    console.log(`\n🎯 FEATURE IMPACTS:`);
+    console.info(`\n🎯 FEATURE IMPACTS:`);
     Object.entries(featureImpacts)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 10)
       .forEach(([feature, impact], index) => {
         const icon = impact > 15 ? "🔴" : impact > 8 ? "🟡" : "🟢";
-        console.log(`  ${index + 1}. ${icon} ${feature}: +${impact}KB`);
+        console.info(`  ${index + 1}. ${icon} ${feature}: +${impact}KB`);
       });
 
     return {
@@ -416,7 +416,7 @@ export class PerformanceProfiler {
   // Profile feature performance
   static profileFeature(featureName: string, fn: () => any) {
     if (!feature(featureName as any)) {
-      console.log(`⏭️ Skipping ${featureName} (feature disabled)`);
+      console.info(`⏭️ Skipping ${featureName} (feature disabled)`);
       return null;
     }
 
@@ -424,14 +424,14 @@ export class PerformanceProfiler {
     const result = fn();
     const duration = this.endMeasurement(featureName, startTime);
 
-    console.log(`⚡ ${featureName}: ${duration.toFixed(2)}ms`);
+    console.info(`⚡ ${featureName}: ${duration.toFixed(2)}ms`);
     return result;
   }
 
   // Get performance report
   static getPerformanceReport() {
-    console.log("\n⚡ FEATURE PERFORMANCE REPORT");
-    console.log("=".repeat(40));
+    console.info("\n⚡ FEATURE PERFORMANCE REPORT");
+    console.info("=".repeat(40));
 
     Object.entries(this.measurements).forEach(([feature, times]) => {
       if (times.length === 0) return;
@@ -440,11 +440,11 @@ export class PerformanceProfiler {
       const min = Math.min(...times);
       const max = Math.max(...times);
 
-      console.log(`\n🎯 ${feature}:`);
-      console.log(`  • Average: ${avg.toFixed(2)}ms`);
-      console.log(`  • Min: ${min.toFixed(2)}ms`);
-      console.log(`  • Max: ${max.toFixed(2)}ms`);
-      console.log(`  • Samples: ${times.length}`);
+      console.info(`\n🎯 ${feature}:`);
+      console.info(`  • Average: ${avg.toFixed(2)}ms`);
+      console.info(`  • Min: ${min.toFixed(2)}ms`);
+      console.info(`  • Max: ${max.toFixed(2)}ms`);
+      console.info(`  • Samples: ${times.length}`);
     });
 
     return this.measurements;
@@ -463,8 +463,8 @@ export class PerformanceProfiler {
 export class FeatureValidator {
   // Validate feature configuration
   static validateConfiguration() {
-    console.log("\n🔍 FEATURE VALIDATION");
-    console.log("=".repeat(30));
+    console.info("\n🔍 FEATURE VALIDATION");
+    console.info("=".repeat(30));
 
     const issues: string[] = [];
     const warnings: string[] = [];
@@ -504,17 +504,17 @@ export class FeatureValidator {
 
     // Report results
     if (issues.length > 0) {
-      console.log("\n❌ ISSUES FOUND:");
-      issues.forEach((issue) => console.log(`  ${issue}`));
+      console.info("\n❌ ISSUES FOUND:");
+      issues.forEach((issue) => console.info(`  ${issue}`));
     }
 
     if (warnings.length > 0) {
-      console.log("\n⚠️ WARNINGS:");
-      warnings.forEach((warning) => console.log(`  ${warning}`));
+      console.info("\n⚠️ WARNINGS:");
+      warnings.forEach((warning) => console.info(`  ${warning}`));
     }
 
     if (issues.length === 0 && warnings.length === 0) {
-      console.log("✅ No issues found - configuration looks good!");
+      console.info("✅ No issues found - configuration looks good!");
     }
 
     return {
@@ -526,8 +526,8 @@ export class FeatureValidator {
 
   // Suggest optimizations
   static suggestOptimizations() {
-    console.log("\n💡 OPTIMIZATION SUGGESTIONS");
-    console.log("=".repeat(35));
+    console.info("\n💡 OPTIMIZATION SUGGESTIONS");
+    console.info("=".repeat(35));
 
     const suggestions: string[] = [];
 
@@ -568,10 +568,10 @@ export class FeatureValidator {
     }
 
     if (suggestions.length === 0) {
-      console.log("✅ No optimizations needed - configuration is optimal!");
+      console.info("✅ No optimizations needed - configuration is optimal!");
     } else {
       suggestions.forEach((suggestion, index) => {
-        console.log(`${index + 1}. ${suggestion}`);
+        console.info(`${index + 1}. ${suggestion}`);
       });
     }
 
@@ -586,8 +586,8 @@ export class FeatureValidator {
 export class ComprehensiveAnalyzer {
   // Run complete analysis
   static runFullAnalysis() {
-    console.log("🔍 STARTING COMPREHENSIVE FEATURE ANALYSIS");
-    console.log("=".repeat(50));
+    console.info("🔍 STARTING COMPREHENSIVE FEATURE ANALYSIS");
+    console.info("=".repeat(50));
 
     // 1. Feature flag debugging
     FeatureFlagDebugger.printDebugInfo();
@@ -605,14 +605,14 @@ export class ComprehensiveAnalyzer {
     const performanceReport = PerformanceProfiler.getPerformanceReport();
 
     // Summary
-    console.log("\n📊 ANALYSIS SUMMARY");
-    console.log("=".repeat(30));
-    console.log(`• Configuration Valid: ${validation.valid ? "✅" : "❌"}`);
-    console.log(`• Issues Found: ${validation.issues.length}`);
-    console.log(`• Warnings: ${validation.warnings.length}`);
-    console.log(`• Optimization Suggestions: ${suggestions.length}`);
-    console.log(`• Estimated Bundle Size: ${bundleAnalysis.totalSize}KB`);
-    console.log(`• Dead Code Eliminated: ${bundleAnalysis.eliminatedSize}KB`);
+    console.info("\n📊 ANALYSIS SUMMARY");
+    console.info("=".repeat(30));
+    console.info(`• Configuration Valid: ${validation.valid ? "✅" : "❌"}`);
+    console.info(`• Issues Found: ${validation.issues.length}`);
+    console.info(`• Warnings: ${validation.warnings.length}`);
+    console.info(`• Optimization Suggestions: ${suggestions.length}`);
+    console.info(`• Estimated Bundle Size: ${bundleAnalysis.totalSize}KB`);
+    console.info(`• Dead Code Eliminated: ${bundleAnalysis.eliminatedSize}KB`);
 
     return {
       featureStatus: FeatureFlagDebugger.getFeatureStatus(),
@@ -626,8 +626,8 @@ export class ComprehensiveAnalyzer {
 
 // Auto-run analysis in development
 if (feature("ENV_DEVELOPMENT")) {
-  console.log("🔍 Feature analysis tools available");
-  console.log(
+  console.info("🔍 Feature analysis tools available");
+  console.info(
     "Run: ComprehensiveAnalyzer.runFullAnalysis() for complete analysis"
   );
 }

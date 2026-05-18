@@ -32,9 +32,9 @@ class RSSPerformanceProfiler {
 			enableMetrics = true,
 		} = options;
 
-		console.log("🚀 Starting RSS Performance Profiling");
-		console.log(`⏱️  Duration: ${duration}ms, Interval: ${interval}ms`);
-		console.log(
+		console.info("🚀 Starting RSS Performance Profiling");
+		console.info(`⏱️  Duration: ${duration}ms, Interval: ${interval}ms`);
+		console.info(
 			`📊 CPU: ${enableCPU ? "✅" : "❌"}, Heap: ${enableHeap ? "✅" : "❌"}, Metrics: ${enableMetrics ? "✅" : "❌"}\n`,
 		);
 
@@ -79,7 +79,7 @@ class RSSPerformanceProfiler {
 	 * Start CPU profiling
 	 */
 	startCPUProfiling() {
-		console.log("🔥 Starting CPU profiling...");
+		console.info("🔥 Starting CPU profiling...");
 		// CPU profiling is handled by Bun CLI flags
 		// This method tracks the start time for reporting
 		this.cpuStartTime = performance.now();
@@ -89,7 +89,7 @@ class RSSPerformanceProfiler {
 	 * Start heap profiling
 	 */
 	startHeapProfiling() {
-		console.log("💾 Starting heap profiling...");
+		console.info("💾 Starting heap profiling...");
 		// Heap profiling is handled by Bun CLI flags
 		this.heapStartTime = performance.now();
 	}
@@ -99,7 +99,7 @@ class RSSPerformanceProfiler {
 	 */
 	stopCPUProfiling() {
 		const duration = performance.now() - this.cpuStartTime;
-		console.log(`🔥 CPU profiling stopped (${duration.toFixed(2)}ms)`);
+		console.info(`🔥 CPU profiling stopped (${duration.toFixed(2)}ms)`);
 	}
 
 	/**
@@ -107,7 +107,7 @@ class RSSPerformanceProfiler {
 	 */
 	stopHeapProfiling() {
 		const duration = performance.now() - this.heapStartTime;
-		console.log(`💾 Heap profiling stopped (${duration.toFixed(2)}ms)`);
+		console.info(`💾 Heap profiling stopped (${duration.toFixed(2)}ms)`);
 	}
 
 	/**
@@ -139,7 +139,7 @@ class RSSPerformanceProfiler {
 		this.profiles.metrics.push(metrics);
 
 		// v1.3.7: 90% faster string padding for aligned output
-		console.log(
+		console.info(
 			`${new Date(timestamp).toISOString().slice(11, 19)} | ` +
 				`${stats.fetchCount.toString().padStart(6)} fetches | ` +
 				`${stats.averageTime.toFixed(2).padStart(8)}ms avg | ` +
@@ -217,9 +217,9 @@ class RSSPerformanceProfiler {
 			JSON.stringify(report, null, 2),
 		);
 
-		console.log("\n📄 Performance report generated:");
-		console.log("   📝 Markdown: ./profiles/rss-performance-report.md");
-		console.log("   📊 JSON: ./profiles/rss-performance-data.json");
+		console.info("\n📄 Performance report generated:");
+		console.info("   📝 Markdown: ./profiles/rss-performance-report.md");
+		console.info("   📊 JSON: ./profiles/rss-performance-data.json");
 	}
 
 	/**
@@ -369,13 +369,13 @@ ${report.metrics
 	 * Run quick benchmark comparison
 	 */
 	async runBenchmark() {
-		console.log("⚡ Running Bun v1.3.7 RSS Benchmark...\n");
+		console.info("⚡ Running Bun v1.3.7 RSS Benchmark...\n");
 
 		const iterations = 100;
 		const testUrl = "https://feeds.bbci.co.uk/news/rss.xml";
 
 		// Test v1.3.7 optimizations
-		console.log("🔄 Testing optimized implementation...");
+		console.info("🔄 Testing optimized implementation...");
 		const optimizedStart = performance.now();
 
 		for (let i = 0; i < iterations; i++) {
@@ -389,14 +389,14 @@ ${report.metrics
 		const optimizedTime = performance.now() - optimizedStart;
 
 		// Results
-		console.log("\n📊 Benchmark Results:");
-		console.log(
+		console.info("\n📊 Benchmark Results:");
+		console.info(
 			`   Optimized: ${optimizedTime.toFixed(2)}ms (${iterations} requests)`,
 		);
-		console.log(
+		console.info(
 			`   Average: ${(optimizedTime / iterations).toFixed(2)}ms per request`,
 		);
-		console.log(
+		console.info(
 			`   Requests/sec: ${(iterations / (optimizedTime / 1000)).toFixed(0)}`,
 		);
 
@@ -425,16 +425,16 @@ async function main() {
 		);
 		await profiler.runProfile({ duration: parseInt(duration, 10) });
 	} else {
-		console.log("🔧 RSS Performance Profiler");
-		console.log("");
-		console.log("Usage:");
-		console.log("  --benchmark     Run quick benchmark");
-		console.log("  --profile       Run full profiling (60s default)");
-		console.log("  --duration=MS   Set profiling duration");
-		console.log("");
-		console.log("Examples:");
-		console.log("  bun scripts/rss-performance-profiler.js --benchmark");
-		console.log(
+		console.info("🔧 RSS Performance Profiler");
+		console.info("");
+		console.info("Usage:");
+		console.info("  --benchmark     Run quick benchmark");
+		console.info("  --profile       Run full profiling (60s default)");
+		console.info("  --duration=MS   Set profiling duration");
+		console.info("");
+		console.info("Examples:");
+		console.info("  bun scripts/rss-performance-profiler.js --benchmark");
+		console.info(
 			"  bun scripts/rss-performance-profiler.js --profile --duration=120000",
 		);
 	}

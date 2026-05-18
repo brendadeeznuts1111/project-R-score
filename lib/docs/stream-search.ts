@@ -158,7 +158,7 @@ export class ZenStreamSearcher {
       const resourceUsage = proc.resourceUsage;
       if (resourceUsage) {
         const { maxRSS, cpuTime } = resourceUsage;
-        console.log(`📊 Resource Usage - Max Memory: ${(maxRSS / 1024 / 1024).toFixed(2)}MB, CPU Time: ${cpuTime?.total || 'N/A'}ms`);
+        console.info(`📊 Resource Usage - Max Memory: ${(maxRSS / 1024 / 1024).toFixed(2)}MB, CPU Time: ${cpuTime?.total || 'N/A'}ms`);
       }
       
       if (exitCode !== 0) {
@@ -170,7 +170,7 @@ export class ZenStreamSearcher {
       
     } catch (error) {
       if (error.name === 'AbortError') {
-        console.log('🛑 Search aborted by user');
+        console.info('🛑 Search aborted by user');
       } else {
         console.error('❌ Search error:', error);
       }
@@ -195,7 +195,7 @@ export class ZenStreamSearcher {
     });
 
     await proc.exited;
-    console.log('✅ PTY search complete');
+    console.info('✅ PTY search complete');
   }
 
   /**
@@ -229,10 +229,10 @@ export class ZenStreamSearcher {
     this.searchStats.filesSearched = linesCount;
     this.searchStats.memoryUsage = resources.maxRSS;
 
-    console.log(`📊 Max Memory: ${(resources.maxRSS / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`⏱️  CPU Time: ${resources.cpuTime.total}ms`);
-    console.log(`📁 Files Searched: ${this.searchStats.filesSearched}`);
-    console.log(`🎯 Matches Found: ${this.searchStats.matchesFound}`);
+    console.info(`📊 Max Memory: ${(resources.maxRSS / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`⏱️  CPU Time: ${resources.cpuTime.total}ms`);
+    console.info(`📁 Files Searched: ${this.searchStats.filesSearched}`);
+    console.info(`🎯 Matches Found: ${this.searchStats.matchesFound}`);
 
     return {
       stats: this.searchStats,
@@ -262,11 +262,11 @@ export class ZenStreamSearcher {
       cachePath,
       signal: this.abortController.signal,
       onMatch: (match) => {
-        console.log(`✨ Found in: ${match.data.path.text}:${match.data.line_number}`);
-        console.log(`   ${match.data.lines.text.trim()}`);
+        console.info(`✨ Found in: ${match.data.path.text}:${match.data.line_number}`);
+        console.info(`   ${match.data.lines.text.trim()}`);
       },
       onProgress: (stats) => {
-        console.log(`📈 Progress: ${stats.matchesFound} matches, ${stats.bytesProcessed} bytes processed`);
+        console.info(`📈 Progress: ${stats.matchesFound} matches, ${stats.bytesProcessed} bytes processed`);
       },
       ...options
     });
@@ -310,7 +310,7 @@ export class ZenStreamSearcher {
           const match: RipgrepMatch = JSON.parse(line);
           if (match.type === 'match') {
             this.searchStats.matchesFound++;
-            console.log(`🌐 Found in response: ${match.data.lines.text.trim()}`);
+            console.info(`🌐 Found in response: ${match.data.lines.text.trim()}`);
           }
         } catch {
           // Skip malformed lines
@@ -338,22 +338,22 @@ export class EnhancedDocsFetcher {
 
   async fetchAndSearch(query: string, docsUrl: string, cachePath: string): Promise<void> {
     try {
-      console.log(`🔍 Searching for: ${query}`);
-      console.log(`📂 Cache path: ${cachePath}`);
+      console.info(`🔍 Searching for: ${query}`);
+      console.info(`📂 Cache path: ${cachePath}`);
       
       // Perform adaptive search with automatic cancellation
       const stats = await this.searcher.adaptiveSearch(query, cachePath, {
         enableColors: true,
         onMatch: (match) => {
           const highlight = this.highlightMatch(match.data.lines.text, match.data.submatches);
-          console.log(`\n📄 ${match.data.path.text}:${match.data.line_number}`);
-          console.log(`   ${highlight}`);
+          console.info(`\n📄 ${match.data.path.text}:${match.data.line_number}`);
+          console.info(`   ${highlight}`);
         }
       });
 
-      console.log(`\n✅ Search completed in ${stats.elapsedTime.toFixed(2)}ms`);
-      console.log(`📊 Processed ${stats.bytesProcessed} bytes`);
-      console.log(`🎯 Found ${stats.matchesFound} matches across ${stats.filesSearched} files`);
+      console.info(`\n✅ Search completed in ${stats.elapsedTime.toFixed(2)}ms`);
+      console.info(`📊 Processed ${stats.bytesProcessed} bytes`);
+      console.info(`🎯 Found ${stats.matchesFound} matches across ${stats.filesSearched} files`);
       
     } catch (error) {
       console.error('❌ Search failed:', error);

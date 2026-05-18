@@ -42,17 +42,17 @@ class DashboardWatcher {
     // Setup file watcher
     this.setupWatcher();
     
-    console.log('🔥 Dashboard watcher active');
-    console.log(`📁 Watching: ${DASHBOARD_SRC}`);
-    console.log(`📦 Building: ${DASHBOARD_DIST}`);
-    console.log(`🌐 Preview: http://localhost:${PORT}/multi-layer-graph.html`);
+    console.info('🔥 Dashboard watcher active');
+    console.info(`📁 Watching: ${DASHBOARD_SRC}`);
+    console.info(`📦 Building: ${DASHBOARD_DIST}`);
+    console.info(`🌐 Preview: http://localhost:${PORT}/multi-layer-graph.html`);
   }
   
   async cleanBuild() {
     try {
       await Bun.$`rm -rf ${DASHBOARD_DIST}`;
       await Bun.$`mkdir -p ${DASHBOARD_DIST}`;
-      console.log('🧹 Clean build directory');
+      console.info('🧹 Clean build directory');
     } catch (error) {
       // Ignore if directory doesn't exist
     }
@@ -80,7 +80,7 @@ class DashboardWatcher {
     if (this.isBuilding) return;
     
     this.isBuilding = true;
-    console.log('🔨 Building dashboard...');
+    console.info('🔨 Building dashboard...');
     
     try {
       // Copy static assets
@@ -98,7 +98,7 @@ class DashboardWatcher {
       // Restart preview server
       await this.restartPreview();
       
-      console.log('✅ Build completed');
+      console.info('✅ Build completed');
     } catch (error) {
       console.error('❌ Build failed:', error);
     } finally {
@@ -126,7 +126,7 @@ class DashboardWatcher {
       }
     }
     
-    console.log('📁 Assets copied');
+    console.info('📁 Assets copied');
   }
   
   async bundleJS() {
@@ -141,7 +141,7 @@ class DashboardWatcher {
     });
     
     if (result.successes.length > 0) {
-      console.log('📦 JavaScript bundled');
+      console.info('📦 JavaScript bundled');
     } else {
       console.error('❌ JS bundling failed:', result.errors);
       throw new Error('JS bundling failed');
@@ -155,7 +155,7 @@ class DashboardWatcher {
     
     try {
       await Bun.$`cp ${cssSrc} ${cssDest}`;
-      console.log('🎨 CSS copied (dev mode)');
+      console.info('🎨 CSS copied (dev mode)');
     } catch (error) {
       console.warn('⚠️  CSS copy failed:', error.message);
     }
@@ -204,7 +204,7 @@ class DashboardWatcher {
           
           // Dev-only: Mock data generator
           window.generateMockGraph = async (eventId) => {
-            console.log('🔧 Dev: Generating mock graph for', eventId);
+            console.info('🔧 Dev: Generating mock graph for', eventId);
             return {
               nodes: Array.from({length: 50}, (_, i) => ({
                 id: \`n\${i}\`,
@@ -250,7 +250,7 @@ class DashboardWatcher {
     );
     
     await Bun.write(htmlPath, html);
-    console.log('🔧 Dev manifest generated with hot reload');
+    console.info('🔧 Dev manifest generated with hot reload');
   }
   
   setupWatcher() {
@@ -266,22 +266,22 @@ class DashboardWatcher {
     
     this.watcher
       .on('add', (path) => {
-        console.log('➕ File added:', path);
+        console.info('➕ File added:', path);
         this.build(false); // Don't debounce new files
       })
       .on('change', (path) => {
-        console.log('🔄 File changed:', path);
+        console.info('🔄 File changed:', path);
         this.build(true); // Debounce changes
       })
       .on('unlink', (path) => {
-        console.log('🗑️  File deleted:', path);
+        console.info('🗑️  File deleted:', path);
         this.build(false);
       })
       .on('error', (error) => {
         console.error('❌ Watcher error:', error);
       });
     
-    console.log('👀 File watcher active');
+    console.info('👀 File watcher active');
   }
   
   async startPreview() {
@@ -303,12 +303,12 @@ class DashboardWatcher {
       stderr: 'inherit',
     });
     
-    console.log(`🌐 Dev server started: http://localhost:${PORT}`);
+    console.info(`🌐 Dev server started: http://localhost:${PORT}`);
   }
   
   async restartPreview() {
     if (this.previewProcess) {
-      console.log('🔄 Restarting dev server...');
+      console.info('🔄 Restarting dev server...');
       this.previewProcess.kill();
       
       // Wait for process to exit
@@ -327,7 +327,7 @@ const watcher = new DashboardWatcher();
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('\n🛑 Shutting down dashboard watcher...');
+  console.info('\n🛑 Shutting down dashboard watcher...');
   
   if (watcher.watcher) {
     watcher.watcher.close();
@@ -337,6 +337,6 @@ process.on('SIGINT', async () => {
     watcher.previewProcess.kill();
   }
   
-  console.log('👋 Goodbye!');
+  console.info('👋 Goodbye!');
   process.exit(0);
 });

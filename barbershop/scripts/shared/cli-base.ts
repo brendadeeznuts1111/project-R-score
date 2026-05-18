@@ -25,25 +25,25 @@ export abstract class CLIBase {
     usage: string,
     options: Array<{ flag: string; description: string }>
   ): void {
-    console.log(this.styled(title, 'primary'));
-    console.log(this.styled('='.repeat(title.length), 'muted'));
-    console.log();
-    console.log(this.styled('Usage:', 'info'));
-    console.log(`  ${usage}`);
-    console.log();
-    console.log(this.styled('Options:', 'info'));
+    console.info(this.styled(title, 'primary'));
+    console.info(this.styled('='.repeat(title.length), 'muted'));
+    console.info();
+    console.info(this.styled('Usage:', 'info'));
+    console.info(`  ${usage}`);
+    console.info();
+    console.info(this.styled('Options:', 'info'));
     options.forEach(option => {
-      console.log(`  ${option.flag.padEnd(20)} ${option.description}`);
+      console.info(`  ${option.flag.padEnd(20)} ${option.description}`);
     });
-    console.log();
+    console.info();
     this.showDocumentation();
   }
 
   protected showDocumentation(): void {
-    console.log(this.styled('📚 Documentation:', 'accent'));
-    console.log('  🔐 Bun Secrets: https://bun.sh/docs/runtime/secrets');
-    console.log('  🏰 FactoryWager: https://docs.factory-wager.com/secrets');
-    console.log();
+    console.info(this.styled('📚 Documentation:', 'accent'));
+    console.info('  🔐 Bun Secrets: https://bun.sh/docs/runtime/secrets');
+    console.info('  🏰 FactoryWager: https://docs.factory-wager.com/secrets');
+    console.info();
   }
 
   protected async handleError(error: Error, context: string): Promise<void> {
@@ -52,7 +52,7 @@ export abstract class CLIBase {
     // Show relevant documentation
     const secretsRef = { url: 'https://bun.sh/docs/runtime/secrets' }; // Simplified for now
     if (secretsRef && context.toLowerCase().includes('secret')) {
-      console.log(this.styled(`📖 See: ${secretsRef.url}`, 'info'));
+      console.info(this.styled(`📖 See: ${secretsRef.url}`, 'info'));
     }
 
     // Log error without circular dependency

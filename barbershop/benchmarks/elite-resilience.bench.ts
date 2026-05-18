@@ -11,11 +11,11 @@
 import { EliteCircuitBreaker } from '../src/utils/elite-circuit-breaker';
 import { EliteRateLimiter, MultiTierRateLimiter } from '../src/utils/elite-rate-limiter';
 
-console.log('\n╔══════════════════════════════════════════════════════════════════╗');
-console.log('║  ⚡ ELITE RESILIENCE MODULE BENCHMARKS                           ║');
-console.log('╠══════════════════════════════════════════════════════════════════╣');
-console.log('║  Circuit Breaker • Rate Limiter • Multi-Tier • Middleware        ║');
-console.log('╚══════════════════════════════════════════════════════════════════╝\n');
+console.info('\n╔══════════════════════════════════════════════════════════════════╗');
+console.info('║  ⚡ ELITE RESILIENCE MODULE BENCHMARKS                           ║');
+console.info('╠══════════════════════════════════════════════════════════════════╣');
+console.info('║  Circuit Breaker • Rate Limiter • Multi-Tier • Middleware        ║');
+console.info('╚══════════════════════════════════════════════════════════════════╝\n');
 
 // Benchmark helper
 async function benchmark(name: string, fn: () => void | Promise<void>, iterations = 10000) {
@@ -27,7 +27,7 @@ async function benchmark(name: string, fn: () => void | Promise<void>, iteration
   const opsPerSecond = Math.round((iterations / elapsed) * 1000);
   const avgMs = (elapsed / iterations).toFixed(4);
   
-  console.log(`${name.padEnd(45)} ${opsPerSecond.toString().padStart(10)} ops/s  (${avgMs} ms/op)`);
+  console.info(`${name.padEnd(45)} ${opsPerSecond.toString().padStart(10)} ops/s  (${avgMs} ms/op)`);
   return opsPerSecond;
 }
 
@@ -35,8 +35,8 @@ async function benchmark(name: string, fn: () => void | Promise<void>, iteration
 // CIRCUIT BREAKER BENCHMARKS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('Circuit Breaker');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('Circuit Breaker');
+console.info('──────────────────────────────────────────────────────────────────');
 
 const breaker = new EliteCircuitBreaker('benchmark', {
   failureThreshold: 1000,
@@ -77,8 +77,8 @@ breaker.destroy();
 // RATE LIMITER BENCHMARKS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('\nRate Limiter - Token Bucket');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('\nRate Limiter - Token Bucket');
+console.info('──────────────────────────────────────────────────────────────────');
 
 const limiter = new EliteRateLimiter({
   strategy: 'token_bucket',
@@ -111,8 +111,8 @@ await benchmark('reset rate limit', async () => {
 // STRATEGY COMPARISON
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('\nRate Limiter - Strategy Comparison');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('\nRate Limiter - Strategy Comparison');
+console.info('──────────────────────────────────────────────────────────────────');
 
 const tokenBucket = new EliteRateLimiter({
   strategy: 'token_bucket',
@@ -139,8 +139,8 @@ await benchmark('fixed window', async () => {
 // MULTI-TIER RATE LIMITER
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('\nMulti-Tier Rate Limiter');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('\nMulti-Tier Rate Limiter');
+console.info('──────────────────────────────────────────────────────────────────');
 
 const multiTier = new MultiTierRateLimiter();
 
@@ -173,8 +173,8 @@ await benchmark('check all tiers', async () => {
 // THROUGHPUT SUMMARY
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('\nThroughput Summary');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('\nThroughput Summary');
+console.info('──────────────────────────────────────────────────────────────────');
 
 const cbStart = performance.now();
 const throughputBreaker = new EliteCircuitBreaker('throughput', {
@@ -187,7 +187,7 @@ for (let i = 0; i < 100000; i++) {
 }
 throughputBreaker.destroy();
 const cbElapsed = performance.now() - cbStart;
-console.log(`100k circuit breaker executions`.padEnd(45) + `${Math.round(100000 / cbElapsed * 1000).toString().padStart(10)} ops/s`);
+console.info(`100k circuit breaker executions`.padEnd(45) + `${Math.round(100000 / cbElapsed * 1000).toString().padStart(10)} ops/s`);
 
 const rlStart = performance.now();
 const throughputLimiter = new EliteRateLimiter({
@@ -200,6 +200,6 @@ for (let i = 0; i < 100000; i++) {
   await throughputLimiter.check(`user-${i % 100}`);
 }
 const rlElapsed = performance.now() - rlStart;
-console.log(`100k rate limiter checks`.padEnd(45) + `${Math.round(100000 / rlElapsed * 1000).toString().padStart(10)} ops/s`);
+console.info(`100k rate limiter checks`.padEnd(45) + `${Math.round(100000 / rlElapsed * 1000).toString().padStart(10)} ops/s`);
 
-console.log('\n✅ Resilience benchmarks complete!\n');
+console.info('\n✅ Resilience benchmarks complete!\n');

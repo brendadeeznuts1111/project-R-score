@@ -74,7 +74,7 @@ const server = Bun.serve({
         // Write profilePicture to disk
         await Bun.write("profilePicture.png", profilePicture);
 
-        console.log(`✅ Uploaded: ${name}'s profile picture (${(profilePicture as Blob).size} bytes)`);
+        console.info(`✅ Uploaded: ${name}'s profile picture (${(profilePicture as Blob).size} bytes)`);
 
         return new Response(`✅ Success! Uploaded ${name}'s profile picture.`, {
           status: 200,
@@ -90,7 +90,7 @@ const server = Bun.serve({
   },
 });
 
-console.log(`
+console.info(`
 ╔════════════════════════════════════════════╗
 ║  FormData File Upload Demo                 ║
 ╠════════════════════════════════════════════╣

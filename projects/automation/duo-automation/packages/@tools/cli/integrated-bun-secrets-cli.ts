@@ -634,7 +634,7 @@ function createIntegratedSecretsCLI(): Elysia {
  * Demonstrate the integrated Bun secrets CLI with per-user scopes
  */
 async function demonstrateIntegratedSecretsCLI(): Promise<void> {
-  console.log(EmpireProDashboard.generateHeader(
+  console.info(EmpireProDashboard.generateHeader(
     'INTEGRATED BUN SECRETS CLI WITH PER-USER SCOPES',
     'Health Monitoring, User Management, and Scope-Based Access Control'
   ));
@@ -644,11 +644,11 @@ async function demonstrateIntegratedSecretsCLI(): Promise<void> {
   
   const server = app.listen(port);
   
-  console.log(UnicodeTableFormatter.colorize('🚀 Integrated Bun Secrets CLI Server Started', DesignSystem.status.operational));
-  console.log(UnicodeTableFormatter.colorize(`🌐 Server: http://localhost:${port}`, DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('🚀 Integrated Bun Secrets CLI Server Started', DesignSystem.status.operational));
+  console.info(UnicodeTableFormatter.colorize(`🌐 Server: http://localhost:${port}`, DesignSystem.text.accent.blue));
   
   // Demonstrate user authentication and profiles
-  console.log(UnicodeTableFormatter.colorize('\n👥 USER PROFILES AND SCOPES:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('\n👥 USER PROFILES AND SCOPES:', DesignSystem.text.accent.blue));
   
   const users = ['user-001', 'user-002', 'user-003'];
   const userProfiles = [];
@@ -673,10 +673,10 @@ async function demonstrateIntegratedSecretsCLI(): Promise<void> {
     }
   }
   
-  console.log(UnicodeTableFormatter.generateTable(userProfiles, { maxWidth: 120 }));
+  console.info(UnicodeTableFormatter.generateTable(userProfiles, { maxWidth: 120 }));
   
   // Demonstrate user secrets configurations
-  console.log(UnicodeTableFormatter.colorize('\n🔐 USER SECRETS CONFIGURATIONS:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('\n🔐 USER SECRETS CONFIGURATIONS:', DesignSystem.text.accent.blue));
   
   const secretsConfigs = [];
   for (const userId of users) {
@@ -699,10 +699,10 @@ async function demonstrateIntegratedSecretsCLI(): Promise<void> {
     }
   }
   
-  console.log(UnicodeTableFormatter.generateTable(secretsConfigs, { maxWidth: 140 }));
+  console.info(UnicodeTableFormatter.generateTable(secretsConfigs, { maxWidth: 140 }));
   
   // Demonstrate user-specific health checks
-  console.log(UnicodeTableFormatter.colorize('\n🏥 USER-SPECIFIC HEALTH CHECKS:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('\n🏥 USER-SPECIFIC HEALTH CHECKS:', DesignSystem.text.accent.blue));
   
   const healthChecks = [];
   for (const userId of users) {
@@ -725,15 +725,15 @@ async function demonstrateIntegratedSecretsCLI(): Promise<void> {
     }
   }
   
-  console.log(UnicodeTableFormatter.generateTable(healthChecks, { maxWidth: 120 }));
+  console.info(UnicodeTableFormatter.generateTable(healthChecks, { maxWidth: 120 }));
   
   // Demonstrate secrets access
-  console.log(UnicodeTableFormatter.colorize('\n🔑 SECRETS ACCESS DEMONSTRATION:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('\n🔑 SECRETS ACCESS DEMONSTRATION:', DesignSystem.text.accent.blue));
   
   // Get secrets for admin user
   const adminSecretsResponse = await app.handle(new Request(`http://localhost:${port}/user/user-001/secrets`)).then(r => r.json());
   if (adminSecretsResponse.secrets) {
-    console.log(UnicodeTableFormatter.colorize('👑 Admin User (user-001) Secrets:', DesignSystem.text.accent.green));
+    console.info(UnicodeTableFormatter.colorize('👑 Admin User (user-001) Secrets:', DesignSystem.text.accent.green));
     const secretsTable = Object.entries(adminSecretsResponse.secrets).map(([key, value]) => ({
       Secret: UnicodeTableFormatter.colorize(key, DesignSystem.text.accent.purple),
       Value: UnicodeTableFormatter.colorize(
@@ -747,13 +747,13 @@ async function demonstrateIntegratedSecretsCLI(): Promise<void> {
         DesignSystem.text.secondary
       )
     }));
-    console.log(UnicodeTableFormatter.generateTable(secretsTable, { maxWidth: 120 }));
+    console.info(UnicodeTableFormatter.generateTable(secretsTable, { maxWidth: 120 }));
   }
   
   // Get secrets for developer user
   const devSecretsResponse = await app.handle(new Request(`http://localhost:${port}/user/user-002/secrets`)).then(r => r.json());
   if (devSecretsResponse.secrets) {
-    console.log(UnicodeTableFormatter.colorize('💻 Developer User (user-002) Secrets:', DesignSystem.text.accent.blue));
+    console.info(UnicodeTableFormatter.colorize('💻 Developer User (user-002) Secrets:', DesignSystem.text.accent.blue));
     const secretsTable = Object.entries(devSecretsResponse.secrets).map(([key, value]) => ({
       Secret: UnicodeTableFormatter.colorize(key, DesignSystem.text.accent.purple),
       Value: UnicodeTableFormatter.colorize(
@@ -767,29 +767,29 @@ async function demonstrateIntegratedSecretsCLI(): Promise<void> {
         DesignSystem.text.secondary
       )
     }));
-    console.log(UnicodeTableFormatter.generateTable(secretsTable, { maxWidth: 120 }));
+    console.info(UnicodeTableFormatter.generateTable(secretsTable, { maxWidth: 120 }));
   }
   
-  console.log(EmpireProDashboard.generateFooter());
+  console.info(EmpireProDashboard.generateFooter());
   
-  console.log('\n🎉 INTEGRATED BUN SECRETS CLI DEMO COMPLETE!');
-  console.log('✅ Per-user scope management with proper access control');
-  console.log('✅ User-specific secrets backend configuration');
-  console.log('✅ Health monitoring with user-aware status tracking');
-  console.log('✅ Role-based permissions and security');
-  console.log('✅ Integration with Bun secrets API simulation');
-  console.log('\n📋 AVAILABLE ENDPOINTS:');
-  console.log('  GET /auth/user/:userId           - User authentication and profile');
-  console.log('  GET /user/:userId/secrets/config  - User secrets configuration');
-  console.log('  GET /user/:userId/secrets         - Get user secrets (with permissions)');
-  console.log('  POST /user/:userId/scope          - Switch user scope');
-  console.log('  GET /user/:userId/health          - User-specific health check');
-  console.log('  GET /admin/users                  - List all users (admin only)');
-  console.log('  GET /health                       - General health endpoint');
+  console.info('\n🎉 INTEGRATED BUN SECRETS CLI DEMO COMPLETE!');
+  console.info('✅ Per-user scope management with proper access control');
+  console.info('✅ User-specific secrets backend configuration');
+  console.info('✅ Health monitoring with user-aware status tracking');
+  console.info('✅ Role-based permissions and security');
+  console.info('✅ Integration with Bun secrets API simulation');
+  console.info('\n📋 AVAILABLE ENDPOINTS:');
+  console.info('  GET /auth/user/:userId           - User authentication and profile');
+  console.info('  GET /user/:userId/secrets/config  - User secrets configuration');
+  console.info('  GET /user/:userId/secrets         - Get user secrets (with permissions)');
+  console.info('  POST /user/:userId/scope          - Switch user scope');
+  console.info('  GET /user/:userId/health          - User-specific health check');
+  console.info('  GET /admin/users                  - List all users (admin only)');
+  console.info('  GET /health                       - General health endpoint');
   
   // Handle graceful shutdown
   process.on('SIGINT', () => {
-    console.log(UnicodeTableFormatter.colorize('\n🛑 Shutting down integrated secrets CLI server...', DesignSystem.text.secondary));
+    console.info(UnicodeTableFormatter.colorize('\n🛑 Shutting down integrated secrets CLI server...', DesignSystem.text.secondary));
     server.stop();
     process.exit(0);
   });

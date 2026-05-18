@@ -1,11 +1,11 @@
 // bun-processing-pipeline-demo.ts - Complete Bun processing pipeline demonstration
 
-console.log("🎯 Bun Processing Pipeline Demo");
-console.log("==============================");
+console.info("🎯 Bun Processing Pipeline Demo");
+console.info("==============================");
 
 // 1. Processing Pipeline Overview
-console.log("\n📋 1. Processing Pipeline Overview:");
-console.log(
+console.info("\n📋 1. Processing Pipeline Overview:");
+console.info(
   "Bun automatically processes HTML files through a 5-step pipeline:"
 );
 
@@ -38,54 +38,54 @@ const pipelineSteps = [
   ["5. Serving", "Static routes", "Bundled files", "HTTP responses"],
 ];
 
-console.log("\n📊 Pipeline Steps:");
+console.info("\n📊 Pipeline Steps:");
 pipelineSteps.forEach((row) => {
-  console.log(row.map((cell) => cell.padEnd(30)).join(" | "));
+  console.info(row.map((cell) => cell.padEnd(30)).join(" | "));
 });
 
 // 2. Script Processing Demonstration
-console.log("\n🔧 2. <script> Processing:");
-console.log("Input HTML:");
-console.log(`<script type="module" src="./counter.tsx"></script>`);
-console.log("\nProcessing:");
-console.log("• Transpiles TypeScript to JavaScript");
-console.log("• Converts JSX to React.createElement calls");
-console.log("• Bundles imported dependencies");
-console.log("• Generates sourcemaps for debugging");
-console.log("• Minifies in production mode");
-console.log("\nOutput:");
-console.log(
+console.info("\n🔧 2. <script> Processing:");
+console.info("Input HTML:");
+console.info(`<script type="module" src="./counter.tsx"></script>`);
+console.info("\nProcessing:");
+console.info("• Transpiles TypeScript to JavaScript");
+console.info("• Converts JSX to React.createElement calls");
+console.info("• Bundles imported dependencies");
+console.info("• Generates sourcemaps for debugging");
+console.info("• Minifies in production mode");
+console.info("\nOutput:");
+console.info(
   `<script type="module" src="/assets/counter-a1b2c3d4.js"></script>`
 );
 
 // 3. Link Processing Demonstration
-console.log("\n🎨 3. <link> Processing:");
-console.log("Input HTML:");
-console.log(`<link rel="stylesheet" href="./styles.css" />`);
-console.log("\nProcessing:");
-console.log("• Processes CSS imports and @import statements");
-console.log("• Concatenates multiple CSS files");
-console.log("• Rewrites asset URLs with content hashes");
-console.log("• Inlines small assets as data: URLs");
-console.log("\nOutput:");
-console.log(`<link rel="stylesheet" href="/assets/styles-e5f6g7h8.css" />`);
+console.info("\n🎨 3. <link> Processing:");
+console.info("Input HTML:");
+console.info(`<link rel="stylesheet" href="./styles.css" />`);
+console.info("\nProcessing:");
+console.info("• Processes CSS imports and @import statements");
+console.info("• Concatenates multiple CSS files");
+console.info("• Rewrites asset URLs with content hashes");
+console.info("• Inlines small assets as data: URLs");
+console.info("\nOutput:");
+console.info(`<link rel="stylesheet" href="/assets/styles-e5f6g7h8.css" />`);
 
 // 4. Asset Processing Demonstration
-console.log("\n🖼️ 4. Asset Processing:");
-console.log("Input HTML:");
-console.log(`<img src="./logo.png" alt="Logo" />`);
-console.log("\nProcessing:");
-console.log("• Rewrites asset URLs with content-addressable hashes");
-console.log("• Inlines small assets as data: URLs");
-console.log("• Reduces HTTP requests");
-console.log("• Optimizes for caching");
-console.log("\nOutput:");
-console.log(`<img src="/assets/logo-i9j0k1l2.png" alt="Logo" />`);
+console.info("\n🖼️ 4. Asset Processing:");
+console.info("Input HTML:");
+console.info(`<img src="./logo.png" alt="Logo" />`);
+console.info("\nProcessing:");
+console.info("• Rewrites asset URLs with content-addressable hashes");
+console.info("• Inlines small assets as data: URLs");
+console.info("• Reduces HTTP requests");
+console.info("• Optimizes for caching");
+console.info("\nOutput:");
+console.info(`<img src="/assets/logo-i9j0k1l2.png" alt="Logo" />`);
 
 // 5. HTML Rewriting Demonstration
-console.log("\n📝 5. HTML Rewriting:");
-console.log("Input HTML:");
-console.log(`<!DOCTYPE html>
+console.info("\n📝 5. HTML Rewriting:");
+console.info("Input HTML:");
+console.info(`<!DOCTYPE html>
 <html>
 <head>
   <link rel="stylesheet" href="./styles.css" />
@@ -97,8 +97,8 @@ console.log(`<!DOCTYPE html>
 </body>
 </html>`);
 
-console.log("\nOutput HTML:");
-console.log(`<!DOCTYPE html>
+console.info("\nOutput HTML:");
+console.info(`<!DOCTYPE html>
 <html>
 <head>
   <link rel="stylesheet" href="/assets/bundle-m3n4o5p6.css" />
@@ -109,10 +109,10 @@ console.log(`<!DOCTYPE html>
 </html>`);
 
 // 6. Complete Fullstack Example
-console.log("\n🏗️ 6. Complete Fullstack Example:");
+console.info("\n🏗️ 6. Complete Fullstack Example:");
 
 // Database setup simulation
-console.log("\n📊 Database Setup:");
+console.info("\n📊 Database Setup:");
 const dbSchema = `
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -120,10 +120,10 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT UNIQUE NOT NULL,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 )`;
-console.log("✅ Database schema created");
+console.info("✅ Database schema created");
 
 // Server configuration
-console.log("\n🚀 Server Configuration:");
+console.info("\n🚀 Server Configuration:");
 const serverConfig = {
   routes: {
     "/": "public/index.html",
@@ -145,13 +145,13 @@ const serverConfig = {
     console: true,
   },
 };
-console.log("✅ Server configured with routes and development features");
+console.info("✅ Server configured with routes and development features");
 
 // 7. Frontend Components
-console.log("\n⚛️ 7. Frontend Components:");
+console.info("\n⚛️ 7. Frontend Components:");
 
 // React component simulation
-console.log("\n📱 App Component:");
+console.info("\n📱 App Component:");
 const appComponent = {
   state: {
     users: [],
@@ -173,10 +173,10 @@ const appComponent = {
   ],
 };
 
-console.log("✅ React App component with user management");
+console.info("✅ React App component with user management");
 
 // 8. CSS Processing
-console.log("\n🎨 8. CSS Processing:");
+console.info("\n🎨 8. CSS Processing:");
 const cssFeatures = [
   "Responsive design",
   "Component-based styling",
@@ -187,11 +187,11 @@ const cssFeatures = [
 ];
 
 cssFeatures.forEach((feature) => {
-  console.log(`✅ ${feature}`);
+  console.info(`✅ ${feature}`);
 });
 
 // 9. Project Structure
-console.log("\n📁 9. Project Structure:");
+console.info("\n📁 9. Project Structure:");
 const projectStructure = [
   ["my-app/", "Root directory"],
   ["├── src/", "Source code"],
@@ -211,11 +211,11 @@ const projectStructure = [
 ];
 
 projectStructure.forEach(([path, description]) => {
-  console.log(`${path.padEnd(25)} - ${description}`);
+  console.info(`${path.padEnd(25)} - ${description}`);
 });
 
 // 10. Environment Configuration
-console.log("\n⚙️ 10. Environment Configuration:");
+console.info("\n⚙️ 10. Environment Configuration:");
 const environments = {
   development: {
     NODE_ENV: "development",
@@ -234,18 +234,18 @@ const environments = {
 };
 
 Object.entries(environments).forEach(([env, config]) => {
-  console.log(`\n${env.toUpperCase()}:`);
+  console.info(`\n${env.toUpperCase()}:`);
   Object.entries(config).forEach(([key, value]) => {
     if (Array.isArray(value)) {
-      console.log(`  ${key}: ${value.join(", ")}`);
+      console.info(`  ${key}: ${value.join(", ")}`);
     } else {
-      console.log(`  ${key}: ${value}`);
+      console.info(`  ${key}: ${value}`);
     }
   });
 });
 
 // 11. Error Handling
-console.log("\n❌ 11. Error Handling:");
+console.info("\n❌ 11. Error Handling:");
 const errorHandling = {
   development: {
     stackTraces: true,
@@ -259,18 +259,18 @@ const errorHandling = {
   },
 };
 
-console.log("Development error handling:");
-console.log("• Full stack traces");
-console.log("• Detailed error messages");
-console.log("• Source file references");
+console.info("Development error handling:");
+console.info("• Full stack traces");
+console.info("• Detailed error messages");
+console.info("• Source file references");
 
-console.log("\nProduction error handling:");
-console.log("• Minimal error details");
-console.log("• Generic error messages");
-console.log("• Security-focused");
+console.info("\nProduction error handling:");
+console.info("• Minimal error details");
+console.info("• Generic error messages");
+console.info("• Security-focused");
 
 // 12. API Response Helpers
-console.log("\n🔧 12. API Response Helpers:");
+console.info("\n🔧 12. API Response Helpers:");
 const responseHelpers = {
   json: "Response.json(data, status)",
   error: "Response.json({ error: message }, status)",
@@ -279,11 +279,11 @@ const responseHelpers = {
 };
 
 Object.entries(responseHelpers).forEach(([name, implementation]) => {
-  console.log(`${name.padEnd(12)}: ${implementation}`);
+  console.info(`${name.padEnd(12)}: ${implementation}`);
 });
 
 // 13. Type Safety
-console.log("\n🔒 13. Type Safety:");
+console.info("\n🔒 13. Type Safety:");
 const typeDefinitions = [
   "interface User { id: number; name: string; email: string; }",
   "interface CreateUserRequest { name: string; email: string; }",
@@ -292,11 +292,11 @@ const typeDefinitions = [
 ];
 
 typeDefinitions.forEach((type) => {
-  console.log(`✅ ${type}`);
+  console.info(`✅ ${type}`);
 });
 
 // 14. Deployment
-console.log("\n🚀 14. Deployment:");
+console.info("\n🚀 14. Deployment:");
 const deploymentSteps = [
   "Build for production: bun build --target=bun --production --outdir=dist",
   "Set environment: NODE_ENV=production",
@@ -305,11 +305,11 @@ const deploymentSteps = [
 ];
 
 deploymentSteps.forEach((step, index) => {
-  console.log(`${index + 1}. ${step}`);
+  console.info(`${index + 1}. ${step}`);
 });
 
 // 15. Migration from Other Frameworks
-console.log("\n🔄 15. Migration from Other Frameworks:");
+console.info("\n🔄 15. Migration from Other Frameworks:");
 
 const expressMigration = {
   before: {
@@ -322,12 +322,12 @@ const expressMigration = {
   },
 };
 
-console.log("Express → Bun Migration:");
-console.log("Before:", expressMigration.before.static);
-console.log("After: ", expressMigration.after.static);
+console.info("Express → Bun Migration:");
+console.info("Before:", expressMigration.before.static);
+console.info("After: ", expressMigration.after.static);
 
 // 16. Current Limitations
-console.log("\n⚠️ 16. Current Limitations:");
+console.info("\n⚠️ 16. Current Limitations:");
 const limitations = [
   "bun build CLI integration not yet available for fullstack apps",
   "Auto-discovery of API routes not implemented",
@@ -336,11 +336,11 @@ const limitations = [
 ];
 
 limitations.forEach((limitation) => {
-  console.log(`• ${limitation}`);
+  console.info(`• ${limitation}`);
 });
 
 // 17. Planned Features
-console.log("\n🔮 17. Planned Features:");
+console.info("\n🔮 17. Planned Features:");
 const plannedFeatures = [
   "Integration with bun build CLI",
   "File-based routing for API endpoints",
@@ -351,11 +351,11 @@ const plannedFeatures = [
 ];
 
 plannedFeatures.forEach((feature) => {
-  console.log(`🎯 ${feature}`);
+  console.info(`🎯 ${feature}`);
 });
 
 // 18. Performance Optimization
-console.log("\n⚡ 18. Performance Optimization:");
+console.info("\n⚡ 18. Performance Optimization:");
 const optimizations = [
   "Content-addressable hashing for cache busting",
   "Asset inlining for small files",
@@ -366,11 +366,11 @@ const optimizations = [
 ];
 
 optimizations.forEach((opt) => {
-  console.log(`🚀 ${opt}`);
+  console.info(`🚀 ${opt}`);
 });
 
 // 19. Development Experience
-console.log("\n🛠️ 19. Development Experience:");
+console.info("\n🛠️ 19. Development Experience:");
 const devFeatures = [
   "Hot Module Reloading (HMR)",
   "Console log forwarding",
@@ -381,11 +381,11 @@ const devFeatures = [
 ];
 
 devFeatures.forEach((feature) => {
-  console.log(`✨ ${feature}`);
+  console.info(`✨ ${feature}`);
 });
 
 // 20. Best Practices Summary
-console.log("\n🎯 20. Best Practices Summary:");
+console.info("\n🎯 20. Best Practices Summary:");
 const bestPractices = [
   "Use environment-based configuration",
   "Implement proper error handling",
@@ -400,15 +400,15 @@ const bestPractices = [
 ];
 
 bestPractices.forEach((practice, index) => {
-  console.log(`${index + 1}. ${practice}`);
+  console.info(`${index + 1}. ${practice}`);
 });
 
-console.log("\n🎉 Bun Processing Pipeline Demo Completed!");
-console.log("\n📋 Key Takeaways:");
-console.log("  • Automatic HTML processing pipeline");
-console.log("  • TypeScript/JSX/CSS bundling");
-console.log("  • Content-addressable hashing");
-console.log("  • Development vs production optimization");
-console.log("  • Full-stack application support");
-console.log("  • Type safety and error handling");
-console.log("  • Easy deployment and migration");
+console.info("\n🎉 Bun Processing Pipeline Demo Completed!");
+console.info("\n📋 Key Takeaways:");
+console.info("  • Automatic HTML processing pipeline");
+console.info("  • TypeScript/JSX/CSS bundling");
+console.info("  • Content-addressable hashing");
+console.info("  • Development vs production optimization");
+console.info("  • Full-stack application support");
+console.info("  • Type safety and error handling");
+console.info("  • Easy deployment and migration");

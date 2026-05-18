@@ -20,7 +20,7 @@ class SecurityRuleTemplater {
   private rulesFile = 'scripts/gov-rules.ts';
 
   async createRule(template: SecurityRuleTemplate): Promise<void> {
-    console.log(`🛡️  Creating new security rule: ${template.id}`);
+    console.info(`🛡️  Creating new security rule: ${template.id}`);
 
     // Validate template
     this.validateTemplate(template);
@@ -34,8 +34,8 @@ class SecurityRuleTemplater {
     // Update stats
     await this.updateStats(template.category);
 
-    console.log(`✅ Security rule ${template.id} created successfully!`);
-    console.log(`🔧 Run: bun rules:validate && bun gov:security`);
+    console.info(`✅ Security rule ${template.id} created successfully!`);
+    console.info(`🔧 Run: bun rules:validate && bun gov:security`);
   }
 
   private validateTemplate(template: SecurityRuleTemplate): void {
@@ -114,13 +114,13 @@ class SecurityRuleTemplater {
     const content = readFileSync(this.rulesFile, 'utf-8');
 
     // This is a simplified update - in practice you'd want to count actual rules
-    console.log(`📊 Updated ${category} category (+1 rule)`);
+    console.info(`📊 Updated ${category} category (+1 rule)`);
   }
 
   async quickAddRule(description: string, category: string): Promise<void> {
-    console.log(`🚀 Quick Add Security Rule`);
-    console.log(`Description: ${description}`);
-    console.log(`Category: ${category}`);
+    console.info(`🚀 Quick Add Security Rule`);
+    console.info(`Description: ${description}`);
+    console.info(`Category: ${category}`);
 
     // Generate ID based on category
     const categoryPrefix = category.split('/')[0].toUpperCase();
@@ -148,7 +148,7 @@ class SecurityRuleTemplater {
   }
 
   async listTemplates(): Promise<void> {
-    console.log(`
+    console.info(`
 🛡️  SECURITY RULE TEMPLATES v2.10
 
 QUICK ADD TEMPLATES:

@@ -57,10 +57,10 @@ export class QuantumHashIntegration {
     this.schemaVersion = options.schemaVersion || 1;
     this.monitoringEnabled = options.monitoringEnabled !== false;
     
-    console.log(`🔒 QuantumHashIntegration initialized:`);
-    console.log(`   • Hardware acceleration: ${this._useSoftwareFallback ? '❌ Software fallback' : '✅ Enabled'}`);
-    console.log(`   • Schema version: ${this.schemaVersion}`);
-    console.log(`   • Monitoring: ${this.monitoringEnabled ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info(`🔒 QuantumHashIntegration initialized:`);
+    console.info(`   • Hardware acceleration: ${this._useSoftwareFallback ? '❌ Software fallback' : '✅ Enabled'}`);
+    console.info(`   • Schema version: ${this.schemaVersion}`);
+    console.info(`   • Monitoring: ${this.monitoringEnabled ? '✅ Enabled' : '❌ Disabled'}`);
   }
 
   /**
@@ -114,11 +114,11 @@ export class QuantumHashIntegration {
         }
       };
       
-      console.log(`🔒 Data pipeline created:`);
-      console.log(`   • CRC32: ${crc32.toString(16)}`);
-      console.log(`   • Processing time: ${processingTime.toFixed(3)}ms`);
-      console.log(`   • Throughput: ${throughput.toFixed(0)} KB/s`);
-      console.log(`   • Hardware accelerated: ${result.integrity.hardwareAccelerated ? '✅' : '❌'}`);
+      console.info(`🔒 Data pipeline created:`);
+      console.info(`   • CRC32: ${crc32.toString(16)}`);
+      console.info(`   • Processing time: ${processingTime.toFixed(3)}ms`);
+      console.info(`   • Throughput: ${throughput.toFixed(0)} KB/s`);
+      console.info(`   • Hardware accelerated: ${result.integrity.hardwareAccelerated ? '✅' : '❌'}`);
       
       return result;
       
@@ -132,7 +132,7 @@ export class QuantumHashIntegration {
    * Process evidence with quantum hash and monitoring
    */
   async processEvidence(evidenceId: string, filePath: string): Promise<EvidenceMetadata> {
-    console.log(`🔍 Processing evidence: ${evidenceId}`);
+    console.info(`🔍 Processing evidence: ${evidenceId}`);
     
     try {
       // Read file data
@@ -163,11 +163,11 @@ export class QuantumHashIntegration {
         await this.startEvidenceMonitoring(evidenceId, filePath);
       }
       
-      console.log(`✅ Evidence processed successfully:`);
-      console.log(`   • ID: ${metadata.id}`);
-      console.log(`   • CRC32: ${metadata.crc32_hash}`);
-      console.log(`   • Schema version: ${metadata.schema_version}`);
-      console.log(`   • Monitoring: ${this.monitoringEnabled ? '✅ Enabled' : '❌ Disabled'}`);
+      console.info(`✅ Evidence processed successfully:`);
+      console.info(`   • ID: ${metadata.id}`);
+      console.info(`   • CRC32: ${metadata.crc32_hash}`);
+      console.info(`   • Schema version: ${metadata.schema_version}`);
+      console.info(`   • Monitoring: ${this.monitoringEnabled ? '✅ Enabled' : '❌ Disabled'}`);
       
       return metadata;
       
@@ -181,7 +181,7 @@ export class QuantumHashIntegration {
    * Start evidence monitoring with automatic cleanup
    */
   async startEvidenceMonitoring(evidenceId: string, filePath: string): Promise<void> {
-    console.log(`🔒 Starting evidence monitoring: ${evidenceId}`);
+    console.info(`🔒 Starting evidence monitoring: ${evidenceId}`);
     
     try {
       // Get initial file hash
@@ -202,7 +202,7 @@ export class QuantumHashIntegration {
             const checkInterval = setInterval(() => {
               const timeSinceActivity = Date.now() - monitor.lastActivity.getTime();
               if (timeSinceActivity > 86400000) { // 24h
-                console.log(`🧹 Cleaning up inactive monitor: ${evidenceId}`);
+                console.info(`🧹 Cleaning up inactive monitor: ${evidenceId}`);
                 callback(evidenceId);
                 clearInterval(checkInterval);
                 this.stopEvidenceMonitoring(evidenceId);
@@ -213,7 +213,7 @@ export class QuantumHashIntegration {
         stop: () => {
           monitor.isActive = false;
           this.evidenceMonitors.delete(evidenceId);
-          console.log(`⏹️ Evidence monitoring stopped: ${evidenceId}`);
+          console.info(`⏹️ Evidence monitoring stopped: ${evidenceId}`);
         }
       };
       
@@ -222,13 +222,13 @@ export class QuantumHashIntegration {
       
       // Setup automatic cleanup
       monitor.on('inactive', (inactiveEvidenceId: string) => {
-        console.log(`🧹 Auto-cleanup triggered for inactive evidence: ${inactiveEvidenceId}`);
+        console.info(`🧹 Auto-cleanup triggered for inactive evidence: ${inactiveEvidenceId}`);
       });
       
       // CRITICAL: Use Bun's native watcher for sub-500ms alerts
       this.startNativeFileWatch(evidenceId, filePath, lastKnownHash, monitor);
       
-      console.log(`✅ Evidence monitoring started: ${evidenceId}`);
+      console.info(`✅ Evidence monitoring started: ${evidenceId}`);
       
     } catch (error) {
       console.error(`❌ Failed to start evidence monitoring: ${error.message}`);
@@ -245,7 +245,7 @@ export class QuantumHashIntegration {
     lastKnownHash: number,
     monitor: EvidenceMonitor
   ): void {
-    console.log(`👁️ Starting native file watch: ${filePath}`);
+    console.info(`👁️ Starting native file watch: ${filePath}`);
     
     try {
       // CRITICAL: Use Bun's native watcher with proper API
@@ -272,10 +272,10 @@ export class QuantumHashIntegration {
               if (newHash !== lastKnownHash) {
                 const alertLatency = Date.now() - event.timestamp;
                 
-                console.log(`🚨 TAMPER DETECTED: ${evidenceId}`);
-                console.log(`   Old hash: ${lastKnownHash.toString(16).padStart(8, '0')}`);
-                console.log(`   New hash: ${newHash.toString(16).padStart(8, '0')}`);
-                console.log(`   Latency: ${alertLatency}ms`);
+                console.info(`🚨 TAMPER DETECTED: ${evidenceId}`);
+                console.info(`   Old hash: ${lastKnownHash.toString(16).padStart(8, '0')}`);
+                console.info(`   New hash: ${newHash.toString(16).padStart(8, '0')}`);
+                console.info(`   Latency: ${alertLatency}ms`);
                 
                 // Trigger tamper alert
                 this.triggerTamperAlert({
@@ -315,10 +315,10 @@ export class QuantumHashIntegration {
             if (newHash !== lastKnownHash) {
               const alertLatency = Date.now() - lastCheck;
               
-              console.log(`🚨 TAMPER DETECTED: ${evidenceId}`);
-              console.log(`   Old hash: ${lastKnownHash.toString(16).padStart(8, '0')}`);
-              console.log(`   New hash: ${newHash.toString(16).padStart(8, '0')}`);
-              console.log(`   Latency: ${alertLatency}ms (polling mode)`);
+              console.info(`🚨 TAMPER DETECTED: ${evidenceId}`);
+              console.info(`   Old hash: ${lastKnownHash.toString(16).padStart(8, '0')}`);
+              console.info(`   New hash: ${newHash.toString(16).padStart(8, '0')}`);
+              console.info(`   Latency: ${alertLatency}ms (polling mode)`);
               
               this.triggerTamperAlert({
                 evidenceId,
@@ -340,13 +340,13 @@ export class QuantumHashIntegration {
         }, 500); // Poll every 500ms for sub-second detection
         
         watcher = { stop: () => clearInterval(checkInterval) };
-        console.log(`⚠️ Using optimized polling fallback (500ms interval)`);
+        console.info(`⚠️ Using optimized polling fallback (500ms interval)`);
       }
       
       // Store watcher reference for cleanup
       (monitor as any).watcher = watcher;
       
-      console.log(`✅ Native file watcher started: ${filePath}`);
+      console.info(`✅ Native file watcher started: ${filePath}`);
       
     } catch (error) {
       console.error(`❌ Failed to start native file watcher: ${error.message}`);
@@ -365,11 +365,11 @@ export class QuantumHashIntegration {
     latency: number;
     filePath: string;
   }): void {
-    console.log(`🚨 TRIGGERING TAMPER ALERT:`);
-    console.log(`   Evidence ID: ${alertData.evidenceId}`);
-    console.log(`   File Path: ${alertData.filePath}`);
-    console.log(`   Alert Latency: ${alertData.latency}ms`);
-    console.log(`   Hash Change: ${alertData.oldHash.toString(16).padStart(8, '0')} → ${alertData.newHash.toString(16).padStart(8, '0')}`);
+    console.info(`🚨 TRIGGERING TAMPER ALERT:`);
+    console.info(`   Evidence ID: ${alertData.evidenceId}`);
+    console.info(`   File Path: ${alertData.filePath}`);
+    console.info(`   Alert Latency: ${alertData.latency}ms`);
+    console.info(`   Hash Change: ${alertData.oldHash.toString(16).padStart(8, '0')} → ${alertData.newHash.toString(16).padStart(8, '0')}`);
     
     // Multi-channel alert system (simulated)
     this.sendEmailAlert(alertData);
@@ -384,28 +384,28 @@ export class QuantumHashIntegration {
    * Send email alert (simulated)
    */
   private sendEmailAlert(alertData: any): void {
-    console.log(`📧 Email alert sent to security@company.com`);
+    console.info(`📧 Email alert sent to security@company.com`);
   }
 
   /**
    * Send Slack alert (simulated)
    */
   private sendSlackAlert(alertData: any): void {
-    console.log(`💬 Slack alert sent to #security-alerts`);
+    console.info(`💬 Slack alert sent to #security-alerts`);
   }
 
   /**
    * Send webhook alert (simulated)
    */
   private sendWebhookAlert(alertData: any): void {
-    console.log(`🪝 Webhook alert sent to security API`);
+    console.info(`🪝 Webhook alert sent to security API`);
   }
 
   /**
    * Log tamper event to audit trail
    */
   private logTamperEvent(alertData: any): void {
-    console.log(`📝 Tamper event logged to audit trail`);
+    console.info(`📝 Tamper event logged to audit trail`);
   }
 
   /**
@@ -417,11 +417,11 @@ export class QuantumHashIntegration {
       // Stop native watcher if it exists
       if ((monitor as any).watcher) {
         (monitor as any).watcher.stop();
-        console.log(`⏹️ Native file watcher stopped: ${evidenceId}`);
+        console.info(`⏹️ Native file watcher stopped: ${evidenceId}`);
       }
       
       monitor.stop();
-      console.log(`⏹️ Evidence monitoring stopped: ${evidenceId}`);
+      console.info(`⏹️ Evidence monitoring stopped: ${evidenceId}`);
     }
   }
 
@@ -512,7 +512,7 @@ export class QuantumHashIntegration {
    * Save evidence metadata (simulated)
    */
   private async saveEvidenceMetadata(metadata: EvidenceMetadata): Promise<void> {
-    console.log(`💾 Saving evidence metadata: ${metadata.id}`);
+    console.info(`💾 Saving evidence metadata: ${metadata.id}`);
     // In production, this would save to database
     // await this.db.query('INSERT INTO evidence_metadata (...) VALUES (...)', metadata);
   }
@@ -529,7 +529,7 @@ export class QuantumHashIntegration {
    * Start file watch (simulated)
    */
   private startFileWatch(evidenceId: string, filePath: string, monitor: EvidenceMonitor): void {
-    console.log(`👁️ Starting file watch: ${filePath}`);
+    console.info(`👁️ Starting file watch: ${filePath}`);
     // In production, this would use fs.watch or similar
   }
 
@@ -537,7 +537,7 @@ export class QuantumHashIntegration {
    * Cleanup all resources
    */
   cleanup(): void {
-    console.log('🧹 Cleaning up QuantumHashIntegration resources...');
+    console.info('🧹 Cleaning up QuantumHashIntegration resources...');
     
     // Stop all monitors
     for (const [evidenceId, monitor] of this.evidenceMonitors) {
@@ -545,18 +545,18 @@ export class QuantumHashIntegration {
     }
     
     this.evidenceMonitors.clear();
-    console.log('✅ Cleanup complete');
+    console.info('✅ Cleanup complete');
   }
 }
 
 // Auto-run if executed directly
 if (import.meta.main) {
-  console.log('🎯 Phase 1 Execution - Evidence Integrity Pipeline');
-  console.log('===================================================\n');
+  console.info('🎯 Phase 1 Execution - Evidence Integrity Pipeline');
+  console.info('===================================================\n');
   
   // Test hardware acceleration detection
-  console.log('🔍 Testing hardware acceleration...');
-  console.log(`   BUN_ENABLE_CRC32_HW: ${Bun.env.BUN_ENABLE_CRC32_HW || 'undefined'}`);
+  console.info('🔍 Testing hardware acceleration...');
+  console.info(`   BUN_ENABLE_CRC32_HW: ${Bun.env.BUN_ENABLE_CRC32_HW || 'undefined'}`);
   
   // Initialize quantum hash integration
   const quantumIntegration = QuantumHashIntegration.getInstance({
@@ -567,23 +567,23 @@ if (import.meta.main) {
   });
   
   // Test data pipeline
-  console.log('\n🔒 Testing data pipeline...');
+  console.info('\n🔒 Testing data pipeline...');
   const testData = Buffer.from('test_evidence_data_' + Date.now());
   
   quantumIntegration.createDataPipeline(testData)
     .then((pipeline) => {
-      console.log('✅ Data pipeline test successful');
+      console.info('✅ Data pipeline test successful');
       
       // Test monitoring stats
       const stats = quantumIntegration.getMonitoringStats();
-      console.log('\n📊 Monitoring Statistics:');
-      console.log(`   Active monitors: ${stats.activeMonitors}`);
-      console.log(`   Total processed: ${stats.totalProcessed}`);
-      console.log(`   Hardware accelerated: ${stats.hardwareAccelerated ? '✅' : '❌'}`);
-      console.log(`   Schema version: ${stats.schemaVersion}`);
-      console.log(`   Uptime: ${stats.uptime.toFixed(2)}s`);
+      console.info('\n📊 Monitoring Statistics:');
+      console.info(`   Active monitors: ${stats.activeMonitors}`);
+      console.info(`   Total processed: ${stats.totalProcessed}`);
+      console.info(`   Hardware accelerated: ${stats.hardwareAccelerated ? '✅' : '❌'}`);
+      console.info(`   Schema version: ${stats.schemaVersion}`);
+      console.info(`   Uptime: ${stats.uptime.toFixed(2)}s`);
       
-      console.log('\n🎉 Phase 1 execution complete - Ready for production!');
+      console.info('\n🎉 Phase 1 execution complete - Ready for production!');
       
       // Cleanup
       quantumIntegration.cleanup();

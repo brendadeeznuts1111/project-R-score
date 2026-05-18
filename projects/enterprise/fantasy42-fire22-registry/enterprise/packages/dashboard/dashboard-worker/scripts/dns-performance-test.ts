@@ -38,8 +38,8 @@ class DNSPerformanceTester {
    * Run comprehensive DNS performance tests
    */
   async runPerformanceTests(): Promise<void> {
-    console.log('🧪 Fire22 DNS Performance Testing Suite');
-    console.log('='.repeat(60));
+    console.info('🧪 Fire22 DNS Performance Testing Suite');
+    console.info('='.repeat(60));
 
     // Test different TTL configurations
     const ttlConfigs = [5, 30, 60];
@@ -49,7 +49,7 @@ class DNSPerformanceTester {
 
     for (const ttl of ttlConfigs) {
       for (const verbose of verboseModes) {
-        console.log(`\n🔬 Testing TTL=${ttl}s, Verbose=${verbose}`);
+        console.info(`\n🔬 Testing TTL=${ttl}s, Verbose=${verbose}`);
         const result = await this.testConfiguration(ttl, verbose);
         results.push(result);
 
@@ -88,7 +88,7 @@ class DNSPerformanceTester {
         const endTime = Date.now();
         responseTimes.push(endTime - startTime);
 
-        console.log(`  Run ${i + 1}/${testRuns}: ${endTime - startTime}ms`);
+        console.info(`  Run ${i + 1}/${testRuns}: ${endTime - startTime}ms`);
       } catch (error) {
         console.warn(`  Run ${i + 1}/${testRuns}: Error - ${error.message}`);
         responseTimes.push(999999); // High value for error cases
@@ -136,7 +136,7 @@ class DNSPerformanceTester {
       fire22.getDebuggingConfig();
     } catch (error) {
       // Expected in demo mode, just for timing tests
-      console.log(`   Demo mode simulation: ${error.message}`);
+      console.info(`   Demo mode simulation: ${error.message}`);
     }
   }
 
@@ -144,8 +144,8 @@ class DNSPerformanceTester {
    * Print comprehensive test results
    */
   private printSummaryReport(results: DNSTestResult[]): void {
-    console.log('\n📊 DNS Performance Test Results');
-    console.log('='.repeat(60));
+    console.info('\n📊 DNS Performance Test Results');
+    console.info('='.repeat(60));
 
     // Group by TTL
     const ttlGroups = results.reduce(
@@ -159,13 +159,13 @@ class DNSPerformanceTester {
     );
 
     for (const [ttl, ttlResults] of Object.entries(ttlGroups)) {
-      console.log(`\n🕒 TTL: ${ttl} seconds`);
+      console.info(`\n🕒 TTL: ${ttl} seconds`);
 
       ttlResults.forEach(result => {
         const hitRate = result.results.cacheHitRate.toFixed(1);
         const avgTime = result.results.avgResponseTime.toFixed(0);
 
-        console.log(
+        console.info(
           `  ${result.verboseMode.padEnd(5)}: ${avgTime}ms avg, ${hitRate}% cache hit, ${result.results.totalOperations} ops`
         );
       });
@@ -175,62 +175,62 @@ class DNSPerformanceTester {
         current.results.avgResponseTime < best.results.avgResponseTime ? current : best
       );
 
-      console.log(
+      console.info(
         `  🏆 Best: ${bestResult.verboseMode} mode (${bestResult.results.avgResponseTime.toFixed(0)}ms)`
       );
     }
 
     // Overall recommendations
-    console.log('\n💡 Performance Recommendations:');
+    console.info('\n💡 Performance Recommendations:');
 
     const overallBest = results.reduce((best, current) =>
       current.results.avgResponseTime < best.results.avgResponseTime ? current : best
     );
 
-    console.log(
+    console.info(
       `  • Optimal configuration: TTL=${overallBest.ttl}s, Verbose=${overallBest.verboseMode}`
     );
-    console.log(
+    console.info(
       `  • Best performance: ${overallBest.results.avgResponseTime.toFixed(0)}ms average`
     );
-    console.log(
+    console.info(
       `  • Best cache hit rate: ${Math.max(...results.map(r => r.results.cacheHitRate)).toFixed(1)}%`
     );
 
     // Environment-specific recommendations
-    console.log('\n🔧 Environment Configuration Recommendations:');
-    console.log('  Development:');
-    console.log('    BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS=5');
-    console.log('    BUN_CONFIG_VERBOSE_FETCH=true');
-    console.log('  Production:');
-    console.log('    BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS=30');
-    console.log('    BUN_CONFIG_VERBOSE_FETCH=false');
-    console.log('  High-Performance:');
-    console.log('    BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS=60');
-    console.log('    BUN_CONFIG_VERBOSE_FETCH=false');
+    console.info('\n🔧 Environment Configuration Recommendations:');
+    console.info('  Development:');
+    console.info('    BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS=5');
+    console.info('    BUN_CONFIG_VERBOSE_FETCH=true');
+    console.info('  Production:');
+    console.info('    BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS=30');
+    console.info('    BUN_CONFIG_VERBOSE_FETCH=false');
+    console.info('  High-Performance:');
+    console.info('    BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS=60');
+    console.info('    BUN_CONFIG_VERBOSE_FETCH=false');
   }
 
   /**
    * Test real-world Fire22 integration scenarios
    */
   private async testRealWorldScenarios(): Promise<void> {
-    console.log('\n🌐 Real-World Scenario Testing');
-    console.log('='.repeat(60));
+    console.info('\n🌐 Real-World Scenario Testing');
+    console.info('='.repeat(60));
 
     // Test cold start scenario
-    console.log('\n❄️ Cold Start Test:');
+    console.info('\n❄️ Cold Start Test:');
     process.env.BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS = '30';
 
     const coldStartTime = Date.now();
     const fire22Cold = new Fire22Integration(this.testEnv);
     const coldStats = fire22Cold.getDnsStats();
-    console.log(`  Cold start time: ${Date.now() - coldStartTime}ms`);
-    console.log(
+    console.info(`  Cold start time: ${Date.now() - coldStartTime}ms`);
+    console.info(
       `  Domains prefetched: Fire22=${coldStats.domains.length}, DB=${coldStats.databaseDomains.length}`
     );
 
     // Test warm cache performance
-    console.log('\n🔥 Warm Cache Test:');
+    console.info('\n🔥 Warm Cache Test:');
     const warmStartTime = Date.now();
 
     for (let i = 0; i < 3; i++) {
@@ -238,25 +238,25 @@ class DNSPerformanceTester {
     }
 
     const warmStats = fire22Cold.getDnsStats();
-    console.log(`  Warm cache operations: ${Date.now() - warmStartTime}ms for 3 rounds`);
-    console.log(`  Cache efficiency: ${warmStats.cacheSize > 0 ? 'Active' : 'Inactive'}`);
-    console.log(`  Total operations: ${warmStats.totalCount}`);
+    console.info(`  Warm cache operations: ${Date.now() - warmStartTime}ms for 3 rounds`);
+    console.info(`  Cache efficiency: ${warmStats.cacheSize > 0 ? 'Active' : 'Inactive'}`);
+    console.info(`  Total operations: ${warmStats.totalCount}`);
 
     // Test cache refresh
-    console.log('\n🔄 Cache Refresh Test:');
+    console.info('\n🔄 Cache Refresh Test:');
     const refreshStartTime = Date.now();
     await fire22Cold.refreshDnsCache();
-    console.log(`  Cache refresh time: ${Date.now() - refreshStartTime}ms`);
+    console.info(`  Cache refresh time: ${Date.now() - refreshStartTime}ms`);
 
     // Test verbose fetch modes
-    console.log('\n🔍 Verbose Fetch Mode Test:');
+    console.info('\n🔍 Verbose Fetch Mode Test:');
     fire22Cold.enableVerboseFetch('curl');
-    console.log('  Enabled curl mode - check console for curl commands');
+    console.info('  Enabled curl mode - check console for curl commands');
 
     await this.simulateApiCalls(fire22Cold);
 
     fire22Cold.disableVerboseFetch();
-    console.log('  Disabled verbose fetch');
+    console.info('  Disabled verbose fetch');
   }
 
   /**
@@ -270,42 +270,42 @@ class DNSPerformanceTester {
    * Test Bun DNS API availability
    */
   async testBunDnsApi(): Promise<void> {
-    console.log('\n🔬 Bun DNS API Compatibility Test');
-    console.log('-'.repeat(40));
+    console.info('\n🔬 Bun DNS API Compatibility Test');
+    console.info('-'.repeat(40));
 
     try {
       const stats = dns.getCacheStats();
-      console.log('✅ dns.getCacheStats() available');
-      console.log(`   Current stats:`, stats);
+      console.info('✅ dns.getCacheStats() available');
+      console.info(`   Current stats:`, stats);
     } catch (error) {
-      console.log('❌ dns.getCacheStats() unavailable:', error.message);
+      console.info('❌ dns.getCacheStats() unavailable:', error.message);
     }
 
     try {
       // Test DNS prefetch if available
       if (dns.prefetch) {
         await dns.prefetch('fire22.ag');
-        console.log('✅ dns.prefetch() available and working');
+        console.info('✅ dns.prefetch() available and working');
       } else {
-        console.log('⚠️ dns.prefetch() not available');
+        console.info('⚠️ dns.prefetch() not available');
       }
     } catch (error) {
-      console.log('❌ dns.prefetch() failed:', error.message);
+      console.info('❌ dns.prefetch() failed:', error.message);
     }
 
     // Test environment variable reading
     const ttl = process.env.BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS || 'not set';
     const verbose = process.env.BUN_CONFIG_VERBOSE_FETCH || 'not set';
 
-    console.log('📋 Environment Variables:');
-    console.log(`   BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS: ${ttl}`);
-    console.log(`   BUN_CONFIG_VERBOSE_FETCH: ${verbose}`);
+    console.info('📋 Environment Variables:');
+    console.info(`   BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS: ${ttl}`);
+    console.info(`   BUN_CONFIG_VERBOSE_FETCH: ${verbose}`);
   }
 }
 
 // Run the test suite
 async function runTests() {
-  console.log('🚀 Starting Fire22 DNS Performance Test Suite\n');
+  console.info('🚀 Starting Fire22 DNS Performance Test Suite\n');
 
   const tester = new DNSPerformanceTester();
 
@@ -313,12 +313,12 @@ async function runTests() {
     await tester.testBunDnsApi();
     await tester.runPerformanceTests();
 
-    console.log('\n✅ All tests completed successfully!');
-    console.log('\n💡 Next steps:');
-    console.log('   1. Review performance recommendations above');
-    console.log('   2. Update wrangler.toml with optimal DNS TTL settings');
-    console.log('   3. Test in production environment');
-    console.log('   4. Monitor DNS cache hit rates via /api/fire22/dns-stats');
+    console.info('\n✅ All tests completed successfully!');
+    console.info('\n💡 Next steps:');
+    console.info('   1. Review performance recommendations above');
+    console.info('   2. Update wrangler.toml with optimal DNS TTL settings');
+    console.info('   3. Test in production environment');
+    console.info('   4. Monitor DNS cache hit rates via /api/fire22/dns-stats');
   } catch (error) {
     console.error('\n❌ Test suite failed:', error);
     process.exit(1);

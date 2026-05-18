@@ -59,7 +59,7 @@ export class QuantumArbRouter {
 			regionName,
 			QuantumURLPatternSpyFactory.createMulti(api, 'fetchOdds', newPatterns, { cacheResults: enableCache })
 		);
-		console.log(`Patterns for region '${regionName}' dynamically updated.`);
+		console.info(`Patterns for region '${regionName}' dynamically updated.`);
 		
 		// Trigger HMR
 		this.hmrManager.triggerUpdate(regionName);

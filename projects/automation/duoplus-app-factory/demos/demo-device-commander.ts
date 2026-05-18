@@ -6,16 +6,16 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.hex("#FF6B35").bold(`
+console.info(chalk.hex("#FF6B35").bold(`
 ╔══════════════════════════════════════════════╗
 ║     🧬 NEBULA-FLOW™ DEVICE COMMANDER         ║
 ║        Device Lifecycle Management           ║
 ╚══════════════════════════════════════════════╝
 `));
 
-console.log(chalk.blue.bold("🎯 Key Features Implemented:"));
+console.info(chalk.blue.bold("🎯 Key Features Implemented:"));
 
-console.log(`
+console.info(`
 ${chalk.green("✅")} Device Listing      - List all devices with status & IP
 ${chalk.green("✅")} Clone Operations    - Auto-name new Starlight-IDs  
 ${chalk.green("✅")} Snapshot Management - Create device snapshots
@@ -26,9 +26,9 @@ ${chalk.green("✅")} Mass Flash          - 120-node parallel deployment
 ${chalk.green("✅")} Device Destruction  - Clean removal with confirmation
 `);
 
-console.log(chalk.cyan.bold("🔧 API Integration:"));
+console.info(chalk.cyan.bold("🔧 API Integration:"));
 
-console.log(`
+console.info(`
 Base URL: https://api.duoplus.com/v1
 Auth: Bearer \${DUOPLUS_API_KEY}
 
@@ -42,9 +42,9 @@ Endpoints:
 • WS     /devices/{id}/logcat
 `);
 
-console.log(chalk.yellow.bold("⌨️  Hot-Key Commands:"));
+console.info(chalk.yellow.bold("⌨️  Hot-Key Commands:"));
 
-console.log(`
+console.info(`
 ┌─────────────────────────────────────┐
 │ Key │ Action                 │ Time │
 ├─────┼────────────────────────┼──────┤
@@ -59,9 +59,9 @@ console.log(`
 └─────────────────────────────────────┘
 `);
 
-console.log(chalk.magenta.bold("🚀 Usage Examples:"));
+console.info(chalk.magenta.bold("🚀 Usage Examples:"));
 
-console.log(`
+console.info(`
 // Start dashboard
 ${chalk.gray("$")} bun run dashboard
 
@@ -75,9 +75,9 @@ ${chalk.gray("// Press 'm' for mass-flash")}
 ${chalk.gray("// Use ↑↓ to select, then c/s/x/p/r/l")}
 `);
 
-console.log(chalk.green.bold("💡 Integration Notes:"));
+console.info(chalk.green.bold("💡 Integration Notes:"));
 
-console.log(`
+console.info(`
 • Seamlessly integrated into existing Lightning dashboard
 • Same PTY session - no browser required  
 • Real-time status updates and progress bars
@@ -87,5 +87,5 @@ console.log(`
 • Error handling with graceful fallbacks
 `);
 
-console.log(chalk.blue.bold("\n🎉 Nebula-Flow™ Device Commander Ready!"));
-console.log(chalk.gray("Run 'bun run dashboard' and press 'd' to activate\n"));
+console.info(chalk.blue.bold("\n🎉 Nebula-Flow™ Device Commander Ready!"));
+console.info(chalk.gray("Run 'bun run dashboard' and press 'd' to activate\n"));

@@ -43,14 +43,14 @@ class BettingWorkflowWebSocketClient {
       });
 
       this.socket.on('connect', () => {
-        console.log('🔌 Connected to WebSocket server');
+        console.info('🔌 Connected to WebSocket server');
         this.reconnectAttempts = 0;
         this.reconnectDelay = 1000;
         resolve();
       });
 
       this.socket.on('disconnect', (reason) => {
-        console.log('🔌 Disconnected from WebSocket server:', reason);
+        console.info('🔌 Disconnected from WebSocket server:', reason);
 
         if (reason === 'io server disconnect') {
           // Server disconnected us, try to reconnect
@@ -90,7 +90,7 @@ class BettingWorkflowWebSocketClient {
     }
 
     this.socket.emit('subscribe_workflow', workflowId);
-    console.log(`📡 Subscribed to workflow: ${workflowId}`);
+    console.info(`📡 Subscribed to workflow: ${workflowId}`);
   }
 
   /**
@@ -102,7 +102,7 @@ class BettingWorkflowWebSocketClient {
     }
 
     this.socket.emit('unsubscribe_workflow', workflowId);
-    console.log(`🚫 Unsubscribed from workflow: ${workflowId}`);
+    console.info(`🚫 Unsubscribed from workflow: ${workflowId}`);
   }
 
   /**
@@ -124,7 +124,7 @@ class BettingWorkflowWebSocketClient {
 
     // Authentication events
     this.socket.on('authenticated', (data: { userId: string }) => {
-      console.log('✅ WebSocket authenticated for user:', data.userId);
+      console.info('✅ WebSocket authenticated for user:', data.userId);
       this.emit('authenticated', data);
     });
 
@@ -135,28 +135,28 @@ class BettingWorkflowWebSocketClient {
 
     // Subscription events
     this.socket.on('subscribed', (data: { workflowId: string }) => {
-      console.log('✅ Subscribed to workflow:', data.workflowId);
+      console.info('✅ Subscribed to workflow:', data.workflowId);
       this.emit('subscribed', data);
     });
 
     this.socket.on('unsubscribed', (data: { workflowId: string }) => {
-      console.log('🚫 Unsubscribed from workflow:', data.workflowId);
+      console.info('🚫 Unsubscribed from workflow:', data.workflowId);
       this.emit('unsubscribed', data);
     });
 
     // Workflow events
     this.socket.on('workflow.created', (workflow: WorkflowUpdate) => {
-      console.log('🆕 Workflow created:', workflow.id);
+      console.info('🆕 Workflow created:', workflow.id);
       this.emit('workflow.created', workflow);
     });
 
     this.socket.on('workflow.updated', (workflow: WorkflowUpdate) => {
-      console.log('📝 Workflow updated:', workflow.id, workflow.status);
+      console.info('📝 Workflow updated:', workflow.id, workflow.status);
       this.emit('workflow.updated', workflow);
     });
 
     this.socket.on('workflow.approved', (approval: ApprovalUpdate) => {
-      console.log('✅ Workflow step approved:', approval.workflowId, approval.stepId);
+      console.info('✅ Workflow step approved:', approval.workflowId, approval.stepId);
       this.emit('workflow.approved', approval);
     });
 
@@ -178,7 +178,7 @@ class BettingWorkflowWebSocketClient {
     }
 
     this.reconnectAttempts++;
-    console.log(`🔄 Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${this.reconnectDelay}ms`);
+    console.info(`🔄 Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${this.reconnectDelay}ms`);
 
     setTimeout(() => {
       if (this.socket && !this.socket.connected) {
@@ -252,18 +252,18 @@ class BettingWorkflowWebSocketClient {
 // ===== USAGE EXAMPLES =====
 
 async function basicWebSocketExample() {
-  console.log('🚀 Starting basic WebSocket client example...\n');
+  console.info('🚀 Starting basic WebSocket client example...\n');
 
   const client = new BettingWorkflowWebSocketClient();
 
   try {
     // Connect to server
     await client.connect();
-    console.log('✅ Connected successfully\n');
+    console.info('✅ Connected successfully\n');
 
     // Set up event listeners
     client.on('workflow.created', (workflow: WorkflowUpdate) => {
-      console.log('🎉 New workflow created:', {
+      console.info('🎉 New workflow created:', {
         id: workflow.id,
         status: workflow.status,
         step: workflow.currentStep
@@ -271,7 +271,7 @@ async function basicWebSocketExample() {
     });
 
     client.on('workflow.updated', (workflow: WorkflowUpdate) => {
-      console.log('📈 Workflow updated:', {
+      console.info('📈 Workflow updated:', {
         id: workflow.id,
         status: workflow.status,
         lastUpdate: workflow.updatedAt
@@ -279,7 +279,7 @@ async function basicWebSocketExample() {
     });
 
     client.on('workflow.approved', (approval: ApprovalUpdate) => {
-      console.log('👍 Workflow approved:', {
+      console.info('👍 Workflow approved:', {
         workflowId: approval.workflowId,
         stepId: approval.stepId,
         approver: approval.approver,
@@ -291,12 +291,12 @@ async function basicWebSocketExample() {
     const testWorkflowId = 'test-workflow-id';
     client.subscribeToWorkflow(testWorkflowId);
 
-    console.log('🎧 Listening for workflow updates...');
-    console.log('💡 Create or update workflows via the REST API to see real-time updates\n');
+    console.info('🎧 Listening for workflow updates...');
+    console.info('💡 Create or update workflows via the REST API to see real-time updates\n');
 
     // Keep the connection alive for demonstration
     setTimeout(() => {
-      console.log('⏰ Demo timeout reached, disconnecting...');
+      console.info('⏰ Demo timeout reached, disconnecting...');
       client.disconnect();
     }, 30000); // 30 seconds
 
@@ -306,7 +306,7 @@ async function basicWebSocketExample() {
 }
 
 async function authenticatedWebSocketExample() {
-  console.log('🔐 Starting authenticated WebSocket client example...\n');
+  console.info('🔐 Starting authenticated WebSocket client example...\n');
 
   // For production, use your actual JWT token
   const jwtToken = process.env.JWT_TOKEN || 'your-jwt-token-here';
@@ -316,10 +316,10 @@ async function authenticatedWebSocketExample() {
   try {
     // Connect with authentication
     await client.connect(jwtToken);
-    console.log('✅ Connected and authenticated successfully\n');
+    console.info('✅ Connected and authenticated successfully\n');
 
     // The server will automatically join user-specific rooms based on JWT
-    console.log('👤 User-specific notifications enabled');
+    console.info('👤 User-specific notifications enabled');
 
     // Subscribe to multiple workflows
     const workflowIds = ['workflow-1', 'workflow-2', 'workflow-3'];
@@ -328,11 +328,11 @@ async function authenticatedWebSocketExample() {
       client.subscribeToWorkflow(id);
     });
 
-    console.log('🎧 Listening for updates on multiple workflows...\n');
+    console.info('🎧 Listening for updates on multiple workflows...\n');
 
     // Handle authentication events
     client.on('authenticated', (data) => {
-      console.log('🔑 Authentication confirmed for user:', data.userId);
+      console.info('🔑 Authentication confirmed for user:', data.userId);
     });
 
     client.on('authentication_error', (error) => {
@@ -350,12 +350,12 @@ async function authenticatedWebSocketExample() {
 }
 
 async function errorHandlingExample() {
-  console.log('🛡️ Starting error handling WebSocket client example...\n');
+  console.info('🛡️ Starting error handling WebSocket client example...\n');
 
   const client = new BettingWorkflowWebSocketClient('http://invalid-server:9999');
 
   client.on('max_reconnect_attempts_reached', () => {
-    console.log('🔄 Max reconnection attempts reached, giving up');
+    console.info('🔄 Max reconnection attempts reached, giving up');
   });
 
   client.on('error', (error) => {
@@ -365,11 +365,11 @@ async function errorHandlingExample() {
   try {
     await client.connect();
   } catch (error) {
-    console.log('💡 As expected, connection failed. Demonstrating error handling:');
-    console.log('   - Automatic reconnection attempts');
-    console.log('   - Exponential backoff');
-    console.log('   - Event emission for error handling');
-    console.log('   - Graceful failure after max attempts\n');
+    console.info('💡 As expected, connection failed. Demonstrating error handling:');
+    console.info('   - Automatic reconnection attempts');
+    console.info('   - Exponential backoff');
+    console.info('   - Event emission for error handling');
+    console.info('   - Graceful failure after max attempts\n');
 
     // In a real app, you might show a user-friendly message or retry with user input
   }

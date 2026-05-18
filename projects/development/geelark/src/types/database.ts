@@ -55,7 +55,7 @@ export function queryMany<T extends DatabaseRow>(
  * @example
  * ```typescript
  * const result = queryRun(db, "INSERT INTO users (name) VALUES (?)", "Alice");
- * console.log(result.changes); // 1
+ * console.info(result.changes); // 1
  * ```
  */
 export function queryRun(

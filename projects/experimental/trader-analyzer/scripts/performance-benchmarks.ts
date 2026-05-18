@@ -18,7 +18,7 @@ export class BunPerformanceBenchmarks {
   private static results: BenchmarkResult[] = [];
 
   static async runAllBenchmarks(): Promise<BenchmarkResult[]> {
-    console.log('🏁 Running Bun Performance Benchmarks...\n');
+    console.info('🏁 Running Bun Performance Benchmarks...\n');
 
     this.results = [];
 
@@ -52,7 +52,7 @@ export class BunPerformanceBenchmarks {
     // URL parsing benchmark
     await this.benchmarkURLParsing();
 
-    console.log('✅ All benchmarks completed!\n');
+    console.info('✅ All benchmarks completed!\n');
     return this.results;
   }
 
@@ -382,7 +382,7 @@ export class BunPerformanceBenchmarks {
     };
 
     await Bun.write(filename, JSON.stringify(results, null, 2));
-    console.log(`📁 Results saved to ${filename}`);
+    console.info(`📁 Results saved to ${filename}`);
   }
 
   static async loadResults(filename: string = 'bun-benchmarks.json'): Promise<BenchmarkResult[]> {
@@ -399,18 +399,18 @@ export class BunPerformanceBenchmarks {
 
 // Demo function
 async function demo() {
-  console.log('🏁 Running Bun Performance Benchmarks Demo...\n');
+  console.info('🏁 Running Bun Performance Benchmarks Demo...\n');
 
   // Run all benchmarks
   const results = await BunPerformanceBenchmarks.runAllBenchmarks();
 
   // Display formatted results
-  console.log(BunPerformanceBenchmarks.formatResults(results));
+  console.info(BunPerformanceBenchmarks.formatResults(results));
 
   // Save results
   await BunPerformanceBenchmarks.saveResults();
 
-  console.log('\n✨ Benchmark demo complete!');
+  console.info('\n✨ Benchmark demo complete!');
 }
 
 // Run demo if executed directly

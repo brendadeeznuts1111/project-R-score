@@ -30,7 +30,7 @@ const mockProcess: MockProcess = {
 };
 
 const mockSpawn = (command: string, args: string[]): MockSpawn => {
-  console.log(`[Spawn] ${command} ${args.join(' ')}`);
+  console.info(`[Spawn] ${command} ${args.join(' ')}`);
   return {
     on: (event: string, handler: Function) => {
       if (event === 'close') {
@@ -41,12 +41,12 @@ const mockSpawn = (command: string, args: string[]): MockSpawn => {
 };
 
 const mockReadFileSync = (path: string): string => {
-  console.log(`[ReadFile] ${path}`);
+  console.info(`[ReadFile] ${path}`);
   return '{}';
 };
 
 const mockWriteFileSync = (path: string, data: string): void => {
-  console.log(`[WriteFile] ${path} (${data.length} bytes)`);
+  console.info(`[WriteFile] ${path} (${data.length} bytes)`);
 };
 
 const mockJoin = (...paths: string[]): string => {
@@ -90,7 +90,7 @@ class CascadeDeployment {
   private startTime: number = Date.now();
   
   constructor() {
-    console.log('🚀 Initializing Cascade Customization System Deployment...');
+    console.info('🚀 Initializing Cascade Customization System Deployment...');
     this.log(`Deployment started at ${new Date().toISOString()}`);
     this.log(`Environment: ${this.config.environment}`);
     this.log(`Domain: ${this.config.domain}`);
@@ -619,7 +619,7 @@ class CascadeDeployment {
     const timestamp = new Date().toISOString();
     const logEntry = `[${timestamp}] ${message}`;
     this.deploymentLog.push(logEntry);
-    console.log(logEntry);
+    console.info(logEntry);
   }
   
   private generateDeploymentReport(result: DeploymentResult): void {
@@ -688,15 +688,15 @@ async function main() {
   try {
     const result = await deployment.deploy();
     
-    console.log('\\n🎉 CASCADE CUSTOMIZATION SYSTEM DEPLOYMENT COMPLETE!');
-    console.log(`📊 Dashboard: ${result.endpoints?.dashboard}`);
-    console.log(`📈 Benchmarks: ${result.endpoints?.benchmarks}`);
-    console.log(`⚙️ Configuration: ${result.endpoints?.configuration}`);
-    console.log(`🏥 Health: ${result.endpoints?.health}`);
-    console.log(`⏱️ Deployment Time: ${(result.deploymentTime / 1000).toFixed(2)}s`);
+    console.info('\\n🎉 CASCADE CUSTOMIZATION SYSTEM DEPLOYMENT COMPLETE!');
+    console.info(`📊 Dashboard: ${result.endpoints?.dashboard}`);
+    console.info(`📈 Benchmarks: ${result.endpoints?.benchmarks}`);
+    console.info(`⚙️ Configuration: ${result.endpoints?.configuration}`);
+    console.info(`🏥 Health: ${result.endpoints?.health}`);
+    console.info(`⏱️ Deployment Time: ${(result.deploymentTime / 1000).toFixed(2)}s`);
     
     if (result.healthReport) {
-      console.log(`💚 Cascade Score: ${result.healthReport?.cascadeScore?.toFixed(1) || 'N/A'}%`);
+      console.info(`💚 Cascade Score: ${result.healthReport?.cascadeScore?.toFixed(1) || 'N/A'}%`);
     }
     
     mockProcess.exit(0);

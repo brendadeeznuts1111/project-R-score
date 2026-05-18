@@ -59,18 +59,18 @@ function formatTime(ms: number): string {
 }
 
 async function runBenchmark() {
-  console.log("=".repeat(70));
-  console.log("Bun v1.3.9 String & Collection Optimization Benchmarks");
-  console.log("=".repeat(70));
-  console.log(`Bun version: ${Bun.version}`);
-  console.log(`Platform: ${process.platform} ${process.arch}`);
-  console.log("");
+  console.info("=".repeat(70));
+  console.info("Bun v1.3.9 String & Collection Optimization Benchmarks");
+  console.info("=".repeat(70));
+  console.info(`Bun version: ${Bun.version}`);
+  console.info(`Platform: ${process.platform} ${process.arch}`);
+  console.info("");
   
   const ITERATIONS = 10_000_000;
   
   // String#startsWith benchmarks
-  console.log("🔍 String.prototype.startsWith");
-  console.log("-".repeat(70));
+  console.info("🔍 String.prototype.startsWith");
+  console.info("-".repeat(70));
   
   for (const [size, str] of Object.entries(TEST_STRINGS)) {
     const prefix = TEST_PREFIXES[size as keyof typeof TEST_PREFIXES];
@@ -99,19 +99,19 @@ async function runBenchmark() {
       ITERATIONS
     );
     
-    console.log(`${size.padEnd(8)} | Basic: ${formatTime(basicTime / ITERATIONS).padEnd(12)} | With index: ${formatTime(indexTime / ITERATIONS).padEnd(12)} | Constant: ${formatTime(constantTime / ITERATIONS).padEnd(12)}`);
+    console.info(`${size.padEnd(8)} | Basic: ${formatTime(basicTime / ITERATIONS).padEnd(12)} | With index: ${formatTime(indexTime / ITERATIONS).padEnd(12)} | Constant: ${formatTime(constantTime / ITERATIONS).padEnd(12)}`);
   }
   
-  console.log("");
-  console.log("Expected improvements:");
-  console.log("  • Basic startsWith:      ~1.42x faster");
-  console.log("  • startsWith with index: ~1.22x faster");
-  console.log("  • Constant folding:     ~5.76x faster");
-  console.log("");
+  console.info("");
+  console.info("Expected improvements:");
+  console.info("  • Basic startsWith:      ~1.42x faster");
+  console.info("  • startsWith with index: ~1.22x faster");
+  console.info("  • Constant folding:     ~5.76x faster");
+  console.info("");
   
   // String#trim benchmarks
-  console.log("✂️  String.prototype.trim / trimStart / trimEnd");
-  console.log("-".repeat(70));
+  console.info("✂️  String.prototype.trim / trimStart / trimEnd");
+  console.info("-".repeat(70));
   
   const trimTestStrings = {
     short: "  Hello World  ",
@@ -138,19 +138,19 @@ async function runBenchmark() {
       ITERATIONS
     );
     
-    console.log(`${size.padEnd(8)} | trim: ${formatTime(trimTime / ITERATIONS).padEnd(12)} | trimStart: ${formatTime(trimStartTime / ITERATIONS).padEnd(12)} | trimEnd: ${formatTime(trimEndTime / ITERATIONS).padEnd(12)}`);
+    console.info(`${size.padEnd(8)} | trim: ${formatTime(trimTime / ITERATIONS).padEnd(12)} | trimStart: ${formatTime(trimStartTime / ITERATIONS).padEnd(12)} | trimEnd: ${formatTime(trimEndTime / ITERATIONS).padEnd(12)}`);
   }
   
-  console.log("");
-  console.log("Expected improvements:");
-  console.log("  • trim:      ~1.17x faster");
-  console.log("  • trimStart: ~1.10x faster");
-  console.log("  • trimEnd:   ~1.42x faster");
-  console.log("");
+  console.info("");
+  console.info("Expected improvements:");
+  console.info("  • trim:      ~1.17x faster");
+  console.info("  • trimStart: ~1.10x faster");
+  console.info("  • trimEnd:   ~1.42x faster");
+  console.info("");
   
   // String#replace (rope optimization)
-  console.log("🔄 String.prototype.replace (Rope Optimization)");
-  console.log("-".repeat(70));
+  console.info("🔄 String.prototype.replace (Rope Optimization)");
+  console.info("-".repeat(70));
   
   const replaceTest = TEST_STRINGS.medium;
   const replaceIterations = 1_000_000;
@@ -161,14 +161,14 @@ async function runBenchmark() {
     replaceIterations
   );
   
-  console.log(`Average time: ${formatTime(replaceTime / replaceIterations)}`);
-  console.log("Note: Returns rope (lazy concatenation) instead of eager copy");
-  console.log("      This avoids unnecessary allocations for short-lived results");
-  console.log("");
+  console.info(`Average time: ${formatTime(replaceTime / replaceIterations)}`);
+  console.info("Note: Returns rope (lazy concatenation) instead of eager copy");
+  console.info("      This avoids unnecessary allocations for short-lived results");
+  console.info("");
   
   // Set#size and Map#size benchmarks
-  console.log("📊 Set#size and Map#size");
-  console.log("-".repeat(70));
+  console.info("📊 Set#size and Map#size");
+  console.info("-".repeat(70));
   
   const setSize = 1000;
   const mapSize = 1000;
@@ -198,13 +198,13 @@ async function runBenchmark() {
     ITERATIONS
   );
   
-  console.log(`Set#size:  ${formatTime(setSizeTime / ITERATIONS).padEnd(12)} | Expected: ~2.24x faster`);
-  console.log(`Map#size:  ${formatTime(mapSizeTime / ITERATIONS).padEnd(12)} | Expected: ~2.74x faster`);
-  console.log("");
+  console.info(`Set#size:  ${formatTime(setSizeTime / ITERATIONS).padEnd(12)} | Expected: ~2.24x faster`);
+  console.info(`Map#size:  ${formatTime(mapSizeTime / ITERATIONS).padEnd(12)} | Expected: ~2.74x faster`);
+  console.info("");
   
   // AbortSignal.abort() benchmark
-  console.log("🚫 AbortSignal.abort() (No Listeners)");
-  console.log("-".repeat(70));
+  console.info("🚫 AbortSignal.abort() (No Listeners)");
+  console.info("-".repeat(70));
   
   const abortIterations = 1_000_000;
   
@@ -229,19 +229,19 @@ async function runBenchmark() {
     abortIterations
   );
   
-  console.log(`No listeners:    ${formatTime(abortNoListenersTime / abortIterations).padEnd(12)} | Expected: ~6% faster`);
-  console.log(`With listeners:  ${formatTime(abortWithListenersTime / abortIterations).padEnd(12)} | (same as before)`);
-  console.log("");
-  console.log("Note: AbortSignal.abort() skips Event creation when no listeners");
-  console.log("      Saves ~16ms per 1M calls");
-  console.log("");
+  console.info(`No listeners:    ${formatTime(abortNoListenersTime / abortIterations).padEnd(12)} | Expected: ~6% faster`);
+  console.info(`With listeners:  ${formatTime(abortWithListenersTime / abortIterations).padEnd(12)} | (same as before)`);
+  console.info("");
+  console.info("Note: AbortSignal.abort() skips Event creation when no listeners");
+  console.info("      Saves ~16ms per 1M calls");
+  console.info("");
   
-  console.log("=".repeat(70));
-  console.log("SUMMARY");
-  console.log("=".repeat(70));
-  console.log("All optimizations are in JavaScriptCore (JSC) and apply automatically.");
-  console.log("No code changes required - just upgrade to Bun v1.3.9!");
-  console.log("");
+  console.info("=".repeat(70));
+  console.info("SUMMARY");
+  console.info("=".repeat(70));
+  console.info("All optimizations are in JavaScriptCore (JSC) and apply automatically.");
+  console.info("No code changes required - just upgrade to Bun v1.3.9!");
+  console.info("");
 }
 
 runBenchmark().catch(console.error);

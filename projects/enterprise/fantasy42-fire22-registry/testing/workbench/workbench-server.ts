@@ -39,12 +39,12 @@ class WorkbenchServer {
 
   private async initializeFantasy402Service(): Promise<void> {
     try {
-      console.log('🚀 Initializing Fantasy402 service for workbench...');
+      console.info('🚀 Initializing Fantasy402 service for workbench...');
       const initialized = await fantasy402Service.initialize();
       this.isInitialized = initialized;
 
       if (initialized) {
-        console.log('✅ Fantasy402 service initialized successfully');
+        console.info('✅ Fantasy402 service initialized successfully');
       } else {
         console.warn('⚠️ Fantasy402 service initialization failed');
       }
@@ -451,19 +451,19 @@ const server = Bun.serve({
   },
 });
 
-console.log('🧪 Fantasy402 Testing Workbench Server');
-console.log('======================================');
-console.log(`🌐 Server running at: http://${server.hostname}:${server.port}`);
-console.log(`🔗 Workbench URL: http://${server.hostname}:${server.port}/workbench`);
-console.log(`📊 API Base: http://${server.hostname}:${server.port}/api/fantasy402/`);
-console.log('');
-console.log('Available endpoints:');
-console.log('  GET  /workbench                     - Testing workbench UI');
-console.log('  GET  /api/fantasy402/health         - Health check');
-console.log('  GET  /api/fantasy402/token-info     - Token information');
-console.log('  POST /api/fantasy402/auth/refresh   - Refresh token');
-console.log('  GET  /api/fantasy402/test/*         - Various test endpoints');
-console.log('');
-console.log('🚀 Ready for testing!');
+console.info('🧪 Fantasy402 Testing Workbench Server');
+console.info('======================================');
+console.info(`🌐 Server running at: http://${server.hostname}:${server.port}`);
+console.info(`🔗 Workbench URL: http://${server.hostname}:${server.port}/workbench`);
+console.info(`📊 API Base: http://${server.hostname}:${server.port}/api/fantasy402/`);
+console.info('');
+console.info('Available endpoints:');
+console.info('  GET  /workbench                     - Testing workbench UI');
+console.info('  GET  /api/fantasy402/health         - Health check');
+console.info('  GET  /api/fantasy402/token-info     - Token information');
+console.info('  POST /api/fantasy402/auth/refresh   - Refresh token');
+console.info('  GET  /api/fantasy402/test/*         - Various test endpoints');
+console.info('');
+console.info('🚀 Ready for testing!');
 
 export { WorkbenchServer };

@@ -1,13 +1,13 @@
 #!/usr/bin/env bun
 // CLI DEPENDENCY ANALYSIS - What Other CLIs Are Using
 
-console.log('🔍 CLI DEPENDENCY ANALYSIS REPORT');
-console.log('==================================\n');
+console.info('🔍 CLI DEPENDENCY ANALYSIS REPORT');
+console.info('==================================\n');
 
-console.log('📊 CURRENT CLI USAGE PATTERNS:');
-console.log('');
+console.info('📊 CURRENT CLI USAGE PATTERNS:');
+console.info('');
 
-console.log('✅ USING NATIVE UNICODE TABLE FORMATTER (Empire Pro v3.7):');
+console.info('✅ USING NATIVE UNICODE TABLE FORMATTER (Empire Pro v3.7):');
 const nativeCLIs = [
   'commands/matrix.ts',
   'commands/matrix-enhanced.ts', 
@@ -16,10 +16,10 @@ const nativeCLIs = [
 ];
 
 nativeCLIs.forEach(cli => {
-  console.log(`  🎨 ${cli} - Native UnicodeTableFormatter with Empire Pro colors`);
+  console.info(`  🎨 ${cli} - Native UnicodeTableFormatter with Empire Pro colors`);
 });
 
-console.log('\n⚠️  USING EXTERNAL DEPENDENCIES:');
+console.info('\n⚠️  USING EXTERNAL DEPENDENCIES:');
 const externalCLIs = [
   {
     command: 'package/bin/empire.ts',
@@ -79,14 +79,14 @@ const externalCLIs = [
 ];
 
 externalCLIs.forEach(cli => {
-  console.log(`  🔗 ${cli.command}`);
-  console.log(`     Dependencies: ${cli.dependencies.join(', ')}`);
-  console.log(`     Status: ${cli.status}`);
-  console.log('');
+  console.info(`  🔗 ${cli.command}`);
+  console.info(`     Dependencies: ${cli.dependencies.join(', ')}`);
+  console.info(`     Status: ${cli.status}`);
+  console.info('');
 });
 
-console.log('📈 OPPORTUNITIES FOR NATIVE INTEGRATION:');
-console.log('');
+console.info('📈 OPPORTUNITIES FOR NATIVE INTEGRATION:');
+console.info('');
 
 const opportunities = [
   {
@@ -116,15 +116,15 @@ const opportunities = [
 ];
 
 opportunities.forEach(opp => {
-  console.log(`  🚀 ${opp.command}`);
-  console.log(`     Current: ${opp.current}`);
-  console.log(`     Replacement: ${opp.replacement}`);
-  console.log(`     Benefit: ${opp.benefit}`);
-  console.log('');
+  console.info(`  🚀 ${opp.command}`);
+  console.info(`     Current: ${opp.current}`);
+  console.info(`     Replacement: ${opp.replacement}`);
+  console.info(`     Benefit: ${opp.benefit}`);
+  console.info('');
 });
 
-console.log('🎨 EMPIRE PRO V3.7 INTEGRATION STATUS:');
-console.log('');
+console.info('🎨 EMPIRE PRO V3.7 INTEGRATION STATUS:');
+console.info('');
 
 const integrationStatus = {
   fullyIntegrated: 4,  // Using native UnicodeTableFormatter
@@ -135,12 +135,12 @@ const integrationStatus = {
 const total = integrationStatus.fullyIntegrated + integrationStatus.partiallyIntegrated + integrationStatus.externalOnly;
 const nativePercentage = ((integrationStatus.fullyIntegrated / total) * 100).toFixed(1);
 
-console.log(`✅ Fully Integrated (Native UnicodeTableFormatter): ${integrationStatus.fullyIntegrated} (${nativePercentage}%)`);
-console.log(`🔄 Partially Integrated: ${integrationStatus.partiallyIntegrated} (0.0%)`);
-console.log(`🔗 External Dependencies Only: ${integrationStatus.externalOnly} (${((integrationStatus.externalOnly / total) * 100).toFixed(1)}%)`);
+console.info(`✅ Fully Integrated (Native UnicodeTableFormatter): ${integrationStatus.fullyIntegrated} (${nativePercentage}%)`);
+console.info(`🔄 Partially Integrated: ${integrationStatus.partiallyIntegrated} (0.0%)`);
+console.info(`🔗 External Dependencies Only: ${integrationStatus.externalOnly} (${((integrationStatus.externalOnly / total) * 100).toFixed(1)}%)`);
 
-console.log('\n🎯 RECOMMENDATIONS:');
-console.log('');
+console.info('\n🎯 RECOMMENDATIONS:');
+console.info('');
 
 const recommendations = [
   '1. PRIORITY: Update package/bin/empire.ts to use UnicodeTableFormatter',
@@ -154,23 +154,23 @@ const recommendations = [
 ];
 
 recommendations.forEach(rec => {
-  console.log(`  ${rec}`);
+  console.info(`  ${rec}`);
 });
 
-console.log('\n🚀 NEXT STEPS:');
-console.log('');
-console.log('1. Start with empire.ts (main CLI) - highest visibility');
-console.log('2. Update dashboard commands for consistent Empire Pro branding');
-console.log('3. Add color coding to deployment and notification commands');
-console.log('4. Gradually replace external dependencies with native equivalents');
-console.log('');
+console.info('\n🚀 NEXT STEPS:');
+console.info('');
+console.info('1. Start with empire.ts (main CLI) - highest visibility');
+console.info('2. Update dashboard commands for consistent Empire Pro branding');
+console.info('3. Add color coding to deployment and notification commands');
+console.info('4. Gradually replace external dependencies with native equivalents');
+console.info('');
 
-console.log('💡 IMPACT:');
-console.log('');
-console.log('• Professional Empire Pro v3.7 branding across all CLIs');
-console.log('• Consistent color scheme and visual identity');
-console.log('• Reduced external dependencies');
-console.log('• Enhanced user experience with color-coded output');
-console.log('• Better error handling and status visualization');
+console.info('💡 IMPACT:');
+console.info('');
+console.info('• Professional Empire Pro v3.7 branding across all CLIs');
+console.info('• Consistent color scheme and visual identity');
+console.info('• Reduced external dependencies');
+console.info('• Enhanced user experience with color-coded output');
+console.info('• Better error handling and status visualization');
 
-console.log('\n✅ ANALYSIS COMPLETE');
+console.info('\n✅ ANALYSIS COMPLETE');

@@ -85,7 +85,7 @@ export class VisualizationEngine {
     const path = `${this.outputDir}/${filename}`;
 
     // Mock file write
-    console.log(`📊 Dashboard created: ${path}`);
+    console.info(`📊 Dashboard created: ${path}`);
 
     const result: VisualizationResult = {
       url: `http://localhost:8080/${filename}`,
@@ -111,7 +111,7 @@ export class VisualizationEngine {
     const filename = `graph_${Date.now()}.html`;
     const path = `${this.outputDir}/${filename}`;
 
-    console.log(`🕸️ Graph visualization created: ${path}`);
+    console.info(`🕸️ Graph visualization created: ${path}`);
 
     const result: VisualizationResult = {
       url: `http://localhost:8080/${filename}`,
@@ -137,7 +137,7 @@ export class VisualizationEngine {
     const filename = `map_${Date.now()}.html`;
     const path = `${this.outputDir}/${filename}`;
 
-    console.log(`🗺️ Map visualization created: ${path}`);
+    console.info(`🗺️ Map visualization created: ${path}`);
 
     const result: VisualizationResult = {
       url: `http://localhost:8080/${filename}`,
@@ -163,7 +163,7 @@ export class VisualizationEngine {
     const filename = `timeline_${Date.now()}.html`;
     const path = `${this.outputDir}/${filename}`;
 
-    console.log(`📅 Timeline visualization created: ${path}`);
+    console.info(`📅 Timeline visualization created: ${path}`);
 
     const result: VisualizationResult = {
       url: `http://localhost:8080/${filename}`,
@@ -189,7 +189,7 @@ export class VisualizationEngine {
     const filename = `visualization_3d_${Date.now()}.html`;
     const path = `${this.outputDir}/${filename}`;
 
-    console.log(`🎮 3D visualization created: ${path}`);
+    console.info(`🎮 3D visualization created: ${path}`);
 
     const result: VisualizationResult = {
       url: `http://localhost:8080/${filename}`,
@@ -215,7 +215,7 @@ export class VisualizationEngine {
     const filename = `vr_${Date.now()}.html`;
     const path = `${this.outputDir}/${filename}`;
 
-    console.log(`🥽 VR visualization created: ${path}`);
+    console.info(`🥽 VR visualization created: ${path}`);
 
     const result: VisualizationResult = {
       url: `http://localhost:8080/${filename}`,
@@ -239,7 +239,7 @@ export class VisualizationEngine {
   async export(visualization: VisualizationResult, format: 'png' | 'svg' | 'pdf' | 'gif'): Promise<string> {
     const exportPath = visualization.path.replace('.html', `.${format}`);
     
-    console.log(`📤 Exporting visualization to ${format}: ${exportPath}`);
+    console.info(`📤 Exporting visualization to ${format}: ${exportPath}`);
     
     // Mock export process
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -258,7 +258,7 @@ export class VisualizationEngine {
     const filename = `realtime_${Date.now()}.html`;
     const path = `${this.outputDir}/${filename}`;
 
-    console.log(`📡 Real-time visualization created: ${path}`);
+    console.info(`📡 Real-time visualization created: ${path}`);
 
     const result: VisualizationResult = {
       url: `http://localhost:8080/${filename}`,
@@ -309,7 +309,7 @@ export class VisualizationEngine {
     <script>
         const data = ${JSON.stringify(data, null, 2)};
         // Dashboard initialization code would go here
-        console.log('Dashboard data:', data);
+        console.info('Dashboard data:', data);
     </script>
 </body>
 </html>`;
@@ -336,8 +336,8 @@ export class VisualizationEngine {
         const options = ${JSON.stringify(options, null, 2)};
         
         // D3.js graph visualization code would go here
-        console.log('Graph data:', graphData);
-        console.log('Options:', options);
+        console.info('Graph data:', graphData);
+        console.info('Options:', options);
     </script>
 </body>
 </html>`;
@@ -370,8 +370,8 @@ export class VisualizationEngine {
         }).addTo(map);
         
         // Add markers and layers based on data
-        console.log('Geo data:', geoData);
-        console.log('Options:', options);
+        console.info('Geo data:', geoData);
+        console.info('Options:', options);
     </script>
 </body>
 </html>`;
@@ -405,8 +405,8 @@ export class VisualizationEngine {
         const options = ${JSON.stringify(options, null, 2)};
         
         // Timeline visualization code would go here
-        console.log('Timeline data:', timelineData);
-        console.log('Options:', options);
+        console.info('Timeline data:', timelineData);
+        console.info('Options:', options);
     </script>
 </body>
 </html>`;
@@ -435,8 +435,8 @@ export class VisualizationEngine {
         const options = ${JSON.stringify(options, null, 2)};
         
         // Three.js 3D visualization code would go here
-        console.log('3D data:', data);
-        console.log('Options:', options);
+        console.info('3D data:', data);
+        console.info('Options:', options);
         
         // Basic Three.js setup
         const scene = new THREE.Scene();
@@ -493,11 +493,11 @@ export class VisualizationEngine {
         const options = ${JSON.stringify(options, null, 2)};
         
         // VR-ready Three.js visualization
-        console.log('VR data:', data);
-        console.log('Options:', options);
+        console.info('VR data:', data);
+        console.info('Options:', options);
         
         function enterVR() {
-            console.log('Entering VR mode...');
+            console.info('Entering VR mode...');
             // VR entry logic would go here
         }
     </script>
@@ -595,7 +595,7 @@ export class VisualizationEngine {
             document.getElementById('value-3').textContent = Math.floor(Math.random() * 100) + 'ms';
         }, ${options.updateInterval || 1000});
         
-        console.log('Real-time data stream:', dataStream);
+        console.info('Real-time data stream:', dataStream);
     </script>
 </body>
 </html>`;

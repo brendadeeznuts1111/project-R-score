@@ -26,7 +26,7 @@ const { allSkills, getSkill, formatStatus } = skillsModule;
 const DEBUG = process.env.DEBUG === "1" || process.env.DEBUG === "true" || process.env.LOG_LEVEL === "debug";
 
 function debugLog(...args: unknown[]): void {
-  if (DEBUG) console.log(...args);
+  if (DEBUG) console.info(...args);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -331,7 +331,7 @@ function addLog(
     } else if (level === "warn") {
       console.warn(prefix, message, details || "");
     } else {
-      console.log(prefix, message, details || "");
+      console.info(prefix, message, details || "");
     }
   }
 
@@ -2448,7 +2448,7 @@ function serveDashboard(): Response {
     addButtonHandler('btn-emergency', async () => {
       if (!confirm('Emergency stop all running skill processes?')) return;
       // For now just log - would need backend endpoint
-      console.log('Emergency stop triggered');
+      console.info('Emergency stop triggered');
       alert('Emergency stop initiated. Check console for details.');
     });
 
@@ -3022,30 +3022,30 @@ export class SkillAPIServer {
     });
 
     // Startup banner - always show minimal info
-    console.log(`🚀 Skill API Server listening on http://localhost:${port}`);
+    console.info(`🚀 Skill API Server listening on http://localhost:${port}`);
 
     // Log server startup
     serverLog.info("server", "API server started", { port, bun: Bun.version, platform: process.platform });
 
     // Verbose startup info only in DEBUG mode
     if (DEBUG) {
-      console.log("═".repeat(60));
-      console.log(`📡 Local: http://localhost:${port}`);
-      console.log(`📊 Dashboard: http://localhost:${port}/dashboard`);
+      console.info("═".repeat(60));
+      console.info(`📡 Local: http://localhost:${port}`);
+      console.info(`📊 Dashboard: http://localhost:${port}/dashboard`);
 
       // Display Tailscale info
       const tailscale = await getTailscaleStatus();
       if (tailscale.connected) {
-        console.log(`🔗 Tailscale IP: ${tailscale.ip}`);
+        console.info(`🔗 Tailscale IP: ${tailscale.ip}`);
         if (tailscale.dnsName) {
-          console.log(`🌐 Tailscale DNS: ${tailscale.dnsName}`);
+          console.info(`🌐 Tailscale DNS: ${tailscale.dnsName}`);
         }
       } else {
-        console.log(`⚠️  Tailscale: Not connected`);
+        console.info(`⚠️  Tailscale: Not connected`);
       }
 
-      console.log(`🔑 API Keys configured: ${API_KEYS.size}`);
-      console.log("═".repeat(60));
+      console.info(`🔑 API Keys configured: ${API_KEYS.size}`);
+      console.info("═".repeat(60));
     }
 
     return this.server;

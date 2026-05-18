@@ -45,7 +45,7 @@ class ExamplePrefetchOptimizer {
   ];
   
   optimizeAll(): void {
-    console.log('🚀 Optimizing examples with prefetch hints...\n');
+    console.info('🚀 Optimizing examples with prefetch hints...\n');
     
     let totalFiles = 0;
     let totalOptimizations = 0;
@@ -61,19 +61,19 @@ class ExamplePrefetchOptimizer {
       }
     }
     
-    console.log(`\n🎯 Optimization Summary:`);
-    console.log(`   Files processed: ${totalFiles}`);
-    console.log(`   Optimizations made: ${totalOptimizations}`);
+    console.info(`\n🎯 Optimization Summary:`);
+    console.info(`   Files processed: ${totalFiles}`);
+    console.info(`   Optimizations made: ${totalOptimizations}`);
     
     if (totalOptimizations > 0) {
-      console.log('\n✅ Successfully added prefetch optimizations');
-      console.log('🚀 Performance improvements:');
-      console.log('   • DNS prefetching for faster domain resolution');
-      console.log('   • Preconnect for faster TCP handshakes');
-      console.log('   • Preload for critical resources');
-      console.log('   • Module preload for faster JS execution');
+      console.info('\n✅ Successfully added prefetch optimizations');
+      console.info('🚀 Performance improvements:');
+      console.info('   • DNS prefetching for faster domain resolution');
+      console.info('   • Preconnect for faster TCP handshakes');
+      console.info('   • Preload for critical resources');
+      console.info('   • Module preload for faster JS execution');
     } else {
-      console.log('\nℹ️  No optimizations needed - examples already optimized');
+      console.info('\nℹ️  No optimizations needed - examples already optimized');
     }
   }
   
@@ -94,7 +94,7 @@ class ExamplePrefetchOptimizer {
           if (this.fileExtensions.includes(ext)) {
             const fileOptimizations = this.optimizeFile(fullPath, ext);
             if (fileOptimizations > 0) {
-              console.log(`  ✅ ${fullPath}: ${fileOptimizations} optimizations`);
+              console.info(`  ✅ ${fullPath}: ${fileOptimizations} optimizations`);
               optimizations += fileOptimizations;
             }
             fileCount++;
@@ -328,14 +328,14 @@ async function main(): Promise<void> {
   switch (command) {
     case 'optimize':
     case '':
-      console.log('🚀 Example Prefetch Optimizer\n');
+      console.info('🚀 Example Prefetch Optimizer\n');
       optimizer.optimizeAll();
       break;
       
     case 'help':
     case '--help':
     case '-h':
-      console.log(`
+      console.info(`
 🚀 Example Prefetch Optimizer
 
 USAGE:

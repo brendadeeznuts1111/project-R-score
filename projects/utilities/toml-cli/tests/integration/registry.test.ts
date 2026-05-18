@@ -46,9 +46,9 @@ beforeAll(async () => {
       const authHeader = req.headers.get('Authorization');
       const cookieHeader = req.headers.get('Cookie');
 
-      console.log(`Mock registry: ${req.method} ${url.pathname}`);
-      console.log(`  Auth: ${authHeader ? '✓' : '✗'}`);
-      console.log(`  Cookie: ${cookieHeader ? '✓' : '✗'}`);
+      console.info(`Mock registry: ${req.method} ${url.pathname}`);
+      console.info(`  Auth: ${authHeader ? '✓' : '✗'}`);
+      console.info(`  Cookie: ${cookieHeader ? '✓' : '✗'}`);
 
       // Test 1: Require authentication
       if (!authHeader && !cookieHeader) {

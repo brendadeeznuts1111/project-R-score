@@ -50,7 +50,7 @@ export class LoadTester {
    * Start test server
    */
   async startTestServer(port: number = 3456): Promise<void> {
-    console.log(`🚀 Starting test server on port ${port}...`);
+    console.info(`🚀 Starting test server on port ${port}...`);
 
     this.server = Bun.serve({
       port,
@@ -69,7 +69,7 @@ export class LoadTester {
     });
 
     this.baseUrl = `http://localhost:${port}`;
-    console.log(`✅ Test server running at ${this.baseUrl}`);
+    console.info(`✅ Test server running at ${this.baseUrl}`);
   }
 
   /**
@@ -148,21 +148,21 @@ export class LoadTester {
    * Install load testing tools
    */
   async installTools(): Promise<void> {
-    console.log('🔧 Checking load testing tools...');
+    console.info('🔧 Checking load testing tools...');
 
     const hasBombardier = await this.checkBombardier();
     const hasOha = await this.checkOha();
 
     if (!hasBombardier && !hasOha) {
-      console.log('📦 Installing load testing tools...');
-      console.log('   Please install one of the following:');
-      console.log('   - bombardier: go install -a github.com/codesenberg/bombardier@latest');
-      console.log('   - oha: cargo install oha');
-      console.log('   - Or use homebrew: brew install bombardier oha');
+      console.info('📦 Installing load testing tools...');
+      console.info('   Please install one of the following:');
+      console.info('   - bombardier: go install -a github.com/codesenberg/bombardier@latest');
+      console.info('   - oha: cargo install oha');
+      console.info('   - Or use homebrew: brew install bombardier oha');
     } else {
-      console.log('✅ Load testing tools available');
-      if (hasBombardier) console.log('   - bombardier ✓');
-      if (hasOha) console.log('   - oha ✓');
+      console.info('✅ Load testing tools available');
+      if (hasBombardier) console.info('   - bombardier ✓');
+      if (hasOha) console.info('   - oha ✓');
     }
   }
 
@@ -170,11 +170,11 @@ export class LoadTester {
    * Run load test using Bun's built-in capabilities
    */
   async runBunLoadTest(scenario: LoadTestScenario): Promise<LoadTestResult> {
-    console.log(`\n🎯 Load Test: ${scenario.name}`);
-    console.log(`   Endpoint: ${scenario.endpoint}`);
-    console.log(`   Method: ${scenario.method}`);
-    console.log(`   Duration: ${scenario.duration}s`);
-    console.log(`   Connections: ${scenario.connections}`);
+    console.info(`\n🎯 Load Test: ${scenario.name}`);
+    console.info(`   Endpoint: ${scenario.endpoint}`);
+    console.info(`   Method: ${scenario.method}`);
+    console.info(`   Duration: ${scenario.duration}s`);
+    console.info(`   Connections: ${scenario.connections}`);
 
     const url = this.baseUrl + scenario.endpoint;
     const startTime = Date.now();
@@ -260,11 +260,11 @@ export class LoadTester {
    */
   async runBombardierTest(scenario: LoadTestScenario): Promise<LoadTestResult> {
     if (!(await this.checkBombardier())) {
-      console.log('⚠️  bombardier not installed, using Bun load test');
+      console.info('⚠️  bombardier not installed, using Bun load test');
       return this.runBunLoadTest(scenario);
     }
 
-    console.log(`\n🎯 Bombardier Load Test: ${scenario.name}`);
+    console.info(`\n🎯 Bombardier Load Test: ${scenario.name}`);
 
     const url = this.baseUrl + scenario.endpoint;
     const args = [
@@ -327,8 +327,8 @@ export class LoadTester {
    * Run comprehensive load test suite
    */
   async runLoadTestSuite(): Promise<void> {
-    console.log('\n🚀 Fire22 Load Test Suite');
-    console.log('='.repeat(50));
+    console.info('\n🚀 Fire22 Load Test Suite');
+    console.info('='.repeat(50));
 
     const scenarios: LoadTestScenario[] = [
       {
@@ -391,10 +391,10 @@ export class LoadTester {
    * Stress test with increasing load
    */
   async runStressTest(endpoint: string, maxConnections: number = 100): Promise<void> {
-    console.log('\n💪 Stress Test');
-    console.log('='.repeat(50));
-    console.log(`Endpoint: ${endpoint}`);
-    console.log(`Max Connections: ${maxConnections}`);
+    console.info('\n💪 Stress Test');
+    console.info('='.repeat(50));
+    console.info(`Endpoint: ${endpoint}`);
+    console.info(`Max Connections: ${maxConnections}`);
 
     const steps = [1, 5, 10, 25, 50, 75, 100];
     const stressResults: LoadTestResult[] = [];
@@ -402,7 +402,7 @@ export class LoadTester {
     for (const connections of steps) {
       if (connections > maxConnections) break;
 
-      console.log(`\n📊 Testing with ${connections} connections...`);
+      console.info(`\n📊 Testing with ${connections} connections...`);
 
       const result = await this.runBunLoadTest({
         name: `Stress Test - ${connections} connections`,
@@ -416,9 +416,9 @@ export class LoadTester {
 
       // Check if system is degrading
       if (result.successRate < 95 || result.p95Latency > 1000) {
-        console.log('⚠️  Performance degradation detected!');
-        console.log(`   Success Rate: ${result.successRate.toFixed(2)}%`);
-        console.log(`   P95 Latency: ${result.p95Latency.toFixed(2)}ms`);
+        console.info('⚠️  Performance degradation detected!');
+        console.info(`   Success Rate: ${result.successRate.toFixed(2)}%`);
+        console.info(`   P95 Latency: ${result.p95Latency.toFixed(2)}ms`);
         break;
       }
     }
@@ -426,9 +426,9 @@ export class LoadTester {
     // Find breaking point
     const breakingPoint = stressResults.find(r => r.successRate < 95);
     if (breakingPoint) {
-      console.log(`\n🔴 Breaking point: ${breakingPoint.requests / breakingPoint.duration} rps`);
+      console.info(`\n🔴 Breaking point: ${breakingPoint.requests / breakingPoint.duration} rps`);
     } else {
-      console.log(`\n✅ System stable up to ${maxConnections} connections`);
+      console.info(`\n✅ System stable up to ${maxConnections} connections`);
     }
   }
 
@@ -436,10 +436,10 @@ export class LoadTester {
    * WebSocket load test
    */
   async runWebSocketTest(connections: number = 100, duration: number = 10): Promise<void> {
-    console.log('\n🔌 WebSocket Load Test');
-    console.log('='.repeat(50));
-    console.log(`Connections: ${connections}`);
-    console.log(`Duration: ${duration}s`);
+    console.info('\n🔌 WebSocket Load Test');
+    console.info('='.repeat(50));
+    console.info(`Connections: ${connections}`);
+    console.info(`Duration: ${duration}s`);
 
     const wsUrl = this.baseUrl.replace('http://', 'ws://') + '/ws';
     const sockets: WebSocket[] = [];
@@ -486,31 +486,31 @@ export class LoadTester {
     // Close all connections
     sockets.forEach(ws => ws.close());
 
-    console.log('\n📊 WebSocket Test Results:');
-    console.log(`   Successful Connections: ${sockets.length}`);
-    console.log(`   Connection Errors: ${connectionErrors}`);
-    console.log(`   Messages Received: ${messagesReceived}`);
-    console.log(`   Messages/sec: ${(messagesReceived / duration).toFixed(2)}`);
+    console.info('\n📊 WebSocket Test Results:');
+    console.info(`   Successful Connections: ${sockets.length}`);
+    console.info(`   Connection Errors: ${connectionErrors}`);
+    console.info(`   Messages Received: ${messagesReceived}`);
+    console.info(`   Messages/sec: ${(messagesReceived / duration).toFixed(2)}`);
   }
 
   /**
    * Print load test result
    */
   private printResult(result: LoadTestResult): void {
-    console.log('\n📊 Results:');
-    console.log(`   Total Requests: ${result.requests.toLocaleString()}`);
-    console.log(`   Success Rate: ${result.successRate.toFixed(2)}%`);
-    console.log(`   Throughput: ${result.throughput.toFixed(2)} req/s`);
-    console.log(`   Latency:`);
-    console.log(`     Average: ${result.avgLatency.toFixed(2)}ms`);
-    console.log(`     P50: ${result.p50Latency.toFixed(2)}ms`);
-    console.log(`     P95: ${result.p95Latency.toFixed(2)}ms`);
-    console.log(`     P99: ${result.p99Latency.toFixed(2)}ms`);
+    console.info('\n📊 Results:');
+    console.info(`   Total Requests: ${result.requests.toLocaleString()}`);
+    console.info(`   Success Rate: ${result.successRate.toFixed(2)}%`);
+    console.info(`   Throughput: ${result.throughput.toFixed(2)} req/s`);
+    console.info(`   Latency:`);
+    console.info(`     Average: ${result.avgLatency.toFixed(2)}ms`);
+    console.info(`     P50: ${result.p50Latency.toFixed(2)}ms`);
+    console.info(`     P95: ${result.p95Latency.toFixed(2)}ms`);
+    console.info(`     P99: ${result.p99Latency.toFixed(2)}ms`);
     if (result.errors > 0) {
-      console.log(`   Errors: ${result.errors}`);
+      console.info(`   Errors: ${result.errors}`);
     }
     if (result.timeouts > 0) {
-      console.log(`   Timeouts: ${result.timeouts}`);
+      console.info(`   Timeouts: ${result.timeouts}`);
     }
   }
 
@@ -518,9 +518,9 @@ export class LoadTester {
    * Print summary of all tests
    */
   private printSummary(): void {
-    console.log('\n' + '='.repeat(50));
-    console.log('📈 Load Test Summary');
-    console.log('='.repeat(50));
+    console.info('\n' + '='.repeat(50));
+    console.info('📈 Load Test Summary');
+    console.info('='.repeat(50));
 
     const table: any[] = [];
 
@@ -545,11 +545,11 @@ export class LoadTester {
       prev.throughput > current.throughput ? prev : current
     );
 
-    console.log('\n🏆 Best Performers:');
-    console.log(
+    console.info('\n🏆 Best Performers:');
+    console.info(
       `   Lowest Latency: ${bestLatency.endpoint} (${bestLatency.avgLatency.toFixed(2)}ms)`
     );
-    console.log(
+    console.info(
       `   Highest Throughput: ${bestThroughput.endpoint} (${bestThroughput.throughput.toFixed(0)} req/s)`
     );
   }
@@ -560,7 +560,7 @@ export class LoadTester {
   stopServer(): void {
     if (this.server) {
       this.server.stop();
-      console.log('✅ Test server stopped');
+      console.info('✅ Test server stopped');
     }
   }
 }

@@ -139,10 +139,10 @@ export class Tier1380EnhancedCitadel {
 
     this.cache = new ABTestCache();
 
-    console.log(`🏭 Tier-1380 Enhanced Citadel initialized`);
-    console.log(`   Environment: ${this.config.environment}`);
-    console.log(`   Cache: ${this.config.cacheEnabled ? 'enabled' : 'disabled'}`);
-    console.log(`   A/B Tests: ${Object.keys(this.abTestConfig).length} loaded`);
+    console.info(`🏭 Tier-1380 Enhanced Citadel initialized`);
+    console.info(`   Environment: ${this.config.environment}`);
+    console.info(`   Cache: ${this.config.cacheEnabled ? 'enabled' : 'disabled'}`);
+    console.info(`   A/B Tests: ${Object.keys(this.abTestConfig).length} loaded`);
   }
 
   /**
@@ -200,7 +200,7 @@ export class Tier1380EnhancedCitadel {
 
     if (cachedSnapshot && this.config.cacheEnabled) {
       cacheHit = true;
-      console.log(`💾 Cache hit for ${cacheKey}`);
+      console.info(`💾 Cache hit for ${cacheKey}`);
     } else {
       // Load and validate configuration
       const { valid, config, errors } = this.loadAndValidateConfig();
@@ -259,7 +259,7 @@ export class Tier1380EnhancedCitadel {
     const key = `snapshots/enhanced-${this.config.variant}-${Date.now()}.tier1380.zst`;
 
     const endTime = performance.now();
-    console.log(`📸 Enhanced snapshot created in ${(endTime - startTime).toFixed(2)}ms (${cacheHit ? 'cache' : 'fresh'})`);
+    console.info(`📸 Enhanced snapshot created in ${(endTime - startTime).toFixed(2)}ms (${cacheHit ? 'cache' : 'fresh'})`);
 
     // Generate signed URL for R2 access
     let signedAccessUrl: string | undefined;
@@ -344,9 +344,9 @@ export class Tier1380EnhancedCitadel {
     });
 
     const endTime = performance.now();
-    console.log(`🪣 Enhanced R2 write completed in ${(endTime - startTime).toFixed(2)}ms: ${key}`);
-    console.log(`   Compression ratio: ${metadata["compression-ratio"]}%`);
-    console.log(`   Cache hit: ${cacheHit ? 'yes' : 'no'}`);
+    console.info(`🪣 Enhanced R2 write completed in ${(endTime - startTime).toFixed(2)}ms: ${key}`);
+    console.info(`   Compression ratio: ${metadata["compression-ratio"]}%`);
+    console.info(`   Cache hit: ${cacheHit ? 'yes' : 'no'}`);
 
     return result;
   }
@@ -426,7 +426,7 @@ export class Tier1380EnhancedCitadel {
    */
   clearCache(): void {
     this.cache.clear();
-    console.log("🗑️ Tier-1380 cache cleared");
+    console.info("🗑️ Tier-1380 cache cleared");
   }
 
   /**

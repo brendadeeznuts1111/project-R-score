@@ -69,7 +69,7 @@ export class EnhancedCloudNumberManager {
    * Purchase cloud numbers for Apple ID verification
    */
   async purchaseNumbersForAppleIDs(count: number): Promise<NumberAssignment[]> {
-    console.log(`📱 Purchasing ${count} cloud numbers for Apple ID verification...`);
+    console.info(`📱 Purchasing ${count} cloud numbers for Apple ID verification...`);
 
     // Validate budget
     const costs = await this.numberManager.getNumberCosts();
@@ -110,8 +110,8 @@ export class EnhancedCloudNumberManager {
       assignments.push(assignment);
     }
 
-    console.log(`✅ Successfully purchased and assigned ${assignments.length} numbers`);
-    console.log(`💰 Daily cost: $${dailyCost.toFixed(3)} | Monthly: $${(dailyCost * 30).toFixed(2)}`);
+    console.info(`✅ Successfully purchased and assigned ${assignments.length} numbers`);
+    console.info(`💰 Daily cost: $${dailyCost.toFixed(3)} | Monthly: $${(dailyCost * 30).toFixed(2)}`);
 
     return assignments;
   }
@@ -120,7 +120,7 @@ export class EnhancedCloudNumberManager {
    * Purchase numbers specifically for Cash App
    */
   async purchaseNumbersForCashApp(count: number): Promise<NumberAssignment[]> {
-    console.log(`💳 Purchasing ${count} cloud numbers for Cash App verification...`);
+    console.info(`💳 Purchasing ${count} cloud numbers for Cash App verification...`);
 
     // Cash App requires non-VoIP US numbers
     const numbers = await this.duo.purchaseCloudNumbers({
@@ -153,8 +153,8 @@ export class EnhancedCloudNumberManager {
     }
 
     const totalDailyCost = numbers.reduce((sum, n) => sum + (n?.cost || 0), 0);
-    console.log(`✅ Cash App numbers ready: ${assignments.length}`);
-    console.log(`💰 Total daily cost: $${totalDailyCost.toFixed(3)}`);
+    console.info(`✅ Cash App numbers ready: ${assignments.length}`);
+    console.info(`💰 Total daily cost: $${totalDailyCost.toFixed(3)}`);
 
     return assignments;
   }
@@ -163,7 +163,7 @@ export class EnhancedCloudNumberManager {
    * Legacy method for backward compatibility
    */
   async getVerificationCode(phoneNumber: string, service = 'cashapp'): Promise<string> {
-    console.log(`📱 Waiting for verification code for ${phoneNumber} on ${service}...`);
+    console.info(`📱 Waiting for verification code for ${phoneNumber} on ${service}...`);
     
     const startTime = Date.now();
     const timeout = this.config.timeout || 120000;
@@ -180,7 +180,7 @@ export class EnhancedCloudNumberManager {
         if (cashAppMessage) {
           const code = this.extractVerificationCode(cashAppMessage);
           if (code) {
-            console.log(`✅ Found verification code: ${code}`);
+            console.info(`✅ Found verification code: ${code}`);
             return code;
           }
         }
@@ -189,7 +189,7 @@ export class EnhancedCloudNumberManager {
         await this.sleep(checkInterval);
         
       } catch (error: any) {
-        console.log(`⚠️ Error checking messages: ${error.message}`);
+        console.info(`⚠️ Error checking messages: ${error.message}`);
         await this.sleep(checkInterval);
       }
     }
@@ -244,7 +244,7 @@ export class EnhancedCloudNumberManager {
    * Release expired numbers
    */
   async releaseExpiredNumbers() {
-    console.log('🧹 Cleaning up expired numbers...');
+    console.info('🧹 Cleaning up expired numbers...');
     
     const now = new Date();
     let releasedCount = 0;
@@ -257,7 +257,7 @@ export class EnhancedCloudNumberManager {
       }
     }
 
-    console.log(`✅ Released ${releasedCount} expired numbers`);
+    console.info(`✅ Released ${releasedCount} expired numbers`);
     return releasedCount;
   }
 
@@ -302,7 +302,7 @@ export class EnhancedCloudNumberManager {
    * Bulk purchase for scaling
    */
   async bulkPurchaseForScaling(targetAccounts: number): Promise<NumberAssignment[]> {
-    console.log(`🚀 Bulk purchasing for ${targetAccounts} accounts...`);
+    console.info(`🚀 Bulk purchasing for ${targetAccounts} accounts...`);
 
     // Calculate optimal number distribution
     const batchSize = Math.min(targetAccounts, 100); // Max 100 per batch
@@ -312,7 +312,7 @@ export class EnhancedCloudNumberManager {
 
     for (let i = 0; i < batches; i++) {
       const currentBatch = Math.min(batchSize, targetAccounts - (i * batchSize));
-      console.log(`📦 Processing batch ${i + 1}/${batches} (${currentBatch} numbers)...`);
+      console.info(`📦 Processing batch ${i + 1}/${batches} (${currentBatch} numbers)...`);
 
       const assignments = await this.purchaseNumbersForAppleIDs(currentBatch);
       allAssignments.push(...assignments);
@@ -323,7 +323,7 @@ export class EnhancedCloudNumberManager {
       }
     }
 
-    console.log(`✅ Bulk purchase complete: ${allAssignments.length} numbers ready`);
+    console.info(`✅ Bulk purchase complete: ${allAssignments.length} numbers ready`);
     return allAssignments;
   }
 
@@ -363,7 +363,7 @@ export class EnhancedCloudNumberManager {
       const { bundleId, ...assignment } = item;
       this.assignments.set(bundleId, assignment);
     }
-    console.log(`📥 Imported ${data.length} number assignments`);
+    console.info(`📥 Imported ${data.length} number assignments`);
   }
 
   // Legacy methods for backward compatibility
@@ -383,7 +383,7 @@ export class EnhancedCloudNumberManager {
       const data = await response.json();
       return data.messages || [];
     } catch (error: any) {
-      console.log(`⚠️ Failed to fetch messages: ${error.message}`);
+      console.info(`⚠️ Failed to fetch messages: ${error.message}`);
       return [];
     }
   }
@@ -438,7 +438,7 @@ export class EnhancedCloudNumberManager {
         body: JSON.stringify({})
       });
     } catch (error: any) {
-      console.log(`⚠️ Failed to mark message as read: ${error.message}`);
+      console.info(`⚠️ Failed to mark message as read: ${error.message}`);
     }
   }
 
@@ -454,7 +454,7 @@ export class EnhancedCloudNumberManager {
       const data = await response.json();
       return data.numbers || [];
     } catch (error: any) {
-      console.log(`⚠️ Failed to fetch available numbers: ${error.message}`);
+      console.info(`⚠️ Failed to fetch available numbers: ${error.message}`);
       return [];
     }
   }
@@ -472,7 +472,7 @@ export class EnhancedCloudNumberManager {
       
       return await response.json();
     } catch (error: any) {
-      console.log(`⚠️ Failed to rent number: ${error.message}`);
+      console.info(`⚠️ Failed to rent number: ${error.message}`);
       throw error;
     }
   }
@@ -483,14 +483,14 @@ export class EnhancedCloudNumberManager {
 
   // Mock implementation for testing without real SMS service
   async getVerificationCodeMock(phoneNumber: string, service = 'cashapp'): Promise<string> {
-    console.log(`📱 Mock: Waiting for verification code for ${phoneNumber} on ${service}...`);
+    console.info(`📱 Mock: Waiting for verification code for ${phoneNumber} on ${service}...`);
     
     // Simulate waiting for SMS
     await this.sleep(3000);
     
     // Generate mock verification code
     const mockCode = Math.floor(100000 + Math.random() * 900000).toString();
-    console.log(`✅ Mock verification code: ${mockCode}`);
+    console.info(`✅ Mock verification code: ${mockCode}`);
     
     return mockCode;
   }
@@ -514,14 +514,14 @@ export class PhoneVerificationFlowManager {
     cashAppNumbers: NumberAssignment[];
     totalCost: number;
   }> {
-    console.log('🔧 Setting up complete phone verification flow...');
+    console.info('🔧 Setting up complete phone verification flow...');
 
     // Step 1: Purchase numbers for Apple IDs (can use VoIP)
-    console.log('\n📱 Step 1: Apple ID Numbers (VoIP - $0.049/day)');
+    console.info('\n📱 Step 1: Apple ID Numbers (VoIP - $0.049/day)');
     const appleIdNumbers = await this.numberManager.purchaseNumbersForAppleIDs(appleIdCount);
 
     // Step 2: Purchase numbers for Cash App (requires Non-VoIP)
-    console.log('\n💳 Step 2: Cash App Numbers (Non-VoIP - $0.392/day)');
+    console.info('\n💳 Step 2: Cash App Numbers (Non-VoIP - $0.392/day)');
     const cashAppNumbers = await this.numberManager.purchaseNumbersForCashApp(cashAppCount);
 
     // Step 3: Calculate total costs
@@ -529,11 +529,11 @@ export class PhoneVerificationFlowManager {
     const cashAppCost = cashAppNumbers.reduce((sum, n) => sum + n.cost, 0);
     const totalCost = appleIdCost + cashAppCost;
 
-    console.log('\n💰 Cost Summary:');
-    console.log(`• Apple ID Numbers: ${appleIdNumbers.length} × $0.049 = $${appleIdCost.toFixed(3)}/day`);
-    console.log(`• Cash App Numbers: ${cashAppNumbers.length} × $0.392 = $${cashAppCost.toFixed(3)}/day`);
-    console.log(`• Total Daily Cost: $${totalCost.toFixed(3)}`);
-    console.log(`• Monthly Cost: $${(totalCost * 30).toFixed(2)}`);
+    console.info('\n💰 Cost Summary:');
+    console.info(`• Apple ID Numbers: ${appleIdNumbers.length} × $0.049 = $${appleIdCost.toFixed(3)}/day`);
+    console.info(`• Cash App Numbers: ${cashAppNumbers.length} × $0.392 = $${cashAppCost.toFixed(3)}/day`);
+    console.info(`• Total Daily Cost: $${totalCost.toFixed(3)}`);
+    console.info(`• Monthly Cost: $${(totalCost * 30).toFixed(2)}`);
 
     return {
       appleIdNumbers,

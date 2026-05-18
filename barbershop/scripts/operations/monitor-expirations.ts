@@ -66,24 +66,24 @@ function parseArgs(): MonitorOptions {
 }
 
 function showHelp() {
-  console.log('⏰ Monitor Expirations Continuously');
-  console.log('===================================');
-  console.log();
-  console.log('Monitor secret expirations and send alerts.');
-  console.log();
-  console.log('Options:');
-  console.log('  --daemon              Run as continuous daemon');
-  console.log('  --interval <seconds>  Check interval (default: 3600)');
-  console.log('  --slack-alerts       Send alerts to Slack');
-  console.log('  --r2-reports          Store reports in R2');
-  console.log('  --email-alerts       Send email alerts');
-  console.log('  --threshold <days>   Alert threshold (default: 7)');
-  console.log('  --help, -h            Show this help');
-  console.log();
-  console.log('Examples:');
-  console.log('  bun monitor-expirations.ts --daemon --slack-alerts --r2-reports');
-  console.log('  bun monitor-expirations.ts --interval 1800 --threshold 14');
-  console.log('  bun monitor-expirations.ts --daemon --email-alerts --slack-alerts');
+  console.info('⏰ Monitor Expirations Continuously');
+  console.info('===================================');
+  console.info();
+  console.info('Monitor secret expirations and send alerts.');
+  console.info();
+  console.info('Options:');
+  console.info('  --daemon              Run as continuous daemon');
+  console.info('  --interval <seconds>  Check interval (default: 3600)');
+  console.info('  --slack-alerts       Send alerts to Slack');
+  console.info('  --r2-reports          Store reports in R2');
+  console.info('  --email-alerts       Send email alerts');
+  console.info('  --threshold <days>   Alert threshold (default: 7)');
+  console.info('  --help, -h            Show this help');
+  console.info();
+  console.info('Examples:');
+  console.info('  bun monitor-expirations.ts --daemon --slack-alerts --r2-reports');
+  console.info('  bun monitor-expirations.ts --interval 1800 --threshold 14');
+  console.info('  bun monitor-expirations.ts --daemon --email-alerts --slack-alerts');
 }
 
 function styled(
@@ -113,31 +113,31 @@ class ExpirationMonitor {
   }
 
   async start(): Promise<void> {
-    console.log(styled('⏰ Starting Expiration Monitor', 'primary'));
-    console.log(styled('==============================', 'muted'));
-    console.log();
+    console.info(styled('⏰ Starting Expiration Monitor', 'primary'));
+    console.info(styled('==============================', 'muted'));
+    console.info();
 
-    console.log(styled('Configuration:', 'info'));
-    console.log(
+    console.info(styled('Configuration:', 'info'));
+    console.info(
       styled(`   Mode: ${this.options.daemon ? 'Daemon (continuous)' : 'One-time check'}`, 'muted')
     );
-    console.log(styled(`   Interval: ${this.options.interval / 1000} seconds`, 'muted'));
-    console.log(styled(`   Threshold: ${this.options.threshold} days`, 'muted'));
-    console.log(
+    console.info(styled(`   Interval: ${this.options.interval / 1000} seconds`, 'muted'));
+    console.info(styled(`   Threshold: ${this.options.threshold} days`, 'muted'));
+    console.info(
       styled(`   Slack alerts: ${this.options.slackAlerts ? 'enabled' : 'disabled'}`, 'muted')
     );
-    console.log(
+    console.info(
       styled(`   R2 reports: ${this.options.r2Reports ? 'enabled' : 'disabled'}`, 'muted')
     );
-    console.log(
+    console.info(
       styled(`   Email alerts: ${this.options.emailAlerts ? 'enabled' : 'disabled'}`, 'muted')
     );
-    console.log();
+    console.info();
 
     if (this.options.daemon) {
-      console.log(styled('🔄 Starting daemon mode...', 'warning'));
-      console.log(styled('   Press Ctrl+C to stop monitoring', 'muted'));
-      console.log();
+      console.info(styled('🔄 Starting daemon mode...', 'warning'));
+      console.info(styled('   Press Ctrl+C to stop monitoring', 'muted'));
+      console.info();
 
       this.running = true;
 
@@ -153,18 +153,18 @@ class ExpirationMonitor {
 
       // Handle graceful shutdown
       process.on('SIGINT', () => {
-        console.log(styled('\n🛑 Shutting down monitor...', 'warning'));
+        console.info(styled('\n🛑 Shutting down monitor...', 'warning'));
         this.stop();
       });
 
       process.on('SIGTERM', () => {
-        console.log(styled('\n🛑 Shutting down monitor...', 'warning'));
+        console.info(styled('\n🛑 Shutting down monitor...', 'warning'));
         this.stop();
       });
     } else {
-      console.log(styled('🔍 Running one-time check...', 'info'));
+      console.info(styled('🔍 Running one-time check...', 'info'));
       await this.performCheck();
-      console.log(styled('✅ Check completed', 'success'));
+      console.info(styled('✅ Check completed', 'success'));
     }
   }
 
@@ -173,13 +173,13 @@ class ExpirationMonitor {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
-    console.log(styled('🛑 Monitor stopped', 'warning'));
+    console.info(styled('🛑 Monitor stopped', 'warning'));
     process.exit(0);
   }
 
   private async performCheck(): Promise<void> {
     const timestamp = new Date();
-    console.log(styled(`⏰ [${timestamp.toLocaleTimeString()}] Checking expirations...`, 'info'));
+    console.info(styled(`⏰ [${timestamp.toLocaleTimeString()}] Checking expirations...`, 'info'));
 
     try {
       // Get expiring secrets
@@ -201,14 +201,14 @@ class ExpirationMonitor {
         await this.storeReportInR2(report);
       }
 
-      console.log(
+      console.info(
         styled(`   ✅ Check completed (${report.summary.total} secrets monitored)`, 'success')
       );
     } catch (error) {
       console.error(styled(`   ❌ Check failed: ${error.message}`, 'error'));
     }
 
-    console.log();
+    console.info();
   }
 
   private async generateExpirationReport(
@@ -278,19 +278,19 @@ class ExpirationMonitor {
   }
 
   private displaySummary(report: ExpirationReport): void {
-    console.log(styled('   📊 Summary:', 'primary'));
-    console.log(styled(`      Total monitored: ${report.summary.total}`, 'info'));
+    console.info(styled('   📊 Summary:', 'primary'));
+    console.info(styled(`      Total monitored: ${report.summary.total}`, 'info'));
 
     if (report.summary.expired > 0) {
-      console.log(styled(`      🚨 Expired: ${report.summary.expired}`, 'error'));
+      console.info(styled(`      🚨 Expired: ${report.summary.expired}`, 'error'));
     }
 
     if (report.summary.critical > 0) {
-      console.log(styled(`      ⚠️  Critical (≤1 day): ${report.summary.critical}`, 'error'));
+      console.info(styled(`      ⚠️  Critical (≤1 day): ${report.summary.critical}`, 'error'));
     }
 
     if (report.summary.warning > 0) {
-      console.log(
+      console.info(
         styled(
           `      ⏳ Warning (≤${this.options.threshold} days): ${report.summary.warning}`,
           'warning'
@@ -303,7 +303,7 @@ class ExpirationMonitor {
       report.summary.critical === 0 &&
       report.summary.warning === 0
     ) {
-      console.log(styled('      ✅ No secrets expiring soon', 'success'));
+      console.info(styled('      ✅ No secrets expiring soon', 'success'));
     }
 
     // Show critical/expired details
@@ -312,11 +312,11 @@ class ExpirationMonitor {
       ...report.expiring.filter(s => s.severity === 'CRITICAL'),
     ];
     if (criticalItems.length > 0) {
-      console.log(styled('   🚨 Immediate attention required:', 'error'));
+      console.info(styled('   🚨 Immediate attention required:', 'error'));
       criticalItems.forEach(item => {
         const daysText =
           'daysExpired' in item ? `${item.daysExpired} days expired` : `${item.daysLeft} days left`;
-        console.log(styled(`      • ${item.key} (${daysText})`, 'error'));
+        console.info(styled(`      • ${item.key} (${daysText})`, 'error'));
       });
     }
   }
@@ -326,7 +326,7 @@ class ExpirationMonitor {
       return;
     }
 
-    console.log(styled('   📢 Sending alerts...', 'warning'));
+    console.info(styled('   📢 Sending alerts...', 'warning'));
 
     // Send Slack alerts
     if (this.options.slackAlerts) {
@@ -338,12 +338,12 @@ class ExpirationMonitor {
       await this.sendEmailAlert(report);
     }
 
-    console.log(styled('   ✅ Alerts sent', 'success'));
+    console.info(styled('   ✅ Alerts sent', 'success'));
   }
 
   private async sendSlackAlert(report: ExpirationReport): Promise<void> {
     // In a real implementation, this would send to Slack webhook
-    console.log(styled('      📱 Slack alert sent', 'info'));
+    console.info(styled('      📱 Slack alert sent', 'info'));
 
     const message = {
       text: `🚨 Secret Expiration Alert`,
@@ -366,7 +366,7 @@ class ExpirationMonitor {
 
   private async sendEmailAlert(report: ExpirationReport): Promise<void> {
     // In a real implementation, this would send email
-    console.log(styled('      📧 Email alert sent', 'info'));
+    console.info(styled('      📧 Email alert sent', 'info'));
 
     const subject = `🚨 Secret Expiration Alert - ${report.summary.expired + report.summary.critical} secrets need attention`;
 
@@ -407,9 +407,9 @@ class ExpirationMonitor {
         body: reportContent,
       });
 
-      console.log(styled('      🌐 Report stored in R2', 'info'));
+      console.info(styled('      🌐 Report stored in R2', 'info'));
     } catch (error) {
-      console.log(styled('      ❌ Failed to store in R2', 'error'));
+      console.info(styled('      ❌ Failed to store in R2', 'error'));
     }
   }
 }

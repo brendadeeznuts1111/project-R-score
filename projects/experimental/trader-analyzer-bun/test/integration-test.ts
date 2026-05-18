@@ -18,24 +18,24 @@ import {
 import { inspectTable, ProgressBar } from "./src/utils/bun";
 
 async function comprehensiveIntegrationTest() {
-  console.log('🚀 Complete Bun Utils Integration Test\n');
+  console.info('🚀 Complete Bun Utils Integration Test\n');
 
   // 1. Rate Limiting for API calls
-  console.log('1. 🔒 Rate Limiting API Calls');
+  console.info('1. 🔒 Rate Limiting API Calls');
   const apiLimiter = new RateLimiter(5, 1); // 5 requests per second
 
   const apiCalls = Array.from({ length: 8 }, (_, i) => `API Call ${i + 1}`);
   for (const call of apiCalls) {
     if (apiLimiter.acquireSync()) {
-      console.log(`  ✅ ${call} - Allowed`);
+      console.info(`  ✅ ${call} - Allowed`);
     } else {
-      console.log(`  ❌ ${call} - Rate limited`);
+      console.info(`  ❌ ${call} - Rate limited`);
     }
   }
-  console.log();
+  console.info();
 
   // 2. Promise utilities with retry logic
-  console.log('2. 🔄 Promise Retry with Timeout');
+  console.info('2. 🔄 Promise Retry with Timeout');
   let attemptCount = 0;
 
   const unreliableOperation = async () => {
@@ -52,46 +52,46 @@ async function comprehensiveIntegrationTest() {
       delay: 100,
       shouldRetry: (error) => error.message.includes('failed')
     });
-    console.log(`  ✅ ${result}`);
+    console.info(`  ✅ ${result}`);
   } catch (error) {
-    console.log(`  ❌ ${error.message}`);
+    console.info(`  ❌ ${error.message}`);
   }
-  console.log();
+  console.info();
 
   // 3. Path resolution and file operations
-  console.log('3. 📁 Path Resolution & File Operations');
+  console.info('3. 📁 Path Resolution & File Operations');
   try {
     const resolvedPath = PathResolver.resolve('./package.json');
-    console.log(`  📄 Resolved package.json: ${resolvedPath}`);
+    console.info(`  📄 Resolved package.json: ${resolvedPath}`);
 
     const fileURL = PathResolver.toFileURL(resolvedPath);
-    console.log(`  🔗 File URL: ${fileURL.href}`);
+    console.info(`  🔗 File URL: ${fileURL.href}`);
 
     const backToPath = PathResolver.fromFileURL(fileURL);
-    console.log(`  🔄 Back to path: ${backToPath}`);
+    console.info(`  🔄 Back to path: ${backToPath}`);
   } catch (error) {
-    console.log(`  ❌ Path resolution failed: ${error.message}`);
+    console.info(`  ❌ Path resolution failed: ${error.message}`);
   }
-  console.log();
+  console.info();
 
   // 4. Migration analysis
-  console.log('4. 🔄 NPM → Bun Migration Analysis');
+  console.info('4. 🔄 NPM → Bun Migration Analysis');
   const replacements = MigrationHelper.getReplacements();
   const stats = MigrationHelper.getMigrationStats();
 
-  console.log(`  📦 Found ${stats.totalPackages} packages with Bun alternatives`);
-  console.log(`  💾 Potential bundle reduction: ${stats.totalBundleReduction}`);
+  console.info(`  📦 Found ${stats.totalPackages} packages with Bun alternatives`);
+  console.info(`  💾 Potential bundle reduction: ${stats.totalBundleReduction}`);
 
   // Show top 5 replacements
-  console.log('  🔧 Top replacements:');
+  console.info('  🔧 Top replacements:');
   replacements.slice(0, 5).forEach(rep => {
-    console.log(`    ${rep.npmPackage.padEnd(15)} → ${rep.bunReplacement}`);
+    console.info(`    ${rep.npmPackage.padEnd(15)} → ${rep.bunReplacement}`);
   });
-  console.log();
+  console.info();
 
   // 5. Performance benchmarking
-  console.log('5. ⚡ Performance Benchmarking');
-  console.log('  Running quick benchmarks...');
+  console.info('5. ⚡ Performance Benchmarking');
+  console.info('  Running quick benchmarks...');
 
   // Quick string width benchmark
   const testString = 'Hello, World! 🎉 🌟 🚀 中文 español';
@@ -103,12 +103,12 @@ async function comprehensiveIntegrationTest() {
   }
   const bunTime = Number(Bun.nanoseconds() - start) / 1_000_000;
 
-  console.log(`  📏 String width (${iterations} iterations): ${bunTime.toFixed(2)}ms`);
-  console.log(`  🚀 ~6,756x faster than npm string-width package`);
-  console.log();
+  console.info(`  📏 String width (${iterations} iterations): ${bunTime.toFixed(2)}ms`);
+  console.info(`  🚀 ~6,756x faster than npm string-width package`);
+  console.info();
 
   // 6. Table formatting with real data
-  console.log('6. 📊 Advanced Table Formatting');
+  console.info('6. 📊 Advanced Table Formatting');
   const benchmarkData = [
     { operation: 'String Width', bun: '15.84ms', npm: '107,042ms', speedup: '6,756x' },
     { operation: 'ANSI Strip', bun: '8.56ms', npm: '487ms', speedup: '57x' },
@@ -116,14 +116,14 @@ async function comprehensiveIntegrationTest() {
     { operation: 'GZIP', bun: '2.04ms', npm: '3.07ms', speedup: '1.5x' }
   ];
 
-  console.log(inspectTable(benchmarkData, {
+  console.info(inspectTable(benchmarkData, {
     columns: ['operation', 'bun', 'npm', 'speedup'],
     colors: true
   }));
-  console.log();
+  console.info();
 
   // 7. Progress bar demonstration
-  console.log('7. 📈 Progress Bar with Real Work');
+  console.info('7. 📈 Progress Bar with Real Work');
   const progress = new ProgressBar(20, 40);
 
   for (let i = 0; i <= 20; i++) {
@@ -144,10 +144,10 @@ async function comprehensiveIntegrationTest() {
   }
 
   progress.complete('All tasks completed!');
-  console.log();
+  console.info();
 
   // 8. Promise pool for concurrent operations
-  console.log('8. 🏊 Promise Pool for Concurrency Control');
+  console.info('8. 🏊 Promise Pool for Concurrency Control');
   const pool = new PromisePool(3); // Max 3 concurrent
 
   const tasks = Array.from({ length: 10 }, (_, i) => async () => {
@@ -156,23 +156,23 @@ async function comprehensiveIntegrationTest() {
     return `Task ${i + 1} completed in ${delay.toFixed(0)}ms`;
   });
 
-  console.log('  Starting 10 tasks with max 3 concurrent...');
+  console.info('  Starting 10 tasks with max 3 concurrent...');
   const startPool = Bun.nanoseconds();
 
   const poolResults = await Promise.all(
     tasks.map((task, index) => pool.add(async () => {
       const result = await task();
-      console.log(`    ${result}`);
+      console.info(`    ${result}`);
       return result;
     }))
   );
 
   const poolTime = Number(Bun.nanoseconds() - startPool) / 1_000_000;
-  console.log(`  ✅ All ${poolResults.length} tasks completed in ${poolTime.toFixed(2)}ms`);
-  console.log();
+  console.info(`  ✅ All ${poolResults.length} tasks completed in ${poolTime.toFixed(2)}ms`);
+  console.info();
 
   // 9. Serialization with structured clone
-  console.log('9. 🔄 Structured Clone Serialization');
+  console.info('9. 🔄 Structured Clone Serialization');
   const complexData = {
     users: new Map([['alice', { role: 'admin' }], ['bob', { role: 'user' }]]),
     tags: new Set(['typescript', 'bun', 'performance']),
@@ -182,27 +182,27 @@ async function comprehensiveIntegrationTest() {
   const serialized = serialize(complexData);
   const deserialized = deserialize(serialized);
 
-  console.log(`  📦 Serialized ${complexData.users.size} users and ${complexData.tags.size} tags`);
-  console.log(`  💾 Buffer size: ${serialized.byteLength} bytes`);
-  console.log(`  ✅ Map preserved: ${deserialized.users instanceof Map}`);
-  console.log(`  ✅ Set preserved: ${deserialized.tags instanceof Set}`);
-  console.log(`  ✅ Data integrity: ${deserialized.metadata.version === '1.0.0'}`);
-  console.log();
+  console.info(`  📦 Serialized ${complexData.users.size} users and ${complexData.tags.size} tags`);
+  console.info(`  💾 Buffer size: ${serialized.byteLength} bytes`);
+  console.info(`  ✅ Map preserved: ${deserialized.users instanceof Map}`);
+  console.info(`  ✅ Set preserved: ${deserialized.tags instanceof Set}`);
+  console.info(`  ✅ Data integrity: ${deserialized.metadata.version === '1.0.0'}`);
+  console.info();
 
   // 10. Final summary
-  console.log('10. 🎉 Integration Test Summary');
-  console.log('  ✅ Rate limiting working correctly');
-  console.log('  ✅ Promise retry with backoff successful');
-  console.log('  ✅ Path resolution and URL conversion working');
-  console.log('  ✅ Migration analysis identified 20+ npm replacements');
-  console.log('  ✅ Performance benchmarks show massive speedups');
-  console.log('  ✅ Table formatting with Unicode support');
-  console.log('  ✅ Progress bars with ETA calculation');
-  console.log('  ✅ Promise pool controlling concurrency');
-  console.log('  ✅ Structured clone serialization working');
-  console.log();
-  console.log('🎊 All Bun utilities are working perfectly together!');
-  console.log('💡 This demonstrates zero-dependency, high-performance development with Bun.');
+  console.info('10. 🎉 Integration Test Summary');
+  console.info('  ✅ Rate limiting working correctly');
+  console.info('  ✅ Promise retry with backoff successful');
+  console.info('  ✅ Path resolution and URL conversion working');
+  console.info('  ✅ Migration analysis identified 20+ npm replacements');
+  console.info('  ✅ Performance benchmarks show massive speedups');
+  console.info('  ✅ Table formatting with Unicode support');
+  console.info('  ✅ Progress bars with ETA calculation');
+  console.info('  ✅ Promise pool controlling concurrency');
+  console.info('  ✅ Structured clone serialization working');
+  console.info();
+  console.info('🎊 All Bun utilities are working perfectly together!');
+  console.info('💡 This demonstrates zero-dependency, high-performance development with Bun.');
 }
 
 // Run the comprehensive integration test

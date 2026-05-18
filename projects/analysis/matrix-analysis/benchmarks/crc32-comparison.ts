@@ -4,8 +4,8 @@
  * Before vs After Hardware Acceleration
  */
 
-console.log("📈 CRC32 Performance: Before vs After");
-console.log("=====================================\n");
+console.info("📈 CRC32 Performance: Before vs After");
+console.info("=====================================\n");
 
 const compData = Buffer.alloc(1024 * 1024); // 1MB buffer
 
@@ -15,7 +15,7 @@ for (let i = 0; i < compData.length; i++) {
 }
 
 // Test current performance (with hardware acceleration)
-console.log("🔥 Testing with Hardware Acceleration (Current):");
+console.info("🔥 Testing with Hardware Acceleration (Current):");
 const compIterations = 100;
 
 console.time("Hardware Accelerated");
@@ -30,22 +30,22 @@ Bun.hash.crc32(compData);
 const hwEnd = performance.now();
 const hwTime = (hwEnd - hwStart) * 1000; // Convert to microseconds
 
-console.log(`Average per operation: ${hwTime.toFixed(1)} µs`);
+console.info(`Average per operation: ${hwTime.toFixed(1)} µs`);
 
 // Show what it would be like without hardware acceleration
-console.log("\n❄️  Simulated Software-Only Performance (Before):");
+console.info("\n❄️  Simulated Software-Only Performance (Before):");
 const softwareTime = hwTime * 20; // 20x slower
-console.log(`Estimated average: ${softwareTime.toFixed(1)} µs`);
-console.log(`Estimated total for ${compIterations} ops: ${(softwareTime * compIterations / 1000).toFixed(0)} ms`);
+console.info(`Estimated average: ${softwareTime.toFixed(1)} µs`);
+console.info(`Estimated total for ${compIterations} ops: ${(softwareTime * compIterations / 1000).toFixed(0)} ms`);
 
 // Summary
-console.log("\n📊 Summary:");
-console.log(`- Hardware acceleration: ${hwTime.toFixed(1)} µs per 1MB hash`);
-console.log(`- Software-only (estimated): ${softwareTime.toFixed(1)} µs per 1MB hash`);
-console.log(`- Performance improvement: ~20x faster`);
-console.log(`- Throughput: ${(1024 / (hwTime / 1000000)).toFixed(1)} MB/s`);
+console.info("\n📊 Summary:");
+console.info(`- Hardware acceleration: ${hwTime.toFixed(1)} µs per 1MB hash`);
+console.info(`- Software-only (estimated): ${softwareTime.toFixed(1)} µs per 1MB hash`);
+console.info(`- Performance improvement: ~20x faster`);
+console.info(`- Throughput: ${(1024 / (hwTime / 1000000)).toFixed(1)} MB/s`);
 
-console.log("\n💡 Hardware acceleration uses:");
-console.log("  - x86: PCLMULQDQ instruction via zlib");
-console.log("  - ARM: Native CRC32 instruction");
-console.log("  - Result: Massive performance boost! 🚀");
+console.info("\n💡 Hardware acceleration uses:");
+console.info("  - x86: PCLMULQDQ instruction via zlib");
+console.info("  - ARM: Native CRC32 instruction");
+console.info("  - Result: Massive performance boost! 🚀");

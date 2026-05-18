@@ -41,11 +41,11 @@ export class WaterDashboardIntegrator {
    */
   public integrateWaterKPIs(): void {
     if (this.isIntegrated) {
-      console.log('🌊 Water KPIs already integrated');
+      console.info('🌊 Water KPIs already integrated');
       return;
     }
 
-    console.log('🌊 Starting water dashboard KPI integration...');
+    console.info('🌊 Starting water dashboard KPI integration...');
 
     // Find the system info section
     const systemInfoSection = this.findSystemInfoSection();
@@ -57,7 +57,7 @@ export class WaterDashboardIntegrator {
     // Find existing KPI cards
     const existingKPIs = this.findExistingKPIs(systemInfoSection);
     if (existingKPIs.length === 0) {
-      console.log('🌊 No existing KPI cards found');
+      console.info('🌊 No existing KPI cards found');
       return;
     }
 
@@ -71,7 +71,7 @@ export class WaterDashboardIntegrator {
     this.initializeWaterMonitoring(systemInfoSection);
 
     this.isIntegrated = true;
-    console.log('🌊 Water dashboard KPI integration completed successfully!');
+    console.info('🌊 Water dashboard KPI integration completed successfully!');
   }
 
   /**
@@ -357,7 +357,7 @@ export class WaterDashboardIntegrator {
     if (this.waterManager) {
       // Force update of all KPIs
       const status = this.waterManager.getWaterSystemStatus();
-      console.log('🌊 Water system status:', status);
+      console.info('🌊 Water system status:', status);
 
       // Update last update time
       const lastUpdateElement = document.getElementById('last-update');
@@ -375,7 +375,7 @@ export class WaterDashboardIntegrator {
       return;
     }
 
-    console.log('🌊 Restoring original KPI cards...');
+    console.info('🌊 Restoring original KPI cards...');
 
     // Stop water monitoring
     this.waterManager?.stopWaterMonitoring();
@@ -401,7 +401,7 @@ export class WaterDashboardIntegrator {
     }
 
     this.isIntegrated = false;
-    console.log('🌊 Original KPI cards restored');
+    console.info('🌊 Original KPI cards restored');
   }
 
   /**

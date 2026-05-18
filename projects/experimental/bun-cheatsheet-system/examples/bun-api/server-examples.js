@@ -1,14 +1,14 @@
 #!/usr/bin/env bun
 
 export async function demoServerExamples() {
-  console.log('🌐 Bun Server Examples');
-  console.log('='.repeat(40));
+  console.info('🌐 Bun Server Examples');
+  console.info('='.repeat(40));
   
   // Note: These are server examples that would normally run continuously
   // For demo purposes, we'll show the setup and then stop them
   
   // 1. Basic HTTP server
-  console.log('\n1. 🚀 Basic HTTP Server:');
+  console.info('\n1. 🚀 Basic HTTP Server:');
   const basicServerCode = `
 const server = Bun.serve({
   port: 3000,
@@ -17,13 +17,13 @@ const server = Bun.serve({
   }
 });
 
-console.log('Server running on http://localhost:3000');
+console.info('Server running on http://localhost:3000');
 `;
-  console.log('   Code:');
-  console.log(basicServerCode);
+  console.info('   Code:');
+  console.info(basicServerCode);
   
   // 2. Server with routing
-  console.log('\n2. 🛣️ Server with Routing:');
+  console.info('\n2. 🛣️ Server with Routing:');
   const routingServerCode = `
 const server = Bun.serve({
   port: 3001,
@@ -43,11 +43,11 @@ const server = Bun.serve({
   }
 });
 `;
-  console.log('   Code:');
-  console.log(routingServerCode);
+  console.info('   Code:');
+  console.info(routingServerCode);
   
   // 3. WebSocket server
-  console.log('\n3. 🔌 WebSocket Server:');
+  console.info('\n3. 🔌 WebSocket Server:');
   const websocketServerCode = `
 const server = Bun.serve({
   port: 3002,
@@ -60,24 +60,24 @@ const server = Bun.serve({
   },
   websocket: {
     message(ws, message) {
-      console.log('Received:', message);
+      console.info('Received:', message);
       ws.send('Echo: ' + message);
     },
     open(ws) {
-      console.log('WebSocket connection opened');
+      console.info('WebSocket connection opened');
       ws.send('Welcome to WebSocket!');
     },
     close(ws, code, message) {
-      console.log('WebSocket closed:', code, message);
+      console.info('WebSocket closed:', code, message);
     }
   }
 });
 `;
-  console.log('   Code:');
-  console.log(websocketServerCode);
+  console.info('   Code:');
+  console.info(websocketServerCode);
   
   // 4. Static file server
-  console.log('\n4. 📁 Static File Server:');
+  console.info('\n4. 📁 Static File Server:');
   const staticServerCode = `
 const server = Bun.serve({
   port: 3003,
@@ -96,15 +96,15 @@ const server = Bun.serve({
   }
 });
 `;
-  console.log('   Code:');
-  console.log(staticServerCode);
+  console.info('   Code:');
+  console.info(staticServerCode);
   
   // 5. API server with middleware
-  console.log('\n5. 🔧 API Server with Middleware:');
+  console.info('\n5. 🔧 API Server with Middleware:');
   const apiServerCode = `
 // Middleware for logging
 const logger = (req) => {
-  console.log(\`\\\${new Date().toISOString()} - \\\${req.method} \\\${req.url}\`);
+  console.info(\`\\\${new Date().toISOString()} - \\\${req.method} \\\${req.url}\`);
 };
 
 // Middleware for CORS
@@ -147,11 +147,11 @@ const server = Bun.serve({
   }
 });
 `;
-  console.log('   Code:');
-  console.log(apiServerCode);
+  console.info('   Code:');
+  console.info(apiServerCode);
   
   // 6. Demonstrate creating a temporary server
-  console.log('\n6. 🧪 Temporary Server Demo:');
+  console.info('\n6. 🧪 Temporary Server Demo:');
   try {
     const tempServer = Bun.serve({
       port: 0, // Random available port
@@ -160,26 +160,26 @@ const server = Bun.serve({
       }
     });
     
-    console.log(`   ✅ Temporary server started on port ${tempServer.port}`);
+    console.info(`   ✅ Temporary server started on port ${tempServer.port}`);
     
     // Test the server
     const response = await fetch(`http://localhost:${tempServer.port}`);
     const text = await response.text();
-    console.log(`   📡 Response: ${text}`);
+    console.info(`   📡 Response: ${text}`);
     
     // Stop the server
     tempServer.stop();
-    console.log('   🛑 Temporary server stopped');
+    console.info('   🛑 Temporary server stopped');
     
   } catch (error) {
-    console.log(`   ❌ Error: ${error.message}`);
+    console.info(`   ❌ Error: ${error.message}`);
   }
   
-  console.log('\n✅ Server examples demonstrated!');
-  console.log('\n💡 To run these servers:');
-  console.log('   1. Copy the code into separate .js files');
-  console.log('   2. Run with: bun <filename>.js');
-  console.log('   3. Access in browser or with curl');
+  console.info('\n✅ Server examples demonstrated!');
+  console.info('\n💡 To run these servers:');
+  console.info('   1. Copy the code into separate .js files');
+  console.info('   2. Run with: bun <filename>.js');
+  console.info('   3. Access in browser or with curl');
 }
 
 if (import.meta.main) {

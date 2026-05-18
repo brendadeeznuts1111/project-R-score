@@ -33,7 +33,7 @@ async function benchmarkAsync(
 	return { name, time, iterations, opsPerSecond };
 }
 
-console.log(`
+console.info(`
 ╔══════════════════════════════════════════════════════════╗
 ║   🌐 DNS Preconnect Benchmark                           ║
 ║   Testing connection pre-warming impact                 ║
@@ -52,11 +52,11 @@ const preconnectManager = new DNSPreconnectManager({
 });
 
 // Wait for preconnect to complete
-console.log("⏳ Preconnecting to domains...\n");
+console.info("⏳ Preconnecting to domains...\n");
 await new Promise((resolve) => setTimeout(resolve, 1000));
 
 // Verify preconnections
-console.log("📊 Preconnection Status:");
+console.info("📊 Preconnection Status:");
 const testDomains = [
 	"api.example.com",
 	"cdn.example.com",
@@ -66,10 +66,10 @@ const testDomains = [
 for (const domain of testDomains) {
 	const isConnected = preconnectManager.isPreconnected(domain);
 	const age = preconnectManager.getConnectionAge(domain);
-	console.log(`  ${isConnected ? "✅" : "❌"} ${domain} (age: ${age}ms)`);
+	console.info(`  ${isConnected ? "✅" : "❌"} ${domain} (age: ${age}ms)`);
 }
 
-console.log("\n⏳ Running benchmarks...\n");
+console.info("\n⏳ Running benchmarks...\n");
 
 const results: BenchmarkResult[] = [];
 
@@ -126,13 +126,13 @@ results.push(
 );
 
 // Display results
-console.log("\n📊 Benchmark Results:\n");
+console.info("\n📊 Benchmark Results:\n");
 results.forEach((result) => {
 	const opsPerSec = result.opsPerSecond.toFixed(0);
 	const timeMs = result.time.toFixed(3);
-	console.log(`${result.name}:`);
-	console.log(`  Time: ${timeMs}ms (${result.iterations} iterations)`);
-	console.log(`  Throughput: ${opsPerSec} ops/sec\n`);
+	console.info(`${result.name}:`);
+	console.info(`  Time: ${timeMs}ms (${result.iterations} iterations)`);
+	console.info(`  Throughput: ${opsPerSec} ops/sec\n`);
 });
 
 // Calculate improvement
@@ -152,12 +152,12 @@ const fetchWarmTime =
 if (coldTime > 0 && warmTime > 0) {
 	const improvement = (((coldTime - warmTime) / coldTime) * 100).toFixed(1);
 	const speedup = (coldTime / warmTime).toFixed(2);
-	console.log("╔══════════════════════════════════════════════════════════╗");
-	console.log("║   📈 Preconnect Impact                                   ║");
-	console.log("╚══════════════════════════════════════════════════════════╝\n");
-	console.log(`   Cold Connection: ${coldTime.toFixed(2)}ms`);
-	console.log(`   Warm Connection: ${warmTime.toFixed(2)}ms`);
-	console.log(`   Improvement: ${improvement}% faster (${speedup}x speedup)\n`);
+	console.info("╔══════════════════════════════════════════════════════════╗");
+	console.info("║   📈 Preconnect Impact                                   ║");
+	console.info("╚══════════════════════════════════════════════════════════╝\n");
+	console.info(`   Cold Connection: ${coldTime.toFixed(2)}ms`);
+	console.info(`   Warm Connection: ${warmTime.toFixed(2)}ms`);
+	console.info(`   Improvement: ${improvement}% faster (${speedup}x speedup)\n`);
 }
 
 if (fetchColdTime > 0 && fetchWarmTime > 0) {
@@ -166,21 +166,21 @@ if (fetchColdTime > 0 && fetchWarmTime > 0) {
 		100
 	).toFixed(1);
 	const fetchSpeedup = (fetchColdTime / fetchWarmTime).toFixed(2);
-	console.log(`   Fetch Cold: ${fetchColdTime.toFixed(2)}ms`);
-	console.log(`   Fetch Warm: ${fetchWarmTime.toFixed(2)}ms`);
-	console.log(
+	console.info(`   Fetch Cold: ${fetchColdTime.toFixed(2)}ms`);
+	console.info(`   Fetch Warm: ${fetchWarmTime.toFixed(2)}ms`);
+	console.info(
 		`   Fetch Improvement: ${fetchImprovement}% faster (${fetchSpeedup}x speedup)\n`,
 	);
 }
 
-console.log("💡 Expected Results in Production:");
-console.log("   Without Preconnect:");
-console.log("     - DNS Lookup: 40ms");
-console.log("     - TCP Handshake: 60ms");
-console.log("     - SSL Negotiation: 50ms");
-console.log("     - Total: ~150ms");
-console.log("\n   With Preconnect:");
-console.log("     - DNS Lookup: 0ms (cached)");
-console.log("     - TCP Handshake: 0ms (pre-warmed)");
-console.log("     - SSL Negotiation: 0ms (pre-shaken)");
-console.log("     - Total: ~0-5ms\n");
+console.info("💡 Expected Results in Production:");
+console.info("   Without Preconnect:");
+console.info("     - DNS Lookup: 40ms");
+console.info("     - TCP Handshake: 60ms");
+console.info("     - SSL Negotiation: 50ms");
+console.info("     - Total: ~150ms");
+console.info("\n   With Preconnect:");
+console.info("     - DNS Lookup: 0ms (cached)");
+console.info("     - TCP Handshake: 0ms (pre-warmed)");
+console.info("     - SSL Negotiation: 0ms (pre-shaken)");
+console.info("     - Total: ~0-5ms\n");

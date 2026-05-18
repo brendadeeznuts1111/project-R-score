@@ -20,7 +20,7 @@ import { packageCache, queryCache } from './cache';
 
 class ProductionOptimizations {
   static enable(): void {
-    console.log('⚡ Enabling production optimizations...');
+    console.info('⚡ Enabling production optimizations...');
 
     // Optimize garbage collection for production
     if (typeof gc !== 'undefined') {
@@ -47,25 +47,25 @@ class ProductionOptimizations {
       console.error('💥 Unhandled Rejection at:', promise, 'reason:', reason);
     });
 
-    console.log('✅ Production optimizations enabled');
+    console.info('✅ Production optimizations enabled');
   }
 
   static logStartupInfo(): void {
     const nodeEnv = process.env.NODE_ENV || 'development';
     const isProduction = nodeEnv === 'production';
 
-    console.log(
+    console.info(
       `🚀 Ultra-Fast Package Registry - ${isProduction ? 'Production' : 'Development'} Mode`
     );
-    console.log(`📊 Bun Version: ${Bun.version}`);
-    console.log(`🏗️ Platform: ${Bun.platform || 'unknown'}`);
-    console.log(`💾 Architecture: ${process.arch}`);
-    console.log(`🎯 Node Environment: ${nodeEnv}`);
-    console.log(
+    console.info(`📊 Bun Version: ${Bun.version}`);
+    console.info(`🏗️ Platform: ${Bun.platform || 'unknown'}`);
+    console.info(`💾 Architecture: ${process.arch}`);
+    console.info(`🎯 Node Environment: ${nodeEnv}`);
+    console.info(
       `🗄️ Database: ${process.env.DATABASE_URL || (isProduction ? './registry-production.db' : './dev.db')}`
     );
-    console.log(`🌐 Port: ${process.env.PORT || APPLICATION_CONSTANTS.DEFAULT_PORT}`);
-    console.log(`⏰ Startup Time: ${new Date().toISOString()}`);
+    console.info(`🌐 Port: ${process.env.PORT || APPLICATION_CONSTANTS.DEFAULT_PORT}`);
+    console.info(`⏰ Startup Time: ${new Date().toISOString()}`);
   }
 }
 
@@ -101,7 +101,7 @@ class ProductionServer {
     const isProduction = nodeEnv === 'production';
     const dbPath =
       process.env.DATABASE_URL || (isProduction ? './registry-production.db' : './dev.db');
-    console.log(
+    console.info(
       `🗄️ Initializing ${isProduction ? 'production' : 'development'} database: ${dbPath}`
     );
 
@@ -113,7 +113,7 @@ class ProductionServer {
   }
 
   private async preBundleAssets(): Promise<void> {
-    console.log('📦 Pre-bundling critical assets for production...');
+    console.info('📦 Pre-bundling critical assets for production...');
 
     try {
       // Bundle HTML interface
@@ -134,7 +134,7 @@ class ProductionServer {
       // Bundle CSS (inline in HTML for now)
       // Bundle JS (inline in HTML for now)
 
-      console.log(`✅ Pre-bundled ${this.bundledAssets.size} critical assets`);
+      console.info(`✅ Pre-bundled ${this.bundledAssets.size} critical assets`);
     } catch (error) {
       console.error('❌ Asset pre-bundling failed:', error);
     }
@@ -188,7 +188,7 @@ class ProductionServer {
   }
 
   async start(port: number = APPLICATION_CONSTANTS.DEFAULT_PORT): Promise<void> {
-    console.log(`🚀 Starting Production Server on port ${port}`);
+    console.info(`🚀 Starting Production Server on port ${port}`);
 
     Bun.serve({
       port,
@@ -205,14 +205,14 @@ class ProductionServer {
         message(ws, message) {
           try {
             const data = JSON.parse(message.toString());
-            console.log('📡 WS:', data.type || 'message');
+            console.info('📡 WS:', data.type || 'message');
           } catch (error) {
             ws.send(JSON.stringify({ error: 'Invalid message format' }));
           }
         },
 
         open(ws) {
-          console.log('📡 WebSocket connected (production)');
+          console.info('📡 WebSocket connected (production)');
           ws.send(
             JSON.stringify({
               type: 'connected',
@@ -224,7 +224,7 @@ class ProductionServer {
         },
 
         close(ws, code, reason) {
-          console.log('📡 WebSocket disconnected:', code);
+          console.info('📡 WebSocket disconnected:', code);
         },
       },
 
@@ -244,15 +244,15 @@ class ProductionServer {
       },
     });
 
-    console.log(`✅ Production Server running at http://localhost:${port}`);
-    console.log(`🎯 Production features enabled:`);
-    console.log(`   • Runtime bundling with in-memory caching`);
-    console.log(`   • Cache-Control and ETag headers`);
-    console.log(`   • Minified JavaScript/TypeScript`);
-    console.log(`   • Hardware-accelerated HTTP parsing`);
-    console.log(`   • Optimized database connections`);
-    console.log(`   • Real-time WebSocket support`);
-    console.log(`   • Production monitoring and logging`);
+    console.info(`✅ Production Server running at http://localhost:${port}`);
+    console.info(`🎯 Production features enabled:`);
+    console.info(`   • Runtime bundling with in-memory caching`);
+    console.info(`   • Cache-Control and ETag headers`);
+    console.info(`   • Minified JavaScript/TypeScript`);
+    console.info(`   • Hardware-accelerated HTTP parsing`);
+    console.info(`   • Optimized database connections`);
+    console.info(`   • Real-time WebSocket support`);
+    console.info(`   • Production monitoring and logging`);
 
     // Start periodic stats logging
     this.startStatsLogging();
@@ -415,7 +415,7 @@ class ProductionServer {
       const cacheHitRate =
         this.stats.requests > 0 ? (this.stats.cacheHits / this.stats.requests) * 100 : 0;
 
-      console.log(
+      console.info(
         `📊 Production Stats: ${this.stats.requests} req, ${this.stats.avgResponseTime.toFixed(1)}ms avg, ${cacheHitRate.toFixed(1)}% cache hit rate, ${uptime.toFixed(0)}s uptime`
       );
     }, 60000); // Every minute
@@ -445,7 +445,7 @@ async function startProductionServer(): Promise<void> {
 
   // Graceful shutdown
   const shutdown = () => {
-    console.log('\n🛑 Shutting down production server...');
+    console.info('\n🛑 Shutting down production server...');
     process.exit(0);
   };
 

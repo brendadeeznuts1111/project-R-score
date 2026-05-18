@@ -31,7 +31,7 @@ class ThirteenByteConfig {
     
     const endTime = performance.now();
     const latency = (endTime - startTime) * 1000000;
-    console.log(`Configuration randomized in ${latency.toFixed(1)}ns`);
+    console.info(`Configuration randomized in ${latency.toFixed(1)}ns`);
   }
 
   getBytes(): Uint8Array {
@@ -67,7 +67,7 @@ class ThirteenByteConfig {
 
   setActiveRegion(region: string): void {
     // Mock implementation for demo
-    console.log(`Region set to: ${region}`);
+    console.info(`Region set to: ${region}`);
     this.updateCount++;
   }
 
@@ -78,7 +78,7 @@ class ThirteenByteConfig {
 
   setPerformanceMode(mode: string): void {
     // Mock implementation for demo
-    console.log(`Performance mode set to: ${mode}`);
+    console.info(`Performance mode set to: ${mode}`);
     this.updateCount++;
   }
 
@@ -198,13 +198,13 @@ class EnhancedSportsTradingDemo {
       totalVolume: 0
     };
     
-    console.log('🚀 Enhanced Sports Trading Demo Initialized');
-    console.log('📊 13-Byte Configuration System Active');
-    console.log('⚡ Real-time Multi-Platform Integration Ready');
+    console.info('🚀 Enhanced Sports Trading Demo Initialized');
+    console.info('📊 13-Byte Configuration System Active');
+    console.info('⚡ Real-time Multi-Platform Integration Ready');
   }
 
   async start(): Promise<void> {
-    console.log('\n🎯 Starting Enhanced Sports Trading Demo...');
+    console.info('\n🎯 Starting Enhanced Sports Trading Demo...');
     
     // Start real-time data collection
     await this.startDataCollection();
@@ -220,7 +220,7 @@ class EnhancedSportsTradingDemo {
   }
 
   private async startDataCollection(): Promise<void> {
-    console.log('📡 Starting real-time data collection...');
+    console.info('📡 Starting real-time data collection...');
     
     // Collect data from Polymarket
     setInterval(async () => {
@@ -294,7 +294,7 @@ class EnhancedSportsTradingDemo {
   }
 
   private async startArbitrageDetection(): Promise<void> {
-    console.log('🔍 Starting arbitrage detection...');
+    console.info('🔍 Starting arbitrage detection...');
     
     setInterval(() => {
       const opportunities = Array.from(this.opportunities.values());
@@ -305,9 +305,9 @@ class EnhancedSportsTradingDemo {
           this.arbitrages.set(arbitrage.id, arbitrage);
           this.metrics.arbitragesFound++;
           
-          console.log(`💰 Arbitrage Found: ${arbitrage.event}`);
-          console.log(`   ${arbitrage.platform1} (${arbitrage.price1}) → ${arbitrage.platform2} (${arbitrage.price2})`);
-          console.log(`   Profit: ${arbitrage.profit.toFixed(2)}% | Confidence: ${(arbitrage.confidence * 100).toFixed(1)}%`);
+          console.info(`💰 Arbitrage Found: ${arbitrage.event}`);
+          console.info(`   ${arbitrage.platform1} (${arbitrage.price1}) → ${arbitrage.platform2} (${arbitrage.price2})`);
+          console.info(`   Profit: ${arbitrage.profit.toFixed(2)}% | Confidence: ${(arbitrage.confidence * 100).toFixed(1)}%`);
         }
       }
     }, 2000); // Every 2 seconds
@@ -359,17 +359,17 @@ class EnhancedSportsTradingDemo {
   }
 
   private async startPerformanceMonitoring(): Promise<void> {
-    console.log('📊 Starting performance monitoring...');
+    console.info('📊 Starting performance monitoring...');
     
     setInterval(() => {
-      console.log('\n📈 Performance Metrics:');
-      console.log(`   Trades Processed: ${this.metrics.tradesProcessed.toLocaleString()}`);
-      console.log(`   Arbitrages Found: ${this.metrics.arbitragesFound}`);
-      console.log(`   Average Latency: ${this.metrics.averageLatency.toFixed(1)}ns`);
-      console.log(`   Total Volume: $${this.metrics.totalVolume.toLocaleString()}`);
-      console.log(`   Config Updates: ${this.config.getUpdateCount()}`);
-      console.log(`   Terminal Mode: ${this.config.getTerminalMode()}`);
-      console.log(`   Active Region: ${this.config.getActiveRegion()}`);
+      console.info('\n📈 Performance Metrics:');
+      console.info(`   Trades Processed: ${this.metrics.tradesProcessed.toLocaleString()}`);
+      console.info(`   Arbitrages Found: ${this.metrics.arbitragesFound}`);
+      console.info(`   Average Latency: ${this.metrics.averageLatency.toFixed(1)}ns`);
+      console.info(`   Total Volume: $${this.metrics.totalVolume.toLocaleString()}`);
+      console.info(`   Config Updates: ${this.config.getUpdateCount()}`);
+      console.info(`   Terminal Mode: ${this.config.getTerminalMode()}`);
+      console.info(`   Active Region: ${this.config.getActiveRegion()}`);
     }, 5000); // Every 5 seconds
   }
 
@@ -380,13 +380,13 @@ class EnhancedSportsTradingDemo {
   }
 
   private async runInteractiveDemo(): Promise<void> {
-    console.log('\n🎮 Interactive Demo Controls:');
-    console.log('   1. Press "c" to randomize configuration');
-    console.log('   2. Press "r" to change region');
-    console.log('   3. Press "p" to change performance mode');
-    console.log('   4. Press "a" to toggle arbitrage mode');
-    console.log('   5. Press "d" to toggle debug mode');
-    console.log('   6. Press "q" to quit');
+    console.info('\n🎮 Interactive Demo Controls:');
+    console.info('   1. Press "c" to randomize configuration');
+    console.info('   2. Press "r" to change region');
+    console.info('   3. Press "p" to change performance mode');
+    console.info('   4. Press "a" to toggle arbitrage mode');
+    console.info('   5. Press "d" to toggle debug mode');
+    console.info('   6. Press "q" to quit');
     
     process.stdin.setRawMode(true);
     process.stdin.resume();
@@ -410,7 +410,7 @@ class EnhancedSportsTradingDemo {
           this.toggleDebug();
           break;
         case 'q':
-          console.log('\n👋 Demo ended. Thanks for watching!');
+          console.info('\n👋 Demo ended. Thanks for watching!');
           process.exit(0);
           break;
       }
@@ -425,10 +425,10 @@ class EnhancedSportsTradingDemo {
     const endTime = performance.now();
     const latency = (endTime - startTime) * 1000000; // Convert to nanoseconds
     
-    console.log(`\n🎲 Configuration randomized in ${latency.toFixed(1)}ns`);
-    console.log(`   New Terminal Mode: ${this.config.getTerminalMode()}`);
-    console.log(`   New Region: ${this.config.getActiveRegion()}`);
-    console.log(`   New Performance: ${this.config.getPerformanceMode()}`);
+    console.info(`\n🎲 Configuration randomized in ${latency.toFixed(1)}ns`);
+    console.info(`   New Terminal Mode: ${this.config.getTerminalMode()}`);
+    console.info(`   New Region: ${this.config.getActiveRegion()}`);
+    console.info(`   New Performance: ${this.config.getPerformanceMode()}`);
   }
 
   private changeRegion(): void {
@@ -439,8 +439,8 @@ class EnhancedSportsTradingDemo {
     
     this.config.setActiveRegion(regions[nextIndex]);
     
-    console.log(`\n🌍 Region changed to: ${regions[nextIndex]}`);
-    console.log(`   Latency optimization applied for ${regions[nextIndex]}`);
+    console.info(`\n🌍 Region changed to: ${regions[nextIndex]}`);
+    console.info(`   Latency optimization applied for ${regions[nextIndex]}`);
   }
 
   private changePerformance(): void {
@@ -451,24 +451,24 @@ class EnhancedSportsTradingDemo {
     
     this.config.setPerformanceMode(modes[nextIndex]);
     
-    console.log(`\n⚡ Performance mode changed to: ${modes[nextIndex]}`);
-    console.log(`   Processing speed optimized for ${modes[nextIndex]} performance`);
+    console.info(`\n⚡ Performance mode changed to: ${modes[nextIndex]}`);
+    console.info(`   Processing speed optimized for ${modes[nextIndex]} performance`);
   }
 
   private toggleArbitrage(): void {
     const current = this.config.isArbitrageEnabled();
     this.config.setArbitrageEnabled(!current);
     
-    console.log(`\n💰 Arbitrage ${!current ? 'enabled' : 'disabled'}`);
-    console.log(`   Real-time arbitrage detection is now ${!current ? 'active' : 'inactive'}`);
+    console.info(`\n💰 Arbitrage ${!current ? 'enabled' : 'disabled'}`);
+    console.info(`   Real-time arbitrage detection is now ${!current ? 'active' : 'inactive'}`);
   }
 
   private toggleDebug(): void {
     const current = this.config.isDebugMode();
     this.config.setDebugMode(!current);
     
-    console.log(`\n🐛 Debug mode ${!current ? 'enabled' : 'disabled'}`);
-    console.log(`   Verbose logging is now ${!current ? 'active' : 'inactive'}`);
+    console.info(`\n🐛 Debug mode ${!current ? 'enabled' : 'disabled'}`);
+    console.info(`   Verbose logging is now ${!current ? 'active' : 'inactive'}`);
   }
 }
 
@@ -477,13 +477,13 @@ export { EnhancedSportsTradingDemo, ThirteenByteConfig };
 
 // Main execution
 async function main(): Promise<void> {
-  console.log('🏆 Enhanced Sports Trading Demo');
-  console.log('=====================================');
-  console.log('🎯 Real-time multi-platform trading');
-  console.log('⚡ 13-byte configuration system');
-  console.log('🔍 Arbitrage detection');
-  console.log('📊 Performance monitoring');
-  console.log('');
+  console.info('🏆 Enhanced Sports Trading Demo');
+  console.info('=====================================');
+  console.info('🎯 Real-time multi-platform trading');
+  console.info('⚡ 13-byte configuration system');
+  console.info('🔍 Arbitrage detection');
+  console.info('📊 Performance monitoring');
+  console.info('');
   
   const demo = new EnhancedSportsTradingDemo();
   await demo.start();

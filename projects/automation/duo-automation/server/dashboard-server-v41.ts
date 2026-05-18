@@ -586,7 +586,7 @@ class DashboardServerV41 {
             setInterval(updateUptime, 1000);
             setInterval(() => {
                 fetch('/api/metrics').then(r => r.json()).then(metrics => {
-                    console.log('🔥 v4.1 Metrics updated:', metrics);
+                    console.info('🔥 v4.1 Metrics updated:', metrics);
                 });
             }, 30000);
         });
@@ -661,16 +661,16 @@ class DashboardServerV41 {
   // 🔥 Hot Reload Method
   public hotReload(newRoutes?: any): void {
     if (this.server && this.hotReloadEnabled) {
-      console.log("🔥 Performing hot reload...");
+      console.info("🔥 Performing hot reload...");
 
       // Update routes without server restart
       if (newRoutes) {
         // This would be implemented with actual server.reload() when available
-        console.log("🔄 Routes reloaded with new patterns");
+        console.info("🔄 Routes reloaded with new patterns");
       }
 
       this.updateMetrics();
-      console.log("✅ Hot reload completed - serving v4.1 patterns");
+      console.info("✅ Hot reload completed - serving v4.1 patterns");
     }
   }
 
@@ -813,25 +813,25 @@ class DashboardServerV41 {
     // Override with Unix socket if provided
     if (unixSocket) {
       serverConfig.unix = unixSocket;
-      console.log(`📡 Starting Unix socket server: ${unixSocket}`);
+      console.info(`📡 Starting Unix socket server: ${unixSocket}`);
     }
 
-    console.log(`🚀 DuoPlus Dashboard Server v4.1 starting...`);
-    console.log(`🔗 Bun.serve + URLPattern Fusion`);
-    console.log(`🌐 Port: ${this.port} | Hostname: 0.0.0.0`);
-    console.log(`🔥 Hot Reload: ${this.hotReloadEnabled ? 'Enabled' : 'Disabled'}`);
-    console.log(`📊 Dashboards: ${this.dashboards.length} | URLPattern: true`);
+    console.info(`🚀 DuoPlus Dashboard Server v4.1 starting...`);
+    console.info(`🔗 Bun.serve + URLPattern Fusion`);
+    console.info(`🌐 Port: ${this.port} | Hostname: 0.0.0.0`);
+    console.info(`🔥 Hot Reload: ${this.hotReloadEnabled ? 'Enabled' : 'Disabled'}`);
+    console.info(`📊 Dashboards: ${this.dashboards.length} | URLPattern: true`);
 
     this.server = serve(serverConfig);
 
     // Keep process alive for main server
     this.server.ref();
 
-    console.log(`✅ DuoPlus Dashboard Server v4.1 is running!`);
-    console.log(`🔗 Dashboard: http://localhost:${this.port}/`);
-    console.log(`🏥 Health: http://localhost:${this.port}/health`);
-    console.log(`📊 Metrics: http://localhost:${this.port}/api/metrics`);
-    console.log(`🔥 URLPattern: Active | Hot Reload: ${this.hotReloadEnabled}`);
+    console.info(`✅ DuoPlus Dashboard Server v4.1 is running!`);
+    console.info(`🔗 Dashboard: http://localhost:${this.port}/`);
+    console.info(`🏥 Health: http://localhost:${this.port}/health`);
+    console.info(`📊 Metrics: http://localhost:${this.port}/api/metrics`);
+    console.info(`🔥 URLPattern: Active | Hot Reload: ${this.hotReloadEnabled}`);
 
     // Start metrics logging
     setInterval(async () => {
@@ -841,10 +841,10 @@ class DashboardServerV41 {
 
   public async stop(force: boolean = false): Promise<void> {
     if (this.server) {
-      console.log(`🛑 Stopping DuoPlus Dashboard Server v4.1 (force: ${force})...`);
+      console.info(`🛑 Stopping DuoPlus Dashboard Server v4.1 (force: ${force})...`);
       this.server.stop(force);
       this.server = null;
-      console.log('✅ Server stopped successfully');
+      console.info('✅ Server stopped successfully');
     }
   }
 
@@ -861,7 +861,7 @@ class DashboardServerV41 {
   // Enable/disable hot reload
   public setHotReload(enabled: boolean): void {
     this.hotReloadEnabled = enabled;
-    console.log(`🔥 Hot Reload ${enabled ? 'enabled' : 'disabled'}`);
+    console.info(`🔥 Hot Reload ${enabled ? 'enabled' : 'disabled'}`);
   }
 }
 
@@ -870,13 +870,13 @@ const server = new DashboardServerV41();
 
 // Handle graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('\n🛑 Received SIGINT, shutting down gracefully...');
+  console.info('\n🛑 Received SIGINT, shutting down gracefully...');
   await server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-  console.log('\n🛑 Received SIGTERM, shutting down gracefully...');
+  console.info('\n🛑 Received SIGTERM, shutting down gracefully...');
   await server.stop();
   process.exit(0);
 });

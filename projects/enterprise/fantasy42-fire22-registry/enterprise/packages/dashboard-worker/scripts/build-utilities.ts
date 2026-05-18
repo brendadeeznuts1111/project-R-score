@@ -194,7 +194,7 @@ export class BuildUtilities {
       error: '❌',
     }[level];
 
-    console.log(`${prefix} [${timestamp}] ${message}`);
+    console.info(`${prefix} [${timestamp}] ${message}`);
 
     if (level === 'error') {
       this.addError(message);

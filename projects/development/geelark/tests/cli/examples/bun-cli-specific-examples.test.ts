@@ -6,7 +6,7 @@ describe("🎯 Bun CLI - Specific Examples Verification", () => {
   test("✅ Run JavaScript file: bun run ./index.js", async () => {
     // Create a test JavaScript file
     const jsContent = `
-console.log('JavaScript file executed successfully');
+console.info('JavaScript file executed successfully');
 export const message = 'Hello from JS';
 `;
 
@@ -27,7 +27,7 @@ export const message = 'Hello from JS';
     const tsxContent = `
 const App = () => {
   const message: string = 'TypeScript JSX executed successfully';
-  console.log(message);
+  console.info(message);
   return <div>{message}</div>;
 };
 
@@ -92,7 +92,7 @@ export default App;
     };
 
     await Bun.write("/tmp/package.json", JSON.stringify(packageJson, null, 2));
-    await Bun.write("/tmp/index.js", "console.log('From index.js file');");
+    await Bun.write("/tmp/index.js", "console.info('From index.js file');");
 
     // Test that script takes precedence over file
     const result = await Bun.spawn(["bun", "run", "index"], {
@@ -122,13 +122,13 @@ interface User {
 }
 
 const user: User = { name: 'Alice', age: 30 };
-console.log(\`User \${user.name} is \${user.age} years old\`);
+console.info(\`User \${user.name} is \${user.age} years old\`);
 
 export function greetUser(user: User): string {
   return \`Hello, \${user.name}!\`;
 }
 
-console.log(greetUser(user));
+console.info(greetUser(user));
 `;
 
     await Bun.write("/tmp/user.ts", tsContent);
@@ -147,7 +147,7 @@ console.log(greetUser(user));
     // Create a JSX component file
     const jsxContent = `
 const Button = ({ onClick, children }) => {
-  console.log('Button component defined');
+  console.info('Button component defined');
   return {
     type: 'button',
     props: { onClick, children },
@@ -156,11 +156,11 @@ const Button = ({ onClick, children }) => {
 };
 
 const button = Button({
-  onClick: () => console.log('clicked'),
+  onClick: () => console.info('clicked'),
   children: 'Click me'
 });
 
-console.log(button.render());
+console.info(button.render());
 export default Button;
 `;
 

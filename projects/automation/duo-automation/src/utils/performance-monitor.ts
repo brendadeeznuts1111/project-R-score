@@ -31,7 +31,7 @@ class PerformanceMonitor {
     
     // Log in production for monitoring
     if (process.env.NODE_ENV === 'production') {
-      console.log('[DI_PERF]', JSON.stringify(perf));
+      console.info('[DI_PERF]', JSON.stringify(perf));
     }
   }
   

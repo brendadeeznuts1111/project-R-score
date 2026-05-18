@@ -20,7 +20,7 @@ export class Fantasy42AlertIntegration {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🚨 Initializing Fantasy42 Alert Integration...');
+      console.info('🚨 Initializing Fantasy42 Alert Integration...');
 
       // Create alert configuration
       const config: TelegramAlertConfig = {
@@ -68,7 +68,7 @@ export class Fantasy42AlertIntegration {
 
       if (alertsReady) {
         this.isInitialized = true;
-        console.log('✅ Fantasy42 Alert Integration complete');
+        console.info('✅ Fantasy42 Alert Integration complete');
 
         // Setup additional UI enhancements
         await this.setupAlertEnhancements();
@@ -97,7 +97,7 @@ export class Fantasy42AlertIntegration {
     // Add alert history viewer
     await this.addAlertHistoryViewer();
 
-    console.log('✅ Alert enhancements setup');
+    console.info('✅ Alert enhancements setup');
   }
 
   /**
@@ -167,7 +167,7 @@ export class Fantasy42AlertIntegration {
       }
     });
 
-    console.log(
+    console.info(
       '✅ Alert keyboard shortcuts setup: Ctrl+Shift+T (Toggle), Ctrl+Shift+H (History), Ctrl+Shift+R (Refresh)'
     );
   }
@@ -203,7 +203,7 @@ export class Fantasy42AlertIntegration {
       alertLabel.parentElement?.appendChild(historyButton);
     }
 
-    console.log('✅ Alert history viewer added');
+    console.info('✅ Alert history viewer added');
   }
 
   /**
@@ -386,7 +386,7 @@ export class Fantasy42AlertIntegration {
       }
     });
 
-    console.log('📊 Alert status modal displayed');
+    console.info('📊 Alert status modal displayed');
   }
 
   /**
@@ -529,7 +529,7 @@ export class Fantasy42AlertIntegration {
       }
     });
 
-    console.log('📋 Alert history modal displayed');
+    console.info('📋 Alert history modal displayed');
   }
 
   /**
@@ -542,7 +542,7 @@ export class Fantasy42AlertIntegration {
     const newState = !status.config.autoSendEnabled;
 
     // Update configuration (this would need to be implemented in the alerts class)
-    console.log(`🚨 Alerts ${newState ? 'enabled' : 'disabled'} via shortcut`);
+    console.info(`🚨 Alerts ${newState ? 'enabled' : 'disabled'} via shortcut`);
 
     // Visual feedback
     const statusIndicator = document.getElementById('fantasy42-alert-status');
@@ -557,12 +557,12 @@ export class Fantasy42AlertIntegration {
    * Refresh alerts shortcut
    */
   private async refreshAlertsShortcut(): Promise<void> {
-    console.log('🔄 Refreshing alerts...');
+    console.info('🔄 Refreshing alerts...');
 
     // This would trigger a refresh of the alert system
     if (this.alerts) {
       // Force a check for new wagers
-      console.log('✅ Alerts refreshed');
+      console.info('✅ Alerts refreshed');
     }
   }
 
@@ -607,14 +607,14 @@ export class Fantasy42AlertIntegration {
       recommendedAction: 'Review and monitor closely',
     };
 
-    console.log('🧪 Creating test alert...');
+    console.info('🧪 Creating test alert...');
 
     // This would normally be triggered by the wager monitoring system
     // For demo purposes, we'll simulate it
     this.alertHistory.push(testAlert);
     this.updateAlertCount();
 
-    console.log('✅ Test alert created');
+    console.info('✅ Test alert created');
   }
 
   /**
@@ -653,7 +653,7 @@ export class Fantasy42AlertIntegration {
       historyBtn.remove();
     }
 
-    console.log('🧹 Fantasy42 Alert Integration cleaned up');
+    console.info('🧹 Fantasy42 Alert Integration cleaned up');
   }
 }
 
@@ -669,10 +669,10 @@ export const initializeFantasy42Alerts = async (): Promise<boolean> => {
 
 // Auto-initialize if running in Fantasy42 environment
 if (typeof window !== 'undefined' && window.location.hostname.includes('fantasy42')) {
-  console.log('🚨 Fantasy42 environment detected, auto-initializing alert integration...');
+  console.info('🚨 Fantasy42 environment detected, auto-initializing alert integration...');
   initializeFantasy42Alerts().then(success => {
     if (success) {
-      console.log('✅ Fantasy42 Alert Integration auto-initialized');
+      console.info('✅ Fantasy42 Alert Integration auto-initialized');
 
       // Add test alert button for demonstration
       setTimeout(() => {
@@ -686,7 +686,7 @@ if (typeof window !== 'undefined' && window.location.hostname.includes('fantasy4
         document.body.appendChild(testBtn);
       }, 3000);
     } else {
-      console.log('⚠️ Fantasy42 Alert Integration failed to auto-initialize');
+      console.info('⚠️ Fantasy42 Alert Integration failed to auto-initialize');
     }
   });
 }

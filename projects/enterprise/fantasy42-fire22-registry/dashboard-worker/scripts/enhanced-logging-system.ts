@@ -489,7 +489,7 @@ export class EnhancedLogger {
   info(module: string, version: string, message: string): void {
     const formatter = this.getFormatter();
     const formatted = formatter('info', module, version, message);
-    console.log(formatted);
+    console.info(formatted);
   }
 
   /**
@@ -498,7 +498,7 @@ export class EnhancedLogger {
   success(module: string, version: string, message: string): void {
     const formatter = this.getFormatter();
     const formatted = formatter('success', module, version, message);
-    console.log(formatted);
+    console.info(formatted);
   }
 
   /**
@@ -533,7 +533,7 @@ export class EnhancedLogger {
    */
   debug(module: string, version: string, message: string): void {
     const formatted = this.formatLogEntry('DEBUG', module, version, message);
-    console.log(formatted);
+    console.info(formatted);
   }
 
   /**
@@ -599,8 +599,8 @@ export const errorManager = ErrorCodeManager.getInstance();
 
 // !==!==!===== CLI DEMO !==!==!=====
 if (import.meta.main) {
-  console.log('\n🌈 ENHANCED LOGGING SYSTEM DEMO 🌈\n');
-  console.log('='.repeat(60));
+  console.info('\n🌈 ENHANCED LOGGING SYSTEM DEMO 🌈\n');
+  console.info('='.repeat(60));
 
   // Set timezone for demo
   logger.setTimezone('America/New_York');
@@ -626,37 +626,37 @@ if (import.meta.main) {
   );
 
   // Show statistics
-  console.log('\n📊 **LOG STATISTICS**');
-  console.log('-'.repeat(60));
+  console.info('\n📊 **LOG STATISTICS**');
+  console.info('-'.repeat(60));
   const stats = logger.getLogStats();
 
-  console.log(
+  console.info(
     `Current Timezone: ${color('#4ade80', 'css')}${stats.timezone}${color('#ffffff', 'css')}`
   );
-  console.log(`Total Logs: ${color('#3b82f6', 'css')}${stats.totalLogs}${color('#ffffff', 'css')}`);
-  console.log(
+  console.info(`Total Logs: ${color('#3b82f6', 'css')}${stats.totalLogs}${color('#ffffff', 'css')}`);
+  console.info(
     `Total Errors: ${color('#ef4444', 'css')}${stats.totalErrors}${color('#ffffff', 'css')}`
   );
 
-  console.log('\n🏷️ **LOG COUNTS BY TYPE**');
-  console.log('-'.repeat(60));
+  console.info('\n🏷️ **LOG COUNTS BY TYPE**');
+  console.info('-'.repeat(60));
   stats.logCounts.forEach((count, level) => {
-    console.log(
+    console.info(
       `${level.padEnd(10)}: ${color('#40e0d0', 'css')}${count}${color('#ffffff', 'css')}`
     );
   });
 
-  console.log('\n❌ **ERROR COUNTS BY CODE**');
-  console.log('-'.repeat(60));
+  console.info('\n❌ **ERROR COUNTS BY CODE**');
+  console.info('-'.repeat(60));
   stats.errorCounts.forEach((count, code) => {
     const errorInfo = errorManager.getErrorInfo(code);
-    console.log(
+    console.info(
       `${code.padEnd(6)}: ${color('#ef4444', 'css')}${count}${color('#ffffff', 'css')} - ${errorInfo?.message || 'Unknown error'}`
     );
   });
 
-  console.log('\n🌍 **TIMEZONE CHANGE DEMO**');
-  console.log('-'.repeat(60));
+  console.info('\n🌍 **TIMEZONE CHANGE DEMO**');
+  console.info('-'.repeat(60));
   const timezones = ['UTC', 'Europe/London', 'Asia/Tokyo', 'America/Los_Angeles'];
 
   timezones.forEach(tz => {
@@ -664,6 +664,6 @@ if (import.meta.main) {
     logger.info('TIMEZONE', '2.0.0', `Current time in ${tz}`);
   });
 
-  console.log('\n' + '='.repeat(60));
-  console.log('Enhanced logging system demo complete!');
+  console.info('\n' + '='.repeat(60));
+  console.info('Enhanced logging system demo complete!');
 }

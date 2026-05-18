@@ -111,9 +111,9 @@ const stats: LineStats[] = lines.map((l, i) => {
 
 /* 3. print 5-col table (matches your screenshot) ------ */
 // Note: inspect.table auto-includes row index → total 7 cols, but only 5 data cols
-console.log("\n🚀 Bun Inspect stdin Analysis");
-console.log("=====================================");
-console.log(inspect.table(stats, { border: true, colors: true }));
+console.info("\n🚀 Bun Inspect stdin Analysis");
+console.info("=====================================");
+console.info(inspect.table(stats, { border: true, colors: true }));
 
 /* 4. strict snapshot ---------------------------------- */
 const snap = { lines: stats.length, bytes: raw.byteLength };
@@ -124,16 +124,16 @@ try {
       "/tmp/stdin-snapshot-bun-inspect.json",
       JSON.stringify(snap, null, 2)
     );
-    console.log("✅ Snapshot updated (strict mode)");
+    console.info("✅ Snapshot updated (strict mode)");
   } else {
-    console.log("📋 No changes detected (stable snapshot)");
+    console.info("📋 No changes detected (stable snapshot)");
   }
 } catch {
   await Bun.write(
     "/tmp/stdin-snapshot-bun-inspect.json",
     JSON.stringify(snap, null, 2)
   );
-  console.log("✅ Snapshot created");
+  console.info("✅ Snapshot created");
 }
 
 /* 5. gzipped artefact --------------------------------- */
@@ -153,14 +153,14 @@ const gz = gzipSync(new TextEncoder().encode(JSON.stringify(report)), {
 const perfEnd = performance.now();
 
 await Bun.write("/tmp/stdin-analyzer-bun-inspect.json.gz", gz);
-console.log("📊 Gzipped report:", gz.byteLength, "bytes");
-console.log(
+console.info("📊 Gzipped report:", gz.byteLength, "bytes");
+console.info(
   `💾 Compression ratio: ${(
     (gz.byteLength / JSON.stringify(report).length) *
     100
   ).toFixed(1)}%`
 );
-console.log(`⚡ Compression time: ${(perfEnd - perfStart).toFixed(2)}ms`);
+console.info(`⚡ Compression time: ${(perfEnd - perfStart).toFixed(2)}ms`);
 
 /* 6. Analytics summary -------------------------------- */
 const totalChars = lines.reduce((sum, line) => sum + line.length, 0);
@@ -171,11 +171,11 @@ const totalWords = lines.reduce(
 const avgLineLength = (totalChars / lines.length).toFixed(1);
 const avgWordsPerLine = (totalWords / lines.length).toFixed(1);
 
-console.log("\n📊 Analytics Summary:");
-console.log(`  • Lines: ${stats.length}`);
-console.log(`  • Total chars: ${totalChars}`);
-console.log(`  • Total words: ${totalWords}`);
-console.log(`  • Avg line length: ${avgLineLength}`);
-console.log(`  • Avg words/line: ${avgWordsPerLine}`);
+console.info("\n📊 Analytics Summary:");
+console.info(`  • Lines: ${stats.length}`);
+console.info(`  • Total chars: ${totalChars}`);
+console.info(`  • Total words: ${totalWords}`);
+console.info(`  • Avg line length: ${avgLineLength}`);
+console.info(`  • Avg words/line: ${avgWordsPerLine}`);
 
-console.log("\n🎉 Bun Inspect Analysis Complete!");
+console.info("\n🎉 Bun Inspect Analysis Complete!");

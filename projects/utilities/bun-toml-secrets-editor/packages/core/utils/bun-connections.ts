@@ -589,7 +589,7 @@ export class BunWebSocketClient {
 		const delay =
 			this.config.reconnectDelayMs * 1.5 ** (this.reconnectAttempts - 1);
 
-		console.log(
+		console.info(
 			`Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})...`,
 		);
 
@@ -697,16 +697,16 @@ export const Connections = {
 // ============================================================================
 
 export async function testConnections(): Promise<void> {
-	console.log("🧪 Testing Bun-native connections...\n");
+	console.info("🧪 Testing Bun-native connections...\n");
 
 	// Test HTTP client
-	console.log("1️⃣ Testing HTTP client (httpbin.org)...");
+	console.info("1️⃣ Testing HTTP client (httpbin.org)...");
 	const http = Connections.http("https://httpbin.org");
 
 	try {
 		const _response = await http.get("/get");
-		console.log("   ✅ HTTP GET successful");
-		console.log(
+		console.info("   ✅ HTTP GET successful");
+		console.info(
 			`   📊 Latency: ${http.getMetrics().avgLatencyMs.toFixed(2)}ms`,
 		);
 	} catch (error) {
@@ -714,7 +714,7 @@ export async function testConnections(): Promise<void> {
 	}
 
 	// Test retry logic
-	console.log("\n2️⃣ Testing retry logic (simulated failure)...");
+	console.info("\n2️⃣ Testing retry logic (simulated failure)...");
 	try {
 		// This will fail but test retry mechanism
 		await http.get("/status/503", {
@@ -722,11 +722,11 @@ export async function testConnections(): Promise<void> {
 			timeoutMs: 5000,
 		});
 	} catch (_error) {
-		console.log("   ✅ Retry mechanism working (expected failure)");
-		console.log(`   🔄 Retry count: ${http.getMetrics().retryCount}`);
+		console.info("   ✅ Retry mechanism working (expected failure)");
+		console.info(`   🔄 Retry count: ${http.getMetrics().retryCount}`);
 	}
 
-	console.log("\n✅ Connection tests complete!");
+	console.info("\n✅ Connection tests complete!");
 }
 
 // Run if called directly

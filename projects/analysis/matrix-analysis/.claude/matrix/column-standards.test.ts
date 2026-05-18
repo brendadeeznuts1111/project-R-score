@@ -259,6 +259,6 @@ describe("Aliases", () => {
 });
 
 // Summary
-console.log("\n" + "=".repeat(60));
-console.log("Test Suite Complete");
-console.log("=".repeat(60));
+console.info("\n" + "=".repeat(60));
+console.info("Test Suite Complete");
+console.info("=".repeat(60));

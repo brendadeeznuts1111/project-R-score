@@ -93,9 +93,9 @@ export class BuildAndPackSystem {
       destination: destination || this.ciDir,
     };
 
-    console.log('📦 Packing in quiet mode...');
+    console.info('📦 Packing in quiet mode...');
     const tarball = await this.pack(options);
-    console.log(`   Created: ${tarball}`);
+    console.info(`   Created: ${tarball}`);
     return tarball;
   }
 
@@ -103,8 +103,8 @@ export class BuildAndPackSystem {
    * Perform dry run to see what will be packed
    */
   async packDryRun(): Promise<void> {
-    console.log('🔍 Dry Run - Files to be packed:');
-    console.log('='.repeat(50));
+    console.info('🔍 Dry Run - Files to be packed:');
+    console.info('='.repeat(50));
 
     await $`bun pm pack --dry-run`;
   }
@@ -113,19 +113,19 @@ export class BuildAndPackSystem {
    * Pack all workspace packages
    */
   async packAllWorkspaces(): Promise<void> {
-    console.log('📦 Packing All Workspace Packages');
-    console.log('='.repeat(50));
+    console.info('📦 Packing All Workspace Packages');
+    console.info('='.repeat(50));
 
     // Get current package info
     const mainPackage = await Bun.file('package.json').json();
 
     // Pack main package
-    console.log('\n📦 Main Package:');
+    console.info('\n📦 Main Package:');
     const mainTarball = await this.pack({
       destination: this.packagesDir,
       quiet: true,
     });
-    console.log(`   ✅ ${mainTarball}`);
+    console.info(`   ✅ ${mainTarball}`);
 
     // Pack workspace packages
     const workspaces = mainPackage.workspaces || [];
@@ -148,7 +148,7 @@ export class BuildAndPackSystem {
 
         if (!existsSync(pkgJsonPath)) continue;
 
-        console.log(`\n📦 ${pkg}:`);
+        console.info(`\n📦 ${pkg}:`);
         process.chdir(pkgPath);
 
         try {
@@ -156,24 +156,24 @@ export class BuildAndPackSystem {
             destination: this.packagesDir,
             quiet: true,
           });
-          console.log(`   ✅ ${tarball}`);
+          console.info(`   ✅ ${tarball}`);
         } catch (error) {
-          console.log(`   ❌ Failed to pack`);
+          console.info(`   ❌ Failed to pack`);
         }
       }
     }
 
     // Return to original directory
     process.chdir(join(this.packagesDir, '../..'));
-    console.log('\n✅ All packages packed successfully!');
+    console.info('\n✅ All packages packed successfully!');
   }
 
   /**
    * Create a versioned release
    */
   async createRelease(options: ReleaseOptions = {}): Promise<void> {
-    console.log('🚀 Creating Release');
-    console.log('='.repeat(50));
+    console.info('🚀 Creating Release');
+    console.info('='.repeat(50));
 
     // Get current version
     const packageJson = await Bun.file('package.json').json();
@@ -186,28 +186,28 @@ export class BuildAndPackSystem {
     }
 
     // Pack to release directory
-    console.log(`\n📦 Creating release v${version}...`);
+    console.info(`\n📦 Creating release v${version}...`);
     const tarball = await this.pack({
       destination: releaseDir,
       gzipLevel: 9,
       quiet: true,
     });
-    console.log(`   ✅ Package: ${tarball}`);
+    console.info(`   ✅ Package: ${tarball}`);
 
     // Generate checksums
     await this.generateChecksums(releaseDir);
 
     // Get dependencies info
-    console.log('\n📋 Generating dependency list...');
+    console.info('\n📋 Generating dependency list...');
     const deps = await $`bun pm ls`.text();
     writeFileSync(join(releaseDir, 'dependencies.txt'), deps);
-    console.log('   ✅ Dependencies saved');
+    console.info('   ✅ Dependencies saved');
 
     // Get hash info
-    console.log('\n🔐 Generating lockfile hash...');
+    console.info('\n🔐 Generating lockfile hash...');
     const hash = await $`bun pm hash`.text();
     writeFileSync(join(releaseDir, 'lockfile-hash.txt'), hash.trim());
-    console.log(`   ✅ Hash: ${hash.trim()}`);
+    console.info(`   ✅ Hash: ${hash.trim()}`);
 
     // Create symlink to latest
     const latestDir = join(this.distDir, 'latest');
@@ -215,18 +215,18 @@ export class BuildAndPackSystem {
       await $`rm -rf ${latestDir}`;
     }
     await $`ln -s ${releaseDir} ${latestDir}`;
-    console.log('\n✅ Release created successfully!');
+    console.info('\n✅ Release created successfully!');
   }
 
   /**
    * Generate checksums for files in a directory
    */
   async generateChecksums(dir: string): Promise<void> {
-    console.log('\n🔐 Generating checksums...');
+    console.info('\n🔐 Generating checksums...');
 
     const files = await $`ls ${dir}/*.tgz 2>/dev/null || true`.text();
     if (!files.trim()) {
-      console.log('   ⚠️  No .tgz files found');
+      console.info('   ⚠️  No .tgz files found');
       return;
     }
 
@@ -242,15 +242,15 @@ export class BuildAndPackSystem {
 
     const checksumsPath = join(dir, 'checksums.txt');
     writeFileSync(checksumsPath, checksums.join('\n'));
-    console.log(`   ✅ Checksums saved to ${checksumsPath}`);
+    console.info(`   ✅ Checksums saved to ${checksumsPath}`);
   }
 
   /**
    * Create distribution manifest
    */
   async createManifest(): Promise<void> {
-    console.log('📋 Creating Distribution Manifest');
-    console.log('='.repeat(50));
+    console.info('📋 Creating Distribution Manifest');
+    console.info('='.repeat(50));
 
     const manifest: any = {
       created: new Date().toISOString(),
@@ -285,9 +285,9 @@ export class BuildAndPackSystem {
     const manifestPath = join(this.distDir, 'manifest.json');
     writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
 
-    console.log('\n📋 Manifest:');
-    console.log(JSON.stringify(manifest, null, 2));
-    console.log(`\n✅ Manifest saved to ${manifestPath}`);
+    console.info('\n📋 Manifest:');
+    console.info(JSON.stringify(manifest, null, 2));
+    console.info(`\n✅ Manifest saved to ${manifestPath}`);
   }
 
   /**
@@ -302,48 +302,48 @@ export class BuildAndPackSystem {
    * Clean distribution directory
    */
   async clean(): Promise<void> {
-    console.log('🧹 Cleaning Distribution Directory');
-    console.log('='.repeat(50));
+    console.info('🧹 Cleaning Distribution Directory');
+    console.info('='.repeat(50));
 
     await $`rm -rf ${this.distDir}`;
     this.ensureDirectories();
 
-    console.log('✅ Distribution directory cleaned');
+    console.info('✅ Distribution directory cleaned');
   }
 
   /**
    * Verify distribution
    */
   async verify(): Promise<void> {
-    console.log('✓ Verifying Distribution');
-    console.log('='.repeat(50));
+    console.info('✓ Verifying Distribution');
+    console.info('='.repeat(50));
 
     // Check directories
-    console.log('\n📁 Directories:');
+    console.info('\n📁 Directories:');
     const dirs = [this.packagesDir, this.releasesDir, this.ciDir];
     for (const dir of dirs) {
       const exists = existsSync(dir);
       const status = exists ? '✅' : '❌';
-      console.log(`   ${status} ${dir}`);
+      console.info(`   ${status} ${dir}`);
     }
 
     // Count packages
     const packages = await $`ls ${this.packagesDir}/*.tgz 2>/dev/null | wc -l`.text();
-    console.log(`\n📦 Packages: ${packages.trim()} tarball(s)`);
+    console.info(`\n📦 Packages: ${packages.trim()} tarball(s)`);
 
     // Check latest release
     const latestDir = join(this.distDir, 'latest');
     if (existsSync(latestDir)) {
       const target = await $`readlink ${latestDir}`.text();
-      console.log(`\n🔗 Latest release: ${target.trim()}`);
+      console.info(`\n🔗 Latest release: ${target.trim()}`);
     }
 
     // Check manifest
     const manifestPath = join(this.distDir, 'manifest.json');
     if (existsSync(manifestPath)) {
-      console.log('\n✅ Manifest exists');
+      console.info('\n✅ Manifest exists');
     } else {
-      console.log('\n❌ Manifest missing');
+      console.info('\n❌ Manifest missing');
     }
   }
 
@@ -351,21 +351,21 @@ export class BuildAndPackSystem {
    * Show cache info
    */
   async cacheInfo(): Promise<void> {
-    console.log('💾 Cache Information');
-    console.log('='.repeat(50));
+    console.info('💾 Cache Information');
+    console.info('='.repeat(50));
 
     const cachePath = await $`bun pm cache`.text();
-    console.log(`\n📁 Cache path: ${cachePath.trim()}`);
+    console.info(`\n📁 Cache path: ${cachePath.trim()}`);
 
     // Get cache size
     try {
       const size = await $`du -sh ${cachePath.trim()} 2>/dev/null | cut -f1`.text();
-      console.log(`📊 Cache size: ${size.trim()}`);
+      console.info(`📊 Cache size: ${size.trim()}`);
     } catch {
-      console.log('📊 Cache size: Unable to determine');
+      console.info('📊 Cache size: Unable to determine');
     }
 
-    console.log('\nTo clear cache, run: bun pm cache rm');
+    console.info('\nTo clear cache, run: bun pm cache rm');
   }
 }
 
@@ -413,7 +413,7 @@ if (import.meta.main) {
         break;
 
       default:
-        console.log(`
+        console.info(`
 🚀 Fire22 Build & Pack System
 !==!==!==!==!====
 

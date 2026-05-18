@@ -38,12 +38,12 @@ async function handleBinaryData(url: URL): Promise<Response> {
 async function handleFetchExample(): Promise<Response> {
   const exampleCode = `// Example from Bun docs: https://bun.sh/docs/runtime/networking/fetch
 const response = await fetch("${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}");
-console.log(response.status); // => 200
+console.info(response.status); // => 200
 const text = await response.text(); // or response.json(), response.arrayBuffer(), etc.
 
 // Our typed array base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}
 const typedArrayResponse = await fetch("${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}");
-console.log(\`TypedArray docs status: \${typedArrayResponse.status}\`);
+console.info(\`TypedArray docs status: \${typedArrayResponse.status}\`);
 `;
   
   return new Response(exampleCode, {
@@ -238,9 +238,9 @@ async function handleRoot(): Promise<Response> {
       <h2>Try the Fetch Pattern</h2>
       <pre><code>// Using Bun's native fetch pattern:
 const response = await fetch("/api/typedarray/urls");
-console.log(response.status); // => 200
+console.info(response.status); // => 200
 const data = await response.json();
-console.log(data.base); // => "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}"</code></pre>
+console.info(data.base); // => "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}"</code></pre>
       
       <button onclick="testFetch()">Test Fetch</button>
       <div id="result"></div>
@@ -291,12 +291,12 @@ const response = await fetch("https://bun.sh/docs/api/fetch", {
 
 // 4. Streaming response
 for await (const chunk of response.body!) {
-  console.log(\`Received chunk: \${chunk.length} bytes\`);
+  console.info(\`Received chunk: \${chunk.length} bytes\`);
 }
 
 // 5. Binary data as Uint8Array (Bun-specific)
 const bytes = await response.bytes();
-console.log(\`Got \${bytes.length} bytes as Uint8Array\`);
+console.info(\`Got \${bytes.length} bytes as Uint8Array\`);
 
 // 6. POST with streaming body
 const stream = new ReadableStream({
@@ -335,7 +335,7 @@ const jsonData = await response.clone().json();
 const arrayBuffer = await response.clone().arrayBuffer();
 const uint8Array = await response.clone().bytes(); // Bun-specific
 
-console.log("Advanced fetch demo completed!");
+console.info("Advanced fetch demo completed!");
 `;
   
   return new Response(demoCode, {
@@ -347,7 +347,7 @@ console.log("Advanced fetch demo completed!");
 async function runAdvancedDemo(): Promise<Response> {
   try {
     if (process.env.DEBUG === '1') {
-      console.log('🎯 Running advanced fetch demo...');
+      console.info('🎯 Running advanced fetch demo...');
     }
     
     // Run the demo in the background
@@ -465,8 +465,8 @@ const server = Bun.serve({
   },
 });
 
-console.log(`🚀 Starting Bun TypedArray Documentation Server on port ${SERVER_PORT}...`);
-console.log(`📚 Base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`);
-console.log(`🌐 Visit: http://${SERVER_HOST}:${SERVER_PORT}`);
+console.info(`🚀 Starting Bun TypedArray Documentation Server on port ${SERVER_PORT}...`);
+console.info(`📚 Base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`);
+console.info(`🌐 Visit: http://${SERVER_HOST}:${SERVER_PORT}`);
 
 export default server;

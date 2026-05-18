@@ -215,7 +215,7 @@ export const secureFire22Client = new SecureFire22Client();
 
 // CLI test interface
 if (import.meta.main) {
-  console.log(`
+  console.info(`
 ╔════════════════════════════════════════════════════════╗
 ║        Secure Fire22 Client Test                      ║
 ╚════════════════════════════════════════════════════════╝

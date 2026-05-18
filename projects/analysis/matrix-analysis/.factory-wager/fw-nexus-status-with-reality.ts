@@ -88,67 +88,67 @@ class RealityAwareNexusStatus {
   }
 
   async runStatusCheck(): Promise<RealityAwareNexusStatus> {
-    console.log("🔌 FactoryWager Reality-Aware Nexus Status Monitor");
-    console.log("=" .repeat(60));
-    console.log(`Config: ${this.configFile}`);
-    console.log(`Time: ${new Date().toISOString()}`);
-    console.log("");
+    console.info("🔌 FactoryWager Reality-Aware Nexus Status Monitor");
+    console.info("=" .repeat(60));
+    console.info(`Config: ${this.configFile}`);
+    console.info(`Time: ${new Date().toISOString()}`);
+    console.info("");
 
     // Phase 1: Reality Check
-    console.log("🌐 Phase 1: Infrastructure Reality Assessment");
-    console.log("============================================");
+    console.info("🌐 Phase 1: Infrastructure Reality Assessment");
+    console.info("============================================");
 
     const realityStatus = await RealityCheck.overall.getRealityStatus();
 
-    console.log(`📊 Reality Mode: ${realityStatus.overall}`);
-    console.log(`   R2 Storage: ${realityStatus.r2.mode}`);
-    console.log(`   MCP Servers: ${realityStatus.mcp.installed}/${realityStatus.mcp.total}`);
-    console.log(`   Secrets: ${realityStatus.secrets.real}/${realityStatus.secrets.total}`);
-    console.log("");
+    console.info(`📊 Reality Mode: ${realityStatus.overall}`);
+    console.info(`   R2 Storage: ${realityStatus.r2.mode}`);
+    console.info(`   MCP Servers: ${realityStatus.mcp.installed}/${realityStatus.mcp.total}`);
+    console.info(`   Secrets: ${realityStatus.secrets.real}/${realityStatus.secrets.total}`);
+    console.info("");
 
     // Phase 2: Load Configuration
-    console.log("📂 Phase 2: Configuration Loading");
-    console.log("===============================");
+    console.info("📂 Phase 2: Configuration Loading");
+    console.info("===============================");
 
     const configEntries = this.loadConfiguration();
-    console.log(`✅ Loaded ${configEntries.length} configuration entries`);
-    console.log("");
+    console.info(`✅ Loaded ${configEntries.length} configuration entries`);
+    console.info("");
 
     // Phase 3: Probe Infrastructure
-    console.log("🔍 Phase 3: Infrastructure Probing");
-    console.log("=================================");
+    console.info("🔍 Phase 3: Infrastructure Probing");
+    console.info("=================================");
 
     const healthProbes = await this.probeInfrastructure(configEntries);
     const nexusStatus = this.calculateNexusStatus(healthProbes, configEntries);
 
     this.displayNexusStatus(nexusStatus);
-    console.log("");
+    console.info("");
 
     // Phase 4: Reality-Integrated Assessment
-    console.log("🌐 Phase 4: Reality-Integrated Assessment");
-    console.log("=======================================");
+    console.info("🌐 Phase 4: Reality-Integrated Assessment");
+    console.info("=======================================");
 
     const monitoringAssessment = this.assessMonitoringEffectiveness(nexusStatus, realityStatus);
 
-    console.log(`📊 Effective Health: ${monitoringAssessment.effective_health}/100`);
-    console.log(`🔄 Reality-Adjusted Score: ${monitoringAssessment.reality_adjusted_score}/100`);
+    console.info(`📊 Effective Health: ${monitoringAssessment.effective_health}/100`);
+    console.info(`🔄 Reality-Adjusted Score: ${monitoringAssessment.reality_adjusted_score}/100`);
 
     if (monitoringAssessment.warnings.length > 0) {
-      console.log("⚠️  Warnings:");
-      monitoringAssessment.warnings.forEach(warning => console.log(`      • ${warning}`));
+      console.info("⚠️  Warnings:");
+      monitoringAssessment.warnings.forEach(warning => console.info(`      • ${warning}`));
     }
 
     if (monitoringAssessment.recommendations.length > 0) {
-      console.log("💡 Recommendations:");
-      monitoringAssessment.recommendations.forEach(rec => console.log(`      • ${rec}`));
+      console.info("💡 Recommendations:");
+      monitoringAssessment.recommendations.forEach(rec => console.info(`      • ${rec}`));
     }
-    console.log("");
+    console.info("");
 
     // Phase 5: Alert Check
     if (this.alertThreshold > 0 && monitoringAssessment.effective_health < this.alertThreshold) {
-      console.log(`🚨 ALERT: Health score ${monitoringAssessment.effective_health} below threshold ${this.alertThreshold}`);
+      console.info(`🚨 ALERT: Health score ${monitoringAssessment.effective_health} below threshold ${this.alertThreshold}`);
       if (this.watchMode) {
-        console.log("   (Watch mode: continuing monitoring)");
+        console.info("   (Watch mode: continuing monitoring)");
       } else {
         process.exit(1);
       }
@@ -176,18 +176,18 @@ class RealityAwareNexusStatus {
     const reportFile = join(this.reportsDir, `fw-nexus-status-reality-${timestamp}.json`);
 
     writeFileSync(reportFile, JSON.stringify(realityAwareNexusStatus, null, 2));
-    console.log(`📄 Reality-aware status report saved: ${reportFile}`);
+    console.info(`📄 Reality-aware status report saved: ${reportFile}`);
 
     // Phase 7: Watch Mode
     if (this.watchMode) {
-      console.log("🔄 Watch mode active - checking every 30 seconds");
-      console.log("   Press Ctrl+C to stop monitoring");
+      console.info("🔄 Watch mode active - checking every 30 seconds");
+      console.info("   Press Ctrl+C to stop monitoring");
 
       const interval = setInterval(async () => {
         console.clear();
-        console.log("🔄 FactoryWager Nexus Status Monitor (Watch Mode)");
-        console.log(`Last Check: ${new Date().toISOString()}`);
-        console.log("");
+        console.info("🔄 FactoryWager Nexus Status Monitor (Watch Mode)");
+        console.info(`Last Check: ${new Date().toISOString()}`);
+        console.info("");
 
         const newStatus = await this.runStatusCheck();
         // Log state changes if needed
@@ -197,7 +197,7 @@ class RealityAwareNexusStatus {
       // Handle graceful shutdown
       process.on('SIGINT', () => {
         clearInterval(interval);
-        console.log("\n✅ Monitoring stopped");
+        console.info("\n✅ Monitoring stopped");
         process.exit(0);
       });
     }
@@ -426,10 +426,10 @@ class RealityAwareNexusStatus {
 
   private displayNexusStatus(status: NexusStatus): void {
     const mode = "SIMULATED"; // This would come from reality check in real implementation
-    console.log(VisualDashboard.generateNexusHeader(mode, status.score, status.endpoints));
-    console.log(`Endpoints: ${status.endpoints.up}/${status.endpoints.total} up`);
-    console.log(`Latency: ${status.latency.average}ms avg (${status.latency.min}-${status.latency.max}ms)`);
-    console.log(`Drift: ${status.drift.count} mismatches`);
+    console.info(VisualDashboard.generateNexusHeader(mode, status.score, status.endpoints));
+    console.info(`Endpoints: ${status.endpoints.up}/${status.endpoints.total} up`);
+    console.info(`Latency: ${status.latency.average}ms avg (${status.latency.min}-${status.latency.max}ms)`);
+    console.info(`Drift: ${status.drift.count} mismatches`);
   }
 
   private getHealthLabel(score: number): string {

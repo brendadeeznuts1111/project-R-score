@@ -78,15 +78,15 @@ program
         });
         
         spinner.succeed();
-        console.log(chalk.green('✅ Phone Audit Complete'));
-        console.log(chalk.blue(`📊 Consistency: ${auditResult.consistency}% ✅`));
-        console.log(chalk.yellow(`📧 Email: ${auditResult.correlations.email || 'Not found'}`));
-        console.log(chalk.cyan(`🏠 Address: ${auditResult.correlations.address || 'Not found'}`));
-        console.log(chalk.magenta(`👤 Social: ${auditResult.correlations.social || 'Not found'}`));
+        console.info(chalk.green('✅ Phone Audit Complete'));
+        console.info(chalk.blue(`📊 Consistency: ${auditResult.consistency}% ✅`));
+        console.info(chalk.yellow(`📧 Email: ${auditResult.correlations.email || 'Not found'}`));
+        console.info(chalk.cyan(`🏠 Address: ${auditResult.correlations.address || 'Not found'}`));
+        console.info(chalk.magenta(`👤 Social: ${auditResult.correlations.social || 'Not found'}`));
         
         if (options.riskBreakdown) {
-          console.log(chalk.red(`⚠️ SyntheticRisk: ${auditResult.risk.synthetic}% | FraudRisk: ${auditResult.risk.fraud}% | TakeoverRisk: ${auditResult.risk.takeover}%`));
-          console.log(chalk.blue(`🧠 ML_Confidence: ${auditResult.mlConfidence}`));
+          console.info(chalk.red(`⚠️ SyntheticRisk: ${auditResult.risk.synthetic}% | FraudRisk: ${auditResult.risk.fraud}% | TakeoverRisk: ${auditResult.risk.takeover}%`));
+          console.info(chalk.blue(`🧠 ML_Confidence: ${auditResult.mlConfidence}`));
         }
       }
       
@@ -98,15 +98,15 @@ program
         });
         
         spinner.succeed();
-        console.log(chalk.green('✅ Intelligence Gathering Complete'));
-        console.log(chalk.blue(`📱 Carrier: ${result.carrier}`));
-        console.log(chalk.yellow(`🏷️ Type: ${result.type}`));
-        console.log(chalk.cyan(`🌍 Location: ${result.location}`));
+        console.info(chalk.green('✅ Intelligence Gathering Complete'));
+        console.info(chalk.blue(`📱 Carrier: ${result.carrier}`));
+        console.info(chalk.yellow(`🏷️ Type: ${result.type}`));
+        console.info(chalk.cyan(`🌍 Location: ${result.location}`));
         
         if (options.temporal) {
-          console.log(chalk.magenta(`📅 CarrierChanges: ${result.temporal.carrierChanges} | AddressChanges: ${result.temporal.addressChanges}`));
+          console.info(chalk.magenta(`📅 CarrierChanges: ${result.temporal.carrierChanges} | AddressChanges: ${result.temporal.addressChanges}`));
           if (result.temporal.riskPeak) {
-            console.log(chalk.red(`⚠️ RiskPeak: ${result.temporal.riskPeak}`));
+            console.info(chalk.red(`⚠️ RiskPeak: ${result.temporal.riskPeak}`));
           }
         }
       }
@@ -119,12 +119,12 @@ program
         });
         
         spinner.succeed();
-        console.log(chalk.green('✅ Graph Generated'));
+        console.info(chalk.green('✅ Graph Generated'));
         
         if (options.format === 'html') {
-          console.log(chalk.blue(`🌐 Web server started: config.getEndpoint('api').local/graph.html`));
+          console.info(chalk.blue(`🌐 Web server started: config.getEndpoint('api').local/graph.html`));
         } else {
-          console.log(chalk.blue(`📁 Graph exported to: ${graph.path}`));
+          console.info(chalk.blue(`📁 Graph exported to: ${graph.path}`));
         }
       }
       
@@ -134,21 +134,21 @@ program
           interval: parseInt(options.interval) * 1000,
           onUpdate: (update) => {
             console.clear();
-            console.log(chalk.green('🔄 Live Monitoring'));
-            console.log(chalk.blue(`TrustScore: ${update.trustScore.prev}→${update.trustScore.current} (${update.latency}s)`));
+            console.info(chalk.green('🔄 Live Monitoring'));
+            console.info(chalk.blue(`TrustScore: ${update.trustScore.prev}→${update.trustScore.current} (${update.latency}s)`));
             
             update.flags.forEach(flag => {
               if (flag.cleared) {
-                console.log(chalk.green(`✅ ${flag.type} cleared`));
+                console.info(chalk.green(`✅ ${flag.type} cleared`));
               } else {
-                console.log(chalk.red(`🚨 ${flag.type}: ${flag.severity}`));
+                console.info(chalk.red(`🚨 ${flag.type}: ${flag.severity}`));
               }
             });
           }
         });
         
         spinner.succeed();
-        console.log(chalk.green('✅ Live monitoring started'));
+        console.info(chalk.green('✅ Live monitoring started'));
       }
       
     } catch (error) {
@@ -194,12 +194,12 @@ program
         });
         
         spinner.succeed();
-        console.log(chalk.green('✅ Email Audit Complete'));
-        console.log(chalk.blue(`📅 DomainAge: ${audit.domainAge}d`));
-        console.log(chalk.yellow(`🚨 Breaches: ${audit.breaches}`));
-        console.log(chalk.cyan(`📮 MX: ${audit.mxProvider}`));
-        console.log(chalk.magenta(`🗑️ Disposable: ${audit.isDisposable ? '✅' : '❌'}`));
-        console.log(chalk.green(`📊 Reputation: ${audit.reputation}`));
+        console.info(chalk.green('✅ Email Audit Complete'));
+        console.info(chalk.blue(`📅 DomainAge: ${audit.domainAge}d`));
+        console.info(chalk.yellow(`🚨 Breaches: ${audit.breaches}`));
+        console.info(chalk.cyan(`📮 MX: ${audit.mxProvider}`));
+        console.info(chalk.magenta(`🗑️ Disposable: ${audit.isDisposable ? '✅' : '❌'}`));
+        console.info(chalk.green(`📊 Reputation: ${audit.reputation}`));
       }
       
       if (options.batchEmails) {
@@ -216,13 +216,13 @@ program
         });
         
         spinner.succeed();
-        console.log(chalk.green(`✅ ${results.processed} processed`));
-        console.log(chalk.yellow(`⚠️ ${results.disposables} disposables`));
-        console.log(chalk.red(`🔴 ${results.breached} breached`));
+        console.info(chalk.green(`✅ ${results.processed} processed`));
+        console.info(chalk.yellow(`⚠️ ${results.disposables} disposables`));
+        console.info(chalk.red(`🔴 ${results.breached} breached`));
         
         if (options.export === 'slack') {
           await emailIntel.sendSlackAlert(results);
-          console.log(chalk.blue(`📤 Slack alert sent`));
+          console.info(chalk.blue(`📤 Slack alert sent`));
         }
       }
       
@@ -231,11 +231,11 @@ program
         const enrichment = await emailIntel.enrichLinkedIn(email);
         
         spinner.succeed();
-        console.log(chalk.green('✅ LinkedIn Enrichment Complete'));
-        console.log(chalk.blue(`👔 LinkedIn: ${enrichment.title}`));
-        console.log(chalk.yellow(`🏢 Company: ${enrichment.company}`));
-        console.log(chalk.cyan(`👥 Employees: ${enrichment.employees}+`));
-        console.log(chalk.magenta(`💰 Revenue: $${enrichment.revenue}`));
+        console.info(chalk.green('✅ LinkedIn Enrichment Complete'));
+        console.info(chalk.blue(`👔 LinkedIn: ${enrichment.title}`));
+        console.info(chalk.yellow(`🏢 Company: ${enrichment.company}`));
+        console.info(chalk.cyan(`👥 Employees: ${enrichment.employees}+`));
+        console.info(chalk.magenta(`💰 Revenue: $${enrichment.revenue}`));
       }
       
       if (options.findAssociated) {
@@ -245,14 +245,14 @@ program
         });
         
         spinner.succeed();
-        console.log(chalk.green('✅ Identity Graph Expansion'));
-        console.log(chalk.blue(`📊 Graph: ${graph.nodes.length} nodes, ${graph.edges.length} edges`));
+        console.info(chalk.green('✅ Identity Graph Expansion'));
+        console.info(chalk.blue(`📊 Graph: ${graph.nodes.length} nodes, ${graph.edges.length} edges`));
         
         // Show summary
-        console.log(chalk.yellow(`📧 Emails: ${graph.emails.length}`));
-        console.log(chalk.cyan(`📱 Phones: ${graph.phones.length}`));
-        console.log(chalk.magenta(`🏠 Addresses: ${graph.addresses.length}`));
-        console.log(chalk.green(`👤 Social: ${graph.socialProfiles.length}`));
+        console.info(chalk.yellow(`📧 Emails: ${graph.emails.length}`));
+        console.info(chalk.cyan(`📱 Phones: ${graph.phones.length}`));
+        console.info(chalk.magenta(`🏠 Addresses: ${graph.addresses.length}`));
+        console.info(chalk.green(`👤 Social: ${graph.socialProfiles.length}`));
       }
       
       if (options.disposableCheck) {
@@ -261,11 +261,11 @@ program
         
         if (check.isDisposable) {
           spinner.succeed();
-          console.log(chalk.red(`🚫 BLOCKED | Reason: ${check.reason}`));
-          console.log(chalk.red(`RiskScore: ${check.riskScore} | Action:REJECT`));
+          console.info(chalk.red(`🚫 BLOCKED | Reason: ${check.reason}`));
+          console.info(chalk.red(`RiskScore: ${check.riskScore} | Action:REJECT`));
         } else {
           spinner.succeed();
-          console.log(chalk.green(`✅ Email is valid and not disposable`));
+          console.info(chalk.green(`✅ Email is valid and not disposable`));
         }
       }
       
@@ -312,11 +312,11 @@ program
         });
         
         spinner.succeed();
-        console.log(chalk.green('✅ Address Audit Complete'));
-        console.log(chalk.blue(`💰 Value: $${audit.propertyValue}`));
-        console.log(chalk.yellow(`🚨 CrimeRate: ${audit.crimeRate}/100`));
-        console.log(chalk.cyan(`💵 Income: ${audit.incomeLevel}`));
-        console.log(chalk.magenta(`📊 Turnover: ${audit.turnover}`));
+        console.info(chalk.green('✅ Address Audit Complete'));
+        console.info(chalk.blue(`💰 Value: $${audit.propertyValue}`));
+        console.info(chalk.yellow(`🚨 CrimeRate: ${audit.crimeRate}/100`));
+        console.info(chalk.cyan(`💵 Income: ${audit.incomeLevel}`));
+        console.info(chalk.magenta(`📊 Turnover: ${audit.turnover}`));
       }
       
       if (options.geoBatch) {
@@ -329,19 +329,19 @@ program
         });
         
         spinner.succeed();
-        console.log(chalk.green(`📍 Clusters: ${clusters.length}`));
+        console.info(chalk.green(`📍 Clusters: ${clusters.length}`));
         
         clusters.forEach((cluster, i) => {
           const density = cluster.density === 'high' ? chalk.red('High') : 
                          cluster.density === 'medium' ? chalk.yellow('Med') : 
                          chalk.green('Low');
-          console.log(chalk.blue(`Cluster ${i + 1}: ${density} Density (${cluster.addresses.length} addresses)`));
+          console.info(chalk.blue(`Cluster ${i + 1}: ${density} Density (${cluster.addresses.length} addresses)`));
         });
         
         if (options.clusterAnalysis) {
           const anomalies = await addressIntel.detectAnomalies(clusters);
           if (anomalies.length > 0) {
-            console.log(chalk.yellow(`⚠️ Anomalies: ${anomalies.length} addrs >50km apart`));
+            console.info(chalk.yellow(`⚠️ Anomalies: ${anomalies.length} addrs >50km apart`));
           }
         }
       }
@@ -352,15 +352,15 @@ program
         
         spinner.succeed();
         if (risk.isHighRisk) {
-          console.log(chalk.red(`⚠️ HIGH_RISK: ${risk.primaryReason}`));
+          console.info(chalk.red(`⚠️ HIGH_RISK: ${risk.primaryReason}`));
           if (risk.isCommercialMix) {
-            console.log(chalk.yellow(`CommercialResidentialMix:YES`));
+            console.info(chalk.yellow(`CommercialResidentialMix:YES`));
           }
           if (risk.isVacant) {
-            console.log(chalk.red(`Vacant:YES`));
+            console.info(chalk.red(`Vacant:YES`));
           }
         } else {
-          console.log(chalk.green(`✅ Low risk address`));
+          console.info(chalk.green(`✅ Low risk address`));
         }
       }
       
@@ -371,11 +371,11 @@ program
         });
         
         spinner.succeed();
-        console.log(chalk.green('✅ Historical Resident Analysis'));
-        console.log(chalk.blue(`👥 Residents: ${history.totalResidents} (${options.temporal}y)`));
-        console.log(chalk.yellow(`📅 AvgStay: ${history.averageStay}y`));
+        console.info(chalk.green('✅ Historical Resident Analysis'));
+        console.info(chalk.blue(`👥 Residents: ${history.totalResidents} (${options.temporal}y)`));
+        console.info(chalk.yellow(`📅 AvgStay: ${history.averageStay}y`));
         if (history.currentResident) {
-          console.log(chalk.cyan(`🏠 Current: ${history.currentResident.family} (${history.currentResident.duration}y)`));
+          console.info(chalk.cyan(`🏠 Current: ${history.currentResident.family} (${history.currentResident.duration}y)`));
         }
       }
       
@@ -386,9 +386,9 @@ program
         });
         
         spinner.succeed();
-        console.log(chalk.green('✅ Map Visualization Created'));
-        console.log(chalk.blue(`🗺️ Map: ${map.description} (layers: ${options.layers.split(':').length})`));
-        console.log(chalk.cyan(`🌐 View at: ${map.url}`));
+        console.info(chalk.green('✅ Map Visualization Created'));
+        console.info(chalk.blue(`🗺️ Map: ${map.description} (layers: ${options.layers.split(':').length})`));
+        console.info(chalk.cyan(`🌐 View at: ${map.url}`));
       }
       
     } catch (error) {
@@ -431,16 +431,16 @@ program
         });
         
         spinner.succeed();
-        console.log(chalk.green('✅ Cross-Platform Mapping Complete'));
-        console.log(chalk.blue(`📱 Platforms: ${mapping.platforms.length}`));
-        console.log(chalk.yellow(`🌟 Influence: ${mapping.influenceLevel}`));
+        console.info(chalk.green('✅ Cross-Platform Mapping Complete'));
+        console.info(chalk.blue(`📱 Platforms: ${mapping.platforms.length}`));
+        console.info(chalk.yellow(`🌟 Influence: ${mapping.influenceLevel}`));
         
         mapping.platforms.forEach(platform => {
           const verified = platform.verified ? chalk.green('✅') : chalk.red('❌');
-          console.log(`${verified} ${platform.name}: ${platform.handle || 'Not found'}`);
+          console.info(`${verified} ${platform.name}: ${platform.handle || 'Not found'}`);
         });
         
-        console.log(chalk.magenta(`📊 GraphScore: ${mapping.graphScore}`));
+        console.info(chalk.magenta(`📊 GraphScore: ${mapping.graphScore}`));
       }
       
       if (options.findProfiles) {
@@ -451,16 +451,16 @@ program
         });
         
         spinner.succeed();
-        console.log(chalk.green('✅ Professional Identity Found'));
-        console.log(chalk.blue(`💼 Corporate: ${profiles.corporate.join('/')}`));
+        console.info(chalk.green('✅ Professional Identity Found'));
+        console.info(chalk.blue(`💼 Corporate: ${profiles.corporate.join('/')}`));
         
         if (profiles.executive) {
-          console.log(chalk.yellow(`👔 Executive: ${profiles.executive.title}`));
-          console.log(chalk.cyan(`🏢 Company: ${profiles.executive.company}`));
+          console.info(chalk.yellow(`👔 Executive: ${profiles.executive.title}`));
+          console.info(chalk.cyan(`🏢 Company: ${profiles.executive.company}`));
         }
         
         if (profiles.companyMatches > 0) {
-          console.log(chalk.magenta(`🎯 CompanyMatches: ${profiles.companyMatches}`));
+          console.info(chalk.magenta(`🎯 CompanyMatches: ${profiles.companyMatches}`));
         }
       }
       
@@ -471,10 +471,10 @@ program
         });
         
         spinner.succeed();
-        console.log(chalk.green('✅ Automated Enrichment Complete'));
-        console.log(chalk.blue(`🔍 Enriched: ${enrichment.enrichmentPath}`));
-        console.log(chalk.yellow(`📊 Confidence: ${enrichment.confidence}`));
-        console.log(chalk.cyan(`📈 NewData: ${enrichment.newDataPercentage}%`));
+        console.info(chalk.green('✅ Automated Enrichment Complete'));
+        console.info(chalk.blue(`🔍 Enriched: ${enrichment.enrichmentPath}`));
+        console.info(chalk.yellow(`📊 Confidence: ${enrichment.confidence}`));
+        console.info(chalk.cyan(`📈 NewData: ${enrichment.newDataPercentage}%`));
       }
       
       if (options.identityGraph) {
@@ -482,14 +482,14 @@ program
         const graph = await socialIntel.generateIdentityGraph(handle);
         
         spinner.succeed();
-        console.log(chalk.green('✅ Identity Graph Generated'));
-        console.log(chalk.blue(`📊 Graph: ${graph.stats.nodes} nodes → ${graph.stats.edges} relationships`));
+        console.info(chalk.green('✅ Identity Graph Generated'));
+        console.info(chalk.blue(`📊 Graph: ${graph.stats.nodes} nodes → ${graph.stats.edges} relationships`));
         
         // Show graph summary
-        console.log(chalk.yellow(`📧 Emails: ${graph.data.emails.length}`));
-        console.log(chalk.cyan(`📱 Phones: ${graph.data.phones.length}`));
-        console.log(chalk.magenta(`🏠 Addresses: ${graph.data.addresses.length}`));
-        console.log(chalk.green(`👤 Social: ${graph.data.social.length}`));
+        console.info(chalk.yellow(`📧 Emails: ${graph.data.emails.length}`));
+        console.info(chalk.cyan(`📱 Phones: ${graph.data.phones.length}`));
+        console.info(chalk.magenta(`🏠 Addresses: ${graph.data.addresses.length}`));
+        console.info(chalk.green(`👤 Social: ${graph.data.social.length}`));
       }
       
       if (options.activityPatterns) {
@@ -497,11 +497,11 @@ program
         const patterns = await socialIntel.analyzeActivityPatterns(handle);
         
         spinner.succeed();
-        console.log(chalk.green('✅ Behavioral Analysis Complete'));
-        console.log(chalk.blue(`📊 Activity: ${patterns.frequency}`));
-        console.log(chalk.yellow(`🔄 Patterns: ${patterns.consistency}`));
-        console.log(chalk.cyan(`📈 BehavioralScore: ${patterns.score}`));
-        console.log(chalk.magenta(`⚠️ Anomalies: ${patterns.anomalies}`));
+        console.info(chalk.green('✅ Behavioral Analysis Complete'));
+        console.info(chalk.blue(`📊 Activity: ${patterns.frequency}`));
+        console.info(chalk.yellow(`🔄 Patterns: ${patterns.consistency}`));
+        console.info(chalk.cyan(`📈 BehavioralScore: ${patterns.score}`));
+        console.info(chalk.magenta(`⚠️ Anomalies: ${patterns.anomalies}`));
       }
       
     } catch (error) {
@@ -565,22 +565,22 @@ program
       }
       
       spinner.succeed();
-      console.log(chalk.green(`✅ Batch Processing Complete`));
-      console.log(chalk.blue(`📊 Processed: ${results.processed}`));
-      console.log(chalk.yellow(`⚠️ Failed: ${results.failed}`));
+      console.info(chalk.green(`✅ Batch Processing Complete`));
+      console.info(chalk.blue(`📊 Processed: ${results.processed}`));
+      console.info(chalk.yellow(`⚠️ Failed: ${results.failed}`));
       
       if (options.riskFilter) {
         const highRisk = Object.values(results.data).filter(item => 
           item.riskScore && item.riskScore > parseInt(options.riskFilter)
         );
-        console.log(chalk.red(`🚨 High Risk: ${highRisk.length}`));
+        console.info(chalk.red(`🚨 High Risk: ${highRisk.length}`));
       }
       
       // Export results
       if (options.export) {
         const outputPath = file.replace(/\.[^.]+$/, `.${options.export}`);
         await fs.writeFile(outputPath, JSON.stringify(results, null, 2));
-        console.log(chalk.cyan(`📁 Exported to: ${outputPath}`));
+        console.info(chalk.cyan(`📁 Exported to: ${outputPath}`));
       }
       
     } catch (error) {
@@ -617,10 +617,10 @@ program
         });
         
         spinner.succeed();
-        console.log(chalk.green('✅ Enterprise Monitoring Active'));
-        console.log(chalk.blue('👁️ Monitoring: 24/7'));
-        console.log(chalk.yellow(`📡 Alerts: ${options.webhooks || 'None'}`));
-        console.log(chalk.cyan('📈 SLA: 99.9%'));
+        console.info(chalk.green('✅ Enterprise Monitoring Active'));
+        console.info(chalk.blue('👁️ Monitoring: 24/7'));
+        console.info(chalk.yellow(`📡 Alerts: ${options.webhooks || 'None'}`));
+        console.info(chalk.cyan('📈 SLA: 99.9%'));
       }
       
       if (options.kafkaProduce) {
@@ -631,9 +631,9 @@ program
         });
         
         spinner.succeed();
-        console.log(chalk.green(`✅ Kafka: Producing to ${options.kafkaProduce}`));
-        console.log(chalk.blue(`📋 AvroSchema: ${options.avroSchema ? 'valid' : 'disabled'}`));
-        console.log(chalk.yellow('📊 Throughput: 1k msgs/s'));
+        console.info(chalk.green(`✅ Kafka: Producing to ${options.kafkaProduce}`));
+        console.info(chalk.blue(`📋 AvroSchema: ${options.avroSchema ? 'valid' : 'disabled'}`));
+        console.info(chalk.yellow('📊 Throughput: 1k msgs/s'));
       }
       
       // Start processing stream
@@ -644,7 +644,7 @@ program
       });
       
       spinner.succeed();
-      console.log(chalk.green('✅ Stream processing complete'));
+      console.info(chalk.green('✅ Stream processing complete'));
       
     } catch (error) {
       spinner.fail('❌ Stream processing failed');
@@ -661,9 +661,9 @@ program
   .command('version')
   .description('Show version information')
   .action(() => {
-    console.log(chalk.green(figlet.textSync('Empire Pro CLI', { font: 'Small' })));
-    console.log(chalk.blue('Version 4.0.0 - Complete Identity Intelligence Platform'));
-    console.log(chalk.gray('© 2026 Empire Pro Technologies'));
+    console.info(chalk.green(figlet.textSync('Empire Pro CLI', { font: 'Small' })));
+    console.info(chalk.blue('Version 4.0.0 - Complete Identity Intelligence Platform'));
+    console.info(chalk.gray('© 2026 Empire Pro Technologies'));
   });
 
 program
@@ -676,11 +676,11 @@ program
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     spinner.succeed();
-    console.log(chalk.green('✅ Empire Pro CLI Demo Complete'));
-    console.log(chalk.blue('🚀 Features: Phone, Email, Address, Social Intelligence'));
-    console.log(chalk.yellow('🧠 Capabilities: ML, Real-time, Batch, Visualization'));
-    console.log(chalk.cyan('📊 Performance: <500ms response, 10k+ throughput'));
-    console.log(chalk.magenta('🔒 Security: Enterprise-grade, Compliance-ready'));
+    console.info(chalk.green('✅ Empire Pro CLI Demo Complete'));
+    console.info(chalk.blue('🚀 Features: Phone, Email, Address, Social Intelligence'));
+    console.info(chalk.yellow('🧠 Capabilities: ML, Real-time, Batch, Visualization'));
+    console.info(chalk.cyan('📊 Performance: <500ms response, 10k+ throughput'));
+    console.info(chalk.magenta('🔒 Security: Enterprise-grade, Compliance-ready'));
   });
 
 // ============================================================================

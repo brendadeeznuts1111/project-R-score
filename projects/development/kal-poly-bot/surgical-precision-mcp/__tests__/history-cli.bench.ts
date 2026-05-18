@@ -40,7 +40,7 @@ const results: BenchmarkResult[] = [];
 function recordResult(result: BenchmarkResult): void {
   results.push(result);
   const status = result.averageTimeMs < 50 ? '✅' : '⚠️ ';
-  console.log(
+  console.info(
     `${status} ${result.category.padEnd(20)} - ${result.name.padEnd(40)} ` +
     `${result.averageTimeMs.toFixed(2)}ms (${result.opsPerSec.toFixed(0)} ops/sec)`
   );
@@ -115,8 +115,8 @@ function cleanupTest(): void {
 // BENCHMARK: History Loading
 // ============================================================================
 
-console.log('\n🔬 HISTORY LOADING BENCHMARKS');
-console.log('━'.repeat(80));
+console.info('\n🔬 HISTORY LOADING BENCHMARKS');
+console.info('━'.repeat(80));
 
 // Create test data with increasing entry counts
 const loadSizes = [100, 500, 1000, 5000, 10000];
@@ -153,8 +153,8 @@ for (const size of loadSizes) {
 // BENCHMARK: Tab Completion
 // ============================================================================
 
-console.log('\n💡 TAB COMPLETION BENCHMARKS');
-console.log('━'.repeat(80));
+console.info('\n💡 TAB COMPLETION BENCHMARKS');
+console.info('━'.repeat(80));
 
 // Test completion with different data sizes
 const completionTests = [
@@ -191,8 +191,8 @@ for (const { size, prefix } of completionTests) {
 // BENCHMARK: History Search
 // ============================================================================
 
-console.log('\n🔍 HISTORY SEARCH BENCHMARKS');
-console.log('━'.repeat(80));
+console.info('\n🔍 HISTORY SEARCH BENCHMARKS');
+console.info('━'.repeat(80));
 
 const searchTests = [
   { size: 100, pattern: 'npm' },
@@ -228,8 +228,8 @@ for (const { size, pattern } of searchTests) {
 // BENCHMARK: Cache Effectiveness
 // ============================================================================
 
-console.log('\n⚡ CACHE EFFECTIVENESS BENCHMARKS');
-console.log('━'.repeat(80));
+console.info('\n⚡ CACHE EFFECTIVENESS BENCHMARKS');
+console.info('━'.repeat(80));
 
 const path = setupTest();
 const manager = new HistoryCLIManager(path);
@@ -271,8 +271,8 @@ cleanupTest();
 // BENCHMARK: Adding Entries
 // ============================================================================
 
-console.log('\n📝 ENTRY ADDITION BENCHMARKS');
-console.log('━'.repeat(80));
+console.info('\n📝 ENTRY ADDITION BENCHMARKS');
+console.info('━'.repeat(80));
 
 const path2 = setupTest();
 const manager2 = new HistoryCLIManager(path2);
@@ -293,8 +293,8 @@ cleanupTest();
 // BENCHMARK: Statistics Calculation
 // ============================================================================
 
-console.log('\n📊 STATISTICS CALCULATION BENCHMARKS');
-console.log('━'.repeat(80));
+console.info('\n📊 STATISTICS CALCULATION BENCHMARKS');
+console.info('━'.repeat(80));
 
 const statSizes = [100, 500, 1000, 5000];
 
@@ -323,8 +323,8 @@ for (const size of statSizes) {
 // BENCHMARK: Memory Usage
 // ============================================================================
 
-console.log('\n💾 MEMORY USAGE BENCHMARKS');
-console.log('━'.repeat(80));
+console.info('\n💾 MEMORY USAGE BENCHMARKS');
+console.info('━'.repeat(80));
 
 const memSizes = [100, 500, 1000, 5000, 10000];
 
@@ -340,7 +340,7 @@ for (const size of memSizes) {
   const stats = manager4.getStats();
   const memoryMB = stats.memorySizeBytes / (1024 * 1024);
 
-  console.log(
+  console.info(
     `💾 Memory (${size} entries): ${TableUtils.color.blue(memoryMB.toFixed(2))}MB ` +
     `(${(stats.memorySizeBytes / size).toFixed(0)} bytes/entry)`
   );
@@ -352,8 +352,8 @@ for (const size of memSizes) {
 // BENCHMARK: Zero-Collateral Verification
 // ============================================================================
 
-console.log('\n✅ ZERO-COLLATERAL VERIFICATION BENCHMARKS');
-console.log('━'.repeat(80));
+console.info('\n✅ ZERO-COLLATERAL VERIFICATION BENCHMARKS');
+console.info('━'.repeat(80));
 
 const path5 = setupTest();
 const manager5 = new HistoryCLIManager(path5);
@@ -378,8 +378,8 @@ cleanupTest();
 // BENCHMARK SUMMARY
 // ============================================================================
 
-console.log('\n📈 BENCHMARK SUMMARY');
-console.log('━'.repeat(80));
+console.info('\n📈 BENCHMARK SUMMARY');
+console.info('━'.repeat(80));
 
 const categories = [...new Set(results.map(r => r.category))];
 
@@ -389,21 +389,21 @@ for (const category of categories) {
   const avgOps = categoryResults.reduce((sum, r) => sum + r.opsPerSec, 0) / categoryResults.length;
   const avgSuccess = categoryResults.reduce((sum, r) => sum + r.successRate, 0) / categoryResults.length;
 
-  console.log(`\n${category}:`);
-  console.log(`  • Tests: ${categoryResults.length}`);
-  console.log(`  • Avg Time: ${TableUtils.color.yellow(avgTime.toFixed(2))}ms`);
-  console.log(`  • Avg Ops/Sec: ${TableUtils.color.green(avgOps.toFixed(0))}`);
-  console.log(`  • Success Rate: ${TableUtils.color.bob(avgSuccess.toFixed(1))}%`);
+  console.info(`\n${category}:`);
+  console.info(`  • Tests: ${categoryResults.length}`);
+  console.info(`  • Avg Time: ${TableUtils.color.yellow(avgTime.toFixed(2))}ms`);
+  console.info(`  • Avg Ops/Sec: ${TableUtils.color.green(avgOps.toFixed(0))}`);
+  console.info(`  • Success Rate: ${TableUtils.color.bob(avgSuccess.toFixed(1))}%`);
 }
 
 // Performance targets check
-console.log('\n🎯 PERFORMANCE TARGETS:');
-console.log('━'.repeat(80));
+console.info('\n🎯 PERFORMANCE TARGETS:');
+console.info('━'.repeat(80));
 
 const historyLoadResults = results.filter(r => r.category === 'History Load');
 const loadTarget = historyLoadResults.filter(r => r.averageTimeMs < 10);
 const loadSuccess = (loadTarget.length / historyLoadResults.length) * 100;
-console.log(
+console.info(
   `History Load (<10ms): ${loadSuccess === 100 ? '✅' : '⚠️ '} ${loadSuccess.toFixed(1)}% ` +
   `(${loadTarget.length}/${historyLoadResults.length})`
 );
@@ -411,22 +411,22 @@ console.log(
 const completionResults = results.filter(r => r.category === 'Tab Completion');
 const completionTarget = completionResults.filter(r => r.averageTimeMs < 50);
 const completionSuccess = (completionTarget.length / completionResults.length) * 100;
-console.log(
+console.info(
   `Tab Completion (<50ms): ${completionSuccess >= 80 ? '✅' : '⚠️ '} ${completionSuccess.toFixed(1)}% ` +
   `(${completionTarget.length}/${completionResults.length})`
 );
 
 const allSuccessRate = results.reduce((sum, r) => sum + r.successRate, 0) / results.length;
 const targetMet = allSuccessRate >= 98.5;
-console.log(
+console.info(
   `Overall Success Rate (≥98.5%): ${targetMet ? '✅' : '⚠️ '} ${allSuccessRate.toFixed(2)}%`
 );
 
-console.log('\n✨ Benchmark Suite Complete');
-console.log(`Total tests: ${results.length}`);
-console.log(`Timestamp: ${results[0]?.timestamp || 'N/A'}`);
+console.info('\n✨ Benchmark Suite Complete');
+console.info(`Total tests: ${results.length}`);
+console.info(`Timestamp: ${results[0]?.timestamp || 'N/A'}`);
 
 // Export results as JSON
-console.log('\n📊 Raw Results (JSON):');
-console.log('─'.repeat(80));
-console.log(JSON.stringify(results, null, 2));
+console.info('\n📊 Raw Results (JSON):');
+console.info('─'.repeat(80));
+console.info(JSON.stringify(results, null, 2));

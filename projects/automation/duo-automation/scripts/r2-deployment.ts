@@ -44,10 +44,10 @@ class R2Deployment {
    * Complete deployment process
    */
   async deploy(): Promise<void> {
-    console.log('🚀 Starting R2 deployment...');
-    console.log(`📦 Bucket: ${this.config.bucketName}`);
-    console.log(`🌐 Domain: ${this.config.customDomain}`);
-    console.log(`🔧 Environment: ${this.config.environment}\n`);
+    console.info('🚀 Starting R2 deployment...');
+    console.info(`📦 Bucket: ${this.config.bucketName}`);
+    console.info(`🌐 Domain: ${this.config.customDomain}`);
+    console.info(`🔧 Environment: ${this.config.environment}\n`);
 
     try {
       // Step 1: Validate configuration
@@ -72,7 +72,7 @@ class R2Deployment {
       // Step 6: Health checks
       await this.performHealthChecks();
 
-      console.log('✅ Deployment completed successfully!');
+      console.info('✅ Deployment completed successfully!');
       await this.showDeploymentSummary();
 
     } catch (error) {
@@ -85,7 +85,7 @@ class R2Deployment {
    * Validate deployment configuration
    */
   private async validateConfiguration(): Promise<void> {
-    console.log('🔍 Validating configuration...');
+    console.info('🔍 Validating configuration...');
 
     if (!this.config.accountId) {
       throw new Error('R2_ACCOUNT_ID is required');
@@ -103,23 +103,23 @@ class R2Deployment {
       throw new Error('CLOUDFLARE_API_TOKEN is required for custom domain setup');
     }
 
-    console.log('✅ Configuration validated');
+    console.info('✅ Configuration validated');
   }
 
   /**
    * Setup R2 bucket
    */
   private async setupBucket(): Promise<void> {
-    console.log('📦 Setting up R2 bucket...');
+    console.info('📦 Setting up R2 bucket...');
 
     try {
       // Create bucket if it doesn't exist
       const createBucketCommand = `wrangler r2 bucket create ${this.config.bucketName}`;
       execSync(createBucketCommand, { stdio: 'pipe' });
-      console.log(`✅ Bucket ${this.config.bucketName} created`);
+      console.info(`✅ Bucket ${this.config.bucketName} created`);
     } catch (error) {
       // Bucket might already exist
-      console.log(`ℹ️  Bucket ${this.config.bucketName} already exists`);
+      console.info(`ℹ️  Bucket ${this.config.bucketName} already exists`);
     }
 
     // Configure bucket settings
@@ -129,20 +129,20 @@ class R2Deployment {
       publicAccess: 'Blocked',
     };
 
-    console.log('✅ Bucket setup completed');
+    console.info('✅ Bucket setup completed');
   }
 
   /**
    * Setup custom domain
    */
   private async setupCustomDomain(): Promise<void> {
-    console.log('🌐 Setting up custom domain...');
+    console.info('🌐 Setting up custom domain...');
 
     try {
       await this.r2Manager.setupCustomDomain(this.config.customDomain);
       
       // Wait for DNS propagation
-      console.log('⏳ Waiting for DNS propagation...');
+      console.info('⏳ Waiting for DNS propagation...');
       await this.sleep(30000); // 30 seconds
 
       // Verify domain configuration
@@ -151,7 +151,7 @@ class R2Deployment {
         throw new Error('Domain configuration verification failed');
       }
 
-      console.log(`✅ Custom domain ${this.config.customDomain} configured`);
+      console.info(`✅ Custom domain ${this.config.customDomain} configured`);
     } catch (error) {
       throw new Error(`Failed to setup custom domain: ${error}`);
     }
@@ -161,7 +161,7 @@ class R2Deployment {
    * Upload assets to R2
    */
   private async uploadAssets(): Promise<void> {
-    console.log('📤 Uploading assets...');
+    console.info('📤 Uploading assets...');
 
     const assetsPath = this.config.assetsPath;
     const uploadPromises: Promise<any>[] = [];
@@ -182,7 +182,7 @@ class R2Deployment {
     const successful = results.filter(r => r.status === 'fulfilled').length;
     const failed = results.filter(r => r.status === 'rejected').length;
 
-    console.log(`✅ Assets uploaded: ${successful} successful, ${failed} failed`);
+    console.info(`✅ Assets uploaded: ${successful} successful, ${failed} failed`);
   }
 
   /**
@@ -220,19 +220,19 @@ class R2Deployment {
    * Configure CDN settings
    */
   private async configureCDN(): Promise<void> {
-    console.log('⚡ Configuring CDN...');
+    console.info('⚡ Configuring CDN...');
 
     // CDN configuration would go here
     // This includes cache rules, compression, security headers, etc.
     
-    console.log('✅ CDN configured');
+    console.info('✅ CDN configured');
   }
 
   /**
    * Perform health checks
    */
   private async performHealthChecks(): Promise<void> {
-    console.log('🏥 Performing health checks...');
+    console.info('🏥 Performing health checks...');
 
     // Check bucket accessibility
     const stats = await this.r2Manager.getBucketStats();
@@ -248,7 +248,7 @@ class R2Deployment {
       }
     }
 
-    console.log('✅ Health checks passed');
+    console.info('✅ Health checks passed');
   }
 
   /**
@@ -257,23 +257,23 @@ class R2Deployment {
   private async showDeploymentSummary(): Promise<void> {
     const stats = await this.r2Manager.getBucketStats();
 
-    console.log('\n📊 Deployment Summary');
-    console.log('=====================');
-    console.log(`📦 Bucket: ${this.config.bucketName}`);
-    console.log(`🌐 Domain: ${this.config.customDomain || 'None'}`);
-    console.log(`🔧 Environment: ${this.config.environment}`);
-    console.log(`📁 Objects: ${stats.totalObjects}`);
-    console.log(`💾 Size: ${(stats.totalSize / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`⚡ CDN: ${this.config.enableCDN ? 'Enabled' : 'Disabled'}`);
-    console.log(`🔒 SSL: ${this.config.enableSSL ? 'Enabled' : 'Disabled'}`);
+    console.info('\n📊 Deployment Summary');
+    console.info('=====================');
+    console.info(`📦 Bucket: ${this.config.bucketName}`);
+    console.info(`🌐 Domain: ${this.config.customDomain || 'None'}`);
+    console.info(`🔧 Environment: ${this.config.environment}`);
+    console.info(`📁 Objects: ${stats.totalObjects}`);
+    console.info(`💾 Size: ${(stats.totalSize / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`⚡ CDN: ${this.config.enableCDN ? 'Enabled' : 'Disabled'}`);
+    console.info(`🔒 SSL: ${this.config.enableSSL ? 'Enabled' : 'Disabled'}`);
     
-    console.log('\n🔗 Access URLs:');
+    console.info('\n🔗 Access URLs:');
     if (this.config.customDomain) {
-      console.log(`🌐 Custom Domain: https://${this.config.customDomain}`);
+      console.info(`🌐 Custom Domain: https://${this.config.customDomain}`);
     }
-    console.log(`🪣 R2 URL: https://${this.config.bucketName}.${this.config.accountId}.r2.cloudflarestorage.com`);
+    console.info(`🪣 R2 URL: https://${this.config.bucketName}.${this.config.accountId}.r2.cloudflarestorage.com`);
     
-    console.log('\n🎉 Deployment completed successfully!');
+    console.info('\n🎉 Deployment completed successfully!');
   }
 
   /**
@@ -376,8 +376,8 @@ async function main() {
   const args = process.argv.slice(2);
   const environment = args[0] as 'development' | 'staging' | 'production' || 'development';
 
-  console.log('🚀 R2 Deployment Script');
-  console.log('========================\n');
+  console.info('🚀 R2 Deployment Script');
+  console.info('========================\n');
 
   const config: DeploymentConfig = {
     accountId: process.env.R2_ACCOUNT_ID || '',

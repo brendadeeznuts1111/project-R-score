@@ -10,4 +10,4 @@ export class SecretsEditor {
 	}
 }
 
-console.log("Main entry stub loaded");
+console.info("Main entry stub loaded");

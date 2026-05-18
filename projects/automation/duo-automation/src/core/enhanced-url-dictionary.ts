@@ -453,21 +453,21 @@ export const getHealthReport = (environment?: string) => urlDictionary.getHealth
 
 // Run demo if this is the main module
 if (import.meta.main) {
-  console.log('🔗 ENHANCED URL DICTIONARY DEMO');
-  console.log('='.repeat(40));
+  console.info('🔗 ENHANCED URL DICTIONARY DEMO');
+  console.info('='.repeat(40));
   
-  console.log('\n📊 Current Environment URLs:');
+  console.info('\n📊 Current Environment URLs:');
   const urls = urlDictionary.getAllURLs();
   Object.entries(urls).forEach(([key, config]) => {
     const healthy = urlDictionary.isHealthy(key);
     const status = healthy ? '✅' : '❌';
-    console.log(`${status} ${key}: ${config.url} (${config.description})`);
+    console.info(`${status} ${key}: ${config.url} (${config.description})`);
   });
 
-  console.log('\n🏥 Health Report:');
-  console.log(urlDictionary.getHealthReport());
+  console.info('\n🏥 Health Report:');
+  console.info(urlDictionary.getHealthReport());
 
-  console.log('\n🔍 Dynamic URL Resolution:');
+  console.info('\n🔍 Dynamic URL Resolution:');
   const packageURL = urlDictionary.resolveURL('registry_main', { package: 'core' });
-  console.log(`Resolved URL: ${packageURL}`);
+  console.info(`Resolved URL: ${packageURL}`);
 }

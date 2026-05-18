@@ -81,7 +81,7 @@ export class SecureCookieManager {
 
     // Note: In a real implementation, you'd set this on the response headers
     // For now, we'll store it in a map for demonstration
-    console.log(`Setting cookie: ${cookieString}`);
+    console.info(`Setting cookie: ${cookieString}`);
   }
 
   async getSecureCookie(

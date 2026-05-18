@@ -74,7 +74,7 @@ class BunSecretsManager {
     this.secrets.set('CARDINAL_TEAM_KEY', process.env.CARDINAL_TEAM_KEY || Bun.env.CARDINAL_TEAM_KEY);
     this.secrets.set('CARDINAL_PUBLIC_KEY', process.env.CARDINAL_PUBLIC_KEY || Bun.env.CARDINAL_PUBLIC_KEY);
 
-    console.log('🔐 Bun.secrets initialized with R2 and Wiki configurations');
+    console.info('🔐 Bun.secrets initialized with R2 and Wiki configurations');
   }
 
   /**
@@ -131,7 +131,7 @@ class BunSecretsManager {
     };
 
     this.userWindows.set(windowId, userWindow);
-    console.log(`🪟 Created user scoped window: ${windowId} for user: ${userId} with scope: ${scope}`);
+    console.info(`🪟 Created user scoped window: ${windowId} for user: ${userId} with scope: ${scope}`);
     
     return userWindow;
   }
@@ -280,7 +280,7 @@ class BunSecretsManager {
         throw new Error(`R2 upload failed: ${response.status} ${response.statusText}`);
       }
 
-      console.log(`☁️ Wiki content uploaded to R2: ${objectKey}`);
+      console.info(`☁️ Wiki content uploaded to R2: ${objectKey}`);
       
       return { 
         success: true, 
@@ -334,7 +334,7 @@ class BunSecretsManager {
         content = this.decryptContent(content, windowId);
       }
 
-      console.log(`☁️ Wiki content downloaded from R2: ${objectKey}`);
+      console.info(`☁️ Wiki content downloaded from R2: ${objectKey}`);
 
       return { success: true, content };
 
@@ -408,7 +408,7 @@ class BunSecretsManager {
     }
     
     if (cleaned > 0) {
-      console.log(`🧹 Cleaned up ${cleaned} expired windows`);
+      console.info(`🧹 Cleaned up ${cleaned} expired windows`);
     }
   }
 }
@@ -501,11 +501,11 @@ class WikiServer {
       }
     });
 
-    console.log(`🌐 Wiki Server with Bun.secrets started on port ${port}`);
-    console.log(`📊 Dashboard: http://localhost:${port}`);
-    console.log(`🔐 R2 Integration: ${this.secretsManager.getWikiConfig().features.r2Integration ? 'Enabled' : 'Disabled'}`);
-    console.log(`👥 User Scoping: ${this.secretsManager.getWikiConfig().features.userScoping ? 'Enabled' : 'Disabled'}`);
-    console.log(`🚩 Cardinal Flags: ${this.secretsManager.getWikiConfig().features.cardinalFlags ? 'Enabled' : 'Disabled'}`);
+    console.info(`🌐 Wiki Server with Bun.secrets started on port ${port}`);
+    console.info(`📊 Dashboard: http://localhost:${port}`);
+    console.info(`🔐 R2 Integration: ${this.secretsManager.getWikiConfig().features.r2Integration ? 'Enabled' : 'Disabled'}`);
+    console.info(`👥 User Scoping: ${this.secretsManager.getWikiConfig().features.userScoping ? 'Enabled' : 'Disabled'}`);
+    console.info(`🚩 Cardinal Flags: ${this.secretsManager.getWikiConfig().features.cardinalFlags ? 'Enabled' : 'Disabled'}`);
 
     // Cleanup expired windows every hour
     setInterval(() => {

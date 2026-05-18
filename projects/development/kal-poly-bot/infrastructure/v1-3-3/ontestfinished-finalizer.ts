@@ -115,7 +115,7 @@ export class TestFinalizer {
       const cleanupTime = performance.now() - startTime;
       this.updateAverageCleanupTime(cleanupTime);
 
-      console.log(
+      console.info(
         `[FINALIZER] Completed ${testContext.finalizers.length} finalizers in ${cleanupTime.toFixed(2)}ms`
       );
     } catch (error) {
@@ -158,7 +158,7 @@ export class TestFinalizer {
       delete globalThis.__kalman_cache[`pattern-${patternId}`];
     }
 
-    console.log(`[FINALIZER] Cleared state for Pattern #${patternId}`);
+    console.info(`[FINALIZER] Cleared state for Pattern #${patternId}`);
   }
 
   // Clear all test state
@@ -177,7 +177,7 @@ export class TestFinalizer {
       delete globalThis.__test_state;
     }
 
-    console.log("[FINALIZER] Cleared all test state");
+    console.info("[FINALIZER] Cleared all test state");
   }
 
   // Get finalizer metrics
@@ -199,7 +199,7 @@ export class TestFinalizer {
   // Create Kalman-specific finalizer
   static createKalmanFinalizer(patternId: number): FinalizerFunction {
     return async () => {
-      console.log(`[FINALIZER] Cleaning up Kalman Pattern #${patternId}`);
+      console.info(`[FINALIZER] Cleaning up Kalman Pattern #${patternId}`);
 
       // Clear pattern state
       this.clearPatternState(patternId);
@@ -286,7 +286,7 @@ export class TestFinalizer {
       }
     }
 
-    console.log("[FINALIZER] Force cleanup completed");
+    console.info("[FINALIZER] Force cleanup completed");
   }
 }
 

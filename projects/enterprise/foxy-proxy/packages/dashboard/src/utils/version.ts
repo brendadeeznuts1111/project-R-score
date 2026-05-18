@@ -15,5 +15,5 @@ export function getVersionString() {
 }
 
 export function logVersion() {
-  console.log(`🚀 ${getVersionString()}`);
+  console.info(`🚀 ${getVersionString()}`);
 }

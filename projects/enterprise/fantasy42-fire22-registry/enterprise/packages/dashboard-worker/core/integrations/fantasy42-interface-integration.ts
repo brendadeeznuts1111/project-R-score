@@ -18,7 +18,7 @@ export class Fantasy42InterfaceIntegration {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🎯 Initializing Fantasy42 Interface Integration...');
+      console.info('🎯 Initializing Fantasy42 Interface Integration...');
 
       // Create automation configuration
       const config: P2PAutomationConfig = {
@@ -52,7 +52,7 @@ export class Fantasy42InterfaceIntegration {
 
       if (automationReady) {
         this.isInitialized = true;
-        console.log('✅ Fantasy42 Interface Integration complete');
+        console.info('✅ Fantasy42 Interface Integration complete');
 
         // Setup additional interface enhancements
         await this.setupInterfaceEnhancements();
@@ -81,7 +81,7 @@ export class Fantasy42InterfaceIntegration {
     // Add quick action buttons
     await this.addQuickActionButtons();
 
-    console.log('✅ Interface enhancements setup');
+    console.info('✅ Interface enhancements setup');
   }
 
   /**
@@ -145,7 +145,7 @@ export class Fantasy42InterfaceIntegration {
       }
     });
 
-    console.log(
+    console.info(
       '✅ Keyboard shortcuts setup: Ctrl+Shift+P (Process), Ctrl+Shift+A (Toggle), Ctrl+Shift+S (Status)'
     );
   }
@@ -219,14 +219,14 @@ export class Fantasy42InterfaceIntegration {
       this.showAutomationStatusModal();
     });
 
-    console.log('✅ Quick action buttons added');
+    console.info('✅ Quick action buttons added');
   }
 
   /**
    * Process P2P transfer shortcut
    */
   private async processP2PTransferShortcut(): Promise<void> {
-    console.log('⌨️ P2P Transfer shortcut activated');
+    console.info('⌨️ P2P Transfer shortcut activated');
 
     if (!this.automation) {
       console.warn('⚠️ Automation not initialized');
@@ -238,16 +238,16 @@ export class Fantasy42InterfaceIntegration {
     const agentId = await this.getAgentIdValue();
 
     if (thirdPartyId) {
-      console.log('🔄 Processing P2P transfer for:', thirdPartyId);
+      console.info('🔄 Processing P2P transfer for:', thirdPartyId);
 
       // Find matches for this address
       const matches = await this.automation.findImmediateMatches(thirdPartyId);
 
       if (matches.length > 0) {
-        console.log(`🎯 Found ${matches.length} matches, processing...`);
+        console.info(`🎯 Found ${matches.length} matches, processing...`);
         await this.automation.processImmediateMatches(matches, thirdPartyId);
       } else {
-        console.log('❌ No matches found for current address');
+        console.info('❌ No matches found for current address');
       }
     } else {
       console.warn('⚠️ No 3rd party ID found');
@@ -258,19 +258,19 @@ export class Fantasy42InterfaceIntegration {
    * Toggle automation shortcut
    */
   private toggleAutomationShortcut(): Promise<void> {
-    console.log('⌨️ Toggle automation shortcut activated');
+    console.info('⌨️ Toggle automation shortcut activated');
 
     if (this.automation) {
       const status = this.automation.getStatus();
       if (status.automationActive) {
         this.automation.stop();
         this.updateStatusIndicator('inactive');
-        console.log('🛑 Automation stopped');
+        console.info('🛑 Automation stopped');
       } else {
         // Restart automation
         this.automation.initialize();
         this.updateStatusIndicator('active');
-        console.log('🚀 Automation restarted');
+        console.info('🚀 Automation restarted');
       }
     }
   }
@@ -441,14 +441,14 @@ export class Fantasy42InterfaceIntegration {
       }
     });
 
-    console.log('📊 Automation status modal displayed');
+    console.info('📊 Automation status modal displayed');
   }
 
   /**
    * Find matches action
    */
   private async findMatchesAction(): Promise<void> {
-    console.log('🔍 Find matches action triggered');
+    console.info('🔍 Find matches action triggered');
 
     const thirdPartyId = await this.getThirdPartyIdValue();
     if (!thirdPartyId) {
@@ -474,7 +474,7 @@ export class Fantasy42InterfaceIntegration {
    * Process transfer action
    */
   private async processTransferAction(): Promise<void> {
-    console.log('💸 Process transfer action triggered');
+    console.info('💸 Process transfer action triggered');
 
     const thirdPartyId = await this.getThirdPartyIdValue();
     const agentId = await this.getAgentIdValue();
@@ -656,7 +656,7 @@ export class Fantasy42InterfaceIntegration {
       quickActions.remove();
     }
 
-    console.log('🧹 Fantasy42 Interface Integration cleaned up');
+    console.info('🧹 Fantasy42 Interface Integration cleaned up');
   }
 }
 
@@ -672,12 +672,12 @@ export const initializeFantasy42Interface = async (): Promise<boolean> => {
 
 // Auto-initialize if running in Fantasy42 environment
 if (typeof window !== 'undefined' && window.location.hostname.includes('fantasy42')) {
-  console.log('🎯 Fantasy42 environment detected, auto-initializing integration...');
+  console.info('🎯 Fantasy42 environment detected, auto-initializing integration...');
   initializeFantasy42Interface().then(success => {
     if (success) {
-      console.log('✅ Fantasy42 Interface Integration auto-initialized');
+      console.info('✅ Fantasy42 Interface Integration auto-initialized');
     } else {
-      console.log('⚠️ Fantasy42 Interface Integration failed to auto-initialize');
+      console.info('⚠️ Fantasy42 Interface Integration failed to auto-initialize');
     }
   });
 }

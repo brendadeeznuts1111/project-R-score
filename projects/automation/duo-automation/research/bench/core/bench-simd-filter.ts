@@ -12,7 +12,7 @@ async function runBench() {
 
   const filters = parseCliFilters(['--filter', 'success=true region=US']);
 
-  console.log(`🚀 Benchmarking Filter Speedup (${datasetSize.toLocaleString()} items)...`);
+  console.info(`🚀 Benchmarking Filter Speedup (${datasetSize.toLocaleString()} items)...`);
 
   // 1. Standard Filter
   const startStd = performance.now();
@@ -32,13 +32,13 @@ async function runBench() {
 
   const speedup = ((1 - avgSimd / avgStd) * 100).toFixed(0);
 
-  console.log(`\n--- Results ---`);
-  console.log(`Standard Filter: ${avgStd.toFixed(1)}μs`);
-  console.log(`SIMD (Parallel): ${avgSimd.toFixed(1)}μs`);
-  console.log(`Speedup: ${speedup}% 🚀`);
+  console.info(`\n--- Results ---`);
+  console.info(`Standard Filter: ${avgStd.toFixed(1)}μs`);
+  console.info(`SIMD (Parallel): ${avgSimd.toFixed(1)}μs`);
+  console.info(`Speedup: ${speedup}% 🚀`);
 
   if (Number(speedup) > 40) {
-    console.log(`✅ Performance Target Met! (Expected: ~51%)`);
+    console.info(`✅ Performance Target Met! (Expected: ~51%)`);
   }
 }
 

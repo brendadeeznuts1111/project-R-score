@@ -35,7 +35,7 @@ export async function generateTypedFarm(scale: number = BULK_CONFIG.BATCH_SIZE):
   }
   
   const timeMs = (Bun.nanoseconds() - start) / 1e6;
-  console.log(`🚀 Typed Farm Generated: ${scale} AppleIDs in ${timeMs.toFixed(2)}ms`);
+  console.info(`🚀 Typed Farm Generated: ${scale} AppleIDs in ${timeMs.toFixed(2)}ms`);
   return farm;
 }
 

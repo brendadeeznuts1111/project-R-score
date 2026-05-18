@@ -50,8 +50,8 @@ const html = `<!doctype html>
 </html>`;
 
 await Bun.write(outputPath, html);
-console.log(`Wrote ${outputPath}`);
-console.log(`Coverage ${coverage.totals.lineCoverage.toFixed(2)}% (threshold ${threshold.toFixed(2)}%)`);
+console.info(`Wrote ${outputPath}`);
+console.info(`Coverage ${coverage.totals.lineCoverage.toFixed(2)}% (threshold ${threshold.toFixed(2)}%)`);
 process.exit(status === "PASS" ? 0 : 1);
 
 function escape(s: string) {

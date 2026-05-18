@@ -110,9 +110,9 @@ class RealTimeMonitor {
       ...config,
     };
 
-    console.log('📊 Real-Time Monitor initialized');
-    console.log(`📍 Monitoring interval: ${this.config.interval}ms`);
-    console.log(`🔗 API Base URL: ${this.config.apiBaseUrl}`);
+    console.info('📊 Real-Time Monitor initialized');
+    console.info(`📍 Monitoring interval: ${this.config.interval}ms`);
+    console.info(`🔗 API Base URL: ${this.config.apiBaseUrl}`);
   }
 
   /**
@@ -120,12 +120,12 @@ class RealTimeMonitor {
    */
   async startMonitoring(): Promise<void> {
     if (this.isMonitoring) {
-      console.log('⚠️ Monitor is already running');
+      console.info('⚠️ Monitor is already running');
       return;
     }
 
     this.isMonitoring = true;
-    console.log('🚀 Starting real-time monitoring...\n');
+    console.info('🚀 Starting real-time monitoring...\n');
 
     // System metrics monitoring
     const systemInterval = setInterval(() => {
@@ -155,8 +155,8 @@ class RealTimeMonitor {
     await this.collectSystemMetrics();
     await this.monitorAPIEndpoints();
 
-    console.log('✅ Real-time monitoring started');
-    console.log('Press Ctrl+C to stop monitoring\n');
+    console.info('✅ Real-time monitoring started');
+    console.info('Press Ctrl+C to stop monitoring\n');
 
     // Handle graceful shutdown
     process.on('SIGINT', () => {
@@ -173,7 +173,7 @@ class RealTimeMonitor {
       return;
     }
 
-    console.log('\n🛑 Stopping real-time monitoring...');
+    console.info('\n🛑 Stopping real-time monitoring...');
 
     this.intervalIds.forEach(id => clearInterval(id));
     this.intervalIds = [];
@@ -182,7 +182,7 @@ class RealTimeMonitor {
     // Final export
     this.exportMetrics();
 
-    console.log('✅ Monitoring stopped');
+    console.info('✅ Monitoring stopped');
   }
 
   /**
@@ -403,7 +403,7 @@ class RealTimeMonitor {
 
     // Log critical alerts immediately
     if (alert.severity === 'critical') {
-      console.log(`\n🚨 CRITICAL ALERT: ${alert.message}`);
+      console.info(`\n🚨 CRITICAL ALERT: ${alert.message}`);
     }
   }
 
@@ -417,45 +417,45 @@ class RealTimeMonitor {
     const currentMetrics = this.systemHistory[0];
     if (!currentMetrics) return;
 
-    console.log('🔥 Fire22 Real-Time Performance Dashboard');
-    console.log('='.repeat(50));
-    console.log(`📅 ${new Date().toLocaleString()}\n`);
+    console.info('🔥 Fire22 Real-Time Performance Dashboard');
+    console.info('='.repeat(50));
+    console.info(`📅 ${new Date().toLocaleString()}\n`);
 
     // System metrics
-    console.log('💻 System Metrics:');
-    console.log(
+    console.info('💻 System Metrics:');
+    console.info(
       `   CPU Usage: ${currentMetrics.cpu.usage}% ${this.getHealthIndicator(currentMetrics.cpu.usage, 80)}`
     );
-    console.log(
+    console.info(
       `   Memory: ${currentMetrics.memory.used}MB / ${currentMetrics.memory.total}MB (${currentMetrics.memory.percentage}%) ${this.getHealthIndicator(currentMetrics.memory.percentage, 85)}`
     );
-    console.log(
+    console.info(
       `   Uptime: ${Math.floor(currentMetrics.bun.uptime / 60)}m ${Math.floor(currentMetrics.bun.uptime % 60)}s`
     );
-    console.log(`   Bun Version: ${currentMetrics.bun.version}\n`);
+    console.info(`   Bun Version: ${currentMetrics.bun.version}\n`);
 
     // API endpoints status
-    console.log('🌐 API Endpoints:');
+    console.info('🌐 API Endpoints:');
     for (const [endpoint, metrics] of this.apiMetrics.entries()) {
       const statusIcon = this.getStatusIcon(metrics.status);
       const responseTime = metrics.averageResponseTime.toFixed(0);
-      console.log(
+      console.info(
         `   ${statusIcon} ${endpoint} - ${responseTime}ms (${metrics.successRate}% success)`
       );
     }
 
     // Recent alerts
     if (this.alerts.length > 0) {
-      console.log('\n🚨 Recent Alerts:');
+      console.info('\n🚨 Recent Alerts:');
       const recentAlerts = this.alerts.slice(0, 5);
       for (const alert of recentAlerts) {
         const severityIcon = this.getSeverityIcon(alert.severity);
         const time = new Date(alert.timestamp).toLocaleTimeString();
-        console.log(`   ${severityIcon} [${time}] ${alert.message}`);
+        console.info(`   ${severityIcon} [${time}] ${alert.message}`);
       }
     }
 
-    console.log(
+    console.info(
       `\n📊 Monitoring active | Interval: ${this.config.interval}ms | Press Ctrl+C to stop`
     );
   }
@@ -600,7 +600,7 @@ async function main() {
         break;
       case '--help':
       case '-h':
-        console.log(`
+        console.info(`
 📊 Fire22 Real-Time Performance Monitor
 
 USAGE:
@@ -636,7 +636,7 @@ EXAMPLES:
       setTimeout(async () => {
         monitor.stopMonitoring();
         const reportPath = await monitor.generateReport();
-        console.log(`\n📊 Performance report generated: ${reportPath}`);
+        console.info(`\n📊 Performance report generated: ${reportPath}`);
         process.exit(0);
       }, duration);
     }

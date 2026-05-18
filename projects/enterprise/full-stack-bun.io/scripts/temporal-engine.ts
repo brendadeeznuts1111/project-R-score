@@ -156,7 +156,7 @@ class TemporalEngine {
       }
     }
 
-    console.log(`Loaded ${this.cronRules.size} cron rules`);
+    console.info(`Loaded ${this.cronRules.size} cron rules`);
   }
 
   private extractCronRules(content: string, filename: string): CronRule[] {
@@ -230,7 +230,7 @@ class TemporalEngine {
       }
     }
 
-    console.log(`Loaded ${this.workflows.size} temporal workflows`);
+    console.info(`Loaded ${this.workflows.size} temporal workflows`);
   }
 
   private parseWorkflow(content: string, filename: string): TemporalWorkflow | null {
@@ -258,7 +258,7 @@ class TemporalEngine {
     if (this.running) return;
 
     this.running = true;
-    console.log('⏰ Starting Temporal Engine...');
+    console.info('⏰ Starting Temporal Engine...');
 
     // Schedule initial runs
     await this.scheduleRules();
@@ -280,7 +280,7 @@ class TemporalEngine {
     }
     this.nextTimeouts.clear();
 
-    console.log('⏹️  Stopped Temporal Engine');
+    console.info('⏹️  Stopped Temporal Engine');
   }
 
   // Schedule cron rules
@@ -311,14 +311,14 @@ class TemporalEngine {
         this.nextTimeouts.set(rule.id, timeout);
         rule.metadata.nextRun = nextRun.toISOString();
 
-        console.log(`📅 Scheduled ${rule.name} for ${nextRun.toISOString()}`);
+        console.info(`📅 Scheduled ${rule.name} for ${nextRun.toISOString()}`);
       }
     }
   }
 
   // Execute a cron rule
   private async executeRule(rule: CronRule): Promise<void> {
-    console.log(`🚀 Executing cron rule: ${rule.name}`);
+    console.info(`🚀 Executing cron rule: ${rule.name}`);
 
     rule.metadata.runCount++;
     rule.metadata.lastRun = new Date().toISOString();
@@ -340,7 +340,7 @@ class TemporalEngine {
       }
 
       rule.metadata.successCount++;
-      console.log(`✅ Cron rule ${rule.name} completed successfully`);
+      console.info(`✅ Cron rule ${rule.name} completed successfully`);
 
     } catch (error) {
       rule.metadata.failureCount++;
@@ -349,7 +349,7 @@ class TemporalEngine {
       // Handle retries if configured
       if (rule.retryPolicy && rule.metadata.failureCount <= rule.retryPolicy.attempts) {
         const delay = this.calculateRetryDelay(rule.retryPolicy, rule.metadata.failureCount);
-        console.log(`🔄 Retrying ${rule.name} in ${delay}ms`);
+        console.info(`🔄 Retrying ${rule.name} in ${delay}ms`);
 
         setTimeout(() => this.executeRule(rule), delay);
       }
@@ -510,7 +510,7 @@ async function main() {
   const [command, ...args] = process.argv.slice(2);
 
   if (!command) {
-    console.log(`
+    console.info(`
 Temporal Engine v1.0.0 - Cron-based rule scheduling
 
 Usage:
@@ -539,7 +539,7 @@ Examples:
   try {
     switch (command) {
       case 'start':
-        console.log('Starting Temporal Engine...');
+        console.info('Starting Temporal Engine...');
         await engine.start();
         break;
 
@@ -554,7 +554,7 @@ Examples:
         }
         const rule = JSON.parse(ruleJson);
         engine.addCronRule(rule);
-        console.log(`✅ Added cron rule: ${rule.id}`);
+        console.info(`✅ Added cron rule: ${rule.id}`);
         break;
 
       case 'remove-rule':
@@ -563,27 +563,27 @@ Examples:
           throw new Error('Usage: remove-rule <rule-id>');
         }
         const removed = engine.removeCronRule(ruleId);
-        console.log(removed ? `✅ Removed rule: ${ruleId}` : `❌ Rule not found: ${ruleId}`);
+        console.info(removed ? `✅ Removed rule: ${ruleId}` : `❌ Rule not found: ${ruleId}`);
         break;
 
       case 'list-rules':
         const rules = engine.getCronRules();
-        console.log('Active Cron Rules:');
+        console.info('Active Cron Rules:');
         rules.forEach(rule => {
-          console.log(`  ${rule.id}: ${rule.name} (${rule.cron}) - ${rule.enabled ? '✅' : '❌'}`);
+          console.info(`  ${rule.id}: ${rule.name} (${rule.cron}) - ${rule.enabled ? '✅' : '❌'}`);
         });
         break;
 
       case 'status':
         const allRules = engine.getCronRules();
-        console.log('Temporal Engine Status:');
-        console.log(`  Active Rules: ${allRules.filter(r => r.enabled).length}`);
-        console.log(`  Total Rules: ${allRules.length}`);
-        console.log(`  Running: ${true}`); // Simplified
+        console.info('Temporal Engine Status:');
+        console.info(`  Active Rules: ${allRules.filter(r => r.enabled).length}`);
+        console.info(`  Total Rules: ${allRules.length}`);
+        console.info(`  Running: ${true}`); // Simplified
         break;
 
       case 'report':
-        console.log(engine.generateReport());
+        console.info(engine.generateReport());
         break;
 
       default:

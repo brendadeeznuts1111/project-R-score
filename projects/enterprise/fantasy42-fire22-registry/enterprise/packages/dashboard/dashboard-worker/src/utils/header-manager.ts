@@ -420,7 +420,7 @@ export class HeaderManager {
    */
   logHeaders(headers: Headers, context: string): void {
     if (this.environment === 'development') {
-      console.log(`🔐 [${context}] Headers:`, Object.fromEntries(headers.entries()));
+      console.info(`🔐 [${context}] Headers:`, Object.fromEntries(headers.entries()));
     }
   }
 }

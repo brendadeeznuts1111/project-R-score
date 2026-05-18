@@ -8,7 +8,7 @@
 import { cpSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-console.log("🚀 Migrating to workspace structure...\n");
+console.info("🚀 Migrating to workspace structure...\n");
 
 interface PackageStructure {
 	[key: string]: string[];
@@ -47,13 +47,13 @@ const structure: PackageStructure = {
 
 // Create directories and copy files
 for (const [category, packages] of Object.entries(structure)) {
-	console.log(`📦 Processing ${category}...`);
+	console.info(`📦 Processing ${category}...`);
 
 	for (const [pkg, dirs] of Object.entries(packages)) {
 		const pkgPath = join(category, pkg);
 
 		if (!existsSync(pkgPath)) {
-			console.log(`  Creating ${pkgPath}`);
+			console.info(`  Creating ${pkgPath}`);
 			mkdirSync(pkgPath, { recursive: true });
 			mkdirSync(join(pkgPath, "src"), { recursive: true });
 
@@ -67,10 +67,10 @@ for (const [category, packages] of Object.entries(structure)) {
 				}
 
 				if (existsSync(dir)) {
-					console.log(`    Copying ${dir} -> ${dest}`);
+					console.info(`    Copying ${dir} -> ${dest}`);
 					cpSync(dir, dest, { recursive: true });
 				} else {
-					console.log(`    ⚠️  Source not found: ${dir}`);
+					console.info(`    ⚠️  Source not found: ${dir}`);
 				}
 			}
 
@@ -93,7 +93,7 @@ for (const [category, packages] of Object.entries(structure)) {
 				writeFileSync(tsconfigPath, createTsConfig(pkg));
 			}
 		} else {
-			console.log(`  ✅ ${pkgPath} already exists`);
+			console.info(`  ✅ ${pkgPath} already exists`);
 		}
 	}
 }
@@ -101,7 +101,7 @@ for (const [category, packages] of Object.entries(structure)) {
 // Create workspace root package.json if it doesn't exist
 const rootPackageJsonPath = "package.json";
 if (!existsSync(rootPackageJsonPath)) {
-	console.log("📄 Creating root package.json");
+	console.info("📄 Creating root package.json");
 	const rootPackageJson = {
 		name: "@bun-toml/platform",
 		version: "1.0.0",
@@ -132,13 +132,13 @@ if (!existsSync(rootPackageJsonPath)) {
 // Create migration validation script
 writeFileSync("scripts/validate-migration.ts", createValidationScript());
 
-console.log("\n✅ Workspace structure created");
-console.log("\n📋 Next steps:");
-console.log("1. Review moved files for import path updates");
-console.log("2. Run: bun install (to link workspace dependencies)");
-console.log("3. Run: bun run build (to test builds)");
-console.log("4. Run: bun run test (to verify functionality)");
-console.log(
+console.info("\n✅ Workspace structure created");
+console.info("\n📋 Next steps:");
+console.info("1. Review moved files for import path updates");
+console.info("2. Run: bun install (to link workspace dependencies)");
+console.info("3. Run: bun run build (to test builds)");
+console.info("4. Run: bun run test (to verify functionality)");
+console.info(
 	"5. Run: bun scripts/validate-migration.ts (to validate migration)",
 );
 
@@ -301,7 +301,7 @@ function createValidationScript(): string {
 import { $ } from "bun";
 import { existsSync } from "fs";
 
-console.log("🔍 Validating workspace migration...\n");
+console.info("🔍 Validating workspace migration...\n");
 
 const validations = [
   {
@@ -353,37 +353,37 @@ for (const validation of validations) {
   try {
     const result = validation.check();
     if (result) {
-      console.log(\`✅ \${validation.name}\`);
+      console.info(\`✅ \${validation.name}\`);
       passed++;
     } else {
-      console.log(\`❌ \${validation.name}\`);
+      console.info(\`❌ \${validation.name}\`);
       if (validation.required) {
         failed++;
       }
     }
   } catch (error) {
-    console.log(\`❌ \${validation.name} - Error: \${error}\`);
+    console.info(\`❌ \${validation.name} - Error: \${error}\`);
     if (validation.required) {
       failed++;
     }
   }
 }
 
-console.log(\`\n📊 Results: \${passed} passed, \${failed} failed\`);
+console.info(\`\n📊 Results: \${passed} passed, \${failed} failed\`);
 
 if (failed > 0) {
-  console.log("\n⚠️  Some required validations failed. Please review the migration.");
+  console.info("\n⚠️  Some required validations failed. Please review the migration.");
   process.exit(1);
 } else {
-  console.log("\n🎉 All validations passed! Migration successful.");
+  console.info("\n🎉 All validations passed! Migration successful.");
   
-  console.log("\n🧪 Running test validation...");
+  console.info("\n🧪 Running test validation...");
   try {
     await $\`bun run test\`;
-    console.log("✅ All tests pass");
+    console.info("✅ All tests pass");
   } catch (error) {
-    console.log("❌ Some tests failed. Please review:");
-    console.log(error);
+    console.info("❌ Some tests failed. Please review:");
+    console.info(error);
     process.exit(1);
   }
 }

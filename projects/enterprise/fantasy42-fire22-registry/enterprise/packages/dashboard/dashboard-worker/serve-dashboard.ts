@@ -8,14 +8,14 @@ import { mainWorkerInstance } from './src/main-worker'; // Import the main worke
 const PORT = 8790; // Changed port to avoid conflict
 const DASHBOARD_PATH = join(import.meta.dir, 'src', 'dashboard.html');
 
-console.log(`🚀 Starting Fire22 Dashboard Server on port ${PORT}`);
-console.log(`📁 Dashboard file: ${DASHBOARD_PATH}`);
+console.info(`🚀 Starting Fire22 Dashboard Server on port ${PORT}`);
+console.info(`📁 Dashboard file: ${DASHBOARD_PATH}`);
 
 // Initialize the main worker
 mainWorkerInstance
   .initialize()
   .then(() => {
-    console.log('MainWorker initialized successfully.');
+    console.info('MainWorker initialized successfully.');
 
     serve({
       port: PORT,
@@ -129,9 +129,9 @@ mainWorkerInstance
       },
     });
 
-    console.log(`✅ Dashboard server running at http://localhost:${PORT}`);
-    console.log(`🔗 Dashboard URL: http://localhost:${PORT}/dashboard`);
-    console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
+    console.info(`✅ Dashboard server running at http://localhost:${PORT}`);
+    console.info(`🔗 Dashboard URL: http://localhost:${PORT}/dashboard`);
+    console.info(`🏥 Health check: http://localhost:${PORT}/api/health`);
   })
   .catch(error => {
     console.error('Failed to initialize MainWorker:', error);

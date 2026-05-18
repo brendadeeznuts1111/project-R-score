@@ -84,10 +84,10 @@ export class TensionPredictionEngine {
   }
 
   async trainModels(): Promise<void> {
-    console.log('🧠 Training prediction models...');
+    console.info('🧠 Training prediction models...');
 
     if (this.trainingData.inputs.length < 10) {
-      console.log('⚠️ Insufficient training data');
+      console.info('⚠️ Insufficient training data');
       return;
     }
 
@@ -103,7 +103,7 @@ export class TensionPredictionEngine {
     // Update ensemble weights based on performance
     this.updateEnsembleWeights();
 
-    console.log('✅ Model training complete');
+    console.info('✅ Model training complete');
   }
 
   private async trainLinearModel(): Promise<void> {
@@ -406,11 +406,11 @@ if (import.meta.main) {
   const currentState = [65, 45, 70, 85, 40];
   const predictions = engine.predict(currentState);
 
-  console.log('🔮 Tension Field Predictions:');
-  console.log(JSON.stringify(predictions, null, 2));
+  console.info('🔮 Tension Field Predictions:');
+  console.info(JSON.stringify(predictions, null, 2));
 
-  console.log('\n📊 Model Status:');
-  console.log(JSON.stringify(engine.getModelStatus(), null, 2));
+  console.info('\n📊 Model Status:');
+  console.info(JSON.stringify(engine.getModelStatus(), null, 2));
 }
 // [TENSION-VOLUME-001]
 // [TENSION-LINK-002]

@@ -104,8 +104,8 @@ export function createProjectContext(projectId: string): ProjectContext {
 
 export function logProjectContext(context: ProjectContext, verbose?: boolean): void {
 	if (verbose) {
-		console.log(`Project: ${context.name} (${context.id}) at ${context.path}`);
+		console.info(`Project: ${context.name} (${context.id}) at ${context.path}`);
 	} else {
-		console.log(`Project: ${context.name} (${context.id})`);
+		console.info(`Project: ${context.name} (${context.id})`);
 	}
 }

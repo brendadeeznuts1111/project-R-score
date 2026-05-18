@@ -19,7 +19,7 @@ const {
 
 // Call the complex C function
 const result = complex_example();
-console.log(`Complex C function returned: ${result}`);
+console.info(`Complex C function returned: ${result}`);
 
 // Environment variables usage examples:
 
@@ -43,6 +43,6 @@ console.log(`Complex C function returned: ${result}`);
 // export LIBRARY_PATH="/container/lib"
 // bun run examples/bun-ffi-advanced.ts
 
-console.log("Environment variables are automatically read by bun:ffi");
-console.log("C_INCLUDE_PATH:", process.env.C_INCLUDE_PATH || "not set");
-console.log("LIBRARY_PATH:", process.env.LIBRARY_PATH || "not set");
+console.info("Environment variables are automatically read by bun:ffi");
+console.info("C_INCLUDE_PATH:", process.env.C_INCLUDE_PATH || "not set");
+console.info("LIBRARY_PATH:", process.env.LIBRARY_PATH || "not set");

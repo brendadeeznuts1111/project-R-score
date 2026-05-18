@@ -96,15 +96,15 @@ async function createPR(config: PRConfig): Promise<boolean> {
 	const hasGh = await checkGitHubCLI();
 
 	if (!hasGh) {
-		console.log("❌ GitHub CLI (gh) not installed");
-		console.log();
-		console.log("Install from: https://cli.github.com/");
-		console.log("Or create PR manually at:");
+		console.info("❌ GitHub CLI (gh) not installed");
+		console.info();
+		console.info("Install from: https://cli.github.com/");
+		console.info("Or create PR manually at:");
 
 		const remote = await $`git remote get-url origin`.text().catch(() => "");
 		const match = remote.match(/github\.com[:/](.+?)\.git/);
 		if (match) {
-			console.log(
+			console.info(
 				`  https://github.com/${match[1]}/pull/new/${await $`git branch --show-current`.text()}`,
 			);
 		}
@@ -128,7 +128,7 @@ async function createPR(config: PRConfig): Promise<boolean> {
 
 	try {
 		const result = await $`gh ${args}`.text();
-		console.log(result);
+		console.info(result);
 		return true;
 	} catch (error) {
 		console.error("❌ Failed to create PR:", error);
@@ -140,25 +140,25 @@ async function createPR(config: PRConfig): Promise<boolean> {
 if (import.meta.main) {
 	const args = Bun.argv.slice(2);
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA PR Creator                         ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA PR Creator                         ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	// Check if gh is available
 	const hasGh = await checkGitHubCLI();
 	if (!hasGh) {
-		console.log("⚠️  GitHub CLI not detected. Will generate PR template only.");
-		console.log();
+		console.info("⚠️  GitHub CLI not detected. Will generate PR template only.");
+		console.info();
 	}
 
 	// Generate suggestions
 	const titles = await suggestPRTitle();
 	const body = await generatePRBody();
 
-	console.log("Suggested PR Title:");
-	console.log(`  ${titles[0]}`);
-	console.log();
+	console.info("Suggested PR Title:");
+	console.info(`  ${titles[0]}`);
+	console.info();
 
 	// Get title from args or use suggestion
 	let title = args.find((a) => !a.startsWith("--"));
@@ -170,14 +170,14 @@ if (import.meta.main) {
 	const base = args.find((a) => a.startsWith("--base="))?.split("=")[1] || "main";
 
 	// Display PR body preview
-	console.log("PR Body Preview:");
-	console.log("─".repeat(50));
-	console.log(body);
-	console.log("─".repeat(50));
-	console.log();
+	console.info("PR Body Preview:");
+	console.info("─".repeat(50));
+	console.info(body);
+	console.info("─".repeat(50));
+	console.info();
 
 	if (!hasGh) {
-		console.log("Save the above as your PR description.");
+		console.info("Save the above as your PR description.");
 		process.exit(0);
 	}
 
@@ -185,8 +185,8 @@ if (import.meta.main) {
 	const success = await createPR({ title, body, base, draft });
 
 	if (success) {
-		console.log();
-		console.log("✅ PR created successfully!");
+		console.info();
+		console.info("✅ PR created successfully!");
 	} else {
 		process.exit(1);
 	}

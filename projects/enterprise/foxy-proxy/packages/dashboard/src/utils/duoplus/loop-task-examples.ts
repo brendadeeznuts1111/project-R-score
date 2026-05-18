@@ -43,7 +43,7 @@ export async function createIntervalTaskExample() {
       }
     });
 
-    console.log("Interval task created successfully:", response);
+    console.info("Interval task created successfully:", response);
     return response;
   } catch (error) {
     console.error("Failed to create interval task:", error);
@@ -74,7 +74,7 @@ export async function createDailyTaskExample() {
       }
     });
 
-    console.log("Daily task created successfully:", response);
+    console.info("Daily task created successfully:", response);
     return response;
   } catch (error) {
     console.error("Failed to create daily task:", error);
@@ -108,7 +108,7 @@ export async function createWeeklyTaskExample() {
       }
     });
 
-    console.log("Weekly task created successfully:", response);
+    console.info("Weekly task created successfully:", response);
     return response;
   } catch (error) {
     console.error("Failed to create weekly task:", error);
@@ -144,7 +144,7 @@ export async function createMonthlyTaskExample() {
       }
     });
 
-    console.log("Monthly task created successfully:", response);
+    console.info("Monthly task created successfully:", response);
     return response;
   } catch (error) {
     console.error("Failed to create monthly task:", error);
@@ -188,7 +188,7 @@ export async function createComplexTaskExample() {
       .build();
 
     const response = await loopTaskHelper.createLoopTask(request);
-    console.log("Complex task created successfully:", response);
+    console.info("Complex task created successfully:", response);
     return response;
   } catch (error) {
     console.error("Failed to create complex task:", error);
@@ -237,7 +237,7 @@ export async function createBatchTasksExample() {
   const successful = results.filter((r) => r.status === "fulfilled");
   const failed = results.filter((r) => r.status === "rejected");
 
-  console.log(`Batch creation completed: ${successful.length} successful, ${failed.length} failed`);
+  console.info(`Batch creation completed: ${successful.length} successful, ${failed.length} failed`);
 
   if (failed.length > 0) {
     console.error(
@@ -268,11 +268,11 @@ export function validateTaskExample() {
   const errors = LoopTaskHelper.validateImage(image);
 
   if (errors.length > 0) {
-    console.log("Validation errors found:", errors);
+    console.info("Validation errors found:", errors);
     return false;
   }
 
-  console.log("Configuration is valid");
+  console.info("Configuration is valid");
   return true;
 }
 

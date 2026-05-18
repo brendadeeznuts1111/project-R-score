@@ -150,7 +150,7 @@ export class EmpireProKeyboardShortcuts {
       }
     ]);
 
-    console.log('⌨️ Empire Pro Keyboard Shortcuts Initialized');
+    console.info('⌨️ Empire Pro Keyboard Shortcuts Initialized');
   }
 
   // Phone Intelligence Actions
@@ -302,8 +302,8 @@ export class EmpireProKeyboardShortcuts {
 
   // Utility Methods
   private showCommand(command: string, message: string): void {
-    console.log(`⌨️ Shortcut: ${command}`);
-    console.log(`📝 ${message}`);
+    console.info(`⌨️ Shortcut: ${command}`);
+    console.info(`📝 ${message}`);
     
     // Show command in UI
     const commandDisplay = document.getElementById('command-display');
@@ -367,8 +367,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Make it globally available
   (window as any).empireProShortcuts = empireProShortcuts;
   
-  console.log('⌨️ Empire Pro Keyboard Shortcuts Ready!');
-  console.log('Press Ctrl+Shift+/ to see all shortcuts');
+  console.info('⌨️ Empire Pro Keyboard Shortcuts Ready!');
+  console.info('Press Ctrl+Shift+/ to see all shortcuts');
 });
 
 export default EmpireProKeyboardShortcuts;

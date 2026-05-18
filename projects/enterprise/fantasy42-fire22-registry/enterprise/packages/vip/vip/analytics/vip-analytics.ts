@@ -92,7 +92,7 @@ export class VipAnalyticsService {
    * Generate comprehensive VIP analytics report
    */
   async generateVipAnalyticsReport(startDate: Date, endDate: Date): Promise<VipAnalyticsReport> {
-    console.log(
+    console.info(
       `📊 Generating VIP analytics report for ${startDate.toISOString()} to ${endDate.toISOString()}`
     );
 

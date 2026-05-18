@@ -259,9 +259,9 @@ async function executeBuild(
     outfile,
   ].join(' ');
 
-  console.log(`🚀 Building ${config.name} for ${platform}...`);
-  console.log(`📋 Configuration: ${config.optimization} optimization`);
-  console.log(`🔧 Command: ${command}`);
+  console.info(`🚀 Building ${config.name} for ${platform}...`);
+  console.info(`📋 Configuration: ${config.optimization} optimization`);
+  console.info(`🔧 Command: ${command}`);
 
   try {
     // Execute build
@@ -271,17 +271,17 @@ async function executeBuild(
       env: { ...process.env, NODE_ENV: config.defines.ENVIRONMENT?.replace(/"/g, '') },
     });
 
-    console.log(`✅ Build completed successfully!`);
-    console.log(`📦 Output: ${outfile}`);
+    console.info(`✅ Build completed successfully!`);
+    console.info(`📦 Output: ${outfile}`);
 
     // Get file size
     try {
       const fs = await import('fs');
       const stats = fs.statSync(outfile);
       const sizeInMB = (stats.size / (1024 * 1024)).toFixed(2);
-      console.log(`📏 File size: ${sizeInMB} MB`);
+      console.info(`📏 File size: ${sizeInMB} MB`);
     } catch (error) {
-      console.log(`📏 File size: Unable to determine`);
+      console.info(`📏 File size: Unable to determine`);
     }
 
     return { success: true, output: outfile };
@@ -301,7 +301,7 @@ function showBuildInfo() {
   const bunVersion = getBunVersion();
   const gitInfo = getGitInfo();
 
-  console.log(`
+  console.info(`
 🏗️ Fire22 Dashboard - Build Information
 
 🖥️ System Information:
@@ -337,7 +337,7 @@ function showBuildInfo() {
  * Show help information
  */
 function showHelp() {
-  console.log(`
+  console.info(`
 🔧 Fire22 Dashboard - Enhanced Build Compilation
 
 📋 Usage:
@@ -441,7 +441,7 @@ async function main() {
   const result = await executeBuild(config, platform, customDefines);
 
   if (result.success) {
-    console.log(`
+    console.info(`
 🎉 Build completed successfully!
 
 📦 Output: ${result.output}

@@ -27,20 +27,20 @@ defineCommand({
 		const res = await fetch(url);
 		const data = await res.json();
 
-		console.log(`\nSearch results for "${query}":\n`);
+		console.info(`\nSearch results for "${query}":\n`);
 
 		for (const pkg of data.objects || []) {
 			const p = pkg.package;
-			console.log(`  ${p.name}@${p.version}`);
-			console.log(
+			console.info(`  ${p.name}@${p.version}`);
+			console.info(
 				`   ${p.description?.slice(0, 80) || "No description"}${p.description?.length > 80 ? "..." : ""}`,
 			);
-			console.log(
+			console.info(
 				`   Downloads: ${pkg.downloads?.weekly?.toLocaleString() || "N/A"}/week`,
 			);
-			console.log(`   https://www.npmjs.com/package/${p.name}\n`);
+			console.info(`   https://www.npmjs.com/package/${p.name}\n`);
 		}
 
-		console.log(`Found ${data.total} packages total`);
+		console.info(`Found ${data.total} packages total`);
 	},
 });

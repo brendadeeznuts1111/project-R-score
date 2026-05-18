@@ -15,7 +15,7 @@ import {
 const args = process.argv.slice(2);
 
 function showHelp() {
-  console.log(`
+  console.info(`
 🚀 Dev HQ CLI - Advanced Codebase Analysis & Automation Platform
 
 USAGE:
@@ -43,7 +43,7 @@ EXAMPLES:
 }
 
 function showVersion() {
-  console.log("Dev HQ v1.0.0 - Built with Bun");
+  console.info("Dev HQ v1.0.0 - Built with Bun");
 }
 
 // Initialize system components
@@ -80,42 +80,42 @@ async function initializeSystem() {
 async function runInsights() {
   await initializeSystem();
 
-  console.log("🔍 Running codebase insights analysis...");
+  console.info("🔍 Running codebase insights analysis...");
 
   const includeBundleAnalysis = args.includes("--analyze");
   const outputFormat = args.includes("--json") ? "json" : args.includes("--table") ? "table" : "default";
 
-  console.log(`📊 Output format: ${outputFormat}`);
+  console.info(`📊 Output format: ${outputFormat}`);
   if (includeBundleAnalysis) {
-    console.log("📦 Bundle analysis: enabled");
+    console.info("📦 Bundle analysis: enabled");
   }
 
   // TODO: Implement actual insights logic
-  console.log("✅ Insights analysis complete");
+  console.info("✅ Insights analysis complete");
 }
 
 async function runHealth() {
   await initializeSystem();
 
-  console.log("🏥 Running system health check...");
+  console.info("🏥 Running system health check...");
 
   // Check feature registry
   const enabledFeatures = featureRegistry.getEnabledFlags();
-  console.log(`✅ Feature registry: ${enabledFeatures.length} features enabled`);
+  console.info(`✅ Feature registry: ${enabledFeatures.length} features enabled`);
 
   // Check logger
-  console.log("✅ Logger: operational");
+  console.info("✅ Logger: operational");
 
   // Check dashboard
-  console.log("✅ Dashboard: ready");
+  console.info("✅ Dashboard: ready");
 
-  console.log("🎉 System health: All components operational");
+  console.info("🎉 System health: All components operational");
 }
 
 async function startDashboard() {
   await initializeSystem();
 
-  console.log("📊 Starting interactive dashboard...");
+  console.info("📊 Starting interactive dashboard...");
   dashboard.displayStatus();
 }
 
@@ -123,7 +123,7 @@ async function runTranspilationCommand() {
   const transpileArgs = args.slice(1);
   
   if (transpileArgs.length === 0 || transpileArgs[0] === 'help') {
-    console.log(getTranspilationHelp());
+    console.info(getTranspilationHelp());
     return;
   }
 
@@ -143,7 +143,7 @@ async function runTranspilationCommand() {
     }
     
     const result = executeTranspilationCommand(command);
-    console.log(result);
+    console.info(result);
   } catch (error) {
     console.error(
       `❌ Error: ${error instanceof Error ? error.message : String(error)}`

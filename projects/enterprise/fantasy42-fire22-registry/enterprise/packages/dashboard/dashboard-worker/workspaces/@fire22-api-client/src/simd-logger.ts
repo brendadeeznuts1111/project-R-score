@@ -83,10 +83,10 @@ export class SIMDLogger {
         console.warn(`⚠️  ${prefix}`, entry.message);
         break;
       case 'info':
-        console.log(`ℹ️  ${prefix}`, entry.message);
+        console.info(`ℹ️  ${prefix}`, entry.message);
         break;
       case 'debug':
-        console.log(`🐛 ${prefix}`, entry.message);
+        console.info(`🐛 ${prefix}`, entry.message);
         break;
     }
   }

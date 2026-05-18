@@ -42,12 +42,12 @@ async function main() {
         latencyMs: Math.round(performance.now() - started),
         error: error instanceof Error ? error.message : String(error),
       });
-      console.log(JSON.stringify({ base, results: output }, null, 2));
+      console.info(JSON.stringify({ base, results: output }, null, 2));
       process.exit(1);
     }
   }
 
-  console.log(JSON.stringify({ base, results: output }, null, 2));
+  console.info(JSON.stringify({ base, results: output }, null, 2));
 }
 
 await main();

@@ -854,18 +854,18 @@ export class EnterpriseQRDashboardWebSocket {
   
   constructor(port: number = 8081) {
     // Mock WebSocket server initialization
-    console.log(`📡 QR Dashboard WebSocket server starting on port ${port}`);
+    console.info(`📡 QR Dashboard WebSocket server starting on port ${port}`);
     this.setupConnectionHandlers();
   }
   
   private setupConnectionHandlers() {
-    console.log('🔗 Setting up WebSocket connection handlers...');
+    console.info('🔗 Setting up WebSocket connection handlers...');
     
     // Mock connection handling
     this.connections.set('mock-merchant', {
       readyState: 1, // OPEN
       send: (data: string) => {
-        console.log('📤 Broadcasting:', data);
+        console.info('📤 Broadcasting:', data);
       }
     });
   }

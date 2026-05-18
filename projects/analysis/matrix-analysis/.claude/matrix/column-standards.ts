@@ -1560,11 +1560,11 @@ if (import.meta.main) {
 
 	switch (command) {
 		case "list": {
-			console.log("Tier-1380 OMEGA Column Standards\n");
-			console.log(
+			console.info("Tier-1380 OMEGA Column Standards\n");
+			console.info(
 				"Index | ID                    | Category  | Type      | Required | Description",
 			);
-			console.log(
+			console.info(
 				"------|-----------------------|-----------|-----------|----------|-------------",
 			);
 
@@ -1576,17 +1576,17 @@ if (import.meta.main) {
 				const cat = col.category.padEnd(9, " ");
 				const type = col.type.padEnd(9, " ");
 				const req = (col.required ? "yes" : "no").padEnd(8, " ");
-				console.log(
+				console.info(
 					`  ${idx}  | ${id} | ${cat} | ${type} | ${req} | ${col.description}`,
 				);
 			}
 
-			console.log(`\nTotal: ${sorted.length} columns defined`);
+			console.info(`\nTotal: ${sorted.length} columns defined`);
 			break;
 		}
 
 		case "categories": {
-			console.log("Column Categories:\n");
+			console.info("Column Categories:\n");
 			const categories: ColumnCategory[] = [
 				"core",
 				"security",
@@ -1605,11 +1605,11 @@ if (import.meta.main) {
 
 			for (const cat of categories) {
 				const cols = getColumnsByCategory(cat);
-				console.log(`${cat.padEnd(10)}: ${cols.length} columns`);
+				console.info(`${cat.padEnd(10)}: ${cols.length} columns`);
 				for (const col of cols) {
-					console.log(`  - ${col.id}`);
+					console.info(`  - ${col.id}`);
 				}
-				console.log();
+				console.info();
 			}
 			break;
 		}
@@ -1619,7 +1619,7 @@ if (import.meta.main) {
 			const valueStr = Bun.argv[4];
 
 			if (!colId || !valueStr) {
-				console.log("Usage: bun run column-standards.ts validate <column-id> <value>");
+				console.info("Usage: bun run column-standards.ts validate <column-id> <value>");
 				process.exit(1);
 			}
 
@@ -1635,9 +1635,9 @@ if (import.meta.main) {
 			if (col.type === "boolean") value = valueStr === "true";
 
 			const result = validateColumnValue(colId, value);
-			console.log(`Validation: ${result.valid ? "✅ PASS" : "❌ FAIL"}`);
+			console.info(`Validation: ${result.valid ? "✅ PASS" : "❌ FAIL"}`);
 			if (result.error) {
-				console.log(`Error: ${result.error}`);
+				console.info(`Error: ${result.error}`);
 			}
 			break;
 		}
@@ -1651,18 +1651,18 @@ if (import.meta.main) {
 				arch: process.arch,
 			});
 
-			console.log("Empty Column Context Created:\n");
-			console.log(exportContext(ctx));
+			console.info("Empty Column Context Created:\n");
+			console.info(exportContext(ctx));
 			break;
 		}
 
 		default: {
-			console.log("Tier-1380 OMEGA Column Standards\n");
-			console.log("Commands:");
-			console.log("  list          List all column definitions");
-			console.log("  categories    Show columns by category");
-			console.log("  validate      Validate a column value");
-			console.log("  create-ctx    Create empty context");
+			console.info("Tier-1380 OMEGA Column Standards\n");
+			console.info("Commands:");
+			console.info("  list          List all column definitions");
+			console.info("  categories    Show columns by category");
+			console.info("  validate      Validate a column value");
+			console.info("  create-ctx    Create empty context");
 		}
 	}
 }

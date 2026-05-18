@@ -47,7 +47,7 @@ export class DeploymentBundler {
     sourceDir: string = './src'
   ): Promise<BundleResult> {
     const startTime = performance.now();
-    console.log(`📦 Creating deployment bundle: ${name}@${version} (${environment})`);
+    console.info(`📦 Creating deployment bundle: ${name}@${version} (${environment})`);
 
     try {
       // Gather files for bundling
@@ -105,11 +105,11 @@ export class DeploymentBundler {
       const creationTime = performance.now() - startTime;
       const finalSize = Bun.file(bundlePath).size;
 
-      console.log(`✅ Bundle created: ${bundlePath}`);
-      console.log(`📊 Size: ${(finalSize / 1024 / 1024).toFixed(2)}MB`);
-      console.log(`📁 Files: ${metadata.fileCount}`);
-      console.log(`🔐 Checksum: ${checksum}`);
-      console.log(`⏱️ Creation time: ${creationTime.toFixed(0)}ms`);
+      console.info(`✅ Bundle created: ${bundlePath}`);
+      console.info(`📊 Size: ${(finalSize / 1024 / 1024).toFixed(2)}MB`);
+      console.info(`📁 Files: ${metadata.fileCount}`);
+      console.info(`🔐 Checksum: ${checksum}`);
+      console.info(`⏱️ Creation time: ${creationTime.toFixed(0)}ms`);
 
       return {
         bundlePath,
@@ -136,7 +136,7 @@ export class DeploymentBundler {
     const startTime = performance.now();
 
     try {
-      console.log(`📂 Extracting bundle: ${bundlePath}`);
+      console.info(`📂 Extracting bundle: ${bundlePath}`);
 
       // Read bundle archive
       const archiveData = await Bun.file(bundlePath).bytes();
@@ -159,7 +159,7 @@ export class DeploymentBundler {
         verified = metadata.checksum === actualChecksum;
 
         if (verified) {
-          console.log(`✅ Bundle verified: ${metadata!.checksum}`);
+          console.info(`✅ Bundle verified: ${metadata!.checksum}`);
         } else {
           console.warn(`⚠️ Checksum mismatch: expected ${metadata!.checksum}, got ${actualChecksum}`);
         }
@@ -168,7 +168,7 @@ export class DeploymentBundler {
       }
 
       const extractionTime = performance.now() - startTime;
-      console.log(`📊 Extracted ${fileCount} files in ${extractionTime.toFixed(0)}ms`);
+      console.info(`📊 Extracted ${fileCount} files in ${extractionTime.toFixed(0)}ms`);
 
       return {
         extractedFiles: fileCount,
@@ -185,7 +185,7 @@ export class DeploymentBundler {
    * Create optimized production bundle
    */
   async createProductionBundle(name: string, version: string): Promise<BundleResult> {
-    console.log(`🚀 Creating production bundle with optimizations...`);
+    console.info(`🚀 Creating production bundle with optimizations...`);
 
     // Create temporary build directory
     const buildDir = './tmp/prod-build';
@@ -234,12 +234,12 @@ export class DeploymentBundler {
     version: string,
     environments: Array<'development' | 'staging' | 'production'>
   ): Promise<BundleResult[]> {
-    console.log(`🌐 Creating multi-environment bundle for ${environments.length} environments...`);
+    console.info(`🌐 Creating multi-environment bundle for ${environments.length} environments...`);
 
     const results: BundleResult[] = [];
 
     for (const environment of environments) {
-      console.log(`\n📦 Building ${environment} bundle...`);
+      console.info(`\n📦 Building ${environment} bundle...`);
       const result = await this.createBundle(name, version, environment);
       results.push(result);
     }
@@ -260,10 +260,10 @@ export class DeploymentBundler {
     const manifestPath = `${this.outputDir}/${name}-v${version}-manifest.json`;
     await Bun.write(manifestPath, JSON.stringify(manifest, null, 2));
 
-    console.log(`\n✅ Multi-environment bundle complete:`);
-    console.log(`📊 Total bundles: ${results.length}`);
-    console.log(`💾 Total size: ${(manifest.totalSize / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`📄 Manifest: ${manifestPath}`);
+    console.info(`\n✅ Multi-environment bundle complete:`);
+    console.info(`📊 Total bundles: ${results.length}`);
+    console.info(`💾 Total size: ${(manifest.totalSize / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`📄 Manifest: ${manifestPath}`);
 
     return results;
   }
@@ -438,14 +438,14 @@ echo "✅ Deployment completed successfully!"
    * Apply production optimizations
    */
   private async applyProductionOptimizations(buildDir: string): Promise<void> {
-    console.log(`⚡ Applying production optimizations...`);
+    console.info(`⚡ Applying production optimizations...`);
 
     // Minify TypeScript files (placeholder)
     // Remove development code
     // Optimize imports
     // Compress assets
 
-    console.log(`✅ Production optimizations applied`);
+    console.info(`✅ Production optimizations applied`);
   }
 
   /**
@@ -493,53 +493,53 @@ if (import.meta.main) {
     case 'create':
       const environment = (process.argv[5] as any) || 'development';
       const result = await bundler.createBundle(name, version, environment);
-      console.log('\n📊 Bundle Result:');
-      console.log(`📦 Path: ${result.bundlePath}`);
-      console.log(`🔐 Checksum: ${result.checksum}`);
-      console.log(`📏 Size: ${(result.size / 1024 / 1024).toFixed(2)}MB`);
-      console.log(`📁 Files: ${result.fileCount}`);
+      console.info('\n📊 Bundle Result:');
+      console.info(`📦 Path: ${result.bundlePath}`);
+      console.info(`🔐 Checksum: ${result.checksum}`);
+      console.info(`📏 Size: ${(result.size / 1024 / 1024).toFixed(2)}MB`);
+      console.info(`📁 Files: ${result.fileCount}`);
       break;
 
     case 'extract':
       const bundlePath = process.argv[3];
       if (bundlePath) {
         const extractResult = await bundler.extractBundle(bundlePath);
-        console.log('\n📊 Extraction Result:');
-        console.log(`📁 Files extracted: ${extractResult.extractedFiles}`);
-        console.log(`✅ Verified: ${extractResult.verified}`);
+        console.info('\n📊 Extraction Result:');
+        console.info(`📁 Files extracted: ${extractResult.extractedFiles}`);
+        console.info(`✅ Verified: ${extractResult.verified}`);
         if (extractResult.metadata) {
-          console.log(`📋 Environment: ${extractResult.metadata.environment}`);
-          console.log(`📅 Created: ${extractResult.metadata.created}`);
+          console.info(`📋 Environment: ${extractResult.metadata.environment}`);
+          console.info(`📅 Created: ${extractResult.metadata.created}`);
         }
       } else {
-        console.log('Usage: bun deployment-bundler.ts extract <bundle-path>');
+        console.info('Usage: bun deployment-bundler.ts extract <bundle-path>');
       }
       break;
 
     case 'production':
       const prodResult = await bundler.createProductionBundle(name, version);
-      console.log('\n🚀 Production Bundle Result:');
-      console.log(`📦 Path: ${prodResult.bundlePath}`);
-      console.log(`📏 Size: ${(prodResult.size / 1024 / 1024).toFixed(2)}MB`);
+      console.info('\n🚀 Production Bundle Result:');
+      console.info(`📦 Path: ${prodResult.bundlePath}`);
+      console.info(`📏 Size: ${(prodResult.size / 1024 / 1024).toFixed(2)}MB`);
       break;
 
     case 'multi':
       const environments: Array<'development' | 'staging' | 'production'> = ['development', 'staging', 'production'];
       const multiResults = await bundler.createMultiEnvironmentBundle(name, version, environments);
-      console.log(`\n🌐 Multi-environment bundle created with ${multiResults.length} bundles`);
+      console.info(`\n🌐 Multi-environment bundle created with ${multiResults.length} bundles`);
       break;
 
     default:
-      console.log('Available commands:');
-      console.log('  create <name> <version> <env> - Create deployment bundle');
-      console.log('  extract <bundle-path>               - Extract and verify bundle');
-      console.log('  production <name> <version>         - Create optimized production bundle');
-      console.log('  multi <name> <version>               - Create multi-environment bundles');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun deployment-bundler.ts create empire-pro 1.0.0 production');
-      console.log('  bun deployment-bundler.ts production empire-pro 1.0.0');
-      console.log('  bun deployment-bundler.ts multi empire-pro 1.0.0');
+      console.info('Available commands:');
+      console.info('  create <name> <version> <env> - Create deployment bundle');
+      console.info('  extract <bundle-path>               - Extract and verify bundle');
+      console.info('  production <name> <version>         - Create optimized production bundle');
+      console.info('  multi <name> <version>               - Create multi-environment bundles');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun deployment-bundler.ts create empire-pro 1.0.0 production');
+      console.info('  bun deployment-bundler.ts production empire-pro 1.0.0');
+      console.info('  bun deployment-bundler.ts multi empire-pro 1.0.0');
   }
 }
 

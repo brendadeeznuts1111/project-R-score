@@ -358,7 +358,7 @@ export class ProductionUriInspector {
       results.push(result);
       
       if (this.config.verbose) {
-        console.log(`Inspected: ${uri} -> ${result.status}`);
+        console.info(`Inspected: ${uri} -> ${result.status}`);
       }
     }
     
@@ -402,7 +402,7 @@ export class ProductionUriInspector {
     }
     
     await writeFile(this.config.outputFile, content);
-    console.log(`Results exported to: ${this.config.outputFile}`);
+    console.info(`Results exported to: ${this.config.outputFile}`);
   }
   
   /**
@@ -426,38 +426,38 @@ export class ProductionUriInspector {
    * Generate comprehensive report
    */
   generateReport(results: UriInspectionResult[]): void {
-    console.log("\n📊 Inspection Report Summary");
-    console.log("=".repeat(50));
+    console.info("\n📊 Inspection Report Summary");
+    console.info("=".repeat(50));
     
     const stats = this.getStatistics();
-    console.log(`Total Inspections: ${stats.totalInspections}`);
-    console.log(`Security Events: ${stats.securityEvents}`);
+    console.info(`Total Inspections: ${stats.totalInspections}`);
+    console.info(`Security Events: ${stats.securityEvents}`);
     
-    console.log("\n📈 Status Distribution:");
+    console.info("\n📈 Status Distribution:");
     stats.byStatus.forEach((item: any) => {
       const icon = item.status === "PASS" ? "✅" : 
                    item.status === "FAIL" ? "❌" : 
                    item.status === "WARN" ? "⚠️" : "ℹ️";
-      console.log(`   ${icon} ${item.status}: ${item.count}`);
+      console.info(`   ${icon} ${item.status}: ${item.count}`);
     });
     
-    console.log("\n🛡️ Risk Distribution:");
+    console.info("\n🛡️ Risk Distribution:");
     stats.byRisk.forEach((item: any) => {
       const color = item.security_risk === "CRITICAL" ? "\x1b[91m" :
                    item.security_risk === "HIGH" ? "\x1b[31m" :
                    item.security_risk === "MEDIUM" ? "\x1b[33m" : "\x1b[32m";
-      console.log(`   ${color}${item.security_risk}\x1b[0m: ${item.count}`);
+      console.info(`   ${color}${item.security_risk}\x1b[0m: ${item.count}`);
     });
     
     const avgTime = results.reduce((sum, r) => sum + r.processingTime, 0) / results.length;
-    console.log(`\n⚡ Average Processing Time: ${avgTime.toFixed(2)}ms`);
+    console.info(`\n⚡ Average Processing Time: ${avgTime.toFixed(2)}ms`);
     
     const criticalIssues = results.filter(r => r.securityRisk === "CRITICAL");
     if (criticalIssues.length > 0) {
-      console.log("\n🚨 Critical Issues:");
+      console.info("\n🚨 Critical Issues:");
       criticalIssues.forEach(r => {
-        console.log(`   ❌ ${r.uri}`);
-        console.log(`      ${r.message}`);
+        console.info(`   ❌ ${r.uri}`);
+        console.info(`      ${r.message}`);
       });
     }
   }
@@ -470,7 +470,7 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
-    console.log(`
+    console.info(`
 🔍 DuoPlus CLI v3.0+ - Production URI Inspector
 
 Usage:
@@ -533,25 +533,25 @@ Examples:
         }
         
         const result = inspector.inspectUri(uri);
-        console.log("🔍 URI Inspection Result:");
-        console.log(result[inspectCustom]());
+        console.info("🔍 URI Inspection Result:");
+        console.info(result[inspectCustom]());
         
         if (config.includeDetails) {
-          console.log("\n📊 Detailed Analysis:");
-          console.log(`   Raw URI: ${result.uri}`);
-          console.log(`   Decoded URI: ${result.decodedUri || "N/A"}`);
-          console.log(`   Display Width: ${result.displayWidth} characters`);
-          console.log(`   Security Risk: ${result.securityRisk}`);
+          console.info("\n📊 Detailed Analysis:");
+          console.info(`   Raw URI: ${result.uri}`);
+          console.info(`   Decoded URI: ${result.decodedUri || "N/A"}`);
+          console.info(`   Display Width: ${result.displayWidth} characters`);
+          console.info(`   Security Risk: ${result.securityRisk}`);
           
           if (result.zeroWidthAnalysis.has) {
-            console.log(`   Zero-Width Characters: ${result.zeroWidthAnalysis.count}`);
+            console.info(`   Zero-Width Characters: ${result.zeroWidthAnalysis.count}`);
             result.zeroWidthAnalysis.positions.forEach((pos, i) => {
-              console.log(`     ${i + 1}. Position ${pos}: ${result.zeroWidthAnalysis.types[i]}`);
+              console.info(`     ${i + 1}. Position ${pos}: ${result.zeroWidthAnalysis.types[i]}`);
             });
           }
           
           if (result.encodingAnomalies.length > 0) {
-            console.log(`   Encoding Anomalies: ${result.encodingAnomalies.join(", ")}`);
+            console.info(`   Encoding Anomalies: ${result.encodingAnomalies.join(", ")}`);
           }
         }
         
@@ -568,11 +568,11 @@ Examples:
         const content = await readFile(file, "utf-8");
         const uris = content.split("\n").filter(line => line.trim());
         
-        console.log(`🔍 Processing ${uris.length} URIs...`);
+        console.info(`🔍 Processing ${uris.length} URIs...`);
         const results = await inspector.inspectUris(uris);
         
-        console.log("\n📊 Inspection Results:");
-        console.log(Bun.inspect.table(results, { colors: true, indent: 2 }));
+        console.info("\n📊 Inspection Results:");
+        console.info(Bun.inspect.table(results, { colors: true, indent: 2 }));
         
         inspector.generateReport(results);
         await inspector.exportResults(results);
@@ -592,11 +592,11 @@ Examples:
           "https://example.com/path%00%0A%0D"
         ];
         
-        console.log("🔍 Running demonstration with test cases...");
+        console.info("🔍 Running demonstration with test cases...");
         const results = await inspector.inspectUris(testUris);
         
-        console.log("\n📊 Demo Results:");
-        console.log(Bun.inspect.table(results, { colors: true, indent: 2 }));
+        console.info("\n📊 Demo Results:");
+        console.info(Bun.inspect.table(results, { colors: true, indent: 2 }));
         
         inspector.generateReport(results);
         await inspector.exportResults(results);
@@ -606,7 +606,7 @@ Examples:
       
       default:
         console.error(`Error: Unknown command '${command}'`);
-        console.log("Use --help for usage information");
+        console.info("Use --help for usage information");
     }
   } catch (error) {
     console.error(`Error: ${error}`);

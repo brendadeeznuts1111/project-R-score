@@ -404,4 +404,4 @@ describe("Enhanced Widget", () => {
 	});
 });
 
-console.log("🧪 Enhanced Widget Tests Complete!");
+console.info("🧪 Enhanced Widget Tests Complete!");

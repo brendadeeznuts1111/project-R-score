@@ -98,11 +98,11 @@ export class ProductionDebugger {
     // Generate session
     const sessionId = `prod-debug-${skillId}-${Date.now()}`;
 
-    console.log(`Attaching to ${skillId} (PID: ${proc.pid})`);
-    console.log("WARNING: You are debugging a running skill");
+    console.info(`Attaching to ${skillId} (PID: ${proc.pid})`);
+    console.info("WARNING: You are debugging a running skill");
 
     if (readOnly) {
-      console.log("Mode: READ-ONLY");
+      console.info("Mode: READ-ONLY");
     }
 
     // Create terminal for debug output
@@ -145,11 +145,11 @@ export class ProductionDebugger {
       throw new Error(`Platform ${process.platform} not supported for production debugging`);
     }
 
-    console.log("Commands: 'c' continue, 'q' quit");
+    console.info("Commands: 'c' continue, 'q' quit");
 
     // Setup timeout
     const timeoutId = setTimeout(() => {
-      console.log(`\nSession timeout (${timeout / 1000}s)`);
+      console.info(`\nSession timeout (${timeout / 1000}s)`);
       detach();
     }, timeout);
 
@@ -165,7 +165,7 @@ export class ProductionDebugger {
       }
 
       this.activeSessions.delete(sessionId);
-      console.log("\nDetached from process");
+      console.info("\nDetached from process");
     };
 
     const result: AttachResult = {
@@ -209,14 +209,14 @@ export class ProductionDebugger {
     }
 
     // Log approval request
-    console.log(`Production debug approval requested:`);
-    console.log(`  Skill: ${skillId}`);
-    console.log(`  Requested by: ${userId}`);
-    console.log(`  Timestamp: ${new Date().toISOString()}`);
+    console.info(`Production debug approval requested:`);
+    console.info(`  Skill: ${skillId}`);
+    console.info(`  Requested by: ${userId}`);
+    console.info(`  Timestamp: ${new Date().toISOString()}`);
 
     if (approvedBy) {
       // Pre-approved
-      console.log(`  Approved by: ${approvedBy}`);
+      console.info(`  Approved by: ${approvedBy}`);
 
       const processes = await this.findSkillProcesses(skillId);
       if (processes.length === 0) {
@@ -268,8 +268,8 @@ export class ProductionDebugger {
       throw new Error(`Approval denied: ${approval.reason}`);
     }
 
-    console.log("\nApproval granted. Starting debug session...");
-    console.log(`Session expires: ${new Date(approval.expiresAt!).toISOString()}`);
+    console.info("\nApproval granted. Starting debug session...");
+    console.info(`Session expires: ${new Date(approval.expiresAt!).toISOString()}`);
 
     // Attach to process
     const session = await this.attach(skillId, approval.processId!, {
@@ -281,7 +281,7 @@ export class ProductionDebugger {
 
     // Handle interrupt
     const handleInterrupt = () => {
-      console.log("\nInterrupted by user");
+      console.info("\nInterrupted by user");
       session.detach();
       process.exit(0);
     };

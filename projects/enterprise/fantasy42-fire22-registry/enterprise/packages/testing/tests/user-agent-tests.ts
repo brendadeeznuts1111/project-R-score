@@ -497,7 +497,7 @@ describe('Performance Tests', () => {
     const endTime = Date.now();
     const duration = endTime - startTime;
 
-    console.log(`Performance test: ${iterations} agents tracked in ${duration}ms`);
+    console.info(`Performance test: ${iterations} agents tracked in ${duration}ms`);
 
     const usage = UserAgentMonitor.getAgentUsageStats();
     expect(Object.keys(usage.usage).length).toBe(iterations);

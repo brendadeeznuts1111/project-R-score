@@ -158,7 +158,7 @@ export class SuperRipgrep {
     const results: BenchmarkResult[] = [];
 
     for (const query of queries) {
-      console.log(`🔍 Benchmarking: "${query}"`);
+      console.info(`🔍 Benchmarking: "${query}"`);
 
       const comparison = await this.compareWithGrep(query, path);
 
@@ -168,7 +168,7 @@ export class SuperRipgrep {
         speedup: comparison.speedup === Infinity ? '∞x' : `${comparison.speedup}x`
       });
 
-      console.log(`   → ${comparison.ripgrep.durationMs.toFixed(1)}ms, ${comparison.ripgrep.matches} matches, ${comparison.speedup}x speedup`);
+      console.info(`   → ${comparison.ripgrep.durationMs.toFixed(1)}ms, ${comparison.ripgrep.matches} matches, ${comparison.speedup}x speedup`);
     }
 
     return results;

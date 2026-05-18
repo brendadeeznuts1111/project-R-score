@@ -12,7 +12,7 @@ const AVAILABLE_DASHBOARDS: Record<string, { file: string; port: number; descrip
 };
 
 function showHelp() {
-  console.log(`
+  console.info(`
 🚀 BUNMARK CLI v${CLI_VERSION} - Dashboard System Controller
 
 USAGE:
@@ -56,23 +56,23 @@ ENVIRONMENT:
 }
 
 function listDashboards() {
-  console.log("\n📊 Available Dashboards:");
-  console.log("─".repeat(60));
+  console.info("\n📊 Available Dashboards:");
+  console.info("─".repeat(60));
   
   Object.entries(AVAILABLE_DASHBOARDS).forEach(([key, info]) => {
-    console.log(`  ${key.padEnd(12)} │ Port ${info.port} │ ${info.description}`);
+    console.info(`  ${key.padEnd(12)} │ Port ${info.port} │ ${info.description}`);
   });
   
-  console.log("\n🚀 Quick Start:");
-  console.log("  bun run bunmark-cli.ts start <dashboard>");
-  console.log("  bun run bunmark-cli.ts dev    # Development mode");
+  console.info("\n🚀 Quick Start:");
+  console.info("  bun run bunmark-cli.ts start <dashboard>");
+  console.info("  bun run bunmark-cli.ts dev    # Development mode");
 }
 
 async function startDashboard(name: string, options: any = {}) {
   const dashboard = AVAILABLE_DASHBOARDS[name];
   if (!dashboard) {
     console.error(`❌ Unknown dashboard: ${name}`);
-    console.log("Run 'bun run bunmark-cli.ts list' to see available dashboards");
+    console.info("Run 'bun run bunmark-cli.ts list' to see available dashboards");
     process.exit(1);
   }
 
@@ -81,19 +81,19 @@ async function startDashboard(name: string, options: any = {}) {
   
   if (options.profile) args.push("--cpu-prof-md");
   if (options.smol) args.push("--smol");
-  if (options.verbose) console.log(`🔧 Starting ${name} dashboard...`);
+  if (options.verbose) console.info(`🔧 Starting ${name} dashboard...`);
   
   const env = { ...process.env };
   if (options.proxy) {
     env.HTTPS_PROXY = options.proxy;
     env.HTTP_PROXY = options.proxy;
-    if (options.verbose) console.log(`🔒 Using proxy: ${options.proxy}`);
+    if (options.verbose) console.info(`🔒 Using proxy: ${options.proxy}`);
   }
   
-  console.log(`🚀 Starting ${name} dashboard on port ${port}...`);
-  console.log(`📁 File: ${dashboard.file}`);
-  console.log(`🌐 URL: http://localhost:${port}`);
-  console.log("─".repeat(50));
+  console.info(`🚀 Starting ${name} dashboard on port ${port}...`);
+  console.info(`📁 File: ${dashboard.file}`);
+  console.info(`🌐 URL: http://localhost:${port}`);
+  console.info("─".repeat(50));
   
   const proc = spawn({
     cmd: ["bun", ...args, dashboard.file],
@@ -105,7 +105,7 @@ async function startDashboard(name: string, options: any = {}) {
   
   // Handle graceful shutdown
   process.on('SIGINT', () => {
-    console.log("\n🛑 Stopping dashboard...");
+    console.info("\n🛑 Stopping dashboard...");
     proc.kill();
     process.exit(0);
   });
@@ -114,8 +114,8 @@ async function startDashboard(name: string, options: any = {}) {
 }
 
 async function showStatus() {
-  console.log("\n📊 Dashboard Status:");
-  console.log("─".repeat(60));
+  console.info("\n📊 Dashboard Status:");
+  console.info("─".repeat(60));
   
   const ports = [3137, 3138];
   
@@ -126,10 +126,10 @@ async function showStatus() {
         const title = await response.text();
         const titleMatch = title.match(/<title>(.*?)<\/title>/);
         const dashboardName = titleMatch ? titleMatch[1] : "Unknown";
-        console.log(`  ✅ Port ${port}: ${dashboardName}`);
+        console.info(`  ✅ Port ${port}: ${dashboardName}`);
       }
     } catch {
-      console.log(`  ❌ Port ${port}: Not running`);
+      console.info(`  ❌ Port ${port}: Not running`);
     }
   }
 }
@@ -141,8 +141,8 @@ async function testDashboard(name: string) {
     process.exit(1);
   }
 
-  console.log(`\n🧪 Testing ${name} dashboard...`);
-  console.log("─".repeat(50));
+  console.info(`\n🧪 Testing ${name} dashboard...`);
+  console.info("─".repeat(50));
   
   const baseUrl = `http://localhost:${dashboard.port}`;
   
@@ -177,19 +177,19 @@ async function testDashboard(name: string) {
       const response = await fetch(`${baseUrl}${endpoint.path}`);
       const status = response.ok ? "✅" : "❌";
       const time = response.headers.get("x-response-time") || "N/A";
-      console.log(`  ${status} ${endpoint.path.padEnd(15)} │ ${endpoint.description.padEnd(20)} │ ${time}`);
+      console.info(`  ${status} ${endpoint.path.padEnd(15)} │ ${endpoint.description.padEnd(20)} │ ${time}`);
     } catch (error) {
-      console.log(`  ❌ ${endpoint.path.padEnd(15)} │ ${endpoint.description.padEnd(20)} │ Connection failed`);
+      console.info(`  ❌ ${endpoint.path.padEnd(15)} │ ${endpoint.description.padEnd(20)} │ Connection failed`);
     }
   }
   
-  console.log(`\n🌐 Full dashboard: ${baseUrl}`);
+  console.info(`\n🌐 Full dashboard: ${baseUrl}`);
 }
 
 async function devMode() {
-  console.log("🔧 Development Mode");
-  console.log("─".repeat(50));
-  console.log("Starting all dashboards with hot reload...");
+  console.info("🔧 Development Mode");
+  console.info("─".repeat(50));
+  console.info("Starting all dashboards with hot reload...");
   
   // Start spectrum dashboard (most feature-rich)
   await startDashboard("spectrum", { profile: true, smol: true, verbose: true });
@@ -226,7 +226,7 @@ switch (command) {
   case "start":
     if (!cleanArgs[0]) {
       console.error("❌ Please specify a dashboard to start");
-      console.log("Run 'bun run bunmark-cli.ts list' to see available dashboards");
+      console.info("Run 'bun run bunmark-cli.ts list' to see available dashboards");
       process.exit(1);
     }
     startDashboard(cleanArgs[0], options);
@@ -254,7 +254,7 @@ switch (command) {
       console.error("❌ Please specify a port to stop");
       process.exit(1);
     }
-    console.log(`🛑 Stopping dashboard on port ${port}...`);
+    console.info(`🛑 Stopping dashboard on port ${port}...`);
     spawn({ cmd: ["pkill", "-f", `port ${port}`] });
     break;
     

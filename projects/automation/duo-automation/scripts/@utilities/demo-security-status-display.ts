@@ -4,7 +4,7 @@
 
 import { SecurityStatusDisplay } from '../security/status-display.ts';
 
-console.log('🔒 Security Status Display Demo - Empire Pro v3.7\n');
+console.info('🔒 Security Status Display Demo - Empire Pro v3.7\n');
 
 // Example security checks for different domains
 const securityChecks = [
@@ -51,25 +51,25 @@ const domains = [
 ];
 
 domains.forEach(domain => {
-  console.log(`📋 Security Status for: ${domain}`);
-  console.log(SecurityStatusDisplay.displayStatus(domain, securityChecks));
-  console.log('\n' + '='.repeat(60) + '\n');
+  console.info(`📋 Security Status for: ${domain}`);
+  console.info(SecurityStatusDisplay.displayStatus(domain, securityChecks));
+  console.info('\n' + '='.repeat(60) + '\n');
 });
 
 // Demo security badges
-console.log('🏆 Security Badges Demo:\n');
+console.info('🏆 Security Badges Demo:\n');
 
 const scores = [95, 87, 65, 42];
 scores.forEach(score => {
-  console.log(SecurityStatusDisplay.createSecurityBadge(score));
-  console.log();
+  console.info(SecurityStatusDisplay.createSecurityBadge(score));
+  console.info();
 });
 
-console.log('✅ Security Status Display demo completed!');
-console.log('🎯 Features demonstrated:');
-console.log('  • Country flag generation from domain TLD');
-console.log('  • Unicode-aware border sizing (Bun.stringWidth)');
-console.log('  • ANSI color coding for status levels');
-console.log('  • Hierarchical check formatting');
-console.log('  • ASCII art security badges');
-console.log('  • Comprehensive summary statistics');
+console.info('✅ Security Status Display demo completed!');
+console.info('🎯 Features demonstrated:');
+console.info('  • Country flag generation from domain TLD');
+console.info('  • Unicode-aware border sizing (Bun.stringWidth)');
+console.info('  • ANSI color coding for status levels');
+console.info('  • Hierarchical check formatting');
+console.info('  • ASCII art security badges');
+console.info('  • Comprehensive summary statistics');

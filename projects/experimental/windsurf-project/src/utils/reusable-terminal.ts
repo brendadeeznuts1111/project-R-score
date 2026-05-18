@@ -23,7 +23,7 @@ export class ReusableTerminal {
     return {
       terminalId,
       [Symbol.asyncDispose]: async () => {
-        console.log(`♻️  Reclaiming terminal: ${terminalId}`);
+        console.info(`♻️  Reclaiming terminal: ${terminalId}`);
         this.activeTerminals.delete(terminalId);
         // actual cleanup logic here
       }

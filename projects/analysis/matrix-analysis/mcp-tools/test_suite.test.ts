@@ -465,12 +465,12 @@ describe("Performance Tests", () => {
 
 // Run tests
 if (import.meta.main) {
-  console.log("🧪 Running Enhanced Dashboard Test Suite");
-  console.log("=" .repeat(50));
+  console.info("🧪 Running Enhanced Dashboard Test Suite");
+  console.info("=" .repeat(50));
   
   // Bun test runner will automatically run all tests
-  console.log("Test configuration loaded");
-  console.log("Run with: bun test test-suite.ts");
+  console.info("Test configuration loaded");
+  console.info("Run with: bun test test-suite.ts");
 }
 
 export {};

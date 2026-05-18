@@ -3,14 +3,14 @@
 
 if (Bun.env.DEBUG_FETCH === "1") {
   Bun.env.BUN_CONFIG_VERBOSE_FETCH = "curl";
-  console.log("DEBUG_FETCH=1 -> BUN_CONFIG_VERBOSE_FETCH=curl");
+  console.info("DEBUG_FETCH=1 -> BUN_CONFIG_VERBOSE_FETCH=curl");
 } else {
   Bun.env.BUN_CONFIG_VERBOSE_FETCH = "false";
 }
 
 export async function debugFetch(url: string, options: RequestInit = {}) {
   const response = await fetch(url, options);
-  console.log(`${url} -> ${response.status} hsl(159,87%,37%)`);
+  console.info(`${url} -> ${response.status} hsl(159,87%,37%)`);
   return response;
 }
 

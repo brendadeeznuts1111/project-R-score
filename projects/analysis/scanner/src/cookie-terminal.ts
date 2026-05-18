@@ -37,7 +37,7 @@ export function createCookieTerminalManager(config: {interactive: boolean; color
 				return null;
 			}
 
-			console.log(`${c.cyan('Creating interactive session for')} ${service}/${project}`);
+			console.info(`${c.cyan('Creating interactive session for')} ${service}/${project}`);
 			const domain = 'localhost';
 			const session = await createCookieSession(service, project, domain, {
 				ttl: 24 * 60 * 60 * 1000,
@@ -45,7 +45,7 @@ export function createCookieTerminalManager(config: {interactive: boolean; color
 				sameSite: 'Lax',
 			});
 
-			console.log(`${c.green('✓')} Created session ${c.cyan(session.id)}`);
+			console.info(`${c.green('✓')} Created session ${c.cyan(session.id)}`);
 			return session;
 		},
 
@@ -55,7 +55,7 @@ export function createCookieTerminalManager(config: {interactive: boolean; color
 				return;
 			}
 
-			console.log(`${c.cyan('Monitoring session')} ${sessionId} ${c.dim(`(${service}/${project})`)}`);
+			console.info(`${c.cyan('Monitoring session')} ${sessionId} ${c.dim(`(${service}/${project})`)}`);
 			const session = await getSession(service, project, sessionId);
 			if (!session) {
 				console.error(`${c.red('error:')} session not found`);
@@ -63,22 +63,22 @@ export function createCookieTerminalManager(config: {interactive: boolean; color
 			}
 
 			const cookieCount = Object.keys(session.cookies).length;
-			console.log(`${c.green('✓')} Session active with ${cookieCount} cookie(s)`);
-			console.log(`${c.dim('Press Ctrl+C to stop monitoring')}`);
+			console.info(`${c.green('✓')} Session active with ${cookieCount} cookie(s)`);
+			console.info(`${c.dim('Press Ctrl+C to stop monitoring')}`);
 
 			// Simple monitoring loop (can be enhanced with actual terminal updates)
 			let lastCookieCount = cookieCount;
 			const interval = setInterval(async () => {
 				const updated = await getSession(service, project, sessionId);
 				if (!updated) {
-					console.log(`${c.yellow('⚠')} Session expired or deleted`);
+					console.info(`${c.yellow('⚠')} Session expired or deleted`);
 					clearInterval(interval);
 					return;
 				}
 
 				const currentCookieCount = Object.keys(updated.cookies).length;
 				if (currentCookieCount !== lastCookieCount) {
-					console.log(`${c.cyan('→')} Cookie count changed: ${lastCookieCount} → ${currentCookieCount}`);
+					console.info(`${c.cyan('→')} Cookie count changed: ${lastCookieCount} → ${currentCookieCount}`);
 					lastCookieCount = currentCookieCount;
 				}
 			}, 2000);
@@ -86,7 +86,7 @@ export function createCookieTerminalManager(config: {interactive: boolean; color
 			// Cleanup on process exit
 			process.on('SIGINT', () => {
 				clearInterval(interval);
-				console.log(`\n${c.dim('Monitoring stopped')}`);
+				console.info(`\n${c.dim('Monitoring stopped')}`);
 				process.exit(0);
 			});
 		},
@@ -94,8 +94,8 @@ export function createCookieTerminalManager(config: {interactive: boolean; color
 }
 
 export function promptForCookieData(): CookieInfo[] {
-	console.log(`${c.yellow('⚠')} Interactive cookie input not yet implemented`);
-	console.log(`${c.dim('Use --cookie-add with cookie string instead')}`);
+	console.info(`${c.yellow('⚠')} Interactive cookie input not yet implemented`);
+	console.info(`${c.dim('Use --cookie-add with cookie string instead')}`);
 	return [];
 }
 
@@ -109,12 +109,12 @@ export function selectSessionInteractively(sessions: CookieSession[]): string {
 		return sessions[0]!.id;
 	}
 
-	console.log(`${c.cyan('Available sessions:')}`);
+	console.info(`${c.cyan('Available sessions:')}`);
 	sessions.forEach((s, i) => {
 		const cookieCount = Object.keys(s.cookies).length;
-		console.log(`  ${i + 1}. ${s.id} (${cookieCount} cookies, ${s.domain})`);
+		console.info(`  ${i + 1}. ${s.id} (${cookieCount} cookies, ${s.domain})`);
 	});
 
-	console.log(`${c.dim('Selecting first session (interactive selection not yet implemented)')}`);
+	console.info(`${c.dim('Selecting first session (interactive selection not yet implemented)')}`);
 	return sessions[0]!.id;
 }

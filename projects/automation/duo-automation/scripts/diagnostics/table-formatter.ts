@@ -63,8 +63,8 @@ export class PerfTableFormatter {
    * Generate formatted table with custom inspectors
    */
   generateTable(perfMetrics: PerfMetric[]): string {
-    console.log('\n📊 MASTER_PERF Matrix Update (v3.7-custom)');
-    console.log('='.repeat(120));
+    console.info('\n📊 MASTER_PERF Matrix Update (v3.7-custom)');
+    console.info('='.repeat(120));
     
     // Enhance metrics with custom inspector
     const enhanced = perfMetrics.map(m => enhanceMetric(m));

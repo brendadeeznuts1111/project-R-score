@@ -76,8 +76,8 @@ export class CloudflareSecretsBridge {
     } catch (e) {
       const envKey = `${service}_${name}`.toUpperCase().replace(/[^A-Z0-9]+/g, '_');
       console.warn(`Failed to store in Bun.secrets: ${(e as Error).message}`);
-      console.log(c('  ℹ️  Note: Bun.secrets not available', 'yellow'));
-      console.log(c(`     Set environment variable: ${envKey}`, 'gray'));
+      console.info(c('  ℹ️  Note: Bun.secrets not available', 'yellow'));
+      console.info(c(`     Set environment variable: ${envKey}`, 'gray'));
       throw new Error('Bun.secrets not available - use environment variables instead');
     }
   }
@@ -185,7 +185,7 @@ export class CloudflareSecretsBridge {
    */
   async getHistory(limit: number = 10): Promise<any[]> {
     if (!this.useAdvancedFeatures || !this.integratedSecretManager) {
-      console.log(c('  Note: Version history requires integrated secrets manager', 'yellow'));
+      console.info(c('  Note: Version history requires integrated secrets manager', 'yellow'));
       return [];
     }
     return await this.integratedSecretManager.getVersionHistory(CF_SERVICE, TOKEN_NAME, limit);
@@ -206,8 +206,8 @@ export class CloudflareSecretsBridge {
    */
   async scheduleRotation(cronExpression: string = '0 2 * * 0'): Promise<void> {
     if (!this.useAdvancedFeatures || !this.secretLifecycleManager) {
-      console.log(c('  Note: Scheduled rotation requires integrated lifecycle manager', 'yellow'));
-      console.log(c('  Run rotation manually: bun run cf:secrets:rotate', 'gray'));
+      console.info(c('  Note: Scheduled rotation requires integrated lifecycle manager', 'yellow'));
+      console.info(c('  Run rotation manually: bun run cf:secrets:rotate', 'gray'));
       return;
     }
 
@@ -272,42 +272,42 @@ export class CloudflareSecretsBridge {
     const creds = await this.getCredentials();
     const rotationStatus = await this.checkRotationStatus();
 
-    console.log();
-    console.log(c('🏭 Cloudflare Credentials Status', 'bold'));
-    console.log(c('─'.repeat(40), 'gray'));
+    console.info();
+    console.info(c('🏭 Cloudflare Credentials Status', 'bold'));
+    console.info(c('─'.repeat(40), 'gray'));
 
     if (!creds) {
-      console.log(c('  Status: ', 'bold') + c('Not configured', 'red'));
-      console.log(c('  Run: bun run cf:secrets:set-token <token>', 'gray'));
+      console.info(c('  Status: ', 'bold') + c('Not configured', 'red'));
+      console.info(c('  Run: bun run cf:secrets:set-token <token>', 'gray'));
       return;
     }
 
-    console.log(c('  Status: ', 'bold') + c('Configured', 'green'));
-    console.log(c(`  API Token: ${'*'.repeat(20)}${creds.apiToken.slice(-4)}`, 'gray'));
+    console.info(c('  Status: ', 'bold') + c('Configured', 'green'));
+    console.info(c(`  API Token: ${'*'.repeat(20)}${creds.apiToken.slice(-4)}`, 'gray'));
 
     if (creds.accountId) {
-      console.log(c(`  Account ID: ${creds.accountId}`, 'gray'));
+      console.info(c(`  Account ID: ${creds.accountId}`, 'gray'));
     } else {
-      console.log(c('  Account ID: Not set', 'yellow'));
+      console.info(c('  Account ID: Not set', 'yellow'));
     }
 
     // Show storage method
     const hasBunSecrets = typeof Bun !== 'undefined' && 'secrets' in Bun;
-    console.log(c(`  Storage: ${hasBunSecrets ? 'Bun.secrets' : 'Environment variables'}`, 'gray'));
+    console.info(c(`  Storage: ${hasBunSecrets ? 'Bun.secrets' : 'Environment variables'}`, 'gray'));
 
     if (rotationStatus.daysOld !== undefined) {
-      console.log();
-      console.log(c('  Rotation Status:', 'bold'));
+      console.info();
+      console.info(c('  Rotation Status:', 'bold'));
 
       if (rotationStatus.needsRotation) {
-        console.log(c(`    ⚠️  Token is ${rotationStatus.daysOld} days old`, 'yellow'));
-        console.log(c('    Run: bun run cf:secrets:rotate', 'gray'));
+        console.info(c(`    ⚠️  Token is ${rotationStatus.daysOld} days old`, 'yellow'));
+        console.info(c('    Run: bun run cf:secrets:rotate', 'gray'));
       } else {
-        console.log(c(`    ✓ Token is ${rotationStatus.daysOld} days old`, 'green'));
+        console.info(c(`    ✓ Token is ${rotationStatus.daysOld} days old`, 'green'));
       }
 
       if (rotationStatus.lastRotated) {
-        console.log(
+        console.info(
           c(
             `    Last rotated: ${new Date(rotationStatus.lastRotated).toLocaleDateString()}`,
             'gray'
@@ -316,7 +316,7 @@ export class CloudflareSecretsBridge {
       }
     }
 
-    console.log();
+    console.info();
   }
 }
 
@@ -382,63 +382,63 @@ async function main() {
         break;
 
       default:
-        console.log(c(`❌ Unknown command: ${command}`, 'red'));
+        console.info(c(`❌ Unknown command: ${command}`, 'red'));
         showHelp();
         process.exit(1);
     }
   } catch (error) {
-    console.log(c(`❌ Error: ${(error as Error).message}`, 'red'));
+    console.info(c(`❌ Error: ${(error as Error).message}`, 'red'));
     process.exit(1);
   }
 }
 
 function showHelp(): void {
-  console.log();
-  console.log(c('🏭 Cloudflare Secrets Bridge', 'bold'));
-  console.log(c('   Secure credential management for Cloudflare API', 'gray'));
-  console.log();
-  console.log(c('Usage:', 'bold'));
-  console.log('  bun run scripts/domain/cf-secrets-bridge.ts <command> [options]');
-  console.log();
-  console.log(c('Commands:', 'bold'));
-  console.log('  set-token <token>           Store Cloudflare API token');
-  console.log('  set-account <account-id>    Store Cloudflare Account ID');
-  console.log('  setup <token> [account-id]  Configure both token and account');
-  console.log('  status                      Show credentials status');
-  console.log('  history [limit]             Show version history (default: 10)');
-  console.log('  rotate [reason]             Rotate token immediately');
-  console.log('  schedule <cron>             Schedule automatic rotation');
-  console.log('  rollback <version>          Rollback to previous version');
-  console.log('  delete                      Delete all credentials');
-  console.log();
-  console.log(c('Examples:', 'bold'));
-  console.log('  bun run cf:secrets:set-token abc123xyz...');
-  console.log('  bun run cf:secrets:setup abc123xyz... your-account-id');
-  console.log('  bun run cf:secrets:status');
-  console.log('  bun run cf:secrets:schedule "0 2 * * 0"');
-  console.log();
-  console.log(c('Environment Variables:', 'bold'));
-  console.log('  CLOUDFLARE_API_TOKEN        Fallback if not in secrets store');
-  console.log('  CLOUDFLARE_ACCOUNT_ID       Fallback if not in secrets store');
-  console.log();
+  console.info();
+  console.info(c('🏭 Cloudflare Secrets Bridge', 'bold'));
+  console.info(c('   Secure credential management for Cloudflare API', 'gray'));
+  console.info();
+  console.info(c('Usage:', 'bold'));
+  console.info('  bun run scripts/domain/cf-secrets-bridge.ts <command> [options]');
+  console.info();
+  console.info(c('Commands:', 'bold'));
+  console.info('  set-token <token>           Store Cloudflare API token');
+  console.info('  set-account <account-id>    Store Cloudflare Account ID');
+  console.info('  setup <token> [account-id]  Configure both token and account');
+  console.info('  status                      Show credentials status');
+  console.info('  history [limit]             Show version history (default: 10)');
+  console.info('  rotate [reason]             Rotate token immediately');
+  console.info('  schedule <cron>             Schedule automatic rotation');
+  console.info('  rollback <version>          Rollback to previous version');
+  console.info('  delete                      Delete all credentials');
+  console.info();
+  console.info(c('Examples:', 'bold'));
+  console.info('  bun run cf:secrets:set-token abc123xyz...');
+  console.info('  bun run cf:secrets:setup abc123xyz... your-account-id');
+  console.info('  bun run cf:secrets:status');
+  console.info('  bun run cf:secrets:schedule "0 2 * * 0"');
+  console.info();
+  console.info(c('Environment Variables:', 'bold'));
+  console.info('  CLOUDFLARE_API_TOKEN        Fallback if not in secrets store');
+  console.info('  CLOUDFLARE_ACCOUNT_ID       Fallback if not in secrets store');
+  console.info();
 }
 
 async function handleSetToken(bridge: CloudflareSecretsBridge, token?: string): Promise<void> {
   if (!token) {
-    console.log(c('❌ API token required', 'red'));
-    console.log(c('Usage: set-token <token>', 'gray'));
+    console.info(c('❌ API token required', 'red'));
+    console.info(c('Usage: set-token <token>', 'gray'));
     return;
   }
 
   const validation = bridge.validateTokenFormat(token);
   if (!validation.valid) {
-    console.log(c(`❌ Invalid token: ${validation.message}`, 'red'));
+    console.info(c(`❌ Invalid token: ${validation.message}`, 'red'));
     return;
   }
 
   await bridge.setToken(token);
-  console.log(c('✅ API token stored securely', 'green'));
-  console.log(c(`   Token: ${'*'.repeat(20)}${token.slice(-4)}`, 'gray'));
+  console.info(c('✅ API token stored securely', 'green'));
+  console.info(c(`   Token: ${'*'.repeat(20)}${token.slice(-4)}`, 'gray'));
 }
 
 async function handleSetAccount(
@@ -446,14 +446,14 @@ async function handleSetAccount(
   accountId?: string
 ): Promise<void> {
   if (!accountId) {
-    console.log(c('❌ Account ID required', 'red'));
-    console.log(c('Usage: set-account <account-id>', 'gray'));
+    console.info(c('❌ Account ID required', 'red'));
+    console.info(c('Usage: set-account <account-id>', 'gray'));
     return;
   }
 
   await bridge.setAccountId(accountId);
-  console.log(c('✅ Account ID stored', 'green'));
-  console.log(c(`   Account: ${accountId}`, 'gray'));
+  console.info(c('✅ Account ID stored', 'green'));
+  console.info(c(`   Account: ${accountId}`, 'gray'));
 }
 
 async function handleSetup(
@@ -462,8 +462,8 @@ async function handleSetup(
   accountId?: string
 ): Promise<void> {
   if (!token) {
-    console.log(c('❌ API token required', 'red'));
-    console.log(c('Usage: setup <token> [account-id]', 'gray'));
+    console.info(c('❌ API token required', 'red'));
+    console.info(c('Usage: setup <token> [account-id]', 'gray'));
     return;
   }
 
@@ -473,44 +473,44 @@ async function handleSetup(
     await handleSetAccount(bridge, accountId);
   }
 
-  console.log();
-  console.log(c('✅ Cloudflare credentials configured!', 'green'));
-  console.log(c('   Run: bun run domain:verify', 'gray'));
+  console.info();
+  console.info(c('✅ Cloudflare credentials configured!', 'green'));
+  console.info(c('   Run: bun run domain:verify', 'gray'));
 }
 
 async function handleHistory(bridge: CloudflareSecretsBridge, limit: number): Promise<void> {
   const history = await bridge.getHistory(limit);
 
-  console.log(c(`📜 Token History (last ${history.length})`, 'cyan'));
-  console.log(c('─'.repeat(50), 'gray'));
+  console.info(c(`📜 Token History (last ${history.length})`, 'cyan'));
+  console.info(c('─'.repeat(50), 'gray'));
 
   if (history.length === 0) {
-    console.log(c('  No history found', 'gray'));
+    console.info(c('  No history found', 'gray'));
     return;
   }
 
   for (const entry of history) {
     const icon = entry.action === 'CREATE' ? '➕' : entry.action === 'ROLLBACK' ? '⏪' : '🔄';
     const date = new Date(entry.timestamp).toLocaleDateString();
-    console.log(
+    console.info(
       c(`  ${icon} ${entry.version}`, 'green') + c(` | ${date} | ${entry.author}`, 'gray')
     );
     if (entry.description) {
-      console.log(c(`     ${entry.description}`, 'gray'));
+      console.info(c(`     ${entry.description}`, 'gray'));
     }
   }
 }
 
 async function handleRotate(bridge: CloudflareSecretsBridge, reason?: string): Promise<void> {
-  console.log(c('🔄 Rotating Cloudflare token...', 'cyan'));
-  console.log();
-  console.log(c('  Manual rotation steps:', 'bold'));
-  console.log('  1. Generate new token in Cloudflare dashboard');
-  console.log('  2. Run: bun run cf:secrets:set-token <new-token>');
-  console.log('  3. Update services using the old token');
-  console.log('  4. Delete old token in Cloudflare dashboard');
-  console.log();
-  console.log(c('  For automated rotation, configure integrated secrets manager', 'gray'));
+  console.info(c('🔄 Rotating Cloudflare token...', 'cyan'));
+  console.info();
+  console.info(c('  Manual rotation steps:', 'bold'));
+  console.info('  1. Generate new token in Cloudflare dashboard');
+  console.info('  2. Run: bun run cf:secrets:set-token <new-token>');
+  console.info('  3. Update services using the old token');
+  console.info('  4. Delete old token in Cloudflare dashboard');
+  console.info();
+  console.info(c('  For automated rotation, configure integrated secrets manager', 'gray'));
 }
 
 async function handleSchedule(
@@ -521,29 +521,29 @@ async function handleSchedule(
 
   await bridge.scheduleRotation(schedule);
 
-  console.log(c('⏰ Rotation scheduled', 'green'));
-  console.log(c(`   Schedule: ${schedule}`, 'gray'));
-  console.log(c('   Format: cron', 'gray'));
+  console.info(c('⏰ Rotation scheduled', 'green'));
+  console.info(c(`   Schedule: ${schedule}`, 'gray'));
+  console.info(c('   Format: cron', 'gray'));
 }
 
 async function handleRollback(bridge: CloudflareSecretsBridge, version?: string): Promise<void> {
   if (!version) {
-    console.log(c('❌ Version required', 'red'));
-    console.log(c('Usage: rollback <version>', 'gray'));
+    console.info(c('❌ Version required', 'red'));
+    console.info(c('Usage: rollback <version>', 'gray'));
     return;
   }
 
-  console.log(c(`⏪ Rolling back to ${version}...`, 'yellow'));
+  console.info(c(`⏪ Rolling back to ${version}...`, 'yellow'));
   await bridge.rollback(version);
-  console.log(c('✅ Rollback complete', 'green'));
+  console.info(c('✅ Rollback complete', 'green'));
 }
 
 async function handleDelete(bridge: CloudflareSecretsBridge): Promise<void> {
-  console.log(c('⚠️  This will delete all Cloudflare credentials!', 'yellow'));
-  console.log(c('   Use --force to skip confirmation', 'gray'));
+  console.info(c('⚠️  This will delete all Cloudflare credentials!', 'yellow'));
+  console.info(c('   Use --force to skip confirmation', 'gray'));
 
   await bridge.deleteCredentials();
-  console.log(c('🗑️  Credentials deleted', 'green'));
+  console.info(c('🗑️  Credentials deleted', 'green'));
 }
 
 // Run CLI if executed directly

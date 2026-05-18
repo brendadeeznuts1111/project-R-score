@@ -4,11 +4,11 @@
 
 import { errorHandler, TensionErrorCode, BunErrorUtils } from '../src/tension-field/error-handler';
 
-console.log('🛡️ Tension Field Error Handling Demo');
-console.log('=====================================\n');
+console.info('🛡️ Tension Field Error Handling Demo');
+console.info('=====================================\n');
 
 // Demo 1: Create and handle errors
-console.log('1. Creating structured errors...');
+console.info('1. Creating structured errors...');
 const error1 = errorHandler.createError(
   TensionErrorCode.PROPAGATION_FAILED,
   'Graph propagation failed on node network',
@@ -18,7 +18,7 @@ const error1 = errorHandler.createError(
   3
 );
 
-console.log('   Error created:', {
+console.info('   Error created:', {
   code: error1.code,
   severity: error1.severity,
   recoverable: error1.recoverable,
@@ -26,11 +26,11 @@ console.log('   Error created:', {
 });
 
 // Demo 2: Handle errors with logging
-console.log('\n2. Handling errors with logging...');
+console.info('\n2. Handling errors with logging...');
 await errorHandler.handleError(error1);
 
 // Demo 3: Timed operations
-console.log('\n3. Timed error tracking...');
+console.info('\n3. Timed error tracking...');
 try {
   await BunErrorUtils.createTimedError(
     TENSIONErrorCode.TIMEOUT_EXCEEDED,
@@ -41,13 +41,13 @@ try {
     },
     { operation: 'data-processing' }
   );
-  console.log('   ✅ Operation completed successfully');
+  console.info('   ✅ Operation completed successfully');
 } catch (e) {
-  console.log('   ❌ Operation failed:', (e as Error).message);
+  console.info('   ❌ Operation failed:', (e as Error).message);
 }
 
 // Demo 4: Error wrapping
-console.log('\n4. Function wrapping with error handling...');
+console.info('\n4. Function wrapping with error handling...');
 const safeDivision = BunErrorUtils.withErrorHandling(
   async (a: number, b: number) => {
     if (b === 0) {
@@ -60,13 +60,13 @@ const safeDivision = BunErrorUtils.withErrorHandling(
 
 try {
   const result = await safeDivision(10, 0);
-  console.log('   Result:', result);
+  console.info('   Result:', result);
 } catch (e) {
-  console.log('   ❌ Caught error:', (e as Error).message);
+  console.info('   ❌ Caught error:', (e as Error).message);
 }
 
 // Demo 5: Batch error processing
-console.log('\n5. Batch error processing...');
+console.info('\n5. Batch error processing...');
 const errors = [
   errorHandler.createError(TensionErrorCode.NODE_NOT_FOUND, 'Missing node'),
   errorHandler.createError(TensionErrorCode.MEMORY_LIMIT_EXCEEDED, 'High memory usage', 'medium'),
@@ -74,18 +74,18 @@ const errors = [
 ];
 
 await BunErrorUtils.processErrors(errors);
-console.log('   Processed', errors.length, 'errors');
+console.info('   Processed', errors.length, 'errors');
 
 // Demo 6: Error statistics
-console.log('\n6. Error statistics...');
+console.info('\n6. Error statistics...');
 const stats = errorHandler.getErrorStats();
-console.log('   Error summary:');
+console.info('   Error summary:');
 stats.forEach((stat: any) => {
-  console.log(`   - ${stat.code}: ${stat.count} occurrences (${stat.severity})`);
+  console.info(`   - ${stat.code}: ${stat.count} occurrences (${stat.severity})`);
 });
 
 // Demo 7: Circuit breaker
-console.log('\n7. Circuit breaker pattern...');
+console.info('\n7. Circuit breaker pattern...');
 // Simulate multiple failures for the same service
 for (let i = 0; i < 6; i++) {
   await errorHandler.handleError(
@@ -98,10 +98,10 @@ for (let i = 0; i < 6; i++) {
   );
 }
 
-console.log('   Service available:', errorHandler.isServiceAvailable('external-api'));
+console.info('   Service available:', errorHandler.isServiceAvailable('external-api'));
 
 // Demo 8: Critical error handling
-console.log('\n8. Critical error notification...');
+console.info('\n8. Critical error notification...');
 const criticalError = errorHandler.createError(
   TensionErrorCode.SECURITY_VIOLATION,
   'Unauthorized access attempt detected',
@@ -110,15 +110,15 @@ const criticalError = errorHandler.createError(
 );
 
 await errorHandler.handleError(criticalError);
-console.log('   🚨 Critical error logged and notified');
+console.info('   🚨 Critical error logged and notified');
 
 // Demo 9: Cleanup old errors
-console.log('\n9. Cleanup old errors...');
+console.info('\n9. Cleanup old errors...');
 await errorHandler.cleanupOldLogs(0); // Clean all errors for demo
-console.log('   ✅ Old errors cleaned up');
+console.info('   ✅ Old errors cleaned up');
 
-console.log('\n✅ Error handling demo complete!');
-console.log('\n📊 Check the following files for error logs:');
-console.log('   - ./tension-errors.db (SQLite database)');
-console.log('   - ./tension-errors.log (Text log)');
-console.log('   - ./critical-errors.json (Critical errors)');
+console.info('\n✅ Error handling demo complete!');
+console.info('\n📊 Check the following files for error logs:');
+console.info('   - ./tension-errors.db (SQLite database)');
+console.info('   - ./tension-errors.log (Text log)');
+console.info('   - ./critical-errors.json (Critical errors)');

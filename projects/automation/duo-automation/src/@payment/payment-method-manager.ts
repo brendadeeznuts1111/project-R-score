@@ -111,8 +111,8 @@ class CashAppPaymentMethod extends BasePaymentMethod {
 
       // In production, this would integrate with Cash App API
       // For now, simulate the payment flow
-      console.log(`💰 Processing Cash App payment: ${transactionId}`);
-      console.log(`📱 Payment Link: ${paymentLink}`);
+      console.info(`💰 Processing Cash App payment: ${transactionId}`);
+      console.info(`📱 Payment Link: ${paymentLink}`);
 
       return {
         success: true,
@@ -200,8 +200,8 @@ class VenmoPaymentMethod extends BasePaymentMethod {
       // Generate Venmo payment link
       const paymentLink = `https://venmo.com/${request.recipient.identifier}?txn=pay&amount=${totalAmount}&note=${encodeURIComponent(request.description)}`;
 
-      console.log(`💰 Processing Venmo payment: ${transactionId}`);
-      console.log(`📱 Payment Link: ${paymentLink}`);
+      console.info(`💰 Processing Venmo payment: ${transactionId}`);
+      console.info(`📱 Payment Link: ${paymentLink}`);
 
       return {
         success: true,
@@ -297,8 +297,8 @@ class CryptoPaymentMethod extends BasePaymentMethod {
 
       const paymentUri = `bitcoin:${paymentRequest.address}?amount=${totalAmount}&message=${encodeURIComponent(paymentRequest.memo)}`;
 
-      console.log(`💰 Processing crypto payment: ${transactionId}`);
-      console.log(`🔗 Payment URI: ${paymentUri}`);
+      console.info(`💰 Processing crypto payment: ${transactionId}`);
+      console.info(`🔗 Payment URI: ${paymentUri}`);
 
       return {
         success: true,
@@ -393,10 +393,10 @@ class FactoryWagerPaymentMethod extends BasePaymentMethod {
       const fees = this.calculateFees(request.amount);
 
       // Process FactoryWager payment (internal transfer)
-      console.log(`💰 Processing FactoryWager payment: ${transactionId}`);
-      console.log(`👤 From: ${request.customer?.name || 'Anonymous'}`);
-      console.log(`👤 To: ${request.recipient.name} (${request.recipient.id})`);
-      console.log(`💵 Amount: $${request.amount}`);
+      console.info(`💰 Processing FactoryWager payment: ${transactionId}`);
+      console.info(`👤 From: ${request.customer?.name || 'Anonymous'}`);
+      console.info(`👤 To: ${request.recipient.name} (${request.recipient.id})`);
+      console.info(`💵 Amount: $${request.amount}`);
 
       // In production, this would call FactoryWager API
       // For now, simulate successful internal transfer
@@ -623,13 +623,13 @@ if (import.meta.main) {
 
         PaymentMethodManager.processPayment(methodType, request)
           .then(response => {
-            console.log(`💳 Payment Processing Result (${methodType}):`);
-            console.log(`Success: ${response.success}`);
-            console.log(`Status: ${response.status}`);
-            console.log(`Transaction ID: ${response.transactionId || 'N/A'}`);
-            console.log(`Message: ${response.message || response.error}`);
+            console.info(`💳 Payment Processing Result (${methodType}):`);
+            console.info(`Success: ${response.success}`);
+            console.info(`Status: ${response.status}`);
+            console.info(`Transaction ID: ${response.transactionId || 'N/A'}`);
+            console.info(`Message: ${response.message || response.error}`);
             if (response.metadata?.paymentLink) {
-              console.log(`Payment Link: ${response.metadata.paymentLink}`);
+              console.info(`Payment Link: ${response.metadata.paymentLink}`);
             }
           })
           .catch(error => console.error('❌ Error:', error.message));
@@ -638,26 +638,26 @@ if (import.meta.main) {
 
     case 'methods':
       const stats = PaymentMethodManager.getStatistics();
-      console.log('💳 Supported Payment Methods:');
-      console.log(`Total: ${stats.totalMethods}`);
-      console.log(`Enabled: ${stats.enabledMethods}`);
-      console.log('\nMethods:');
+      console.info('💳 Supported Payment Methods:');
+      console.info(`Total: ${stats.totalMethods}`);
+      console.info(`Enabled: ${stats.enabledMethods}`);
+      console.info('\nMethods:');
       for (const [type, info] of Object.entries(stats.methodsByType)) {
-        console.log(`  ${type}: ${info.enabled ? '✅' : '❌'} (Min: $${info.minAmount}, Max: $${info.maxAmount}, Fee: ${info.feePercentage}%)`);
+        console.info(`  ${type}: ${info.enabled ? '✅' : '❌'} (Min: $${info.minAmount}, Max: $${info.maxAmount}, Fee: ${info.feePercentage}%)`);
       }
       break;
 
     case 'fees':
       if (methodType) {
         const fees = PaymentMethodManager.calculateFees(methodType, amount);
-        console.log(`💰 Fees for ${methodType} payment of $${amount}:`);
-        console.log(`Total Fees: $${fees.toFixed(2)}`);
-        console.log(`Net Amount: $${(amount - fees).toFixed(2)}`);
+        console.info(`💰 Fees for ${methodType} payment of $${amount}:`);
+        console.info(`Total Fees: $${fees.toFixed(2)}`);
+        console.info(`Net Amount: $${(amount - fees).toFixed(2)}`);
       }
       break;
 
     default:
-      console.log(`
+      console.info(`
 💳 Payment Method Management System
 
 Usage:

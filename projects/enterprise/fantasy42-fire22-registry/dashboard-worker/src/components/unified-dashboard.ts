@@ -92,11 +92,11 @@ class UnifiedDashboard extends EventEmitter {
       };
 
       ws.onclose = () => {
-        console.log('🔄 WebSocket connection lost, retrying...');
+        console.info('🔄 WebSocket connection lost, retrying...');
         setTimeout(() => this.setupWebSocketConnection(), 5000);
       };
     } catch (error) {
-      console.log('⚠️ WebSocket not available, using polling');
+      console.info('⚠️ WebSocket not available, using polling');
     }
   }
 
@@ -440,12 +440,12 @@ export function initializeUnifiedDashboard(): UnifiedDashboard {
 
     // Setup event listeners
     dashboardInstance.on('metrics-updated', metrics => {
-      console.log('📊 Dashboard metrics updated:', metrics);
+      console.info('📊 Dashboard metrics updated:', metrics);
       updateDashboardDisplay(metrics);
     });
 
     dashboardInstance.on('action-items-updated', actions => {
-      console.log('🚨 Action items updated:', actions.length);
+      console.info('🚨 Action items updated:', actions.length);
       updateActionItems(actions);
     });
 
@@ -536,7 +536,7 @@ declare global {
 }
 
 window.handleAction = (actionId: string) => {
-  console.log('🎯 Handling action:', actionId);
+  console.info('🎯 Handling action:', actionId);
   // Implement action handling logic
 };
 
@@ -546,17 +546,17 @@ window.openAgentManagement = () => {
 
 window.openBetTicker = () => {
   // Implement bet ticker opening
-  console.log('📊 Opening Bet Ticker');
+  console.info('📊 Opening Bet Ticker');
 };
 
 window.openTicketwriter = () => {
   // Implement ticketwriter opening
-  console.log('🎯 Opening Ticketwriter');
+  console.info('🎯 Opening Ticketwriter');
 };
 
 window.openAgentPerformance = () => {
   // Implement agent performance opening
-  console.log('📈 Opening Agent Performance');
+  console.info('📈 Opening Agent Performance');
 };
 
 export { UnifiedDashboard, DashboardMetrics, ActionItem };

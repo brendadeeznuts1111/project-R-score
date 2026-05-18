@@ -30,15 +30,15 @@ class RipgrepConform {
       description = 'Auto-generated purge rule'
     } = options;
 
-    console.log('⚡ FACTORYWAGER RIPGREP v4.0 - Conform Engine');
-    console.log('═══════════════════════════════════════════════════════════════');
+    console.info('⚡ FACTORYWAGER RIPGREP v4.0 - Conform Engine');
+    console.info('═══════════════════════════════════════════════════════════════');
 
     try {
-      console.log(`🔥 Generating Purge Rule...`);
-      console.log(`   Scope: ${scope}`);
-      console.log(`   Type: ${type}`);
-      console.log(`   Pattern: ${pattern}`);
-      console.log(`   Description: ${description}`);
+      console.info(`🔥 Generating Purge Rule...`);
+      console.info(`   Scope: ${scope}`);
+      console.info(`   Type: ${type}`);
+      console.info(`   Pattern: ${pattern}`);
+      console.info(`   Description: ${description}`);
 
       // Generate purge signature
       const purge = await this.engine.purgeRipgrep({
@@ -47,31 +47,31 @@ class RipgrepConform {
         pattern
       });
 
-      console.log(`\n📋 Purge Rule Generated:`);
-      console.log(`   ID: ${purge.id}`);
-      console.log(`   Signature: ${purge.signature}`);
-      console.log(`   Grepable: ${purge.grepable}`);
-      console.log(`   Hash: ${purge.contentHash}`);
-      console.log(`   Timestamp: ${new Date(purge.timestamp).toISOString()}`);
+      console.info(`\n📋 Purge Rule Generated:`);
+      console.info(`   ID: ${purge.id}`);
+      console.info(`   Signature: ${purge.signature}`);
+      console.info(`   Grepable: ${purge.grepable}`);
+      console.info(`   Hash: ${purge.contentHash}`);
+      console.info(`   Timestamp: ${new Date(purge.timestamp).toISOString()}`);
 
       // Generate rule file content
       const ruleContent = this.generateRuleFile(purge, pattern, description);
       
-      console.log(`\n📄 Rule File Content:`);
-      console.log('```yaml');
-      console.log(ruleContent);
-      console.log('```');
+      console.info(`\n📄 Rule File Content:`);
+      console.info('```yaml');
+      console.info(ruleContent);
+      console.info('```');
 
       // Save rule file
       const ruleFileName = `rule-${purge.id.toLowerCase()}.yaml`;
       await Bun.write(`./rules/${ruleFileName}`, ruleContent);
       
-      console.log(`\n💾 Rule saved to: ./rules/${ruleFileName}`);
+      console.info(`\n💾 Rule saved to: ./rules/${ruleFileName}`);
 
       // Generate grep command
       const grepCommand = `rg --type js --type ts --type jsx --type tsx "${pattern}" .`;
-      console.log(`\n🔍 Grep Command:`);
-      console.log(`   ${grepCommand}`);
+      console.info(`\n🔍 Grep Command:`);
+      console.info(`   ${grepCommand}`);
 
       return purge;
 
@@ -157,7 +157,7 @@ async function main() {
         break;
       case '--help':
       case '-h':
-        console.log(`
+        console.info(`
 ⚡ FACTORYWAGER RIPGREP v4.0 - Conform Engine
 
 USAGE:
@@ -186,7 +186,7 @@ EXAMPLES:
 
   if (!options.pattern) {
     console.error('❌ --pattern is required');
-    console.log('Use --help for usage information');
+    console.info('Use --help for usage information');
     process.exit(1);
   }
 

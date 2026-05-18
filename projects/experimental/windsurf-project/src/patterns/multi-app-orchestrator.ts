@@ -84,11 +84,11 @@ export class MultiAppOrchestrator {
     // Check cache first
     const cached = await this.cache.get<UnifiedProfile>(cacheKey);
     if (cached) {
-      console.log(`Cache hit for unified profile: ${sanitized.e164}`);
+      console.info(`Cache hit for unified profile: ${sanitized.e164}`);
       return cached;
     }
 
-    console.log(`Building unified profile for: ${sanitized.e164}`);
+    console.info(`Building unified profile for: ${sanitized.e164}`);
 
     try {
       // Execute all integrations in parallel with timeout

@@ -48,14 +48,14 @@ const featureSection = [
     }
 ];
 
-console.log("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
-console.log("║           FEATURE ANALYSIS SECTION - SEMANTIC CLASS VERIFICATION                     ║");
-console.log("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
+console.info("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
+console.info("║           FEATURE ANALYSIS SECTION - SEMANTIC CLASS VERIFICATION                     ║");
+console.info("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
 
-console.log(Bun.inspect.table(featureSection, undefined, { colors: true }));
+console.info(Bun.inspect.table(featureSection, undefined, { colors: true }));
 
-console.log("\n📋 Expected HTML Structure:\n");
-console.log(`
+console.info("\n📋 Expected HTML Structure:\n");
+console.info(`
 <section aria-labelledby="analysis-heading">
   <div class="layout-grid layout-grid--columns-1 layout-grid--lg-columns-3 layout-grid--gap-large">
     <article class="visualization-panel">
@@ -80,7 +80,7 @@ console.log(`
 </section>
 `);
 
-console.log("\n✅ All elements in the Feature Analysis section use semantic BEM-style classes!\n");
+console.info("\n✅ All elements in the Feature Analysis section use semantic BEM-style classes!\n");
 
 // Check for any remaining old utility classes
 const remainingUtilities = [
@@ -96,5 +96,5 @@ const remainingUtilities = [
     }
 ];
 
-console.log("📝 Note: Some utility classes are intentionally kept for backward compatibility:\n");
-console.log(Bun.inspect.table(remainingUtilities, undefined, { colors: true }));
+console.info("📝 Note: Some utility classes are intentionally kept for backward compatibility:\n");
+console.info(Bun.inspect.table(remainingUtilities, undefined, { colors: true }));

@@ -172,7 +172,7 @@ export class FactoryWagerSDK implements FactoryWagerSDKClient {
    */
   async connect(): Promise<boolean> {
     try {
-      console.log('🔌 Connecting to FactoryWager SDK...');
+      console.info('🔌 Connecting to FactoryWager SDK...');
       
       // Initialize WebSocket connection
       this.ws = new WebSocket(`${this.config.wsUrl}?apiKey=${this.config.apiKey}&familyId=${this.config.familyId}`);
@@ -184,7 +184,7 @@ export class FactoryWagerSDK implements FactoryWagerSDKClient {
 
         this.ws!.onopen = () => {
           clearTimeout(timeout);
-          console.log('✅ Connected to FactoryWager SDK');
+          console.info('✅ Connected to FactoryWager SDK');
           
           this.connectionStatus.connected = true;
           this.connectionStatus.deviceId = this.generateDeviceId();
@@ -209,7 +209,7 @@ export class FactoryWagerSDK implements FactoryWagerSDKClient {
 
         this.ws!.onclose = () => {
           clearTimeout(timeout);
-          console.log('❌ Disconnected from FactoryWager SDK');
+          console.info('❌ Disconnected from FactoryWager SDK');
           this.connectionStatus.connected = false;
           this.stopHeartbeat();
         };
@@ -232,7 +232,7 @@ export class FactoryWagerSDK implements FactoryWagerSDKClient {
    */
   async disconnect(): Promise<void> {
     try {
-      console.log('🔌 Disconnecting from FactoryWager SDK...');
+      console.info('🔌 Disconnecting from FactoryWager SDK...');
       
       if (this.ws) {
         this.ws.close();
@@ -248,7 +248,7 @@ export class FactoryWagerSDK implements FactoryWagerSDKClient {
       });
       this.pendingCommands.clear();
       
-      console.log('✅ Disconnected from FactoryWager SDK');
+      console.info('✅ Disconnected from FactoryWager SDK');
       
     } catch (error) {
       console.error('❌ Error disconnecting from FactoryWager SDK:', error);
@@ -279,7 +279,7 @@ export class FactoryWagerSDK implements FactoryWagerSDKClient {
       const message = JSON.stringify(command);
       this.ws!.send(message);
       
-      console.log(`📤 Sent command: ${command.type} (${command.id})`);
+      console.info(`📤 Sent command: ${command.type} (${command.id})`);
     });
   }
 
@@ -460,7 +460,7 @@ export class FactoryWagerSDK implements FactoryWagerSDKClient {
       timestamp: eventData.timestamp
     };
     
-    console.log(`📢 Received event: ${event.type} from ${event.source}`);
+    console.info(`📢 Received event: ${event.type} from ${event.source}`);
     
     // Notify all subscribers
     this.eventCallbacks.forEach(callback => {
@@ -490,17 +490,17 @@ export class FactoryWagerSDK implements FactoryWagerSDKClient {
   private handleSpecificEvent(event: FactoryWagerEvent): void {
     switch (event.type) {
       case 'payment_received':
-        console.log('💰 Payment received on Android device');
+        console.info('💰 Payment received on Android device');
         break;
       case 'qr_scanned':
-        console.log('📷 QR code scanned on Android device');
+        console.info('📷 QR code scanned on Android device');
         this.handleQRScannedEvent(event.data);
         break;
       case 'family_updated':
-        console.log('👨‍👩‍👧‍👦 Family data updated on Android device');
+        console.info('👨‍👩‍👧‍👦 Family data updated on Android device');
         break;
       case 'app_launched':
-        console.log('🚀 App launched on Android device');
+        console.info('🚀 App launched on Android device');
         break;
       case 'error':
         console.error('❌ Error from Android device:', event.data);
@@ -512,12 +512,12 @@ export class FactoryWagerSDK implements FactoryWagerSDKClient {
    * 📷 Handle QR code scanned event
    */
   private handleQRScannedEvent(data: any): void {
-    console.log('📷 QR Code scanned:', data);
+    console.info('📷 QR Code scanned:', data);
     
     // Process the QR code data
     if (data.qrData && data.qrData.startsWith('factory-wager://pay/')) {
       // This would trigger payment processing
-      console.log('💰 Processing payment from QR code:', data.qrData);
+      console.info('💰 Processing payment from QR code:', data.qrData);
     }
   }
 

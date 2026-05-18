@@ -418,10 +418,10 @@ if (import.meta.main) {
 			const [color, format] = args;
 			if (color && format) {
 				const result = convertColor(color, format as ColorFormat);
-				console.log(result);
+				console.info(result);
 			} else {
-				console.log("Usage: color convert <color> <format>");
-				console.log("Example: color convert red hex");
+				console.info("Usage: color convert <color> <format>");
+				console.info("Example: color convert red hex");
 			}
 			break;
 		}
@@ -431,9 +431,9 @@ if (import.meta.main) {
 			if (color) {
 				const rgba = getRGBA(color);
 				if (rgba) {
-					console.log(`R: ${rgba.r}, G: ${rgba.g}, B: ${rgba.b}, A: ${rgba.a}`);
+					console.info(`R: ${rgba.r}, G: ${rgba.g}, B: ${rgba.b}, A: ${rgba.a}`);
 				} else {
-					console.log("Invalid color");
+					console.info("Invalid color");
 				}
 			}
 			break;
@@ -444,8 +444,8 @@ if (import.meta.main) {
 			if (color) {
 				const ansi = getANSIColor(color);
 				if (ansi) {
-					console.log(`${ansi}This is colored text${"\x1b[0m"}`);
-					console.log(`ANSI code: ${JSON.stringify(ansi)}`);
+					console.info(`${ansi}This is colored text${"\x1b[0m"}`);
+					console.info(`ANSI code: ${JSON.stringify(ansi)}`);
 				}
 			}
 			break;
@@ -457,9 +457,9 @@ if (import.meta.main) {
 				const ratio = getContrastRatio(bg, fg);
 				const meetsAA = meetsWCAG(bg, fg, "AA");
 				const meetsAAA = meetsWCAG(bg, fg, "AAA");
-				console.log(`Contrast ratio: ${ratio?.toFixed(2)}:1`);
-				console.log(`WCAG AA: ${meetsAA ? "✅ Pass" : "❌ Fail"}`);
-				console.log(`WCAG AAA: ${meetsAAA ? "✅ Pass" : "❌ Fail"}`);
+				console.info(`Contrast ratio: ${ratio?.toFixed(2)}:1`);
+				console.info(`WCAG AA: ${meetsAA ? "✅ Pass" : "❌ Fail"}`);
+				console.info(`WCAG AAA: ${meetsAAA ? "✅ Pass" : "❌ Fail"}`);
 			}
 			break;
 		}
@@ -468,7 +468,7 @@ if (import.meta.main) {
 			const [color, amount] = args;
 			if (color) {
 				const result = lighten(color, parseFloat(amount) || 0.2);
-				console.log(result);
+				console.info(result);
 			}
 			break;
 		}
@@ -477,7 +477,7 @@ if (import.meta.main) {
 			const [color, amount] = args;
 			if (color) {
 				const result = darken(color, parseFloat(amount) || 0.2);
-				console.log(result);
+				console.info(result);
 			}
 			break;
 		}
@@ -491,12 +491,12 @@ if (import.meta.main) {
 				Development: "#9C27B0",
 			};
 
-			console.log("Topic Colors:");
+			console.info("Topic Colors:");
 			for (const [name, color] of Object.entries(topicColors)) {
 				const info = getTopicColor(color);
 				const ansi = info.ansi || "";
 				const reset = "\x1b[0m";
-				console.log(
+				console.info(
 					`  ${ansi}●${reset} ${name.padEnd(15)} ${info.hex} RGB(${info.rgba?.r},${info.rgba?.g},${info.rgba?.b}) ${info.isLight ? "(light)" : "(dark)"}`,
 				);
 			}
@@ -504,7 +504,7 @@ if (import.meta.main) {
 		}
 
 		default:
-			console.log(`
+			console.info(`
 Color Utility - Uses Bun.color() API
 
 Usage:

@@ -99,7 +99,7 @@ export class TickRetentionManager {
 			});
 
 			// Log retention metrics
-			console.log('%s | RETENTION_CYCLE | %j', new Date().toISOString(), {
+			console.info('%s | RETENTION_CYCLE | %j', new Date().toISOString(), {
 				compressed_count: this.db.prepare('SELECT COUNT(*) as count FROM tick_data_compressed').get(),
 				raw_count: this.db.prepare('SELECT COUNT(*) as count FROM tick_data').get(),
 				deleted_count: deleteResult
@@ -136,7 +136,7 @@ export class TickRetentionManager {
 
 		// In production, upload to S3 Glacier here
 		// For now, just log the archive operation
-		console.log('%s | RETENTION_ARCHIVE | %j', new Date().toISOString(), {
+		console.info('%s | RETENTION_ARCHIVE | %j', new Date().toISOString(), {
 			rows_to_archive: rows.length,
 			cutoff_time: cutoffTime
 		});

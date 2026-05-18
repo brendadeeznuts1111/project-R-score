@@ -5,8 +5,8 @@
 
 import { writeFileSync } from 'fs'
 
-console.log('🎨 FactoryWager Registry v4.0 - Bun Color Formatting Showcase')
-console.log('=' .repeat(70))
+console.info('🎨 FactoryWager Registry v4.0 - Bun Color Formatting Showcase')
+console.info('=' .repeat(70))
 
 // Demo colors for FactoryWager branding
 const factoryColors = {
@@ -19,24 +19,24 @@ const factoryColors = {
 }
 
 // 1. Basic Color Conversion
-console.log('\n🔧 1. Basic Color Conversion')
-console.log('-' .repeat(40))
+console.info('\n🔧 1. Basic Color Conversion')
+console.info('-' .repeat(40))
 
 const blue = Bun.color('#3b82f6')
-console.log('Hex input:', '#3b82f6')
-console.log('Bun.color() result:', blue)
+console.info('Hex input:', '#3b82f6')
+console.info('Bun.color() result:', blue)
 
 // Test different input formats
-console.log('\nDifferent input formats:')
-console.log('Hex:', Bun.color('#3b82f6'))
-console.log('RGB object:', Bun.color({ r: 59, g: 130, b: 246 }))
-console.log('RGB array:', Bun.color([59, 130, 246]))
-console.log('RGBA object:', Bun.color({ r: 59, g: 130, b: 246, a: 0.8 }))
-console.log('RGBA array:', Bun.color([59, 130, 246, 0.8]))
+console.info('\nDifferent input formats:')
+console.info('Hex:', Bun.color('#3b82f6'))
+console.info('RGB object:', Bun.color({ r: 59, g: 130, b: 246 }))
+console.info('RGB array:', Bun.color([59, 130, 246]))
+console.info('RGBA object:', Bun.color({ r: 59, g: 130, b: 246, a: 0.8 }))
+console.info('RGBA array:', Bun.color([59, 130, 246, 0.8]))
 
 // 2. Color Channel Extraction
-console.log('\n🔍 2. Color Channel Extraction')
-console.log('-' .repeat(40))
+console.info('\n🔍 2. Color Channel Extraction')
+console.info('-' .repeat(40))
 
 // Convert hex to RGB manually for channel access
 const hexToRgb = (hex: string) => {
@@ -50,15 +50,15 @@ const hexToRgb = (hex: string) => {
 
 const colorRgb = hexToRgb('#3b82f6')
 if (colorRgb) {
-  console.log('Hex: #3b82f6')
-  console.log('Red channel:', colorRgb.r)     // 59
-  console.log('Green channel:', colorRgb.g)   // 130
-  console.log('Blue channel:', colorRgb.b)    // 246
+  console.info('Hex: #3b82f6')
+  console.info('Red channel:', colorRgb.r)     // 59
+  console.info('Green channel:', colorRgb.g)   // 130
+  console.info('Blue channel:', colorRgb.b)    // 246
 }
 
 // 3. CSS Color Formatting (Manual Implementation)
-console.log('\n🎨 3. CSS Color Formatting')
-console.log('-' .repeat(40))
+console.info('\n🎨 3. CSS Color Formatting')
+console.info('-' .repeat(40))
 
 const toCssRGB = (hex: string) => {
   const rgb = hexToRgb(hex)
@@ -96,13 +96,13 @@ const toCssHSL = (hex: string) => {
   return `hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`
 }
 
-console.log('CSS RGB:', toCssRGB('#3b82f6'))           // rgb(59, 130, 246)
-console.log('CSS RGBA:', toCssRGBA('#3b82f6', 0.8))    // rgba(59, 130, 246, 0.8)
-console.log('CSS HSL:', toCssHSL('#3b82f6'))           // hsl(217, 91%, 60%)
+console.info('CSS RGB:', toCssRGB('#3b82f6'))           // rgb(59, 130, 246)
+console.info('CSS RGBA:', toCssRGBA('#3b82f6', 0.8))    // rgba(59, 130, 246, 0.8)
+console.info('CSS HSL:', toCssHSL('#3b82f6'))           // hsl(217, 91%, 60%)
 
 // 4. ANSI Terminal Colors (16-color)
-console.log('\n🖥️  4. ANSI Terminal Colors (16-color)')
-console.log('-' .repeat(40))
+console.info('\n🖥️  4. ANSI Terminal Colors (16-color)')
+console.info('-' .repeat(40))
 
 // ANSI escape codes for 16-color palette
 const ansi16 = {
@@ -113,14 +113,14 @@ const ansi16 = {
   bright_cyan: '\x1b[96m', bright_white: '\x1b[97m', reset: '\x1b[0m'
 }
 
-console.log(`${ansi16.bright_blue}FactoryWager${ansi16.reset} Registry`)
-console.log(`${ansi16.bright_green}✅ Success${ansi16.reset}: Operation completed`)
-console.log(`${ansi16.bright_yellow}⚠️  Warning${ansi16.reset}: Deprecated API`)
-console.log(`${ansi16.bright_red}❌ Error${ansi16.reset}: Validation failed`)
+console.info(`${ansi16.bright_blue}FactoryWager${ansi16.reset} Registry`)
+console.info(`${ansi16.bright_green}✅ Success${ansi16.reset}: Operation completed`)
+console.info(`${ansi16.bright_yellow}⚠️  Warning${ansi16.reset}: Deprecated API`)
+console.info(`${ansi16.bright_red}❌ Error${ansi16.reset}: Validation failed`)
 
 // 5. ANSI 256-color
-console.log('\n🌈 5. ANSI 256-color')
-console.log('-' .repeat(40))
+console.info('\n🌈 5. ANSI 256-color')
+console.info('-' .repeat(40))
 
 // Convert colors to 256-color ANSI codes
 const toAnsi256 = (hex: string) => {
@@ -134,14 +134,14 @@ const toAnsi256 = (hex: string) => {
   return `\x1b[38;5;${code}m`
 }
 
-console.log(`${toAnsi256(factoryColors.primary)}FactoryWager${ansi16.reset} Registry (256-color)`)
-console.log(`${toAnsi256(factoryColors.success)}✅ Success${ansi16.reset} (256-color)`)
-console.log(`${toAnsi256(factoryColors.warning)}⚠️  Warning${ansi16.reset} (256-color)`)
-console.log(`${toAnsi256(factoryColors.error)}❌ Error${ansi16.reset} (256-color)`)
+console.info(`${toAnsi256(factoryColors.primary)}FactoryWager${ansi16.reset} Registry (256-color)`)
+console.info(`${toAnsi256(factoryColors.success)}✅ Success${ansi16.reset} (256-color)`)
+console.info(`${toAnsi256(factoryColors.warning)}⚠️  Warning${ansi16.reset} (256-color)`)
+console.info(`${toAnsi256(factoryColors.error)}❌ Error${ansi16.reset} (256-color)`)
 
 // 6. ANSI 24-bit (True Color)
-console.log('\n🎨 6. ANSI 24-bit (True Color)')
-console.log('-' .repeat(40))
+console.info('\n🎨 6. ANSI 24-bit (True Color)')
+console.info('-' .repeat(40))
 
 // Convert colors to 24-bit ANSI codes
 const toAnsi24bit = (hex: string) => {
@@ -151,14 +151,14 @@ const toAnsi24bit = (hex: string) => {
   return `\x1b[38;2;${rgb.r};${rgb.g};${rgb.b}m`
 }
 
-console.log(`${toAnsi24bit(factoryColors.primary)}FactoryWager${ansi16.reset} Registry (24-bit)`)
-console.log(`${toAnsi24bit(factoryColors.success)}✅ Success${ansi16.reset} (24-bit)`)
-console.log(`${toAnsi24bit(factoryColors.warning)}⚠️  Warning${ansi16.reset} (24-bit)`)
-console.log(`${toAnsi24bit(factoryColors.error)}❌ Error${ansi16.reset} (24-bit)`)
+console.info(`${toAnsi24bit(factoryColors.primary)}FactoryWager${ansi16.reset} Registry (24-bit)`)
+console.info(`${toAnsi24bit(factoryColors.success)}✅ Success${ansi16.reset} (24-bit)`)
+console.info(`${toAnsi24bit(factoryColors.warning)}⚠️  Warning${ansi16.reset} (24-bit)`)
+console.info(`${toAnsi24bit(factoryColors.error)}❌ Error${ansi16.reset} (24-bit)`)
 
 // 7. FactoryWager Registry Status Display
-console.log('\n🏭 7. FactoryWager Registry Status Display')
-console.log('-' .repeat(40))
+console.info('\n🏭 7. FactoryWager Registry Status Display')
+console.info('-' .repeat(40))
 
 const registryStatus = [
   { service: 'CRC32 Validator', status: 'active', color: factoryColors.success },
@@ -171,12 +171,12 @@ const registryStatus = [
 registryStatus.forEach(item => {
   const statusColor = toAnsi24bit(item.color)
   const statusIcon = item.status === 'active' ? '🟢' : item.status === 'warning' ? '🟡' : '🔴'
-  console.log(`${statusIcon} ${item.service.padEnd(20)} ${statusColor}${item.status.toUpperCase()}${ansi16.reset}`)
+  console.info(`${statusIcon} ${item.service.padEnd(20)} ${statusColor}${item.status.toUpperCase()}${ansi16.reset}`)
 })
 
 // 8. Bundle-time Client-side Color Formatting
-console.log('\n📦 8. Bundle-time Client-side Color Formatting')
-console.log('-' .repeat(40))
+console.info('\n📦 8. Bundle-time Client-side Color Formatting')
+console.info('-' .repeat(40))
 
 // Generate CSS variables for client-side use
 const cssVariables = `
@@ -195,16 +195,16 @@ const cssVariables = `
   --fw-error-rgb: ${toCssRGB(factoryColors.error)};
 }`
 
-console.log('Generated CSS Variables:')
-console.log(cssVariables)
+console.info('Generated CSS Variables:')
+console.info(cssVariables)
 
 // Save CSS to file for client-side use
 writeFileSync('./factory-wager-colors.css', cssVariables)
-console.log('\n💾 CSS variables saved to: factory-wager-colors.css')
+console.info('\n💾 CSS variables saved to: factory-wager-colors.css')
 
 // 9. Color Manipulation and Utilities
-console.log('\n🛠️  9. Color Manipulation and Utilities')
-console.log('-' .repeat(40))
+console.info('\n🛠️  9. Color Manipulation and Utilities')
+console.info('-' .repeat(40))
 
 // Lighten and darken colors
 const lightenColor = (hex: string, percent: number) => {
@@ -233,9 +233,9 @@ const darkenColor = (hex: string, percent: number) => {
   return `#${darkened.r.toString(16).padStart(2, '0')}${darkened.g.toString(16).padStart(2, '0')}${darkened.b.toString(16).padStart(2, '0')}`
 }
 
-console.log('Original blue:', factoryColors.primary)
-console.log('Lighter (+20%):', lightenColor(factoryColors.primary, 20))
-console.log('Darker (-20%):', darkenColor(factoryColors.primary, 20))
+console.info('Original blue:', factoryColors.primary)
+console.info('Lighter (+20%):', lightenColor(factoryColors.primary, 20))
+console.info('Darker (-20%):', darkenColor(factoryColors.primary, 20))
 
 // Generate color palette
 const generatePalette = (baseColor: string) => {
@@ -254,24 +254,24 @@ const generatePalette = (baseColor: string) => {
 }
 
 const bluePalette = generatePalette(factoryColors.primary)
-console.log('\n🎨 Blue Palette Generated:')
+console.info('\n🎨 Blue Palette Generated:')
 Object.entries(bluePalette).forEach(([shade, color]) => {
   const ansiColor = toAnsi24bit(color)
-  console.log(`${ansiColor}■${ansi16.reset} ${shade}: ${color}`)
+  console.info(`${ansiColor}■${ansi16.reset} ${shade}: ${color}`)
 })
 
 // 10. Color Format Comparison
-console.log('\n📊 10. Color Format Comparison')
-console.log('-' .repeat(40))
+console.info('\n📊 10. Color Format Comparison')
+console.info('-' .repeat(40))
 
 const testColor = factoryColors.primary
-console.log('Original hex:', testColor)
-console.log('RGB object:', hexToRgb(testColor))
-console.log('CSS RGB:', toCssRGB(testColor))
-console.log('CSS RGBA (0.8):', toCssRGBA(testColor, 0.8))
-console.log('CSS HSL:', toCssHSL(testColor))
-console.log('ANSI 256:', toAnsi256(testColor).replace(/\x1b/g, '\\x1b'))
-console.log('ANSI 24-bit:', toAnsi24bit(testColor).replace(/\x1b/g, '\\x1b'))
+console.info('Original hex:', testColor)
+console.info('RGB object:', hexToRgb(testColor))
+console.info('CSS RGB:', toCssRGB(testColor))
+console.info('CSS RGBA (0.8):', toCssRGBA(testColor, 0.8))
+console.info('CSS HSL:', toCssHSL(testColor))
+console.info('ANSI 256:', toAnsi256(testColor).replace(/\x1b/g, '\\x1b'))
+console.info('ANSI 24-bit:', toAnsi24bit(testColor).replace(/\x1b/g, '\\x1b'))
 
-console.log('\n🎯 Color Formatting Showcase Complete!')
-console.log('🚀 FactoryWager Registry v4.0 - Full Color API Integration')
+console.info('\n🎯 Color Formatting Showcase Complete!')
+console.info('🚀 FactoryWager Registry v4.0 - Full Color API Integration')

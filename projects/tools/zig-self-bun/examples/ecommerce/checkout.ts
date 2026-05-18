@@ -49,7 +49,7 @@ serve({
       
       // If DEBUG flag, log performance
       if (Bun.config.features.DEBUG) {
-        console.log(`Checkout completed in ${duration}ns`);
+        console.info(`Checkout completed in ${duration}ns`);
       }
 
       return Response.json({
@@ -64,10 +64,10 @@ serve({
   },
 });
 
-console.log(`🛒 E-Commerce API listening on :${PORT}`);
-console.log(`📊 Config version: ${Bun.config.version}`);
-console.log(`🔑 Features: 0x${Bun.config.featureFlags.toString(16)}`);
-console.log(`🌐 Registry: 0x${Bun.config.registryHash.toString(16)}`);
+console.info(`🛒 E-Commerce API listening on :${PORT}`);
+console.info(`📊 Config version: ${Bun.config.version}`);
+console.info(`🔑 Features: 0x${Bun.config.featureFlags.toString(16)}`);
+console.info(`🌐 Registry: 0x${Bun.config.registryHash.toString(16)}`);
 
 // Helper functions (simplified)
 function parseCookies(cookieHeader: string): Map<string, string> {

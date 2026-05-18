@@ -62,7 +62,7 @@ export class MemoryProfiler {
       return;
     }
 
-    console.log(`🧠 Starting memory monitoring: ${this.name}`);
+    console.info(`🧠 Starting memory monitoring: ${this.name}`);
     this.monitoring = true;
     this.startTime = Date.now();
     this.snapshots = [];
@@ -111,7 +111,7 @@ export class MemoryProfiler {
       gcRuns: this.gcRuns,
     };
 
-    console.log('✅ Memory monitoring stopped');
+    console.info('✅ Memory monitoring stopped');
     this.printReport(report);
 
     return report;
@@ -156,10 +156,10 @@ export class MemoryProfiler {
    * Force garbage collection
    */
   forceGC(synchronous: boolean = true): void {
-    console.log('🗑️  Forcing garbage collection...');
+    console.info('🗑️  Forcing garbage collection...');
     Bun.gc(synchronous);
     this.gcRuns++;
-    console.log('✅ Garbage collection complete');
+    console.info('✅ Garbage collection complete');
   }
 
   /**
@@ -200,11 +200,11 @@ export class MemoryProfiler {
   async generateHeapSnapshot(filename?: string): Promise<string> {
     const name = filename || `heap-${Date.now()}.json`;
 
-    console.log('📸 Generating heap snapshot...');
+    console.info('📸 Generating heap snapshot...');
     const snapshot = generateHeapSnapshot();
 
     await Bun.write(name, JSON.stringify(snapshot, null, 2));
-    console.log(`✅ Heap snapshot saved to: ${name}`);
+    console.info(`✅ Heap snapshot saved to: ${name}`);
 
     return name;
   }
@@ -217,7 +217,7 @@ export class MemoryProfiler {
     fn: () => T | Promise<T>,
     options: { gc?: boolean } = {}
   ): Promise<{ result: T; memory: MemoryReport }> {
-    console.log(`\n🎯 Profiling function: ${name}`);
+    console.info(`\n🎯 Profiling function: ${name}`);
 
     // Optional GC before profiling
     if (options.gc) {
@@ -253,8 +253,8 @@ export class MemoryProfiler {
   ): Promise<void> {
     const { gc = true, iterations = 1 } = options;
 
-    console.log(`\n⚔️  Memory Comparison: ${name}`);
-    console.log('='.repeat(50));
+    console.info(`\n⚔️  Memory Comparison: ${name}`);
+    console.info('='.repeat(50));
 
     const results: Record<string, MemoryReport[]> = {};
 
@@ -273,7 +273,7 @@ export class MemoryProfiler {
     }
 
     // Calculate averages and compare
-    console.log('\n📊 Comparison Results:');
+    console.info('\n📊 Comparison Results:');
 
     const summaries = Object.entries(results).map(([name, reports]) => {
       const avgHeapGrowth =
@@ -299,9 +299,9 @@ export class MemoryProfiler {
       const status =
         summary === mostEfficient ? '🏆 MOST EFFICIENT' : `${ratio.toFixed(2)}x more memory`;
 
-      console.log(`\n   ${summary.name}:`);
-      console.log(`      Heap Growth: ${this.formatBytes(summary.avgHeapGrowth)} ${status}`);
-      console.log(`      Object Growth: ${summary.avgObjectGrowth.toLocaleString()} objects`);
+      console.info(`\n   ${summary.name}:`);
+      console.info(`      Heap Growth: ${this.formatBytes(summary.avgHeapGrowth)} ${status}`);
+      console.info(`      Object Growth: ${summary.avgObjectGrowth.toLocaleString()} objects`);
     });
   }
 
@@ -313,8 +313,8 @@ export class MemoryProfiler {
     duration: number,
     fn: () => Promise<void>
   ): Promise<MemoryReport> {
-    console.log(`\n🚀 Load Test Memory Monitoring: ${name}`);
-    console.log(`   Duration: ${duration}ms`);
+    console.info(`\n🚀 Load Test Memory Monitoring: ${name}`);
+    console.info(`   Duration: ${duration}ms`);
 
     this.startMonitoring(100);
 
@@ -333,8 +333,8 @@ export class MemoryProfiler {
 
     const report = this.stopMonitoring();
 
-    console.log(`\n   Iterations completed: ${iterations.toLocaleString()}`);
-    console.log(
+    console.info(`\n   Iterations completed: ${iterations.toLocaleString()}`);
+    console.info(
       `   Average iteration memory: ${this.formatBytes(report.finalMemory.heapSize / iterations)}`
     );
 
@@ -345,39 +345,39 @@ export class MemoryProfiler {
    * Print memory report
    */
   private printReport(report: MemoryReport): void {
-    console.log('\n📊 Memory Report');
-    console.log('='.repeat(50));
+    console.info('\n📊 Memory Report');
+    console.info('='.repeat(50));
 
     const heapGrowth = report.finalMemory.heapSize - report.initialMemory.heapSize;
     const objectGrowth = report.finalMemory.objectCount - report.initialMemory.objectCount;
 
-    console.log(`Duration: ${(report.duration / 1000).toFixed(2)}s`);
-    console.log(`GC Runs: ${report.gcRuns}`);
-    console.log('\nMemory Usage:');
-    console.log(`   Initial Heap: ${this.formatBytes(report.initialMemory.heapSize)}`);
-    console.log(`   Final Heap: ${this.formatBytes(report.finalMemory.heapSize)}`);
-    console.log(`   Peak Heap: ${this.formatBytes(report.peakMemory.heapSize)}`);
-    console.log(
+    console.info(`Duration: ${(report.duration / 1000).toFixed(2)}s`);
+    console.info(`GC Runs: ${report.gcRuns}`);
+    console.info('\nMemory Usage:');
+    console.info(`   Initial Heap: ${this.formatBytes(report.initialMemory.heapSize)}`);
+    console.info(`   Final Heap: ${this.formatBytes(report.finalMemory.heapSize)}`);
+    console.info(`   Peak Heap: ${this.formatBytes(report.peakMemory.heapSize)}`);
+    console.info(
       `   Heap Growth: ${this.formatBytes(heapGrowth)} (${heapGrowth > 0 ? '📈' : '📉'})`
     );
-    console.log('\nObject Count:');
-    console.log(`   Initial: ${report.initialMemory.objectCount.toLocaleString()}`);
-    console.log(`   Final: ${report.finalMemory.objectCount.toLocaleString()}`);
-    console.log(`   Growth: ${objectGrowth.toLocaleString()} objects`);
+    console.info('\nObject Count:');
+    console.info(`   Initial: ${report.initialMemory.objectCount.toLocaleString()}`);
+    console.info(`   Final: ${report.finalMemory.objectCount.toLocaleString()}`);
+    console.info(`   Growth: ${objectGrowth.toLocaleString()} objects`);
 
     if (report.leaks.length > 0) {
-      console.log('\n⚠️  Potential Memory Leaks:');
+      console.info('\n⚠️  Potential Memory Leaks:');
       report.leaks.slice(0, 5).forEach(leak => {
         if (leak.suspicious) {
-          console.log(
+          console.info(
             `   🔴 ${leak.type}: +${leak.growth} objects (${(leak.growthRate * 100).toFixed(1)}% growth)`
           );
         } else {
-          console.log(`   🟡 ${leak.type}: +${leak.growth} objects`);
+          console.info(`   🟡 ${leak.type}: +${leak.growth} objects`);
         }
       });
     } else {
-      console.log('\n✅ No memory leaks detected');
+      console.info('\n✅ No memory leaks detected');
     }
   }
 
@@ -409,7 +409,7 @@ export class MemoryProfiler {
    * Analyze heap snapshot
    */
   async analyzeSnapshot(snapshotPath: string): Promise<void> {
-    console.log(`\n🔍 Analyzing heap snapshot: ${snapshotPath}`);
+    console.info(`\n🔍 Analyzing heap snapshot: ${snapshotPath}`);
 
     const snapshot = await Bun.file(snapshotPath).json();
 
@@ -419,11 +419,11 @@ export class MemoryProfiler {
 
     if (snapshot.nodes) {
       // Process nodes based on snapshot format
-      console.log(`   Total nodes: ${snapshot.nodes.length}`);
+      console.info(`   Total nodes: ${snapshot.nodes.length}`);
     }
 
-    console.log('✅ Snapshot analysis complete');
-    console.log('   Use Safari DevTools or WebKit GTK to view detailed analysis');
+    console.info('✅ Snapshot analysis complete');
+    console.info('   Use Safari DevTools or WebKit GTK to view detailed analysis');
   }
 }
 
@@ -431,8 +431,8 @@ export class MemoryProfiler {
 async function runMemoryDemos() {
   const profiler = new MemoryProfiler('Fire22 Memory Analysis');
 
-  console.log('🧠 Fire22 Memory Profiler Demo');
-  console.log('='.repeat(50));
+  console.info('🧠 Fire22 Memory Profiler Demo');
+  console.info('='.repeat(50));
 
   // Demo 1: Profile array operations
   await profiler.compareMemory('Array Creation', {
@@ -486,7 +486,7 @@ async function runMemoryDemos() {
   // Demo 3: Generate heap snapshot
   await profiler.generateHeapSnapshot('demo-heap.json');
 
-  console.log('\n✅ Memory profiling demo complete!');
+  console.info('\n✅ Memory profiling demo complete!');
 }
 
 // Run demos if executed directly

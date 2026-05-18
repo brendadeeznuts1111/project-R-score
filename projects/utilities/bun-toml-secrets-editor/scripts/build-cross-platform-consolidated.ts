@@ -91,7 +91,7 @@ function parseArgs(): BuildOptions {
 }
 
 function showHelp(): void {
-	console.log(`
+	console.info(`
 🔨 Consolidated Cross-Platform Build Script
 
 USAGE:
@@ -142,23 +142,23 @@ class CrossPlatformBuilder {
 	async build(): Promise<void> {
 		const buildMatrix = this.generateBuildMatrix();
 
-		console.log(`🏗️  Building ${buildMatrix.length} target(s)...`);
+		console.info(`🏗️  Building ${buildMatrix.length} target(s)...`);
 
 		if (this.options.verbose) {
-			console.log("\n📋 Build Matrix:");
+			console.info("\n📋 Build Matrix:");
 			buildMatrix.forEach((target, index) => {
-				console.log(
+				console.info(
 					`  ${index + 1}. ${target.platform}-${target.arch}-${target.tier}`,
 				);
 			});
-			console.log("");
+			console.info("");
 		}
 
 		for (const target of buildMatrix) {
 			await this.buildTarget(target);
 		}
 
-		console.log("✅ Build completed successfully!");
+		console.info("✅ Build completed successfully!");
 	}
 
 	private generateBuildMatrix(): Array<{
@@ -180,7 +180,7 @@ class CrossPlatformBuilder {
 					// Skip invalid combinations
 					if (platform === "win32" && arch === "arm64") {
 						if (this.options.verbose) {
-							console.log(`⚠️  Skipping win32-arm64 (not supported)`);
+							console.info(`⚠️  Skipping win32-arm64 (not supported)`);
 						}
 						continue;
 					}
@@ -213,14 +213,14 @@ class CrossPlatformBuilder {
 		];
 
 		if (this.options.verbose) {
-			console.log(
+			console.info(
 				`🔨 Building ${target.platform}-${target.arch}-${target.tier}...`,
 			);
-			console.log(`   Command: ${command.join(" ")}`);
+			console.info(`   Command: ${command.join(" ")}`);
 		}
 
 		if (this.options.dryRun) {
-			console.log(`[DRY-RUN] Would execute: ${command.join(" ")}`);
+			console.info(`[DRY-RUN] Would execute: ${command.join(" ")}`);
 			return;
 		}
 
@@ -235,7 +235,7 @@ class CrossPlatformBuilder {
 			const duration = Date.now() - startTime;
 
 			if (exitCode === 0) {
-				console.log(
+				console.info(
 					`✅ ${target.platform}-${target.arch}-${target.tier} (${duration}ms)`,
 				);
 			} else {

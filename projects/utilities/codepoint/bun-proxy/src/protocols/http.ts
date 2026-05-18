@@ -61,7 +61,7 @@ export class HTTPProxy extends ProxyServer {
       }
     });
 
-    console.log(`📡 HTTP Proxy listening on http://${config.host}:${config.port}`);
+    console.info(`📡 HTTP Proxy listening on http://${config.host}:${config.port}`);
   }
 
   protected async cleanup(): Promise<void> {
@@ -217,7 +217,7 @@ export class HTTPProxy extends ProxyServer {
         }
       },
       cancel: () => {
-        console.log('Stream cancelled');
+        console.info('Stream cancelled');
       }
     });
 

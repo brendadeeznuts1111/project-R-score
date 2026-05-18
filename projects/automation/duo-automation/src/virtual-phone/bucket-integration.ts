@@ -71,14 +71,14 @@ export class BucketIntegration {
    */
   async connect(): Promise<boolean> {
     try {
-      console.log(`🪣 Connecting to ${this.config.provider} bucket: ${this.config.bucketName}`);
-      console.log(`🌍 Region: ${this.config.region}`);
+      console.info(`🪣 Connecting to ${this.config.provider} bucket: ${this.config.bucketName}`);
+      console.info(`🌍 Region: ${this.config.region}`);
       
       // Simulate connection setup
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       this.isConnected = true;
-      console.log('✅ Bucket connection established');
+      console.info('✅ Bucket connection established');
       
       // Initialize default bucket structure
       await this.initializeBucketStructure();
@@ -95,7 +95,7 @@ export class BucketIntegration {
    */
   async disconnect(): Promise<void> {
     this.isConnected = false;
-    console.log('🪣 Bucket connection closed');
+    console.info('🪣 Bucket connection closed');
   }
 
   /**
@@ -119,7 +119,7 @@ export class BucketIntegration {
       await this.createFolder(folder);
     }
 
-    console.log('📁 Bucket structure initialized');
+    console.info('📁 Bucket structure initialized');
   }
 
   /**
@@ -181,7 +181,7 @@ export class BucketIntegration {
       // Log access
       this.logAccess('STORE', key, bucketObject.size);
       
-      console.log(`✅ Phone record stored: ${key}`);
+      console.info(`✅ Phone record stored: ${key}`);
       return true;
     } catch (error) {
       console.error('❌ Failed to store phone record:', error);
@@ -198,7 +198,7 @@ export class BucketIntegration {
       const bucketObject = this.bucketData.get(key);
       
       if (!bucketObject) {
-        console.log(`❌ Phone record not found: ${key}`);
+        console.info(`❌ Phone record not found: ${key}`);
         return null;
       }
 
@@ -214,7 +214,7 @@ export class BucketIntegration {
       // Log access
       this.logAccess('RETRIEVE', key, bucketObject.size);
       
-      console.log(`✅ Phone record retrieved: ${key}`);
+      console.info(`✅ Phone record retrieved: ${key}`);
       return record;
     } catch (error) {
       console.error('❌ Failed to retrieve phone record:', error);
@@ -253,7 +253,7 @@ export class BucketIntegration {
       // Log access
       this.logAccess('STORE_IDENTITY', key, bucketObject.size);
       
-      console.log(`✅ Identity data stored: ${key}`);
+      console.info(`✅ Identity data stored: ${key}`);
       return true;
     } catch (error) {
       console.error('❌ Failed to store identity data:', error);
@@ -294,7 +294,7 @@ export class BucketIntegration {
       // Log access
       this.logAccess('STORE_FINTECH', key, bucketObject.size);
       
-      console.log(`✅ Fintech data stored: ${key}`);
+      console.info(`✅ Fintech data stored: ${key}`);
       return true;
     } catch (error) {
       console.error('❌ Failed to store fintech data:', error);
@@ -310,7 +310,7 @@ export class BucketIntegration {
     const timestamp = new Date();
     
     try {
-      console.log(`🔄 Creating backup: ${backupId}`);
+      console.info(`🔄 Creating backup: ${backupId}`);
       
       let totalObjects = 0;
       let totalSize = 0;
@@ -386,7 +386,7 @@ export class BucketIntegration {
       
       const compressionRatio = originalTotalSize > 0 ? originalTotalSize / totalSize : 1.0;
       
-      console.log(`✅ Backup created: ${backupId} (${totalObjects} objects, ${totalSize} bytes)`);
+      console.info(`✅ Backup created: ${backupId} (${totalObjects} objects, ${totalSize} bytes)`);
       
       return {
         success: true,
@@ -420,7 +420,7 @@ export class BucketIntegration {
     const timestamp = new Date();
     
     try {
-      console.log(`🔄 Restoring from backup: ${backupId}`);
+      console.info(`🔄 Restoring from backup: ${backupId}`);
       
       // Load backup manifest
       const manifestKey = `backups/${backupId}/manifest.json`;
@@ -479,7 +479,7 @@ export class BucketIntegration {
         }
       }
       
-      console.log(`✅ Restore completed: ${restoreId} (${totalObjects} objects, ${totalSize} bytes)`);
+      console.info(`✅ Restore completed: ${restoreId} (${totalObjects} objects, ${totalSize} bytes)`);
       
       return {
         success: true,

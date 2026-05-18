@@ -175,49 +175,49 @@ function generateSuggestions(analysis: ChangeAnalysis): string[] {
 
 // Main
 if (import.meta.main) {
-	console.log("🔍 Analyzing staged changes...\n");
+	console.info("🔍 Analyzing staged changes...\n");
 
 	const analysis = await analyzeChanges();
 
 	if (analysis.files.length === 0) {
-		console.log("❌ No staged changes found.");
-		console.log();
-		console.log("Stage files first:");
-		console.log("  git add <files>");
+		console.info("❌ No staged changes found.");
+		console.info();
+		console.info("Stage files first:");
+		console.info("  git add <files>");
 		process.exit(1);
 	}
 
-	console.log("Files changed:");
+	console.info("Files changed:");
 	for (const file of analysis.files.slice(0, 10)) {
-		console.log(`  • ${file}`);
+		console.info(`  • ${file}`);
 	}
 	if (analysis.files.length > 10) {
-		console.log(`  ... and ${analysis.files.length - 10} more`);
+		console.info(`  ... and ${analysis.files.length - 10} more`);
 	}
 
-	console.log();
-	console.log("Analysis:");
-	console.log(`  Domain:     ${analysis.domains.join(", ") || "PLATFORM (default)"}`);
-	console.log(`  Component:  ${analysis.components.join(", ") || "MATRIX (default)"}`);
-	console.log(`  Types:      ${analysis.types.join(", ") || "Update"}`);
-	console.log(`  Tier:       ${analysis.tier}`);
-	console.log();
+	console.info();
+	console.info("Analysis:");
+	console.info(`  Domain:     ${analysis.domains.join(", ") || "PLATFORM (default)"}`);
+	console.info(`  Component:  ${analysis.components.join(", ") || "MATRIX (default)"}`);
+	console.info(`  Types:      ${analysis.types.join(", ") || "Update"}`);
+	console.info(`  Tier:       ${analysis.tier}`);
+	console.info();
 
 	// Generate suggestions
 	const suggestions = generateSuggestions(analysis);
 
-	console.log("Suggested commit messages:");
-	console.log();
+	console.info("Suggested commit messages:");
+	console.info();
 	for (let i = 0; i < suggestions.length; i++) {
-		console.log(`  ${i + 1}. ${suggestions[i]}`);
+		console.info(`  ${i + 1}. ${suggestions[i]}`);
 	}
 
-	console.log();
-	console.log("Use with:");
-	console.log(`  git commit -m "${suggestions[0]}"`);
-	console.log();
-	console.log("Or with the helper:");
-	console.log(
+	console.info();
+	console.info("Use with:");
+	console.info(`  git commit -m "${suggestions[0]}"`);
+	console.info();
+	console.info("Or with the helper:");
+	console.info(
 		`  bun ~/.kimi/skills/tier1380-commit-flow/scripts/git-commit.ts "${suggestions[0]}"`,
 	);
 }

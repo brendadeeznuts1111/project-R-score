@@ -81,4 +81,4 @@ g.matchMedia = (query: string) => ({
   dispatchEvent: () => false,
 });
 
-console.log("[happydom] DOM globals registered");
+console.info("[happydom] DOM globals registered");

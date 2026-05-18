@@ -19,7 +19,7 @@ export class BufferOptimizer {
       const result = buffer.indexOf(pattern);
       
       const duration = performance.now() - startTime;
-      console.log(`🔍 Pattern search completed in ${duration.toFixed(3)}ms (SIMD: ${buffer.length > this.SIMD_THRESHOLD ? 'ON' : 'OFF'})`);
+      console.info(`🔍 Pattern search completed in ${duration.toFixed(3)}ms (SIMD: ${buffer.length > this.SIMD_THRESHOLD ? 'ON' : 'OFF'})`);
       
       return result;
     } catch (error) {
@@ -42,7 +42,7 @@ export class BufferOptimizer {
     }
     
     const duration = performance.now() - startTime;
-    console.log(`🔍 Multi-pattern search (${patterns.length} patterns) completed in ${duration.toFixed(3)}ms`);
+    console.info(`🔍 Multi-pattern search (${patterns.length} patterns) completed in ${duration.toFixed(3)}ms`);
     
     return results;
   }
@@ -121,14 +121,14 @@ export class BufferOptimizer {
    * Benchmark buffer operations
    */
   static async benchmarkOperations(): Promise<void> {
-    console.log('🚀 Buffer Performance Benchmark (Bun v1.3.6 SIMD Features)');
-    console.log('=' .repeat(60));
+    console.info('🚀 Buffer Performance Benchmark (Bun v1.3.6 SIMD Features)');
+    console.info('=' .repeat(60));
     
     // Test data sizes
     const testSizes = [1024, 10240, 102400, 1024000]; // 1KB to 1MB
     
     for (const size of testSizes) {
-      console.log(`\n📊 Testing ${size} bytes...`);
+      console.info(`\n📊 Testing ${size} bytes...`);
       
       // Create test data
       const testData = Buffer.alloc(size, 'x'.charCodeAt(0));
@@ -140,8 +140,8 @@ export class BufferOptimizer {
       // Benchmark SIMD vs regular search
       const simdTime = this.benchmarkSearch(testData, pattern);
       
-      console.log(`  🔍 SIMD search: ${simdTime.toFixed(3)}ms`);
-      console.log(`  📈 Throughput: ${(size / 1024 / 1024 / (simdTime / 1000)).toFixed(2)} MB/s`);
+      console.info(`  🔍 SIMD search: ${simdTime.toFixed(3)}ms`);
+      console.info(`  📈 Throughput: ${(size / 1024 / 1024 / (simdTime / 1000)).toFixed(2)} MB/s`);
     }
   }
 
@@ -178,7 +178,7 @@ export class BufferOptimizer {
     let patternsFound = 0;
     let totalBytesRead = 0;
     
-    console.log(`📁 Processing large file: ${filePath} (${(totalSize / 1024 / 1024).toFixed(2)}MB)`);
+    console.info(`📁 Processing large file: ${filePath} (${(totalSize / 1024 / 1024).toFixed(2)}MB)`);
     
     const patterns = ['error', 'warning', 'critical'];
     
@@ -201,7 +201,7 @@ export class BufferOptimizer {
       // Progress reporting
       if (chunksProcessed % 10 === 0) {
         const progress = (end / totalSize * 100).toFixed(1);
-        console.log(`  📈 Progress: ${progress}% (${chunksProcessed} chunks)`);
+        console.info(`  📈 Progress: ${progress}% (${chunksProcessed} chunks)`);
       }
     }
     
@@ -228,17 +228,17 @@ if (import.meta.main) {
       const filePath = process.argv[3];
       if (filePath) {
         const result = await BufferOptimizer.processLargeFile(filePath);
-        console.log('\n📊 Processing Results:');
-        console.log(`  📁 Total bytes: ${(result.totalBytes / 1024 / 1024).toFixed(2)}MB`);
-        console.log(`  🧩 Chunks processed: ${result.chunksProcessed}`);
-        console.log(`  🔍 Patterns found: ${result.patternsFound}`);
-        console.log(`  ⏱️ Processing time: ${result.processingTime.toFixed(2)}ms`);
-        console.log(`  🚀 Throughput: ${(result.totalBytes / 1024 / 1024 / (result.processingTime / 1000)).toFixed(2)} MB/s`);
+        console.info('\n📊 Processing Results:');
+        console.info(`  📁 Total bytes: ${(result.totalBytes / 1024 / 1024).toFixed(2)}MB`);
+        console.info(`  🧩 Chunks processed: ${result.chunksProcessed}`);
+        console.info(`  🔍 Patterns found: ${result.patternsFound}`);
+        console.info(`  ⏱️ Processing time: ${result.processingTime.toFixed(2)}ms`);
+        console.info(`  🚀 Throughput: ${(result.totalBytes / 1024 / 1024 / (result.processingTime / 1000)).toFixed(2)} MB/s`);
       } else {
-        console.log('Usage: bun buffer-optimizer.ts process <file-path>');
+        console.info('Usage: bun buffer-optimizer.ts process <file-path>');
       }
       break;
     default:
-      console.log('Usage: bun buffer-optimizer.ts [benchmark|process] [file-path]');
+      console.info('Usage: bun buffer-optimizer.ts [benchmark|process] [file-path]');
   }
 }

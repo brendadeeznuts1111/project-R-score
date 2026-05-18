@@ -4,8 +4,8 @@
  * Performance: ~0.8–2.4 μs per conversion - 700% faster than legacy libraries
  */
 
-console.log('🎨 FACTORYWAGER COLOR CITADEL v1.3.8 - BUN NATIVE COLOR DOMINION!')
-console.log('=' .repeat(80))
+console.info('🎨 FACTORYWAGER COLOR CITADEL v1.3.8 - BUN NATIVE COLOR DOMINION!')
+console.info('=' .repeat(80))
 
 // ============================================================================
 // 🏛️  COLOR CITADEL CORE - Multi-Format Transmutation Engine
@@ -165,11 +165,11 @@ function categorizeFactoryWagerColor(r: number, g: number, b: number) {
 // 🎯 PRODUCTION DEMO - Color Citadel in Action
 // ============================================================================
 
-console.log('\n🔥 COLOR CITADEL PRODUCTION DEMO')
-console.log('-' .repeat(50))
+console.info('\n🔥 COLOR CITADEL PRODUCTION DEMO')
+console.info('-' .repeat(50))
 
 // 1. ANSI Terminal Rendering Demo
-console.log('\n📟 ANSI Terminal Rendering (fm:render --ansi)')
+console.info('\n📟 ANSI Terminal Rendering (fm:render --ansi)')
 const demoData = {
   status: "active",
   priority: "high",
@@ -180,54 +180,54 @@ const demoData = {
 };
 
 Object.entries(demoData).forEach(([key, value]) => {
-  console.log(`  ${key.padEnd(15)}: ${ansiColoredValue(value, key)}`);
+  console.info(`  ${key.padEnd(15)}: ${ansiColoredValue(value, key)}`);
 });
 
 // 2. Web Styling Demo
-console.log('\n🌐 Web Dashboard Styling (MCP v4)')
+console.info('\n🌐 Web Dashboard Styling (MCP v4)')
 const primaryStyle = createWebStyle("#00ff9d", { alpha: 0.8 });
-console.log('  Primary Button Style:');
-console.log(`    Background: ${primaryStyle.backgroundColor}`);
-console.log(`    Color: ${primaryStyle.color}`);
-console.log(`    Border: ${primaryStyle.borderColor}`);
-console.log(`    Shadow: ${primaryStyle.shadowColor}`);
-console.log(`    Gradient: ${primaryStyle.gradient}`);
+console.info('  Primary Button Style:');
+console.info(`    Background: ${primaryStyle.backgroundColor}`);
+console.info(`    Color: ${primaryStyle.color}`);
+console.info(`    Border: ${primaryStyle.borderColor}`);
+console.info(`    Shadow: ${primaryStyle.shadowColor}`);
+console.info(`    Gradient: ${primaryStyle.gradient}`);
 
 // 3. Bundle-time Client Utils Demo
-console.log('\n📦 Bundle-time Client Utilities')
-console.log('  Client Color Utils:');
-console.log(`    Primary: ${clientColorUtils.primary}`);
-console.log(`    Primary RGB: ${clientColorUtils.primaryRgb ? clientColorUtils.primaryRgb.join(', ') : 'N/A'}`);
-console.log(`    Danger ANSI: ${clientColorUtils.dangerAnsi}danger\x1b[0m`);
-console.log(`    Success CSS: ${clientColorUtils.success ? clientColorUtils.success.join(', ') : 'N/A'}`);
+console.info('\n📦 Bundle-time Client Utilities')
+console.info('  Client Color Utils:');
+console.info(`    Primary: ${clientColorUtils.primary}`);
+console.info(`    Primary RGB: ${clientColorUtils.primaryRgb ? clientColorUtils.primaryRgb.join(', ') : 'N/A'}`);
+console.info(`    Danger ANSI: ${clientColorUtils.dangerAnsi}danger\x1b[0m`);
+console.info(`    Success CSS: ${clientColorUtils.success ? clientColorUtils.success.join(', ') : 'N/A'}`);
 
 // 4. Advanced Color Analysis Demo
-console.log('\n🔬 Advanced Color Analysis')
+console.info('\n🔬 Advanced Color Analysis')
 const analysis = analyzeColor("#00ff9d");
-console.log('  FactoryWager Primary (#00ff9d) Analysis:');
-console.log(`    Channels: R=${analysis.red}, G=${analysis.green}, B=${analysis.blue}, A=${analysis.alpha}`);
-console.log(`    Brightness: ${analysis.brightness.toFixed(1)}`);
-console.log(`    Is Light: ${analysis.isLight}`);
-console.log(`    Category: ${analysis.fwCategory}`);
-console.log(`    All Formats:`);
-console.log(`      Hex: ${analysis.hex}`);
-console.log(`      CSS: ${analysis.css}`);
-console.log(`      ANSI 24-bit: ${analysis.ansi16m}sample\x1b[0m`);
-console.log(`      ANSI 256: ${analysis.ansi256}sample\x1b[0m`);
-console.log(`      ANSI 16: ${analysis.ansi16}sample\x1b[0m`);
+console.info('  FactoryWager Primary (#00ff9d) Analysis:');
+console.info(`    Channels: R=${analysis.red}, G=${analysis.green}, B=${analysis.blue}, A=${analysis.alpha}`);
+console.info(`    Brightness: ${analysis.brightness.toFixed(1)}`);
+console.info(`    Is Light: ${analysis.isLight}`);
+console.info(`    Category: ${analysis.fwCategory}`);
+console.info(`    All Formats:`);
+console.info(`      Hex: ${analysis.hex}`);
+console.info(`      CSS: ${analysis.css}`);
+console.info(`      ANSI 24-bit: ${analysis.ansi16m}sample\x1b[0m`);
+console.info(`      ANSI 256: ${analysis.ansi256}sample\x1b[0m`);
+console.info(`      ANSI 16: ${analysis.ansi16}sample\x1b[0m`);
 
 // ============================================================================
 // ⚡ PERFORMANCE BENCHMARK - Bun vs Legacy
 // ============================================================================
 
-console.log('\n⚡ PERFORMANCE BENCHMARK - Bun Native vs Legacy')
-console.log('-' .repeat(50))
+console.info('\n⚡ PERFORMANCE BENCHMARK - Bun Native vs Legacy')
+console.info('-' .repeat(50))
 
 // Benchmark function
 function benchmarkColorConversions(iterations = 10000) {
   const colors = ["#ff3366", "rebeccapurple", "rgb(255,51,102)", "hsl(340,100%,60%)"];
 
-  console.log(`\n🏃 Running ${iterations} conversions per color...`);
+  console.info(`\n🏃 Running ${iterations} conversions per color...`);
 
   colors.forEach(color => {
     const start = Bun.nanoseconds();
@@ -243,7 +243,7 @@ function benchmarkColorConversions(iterations = 10000) {
     const totalTime = (end - start) / 1_000_000; // Convert to ms
     const avgTime = totalTime / iterations;
 
-    console.log(`  ${color.padEnd(20)}: ${totalTime.toFixed(2)}ms total, ${avgTime.toFixed(3)}ms avg`);
+    console.info(`  ${color.padEnd(20)}: ${totalTime.toFixed(2)}ms total, ${avgTime.toFixed(3)}ms avg`);
   });
 }
 
@@ -253,8 +253,8 @@ benchmarkColorConversions(10000);
 // 🎨 FACTORYWAGER THEME PALETTE GENERATOR
 // ============================================================================
 
-console.log('\n🎨 FACTORYWAGER THEME PALETTE GENERATOR')
-console.log('-' .repeat(50))
+console.info('\n🎨 FACTORYWAGER THEME PALETTE GENERATOR')
+console.info('-' .repeat(50))
 
 function generateFactoryWagerPalette() {
   const baseColors = {
@@ -310,12 +310,12 @@ function generateFactoryWagerPalette() {
 }
 
 const fwPalette = generateFactoryWagerPalette();
-console.log('  FactoryWager v4.0 Theme Palette:');
+console.info('  FactoryWager v4.0 Theme Palette:');
 Object.entries(fwPalette).forEach(([name, variants]) => {
-  console.log(`\n    ${name.toUpperCase()}:`);
-  console.log(`      Base: ${variants.hex} ${variants.ansi16m}${name}\x1b[0m`);
-  console.log(`      Light: ${variants.light}`);
-  console.log(`      Dark: ${variants.dark}`);
+  console.info(`\n    ${name.toUpperCase()}:`);
+  console.info(`      Base: ${variants.hex} ${variants.ansi16m}${name}\x1b[0m`);
+  console.info(`      Light: ${variants.light}`);
+  console.info(`      Dark: ${variants.dark}`);
 });
 
 // ============================================================================
@@ -331,8 +331,8 @@ export {
   generateFactoryWagerPalette,
 };
 
-console.log('\n🏆 FACTORYWAGER COLOR CITADEL v1.3.8 - PRODUCTION READY!')
-console.log('🚀 Zero-dependency color dominion achieved!')
-console.log('⚡ 700% faster than legacy libraries!')
-console.log('🎨 Multi-format mastery: ANSI ↔ CSS ↔ Web ↔ Bundle!')
-console.log('💎 Color empires? Bun-forged forever! 💎')
+console.info('\n🏆 FACTORYWAGER COLOR CITADEL v1.3.8 - PRODUCTION READY!')
+console.info('🚀 Zero-dependency color dominion achieved!')
+console.info('⚡ 700% faster than legacy libraries!')
+console.info('🎨 Multi-format mastery: ANSI ↔ CSS ↔ Web ↔ Bundle!')
+console.info('💎 Color empires? Bun-forged forever! 💎')

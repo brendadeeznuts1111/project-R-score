@@ -51,9 +51,9 @@ class AuthTestSuite {
    * Run all authentication tests
    */
   async runAllTests(): Promise<void> {
-    console.log('🧪 Fire22 Authentication Test Suite');
-    console.log('='.repeat(60));
-    console.log('Testing JWT validation, security features, and more...\n');
+    console.info('🧪 Fire22 Authentication Test Suite');
+    console.info('='.repeat(60));
+    console.info('Testing JWT validation, security features, and more...\n');
 
     const testCases: TestCase[] = [
       // JWT Token Tests
@@ -179,8 +179,8 @@ class AuthTestSuite {
     const categories = [...new Set(testCases.map(t => t.category))];
 
     for (const category of categories) {
-      console.log(`\n📦 ${category} Tests`);
-      console.log('-'.repeat(40));
+      console.info(`\n📦 ${category} Tests`);
+      console.info('-'.repeat(40));
 
       const categoryTests = testCases.filter(t => t.category === category);
 
@@ -212,9 +212,9 @@ class AuthTestSuite {
       });
 
       if (passed) {
-        console.log(`✅ PASS (${duration}ms)`);
+        console.info(`✅ PASS (${duration}ms)`);
       } else {
-        console.log(`❌ FAIL (${duration}ms)`);
+        console.info(`❌ FAIL (${duration}ms)`);
       }
     } catch (error) {
       const duration = Date.now() - startTime;
@@ -228,7 +228,7 @@ class AuthTestSuite {
         critical: testCase.critical,
       });
 
-      console.log(
+      console.info(
         `❌ ERROR (${duration}ms): ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }
@@ -511,36 +511,36 @@ class AuthTestSuite {
     const criticalPassed = critical.filter(r => r.passed).length;
     const passRate = ((passed / total) * 100).toFixed(1);
 
-    console.log('\n' + '='.repeat(60));
-    console.log('🔐 Authentication Test Summary');
-    console.log('-'.repeat(60));
-    console.log(`Total Tests: ${total}`);
-    console.log(`✅ Passed: ${passed}`);
-    console.log(`❌ Failed: ${failed}`);
-    console.log(`📈 Pass Rate: ${passRate}%`);
-    console.log(`🔥 Critical Tests: ${criticalPassed}/${critical.length} passed`);
+    console.info('\n' + '='.repeat(60));
+    console.info('🔐 Authentication Test Summary');
+    console.info('-'.repeat(60));
+    console.info(`Total Tests: ${total}`);
+    console.info(`✅ Passed: ${passed}`);
+    console.info(`❌ Failed: ${failed}`);
+    console.info(`📈 Pass Rate: ${passRate}%`);
+    console.info(`🔥 Critical Tests: ${criticalPassed}/${critical.length} passed`);
 
     if (failed > 0) {
-      console.log('\n❌ Failed Tests:');
+      console.info('\n❌ Failed Tests:');
       this.results
         .filter(r => !r.passed)
         .forEach(result => {
           const criticality = result.critical ? '🔥 CRITICAL' : '';
-          console.log(`  • ${result.name} ${criticality}`);
+          console.info(`  • ${result.name} ${criticality}`);
           if (result.error) {
-            console.log(`    Error: ${result.error}`);
+            console.info(`    Error: ${result.error}`);
           }
         });
     }
 
     // Overall status
-    console.log('\n' + '='.repeat(60));
+    console.info('\n' + '='.repeat(60));
     if (passed === total) {
-      console.log('✅ All authentication tests passed! Security system is ready.');
+      console.info('✅ All authentication tests passed! Security system is ready.');
     } else if (criticalPassed === critical.length && passRate >= '80') {
-      console.log('⚠️  Most tests passed, critical security features working.');
+      console.info('⚠️  Most tests passed, critical security features working.');
     } else {
-      console.log('❌ Authentication tests failed. Security system needs attention.');
+      console.info('❌ Authentication tests failed. Security system needs attention.');
     }
   }
 }
@@ -550,7 +550,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🧪 Fire22 Authentication Test Suite
 
 DESCRIPTION:

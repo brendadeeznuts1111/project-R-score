@@ -54,7 +54,7 @@ export class BunWorkerPoolExecutor {
    * Initialize the worker pool
    */
   async initialize(): Promise<void> {
-    console.log(`🚀 Initializing worker pool with ${this.maxWorkerThreads} threads`);
+    console.info(`🚀 Initializing worker pool with ${this.maxWorkerThreads} threads`);
     
     for (let i = 0; i < this.maxWorkerThreads; i++) {
       const worker = new Worker(join(__dirname, 'worker-thread.js'), {
@@ -226,7 +226,7 @@ export class BunWorkerPoolExecutor {
    * Handle worker exit
    */
   private handleWorkerExit(workerIndex: number, code: number): void {
-    console.log(`Worker ${workerIndex} exited with code ${code}`);
+    console.info(`Worker ${workerIndex} exited with code ${code}`);
     this.busyWorkers.delete(workerIndex);
     
     if (code !== 0) {
@@ -239,7 +239,7 @@ export class BunWorkerPoolExecutor {
    * Handle task timeout
    */
   private handleTaskTimeout(workerIndex: number, taskId: string): void {
-    console.log(`Task ${taskId} timed out on worker ${workerIndex}`);
+    console.info(`Task ${taskId} timed out on worker ${workerIndex}`);
     
     const task = this.findTaskInQueue(taskId);
     if (task) {
@@ -257,7 +257,7 @@ export class BunWorkerPoolExecutor {
    * Restart a worker
    */
   private restartWorker(workerIndex: number): void {
-    console.log(`Restarting worker ${workerIndex}`);
+    console.info(`Restarting worker ${workerIndex}`);
     
     const newWorker = new Worker(join(__dirname, 'worker-thread.js'), {
       transferList: this.transferListEnabled ? [] : undefined
@@ -312,7 +312,7 @@ export class BunWorkerPoolExecutor {
    * Shutdown worker pool
    */
   async shutdown(): Promise<void> {
-    console.log('🛑 Shutting down worker pool...');
+    console.info('🛑 Shutting down worker pool...');
     
     this.isRunning = false;
     
@@ -332,7 +332,7 @@ export class BunWorkerPoolExecutor {
     this.busyWorkers.clear();
     this.taskResults.clear();
     
-    console.log('✅ Worker pool shutdown complete');
+    console.info('✅ Worker pool shutdown complete');
   }
 
   /**

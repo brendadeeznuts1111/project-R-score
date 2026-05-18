@@ -10,11 +10,11 @@ import { EXIT_CODES } from "../.claude/lib/exit-codes.ts";
 
 // ── --help ──────────────────────────────────────────────────────────────────
 if (Bun.argv.includes("--help") || Bun.argv.includes("-h")) {
-	console.log(
+	console.info(
 		`\n${fmt.bold("tension-status")} — Health dashboard with Bun-native checks\n`,
 	);
-	console.log(`${fmt.bold("Usage:")} bun tools/tension-status.ts\n`);
-	console.log("Runs all checks and outputs a status table. No flags required.");
+	console.info(`${fmt.bold("Usage:")} bun tools/tension-status.ts\n`);
+	console.info("Runs all checks and outputs a status table. No flags required.");
 	process.exit(EXIT_CODES.SUCCESS);
 }
 
@@ -413,12 +413,12 @@ try {
 }
 
 // ── Output ──────────────────────────────────────────────────────────────────
-console.log("Tension-Field-God Status\n");
-console.log(Bun.inspect.table(rows, ["check", "pattern", "result", "count"]));
+console.info("Tension-Field-God Status\n");
+console.info(Bun.inspect.table(rows, ["check", "pattern", "result", "count"]));
 
 const found = rows.filter(
 	(r) => r.result === "FOUND" && r.check.includes("Anti"),
 ).length;
-console.log(
+console.info(
 	found === 0 ? "Status: ACTIVE" : `Status: ${found} anti-pattern(s) detected`,
 );

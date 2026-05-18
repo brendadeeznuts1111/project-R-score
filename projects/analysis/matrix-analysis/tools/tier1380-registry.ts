@@ -183,7 +183,7 @@ const cacheDB = initRegistryCache();
 
 // ─── DNS Prefetch for Registry ────────────────────
 async function prefetchRegistryDNS(): Promise<void> {
-	console.log(`${GLYPHS.DNS} Prefetching registry DNS...`);
+	console.info(`${GLYPHS.DNS} Prefetching registry DNS...`);
 
 	const start = Bun.nanoseconds();
 
@@ -205,7 +205,7 @@ async function prefetchRegistryDNS(): Promise<void> {
 	);
 
 	const duration = Number(Bun.nanoseconds() - start) / 1000000;
-	console.log(`${GLYPHS.OK} DNS prefetch complete (${duration.toFixed(2)}ms)`);
+	console.info(`${GLYPHS.OK} DNS prefetch complete (${duration.toFixed(2)}ms)`);
 }
 
 // ─── Parse Version ────────────────────────────────
@@ -345,7 +345,7 @@ async function setCacheEntry(
 
 // ─── Check Registry ───────────────────────────────
 async function checkRegistry(): Promise<RegistryStatus> {
-	console.log(`${GLYPHS.CONNECT} Checking OMEGA Registry connection...\n`);
+	console.info(`${GLYPHS.CONNECT} Checking OMEGA Registry connection...\n`);
 
 	const startTime = Bun.nanoseconds();
 
@@ -425,8 +425,8 @@ async function checkPort(port: number, host = "127.0.0.1"): Promise<boolean> {
 
 // ─── Display Status ───────────────────────────────
 function displayStatus(status: RegistryStatus): void {
-	console.log(`${GLYPHS.DRIFT} Tier-1380 OMEGA Registry Status\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} Tier-1380 OMEGA Registry Status\n`);
+	console.info("-".repeat(70));
 
 	const connIcon = status.connected ? GLYPHS.OK : GLYPHS.FAIL;
 	const connStatus = status.connected ? "CONNECTED" : "DISCONNECTED";
@@ -434,51 +434,51 @@ function displayStatus(status: RegistryStatus): void {
 	const r2Status = status.r2Status === "connected" ? "CONNECTED" : "DISCONNECTED";
 	const cacheIcon = status.cacheStatus === "ready" ? GLYPHS.OK : GLYPHS.FAIL;
 
-	console.log(`  Connection:      ${connIcon} ${connStatus}`);
-	console.log(`  Environment:     ${status.environment.toUpperCase()}`);
-	console.log(`  Version:         ${status.version}`);
-	console.log(`  KV Namespace:    ${REGISTRY_CONFIG.kvNamespace}`);
-	console.log(`  KV Status:       ${status.kvStatus}`);
-	console.log(`  R2 Bucket:       ${R2_CONFIG.bucket}`);
-	console.log(`  R2 Status:       ${r2Icon} ${r2Status}`);
-	console.log(`  Cache Status:    ${cacheIcon} ${status.cacheStatus.toUpperCase()}`);
-	console.log(`  DNS Status:      ${GLYPHS.OK} ${status.dnsStatus.toUpperCase()}`);
-	console.log(`  Latency:         ${(Number(status.latencyNs) / 1000000).toFixed(2)}ms`);
-	console.log(`  Timestamp:       ${status.timestamp}`);
+	console.info(`  Connection:      ${connIcon} ${connStatus}`);
+	console.info(`  Environment:     ${status.environment.toUpperCase()}`);
+	console.info(`  Version:         ${status.version}`);
+	console.info(`  KV Namespace:    ${REGISTRY_CONFIG.kvNamespace}`);
+	console.info(`  KV Status:       ${status.kvStatus}`);
+	console.info(`  R2 Bucket:       ${R2_CONFIG.bucket}`);
+	console.info(`  R2 Status:       ${r2Icon} ${r2Status}`);
+	console.info(`  Cache Status:    ${cacheIcon} ${status.cacheStatus.toUpperCase()}`);
+	console.info(`  DNS Status:      ${GLYPHS.OK} ${status.dnsStatus.toUpperCase()}`);
+	console.info(`  Latency:         ${(Number(status.latencyNs) / 1000000).toFixed(2)}ms`);
+	console.info(`  Timestamp:       ${status.timestamp}`);
 
-	console.log("-".repeat(70));
+	console.info("-".repeat(70));
 
 	// Parse version
 	const v = parseVersion(status.version);
-	console.log(`\n  Version Breakdown:`);
-	console.log(`    Major: ${v.major}`);
-	console.log(`    Minor: ${v.minor}`);
-	console.log(`    Patch: ${v.patch}`);
-	if (v.build) console.log(`    Build: ${v.build}`);
+	console.info(`\n  Version Breakdown:`);
+	console.info(`    Major: ${v.major}`);
+	console.info(`    Minor: ${v.minor}`);
+	console.info(`    Patch: ${v.patch}`);
+	if (v.build) console.info(`    Build: ${v.build}`);
 
 	// Registry endpoints
-	console.log(`\n  Registry Endpoints:`);
-	console.log(`    Local:       ${REGISTRY_CONFIG.local}`);
-	console.log(`    Staging:     ${REGISTRY_CONFIG.staging}`);
-	console.log(`    Production:  ${REGISTRY_CONFIG.production}`);
+	console.info(`\n  Registry Endpoints:`);
+	console.info(`    Local:       ${REGISTRY_CONFIG.local}`);
+	console.info(`    Staging:     ${REGISTRY_CONFIG.staging}`);
+	console.info(`    Production:  ${REGISTRY_CONFIG.production}`);
 
 	// R2 Configuration
-	console.log(`\n  R2 Configuration:`);
-	console.log(`    Bucket:      ${R2_CONFIG.bucket}`);
-	console.log(`    Endpoint:    ${R2_CONFIG.endpoint}`);
-	console.log(`    Region:      ${R2_CONFIG.region}`);
+	console.info(`\n  R2 Configuration:`);
+	console.info(`    Bucket:      ${R2_CONFIG.bucket}`);
+	console.info(`    Endpoint:    ${R2_CONFIG.endpoint}`);
+	console.info(`    Region:      ${R2_CONFIG.region}`);
 
 	// Cache stats
 	const cacheStats = cacheDB
 		.query("SELECT COUNT(*) as count, SUM(size) as total_size FROM registry_cache")
 		.get() as any;
-	console.log(`\n  Cache Statistics:`);
-	console.log(`    Entries:     ${cacheStats.count || 0}`);
-	console.log(`    Total Size:  ${formatBytes(cacheStats.total_size || 0)}`);
+	console.info(`\n  Cache Statistics:`);
+	console.info(`    Entries:     ${cacheStats.count || 0}`);
+	console.info(`    Total Size:  ${formatBytes(cacheStats.total_size || 0)}`);
 
-	console.log("-".repeat(70));
-	console.log(`\n  ${GLYPHS.LOCKED} OMEGA Registry v${status.version}`);
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70));
+	console.info(`\n  ${GLYPHS.LOCKED} OMEGA Registry v${status.version}`);
+	console.info("-".repeat(70) + "\n");
 }
 
 function formatBytes(bytes: number): string {
@@ -491,17 +491,17 @@ function formatBytes(bytes: number): string {
 
 // ─── Connect to Registry ──────────────────────────
 async function connectRegistry(): Promise<void> {
-	console.log(`${GLYPHS.CONNECT} Connecting to OMEGA Registry...\n`);
+	console.info(`${GLYPHS.CONNECT} Connecting to OMEGA Registry...\n`);
 
 	const status = await checkRegistry();
 
 	if (!status.connected) {
-		console.log(`${GLYPHS.FAIL} Failed to connect to registry`);
-		console.log(`\nAttempting local registry connection...`);
+		console.info(`${GLYPHS.FAIL} Failed to connect to registry`);
+		console.info(`\nAttempting local registry connection...`);
 
-		console.log(`\n${GLYPHS.DRIFT} Local registry not available`);
-		console.log(`To start the registry, run:`);
-		console.log(`  bun run omega:registry:start`);
+		console.info(`\n${GLYPHS.DRIFT} Local registry not available`);
+		console.info(`To start the registry, run:`);
+		console.info(`  bun run omega:registry:start`);
 		process.exit(1);
 	}
 
@@ -523,13 +523,13 @@ async function connectRegistry(): Promise<void> {
 		db.close();
 	}
 
-	console.log(`${GLYPHS.OK} Successfully connected to ${status.environment} registry`);
+	console.info(`${GLYPHS.OK} Successfully connected to ${status.environment} registry`);
 }
 
 // ─── Show Version History ─────────────────────────
 function showVersionHistory(): void {
-	console.log(`${GLYPHS.DRIFT} Tier-1380 OMEGA Version History\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} Tier-1380 OMEGA Version History\n`);
+	console.info("-".repeat(70));
 
 	const history = [
 		{ version: "4.0.0", date: "2026-01-31", notes: "Current stable - Bun-native APIs" },
@@ -538,10 +538,10 @@ function showVersionHistory(): void {
 	];
 
 	history.forEach((h) => {
-		console.log(`  ${h.version.padEnd(10)} ${h.date}  ${h.notes}`);
+		console.info(`  ${h.version.padEnd(10)} ${h.date}  ${h.notes}`);
 	});
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── R2 Operations ────────────────────────────────
@@ -555,11 +555,11 @@ async function r2Upload(
 	const credentials = await getR2Credentials();
 	if (!credentials) {
 		console.error(`${GLYPHS.FAIL} R2 credentials not found`);
-		console.log("Set them using:");
-		console.log(
+		console.info("Set them using:");
+		console.info(
 			"  Bun.secrets: com.factory-wager.r2.access-key-id, com.factory-wager.r2.secret-access-key",
 		);
-		console.log("  Environment: R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY");
+		console.info("  Environment: R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY");
 		process.exit(1);
 	}
 
@@ -570,9 +570,9 @@ async function r2Upload(
 
 	// Calculate CRC32 for integrity
 	const crc32 = await calculateCRC32(Buffer.from(fileData));
-	console.log(`${GLYPHS.HASH} CRC32: ${crc32.toString(16).toUpperCase()}`);
+	console.info(`${GLYPHS.HASH} CRC32: ${crc32.toString(16).toUpperCase()}`);
 
-	console.log(
+	console.info(
 		`${GLYPHS.UPLOAD} Uploading to R2: ${targetKey} (${formatBytes(fileSize)})`,
 	);
 
@@ -580,10 +580,10 @@ async function r2Upload(
 	let uploadData = fileData;
 	let isCompressed = false;
 	if (options.compress && fileSize > 1024) {
-		console.log(`${GLYPHS.COMPRESS} Compressing...`);
+		console.info(`${GLYPHS.COMPRESS} Compressing...`);
 		uploadData = await compressData(fileData);
 		isCompressed = true;
-		console.log(
+		console.info(
 			`${GLYPHS.OK} Compressed: ${formatBytes(fileSize)} → ${formatBytes(uploadData.length)}`,
 		);
 	}
@@ -606,14 +606,14 @@ async function r2Upload(
 		const durationMs = Number(durationNs) / 1000000;
 		const throughput = (fileSize / 1024 / 1024 / (durationMs / 1000)).toFixed(2);
 
-		console.log(
+		console.info(
 			`${GLYPHS.OK} Uploaded to R2 in ${durationMs.toFixed(2)}ms (${throughput} MB/s)`,
 		);
 
 		// Cache locally
 		if (options.cache !== false) {
 			await setCacheEntry(targetKey, fileData, isCompressed);
-			console.log(`${GLYPHS.CACHE} Cached locally`);
+			console.info(`${GLYPHS.CACHE} Cached locally`);
 		}
 
 		// Log to SQLite
@@ -661,24 +661,24 @@ async function r2Download(
 	if (options.useCache !== false) {
 		const cached = await getCachedEntry(r2Key);
 		if (cached) {
-			console.log(`${GLYPHS.CACHE} Cache hit for ${r2Key}`);
+			console.info(`${GLYPHS.CACHE} Cache hit for ${r2Key}`);
 			await Bun.write(targetPath, cached.data);
 
 			// Verify CRC32
 			const currentCRC32 = await calculateCRC32(Buffer.from(cached.data));
 			if (currentCRC32 === cached.crc32) {
-				console.log(
+				console.info(
 					`${GLYPHS.OK} CRC32 verified: ${currentCRC32.toString(16).toUpperCase()}`,
 				);
-				console.log(`${GLYPHS.OK} Downloaded from cache to: ${targetPath}`);
+				console.info(`${GLYPHS.OK} Downloaded from cache to: ${targetPath}`);
 				return;
 			} else {
-				console.log(`${GLYPHS.FAIL} CRC32 mismatch, fetching from R2...`);
+				console.info(`${GLYPHS.FAIL} CRC32 mismatch, fetching from R2...`);
 			}
 		}
 	}
 
-	console.log(`${GLYPHS.DOWNLOAD} Downloading from R2: ${r2Key}`);
+	console.info(`${GLYPHS.DOWNLOAD} Downloading from R2: ${r2Key}`);
 
 	const s3Opts = getR2S3Options(credentials);
 
@@ -697,7 +697,7 @@ async function r2Download(
 
 		let finalData = data;
 		if (isCompressed) {
-			console.log(`${GLYPHS.COMPRESS} Decompressing...`);
+			console.info(`${GLYPHS.COMPRESS} Decompressing...`);
 			finalData = await decompressData(data);
 		}
 
@@ -708,7 +708,7 @@ async function r2Download(
 				`${GLYPHS.FAIL} CRC32 mismatch! Expected ${originalCRC32.toString(16)}, got ${calculatedCRC32.toString(16)}`,
 			);
 		} else {
-			console.log(
+			console.info(
 				`${GLYPHS.HASH} CRC32 verified: ${calculatedCRC32.toString(16).toUpperCase()}`,
 			);
 		}
@@ -716,14 +716,14 @@ async function r2Download(
 		await Bun.write(targetPath, finalData);
 
 		const durationMs = Number(Bun.nanoseconds() - startTime) / 1000000;
-		console.log(
+		console.info(
 			`${GLYPHS.OK} Downloaded to: ${targetPath} (${durationMs.toFixed(2)}ms)`,
 		);
 
 		// Cache locally
 		if (options.useCache !== false) {
 			await setCacheEntry(r2Key, finalData, isCompressed);
-			console.log(`${GLYPHS.CACHE} Cached locally`);
+			console.info(`${GLYPHS.CACHE} Cached locally`);
 		}
 
 		// Log sync
@@ -741,7 +741,7 @@ async function r2Download(
 }
 
 async function r2List(prefix: string = ""): Promise<void> {
-	console.log(
+	console.info(
 		`${GLYPHS.LIST} Listing R2 objects${prefix ? ` with prefix: ${prefix}` : ""}\n`,
 	);
 
@@ -750,28 +750,28 @@ async function r2List(prefix: string = ""): Promise<void> {
 			await $`wrangler r2 object list ${R2_CONFIG.bucket} ${prefix ? `--prefix=${prefix}` : ""}`.nothrow();
 
 		if (result.exitCode === 0) {
-			console.log(result.stdout.toString());
+			console.info(result.stdout.toString());
 		} else {
-			console.log(
+			console.info(
 				`${GLYPHS.FAIL} Failed to list objects. Ensure wrangler is configured.`,
 			);
 		}
 	} catch (error) {
-		console.log(`${GLYPHS.FAIL} R2 listing requires wrangler or AWS CLI`);
-		console.log(`\nTo list objects, run:`);
-		console.log(`  wrangler r2 object list ${R2_CONFIG.bucket}`);
+		console.info(`${GLYPHS.FAIL} R2 listing requires wrangler or AWS CLI`);
+		console.info(`\nTo list objects, run:`);
+		console.info(`  wrangler r2 object list ${R2_CONFIG.bucket}`);
 	}
 }
 
 async function r2Delete(r2Key: string): Promise<void> {
-	console.log(`${GLYPHS.DELETE} Deleting from R2: ${r2Key}`);
+	console.info(`${GLYPHS.DELETE} Deleting from R2: ${r2Key}`);
 
 	try {
 		const result =
 			await $`wrangler r2 object delete ${R2_CONFIG.bucket} ${r2Key}`.nothrow();
 
 		if (result.exitCode === 0) {
-			console.log(`${GLYPHS.OK} Deleted: ${r2Key}`);
+			console.info(`${GLYPHS.OK} Deleted: ${r2Key}`);
 
 			// Remove from cache
 			cacheDB.prepare("DELETE FROM registry_cache WHERE key = ?").run(r2Key);
@@ -789,10 +789,10 @@ async function r2Delete(r2Key: string): Promise<void> {
 				)
 				.run("delete", r2Key);
 		} else {
-			console.log(`${GLYPHS.FAIL} Failed to delete: ${result.stderr.toString()}`);
+			console.info(`${GLYPHS.FAIL} Failed to delete: ${result.stderr.toString()}`);
 		}
 	} catch (error) {
-		console.log(`${GLYPHS.FAIL} R2 deletion requires wrangler`);
+		console.info(`${GLYPHS.FAIL} R2 deletion requires wrangler`);
 	}
 }
 
@@ -801,7 +801,7 @@ async function syncRegistry(
 	direction: "up" | "down" | "both" = "both",
 	pattern: string = "*",
 ): Promise<void> {
-	console.log(`${GLYPHS.SYNC} Syncing registry (${direction})...\n`);
+	console.info(`${GLYPHS.SYNC} Syncing registry (${direction})...\n`);
 	const startTime = Bun.nanoseconds();
 
 	// Get local files matching pattern
@@ -816,10 +816,10 @@ async function syncRegistry(
 		}
 	}
 
-	console.log(`  Local files: ${localFiles.length}`);
+	console.info(`  Local files: ${localFiles.length}`);
 
 	if (direction === "up" || direction === "both") {
-		console.log(`\n${GLYPHS.UPLOAD} Uploading to R2...`);
+		console.info(`\n${GLYPHS.UPLOAD} Uploading to R2...`);
 		for (const file of localFiles.slice(0, 10)) {
 			// Limit to 10 for safety
 			const localPath = join(localDir, file);
@@ -832,13 +832,13 @@ async function syncRegistry(
 	}
 
 	const durationMs = Number(Bun.nanoseconds() - startTime) / 1000000;
-	console.log(`\n${GLYPHS.OK} Sync complete (${durationMs.toFixed(2)}ms)`);
+	console.info(`\n${GLYPHS.OK} Sync complete (${durationMs.toFixed(2)}ms)`);
 }
 
 // ─── Benchmark ────────────────────────────────────
 async function benchmarkRegistry(): Promise<void> {
-	console.log(`${GLYPHS.BENCHMARK} Registry Benchmark\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.BENCHMARK} Registry Benchmark\n`);
+	console.info("-".repeat(70));
 
 	const results: BenchmarkResult[] = [];
 	const testData = new Uint8Array(1024 * 1024); // 1MB test data
@@ -926,7 +926,7 @@ async function benchmarkRegistry(): Promise<void> {
 	}
 
 	// Display results
-	console.log(
+	console.info(
 		Bun.inspect.table(
 			results.map((r) => ({
 				Operation: r.operation,
@@ -937,14 +937,14 @@ async function benchmarkRegistry(): Promise<void> {
 		),
 	);
 
-	console.log("-".repeat(70));
-	console.log(`\n${GLYPHS.BENCHMARK} Benchmark complete`);
+	console.info("-".repeat(70));
+	console.info(`\n${GLYPHS.BENCHMARK} Benchmark complete`);
 }
 
 // ─── Show Cache Stats ─────────────────────────────
 function showCacheStats(): void {
-	console.log(`${GLYPHS.CACHE} Registry Cache Statistics\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.CACHE} Registry Cache Statistics\n`);
+	console.info("-".repeat(70));
 
 	const stats = cacheDB
 		.query(`
@@ -958,11 +958,11 @@ function showCacheStats(): void {
   `)
 		.get() as any;
 
-	console.log(`  Total Entries:     ${stats.count || 0}`);
-	console.log(`  Total Size:        ${formatBytes(stats.total_size || 0)}`);
-	console.log(`  Average Size:      ${formatBytes(stats.avg_size || 0)}`);
-	console.log(`  Compressed:        ${stats.compressed_count || 0}`);
-	console.log(`  Total Accesses:    ${stats.total_accesses || 0}`);
+	console.info(`  Total Entries:     ${stats.count || 0}`);
+	console.info(`  Total Size:        ${formatBytes(stats.total_size || 0)}`);
+	console.info(`  Average Size:      ${formatBytes(stats.avg_size || 0)}`);
+	console.info(`  Compressed:        ${stats.compressed_count || 0}`);
+	console.info(`  Total Accesses:    ${stats.total_accesses || 0}`);
 
 	// Recent sync log
 	const recentSyncs = cacheDB
@@ -975,37 +975,37 @@ function showCacheStats(): void {
 		.all() as any[];
 
 	if (recentSyncs.length > 0) {
-		console.log(`\n  Recent Operations:`);
-		console.log(Bun.inspect.table(recentSyncs));
+		console.info(`\n  Recent Operations:`);
+		console.info(Bun.inspect.table(recentSyncs));
 	}
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Kimi Shell Integration ───────────────────────
 
 async function kimiShellStatus(): Promise<void> {
-	console.log(`${GLYPHS.SHELL} Kimi Shell Integration Status\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.SHELL} Kimi Shell Integration Status\n`);
+	console.info("-".repeat(70));
 
 	// Check shell bridge
 	const bridgePath = `${process.env.HOME}/.kimi/tools/unified-shell-bridge.ts`;
 	const bridgeExists = existsSync(bridgePath);
-	console.log(
+	console.info(
 		`  Unified Bridge:    ${bridgeExists ? GLYPHS.OK + " Found" : GLYPHS.FAIL + " Not found"}`,
 	);
 
 	// Check Kimi CLI
 	const kimiPath = `${process.env.HOME}/.kimi/bin/kimi`;
 	const kimiExists = existsSync(kimiPath);
-	console.log(
+	console.info(
 		`  Kimi CLI:          ${kimiExists ? GLYPHS.OK + " Found" : GLYPHS.FAIL + " Not found"}`,
 	);
 
 	// Check skills
 	const skillsPath = `${process.env.HOME}/.kimi/skills`;
 	const skillsExist = existsSync(skillsPath);
-	console.log(
+	console.info(
 		`  Skills Registry:   ${skillsExist ? GLYPHS.OK + " Found" : GLYPHS.FAIL + " Not found"}`,
 	);
 
@@ -1014,13 +1014,13 @@ async function kimiShellStatus(): Promise<void> {
 		try {
 			const result = await $`ls ${skillsPath}/tier1380-* 2>/dev/null`.nothrow();
 			const skills = result.stdout.toString().trim().split("\n").filter(Boolean);
-			console.log(`\n  Tier-1380 Skills:`);
+			console.info(`\n  Tier-1380 Skills:`);
 			skills.forEach((skill) => {
 				const name = skill.split("/").pop();
-				console.log(`    ${GLYPHS.OK} ${name}`);
+				console.info(`    ${GLYPHS.OK} ${name}`);
 			});
 		} catch {
-			console.log(`\n  Tier-1380 Skills:  None found`);
+			console.info(`\n  Tier-1380 Skills:  None found`);
 		}
 	}
 
@@ -1035,29 +1035,29 @@ async function kimiShellStatus(): Promise<void> {
 			return null;
 		}
 	})();
-	console.log(
+	console.info(
 		`\n  OpenClaw Token:    ${openclawToken ? GLYPHS.OK + " Configured" : GLYPHS.FAIL + " Not set"}`,
 	);
 
 	// Check R2 credentials in Kimi context
 	const r2Creds = await getR2Credentials();
-	console.log(
+	console.info(
 		`  R2 Credentials:    ${r2Creds ? GLYPHS.OK + " Available" : GLYPHS.FAIL + " Not configured"}`,
 	);
 
 	// Bun-native features check
-	console.log(`\n  Bun-native APIs:`);
-	console.log(`    ${GLYPHS.OK} Bun.dns.prefetch()`);
-	console.log(`    ${GLYPHS.OK} Bun.hash.crc32()`);
-	console.log(`    ${GLYPHS.OK} Bun.hash.wyhash()`);
-	console.log(`    ${GLYPHS.OK} Bun.gzip/gunzip`);
-	console.log(`    ${GLYPHS.OK} Bun.nanoseconds()`);
-	console.log(`    ${GLYPHS.OK} Bun.s3 (R2)`);
-	console.log(`    ${GLYPHS.OK} Bun:sqlite`);
+	console.info(`\n  Bun-native APIs:`);
+	console.info(`    ${GLYPHS.OK} Bun.dns.prefetch()`);
+	console.info(`    ${GLYPHS.OK} Bun.hash.crc32()`);
+	console.info(`    ${GLYPHS.OK} Bun.hash.wyhash()`);
+	console.info(`    ${GLYPHS.OK} Bun.gzip/gunzip`);
+	console.info(`    ${GLYPHS.OK} Bun.nanoseconds()`);
+	console.info(`    ${GLYPHS.OK} Bun.s3 (R2)`);
+	console.info(`    ${GLYPHS.OK} Bun:sqlite`);
 
-	console.log("-".repeat(70));
-	console.log(`\n  ${GLYPHS.SHELL} Shell Integration v2.0.0`);
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70));
+	console.info(`\n  ${GLYPHS.SHELL} Shell Integration v2.0.0`);
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Version Compare (Bun.semver) ─────────────────
@@ -1065,23 +1065,23 @@ async function compareVersions(
 	version1: string,
 	version2: string = REGISTRY_CONFIG.version,
 ): Promise<void> {
-	console.log(`${GLYPHS.DRIFT} Version Comparison\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} Version Comparison\n`);
+	console.info("-".repeat(70));
 
 	const v1 = parseVersion(version1);
 	const v2 = parseVersion(version2);
 
-	console.log(`  Version 1: ${version1}`);
-	console.log(`  Version 2: ${version2}`);
+	console.info(`  Version 1: ${version1}`);
+	console.info(`  Version 2: ${version2}`);
 
 	// Use Bun.semver if available
 	if (typeof Bun !== "undefined" && Bun.semver) {
 		const satisfies1 = Bun.semver.satisfies(version1, `>=${version2}`);
 		const satisfies2 = Bun.semver.satisfies(version2, `>=${version1}`);
 
-		console.log(`\n  Bun.semver Analysis:`);
-		console.log(`    ${version1} >= ${version2}: ${satisfies1}`);
-		console.log(`    ${version2} >= ${version1}: ${satisfies2}`);
+		console.info(`\n  Bun.semver Analysis:`);
+		console.info(`    ${version1} >= ${version2}: ${satisfies1}`);
+		console.info(`    ${version2} >= ${version1}: ${satisfies2}`);
 	}
 
 	// Manual comparison
@@ -1090,17 +1090,17 @@ async function compareVersions(
 	else if (v1.minor !== v2.minor) comparison = v1.minor - v2.minor;
 	else comparison = v1.patch - v2.patch;
 
-	console.log(
+	console.info(
 		`\n  Result: ${comparison > 0 ? COLORS.success(version1 + " is newer") : comparison < 0 ? COLORS.error(version1 + " is older") : COLORS.info("Versions are equal")}`,
 	);
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Binary Detection (Bun.which) ─────────────────
 async function detectBinaries(): Promise<void> {
-	console.log(`${GLYPHS.DRIFT} Registry Binary Detection\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} Registry Binary Detection\n`);
+	console.info("-".repeat(70));
 
 	const binaries = ["bun", "wrangler", "aws", "git", "curl", "wget", "tar", "gzip"];
 
@@ -1109,29 +1109,29 @@ async function detectBinaries(): Promise<void> {
 		return { Binary: bin, Path: path || COLORS.error("not found") };
 	});
 
-	console.log(Bun.inspect.table(results));
+	console.info(Bun.inspect.table(results));
 
 	// Check critical binaries for registry operations
 	const critical = ["bun", "wrangler"];
 	const missing = critical.filter((bin) => !Bun.which(bin));
 
 	if (missing.length > 0) {
-		console.log(
+		console.info(
 			COLORS.warning(`\n  Warning: Missing critical binaries: ${missing.join(", ")}`),
 		);
 	} else {
-		console.log(COLORS.success(`\n  ${GLYPHS.OK} All critical binaries found`));
+		console.info(COLORS.success(`\n  ${GLYPHS.OK} All critical binaries found`));
 	}
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Health Monitor ───────────────────────────────
 async function healthMonitor(interval: number = 30): Promise<void> {
-	console.log(
+	console.info(
 		`${GLYPHS.HEALTH} Starting Registry Health Monitor (${interval}s interval)\n`,
 	);
-	console.log("Press Ctrl+C to stop\n");
+	console.info("Press Ctrl+C to stop\n");
 
 	let checks = 0;
 	let failures = 0;
@@ -1147,7 +1147,7 @@ async function healthMonitor(interval: number = 30): Promise<void> {
 		if (!status.connected) failures++;
 
 		const line = `[${timestamp}] ${icon} Registry: ${status.connected ? "UP" : "DOWN"} | R2: ${status.r2Status} | Cache: ${status.cacheStatus} | Failures: ${failures}/${checks}`;
-		console.log(color(line));
+		console.info(color(line));
 
 		// Log to SQLite
 		cacheDB
@@ -1171,7 +1171,7 @@ async function healthMonitor(interval: number = 30): Promise<void> {
 	// Handle graceful shutdown
 	process.on("SIGINT", () => {
 		clearInterval(intervalId);
-		console.log(
+		console.info(
 			`\n${GLYPHS.OK} Health monitor stopped. ${checks} checks, ${failures} failures.`,
 		);
 		process.exit(0);
@@ -1180,8 +1180,8 @@ async function healthMonitor(interval: number = 30): Promise<void> {
 
 // ─── Registry Backup ──────────────────────────────
 async function backupRegistry(outputPath?: string): Promise<void> {
-	console.log(`${GLYPHS.BACKUP} Creating Registry Backup\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.BACKUP} Creating Registry Backup\n`);
+	console.info("-".repeat(70));
 
 	const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
 	const backupFile = outputPath || `./backups/registry-backup-${timestamp}.tar.gz`;
@@ -1198,8 +1198,8 @@ async function backupRegistry(outputPath?: string): Promise<void> {
 		`${REGISTRY_CONFIG.cacheDir}/registry-cache.db`,
 	].filter(existsSync);
 
-	console.log(`  Files to backup: ${filesToBackup.length}`);
-	filesToBackup.forEach((f) => console.log(`    ${GLYPHS.OK} ${f}`));
+	console.info(`  Files to backup: ${filesToBackup.length}`);
+	filesToBackup.forEach((f) => console.info(`    ${GLYPHS.OK} ${f}`));
 
 	// Create backup using tar
 	const startTime = Bun.nanoseconds();
@@ -1219,14 +1219,14 @@ async function backupRegistry(outputPath?: string): Promise<void> {
 		const durationMs = Number(Bun.nanoseconds() - startTime) / 1000000;
 		const backupSize = (await Bun.file(backupFile).stat()).size;
 
-		console.log(`\n${GLYPHS.OK} Backup created: ${backupFile}`);
-		console.log(`  Size: ${formatBytes(backupSize)}`);
-		console.log(`  Time: ${durationMs.toFixed(2)}ms`);
+		console.info(`\n${GLYPHS.OK} Backup created: ${backupFile}`);
+		console.info(`  Size: ${formatBytes(backupSize)}`);
+		console.info(`  Time: ${durationMs.toFixed(2)}ms`);
 
 		// Calculate checksum
 		const backupData = await Bun.file(backupFile).bytes();
 		const crc32 = Bun.hash.crc32(backupData);
-		console.log(`  CRC32: ${crc32.toString(16).toUpperCase()}`);
+		console.info(`  CRC32: ${crc32.toString(16).toUpperCase()}`);
 
 		// Log backup
 		cacheDB
@@ -1239,13 +1239,13 @@ async function backupRegistry(outputPath?: string): Promise<void> {
 		process.exit(1);
 	}
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Registry Restore ─────────────────────────────
 async function restoreRegistry(backupFile: string): Promise<void> {
-	console.log(`${GLYPHS.RESTORE} Restoring Registry from Backup\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.RESTORE} Restoring Registry from Backup\n`);
+	console.info("-".repeat(70));
 
 	if (!existsSync(backupFile)) {
 		console.error(`${GLYPHS.FAIL} Backup file not found: ${backupFile}`);
@@ -1253,13 +1253,13 @@ async function restoreRegistry(backupFile: string): Promise<void> {
 	}
 
 	const backupSize = (await Bun.file(backupFile).stat()).size;
-	console.log(`  Backup: ${backupFile}`);
-	console.log(`  Size: ${formatBytes(backupSize)}`);
+	console.info(`  Backup: ${backupFile}`);
+	console.info(`  Size: ${formatBytes(backupSize)}`);
 
 	// Verify checksum if stored
 	const backupData = await Bun.file(backupFile).bytes();
 	const crc32 = Bun.hash.crc32(backupData);
-	console.log(`  Current CRC32: ${crc32.toString(16).toUpperCase()}`);
+	console.info(`  Current CRC32: ${crc32.toString(16).toUpperCase()}`);
 
 	const startTime = Bun.nanoseconds();
 
@@ -1278,7 +1278,7 @@ async function restoreRegistry(backupFile: string): Promise<void> {
 		}
 
 		const durationMs = Number(Bun.nanoseconds() - startTime) / 1000000;
-		console.log(`\n${GLYPHS.OK} Restore complete (${durationMs.toFixed(2)}ms)`);
+		console.info(`\n${GLYPHS.OK} Restore complete (${durationMs.toFixed(2)}ms)`);
 
 		// Log restore
 		cacheDB
@@ -1291,13 +1291,13 @@ async function restoreRegistry(backupFile: string): Promise<void> {
 		process.exit(1);
 	}
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Config Validation (Bun.deepEquals) ─────────────
 async function validateConfig(configPath: string, schemaPath?: string): Promise<void> {
-	console.log(`${GLYPHS.LOCK} Config Validation (Bun.deepEquals)\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.LOCK} Config Validation (Bun.deepEquals)\n`);
+	console.info("-".repeat(70));
 
 	if (!existsSync(configPath)) {
 		console.error(`${GLYPHS.FAIL} Config file not found: ${configPath}`);
@@ -1306,15 +1306,15 @@ async function validateConfig(configPath: string, schemaPath?: string): Promise<
 
 	const config = await Bun.file(configPath).json();
 
-	console.log(`  Config: ${configPath}`);
-	console.log(`  Keys: ${Object.keys(config).join(", ")}`);
+	console.info(`  Config: ${configPath}`);
+	console.info(`  Keys: ${Object.keys(config).join(", ")}`);
 
 	// Validate required fields
 	const requiredFields = ["version", "environment", "r2Bucket"];
 	const missing = requiredFields.filter((f) => !(f in config));
 
 	if (missing.length > 0) {
-		console.log(`\n${GLYPHS.FAIL} Missing required fields: ${missing.join(", ")}`);
+		console.info(`\n${GLYPHS.FAIL} Missing required fields: ${missing.join(", ")}`);
 		process.exit(1);
 	}
 
@@ -1335,7 +1335,7 @@ async function validateConfig(configPath: string, schemaPath?: string): Promise<
 		true,
 	);
 
-	console.log(
+	console.info(
 		`\n  Bun.deepEquals check: ${isMatch ? COLORS.success("matches defaults") : COLORS.warning("differs from defaults")}`,
 	);
 
@@ -1346,17 +1346,17 @@ async function validateConfig(configPath: string, schemaPath?: string): Promise<
 			.split("\n")
 			.map((line) => Bun.stringWidth(line, { countAnsiEscapeCodes: false })),
 	);
-	console.log(
+	console.info(
 		`  Max line width: ${maxLineWidth} cols (Col-89: ${maxLineWidth <= 89 ? COLORS.success("PASS") : COLORS.error("FAIL")})`,
 	);
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Config Diff (Bun.deepEquals) ─────────────────
 async function diffConfigs(config1Path: string, config2Path: string): Promise<void> {
-	console.log(`${GLYPHS.DRIFT} Config Diff (Bun.deepEquals)\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} Config Diff (Bun.deepEquals)\n`);
+	console.info("-".repeat(70));
 
 	if (!existsSync(config1Path) || !existsSync(config2Path)) {
 		console.error(`${GLYPHS.FAIL} One or both config files not found`);
@@ -1366,15 +1366,15 @@ async function diffConfigs(config1Path: string, config2Path: string): Promise<vo
 	const config1 = await Bun.file(config1Path).json();
 	const config2 = await Bun.file(config2Path).json();
 
-	console.log(`  Config 1: ${config1Path}`);
-	console.log(`  Config 2: ${config2Path}`);
+	console.info(`  Config 1: ${config1Path}`);
+	console.info(`  Config 2: ${config2Path}`);
 
 	const equal = Bun.deepEquals(config1, config2, true);
 
 	if (equal) {
-		console.log(`\n${GLYPHS.OK} ${COLORS.success("Configs are identical")}`);
+		console.info(`\n${GLYPHS.OK} ${COLORS.success("Configs are identical")}`);
 	} else {
-		console.log(`\n${GLYPHS.FAIL} ${COLORS.error("Configs differ")}`);
+		console.info(`\n${GLYPHS.FAIL} ${COLORS.error("Configs differ")}`);
 
 		// Show differences
 		const keys1 = Object.keys(config1);
@@ -1386,23 +1386,23 @@ async function diffConfigs(config1Path: string, config2Path: string): Promise<vo
 			(k) => k in config2 && !Bun.deepEquals(config1[k], config2[k], true),
 		);
 
-		if (onlyIn1.length) console.log(`  Only in config1: ${onlyIn1.join(", ")}`);
-		if (onlyIn2.length) console.log(`  Only in config2: ${onlyIn2.join(", ")}`);
-		if (different.length) console.log(`  Different values: ${different.join(", ")}`);
+		if (onlyIn1.length) console.info(`  Only in config1: ${onlyIn1.join(", ")}`);
+		if (onlyIn2.length) console.info(`  Only in config2: ${onlyIn2.join(", ")}`);
+		if (different.length) console.info(`  Different values: ${different.join(", ")}`);
 	}
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Password Hash (Bun.password) ─────────────────
 async function hashPassword(password?: string): Promise<void> {
-	console.log(`${GLYPHS.LOCK} Password Hashing (Bun.password)\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.LOCK} Password Hashing (Bun.password)\n`);
+	console.info("-".repeat(70));
 
 	const pwd = password || "default-password-change-me";
 
-	console.log(`  Input: ${"*".repeat(pwd.length)}`);
-	console.log(`  Algorithm: argon2id (Bun.password default)`);
+	console.info(`  Input: ${"*".repeat(pwd.length)}`);
+	console.info(`  Algorithm: argon2id (Bun.password default)`);
 
 	const start = Bun.nanoseconds();
 	const hash = await Bun.password.hash(pwd, {
@@ -1412,26 +1412,26 @@ async function hashPassword(password?: string): Promise<void> {
 	});
 	const duration = Number(Bun.nanoseconds() - start) / 1000000;
 
-	console.log(`\n  Hash: ${hash.slice(0, 50)}...`);
-	console.log(`  Time: ${duration.toFixed(2)}ms`);
+	console.info(`\n  Hash: ${hash.slice(0, 50)}...`);
+	console.info(`  Time: ${duration.toFixed(2)}ms`);
 
 	// Verify
 	const verifyStart = Bun.nanoseconds();
 	const valid = await Bun.password.verify(pwd, hash);
 	const verifyDuration = Number(Bun.nanoseconds() - verifyStart) / 1000000;
 
-	console.log(
+	console.info(
 		`\n  Verification: ${valid ? COLORS.success("VALID") : COLORS.error("INVALID")}`,
 	);
-	console.log(`  Verify time: ${verifyDuration.toFixed(2)}ms`);
+	console.info(`  Verify time: ${verifyDuration.toFixed(2)}ms`);
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── RSS Feed Generation (Bun.escapeHTML) ─────────
 async function generateRSSFeed(): Promise<void> {
-	console.log(`${GLYPHS.DRIFT} Generating Registry RSS Feed\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} Generating Registry RSS Feed\n`);
+	console.info("-".repeat(70));
 
 	// Get recent operations from SQLite
 	const operations = cacheDB
@@ -1473,25 +1473,25 @@ async function generateRSSFeed(): Promise<void> {
 	const rssPath = "./.registry-cache/activity.xml";
 	await Bun.write(rssPath, rss);
 
-	console.log(`  Generated: ${rssPath}`);
-	console.log(`  Items: ${operations.length}`);
-	console.log(`  Size: ${formatBytes(rss.length)}`);
+	console.info(`  Generated: ${rssPath}`);
+	console.info(`  Items: ${operations.length}`);
+	console.info(`  Size: ${formatBytes(rss.length)}`);
 
 	// Show Col-89 compliance
 	const maxWidth = Math.max(
 		...rss.split("\n").map((l) => Bun.stringWidth(l, { countAnsiEscapeCodes: false })),
 	);
-	console.log(
+	console.info(
 		`  Col-89: ${maxWidth <= 89 ? COLORS.success("PASS") : COLORS.warning(`FAIL (${maxWidth})`)}`,
 	);
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Async Peek Demo (Bun.peek) ───────────────────
 async function peekDemo(): Promise<void> {
-	console.log(`${GLYPHS.DRIFT} Bun.peek() Async Inspection Demo\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} Bun.peek() Async Inspection Demo\n`);
+	console.info("-".repeat(70));
 
 	// Create a promise that resolves after a delay
 	const delayedPromise = new Promise<string>((resolve) => {
@@ -1500,42 +1500,42 @@ async function peekDemo(): Promise<void> {
 
 	// Check if resolved using Bun.peek (returns the value or a sentinel)
 	const peek1 = Bun.peek(delayedPromise);
-	console.log(
+	console.info(
 		`  Immediate peek: ${typeof peek1 === "object" ? "Promise (pending)" : peek1}`,
 	);
 
 	// Wait and check again
 	await new Promise((r) => setTimeout(r, 150));
 	const peek2 = Bun.peek(delayedPromise);
-	console.log(`  After 150ms peek: ${peek2}`);
+	console.info(`  After 150ms peek: ${peek2}`);
 
 	// Real use case: Check if cached data is ready
 	const cachePromise = getCachedEntry("test-key").catch(() => null);
 	const cachePeek = Bun.peek(cachePromise);
 
 	if (cachePeek instanceof Promise) {
-		console.log(`  Cache lookup: async (not cached)`);
+		console.info(`  Cache lookup: async (not cached)`);
 	} else {
-		console.log(`  Cache lookup: ${cachePeek ? "sync (cached)" : "sync (miss)"}`);
+		console.info(`  Cache lookup: ${cachePeek ? "sync (cached)" : "sync (miss)"}`);
 	}
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Path Operations (Bun.path) ─────────────────────
 async function pathOperations(filePath: string = "./data/test.json"): Promise<void> {
-	console.log(`${GLYPHS.DRIFT} Path Operations Demo (path)\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} Path Operations Demo (path)\n`);
+	console.info("-".repeat(70));
 
-	console.log(`  Input: ${filePath}`);
-	console.log(`  basename: ${basename(filePath)}`);
-	console.log(`  dirname: ${dirname(filePath)}`);
-	console.log(`  extname: ${extname(filePath)}`);
-	console.log(`  join: ${join(dirname(filePath), "subfolder", basename(filePath))}`);
+	console.info(`  Input: ${filePath}`);
+	console.info(`  basename: ${basename(filePath)}`);
+	console.info(`  dirname: ${dirname(filePath)}`);
+	console.info(`  extname: ${extname(filePath)}`);
+	console.info(`  join: ${join(dirname(filePath), "subfolder", basename(filePath))}`);
 
 	// Bun.file path operations
 	const file = Bun.file(filePath);
-	console.log(`\n  Bun.file exists: ${await file.exists()}`);
+	console.info(`\n  Bun.file exists: ${await file.exists()}`);
 
 	// Registry path resolution
 	const registryPaths = {
@@ -1545,20 +1545,20 @@ async function pathOperations(filePath: string = "./data/test.json"): Promise<vo
 		config: "./config",
 	};
 
-	console.log(`\n  Registry Paths:`);
+	console.info(`\n  Registry Paths:`);
 	Object.entries(registryPaths).forEach(([name, path]) => {
-		console.log(`    ${name}: ${path} (basename: ${basename(path)})`);
+		console.info(`    ${name}: ${path} (basename: ${basename(path)})`);
 	});
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── TCP Registry Server ────────────────────────────
 let tcpServer: TCPSocketListener | null = null;
 
 async function startRegistryServer(port: number = REGISTRY_PORT): Promise<void> {
-	console.log(`${GLYPHS.CONNECT} Starting Registry TCP Server on port ${port}\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.CONNECT} Starting Registry TCP Server on port ${port}\n`);
+	console.info("-".repeat(70));
 
 	const connections = new Set<Socket>();
 
@@ -1568,7 +1568,7 @@ async function startRegistryServer(port: number = REGISTRY_PORT): Promise<void> 
 		socket: {
 			open(socket) {
 				connections.add(socket);
-				console.log(
+				console.info(
 					`  [${new Date().toISOString()}] Client connected (${connections.size} total)`,
 				);
 				socket.write("Welcome to Tier-1380 Registry Server\n");
@@ -1576,7 +1576,7 @@ async function startRegistryServer(port: number = REGISTRY_PORT): Promise<void> 
 			},
 			data(socket, data) {
 				const command = new TextDecoder().decode(data).trim().toUpperCase();
-				console.log(`  [${new Date().toISOString()}] Command: ${command}`);
+				console.info(`  [${new Date().toISOString()}] Command: ${command}`);
 
 				switch (command) {
 					case "STATUS":
@@ -1614,7 +1614,7 @@ async function startRegistryServer(port: number = REGISTRY_PORT): Promise<void> 
 			},
 			close(socket) {
 				connections.delete(socket);
-				console.log(
+				console.info(
 					`  [${new Date().toISOString()}] Client disconnected (${connections.size} remaining)`,
 				);
 			},
@@ -1625,12 +1625,12 @@ async function startRegistryServer(port: number = REGISTRY_PORT): Promise<void> 
 		},
 	});
 
-	console.log(`  ${GLYPHS.OK} Server listening on 127.0.0.1:${port}`);
-	console.log(`  Press Ctrl+C to stop\n`);
+	console.info(`  ${GLYPHS.OK} Server listening on 127.0.0.1:${port}`);
+	console.info(`  Press Ctrl+C to stop\n`);
 
 	// Handle graceful shutdown
 	process.on("SIGINT", () => {
-		console.log(`\n${GLYPHS.OK} Stopping server...`);
+		console.info(`\n${GLYPHS.OK} Stopping server...`);
 		tcpServer?.stop();
 		process.exit(0);
 	});
@@ -1643,8 +1643,8 @@ async function startRegistryServer(port: number = REGISTRY_PORT): Promise<void> 
 let httpServer: ReturnType<typeof Bun.serve> | null = null;
 
 async function startHTTPServer(port: number = HTTP_DEFAULT_PORT): Promise<void> {
-	console.log(`${GLYPHS.CONNECT} Starting HTTP Registry Server on port ${port}\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.CONNECT} Starting HTTP Registry Server on port ${port}\n`);
+	console.info("-".repeat(70));
 
 	const stats = {
 		requests: 0,
@@ -1745,11 +1745,11 @@ async function startHTTPServer(port: number = HTTP_DEFAULT_PORT): Promise<void> 
 
 		websocket: {
 			open(ws) {
-				console.log(`  [${new Date().toISOString()}] WebSocket connected`);
+				console.info(`  [${new Date().toISOString()}] WebSocket connected`);
 				ws.send(JSON.stringify({ type: "welcome", version: REGISTRY_CONFIG.version }));
 			},
 			message(ws, message) {
-				console.log(`  [${new Date().toISOString()}] WebSocket message:`, message);
+				console.info(`  [${new Date().toISOString()}] WebSocket message:`, message);
 
 				try {
 					const data = JSON.parse(message as string);
@@ -1766,26 +1766,26 @@ async function startHTTPServer(port: number = HTTP_DEFAULT_PORT): Promise<void> 
 				}
 			},
 			close(ws, code, reason) {
-				console.log(
+				console.info(
 					`  [${new Date().toISOString()}] WebSocket closed: ${code} ${reason}`,
 				);
 			},
 		},
 	});
 
-	console.log(`  ${GLYPHS.OK} HTTP Server: http://127.0.0.1:${port}`);
-	console.log(`  ${GLYPHS.OK} WebSocket: ws://127.0.0.1:${port}`);
-	console.log(`\n  Endpoints:`);
-	console.log(`    GET /status      - Server status`);
-	console.log(`    GET /version     - Version info`);
-	console.log(`    GET /cache       - Cache statistics`);
-	console.log(`    GET /r2/status   - R2 connection status`);
-	console.log(`    GET /health      - Health check`);
-	console.log(`    WebSocket /      - Real-time updates`);
-	console.log(`\n  Press Ctrl+C to stop`);
+	console.info(`  ${GLYPHS.OK} HTTP Server: http://127.0.0.1:${port}`);
+	console.info(`  ${GLYPHS.OK} WebSocket: ws://127.0.0.1:${port}`);
+	console.info(`\n  Endpoints:`);
+	console.info(`    GET /status      - Server status`);
+	console.info(`    GET /version     - Version info`);
+	console.info(`    GET /cache       - Cache statistics`);
+	console.info(`    GET /r2/status   - R2 connection status`);
+	console.info(`    GET /health      - Health check`);
+	console.info(`    WebSocket /      - Real-time updates`);
+	console.info(`\n  Press Ctrl+C to stop`);
 
 	process.on("SIGINT", () => {
-		console.log(`\n${GLYPHS.OK} Stopping HTTP server...`);
+		console.info(`\n${GLYPHS.OK} Stopping HTTP server...`);
 		httpServer?.stop();
 		process.exit(0);
 	});
@@ -1795,13 +1795,13 @@ async function startHTTPServer(port: number = HTTP_DEFAULT_PORT): Promise<void> 
 
 // ─── Spawn Worker with IPC ──────────────────────────
 async function spawnWorker(task: string = "benchmark"): Promise<void> {
-	console.log(`${GLYPHS.DRIFT} Spawning Worker with IPC (Bun.spawn)\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} Spawning Worker with IPC (Bun.spawn)\n`);
+	console.info("-".repeat(70));
 
 	const workerScript = `
     // Worker process
     process.on("message", (msg) => {
-      console.log("[Worker] Received:", msg);
+      console.info("[Worker] Received:", msg);
       
       if (msg.task === "benchmark") {
         const data = new Uint8Array(1024 * 1024);
@@ -1823,38 +1823,38 @@ async function spawnWorker(task: string = "benchmark"): Promise<void> {
 
 	const proc = Bun.spawn(["bun", "-e", workerScript], {
 		ipc: (message, subprocess) => {
-			console.log(`  [Main] IPC from worker:`, message);
+			console.info(`  [Main] IPC from worker:`, message);
 		},
 		onExit: (subprocess, exitCode, signalCode, error) => {
-			console.log(`  [Main] Worker exited with code ${exitCode}`);
+			console.info(`  [Main] Worker exited with code ${exitCode}`);
 		},
 	});
 
-	console.log(`  ${GLYPHS.OK} Worker spawned (PID: ${proc.pid})`);
+	console.info(`  ${GLYPHS.OK} Worker spawned (PID: ${proc.pid})`);
 
 	// Wait for worker to be ready
 	await new Promise((r) => setTimeout(r, 100));
 
 	// Send task to worker
-	console.log(`  [Main] Sending task: ${task}`);
+	console.info(`  [Main] Sending task: ${task}`);
 	proc.send({ task, data: "test-data" });
 
 	// Wait for completion
 	await new Promise((r) => setTimeout(r, 500));
 
 	proc.kill();
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── File Watcher (Bun.watch) ───────────────────────
 async function watchFiles(pattern: string = "./data/*"): Promise<void> {
-	console.log(`${GLYPHS.WATCH} Starting File Watcher (fs.watch)\n`);
-	console.log("-".repeat(70));
-	console.log(`  Watching: ${pattern}`);
-	console.log(`  Press Ctrl+C to stop\n`);
+	console.info(`${GLYPHS.WATCH} Starting File Watcher (fs.watch)\n`);
+	console.info("-".repeat(70));
+	console.info(`  Watching: ${pattern}`);
+	console.info(`  Press Ctrl+C to stop\n`);
 
 	const watcher = fs.watch("./data", { recursive: true }, (eventType, filename) => {
-		console.log(`  [${new Date().toISOString()}] ${eventType}: ${filename}`);
+		console.info(`  [${new Date().toISOString()}] ${eventType}: ${filename}`);
 
 		// Log to database
 		cacheDB
@@ -1865,7 +1865,7 @@ async function watchFiles(pattern: string = "./data/*"): Promise<void> {
 	});
 
 	process.on("SIGINT", () => {
-		console.log(`\n${GLYPHS.OK} Stopping watcher...`);
+		console.info(`\n${GLYPHS.OK} Stopping watcher...`);
 		watcher.close();
 		process.exit(0);
 	});
@@ -1879,8 +1879,8 @@ import * as fs from "fs";
 
 // ─── TOML Config Parser (Bun.TOML) ────────────────
 async function parseTOMLConfig(tomlPath?: string): Promise<void> {
-	console.log(`${GLYPHS.DRIFT} TOML Config Parser (Bun.TOML)\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} TOML Config Parser (Bun.TOML)\n`);
+	console.info("-".repeat(70));
 
 	const testToml = tomlPath || "./.registry-cache/test-config.toml";
 
@@ -1907,7 +1907,7 @@ value = "nested value"
 array = [1, 2, 3, 4, 5]
 `;
 		await Bun.write(testToml, sampleToml);
-		console.log(`  Created sample TOML: ${testToml}`);
+		console.info(`  Created sample TOML: ${testToml}`);
 	}
 
 	// Parse TOML
@@ -1916,30 +1916,30 @@ array = [1, 2, 3, 4, 5]
 	const config = Bun.TOML.parse(content);
 	const duration = Number(Bun.nanoseconds() - start) / 1000000;
 
-	console.log(`\n  Parsed in ${duration.toFixed(2)}ms`);
-	console.log(`\n  Registry Version: ${config.registry.version}`);
-	console.log(`  Environment: ${config.registry.environment}`);
-	console.log(`  R2 Bucket: ${config.r2.bucket}`);
-	console.log(`  Cache Enabled: ${config.cache.enabled}`);
-	console.log(`  Nested Value: ${config.nested.deep.value}`);
+	console.info(`\n  Parsed in ${duration.toFixed(2)}ms`);
+	console.info(`\n  Registry Version: ${config.registry.version}`);
+	console.info(`  Environment: ${config.registry.environment}`);
+	console.info(`  R2 Bucket: ${config.r2.bucket}`);
+	console.info(`  Cache Enabled: ${config.cache.enabled}`);
+	console.info(`  Nested Value: ${config.nested.deep.value}`);
 
 	// Compare with JSON
 	const jsonString = JSON.stringify(config, null, 2);
-	console.log(`\n  JSON equivalent: ${formatBytes(jsonString.length)}`);
+	console.info(`\n  JSON equivalent: ${formatBytes(jsonString.length)}`);
 
 	// Show raw TOML content
-	console.log(`  Raw TOML size: ${formatBytes(content.length)}`);
-	console.log(
+	console.info(`  Raw TOML size: ${formatBytes(content.length)}`);
+	console.info(
 		`  TOML savings: ${((1 - content.length / jsonString.length) * 100).toFixed(1)}%`,
 	);
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Code Transpiler (Bun.Transpiler) ─────────────
 async function transpileCode(code?: string): Promise<void> {
-	console.log(`${GLYPHS.DRIFT} Code Transpiler (Bun.Transpiler)\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} Code Transpiler (Bun.Transpiler)\n`);
+	console.info("-".repeat(70));
 
 	const testCode =
 		code ||
@@ -1958,8 +1958,8 @@ const config: RegistryConfig = {
 export default config;
 `;
 
-	console.log("  Input TypeScript:");
-	console.log("  " + testCode.split("\n").join("\n  "));
+	console.info("  Input TypeScript:");
+	console.info("  " + testCode.split("\n").join("\n  "));
 
 	const start = Bun.nanoseconds();
 	const transpiler = new Bun.Transpiler({
@@ -1970,32 +1970,32 @@ export default config;
 	const result = await transpiler.transform(testCode);
 	const duration = Number(Bun.nanoseconds() - start) / 1000000;
 
-	console.log(`\n  Transpiled in ${duration.toFixed(2)}ms`);
-	console.log("\n  Output JavaScript:");
-	console.log("  " + result.split("\n").join("\n  "));
+	console.info(`\n  Transpiled in ${duration.toFixed(2)}ms`);
+	console.info("\n  Output JavaScript:");
+	console.info("  " + result.split("\n").join("\n  "));
 
 	// Scan for imports
 	const imports = transpiler.scan(testCode);
-	console.log(`\n  Scanned imports: ${imports.exports.length}`);
+	console.info(`\n  Scanned imports: ${imports.exports.length}`);
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Markdown Parser (Bun.markdown) ───────────────
 async function parseMarkdown(mdPath?: string): Promise<void> {
-	console.log(`${GLYPHS.DRIFT} Markdown Parser (Bun.markdown)\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} Markdown Parser (Bun.markdown)\n`);
+	console.info("-".repeat(70));
 
 	// Check if Bun.markdown is available (v1.3.8+)
 	if (typeof Bun.markdown === "undefined") {
-		console.log(`  ${GLYPHS.FAIL} Bun.markdown is not available in Bun ${Bun.version}`);
-		console.log(`  ${COLORS.info("This feature requires Bun v1.3.8 or later")}`);
-		console.log(`\n  Preview of what Bun.markdown will provide:`);
-		console.log(`    - CommonMark-compliant Markdown parser`);
-		console.log(`    - Converts Markdown → HTML`);
-		console.log(`    - Fast Zig-based implementation`);
-		console.log(`    - No external dependencies`);
-		console.log("-".repeat(70) + "\n");
+		console.info(`  ${GLYPHS.FAIL} Bun.markdown is not available in Bun ${Bun.version}`);
+		console.info(`  ${COLORS.info("This feature requires Bun v1.3.8 or later")}`);
+		console.info(`\n  Preview of what Bun.markdown will provide:`);
+		console.info(`    - CommonMark-compliant Markdown parser`);
+		console.info(`    - Converts Markdown → HTML`);
+		console.info(`    - Fast Zig-based implementation`);
+		console.info(`    - No external dependencies`);
+		console.info("-".repeat(70) + "\n");
 		return;
 	}
 
@@ -2030,7 +2030,7 @@ bun run tier1380:registry r2:upload file.txt
 [Documentation](https://factory-wager.com/docs)
 `;
 		await Bun.write(testMd, sampleMd);
-		console.log(`  Created sample markdown: ${testMd}`);
+		console.info(`  Created sample markdown: ${testMd}`);
 	}
 
 	const content = await Bun.file(testMd).text();
@@ -2043,9 +2043,9 @@ bun run tier1380:registry r2:upload file.txt
 	});
 	const duration = Number(Bun.nanoseconds() - start) / 1000000;
 
-	console.log(`\n  Parsed in ${duration.toFixed(2)}ms`);
-	console.log(`\n  Input: ${formatBytes(content.length)} markdown`);
-	console.log(`  Output: ${formatBytes(html.length)} HTML`);
+	console.info(`\n  Parsed in ${duration.toFixed(2)}ms`);
+	console.info(`\n  Input: ${formatBytes(content.length)} markdown`);
+	console.info(`  Output: ${formatBytes(html.length)} HTML`);
 
 	// Count elements
 	const headings = (content.match(/^#{1,6}\s/gm) || []).length;
@@ -2053,28 +2053,28 @@ bun run tier1380:registry r2:upload file.txt
 	const links = (content.match(/\[.+?\]\(.+?\)/g) || []).length;
 	const tables = (content.match(/\|/g) || []).length / 2;
 
-	console.log(`\n  Elements detected:`);
-	console.log(`    Headings: ${headings}`);
-	console.log(`    Code blocks: ${codeBlocks}`);
-	console.log(`    Links: ${links}`);
-	console.log(`    Table cells: ${tables}`);
+	console.info(`\n  Elements detected:`);
+	console.info(`    Headings: ${headings}`);
+	console.info(`    Code blocks: ${codeBlocks}`);
+	console.info(`    Links: ${links}`);
+	console.info(`    Table cells: ${tables}`);
 
 	// Save HTML output
 	const htmlPath = testMd.replace(/\.md$/, ".html");
 	await Bun.write(htmlPath, html);
-	console.log(`\n  ${GLYPHS.OK} HTML saved: ${htmlPath}`);
+	console.info(`\n  ${GLYPHS.OK} HTML saved: ${htmlPath}`);
 
 	// Show preview
-	console.log(`\n  HTML Preview (first 300 chars):`);
-	console.log("  " + html.slice(0, 300).split("\n").join("\n  ") + "...");
+	console.info(`\n  HTML Preview (first 300 chars):`);
+	console.info("  " + html.slice(0, 300).split("\n").join("\n  ") + "...");
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Environment Manager (Bun.env) ────────────────
 function manageEnv(): void {
-	console.log(`${GLYPHS.DRIFT} Environment Manager (Bun.env)\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} Environment Manager (Bun.env)\n`);
+	console.info("-".repeat(70));
 
 	// Display registry-specific env vars
 	const registryVars = [
@@ -2088,7 +2088,7 @@ function manageEnv(): void {
 		"MCP_ENABLED",
 	];
 
-	console.log("  Registry Environment Variables:\n");
+	console.info("  Registry Environment Variables:\n");
 
 	const table: Array<{ Variable: string; Status: string; Value: string }> = [];
 
@@ -2099,48 +2099,48 @@ function manageEnv(): void {
 		table.push({ Variable: key, Status: status, Value: display });
 	}
 
-	console.log(Bun.inspect.table(table));
+	console.info(Bun.inspect.table(table));
 
 	// Bun.env manipulation
-	console.log(`\n  Bun.env Manipulation:`);
+	console.info(`\n  Bun.env Manipulation:`);
 	const testKey = "REGISTRY_TEST_VAR";
 	Bun.env[testKey] = "test-value";
-	console.log(`    Set ${testKey} = ${Bun.env[testKey]}`);
+	console.info(`    Set ${testKey} = ${Bun.env[testKey]}`);
 	delete Bun.env[testKey];
-	console.log(`    Deleted ${testKey}: ${Bun.env[testKey] === undefined ? "✓" : "✗"}`);
+	console.info(`    Deleted ${testKey}: ${Bun.env[testKey] === undefined ? "✓" : "✗"}`);
 
 	// Compare with process.env
-	console.log(`\n  Bun.env vs process.env:`);
-	console.log(`    Same reference: ${Bun.env === process.env ? "✓" : "✗"}`);
-	console.log(`    Bun.env.PORT: ${Bun.env.PORT || "undefined"}`);
-	console.log(`    process.env.PORT: ${process.env.PORT || "undefined"}`);
+	console.info(`\n  Bun.env vs process.env:`);
+	console.info(`    Same reference: ${Bun.env === process.env ? "✓" : "✗"}`);
+	console.info(`    Bun.env.PORT: ${Bun.env.PORT || "undefined"}`);
+	console.info(`    process.env.PORT: ${process.env.PORT || "undefined"}`);
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Bun.sleep Demo ───────────────────────────────
 async function sleepDemo(ms: number = 1000): Promise<void> {
-	console.log(`${GLYPHS.DRIFT} Bun.sleep() Demo\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} Bun.sleep() Demo\n`);
+	console.info("-".repeat(70));
 
-	console.log(`  Sleeping for ${ms}ms...`);
+	console.info(`  Sleeping for ${ms}ms...`);
 	const start = Bun.nanoseconds();
 
 	await Bun.sleep(ms);
 
 	const duration = Number(Bun.nanoseconds() - start) / 1000000;
-	console.log(`  Woke up after ${duration.toFixed(2)}ms`);
-	console.log(`  Drift: ${(duration - ms).toFixed(2)}ms`);
+	console.info(`  Woke up after ${duration.toFixed(2)}ms`);
+	console.info(`  Drift: ${(duration - ms).toFixed(2)}ms`);
 
 	// Chain multiple sleeps
-	console.log(`\n  Chained sleeps:`);
+	console.info(`\n  Chained sleeps:`);
 	for (let i = 100; i <= 500; i += 100) {
 		process.stdout.write(`  ${i}ms... `);
 		await Bun.sleep(i);
-		console.log("done");
+		console.info("done");
 	}
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Crypto HMAC (Bun.CryptoHasher) ───────────────
@@ -2148,14 +2148,14 @@ async function cryptoHMAC(
 	data: string = "registry-data",
 	secret?: string,
 ): Promise<void> {
-	console.log(`${GLYPHS.LOCK} HMAC Generation (Bun.CryptoHasher)\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.LOCK} HMAC Generation (Bun.CryptoHasher)\n`);
+	console.info("-".repeat(70));
 
 	const key =
 		secret || (await Bun.password.hash("registry-secret", { algorithm: "bcrypt" }));
 
-	console.log(`  Algorithm: sha256`);
-	console.log(`  Data: ${data}`);
+	console.info(`  Algorithm: sha256`);
+	console.info(`  Data: ${data}`);
 
 	const start = Bun.nanoseconds();
 
@@ -2166,20 +2166,20 @@ async function cryptoHMAC(
 
 	const duration = Number(Bun.nanoseconds() - start) / 1000000;
 
-	console.log(`\n  HMAC: ${hmac.slice(0, 32)}...`);
-	console.log(`  Time: ${duration.toFixed(3)}ms`);
+	console.info(`\n  HMAC: ${hmac.slice(0, 32)}...`);
+	console.info(`  Time: ${duration.toFixed(3)}ms`);
 
 	// Verify
 	const verifyHasher = new Bun.CryptoHasher("sha256", key);
 	verifyHasher.update(data);
 	const verifyHmac = verifyHasher.digest("hex");
 
-	console.log(
+	console.info(
 		`  Verification: ${hmac === verifyHmac ? COLORS.success("MATCH") : COLORS.error("MISMATCH")}`,
 	);
 
 	// Compare algorithms
-	console.log(`\n  Algorithm Comparison:`);
+	console.info(`\n  Algorithm Comparison:`);
 	const algorithms = ["sha256", "sha512", "blake2b256"] as const;
 
 	for (const algo of algorithms) {
@@ -2188,18 +2188,18 @@ async function cryptoHMAC(
 		h.update(data.repeat(100));
 		h.digest("hex");
 		const dur = Number(Bun.nanoseconds() - start) / 1000;
-		console.log(`    ${algo}: ${dur.toFixed(2)}µs`);
+		console.info(`    ${algo}: ${dur.toFixed(2)}µs`);
 	}
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── UUID Generation (Bun.randomUUIDv7) ───────────
 function generateUUIDs(count: number = 5): void {
-	console.log(`${GLYPHS.DRIFT} UUID Generation (Bun.randomUUIDv7)\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} UUID Generation (Bun.randomUUIDv7)\n`);
+	console.info("-".repeat(70));
 
-	console.log(`  Generating ${count} UUIDv7s:\n`);
+	console.info(`  Generating ${count} UUIDv7s:\n`);
 
 	const uuids: string[] = [];
 	const timestamps: number[] = [];
@@ -2212,7 +2212,7 @@ function generateUUIDs(count: number = 5): void {
 		uuids.push(uuid);
 		timestamps.push(Date.now());
 
-		console.log(`  ${i + 1}. ${uuid} (${duration.toFixed(2)}µs)`);
+		console.info(`  ${i + 1}. ${uuid} (${duration.toFixed(2)}µs)`);
 
 		if (i < count - 1) {
 			Bun.sleepSync(10); // Small delay to show timestamp difference
@@ -2220,41 +2220,41 @@ function generateUUIDs(count: number = 5): void {
 	}
 
 	// Show timestamp extraction (UUIDv7 embeds timestamp)
-	console.log(`\n  Timestamp Analysis:`);
-	console.log(`  First: ${new Date(timestamps[0]).toISOString()}`);
-	console.log(`  Last:  ${new Date(timestamps[timestamps.length - 1]).toISOString()}`);
+	console.info(`\n  Timestamp Analysis:`);
+	console.info(`  First: ${new Date(timestamps[0]).toISOString()}`);
+	console.info(`  Last:  ${new Date(timestamps[timestamps.length - 1]).toISOString()}`);
 
 	// Check uniqueness
 	const unique = new Set(uuids).size === uuids.length;
-	console.log(
+	console.info(
 		`\n  Uniqueness: ${unique ? COLORS.success("ALL UNIQUE") : COLORS.error("DUPLICATES FOUND")}`,
 	);
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Bun Environment Info ─────────────────────────
 function showBunInfo(): void {
-	console.log(`${GLYPHS.DRIFT} Bun Environment Information\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.DRIFT} Bun Environment Information\n`);
+	console.info("-".repeat(70));
 
-	console.log(`  Bun Version:   ${Bun.version}`);
-	console.log(`  Bun Revision:  ${Bun.revision.slice(0, 16)}...`);
-	console.log(`  Is Main:       ${import.meta.main}`);
-	console.log(`  Executable:    ${Bun.which("bun")}`);
-	console.log(`  Platform:      ${process.platform}`);
-	console.log(`  Architecture:  ${process.arch}`);
+	console.info(`  Bun Version:   ${Bun.version}`);
+	console.info(`  Bun Revision:  ${Bun.revision.slice(0, 16)}...`);
+	console.info(`  Is Main:       ${import.meta.main}`);
+	console.info(`  Executable:    ${Bun.which("bun")}`);
+	console.info(`  Platform:      ${process.platform}`);
+	console.info(`  Architecture:  ${process.arch}`);
 
 	// Memory usage
 	const mem = process.memoryUsage();
-	console.log(`\n  Memory Usage:`);
-	console.log(`    RSS:         ${formatBytes(mem.rss)}`);
-	console.log(`    Heap Used:   ${formatBytes(mem.heapUsed)}`);
-	console.log(`    Heap Total:  ${formatBytes(mem.heapTotal)}`);
-	console.log(`    External:    ${formatBytes(mem.external || 0)}`);
+	console.info(`\n  Memory Usage:`);
+	console.info(`    RSS:         ${formatBytes(mem.rss)}`);
+	console.info(`    Heap Used:   ${formatBytes(mem.heapUsed)}`);
+	console.info(`    Heap Total:  ${formatBytes(mem.heapTotal)}`);
+	console.info(`    External:    ${formatBytes(mem.external || 0)}`);
 
 	// Bun-specific features check
-	console.log(`\n  Bun-native Features Available:`);
+	console.info(`\n  Bun-native Features Available:`);
 	const features = [
 		{ name: "Bun.s3", available: typeof Bun.s3 !== "undefined" },
 		{ name: "Bun.password", available: typeof Bun.password !== "undefined" },
@@ -2268,10 +2268,10 @@ function showBunInfo(): void {
 	];
 
 	features.forEach((f) => {
-		console.log(`    ${f.available ? GLYPHS.OK : GLYPHS.FAIL} ${f.name}`);
+		console.info(`    ${f.available ? GLYPHS.OK : GLYPHS.FAIL} ${f.name}`);
 	});
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 // ─── Main ─────────────────────────────────────────
@@ -2287,7 +2287,7 @@ async function main(): Promise<void> {
 		}
 
 		case "version":
-			console.log(REGISTRY_CONFIG.version);
+			console.info(REGISTRY_CONFIG.version);
 			break;
 
 		case "connect":
@@ -2342,7 +2342,7 @@ async function main(): Promise<void> {
 
 		case "r2:status": {
 			const r2Connected = await checkR2Connection();
-			console.log(
+			console.info(
 				`${GLYPHS.R2} R2 Status: ${r2Connected ? "CONNECTED" : "DISCONNECTED"}`,
 			);
 			process.exit(r2Connected ? 0 : 1);
@@ -2369,7 +2369,7 @@ async function main(): Promise<void> {
 		case "cache:clear":
 			cacheDB.run("DELETE FROM registry_cache");
 			await $`rm -rf ${REGISTRY_CONFIG.cacheDir}/*.cache`.nothrow();
-			console.log(`${GLYPHS.OK} Cache cleared`);
+			console.info(`${GLYPHS.OK} Cache cleared`);
 			break;
 
 		// Benchmark
@@ -2522,7 +2522,7 @@ async function main(): Promise<void> {
 
 		case "help":
 		default:
-			console.log(`
+			console.info(`
 ${GLYPHS.DRIFT} Tier-1380 OMEGA Registry Connector v2.1
 
 Usage:

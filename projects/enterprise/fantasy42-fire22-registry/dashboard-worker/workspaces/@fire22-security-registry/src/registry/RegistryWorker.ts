@@ -304,7 +304,7 @@ class CloudflareRegistry extends Fire22RegistryServer {
     try {
       const { results } = await this.env.REGISTRY_DB.prepare('SELECT * FROM packages').all();
 
-      console.log(`📦 Loaded ${results?.length || 0} packages from D1`);
+      console.info(`📦 Loaded ${results?.length || 0} packages from D1`);
 
       // Reconstruct packages map from database results
       if (results) {
@@ -329,7 +329,7 @@ class CloudflareRegistry extends Fire22RegistryServer {
   protected async savePackages(): Promise<void> {
     try {
       // This would implement incremental updates in production
-      console.log('💾 Registry state would be saved to D1');
+      console.info('💾 Registry state would be saved to D1');
     } catch (error) {
       console.warn('Could not save packages to D1:', error.message);
     }
@@ -349,7 +349,7 @@ class CloudflareRegistry extends Fire22RegistryServer {
         },
       });
 
-      console.log(`📦 Tarball stored in R2: ${key}`);
+      console.info(`📦 Tarball stored in R2: ${key}`);
     } catch (error) {
       console.warn('Could not store tarball in R2:', error.message);
     }

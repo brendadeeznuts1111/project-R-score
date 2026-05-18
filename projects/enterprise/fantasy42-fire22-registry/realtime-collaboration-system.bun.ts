@@ -106,7 +106,7 @@ class RealtimeCollaborationManager {
     };
 
     this.sessions.set(sessionId, session);
-    console.log(`🎯 Created collaboration session: ${sessionId} for dashboard: ${dashboardId}`);
+    console.info(`🎯 Created collaboration session: ${sessionId} for dashboard: ${dashboardId}`);
 
     return sessionId;
   }
@@ -133,7 +133,7 @@ class RealtimeCollaborationManager {
       timestamp: new Date()
     });
 
-    console.log(`👋 User ${user.username} joined session ${sessionId}`);
+    console.info(`👋 User ${user.username} joined session ${sessionId}`);
     return true;
   }
 
@@ -157,7 +157,7 @@ class RealtimeCollaborationManager {
       timestamp: new Date()
     });
 
-    console.log(`👋 User ${user.username} left session ${sessionId}`);
+    console.info(`👋 User ${user.username} left session ${sessionId}`);
     return true;
   }
 
@@ -221,7 +221,7 @@ class RealtimeCollaborationManager {
       timestamp: new Date()
     });
 
-    console.log(`✏️ Element ${elementId} edited by user ${userId}`);
+    console.info(`✏️ Element ${elementId} edited by user ${userId}`);
     return true;
   }
 
@@ -261,7 +261,7 @@ class RealtimeCollaborationManager {
       timestamp: new Date()
     });
 
-    console.log(`💬 Comment added to element ${elementId} by user ${userId}`);
+    console.info(`💬 Comment added to element ${elementId} by user ${userId}`);
     return true;
   }
 
@@ -276,7 +276,7 @@ class RealtimeCollaborationManager {
     };
 
     this.elements.set(elementId, collaborativeElement);
-    console.log(`📝 Registered collaborative element: ${elementId}`);
+    console.info(`📝 Registered collaborative element: ${elementId}`);
     return true;
   }
 
@@ -293,7 +293,7 @@ class RealtimeCollaborationManager {
     };
 
     // In a real implementation, this would send to WebSocket connections
-    console.log(`📡 Broadcasting ${event} to session ${sessionId}:`, eventData);
+    console.info(`📡 Broadcasting ${event} to session ${sessionId}:`, eventData);
 
     // Trigger local event handlers
     const handlers = this.eventHandlers.get(event) || [];
@@ -351,7 +351,7 @@ class RealtimeCollaborationManager {
     }
 
     if (cleaned > 0) {
-      console.log(`🧹 Cleaned up ${cleaned} inactive sessions`);
+      console.info(`🧹 Cleaned up ${cleaned} inactive sessions`);
     }
 
     return cleaned;
@@ -420,13 +420,13 @@ class CollaborationWebSocketServer {
       },
     });
 
-    console.log(`🚀 Collaboration WebSocket Server with Compression started on port ${port}`);
-    console.log(`🔧 WebSocket Compression: permessage-deflate ENABLED`);
-    console.log(`📊 Max Payload: 1MB, Idle Timeout: 5 minutes`);
+    console.info(`🚀 Collaboration WebSocket Server with Compression started on port ${port}`);
+    console.info(`🔧 WebSocket Compression: permessage-deflate ENABLED`);
+    console.info(`📊 Max Payload: 1MB, Idle Timeout: 5 minutes`);
   }
 
   private handleConnection(ws: WebSocket): void {
-    console.log(`🔗 Collaboration client connected (with compression)`);
+    console.info(`🔗 Collaboration client connected (with compression)`);
 
     // Send welcome message
     ws.send(JSON.stringify({
@@ -441,7 +441,7 @@ class CollaborationWebSocketServer {
   private handleMessage(ws: WebSocket, message: string | Buffer): void {
     try {
       const data = JSON.parse(message.toString());
-      console.log(`📨 Collaboration message: ${data.type}`);
+      console.info(`📨 Collaboration message: ${data.type}`);
 
       switch (data.type) {
         case 'join-session':
@@ -460,7 +460,7 @@ class CollaborationWebSocketServer {
           ws.send(JSON.stringify({ type: 'pong', timestamp: new Date().toISOString() }));
           break;
         default:
-          console.log(`Unknown collaboration message type: ${data.type}`);
+          console.info(`Unknown collaboration message type: ${data.type}`);
       }
     } catch (error) {
       console.error(`❌ Error parsing collaboration message: ${error.message}`);
@@ -566,11 +566,11 @@ class CollaborationWebSocketServer {
       this.clients.delete(ws);
     }
 
-    console.log(`🔌 Collaboration client disconnected (${code})`);
+    console.info(`🔌 Collaboration client disconnected (${code})`);
   }
 
   private handleDrain(ws: WebSocket): void {
-    console.log(`💧 Collaboration WebSocket backpressure relieved`);
+    console.info(`💧 Collaboration WebSocket backpressure relieved`);
   }
 
   private broadcastToDashboard(dashboardId: string, message: any, excludeWs?: WebSocket): void {
@@ -588,7 +588,7 @@ class CollaborationWebSocketServer {
   public stop(): void {
     if (this.server) {
       this.server.stop();
-      console.log('✅ Collaboration WebSocket server stopped');
+      console.info('✅ Collaboration WebSocket server stopped');
     }
   }
 }
@@ -640,7 +640,7 @@ class CollaborativeDashboard {
       });
 
       if (joined) {
-        console.log(`🎯 Joined collaborative session for dashboard: ${this.dashboardId}`);
+        console.info(`🎯 Joined collaborative session for dashboard: ${this.dashboardId}`);
         this.setupRealtimeUpdates();
       }
 
@@ -778,22 +778,22 @@ class CollaborativeDashboard {
 
   private updateCollaboratorCursor(data: any) {
     // In a real implementation, this would update cursor positions on the UI
-    console.log(`🖱️ Cursor update from ${data.userId}: (${data.x}, ${data.y})`);
+    console.info(`🖱️ Cursor update from ${data.userId}: (${data.x}, ${data.y})`);
   }
 
   private updateUserPresence(data: any) {
     // In a real implementation, this would update user presence indicators
-    console.log(`👤 Presence update for ${data.userId}:`, data.updates);
+    console.info(`👤 Presence update for ${data.userId}:`, data.updates);
   }
 
   private applyRemoteEdit(data: any) {
     // In a real implementation, this would apply remote edits to elements
-    console.log(`✏️ Remote edit on element ${data.elementId} by ${data.userId}`);
+    console.info(`✏️ Remote edit on element ${data.elementId} by ${data.userId}`);
   }
 
   private addCollaborativeComment(data: any) {
     // In a real implementation, this would add comments to elements
-    console.log(`💬 Comment added to ${data.elementId}: ${data.comment.content}`);
+    console.info(`💬 Comment added to ${data.elementId}: ${data.comment.content}`);
   }
 
   private generateRandomColor(): string {
@@ -807,14 +807,14 @@ class CollaborativeDashboard {
 
 // Demonstration and testing
 async function demonstrateRealtimeCollaboration() {
-  console.log('🤝 Real-time Collaboration System with WebSocket Compression');
-  console.log('==========================================================\n');
+  console.info('🤝 Real-time Collaboration System with WebSocket Compression');
+  console.info('==========================================================\n');
 
   // 🚀 BUN 1.1.X OPTIMIZATION: Initialize WebSocket server with compression
   const collaborationManager = new RealtimeCollaborationManager();
   const wsServer = new CollaborationWebSocketServer(collaborationManager, 8081);
 
-  console.log('🚀 WebSocket server initialized with compression support\n');
+  console.info('🚀 WebSocket server initialized with compression support\n');
 
   const dashboard = new CollaborativeDashboard('demo-dashboard');
 
@@ -825,12 +825,12 @@ async function demonstrateRealtimeCollaboration() {
     { userId: 'user3', username: 'Charlie', color: '#45B7D1' }
   ];
 
-  console.log('👥 Simulating users joining collaboration session...\n');
+  console.info('👥 Simulating users joining collaboration session...\n');
 
   for (const user of users) {
     const joined = await dashboard.initializeCollaboration(user);
     if (joined) {
-      console.log(`✅ ${user.username} joined the collaboration session`);
+      console.info(`✅ ${user.username} joined the collaboration session`);
 
       // Register some collaborative elements
       dashboard.registerElement(`chart-${user.userId}`, 'chart', {
@@ -843,32 +843,32 @@ async function demonstrateRealtimeCollaboration() {
       dashboard.addComment(`chart-${user.userId}`, `Great chart, ${user.username}!`);
 
     } else {
-      console.log(`❌ ${user.username} failed to join`);
+      console.info(`❌ ${user.username} failed to join`);
     }
   }
 
   // Get session information
   const sessionInfo = dashboard.getSessionInfo();
-  console.log(`\n📊 Session Information:`);
-  console.log(`   Session ID: ${sessionInfo.sessionId}`);
-  console.log(`   Participants: ${sessionInfo.participants.length}`);
-  console.log(`   Total Elements: ${sessionInfo.statistics.totalElements}`);
-  console.log(`   Active Sessions: ${sessionInfo.statistics.activeSessions}`);
+  console.info(`\n📊 Session Information:`);
+  console.info(`   Session ID: ${sessionInfo.sessionId}`);
+  console.info(`   Participants: ${sessionInfo.participants.length}`);
+  console.info(`   Total Elements: ${sessionInfo.statistics.totalElements}`);
+  console.info(`   Active Sessions: ${sessionInfo.statistics.activeSessions}`);
 
-  console.log('\n🎯 Collaboration Features Demonstrated:');
-  console.log('  ✅ Multi-user sessions');
-  console.log('  ✅ Real-time presence tracking');
-  console.log('  ✅ Collaborative element editing');
-  console.log('  ✅ Live cursor tracking');
-  console.log('  ✅ Comment system');
-  console.log('  ✅ Activity monitoring');
-  console.log('  ✅ Session management');
+  console.info('\n🎯 Collaboration Features Demonstrated:');
+  console.info('  ✅ Multi-user sessions');
+  console.info('  ✅ Real-time presence tracking');
+  console.info('  ✅ Collaborative element editing');
+  console.info('  ✅ Live cursor tracking');
+  console.info('  ✅ Comment system');
+  console.info('  ✅ Activity monitoring');
+  console.info('  ✅ Session management');
 
   // Cleanup
   setTimeout(() => {
     dashboard.cleanup();
     wsServer.stop();
-    console.log('\n🧹 Collaboration session and WebSocket server cleaned up');
+    console.info('\n🧹 Collaboration session and WebSocket server cleaned up');
   }, 2000);
 
   // Generate collaboration report
@@ -909,8 +909,8 @@ ${users.map(user => `- **${user.username}** (${user.userId}) - Color: ${user.col
 *Generated on ${new Date().toISOString()}*`;
 
   await Bun.write('./realtime-collaboration-report.md', report);
-  console.log('\n📄 Generated Collaboration Report: ./realtime-collaboration-report.md');
-  console.log('\n✨ Real-time collaboration demonstration complete!');
+  console.info('\n📄 Generated Collaboration Report: ./realtime-collaboration-report.md');
+  console.info('\n✨ Real-time collaboration demonstration complete!');
 }
 
 // Run demonstration if called directly

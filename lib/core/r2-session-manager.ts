@@ -102,7 +102,7 @@ export interface SessionSpawnResult {
  * });
  * 
  * if (result.success) {
- *   console.log('Session spawned:', result.spawnProfile);
+ *   console.info('Session spawned:', result.spawnProfile);
  * } else {
  *   console.error('Failed:', result.error);
  * }
@@ -364,7 +364,7 @@ export class R2SessionManager {
  * });
  * 
  * if (result.success) {
- *   console.log('Spawned:', result.spawnProfile);
+ *   console.info('Spawned:', result.spawnProfile);
  * }
  * ```
  */
@@ -381,13 +381,13 @@ export async function spawnR2Session(
 
 // Entry guard for testing
 if (import.meta.main) {
-  console.log('🔧 R2 Session Manager Demo\n');
+  console.info('🔧 R2 Session Manager Demo\n');
 
   const manager = new R2SessionManager({
     serviceName: 'demo-service',
   });
 
-  console.log('Spawning session with error handling...\n');
+  console.info('Spawning session with error handling...\n');
 
   const result = await manager.spawnSession({
     command: ['bun', 'junior-runner', 'test.md'],
@@ -397,7 +397,7 @@ if (import.meta.main) {
     circuitBreaker: { enabled: true },
   });
 
-  console.log('Result:', {
+  console.info('Result:', {
     success: result.success,
     durationMs: result.durationMs.toFixed(2),
     attempts: result.attempts,
@@ -406,16 +406,16 @@ if (import.meta.main) {
   });
 
   if (result.success && result.spawnProfile) {
-    console.log('\nSpawn Profile:');
-    console.log(`  Session ID: ${result.spawnProfile.sessionId}`);
-    console.log(`  Terminal ID: ${result.spawnProfile.terminalId}`);
-    console.log(`  PID: ${result.spawnProfile.pid}`);
-    console.log(`  Status: ${result.spawnProfile.status}`);
+    console.info('\nSpawn Profile:');
+    console.info(`  Session ID: ${result.spawnProfile.sessionId}`);
+    console.info(`  Terminal ID: ${result.spawnProfile.terminalId}`);
+    console.info(`  PID: ${result.spawnProfile.pid}`);
+    console.info(`  Status: ${result.spawnProfile.status}`);
   }
 
-  console.log('\nCircuit Breaker Stats:', manager.getCircuitBreakerStats());
-  console.log('Metrics Stats:', manager.getMetricsStats());
+  console.info('\nCircuit Breaker Stats:', manager.getCircuitBreakerStats());
+  console.info('Metrics Stats:', manager.getMetricsStats());
 
   manager.destroy();
-  console.log('\n✅ Demo complete!');
+  console.info('\n✅ Demo complete!');
 }

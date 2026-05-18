@@ -24,8 +24,8 @@ export async function testProxy(
 	url: string,
 	proxyUrl: string,
 ): Promise<{ success: boolean; status?: number; error?: string }> {
-	console.log(`\n🔍 Testing proxy: ${proxyUrl}`);
-	console.log(`   Target URL: ${url}\n`);
+	console.info(`\n🔍 Testing proxy: ${proxyUrl}`);
+	console.info(`   Target URL: ${url}\n`);
 
 	try {
 		const startTime = performance.now();
@@ -36,10 +36,10 @@ export async function testProxy(
 
 		const data = await response.text();
 
-		console.log(`✅ Proxy test successful`);
-		console.log(`   Status: ${response.status}`);
-		console.log(`   Duration: ${duration.toFixed(2)}ms`);
-		console.log(`   Response size: ${data.length} bytes`);
+		console.info(`✅ Proxy test successful`);
+		console.info(`   Status: ${response.status}`);
+		console.info(`   Duration: ${duration.toFixed(2)}ms`);
+		console.info(`   Response size: ${data.length} bytes`);
 
 		return { success: true, status: response.status };
 	} catch (error) {
@@ -60,9 +60,9 @@ export async function testProxyAuth(
 	user: string,
 	pass: string,
 ): Promise<{ success: boolean; status?: number; error?: string }> {
-	console.log(`\n🔍 Testing authenticated proxy: ${proxyUrl}`);
-	console.log(`   Target URL: ${url}`);
-	console.log(`   User: ${user}\n`);
+	console.info(`\n🔍 Testing authenticated proxy: ${proxyUrl}`);
+	console.info(`   Target URL: ${url}`);
+	console.info(`   User: ${user}\n`);
 
 	try {
 		const startTime = performance.now();
@@ -78,10 +78,10 @@ export async function testProxyAuth(
 
 		const data = await response.text();
 
-		console.log(`✅ Authenticated proxy test successful`);
-		console.log(`   Status: ${response.status}`);
-		console.log(`   Duration: ${duration.toFixed(2)}ms`);
-		console.log(`   Response size: ${data.length} bytes`);
+		console.info(`✅ Authenticated proxy test successful`);
+		console.info(`   Status: ${response.status}`);
+		console.info(`   Duration: ${duration.toFixed(2)}ms`);
+		console.info(`   Response size: ${data.length} bytes`);
 
 		return { success: true, status: response.status };
 	} catch (error) {
@@ -102,10 +102,10 @@ export async function testHeaders(
 	url: string,
 	headers: Record<string, string>,
 ): Promise<{ success: boolean; receivedHeaders?: Record<string, string>; error?: string }> {
-	console.log(`\n🔍 Testing custom headers`);
-	console.log(`   URL: ${url}`);
-	console.log(`   Headers:`, headers);
-	console.log();
+	console.info(`\n🔍 Testing custom headers`);
+	console.info(`   URL: ${url}`);
+	console.info(`   Headers:`, headers);
+	console.info();
 
 	try {
 		const startTime = performance.now();
@@ -116,10 +116,10 @@ export async function testHeaders(
 
 		const data = await response.json();
 
-		console.log(`✅ Header test successful`);
-		console.log(`   Status: ${response.status}`);
-		console.log(`   Duration: ${duration.toFixed(2)}ms`);
-		console.log(`   Received headers:`, JSON.stringify(data.headers || {}, null, 2));
+		console.info(`✅ Header test successful`);
+		console.info(`   Status: ${response.status}`);
+		console.info(`   Duration: ${duration.toFixed(2)}ms`);
+		console.info(`   Received headers:`, JSON.stringify(data.headers || {}, null, 2));
 
 		return {
 			success: true,
@@ -143,8 +143,8 @@ export async function benchmarkHeaders(
 	url: string,
 	iterations: number = 100,
 ): Promise<{ avgDuration: number; minDuration: number; maxDuration: number }> {
-	console.log(`\n⚡ Benchmarking headers (${iterations} iterations)`);
-	console.log(`   URL: ${url}\n`);
+	console.info(`\n⚡ Benchmarking headers (${iterations} iterations)`);
+	console.info(`   URL: ${url}\n`);
 
 	const durations: number[] = [];
 
@@ -172,10 +172,10 @@ export async function benchmarkHeaders(
 	const minDuration = Math.min(...durations);
 	const maxDuration = Math.max(...durations);
 
-	console.log(`\n✅ Benchmark completed`);
-	console.log(`   Average duration: ${avgDuration.toFixed(2)}ms`);
-	console.log(`   Min duration: ${minDuration.toFixed(2)}ms`);
-	console.log(`   Max duration: ${maxDuration.toFixed(2)}ms`);
+	console.info(`\n✅ Benchmark completed`);
+	console.info(`   Average duration: ${avgDuration.toFixed(2)}ms`);
+	console.info(`   Min duration: ${minDuration.toFixed(2)}ms`);
+	console.info(`   Max duration: ${maxDuration.toFixed(2)}ms`);
 
 	return { avgDuration, minDuration, maxDuration };
 }
@@ -187,7 +187,7 @@ async function main() {
 	const command = args[0];
 
 	if (!command) {
-		console.log(`
+		console.info(`
 Usage: bun run examples/bun-fetch-testing-utilities.ts <command> [options]
 
 Commands:

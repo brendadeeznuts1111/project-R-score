@@ -65,7 +65,7 @@ export class ProfilingMultiLayerGraphSystem {
 		this.db = config.db || null;
 
 		if (this.profilingEnabled) {
-			console.log("🔧 CPU Profiling enabled for multi-layer graph system");
+			console.info("🔧 CPU Profiling enabled for multi-layer graph system");
 			this.performanceMonitor.markStart("system_init");
 		}
 
@@ -277,7 +277,7 @@ export class ProfilingMultiLayerGraphSystem {
 			try {
 				// In production, would insert into database
 				// For now, just log
-				console.log("📊 Performance anomaly:", anomaly);
+				console.info("📊 Performance anomaly:", anomaly);
 			} catch (error: unknown) {
 				const errorMessage =
 					error instanceof Error ? error.message : String(error);
@@ -297,8 +297,8 @@ export class ProfilingMultiLayerGraphSystem {
 		const summary = this.performanceMonitor.getSummary();
 		const metrics = this.performanceMonitor.exportMetrics();
 
-		console.log("📊 Profile Summary:", summary);
-		console.log("📈 Metrics:", metrics);
+		console.info("📊 Profile Summary:", summary);
+		console.info("📈 Metrics:", metrics);
 	}
 
 	/**
@@ -314,7 +314,7 @@ export class ProfilingMultiLayerGraphSystem {
 	 */
 	clearLayerCache(layer: number): void {
 		// In production, would clear actual cache
-		console.log(`🧹 Cleared Layer ${layer} cache`);
+		console.info(`🧹 Cleared Layer ${layer} cache`);
 	}
 
 	/**
@@ -351,7 +351,7 @@ export class ProfilingMultiLayerGraphSystem {
 	 * Clear edge cache
 	 */
 	clearEdgeCache(): void {
-		console.log("🧹 Cleared edge cache");
+		console.info("🧹 Cleared edge cache");
 	}
 
 	/**
@@ -359,7 +359,7 @@ export class ProfilingMultiLayerGraphSystem {
 	 */
 	async cleanupDatabase(): Promise<void> {
 		// In production, would clean up database resources
-		console.log("🧹 Database cleanup complete");
+		console.info("🧹 Database cleanup complete");
 	}
 
 	/**
@@ -387,6 +387,6 @@ export class ProfilingMultiLayerGraphSystem {
 	 */
 	async deleteProfile(sessionId: string): Promise<void> {
 		// In production, would delete from storage
-		console.log(`🗑️ Deleted profile: ${sessionId}`);
+		console.info(`🗑️ Deleted profile: ${sessionId}`);
 	}
 }

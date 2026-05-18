@@ -14,7 +14,7 @@ const server = Bun.serve({
       const theme = req.cookies.get("theme") || "light";
       const sessionId = req.cookies.get("sessionId");
       
-      console.log(`🍪 Reading cookies: user_id=${userId}, theme=${theme}, sessionId=${sessionId}`);
+      console.info(`🍪 Reading cookies: user_id=${userId}, theme=${theme}, sessionId=${sessionId}`);
       
       return Response.json({
         userId,
@@ -52,7 +52,7 @@ const server = Bun.serve({
         sameSite: "strict",
       });
       
-      console.log("🍪 Set cookies: user_id, theme, sessionId");
+      console.info("🍪 Set cookies: user_id, theme, sessionId");
       
       return new Response("Login successful - cookies set using Bun's CookieMap");
     }
@@ -64,7 +64,7 @@ const server = Bun.serve({
       req.cookies.delete("theme", { path: "/" });
       req.cookies.delete("sessionId", { path: "/" });
       
-      console.log("🍪 Deleted cookies: user_id, theme, sessionId");
+      console.info("🍪 Deleted cookies: user_id, theme, sessionId");
       
       return new Response("Logged out successfully - cookies deleted using Bun's API");
     }
@@ -137,20 +137,20 @@ const server = Bun.serve({
   },
 });
 
-console.log(`🍪 Bun Cookie API Demo server starting on http://localhost:${server.port}`);
-console.log(`📖 Based on: https://bun.com/docs/runtime/http/cookies`);
-console.log("");
-console.log("Available endpoints:");
-console.log("  GET  /profile          - Read cookies");
-console.log("  POST /login           - Set cookies");
-console.log("  POST /logout          - Delete cookies");
-console.log("  GET  /cookie-demo      - Cookie management demo");
-console.log("  GET  /cookie-map-demo  - CookieMap features");
-console.log("");
+console.info(`🍪 Bun Cookie API Demo server starting on http://localhost:${server.port}`);
+console.info(`📖 Based on: https://bun.com/docs/runtime/http/cookies`);
+console.info("");
+console.info("Available endpoints:");
+console.info("  GET  /profile          - Read cookies");
+console.info("  POST /login           - Set cookies");
+console.info("  POST /logout          - Delete cookies");
+console.info("  GET  /cookie-demo      - Cookie management demo");
+console.info("  GET  /cookie-map-demo  - CookieMap features");
+console.info("");
 
 // Handle graceful shutdown
 process.on("SIGINT", () => {
-  console.log("\n🛑 Shutting down Cookie Demo server...");
+  console.info("\n🛑 Shutting down Cookie Demo server...");
   server.stop();
   process.exit(0);
 });

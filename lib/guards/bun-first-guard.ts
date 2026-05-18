@@ -235,10 +235,10 @@ async function main(): Promise<void> {
   const files = args.filter(arg => !arg.startsWith('--'));
 
   if (files.length === 0) {
-    console.log('🛡️ BUN-FIRST GUARD');
-    console.log('Usage: bun run lib/guards/bun-first-guard.ts <file1.ts> <file2.ts> ...');
-    console.log('');
-    console.log('Checks TypeScript files for Bun-first compliance violations.');
+    console.info('🛡️ BUN-FIRST GUARD');
+    console.info('Usage: bun run lib/guards/bun-first-guard.ts <file1.ts> <file2.ts> ...');
+    console.info('');
+    console.info('Checks TypeScript files for Bun-first compliance violations.');
     process.exit(0);
   }
 
@@ -251,25 +251,25 @@ async function main(): Promise<void> {
       const result = checkBunFirstCompliance(content, file);
 
       if (!result.valid) {
-        console.log(`\n❌ ${file}`);
+        console.info(`\n❌ ${file}`);
         for (const v of result.violations) {
           const icon = v.severity === 'error' ? '🔴' : '🟡';
-          console.log(`  ${icon} Line ${v.line}: ${v.message}`);
-          console.log(`     💡 ${v.replacement}`);
+          console.info(`  ${icon} Line ${v.line}: ${v.message}`);
+          console.info(`     💡 ${v.replacement}`);
 
           totalViolations++;
           if (v.severity === 'error') totalErrors++;
         }
       } else {
-        console.log(`✅ ${file} - No violations`);
+        console.info(`✅ ${file} - No violations`);
       }
     } catch (error) {
       console.error(`❌ Error reading ${file}:`, error);
     }
   }
 
-  console.log('\n' + '='.repeat(60));
-  console.log(
+  console.info('\n' + '='.repeat(60));
+  console.info(
     `Total violations: ${totalViolations} (${totalErrors} errors, ${totalViolations - totalErrors} warnings)`
   );
 

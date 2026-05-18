@@ -39,10 +39,10 @@ const server = serve({
 	},
 });
 
-console.log(`🚀 Stress Test Server running on ${server.url}`);
-console.log(`📊 Test endpoints:`);
-console.log(`   GET ${server.url}/api/health`);
-console.log(`   POST ${server.url}/api/risk/score`);
-console.log("\n💡 Run stress test with:");
-console.log(`   bombardier -c 256 -n 10000 ${server.url}/api/health`);
-console.log(`   wrk -t12 -c400 -d30s ${server.url}/api/health`);
+console.info(`🚀 Stress Test Server running on ${server.url}`);
+console.info(`📊 Test endpoints:`);
+console.info(`   GET ${server.url}/api/health`);
+console.info(`   POST ${server.url}/api/risk/score`);
+console.info("\n💡 Run stress test with:");
+console.info(`   bombardier -c 256 -n 10000 ${server.url}/api/health`);
+console.info(`   wrk -t12 -c400 -d30s ${server.url}/api/health`);

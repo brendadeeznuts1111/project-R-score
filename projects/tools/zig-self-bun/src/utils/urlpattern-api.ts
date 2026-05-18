@@ -7,12 +7,12 @@
 
 // URLPattern Examples and Utilities
 export function demonstrateURLPattern() {
-  console.log("🔗 URLPattern API Examples:");
+  console.info("🔗 URLPattern API Examples:");
 
   // Basic pathname pattern
   const apiPattern = new URLPattern({ pathname: "/api/:resource/:id?" });
   const match1 = apiPattern.exec("https://example.com/api/users/123");
-  console.log("API Pattern Match:", match1?.pathname.groups);
+  console.info("API Pattern Match:", match1?.pathname.groups);
 
   // Protocol and hostname patterns
   const fullPattern = new URLPattern({
@@ -22,7 +22,7 @@ export function demonstrateURLPattern() {
   });
 
   const match2 = fullPattern.exec("https://api.example.com/api/v1/users");
-  console.log("Full Pattern Match:", {
+  console.info("Full Pattern Match:", {
     hostname: match2?.hostname.groups,
     pathname: match2?.pathname.groups
   });
@@ -30,7 +30,7 @@ export function demonstrateURLPattern() {
   // Search parameter patterns
   const searchPattern = new URLPattern({ search: "?type=:type&page=:page" });
   const match3 = searchPattern.exec("https://example.com/search?type=users&page=1");
-  console.log("Search Pattern Match:", match3?.search.groups);
+  console.info("Search Pattern Match:", match3?.search.groups);
 }
 
 // Advanced URLPattern Router

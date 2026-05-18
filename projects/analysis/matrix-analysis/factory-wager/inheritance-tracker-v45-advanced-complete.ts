@@ -3,10 +3,10 @@
  * Sophisticated inheritance chain tracking with override detection
  */
 
-console.log('🧬 INHERITANCE TRACKER v4.5 - ADVANCED CHAIN ANALYSIS COMPLETE!')
-console.log('=' .repeat(80))
+console.info('🧬 INHERITANCE TRACKER v4.5 - ADVANCED CHAIN ANALYSIS COMPLETE!')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 🚀 SOPHISTICATED INHERITANCE CHAIN TRACKING SYSTEM DEPLOYED!
 
 ✅ ADVANCED INHERITANCE ANALYSIS FEATURES IMPLEMENTED:
@@ -224,9 +224,9 @@ The inheritance tracker provides unprecedented visibility into configuration inh
 🧬✅ INHERITANCE TRACKER v4.5 - ADVANCED CHAIN ANALYSIS COMPLETE! ✅🧬
 `)
 
-console.log('🧬✅ INHERITANCE TRACKER v4.5 - ADVANCED CHAIN ANALYSIS COMPLETE!')
-console.log('🔗 Advanced chain analysis - Inheritance tracking mastered!')
-console.log('🎨 Professional visualization - ASCII box rendering!')
-console.log('📊 Smart detection - Override and inheritance mapping!')
-console.log('🔧 CLI integration - Seamless --track-inheritance flag!')
-console.log('💎 FactoryWager v4.5 - Sophisticated inheritance analysis complete!')
+console.info('🧬✅ INHERITANCE TRACKER v4.5 - ADVANCED CHAIN ANALYSIS COMPLETE!')
+console.info('🔗 Advanced chain analysis - Inheritance tracking mastered!')
+console.info('🎨 Professional visualization - ASCII box rendering!')
+console.info('📊 Smart detection - Override and inheritance mapping!')
+console.info('🔧 CLI integration - Seamless --track-inheritance flag!')
+console.info('💎 FactoryWager v4.5 - Sophisticated inheritance analysis complete!')

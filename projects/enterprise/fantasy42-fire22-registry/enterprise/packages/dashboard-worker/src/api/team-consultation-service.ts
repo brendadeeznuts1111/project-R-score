@@ -171,7 +171,7 @@ export class TeamConsultationService {
         )
       `;
 
-      console.log('✅ Team consultation database tables initialized');
+      console.info('✅ Team consultation database tables initialized');
     } catch (error) {
       console.error('❌ Failed to initialize consultation database:', error);
       throw error;
@@ -187,7 +187,7 @@ export class TeamConsultationService {
     try {
       const consultationId = `consultation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-      console.log(`🤝 Creating team consultation: ${request.projectName}`);
+      console.info(`🤝 Creating team consultation: ${request.projectName}`);
 
       // Insert main consultation record
       await this.db`
@@ -228,7 +228,7 @@ export class TeamConsultationService {
       // Get consultation status
       const status = await this.getConsultationStatus(request.projectId);
 
-      console.log(`✅ Team consultation created: ${consultationId}`);
+      console.info(`✅ Team consultation created: ${consultationId}`);
       return { success: true, data: status };
     } catch (error) {
       console.error(`❌ Failed to create consultation for ${request.projectName}:`, error);
@@ -305,7 +305,7 @@ ${team.deliverables.map(del => `- ${del}`).join('\n')}
       };
 
       // Log for team notification system pickup
-      console.log(
+      console.info(
         `TEAM_CONSULTATION_REQUEST:${team.team.toUpperCase()}:`,
         JSON.stringify(notification)
       );
@@ -409,7 +409,7 @@ ${team.deliverables.map(del => `- ${del}`).join('\n')}
         UPDATE consultations SET updated_at = CURRENT_TIMESTAMP WHERE project_id = ${projectId}
       `;
 
-      console.log(`✅ Updated consultation status for ${team} on project ${projectId}: ${status}`);
+      console.info(`✅ Updated consultation status for ${team} on project ${projectId}: ${status}`);
       return { success: true };
     } catch (error) {
       console.error(`❌ Failed to update team status for ${projectId}:`, error);

@@ -1124,5 +1124,5 @@ const comparator = new ConfigComparator(
   originalConfig as unknown as Record<string, unknown>,
   testConfig as unknown as Record<string, unknown>
 );
-console.log("Config Comparison:");
-console.log(Bun.inspect(comparator));
+console.info("Config Comparison:");
+console.info(Bun.inspect(comparator));

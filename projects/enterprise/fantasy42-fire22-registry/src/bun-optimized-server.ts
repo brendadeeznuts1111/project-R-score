@@ -36,7 +36,7 @@ export class BunOptimizedServer {
   }
 
   start(port: number = APPLICATION_CONSTANTS.DEFAULT_PORT): void {
-    console.log(`🚀 Starting Bun-Optimized Server on port ${port}`);
+    console.info(`🚀 Starting Bun-Optimized Server on port ${port}`);
 
     Bun.serve({
       port,
@@ -80,15 +80,15 @@ export class BunOptimizedServer {
       websocket: {
         message(ws, message) {
           // Handle real-time package updates
-          console.log('WebSocket message:', message);
+          console.info('WebSocket message:', message);
         },
 
         open(ws) {
-          console.log('WebSocket connection opened');
+          console.info('WebSocket connection opened');
         },
 
         close(ws, code, reason) {
-          console.log('WebSocket connection closed:', code, reason);
+          console.info('WebSocket connection closed:', code, reason);
         },
       },
 
@@ -99,8 +99,8 @@ export class BunOptimizedServer {
       },
     });
 
-    console.log(`✅ Bun-Optimized Server running at http://localhost:${port}`);
-    console.log(`🎯 Leveraging Bun's native HTTP implementation for maximum performance`);
+    console.info(`✅ Bun-Optimized Server running at http://localhost:${port}`);
+    console.info(`🎯 Leveraging Bun's native HTTP implementation for maximum performance`);
   }
 
   private async handleHealthCheck(request: Request): Promise<Response> {
@@ -437,7 +437,7 @@ export class BunOptimizedShell {
       const exitCode = await proc.exited;
 
       const executionTime = (Bun.nanoseconds() - startTime) / 1_000_000; // milliseconds
-      console.log(`⚡ Command executed in ${executionTime.toFixed(2)}ms: ${command}`);
+      console.info(`⚡ Command executed in ${executionTime.toFixed(2)}ms: ${command}`);
 
       return {
         success: exitCode === 0,
@@ -533,7 +533,7 @@ export class BunOptimizedMonitor {
       const result = await operation();
       const duration = (Bun.nanoseconds() - startTime) / 1_000_000; // milliseconds
 
-      console.log(`⚡ ${label} completed in ${duration.toFixed(3)}ms`);
+      console.info(`⚡ ${label} completed in ${duration.toFixed(3)}ms`);
 
       return { result, duration };
     } catch (error) {
@@ -570,47 +570,47 @@ export class BunOptimizedMonitor {
 // ============================================================================
 
 export async function demonstrateBunOptimization(): Promise<void> {
-  console.log('🚀 Demonstrating Bun-Native Performance Optimizations\n');
+  console.info('🚀 Demonstrating Bun-Native Performance Optimizations\n');
 
   // 1. High-performance file operations
-  console.log('📁 Testing Bun-native file operations...');
+  console.info('📁 Testing Bun-native file operations...');
   const { result: files, duration: fileTime } = await BunOptimizedMonitor.measurePerformance(
     () => BunOptimizedFileOps.discoverPackages(),
     'File discovery'
   );
-  console.log(`   Found ${files.length} package files in ${fileTime.toFixed(2)}ms\n`);
+  console.info(`   Found ${files.length} package files in ${fileTime.toFixed(2)}ms\n`);
 
   // 2. Ultra-fast hashing
-  console.log('🔐 Testing Bun-native hashing...');
+  console.info('🔐 Testing Bun-native hashing...');
   const testData = 'This is test data for Bun-native hashing performance';
   const { result: hash, duration: hashTime } = await BunOptimizedMonitor.measurePerformance(
     () => Promise.resolve(BunOptimizedHashing.generateIntegrity(testData)),
     'Hash generation'
   );
-  console.log(`   Generated hash: ${hash.substring(0, 20)}... in ${hashTime.toFixed(3)}ms\n`);
+  console.info(`   Generated hash: ${hash.substring(0, 20)}... in ${hashTime.toFixed(3)}ms\n`);
 
   // 3. High-performance compression
-  console.log('🗜️ Testing Bun-native compression...');
+  console.info('🗜️ Testing Bun-native compression...');
   const largeData = JSON.stringify({ data: 'x'.repeat(10000) });
   const { result: compressed, duration: compressTime } =
     await BunOptimizedMonitor.measurePerformance(
       () => Promise.resolve(BunOptimizedCompression.compressData(largeData)),
       'Data compression'
     );
-  console.log(
+  console.info(
     `   Compressed ${largeData.length} bytes to ${compressed.length} bytes in ${compressTime.toFixed(2)}ms\n`
   );
 
   // 4. System information with Bun APIs
-  console.log('📊 System Information (Bun-native):');
+  console.info('📊 System Information (Bun-native):');
   const sysInfo = BunOptimizedMonitor.getSystemInfo();
-  console.log(`   Bun Version: ${sysInfo.version}`);
-  console.log(`   Platform: ${sysInfo.platform}`);
-  console.log(`   Memory Usage: ${sysInfo.memory.heapUsed.toFixed(1)}MB heap`);
-  console.log(`   Uptime: ${sysInfo.uptime.toFixed(1)}s\n`);
+  console.info(`   Bun Version: ${sysInfo.version}`);
+  console.info(`   Platform: ${sysInfo.platform}`);
+  console.info(`   Memory Usage: ${sysInfo.memory.heapUsed.toFixed(1)}MB heap`);
+  console.info(`   Uptime: ${sysInfo.uptime.toFixed(1)}s\n`);
 
-  console.log('✅ Bun-native optimizations demonstrated!');
-  console.log(
+  console.info('✅ Bun-native optimizations demonstrated!');
+  console.info(
     '🎯 These optimizations provide significant performance gains over traditional Node.js implementations'
   );
 }

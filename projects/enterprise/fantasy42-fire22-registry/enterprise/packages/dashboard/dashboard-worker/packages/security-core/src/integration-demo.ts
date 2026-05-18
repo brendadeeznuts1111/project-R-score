@@ -13,8 +13,8 @@ class Fire22SecurityIntegrationDemo {
   private coreConfig: any = {};
 
   async initialize() {
-    console.log('🔥 Fire22 Security Integration Demo');
-    console.log('='.repeat(50));
+    console.info('🔥 Fire22 Security Integration Demo');
+    console.info('='.repeat(50));
 
     // Initialize security system with core package integration
     this.security = await initializeFire22Security({
@@ -32,12 +32,12 @@ class Fire22SecurityIntegrationDemo {
       },
     });
 
-    console.log('✅ Security system initialized with workspace integration');
+    console.info('✅ Security system initialized with workspace integration');
   }
 
   async demoWorkspaceCredentials() {
-    console.log('\n🔐 Workspace Credential Management');
-    console.log('-'.repeat(30));
+    console.info('\n🔐 Workspace Credential Management');
+    console.info('-'.repeat(30));
 
     // Demo credentials for different Fire22 packages
     const workspaceCredentials = [
@@ -77,7 +77,7 @@ class Fire22SecurityIntegrationDemo {
     ];
 
     for (const pkg of workspaceCredentials) {
-      console.log(`\n📦 ${pkg.package}:`);
+      console.info(`\n📦 ${pkg.package}:`);
 
       for (const cred of pkg.credentials) {
         const keyName = `${pkg.package.replace('@fire22/', '')}_${cred.name}`;
@@ -87,14 +87,14 @@ class Fire22SecurityIntegrationDemo {
           `${pkg.package} - ${cred.name}`,
           'development'
         );
-        console.log(`  ✅ Stored: ${keyName}`);
+        console.info(`  ✅ Stored: ${keyName}`);
       }
     }
   }
 
   async demoPackageSecurityScanning() {
-    console.log('\n🛡️ Package Security Scanning');
-    console.log('-'.repeat(30));
+    console.info('\n🛡️ Package Security Scanning');
+    console.info('-'.repeat(30));
 
     // Create a mock package.json with Fire22 workspace dependencies
     const mockPackageJson = {
@@ -117,34 +117,34 @@ class Fire22SecurityIntegrationDemo {
       },
     };
 
-    console.log('📋 Scanning Fire22 workspace dependencies...');
-    console.log('Dependencies:', Object.keys(mockPackageJson.dependencies).length);
-    console.log('Dev Dependencies:', Object.keys(mockPackageJson.devDependencies).length);
+    console.info('📋 Scanning Fire22 workspace dependencies...');
+    console.info('Dependencies:', Object.keys(mockPackageJson.dependencies).length);
+    console.info('Dev Dependencies:', Object.keys(mockPackageJson.devDependencies).length);
 
     // Simulate security scan results
-    console.log('\n🔍 Security Scan Results:');
-    console.log('✅ @fire22/* packages: Clean (internal packages trusted)');
-    console.log('✅ express: No vulnerabilities found');
-    console.log('✅ zod: No vulnerabilities found');
-    console.log('⚠️ crypto-js: Policy warning (cryptocurrency-related package)');
-    console.log('📝 lodash: Consider replacing with native ES6+ methods');
+    console.info('\n🔍 Security Scan Results:');
+    console.info('✅ @fire22/* packages: Clean (internal packages trusted)');
+    console.info('✅ express: No vulnerabilities found');
+    console.info('✅ zod: No vulnerabilities found');
+    console.info('⚠️ crypto-js: Policy warning (cryptocurrency-related package)');
+    console.info('📝 lodash: Consider replacing with native ES6+ methods');
 
-    console.log('\n💡 Fire22 Workspace Security Benefits:');
-    console.log('  • Internal packages (@fire22/*) automatically trusted');
-    console.log('  • Workspace protocol prevents version conflicts');
-    console.log('  • Custom policies for Fire22 development standards');
-    console.log('  • Integration with existing Fire22 testing framework');
+    console.info('\n💡 Fire22 Workspace Security Benefits:');
+    console.info('  • Internal packages (@fire22/*) automatically trusted');
+    console.info('  • Workspace protocol prevents version conflicts');
+    console.info('  • Custom policies for Fire22 development standards');
+    console.info('  • Integration with existing Fire22 testing framework');
   }
 
   async demoEnvironmentIsolation() {
-    console.log('\n🌍 Environment Isolation Demo');
-    console.log('-'.repeat(30));
+    console.info('\n🌍 Environment Isolation Demo');
+    console.info('-'.repeat(30));
 
     const environments = ['development', 'staging', 'production'];
     const baseCredentials = ['database_url', 'fire22_api_token', 'jwt_secret'];
 
     for (const env of environments) {
-      console.log(`\n📍 ${env.toUpperCase()} Environment:`);
+      console.info(`\n📍 ${env.toUpperCase()} Environment:`);
 
       for (const credName of baseCredentials) {
         const envSpecificValue = this.generateEnvSpecificCredential(credName, env);
@@ -160,31 +160,31 @@ class Fire22SecurityIntegrationDemo {
         const masked = retrieved
           ? retrieved.substring(0, 10) + '...' + retrieved.slice(-4)
           : 'null';
-        console.log(`  🔐 ${credName}: ${masked}`);
+        console.info(`  🔐 ${credName}: ${masked}`);
       }
     }
 
-    console.log('\n✅ Environment isolation complete');
-    console.log('💡 Each environment has separate, encrypted credential storage');
+    console.info('\n✅ Environment isolation complete');
+    console.info('💡 Each environment has separate, encrypted credential storage');
   }
 
   async demoIntegrationWithCore() {
-    console.log('\n🔗 Integration with @fire22/core');
-    console.log('-'.repeat(30));
+    console.info('\n🔗 Integration with @fire22/core');
+    console.info('-'.repeat(30));
 
     // Load Fire22 configuration from secure storage
     const secureConfig = await this.security.credentialManager.loadFire22Config();
 
-    console.log('📋 Loaded secure configuration from keychain:');
+    console.info('📋 Loaded secure configuration from keychain:');
     for (const [key, value] of Object.entries(secureConfig)) {
       if (value && typeof value === 'string') {
         const masked = value.substring(0, 8) + '...' + value.slice(-4);
-        console.log(`  ${key}: ${masked}`);
+        console.info(`  ${key}: ${masked}`);
       }
     }
 
     // Demonstrate integration with other Fire22 packages
-    console.log('\n🔄 Package Integration Examples:');
+    console.info('\n🔄 Package Integration Examples:');
 
     const integrationExamples = [
       {
@@ -210,16 +210,16 @@ class Fire22SecurityIntegrationDemo {
     ];
 
     for (const example of integrationExamples) {
-      console.log(`\n📦 ${example.package}:`);
-      console.log(`   Usage: ${example.use}`);
-      console.log(`   Credential: ${example.credential} (securely retrieved from keychain)`);
-      console.log(`   Integration: Seamless import from @fire22/security-core`);
+      console.info(`\n📦 ${example.package}:`);
+      console.info(`   Usage: ${example.use}`);
+      console.info(`   Credential: ${example.credential} (securely retrieved from keychain)`);
+      console.info(`   Integration: Seamless import from @fire22/security-core`);
     }
   }
 
   async demoWorkspaceOrchestration() {
-    console.log('\n🏗️ Workspace Orchestration Security');
-    console.log('-'.repeat(30));
+    console.info('\n🏗️ Workspace Orchestration Security');
+    console.info('-'.repeat(30));
 
     // Simulate workspace orchestration with security
     const workspaceConfig = {
@@ -235,7 +235,7 @@ class Fire22SecurityIntegrationDemo {
       centralizedAudit: true,
     };
 
-    console.log('📊 Workspace Security Configuration:');
+    console.info('📊 Workspace Security Configuration:');
     for (const workspace of workspaceConfig.workspaces) {
       const icon =
         workspace.securityLevel === 'strict'
@@ -243,39 +243,39 @@ class Fire22SecurityIntegrationDemo {
           : workspace.securityLevel === 'standard'
             ? '🛡️'
             : '📂';
-      console.log(`  ${icon} ${workspace.name}: ${workspace.securityLevel}`);
+      console.info(`  ${icon} ${workspace.name}: ${workspace.securityLevel}`);
     }
 
-    console.log(`\n🔗 Shared Credentials: ${workspaceConfig.sharedCredentials.join(', ')}`);
-    console.log(
+    console.info(`\n🔗 Shared Credentials: ${workspaceConfig.sharedCredentials.join(', ')}`);
+    console.info(
       `📊 Centralized Audit: ${workspaceConfig.centralizedAudit ? 'Enabled' : 'Disabled'}`
     );
 
     // Demo centralized security audit
-    console.log('\n🔍 Centralized Security Audit:');
-    console.log('  ✅ All workspaces scanned for vulnerabilities');
-    console.log('  ✅ Shared credentials verified and encrypted');
-    console.log('  ✅ Security policies enforced across workspace');
-    console.log('  ✅ Integration with existing Fire22 tooling');
+    console.info('\n🔍 Centralized Security Audit:');
+    console.info('  ✅ All workspaces scanned for vulnerabilities');
+    console.info('  ✅ Shared credentials verified and encrypted');
+    console.info('  ✅ Security policies enforced across workspace');
+    console.info('  ✅ Integration with existing Fire22 tooling');
   }
 
   async performanceDemo() {
-    console.log('\n⚡ Performance Benchmarks');
-    console.log('-'.repeat(30));
+    console.info('\n⚡ Performance Benchmarks');
+    console.info('-'.repeat(30));
 
     const benchmark = await this.security.credentialManager.benchmarkPerformance(50);
 
-    console.log(`📊 Credential Retrieval Performance (50 iterations):`);
-    console.log(`   Average Time: ${benchmark.averageRetrievalTime.toFixed(3)}ms`);
-    console.log(`   Total Time: ${benchmark.totalTime.toFixed(2)}ms`);
-    console.log(`   Operations/sec: ${Math.round(benchmark.operationsPerSecond)}`);
-    console.log(`   🚀 Performance: ${benchmark.averageRetrievalTime < 2 ? 'Excellent' : 'Good'}`);
+    console.info(`📊 Credential Retrieval Performance (50 iterations):`);
+    console.info(`   Average Time: ${benchmark.averageRetrievalTime.toFixed(3)}ms`);
+    console.info(`   Total Time: ${benchmark.totalTime.toFixed(2)}ms`);
+    console.info(`   Operations/sec: ${Math.round(benchmark.operationsPerSecond)}`);
+    console.info(`   🚀 Performance: ${benchmark.averageRetrievalTime < 2 ? 'Excellent' : 'Good'}`);
 
-    console.log('\n💡 Performance Benefits:');
-    console.log('  • Native OS keychain integration (no external deps)');
-    console.log('  • Bun native APIs for maximum performance');
-    console.log('  • Efficient credential caching');
-    console.log('  • Workspace-optimized for Fire22 development');
+    console.info('\n💡 Performance Benefits:');
+    console.info('  • Native OS keychain integration (no external deps)');
+    console.info('  • Bun native APIs for maximum performance');
+    console.info('  • Efficient credential caching');
+    console.info('  • Workspace-optimized for Fire22 development');
   }
 
   private generateEnvSpecificCredential(name: string, env: string): string {
@@ -295,8 +295,8 @@ class Fire22SecurityIntegrationDemo {
   }
 
   async cleanup() {
-    console.log('\n🧹 Demo Cleanup');
-    console.log('-'.repeat(30));
+    console.info('\n🧹 Demo Cleanup');
+    console.info('-'.repeat(30));
 
     const testCredentials = [
       'core_database_url',
@@ -319,7 +319,7 @@ class Fire22SecurityIntegrationDemo {
       }
     }
 
-    console.log('✅ Demo credentials cleaned up');
+    console.info('✅ Demo credentials cleaned up');
   }
 }
 
@@ -337,12 +337,12 @@ async function runIntegrationDemo() {
     await demo.performanceDemo();
     await demo.cleanup();
 
-    console.log('\n🎉 Fire22 Security Integration Demo Complete!');
-    console.log('\n💡 Next Steps:');
-    console.log('  1. Install: bun add @fire22/security-core');
-    console.log('  2. Import: import { initializeFire22Security } from "@fire22/security-core"');
-    console.log('  3. Configure: Set up your security policies and credentials');
-    console.log('  4. Deploy: Use with existing Fire22 workspace packages');
+    console.info('\n🎉 Fire22 Security Integration Demo Complete!');
+    console.info('\n💡 Next Steps:');
+    console.info('  1. Install: bun add @fire22/security-core');
+    console.info('  2. Import: import { initializeFire22Security } from "@fire22/security-core"');
+    console.info('  3. Configure: Set up your security policies and credentials');
+    console.info('  4. Deploy: Use with existing Fire22 workspace packages');
   } catch (error) {
     console.error('❌ Demo failed:', error);
   }

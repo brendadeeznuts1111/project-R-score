@@ -53,8 +53,8 @@ async function benchAsync(
   };
 }
 
-console.log('lib/ai/ Performance Benchmark');
-console.log('='.repeat(60));
+console.info('lib/ai/ Performance Benchmark');
+console.info('='.repeat(60));
 
 // Heap snapshot BEFORE benchmarks
 const heapBefore = heapStats();
@@ -65,7 +65,7 @@ const results: BenchResult[] = [];
 // 1. LRU CACHE (AdvancedLRUCache)
 // ============================================================================
 
-console.log('\n' + '— LRU Cache —');
+console.info('\n' + '— LRU Cache —');
 
 const cache = new AdvancedLRUCache<string>({
   maxSize: 10_000,
@@ -104,7 +104,7 @@ results.push(
 // 2. ID GENERATION (Bun.randomUUIDv7 vs old Date.now+Math.random)
 // ============================================================================
 
-console.log('— ID Generation —');
+console.info('— ID Generation —');
 
 results.push(
   bench('Bun.randomUUIDv7()', () => {
@@ -129,7 +129,7 @@ results.push(
 // 3. YAML PARSING (Bun YAML vs JSON)
 // ============================================================================
 
-console.log('— Parsing —');
+console.info('— Parsing —');
 
 const sampleYaml = `
 cookie:
@@ -172,7 +172,7 @@ results.push(
 // 4. ANOMALY DETECTOR
 // ============================================================================
 
-console.log('— Anomaly Detector —');
+console.info('— Anomaly Detector —');
 
 const detector = AnomalyDetector.getInstance();
 
@@ -202,7 +202,7 @@ results.push(
 // 5. SMART CACHE
 // ============================================================================
 
-console.log('— Smart Cache —');
+console.info('— Smart Cache —');
 
 const smartCache = new SmartCacheManager({ enablePredictions: false });
 
@@ -222,7 +222,7 @@ results.push(
 // 6. Bun.deepEquals (used in config comparison)
 // ============================================================================
 
-console.log('— Bun.deepEquals —');
+console.info('— Bun.deepEquals —');
 
 const objA = { v: 'A', s: 'abc123', t: 1234567890, nested: { a: 1, b: [1, 2, 3] } };
 const objB = { v: 'A', s: 'abc123', t: 1234567890, nested: { a: 1, b: [1, 2, 3] } };
@@ -243,7 +243,7 @@ results.push(
 // 7. Bun.nanoseconds overhead
 // ============================================================================
 
-console.log('— Timing & Introspection —');
+console.info('— Timing & Introspection —');
 
 results.push(
   bench('Bun.nanoseconds()', () => {
@@ -261,14 +261,14 @@ results.push(
 // RESULTS
 // ============================================================================
 
-console.log('\n' + '='.repeat(60));
-console.log(Bun.inspect.table(results, ['operation', 'ns/op', 'ops/s', 'iters']));
+console.info('\n' + '='.repeat(60));
+console.info(Bun.inspect.table(results, ['operation', 'ns/op', 'ops/s', 'iters']));
 
 // Heap snapshot AFTER benchmarks — show delta
 const heapAfter = heapStats();
 
-console.log('\n' + '— JSC Heap (bun:jsc heapStats) —');
-console.log(Bun.inspect.table([
+console.info('\n' + '— JSC Heap (bun:jsc heapStats) —');
+console.info(Bun.inspect.table([
   { metric: 'heapSize', before: `${(heapBefore.heapSize / 1024).toFixed(0)} KiB`, after: `${(heapAfter.heapSize / 1024).toFixed(0)} KiB`, delta: `+${((heapAfter.heapSize - heapBefore.heapSize) / 1024).toFixed(0)} KiB` },
   { metric: 'heapCapacity', before: `${(heapBefore.heapCapacity / 1024).toFixed(0)} KiB`, after: `${(heapAfter.heapCapacity / 1024).toFixed(0)} KiB`, delta: `+${((heapAfter.heapCapacity - heapBefore.heapCapacity) / 1024).toFixed(0)} KiB` },
   { metric: 'extraMemorySize', before: `${(heapBefore.extraMemorySize / 1024).toFixed(0)} KiB`, after: `${(heapAfter.extraMemorySize / 1024).toFixed(0)} KiB`, delta: `+${((heapAfter.extraMemorySize - heapBefore.extraMemorySize) / 1024).toFixed(0)} KiB` },
@@ -276,7 +276,7 @@ console.log(Bun.inspect.table([
   { metric: 'protectedObjectCount', before: String(heapBefore.protectedObjectCount), after: String(heapAfter.protectedObjectCount), delta: `+${heapAfter.protectedObjectCount - heapBefore.protectedObjectCount}` },
 ], ['metric', 'before', 'after', 'delta']));
 
-console.log('Tip: MIMALLOC_SHOW_STATS=1 bun lib/ai/ai.bench.ts for allocator stats');
+console.info('Tip: MIMALLOC_SHOW_STATS=1 bun lib/ai/ai.bench.ts for allocator stats');
 
 // Cleanup timers
 detector.removeAllListeners();

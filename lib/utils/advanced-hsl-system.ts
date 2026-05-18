@@ -257,31 +257,31 @@ export function advancedColorize(
 // ──────────────────────────────────────────────────────────────────────────────
 
 export function demoAdvancedHSL(): void {
-  console.log(colorize('🎨 ADVANCED HSL COLOR THEORY DEMO', 'cyan', true));
-  console.log(colorize('═'.repeat(50), 'gray'));
-  console.log();
+  console.info(colorize('🎨 ADVANCED HSL COLOR THEORY DEMO', 'cyan', true));
+  console.info(colorize('═'.repeat(50), 'gray'));
+  console.info();
 
   // Harmonious palette demo
-  console.log(colorize('🎯 Harmonious Palettes:', 'yellow', true));
+  console.info(colorize('🎯 Harmonious Palettes:', 'yellow', true));
   const baseHue = 210; // blue
   const palette = generateHarmoniousPalette(baseHue, 85, 65, 'analogous');
 
   palette.forEach((color, i) => {
-    console.log(`${i + 1}. ${color.hex} (${color.hsl})`);
+    console.info(`${i + 1}. ${color.hex} (${color.hsl})`);
   });
-  console.log();
+  console.info();
 
   // Tints and shades demo
-  console.log(colorize('🎨 Tints & Shades:', 'magenta', true));
+  console.info(colorize('🎨 Tints & Shades:', 'magenta', true));
   const baseColor = { h: 135, s: 90, l: 60 }; // green
   const { tints, shades } = generateTintsAndShades(baseColor);
 
-  console.log('Tints:', tints.join(' '));
-  console.log('Shades:', shades.join(' '));
-  console.log();
+  console.info('Tints:', tints.join(' '));
+  console.info('Shades:', shades.join(' '));
+  console.info();
 
   // Dynamic status coloring
-  console.log(colorize('📊 Dynamic Status Colors:', 'green', true));
+  console.info(colorize('📊 Dynamic Status Colors:', 'green', true));
   const statuses: Array<'success' | 'warning' | 'error' | 'info'> = [
     'success',
     'warning',
@@ -296,17 +296,17 @@ export function demoAdvancedHSL(): void {
   ];
 
   statuses.forEach(status => {
-    console.log(`${status.toUpperCase()}:`);
+    console.info(`${status.toUpperCase()}:`);
     severities.forEach(severity => {
       const hsl = getDynamicStatusColor(status, severity);
       const hex = color(hsl, 'hex');
-      console.log(`  ${severity}: ${hex} (${hsl})`);
+      console.info(`  ${severity}: ${hex} (${hsl})`);
     });
-    console.log();
+    console.info();
   });
 
   // Perceptual brightness demo
-  console.log(colorize('💡 Perceptual Brightness:', 'blue', true));
+  console.info(colorize('💡 Perceptual Brightness:', 'blue', true));
   const testColors = [
     { h: 0, s: 100, l: 50 }, // pure red
     { h: 0, s: 100, l: 25 }, // dark red
@@ -319,6 +319,6 @@ export function demoAdvancedHSL(): void {
     const brightness = perceivedBrightness(color.h, color.s, color.l);
     const hsl = `hsl(${color.h}, ${color.s}%, ${color.l}%)`;
     const hex = Bun.color(hsl, 'hex');
-    console.log(`${hex}: Brightness = ${(brightness * 100).toFixed(1)}%`);
+    console.info(`${hex}: Brightness = ${(brightness * 100).toFixed(1)}%`);
   });
 }

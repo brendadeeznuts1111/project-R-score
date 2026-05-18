@@ -549,7 +549,7 @@ export class EnhancedLotteryInterface {
 
       return null;
     } catch (error) {
-      console.log('Peer funding attempt failed:', error);
+      console.info('Peer funding attempt failed:', error);
       return null;
     }
   }

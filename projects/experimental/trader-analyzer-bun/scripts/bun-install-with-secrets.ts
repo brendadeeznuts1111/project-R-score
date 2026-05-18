@@ -34,8 +34,8 @@ async function main() {
 	// Run bun install with provided arguments
 	const installArgs = args.length > 0 ? args : [];
 	
-	console.log("🔐 Loaded registry credentials from Bun.secrets");
-	console.log(`📦 Running: bun install ${installArgs.join(" ")}`);
+	console.info("🔐 Loaded registry credentials from Bun.secrets");
+	console.info(`📦 Running: bun install ${installArgs.join(" ")}`);
 	
 	// Spawn bun install process with environment variables
 	const proc = Bun.spawn(["bun", "install", ...installArgs], {

@@ -37,8 +37,8 @@ function parseArgs(args: string[]): CLIArgs {
 
 const commands = {
   'test:full': async (args: CLIArgs) => {
-    console.log('🧪 COMPLETE TEST MATRIX - 12.X.X.X TIERS');
-    console.log('===========================================');
+    console.info('🧪 COMPLETE TEST MATRIX - 12.X.X.X TIERS');
+    console.info('===========================================');
     
     const orchestrator = new TestOrchestrator();
     return await orchestrator.runFullMatrix({
@@ -49,8 +49,8 @@ const commands = {
   },
   
   'test:compliance': async (args: CLIArgs) => {
-    console.log('⚖️ COMPLIANCE TESTING - 12.X.X.X TIERS');
-    console.log('========================================');
+    console.info('⚖️ COMPLIANCE TESTING - 12.X.X.X TIERS');
+    console.info('========================================');
     
     const standards = args.get('--standards')?.split(',') || ['aml5', 'gdpr', 'pci-dss'];
     const tester = new TestOrchestrator();
@@ -58,8 +58,8 @@ const commands = {
   },
   
   'mobile:build': async (args: CLIArgs) => {
-    console.log('📱 MOBILE APP DEPLOYMENT - 13.X.X.X TIERS');
-    console.log('===========================================');
+    console.info('📱 MOBILE APP DEPLOYMENT - 13.X.X.X TIERS');
+    console.info('===========================================');
     
     const platforms = args.get('--platforms')?.split(',') || ['ios', 'android'];
     const deployer = new MobileDeployOrchestrator();
@@ -67,8 +67,8 @@ const commands = {
   },
   
   'partner:deploy': async (args: CLIArgs) => {
-    console.log('🤝 PARTNER INTEGRATION DEPLOYMENT - 13.X.X.X');
-    console.log('============================================');
+    console.info('🤝 PARTNER INTEGRATION DEPLOYMENT - 13.X.X.X');
+    console.info('============================================');
     
     const partners = args.get('--partners')?.split(',') || ['square', 'twilio', 'stripe'];
     const deployer = new PartnerDeployer();
@@ -76,8 +76,8 @@ const commands = {
   },
   
   'sdk:publish': async (args: CLIArgs) => {
-    console.log('📦 SDK PUBLISHING - 14.X.X.X TIERS');
-    console.log('===================================');
+    console.info('📦 SDK PUBLISHING - 14.X.X.X TIERS');
+    console.info('===================================');
     
     const platforms = args.get('--platforms')?.split(',') || ['js', 'py', 'php', 'go'];
     const publisher = new SDKPublisher();
@@ -85,9 +85,9 @@ const commands = {
   },
   
   'pipeline:complete': async (args: CLIArgs) => {
-    console.log('🚀 COMPLETE DEPLOYMENT PIPELINE - 12.X.X.X to 14.X.X.X');
-    console.log('====================================================');
-    console.log('');
+    console.info('🚀 COMPLETE DEPLOYMENT PIPELINE - 12.X.X.X to 14.X.X.X');
+    console.info('====================================================');
+    console.info('');
     
     const results = {
       tests: null,
@@ -99,39 +99,39 @@ const commands = {
     
     try {
       // 1. Run complete test matrix
-      console.log('🧪 STEP 1: Complete Test Matrix');
+      console.info('🧪 STEP 1: Complete Test Matrix');
       results.tests = await commands['test:full'](args);
-      console.log('✅ Tests completed\n');
+      console.info('✅ Tests completed\n');
       
       // 2. Run compliance tests
-      console.log('⚖️ STEP 2: Compliance Testing');
+      console.info('⚖️ STEP 2: Compliance Testing');
       results.compliance = await commands['test:compliance'](args);
-      console.log('✅ Compliance completed\n');
+      console.info('✅ Compliance completed\n');
       
       // 3. Build mobile apps
-      console.log('📱 STEP 3: Mobile App Build');
+      console.info('📱 STEP 3: Mobile App Build');
       results.mobile = await commands['mobile:build'](args);
-      console.log('✅ Mobile build completed\n');
+      console.info('✅ Mobile build completed\n');
       
       // 4. Deploy partner integrations
-      console.log('🤝 STEP 4: Partner Deployment');
+      console.info('🤝 STEP 4: Partner Deployment');
       results.partners = await commands['partner:deploy'](args);
-      console.log('✅ Partner deployment completed\n');
+      console.info('✅ Partner deployment completed\n');
       
       // 5. Publish SDKs
-      console.log('📦 STEP 5: SDK Publishing');
+      console.info('📦 STEP 5: SDK Publishing');
       results.sdk = await commands['sdk:publish'](args);
-      console.log('✅ SDK publishing completed\n');
+      console.info('✅ SDK publishing completed\n');
       
-      console.log('🎊 COMPLETE PIPELINE EXECUTION SUMMARY');
-      console.log('=====================================');
-      console.log('✅ All 14 tiers deployed successfully');
-      console.log('✅ Production-ready with full compliance');
-      console.log('✅ Mobile apps published to stores');
-      console.log('✅ Partner integrations active');
-      console.log('✅ Multi-language SDK ecosystem live');
-      console.log('');
-      console.log('🚀 DuoPlus Automation Platform - PRODUCTION READY!');
+      console.info('🎊 COMPLETE PIPELINE EXECUTION SUMMARY');
+      console.info('=====================================');
+      console.info('✅ All 14 tiers deployed successfully');
+      console.info('✅ Production-ready with full compliance');
+      console.info('✅ Mobile apps published to stores');
+      console.info('✅ Partner integrations active');
+      console.info('✅ Multi-language SDK ecosystem live');
+      console.info('');
+      console.info('🚀 DuoPlus Automation Platform - PRODUCTION READY!');
       
       return results;
     } catch (error) {
@@ -147,32 +147,32 @@ async function main() {
   const command = args.positionals[0];
 
   if (!command) {
-    console.log('🚀 DuoPlus Deployment CLI - Complete Deployment Pipeline');
-    console.log('=========================================================');
-    console.log('');
-    console.log('Available commands:');
-    console.log('');
-    console.log('🧪 Testing (12.X.X.X):');
-    console.log('  test:full                    - Run complete test matrix');
-    console.log('  test:compliance              - Run compliance tests');
-    console.log('');
-    console.log('📱 Mobile Deployment (13.X.X.X):');
-    console.log('  mobile:build                 - Build mobile apps');
-    console.log('  partner:deploy               - Deploy partner integrations');
-    console.log('');
-    console.log('📦 SDK Publishing (14.X.X.X):');
-    console.log('  sdk:publish                  - Publish SDK packages');
-    console.log('');
-    console.log('🚀 Complete Pipeline:');
-    console.log('  pipeline:complete            - Execute full deployment pipeline');
-    console.log('');
-    console.log('Examples:');
-    console.log('  bun run deployment-cli.ts test:full --coverage --load --chaos');
-    console.log('  bun run deployment-cli.ts test:compliance --standards="aml5,gdpr,pci-dss"');
-    console.log('  bun run deployment-cli.ts mobile:build --platforms="ios,android"');
-    console.log('  bun run deployment-cli.ts partner:deploy --partners="square,twilio,stripe"');
-    console.log('  bun run deployment-cli.ts sdk:publish --platforms="js,py,php,go"');
-    console.log('  bun run deployment-cli.ts pipeline:complete');
+    console.info('🚀 DuoPlus Deployment CLI - Complete Deployment Pipeline');
+    console.info('=========================================================');
+    console.info('');
+    console.info('Available commands:');
+    console.info('');
+    console.info('🧪 Testing (12.X.X.X):');
+    console.info('  test:full                    - Run complete test matrix');
+    console.info('  test:compliance              - Run compliance tests');
+    console.info('');
+    console.info('📱 Mobile Deployment (13.X.X.X):');
+    console.info('  mobile:build                 - Build mobile apps');
+    console.info('  partner:deploy               - Deploy partner integrations');
+    console.info('');
+    console.info('📦 SDK Publishing (14.X.X.X):');
+    console.info('  sdk:publish                  - Publish SDK packages');
+    console.info('');
+    console.info('🚀 Complete Pipeline:');
+    console.info('  pipeline:complete            - Execute full deployment pipeline');
+    console.info('');
+    console.info('Examples:');
+    console.info('  bun run deployment-cli.ts test:full --coverage --load --chaos');
+    console.info('  bun run deployment-cli.ts test:compliance --standards="aml5,gdpr,pci-dss"');
+    console.info('  bun run deployment-cli.ts mobile:build --platforms="ios,android"');
+    console.info('  bun run deployment-cli.ts partner:deploy --partners="square,twilio,stripe"');
+    console.info('  bun run deployment-cli.ts sdk:publish --platforms="js,py,php,go"');
+    console.info('  bun run deployment-cli.ts pipeline:complete');
     return;
   }
 
@@ -182,11 +182,11 @@ async function main() {
       const result = await commands[command](args);
       const duration = Date.now() - startTime;
       
-      console.log(`\n⏱️ Command completed in ${duration}ms`);
+      console.info(`\n⏱️ Command completed in ${duration}ms`);
       
       if (result && typeof result === 'object') {
-        console.log('\n📊 Result:');
-        console.log(JSON.stringify(result, null, 2));
+        console.info('\n📊 Result:');
+        console.info(JSON.stringify(result, null, 2));
       }
       
     } catch (error) {
@@ -195,7 +195,7 @@ async function main() {
     }
   } else {
     console.error(`❌ Unknown command: ${command}`);
-    console.log('Run "bun run deployment-cli.ts" to see available commands');
+    console.info('Run "bun run deployment-cli.ts" to see available commands');
     process.exit(1);
   }
 }

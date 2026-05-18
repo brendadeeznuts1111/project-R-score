@@ -19,7 +19,7 @@ async function enhanceSeniorProfile() {
     // In a real scenario, this might be stored in the JSON or reconstructed
     const md = await Bun.file('../test-multi-table.md').text();
     
-    console.log(`📄 Processing markdown: ${md.length} chars`);
+    console.info(`📄 Processing markdown: ${md.length} chars`);
     
     // Replace with FULL GFM feature scan
     const scanResult = scanFeatures(md);
@@ -37,22 +37,22 @@ async function enhanceSeniorProfile() {
     // Write the enhanced senior profile
     await Bun.write('senior-enhanced.json', JSON.stringify(oldJson, null, 2));
     
-    console.log('✅ Senior profile enhanced with FULL GFM features!');
-    console.log('📁 Output: senior-enhanced.json');
-    console.log(`🔍 Features scanned: ${Object.keys(oldJson.markdown.featureCounts).length}`);
-    console.log(`⚡ Scan time: ${scanResult.scanTime.toFixed(2)}μs`);
+    console.info('✅ Senior profile enhanced with FULL GFM features!');
+    console.info('📁 Output: senior-enhanced.json');
+    console.info(`🔍 Features scanned: ${Object.keys(oldJson.markdown.featureCounts).length}`);
+    console.info(`⚡ Scan time: ${scanResult.scanTime.toFixed(2)}μs`);
     
     // Display the enhanced feature counts
-    console.log('\n📊 Enhanced Feature Analysis:');
+    console.info('\n📊 Enhanced Feature Analysis:');
     const features = oldJson.markdown.featureCounts;
     Object.entries(features).forEach(([key, value]) => {
       if (typeof value === 'object') {
-        console.log(`  ${key}:`);
+        console.info(`  ${key}:`);
         Object.entries(value as any).forEach(([subKey, subValue]) => {
-          console.log(`    ${subKey}: ${subValue}`);
+          console.info(`    ${subKey}: ${subValue}`);
         });
       } else {
-        console.log(`  ${key}: ${value}`);
+        console.info(`  ${key}: ${value}`);
       }
     });
     

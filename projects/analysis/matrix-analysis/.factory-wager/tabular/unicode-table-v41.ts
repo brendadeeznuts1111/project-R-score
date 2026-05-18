@@ -175,11 +175,11 @@ export function benchmarkUnicodeTable(rows: number = 1000): void {
   const result = renderUnicodeTable(testData);
   const duration = performance.now() - start;
   
-  console.log(`📊 Unicode Table Benchmark:`);
-  console.log(`   Rows: ${rows}`);
-  console.log(`   Duration: ${duration.toFixed(2)}ms`);
-  console.log(`   Output length: ${result.length} chars`);
-  console.log(`   Performance: ${(rows / duration * 1000).toFixed(0)} rows/sec`);
+  console.info(`📊 Unicode Table Benchmark:`);
+  console.info(`   Rows: ${rows}`);
+  console.info(`   Duration: ${duration.toFixed(2)}ms`);
+  console.info(`   Output length: ${result.length} chars`);
+  console.info(`   Performance: ${(rows / duration * 1000).toFixed(0)} rows/sec`);
 }
 
 // Export utility functions for external use
@@ -235,14 +235,14 @@ if (import.meta.main) {
     }
   ];
   
-  console.log('🎉 FactoryWager Unicode Table Renderer v4.1 Demo');
-  console.log('');
-  console.log(renderUnicodeTable(demoData, {
+  console.info('🎉 FactoryWager Unicode Table Renderer v4.1 Demo');
+  console.info('');
+  console.info(renderUnicodeTable(demoData, {
     title: '🛡️ Unicode Citadel Demo - 多语言支持',
     footer: `Total width: ${calculateTableWidth(REDUCED_COLUMNS)} columns (reduced from ~180)`
   }));
   
-  console.log('');
-  console.log('🚀 Running performance benchmark...');
+  console.info('');
+  console.info('🚀 Running performance benchmark...');
   benchmarkUnicodeTable(1000);
 }

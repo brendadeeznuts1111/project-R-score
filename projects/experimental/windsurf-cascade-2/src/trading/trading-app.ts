@@ -18,18 +18,18 @@ export class SportsTradingApp {
 
   // Start the trading application
   public async start(): Promise<void> {
-    console.log('🏃 Starting High-Frequency Sports Trading Application...');
+    console.info('🏃 Starting High-Frequency Sports Trading Application...');
     
     try {
       // Initialize 13-byte trading configuration
-      console.log('🔧 Initializing 13-byte trading configuration...');
+      console.info('🔧 Initializing 13-byte trading configuration...');
       await initializeTradingConfig();
-      console.log('✅ Trading configuration initialized');
+      console.info('✅ Trading configuration initialized');
 
       // Start the trading API server
-      console.log('🌐 Starting trading API server...');
+      console.info('🌐 Starting trading API server...');
       await sportsTradingAPI.start();
-      console.log(`✅ Trading API running on http://localhost:${this.port}`);
+      console.info(`✅ Trading API running on http://localhost:${this.port}`);
 
       // Display performance metrics
       await this.displayPerformanceMetrics();
@@ -41,10 +41,10 @@ export class SportsTradingApp {
       this.setupShutdownHandlers();
 
       this.isRunning = true;
-      console.log('🚀 Sports Trading Application is running!');
-      console.log('📊 Dashboard: Open trading-dashboard.html in your browser');
-      console.log('🔗 API: http://localhost:3000');
-      console.log('⚡ Powered by 13-byte configuration system');
+      console.info('🚀 Sports Trading Application is running!');
+      console.info('📊 Dashboard: Open trading-dashboard.html in your browser');
+      console.info('🔗 API: http://localhost:3000');
+      console.info('⚡ Powered by 13-byte configuration system');
 
     } catch (error) {
       console.error('❌ Failed to start trading application:', error);
@@ -54,52 +54,52 @@ export class SportsTradingApp {
 
   // Display performance metrics
   private async displayPerformanceMetrics(): Promise<void> {
-    console.log('\n⚡ Performance Metrics:');
-    console.log('┌─────────────────────────────────────┐');
-    console.log('│ 13-Byte Config System Performance    │');
-    console.log('├─────────────────────────────────────┤');
-    console.log('│ Config Updates:     ~45ns           │');
-    console.log('│ Feature Checks:     ~45ns           │');
-    console.log('│ Risk Validation:    ~45ns           │');
-    console.log('│ Total Latency:      ~135ns          │');
-    console.log('│                                             │');
-    console.log('│ Speed Comparison:                      │');
-    console.log('│ vs Redis:    600,000x faster          │');
-    console.log('│ vs etcd:     419,473x faster          │');
-    console.log('│ vs Consul:   629,209x faster          │');
-    console.log('└─────────────────────────────────────┘');
+    console.info('\n⚡ Performance Metrics:');
+    console.info('┌─────────────────────────────────────┐');
+    console.info('│ 13-Byte Config System Performance    │');
+    console.info('├─────────────────────────────────────┤');
+    console.info('│ Config Updates:     ~45ns           │');
+    console.info('│ Feature Checks:     ~45ns           │');
+    console.info('│ Risk Validation:    ~45ns           │');
+    console.info('│ Total Latency:      ~135ns          │');
+    console.info('│                                             │');
+    console.info('│ Speed Comparison:                      │');
+    console.info('│ vs Redis:    600,000x faster          │');
+    console.info('│ vs etcd:     419,473x faster          │');
+    console.info('│ vs Consul:   629,209x faster          │');
+    console.info('└─────────────────────────────────────┘');
   }
 
   // Display dashboard information
   private displayDashboardInfo(): void {
-    console.log('\n📱 Trading Dashboard Features:');
-    console.log('┌─────────────────────────────────────┐');
-    console.log('│ Real-time Trading Controls            │');
-    console.log('│ • Auto-trading toggle                │');
-    console.log('│ • Risk management settings            │');
-    console.log('│ • Market making controls              │');
-    console.log('│ • Arbitrage detection                 │');
-    console.log('│ • Position hedging                    │');
-    console.log('│ • Liquidity mining                    │');
-    console.log('├─────────────────────────────────────┤');
-    console.log('│ Live Market Data & Signals            │');
-    console.log('│ • Real-time odds updates              │');
-    console.log('│ • Trading signal generation            │');
-    console.log('│ • One-click trade execution            │');
-    console.log('│ • Market data visualization           │');
-    console.log('├─────────────────────────────────────┤');
-    console.log('│ Performance Analytics                 │');
-    console.log('│ • Nanosecond latency display           │');
-    console.log('│ • P&L tracking                       │');
-    console.log('│ • Position monitoring                 │');
-    console.log('│ • Risk metrics                       │');
-    console.log('└─────────────────────────────────────┘');
+    console.info('\n📱 Trading Dashboard Features:');
+    console.info('┌─────────────────────────────────────┐');
+    console.info('│ Real-time Trading Controls            │');
+    console.info('│ • Auto-trading toggle                │');
+    console.info('│ • Risk management settings            │');
+    console.info('│ • Market making controls              │');
+    console.info('│ • Arbitrage detection                 │');
+    console.info('│ • Position hedging                    │');
+    console.info('│ • Liquidity mining                    │');
+    console.info('├─────────────────────────────────────┤');
+    console.info('│ Live Market Data & Signals            │');
+    console.info('│ • Real-time odds updates              │');
+    console.info('│ • Trading signal generation            │');
+    console.info('│ • One-click trade execution            │');
+    console.info('│ • Market data visualization           │');
+    console.info('├─────────────────────────────────────┤');
+    console.info('│ Performance Analytics                 │');
+    console.info('│ • Nanosecond latency display           │');
+    console.info('│ • P&L tracking                       │');
+    console.info('│ • Position monitoring                 │');
+    console.info('│ • Risk metrics                       │');
+    console.info('└─────────────────────────────────────┘');
   }
 
   // Set up graceful shutdown handlers
   private setupShutdownHandlers(): void {
     const shutdown = async (signal: string) => {
-      console.log(`\n🛑 Received ${signal}, shutting down gracefully...`);
+      console.info(`\n🛑 Received ${signal}, shutting down gracefully...`);
       
       try {
         // Stop the API server
@@ -109,14 +109,14 @@ export class SportsTradingApp {
         const stats = sportsTradingEngine.getStatistics();
         const pnl = sportsTradingEngine.calculatePnL();
         
-        console.log('\n📊 Final Trading Statistics:');
-        console.log(`┌─────────────────────────────────────┐`);
-        console.log(`│ Total Events Processed: ${stats.totalEvents.toString().padEnd(15)} │`);
-        console.log(`│ Active Positions:     ${stats.activePositions.toString().padEnd(15)} │`);
-        console.log(`│ Total P&L:             ${(pnl.total * 100).toFixed(2).padEnd(15)}% │`);
-        console.log(`└─────────────────────────────────────┘`);
+        console.info('\n📊 Final Trading Statistics:');
+        console.info(`┌─────────────────────────────────────┐`);
+        console.info(`│ Total Events Processed: ${stats.totalEvents.toString().padEnd(15)} │`);
+        console.info(`│ Active Positions:     ${stats.activePositions.toString().padEnd(15)} │`);
+        console.info(`│ Total P&L:             ${(pnl.total * 100).toFixed(2).padEnd(15)}% │`);
+        console.info(`└─────────────────────────────────────┘`);
         
-        console.log('\n🎓 Sports Trading Application stopped successfully');
+        console.info('\n🎓 Sports Trading Application stopped successfully');
         process.exit(0);
         
       } catch (error) {
@@ -133,10 +133,10 @@ export class SportsTradingApp {
   public async stop(): Promise<void> {
     if (!this.isRunning) return;
     
-    console.log('🛑 Stopping Sports Trading Application...');
+    console.info('🛑 Stopping Sports Trading Application...');
     sportsTradingAPI.stop();
     this.isRunning = false;
-    console.log('✅ Sports Trading Application stopped');
+    console.info('✅ Sports Trading Application stopped');
   }
 
   // Get application status
@@ -248,7 +248,7 @@ export async function runSportsTradingApp(): Promise<void> {
     await app.start();
     
     // Keep the process running
-    console.log('\n🎯 Application is running. Press Ctrl+C to stop.');
+    console.info('\n🎯 Application is running. Press Ctrl+C to stop.');
     
   } catch (error) {
     console.error('❌ Application failed to start:', error);

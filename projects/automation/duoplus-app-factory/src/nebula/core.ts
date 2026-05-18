@@ -48,8 +48,8 @@ export class NebulaFlowCore {
     this.cometCollect = new CometCollect();
     this.nebulaConsole = new NebulaConsole();
     
-    console.log('✨ Nebula-Flow™ Core initialized');
-    console.log(`🌌 ${this.config.totalStarlightIDs.toLocaleString()} Starlight-IDs online`);
+    console.info('✨ Nebula-Flow™ Core initialized');
+    console.info(`🌌 ${this.config.totalStarlightIDs.toLocaleString()} Starlight-IDs online`);
   }
 
   static getInstance(): NebulaFlowCore {
@@ -90,8 +90,8 @@ export class NebulaFlowCore {
     // Assess Black-Hole-Rate™ (chargeback risk)
     const blackHoleRisk = this.config.blackHoleRate * (params.riskLevel === 'high' ? 2 : params.riskLevel === 'medium' ? 1.5 : 1);
 
-    console.log(`🌠 Value entering nebula: $${params.amount} via ${params.sourceStarlightID}`);
-    console.log(`🎯 Target: ${params.targetGood} | Yield: $${projectedYield.toFixed(2)} | Risk: ${(blackHoleRisk * 100).toFixed(2)}%`);
+    console.info(`🌠 Value entering nebula: $${params.amount} via ${params.sourceStarlightID}`);
+    console.info(`🎯 Target: ${params.targetGood} | Yield: $${projectedYield.toFixed(2)} | Risk: ${(blackHoleRisk * 100).toFixed(2)}%`);
 
     // Store active flow
     this.activeFlows.set(flowId, {
@@ -172,7 +172,7 @@ export class NebulaFlowCore {
 
     // Check Event Horizon™
     if (Date.now() > flow.eventHorizon.getTime()) {
-      console.log(`⚠️  Event Horizon™ passed for flow ${flowId}`);
+      console.info(`⚠️  Event Horizon™ passed for flow ${flowId}`);
     }
 
     return await this.cometCollect.sweepFunds({
@@ -188,7 +188,7 @@ export class NebulaFlowCore {
    */
   registerStarlightID(starlight: StarlightID): void {
     this.starlightIDs.set(starlight.id, starlight);
-    console.log(`⭐ Starlight-ID ${starlight.id} added to galaxy`);
+    console.info(`⭐ Starlight-ID ${starlight.id} added to galaxy`);
   }
 
   /**

@@ -259,7 +259,7 @@ export function parseArgs(
 }
 
 function usage(): void {
-	console.log(`Analyze CLI (default: scan)
+	console.info(`Analyze CLI (default: scan)
 
 Usage:
   bun tools/analyze.ts                    Run default: scan with default roots
@@ -351,20 +351,20 @@ export async function runScan(opts: ReturnType<typeof parseArgs>): Promise<void>
 	const slice = rows.slice(0, opts.limit);
 
 	if (opts.format === "json") {
-		console.log(JSON.stringify({ total: rows.length, files: slice }, null, 2));
+		console.info(JSON.stringify({ total: rows.length, files: slice }, null, 2));
 		return;
 	}
 
-	console.log("📂 Structure scan (top " + opts.limit + " by lines)\n");
+	console.info("📂 Structure scan (top " + opts.limit + " by lines)\n");
 	const cols = opts.metrics
 		? ["file", "lines", "imports", "exports"]
 		: ["file", "lines"];
-	console.log(
+	console.info(
 		Bun.inspect.table(slice, cols as (keyof ScanRow)[], {
 			colors: process.stdout.isTTY && !process.env.NO_COLOR,
 		}),
 	);
-	console.log("\nTotal files scanned:", rows.length);
+	console.info("\nTotal files scanned:", rows.length);
 }
 
 /** Extract property/member names from type body (interface/class/type alias). Heuristic. */
@@ -514,7 +514,7 @@ export async function runTypes(opts: ReturnType<typeof parseArgs>): Promise<void
 				}
 			}
 			if (opts.format === "json") {
-				console.log(
+				console.info(
 					JSON.stringify(
 						{
 							total: filtered.length,
@@ -531,7 +531,7 @@ export async function runTypes(opts: ReturnType<typeof parseArgs>): Promise<void
 		}
 	}
 	if (opts.format === "json") {
-		console.log(
+		console.info(
 			JSON.stringify(
 				{ total: filtered.length, kind: kindFilter ?? "all", types: slice },
 				null,
@@ -550,17 +550,17 @@ export async function runTypes(opts: ReturnType<typeof parseArgs>): Promise<void
 		});
 	}
 	const kindLabel = kindFilter ? " (" + kindFilter + " only)" : "";
-	console.log(
+	console.info(
 		withProps
 			? "📐 Types and properties (top " + opts.limit + kindLabel + ")\n"
 			: "📐 Exported types (top " + opts.limit + kindLabel + ")\n",
 	);
-	console.log(
+	console.info(
 		Bun.inspect.table(slice, cols as (keyof (typeof types)[0])[], {
 			colors: process.stdout.isTTY && !process.env.NO_COLOR,
 		}),
 	);
-	console.log("\nTotal types:", filtered.length);
+	console.info("\nTotal types:", filtered.length);
 }
 
 function resolveSpecToPath(
@@ -665,15 +665,15 @@ export async function runDeps(opts: ReturnType<typeof parseArgs>): Promise<void>
 
 	// G3: deps --format=dot — import graph as Graphviz DOT
 	if (opts.format === "dot") {
-		console.log("digraph imports {");
+		console.info("digraph imports {");
 		for (const [fromPath, toPaths] of edges) {
 			const fromId = '"' + fromPath.replace(/"/g, '\\"') + '"';
 			for (const to of toPaths) {
 				const toId = '"' + to.replace(/"/g, '\\"') + '"';
-				console.log("  " + fromId + " -> " + toId + ";");
+				console.info("  " + fromId + " -> " + toId + ";");
 			}
 		}
-		console.log("}");
+		console.info("}");
 		return;
 	}
 
@@ -683,33 +683,33 @@ export async function runDeps(opts: ReturnType<typeof parseArgs>): Promise<void>
 			const cycles = findCycles(edges);
 			out.circular = cycles;
 		}
-		console.log(JSON.stringify(out, null, 2));
+		console.info(JSON.stringify(out, null, 2));
 		return;
 	}
 
-	console.log("📦 Imports (sample)\n");
+	console.info("📦 Imports (sample)\n");
 	const entries = [...importsByFile.entries()].slice(0, opts.limit);
 	const rows = entries.map(([file, imps]) => ({
 		file,
 		imports: imps.length,
 		sample: imps.slice(0, 3).join(", "),
 	}));
-	console.log(
+	console.info(
 		Bun.inspect.table(rows, ["file", "imports", "sample"], {
 			colors: process.stdout.isTTY && !process.env.NO_COLOR,
 		}),
 	);
-	console.log("\nTotal files with imports:", importsByFile.size);
+	console.info("\nTotal files with imports:", importsByFile.size);
 
 	if (circular) {
 		const cycles = findCycles(edges);
 		if (cycles.length === 0) {
-			console.log("\n🔄 No circular dependencies found.");
+			console.info("\n🔄 No circular dependencies found.");
 		} else {
-			console.log("\n🔄 Circular dependencies (" + cycles.length + "):\n");
+			console.info("\n🔄 Circular dependencies (" + cycles.length + "):\n");
 			for (let i = 0; i < cycles.length; i++) {
 				const c = cycles[i];
-				console.log("  " + (i + 1) + ". " + c.join(" → ") + " → " + c[0]);
+				console.info("  " + (i + 1) + ". " + c.join(" → ") + " → " + c[0]);
 			}
 		}
 	}
@@ -759,18 +759,18 @@ export async function runComplexity(
 	const slice = rows.slice(0, opts.limit);
 
 	if (opts.format === "json") {
-		console.log(
+		console.info(
 			JSON.stringify({ threshold, total: rows.length, files: slice }, null, 2),
 		);
 		return;
 	}
-	console.log("📊 Complexity (threshold ≥ " + threshold + ", top " + opts.limit + ")\n");
-	console.log(
+	console.info("📊 Complexity (threshold ≥ " + threshold + ", top " + opts.limit + ")\n");
+	console.info(
 		Bun.inspect.table(slice, ["file", "lines", "complexity"], {
 			colors: process.stdout.isTTY && !process.env.NO_COLOR,
 		}),
 	);
-	console.log("\nFiles at or above threshold:", rows.length);
+	console.info("\nFiles at or above threshold:", rows.length);
 }
 
 export async function runClasses(opts: ReturnType<typeof parseArgs>): Promise<void> {
@@ -837,11 +837,11 @@ export async function runClasses(opts: ReturnType<typeof parseArgs>): Promise<vo
 	}
 
 	if (effectiveFormat === "dot") {
-		console.log("digraph inheritance {");
+		console.info("digraph inheritance {");
 		for (const row of classList) {
-			if (row.extends) console.log('  "' + row.name + '" -> "' + row.extends + '";');
+			if (row.extends) console.info('  "' + row.name + '" -> "' + row.extends + '";');
 		}
-		console.log("}");
+		console.info("}");
 		return;
 	}
 
@@ -851,8 +851,8 @@ export async function runClasses(opts: ReturnType<typeof parseArgs>): Promise<vo
 			out.push(root);
 			out.push(...buildTreeLines(root, ""));
 		}
-		console.log(out.slice(0, opts.limit * 3).join("\n"));
-		if (treeRoots.length === 0) console.log("(no exported classes with extends)");
+		console.info(out.slice(0, opts.limit * 3).join("\n"));
+		if (treeRoots.length === 0) console.info("(no exported classes with extends)");
 		return;
 	}
 
@@ -874,7 +874,7 @@ export async function runClasses(opts: ReturnType<typeof parseArgs>): Promise<vo
 				}
 			}
 			if (effectiveFormat === "json") {
-				console.log(
+				console.info(
 					JSON.stringify(
 						{ total: classList.length, classes: sliceWithXref, xref: xrefList },
 						null,
@@ -886,7 +886,7 @@ export async function runClasses(opts: ReturnType<typeof parseArgs>): Promise<vo
 		}
 	}
 	if (effectiveFormat === "json") {
-		console.log(
+		console.info(
 			JSON.stringify({ total: classList.length, classes: sliceWithXref }, null, 2),
 		);
 		return;
@@ -894,13 +894,13 @@ export async function runClasses(opts: ReturnType<typeof parseArgs>): Promise<vo
 	const classCols: string[] = sliceWithXref.some((r) => r.docUrl)
 		? ["name", "extends", "file", "docUrl"]
 		: ["name", "extends", "file"];
-	console.log("📊 Classes (top " + opts.limit + ")\n");
-	console.log(
+	console.info("📊 Classes (top " + opts.limit + ")\n");
+	console.info(
 		Bun.inspect.table(sliceWithXref, classCols, {
 			colors: process.stdout.isTTY && !process.env.NO_COLOR,
 		}),
 	);
-	console.log("\nTotal classes:", classList.length);
+	console.info("\nTotal classes:", classList.length);
 }
 
 /** G2: Optional line penalty — files over LINE_PENALTY_THRESHOLD get score scaled down. */
@@ -952,20 +952,20 @@ export async function runStrength(opts: ReturnType<typeof parseArgs>): Promise<v
 	const slice = rows.slice(0, opts.limit);
 
 	if (opts.format === "json") {
-		console.log(JSON.stringify({ total: rows.length, weakest, files: slice }, null, 2));
+		console.info(JSON.stringify({ total: rows.length, weakest, files: slice }, null, 2));
 		return;
 	}
-	console.log(
+	console.info(
 		weakest
 			? "📉 Weakest components (top " + opts.limit + ")\n"
 			: "📈 Strongest components (top " + opts.limit + ")\n",
 	);
-	console.log(
+	console.info(
 		Bun.inspect.table(slice, ["file", "score", "lines", "complexity", "exports"], {
 			colors: process.stdout.isTTY && !process.env.NO_COLOR,
 		}),
 	);
-	console.log("\nTotal files:", rows.length);
+	console.info("\nTotal files:", rows.length);
 }
 
 export async function runRename(opts: ReturnType<typeof parseArgs>): Promise<void> {
@@ -1017,18 +1017,18 @@ export async function runRename(opts: ReturnType<typeof parseArgs>): Promise<voi
 	}
 
 	if (dryRun) {
-		console.log("Rename (dry-run): " + oldName + " → " + newName + "\n");
+		console.info("Rename (dry-run): " + oldName + " → " + newName + "\n");
 		if (hits.length === 0) {
-			console.log("No occurrences found.");
+			console.info("No occurrences found.");
 			return;
 		}
 		const slice = hits.slice(0, opts.limit);
-		console.log(
+		console.info(
 			Bun.inspect.table(slice, ["file", "line", "snippet"], {
 				colors: process.stdout.isTTY && !process.env.NO_COLOR,
 			}),
 		);
-		console.log(
+		console.info(
 			"\nTotal occurrences: " +
 				hits.length +
 				" in " +
@@ -1043,7 +1043,7 @@ export async function runRename(opts: ReturnType<typeof parseArgs>): Promise<voi
 		text = text.replace(wordRe, newName);
 		await Bun.write(path, text);
 	}
-	console.log(
+	console.info(
 		"Renamed " + oldName + " → " + newName + " in " + filesToEdit.length + " files.",
 	);
 }
@@ -1120,25 +1120,25 @@ export async function runPolish(opts: ReturnType<typeof parseArgs>): Promise<voi
 	}
 
 	if (dryRun) {
-		console.log("Polish (dry-run): unused imports\n");
+		console.info("Polish (dry-run): unused imports\n");
 		if (changes.length === 0) {
-			console.log("No unused imports found.");
+			console.info("No unused imports found.");
 			return;
 		}
 		const slice = changes.slice(0, opts.limit);
-		console.log(
+		console.info(
 			Bun.inspect.table(slice, ["file", "removed"], {
 				colors: process.stdout.isTTY && !process.env.NO_COLOR,
 			}),
 		);
-		console.log(
+		console.info(
 			"\nTotal: " +
 				changes.length +
 				" unused import(s). Run with --fix-imports or --auto to remove.",
 		);
 		return;
 	}
-	console.log("Removed " + changes.length + " unused import(s).");
+	console.info("Removed " + changes.length + " unused import(s).");
 }
 
 /** 4.2: Subcommand xref — resolve term to Bun doc URL via mcp-bun-docs. */
@@ -1156,14 +1156,14 @@ export async function runXref(opts: ReturnType<typeof parseArgs>): Promise<void>
 	const entry = resolver.getDocEntry(term);
 	if (opts.format === "json") {
 		const xref = entry ? [{ term, url: resolver.buildDocUrl(entry.path) }] : [];
-		console.log(JSON.stringify({ term, xref }, null, 2));
+		console.info(JSON.stringify({ term, xref }, null, 2));
 		return;
 	}
 	if (!entry) {
-		console.log("No doc entry for: " + term);
+		console.info("No doc entry for: " + term);
 		return;
 	}
-	console.log(resolver.buildDocUrl(entry.path));
+	console.info(resolver.buildDocUrl(entry.path));
 }
 
 const BENCH_COMMANDS = [
@@ -1237,7 +1237,7 @@ async function runBench(
 	}
 
 	if (benchFormat === "json") {
-		console.log(
+		console.info(
 			JSON.stringify(
 				{ benchmark: "analyze", commands: rows, timestamp: Date.now() },
 				null,
@@ -1245,8 +1245,8 @@ async function runBench(
 			),
 		);
 	} else {
-		console.log("⏱️ Analyze benchmark (read-only commands)\n");
-		console.log(
+		console.info("⏱️ Analyze benchmark (read-only commands)\n");
+		console.info(
 			Bun.inspect.table(rows, ["command", "ms", "files", "filesPerSec"], {
 				colors: process.stdout.isTTY && !process.env.NO_COLOR,
 			}),

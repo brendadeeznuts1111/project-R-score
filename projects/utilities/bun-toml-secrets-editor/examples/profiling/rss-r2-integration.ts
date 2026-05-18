@@ -43,14 +43,14 @@ async function loadEnvironment() {
 							name: cleanKey,
 							value: cleanValue,
 						});
-						console.log(`🔐 Loaded ${cleanKey} into Bun.secrets`);
+						console.info(`🔐 Loaded ${cleanKey} into Bun.secrets`);
 					}
 				}
 			}
 		}
-		console.log("✅ Loaded R2 environment variables from .env.r2");
+		console.info("✅ Loaded R2 environment variables from .env.r2");
 	} catch (error) {
-		console.log(
+		console.info(
 			"⚠️  Could not load .env.r2 file:",
 			error instanceof Error ? error.message : String(error),
 		);
@@ -104,7 +104,7 @@ class RSSR2Integration {
 		bufferOptimizations: boolean;
 		inspectorAPIs: boolean;
 	}> {
-		console.log("🔍 Validating Bun v1.3.7 profiling APIs...");
+		console.info("🔍 Validating Bun v1.3.7 profiling APIs...");
 
 		const results = {
 			cpuProfiling: false,
@@ -115,7 +115,7 @@ class RSSR2Integration {
 
 		try {
 			// Test CPU profiling CLI flags
-			console.log("  📊 Testing CPU profiling flags...");
+			console.info("  📊 Testing CPU profiling flags...");
 			const cpuFlags = [
 				"--cpu-prof",
 				"--cpu-prof-md",
@@ -123,12 +123,12 @@ class RSSR2Integration {
 				"--cpu-prof-dir",
 			];
 			results.cpuProfiling = cpuFlags.every(() => {
-				console.log("    ✅ CPU profiling flags available");
+				console.info("    ✅ CPU profiling flags available");
 				return true;
 			});
 
 			// Test Heap profiling CLI flags
-			console.log("  💾 Testing heap profiling flags...");
+			console.info("  💾 Testing heap profiling flags...");
 			const heapFlags = [
 				"--heap-prof",
 				"--heap-prof-md",
@@ -136,12 +136,12 @@ class RSSR2Integration {
 				"--heap-prof-dir",
 			];
 			results.heapProfiling = heapFlags.every(() => {
-				console.log("    ✅ Heap profiling flags available");
+				console.info("    ✅ Heap profiling flags available");
 				return true;
 			});
 
 			// Test Buffer optimizations
-			console.log("  📦 Testing Buffer optimizations...");
+			console.info("  📦 Testing Buffer optimizations...");
 			const start = performance.now();
 			const buffer = Buffer.from("RSS feed content test");
 			const bufferFromTime = performance.now() - start;
@@ -159,26 +159,26 @@ class RSSR2Integration {
 					swap64Time = performance.now() - start;
 				}
 			} catch (swapError) {
-				console.log(
+				console.info(
 					`    ⚠️  Buffer swap test skipped: ${swapError instanceof Error ? swapError.message : String(swapError)}`,
 				);
 			}
 
 			results.bufferOptimizations = bufferFromTime < 1.0;
-			console.log(`    ✅ Buffer.from(): ${bufferFromTime.toFixed(4)}ms`);
+			console.info(`    ✅ Buffer.from(): ${bufferFromTime.toFixed(4)}ms`);
 			if (swap16Time > 0)
-				console.log(`    ✅ Buffer.swap16(): ${swap16Time.toFixed(4)}ms`);
+				console.info(`    ✅ Buffer.swap16(): ${swap16Time.toFixed(4)}ms`);
 			if (swap64Time > 0)
-				console.log(`    ✅ Buffer.swap64(): ${swap64Time.toFixed(4)}ms`);
+				console.info(`    ✅ Buffer.swap64(): ${swap64Time.toFixed(4)}ms`);
 
 			// Test Node.js Inspector APIs
-			console.log("  🔍 Testing Inspector APIs...");
+			console.info("  🔍 Testing Inspector APIs...");
 			if (typeof globalThis !== "undefined" && "inspector" in globalThis) {
 				results.inspectorAPIs = true;
-				console.log("    ⚠️  Inspector APIs available (unexpected)");
+				console.info("    ⚠️  Inspector APIs available (unexpected)");
 			} else {
 				results.inspectorAPIs = false;
-				console.log("    ✅ Inspector APIs not available (expected in Bun)");
+				console.info("    ✅ Inspector APIs not available (expected in Bun)");
 			}
 		} catch (error) {
 			console.error(`    ❌ Schema validation error: ${error}`);
@@ -189,7 +189,7 @@ class RSSR2Integration {
 
 	// Profile RSS feed operations with R2 storage
 	async profileRSSFeed(feedUrl: string): Promise<RSSProfileResult> {
-		console.log(`\n📡 Profiling RSS feed: ${feedUrl}`);
+		console.info(`\n📡 Profiling RSS feed: ${feedUrl}`);
 
 		const result: RSSProfileResult = {
 			feedUrl,
@@ -239,16 +239,16 @@ class RSSR2Integration {
 			result.rssPerformance.parseTime = performance.now() - parseStart;
 			result.rssPerformance.totalTime = performance.now() - totalStart;
 
-			console.log(
+			console.info(
 				`  ✅ Fetch: ${result.rssPerformance.fetchTime.toFixed(2)}ms`,
 			);
-			console.log(
+			console.info(
 				`  ✅ Parse: ${result.rssPerformance.parseTime.toFixed(2)}ms`,
 			);
-			console.log(
+			console.info(
 				`  ✅ Total: ${result.rssPerformance.totalTime.toFixed(2)}ms`,
 			);
-			console.log(`  📰 Found ${items.length} RSS items`);
+			console.info(`  📰 Found ${items.length} RSS items`);
 
 			// Store RSS feed data in R2
 			try {
@@ -264,11 +264,11 @@ class RSSR2Integration {
 				};
 
 				await this.r2Storage.storeRSSFeed(rssFeedData);
-				console.log(
+				console.info(
 					`  ☁️  Stored in R2: ${this.r2Storage.getPublicUrl("feeds/example.json")}`,
 				);
 			} catch (r2Error) {
-				console.log(
+				console.info(
 					`  ⚠️  R2 storage failed: ${r2Error instanceof Error ? r2Error.message : String(r2Error)}`,
 				);
 			}
@@ -405,7 +405,7 @@ class RSSR2Integration {
 		report += `**R2 Storage Active**: ✅ CLOUD STORAGE\n`;
 
 		writeFileSync(reportPath, report);
-		console.log(`\n📋 RSS R2 integration report generated: ${reportPath}`);
+		console.info(`\n📋 RSS R2 integration report generated: ${reportPath}`);
 
 		// Store profiling report in R2
 		try {
@@ -436,9 +436,9 @@ class RSSR2Integration {
 			};
 
 			const reportKey = await this.r2Storage.storeProfilingReport(report);
-			console.log(`☁️  Profiling report stored in R2`);
+			console.info(`☁️  Profiling report stored in R2`);
 		} catch (r2Error) {
-			console.log(
+			console.info(
 				`⚠️  Failed to store profiling report in R2: ${r2Error instanceof Error ? r2Error.message : String(r2Error)}`,
 			);
 		}
@@ -446,8 +446,8 @@ class RSSR2Integration {
 
 	// Run complete RSS profiling integration with R2
 	async runFullIntegration(): Promise<void> {
-		console.log("🔗 Starting RSS Profiling with R2 Storage Integration");
-		console.log("======================================================\n");
+		console.info("🔗 Starting RSS Profiling with R2 Storage Integration");
+		console.info("======================================================\n");
 
 		// Test with sample RSS feeds
 		const sampleFeeds = [
@@ -462,7 +462,7 @@ class RSSR2Integration {
 		}
 
 		await this.generateReport();
-		console.log("\n✅ RSS R2 integration complete!");
+		console.info("\n✅ RSS R2 integration complete!");
 	}
 }
 

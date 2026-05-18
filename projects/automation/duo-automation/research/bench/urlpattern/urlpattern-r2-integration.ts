@@ -7,8 +7,8 @@ config({ path: './.env' });
 import { BunR2AppleManager } from '../../src/storage/r2-apple-manager.js';
 
 async function demonstrateURLPatternR2Integration() {
-  console.log('🔗 **URLPattern + R2 Integration Demo** 🔗');
-  console.log('='.repeat(50));
+  console.info('🔗 **URLPattern + R2 Integration Demo** 🔗');
+  console.info('='.repeat(50));
 
   // Get URLPattern from global scope
   const { URLPattern } = globalThis as any;
@@ -24,9 +24,9 @@ async function demonstrateURLPatternR2Integration() {
     loadBalancer: new URLPattern({ pathname: 'load-balancer/:endpoint/:id.json' })
   };
 
-  console.log('\n📋 **R2 File Patterns Defined:**');
+  console.info('\n📋 **R2 File Patterns Defined:**');
   Object.entries(r2Patterns).forEach(([name, pattern]) => {
-    console.log(`  ${name}: ${pattern.pathname}`);
+    console.info(`  ${name}: ${pattern.pathname}`);
   });
 
   // Test data for different file types
@@ -53,10 +53,10 @@ async function demonstrateURLPatternR2Integration() {
     }
   ];
 
-  console.log('\n📤 **Uploading Files with Pattern Classification:**');
+  console.info('\n📤 **Uploading Files with Pattern Classification:**');
 
   for (const { url, data, expectedPattern } of testData) {
-    console.log(`\n📁 Processing: ${url}`);
+    console.info(`\n📁 Processing: ${url}`);
     
     // Match URL to determine pattern
     let matchedPattern: string | null = null;
@@ -71,36 +71,36 @@ async function demonstrateURLPatternR2Integration() {
     }
 
     if (matchedPattern && extracted) {
-      console.log(`  ✅ Pattern: ${matchedPattern}`);
-      console.log(`  📊 Extracted: ${JSON.stringify(extracted.pathname.groups)}`);
+      console.info(`  ✅ Pattern: ${matchedPattern}`);
+      console.info(`  📊 Extracted: ${JSON.stringify(extracted.pathname.groups)}`);
       
       // Upload to R2
       try {
         const result = await manager.uploadAppleID(data, url);
         if (result.success) {
-          console.log(`  🚀 Upload: ${result.size} bytes (${result.savings.toFixed(1)}% compressed)`);
-          console.log(`  🔗 Public: https://pub-dc0e1ef5dd2245be81d6670a9b7b1550.r2.dev/${url}`);
+          console.info(`  🚀 Upload: ${result.size} bytes (${result.savings.toFixed(1)}% compressed)`);
+          console.info(`  🔗 Public: https://pub-dc0e1ef5dd2245be81d6670a9b7b1550.r2.dev/${url}`);
           
           // Verify pattern matches expected
           if (matchedPattern === expectedPattern) {
-            console.log(`  ✅ Pattern classification correct`);
+            console.info(`  ✅ Pattern classification correct`);
           } else {
-            console.log(`  ⚠️ Expected ${expectedPattern}, got ${matchedPattern}`);
+            console.info(`  ⚠️ Expected ${expectedPattern}, got ${matchedPattern}`);
           }
         }
       } catch (error: any) {
-        console.log(`  ❌ Upload failed: ${error.message}`);
+        console.info(`  ❌ Upload failed: ${error.message}`);
       }
     } else {
-      console.log(`  ❌ No pattern match for ${url}`);
+      console.info(`  ❌ No pattern match for ${url}`);
     }
   }
 
-  console.log('\n📥 **Pattern-Based File Retrieval:**');
+  console.info('\n📥 **Pattern-Based File Retrieval:**');
   
   // Test pattern-based retrieval
   for (const [patternName, pattern] of Object.entries(r2Patterns)) {
-    console.log(`\n🔍 Testing ${patternName} pattern:`);
+    console.info(`\n🔍 Testing ${patternName} pattern:`);
     
     // Find matching files
     const matchingFiles = testData.filter(item => 
@@ -113,24 +113,24 @@ async function demonstrateURLPatternR2Integration() {
         const parsed = JSON.parse(content);
         const result = pattern.exec({ pathname: file.url });
         
-        console.log(`  📄 Found: ${file.url}`);
-        console.log(`    Groups: ${JSON.stringify(result?.pathname.groups)}`);
-        console.log(`    Data: ${JSON.stringify(parsed).slice(0, 50)}...`);
+        console.info(`  📄 Found: ${file.url}`);
+        console.info(`    Groups: ${JSON.stringify(result?.pathname.groups)}`);
+        console.info(`    Data: ${JSON.stringify(parsed).slice(0, 50)}...`);
       } catch {
-        console.log(`  ❌ Could not read ${file.url}`);
+        console.info(`  ❌ Could not read ${file.url}`);
       }
     }
   }
 
-  console.log('\n🎯 **Advanced Pattern Features:**');
+  console.info('\n🎯 **Advanced Pattern Features:**');
   
   // Test wildcard patterns
   const wildcardPattern = new URLPattern({ pathname: '/apple-ids/*' });
-  console.log(`\n🌐 Wildcard Pattern: ${wildcardPattern.pathname}`);
+  console.info(`\n🌐 Wildcard Pattern: ${wildcardPattern.pathname}`);
   
   testData.forEach(item => {
     if (wildcardPattern.test({ pathname: item.url })) {
-      console.log(`  ✅ Wildcard match: ${item.url}`);
+      console.info(`  ✅ Wildcard match: ${item.url}`);
     }
   });
 
@@ -141,16 +141,16 @@ async function demonstrateURLPatternR2Integration() {
     pathname: '/:category/*/:id.json'
   });
   
-  console.log(`\n🔧 Complex Pattern: ${complexPattern.pathname}`);
-  console.log(`  Hostname: ${complexPattern.hostname}`);
-  console.log(`  Protocol: ${complexPattern.protocol}`);
+  console.info(`\n🔧 Complex Pattern: ${complexPattern.pathname}`);
+  console.info(`  Hostname: ${complexPattern.hostname}`);
+  console.info(`  Protocol: ${complexPattern.protocol}`);
 
-  console.log('\n🎉 **URLPattern + R2 Integration Complete!**');
-  console.log('✅ Pattern classification working');
-  console.log('✅ File upload with metadata');
-  console.log('✅ Pattern-based retrieval');
-  console.log('✅ Advanced pattern features');
-  console.log('✅ Real R2 integration');
+  console.info('\n🎉 **URLPattern + R2 Integration Complete!**');
+  console.info('✅ Pattern classification working');
+  console.info('✅ File upload with metadata');
+  console.info('✅ Pattern-based retrieval');
+  console.info('✅ Advanced pattern features');
+  console.info('✅ Real R2 integration');
 }
 
 // Run the integration demo

@@ -227,7 +227,7 @@ export class FollowUpManager {
    * Execute follow-up suggestion
    */
   async executeFollowUp(suggestion: FollowUpSuggestion): Promise<any> {
-    console.log(`🔄 Executing follow-up: ${suggestion.title}`);
+    console.info(`🔄 Executing follow-up: ${suggestion.title}`);
     
     // Record in history
     this.recordSuggestion(suggestion);
@@ -249,13 +249,13 @@ export class FollowUpManager {
   
   private async executeCommandFollowUp(suggestion: FollowUpSuggestion): Promise<any> {
     // Simulate command execution
-    console.log(`⚡ Executing command: ${suggestion.context}`);
+    console.info(`⚡ Executing command: ${suggestion.context}`);
     return { status: 'executed', command: suggestion.context };
   }
   
   private async executeActionFollowUp(suggestion: FollowUpSuggestion): Promise<any> {
     // Simulate action execution
-    console.log(`🎬 Executing action: ${suggestion.context}`);
+    console.info(`🎬 Executing action: ${suggestion.context}`);
     return { status: 'completed', action: suggestion.context };
   }
   
@@ -298,7 +298,7 @@ export class FollowUpManager {
    */
   clearHistory(): void {
     this.suggestionHistory = [];
-    console.log('🧹 Follow-up history cleared');
+    console.info('🧹 Follow-up history cleared');
   }
   
   private recordSuggestion(suggestion: FollowUpSuggestion): void {

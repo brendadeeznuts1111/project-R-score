@@ -121,7 +121,7 @@ class DevHQCLI {
     const cmd = args.filter((arg) => !arg.startsWith("--"));
     if (cmd.length === 0) throw new Error("No command specified");
 
-    console.log(`▶️  Running: ${cmd.join(" ")}`);
+    console.info(`▶️  Running: ${cmd.join(" ")}`);
 
     if (config.watch) {
       return this.watchCommand(cmd, config);
@@ -147,7 +147,7 @@ class DevHQCLI {
   }
 
   private async watchCommand(cmd: string[], config: CommandConfig) {
-    console.log(`👀 Watching command: ${cmd.join(" ")}`);
+    console.info(`👀 Watching command: ${cmd.join(" ")}`);
 
     const watcher = Bun.spawn(["bun", "--watch", "run", ...cmd], {
       cwd: config.cwd,
@@ -166,7 +166,7 @@ class DevHQCLI {
   }
 
   private async gitInsights(config: CommandConfig) {
-    console.log("📊 Analyzing Git repository...");
+    console.info("📊 Analyzing Git repository...");
 
     const insights = await DevHQActions.gitInsights();
 
@@ -182,7 +182,7 @@ class DevHQCLI {
   }
 
   private async codeAnalysis(config: CommandConfig) {
-    console.log("🔍 Analyzing code...");
+    console.info("🔍 Analyzing code...");
 
     const cloc = await DevHQActions.analyzeWithCLOC();
 
@@ -198,12 +198,12 @@ class DevHQCLI {
   }
 
   private async runTests(config: CommandConfig) {
-    console.log("🧪 Running tests...");
+    console.info("🧪 Running tests...");
 
     const testProc = await DevHQActions.runTests(true);
 
     if (config.watch) {
-      console.log("👀 Watching tests for changes...");
+      console.info("👀 Watching tests for changes...");
       return testProc;
     }
 
@@ -211,7 +211,7 @@ class DevHQCLI {
   }
 
   private async dockerInsights(config: CommandConfig) {
-    console.log("🐳 Analyzing Docker containers...");
+    console.info("🐳 Analyzing Docker containers...");
 
     const insights = await DevHQActions.dockerInsights();
 
@@ -227,7 +227,7 @@ class DevHQCLI {
   }
 
   private async healthCheck(config: CommandConfig) {
-    console.log("🏥 Performing health check...");
+    console.info("🏥 Performing health check...");
 
     const health = {
       status: "healthy" as "healthy" | "unhealthy",
@@ -255,13 +255,13 @@ class DevHQCLI {
       return health;
     }
 
-    console.log(`Status: ${health.status.toUpperCase()}`);
-    console.log(
+    console.info(`Status: ${health.status.toUpperCase()}`);
+    console.info(
       `Checks passed: ${Object.values(health.checks).filter(Boolean).length}/${
         Object.keys(health.checks).length
       }`
     );
-    console.log(`Uptime: ${health.uptime}ms`);
+    console.info(`Uptime: ${health.uptime}ms`);
 
     return health;
   }
@@ -293,7 +293,7 @@ class DevHQCLI {
   }
 
   private async startServer(config: CommandConfig) {
-    console.log("🚀 Starting Dev HQ Automation Server...");
+    console.info("🚀 Starting Dev HQ Automation Server...");
 
     // Import and start the server
     await import("../dev-hq/spawn-server.js");
@@ -306,20 +306,20 @@ class DevHQCLI {
 
   private formatTable(data: any, title: string): string {
     // Simple table formatting using Bun.inspect
-    console.log(`\\n📊 ${title}:`);
-    console.log(Bun.inspect(data, { colors: true, compact: false }));
+    console.info(`\\n📊 ${title}:`);
+    console.info(Bun.inspect(data, { colors: true, compact: false }));
     return data;
   }
 
   private handleOutput(result: any, config: CommandConfig): number {
     if (config.json) {
-      console.log(JSON.stringify(result, null, 2));
+      console.info(JSON.stringify(result, null, 2));
     } else if (config.table) {
       // Already handled in formatTable
     } else if (typeof result === "object" && result !== null) {
-      console.log(Bun.inspect(result, { colors: true, compact: true }));
+      console.info(Bun.inspect(result, { colors: true, compact: true }));
     } else if (result !== undefined) {
-      console.log(result);
+      console.info(result);
     }
 
     // Return appropriate exit code
@@ -332,7 +332,7 @@ class DevHQCLI {
 
   private handleError(error: Error, config: CommandConfig) {
     if (config.json) {
-      console.log(
+      console.info(
         JSON.stringify(
           {
             error: true,
@@ -352,7 +352,7 @@ class DevHQCLI {
   }
 
   private logMetrics(command: string, duration: number) {
-    console.log(`📊 Metrics: ${command} completed in ${duration}ms`);
+    console.info(`📊 Metrics: ${command} completed in ${duration}ms`);
   }
 
   private async checkGit(): boolean {
@@ -387,7 +387,7 @@ class DevHQCLI {
   }
 
   private showHelp() {
-    console.log(`
+    console.info(`
 🎯 Dev HQ - Production-ready Automation CLI
 
 Perfect Bun Syntax:
@@ -446,7 +446,7 @@ if (import.meta.main) {
 
   // Handle cleanup on exit
   process.on("SIGINT", async () => {
-    console.log("\\n🧹 Cleaning up...");
+    console.info("\\n🧹 Cleaning up...");
     await cli.cleanup();
     process.exit(0);
   });

@@ -438,56 +438,56 @@ async function main() {
   try {
     switch (command) {
       case 'scan':
-        console.log('🔍 Scanning packages...');
+        console.info('🔍 Scanning packages...');
         const packages = await manager.scanPackages();
-        console.log(`Found ${packages.length} packages`);
+        console.info(`Found ${packages.length} packages`);
 
         for (const pkg of packages) {
           await manager.savePackageMetadata(pkg);
-          console.log(`✅ Saved metadata for ${pkg.name}`);
+          console.info(`✅ Saved metadata for ${pkg.name}`);
         }
         break;
 
       case 'validate':
-        console.log('🔍 Validating metadata...');
+        console.info('🔍 Validating metadata...');
         const validation = await manager.validateMetadata();
-        console.log(`Validation ${validation.valid ? 'PASSED' : 'FAILED'}`);
+        console.info(`Validation ${validation.valid ? 'PASSED' : 'FAILED'}`);
 
         if (validation.issues.length > 0) {
-          console.log('\n⚠️ Issues:');
+          console.info('\n⚠️ Issues:');
           for (const issue of validation.issues) {
-            console.log(`  - ${issue}`);
+            console.info(`  - ${issue}`);
           }
         }
 
-        console.log('\n📊 Summary:');
+        console.info('\n📊 Summary:');
         console.table(validation.summary);
         break;
 
       case 'report':
-        console.log('📊 Generating report...');
+        console.info('📊 Generating report...');
         const report = await manager.generateReport();
         const reportPath = join(process.cwd(), 'PACKAGE-METADATA-REPORT.md');
         // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file writing
         await Bun.write(reportPath, report);
-        console.log(`📄 Report saved to ${reportPath}`);
+        console.info(`📄 Report saved to ${reportPath}`);
         break;
 
       case 'list':
         const allPackages = await manager.getAllPackages();
-        console.log('📦 Registry Packages:');
+        console.info('📦 Registry Packages:');
         for (const pkg of allPackages) {
-          console.log(`  - ${pkg.name} (${pkg.version}) - ${pkg.domain}`);
+          console.info(`  - ${pkg.name} (${pkg.version}) - ${pkg.domain}`);
         }
         break;
 
       default:
-        console.log('Usage: bun run package-metadata-manager.bun.ts <command>');
-        console.log('Commands:');
-        console.log('  scan     - Scan and save package metadata');
-        console.log('  validate - Validate existing metadata');
-        console.log('  report   - Generate metadata report');
-        console.log('  list     - List all packages');
+        console.info('Usage: bun run package-metadata-manager.bun.ts <command>');
+        console.info('Commands:');
+        console.info('  scan     - Scan and save package metadata');
+        console.info('  validate - Validate existing metadata');
+        console.info('  report   - Generate metadata report');
+        console.info('  list     - List all packages');
     }
   } finally {
     await manager.close();

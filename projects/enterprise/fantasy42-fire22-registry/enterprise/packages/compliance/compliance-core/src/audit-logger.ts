@@ -267,7 +267,7 @@ export class Fantasy42ComplianceLogger extends Fantasy42SecureClient {
         timestamp: new Date().toISOString(),
       });
 
-      console.log(`📋 Flushed ${this.auditBuffer.length} audit entries`);
+      console.info(`📋 Flushed ${this.auditBuffer.length} audit entries`);
       this.auditBuffer = [];
     } catch (error) {
       console.error('❌ Failed to flush audit buffer:', error);
@@ -412,7 +412,7 @@ export class Fantasy42ComplianceLogger extends Fantasy42SecureClient {
         console.warn(message);
         break;
       default:
-        console.log(message);
+        console.info(message);
     }
   }
 
@@ -538,7 +538,7 @@ export class Fantasy42ComplianceLogger extends Fantasy42SecureClient {
   private async saveComplianceReport(report: ComplianceReport): Promise<void> {
     const reportPath = `./compliance-report-${Date.now()}.json`;
     await Bun.write(reportPath, JSON.stringify(report, null, 2));
-    console.log(`📊 Compliance report saved: ${reportPath}`);
+    console.info(`📊 Compliance report saved: ${reportPath}`);
   }
 }
 

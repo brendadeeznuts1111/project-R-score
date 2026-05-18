@@ -3,10 +3,10 @@
  * HSL-powered infrastructure dashboard with Tabular v4.3 integration
  */
 
-console.log('🎨 FACTORYWAGER DASHBOARD v5.0 - CHROMATIC VISUALIZATION COMPLETE')
-console.log('=' .repeat(80))
+console.info('🎨 FACTORYWAGER DASHBOARD v5.0 - CHROMATIC VISUALIZATION COMPLETE')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 🎯 ENTERPRISE DASHBOARD IMPLEMENTATION - STUNNING SUCCESS!
 
 ✅ CORE DASHBOARD COMPONENTS IMPLEMENTED:
@@ -149,8 +149,8 @@ FactoryWager Dashboard v5.0 - VISUAL PERFECTION ACHIEVED!
 🚀 Ready for production deployment with stunning infrastructure visualization!
 `)
 
-console.log('🎨✨ FACTORYWAGER DASHBOARD v5.0 - CHROMATIC VISUALIZATION COMPLETE! ✨🎨')
-console.log('🎯 HSL-powered enterprise dashboard with Tabular v4.3 integration!')
-console.log('💎 Stunning infrastructure visualization - Production ready!')
-console.log('🚀 Multi-scenario demos with real-time status indicators!')
-console.log('🛡️ ARM64 optimization display with CRC32 integrity validation!')
+console.info('🎨✨ FACTORYWAGER DASHBOARD v5.0 - CHROMATIC VISUALIZATION COMPLETE! ✨🎨')
+console.info('🎯 HSL-powered enterprise dashboard with Tabular v4.3 integration!')
+console.info('💎 Stunning infrastructure visualization - Production ready!')
+console.info('🚀 Multi-scenario demos with real-time status indicators!')
+console.info('🛡️ ARM64 optimization display with CRC32 integrity validation!')

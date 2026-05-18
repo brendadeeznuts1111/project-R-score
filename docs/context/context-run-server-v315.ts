@@ -665,7 +665,7 @@ class ContextRequestHandler {
 
 // Main server function
 async function startContextServer() {
-  console.log('🚀 Starting Context Run Server v3.15...\n');
+  console.info('🚀 Starting Context Run Server v3.15...\n');
 
   // Initialize components
   const metrics = new ServerMetrics();
@@ -682,48 +682,48 @@ async function startContextServer() {
     }
   });
 
-  console.log('✅ Context Run Server v3.15 Started Successfully!\n');
-  console.log('📊 Server Configuration:');
-  console.log(`   Port: ${SERVER_CONFIG.port}`);
-  console.log(`   Host: ${SERVER_CONFIG.host}`);
-  console.log(`   Environment: ${SERVER_CONFIG.environment}`);
-  console.log(`   CORS: ${SERVER_CONFIG.cors ? 'Enabled' : 'Disabled'}`);
-  console.log(`   Logging: ${SERVER_CONFIG.logging ? 'Enabled' : 'Disabled'}\n`);
+  console.info('✅ Context Run Server v3.15 Started Successfully!\n');
+  console.info('📊 Server Configuration:');
+  console.info(`   Port: ${SERVER_CONFIG.port}`);
+  console.info(`   Host: ${SERVER_CONFIG.host}`);
+  console.info(`   Environment: ${SERVER_CONFIG.environment}`);
+  console.info(`   CORS: ${SERVER_CONFIG.cors ? 'Enabled' : 'Disabled'}`);
+  console.info(`   Logging: ${SERVER_CONFIG.logging ? 'Enabled' : 'Disabled'}\n`);
 
-  console.log('🔌 Integration Status:');
-  console.log(`   Wiki Integration: ${INTEGRATION_CONFIG.wiki?.enabled ? '✅ Enabled' : '❌ Disabled'}`);
-  console.log(`   Session Management: ${INTEGRATION_CONFIG.session?.enabled ? '✅ Enabled' : '❌ Disabled'}`);
-  console.log(`   R2 Storage: ${INTEGRATION_CONFIG.r2?.enabled ? '✅ Enabled' : '❌ Disabled'}`);
-  console.log(`   Analytics: ${INTEGRATION_CONFIG.analytics?.enabled ? '✅ Enabled' : '❌ Disabled'}\n`);
+  console.info('🔌 Integration Status:');
+  console.info(`   Wiki Integration: ${INTEGRATION_CONFIG.wiki?.enabled ? '✅ Enabled' : '❌ Disabled'}`);
+  console.info(`   Session Management: ${INTEGRATION_CONFIG.session?.enabled ? '✅ Enabled' : '❌ Disabled'}`);
+  console.info(`   R2 Storage: ${INTEGRATION_CONFIG.r2?.enabled ? '✅ Enabled' : '❌ Disabled'}`);
+  console.info(`   Analytics: ${INTEGRATION_CONFIG.analytics?.enabled ? '✅ Enabled' : '❌ Disabled'}\n`);
 
-  console.log('🌐 Available Endpoints:');
-  console.log(`   Dashboard: http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/`);
-  console.log(`   Deep Links: POST http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/api/deep-link`);
-  console.log(`   Analytics: GET http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/api/analytics`);
-  console.log(`   Metrics: GET http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/api/metrics`);
-  console.log(`   Health: GET http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/api/health\n`);
+  console.info('🌐 Available Endpoints:');
+  console.info(`   Dashboard: http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/`);
+  console.info(`   Deep Links: POST http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/api/deep-link`);
+  console.info(`   Analytics: GET http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/api/analytics`);
+  console.info(`   Metrics: GET http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/api/metrics`);
+  console.info(`   Health: GET http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/api/health\n`);
 
-  console.log('🧪 Example Usage:');
-  console.log(`   curl -X POST http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/api/deep-link \\`);
-  console.log(`        -H "Content-Type: application/json" \\`);
-  console.log(`        -d '{"url": "freshcuts://payment?amount=45&shop=nyc_01"}'\n`);
+  console.info('🧪 Example Usage:');
+  console.info(`   curl -X POST http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/api/deep-link \\`);
+  console.info(`        -H "Content-Type: application/json" \\`);
+  console.info(`        -d '{"url": "freshcuts://payment?amount=45&shop=nyc_01"}'\n`);
 
-  console.log('📈 Real-time Dashboard: http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/dashboard');
-  console.log('🔍 Health Check: http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/api/health');
-  console.log(`🚀 Server is ready to handle requests!\n`);
+  console.info('📈 Real-time Dashboard: http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/dashboard');
+  console.info('🔍 Health Check: http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}/api/health');
+  console.info(`🚀 Server is ready to handle requests!\n`);
 
   // Graceful shutdown
   process.on('SIGINT', () => {
-    console.log('\n🛑 Shutting down Context Run Server v3.15...');
+    console.info('\n🛑 Shutting down Context Run Server v3.15...');
     server.stop();
-    console.log('✅ Server stopped gracefully.');
+    console.info('✅ Server stopped gracefully.');
     process.exit(0);
   });
 
   process.on('SIGTERM', () => {
-    console.log('\n🛑 Shutting down Context Run Server v3.15...');
+    console.info('\n🛑 Shutting down Context Run Server v3.15...');
     server.stop();
-    console.log('✅ Server stopped gracefully.');
+    console.info('✅ Server stopped gracefully.');
     process.exit(0);
   });
 

@@ -3,7 +3,7 @@
 // ai/enhanced-integration.ts - Unified AI Integration Layer
 // Advanced AI orchestration connecting fraud detection, shopping, security, and monitoring
 
-console.log("🧠 Enhanced AI Integration Layer - Unified Intelligence Starting...");
+console.info("🧠 Enhanced AI Integration Layer - Unified Intelligence Starting...");
 
 import { EnhancedAIModel } from './enhanced-ai-model.js';
 import { EnhancedNetworkOptimizer } from './enhanced-network-optimizer.js';
@@ -107,7 +107,7 @@ export class EnhancedAIIntegration {
 
   private startIntegration() {
     this.isIntegrating = true;
-    console.log("🔄 Starting unified AI integration...");
+    console.info("🔄 Starting unified AI integration...");
     
     // Start continuous learning and optimization
     setInterval(() => {
@@ -118,7 +118,7 @@ export class EnhancedAIIntegration {
   }
 
   private initializeLearning() {
-    console.log("🎓 Initializing AI learning systems...");
+    console.info("🎓 Initializing AI learning systems...");
     
     // Subscribe to monitoring alerts for learning
     this.monitoringSystem.subscribeToAlerts('ai-integration', (alert) => {
@@ -133,7 +133,7 @@ export class EnhancedAIIntegration {
     execution: any;
   }> {
     try {
-      console.log(`🧠 Processing unified request for user ${context.userId}`);
+      console.info(`🧠 Processing unified request for user ${context.userId}`);
       
       // Step 1: Collect all AI insights
       const insights = await this.generateInsights(context);
@@ -593,32 +593,32 @@ export class EnhancedAIIntegration {
   }
 
   private async blockAction(target: string, parameters: any): Promise<any> {
-    console.log(`🚫 Blocking ${target} with parameters:`, parameters);
+    console.info(`🚫 Blocking ${target} with parameters:`, parameters);
     return { action: 'blocked', target, parameters, timestamp: Date.now() };
   }
 
   private async challengeAction(target: string, parameters: any): Promise<any> {
-    console.log(`🔍 Challenging ${target} with parameters:`, parameters);
+    console.info(`🔍 Challenging ${target} with parameters:`, parameters);
     return { action: 'challenged', target, parameters, timestamp: Date.now() };
   }
 
   private async monitorAction(target: string, parameters: any): Promise<any> {
-    console.log(`📊 Monitoring ${target} with parameters:`, parameters);
+    console.info(`📊 Monitoring ${target} with parameters:`, parameters);
     return { action: 'monitoring', target, parameters, timestamp: Date.now() };
   }
 
   private async optimizeAction(target: string, parameters: any): Promise<any> {
-    console.log(`⚡ Optimizing ${target} with parameters:`, parameters);
+    console.info(`⚡ Optimizing ${target} with parameters:`, parameters);
     return { action: 'optimized', target, parameters, timestamp: Date.now() };
   }
 
   private async notifyAction(target: string, parameters: any): Promise<any> {
-    console.log(`📢 Notifying ${target} with parameters:`, parameters);
+    console.info(`📢 Notifying ${target} with parameters:`, parameters);
     return { action: 'notified', target, parameters, timestamp: Date.now() };
   }
 
   private async investigateAction(target: string, parameters: any): Promise<any> {
-    console.log(`🔎 Investigating ${target} with parameters:`, parameters);
+    console.info(`🔎 Investigating ${target} with parameters:`, parameters);
     return { action: 'investigating', target, parameters, timestamp: Date.now() };
   }
 
@@ -645,34 +645,34 @@ export class EnhancedAIIntegration {
         this.learningData = this.learningData.slice(-10000);
       }
       
-      console.log(`🎓 Learned from interaction: ${decision.decision.action} (confidence: ${decision.decision.confidence})`);
+      console.info(`🎓 Learned from interaction: ${decision.decision.action} (confidence: ${decision.decision.confidence})`);
     } catch (error) {
       console.error('❌ Error learning from interaction:', error);
     }
   }
 
   private learnFromAlert(alert: any) {
-    console.log(`📚 Learning from alert: ${alert.title}`);
+    console.info(`📚 Learning from alert: ${alert.title}`);
     // In a real implementation, this would update AI models based on alerts
   }
 
   private performContinuousLearning() {
     if (this.learningData.length < 100) return;
     
-    console.log('🧠 Performing continuous learning...');
+    console.info('🧠 Performing continuous learning...');
     
     // Analyze recent decisions and outcomes
     const recentData = this.learningData.slice(-100);
     const successRate = recentData.filter(d => d.execution.status === 'completed').length / recentData.length;
     
     if (successRate < 0.8) {
-      console.log('⚠️ Low success rate detected, adjusting decision thresholds...');
+      console.info('⚠️ Low success rate detected, adjusting decision thresholds...');
       // Adjust decision thresholds based on performance
     }
   }
 
   private optimizeSystemPerformance() {
-    console.log('⚡ Optimizing system performance...');
+    console.info('⚡ Optimizing system performance...');
     
     // Get current metrics
     const systemMetrics = this.monitoringSystem.getSystemMetrics(1)[0];
@@ -684,16 +684,16 @@ export class EnhancedAIIntegration {
     
     if (systemMetrics.memory.usage > 80) {
       // Trigger memory optimization
-      console.log('🧹 Triggering memory optimization...');
+      console.info('🧹 Triggering memory optimization...');
     }
   }
 
   private updateAIModels() {
-    console.log('🤖 Updating AI models...');
+    console.info('🤖 Updating AI models...');
     
     // Retrain models with new data
     if (this.learningData.length > 1000) {
-      console.log('📈 Retraining AI models with new data...');
+      console.info('📈 Retraining AI models with new data...');
       // In a real implementation, this would retrain the models
     }
   }
@@ -735,7 +735,7 @@ export class EnhancedAIIntegration {
   }
 
   private fallbackProcessing(context: UnifiedContext, error: any): any {
-    console.log('🛡️ Executing fallback processing due to error:', error);
+    console.info('🛡️ Executing fallback processing due to error:', error);
     
     return {
       insights: [{
@@ -795,13 +795,13 @@ export class EnhancedAIIntegration {
 
 // Demo and testing
 async function demonstrateEnhancedIntegration() {
-  console.log("🧠 Enhanced AI Integration Layer - Unified Intelligence Demo");
-  console.log("=" .repeat(60));
+  console.info("🧠 Enhanced AI Integration Layer - Unified Intelligence Demo");
+  console.info("=" .repeat(60));
 
   const integration = new EnhancedAIIntegration();
 
   // Wait for initialization
-  console.log("\n⏳ Initializing AI integration systems...");
+  console.info("\n⏳ Initializing AI integration systems...");
   await new Promise(resolve => setTimeout(resolve, 5000));
 
   // Create test context
@@ -833,39 +833,39 @@ async function demonstrateEnhancedIntegration() {
     }
   };
 
-  console.log("\n🔄 Processing unified request...");
+  console.info("\n🔄 Processing unified request...");
   const result = await integration.processUnifiedRequest(testContext);
 
-  console.log("\n💡 Generated Insights:");
+  console.info("\n💡 Generated Insights:");
   result.insights.forEach((insight, index) => {
-    console.log(`   ${index + 1}. [${insight.priority.toUpperCase()}] ${insight.title}`);
-    console.log(`      Type: ${insight.type}, Confidence: ${(insight.confidence * 100).toFixed(1)}%`);
-    console.log(`      Description: ${insight.description}`);
+    console.info(`   ${index + 1}. [${insight.priority.toUpperCase()}] ${insight.title}`);
+    console.info(`      Type: ${insight.type}, Confidence: ${(insight.confidence * 100).toFixed(1)}%`);
+    console.info(`      Description: ${insight.description}`);
   });
 
-  console.log("\n🎯 Orchestration Decision:");
-  console.log(`   Action: ${result.decision.decision.action}`);
-  console.log(`   Reasoning: ${result.decision.decision.reasoning}`);
-  console.log(`   Confidence: ${(result.decision.decision.confidence * 100).toFixed(1)}%`);
-  console.log(`   Automated: ${result.decision.decision.automated ? 'Yes' : 'No'}`);
-  console.log(`   Requires Human Review: ${result.decision.decision.requiresHumanReview ? 'Yes' : 'No'}`);
+  console.info("\n🎯 Orchestration Decision:");
+  console.info(`   Action: ${result.decision.decision.action}`);
+  console.info(`   Reasoning: ${result.decision.decision.reasoning}`);
+  console.info(`   Confidence: ${(result.decision.decision.confidence * 100).toFixed(1)}%`);
+  console.info(`   Automated: ${result.decision.decision.automated ? 'Yes' : 'No'}`);
+  console.info(`   Requires Human Review: ${result.decision.decision.requiresHumanReview ? 'Yes' : 'No'}`);
 
-  console.log("\n⚡ Execution Results:");
+  console.info("\n⚡ Execution Results:");
   result.execution.forEach((result: any, index: number) => {
-    console.log(`   ${index + 1}. ${result.action} on ${result.target}`);
+    console.info(`   ${index + 1}. ${result.action} on ${result.target}`);
   });
 
   // Show integration status
-  console.log("\n📊 Integration Status:");
+  console.info("\n📊 Integration Status:");
   const status = integration.getIntegrationStatus();
-  console.log(`   Integration Active: ${status.isIntegrating ? '✅ Yes' : '❌ No'}`);
-  console.log(`   Total Insights Generated: ${status.totalInsights}`);
-  console.log(`   Total Decisions Made: ${status.totalDecisions}`);
-  console.log(`   Learning Data Points: ${status.learningDataSize}`);
-  console.log(`   Uptime: ${Math.floor(status.uptime / 1000 / 60)} minutes`);
+  console.info(`   Integration Active: ${status.isIntegrating ? '✅ Yes' : '❌ No'}`);
+  console.info(`   Total Insights Generated: ${status.totalInsights}`);
+  console.info(`   Total Decisions Made: ${status.totalDecisions}`);
+  console.info(`   Learning Data Points: ${status.learningDataSize}`);
+  console.info(`   Uptime: ${Math.floor(status.uptime / 1000 / 60)} minutes`);
 
-  console.log("\n🎉 Enhanced AI Integration Layer Demo Complete!");
-  console.log("💚 Unified intelligence with fraud detection, security, monitoring, and business intelligence operational!");
+  console.info("\n🎉 Enhanced AI Integration Layer Demo Complete!");
+  console.info("💚 Unified intelligence with fraud detection, security, monitoring, and business intelligence operational!");
 }
 
 // Run demo if executed directly

@@ -16,7 +16,7 @@ const sdk = new DuoPlusSDK('https://api.duoplus.com', Bun.env.DUOPLUS_API_KEY ||
  * 1. Stream simulated IDs to R2 Storage with massive scale
  */
 async function streamAppleIDsToR2(count: number) {
-  console.log(`🚀 **Phase 1: Streaming ${count} Simulated IDs to R2...**`);
+  console.info(`🚀 **Phase 1: Streaming ${count} Simulated IDs to R2...**`);
   const { mockAppleData } = await import('../utils/urlpattern-r2');
   
   const start = Date.now();
@@ -52,7 +52,7 @@ async function streamAppleIDsToR2(count: number) {
   }
   
   const duration = (Date.now() - start) / 1000;
-  console.log(`\n✅ Phase 1 Complete: ${ids.length} objects stored in ${duration.toFixed(1)}s`);
+  console.info(`\n✅ Phase 1 Complete: ${ids.length} objects stored in ${duration.toFixed(1)}s`);
   return { ids, total: ids.length };
 }
 
@@ -60,7 +60,7 @@ async function streamAppleIDsToR2(count: number) {
  * 2. Simulation: Generate Mock Screenshots
  */
 async function generatePipelineScreenshots(batch: { ids: any[], total: number }) {
-  console.log(`🚀 **Phase 2: Generating Simulation Screenshots for ${batch.total} IDs...**`);
+  console.info(`🚀 **Phase 2: Generating Simulation Screenshots for ${batch.total} IDs...**`);
   
   const start = Date.now();
   const screenshotUrls: string[] = [];
@@ -92,7 +92,7 @@ async function generatePipelineScreenshots(batch: { ids: any[], total: number })
   }
 
   const duration = (Date.now() - start) / 1000;
-  console.log(`\n✅ Phase 2 Complete: ${screenshotUrls.length} screenshots mirrored in ${duration.toFixed(1)}s`);
+  console.info(`\n✅ Phase 2 Complete: ${screenshotUrls.length} screenshots mirrored in ${duration.toFixed(1)}s`);
   return screenshotUrls;
 }
 
@@ -100,9 +100,9 @@ async function generatePipelineScreenshots(batch: { ids: any[], total: number })
  * Main Pipeline Execution
  */
 async function runPipeline() {
-  console.log(`\n${'═'.repeat(60)}`);
-  console.log(`🔥 **E2E AUTOMATION PIPELINE STARTING**`);
-  console.log(`${'═'.repeat(60)}`);
+  console.info(`\n${'═'.repeat(60)}`);
+  console.info(`🔥 **E2E AUTOMATION PIPELINE STARTING**`);
+  console.info(`${'═'.repeat(60)}`);
 
   try {
     // Stage 1: Massive Data Feed
@@ -113,15 +113,15 @@ async function runPipeline() {
     const screenshotUrls = await generatePipelineScreenshots(batch);
 
     // Stage 3: RPA Orchestration via DuoPlus
-    console.log(`🚀 **Phase 3: Dispatching to Phone Pools...**`);
+    console.info(`🚀 **Phase 3: Dispatching to Phone Pools...**`);
     await sdk.batchPushToPhones(
       screenshotUrls,
       Array(batch.total).fill('sim-phone-pool')
     );
 
-    console.log(`\n✨ **E2E Simulation Pipeline Successfully Executed** ✨`);
-    console.log(`📊 Summary: ${batch.total} IDs processed | ${screenshotUrls.length} Media assets generated`);
-    console.log(`${'═'.repeat(60)}\n`);
+    console.info(`\n✨ **E2E Simulation Pipeline Successfully Executed** ✨`);
+    console.info(`📊 Summary: ${batch.total} IDs processed | ${screenshotUrls.length} Media assets generated`);
+    console.info(`${'═'.repeat(60)}\n`);
 
   } catch (error) {
     console.error(`❌ Pipeline failed:`, error);

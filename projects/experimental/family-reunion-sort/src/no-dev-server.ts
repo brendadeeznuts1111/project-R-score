@@ -1,6 +1,6 @@
 // Test server without development mode
 
-console.log("Starting no-dev server...");
+console.info("Starting no-dev server...");
 const server = Bun.serve({
   port: 5683,
   async fetch(req) {
@@ -21,6 +21,6 @@ const server = Bun.serve({
   // No development mode
 });
 
-console.log(`No-dev server running on http://localhost:${server.port}`);
+console.info(`No-dev server running on http://localhost:${server.port}`);
 
 export default server;

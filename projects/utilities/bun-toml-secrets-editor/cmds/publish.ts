@@ -19,7 +19,7 @@ const shouldBuild =
 	!args.includes("--no-build") && !args.includes("--skip-build");
 
 if (shouldBuild) {
-	console.log("🔨 Building all platform binaries...");
+	console.info("🔨 Building all platform binaries...");
 	const buildProc = Bun.spawn(["bun", "run", "build:all"], {
 		stdout: "inherit",
 		stderr: "inherit",
@@ -32,7 +32,7 @@ if (shouldBuild) {
 		process.exit(1);
 	}
 
-	console.log("✅ All binaries built successfully\n");
+	console.info("✅ All binaries built successfully\n");
 }
 
 // Prepare bun publish command
@@ -41,8 +41,8 @@ const publishArgs = args.filter(
 );
 const publishCmd = ["bun", "publish", ...publishArgs];
 
-console.log(`📦 Publishing package...`);
-console.log(`   Command: ${publishCmd.join(" ")}\n`);
+console.info(`📦 Publishing package...`);
+console.info(`   Command: ${publishCmd.join(" ")}\n`);
 
 // Execute bun publish
 const publishProc = Bun.spawn(publishCmd, {
@@ -54,7 +54,7 @@ const publishProc = Bun.spawn(publishCmd, {
 await publishProc.exited;
 
 if (publishProc.exitCode === 0) {
-	console.log("\n✅ Package published successfully!");
+	console.info("\n✅ Package published successfully!");
 } else {
 	console.error("\n❌ Publish failed");
 	process.exit(publishProc.exitCode || 1);

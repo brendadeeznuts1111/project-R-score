@@ -74,11 +74,11 @@ class IntelligentLoadBalancer {
   private circuitBreakerThreshold = 5; // Fail after 5 consecutive errors
 
   async startHealthMonitoring() {
-    console.log('🏥 **Starting Intelligent Load Balancer**');
-    console.log('='.repeat(50));
-    console.log(`📊 Monitoring ${this.endpoints.length} endpoints`);
-    console.log(`🔄 Health check interval: ${this.healthCheckInterval / 1000}s`);
-    console.log('');
+    console.info('🏥 **Starting Intelligent Load Balancer**');
+    console.info('='.repeat(50));
+    console.info(`📊 Monitoring ${this.endpoints.length} endpoints`);
+    console.info(`🔄 Health check interval: ${this.healthCheckInterval / 1000}s`);
+    console.info('');
 
     // Initial health check
     await this.performHealthChecks();
@@ -86,7 +86,7 @@ class IntelligentLoadBalancer {
     // Start continuous monitoring
     setInterval(() => this.performHealthChecks(), this.healthCheckInterval);
     
-    console.log('✅ Load balancer active with intelligent failover');
+    console.info('✅ Load balancer active with intelligent failover');
   }
 
   async uploadWithFailover(data: any, filename: string): Promise<LoadBalancingResult> {
@@ -128,12 +128,12 @@ class IntelligentLoadBalancer {
         // Mark endpoint as unhealthy if too many errors
         if (endpoint.errorCount >= this.circuitBreakerThreshold) {
           endpoint.healthy = false;
-          console.log(`🔴 Circuit breaker activated for ${endpoint.name}`);
+          console.info(`🔴 Circuit breaker activated for ${endpoint.name}`);
         }
         
         // Continue to next endpoint if available
         if (attempts < this.maxRetries && healthyEndpoints.indexOf(endpoint) < healthyEndpoints.length - 1) {
-          console.log(`🔄 Failing over to next endpoint...`);
+          console.info(`🔄 Failing over to next endpoint...`);
           continue;
         }
       }
@@ -176,7 +176,7 @@ class IntelligentLoadBalancer {
   }
 
   private async performHealthChecks() {
-    console.log('🏥 Performing health checks...');
+    console.info('🏥 Performing health checks...');
     
     for (const endpoint of this.endpoints) {
       try {
@@ -186,16 +186,16 @@ class IntelligentLoadBalancer {
         
         const status = isHealthy ? '✅' : '❌';
         const responseTime = endpoint.responseTime > 0 ? `${endpoint.responseTime}ms` : 'N/A';
-        console.log(`${status} ${endpoint.name}: ${responseTime} | Success: ${endpoint.successCount} | Errors: ${endpoint.errorCount}`);
+        console.info(`${status} ${endpoint.name}: ${responseTime} | Success: ${endpoint.successCount} | Errors: ${endpoint.errorCount}`);
         
       } catch (error: any) {
         endpoint.healthy = false;
         endpoint.lastCheck = Date.now();
-        console.log(`❌ ${endpoint.name}: Health check failed - ${error.message}`);
+        console.info(`❌ ${endpoint.name}: Health check failed - ${error.message}`);
       }
     }
     
-    console.log('');
+    console.info('');
   }
 
   private async checkEndpointHealth(endpoint: Endpoint): Promise<boolean> {
@@ -249,19 +249,19 @@ class IntelligentLoadBalancer {
   displayStats() {
     const stats = this.getLoadBalancingStats();
     
-    console.log('📊 **Load Balancer Statistics**');
-    console.log('='.repeat(40));
-    console.log(`🌐 Endpoints: ${stats.healthyEndpoints}/${stats.totalEndpoints} healthy`);
-    console.log(`✅ Success Rate: ${stats.successRate.toFixed(1)}%`);
-    console.log(`📈 Total Success: ${stats.totalSuccess}`);
-    console.log(`❌ Total Errors: ${stats.totalErrors}`);
-    console.log('');
+    console.info('📊 **Load Balancer Statistics**');
+    console.info('='.repeat(40));
+    console.info(`🌐 Endpoints: ${stats.healthyEndpoints}/${stats.totalEndpoints} healthy`);
+    console.info(`✅ Success Rate: ${stats.successRate.toFixed(1)}%`);
+    console.info(`📈 Total Success: ${stats.totalSuccess}`);
+    console.info(`❌ Total Errors: ${stats.totalErrors}`);
+    console.info('');
     
-    console.log('**Endpoint Details**:');
+    console.info('**Endpoint Details**:');
     stats.endpoints.forEach(endpoint => {
       const status = endpoint.healthy ? '🟢' : '🔴';
       const responseTime = endpoint.responseTime > 0 ? `${endpoint.responseTime}ms` : 'N/A';
-      console.log(`${status} ${endpoint.name}: ${responseTime} | ${endpoint.successRate.toFixed(1)}% success`);
+      console.info(`${status} ${endpoint.name}: ${responseTime} | ${endpoint.successRate.toFixed(1)}% success`);
     });
   }
 }
@@ -274,7 +274,7 @@ if (Bun.main === import.meta.path) {
   await loadBalancer.startHealthMonitoring();
   
   // Test failover with sample uploads
-  console.log('🧪 Testing intelligent failover...');
+  console.info('🧪 Testing intelligent failover...');
   
   const testData = {
     test: 'load-balancer',
@@ -287,16 +287,16 @@ if (Bun.main === import.meta.path) {
       const result = await loadBalancer.uploadWithFailover(testData, `test-${i}.json`);
       const status = result.success ? '✅' : '❌';
       const failover = result.failoverUsed ? ' (failover)' : '';
-      console.log(`${status} Upload ${i + 1}: ${result.endpoint}${failover} - ${result.uploadTime}ms`);
+      console.info(`${status} Upload ${i + 1}: ${result.endpoint}${failover} - ${result.uploadTime}ms`);
     } catch (error: any) {
-      console.log(`❌ Upload ${i + 1} failed: ${error.message}`);
+      console.info(`❌ Upload ${i + 1} failed: ${error.message}`);
     }
     
     await Bun.sleep(1000);
   }
   
   // Display final stats
-  console.log('');
+  console.info('');
   loadBalancer.displayStats();
 }
 

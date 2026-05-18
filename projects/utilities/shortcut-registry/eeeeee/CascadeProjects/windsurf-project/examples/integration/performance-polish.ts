@@ -99,7 +99,7 @@ export function useVirtualizedMatrix<T>(items: T[], options?: {
       const visibleItems = items.slice(startIndex, endIndex);
       
       if (isDebug) {
-        console.log(`Virtualized render: ${visibleItems.length} items (${startIndex}-${endIndex})`);
+        console.info(`Virtualized render: ${visibleItems.length} items (${startIndex}-${endIndex})`);
       }
       
       return visibleItems.map((item, index) => ({
@@ -141,7 +141,7 @@ export function useOptimisticProbe<T>(action: () => Promise<T>, options?: {
         // Mock API returns instant success
         if (isMockApi) {
           if (isDebug) {
-            console.log('Mock API: Instant success simulated');
+            console.info('Mock API: Instant success simulated');
           }
           return { success: true, data: generateMockData<T>() };
         }
@@ -156,7 +156,7 @@ export function useOptimisticProbe<T>(action: () => Promise<T>, options?: {
         
         const duration = performance.now() - startTime;
         if (isDebug) {
-          console.log(`Optimistic probe completed in ${duration.toFixed(2)}ms`);
+          console.info(`Optimistic probe completed in ${duration.toFixed(2)}ms`);
         }
         
         return { success: true, data: result };
@@ -164,13 +164,13 @@ export function useOptimisticProbe<T>(action: () => Promise<T>, options?: {
       } catch (error) {
         const duration = performance.now() - startTime;
         if (isDebug) {
-          console.log(`Optimistic probe failed after ${duration.toFixed(2)}ms:`, error);
+          console.info(`Optimistic probe failed after ${duration.toFixed(2)}ms:`, error);
         }
         
         // Rollback after delay
         setTimeout(() => {
           if (isDebug) {
-            console.log('Rollback completed');
+            console.info('Rollback completed');
           }
         }, config.rollbackDelay);
         
@@ -287,7 +287,7 @@ export function usePerformanceMonitor() {
       renderFn();
       const duration = performance.now() - startTime;
       
-      console.log(`[PERF] ${componentName} rendered in ${duration.toFixed(2)}ms`);
+      console.info(`[PERF] ${componentName} rendered in ${duration.toFixed(2)}ms`);
     },
     
     measureBundle: () => {
@@ -295,7 +295,7 @@ export function usePerformanceMonitor() {
         const entries = globalThis.performance.getEntriesByType('navigation' as any) as any[];
         if (entries.length > 0) {
           const nav = entries[0];
-          console.log('[PERF] Bundle Metrics:', {
+          console.info('[PERF] Bundle Metrics:', {
             domContentLoaded: nav.domContentLoadedEventEnd - nav.domContentLoadedEventStart,
             loadComplete: nav.loadEventEnd - nav.loadEventStart,
             totalLoad: nav.loadEventEnd - nav.fetchStart

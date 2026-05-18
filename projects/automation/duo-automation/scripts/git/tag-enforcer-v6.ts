@@ -22,7 +22,7 @@ class TagEnforcer {
 
   async run() {
     const stage = process.env.ENFORCEMENT_STAGE || 'pre-commit';
-    console.log(`\n🔒 DuoPlus Tag Enforcement v6.1 [Stage: ${stage}]`);
+    console.info(`\n🔒 DuoPlus Tag Enforcement v6.1 [Stage: ${stage}]`);
 
     if (stage === 'pre-commit') {
       await this.enforcePreCommit();
@@ -180,7 +180,7 @@ class TagEnforcer {
 
   private report() {
     if (this.violations.length === 0) {
-      console.log('✅ All DuoPlus tag enforcement checks passed.');
+      console.info('✅ All DuoPlus tag enforcement checks passed.');
       process.exit(0);
     }
 

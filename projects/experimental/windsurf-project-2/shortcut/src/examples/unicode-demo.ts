@@ -9,8 +9,8 @@ import { GraphemeClusterer, GraphemeUtils } from '../core/unicode/grapheme';
 import { UnicodeValidator, UnicodeShortcutBuilder } from '../core/unicode/validation';
 import { UnicodeEnhancedShortcutManager } from '../core/shortcuts/unicode-enhanced';
 
-console.log('🌍 Unicode Enhancement Demo');
-console.log('============================\n');
+console.info('🌍 Unicode Enhancement Demo');
+console.info('============================\n');
 
 // Initialize Unicode components
 const clusterer = new GraphemeClusterer();
@@ -19,14 +19,14 @@ const unicodeManager = new UnicodeEnhancedShortcutManager();
 
 // Check Unicode capabilities
 const unicodeInfo = GraphemeUtils.getUnicodeInfo();
-console.log('📊 Unicode Capabilities:');
-console.log(`   Version: ${unicodeInfo.version}`);
-console.log(`   Intl.Segmenter: ${unicodeInfo.hasSegmenter ? '✅ Available' : '❌ Not Available'}`);
-console.log(`   Normalization: ${unicodeInfo.hasNormalization ? '✅ Available' : '❌ Not Available'}\n`);
+console.info('📊 Unicode Capabilities:');
+console.info(`   Version: ${unicodeInfo.version}`);
+console.info(`   Intl.Segmenter: ${unicodeInfo.hasSegmenter ? '✅ Available' : '❌ Not Available'}`);
+console.info(`   Normalization: ${unicodeInfo.hasNormalization ? '✅ Available' : '❌ Not Available'}\n`);
 
 async function demonstrateGraphemeClustering() {
-  console.log('🔤 Grapheme Clustering Demo');
-  console.log('==========================\n');
+  console.info('🔤 Grapheme Clustering Demo');
+  console.info('==========================\n');
   
   const testCases = [
     {
@@ -66,20 +66,20 @@ async function demonstrateGraphemeClustering() {
     const clusterCount = clusterer.getClusterLength(testCase.text);
     const visualWidth = clusterer.getVisualWidth(testCase.text);
     
-    console.log(`📝 ${testCase.name}:`);
-    console.log(`   Text: "${testCase.text}"`);
-    console.log(`   Clusters: [${clusters.map(c => `"${c}"`).join(', ')}]`);
-    console.log(`   Count: ${clusterCount} clusters`);
-    console.log(`   Visual Width: ${visualWidth}`);
-    console.log(`   Emoji Count: ${GraphemeUtils.countEmojis(testCase.text)}`);
-    console.log(`   Complex Unicode: ${GraphemeUtils.hasComplexUnicode(testCase.text)}`);
-    console.log();
+    console.info(`📝 ${testCase.name}:`);
+    console.info(`   Text: "${testCase.text}"`);
+    console.info(`   Clusters: [${clusters.map(c => `"${c}"`).join(', ')}]`);
+    console.info(`   Count: ${clusterCount} clusters`);
+    console.info(`   Visual Width: ${visualWidth}`);
+    console.info(`   Emoji Count: ${GraphemeUtils.countEmojis(testCase.text)}`);
+    console.info(`   Complex Unicode: ${GraphemeUtils.hasComplexUnicode(testCase.text)}`);
+    console.info();
   }
 }
 
 function demonstrateUnicodeValidation() {
-  console.log('✅ Unicode Validation Demo');
-  console.log('===========================\n');
+  console.info('✅ Unicode Validation Demo');
+  console.info('===========================\n');
   
   const validationTests = [
     {
@@ -117,38 +117,38 @@ function demonstrateUnicodeValidation() {
   for (const test of validationTests) {
     const result = validator.validateShortcutText(test.text, test.context);
     
-    console.log(`🔍 ${test.name}:`);
-    console.log(`   Text: "${test.text}"`);
-    console.log(`   Context: ${test.context}`);
-    console.log(`   Valid: ${result.isValid ? '✅' : '❌'}`);
+    console.info(`🔍 ${test.name}:`);
+    console.info(`   Text: "${test.text}"`);
+    console.info(`   Context: ${test.context}`);
+    console.info(`   Valid: ${result.isValid ? '✅' : '❌'}`);
     
     if (result.errors.length > 0) {
-      console.log(`   Errors:`);
+      console.info(`   Errors:`);
       result.errors.forEach(error => {
-        console.log(`     - ${error.code}: ${error.message}`);
+        console.info(`     - ${error.code}: ${error.message}`);
       });
     }
     
     if (result.warnings.length > 0) {
-      console.log(`   Warnings:`);
+      console.info(`   Warnings:`);
       result.warnings.forEach(warning => {
-        console.log(`     - ${warning}`);
+        console.info(`     - ${warning}`);
       });
     }
     
-    console.log(`   Metadata:`);
-    console.log(`     Clusters: ${result.metadata.clusterCount}`);
-    console.log(`     Visual Width: ${result.metadata.visualWidth}`);
-    console.log(`     Scripts: ${result.metadata.scriptCount}`);
-    console.log(`     Emojis: ${result.metadata.emojiCount}`);
-    console.log(`     Complex: ${result.metadata.hasComplexUnicode}`);
-    console.log();
+    console.info(`   Metadata:`);
+    console.info(`     Clusters: ${result.metadata.clusterCount}`);
+    console.info(`     Visual Width: ${result.metadata.visualWidth}`);
+    console.info(`     Scripts: ${result.metadata.scriptCount}`);
+    console.info(`     Emojis: ${result.metadata.emojiCount}`);
+    console.info(`     Complex: ${result.metadata.hasComplexUnicode}`);
+    console.info();
   }
 }
 
 function demonstrateKeyValidation() {
-  console.log('⌨️ Key Combination Validation Demo');
-  console.log('===================================\n');
+  console.info('⌨️ Key Combination Validation Demo');
+  console.info('===================================\n');
   
   const keyTests = [
     { combo: 'Ctrl+S', platform: 'windows' as const },
@@ -163,33 +163,33 @@ function demonstrateKeyValidation() {
   for (const test of keyTests) {
     const result = validator.validateKeyCombination(test.combo, test.platform);
     
-    console.log(`⌨️ ${test.combo} (${test.platform}):`);
-    console.log(`   Valid: ${result.isValid ? '✅' : '❌'}`);
+    console.info(`⌨️ ${test.combo} (${test.platform}):`);
+    console.info(`   Valid: ${result.isValid ? '✅' : '❌'}`);
     
     if (result.errors.length > 0) {
-      console.log(`   Errors:`);
+      console.info(`   Errors:`);
       result.errors.forEach(error => {
-        console.log(`     - ${error.code}: ${error.message}`);
+        console.info(`     - ${error.code}: ${error.message}`);
       });
     }
     
     if (result.warnings.length > 0) {
-      console.log(`   Warnings:`);
+      console.info(`   Warnings:`);
       result.warnings.forEach(warning => {
-        console.log(`     - ${warning}`);
+        console.info(`     - ${warning}`);
       });
     }
     
     // Show Unicode display
     const unicodeDisplay = UnicodeShortcutBuilder.getUnicodeKeyDisplay(test.combo, test.platform);
-    console.log(`   Unicode Display: ${unicodeDisplay}`);
-    console.log();
+    console.info(`   Unicode Display: ${unicodeDisplay}`);
+    console.info();
   }
 }
 
 function demonstrateUnicodeShortcuts() {
-  console.log('🚀 Unicode-Enhanced Shortcuts Demo');
-  console.log('====================================\n');
+  console.info('🚀 Unicode-Enhanced Shortcuts Demo');
+  console.info('====================================\n');
   
   // Create some Unicode-aware shortcuts
   const shortcuts = [
@@ -237,28 +237,28 @@ function demonstrateUnicodeShortcuts() {
       shortcutData.icon
     );
     
-    console.log(`🎯 ${shortcutData.id}:`);
-    console.log(`   Action: ${shortcut.action}`);
-    console.log(`   Description: ${shortcut.description}`);
-    console.log(`   Icon: ${shortcut.icon}`);
-    console.log(`   Key: ${shortcut.default.primary}`);
-    console.log(`   Unicode Key: ${shortcut.default.unicodePrimary}`);
-    console.log(`   Valid: ${shortcut.enabled ? '✅' : '❌'}`);
+    console.info(`🎯 ${shortcutData.id}:`);
+    console.info(`   Action: ${shortcut.action}`);
+    console.info(`   Description: ${shortcut.description}`);
+    console.info(`   Icon: ${shortcut.icon}`);
+    console.info(`   Key: ${shortcut.default.primary}`);
+    console.info(`   Unicode Key: ${shortcut.default.unicodePrimary}`);
+    console.info(`   Valid: ${shortcut.enabled ? '✅' : '❌'}`);
     
     if (!validation.action.isValid || !validation.description.isValid || !validation.key.isValid) {
-      console.log(`   Issues:`);
-      if (!validation.action.isValid) console.log(`     - Action invalid`);
-      if (!validation.description.isValid) console.log(`     - Description invalid`);
-      if (!validation.key.isValid) console.log(`     - Key invalid`);
+      console.info(`   Issues:`);
+      if (!validation.action.isValid) console.info(`     - Action invalid`);
+      if (!validation.description.isValid) console.info(`     - Description invalid`);
+      if (!validation.key.isValid) console.info(`     - Key invalid`);
     }
     
-    console.log();
+    console.info();
   }
 }
 
 function demonstrateTextProcessing() {
-  console.log('📝 Advanced Text Processing Demo');
-  console.log('=================================\n');
+  console.info('📝 Advanced Text Processing Demo');
+  console.info('=================================\n');
   
   const textSamples = [
     'Hello World 🌍',
@@ -269,42 +269,42 @@ function demonstrateTextProcessing() {
   ];
   
   for (const text of textSamples) {
-    console.log(`📄 Processing: "${text}"`);
+    console.info(`📄 Processing: "${text}"`);
     
     // Truncate
     const truncated = GraphemeUtils.safeTruncate(text, 5);
-    console.log(`   Truncated (5): "${truncated}"`);
+    console.info(`   Truncated (5): "${truncated}"`);
     
     // Visual width
     const visualWidth = GraphemeUtils.visualLength(text);
-    console.log(`   Visual Width: ${visualWidth}`);
+    console.info(`   Visual Width: ${visualWidth}`);
     
     // Wrap text
     const wrapped = GraphemeUtils.wrapText(text, 10);
-    console.log(`   Wrapped (width 10):`);
+    console.info(`   Wrapped (width 10):`);
     wrapped.forEach((line, i) => {
-      console.log(`     ${i + 1}: "${line}"`);
+      console.info(`     ${i + 1}: "${line}"`);
     });
     
     // Extract emojis
     const emojis = GraphemeUtils.extractEmojis(text);
     if (emojis.length > 0) {
-      console.log(`   Emojis: [${emojis.join(', ')}]`);
+      console.info(`   Emojis: [${emojis.join(', ')}]`);
     }
     
     // Normalize
     const normalized = GraphemeUtils.normalizeEmoji(text);
     if (normalized !== text) {
-      console.log(`   Normalized: "${normalized}"`);
+      console.info(`   Normalized: "${normalized}"`);
     }
     
-    console.log();
+    console.info();
   }
 }
 
 function demonstrateKeyboardVisualization() {
-  console.log('⌨️ Keyboard Visualization Demo');
-  console.log('===============================\n');
+  console.info('⌨️ Keyboard Visualization Demo');
+  console.info('===============================\n');
   
   // Create some test shortcuts
   const testShortcuts = [
@@ -339,32 +339,32 @@ function demonstrateKeyboardVisualization() {
   
   const keyboard = unicodeManager.createKeyboardVisualization(testShortcuts);
   
-  console.log('🗺️ Keyboard Layout:');
+  console.info('🗺️ Keyboard Layout:');
   keyboard.layout.forEach((row, rowIndex) => {
     const rowDisplay = row.map(key => {
       const hasShortcut = key.shortcuts.length > 0;
       const shortcutIndicator = hasShortcut ? '●' : '○';
       return `${key.display}${shortcutIndicator}`;
     }).join(' ');
-    console.log(`   Row ${rowIndex + 1}: ${rowDisplay}`);
+    console.info(`   Row ${rowIndex + 1}: ${rowDisplay}`);
   });
   
-  console.log('\n📋 Legend:');
+  console.info('\n📋 Legend:');
   Object.entries(keyboard.legend).forEach(([key, symbol]) => {
-    console.log(`   ${key} → ${symbol}`);
+    console.info(`   ${key} → ${symbol}`);
   });
   
-  console.log('\n🎯 Shortcuts Found:');
+  console.info('\n🎯 Shortcuts Found:');
   testShortcuts.forEach(shortcut => {
-    console.log(`   ${shortcut.id}: ${shortcut.default.primary} → ${shortcut.default.unicodePrimary}`);
+    console.info(`   ${shortcut.id}: ${shortcut.default.primary} → ${shortcut.default.unicodePrimary}`);
   });
   
-  console.log();
+  console.info();
 }
 
 function demonstratePerformance() {
-  console.log('⚡ Performance Benchmark Demo');
-  console.log('==============================\n');
+  console.info('⚡ Performance Benchmark Demo');
+  console.info('==============================\n');
   
   const testTexts = [
     'Simple ASCII text for testing',
@@ -385,7 +385,7 @@ function demonstratePerformance() {
   const iterations = 1000;
   
   for (const testText of testTexts) {
-    console.log(`📊 Testing: "${testText.substring(0, 30)}${testText.length > 30 ? '...' : ''}"`);
+    console.info(`📊 Testing: "${testText.substring(0, 30)}${testText.length > 30 ? '...' : ''}"`);
     
     for (const operation of operations) {
       // Warm up
@@ -403,10 +403,10 @@ function demonstratePerformance() {
       const duration = end - start;
       const opsPerSecond = (iterations / duration) * 1000;
       
-      console.log(`   ${operation.name}: ${opsPerSecond.toFixed(0)} ops/sec (${duration.toFixed(2)}ms total)`);
+      console.info(`   ${operation.name}: ${opsPerSecond.toFixed(0)} ops/sec (${duration.toFixed(2)}ms total)`);
     }
     
-    console.log();
+    console.info();
   }
 }
 
@@ -420,9 +420,9 @@ async function main() {
     demonstrateKeyboardVisualization();
     demonstratePerformance();
     
-    console.log('🎉 Unicode Enhancement Demo Complete!');
-    console.log('=====================================');
-    console.log('All Unicode features demonstrated successfully!');
+    console.info('🎉 Unicode Enhancement Demo Complete!');
+    console.info('=====================================');
+    console.info('All Unicode features demonstrated successfully!');
     
   } catch (error) {
     console.error('❌ Demo failed:', error);

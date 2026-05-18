@@ -258,7 +258,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
     const startTime = performance.now();
     const traceId = `trace-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
-    console.log(`🔄 Executing protocol for dispute ${dispute.id} [${traceId}]`);
+    console.info(`🔄 Executing protocol for dispute ${dispute.id} [${traceId}]`);
     
     // Protocol execution with Bun-native performance monitoring
     const transitions: TransitionLog[] = [];
@@ -312,7 +312,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
       dispute.status = currentState;
       dispute.updatedAt = new Date();
       
-      console.log(`✅ Transition: ${transitionLog.from} → ${transitionLog.to} (${transitionTime.toFixed(2)}ms)`);
+      console.info(`✅ Transition: ${transitionLog.from} → ${transitionLog.to} (${transitionTime.toFixed(2)}ms)`);
       
       // Bun-native yield for non-blocking execution
       await Bun.sleep(0); // Yield to event loop
@@ -331,7 +331,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
       protocolVersion: this.protocolVersion
     };
     
-    console.log(`🏁 Protocol execution complete: ${result.success ? 'SUCCESS' : 'PARTIAL'} [${executionTime.toFixed(2)}ms]`);
+    console.info(`🏁 Protocol execution complete: ${result.success ? 'SUCCESS' : 'PARTIAL'} [${executionTime.toFixed(2)}ms]`);
     
     return result;
   }
@@ -437,7 +437,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
   // ============================================================================
 
   private async assignToReviewer(dispute: Dispute, context: ProtocolContext): Promise<TransitionResult> {
-    console.log(`👤 Assigning reviewer to dispute ${dispute.id}`);
+    console.info(`👤 Assigning reviewer to dispute ${dispute.id}`);
     
     // Auto-assign to available reviewer
     const reviewerId = `reviewer-${Math.floor(Math.random() * 10) + 1}`;
@@ -464,7 +464,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
   }
 
   private async notifyMerchant(dispute: Dispute, context: ProtocolContext): Promise<TransitionResult> {
-    console.log(`📧 Notifying merchant for dispute ${dispute.id}`);
+    console.info(`📧 Notifying merchant for dispute ${dispute.id}`);
     
     // Send merchant notification
     dispute.metadata = { ...dispute.metadata, merchantNotified: true, notifiedAt: new Date() };
@@ -484,7 +484,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
   }
 
   private async autoDecideSimpleCase(dispute: Dispute, context: ProtocolContext): Promise<TransitionResult> {
-    console.log(`⚡ Auto-deciding simple case ${dispute.id}`);
+    console.info(`⚡ Auto-deciding simple case ${dispute.id}`);
     
     // Simple decision logic
     const hasReceipt = dispute.evidence.some(e => e.type === "receipt");
@@ -504,7 +504,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
   }
 
   private async triggerAIAnalysis(dispute: Dispute, context: ProtocolContext): Promise<TransitionResult> {
-    console.log(`🤖 Triggering AI analysis for dispute ${dispute.id}`);
+    console.info(`🤖 Triggering AI analysis for dispute ${dispute.id}`);
     
     if (!context.config.aiAnalysisEnabled) {
       return {
@@ -538,7 +538,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
   }
 
   private async escalateToHuman(dispute: Dispute, context: ProtocolContext): Promise<TransitionResult> {
-    console.log(`🧑‍💼 Escalating dispute ${dispute.id} to human review`);
+    console.info(`🧑‍💼 Escalating dispute ${dispute.id} to human review`);
     
     const escalationReason = this.getEscalationReason(dispute);
     dispute.metadata = { 
@@ -556,7 +556,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
   }
 
   private async runFraudCheck(dispute: Dispute, context: ProtocolContext): Promise<TransitionResult> {
-    console.log(`🔍 Running fraud check for dispute ${dispute.id}`);
+    console.info(`🔍 Running fraud check for dispute ${dispute.id}`);
     
     if (!context.config.fraudDetectionEnabled) {
       return {
@@ -582,7 +582,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
   }
 
   private async generateRecommendation(dispute: Dispute, context: ProtocolContext): Promise<TransitionResult> {
-    console.log(`📋 Generating recommendation for dispute ${dispute.id}`);
+    console.info(`📋 Generating recommendation for dispute ${dispute.id}`);
     
     const recommendation = await this.generateAIRecommendation(dispute, context);
     
@@ -600,7 +600,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
   }
 
   private async escalateForReview(dispute: Dispute, context: ProtocolContext): Promise<TransitionResult> {
-    console.log(`🔍 Escalating dispute ${dispute.id} for review`);
+    console.info(`🔍 Escalating dispute ${dispute.id} for review`);
     
     dispute.metadata = { 
       ...dispute.metadata, 
@@ -617,7 +617,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
   }
 
   private async triggerFraudAlert(dispute: Dispute, context: ProtocolContext): Promise<TransitionResult> {
-    console.log(`🚨 TRIGGERING FRAUD ALERT for dispute ${dispute.id}`);
+    console.info(`🚨 TRIGGERING FRAUD ALERT for dispute ${dispute.id}`);
     
     dispute.metadata = { 
       ...dispute.metadata, 
@@ -644,7 +644,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
   }
 
   private async reviewMerchantResponse(dispute: Dispute, context: ProtocolContext): Promise<TransitionResult> {
-    console.log(`📝 Reviewing merchant response for dispute ${dispute.id}`);
+    console.info(`📝 Reviewing merchant response for dispute ${dispute.id}`);
     
     dispute.metadata = { 
       ...dispute.metadata, 
@@ -660,7 +660,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
   }
 
   private async makeAutoDecision(dispute: Dispute, context: ProtocolContext): Promise<TransitionResult> {
-    console.log(`⚖️ Making auto decision for dispute ${dispute.id}`);
+    console.info(`⚖️ Making auto decision for dispute ${dispute.id}`);
     
     const decision = this.makeDecisionBasedOnEvidence(dispute);
     
@@ -678,7 +678,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
   }
 
   private async resolveWithRecommendation(dispute: Dispute, context: ProtocolContext): Promise<TransitionResult> {
-    console.log(`✅ Resolving dispute ${dispute.id} with recommendation`);
+    console.info(`✅ Resolving dispute ${dispute.id} with recommendation`);
     
     const recommendation = dispute.metadata?.recommendation;
     
@@ -697,7 +697,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
   }
 
   private async resolveFromReview(dispute: Dispute, context: ProtocolContext): Promise<TransitionResult> {
-    console.log(`✅ Resolving dispute ${dispute.id} from review`);
+    console.info(`✅ Resolving dispute ${dispute.id} from review`);
     
     const resolution = dispute.metadata?.reviewResolution || "manual_review";
     
@@ -716,7 +716,7 @@ export class DisputeResolutionProtocol implements IDomainProtocol {
   }
 
   private async escalateDispute(dispute: Dispute, context: ProtocolContext): Promise<TransitionResult> {
-    console.log(`🔥 Escalating dispute ${dispute.id} to higher authority`);
+    console.info(`🔥 Escalating dispute ${dispute.id} to higher authority`);
     
     dispute.metadata = { 
       ...dispute.metadata, 

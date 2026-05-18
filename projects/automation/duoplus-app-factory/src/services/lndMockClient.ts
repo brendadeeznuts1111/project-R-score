@@ -117,7 +117,7 @@ export class LndMockClient {
       creation_date: new Date().toISOString(),
     };
     mockPayments.unshift(payment);
-    console.log(`🔄 Mock payment sent: ${payment.amount} sats (fee: ${payment.fee} sats)`);
+    console.info(`🔄 Mock payment sent: ${payment.amount} sats (fee: ${payment.fee} sats)`);
     return payment;
   }
 
@@ -131,7 +131,7 @@ export class LndMockClient {
       r_preimage: `preimage_${Date.now()}`,
     };
     mockInvoices.unshift(invoice);
-    console.log(`📝 Mock invoice created: ${value} sats - "${memo}"`);
+    console.info(`📝 Mock invoice created: ${value} sats - "${memo}"`);
     return invoice;
   }
 
@@ -148,12 +148,12 @@ export class LndMockClient {
   }
 
   async connectPeer(pubkey: string, addr: string): Promise<{ peer_id: string }> {
-    console.log(`🔗 Connected to peer: ${pubkey}@${addr}`);
+    console.info(`🔗 Connected to peer: ${pubkey}@${addr}`);
     return { peer_id: pubkey };
   }
 
   async closeChannel(chanId: string): Promise<{ closing_hash: string; status: string }> {
-    console.log(`🔒 Closing channel: ${chanId}`);
+    console.info(`🔒 Closing channel: ${chanId}`);
     const index = mockChannels.findIndex(ch => ch.chan_id === chanId);
     if (index > -1) {
       mockChannels.splice(index, 1);
@@ -165,7 +165,7 @@ export class LndMockClient {
     nodeUri: string,
     amount: number
   ): Promise<{ funding_txid: string; output_index: number; status: string }> {
-    console.log(`🔓 Opening channel to ${nodeUri} for ${amount} sats`);
+    console.info(`🔓 Opening channel to ${nodeUri} for ${amount} sats`);
     const newChannel: MockChannel = {
       chan_id: String(mockChannels.length + 1),
       local_balance: amount,

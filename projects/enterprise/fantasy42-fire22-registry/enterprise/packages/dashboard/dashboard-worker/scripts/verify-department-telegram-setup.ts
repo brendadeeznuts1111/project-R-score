@@ -39,7 +39,7 @@ async function verifyDepartmentTelegramSetup(): Promise<{
   overallStatus: 'complete' | 'partial' | 'incomplete';
   recommendations: string[];
 }> {
-  console.log('🔍 Starting Fire22 Department Telegram Setup Verification...\n');
+  console.info('🔍 Starting Fire22 Department Telegram Setup Verification...\n');
 
   const bot = new DepartmentalTelegramBot();
   const configuredDepartments = bot.getDepartments();
@@ -57,8 +57,8 @@ async function verifyDepartmentTelegramSetup(): Promise<{
 
   // Expected departments from team directory
   const expectedDepartments = Object.keys(teamDirectory.departments);
-  console.log(`📋 Expected departments: ${expectedDepartments.length}`);
-  console.log(`🤖 Configured in bot: ${configuredDepartments.length}\n`);
+  console.info(`📋 Expected departments: ${expectedDepartments.length}`);
+  console.info(`🤖 Configured in bot: ${configuredDepartments.length}\n`);
 
   // Verify each expected department
   for (const deptName of expectedDepartments) {
@@ -112,9 +112,9 @@ async function verifyDepartmentTelegramSetup(): Promise<{
     const issueCount = verification.issues.length;
     const issueText = issueCount > 0 ? ` (${issueCount} issues)` : '';
 
-    console.log(`${status} ${deptName.toUpperCase()}: ${verification.channel}${issueText}`);
+    console.info(`${status} ${deptName.toUpperCase()}: ${verification.channel}${issueText}`);
     if (verification.issues.length > 0) {
-      verification.issues.forEach(issue => console.log(`   ⚠️ ${issue}`));
+      verification.issues.forEach(issue => console.info(`   ⚠️ ${issue}`));
     }
   }
 
@@ -124,9 +124,9 @@ async function verifyDepartmentTelegramSetup(): Promise<{
   );
 
   if (extraDepartments.length > 0) {
-    console.log('\n🤔 Extra departments in bot configuration:');
+    console.info('\n🤔 Extra departments in bot configuration:');
     extraDepartments.forEach(dept => {
-      console.log(`   🤖 ${dept.name}: ${dept.channel}`);
+      console.info(`   🤖 ${dept.name}: ${dept.channel}`);
     });
   }
 
@@ -171,16 +171,16 @@ async function verifyDepartmentTelegramSetup(): Promise<{
     overallStatus = 'incomplete';
   }
 
-  console.log('\n📊 VERIFICATION SUMMARY');
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log(`Total Departments: ${expectedDepartments.length}`);
-  console.log(`Configured: ${configuredCount}`);
-  console.log(`Issues Found: ${totalIssues}`);
-  console.log(`Overall Status: ${overallStatus.toUpperCase()}`);
+  console.info('\n📊 VERIFICATION SUMMARY');
+  console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.info(`Total Departments: ${expectedDepartments.length}`);
+  console.info(`Configured: ${configuredCount}`);
+  console.info(`Issues Found: ${totalIssues}`);
+  console.info(`Overall Status: ${overallStatus.toUpperCase()}`);
 
   if (overallRecommendations.length > 0) {
-    console.log('\n💡 RECOMMENDATIONS:');
-    overallRecommendations.forEach(rec => console.log(`- ${rec}`));
+    console.info('\n💡 RECOMMENDATIONS:');
+    overallRecommendations.forEach(rec => console.info(`- ${rec}`));
   }
 
   return {
@@ -193,7 +193,7 @@ async function verifyDepartmentTelegramSetup(): Promise<{
 }
 
 async function generateSetupScript(): Promise<void> {
-  console.log('\n🛠️ Generating department setup script...');
+  console.info('\n🛠️ Generating department setup script...');
 
   const setupScript = `#!/usr/bin/env bun
 
@@ -220,9 +220,9 @@ const channelsToCreate = [
   '@fire22_help'
 ];
 
-console.log('📱 TELEGRAM CHANNELS TO CREATE:');
+console.info('📱 TELEGRAM CHANNELS TO CREATE:');
 channelsToCreate.forEach(channel => {
-  console.log(\`- \${channel}\`);
+  console.info(\`- \${channel}\`);
 });
 
 // 2. Bot setup commands
@@ -235,9 +235,9 @@ const botCommands = [
   'language - Change language (en/es/pt/fr)'
 ];
 
-console.log('\\n🤖 BOT COMMANDS TO CONFIGURE:');
+console.info('\\n🤖 BOT COMMANDS TO CONFIGURE:');
 botCommands.forEach(cmd => {
-  console.log(cmd);
+  console.info(cmd);
 });
 
 // 3. Channel configuration
@@ -252,33 +252,33 @@ const channelConfig = {
   ]
 };
 
-console.log('\\n⚙️ CHANNEL CONFIGURATION:');
-console.log(\`Description template: \${channelConfig.description}\`);
-console.log('Rules:');
+console.info('\\n⚙️ CHANNEL CONFIGURATION:');
+console.info(\`Description template: \${channelConfig.description}\`);
+console.info('Rules:');
 channelConfig.rules.forEach(rule => {
-  console.log(\`- \${rule}\`);
+  console.info(\`- \${rule}\`);
 });
 
 export { channelsToCreate, botCommands, channelConfig };
 `;
 
   await Bun.write('./scripts/setup-department-telegram.ts', setupScript);
-  console.log('✅ Setup script generated: scripts/setup-department-telegram.ts');
+  console.info('✅ Setup script generated: scripts/setup-department-telegram.ts');
 }
 
 async function testSystemIntegration(): Promise<void> {
-  console.log('\n🧪 Testing system integration...');
+  console.info('\n🧪 Testing system integration...');
 
   try {
     const bot = new DepartmentalTelegramBot();
 
     // Test department stats
     const stats = bot.getDepartmentStats();
-    console.log(`✅ Department stats: ${stats.size} departments tracked`);
+    console.info(`✅ Department stats: ${stats.size} departments tracked`);
 
     // Test performance report
     const report = bot.generatePerformanceReport();
-    console.log(`✅ Performance report: ${report.length} characters generated`);
+    console.info(`✅ Performance report: ${report.length} characters generated`);
 
     // Test sample inquiry routing
     const testUser = {
@@ -291,8 +291,8 @@ async function testSystemIntegration(): Promise<void> {
     const testMessage = 'I need help with my payment withdrawal';
     const result = await bot.routeCustomerInquiry(testUser, testMessage, 'normal');
 
-    console.log(`✅ Inquiry routing: ${result.inquiryId} → ${result.department} dept`);
-    console.log(`   Wait time: ${result.estimatedWaitTime} minutes`);
+    console.info(`✅ Inquiry routing: ${result.inquiryId} → ${result.department} dept`);
+    console.info(`   Wait time: ${result.estimatedWaitTime} minutes`);
   } catch (error) {
     console.error(`❌ Integration test failed: ${error.message}`);
   }
@@ -300,8 +300,8 @@ async function testSystemIntegration(): Promise<void> {
 
 // Main execution
 async function main() {
-  console.log('🔥📱 FIRE22 DEPARTMENT TELEGRAM VERIFICATION');
-  console.log('='.repeat(50));
+  console.info('🔥📱 FIRE22 DEPARTMENT TELEGRAM VERIFICATION');
+  console.info('='.repeat(50));
 
   try {
     // Run verification
@@ -313,13 +313,13 @@ async function main() {
     // Test system integration
     await testSystemIntegration();
 
-    console.log('\n🎉 VERIFICATION COMPLETE!');
-    console.log('='.repeat(50));
+    console.info('\n🎉 VERIFICATION COMPLETE!');
+    console.info('='.repeat(50));
 
     if (results.overallStatus === 'complete') {
-      console.log('✅ All departments properly configured for Telegram support');
+      console.info('✅ All departments properly configured for Telegram support');
     } else {
-      console.log(`⚠️ Setup is ${results.overallStatus} - see recommendations above`);
+      console.info(`⚠️ Setup is ${results.overallStatus} - see recommendations above`);
     }
 
     return results;

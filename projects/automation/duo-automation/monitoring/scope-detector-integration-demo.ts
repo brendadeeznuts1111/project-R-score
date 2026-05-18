@@ -9,148 +9,148 @@ import { DisputeDashboard } from './src/dashboard/dispute-dashboard.ts';
 import { ScopeDetector, PlatformScopeAdapter } from './packages/@core/utils/scope-detector.ts';
 
 async function demonstrateScopeDetectorIntegration() {
-  console.log('🎯 ScopeDetector-Enhanced Dispute Dashboard Demo');
-  console.log('='.repeat(70));
+  console.info('🎯 ScopeDetector-Enhanced Dispute Dashboard Demo');
+  console.info('='.repeat(70));
   
   const dashboard = new DisputeDashboard();
   
   try {
     // Get dashboard data with enhanced scope information
-    console.log('\n🔍 Loading dashboard with ScopeDetector integration...');
+    console.info('\n🔍 Loading dashboard with ScopeDetector integration...');
     const dashboardData = await dashboard.getDashboardData();
     
     // Display ScopeDetector configuration
     if (dashboardData.scopeInfo && dashboardData.scopeInfo.scopeConfig) {
       const scopeConfig = dashboardData.scopeInfo.scopeConfig;
       
-      console.log('\n🌐 ScopeDetector Configuration:');
-      console.log(`  Detected Scope: ${scopeConfig.scope}`);
-      console.log(`  Platform Scope: ${scopeConfig.platformScope}`);
-      console.log(`  Serving Domain: ${scopeConfig.domain}`);
-      console.log(`  Path Prefix: ${scopeConfig.pathPrefix}`);
-      console.log(`  Storage Type: ${scopeConfig.storageType}`);
-      console.log(`  Encryption Type: ${scopeConfig.encryptionType}`);
+      console.info('\n🌐 ScopeDetector Configuration:');
+      console.info(`  Detected Scope: ${scopeConfig.scope}`);
+      console.info(`  Platform Scope: ${scopeConfig.platformScope}`);
+      console.info(`  Serving Domain: ${scopeConfig.domain}`);
+      console.info(`  Path Prefix: ${scopeConfig.pathPrefix}`);
+      console.info(`  Storage Type: ${scopeConfig.storageType}`);
+      console.info(`  Encryption Type: ${scopeConfig.encryptionType}`);
       
       // Display platform-specific storage configuration
-      console.log('\n🔐 Platform-Specific Storage:');
+      console.info('\n🔐 Platform-Specific Storage:');
       const platformStorage = dashboardData.scopeInfo.platformStorage;
-      console.log(`  Storage Type: ${platformStorage.type}`);
-      console.log(`  Encryption: ${platformStorage.encryption}`);
-      console.log(`  Isolation: ${platformStorage.isolation}`);
-      console.log(`  Persist Flag: ${platformStorage.persist}`);
+      console.info(`  Storage Type: ${platformStorage.type}`);
+      console.info(`  Encryption: ${platformStorage.encryption}`);
+      console.info(`  Isolation: ${platformStorage.isolation}`);
+      console.info(`  Persist Flag: ${platformStorage.persist}`);
       
       // Display security features
-      console.log('\n🛡️ Security Features:');
+      console.info('\n🛡️ Security Features:');
       const security = dashboardData.scopeInfo.securityFeatures;
-      console.log(`  Available Features: ${security.available.length}`);
-      security.available.forEach(feature => console.log(`    • ${feature}`));
-      console.log(`  Recommended: ${security.recommended.length}`);
-      security.recommended.forEach(feature => console.log(`    • ${feature}`));
-      console.log(`  Limitations: ${security.limitations.length}`);
+      console.info(`  Available Features: ${security.available.length}`);
+      security.available.forEach(feature => console.info(`    • ${feature}`));
+      console.info(`  Recommended: ${security.recommended.length}`);
+      security.recommended.forEach(feature => console.info(`    • ${feature}`));
+      console.info(`  Limitations: ${security.limitations.length}`);
       if (security.limitations.length > 0) {
-        security.limitations.forEach(limitation => console.log(`    • ${limitation}`));
+        security.limitations.forEach(limitation => console.info(`    • ${limitation}`));
       } else {
-        console.log('    ✅ No limitations');
+        console.info('    ✅ No limitations');
       }
       
       // Display validation results
-      console.log('\n✅ Scope Validation:');
+      console.info('\n✅ Scope Validation:');
       const validation = dashboardData.scopeInfo.validation;
-      console.log(`  Valid: ${validation.valid ? '✅ Yes' : '❌ No'}`);
+      console.info(`  Valid: ${validation.valid ? '✅ Yes' : '❌ No'}`);
       if (validation.errors.length > 0) {
-        console.log('  Errors:');
-        validation.errors.forEach(error => console.log(`    ❌ ${error}`));
+        console.info('  Errors:');
+        validation.errors.forEach(error => console.info(`    ❌ ${error}`));
       }
       if (validation.warnings.length > 0) {
-        console.log('  Warnings:');
-        validation.warnings.forEach(warning => console.log(`    ⚠️ ${warning}`));
+        console.info('  Warnings:');
+        validation.warnings.forEach(warning => console.info(`    ⚠️ ${warning}`));
       }
       
       // Display domain mappings
-      console.log('\n🌍 Domain Mappings:');
+      console.info('\n🌍 Domain Mappings:');
       dashboardData.scopeInfo.domainMappings.forEach((mapping, index) => {
         const isCurrent = mapping.domain === scopeConfig.domain;
-        console.log(`  ${index + 1}. ${mapping.domain} -> ${mapping.scope} ${isCurrent ? '(CURRENT)' : ''}`);
-        console.log(`     ${mapping.description}`);
+        console.info(`  ${index + 1}. ${mapping.domain} -> ${mapping.scope} ${isCurrent ? '(CURRENT)' : ''}`);
+        console.info(`     ${mapping.description}`);
       });
     }
     
     // Display enhanced scope information
     if (dashboardData.scopeInfo) {
-      console.log('\n🎯 Enhanced Scope Information:');
-      console.log(`  Environment: ${dashboardData.scopeInfo.environment.toUpperCase()}`);
-      console.log(`  Platform: ${dashboardData.scopeInfo.platform}`);
-      console.log(`  Connection Pool: ${dashboardData.scopeInfo.connectionPool.maxConnections} max connections`);
-      console.log(`  AI Capabilities: ${dashboardData.scopeInfo.aiCapabilities.enabled ? 'Enabled' : 'Disabled'}`);
-      console.log(`  ML Models: ${dashboardData.scopeInfo.aiCapabilities.models.length} available`);
-      console.log(`  Real-time Analytics: ${dashboardData.scopeInfo.aiCapabilities.realTimeAnalytics ? 'Enabled' : 'Disabled'}`);
+      console.info('\n🎯 Enhanced Scope Information:');
+      console.info(`  Environment: ${dashboardData.scopeInfo.environment.toUpperCase()}`);
+      console.info(`  Platform: ${dashboardData.scopeInfo.platform}`);
+      console.info(`  Connection Pool: ${dashboardData.scopeInfo.connectionPool.maxConnections} max connections`);
+      console.info(`  AI Capabilities: ${dashboardData.scopeInfo.aiCapabilities.enabled ? 'Enabled' : 'Disabled'}`);
+      console.info(`  ML Models: ${dashboardData.scopeInfo.aiCapabilities.models.length} available`);
+      console.info(`  Real-time Analytics: ${dashboardData.scopeInfo.aiCapabilities.realTimeAnalytics ? 'Enabled' : 'Disabled'}`);
       
-      console.log('\n🔧 ScopeDetector Methods:');
-      console.log(`  getScopeConfig(): ${dashboard.getScopeConfig()?.scope || 'None'}`);
-      console.log(`  supportsEnterpriseFeatures(): ${dashboard.supportsEnterpriseFeatures() ? 'Yes' : 'No'}`);
-      console.log(`  validateScope(): ${dashboard.validateScope().valid ? 'Valid' : 'Invalid'}`);
+      console.info('\n🔧 ScopeDetector Methods:');
+      console.info(`  getScopeConfig(): ${dashboard.getScopeConfig()?.scope || 'None'}`);
+      console.info(`  supportsEnterpriseFeatures(): ${dashboard.supportsEnterpriseFeatures() ? 'Yes' : 'No'}`);
+      console.info(`  validateScope(): ${dashboard.validateScope().valid ? 'Valid' : 'Invalid'}`);
       
       // Test scoped utility methods
-      console.log('\n🛠️ Scoped Utility Methods:');
-      console.log(`  getScopedServiceName('dispute-service'): ${dashboard.getScopedServiceName('dispute-service')}`);
-      console.log(`  getScopedR2Path('disputes/data'): ${dashboard.getScopedR2Path('disputes/data')}`);
-      console.log(`  getLocalMirrorPath('cache'): ${dashboard.getLocalMirrorPath('cache')}`);
+      console.info('\n🛠️ Scoped Utility Methods:');
+      console.info(`  getScopedServiceName('dispute-service'): ${dashboard.getScopedServiceName('dispute-service')}`);
+      console.info(`  getScopedR2Path('disputes/data'): ${dashboard.getScopedR2Path('disputes/data')}`);
+      console.info(`  getLocalMirrorPath('cache'): ${dashboard.getLocalMirrorPath('cache')}`);
       
       // Export scope as environment variables
       const envVars = dashboard.exportScopeAsEnv();
-      console.log('\n🌍 Environment Variables:');
+      console.info('\n🌍 Environment Variables:');
       Object.entries(envVars).forEach(([key, value]) => {
-        console.log(`  ${key}=${value}`);
+        console.info(`  ${key}=${value}`);
       });
     }
     
     // Display AI insights if available
     if (dashboardData.aiInsights) {
-      console.log('\n🧠 AI-Powered Insights:');
-      console.log(`  Risk Level: ${dashboardData.aiInsights.riskLevel.toUpperCase()}`);
-      console.log(`  Predicted Volume: ${dashboardData.aiInsights.predictedVolume.toLocaleString()}`);
-      console.log(`  Confidence: ${Math.round(dashboardData.aiInsights.performanceMetrics.confidence * 100)}%`);
+      console.info('\n🧠 AI-Powered Insights:');
+      console.info(`  Risk Level: ${dashboardData.aiInsights.riskLevel.toUpperCase()}`);
+      console.info(`  Predicted Volume: ${dashboardData.aiInsights.predictedVolume.toLocaleString()}`);
+      console.info(`  Confidence: ${Math.round(dashboardData.aiInsights.performanceMetrics.confidence * 100)}%`);
       
       if (dashboardData.aiInsights.anomalyAlerts.length > 0) {
-        console.log('\n🚨 Detected Anomalies:');
+        console.info('\n🚨 Detected Anomalies:');
         dashboardData.aiInsights.anomalyAlerts.forEach((alert, index) => {
-          console.log(`  ${index + 1}. [${alert.severity.toUpperCase()}] ${alert.type}: ${alert.message}`);
+          console.info(`  ${index + 1}. [${alert.severity.toUpperCase()}] ${alert.type}: ${alert.message}`);
         });
       }
       
-      console.log('\n💡 Recommended Actions:');
+      console.info('\n💡 Recommended Actions:');
       dashboardData.aiInsights.recommendedActions.forEach((action, index) => {
-        console.log(`  ${index + 1}. ${action}`);
+        console.info(`  ${index + 1}. ${action}`);
       });
     }
     
     // Display system statistics
-    console.log('\n📊 System Statistics:');
-    console.log(`  Total Disputes: ${dashboardData.systemStats.totalDisputes.toLocaleString()}`);
-    console.log(`  Active Disputes: ${dashboardData.systemStats.activeDisputes.toLocaleString()}`);
-    console.log(`  Resolved Today: ${dashboardData.systemStats.resolvedToday.toLocaleString()}`);
-    console.log(`  Avg Resolution: ${dashboardData.systemStats.avgResolutionTime}`);
-    console.log(`  Refund Rate: ${dashboardData.systemStats.refundRate}`);
+    console.info('\n📊 System Statistics:');
+    console.info(`  Total Disputes: ${dashboardData.systemStats.totalDisputes.toLocaleString()}`);
+    console.info(`  Active Disputes: ${dashboardData.systemStats.activeDisputes.toLocaleString()}`);
+    console.info(`  Resolved Today: ${dashboardData.systemStats.resolvedToday.toLocaleString()}`);
+    console.info(`  Avg Resolution: ${dashboardData.systemStats.avgResolutionTime}`);
+    console.info(`  Refund Rate: ${dashboardData.systemStats.refundRate}`);
     
-    console.log('\n🎨 Web Dashboard Enhancements:');
-    console.log('  • Advanced Scope Configuration section');
-    console.log('  • Platform-specific storage information');
-    console.log('  • Security features display');
-    console.log('  • Validation results with badges');
-    console.log('  • Domain mappings with current indicator');
-    console.log('  • Real-time scope validation');
-    console.log('  • Environment variable export');
+    console.info('\n🎨 Web Dashboard Enhancements:');
+    console.info('  • Advanced Scope Configuration section');
+    console.info('  • Platform-specific storage information');
+    console.info('  • Security features display');
+    console.info('  • Validation results with badges');
+    console.info('  • Domain mappings with current indicator');
+    console.info('  • Real-time scope validation');
+    console.info('  • Environment variable export');
     
-    console.log('\n🔗 Integration Benefits:');
-    console.log('  ✅ Comprehensive scope detection');
-    console.log('  ✅ Platform-aware security features');
-    console.log('  ✅ Validation and error reporting');
-    console.log('  ✅ Multi-tenant domain mapping');
-    console.log('  ✅ Scoped utility methods');
-    console.log('  ✅ Environment variable management');
+    console.info('\n🔗 Integration Benefits:');
+    console.info('  ✅ Comprehensive scope detection');
+    console.info('  ✅ Platform-aware security features');
+    console.info('  ✅ Validation and error reporting');
+    console.info('  ✅ Multi-tenant domain mapping');
+    console.info('  ✅ Scoped utility methods');
+    console.info('  ✅ Environment variable management');
     
-    console.log('\n🎉 ScopeDetector Integration Demo Complete!');
-    console.log('\n💡 Open web/dispute-dashboard.html to see the full ScopeDetector-powered interface');
+    console.info('\n🎉 ScopeDetector Integration Demo Complete!');
+    console.info('\n💡 Open web/dispute-dashboard.html to see the full ScopeDetector-powered interface');
     
   } catch (error) {
     console.error('❌ Demo failed:', error.message);
@@ -159,27 +159,27 @@ async function demonstrateScopeDetectorIntegration() {
 
 // Test different platform capabilities
 async function testPlatformCapabilities() {
-  console.log('\n🔄 Testing Platform Capabilities');
-  console.log('='.repeat(50));
+  console.info('\n🔄 Testing Platform Capabilities');
+  console.info('='.repeat(50));
   
   const platforms = ['win32', 'darwin', 'linux'];
   const scopes = ['ENTERPRISE', 'DEVELOPMENT', 'LOCAL-SANDBOX'];
   
   for (const platform of platforms) {
-    console.log(`\n🖥️  Platform: ${platform}`);
+    console.info(`\n🖥️  Platform: ${platform}`);
     
     for (const scope of scopes) {
       const storage = PlatformScopeAdapter.getScopedStorage(platform, scope);
       const validation = PlatformScopeAdapter.validatePlatformCapability(platform, scope);
       const security = PlatformScopeAdapter.getSecurityFeatures(platform);
       
-      console.log(`  📦 ${scope} Scope:`);
-      console.log(`    Storage: ${storage.type} (${storage.encryption})`);
-      console.log(`    Supported: ${validation.supported ? '✅' : '❌'}`);
-      console.log(`    Security Features: ${security.available.length} available`);
+      console.info(`  📦 ${scope} Scope:`);
+      console.info(`    Storage: ${storage.type} (${storage.encryption})`);
+      console.info(`    Supported: ${validation.supported ? '✅' : '❌'}`);
+      console.info(`    Security Features: ${security.available.length} available`);
       
       if (validation.recommendations.length > 0) {
-        console.log(`    Recommendations: ${validation.recommendations.join(', ')}`);
+        console.info(`    Recommendations: ${validation.recommendations.join(', ')}`);
       }
     }
   }

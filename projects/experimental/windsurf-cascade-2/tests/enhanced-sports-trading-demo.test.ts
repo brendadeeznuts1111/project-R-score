@@ -403,8 +403,8 @@ describe('Performance Comparison', () => {
     // 13-byte system should be significantly faster
     expect(time13).toBeLessThan(timeTraditional * 0.5); // At least 2x faster
     
-    console.log(`13-byte system: ${time13.toFixed(2)}ms`);
-    console.log(`Traditional system: ${timeTraditional.toFixed(2)}ms`);
-    console.log(`Speed improvement: ${(timeTraditional / time13).toFixed(2)}x`);
+    console.info(`13-byte system: ${time13.toFixed(2)}ms`);
+    console.info(`Traditional system: ${timeTraditional.toFixed(2)}ms`);
+    console.info(`Speed improvement: ${(timeTraditional / time13).toFixed(2)}x`);
   });
 });

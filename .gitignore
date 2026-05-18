@@ -197,3 +197,6 @@ clawdbot/
 
 # NPM Cache (should not be committed)
 .npm-cache/
+
+# Separate projects with their own git history
+kimiremote/

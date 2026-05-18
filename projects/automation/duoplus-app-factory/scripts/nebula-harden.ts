@@ -160,28 +160,28 @@ export async function deployNebulaHardening(): Promise<{
 if (require.main === module) {
   deployNebulaHardening()
     .then((result) => {
-      console.log("\n=== Nebula-Flow™ Hardening Pack Deployment ===");
-      console.log(`Success: ${result.success}`);
-      console.log(`Files Created: ${result.filesCreated.length}`);
-      console.log(`Errors: ${result.errors.length}`);
+      console.info("\n=== Nebula-Flow™ Hardening Pack Deployment ===");
+      console.info(`Success: ${result.success}`);
+      console.info(`Files Created: ${result.filesCreated.length}`);
+      console.info(`Errors: ${result.errors.length}`);
       
       if (result.filesCreated.length > 0) {
-        console.log("\nCreated Files:");
-        result.filesCreated.forEach(file => console.log(`  ✓ ${file}`));
+        console.info("\nCreated Files:");
+        result.filesCreated.forEach(file => console.info(`  ✓ ${file}`));
       }
 
       if (result.errors.length > 0) {
-        console.log("\nErrors:");
-        result.errors.forEach(err => console.log(`  ✗ ${err}`));
+        console.info("\nErrors:");
+        result.errors.forEach(err => console.info(`  ✗ ${err}`));
       }
 
-      console.log("\nNext Steps:");
-      console.log("  1. bun install");
-      console.log("  2. cp .env.example .env");
-      console.log("  3. Edit .env with your Redis URL and other settings");
-      console.log("  4. bun run ai:build");
-      console.log("  5. bun run ai:train");
-      console.log("  6. bun run start");
+      console.info("\nNext Steps:");
+      console.info("  1. bun install");
+      console.info("  2. cp .env.example .env");
+      console.info("  3. Edit .env with your Redis URL and other settings");
+      console.info("  4. bun run ai:build");
+      console.info("  5. bun run ai:train");
+      console.info("  6. bun run start");
 
       process.exit(result.success ? 0 : 1);
     })

@@ -29,10 +29,10 @@ import reportTemplate from './report-template.html' with { type: 'html' };
 // @ts-ignore - Bun's text loader handles this at runtime
 import reportStyles from './report-styles.css' with { type: 'text' };
 
-console.log('🔮 PTY Analysis Engine Starting...');
-console.log(`📊 Log size: ${(ptyLog.length / 1024).toFixed(2)} KB`);
-console.log(`⚙️  Analysis config loaded: ${Object.keys(analysisConfig).length} sections`);
-console.log(`🗄️  Embedded SQLite: ${sessionsDB ? 'Ready' : 'Failed'}`);
+console.info('🔮 PTY Analysis Engine Starting...');
+console.info(`📊 Log size: ${(ptyLog.length / 1024).toFixed(2)} KB`);
+console.info(`⚙️  Analysis config loaded: ${Object.keys(analysisConfig).length} sections`);
+console.info(`🗄️  Embedded SQLite: ${sessionsDB ? 'Ready' : 'Failed'}`);
 
 interface PTYMetrics {
   totalCommands: number;
@@ -77,7 +77,7 @@ class PTYAnalyzer {
   }
   
   analyzeSession(logContent: string): PTYMetrics {
-    console.log('🔍 Analyzing PTY session...');
+    console.info('🔍 Analyzing PTY session...');
     
     const lines = logContent.split('\n');
     const commands = new Set<string>();
@@ -175,7 +175,7 @@ class PTYAnalyzer {
   }
   
   generateHTMLReport(metrics: PTYMetrics): string {
-    console.log('📝 Generating HTML report...');
+    console.info('📝 Generating HTML report...');
     
     // Handle HTML loader output (might be object or string)
     let html = typeof reportTemplate === 'string' ? reportTemplate : String(reportTemplate);
@@ -236,28 +236,28 @@ async function main() {
     // Analyze the PTY session
     const metrics = analyzer.analyzeSession(ptyLog);
     
-    console.log('\n📊 Analysis Results:');
-    console.log(`   Commands: ${metrics.totalCommands}`);
-    console.log(`   Errors: ${metrics.errors}`);
-    console.log(`   Warnings: ${metrics.warnings}`);
-    console.log(`   Top command: ${metrics.mostUsedCommands[0]?.command || 'N/A'} (${metrics.mostUsedCommands[0]?.count || 0} times)`);
+    console.info('\n📊 Analysis Results:');
+    console.info(`   Commands: ${metrics.totalCommands}`);
+    console.info(`   Errors: ${metrics.errors}`);
+    console.info(`   Warnings: ${metrics.warnings}`);
+    console.info(`   Top command: ${metrics.mostUsedCommands[0]?.command || 'N/A'} (${metrics.mostUsedCommands[0]?.count || 0} times)`);
     
     // Save to embedded database
     const sessionId = analyzer.saveSession(metrics);
-    console.log(`\n💾 Session saved with ID: ${sessionId}`);
+    console.info(`\n💾 Session saved with ID: ${sessionId}`);
     
     // Generate HTML report
     const reportHTML = analyzer.generateHTMLReport(metrics);
     await Bun.write('./pty-analysis-report.html', reportHTML);
     
-    console.log('\n🎉 PTY Analysis Complete!');
-    console.log('📄 Report generated: ./pty-analysis-report.html');
-    console.log('\n🔥 Bun Loader Magic Used:');
-    console.log('   • text loader - PTY log import');
-    console.log('   • toml loader - Configuration parsing');
-    console.log('   • sqlite loader - Embedded database');
-    console.log('   • html loader - Template processing');
-    console.log('   • text loader - CSS styling');
+    console.info('\n🎉 PTY Analysis Complete!');
+    console.info('📄 Report generated: ./pty-analysis-report.html');
+    console.info('\n🔥 Bun Loader Magic Used:');
+    console.info('   • text loader - PTY log import');
+    console.info('   • toml loader - Configuration parsing');
+    console.info('   • sqlite loader - Embedded database');
+    console.info('   • html loader - Template processing');
+    console.info('   • text loader - CSS styling');
     
     // Show file hashes (demonstrating asset handling)
     const reportContent = await Bun.file('./pty-analysis-report.html').text();
@@ -268,7 +268,7 @@ async function main() {
       hash = hash & hash;
     }
     const reportHash = Math.abs(hash).toString(16);
-    console.log(`\n🔐 Report hash: ${reportHash}`);
+    console.info(`\n🔐 Report hash: ${reportHash}`);
     
   } catch (error) {
     console.error('❌ Demo failed:', error);

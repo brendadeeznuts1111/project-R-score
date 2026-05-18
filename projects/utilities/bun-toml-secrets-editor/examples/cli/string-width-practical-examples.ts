@@ -7,7 +7,7 @@
  * Example 1: Fix CLI tool padding
  */
 function fixedCLIPadding() {
-	console.log("1. Fixed CLI Tool Padding:\n");
+	console.info("1. Fixed CLI Tool Padding:\n");
 
 	// ❌ BAD: Breaks with emojis
 	function badPadding(text: string, width: number) {
@@ -27,16 +27,16 @@ function fixedCLIPadding() {
 		{ name: "Data", status: "👨‍💻" },
 	];
 
-	console.log("❌ Bad (breaks with emojis):");
+	console.info("❌ Bad (breaks with emojis):");
 	items.forEach((item) => {
-		console.log(`  ${badPadding(item.name, 10)}${item.status}`);
+		console.info(`  ${badPadding(item.name, 10)}${item.status}`);
 	});
 
-	console.log("\n✅ Good (works with emojis):");
+	console.info("\n✅ Good (works with emojis):");
 	items.forEach((item) => {
-		console.log(`  ${goodPadding(item.name, 10)}${item.status}`);
+		console.info(`  ${goodPadding(item.name, 10)}${item.status}`);
 	});
-	console.log();
+	console.info();
 }
 
 /**
@@ -63,7 +63,7 @@ function createProgressBar(current: number, total: number, label = "") {
 }
 
 function progressBarExample() {
-	console.log("2. Better Progress Bars:\n");
+	console.info("2. Better Progress Bars:\n");
 
 	const tasks = [
 		{ current: 25, total: 100, label: "Processing files 🇺🇸" },
@@ -73,16 +73,16 @@ function progressBarExample() {
 	];
 
 	tasks.forEach((task) => {
-		console.log(createProgressBar(task.current, task.total, task.label));
+		console.info(createProgressBar(task.current, task.total, task.label));
 	});
-	console.log();
+	console.info();
 }
 
 /**
  * Example 3: International-friendly currency display
  */
 function currencyDisplay() {
-	console.log("3. International-Friendly Currency Display:\n");
+	console.info("3. International-Friendly Currency Display:\n");
 
 	const prices = [
 		{ symbol: "💲", amount: "100", currency: "USD" },
@@ -95,16 +95,16 @@ function currencyDisplay() {
 	prices.forEach(({ symbol, amount, currency }) => {
 		const symbolWidth = Bun.stringWidth(symbol);
 		const padding = " ".repeat(3 - symbolWidth);
-		console.log(`${symbol}${padding} ${amount.padStart(8)} ${currency}`);
+		console.info(`${symbol}${padding} ${amount.padStart(8)} ${currency}`);
 	});
-	console.log();
+	console.info();
 }
 
 /**
  * Example 4: Status table with emojis and colors
  */
 function statusTable() {
-	console.log("4. Status Table with Emojis and Colors:\n");
+	console.info("4. Status Table with Emojis and Colors:\n");
 
 	const statuses = [
 		{
@@ -150,11 +150,11 @@ function statusTable() {
 		const servicePad = " ".repeat(serviceWidth - Bun.stringWidth(service));
 		const timePad = " ".repeat(timeWidth - Bun.stringWidth(time));
 
-		console.log(
+		console.info(
 			`${icon}${iconPad}  ${status}${statusPad}  ${service}${servicePad}  ${time}${timePad}`,
 		);
 	});
-	console.log();
+	console.info();
 }
 
 /**
@@ -177,7 +177,7 @@ function truncateByWidth(text: string, maxWidth: number): string {
 }
 
 function truncationExample() {
-	console.log("5. Truncate by Visible Width:\n");
+	console.info("5. Truncate by Visible Width:\n");
 
 	const longTexts = [
 		"This is a very long text that needs truncation 🇺🇸",
@@ -190,10 +190,10 @@ function truncationExample() {
 
 	longTexts.forEach((text) => {
 		const truncated = truncateByWidth(text, maxWidth);
-		console.log(`Original: ${text}`);
-		console.log(`Truncated: ${truncated}`);
-		console.log(`Width: ${Bun.stringWidth(truncated)}/${maxWidth}`);
-		console.log();
+		console.info(`Original: ${text}`);
+		console.info(`Truncated: ${truncated}`);
+		console.info(`Width: ${Bun.stringWidth(truncated)}/${maxWidth}`);
+		console.info();
 	});
 }
 
@@ -201,8 +201,8 @@ function truncationExample() {
  * Main function
  */
 async function main() {
-	console.log("🚀 Practical Examples of Bun.stringWidth()\n");
-	console.log(`${"=".repeat(60)}\n`);
+	console.info("🚀 Practical Examples of Bun.stringWidth()\n");
+	console.info(`${"=".repeat(60)}\n`);
 
 	fixedCLIPadding();
 	progressBarExample();
@@ -210,12 +210,12 @@ async function main() {
 	statusTable();
 	truncationExample();
 
-	console.log("✅ All practical examples completed!");
-	console.log("\n💡 Key Takeaways:");
-	console.log("   • Always use Bun.stringWidth() for padding/alignment");
-	console.log("   • Truncate by visible width, not character count");
-	console.log("   • Works correctly with emojis, ANSI codes, and Unicode");
-	console.log("   • Essential for international-friendly CLI tools");
+	console.info("✅ All practical examples completed!");
+	console.info("\n💡 Key Takeaways:");
+	console.info("   • Always use Bun.stringWidth() for padding/alignment");
+	console.info("   • Truncate by visible width, not character count");
+	console.info("   • Works correctly with emojis, ANSI codes, and Unicode");
+	console.info("   • Essential for international-friendly CLI tools");
 }
 
 // Run if executed directly

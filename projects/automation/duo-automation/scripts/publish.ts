@@ -243,7 +243,7 @@ async function getWorkspacePackages(): Promise<string[]> {
 }
 
 async function publishWorkspace(workspace: string, options: PublishOptions): Promise<PublishResult> {
-  console.log(`\n📦 Publishing workspace: ${workspace}`);
+  console.info(`\n📦 Publishing workspace: ${workspace}`);
 
   const pkgPath = `${workspace}/package.json`;
   const pkgFile = Bun.file(pkgPath);
@@ -307,7 +307,7 @@ async function publishWorkspace(workspace: string, options: PublishOptions): Pro
 // ═══════════════════════════════════════════════════════════
 
 async function displayHeader(options: PublishOptions) {
-  console.log(`
+  console.info(`
 ╔═══════════════════════════════════════════════════════════════════╗
 ║           DUOPLUS BUN-NATIVE PUBLISHING WORKFLOW v1.0             ║
 ║           SOC2 Type II | ISO-27001 Compliant                      ║
@@ -315,51 +315,51 @@ async function displayHeader(options: PublishOptions) {
 `);
 
   if (options.dryRun) {
-    console.log("🔍 DRY-RUN MODE - No packages will be published\n");
+    console.info("🔍 DRY-RUN MODE - No packages will be published\n");
   }
 }
 
 async function runPrePublishChecks(options: PublishOptions): Promise<boolean> {
-  console.log("🔒 Running pre-publish checks...\n");
+  console.info("🔒 Running pre-publish checks...\n");
 
   // Tag compliance validation
   if (!options.skipTagValidation) {
-    console.log("📋 Tag Compliance Validation:");
+    console.info("📋 Tag Compliance Validation:");
     const checks = await validateTagCompliance();
 
     let hasFailure = false;
     for (const check of checks) {
       const icon = check.status === "pass" ? "✅" : check.status === "warn" ? "⚠️" : "❌";
-      console.log(`   ${icon} ${check.name}: ${check.message}`);
+      console.info(`   ${icon} ${check.name}: ${check.message}`);
       if (check.status === "fail") hasFailure = true;
     }
 
     if (hasFailure) {
-      console.log("\n❌ Tag compliance validation failed. Fix issues before publishing.");
+      console.info("\n❌ Tag compliance validation failed. Fix issues before publishing.");
       return false;
     }
-    console.log("");
+    console.info("");
   }
 
   // Run tests
   if (!options.skipTests) {
-    console.log("🧪 Running tests...");
+    console.info("🧪 Running tests...");
     try {
       await $`bun test`.quiet();
-      console.log("   ✅ All tests passed\n");
+      console.info("   ✅ All tests passed\n");
     } catch {
-      console.log("   ❌ Tests failed. Fix tests before publishing.\n");
+      console.info("   ❌ Tests failed. Fix tests before publishing.\n");
       return false;
     }
   }
 
   // Build
-  console.log("🔨 Building package...");
+  console.info("🔨 Building package...");
   try {
     await $`bun run build`.quiet();
-    console.log("   ✅ Build successful\n");
+    console.info("   ✅ Build successful\n");
   } catch {
-    console.log("   ❌ Build failed\n");
+    console.info("   ❌ Build failed\n");
     return false;
   }
 
@@ -371,12 +371,12 @@ async function publish(options: PublishOptions): Promise<PublishResult> {
   const pkg = await pkgFile.json();
   const registry = options.registry || DEFAULT_REGISTRY;
 
-  console.log(`📦 Publishing ${pkg.name}@${pkg.version}`);
-  console.log(`   Registry: ${registry}`);
-  console.log(`   Tag: ${options.tag}`);
-  console.log(`   Access: ${options.access}`);
+  console.info(`📦 Publishing ${pkg.name}@${pkg.version}`);
+  console.info(`   Registry: ${registry}`);
+  console.info(`   Tag: ${options.tag}`);
+  console.info(`   Access: ${options.access}`);
   if (options.tolerateRepublish) {
-    console.log(`   Tolerate Republish: enabled (CI-friendly)`);
+    console.info(`   Tolerate Republish: enabled (CI-friendly)`);
   }
 
   // Build publish command with Bun-native options (v1.3+)
@@ -446,9 +446,9 @@ async function main() {
   if (options.workspace === "all") {
     const workspaces = await getWorkspacePackages();
     if (workspaces.length === 0) {
-      console.log("⚠️  No workspaces found. Publishing root package...\n");
+      console.info("⚠️  No workspaces found. Publishing root package...\n");
     } else {
-      console.log(`📦 Publishing ${workspaces.length} workspace packages...\n`);
+      console.info(`📦 Publishing ${workspaces.length} workspace packages...\n`);
 
       const results: PublishResult[] = [];
       for (const ws of workspaces) {
@@ -457,19 +457,19 @@ async function main() {
       }
 
       // Summary
-      console.log("\n" + "─".repeat(50));
-      console.log("📊 PUBLISH SUMMARY\n");
+      console.info("\n" + "─".repeat(50));
+      console.info("📊 PUBLISH SUMMARY\n");
 
       const successful = results.filter(r => r.success);
       const failed = results.filter(r => !r.success);
 
-      console.log(`   ✅ Successful: ${successful.length}`);
-      console.log(`   ❌ Failed: ${failed.length}`);
+      console.info(`   ✅ Successful: ${successful.length}`);
+      console.info(`   ❌ Failed: ${failed.length}`);
 
       if (failed.length > 0) {
-        console.log("\n   Failed packages:");
+        console.info("\n   Failed packages:");
         for (const f of failed) {
-          console.log(`     - ${f.package}: ${f.error}`);
+          console.info(`     - ${f.package}: ${f.error}`);
         }
         process.exit(1);
       }
@@ -479,22 +479,22 @@ async function main() {
   }
 
   // Single package publishing
-  console.log("");
+  console.info("");
   const result = await publish(options);
 
-  console.log("\n" + "─".repeat(50));
+  console.info("\n" + "─".repeat(50));
 
   if (result.success) {
-    console.log(`\n✅ Successfully published ${result.package}@${result.version}`);
+    console.info(`\n✅ Successfully published ${result.package}@${result.version}`);
     if (result.auditHash) {
-      console.log(`   Audit hash: ${result.auditHash}`);
+      console.info(`   Audit hash: ${result.auditHash}`);
     }
     if (options.dryRun) {
-      console.log("\n   (Dry-run mode - no actual publish occurred)");
+      console.info("\n   (Dry-run mode - no actual publish occurred)");
     }
   } else {
-    console.log(`\n❌ Failed to publish ${result.package}`);
-    console.log(`   Error: ${result.error}`);
+    console.info(`\n❌ Failed to publish ${result.package}`);
+    console.info(`   Error: ${result.error}`);
     process.exit(1);
   }
 }

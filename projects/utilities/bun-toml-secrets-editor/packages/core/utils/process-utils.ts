@@ -47,7 +47,7 @@ export class ProcessUtils {
 			ProcessUtils.originalTimezone = process.env.TZ;
 		}
 		process.env.TZ = timezone;
-		console.log(`🌍 Timezone set to: ${timezone}`);
+		console.info(`🌍 Timezone set to: ${timezone}`);
 	}
 
 	/**
@@ -56,12 +56,12 @@ export class ProcessUtils {
 	static resetTimezone(): void {
 		if (ProcessUtils.originalTimezone !== undefined) {
 			process.env.TZ = ProcessUtils.originalTimezone;
-			console.log(
+			console.info(
 				`🌍 Timezone reset to: ${ProcessUtils.originalTimezone || "system default"}`,
 			);
 		} else {
 			delete process.env.TZ;
-			console.log(`🌍 Timezone reset to system default`);
+			console.info(`🌍 Timezone reset to system default`);
 		}
 	}
 
@@ -101,10 +101,10 @@ export class ProcessUtils {
 				ProcessUtils.setTimezone(options.timezone);
 			}
 
-			console.log(
+			console.info(
 				`🌍 Executing in timezone: ${ProcessUtils.getCurrentTimezone()}`,
 			);
-			console.log(`🕐 Local time: ${ProcessUtils.getLocalTimeString()}`);
+			console.info(`🕐 Local time: ${ProcessUtils.getLocalTimeString()}`);
 
 			// Execute command
 			const result = await ProcessUtils.execute(command, options);
@@ -172,7 +172,7 @@ export class ProcessUtils {
 			process.on("SIGINT", () => {
 				if (!ProcessUtils.isShuttingDown) {
 					ProcessUtils.isShuttingDown = true;
-					console.log(
+					console.info(
 						"\n🛑 SIGINT (Ctrl+C) detected - Gracefully shutting down...",
 					);
 					ProcessUtils.performCleanup("SIGINT");
@@ -183,14 +183,14 @@ export class ProcessUtils {
 			process.on("SIGTERM", () => {
 				if (!ProcessUtils.isShuttingDown) {
 					ProcessUtils.isShuttingDown = true;
-					console.log("\n🛑 SIGTERM detected - Gracefully shutting down...");
+					console.info("\n🛑 SIGTERM detected - Gracefully shutting down...");
 					ProcessUtils.performCleanup("SIGTERM");
 				}
 			});
 
 			// Handle beforeExit event - Event loop is empty, last chance for async cleanup
 			process.on("beforeExit", (code) => {
-				console.log(
+				console.info(
 					`\n📋 Event loop is empty with code ${code} - Final cleanup...`,
 				);
 				ProcessUtils.performCleanup("beforeExit");
@@ -198,7 +198,7 @@ export class ProcessUtils {
 
 			// Handle exit event - Process is exiting (synchronous only)
 			process.on("exit", (code) => {
-				console.log(`📤 Process exiting with code ${code}`);
+				console.info(`📤 Process exiting with code ${code}`);
 			});
 
 			// Handle uncaught exceptions - Critical errors
@@ -220,7 +220,7 @@ export class ProcessUtils {
 	 * Perform cleanup operations
 	 */
 	private static performCleanup(signal: string): void {
-		console.log(`🧹 Cleaning up resources... (signal: ${signal})`);
+		console.info(`🧹 Cleaning up resources... (signal: ${signal})`);
 
 		// Kill all active processes
 		let killedCount = 0;
@@ -232,13 +232,13 @@ export class ProcessUtils {
 		}
 
 		if (killedCount > 0) {
-			console.log(`   🔄 Terminated ${killedCount} active process(es)`);
+			console.info(`   🔄 Terminated ${killedCount} active process(es)`);
 		}
 
 		ProcessUtils.activeProcesses.clear();
 
 		// Log cleanup completion
-		console.log("✅ Cleanup completed");
+		console.info("✅ Cleanup completed");
 	}
 
 	/**
@@ -261,9 +261,9 @@ export class ProcessUtils {
 	): Promise<ShellResult> {
 		const startTime = Date.now();
 
-		console.log(`🐚 Starting shell command: ${command}`);
-		console.log(`⏱️  At ${new Date().toISOString()}`);
-		console.log(
+		console.info(`🐚 Starting shell command: ${command}`);
+		console.info(`⏱️  At ${new Date().toISOString()}`);
+		console.info(
 			`📊 Process uptime: ${ProcessUtils.getProcessUptimeFormatted()}`,
 		);
 
@@ -289,13 +289,13 @@ export class ProcessUtils {
 
 			// Log timing information if requested
 			if (options.trackTiming !== false) {
-				console.log(
+				console.info(
 					`✅ Shell command completed in ${ProcessUtils.formatDuration(duration)}`,
 				);
-				console.log(`📈 Exit code: ${shellResult.exitCode ?? "unknown"}`);
-				console.log(`🎯 Success: ${shellResult.success}`);
+				console.info(`📈 Exit code: ${shellResult.exitCode ?? "unknown"}`);
+				console.info(`🎯 Success: ${shellResult.success}`);
 				if (shellResult.stderr.trim()) {
-					console.log(`⚠️  Stderr: ${shellResult.stderr.trim()}`);
+					console.info(`⚠️  Stderr: ${shellResult.stderr.trim()}`);
 				}
 			}
 
@@ -304,7 +304,7 @@ export class ProcessUtils {
 			const endTime = Date.now();
 			const duration = endTime - startTime;
 
-			console.log(
+			console.info(
 				`❌ Shell command failed in ${ProcessUtils.formatDuration(duration)}`,
 			);
 
@@ -327,7 +327,7 @@ export class ProcessUtils {
 		command: string,
 		_options: ProcessOptions = {},
 	): Promise<string[]> {
-		console.log(`🐚 Executing shell command for lines: ${command}`);
+		console.info(`🐚 Executing shell command for lines: ${command}`);
 
 		try {
 			const lines: string[] = [];
@@ -337,10 +337,10 @@ export class ProcessUtils {
 				lines.push(line);
 			}
 
-			console.log(`✅ Retrieved ${lines.length} lines from shell command`);
+			console.info(`✅ Retrieved ${lines.length} lines from shell command`);
 			return lines;
 		} catch (error) {
-			console.log(
+			console.info(
 				`❌ Shell command failed: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 			throw error;
@@ -354,7 +354,7 @@ export class ProcessUtils {
 		command: string,
 		options: ProcessOptions = {},
 	): Promise<T> {
-		console.log(`🐚 Executing shell command for JSON: ${command}`);
+		console.info(`🐚 Executing shell command for JSON: ${command}`);
 
 		try {
 			const result = await ProcessUtils.executeWithShell(command, options);
@@ -366,10 +366,10 @@ export class ProcessUtils {
 			// Parse JSON output
 			const parsed = JSON.parse(result.stdout);
 
-			console.log(`✅ Successfully parsed JSON from shell command`);
+			console.info(`✅ Successfully parsed JSON from shell command`);
 			return parsed;
 		} catch (error) {
-			console.log(
+			console.info(
 				`❌ Failed to parse JSON from shell command: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 			throw error;
@@ -402,8 +402,8 @@ export class ProcessUtils {
 		const startTime = Date.now();
 		const _startUptime = ProcessUtils.getProcessUptime();
 
-		console.log(`⏱️  Starting process at ${new Date().toISOString()}`);
-		console.log(
+		console.info(`⏱️  Starting process at ${new Date().toISOString()}`);
+		console.info(
 			`📊 Process uptime: ${ProcessUtils.getProcessUptimeFormatted()}`,
 		);
 
@@ -470,12 +470,12 @@ export class ProcessUtils {
 
 		// Log timing information if requested
 		if (options.trackTiming !== false) {
-			console.log(
+			console.info(
 				`✅ Process completed in ${ProcessUtils.formatDuration(duration)}`,
 			);
-			console.log(`📈 Exit code: ${result.exitCode ?? "unknown"}`);
+			console.info(`📈 Exit code: ${result.exitCode ?? "unknown"}`);
 			if (stderr.trim()) {
-				console.log(`⚠️  Stderr: ${stderr.trim()}`);
+				console.info(`⚠️  Stderr: ${stderr.trim()}`);
 			}
 		}
 

@@ -3,15 +3,15 @@ import { feature } from "bun:bundle";
 import { readFileSync } from "fs";
 import { join } from "path";
 
-console.log("🔍 DEV HQ Enhanced Feature Flag Verification");
-console.log("==========================================\n");
+console.info("🔍 DEV HQ Enhanced Feature Flag Verification");
+console.info("==========================================\n");
 
 // Load meta.json for performance impact and configuration data
 let metaConfig: any = {};
 try {
   const metaPath = join(import.meta.dir, "../meta.json");
   metaConfig = JSON.parse(readFileSync(metaPath, "utf-8"));
-  console.log("✅ Loaded meta.json configuration");
+  console.info("✅ Loaded meta.json configuration");
 } catch (error) {
   console.warn("⚠️  Could not load meta.json, using defaults");
 }
@@ -58,8 +58,8 @@ const featureConflicts: Record<string, string[]> = {
 // Performance impact data from meta.json
 const performanceImpacts = metaConfig?.featureFlags || {};
 
-console.log("📋 Feature Status Report");
-console.log("----------------------");
+console.info("📋 Feature Status Report");
+console.info("----------------------");
 
 // Check features using Bun's feature() function with string literals
 const featureStatus = {
@@ -112,14 +112,14 @@ for (const [flag, isEnabled] of Object.entries(featureStatus)) {
 
   const status = isEnabled ? "✅ ENABLED" : "❌ DISABLED";
   const impact = performanceImpacts[flag]?.impact?.performance || "N/A";
-  console.log(`${status} ${flag.padEnd(25)} | Performance: ${impact.padEnd(8)}`);
+  console.info(`${status} ${flag.padEnd(25)} | Performance: ${impact.padEnd(8)}`);
 }
 
-console.log(`\n📊 Summary: ${enabledCount}/${allFeatures.length} features enabled (${Math.round(enabledCount/allFeatures.length*100)}%)`);
+console.info(`\n📊 Summary: ${enabledCount}/${allFeatures.length} features enabled (${Math.round(enabledCount/allFeatures.length*100)}%)`);
 
 // Dependencies Analysis
-console.log("\n🔗 Dependencies Analysis");
-console.log("------------------------");
+console.info("\n🔗 Dependencies Analysis");
+console.info("------------------------");
 
 let dependencyIssues: string[] = [];
 let conflictIssues: string[] = [];
@@ -147,21 +147,21 @@ for (const feature of enabledFeatures) {
 }
 
 if (dependencyIssues.length === 0 && conflictIssues.length === 0) {
-  console.log("✅ No dependency or conflict issues found");
+  console.info("✅ No dependency or conflict issues found");
 } else {
   if (dependencyIssues.length > 0) {
-    console.log("⚠️  Dependency Issues:");
-    dependencyIssues.forEach(issue => console.log(`   - ${issue}`));
+    console.info("⚠️  Dependency Issues:");
+    dependencyIssues.forEach(issue => console.info(`   - ${issue}`));
   }
   if (conflictIssues.length > 0) {
-    console.log("⚠️  Conflict Issues:");
-    conflictIssues.forEach(issue => console.log(`   - ${issue}`));
+    console.info("⚠️  Conflict Issues:");
+    conflictIssues.forEach(issue => console.info(`   - ${issue}`));
   }
 }
 
 // Performance Impact Analysis
-console.log("\n⚡ Performance Impact Analysis");
-console.log("-----------------------------");
+console.info("\n⚡ Performance Impact Analysis");
+console.info("-----------------------------");
 
 let totalPerformanceImpact = 0;
 let performanceBreakdown: {
@@ -190,21 +190,21 @@ for (const feature of enabledFeatures) {
   }
 }
 
-console.log(`📈 Net Performance Impact: ${totalPerformanceImpact > 0 ? '+' : ''}${totalPerformanceImpact}%`);
+console.info(`📈 Net Performance Impact: ${totalPerformanceImpact > 0 ? '+' : ''}${totalPerformanceImpact}%`);
 
 if (performanceBreakdown.positive.length > 0) {
-  console.log("\n🟢 Performance Improvements:");
-  performanceBreakdown.positive.forEach(imp => console.log(`   + ${imp}`));
+  console.info("\n🟢 Performance Improvements:");
+  performanceBreakdown.positive.forEach(imp => console.info(`   + ${imp}`));
 }
 
 if (performanceBreakdown.negative.length > 0) {
-  console.log("\n🔴 Performance Overheads:");
-  performanceBreakdown.negative.forEach(imp => console.log(`   - ${imp}`));
+  console.info("\n🔴 Performance Overheads:");
+  performanceBreakdown.negative.forEach(imp => console.info(`   - ${imp}`));
 }
 
 // Bundle Analysis Verification
-console.log("\n📦 Bundle Analysis Verification");
-console.log("------------------------------");
+console.info("\n📦 Bundle Analysis Verification");
+console.info("------------------------------");
 
 try {
   // Check if --analyze option is available in CLI configuration
@@ -213,19 +213,19 @@ try {
   const hasAnalyzeOption = insightsCommand.options?.some((opt: any) => opt.flag === "--analyze");
 
   if (hasAnalyzeOption) {
-    console.log("✅ Bundle analysis (--analyze) option is available");
-    console.log("   Usage: bunx dev-hq insights --analyze");
+    console.info("✅ Bundle analysis (--analyze) option is available");
+    console.info("   Usage: bunx dev-hq insights --analyze");
   } else {
-    console.log("⚠️  Bundle analysis option not found in CLI configuration");
+    console.info("⚠️  Bundle analysis option not found in CLI configuration");
   }
 
   // Check build configurations
   const buildConfigs = metaConfig?.build?.configurations || [];
-  console.log(`📋 Found ${buildConfigs.length} build configurations:`);
+  console.info(`📋 Found ${buildConfigs.length} build configurations:`);
 
   buildConfigs.forEach((config: any, index: number) => {
     const optimizations = config.optimizations?.join(", ") || "None";
-    console.log(`   ${index + 1}. ${config.name}: ${optimizations}`);
+    console.info(`   ${index + 1}. ${config.name}: ${optimizations}`);
   });
 
 } catch (error) {
@@ -233,66 +233,66 @@ try {
 }
 
 // Build Configuration Analysis
-console.log("\n🏗️  Build Configuration Analysis");
-console.log("-------------------------------");
+console.info("\n🏗️  Build Configuration Analysis");
+console.info("-------------------------------");
 
 try {
   const buildConfigs = metaConfig?.build?.configurations || [];
 
   for (const config of buildConfigs) {
-    console.log(`\n📦 ${config.name} Configuration:`);
-    console.log(`   Command: ${config.cliCommand}`);
-    console.log(`   Features: ${config.features?.join(", ") || "None"}`);
-    console.log(`   Optimizations: ${config.optimizations?.join(", ") || "None"}`);
-    console.log(`   Output: ${config.output}`);
-    console.log(`   Size Estimate: ${config.sizeEstimate}`);
-    console.log(`   Dead Code Elimination: ${config.deadCodeElimination || "N/A"}`);
+    console.info(`\n📦 ${config.name} Configuration:`);
+    console.info(`   Command: ${config.cliCommand}`);
+    console.info(`   Features: ${config.features?.join(", ") || "None"}`);
+    console.info(`   Optimizations: ${config.optimizations?.join(", ") || "None"}`);
+    console.info(`   Output: ${config.output}`);
+    console.info(`   Size Estimate: ${config.sizeEstimate}`);
+    console.info(`   Dead Code Elimination: ${config.deadCodeElimination || "N/A"}`);
   }
 } catch (error) {
   console.warn("⚠️  Could not analyze build configurations");
 }
 
 // A/B Testing Status
-console.log("\n🧪 A/B Testing Status");
-console.log("---------------------");
+console.info("\n🧪 A/B Testing Status");
+console.info("---------------------");
 
 const variantAEnabled = enabledFeatures.includes("FEAT_VARIANT_A");
 const variantBEnabled = enabledFeatures.includes("FEAT_VARIANT_B");
 const mockApiEnabled = enabledFeatures.includes("FEAT_MOCK_API");
 
 if (variantAEnabled && variantBEnabled) {
-  console.log("⚠️  Both variants A and B are enabled - this may cause conflicts");
+  console.info("⚠️  Both variants A and B are enabled - this may cause conflicts");
 } else if (variantAEnabled) {
-  console.log("✅ Variant A is active (testing mode)");
+  console.info("✅ Variant A is active (testing mode)");
 } else if (variantBEnabled) {
-  console.log("✅ Variant B is active (testing mode)");
+  console.info("✅ Variant B is active (testing mode)");
 } else {
-  console.log("ℹ️  No A/B testing variants are enabled");
+  console.info("ℹ️  No A/B testing variants are enabled");
 }
 
 if (!mockApiEnabled && (variantAEnabled || variantBEnabled)) {
-  console.log("⚠️  A/B testing variants require FEAT_MOCK_API to be enabled");
+  console.info("⚠️  A/B testing variants require FEAT_MOCK_API to be enabled");
 }
 
 // Security Analysis
-console.log("\n🔒 Security Analysis");
-console.log("-------------------");
+console.info("\n🔒 Security Analysis");
+console.info("-------------------");
 
 const encryptionEnabled = enabledFeatures.includes("FEAT_ENCRYPTION");
 const validationStrict = enabledFeatures.includes("FEAT_VALIDATION_STRICT");
 const auditLogging = enabledFeatures.includes("FEAT_AUDIT_LOGGING");
 
-console.log(`🔐 Encryption: ${encryptionEnabled ? "✅ ENABLED" : "❌ DISABLED"}`);
-console.log(`🛡️  Strict Validation: ${validationStrict ? "✅ ENABLED" : "❌ DISABLED"}`);
-console.log(`📋 Audit Logging: ${auditLogging ? "✅ ENABLED" : "❌ DISABLED"}`);
+console.info(`🔐 Encryption: ${encryptionEnabled ? "✅ ENABLED" : "❌ DISABLED"}`);
+console.info(`🛡️  Strict Validation: ${validationStrict ? "✅ ENABLED" : "❌ DISABLED"}`);
+console.info(`📋 Audit Logging: ${auditLogging ? "✅ ENABLED" : "❌ DISABLED"}`);
 
 if (!encryptionEnabled && enabledFeatures.includes("ENV_PRODUCTION")) {
-  console.log("⚠️  WARNING: Production environment without encryption");
+  console.info("⚠️  WARNING: Production environment without encryption");
 }
 
 // Recommendations
-console.log("\n💡 Recommendations");
-console.log("------------------");
+console.info("\n💡 Recommendations");
+console.info("------------------");
 
 const recommendations: string[] = [];
 
@@ -317,12 +317,12 @@ if (totalPerformanceImpact < -10) {
 }
 
 if (recommendations.length === 0) {
-  console.log("✅ Configuration looks good! No immediate recommendations.");
+  console.info("✅ Configuration looks good! No immediate recommendations.");
 } else {
   recommendations.forEach((rec, index) => {
-    console.log(`${index + 1}. ${rec}`);
+    console.info(`${index + 1}. ${rec}`);
   });
 }
 
-console.log("\n✅ Enhanced verification complete");
-console.log(`📊 Generated comprehensive report with ${enabledCount} enabled features`);
+console.info("\n✅ Enhanced verification complete");
+console.info(`📊 Generated comprehensive report with ${enabledCount} enabled features`);

@@ -13,7 +13,7 @@ class GlobalEnhancer {
   private homeDir = process.env.HOME || "";
   
   async enhanceGlobalConfig(): Promise<void> {
-    console.log("🚀 Enhancing global Bun configuration...\n");
+    console.info("🚀 Enhancing global Bun configuration...\n");
     
     // Create enhanced global bunfig.toml
     const enhancedConfig = `# SportsBet Enhanced Global Configuration
@@ -175,11 +175,11 @@ showProgress = true
 `;
 
     await Bun.write(join(this.homeDir, ".bunfig.toml"), enhancedConfig);
-    console.log("✅ Enhanced global bunfig.toml created");
+    console.info("✅ Enhanced global bunfig.toml created");
   }
   
   async setupAdvancedCache(): Promise<void> {
-    console.log("\n🗄️ Setting up advanced caching strategy...");
+    console.info("\n🗄️ Setting up advanced caching strategy...");
     
     // Create cache directories
     const cacheDirs = [
@@ -195,7 +195,7 @@ showProgress = true
       const fullPath = dir.replace("~", this.homeDir);
       if (!existsSync(fullPath)) {
         mkdirSync(fullPath, { recursive: true });
-        console.log(`  ✅ Created: ${dir}`);
+        console.info(`  ✅ Created: ${dir}`);
       }
     }
     
@@ -246,11 +246,11 @@ showProgress = true
       JSON.stringify(cacheStrategy, null, 2)
     );
     
-    console.log("✅ Advanced cache strategy configured");
+    console.info("✅ Advanced cache strategy configured");
   }
   
   async setupRegistryPriority(): Promise<void> {
-    console.log("\n🌐 Setting up registry priority system...");
+    console.info("\n🌐 Setting up registry priority system...");
     
     const registryConfig = {
       version: "1.0.0",
@@ -308,11 +308,11 @@ showProgress = true
       JSON.stringify(registryConfig, null, 2)
     );
     
-    console.log("✅ Registry priority system configured");
+    console.info("✅ Registry priority system configured");
   }
   
   async installSportsBetCLI(): Promise<void> {
-    console.log("\n📦 Installing SportsBet CLI tools...");
+    console.info("\n📦 Installing SportsBet CLI tools...");
     
     const cliTools = [
       "@sportsbet-registry/cli",
@@ -322,18 +322,18 @@ showProgress = true
     ];
     
     for (const tool of cliTools) {
-      console.log(`  Installing ${tool}...`);
+      console.info(`  Installing ${tool}...`);
       try {
         // Simulate installation since registry doesn't exist
-        console.log(`  ✅ ${tool} (simulated)`);
+        console.info(`  ✅ ${tool} (simulated)`);
       } catch (error: any) {
-        console.log(`  ⚠️ ${tool} not available`);
+        console.info(`  ⚠️ ${tool} not available`);
       }
     }
   }
   
   async setupSecurityScanning(): Promise<void> {
-    console.log("\n🔐 Setting up security scanning...");
+    console.info("\n🔐 Setting up security scanning...");
     
     const securityConfig = {
       version: "1.0.0",
@@ -382,11 +382,11 @@ showProgress = true
       JSON.stringify(securityConfig, null, 2)
     );
     
-    console.log("✅ Security scanning configured");
+    console.info("✅ Security scanning configured");
   }
   
   async createGlobalAliases(): Promise<void> {
-    console.log("\n🔗 Creating global command aliases...");
+    console.info("\n🔗 Creating global command aliases...");
     
     // Create shell aliases for common commands
     const aliases = `
@@ -414,12 +414,12 @@ alias bun-clean='bun pm prune --global'
       aliases.trim()
     );
     
-    console.log("✅ Global aliases created");
-    console.log("   Add to your shell: source ~/.bun/aliases.sh");
+    console.info("✅ Global aliases created");
+    console.info("   Add to your shell: source ~/.bun/aliases.sh");
   }
   
   async optimizePerformance(): Promise<void> {
-    console.log("\n⚡ Optimizing performance settings...");
+    console.info("\n⚡ Optimizing performance settings...");
     
     // Create performance optimization config
     const perfConfig = {
@@ -462,38 +462,38 @@ alias bun-clean='bun pm prune --global'
       JSON.stringify(perfConfig, null, 2)
     );
     
-    console.log("✅ Performance optimizations configured");
+    console.info("✅ Performance optimizations configured");
   }
   
   async showEnhancements(): Promise<void> {
-    console.log("\n" + "=".repeat(60));
-    console.log("               ENHANCEMENTS COMPLETE");
-    console.log("=".repeat(60));
+    console.info("\n" + "=".repeat(60));
+    console.info("               ENHANCEMENTS COMPLETE");
+    console.info("=".repeat(60));
     
-    console.log("\n✨ New Features:");
-    console.log("  • 64 concurrent network connections");
-    console.log("  • 5GB cache with LRU eviction");
-    console.log("  • Multi-layer caching (Memory → Disk → Registry)");
-    console.log("  • 4-tier registry priority system");
-    console.log("  • Automatic security scanning");
-    console.log("  • GDPR/PCI-DSS/SOC2 compliance");
-    console.log("  • Pre-cached SportsBet packages");
-    console.log("  • Shell aliases for quick commands");
-    console.log("  • 8 parallel workers for installations");
+    console.info("\n✨ New Features:");
+    console.info("  • 64 concurrent network connections");
+    console.info("  • 5GB cache with LRU eviction");
+    console.info("  • Multi-layer caching (Memory → Disk → Registry)");
+    console.info("  • 4-tier registry priority system");
+    console.info("  • Automatic security scanning");
+    console.info("  • GDPR/PCI-DSS/SOC2 compliance");
+    console.info("  • Pre-cached SportsBet packages");
+    console.info("  • Shell aliases for quick commands");
+    console.info("  • 8 parallel workers for installations");
     
-    console.log("\n🚀 Quick Start:");
-    console.log("  source ~/.bun/aliases.sh");
-    console.log("  sb-install cli           # Install @sportsbet-registry/cli");
-    console.log("  sb-run betting-engine    # Run SportsBet betting engine");
-    console.log("  f22-scan                 # Run Fire22 security scanner");
+    console.info("\n🚀 Quick Start:");
+    console.info("  source ~/.bun/aliases.sh");
+    console.info("  sb-install cli           # Install @sportsbet-registry/cli");
+    console.info("  sb-run betting-engine    # Run SportsBet betting engine");
+    console.info("  f22-scan                 # Run Fire22 security scanner");
     
-    console.log("\n📊 Performance Targets:");
-    console.log("  • Package install: < 500ms");
-    console.log("  • BunX execution: < 50ms");
-    console.log("  • Cache hit rate: > 90%");
-    console.log("  • Network latency: < 100ms");
+    console.info("\n📊 Performance Targets:");
+    console.info("  • Package install: < 500ms");
+    console.info("  • BunX execution: < 50ms");
+    console.info("  • Cache hit rate: > 90%");
+    console.info("  • Network latency: < 100ms");
     
-    console.log("\n" + "=".repeat(60));
+    console.info("\n" + "=".repeat(60));
   }
   
   async run(): Promise<void> {

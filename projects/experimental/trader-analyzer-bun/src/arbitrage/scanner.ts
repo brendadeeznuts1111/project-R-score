@@ -125,11 +125,11 @@ export class ArbitrageScanner {
 		this.pruneTimer = setInterval(() => {
 			const pruned = this.detector.pruneStale(this.config.maxQuoteAge * 5);
 			if (pruned > 0) {
-				console.log(`Arbitrage Scanner: Pruned ${pruned} stale opportunities`);
+				console.info(`Arbitrage Scanner: Pruned ${pruned} stale opportunities`);
 			}
 		}, 300000);
 
-		console.log(`
+		console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  🎯 NEXUS Arbitrage Scanner (Bun-optimized)               ║
 ║  Poll Interval: ${(this.config.pollInterval / 1000).toFixed(0).padEnd(5)}seconds                           ║
@@ -158,7 +158,7 @@ export class ArbitrageScanner {
 		}
 
 		this.isRunning = false;
-		console.log("Arbitrage Scanner: Stopped");
+		console.info("Arbitrage Scanner: Stopped");
 	}
 
 	/**
@@ -208,7 +208,7 @@ export class ArbitrageScanner {
 				}
 
 				const scanTimeMs = Number(Bun.nanoseconds() - startTime) / 1_000_000;
-				console.log(
+				console.info(
 					`Arbitrage Scanner: Found ${result.opportunities.length} opportunities ` +
 						`(${result.opportunities.filter((o) => o.isArbitrage).length} arbitrage) ` +
 						`in ${scanTimeMs.toFixed(2)}ms`,

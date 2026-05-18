@@ -33,34 +33,34 @@ export class DomainDeploymentManager {
    * Execute full domain workers deployment
    */
   async deployAllDomains(): Promise<void> {
-    console.log('🚀 Starting Crystal Clear Architecture Domain Workers Deployment...\n');
+    console.info('🚀 Starting Crystal Clear Architecture Domain Workers Deployment...\n');
 
     try {
       // Step 1: Generate worker configurations
-      console.log('📝 Generating domain worker configurations...');
+      console.info('📝 Generating domain worker configurations...');
       await this.generateWorkerConfigurations();
 
       // Step 2: Create Cloudflare resources
-      console.log('☁️  Creating Cloudflare resources...');
+      console.info('☁️  Creating Cloudflare resources...');
       await this.createCloudflareResources();
 
       // Step 3: Generate deployment configuration
-      console.log('⚙️  Generating deployment configuration...');
+      console.info('⚙️  Generating deployment configuration...');
       await this.generateDeploymentConfig();
 
       // Step 4: Deploy domain workers
-      console.log('📦 Deploying domain workers...');
+      console.info('📦 Deploying domain workers...');
       await this.deployWorkers();
 
       // Step 5: Configure routing
-      console.log('🔀 Configuring domain routing...');
+      console.info('🔀 Configuring domain routing...');
       await this.configureRouting();
 
       // Step 6: Verify deployment
-      console.log('✅ Verifying deployment...');
+      console.info('✅ Verifying deployment...');
       await this.verifyDeployment();
 
-      console.log('\n🎉 Crystal Clear Architecture domain workers deployed successfully!');
+      console.info('\n🎉 Crystal Clear Architecture domain workers deployed successfully!');
       this.printDeploymentSummary();
     } catch (error) {
       console.error('❌ Deployment failed:', error);
@@ -77,18 +77,18 @@ export class DomainDeploymentManager {
     for (const deployment of deployments) {
       const filePath = `dist/domain-workers/${deployment.name}.ts`;
       await writeFile(filePath, deployment.script);
-      console.log(`  ✅ Generated ${deployment.name}.ts`);
+      console.info(`  ✅ Generated ${deployment.name}.ts`);
     }
 
     // Generate domain router
     const routerScript = this.factory.generateDomainRouter();
     await writeFile('dist/domain-workers/domain-router.ts', routerScript);
-    console.log('  ✅ Generated domain-router.ts');
+    console.info('  ✅ Generated domain-router.ts');
   }
 
   private async createCloudflareResources(): Promise<void> {
     if (!this.config.createDatabases && !this.config.createKVNamespaces) {
-      console.log('  ⏭️  Skipping resource creation (disabled in config)');
+      console.info('  ⏭️  Skipping resource creation (disabled in config)');
       return;
     }
 
@@ -105,9 +105,9 @@ export class DomainDeploymentManager {
       for (const db of databases) {
         try {
           execSync(`wrangler d1 create ${db}`, { stdio: 'pipe' });
-          console.log(`  ✅ Created D1 database: ${db}`);
+          console.info(`  ✅ Created D1 database: ${db}`);
         } catch (error) {
-          console.log(`  ⚠️  D1 database ${db} may already exist`);
+          console.info(`  ⚠️  D1 database ${db} may already exist`);
         }
       }
     }
@@ -125,9 +125,9 @@ export class DomainDeploymentManager {
       for (const ns of namespaces) {
         try {
           execSync(`wrangler kv:namespace create ${ns}`, { stdio: 'pipe' });
-          console.log(`  ✅ Created KV namespace: ${ns}`);
+          console.info(`  ✅ Created KV namespace: ${ns}`);
         } catch (error) {
-          console.log(`  ⚠️  KV namespace ${ns} may already exist`);
+          console.info(`  ⚠️  KV namespace ${ns} may already exist`);
         }
       }
     }
@@ -169,7 +169,7 @@ LOG_LEVEL = "info"
 
     const fullConfig = wranglerConfig + envConfig;
     await writeFile('dist/domain-workers/wrangler.toml', fullConfig);
-    console.log('  ✅ Generated wrangler.toml');
+    console.info('  ✅ Generated wrangler.toml');
   }
 
   private async deployWorkers(): Promise<void> {
@@ -177,7 +177,7 @@ LOG_LEVEL = "info"
 
     for (const deployment of deployments) {
       try {
-        console.log(`  📦 Deploying ${deployment.name}...`);
+        console.info(`  📦 Deploying ${deployment.name}...`);
 
         // Deploy worker
         execSync(
@@ -192,7 +192,7 @@ LOG_LEVEL = "info"
           execSync(`wrangler route add "${route}" ${deployment.name}`, { stdio: 'pipe' });
         }
 
-        console.log(`  ✅ ${deployment.name} deployed successfully`);
+        console.info(`  ✅ ${deployment.name} deployed successfully`);
       } catch (error) {
         console.error(`  ❌ Failed to deploy ${deployment.name}:`, error);
         throw error;
@@ -201,14 +201,14 @@ LOG_LEVEL = "info"
 
     // Deploy domain router
     try {
-      console.log('  🔄 Deploying domain router...');
+      console.info('  🔄 Deploying domain router...');
       execSync(
         `cd dist/domain-workers && wrangler deploy domain-router.ts --name crystal-clear-domains`,
         {
           stdio: 'inherit',
         }
       );
-      console.log('  ✅ Domain router deployed successfully');
+      console.info('  ✅ Domain router deployed successfully');
     } catch (error) {
       console.error('  ❌ Failed to deploy domain router:', error);
       throw error;
@@ -228,7 +228,7 @@ LOG_LEVEL = "info"
       'dist/domain-workers/routing-config.json',
       JSON.stringify(routingConfig, null, 2)
     );
-    console.log('  ✅ Generated routing configuration');
+    console.info('  ✅ Generated routing configuration');
   }
 
   private async verifyDeployment(): Promise<void> {
@@ -247,7 +247,7 @@ LOG_LEVEL = "info"
           health: health,
         });
 
-        console.log(`  ✅ ${deployment.name}: ${response.ok ? 'healthy' : 'unhealthy'}`);
+        console.info(`  ✅ ${deployment.name}: ${response.ok ? 'healthy' : 'unhealthy'}`);
       } catch (error) {
         verificationResults.push({
           domain: deployment.name,
@@ -255,7 +255,7 @@ LOG_LEVEL = "info"
           error: error instanceof Error ? error.message : 'Unknown error',
         });
 
-        console.log(
+        console.info(
           `  ❌ ${deployment.name}: error - ${error instanceof Error ? error.message : 'Unknown error'}`
         );
       }
@@ -270,26 +270,26 @@ LOG_LEVEL = "info"
   private printDeploymentSummary(): void {
     const deployments = this.factory.getAllDeploymentConfigs();
 
-    console.log('\n📋 Deployment Summary:');
-    console.log('='.repeat(50));
+    console.info('\n📋 Deployment Summary:');
+    console.info('='.repeat(50));
 
     deployments.forEach(deployment => {
-      console.log(`✅ ${deployment.name}`);
-      console.log(`   Routes: ${deployment.routes.join(', ')}`);
-      console.log(`   Environment: ${Object.keys(deployment.environment).length} variables`);
-      console.log('');
+      console.info(`✅ ${deployment.name}`);
+      console.info(`   Routes: ${deployment.routes.join(', ')}`);
+      console.info(`   Environment: ${Object.keys(deployment.environment).length} variables`);
+      console.info('');
     });
 
-    console.log('🔗 Domain Router: crystal-clear-domains');
-    console.log(`🌐 Base URL: https://crystal-clear-domains.${this.config.domain}`);
-    console.log('📊 Health Check: /health');
-    console.log('📈 Metrics: /metrics');
+    console.info('🔗 Domain Router: crystal-clear-domains');
+    console.info(`🌐 Base URL: https://crystal-clear-domains.${this.config.domain}`);
+    console.info('📊 Health Check: /health');
+    console.info('📈 Metrics: /metrics');
 
-    console.log('\n🔧 Next Steps:');
-    console.log('1. Configure monitoring and alerting');
-    console.log('2. Set up CI/CD pipelines');
-    console.log('3. Test domain-specific functionality');
-    console.log('4. Configure load balancing if needed');
+    console.info('\n🔧 Next Steps:');
+    console.info('1. Configure monitoring and alerting');
+    console.info('2. Set up CI/CD pipelines');
+    console.info('3. Test domain-specific functionality');
+    console.info('4. Configure load balancing if needed');
   }
 }
 
@@ -298,19 +298,19 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length < 1) {
-    console.log('Usage: deploy-domains.ts <environment> [options]');
-    console.log('');
-    console.log('Environments:');
-    console.log('  development  - Local development deployment');
-    console.log('  staging     - Staging environment deployment');
-    console.log('  production  - Production environment deployment');
-    console.log('');
-    console.log('Options:');
-    console.log('  --account-id <id>     - Cloudflare account ID');
-    console.log('  --zone-id <id>        - Cloudflare zone ID');
-    console.log('  --domain <domain>     - Domain for deployment');
-    console.log('  --create-db           - Create D1 databases');
-    console.log('  --create-kv           - Create KV namespaces');
+    console.info('Usage: deploy-domains.ts <environment> [options]');
+    console.info('');
+    console.info('Environments:');
+    console.info('  development  - Local development deployment');
+    console.info('  staging     - Staging environment deployment');
+    console.info('  production  - Production environment deployment');
+    console.info('');
+    console.info('Options:');
+    console.info('  --account-id <id>     - Cloudflare account ID');
+    console.info('  --zone-id <id>        - Cloudflare zone ID');
+    console.info('  --domain <domain>     - Domain for deployment');
+    console.info('  --create-db           - Create D1 databases');
+    console.info('  --create-kv           - Create KV namespaces');
     process.exit(1);
   }
 

@@ -105,9 +105,9 @@ export class UploadService {
         endpoint: this.config.endpoint,
       });
 
-      console.log(`✅ S3/R2 client initialized: ${this.config.provider}/${this.config.bucket}`);
+      console.info(`✅ S3/R2 client initialized: ${this.config.provider}/${this.config.bucket}`);
     } else {
-      console.log(`📁 Local upload mode: ${this.config.localDir || "./uploads"}`);
+      console.info(`📁 Local upload mode: ${this.config.localDir || "./uploads"}`);
     }
   }
 
@@ -143,10 +143,10 @@ export class UploadService {
     const HAS_MULTIPART = feature("FEAT_MULTIPART_UPLOAD", false);
 
     if (HAS_MULTIPART && totalBytes > UPLOAD.MAX_SIMPLE_SIZE) {
-      console.log(`🧩 Using multipart upload for ${options.filename}`);
+      console.info(`🧩 Using multipart upload for ${options.filename}`);
       return this.multipartUpload(uploadId, file, options, startedAt);
     } else {
-      console.log(`📦 Using simple upload for ${options.filename}`);
+      console.info(`📦 Using simple upload for ${options.filename}`);
       return this.simpleUpload(uploadId, file, options, startedAt);
     }
   }
@@ -174,7 +174,7 @@ export class UploadService {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      console.log(`📄 File converted to Buffer: ${buffer.length} bytes`);
+      console.info(`📄 File converted to Buffer: ${buffer.length} bytes`);
 
       if (this.config.provider === "local") {
         // Local development: store to disk
@@ -192,7 +192,7 @@ export class UploadService {
         const HAS_CUSTOM_METADATA = feature("FEAT_CUSTOM_METADATA", false);
         if (HAS_CUSTOM_METADATA && options.metadata) {
           Object.assign(metadata, options.metadata);
-          console.log(`🏷️  Custom metadata: ${JSON.stringify(options.metadata)}`);
+          console.info(`🏷️  Custom metadata: ${JSON.stringify(options.metadata)}`);
         }
 
         // Add system metadata
@@ -208,7 +208,7 @@ export class UploadService {
           metadata,
         });
 
-        console.log(`☁️  Uploaded to ${this.config.provider}/${this.config.bucket}/${key}`);
+        console.info(`☁️  Uploaded to ${this.config.provider}/${this.config.bucket}/${key}`);
 
         // Generate public URL
         url = this.generateUrl(key);
@@ -224,7 +224,7 @@ export class UploadService {
       progress.completedAt = completedAt;
       progress.url = url;
 
-      console.log(`✅ Upload complete: ${options.filename} (${duration}ms)`);
+      console.info(`✅ Upload complete: ${options.filename} (${duration}ms)`);
 
       // Record telemetry if feature enabled
       this.recordTelemetry({
@@ -292,13 +292,13 @@ export class UploadService {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      console.log(`🧩 Starting multipart upload: ${buffer.length} bytes`);
+      console.info(`🧩 Starting multipart upload: ${buffer.length} bytes`);
 
       // Calculate chunks
       const totalChunks = Math.ceil(buffer.length / UPLOAD.CHUNK_SIZE);
       let uploadedBytes = 0;
 
-      console.log(`📦 Total chunks: ${totalChunks}`);
+      console.info(`📦 Total chunks: ${totalChunks}`);
 
       // Upload chunks in parallel
       const chunkPromises: Promise<{ partNumber: number; etag: string }>[] = [];
@@ -309,7 +309,7 @@ export class UploadService {
         const chunk = buffer.subarray(start, end);
         const partNumber = i + 1;
 
-        console.log(`📤 Uploading part ${partNumber}/${totalChunks} (${chunk.length} bytes)`);
+        console.info(`📤 Uploading part ${partNumber}/${totalChunks} (${chunk.length} bytes)`);
 
         chunkPromises.push(
           (async () => {
@@ -328,7 +328,7 @@ export class UploadService {
               }
             }
 
-            console.log(`✅ Part ${partNumber} complete: ${progress?.progress.toFixed(1)}%`);
+            console.info(`✅ Part ${partNumber} complete: ${progress?.progress.toFixed(1)}%`);
 
             return { partNumber, etag };
           })()
@@ -350,7 +350,7 @@ export class UploadService {
       progress.completedAt = completedAt;
       progress.url = this.generateUrl(key);
 
-      console.log(`✅ Multipart upload complete: ${options.filename} (${duration}ms)`);
+      console.info(`✅ Multipart upload complete: ${options.filename} (${duration}ms)`);
 
       this.recordTelemetry({
         uploadId,
@@ -434,7 +434,7 @@ export class UploadService {
     // Write file using Bun File API
     await Bun.write(filePath, buffer);
 
-    console.log(`💾 Uploaded to local: ${filePath}`);
+    console.info(`💾 Uploaded to local: ${filePath}`);
 
     return filePath;
   }
@@ -503,7 +503,7 @@ export class UploadService {
     }
 
     // Progress emission will be handled by dashboard-server.ts via WebSocket
-    console.log(`📊 Upload progress: ${progress.filename} - ${progress.progress.toFixed(1)}%`);
+    console.info(`📊 Upload progress: ${progress.filename} - ${progress.progress.toFixed(1)}%`);
   }
 
   /**
@@ -525,7 +525,7 @@ export class UploadService {
     }
 
     // Record telemetry
-    console.log(`📊 Upload telemetry: ${data.filename} - ${data.status} (${data.duration}ms)`);
+    console.info(`📊 Upload telemetry: ${data.filename} - ${data.status} (${data.duration}ms)`);
 
     // TelemetrySystem integration will be added separately
     // This is the integration point
@@ -586,7 +586,7 @@ export async function loadUploadConfig(configPath: string): Promise<UploadConfig
     // Parse JSON using Bun File API
     const config = await configFile.json() as UploadConfig;
 
-    console.log(`✅ Upload config loaded: ${config.provider}/${config.bucket}`);
+    console.info(`✅ Upload config loaded: ${config.provider}/${config.bucket}`);
 
     return config;
   } catch (error) {

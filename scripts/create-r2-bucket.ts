@@ -116,9 +116,9 @@ async function signRequest(
  * @param bucketName - Name of the bucket to create
  */
 async function createBucket(bucketName: string): Promise<void> {
-  console.log(`Creating bucket: ${bucketName}...\n`);
-  console.log(`   Endpoint: ${R2_ENDPOINT}`);
-  console.log(`   Registry: ${REGISTRY_URL}\n`);
+  console.info(`Creating bucket: ${bucketName}...\n`);
+  console.info(`   Endpoint: ${R2_ENDPOINT}`);
+  console.info(`   Registry: ${REGISTRY_URL}\n`);
   
   const headers = await signRequest('PUT', `/${bucketName}`);
   
@@ -128,15 +128,15 @@ async function createBucket(bucketName: string): Promise<void> {
   });
   
   if (resp.ok) {
-    console.log(`✅ Bucket "${bucketName}" created successfully`);
-    console.log(`   URL: ${R2_ENDPOINT}/${bucketName}`);
-    console.log(`\n🚀 Next steps:`);
-    console.log(`   1. Configure CORS if needed`);
-    console.log(`   2. Set up bucket policies`);
-    console.log(`   3. Use with: R2_BUCKET_NAME=${bucketName} bun run bun:secrets:init`);
+    console.info(`✅ Bucket "${bucketName}" created successfully`);
+    console.info(`   URL: ${R2_ENDPOINT}/${bucketName}`);
+    console.info(`\n🚀 Next steps:`);
+    console.info(`   1. Configure CORS if needed`);
+    console.info(`   2. Set up bucket policies`);
+    console.info(`   3. Use with: R2_BUCKET_NAME=${bucketName} bun run bun:secrets:init`);
   } else if (resp.status === 409) {
-    console.log(`ℹ️  Bucket "${bucketName}" already exists`);
-    console.log(`   URL: ${R2_ENDPOINT}/${bucketName}`);
+    console.info(`ℹ️  Bucket "${bucketName}" already exists`);
+    console.info(`   URL: ${R2_ENDPOINT}/${bucketName}`);
   } else {
     console.error(`❌ Failed to create bucket: ${resp.status}`);
     const text = await resp.text();
@@ -148,8 +148,8 @@ async function createBucket(bucketName: string): Promise<void> {
  * List all R2 buckets
  */
 async function listBuckets(): Promise<void> {
-  console.log("Listing buckets...\n");
-  console.log(`   Endpoint: ${R2_ENDPOINT}\n`);
+  console.info("Listing buckets...\n");
+  console.info(`   Endpoint: ${R2_ENDPOINT}\n`);
   
   const headers = await signRequest('GET', '/');
   
@@ -161,10 +161,10 @@ async function listBuckets(): Promise<void> {
   if (resp.ok) {
     const xml = await resp.text();
     const buckets = [...xml.matchAll(/<Name>([^<]+)<\/Name>/g)].map(m => m[1]);
-    console.log(`Found ${buckets.length} bucket(s):`);
+    console.info(`Found ${buckets.length} bucket(s):`);
     for (const bucket of buckets) {
-      console.log(`  • ${bucket}`);
-      console.log(`    ${R2_ENDPOINT}/${bucket}`);
+      console.info(`  • ${bucket}`);
+      console.info(`    ${R2_ENDPOINT}/${bucket}`);
     }
   } else {
     console.error(`❌ Failed to list buckets: ${resp.status}`);

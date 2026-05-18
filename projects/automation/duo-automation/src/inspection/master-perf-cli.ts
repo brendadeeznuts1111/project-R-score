@@ -23,26 +23,26 @@ const commands = {
 };
 
 function showHelp(): void {
-  console.log('\n🎮 MASTER_PERF CLI');
-  console.log('='.repeat(30));
-  console.log('\nAvailable commands:');
+  console.info('\n🎮 MASTER_PERF CLI');
+  console.info('='.repeat(30));
+  console.info('\nAvailable commands:');
   
   Object.entries(commands).forEach(([cmd, desc]) => {
-    console.log(`  ${cmd.padEnd(12)} ${desc}`);
+    console.info(`  ${cmd.padEnd(12)} ${desc}`);
   });
   
-  console.log('\nExamples:');
-  console.log('  bun src/inspection/master-perf-cli.ts demo');
-  console.log('  bun src/inspection/master-perf-cli.ts benchmark');
-  console.log('  bun src/inspection/master-perf-cli.ts colors');
-  console.log('  bun src/inspection/master-perf-cli.ts stress');
+  console.info('\nExamples:');
+  console.info('  bun src/inspection/master-perf-cli.ts demo');
+  console.info('  bun src/inspection/master-perf-cli.ts benchmark');
+  console.info('  bun src/inspection/master-perf-cli.ts colors');
+  console.info('  bun src/inspection/master-perf-cli.ts stress');
 }
 
 function showBanner(): void {
-  console.log('\n🚀 MASTER_PERF Inspector CLI');
-  console.log('⚡ Dual-Mode Table System with Bun.color()');
-  console.log('📊 ANSI + Plain Text + JSON Exports');
-  console.log('─'.repeat(50));
+  console.info('\n🚀 MASTER_PERF Inspector CLI');
+  console.info('⚡ Dual-Mode Table System with Bun.color()');
+  console.info('📊 ANSI + Plain Text + JSON Exports');
+  console.info('─'.repeat(50));
 }
 
 /**
@@ -79,13 +79,13 @@ async function handleDemo(): Promise<void> {
 
 async function handleBenchmark(): Promise<void> {
   showBanner();
-  console.log('⚡ Performance Benchmark');
-  console.log('─'.repeat(40));
+  console.info('⚡ Performance Benchmark');
+  console.info('─'.repeat(40));
   
   MasterPerfInspector.benchmark();
   
-  console.log('\n📈 Large Dataset Performance');
-  console.log('─'.repeat(40));
+  console.info('\n📈 Large Dataset Performance');
+  console.info('─'.repeat(40));
   
   const sizes = [100, 1000, 5000, 10000];
   
@@ -96,7 +96,7 @@ async function handleBenchmark(): Promise<void> {
     const plainText = MasterPerfInspector.generatePlainText(metrics);
     const end = performance.now();
     
-    console.log(`${size.toLocaleString().padStart(6)} metrics: ${(end - start).toFixed(2).padStart(8)}ms (${plainText.length.toLocaleString()} chars)`);
+    console.info(`${size.toLocaleString().padStart(6)} metrics: ${(end - start).toFixed(2).padStart(8)}ms (${plainText.length.toLocaleString()} chars)`);
   }
 }
 
@@ -104,8 +104,8 @@ async function handleColors(): Promise<void> {
   showBanner();
   MasterPerfInspector.validateColors();
   
-  console.log('\n🎨 Color Format Conversion Examples');
-  console.log('─'.repeat(40));
+  console.info('\n🎨 Color Format Conversion Examples');
+  console.info('─'.repeat(40));
   
   const categories = ['Security', 'R2', 'Isolation', 'Zstd', 'Demo'];
   
@@ -114,22 +114,22 @@ async function handleColors(): Promise<void> {
     const number = MasterPerfInspector.getColorNumber(category);
     const ansi = MasterPerfInspector.generateTable([generateSampleMetrics(1).find(m => m.category === category)!]);
     
-    console.log(`${category.padEnd(12)} Hex: ${hex.padEnd(8)} Number: ${String(number).padStart(10)}`);
+    console.info(`${category.padEnd(12)} Hex: ${hex.padEnd(8)} Number: ${String(number).padStart(10)}`);
   });
   
-  console.log('\n🌈 Terminal Color Preview');
-  console.log('─'.repeat(40));
+  console.info('\n🌈 Terminal Color Preview');
+  console.info('─'.repeat(40));
   
   const testMetrics = generateSampleMetrics(5);
-  console.log(MasterPerfInspector.generateTable(testMetrics));
+  console.info(MasterPerfInspector.generateTable(testMetrics));
 }
 
 async function handleStress(): Promise<void> {
   showBanner();
   runStressTest();
   
-  console.log('\n🔥 Additional Stress Tests');
-  console.log('─'.repeat(40));
+  console.info('\n🔥 Additional Stress Tests');
+  console.info('─'.repeat(40));
   
   // Test memory usage
   if (global.gc) {
@@ -141,13 +141,13 @@ async function handleStress(): Promise<void> {
     
     const memAfter = process.memoryUsage();
     
-    console.log(`Memory usage for 50,000 metrics:`);
-    console.log(`  Before: ${(memBefore.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`  After:  ${(memAfter.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`  Growth: ${((memAfter.heapUsed - memBefore.heapUsed) / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`  Output: ${(result.length / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`Memory usage for 50,000 metrics:`);
+    console.info(`  Before: ${(memBefore.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`  After:  ${(memAfter.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`  Growth: ${((memAfter.heapUsed - memBefore.heapUsed) / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`  Output: ${(result.length / 1024 / 1024).toFixed(2)} MB`);
   } else {
-    console.log('Run with --expose-gc for memory usage test');
+    console.info('Run with --expose-gc for memory usage test');
   }
 }
 
@@ -155,7 +155,7 @@ async function handleCustom(args: string[]): Promise<void> {
   showBanner();
   
   if (args.length === 0) {
-    console.log('❌ No custom command provided');
+    console.info('❌ No custom command provided');
     return;
   }
   
@@ -164,26 +164,26 @@ async function handleCustom(args: string[]): Promise<void> {
   switch (subCommand) {
     case 'generate':
       const count = parseInt(args[1]) || 100;
-      console.log(`📊 Generating ${count} sample metrics...`);
+      console.info(`📊 Generating ${count} sample metrics...`);
       
       const metrics = generateSampleMetrics(count);
       
-      console.log('\n🎨 Colored Output:');
-      console.log(MasterPerfInspector.generateTable(metrics));
+      console.info('\n🎨 Colored Output:');
+      console.info(MasterPerfInspector.generateTable(metrics));
       
-      console.log('\n📄 Plain Text:');
-      console.log(MasterPerfInspector.generatePlainText(metrics));
+      console.info('\n📄 Plain Text:');
+      console.info(MasterPerfInspector.generatePlainText(metrics));
       
-      console.log('\n📦 JSON (first 500 chars):');
+      console.info('\n📦 JSON (first 500 chars):');
       const json = MasterPerfInspector.generateJson(metrics);
-      console.log(json.substring(0, 500) + '...');
+      console.info(json.substring(0, 500) + '...');
       break;
       
     case 'export':
       const exportCount = parseInt(args[1]) || 1000;
       const exportMetrics = generateSampleMetrics(exportCount);
       
-      console.log(`📤 Exporting ${exportCount} metrics...`);
+      console.info(`📤 Exporting ${exportCount} metrics...`);
       
       // Write different formats
       MasterPerfInspector.writeLogfile(exportMetrics, `export-${Date.now()}.log`);
@@ -191,14 +191,14 @@ async function handleCustom(args: string[]): Promise<void> {
       const jsonExport = MasterPerfInspector.generateJson(exportMetrics);
       await Bun.write(`export-${Date.now()}.json`, jsonExport);
       
-      console.log('✅ Exported to log and JSON files');
+      console.info('✅ Exported to log and JSON files');
       break;
       
     default:
-      console.log(`❌ Unknown custom command: ${subCommand}`);
-      console.log('Available custom commands:');
-      console.log('  generate [count] - Generate sample metrics');
-      console.log('  export [count]   - Export metrics to files');
+      console.info(`❌ Unknown custom command: ${subCommand}`);
+      console.info('Available custom commands:');
+      console.info('  generate [count] - Generate sample metrics');
+      console.info('  export [count]   - Export metrics to files');
   }
 }
 
@@ -218,8 +218,8 @@ async function main(): Promise<void> {
     if (command === 'custom') {
       await handleCustom(args.slice(1));
     } else {
-      console.log(`❌ Unknown command: ${command}`);
-      console.log('Run "help" for available commands');
+      console.info(`❌ Unknown command: ${command}`);
+      console.info('Run "help" for available commands');
     }
     return;
   }

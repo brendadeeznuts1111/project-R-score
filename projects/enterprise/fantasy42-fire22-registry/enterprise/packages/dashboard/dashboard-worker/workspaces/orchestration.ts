@@ -19,41 +19,41 @@ const workspaces = [
 
 switch (command) {
   case 'build:linked':
-    console.log('🔗 Building all linked workspaces...');
+    console.info('🔗 Building all linked workspaces...');
     for (const ws of workspaces) {
       await Bun.$`cd ${ws} && bun run build`;
     }
     break;
 
   case 'build:standalone':
-    console.log('📦 Building all standalone workspaces...');
+    console.info('📦 Building all standalone workspaces...');
     for (const ws of workspaces) {
       await Bun.$`cd ${ws} && bun run build:standalone`;
     }
     break;
 
   case 'install:isolated':
-    console.log('🔒 Installing all workspaces with isolated strategy...');
+    console.info('🔒 Installing all workspaces with isolated strategy...');
     for (const ws of workspaces) {
       await Bun.$`cd ${ws} && bun install --linker isolated`;
     }
     break;
 
   case 'test:all':
-    console.log('🧪 Testing all workspaces...');
+    console.info('🧪 Testing all workspaces...');
     for (const ws of workspaces) {
       await Bun.$`cd ${ws} && bun test`;
     }
     break;
 
   default:
-    console.log(
+    console.info(
       'Usage: bun orchestration.ts [build:linked|build:standalone|install:isolated|test:all]'
     );
-    console.log('');
-    console.log('Commands:');
-    console.log('  build:linked      - Build all workspaces in linked mode');
-    console.log('  build:standalone  - Build all workspaces in standalone mode');
-    console.log('  install:isolated  - Install all dependencies with Bun isolated strategy');
-    console.log('  test:all         - Run tests for all workspaces');
+    console.info('');
+    console.info('Commands:');
+    console.info('  build:linked      - Build all workspaces in linked mode');
+    console.info('  build:standalone  - Build all workspaces in standalone mode');
+    console.info('  install:isolated  - Install all dependencies with Bun isolated strategy');
+    console.info('  test:all         - Run tests for all workspaces');
 }

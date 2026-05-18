@@ -29,7 +29,7 @@ export class PerformanceMonitor {
     if (!this.server) return;
     
     // Log server protocol info
-    console.log(`🚀 Server running with protocol: ${this.server.protocol}`);
+    console.info(`🚀 Server running with protocol: ${this.server.protocol}`);
     
     // Set up performance monitoring interval
     setInterval(() => {
@@ -160,7 +160,7 @@ export class PerformanceMonitor {
   }
   
   private generateRequestId(): string {
-    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return crypto.randomUUID();
   }
   
   private cleanupMetrics(): void {
@@ -338,7 +338,7 @@ export class PerformanceMonitor {
     const metrics = this.server.performance;
     const protocol = this.server.protocol;
     
-    console.log(`
+    console.info(`
     📊 Performance Metrics (${protocol}):
     ──────────────────────────────────
     • Requests/sec: ${metrics?.requestsPerSecond?.toFixed(2) || 0}

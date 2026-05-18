@@ -122,7 +122,7 @@ export class CloudPhoneManagementService {
   addPhone(phoneId: string): boolean {
     if (this.phones.length >= this.config.maxAccounts) {
       if (feature("DEBUG")) {
-        console.log(`Cannot add phone ${phoneId}: limit of ${this.config.maxAccounts} reached`);
+        console.info(`Cannot add phone ${phoneId}: limit of ${this.config.maxAccounts} reached`);
       }
       return false;
     }
@@ -130,7 +130,7 @@ export class CloudPhoneManagementService {
     this.phones.push({ id: phoneId, status: "active" });
 
     if (feature("DEBUG")) {
-      console.log(
+      console.info(
         `Added phone ${phoneId}. Total: ${this.phones.length}/${this.config.maxAccounts}`
       );
     }

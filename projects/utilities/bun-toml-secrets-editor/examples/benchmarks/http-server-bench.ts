@@ -42,7 +42,7 @@ const server = Bun.serve({
 	},
 });
 
-console.log(`
+console.info(`
 ╔══════════════════════════════════════════════════════════╗
 ║   🌐 HTTP Server Benchmark Server                       ║
 ║   Testing response.bytes() vs response.text()           ║
@@ -69,7 +69,7 @@ Or use wrk:
 
 // Keep server running
 process.on("SIGINT", () => {
-	console.log("\n👋 Shutting down server...");
+	console.info("\n👋 Shutting down server...");
 	server.stop();
 	process.exit(0);
 });

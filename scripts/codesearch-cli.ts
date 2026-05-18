@@ -136,7 +136,7 @@ function parseArgs(argv: string[]): { query: string; options: CliOptions } | nul
   }
 
   if (options.version) {
-    console.log('codesearch-cli v2.0.0');
+    console.info('codesearch-cli v2.0.0');
     return null;
   }
 
@@ -156,7 +156,7 @@ function parseArgs(argv: string[]): { query: string; options: CliOptions } | nul
 }
 
 function printUsage(): void {
-  console.log(`
+  console.info(`
 CodeSearch CLI - Fast, streaming code search
 
 USAGE:
@@ -274,7 +274,7 @@ async function runSearch(query: string, options: CliOptions): Promise<void> {
 
   // Streaming mode
   if (options.stream && !options.json) {
-    console.log(`${colors.dim}Streaming results for "${query}"...${colors.reset}\n`);
+    console.info(`${colors.dim}Streaming results for "${query}"...${colors.reset}\n`);
     
     let count = 0;
     const files = new Set<string>();
@@ -282,7 +282,7 @@ async function runSearch(query: string, options: CliOptions): Promise<void> {
     for await (const match of searcher.searchStream(options)) {
       count++;
       files.add(match.file);
-      console.log(formatMatch(match as ScoredMatch, count - 1, query, false));
+      console.info(formatMatch(match as ScoredMatch, count - 1, query, false));
       
       if (options.maxResults && count >= options.maxResults) {
         break;
@@ -290,7 +290,7 @@ async function runSearch(query: string, options: CliOptions): Promise<void> {
     }
 
     const totalTime = performance.now() - start;
-    console.log(`\n${formatStats({ timeMs: totalTime, filesSearched: files.size, matchesFound: count })}`);
+    console.info(`\n${formatStats({ timeMs: totalTime, filesSearched: files.size, matchesFound: count })}`);
     return;
   }
 
@@ -326,32 +326,32 @@ async function runSearch(query: string, options: CliOptions): Promise<void> {
       },
       matches: result.matches,
     };
-    console.log(JSON.stringify(output, null, 2));
+    console.info(JSON.stringify(output, null, 2));
     return;
   }
 
   // Pretty output
-  console.log(`${colors.bright}Search: "${query}"${colors.reset}\n`);
+  console.info(`${colors.bright}Search: "${query}"${colors.reset}\n`);
 
   if (result.matches.length === 0) {
-    console.log(`${colors.yellow}No matches found${colors.reset}`);
+    console.info(`${colors.yellow}No matches found${colors.reset}`);
   } else {
     result.matches.forEach((match, i) => {
-      console.log(formatMatch(match as ScoredMatch, i, query, options.scored));
-      console.log();
+      console.info(formatMatch(match as ScoredMatch, i, query, options.scored));
+      console.info();
     });
   }
 
-  console.log(formatStats(result.stats, searcher.getCacheStats().size));
+  console.info(formatStats(result.stats, searcher.getCacheStats().size));
 
   if (options.stats) {
-    console.log(`\n${colors.dim}Detailed Stats:${colors.reset}`);
-    console.log(`  Cache enabled: ${options.cache !== false}`);
-    console.log(`  Cache size: ${searcher.getCacheStats().size}`);
-    console.log(`  Case sensitive: ${options.caseSensitive || false}`);
-    console.log(`  Word boundary: ${options.wordBoundary || false}`);
-    console.log(`  File type: ${options.type || 'all'}`);
-    console.log(`  Paths: ${options.paths?.join(', ') || '.'}`);
+    console.info(`\n${colors.dim}Detailed Stats:${colors.reset}`);
+    console.info(`  Cache enabled: ${options.cache !== false}`);
+    console.info(`  Cache size: ${searcher.getCacheStats().size}`);
+    console.info(`  Case sensitive: ${options.caseSensitive || false}`);
+    console.info(`  Word boundary: ${options.wordBoundary || false}`);
+    console.info(`  File type: ${options.type || 'all'}`);
+    console.info(`  Paths: ${options.paths?.join(', ') || '.'}`);
   }
 }
 
@@ -382,7 +382,7 @@ async function main(): Promise<void> {
 async function runPathMigrationAudit(options: CliOptions): Promise<void> {
   const isConfigMode = options.configPaths;
 
-  console.log(`${colors.bright}🔍 Path Migration Audit Mode${colors.reset}${isConfigMode ? ' (Config)' : ''}\n`);
+  console.info(`${colors.bright}🔍 Path Migration Audit Mode${colors.reset}${isConfigMode ? ' (Config)' : ''}\n`);
 
   const fromPath = options.from || (isConfigMode ? 'configs/' : null);
   const toPath = options.to || (isConfigMode ? 'config/' : null);
@@ -392,17 +392,17 @@ async function runPathMigrationAudit(options: CliOptions): Promise<void> {
     process.exit(1);
   }
 
-  console.log(`Auditing references to paths...`);
+  console.info(`Auditing references to paths...`);
   if (fromPath && toPath) {
-    console.log(`Migration audit: ${colors.yellow}${fromPath}${colors.reset} → ${colors.green}${toPath}${colors.reset}\n`);
+    console.info(`Migration audit: ${colors.yellow}${fromPath}${colors.reset} → ${colors.green}${toPath}${colors.reset}\n`);
   } else {
-    console.log(`Showing references to "${fromPath}" (potential stale references).\n`);
+    console.info(`Showing references to "${fromPath}" (potential stale references).\n`);
   }
 
   const searcher = new CodeSearch();
 
   // === Stale references (old path) ===
-  console.log(`${colors.yellow}Stale / Old Path References ("${fromPath}"):${colors.reset}`);
+  console.info(`${colors.yellow}Stale / Old Path References ("${fromPath}"):${colors.reset}`);
 
   // Base search for the old path
   const staleResult = await searcher.search({
@@ -433,7 +433,7 @@ async function runPathMigrationAudit(options: CliOptions): Promise<void> {
   );
 
   if (uniqueStale.length === 0) {
-    console.log(`  ${colors.green}✓ No stale references found for "${fromPath}"${colors.reset}\n`);
+    console.info(`  ${colors.green}✓ No stale references found for "${fromPath}"${colors.reset}\n`);
   } else {
     uniqueStale.slice(0, 40).forEach((m, i) => {
       const file = m.file.replace(process.cwd(), '.');
@@ -451,18 +451,18 @@ async function runPathMigrationAudit(options: CliOptions): Promise<void> {
       const isDynamic = content.includes('${') || content.includes('`');
       const prefix = isDynamic ? `${colors.cyan}[dynamic]${colors.reset} ` : '';
 
-      console.log(`  ${i + 1}. ${prefix}${file}:${m.line}`);
-      console.log(`     ${content}${suggestion}`);
+      console.info(`  ${i + 1}. ${prefix}${file}:${m.line}`);
+      console.info(`     ${content}${suggestion}`);
     });
 
     if (uniqueStale.length > 40) {
-      console.log(`  ... and ${uniqueStale.length - 40} more`);
+      console.info(`  ... and ${uniqueStale.length - 40} more`);
     }
-    console.log('');
+    console.info('');
   }
 
   // === Current / New path references ===
-  console.log(`${colors.blue}Current / New Path References ("${toPath}"):${colors.reset}`);
+  console.info(`${colors.blue}Current / New Path References ("${toPath}"):${colors.reset}`);
 
   const currentResult = await searcher.search({
     query: toPath,
@@ -474,31 +474,31 @@ async function runPathMigrationAudit(options: CliOptions): Promise<void> {
   });
 
   if (currentResult.matches.length === 0) {
-    console.log(`  ${colors.dim}(No references to "${toPath}" found in this run)${colors.reset}`);
+    console.info(`  ${colors.dim}(No references to "${toPath}" found in this run)${colors.reset}`);
   } else {
     currentResult.matches.slice(0, 25).forEach((m, i) => {
       const file = m.file.replace(process.cwd(), '.');
-      console.log(`  ${i + 1}. ${file}:${m.line}`);
+      console.info(`  ${i + 1}. ${file}:${m.line}`);
     });
 
     if (currentResult.matches.length > 25) {
-      console.log(`  ... and ${currentResult.matches.length - 25} more`);
+      console.info(`  ... and ${currentResult.matches.length - 25} more`);
     }
   }
 
   // Summary
-  console.log(`\n${colors.bright}Summary:${colors.reset}`);
-  console.log(`  Stale references found: ${uniqueStale.length}`);
-  console.log(`  Current path references found: ${currentResult.matches.length}`);
+  console.info(`\n${colors.bright}Summary:${colors.reset}`);
+  console.info(`  Stale references found: ${uniqueStale.length}`);
+  console.info(`  Current path references found: ${currentResult.matches.length}`);
 
   if (options.from && options.to && uniqueStale.length > 0) {
-    console.log(`\n${colors.yellow}Tip:${colors.reset} Use the suggested lines above to update your code.`);
-    console.log(`      Run with --json for machine-readable output in the future.`);
+    console.info(`\n${colors.yellow}Tip:${colors.reset} Use the suggested lines above to update your code.`);
+    console.info(`      Run with --json for machine-readable output in the future.`);
   }
 
-  console.log(`\n${colors.dim}Usage examples:${colors.reset}`);
-  console.log(`  bun run scripts/codesearch-cli.ts --config-paths --from configs/ --to config/`);
-  console.log(`  bun run scripts/codesearch-cli.ts --config-paths --from cli/ --to tools/cli/`);
+  console.info(`\n${colors.dim}Usage examples:${colors.reset}`);
+  console.info(`  bun run scripts/codesearch-cli.ts --config-paths --from configs/ --to config/`);
+  console.info(`  bun run scripts/codesearch-cli.ts --config-paths --from cli/ --to tools/cli/`);
 }
 
 await main();

@@ -63,7 +63,7 @@ class Fire22DevServer {
     };
 
     this.startTime = Date.now();
-    console.log('🔥 Initializing Fire22 Development Server...');
+    console.info('🔥 Initializing Fire22 Development Server...');
   }
 
   /**
@@ -78,7 +78,7 @@ class Fire22DevServer {
       join(process.cwd(), 'package.json'),
     ];
 
-    console.log('👀 Setting up hot reload file watching...');
+    console.info('👀 Setting up hot reload file watching...');
 
     for (const watchPath of watchPaths) {
       if (existsSync(watchPath)) {
@@ -132,7 +132,7 @@ class Fire22DevServer {
       reset: '\x1b[0m',
     };
 
-    console.log(
+    console.info(
       `${colors[level]}[${timestamp}] [${level.toUpperCase()}]${colors.reset} ${message}`
     );
   }
@@ -504,12 +504,12 @@ class Fire22DevServer {
         fetch: request => this.handleRequest(request),
       });
 
-      console.log('🚀 Fire22 Development Server started successfully!');
-      console.log(`📍 Server URL: http://${this.config.host}:${this.config.port}`);
-      console.log(`🔧 Development Dashboard: http://${this.config.host}:${this.config.port}/`);
-      console.log(`🔍 Dev Tools: http://${this.config.host}:${this.config.port}/__dev/logs`);
-      console.log('👀 Hot reload enabled - watching for file changes...');
-      console.log('\n🔥 Ready for development!');
+      console.info('🚀 Fire22 Development Server started successfully!');
+      console.info(`📍 Server URL: http://${this.config.host}:${this.config.port}`);
+      console.info(`🔧 Development Dashboard: http://${this.config.host}:${this.config.port}/`);
+      console.info(`🔍 Dev Tools: http://${this.config.host}:${this.config.port}/__dev/logs`);
+      console.info('👀 Hot reload enabled - watching for file changes...');
+      console.info('\n🔥 Ready for development!');
     } catch (error) {
       this.log('error', `Failed to start server: ${error.message}`);
       process.exit(1);
@@ -529,7 +529,7 @@ class Fire22DevServer {
       watcher.close();
     }
 
-    console.log('🛑 Development server stopped');
+    console.info('🛑 Development server stopped');
   }
 }
 
@@ -564,7 +564,7 @@ async function main() {
         config.logLevel = args[++i] as 'debug' | 'info' | 'warn' | 'error';
         break;
       case '--help':
-        console.log(`
+        console.info(`
 🚀 Fire22 Enhanced Development Server
 
 USAGE:
@@ -599,7 +599,7 @@ EXAMPLES:
 
   // Handle graceful shutdown
   process.on('SIGINT', async () => {
-    console.log('\n🛑 Shutting down development server...');
+    console.info('\n🛑 Shutting down development server...');
     await server.stop();
     process.exit(0);
   });

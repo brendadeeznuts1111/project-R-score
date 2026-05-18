@@ -88,8 +88,8 @@ class ARBDecisionManager {
     const filename = join(this.decisionsDir, `${nextId}.json`);
     writeFileSync(filename, JSON.stringify(decision, null, 2));
     
-    console.log(`✅ Created ARB decision: ${nextId}`);
-    console.log(`📄 File: ${filename}`);
+    console.info(`✅ Created ARB decision: ${nextId}`);
+    console.info(`📄 File: ${filename}`);
     
     return nextId;
   }
@@ -179,7 +179,7 @@ class ARBDecisionManager {
         return false;
       }
 
-      console.log(`✅ Decision ${decisionId} is valid`);
+      console.info(`✅ Decision ${decisionId} is valid`);
       return true;
 
     } catch (error) {
@@ -200,21 +200,21 @@ class ARBDecisionManager {
       averageScore: decisions.reduce((sum, d) => sum + d.playbookAlignment.score, 0) / decisions.length || 0
     };
 
-    console.log('📊 ARB Decisions Statistics');
-    console.log('═══════════════════════════');
-    console.log(`Total Decisions: ${stats.total}`);
-    console.log(`✅ Approved: ${stats.approved} (${(stats.approved/stats.total*100).toFixed(1)}%)`);
-    console.log(`❌ Rejected: ${stats.rejected} (${(stats.rejected/stats.total*100).toFixed(1)}%)`);
-    console.log(`⚠️ Conditional: ${stats.conditional} (${(stats.conditional/stats.total*100).toFixed(1)}%)`);
-    console.log(`⏳ Pending: ${stats.pending} (${(stats.pending/stats.total*100).toFixed(1)}%)`);
-    console.log(`📈 Average Playbook Score: ${stats.averageScore.toFixed(1)}`);
+    console.info('📊 ARB Decisions Statistics');
+    console.info('═══════════════════════════');
+    console.info(`Total Decisions: ${stats.total}`);
+    console.info(`✅ Approved: ${stats.approved} (${(stats.approved/stats.total*100).toFixed(1)}%)`);
+    console.info(`❌ Rejected: ${stats.rejected} (${(stats.rejected/stats.total*100).toFixed(1)}%)`);
+    console.info(`⚠️ Conditional: ${stats.conditional} (${(stats.conditional/stats.total*100).toFixed(1)}%)`);
+    console.info(`⏳ Pending: ${stats.pending} (${(stats.pending/stats.total*100).toFixed(1)}%)`);
+    console.info(`📈 Average Playbook Score: ${stats.averageScore.toFixed(1)}`);
 
     // Recent decisions
     const recent = decisions
       .sort((a, b) => b.date.localeCompare(a.date))
       .slice(0, 5);
 
-    console.log('\n📅 Recent Decisions:');
+    console.info('\n📅 Recent Decisions:');
     recent.forEach(decision => {
       const statusIcon = {
         approved: '✅',
@@ -223,7 +223,7 @@ class ARBDecisionManager {
         pending: '⏳'
       }[decision.status];
       
-      console.log(`  ${statusIcon} ${decision.id}: ${decision.title} (${decision.date})`);
+      console.info(`  ${statusIcon} ${decision.id}: ${decision.title} (${decision.date})`);
     });
   }
 
@@ -247,14 +247,14 @@ class ARBDecisionManager {
 
   async printDecisionTable(decisions: ARBDecision[]): Promise<void> {
     if (decisions.length === 0) {
-      console.log('No decisions found.');
+      console.info('No decisions found.');
       return;
     }
 
-    console.log('\n📋 ARB Decisions');
-    console.log('═══════════════════════════════════════════════════════════════');
-    console.log('ID           | Date       | Status      | Score | Title');
-    console.log('─────────────┼────────────┼─────────────┼───────┼──────────────────');
+    console.info('\n📋 ARB Decisions');
+    console.info('═══════════════════════════════════════════════════════════════');
+    console.info('ID           | Date       | Status      | Score | Title');
+    console.info('─────────────┼────────────┼─────────────┼───────┼──────────────────');
 
     decisions.forEach(decision => {
       const statusIcon = {
@@ -268,7 +268,7 @@ class ARBDecisionManager {
         ? decision.title.substring(0, 27) + '...'
         : decision.title;
 
-      console.log(
+      console.info(
         `${decision.id.padEnd(12)} | ${decision.date} | ${statusIcon} ${decision.status.padEnd(9)} | ${decision.playbookAlignment.score.toString().padStart(3)}%  | ${title}`
       );
     });
@@ -301,7 +301,7 @@ async function main() {
           process.exit(1);
         }
         const results = await manager.searchDecisions(query);
-        console.log(`🔍 Search results for "${query}":`);
+        console.info(`🔍 Search results for "${query}":`);
         await manager.printDecisionTable(results);
         break;
 
@@ -320,22 +320,22 @@ async function main() {
         break;
 
       default:
-        console.log('🏛️ ARB Decision Manager');
-        console.log('');
-        console.log('Usage: bun run scripts/arb-decision-manager.ts <command> [options]');
-        console.log('');
-        console.log('Commands:');
-        console.log('  create [title]     Create a new ARB decision');
-        console.log('  list [status]      List all decisions (optionally filter by status)');
-        console.log('  search <query>     Search decisions by title, context, or participants');
-        console.log('  validate <id>      Validate decision format');
-        console.log('  stats              Show decision statistics');
-        console.log('');
-        console.log('Examples:');
-        console.log('  bun run scripts/arb-decision-manager.ts create "New API Gateway"');
-        console.log('  bun run scripts/arb-decision-manager.ts list approved');
-        console.log('  bun run scripts/arb-decision-manager.ts search "payment"');
-        console.log('  bun run scripts/arb-decision-manager.ts validate ARB-2025-001');
+        console.info('🏛️ ARB Decision Manager');
+        console.info('');
+        console.info('Usage: bun run scripts/arb-decision-manager.ts <command> [options]');
+        console.info('');
+        console.info('Commands:');
+        console.info('  create [title]     Create a new ARB decision');
+        console.info('  list [status]      List all decisions (optionally filter by status)');
+        console.info('  search <query>     Search decisions by title, context, or participants');
+        console.info('  validate <id>      Validate decision format');
+        console.info('  stats              Show decision statistics');
+        console.info('');
+        console.info('Examples:');
+        console.info('  bun run scripts/arb-decision-manager.ts create "New API Gateway"');
+        console.info('  bun run scripts/arb-decision-manager.ts list approved');
+        console.info('  bun run scripts/arb-decision-manager.ts search "payment"');
+        console.info('  bun run scripts/arb-decision-manager.ts validate ARB-2025-001');
         break;
     }
   } catch (error) {

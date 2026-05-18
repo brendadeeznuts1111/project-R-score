@@ -10,7 +10,7 @@ const client = new S3Client({
 
 try {
   await client.write("test.txt", Buffer.from("test"));
-  console.log(`✅ Bucket "${process.env.R2_BUCKET}" is ready`);
+  console.info(`✅ Bucket "${process.env.R2_BUCKET}" is ready`);
 } catch (error) {
   console.error(`❌ Error: ${error.message}`);
 }

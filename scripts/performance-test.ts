@@ -76,7 +76,7 @@ class PerformanceTest {
   }
 
   async testRipgrepPerformance(): Promise<void> {
-    console.log('🚀 Testing RipgrepSearcher with Bun.spawn...\n');
+    console.info('🚀 Testing RipgrepSearcher with Bun.spawn...\n');
     
     const searcher = new RipgrepSearcher();
     
@@ -86,12 +86,12 @@ class PerformanceTest {
         () => searcher.search(query, { maxResults: 10 })
       );
       
-      console.log(`✅ ${query}: ${metrics.duration}ms, ${metrics.results} matches, ${metrics.memoryAfter}MB`);
+      console.info(`✅ ${query}: ${metrics.duration}ms, ${metrics.results} matches, ${metrics.memoryAfter}MB`);
     }
   }
 
   async testEnhancedFetcherPerformance(): Promise<void> {
-    console.log('\n📚 Testing EnhancedDocsFetcher with parallel search...\n');
+    console.info('\n📚 Testing EnhancedDocsFetcher with parallel search...\n');
     
     const fetcher = new EnhancedDocsFetcher();
     
@@ -101,12 +101,12 @@ class PerformanceTest {
         () => fetcher.searchWithRipgrep(query, { maxResults: 10 })
       );
       
-      console.log(`✅ ${query}: ${metrics.duration}ms, ${result.performance.totalMatches} total matches`);
+      console.info(`✅ ${query}: ${metrics.duration}ms, ${result.performance.totalMatches} total matches`);
     }
   }
 
   async testGhostSearchPerformance(): Promise<void> {
-    console.log('\n👻 Testing Ghost Search (parallel multi-source)...\n');
+    console.info('\n👻 Testing Ghost Search (parallel multi-source)...\n');
     
     const fetcher = new EnhancedDocsFetcher();
     
@@ -121,12 +121,12 @@ class PerformanceTest {
       );
       
       const totalMatches = result.bunSh.length + result.bunCom.length + result.content.length + (result.projectCode?.length || 0);
-      console.log(`✅ ${query}: ${metrics.duration}ms, ${totalMatches} total matches, ${result.performance.parallelSpeedup}x speedup`);
+      console.info(`✅ ${query}: ${metrics.duration}ms, ${totalMatches} total matches, ${result.performance.parallelSpeedup}x speedup`);
     }
   }
 
   async testRealTimeSearchPerformance(): Promise<void> {
-    console.log('\n⚡ Testing Real-time Search with debouncing...\n');
+    console.info('\n⚡ Testing Real-time Search with debouncing...\n');
     
     const fetcher = new EnhancedDocsFetcher();
     const realTimeSearch = fetcher.createRealTimeSearch(100); // 100ms debounce
@@ -140,12 +140,12 @@ class PerformanceTest {
         () => realTimeSearch.search(query, { maxResults: 5 })
       );
       
-      console.log(`✅ "${query}": ${metrics.duration}ms, ${result.performance.totalMatches} matches`);
+      console.info(`✅ "${query}": ${metrics.duration}ms, ${result.performance.totalMatches} matches`);
     }
   }
 
   async testParallelVsSequential(): Promise<void> {
-    console.log('\n🏁 Testing Parallel vs Sequential Performance...\n');
+    console.info('\n🏁 Testing Parallel vs Sequential Performance...\n');
     
     const fetcher = new EnhancedDocsFetcher();
     const testQueries = this.queries.slice(0, 3);
@@ -170,13 +170,13 @@ class PerformanceTest {
     );
     
     const speedup = (sequentialMetrics.duration / parallelMetrics.duration).toFixed(2);
-    console.log(`📊 Sequential: ${sequentialMetrics.duration}ms`);
-    console.log(`📊 Parallel: ${parallelMetrics.duration}ms`);
-    console.log(`🚀 Speedup: ${speedup}x faster`);
+    console.info(`📊 Sequential: ${sequentialMetrics.duration}ms`);
+    console.info(`📊 Parallel: ${parallelMetrics.duration}ms`);
+    console.info(`🚀 Speedup: ${speedup}x faster`);
   }
 
   async testMemoryEfficiency(): Promise<void> {
-    console.log('\n💾 Testing Memory Efficiency...\n');
+    console.info('\n💾 Testing Memory Efficiency...\n');
     
     const searcher = new RipgrepSearcher();
     const initialMemory = this.getMemoryUsage();
@@ -195,15 +195,15 @@ class PerformanceTest {
     const finalMemory = this.getMemoryUsage();
     const memoryGrowth = finalMemory - initialMemory;
     
-    console.log(`📊 Initial memory: ${initialMemory}MB`);
-    console.log(`📊 Final memory: ${finalMemory}MB`);
-    console.log(`📈 Memory growth: ${memoryGrowth.toFixed(2)}MB`);
-    console.log(`🧹 Cache stats:`, searcher.getStats());
+    console.info(`📊 Initial memory: ${initialMemory}MB`);
+    console.info(`📊 Final memory: ${finalMemory}MB`);
+    console.info(`📈 Memory growth: ${memoryGrowth.toFixed(2)}MB`);
+    console.info(`🧹 Cache stats:`, searcher.getStats());
   }
 
   printSummary(): void {
-    console.log('\n📊 Performance Test Summary');
-    console.log('============================\n');
+    console.info('\n📊 Performance Test Summary');
+    console.info('============================\n');
     
     const successfulOps = this.metrics.filter(m => m.success);
     const failedOps = this.metrics.filter(m => !m.success);
@@ -214,35 +214,35 @@ class PerformanceTest {
       const maxDuration = Math.max(...successfulOps.map(m => m.duration));
       const totalResults = successfulOps.reduce((sum, m) => sum + (m.results || 0), 0);
       
-      console.log(`✅ Successful operations: ${successfulOps.length}`);
-      console.log(`❌ Failed operations: ${failedOps.length}`);
-      console.log(`⚡ Average duration: ${avgDuration.toFixed(2)}ms`);
-      console.log(`🏃 Fastest operation: ${minDuration}ms`);
-      console.log(`🐌 Slowest operation: ${maxDuration}ms`);
-      console.log(`📈 Total results: ${totalResults}`);
+      console.info(`✅ Successful operations: ${successfulOps.length}`);
+      console.info(`❌ Failed operations: ${failedOps.length}`);
+      console.info(`⚡ Average duration: ${avgDuration.toFixed(2)}ms`);
+      console.info(`🏃 Fastest operation: ${minDuration}ms`);
+      console.info(`🐌 Slowest operation: ${maxDuration}ms`);
+      console.info(`📈 Total results: ${totalResults}`);
       
       // Performance categories
       const fastOps = successfulOps.filter(m => m.duration < 10);
       const mediumOps = successfulOps.filter(m => m.duration >= 10 && m.duration < 50);
       const slowOps = successfulOps.filter(m => m.duration >= 50);
       
-      console.log(`\n🎯 Performance Breakdown:`);
-      console.log(`   🚀 Fast (<10ms): ${fastOps.length} operations`);
-      console.log(`   ⚡ Medium (10-50ms): ${mediumOps.length} operations`);
-      console.log(`   🐌 Slow (>50ms): ${slowOps.length} operations`);
+      console.info(`\n🎯 Performance Breakdown:`);
+      console.info(`   🚀 Fast (<10ms): ${fastOps.length} operations`);
+      console.info(`   ⚡ Medium (10-50ms): ${mediumOps.length} operations`);
+      console.info(`   🐌 Slow (>50ms): ${slowOps.length} operations`);
     }
     
     if (failedOps.length > 0) {
-      console.log(`\n❌ Failed Operations:`);
+      console.info(`\n❌ Failed Operations:`);
       failedOps.forEach(m => {
-        console.log(`   ${m.operation}: ${m.duration}ms`);
+        console.info(`   ${m.operation}: ${m.duration}ms`);
       });
     }
   }
 
   async runAllTests(): Promise<void> {
-    console.log('🧪 Starting Performance Tests for Bun.spawn Architecture\n');
-    console.log('========================================================\n');
+    console.info('🧪 Starting Performance Tests for Bun.spawn Architecture\n');
+    console.info('========================================================\n');
     
     try {
       await this.testRipgrepPerformance();
@@ -254,12 +254,12 @@ class PerformanceTest {
       
       this.printSummary();
       
-      console.log('\n🎉 All performance tests completed!');
-      console.log('\n💡 Key Takeaways:');
-      console.log('   • Bun.spawn provides zero-copy pipe performance');
-      console.log('   • Parallel execution achieves significant speedups');
-      console.log('   • Memory usage remains efficient with caching');
-      console.log('   • Real-time search with debouncing is highly responsive');
+      console.info('\n🎉 All performance tests completed!');
+      console.info('\n💡 Key Takeaways:');
+      console.info('   • Bun.spawn provides zero-copy pipe performance');
+      console.info('   • Parallel execution achieves significant speedups');
+      console.info('   • Memory usage remains efficient with caching');
+      console.info('   • Real-time search with debouncing is highly responsive');
       
     } catch (error) {
       console.error('❌ Performance test failed:', error);

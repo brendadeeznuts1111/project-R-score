@@ -129,7 +129,7 @@ class UltimatePropertiesConfigurationDashboard {
             { id: 5, name: "Eve", value: "Engineer" }
         ];
 
-        console.log(Bun.inspect.table(basicData, propertiesConfigurations.basic, {
+        console.info(Bun.inspect.table(basicData, propertiesConfigurations.basic, {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -174,7 +174,7 @@ class UltimatePropertiesConfigurationDashboard {
         const selectedProperties = config.include.filter(prop => !config.exclude.includes(prop));
         const orderedProperties = config.order.filter(prop => selectedProperties.includes(prop));
 
-        console.log('\n📊 Configuration Analysis:');
+        console.info('\n📊 Configuration Analysis:');
         const configData = [
             {
                 setting: "Include Columns",
@@ -202,7 +202,7 @@ class UltimatePropertiesConfigurationDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(configData, ["setting", "columns", "count", "type"], {
+        console.info(Bun.inspect.table(configData, ["setting", "columns", "count", "type"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",
@@ -227,8 +227,8 @@ class UltimatePropertiesConfigurationDashboard {
             }
         }));
 
-        console.log('\n📋 Applied Properties Table:');
-        console.log(Bun.inspect.table(advancedData, orderedProperties, {
+        console.info('\n📋 Applied Properties Table:');
+        console.info(Bun.inspect.table(advancedData, orderedProperties, {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -253,14 +253,14 @@ class UltimatePropertiesConfigurationDashboard {
         }));
 
         // Display group information
-        console.log('\n📂 Column Groups:');
+        console.info('\n📂 Column Groups:');
         const groupData = Object.entries(config.groups).map(([groupName, columns]) => ({
             group: groupName,
             columns: columns.join(", "),
             count: columns.length
         }));
 
-        console.log(Bun.inspect.table(groupData, ["group", "columns", "count"], {
+        console.info(Bun.inspect.table(groupData, ["group", "columns", "count"], {
             colors: true,
             compact: true,
             minWidth: 8,
@@ -293,7 +293,7 @@ class UltimatePropertiesConfigurationDashboard {
         // Apply dynamic property selection
         const dynamicProps = propertiesConfigurations.dynamic(dynamicData);
 
-        console.log('\n🔍 Dynamic Analysis Results:');
+        console.info('\n🔍 Dynamic Analysis Results:');
         const analysisData = [
             {
                 category: "Total Columns",
@@ -321,7 +321,7 @@ class UltimatePropertiesConfigurationDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(analysisData, ["category", "detected", "selected", "ratio"], {
+        console.info(Bun.inspect.table(analysisData, ["category", "detected", "selected", "ratio"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",
@@ -349,8 +349,8 @@ class UltimatePropertiesConfigurationDashboard {
             }
         }));
 
-        console.log('\n📋 Dynamic Properties Table:');
-        console.log(Bun.inspect.table(dynamicData, dynamicProps, {
+        console.info('\n📋 Dynamic Properties Table:');
+        console.info(Bun.inspect.table(dynamicData, dynamicProps, {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -388,8 +388,8 @@ class UltimatePropertiesConfigurationDashboard {
 
         const config = propertiesConfigurations.conditional;
 
-        console.log('\n📋 Default View:');
-        console.log(Bun.inspect.table(conditionalData, config.default, {
+        console.info('\n📋 Default View:');
+        console.info(Bun.inspect.table(conditionalData, config.default, {
             colors: true,
             compact: true,
             minWidth: 6,
@@ -409,8 +409,8 @@ class UltimatePropertiesConfigurationDashboard {
             }
         }));
 
-        console.log('\n📊 Detailed View:');
-        console.log(Bun.inspect.table(conditionalData, config.detailed, {
+        console.info('\n📊 Detailed View:');
+        console.info(Bun.inspect.table(conditionalData, config.detailed, {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -436,8 +436,8 @@ class UltimatePropertiesConfigurationDashboard {
             }
         }));
 
-        console.log('\n📈 Summary View:');
-        console.log(Bun.inspect.table(conditionalData, config.summary, {
+        console.info('\n📈 Summary View:');
+        console.info(Bun.inspect.table(conditionalData, config.summary, {
             colors: true,
             compact: true,
             minWidth: 8,
@@ -460,7 +460,7 @@ class UltimatePropertiesConfigurationDashboard {
         }));
 
         // Configuration comparison
-        console.log('\n⚙️ Configuration Comparison:');
+        console.info('\n⚙️ Configuration Comparison:');
         const comparisonData = [
             {
                 view: "Default",
@@ -482,7 +482,7 @@ class UltimatePropertiesConfigurationDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(comparisonData, ["view", "columns", "focus", "use"], {
+        console.info(Bun.inspect.table(comparisonData, ["view", "columns", "focus", "use"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",
@@ -553,7 +553,7 @@ class UltimatePropertiesConfigurationDashboard {
         // Apply smart property selection
         const smartProps = smartProperties.properties(smartData);
 
-        console.log('\n🧠 Smart Analysis:');
+        console.info('\n🧠 Smart Analysis:');
         const sample = smartData[0];
         const allColumns = Object.keys(sample);
 
@@ -596,7 +596,7 @@ class UltimatePropertiesConfigurationDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(analysisData, ["category", "columns", "selected", "reason"], {
+        console.info(Bun.inspect.table(analysisData, ["category", "columns", "selected", "reason"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",
@@ -629,8 +629,8 @@ class UltimatePropertiesConfigurationDashboard {
             }
         }));
 
-        console.log('\n📋 Smart Properties Table:');
-        console.log(Bun.inspect.table(smartData, smartProps, {
+        console.info('\n📋 Smart Properties Table:');
+        console.info(Bun.inspect.table(smartData, smartProps, {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -699,7 +699,7 @@ class UltimatePropertiesConfigurationDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(performanceData, ["method", "complexity", "flexibility", "performance", "use"], {
+        console.info(Bun.inspect.table(performanceData, ["method", "complexity", "flexibility", "performance", "use"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",
@@ -735,7 +735,7 @@ class UltimatePropertiesConfigurationDashboard {
         }));
 
         // Best practices
-        console.log('\n💡 Properties Configuration Best Practices:');
+        console.info('\n💡 Properties Configuration Best Practices:');
         const bestPracticesData = [
             {
                 practice: "Column Naming",
@@ -764,7 +764,7 @@ class UltimatePropertiesConfigurationDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(bestPracticesData, ["practice", "recommendation", "benefit"], {
+        console.info(Bun.inspect.table(bestPracticesData, ["practice", "recommendation", "benefit"], {
             colors: true,
             compact: false,
             minWidth: 10,
@@ -825,7 +825,7 @@ class UltimatePropertiesConfigurationDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(summaryData, ["feature", "implemented", "flexibility", "performance"], {
+        console.info(Bun.inspect.table(summaryData, ["feature", "implemented", "flexibility", "performance"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",
@@ -883,8 +883,8 @@ class UltimatePropertiesConfigurationDashboard {
             }
         ];
 
-        console.log('\n📊 System Metrics:');
-        console.log(Bun.inspect.table(metricsData, ["metric", "value", "category", "status"], {
+        console.info('\n📊 System Metrics:');
+        console.info(Bun.inspect.table(metricsData, ["metric", "value", "category", "status"], {
             colors: true,
             compact: true,
             minWidth: 8,

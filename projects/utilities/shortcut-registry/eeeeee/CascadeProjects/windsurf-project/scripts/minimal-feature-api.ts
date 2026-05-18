@@ -122,11 +122,11 @@ const server = serve({
   }
 });
 
-console.log('🚀 Minimal Feature Status API running on port 3010');
-console.log('📊 Available endpoints:');
-console.log('   GET /api/status - Comprehensive system status');
-console.log('   GET /api/features - List all features');
-console.log('   GET /api/health - Simple health check');
-console.log('   GET /api/services - Service status');
+console.info('🚀 Minimal Feature Status API running on port 3010');
+console.info('📊 Available endpoints:');
+console.info('   GET /api/status - Comprehensive system status');
+console.info('   GET /api/features - List all features');
+console.info('   GET /api/health - Simple health check');
+console.info('   GET /api/services - Service status');
 
 export default server;

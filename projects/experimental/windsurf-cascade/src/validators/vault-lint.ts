@@ -38,8 +38,8 @@ async function main() {
         options.exclude = args[excludeIndex].split('=')[1].split(',');
     }
 
-    console.log('🔍 Enhanced Vault Lint - Bun Native Edition');
-    console.log(`📊 Options: ${JSON.stringify(options, null, 2)}`);
+    console.info('🔍 Enhanced Vault Lint - Bun Native Edition');
+    console.info(`📊 Options: ${JSON.stringify(options, null, 2)}`);
 
     // Initialize graph and orchestrator
     const graph = new VaultGraph();
@@ -75,11 +75,11 @@ async function runLint(orchestrator: ValidationOrchestrator, options: LintOption
     });
 
     if (files.length === 0) {
-        console.log('⚠️ No markdown files found');
+        console.info('⚠️ No markdown files found');
         return;
     }
 
-    console.log(`📁 Found ${files.length} files to validate`);
+    console.info(`📁 Found ${files.length} files to validate`);
 
     // Run validation
     const filePaths = files.map(file => `./Odds-mono-map/${file}`);
@@ -91,14 +91,14 @@ async function runLint(orchestrator: ValidationOrchestrator, options: LintOption
     // Output report
     switch (options.output) {
         case 'json':
-            console.log(JSON.stringify(report, null, 2));
+            console.info(JSON.stringify(report, null, 2));
             break;
         case 'text':
-            console.log(formatTextReport(report));
+            console.info(formatTextReport(report));
             break;
         case 'summary':
         default:
-            console.log(formatSummaryReport(report));
+            console.info(formatSummaryReport(report));
             break;
     }
 
@@ -109,7 +109,7 @@ async function runLint(orchestrator: ValidationOrchestrator, options: LintOption
 }
 
 async function startWatchMode(orchestrator: ValidationOrchestrator, options: LintOptions) {
-    console.log('👀 Starting watch mode...');
+    console.info('👀 Starting watch mode...');
 
     // Import and start the vault watcher
     const { VaultWatcher } = await import('../watchers/vault-watcher');
@@ -125,13 +125,13 @@ async function startWatchMode(orchestrator: ValidationOrchestrator, options: Lin
 
     // Handle graceful shutdown
     process.on('SIGINT', async () => {
-        console.log('\n🛑 Shutting down watch mode...');
+        console.info('\n🛑 Shutting down watch mode...');
         await watcher.stop();
         process.exit(0);
     });
 
     // Keep process alive
-    console.log('⏳ Watching for changes... (Press Ctrl+C to stop)');
+    console.info('⏳ Watching for changes... (Press Ctrl+C to stop)');
 }
 
 function generateReport(results: any[], duration: number) {

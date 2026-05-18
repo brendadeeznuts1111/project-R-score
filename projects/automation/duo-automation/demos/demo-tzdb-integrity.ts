@@ -89,21 +89,21 @@ LINK=Actual/Canonical/Zone
    * 🚀 Run demonstration verification
    */
   async runDemo(): Promise<void> {
-    console.log('🔍 TZDB Integrity Verification Demo');
-    console.log('===================================');
-    console.log('');
-    console.log('💡 Pro Tip: Run tzdata-zdump -v Etc/UTC | head on production servers monthly');
-    console.log('   Canonical zones never appear in the LINK column of output');
-    console.log('');
+    console.info('🔍 TZDB Integrity Verification Demo');
+    console.info('===================================');
+    console.info('');
+    console.info('💡 Pro Tip: Run tzdata-zdump -v Etc/UTC | head on production servers monthly');
+    console.info('   Canonical zones never appear in the LINK column of output');
+    console.info('');
     
-    console.log('📊 System Information:');
-    console.log(`   • Total canonical zones: ${this.CANONICAL_ZONES.size}`);
-    console.log(`   • Critical zones: ${this.CRITICAL_ZONES.length}`);
-    console.log('');
+    console.info('📊 System Information:');
+    console.info(`   • Total canonical zones: ${this.CANONICAL_ZONES.size}`);
+    console.info(`   • Critical zones: ${this.CRITICAL_ZONES.length}`);
+    console.info('');
     
     // Verify critical zones
-    console.log('🚨 Verifying Critical Zones:');
-    console.log('------------------------------');
+    console.info('🚨 Verifying Critical Zones:');
+    console.info('------------------------------');
     
     let passed = 0;
     let warnings = 0;
@@ -115,23 +115,23 @@ LINK=Actual/Canonical/Zone
       switch (result.status) {
         case 'PASS':
           passed++;
-          console.log(`   ✅ ${zone}: ${result.details}`);
+          console.info(`   ✅ ${zone}: ${result.details}`);
           break;
         case 'WARNING':
           warnings++;
-          console.log(`   ⚠️  ${zone}: ${result.details}`);
+          console.info(`   ⚠️  ${zone}: ${result.details}`);
           break;
         case 'FAIL':
           failed++;
-          console.log(`   ❌ ${zone}: ${result.details}`);
+          console.info(`   ❌ ${zone}: ${result.details}`);
           break;
       }
     }
     
     // Test some edge cases
-    console.log('');
-    console.log('🧪 Testing Edge Cases:');
-    console.log('----------------------');
+    console.info('');
+    console.info('🧪 Testing Edge Cases:');
+    console.info('----------------------');
     
     const edgeCases = [
       'US/Eastern',      // Should fail - non-canonical alias
@@ -145,56 +145,56 @@ LINK=Actual/Canonical/Zone
       
       switch (result.status) {
         case 'PASS':
-          console.log(`   ✅ ${zone}: ${result.details}`);
+          console.info(`   ✅ ${zone}: ${result.details}`);
           break;
         case 'WARNING':
-          console.log(`   ⚠️  ${zone}: ${result.details}`);
+          console.info(`   ⚠️  ${zone}: ${result.details}`);
           break;
         case 'FAIL':
-          console.log(`   ❌ ${zone}: ${result.details}`);
+          console.info(`   ❌ ${zone}: ${result.details}`);
           break;
       }
     }
     
     // Summary
-    console.log('');
-    console.log('📈 Verification Summary:');
-    console.log('------------------------');
-    console.log(`   • Passed: ${passed}`);
-    console.log(`   • Warnings: ${warnings}`);
-    console.log(`   • Failed: ${failed}`);
+    console.info('');
+    console.info('📈 Verification Summary:');
+    console.info('------------------------');
+    console.info(`   • Passed: ${passed}`);
+    console.info(`   • Warnings: ${warnings}`);
+    console.info(`   • Failed: ${failed}`);
     
     const overallStatus = failed > 0 ? 'COMPROMISED' : warnings > 0 ? 'WARNING' : 'SECURE';
-    console.log(`   • Overall Status: ${overallStatus}`);
+    console.info(`   • Overall Status: ${overallStatus}`);
     
     // Production recommendations
-    console.log('');
-    console.log('🚀 Production Deployment Recommendations:');
-    console.log('----------------------------------------');
-    console.log('1. Install tzdata-zdump on production servers');
-    console.log('2. Set up monthly cron job: 0 0 1 * *');
-    console.log('3. Configure alerts for verification failures');
-    console.log('4. Store verification reports for audit trail');
-    console.log('5. Integrate with Evidence Integrity Pipeline');
+    console.info('');
+    console.info('🚀 Production Deployment Recommendations:');
+    console.info('----------------------------------------');
+    console.info('1. Install tzdata-zdump on production servers');
+    console.info('2. Set up monthly cron job: 0 0 1 * *');
+    console.info('3. Configure alerts for verification failures');
+    console.info('4. Store verification reports for audit trail');
+    console.info('5. Integrate with Evidence Integrity Pipeline');
     
     // Cron job example
-    console.log('');
-    console.log('📅 Example Cron Job:');
-    console.log('--------------------');
-    console.log('# Add to crontab: crontab -e');
-    console.log('0 0 1 * * cd /path/to/project && bun run lib/tzdb-integrity-verifier.ts monthly');
+    console.info('');
+    console.info('📅 Example Cron Job:');
+    console.info('--------------------');
+    console.info('# Add to crontab: crontab -e');
+    console.info('0 0 1 * * cd /path/to/project && bun run lib/tzdb-integrity-verifier.ts monthly');
     
     // Alert integration
-    console.log('');
-    console.log('🚨 Alert Integration:');
-    console.log('---------------------');
-    console.log('• Email alerts on verification failures');
-    console.log('• Slack notifications for warnings');
-    console.log('• PagerDuty escalation for critical issues');
-    console.log('• Dashboard integration for monitoring');
+    console.info('');
+    console.info('🚨 Alert Integration:');
+    console.info('---------------------');
+    console.info('• Email alerts on verification failures');
+    console.info('• Slack notifications for warnings');
+    console.info('• PagerDuty escalation for critical issues');
+    console.info('• Dashboard integration for monitoring');
     
-    console.log('');
-    console.log('🎯 TZDB Integrity Verification: PRODUCTION READY!');
+    console.info('');
+    console.info('🎯 TZDB Integrity Verification: PRODUCTION READY!');
   }
 
   /**

@@ -20,11 +20,11 @@ class CITestWorkflow {
     };
 
     async runCITests(): Promise<{ seed: number; exitCode: number; duration: number }> {
-        console.log("🔄 Running CI tests with randomization...\n");
+        console.info("🔄 Running CI tests with randomization...\n");
 
         // Generate random seed for this run
         const seed = Math.floor(Math.random() * 1000000);
-        console.log(`🎲 Using random seed: ${seed}`);
+        console.info(`🎲 Using random seed: ${seed}`);
 
         const startTime = Date.now();
 
@@ -34,31 +34,31 @@ class CITestWorkflow {
 
             const duration = Date.now() - startTime;
 
-            console.log(`\n✅ CI tests completed successfully!`);
-            console.log(`⏱️ Duration: ${duration}ms`);
-            console.log(`🎲 Seed: ${seed} (use for reproduction)`);
+            console.info(`\n✅ CI tests completed successfully!`);
+            console.info(`⏱️ Duration: ${duration}ms`);
+            console.info(`🎲 Seed: ${seed} (use for reproduction)`);
 
             return { seed, exitCode: 0, duration };
         } catch (error) {
             const duration = Date.now() - startTime;
 
-            console.log(`\n❌ CI tests failed!`);
-            console.log(`⏱️ Duration: ${duration}ms`);
-            console.log(`🎲 Seed: ${seed} (use for reproduction)`);
-            console.log(`🔍 To reproduce locally: bun test --seed ${seed}`);
+            console.info(`\n❌ CI tests failed!`);
+            console.info(`⏱️ Duration: ${duration}ms`);
+            console.info(`🎲 Seed: ${seed} (use for reproduction)`);
+            console.info(`🔍 To reproduce locally: bun test --seed ${seed}`);
 
             return { seed, exitCode: 1, duration };
         }
     }
 
     async reproduceCIFailure(seed: number): Promise<void> {
-        console.log(`🔍 Reproducing CI failure with seed: ${seed}\n`);
+        console.info(`🔍 Reproducing CI failure with seed: ${seed}\n`);
 
         try {
             await this.runTests("packages/*/src/**/*.test.ts", seed);
-            console.log("✅ Tests passed with seed - issue may be environment-specific");
+            console.info("✅ Tests passed with seed - issue may be environment-specific");
         } catch (error) {
-            console.log("❌ Tests failed with seed - successfully reproduced CI issue");
+            console.info("❌ Tests failed with seed - successfully reproduced CI issue");
             throw error;
         }
     }
@@ -74,7 +74,7 @@ class CITestWorkflow {
             "--coverage"
         ];
 
-        console.log(`Running: bun ${args.join(" ")}`);
+        console.info(`Running: bun ${args.join(" ")}`);
 
         const proc = spawn({
             cmd: ["bun", ...args],
@@ -109,14 +109,14 @@ async function main() {
             case "reproduce":
                 if (!seedArg) {
                     console.error("❌ Seed required for reproduction");
-                    console.log("Usage: bun scripts/test/ci-test-workflow.ts reproduce <seed>");
+                    console.info("Usage: bun scripts/test/ci-test-workflow.ts reproduce <seed>");
                     process.exit(1);
                 }
                 await workflow.reproduceCIFailure(parseInt(seedArg));
                 break;
 
             default:
-                console.log(`
+                console.info(`
 🔄 CI Test Workflow
 
 Usage: bun scripts/test/ci-test-workflow.ts <command> [seed]

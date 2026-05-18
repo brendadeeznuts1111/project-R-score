@@ -135,7 +135,7 @@ describe.concurrent("performance demonstration", () => {
     
     // With 5 concurrent 80ms operations, total should be much less than 400ms
     // (if they ran sequentially) but more than 80ms (if they were truly instant)
-    console.log(`Concurrent execution time: ${duration}ms`);
+    console.info(`Concurrent execution time: ${duration}ms`);
     expect(duration).toBeGreaterThan(80);
     expect(duration).toBeLessThan(1000); // Adjusted for real network conditions
   });

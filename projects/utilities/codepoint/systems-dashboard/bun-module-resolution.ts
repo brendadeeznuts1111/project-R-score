@@ -33,24 +33,24 @@ class ModuleResolutionDemo {
       resolvedModules: [],
     };
 
-    console.log("📦 Advanced Bun Module Resolution Demo");
-    console.log("=====================================");
+    console.info("📦 Advanced Bun Module Resolution Demo");
+    console.info("=====================================");
     this.demonstrateAutoInstall();
     this.setupServer();
   }
 
   private demonstrateAutoInstall(): void {
-    console.log("🚀 Auto-install Demonstration");
-    console.log("===============================");
+    console.info("🚀 Auto-install Demonstration");
+    console.info("===============================");
 
     // Test auto-installed packages
     const testString = "Bun module resolution demo";
     const hashResult = Bun.hash(testString).toString();
     const validationResult = z.string().parse(testString);
 
-    console.log(`✅ Auto-installed zod: validation successful`);
-    console.log(`✅ Native Bun hash: hash = ${hashResult}`);
-    console.log(`📦 Packages tested: zod (auto-install), Bun.hash (native)`);
+    console.info(`✅ Auto-installed zod: validation successful`);
+    console.info(`✅ Native Bun hash: hash = ${hashResult}`);
+    console.info(`📦 Packages tested: zod (auto-install), Bun.hash (native)`);
 
     this.metrics.autoInstalledPackages = ["zod", "Bun.hash (native)"];
 
@@ -59,8 +59,8 @@ class ModuleResolutionDemo {
   }
 
   private demonstrateModuleResolution(): void {
-    console.log("\n🔍 Module Resolution Features");
-    console.log("=============================");
+    console.info("\n🔍 Module Resolution Features");
+    console.info("=============================");
 
     const resolutionStart = performance.now();
 
@@ -80,14 +80,14 @@ class ModuleResolutionDemo {
     ];
 
     modules.forEach((module) => {
-      console.log(`📁 Resolved module: ${module}`);
+      console.info(`📁 Resolved module: ${module}`);
       this.metrics.resolvedModules.push(module);
     });
 
     const resolutionEnd = performance.now();
     this.metrics.moduleResolutionTime = resolutionEnd - resolutionStart;
 
-    console.log(
+    console.info(
       `⚡ Module resolution completed in ${this.metrics.moduleResolutionTime.toFixed(2)}ms`
     );
 
@@ -96,35 +96,35 @@ class ModuleResolutionDemo {
   }
 
   private demonstrateAdvancedFeatures(): void {
-    console.log("\n🎯 Advanced Module Features");
-    console.log("===========================");
+    console.info("\n🎯 Advanced Module Features");
+    console.info("===========================");
 
     // 1. Mixed import/require usage
-    console.log("✅ Mixed ES modules and CommonJS:");
-    console.log("   - import { serve } from 'bun' (ES module)");
-    console.log("   - const { hash } = require('hasha') (CommonJS)");
+    console.info("✅ Mixed ES modules and CommonJS:");
+    console.info("   - import { serve } from 'bun' (ES module)");
+    console.info("   - const { hash } = require('hasha') (CommonJS)");
 
     // 2. TypeScript extension handling
-    console.log("✅ TypeScript extension resolution:");
-    console.log("   - .ts, .tsx, .js, .jsx all supported");
-    console.log("   - Explicit extensions optional");
+    console.info("✅ TypeScript extension resolution:");
+    console.info("   - .ts, .tsx, .js, .jsx all supported");
+    console.info("   - Explicit extensions optional");
 
     // 3. Version specifier support
-    console.log("✅ Version specifier imports:");
-    console.log("   - zod@^3.20.0 (semver range)");
-    console.log("   - hasha@5.2.1 (exact version)");
+    console.info("✅ Version specifier imports:");
+    console.info("   - zod@^3.20.0 (semver range)");
+    console.info("   - hasha@5.2.1 (exact version)");
 
     // 4. Cache behavior
-    console.log("✅ Module cache behavior:");
-    console.log("   - Global cache for efficiency");
-    console.log("   - 24-hour cache for latest versions");
-    console.log("   - Space-efficient deduplication");
+    console.info("✅ Module cache behavior:");
+    console.info("   - Global cache for efficiency");
+    console.info("   - 24-hour cache for latest versions");
+    console.info("   - Space-efficient deduplication");
 
     // 5. Built-in module support
-    console.log("✅ Built-in Bun modules:");
-    console.log("   - bun:ffi (Foreign Function Interface)");
-    console.log("   - bun:sqlite (SQLite database)");
-    console.log("   - bun:crypto (Cryptography)");
+    console.info("✅ Built-in Bun modules:");
+    console.info("   - bun:ffi (Foreign Function Interface)");
+    console.info("   - bun:sqlite (SQLite database)");
+    console.info("   - bun:crypto (Cryptography)");
   }
 
   private setupServer(): void {
@@ -133,15 +133,15 @@ class ModuleResolutionDemo {
       fetch: this.createRequestHandler(),
     });
 
-    console.log(
+    console.info(
       `\n🚀 Module resolution server running at http://localhost:${this.port}`
     );
-    console.log("📊 Available endpoints:");
-    console.log("  GET /api/metrics - Module resolution metrics");
-    console.log("  GET /api/packages - Auto-installed packages");
-    console.log("  GET /api/resolution - Module resolution demo");
-    console.log("  POST /api/test-module - Test module resolution");
-    console.log("  GET /health - Health check");
+    console.info("📊 Available endpoints:");
+    console.info("  GET /api/metrics - Module resolution metrics");
+    console.info("  GET /api/packages - Auto-installed packages");
+    console.info("  GET /api/resolution - Module resolution demo");
+    console.info("  POST /api/test-module - Test module resolution");
+    console.info("  GET /health - Health check");
   }
 
   private createRequestHandler() {
@@ -475,7 +475,7 @@ class ModuleResolutionDemo {
             fetch('/api/packages')
                 .then(r => r.json())
                 .then(data => {
-                    console.log('Package Info:', data);
+                    console.info('Package Info:', data);
                     alert('Package info logged to console');
                 });
         }
@@ -484,7 +484,7 @@ class ModuleResolutionDemo {
             fetch('/api/resolution')
                 .then(r => r.json())
                 .then(data => {
-                    console.log('Resolution Demo:', data);
+                    console.info('Resolution Demo:', data);
                     alert('Resolution demo logged to console');
                 });
         }
@@ -504,13 +504,13 @@ class ModuleResolutionDemo {
 }
 
 // Start the module resolution demonstration
-console.log("🚀 Starting Advanced Bun Module Resolution Demo...");
-console.log("💡 Features demonstrated:");
-console.log("  • Auto-install with version specifiers");
-console.log("  • Advanced module resolution patterns");
-console.log("  • Cache efficiency and deduplication");
-console.log("  • ES modules and CommonJS interoperability");
-console.log("  • Built-in Bun module support");
+console.info("🚀 Starting Advanced Bun Module Resolution Demo...");
+console.info("💡 Features demonstrated:");
+console.info("  • Auto-install with version specifiers");
+console.info("  • Advanced module resolution patterns");
+console.info("  • Cache efficiency and deduplication");
+console.info("  • ES modules and CommonJS interoperability");
+console.info("  • Built-in Bun module support");
 
 const demo = new ModuleResolutionDemo();
 
@@ -519,6 +519,6 @@ setInterval(() => {
   // Prevent process from exiting
 }, 1000000);
 
-console.log("✅ Module resolution demo initialized successfully!");
-console.log("📦 Test auto-install: zod@^3.20.0, hasha@5.2.1");
-console.log("🔍 Try testing different module patterns via the web interface!");
+console.info("✅ Module resolution demo initialized successfully!");
+console.info("📦 Test auto-install: zod@^3.20.0, hasha@5.2.1");
+console.info("🔍 Try testing different module patterns via the web interface!");

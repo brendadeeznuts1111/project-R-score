@@ -24,7 +24,7 @@ async function testProtocolPerformance() {
   let port = TEST_PORT_START;
   
   for (const protocol of protocols) {
-    console.log(`\n🧪 Testing ${protocol} protocol...`);
+    console.info(`\n🧪 Testing ${protocol} protocol...`);
 
     let server: ReturnType<typeof createEnhancedServer> | null = null;
     try {
@@ -54,11 +54,11 @@ async function testProtocolPerformance() {
       await runLoadTest(server.url, protocol);
 
       // Get final stats
-      console.log(`\n📊 ${protocol.toUpperCase()} Results:`);
-      console.log(`  Final Protocol: ${server.protocol}`);
-      console.log(`  Requests/sec: ${server.performance.requestsPerSecond?.toFixed(2)}`);
-      console.log(`  Avg Response Time: ${server.performance.avgResponseTime?.toFixed(2)}ms`);
-      console.log(`  Compression Ratio: ${((server.performance.bytesTransferred?.compressionRatio || 0) * 100).toFixed(1)}%`);
+      console.info(`\n📊 ${protocol.toUpperCase()} Results:`);
+      console.info(`  Final Protocol: ${server.protocol}`);
+      console.info(`  Requests/sec: ${server.performance.requestsPerSecond?.toFixed(2)}`);
+      console.info(`  Avg Response Time: ${server.performance.avgResponseTime?.toFixed(2)}ms`);
+      console.info(`  Compression Ratio: ${((server.performance.bytesTransferred?.compressionRatio || 0) * 100).toFixed(1)}%`);
       
       // Test protocol optimizer
       const optimizer = new ProtocolOptimizer(server);
@@ -66,8 +66,8 @@ async function testProtocolPerformance() {
       
       const recommendations = optimizer.getProtocolRecommendations();
       if (recommendations.length > 0) {
-        console.log('💡 Recommendations:');
-        recommendations.forEach(rec => console.log(`  • ${rec}`));
+        console.info('💡 Recommendations:');
+        recommendations.forEach(rec => console.info(`  • ${rec}`));
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
@@ -100,8 +100,8 @@ async function runLoadTest(url: string, protocol: string) {
   const duration = Date.now() - start;
   const rps = (requests / (duration / 1000)).toFixed(2);
   
-  console.log(`  Load test: ${requests} requests in ${duration}ms (${rps} req/sec)`);
-  console.log(`  Success rate: ${results.filter(r => !r.startsWith('Error')).length}/${requests}`);
+  console.info(`  Load test: ${requests} requests in ${duration}ms (${rps} req/sec)`);
+  console.info(`  Success rate: ${results.filter(r => !r.startsWith('Error')).length}/${requests}`);
 }
 
 // Run the test

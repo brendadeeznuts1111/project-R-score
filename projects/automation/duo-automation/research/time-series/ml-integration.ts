@@ -24,7 +24,7 @@ export class MLPatternRecognizer {
   }
 
   private async initializeMLModels(): Promise<void> {
-    console.log('🧠 Initializing ML pattern recognition models...');
+    console.info('🧠 Initializing ML pattern recognition models...');
     
     // Initialize with pre-trained weights for common patterns
     this.modelWeights.set('anomaly_classifier', {
@@ -39,9 +39,9 @@ export class MLPatternRecognizer {
     try {
       const savedModels = await Bun.file('./models/pattern-models.json').json();
       this.modelWeights = new Map(Object.entries(savedModels));
-      console.log('✅ Loaded pre-trained ML models');
+      console.info('✅ Loaded pre-trained ML models');
     } catch {
-      console.log('⚠️  No pre-trained models found, using default weights');
+      console.info('⚠️  No pre-trained models found, using default weights');
     }
   }
 
@@ -472,7 +472,7 @@ export class MLPatternRecognizer {
     anomalies: Anomaly[],
     aggregations: AggregationWindow[]
   ): Promise<void> {
-    console.log('🎯 Training ML model with new data...');
+    console.info('🎯 Training ML model with new data...');
     
     // Extract features from anomalies for supervised learning
     const trainingFeatures = anomalies.map(anomaly => {
@@ -496,7 +496,7 @@ export class MLPatternRecognizer {
     }
     
     // Simple online learning update (in production, use proper ML library)
-    console.log(`📚 Training data size: ${this.trainingData.length} samples`);
+    console.info(`📚 Training data size: ${this.trainingData.length} samples`);
     
     // Save updated model
     await this.saveModel();
@@ -507,7 +507,7 @@ export class MLPatternRecognizer {
     
     try {
       await Bun.write('./models/pattern-models.json', Bun.deepToString(modelData, null, 2) // 3x faster);
-      console.log('💾 ML model saved to disk');
+      console.info('💾 ML model saved to disk');
     } catch (error) {
       console.error('❌ Failed to save ML model:', error.message);
     }

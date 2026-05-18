@@ -40,7 +40,7 @@ class DocsCDN {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    console.log(`📄 Docs CDN Request: ${path}`);
+    console.info(`📄 Docs CDN Request: ${path}`);
 
     // Handle root path
     if (path === '/' || path === '') {
@@ -127,7 +127,7 @@ class DocsCDN {
       const cached = this.cache.get(cacheKey);
 
       if (cached && this.isCacheValid(cached)) {
-        console.log(`✅ Serving from cache: ${path}`);
+        console.info(`✅ Serving from cache: ${path}`);
         return new Response(cached.content, {
           headers: {
             'Content-Type': cached.contentType,
@@ -141,7 +141,7 @@ class DocsCDN {
       }
 
       // Fetch from GitHub
-      console.log(`🔄 Fetching from GitHub: ${path}`);
+      console.info(`🔄 Fetching from GitHub: ${path}`);
       const content = await this.fetchFromGitHub(`docs${path}`);
 
       // Determine content type
@@ -176,7 +176,7 @@ class DocsCDN {
       // Try to serve from cache if available
       const cached = this.cache.get(`docs${path}`);
       if (cached) {
-        console.log(`⚠️ Serving stale cache for ${path}`);
+        console.info(`⚠️ Serving stale cache for ${path}`);
         return new Response(cached.content, {
           headers: {
             'Content-Type': cached.contentType,
@@ -328,7 +328,7 @@ class DocsCDN {
   private async fetchFromGitHub(path: string): Promise<string> {
     const githubUrl = `https://raw.githubusercontent.com/${this.env.GITHUB_REPO}/${this.env.GITHUB_BRANCH}/${path}`;
 
-    console.log(`🌐 Fetching from GitHub: ${githubUrl}`);
+    console.info(`🌐 Fetching from GitHub: ${githubUrl}`);
 
     const headers: Record<string, string> = {
       'User-Agent': 'Crystal-Clear-Docs-CDN/1.0'

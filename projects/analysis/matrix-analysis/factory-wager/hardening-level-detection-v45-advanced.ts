@@ -3,10 +3,10 @@
  * Sophisticated progressive hardening analysis with override detection
  */
 
-console.log('🔧 HARDENING LEVEL DETECTION v4.5 - ADVANCED SECURITY ASSESSMENT!')
-console.log('='.repeat(80))
+console.info('🔧 HARDENING LEVEL DETECTION v4.5 - ADVANCED SECURITY ASSESSMENT!')
+console.info('='.repeat(80))
 
-console.log(`
+console.info(`
 🚀 SOPHISTICATED SECURITY HARDENING ANALYSIS DEPLOYED!
 
 ✅ determineHardeningLevel() Method - INTELLIGENT ASSESSMENT:
@@ -223,9 +223,9 @@ The hardening level detection provides automated security assessment that instan
 🔧✅ HARDENING LEVEL DETECTION v4.5 - ADVANCED SECURITY ASSESSMENT COMPLETE! ✅🔧
 `)
 
-console.log('🔧✅ HARDENING LEVEL DETECTION v4.5 - ADVANCED SECURITY ASSESSMENT!')
-console.log('🛡️ Intelligent assessment - Context-aware security analysis!')
-console.log('📊 Progressive detection - Environment hierarchy evaluation!')
-console.log('🔍 Override validation - Security modification verification!')
-console.log('🎯 Type safety - Strict union type enforcement!')
-console.log('💎 FactoryWager v4.5 - Sophisticated security assessment complete!')
+console.info('🔧✅ HARDENING LEVEL DETECTION v4.5 - ADVANCED SECURITY ASSESSMENT!')
+console.info('🛡️ Intelligent assessment - Context-aware security analysis!')
+console.info('📊 Progressive detection - Environment hierarchy evaluation!')
+console.info('🔍 Override validation - Security modification verification!')
+console.info('🎯 Type safety - Strict union type enforcement!')
+console.info('💎 FactoryWager v4.5 - Sophisticated security assessment complete!')

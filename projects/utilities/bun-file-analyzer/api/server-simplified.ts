@@ -108,7 +108,7 @@ async function handleSearch(req: Request, params: RouteParams) {
 async function handleUpload(req: Request, params: RouteParams) {
   // Using Bun's optimized .bytes() method for binary data
   const data = await req.bytes(); 
-  console.log(`Received ${data.length} bytes`);
+  console.info(`Received ${data.length} bytes`);
   
   return Response.json({ success: true, size: data.length });
 }
@@ -215,7 +215,7 @@ export const server = Bun.serve({
   },
 });
 
-console.log(
+console.info(
   `%c🚀 URLPattern server at ${server.url}`, 
   `color: ${Bun.color("hsl(195, 85%, 55%)", "ansi")}` 
 );

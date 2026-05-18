@@ -14,7 +14,7 @@
  * 
  * // This fetch and parsing happens at build-time, not runtime
  * const meta = await extractMetaTags('https://example.com');
- * console.log(`Title: ${meta.title}`);
+ * console.info(`Title: ${meta.title}`);
  * ```
  */
 

@@ -914,10 +914,10 @@ describe("Sportsbook Wire Protocol Simulation", () => {
     const odds = new CustomFloat64Array(10, "odds");
 
     // These should not throw
-    expect(() => console.log(header)).not.toThrow();
-    expect(() => console.log(ids)).not.toThrow();
-    expect(() => console.log(odds)).not.toThrow();
-    expect(() => console.log({ header, ids, odds })).not.toThrow();
+    expect(() => console.info(header)).not.toThrow();
+    expect(() => console.info(ids)).not.toThrow();
+    expect(() => console.info(odds)).not.toThrow();
+    expect(() => console.info({ header, ids, odds })).not.toThrow();
   });
 
   test("Bun.inspect works on all types", () => {

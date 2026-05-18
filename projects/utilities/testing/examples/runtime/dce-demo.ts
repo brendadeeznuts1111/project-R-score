@@ -23,12 +23,12 @@ function incrementCounter() {
   counter++;
 }
 
-console.log("--- DCE Annotations Demo ---");
+console.info("--- DCE Annotations Demo ---");
 
 // Calling functions to verify they exist
-console.log(`add(1, 2) = ${add(1, 2)}`);
+console.info(`add(1, 2) = ${add(1, 2)}`);
 incrementCounter();
-console.log(`counter = ${counter}`);
+console.info(`counter = ${counter}`);
 
 // Note: To see the effect of these annotations, run:
 // bun build ./dce-demo.ts --outdir ./out --analyze

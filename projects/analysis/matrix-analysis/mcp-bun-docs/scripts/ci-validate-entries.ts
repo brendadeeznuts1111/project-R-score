@@ -56,47 +56,47 @@ const rows = [
 	},
 ];
 
-console.log("\n  ╭─────────────────────────────────────────────────────────╮");
-console.log("  │  🔷 Tier-1380 CI Validation                              │");
-console.log("  ╰─────────────────────────────────────────────────────────╯\n");
+console.info("\n  ╭─────────────────────────────────────────────────────────╮");
+console.info("  │  🔷 Tier-1380 CI Validation                              │");
+console.info("  ╰─────────────────────────────────────────────────────────╯\n");
 
 if (typeof Bun !== "undefined" && Bun.inspect?.table) {
-	console.log(Bun.inspect.table(rows, ["Check", "Value", "Status"], { colors: true }));
+	console.info(Bun.inspect.table(rows, ["Check", "Value", "Status"], { colors: true }));
 } else {
-	rows.forEach((r) => console.log(`  ${r.Check}: ${r.Value}  ${r.Status}`));
+	rows.forEach((r) => console.info(`  ${r.Check}: ${r.Value}  ${r.Status}`));
 }
 
 if (DEPRECATED.length > 0) {
-	console.log("\n  ❌ Deprecated entries (CI fail):\n");
+	console.info("\n  ❌ Deprecated entries (CI fail):\n");
 	const depRows = DEPRECATED.map((e) => ({
 		Term: e.term,
 		Path: e.path,
 		"Min ver": e.bunMinVersion,
 	}));
 	if (typeof Bun !== "undefined" && Bun.inspect?.table) {
-		console.log(
+		console.info(
 			Bun.inspect.table(depRows, ["Term", "Path", "Min ver"], { colors: true }),
 		);
 	} else {
-		DEPRECATED.forEach((e) => console.log(`     - ${e.term} (${e.path})`));
+		DEPRECATED.forEach((e) => console.info(`     - ${e.term} (${e.path})`));
 	}
 	process.exit(1);
 }
 
 if (EXPERIMENTAL.length > 0) {
-	console.log("\n  ⚠  Experimental (excluded from prod-safe):\n");
+	console.info("\n  ⚠  Experimental (excluded from prod-safe):\n");
 	const expRows = EXPERIMENTAL.map((e) => ({
 		Term: e.term,
 		Path: e.path,
 		Platforms: e.platforms.join(", "),
 	}));
 	if (typeof Bun !== "undefined" && Bun.inspect?.table) {
-		console.log(
+		console.info(
 			Bun.inspect.table(expRows, ["Term", "Path", "Platforms"], { colors: true }),
 		);
 	} else {
-		EXPERIMENTAL.forEach((e) => console.log(`     - ${e.term} (${e.path})`));
+		EXPERIMENTAL.forEach((e) => console.info(`     - ${e.term} (${e.path})`));
 	}
 }
 
-console.log("\n  ✅ CI validation passed (no deprecated)\n");
+console.info("\n  ✅ CI validation passed (no deprecated)\n");

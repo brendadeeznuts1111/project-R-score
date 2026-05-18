@@ -18,7 +18,7 @@ async function main() {
   switch (command) {
     case "dashboard":
     case "dash":
-      console.log("🚀 Starting Cash App Green Dashboard...");
+      console.info("🚀 Starting Cash App Green Dashboard...");
       await dashboard.start();
       break;
 
@@ -47,7 +47,7 @@ async function main() {
       }
 
       try {
-        console.log(`💰 Depositing $${amount} to Green account for user ${userId}...`);
+        console.info(`💰 Depositing $${amount} to Green account for user ${userId}...`);
         
         const result = await greenClient.depositToGreen({
           userId,
@@ -56,8 +56,8 @@ async function main() {
           traceId: `manual-cli-${Date.now()}`
         });
 
-        console.log(`✅ Success! Deposit ID: ${result.depositId}`);
-        console.log(`💵 Projected annual yield: $${result.yieldProjection.toFixed(2)}`);
+        console.info(`✅ Success! Deposit ID: ${result.depositId}`);
+        console.info(`💵 Projected annual yield: $${result.yieldProjection.toFixed(2)}`);
         
       } catch (error) {
         console.error(`❌ Deposit failed: ${error}`);
@@ -81,13 +81,13 @@ async function main() {
       }
       
       try {
-        console.log(`📊 Checking balance for user ${balanceUserId}...`);
+        console.info(`📊 Checking balance for user ${balanceUserId}...`);
         
         const balance = await greenClient.getGreenBalance(balanceUserId);
         
-        console.log(`💰 Current Balance: $${balance.balance.toLocaleString()}`);
-        console.log(`💵 Yield Earned: $${balance.yieldEarned.toLocaleString()}`);
-        console.log(`📈 Current APY: ${(balance.apy * 100).toFixed(2)}%`);
+        console.info(`💰 Current Balance: $${balance.balance.toLocaleString()}`);
+        console.info(`💵 Yield Earned: $${balance.yieldEarned.toLocaleString()}`);
+        console.info(`📈 Current APY: ${(balance.apy * 100).toFixed(2)}%`);
         
       } catch (error) {
         console.error(`❌ Balance check failed: ${error}`);
@@ -98,14 +98,14 @@ async function main() {
     case "price":
       try {
         const currentPrice = priceFeed.getCurrentPrice();
-        console.log(`💰 Current BTC Price: $${currentPrice.toLocaleString()}`);
+        console.info(`💰 Current BTC Price: $${currentPrice.toLocaleString()}`);
         
         const metrics = router.getMetrics();
-        console.log("\n📊 Routing Metrics:");
-        console.log(`  Total Routed: $${metrics.totalRouted.toLocaleString()}`);
-        console.log(`  Projected Yield: $${metrics.totalYieldProjected.toLocaleString()}`);
-        console.log(`  Average Route Time: ${metrics.averageRouteTime.toFixed(0)}ms`);
-        console.log(`  Success Rate: ${(metrics.successRate * 100).toFixed(1)}%`);
+        console.info("\n📊 Routing Metrics:");
+        console.info(`  Total Routed: $${metrics.totalRouted.toLocaleString()}`);
+        console.info(`  Projected Yield: $${metrics.totalYieldProjected.toLocaleString()}`);
+        console.info(`  Average Route Time: ${metrics.averageRouteTime.toFixed(0)}ms`);
+        console.info(`  Success Rate: ${(metrics.successRate * 100).toFixed(1)}%`);
         
       } catch (error) {
         console.error(`❌ Price check failed: ${error}`);
@@ -115,18 +115,18 @@ async function main() {
 
     case "status":
       try {
-        console.log("🏥 DuoPlus Cash App Green System Status\n");
+        console.info("🏥 DuoPlus Cash App Green System Status\n");
         
         // Check BTC price feed
         const price = priceFeed.getCurrentPrice();
-        console.log(`💰 BTC Price: $${price.toLocaleString()} ✅`);
+        console.info(`💰 BTC Price: $${price.toLocaleString()} ✅`);
         
         // Check routing metrics
         const metrics = router.getMetrics();
-        console.log(`📊 Router: ${metrics.totalRouted > 0 ? "✅ Active" : "⚠️ Idle"}`);
+        console.info(`📊 Router: ${metrics.totalRouted > 0 ? "✅ Active" : "⚠️ Idle"}`);
         
         // Check Green client
-        console.log(`🟩 Green Client: Ready ✅`);
+        console.info(`🟩 Green Client: Ready ✅`);
         
         // Environment variables
         const requiredEnvVars = [
@@ -135,13 +135,13 @@ async function main() {
           "CHAINALYSIS_API_KEY"
         ];
         
-        console.log("\n🔧 Configuration:");
+        console.info("\n🔧 Configuration:");
         requiredEnvVars.forEach(envVar => {
           const status = process.env[envVar] ? "✅" : "❌";
-          console.log(`  ${envVar}: ${status}`);
+          console.info(`  ${envVar}: ${status}`);
         });
         
-        console.log("\n📈 System Health: All systems operational ✅");
+        console.info("\n📈 System Health: All systems operational ✅");
         
       } catch (error) {
         console.error(`❌ Status check failed: ${error}`);
@@ -151,7 +151,7 @@ async function main() {
 
     case "test":
       try {
-        console.log("🧪 Running Cash App Green integration tests...");
+        console.info("🧪 Running Cash App Green integration tests...");
         
         const process = Bun.spawn(["bun", "test", "test/cashapp-green-integration.test.ts"], {
           stdout: "inherit",
@@ -161,9 +161,9 @@ async function main() {
         const exitCode = await process.exited;
         
         if (exitCode === 0) {
-          console.log("✅ All tests passed!");
+          console.info("✅ All tests passed!");
         } else {
-          console.log("❌ Some tests failed.");
+          console.info("❌ Some tests failed.");
           // Use Bun.exit instead of process.exit for subprocess
           throw new Error(`Tests failed with exit code: ${exitCode}`);
         }
@@ -175,7 +175,7 @@ async function main() {
       break;
 
     default:
-      console.log(`
+      console.info(`
 🟩 Cash App Green CLI - Available Commands:
 
   dashboard          Launch interactive yield dashboard
@@ -208,13 +208,13 @@ process.on("unhandledRejection", (reason, promise) => {
 
 // Graceful shutdown
 process.on("SIGINT", () => {
-  console.log("\n👋 Shutting down gracefully...");
+  console.info("\n👋 Shutting down gracefully...");
   priceFeed.destroy();
   process.exit(0);
 });
 
 process.on("SIGTERM", () => {
-  console.log("\n👋 Shutting down gracefully...");
+  console.info("\n👋 Shutting down gracefully...");
   priceFeed.destroy();
   process.exit(0);
 });

@@ -33,7 +33,7 @@ export class MMapCache {
 			return new TextDecoder().decode(markets);
 		} catch (e: any) {
 			if (e.message?.includes('non-numeric') || e.message?.includes('Invalid')) {
-				console.log('Cache corrupted - rebuilding');
+				console.info('Cache corrupted - rebuilding');
 				await this.rebuildCache();
 				// Retry after rebuild
 				return this.loadMarkets();

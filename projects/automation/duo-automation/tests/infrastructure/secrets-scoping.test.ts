@@ -29,7 +29,7 @@ interface TestResult {
 const testResults: TestResult[] = [];
 
 function log(message: string) {
-  console.log(`[SECRETS-TEST] ${message}`);
+  console.info(`[SECRETS-TEST] ${message}`);
 }
 
 function addResult(testName: string, passed: boolean, message: string, details?: any) {

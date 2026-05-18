@@ -27,8 +27,8 @@ function createWorker() {
 
 createWorker();
 
-console.log("🧬 T3-Lattice Worker Transferable Benchmarks (4MB Payload)");
-console.log("=========================================================");
+console.info("🧬 T3-Lattice Worker Transferable Benchmarks (4MB Payload)");
+console.info("=========================================================");
 
 bench("postMessage(Standard Object with 4MB Uint8Array)", () => {
   const data = {
@@ -51,6 +51,6 @@ await run();
 
 // Cleanup
 setTimeout(() => {
-  console.log(`\nVerification: Sent ${sentCount}, Received ${receivedCount[0]}`);
+  console.info(`\nVerification: Sent ${sentCount}, Received ${receivedCount[0]}`);
   worker.terminate();
 }, 1000);

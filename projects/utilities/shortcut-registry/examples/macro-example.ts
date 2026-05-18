@@ -57,22 +57,22 @@ export const SHORTCUT_STATS = stats;
 
 // Example function that uses the embedded data
 export function displayBuildInfo() {
-  console.log('=== ShortcutRegistry Build Info ===');
-  console.log(`Version: ${BUILD_INFO.version}`);
-  console.log(`Build Time: ${BUILD_INFO.buildTime}`);
-  console.log(`Git Commit: ${BUILD_INFO.commit}`);
-  console.log(`Platform: ${BUILD_INFO.platform}`);
-  console.log('');
-  console.log('=== Shortcut Statistics ===');
-  console.log(`Total Shortcuts: ${SHORTCUT_STATS.total}`);
-  console.log(`By Category:`, SHORTCUT_STATS.byCategory);
-  console.log(`By Scope:`, SHORTCUT_STATS.byScope);
-  console.log('');
-  console.log('=== Available Shortcuts ===');
+  console.info('=== ShortcutRegistry Build Info ===');
+  console.info(`Version: ${BUILD_INFO.version}`);
+  console.info(`Build Time: ${BUILD_INFO.buildTime}`);
+  console.info(`Git Commit: ${BUILD_INFO.commit}`);
+  console.info(`Platform: ${BUILD_INFO.platform}`);
+  console.info('');
+  console.info('=== Shortcut Statistics ===');
+  console.info(`Total Shortcuts: ${SHORTCUT_STATS.total}`);
+  console.info(`By Category:`, SHORTCUT_STATS.byCategory);
+  console.info(`By Scope:`, SHORTCUT_STATS.byScope);
+  console.info('');
+  console.info('=== Available Shortcuts ===');
   shortcutIds.forEach(id => {
     const shortcut = shortcuts.find(s => s.id === id);
     if (shortcut) {
-      console.log(`  ${id}: ${shortcut.description} (${shortcut.default.primary})`);
+      console.info(`  ${id}: ${shortcut.description} (${shortcut.default.primary})`);
     }
   });
 }

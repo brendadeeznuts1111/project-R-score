@@ -54,7 +54,7 @@ export default {
     // Route: /reload (hot reload simulation)
     if (pathname === '/reload') {
       state.version = '2.0.0';
-      console.log(`🔄 Hot reload triggered! New version: ${state.version}`);
+      console.info(`🔄 Hot reload triggered! New version: ${state.version}`);
       return Response.json({
         reloaded: true,
         version: state.version,
@@ -104,8 +104,8 @@ Test with:
   },
 } satisfies Parameters<typeof Bun.serve>[0];
 
-console.log('✅ Bun Server started');
-console.log('📝 Unix socket: ./my-socket.sock');
-console.log('⏱️  Idle timeout: 10 seconds');
-console.log('🚀 Ready for requests!\n');
+console.info('✅ Bun Server started');
+console.info('📝 Unix socket: ./my-socket.sock');
+console.info('⏱️  Idle timeout: 10 seconds');
+console.info('🚀 Ready for requests!\n');
 

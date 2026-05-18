@@ -115,7 +115,7 @@ describe('Lifecycle Hooks', () => {
 
   beforeAll(() => {
     events.push('beforeAll');
-    console.log('⚡ Suite setup complete');
+    console.info('⚡ Suite setup complete');
   });
 
   beforeEach(() => {
@@ -128,7 +128,7 @@ describe('Lifecycle Hooks', () => {
 
   afterAll(() => {
     events.push('afterAll');
-    console.log('🏁 Suite cleanup complete');
+    console.info('🏁 Suite cleanup complete');
     expect(events.filter(e => e === 'beforeAll').length).toBe(1);
     expect(events.filter(e => e === 'afterAll').length).toBe(1);
   });

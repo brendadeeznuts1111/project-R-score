@@ -20,17 +20,17 @@ export class KqueueEventLoopFix {
   // Initialize kqueue event loop with fixes
   static initialize(): void {
     if (!isFeatureEnabled()) {
-      console.log("⚠️  Kqueue Event Loop: Feature disabled, using fallback");
+      console.info("⚠️  Kqueue Event Loop: Feature disabled, using fallback");
       return;
     }
 
     if (this.eventLoopActive) {
-      console.log("✅ Kqueue Event Loop: Already initialized");
+      console.info("✅ Kqueue Event Loop: Already initialized");
       return;
     }
 
     this.eventLoopActive = true;
-    console.log("✅ Kqueue Event Loop: Initialized with EV_ONESHOT support");
+    console.info("✅ Kqueue Event Loop: Initialized with EV_ONESHOT support");
   }
 
   // Register event filter with fix for & vs == bug
@@ -211,7 +211,7 @@ export class KqueueEventLoopFix {
     const errors = [
       { code: "EINVAL", message: "Invalid filter", fix: () => this.fixCommonIssues({ filter: 0 }) },
       { code: "EAGAIN", message: "Resource temporarily unavailable", fix: () => this.fixCommonIssues({ timeout: 100 }) },
-      { code: "EBADF", message: "Bad file descriptor", fix: () => console.log("Close and reopen descriptor") },
+      { code: "EBADF", message: "Bad file descriptor", fix: () => console.info("Close and reopen descriptor") },
     ];
 
     errors.forEach((error) => {

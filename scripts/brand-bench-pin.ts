@@ -46,7 +46,7 @@ async function main(): Promise<void> {
 
   await mkdir(dirname(options.outPath), { recursive: true });
   await writeFile(options.outPath, JSON.stringify(next, null, 2));
-  console.log(JSON.stringify(next, null, 2));
+  console.info(JSON.stringify(next, null, 2));
 }
 
 if (import.meta.main) {

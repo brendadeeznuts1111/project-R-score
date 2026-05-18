@@ -22,7 +22,7 @@ class HeadscaleCLI {
         "INSERT INTO users (id, name, created_at) VALUES (?, ?, ?)"
       );
       stmt.run(id, name, createdAt);
-      console.log(`✅ User created: ${name} (${id})`);
+      console.info(`✅ User created: ${name} (${id})`);
     } catch (error) {
       console.error(`❌ Error creating user: ${error}`);
     }
@@ -52,8 +52,8 @@ class HeadscaleCLI {
         "INSERT INTO auth_keys (id, user_id, key, reusable, expiration, created_at) VALUES (?, ?, ?, ?, ?, ?)"
       );
       stmt.run(keyId, userId, key, reusable ? 1 : 0, expiration, Date.now());
-      console.log(`✅ Auth key created: ${key}`);
-      console.log(`⏰ Expires in ${expirationHours} hours`);
+      console.info(`✅ Auth key created: ${key}`);
+      console.info(`⏰ Expires in ${expirationHours} hours`);
     } catch (error) {
       console.error(`❌ Error creating auth key: ${error}`);
     }
@@ -87,7 +87,7 @@ class HeadscaleCLI {
     try {
       const stmt = this.db.prepare("DELETE FROM users WHERE id = ?");
       stmt.run(userId);
-      console.log(`✅ User deleted: ${userId}`);
+      console.info(`✅ User deleted: ${userId}`);
     } catch (error) {
       console.error(`❌ Error deleting user: ${error}`);
     }
@@ -97,7 +97,7 @@ class HeadscaleCLI {
     try {
       const stmt = this.db.prepare("DELETE FROM nodes WHERE id = ?");
       stmt.run(nodeId);
-      console.log(`✅ Node deleted: ${nodeId}`);
+      console.info(`✅ Node deleted: ${nodeId}`);
     } catch (error) {
       console.error(`❌ Error deleting node: ${error}`);
     }
@@ -127,7 +127,7 @@ async function main() {
         } else if (subcommand === "delete" && param) {
           await cli.deleteUser(param);
         } else {
-          console.log("Usage: headscale-cli user <create|list|delete> [name|id]");
+          console.info("Usage: headscale-cli user <create|list|delete> [name|id]");
         }
         break;
 
@@ -140,7 +140,7 @@ async function main() {
         } else if (subcommand === "list" && param) {
           await cli.listAuthKeys(param);
         } else {
-          console.log("Usage: headscale-cli authkey <create|list> <user_id>");
+          console.info("Usage: headscale-cli authkey <create|list> <user_id>");
         }
         break;
 
@@ -150,12 +150,12 @@ async function main() {
         } else if (subcommand === "delete" && param) {
           await cli.deleteNode(param);
         } else {
-          console.log("Usage: headscale-cli node <list|delete> <user_id|node_id>");
+          console.info("Usage: headscale-cli node <list|delete> <user_id|node_id>");
         }
         break;
 
       default:
-        console.log(`
+        console.info(`
 Headscale CLI (Bun-native)
 
 Usage: headscale-cli <command> <subcommand> [options]

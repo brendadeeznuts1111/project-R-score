@@ -28,14 +28,14 @@ beforeAll(async () => {
   // Create test directories if they don't exist
   await ensureTestDirectories();
   
-  console.log('🧪 Test environment initialized');
+  console.info('🧪 Test environment initialized');
 });
 
 // Global cleanup after all tests
 afterAll(async () => {
   // Clean up test environment
   await cleanupTestEnvironment();
-  console.log('🧹 Test environment cleaned up');
+  console.info('🧹 Test environment cleaned up');
 });
 
 // Setup before each test

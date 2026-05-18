@@ -58,7 +58,7 @@ export class FeedConnectionPool {
 				tls: feed.port === 443 || feed.hostname?.includes('https'),
 				socket: {
 					data: (sock, data) => {
-						console.log(`📦 Received ${data.length} bytes from ${sock.remoteAddress}`);
+						console.info(`📦 Received ${data.length} bytes from ${sock.remoteAddress}`);
 					},
 					open: () => {},
 					error: () => {},

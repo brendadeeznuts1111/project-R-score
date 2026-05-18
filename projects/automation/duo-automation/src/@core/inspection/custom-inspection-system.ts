@@ -463,7 +463,7 @@ export function InspectableClass(emoji: string, color: string) {
  */
 export function setupGlobalInspection(): void {
   // This would set up global inspection hooks
-  console.log('🎨 Custom Inspection System v1.0 initialized');
+  console.info('🎨 Custom Inspection System v1.0 initialized');
 }
 
 /**
@@ -517,17 +517,17 @@ export class InspectionStats {
   printStats(): void {
     const total = this.inspections.length;
     if (total === 0) {
-      console.log('📊 No inspection statistics available');
+      console.info('📊 No inspection statistics available');
       return;
     }
     
     const avgDuration = this.inspections.reduce((sum, i) => sum + i.duration, 0) / total;
     const errorRate = (this.inspections.filter(i => i.hasError).length / total) * 100;
     
-    console.log('📊 Inspection Statistics:');
-    console.log(`  Total Inspections: ${total}`);
-    console.log(`  Average Duration: ${avgDuration.toFixed(3)}ms`);
-    console.log(`  Error Rate: ${errorRate.toFixed(1)}%`);
+    console.info('📊 Inspection Statistics:');
+    console.info(`  Total Inspections: ${total}`);
+    console.info(`  Average Duration: ${avgDuration.toFixed(3)}ms`);
+    console.info(`  Error Rate: ${errorRate.toFixed(1)}%`);
     
     // Type breakdown
     const typeCounts = this.inspections.reduce((acc, i) => {
@@ -535,9 +535,9 @@ export class InspectionStats {
       return acc;
     }, {} as Record<string, number>);
     
-    console.log('  Types:');
+    console.info('  Types:');
     Object.entries(typeCounts).forEach(([type, count]) => {
-      console.log(`    ${type}: ${count}`);
+      console.info(`    ${type}: ${count}`);
     });
   }
 }
@@ -554,14 +554,14 @@ export function createInspectionMiddleware() {
     // Add inspection helpers to request object
     req.inspect = (object: any) => {
       if (object && typeof object[INSPECT_CUSTOM] === 'function') {
-        console.log(object[INSPECT_CUSTOM]());
+        console.info(object[INSPECT_CUSTOM]());
       } else {
-        console.log(JSON.stringify(object, null, 2));
+        console.info(JSON.stringify(object, null, 2));
       }
     };
     
     req.logInspectable = (message: string, object: any) => {
-      console.log(`🔍 ${message}:`);
+      console.info(`🔍 ${message}:`);
       req.inspect(object);
     };
     

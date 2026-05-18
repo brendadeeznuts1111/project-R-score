@@ -23,8 +23,8 @@ export class VenmoBackendServer {
    * 🚀 Start the server
    */
   async start(): Promise<void> {
-    console.log('🚀 Starting Venmo Family Account Backend Server...');
-    console.log(`📡 Server will run on port ${this.port}`);
+    console.info('🚀 Starting Venmo Family Account Backend Server...');
+    console.info(`📡 Server will run on port ${this.port}`);
 
     const server = serve({
       port: this.port,
@@ -35,19 +35,19 @@ export class VenmoBackendServer {
       }
     });
 
-    console.log(`✅ Venmo Backend Server started successfully!`);
-    console.log(`🌐 API available at: http://localhost:${this.port}`);
-    console.log(`📚 API Documentation:`);
-    console.log(`   POST /api/family/create - Create family account`);
-    console.log(`   GET  /api/family/:familyId - Get family account`);
-    console.log(`   GET  /api/family/:familyId/members - Get family members`);
-    console.log(`   POST /api/family/:familyId/join - Join family account`);
-    console.log(`   GET  /api/qr/generate - Generate payment QR code`);
-    console.log(`   POST /api/payments/send - Send payment`);
-    console.log(`   POST /api/payments/split - Create split payment`);
-    console.log(`   POST /api/payments/approve - Approve transaction`);
-    console.log(`   GET  /api/transactions/:familyId - Get family transactions`);
-    console.log(`   GET  /api/stats - Get system statistics`);
+    console.info(`✅ Venmo Backend Server started successfully!`);
+    console.info(`🌐 API available at: http://localhost:${this.port}`);
+    console.info(`📚 API Documentation:`);
+    console.info(`   POST /api/family/create - Create family account`);
+    console.info(`   GET  /api/family/:familyId - Get family account`);
+    console.info(`   GET  /api/family/:familyId/members - Get family members`);
+    console.info(`   POST /api/family/:familyId/join - Join family account`);
+    console.info(`   GET  /api/qr/generate - Generate payment QR code`);
+    console.info(`   POST /api/payments/send - Send payment`);
+    console.info(`   POST /api/payments/split - Create split payment`);
+    console.info(`   POST /api/payments/approve - Approve transaction`);
+    console.info(`   GET  /api/transactions/:familyId - Get family transactions`);
+    console.info(`   GET  /api/stats - Get system statistics`);
 
     return server;
   }
@@ -60,7 +60,7 @@ export class VenmoBackendServer {
     const method = req.method;
     const path = url.pathname;
 
-    console.log(`📡 ${method} ${path}`);
+    console.info(`📡 ${method} ${path}`);
 
     try {
       // Enable CORS for all requests

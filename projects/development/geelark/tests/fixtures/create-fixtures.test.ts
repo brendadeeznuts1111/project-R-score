@@ -16,7 +16,7 @@ test("🔧 Auto-Create Glob Test Files", async () => {
     const fullPath = path.join(process.cwd(), fixture);
     if (!(await Bun.file(fullPath).exists())) {
       await Bun.write(fullPath, `# Dev HQ test fixture\n`);
-      console.log(`📝 Created ${fixture}`);
+      console.info(`📝 Created ${fixture}`);
     }
   }
 });

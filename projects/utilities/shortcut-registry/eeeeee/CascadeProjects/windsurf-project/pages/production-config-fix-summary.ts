@@ -30,13 +30,13 @@ const fixes = [
     }
 ];
 
-console.log("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
-console.log("║                    PRODUCTION CONFIGURATION FIXES APPLIED                            ║");
-console.log("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
+console.info("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
+console.info("║                    PRODUCTION CONFIGURATION FIXES APPLIED                            ║");
+console.info("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
 
-console.log(Bun.inspect.table(fixes, undefined, { colors: true }));
+console.info(Bun.inspect.table(fixes, undefined, { colors: true }));
 
-console.log("\n📋 Required Environment Variables for Production:\n");
+console.info("\n📋 Required Environment Variables for Production:\n");
 
 const requiredVars = [
     {
@@ -83,13 +83,13 @@ const requiredVars = [
     }
 ];
 
-console.log(Bun.inspect.table(requiredVars, undefined, { colors: true }));
+console.info(Bun.inspect.table(requiredVars, undefined, { colors: true }));
 
-console.log("\n💡 Next Steps:\n");
-console.log("  1. Copy .env.production.example to .env.production");
-console.log("  2. Fill in all required environment variables");
-console.log("  3. Set up Lightning certificate: /secure/lnd/tls.cert");
-console.log("  4. Run validation: bun --define process.env.NODE_ENV=\"'production'\" scripts/config-validator.ts");
-console.log("  5. Verify all errors are resolved\n");
+console.info("\n💡 Next Steps:\n");
+console.info("  1. Copy .env.production.example to .env.production");
+console.info("  2. Fill in all required environment variables");
+console.info("  3. Set up Lightning certificate: /secure/lnd/tls.cert");
+console.info("  4. Run validation: bun --define process.env.NODE_ENV=\"'production'\" scripts/config-validator.ts");
+console.info("  5. Verify all errors are resolved\n");
 
-console.log("✅ Production configuration fixes applied!\n");
+console.info("✅ Production configuration fixes applied!\n");

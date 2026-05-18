@@ -61,8 +61,8 @@ function fixFile(filePath: string): { fixed: boolean; fixes: number } {
 }
 
 async function main() {
-  console.log('🔧 Simple Syntax Error Fixer');
-  console.log('=============================\n');
+  console.info('🔧 Simple Syntax Error Fixer');
+  console.info('=============================\n');
 
   const directories = ['src', 'crystal-clear-architecture', 'dashboard-worker'];
 
@@ -73,10 +73,10 @@ async function main() {
   let totalFixes = 0;
 
   for (const dir of directories) {
-    console.log(`📁 Scanning: ${dir}`);
+    console.info(`📁 Scanning: ${dir}`);
 
     const files = findFiles(dir, extensions);
-    console.log(`   Found ${files.length} files`);
+    console.info(`   Found ${files.length} files`);
 
     for (const file of files) {
       totalFiles++;
@@ -85,21 +85,21 @@ async function main() {
       if (result.fixed) {
         fixedFiles++;
         totalFixes += result.fixes;
-        console.log(`   ✅ Fixed: ${file} (${result.fixes} fixes)`);
+        console.info(`   ✅ Fixed: ${file} (${result.fixes} fixes)`);
       }
     }
   }
 
-  console.log('\n📊 Summary:');
-  console.log(`   📁 Total files: ${totalFiles}`);
-  console.log(`   🔧 Fixed files: ${fixedFiles}`);
-  console.log(`   ✅ Total fixes: ${totalFixes}`);
+  console.info('\n📊 Summary:');
+  console.info(`   📁 Total files: ${totalFiles}`);
+  console.info(`   🔧 Fixed files: ${fixedFiles}`);
+  console.info(`   ✅ Total fixes: ${totalFixes}`);
 
   if (fixedFiles > 0) {
-    console.log('\n🎉 Fixes applied! Run prettier again:');
-    console.log('   bunx prettier@3.2.5 --write .');
+    console.info('\n🎉 Fixes applied! Run prettier again:');
+    console.info('   bunx prettier@3.2.5 --write .');
   } else {
-    console.log('\n✨ No auto-fixable errors found.');
+    console.info('\n✨ No auto-fixable errors found.');
   }
 }
 

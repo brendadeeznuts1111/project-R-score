@@ -14,47 +14,47 @@ function getOption(name: string, fallback: string): string {
 }
 
 function printHelp(): void {
-  console.log("Autonomic (§Workflow:100) operations");
-  console.log("now");
-  console.log("cleanup");
-  console.log("monitor");
+  console.info("Autonomic (§Workflow:100) operations");
+  console.info("now");
+  console.info("cleanup");
+  console.info("monitor");
 }
 
 function handleHealNow(): void {
   const subsystem = args[2] && !args[2].startsWith("--") ? args[2] : "all";
-  console.log(`Triggering autonomic healing for: ${subsystem}`);
-  console.log(`${subsystem} OK`);
+  console.info(`Triggering autonomic healing for: ${subsystem}`);
+  console.info(`${subsystem} OK`);
 
   if (hasFlag("--deep-cleanup")) {
-    console.log("Running v2.01.05 deep filesystem cleanup");
-    console.log("Deep cleanup completed:");
+    console.info("Running v2.01.05 deep filesystem cleanup");
+    console.info("Deep cleanup completed:");
     if (hasFlag("--dry-run")) {
-      console.log("DRY RUN MODE");
+      console.info("DRY RUN MODE");
     }
   }
 }
 
 function handleHealCleanup(): void {
   const targetDir = getOption("--target-dir", "utils");
-  console.log("Advanced v2.01.05 Filesystem Cleanup");
-  console.log(`Target: ${targetDir}`);
-  console.log("Files processed:");
+  console.info("Advanced v2.01.05 Filesystem Cleanup");
+  console.info(`Target: ${targetDir}`);
+  console.info("Files processed:");
   if (hasFlag("--parallel")) {
-    console.log("Parallel operations:");
+    console.info("Parallel operations:");
   }
-  console.log("Success rate:");
+  console.info("Success rate:");
   if (hasFlag("--dry-run")) {
-    console.log("DRY RUN MODE");
+    console.info("DRY RUN MODE");
   }
 }
 
 function handleHealMonitor(): void {
-  console.log("Monitoring autonomic telemetry");
+  console.info("Monitoring autonomic telemetry");
   if (hasFlag("--include-cleanup")) {
-    console.log("Including v2.01.05 cleanup events");
+    console.info("Including v2.01.05 cleanup events");
   }
   setInterval(() => {
-    console.log("OK");
+    console.info("OK");
   }, 1000);
 }
 

@@ -6,28 +6,28 @@
 import { ScopedSecretsManager } from '../utils/scoped-secrets-manager';
 
 async function runSecretsHealthCheck() {
-  console.log('🔍 Starting Enterprise Secrets Health Check...');
+  console.info('🔍 Starting Enterprise Secrets Health Check...');
   
   const secretsManager = new ScopedSecretsManager();
   const report = await secretsManager.getHealthReport();
   
-  console.log('\n📊 Health Metrics:');
-  console.log(`- Accessible: ${report.accessible ? '✅' : '❌'}`);
-  console.log(`- Scoped Correctly: ${report.scopedCorrectly ? '✅' : '❌'}`);
-  console.log(`- Platform Supported: ${report.platformSupported ? '✅' : '❌'}`);
-  console.log(`- Storage Type: ${report.storageType}`);
-  console.log(`- Encryption: ${report.encryptionStrength}`);
+  console.info('\n📊 Health Metrics:');
+  console.info(`- Accessible: ${report.accessible ? '✅' : '❌'}`);
+  console.info(`- Scoped Correctly: ${report.scopedCorrectly ? '✅' : '❌'}`);
+  console.info(`- Platform Supported: ${report.platformSupported ? '✅' : '❌'}`);
+  console.info(`- Storage Type: ${report.storageType}`);
+  console.info(`- Encryption: ${report.encryptionStrength}`);
 
   if (report.recommendations.length > 0) {
-    console.log('\n💡 Recommendations:');
-    report.recommendations.forEach(rec => console.log(`  - ${rec}`));
+    console.info('\n💡 Recommendations:');
+    report.recommendations.forEach(rec => console.info(`  - ${rec}`));
   }
 
   // 100% Bun-Native: Performance Metric
   const start = performance.now();
   await secretsManager.getSecret('HEALTH_CHECK_PING');
   const duration = performance.now() - start;
-  console.log(`\n⚡ Secret retrieval latency: ${duration.toFixed(2)}ms`);
+  console.info(`\n⚡ Secret retrieval latency: ${duration.toFixed(2)}ms`);
 
   const debugInfo = secretsManager.exportDebugInfo();
   
@@ -42,7 +42,7 @@ async function runSecretsHealthCheck() {
   };
 
   await (Bun as any).write('reports/secrets-health.json', JSON.stringify(output, null, 2));
-  console.log('\n📄 Report exported to reports/secrets-health.json');
+  console.info('\n📄 Report exported to reports/secrets-health.json');
 
   if (!report.accessible) {
     process.exit(1);

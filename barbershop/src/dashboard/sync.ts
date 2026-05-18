@@ -514,7 +514,7 @@ export class SyncEngine {
     const delay = this.config.reconnectDelay * this.reconnectAttempts;
 
     this.reconnectTimer = setTimeout(() => {
-      console.log(`Reconnecting... (${this.reconnectAttempts}/${this.config.reconnectAttempts})`);
+      console.info(`Reconnecting... (${this.reconnectAttempts}/${this.config.reconnectAttempts})`);
       this.connect();
     }, delay);
   }

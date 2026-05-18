@@ -836,25 +836,25 @@ function handleSliceRangeRequest(request: Request): Response | null {
   }
 });
 
-console.log("🚀 Advanced Blob API Server started on http://localhost:3000");
-console.log("📊 Available endpoints:");
-console.log(
+console.info("🚀 Advanced Blob API Server started on http://localhost:3000");
+console.info("📊 Available endpoints:");
+console.info(
   "   GET /api/response-methods/blob/advanced - Comprehensive blob documentation"
 );
-console.log(
+console.info(
   "   GET /api/response-methods/blob/image - SVG image blob (603 bytes)"
 );
-console.log("   GET /api/response-methods/blob/file - File download blob");
-console.log(
+console.info("   GET /api/response-methods/blob/file - File download blob");
+console.info(
   "   GET /api/response-methods/blob/slice - Interactive slice demo (1817 bytes)"
 );
-console.log("   GET /api/response-methods/blob - Basic blob demonstration");
-console.log("   GET /health - Health check and endpoint list");
-console.log("\n📝 Example usage:");
-console.log(
+console.info("   GET /api/response-methods/blob - Basic blob demonstration");
+console.info("   GET /health - Health check and endpoint list");
+console.info("\n📝 Example usage:");
+console.info(
   "   curl http://localhost:3000/api/response-methods/blob/advanced | jq ."
 );
-console.log("   curl -I http://localhost:3000/api/response-methods/blob/image");
-console.log("   curl -O http://localhost:3000/api/response-methods/blob/file");
-console.log("   curl -I http://localhost:3000/api/response-methods/blob/slice");
-console.log("   curl http://localhost:3000/api/response-methods/blob");
+console.info("   curl -I http://localhost:3000/api/response-methods/blob/image");
+console.info("   curl -O http://localhost:3000/api/response-methods/blob/file");
+console.info("   curl -I http://localhost:3000/api/response-methods/blob/slice");
+console.info("   curl http://localhost:3000/api/response-methods/blob");

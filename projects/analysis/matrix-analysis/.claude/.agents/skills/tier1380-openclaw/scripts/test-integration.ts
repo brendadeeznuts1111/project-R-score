@@ -55,16 +55,16 @@ function test(
 }
 
 async function runTests() {
-	console.log(`${COLORS.bold}${COLORS.cyan}`);
-	console.log("╔══════════════════════════════════════════════════════════════════╗");
-	console.log("║     INTEGRATION TEST SUITE                                     ║");
-	console.log("║     Tier-1380 OpenClaw v1.0.0                                  ║");
-	console.log("╚══════════════════════════════════════════════════════════════════╝");
-	console.log(`${COLORS.reset}\n`);
+	console.info(`${COLORS.bold}${COLORS.cyan}`);
+	console.info("╔══════════════════════════════════════════════════════════════════╗");
+	console.info("║     INTEGRATION TEST SUITE                                     ║");
+	console.info("║     Tier-1380 OpenClaw v1.0.0                                  ║");
+	console.info("╚══════════════════════════════════════════════════════════════════╝");
+	console.info(`${COLORS.reset}\n`);
 
 	// ===== CONFIGURATION TESTS =====
-	console.log(`${COLORS.bold}Configuration Tests${COLORS.reset}`);
-	console.log("─".repeat(60));
+	console.info(`${COLORS.bold}Configuration Tests${COLORS.reset}`);
+	console.info("─".repeat(60));
 
 	test("telegram-topics.yaml exists", () => {
 		return readTextFile(`${import.meta.dir}/../config/telegram-topics.yaml`) !== null;
@@ -101,8 +101,8 @@ async function runTests() {
 	});
 
 	// ===== BYTES UTILITIES TESTS =====
-	console.log(`\n${COLORS.bold}Bytes Utilities Tests${COLORS.reset}`);
-	console.log("─".repeat(60));
+	console.info(`\n${COLORS.bold}Bytes Utilities Tests${COLORS.reset}`);
+	console.info("─".repeat(60));
 
 	test("formatBytes formats correctly", async () => {
 		const { formatBytes } = await import("./lib/bytes.ts");
@@ -122,8 +122,8 @@ async function runTests() {
 	});
 
 	// ===== COLOR UTILITIES TESTS =====
-	console.log(`\n${COLORS.bold}Color Utilities Tests${COLORS.reset}`);
-	console.log("─".repeat(60));
+	console.info(`\n${COLORS.bold}Color Utilities Tests${COLORS.reset}`);
+	console.info("─".repeat(60));
 
 	test("getRGBA extracts channels", () => {
 		const rgba = getRGBA("#4CAF50");
@@ -148,8 +148,8 @@ async function runTests() {
 	});
 
 	// ===== JSC MONITOR TESTS =====
-	console.log(`\n${COLORS.bold}JSC Monitor Tests${COLORS.reset}`);
-	console.log("─".repeat(60));
+	console.info(`\n${COLORS.bold}JSC Monitor Tests${COLORS.reset}`);
+	console.info("─".repeat(60));
 
 	test("getMemoryUsage returns stats", () => {
 		const mem = getMemoryUsage();
@@ -162,8 +162,8 @@ async function runTests() {
 	});
 
 	// ===== GIT HOOKS TESTS =====
-	console.log(`\n${COLORS.bold}Git Hooks Tests${COLORS.reset}`);
-	console.log("─".repeat(60));
+	console.info(`\n${COLORS.bold}Git Hooks Tests${COLORS.reset}`);
+	console.info("─".repeat(60));
 
 	test("Git hooks installed for nolarose-mcp-config", async () => {
 		const hook1 = await Bun.file(
@@ -196,8 +196,8 @@ async function runTests() {
 	});
 
 	// ===== CLI INTEGRATION TESTS =====
-	console.log(`\n${COLORS.bold}CLI Integration Tests${COLORS.reset}`);
-	console.log("─".repeat(60));
+	console.info(`\n${COLORS.bold}CLI Integration Tests${COLORS.reset}`);
+	console.info("─".repeat(60));
 
 	test("topic-manager.ts executes", async () => {
 		const result = await $`bun ${import.meta.dir}/topic-manager.ts list`
@@ -242,8 +242,8 @@ async function runTests() {
 	});
 
 	// ===== BUN API TESTS =====
-	console.log(`\n${COLORS.bold}Bun API Tests${COLORS.reset}`);
-	console.log("─".repeat(60));
+	console.info(`\n${COLORS.bold}Bun API Tests${COLORS.reset}`);
+	console.info("─".repeat(60));
 
 	test("Bun.color API available", () => {
 		// @ts-expect-error
@@ -272,8 +272,8 @@ async function runTests() {
 	await new Promise((resolve) => setTimeout(resolve, 500));
 
 	// ===== PRINT RESULTS =====
-	console.log(`\n${COLORS.bold}Test Results${COLORS.reset}`);
-	console.log("=".repeat(60));
+	console.info(`\n${COLORS.bold}Test Results${COLORS.reset}`);
+	console.info("=".repeat(60));
 
 	let passed = 0;
 	let failed = 0;
@@ -281,26 +281,26 @@ async function runTests() {
 	for (const result of results) {
 		if (result.passed) {
 			passed++;
-			console.log(`  ${COLORS.green}✅${COLORS.reset} ${result.name}`);
+			console.info(`  ${COLORS.green}✅${COLORS.reset} ${result.name}`);
 		} else {
 			failed++;
-			console.log(`  ${COLORS.red}❌${COLORS.reset} ${result.name}`);
+			console.info(`  ${COLORS.red}❌${COLORS.reset} ${result.name}`);
 			if (result.message) {
-				console.log(`     ${COLORS.gray}${result.message}${COLORS.reset}`);
+				console.info(`     ${COLORS.gray}${result.message}${COLORS.reset}`);
 			}
 		}
 	}
 
-	console.log("\n" + "=".repeat(60));
-	console.log(
+	console.info("\n" + "=".repeat(60));
+	console.info(
 		`${COLORS.bold}Summary:${COLORS.reset} ${passed} passed, ${failed} failed, ${results.length} total`,
 	);
 
 	if (failed === 0) {
-		console.log(`\n${COLORS.green}${COLORS.bold}✅ ALL TESTS PASSED${COLORS.reset}`);
+		console.info(`\n${COLORS.green}${COLORS.bold}✅ ALL TESTS PASSED${COLORS.reset}`);
 		process.exit(0);
 	} else {
-		console.log(`\n${COLORS.red}${COLORS.bold}❌ SOME TESTS FAILED${COLORS.reset}`);
+		console.info(`\n${COLORS.red}${COLORS.bold}❌ SOME TESTS FAILED${COLORS.reset}`);
 		process.exit(1);
 	}
 }

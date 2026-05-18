@@ -92,16 +92,16 @@ export class Tier1380DirectoryScanner {
    * 20-Column Directory Matrix
    */
   renderDirectoryMatrix(metrics: DirectoryMetrics[]): void {
-    console.log(
+    console.info(
       `\n\x1b[36m▵⟂⥂══════════════════════════════════════════════════════════════════════════════════════▵⟂⥂\x1b[0m`
     );
-    console.log(
+    console.info(
       `\x1b[36m  📁  DIRECTORY OPERATIONS — Node:fs Integration (Bun-native pending)\x1b[0m`
     );
-    console.log(
+    console.info(
       `\x1b[36m▵⟂⥂══════════════════════════════════════════════════════════════════════════════════════▵⟂⥸\x1b[0m\n`
     );
-    console.log(
+    console.info(
       `\x1b[90mNote: Bun-native directory API not yet implemented. Using node:fs/promises.\x1b[0m\n`
     );
 
@@ -114,10 +114,10 @@ export class Tier1380DirectoryScanner {
       API: '\x1b[33mnode:fs\x1b[0m', // Yellow for non-native
     }));
 
-    console.log(Bun.inspect.table(table, { colors: true }));
+    console.info(Bun.inspect.table(table, { colors: true }));
 
     const totalNs = metrics.reduce((a, m) => a + m.latencyNs, 0);
-    console.log(
+    console.info(
       `\n\x1b[36m◉ Total:\x1b[0m ${(totalNs / 1e6).toFixed(2)}ms │ \x1b[36mAPI:\x1b[0m node:fs/promises (documented) │ \x1b[36mRisk:\x1b[0m 2.010005001`
     );
   }
@@ -148,10 +148,10 @@ export async function hybridProjectScan(rootPath: string) {
   }
 
   // Combined report
-  console.log(`\n\x1b[36m◉ HYBRID SCAN COMPLETE\x1b[0m`);
-  console.log(`\x1b[36mDirectories:\x1b[0m node:fs │ Risk: 2.010005001`);
-  console.log(`\x1b[36mFiles:\x1b[0m Bun-native │ Risk: 1.000001000`);
-  console.log(`\x1b[36mProjects:\x1b[0m ${projects.length} │ \x1b[36mPattern:\x1b[0m ▵⟂⥂`);
+  console.info(`\n\x1b[36m◉ HYBRID SCAN COMPLETE\x1b[0m`);
+  console.info(`\x1b[36mDirectories:\x1b[0m node:fs │ Risk: 2.010005001`);
+  console.info(`\x1b[36mFiles:\x1b[0m Bun-native │ Risk: 1.000001000`);
+  console.info(`\x1b[36mProjects:\x1b[0m ${projects.length} │ \x1b[36mPattern:\x1b[0m ▵⟂⥂`);
 
   return { projects, dirMetrics, fileMetrics };
 }

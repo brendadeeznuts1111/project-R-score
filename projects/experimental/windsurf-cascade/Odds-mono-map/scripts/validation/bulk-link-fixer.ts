@@ -53,7 +53,7 @@ class BulkLinkFixer {
     }
 
     async initialize(): Promise<void> {
-        console.log('🔧 Initializing bulk link fixer...');
+        console.info('🔧 Initializing bulk link fixer...');
         await this.buildFileIndex();
         await this.detectRenamedFiles();
     }
@@ -69,9 +69,9 @@ class BulkLinkFixer {
             batchSize = 50
         } = options;
 
-        console.log(`🔧 Starting bulk link fix (${dryRun ? 'dry run' : 'live'})...`);
-        console.log(`  📊 Confidence threshold: ${(confidenceThreshold * 100).toFixed(0)}%`);
-        console.log(`  📦 Batch size: ${batchSize}`);
+        console.info(`🔧 Starting bulk link fix (${dryRun ? 'dry run' : 'live'})...`);
+        console.info(`  📊 Confidence threshold: ${(confidenceThreshold * 100).toFixed(0)}%`);
+        console.info(`  📦 Batch size: ${batchSize}`);
 
         const allFiles = await this.getAllMarkdownFiles();
         const result: BatchFixResult = {
@@ -85,7 +85,7 @@ class BulkLinkFixer {
         // Process files in batches
         for (let i = 0; i < allFiles.length; i += batchSize) {
             const batch = allFiles.slice(i, i + batchSize);
-            console.log(`  📂 Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(allFiles.length / batchSize)}`);
+            console.info(`  📂 Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(allFiles.length / batchSize)}`);
 
             const batchResult = await this.processBatch(batch, confidenceThreshold, dryRun);
 
@@ -191,7 +191,7 @@ class BulkLinkFixer {
             }
         }
 
-        console.log(`  📚 Indexed ${files.length} files`);
+        console.info(`  📚 Indexed ${files.length} files`);
     }
 
     private initializeTemplateMappings(): void {
@@ -215,7 +215,7 @@ class BulkLinkFixer {
         this.templateMappings.set('06 - Registry Aware Template With Version Management', 'Registry Aware Template');
         this.templateMappings.set('Research-Notebook-Template', 'Research Notebook Template');
 
-        console.log(`  📋 Loaded ${this.templateMappings.size} template mappings`);
+        console.info(`  📋 Loaded ${this.templateMappings.size} template mappings`);
     }
 
     private async detectRenamedFiles(): Promise<void> {
@@ -234,7 +234,7 @@ class BulkLinkFixer {
             }
         }
 
-        console.log(`  🔄 Detected ${this.renamedFiles.length} renamed files`);
+        console.info(`  🔄 Detected ${this.renamedFiles.length} renamed files`);
     }
 
     private async processBatch(files: string[], confidenceThreshold: number, dryRun: boolean): Promise<BatchFixResult> {
@@ -506,14 +506,14 @@ async function main(): Promise<void> {
     const vaultPath = args[0] || process.cwd();
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log('🔧 Bulk Link Fixer');
-        console.log('Usage: bun bulk-link-fixer.ts [vault-path] [options]');
-        console.log('\nOptions:');
-        console.log('  --help, -h              Show this help message');
-        console.log('  --apply                 Actually apply fixes (not dry run)');
-        console.log('  --confidence <number>   Set confidence threshold (0.0-1.0, default: 0.7)');
-        console.log('  --batch-size <number>   Set batch size (default: 50)');
-        console.log('  --report                Generate detailed report');
+        console.info('🔧 Bulk Link Fixer');
+        console.info('Usage: bun bulk-link-fixer.ts [vault-path] [options]');
+        console.info('\nOptions:');
+        console.info('  --help, -h              Show this help message');
+        console.info('  --apply                 Actually apply fixes (not dry run)');
+        console.info('  --confidence <number>   Set confidence threshold (0.0-1.0, default: 0.7)');
+        console.info('  --batch-size <number>   Set batch size (default: 50)');
+        console.info('  --report                Generate detailed report');
         process.exit(0);
     }
 
@@ -539,27 +539,27 @@ async function main(): Promise<void> {
             options.batchSize = parseInt(args[batchSizeIndex + 1]);
         }
 
-        console.log(`🚀 Starting bulk link fix with ${(options.dryRun ? 'dry run' : 'live')} mode`);
+        console.info(`🚀 Starting bulk link fix with ${(options.dryRun ? 'dry run' : 'live')} mode`);
 
         const result = await fixer.fixAllLinks(options);
 
-        console.log('\n📊 Results:');
-        console.log(`  Total Links: ${result.totalLinks}`);
-        console.log(`  Fixed: ${result.fixedLinks}`);
-        console.log(`  Skipped: ${result.skippedLinks}`);
-        console.log(`  Errors: ${result.errors}`);
-        console.log(`  Success Rate: ${result.totalLinks > 0 ? ((result.fixedLinks / result.totalLinks) * 100).toFixed(1) : 0}%`);
+        console.info('\n📊 Results:');
+        console.info(`  Total Links: ${result.totalLinks}`);
+        console.info(`  Fixed: ${result.fixedLinks}`);
+        console.info(`  Skipped: ${result.skippedLinks}`);
+        console.info(`  Errors: ${result.errors}`);
+        console.info(`  Success Rate: ${result.totalLinks > 0 ? ((result.fixedLinks / result.totalLinks) * 100).toFixed(1) : 0}%`);
 
         if (args.includes('--report')) {
             const report = await fixer.generateFixReport(result);
             const reportPath = join(vaultPath, `bulk-link-fix-report-${Date.now()}.md`);
             await writeFile(reportPath, report, 'utf-8');
-            console.log(`\n📄 Report saved to: ${reportPath}`);
+            console.info(`\n📄 Report saved to: ${reportPath}`);
         }
 
         if (!options.dryRun && result.fixedLinks > 0) {
-            console.log('\n✅ Fixes applied successfully!');
-            console.log('💡 Run validation again to verify the results');
+            console.info('\n✅ Fixes applied successfully!');
+            console.info('💡 Run validation again to verify the results');
         }
 
     } catch (error) {

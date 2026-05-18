@@ -15,19 +15,19 @@ function formatMb(bytes: number) {
   return (bytes / 1024 / 1024).toFixed(2) + " MB";
 }
 
-console.log("🚀 Advanced Process Monitor Started");
-console.log(`Main Entry: ${Bun.main}`);
-console.log(`PID: ${process.pid}`);
-console.log("----------------------------------\n");
+console.info("🚀 Advanced Process Monitor Started");
+console.info(`Main Entry: ${Bun.main}`);
+console.info(`PID: ${process.pid}`);
+console.info("----------------------------------\n");
 
 // 1. Monitor health every 2 seconds
 const monitor = setInterval(() => {
   const { rss, heapUsed } = process.memoryUsage();
-  console.log(`[MONITOR] RSS: ${formatMb(rss)} | Heap: ${formatMb(heapUsed)}`);
+  console.info(`[MONITOR] RSS: ${formatMb(rss)} | Heap: ${formatMb(heapUsed)}`);
 }, 2000);
 
 // 2. Spawn a background "worker" (a simple shell command)
-console.log("Spawning long-running worker process...");
+console.info("Spawning long-running worker process...");
 const worker = Bun.spawn(["sh", "-c", "for i in 1 2 3; do echo 'Worker pulse '$i; sleep 1; done"], {
   stdout: "pipe",
 });
@@ -38,21 +38,21 @@ const worker = Bun.spawn(["sh", "-c", "for i in 1 2 3; do echo 'Worker pulse '$i
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
-    console.log(`[WORKER] ${new TextDecoder().decode(value).trim()}`);
+    console.info(`[WORKER] ${new TextDecoder().decode(value).trim()}`);
   }
-  console.log("[WORKER] Finished work.");
+  console.info("[WORKER] Finished work.");
 })();
 
 // 3. Handle Graceful Shutdown
 process.on("SIGINT", () => {
-  console.log("\n\n🛑 Shutdown signal received.");
+  console.info("\n\n🛑 Shutdown signal received.");
   clearInterval(monitor);
   worker.kill();
-  console.log("Cleaning up resources... done.");
+  console.info("Cleaning up resources... done.");
   process.exit(0);
 });
 
-console.log("\nPress Ctrl+C to stop the monitor.");
+console.info("\nPress Ctrl+C to stop the monitor.");
 
 // 4. Demonstrate unhandled rejections configuration if needed
 // (But we want this script to stay alive, so we won't trigger a fatal one here)

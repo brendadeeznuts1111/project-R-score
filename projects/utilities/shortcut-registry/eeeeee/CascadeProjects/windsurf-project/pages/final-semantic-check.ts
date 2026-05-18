@@ -48,13 +48,13 @@ const remainingUtilities = [
     }
 ];
 
-console.log("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
-console.log("║                    FINAL SEMANTIC REFACTORING - MODAL COMPONENT                       ║");
-console.log("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
+console.info("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
+console.info("║                    FINAL SEMANTIC REFACTORING - MODAL COMPONENT                       ║");
+console.info("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
 
-console.log(Bun.inspect.table(remainingUtilities, undefined, { colors: true }));
+console.info(Bun.inspect.table(remainingUtilities, undefined, { colors: true }));
 
-console.log("\n📋 Modal Component Structure:\n");
+console.info("\n📋 Modal Component Structure:\n");
 
 const modalStructure = [
     {
@@ -99,10 +99,10 @@ const modalStructure = [
     }
 ];
 
-console.log(Bun.inspect.table(modalStructure, undefined, { colors: true }));
+console.info(Bun.inspect.table(modalStructure, undefined, { colors: true }));
 
-console.log("\n✅ All components now use semantic BEM-style naming!\n");
-console.log("📊 Summary:\n");
+console.info("\n✅ All components now use semantic BEM-style naming!\n");
+console.info("📊 Summary:\n");
 
 const summary = [
     {
@@ -157,6 +157,6 @@ const summary = [
     }
 ];
 
-console.log(Bun.inspect.table(summary, undefined, { colors: true }));
+console.info(Bun.inspect.table(summary, undefined, { colors: true }));
 
-console.log("\n🎉 All CSS classes have been refactored to use semantic, BEM-style naming conventions!\n");
+console.info("\n🎉 All CSS classes have been refactored to use semantic, BEM-style naming conventions!\n");

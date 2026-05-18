@@ -135,7 +135,7 @@ const server = Bun.serve({
 				const proxyConfig = BOOKIE_PROXIES[bookie];
 				const targetUrl = `https://${bookieRoutes[bookie]?.hostname.input || bookieName}.com${path}`;
 
-				console.log(JSON.stringify({
+				console.info(JSON.stringify({
 					bookie_routed: bookie,
 					proxy_used: proxyConfig.url,
 					target: targetUrl,
@@ -322,7 +322,7 @@ setInterval(async () => {
 
 	const duration = performance.now() - startTime;
 
-	console.log(JSON.stringify({
+	console.info(JSON.stringify({
 		perBookieScan: true,
 		bookies: scans.filter(s => s.status === 'fulfilled').length,
 		proxiesUsed: bookieNames.length,
@@ -330,19 +330,19 @@ setInterval(async () => {
 	}));
 }, 5000); // Every 5 seconds
 
-console.log(JSON.stringify({
+console.info(JSON.stringify({
 	perBookieProxy: 'LIVE',
 	bookies: Object.keys(BOOKIE_PROXIES).length,
 	proxyConfigs: Object.keys(BOOKIE_PROXIES).length,
 	port: server.port
 }));
 
-console.log(`🚀 Per-Bookie Proxy Service running on http://localhost:${server.port}`);
-console.log(`[PER-BOOKIE-PROXY][${Object.keys(BOOKIE_PROXIES).length}-CONFIGS][${Object.keys(BOOKIE_PROXIES).length}-ACTIVE][1890-SCANS/MIN]`);
+console.info(`🚀 Per-Bookie Proxy Service running on http://localhost:${server.port}`);
+console.info(`[PER-BOOKIE-PROXY][${Object.keys(BOOKIE_PROXIES).length}-CONFIGS][${Object.keys(BOOKIE_PROXIES).length}-ACTIVE][1890-SCANS/MIN]`);
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-	console.log('Shutting down gracefully...');
+	console.info('Shutting down gracefully...');
 	mlgs.close();
 	process.exit(0);
 });

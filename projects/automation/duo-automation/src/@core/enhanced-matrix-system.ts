@@ -588,20 +588,20 @@ class RealTimeMetricsCollector {
     try {
       // Performance prediction
       const performancePrediction = await this.aiEngine.predictPerformance(currentStats);
-      console.log('🤖 AI Performance Prediction:', performancePrediction);
+      console.info('🤖 AI Performance Prediction:', performancePrediction);
       
       // Anomaly detection
       const historicalData = this.getHistoricalData();
       const anomalies = await this.aiEngine.detectAnomalies(currentStats, historicalData);
       
       if (anomalies.length > 0) {
-        console.log('🚨 AI Detected Anomalies:', anomalies);
+        console.info('🚨 AI Detected Anomalies:', anomalies);
       }
       
       // Connection optimization
       // Note: This would need the current scope, which we'd need to pass in
       // const optimization = await this.aiEngine.optimizeConnections(currentStats, scope);
-      // console.log('⚡ AI Optimization Recommendations:', optimization);
+      // console.info('⚡ AI Optimization Recommendations:', optimization);
       
     } catch (error) {
       console.error('❌ AI Analytics Error:', error);
@@ -697,7 +697,7 @@ export class BunConnectionEcosystem {
   initializeAI(scope: EnhancedScopeRow): void {
     if (scope.aiAnalytics && scope.realTimeMetrics?.enabled) {
       this.metricsCollector = new RealTimeMetricsCollector(this, scope);
-      console.log('🤖 AI Analytics initialized for scope:', scope.detectedScope);
+      console.info('🤖 AI Analytics initialized for scope:', scope.detectedScope);
       
       // Register ML models
       if (scope.mlModels) {
@@ -725,7 +725,7 @@ export class BunConnectionEcosystem {
         console.warn('⚠️', alertMessage);
         break;
       case 'medium':
-        console.log('🔍', alertMessage);
+        console.info('🔍', alertMessage);
         break;
       case 'low':
         console.debug('ℹ️', alertMessage);
@@ -867,7 +867,7 @@ export class BunConnectionEcosystem {
   get connectionPool() {
     return {
       updateConfig: (config: any) => {
-        console.log('🔧 Connection pool config updated:', config);
+        console.info('🔧 Connection pool config updated:', config);
         // Store config for actual implementation
         (this as any)._poolConfig = config;
       },
@@ -1019,17 +1019,17 @@ export class MatrixConnectionManager {
       this.setupMonitoring();
     }
     
-    console.log(`✅ Scope "${scope.detectedScope}" activated for ${scope.servingDomain}`);
-    console.log(`   Max connections: ${scope.connectionConfig.maxConnections}`);
-    console.log(`   Preloaded cookies: ${scope.preloadedCookies?.length || 0}`);
-    console.log(`   Feature flags: ${scope.featureFlags.join(', ')}`);
+    console.info(`✅ Scope "${scope.detectedScope}" activated for ${scope.servingDomain}`);
+    console.info(`   Max connections: ${scope.connectionConfig.maxConnections}`);
+    console.info(`   Preloaded cookies: ${scope.preloadedCookies?.length || 0}`);
+    console.info(`   Feature flags: ${scope.featureFlags.join(', ')}`);
     
     if (scope.aiAnalytics) {
-      console.log(`   🤖 AI Analytics: ${Object.keys(scope.aiAnalytics).filter(k => scope.aiAnalytics![k as keyof typeof scope.aiAnalytics]).join(', ')}`);
+      console.info(`   🤖 AI Analytics: ${Object.keys(scope.aiAnalytics).filter(k => scope.aiAnalytics![k as keyof typeof scope.aiAnalytics]).join(', ')}`);
     }
     
     if (scope.mlModels && scope.mlModels.length > 0) {
-      console.log(`   🧠 ML Models: ${scope.mlModels.map(m => `${m.name} (${(m.accuracy * 100).toFixed(1)}%)`).join(', ')}`);
+      console.info(`   🧠 ML Models: ${scope.mlModels.map(m => `${m.name} (${(m.accuracy * 100).toFixed(1)}%)`).join(', ')}`);
     }
   }
   
@@ -1053,7 +1053,7 @@ export class MatrixConnectionManager {
     
     this.ecosystem.dataManager.savePreloadConfig(preloadConfig);
     
-    console.log(`🍪 Preloaded ${cookies.length} cookies`);
+    console.info(`🍪 Preloaded ${cookies.length} cookies`);
   }
   
   // Preconnect to domains for faster first requests
@@ -1061,14 +1061,14 @@ export class MatrixConnectionManager {
     for (const domain of domains) {
       Bun.dns.prefetch(domain);
       Bun.fetch.preconnect(`https://${domain}`);
-      console.log(`🔗 Preconnected to ${domain}`);
+      console.info(`🔗 Preconnected to ${domain}`);
     }
   }
   
   // Set up real-time monitoring
   private setupMonitoring(): void {
     const monitor = new ConnectionMonitor(this.ecosystem);
-    console.log('📊 Real-time monitoring enabled');
+    console.info('📊 Real-time monitoring enabled');
   }
   
   // Resolve environment variable placeholders
@@ -1205,14 +1205,14 @@ class ConnectionMonitor {
       this.logStats();
     }, intervalMs);
     
-    console.log(`📈 Monitoring started (logging to ${this.logPath})`);
+    console.info(`📈 Monitoring started (logging to ${this.logPath})`);
   }
   
   stop(): void {
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
-      console.log('📈 Monitoring stopped');
+      console.info('📈 Monitoring stopped');
     }
   }
   
@@ -1235,19 +1235,19 @@ class ConnectionMonitor {
     // Console output for active monitoring
     if (process.env.NODE_ENV !== 'production') {
       console.clear();
-      console.log('🔄 REAL-TIME CONNECTION MONITOR');
-      console.log('='.repeat(60));
-      console.log(`Timestamp: ${timestamp}`);
-      console.log(`Uptime: ${Math.floor(process.uptime())}s`);
-      console.log('');
+      console.info('🔄 REAL-TIME CONNECTION MONITOR');
+      console.info('='.repeat(60));
+      console.info(`Timestamp: ${timestamp}`);
+      console.info(`Uptime: ${Math.floor(process.uptime())}s`);
+      console.info('');
       
       stats.forEach(stat => {
-        console.log(`${stat.host}`);
-        console.log(`  📊 Requests: ${stat.totalRequests}`);
-        console.log(`  ⚡ Avg Time: ${stat.averageResponseTime.toFixed(2)}ms`);
-        console.log(`  ❌ Failures: ${stat.failures}`);
-        console.log(`  🔗 Active: ${stat.activeConnections}`);
-        console.log('');
+        console.info(`${stat.host}`);
+        console.info(`  📊 Requests: ${stat.totalRequests}`);
+        console.info(`  ⚡ Avg Time: ${stat.averageResponseTime.toFixed(2)}ms`);
+        console.info(`  ❌ Failures: ${stat.failures}`);
+        console.info(`  🔗 Active: ${stat.activeConnections}`);
+        console.info('');
       });
     }
   }
@@ -1303,14 +1303,14 @@ export class MatrixCLI {
     switch (subcommand) {
       case 'detect':
         const scope = await this.manager.detectScope();
-        console.log('🎯 Detected Scope:', scope.detectedScope);
-        console.log('🌐 Domain:', scope.servingDomain);
-        console.log('🖥️ Platform:', scope.platform);
+        console.info('🎯 Detected Scope:', scope.detectedScope);
+        console.info('🌐 Domain:', scope.servingDomain);
+        console.info('🖥️ Platform:', scope.platform);
         break;
         
       case 'stats':
         const stats = this.manager.getScopeStats();
-        console.log(JSON.stringify(stats, null, 2));
+        console.info(JSON.stringify(stats, null, 2));
         break;
         
       case 'request':
@@ -1321,26 +1321,26 @@ export class MatrixCLI {
         }
         
         const response = await this.manager.makeScopedRequest(url);
-        console.log(`Status: ${response.status}`);
+        console.info(`Status: ${response.status}`);
         const body = await response.text();
-        console.log('Response:', body.slice(0, 200));
+        console.info('Response:', body.slice(0, 200));
         break;
         
       default:
-        console.log('Available scope commands: detect, stats, request');
+        console.info('Available scope commands: detect, stats, request');
     }
   }
   
   private async showMatrix(): Promise<void> {
-    console.log('\n📊 ENHANCED SCOPING MATRIX');
-    console.log('='.repeat(80));
+    console.info('\n📊 ENHANCED SCOPING MATRIX');
+    console.info('='.repeat(80));
     
     ENHANCED_SCOPING_MATRIX.forEach((row, index) => {
-      console.log(`\n${index + 1}. ${row.servingDomain} (${row.detectedScope})`);
-      console.log(`   Platform: ${row.platform}`);
-      console.log(`   Connections: ${row.connectionConfig.maxConnections}`);
-      console.log(`   Feature Flags: ${row.featureFlags.slice(0, 3).join(', ')}${row.featureFlags.length > 3 ? '...' : ''}`);
-      console.log(`   CLI: ${row.cliCommands.join(', ')}`);
+      console.info(`\n${index + 1}. ${row.servingDomain} (${row.detectedScope})`);
+      console.info(`   Platform: ${row.platform}`);
+      console.info(`   Connections: ${row.connectionConfig.maxConnections}`);
+      console.info(`   Feature Flags: ${row.featureFlags.slice(0, 3).join(', ')}${row.featureFlags.length > 3 ? '...' : ''}`);
+      console.info(`   CLI: ${row.cliCommands.join(', ')}`);
     });
   }
   
@@ -1354,10 +1354,10 @@ export class MatrixCLI {
       // Convert markdown to HTML
       const html = this.markdownToHTML(docs);
       await Bun.write('./scope-documentation.html', html);
-      console.log('📄 HTML documentation generated');
+      console.info('📄 HTML documentation generated');
     } else {
       await Bun.write('./SCOPE_DOCS.md', docs);
-      console.log('📄 Markdown documentation generated');
+      console.info('📄 Markdown documentation generated');
     }
   }
   
@@ -1368,7 +1368,7 @@ export class MatrixCLI {
     const monitor = new ConnectionMonitor(this.manager['ecosystem']);
     monitor.start(parseInt(interval));
     
-    console.log('📈 Monitoring started. Press Ctrl+C to stop.');
+    console.info('📈 Monitoring started. Press Ctrl+C to stop.');
     
     // Keep process alive
     process.on('SIGINT', () => {
@@ -1393,9 +1393,9 @@ export class MatrixCLI {
     if (scope?.preloadedCookies) {
       const manager = new MatrixConnectionManager();
       await manager['preloadCookies'](scope.preloadedCookies);
-      console.log(`✅ Preloaded ${scope.preloadedCookies.length} cookies for ${domain}`);
+      console.info(`✅ Preloaded ${scope.preloadedCookies.length} cookies for ${domain}`);
     } else {
-      console.log('⚠️ No preloaded cookies configured for this domain');
+      console.info('⚠️ No preloaded cookies configured for this domain');
     }
   }
   
@@ -1448,7 +1448,7 @@ export class MatrixCLI {
         break;
         
       default:
-        console.log('Available AI commands: predict, anomalies, optimize, models');
+        console.info('Available AI commands: predict, anomalies, optimize, models');
     }
   }
   
@@ -1459,14 +1459,14 @@ export class MatrixCLI {
     const prediction = await this.manager['ecosystem'].getAIPrediction(type as any);
     
     if (prediction) {
-      console.log('🤖 AI Prediction:');
-      console.log(`  Model: ${prediction.model}`);
-      console.log(`  Type: ${prediction.predictionType}`);
-      console.log(`  Confidence: ${(prediction.confidence * 100).toFixed(1)}%`);
-      console.log(`  Prediction:`, prediction.prediction);
-      console.log(`  Timestamp: ${prediction.timestamp.toISOString()}`);
+      console.info('🤖 AI Prediction:');
+      console.info(`  Model: ${prediction.model}`);
+      console.info(`  Type: ${prediction.predictionType}`);
+      console.info(`  Confidence: ${(prediction.confidence * 100).toFixed(1)}%`);
+      console.info(`  Prediction:`, prediction.prediction);
+      console.info(`  Timestamp: ${prediction.timestamp.toISOString()}`);
     } else {
-      console.log('❌ No prediction available');
+      console.info('❌ No prediction available');
     }
   }
   
@@ -1475,15 +1475,15 @@ export class MatrixCLI {
     const anomalies = await this.manager['ecosystem'].getAIAnomalies();
     
     if (anomalies.length > 0) {
-      console.log(`🚨 AI Detected ${anomalies.length} Anomalies:`);
+      console.info(`🚨 AI Detected ${anomalies.length} Anomalies:`);
       anomalies.forEach((alert, index) => {
-        console.log(`\n${index + 1}. [${alert.severity.toUpperCase()}] ${alert.type}`);
-        console.log(`   Message: ${alert.message}`);
-        console.log(`   Timestamp: ${alert.timestamp.toISOString()}`);
-        console.log(`   Metrics:`, alert.metrics);
+        console.info(`\n${index + 1}. [${alert.severity.toUpperCase()}] ${alert.type}`);
+        console.info(`   Message: ${alert.message}`);
+        console.info(`   Timestamp: ${alert.timestamp.toISOString()}`);
+        console.info(`   Metrics:`, alert.metrics);
       });
     } else {
-      console.log('✅ No anomalies detected');
+      console.info('✅ No anomalies detected');
     }
   }
   
@@ -1492,19 +1492,19 @@ export class MatrixCLI {
     const scope = this.manager['currentScope']!;
     
     if (!scope.aiAnalytics?.performanceOptimization) {
-      console.log('❌ AI optimization not enabled for this scope');
+      console.info('❌ AI optimization not enabled for this scope');
       return;
     }
     
     const optimization = await this.manager['ecosystem'].getAIOptimizations(scope);
     
-    console.log('⚡ AI Optimization Recommendations:');
+    console.info('⚡ AI Optimization Recommendations:');
     optimization.recommendations.forEach(rec => {
-      console.log(`  • ${rec}`);
+      console.info(`  • ${rec}`);
     });
     
-    console.log('\nOptimized Configuration:');
-    console.log(JSON.stringify(optimization.optimizedConfig, null, 2));
+    console.info('\nOptimized Configuration:');
+    console.info(JSON.stringify(optimization.optimizedConfig, null, 2));
   }
   
   private async showMLModels(): Promise<void> {
@@ -1512,21 +1512,21 @@ export class MatrixCLI {
     const scope = this.manager['currentScope']!;
     
     if (!scope.mlModels || scope.mlModels.length === 0) {
-      console.log('❌ No ML models configured for this scope');
+      console.info('❌ No ML models configured for this scope');
       return;
     }
     
-    console.log('🧠 ML Models:');
+    console.info('🧠 ML Models:');
     scope.mlModels.forEach((model, index) => {
-      console.log(`\n${index + 1}. ${model.name}`);
-      console.log(`   Type: ${model.predictionType}`);
-      console.log(`   Accuracy: ${(model.accuracy * 100).toFixed(1)}%`);
-      console.log(`   Last Trained: ${model.lastTrained.toISOString()}`);
+      console.info(`\n${index + 1}. ${model.name}`);
+      console.info(`   Type: ${model.predictionType}`);
+      console.info(`   Accuracy: ${(model.accuracy * 100).toFixed(1)}%`);
+      console.info(`   Last Trained: ${model.lastTrained.toISOString()}`);
     });
   }
   
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🎯 BUN MATRIX CONNECTION MANAGER CLI (AI-Enhanced)
 ===============================================
 

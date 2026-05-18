@@ -133,14 +133,14 @@ class Fantasy42WindowsBuilder {
   }
 
   async build(): Promise<void> {
-    console.log('🪟 Fantasy42-Fire22 Windows Builder');
-    console.log('===================================');
-    console.log(`📋 Mode: ${this.config.mode.toUpperCase()}`);
-    console.log(
+    console.info('🪟 Fantasy42-Fire22 Windows Builder');
+    console.info('===================================');
+    console.info(`📋 Mode: ${this.config.mode.toUpperCase()}`);
+    console.info(
       `🎯 Target: ${this.config.allTargets ? 'All Windows targets' : this.config.target}`
     );
-    console.log(`🔐 Signing: ${this.config.sign ? 'Enabled' : 'Disabled'}`);
-    console.log('');
+    console.info(`🔐 Signing: ${this.config.sign ? 'Enabled' : 'Disabled'}`);
+    console.info('');
 
     try {
       // Prepare build environment
@@ -166,7 +166,7 @@ class Fantasy42WindowsBuilder {
   }
 
   private async prepareBuildEnvironment(): Promise<void> {
-    console.log('🔧 Preparing build environment...');
+    console.info('🔧 Preparing build environment...');
 
     // Create output directory
     if (!existsSync(this.config.outputDir)) {
@@ -175,7 +175,7 @@ class Fantasy42WindowsBuilder {
 
     // Clean if requested
     if (this.config.clean) {
-      console.log('🧹 Cleaning previous builds...');
+      console.info('🧹 Cleaning previous builds...');
       try {
         execSync(
           `rmdir /s /q "${this.config.outputDir}" 2>nul || rm -rf "${this.config.outputDir}"`,
@@ -190,16 +190,16 @@ class Fantasy42WindowsBuilder {
     // Verify Bun installation
     try {
       const bunVersion = execSync('bun --version', { encoding: 'utf-8' }).trim();
-      console.log(`✅ Bun version: ${bunVersion}`);
+      console.info(`✅ Bun version: ${bunVersion}`);
     } catch (error) {
       throw new Error('Bun not found. Please install Bun first.');
     }
 
-    console.log('✅ Build environment ready');
+    console.info('✅ Build environment ready');
   }
 
   private async buildForTarget(target: string): Promise<void> {
-    console.log(`\n🏗️ Building for ${target}...`);
+    console.info(`\n🏗️ Building for ${target}...`);
 
     try {
       const buildMode = BUILD_MODES[this.config.mode];
@@ -239,14 +239,14 @@ class Fantasy42WindowsBuilder {
       };
 
       if (this.config.verbose) {
-        console.log('📋 Build configuration:');
-        console.log(JSON.stringify(buildConfig, null, 2));
+        console.info('📋 Build configuration:');
+        console.info(JSON.stringify(buildConfig, null, 2));
       }
 
       // Execute build
       await Bun.build(buildConfig);
 
-      console.log(`✅ Built: ${outputFilename}`);
+      console.info(`✅ Built: ${outputFilename}`);
       this.buildStats.built++;
 
       // Sign executable if requested
@@ -357,7 +357,7 @@ class Fantasy42WindowsBuilder {
   }
 
   private async signExecutable(executablePath: string): Promise<void> {
-    console.log(`🔐 Signing executable: ${basename(executablePath)}`);
+    console.info(`🔐 Signing executable: ${basename(executablePath)}`);
 
     try {
       // Check if certificate exists
@@ -371,16 +371,16 @@ class Fantasy42WindowsBuilder {
         );
 
       if (!existsSync(certPath)) {
-        console.log('⚠️ Certificate not found, skipping signing');
-        console.log(`   Expected: ${certPath}`);
-        console.log('   Set FIRE22_WINDOWS_CERT_PATH environment variable');
+        console.info('⚠️ Certificate not found, skipping signing');
+        console.info(`   Expected: ${certPath}`);
+        console.info('   Set FIRE22_WINDOWS_CERT_PATH environment variable');
         return;
       }
 
       const certPassword = process.env.FIRE22_WINDOWS_CERT_PASSWORD;
       if (!certPassword) {
-        console.log('⚠️ Certificate password not set, skipping signing');
-        console.log('   Set FIRE22_WINDOWS_CERT_PASSWORD environment variable');
+        console.info('⚠️ Certificate password not set, skipping signing');
+        console.info('   Set FIRE22_WINDOWS_CERT_PASSWORD environment variable');
         return;
       }
 
@@ -392,11 +392,11 @@ class Fantasy42WindowsBuilder {
 
       execSync(signCommand, { stdio: this.config.verbose ? 'inherit' : 'pipe' });
 
-      console.log(`✅ Signed: ${basename(executablePath)}`);
+      console.info(`✅ Signed: ${basename(executablePath)}`);
       this.buildStats.signed++;
     } catch (error) {
       console.error(`❌ Signing failed for ${basename(executablePath)}:`, error);
-      console.log('💡 Install signtool (Windows SDK) or osslsigncode for signing support');
+      console.info('💡 Install signtool (Windows SDK) or osslsigncode for signing support');
     }
   }
 
@@ -444,7 +444,7 @@ class Fantasy42WindowsBuilder {
     writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
 
     if (this.config.verbose) {
-      console.log(`📋 Generated manifest: ${basename(manifestPath)}`);
+      console.info(`📋 Generated manifest: ${basename(manifestPath)}`);
     }
   }
 
@@ -471,7 +471,7 @@ class Fantasy42WindowsBuilder {
     };
 
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`📊 Build report: ${basename(reportPath)}`);
+    console.info(`📊 Build report: ${basename(reportPath)}`);
   }
 
   private getOutputFiles(): string[] {
@@ -518,25 +518,25 @@ class Fantasy42WindowsBuilder {
   }
 
   private showBuildSummary(): void {
-    console.log('\n🏆 Build Summary');
-    console.log('================');
-    console.log(`✅ Built: ${this.buildStats.built}`);
-    console.log(`❌ Failed: ${this.buildStats.failed}`);
-    console.log(`🔐 Signed: ${this.buildStats.signed}`);
+    console.info('\n🏆 Build Summary');
+    console.info('================');
+    console.info(`✅ Built: ${this.buildStats.built}`);
+    console.info(`❌ Failed: ${this.buildStats.failed}`);
+    console.info(`🔐 Signed: ${this.buildStats.signed}`);
 
     if (this.buildStats.endTime) {
       const duration = (this.buildStats.endTime - this.buildStats.startTime) / 1000;
-      console.log(`⏱️ Duration: ${duration.toFixed(2)}s`);
+      console.info(`⏱️ Duration: ${duration.toFixed(2)}s`);
     }
 
-    console.log(`📁 Output: ${this.config.outputDir}`);
+    console.info(`📁 Output: ${this.config.outputDir}`);
 
     if (this.buildStats.built > 0) {
-      console.log('\n🚀 Next Steps:');
-      console.log('1. Test executables on Windows systems');
-      console.log('2. Verify Windows metadata in file properties');
-      console.log('3. Check digital signatures (if enabled)');
-      console.log('4. Deploy to target environments');
+      console.info('\n🚀 Next Steps:');
+      console.info('1. Test executables on Windows systems');
+      console.info('2. Verify Windows metadata in file properties');
+      console.info('3. Check digital signatures (if enabled)');
+      console.info('4. Deploy to target environments');
     }
   }
 }
@@ -603,7 +603,7 @@ async function main() {
 }
 
 function showHelp() {
-  console.log(`
+  console.info(`
 🪟 Fantasy42-Fire22 Windows Builder
 
 Usage: bun run scripts/build-windows.ts [options]

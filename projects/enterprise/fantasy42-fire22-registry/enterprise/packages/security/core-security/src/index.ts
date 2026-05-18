@@ -20,5 +20,5 @@ export const PACKAGE_INFO = {
   features: ['User Agent Management', 'Secure HTTP Client', 'Fraud Detection', 'Compliance Tools'],
 };
 
-console.log(`🚀 ${PACKAGE_INFO.name} v${PACKAGE_INFO.version} loaded`);
-console.log(`   Features: ${PACKAGE_INFO.features.join(', ')}`);
+console.info(`🚀 ${PACKAGE_INFO.name} v${PACKAGE_INFO.version} loaded`);
+console.info(`   Features: ${PACKAGE_INFO.features.join(', ')}`);

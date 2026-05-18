@@ -48,7 +48,7 @@ async function processFile(filePath: string): Promise<AssetEntry> {
 }
 
 async function main() {
-  console.log('🔧 Building Tier-1380 Asset Manifest');
+  console.info('🔧 Building Tier-1380 Asset Manifest');
   
   const files = [
     'assets/index.html',
@@ -63,7 +63,7 @@ async function main() {
     try {
       const asset = await processFile(file);
       assets.push(asset);
-      console.log(`✅ ${file} -> ${asset.hash.slice(0, 12)}...`);
+      console.info(`✅ ${file} -> ${asset.hash.slice(0, 12)}...`);
     } catch (error) {
       console.error(`❌ Failed to process ${file}:`, error);
     }
@@ -77,9 +77,9 @@ async function main() {
   
   writeFileSync('./dist/manifest.json', JSON.stringify(manifest, null, 2));
   
-  console.log(`📦 Manifest saved: ${assets.length} assets`);
+  console.info(`📦 Manifest saved: ${assets.length} assets`);
   const totalSize = assets.reduce((sum, a) => sum + a.size, 0);
-  console.log(`📏 Total size: ${(totalSize / 1024).toFixed(2)} KB`);
+  console.info(`📏 Total size: ${(totalSize / 1024).toFixed(2)} KB`);
 }
 
 main().catch(console.error);

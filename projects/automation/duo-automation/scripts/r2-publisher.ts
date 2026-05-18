@@ -27,7 +27,7 @@ class DuoR2Publisher {
   ];
 
   async runCommand(command: string, args: string[], cwd?: string): Promise<string> {
-    console.log(`🚀 Running: ${command} ${args.join(' ')}`);
+    console.info(`🚀 Running: ${command} ${args.join(' ')}`);
     
     try {
       const result = await Bun.spawn({
@@ -56,17 +56,17 @@ class DuoR2Publisher {
   }
 
   async packPackage(packageInfo: PackageInfo): Promise<string> {
-    console.log(`📦 Packing ${packageInfo.name}...`);
+    console.info(`📦 Packing ${packageInfo.name}...`);
     
     const tarball = await this.runCommand("bun", ["pm", "pack", "--quiet"], packageInfo.path);
     packageInfo.tarball = tarball;
     
-    console.log(`✅ Created: ${tarball}`);
+    console.info(`✅ Created: ${tarball}`);
     return tarball;
   }
 
   async publishPackage(packageInfo: PackageInfo): Promise<void> {
-    console.log(`🚀 Publishing ${packageInfo.name} to R2...`);
+    console.info(`🚀 Publishing ${packageInfo.name} to R2...`);
     
     const tarballPath = `${packageInfo.path}/${packageInfo.tarball}`;
     
@@ -77,11 +77,11 @@ class DuoR2Publisher {
     // Publish to R2 registry
     await this.runCommand("bun", ["publish", "--registry", this.r2Registry], packageInfo.path);
     
-    console.log(`✅ Published ${packageInfo.name} to R2 registry`);
+    console.info(`✅ Published ${packageInfo.name} to R2 registry`);
   }
 
   async packAllPackages(): Promise<void> {
-    console.log("📦 Packing all workspace packages...");
+    console.info("📦 Packing all workspace packages...");
     
     // Ensure dist directory exists
     await this.runCommand("mkdir", ["-p", "dist"]);
@@ -90,45 +90,45 @@ class DuoR2Publisher {
       await this.packPackage(pkg);
     }
     
-    console.log("✅ All packages packed successfully!");
+    console.info("✅ All packages packed successfully!");
   }
 
   async publishAllPackages(): Promise<void> {
-    console.log("🚀 Publishing all packages to R2...");
+    console.info("🚀 Publishing all packages to R2...");
     
     for (const pkg of this.packages) {
       await this.publishPackage(pkg);
     }
     
-    console.log("✅ All packages published to R2!");
+    console.info("✅ All packages published to R2!");
   }
 
   async verifyCatalogResolution(): Promise<void> {
-    console.log("🔍 Verifying catalog resolution...");
+    console.info("🔍 Verifying catalog resolution...");
     
     // Check that catalog references are resolved in packed packages
     for (const pkg of this.packages) {
       const packageJsonPath = `${pkg.path}/package.json`;
       const packageJson = await Bun.file(packageJsonPath).json();
       
-      console.log(`📋 ${pkg.name}:`);
+      console.info(`📋 ${pkg.name}:`);
       
       // Check catalog references
       for (const [dep, version] of Object.entries(packageJson.dependencies || {})) {
         if (version === "catalog:") {
-          console.log(`  ✅ ${dep}: catalog: (will be resolved to actual version)`);
+          console.info(`  ✅ ${dep}: catalog: (will be resolved to actual version)`);
         } else if (typeof version === "string" && version.startsWith("catalog:")) {
           const catalogName = version.replace("catalog:", "");
-          console.log(`  ✅ ${dep}: catalog:${catalogName} (will be resolved to actual version)`);
+          console.info(`  ✅ ${dep}: catalog:${catalogName} (will be resolved to actual version)`);
         } else {
-          console.log(`  📦 ${dep}: ${version}`);
+          console.info(`  📦 ${dep}: ${version}`);
         }
       }
     }
   }
 
   async cleanup(): Promise<void> {
-    console.log("🧹 Cleaning up tarballs...");
+    console.info("🧹 Cleaning up tarballs...");
     
     for (const pkg of this.packages) {
       if (pkg.tarball) {
@@ -139,30 +139,30 @@ class DuoR2Publisher {
       }
     }
     
-    console.log("✅ Cleanup complete!");
+    console.info("✅ Cleanup complete!");
   }
 
   async showPublishingInfo(): Promise<void> {
-    console.log("📊 DuoPlus R2 Publishing Information:");
-    console.log("");
-    console.log("🔧 Registry Configuration:");
-    console.log(`  Registry: ${this.r2Registry}`);
-    console.log(`  Auth: Configured in bunfig.toml`);
-    console.log("");
-    console.log("📦 Packages to Publish:");
+    console.info("📊 DuoPlus R2 Publishing Information:");
+    console.info("");
+    console.info("🔧 Registry Configuration:");
+    console.info(`  Registry: ${this.r2Registry}`);
+    console.info(`  Auth: Configured in bunfig.toml`);
+    console.info("");
+    console.info("📦 Packages to Publish:");
     
     for (const pkg of this.packages) {
-      console.log(`  - ${pkg.name}@${pkg.version}`);
+      console.info(`  - ${pkg.name}@${pkg.version}`);
     }
     
-    console.log("");
-    console.log("🎯 Catalog Publishing Process:");
-    console.log("  1. Pack packages (catalog: references resolved)");
-    console.log("  2. Publish to R2 registry");
-    console.log("  3. Packages available for installation");
-    console.log("");
-    console.log("📥 Installation Command:");
-    console.log(`  bun install --registry ${this.r2Registry}`);
+    console.info("");
+    console.info("🎯 Catalog Publishing Process:");
+    console.info("  1. Pack packages (catalog: references resolved)");
+    console.info("  2. Publish to R2 registry");
+    console.info("  3. Packages available for installation");
+    console.info("");
+    console.info("📥 Installation Command:");
+    console.info(`  bun install --registry ${this.r2Registry}`);
   }
 }
 
@@ -194,21 +194,21 @@ async function main() {
       break;
       
     default:
-      console.log("DuoPlus R2 Publisher with Catalog Support");
-      console.log("");
-      console.log("Usage: bun run scripts/r2-publisher.ts <command>");
-      console.log("");
-      console.log("Commands:");
-      console.log("  pack     - Pack all workspace packages (resolves catalogs)");
-      console.log("  publish  - Pack and publish all packages to R2");
-      console.log("  verify   - Verify catalog resolution in packages");
-      console.log("  info     - Show publishing configuration");
-      console.log("  clean    - Clean up tarballs");
-      console.log("");
-      console.log("Examples:");
-      console.log("  bun run scripts/r2-publisher.ts info");
-      console.log("  bun run scripts/r2-publisher.ts pack");
-      console.log("  bun run scripts/r2-publisher.ts publish");
+      console.info("DuoPlus R2 Publisher with Catalog Support");
+      console.info("");
+      console.info("Usage: bun run scripts/r2-publisher.ts <command>");
+      console.info("");
+      console.info("Commands:");
+      console.info("  pack     - Pack all workspace packages (resolves catalogs)");
+      console.info("  publish  - Pack and publish all packages to R2");
+      console.info("  verify   - Verify catalog resolution in packages");
+      console.info("  info     - Show publishing configuration");
+      console.info("  clean    - Clean up tarballs");
+      console.info("");
+      console.info("Examples:");
+      console.info("  bun run scripts/r2-publisher.ts info");
+      console.info("  bun run scripts/r2-publisher.ts pack");
+      console.info("  bun run scripts/r2-publisher.ts publish");
   }
 }
 

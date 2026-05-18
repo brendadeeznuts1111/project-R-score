@@ -270,7 +270,7 @@ async function handleToolCall(name: string, args: any): Promise<object> {
 
 // Main MCP loop
 if (import.meta.main) {
-	console.log(
+	console.info(
 		JSON.stringify({
 			jsonrpc: "2.0",
 			id: 0,
@@ -292,7 +292,7 @@ if (import.meta.main) {
 			const request = JSON.parse(line);
 
 			if (request.method === "tools/list") {
-				console.log(
+				console.info(
 					JSON.stringify({
 						jsonrpc: "2.0",
 						id: request.id,
@@ -434,7 +434,7 @@ if (import.meta.main) {
 					request.params.name,
 					request.params.arguments,
 				);
-				console.log(
+				console.info(
 					JSON.stringify({
 						jsonrpc: "2.0",
 						id: request.id,

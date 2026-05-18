@@ -15,9 +15,9 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.blue.bold('🌍 Enhanced Environment Variables Dashboard'));
-console.log(chalk.gray('Real-time monitoring and optimization of Bun environment configuration'));
-console.log(chalk.gray(`Last updated: ${new Date().toISOString()}\n`));
+console.info(chalk.blue.bold('🌍 Enhanced Environment Variables Dashboard'));
+console.info(chalk.gray('Real-time monitoring and optimization of Bun environment configuration'));
+console.info(chalk.gray(`Last updated: ${new Date().toISOString()}\n`));
 
 // Environment status monitoring
 function getEnvironmentStatus() {
@@ -332,11 +332,11 @@ function generateOptimizationCommands() {
 }
 
 // Display dashboard
-console.log(chalk.yellow('📊 Environment Configuration Status'));
-console.log(createEnvironmentTable());
+console.info(chalk.yellow('📊 Environment Configuration Status'));
+console.info(createEnvironmentTable());
 
 // Topic summary
-console.log(chalk.blue.bold('\n📋 Topic Summary'));
+console.info(chalk.blue.bold('\n📋 Topic Summary'));
 const topics = generateTopicSummary();
 const topicTable = topics.map(topic => ({
     topic: topic.topic,
@@ -344,55 +344,55 @@ const topicTable = topics.map(topic => ({
     health: topic.health >= 90 ? chalk.green(topic.health + '%') : topic.health >= 70 ? chalk.yellow(topic.health + '%') : chalk.red(topic.health + '%'),
     description: topic.description
 }));
-console.log(Bun.inspect.table(topicTable, { colors: true }));
+console.info(Bun.inspect.table(topicTable, { colors: true }));
 
 // Health assessment
 const health = calculateEnvironmentHealth();
-console.log(chalk.blue.bold('\n🏥 Environment Health Assessment'));
-console.log(chalk.gray(`   Overall Score: ${health.score >= 80 ? chalk.green(health.score) : health.score >= 60 ? chalk.yellow(health.score) : chalk.red(health.score)}/100`));
+console.info(chalk.blue.bold('\n🏥 Environment Health Assessment'));
+console.info(chalk.gray(`   Overall Score: ${health.score >= 80 ? chalk.green(health.score) : health.score >= 60 ? chalk.yellow(health.score) : chalk.red(health.score)}/100`));
 
 if (health.issues.length > 0) {
-    console.log(chalk.red('\n❌ Critical Issues:'));
+    console.info(chalk.red('\n❌ Critical Issues:'));
     health.issues.forEach(issue => {
-        console.log(chalk.red(`   • ${issue}`));
+        console.info(chalk.red(`   • ${issue}`));
     });
 }
 
 if (health.warnings.length > 0) {
-    console.log(chalk.yellow('\n⚠️  Warnings:'));
+    console.info(chalk.yellow('\n⚠️  Warnings:'));
     health.warnings.forEach(warning => {
-        console.log(chalk.yellow(`   • ${warning}`));
+        console.info(chalk.yellow(`   • ${warning}`));
     });
 }
 
 // Recommendations
 const recommendations = getRecommendations();
 if (recommendations.length > 0) {
-    console.log(chalk.blue('\n💡 Recommendations:'));
+    console.info(chalk.blue('\n💡 Recommendations:'));
     recommendations.forEach(rec => {
-        console.log(chalk.cyan(`   ${rec}`));
+        console.info(chalk.cyan(`   ${rec}`));
     });
 }
 
 // Environment file status
-console.log(chalk.blue.bold('\n📁 Environment Files Status'));
+console.info(chalk.blue.bold('\n📁 Environment Files Status'));
 const envFiles = ['.env', '.env.local', '.env.development', '.env.production', '.env.test'];
 envFiles.forEach(file => {
     const exists = require('fs').existsSync(file);
-    console.log(chalk.gray(`   ${exists ? '✅' : '⚪'} ${file}`));
+    console.info(chalk.gray(`   ${exists ? '✅' : '⚪'} ${file}`));
 });
 
 // Optimization commands
-console.log(chalk.blue.bold('\n⚡ Environment Optimization Commands'));
+console.info(chalk.blue.bold('\n⚡ Environment Optimization Commands'));
 const commands = generateOptimizationCommands();
 commands.forEach(cmd => {
-    console.log(chalk.gray(`\n   ${cmd.category}:`));
-    console.log(chalk.cyan(`   ${cmd.command}`));
-    console.log(chalk.gray(`   # ${cmd.description}`));
+    console.info(chalk.gray(`\n   ${cmd.category}:`));
+    console.info(chalk.cyan(`   ${cmd.command}`));
+    console.info(chalk.gray(`   # ${cmd.description}`));
 });
 
 // Enhanced environment variable reference
-console.log(chalk.blue.bold('\n📚 Enhanced Environment Variable Reference'));
+console.info(chalk.blue.bold('\n📚 Enhanced Environment Variable Reference'));
 const referenceTable = [
     { topic: '🌐 Network', variable: 'BUN_CONFIG_VERBOSE_FETCH', values: 'curl, true, false', description: 'Network request debugging', type: 'Debug' },
     { topic: '🌐 Network', variable: 'BUN_CONFIG_MAX_HTTP_REQUESTS', values: 'number (default: 256)', description: 'HTTP request concurrency limit', type: 'Performance' },
@@ -412,6 +412,6 @@ const referenceTable = [
     { topic: '📦 Application', variable: 'HOST', values: 'hostname', description: 'Server binding host', type: 'Configuration' }
 ];
 
-console.log(Bun.inspect.table(referenceTable, { colors: true }));
+console.info(Bun.inspect.table(referenceTable, { colors: true }));
 
-console.log(chalk.green('\n✅ Enhanced environment dashboard with topics and properties updated successfully!'));
+console.info(chalk.green('\n✅ Enhanced environment dashboard with topics and properties updated successfully!'));

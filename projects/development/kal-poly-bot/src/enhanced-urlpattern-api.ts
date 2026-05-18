@@ -68,35 +68,35 @@ export class URLPatternExamples {
   static filePattern = new URLPattern("http://localhost/static/:path(.*)");
 
   static testPatterns() {
-    console.log("User ID pattern tests:");
-    console.log(
+    console.info("User ID pattern tests:");
+    console.info(
       this.userPattern.test("http://localhost/users/123") ? "✓ Pass" : "✗ Fail"
     );
-    console.log(
+    console.info(
       this.userPattern.test("http://localhost/users/abc") ? "✗ Fail" : "✓ Pass"
     );
 
-    console.log("\nEmail pattern tests:");
-    console.log(
+    console.info("\nEmail pattern tests:");
+    console.info(
       this.emailPattern.test("http://localhost/profile/user@example.com")
         ? "✓ Pass"
         : "✗ Fail"
     );
 
-    console.log("\nSlug pattern tests:");
-    console.log(
+    console.info("\nSlug pattern tests:");
+    console.info(
       this.slugPattern.test("http://localhost/posts/bunrelease")
         ? "✓ Pass"
         : "✗ Fail"
     );
-    console.log(
+    console.info(
       this.slugPattern.test("http://localhost/posts/invalid_slug")
         ? "✗ Fail"
         : "✓ Pass"
     );
 
-    console.log("\nDate pattern tests:");
-    console.log(
+    console.info("\nDate pattern tests:");
+    console.info(
       this.datePattern.test("http://localhost/posts/2024/01/15/bunrelease")
         ? "✓ Pass"
         : "✗ Fail"

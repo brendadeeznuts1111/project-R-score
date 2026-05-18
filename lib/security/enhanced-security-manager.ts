@@ -257,7 +257,7 @@ export class EnhancedSecurityManager {
     try {
       // In production, this would write to a secure audit database
       // For now, we'll log to console with audit marker
-      console.log('🔒 AUDIT_LOG_FLUSH:', {
+      console.info('🔒 AUDIT_LOG_FLUSH:', {
         entryCount: auditEntries.length,
         timestamp: new Date().toISOString(),
         entries: auditEntries.map(entry => ({
@@ -457,7 +457,7 @@ export class EnhancedSecurityManager {
     };
 
     // Log to console for immediate visibility
-    console.log('🔍 Security Audit:', JSON.stringify(auditData));
+    console.info('🔍 Security Audit:', JSON.stringify(auditData));
 
     // Add to persistent audit storage
     this.addToAuditLog(event, service, name, correlationId, metadata || {}, ip, userAgent);
@@ -514,7 +514,7 @@ export class EnhancedSecurityManager {
 
   private async initialize(): Promise<void> {
     try {
-      console.log('🔧 Initializing Enhanced Security Manager...');
+      console.info('🔧 Initializing Enhanced Security Manager...');
 
       // Validate configuration
       const validation = securityConfig.validateConfig();
@@ -534,7 +534,7 @@ export class EnhancedSecurityManager {
       (this as any).initializedTime = Date.now();
 
       this.isInitialized = true;
-      console.log('✅ Enhanced Security Manager initialized successfully');
+      console.info('✅ Enhanced Security Manager initialized successfully');
     } catch (error) {
       console.error('❌ Failed to initialize Enhanced Security Manager:', error.message);
       throw error;
@@ -546,22 +546,22 @@ export class EnhancedSecurityManager {
 
     // Security features
     if (feature('ENTERPRISE_SECURITY')) {
-      console.log('🏢 Enterprise Security Mode: Advanced threat detection enabled');
+      console.info('🏢 Enterprise Security Mode: Advanced threat detection enabled');
       await this.initializeEnterpriseSecurity();
     } else if (feature('STANDARD_SECURITY')) {
-      console.log('🔒 Standard Security Mode: Basic protection enabled');
+      console.info('🔒 Standard Security Mode: Basic protection enabled');
       await this.initializeStandardSecurity();
     } else if (feature('DEVELOPMENT_MODE')) {
-      console.log('🛠️ Development Mode: Reduced security for development');
+      console.info('🛠️ Development Mode: Reduced security for development');
       await this.initializeDevelopmentMode();
     }
 
     // Authentication features
     if (feature('AWS_SIGV4')) {
-      console.log('🔐 AWS Signature V4 Authentication: Enabled');
+      console.info('🔐 AWS Signature V4 Authentication: Enabled');
       await this.initializeAWSAuth();
     } else if (feature('BASIC_AUTH')) {
-      console.log('🔑 Basic Authentication: Enabled (Development Only)');
+      console.info('🔑 Basic Authentication: Enabled (Development Only)');
       if (process.env.NODE_ENV === 'production') {
         console.warn('⚠️ Basic Auth not recommended for production');
       }
@@ -569,31 +569,31 @@ export class EnhancedSecurityManager {
 
     // Cache features
     if (feature('REDIS_CACHE')) {
-      console.log('💾 Redis Cache: Enabled');
+      console.info('💾 Redis Cache: Enabled');
       await this.initializeRedisCache();
     } else if (feature('MEMORY_CACHE')) {
-      console.log('🧠 Memory Cache: Enabled');
+      console.info('🧠 Memory Cache: Enabled');
       // Memory cache is already initialized in secretManager
     }
 
     // Audit features
     if (feature('FULL_AUDIT')) {
-      console.log('📊 Full Audit Logging: Enabled');
+      console.info('📊 Full Audit Logging: Enabled');
       await this.initializeFullAudit();
     } else if (feature('SECURITY_AUDIT')) {
-      console.log('🔍 Security Audit: Enabled');
+      console.info('🔍 Security Audit: Enabled');
       await this.initializeSecurityAudit();
     }
 
     // Monitoring features
     if (feature('PROMETHEUS')) {
-      console.log('📈 Prometheus Metrics: Enabled');
+      console.info('📈 Prometheus Metrics: Enabled');
       await this.initializePrometheusMetrics();
     }
 
     // Auto-rotation feature
     if (feature('AUTO_ROTATION')) {
-      console.log('🔄 Auto-rotation: Enabled');
+      console.info('🔄 Auto-rotation: Enabled');
       await this.initializeAutoRotation();
     }
   }
@@ -601,7 +601,7 @@ export class EnhancedSecurityManager {
   // Feature-specific initializations
   private async initializeEnterpriseSecurity(): Promise<void> {
     // Advanced threat detection
-    console.log('🛡️ Initializing enterprise security features...');
+    console.info('🛡️ Initializing enterprise security features...');
 
     // Enable advanced monitoring
     this.metrics.securityEvents = 0;
@@ -614,42 +614,42 @@ export class EnhancedSecurityManager {
   }
 
   private async initializeStandardSecurity(): Promise<void> {
-    console.log('🔒 Initializing standard security features...');
+    console.info('🔒 Initializing standard security features...');
     // Standard security setup
   }
 
   private async initializeDevelopmentMode(): Promise<void> {
-    console.log('🛠️ Initializing development mode...');
+    console.info('🛠️ Initializing development mode...');
     // Development-specific setup with reduced security
   }
 
   private async initializeAWSAuth(): Promise<void> {
-    console.log('🔐 Setting up AWS Signature V4 authentication...');
+    console.info('🔐 Setting up AWS Signature V4 authentication...');
     // AWS auth setup would go here
   }
 
   private async initializeRedisCache(): Promise<void> {
-    console.log('💾 Initializing Redis cache connection...');
+    console.info('💾 Initializing Redis cache connection...');
     // Redis connection setup would go here
   }
 
   private async initializeFullAudit(): Promise<void> {
-    console.log('📊 Setting up comprehensive audit logging...');
+    console.info('📊 Setting up comprehensive audit logging...');
     // Full audit setup would go here
   }
 
   private async initializeSecurityAudit(): Promise<void> {
-    console.log('🔍 Setting up security-focused audit logging...');
+    console.info('🔍 Setting up security-focused audit logging...');
     // Security audit setup would go here
   }
 
   private async initializePrometheusMetrics(): Promise<void> {
-    console.log('📈 Setting up Prometheus metrics collection...');
+    console.info('📈 Setting up Prometheus metrics collection...');
     // Prometheus setup would go here
   }
 
   private async initializeAutoRotation(): Promise<void> {
-    console.log('🔄 Setting up automatic secret rotation...');
+    console.info('🔄 Setting up automatic secret rotation...');
     // Auto-rotation setup would go here
   }
 
@@ -892,7 +892,7 @@ export class EnhancedSecurityManager {
   ): Promise<void> {
     await this.updateMetric('auditEvents');
     // Full audit implementation would go here
-    console.log('� Full Audit:', { action, service, name, timestamp: new Date().toISOString() });
+    console.info('� Full Audit:', { action, service, name, timestamp: new Date().toISOString() });
   }
 
   private async logSecurityAudit(action: string, service: string, name: string): Promise<void> {
@@ -907,7 +907,7 @@ export class EnhancedSecurityManager {
       auditLevel: 'SECURITY',
     };
 
-    console.log('🔍 Security Audit:', auditData);
+    console.info('🔍 Security Audit:', auditData);
   }
 
   // Runtime feature checking - DISABLED due to Bun limitations
@@ -1005,7 +1005,7 @@ export class EnhancedSecurityManager {
       return; // Already shut down or never initialized
     }
 
-    console.log('🔄 Shutting down Enhanced Security Manager...');
+    console.info('🔄 Shutting down Enhanced Security Manager...');
 
     try {
       // Flush any remaining audit logs
@@ -1024,7 +1024,7 @@ export class EnhancedSecurityManager {
       // Clear operation tracking
       this.activeOperations.clear();
 
-      console.log('✅ Enhanced Security Manager shutdown complete');
+      console.info('✅ Enhanced Security Manager shutdown complete');
     } catch (error) {
       console.error('🚨 Error during Enhanced Security Manager shutdown:', error);
     }
@@ -1190,7 +1190,7 @@ export function getSecurityMetrics() {
 export function debugLog(message: string): void {
   // This entire function will be removed at bundle time if DEBUG feature is not enabled
   if (feature('DEBUG')) {
-    console.log(`🐛 [DEBUG] ${message}`);
+    console.info(`🐛 [DEBUG] ${message}`);
   }
 }
 

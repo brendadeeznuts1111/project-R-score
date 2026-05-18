@@ -213,14 +213,14 @@ class VaultValidator {
     }
 
     async validateVault(vaultPath: string): Promise<ValidationReport> {
-        console.log('🔍 Starting vault validation...');
+        console.info('🔍 Starting vault validation...');
 
         const context = await this.buildValidationContext(vaultPath);
         const results: ValidationResult[] = [];
 
         // Run all validation rules
         for (const rule of this.rules) {
-            console.log(`  📋 Running rule: ${rule.name}`);
+            console.info(`  📋 Running rule: ${rule.name}`);
             const ruleResults = rule.validate(context);
             results.push(...ruleResults);
         }
@@ -577,12 +577,12 @@ async function main(): Promise<void> {
     const vaultPath = args[0] || process.cwd();
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log('🛡️  Vault Validator');
-        console.log('Usage: bun vault-validator.ts [vault-path] [options]');
-        console.log('\nOptions:');
-        console.log('  --help, -h     Show this help message');
-        console.log('  --output, -o   Output report to file');
-        console.log('  --fix          Attempt to auto-fix issues (experimental)');
+        console.info('🛡️  Vault Validator');
+        console.info('Usage: bun vault-validator.ts [vault-path] [options]');
+        console.info('\nOptions:');
+        console.info('  --help, -h     Show this help message');
+        console.info('  --output, -o   Output report to file');
+        console.info('  --fix          Attempt to auto-fix issues (experimental)');
         process.exit(0);
     }
 
@@ -590,16 +590,16 @@ async function main(): Promise<void> {
         const validator = new VaultValidator();
         const report = await validator.validateVault(vaultPath);
 
-        console.log('\n📋 Validation Results:');
-        console.log(`  Errors: ${report.summary.errors}`);
-        console.log(`  Warnings: ${report.summary.warnings}`);
-        console.log(`  Compliance Score: ${report.summary.complianceScore}%`);
+        console.info('\n📋 Validation Results:');
+        console.info(`  Errors: ${report.summary.errors}`);
+        console.info(`  Warnings: ${report.summary.warnings}`);
+        console.info(`  Compliance Score: ${report.summary.complianceScore}%`);
 
         if (args.includes('--output') || args.includes('-o')) {
             const reportContent = await validator.generateReport(report);
             const reportPath = join(vaultPath, `validation-report-${Date.now()}.md`);
             await writeFile(reportPath, reportContent, 'utf-8');
-            console.log(`\n📄 Report saved to: ${reportPath}`);
+            console.info(`\n📄 Report saved to: ${reportPath}`);
         }
 
         if (report.summary.errors > 0) {

@@ -34,7 +34,7 @@ function pad(text: string, width: number): string {
 
 function output(data: unknown, humanFn: (d: any) => void): void {
   if (jsonOutput) {
-    console.log(JSON.stringify(data, null, 2));
+    console.info(JSON.stringify(data, null, 2));
   } else {
     humanFn(data);
   }
@@ -75,7 +75,7 @@ switch (cmd) {
   case 'health': {
     const result = await healthCheck(SERVER);
     output(result, (r) => {
-      console.log(r.ok
+      console.info(r.ok
         ? `${green('OK')}  ${SERVER}  ${r.latencyMs.toFixed(1)}ms`
         : `${red('FAIL')}  ${SERVER}  ${r.latencyMs.toFixed(1)}ms`);
     });
@@ -88,11 +88,11 @@ switch (cmd) {
     if (!json) { console.error('Missing JSON argument'); process.exit(1); }
     const result = safeValidateUser(JSON.parse(json));
     if (result.success) {
-      console.log('VALID');
-      console.log(Bun.inspect(result.data, { depth: 4 }));
+      console.info('VALID');
+      console.info(Bun.inspect(result.data, { depth: 4 }));
     } else {
-      console.log('INVALID');
-      console.log(Bun.inspect(result.error, { depth: 4 }));
+      console.info('INVALID');
+      console.info(Bun.inspect(result.error, { depth: 4 }));
       process.exit(1);
     }
     break;
@@ -102,15 +102,15 @@ switch (cmd) {
     const json = args[0];
     if (!json) { console.error('Missing JSON argument'); process.exit(1); }
     const user = validateUser(JSON.parse(json));
-    console.log(hashUser(user));
+    console.info(hashUser(user));
     break;
   }
 
   case 'seed': {
     const count = parseInt(args[0] ?? '10', 10);
-    console.log(`Seeding ${count} users to ${SERVER}...`);
+    console.info(`Seeding ${count} users to ${SERVER}...`);
     const result = await seedUsers(SERVER, count);
-    console.log(`Created: ${result.created}  Errors: ${result.errors}  Duration: ${result.durationMs.toFixed(1)}ms`);
+    console.info(`Created: ${result.created}  Errors: ${result.errors}  Duration: ${result.durationMs.toFixed(1)}ms`);
     break;
   }
 
@@ -118,9 +118,9 @@ switch (cmd) {
     const count = parseInt(args[0] ?? '5', 10);
     const users = generateUsers(count);
     for (const u of users) {
-      console.log(`${hashUser(u)}  ${u.role.padEnd(6)}  ${u.name}  <${u.email}>`);
+      console.info(`${hashUser(u)}  ${u.role.padEnd(6)}  ${u.name}  <${u.email}>`);
     }
-    console.log(`\nGenerated ${count} users`);
+    console.info(`\nGenerated ${count} users`);
     break;
   }
 
@@ -129,11 +129,11 @@ switch (cmd) {
       const res = await fetch(`${SERVER}${ROUTES.METRICS}`);
       const metrics = await res.json() as { count: number; sizeBytes: number; path: string; logs: unknown[] };
       output(metrics, (m) => {
-        console.log(`${cyan('Server:')} ${SERVER}`);
-        console.log(`  ${cyan('Users:')} ${m.count}`);
-        console.log(`  ${cyan('DB size:')} ${(m.sizeBytes / 1024).toFixed(1)} KB`);
-        console.log(`  ${cyan('DB path:')} ${m.path}`);
-        console.log(`  ${cyan('Request logs:')} ${m.logs.length}`);
+        console.info(`${cyan('Server:')} ${SERVER}`);
+        console.info(`  ${cyan('Users:')} ${m.count}`);
+        console.info(`  ${cyan('DB size:')} ${(m.sizeBytes / 1024).toFixed(1)} KB`);
+        console.info(`  ${cyan('DB path:')} ${m.path}`);
+        console.info(`  ${cyan('Request logs:')} ${m.logs.length}`);
       });
     } catch {
       console.error(`Cannot reach ${SERVER}`);
@@ -158,14 +158,14 @@ switch (cmd) {
       const { users, total } = body;
       output(body, () => {
         if (users.length === 0) {
-          console.log('No users found.');
+          console.info('No users found.');
           return;
         }
-        console.log(`${pad(cyan('ID'), 38)} ${pad(cyan('NAME'), 20)} ${pad(cyan('ROLE'), 8)} ${cyan('EMAIL')}`);
+        console.info(`${pad(cyan('ID'), 38)} ${pad(cyan('NAME'), 20)} ${pad(cyan('ROLE'), 8)} ${cyan('EMAIL')}`);
         for (const u of users) {
-          console.log(`${pad(dim(u.id), 38)} ${pad(u.name, 20)} ${pad(u.role, 8)} ${u.email}`);
+          console.info(`${pad(dim(u.id), 38)} ${pad(u.name, 20)} ${pad(u.role, 8)} ${u.email}`);
         }
-        console.log(`\n${users.length} of ${total} user(s)`);
+        console.info(`\n${users.length} of ${total} user(s)`);
       });
     } catch {
       console.error(`Cannot reach ${SERVER}`);
@@ -183,7 +183,7 @@ switch (cmd) {
     if (!yesFlag && !jsonOutput) {
       const answer = prompt(`Delete user ${id}? [y/N]`);
       if (answer?.toLowerCase() !== 'y') {
-        console.log('Cancelled');
+        console.info('Cancelled');
         process.exit(0);
       }
     }
@@ -192,7 +192,7 @@ switch (cmd) {
       const body = await res.json();
       output(body, (b) => {
         if (res.status === 200) {
-          console.log(green(`Deleted user ${id}`));
+          console.info(green(`Deleted user ${id}`));
         } else {
           console.error(red(`Failed: ${b.error ?? 'unknown error'}`));
           process.exit(1);
@@ -221,10 +221,10 @@ switch (cmd) {
       const body = await res.json();
       output(body, (b) => {
         if (res.status === 200) {
-          console.log(green(`Updated user ${id}:`));
-          console.log(`  Name:  ${b.name}`);
-          console.log(`  Email: ${b.email}`);
-          console.log(`  Role:  ${b.role}`);
+          console.info(green(`Updated user ${id}:`));
+          console.info(`  Name:  ${b.name}`);
+          console.info(`  Email: ${b.email}`);
+          console.info(`  Role:  ${b.role}`);
         } else {
           console.error(red(`Failed: ${b.error ?? 'unknown error'}`));
           process.exit(1);
@@ -267,18 +267,18 @@ switch (cmd) {
       const result = await importGzip(inputFile, db);
       db.close();
       if (jsonOutput) {
-        console.log(JSON.stringify(result));
+        console.info(JSON.stringify(result));
       } else {
-        console.log(`Imported ${result.imported} users from gzip, skipped ${result.skipped}`);
+        console.info(`Imported ${result.imported} users from gzip, skipped ${result.skipped}`);
       }
     } else {
       const stream = Bun.stdin.stream();
       const result = await importJSONL(db, stream);
       db.close();
       if (jsonOutput) {
-        console.log(JSON.stringify(result));
+        console.info(JSON.stringify(result));
       } else {
-        console.log(`Imported ${result.imported} users, skipped ${result.skipped}`);
+        console.info(`Imported ${result.imported} users, skipped ${result.skipped}`);
       }
     }
     break;
@@ -286,15 +286,15 @@ switch (cmd) {
 
   case 'watch': {
     const wsTarget = `${SERVER.replace(/^http/, 'ws')}${ROUTES.WS}`;
-    console.log(`Connecting to ${wsTarget}...`);
+    console.info(`Connecting to ${wsTarget}...`);
     const ws = new WebSocket(wsTarget);
-    ws.onopen = () => console.log('Connected. Watching for events...\n');
+    ws.onopen = () => console.info('Connected. Watching for events...\n');
     ws.onmessage = (e) => {
       const msg = JSON.parse(e.data as string);
       const time = new Date(msg.ts).toISOString().slice(11, 19);
-      console.log(`[${time}] ${msg.event}  ${JSON.stringify(msg.data)}`);
+      console.info(`[${time}] ${msg.event}  ${JSON.stringify(msg.data)}`);
     };
-    ws.onclose = () => { console.log('Disconnected'); process.exit(0); };
+    ws.onclose = () => { console.info('Disconnected'); process.exit(0); };
     ws.onerror = () => { console.error(`Cannot connect to ${wsTarget}`); process.exit(1); };
     await new Promise(() => {});
     break;
@@ -302,7 +302,7 @@ switch (cmd) {
 
   case 'serve': {
     const serverPath = import.meta.dir + '/../stuff-b/server.ts';
-    console.log(`Starting stuff-b server...`);
+    console.info(`Starting stuff-b server...`);
     const proc = Bun.spawn(['bun', 'run', serverPath], {
       env: { ...process.env },
       stdout: 'inherit',
@@ -319,7 +319,7 @@ switch (cmd) {
       } catch {}
     }
     if (ready) {
-      console.log(`\nServer ready at ${SERVER}`);
+      console.info(`\nServer ready at ${SERVER}`);
     } else {
       console.error('Server failed to start within 3s');
     }
@@ -334,7 +334,7 @@ switch (cmd) {
   case 'load': {
     const total = parseInt(args[0] ?? '100', 10);
     const concurrency = parseInt(args[1] ?? String(LIMITS.LOAD_TEST_DEFAULT_CONCURRENCY), 10);
-    console.log(`Load testing ${SERVER} — ${total} requests, ${concurrency} concurrent\n`);
+    console.info(`Load testing ${SERVER} — ${total} requests, ${concurrency} concurrent\n`);
 
     // Verify server is up
     const check = await healthCheck(SERVER);
@@ -379,17 +379,17 @@ switch (cmd) {
     const p99 = latencies[Math.floor(latencies.length * 0.99)];
     const rps = (total / totalMs) * 1000;
 
-    console.log(`Results:`);
-    console.log(`  Total:    ${total} requests in ${totalMs.toFixed(0)}ms`);
-    console.log(`  RPS:      ${rps.toFixed(0)} req/s`);
-    console.log(`  Errors:   ${errors}`);
-    console.log(`  Latency:`);
-    console.log(`    avg:    ${avg.toFixed(2)}ms`);
-    console.log(`    p50:    ${p50.toFixed(2)}ms`);
-    console.log(`    p95:    ${p95.toFixed(2)}ms`);
-    console.log(`    p99:    ${p99.toFixed(2)}ms`);
-    console.log(`    min:    ${latencies[0].toFixed(2)}ms`);
-    console.log(`    max:    ${latencies[latencies.length - 1].toFixed(2)}ms`);
+    console.info(`Results:`);
+    console.info(`  Total:    ${total} requests in ${totalMs.toFixed(0)}ms`);
+    console.info(`  RPS:      ${rps.toFixed(0)} req/s`);
+    console.info(`  Errors:   ${errors}`);
+    console.info(`  Latency:`);
+    console.info(`    avg:    ${avg.toFixed(2)}ms`);
+    console.info(`    p50:    ${p50.toFixed(2)}ms`);
+    console.info(`    p95:    ${p95.toFixed(2)}ms`);
+    console.info(`    p99:    ${p99.toFixed(2)}ms`);
+    console.info(`    min:    ${latencies[0].toFixed(2)}ms`);
+    console.info(`    max:    ${latencies[latencies.length - 1].toFixed(2)}ms`);
     break;
   }
 
@@ -417,22 +417,22 @@ switch (cmd) {
       },
     };
     output(data, () => {
-      console.log(`stuff-c  v${root.version}`);
-      console.log(`  stuff-a  v${stuffA.version}  (zod ${stuffA.dependencies.zod})`);
-      console.log(`  stuff-b  v${stuffB.version}  (depends on stuff-a)`);
-      console.log(`  server   ${SERVER}`);
-      console.log(`  runtime  Bun ${Bun.version}`);
-      console.log(`  config   ${CONFIG_PATH}`);
+      console.info(`stuff-c  v${root.version}`);
+      console.info(`  stuff-a  v${stuffA.version}  (zod ${stuffA.dependencies.zod})`);
+      console.info(`  stuff-b  v${stuffB.version}  (depends on stuff-a)`);
+      console.info(`  server   ${SERVER}`);
+      console.info(`  runtime  Bun ${Bun.version}`);
+      console.info(`  config   ${CONFIG_PATH}`);
       if (dbExists) {
-        console.log(`  db       ${DB.DEFAULT_PATH}  (${(dbFile.size / 1024).toFixed(1)} KB, ${dbFile.type})`);
+        console.info(`  db       ${DB.DEFAULT_PATH}  (${(dbFile.size / 1024).toFixed(1)} KB, ${dbFile.type})`);
       } else {
-        console.log(`  db       ${DB.DEFAULT_PATH}  (not created)`);
+        console.info(`  db       ${DB.DEFAULT_PATH}  (not created)`);
       }
     });
     break;
   }
 
   default:
-    console.log(usage);
+    console.info(usage);
     process.exit(cmd ? 1 : 0);
 }

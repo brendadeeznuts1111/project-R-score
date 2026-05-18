@@ -51,7 +51,7 @@ if (Bun.argv.includes("--feedback")) {
     ``
   ].join("\n");
 
-  console.log(`[GOV-FDB-001] Preparing enhanced feedback to Bun team...`);
+  console.info(`[GOV-FDB-001] Preparing enhanced feedback to Bun team...`);
 
   // Create temporary file for feedback content
   const tempFile = `/tmp/gov-fdb-001-${Date.now()}.txt`;
@@ -68,7 +68,7 @@ if (Bun.argv.includes("--feedback")) {
     
     while (attempt < maxRetries && !success) {
       attempt++;
-      console.log(`[GOV-FDB-001] Attempt ${attempt}/${maxRetries}...`);
+      console.info(`[GOV-FDB-001] Attempt ${attempt}/${maxRetries}...`);
       
       try {
         const controller = new AbortController();
@@ -93,8 +93,8 @@ if (Bun.argv.includes("--feedback")) {
         const exitCode = await child.exited;
         
         if (exitCode === 0) {
-          console.log(`[✓] GOV-FDB-001: Feedback delivered successfully!`);
-          console.log(`[✓] Response: ${stdout.trim()}`);
+          console.info(`[✓] GOV-FDB-001: Feedback delivered successfully!`);
+          console.info(`[✓] Response: ${stdout.trim()}`);
           success = true;
         } else {
           console.error(`[!] GOV-FDB-001: Attempt ${attempt} failed (exit code: ${exitCode})`);
@@ -102,7 +102,7 @@ if (Bun.argv.includes("--feedback")) {
           
           if (attempt < maxRetries) {
             const delay = Math.pow(2, attempt) * 1000; // Exponential backoff
-            console.log(`[⏳] Retrying in ${delay/1000}s...`);
+            console.info(`[⏳] Retrying in ${delay/1000}s...`);
             await new Promise(resolve => setTimeout(resolve, delay));
           }
         }
@@ -118,7 +118,7 @@ if (Bun.argv.includes("--feedback")) {
             error: error instanceof Error ? error.message : String(error),
             attempt
           }, null, 2));
-          console.log(`[📁] GOV-FDB-001: Feedback saved to ${fallbackFile} for manual submission`);
+          console.info(`[📁] GOV-FDB-001: Feedback saved to ${fallbackFile} for manual submission`);
         }
       }
     }
@@ -365,8 +365,8 @@ if (selectedColumns.length === 0) {
 // Calculate total columns
 const totalCols = selectedColumns.reduce((sum, col) => sum + (COLUMNS[col as keyof typeof COLUMNS]?.count || 0), 0);
 
-console.log(`\n🧬 Ultra-Enhanced ${totalCols}-Column Matrix\n`);
-console.log(`Selected Categories: ${selectedColumns.map(c => COLUMNS[c as keyof typeof COLUMNS]?.name).join(", ")}\n`);
+console.info(`\n🧬 Ultra-Enhanced ${totalCols}-Column Matrix\n`);
+console.info(`Selected Categories: ${selectedColumns.map(c => COLUMNS[c as keyof typeof COLUMNS]?.name).join(", ")}\n`);
 
 // Display header
 const header = selectedColumns
@@ -376,8 +376,8 @@ const header = selectedColumns
   })
   .join(" | ");
 
-console.log(header);
-console.log("=".repeat(Math.min(header.length, 200)));
+console.info(header);
+console.info("=".repeat(Math.min(header.length, 200)));
 
 // Analysis functions
 function analyzeURLPattern(pattern: string) {
@@ -886,7 +886,7 @@ for (let i = 0; i < numSamples; i++) {
     row.push(value);
   });
 
-  console.log(row.join(" | "));
+  console.info(row.join(" | "));
 }
 
-console.log("\n✅ Matrix generation complete!\n");
+console.info("\n✅ Matrix generation complete!\n");

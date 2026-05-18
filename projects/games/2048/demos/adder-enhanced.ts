@@ -14,13 +14,13 @@ class EnhancedCalculator {
 
   private showHeader(): void {
     console.clear();
-    console.log(
+    console.info(
       "\n" + colourKit(0.8).ansi + "🧮 Enhanced Quantum Calculator" + "\x1b[0m"
     );
-    console.log(
+    console.info(
       colourKit(0.3).ansi + " stdin + quantum toolkit demo" + "\x1b[0m\n"
     );
-    console.log("Commands: numbers | clear | history | lattice | quit\n");
+    console.info("Commands: numbers | clear | history | lattice | quit\n");
   }
 
   private renderDisplay(): void {
@@ -58,27 +58,27 @@ class EnhancedCalculator {
   }
 
   private showHistory(): void {
-    console.log("\n📊 Calculation History:");
-    console.log("┌─────┬─────┬──────────┐");
-    console.log("│ #   │ Val │ Total    │");
-    console.log("├─────┼─────┼──────────┤");
+    console.info("\n📊 Calculation History:");
+    console.info("┌─────┬─────┬──────────┐");
+    console.info("│ #   │ Val │ Total    │");
+    console.info("├─────┼─────┼──────────┤");
 
     this.operations.forEach((op, i) => {
-      console.log(
+      console.info(
         `│ ${pad((i + 1).toString(), 3)} │ ${pad(op.input.toString(), 3)} │ ${
           op.color
         }${pad(op.total.toString(), 8)}\x1b[0m │`
       );
     });
 
-    console.log("└─────┴─────┴──────────┘\n");
+    console.info("└─────┴─────┴──────────┘\n");
   }
 
   private showLattice(): void {
-    console.log("\n🎨 Quantum Lattice Visualization:");
+    console.info("\n🎨 Quantum Lattice Visualization:");
     const tension = Math.min(Math.abs(this.total) / 200, 1);
-    console.log(rgbaLattice(tension * 10));
-    console.log(`Tension level: ${(tension * 100).toFixed(1)}%\n`);
+    console.info(rgbaLattice(tension * 10));
+    console.info(`Tension level: ${(tension * 100).toFixed(1)}%\n`);
   }
 
   private clear(): void {
@@ -95,8 +95,8 @@ class EnhancedCalculator {
       average: this.history.length > 0 ? this.total / this.history.length : 0,
       timestamp: new Date().toISOString(),
     });
-    console.log("\n📡 SSE Event Generated:");
-    console.log(event);
+    console.info("\n📡 SSE Event Generated:");
+    console.info(event);
   }
 
   public async start(): Promise<void> {
@@ -106,8 +106,8 @@ class EnhancedCalculator {
       const input = line.trim().toLowerCase();
 
       if (input === "quit" || input === "q" || input === "exit") {
-        console.log("\n👋 Thanks for using Enhanced Quantum Calculator!");
-        console.log(
+        console.info("\n👋 Thanks for using Enhanced Quantum Calculator!");
+        console.info(
           `Final total: ${this.total} from ${this.history.length} operations`
         );
         break;
@@ -120,19 +120,19 @@ class EnhancedCalculator {
       } else if (input === "sse") {
         this.generateSSE();
       } else if (input === "help") {
-        console.log("\n📖 Commands:");
-        console.log("  numbers - Add to total");
-        console.log("  clear/c - Reset calculator");
-        console.log("  history/h - Show calculation history");
-        console.log("  lattice/l - Show quantum visualization");
-        console.log("  sse - Generate Server-Sent Event");
-        console.log("  help - Show this help");
-        console.log("  quit/q - Exit program");
+        console.info("\n📖 Commands:");
+        console.info("  numbers - Add to total");
+        console.info("  clear/c - Reset calculator");
+        console.info("  history/h - Show calculation history");
+        console.info("  lattice/l - Show quantum visualization");
+        console.info("  sse - Generate Server-Sent Event");
+        console.info("  help - Show this help");
+        console.info("  quit/q - Exit program");
       } else if (input && !isNaN(Number(input))) {
         const value = Number(input);
         this.addToHistory(value);
       } else if (input) {
-        console.log(
+        console.info(
           `\n❌ Unknown command: ${input}. Type 'help' for commands.`
         );
       }

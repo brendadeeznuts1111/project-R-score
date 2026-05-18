@@ -51,7 +51,7 @@ export class OddsFeedProcessor {
     const timestamp = view.getBigUint64(4, true);
     const marketCount = view.getUint16(12, true);
     
-    console.log(`[OddsFeed] Provider: ${providerId}, Markets: ${marketCount}, Magic: ${magic.toString(16)}`);
+    console.info(`[OddsFeed] Provider: ${providerId}, Markets: ${marketCount}, Magic: ${magic.toString(16)}`);
     
     // Process each market
     for (let i = 0; i < marketCount; i++) {
@@ -75,8 +75,8 @@ export class OddsFeedProcessor {
       
       // Debug with full dump if needed
       if (odds > 1000) {
-        console.log('⚠️  High odds detected, full dump:');
-        console.log(marketData.inspect(2, {}, (v: any) => JSON.stringify(v)));
+        console.info('⚠️  High odds detected, full dump:');
+        console.info(marketData.inspect(2, {}, (v: any) => JSON.stringify(v)));
       }
     }
   }
@@ -126,7 +126,7 @@ export class OrderMatchingEngine {
     const price = view.getFloat64(9, true);
     const quantity = view.getUint32(17, true);
     
-    console.log(`[Order] ID: ${orderId}, Side: ${side === 0 ? 'BUY' : 'SELL'}, Price: $${price}, Qty: ${quantity}`);
+    console.info(`[Order] ID: ${orderId}, Side: ${side === 0 ? 'BUY' : 'SELL'}, Price: $${price}, Qty: ${quantity}`);
     
     // Log order match event
     this.logger.logOrderMatch(
@@ -141,7 +141,7 @@ export class OrderMatchingEngine {
     // Validate order size (security check)
     if (quantity > 1000000) {
       console.warn('⚠️  Suspicious large order detected');
-      console.log(orderArray.inspect(2, {}, (v: any) => JSON.stringify(v)));
+      console.info(orderArray.inspect(2, {}, (v: any) => JSON.stringify(v)));
     }
   }
   
@@ -154,10 +154,10 @@ export class OrderMatchingEngine {
       `orderbook:${marketId}`
     );
     
-    console.log(`[OrderBook] Snapshot received for market ${marketId}, size: ${snapshot.length} bytes`);
+    console.info(`[OrderBook] Snapshot received for market ${marketId}, size: ${snapshot.length} bytes`);
     
     // Show preview only (depth 1) to avoid log bloat
-    console.log(snapshot.inspect(1, {}, (v: any) => JSON.stringify(v)));
+    console.info(snapshot.inspect(1, {}, (v: any) => JSON.stringify(v)));
   }
 }
 
@@ -220,7 +220,7 @@ export class MarketDataAggregator {
       totalBytes += buffer.length;
       
       // Inspect each provider's data at shallow depth
-      console.log(`[${providerId}] `, buffer.inspect(0, {}, (v: any) => JSON.stringify(v)));
+      console.info(`[${providerId}] `, buffer.inspect(0, {}, (v: any) => JSON.stringify(v)));
     }
     
     return {
@@ -237,7 +237,7 @@ export class MarketDataAggregator {
     const now = Date.now();
     for (const [providerId, buffer] of this.providerBuffers) {
       if (now - buffer.createdAt > maxAgeMs) {
-        console.log(`Cleaning up stale buffer: ${providerId}`);
+        console.info(`Cleaning up stale buffer: ${providerId}`);
         this.providerBuffers.delete(providerId);
       }
     }
@@ -302,12 +302,12 @@ export class BinaryProtocolValidator {
     
     // Log validation result
     if (errors.length > 0) {
-      console.log('❌ Protocol validation failed:');
-      console.log(array.inspect(2, {}, (v: any) => JSON.stringify(v)));
-      errors.forEach(e => console.log(`  - ${e}`));
+      console.info('❌ Protocol validation failed:');
+      console.info(array.inspect(2, {}, (v: any) => JSON.stringify(v)));
+      errors.forEach(e => console.info(`  - ${e}`));
     } else {
-      console.log('✅ Protocol validation passed');
-      console.log(array.inspect(1, {}, (v: any) => JSON.stringify(v)));
+      console.info('✅ Protocol validation passed');
+      console.info(array.inspect(1, {}, (v: any) => JSON.stringify(v)));
     }
     
     return { valid: errors.length === 0, errors };
@@ -325,7 +325,7 @@ export class BinaryProtocolValidator {
     const customArray = new CustomTypedArray(64, 'benchmark');
     customArray.set(testData);
     
-    console.log(`\n=== Benchmarking ${iterations} iterations ===`);
+    console.info(`\n=== Benchmarking ${iterations} iterations ===`);
     
     // Regular parsing
     console.time('Regular parsing');
@@ -369,17 +369,17 @@ export class ProductionDebugger {
     providerB: Uint8Array,
     marketId: number
   ): void {
-    console.log(`\n🔍 Investigating market ${marketId} discrepancy...`);
+    console.info(`\n🔍 Investigating market ${marketId} discrepancy...`);
     
     const arrayA = CustomTypedArray.fromUint8Array(providerA, `provider-A:${marketId}`);
     const arrayB = CustomTypedArray.fromUint8Array(providerB, `provider-B:${marketId}`);
     
     // Show both with full context
-    console.log('\nProvider A:');
-    console.log(arrayA.inspect(2, {}, (v: any) => JSON.stringify(v)));
+    console.info('\nProvider A:');
+    console.info(arrayA.inspect(2, {}, (v: any) => JSON.stringify(v)));
     
-    console.log('\nProvider B:');
-    console.log(arrayB.inspect(2, {}, (v: any) => JSON.stringify(v)));
+    console.info('\nProvider B:');
+    console.info(arrayB.inspect(2, {}, (v: any) => JSON.stringify(v)));
     
     // Compare byte-by-byte
     const minLength = Math.min(providerA.length, providerB.length);
@@ -389,23 +389,23 @@ export class ProductionDebugger {
       if (providerA[i] !== providerB[i]) {
         differences++;
         if (differences <= 5) { // Show first 5 differences
-          console.log(`Byte ${i}: A=${providerA[i].toString(16).padStart(2, '0')} B=${providerB[i].toString(16).padStart(2, '0')}`);
+          console.info(`Byte ${i}: A=${providerA[i].toString(16).padStart(2, '0')} B=${providerB[i].toString(16).padStart(2, '0')}`);
         }
       }
     }
     
     if (differences > 5) {
-      console.log(`... and ${differences - 5} more differences`);
+      console.info(`... and ${differences - 5} more differences`);
     }
     
-    console.log(`Total differences: ${differences}`);
+    console.info(`Total differences: ${differences}`);
   }
   
   /**
    * Debug scenario: Memory leak detection
    */
   debugMemoryLeak(): void {
-    console.log('\n🔍 Memory usage analysis...');
+    console.info('\n🔍 Memory usage analysis...');
     
     const allocations: CustomTypedArray[] = [];
     
@@ -419,13 +419,13 @@ export class ProductionDebugger {
     // Show all allocations with age
     allocations.forEach((arr, i) => {
       const info = arr.inspectInfo;
-      console.log(`Allocation ${i}: ${info.length} bytes, age: ${info.ageMs}ms, context: ${info.context}`);
+      console.info(`Allocation ${i}: ${info.length} bytes, age: ${info.ageMs}ms, context: ${info.context}`);
     });
     
     // Show shallow inspection to prevent log bloat
-    console.log('\nShallow inspection of all allocations:');
+    console.info('\nShallow inspection of all allocations:');
     allocations.forEach((arr, i) => {
-      console.log(`${i}: `, arr.inspect(0, {}, (v: any) => JSON.stringify(v)));
+      console.info(`${i}: `, arr.inspect(0, {}, (v: any) => JSON.stringify(v)));
     });
   }
   
@@ -433,12 +433,12 @@ export class ProductionDebugger {
    * Debug scenario: Protocol violation
    */
   debugProtocolViolation(data: Uint8Array, violationType: string): void {
-    console.log(`\n🚨 Protocol Violation: ${violationType}`);
+    console.info(`\n🚨 Protocol Violation: ${violationType}`);
     
     const array = CustomTypedArray.fromUint8Array(data, `violation:${violationType}`);
     
     // Always show full dump for violations
-    console.log(array.inspect(2, {}, (v: any) => JSON.stringify(v)));
+    console.info(array.inspect(2, {}, (v: any) => JSON.stringify(v)));
     
     // Report to threat intelligence
     this.logger.logBinaryEvent(
@@ -455,7 +455,7 @@ export class ProductionDebugger {
  */
 
 // Example 1: Odds Feed Processing
-console.log('=== EXAMPLE 1: Odds Feed Processing ===');
+console.info('=== EXAMPLE 1: Odds Feed Processing ===');
 const oddsProcessor = new OddsFeedProcessor();
 
 // Simulate binary odds feed message (256 bytes)
@@ -474,7 +474,7 @@ feedView.setFloat64(38, 2.10, true); // Odds
 oddsProcessor.processOddsFeed(feedData, 'provider-1');
 
 // Example 2: Order Matching
-console.log('\n=== EXAMPLE 2: Order Matching ===');
+console.info('\n=== EXAMPLE 2: Order Matching ===');
 const orderEngine = new OrderMatchingEngine();
 
 const orderData = new Uint8Array(25);
@@ -487,7 +487,7 @@ orderView.setUint32(17, 1000, true); // Quantity
 orderEngine.processOrder(orderData, 12345);
 
 // Example 3: Protocol Validation
-console.log('\n=== EXAMPLE 3: Protocol Validation ===');
+console.info('\n=== EXAMPLE 3: Protocol Validation ===');
 const validMessage = new Uint8Array(32);
 const validView = new DataView(validMessage.buffer);
 validView.setUint32(0, 0x42554655, true); // Correct magic
@@ -495,10 +495,10 @@ validView.setUint8(4, 1); // Version 1
 validView.setBigUint64(5, BigInt(Date.now()), true);
 
 const result = BinaryProtocolValidator.validateMessage(validMessage, 0x42554655, 1);
-console.log('Validation result:', result);
+console.info('Validation result:', result);
 
 // Example 4: Production Debugging
-console.log('\n=== EXAMPLE 4: Production Debugging ===');
+console.info('\n=== EXAMPLE 4: Production Debugging ===');
 const prodDebugger = new ProductionDebugger();
 
 // Simulate discrepancy
@@ -508,7 +508,7 @@ const providerB = new Uint8Array([0x42, 0x55, 0x46, 0x55, 0x01, 0x02, 0x03, 0x05
 prodDebugger.debugMarketDiscrepancy(providerA, providerB, 12345);
 
 // Example 5: Benchmarking
-console.log('\n=== EXAMPLE 5: Performance Benchmark ===');
+console.info('\n=== EXAMPLE 5: Performance Benchmark ===');
 BinaryProtocolValidator.benchmarkParsing(100);
 
-console.log('\n✅ All examples completed successfully!');
+console.info('\n✅ All examples completed successfully!');

@@ -173,7 +173,7 @@ class CatalogSynchronizer {
         
         if (catalogVersion) {
           // Suggest migration to catalog
-          console.log(`📦 ${packageJson.name || 'unknown'}: ${depName}@${version} → catalog:${catalogName}`);
+          console.info(`📦 ${packageJson.name || 'unknown'}: ${depName}@${version} → catalog:${catalogName}`);
           result.updated.push(`${packageJson.name || 'unknown'}:${depName}`);
         }
       }
@@ -267,14 +267,14 @@ class CatalogSynchronizer {
     const result: SyncResult = { updated: [], added: [], removed: [], errors: [] };
     const analysis = this.analyzeSync();
     
-    console.log(`🔄 Found ${analysis.migrations.length} potential catalog migrations:\n`);
+    console.info(`🔄 Found ${analysis.migrations.length} potential catalog migrations:\n`);
     
     for (const migration of analysis.migrations) {
-      console.log(`   ${migration.pkg}: ${migration.dep}@${migration.version} → catalog:${migration.catalog}`);
+      console.info(`   ${migration.pkg}: ${migration.dep}@${migration.version} → catalog:${migration.catalog}`);
     }
     
     if (applyChanges && analysis.migrations.length > 0) {
-      console.log('\n🔧 Applying migrations...');
+      console.info('\n🔧 Applying migrations...');
       
       // Group migrations by package
       const migrationsByPackage = new Map<string, Array<{ dep: string; catalog: string }>>();
@@ -299,10 +299,10 @@ class CatalogSynchronizer {
             try {
               this.updatePackage(pkg, packagePath, migrations);
               result.updated.push(pkg.name);
-              console.log(`   ✅ Updated ${pkg.name}`);
+              console.info(`   ✅ Updated ${pkg.name}`);
             } catch (error) {
               result.errors.push(`Failed to update ${pkg.name}: ${error}`);
-              console.log(`   ❌ Failed to update ${pkg.name}`);
+              console.info(`   ❌ Failed to update ${pkg.name}`);
             }
           }
         }
@@ -377,7 +377,7 @@ async function main() {
   const generateReport = args.includes('--report') || args.includes('-r');
   
   try {
-    console.log('🔄 Analyzing Bun v1.3 Catalog Synchronization...\n');
+    console.info('🔄 Analyzing Bun v1.3 Catalog Synchronization...\n');
     
     const synchronizer = new CatalogSynchronizer();
     const result = synchronizer.sync(applyChanges);
@@ -386,20 +386,20 @@ async function main() {
       const report = synchronizer.generateSyncReport();
       const reportPath = join(process.cwd(), 'catalog-sync-report.md');
       writeFileSync(reportPath, report);
-      console.log(`📄 Detailed report saved to: ${reportPath}`);
+      console.info(`📄 Detailed report saved to: ${reportPath}`);
     }
     
     if (applyChanges) {
-      console.log(`\n✅ Synchronization complete!`);
-      console.log(`   Updated packages: ${result.updated.length}`);
+      console.info(`\n✅ Synchronization complete!`);
+      console.info(`   Updated packages: ${result.updated.length}`);
       if (result.errors.length > 0) {
-        console.log(`   Errors: ${result.errors.length}`);
+        console.info(`   Errors: ${result.errors.length}`);
       }
     } else {
-      console.log('\n💡 To apply these migrations, run:');
-      console.log('   bun run catalog:sync --apply');
-      console.log('\n📄 To generate a detailed report, run:');
-      console.log('   bun run catalog:sync --report');
+      console.info('\n💡 To apply these migrations, run:');
+      console.info('   bun run catalog:sync --apply');
+      console.info('\n📄 To generate a detailed report, run:');
+      console.info('   bun run catalog:sync --report');
     }
     
   } catch (error) {

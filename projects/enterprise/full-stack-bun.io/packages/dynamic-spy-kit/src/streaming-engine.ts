@@ -52,7 +52,7 @@ export class LiveStreamingEngine {
 			this.ws = new WebSocket(`${wsUrl}/stream/sports`);
 
 			this.ws.onopen = () => {
-				console.log('✅ WebSocket connected to private registry');
+				console.info('✅ WebSocket connected to private registry');
 				this.isConnected = true;
 				this.reconnectAttempts = 0;
 			};
@@ -65,7 +65,7 @@ export class LiveStreamingEngine {
 			};
 
 			this.ws.onclose = () => {
-				console.log('WebSocket closed, attempting reconnect...');
+				console.info('WebSocket closed, attempting reconnect...');
 				this.isConnected = false;
 				this.reconnect();
 			};
@@ -107,7 +107,7 @@ export class LiveStreamingEngine {
 
 			// 4. LOG LIVE UPDATE
 			if (update.arbOpportunity) {
-				console.log(`🔥 LIVE: ${update.market} → ${(update.arbOpportunity.profit * 100).toFixed(2)}%`);
+				console.info(`🔥 LIVE: ${update.market} → ${(update.arbOpportunity.profit * 100).toFixed(2)}%`);
 			}
 		} catch (error) {
 			console.error('Error handling live update:', error);
@@ -127,7 +127,7 @@ export class LiveStreamingEngine {
 		this.reconnectAttempts++;
 
 		setTimeout(() => {
-			console.log(`Reconnecting (attempt ${this.reconnectAttempts})...`);
+			console.info(`Reconnecting (attempt ${this.reconnectAttempts})...`);
 			this.connect();
 		}, delay);
 	}

@@ -252,8 +252,8 @@ class UltraFastRegistryServer {
   }
 
   start(port: number = APPLICATION_CONSTANTS.DEFAULT_PORT): void {
-    console.log(`⚡ Starting Ultra-Fast Registry Server on port ${port}`);
-    console.log(`🚀 Leveraging Bun's native HTTP implementation for maximum performance`);
+    console.info(`⚡ Starting Ultra-Fast Registry Server on port ${port}`);
+    console.info(`🚀 Leveraging Bun's native HTTP implementation for maximum performance`);
 
     Bun.serve({
       port,
@@ -293,21 +293,21 @@ class UltraFastRegistryServer {
           try {
             const data = JSON.parse(message.toString());
             // Handle real-time package watch subscriptions
-            console.log('WebSocket message:', data);
+            console.info('WebSocket message:', data);
           } catch (error) {
             ws.send(JSON.stringify({ error: 'Invalid message format' }));
           }
         },
 
         open(ws) {
-          console.log('📡 WebSocket connection established');
+          console.info('📡 WebSocket connection established');
           ws.send(
             JSON.stringify({ type: 'connected', message: 'Real-time package updates enabled' })
           );
         },
 
         close(ws, code, reason) {
-          console.log('📡 WebSocket connection closed:', code);
+          console.info('📡 WebSocket connection closed:', code);
         },
       },
 
@@ -318,13 +318,13 @@ class UltraFastRegistryServer {
       },
     });
 
-    console.log(`✅ Ultra-Fast Registry Server running at http://localhost:${port}`);
-    console.log(`🎯 Performance optimizations:`);
-    console.log(`   • Native HTTP parsing (no Node.js overhead)`);
-    console.log(`   • Hardware-accelerated compression`);
-    console.log(`   • Multi-layer caching system`);
-    console.log(`   • Prepared statement optimization`);
-    console.log(`   • Real-time WebSocket support`);
+    console.info(`✅ Ultra-Fast Registry Server running at http://localhost:${port}`);
+    console.info(`🎯 Performance optimizations:`);
+    console.info(`   • Native HTTP parsing (no Node.js overhead)`);
+    console.info(`   • Hardware-accelerated compression`);
+    console.info(`   • Multi-layer caching system`);
+    console.info(`   • Prepared statement optimization`);
+    console.info(`   • Real-time WebSocket support`);
   }
 
   private async handleGET(request: Request, url: URL, path: string): Promise<Response> {
@@ -548,22 +548,22 @@ if (import.meta.main) {
   const port = parseInt(process.env.PORT || '3000');
   const dbPath = process.env.DATABASE_URL || './registry.db';
 
-  console.log('🚀 Starting Ultra-Fast Package Registry...');
-  console.log(`📊 Database: ${dbPath}`);
-  console.log(`🌐 Port: ${port}`);
-  console.log(`⚡ Bun Version: ${Bun.version}`);
+  console.info('🚀 Starting Ultra-Fast Package Registry...');
+  console.info(`📊 Database: ${dbPath}`);
+  console.info(`🌐 Port: ${port}`);
+  console.info(`⚡ Bun Version: ${Bun.version}`);
 
   const registry = UltraFastRegistryFactory.createPersistentRegistry(dbPath);
   registry.start(port);
 
   // Graceful shutdown
   process.on('SIGINT', () => {
-    console.log('\n🛑 Shutting down Ultra-Fast Registry...');
+    console.info('\n🛑 Shutting down Ultra-Fast Registry...');
     process.exit(0);
   });
 
   process.on('SIGTERM', () => {
-    console.log('\n🛑 Shutting down Ultra-Fast Registry...');
+    console.info('\n🛑 Shutting down Ultra-Fast Registry...');
     process.exit(0);
   });
 }

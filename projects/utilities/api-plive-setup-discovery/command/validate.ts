@@ -22,7 +22,7 @@ async function validateCCS(): Promise<{ valid: number; errors: string[] }> {
       cwd: process.cwd()
     });
 
-    console.log(`🔍 Validating ${files.length} CCS command files...`);
+    console.info(`🔍 Validating ${files.length} CCS command files...`);
 
     for (const filePath of files) {
       try {
@@ -50,7 +50,7 @@ async function validateCCS(): Promise<{ valid: number; errors: string[] }> {
 
         if (errors.length === 0) {
           valid++;
-          console.log(`🟢 ${filePath}: Valid CCS handler`);
+          console.info(`🟢 ${filePath}: Valid CCS handler`);
         }
 
       } catch (error: any) {
@@ -64,7 +64,7 @@ async function validateCCS(): Promise<{ valid: number; errors: string[] }> {
       absolute: false
     });
 
-    console.log(`\n🔍 Validating ${stagedFiles.length} staged configs...`);
+    console.info(`\n🔍 Validating ${stagedFiles.length} staged configs...`);
 
     for (const stagedFile of stagedFiles) {
       if (stagedFile === '.staging.index') continue;
@@ -77,7 +77,7 @@ async function validateCCS(): Promise<{ valid: number; errors: string[] }> {
         if (!validation.valid) {
           errors.push(`❌ ${stagedFile}: Invalid deploy schema - ${validation.errors.join(', ')}`);
         } else {
-          console.log(`🟢 ${stagedFile}: Valid deploy config`);
+          console.info(`🟢 ${stagedFile}: Valid deploy config`);
         }
 
       } catch (error: any) {
@@ -96,22 +96,22 @@ async function validateCCS(): Promise<{ valid: number; errors: string[] }> {
  * Main validation function
  */
 async function main() {
-  console.log('\n🎯 CCS Validation Engine v3.1');
-  console.log('═══════════════════════════════════════════════════════════════\n');
+  console.info('\n🎯 CCS Validation Engine v3.1');
+  console.info('═══════════════════════════════════════════════════════════════\n');
 
   const result = await validateCCS();
 
-  console.log('\n📊 Validation Results:');
-  console.log('─────────────────────────────────────────────────────────────────');
-  console.log(`✅ Valid handlers/configs: ${result.valid}`);
+  console.info('\n📊 Validation Results:');
+  console.info('─────────────────────────────────────────────────────────────────');
+  console.info(`✅ Valid handlers/configs: ${result.valid}`);
 
   if (result.errors.length > 0) {
-    console.log(`❌ Errors: ${result.errors.length}\n`);
-    result.errors.forEach(error => console.log(`   ${error}`));
-    console.log('\n');
+    console.info(`❌ Errors: ${result.errors.length}\n`);
+    result.errors.forEach(error => console.info(`   ${error}`));
+    console.info('\n');
     process.exit(1);
   } else {
-    console.log(`🎉 All CCS handlers + staging configs valid!\n`);
+    console.info(`🎉 All CCS handlers + staging configs valid!\n`);
     process.exit(0);
   }
 }

@@ -105,35 +105,35 @@ class QuickStatus {
   async printStatus(): Promise<void> {
     const statusItems = await this.getStatus();
 
-    console.log('📊 Fantasy42-Fire22 Environment Status\n');
-    console.log('═'.repeat(50));
+    console.info('📊 Fantasy42-Fire22 Environment Status\n');
+    console.info('═'.repeat(50));
 
     let allGood = true;
 
     for (const item of statusItems) {
-      console.log(`${item.status} ${item.name}`);
-      console.log(`   ${item.description}`);
+      console.info(`${item.status} ${item.name}`);
+      console.info(`   ${item.description}`);
 
       if (item.status === '❌' || item.status === '⚠️') {
         allGood = false;
       }
-      console.log('');
+      console.info('');
     }
 
-    console.log('═'.repeat(50));
+    console.info('═'.repeat(50));
 
     if (allGood) {
-      console.log('🎉 All systems go! Ready for development');
-      console.log('\n🚀 Quick start commands:');
-      console.log('   bun run dev              # Start development server');
-      console.log('   bun run enterprise:setup # Complete enterprise setup');
-      console.log('   bun run env:guide        # View setup guide');
+      console.info('🎉 All systems go! Ready for development');
+      console.info('\n🚀 Quick start commands:');
+      console.info('   bun run dev              # Start development server');
+      console.info('   bun run enterprise:setup # Complete enterprise setup');
+      console.info('   bun run env:guide        # View setup guide');
     } else {
-      console.log('⚠️  Some items need attention');
-      console.log('\n🔧 Setup commands:');
-      console.log('   bun run env:setup        # Run environment setup');
-      console.log('   bun run env:guide        # View detailed setup guide');
-      console.log('   bun run env:validate     # Validate current setup');
+      console.info('⚠️  Some items need attention');
+      console.info('\n🔧 Setup commands:');
+      console.info('   bun run env:setup        # Run environment setup');
+      console.info('   bun run env:guide        # View detailed setup guide');
+      console.info('   bun run env:validate     # Validate current setup');
     }
   }
 }

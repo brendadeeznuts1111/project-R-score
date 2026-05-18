@@ -71,7 +71,7 @@ export class TickDataCollector17 {
   private subscribeToBookmakerStream(bookmaker: string, client: BookmakerApiClient17): void {
     // Placeholder for WebSocket subscription logic
     // In real implementation, this would connect to bookmaker's WebSocket feed
-    console.log(`Subscribing to ${bookmaker} stream with connection pooling`)
+    console.info(`Subscribing to ${bookmaker} stream with connection pooling`)
 
     // Simulate receiving ticks (replace with actual WebSocket handling)
     // this.streamClient.subscribe(bookmaker, async (rawTick) => { ... });
@@ -194,7 +194,7 @@ export class TickDataCollector17 {
 
       // Log flush metrics with %j format (Bun console.log enhancement)
       const flushDuration = Date.now() - flushStartTime
-      console.log("%s | TICK_FLUSH | %j", new Date().toISOString(), {
+      console.info("%s | TICK_FLUSH | %j", new Date().toISOString(), {
         batch_size: batch.length,
         flush_duration_ms: flushDuration,
         buffer_remaining: this.buffer.length,

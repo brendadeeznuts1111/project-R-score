@@ -31,7 +31,7 @@ class EvidenceServiceIntegration {
    * Add CRC32 field to evidence_metadata table
    */
   async addCRC32Field(): Promise<void> {
-    console.log('🔍 Adding CRC32 field to evidence_metadata table...');
+    console.info('🔍 Adding CRC32 field to evidence_metadata table...');
     
     // SQL for adding CRC32 field
     const migrations = [
@@ -43,22 +43,22 @@ class EvidenceServiceIntegration {
 
     for (const migration of migrations) {
       try {
-        console.log(`   Executing: ${migration}`);
+        console.info(`   Executing: ${migration}`);
         // await this.dbConnection.execute(migration);
-        console.log('   ✅ Success');
+        console.info('   ✅ Success');
       } catch (error) {
-        console.log(`   ⚠️  ${error.message}`);
+        console.info(`   ⚠️  ${error.message}`);
       }
     }
 
-    console.log('✅ CRC32 field added to evidence_metadata table');
+    console.info('✅ CRC32 field added to evidence_metadata table');
   }
 
   /**
    * Process existing evidence with quantum hashing
    */
   async processExistingEvidence(): Promise<void> {
-    console.log('🔄 Processing existing evidence with quantum hashing...');
+    console.info('🔄 Processing existing evidence with quantum hashing...');
     
     try {
       // Get all evidence without CRC32 hash
@@ -73,7 +73,7 @@ class EvidenceServiceIntegration {
         { id: '3', metadata_value: 'sample_evidence_3' }
       ];
 
-      console.log(`   Found ${evidence.length} evidence records to process`);
+      console.info(`   Found ${evidence.length} evidence records to process`);
 
       for (const record of evidence) {
         const crc32 = this.quantumHash.crc32(record.metadata_value);
@@ -85,10 +85,10 @@ class EvidenceServiceIntegration {
         //   [crc32Hex, record.id]
         // );
 
-        console.log(`   ✅ Processed evidence ${record.id}: ${crc32Hex}`);
+        console.info(`   ✅ Processed evidence ${record.id}: ${crc32Hex}`);
       }
 
-      console.log('✅ All existing evidence processed with quantum hashing');
+      console.info('✅ All existing evidence processed with quantum hashing');
     } catch (error) {
       console.error(`❌ Failed to process existing evidence: ${error.message}`);
     }
@@ -117,7 +117,7 @@ class EvidenceServiceIntegration {
     //   [newEvidence.id, newEvidence.evidence_id, newEvidence.metadata_type, newEvidence.metadata_value, newEvidence.crc32_hash, newEvidence.quantum_hashed, newEvidence.created_at, newEvidence.updated_at]
     // );
 
-    console.log(`✅ Created evidence ${newEvidence.id} with quantum hash ${crc32Hex}`);
+    console.info(`✅ Created evidence ${newEvidence.id} with quantum hash ${crc32Hex}`);
     return newEvidence;
   }
 
@@ -129,7 +129,7 @@ class EvidenceServiceIntegration {
     expectedHash: string;
     actualHash: string;
   }> {
-    console.log(`🔍 Verifying evidence integrity: ${evidenceId}`);
+    console.info(`🔍 Verifying evidence integrity: ${evidenceId}`);
 
     try {
       // Get evidence from database
@@ -150,9 +150,9 @@ class EvidenceServiceIntegration {
 
       const isValid = actualHashHex === evidence.crc32_hash;
 
-      console.log(`   Expected: ${evidence.crc32_hash}`);
-      console.log(`   Actual: ${actualHashHex}`);
-      console.log(`   Valid: ${isValid ? '✅' : '❌'}`);
+      console.info(`   Expected: ${evidence.crc32_hash}`);
+      console.info(`   Actual: ${actualHashHex}`);
+      console.info(`   Valid: ${isValid ? '✅' : '❌'}`);
 
       return {
         valid: isValid,
@@ -178,7 +178,7 @@ class EvidenceServiceIntegration {
       totalProcessed: number;
     };
   }> {
-    console.log('📊 Generating evidence integrity report...');
+    console.info('📊 Generating evidence integrity report...');
 
     try {
       // Get statistics from database
@@ -200,13 +200,13 @@ class EvidenceServiceIntegration {
       const failed = stats.total - stats.verified;
       const performanceStats = this.quantumHash.getPerformanceStats();
 
-      console.log('📊 Evidence Integrity Report:');
-      console.log(`   Total Evidence: ${stats.total}`);
-      console.log(`   Quantum Hashed: ${stats.quantum_hashed}`);
-      console.log(`   Verified: ${stats.verified}`);
-      console.log(`   Failed: ${failed}`);
-      console.log(`   Average Hash Time: ${performanceStats.averageTime.toFixed(3)}ms`);
-      console.log(`   Total Processed: ${performanceStats.totalOperations}`);
+      console.info('📊 Evidence Integrity Report:');
+      console.info(`   Total Evidence: ${stats.total}`);
+      console.info(`   Quantum Hashed: ${stats.quantum_hashed}`);
+      console.info(`   Verified: ${stats.verified}`);
+      console.info(`   Failed: ${failed}`);
+      console.info(`   Average Hash Time: ${performanceStats.averageTime.toFixed(3)}ms`);
+      console.info(`   Total Processed: ${performanceStats.totalOperations}`);
 
       return {
         total: stats.total,
@@ -233,15 +233,15 @@ class EvidenceServiceIntegration {
 if (import.meta.main) {
   const evidenceService = new EvidenceServiceIntegration();
   
-  console.log('🎯 Evidence Service Integration - Quantum Hash System');
-  console.log('=====================================================\n');
+  console.info('🎯 Evidence Service Integration - Quantum Hash System');
+  console.info('=====================================================\n');
   
   evidenceService.addCRC32Field()
     .then(() => evidenceService.processExistingEvidence())
     .then(() => evidenceService.generateIntegrityReport())
     .then((report) => {
-      console.log('\n✅ Evidence service integration complete!');
-      console.log(`📊 Processed ${report.quantumHashed} evidence with quantum hashing`);
+      console.info('\n✅ Evidence service integration complete!');
+      console.info(`📊 Processed ${report.quantumHashed} evidence with quantum hashing`);
     })
     .catch(console.error);
 }

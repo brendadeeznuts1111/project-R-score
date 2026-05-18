@@ -150,16 +150,16 @@ export class ZshBridgeConnector {
     
     const plugin = await this.detector.detect();
     if (!plugin.installed) {
-      console.log("⚠️  Official zsh-kimi-cli plugin not detected");
-      console.log("   Install: git clone https://github.com/MoonshotAI/zsh-kimi-cli.git");
+      console.info("⚠️  Official zsh-kimi-cli plugin not detected");
+      console.info("   Install: git clone https://github.com/MoonshotAI/zsh-kimi-cli.git");
       return;
     }
 
-    console.log(`✅ Zsh plugin detected (${plugin.method})`);
+    console.info(`✅ Zsh plugin detected (${plugin.method})`);
     if (plugin.path) {
       const version = await this.detector.getVersion(plugin.path);
       if (version) {
-        console.log(`   Version: ${version}`);
+        console.info(`   Version: ${version}`);
       }
     }
 
@@ -187,7 +187,7 @@ export class ZshBridgeConnector {
       case "profile_switch": {
         const profile = event.data as string;
         this.stateManager.update({ activeProfile: profile });
-        console.log(`🔄 Profile switched: ${profile}`);
+        console.info(`🔄 Profile switched: ${profile}`);
         break;
       }
       
@@ -309,8 +309,8 @@ export async function handleZshEnhancedToolCall(
 // ============================================================================
 
 async function main(): Promise<void> {
-  console.log("🔗 Zsh Bridge Connector");
-  console.log("======================\n");
+  console.info("🔗 Zsh Bridge Connector");
+  console.info("======================\n");
 
   const connector = new ZshBridgeConnector();
   await connector.initialize();
@@ -330,7 +330,7 @@ async function main(): Promise<void> {
   setInterval(async () => {
     const context = await connector.getContextForMcp();
     if (context.activeProfile) {
-      console.log(`💓 Heartbeat | Profile: ${context.activeProfile} | Dir: ${context.workingDir}`);
+      console.info(`💓 Heartbeat | Profile: ${context.activeProfile} | Dir: ${context.workingDir}`);
     }
   }, 10000);
 }

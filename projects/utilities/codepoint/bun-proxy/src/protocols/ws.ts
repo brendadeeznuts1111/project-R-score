@@ -63,7 +63,7 @@ export class WebSocketProxy extends ProxyServer {
       }
     });
 
-    console.log(`🔌 WebSocket Proxy listening on ws://${config.host}:${config.port}`);
+    console.info(`🔌 WebSocket Proxy listening on ws://${config.host}:${config.port}`);
   }
 
   protected async cleanup(): Promise<void> {
@@ -165,7 +165,7 @@ export class WebSocketProxy extends ProxyServer {
     this.stats.activeConnections++;
     this.stats.totalConnections++;
 
-    console.log(`🔌 WebSocket connection opened: ${connectionId}`);
+    console.info(`🔌 WebSocket connection opened: ${connectionId}`);
 
     // Setup heartbeat if enabled
     const config = this.config as WebSocketProxyConfig;
@@ -196,7 +196,7 @@ export class WebSocketProxy extends ProxyServer {
       this.connections.delete(connection.id);
       this.stats.activeConnections--;
 
-      console.log(`🔌 WebSocket connection closed: ${connection.id} (${code})`);
+      console.info(`🔌 WebSocket connection closed: ${connection.id} (${code})`);
       this.emit('disconnection', { id: connection.id, code, reason });
     }
   }

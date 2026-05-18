@@ -68,9 +68,9 @@ async function buildConfiguration(config: BuildConfig): Promise<{
   features: string[];
   buildTime: number;
 }> {
-  console.log(`\n🔨 Building ${config.name}...`);
-  console.log(`   Features: ${config.features.join(', ') || 'none'}`);
-  console.log(`   Output: ${config.outputFile}`);
+  console.info(`\n🔨 Building ${config.name}...`);
+  console.info(`   Features: ${config.features.join(', ') || 'none'}`);
+  console.info(`   Output: ${config.outputFile}`);
   
   const startTime = performance.now();
   
@@ -86,7 +86,7 @@ async function buildConfiguration(config: BuildConfig): Promise<{
       ...config.flags
     ].join(' ');
     
-    console.log(`   Command: ${buildCommand}`);
+    console.info(`   Command: ${buildCommand}`);
     
     // Build the project
     execSync(buildCommand, { 
@@ -99,9 +99,9 @@ async function buildConfiguration(config: BuildConfig): Promise<{
     // Get file size
     const stats = await Bun.file(`./dist/${config.outputFile}`).stat();
     
-    console.log(`   ✅ Build successful!`);
-    console.log(`   📦 Size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`   ⏱️  Build time: ${buildTime.toFixed(2)}ms`);
+    console.info(`   ✅ Build successful!`);
+    console.info(`   📦 Size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`   ⏱️  Build time: ${buildTime.toFixed(2)}ms`);
     
     return {
       success: true,
@@ -111,7 +111,7 @@ async function buildConfiguration(config: BuildConfig): Promise<{
     };
     
   } catch (error) {
-    console.log(`   ❌ Build failed: ${error}`);
+    console.info(`   ❌ Build failed: ${error}`);
     return {
       success: false,
       size: 0,
@@ -122,8 +122,8 @@ async function buildConfiguration(config: BuildConfig): Promise<{
 }
 
 async function runBuildMatrix() {
-  console.log('🚀 URLPattern Observatory Build Matrix');
-  console.log('=====================================');
+  console.info('🚀 URLPattern Observatory Build Matrix');
+  console.info('=====================================');
   
   const results: Array<{
     config: BuildConfig;
@@ -137,23 +137,23 @@ async function runBuildMatrix() {
   }
   
   // Display results summary
-  console.log('\n📊 Build Matrix Results');
-  console.log('=======================');
+  console.info('\n📊 Build Matrix Results');
+  console.info('=======================');
   
-  console.log('\n| Configuration | Features | Size (MB) | Build Time (ms) | Status |');
-  console.log('|--------------|----------|-----------|-----------------|--------|');
+  console.info('\n| Configuration | Features | Size (MB) | Build Time (ms) | Status |');
+  console.info('|--------------|----------|-----------|-----------------|--------|');
   
   for (const { config, result } of results) {
     const sizeMB = (result.size / 1024 / 1024).toFixed(2);
     const features = config.features.length || 'None';
     const status = result.success ? '✅' : '❌';
     
-    console.log(`| ${config.name.padEnd(12)} | ${features.toString().padEnd(8)} | ${sizeMB.padEnd(9)} | ${result.buildTime.toFixed(0).padEnd(15)} | ${status} |`);
+    console.info(`| ${config.name.padEnd(12)} | ${features.toString().padEnd(8)} | ${sizeMB.padEnd(9)} | ${result.buildTime.toFixed(0).padEnd(15)} | ${status} |`);
   }
   
   // Performance analysis
-  console.log('\n📈 Performance Analysis');
-  console.log('=======================');
+  console.info('\n📈 Performance Analysis');
+  console.info('=======================');
   
   const successful = results.filter(r => r.result.success);
   if (successful.length > 0) {
@@ -169,17 +169,17 @@ async function runBuildMatrix() {
       curr.result.buildTime < min.result.buildTime ? curr : min
     );
     
-    console.log(`🏆 Smallest build: ${smallest.config.name} (${(smallest.result.size / 1024 / 1024).toFixed(2)} MB)`);
-    console.log(`📦 Largest build: ${largest.config.name} (${(largest.result.size / 1024 / 1024).toFixed(2)} MB)`);
-    console.log(`⚡ Fastest build: ${fastest.config.name} (${fastest.result.buildTime.toFixed(0)}ms)`);
+    console.info(`🏆 Smallest build: ${smallest.config.name} (${(smallest.result.size / 1024 / 1024).toFixed(2)} MB)`);
+    console.info(`📦 Largest build: ${largest.config.name} (${(largest.result.size / 1024 / 1024).toFixed(2)} MB)`);
+    console.info(`⚡ Fastest build: ${fastest.config.name} (${fastest.result.buildTime.toFixed(0)}ms)`);
     
     const sizeRatio = largest.result.size / smallest.result.size;
-    console.log(`📊 Size ratio: ${sizeRatio.toFixed(1)}x between largest and smallest`);
+    console.info(`📊 Size ratio: ${sizeRatio.toFixed(1)}x between largest and smallest`);
   }
   
   // Feature impact analysis
-  console.log('\n🔍 Feature Impact Analysis');
-  console.log('==========================');
+  console.info('\n🔍 Feature Impact Analysis');
+  console.info('==========================');
   
   const communityBuild = results.find(r => r.config.name === 'Community');
   const enterpriseBuild = results.find(r => r.config.name === 'Enterprise');
@@ -188,14 +188,14 @@ async function runBuildMatrix() {
     const overhead = enterpriseBuild.result.size - communityBuild.result.size;
     const overheadPercent = (overhead / communityBuild.result.size * 100).toFixed(1);
     
-    console.log(`📊 Community base size: ${(communityBuild.result.size / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`🏢 Enterprise size: ${(enterpriseBuild.result.size / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`📈 Feature overhead: ${(overhead / 1024 / 1024).toFixed(2)} MB (${overheadPercent}%)`);
+    console.info(`📊 Community base size: ${(communityBuild.result.size / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`🏢 Enterprise size: ${(enterpriseBuild.result.size / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`📈 Feature overhead: ${(overhead / 1024 / 1024).toFixed(2)} MB (${overheadPercent}%)`);
   }
   
   // Dead Code Elimination verification
-  console.log('\n🗑️  Dead Code Elimination (DCE) Verification');
-  console.log('===========================================');
+  console.info('\n🗑️  Dead Code Elimination (DCE) Verification');
+  console.info('===========================================');
   
   for (const { config, result } of results) {
     if (result.success) {
@@ -204,49 +204,49 @@ async function runBuildMatrix() {
       const hasInteractive = expectedFeatures.includes('INTERACTIVE');
       const hasTelemetry = expectedFeatures.includes('TELEMETRY');
       
-      console.log(`\n${config.name}:`);
-      console.log(`   ✅ Features compiled: ${expectedFeatures.join(', ') || 'none'}`);
-      console.log(`   ✅ Cache code: ${hasCache ? 'included' : 'eliminated'}`);
-      console.log(`   ✅ PTY editor: ${hasInteractive ? 'included' : 'eliminated'}`);
-      console.log(`   ✅ Telemetry: ${hasTelemetry ? 'included' : 'eliminated'}`);
+      console.info(`\n${config.name}:`);
+      console.info(`   ✅ Features compiled: ${expectedFeatures.join(', ') || 'none'}`);
+      console.info(`   ✅ Cache code: ${hasCache ? 'included' : 'eliminated'}`);
+      console.info(`   ✅ PTY editor: ${hasInteractive ? 'included' : 'eliminated'}`);
+      console.info(`   ✅ Telemetry: ${hasTelemetry ? 'included' : 'eliminated'}`);
     }
   }
   
-  console.log('\n🎯 Build Optimization Insights');
-  console.log('=============================');
+  console.info('\n🎯 Build Optimization Insights');
+  console.info('=============================');
   
-  console.log('💡 Key optimizations demonstrated:');
-  console.log('   ✅ Feature-based dead code elimination');
-  console.log('   ✅ Conditional imports reduce bundle size');
-  console.log('   ✅ Premium features only in paid builds');
-  console.log('   ✅ Debug code eliminated in production');
-  console.log('   ✅ Interactive features optional');
-  console.log('   ✅ Telemetry can be disabled for privacy');
+  console.info('💡 Key optimizations demonstrated:');
+  console.info('   ✅ Feature-based dead code elimination');
+  console.info('   ✅ Conditional imports reduce bundle size');
+  console.info('   ✅ Premium features only in paid builds');
+  console.info('   ✅ Debug code eliminated in production');
+  console.info('   ✅ Interactive features optional');
+  console.info('   ✅ Telemetry can be disabled for privacy');
   
-  console.log('\n🚀 Production Deployment Recommendations');
-  console.log('=====================================');
+  console.info('\n🚀 Production Deployment Recommendations');
+  console.info('=====================================');
   
-  console.log('📦 Use Community build for:');
-  console.log('   • Open source distributions');
-  console.log('   • Basic security scanning');
-  console.log('   • Minimal footprint requirements');
+  console.info('📦 Use Community build for:');
+  console.info('   • Open source distributions');
+  console.info('   • Basic security scanning');
+  console.info('   • Minimal footprint requirements');
   
-  console.log('\n🏢 Use Premium build for:');
-  console.log('   • Commercial products');
-  console.log('   • Advanced security analysis');
-  console.log('   • Performance-critical applications');
+  console.info('\n🏢 Use Premium build for:');
+  console.info('   • Commercial products');
+  console.info('   • Advanced security analysis');
+  console.info('   • Performance-critical applications');
   
-  console.log('\n🖥️  Use Interactive build for:');
-  console.log('   • Development tools');
-  console.log('   • Security auditing workflows');
-  console.log('   • IDE integrations');
+  console.info('\n🖥️  Use Interactive build for:');
+  console.info('   • Development tools');
+  console.info('   • Security auditing workflows');
+  console.info('   • IDE integrations');
   
-  console.log('\n🏭 Use Enterprise build for:');
-  console.log('   • Corporate environments');
-  console.log('   • Compliance requirements');
-  console.log('   • Full feature set needed');
+  console.info('\n🏭 Use Enterprise build for:');
+  console.info('   • Corporate environments');
+  console.info('   • Compliance requirements');
+  console.info('   • Full feature set needed');
   
-  console.log('\n🎉 Build matrix analysis complete!');
+  console.info('\n🎉 Build matrix analysis complete!');
 }
 
 // CLI interface
@@ -254,7 +254,7 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help')) {
-    console.log(`
+    console.info(`
 Observatory Build Matrix - Feature-Flagged Builds
 
 Usage:
@@ -282,8 +282,8 @@ Examples:
     if (config) {
       await buildConfiguration(config);
     } else {
-      console.log('❌ Unknown configuration. Available:');
-      buildMatrix.forEach(c => console.log(`   • ${c.name.toLowerCase()}`));
+      console.info('❌ Unknown configuration. Available:');
+      buildMatrix.forEach(c => console.info(`   • ${c.name.toLowerCase()}`));
     }
   }
 }

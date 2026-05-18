@@ -186,7 +186,7 @@ export class DNSPreconnectManager {
 				const duration = performance.now() - start;
 				this.connections.set(domain, new Date());
 
-				console.log(`✅ Preconnected to ${domain} in ${duration.toFixed(2)}ms`);
+				console.info(`✅ Preconnected to ${domain} in ${duration.toFixed(2)}ms`);
 			} catch (error) {
 				console.warn(`⚠️  Failed to preconnect to ${domain}:`, error);
 			}

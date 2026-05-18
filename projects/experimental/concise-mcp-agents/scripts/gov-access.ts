@@ -159,14 +159,14 @@ export class GovAccessEnforcer {
     if (failedAttempts >= 5) {
       user.lockedUntil = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour lockout
       user.failedMFAAttempts = 0;
-      console.log(`🚫 User ${user.id} locked out due to MFA failures`);
+      console.info(`🚫 User ${user.id} locked out due to MFA failures`);
     }
 
     await this.access.updateUser(user);
   }
 
   async runFullAccessAudit(): Promise<{ violations: any[], lockedUsers: string[], report: string }> {
-    console.log(`🔍 Running full access audit...`);
+    console.info(`🔍 Running full access audit...`);
 
     const violations: any[] = [];
     const lockedUsers: string[] = [];
@@ -287,7 +287,7 @@ async function main() {
   const enforcer = new GovAccessEnforcer();
 
   if (args.length === 0) {
-    console.log(`🛡️ GOV Access Control v2.11
+    console.info(`🛡️ GOV Access Control v2.11
 
 USAGE:
   bun gov:access audit          # Full access audit + lock violators
@@ -323,13 +323,13 @@ COMPLIANCE CHECKS:
     switch (command) {
       case 'audit':
         const audit = await enforcer.runFullAccessAudit();
-        console.log(audit.report);
+        console.info(audit.report);
 
         if (audit.violations.length > 0) {
-          console.log(`\n⚠️  Found ${audit.violations.length} violations - Manual review required`);
+          console.info(`\n⚠️  Found ${audit.violations.length} violations - Manual review required`);
           process.exit(1);
         } else {
-          console.log(`\n✅ Access controls compliant - Zero violations`);
+          console.info(`\n✅ Access controls compliant - Zero violations`);
         }
         break;
 
@@ -345,11 +345,11 @@ COMPLIANCE CHECKS:
 
         const result = await enforcer.checkAccess(userId, action, resource, ip);
         if (result.allowed) {
-          console.log(`✅ Access granted for ${userId} to ${action} ${resource}`);
+          console.info(`✅ Access granted for ${userId} to ${action} ${resource}`);
         } else {
-          console.log(`❌ Access denied: ${result.reason}`);
+          console.info(`❌ Access denied: ${result.reason}`);
           if (result.requiresMFA) {
-            console.log(`🔐 MFA required - use: bun gov:access mfa ${userId} ${action} ${resource} <code>`);
+            console.info(`🔐 MFA required - use: bun gov:access mfa ${userId} ${action} ${resource} <code>`);
           }
           process.exit(1);
         }
@@ -357,7 +357,7 @@ COMPLIANCE CHECKS:
 
       case 'roles':
         const report = await enforcer.generateRoleReport();
-        console.log(report);
+        console.info(report);
         break;
 
       case 'mfa':
@@ -373,16 +373,16 @@ COMPLIANCE CHECKS:
 
         const mfaResult = await enforcer.authenticateWithMFA(mfaUser, mfaCode, mfaAction, mfaResource, mfaIp);
         if (mfaResult.allowed) {
-          console.log(`✅ MFA authentication successful - access granted`);
+          console.info(`✅ MFA authentication successful - access granted`);
         } else {
-          console.log(`❌ MFA authentication failed: ${mfaResult.reason}`);
+          console.info(`❌ MFA authentication failed: ${mfaResult.reason}`);
           process.exit(1);
         }
         break;
 
       default:
         console.error(`Unknown command: ${command}`);
-        console.log('Use: bun gov:access --help');
+        console.info('Use: bun gov:access --help');
         process.exit(1);
     }
   } catch (error) {

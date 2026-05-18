@@ -402,7 +402,7 @@ export const ptyService = new PTYService();
 setInterval(() => {
   const cleaned = ptyService.cleanup();
   if (cleaned > 0) {
-    console.log(`[PTY] Cleaned up ${cleaned} old sessions`);
+    console.info(`[PTY] Cleaned up ${cleaned} old sessions`);
   }
 }, 5 * 60 * 1000);
 

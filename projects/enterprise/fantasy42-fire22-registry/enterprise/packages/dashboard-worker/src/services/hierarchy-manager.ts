@@ -417,7 +417,7 @@ export class HierarchyManager {
    */
   private async migrateOrganizationalHierarchy(migration: HierarchyMigration): Promise<void> {
     // Implementation for organizational hierarchy migration
-    console.log('Migrating organizational hierarchy...');
+    console.info('Migrating organizational hierarchy...');
   }
 
   /**
@@ -425,7 +425,7 @@ export class HierarchyManager {
    */
   private async migrateDepartmentHierarchy(migration: HierarchyMigration): Promise<void> {
     // Implementation for department hierarchy migration
-    console.log('Migrating department hierarchy...');
+    console.info('Migrating department hierarchy...');
   }
 
   /**

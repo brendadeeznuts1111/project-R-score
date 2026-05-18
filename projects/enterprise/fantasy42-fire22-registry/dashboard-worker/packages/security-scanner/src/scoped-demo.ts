@@ -13,8 +13,8 @@ class ScopedPackageSecurityDemo {
   private scanner = new Fire22SecurityScanner();
 
   async runScopedDemo() {
-    console.log('🔐 Fire22 Scoped Package Security Demo');
-    console.log('='.repeat(50));
+    console.info('🔐 Fire22 Scoped Package Security Demo');
+    console.info('='.repeat(50));
 
     await this.demoScopedPackages();
     await this.demoRegistryConfiguration();
@@ -22,11 +22,11 @@ class ScopedPackageSecurityDemo {
     await this.demoPrivateRegistrySecurity();
     await this.demoScopedPolicies();
 
-    console.log('\n🎉 Scoped Security Demo Complete!');
+    console.info('\n🎉 Scoped Security Demo Complete!');
   }
 
   async demoScopedPackages() {
-    console.log('\n📦 SCOPED PACKAGE SECURITY\n');
+    console.info('\n📦 SCOPED PACKAGE SECURITY\n');
 
     const scopedRequest: ScanRequest = {
       packages: [
@@ -50,7 +50,7 @@ class ScopedPackageSecurityDemo {
       ],
     };
 
-    console.log('📊 Scanning scoped and unscoped packages...\n');
+    console.info('📊 Scanning scoped and unscoped packages...\n');
 
     const result = await this.scanner.scan(scopedRequest);
 
@@ -61,35 +61,35 @@ class ScopedPackageSecurityDemo {
     );
     const unscopedPackages = scopedRequest.packages.filter(p => !p.name.startsWith('@'));
 
-    console.log('📋 Package Breakdown:');
-    console.log(`   @fire22/* packages: ${fire22Packages.length} (auto-trusted)`);
-    console.log(`   Other scoped packages: ${otherScopedPackages.length}`);
-    console.log(`   Unscoped packages: ${unscopedPackages.length}`);
-    console.log(`   Total advisories: ${result.advisories.length}\n`);
+    console.info('📋 Package Breakdown:');
+    console.info(`   @fire22/* packages: ${fire22Packages.length} (auto-trusted)`);
+    console.info(`   Other scoped packages: ${otherScopedPackages.length}`);
+    console.info(`   Unscoped packages: ${unscopedPackages.length}`);
+    console.info(`   Total advisories: ${result.advisories.length}\n`);
 
     // Show advisories by scope
-    console.log('🛡️ Security Results by Scope:\n');
+    console.info('🛡️ Security Results by Scope:\n');
 
-    console.log('✅ @fire22/* Scope (Trusted):');
-    console.log('   All @fire22/* packages automatically trusted');
-    console.log('   No security scanning needed for internal packages\n');
+    console.info('✅ @fire22/* Scope (Trusted):');
+    console.info('   All @fire22/* packages automatically trusted');
+    console.info('   No security scanning needed for internal packages\n');
 
     const scopedAdvisories = result.advisories.filter(a => a.package.startsWith('@'));
     if (scopedAdvisories.length > 0) {
-      console.log('⚠️ Other Scoped Packages with Issues:');
+      console.info('⚠️ Other Scoped Packages with Issues:');
       scopedAdvisories.forEach(advisory => {
-        console.log(
+        console.info(
           `   ${advisory.level === 'fatal' ? '🚨' : '⚠️'} ${advisory.package}: ${advisory.title}`
         );
       });
-      console.log('');
+      console.info('');
     }
 
     const unscopedAdvisories = result.advisories.filter(a => !a.package.startsWith('@'));
     if (unscopedAdvisories.length > 0) {
-      console.log('📦 Unscoped Packages with Issues:');
+      console.info('📦 Unscoped Packages with Issues:');
       unscopedAdvisories.forEach(advisory => {
-        console.log(
+        console.info(
           `   ${advisory.level === 'fatal' ? '🚨' : '⚠️'} ${advisory.package}: ${advisory.title}`
         );
       });
@@ -97,24 +97,24 @@ class ScopedPackageSecurityDemo {
   }
 
   async demoRegistryConfiguration() {
-    console.log('\n🌐 REGISTRY CONFIGURATION\n');
+    console.info('\n🌐 REGISTRY CONFIGURATION\n');
 
-    console.log('📋 bunfig.toml Registry Settings:');
-    console.log('```toml');
-    console.log('[install]');
-    console.log('registry = "https://registry.npmjs.org/"');
-    console.log('');
-    console.log('[install.scopes]');
-    console.log('"@fire22" = "https://fire22.workers.dev/registry"');
-    console.log('"@types" = "https://registry.npmjs.org/"');
-    console.log('"@cloudflare" = "https://registry.npmjs.org/"');
-    console.log('```\n');
+    console.info('📋 bunfig.toml Registry Settings:');
+    console.info('```toml');
+    console.info('[install]');
+    console.info('registry = "https://registry.npmjs.org/"');
+    console.info('');
+    console.info('[install.scopes]');
+    console.info('"@fire22" = "https://fire22.workers.dev/registry"');
+    console.info('"@types" = "https://registry.npmjs.org/"');
+    console.info('"@cloudflare" = "https://registry.npmjs.org/"');
+    console.info('```\n');
 
-    console.log('🔒 Security Implications:');
-    console.log('   • @fire22/* packages fetched from private registry');
-    console.log('   • Private registry packages inherit trust');
-    console.log('   • Public registry packages undergo full scanning');
-    console.log('   • Mixed registry support with per-scope policies\n');
+    console.info('🔒 Security Implications:');
+    console.info('   • @fire22/* packages fetched from private registry');
+    console.info('   • Private registry packages inherit trust');
+    console.info('   • Public registry packages undergo full scanning');
+    console.info('   • Mixed registry support with per-scope policies\n');
 
     // Demonstrate registry-aware scanning
     const registryRequest: ScanRequest = {
@@ -133,20 +133,20 @@ class ScopedPackageSecurityDemo {
       },
     };
 
-    console.log('🔍 Registry-Aware Scanning:');
+    console.info('🔍 Registry-Aware Scanning:');
     const result = await this.scanner.scan(registryRequest);
 
-    console.log(
+    console.info(
       `   Private registry packages: ${registryRequest.packages.filter(p => p.registry?.includes('fire22')).length}`
     );
-    console.log(
+    console.info(
       `   Public registry packages: ${registryRequest.packages.filter(p => !p.registry?.includes('fire22')).length}`
     );
-    console.log(`   Security advisories: ${result.advisories.length}`);
+    console.info(`   Security advisories: ${result.advisories.length}`);
   }
 
   async demoWorkspaceScopes() {
-    console.log('\n🏗️ WORKSPACE SCOPE SECURITY\n');
+    console.info('\n🏗️ WORKSPACE SCOPE SECURITY\n');
 
     const workspaceScopes = [
       '@fire22/core-dashboard',
@@ -157,16 +157,16 @@ class ScopedPackageSecurityDemo {
       '@fire22/build-system',
     ];
 
-    console.log('📦 Fire22 Workspace Scopes:');
+    console.info('📦 Fire22 Workspace Scopes:');
     workspaceScopes.forEach(scope => {
-      console.log(`   ✅ ${scope} (workspace:* protocol)`);
+      console.info(`   ✅ ${scope} (workspace:* protocol)`);
     });
 
-    console.log('\n🔗 Workspace Protocol Security:');
-    console.log('   • workspace:* packages never leave local system');
-    console.log('   • No network requests = no supply chain attacks');
-    console.log('   • Automatic trust for workspace protocol');
-    console.log('   • Version locking through workspace protocol\n');
+    console.info('\n🔗 Workspace Protocol Security:');
+    console.info('   • workspace:* packages never leave local system');
+    console.info('   • No network requests = no supply chain attacks');
+    console.info('   • Automatic trust for workspace protocol');
+    console.info('   • Version locking through workspace protocol\n');
 
     // Demo workspace protocol handling
     const workspaceRequest: ScanRequest = {
@@ -177,45 +177,45 @@ class ScopedPackageSecurityDemo {
     };
 
     const result = await this.scanner.scan(workspaceRequest);
-    console.log(`📊 Workspace Scan Results:`);
-    console.log(`   Packages: ${workspaceRequest.packages.length}`);
-    console.log(`   Advisories: ${result.advisories.length} (all trusted)`);
+    console.info(`📊 Workspace Scan Results:`);
+    console.info(`   Packages: ${workspaceRequest.packages.length}`);
+    console.info(`   Advisories: ${result.advisories.length} (all trusted)`);
   }
 
   async demoPrivateRegistrySecurity() {
-    console.log('\n🔒 PRIVATE REGISTRY SECURITY\n');
+    console.info('\n🔒 PRIVATE REGISTRY SECURITY\n');
 
-    console.log('🌐 Fire22 Private Registry Configuration:');
-    console.log('   URL: https://fire22.workers.dev/registry');
-    console.log('   Authentication: Bearer token (from Bun.secrets)');
-    console.log('   Scope: @fire22/*\n');
+    console.info('🌐 Fire22 Private Registry Configuration:');
+    console.info('   URL: https://fire22.workers.dev/registry');
+    console.info('   Authentication: Bearer token (from Bun.secrets)');
+    console.info('   Scope: @fire22/*\n');
 
-    console.log('🛡️ Security Features:');
-    console.log('   • Package signing verification');
-    console.log('   • Registry authentication via Bun.secrets');
-    console.log('   • Automatic trust for authenticated packages');
-    console.log('   • Fallback to public registry disabled\n');
+    console.info('🛡️ Security Features:');
+    console.info('   • Package signing verification');
+    console.info('   • Registry authentication via Bun.secrets');
+    console.info('   • Automatic trust for authenticated packages');
+    console.info('   • Fallback to public registry disabled\n');
 
     // Show how credentials are secured
-    console.log('🔐 Registry Authentication:');
-    console.log('```typescript');
-    console.log('// Registry token stored securely');
-    console.log('await secrets.set({');
-    console.log('  service: "fire22-registry",');
-    console.log('  name: "auth-token",');
-    console.log('  value: "fire22_registry_token_xxxxx"');
-    console.log('});');
-    console.log('');
-    console.log('// Retrieved during package installation');
-    console.log('const token = await secrets.get({');
-    console.log('  service: "fire22-registry",');
-    console.log('  name: "auth-token"');
-    console.log('});');
-    console.log('```');
+    console.info('🔐 Registry Authentication:');
+    console.info('```typescript');
+    console.info('// Registry token stored securely');
+    console.info('await secrets.set({');
+    console.info('  service: "fire22-registry",');
+    console.info('  name: "auth-token",');
+    console.info('  value: "fire22_registry_token_xxxxx"');
+    console.info('});');
+    console.info('');
+    console.info('// Retrieved during package installation');
+    console.info('const token = await secrets.get({');
+    console.info('  service: "fire22-registry",');
+    console.info('  name: "auth-token"');
+    console.info('});');
+    console.info('```');
   }
 
   async demoScopedPolicies() {
-    console.log('\n📋 SCOPED PACKAGE POLICIES\n');
+    console.info('\n📋 SCOPED PACKAGE POLICIES\n');
 
     const scopedPolicies = {
       '@fire22/*': {
@@ -252,15 +252,15 @@ class ScopedPackageSecurityDemo {
       },
     };
 
-    console.log('🔍 Security Policies by Scope:\n');
+    console.info('🔍 Security Policies by Scope:\n');
 
     for (const [scope, policy] of Object.entries(scopedPolicies)) {
-      console.log(`📦 ${scope}:`);
-      console.log(`   Trust Level: ${policy.trust}`);
-      console.log(`   Scanning: ${policy.scanning}`);
-      console.log(`   Registry: ${policy.registry}`);
-      console.log(`   Updates: ${policy.updates}`);
-      console.log('');
+      console.info(`📦 ${scope}:`);
+      console.info(`   Trust Level: ${policy.trust}`);
+      console.info(`   Scanning: ${policy.scanning}`);
+      console.info(`   Registry: ${policy.registry}`);
+      console.info(`   Updates: ${policy.updates}`);
+      console.info('');
     }
 
     // Demo custom scope policies
@@ -273,7 +273,7 @@ class ScopedPackageSecurityDemo {
       ],
     };
 
-    console.log('🎯 Custom Scope Policy Application:');
+    console.info('🎯 Custom Scope Policy Application:');
     const result = await this.scanner.scan(customScopeRequest);
 
     customScopeRequest.packages.forEach(pkg => {
@@ -286,7 +286,7 @@ class ScopedPackageSecurityDemo {
             ? '⚠️'
             : '📦';
 
-      console.log(
+      console.info(
         `   ${icon} ${pkg.name}: ${
           pkg.name.startsWith('@fire22/')
             ? 'Auto-trusted (Fire22 scope)'
@@ -301,7 +301,7 @@ class ScopedPackageSecurityDemo {
   }
 
   async demoScopeSquatting() {
-    console.log('\n⚠️ SCOPE SQUATTING DETECTION\n');
+    console.info('\n⚠️ SCOPE SQUATTING DETECTION\n');
 
     const scopeSquattingRequest: ScanRequest = {
       packages: [
@@ -319,7 +319,7 @@ class ScopedPackageSecurityDemo {
       ],
     };
 
-    console.log('🔍 Detecting scope squatting attempts...\n');
+    console.info('🔍 Detecting scope squatting attempts...\n');
 
     const legitimateScopes = ['@fire22', '@types', '@cloudflare'];
 
@@ -328,13 +328,13 @@ class ScopedPackageSecurityDemo {
       const isLegitimate = legitimateScopes.includes(scope);
 
       if (!isLegitimate && this.isScopeSquat(scope, '@fire22')) {
-        console.log(`🚨 POTENTIAL SCOPE SQUATTING: ${pkg.name}`);
-        console.log(`   Suspicious similarity to @fire22 scope`);
-        console.log(`   Recommendation: Use official @fire22/* packages only\n`);
+        console.info(`🚨 POTENTIAL SCOPE SQUATTING: ${pkg.name}`);
+        console.info(`   Suspicious similarity to @fire22 scope`);
+        console.info(`   Recommendation: Use official @fire22/* packages only\n`);
       } else if (isLegitimate) {
-        console.log(`✅ Legitimate: ${pkg.name}`);
+        console.info(`✅ Legitimate: ${pkg.name}`);
       } else {
-        console.log(`📦 Unknown scope: ${pkg.name} (requires security review)`);
+        console.info(`📦 Unknown scope: ${pkg.name} (requires security review)`);
       }
     });
   }

@@ -50,10 +50,10 @@ class ProfileTerminalManager {
     this.profiles.set(profileId, profile);
     await this.saveProfile(profile);
 
-    console.log(`✅ Profile "${name}" created`);
-    console.log(`   Tier: ${tier}`);
-    console.log(`   Quantum Seal: ${profile.quantumSeal}`);
-    console.log(`   Environment: ${profile.environment}`);
+    console.info(`✅ Profile "${name}" created`);
+    console.info(`   Tier: ${tier}`);
+    console.info(`   Quantum Seal: ${profile.quantumSeal}`);
+    console.info(`   Environment: ${profile.environment}`);
   }
 
   async createTerminal(type: 'quantum' | 'standard' | 'secure', profileName: string): Promise<void> {
@@ -76,16 +76,16 @@ class ProfileTerminalManager {
     this.terminals.set(terminalId, terminal);
     await this.saveTerminal(terminal);
 
-    console.log(`✅ Terminal created`);
-    console.log(`   ID: ${terminalId}`);
-    console.log(`   Type: ${type}`);
-    console.log(`   Profile: ${profileName}`);
-    console.log(`   Quantum Entangled: ${terminal.quantumEntangled}`);
+    console.info(`✅ Terminal created`);
+    console.info(`   ID: ${terminalId}`);
+    console.info(`   Type: ${type}`);
+    console.info(`   Profile: ${profileName}`);
+    console.info(`   Quantum Entangled: ${terminal.quantumEntangled}`);
   }
 
   async viewMatrix(): Promise<void> {
-    console.log('\n🔢 Tier-1380 Profile-Terminal Matrix');
-    console.log('=====================================');
+    console.info('\n🔢 Tier-1380 Profile-Terminal Matrix');
+    console.info('=====================================');
 
     const matrix = [
       ['Profile', 'Tier', 'Terminals', 'Seal Status'],
@@ -114,13 +114,13 @@ class ProfileTerminalManager {
 
     // Print matrix with proper spacing
     matrix.forEach(row => {
-      console.log(`| ${row.join(' | ')} |`);
+      console.info(`| ${row.join(' | ')} |`);
     });
 
-    console.log('');
-    console.log(`Total Profiles: ${this.profiles.size}`);
-    console.log(`Total Terminals: ${this.terminals.size}`);
-    console.log(`Matrix Width: 93 chars (Col 93 compliant)`);
+    console.info('');
+    console.info(`Total Profiles: ${this.profiles.size}`);
+    console.info(`Total Terminals: ${this.terminals.size}`);
+    console.info(`Matrix Width: 93 chars (Col 93 compliant)`);
   }
 
   private padRight(text: string | number, width: number): string {
@@ -150,7 +150,7 @@ class ProfileTerminalManager {
       const fs = await import('node:fs');
 
       if (!fs.existsSync(this.dataDir)) {
-        console.log('Data directory not found');
+        console.info('Data directory not found');
         return;
       }
 
@@ -162,7 +162,7 @@ class ProfileTerminalManager {
           const content = await readFile(join(this.dataDir, file), 'utf-8');
           const profile = JSON.parse(content) as Profile;
           this.profiles.set(`profile-${profile.name.toLowerCase()}`, profile);
-          console.log(`Loaded profile: ${profile.name}`);
+          console.info(`Loaded profile: ${profile.name}`);
         }
 
         if (file.startsWith('terminal-') && file.endsWith('.json')) {
@@ -173,7 +173,7 @@ class ProfileTerminalManager {
       }
     } catch (error) {
       // Data directory might not exist yet
-      console.log('No existing data found');
+      console.info('No existing data found');
     }
   }
 }
@@ -208,18 +208,18 @@ async function main() {
     await manager.viewMatrix();
   }
   else {
-    console.log('Tier-1380 Profile & Terminal Management');
-    console.log('=====================================');
-    console.log('');
-    console.log('Commands:');
-    console.log('  profile create <name> <tier>  Create a new profile');
-    console.log('  terminal create <type> <profile>  Create a terminal (quantum|standard|secure)');
-    console.log('  matrix view                    View profile-terminal matrix');
-    console.log('');
-    console.log('Examples:');
-    console.log('  bun run profile-terminal.ts profile create "MyProfile" 1380');
-    console.log('  bun run profile-terminal.ts terminal create quantum "MyProfile"');
-    console.log('  bun run profile-terminal.ts matrix view');
+    console.info('Tier-1380 Profile & Terminal Management');
+    console.info('=====================================');
+    console.info('');
+    console.info('Commands:');
+    console.info('  profile create <name> <tier>  Create a new profile');
+    console.info('  terminal create <type> <profile>  Create a terminal (quantum|standard|secure)');
+    console.info('  matrix view                    View profile-terminal matrix');
+    console.info('');
+    console.info('Examples:');
+    console.info('  bun run profile-terminal.ts profile create "MyProfile" 1380');
+    console.info('  bun run profile-terminal.ts terminal create quantum "MyProfile"');
+    console.info('  bun run profile-terminal.ts matrix view');
   }
 }
 

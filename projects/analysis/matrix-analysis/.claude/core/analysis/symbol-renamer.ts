@@ -207,12 +207,12 @@ export class SymbolRenamer {
  * Display rename results using Bun.inspect.table().
  */
 export function displayRenameResults(result: RenameResult, dryRun: boolean): void {
-	console.log(
+	console.info(
 		`\n🔄 Rename ${dryRun ? "Preview" : "Applied"}: ${result.oldName} → ${result.newName}\n`,
 	);
 
 	if (result.references.length === 0) {
-		console.log("No references found.");
+		console.info("No references found.");
 		return;
 	}
 
@@ -223,15 +223,15 @@ export function displayRenameResults(result: RenameResult, dryRun: boolean): voi
 		Content: ref.lineContent.trim().substring(0, 60),
 	}));
 
-	console.log(
+	console.info(
 		Bun.inspect.table(tableData, ["File", "Line", "Kind", "Content"], { colors: true }),
 	);
 
-	console.log(`\nReferences: ${result.references.length} total`);
-	console.log(`Files affected: ${result.filesAffected}`);
+	console.info(`\nReferences: ${result.references.length} total`);
+	console.info(`Files affected: ${result.filesAffected}`);
 
 	if (dryRun) {
-		console.log("\nRun without --dry-run to apply changes.");
+		console.info("\nRun without --dry-run to apply changes.");
 	}
 }
 

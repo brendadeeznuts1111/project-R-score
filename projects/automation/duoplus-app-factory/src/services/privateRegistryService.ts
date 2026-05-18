@@ -82,7 +82,7 @@ export class PrivateRegistry {
     }
     this.packages.get(name)!.push(packageMeta);
     
-    console.log(`📦 Published package: ${name}@${version}`);
+    console.info(`📦 Published package: ${name}@${version}`);
     return packageMeta;
   }
 

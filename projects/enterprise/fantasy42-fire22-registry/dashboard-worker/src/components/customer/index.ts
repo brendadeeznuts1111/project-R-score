@@ -42,14 +42,14 @@ export class CustomerInformationInterface extends EventEmitter {
    * Initialize the customer interface
    */
   async initialize(): Promise<void> {
-    console.log('👥 Initializing Customer Information Interface...');
+    console.info('👥 Initializing Customer Information Interface...');
 
     await this.core.initialize();
 
     // Render initial interface
     this.render();
 
-    console.log('✅ Customer Information Interface initialized');
+    console.info('✅ Customer Information Interface initialized');
   }
 
   /**
@@ -318,7 +318,7 @@ export class CustomerInformationInterface extends EventEmitter {
     // Show initial view
     this.showView(this.options.defaultView === 'list' ? 'list' : 'dashboard');
 
-    console.log('🔧 Customer interface components initialized');
+    console.info('🔧 Customer interface components initialized');
   }
 
   /**
@@ -410,7 +410,7 @@ export class CustomerInformationInterface extends EventEmitter {
         break;
 
       default:
-        console.log(`Unhandled action: ${action}`);
+        console.info(`Unhandled action: ${action}`);
     }
   }
 
@@ -453,50 +453,50 @@ export class CustomerInformationInterface extends EventEmitter {
   private async showCreateCustomer(): Promise<void> {
     this.showView('create');
     // Implementation would create and show form
-    console.log('📝 Showing create customer form');
+    console.info('📝 Showing create customer form');
   }
 
   private async showEditCustomer(customerId: string): Promise<void> {
     this.showView('edit');
     // Implementation would load customer and show edit form
-    console.log(`📝 Showing edit form for customer: ${customerId}`);
+    console.info(`📝 Showing edit form for customer: ${customerId}`);
   }
 
   private async viewCustomer(customerId: string): Promise<void> {
     this.showView('profile');
     // Implementation would load and display customer profile
-    console.log(`👤 Viewing customer profile: ${customerId}`);
+    console.info(`👤 Viewing customer profile: ${customerId}`);
   }
 
   private async performSearch(query?: string): Promise<void> {
     this.showView('search');
     // Implementation would perform search and display results
-    console.log(`🔍 Performing search: ${query || 'current query'}`);
+    console.info(`🔍 Performing search: ${query || 'current query'}`);
   }
 
   private showAdvancedSearch(): void {
     // Implementation would show advanced search modal/form
-    console.log('🔬 Showing advanced search');
+    console.info('🔬 Showing advanced search');
   }
 
   private clearSearch(): void {
     // Implementation would clear search and return to default view
-    console.log('🧹 Clearing search');
+    console.info('🧹 Clearing search');
   }
 
   private async exportCustomers(): Promise<void> {
     // Implementation would export customer data
-    console.log('📊 Exporting customers');
+    console.info('📊 Exporting customers');
   }
 
   private async refresh(): Promise<void> {
     await this.core.refresh();
-    console.log('🔄 Refreshing interface');
+    console.info('🔄 Refreshing interface');
   }
 
   private showNotification(notification: any): void {
     // Implementation would show notification to user
-    console.log('🔔 Showing notification:', notification);
+    console.info('🔔 Showing notification:', notification);
   }
 
   // Utility methods

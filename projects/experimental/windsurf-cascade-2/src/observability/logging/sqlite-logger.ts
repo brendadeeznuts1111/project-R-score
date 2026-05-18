@@ -152,7 +152,7 @@ function flushLogBuffer() {
 // Mock R2 sync (would integrate with Cloudflare R2 in production)
 async function flushSQLiteToR2() {
   if (config.features?.DEBUG) {
-    console.log("[R2] Starting sync to cloud storage...");
+    console.info("[R2] Starting sync to cloud storage...");
   }
   
   // In production, this would:
@@ -163,7 +163,7 @@ async function flushSQLiteToR2() {
   return new Promise<void>((resolve) => {
     setTimeout(() => {
       if (config.features?.DEBUG) {
-        console.log("[R2] Sync completed");
+        console.info("[R2] Sync completed");
       }
       resolve();
     }, 100); // Mock async operation
@@ -280,13 +280,13 @@ export function cleanupOldLogs(olderThanNanoseconds: number = 7 * 24 * 60 * 60 *
 export { db };
 
 // Initialize logging system
-console.log("🗄️  SQLite logger initialized with 13-byte config");
-console.log(`📊 Database: ${dbPath}`);
-console.log(`🔧 Config: v${config.version}, flags: 0x${config.featureFlags.toString(16)}`);
+console.info("🗄️  SQLite logger initialized with 13-byte config");
+console.info(`📊 Database: ${dbPath}`);
+console.info(`🔧 Config: v${config.version}, flags: 0x${config.featureFlags.toString(16)}`);
 
 // Example usage
 export function demonstrateLogging() {
-  console.log("📝 Demonstrating SQLite logging with 13-byte config");
+  console.info("📝 Demonstrating SQLite logging with 13-byte config");
   
   // Log some example entries
   logToSQLite({
@@ -317,11 +317,11 @@ export function demonstrateLogging() {
   
   // Query logs back
   const logs = queryLogsByConfig(config.version, config.featureFlags, 10);
-  console.log(`📋 Retrieved ${logs.length} logs for current config`);
+  console.info(`📋 Retrieved ${logs.length} logs for current config`);
   
   // Show stats
   const stats = getDatabaseStats();
-  console.log("📊 Database stats:", stats);
+  console.info("📊 Database stats:", stats);
 }
 
 // Auto-flush on process exit

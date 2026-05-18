@@ -25,7 +25,7 @@ type ValidationResult = {
 };
 
 function usage(): void {
-  console.log(`
+  console.info(`
 Search Benchmark Baseline Governance
 
 USAGE:
@@ -116,7 +116,7 @@ async function main(): Promise<void> {
 
   const failed = results.filter((r) => !r.ok);
   if (asJson) {
-    console.log(
+    console.info(
       JSON.stringify(
         {
           ok: failed.length === 0,
@@ -131,11 +131,11 @@ async function main(): Promise<void> {
   } else {
     for (const result of results) {
       if (result.ok) {
-        console.log(`[search:bench:baseline:verify] ok ${result.path}`);
+        console.info(`[search:bench:baseline:verify] ok ${result.path}`);
       } else {
-        console.log(`[search:bench:baseline:verify] fail ${result.path}`);
+        console.info(`[search:bench:baseline:verify] fail ${result.path}`);
         for (const error of result.errors) {
-          console.log(`  - ${error}`);
+          console.info(`  - ${error}`);
         }
       }
     }

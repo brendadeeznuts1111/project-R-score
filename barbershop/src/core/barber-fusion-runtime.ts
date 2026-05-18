@@ -838,64 +838,64 @@ export class FusionCache {
 // ==================== DEMO / TEST ====================
 
 export async function runDemo() {
-  console.log('🎯 OpenClaw Context Integration Demo\n');
+  console.info('🎯 OpenClaw Context Integration Demo\n');
 
   // Resolve Fusion context
-  console.log('📍 Resolving Fusion Context...');
+  console.info('📍 Resolving Fusion Context...');
   const contextResult = await FusionContextExecutor.executeWithContext(async () => {
     return await FusionContextResolver.resolveContext();
   });
 
-  console.log(`  Environment: ${contextResult.data.environment}`);
-  console.log(`  Context Hash: ${contextResult.data.contextHash}`);
-  console.log(`  Duration: ${contextResult.durationMs.toFixed(2)}ms`);
-  console.log(`  Feature Flags:`, contextResult.data.featureFlags);
-  console.log();
+  console.info(`  Environment: ${contextResult.data.environment}`);
+  console.info(`  Context Hash: ${contextResult.data.contextHash}`);
+  console.info(`  Duration: ${contextResult.durationMs.toFixed(2)}ms`);
+  console.info(`  Feature Flags:`, contextResult.data.featureFlags);
+  console.info();
 
   // Validate account ages
-  console.log('🔍 Validating Sample Data...\n');
+  console.info('🔍 Validating Sample Data...\n');
   for (const [tier, data] of Object.entries(SampleAccountAges)) {
     const result = SchemaValidator.validateAccountAge(data);
-    console.log(
+    console.info(
       `${tier}: ${result.valid ? '✅' : '❌'} ${result.errors.length} errors, ${result.warnings.length} warnings`
     );
     if (result.errors.length > 0) {
-      console.log('  Errors:', result.errors.map(e => e.message).join(', '));
+      console.info('  Errors:', result.errors.map(e => e.message).join(', '));
     }
   }
 
-  console.log('\n📊 Testing Utilities...\n');
+  console.info('\n📊 Testing Utilities...\n');
 
   // Test utilities
-  console.log('Account age for 5 days:', FusionUtils.getAccountAgeFromDays(5));
-  console.log('Account age for 45 days:', FusionUtils.getAccountAgeFromDays(45));
-  console.log('Account age for 400 days:', FusionUtils.getAccountAgeFromDays(400));
+  console.info('Account age for 5 days:', FusionUtils.getAccountAgeFromDays(5));
+  console.info('Account age for 45 days:', FusionUtils.getAccountAgeFromDays(45));
+  console.info('Account age for 400 days:', FusionUtils.getAccountAgeFromDays(400));
 
-  console.log(
+  console.info(
     '\nEffective rate for new account (60% base):',
     FusionUtils.calculateEffectiveRate(0.6, 'new')
   );
-  console.log(
+  console.info(
     'Effective rate for veteran (60% base):',
     FusionUtils.calculateEffectiveRate(0.6, 'veteran')
   );
 
-  console.log(
+  console.info(
     '\nActions for new + casual:',
     FusionUtils.getActionsFor('new', 'casual').map(a => a.id)
   );
-  console.log(
+  console.info(
     'Actions for veteran + whale:',
     FusionUtils.getActionsFor('veteran', 'whale').map(a => a.id)
   );
 
   // Test database with context
-  console.log('\n💾 Testing Database with Context...\n');
+  console.info('\n💾 Testing Database with Context...\n');
   const db = new FusionDatabase();
 
   await FusionContextExecutor.executeDbWithContext(db, async (database) => {
     const allAges = database.getAllAccountAges();
-    console.log('Account ages in DB:', allAges.map((a: AccountAgeRecord) => a.tier).join(', '));
+    console.info('Account ages in DB:', allAges.map((a: AccountAgeRecord) => a.tier).join(', '));
 
     // Log context operation
     database.logContextOperation(
@@ -906,23 +906,23 @@ export async function runDemo() {
     );
 
     const contextLogs = database.getContextStats();
-    console.log('Context operations logged:', contextLogs.length);
+    console.info('Context operations logged:', contextLogs.length);
 
     return allAges;
   });
 
   // Test caching (if Redis available)
-  console.log('\n⚡ Testing Cache with Context...\n');
+  console.info('\n⚡ Testing Cache with Context...\n');
   await FusionCache.cacheWithContext('demo:test', { message: 'Hello from Fusion Context' });
   const cached = await FusionCache.getWithContext<{ message: string }>('demo:test');
-  console.log('Cached data:', cached?.message || 'Not found');
+  console.info('Cached data:', cached?.message || 'Not found');
 
-  console.log('\n✅ Demo Complete!');
-  console.log('\n📝 OpenClaw Integration:');
-  console.log('  - Global config resolution via lib/bun-context.ts');
-  console.log('  - Context-aware execution with caching');
-  console.log('  - Profile integration from OpenClaw gateway');
-  console.log('  - Context hash for cache invalidation');
+  console.info('\n✅ Demo Complete!');
+  console.info('\n📝 OpenClaw Integration:');
+  console.info('  - Global config resolution via lib/bun-context.ts');
+  console.info('  - Context-aware execution with caching');
+  console.info('  - Profile integration from OpenClaw gateway');
+  console.info('  - Context hash for cache invalidation');
 }
 
 // Run if executed directly

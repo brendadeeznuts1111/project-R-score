@@ -55,15 +55,15 @@ class WebSocketOptimizedWidget {
 			...wsConfig,
 		};
 
-		console.log("🌐 WebSocket Optimized Widget Initialized");
-		console.log(`📡 URL: ${this.wsConfig.url}`);
-		console.log(
+		console.info("🌐 WebSocket Optimized Widget Initialized");
+		console.info(`📡 URL: ${this.wsConfig.url}`);
+		console.info(
 			`🔄 Binary Mode: ${this.wsConfig.binaryMode ? "Enabled" : "Disabled"}`,
 		);
-		console.log(
+		console.info(
 			`🗜️  Compression: ${this.wsConfig.compressionEnabled ? "Enabled" : "Disabled"}`,
 		);
-		console.log("");
+		console.info("");
 
 		this.initializeWebSocket();
 	}
@@ -72,7 +72,7 @@ class WebSocketOptimizedWidget {
 		if (this.isConnecting) return;
 
 		this.isConnecting = true;
-		console.log("🔌 Connecting to WebSocket server...");
+		console.info("🔌 Connecting to WebSocket server...");
 
 		try {
 			// Use Bun's native WebSocket
@@ -80,7 +80,7 @@ class WebSocketOptimizedWidget {
 
 			// Set up event listeners using Bun's API
 			this.ws.addEventListener("open", () => {
-				console.log("✅ WebSocket connection established");
+				console.info("✅ WebSocket connection established");
 				this.reconnectAttempts = 0;
 				this.isConnecting = false;
 				this.processMessageQueue();
@@ -91,7 +91,7 @@ class WebSocketOptimizedWidget {
 			});
 
 			this.ws.addEventListener("close", (event) => {
-				console.log(`❌ WebSocket closed: ${event.code} - ${event.reason}`);
+				console.info(`❌ WebSocket closed: ${event.code} - ${event.reason}`);
 				this.isConnecting = false;
 				this.scheduleReconnect();
 			});
@@ -137,7 +137,7 @@ class WebSocketOptimizedWidget {
 
 			// Track performance metrics
 			if (processingTime > 10) {
-				console.log(
+				console.info(
 					`⚠️  Slow message processing: ${processingTime.toFixed(2)}ms`,
 				);
 			}
@@ -212,7 +212,7 @@ class WebSocketOptimizedWidget {
 
 	private updateRealTimeMetrics(metrics: any): void {
 		// Update performance metrics with real-time data
-		console.log(
+		console.info(
 			`📊 Real-time metrics: avg=${metrics.average.toFixed(2)}, min=${metrics.min.toFixed(2)}, max=${metrics.max.toFixed(2)}`,
 		);
 
@@ -223,7 +223,7 @@ class WebSocketOptimizedWidget {
 	private processMessageQueue(): void {
 		if (this.messageQueue.length === 0) return;
 
-		console.log(`📤 Processing ${this.messageQueue.length} queued messages`);
+		console.info(`📤 Processing ${this.messageQueue.length} queued messages`);
 
 		while (this.messageQueue.length > 0) {
 			const message = this.messageQueue.shift();
@@ -283,7 +283,7 @@ class WebSocketOptimizedWidget {
 		const delay =
 			this.wsConfig.reconnectInterval * 2 ** (this.reconnectAttempts - 1);
 
-		console.log(
+		console.info(
 			`🔄 Scheduling reconnection attempt ${this.reconnectAttempts} in ${delay}ms`,
 		);
 
@@ -338,7 +338,7 @@ class WebSocketOptimizedWidget {
 
 	public async disconnect(): Promise<void> {
 		if (this.ws) {
-			console.log("🔌 Disconnecting WebSocket...");
+			console.info("🔌 Disconnecting WebSocket...");
 
 			return new Promise((resolve) => {
 				if (this.ws?.readyState === WebSocketConstants.OPEN) {
@@ -382,7 +382,7 @@ if (import.meta.main) {
 
 	// Handle graceful shutdown
 	process.on("SIGINT", async () => {
-		console.log("\n👋 Shutting down WebSocket widget...");
+		console.info("\n👋 Shutting down WebSocket widget...");
 		await widget.disconnect();
 		process.exit(0);
 	});

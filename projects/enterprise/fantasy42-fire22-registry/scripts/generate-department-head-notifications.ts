@@ -485,7 +485,7 @@ Your selection as ${departmentHead.department} Department Head represents recogn
 }
 
 async function main() {
-  console.log(
+  console.info(
     '🚀 Generating Department Head Notifications for Fantasy42-Fire22 Leadership Framework...'
   );
 
@@ -505,7 +505,7 @@ async function main() {
 
     try {
       await Bun.write(filePath, notification);
-      console.log(
+      console.info(
         `✅ Generated notification for ${departmentHead.name} (${departmentHead.department})`
       );
     } catch (error) {
@@ -513,14 +513,14 @@ async function main() {
     }
   }
 
-  console.log('\n🎉 All Department Head Notifications Generated Successfully!');
-  console.log(`📁 Notifications saved to: ${notificationsDir}`);
-  console.log('📊 Total notifications created:', departmentHeads.length);
-  console.log('\n📋 Next Steps:');
-  console.log('1. Review generated notifications for accuracy');
-  console.log('2. Distribute notifications to respective department heads');
-  console.log('3. Schedule leadership introductory meetings');
-  console.log('4. Begin CODEOWNERS access verification process');
+  console.info('\n🎉 All Department Head Notifications Generated Successfully!');
+  console.info(`📁 Notifications saved to: ${notificationsDir}`);
+  console.info('📊 Total notifications created:', departmentHeads.length);
+  console.info('\n📋 Next Steps:');
+  console.info('1. Review generated notifications for accuracy');
+  console.info('2. Distribute notifications to respective department heads');
+  console.info('3. Schedule leadership introductory meetings');
+  console.info('4. Begin CODEOWNERS access verification process');
 }
 
 // Run the script

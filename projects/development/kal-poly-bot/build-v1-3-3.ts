@@ -71,7 +71,7 @@ function parseArgs() {
 }
 
 function printHelp() {
-  console.log(`
+  console.info(`
 Golden Matrix v1.3.3 Production Build
 =====================================
 
@@ -118,8 +118,8 @@ if (typeof process !== 'undefined') {
 
 // Bundle analysis
 async function analyzeBundle(buildResult: any) {
-  console.log("\n📊 Bundle Analysis");
-  console.log("==================");
+  console.info("\n📊 Bundle Analysis");
+  console.info("==================");
 
   const outputs = buildResult.outputs || [];
   let totalSize = 0;
@@ -131,23 +131,23 @@ async function analyzeBundle(buildResult: any) {
       totalSize += size;
       totalModules += output.modules?.length || 0;
 
-      console.log(`📦 Main Bundle: ${output.path}`);
-      console.log(`   Size: ${(size / 1024).toFixed(2)} KB`);
-      console.log(`   Modules: ${output.modules?.length || 0}`);
+      console.info(`📦 Main Bundle: ${output.path}`);
+      console.info(`   Size: ${(size / 1024).toFixed(2)} KB`);
+      console.info(`   Modules: ${output.modules?.length || 0}`);
 
       if (output.dependencies) {
-        console.log(`   Dependencies: ${output.dependencies.length}`);
+        console.info(`   Dependencies: ${output.dependencies.length}`);
       }
     }
   }
 
-  console.log(`\n📈 Totals:`);
-  console.log(`   Total Size: ${(totalSize / 1024).toFixed(2)} KB`);
-  console.log(`   Total Modules: ${totalModules}`);
-  console.log(`   Outputs: ${outputs.length}`);
+  console.info(`\n📈 Totals:`);
+  console.info(`   Total Size: ${(totalSize / 1024).toFixed(2)} KB`);
+  console.info(`   Total Modules: ${totalModules}`);
+  console.info(`   Outputs: ${outputs.length}`);
 
   // Component breakdown
-  console.log(`\n🔧 Component Breakdown:`);
+  console.info(`\n🔧 Component Breakdown:`);
   const components = [
     "Sourcemap-Integrity-Validator",
     "NAPI-ThreadSafety-Guard",
@@ -159,38 +159,38 @@ async function analyzeBundle(buildResult: any) {
   components.forEach((comp, i) => {
     const active = Object.values(CONFIG.features)[i];
     const status = active ? "✅ ACTIVE" : "❌ ZERO-COST";
-    console.log(`   ${comp.padEnd(35)} ${status}`);
+    console.info(`   ${comp.padEnd(35)} ${status}`);
   });
 
   // Performance metrics
-  console.log(`\n⚡ Performance Metrics:`);
+  console.info(`\n⚡ Performance Metrics:`);
   const zeroCostCount = Object.values(CONFIG.features).filter(v => !v).length;
   const activeCount = 5 - zeroCostCount;
   const zeroCostPercent = Math.round((zeroCostCount / 5) * 100);
 
-  console.log(`   Zero-Cost Eliminated: ${zeroCostCount}/5 (${zeroCostPercent}%)`);
-  console.log(`   Active Components: ${activeCount}/5`);
-  console.log(`   Production Ready: ${Object.values(CONFIG.features).every(v => v) ? "✅ YES" : "⚠️  NO"}`);
+  console.info(`   Zero-Cost Eliminated: ${zeroCostCount}/5 (${zeroCostPercent}%)`);
+  console.info(`   Active Components: ${activeCount}/5`);
+  console.info(`   Production Ready: ${Object.values(CONFIG.features).every(v => v) ? "✅ YES" : "⚠️  NO"}`);
 }
 
 // Main build function
 async function buildProduction() {
-  console.log("🚀 Golden Matrix v1.3.3 Production Build");
-  console.log("=========================================\n");
+  console.info("🚀 Golden Matrix v1.3.3 Production Build");
+  console.info("=========================================\n");
 
   // Parse arguments
   const args = parseArgs();
   const config = { ...CONFIG, ...args };
 
   // Show configuration
-  console.log("📋 Build Configuration:");
-  console.log(`   Entry Point: ${config.entryPoint}`);
-  console.log(`   Output: ${join(config.outputDir, config.outputFile)}`);
-  console.log(`   Target: ${config.target}`);
-  console.log(`   Minify: ${config.minify}`);
-  console.log(`   Sourcemap: ${config.sourcemap}`);
-  console.log(`   Dry Run: ${config.dryRun}`);
-  console.log(`   Analyze: ${config.analyze}`);
+  console.info("📋 Build Configuration:");
+  console.info(`   Entry Point: ${config.entryPoint}`);
+  console.info(`   Output: ${join(config.outputDir, config.outputFile)}`);
+  console.info(`   Target: ${config.target}`);
+  console.info(`   Minify: ${config.minify}`);
+  console.info(`   Sourcemap: ${config.sourcemap}`);
+  console.info(`   Dry Run: ${config.dryRun}`);
+  console.info(`   Analyze: ${config.analyze}`);
 
   // Check entry point
   if (!existsSync(config.entryPoint)) {
@@ -202,27 +202,27 @@ async function buildProduction() {
   const featureFlags = generateFeatureFlags(config.features);
 
   if (config.dryRun) {
-    console.log("\n🧪 Dry Run Mode - Testing build configuration...");
-    console.log("\nFeature Flags:");
-    console.log(featureFlags);
+    console.info("\n🧪 Dry Run Mode - Testing build configuration...");
+    console.info("\nFeature Flags:");
+    console.info(featureFlags);
 
     if (config.analyze) {
       await analyzeBundle({ outputs: [] });
     }
 
-    console.log("\n✅ Dry run completed successfully");
+    console.info("\n✅ Dry run completed successfully");
     return;
   }
 
   // Create output directory
   const outputDir = config.outputDir;
   if (!existsSync(outputDir)) {
-    console.log(`\n📁 Creating output directory: ${outputDir}`);
+    console.info(`\n📁 Creating output directory: ${outputDir}`);
     // Note: In real implementation, use fs.mkdirSync
   }
 
   // Build the bundle
-  console.log("\n🔨 Building bundle...");
+  console.info("\n🔨 Building bundle...");
 
   try {
     const buildResult = await build({
@@ -242,7 +242,7 @@ async function buildProduction() {
     // Write feature flags
     const featureFlagsPath = join(outputDir, "feature-flags.js");
     writeFileSync(featureFlagsPath, featureFlags);
-    console.log(`✅ Feature flags written: ${featureFlagsPath}`);
+    console.info(`✅ Feature flags written: ${featureFlagsPath}`);
 
     // Write build manifest
     const manifest = {
@@ -264,7 +264,7 @@ async function buildProduction() {
 
     const manifestPath = join(outputDir, "build-manifest.json");
     writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
-    console.log(`✅ Build manifest written: ${manifestPath}`);
+    console.info(`✅ Build manifest written: ${manifestPath}`);
 
     // Analyze bundle if requested
     if (config.analyze) {
@@ -272,19 +272,19 @@ async function buildProduction() {
     }
 
     // Final summary
-    console.log("\n🎉 Build Complete!");
-    console.log("==================");
-    console.log(`📦 Output: ${join(outputDir, config.outputFile)}`);
-    console.log(`🔧 Components: 71-75 (v1.3.3 Golden Matrix)`);
-    console.log(`⚡ Features Active: ${Object.values(config.features).filter(v => v).length}/5`);
-    console.log(`🎯 Production Ready: ${Object.values(config.features).every(v => v) ? "✅ YES" : "⚠️  NO"}`);
+    console.info("\n🎉 Build Complete!");
+    console.info("==================");
+    console.info(`📦 Output: ${join(outputDir, config.outputFile)}`);
+    console.info(`🔧 Components: 71-75 (v1.3.3 Golden Matrix)`);
+    console.info(`⚡ Features Active: ${Object.values(config.features).filter(v => v).length}/5`);
+    console.info(`🎯 Production Ready: ${Object.values(config.features).every(v => v) ? "✅ YES" : "⚠️  NO"}`);
 
     // Show next steps
-    console.log("\n📋 Next Steps:");
-    console.log("   1. Review build output in dist/ directory");
-    console.log("   2. Run tests: bun test infrastructure/v1-3-3/__tests__/components-71-75.test.ts");
-    console.log("   3. Deploy to production with feature flags enabled");
-    console.log("   4. Monitor audit logs for component health");
+    console.info("\n📋 Next Steps:");
+    console.info("   1. Review build output in dist/ directory");
+    console.info("   2. Run tests: bun test infrastructure/v1-3-3/__tests__/components-71-75.test.ts");
+    console.info("   3. Deploy to production with feature flags enabled");
+    console.info("   4. Monitor audit logs for component health");
 
   } catch (error) {
     console.error("\n❌ Build failed:", error);

@@ -10,12 +10,12 @@ function generateFingerprint(ver: (typeof ANDROID_VERS)[number]): Uint8Array {
   }
   // Compress for proxy push
   const compressed = Bun.zstdCompressSync(fp, { level: 3 });
-  console.log(`✨ FP generated for Android ${ver}: ${(Bun.nanoseconds() - start) / 1e6}ms`);
+  console.info(`✨ FP generated for Android ${ver}: ${(Bun.nanoseconds() - start) / 1e6}ms`);
   return compressed;
 }
 
 if (import.meta.main) {
-    console.log("🛠️  Generating Reddit anti-detect fingerprints...");
+    console.info("🛠️  Generating Reddit anti-detect fingerprints...");
     ANDROID_VERS.forEach(ver => {
         generateFingerprint(ver);
     });

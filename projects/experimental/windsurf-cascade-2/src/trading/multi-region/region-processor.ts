@@ -265,7 +265,7 @@ export class MultiRegionProcessor {
         this.processingQueue = this.processingQueue.slice(-500);
       }
 
-      console.log(`🌍 Processed ${batchData.length} data points from ${this.activeRegions.size} regions`);
+      console.info(`🌍 Processed ${batchData.length} data points from ${this.activeRegions.size} regions`);
       
       // Log regional breakdown
       const regionBreakdown = new Map<string, number>();
@@ -274,7 +274,7 @@ export class MultiRegionProcessor {
       });
       
       for (const [region, count] of regionBreakdown) {
-        console.log(`   ${region.toUpperCase()}: ${count} data points`);
+        console.info(`   ${region.toUpperCase()}: ${count} data points`);
       }
       
     } catch (error) {
@@ -387,7 +387,7 @@ export class MultiRegionProcessor {
       }
     }
     
-    console.log('🌍 Region priorities optimized based on latency:', latencyTests);
+    console.info('🌍 Region priorities optimized based on latency:', latencyTests);
   }
 }
 

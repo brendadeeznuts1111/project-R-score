@@ -19,4 +19,4 @@ describe('Exit Code 0: All Tests Pass', () => {
   });
 });
 
-console.log('✅ This file will result in Exit Code 0');
+console.info('✅ This file will result in Exit Code 0');

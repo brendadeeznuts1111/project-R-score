@@ -86,13 +86,13 @@ class EnhancedFactoryWagerValidator {
   async execute(): Promise<EnhancedValidationResult> {
     const startTime = Date.now();
     
-    console.log(`🔍 FactoryWager Enhanced Configuration Validator v2.0`);
-    console.log(`========================================================`);
-    console.log(`Environment: ${this.environment.toUpperCase()}`);
-    console.log(`Strict Mode: ${this.strict ? 'ENABLED' : 'DISABLED'}`);
-    console.log(`ML Analysis: ENABLED`);
-    console.log(`Auto-Fix: AVAILABLE`);
-    console.log('');
+    console.info(`🔍 FactoryWager Enhanced Configuration Validator v2.0`);
+    console.info(`========================================================`);
+    console.info(`Environment: ${this.environment.toUpperCase()}`);
+    console.info(`Strict Mode: ${this.strict ? 'ENABLED' : 'DISABLED'}`);
+    console.info(`ML Analysis: ENABLED`);
+    console.info(`Auto-Fix: AVAILABLE`);
+    console.info('');
 
     const results: EnhancedValidationResult[] = [];
 
@@ -848,51 +848,51 @@ class EnhancedFactoryWagerValidator {
 
     const reportPath = `.factory-wager/reports/enhanced-validation-${Date.now()}.json`;
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`📄 Enhanced report saved to: ${reportPath}`);
+    console.info(`📄 Enhanced report saved to: ${reportPath}`);
   }
 
   private printEnhancedResults(result: EnhancedValidationResult): void {
-    console.log(`\n🎯 Enhanced Validation Results:`);
-    console.log(`================================`);
+    console.info(`\n🎯 Enhanced Validation Results:`);
+    console.info(`================================`);
     
     if (result.passed) {
-      console.log(`✅ VALIDATION PASSED`);
-      console.log(`Environment: ${this.environment}`);
-      console.log(`Hardening Level: ${result.hardeningLevel.toUpperCase()}`);
-      console.log(`Risk Score: ${result.riskScore}/100`);
-      console.log(`Predictive Risk: ${result.predictiveRisk}/100`);
+      console.info(`✅ VALIDATION PASSED`);
+      console.info(`Environment: ${this.environment}`);
+      console.info(`Hardening Level: ${result.hardeningLevel.toUpperCase()}`);
+      console.info(`Risk Score: ${result.riskScore}/100`);
+      console.info(`Predictive Risk: ${result.predictiveRisk}/100`);
     } else {
-      console.log(`❌ VALIDATION FAILED`);
-      console.log(`Environment: ${this.environment}`);
-      console.log(`Critical Issues: ${result.violations.filter(v => v.impact === 'critical').length}`);
+      console.info(`❌ VALIDATION FAILED`);
+      console.info(`Environment: ${this.environment}`);
+      console.info(`Critical Issues: ${result.violations.filter(v => v.impact === 'critical').length}`);
     }
 
     // Print ML Insights
     if (result.mlInsights.length > 0) {
-      console.log(`\n🧠 ML Insights:`);
+      console.info(`\n🧠 ML Insights:`);
       result.mlInsights.forEach(insight => {
-        console.log(`   ${insight.type.toUpperCase()}: ${insight.description} (${insight.confidence}% confidence)`);
+        console.info(`   ${insight.type.toUpperCase()}: ${insight.description} (${insight.confidence}% confidence)`);
       });
     }
 
     // Print top recommendations
     if (result.recommendations.length > 0) {
-      console.log(`\n💡 Top Recommendations:`);
+      console.info(`\n💡 Top Recommendations:`);
       result.recommendations.slice(0, 3).forEach(rec => {
-        console.log(`   ${rec.priority.toUpperCase()}: ${rec.action}`);
+        console.info(`   ${rec.priority.toUpperCase()}: ${rec.action}`);
       });
     }
 
-    console.log(`\n📊 Performance Metrics:`);
-    console.log(`   Parse Time: ${result.performanceMetrics.parseTime}ms`);
-    console.log(`   Validation Time: ${result.performanceMetrics.validationTime}ms`);
-    console.log(`   Complexity Score: ${result.performanceMetrics.complexityScore.toFixed(2)}`);
+    console.info(`\n📊 Performance Metrics:`);
+    console.info(`   Parse Time: ${result.performanceMetrics.parseTime}ms`);
+    console.info(`   Validation Time: ${result.performanceMetrics.validationTime}ms`);
+    console.info(`   Complexity Score: ${result.performanceMetrics.complexityScore.toFixed(2)}`);
 
     if (result.autoFixAvailable) {
-      console.log(`\n🔧 Auto-Fix Available: Run with --auto-fix to apply automatic fixes`);
+      console.info(`\n🔧 Auto-Fix Available: Run with --auto-fix to apply automatic fixes`);
     }
 
-    console.log(`\nExit code: ${result.passed ? 0 : 1}`);
+    console.info(`\nExit code: ${result.passed ? 0 : 1}`);
   }
 }
 

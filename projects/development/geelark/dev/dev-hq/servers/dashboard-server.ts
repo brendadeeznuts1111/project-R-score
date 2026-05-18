@@ -87,7 +87,7 @@ function renderMetric(emoji: string, label: string, value: string, maxWidth: num
   const totalTextWidth = emojiWidth + labelWidth + valueWidth + 4; // +4 for spaces and colons
   const padding = Math.max(0, maxWidth - totalTextWidth);
 
-  console.log(`${emoji} ${label}:${" ".repeat(padding)}${value}`);
+  console.info(`${emoji} ${label}:${" ".repeat(padding)}${value}`);
 }
 
 /**
@@ -96,7 +96,7 @@ function renderMetric(emoji: string, label: string, value: string, maxWidth: num
 function renderStatusBox(boxWidth: number = 70): void {
   const envPadding = Math.max(0, boxWidth - Bun.stringWidth(ENVIRONMENT_VALUE) - 16);
 
-  console.log(`
+  console.info(`
 ╔════════════════════════════════════════════════════════════╗
 ║           🎨 Geelark Feature Flag Dashboard                ║
 ╠════════════════════════════════════════════════════════════╣
@@ -183,7 +183,7 @@ const CLI_CONFIG = {
 
 // Display CLI help
 if (args.help || args.h) {
-  console.log(`
+  console.info(`
 Geelark Dashboard Server
 =========================
 
@@ -235,7 +235,7 @@ For more information, see https://bun.sh/docs/cli
 }
 
 // Display startup banner
-console.log(`
+console.info(`
 ╔════════════════════════════════════════════════════════════════════════════╗
 ║                                                                              ║
 ║  ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗                                 ║
@@ -251,7 +251,7 @@ console.log(`
 `);
 
 // Log configuration with Unicode-aware alignment
-console.log("📋 Configuration:");
+console.info("📋 Configuration:");
 renderMetric("🌍", "Environment", CLI_CONFIG.envFile);
 renderMetric("🔌", "Port", CLI_CONFIG.port.toString());
 renderMetric("☁️", "Upload Provider", CLI_CONFIG.uploadProvider);
@@ -259,7 +259,7 @@ renderMetric("📦", "Max HTTP Header Size", `${CLI_CONFIG.maxHttpHeaderSize} by
 renderMetric("🔍", "DNS Order", CLI_CONFIG.dnsResultOrder);
 renderMetric("🔐", "Use System CA", CLI_CONFIG.useSystemCa.toString());
 renderMetric("📁", "Working Directory", CLI_CONFIG.cwd);
-console.log("");
+console.info("");
 
 // ============================================================================
 // Proxy Header Validation Status (if validator module available)
@@ -270,7 +270,7 @@ console.log("");
     // Dynamic import to avoid errors if module not available
     const { validateProxyHeader } = await import("../../src/proxy/validator.js");
 
-    console.log("🔒 Proxy Header Validation:");
+    console.info("🔒 Proxy Header Validation:");
 
     // Validate current config headers (demonstration)
     const demoHeaders = {
@@ -292,11 +292,11 @@ console.log("");
       renderMetric(icon, shortName, `${value} (${status})`);
     }
 
-    console.log("");
+    console.info("");
   } catch (error) {
     // Validator module not available, skip validation display
-    console.log("⚠️  Proxy header validation: module not available");
-    console.log("");
+    console.info("⚠️  Proxy header validation: module not available");
+    console.info("");
   }
 })();
 
@@ -341,15 +341,15 @@ const uploadService = new UploadService(uploadConfig);
 // Get environment from env or default to development
 const ENVIRONMENT_VALUE = process.env.ENVIRONMENT || process.env.NODE_ENV || ENVIRONMENT.DEVELOPMENT;
 
-console.log(`🔍 Monitoring System initialized for environment: ${ENVIRONMENT_VALUE}`);
-console.log(`🔐 Authentication System initialized`);
-console.log(`🚨 Alerts System initialized`);
-console.log(`🌍 Geolocation System initialized`);
-console.log(`📊 Anomaly Detection System initialized`);
-console.log(`🎨 Dashboard Configuration System initialized`);
-console.log(`🔌 Socket Inspection System initialized (DNS/TCP)`);
-console.log(`📈 Telemetry System initialized (Performance & Alerts)`);
-console.log(`☁️ Upload Service initialized (provider: ${uploadConfig.provider})`);
+console.info(`🔍 Monitoring System initialized for environment: ${ENVIRONMENT_VALUE}`);
+console.info(`🔐 Authentication System initialized`);
+console.info(`🚨 Alerts System initialized`);
+console.info(`🌍 Geolocation System initialized`);
+console.info(`📊 Anomaly Detection System initialized`);
+console.info(`🎨 Dashboard Configuration System initialized`);
+console.info(`🔌 Socket Inspection System initialized (DNS/TCP)`);
+console.info(`📈 Telemetry System initialized (Performance & Alerts)`);
+console.info(`☁️ Upload Service initialized (provider: ${uploadConfig.provider})`);
 
 // Create server (port from CLI, env, or default)
 const server = new BunServe({
@@ -569,7 +569,7 @@ const monitoringMiddleware = async (req: Request, next: () => Promise<Response>)
       const triggeredAlerts = await alerts.checkEvent(monitoringEvent);
       for (const alert of triggeredAlerts) {
         const createdAlert = alerts.createAlert(alert);
-        console.log(`🚨 Alert triggered: ${alert.title} from ${ip}`);
+        console.info(`🚨 Alert triggered: ${alert.title} from ${ip}`);
         // TODO: Send notifications via WebSocket
       }
     } catch (error) {
@@ -2620,7 +2620,7 @@ server.get("/", () => {
 // WebSocket for real-time updates
 server.websocket({
   open(ws) {
-    console.log("📊 Dashboard WebSocket connected");
+    console.info("📊 Dashboard WebSocket connected");
     ws.subscribe(WEBSOCKET.DASHBOARD_CHANNEL);
 
     // Send initial monitoring summary
@@ -2635,7 +2635,7 @@ server.websocket({
     ws.publish(WEBSOCKET.DASHBOARD_CHANNEL, message);
   },
   close(ws, code, reason) {
-    console.log(`📊 Dashboard WebSocket disconnected: ${code} ${reason}`);
+    console.info(`📊 Dashboard WebSocket disconnected: ${code} ${reason}`);
   },
 });
 
@@ -2652,7 +2652,7 @@ setInterval(() => {
   try {
     const detectedAlerts = telemetry.checkAlerts(ENVIRONMENT_VALUE);
     if (detectedAlerts.length > 0) {
-      console.log(`📈 Telemetry: Detected ${detectedAlerts.length} alerts`);
+      console.info(`📈 Telemetry: Detected ${detectedAlerts.length} alerts`);
 
       // Publish alerts via WebSocket
       const alertMessage = {
@@ -2709,11 +2709,11 @@ metricsInterval = setInterval(() => {
     const memoryMB = (memory.heapUsed / 1024 / 1024).toFixed(2);
     const uptime = Math.floor(process.uptime());
 
-    console.log(""); // Blank line for separation
+    console.info(""); // Blank line for separation
     renderMetric("⏱️", "Uptime", `${uptime}s`);
     renderMetric("💾", "Memory Used", `${memoryMB} MB`);
     renderMetric("📊", "Active Connections", monitoring.getSummary().totalRequests.toString());
-    console.log(""); // Blank line for separation
+    console.info(""); // Blank line for separation
   }
 
   const metrics = {
@@ -2750,7 +2750,7 @@ metricsInterval = setInterval(() => {
 setInterval(() => {
   const deleted = monitoring.cleanup(7); // Keep last 7 days
   if (deleted > 0) {
-    console.log(`🧹 Cleaned up ${deleted} old monitoring events`);
+    console.info(`🧹 Cleaned up ${deleted} old monitoring events`);
   }
 }, INTERVALS.DATA_CLEANUP);
 
@@ -2759,7 +2759,7 @@ setInterval(async () => {
   try {
     const detectedAnomalies = await anomalyDetection.detectAnomalies(ENVIRONMENT_VALUE);
     if (detectedAnomalies.length > 0) {
-      console.log(`📊 Detected ${detectedAnomalies.length} anomalies`);
+      console.info(`📊 Detected ${detectedAnomalies.length} anomalies`);
 
       // Publish anomalies via WebSocket
       const anomalyMessage = {
@@ -2782,7 +2782,7 @@ renderStatusBox();
 
 // Graceful shutdown
 const shutdown = async () => {
-  console.log("\n🛑 Shutting down dashboard server...");
+  console.info("\n🛑 Shutting down dashboard server...");
 
   if (metricsInterval) {
     clearInterval(metricsInterval);

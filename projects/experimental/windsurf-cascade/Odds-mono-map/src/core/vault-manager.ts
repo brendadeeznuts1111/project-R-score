@@ -103,7 +103,7 @@ export class VaultManager {
     // ============================================================================
 
     async initialize(): Promise<void> {
-        console.log('🚀 Initializing Odds-mono-map vault...');
+        console.info('🚀 Initializing Odds-mono-map vault...');
 
         // Create necessary directories
         await this.ensureDirectories();
@@ -112,7 +112,7 @@ export class VaultManager {
         await this.saveConfig();
         await this.saveStatus();
 
-        console.log('✅ Vault initialization completed');
+        console.info('✅ Vault initialization completed');
     }
 
     private async ensureDirectories(): Promise<void> {
@@ -142,7 +142,7 @@ export class VaultManager {
     // ============================================================================
 
     async validate(): Promise<ValidationResult> {
-        console.log('🔍 Validating vault structure and content...');
+        console.info('🔍 Validating vault structure and content...');
 
         const result: ValidationResult = {
             valid: true,
@@ -232,7 +232,7 @@ export class VaultManager {
     // ============================================================================
 
     async organize(): Promise<void> {
-        console.log('📁 Organizing vault structure...');
+        console.info('📁 Organizing vault structure...');
 
         try {
             // Organize templates
@@ -248,7 +248,7 @@ export class VaultManager {
             this.status.lastOrganization = new Date().toISOString();
             await this.saveStatus();
 
-            console.log('✅ Vault organization completed');
+            console.info('✅ Vault organization completed');
 
         } catch (error) {
             console.error('❌ Organization failed:', error.message);
@@ -258,19 +258,19 @@ export class VaultManager {
 
     private async organizeTemplates(): Promise<void> {
         // Template organization logic
-        console.log('  📋 Organizing templates...');
+        console.info('  📋 Organizing templates...');
         // Implementation would go here
     }
 
     private async organizeDailyNotes(): Promise<void> {
         // Daily notes organization logic
-        console.log('  📅 Organizing daily notes...');
+        console.info('  📅 Organizing daily notes...');
         // Implementation would go here
     }
 
     private async cleanupDuplicates(): Promise<void> {
         // Duplicate cleanup logic
-        console.log('  🧹 Cleaning up duplicates...');
+        console.info('  🧹 Cleaning up duplicates...');
         // Implementation would go here
     }
 
@@ -280,16 +280,16 @@ export class VaultManager {
 
     async startMonitoring(): Promise<void> {
         if (!this.config.settings.enableMonitoring) {
-            console.log('⚠️ Monitoring is disabled in configuration');
+            console.info('⚠️ Monitoring is disabled in configuration');
             return;
         }
 
-        console.log('👁️ Starting vault monitoring...');
+        console.info('👁️ Starting vault monitoring...');
         // Monitoring implementation would go here
     }
 
     async stopMonitoring(): Promise<void> {
-        console.log('⏹️ Stopping vault monitoring...');
+        console.info('⏹️ Stopping vault monitoring...');
         // Stop monitoring implementation
     }
 
@@ -356,12 +356,12 @@ export async function main() {
 
             case 'validate':
                 const result = await vault.validate();
-                console.log(`Validation result: ${result.valid ? '✅ PASSED' : '❌ FAILED'}`);
+                console.info(`Validation result: ${result.valid ? '✅ PASSED' : '❌ FAILED'}`);
                 if (result.errors.length > 0) {
-                    console.log('Errors:', result.errors);
+                    console.info('Errors:', result.errors);
                 }
                 if (result.warnings.length > 0) {
-                    console.log('Warnings:', result.warnings);
+                    console.info('Warnings:', result.warnings);
                 }
                 break;
 
@@ -371,12 +371,12 @@ export async function main() {
 
             case 'status':
                 const status = vault.getStatus();
-                console.log('Vault Status:', JSON.stringify(status, null, 2));
+                console.info('Vault Status:', JSON.stringify(status, null, 2));
                 break;
 
             case 'report':
                 const report = await vault.generateReport();
-                console.log(report);
+                console.info(report);
                 break;
 
             case 'monitor':
@@ -384,7 +384,7 @@ export async function main() {
                 break;
 
             default:
-                console.log(`
+                console.info(`
 🏛️ Odds-Mono-Map Vault Manager
 
 Usage: bun vault-cli.ts <command>

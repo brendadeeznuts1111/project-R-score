@@ -92,8 +92,8 @@ class EnterpriseCLI {
   private async handleInspect(args: string[], options: CLIOptions) {
     const url = args[0] || 'factory-wager.com';
     
-    console.log('🔍 FactoryWager Inspector v2.0');
-    console.log(`📯 Target: ${url}`);
+    console.info('🔍 FactoryWager Inspector v2.0');
+    console.info(`📯 Target: ${url}`);
     
     // Simulate inspection
     const result = {
@@ -114,110 +114,110 @@ class EnterpriseCLI {
     };
     
     if (options.json) {
-      console.log(JSON.stringify(result, null, 2));
+      console.info(JSON.stringify(result, null, 2));
     } else {
-      console.log('\n📊 Inspection Results');
-      console.log(`├─ URL: ${result.url}`);
-      console.log(`├─ Patterns: ${result.patterns.financial} found, ${result.patterns.redacted} redacted`);
-      console.log(`├─ Compliance: ${result.patterns.compliance}%`);
-      console.log(`├─ Metrics: ${result.metrics.requests} req | ${result.metrics.visitors} visitors | ${result.metrics.cacheHit}% cache`);
-      console.log(`├─ MRR: $${(result.metrics.mrr/1000).toFixed(1)}K | Uptime: ${result.metrics.uptime}%`);
-      console.log(`└─ Generated: ${result.timestamp.toLocaleString()} | © DuoPlus Enterprise`);
+      console.info('\n📊 Inspection Results');
+      console.info(`├─ URL: ${result.url}`);
+      console.info(`├─ Patterns: ${result.patterns.financial} found, ${result.patterns.redacted} redacted`);
+      console.info(`├─ Compliance: ${result.patterns.compliance}%`);
+      console.info(`├─ Metrics: ${result.metrics.requests} req | ${result.metrics.visitors} visitors | ${result.metrics.cacheHit}% cache`);
+      console.info(`├─ MRR: $${(result.metrics.mrr/1000).toFixed(1)}K | Uptime: ${result.metrics.uptime}%`);
+      console.info(`└─ Generated: ${result.timestamp.toLocaleString()} | © DuoPlus Enterprise`);
     }
   }
   
   private async handleDashboard(args: string[], options: CLIOptions) {
     const port = options.port || '8090';
     
-    console.log('🌐 FactoryWager Dashboard');
-    console.log(`🚀 Starting dashboard on port ${port}`);
-    console.log('✅ Dashboard routes:');
-    console.log(`   http://localhost:${port}/inspector - Main interface`);
-    console.log(`   http://localhost:${port}/inspector/query - Query engine`);
-    console.log(`   http://localhost:${port}/inspector/redact - PCI/GDPR masking`);
+    console.info('🌐 FactoryWager Dashboard');
+    console.info(`🚀 Starting dashboard on port ${port}`);
+    console.info('✅ Dashboard routes:');
+    console.info(`   http://localhost:${port}/inspector - Main interface`);
+    console.info(`   http://localhost:${port}/inspector/query - Query engine`);
+    console.info(`   http://localhost:${port}/inspector/redact - PCI/GDPR masking`);
     
-    console.log('⚠️ Dashboard server requires additional setup');
+    console.info('⚠️ Dashboard server requires additional setup');
   }
   
   private async handleQROnboarding(args: string[], options: CLIOptions) {
     const port = options.port || '8091';
     
-    console.log('📱 QR Onboarding System');
-    console.log('⏱️  Target: 28-second onboarding');
-    console.log('🔒 15 health checks enforced');
+    console.info('📱 QR Onboarding System');
+    console.info('⏱️  Target: 28-second onboarding');
+    console.info('🔒 15 health checks enforced');
     
     if (options.healthChecks) {
-      console.log('✅ Running device health validations:');
-      console.log('   • OS version check');
-      console.log('   • Browser compatibility');
-      console.log('   • Network performance');
-      console.log('   • Storage validation');
-      console.log('   • Camera test');
-      console.log('   • Biometric check');
-      console.log('   • Security posture');
-      console.log('   • WebAuthn validation');
-      console.log('   • Processor performance');
-      console.log('   • Root detection');
-      console.log('   • App integrity');
-      console.log('   • Encryption support');
-      console.log('   • VPN detection');
-      console.log('   • Patch level');
-      console.log('   • Enterprise readiness');
+      console.info('✅ Running device health validations:');
+      console.info('   • OS version check');
+      console.info('   • Browser compatibility');
+      console.info('   • Network performance');
+      console.info('   • Storage validation');
+      console.info('   • Camera test');
+      console.info('   • Biometric check');
+      console.info('   • Security posture');
+      console.info('   • WebAuthn validation');
+      console.info('   • Processor performance');
+      console.info('   • Root detection');
+      console.info('   • App integrity');
+      console.info('   • Encryption support');
+      console.info('   • VPN detection');
+      console.info('   • Patch level');
+      console.info('   • Enterprise readiness');
     }
     
-    console.log(`🚀 QR onboarding would start on port ${port}`);
+    console.info(`🚀 QR onboarding would start on port ${port}`);
   }
   
   private async handleCompliance(args: string[], options: CLIOptions) {
     const standards = options.standards || 'pci,gdpr,aml5';
     
-    console.log('🛡️ Compliance Engine');
-    console.log(`📋 Standards: ${standards}`);
+    console.info('🛡️ Compliance Engine');
+    console.info(`📋 Standards: ${standards}`);
     
     const standardsList = standards.split(',');
     
-    console.log('✅ Compliance checks:');
+    console.info('✅ Compliance checks:');
     standardsList.forEach((standard: string) => {
-      console.log(`   • ${standard.toUpperCase()}: 99.8% compliant`);
+      console.info(`   • ${standard.toUpperCase()}: 99.8% compliant`);
     });
     
     if (options.audit) {
-      console.log('📄 Audit report generated');
-      console.log('   • PCI DSS v4.0: Compliant');
-      console.log('   • GDPR Article 32: Compliant');
-      console.log('   • AML5 Directive: Compliant');
+      console.info('📄 Audit report generated');
+      console.info('   • PCI DSS v4.0: Compliant');
+      console.info('   • GDPR Article 32: Compliant');
+      console.info('   • AML5 Directive: Compliant');
     }
   }
   
   private async handleDeploy(args: string[], options: CLIOptions) {
-    console.log('🚀 Production Deployment');
+    console.info('🚀 Production Deployment');
     
     if (options.global) {
-      console.log('🌍 Installing globally...');
-      console.log('✅ package.json created');
-      console.log('🔨 Building CLI for production...');
-      console.log('✅ CLI build complete');
-      console.log('📦 Installing globally...');
-      console.log('✅ Global installation complete');
+      console.info('🌍 Installing globally...');
+      console.info('✅ package.json created');
+      console.info('🔨 Building CLI for production...');
+      console.info('✅ CLI build complete');
+      console.info('📦 Installing globally...');
+      console.info('✅ Global installation complete');
     }
     
     if (options.systemd) {
-      console.log('🔧 Creating systemd service...');
-      console.log('   • Service: factorywager-inspector.service');
-      console.log('   • Auto-restart: enabled');
-      console.log('   • Dashboard: http://localhost:8090/inspector');
+      console.info('🔧 Creating systemd service...');
+      console.info('   • Service: factorywager-inspector.service');
+      console.info('   • Auto-restart: enabled');
+      console.info('   • Dashboard: http://localhost:8090/inspector');
     }
     
     if (options.verify) {
-      console.log('🔍 Verifying installation...');
-      console.log('✅ CLI: factorywager --version');
-      console.log('✅ Short command: fw --version');
-      console.log('✅ Dashboard: factorywager dashboard --live');
+      console.info('🔍 Verifying installation...');
+      console.info('✅ CLI: factorywager --version');
+      console.info('✅ Short command: fw --version');
+      console.info('✅ Dashboard: factorywager dashboard --live');
     }
   }
   
   private async handleStatus(args: string[], options: CLIOptions) {
-    console.log('📊 Enterprise System Status');
+    console.info('📊 Enterprise System Status');
     
     const status = {
       cli: '✅ Active',
@@ -230,26 +230,26 @@ class EnterpriseCLI {
       uptime: '99.9%'
     };
     
-    console.log('\nSystem Components:');
+    console.info('\nSystem Components:');
     Object.entries(status).forEach(([component, state]) => {
-      console.log(`   ${component}: ${state}`);
+      console.info(`   ${component}: ${state}`);
     });
     
     if (options.detailed) {
-      console.log('\nDetailed Information:');
-      console.log('   • CLI Version: 2.0.0');
-      console.log('   • Dashboard Port: 8090');
-      console.log('   • QR Onboarding Port: 8091');
-      console.log('   • Compliance Standards: PCI, GDPR, AML5');
-      console.log('   • Color Scheme: Enterprise Blue (No Purple)');
-      console.log('   • Target Onboarding Time: 28 seconds');
-      console.log('   • Health Checks: 15 validations');
-      console.log('   • MRR Baseline: $65% per merchant');
+      console.info('\nDetailed Information:');
+      console.info('   • CLI Version: 2.0.0');
+      console.info('   • Dashboard Port: 8090');
+      console.info('   • QR Onboarding Port: 8091');
+      console.info('   • Compliance Standards: PCI, GDPR, AML5');
+      console.info('   • Color Scheme: Enterprise Blue (No Purple)');
+      console.info('   • Target Onboarding Time: 28 seconds');
+      console.info('   • Health Checks: 15 validations');
+      console.info('   • MRR Baseline: $65% per merchant');
     }
   }
   
   private showHelp() {
-    console.log(`
+    console.info(`
 FactoryWager CLI Inspector v2.0 - Enterprise Edition
 
 Usage: factorywager <command> [options]

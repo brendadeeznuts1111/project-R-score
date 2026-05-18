@@ -46,7 +46,7 @@ class DashboardLauncher {
                      process.platform === 'win32' ? 'start' : 'xdg-open';
       
       execSync(`${command} ${filePath}`, { stdio: 'inherit' });
-      console.log(`✅ Opened: ${filePath}`);
+      console.info(`✅ Opened: ${filePath}`);
     } catch (error) {
       console.error(`❌ Failed to open: ${filePath}`, error);
     }
@@ -58,44 +58,44 @@ class DashboardLauncher {
                      process.platform === 'win32' ? 'start' : 'xdg-open';
       
       execSync(`${command} ${url}`, { stdio: 'inherit' });
-      console.log(`✅ Opened: ${url}`);
+      console.info(`✅ Opened: ${url}`);
     } catch (error) {
       console.error(`❌ Failed to open: ${url}`, error);
     }
   }
 
   showMenu(): void {
-    console.log('🚀 EMPIRE PRO DASHBOARD LAUNCHER');
-    console.log('═'.repeat(50));
-    console.log('');
+    console.info('🚀 EMPIRE PRO DASHBOARD LAUNCHER');
+    console.info('═'.repeat(50));
+    console.info('');
     
     this.dashboards.forEach((dashboard, index) => {
       const location = dashboard.path || dashboard.url;
-      console.log(`${index + 1}. ${dashboard.name}`);
-      console.log(`   ${dashboard.description}`);
-      console.log(`   📍 ${location}`);
-      console.log('');
+      console.info(`${index + 1}. ${dashboard.name}`);
+      console.info(`   ${dashboard.description}`);
+      console.info(`   📍 ${location}`);
+      console.info('');
     });
 
-    console.log('9. 📖 Open Credentials Guide');
-    console.log('   Complete credential reference documentation');
-    console.log('   📍 CREDENTIALS_GUIDE.md');
-    console.log('');
+    console.info('9. 📖 Open Credentials Guide');
+    console.info('   Complete credential reference documentation');
+    console.info('   📍 CREDENTIALS_GUIDE.md');
+    console.info('');
 
-    console.log('10. 🧪 Run System Validation');
-    console.log('    Complete system health check');
-    console.log('    💻 bun run scripts/validate-production.ts');
-    console.log('');
+    console.info('10. 🧪 Run System Validation');
+    console.info('    Complete system health check');
+    console.info('    💻 bun run scripts/validate-production.ts');
+    console.info('');
 
-    console.log('0. 🚪 Exit');
-    console.log('');
+    console.info('0. 🚪 Exit');
+    console.info('');
   }
 
   async launch(choice: string): Promise<void> {
     const index = parseInt(choice);
 
     if (choice === '0') {
-      console.log('👋 Goodbye!');
+      console.info('👋 Goodbye!');
       process.exit(0);
     }
 
@@ -105,7 +105,7 @@ class DashboardLauncher {
     }
 
     if (choice === '10') {
-      console.log('🧪 Running system validation...');
+      console.info('🧪 Running system validation...');
       try {
         execSync('bun run scripts/validate-production.ts', { stdio: 'inherit', cwd: process.cwd() });
       } catch (error) {
@@ -123,27 +123,27 @@ class DashboardLauncher {
         this.openUrl(dashboard.url);
       }
     } else {
-      console.log('❌ Invalid choice. Please try again.');
+      console.info('❌ Invalid choice. Please try again.');
     }
   }
 
   async quickStart(): Promise<void> {
-    console.log('🚀 Quick Start - Opening Essential Dashboards...');
-    console.log('');
+    console.info('🚀 Quick Start - Opening Essential Dashboards...');
+    console.info('');
 
     // Open credential dashboard first
-    console.log('🔐 Opening Credential Dashboard...');
+    console.info('🔐 Opening Credential Dashboard...');
     this.openFile('dashboards/credentials/credential-dashboard.html');
 
     // Wait a moment then open production dashboard
     setTimeout(() => {
-      console.log('📊 Opening Production Dashboard...');
+      console.info('📊 Opening Production Dashboard...');
       this.openUrl('https://dashboard.apple');
     }, 1000);
 
     // Wait another moment then run validation
     setTimeout(() => {
-      console.log('🧪 Running System Validation...');
+      console.info('🧪 Running System Validation...');
       try {
         execSync('bun run scripts/validate-production.ts', { stdio: 'inherit', cwd: process.cwd() });
       } catch (error) {
@@ -151,9 +151,9 @@ class DashboardLauncher {
       }
     }, 2000);
 
-    console.log('');
-    console.log('✅ All dashboards opened! Check your browser windows.');
-    console.log('📖 For complete documentation, see: CREDENTIALS_GUIDE.md');
+    console.info('');
+    console.info('✅ All dashboards opened! Check your browser windows.');
+    console.info('📖 For complete documentation, see: CREDENTIALS_GUIDE.md');
   }
 }
 

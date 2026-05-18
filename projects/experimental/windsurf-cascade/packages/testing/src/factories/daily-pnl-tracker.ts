@@ -14,7 +14,7 @@ export class DailyPnlTracker {
 
         // Reset at midnight UTC
         if (today !== this.lastRollover) {
-            console.log(`Daily P&L rollover: ${this.lastRollover} -> ${today}, previous loss: ${this.dailyLoss}`);
+            console.info(`Daily P&L rollover: ${this.lastRollover} -> ${today}, previous loss: ${this.dailyLoss}`);
             this.dailyLoss = 0;
             this.lastRollover = today;
         }
@@ -23,7 +23,7 @@ export class DailyPnlTracker {
 
         // Log significant P&L changes
         if (Math.abs(pnl) > 100) {
-            console.log(`Significant P&L recorded: ${opportunityId} = $${pnl.toFixed(2)}, daily total: $${this.dailyLoss.toFixed(2)}`);
+            console.info(`Significant P&L recorded: ${opportunityId} = $${pnl.toFixed(2)}, daily total: $${this.dailyLoss.toFixed(2)}`);
         }
     }
 
@@ -69,6 +69,6 @@ export class DailyPnlTracker {
     reset(): void {
         this.dailyLoss = 0;
         this.lastRollover = new Date().toISOString().split('T')[0];
-        console.log('Daily P&L tracker manually reset');
+        console.info('Daily P&L tracker manually reset');
     }
 }

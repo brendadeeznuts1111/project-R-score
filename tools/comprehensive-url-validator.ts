@@ -40,37 +40,37 @@ const colors = options.noColor ? {
 
 // Show help
 if (options.help) {
-  console.log(`${colors.cyan}🔍 Comprehensive URL Validator${colors.reset}`);
-  console.log('');
-  console.log('Usage: bun comprehensive-url-validator.ts [options]');
-  console.log('');
-  console.log('Options:');
-  console.log('  -v, --verbose         Verbose output with detailed information');
-  console.log('  -q, --quiet           Quiet mode with minimal output');
-  console.log('  --check-subpaths      Include subpath validation');
-  console.log('  --check-fragments     Include fragment validation');
-  console.log('  --check-structure     Include URL structure analysis');
-  console.log('  --full-analysis       Complete URL analysis (all checks)');
-  console.log('  --json                Output results in JSON format');
-  console.log('  --no-color            Disable colored output');
-  console.log('  -h, --help            Show this help message');
-  console.log('');
-  console.log('Examples:');
-  console.log('  bun comprehensive-url-validator.ts --full-analysis');
-  console.log('  bun comprehensive-url-validator.ts --check-subpaths --verbose');
-  console.log('  bun comprehensive-url-validator.ts --check-fragments --json');
+  console.info(`${colors.cyan}🔍 Comprehensive URL Validator${colors.reset}`);
+  console.info('');
+  console.info('Usage: bun comprehensive-url-validator.ts [options]');
+  console.info('');
+  console.info('Options:');
+  console.info('  -v, --verbose         Verbose output with detailed information');
+  console.info('  -q, --quiet           Quiet mode with minimal output');
+  console.info('  --check-subpaths      Include subpath validation');
+  console.info('  --check-fragments     Include fragment validation');
+  console.info('  --check-structure     Include URL structure analysis');
+  console.info('  --full-analysis       Complete URL analysis (all checks)');
+  console.info('  --json                Output results in JSON format');
+  console.info('  --no-color            Disable colored output');
+  console.info('  -h, --help            Show this help message');
+  console.info('');
+  console.info('Examples:');
+  console.info('  bun comprehensive-url-validator.ts --full-analysis');
+  console.info('  bun comprehensive-url-validator.ts --check-subpaths --verbose');
+  console.info('  bun comprehensive-url-validator.ts --check-fragments --json');
   process.exit(0);
 }
 
 // Logging utilities
 const log = {
-  info: (msg: string) => !options.quiet && console.log(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) => !options.quiet && console.log(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) => !options.quiet && console.log(`${colors.yellow}⚠️${colors.reset} ${msg}`),
-  error: (msg: string) => console.log(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) => options.verbose && console.log(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) => !options.quiet && console.log(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.log(JSON.stringify(data, null, 2))
+  info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
+  success: (msg: string) => !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
+  warning: (msg: string) => !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
+  error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
+  verbose: (msg: string) => options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
+  section: (title: string) => !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
+  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2))
 };
 
 // Test results storage
@@ -273,8 +273,8 @@ function analyzeURLPatterns(urls: string[]) {
 
 // Main validation function
 async function runComprehensiveValidation() {
-  console.log(`${colors.cyan}🔍 Comprehensive URL Validator${colors.reset}`);
-  console.log(`${colors.gray}Validating URLs with Base + Subpath + Fragment analysis...${colors.reset}\n`);
+  console.info(`${colors.cyan}🔍 Comprehensive URL Validator${colors.reset}`);
+  console.info(`${colors.gray}Validating URLs with Base + Subpath + Fragment analysis...${colors.reset}\n`);
 
   const startTime = Date.now();
 
@@ -521,11 +521,11 @@ async function runComprehensiveValidation() {
     const { total, passed, failed } = testResults.summary;
     const successRate = total > 0 ? ((passed / total) * 100).toFixed(1) : '0';
 
-    console.log(`${colors.white}Total Tests:${colors.reset} ${total}`);
-    console.log(`${colors.green}Passed:${colors.reset} ${passed}`);
-    console.log(`${colors.red}Failed:${colors.reset} ${failed}`);
-    console.log(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
-    console.log(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
+    console.info(`${colors.white}Total Tests:${colors.reset} ${total}`);
+    console.info(`${colors.green}Passed:${colors.reset} ${passed}`);
+    console.info(`${colors.red}Failed:${colors.reset} ${failed}`);
+    console.info(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
+    console.info(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
 
     // Output JSON if requested
     if (options.json) {
@@ -538,10 +538,10 @@ async function runComprehensiveValidation() {
 
     // Exit with appropriate code
     if (failed > 0) {
-      console.log(`\n${colors.yellow}⚠️ Some validations failed. See details above.${colors.reset}`);
+      console.info(`\n${colors.yellow}⚠️ Some validations failed. See details above.${colors.reset}`);
       process.exit(1);
     } else {
-      console.log(`\n${colors.green}🎉 All validations passed!${colors.reset}`);
+      console.info(`\n${colors.green}🎉 All validations passed!${colors.reset}`);
       process.exit(0);
     }
 

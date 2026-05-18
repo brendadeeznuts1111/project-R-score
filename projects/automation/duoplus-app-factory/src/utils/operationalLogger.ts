@@ -150,7 +150,7 @@ export class OperationalLogger {
         metrics.eventHorizonAvgSec
       ]);
 
-      console.log(chalk.green('✅ Operational metrics logged to database'));
+      console.info(chalk.green('✅ Operational metrics logged to database'));
     } catch (error) {
       console.error('❌ Error logging operational metrics:', error);
       throw error;
@@ -162,49 +162,49 @@ export class OperationalLogger {
    */
   displayMetrics(metrics: OperationalMetrics): void {
     console.clear();
-    console.log(chalk.hex("#FF6B35").bold(`
+    console.info(chalk.hex("#FF6B35").bold(`
 ╔══════════════════════════════════════════════╗
 ║     🌌 NEBULA-FLOW™ OPERATIONAL STATUS       ║
 ║        Real-time Performance Metrics         ║
 ╚══════════════════════════════════════════════╝
 `));
 
-    console.log(chalk.blue.bold("📊 Core Metrics"));
-    console.log(`  Starlight-IDs: ${metrics.starlightIDs} ${chalk.green('✔')}`);
-    console.log(`  Orbit-Assign™: ${metrics.orbitAssignLegs} legs ${chalk.green('✔')}`);
-    console.log(`  Cover-Stardust™: ${metrics.coverStardustStatus} ${chalk.green('✔')}`);
-    console.log("");
+    console.info(chalk.blue.bold("📊 Core Metrics"));
+    console.info(`  Starlight-IDs: ${metrics.starlightIDs} ${chalk.green('✔')}`);
+    console.info(`  Orbit-Assign™: ${metrics.orbitAssignLegs} legs ${chalk.green('✔')}`);
+    console.info(`  Cover-Stardust™: ${metrics.coverStardustStatus} ${chalk.green('✔')}`);
+    console.info("");
 
-    console.log(chalk.cyan.bold("💫 Collection Status"));
-    console.log(`  Comet-Collect™: ${metrics.cometCollectSwept}/100 swept (${metrics.cometCollectPending} pending < ${metrics.cometCollectEtaMinutes} min)`);
-    console.log("");
+    console.info(chalk.cyan.bold("💫 Collection Status"));
+    console.info(`  Comet-Collect™: ${metrics.cometCollectSwept}/100 swept (${metrics.cometCollectPending} pending < ${metrics.cometCollectEtaMinutes} min)`);
+    console.info("");
 
-    console.log(chalk.green.bold("💰 Yield Performance"));
-    console.log(`  Stardrop™ Yield: ${metrics.stardropYieldPct}% → $${metrics.stardropProfitUsd.toLocaleString()} profit`);
-    console.log("");
+    console.info(chalk.green.bold("💰 Yield Performance"));
+    console.info(`  Stardrop™ Yield: ${metrics.stardropYieldPct}% → $${metrics.stardropProfitUsd.toLocaleString()} profit`);
+    console.info("");
 
-    console.log(chalk.red.bold("⚠️ Risk Management"));
-    console.log(`  Black-Hole-Rate™: ${metrics.blackHoleRatePct}% (${metrics.blackHoleDisputes} dispute${metrics.blackHoleDisputes !== 1 ? 's' : ''}, auto-refunded)`);
-    console.log("");
+    console.info(chalk.red.bold("⚠️ Risk Management"));
+    console.info(`  Black-Hole-Rate™: ${metrics.blackHoleRatePct}% (${metrics.blackHoleDisputes} dispute${metrics.blackHoleDisputes !== 1 ? 's' : ''}, auto-refunded)`);
+    console.info("");
 
-    console.log(chalk.yellow.bold("⏱️ Performance"));
+    console.info(chalk.yellow.bold("⏱️ Performance"));
     const minutes = Math.floor(metrics.eventHorizonAvgSec / 60);
     const seconds = metrics.eventHorizonAvgSec % 60;
-    console.log(`  Event-Horizon™: ${minutes} min ${seconds} sec avg`);
-    console.log("");
+    console.info(`  Event-Horizon™: ${minutes} min ${seconds} sec avg`);
+    console.info("");
 
     // Performance indicators
-    console.log(chalk.gray.bold("📈 Health Indicators"));
+    console.info(chalk.gray.bold("📈 Health Indicators"));
     const yieldHealth = metrics.stardropYieldPct >= 1.5 ? chalk.green('✅') : chalk.yellow('⚠️');
     const disputeHealth = metrics.blackHoleRatePct <= 1.0 ? chalk.green('✅') : chalk.red('❌');
     const etaHealth = metrics.cometCollectEtaMinutes <= 15 ? chalk.green('✅') : chalk.yellow('⚠️');
 
-    console.log(`  Yield Health: ${yieldHealth} (${metrics.stardropYieldPct}% target: ≥1.5%)`);
-    console.log(`  Dispute Health: ${disputeHealth} (${metrics.blackHoleRatePct}% target: ≤1.0%)`);
-    console.log(`  ETA Health: ${etaHealth} (${metrics.cometCollectEtaMinutes}min target: ≤15min)`);
-    console.log("");
+    console.info(`  Yield Health: ${yieldHealth} (${metrics.stardropYieldPct}% target: ≥1.5%)`);
+    console.info(`  Dispute Health: ${disputeHealth} (${metrics.blackHoleRatePct}% target: ≤1.0%)`);
+    console.info(`  ETA Health: ${etaHealth} (${metrics.cometCollectEtaMinutes}min target: ≤15min)`);
+    console.info("");
 
-    console.log(chalk.gray(`⏰ Logged: ${new Date().toLocaleString()} | Status: ${chalk.green('OPERATIONAL')}`));
+    console.info(chalk.gray(`⏰ Logged: ${new Date().toLocaleString()} | Status: ${chalk.green('OPERATIONAL')}`));
   }
 
   /**

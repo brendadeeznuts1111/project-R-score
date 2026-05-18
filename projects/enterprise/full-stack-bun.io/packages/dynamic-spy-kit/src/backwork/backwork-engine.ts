@@ -46,7 +46,7 @@ export class BackworkEngine {
 	 * @returns Complete backwork analysis
 	 */
 	async reverseEngineer(winningPlay: WinningPlay): Promise<BackworkResult> {
-		console.log('🔍 BACKWORKING WINNING PLAY:\n%j', winningPlay);
+		console.info('🔍 BACKWORKING WINNING PLAY:\n%j', winningPlay);
 
 		// 1. Fuzzy search tick data
 		const matches = this.modelReverse.fuzzySearchWinningPlay(winningPlay);
@@ -61,7 +61,7 @@ export class BackworkEngine {
 		// 4. Model reconstruction
 		const modelFingerprint = this.buildModelFingerprint(patterns, asiaSignals, topMatch);
 
-		console.log('🎯 MODEL FINGERPRINT:\n%j', modelFingerprint);
+		console.info('🎯 MODEL FINGERPRINT:\n%j', modelFingerprint);
 
 		return {
 			winningPlay,

@@ -50,7 +50,7 @@ class ColorSnap {
   }
 
   async run() {
-    console.log('📸 ColorSnap - Advanced Color System Auditor');
+    console.info('📸 ColorSnap - Advanced Color System Auditor');
     
     if (this.config.audit) {
       await this.audit();
@@ -66,25 +66,25 @@ class ColorSnap {
   }
 
   private async audit() {
-    console.log('🔍 Auditing color compliance...');
+    console.info('🔍 Auditing color compliance...');
     
     const violations = await this.scanForViolations();
     const report = this.generateAuditReport(violations);
     
-    console.log(`📊 Audit Results:`);
-    console.log(`   • Total Files: ${report.summary.totalFiles}`);
-    console.log(`   • Compliant Files: ${report.summary.compliantFiles}`);
-    console.log(`   • Violations: ${report.summary.violations}`);
-    console.log(`   • Compliance: ${report.summary.compliance}%`);
+    console.info(`📊 Audit Results:`);
+    console.info(`   • Total Files: ${report.summary.totalFiles}`);
+    console.info(`   • Compliant Files: ${report.summary.compliantFiles}`);
+    console.info(`   • Violations: ${report.summary.violations}`);
+    console.info(`   • Compliance: ${report.summary.compliance}%`);
     
     if (violations.length > 0) {
-      console.log('\n⚠️ Color Violations Found:');
+      console.info('\n⚠️ Color Violations Found:');
       violations.slice(0, 10).forEach(v => {
-        console.log(`   • ${v.file}:${v.line} - ${v.color} (${v.issue})`);
+        console.info(`   • ${v.file}:${v.line} - ${v.color} (${v.issue})`);
       });
       
       if (violations.length > 10) {
-        console.log(`   ... and ${violations.length - 10} more`);
+        console.info(`   ... and ${violations.length - 10} more`);
       }
     }
     
@@ -93,7 +93,7 @@ class ColorSnap {
   }
 
   private async fix() {
-    console.log('🔧 Auto-fixing color violations...');
+    console.info('🔧 Auto-fixing color violations...');
     
     const violations = await this.scanForViolations();
     let fixedCount = 0;
@@ -114,16 +114,16 @@ class ColorSnap {
             fixedCount++;
           }
         } catch (error) {
-          console.log(`⚠️ Could not fix ${violation.file}:${violation.line}`);
+          console.info(`⚠️ Could not fix ${violation.file}:${violation.line}`);
         }
       }
     }
     
-    console.log(`✅ Fixed ${fixedCount} color violations.`);
+    console.info(`✅ Fixed ${fixedCount} color violations.`);
   }
 
   private async generateReport() {
-    console.log('📋 Generating comprehensive color report...');
+    console.info('📋 Generating comprehensive color report...');
     
     const violations = await this.scanForViolations();
     const report = this.generateAuditReport(violations);
@@ -132,7 +132,7 @@ class ColorSnap {
     const outputFile = this.config.output || `color-audit-${new Date().toISOString().split('T')[0]}.md`;
     
     writeFileSync(outputFile, markdown);
-    console.log(`📄 Report saved to ${outputFile}`);
+    console.info(`📄 Report saved to ${outputFile}`);
   }
 
   private async scanForViolations() {

@@ -10,22 +10,22 @@
  * Run this script and press Ctrl+C to see the signal handler in action.
  */
 
-console.log("🚀 SIGINT Demo started!");
-console.log("Press Ctrl+C to trigger the signal handler...");
-console.log("The handler will log 'Ctrl-C was pressed' and exit\n");
+console.info("🚀 SIGINT Demo started!");
+console.info("Press Ctrl+C to trigger the signal handler...");
+console.info("The handler will log 'Ctrl-C was pressed' and exit\n");
 
 let interrupts = 0;
 
 // Listen for CTRL+C (SIGINT)
 process.on("SIGINT", () => {
   interrupts++;
-  console.log(`\n🛑 Ctrl-C was pressed (${interrupts} times)`);
+  console.info(`\n🛑 Ctrl-C was pressed (${interrupts} times)`);
 
   if (interrupts >= 3) {
-    console.log("Multiple interrupts detected - exiting now!");
+    console.info("Multiple interrupts detected - exiting now!");
     process.exit();
   } else {
-    console.log("Press Ctrl+C again to exit, or wait...");
+    console.info("Press Ctrl+C again to exit, or wait...");
   }
 });
 
@@ -36,12 +36,12 @@ const dotTimer = setInterval(() => {
 
 // Handle process lifecycle events
 process.on("beforeExit", (code) => {
-  console.log(`🔔 Event loop is empty! (exit code: ${code})`);
+  console.info(`🔔 Event loop is empty! (exit code: ${code})`);
   // Note: No async operations allowed here
 });
 
 process.on("exit", (code) => {
   // Only synchronous operations allowed here
-  console.log(`👋 Process is exiting with code ${code}`);
+  console.info(`👋 Process is exiting with code ${code}`);
   clearInterval(dotTimer);
 });

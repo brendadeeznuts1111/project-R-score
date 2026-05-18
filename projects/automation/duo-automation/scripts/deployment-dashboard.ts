@@ -64,8 +64,8 @@ class DeploymentDashboard {
     console.clear();
     
     // Header
-    console.log('📊 Production Deployment Dashboard');
-    console.log('=====================================\n');
+    console.info('📊 Production Deployment Dashboard');
+    console.info('=====================================\n');
     
     // Environment Status
     this.displayEnvironmentStatus();
@@ -128,10 +128,10 @@ class DeploymentDashboard {
       'rolling-back': '🔄'
     };
 
-    console.log(`🌍 Environment: ${status.environment.toUpperCase()}`);
-    console.log(`📊 Status: ${statusEmoji[status.status]} ${status.status.toUpperCase()}`);
-    console.log(`🕐 Last Update: ${status.timestamp.toLocaleString()}`);
-    console.log('');
+    console.info(`🌍 Environment: ${status.environment.toUpperCase()}`);
+    console.info(`📊 Status: ${statusEmoji[status.status]} ${status.status.toUpperCase()}`);
+    console.info(`🕐 Last Update: ${status.timestamp.toLocaleString()}`);
+    console.info('');
   }
 
   /**
@@ -140,14 +140,14 @@ class DeploymentDashboard {
   private displayPerformanceMetrics(): void {
     const perf = this.currentStatus.performance;
     
-    console.log('⚡ Performance Metrics:');
-    console.log('=======================');
-    console.log(`🔧 Hardware Acceleration: ${perf.hardwareAcceleration ? '✅ Enabled' : '❌ Disabled'}`);
-    console.log(`📈 Performance Improvement: ${perf.improvement}`);
-    console.log(`📦 Total Artifacts: ${perf.totalArtifacts}`);
-    console.log(`⏱️  Average Hash Time: ${perf.averageHashTime}ms`);
-    console.log(`🚀 Throughput: ${perf.throughput} artifacts/sec`);
-    console.log('');
+    console.info('⚡ Performance Metrics:');
+    console.info('=======================');
+    console.info(`🔧 Hardware Acceleration: ${perf.hardwareAcceleration ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info(`📈 Performance Improvement: ${perf.improvement}`);
+    console.info(`📦 Total Artifacts: ${perf.totalArtifacts}`);
+    console.info(`⏱️  Average Hash Time: ${perf.averageHashTime}ms`);
+    console.info(`🚀 Throughput: ${perf.throughput} artifacts/sec`);
+    console.info('');
   }
 
   /**
@@ -156,30 +156,30 @@ class DeploymentDashboard {
   private displayArtifactStatus(): void {
     const artifacts = this.currentStatus.artifacts;
     
-    console.log('📦 Artifact Status:');
-    console.log('==================');
+    console.info('📦 Artifact Status:');
+    console.info('==================');
     
     if (artifacts.length === 0) {
-      console.log('   No artifacts deployed yet');
+      console.info('   No artifacts deployed yet');
     } else {
       // Group by status
       const deployed = artifacts.filter(a => a.deployed);
       const verified = artifacts.filter(a => a.verified);
       const failed = artifacts.filter(a => !a.deployed);
       
-      console.log(`   ✅ Deployed: ${deployed.length}`);
-      console.log(`   🔒 Verified: ${verified.length}`);
-      console.log(`   ❌ Failed: ${failed.length}`);
+      console.info(`   ✅ Deployed: ${deployed.length}`);
+      console.info(`   🔒 Verified: ${verified.length}`);
+      console.info(`   ❌ Failed: ${failed.length}`);
       
       if (deployed.length > 0) {
-        console.log('\n   Recent Deployments:');
+        console.info('\n   Recent Deployments:');
         deployed.slice(-5).forEach(artifact => {
           const status = artifact.verified ? '✅' : '⚠️';
-          console.log(`   ${status} ${artifact.name} (${artifact.hash.slice(0, 8)}...) - ${artifact.duration}ms`);
+          console.info(`   ${status} ${artifact.name} (${artifact.hash.slice(0, 8)}...) - ${artifact.duration}ms`);
         });
       }
     }
-    console.log('');
+    console.info('');
   }
 
   /**
@@ -188,21 +188,21 @@ class DeploymentDashboard {
   private displayIntegrityStatus(): void {
     const integrity = this.currentStatus.integrity;
     
-    console.log('🔒 Integrity Status:');
-    console.log('==================');
-    console.log(`   ✅ Verified: ${integrity.totalVerified}`);
-    console.log(`   ❌ Failed: ${integrity.totalFailed}`);
-    console.log(`   📈 Success Rate: ${integrity.verificationRate}%`);
-    console.log(`   🕐 Last Check: ${integrity.lastCheck.toLocaleString()}`);
-    console.log('');
+    console.info('🔒 Integrity Status:');
+    console.info('==================');
+    console.info(`   ✅ Verified: ${integrity.totalVerified}`);
+    console.info(`   ❌ Failed: ${integrity.totalFailed}`);
+    console.info(`   📈 Success Rate: ${integrity.verificationRate}%`);
+    console.info(`   🕐 Last Check: ${integrity.lastCheck.toLocaleString()}`);
+    console.info('');
   }
 
   /**
    * Display recent activity
    */
   private displayRecentActivity(): void {
-    console.log('📋 Recent Activity:');
-    console.log('==================');
+    console.info('📋 Recent Activity:');
+    console.info('==================');
     
     const activities = [
       `🚀 Deployment started for ${this.currentStatus.environment}`,
@@ -212,24 +212,24 @@ class DeploymentDashboard {
     ];
     
     activities.forEach((activity, index) => {
-      console.log(`   ${index + 1}. ${activity}`);
+      console.info(`   ${index + 1}. ${activity}`);
     });
-    console.log('');
+    console.info('');
   }
 
   /**
    * Display available commands
    */
   private displayAvailableCommands(): void {
-    console.log('🎛️  Available Commands:');
-    console.log('=======================');
-    console.log('   • deploy:production    Deploy to production');
-    console.log('   • deploy:staging       Deploy to staging');
-    console.log('   • verify:deployment    Verify deployment integrity');
-    console.log('   • rollback              Rollback to previous version');
-    console.log('   • demo:hash benchmark   Run hardware hashing benchmark');
-    console.log('   • r2:stats              Show R2 bucket statistics');
-    console.log('');
+    console.info('🎛️  Available Commands:');
+    console.info('=======================');
+    console.info('   • deploy:production    Deploy to production');
+    console.info('   • deploy:staging       Deploy to staging');
+    console.info('   • verify:deployment    Verify deployment integrity');
+    console.info('   • rollback              Rollback to previous version');
+    console.info('   • demo:hash benchmark   Run hardware hashing benchmark');
+    console.info('   • r2:stats              Show R2 bucket statistics');
+    console.info('');
   }
 
   /**
@@ -367,7 +367,7 @@ async function main() {
       break;
 
     case 'report':
-      console.log(dashboard.generateReport());
+      console.info(dashboard.generateReport());
       break;
 
     case 'update':
@@ -376,9 +376,9 @@ async function main() {
           status: args[2] as any,
           environment: args[1]
         });
-        console.log('✅ Status updated');
+        console.info('✅ Status updated');
       } else {
-        console.log('Usage: deployment-dashboard.ts update <environment> <status>');
+        console.info('Usage: deployment-dashboard.ts update <environment> <status>');
       }
       break;
 
@@ -393,9 +393,9 @@ async function main() {
           deployed: false,
           duration: 0
         });
-        console.log('✅ Artifact added');
+        console.info('✅ Artifact added');
       } else {
-        console.log('Usage: deployment-dashboard.ts add-artifact <name> [version]');
+        console.info('Usage: deployment-dashboard.ts add-artifact <name> [version]');
       }
       break;
 

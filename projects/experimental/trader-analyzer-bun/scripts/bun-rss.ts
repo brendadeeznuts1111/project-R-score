@@ -57,21 +57,21 @@ ${index + 1}. ${item.title}
  */
 async function displayBunRSS(limit: number = RSS_DEFAULTS.ITEM_LIMIT): Promise<void> {
 	try {
-		console.log("🔍 Fetching Bun RSS feed...\n");
+		console.info("🔍 Fetching Bun RSS feed...\n");
 		const feed = await fetchRSSFeed(RSS_FEED_URLS.BUN);
 
-		console.log(`📡 ${feed.title}`);
-		console.log(`🔗 ${feed.link}\n`);
-		console.log(`📝 ${feed.description}\n`);
-		console.log("─".repeat(70));
-		console.log(`Latest ${Math.min(limit, feed.items.length)} items:\n`);
+		console.info(`📡 ${feed.title}`);
+		console.info(`🔗 ${feed.link}\n`);
+		console.info(`📝 ${feed.description}\n`);
+		console.info("─".repeat(70));
+		console.info(`Latest ${Math.min(limit, feed.items.length)} items:\n`);
 
 		feed.items.slice(0, limit).forEach((item, index) => {
-			console.log(formatItem(item, index));
+			console.info(formatItem(item, index));
 		});
 
-		console.log("─".repeat(70));
-		console.log(`\n✅ Fetched ${feed.items.length} total items`);
+		console.info("─".repeat(70));
+		console.info(`\n✅ Fetched ${feed.items.length} total items`);
 	} catch (error) {
 		console.error("❌ Error fetching Bun RSS feed:", error);
 		process.exit(1);
@@ -87,7 +87,7 @@ if (import.meta.main) {
 	if (command === "version" || command === "v") {
 		getLatestBunVersion().then((version) => {
 			if (version) {
-				console.log(version);
+				console.info(version);
 			} else {
 				console.error("Could not determine latest Bun version");
 				process.exit(1);

@@ -382,13 +382,13 @@ class EnhancedFantasy42ComplianceChecker {
       region?: string;
     } = {}
   ): Promise<ComplianceSummary> {
-    console.log('⚖️ Running Enhanced Fantasy42 Compliance Check...');
-    console.log('=================================================\n');
+    console.info('⚖️ Running Enhanced Fantasy42 Compliance Check...');
+    console.info('=================================================\n');
 
     try {
       const frameworksToCheck = options.frameworks || Object.keys(COMPLIANCE_FRAMEWORKS);
 
-      console.log(`📋 Checking ${frameworksToCheck.length} compliance frameworks...\n`);
+      console.info(`📋 Checking ${frameworksToCheck.length} compliance frameworks...\n`);
 
       for (const framework of frameworksToCheck) {
         await this.checkFrameworkCompliance(framework, options);
@@ -419,11 +419,11 @@ class EnhancedFantasy42ComplianceChecker {
     const frameworkConfig = COMPLIANCE_FRAMEWORKS[framework as keyof typeof COMPLIANCE_FRAMEWORKS];
 
     if (!frameworkConfig) {
-      console.log(`⚠️  Unknown framework: ${framework}`);
+      console.info(`⚠️  Unknown framework: ${framework}`);
       return;
     }
 
-    console.log(`🔍 Checking: ${frameworkConfig.name} (${framework.toUpperCase()})`);
+    console.info(`🔍 Checking: ${frameworkConfig.name} (${framework.toUpperCase()})`);
 
     const violations: ComplianceViolation[] = [];
     const requirements = frameworkConfig.requirements;
@@ -468,11 +468,11 @@ class EnhancedFantasy42ComplianceChecker {
     this.complianceResults.frameworks.set(framework, frameworkResult);
     this.complianceResults.violations.push(...violations);
 
-    console.log(
+    console.info(
       `   📊 ${status}: ${metRequirements}/${requirements.length} requirements met (${compliancePercentage.toFixed(1)}%)`
     );
     if (violations.length > 0) {
-      console.log(`   🚨 ${violations.length} violations found`);
+      console.info(`   🚨 ${violations.length} violations found`);
     }
   }
 
@@ -636,42 +636,42 @@ class EnhancedFantasy42ComplianceChecker {
   }
 
   private displayEnhancedComplianceResults(): void {
-    console.log('\n📊 Enhanced Compliance Check Results');
-    console.log('=====================================');
+    console.info('\n📊 Enhanced Compliance Check Results');
+    console.info('=====================================');
 
-    console.log(
+    console.info(
       `\n🎯 Overall Compliance: ${this.complianceResults.summary.overallCompliancePercentage.toFixed(1)}%`
     );
-    console.log(`🚨 Risk Level: ${this.complianceResults.summary.riskLevel}`);
+    console.info(`🚨 Risk Level: ${this.complianceResults.summary.riskLevel}`);
 
-    console.log('\n🏛️ Framework Summary:');
-    console.log(`   Total Frameworks: ${this.complianceResults.summary.totalFrameworks}`);
-    console.log(`   ✅ Compliant: ${this.complianceResults.summary.compliantFrameworks}`);
-    console.log(`   ⚠️  Partial: ${this.complianceResults.summary.partialFrameworks}`);
-    console.log(`   ❌ Non-Compliant: ${this.complianceResults.summary.nonCompliantFrameworks}`);
+    console.info('\n🏛️ Framework Summary:');
+    console.info(`   Total Frameworks: ${this.complianceResults.summary.totalFrameworks}`);
+    console.info(`   ✅ Compliant: ${this.complianceResults.summary.compliantFrameworks}`);
+    console.info(`   ⚠️  Partial: ${this.complianceResults.summary.partialFrameworks}`);
+    console.info(`   ❌ Non-Compliant: ${this.complianceResults.summary.nonCompliantFrameworks}`);
 
-    console.log('\n📋 Requirements Summary:');
-    console.log(`   Total Requirements: ${this.complianceResults.summary.totalRequirements}`);
-    console.log(`   ✅ Met: ${this.complianceResults.summary.metRequirements}`);
-    console.log(`   ❌ Unmet: ${this.complianceResults.summary.unmetRequirements}`);
+    console.info('\n📋 Requirements Summary:');
+    console.info(`   Total Requirements: ${this.complianceResults.summary.totalRequirements}`);
+    console.info(`   ✅ Met: ${this.complianceResults.summary.metRequirements}`);
+    console.info(`   ❌ Unmet: ${this.complianceResults.summary.unmetRequirements}`);
 
-    console.log('\n🚨 Violations by Severity:');
-    console.log(`   🚨 Critical: ${this.complianceResults.summary.criticalViolations}`);
-    console.log(`   🔴 High: ${this.complianceResults.summary.highViolations}`);
-    console.log(`   🟡 Medium: ${this.complianceResults.summary.mediumViolations}`);
-    console.log(`   🟢 Low: ${this.complianceResults.summary.lowViolations}`);
+    console.info('\n🚨 Violations by Severity:');
+    console.info(`   🚨 Critical: ${this.complianceResults.summary.criticalViolations}`);
+    console.info(`   🔴 High: ${this.complianceResults.summary.highViolations}`);
+    console.info(`   🟡 Medium: ${this.complianceResults.summary.mediumViolations}`);
+    console.info(`   🟢 Low: ${this.complianceResults.summary.lowViolations}`);
 
     if (this.complianceResults.recommendations.length > 0) {
-      console.log('\n💡 Key Recommendations:');
-      this.complianceResults.recommendations.forEach(rec => console.log(`   • ${rec}`));
+      console.info('\n💡 Key Recommendations:');
+      this.complianceResults.recommendations.forEach(rec => console.info(`   • ${rec}`));
     }
 
-    console.log('\n📋 Detailed Violations:');
+    console.info('\n📋 Detailed Violations:');
     const violationsByFramework = this.groupViolationsByFramework();
 
     Object.entries(violationsByFramework).forEach(([framework, violations]) => {
       const frameworkInfo = COMPLIANCE_FRAMEWORKS[framework as keyof typeof COMPLIANCE_FRAMEWORKS];
-      console.log(`\n🏛️ ${frameworkInfo.name} (${framework.toUpperCase()}):`);
+      console.info(`\n🏛️ ${frameworkInfo.name} (${framework.toUpperCase()}):`);
 
       violations.forEach(violation => {
         const errorInfo = COMPLIANCE_ERROR_CODES[violation.code];
@@ -684,26 +684,26 @@ class EnhancedFantasy42ComplianceChecker {
                 ? '🟡'
                 : '🟢';
 
-        console.log(`\n${severityIcon} ${violation.code}: ${errorInfo.title}`);
-        console.log(`   📝 ${errorInfo.description}`);
-        console.log(`   💥 Impact: ${errorInfo.impact}`);
-        console.log(`   ⏰ Deadline: ${violation.deadline}`);
-        console.log(`   👤 Responsible: ${violation.responsibleParty}`);
+        console.info(`\n${severityIcon} ${violation.code}: ${errorInfo.title}`);
+        console.info(`   📝 ${errorInfo.description}`);
+        console.info(`   💥 Impact: ${errorInfo.impact}`);
+        console.info(`   ⏰ Deadline: ${violation.deadline}`);
+        console.info(`   👤 Responsible: ${violation.responsibleParty}`);
         if (violation.reference) {
-          console.log(`   📚 Reference: ${violation.reference}`);
+          console.info(`   📚 Reference: ${violation.reference}`);
         }
 
-        console.log(`   🛠️  Suggestions:`);
+        console.info(`   🛠️  Suggestions:`);
         errorInfo.suggestions.forEach(suggestion => {
-          console.log(`      • ${suggestion}`);
+          console.info(`      • ${suggestion}`);
         });
 
-        console.log(`   🔧 Remediation: ${errorInfo.remediation}`);
+        console.info(`   🔧 Remediation: ${errorInfo.remediation}`);
       });
     });
 
     // Compliance roadmap
-    console.log('\n🗓️ Compliance Roadmap:');
+    console.info('\n🗓️ Compliance Roadmap:');
     this.displayComplianceRoadmap();
   }
 
@@ -730,18 +730,18 @@ class EnhancedFantasy42ComplianceChecker {
       .sort((a, b) => new Date(a.deadline!).getTime() - new Date(b.deadline!).getTime());
 
     if (criticalViolations.length > 0) {
-      console.log('🚨 Critical Priority (Next 30 days):');
+      console.info('🚨 Critical Priority (Next 30 days):');
       criticalViolations.slice(0, 3).forEach(violation => {
         const errorInfo = COMPLIANCE_ERROR_CODES[violation.code];
-        console.log(`   • ${violation.code}: ${errorInfo.title} (${violation.deadline})`);
+        console.info(`   • ${violation.code}: ${errorInfo.title} (${violation.deadline})`);
       });
     }
 
     if (highViolations.length > 0) {
-      console.log('🔴 High Priority (Next 45-60 days):');
+      console.info('🔴 High Priority (Next 45-60 days):');
       highViolations.slice(0, 3).forEach(violation => {
         const errorInfo = COMPLIANCE_ERROR_CODES[violation.code];
-        console.log(`   • ${violation.code}: ${errorInfo.title} (${violation.deadline})`);
+        console.info(`   • ${violation.code}: ${errorInfo.title} (${violation.deadline})`);
       });
     }
   }
@@ -766,7 +766,7 @@ class EnhancedFantasy42ComplianceChecker {
 
     const filename = `enhanced-compliance-report-${new Date().toISOString().slice(0, 10)}.json`;
     await Bun.write(filename, JSON.stringify(report, null, 2));
-    console.log(`💾 Enhanced compliance report saved to: ${filename}`);
+    console.info(`💾 Enhanced compliance report saved to: ${filename}`);
   }
 
   private calculateNextAssessmentDue(framework: string): string {
@@ -886,8 +886,8 @@ class EnhancedFantasy42ComplianceChecker {
 // MAIN EXECUTION
 // ============================================================================
 
-console.log('⚖️ Fantasy42 Enhanced Compliance Checker');
-console.log('======================================\n');
+console.info('⚖️ Fantasy42 Enhanced Compliance Checker');
+console.info('======================================\n');
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -903,7 +903,7 @@ const options = {
 const checker = new EnhancedFantasy42ComplianceChecker();
 await checker.runEnhancedComplianceCheck(options);
 
-console.log('\n✅ Enhanced Fantasy42 Compliance Check Complete!');
-console.log('=================================================');
-console.log('⚖️ Detailed error codes and actionable remediation provided above.');
-console.log('📊 Full compliance report saved with comprehensive analysis.');
+console.info('\n✅ Enhanced Fantasy42 Compliance Check Complete!');
+console.info('=================================================');
+console.info('⚖️ Detailed error codes and actionable remediation provided above.');
+console.info('📊 Full compliance report saved with comprehensive analysis.');

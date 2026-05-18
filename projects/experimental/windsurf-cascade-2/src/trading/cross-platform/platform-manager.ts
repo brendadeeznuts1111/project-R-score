@@ -219,7 +219,7 @@ export class PlatformManager {
   async optimizePerformance(): Promise<void> {
     if (this.isOptimized) return;
 
-    console.log(`🔧 Optimizing performance for ${this.platformConfig.platform}-${this.platformConfig.arch}...`);
+    console.info(`🔧 Optimizing performance for ${this.platformConfig.platform}-${this.platformConfig.arch}...`);
 
     // Measure baseline performance
     const baseline = await this.measurePerformance();
@@ -233,10 +233,10 @@ export class PlatformManager {
     // Update performance metrics
     this.platformConfig.performance = optimized;
 
-    console.log('⚡ Performance optimization complete:');
-    console.log(`   Config latency: ${baseline.configLatency}ns → ${optimized.configLatency}ns`);
-    console.log(`   Signal latency: ${baseline.signalLatency}ns → ${optimized.signalLatency}ns`);
-    console.log(`   Throughput: ${baseline.throughput} → ${optimized.throughput} ops/sec`);
+    console.info('⚡ Performance optimization complete:');
+    console.info(`   Config latency: ${baseline.configLatency}ns → ${optimized.configLatency}ns`);
+    console.info(`   Signal latency: ${baseline.signalLatency}ns → ${optimized.signalLatency}ns`);
+    console.info(`   Throughput: ${baseline.throughput} → ${optimized.throughput} ops/sec`);
 
     this.isOptimized = true;
   }
@@ -398,7 +398,7 @@ export class PlatformManager {
       };
 
       await fs.promises.writeFile(this.configPath, JSON.stringify(configData, null, 2));
-      console.log(`💾 Configuration saved to ${this.configPath}`);
+      console.info(`💾 Configuration saved to ${this.configPath}`);
     } catch (error) {
       console.error('Failed to save configuration:', error);
       throw new Error(`Configuration save failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -415,7 +415,7 @@ export class PlatformManager {
       const configData = await fs.promises.readFile(this.configPath, 'utf8');
       const config = JSON.parse(configData);
       
-      console.log(`📂 Configuration loaded from ${this.configPath}`);
+      console.info(`📂 Configuration loaded from ${this.configPath}`);
       return config;
     } catch (error) {
       console.error('Failed to load configuration:', error);
@@ -453,12 +453,12 @@ export class PlatformManager {
     // Unix-specific signal handling
     if (this.platformConfig.platform !== 'win32') {
       process.on('SIGTERM', () => {
-        console.log('Received SIGTERM, shutting down gracefully...');
+        console.info('Received SIGTERM, shutting down gracefully...');
         process.exit(0);
       });
       
       process.on('SIGINT', () => {
-        console.log('Received SIGINT, shutting down gracefully...');
+        console.info('Received SIGINT, shutting down gracefully...');
         process.exit(0);
       });
     }

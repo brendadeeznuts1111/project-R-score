@@ -40,8 +40,8 @@ class RuntimeSecurityGuardGenerator {
   }
 
   async generateGuards(): Promise<void> {
-    console.log('🛡️ Generating Runtime Security Guards');
-    console.log('===================================');
+    console.info('🛡️ Generating Runtime Security Guards');
+    console.info('===================================');
 
     const patterns = this.db.query('SELECT * FROM cached_results').all() as any[];
     
@@ -51,7 +51,7 @@ class RuntimeSecurityGuardGenerator {
     }
 
     await this.writeGuardsFile();
-    console.log(`✅ Generated ${this.guards.size} runtime guards`);
+    console.info(`✅ Generated ${this.guards.size} runtime guards`);
   }
 
   private createGuard(patternData: any): SecurityGuard {
@@ -218,20 +218,20 @@ async function main() {
   const args = process.argv.slice(2);
   const cacheDb = args.find(arg => arg.startsWith('--cache-db='))?.split('=')[1] || 'results.sqlite';
 
-  console.log('🛡️ Runtime Security Guard Generator');
-  console.log('===================================');
+  console.info('🛡️ Runtime Security Guard Generator');
+  console.info('===================================');
 
   const generator = new RuntimeSecurityGuardGenerator(cacheDb);
   
   try {
     await generator.generateGuards();
-    console.log('✅ Runtime guards generated successfully');
-    console.log('📁 Output: ./runtime-guards.ts');
-    console.log('');
-    console.log('🔧 Integration:');
-    console.log('import { runtimeGuards } from "./runtime-guards";');
-    console.log('const guard = runtimeGuards[patternKey];');
-    console.log('guard.beforeExec(url, groups);');
+    console.info('✅ Runtime guards generated successfully');
+    console.info('📁 Output: ./runtime-guards.ts');
+    console.info('');
+    console.info('🔧 Integration:');
+    console.info('import { runtimeGuards } from "./runtime-guards";');
+    console.info('const guard = runtimeGuards[patternKey];');
+    console.info('guard.beforeExec(url, groups);');
   } catch (error) {
     console.error('❌ Error generating guards:', error);
     process.exit(1);

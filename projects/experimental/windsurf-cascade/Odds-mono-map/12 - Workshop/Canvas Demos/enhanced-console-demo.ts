@@ -29,8 +29,8 @@ import { EnhancedConsoleInspectionModule, ColorManager } from './enhanced-consol
 // =============================================================================
 
 async function main() {
-    console.log('🚀 Enhanced Console Demo with Bun.color ANSI Mastery');
-    console.log('=====================================================\n');
+    console.info('🚀 Enhanced Console Demo with Bun.color ANSI Mastery');
+    console.info('=====================================================\n');
 
     // Create enhanced console inspection module with optimal configuration
     const enhancedConsole = new EnhancedConsoleInspectionModule({
@@ -49,27 +49,27 @@ async function main() {
     await demonstratePerformanceOptimization(enhancedConsole);
     await demonstrateProgressiveEnhancement(enhancedConsole);
 
-    console.log('\n🎉 Enhanced Console Demo Complete!');
-    console.log('🌈 Your console now has perfect Bun.color ANSI mastery!');
+    console.info('\n🎉 Enhanced Console Demo Complete!');
+    console.info('🌈 Your console now has perfect Bun.color ANSI mastery!');
 }
 
 async function demonstrateObjectInspection(consoleModule: EnhancedConsoleInspectionModule) {
-    console.log('\n📋 Section 1: Enhanced Object Inspection');
-    console.log('==========================================');
+    console.info('\n📋 Section 1: Enhanced Object Inspection');
+    console.info('==========================================');
 
     consoleModule.demonstrateObjectInspection();
     consoleModule.demonstrateInspectionUtilities();
 }
 
 async function demonstrateCanvasDashboard(consoleModule: EnhancedConsoleInspectionModule) {
-    console.log('\n📊 Section 2: Canvas System Dashboard');
-    console.log('=====================================');
+    console.info('\n📊 Section 2: Canvas System Dashboard');
+    console.info('=====================================');
 
     const colorManager = consoleModule.getColorManager();
 
     // Create a real-time canvas dashboard with true colors
-    console.log('\n🌈 Canvas System Status Dashboard (True Color)');
-    console.log(''.padEnd(80, '═'));
+    console.info('\n🌈 Canvas System Status Dashboard (True Color)');
+    console.info(''.padEnd(80, '═'));
 
     const services = [
         { name: 'Bridge Service', status: 'active', health: 98.5, connections: 42 },
@@ -93,10 +93,10 @@ async function demonstrateCanvasDashboard(consoleModule: EnhancedConsoleInspecti
         const healthBar = '█'.repeat(Math.floor(service.health / 10)) + '░'.repeat(10 - Math.floor(service.health / 10));
         const healthDisplay = `${healthColor}${healthBar}${reset} ${service.health}%`;
 
-        console.log(`${index + 1}. ${indicator} ${service.name.padEnd(20)} ${service.status.padEnd(12)} ${healthDisplay} ${service.connections} connections`);
+        console.info(`${index + 1}. ${indicator} ${service.name.padEnd(20)} ${service.status.padEnd(12)} ${healthDisplay} ${service.connections} connections`);
     });
 
-    console.log(''.padEnd(80, '═'));
+    console.info(''.padEnd(80, '═'));
 
     // Show system metrics with color coding
     const systemMetrics = {
@@ -108,8 +108,8 @@ async function demonstrateCanvasDashboard(consoleModule: EnhancedConsoleInspecti
         totalConnections: services.reduce((sum, s) => sum + s.connections, 0)
     };
 
-    console.log('\n📈 System Metrics Summary:');
-    console.log(Bun.inspect(systemMetrics, {
+    console.info('\n📈 System Metrics Summary:');
+    console.info(Bun.inspect(systemMetrics, {
         depth: 3,
         colors: true,
         stylize: (text: string, styleType: string) => {
@@ -122,25 +122,25 @@ async function demonstrateCanvasDashboard(consoleModule: EnhancedConsoleInspecti
 }
 
 async function demonstrateColorFormats(consoleModule: EnhancedConsoleInspectionModule) {
-    console.log('\n🌈 Section 3: Comprehensive Color Formats');
-    console.log('==========================================');
+    console.info('\n🌈 Section 3: Comprehensive Color Formats');
+    console.info('==========================================');
 
     consoleModule.demonstrateColorFormats();
 }
 
 async function demonstratePerformanceOptimization(consoleModule: EnhancedConsoleInspectionModule) {
-    console.log('\n⚡ Section 4: Performance Optimization');
-    console.log('=====================================');
+    console.info('\n⚡ Section 4: Performance Optimization');
+    console.info('=====================================');
 
     const colorManager = consoleModule.getColorManager();
 
     // Demonstrate color caching performance
-    console.log('\n🎯 Color Caching Performance Test:');
+    console.info('\n🎯 Color Caching Performance Test:');
 
     const testColors = ['#10B981', '#EAB308', '#EF4444', '#8B5CF6', '#F59E0B', '#06B6D4'];
     const iterations = 10000;
 
-    console.log(`Testing ${iterations} color conversions with caching...\n`);
+    console.info(`Testing ${iterations} color conversions with caching...\n`);
 
     // Test without caching
     const startNoCache = performance.now();
@@ -162,13 +162,13 @@ async function demonstratePerformanceOptimization(consoleModule: EnhancedConsole
     const withCacheOps = Math.round(iterations / withCacheTime * 1000);
     const improvement = (noCacheTime / withCacheTime).toFixed(1);
 
-    console.log(`Without Cache: ${noCacheOps.toLocaleString()} ops/sec`);
-    console.log(`With Cache:    ${withCacheOps.toLocaleString()} ops/sec`);
-    console.log(`Improvement:   ${improvement}x faster`);
-    console.log(`Cache Size:    ${colorManager.getCacheStats().size} entries`);
+    console.info(`Without Cache: ${noCacheOps.toLocaleString()} ops/sec`);
+    console.info(`With Cache:    ${withCacheOps.toLocaleString()} ops/sec`);
+    console.info(`Improvement:   ${improvement}x faster`);
+    console.info(`Cache Size:    ${colorManager.getCacheStats().size} entries`);
 
     // Demonstrate format switching performance
-    console.log('\n🔄 Format Switching Performance:');
+    console.info('\n🔄 Format Switching Performance:');
 
     const formats = ['ansi-16m', 'ansi-256', 'ansi-16'] as const;
 
@@ -180,13 +180,13 @@ async function demonstratePerformanceOptimization(consoleModule: EnhancedConsole
         const duration = performance.now() - start;
         const opsPerSec = Math.round(1000 / duration * 1000);
 
-        console.log(`${format.padEnd(10)}: ${opsPerSec.toLocaleString()} ops/sec`);
+        console.info(`${format.padEnd(10)}: ${opsPerSec.toLocaleString()} ops/sec`);
     });
 }
 
 async function demonstrateProgressiveEnhancement(consoleModule: EnhancedConsoleInspectionModule) {
-    console.log('\n💻 Section 5: Progressive Enhancement');
-    console.log('=====================================');
+    console.info('\n💻 Section 5: Progressive Enhancement');
+    console.info('=====================================');
 
     // Test different terminal configurations
     const configurations = [
@@ -197,7 +197,7 @@ async function demonstrateProgressiveEnhancement(consoleModule: EnhancedConsoleI
     ];
 
     configurations.forEach(config => {
-        console.log(`\n🖥️ ${config.name} Configuration:`);
+        console.info(`\n🖥️ ${config.name} Configuration:`);
 
         const testConsole = new EnhancedConsoleInspectionModule({
             showColors: config.showColors !== false,
@@ -214,8 +214,8 @@ async function demonstrateProgressiveEnhancement(consoleModule: EnhancedConsoleI
             color: '#10B981'
         };
 
-        console.log('Sample data output:');
-        console.log(Bun.inspect(sampleData, {
+        console.info('Sample data output:');
+        console.info(Bun.inspect(sampleData, {
             depth: 3,
             colors: testConsole.getConfig().showColors,
             stylize: testConsole.getColorManager().createStylizer()
@@ -224,17 +224,17 @@ async function demonstrateProgressiveEnhancement(consoleModule: EnhancedConsoleI
         const capabilities = testConsole.getColorManager().getCapabilities();
         const optimalFormat = testConsole.getColorManager().getOptimalColorFormat();
 
-        console.log(`Capabilities: True Color ${capabilities.trueColor ? '✅' : '❌'}, 256-Color ${capabilities.color256 ? '✅' : '❌'}, 16-Color ${capabilities.color16 ? '✅' : '❌'}`);
-        console.log(`Optimal Format: ${optimalFormat}`);
+        console.info(`Capabilities: True Color ${capabilities.trueColor ? '✅' : '❌'}, 256-Color ${capabilities.color256 ? '✅' : '❌'}, 16-Color ${capabilities.color16 ? '✅' : '❌'}`);
+        console.info(`Optimal Format: ${optimalFormat}`);
     });
 
     // Show automatic format detection
-    console.log('\n🎯 Automatic Format Detection:');
-    console.log('The system automatically selects the best format based on terminal capabilities:');
-    console.log('1. Try ansi-16m (24-bit true color) first');
-    console.log('2. Fallback to ansi-256 (256-color palette)');
-    console.log('3. Final fallback to ansi-16 (16-color palette)');
-    console.log('4. Plain text if no color support detected');
+    console.info('\n🎯 Automatic Format Detection:');
+    console.info('The system automatically selects the best format based on terminal capabilities:');
+    console.info('1. Try ansi-16m (24-bit true color) first');
+    console.info('2. Fallback to ansi-256 (256-color palette)');
+    console.info('3. Final fallback to ansi-16 (16-color palette)');
+    console.info('4. Plain text if no color support detected');
 }
 
 // =============================================================================
@@ -244,7 +244,7 @@ async function demonstrateProgressiveEnhancement(consoleModule: EnhancedConsoleI
 function createCanvasColorDemo(colorManager: ColorManager) {
     return {
         showColorPalette: () => {
-            console.log('\n🎨 Canvas Color Palette Demo:');
+            console.info('\n🎨 Canvas Color Palette Demo:');
 
             const canvasColors = [
                 { name: 'Primary', hex: '#0f172a', usage: 'Main interface elements' },
@@ -261,12 +261,12 @@ function createCanvasColorDemo(colorManager: ColorManager) {
                 const color256 = colorManager.getColor(color.hex, 'ansi-256');
                 const color16 = colorManager.getColor(color.hex, 'ansi-16');
 
-                console.log(`${color.name.padEnd(15)} ${color.hex.padEnd(10)} → ${trueColor}${color.name}${colorManager.getResetCode()}`);
-                console.log(`              Usage: ${color.usage}`);
-                console.log(`              True Color: ${JSON.stringify(trueColor)}`);
-                console.log(`              256-Color:  ${JSON.stringify(color256)}`);
-                console.log(`              16-Color:  ${JSON.stringify(color16)}`);
-                console.log('');
+                console.info(`${color.name.padEnd(15)} ${color.hex.padEnd(10)} → ${trueColor}${color.name}${colorManager.getResetCode()}`);
+                console.info(`              Usage: ${color.usage}`);
+                console.info(`              True Color: ${JSON.stringify(trueColor)}`);
+                console.info(`              256-Color:  ${JSON.stringify(color256)}`);
+                console.info(`              16-Color:  ${JSON.stringify(color16)}`);
+                console.info('');
             });
         }
     };

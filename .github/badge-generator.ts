@@ -108,15 +108,15 @@ function hslToHex(hsl: string): string {
 }
 
 // Generate badge markdown
-console.log('## 🎨 Repository Badges\n');
-console.log('<div align="center">\n');
+console.info('## 🎨 Repository Badges\n');
+console.info('<div align="center">\n');
 badges.forEach(badge => {
-  console.log(`  <img src="${generateBadgeUrl(badge)}" alt="${badge.label}: ${badge.message}" />`);
+  console.info(`  <img src="${generateBadgeUrl(badge)}" alt="${badge.label}: ${badge.message}" />`);
 });
-console.log('</div>\n');
+console.info('</div>\n');
 
 // Generate topic tags
-console.log('## 🏷️ Topics\n');
+console.info('## 🏷️ Topics\n');
 const topics = [
   { name: 'bun-runtime', color: 'hsl(280,100%,60%)', icon: '⚡' },
   { name: 'typescript', color: 'hsl(210,100%,55%)', icon: '🔷' },
@@ -130,9 +130,9 @@ const topics = [
   { name: 'vectorize', color: 'hsl(120,100%,50%)', icon: '🔍' }
 ];
 
-console.log('<div align="center">\n');
+console.info('<div align="center">\n');
 topics.forEach(topic => {
   const hexColor = hslToHex(topic.color);
-  console.log(`  <img src="https://img.shields.io/badge/${topic.icon}%20${topic.name.replace(/-/g, '_')}-${hexColor}?style=for-the-badge&logoColor=white" alt="${topic.name}" />`);
+  console.info(`  <img src="https://img.shields.io/badge/${topic.icon}%20${topic.name.replace(/-/g, '_')}-${hexColor}?style=for-the-badge&logoColor=white" alt="${topic.name}" />`);
 });
-console.log('</div>');
+console.info('</div>');

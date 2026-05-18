@@ -228,14 +228,14 @@ async function allocatePort(): Promise<number> {
     return CONFIG.port.preferred;
   } catch {
     // Preferred port not available, find random port
-    console.log(`⚠️  Port ${CONFIG.port.preferred} in use, finding available port...`);
+    console.info(`⚠️  Port ${CONFIG.port.preferred} in use, finding available port...`);
 
     const availablePort = await findAvailablePort(
       CONFIG.port.min,
       CONFIG.port.max
     );
 
-    console.log(`✅ Found available port: ${availablePort}`);
+    console.info(`✅ Found available port: ${availablePort}`);
     return availablePort;
   }
 }
@@ -252,7 +252,7 @@ function setupHotReload(server: Server) {
     return;
   }
 
-  console.log("🔥 Hot reload enabled");
+  console.info("🔥 Hot reload enabled");
 
   // Use Bun's built-in --watch flag would be simpler,
   // but here's a manual implementation for demonstration
@@ -264,7 +264,7 @@ function setupHotReload(server: Server) {
   let debounceTimer: Timer | null = null;
 
   watcher.on("change", (filePath) => {
-    console.log(`\n📝 File changed: ${filePath}`);
+    console.info(`\n📝 File changed: ${filePath}`);
 
     // Debounce rapid changes
     if (debounceTimer) {
@@ -272,7 +272,7 @@ function setupHotReload(server: Server) {
     }
 
     debounceTimer = setTimeout(() => {
-      console.log("♻️  Hot reloading server...\n");
+      console.info("♻️  Hot reloading server...\n");
 
       // Increment reload counter
       state.hotReloads++;
@@ -294,7 +294,7 @@ function setupHotReload(server: Server) {
     }, 300); // 300ms debounce
   });
 
-  console.log(`👀 Watching: ${CONFIG.hotReload.watchPaths.join(", ")}`);
+  console.info(`👀 Watching: ${CONFIG.hotReload.watchPaths.join(", ")}`);
 }
 
 // ============================================================================
@@ -499,7 +499,7 @@ async function createServer(): Promise<Server> {
 
     websocket: {
       open(ws) {
-        console.log("✅ WebSocket connection opened");
+        console.info("✅ WebSocket connection opened");
 
         // Send initial state
         ws.send(JSON.stringify({
@@ -528,7 +528,7 @@ async function createServer(): Promise<Server> {
       },
 
       close(ws, code, message) {
-        console.log(`❌ WebSocket connection closed: ${code} ${message}`);
+        console.info(`❌ WebSocket connection closed: ${code} ${message}`);
 
         // Remove connection
         const connections = Array.from(state.connections.values());
@@ -557,7 +557,7 @@ function printDashboard() {
   console.clear();
 
   // Header
-  console.log(`
+  console.info(`
 ╔══════════════════════════════════════════════════════════════════╗
 ║  🚀 Geelark Dashboard Server - Enhanced Edition                   ║
 ╚══════════════════════════════════════════════════════════════════╝
@@ -566,16 +566,16 @@ function printDashboard() {
   // Metrics using Bun.inspect.table with custom inspect
   const metrics = state.getMetrics();
   const metricsInspector = new InspectableMetrics(metrics);
-  console.log(metricsInspector[Symbol.for("Bun.inspect.custom")]());
+  console.info(metricsInspector[Symbol.for("Bun.inspect.custom")]());
 
   // Connections using Bun.inspect.table
   const connectionsInspector = new InspectableConnections(state.connections);
-  console.log(connectionsInspector[Symbol.for("Bun.inspect.custom")]());
+  console.info(connectionsInspector[Symbol.for("Bun.inspect.custom")]());
 
   // Footer
-  console.log(`\n⏰ Uptime: ${formatDuration(metrics.uptime)}`);
-  console.log(`🔥 Hot Reloads: ${metrics.hotReloads}`);
-  console.log(`📡 Server: http://localhost:${metrics.port}\n`);
+  console.info(`\n⏰ Uptime: ${formatDuration(metrics.uptime)}`);
+  console.info(`🔥 Hot Reloads: ${metrics.hotReloads}`);
+  console.info(`📡 Server: http://localhost:${metrics.port}\n`);
 }
 
 // ============================================================================
@@ -583,13 +583,13 @@ function printDashboard() {
 // ============================================================================
 
 async function main() {
-  console.log("🚀 Starting Geelark Dashboard Server (Enhanced)...\n");
+  console.info("🚀 Starting Geelark Dashboard Server (Enhanced)...\n");
 
   // Create server
   const server = await createServer();
 
-  console.log(`✅ Server started on port ${server.port}`);
-  console.log(`📡 WebSocket endpoint: ws://localhost:${server.port}/ws`);
+  console.info(`✅ Server started on port ${server.port}`);
+  console.info(`📡 WebSocket endpoint: ws://localhost:${server.port}/ws`);
 
   // Setup hot reload
   setupHotReload(server);
@@ -604,7 +604,7 @@ async function main() {
 
   // Keep process alive
   process.on("SIGINT", () => {
-    console.log("\n\n👋 Shutting down server...\n");
+    console.info("\n\n👋 Shutting down server...\n");
     server.stop();
     process.exit(0);
   });

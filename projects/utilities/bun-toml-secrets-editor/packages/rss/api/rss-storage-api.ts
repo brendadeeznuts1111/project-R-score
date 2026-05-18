@@ -20,7 +20,7 @@ export class RSSStorageAPI {
 		try {
 			this.storage = await createRSSStorageWithSecrets();
 			this.initialized = true;
-			console.log("✅ RSS Storage API initialized with R2 and Bun.secrets");
+			console.info("✅ RSS Storage API initialized with R2 and Bun.secrets");
 		} catch (error) {
 			console.error(
 				"❌ Failed to initialize RSS Storage API:",

@@ -3,12 +3,12 @@ import { BunTemplateAPI } from '../scripts/bun-template-api.ts';
 import { surgicalPrecisionTemplate } from '../scripts/create-surgical-precision-template.ts';
 
 async function demonstrateTemplateAPI() {
-  console.log('🎯 Bun Template API Demonstration');
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log('');
+  console.info('🎯 Bun Template API Demonstration');
+  console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.info('');
 
   // Demonstrate the exact usage pattern from the user's example
-  console.log('📝 Creating template using BunTemplateAPI.scaffoldProject...');
+  console.info('📝 Creating template using BunTemplateAPI.scaffoldProject...');
   await BunTemplateAPI.scaffoldProject(
     surgicalPrecisionTemplate,
     {
@@ -22,25 +22,25 @@ async function demonstrateTemplateAPI() {
   const exists = await Bun.file("./demo-app/src/index.ts").exists();
   console.assert(exists, "Template file should be created");
 
-  console.log('✅ Template creation verified!');
-  console.log('');
-  console.log('📁 Generated application structure:');
-  console.log('   demo-app/');
-  console.log('   ├── src/');
-  console.log('   │   ├── index.ts');
-  console.log('   │   └── mcp-init.ts');
-  console.log('   ├── scripts/');
-  console.log('   │   └── help.ts');
-  console.log('   ├── package.json');
-  console.log('   ├── README.md');
-  console.log('   └── ...');
-  console.log('');
-  console.log('🚀 To test the generated app:');
-  console.log('   cd demo-app');
-  console.log('   bun install');
-  console.log('   bun run help');
-  console.log('   bun run dev');
-  console.log('');
+  console.info('✅ Template creation verified!');
+  console.info('');
+  console.info('📁 Generated application structure:');
+  console.info('   demo-app/');
+  console.info('   ├── src/');
+  console.info('   │   ├── index.ts');
+  console.info('   │   └── mcp-init.ts');
+  console.info('   ├── scripts/');
+  console.info('   │   └── help.ts');
+  console.info('   ├── package.json');
+  console.info('   ├── README.md');
+  console.info('   └── ...');
+  console.info('');
+  console.info('🚀 To test the generated app:');
+  console.info('   cd demo-app');
+  console.info('   bun install');
+  console.info('   bun run help');
+  console.info('   bun run dev');
+  console.info('');
 }
 
 // Run if called directly

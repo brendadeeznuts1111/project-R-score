@@ -34,8 +34,8 @@ import { generateKeyPairSync, generateKeySync } from "node:crypto";
  * Why it matters: Fast key rotation = better security + zero downtime
  */
 export function benchmarkKeyCloning(iterations: number = 1000) {
-  console.log(`\n🔬 Benchmark: Key Cloning Performance (${iterations} iterations)`);
-  console.log("=" .repeat(60));
+  console.info(`\n🔬 Benchmark: Key Cloning Performance (${iterations} iterations)`);
+  console.info("=" .repeat(60));
 
   // Generate test keys
   const secretKey = generateKeySync("aes", { length: 256 });
@@ -79,15 +79,15 @@ export function benchmarkKeyCloning(iterations: number = 1000) {
   const privateTime = (privateEnd - privateStart) / 1_000_000;
   const privateOpsPerSec = (iterations / privateTime) * 1000;
 
-  console.log(`\n📊 Results:`);
-  console.log(`   SecretKey cloning:   ${secretTime.toFixed(2)}ms  (${secretOpsPerSec.toFixed(0)} ops/sec)`);
-  console.log(`   PublicKey cloning:   ${publicTime.toFixed(2)}ms  (${publicOpsPerSec.toFixed(0)} ops/sec)`);
-  console.log(`   PrivateKey cloning:  ${privateTime.toFixed(2)}ms  (${privateOpsPerSec.toFixed(0)} ops/sec)`);
+  console.info(`\n📊 Results:`);
+  console.info(`   SecretKey cloning:   ${secretTime.toFixed(2)}ms  (${secretOpsPerSec.toFixed(0)} ops/sec)`);
+  console.info(`   PublicKey cloning:   ${publicTime.toFixed(2)}ms  (${publicOpsPerSec.toFixed(0)} ops/sec)`);
+  console.info(`   PrivateKey cloning:  ${privateTime.toFixed(2)}ms  (${privateOpsPerSec.toFixed(0)} ops/sec)`);
 
-  console.log(`\n💡 Real-World Impact:`);
-  console.log(`   ✅ Zero-downtime key rotation: ${secretTime.toFixed(2)}ms overhead`);
-  console.log(`   ✅ Can rotate keys ${secretOpsPerSec.toFixed(0)} times per second`);
-  console.log(`   ✅ Suitable for high-frequency key rotation`);
+  console.info(`\n💡 Real-World Impact:`);
+  console.info(`   ✅ Zero-downtime key rotation: ${secretTime.toFixed(2)}ms overhead`);
+  console.info(`   ✅ Can rotate keys ${secretOpsPerSec.toFixed(0)} times per second`);
+  console.info(`   ✅ Suitable for high-frequency key rotation`);
 
   return {
     secretKey: { time: secretTime, opsPerSec: secretOpsPerSec },
@@ -106,8 +106,8 @@ export function benchmarkKeyCloning(iterations: number = 1000) {
  * Why it matters: Low overhead = can rotate keys frequently for security
  */
 export function benchmarkKeyRotation(rotations: number = 100) {
-  console.log(`\n🔬 Benchmark: Key Rotation Overhead (${rotations} rotations)`);
-  console.log("=" .repeat(60));
+  console.info(`\n🔬 Benchmark: Key Rotation Overhead (${rotations} rotations)`);
+  console.info("=" .repeat(60));
 
   const results: number[] = [];
 
@@ -137,16 +137,16 @@ export function benchmarkKeyRotation(rotations: number = 100) {
   const maxTime = Math.max(...results);
   const p95Time = results.sort((a, b) => a - b)[Math.floor(results.length * 0.95)];
 
-  console.log(`\n📊 Results:`);
-  console.log(`   Average rotation time: ${avgTime.toFixed(3)}ms`);
-  console.log(`   Min rotation time:     ${minTime.toFixed(3)}ms`);
-  console.log(`   Max rotation time:     ${maxTime.toFixed(3)}ms`);
-  console.log(`   P95 rotation time:     ${p95Time.toFixed(3)}ms`);
+  console.info(`\n📊 Results:`);
+  console.info(`   Average rotation time: ${avgTime.toFixed(3)}ms`);
+  console.info(`   Min rotation time:     ${minTime.toFixed(3)}ms`);
+  console.info(`   Max rotation time:     ${maxTime.toFixed(3)}ms`);
+  console.info(`   P95 rotation time:     ${p95Time.toFixed(3)}ms`);
 
-  console.log(`\n💡 Real-World Impact:`);
-  console.log(`   ✅ Can rotate keys every ${(avgTime * 10).toFixed(0)}ms (10x overhead)`);
-  console.log(`   ✅ Suitable for hourly key rotation (${(avgTime / 1000).toFixed(6)}s overhead)`);
-  console.log(`   ✅ Zero downtime rotation possible`);
+  console.info(`\n💡 Real-World Impact:`);
+  console.info(`   ✅ Can rotate keys every ${(avgTime * 10).toFixed(0)}ms (10x overhead)`);
+  console.info(`   ✅ Suitable for hourly key rotation (${(avgTime / 1000).toFixed(6)}s overhead)`);
+  console.info(`   ✅ Zero downtime rotation possible`);
 
   return { avgTime, minTime, maxTime, p95Time };
 }
@@ -161,8 +161,8 @@ export function benchmarkKeyRotation(rotations: number = 100) {
  * Why it matters: Fast microtask scheduling = better async performance
  */
 export function benchmarkQueueMicrotask(iterations: number = 10000) {
-  console.log(`\n🔬 Benchmark: queueMicrotask Performance (${iterations} iterations)`);
-  console.log("=" .repeat(60));
+  console.info(`\n🔬 Benchmark: queueMicrotask Performance (${iterations} iterations)`);
+  console.info("=" .repeat(60));
 
   let completed = 0;
   const start = Bun.nanoseconds();
@@ -176,15 +176,15 @@ export function benchmarkQueueMicrotask(iterations: number = 10000) {
           const time = (end - start) / 1_000_000; // Convert to ms
           const opsPerSec = (iterations / time) * 1000;
 
-          console.log(`\n📊 Results:`);
-          console.log(`   Total time:        ${time.toFixed(2)}ms`);
-          console.log(`   Operations/sec:    ${opsPerSec.toFixed(0)}`);
-          console.log(`   Avg time per task: ${(time / iterations).toFixed(4)}ms`);
+          console.info(`\n📊 Results:`);
+          console.info(`   Total time:        ${time.toFixed(2)}ms`);
+          console.info(`   Operations/sec:    ${opsPerSec.toFixed(0)}`);
+          console.info(`   Avg time per task: ${(time / iterations).toFixed(4)}ms`);
 
-          console.log(`\n💡 Real-World Impact:`);
-          console.log(`   ✅ Can schedule ${opsPerSec.toFixed(0)} microtasks per second`);
-          console.log(`   ✅ Suitable for high-frequency async operations`);
-          console.log(`   ✅ Proper error handling (v1.2.11+) prevents silent failures`);
+          console.info(`\n💡 Real-World Impact:`);
+          console.info(`   ✅ Can schedule ${opsPerSec.toFixed(0)} microtasks per second`);
+          console.info(`   ✅ Suitable for high-frequency async operations`);
+          console.info(`   ✅ Proper error handling (v1.2.11+) prevents silent failures`);
 
           resolve();
         }
@@ -203,33 +203,33 @@ export function benchmarkQueueMicrotask(iterations: number = 10000) {
  * Why it matters: Catch errors early = faster development, fewer bugs
  */
 export function demonstrateTypeSafety() {
-  console.log(`\n🔬 Benchmark: Type Safety Impact`);
-  console.log("=" .repeat(60));
+  console.info(`\n🔬 Benchmark: Type Safety Impact`);
+  console.info("=" .repeat(60));
 
-  console.log(`\n📊 Type Safety Benefits (Bun v1.2.11+):`);
+  console.info(`\n📊 Type Safety Benefits (Bun v1.2.11+):`);
 
   // Example: Bun.$ type
-  console.log(`\n1️⃣  Bun.$ Type Support:`);
-  console.log(`   Before: shell: any  → Runtime errors possible`);
-  console.log(`   After:  shell: Bun.$ → Compile-time type checking`);
-  console.log(`   Impact: Catch errors before deployment`);
+  console.info(`\n1️⃣  Bun.$ Type Support:`);
+  console.info(`   Before: shell: any  → Runtime errors possible`);
+  console.info(`   After:  shell: Bun.$ → Compile-time type checking`);
+  console.info(`   Impact: Catch errors before deployment`);
 
   // Example: HTTP/2 options
-  console.log(`\n2️⃣  HTTP/2 Option Validation:`);
-  console.log(`   Before: Silent failures with invalid options`);
-  console.log(`   After:  Clear error messages at runtime`);
-  console.log(`   Impact: Faster debugging, fewer production issues`);
+  console.info(`\n2️⃣  HTTP/2 Option Validation:`);
+  console.info(`   Before: Silent failures with invalid options`);
+  console.info(`   After:  Clear error messages at runtime`);
+  console.info(`   Impact: Faster debugging, fewer production issues`);
 
   // Example: Loader types
-  console.log(`\n3️⃣  Loader Type Support:`);
-  console.log(`   Before: "css", "jsonc", "yaml", "html" not recognized`);
-  console.log(`   After:  Full type support for all loaders`);
-  console.log(`   Impact: Better IDE autocomplete, fewer typos`);
+  console.info(`\n3️⃣  Loader Type Support:`);
+  console.info(`   Before: "css", "jsonc", "yaml", "html" not recognized`);
+  console.info(`   After:  Full type support for all loaders`);
+  console.info(`   Impact: Better IDE autocomplete, fewer typos`);
 
-  console.log(`\n💡 Real-World Impact:`);
-  console.log(`   ✅ Catch 90%+ of errors at compile-time`);
-  console.log(`   ✅ Faster development with IDE autocomplete`);
-  console.log(`   ✅ Fewer production bugs`);
+  console.info(`\n💡 Real-World Impact:`);
+  console.info(`   ✅ Catch 90%+ of errors at compile-time`);
+  console.info(`   ✅ Faster development with IDE autocomplete`);
+  console.info(`   ✅ Fewer production bugs`);
 
   return {
     compileTimeErrors: "90%+",
@@ -248,8 +248,8 @@ export function demonstrateTypeSafety() {
  * Why it matters: Catch errors early = faster debugging
  */
 export function benchmarkErrorDetection() {
-  console.log(`\n🔬 Benchmark: Error Detection Speed`);
-  console.log("=" .repeat(60));
+  console.info(`\n🔬 Benchmark: Error Detection Speed`);
+  console.info("=" .repeat(60));
 
   // Simulate invalid HTTP/2 options
   const invalidOptions = [
@@ -258,24 +258,24 @@ export function benchmarkErrorDetection() {
     { endStream: "true" }, // Should be boolean
   ];
 
-  console.log(`\n📊 Error Detection Comparison:`);
+  console.info(`\n📊 Error Detection Comparison:`);
 
   // Before v1.2.11: Errors might be silent or delayed
-  console.log(`\n❌ Before v1.2.11:`);
-  console.log(`   Detection: Runtime (after deployment)`);
-  console.log(`   Time to detect: Minutes to hours`);
-  console.log(`   Impact: Production issues, debugging time`);
+  console.info(`\n❌ Before v1.2.11:`);
+  console.info(`   Detection: Runtime (after deployment)`);
+  console.info(`   Time to detect: Minutes to hours`);
+  console.info(`   Impact: Production issues, debugging time`);
 
   // After v1.2.11: Immediate error detection
-  console.log(`\n✅ After v1.2.11:`);
-  console.log(`   Detection: Immediate (at configuration)`);
-  console.log(`   Time to detect: <1ms`);
-  console.log(`   Impact: Catch errors before deployment`);
+  console.info(`\n✅ After v1.2.11:`);
+  console.info(`   Detection: Immediate (at configuration)`);
+  console.info(`   Time to detect: <1ms`);
+  console.info(`   Impact: Catch errors before deployment`);
 
-  console.log(`\n💡 Real-World Impact:`);
-  console.log(`   ✅ 1000x faster error detection`);
-  console.log(`   ✅ Prevent production issues`);
-  console.log(`   ✅ Save debugging time`);
+  console.info(`\n💡 Real-World Impact:`);
+  console.info(`   ✅ 1000x faster error detection`);
+  console.info(`   ✅ Prevent production issues`);
+  console.info(`   ✅ Save debugging time`);
 
   return {
     before: { detectionTime: "minutes-hours", location: "production" },
@@ -289,13 +289,13 @@ export function benchmarkErrorDetection() {
 // ═══════════════════════════════════════════════════════════════
 
 async function runBenchmarks() {
-  console.log("🚀 Bun v1.2.11 Improvements Benchmarks");
-  console.log("=" .repeat(60));
-  console.log("\nWhy these benchmarks matter:");
-  console.log("  • Key cloning: Zero-downtime security rotations");
-  console.log("  • Type safety: Catch errors before deployment");
-  console.log("  • Error detection: Find issues 1000x faster");
-  console.log("  • Performance: Measure real-world impact");
+  console.info("🚀 Bun v1.2.11 Improvements Benchmarks");
+  console.info("=" .repeat(60));
+  console.info("\nWhy these benchmarks matter:");
+  console.info("  • Key cloning: Zero-downtime security rotations");
+  console.info("  • Type safety: Catch errors before deployment");
+  console.info("  • Error detection: Find issues 1000x faster");
+  console.info("  • Performance: Measure real-world impact");
 
   // Run benchmarks
   benchmarkKeyCloning(1000);
@@ -304,9 +304,9 @@ async function runBenchmarks() {
   demonstrateTypeSafety();
   benchmarkErrorDetection();
 
-  console.log("\n" + "=" .repeat(60));
-  console.log("✨ Benchmark suite complete!");
-  console.log("\n📚 See docs/BUN-1.2.11-IMPROVEMENTS.md for details");
+  console.info("\n" + "=" .repeat(60));
+  console.info("✨ Benchmark suite complete!");
+  console.info("\n📚 See docs/BUN-1.2.11-IMPROVEMENTS.md for details");
 }
 
 // Run if executed directly

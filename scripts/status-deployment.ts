@@ -8,7 +8,7 @@ const simple = args.includes("--simple");
 const report = summarizeDeploymentReadiness();
 
 if (simple) {
-  console.log(
+  console.info(
     [
       `health=${ExecutiveVerdict.score}/${ExecutiveVerdict.max}`,
       `ready=${report.summary.productionReadyCount}`,
@@ -20,4 +20,4 @@ if (simple) {
   process.exit(0);
 }
 
-console.log(JSON.stringify(report, null, 2));
+console.info(JSON.stringify(report, null, 2));

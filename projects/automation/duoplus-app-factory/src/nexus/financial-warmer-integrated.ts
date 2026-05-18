@@ -42,26 +42,26 @@ export class IntegratedFinancialWarmer {
     notes: TransactionNote[];
     report: any;
   }> {
-    console.log(`\x1b[36m🔄 COMPLETE WARMING SEQUENCE: ${baseDeviceId} x${count}\x1b[0m`);
+    console.info(`\x1b[36m🔄 COMPLETE WARMING SEQUENCE: ${baseDeviceId} x${count}\x1b[0m`);
 
     // Step 1: Create Identity Silos
-    console.log(`\x1b[36m  1. Creating ${count} identity silos\x1b[0m`);
+    console.info(`\x1b[36m  1. Creating ${count} identity silos\x1b[0m`);
     const silos = await this.createIdentitySilos(baseDeviceId, count);
 
     // Step 2: Boot Devices
-    console.log(`\x1b[36m  2. Booting ${count} devices\x1b[0m`);
+    console.info(`\x1b[36m  2. Booting ${count} devices\x1b[0m`);
     const boots = await this.bootDevices(silos);
 
     // Step 3: Generate Transaction Notes
-    console.log(`\x1b[36m  3. Generating transaction notes\x1b[0m`);
+    console.info(`\x1b[36m  3. Generating transaction notes\x1b[0m`);
     const notes = this.generateTransactionNotes(silos);
 
     // Step 4: Execute Cross-Pollination
-    console.log(`\x1b[36m  4. Executing cross-pollination\x1b[0m`);
+    console.info(`\x1b[36m  4. Executing cross-pollination\x1b[0m`);
     const transactions = await this.executeCrossPollination(silos, notes);
 
     // Step 5: Verify and Log
-    console.log(`\x1b[36m  5. Verifying and logging\x1b[0m`);
+    console.info(`\x1b[36m  5. Verifying and logging\x1b[0m`);
     const report = this.generateSecurityReport(transactions, notes, silos);
 
     return {
@@ -104,7 +104,7 @@ export class IntegratedFinancialWarmer {
         appHash,
       });
 
-      console.log(`\x1b[32m    ✅ Silo ${i + 1}: ${silo.fullName} (${silo.age}, ${silo.city})\x1b[0m`);
+      console.info(`\x1b[32m    ✅ Silo ${i + 1}: ${silo.fullName} (${silo.age}, ${silo.city})\x1b[0m`);
     }
 
     return silos;
@@ -120,7 +120,7 @@ export class IntegratedFinancialWarmer {
     for (const silo of silos) {
       const boot = await this.deviceInit.boot(silo.deviceId);
       boots.push(boot);
-      console.log(`\x1b[32m    ✅ Booted: ${silo.deviceId} -> ${boot.silo.fullName}\x1b[0m`);
+      console.info(`\x1b[32m    ✅ Booted: ${silo.deviceId} -> ${boot.silo.fullName}\x1b[0m`);
     }
 
     return boots;
@@ -151,7 +151,7 @@ export class IntegratedFinancialWarmer {
         // Validate note
         if (this.noteRandomizer.validateNote(note, "venmo")) {
           notes.push(note);
-          console.log(`\x1b[36m    📝 ${sender.deviceId} -> ${receiver.deviceId}: ${note.text} ${note.emoji}\x1b[0m`);
+          console.info(`\x1b[36m    📝 ${sender.deviceId} -> ${receiver.deviceId}: ${note.text} ${note.emoji}\x1b[0m`);
         }
       });
     }
@@ -196,13 +196,13 @@ export class IntegratedFinancialWarmer {
             result,
           });
 
-          console.log(`\x1b[32m    💸 Transaction: ${sender.deviceId} -> ${receiver.deviceId} | $${matchingNote.amount} | ${matchingNote.text} ${matchingNote.emoji}\x1b[0m`);
+          console.info(`\x1b[32m    💸 Transaction: ${sender.deviceId} -> ${receiver.deviceId} | $${matchingNote.amount} | ${matchingNote.text} ${matchingNote.emoji}\x1b[0m`);
         }
       }
 
       // Random delay between transactions (1-3 hours)
       const delay = (1 + Math.random() * 2) * 3600000;
-      console.log(`\x1b[36m    ⏳ Waiting ${delay / 3600000}h before next transaction...\x1b[0m`);
+      console.info(`\x1b[36m    ⏳ Waiting ${delay / 3600000}h before next transaction...\x1b[0m`);
       await new Promise(resolve => setTimeout(resolve, delay));
     }
 
@@ -248,12 +248,12 @@ export class IntegratedFinancialWarmer {
     siloCount: number = 5,
     cycles: number = 5
   ): Promise<any> {
-    console.log(`\x1b[36m🔄 BATCH WARMUP WITH NOTES: ${siloCount} silos, ${cycles} cycles\x1b[0m`);
+    console.info(`\x1b[36m🔄 BATCH WARMUP WITH NOTES: ${siloCount} silos, ${cycles} cycles\x1b[0m`);
 
     const allResults = [];
 
     for (let cycle = 0; cycle < cycles; cycle++) {
-      console.log(`\x1b[36m🔄 CYCLE ${cycle + 1}/${cycles}\x1b[0m`);
+      console.info(`\x1b[36m🔄 CYCLE ${cycle + 1}/${cycles}\x1b[0m`);
 
       // Create fresh silos for this cycle
       const silos = await this.createIdentitySilos(`${baseDeviceId}-cycle${cycle + 1}`, siloCount);
@@ -277,7 +277,7 @@ export class IntegratedFinancialWarmer {
 
       // 48-hour delay between cycles
       if (cycle < cycles - 1) {
-        console.log(`\x1b[36m   Waiting 48h before next cycle...\x1b[0m`);
+        console.info(`\x1b[36m   Waiting 48h before next cycle...\x1b[0m`);
         await new Promise(resolve => setTimeout(resolve, 172800000));
       }
     }
@@ -296,8 +296,8 @@ export class IntegratedFinancialWarmer {
       })),
     };
 
-    console.log(`\x1b[32m✅ BATCH WARMUP COMPLETE: ${finalReport.totalTransactions} transactions\x1b[0m`);
-    console.log(`\x1b[32m   ${finalReport.warmedSilos} silos marked as "Low Risk"\x1b[0m`);
+    console.info(`\x1b[32m✅ BATCH WARMUP COMPLETE: ${finalReport.totalTransactions} transactions\x1b[0m`);
+    console.info(`\x1b[32m   ${finalReport.warmedSilos} silos marked as "Low Risk"\x1b[0m`);
 
     return finalReport;
   }
@@ -390,26 +390,26 @@ if (import.meta.main) {
   // Execute complete sequence
   const results = await warmer.completeWarmingSequence("Worker", 5);
   
-  console.log("\n📊 COMPLETE WARMING SEQUENCE REPORT");
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log(`Silos: ${results.silos.length}`);
-  console.log(`Transactions: ${results.transactions.length}`);
-  console.log(`Notes: ${results.notes.length}`);
-  console.log(`Success: ${results.success}`);
+  console.info("\n📊 COMPLETE WARMING SEQUENCE REPORT");
+  console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.info(`Silos: ${results.silos.length}`);
+  console.info(`Transactions: ${results.transactions.length}`);
+  console.info(`Notes: ${results.notes.length}`);
+  console.info(`Success: ${results.success}`);
   
   // Export for SQLite
   const sqlite = warmer.exportForSQLite(results);
-  console.log("\n💾 SQLite Export Ready");
-  console.log(`Silos: ${sqlite.silos.length} records`);
-  console.log(`Transactions: ${sqlite.transactions.length} records`);
-  console.log(`Notes: ${sqlite.notes.length} records`);
+  console.info("\n💾 SQLite Export Ready");
+  console.info(`Silos: ${sqlite.silos.length} records`);
+  console.info(`Transactions: ${sqlite.transactions.length} records`);
+  console.info(`Notes: ${sqlite.notes.length} records`);
   
   // Security audit
   const audit = warmer.securityAudit(results);
-  console.log("\n🔍 Security Audit");
-  console.log(`Integrity: ${audit.integrity ? "✅ PASS" : "❌ FAIL"}`);
-  console.log(`Warmed Silos: ${audit.warmed}`);
-  console.log(`Failed Transactions: ${audit.failed}`);
-  console.log(`Average Latency: ${audit.averageLatency.toFixed(2)}ms`);
-  console.log(`Note Integrity: ${audit.noteIntegrity.toFixed(0)}%`);
+  console.info("\n🔍 Security Audit");
+  console.info(`Integrity: ${audit.integrity ? "✅ PASS" : "❌ FAIL"}`);
+  console.info(`Warmed Silos: ${audit.warmed}`);
+  console.info(`Failed Transactions: ${audit.failed}`);
+  console.info(`Average Latency: ${audit.averageLatency.toFixed(2)}ms`);
+  console.info(`Note Integrity: ${audit.noteIntegrity.toFixed(0)}%`);
 }

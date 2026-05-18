@@ -73,9 +73,9 @@ export class EnhancedLogger {
     // Console output (with colors if enabled)
     if (this.options.colorize) {
       const coloredMessage = this.colorize(message, level);
-      console.log(this.formatConsoleOutput(entry, coloredMessage));
+      console.info(this.formatConsoleOutput(entry, coloredMessage));
     } else {
-      console.log(this.formatConsoleOutput(entry, message));
+      console.info(this.formatConsoleOutput(entry, message));
     }
 
     // Write to log file (without colors)
@@ -215,7 +215,7 @@ export class EnhancedLogger {
       // This would integrate with your existing monitoring system
       // For now, we'll just log that we're sending to monitoring
       if (this.config.debugMode) {
-        console.log(`📊 Sending to monitoring: ${entry.level} - ${entry.message}`);
+        console.info(`📊 Sending to monitoring: ${entry.level} - ${entry.message}`);
       }
     } catch (error) {
       console.error('Failed to send to monitoring:', error);

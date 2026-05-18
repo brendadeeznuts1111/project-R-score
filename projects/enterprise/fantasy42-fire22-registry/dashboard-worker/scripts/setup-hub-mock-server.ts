@@ -54,7 +54,7 @@ app.post('/api/d1/:database/query', async c => {
   const database = c.req.param('database');
   const { query, params } = await c.req.json();
 
-  console.log(`📊 Mock D1 Query on ${database}:`, query);
+  console.info(`📊 Mock D1 Query on ${database}:`, query);
 
   // Mock responses for common queries
   if (query.includes('sqlite_master')) {
@@ -79,7 +79,7 @@ app.post('/api/d1/:database/query', async c => {
 
 app.get('/api/d1/:database/tables', c => {
   const database = c.req.param('database');
-  console.log(`📊 Mock D1 Tables for ${database}`);
+  console.info(`📊 Mock D1 Tables for ${database}`);
 
   return c.json({
     success: true,
@@ -91,7 +91,7 @@ app.get('/api/d1/:database/tables', c => {
 app.get('/api/d1/:database/schema/:table', c => {
   const database = c.req.param('database');
   const table = c.req.param('table');
-  console.log(`📊 Mock D1 Schema for ${database}.${table}`);
+  console.info(`📊 Mock D1 Schema for ${database}.${table}`);
 
   return c.json({
     success: true,
@@ -111,7 +111,7 @@ app.post('/api/r2/:bucket/upload', async c => {
   const key = formData.get('key') as string;
   const data = formData.get('data') as File;
 
-  console.log(`📦 Mock R2 Upload to ${bucket}/${key}`);
+  console.info(`📦 Mock R2 Upload to ${bucket}/${key}`);
 
   if (key && data) {
     const content = await data.arrayBuffer();
@@ -138,7 +138,7 @@ app.get('/api/r2/:bucket/download/:key', c => {
   const bucket = c.req.param('bucket');
   const key = c.req.param('key');
 
-  console.log(`📦 Mock R2 Download from ${bucket}/${key}`);
+  console.info(`📦 Mock R2 Download from ${bucket}/${key}`);
 
   const content = mockStorage.get(`${bucket}/${key}`);
 
@@ -164,7 +164,7 @@ app.get('/api/r2/:bucket/download/:key', c => {
 app.post('/api/sqlite/sync', async c => {
   const { operation, tableName } = await c.req.json();
 
-  console.log(`🗄️ Mock SQLite Sync: ${operation} ${tableName || 'all'}`);
+  console.info(`🗄️ Mock SQLite Sync: ${operation} ${tableName || 'all'}`);
 
   return c.json({
     success: true,
@@ -176,7 +176,7 @@ app.post('/api/sqlite/sync', async c => {
 
 // Mock Language endpoints
 app.get('/api/hub/language/codes', c => {
-  console.log('🌐 Mock Language Codes Request');
+  console.info('🌐 Mock Language Codes Request');
 
   return c.json({
     success: true,
@@ -200,7 +200,7 @@ app.get('/api/hub/language/codes', c => {
 app.post('/api/hub/language/sync', async c => {
   const { operation, data } = await c.req.json();
 
-  console.log(`🌐 Mock Language Sync: ${operation}`);
+  console.info(`🌐 Mock Language Sync: ${operation}`);
 
   if (operation === 'push' && data) {
     mockLanguageData.set('codes', data.codes);
@@ -217,7 +217,7 @@ app.post('/api/hub/language/sync', async c => {
 app.post('/api/hub/language/set', async c => {
   const { language } = await c.req.json();
 
-  console.log(`🌐 Mock Language Set: ${language}`);
+  console.info(`🌐 Mock Language Set: ${language}`);
 
   return c.json({
     success: true,
@@ -283,7 +283,7 @@ app.get('/api/language/health', c => {
 
 // Catch-all for debugging
 app.all('*', c => {
-  console.log(`🔍 Mock Hub Request: ${c.req.method} ${c.req.url}`);
+  console.info(`🔍 Mock Hub Request: ${c.req.method} ${c.req.url}`);
   return c.json({
     message: 'Mock Hub Server',
     method: c.req.method,
@@ -299,24 +299,24 @@ const server = serve({
   fetch: app.fetch,
 });
 
-console.log(`🚀 Mock Hub Server started at http://localhost:${port}`);
-console.log('');
-console.log('Available endpoints:');
-console.log('  GET  /health - Hub health check');
-console.log('  POST /api/d1/:database/query - D1 database queries');
-console.log('  GET  /api/d1/:database/tables - List D1 tables');
-console.log('  POST /api/r2/:bucket/upload - R2 file upload');
-console.log('  GET  /api/r2/:bucket/download/:key - R2 file download');
-console.log('  POST /api/sqlite/sync - SQLite synchronization');
-console.log('  GET  /api/hub/language/codes - Language codes');
-console.log('  POST /api/hub/language/sync - Language sync');
-console.log('  GET  /api/hub/health - Hub health with services');
-console.log('');
-console.log('Press Ctrl+C to stop the server');
+console.info(`🚀 Mock Hub Server started at http://localhost:${port}`);
+console.info('');
+console.info('Available endpoints:');
+console.info('  GET  /health - Hub health check');
+console.info('  POST /api/d1/:database/query - D1 database queries');
+console.info('  GET  /api/d1/:database/tables - List D1 tables');
+console.info('  POST /api/r2/:bucket/upload - R2 file upload');
+console.info('  GET  /api/r2/:bucket/download/:key - R2 file download');
+console.info('  POST /api/sqlite/sync - SQLite synchronization');
+console.info('  GET  /api/hub/language/codes - Language codes');
+console.info('  POST /api/hub/language/sync - Language sync');
+console.info('  GET  /api/hub/health - Hub health with services');
+console.info('');
+console.info('Press Ctrl+C to stop the server');
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\\n🛑 Mock Hub Server stopped');
+  console.info('\\n🛑 Mock Hub Server stopped');
   process.exit(0);
 });
 

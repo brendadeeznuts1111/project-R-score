@@ -384,20 +384,20 @@ export const createCloudflareDashboard = () => new CloudflareIntegrationDashboar
 
 // Run demo if this is the main module
 if (import.meta.main) {
-  console.log('📊 CLOUDFLARE INTEGRATION DASHBOARD DEMO');
-  console.log('='.repeat(50));
+  console.info('📊 CLOUDFLARE INTEGRATION DASHBOARD DEMO');
+  console.info('='.repeat(50));
   
   const dashboard = new CloudflareIntegrationDashboard();
-  console.log(dashboard.renderDashboard());
+  console.info(dashboard.renderDashboard());
 
-  console.log('\n🔄 STARTING REAL-TIME UPDATES...');
+  console.info('\n🔄 STARTING REAL-TIME UPDATES...');
   dashboard.startRealTimeUpdates(5000); // Update every 5 seconds for demo
   
   // Simulate some activity
   setTimeout(() => {
-    console.log('\n📊 UPDATED DASHBOARD (5 seconds later):');
+    console.info('\n📊 UPDATED DASHBOARD (5 seconds later):');
     dashboard.updateDashboard();
-    console.log(dashboard.renderDashboard());
+    console.info(dashboard.renderDashboard());
     dashboard.stopRealTimeUpdates();
   }, 5000);
 }

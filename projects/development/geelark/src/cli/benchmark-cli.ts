@@ -47,7 +47,7 @@ program
   .command("time")
   .description("Time execution of Dev HQ functions")
   .action(async () => {
-    console.log("⏱️ Timing Dev HQ Functions\n");
+    console.info("⏱️ Timing Dev HQ Functions\n");
 
     await PerformanceTracker.measureAsync(
       async () => await analyzeCodebase(),
@@ -60,7 +60,7 @@ program
     );
 
     // Compare Bun.sleep vs setTimeout
-    console.log("\n🔍 Comparing sleep implementations:");
+    console.info("\n🔍 Comparing sleep implementations:");
     await PerformanceTracker.measureAsync(
       async () => await Bun.sleep(100),
       "Bun.sleep(100ms)"
@@ -77,7 +77,7 @@ program
   .description("Analyze memory usage")
   .option("--snapshot", "Take heap snapshot", false)
   .action(async (cmd) => {
-    console.log("🧠 Memory Usage Analysis\n");
+    console.info("🧠 Memory Usage Analysis\n");
 
     // @ts-ignore - Bun.gc is available at runtime
     Bun.gc(true); // Start clean
@@ -101,12 +101,12 @@ program
         const snapshot = generateHeapSnapshot?.();
         if (snapshot) {
           await Bun.write(`heap-${Date.now()}.json`, JSON.stringify(snapshot, null, 2));
-          console.log("💾 Heap snapshot saved");
+          console.info("💾 Heap snapshot saved");
         } else {
-          console.log("⚠️ Heap snapshot generation not available");
+          console.info("⚠️ Heap snapshot generation not available");
         }
       } catch (error) {
-        console.log("⚠️ Could not generate heap snapshot:", error);
+        console.info("⚠️ Could not generate heap snapshot:", error);
       }
     }
   });
@@ -117,7 +117,7 @@ program
   .option("--iterations <number>", "Number of iterations", "100")
   .action(async (cmd) => {
     const iterations = parseInt(cmd.iterations);
-    console.log(`🔥 Stress Test - ${iterations} iterations\n`);
+    console.info(`🔥 Stress Test - ${iterations} iterations\n`);
 
     const start = performance.now();
     const startMemory = heapStats().heapSize;
@@ -132,17 +132,17 @@ program
     const end = performance.now();
     const endMemory = heapStats().heapSize;
 
-    console.log(`📊 Results:`);
-    console.log(`  Total time: ${(end - start).toFixed(2)}ms`);
-    console.log(`  Avg per iteration: ${((end - start) / iterations).toFixed(2)}ms`);
-    console.log(`  Memory delta: ${((endMemory - startMemory) / 1024).toFixed(2)}KB`);
+    console.info(`📊 Results:`);
+    console.info(`  Total time: ${(end - start).toFixed(2)}ms`);
+    console.info(`  Avg per iteration: ${((end - start) / iterations).toFixed(2)}ms`);
+    console.info(`  Memory delta: ${((endMemory - startMemory) / 1024).toFixed(2)}KB`);
   });
 
 program
   .command("compare")
   .description("Compare different implementations")
   .action(async () => {
-    console.log("⚖️ Implementation Comparison\n");
+    console.info("⚖️ Implementation Comparison\n");
 
     // Test 1: Sync vs Async analysis
     PerformanceTracker.measure(
@@ -159,7 +159,7 @@ program
     );
 
     // Test 2: Loop styles
-    console.log("\n🔄 Loop Performance:");
+    console.info("\n🔄 Loop Performance:");
 
     const array = Array.from({ length: 10000 }, (_, i) => i);
 
@@ -187,20 +187,20 @@ program
   .command("profile")
   .description("Generate CPU profile")
   .action(() => {
-    console.log("📋 To generate CPU profile:");
-    console.log("  bun --cpu-prof --cpu-prof-name dev-hq.cpuprofile run benchmark-cli.ts time");
-    console.log("\n📋 To view in Chrome:");
-    console.log("  1. Open Chrome DevTools");
-    console.log("  2. Go to Performance tab");
-    console.log("  3. Click 'Load profile'");
-    console.log("  4. Select dev-hq.cpuprofile");
+    console.info("📋 To generate CPU profile:");
+    console.info("  bun --cpu-prof --cpu-prof-name dev-hq.cpuprofile run benchmark-cli.ts time");
+    console.info("\n📋 To view in Chrome:");
+    console.info("  1. Open Chrome DevTools");
+    console.info("  2. Go to Performance tab");
+    console.info("  3. Click 'Load profile'");
+    console.info("  4. Select dev-hq.cpuprofile");
   });
 
 program
   .command("network")
   .description("Benchmark network operations")
   .action(async () => {
-    console.log("🌐 Network Performance Tests\n");
+    console.info("🌐 Network Performance Tests\n");
 
     // Test HTTP server creation
     PerformanceTracker.measure(() => {
@@ -231,7 +231,7 @@ program
   .command("transpilation")
   .description("Benchmark transpilation performance")
   .action(async () => {
-    console.log("⚡ Transpilation Performance Tests\n");
+    console.info("⚡ Transpilation Performance Tests\n");
 
     // Test TypeScript compilation simulation
     const tsCode = `
@@ -267,7 +267,7 @@ program
   .command("configuration")
   .description("Benchmark configuration parsing")
   .action(async () => {
-    console.log("📁 Configuration Performance Tests\n");
+    console.info("📁 Configuration Performance Tests\n");
 
     // Test TOML parsing simulation
     const tomlContent = `

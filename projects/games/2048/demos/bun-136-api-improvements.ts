@@ -1,19 +1,19 @@
 #!/usr/bin/env bun
 
 // Demonstration of Bun v1.3.6 Bun API improvements
-console.log("🔧 Bun v1.3.6 Bun API Improvements");
-console.log("=".repeat(45));
+console.info("🔧 Bun v1.3.6 Bun API Improvements");
+console.info("=".repeat(45));
 
 // Test 1: Bun.write() improvements for large files and mode option
-console.log("\n1️⃣ Bun.write() Improvements:");
+console.info("\n1️⃣ Bun.write() Improvements:");
 
 async function demonstrateBunWriteImprovements() {
-  console.log("✅ Fixed data corruption in files larger than 2GB");
-  console.log("✅ Fixed mode option when copying files from Bun.file()");
-  console.log("✅ Enhanced reliability for large file operations");
+  console.info("✅ Fixed data corruption in files larger than 2GB");
+  console.info("✅ Fixed mode option when copying files from Bun.file()");
+  console.info("✅ Enhanced reliability for large file operations");
 
   // Test mode option fix
-  console.log("\n   📋 Testing mode option fix:");
+  console.info("\n   📋 Testing mode option fix:");
 
   try {
     const testContent = "Test content for mode option";
@@ -24,35 +24,35 @@ async function demonstrateBunWriteImprovements() {
     await Bun.write(testFile, testContent, { mode });
 
     const fileExists = await Bun.file(testFile).exists();
-    console.log(
+    console.info(
       `   ✅ File created with mode ${mode.toString(8)}: ${fileExists}`,
     );
 
     // Verify content
     const writtenContent = await Bun.file(testFile).text();
-    console.log(`   ✅ Content verified: "${writtenContent}"`);
+    console.info(`   ✅ Content verified: "${writtenContent}"`);
 
     // Clean up
     await Bun.write(testFile, ""); // Empty for cleanup
   } catch (error) {
-    console.log(`   ⚠️  Mode option test: ${error.message}`);
+    console.info(`   ⚠️  Mode option test: ${error.message}`);
   }
 
   // Large file handling demonstration
-  console.log("\n   📊 Large file handling:");
-  console.log("   🔧 Before v1.3.6: Potential corruption in files > 2GB");
-  console.log("   🚀 After v1.3.6: Reliable large file operations");
-  console.log("   💡 Use case: Video processing, database exports, log files");
+  console.info("\n   📊 Large file handling:");
+  console.info("   🔧 Before v1.3.6: Potential corruption in files > 2GB");
+  console.info("   🚀 After v1.3.6: Reliable large file operations");
+  console.info("   💡 Use case: Video processing, database exports, log files");
 }
 
 // Test 2: SQL Driver improvements
-console.log("\n2️⃣ SQL Driver Improvements:");
+console.info("\n2️⃣ SQL Driver Improvements:");
 
 function demonstrateSQLDriverImprovements() {
-  console.log("✅ MySQL driver: BINARY/VARBINARY/BLOB now return Buffer");
-  console.log("✅ PostgreSQL driver: Fixed large array parsing (>16KB)");
-  console.log("✅ PostgreSQL driver: Fixed empty array reading (INTEGER[] {})");
-  console.log("✅ JSON parsing: Proper SyntaxError exceptions");
+  console.info("✅ MySQL driver: BINARY/VARBINARY/BLOB now return Buffer");
+  console.info("✅ PostgreSQL driver: Fixed large array parsing (>16KB)");
+  console.info("✅ PostgreSQL driver: Fixed empty array reading (INTEGER[] {})");
+  console.info("✅ JSON parsing: Proper SyntaxError exceptions");
 
   const sqlImprovements = [
     {
@@ -81,21 +81,21 @@ function demonstrateSQLDriverImprovements() {
     },
   ];
 
-  console.log("\n   📋 SQL driver fixes:");
+  console.info("\n   📋 SQL driver fixes:");
   sqlImprovements.forEach((improvement, index) => {
-    console.log(`\n   ${index + 1}. ${improvement.driver}:`);
-    console.log(`      Issue: ${improvement.issue}`);
-    console.log(`      Fix: ${improvement.fix}`);
-    console.log(`      Example: ${improvement.example}`);
+    console.info(`\n   ${index + 1}. ${improvement.driver}:`);
+    console.info(`      Issue: ${improvement.issue}`);
+    console.info(`      Fix: ${improvement.fix}`);
+    console.info(`      Example: ${improvement.example}`);
   });
 }
 
 // Test 3: S3 credential validation improvements
-console.log("\n3️⃣ S3 Credential Validation:");
+console.info("\n3️⃣ S3 Credential Validation:");
 
 function demonstrateS3Validation() {
-  console.log("✅ Fixed S3 credential validation for invalid parameters");
-  console.log("✅ Proper rejection of out-of-range values");
+  console.info("✅ Fixed S3 credential validation for invalid parameters");
+  console.info("✅ Proper rejection of out-of-range values");
 
   const validationRules = [
     {
@@ -118,14 +118,14 @@ function demonstrateS3Validation() {
     },
   ];
 
-  console.log("\n   📋 S3 parameter validation:");
+  console.info("\n   📋 S3 parameter validation:");
   validationRules.forEach((rule) => {
-    console.log(
+    console.info(
       `   • ${rule.parameter}: ${rule.min} - ${rule.max} (${rule.description})`,
     );
   });
 
-  console.log("\n   💡 Example usage:");
+  console.info("\n   💡 Example usage:");
   const s3Example = `
 // v1.3.6: Invalid values are properly rejected
 const s3Client = new S3Client({
@@ -145,64 +145,64 @@ const s3Client = new S3Client({
 // retry: 100 (too many)
   `;
 
-  console.log(s3Example);
+  console.info(s3Example);
 }
 
 // Test 4: Security improvements
-console.log("\n4️⃣ Security Improvements:");
+console.info("\n4️⃣ Security Improvements:");
 
 function demonstrateSecurityImprovements() {
-  console.log("✅ Null byte injection prevention (CWE-158)");
-  console.log("✅ Stricter wildcard certificate matching (RFC 6125)");
+  console.info("✅ Null byte injection prevention (CWE-158)");
+  console.info("✅ Stricter wildcard certificate matching (RFC 6125)");
 
   // Null byte prevention
-  console.log("\n   🛡️  Null byte injection prevention:");
+  console.info("\n   🛡️  Null byte injection prevention:");
   const dangerousInputs = [
     "filename\\x00.txt",
     "command\\x00--arg",
     "env_value\\x00malicious",
   ];
 
-  console.log("   🚫 Blocked in:");
-  console.log("      • Bun.spawn() arguments");
-  console.log("      • Bun.spawnSync() arguments");
-  console.log("      • Environment variables");
-  console.log("      • Shell template literals");
+  console.info("   🚫 Blocked in:");
+  console.info("      • Bun.spawn() arguments");
+  console.info("      • Bun.spawnSync() arguments");
+  console.info("      • Environment variables");
+  console.info("      • Shell template literals");
 
   dangerousInputs.forEach((input, index) => {
-    console.log(`   ${index + 1}. "${input}" -> 🚫 REJECTED`);
+    console.info(`   ${index + 1}. "${input}" -> 🚫 REJECTED`);
   });
 
   // Certificate validation
-  console.log("\n   🔐 Stricter wildcard certificate matching:");
+  console.info("\n   🔐 Stricter wildcard certificate matching:");
   const certificateTests = [
     { pattern: "*.example.com", domain: "foo.example.com", valid: true },
     { pattern: "*.example.com", domain: "foo.bar.example.com", valid: false },
     { pattern: "*.*.example.com", domain: "foo.bar.example.com", valid: false },
   ];
 
-  console.log("   📋 Certificate validation (RFC 6125):");
+  console.info("   📋 Certificate validation (RFC 6125):");
   certificateTests.forEach((test) => {
     const status = test.valid ? "✅ VALID" : "❌ INVALID";
-    console.log(`      "${test.pattern}" vs "${test.domain}" -> ${status}`);
+    console.info(`      "${test.pattern}" vs "${test.domain}" -> ${status}`);
   });
 }
 
 // Test 5: HTTP client improvements
-console.log("\n5️⃣ HTTP Client Improvements:");
+console.info("\n5️⃣ HTTP Client Improvements:");
 
 function demonstrateHTTPClientImprovements() {
-  console.log("✅ Fixed hanging when proxy authentication fails (407)");
-  console.log("✅ Fixed NO_PROXY environment variable parsing");
-  console.log("✅ Fixed ReadableStream memory leak in proxy responses");
+  console.info("✅ Fixed hanging when proxy authentication fails (407)");
+  console.info("✅ Fixed NO_PROXY environment variable parsing");
+  console.info("✅ Fixed ReadableStream memory leak in proxy responses");
 
-  console.log("\n   🌐 Proxy authentication fix:");
-  console.log("   🔧 Before: Requests would hang on 407 errors");
-  console.log("   🚀 After: Falls back to direct connections");
+  console.info("\n   🌐 Proxy authentication fix:");
+  console.info("   🔧 Before: Requests would hang on 407 errors");
+  console.info("   🚀 After: Falls back to direct connections");
 
-  console.log("\n   🔧 NO_PROXY parsing fix:");
-  console.log("   • Handles empty entries correctly");
-  console.log("   • Better proxy bypass behavior");
+  console.info("\n   🔧 NO_PROXY parsing fix:");
+  console.info("   • Handles empty entries correctly");
+  console.info("   • Better proxy bypass behavior");
 
   const noProxyExample = `
 # v1.3.6: NO_PROXY parsing improved
@@ -210,23 +210,23 @@ export NO_PROXY="localhost,127.0.0.1,.local,,example.com"
 # Empty entries are now handled correctly
   `;
 
-  console.log("\n   💡 NO_PROXY example:");
-  console.log(noProxyExample);
+  console.info("\n   💡 NO_PROXY example:");
+  console.info(noProxyExample);
 
-  console.log("\n   🧹 Memory leak fix:");
-  console.log("   • ReadableStream cleanup in proxy responses");
-  console.log("   • Better resource management");
+  console.info("\n   🧹 Memory leak fix:");
+  console.info("   • ReadableStream cleanup in proxy responses");
+  console.info("   • Better resource management");
 }
 
 // Test 6: Shell improvements
-console.log("\n6️⃣ Shell Improvements:");
+console.info("\n6️⃣ Shell Improvements:");
 
 function demonstrateShellImprovements() {
-  console.log("✅ Fixed subprocess stdin cleanup edgecase");
-  console.log("✅ Fixed EBADF error with &> redirect for builtin commands");
-  console.log("✅ Fixed rare crash impacting opencode");
+  console.info("✅ Fixed subprocess stdin cleanup edgecase");
+  console.info("✅ Fixed EBADF error with &> redirect for builtin commands");
+  console.info("✅ Fixed rare crash impacting opencode");
 
-  console.log("\n   🔧 Shell fixes:");
+  console.info("\n   🔧 Shell fixes:");
   const shellFixes = [
     {
       issue: "Subprocess stdin cleanup",
@@ -246,9 +246,9 @@ function demonstrateShellImprovements() {
   ];
 
   shellFixes.forEach((fix, index) => {
-    console.log(`   ${index + 1}. ${fix.issue}:`);
-    console.log(`      Fix: ${fix.fix}`);
-    console.log(`      Impact: ${fix.impact}`);
+    console.info(`   ${index + 1}. ${fix.issue}:`);
+    console.info(`      Fix: ${fix.fix}`);
+    console.info(`      Impact: ${fix.impact}`);
   });
 
   const shellExample = `
@@ -258,16 +258,16 @@ ls -la | grep ".txt"       # Better pipe handling
 bun run script.ts          # Improved subprocess management
   `;
 
-  console.log("\n   💡 Shell usage examples:");
-  console.log(shellExample);
+  console.info("\n   💡 Shell usage examples:");
+  console.info(shellExample);
 }
 
 // Test 7: Memory and crash fixes
-console.log("\n7️⃣ Memory and Crash Fixes:");
+console.info("\n7️⃣ Memory and Crash Fixes:");
 
 function demonstrateMemoryCrashFixes() {
-  console.log("✅ Fixed hypothetical crash in async operations");
-  console.log("✅ Buffer garbage collection safety in worker threads");
+  console.info("✅ Fixed hypothetical crash in async operations");
+  console.info("✅ Buffer garbage collection safety in worker threads");
 
   const crashFixes = [
     {
@@ -287,24 +287,24 @@ function demonstrateMemoryCrashFixes() {
     },
   ];
 
-  console.log("\n   🧠 Memory safety improvements:");
+  console.info("\n   🧠 Memory safety improvements:");
   crashFixes.forEach((fix, index) => {
-    console.log(`   ${index + 1}. ${fix.operation}:`);
-    console.log(`      Issue: ${fix.issue}`);
-    console.log(`      Fix: ${fix.fix}`);
+    console.info(`   ${index + 1}. ${fix.operation}:`);
+    console.info(`      Issue: ${fix.issue}`);
+    console.info(`      Fix: ${fix.fix}`);
   });
 
-  console.log("\n   🎯 Benefits:");
-  console.log("      • Eliminates rare crashes in production");
-  console.log("      • Better stability for async operations");
-  console.log("      • Improved memory management");
+  console.info("\n   🎯 Benefits:");
+  console.info("      • Eliminates rare crashes in production");
+  console.info("      • Better stability for async operations");
+  console.info("      • Improved memory management");
 }
 
 // Test 8: Real-world usage scenarios
-console.log("\n8️⃣ Real-World Usage Scenarios:");
+console.info("\n8️⃣ Real-World Usage Scenarios:");
 
 function demonstrateRealWorldUsage() {
-  console.log("✅ How these API improvements benefit applications:");
+  console.info("✅ How these API improvements benefit applications:");
 
   const scenarios = [
     {
@@ -347,9 +347,9 @@ function demonstrateRealWorldUsage() {
   ];
 
   scenarios.forEach((scenario) => {
-    console.log(`\n   📋 ${scenario.scenario}:`);
-    console.log(`      ${scenario.description}`);
-    console.log(`      🔧 Improvements: ${scenario.improvements.join(", ")}`);
+    console.info(`\n   📋 ${scenario.scenario}:`);
+    console.info(`      ${scenario.description}`);
+    console.info(`      🔧 Improvements: ${scenario.improvements.join(", ")}`);
   });
 }
 
@@ -365,19 +365,19 @@ async function main() {
     demonstrateMemoryCrashFixes();
     demonstrateRealWorldUsage();
 
-    console.log("\n🎯 Summary of Bun v1.3.6 API Improvements:");
-    console.log("   📁 Bun.write(): Fixed >2GB corruption + mode option");
-    console.log("   🗄️  SQL Drivers: Buffer handling + array parsing fixes");
-    console.log("   ☁️  S3: Proper credential validation");
-    console.log(
+    console.info("\n🎯 Summary of Bun v1.3.6 API Improvements:");
+    console.info("   📁 Bun.write(): Fixed >2GB corruption + mode option");
+    console.info("   🗄️  SQL Drivers: Buffer handling + array parsing fixes");
+    console.info("   ☁️  S3: Proper credential validation");
+    console.info(
       "   🛡️  Security: Null byte prevention + certificate validation",
     );
-    console.log("   🌐 HTTP: Proxy auth fixes + NO_PROXY parsing");
-    console.log("   🔧 Shell: Redirect fixes + crash prevention");
-    console.log("   🧠 Memory: Buffer safety + crash fixes");
-    console.log("   🚀 Production: Enhanced reliability and stability");
+    console.info("   🌐 HTTP: Proxy auth fixes + NO_PROXY parsing");
+    console.info("   🔧 Shell: Redirect fixes + crash prevention");
+    console.info("   🧠 Memory: Buffer safety + crash fixes");
+    console.info("   🚀 Production: Enhanced reliability and stability");
 
-    console.log(
+    console.info(
       "\n💨 These improvements make Bun more reliable for production workloads!",
     );
   } catch (error) {

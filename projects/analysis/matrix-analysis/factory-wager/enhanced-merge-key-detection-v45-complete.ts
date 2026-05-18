@@ -3,10 +3,10 @@
  * Revolutionary merge key support with visual indicators and inheritance tracking
  */
 
-console.log('🔧 ENHANCED MERGE KEY DETECTION v4.5 - ADVANCED YAML INHERITANCE!')
-console.log('=' .repeat(80))
+console.info('🔧 ENHANCED MERGE KEY DETECTION v4.5 - ADVANCED YAML INHERITANCE!')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 🚀 REVOLUTIONARY MERGE KEY INHERITANCE SYSTEM DEPLOYED!
 
 ✅ ADVANCED YAML INHERITANCE FEATURES IMPLEMENTED:
@@ -133,9 +133,9 @@ Next Vector: Custom YAML parser with merge key resolution for complete inheritan
 🚀 FACTORYWAGER YAML-NATIVE TABULAR v4.5 - MERGE INHERITANCE FOUNDATION COMPLETE! 🚀
 `)
 
-console.log('🔧✅ ENHANCED MERGE KEY DETECTION v4.5 - ADVANCED YAML INHERITANCE!')
-console.log('🎯 Merge key infrastructure - Complete framework deployed!')
-console.log('🔧 Inheritance tracking - Advanced system ready!')
-console.log('🎨 Visual indicators - Purple merge badges implemented!')
-console.log('🚀 Foundation complete - Ready for enhanced parsing!')
-console.log('💎 FactoryWager v4.5 - Merge inheritance mastery achieved!')
+console.info('🔧✅ ENHANCED MERGE KEY DETECTION v4.5 - ADVANCED YAML INHERITANCE!')
+console.info('🎯 Merge key infrastructure - Complete framework deployed!')
+console.info('🔧 Inheritance tracking - Advanced system ready!')
+console.info('🎨 Visual indicators - Purple merge badges implemented!')
+console.info('🚀 Foundation complete - Ready for enhanced parsing!')
+console.info('💎 FactoryWager v4.5 - Merge inheritance mastery achieved!')

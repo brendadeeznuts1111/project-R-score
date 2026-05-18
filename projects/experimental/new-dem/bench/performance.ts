@@ -220,13 +220,13 @@ group("System Performance", () => {
 
 // Run benchmarks
 if (import.meta.main) {
-  console.log("🚀 T3-Lattice Performance Benchmarks");
-  console.log("====================================");
-  console.log();
+  console.info("🚀 T3-Lattice Performance Benchmarks");
+  console.info("====================================");
+  console.info();
 
   try {
     await run();
   } catch (error) {
-    console.log("Benchmark completed with some display issues, but tests ran successfully");
+    console.info("Benchmark completed with some display issues, but tests ran successfully");
   }
 }

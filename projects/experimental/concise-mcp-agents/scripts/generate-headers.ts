@@ -219,7 +219,7 @@ class HeaderGenerator {
       // Check if file already has a header
       const firstLine = lines[0]?.trim() || '';
       if (firstLine.startsWith('[') && firstLine.includes('][')) {
-        console.log(`File ${filePath} already has a header`);
+        console.info(`File ${filePath} already has a header`);
         return false;
       }
 
@@ -227,7 +227,7 @@ class HeaderGenerator {
       const newContent = `${header}\n\n${content}`;
       writeFileSync(filePath, newContent);
 
-      console.log(`Added header to ${filePath}`);
+      console.info(`Added header to ${filePath}`);
       return true;
     } catch (error) {
       console.error(`Failed to add header to ${filePath}: ${error.message}`);
@@ -265,7 +265,7 @@ async function main() {
   const generator = new HeaderGenerator();
 
   if (args.length === 0) {
-    console.log(`🚀 Header Generator & Validator v2.0
+    console.info(`🚀 Header Generator & Validator v2.0
 
 USAGE:
   bun header generate <domain> <type> [scope] [status] [version]
@@ -306,13 +306,13 @@ STATUSES: ${HeaderGenerator['STATUSES'].join(', ')}
         const version = args[5] || '1.0';
 
         const header = HeaderGenerator.generateHeader({ domain, type, scope, id: 'AUTO', version, status });
-        console.log(header);
+        console.info(header);
         break;
 
       case 'validate':
         const path = args[1] || '.';
         const results = await generator.validateFiles(path);
-        console.log(generator.formatValidationResults(results));
+        console.info(generator.formatValidationResults(results));
         break;
 
       case 'add':
@@ -339,9 +339,9 @@ STATUSES: ${HeaderGenerator['STATUSES'].join(', ')}
 
         const success = await generator.addHeaderToFile(filePath, addHeader);
         if (success) {
-          console.log(`✅ Header added to ${filePath}`);
+          console.info(`✅ Header added to ${filePath}`);
         } else {
-          console.log(`❌ Failed to add header to ${filePath}`);
+          console.info(`❌ Failed to add header to ${filePath}`);
           process.exit(1);
         }
         break;
@@ -356,15 +356,15 @@ STATUSES: ${HeaderGenerator['STATUSES'].join(', ')}
         const parsed = HeaderGenerator.parseHeader(headerToParse);
 
         if (parsed) {
-          console.log('Parsed header:');
-          console.log(`  Domain: ${parsed.domain}`);
-          console.log(`  Type: ${parsed.type}`);
-          console.log(`  Scope: ${parsed.scope}`);
-          console.log(`  ID: ${parsed.id}`);
-          console.log(`  Version: ${parsed.version}`);
-          console.log(`  Status: ${parsed.status}`);
+          console.info('Parsed header:');
+          console.info(`  Domain: ${parsed.domain}`);
+          console.info(`  Type: ${parsed.type}`);
+          console.info(`  Scope: ${parsed.scope}`);
+          console.info(`  ID: ${parsed.id}`);
+          console.info(`  Version: ${parsed.version}`);
+          console.info(`  Status: ${parsed.status}`);
         } else {
-          console.log('❌ Invalid header format');
+          console.info('❌ Invalid header format');
           process.exit(1);
         }
         break;
@@ -372,12 +372,12 @@ STATUSES: ${HeaderGenerator['STATUSES'].join(', ')}
       case 'id':
         const prefix = args[1] || '';
         const id = HeaderGenerator.generateId(prefix);
-        console.log(id);
+        console.info(id);
         break;
 
       default:
         console.error(`Unknown command: ${command}`);
-        console.log('Use: bun header --help');
+        console.info('Use: bun header --help');
         process.exit(1);
     }
   } catch (error) {

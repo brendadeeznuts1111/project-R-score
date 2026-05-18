@@ -81,8 +81,8 @@ export const FamilySponsorshipPanel = feature("PREMIUM") ? function() {
         setLoading(true);
         const result = await familyControlsManager.updateSpendLimits(selectedTeen, spendLimits);
         setNotification('✅ Spend limits updated successfully');
-        console.log('Previous limits:', result.previousLimits);
-        console.log('New limits:', result.newLimits);
+        console.info('Previous limits:', result.previousLimits);
+        console.info('New limits:', result.newLimits);
       } catch (error) {
         console.error('Failed to update spend limits:', error);
         setNotification('❌ Failed to update spend limits');
@@ -121,7 +121,7 @@ export const FamilySponsorshipPanel = feature("PREMIUM") ? function() {
           teenProfile.allowanceFrequency
         );
         setNotification('✅ Auto-allowance setup successful');
-        console.log('Next transfer:', result.nextTransfer);
+        console.info('Next transfer:', result.nextTransfer);
       } catch (error) {
         console.error('Failed to setup auto-allowance:', error);
         setNotification('❌ Failed to setup auto-allowance');

@@ -37,12 +37,12 @@ function trackExecution(command, exitCode, duration, file) {
 function showExecutionAnalytics() {
 	const db = new Database(EXEC_DB_PATH, { create: true });
 
-	console.log("📊 Execution Analytics:");
+	console.info("📊 Execution Analytics:");
 
 	// Recent executions
 	const recent = db.query("SELECT * FROM executions ORDER BY ts DESC LIMIT 3").all();
 	if (recent.length > 0) {
-		console.log("\nRecent Executions:");
+		console.info("\nRecent Executions:");
 		console.table(recent);
 	}
 
@@ -55,7 +55,7 @@ function showExecutionAnalytics() {
 		.get();
 
 	if (!total) {
-		console.log("\n📈 No executions recorded");
+		console.info("\n📈 No executions recorded");
 		db.close();
 		return;
 	}
@@ -65,11 +65,11 @@ function showExecutionAnalytics() {
 			? (((total.c - ((failures && failures.c) || 0)) / total.c) * 100).toFixed(1)
 			: "0";
 
-	console.log(
+	console.info(
 		`\n📈 Success Rate: ${successRate}% (${total.c - ((failures && failures.c) || 0)}/${total.c})`,
 	);
 	if (failures && failures.c && failures.c > 0) {
-		console.log(`${GLYPH.fail} Recent Failures: ${failures.c}`);
+		console.info(`${GLYPH.fail} Recent Failures: ${failures.c}`);
 	}
 
 	db.close();
@@ -93,7 +93,7 @@ async function scanCol89(file) {
 		if (w > COL_LIMIT) {
 			violations++;
 			const preview = Bun.escapeHTML(Bun.stripANSI(lines[i]).slice(0, 60)) + "…";
-			console.log(`${GLYPH.fail} Line ${i + 1}: ${w} cols → ${preview}`);
+			console.info(`${GLYPH.fail} Line ${i + 1}: ${w} cols → ${preview}`);
 		}
 	}
 
@@ -122,7 +122,7 @@ function benchCRC32() {
 
 // ─── Main Execution with Tracking ───────────────────
 async function main() {
-	console.log("🎯 Tier-1380 Performance Suite v2.5 (Execution Tracking)\n");
+	console.info("🎯 Tier-1380 Performance Suite v2.5 (Execution Tracking)\n");
 
 	const startTime = Date.now();
 	const target = process.argv[3] || "src/index.ts";
@@ -131,7 +131,7 @@ async function main() {
 	try {
 		// Show execution analytics first
 		showExecutionAnalytics();
-		console.log("\n" + "=".repeat(60));
+		console.info("\n" + "=".repeat(60));
 
 		// Run performance analysis
 		const [col89, hardware] = await Promise.all([
@@ -146,43 +146,43 @@ async function main() {
 		trackExecution(command, exitCode, duration, target);
 
 		// Results
-		console.log(`\n📊 Results for: ${target}`);
-		console.log(`${"=".repeat(60)}`);
+		console.info(`\n📊 Results for: ${target}`);
+		console.info(`${"=".repeat(60)}`);
 
 		const colStatus = col89.violations === 0 ? GLYPH.pass : GLYPH.fail;
-		console.log(
+		console.info(
 			`${colStatus} Col-89: ${col89.violations} violations ` +
 				`(max ${col89.maxWidth}, avg ${col89.avgWidth})`,
 		);
 
-		console.log(
+		console.info(
 			`${GLYPH.info} Hardware: ${Math.round(hardware.throughput).toLocaleString()} ` +
 				`${hardware.unit} (${hardware.duration.toFixed(2)}ms)`,
 		);
 
-		console.log(`${GLYPH.info} Duration: ${duration}ms`);
+		console.info(`${GLYPH.info} Duration: ${duration}ms`);
 
 		const score = Math.max(0, 100 - col89.violations * 2);
 		const color = score >= 80 ? "32" : score >= 60 ? "33" : "31";
-		console.log(`\n\x1b[${color}m🏥 Health Score: ${score}%\x1b[0m`);
+		console.info(`\n\x1b[${color}m🏥 Health Score: ${score}%\x1b[0m`);
 
 		// One-liner examples
-		console.log(`\n💡 One-Liner Tracking Examples:`);
-		console.log(
+		console.info(`\n💡 One-Liner Tracking Examples:`);
+		console.info(
 			`   • View recent: bun -e 'import{Database}from"bun:sqlite";const d=new Database("./data/executions.db");console.table(d.query("SELECT * FROM executions ORDER BY ts DESC LIMIT 5").all())'`,
 		);
-		console.log(
-			`   • Check failures: bun -e 'import{Database}from"bun:sqlite";const d=new Database("./data/executions.db");const f=d.query("SELECT COUNT(*) as c FROM executions WHERE exit_code != 0").get();console.log(\`Failures: \${f.c}\`)'`,
+		console.info(
+			`   • Check failures: bun -e 'import{Database}from"bun:sqlite";const d=new Database("./data/executions.db");const f=d.query("SELECT COUNT(*) as c FROM executions WHERE exit_code != 0").get();console.info(\`Failures: \${f.c}\`)'`,
 		);
-		console.log(
-			`   • Success rate: bun -e 'import{Database}from"bun:sqlite";const d=new Database("./data/executions.db");const s=d.query("SELECT COUNT(*) as c FROM executions WHERE exit_code = 0").get();const t=d.query("SELECT COUNT(*) as c FROM executions").get();console.log(\`Success: \${(s.c/t.c*100).toFixed(1)}%\`)'`,
+		console.info(
+			`   • Success rate: bun -e 'import{Database}from"bun:sqlite";const d=new Database("./data/executions.db");const s=d.query("SELECT COUNT(*) as c FROM executions WHERE exit_code = 0").get();const t=d.query("SELECT COUNT(*) as c FROM executions").get();console.info(\`Success: \${(s.c/t.c*100).toFixed(1)}%\`)'`,
 		);
 	} catch (e) {
 		const duration = Date.now() - startTime;
 		trackExecution(command, 1, duration, target);
 		const errorMsg =
 			e && typeof e === "object" && "message" in e ? e.message : String(e);
-		console.log(`${GLYPH.fail} Error: ${errorMsg}`);
+		console.info(`${GLYPH.fail} Error: ${errorMsg}`);
 		process.exit(1);
 	}
 }

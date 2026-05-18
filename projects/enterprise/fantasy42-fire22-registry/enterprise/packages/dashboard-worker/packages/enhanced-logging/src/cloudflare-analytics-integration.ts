@@ -776,7 +776,7 @@ export class CloudflareAnalyticsIntegration {
     if (this.eventBuffer.length === 0) return;
 
     // In a real implementation, this would send events to Cloudflare Analytics API
-    console.log(`📊 Flushing ${this.eventBuffer.length} Cloudflare events to analytics`);
+    console.info(`📊 Flushing ${this.eventBuffer.length} Cloudflare events to analytics`);
 
     // Clear buffer
     this.eventBuffer = [];

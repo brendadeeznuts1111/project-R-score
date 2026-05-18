@@ -40,7 +40,7 @@ async function handleDependencyOptions(options: any) {
     try {
       await import(module);
       if (options.verbose) {
-        console.log(chalk.green(`✅ Preloaded module: ${module}`));
+        console.info(chalk.green(`✅ Preloaded module: ${module}`));
       }
     } catch (error) {
       console.error(chalk.red(`❌ Failed to preload module: ${module}`), error);
@@ -54,7 +54,7 @@ async function handleDependencyOptions(options: any) {
   if (options.noInstall) {
     process.env.BUN_NO_INSTALL = "true";
     if (options.verbose) {
-      console.log(chalk.yellow("🔧 Auto-install disabled"));
+      console.info(chalk.yellow("🔧 Auto-install disabled"));
     }
   }
 
@@ -65,14 +65,14 @@ async function handleDependencyOptions(options: any) {
     }
     process.env.BUN_INSTALL = options.install;
     if (options.verbose) {
-      console.log(chalk.yellow(`🔧 Install behavior set to: ${options.install}`));
+      console.info(chalk.yellow(`🔧 Install behavior set to: ${options.install}`));
     }
   }
 
   if (options.i) {
     process.env.BUN_INSTALL = "fallback";
     if (options.verbose) {
-      console.log(chalk.yellow("🔧 Auto-install enabled (fallback mode)"));
+      console.info(chalk.yellow("🔧 Auto-install enabled (fallback mode)"));
     }
   }
 
@@ -80,14 +80,14 @@ async function handleDependencyOptions(options: any) {
   if (options.preferOffline) {
     process.env.BUN_PREFER_OFFLINE = "true";
     if (options.verbose) {
-      console.log(chalk.yellow("🔧 Preferring offline packages"));
+      console.info(chalk.yellow("🔧 Preferring offline packages"));
     }
   }
 
   if (options.preferLatest) {
     process.env.BUN_PREFER_LATEST = "true";
     if (options.verbose) {
-      console.log(chalk.yellow("🔧 Preferring latest package versions"));
+      console.info(chalk.yellow("🔧 Preferring latest package versions"));
     }
   }
 
@@ -95,7 +95,7 @@ async function handleDependencyOptions(options: any) {
   if (options.conditions) {
     process.env.BUN_CONDITIONS = options.conditions;
     if (options.verbose) {
-      console.log(chalk.yellow(`🔧 Custom conditions: ${options.conditions}`));
+      console.info(chalk.yellow(`🔧 Custom conditions: ${options.conditions}`));
     }
   }
 
@@ -103,7 +103,7 @@ async function handleDependencyOptions(options: any) {
   if (options.mainFields) {
     process.env.BUN_MAIN_FIELDS = options.mainFields;
     if (options.verbose) {
-      console.log(chalk.yellow(`🔧 Main fields: ${options.mainFields}`));
+      console.info(chalk.yellow(`🔧 Main fields: ${options.mainFields}`));
     }
   }
 
@@ -111,14 +111,14 @@ async function handleDependencyOptions(options: any) {
   if (options.preserveSymlinks) {
     process.env.BUN_PRESERVE_SYMLINKS = "true";
     if (options.verbose) {
-      console.log(chalk.yellow("🔧 Preserving symlinks when resolving files"));
+      console.info(chalk.yellow("🔧 Preserving symlinks when resolving files"));
     }
   }
 
   if (options.preserveSymlinksMain) {
     process.env.BUN_PRESERVE_SYMLINKS_MAIN = "true";
     if (options.verbose) {
-      console.log(chalk.yellow("🔧 Preserving symlinks when resolving main entry point"));
+      console.info(chalk.yellow("🔧 Preserving symlinks when resolving main entry point"));
     }
   }
 
@@ -126,7 +126,7 @@ async function handleDependencyOptions(options: any) {
   if (options.extensionOrder && options.extensionOrder !== ".tsx,.ts,.jsx,.js,.json") {
     process.env.BUN_EXTENSION_ORDER = options.extensionOrder;
     if (options.verbose) {
-      console.log(chalk.yellow(`🔧 Extension order: ${options.extensionOrder}`));
+      console.info(chalk.yellow(`🔧 Extension order: ${options.extensionOrder}`));
     }
   }
 }

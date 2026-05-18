@@ -9,7 +9,7 @@ export class DNSHealthMonitor {
   ];
 
   async runHealthChecks(): Promise<HealthReport> {
-    console.log('🏥 Running DNS Health Checks...\n');
+    console.info('🏥 Running DNS Health Checks...\n');
     
     const report: HealthReport = {
       timestamp: new Date().toISOString(),

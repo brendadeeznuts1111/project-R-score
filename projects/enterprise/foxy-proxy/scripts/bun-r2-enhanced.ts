@@ -24,7 +24,7 @@ const colors = {
 } as const;
 
 function colorLog(color: keyof typeof colors, message: string): void {
-  console.log(`${colors[color]}${message}${colors.reset}`);
+  console.info(`${colors[color]}${message}${colors.reset}`);
 }
 
 // Enhanced file upload with Content-Disposition
@@ -41,10 +41,10 @@ async function uploadFileEnhanced(
 
   colorLog("cyan", "🚀 Enhanced Bun R2 Upload Tool");
   colorLog("cyan", "===============================");
-  console.log("");
-  console.log(`📁 Local file: ${localPath}`);
-  console.log(`🌐 Bucket: ${config.bucketName}`);
-  console.log(`📝 Remote name: ${key}`);
+  console.info("");
+  console.info(`📁 Local file: ${localPath}`);
+  console.info(`🌐 Bucket: ${config.bucketName}`);
+  console.info(`📝 Remote name: ${key}`);
 
   // Build Content-Disposition message for display
   let contentDispositionMsg = "";
@@ -58,7 +58,7 @@ async function uploadFileEnhanced(
     colorLog("magenta", "🌐 Inline display: ENABLED");
   }
 
-  console.log("");
+  console.info("");
 
   try {
     const file = Bun.file(localPath);
@@ -87,26 +87,26 @@ async function uploadFileEnhanced(
 
     if (exitCode === 0) {
       colorLog("green", "✅ Upload successful!");
-      console.log("");
+      console.info("");
       colorLog("blue", "📊 Upload Details:");
-      console.log(`   • File: ${key}`);
-      console.log(`   • Size: ${fileSize} KB`);
-      console.log(`   • Bucket: ${config.bucketName}`);
+      console.info(`   • File: ${key}`);
+      console.info(`   • Size: ${fileSize} KB`);
+      console.info(`   • Bucket: ${config.bucketName}`);
 
       if (contentDispositionMsg) {
-        console.log(`   • Content-Disposition: ${contentDispositionMsg}`);
+        console.info(`   • Content-Disposition: ${contentDispositionMsg}`);
       }
 
-      console.log("");
+      console.info("");
       colorLog("blue", "🌐 Access URLs:");
-      console.log("   • Web Interface: http://localhost:5173");
-      console.log(`   • Direct URL: ${config.endpoint}/${config.bucketName}/${key}`);
+      console.info("   • Web Interface: http://localhost:5173");
+      console.info(`   • Direct URL: ${config.endpoint}/${config.bucketName}/${key}`);
 
       if (options.forceDownload) {
-        console.log("");
+        console.info("");
         colorLog("yellow", "💡 Download behavior: File will force download when accessed directly");
       } else if (options.inline) {
-        console.log("");
+        console.info("");
         colorLog(
           "yellow",
           "💡 Display behavior: File will display inline in browser when possible"
@@ -114,7 +114,7 @@ async function uploadFileEnhanced(
       }
     } else {
       colorLog("red", "❌ Upload failed:");
-      console.log(stderr);
+      console.info(stderr);
     }
   } catch (error) {
     colorLog("red", "❌ Upload failed: " + error);
@@ -136,26 +136,26 @@ async function uploadInline(localPath: string, remoteName?: string): Promise<voi
 function showHelp(): void {
   colorLog("cyan", "🚀 Enhanced Bun R2 Upload Tool");
   colorLog("cyan", "============================");
-  console.log("");
+  console.info("");
   colorLog("yellow", "Usage:");
-  console.log("   bun scripts/bun-r2-enhanced.ts <command> [options]");
-  console.log("");
+  console.info("   bun scripts/bun-r2-enhanced.ts <command> [options]");
+  console.info("");
   colorLog("yellow", "Commands:");
-  console.log("   upload <file> [name]           - Standard upload");
-  console.log("   download <file> [name]         - Force download behavior");
-  console.log("   inline <file> [name]           - Inline display behavior");
-  console.log("   help                           - Show this help");
-  console.log("");
+  console.info("   upload <file> [name]           - Standard upload");
+  console.info("   download <file> [name]         - Force download behavior");
+  console.info("   inline <file> [name]           - Inline display behavior");
+  console.info("   help                           - Show this help");
+  console.info("");
   colorLog("yellow", "Examples:");
-  console.log("   bun scripts/bun-r2-enhanced.ts upload ./report.pdf");
-  console.log("   bun scripts/bun-r2-enhanced.ts download ./document.pdf quarterly-report.pdf");
-  console.log("   bun scripts/bun-r2-enhanced.ts inline ./image.png gallery-photo.png");
-  console.log("");
+  console.info("   bun scripts/bun-r2-enhanced.ts upload ./report.pdf");
+  console.info("   bun scripts/bun-r2-enhanced.ts download ./document.pdf quarterly-report.pdf");
+  console.info("   bun scripts/bun-r2-enhanced.ts inline ./image.png gallery-photo.png");
+  console.info("");
   colorLog("blue", "💡 New Features:");
-  console.log("   • Content-Disposition support for download control");
-  console.log("   • Custom filename specification");
-  console.log("   • Inline vs download behavior");
-  console.log("   • Enhanced file handling with latest Bun APIs");
+  console.info("   • Content-Disposition support for download control");
+  console.info("   • Custom filename specification");
+  console.info("   • Inline vs download behavior");
+  console.info("   • Enhanced file handling with latest Bun APIs");
 }
 
 // Main execution

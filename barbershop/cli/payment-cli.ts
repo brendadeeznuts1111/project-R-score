@@ -84,13 +84,13 @@ function parseArgs(argv: string[]): ParsedArgs {
 }
 
 function header() {
-  console.log(color(`\n💳 Payment Gateway CLI v${VERSION}`, 'bright'));
-  console.log(color('═══════════════════════════════════════════', 'dim'));
+  console.info(color(`\n💳 Payment Gateway CLI v${VERSION}`, 'bright'));
+  console.info(color('═══════════════════════════════════════════', 'dim'));
 }
 
 function showHelp() {
   header();
-  console.log(`
+  console.info(`
 ${color('Usage:', 'bright')} payment <command> [subcommand] [options]
 
 ${color('Commands:', 'bright')}
@@ -190,7 +190,7 @@ async function showStatus(args: ParsedArgs) {
   ];
 
   if (format === 'json') {
-    console.log(JSON.stringify({
+    console.info(JSON.stringify({
       primary: gateways.primary || 'PayPal',
       supported: gateways.supported || ['PayPal', 'CashApp', 'Venmo'],
       unified_endpoint: gateways.unified_endpoint || 'POST /payment/process',
@@ -199,20 +199,20 @@ async function showStatus(args: ParsedArgs) {
     return;
   }
 
-  console.log();
-  console.log(color('Gateway Configuration:', 'bright'));
-  console.log(`  Primary: ${color(gateways.primary || 'PayPal', 'cyan')}`);
-  console.log(`  Supported: ${(gateways.supported || []).join(', ')}`);
-  console.log();
+  console.info();
+  console.info(color('Gateway Configuration:', 'bright'));
+  console.info(`  Primary: ${color(gateways.primary || 'PayPal', 'cyan')}`);
+  console.info(`  Supported: ${(gateways.supported || []).join(', ')}`);
+  console.info();
 
-  console.log(color('Gateway Status:', 'bright'));
+  console.info(color('Gateway Status:', 'bright'));
   statuses.forEach((g) => {
     const statusStr = g.enabled ? color('● ONLINE', 'green') : color('● OFFLINE', 'red');
     const typeStr = color(`[${g.type}]`, 'dim');
-    console.log(`  ${g.gateway.padEnd(10)} ${statusStr} ${typeStr}`);
-    console.log(`    Currency: ${g.currency}`);
-    console.log(`    Features: ${g.features}`);
-    console.log();
+    console.info(`  ${g.gateway.padEnd(10)} ${statusStr} ${typeStr}`);
+    console.info(`    Currency: ${g.currency}`);
+    console.info(`    Features: ${g.features}`);
+    console.info();
   });
 }
 
@@ -225,7 +225,7 @@ async function checkVelocity(args: ParsedArgs) {
 
   if (!userId) {
     console.error(color('Error: User ID required', 'red'));
-    console.log('Usage: payment velocity <user-id> [--amount <n>]');
+    console.info('Usage: payment velocity <user-id> [--amount <n>]');
     process.exit(1);
   }
 
@@ -242,33 +242,33 @@ async function checkVelocity(args: ParsedArgs) {
   velocity.highVelocity = velocity.velocity24h >= velocity.threshold;
 
   if (format === 'json') {
-    console.log(JSON.stringify(velocity, null, 2));
+    console.info(JSON.stringify(velocity, null, 2));
     return;
   }
 
-  console.log();
-  console.log(`${color('User:', 'bright')} ${userId}`);
-  console.log();
+  console.info();
+  console.info(`${color('User:', 'bright')} ${userId}`);
+  console.info();
 
-  console.log(color('Velocity Metrics:', 'bright'));
-  console.log(`  Recent Payments: ${velocity.recentPayments}`);
-  console.log(`  Last 24 Hours:   ${velocity.velocity24h} ${velocity.highVelocity ? color('⚠ HIGH', 'yellow') : color('✓ OK', 'green')}`);
-  console.log(`  Last 7 Days:     ${velocity.velocity7d}`);
-  console.log();
+  console.info(color('Velocity Metrics:', 'bright'));
+  console.info(`  Recent Payments: ${velocity.recentPayments}`);
+  console.info(`  Last 24 Hours:   ${velocity.velocity24h} ${velocity.highVelocity ? color('⚠ HIGH', 'yellow') : color('✓ OK', 'green')}`);
+  console.info(`  Last 7 Days:     ${velocity.velocity7d}`);
+  console.info();
 
   if (amount > 0) {
     const riskScore = velocity.highVelocity ? 0.6 : 0.1;
-    console.log(color('Risk Assessment:', 'bright'));
-    console.log(`  Amount:     $${amount.toFixed(2)}`);
-    console.log(`  Risk Score: ${(riskScore * 100).toFixed(0)}% ${riskScore > 0.5 ? color('⚠ ELEVATED', 'yellow') : color('✓ LOW', 'green')}`);
-    console.log();
+    console.info(color('Risk Assessment:', 'bright'));
+    console.info(`  Amount:     $${amount.toFixed(2)}`);
+    console.info(`  Risk Score: ${(riskScore * 100).toFixed(0)}% ${riskScore > 0.5 ? color('⚠ ELEVATED', 'yellow') : color('✓ LOW', 'green')}`);
+    console.info();
   }
 
   if (velocity.highVelocity) {
-    console.log(color('Recommendations:', 'yellow'));
-    console.log('  • Verify recent payment pattern');
-    console.log('  • Consider additional verification');
-    console.log('  • Review account history');
+    console.info(color('Recommendations:', 'yellow'));
+    console.info('  • Verify recent payment pattern');
+    console.info('  • Consider additional verification');
+    console.info('  • Review account history');
   }
 }
 
@@ -284,7 +284,7 @@ async function calculateRisk(args: ParsedArgs) {
 
   if (!userId) {
     console.error(color('Error: User ID required', 'red'));
-    console.log('Usage: payment risk <user-id> [--cashtag <c>] [--profile-photo <bool>]');
+    console.info('Usage: payment risk <user-id> [--cashtag <c>] [--profile-photo <bool>]');
     process.exit(1);
   }
 
@@ -303,7 +303,7 @@ async function calculateRisk(args: ParsedArgs) {
   const result = await NewAccountManager.detectNewAccount(userId, paymentData);
 
   if (format === 'json') {
-    console.log(JSON.stringify({
+    console.info(JSON.stringify({
       userId,
       isNew: result.isNew,
       riskScore: result.riskScore,
@@ -313,42 +313,42 @@ async function calculateRisk(args: ParsedArgs) {
     return;
   }
 
-  console.log();
-  console.log(`${color('User:', 'bright')} ${userId}`);
-  if (cashtag) console.log(`${color('Cashtag:', 'bright')} ${cashtag}`);
-  console.log();
+  console.info();
+  console.info(`${color('User:', 'bright')} ${userId}`);
+  if (cashtag) console.info(`${color('Cashtag:', 'bright')} ${cashtag}`);
+  console.info();
 
   // Risk Score Display
   const riskPct = Math.round(result.riskScore * 100);
   const riskColor = riskPct > 70 ? 'red' : riskPct > 40 ? 'yellow' : 'green';
   const riskLabel = riskPct > 70 ? 'HIGH' : riskPct > 40 ? 'MEDIUM' : 'LOW';
 
-  console.log(color('Risk Assessment:', 'bright'));
-  console.log(`  Is New Account: ${result.isNew ? color('YES', 'yellow') : color('NO', 'green')}`);
-  console.log(`  Risk Score:     ${riskPct}% ${color(`[${riskLabel}]`, riskColor)}`);
-  console.log();
+  console.info(color('Risk Assessment:', 'bright'));
+  console.info(`  Is New Account: ${result.isNew ? color('YES', 'yellow') : color('NO', 'green')}`);
+  console.info(`  Risk Score:     ${riskPct}% ${color(`[${riskLabel}]`, riskColor)}`);
+  console.info();
 
   // Profile indicators
-  console.log(color('Profile Indicators:', 'bright'));
-  console.log(`  Profile Photo:   ${hasProfilePhoto ? color('✓ Yes', 'green') : color('✗ No', 'red')}`);
-  console.log(`  Email Verified:  ${emailVerified ? color('✓ Yes', 'green') : color('✗ No', 'red')}`);
-  console.log(`  Amount:          $${amount.toFixed(2)}`);
-  console.log();
+  console.info(color('Profile Indicators:', 'bright'));
+  console.info(`  Profile Photo:   ${hasProfilePhoto ? color('✓ Yes', 'green') : color('✗ No', 'red')}`);
+  console.info(`  Email Verified:  ${emailVerified ? color('✓ Yes', 'green') : color('✗ No', 'red')}`);
+  console.info(`  Amount:          $${amount.toFixed(2)}`);
+  console.info();
 
   // Recommendations
-  console.log(color('Barber Recommendations:', 'bright'));
+  console.info(color('Barber Recommendations:', 'bright'));
   result.recommendations.forEach((rec) => {
-    console.log(`  • ${rec}`);
+    console.info(`  • ${rec}`);
   });
-  console.log();
+  console.info();
 
   // Fusion Adjustments
   if (result.fusionAdjustments.flags?.length) {
-    console.log(color('Fusion Adjustments:', 'bright'));
-    console.log(`  Tier: ${result.fusionAdjustments.tier || 'unchanged'}`);
-    console.log(`  Flags: ${result.fusionAdjustments.flags.join(', ')}`);
+    console.info(color('Fusion Adjustments:', 'bright'));
+    console.info(`  Tier: ${result.fusionAdjustments.tier || 'unchanged'}`);
+    console.info(`  Flags: ${result.fusionAdjustments.flags.join(', ')}`);
     if (result.fusionAdjustments.depositLimit) {
-      console.log(`  Deposit Limit: $${result.fusionAdjustments.depositLimit}`);
+      console.info(`  Deposit Limit: $${result.fusionAdjustments.depositLimit}`);
     }
   }
 }
@@ -361,7 +361,7 @@ async function classifyCustomer(args: ParsedArgs) {
 
   if (!userId) {
     console.error(color('Error: User ID required', 'red'));
-    console.log('Usage: payment classify <user-id>');
+    console.info('Usage: payment classify <user-id>');
     process.exit(1);
   }
 
@@ -375,13 +375,13 @@ async function classifyCustomer(args: ParsedArgs) {
   const classification = await OptimizedFusionEngine.classifyCustomer(userId, mockData);
 
   if (format === 'json') {
-    console.log(JSON.stringify(classification, null, 2));
+    console.info(JSON.stringify(classification, null, 2));
     return;
   }
 
-  console.log();
-  console.log(`${color('Customer:', 'bright')} ${userId}`);
-  console.log();
+  console.info();
+  console.info(`${color('Customer:', 'bright')} ${userId}`);
+  console.info();
 
   // Tier with color
   const tierColors: Record<string, keyof typeof c> = {
@@ -391,20 +391,20 @@ async function classifyCustomer(args: ParsedArgs) {
     casual: 'dim',
   };
 
-  console.log(color('Classification:', 'bright'));
-  console.log(`  Tier:       ${color(classification.tier, tierColors[classification.tier] || 'white')}`);
-  console.log(`  Confidence: ${Math.round(classification.confidence * 100)}%`);
-  console.log(`  Age Factor: ${classification.accountAgeFactor}`);
-  console.log();
+  console.info(color('Classification:', 'bright'));
+  console.info(`  Tier:       ${color(classification.tier, tierColors[classification.tier] || 'white')}`);
+  console.info(`  Confidence: ${Math.round(classification.confidence * 100)}%`);
+  console.info(`  Age Factor: ${classification.accountAgeFactor}`);
+  console.info();
 
-  console.log(color('Next Best Action:', 'bright'));
-  console.log(`  ${classification.nextBestAction}`);
-  console.log();
+  console.info(color('Next Best Action:', 'bright'));
+  console.info(`  ${classification.nextBestAction}`);
+  console.info();
 
   if (classification.barberAlerts.length) {
-    console.log(color('Barber Alerts:', 'bright'));
+    console.info(color('Barber Alerts:', 'bright'));
     classification.barberAlerts.forEach((alert) => {
-      console.log(`  ${alert}`);
+      console.info(`  ${alert}`);
     });
   }
 }
@@ -447,7 +447,7 @@ async function listGateways(args: ParsedArgs) {
   ];
 
   if (format === 'json') {
-    console.log(JSON.stringify({
+    console.info(JSON.stringify({
       unified_endpoint: (unified as { endpoint?: string }).endpoint || 'POST /payment/process',
       default_gateway: (unified as { routing?: { default?: string } }).routing?.default || 'paypal',
       auto_selection: (unified as { features?: { auto_gateway_selection?: boolean } }).features?.auto_gateway_selection ?? true,
@@ -456,24 +456,24 @@ async function listGateways(args: ParsedArgs) {
     return;
   }
 
-  console.log();
-  console.log(color('Configured Payment Gateways:', 'bright'));
-  console.log();
+  console.info();
+  console.info(color('Configured Payment Gateways:', 'bright'));
+  console.info();
 
   gateways.forEach((g) => {
     const status = g.enabled ? color('● ENABLED', 'green') : color('● DISABLED', 'red');
-    console.log(`  ${g.name.padEnd(10)} ${status}`);
-    console.log(`    Priority:         ${g.priority}`);
-    console.log(`    Buyer Protection: ${g.buyerProtection ? color('Yes', 'green') : color('No', 'red')}`);
-    console.log(`    Instant Transfer: ${g.instantTransfer ? color('Yes', 'green') : color('No', 'red')}`);
-    console.log(`    Best For:         ${g.bestFor}`);
-    console.log();
+    console.info(`  ${g.name.padEnd(10)} ${status}`);
+    console.info(`    Priority:         ${g.priority}`);
+    console.info(`    Buyer Protection: ${g.buyerProtection ? color('Yes', 'green') : color('No', 'red')}`);
+    console.info(`    Instant Transfer: ${g.instantTransfer ? color('Yes', 'green') : color('No', 'red')}`);
+    console.info(`    Best For:         ${g.bestFor}`);
+    console.info();
   });
 
-  console.log(color('Unified Endpoint:', 'bright'));
-  console.log(`  ${(unified as { endpoint?: string }).endpoint || 'POST /payment/process'}`);
-  console.log(`  Default: ${(unified as { routing?: { default?: string } }).routing?.default || 'paypal'}`);
-  console.log(`  Auto Selection: ${(unified as { features?: { auto_gateway_selection?: boolean } }).features?.auto_gateway_selection ?? true ? 'Enabled' : 'Disabled'}`);
+  console.info(color('Unified Endpoint:', 'bright'));
+  console.info(`  ${(unified as { endpoint?: string }).endpoint || 'POST /payment/process'}`);
+  console.info(`  Default: ${(unified as { routing?: { default?: string } }).routing?.default || 'paypal'}`);
+  console.info(`  Auto Selection: ${(unified as { features?: { auto_gateway_selection?: boolean } }).features?.auto_gateway_selection ?? true ? 'Enabled' : 'Disabled'}`);
 }
 
 // ==================== PAYMENT TYPES ====================
@@ -515,20 +515,20 @@ async function showPaymentTypes(args: ParsedArgs) {
   ];
 
   if (format === 'json') {
-    console.log(JSON.stringify(types, null, 2));
+    console.info(JSON.stringify(types, null, 2));
     return;
   }
 
-  console.log();
-  console.log(color('Supported Payment Types:', 'bright'));
-  console.log();
+  console.info();
+  console.info(color('Supported Payment Types:', 'bright'));
+  console.info();
 
   types.forEach((t) => {
-    console.log(`  ${color(t.type.toUpperCase(), 'cyan')}`);
-    console.log(`    Description: ${t.description}`);
-    console.log(`    Gateways:    ${t.gateways.join(', ')}`);
-    console.log(`    Max Amount:  ${t.maxAmount}`);
-    console.log();
+    console.info(`  ${color(t.type.toUpperCase(), 'cyan')}`);
+    console.info(`    Description: ${t.description}`);
+    console.info(`    Gateways:    ${t.gateways.join(', ')}`);
+    console.info(`    Max Amount:  ${t.maxAmount}`);
+    console.info();
   });
 }
 
@@ -544,7 +544,7 @@ async function detectNewAccount(args: ParsedArgs) {
 
   if (!userId) {
     console.error(color('Error: User ID required', 'red'));
-    console.log('Usage: payment detect-new <user-id> [--cashtag <c>] [--amount <n>]');
+    console.info('Usage: payment detect-new <user-id> [--cashtag <c>] [--amount <n>]');
     process.exit(1);
   }
 
@@ -562,7 +562,7 @@ async function detectNewAccount(args: ParsedArgs) {
   const result = await NewAccountManager.detectNewAccount(userId, paymentData);
 
   if (format === 'json') {
-    console.log(JSON.stringify({
+    console.info(JSON.stringify({
       userId,
       cashtag,
       amount,
@@ -571,41 +571,41 @@ async function detectNewAccount(args: ParsedArgs) {
     return;
   }
 
-  console.log();
-  console.log(`${color('CashApp User:', 'bright')} ${cashtag}`);
-  console.log(`${color('User ID:', 'bright')} ${userId}`);
-  console.log(`${color('Amount:', 'bright')} $${amount.toFixed(2)}`);
-  console.log();
+  console.info();
+  console.info(`${color('CashApp User:', 'bright')} ${cashtag}`);
+  console.info(`${color('User ID:', 'bright')} ${userId}`);
+  console.info(`${color('Amount:', 'bright')} $${amount.toFixed(2)}`);
+  console.info();
 
   // New Account Detection
   const isNewStr = result.isNew ? color('⚠ NEW ACCOUNT', 'yellow') : color('✓ ESTABLISHED', 'green');
-  console.log(color('Detection Result:', 'bright'));
-  console.log(`  Status:     ${isNewStr}`);
-  console.log(`  Risk Score: ${Math.round(result.riskScore * 100)}%`);
-  console.log();
+  console.info(color('Detection Result:', 'bright'));
+  console.info(`  Status:     ${isNewStr}`);
+  console.info(`  Risk Score: ${Math.round(result.riskScore * 100)}%`);
+  console.info();
 
   // Recommendations
   if (result.recommendations.length) {
-    console.log(color('Barber Actions:', 'bright'));
+    console.info(color('Barber Actions:', 'bright'));
     result.recommendations.forEach((rec) => {
-      console.log(`  • ${rec}`);
+      console.info(`  • ${rec}`);
     });
-    console.log();
+    console.info();
   }
 
   // Pro Tips for new accounts
   if (result.isNew) {
-    console.log(color('Pro Tips for New Accounts:', 'bright'));
-    console.log('  1. Ask: "Is this your first time using CashApp with us?"');
-    console.log('  2. Show payment notification on your phone');
-    console.log('  3. Book next appointment BEFORE they leave');
-    console.log();
+    console.info(color('Pro Tips for New Accounts:', 'bright'));
+    console.info('  1. Ask: "Is this your first time using CashApp with us?"');
+    console.info('  2. Show payment notification on your phone');
+    console.info('  3. Book next appointment BEFORE they leave');
+    console.info();
 
-    console.log(color('Fusion Adjustments:', 'dim'));
-    console.log(`  Tier: ${result.fusionAdjustments.tier || 'unchanged'}`);
-    console.log(`  Bonus Rate: ${result.fusionAdjustments.bonusRate ? `${(result.fusionAdjustments.bonusRate * 100).toFixed(0)}%` : 'default'}`);
+    console.info(color('Fusion Adjustments:', 'dim'));
+    console.info(`  Tier: ${result.fusionAdjustments.tier || 'unchanged'}`);
+    console.info(`  Bonus Rate: ${result.fusionAdjustments.bonusRate ? `${(result.fusionAdjustments.bonusRate * 100).toFixed(0)}%` : 'default'}`);
     if (result.fusionAdjustments.depositLimit) {
-      console.log(`  Deposit Limit: $${result.fusionAdjustments.depositLimit}`);
+      console.info(`  Deposit Limit: $${result.fusionAdjustments.depositLimit}`);
     }
   }
 }
@@ -620,49 +620,49 @@ async function showLimits(args: ParsedArgs) {
 
   if (format === 'json') {
     if (tier === 'all') {
-      console.log(JSON.stringify(tiers, null, 2));
+      console.info(JSON.stringify(tiers, null, 2));
     } else if (tiers[tier]) {
-      console.log(JSON.stringify({ tier, ...tiers[tier] }, null, 2));
+      console.info(JSON.stringify({ tier, ...tiers[tier] }, null, 2));
     } else {
       console.error(color(`Error: Unknown tier "${tier}"`, 'red'));
-      console.log(`Valid tiers: ${Object.keys(tiers).join(', ')}`);
+      console.info(`Valid tiers: ${Object.keys(tiers).join(', ')}`);
       process.exit(1);
     }
     return;
   }
 
-  console.log();
+  console.info();
 
   if (tier === 'all') {
-    console.log(color('CashApp Limits by Account Tier:', 'bright'));
-    console.log();
+    console.info(color('CashApp Limits by Account Tier:', 'bright'));
+    console.info();
 
     Object.entries(tiers).forEach(([name, limits]) => {
       const tierColor = name === 'new' ? 'yellow' : name === 'recent' ? 'cyan' : 'green';
-      console.log(`  ${color(name.toUpperCase(), tierColor)} ${color(`(< ${name === 'new' ? '30' : name === 'recent' ? '90' : '90+'} days)`, 'dim')}`);
-      console.log(`    Daily Limit:   $${limits.dailyLimit.toLocaleString()}`);
-      console.log(`    Weekly Limit:  $${limits.weeklyLimit.toLocaleString()}`);
-      console.log(`    Instant:       ${limits.instantAvailability ? color('Available', 'green') : color('1-3 days', 'yellow')}`);
-      console.log(`    Tips:`);
+      console.info(`  ${color(name.toUpperCase(), tierColor)} ${color(`(< ${name === 'new' ? '30' : name === 'recent' ? '90' : '90+'} days)`, 'dim')}`);
+      console.info(`    Daily Limit:   $${limits.dailyLimit.toLocaleString()}`);
+      console.info(`    Weekly Limit:  $${limits.weeklyLimit.toLocaleString()}`);
+      console.info(`    Instant:       ${limits.instantAvailability ? color('Available', 'green') : color('1-3 days', 'yellow')}`);
+      console.info(`    Tips:`);
       limits.tips.forEach((tip) => {
-        console.log(`      • ${tip}`);
+        console.info(`      • ${tip}`);
       });
-      console.log();
+      console.info();
     });
   } else if (tiers[tier]) {
     const limits = tiers[tier];
-    console.log(color(`CashApp Limits (${tier.toUpperCase()}):`, 'bright'));
-    console.log(`  Daily Limit:   $${limits.dailyLimit.toLocaleString()}`);
-    console.log(`  Weekly Limit:  $${limits.weeklyLimit.toLocaleString()}`);
-    console.log(`  Instant:       ${limits.instantAvailability ? color('Available', 'green') : color('Not available (1-3 days)', 'yellow')}`);
-    console.log();
-    console.log(color('Pro Tips:', 'bright'));
+    console.info(color(`CashApp Limits (${tier.toUpperCase()}):`, 'bright'));
+    console.info(`  Daily Limit:   $${limits.dailyLimit.toLocaleString()}`);
+    console.info(`  Weekly Limit:  $${limits.weeklyLimit.toLocaleString()}`);
+    console.info(`  Instant:       ${limits.instantAvailability ? color('Available', 'green') : color('Not available (1-3 days)', 'yellow')}`);
+    console.info();
+    console.info(color('Pro Tips:', 'bright'));
     limits.tips.forEach((tip, i) => {
-      console.log(`  ${i + 1}. ${tip}`);
+      console.info(`  ${i + 1}. ${tip}`);
     });
   } else {
     console.error(color(`Error: Unknown tier "${tier}"`, 'red'));
-    console.log(`Valid tiers: ${Object.keys(tiers).join(', ')}`);
+    console.info(`Valid tiers: ${Object.keys(tiers).join(', ')}`);
     process.exit(1);
   }
 }
@@ -700,20 +700,20 @@ async function showProTips(args: ParsedArgs) {
   ];
 
   if (format === 'json') {
-    console.log(JSON.stringify(tips, null, 2));
+    console.info(JSON.stringify(tips, null, 2));
     return;
   }
 
-  console.log();
-  console.log(color('Barber Pro Tips:', 'bright'));
-  console.log();
+  console.info();
+  console.info(color('Barber Pro Tips:', 'bright'));
+  console.info();
 
   tips.forEach((t) => {
-    console.log(`  ${color(t.category.toUpperCase(), 'cyan')}`);
-    console.log(`    Tip:     ${t.tip}`);
-    console.log(`    Script:  "${color(t.script, 'dim')}"`);
-    console.log(`    Purpose: ${t.purpose}`);
-    console.log();
+    console.info(`  ${color(t.category.toUpperCase(), 'cyan')}`);
+    console.info(`    Tip:     ${t.tip}`);
+    console.info(`    Script:  "${color(t.script, 'dim')}"`);
+    console.info(`    Purpose: ${t.purpose}`);
+    console.info();
   });
 }
 
@@ -723,30 +723,30 @@ async function showCheatSheet(args: ParsedArgs) {
   const format = (args.flags.format as string) || 'table';
 
   if (format === 'json') {
-    console.log(JSON.stringify(BarberCheatSheet, null, 2));
+    console.info(JSON.stringify(BarberCheatSheet, null, 2));
     return;
   }
 
-  console.log();
-  console.log(color('Barber Cheat Sheet:', 'bright'));
-  console.log();
+  console.info();
+  console.info(color('Barber Cheat Sheet:', 'bright'));
+  console.info();
 
-  console.log(color('Green Flags (Good):', 'green'));
+  console.info(color('Green Flags (Good):', 'green'));
   BarberCheatSheet.greenFlags.forEach((flag) => {
-    console.log(`  ${flag}`);
+    console.info(`  ${flag}`);
   });
-  console.log();
+  console.info();
 
-  console.log(color('Red Flags (Caution):', 'red'));
+  console.info(color('Red Flags (Caution):', 'red'));
   BarberCheatSheet.redFlags.forEach((flag) => {
-    console.log(`  ${flag}`);
+    console.info(`  ${flag}`);
   });
-  console.log();
+  console.info();
 
-  console.log(color('Scripts:', 'bright'));
+  console.info(color('Scripts:', 'bright'));
   Object.entries(BarberCheatSheet.scripts).forEach(([key, script]) => {
-    console.log(`  ${key.charAt(0).toUpperCase() + key.slice(1)}:`);
-    console.log(`    "${color(script, 'dim')}"`);
+    console.info(`  ${key.charAt(0).toUpperCase() + key.slice(1)}:`);
+    console.info(`    "${color(script, 'dim')}"`);
   });
 }
 
@@ -758,30 +758,30 @@ async function showConfig(args: ParsedArgs) {
   const payment = manifest.payment || {};
 
   if (format === 'json') {
-    console.log(JSON.stringify(payment, null, 2));
+    console.info(JSON.stringify(payment, null, 2));
     return;
   }
 
-  console.log();
-  console.log(color('Payment Configuration:', 'bright'));
-  console.log();
+  console.info();
+  console.info(color('Payment Configuration:', 'bright'));
+  console.info();
 
-  console.log(color('Gateways:', 'bright'));
-  console.log(`  Primary:   ${(payment.gateways as { primary?: string })?.primary || 'PayPal'}`);
-  console.log(`  Supported: ${((payment.gateways as { supported?: string[] })?.supported || []).join(', ')}`);
-  console.log(`  Unified:   ${(payment.gateways as { unified_endpoint?: string })?.unified_endpoint || 'POST /payment/process'}`);
-  console.log();
+  console.info(color('Gateways:', 'bright'));
+  console.info(`  Primary:   ${(payment.gateways as { primary?: string })?.primary || 'PayPal'}`);
+  console.info(`  Supported: ${((payment.gateways as { supported?: string[] })?.supported || []).join(', ')}`);
+  console.info(`  Unified:   ${(payment.gateways as { unified_endpoint?: string })?.unified_endpoint || 'POST /payment/process'}`);
+  console.info();
 
-  console.log(color('Risk Scoring:', 'bright'));
+  console.info(color('Risk Scoring:', 'bright'));
   const riskConfig = (payment.cashapp as { risk_scoring?: Record<string, unknown> })?.risk_scoring || {};
-  console.log(`  Enabled:           ${(riskConfig.enabled ?? true) ? color('Yes', 'green') : color('No', 'red')}`);
-  console.log(`  High Risk Threshold: ${(riskConfig.high_risk_threshold as number || 0.7) * 100}%`);
-  console.log(`  New Account Days:  ${riskConfig.new_account_threshold_days || 30}`);
-  console.log();
+  console.info(`  Enabled:           ${(riskConfig.enabled ?? true) ? color('Yes', 'green') : color('No', 'red')}`);
+  console.info(`  High Risk Threshold: ${(riskConfig.high_risk_threshold as number || 0.7) * 100}%`);
+  console.info(`  New Account Days:  ${riskConfig.new_account_threshold_days || 30}`);
+  console.info();
 
-  console.log(color('Customer Tiers:', 'bright'));
+  console.info(color('Customer Tiers:', 'bright'));
   const tiers = (payment.cashapp as { classification?: { tiers?: string[] } })?.classification?.tiers || [];
-  console.log(`  Tiers: ${tiers.join(' → ')}`);
+  console.info(`  Tiers: ${tiers.join(' → ')}`);
 }
 
 // ==================== ROUTING ====================
@@ -793,7 +793,7 @@ async function showRouting(args: ParsedArgs) {
   const rules = (unified as { routing?: { rules?: Array<Record<string, unknown>> } })?.routing?.rules || [];
 
   if (format === 'json') {
-    console.log(JSON.stringify({
+    console.info(JSON.stringify({
       strategy: (unified as { routing?: { strategy?: string } })?.routing?.strategy || 'smart_routing',
       default: (unified as { routing?: { default?: string } })?.routing?.default || 'paypal',
       rules,
@@ -801,25 +801,25 @@ async function showRouting(args: ParsedArgs) {
     return;
   }
 
-  console.log();
-  console.log(color('Smart Routing Rules:', 'bright'));
-  console.log(`  Strategy: ${(unified as { routing?: { strategy?: string } })?.routing?.strategy || 'smart_routing'}`);
-  console.log(`  Default:  ${(unified as { routing?: { default?: string } })?.routing?.default || 'paypal'}`);
-  console.log();
+  console.info();
+  console.info(color('Smart Routing Rules:', 'bright'));
+  console.info(`  Strategy: ${(unified as { routing?: { strategy?: string } })?.routing?.strategy || 'smart_routing'}`);
+  console.info(`  Default:  ${(unified as { routing?: { default?: string } })?.routing?.default || 'paypal'}`);
+  console.info();
 
-  console.log(color('Routing Rules:', 'bright'));
+  console.info(color('Routing Rules:', 'bright'));
   rules.forEach((rule: Record<string, unknown>, i: number) => {
     const priority = rule.priority ? `[P${rule.priority}]` : '';
-    console.log(`  ${i + 1}. ${priority} ${color(rule.condition as string, 'dim')}`);
-    console.log(`     → ${color(rule.gateway as string, 'cyan')} ${rule.tier ? `(${rule.tier})` : ''}`);
-    console.log();
+    console.info(`  ${i + 1}. ${priority} ${color(rule.condition as string, 'dim')}`);
+    console.info(`     → ${color(rule.gateway as string, 'cyan')} ${rule.tier ? `(${rule.tier})` : ''}`);
+    console.info();
   });
 
-  console.log(color('Routing Logic:', 'dim'));
-  console.log('  1. Amount < $50 + CashApp preferred → CashApp');
-  console.log('  2. Amount ≥ $100 OR Venmo preferred → Venmo');
-  console.log('  3. New account + high amount → PayPal (buyer protection)');
-  console.log('  4. Split payment → Venmo');
+  console.info(color('Routing Logic:', 'dim'));
+  console.info('  1. Amount < $50 + CashApp preferred → CashApp');
+  console.info('  2. Amount ≥ $100 OR Venmo preferred → Venmo');
+  console.info('  3. New account + high amount → PayPal (buyer protection)');
+  console.info('  4. Split payment → Venmo');
 }
 
 // ==================== BENCHMARK ====================
@@ -830,7 +830,7 @@ async function listEntities(args: ParsedArgs) {
 
   if (!entityType || !['barbers', 'customers'].includes(entityType)) {
     console.error(color('Error: Entity type required (barbers|customers)', 'red'));
-    console.log('Usage: payment list <barbers|customers>');
+    console.info('Usage: payment list <barbers|customers>');
     process.exit(1);
   }
 
@@ -845,34 +845,34 @@ async function listEntities(args: ParsedArgs) {
     ];
 
     if (format === 'json') {
-      console.log(JSON.stringify(barbers, null, 2));
+      console.info(JSON.stringify(barbers, null, 2));
       return;
     }
 
-    console.log();
-    console.log(color('╔══════════════════════════════════════════════════════════════════════╗', 'bright'));
-    console.log(color('║                          BARBERS LIST                                ║', 'bright'));
-    console.log(color('╚══════════════════════════════════════════════════════════════════════╝', 'bright'));
-    console.log();
+    console.info();
+    console.info(color('╔══════════════════════════════════════════════════════════════════════╗', 'bright'));
+    console.info(color('║                          BARBERS LIST                                ║', 'bright'));
+    console.info(color('╚══════════════════════════════════════════════════════════════════════╝', 'bright'));
+    console.info();
 
     barbers.forEach((b, i) => {
       const status = b.status === 'active' ? '🟢' : '⚪';
-      console.log(`  ${i + 1}. ${status} ${color(b.name, 'cyan')} (${color(b.code, 'yellow')})`);
-      console.log(`     📧 ${color(b.email, 'dim')} | 📱 ${b.phone}`);
-      console.log(`     💵 Commission: ${(b.commission_rate * 100).toFixed(0)}% | Skills: ${b.skills.join(', ')}`);
-      console.log(`     🏪 ${color(b.shop, 'magenta')} | 📍 ${b.location}`);
-      console.log(`     🗺️  Zip: ${b.zipcode} | Lat,Lng: ${b.geocode}`);
-      console.log(`     💳 Payment Apps:`);
-      console.log(`        CashApp: ${color(b.cashapp, 'green')} | Venmo: ${color(b.venmo, 'blue')} | PayPal: ${color(b.paypal, 'blue')}`);
-      console.log(`     📊 Stats: 💰 ${b.total_payments} payments | 🎁 $${b.total_tips.toFixed(2)} tips | 🤝 ${b.referrals_sent} referrals sent`);
-      console.log();
+      console.info(`  ${i + 1}. ${status} ${color(b.name, 'cyan')} (${color(b.code, 'yellow')})`);
+      console.info(`     📧 ${color(b.email, 'dim')} | 📱 ${b.phone}`);
+      console.info(`     💵 Commission: ${(b.commission_rate * 100).toFixed(0)}% | Skills: ${b.skills.join(', ')}`);
+      console.info(`     🏪 ${color(b.shop, 'magenta')} | 📍 ${b.location}`);
+      console.info(`     🗺️  Zip: ${b.zipcode} | Lat,Lng: ${b.geocode}`);
+      console.info(`     💳 Payment Apps:`);
+      console.info(`        CashApp: ${color(b.cashapp, 'green')} | Venmo: ${color(b.venmo, 'blue')} | PayPal: ${color(b.paypal, 'blue')}`);
+      console.info(`     📊 Stats: 💰 ${b.total_payments} payments | 🎁 $${b.total_tips.toFixed(2)} tips | 🤝 ${b.referrals_sent} referrals sent`);
+      console.info();
     });
 
     const activeCount = barbers.filter(b => b.status === 'active').length;
     const totalPayments = barbers.reduce((sum, b) => sum + b.total_payments, 0);
     const totalTips = barbers.reduce((sum, b) => sum + b.total_tips, 0);
     const totalReferrals = barbers.reduce((sum, b) => sum + b.referrals_sent, 0);
-    console.log(color(`  Total: ${barbers.length} barbers (${activeCount} active) | ${totalPayments} payments | $${totalTips.toFixed(2)} tips | ${totalReferrals} referrals`, 'dim'));
+    console.info(color(`  Total: ${barbers.length} barbers (${activeCount} active) | ${totalPayments} payments | $${totalTips.toFixed(2)} tips | ${totalReferrals} referrals`, 'dim'));
     return;
   }
 
@@ -887,50 +887,50 @@ async function listEntities(args: ParsedArgs) {
     ];
 
     if (format === 'json') {
-      console.log(JSON.stringify(customers, null, 2));
+      console.info(JSON.stringify(customers, null, 2));
       return;
     }
 
-    console.log();
-    console.log(color('╔══════════════════════════════════════════════════════════════════════╗', 'bright'));
-    console.log(color('║                         CUSTOMERS LIST                               ║', 'bright'));
-    console.log(color('╚══════════════════════════════════════════════════════════════════════╝', 'bright'));
-    console.log();
+    console.info();
+    console.info(color('╔══════════════════════════════════════════════════════════════════════╗', 'bright'));
+    console.info(color('║                         CUSTOMERS LIST                               ║', 'bright'));
+    console.info(color('╚══════════════════════════════════════════════════════════════════════╝', 'bright'));
+    console.info();
 
     customers.forEach((c, i) => {
       const tierIcon = c.tier === 'vip' ? '⭐' : c.tier === 'regular' ? '🔵' : c.tier === 'casual' ? '🟡' : '🆕';
       const tierColor = c.tier === 'vip' ? 'magenta' : c.tier === 'regular' ? 'blue' : c.tier === 'casual' ? 'yellow' : 'dim';
-      console.log(`  ${i + 1}. ${tierIcon} ${color(c.name, 'cyan')} (${color(c.id, 'dim')})`);
-      console.log(`     📧 ${color(c.email, 'dim')} | 📱 ${c.phone}`);
-      console.log(`     Tier: ${color(c.tier.toUpperCase(), tierColor)} | Visits: ${c.visits} | Total Spent: $${c.total_spent.toFixed(2)}`);
-      console.log(`     📊 Stats: 💰 ${c.total_payments} payments | 🎁 $${c.total_tips.toFixed(2)} tips`);
-      console.log(`     🏪 Home Shop: ${color(c.home_shop, 'magenta')} | 📍 ${c.address}`);
-      console.log(`     🗺️  Zip: ${c.zipcode} | Lat,Lng: ${c.geocode}`);
-      console.log(`     Preferred Barber: ${c.preferred_barber ? color(c.preferred_barber, 'yellow') : 'None'}`);
-      console.log(`     💳 Payment Apps:`);
+      console.info(`  ${i + 1}. ${tierIcon} ${color(c.name, 'cyan')} (${color(c.id, 'dim')})`);
+      console.info(`     📧 ${color(c.email, 'dim')} | 📱 ${c.phone}`);
+      console.info(`     Tier: ${color(c.tier.toUpperCase(), tierColor)} | Visits: ${c.visits} | Total Spent: $${c.total_spent.toFixed(2)}`);
+      console.info(`     📊 Stats: 💰 ${c.total_payments} payments | 🎁 $${c.total_tips.toFixed(2)} tips`);
+      console.info(`     🏪 Home Shop: ${color(c.home_shop, 'magenta')} | 📍 ${c.address}`);
+      console.info(`     🗺️  Zip: ${c.zipcode} | Lat,Lng: ${c.geocode}`);
+      console.info(`     Preferred Barber: ${c.preferred_barber ? color(c.preferred_barber, 'yellow') : 'None'}`);
+      console.info(`     💳 Payment Apps:`);
       const payments = [];
       if (c.cashapp) payments.push(`CashApp: ${color(c.cashapp, 'green')}`);
       if (c.venmo) payments.push(`Venmo: ${color(c.venmo, 'blue')}`);
       if (c.paypal) payments.push(`PayPal: ${color(c.paypal, 'blue')}`);
-      console.log(`        ${payments.join(' | ') || color('None configured', 'dim')}`);
+      console.info(`        ${payments.join(' | ') || color('None configured', 'dim')}`);
       if (c.referred_by) {
-        console.log(`     🤝 Referred by: ${color(c.referred_by, 'cyan')} | Referrals made: ${c.referrals_made}`);
+        console.info(`     🤝 Referred by: ${color(c.referred_by, 'cyan')} | Referrals made: ${c.referrals_made}`);
       } else if (c.referrals_made > 0) {
-        console.log(`     🤝 Referrals made: ${c.referrals_made}`);
+        console.info(`     🤝 Referrals made: ${c.referrals_made}`);
       }
-      console.log();
+      console.info();
     });
 
     const totalPayments = customers.reduce((sum, c) => sum + c.total_payments, 0);
     const totalTips = customers.reduce((sum, c) => sum + c.total_tips, 0);
     const totalReferrals = customers.reduce((sum, c) => sum + c.referrals_made, 0);
-    console.log(color(`  Total: ${customers.length} customers | ${totalPayments} payments | $${totalTips.toFixed(2)} tips | ${totalReferrals} referrals`, 'dim'));
+    console.info(color(`  Total: ${customers.length} customers | ${totalPayments} payments | $${totalTips.toFixed(2)} tips | ${totalReferrals} referrals`, 'dim'));
   }
 }
 
 async function benchmark() {
   header();
-  console.log(color('\nRunning payment benchmarks...\n', 'yellow'));
+  console.info(color('\nRunning payment benchmarks...\n', 'yellow'));
 
   const b = async (name: string, fn: () => void | Promise<void>, iter = 1000) => {
     // Warmup
@@ -945,7 +945,7 @@ async function benchmark() {
     const opsFormatted = ops.toLocaleString().padStart(10);
     const status = ops >= 10000 ? color('✓', 'green') : color('○', 'dim');
 
-    console.log(`  ${name.padEnd(25)} ${opsFormatted} ops/s ${status}`);
+    console.info(`  ${name.padEnd(25)} ${opsFormatted} ops/s ${status}`);
     return ops;
   };
 
@@ -966,14 +966,14 @@ async function benchmark() {
 
   const avg = Math.round(results.reduce((a, b) => a + b, 0) / results.length);
 
-  console.log(`\n${color('Average:', 'bright')} ${avg.toLocaleString()} ops/s`);
+  console.info(`\n${color('Average:', 'bright')} ${avg.toLocaleString()} ops/s`);
 
   const targetOps = 10000;
   if (avg >= targetOps) {
-    console.log(color(`✓ EXCEEDS TARGET (${targetOps.toLocaleString()} ops/s)`, 'green'));
+    console.info(color(`✓ EXCEEDS TARGET (${targetOps.toLocaleString()} ops/s)`, 'green'));
   } else {
     const pct = Math.round((avg / targetOps) * 100);
-    console.log(color(`○ ${pct}% of target (${targetOps.toLocaleString()} ops/s)`, 'yellow'));
+    console.info(color(`○ ${pct}% of target (${targetOps.toLocaleString()} ops/s)`, 'yellow'));
   }
 }
 
@@ -983,18 +983,18 @@ async function kimiShellExecute(args: ParsedArgs) {
   const subcommand = args.subcommand || 'status';
   const format = (args.flags.format as string) || 'table';
   
-  console.log();
-  console.log(color('╔══════════════════════════════════════════════════════════════╗', 'bright'));
-  console.log(color('║                  KIMI SHELL INTEGRATION                      ║', 'bright'));
-  console.log(color('╚══════════════════════════════════════════════════════════════╝', 'bright'));
-  console.log();
+  console.info();
+  console.info(color('╔══════════════════════════════════════════════════════════════╗', 'bright'));
+  console.info(color('║                  KIMI SHELL INTEGRATION                      ║', 'bright'));
+  console.info(color('╚══════════════════════════════════════════════════════════════╝', 'bright'));
+  console.info();
   
   // Check if running in Kimi Shell environment
   const isKimiShell = !!process.env.KIMI_SHELL || !!process.env.KIMI_CLI;
   
   if (isKimiShell) {
-    console.log(color('✓ Running in Kimi Shell environment', 'green'));
-    console.log();
+    console.info(color('✓ Running in Kimi Shell environment', 'green'));
+    console.info();
   }
   
   // Execute the requested command
@@ -1023,36 +1023,36 @@ async function kimiShellExecute(args: ParsedArgs) {
       break;
     case 'help':
     default:
-      console.log(color('Kimi Shell Commands:', 'bright'));
-      console.log('  kimi barbers     - List all barbers with location data');
-      console.log('  kimi customers   - List all customers with location data');
-      console.log('  kimi status      - Show payment gateway status');
-      console.log('  kimi gateways    - List configured gateways');
-      console.log('  kimi risk <user> - Calculate risk for user');
-      console.log('  kimi classify <user> - Classify customer tier');
-      console.log('  kimi routing     - Show smart routing rules');
-      console.log('  kimi config      - Show payment configuration');
-      console.log();
-      console.log(color('Environment Variables:', 'bright'));
-      console.log('  KIMI_SHELL - Set when running in Kimi Shell');
-      console.log('  KIMI_CLI   - Set when running via Kimi CLI');
-      console.log('  R2_PROFILE - Active R2/Matrix profile');
-      console.log();
+      console.info(color('Kimi Shell Commands:', 'bright'));
+      console.info('  kimi barbers     - List all barbers with location data');
+      console.info('  kimi customers   - List all customers with location data');
+      console.info('  kimi status      - Show payment gateway status');
+      console.info('  kimi gateways    - List configured gateways');
+      console.info('  kimi risk <user> - Calculate risk for user');
+      console.info('  kimi classify <user> - Classify customer tier');
+      console.info('  kimi routing     - Show smart routing rules');
+      console.info('  kimi config      - Show payment configuration');
+      console.info();
+      console.info(color('Environment Variables:', 'bright'));
+      console.info('  KIMI_SHELL - Set when running in Kimi Shell');
+      console.info('  KIMI_CLI   - Set when running via Kimi CLI');
+      console.info('  R2_PROFILE - Active R2/Matrix profile');
+      console.info();
   }
   
   // Show Matrix/OpenClaw context if available
   if (process.env.R2_PROFILE) {
-    console.log(color('Matrix Profile:', 'bright'));
-    console.log(`  Active: ${color(process.env.R2_PROFILE, 'cyan')}`);
-    console.log();
+    console.info(color('Matrix Profile:', 'bright'));
+    console.info(`  Active: ${color(process.env.R2_PROFILE, 'cyan')}`);
+    console.info();
   }
   
   // Show MCP server status
-  console.log(color('MCP Integration:', 'bright'));
-  console.log('  Status: ' + color('Available', 'green'));
-  console.log('  Server: unified-shell');
-  console.log('  Tools:  shell_execute, matrix_bridge_proxy');
-  console.log();
+  console.info(color('MCP Integration:', 'bright'));
+  console.info('  Status: ' + color('Available', 'green'));
+  console.info('  Server: unified-shell');
+  console.info('  Tools:  shell_execute, matrix_bridge_proxy');
+  console.info();
 }
 
 // Main entry point
@@ -1135,7 +1135,7 @@ async function main() {
 
     case '-v':
     case '--version':
-      console.log(VERSION);
+      console.info(VERSION);
       break;
 
     case '':
@@ -1146,7 +1146,7 @@ async function main() {
 
     default:
       console.error(color(`Unknown command: ${command}`, 'red'));
-      console.log(`Run ${color('payment help', 'cyan')} for usage`);
+      console.info(`Run ${color('payment help', 'cyan')} for usage`);
       process.exit(1);
   }
 }

@@ -17,11 +17,11 @@ import { renderHyperDashboard } from './hyper-dashboard';
 export class HyperShowcase {
   static async execute(): Promise<void> {
     console.clear();
-    console.log('🎪 EMPIRE PRO HYPERLINK CLI SHOWCASE\n' + '═'.repeat(80));
-    console.log('World\'s First Hyperlinked Terminal Interface\n');
+    console.info('🎪 EMPIRE PRO HYPERLINK CLI SHOWCASE\n' + '═'.repeat(80));
+    console.info('World\'s First Hyperlinked Terminal Interface\n');
 
     // Feature Overview
-    console.log('\n🚀 FEATURE OVERVIEW');
+    console.info('\n🚀 FEATURE OVERVIEW');
     const features = [
       { name: 'OSC 8 Hyperlinks', desc: 'Clickable terminal links', emoji: '🔗' },
       { name: 'Unicode Width', desc: 'Perfect emoji & script rendering', emoji: '🌍' },
@@ -32,30 +32,30 @@ export class HyperShowcase {
     ];
 
     features.forEach(feature => {
-      console.log(`  ${feature.emoji} ${feature.name.padEnd(18)} │ ${feature.desc}`);
+      console.info(`  ${feature.emoji} ${feature.name.padEnd(18)} │ ${feature.desc}`);
     });
 
     // Live Demonstrations
-    console.log('\n🎭 LIVE DEMONSTRATIONS');
+    console.info('\n🎭 LIVE DEMONSTRATIONS');
     
-    console.log('\n1️⃣  UNICODE ACCURACY DEMO');
+    console.info('\n1️⃣  UNICODE ACCURACY DEMO');
     this.showUnicodeDemo();
 
-    console.log('\n2️⃣  ANSI + OSC 8 COMBO DEMO');
+    console.info('\n2️⃣  ANSI + OSC 8 COMBO DEMO');
     this.showAnsiOscDemo();
 
-    console.log('\n3️⃣  WIDTH EFFICIENCY ANALYSIS');
+    console.info('\n3️⃣  WIDTH EFFICIENCY ANALYSIS');
     this.showEfficiencyAnalysis();
 
-    console.log('\n4️⃣  INTERACTIVE COMMANDS');
+    console.info('\n4️⃣  INTERACTIVE COMMANDS');
     this.showCommands();
 
     // Performance Summary
-    console.log('\n📈 PERFORMANCE SUMMARY');
+    console.info('\n📈 PERFORMANCE SUMMARY');
     this.showPerformanceSummary();
 
-    console.log('\n' + '═'.repeat(80));
-    console.log(HyperlinkFormatter.empireStatus('SHOWCASE COMPLETE', 'https://empire.pro/showcase'));
+    console.info('\n' + '═'.repeat(80));
+    console.info(HyperlinkFormatter.empireStatus('SHOWCASE COMPLETE', 'https://empire.pro/showcase'));
   }
 
   private static showUnicodeDemo(): void {
@@ -70,7 +70,7 @@ export class HyperShowcase {
     unicodeTests.forEach(test => {
       const actual = (globalThis as any).Bun?.stringWidth?.(test.text) ?? test.text.length;
       const status = actual === test.expected ? '✅' : '❌';
-      console.log(`  ${status} ${test.desc.padEnd(15)} │ ${test.text} │ Expected: ${test.expected} │ Actual: ${actual}`);
+      console.info(`  ${status} ${test.desc.padEnd(15)} │ ${test.text} │ Expected: ${test.expected} │ Actual: ${actual}`);
     });
   }
 
@@ -86,7 +86,7 @@ export class HyperShowcase {
       const width = (globalThis as any).Bun?.stringWidth?.(example.text) ?? example.text.length;
       const raw = example.text.length;
       const efficiency = (raw / width).toFixed(2);
-      console.log(`  📝 ${example.desc.padEnd(15)} │ Raw: ${raw} │ Display: ${width} │ ${efficiency}x`);
+      console.info(`  📝 ${example.desc.padEnd(15)} │ Raw: ${raw} │ Display: ${width} │ ${efficiency}x`);
     });
   }
 
@@ -103,7 +103,7 @@ export class HyperShowcase {
     categories.forEach(cat => {
       const bar = '█'.repeat(Math.floor(parseFloat(cat.efficiency)));
       const emptyBar = '░'.repeat(Math.max(0, 10 - Math.floor(parseFloat(cat.efficiency))));
-      console.log(`  📊 ${cat.name.padEnd(15)} │ ${cat.efficiency.padEnd(5)} │ [${bar}${emptyBar}] │ ${cat.example}`);
+      console.info(`  📊 ${cat.name.padEnd(15)} │ ${cat.efficiency.padEnd(5)} │ [${bar}${emptyBar}] │ ${cat.example}`);
     });
   }
 
@@ -118,7 +118,7 @@ export class HyperShowcase {
     ];
 
     commands.forEach((cmd, index) => {
-      console.log(`  ${index + 1}. ${cmd.cmd.padEnd(40)} │ ${cmd.desc}`);
+      console.info(`  ${index + 1}. ${cmd.cmd.padEnd(40)} │ ${cmd.desc}`);
     });
   }
 
@@ -133,16 +133,16 @@ export class HyperShowcase {
     ];
 
     metrics.forEach(metric => {
-      console.log(`  ${metric.status} ${metric.name.padEnd(20)} │ ${metric.value}`);
+      console.info(`  ${metric.status} ${metric.name.padEnd(20)} │ ${metric.value}`);
     });
 
-    console.log('\n🎯 KEY ACHIEVEMENTS:');
-    console.log('  • World\'s first hyperlinked terminal interface');
-    console.log('  • Perfect Unicode width calculations');
-    console.log('  • Real-time streaming with depth visualization');
-    console.log('  • ANSI escape sequence exclusion');
-    console.log('  • OSC 8 hyperlink integration');
-    console.log('  • Type-safe TypeScript implementation');
+    console.info('\n🎯 KEY ACHIEVEMENTS:');
+    console.info('  • World\'s first hyperlinked terminal interface');
+    console.info('  • Perfect Unicode width calculations');
+    console.info('  • Real-time streaming with depth visualization');
+    console.info('  • ANSI escape sequence exclusion');
+    console.info('  • OSC 8 hyperlink integration');
+    console.info('  • Type-safe TypeScript implementation');
   }
 }
 

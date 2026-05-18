@@ -45,8 +45,8 @@ class TestRunner {
   }
 
   async runUnitTests(): Promise<void> {
-    console.log("🧪 Running Unit Tests");
-    console.log("=".repeat(50));
+    console.info("🧪 Running Unit Tests");
+    console.info("=".repeat(50));
 
     const args = [
       "bun",
@@ -72,8 +72,8 @@ class TestRunner {
   }
 
   async runIntegrationTests(): Promise<void> {
-    console.log("\n🔗 Running Integration Tests");
-    console.log("=".repeat(50));
+    console.info("\n🔗 Running Integration Tests");
+    console.info("=".repeat(50));
 
     const args = [
       "bun",
@@ -95,8 +95,8 @@ class TestRunner {
   }
 
   async runAllTests(): Promise<void> {
-    console.log("🎯 Running All Tests");
-    console.log("=".repeat(50));
+    console.info("🎯 Running All Tests");
+    console.info("=".repeat(50));
 
     const args = [
       "bun",
@@ -122,8 +122,8 @@ class TestRunner {
   }
 
   async runTestsByPattern(pattern: string): Promise<void> {
-    console.log(`🔍 Running Tests Matching: ${pattern}`);
-    console.log("=".repeat(50));
+    console.info(`🔍 Running Tests Matching: ${pattern}`);
+    console.info("=".repeat(50));
 
     const args = [
       "bun",
@@ -141,8 +141,8 @@ class TestRunner {
   }
 
   async generateCoverageReport(): Promise<void> {
-    console.log("\n📊 Generating Coverage Report");
-    console.log("=".repeat(50));
+    console.info("\n📊 Generating Coverage Report");
+    console.info("=".repeat(50));
 
     const coverageArgs = [
       "bun",
@@ -165,8 +165,8 @@ class TestRunner {
   }
 
   async generateJUnitReport(): Promise<void> {
-    console.log("\n📋 Generating JUnit Report");
-    console.log("=".repeat(50));
+    console.info("\n📋 Generating JUnit Report");
+    console.info("=".repeat(50));
 
     const junitArgs = [
       "bun",
@@ -181,8 +181,8 @@ class TestRunner {
   }
 
   async runPerformanceTests(): Promise<void> {
-    console.log("\n⚡ Running Performance Tests");
-    console.log("=".repeat(50));
+    console.info("\n⚡ Running Performance Tests");
+    console.info("=".repeat(50));
 
     const performanceArgs = [
       "bun",
@@ -196,8 +196,8 @@ class TestRunner {
   }
 
   async watchTests(): Promise<void> {
-    console.log("👀 Watching Tests for Changes");
-    console.log("=".repeat(50));
+    console.info("👀 Watching Tests for Changes");
+    console.info("=".repeat(50));
 
     const watchArgs = [
       "bun",
@@ -210,8 +210,8 @@ class TestRunner {
   }
 
   async runE2ETests(): Promise<void> {
-    console.log("\n🌐 Running End-to-End Tests");
-    console.log("=".repeat(50));
+    console.info("\n🌐 Running End-to-End Tests");
+    console.info("=".repeat(50));
 
     const e2eArgs = [
       "bun",
@@ -225,7 +225,7 @@ class TestRunner {
   }
 
   private async executeCommand(args: string[]): Promise<void> {
-    console.log(`Executing: ${args.join(" ")}`);
+    console.info(`Executing: ${args.join(" ")}`);
 
     const childProcess = spawn({
       cmd: args,
@@ -241,7 +241,7 @@ class TestRunner {
       process.exit(exitCode);
     }
 
-    console.log("✅ Tests completed successfully");
+    console.info("✅ Tests completed successfully");
   }
 
   private async generateCoverageSummary(): Promise<void> {
@@ -275,7 +275,7 @@ Generated on: ${new Date().toISOString()}
         `;
 
         await Bun.write(`${this.reportsDir}/coverage-summary.md`, summaryReport);
-        console.log("📈 Coverage summary generated");
+        console.info("📈 Coverage summary generated");
       }
     } catch (error) {
       console.warn("⚠️  Could not generate coverage summary:", error);
@@ -283,8 +283,8 @@ Generated on: ${new Date().toISOString()}
   }
 
   async runFullTestSuite(): Promise<void> {
-    console.log("🚀 Running Full Test Suite");
-    console.log("=".repeat(60));
+    console.info("🚀 Running Full Test Suite");
+    console.info("=".repeat(60));
 
     try {
       // 1. Run unit tests
@@ -301,8 +301,8 @@ Generated on: ${new Date().toISOString()}
       // 4. Generate JUnit report
       await this.generateJUnitReport();
 
-      console.log("\n🎊 Full test suite completed successfully!");
-      console.log(`📁 Reports available in: ${this.reportsDir}`);
+      console.info("\n🎊 Full test suite completed successfully!");
+      console.info(`📁 Reports available in: ${this.reportsDir}`);
 
     } catch (error) {
       console.error("❌ Test suite failed:", error);
@@ -363,7 +363,7 @@ async function main() {
           await runner.runTestsByPattern(command);
         } else {
           console.error(`Unknown command: ${command}`);
-          console.log(`
+          console.info(`
 Available commands:
   unit              - Run unit tests
   integration       - Run integration tests

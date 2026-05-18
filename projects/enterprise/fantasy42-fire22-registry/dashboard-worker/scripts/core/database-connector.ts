@@ -152,7 +152,7 @@ class DatabaseConnector {
           await this.client.connect();
           this.isConnected = true;
 
-          console.log(
+          console.info(
             `✅ Connected to PostgreSQL database: ${this.config.database} on ${this.config.host}:${this.config.port}`
           );
 
@@ -247,7 +247,7 @@ class DatabaseConnector {
           // Begin transaction
           await this.pool.query('BEGIN');
 
-          console.log(`✅ Transaction ${transactionId} started`);
+          console.info(`✅ Transaction ${transactionId} started`);
           return transactionId;
         } catch (error) {
           throw createError(
@@ -334,9 +334,9 @@ class DatabaseConnector {
           await this.pool.query('COMMIT');
           transaction.status = 'committed';
 
-          console.log(`✅ Transaction ${transactionId} committed successfully`);
-          console.log(`   Queries executed: ${transaction.queries.length}`);
-          console.log(`   Duration: ${Date.now() - transaction.startTime.getTime()}ms`);
+          console.info(`✅ Transaction ${transactionId} committed successfully`);
+          console.info(`   Queries executed: ${transaction.queries.length}`);
+          console.info(`   Duration: ${Date.now() - transaction.startTime.getTime()}ms`);
         } catch (error) {
           throw createError(
             'Failed to commit transaction',
@@ -376,8 +376,8 @@ class DatabaseConnector {
           await this.pool.query('ROLLBACK');
           transaction.status = 'rolled-back';
 
-          console.log(`🔄 Transaction ${transactionId} rolled back`);
-          console.log(`   Queries executed: ${transaction.queries.length}`);
+          console.info(`🔄 Transaction ${transactionId} rolled back`);
+          console.info(`   Queries executed: ${transaction.queries.length}`);
         } catch (error) {
           throw createError(
             'Failed to rollback transaction',
@@ -458,7 +458,7 @@ class DatabaseConnector {
             await this.client.end();
           }
           this.isConnected = false;
-          console.log('✅ Database connections closed');
+          console.info('✅ Database connections closed');
         } catch (error) {
           throw createError(
             'Failed to close database connections',

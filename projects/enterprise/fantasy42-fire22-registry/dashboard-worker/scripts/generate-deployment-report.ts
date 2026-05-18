@@ -36,8 +36,8 @@ class DeploymentReportGenerator {
   }
 
   async generate(): Promise<void> {
-    console.log('📊 Generating Deployment Report');
-    console.log('!==!==!==!==!==!==');
+    console.info('📊 Generating Deployment Report');
+    console.info('!==!==!==!==!==!==');
 
     try {
       // Gather deployment information
@@ -51,8 +51,8 @@ class DeploymentReportGenerator {
       await this.generateHtmlReport();
       await this.generateMarkdownReport();
 
-      console.log('\n✅ Deployment reports generated successfully!');
-      console.log(`📁 Reports saved to: ${this.reportsDir}`);
+      console.info('\n✅ Deployment reports generated successfully!');
+      console.info(`📁 Reports saved to: ${this.reportsDir}`);
     } catch (error) {
       console.error('❌ Report generation failed:', error);
       process.exit(1);
@@ -60,7 +60,7 @@ class DeploymentReportGenerator {
   }
 
   private async gatherDeploymentInfo(): Promise<void> {
-    console.log('\n📋 Gathering deployment information...');
+    console.info('\n📋 Gathering deployment information...');
 
     // GitHub Pages
     this.deployments.push({
@@ -97,7 +97,7 @@ class DeploymentReportGenerator {
       version: await this.getVersion(),
     });
 
-    console.log(`✅ Gathered info for ${this.deployments.length} environments`);
+    console.info(`✅ Gathered info for ${this.deployments.length} environments`);
   }
 
   private async getVersion(): Promise<string> {
@@ -110,7 +110,7 @@ class DeploymentReportGenerator {
   }
 
   private async runHealthChecks(): Promise<void> {
-    console.log('\n🏥 Running health checks...');
+    console.info('\n🏥 Running health checks...');
 
     for (const deployment of this.deployments) {
       if (deployment.status === 'active') {
@@ -118,7 +118,7 @@ class DeploymentReportGenerator {
       }
     }
 
-    console.log('✅ Health checks completed');
+    console.info('✅ Health checks completed');
   }
 
   private async checkDeployment(deployment: DeploymentInfo): Promise<any[]> {
@@ -178,7 +178,7 @@ class DeploymentReportGenerator {
   }
 
   private async generateJsonReport(): Promise<void> {
-    console.log('\n📄 Generating JSON report...');
+    console.info('\n📄 Generating JSON report...');
 
     const report = {
       generated: new Date().toISOString(),
@@ -194,7 +194,7 @@ class DeploymentReportGenerator {
 
     writeFileSync(join(this.reportsDir, 'deployment-report.json'), JSON.stringify(report, null, 2));
 
-    console.log('✅ JSON report generated');
+    console.info('✅ JSON report generated');
   }
 
   private calculateHealthStatus(): string {
@@ -213,7 +213,7 @@ class DeploymentReportGenerator {
   }
 
   private async generateHtmlReport(): Promise<void> {
-    console.log('\n🎨 Generating HTML report...');
+    console.info('\n🎨 Generating HTML report...');
 
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -463,11 +463,11 @@ class DeploymentReportGenerator {
 
     writeFileSync(join(this.reportsDir, 'deployment-report.html'), html);
 
-    console.log('✅ HTML report generated');
+    console.info('✅ HTML report generated');
   }
 
   private async generateMarkdownReport(): Promise<void> {
-    console.log('\n📝 Generating Markdown report...');
+    console.info('\n📝 Generating Markdown report...');
 
     const healthStatus = this.calculateHealthStatus();
     const healthEmoji =
@@ -542,7 +542,7 @@ ${deployment.checks
 
     writeFileSync(join(this.reportsDir, 'deployment-report.md'), markdown);
 
-    console.log('✅ Markdown report generated');
+    console.info('✅ Markdown report generated');
   }
 }
 

@@ -422,7 +422,7 @@ export class DisputeManager {
 
   private async logDisputeResolution(dispute: Dispute): Promise<void> {
     // Log for compliance and audit purposes
-    console.log(`Dispute ${dispute.id} resolved: ${dispute.resolution?.outcome}`);
+    console.info(`Dispute ${dispute.id} resolved: ${dispute.resolution?.outcome}`);
   }
 
   private generateEncryptionKey(): string {
@@ -433,7 +433,7 @@ export class DisputeManager {
   private async storeChatKeyForParticipant(userId: string, key: string): Promise<void> {
     // Store encrypted chat key for participant
     // In a real implementation, this would use proper encryption
-    console.log(`Stored chat key for user ${userId}`);
+    console.info(`Stored chat key for user ${userId}`);
   }
 
   private mapToVenmoDispute(dispute: Dispute): any {
@@ -459,7 +459,7 @@ export class DisputeManager {
 
   private async processInternalRefund(dispute: Dispute, amount: number): Promise<void> {
     // Process internal refund when Venmo API is unavailable
-    console.log(`Processing internal refund of $${amount} for dispute ${dispute.id}`);
+    console.info(`Processing internal refund of $${amount} for dispute ${dispute.id}`);
   }
 
   // Regulation E Compliance: Handle provisional credit and investigation timelines

@@ -400,4 +400,4 @@ describe('lintHar', () => {
   });
 });
 
-console.log('✅ HAR Enhancer tests loaded');
+console.info('✅ HAR Enhancer tests loaded');

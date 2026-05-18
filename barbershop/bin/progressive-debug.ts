@@ -42,13 +42,13 @@ class ProgressiveDebugger {
     const [targetFile, ...options] = args;
     const parsedOptions = this.parseOptions(options);
     
-    console.log('🐛 Progressive Debug Mode');
-    console.log('='.repeat(50));
-    console.log(`Target: ${targetFile}`);
-    console.log(`Mode: ${parsedOptions.progressive ? 'Progressive' : 'Static'}`);
+    console.info('🐛 Progressive Debug Mode');
+    console.info('='.repeat(50));
+    console.info(`Target: ${targetFile}`);
+    console.info(`Mode: ${parsedOptions.progressive ? 'Progressive' : 'Static'}`);
     
     if (parsedOptions.verbose) {
-      console.log(`Options: ${JSON.stringify(parsedOptions, null, 2)}`);
+      console.info(`Options: ${JSON.stringify(parsedOptions, null, 2)}`);
     }
 
     // Check if file exists
@@ -76,11 +76,11 @@ class ProgressiveDebugger {
     };
 
     if (options.verbose) {
-      console.log('\n🔧 Environment Setup:');
-      console.log(`   NODE_ENV: ${env.NODE_ENV}`);
-      console.log(`   DEBUG_PROGRESSIVE: ${env.DEBUG_PROGRESSIVE}`);
-      console.log(`   DEBUG_STREAMING: ${env.DEBUG_STREAMING}`);
-      console.log(`   DEBUG_CIRCULAR: ${env.DEBUG_CIRCULAR}`);
+      console.info('\n🔧 Environment Setup:');
+      console.info(`   NODE_ENV: ${env.NODE_ENV}`);
+      console.info(`   DEBUG_PROGRESSIVE: ${env.DEBUG_PROGRESSIVE}`);
+      console.info(`   DEBUG_STREAMING: ${env.DEBUG_STREAMING}`);
+      console.info(`   DEBUG_CIRCULAR: ${env.DEBUG_CIRCULAR}`);
     }
 
     // Choose debugging strategy
@@ -92,7 +92,7 @@ class ProgressiveDebugger {
   }
 
   private static async runProgressiveDebug(targetFile: string, options: DebugOptions, env: any): Promise<void> {
-    console.log('\n🚀 Starting Progressive Debug...');
+    console.info('\n🚀 Starting Progressive Debug...');
     
     // Use the enhanced ProgressiveDisclosureCLI
     const { ProgressiveDisclosureCLI } = await import('../lib/performance/benchmark-recovery.js');
@@ -112,58 +112,58 @@ class ProgressiveDebugger {
       }
     );
 
-    console.log('\n🎯 Debug Session Summary:');
-    console.log(`   Success: ${result.success ? '✅' : '❌'}`);
-    console.log(`   Optimal Depth: ${result.depthUsed}`);
-    console.log(`   Duration: ${result.duration}ms`);
-    console.log(`   Output Size: ${this.formatBytes(result.estimatedSize || 0)}`);
+    console.info('\n🎯 Debug Session Summary:');
+    console.info(`   Success: ${result.success ? '✅' : '❌'}`);
+    console.info(`   Optimal Depth: ${result.depthUsed}`);
+    console.info(`   Duration: ${result.duration}ms`);
+    console.info(`   Output Size: ${this.formatBytes(result.estimatedSize || 0)}`);
     
     if (result.circularRefs !== undefined && result.circularRefs > 0) {
-      console.log(`   Circular References: ${result.circularRefs}`);
-      console.log('   💡 Consider using --analyze-circular for detailed analysis');
+      console.info(`   Circular References: ${result.circularRefs}`);
+      console.info('   💡 Consider using --analyze-circular for detailed analysis');
     }
     
     if (result.truncated) {
-      console.log('   ⚠️  Output was truncated - deeper inspection may be needed');
+      console.info('   ⚠️  Output was truncated - deeper inspection may be needed');
     }
     
     if (result.streamingUsed) {
-      console.log('   📡 Streaming was used for large output');
+      console.info('   📡 Streaming was used for large output');
     }
 
     // Provide next steps
-    console.log('\n📋 Next Steps:');
+    console.info('\n📋 Next Steps:');
     if (result.success) {
-      console.log('   ✅ Debugging completed successfully');
+      console.info('   ✅ Debugging completed successfully');
       if (result.depthUsed >= 6) {
-        console.log('   💡 Consider optimizing data structures to reduce depth requirements');
+        console.info('   💡 Consider optimizing data structures to reduce depth requirements');
       }
     } else {
-      console.log('   ❌ Issues detected - try the following:');
-      console.log('      1. Run with higher depth: --depth 8');
-      console.log('      2. Enable circular analysis: --analyze-circular');
-      console.log('      3. Try static mode: --no-progressive');
+      console.info('   ❌ Issues detected - try the following:');
+      console.info('      1. Run with higher depth: --depth 8');
+      console.info('      2. Enable circular analysis: --analyze-circular');
+      console.info('      3. Try static mode: --no-progressive');
     }
   }
 
   private static async runStaticDebug(targetFile: string, options: DebugOptions, env: any): Promise<void> {
     const depth = options.depth || 3;
-    console.log(`\n⚡ Starting Static Debug (depth=${depth})...`);
+    console.info(`\n⚡ Starting Static Debug (depth=${depth})...`);
     
     const result = await this.runCommand(targetFile, depth, env);
     
-    console.log('\n📊 Static Debug Results:');
-    console.log(`   Exit Code: ${result.code}`);
-    console.log(`   Duration: ${result.duration}ms`);
-    console.log(`   Output Size: ${this.formatBytes(result.outputSize)}`);
+    console.info('\n📊 Static Debug Results:');
+    console.info(`   Exit Code: ${result.code}`);
+    console.info(`   Duration: ${result.duration}ms`);
+    console.info(`   Output Size: ${this.formatBytes(result.outputSize)}`);
     
     if (result.output.includes('[Circular]')) {
-      console.log('   🔄 Circular references detected');
+      console.info('   🔄 Circular references detected');
     }
     
     if (result.output.includes('...') || result.output.includes('[Object ...]')) {
-      console.log('   ⚠️  Output appears truncated');
-      console.log('   💡 Try progressive mode: --progressive');
+      console.info('   ⚠️  Output appears truncated');
+      console.info('   💡 Try progressive mode: --progressive');
     }
   }
 
@@ -271,66 +271,66 @@ class ProgressiveDebugger {
   }
 
   private static showHelp(): void {
-    console.log('🐛 Progressive Debug - Smart debugging with automatic depth escalation');
-    console.log('');
-    console.log('Usage: bun progressive-debug <file.ts> [options]');
-    console.log('');
-    console.log('Options:');
-    console.log('  --no-progressive    Disable progressive disclosure');
-    console.log('  --no-streaming      Disable streaming for large objects');
-    console.log('  --no-circular       Disable circular reference analysis');
-    console.log('  --depth <n>         Use specific depth (implies static mode)');
-    console.log('  --env <environment> Set environment (development, production, test)');
-    console.log('  --verbose, -v       Enable verbose output');
-    console.log('  --help, -h          Show this help message');
-    console.log('');
-    console.log('Examples:');
-    console.log('  bun progressive-debug app.ts                    # Progressive debug');
-    console.log('  bun progressive-debug app.ts --depth 4          # Static debug with depth 4');
-    console.log('  bun progressive-debug app.ts --no-streaming     # Without streaming');
-    console.log('  bun progressive-debug app.ts --verbose           # Verbose output');
-    console.log('');
-    console.log('Environment Variables:');
-    console.log('  NODE_ENV           Environment (development, production, test)');
-    console.log('  BUN_CONSOLE_DEPTH  Default console depth');
-    console.log('');
-    console.log('For more advanced options, use:');
-    console.log('  bun depth-optimizer debug <file> --progressive');
+    console.info('🐛 Progressive Debug - Smart debugging with automatic depth escalation');
+    console.info('');
+    console.info('Usage: bun progressive-debug <file.ts> [options]');
+    console.info('');
+    console.info('Options:');
+    console.info('  --no-progressive    Disable progressive disclosure');
+    console.info('  --no-streaming      Disable streaming for large objects');
+    console.info('  --no-circular       Disable circular reference analysis');
+    console.info('  --depth <n>         Use specific depth (implies static mode)');
+    console.info('  --env <environment> Set environment (development, production, test)');
+    console.info('  --verbose, -v       Enable verbose output');
+    console.info('  --help, -h          Show this help message');
+    console.info('');
+    console.info('Examples:');
+    console.info('  bun progressive-debug app.ts                    # Progressive debug');
+    console.info('  bun progressive-debug app.ts --depth 4          # Static debug with depth 4');
+    console.info('  bun progressive-debug app.ts --no-streaming     # Without streaming');
+    console.info('  bun progressive-debug app.ts --verbose           # Verbose output');
+    console.info('');
+    console.info('Environment Variables:');
+    console.info('  NODE_ENV           Environment (development, production, test)');
+    console.info('  BUN_CONSOLE_DEPTH  Default console depth');
+    console.info('');
+    console.info('For more advanced options, use:');
+    console.info('  bun depth-optimizer debug <file> --progressive');
   }
 
   private static showDetailedHelp(): void {
-    console.log('🐛 Progressive Debug - Detailed Help');
-    console.log('='.repeat(50));
-    console.log('');
-    console.log('Progressive Debug automatically finds the optimal console depth');
-    console.log('by starting shallow and escalating when truncation is detected.');
-    console.log('');
-    console.log('🚀 Progressive Mode (default):');
-    console.log('  - Starts at depth 1, escalates to 3, 6, then 8');
-    console.log('  - Detects truncation, circular references, and large objects');
-    console.log('  - Provides detailed analysis and recommendations');
-    console.log('  - Best for: Complex debugging, unknown data structures');
-    console.log('');
-    console.log('⚡ Static Mode (--depth <n>):');
-    console.log('  - Uses fixed depth for the entire session');
-    console.log('  - Faster execution, less analysis overhead');
-    console.log('  - Best for: Known data structures, quick checks');
-    console.log('');
-    console.log('📡 Streaming:');
-    console.log('  - Automatically handles large outputs (>10MB)');
-    console.log('  - Prevents memory issues with huge objects');
-    console.log('  - Strategies: sample, json-truncate, file-stream');
-    console.log('');
-    console.log('🔄 Circular Reference Analysis:');
-    console.log('  - Detects and counts circular references');
-    console.log('  - Provides recommendations for handling');
-    console.log('  - Essential for complex object graphs');
-    console.log('');
-    console.log('💡 Pro Tips:');
-    console.log('  - Use --verbose for detailed debugging information');
-    console.log('  - Set NODE_ENV=production for minimal output');
-    console.log('  - Combine with --depth 1 for production debugging');
-    console.log('  - Use --no-progressive for faster, predictable debugging');
+    console.info('🐛 Progressive Debug - Detailed Help');
+    console.info('='.repeat(50));
+    console.info('');
+    console.info('Progressive Debug automatically finds the optimal console depth');
+    console.info('by starting shallow and escalating when truncation is detected.');
+    console.info('');
+    console.info('🚀 Progressive Mode (default):');
+    console.info('  - Starts at depth 1, escalates to 3, 6, then 8');
+    console.info('  - Detects truncation, circular references, and large objects');
+    console.info('  - Provides detailed analysis and recommendations');
+    console.info('  - Best for: Complex debugging, unknown data structures');
+    console.info('');
+    console.info('⚡ Static Mode (--depth <n>):');
+    console.info('  - Uses fixed depth for the entire session');
+    console.info('  - Faster execution, less analysis overhead');
+    console.info('  - Best for: Known data structures, quick checks');
+    console.info('');
+    console.info('📡 Streaming:');
+    console.info('  - Automatically handles large outputs (>10MB)');
+    console.info('  - Prevents memory issues with huge objects');
+    console.info('  - Strategies: sample, json-truncate, file-stream');
+    console.info('');
+    console.info('🔄 Circular Reference Analysis:');
+    console.info('  - Detects and counts circular references');
+    console.info('  - Provides recommendations for handling');
+    console.info('  - Essential for complex object graphs');
+    console.info('');
+    console.info('💡 Pro Tips:');
+    console.info('  - Use --verbose for detailed debugging information');
+    console.info('  - Set NODE_ENV=production for minimal output');
+    console.info('  - Combine with --depth 1 for production debugging');
+    console.info('  - Use --no-progressive for faster, predictable debugging');
   }
 }
 

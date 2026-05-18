@@ -45,7 +45,7 @@ export class PasswordManager {
     });
     
     const elapsedMs = Number(nanoseconds() - startNs) / 1e6;
-    console.log(`[PASSWORD] Hashed in ${elapsedMs.toFixed(2)}ms (${this.config.algorithm})`);
+    console.info(`[PASSWORD] Hashed in ${elapsedMs.toFixed(2)}ms (${this.config.algorithm})`);
     
     return hash;
   }
@@ -54,7 +54,7 @@ export class PasswordManager {
     const startNs = nanoseconds();
     const isMatch = await Bun.password.verify(password, hash);
     const elapsedMs = Number(nanoseconds() - startNs) / 1e6;
-    console.log(`[PASSWORD] Verified in ${elapsedMs.toFixed(2)}ms`);
+    console.info(`[PASSWORD] Verified in ${elapsedMs.toFixed(2)}ms`);
     return isMatch;
   }
   
@@ -233,42 +233,42 @@ if (import.meta.main) {
     gray: (s: string) => `\x1b[90m${s}\x1b[0m`,
   };
 
-  console.log(`\n🔐 Security Module\n`);
+  console.info(`\n🔐 Security Module\n`);
   
   const security = createSecurity();
   
   // Password hashing demo
-  console.log(c.bold('1. Password Hashing (Argon2id)'));
+  console.info(c.bold('1. Password Hashing (Argon2id)'));
   const password = 'super-secure-pa$$word';
   const hash = await security.password.hash(password);
-  console.log(`   Input:    ${password}`);
-  console.log(`   Hash:     ${hash.slice(0, 50)}...`);
+  console.info(`   Input:    ${password}`);
+  console.info(`   Hash:     ${hash.slice(0, 50)}...`);
   
   const isValid = await security.password.verify(password, hash);
-  console.log(`   Valid:    ${isValid ? '✓ YES' : '✗ NO'}`);
+  console.info(`   Valid:    ${isValid ? '✓ YES' : '✗ NO'}`);
   
   // Request signing demo
-  console.log(c.bold('\n2. Request Signing (HMAC-SHA256)'));
+  console.info(c.bold('\n2. Request Signing (HMAC-SHA256)'));
   const data = JSON.stringify({ barberId: 'jb', timestamp: Date.now() });
   const signed = security.signer.signWithTimestamp(data);
-  console.log(`   Signature: ${signed.signature.slice(0, 40)}...`);
+  console.info(`   Signature: ${signed.signature.slice(0, 40)}...`);
   
   const verified = security.signer.verifyWithTimestamp(data, signed.signature, signed.timestamp, 300);
-  console.log(`   Valid:     ${verified.valid ? '✓ YES' : '✗ NO'}`);
+  console.info(`   Valid:     ${verified.valid ? '✓ YES' : '✗ NO'}`);
   
   // Fast hashing demo
-  console.log(c.bold('\n3. Fast Hashing'));
+  console.info(c.bold('\n3. Fast Hashing'));
   const testData = 'barbershop:v4';
-  console.log(`   ETag:      ${FastHash.etag(testData)}`);
-  console.log(`   Cache Key: ${FastHash.cacheKey('barbers', 'active', 123)}`);
+  console.info(`   ETag:      ${FastHash.etag(testData)}`);
+  console.info(`   Cache Key: ${FastHash.cacheKey('barbers', 'active', 123)}`);
   
   // Token generation
-  console.log(c.bold('\n4. Token Generation'));
-  console.log(`   UUID v4:   ${TokenManager.uuid()}`);
-  console.log(`   UUID v7:   ${TokenManager.uuidv7()}`);
-  console.log(`   API Key:   ${security.signer.generateApiKey('barber')}`);
+  console.info(c.bold('\n4. Token Generation'));
+  console.info(`   UUID v4:   ${TokenManager.uuid()}`);
+  console.info(`   UUID v7:   ${TokenManager.uuidv7()}`);
+  console.info(`   API Key:   ${security.signer.generateApiKey('barber')}`);
   
-  console.log(c.bold('\n✅ Security Module Ready!\n'));
+  console.info(c.bold('\n✅ Security Module Ready!\n'));
 }
 
 export default createSecurity;

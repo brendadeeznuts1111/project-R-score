@@ -51,7 +51,7 @@ async function main(): Promise<void> {
 	};
 
 	await Bun.write(output, JSON.stringify(lock, null, 2));
-	console.log(
+	console.info(
 		`\n  🔷 Tier-1380 Seal\n  Matrix: ${matrix}\n  Output: ${output}\n  Checksum: ${checksum}\n`,
 	);
 }

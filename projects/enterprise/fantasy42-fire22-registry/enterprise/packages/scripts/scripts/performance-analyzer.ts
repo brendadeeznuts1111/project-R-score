@@ -531,15 +531,15 @@ class PerformanceAnalyzer {
   }
 
   public generateReport(): void {
-    console.log('\n📊 Fire22 Performance Analysis Report\n');
-    console.log('═'.repeat(80));
+    console.info('\n📊 Fire22 Performance Analysis Report\n');
+    console.info('═'.repeat(80));
 
     // Update budgets first
     this.updateBudgets();
 
     // Performance Budgets
-    console.log('\n💰 Performance Budget Status');
-    console.log('─'.repeat(60));
+    console.info('\n💰 Performance Budget Status');
+    console.info('─'.repeat(60));
     this.budgets.forEach((budget, metric) => {
       const icon =
         budget.status === 'within_budget'
@@ -554,7 +554,7 @@ class PerformanceAnalyzer {
             ? '\x1b[33m'
             : '\x1b[31m';
 
-      console.log(
+      console.info(
         `${icon} ${metric
           .replace(/_/g, ' ')
           .replace(/\b\w/g, l => l.toUpperCase())
@@ -563,32 +563,32 @@ class PerformanceAnalyzer {
       );
 
       if (budget.timeToLimit && budget.timeToLimit > 0) {
-        console.log(`   ⏰ Time to limit: ${budget.timeToLimit} minutes`);
+        console.info(`   ⏰ Time to limit: ${budget.timeToLimit} minutes`);
       }
     });
 
     // Statistical Analysis
-    console.log('\n📈 Statistical Analysis');
-    console.log('─'.repeat(60));
+    console.info('\n📈 Statistical Analysis');
+    console.info('─'.repeat(60));
     this.metrics.forEach((data, metric) => {
       const values = data.slice(-100).map(d => d.value);
       const stats = this.calculateStatistics(values);
 
-      console.log(`\n${metric.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:`);
-      console.log(
+      console.info(`\n${metric.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:`);
+      console.info(
         `  Mean: ${stats.mean.toFixed(2)}  Median: ${stats.median.toFixed(2)}  P95: ${stats.percentiles.p95.toFixed(2)}`
       );
-      console.log(
+      console.info(
         `  Min: ${stats.min.toFixed(2)}  Max: ${stats.max.toFixed(2)}  StdDev: ${stats.stdDev.toFixed(2)}`
       );
-      console.log(
+      console.info(
         `  Outliers: ${stats.outliers} (${((stats.outliers / stats.count) * 100).toFixed(1)}%)`
       );
     });
 
     // Trend Analysis
-    console.log('\n📊 Trend Analysis');
-    console.log('─'.repeat(60));
+    console.info('\n📊 Trend Analysis');
+    console.info('─'.repeat(60));
     this.metrics.forEach((_, metric) => {
       const trend = this.analyzeTrend(metric);
       if (trend) {
@@ -601,48 +601,48 @@ class PerformanceAnalyzer {
                 ? '➡️'
                 : '📊';
 
-        console.log(
+        console.info(
           `${trendIcon} ${metric
             .replace(/_/g, ' ')
             .replace(/\b\w/g, l => l.toUpperCase())
             .padEnd(25)} ` + `${trend.direction} (slope: ${trend.slope.toFixed(3)})`
         );
-        console.log(
+        console.info(
           `   Forecast: ${trend.forecast.nextValue.toFixed(1)} ` +
             `(${trend.forecast.confidence}% confidence)`
         );
 
         if (trend.changePoints.length > 0) {
-          console.log(`   Change points detected: ${trend.changePoints.length}`);
+          console.info(`   Change points detected: ${trend.changePoints.length}`);
         }
       }
     });
 
     // Bottleneck Analysis
-    console.log('\n🔍 Bottleneck Analysis');
-    console.log('─'.repeat(60));
+    console.info('\n🔍 Bottleneck Analysis');
+    console.info('─'.repeat(60));
     const bottlenecks = this.identifyBottlenecks();
     if (bottlenecks.length === 0) {
-      console.log('✅ No significant bottlenecks detected');
+      console.info('✅ No significant bottlenecks detected');
     } else {
       bottlenecks.forEach(bottleneck => {
         const impactIcon =
           bottleneck.impact === 'critical' ? '🔴' : bottleneck.impact === 'high' ? '🟡' : '🟠';
 
-        console.log(`${impactIcon} ${bottleneck.component} (${bottleneck.impact} impact)`);
-        console.log(`   Performance degradation: ${bottleneck.contribution.toFixed(1)}%`);
-        console.log(`   Estimated improvement: ${bottleneck.estimatedImprovement}ms`);
-        console.log(`   Recommendations:`);
+        console.info(`${impactIcon} ${bottleneck.component} (${bottleneck.impact} impact)`);
+        console.info(`   Performance degradation: ${bottleneck.contribution.toFixed(1)}%`);
+        console.info(`   Estimated improvement: ${bottleneck.estimatedImprovement}ms`);
+        console.info(`   Recommendations:`);
         bottleneck.recommendations.forEach(rec => {
-          console.log(`     • ${rec}`);
+          console.info(`     • ${rec}`);
         });
-        console.log();
+        console.info();
       });
     }
 
     // Regression Detection
-    console.log('\n🔍 Regression Detection');
-    console.log('─'.repeat(60));
+    console.info('\n🔍 Regression Detection');
+    console.info('─'.repeat(60));
     let regressionFound = false;
     this.metrics.forEach((_, metric) => {
       const regression = this.detectRegression(metric);
@@ -655,33 +655,33 @@ class PerformanceAnalyzer {
               ? '🟡'
               : '🟠';
 
-        console.log(
+        console.info(
           `${severityIcon} ${metric.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} regression detected`
         );
-        console.log(`   Severity: ${regression.severity}`);
-        console.log(
+        console.info(`   Severity: ${regression.severity}`);
+        console.info(
           `   Impact: ${regression.impactMagnitude > 0 ? '+' : ''}${regression.impactMagnitude}`
         );
-        console.log(
+        console.info(
           `   Period: ${new Date(regression.startTime).toLocaleString()} - ${new Date(regression.endTime).toLocaleString()}`
         );
-        console.log(`   Possible causes: ${regression.possibleCauses.slice(0, 3).join(', ')}`);
-        console.log();
+        console.info(`   Possible causes: ${regression.possibleCauses.slice(0, 3).join(', ')}`);
+        console.info();
       }
     });
 
     if (!regressionFound) {
-      console.log('✅ No performance regressions detected');
+      console.info('✅ No performance regressions detected');
     }
 
-    console.log('\n' + '═'.repeat(80));
-    console.log('\n🎯 Analysis Complete - Key Insights:');
-    console.log('  • Real-time performance budget monitoring');
-    console.log('  • Advanced statistical analysis with percentiles');
-    console.log('  • Trend detection and forecasting');
-    console.log('  • Automated bottleneck identification');
-    console.log('  • Regression detection with statistical significance');
-    console.log('  • Actionable performance recommendations');
+    console.info('\n' + '═'.repeat(80));
+    console.info('\n🎯 Analysis Complete - Key Insights:');
+    console.info('  • Real-time performance budget monitoring');
+    console.info('  • Advanced statistical analysis with percentiles');
+    console.info('  • Trend detection and forecasting');
+    console.info('  • Automated bottleneck identification');
+    console.info('  • Regression detection with statistical significance');
+    console.info('  • Actionable performance recommendations');
   }
 }
 

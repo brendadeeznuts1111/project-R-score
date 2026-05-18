@@ -8,8 +8,8 @@
 
 import { writeFileSync } from 'fs';
 
-console.log('🚀 Bun Profiling Demo Runner');
-console.log('============================\n');
+console.info('🚀 Bun Profiling Demo Runner');
+console.info('============================\n');
 
 // Function to create a sample markdown output
 function createSampleMarkdownOutput() {
@@ -78,43 +78,43 @@ const { cpuProfileMarkdown, heapProfileMarkdown } = createSampleMarkdownOutput()
 
 // Write sample CPU profile markdown
 writeFileSync('sample-cpu-profile.md', cpuProfileMarkdown);
-console.log('✅ Created sample-cpu-profile.md');
+console.info('✅ Created sample-cpu-profile.md');
 
 // Write sample heap profile markdown
 writeFileSync('sample-heap-profile.md', heapProfileMarkdown);
-console.log('✅ Created sample-heap-profile.md');
+console.info('✅ Created sample-heap-profile.md');
 
 // Show usage instructions
-console.log('\n📋 Usage Instructions:');
-console.log('======================');
-console.log('\n🔥 CPU Profiling Commands:');
-console.log('# Generate CPU profile in binary format:');
-console.log('bun --cpu-prof --cpu-prof-name my-cpu-profile.cpuprofile this-script.ts');
-console.log('\n# Generate CPU profile in markdown format:');
-console.log('bun --cpu-prof-md --cpu-prof-name my-cpu-profile.md this-script.ts');
-console.log('\n# Generate both formats:');
-console.log('bun --cpu-prof --cpu-prof-md this-script.ts');
+console.info('\n📋 Usage Instructions:');
+console.info('======================');
+console.info('\n🔥 CPU Profiling Commands:');
+console.info('# Generate CPU profile in binary format:');
+console.info('bun --cpu-prof --cpu-prof-name my-cpu-profile.cpuprofile this-script.ts');
+console.info('\n# Generate CPU profile in markdown format:');
+console.info('bun --cpu-prof-md --cpu-prof-name my-cpu-profile.md this-script.ts');
+console.info('\n# Generate both formats:');
+console.info('bun --cpu-prof --cpu-prof-md this-script.ts');
 
-console.log('\n🧠 Heap Profiling Commands:');
-console.log('# Generate heap snapshot in binary format:');
-console.log('bun --heap-prof --heap-prof-name my-heap-snapshot.heapsnapshot this-script.ts');
-console.log('\n# Generate heap snapshot in markdown format:');
-console.log('bun --heap-prof-md --heap-prof-name my-heap-snapshot.md this-script.ts');
-console.log('\n# Generate both formats:');
-console.log('bun --heap-prof --heap-prof-md this-script.ts');
+console.info('\n🧠 Heap Profiling Commands:');
+console.info('# Generate heap snapshot in binary format:');
+console.info('bun --heap-prof --heap-prof-name my-heap-snapshot.heapsnapshot this-script.ts');
+console.info('\n# Generate heap snapshot in markdown format:');
+console.info('bun --heap-prof-md --heap-prof-name my-heap-snapshot.md this-script.ts');
+console.info('\n# Generate both formats:');
+console.info('bun --heap-prof --heap-prof-md this-script.ts');
 
-console.log('\n⚙️  Advanced Options:');
-console.log('# Custom output directory:');
-console.log('bun --cpu-prof-md --cpu-prof-dir ./profiles this-script.ts');
-console.log('bun --heap-prof-md --heap-prof-dir ./profiles this-script.ts');
+console.info('\n⚙️  Advanced Options:');
+console.info('# Custom output directory:');
+console.info('bun --cpu-prof-md --cpu-prof-dir ./profiles this-script.ts');
+console.info('bun --heap-prof-md --heap-prof-dir ./profiles this-script.ts');
 
-console.log('\n# Using environment variables:');
-console.log('BUN_OPTIONS="--cpu-prof-md" bun this-script.ts');
-console.log('BUN_OPTIONS="--heap-prof-md" bun this-script.ts');
+console.info('\n# Using environment variables:');
+console.info('BUN_OPTIONS="--cpu-prof-md" bun this-script.ts');
+console.info('BUN_OPTIONS="--heap-prof-md" bun this-script.ts');
 
 // Run some actual work to profile
-console.log('\n🏃 Running sample workload for profiling...');
-console.log('==========================================');
+console.info('\n🏃 Running sample workload for profiling...');
+console.info('==========================================');
 
 // Simulate some work that would be profiled
 function sampleWorkload() {
@@ -136,36 +136,36 @@ function sampleWorkload() {
   data.splice(0, 500);
   
   const end = performance.now();
-  console.log(`Workload completed in ${(end - start).toFixed(2)}ms`);
-  console.log(`Result: ${result.toFixed(2)}`);
-  console.log(`Created ${data.length} arrays`);
+  console.info(`Workload completed in ${(end - start).toFixed(2)}ms`);
+  console.info(`Result: ${result.toFixed(2)}`);
+  console.info(`Created ${data.length} arrays`);
 }
 
 sampleWorkload();
 
-console.log('\n📊 What the Markdown Output Contains:');
-console.log('====================================');
-console.log('CPU Profile Markdown:');
-console.log('  📈 Performance metrics and timing');
-console.log('  🔍 Function call stacks');
-console.log('  📊 Percentage breakdown by function');
-console.log('  💡 Performance optimization recommendations');
-console.log('  📅 Timestamp and metadata');
+console.info('\n📊 What the Markdown Output Contains:');
+console.info('====================================');
+console.info('CPU Profile Markdown:');
+console.info('  📈 Performance metrics and timing');
+console.info('  🔍 Function call stacks');
+console.info('  📊 Percentage breakdown by function');
+console.info('  💡 Performance optimization recommendations');
+console.info('  📅 Timestamp and metadata');
 
-console.log('\nHeap Profile Markdown:');
-console.log('  🧠 Memory usage statistics');
-console.log('  📦 Object type distribution');
-console.log('  🔍 Memory leak detection');
-console.log('  💡 Memory optimization recommendations');
-console.log('  📅 GC collection information');
+console.info('\nHeap Profile Markdown:');
+console.info('  🧠 Memory usage statistics');
+console.info('  📦 Object type distribution');
+console.info('  🔍 Memory leak detection');
+console.info('  💡 Memory optimization recommendations');
+console.info('  📅 GC collection information');
 
-console.log('\n✨ Benefits of Markdown Output:');
-console.log('==============================');
-console.log('  📖 Human-readable format');
-console.log('  🔄 Version control friendly');
-console.log('  🤖 LLM-compatible for analysis');
-console.log('  📱 Viewable on any device');
-console.log('  🔗 Easy to share and document');
-console.log('  ⚡ No special tools required');
+console.info('\n✨ Benefits of Markdown Output:');
+console.info('==============================');
+console.info('  📖 Human-readable format');
+console.info('  🔄 Version control friendly');
+console.info('  🤖 LLM-compatible for analysis');
+console.info('  📱 Viewable on any device');
+console.info('  🔗 Easy to share and document');
+console.info('  ⚡ No special tools required');
 
-console.log('\n🎯 Demo completed! Check the generated .md files for examples.');
+console.info('\n🎯 Demo completed! Check the generated .md files for examples.');

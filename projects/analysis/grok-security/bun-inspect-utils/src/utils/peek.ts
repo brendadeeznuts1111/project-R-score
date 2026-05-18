@@ -81,11 +81,11 @@ export function peekAndLog<T = unknown>(
   label: string = "Promise"
 ): T | undefined {
   const result = peekWithState(promise);
-  console.log(
+  console.info(
     `[${label}] State: ${result.state}, Duration: ${result.duration.toFixed(2)}ms`
   );
   if (result.value !== undefined) {
-    console.log(`[${label}] Value:`, result.value);
+    console.info(`[${label}] Value:`, result.value);
   }
   return result.value;
 }

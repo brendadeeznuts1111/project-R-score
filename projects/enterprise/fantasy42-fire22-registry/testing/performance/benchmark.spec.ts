@@ -1,7 +1,7 @@
 import { test, expect } from "bun:test";
 import { performance } from "perf_hooks";
 
-console.log("🚀 Starting performance benchmarks...");
+console.info("🚀 Starting performance benchmarks...");
 
 test("Database query performance", async () => {
   const startTime = performance.now();
@@ -19,7 +19,7 @@ test("Database query performance", async () => {
   const endTime = performance.now();
   const duration = endTime - startTime;
 
-  console.log(`Database query took ${duration.toFixed(2)}ms`);
+  console.info(`Database query took ${duration.toFixed(2)}ms`);
   expect(duration).toBeLessThan(100); // Should complete within 100ms
 });
 
@@ -47,7 +47,7 @@ test("Package processing performance", () => {
   const endTime = performance.now();
   const duration = endTime - startTime;
 
-  console.log(`Package processing took ${duration.toFixed(2)}ms`);
+  console.info(`Package processing took ${duration.toFixed(2)}ms`);
   expect(processed).toHaveLength(50);
   expect(duration).toBeLessThan(50); // Should be very fast
 });
@@ -75,7 +75,7 @@ test("Registry search performance", async () => {
   const endTime = performance.now();
   const duration = endTime - startTime;
 
-  console.log(`Registry search took ${duration.toFixed(2)}ms`);
+  console.info(`Registry search took ${duration.toFixed(2)}ms`);
   expect(results.length).toBeGreaterThanOrEqual(0);
   expect(duration).toBeLessThan(200); // Should be reasonably fast
 });
@@ -97,7 +97,7 @@ test("Memory usage benchmark", () => {
   const afterMemory = process.memoryUsage();
   const memoryIncrease = afterMemory.heapUsed - initialMemory.heapUsed;
 
-  console.log(`Memory usage: ${(memoryIncrease / 1024 / 1024).toFixed(2)} MB increase`);
+  console.info(`Memory usage: ${(memoryIncrease / 1024 / 1024).toFixed(2)} MB increase`);
   expect(memoryIncrease).toBeLessThan(50 * 1024 * 1024); // Less than 50MB increase
 
   // Cleanup
@@ -118,9 +118,9 @@ test("Concurrent operations performance", async () => {
   const endTime = performance.now();
   const duration = endTime - startTime;
 
-  console.log(`Concurrent operations took ${duration.toFixed(2)}ms`);
+  console.info(`Concurrent operations took ${duration.toFixed(2)}ms`);
   expect(results).toHaveLength(10);
   expect(duration).toBeLessThan(100); // Should complete within reasonable time
 });
 
-console.log("✅ Performance benchmarks completed");
+console.info("✅ Performance benchmarks completed");

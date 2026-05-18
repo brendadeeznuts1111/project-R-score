@@ -96,7 +96,7 @@ class MockBunConnectionManager {
   private metrics: Map<string, any> = new Map();
   
   constructor(options: any) {
-    console.log('🔗 Mock Connection Manager initialized');
+    console.info('🔗 Mock Connection Manager initialized');
   }
   
   async clearMetrics() {
@@ -459,7 +459,7 @@ describe('ACME Family Quest System', () => {
       const end = performance.now();
       const duration = end - start;
       
-      console.log(`⏱️  100 concurrent payments processed in ${duration.toFixed(2)}ms`);
+      console.info(`⏱️  100 concurrent payments processed in ${duration.toFixed(2)}ms`);
       expect(duration).toBeLessThan(5000); // Should complete in under 5 seconds
       
       const successes = results.filter(r => r.status === 'fulfilled').length;

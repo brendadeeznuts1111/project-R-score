@@ -496,7 +496,7 @@ class BettingEngineIntegrator {
 
   private async handleBetPlaced(event: any): Promise<void> {
     // Additional processing for bet placement events
-    console.log('Bet placed event:', event);
+    console.info('Bet placed event:', event);
 
     // Risk assessment
     const riskScore = await this.assessBettingRisk(event.userId, event.data);
@@ -513,7 +513,7 @@ class BettingEngineIntegrator {
 
   private async handleBetSettled(event: any): Promise<void> {
     // Process settlement notifications
-    console.log('Bet settled event:', event);
+    console.info('Bet settled event:', event);
 
     // Update user insights
     await this.analyticsSystem.getUserInsights(event.userId);
@@ -521,12 +521,12 @@ class BettingEngineIntegrator {
 
   private async handlePayoutProcessed(event: any): Promise<void> {
     // Handle payout confirmations
-    console.log('Payout processed event:', event);
+    console.info('Payout processed event:', event);
   }
 
   private async handleSuspiciousActivity(activity: SuspiciousActivity): Promise<void> {
     // Handle suspicious activity alerts
-    console.log('Suspicious activity detected:', activity);
+    console.info('Suspicious activity detected:', activity);
 
     // Send admin alert
     await this.notificationSystem.sendAdminAlert({
@@ -540,7 +540,7 @@ class BettingEngineIntegrator {
 
   private async handleComplianceViolation(violation: any): Promise<void> {
     // Handle compliance violations
-    console.log('Compliance violation:', violation);
+    console.info('Compliance violation:', violation);
 
     // Send admin alert
     await this.notificationSystem.sendAdminAlert({
@@ -651,7 +651,7 @@ class BettingEngineIntegrator {
 // ============================================================================
 
 async function setupBettingEngineIntegration() {
-  console.log('🔗 Setting up Fantasy42 Betting Engine Integration...');
+  console.info('🔗 Setting up Fantasy42 Betting Engine Integration...');
 
   // Initialize core systems (mock implementations for example)
   const userSystem: UserManagementSystem = {
@@ -674,7 +674,7 @@ async function setupBettingEngineIntegration() {
       },
     }),
     updateUserBalance: async (userId, amount) => {
-      console.log(`Updated balance for ${userId}: ${amount}`);
+      console.info(`Updated balance for ${userId}: ${amount}`);
     },
     verifyUser: async userId => ({
       verified: true,
@@ -714,7 +714,7 @@ async function setupBettingEngineIntegration() {
 
   const analyticsSystem: AnalyticsPlatform = {
     trackEvent: async event => {
-      console.log('Analytics event:', event.type, event.userId);
+      console.info('Analytics event:', event.type, event.userId);
     },
     getUserInsights: async userId => ({
       bettingPattern: {
@@ -766,7 +766,7 @@ async function setupBettingEngineIntegration() {
       recommendations: [],
     }),
     logAuditEvent: async event => {
-      console.log('Audit event logged:', event.action);
+      console.info('Audit event logged:', event.action);
     },
     getComplianceReport: async userId => ({
       userId,
@@ -776,19 +776,19 @@ async function setupBettingEngineIntegration() {
       nextAudit: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     }),
     flagSuspiciousActivity: async activity => {
-      console.log('Suspicious activity flagged:', activity.activity);
+      console.info('Suspicious activity flagged:', activity.activity);
     },
   };
 
   const notificationSystem: NotificationSystem = {
     sendNotification: async (userId, notification) => {
-      console.log(`Notification sent to ${userId}:`, notification.title);
+      console.info(`Notification sent to ${userId}:`, notification.title);
     },
     sendAdminAlert: async alert => {
-      console.log('Admin alert:', alert.title, alert.level);
+      console.info('Admin alert:', alert.title, alert.level);
     },
     subscribeToEvents: (eventType, callback) => {
-      console.log(`Subscribed to ${eventType} events`);
+      console.info(`Subscribed to ${eventType} events`);
     },
   };
 
@@ -820,7 +820,7 @@ async function setupBettingEngineIntegration() {
     notificationSystem
   );
 
-  console.log('✅ Betting Engine Integration setup complete');
+  console.info('✅ Betting Engine Integration setup complete');
 
   // Example usage
   try {
@@ -845,11 +845,11 @@ async function setupBettingEngineIntegration() {
       { source: 'integration-test' }
     );
 
-    console.log('✅ Integration test bet placed:', bet.id);
+    console.info('✅ Integration test bet placed:', bet.id);
 
     // Get system health
     const health = await integrator.getSystemHealth();
-    console.log('🏥 System health:', health.overall);
+    console.info('🏥 System health:', health.overall);
   } catch (error) {
     console.error('❌ Integration test failed:', error);
   }
@@ -864,8 +864,8 @@ async function setupBettingEngineIntegration() {
 if (import.meta.main) {
   setupBettingEngineIntegration()
     .then(integrator => {
-      console.log('\n🎉 Betting Engine Integration example completed!');
-      console.log('🔗 All systems successfully integrated');
+      console.info('\n🎉 Betting Engine Integration example completed!');
+      console.info('🔗 All systems successfully integrated');
     })
     .catch(error => {
       console.error('\n💥 Integration setup failed:', error);

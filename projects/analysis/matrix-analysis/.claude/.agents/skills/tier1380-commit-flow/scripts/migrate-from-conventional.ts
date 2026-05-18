@@ -87,19 +87,19 @@ if (import.meta.main) {
 	const args = Bun.argv.slice(2);
 	const dryRun = !args.includes("--apply");
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Migration Tool                     ║");
-	console.log(
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Migration Tool                     ║");
+	console.info(
 		`${`║     Mode: ${dryRun ? "DRY RUN (preview only)" : "LIVE (will apply changes)"}`.padEnd(
 			55,
 		)}║`,
 	);
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	const commits = await getRecentCommits(20);
 
-	console.log(`Analyzing ${commits.length} recent commits...\n`);
+	console.info(`Analyzing ${commits.length} recent commits...\n`);
 
 	let convertedCount = 0;
 
@@ -108,32 +108,32 @@ if (import.meta.main) {
 
 		if (parsed) {
 			const tier1380 = convertToTier1380(parsed);
-			console.log(`Original: ${commit.message.slice(0, 50)}`);
-			console.log(`Tier-1380: ${tier1380.slice(0, 50)}`);
-			console.log();
+			console.info(`Original: ${commit.message.slice(0, 50)}`);
+			console.info(`Tier-1380: ${tier1380.slice(0, 50)}`);
+			console.info();
 			convertedCount++;
 		}
 	}
 
-	console.log(`Found ${convertedCount} conventional commits`);
-	console.log();
+	console.info(`Found ${convertedCount} conventional commits`);
+	console.info();
 
 	if (dryRun) {
-		console.log("This was a dry run. No changes were made.");
-		console.log();
-		console.log("To rewrite commits, run:");
-		console.log("  bun migrate-from-conventional.ts --apply");
-		console.log();
-		console.log("⚠️  Warning: Rewriting history will change commit hashes!");
-		console.log("   Only do this on local branches before pushing.");
+		console.info("This was a dry run. No changes were made.");
+		console.info();
+		console.info("To rewrite commits, run:");
+		console.info("  bun migrate-from-conventional.ts --apply");
+		console.info();
+		console.info("⚠️  Warning: Rewriting history will change commit hashes!");
+		console.info("   Only do this on local branches before pushing.");
 	} else {
-		console.log(
+		console.info(
 			"Apply mode not yet implemented. Use git rebase -i to manually rewrite.",
 		);
-		console.log();
-		console.log("Suggested commands:");
-		console.log("  git rebase -i HEAD~20");
-		console.log("  # Then mark commits for 'reword'");
+		console.info();
+		console.info("Suggested commands:");
+		console.info("  git rebase -i HEAD~20");
+		console.info("  # Then mark commits for 'reword'");
 	}
 }
 

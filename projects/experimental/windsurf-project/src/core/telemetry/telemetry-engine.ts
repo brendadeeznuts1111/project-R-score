@@ -16,7 +16,7 @@ class TelemetryEngine {
   private listeners: Map<string, Set<TelemetryListener>> = new Map();
 
   private constructor() {
-    console.log("📡 TelemetryEngine initialized (Empire Pro)");
+    console.info("📡 TelemetryEngine initialized (Empire Pro)");
   }
 
   public static getInstance(): TelemetryEngine {

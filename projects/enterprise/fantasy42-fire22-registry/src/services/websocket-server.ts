@@ -134,11 +134,11 @@ class AdvancedWebSocketServer extends EventEmitter {
       },
     });
 
-    console.log(`🚀 Advanced WebSocket Server with Enhanced Compression started on port ${this.port}`);
-    console.log(`🔧 WebSocket Compression: permessage-deflate + Advanced Batching ENABLED`);
-    console.log(`📊 Max Payload: 1MB, Idle Timeout: 5 minutes`);
-    console.log(`🗜️  Advanced Compression: Min ${this.compressionConfig.minMessageSize}B, Batch ${this.compressionConfig.maxBatchSize} msgs`);
-    console.log(`⚡ Compression Level: ${this.compressionConfig.compressionLevel}, Adaptive: ${this.compressionConfig.adaptiveCompression}`);
+    console.info(`🚀 Advanced WebSocket Server with Enhanced Compression started on port ${this.port}`);
+    console.info(`🔧 WebSocket Compression: permessage-deflate + Advanced Batching ENABLED`);
+    console.info(`📊 Max Payload: 1MB, Idle Timeout: 5 minutes`);
+    console.info(`🗜️  Advanced Compression: Min ${this.compressionConfig.minMessageSize}B, Batch ${this.compressionConfig.maxBatchSize} msgs`);
+    console.info(`⚡ Compression Level: ${this.compressionConfig.compressionLevel}, Adaptive: ${this.compressionConfig.adaptiveCompression}`);
   }
 
   private handleConnection(ws: WebSocket): void {
@@ -163,7 +163,7 @@ class AdvancedWebSocketServer extends EventEmitter {
     this.clients.set(clientId, ws);
     this.clientMetadata.set(clientId, metadata);
 
-    console.log(`🔗 New client connected: ${clientId} (with advanced compression & batching)`);
+    console.info(`🔗 New client connected: ${clientId} (with advanced compression & batching)`);
 
     // 🚀 BUN 1.1.X OPTIMIZATION: Send enhanced welcome message with compression details
     this.sendToClient(clientId, {
@@ -224,7 +224,7 @@ class AdvancedWebSocketServer extends EventEmitter {
 
       client.lastActivity = Date.now();
 
-      console.log(`📨 Message from ${clientId}: ${parsedMessage.type}`);
+      console.info(`📨 Message from ${clientId}: ${parsedMessage.type}`);
 
       switch (parsedMessage.type) {
         case 'authenticate':
@@ -301,7 +301,7 @@ class AdvancedWebSocketServer extends EventEmitter {
       await this.handleCustomMessage(clientId, message);
     }
 
-    console.log(`📦 Processed batched message from ${clientId}: ${messages.length} messages`);
+    console.info(`📦 Processed batched message from ${clientId}: ${messages.length} messages`);
   }
 
   private handleAuthentication(clientId: string, message: RealtimeMessage): void {
@@ -324,7 +324,7 @@ class AdvancedWebSocketServer extends EventEmitter {
         timestamp: new Date().toISOString(),
       });
 
-      console.log(`✅ Client ${clientId} authenticated as user ${client.userId}`);
+      console.info(`✅ Client ${clientId} authenticated as user ${client.userId}`);
       this.emit('client-authenticated', { clientId, userId: client.userId });
     } catch (error) {
       client.authenticated = false;
@@ -334,7 +334,7 @@ class AdvancedWebSocketServer extends EventEmitter {
         timestamp: new Date().toISOString(),
       });
 
-      console.log(`❌ Client ${clientId} authentication failed`);
+      console.info(`❌ Client ${clientId} authentication failed`);
       this.emit('authentication-failed', { clientId, error });
     }
   }
@@ -363,7 +363,7 @@ class AdvancedWebSocketServer extends EventEmitter {
       timestamp: new Date().toISOString(),
     });
 
-    console.log(`📡 Client ${clientId} subscribed to: ${channels.join(', ')}`);
+    console.info(`📡 Client ${clientId} subscribed to: ${channels.join(', ')}`);
     this.emit('client-subscribed', { clientId, channels, filters });
   }
 
@@ -393,7 +393,7 @@ class AdvancedWebSocketServer extends EventEmitter {
       timestamp: new Date().toISOString(),
     });
 
-    console.log(`📴 Client ${clientId} unsubscribed from: ${channels.join(', ')}`);
+    console.info(`📴 Client ${clientId} unsubscribed from: ${channels.join(', ')}`);
     this.emit('client-unsubscribed', { clientId, channels });
   }
 
@@ -413,7 +413,7 @@ class AdvancedWebSocketServer extends EventEmitter {
   private handleDrain(ws: WebSocket): void {
     // Handle backpressure relief
     const clientId = (ws as any).id;
-    console.log(`💧 WebSocket backpressure relieved for client: ${clientId}`);
+    console.info(`💧 WebSocket backpressure relieved for client: ${clientId}`);
   }
 
   private handleDisconnection(ws: WebSocket, code: number, reason: string): void {
@@ -434,7 +434,7 @@ class AdvancedWebSocketServer extends EventEmitter {
 
     this.clients.delete(clientId);
 
-    console.log(`🔌 Client ${clientId} disconnected (code: ${code})`);
+    console.info(`🔌 Client ${clientId} disconnected (code: ${code})`);
     this.emit('client-disconnected', { clientId, code, reason: reason.toString() });
   }
 
@@ -475,7 +475,7 @@ class AdvancedWebSocketServer extends EventEmitter {
 
     for (const [clientId, client] of this.clients) {
       if (now - client.lastActivity > timeout) {
-        console.log(`🧹 Cleaning up inactive client: ${clientId}`);
+        console.info(`🧹 Cleaning up inactive client: ${clientId}`);
         client.close(1000, 'Inactive timeout');
         this.clients.delete(clientId);
       }
@@ -584,7 +584,7 @@ class AdvancedWebSocketServer extends EventEmitter {
 
       client.send(finalData);
 
-      console.log(`📦 Sent compressed batch to ${clientId}: ${metadata.messageBuffer.length} messages (${originalSize} → ${compressedSize} bytes, ${compressionRatio.toFixed(2)}x compression)`);
+      console.info(`📦 Sent compressed batch to ${clientId}: ${metadata.messageBuffer.length} messages (${originalSize} → ${compressedSize} bytes, ${compressionRatio.toFixed(2)}x compression)`);
 
       // Clear the buffer
       metadata.messageBuffer.length = 0;
@@ -710,7 +710,7 @@ class AdvancedWebSocketServer extends EventEmitter {
    */
   close(): Promise<void> {
     return new Promise(resolve => {
-      console.log('🛑 Shutting down WebSocket server...');
+      console.info('🛑 Shutting down WebSocket server...');
 
       clearInterval(this.heartbeatInterval);
       clearInterval(this.cleanupInterval);
@@ -721,7 +721,7 @@ class AdvancedWebSocketServer extends EventEmitter {
       }
 
       // Note: Bun's serve() doesn't have a close method, server will close when process exits
-      console.log('✅ WebSocket server shutdown initiated');
+      console.info('✅ WebSocket server shutdown initiated');
       resolve();
     });
   }
@@ -760,7 +760,7 @@ class RealtimeDataStreamer {
     // System health stream
     this.createStream('system-health', 15000, () => this.generateHealthUpdate());
 
-    console.log('🌊 Initialized real-time data streams');
+    console.info('🌊 Initialized real-time data streams');
   }
 
   private createStream(name: string, interval: number, generator: () => any): void {
@@ -853,7 +853,7 @@ class RealtimeDataStreamer {
   stopAllStreams(): void {
     for (const [name, stream] of this.streams) {
       clearInterval(stream);
-      console.log(`🛑 Stopped stream: ${name}`);
+      console.info(`🛑 Stopped stream: ${name}`);
     }
     this.streams.clear();
   }
@@ -882,7 +882,7 @@ class WebSocketClient {
         this.ws = new WebSocket(this.url);
 
         this.ws.onopen = () => {
-          console.log('🔗 WebSocket client connected');
+          console.info('🔗 WebSocket client connected');
           this.reconnectAttempts = 0;
           resolve();
         };
@@ -892,7 +892,7 @@ class WebSocketClient {
         };
 
         this.ws.onclose = () => {
-          console.log('🔌 WebSocket client disconnected');
+          console.info('🔌 WebSocket client disconnected');
           this.handleReconnect();
         };
 
@@ -918,7 +918,7 @@ class WebSocketClient {
   private handleReconnect(): void {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      console.log(
+      console.info(
         `🔄 Reconnecting... Attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts}`
       );
 
@@ -1012,20 +1012,20 @@ if (require.main === module) {
   const server = new AdvancedWebSocketServer(PORT, JWT_SECRET);
   const streamer = new RealtimeDataStreamer(server);
 
-  console.log(`🚀 WebSocket Server running on port ${PORT}`);
-  console.log(`🔑 JWT Secret: ${JWT_SECRET}`);
-  console.log(`📊 Real-time streams active`);
+  console.info(`🚀 WebSocket Server running on port ${PORT}`);
+  console.info(`🔑 JWT Secret: ${JWT_SECRET}`);
+  console.info(`📊 Real-time streams active`);
 
   // Handle graceful shutdown
   process.on('SIGINT', async () => {
-    console.log('\n🛑 Shutting down WebSocket server...');
+    console.info('\n🛑 Shutting down WebSocket server...');
     streamer.stopAllStreams();
     await server.close();
     process.exit(0);
   });
 
   process.on('SIGTERM', async () => {
-    console.log('\n🛑 Shutting down WebSocket server...');
+    console.info('\n🛑 Shutting down WebSocket server...');
     streamer.stopAllStreams();
     await server.close();
     process.exit(0);

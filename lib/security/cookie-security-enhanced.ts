@@ -114,7 +114,7 @@ export class EnhancedCookieSecurity {
    * Real-time monitoring using FileHandle.readLines()
    */
   async startRealTimeMonitoring(callback: (entry: CookieLogEntry) => void): Promise<void> {
-    console.log('🔍 Starting real-time cookie security monitoring...');
+    console.info('🔍 Starting real-time cookie security monitoring...');
     
     await this.fileLogger.monitorLogFile((entry) => {
       // Enhanced callback with real-time analysis
@@ -309,56 +309,56 @@ export class EnhancedCookieSecurity {
 
 // 🚀 DEMO: FileHandle.readLines() Integration
 export async function demonstrateFileHandleIntegration() {
-  console.log('🚀 Demonstrating Enhanced Cookie Security with Bun v1.3.1 FileHandle.readLines()');
+  console.info('🚀 Demonstrating Enhanced Cookie Security with Bun v1.3.1 FileHandle.readLines()');
   
   const enhancedSecurity = new EnhancedCookieSecurity('./enhanced-cookie-security.log');
 
   // Test batch processing
-  console.log('\n📦 Testing batch cookie processing...');
+  console.info('\n📦 Testing batch cookie processing...');
   const batchResults = await enhancedSecurity.batchProcessFromFile('./test-cookies.txt', 'demo-session-enhanced');
   
-  console.log(`Processed: ${batchResults.results.processed} cookies`);
-  console.log(`Success rate: ${((batchResults.results.successful / batchResults.results.processed) * 100).toFixed(1)}%`);
+  console.info(`Processed: ${batchResults.results.processed} cookies`);
+  console.info(`Success rate: ${((batchResults.results.successful / batchResults.results.processed) * 100).toFixed(1)}%`);
 
   // Test audit trail processing
-  console.log('\n📋 Testing audit trail processing...');
+  console.info('\n📋 Testing audit trail processing...');
   const auditResults = await enhancedSecurity.processAuditTrail('./enhanced-cookie-security.log', {
     limit: 50,
     severityFilter: ['warn', 'error']
   });
   
-  console.log(`Audit entries processed: ${auditResults.totalEntries}`);
-  console.log(`Filtered entries: ${auditResults.filteredEntries.length}`);
-  console.log(`Average security score: ${auditResults.securitySummary.averageScore.toFixed(1)}/100`);
+  console.info(`Audit entries processed: ${auditResults.totalEntries}`);
+  console.info(`Filtered entries: ${auditResults.filteredEntries.length}`);
+  console.info(`Average security score: ${auditResults.securitySummary.averageScore.toFixed(1)}/100`);
 
   // Generate comprehensive report
-  console.log('\n📊 Generating comprehensive security report...');
+  console.info('\n📊 Generating comprehensive security report...');
   const report = await enhancedSecurity.generateComprehensiveReport();
   
-  console.log(`Security score trend: ${report.securityTrends.scoreTrend.length} data points`);
-  console.log(`Failure rate: ${report.securityTrends.failureRate.toFixed(1)}%`);
-  console.log(`Recommendations: ${report.recommendations.length}`);
+  console.info(`Security score trend: ${report.securityTrends.scoreTrend.length} data points`);
+  console.info(`Failure rate: ${report.securityTrends.failureRate.toFixed(1)}%`);
+  console.info(`Recommendations: ${report.recommendations.length}`);
 
   // Test real-time monitoring (brief demo)
-  console.log('\n🔍 Starting real-time monitoring demo (5 seconds)...');
+  console.info('\n🔍 Starting real-time monitoring demo (5 seconds)...');
   
   let monitoringCount = 0;
   await enhancedSecurity.startRealTimeMonitoring((entry) => {
     monitoringCount++;
     if (monitoringCount <= 3) { // Show first few entries
-      console.log(`  📝 ${entry.level.toUpperCase()}: ${entry.cookieName} - ${entry.action}`);
+      console.info(`  📝 ${entry.level.toUpperCase()}: ${entry.cookieName} - ${entry.action}`);
     }
   });
 
   // Wait a bit to show monitoring
   await new Promise(resolve => setTimeout(resolve, 2000));
 
-  console.log('\n✅ FileHandle.readLines() integration demo completed successfully!');
-  console.log('🎯 Key benefits demonstrated:');
-  console.log('  - Efficient log file processing with async iteration');
-  console.log('  - Real-time monitoring with backpressure-aware streaming');
-  console.log('  - Batch processing with performance optimization');
-  console.log('  - Comprehensive audit trail analysis');
+  console.info('\n✅ FileHandle.readLines() integration demo completed successfully!');
+  console.info('🎯 Key benefits demonstrated:');
+  console.info('  - Efficient log file processing with async iteration');
+  console.info('  - Real-time monitoring with backpressure-aware streaming');
+  console.info('  - Batch processing with performance optimization');
+  console.info('  - Comprehensive audit trail analysis');
 }
 
 // 🚀 RUN DEMO IF EXECUTED DIRECTLY

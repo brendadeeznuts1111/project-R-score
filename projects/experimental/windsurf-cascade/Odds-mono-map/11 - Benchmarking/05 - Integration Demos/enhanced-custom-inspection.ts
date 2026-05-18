@@ -7,18 +7,18 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.bold.magenta('🎯 Enhanced Custom Inspection with Bun.stringWidth()'));
-console.log(chalk.gray('Using countAnsiEscapeCodes: true for accurate width management'));
-console.log(chalk.gray('='.repeat(80)));
+console.info(chalk.bold.magenta('🎯 Enhanced Custom Inspection with Bun.stringWidth()'));
+console.info(chalk.gray('Using countAnsiEscapeCodes: true for accurate width management'));
+console.info(chalk.gray('='.repeat(80)));
 
 // =============================================================================
 // DEMONSTRATING Bun.stringWidth() WITH ANSI CODES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📋 Bun.stringWidth() with ANSI Escape Codes'));
+console.info(chalk.bold.cyan('\n📋 Bun.stringWidth() with ANSI Escape Codes'));
 
-console.log(chalk.yellow('\n🔸 Width Measurement Examples:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Width Measurement Examples:'));
+console.info(chalk.white(`
 // Plain text
 Bun.stringWidth("hello") // => 5
 
@@ -33,23 +33,23 @@ Bun.stringWidth("\\u001b[31mhello\\u001b[0m", { countAnsiEscapeCodes: true }) //
 const plainText = "hello";
 const coloredText = "\u001b[31mhello\u001b[0m";
 
-console.log(chalk.green('\n📊 Width Measurements:'));
-console.log(chalk.gray(`Plain text: "${plainText}"`));
-console.log(chalk.cyan(`  Width: ${Bun.stringWidth(plainText)} characters`));
+console.info(chalk.green('\n📊 Width Measurements:'));
+console.info(chalk.gray(`Plain text: "${plainText}"`));
+console.info(chalk.cyan(`  Width: ${Bun.stringWidth(plainText)} characters`));
 
-console.log(chalk.gray(`Colored text: "${coloredText}"`));
-console.log(chalk.cyan(`  Visual width: ${Bun.stringWidth(coloredText)} characters`));
-console.log(chalk.cyan(`  Total width (with ANSI): ${Bun.stringWidth(coloredText, { countAnsiEscapeCodes: true })} characters`));
-console.log(chalk.yellow(`  ANSI overhead: ${Bun.stringWidth(coloredText, { countAnsiEscapeCodes: true }) - Bun.stringWidth(coloredText)} characters`));
+console.info(chalk.gray(`Colored text: "${coloredText}"`));
+console.info(chalk.cyan(`  Visual width: ${Bun.stringWidth(coloredText)} characters`));
+console.info(chalk.cyan(`  Total width (with ANSI): ${Bun.stringWidth(coloredText, { countAnsiEscapeCodes: true })} characters`));
+console.info(chalk.yellow(`  ANSI overhead: ${Bun.stringWidth(coloredText, { countAnsiEscapeCodes: true }) - Bun.stringWidth(coloredText)} characters`));
 
 // =============================================================================
 // ENHANCED VAULT FILE WITH PROPER WIDTH MANAGEMENT
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🏗️  Enhanced Vault File with Proper Width Management'));
+console.info(chalk.bold.cyan('\n🏗️  Enhanced Vault File with Proper Width Management'));
 
-console.log(chalk.yellow('\n🔸 Width-Aware Custom Inspection:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Width-Aware Custom Inspection:'));
+console.info(chalk.white(`
 class EnhancedVaultFile {
   [Bun.inspect.custom]() {
     const nameDisplay = chalk.cyan(this.name);
@@ -133,10 +133,10 @@ const enhancedVaultFiles = [
     })
 ];
 
-console.log(chalk.green('\n📋 Enhanced Custom Inspection with Width Tracking:'));
-enhancedVaultFiles.forEach(file => console.log(file));
+console.info(chalk.green('\n📋 Enhanced Custom Inspection with Width Tracking:'));
+enhancedVaultFiles.forEach(file => console.info(file));
 
-console.log(chalk.yellow('\n📊 Width-Aware Table Format:'));
+console.info(chalk.yellow('\n📊 Width-Aware Table Format:'));
 Bun.inspect.table(
     enhancedVaultFiles.map(file => file.toTableFormat()),
     ['name', 'path', 'size', 'visualWidth', 'totalWidth', 'status'],
@@ -147,10 +147,10 @@ Bun.inspect.table(
 // WIDTH-AWARE VALIDATION ISSUE CLASS
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔗 Width-Aware Validation Issue Class'));
+console.info(chalk.bold.cyan('\n🔗 Width-Aware Validation Issue Class'));
 
-console.log(chalk.yellow('\n🔸 Validation Issue with Width Management:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Validation Issue with Width Management:'));
+console.info(chalk.white(`
 class WidthAwareValidationIssue {
   [Bun.inspect.custom]() {
     const typeDisplay = this.type === 'error' ? 
@@ -252,10 +252,10 @@ const widthAwareIssues = [
     })
 ];
 
-console.log(chalk.green('\n📋 Width-Aware Custom Inspection:'));
-widthAwareIssues.forEach(issue => console.log(issue));
+console.info(chalk.green('\n📋 Width-Aware Custom Inspection:'));
+widthAwareIssues.forEach(issue => console.info(issue));
 
-console.log(chalk.yellow('\n📊 Width-Aware Table with ANSI Analysis:'));
+console.info(chalk.yellow('\n📊 Width-Aware Table with ANSI Analysis:'));
 Bun.inspect.table(
     widthAwareIssues.map(issue => issue.toTableFormat()),
     ['type', 'file', 'line', 'message', 'visualWidth', 'totalWidth', 'ansiOverhead'],
@@ -266,10 +266,10 @@ Bun.inspect.table(
 // SMART TRUNCATION WITH Bun.stringWidth()
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n✂️  Smart Truncation with Bun.stringWidth()'));
+console.info(chalk.bold.cyan('\n✂️  Smart Truncation with Bun.stringWidth()'));
 
-console.log(chalk.yellow('\n🔸 Width-Aware Text Truncation:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Width-Aware Text Truncation:'));
+console.info(chalk.white(`
 // Smart truncation that respects visual width
 function smartTruncate(text, maxWidth) {
   if (Bun.stringWidth(text) <= maxWidth) {
@@ -338,27 +338,27 @@ const testTexts = [
     '\u001b[31mColored text that needs proper width calculation\u001b[0m'
 ];
 
-console.log(chalk.green('\n📋 Smart Truncation Examples (max width: 30):'));
+console.info(chalk.green('\n📋 Smart Truncation Examples (max width: 30):'));
 testTexts.forEach((text, index) => {
     const original = text;
     const truncated = smartTruncate(text, 30);
     const originalWidth = Bun.stringWidth(text);
     const truncatedWidth = Bun.stringWidth(truncated);
 
-    console.log(chalk.bold(`\n${index + 1}. Original: "${original}"`));
-    console.log(chalk.gray(`   Width: ${originalWidth} characters`));
-    console.log(chalk.cyan(`   Truncated: "${truncated}"`));
-    console.log(chalk.gray(`   Width: ${truncatedWidth} characters`));
+    console.info(chalk.bold(`\n${index + 1}. Original: "${original}"`));
+    console.info(chalk.gray(`   Width: ${originalWidth} characters`));
+    console.info(chalk.cyan(`   Truncated: "${truncated}"`));
+    console.info(chalk.gray(`   Width: ${truncatedWidth} characters`));
 });
 
 // =============================================================================
 // WIDTH-OPTIMIZED TABLE GENERATION
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📊 Width-Optimized Table Generation'));
+console.info(chalk.bold.cyan('\n📊 Width-Optimized Table Generation'));
 
-console.log(chalk.yellow('\n🔸 Dynamic Column Width Calculation:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Dynamic Column Width Calculation:'));
+console.info(chalk.white(`
 // Calculate optimal column widths based on content
 function calculateOptimalWidths(data, columns, padding = 2) {
   const widths = {};
@@ -408,14 +408,14 @@ function calculateOptimalWidths(data, columns, padding = 2) {
 const sampleData = enhancedVaultFiles.map(file => file.toTableFormat());
 const columns = ['name', 'path', 'size', 'visualWidth', 'totalWidth', 'status'];
 
-console.log(chalk.green('\n📊 Calculated Optimal Column Widths:'));
+console.info(chalk.green('\n📊 Calculated Optimal Column Widths:'));
 const optimalWidths = calculateOptimalWidths(sampleData, columns);
 Object.entries(optimalWidths).forEach(([column, width]) => {
-    console.log(chalk.cyan(`${column}: ${width} characters`));
+    console.info(chalk.cyan(`${column}: ${width} characters`));
 });
 
-console.log(chalk.yellow('\n📋 Width-Optimized Table:'));
+console.info(chalk.yellow('\n📋 Width-Optimized Table:'));
 Bun.inspect.table(sampleData, columns, { compact: true });
 
-console.log(chalk.bold.magenta('\n🎉 Enhanced Custom Inspection Complete!'));
-console.log(chalk.gray('Now using Bun.stringWidth() with countAnsiEscapeCodes: true for perfect width management!'));
+console.info(chalk.bold.magenta('\n🎉 Enhanced Custom Inspection Complete!'));
+console.info(chalk.gray('Now using Bun.stringWidth() with countAnsiEscapeCodes: true for perfect width management!'));

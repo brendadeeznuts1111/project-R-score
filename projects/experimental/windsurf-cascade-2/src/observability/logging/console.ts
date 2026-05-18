@@ -170,14 +170,14 @@ console.debug = function(...args: any[]) {
 function logToStorage(domain: string, event: string, data: any) {
   // In production, this would log to SQLite/R2
   if (getCurrentConfig().features?.DEBUG) {
-    console.log(`[STORAGE] ${domain}: ${event}`, data);
+    console.info(`[STORAGE] ${domain}: ${event}`, data);
   }
 }
 
 // Export utilities
 export function setTerminalMode(mode: "raw" | "cooked" | "disabled") {
   // This would update the 13-byte config in a real implementation
-  console.log(`[TERMINAL] Mode set to: ${mode}`);
+  console.info(`[TERMINAL] Mode set to: ${mode}`);
 }
 
 export function getTerminalInfo() {
@@ -194,10 +194,10 @@ export function getTerminalInfo() {
 
 // Usage examples
 export function demonstrateConsoleFeatures() {
-  console.log("🔧 Demonstrating 13-byte aware console features");
+  console.info("🔧 Demonstrating 13-byte aware console features");
   
   // Example 1: %j format with JSON
-  console.log("%j", { 
+  console.info("%j", { 
     action: "publish", 
     package: "@mycompany/pkg", 
     version: "2.0.0",
@@ -218,9 +218,9 @@ export function demonstrateConsoleFeatures() {
   
   // Example 4: Terminal width awareness
   const longString = "This is a very long string that should be wrapped according to the terminal width specified in the 13-byte config";
-  console.log("Long string test:", longString);
+  console.info("Long string test:", longString);
 }
 
 // Initialize on import
-console.log("🖥️  Terminal-aware console initialized with 13-byte config");
-console.log("📊 Terminal info:", getTerminalInfo());
+console.info("🖥️  Terminal-aware console initialized with 13-byte config");
+console.info("📊 Terminal info:", getTerminalInfo());

@@ -39,7 +39,7 @@ const commands: Record<string, () => Promise<void>> = {
   // OpenClaw gateway
   openclaw_status: async () => {
     const status = await gateway.getOpenClawStatus();
-    console.log(JSON.stringify(status, null, 2));
+    console.info(JSON.stringify(status, null, 2));
   },
   
   // Matrix Bridge status
@@ -49,10 +49,10 @@ const commands: Record<string, () => Promise<void>> = {
     // Use table engine for pretty output
     const { createTier1380Table, formatters } = await import("../lib/table-engine-v3.28.ts");
     
-    console.log(c.bold(hsl(200, 90, 70, "═══════════════════════════════════════════════")));
-    console.log(c.bold(hsl(200, 90, 70, "       MATRIX BRIDGE STATUS v3.28")));
-    console.log(c.bold(hsl(200, 90, 70, "═══════════════════════════════════════════════")));
-    console.log();
+    console.info(c.bold(hsl(200, 90, 70, "═══════════════════════════════════════════════")));
+    console.info(c.bold(hsl(200, 90, 70, "       MATRIX BRIDGE STATUS v3.28")));
+    console.info(c.bold(hsl(200, 90, 70, "═══════════════════════════════════════════════")));
+    console.info();
     
     // Bridge Overview Table
     const overviewTable = createTier1380Table({
@@ -64,8 +64,8 @@ const commands: Record<string, () => Promise<void>> = {
       borderColor: [220, 80, 60],
     });
     
-    console.log(hsl(180, 80, 60, '── Bridge Overview ──'));
-    console.log(overviewTable.render([
+    console.info(hsl(180, 80, 60, '── Bridge Overview ──'));
+    console.info(overviewTable.render([
       { property: 'Bridge Status', value: status.bridgeOnline ? formatters.status(true) : formatters.status(false) },
       { property: 'Matrix Protocol', value: status.matrixProtocol },
       { property: 'Gateway Connected', value: status.gatewayConnected ? formatters.status(true) : formatters.status(false) },
@@ -75,26 +75,26 @@ const commands: Record<string, () => Promise<void>> = {
       { property: 'Context Hash', value: status.contextSync.hash.slice(0, 16) + '...' },
       { property: 'Context Synced', value: status.contextSync.synced ? formatters.status(true) : formatters.status(false) },
     ]));
-    console.log();
+    console.info();
     
     // Show errors if any
     if (status.errors.length > 0) {
-      console.log(hsl(0, 80, 60, '── Errors ──'));
-      status.errors.forEach(err => console.log(`  ${hsl(0, 80, 60, '✗')} ${err}`));
-      console.log();
+      console.info(hsl(0, 80, 60, '── Errors ──'));
+      status.errors.forEach(err => console.info(`  ${hsl(0, 80, 60, '✗')} ${err}`));
+      console.info();
     }
     
     // Show warnings if any
     if (status.warnings.length > 0) {
-      console.log(hsl(45, 90, 60, '── Warnings ──'));
-      status.warnings.forEach(warn => console.log(`  ${hsl(45, 90, 60, '!')} ${warn}`));
-      console.log();
+      console.info(hsl(45, 90, 60, '── Warnings ──'));
+      status.warnings.forEach(warn => console.info(`  ${hsl(45, 90, 60, '!')} ${warn}`));
+      console.info();
     }
     
     // Raw JSON option
     if (args.includes('--json')) {
-      console.log(dim('── Raw JSON ──'));
-      console.log(JSON.stringify(status, null, 2));
+      console.info(dim('── Raw JSON ──'));
+      console.info(JSON.stringify(status, null, 2));
     }
   },
   
@@ -130,27 +130,27 @@ const commands: Record<string, () => Promise<void>> = {
   profile_status: async () => {
     const status = await gateway.getProfileStatus();
     
-    console.log(`${c.cyan("╔════════════════════════════════════════╗")}`);
-    console.log(`${c.cyan("║")}     ${c.bold("OpenClaw Profile Status")}            ${c.cyan("║")}`);
-    console.log(`${c.cyan("╠════════════════════════════════════════╣")}`);
+    console.info(`${c.cyan("╔════════════════════════════════════════╗")}`);
+    console.info(`${c.cyan("║")}     ${c.bold("OpenClaw Profile Status")}            ${c.cyan("║")}`);
+    console.info(`${c.cyan("╠════════════════════════════════════════╣")}`);
     
     const dirStr = status.currentDirectory.slice(0, 30);
     const profileStr = (status.profile?.name || "None").slice(0, 30);
     const bindingStr = status.binding ? "✓ Bound" : "✗ None";
     const bunfigStr = status.globalConfig.configPath.slice(0, 30);
     
-    console.log(`${c.cyan("║")} Directory: ${dirStr.padEnd(30)} ${c.cyan("║")}`);
-    console.log(`${c.cyan("║")} Profile:   ${profileStr.padEnd(30)} ${c.cyan("║")}`);
-    console.log(`${c.cyan("║")} Binding:   ${bindingStr.padEnd(30)} ${c.cyan("║")}`);
-    console.log(`${c.cyan("║")} Context:   ${status.contextHash.padEnd(30)} ${c.cyan("║")}`);
-    console.log(`${c.cyan("║")} Bunfig:    ${bunfigStr.padEnd(30)} ${c.cyan("║")}`);
-    console.log(`${c.cyan("╚════════════════════════════════════════╝")}`);
+    console.info(`${c.cyan("║")} Directory: ${dirStr.padEnd(30)} ${c.cyan("║")}`);
+    console.info(`${c.cyan("║")} Profile:   ${profileStr.padEnd(30)} ${c.cyan("║")}`);
+    console.info(`${c.cyan("║")} Binding:   ${bindingStr.padEnd(30)} ${c.cyan("║")}`);
+    console.info(`${c.cyan("║")} Context:   ${status.contextHash.padEnd(30)} ${c.cyan("║")}`);
+    console.info(`${c.cyan("║")} Bunfig:    ${bunfigStr.padEnd(30)} ${c.cyan("║")}`);
+    console.info(`${c.cyan("╚════════════════════════════════════════╝")}`);
     
-    console.log("\nAvailable Profiles:");
+    console.info("\nAvailable Profiles:");
     status.allProfiles.forEach(p => {
       const marker = p.id === status.profile?.id ? c.green("→ ") : "  ";
       const bound = p.bound ? c.gray("[bound]") : "";
-      console.log(`${marker}${c.cyan(p.id)}: ${p.name} ${bound}`);
+      console.info(`${marker}${c.cyan(p.id)}: ${p.name} ${bound}`);
     });
   },
   
@@ -162,7 +162,7 @@ const commands: Record<string, () => Promise<void>> = {
       process.exit(1);
     }
     
-    console.log(c.gray(`$ ${command}`));
+    console.info(c.gray(`$ ${command}`));
     
     const parts = command.split(" ");
     const cmd = parts[0];
@@ -170,11 +170,11 @@ const commands: Record<string, () => Promise<void>> = {
     
     const result = await gateway.shellExecute(cmd, cmdArgs);
     
-    if (result.stdout) console.log(result.stdout);
+    if (result.stdout) console.info(result.stdout);
     if (result.stderr) console.error(c.red(result.stderr));
     
     const status = result.exitCode === 0 ? c.green("✓") : c.red("✗");
-    console.log(c.gray(`${status} Exit: ${result.exitCode} | ${result.durationMs}ms`));
+    console.info(c.gray(`${status} Exit: ${result.exitCode} | ${result.durationMs}ms`));
     
     process.exit(result.exitCode);
   },
@@ -186,10 +186,10 @@ const commands: Record<string, () => Promise<void>> = {
       process.exit(1);
     }
     
-    console.log(c.gray(`[context] $ ${args.join(" ")}`));
+    console.info(c.gray(`[context] $ ${args.join(" ")}`));
     
     const result = await gateway.shellExecuteWithContext(args, { useCache: true });
-    console.log(c.gray(`[context] Duration: ${result.durationMs}ms`));
+    console.info(c.gray(`[context] Duration: ${result.durationMs}ms`));
     process.exit(result.exitCode);
   },
   
@@ -198,26 +198,26 @@ const commands: Record<string, () => Promise<void>> = {
     const config = await loadGlobalConfig();
     const bunfig = await loadBunfigToml(config.configPath);
     
-    console.log(c.cyan("Global Config:"));
-    console.log(JSON.stringify({
+    console.info(c.cyan("Global Config:"));
+    console.info(JSON.stringify({
       cwd: config.cwd,
       envFile: config.envFile,
       configPath: config.configPath,
       version: config.version,
     }, null, 2));
     
-    console.log(c.cyan("\nBunfig Config:"));
-    console.log(JSON.stringify(bunfig, null, 2));
+    console.info(c.cyan("\nBunfig Config:"));
+    console.info(JSON.stringify(bunfig, null, 2));
   },
   
   // Version info
   version: async () => {
-    console.log(`OpenClaw Gateway v3.28.0 (Bun Context + Table Engine)`);
-    console.log(`Bun version: ${Bun.version}`);
-    console.log(`Exec path: ${process.execPath}`);
+    console.info(`OpenClaw Gateway v3.28.0 (Bun Context + Table Engine)`);
+    console.info(`Bun version: ${Bun.version}`);
+    console.info(`Exec path: ${process.execPath}`);
     
     const config = await loadGlobalConfig();
-    console.log(`Config: ${config.configPath}`);
+    console.info(`Config: ${config.configPath}`);
   },
   
   // v3.28 Dashboard with enhanced table engine
@@ -250,7 +250,7 @@ const commands: Record<string, () => Promise<void>> = {
       },
     };
     
-    console.log(renderContextDashboard(dashboardContext));
+    console.info(renderContextDashboard(dashboardContext));
   },
   
   // v3.28 Compact dashboard
@@ -281,7 +281,7 @@ const commands: Record<string, () => Promise<void>> = {
       },
     };
     
-    console.log(renderContextCompact(dashboardContext));
+    console.info(renderContextCompact(dashboardContext));
   },
 };
 
@@ -295,7 +295,7 @@ async function main() {
       process.exit(1);
     }
   } else {
-    console.log(`
+    console.info(`
 ${c.cyan("╔════════════════════════════════════════════════════════╗")}
 ${c.cyan("║")}  OpenClaw CLI - Matrix Profile Gateway v3.28         ${c.cyan("║")}
 ${c.cyan("╠════════════════════════════════════════════════════════╣")}

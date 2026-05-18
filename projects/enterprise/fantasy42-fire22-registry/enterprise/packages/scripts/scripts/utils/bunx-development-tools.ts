@@ -7,126 +7,126 @@
 
 import { envConfig } from './src/shared/environment-configuration';
 
-console.log('🚀 Bunx Development Tools Demo');
-console.log('===============================\n');
+console.info('🚀 Bunx Development Tools Demo');
+console.info('===============================\n');
 
-console.log('ℹ️  What is bunx?');
-console.log("   • Bun's package runner for executing packages without global installation");
-console.log('   • Perfect for development tools and one-off tasks');
-console.log('   • Automatically downloads and runs packages on-demand');
-console.log('   • No package.json modifications required');
-console.log("   • Fast execution with Bun's native performance\n");
+console.info('ℹ️  What is bunx?');
+console.info("   • Bun's package runner for executing packages without global installation");
+console.info('   • Perfect for development tools and one-off tasks');
+console.info('   • Automatically downloads and runs packages on-demand');
+console.info('   • No package.json modifications required');
+console.info("   • Fast execution with Bun's native performance\n");
 
-console.log('🔧 Common Development Use Cases:');
+console.info('🔧 Common Development Use Cases:');
 
-console.log('   1. Code Formatting:');
-console.log('      bunx prettier@3.2.5 --write "src/**/*.ts"');
-console.log('');
+console.info('   1. Code Formatting:');
+console.info('      bunx prettier@3.2.5 --write "src/**/*.ts"');
+console.info('');
 
-console.log('   2. Type Checking:');
-console.log('      bunx tsc --noEmit --skipLibCheck');
-console.log('');
+console.info('   2. Type Checking:');
+console.info('      bunx tsc --noEmit --skipLibCheck');
+console.info('');
 
-console.log('   3. Linting:');
-console.log('      bunx eslint@8.57.0 src/ --ext .ts,.tsx');
-console.log('');
+console.info('   3. Linting:');
+console.info('      bunx eslint@8.57.0 src/ --ext .ts,.tsx');
+console.info('');
 
-console.log('   4. Testing:');
-console.log('      bunx jest@29.7.0');
-console.log('');
+console.info('   4. Testing:');
+console.info('      bunx jest@29.7.0');
+console.info('');
 
-console.log('   5. Build Tools:');
-console.log('      bunx rollup@4.9.6 -c');
-console.log('');
+console.info('   5. Build Tools:');
+console.info('      bunx rollup@4.9.6 -c');
+console.info('');
 
-console.log('   6. Development Servers:');
-console.log('      bunx http-server@14.1.1 ./dist -p 8080');
-console.log('');
+console.info('   6. Development Servers:');
+console.info('      bunx http-server@14.1.1 ./dist -p 8080');
+console.info('');
 
-console.log('🎯 Integration with Domain System:');
+console.info('🎯 Integration with Domain System:');
 
-console.log('   • Format domain-specific code:');
-console.log('     bunx prettier@3.2.5 --write "src/domains/**/*.ts"');
-console.log('');
+console.info('   • Format domain-specific code:');
+console.info('     bunx prettier@3.2.5 --write "src/domains/**/*.ts"');
+console.info('');
 
-console.log('   • Lint collections domain:');
-console.log('     bunx eslint@8.57.0 src/domains/collections/ --ext .ts');
-console.log('');
+console.info('   • Lint collections domain:');
+console.info('     bunx eslint@8.57.0 src/domains/collections/ --ext .ts');
+console.info('');
 
-console.log('   • Type check financial reporting:');
-console.log('     bunx tsc --noEmit src/domains/financial-reporting/');
-console.log('');
+console.info('   • Type check financial reporting:');
+console.info('     bunx tsc --noEmit src/domains/financial-reporting/');
+console.info('');
 
-console.log('   • Bundle for production:');
-console.log('     bunx esbuild@0.19.8 src/index.ts --bundle --outdir=dist');
-console.log('');
+console.info('   • Bundle for production:');
+console.info('     bunx esbuild@0.19.8 src/index.ts --bundle --outdir=dist');
+console.info('');
 
-console.log('💰 Benefits for Enterprise Development:');
+console.info('💰 Benefits for Enterprise Development:');
 
-console.log('   ✅ Zero global dependencies');
-console.log('   ✅ Consistent tool versions across team');
-console.log('   ✅ No package.json pollution');
-console.log('   ✅ Automatic version pinning');
-console.log('   ✅ Fast execution');
-console.log('   ✅ Perfect for CI/CD pipelines');
-console.log('   ✅ Works with any npm package');
-console.log('   ✅ Cached for repeated use\n');
+console.info('   ✅ Zero global dependencies');
+console.info('   ✅ Consistent tool versions across team');
+console.info('   ✅ No package.json pollution');
+console.info('   ✅ Automatic version pinning');
+console.info('   ✅ Fast execution');
+console.info('   ✅ Perfect for CI/CD pipelines');
+console.info('   ✅ Works with any npm package');
+console.info('   ✅ Cached for repeated use\n');
 
-console.log('🏗️  Practical Examples for Our System:');
+console.info('🏗️  Practical Examples for Our System:');
 
 // Show current environment
-console.log('🌐 Current Environment:');
-console.log(`   Production: ${envConfig.app.isProduction}`);
-console.log(`   Timezone: ${envConfig.timezone.default}`);
-console.log(`   Cache Enabled: ${envConfig.featureFlags?.cache ?? true}`);
-console.log('');
+console.info('🌐 Current Environment:');
+console.info(`   Production: ${envConfig.app.isProduction}`);
+console.info(`   Timezone: ${envConfig.timezone.default}`);
+console.info(`   Cache Enabled: ${envConfig.featureFlags?.cache ?? true}`);
+console.info('');
 
-console.log('📊 Domain Statistics:');
-console.log('   • Collections Domain: Payment processing & risk assessment');
-console.log('   • Financial Domain: Regulatory reporting & compliance');
-console.log('   • External Domain: Fantasy402 integration');
-console.log('   • Shared Domain: Common infrastructure & utilities');
-console.log('');
+console.info('📊 Domain Statistics:');
+console.info('   • Collections Domain: Payment processing & risk assessment');
+console.info('   • Financial Domain: Regulatory reporting & compliance');
+console.info('   • External Domain: Fantasy402 integration');
+console.info('   • Shared Domain: Common infrastructure & utilities');
+console.info('');
 
-console.log('🛠️  Recommended bunx Commands for Our Project:');
+console.info('🛠️  Recommended bunx Commands for Our Project:');
 
-console.log('   # Format all TypeScript files');
-console.log('   bunx prettier@3.2.5 --write "src/**/*.ts" --ignore-path .gitignore');
-console.log('');
+console.info('   # Format all TypeScript files');
+console.info('   bunx prettier@3.2.5 --write "src/**/*.ts" --ignore-path .gitignore');
+console.info('');
 
-console.log('   # Type check entire project');
-console.log('   bunx typescript@5.3.3 --noEmit --skipLibCheck');
-console.log('');
+console.info('   # Type check entire project');
+console.info('   bunx typescript@5.3.3 --noEmit --skipLibCheck');
+console.info('');
 
-console.log('   # Run ESLint on domains');
-console.log('   bunx eslint@8.57.0 src/domains/ --ext .ts --fix');
-console.log('');
+console.info('   # Run ESLint on domains');
+console.info('   bunx eslint@8.57.0 src/domains/ --ext .ts --fix');
+console.info('');
 
-console.log('   # Bundle for production');
-console.log('   bunx esbuild@0.19.8 src/index.ts --bundle --minify --outdir=dist');
-console.log('');
+console.info('   # Bundle for production');
+console.info('   bunx esbuild@0.19.8 src/index.ts --bundle --minify --outdir=dist');
+console.info('');
 
-console.log('   # Start development server');
-console.log('   bunx live-server@1.2.2 ./dist --port=3000 --open');
-console.log('');
+console.info('   # Start development server');
+console.info('   bunx live-server@1.2.2 ./dist --port=3000 --open');
+console.info('');
 
-console.log('🔄 Integration with Our Build Process:');
+console.info('🔄 Integration with Our Build Process:');
 
-console.log('   • Use bunx in package.json scripts:');
-console.log('     "format": "bunx prettier@3.2.5 --write ."');
-console.log('     "lint": "bunx eslint@8.57.0 src/"');
-console.log('     "type-check": "bunx typescript@5.3.3 --noEmit"');
-console.log('');
+console.info('   • Use bunx in package.json scripts:');
+console.info('     "format": "bunx prettier@3.2.5 --write ."');
+console.info('     "lint": "bunx eslint@8.57.0 src/"');
+console.info('     "type-check": "bunx typescript@5.3.3 --noEmit"');
+console.info('');
 
-console.log('   • CI/CD Pipeline integration:');
-console.log('     - bunx for consistent tool versions');
-console.log('     - No global installation requirements');
-console.log('     - Faster builds with caching');
-console.log('');
+console.info('   • CI/CD Pipeline integration:');
+console.info('     - bunx for consistent tool versions');
+console.info('     - No global installation requirements');
+console.info('     - Faster builds with caching');
+console.info('');
 
-console.log('🎉 Bunx + Domain-Driven Development = Perfect Match!');
-console.log('Our enterprise system now has zero-friction development tooling! 🚀');
+console.info('🎉 Bunx + Domain-Driven Development = Perfect Match!');
+console.info('Our enterprise system now has zero-friction development tooling! 🚀');
 
-console.log(
+console.info(
   "\n💡 Pro Tip: Use bunx for any development tool you need - it's faster than npm install -g and cleaner than local devDependencies!"
 );

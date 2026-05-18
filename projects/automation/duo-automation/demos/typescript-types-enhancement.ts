@@ -107,7 +107,7 @@ export class EnhancedTypeSystem {
     );
     
     // Fixed: TypeScript now knows this returns a Changes object
-    console.log('Insert result:', {
+    console.info('Insert result:', {
       changes: insertResult.changes,
       lastInsertRowid: insertResult.lastInsertRowid,
     });
@@ -401,67 +401,67 @@ export class EnhancedTypeScriptCLI {
    * Run complete TypeScript enhancement demonstration
    */
   async runTypeScriptDemo(): Promise<void> {
-    console.log('🔷 TypeScript Types Enhancement Demo');
-    console.log('='.repeat(60));
+    console.info('🔷 TypeScript Types Enhancement Demo');
+    console.info('='.repeat(60));
     
     // Demonstrate fixed build types
-    console.log('\n🏗️ Fixed Bun.build() Types:');
+    console.info('\n🏗️ Fixed Bun.build() Types:');
     const buildResult = await this.typeSystem.demonstrateBuildTypes();
-    console.log(`   Build configuration created with ${buildResult.buildConfig.autoloadTsconfig ? '✅' : '❌'} autoloadTsconfig`);
-    console.log(`   Build configuration created with ${buildResult.buildConfig.autoloadPackageJson ? '✅' : '❌'} autoloadPackageJson`);
-    console.log(`   Type definitions: ${buildResult.metrics.typeDefinitions}`);
-    console.log(`   Type accuracy: ${buildResult.metrics.typeAccuracy}%`);
+    console.info(`   Build configuration created with ${buildResult.buildConfig.autoloadTsconfig ? '✅' : '❌'} autoloadTsconfig`);
+    console.info(`   Build configuration created with ${buildResult.buildConfig.autoloadPackageJson ? '✅' : '❌'} autoloadPackageJson`);
+    console.info(`   Type definitions: ${buildResult.metrics.typeDefinitions}`);
+    console.info(`   Type accuracy: ${buildResult.metrics.typeAccuracy}%`);
     
     // Demonstrate fixed database types
-    console.log('\n🗄️ Fixed bun:sqlite Types:');
+    console.info('\n🗄️ Fixed bun:sqlite Types:');
     const dbResult = await this.typeSystem.demonstrateDatabaseTypes();
-    console.log(`   Database operations: ${dbResult.dbOperations.length}`);
+    console.info(`   Database operations: ${dbResult.dbOperations.length}`);
     dbResult.dbOperations.forEach(op => {
-      console.log(`   ${op.operation}: changes=${op.changes}, lastInsertRowid=${op.lastInsertRowid}`);
+      console.info(`   ${op.operation}: changes=${op.changes}, lastInsertRowid=${op.lastInsertRowid}`);
     });
-    console.log(`   Type accuracy: ${dbResult.metrics.typeAccuracy}%`);
+    console.info(`   Type accuracy: ${dbResult.metrics.typeAccuracy}%`);
     
     // Demonstrate fixed FileSink types
-    console.log('\n📁 Fixed FileSink Types:');
+    console.info('\n📁 Fixed FileSink Types:');
     const fileResult = await this.typeSystem.demonstrateFileSinkTypes();
-    console.log(`   File operations: ${fileResult.fileOperations.length}`);
+    console.info(`   File operations: ${fileResult.fileOperations.length}`);
     fileResult.fileOperations.forEach(op => {
-      console.log(`   ${op.operation}: ${op.returnType}, bytes=${op.bytesWritten}`);
+      console.info(`   ${op.operation}: ${op.returnType}, bytes=${op.bytesWritten}`);
     });
-    console.log(`   Type accuracy: ${fileResult.metrics.typeAccuracy}%`);
+    console.info(`   Type accuracy: ${fileResult.metrics.typeAccuracy}%`);
     
     // Show enhanced type definitions
-    console.log('\n📋 Enhanced Type Definitions:');
+    console.info('\n📋 Enhanced Type Definitions:');
     const typeDefs = this.typeSystem.createEnhancedTypeDefinitions();
-    console.log(`   CLI types: ${Object.keys(typeDefs.cliTypes).length} definitions`);
-    console.log(`   Artifact types: ${Object.keys(typeDefs.artifactTypes).length} definitions`);
-    console.log(`   Config types: ${Object.keys(typeDefs.configTypes).length} definitions`);
+    console.info(`   CLI types: ${Object.keys(typeDefs.cliTypes).length} definitions`);
+    console.info(`   Artifact types: ${Object.keys(typeDefs.artifactTypes).length} definitions`);
+    console.info(`   Config types: ${Object.keys(typeDefs.configTypes).length} definitions`);
     
     // Validate type safety
-    console.log('\n✅ Type Safety Validation:');
+    console.info('\n✅ Type Safety Validation:');
     const validation = await this.typeSystem.validateTypeSafety();
-    console.log(`   Components validated: ${validation.validationResults.length}`);
+    console.info(`   Components validated: ${validation.validationResults.length}`);
     validation.validationResults.forEach(result => {
-      console.log(`   ${result.component}: ${result.status}`);
+      console.info(`   ${result.component}: ${result.status}`);
     });
-    console.log(`   Overall type safety: ${validation.metrics.typeSafety}%`);
+    console.info(`   Overall type safety: ${validation.metrics.typeSafety}%`);
     
     // Show comprehensive metrics
-    console.log('\n📊 TypeScript Metrics:');
+    console.info('\n📊 TypeScript Metrics:');
     const metrics = this.typeSystem.getTypeMetrics();
-    console.log(`   Total type definitions: ${metrics.totalTypeDefinitions}`);
-    console.log(`   Average type accuracy: ${metrics.averageTypeAccuracy.toFixed(1)}%`);
-    console.log(`   Average compilation time: ${metrics.averageCompilationTime.toFixed(2)}ms`);
-    console.log(`   Overall type safety: ${metrics.overallTypeSafety.toFixed(1)}%`);
+    console.info(`   Total type definitions: ${metrics.totalTypeDefinitions}`);
+    console.info(`   Average type accuracy: ${metrics.averageTypeAccuracy.toFixed(1)}%`);
+    console.info(`   Average compilation time: ${metrics.averageCompilationTime.toFixed(2)}ms`);
+    console.info(`   Overall type safety: ${metrics.overallTypeSafety.toFixed(1)}%`);
     
-    console.log('\n🎉 TypeScript Types Enhancement Complete!');
-    console.log('\n💡 Type Safety Benefits:');
-    console.log('   🔷 Fixed autoloadTsconfig and autoloadPackageJson types');
-    console.log('   🗄️ Correct bun:sqlite .run() return type (Changes object)');
-    console.log('   📁 Fixed FileSink.write() Promise<number> return type');
-    console.log('   🏗️ Enhanced build configuration type safety');
-    console.log('   ✅ 100% type accuracy across all components');
-    console.log('   🚀 Improved developer experience with IntelliSense');
+    console.info('\n🎉 TypeScript Types Enhancement Complete!');
+    console.info('\n💡 Type Safety Benefits:');
+    console.info('   🔷 Fixed autoloadTsconfig and autoloadPackageJson types');
+    console.info('   🗄️ Correct bun:sqlite .run() return type (Changes object)');
+    console.info('   📁 Fixed FileSink.write() Promise<number> return type');
+    console.info('   🏗️ Enhanced build configuration type safety');
+    console.info('   ✅ 100% type accuracy across all components');
+    console.info('   🚀 Improved developer experience with IntelliSense');
   }
 }
 

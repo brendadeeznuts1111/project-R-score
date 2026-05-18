@@ -23,8 +23,8 @@ import {
     CANVAS_BRAND_COLORS
 } from '../../src/types/canvas-color';
 
-console.log('🌈 24-bit ANSI Colors (ansi-16m) Format Demonstration');
-console.log('====================================================\n');
+console.info('🌈 24-bit ANSI Colors (ansi-16m) Format Demonstration');
+console.info('====================================================\n');
 
 // Test colors from official documentation
 const officialExamples = [
@@ -34,32 +34,32 @@ const officialExamples = [
     "#ff0000"
 ];
 
-console.log('🎯 Testing Official ansi-16m Examples\n');
+console.info('🎯 Testing Official ansi-16m Examples\n');
 
 // 1. Official Examples Validation
-console.log('📋 1. Official Examples Validation');
-console.log('─'.repeat(50));
+console.info('📋 1. Official Examples Validation');
+console.info('─'.repeat(50));
 
 officialExamples.forEach((color, index) => {
     const ansi16m = Bun.color(color, "ansi-16m");
     const expected = "\\x1b[38;2;255;0;0m"; // Red should be RGB 255,0,0
 
-    console.log(`${index + 1}. Input: ${JSON.stringify(color).padEnd(15)} → ${JSON.stringify(ansi16m)}`);
+    console.info(`${index + 1}. Input: ${JSON.stringify(color).padEnd(15)} → ${JSON.stringify(ansi16m)}`);
 
     // Verify it's the correct ANSI-16m format (24-bit true color)
     if (typeof ansi16m === 'string' && ansi16m.includes('[38;2;')) {
         const rgbMatch = ansi16m.match(/\[38;2;(\d+);(\d+);(\d+)m/);
         if (rgbMatch) {
             const [_, r, g, b] = rgbMatch;
-            console.log(`    └─ RGB Values: (${r}, ${g}, ${b}) - True Color ✅`);
+            console.info(`    └─ RGB Values: (${r}, ${g}, ${b}) - True Color ✅`);
         }
     }
-    console.log('');
+    console.info('');
 });
 
 // 2. Canvas Brand Colors in True Color (ansi-16m)
-console.log('🎨 2. Canvas Brand Colors in True Color (ansi-16m)');
-console.log('─'.repeat(50));
+console.info('🎨 2. Canvas Brand Colors in True Color (ansi-16m)');
+console.info('─'.repeat(50));
 
 const canvasBrandColors = [
     { name: "Primary", color: CANVAS_BRAND_COLORS.primary },
@@ -71,30 +71,30 @@ const canvasBrandColors = [
     { name: "Experimental", color: CANVAS_BRAND_COLORS.status.experimental }
 ];
 
-console.log('Canvas brand colors in 24-bit true color:');
+console.info('Canvas brand colors in 24-bit true color:');
 canvasBrandColors.forEach((item, index) => {
     const ansi16m = Bun.color(item.color, "ansi-16m");
     const rgba = Bun.color(item.color, "{rgba}");
     const ansi256 = Bun.color(item.color, "ansi-256"); // For comparison
 
-    console.log(`${index + 1}. ${item.name.padEnd(12)}: ${item.color}`);
-    console.log(`    ANSI-16m: ${JSON.stringify(ansi16m)}`);
-    console.log(`    RGBA: ${JSON.stringify(rgba)}`);
-    console.log(`    ANSI-256: ${JSON.stringify(ansi256)} (256-color reference)`);
+    console.info(`${index + 1}. ${item.name.padEnd(12)}: ${item.color}`);
+    console.info(`    ANSI-16m: ${JSON.stringify(ansi16m)}`);
+    console.info(`    RGBA: ${JSON.stringify(rgba)}`);
+    console.info(`    ANSI-256: ${JSON.stringify(ansi256)} (256-color reference)`);
 
     if (typeof ansi16m === 'string') {
         const rgbMatch = ansi16m.match(/\[38;2;(\d+);(\d+);(\d+)m/);
         if (rgbMatch) {
             const [_, r, g, b] = rgbMatch;
-            console.log(`    └─ True Color RGB: (${r}, ${g}, ${b})`);
+            console.info(`    └─ True Color RGB: (${r}, ${g}, ${b})`);
         }
     }
-    console.log('');
+    console.info('');
 });
 
 // 3. True Color Precision Analysis
-console.log('🔍 3. True Color Precision Analysis');
-console.log('─'.repeat(50));
+console.info('🔍 3. True Color Precision Analysis');
+console.info('─'.repeat(50));
 
 // Test various colors to show true color precision
 const precisionTestColors = [
@@ -110,7 +110,7 @@ const precisionTestColors = [
     { name: "Deep Blue", hex: "#1E3A8A", expected: [30, 58, 138] }
 ];
 
-console.log('True color precision validation:');
+console.info('True color precision validation:');
 precisionTestColors.forEach((test, index) => {
     const ansi16m = Bun.color(test.hex, "ansi-16m");
 
@@ -121,14 +121,14 @@ precisionTestColors.forEach((test, index) => {
             const actual = [parseInt(r), parseInt(g), parseInt(b)];
             const matches = JSON.stringify(actual) === JSON.stringify(test.expected);
 
-            console.log(`${index + 1}. ${test.name.padEnd(15)} ${test.hex.padEnd(10)} → (${r}, ${g}, ${b}) ${matches ? '✅' : '❌'}`);
+            console.info(`${index + 1}. ${test.name.padEnd(15)} ${test.hex.padEnd(10)} → (${r}, ${g}, ${b}) ${matches ? '✅' : '❌'}`);
         }
     }
 });
 
 // 4. Canvas Terminal Dashboard with True Color
-console.log('\n🖥️ 4. Canvas Terminal Dashboard with True Color');
-console.log('─'.repeat(50));
+console.info('\n🖥️ 4. Canvas Terminal Dashboard with True Color');
+console.info('─'.repeat(50));
 
 // Simulate a canvas status dashboard using true color ANSI-16m
 const canvasServices = [
@@ -142,8 +142,8 @@ const canvasServices = [
     { name: "Monitor Service", status: "active", color: "#06B6D4", description: "System health monitoring" }
 ];
 
-console.log('🌈 Canvas System Status Dashboard (24-bit True Color)');
-console.log(''.padEnd(80, '═'));
+console.info('🌈 Canvas System Status Dashboard (24-bit True Color)');
+console.info(''.padEnd(80, '═'));
 
 canvasServices.forEach((service, index) => {
     const statusColor = Bun.color(service.color, "ansi-16m");
@@ -158,41 +158,41 @@ canvasServices.forEach((service, index) => {
     const statusLine = `${index + 1}. ${indicator} ${service.name.padEnd(20)} ${service.status.padEnd(12)} ${service.color}`;
     const descLine = `    ${dimColor}${service.description}${resetDim}`;
 
-    console.log(statusLine);
-    console.log(descLine);
+    console.info(statusLine);
+    console.info(descLine);
 });
 
-console.log(''.padEnd(80, '═'));
+console.info(''.padEnd(80, '═'));
 
 // 5. ANSI-16m vs Other Formats Comparison
-console.log('\n🔍 5. ANSI-16m vs Other Formats Comparison');
-console.log('─'.repeat(50));
+console.info('\n🔍 5. ANSI-16m vs Other Formats Comparison');
+console.info('─'.repeat(50));
 
 const comparisonColors = ["#10B981", "#EAB308", "#EF4444", "#8B5CF6"];
 
-console.log('Format comparison for canvas colors (showing true color advantage):');
+console.info('Format comparison for canvas colors (showing true color advantage):');
 comparisonColors.forEach((color, index) => {
     const ansi16m = Bun.color(color, "ansi-16m");
     const ansi = Bun.color(color, "ansi");
     const ansi256 = Bun.color(color, "ansi-256");
     const ansi16 = Bun.color(color, "ansi-16");
 
-    console.log(`${index + 1}. ${color}:`);
-    console.log(`    ANSI-16m (24-bit): ${JSON.stringify(ansi16m)} ⭐ True Color`);
-    console.log(`    ANSI (24-bit):   ${JSON.stringify(ansi)} ⭐ True Color`);
-    console.log(`    ANSI-256 (256):   ${JSON.stringify(ansi256)}   Approximated`);
-    console.log(`    ANSI-16 (16):     ${JSON.stringify(ansi16)}     Limited`);
-    console.log('');
+    console.info(`${index + 1}. ${color}:`);
+    console.info(`    ANSI-16m (24-bit): ${JSON.stringify(ansi16m)} ⭐ True Color`);
+    console.info(`    ANSI (24-bit):   ${JSON.stringify(ansi)} ⭐ True Color`);
+    console.info(`    ANSI-256 (256):   ${JSON.stringify(ansi256)}   Approximated`);
+    console.info(`    ANSI-16 (16):     ${JSON.stringify(ansi16)}     Limited`);
+    console.info('');
 });
 
 // 6. Performance Test
-console.log('⚡ 6. ANSI-16m Performance Test');
-console.log('─'.repeat(50));
+console.info('⚡ 6. ANSI-16m Performance Test');
+console.info('─'.repeat(50));
 
 const iterations = 50000;
 const testColor = "#10B981";
 
-console.log(`Testing ANSI-16m format performance (${iterations} conversions):`);
+console.info(`Testing ANSI-16m format performance (${iterations} conversions):`);
 
 const formats = [
     { name: "ANSI-16m (True Color)", format: "ansi-16m" },
@@ -210,46 +210,46 @@ formats.forEach(format => {
     const duration = performance.now() - start;
     const opsPerSecond = Math.round(iterations / duration * 1000);
 
-    console.log(`${format.name.padEnd(25)}: ${duration.toFixed(2)}ms (${opsPerSecond.toLocaleString()} ops/sec)`);
+    console.info(`${format.name.padEnd(25)}: ${duration.toFixed(2)}ms (${opsPerSecond.toLocaleString()} ops/sec)`);
 });
 
 // 7. True Color Applications
-console.log('\n🎨 7. True Color Applications in Canvas');
-console.log('─'.repeat(50));
+console.info('\n🎨 7. True Color Applications in Canvas');
+console.info('─'.repeat(50));
 
-console.log('📋 Real-world applications of ANSI-16m true color in canvas:');
+console.info('📋 Real-world applications of ANSI-16m true color in canvas:');
 
 // 7.1 Gradient Effects
-console.log('✅ 1. Gradient Effects');
-console.log('   • Smooth color transitions for progress bars');
-console.log('   • Visual heat maps for performance metrics');
-console.log('   • Beautiful status indicators with subtle variations');
-console.log('');
+console.info('✅ 1. Gradient Effects');
+console.info('   • Smooth color transitions for progress bars');
+console.info('   • Visual heat maps for performance metrics');
+console.info('   • Beautiful status indicators with subtle variations');
+console.info('');
 
 // 7.2 Brand Consistency
-console.log('✅ 2. Brand Consistency');
-console.log('   • Exact brand color reproduction');
-console.log('   • Corporate identity preservation');
-console.log('   • Professional appearance across terminals');
-console.log('');
+console.info('✅ 2. Brand Consistency');
+console.info('   • Exact brand color reproduction');
+console.info('   • Corporate identity preservation');
+console.info('   • Professional appearance across terminals');
+console.info('');
 
 // 7.3 Data Visualization
-console.log('✅ 3. Data Visualization');
-console.log('   • Precise color coding for data categories');
-console.log('   • Accurate chart colors in terminal');
-console.log('   • Scientific visualization with exact colors');
-console.log('');
+console.info('✅ 3. Data Visualization');
+console.info('   • Precise color coding for data categories');
+console.info('   • Accurate chart colors in terminal');
+console.info('   • Scientific visualization with exact colors');
+console.info('');
 
 // 7.4 Accessibility
-console.log('✅ 4. Accessibility');
-console.log('   • High contrast ratios for readability');
-console.log('   • Color-blind friendly palettes');
-console.log('   • WCAG compliance in terminal output');
-console.log('');
+console.info('✅ 4. Accessibility');
+console.info('   • High contrast ratios for readability');
+console.info('   • Color-blind friendly palettes');
+console.info('   • WCAG compliance in terminal output');
+console.info('');
 
 // 8. True Color RGB Analysis
-console.log('🔬 8. True Color RGB Analysis');
-console.log('─'.repeat(50));
+console.info('🔬 8. True Color RGB Analysis');
+console.info('─'.repeat(50));
 
 // Analyze RGB precision for complex colors
 const complexColors = [
@@ -261,7 +261,7 @@ const complexColors = [
     { name: "Amber", hex: "#F59E0B", analysis: "Warm amber with orange highlights" }
 ];
 
-console.log('RGB precision analysis for complex canvas colors:');
+console.info('RGB precision analysis for complex canvas colors:');
 complexColors.forEach((color, index) => {
     const ansi16m = Bun.color(color.hex, "ansi-16m");
     const rgba = Bun.color(color.hex, "{rgba}");
@@ -270,17 +270,17 @@ complexColors.forEach((color, index) => {
         const rgbMatch = ansi16m.match(/\[38;2;(\d+);(\d+);(\d+)m/);
         if (rgbMatch) {
             const [_, r, g, b] = rgbMatch;
-            console.log(`${index + 1}. ${color.name.padEnd(15)} ${color.hex.padEnd(8)} → RGB(${r}, ${g}, ${b})`);
-            console.log(`    └─ ${color.analysis}`);
-            console.log(`    └─ Brightness: ${Math.round((parseInt(r) + parseInt(g) + parseInt(b)) / 3 * 100 / 255)}%`);
+            console.info(`${index + 1}. ${color.name.padEnd(15)} ${color.hex.padEnd(8)} → RGB(${r}, ${g}, ${b})`);
+            console.info(`    └─ ${color.analysis}`);
+            console.info(`    └─ Brightness: ${Math.round((parseInt(r) + parseInt(g) + parseInt(b)) / 3 * 100 / 255)}%`);
         }
     }
-    console.log('');
+    console.info('');
 });
 
 // 9. Terminal Compatibility for True Color
-console.log('💻 9. Terminal Compatibility for True Color');
-console.log('─'.repeat(50));
+console.info('💻 9. Terminal Compatibility for True Color');
+console.info('─'.repeat(50));
 
 const terminalCompatibility = [
     { name: "Modern Terminal", support: "Full 24-bit true color", examples: "iTerm2, Windows Terminal, GNOME Terminal" },
@@ -291,46 +291,46 @@ const terminalCompatibility = [
     { name: "SSH Sessions", support: "Depends on client", examples: "Client-dependent true color" }
 ];
 
-console.log('True color compatibility across different terminals:');
+console.info('True color compatibility across different terminals:');
 terminalCompatibility.forEach((terminal, index) => {
     const supportLevel = terminal.support.includes("Full") ? "✅" :
         terminal.support.includes("Most") ? "⚠️" : "❌";
 
-    console.log(`${index + 1}. ${supportLevel} ${terminal.name.padEnd(20)} ${terminal.support.padEnd(25)}`);
-    console.log(`    └─ Examples: ${terminal.examples}`);
-    console.log('');
+    console.info(`${index + 1}. ${supportLevel} ${terminal.name.padEnd(20)} ${terminal.support.padEnd(25)}`);
+    console.info(`    └─ Examples: ${terminal.examples}`);
+    console.info('');
 });
 
 // 10. Best Practices for True Color
-console.log('🎯 10. Best Practices for True Color (ansi-16m)');
-console.log('─'.repeat(50));
+console.info('🎯 10. Best Practices for True Color (ansi-16m)');
+console.info('─'.repeat(50));
 
-console.log('📋 Best practices for using ANSI-16m true color in canvas applications:');
-console.log('');
+console.info('📋 Best practices for using ANSI-16m true color in canvas applications:');
+console.info('');
 
-console.log('✅ 1. Color Selection Strategy');
-console.log('   • Use exact brand colors for consistency');
-console.log('   • Ensure sufficient contrast for readability');
-console.log('   • Test on multiple terminals for compatibility');
-console.log('');
+console.info('✅ 1. Color Selection Strategy');
+console.info('   • Use exact brand colors for consistency');
+console.info('   • Ensure sufficient contrast for readability');
+console.info('   • Test on multiple terminals for compatibility');
+console.info('');
 
-console.log('✅ 2. Performance Optimization');
-console.log('   • Cache true color conversions for repeated use');
-console.log('   • Use progressive enhancement (ansi-16m → ansi-256 → ansi-16)');
-console.log('   • Batch color operations for efficiency');
-console.log('');
+console.info('✅ 2. Performance Optimization');
+console.info('   • Cache true color conversions for repeated use');
+console.info('   • Use progressive enhancement (ansi-16m → ansi-256 → ansi-16)');
+console.info('   • Batch color operations for efficiency');
+console.info('');
 
-console.log('✅ 3. Accessibility Considerations');
-console.log('   • Verify WCAG contrast ratios');
-console.log('   • Provide color-blind friendly alternatives');
-console.log('   • Include non-color indicators (symbols, text)');
-console.log('');
+console.info('✅ 3. Accessibility Considerations');
+console.info('   • Verify WCAG contrast ratios');
+console.info('   • Provide color-blind friendly alternatives');
+console.info('   • Include non-color indicators (symbols, text)');
+console.info('');
 
-console.log('✅ 4. Fallback Strategy');
-console.log('   • Detect terminal capabilities automatically');
-console.log('   • Provide graceful degradation to 256-color');
-console.log('   • Always functional with plain text fallback');
-console.log('');
+console.info('✅ 4. Fallback Strategy');
+console.info('   • Detect terminal capabilities automatically');
+console.info('   • Provide graceful degradation to 256-color');
+console.info('   • Always functional with plain text fallback');
+console.info('');
 
-console.log('🎉 ANSI-16m True Color Format Demonstration Complete!');
-console.log('🌈 Your canvas system perfectly leverages 24-bit true color terminal capabilities!');
+console.info('🎉 ANSI-16m True Color Format Demonstration Complete!');
+console.info('🌈 Your canvas system perfectly leverages 24-bit true color terminal capabilities!');

@@ -35,9 +35,9 @@ async function main(): Promise<void> {
   const count = parseInt(process.argv[2] || "100", 10);
   await populateCache(count);
   
-  console.log(`✅ Populated rotation cache with ${rotationCache.size} games`);
-  console.log(`   Run 'bun run grid:index' to generate index`);
-  console.log(`   Run 'bun run grid:export --format json' to export data`);
+  console.info(`✅ Populated rotation cache with ${rotationCache.size} games`);
+  console.info(`   Run 'bun run grid:index' to generate index`);
+  console.info(`   Run 'bun run grid:export --format json' to export data`);
 }
 
 if (import.meta.main) {

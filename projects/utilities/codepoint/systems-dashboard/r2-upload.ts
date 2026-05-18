@@ -14,7 +14,7 @@ class R2Uploader {
 
   async uploadFile(localPath: string, r2Key: string): Promise<boolean> {
     try {
-      console.log(`📤 Uploading ${localPath} → ${r2Key}`);
+      console.info(`📤 Uploading ${localPath} → ${r2Key}`);
 
       // Read file content
       const fileContent = readFileSync(localPath);
@@ -40,7 +40,7 @@ class R2Uploader {
       });
 
       if (response.ok) {
-        console.log(`✅ Successfully uploaded ${r2Key}`);
+        console.info(`✅ Successfully uploaded ${r2Key}`);
         return true;
       } else {
         console.error(
@@ -78,13 +78,13 @@ class R2Uploader {
   }
 
   async uploadDashboard(): Promise<boolean> {
-    console.log("🚀 Starting dashboard upload to Cloudflare R2...");
+    console.info("🚀 Starting dashboard upload to Cloudflare R2...");
 
     if (!validateR2Config()) {
       console.error(
         "❌ R2 configuration is invalid. Please check your environment variables."
       );
-      console.log(
+      console.info(
         "Required: CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_R2_ACCESS_KEY_ID, CLOUDFLARE_R2_SECRET_ACCESS_KEY, R2_BUCKET"
       );
       return false;
@@ -96,7 +96,7 @@ class R2Uploader {
     let allSuccessful = true;
 
     // Upload main dashboard files
-    console.log("📁 Uploading dashboard files...");
+    console.info("📁 Uploading dashboard files...");
     for (const file of uploadPaths.dashboard) {
       const localPath = join(process.cwd(), file);
       const r2Key = `${r2Prefix}/${basename(file)}`;
@@ -105,7 +105,7 @@ class R2Uploader {
     }
 
     // Upload documentation files
-    console.log("📚 Uploading documentation...");
+    console.info("📚 Uploading documentation...");
     for (const pattern of uploadPaths.docs) {
       const files = this.getFilesByPattern(pattern);
       for (const file of files) {
@@ -118,7 +118,7 @@ class R2Uploader {
     // Upload build files if they exist
     const distPath = join(process.cwd(), "dist");
     if (existsSync(distPath) && statSync(distPath).isDirectory()) {
-      console.log("🏗️ Uploading build files...");
+      console.info("🏗️ Uploading build files...");
       const success = await this.uploadDirectory(distPath, `${r2Prefix}/dist`);
       if (!success) allSuccessful = false;
     }
@@ -127,13 +127,13 @@ class R2Uploader {
     await this.createManifest(r2Prefix);
 
     if (allSuccessful) {
-      console.log(`🎉 All files uploaded successfully to R2!`);
-      console.log(`📂 R2 Location: ${this.baseUrl}/${r2Prefix}/`);
-      console.log(
+      console.info(`🎉 All files uploaded successfully to R2!`);
+      console.info(`📂 R2 Location: ${this.baseUrl}/${r2Prefix}/`);
+      console.info(
         `🔗 Public URL: https://pub-${this.config.accountId}.r2.dev/${r2Prefix}/index.html`
       );
     } else {
-      console.log("⚠️ Some files failed to upload. Check the logs above.");
+      console.info("⚠️ Some files failed to upload. Check the logs above.");
     }
 
     return allSuccessful;
@@ -173,7 +173,7 @@ class R2Uploader {
     });
 
     if (response.ok) {
-      console.log("📋 Manifest created successfully");
+      console.info("📋 Manifest created successfully");
     }
   }
 
@@ -256,28 +256,28 @@ async function main() {
     case "validate":
     case "check":
       if (validateR2Config()) {
-        console.log("✅ R2 configuration is valid");
+        console.info("✅ R2 configuration is valid");
       } else {
-        console.log("❌ R2 configuration is invalid");
-        console.log(
+        console.info("❌ R2 configuration is invalid");
+        console.info(
           "Required: CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_R2_ACCESS_KEY_ID, CLOUDFLARE_R2_SECRET_ACCESS_KEY, R2_BUCKET"
         );
       }
       break;
 
     default:
-      console.log("📋 R2 Dashboard Uploader (Cloudflare R2)");
-      console.log("");
-      console.log("Commands:");
-      console.log("  upload, up    - Upload dashboard to R2");
-      console.log("  validate, check - Validate R2 configuration");
-      console.log("");
-      console.log("Environment Variables:");
-      console.log("  CLOUDFLARE_ACCOUNT_ID     - Cloudflare account ID");
-      console.log("  CLOUDFLARE_R2_ACCESS_KEY_ID  - R2 access key");
-      console.log("  CLOUDFLARE_R2_SECRET_ACCESS_KEY  - R2 secret key");
-      console.log("  R2_BUCKET              - R2 bucket name");
-      console.log("  R2_ENDPOINT            - Custom R2 endpoint (optional)");
+      console.info("📋 R2 Dashboard Uploader (Cloudflare R2)");
+      console.info("");
+      console.info("Commands:");
+      console.info("  upload, up    - Upload dashboard to R2");
+      console.info("  validate, check - Validate R2 configuration");
+      console.info("");
+      console.info("Environment Variables:");
+      console.info("  CLOUDFLARE_ACCOUNT_ID     - Cloudflare account ID");
+      console.info("  CLOUDFLARE_R2_ACCESS_KEY_ID  - R2 access key");
+      console.info("  CLOUDFLARE_R2_SECRET_ACCESS_KEY  - R2 secret key");
+      console.info("  R2_BUCKET              - R2 bucket name");
+      console.info("  R2_ENDPOINT            - Custom R2 endpoint (optional)");
       break;
   }
 }

@@ -29,7 +29,7 @@ function initializeFeatures() {
   const premiumBadge = /*@__PURE__*/ getFeatureBadge(FeatureFlag.FEAT_PREMIUM, premiumEnabled);
   const encryptionBadge = /*@__PURE__*/ getFeatureBadge(FeatureFlag.FEAT_ENCRYPTION, encryptionEnabled);
 
-  console.log(`Premium: ${premiumBadge}, Encryption: ${encryptionBadge}`);
+  console.info(`Premium: ${premiumBadge}, Encryption: ${encryptionBadge}`);
 }
 
 // Example 2: Conditional rendering with pure functions
@@ -103,7 +103,7 @@ function calculateSystemHealth() {
 
 // Example 5: Build-time optimization demo
 export function demonstrateOptimizations() {
-  console.log('🧪 Testing @PURE annotations optimization...');
+  console.info('🧪 Testing @PURE annotations optimization...');
 
   // These calls demonstrate pure function usage
   initializeFeatures();
@@ -111,10 +111,10 @@ export function demonstrateOptimizations() {
   const report = generatePerformanceReport();
   const health = calculateSystemHealth();
 
-  console.log('✅ Pure annotations demo completed');
-  console.log('📊 Dashboard:', dashboard);
-  console.log('📈 Performance:', report);
-  console.log('🏥 Health:', health);
+  console.info('✅ Pure annotations demo completed');
+  console.info('📊 Dashboard:', dashboard);
+  console.info('📈 Performance:', report);
+  console.info('🏥 Health:', health);
 }
 
 // Example 6: Advanced pure utilities
@@ -165,7 +165,7 @@ export function advancedDemo() {
     (flag) => getFeatureBadge(flag, true)
   );
 
-  console.log('🚀 Advanced optimizations:', enabledFeatures);
+  console.info('🚀 Advanced optimizations:', enabledFeatures);
 }
 
 // Export for testing

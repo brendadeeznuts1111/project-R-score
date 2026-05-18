@@ -159,48 +159,48 @@ export class RateLimiterFactory {
 
 // Demo function
 async function demo() {
-  console.log('🚦 Rate Limiter Demo\n');
+  console.info('🚦 Rate Limiter Demo\n');
 
   // Token bucket demo
-  console.log('Token Bucket Rate Limiter:');
+  console.info('Token Bucket Rate Limiter:');
   const limiter = new RateLimiter(5, 2); // 5 tokens, refill 2 per second
 
   for (let i = 0; i < 8; i++) {
     const remaining = limiter.getRemainingTokens();
-    console.log(`Request ${i + 1}: ${remaining} tokens remaining`);
+    console.info(`Request ${i + 1}: ${remaining} tokens remaining`);
 
     if (limiter.acquireSync()) {
-      console.log('  ✅ Request allowed');
+      console.info('  ✅ Request allowed');
     } else {
-      console.log('  ❌ Request denied');
+      console.info('  ❌ Request denied');
     }
 
     if (i === 3) {
-      console.log('  Waiting 2 seconds to refill...');
+      console.info('  Waiting 2 seconds to refill...');
       await Bun.sleep(2000);
     }
   }
 
-  console.log();
+  console.info();
 
   // Sliding window demo
-  console.log('Sliding Window Rate Limiter:');
+  console.info('Sliding Window Rate Limiter:');
   const slidingLimiter = new SlidingWindowRateLimiter(5000, 3); // 3 requests per 5 seconds
 
   for (let i = 0; i < 5; i++) {
     const remaining = slidingLimiter.getRemainingRequests();
-    console.log(`Request ${i + 1}: ${remaining} requests remaining in window`);
+    console.info(`Request ${i + 1}: ${remaining} requests remaining in window`);
 
     if (slidingLimiter.acquireSync()) {
-      console.log('  ✅ Request allowed');
+      console.info('  ✅ Request allowed');
     } else {
-      console.log('  ❌ Request denied');
+      console.info('  ❌ Request denied');
     }
 
     await Bun.sleep(1000);
   }
 
-  console.log('\n✨ Rate limiter demo complete!');
+  console.info('\n✨ Rate limiter demo complete!');
 }
 
 // Run demo if executed directly

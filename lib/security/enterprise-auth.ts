@@ -181,7 +181,7 @@ export class Tier1380EnterpriseAuth {
     const sessionData = JSON.stringify(session);
 
     // In production, would use secure session store or database
-    console.log(`Storing session for user: ${session.userId}`);
+    console.info(`Storing session for user: ${session.userId}`);
   }
 
   /**
@@ -267,7 +267,7 @@ export class Tier1380EnterpriseAuth {
     this.auditLog.push(logEntry);
 
     // In production, would send to SIEM system
-    console.log(`🚨 Authentication failed for ${username} from ${context.ipAddress}`);
+    console.info(`🚨 Authentication failed for ${username} from ${context.ipAddress}`);
   }
 
   /**
@@ -286,7 +286,7 @@ export class Tier1380EnterpriseAuth {
 
     this.auditLog.push(logEntry);
 
-    console.log(`✅ Authentication successful for ${username}`);
+    console.info(`✅ Authentication successful for ${username}`);
   }
 
   /**
@@ -295,7 +295,7 @@ export class Tier1380EnterpriseAuth {
   private static async rehashPassword(username: string, password: string): Promise<void> {
     try {
       await Tier1380PasswordSecurity.hashPassword(password, { userId: username });
-      console.log(`🔄 Rehashed password for ${username}`);
+      console.info(`🔄 Rehashed password for ${username}`);
     } catch (error) {
       console.error(`Failed to rehash password for ${username}:`, error);
     }
@@ -325,7 +325,7 @@ export class Tier1380EnterpriseAuth {
       persistEnterprise: true,
     });
 
-    console.log(`🔒 Locked account ${username}: ${reason}`);
+    console.info(`🔒 Locked account ${username}: ${reason}`);
   }
 
   /**
@@ -358,7 +358,7 @@ export class Tier1380EnterpriseAuth {
   private static async unlockAccount(username: string): Promise<void> {
     const lockKey = `TIER1380_LOCK_${username}`;
     await Tier1380SecretManager.setSecret(lockKey, '', { delete: true });
-    console.log(`🔓 Unlocked account: ${username}`);
+    console.info(`🔓 Unlocked account: ${username}`);
   }
 
   /**

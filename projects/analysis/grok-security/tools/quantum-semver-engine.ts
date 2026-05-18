@@ -292,7 +292,7 @@ export class QuantumBuildPipeline {
     const manifest = this.engine.generateManifest(componentId, channel);
     const outdir = this.engine.getBuildDir(channel, componentId);
 
-    console.log(`📦 Building ${componentId} → ${channel}`);
+    console.info(`📦 Building ${componentId} → ${channel}`);
 
     // Ensure output directory exists
     await $`mkdir -p ${outdir}`;
@@ -338,13 +338,13 @@ export class QuantumBuildPipeline {
       JSON.stringify(manifest, null, 2)
     );
 
-    console.log(`✅ Built ${componentId}@${manifest.version}`);
+    console.info(`✅ Built ${componentId}@${manifest.version}`);
     return manifest;
   }
 
   // Build all components for a channel
   async buildChannel(channel: string): Promise<BuildManifest[]> {
-    console.log(
+    console.info(
       `\n🚀 Building ${channel.toUpperCase()} release\n${"═".repeat(40)}`
     );
 
@@ -372,7 +372,7 @@ export class QuantumBuildPipeline {
       JSON.stringify(releaseManifest, null, 2)
     );
 
-    console.log(
+    console.info(
       `\n✅ ${channel} release complete: ${manifests.length} components`
     );
     return manifests;
@@ -380,7 +380,7 @@ export class QuantumBuildPipeline {
 
   // Deploy to Cloudflare Workers
   async deployWorker(channel: string): Promise<void> {
-    console.log(`\n☁️  Deploying to Cloudflare Workers (${channel})`);
+    console.info(`\n☁️  Deploying to Cloudflare Workers (${channel})`);
 
     const env =
       channel === "stable"
@@ -391,7 +391,7 @@ export class QuantumBuildPipeline {
 
     await $`cd infrastructure && wrangler deploy --env ${env}`;
 
-    console.log(`✅ Deployed to ${env}`);
+    console.info(`✅ Deployed to ${env}`);
   }
 }
 
@@ -407,8 +407,8 @@ if (import.meta.main) {
     case "--version":
     case "-v":
       const versionInfo = engine.getVersion();
-      console.log(`Quantum v${versionInfo.full}`);
-      console.log(`Bun ${Bun.version} (${Bun.revision})`);
+      console.info(`Quantum v${versionInfo.full}`);
+      console.info(`Bun ${Bun.version} (${Bun.revision})`);
       break;
 
     case "--bump":
@@ -419,7 +419,7 @@ if (import.meta.main) {
         | "prerelease";
       const preReleaseId = args[2];
       const newVersion = await engine.bumpVersion(type, preReleaseId);
-      console.log(`✅ Bumped to ${newVersion}`);
+      console.info(`✅ Bumped to ${newVersion}`);
       break;
 
     case "--build":
@@ -450,27 +450,27 @@ if (import.meta.main) {
         process.exit(1);
       }
       const compat = engine.checkCompatibility(v1, v2);
-      console.log(
+      console.info(
         `Compatibility: ${compat.compatible ? "✅" : "❌"} (${compat.diff})`
       );
       break;
 
     case "--list-components":
-      console.log("Components:");
+      console.info("Components:");
       COMPONENTS.forEach((c) =>
-        console.log(`  ${c.id} (${c.type}) → ${c.path}`)
+        console.info(`  ${c.id} (${c.type}) → ${c.path}`)
       );
       break;
 
     case "--list-channels":
-      console.log("Release Channels:");
+      console.info("Release Channels:");
       Object.entries(RELEASE_CHANNELS).forEach(([k, v]) => {
-        console.log(`  ${k}: ${v.stability} (${v.retention})`);
+        console.info(`  ${k}: ${v.stability} (${v.retention})`);
       });
       break;
 
     default:
-      console.log(`
+      console.info(`
 Quantum Semver Engine
 
 Usage: bun tools/quantum-semver-engine.ts <command>

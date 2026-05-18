@@ -75,8 +75,8 @@ class FactoryWagerNexusStatus {
   }
 
   private async singleCheck(): Promise<NexusStatus> {
-    console.log(`🔌 FactoryWager Nexus Status v1.3.8`);
-    console.log(`===================================`);
+    console.info(`🔌 FactoryWager Nexus Status v1.3.8`);
+    console.info(`===================================`);
 
     try {
       // Load and parse configuration
@@ -93,7 +93,7 @@ class FactoryWagerNexusStatus {
 
       // Check alert threshold
       if (this.alert && status.score < this.threshold) {
-        console.log(`\n🚨 ALERT: Health score ${status.score} < threshold ${this.threshold}`);
+        console.info(`\n🚨 ALERT: Health score ${status.score} < threshold ${this.threshold}`);
         process.exit(1);
       }
 
@@ -108,9 +108,9 @@ class FactoryWagerNexusStatus {
   }
 
   private async watchMode(): Promise<void> {
-    console.log(`👁️  FactoryWager Nexus Status - Watch Mode`);
-    console.log(`=========================================`);
-    console.log(`Refreshing every 30 seconds (Ctrl+C to stop)`);
+    console.info(`👁️  FactoryWager Nexus Status - Watch Mode`);
+    console.info(`=========================================`);
+    console.info(`Refreshing every 30 seconds (Ctrl+C to stop)`);
 
     let lastStatus: NexusStatus | null = null;
 
@@ -345,32 +345,32 @@ class FactoryWagerNexusStatus {
   const scoreColor = this.getScoreColor(status.score);
   const scoreBadge = `[${scoreColor}]`;
 
-  console.log(`████████████████████████████████████████████████████████████████`);
-  console.log(` 🔌 FACTORYWAGER NEXUS STATUS v1.3.8`);
-  console.log(` Overall Health: ${status.score}/100 ${scoreBadge}`);
-  console.log(` Last Checked: ${new Date().toISOString()}`);
-  console.log(`████████████████████████████████████████████████████████████████`);
+  console.info(`████████████████████████████████████████████████████████████████`);
+  console.info(` 🔌 FACTORYWAGER NEXUS STATUS v1.3.8`);
+  console.info(` Overall Health: ${status.score}/100 ${scoreBadge}`);
+  console.info(` Last Checked: ${new Date().toISOString()}`);
+  console.info(`████████████████████████████████████████████████████████████████`);
 
   // Render dynamic HSL status table
   this.renderDynamicHealthTable(status);
 
   // Summary statistics
-  console.log(`─────────────────────────────────────────────────────────────────`);
-  console.log(`📊 Summary Statistics:`);
-  console.log(`   Endpoints: ${status.endpoints.up}/${status.endpoints.total} up`);
-  console.log(`   Average Latency: ${status.latency.average}ms`);
-  console.log(`   Configuration Drift: ${status.drift.count} mismatches`);
+  console.info(`─────────────────────────────────────────────────────────────────`);
+  console.info(`📊 Summary Statistics:`);
+  console.info(`   Endpoints: ${status.endpoints.up}/${status.endpoints.total} up`);
+  console.info(`   Average Latency: ${status.latency.average}ms`);
+  console.info(`   Configuration Drift: ${status.drift.count} mismatches`);
 
   // Recommendations
   if (status.score < this.threshold) {
-    console.log(``);
-    console.log(`⚠️  RECOMMENDATION: Health score ${status.score} (< ${this.threshold})`);
-    console.log(`   Run \`/fw-deploy --sync\` to reconcile configuration drift`);
+    console.info(``);
+    console.info(`⚠️  RECOMMENDATION: Health score ${status.score} (< ${this.threshold})`);
+    console.info(`   Run \`/fw-deploy --sync\` to reconcile configuration drift`);
     if (status.latency.max > 500) {
-      console.log(`   Investigate high latency endpoints (${status.latency.max}ms > 500ms threshold)`);
+      console.info(`   Investigate high latency endpoints (${status.latency.max}ms > 500ms threshold)`);
     }
     if (status.endpoints.down > 0) {
-      console.log(`   Check ${status.endpoints.down} down endpoint(s) for accessibility`);
+      console.info(`   Check ${status.endpoints.down} down endpoint(s) for accessibility`);
     }
   }
 
@@ -386,7 +386,7 @@ class FactoryWagerNexusStatus {
 
     if (Math.abs(prevScore - currScore) >= 10) {
       const direction = currScore > prevScore ? '📈 IMPROVED' : '📉 DEGRADED';
-      console.log(`🚨 STATE CHANGE: ${direction} (${prevScore} → ${currScore})`);
+      console.info(`🚨 STATE CHANGE: ${direction} (${prevScore} → ${currScore})`);
     }
 
     // Check for endpoint changes
@@ -396,7 +396,7 @@ class FactoryWagerNexusStatus {
     currEndpoints.forEach(([key, probe]) => {
       const prevProbe = previous.probes.get(key);
       if (prevProbe && prevProbe.health !== probe.health) {
-        console.log(`🔄 ${key}: ${prevProbe.health} → ${probe.health}`);
+        console.info(`🔄 ${key}: ${prevProbe.health} → ${probe.health}`);
       }
     });
   }

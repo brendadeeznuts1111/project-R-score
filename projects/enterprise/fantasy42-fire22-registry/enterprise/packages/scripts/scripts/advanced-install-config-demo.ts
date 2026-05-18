@@ -4,23 +4,23 @@
  * Demonstrating the power of [install] section in bunfig.toml
  */
 
-console.log('🚀 Advanced Bun Install Configuration Demo');
-console.log('='.repeat(60));
+console.info('🚀 Advanced Bun Install Configuration Demo');
+console.info('='.repeat(60));
 
 // ============================================================================
 // CONFIGURATION OVERVIEW
 // ============================================================================
-console.log('\n📋 Advanced [install] Configuration Options:');
-console.log('   🔧 Configured in: bunfig.toml [install] section');
-console.log('   🎯 Purpose: Control package installation behavior');
-console.log('   🛡️  Security: Trust model for lifecycle scripts');
-console.log('   📦 Performance: Optimized installation strategies');
+console.info('\n📋 Advanced [install] Configuration Options:');
+console.info('   🔧 Configured in: bunfig.toml [install] section');
+console.info('   🎯 Purpose: Control package installation behavior');
+console.info('   🛡️  Security: Trust model for lifecycle scripts');
+console.info('   📦 Performance: Optimized installation strategies');
 
 // ============================================================================
 // 1. SCOPES - MULTIPLE REGISTRIES
 // ============================================================================
-console.log('\n🔗 1. Scopes - Multiple Registry Support:');
-console.log('-'.repeat(50));
+console.info('\n🔗 1. Scopes - Multiple Registry Support:');
+console.info('-'.repeat(50));
 
 const scopesConfig = {
   '@fire22': 'https://npm.fire22.com/',
@@ -28,22 +28,22 @@ const scopesConfig = {
   '@private': 'https://npm.private.com',
 };
 
-console.log('🔧 Current Scopes Configuration:');
+console.info('🔧 Current Scopes Configuration:');
 Object.entries(scopesConfig).forEach(([scope, registry]) => {
-  console.log(`   📦 ${scope} → ${registry}`);
+  console.info(`   📦 ${scope} → ${registry}`);
 });
 
-console.log('\n🎯 Benefits:');
-console.log('   ✅ Private packages from enterprise registry');
-console.log('   ✅ Public packages from npm registry');
-console.log('   ✅ Scoped access control');
-console.log('   ✅ Registry failover support');
+console.info('\n🎯 Benefits:');
+console.info('   ✅ Private packages from enterprise registry');
+console.info('   ✅ Public packages from npm registry');
+console.info('   ✅ Scoped access control');
+console.info('   ✅ Registry failover support');
 
 // ============================================================================
 // 2. TRUSTED DEPENDENCIES - SECURITY MODEL
 // ============================================================================
-console.log('\n🛡️  2. Trusted Dependencies - Security Model:');
-console.log('-'.repeat(50));
+console.info('\n🛡️  2. Trusted Dependencies - Security Model:');
+console.info('-'.repeat(50));
 
 const trustedDeps = {
   esbuild: '*', // Bundler - trust all versions
@@ -53,22 +53,22 @@ const trustedDeps = {
   tailwindcss: '^3.0.0', // CSS framework - trust v3.x.x
 };
 
-console.log('🔒 Trusted Dependencies:');
+console.info('🔒 Trusted Dependencies:');
 Object.entries(trustedDeps).forEach(([pkg, version]) => {
-  console.log(`   ✅ ${pkg}: ${version}`);
+  console.info(`   ✅ ${pkg}: ${version}`);
 });
 
-console.log('\n🎯 Security Benefits:');
-console.log('   🚫 Untrusted packages: Install scripts blocked');
-console.log('   ✅ Trusted packages: Full install script execution');
-console.log('   🛡️  Supply chain protection');
-console.log('   ⚡ Performance: Selective script execution');
+console.info('\n🎯 Security Benefits:');
+console.info('   🚫 Untrusted packages: Install scripts blocked');
+console.info('   ✅ Trusted packages: Full install script execution');
+console.info('   🛡️  Supply chain protection');
+console.info('   ⚡ Performance: Selective script execution');
 
 // ============================================================================
 // 3. INSTALLATION BEHAVIOR FLAGS
 // ============================================================================
-console.log('\n⚙️  3. Installation Behavior Flags:');
-console.log('-'.repeat(50));
+console.info('\n⚙️  3. Installation Behavior Flags:');
+console.info('-'.repeat(50));
 
 const installFlags = {
   optional: false, // Skip optional dependencies
@@ -81,17 +81,17 @@ const installFlags = {
   production: false, // Include dev dependencies
 };
 
-console.log('🔧 Current Installation Flags:');
+console.info('🔧 Current Installation Flags:');
 Object.entries(installFlags).forEach(([flag, value]) => {
   const displayValue = typeof value === 'string' ? `"${value}"` : value;
-  console.log(`   📋 ${flag}: ${displayValue}`);
+  console.info(`   📋 ${flag}: ${displayValue}`);
 });
 
 // ============================================================================
 // 4. ENVIRONMENT-SPECIFIC CONFIGURATIONS
 // ============================================================================
-console.log('\n🌍 4. Environment-Specific Configurations:');
-console.log('-'.repeat(50));
+console.info('\n🌍 4. Environment-Specific Configurations:');
+console.info('-'.repeat(50));
 
 const environments = {
   development: {
@@ -124,13 +124,13 @@ const environments = {
   },
 };
 
-console.log('🏭 Environment Configurations:');
+console.info('🏭 Environment Configurations:');
 Object.entries(environments).forEach(([env, config]) => {
-  console.log(`\n   🏗️  ${env.toUpperCase()}:`);
-  console.log(`      📝 ${config.description}`);
+  console.info(`\n   🏗️  ${env.toUpperCase()}:`);
+  console.info(`      📝 ${config.description}`);
   Object.entries(config).forEach(([key, value]) => {
     if (key !== 'description') {
-      console.log(`      🔧 ${key}: ${value}`);
+      console.info(`      🔧 ${key}: ${value}`);
     }
   });
 });
@@ -138,8 +138,8 @@ Object.entries(environments).forEach(([env, config]) => {
 // ============================================================================
 // 5. PRACTICAL FIRE22 SCENARIOS
 // ============================================================================
-console.log('\n🎯 5. Practical Fire22 Scenarios:');
-console.log('-'.repeat(50));
+console.info('\n🎯 5. Practical Fire22 Scenarios:');
+console.info('-'.repeat(50));
 
 const scenarios = [
   {
@@ -189,21 +189,21 @@ const scenarios = [
 ];
 
 scenarios.forEach(({ scenario, command, config, benefit }, index) => {
-  console.log(`\n   ${index + 1}. ${scenario}`);
-  console.log(`      💻 Command: ${command}`);
-  console.log(`      ✅ Benefit: ${benefit}`);
-  console.log(`      🔧 Config:`);
+  console.info(`\n   ${index + 1}. ${scenario}`);
+  console.info(`      💻 Command: ${command}`);
+  console.info(`      ✅ Benefit: ${benefit}`);
+  console.info(`      🔧 Config:`);
   Object.entries(config).forEach(([key, value]) => {
     const displayValue = Array.isArray(value) ? `[${value.join(', ')}]` : value;
-    console.log(`         ${key}: ${displayValue}`);
+    console.info(`         ${key}: ${displayValue}`);
   });
 });
 
 // ============================================================================
 // 6. PERFORMANCE IMPACT ANALYSIS
 // ============================================================================
-console.log('\n⚡ 6. Performance Impact Analysis:');
-console.log('-'.repeat(50));
+console.info('\n⚡ 6. Performance Impact Analysis:');
+console.info('-'.repeat(50));
 
 const performanceMetrics = [
   {
@@ -238,18 +238,18 @@ const performanceMetrics = [
   },
 ];
 
-console.log('📊 Performance & Security Impact:');
+console.info('📊 Performance & Security Impact:');
 performanceMetrics.forEach(({ setting, impact, reason, benefit }) => {
-  console.log(`\n   ${impact} ${setting}`);
-  console.log(`      📝 ${reason}`);
-  console.log(`      ✅ ${benefit}`);
+  console.info(`\n   ${impact} ${setting}`);
+  console.info(`      📝 ${reason}`);
+  console.info(`      ✅ ${benefit}`);
 });
 
 // ============================================================================
 // 7. CONFIGURATION VALIDATION
 // ============================================================================
-console.log('\n✅ 7. Configuration Validation:');
-console.log('-'.repeat(50));
+console.info('\n✅ 7. Configuration Validation:');
+console.info('-'.repeat(50));
 
 const validationChecks = [
   { check: 'Scopes configured for multiple registries', status: true },
@@ -264,14 +264,14 @@ const validationChecks = [
 
 validationChecks.forEach(({ check, status }) => {
   const icon = status ? '✅' : '❌';
-  console.log(`   ${icon} ${check}`);
+  console.info(`   ${icon} ${check}`);
 });
 
 // ============================================================================
 // 8. TROUBLESHOOTING GUIDE
 // ============================================================================
-console.log('\n🔧 8. Troubleshooting Common Issues:');
-console.log('-'.repeat(50));
+console.info('\n🔧 8. Troubleshooting Common Issues:');
+console.info('-'.repeat(50));
 
 const troubleshooting = [
   {
@@ -307,18 +307,18 @@ const troubleshooting = [
 ];
 
 troubleshooting.forEach(({ issue, solution, command, config, action }, index) => {
-  console.log(`\n   ${index + 1}. ${issue}`);
-  console.log(`      💡 Solution: ${solution}`);
-  if (command) console.log(`      💻 Command: ${command}`);
-  if (config) console.log(`      🔧 Config: ${config}`);
-  if (action) console.log(`      🎯 Action: ${action}`);
+  console.info(`\n   ${index + 1}. ${issue}`);
+  console.info(`      💡 Solution: ${solution}`);
+  if (command) console.info(`      💻 Command: ${command}`);
+  if (config) console.info(`      🔧 Config: ${config}`);
+  if (action) console.info(`      🎯 Action: ${action}`);
 });
 
 // ============================================================================
 // 9. FIRE22 ENTERPRISE RECOMMENDATIONS
 // ============================================================================
-console.log('\n🏢 9. Fire22 Enterprise Recommendations:');
-console.log('-'.repeat(50));
+console.info('\n🏢 9. Fire22 Enterprise Recommendations:');
+console.info('-'.repeat(50));
 
 const recommendations = [
   '🔐 Define trustedDependencies minimally for security',
@@ -332,68 +332,68 @@ const recommendations = [
 ];
 
 recommendations.forEach((rec, index) => {
-  console.log(`   ${index + 1}. ${rec}`);
+  console.info(`   ${index + 1}. ${rec}`);
 });
 
 // ============================================================================
 // 10. CONFIGURATION CHEAT SHEET
 // ============================================================================
-console.log('\n📋 10. Configuration Cheat Sheet:');
-console.log('   ┌─────────────────────────────────────────────────────────────┐');
-console.log('   │                 Advanced [install] Options                   │');
-console.log('   ├─────────────────────────────────────────────────────────────┤');
-console.log('   │ scopes                → Multiple registry support            │');
-console.log('   │ trustedDependencies   → Security control for scripts         │');
-console.log('   │ optional              → Control optional dependencies        │');
-console.log('   │ target                → Force platform/architecture          │');
-console.log('   │ lockfile              → Lockfile format (bun.lockb)          │');
-console.log('   │ frozenLockfile        → Prevent lockfile updates            │');
-console.log('   │ production            → Skip dev dependencies               │');
-console.log('   │ global                → Enable/disable global installs       │');
-console.log('   │ dryRun                → Simulate installation                │');
-console.log('   │ force                 → Ignore existing lockfile             │');
-console.log('   │ exclude               → Exclude specific packages            │');
-console.log('   └─────────────────────────────────────────────────────────────┘');
+console.info('\n📋 10. Configuration Cheat Sheet:');
+console.info('   ┌─────────────────────────────────────────────────────────────┐');
+console.info('   │                 Advanced [install] Options                   │');
+console.info('   ├─────────────────────────────────────────────────────────────┤');
+console.info('   │ scopes                → Multiple registry support            │');
+console.info('   │ trustedDependencies   → Security control for scripts         │');
+console.info('   │ optional              → Control optional dependencies        │');
+console.info('   │ target                → Force platform/architecture          │');
+console.info('   │ lockfile              → Lockfile format (bun.lockb)          │');
+console.info('   │ frozenLockfile        → Prevent lockfile updates            │');
+console.info('   │ production            → Skip dev dependencies               │');
+console.info('   │ global                → Enable/disable global installs       │');
+console.info('   │ dryRun                → Simulate installation                │');
+console.info('   │ force                 → Ignore existing lockfile             │');
+console.info('   │ exclude               → Exclude specific packages            │');
+console.info('   └─────────────────────────────────────────────────────────────┘');
 
 // ============================================================================
 // DEMONSTRATE CURRENT CONFIG
 // ============================================================================
-console.log('\n🔍 Current Fire22 Configuration Status:');
+console.info('\n🔍 Current Fire22 Configuration Status:');
 
 try {
   // Read current bunfig.toml to show active configuration
   const bunfigPath = './bunfig.toml';
   const bunfigContent = await Bun.file(bunfigPath).text();
 
-  console.log('   📄 Active Configuration Sections:');
+  console.info('   📄 Active Configuration Sections:');
   const sections = bunfigContent.match(/^\[([^\]]+)\]/gm) || [];
   sections.forEach(section => {
-    console.log(`      🔧 ${section}`);
+    console.info(`      🔧 ${section}`);
   });
 
   // Check for install section
   if (bunfigContent.includes('[install]')) {
-    console.log('   ✅ [install] section configured');
+    console.info('   ✅ [install] section configured');
   } else {
-    console.log('   ⚠️  [install] section not found');
+    console.info('   ⚠️  [install] section not found');
   }
 
   // Check for scopes
   if (bunfigContent.includes('scopes')) {
-    console.log('   ✅ Scopes configured for multiple registries');
+    console.info('   ✅ Scopes configured for multiple registries');
   }
 
   // Check for trusted dependencies
   if (bunfigContent.includes('trustedDependencies')) {
-    console.log('   ✅ Trusted dependencies configured');
+    console.info('   ✅ Trusted dependencies configured');
   }
 } catch (error) {
-  console.log(`   ❌ Could not read configuration: ${error.message}`);
+  console.info(`   ❌ Could not read configuration: ${error.message}`);
 }
 
-console.log('\n🎉 Advanced Bun Install Configuration Demo Complete!');
-console.log('   Your Fire22 project now has enterprise-grade package management!');
-console.log('   Ready for secure, performant, and consistent installations! 🚀');
+console.info('\n🎉 Advanced Bun Install Configuration Demo Complete!');
+console.info('   Your Fire22 project now has enterprise-grade package management!');
+console.info('   Ready for secure, performant, and consistent installations! 🚀');
 
 // ============================================================================
 // EXPORT CONFIGURATION SUMMARY
@@ -407,4 +407,4 @@ export const installConfigSummary = {
   status: 'enterprise-ready',
 };
 
-console.log(`\n📦 Configuration Summary: ${JSON.stringify(installConfigSummary, null, 2)}`);
+console.info(`\n📦 Configuration Summary: ${JSON.stringify(installConfigSummary, null, 2)}`);

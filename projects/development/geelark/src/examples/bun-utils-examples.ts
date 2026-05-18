@@ -12,15 +12,15 @@
  * Run: bun examples/bun-utils-examples.ts
  */
 
-console.log("╔════════════════════════════════════════════════════════════════╗");
-console.log("║  Bun Utilities Examples                                      ║");
-console.log("╚════════════════════════════════════════════════════════════════╝\n");
+console.info("╔════════════════════════════════════════════════════════════════╗");
+console.info("║  Bun Utilities Examples                                      ║");
+console.info("╚════════════════════════════════════════════════════════════════╝\n");
 
 // ============================================================================
 // 1. Bun.inspect.table()
 // ============================================================================
 
-console.log("=== 1. Bun.inspect.table() ===\n");
+console.info("=== 1. Bun.inspect.table() ===\n");
 
 const users = [
   { id: 1, name: "Alice", age: 30, role: "admin" },
@@ -29,17 +29,17 @@ const users = [
   { id: 4, name: "Diana", age: 28, role: "moderator" }
 ];
 
-console.log("Basic table:");
-console.log(Bun.inspect.table(users) + "\n");
+console.info("Basic table:");
+console.info(Bun.inspect.table(users) + "\n");
 
-console.log("Select specific properties:");
-console.log(Bun.inspect.table(users, ["name", "role"]) + "\n");
+console.info("Select specific properties:");
+console.info(Bun.inspect.table(users, ["name", "role"]) + "\n");
 
 // ============================================================================
 // 2. Bun.inspect.custom
 // ============================================================================
 
-console.log("=== 2. Bun.inspect.custom ===\n");
+console.info("=== 2. Bun.inspect.custom ===\n");
 
 class User {
   constructor(
@@ -55,9 +55,9 @@ class User {
 }
 
 const user = new User(1, "Alice", "alice@example.com");
-console.log("Custom inspect:");
-console.log("  ", user); // Uses custom inspect
-console.log();
+console.info("Custom inspect:");
+console.info("  ", user); // Uses custom inspect
+console.info();
 
 class ServerMetrics {
   constructor(
@@ -80,63 +80,63 @@ class ServerMetrics {
 }
 
 const metrics = new ServerMetrics(123456, 1234567, 42);
-console.log("Custom inspect with table:");
-console.log(metrics);
-console.log();
+console.info("Custom inspect with table:");
+console.info(metrics);
+console.info();
 
 // ============================================================================
 // 3. Bun.deepEquals()
 // ============================================================================
 
-console.log("=== 3. Bun.deepEquals() ===\n");
+console.info("=== 3. Bun.deepEquals() ===\n");
 
 const obj1 = { a: 1, b: { c: 2, d: [3, 4] } };
 const obj2 = { a: 1, b: { c: 2, d: [3, 4] } };
 const obj3 = { a: 1, b: { c: 2, d: [3, 5] } };
 
-console.log("obj1:", JSON.stringify(obj1));
-console.log("obj2:", JSON.stringify(obj2));
-console.log("obj3:", JSON.stringify(obj3));
-console.log();
+console.info("obj1:", JSON.stringify(obj1));
+console.info("obj2:", JSON.stringify(obj2));
+console.info("obj3:", JSON.stringify(obj3));
+console.info();
 
-console.log("Bun.deepEquals(obj1, obj2):", Bun.deepEquals(obj1, obj2)); // true
-console.log("Bun.deepEquals(obj1, obj3):", Bun.deepEquals(obj1, obj3)); // false
-console.log();
+console.info("Bun.deepEquals(obj1, obj2):", Bun.deepEquals(obj1, obj2)); // true
+console.info("Bun.deepEquals(obj1, obj3):", Bun.deepEquals(obj1, obj3)); // false
+console.info();
 
 // Edge cases
-console.log("Edge cases:");
-console.log("  [] == []:", Bun.deepEquals([], [])); // true
-console.log("  [1,2] == [1,2]:", Bun.deepEquals([1, 2], [1, 2])); // true
-console.log("  [1,2] == [2,1]:", Bun.deepEquals([1, 2], [2, 1])); // false
-console.log("  NaN == NaN:", Bun.deepEquals(NaN, NaN)); // true
-console.log();
+console.info("Edge cases:");
+console.info("  [] == []:", Bun.deepEquals([], [])); // true
+console.info("  [1,2] == [1,2]:", Bun.deepEquals([1, 2], [1, 2])); // true
+console.info("  [1,2] == [2,1]:", Bun.deepEquals([1, 2], [2, 1])); // false
+console.info("  NaN == NaN:", Bun.deepEquals(NaN, NaN)); // true
+console.info();
 
 // ============================================================================
 // 4. Bun.escapeHTML()
 // ============================================================================
 
-console.log("=== 4. Bun.escapeHTML() ===\n");
+console.info("=== 4. Bun.escapeHTML() ===\n");
 
 const unsafeHTML = '<script>alert("XSS")</script>';
 const safeHTML = Bun.escapeHTML(unsafeHTML);
 
-console.log("Unsafe HTML:", unsafeHTML);
-console.log("Safe HTML:  ", safeHTML);
-console.log();
+console.info("Unsafe HTML:", unsafeHTML);
+console.info("Safe HTML:  ", safeHTML);
+console.info();
 
 // Real-world example
 const userInput = '<img src=x onerror="alert(1)">';
 const comment = `User said: ${userInput}`;
 
-console.log("Unsafe comment:", comment);
-console.log("Safe comment:  ", Bun.escapeHTML(comment));
-console.log();
+console.info("Unsafe comment:", comment);
+console.info("Safe comment:  ", Bun.escapeHTML(comment));
+console.info();
 
 // ============================================================================
 // 5. Bun.stringWidth()
 // ============================================================================
 
-console.log("=== 5. Bun.stringWidth() ===\n");
+console.info("=== 5. Bun.stringWidth() ===\n");
 
 const strings = [
   "Hello",
@@ -147,17 +147,17 @@ const strings = [
   "Mix of 🔥 and regular text"
 ];
 
-console.log("String width calculations:");
+console.info("String width calculations:");
 strings.forEach(str => {
   const width = Bun.stringWidth(str);
   const length = str.length;
-  console.log(`  "${str}"`);
-  console.log(`    Length: ${length}, Width: ${width}`);
+  console.info(`  "${str}"`);
+  console.info(`    Length: ${length}, Width: ${width}`);
 });
-console.log();
+console.info();
 
 // Practical use case: Terminal table alignment
-console.log("Terminal table alignment:");
+console.info("Terminal table alignment:");
 const data = [
   { name: "Alice", status: "🟢 Online" },
   { name: "Bob", status: "🔴 Offline" },
@@ -167,18 +167,18 @@ const data = [
 data.forEach(row => {
   const nameWidth = Bun.stringWidth(row.name);
   const padding = " ".repeat(20 - nameWidth);
-  console.log(`  ${row.name}${padding}${row.status}`);
+  console.info(`  ${row.name}${padding}${row.status}`);
 });
-console.log();
+console.info();
 
 // ============================================================================
 // Combined Examples
 // ============================================================================
 
-console.log("=== Combined Examples ===\n");
+console.info("=== Combined Examples ===\n");
 
 // Example 1: Safe HTML table output
-console.log("1. Safe HTML table output:");
+console.info("1. Safe HTML table output:");
 
 class SafeTable {
   constructor(private data: unknown[]) {}
@@ -192,12 +192,12 @@ class SafeTable {
 }
 
 const safeTable = new SafeTable(users);
-console.log("HTML-safe table output:");
-console.log(safeTable[Symbol.for("Bun.inspect.custom")]());
-console.log();
+console.info("HTML-safe table output:");
+console.info(safeTable[Symbol.for("Bun.inspect.custom")]());
+console.info();
 
 // Example 2: Deep equality comparison with custom inspect
-console.log("2. State comparison:");
+console.info("2. State comparison:");
 
 class ServerState {
   constructor(
@@ -226,19 +226,19 @@ const state1 = new ServerState(3000, 42, 1000);
 const state2 = new ServerState(3000, 42, 1000);
 const state3 = new ServerState(3001, 42, 1000);
 
-console.log("State 1:");
-console.log(state1);
-console.log("\nState 2:");
-console.log(state2);
-console.log("\nState 3:");
-console.log(state3);
+console.info("State 1:");
+console.info(state1);
+console.info("\nState 2:");
+console.info(state2);
+console.info("\nState 3:");
+console.info(state3);
 
-console.log("\nstate1.equals(state2):", state1.equals(state2)); // true
-console.log("state1.equals(state3):", state1.equals(state3)); // false
-console.log();
+console.info("\nstate1.equals(state2):", state1.equals(state2)); // true
+console.info("state1.equals(state3):", state1.equals(state3)); // false
+console.info();
 
 // Example 3: String width in table formatting
-console.log("3. Perfect table alignment using Bun.stringWidth():");
+console.info("3. Perfect table alignment using Bun.stringWidth():");
 
 function createTable(data: Record<string, string>[]): string {
   if (data.length === 0) return "No data";
@@ -301,20 +301,20 @@ const emojiData = [
   { name: "日本語", status: "🟡 Away", role: "Guest" }
 ];
 
-console.log(createTable(emojiData));
-console.log();
+console.info(createTable(emojiData));
+console.info();
 
 // ============================================================================
 // Summary
 // ============================================================================
 
-console.log("╔════════════════════════════════════════════════════════════════╗");
-console.log("║  ✅ All Bun utilities demonstrated!                         ║");
-console.log("╚════════════════════════════════════════════════════════════════╝\n");
+console.info("╔════════════════════════════════════════════════════════════════╗");
+console.info("║  ✅ All Bun utilities demonstrated!                         ║");
+console.info("╚════════════════════════════════════════════════════════════════╝\n");
 
-console.log("Summary:");
-console.log("  1. Bun.inspect.table()  - Format tabular data as string");
-console.log("  2. Bun.inspect.custom   - Custom inspect output");
-console.log("  3. Bun.deepEquals()     - Deep equality comparison");
-console.log("  4. Bun.escapeHTML()     - Escape HTML entities");
-console.log("  5. Bun.stringWidth()    - Calculate display width\n");
+console.info("Summary:");
+console.info("  1. Bun.inspect.table()  - Format tabular data as string");
+console.info("  2. Bun.inspect.custom   - Custom inspect output");
+console.info("  3. Bun.deepEquals()     - Deep equality comparison");
+console.info("  4. Bun.escapeHTML()     - Escape HTML entities");
+console.info("  5. Bun.stringWidth()    - Calculate display width\n");

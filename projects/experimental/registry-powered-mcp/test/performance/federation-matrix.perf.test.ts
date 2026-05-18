@@ -94,7 +94,7 @@ describe('FederationMatrix Component Performance', () => {
       100
     );
 
-    console.log('Data filtering performance:', formatMetrics(metrics));
+    console.info('Data filtering performance:', formatMetrics(metrics));
 
     assertPerformanceMetrics(metrics, {
       maxMean: 1.0,   // 1ms

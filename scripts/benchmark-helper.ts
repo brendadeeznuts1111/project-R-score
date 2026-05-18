@@ -155,11 +155,11 @@ class BenchmarkHelper {
    * Print single benchmark result
    */
   printResult(result: BenchmarkResult): void {
-    console.log(`\n📊 ${result.name}`);
-    console.log(`   Iterations: ${result.iterations.toLocaleString()}`);
-    console.log(`   Total time: ${(result.totalTimeNs / 1_000_000).toFixed(2)}ms`);
-    console.log(`   Avg time: ${result.avgTimeMs.toFixed(4)}ms`);
-    console.log(`   Ops/sec: ${result.opsPerSecond.toLocaleString()}`);
+    console.info(`\n📊 ${result.name}`);
+    console.info(`   Iterations: ${result.iterations.toLocaleString()}`);
+    console.info(`   Total time: ${(result.totalTimeNs / 1_000_000).toFixed(2)}ms`);
+    console.info(`   Avg time: ${result.avgTimeMs.toFixed(4)}ms`);
+    console.info(`   Ops/sec: ${result.opsPerSecond.toLocaleString()}`);
   }
 
   /**
@@ -168,25 +168,25 @@ class BenchmarkHelper {
   printComparison(comparison: ComparisonResult): void {
     const { baseline, comparison, improvement, faster } = comparison;
     
-    console.log(`\n⚡ Performance Comparison`);
-    console.log(`   Baseline: ${baseline.name} - ${baseline.avgTimeMs.toFixed(4)}ms`);
-    console.log(`   Comparison: ${comparison.name} - ${comparison.avgTimeMs.toFixed(4)}ms`);
+    console.info(`\n⚡ Performance Comparison`);
+    console.info(`   Baseline: ${baseline.name} - ${baseline.avgTimeMs.toFixed(4)}ms`);
+    console.info(`   Comparison: ${comparison.name} - ${comparison.avgTimeMs.toFixed(4)}ms`);
     
     if (faster) {
-      console.log(`   ✅ ${improvement.toFixed(1)}% faster`);
+      console.info(`   ✅ ${improvement.toFixed(1)}% faster`);
     } else {
-      console.log(`   ❌ ${Math.abs(improvement).toFixed(1)}% slower`);
+      console.info(`   ❌ ${Math.abs(improvement).toFixed(1)}% slower`);
     }
     
-    console.log(`   Speed ratio: ${(baseline.avgTimeNs / comparison.avgTimeNs).toFixed(2)}x`);
+    console.info(`   Speed ratio: ${(baseline.avgTimeNs / comparison.avgTimeNs).toFixed(2)}x`);
   }
 
   /**
    * Print all results
    */
   printAll(): void {
-    console.log("\n🏁 Benchmark Results");
-    console.log("=" .repeat(60));
+    console.info("\n🏁 Benchmark Results");
+    console.info("=" .repeat(60));
     
     this.results.forEach(result => {
       this.printResult(result);
@@ -291,7 +291,7 @@ version: 3.0.0
         yaml.parse(this.sampleYAML);
       }, iterations);
     } catch {
-      console.log("⚠️  External YAML library not available for comparison");
+      console.info("⚠️  External YAML library not available for comparison");
       return null;
     }
   }
@@ -307,7 +307,7 @@ version: 3.0.0
         load(this.sampleYAML);
       }, iterations);
     } catch {
-      console.log("⚠️  js-yaml library not available for comparison");
+      console.info("⚠️  js-yaml library not available for comparison");
       return null;
     }
   }
@@ -316,7 +316,7 @@ version: 3.0.0
    * Run comprehensive YAML benchmark suite
    */
   async runYAMLSuite(): Promise<void> {
-    console.log("🚀 Starting YAML Performance Benchmark Suite\n");
+    console.info("🚀 Starting YAML Performance Benchmark Suite\n");
 
     // Benchmark Bun.YAML
     const bunParse = await this.benchmarkBunYAML();
@@ -349,7 +349,7 @@ version: 3.0.0
       }
     }
 
-    console.log("\n✅ YAML Benchmark Suite Complete!");
+    console.info("\n✅ YAML Benchmark Suite Complete!");
   }
 }
 
@@ -367,8 +367,8 @@ async function main() {
       // Simple measurement like bun -e template
       const code = process.argv[3];
       if (!code) {
-        console.log("Usage: bun benchmark-helper.ts measure '<code>'");
-        console.log("Example: bun benchmark-helper.ts measure 'Math.random()'");
+        console.info("Usage: bun benchmark-helper.ts measure '<code>'");
+        console.info("Example: bun benchmark-helper.ts measure 'Math.random()'");
         process.exit(1);
       }
       
@@ -384,8 +384,8 @@ async function main() {
       const iterations = parseInt(process.argv[4]) || 1_000_000;
       
       if (!loopCode) {
-        console.log("Usage: bun benchmark-helper.ts loop '<code>' [iterations]");
-        console.log("Example: bun benchmark-helper.ts loop 'Math.random()' 1000000");
+        console.info("Usage: bun benchmark-helper.ts loop '<code>' [iterations]");
+        console.info("Example: bun benchmark-helper.ts loop 'Math.random()' 1000000");
         process.exit(1);
       }
       
@@ -396,12 +396,12 @@ async function main() {
       break;
 
     case "export":
-      console.log(benchmark.export());
+      console.info(benchmark.export());
       break;
 
     case "--help":
     case "-h":
-      console.log(`
+      console.info(`
 Benchmark Helper - Performance Measurement Utility
 
 Usage:
@@ -424,14 +424,14 @@ Examples:
   bun benchmark-helper.ts yaml
   
   # One-liner templates (like bun -e):
-  bun -e 'const t=Bun.nanoseconds(); for(let i=0;i<1e6;i++)Math.random(); console.log((Bun.nanoseconds()-t)/1e6,"ms")'
-  bun -e 'const s=Bun.nanoseconds(); Math.sqrt(144); console.log(Bun.nanoseconds()-s,"ns")'
+  bun -e 'const t=Bun.nanoseconds(); for(let i=0;i<1e6;i++)Math.random(); console.info((Bun.nanoseconds()-t)/1e6,"ms")'
+  bun -e 'const s=Bun.nanoseconds(); Math.sqrt(144); console.info(Bun.nanoseconds()-s,"ns")'
 `);
       break;
 
     default:
-      console.log("❌ Unknown command. Use 'yaml', 'measure', 'loop', or 'export'");
-      console.log("Run 'bun benchmark-helper.ts --help' for usage");
+      console.info("❌ Unknown command. Use 'yaml', 'measure', 'loop', or 'export'");
+      console.info("Run 'bun benchmark-helper.ts --help' for usage");
       process.exit(1);
   }
 }

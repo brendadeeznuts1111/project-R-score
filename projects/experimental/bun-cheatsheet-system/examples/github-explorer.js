@@ -1,14 +1,14 @@
 #!/usr/bin/env bun
 
 export async function demoGitHubExplorer() {
-  console.log('🐙 GitHub Explorer Demo');
-  console.log('='.repeat(40));
+  console.info('🐙 GitHub Explorer Demo');
+  console.info('='.repeat(40));
   
   try {
     // 1. Repository information
-    console.log('\n1. 📊 Repository Information:');
+    console.info('\n1. 📊 Repository Information:');
     const getRepositoryInfo = async (owner, repo) => {
-      console.log(`   🔍 Fetching ${owner}/${repo}...`);
+      console.info(`   🔍 Fetching ${owner}/${repo}...`);
       
       // Simulate API call (in real implementation, use actual GitHub API)
       const repoInfo = {
@@ -37,13 +37,13 @@ export async function demoGitHubExplorer() {
         license: { key: 'mit', name: 'MIT License' }
       };
       
-      console.log(`   ✅ Repository: ${repoInfo.full_name}`);
-      console.log(`   📝 Description: ${repoInfo.description}`);
-      console.log(`   ⭐ Stars: ${repoInfo.stargazers_count.toLocaleString()}`);
-      console.log(`   🍴 Forks: ${repoInfo.forks_count.toLocaleString()}`);
-      console.log(`   🌐 Language: ${repoInfo.language}`);
-      console.log(`   📊 Size: ${(repoInfo.size / 1024).toFixed(1)}MB`);
-      console.log(`   🏷️  Topics: ${repoInfo.topics.join(', ')}`);
+      console.info(`   ✅ Repository: ${repoInfo.full_name}`);
+      console.info(`   📝 Description: ${repoInfo.description}`);
+      console.info(`   ⭐ Stars: ${repoInfo.stargazers_count.toLocaleString()}`);
+      console.info(`   🍴 Forks: ${repoInfo.forks_count.toLocaleString()}`);
+      console.info(`   🌐 Language: ${repoInfo.language}`);
+      console.info(`   📊 Size: ${(repoInfo.size / 1024).toFixed(1)}MB`);
+      console.info(`   🏷️  Topics: ${repoInfo.topics.join(', ')}`);
       
       return repoInfo;
     };
@@ -51,9 +51,9 @@ export async function demoGitHubExplorer() {
     const bunRepo = await getRepositoryInfo('oven-sh', 'bun');
     
     // 2. Contributors analysis
-    console.log('\n2. 👥 Contributors Analysis:');
+    console.info('\n2. 👥 Contributors Analysis:');
     const getContributors = async (owner, repo) => {
-      console.log('   👥 Fetching contributors...');
+      console.info('   👥 Fetching contributors...');
       
       // Simulate contributors data
       const contributors = [
@@ -66,13 +66,13 @@ export async function demoGitHubExplorer() {
       
       const totalContributions = contributors.reduce((sum, c) => sum + c.contributions, 0);
       
-      console.log(`   👥 Total contributors: ${contributors.length}`);
-      console.log(`   🔢 Total contributions: ${totalContributions.toLocaleString()}`);
+      console.info(`   👥 Total contributors: ${contributors.length}`);
+      console.info(`   🔢 Total contributions: ${totalContributions.toLocaleString()}`);
       
-      console.log('   🏆 Top contributors:');
+      console.info('   🏆 Top contributors:');
       contributors.slice(0, 5).forEach((contributor, index) => {
         const percentage = ((contributor.contributions / totalContributions) * 100).toFixed(1);
-        console.log(`      ${index + 1}. ${contributor.login}: ${contributor.contributions} contributions (${percentage}%)`);
+        console.info(`      ${index + 1}. ${contributor.login}: ${contributor.contributions} contributions (${percentage}%)`);
       });
       
       return contributors;
@@ -81,9 +81,9 @@ export async function demoGitHubExplorer() {
     const contributors = await getContributors('oven-sh', 'bun');
     
     // 3. Commit history
-    console.log('\n3. 📜 Commit History:');
+    console.info('\n3. 📜 Commit History:');
     const getCommitHistory = async (owner, repo, limit = 5) => {
-      console.log(`   📜 Fetching last ${limit} commits...`);
+      console.info(`   📜 Fetching last ${limit} commits...`);
       
       // Simulate commit data
       const commits = [
@@ -116,12 +116,12 @@ export async function demoGitHubExplorer() {
         }
       ];
       
-      console.log('   📜 Recent commits:');
+      console.info('   📜 Recent commits:');
       commits.forEach((commit, index) => {
         const timeAgo = getTimeAgo(new Date(commit.date));
-        console.log(`      ${index + 1}. ${commit.sha.substring(0, 7)} - ${commit.message}`);
-        console.log(`         👤 ${commit.author.name} (${timeAgo})`);
-        console.log(`         📊 +${commit.additions} -${commit.deletions} (${commit.changed_files} files)`);
+        console.info(`      ${index + 1}. ${commit.sha.substring(0, 7)} - ${commit.message}`);
+        console.info(`         👤 ${commit.author.name} (${timeAgo})`);
+        console.info(`         📊 +${commit.additions} -${commit.deletions} (${commit.changed_files} files)`);
       });
       
       return commits;
@@ -130,9 +130,9 @@ export async function demoGitHubExplorer() {
     const commits = await getCommitHistory('oven-sh', 'bun');
     
     // 4. Issues and Pull Requests
-    console.log('\n4. 🐛 Issues & Pull Requests:');
+    console.info('\n4. 🐛 Issues & Pull Requests:');
     const getIssuesAndPRs = async (owner, repo) => {
-      console.log('   🐛 Fetching issues and PRs...');
+      console.info('   🐛 Fetching issues and PRs...');
       
       // Simulate issues and PRs
       const issues = [
@@ -147,15 +147,15 @@ export async function demoGitHubExplorer() {
       const openPRs = issues.filter(i => i.type === 'pr' && i.state === 'open').length;
       const mergedPRs = issues.filter(i => i.type === 'pr' && i.state === 'merged').length;
       
-      console.log(`   🐛 Issues: ${openIssues} open, ${closedIssues} closed`);
-      console.log(`   🔀 Pull Requests: ${openPRs} open, ${mergedPRs} merged`);
+      console.info(`   🐛 Issues: ${openIssues} open, ${closedIssues} closed`);
+      console.info(`   🔀 Pull Requests: ${openPRs} open, ${mergedPRs} merged`);
       
-      console.log('   🔥 Recent activity:');
+      console.info('   🔥 Recent activity:');
       issues.slice(0, 3).forEach(item => {
         const icon = item.type === 'pr' ? '🔀' : '🐛';
         const status = item.state === 'open' ? '🟢' : item.state === 'merged' ? '🟣' : '🔴';
         const timeAgo = getTimeAgo(new Date(item.created_at));
-        console.log(`      ${icon} #${item.number} ${item.title} ${status} (${timeAgo})`);
+        console.info(`      ${icon} #${item.number} ${item.title} ${status} (${timeAgo})`);
       });
       
       return issues;
@@ -164,9 +164,9 @@ export async function demoGitHubExplorer() {
     const issues = await getIssuesAndPRs('oven-sh', 'bun');
     
     // 5. Release information
-    console.log('\n5. 🚀 Release Information:');
+    console.info('\n5. 🚀 Release Information:');
     const getReleases = async (owner, repo) => {
-      console.log('   🚀 Fetching releases...');
+      console.info('   🚀 Fetching releases...');
       
       // Simulate releases
       const releases = [
@@ -196,17 +196,17 @@ export async function demoGitHubExplorer() {
         }
       ];
       
-      console.log(`   📦 Latest releases: ${releases.length}`);
+      console.info(`   📦 Latest releases: ${releases.length}`);
       
       releases.forEach((release, index) => {
         const timeAgo = getTimeAgo(new Date(release.published_at));
         const totalDownloads = release.assets.reduce((sum, asset) => sum + asset.download_count, 0);
         const type = release.prerelease ? '🟡 Pre-release' : release.draft ? '📝 Draft' : '✅ Stable';
         
-        console.log(`      ${index + 1}. ${release.tag_name} - ${release.name} ${type}`);
-        console.log(`         📅 Published: ${timeAgo}`);
-        console.log(`         📥 Downloads: ${totalDownloads.toLocaleString()}`);
-        console.log(`         📦 Assets: ${release.assets.length} files`);
+        console.info(`      ${index + 1}. ${release.tag_name} - ${release.name} ${type}`);
+        console.info(`         📅 Published: ${timeAgo}`);
+        console.info(`         📥 Downloads: ${totalDownloads.toLocaleString()}`);
+        console.info(`         📦 Assets: ${release.assets.length} files`);
       });
       
       return releases;
@@ -215,9 +215,9 @@ export async function demoGitHubExplorer() {
     const releases = await getReleases('oven-sh', 'bun');
     
     // 6. Language statistics
-    console.log('\n6. 📊 Language Statistics:');
+    console.info('\n6. 📊 Language Statistics:');
     const getLanguageStats = async (owner, repo) => {
-      console.log('   📊 Analyzing language usage...');
+      console.info('   📊 Analyzing language usage...');
       
       // Simulate language data
       const languages = {
@@ -231,13 +231,13 @@ export async function demoGitHubExplorer() {
       
       const totalBytes = Object.values(languages).reduce((sum, lang) => sum + lang.bytes, 0);
       
-      console.log('   📊 Language breakdown:');
+      console.info('   📊 Language breakdown:');
       Object.entries(languages).forEach(([language, stats]) => {
         const bar = '█'.repeat(Math.round(stats.percentage / 2));
-        console.log(`      ${language.padEnd(12)} ${bar} ${stats.percentage.toFixed(1)}%`);
+        console.info(`      ${language.padEnd(12)} ${bar} ${stats.percentage.toFixed(1)}%`);
       });
       
-      console.log(`   📊 Total code: ${(totalBytes / 1024 / 1024).toFixed(1)}MB`);
+      console.info(`   📊 Total code: ${(totalBytes / 1024 / 1024).toFixed(1)}MB`);
       
       return languages;
     };
@@ -245,9 +245,9 @@ export async function demoGitHubExplorer() {
     const languages = await getLanguageStats('oven-sh', 'bun');
     
     // 7. Activity timeline
-    console.log('\n7. 📈 Activity Timeline:');
+    console.info('\n7. 📈 Activity Timeline:');
     const getActivityTimeline = async (owner, repo) => {
-      console.log('   📈 Generating activity timeline...');
+      console.info('   📈 Generating activity timeline...');
       
       // Simulate activity data for the last 30 days
       const timeline = [];
@@ -279,16 +279,16 @@ export async function demoGitHubExplorer() {
       const totalActivity = timeline.reduce((sum, day) => sum + day.total, 0);
       const avgActivity = totalActivity / timeline.length;
       
-      console.log(`   📈 Last 30 days activity:`);
-      console.log(`      📊 Total events: ${totalActivity}`);
-      console.log(`      📊 Daily average: ${avgActivity.toFixed(1)}`);
-      console.log(`      🔥 Most active: ${mostActiveDay.date} (${mostActiveDay.total} events)`);
+      console.info(`   📈 Last 30 days activity:`);
+      console.info(`      📊 Total events: ${totalActivity}`);
+      console.info(`      📊 Daily average: ${avgActivity.toFixed(1)}`);
+      console.info(`      🔥 Most active: ${mostActiveDay.date} (${mostActiveDay.total} events)`);
       
       // Show last 7 days
-      console.log('   📅 Last 7 days:');
+      console.info('   📅 Last 7 days:');
       timeline.slice(-7).forEach(day => {
         const bar = '█'.repeat(Math.min(day.total, 20));
-        console.log(`      ${day.date}: ${bar.padEnd(20)} ${day.total} events`);
+        console.info(`      ${day.date}: ${bar.padEnd(20)} ${day.total} events`);
       });
       
       return timeline;
@@ -297,7 +297,7 @@ export async function demoGitHubExplorer() {
     const timeline = await getActivityTimeline('oven-sh', 'bun');
     
     // 8. Repository health score
-    console.log('\n8. 🏥 Repository Health Score:');
+    console.info('\n8. 🏥 Repository Health Score:');
     const calculateHealthScore = (repo, contributors, issues, releases) => {
       const factors = {
         stars: Math.min(repo.stargazers_count / 1000, 10) * 0.2, // 20% weight
@@ -311,19 +311,19 @@ export async function demoGitHubExplorer() {
       
       const totalScore = Object.values(factors).reduce((sum, score) => sum + score, 0);
       
-      console.log('   🏥 Health Factors:');
-      console.log(`      ⭐ Stars: ${factors.stars.toFixed(1)}/10`);
-      console.log(`      🍴 Forks: ${factors.forks.toFixed(1)}/10`);
-      console.log(`      👥 Contributors: ${factors.contributors.toFixed(1)}/10`);
-      console.log(`      🐛 Issues: ${factors.issues.toFixed(1)}/10`);
-      console.log(`      🚀 Releases: ${factors.releases.toFixed(1)}/10`);
-      console.log(`      📜 Recent Commits: ${factors.recentCommits.toFixed(1)}/10`);
-      console.log(`      📚 Documentation: ${factors.documentation.toFixed(1)}/10`);
+      console.info('   🏥 Health Factors:');
+      console.info(`      ⭐ Stars: ${factors.stars.toFixed(1)}/10`);
+      console.info(`      🍴 Forks: ${factors.forks.toFixed(1)}/10`);
+      console.info(`      👥 Contributors: ${factors.contributors.toFixed(1)}/10`);
+      console.info(`      🐛 Issues: ${factors.issues.toFixed(1)}/10`);
+      console.info(`      🚀 Releases: ${factors.releases.toFixed(1)}/10`);
+      console.info(`      📜 Recent Commits: ${factors.recentCommits.toFixed(1)}/10`);
+      console.info(`      📚 Documentation: ${factors.documentation.toFixed(1)}/10`);
       
       const grade = totalScore >= 8 ? 'A' : totalScore >= 6 ? 'B' : totalScore >= 4 ? 'C' : 'D';
       const gradeColor = grade === 'A' ? '🟢' : grade === 'B' ? '🟡' : grade === 'C' ? '🟠' : '🔴';
       
-      console.log(`   🎯 Overall Score: ${totalScore.toFixed(1)}/10 ${gradeColor} Grade: ${grade}`);
+      console.info(`   🎯 Overall Score: ${totalScore.toFixed(1)}/10 ${gradeColor} Grade: ${grade}`);
       
       return { score: totalScore, grade, factors };
     };
@@ -340,26 +340,26 @@ export async function demoGitHubExplorer() {
       return `${Math.floor(seconds / 86400)}d ago`;
     }
     
-    console.log('\n✅ GitHub Explorer demo completed!');
-    console.log('\n💡 GitHub Explorer features demonstrated:');
-    console.log('   • Repository information and statistics');
-    console.log('   • Contributor analysis and rankings');
-    console.log('   • Commit history and activity tracking');
-    console.log('   • Issues and pull requests management');
-    console.log('   • Release tracking and download statistics');
-    console.log('   • Language usage analysis');
-    console.log('   • Activity timeline visualization');
-    console.log('   • Repository health scoring');
+    console.info('\n✅ GitHub Explorer demo completed!');
+    console.info('\n💡 GitHub Explorer features demonstrated:');
+    console.info('   • Repository information and statistics');
+    console.info('   • Contributor analysis and rankings');
+    console.info('   • Commit history and activity tracking');
+    console.info('   • Issues and pull requests management');
+    console.info('   • Release tracking and download statistics');
+    console.info('   • Language usage analysis');
+    console.info('   • Activity timeline visualization');
+    console.info('   • Repository health scoring');
     
-    console.log('\n🔧 To implement real GitHub integration:');
-    console.log('   • Get GitHub API token: https://github.com/settings/tokens');
-    console.log('   • Install GitHub client: bun add @octokit/rest');
-    console.log('   • Handle rate limits and pagination');
-    console.log('   • Add authentication for private repositories');
-    console.log('   • Implement caching for better performance');
+    console.info('\n🔧 To implement real GitHub integration:');
+    console.info('   • Get GitHub API token: https://github.com/settings/tokens');
+    console.info('   • Install GitHub client: bun add @octokit/rest');
+    console.info('   • Handle rate limits and pagination');
+    console.info('   • Add authentication for private repositories');
+    console.info('   • Implement caching for better performance');
     
   } catch (error) {
-    console.log(`❌ GitHub Explorer error: ${error.message}`);
+    console.info(`❌ GitHub Explorer error: ${error.message}`);
   }
 }
 

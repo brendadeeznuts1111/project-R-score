@@ -67,7 +67,7 @@ export class AISearchEnhancer {
    * Enhanced search with AI capabilities
    */
   async enhancedSearch(query: string, artifacts: any[]): Promise<SemanticResult[]> {
-    console.log(`🤖 AI-Enhanced Search: "${query}"`);
+    console.info(`🤖 AI-Enhanced Search: "${query}"`);
     
     const startTime = Date.now();
     
@@ -93,9 +93,9 @@ export class AISearchEnhancer {
     
     const searchTime = Date.now() - startTime;
     
-    console.log(`   ✅ Completed in ${searchTime}ms`);
-    console.log(`   📊 Found ${rankedResults.length} semantic results`);
-    console.log(`   🧠 Query expanded: "${expanded.expandedQuery}"`);
+    console.info(`   ✅ Completed in ${searchTime}ms`);
+    console.info(`   📊 Found ${rankedResults.length} semantic results`);
+    console.info(`   🧠 Query expanded: "${expanded.expandedQuery}"`);
     
     return rankedResults;
   }
@@ -658,8 +658,8 @@ export class AISearchEnhancer {
 
 // Demonstration
 async function demonstrateAISearch() {
-  console.log('🤖 AI-Powered Search Enhancement Demo');
-  console.log('='.repeat(60));
+  console.info('🤖 AI-Powered Search Enhancement Demo');
+  console.info('='.repeat(60));
   
   const aiSearch = new AISearchEnhancer({
     enableQueryExpansion: true,
@@ -695,34 +695,34 @@ async function demonstrateAISearch() {
   ];
   
   // Demonstrate enhanced search
-  console.log('\n🔍 Enhanced Search Examples:');
+  console.info('\n🔍 Enhanced Search Examples:');
   
   const searches = ['sec api', 'ui comp', 'test', 'perf'];
   
   for (const search of searches) {
-    console.log(`\n📝 Query: "${search}"`);
+    console.info(`\n📝 Query: "${search}"`);
     const results = await aiSearch.enhancedSearch(search, artifacts);
     
-    console.log(`   Results: ${results.length}`);
+    console.info(`   Results: ${results.length}`);
     results.slice(0, 3).forEach((result, index) => {
-      console.log(`   ${index + 1}. ${result.artifact.path}`);
-      console.log(`      Score: ${result.totalScore.toFixed(3)} (${result.explanation})`);
+      console.info(`   ${index + 1}. ${result.artifact.path}`);
+      console.info(`      Score: ${result.totalScore.toFixed(3)} (${result.explanation})`);
     });
   }
   
   // Demonstrate suggestions
-  console.log('\n💡 Search Suggestions:');
+  console.info('\n💡 Search Suggestions:');
   const suggestions = await aiSearch.getSearchSuggestions('sec');
-  console.log(`   For "sec": ${suggestions.join(', ')}`);
+  console.info(`   For "sec": ${suggestions.join(', ')}`);
   
   // Show learning insights
-  console.log('\n📊 Learning Insights:');
+  console.info('\n📊 Learning Insights:');
   const insights = aiSearch.getLearningInsights();
-  console.log(`   Total searches: ${insights.totalSearches}`);
-  console.log(`   Unique artifacts: ${insights.uniqueArtifacts}`);
-  console.log(`   Top patterns: ${insights.topSearchPatterns.map(p => p.pattern).join(', ')}`);
+  console.info(`   Total searches: ${insights.totalSearches}`);
+  console.info(`   Unique artifacts: ${insights.uniqueArtifacts}`);
+  console.info(`   Top patterns: ${insights.topSearchPatterns.map(p => p.pattern).join(', ')}`);
   
-  console.log('\n🎉 AI Search Demo Complete!');
+  console.info('\n🎉 AI Search Demo Complete!');
 }
 
 if (import.meta.main) {

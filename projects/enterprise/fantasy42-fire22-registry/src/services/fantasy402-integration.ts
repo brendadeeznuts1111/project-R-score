@@ -85,7 +85,7 @@ class Fantasy402Client extends EventEmitter {
 
     if (!this.config.username || !this.config.password) {
       console.warn('⚠️ Fantasy402 credentials not found. Running in demo mode.');
-      console.log(
+      console.info(
         '💡 To configure credentials, edit .env.fantasy402 with your Fantasy402 username/password'
       );
 
@@ -95,11 +95,11 @@ class Fantasy402Client extends EventEmitter {
     }
 
     // Enable console logging for token refresh
-    console.log('🔧 Fantasy402 Client initialized with session storage enabled');
-    console.log('📍 Session storage path:', this.sessionStoragePath);
-    console.log('🔑 Username configured:', this.config.username ? '✅' : '❌');
-    console.log('🔐 Password configured:', this.config.password ? '✅' : '❌');
-    console.log('🎫 Existing session:', this.config.accessToken ? '✅ Found' : '❌ None');
+    console.info('🔧 Fantasy402 Client initialized with session storage enabled');
+    console.info('📍 Session storage path:', this.sessionStoragePath);
+    console.info('🔑 Username configured:', this.config.username ? '✅' : '❌');
+    console.info('🔐 Password configured:', this.config.password ? '✅' : '❌');
+    console.info('🎫 Existing session:', this.config.accessToken ? '✅ Found' : '❌ None');
   }
 
   private loadEnvironmentFile(): void {
@@ -157,22 +157,22 @@ class Fantasy402Client extends EventEmitter {
           this.config.refreshToken = sessionData.refreshToken;
           this.tokenExpiryTime = sessionData.expiresAt;
 
-          console.log('📂 Loaded persisted session');
-          console.log('   🎫 Token expires:', new Date(sessionData.expiresAt).toISOString());
+          console.info('📂 Loaded persisted session');
+          console.info('   🎫 Token expires:', new Date(sessionData.expiresAt).toISOString());
 
           // Schedule refresh if token expires soon
           const timeUntilExpiry = sessionData.expiresAt - Date.now();
           if (timeUntilExpiry > 0 && timeUntilExpiry < 300000) {
             // Less than 5 minutes
-            console.log('⏰ Token expires soon, scheduling refresh');
+            console.info('⏰ Token expires soon, scheduling refresh');
             setTimeout(() => this.refreshAccessToken(), 1000);
           }
         } else {
-          console.log('🗑️ Persisted session expired, will authenticate fresh');
+          console.info('🗑️ Persisted session expired, will authenticate fresh');
           this.clearPersistedSession();
         }
       } else {
-        console.log('📭 No persisted session found');
+        console.info('📭 No persisted session found');
       }
     } catch (error) {
       console.warn('⚠️ Failed to load persisted session:', error.message);
@@ -193,8 +193,8 @@ class Fantasy402Client extends EventEmitter {
       };
 
       writeFileSync(this.sessionStoragePath, JSON.stringify(sessionData, null, 2));
-      console.log('💾 Session saved to disk');
-      console.log(
+      console.info('💾 Session saved to disk');
+      console.info(
         '   📅 Expires:',
         this.tokenExpiryTime ? new Date(this.tokenExpiryTime).toISOString() : 'Unknown'
       );
@@ -209,7 +209,7 @@ class Fantasy402Client extends EventEmitter {
 
       if (existsSync(this.sessionStoragePath)) {
         unlinkSync(this.sessionStoragePath);
-        console.log('🗑️ Cleared persisted session');
+        console.info('🗑️ Cleared persisted session');
       }
     } catch (error) {
       console.warn('⚠️ Failed to clear session:', error.message);
@@ -222,11 +222,11 @@ class Fantasy402Client extends EventEmitter {
 
   async authenticate(): Promise<boolean> {
     try {
-      console.log('🔐 Authenticating with Fantasy402...');
+      console.info('🔐 Authenticating with Fantasy402...');
 
       // In demo mode, simulate successful authentication
       if (this.config.username === 'demo_user') {
-        console.log('🎭 Demo mode: Simulating authentication...');
+        console.info('🎭 Demo mode: Simulating authentication...');
         await new Promise(resolve => setTimeout(resolve, 200)); // Simulate network delay
 
         this.config.accessToken = 'demo_access_token_' + Date.now();
@@ -236,7 +236,7 @@ class Fantasy402Client extends EventEmitter {
         const expiryTime = Date.now() + expiresIn * 1000;
         this.tokenExpiryTime = expiryTime;
 
-        console.log('✅ Fantasy402 demo authentication successful');
+        console.info('✅ Fantasy402 demo authentication successful');
         this.emit('authenticated', {
           access_token: this.config.accessToken,
           refresh_token: this.config.refreshToken,
@@ -276,9 +276,9 @@ class Fantasy402Client extends EventEmitter {
         // Schedule automatic refresh
         this.scheduleTokenRefresh(expiresIn);
 
-        console.log('✅ Fantasy402 authentication successful');
-        console.log('   🎫 Token expires in:', expiresIn, 'seconds');
-        console.log('   💾 Session saved to disk');
+        console.info('✅ Fantasy402 authentication successful');
+        console.info('   🎫 Token expires in:', expiresIn, 'seconds');
+        console.info('   💾 Session saved to disk');
 
         this.emit('authenticated', response.data);
         return true;
@@ -294,12 +294,12 @@ class Fantasy402Client extends EventEmitter {
 
   async refreshAccessToken(): Promise<boolean> {
     if (!this.config.refreshToken) {
-      console.log('🔄 No refresh token available, performing full authentication');
+      console.info('🔄 No refresh token available, performing full authentication');
       return await this.authenticate();
     }
 
     try {
-      console.log('🔄 Refreshing access token...');
+      console.info('🔄 Refreshing access token...');
 
       const response = await this.makeRequest<{
         access_token: string;
@@ -328,8 +328,8 @@ class Fantasy402Client extends EventEmitter {
         const expiryTime = Date.now() + expiresIn * 1000;
         this.tokenExpiryTime = expiryTime;
 
-        console.log('✅ Token refreshed successfully');
-        console.log(`   Expires in: ${expiresIn} seconds`);
+        console.info('✅ Token refreshed successfully');
+        console.info(`   Expires in: ${expiresIn} seconds`);
 
         // Save updated session to disk
         this.savePersistedSession();
@@ -337,7 +337,7 @@ class Fantasy402Client extends EventEmitter {
         // Schedule automatic refresh before expiry
         this.scheduleTokenRefresh(expiresIn);
 
-        console.log('💾 Updated session saved to disk');
+        console.info('💾 Updated session saved to disk');
 
         this.emit('tokenRefreshed', {
           oldToken: oldToken?.substring(0, 10) + '...',
@@ -356,7 +356,7 @@ class Fantasy402Client extends EventEmitter {
 
       // If refresh fails with 401, the refresh token might be expired
       if (error.message?.includes('401')) {
-        console.log('🔄 Refresh token expired, performing full authentication');
+        console.info('🔄 Refresh token expired, performing full authentication');
         this.config.refreshToken = undefined;
       }
 
@@ -371,7 +371,7 @@ class Fantasy402Client extends EventEmitter {
     // Clear existing timer
     if (this.tokenRefreshTimer) {
       clearTimeout(this.tokenRefreshTimer);
-      console.log('🔄 Cleared existing refresh timer');
+      console.info('🔄 Cleared existing refresh timer');
     }
 
     // Schedule refresh at 80% of token lifetime (or 5 minutes before expiry, whichever is sooner)
@@ -379,23 +379,23 @@ class Fantasy402Client extends EventEmitter {
     const refreshIn = (expiresIn - refreshBuffer) * 1000;
     const refreshTime = new Date(Date.now() + refreshIn);
 
-    console.log('🕐 Token Refresh Schedule:');
-    console.log(`   ⏱️  Refresh in: ${Math.floor(refreshIn / 1000)} seconds`);
-    console.log(`   📅 Refresh at: ${refreshTime.toISOString()}`);
-    console.log(`   🛡️  Buffer: ${refreshBuffer} seconds before expiry`);
+    console.info('🕐 Token Refresh Schedule:');
+    console.info(`   ⏱️  Refresh in: ${Math.floor(refreshIn / 1000)} seconds`);
+    console.info(`   📅 Refresh at: ${refreshTime.toISOString()}`);
+    console.info(`   🛡️  Buffer: ${refreshBuffer} seconds before expiry`);
 
     this.tokenRefreshTimer = setTimeout(async () => {
-      console.log('⏰ Automatic token refresh triggered');
-      console.log('🔄 Attempting to refresh access token...');
+      console.info('⏰ Automatic token refresh triggered');
+      console.info('🔄 Attempting to refresh access token...');
 
       const refreshed = await this.refreshAccessToken();
 
       if (!refreshed) {
         console.error('❌ Automatic token refresh failed');
-        console.log('🚨 Will attempt full re-authentication on next request');
+        console.info('🚨 Will attempt full re-authentication on next request');
         this.emit('tokenRefreshFailed', { automatic: true });
       } else {
-        console.log('✅ Automatic token refresh successful');
+        console.info('✅ Automatic token refresh successful');
       }
     }, refreshIn);
   }
@@ -547,14 +547,14 @@ class Fantasy402Client extends EventEmitter {
         }
       }
 
-      console.log('🔌 Connecting to Fantasy402 WebSocket...');
+      console.info('🔌 Connecting to Fantasy402 WebSocket...');
 
       this.websocket = new WebSocket(
         `${this.config.websocketUrl}?token=${this.config.accessToken}`
       );
 
       this.websocket.onopen = () => {
-        console.log('✅ Fantasy402 WebSocket connected');
+        console.info('✅ Fantasy402 WebSocket connected');
         this.isConnected = true;
         this.reconnectAttempts = 0;
         this.emit('connected');
@@ -570,7 +570,7 @@ class Fantasy402Client extends EventEmitter {
       };
 
       this.websocket.onclose = event => {
-        console.log('🔌 Fantasy402 WebSocket disconnected:', event.code, event.reason);
+        console.info('🔌 Fantasy402 WebSocket disconnected:', event.code, event.reason);
         this.isConnected = false;
         this.emit('disconnected', { code: event.code, reason: event.reason });
 
@@ -593,7 +593,7 @@ class Fantasy402Client extends EventEmitter {
   }
 
   private handleWebSocketMessage(event: Fantasy402Event): void {
-    console.log(`📨 Fantasy402 event: ${event.type}`);
+    console.info(`📨 Fantasy402 event: ${event.type}`);
 
     switch (event.type) {
       case 'user_login':
@@ -617,7 +617,7 @@ class Fantasy402Client extends EventEmitter {
     this.reconnectAttempts++;
     const delay = this.config.retryDelay * Math.pow(2, this.reconnectAttempts - 1);
 
-    console.log(
+    console.info(
       `🔄 Scheduling WebSocket reconnect attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${delay}ms`
     );
 
@@ -694,7 +694,7 @@ class Fantasy402Client extends EventEmitter {
   ): Promise<Fantasy402Response<T>> {
     // Check if we have a token and if it's expired
     if (!this.config.accessToken || this.isTokenExpired()) {
-      console.log('🔄 Token missing or expired, refreshing...');
+      console.info('🔄 Token missing or expired, refreshing...');
       const refreshed = await this.refreshAccessToken();
       if (!refreshed) {
         return {
@@ -722,7 +722,7 @@ class Fantasy402Client extends EventEmitter {
       !response.success &&
       (response.error?.includes('401') || response.error?.includes('Unauthorized'))
     ) {
-      console.log('🔄 Received 401, attempting token refresh...');
+      console.info('🔄 Received 401, attempting token refresh...');
 
       const refreshed = await this.refreshAccessToken();
       if (refreshed) {
@@ -735,11 +735,11 @@ class Fantasy402Client extends EventEmitter {
         };
 
         // Retry the request with new token
-        console.log('🔄 Retrying request with refreshed token...');
+        console.info('🔄 Retrying request with refreshed token...');
         response = await this.makeRequest<T>(endpoint, authenticatedOptions);
 
         if (response.success) {
-          console.log('✅ Request succeeded after token refresh');
+          console.info('✅ Request succeeded after token refresh');
         } else {
           console.error('❌ Request still failed after token refresh');
         }
@@ -775,7 +775,7 @@ class Fantasy402Client extends EventEmitter {
     try {
       // In demo mode, simulate a successful health check
       if (this.config.username === 'demo_user') {
-        console.log('🎭 Demo mode: Simulating health check...');
+        console.info('🎭 Demo mode: Simulating health check...');
         await new Promise(resolve => setTimeout(resolve, 100)); // Simulate network delay
         return true;
       }
@@ -807,7 +807,7 @@ class Fantasy402Service {
 
   async initialize(): Promise<boolean> {
     try {
-      console.log('🚀 Initializing Fantasy402 service...');
+      console.info('🚀 Initializing Fantasy402 service...');
 
       // Health check
       const isHealthy = await this.client.healthCheck();
@@ -828,7 +828,7 @@ class Fantasy402Service {
       }
 
       this.isInitialized = true;
-      console.log('✅ Fantasy402 service initialized successfully');
+      console.info('✅ Fantasy402 service initialized successfully');
       return true;
     } catch (error) {
       console.error('❌ Fantasy402 service initialization failed:', error);
@@ -838,31 +838,31 @@ class Fantasy402Service {
 
   private setupEventHandlers(): void {
     this.client.on('authenticated', data => {
-      console.log('🔐 Fantasy402 authenticated:', data);
+      console.info('🔐 Fantasy402 authenticated:', data);
     });
 
     this.client.on('connected', () => {
-      console.log('🔌 Fantasy402 WebSocket connected');
+      console.info('🔌 Fantasy402 WebSocket connected');
     });
 
     this.client.on('disconnected', data => {
-      console.log('🔌 Fantasy402 WebSocket disconnected:', data);
+      console.info('🔌 Fantasy402 WebSocket disconnected:', data);
     });
 
     this.client.on('userLogin', user => {
-      console.log('👤 User logged in:', user);
+      console.info('👤 User logged in:', user);
     });
 
     this.client.on('userLogout', user => {
-      console.log('👤 User logged out:', user);
+      console.info('👤 User logged out:', user);
     });
 
     this.client.on('dataUpdate', data => {
-      console.log('📊 Data update received:', data);
+      console.info('📊 Data update received:', data);
     });
 
     this.client.on('systemAlert', alert => {
-      console.log('🚨 System alert:', alert);
+      console.info('🚨 System alert:', alert);
     });
 
     this.client.on('error', error => {
@@ -879,7 +879,7 @@ class Fantasy402Service {
   }
 
   async shutdown(): Promise<void> {
-    console.log('🛑 Shutting down Fantasy402 service...');
+    console.info('🛑 Shutting down Fantasy402 service...');
     this.client.disconnectWebSocket();
     this.client.removeAllListeners();
     this.isInitialized = false;

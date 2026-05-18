@@ -369,7 +369,7 @@ export async function exampleEnterprisePayment() {
   
   // Test connectivity
   const connectivity = await paymentService.testConnectivity();
-  console.log("Proxy connectivity:", connectivity);
+  console.info("Proxy connectivity:", connectivity);
   
   // Create payment through proxy
   const payment = await paymentService.createPayment("venmo", {
@@ -378,7 +378,7 @@ export async function exampleEnterprisePayment() {
     note: "Family reunion BBQ"
   });
   
-  console.log("Payment created:", payment);
+  console.info("Payment created:", payment);
   
   return payment;
 }

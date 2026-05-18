@@ -59,7 +59,7 @@ const dashboardHTML = `<!DOCTYPE html>
 			const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 			ws = new WebSocket(\`\${protocol}//\${window.location.host}/ws/arb\`);
 
-			ws.onopen = () => console.log('✅ WebSocket connected');
+			ws.onopen = () => console.info('✅ WebSocket connected');
 
 			ws.onmessage = (e) => {
 				try {
@@ -102,7 +102,7 @@ const dashboardHTML = `<!DOCTYPE html>
 		function executeArb(arbId) {
 			fetch(\`/api/execute/\${arbId}\`, { method: 'POST' })
 				.then(res => res.json())
-				.then(data => console.log('Arb executed:', data))
+				.then(data => console.info('Arb executed:', data))
 				.catch(err => console.error('Execute error:', err));
 		}
 
@@ -202,7 +202,7 @@ const server = Bun.serve({
 		// API: Execute arb
 		if (url.pathname.startsWith('/api/execute/')) {
 			const arbId = url.pathname.split('/').pop();
-			console.log('%j', { arb_executed: arbId, timestamp: Date.now() });
+			console.info('%j', { arb_executed: arbId, timestamp: Date.now() });
 			
 			return Response.json({
 				success: true,
@@ -241,7 +241,7 @@ const server = Bun.serve({
 	// WebSocket for live updates
 	websocket: {
 		open(ws) {
-			console.log('%j', { ws_connected: ws.remote, dashboard: 'v2' });
+			console.info('%j', { ws_connected: ws.remote, dashboard: 'v2' });
 		},
 
 		message(ws, message) {
@@ -250,7 +250,7 @@ const server = Bun.serve({
 		},
 
 		close(ws) {
-			console.log('%j', { ws_closed: ws.remote });
+			console.info('%j', { ws_closed: ws.remote });
 		}
 	}
 });
@@ -279,7 +279,7 @@ setInterval(async () => {
 	}));
 }, 2000);
 
-console.log('%j', {
+console.info('%j', {
 	dashboardServerV2: 'VIEW-TRANSITIONS-LIVE',
 	port: server.port,
 	css_features: 'view-transitions + @layer',

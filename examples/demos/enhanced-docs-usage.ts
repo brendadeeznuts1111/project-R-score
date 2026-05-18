@@ -21,25 +21,25 @@ import {
   TEXT_FRAGMENT_PATTERNS
 } from '../lib/docs/documentation-index.ts';
 
-console.log('🚀 Enhanced Enterprise Documentation System Demo');
-console.log('='.repeat(60));
-console.log();
+console.info('🚀 Enhanced Enterprise Documentation System Demo');
+console.info('='.repeat(60));
+console.info();
 
 // 1. Basic URL Access - Your Specific URLs
-console.log('📍 1. Primary Documentation URLs');
-console.log('-'.repeat(40));
-console.log('Bun Reference Portal:', getBunReferenceURL());
-console.log('Bun Guides Portal:   ', getBunGuidesURL());
-console.log('Bun RSS Feed:        ', getBunRSSURL());
-console.log('GitHub Bun Types:    ', getGitHubBunTypesCommitURL());
-console.log();
+console.info('📍 1. Primary Documentation URLs');
+console.info('-'.repeat(40));
+console.info('Bun Reference Portal:', getBunReferenceURL());
+console.info('Bun Guides Portal:   ', getBunGuidesURL());
+console.info('Bun RSS Feed:        ', getBunRSSURL());
+console.info('GitHub Bun Types:    ', getGitHubBunTypesCommitURL());
+console.info();
 
 // 2. Text Fragment URLs - Deep Linking
-console.log('🔗 2. Text Fragment Deep Linking');
-console.log('-'.repeat(40));
+console.info('🔗 2. Text Fragment Deep Linking');
+console.info('-'.repeat(40));
 const textFragments = getBunReferenceWithTextFragment();
-console.log('node:zlib reference:     ', textFragments.nodeZlib);
-console.log('Bun API Reference:       ', textFragments.bunAPIReference);
+console.info('node:zlib reference:     ', textFragments.nodeZlib);
+console.info('Bun API Reference:       ', textFragments.bunAPIReference);
 
 // Custom text fragment
 const customFragment = docsURLBuilder.buildURLWithTextFragment(
@@ -47,31 +47,31 @@ const customFragment = docsURLBuilder.buildURLWithTextFragment(
   'TypedArray methods',
   { prefix: 'Bun', suffix: 'reference' }
 );
-console.log('Custom fragment:         ', customFragment);
-console.log();
+console.info('Custom fragment:         ', customFragment);
+console.info();
 
 // 3. GitHub Integration - Commit References
-console.log('🐙 3. GitHub Commit Integration');
-console.log('-'.repeat(40));
-console.log('Your example commit: ', docsURLBuilder.getExampleCommitURL());
-console.log('Specific commit hash: ', SIGNIFICANT_COMMITS.AF762966);
-console.log('Latest release:       ', SIGNIFICANT_COMMITS.LATEST_RELEASE);
-console.log('Canary build:         ', SIGNIFICANT_COMMITS.CANARY_BUILD);
+console.info('🐙 3. GitHub Commit Integration');
+console.info('-'.repeat(40));
+console.info('Your example commit: ', docsURLBuilder.getExampleCommitURL());
+console.info('Specific commit hash: ', SIGNIFICANT_COMMITS.AF762966);
+console.info('Latest release:       ', SIGNIFICANT_COMMITS.LATEST_RELEASE);
+console.info('Canary build:         ', SIGNIFICANT_COMMITS.CANARY_BUILD);
 
 // Build different commit URLs
 const mainBranchURL = docsURLBuilder.buildBunTypesURL('main');
 const canaryURL = docsURLBuilder.buildBunTypesURL('canary');
-console.log('Main branch:          ', mainBranchURL);
-console.log('Canary branch:        ', canaryURL);
-console.log();
+console.info('Main branch:          ', mainBranchURL);
+console.info('Canary branch:        ', canaryURL);
+console.info();
 
 // 4. GitHub URL Parsing & Validation
-console.log('🔍 4. GitHub URL Analysis');
-console.log('-'.repeat(40));
+console.info('🔍 4. GitHub URL Analysis');
+console.info('-'.repeat(40));
 const exampleURL = 'https://github.com/oven-sh/bun/tree/main/packages/bun-types';
 const parsed = EnhancedDocumentationURLValidator.parseGitHubURL(exampleURL);
-console.log('URL:', exampleURL);
-console.log('Parsed:', {
+console.info('URL:', exampleURL);
+console.info('Parsed:', {
   valid: parsed.isValid,
   type: parsed.type,
   owner: parsed.owner,
@@ -82,102 +82,102 @@ console.log('Parsed:', {
 
 // Extract commit hash
 const commitHash = EnhancedDocumentationURLValidator.extractCommitHash(exampleURL);
-console.log('Extracted hash:       ', commitHash);
-console.log('Is specific commit:   ', EnhancedDocumentationURLValidator.isSpecificCommitURL(exampleURL));
-console.log('Is bun-types URL:     ', EnhancedDocumentationURLValidator.isBunTypesURL(exampleURL));
-console.log();
+console.info('Extracted hash:       ', commitHash);
+console.info('Is specific commit:   ', EnhancedDocumentationURLValidator.isSpecificCommitURL(exampleURL));
+console.info('Is bun-types URL:     ', EnhancedDocumentationURLValidator.isBunTypesURL(exampleURL));
+console.info();
 
 // 5. Text Fragment Analysis
-console.log('📄 5. Text Fragment Analysis');
-console.log('-'.repeat(40));
+console.info('📄 5. Text Fragment Analysis');
+console.info('-'.repeat(40));
 const fragmentURL = 'https://bun.com/reference#:~:text=node%3Azlib,TypedArray%20methods,-performance';
 const fragmentAnalysis = EnhancedDocumentationURLValidator.extractTextFragment(fragmentURL);
-console.log('URL:', fragmentURL);
-console.log('Has text fragment:    ', fragmentAnalysis.hasTextFragment);
-console.log('Raw fragment:         ', fragmentAnalysis.rawFragment);
-console.log('Decoded text:         ', fragmentAnalysis.decodedText);
-console.log('Components:', fragmentAnalysis.components);
-console.log();
+console.info('URL:', fragmentURL);
+console.info('Has text fragment:    ', fragmentAnalysis.hasTextFragment);
+console.info('Raw fragment:         ', fragmentAnalysis.rawFragment);
+console.info('Decoded text:         ', fragmentAnalysis.decodedText);
+console.info('Components:', fragmentAnalysis.components);
+console.info();
 
 // 6. TypeScript Definition URLs
-console.log('📝 6. TypeScript Definition Resources');
-console.log('-'.repeat(40));
+console.info('📝 6. TypeScript Definition Resources');
+console.info('-'.repeat(40));
 const typeURLs = docsURLBuilder.getTypeDefinitionURLs();
-console.log('NPM Package:          ', typeURLs.npmPackage);
-console.log('GitHub Package:       ', typeURLs.githubPackage);
-console.log('Latest Types:         ', typeURLs.latestTypes);
-console.log('Example Commit:       ', typeURLs.exampleCommit);
-console.log('TypeScript Playground:', typeURLs.typescriptPlayground);
-console.log();
+console.info('NPM Package:          ', typeURLs.npmPackage);
+console.info('GitHub Package:       ', typeURLs.githubPackage);
+console.info('Latest Types:         ', typeURLs.latestTypes);
+console.info('Example Commit:       ', typeURLs.exampleCommit);
+console.info('TypeScript Playground:', typeURLs.typescriptPlayground);
+console.info();
 
 // 7. GitHub Package URLs
-console.log('📦 7. GitHub Package URLs');
-console.log('-'.repeat(40));
+console.info('📦 7. GitHub Package URLs');
+console.info('-'.repeat(40));
 const packageURLs = docsURLBuilder.getGitHubPackageURLs('bun-types');
-console.log('Package root:         ', packageURLs.tree);
-console.log('Package.json:         ', packageURLs.blob + '/package.json');
-console.log('README:               ', packageURLs.blob + '/README.md');
-console.log('Source directory:     ', packageURLs.blob + '/src');
-console.log();
+console.info('Package root:         ', packageURLs.tree);
+console.info('Package.json:         ', packageURLs.blob + '/package.json');
+console.info('README:               ', packageURLs.blob + '/README.md');
+console.info('Source directory:     ', packageURLs.blob + '/src');
+console.info();
 
 // 8. Common Text Fragment URLs
-console.log('🎯 8. Common Text Fragment URLs');
-console.log('-'.repeat(40));
+console.info('🎯 8. Common Text Fragment URLs');
+console.info('-'.repeat(40));
 const commonFragments = docsURLBuilder.getCommonTextFragmentURLs();
-console.log('node:zlib:            ', commonFragments.nodeZlib);
-console.log('Bun API Reference:    ', commonFragments.bunAPIReference);
-console.log();
+console.info('node:zlib:            ', commonFragments.nodeZlib);
+console.info('Bun API Reference:    ', commonFragments.bunAPIReference);
+console.info();
 
 // 9. All Critical URLs Collection
-console.log('🌟 9. Complete Critical URLs Collection');
-console.log('-'.repeat(40));
+console.info('🌟 9. Complete Critical URLs Collection');
+console.info('-'.repeat(40));
 const allURLs = getAllCriticalURLs();
 
-console.log('📖 Reference Portal:');
+console.info('📖 Reference Portal:');
 Object.entries(allURLs.referencePortal).forEach(([key, value]) => {
-  console.log(`  ${key.padEnd(12)}: ${typeof value === 'string' ? value : '[object]'}`);
+  console.info(`  ${key.padEnd(12)}: ${typeof value === 'string' ? value : '[object]'}`);
 });
 
-console.log('\n🐙 GitHub Resources:');
+console.info('\n🐙 GitHub Resources:');
 Object.entries(allURLs.github).forEach(([key, value]) => {
-  console.log(`  ${key.padEnd(12)}: ${typeof value === 'string' ? value : '[object]'}`);
+  console.info(`  ${key.padEnd(12)}: ${typeof value === 'string' ? value : '[object]'}`);
 });
 
-console.log('\n📰 RSS Feeds:');
+console.info('\n📰 RSS Feeds:');
 Object.entries(allURLs.rssFeeds).forEach(([key, value]) => {
-  console.log(`  ${key.padEnd(12)}: ${value}`);
+  console.info(`  ${key.padEnd(12)}: ${value}`);
 });
-console.log();
+console.info();
 
 // 10. Text Fragment Patterns
-console.log('🔧 10. Text Fragment Patterns & Encoding');
-console.log('-'.repeat(40));
-console.log('NODE_ZLIB:            ', TEXT_FRAGMENT_PATTERNS.NODE_ZLIB);
-console.log('BUN_API_REFERENCE:    ', TEXT_FRAGMENT_PATTERNS.BUN_API_REFERENCE);
-console.log('Encode "Bun API":     ', TEXT_FRAGMENT_PATTERNS.encode('Bun API'));
-console.log('Decode "Bun%20API":   ', TEXT_FRAGMENT_PATTERNS.decode('Bun%20API'));
-console.log();
+console.info('🔧 10. Text Fragment Patterns & Encoding');
+console.info('-'.repeat(40));
+console.info('NODE_ZLIB:            ', TEXT_FRAGMENT_PATTERNS.NODE_ZLIB);
+console.info('BUN_API_REFERENCE:    ', TEXT_FRAGMENT_PATTERNS.BUN_API_REFERENCE);
+console.info('Encode "Bun API":     ', TEXT_FRAGMENT_PATTERNS.encode('Bun API'));
+console.info('Decode "Bun%20API":   ', TEXT_FRAGMENT_PATTERNS.decode('Bun%20API'));
+console.info();
 
 // 11. Example Commit Metadata
-console.log('📋 11. Example Commit Metadata');
-console.log('-'.repeat(40));
-console.log('Hash:                 ', exampleCommit.hash);
-console.log('URL:                  ', exampleCommit.url);
-console.log('Short Hash:           ', exampleCommit.shortHash);
-console.log('Date:                 ', exampleCommit.date);
-console.log('Description:          ', exampleCommit.description);
-console.log();
+console.info('📋 11. Example Commit Metadata');
+console.info('-'.repeat(40));
+console.info('Hash:                 ', exampleCommit.hash);
+console.info('URL:                  ', exampleCommit.url);
+console.info('Short Hash:           ', exampleCommit.shortHash);
+console.info('Date:                 ', exampleCommit.date);
+console.info('Description:          ', exampleCommit.description);
+console.info();
 
 // 12. Advanced Usage Examples
-console.log('⚡ 12. Advanced Usage Examples');
-console.log('-'.repeat(40));
+console.info('⚡ 12. Advanced Usage Examples');
+console.info('-'.repeat(40));
 
 // Build raw GitHub URL for direct file access
 const rawURL = docsURLBuilder.buildGitHubRawURL(
   SIGNIFICANT_COMMITS.AF762966,
   'packages/bun-types/index.d.ts'
 );
-console.log('Raw file URL:         ', rawURL);
+console.info('Raw file URL:         ', rawURL);
 
 // Build GitHub blob URL for viewing with line numbers
 const blobURL = docsURLBuilder.buildGitHubCommitURL(
@@ -187,7 +187,7 @@ const blobURL = docsURLBuilder.buildGitHubCommitURL(
   'packages/bun-types/globals.d.ts',
   'blob'
 );
-console.log('Blob view URL:        ', blobURL);
+console.info('Blob view URL:        ', blobURL);
 
 // Build complex text fragment
 const complexFragment = docsURLBuilder.buildURLWithTextFragment(
@@ -200,17 +200,17 @@ const complexFragment = docsURLBuilder.buildURLWithTextFragment(
     suffix: 'examples'
   }
 );
-console.log('Complex fragment:     ', complexFragment);
-console.log();
+console.info('Complex fragment:     ', complexFragment);
+console.info();
 
 // Summary
-console.log('✅ Demo completed successfully!');
-console.log('🎉 Your enhanced enterprise documentation system is ready.');
-console.log();
-console.log('Key features demonstrated:');
-console.log('• GitHub commit URL generation and parsing');
-console.log('• Text fragment deep linking');
-console.log('• TypeScript definition resource management');
-console.log('• Enterprise-grade URL validation');
-console.log('• Comprehensive URL collections');
-console.log('• Text fragment encoding/decoding utilities');
+console.info('✅ Demo completed successfully!');
+console.info('🎉 Your enhanced enterprise documentation system is ready.');
+console.info();
+console.info('Key features demonstrated:');
+console.info('• GitHub commit URL generation and parsing');
+console.info('• Text fragment deep linking');
+console.info('• TypeScript definition resource management');
+console.info('• Enterprise-grade URL validation');
+console.info('• Comprehensive URL collections');
+console.info('• Text fragment encoding/decoding utilities');

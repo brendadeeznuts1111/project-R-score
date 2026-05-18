@@ -86,25 +86,25 @@ const sampleAuditData = {
 };
 
 // Demonstrate the integration
-console.log('🏭 FactoryWager + Your Original Code Pattern');
-console.log('=============================================');
-console.log();
+console.info('🏭 FactoryWager + Your Original Code Pattern');
+console.info('=============================================');
+console.info();
 
 // Generate and display the report
 const report = generateFactoryWagerReport(sampleAuditData);
-console.log(report);
+console.info(report);
 
-console.log();
-console.log('🎯 Integration Benefits:');
-console.log('  • Your exact code pattern preserved');
-console.log('  • FactoryWager audit data integration');
-console.log('  • Colored terminal output');
-console.log('  • Professional report formatting');
-console.log();
-console.log('📝 Usage in FactoryWager:');
-console.log('  const body = factoryWagerMarkdownRenderer(fm.content, {');
-console.log('    heading: (c, { level }) => `\\x1b[1;${32+level}m${\'#\'.repeat(level)} ${c}\\x1b[0m\\n`,');
-console.log('    strong: c => `\\x1b[1m${c}\\x1b[0m`');
-console.log('  });');
+console.info();
+console.info('🎯 Integration Benefits:');
+console.info('  • Your exact code pattern preserved');
+console.info('  • FactoryWager audit data integration');
+console.info('  • Colored terminal output');
+console.info('  • Professional report formatting');
+console.info();
+console.info('📝 Usage in FactoryWager:');
+console.info('  const body = factoryWagerMarkdownRenderer(fm.content, {');
+console.info('    heading: (c, { level }) => `\\x1b[1;${32+level}m${\'#\'.repeat(level)} ${c}\\x1b[0m\\n`,');
+console.info('    strong: c => `\\x1b[1m${c}\\x1b[0m`');
+console.info('  });');
 
 export { factoryWagerMarkdownRenderer, generateFactoryWagerReport };

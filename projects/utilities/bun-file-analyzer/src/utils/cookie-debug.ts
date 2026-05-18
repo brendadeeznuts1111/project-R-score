@@ -1,14 +1,14 @@
 import { Bun } from "bun";
 
 export function debugCookies(cookies: Bun.CookieMap) {
-  console.log(
+  console.info(
     `%c🍪 Cookie Map (${cookies.size} cookies)`,
     `color: ${Bun.color("hsl(28, 80%, 52%)", "ansi")}; font-weight: bold`
   );
 
   for (const [name, value] of cookies.entries()) {
     const cookie = new Bun.Cookie(name, value);
-    console.log(
+    console.info(
       `  %c${name}%c = %c${value}`,
       `color: ${Bun.color("hsl(210, 90%, 55%)", "ansi")}`,
       "color: reset",
@@ -41,5 +41,5 @@ export function visualizeCookieJar(jar: Bun.CookieMap) {
     if (x > canvas.width - 5) x = 2;
   }
 
-  console.log(`\n${chart.join("\n")}\n`);
+  console.info(`\n${chart.join("\n")}\n`);
 }

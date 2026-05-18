@@ -244,32 +244,32 @@ class PolishedUIComponents {
 <script>
 function requestBulkPayments() {
   // Implementation for bulk payment requests
-  console.log('Requesting bulk payments...');
+  console.info('Requesting bulk payments...');
 }
 
 function toggleQuestMode() {
   // Toggle quest mode on/off
-  console.log('Toggling quest mode...');
+  console.info('Toggling quest mode...');
 }
 
 function requestPayment(memberId) {
   // Request payment from specific member
-  console.log('Requesting payment from', memberId);
+  console.info('Requesting payment from', memberId);
 }
 
 function viewAnalytics() {
   // Open analytics view
-  console.log('Opening analytics...');
+  console.info('Opening analytics...');
 }
 
 function manageMembers() {
   // Open member management
-  console.log('Managing members...');
+  console.info('Managing members...');
 }
 
 function openSettings() {
   // Open settings panel
-  console.log('Opening settings...');
+  console.info('Opening settings...');
 }
 </script>
     `.trim();
@@ -383,17 +383,17 @@ function openSettings() {
 <script>
 function startPaying() {
   // Open QR scanner or payment flow
-  console.log('Starting payment process...');
+  console.info('Starting payment process...');
 }
 
 function learnMore() {
   // Show detailed tutorial
-  console.log('Showing learn more content...');
+  console.info('Showing learn more content...');
 }
 
 function contactSupport() {
   // Contact support or inviter
-  console.log('Contacting support...');
+  console.info('Contacting support...');
 }
 </script>
     `.trim();
@@ -475,7 +475,7 @@ function contactSupport() {
 <script>
 function closePaymentModal() {
   // Close the modal
-  console.log('Closing payment modal...');
+  console.info('Closing payment modal...');
 }
 
 function setAmount(amount) {
@@ -485,7 +485,7 @@ function setAmount(amount) {
 
 function confirmPayment() {
   // Process payment
-  console.log('Confirming payment...');
+  console.info('Confirming payment...');
 }
 </script>
     `.trim();
@@ -699,15 +699,15 @@ function confirmPayment() {
 
 <script>
 function addMember() {
-  console.log('Adding new member...');
+  console.info('Adding new member...');
 }
 
 function viewReports() {
-  console.log('Viewing reports...');
+  console.info('Viewing reports...');
 }
 
 function openSettings() {
-  console.log('Opening settings...');
+  console.info('Opening settings...');
 }
 </script>
     `.trim();
@@ -1380,11 +1380,11 @@ if (import.meta.main) {
         };
 
         const component = PolishedUIComponents.generateMerchantView(config);
-        console.log('🎨 Generated Merchant View Component');
-        console.log(`ID: ${component.id}`);
-        console.log(`Interactions: ${component.interactions.join(', ')}`);
-        console.log('\n📄 HTML:');
-        console.log(component.rendered);
+        console.info('🎨 Generated Merchant View Component');
+        console.info(`ID: ${component.id}`);
+        console.info(`Interactions: ${component.interactions.join(', ')}`);
+        console.info('\n📄 HTML:');
+        console.info(component.rendered);
       } else if (componentType === 'guest') {
         const config: ReunionModeConfig = {
           familyId: 'FAM123',
@@ -1399,25 +1399,25 @@ if (import.meta.main) {
         };
 
         const component = PolishedUIComponents.generateGuestView(config, 'Sarah', 'Alice');
-        console.log('🎨 Generated Guest View Component');
-        console.log(`ID: ${component.id}`);
-        console.log(`Interactions: ${component.interactions.join(', ')}`);
-        console.log('\n📄 HTML:');
-        console.log(component.rendered);
+        console.info('🎨 Generated Guest View Component');
+        console.info(`ID: ${component.id}`);
+        console.info(`Interactions: ${component.interactions.join(', ')}`);
+        console.info('\n📄 HTML:');
+        console.info(component.rendered);
       }
       break;
 
     case 'list':
-      console.log('🎨 Available UI Components:');
-      console.log('  merchant_view - Family reunion host dashboard');
-      console.log('  guest_view - First-time guest onboarding');
-      console.log('  payment_modal - Payment modal with QR code');
-      console.log('  quest_progress - Gamification progress tracking');
-      console.log('  family_dashboard - Comprehensive family overview');
+      console.info('🎨 Available UI Components:');
+      console.info('  merchant_view - Family reunion host dashboard');
+      console.info('  guest_view - First-time guest onboarding');
+      console.info('  payment_modal - Payment modal with QR code');
+      console.info('  quest_progress - Gamification progress tracking');
+      console.info('  family_dashboard - Comprehensive family overview');
       break;
 
     default:
-      console.log(`
+      console.info(`
 🎨 Polished UI Components - ACME's Delightful Design System
 
 Usage:

@@ -572,7 +572,7 @@ class TensionMetricsWebSocketServer {
     this.setupWebSocketHandlers();
     this.initializeMonitoringContexts();
     
-    console.log(UnicodeTableFormatter.colorize(`🌐 TensionMetrics WebSocket server started on ws://${hostname}:${port}`, DesignSystem.status.operational));
+    console.info(UnicodeTableFormatter.colorize(`🌐 TensionMetrics WebSocket server started on ws://${hostname}:${port}`, DesignSystem.status.operational));
   }
 
   /**
@@ -580,7 +580,7 @@ class TensionMetricsWebSocketServer {
    */
   private setupWebSocketHandlers(): void {
     this.wss.on('connection', (ws, request) => {
-      console.log(UnicodeTableFormatter.colorize('🔗 TensionMetrics WebSocket connection established', DesignSystem.text.accent.blue));
+      console.info(UnicodeTableFormatter.colorize('🔗 TensionMetrics WebSocket connection established', DesignSystem.text.accent.blue));
       
       // Send initial metrics data
       this.sendInitialMetrics(ws);
@@ -597,7 +597,7 @@ class TensionMetricsWebSocketServer {
       
       // Handle disconnection
       ws.on('close', () => {
-        console.log(UnicodeTableFormatter.colorize('🔌 TensionMetrics WebSocket connection closed', DesignSystem.text.secondary));
+        console.info(UnicodeTableFormatter.colorize('🔌 TensionMetrics WebSocket connection closed', DesignSystem.text.secondary));
       });
     });
   }
@@ -670,7 +670,7 @@ class TensionMetricsWebSocketServer {
         this.sendAllContexts(ws);
         break;
       default:
-        console.log(UnicodeTableFormatter.colorize(`❓ Unknown message type: ${message.type}`, DesignSystem.text.secondary));
+        console.info(UnicodeTableFormatter.colorize(`❓ Unknown message type: ${message.type}`, DesignSystem.text.secondary));
     }
   }
 
@@ -1204,7 +1204,7 @@ function createTensionMetricsAPI(wsServer: TensionMetricsWebSocketServer) {
  * Demonstrate the TensionMetrics system
  */
 async function demonstrateTensionMetrics(): Promise<void> {
-  console.log(EmpireProDashboard.generateHeader(
+  console.info(EmpireProDashboard.generateHeader(
     'TENSION METRICS SYSTEM DEMONSTRATION',
     'Weighted Analysis, Trend Detection, and Real-time Monitoring'
   ));
@@ -1243,15 +1243,15 @@ async function demonstrateTensionMetrics(): Promise<void> {
     }
   });
   
-  console.log(UnicodeTableFormatter.colorize('🚀 TensionMetrics API Started', DesignSystem.status.operational));
-  console.log(UnicodeTableFormatter.colorize(`🌐 Main Server: http://${hostname}:${port}`, DesignSystem.text.accent.blue));
-  console.log(UnicodeTableFormatter.colorize(`📊 Demo Page: http://${hostname}:${port}/`, DesignSystem.text.accent.green));
-  console.log(UnicodeTableFormatter.colorize(`📈 Metrics: http://${hostname}:${port}/tension-metrics`, DesignSystem.text.accent.purple));
-  console.log(UnicodeTableFormatter.colorize(`🔗 WebSocket: ws://${hostname}:${wsPort}/ws-inspect`, DesignSystem.text.accent.yellow));
-  console.log(UnicodeTableFormatter.colorize(`🛠️ Utilities: http://${hostname}:${port}/tension-analysis/utilities`, DesignSystem.text.secondary));
+  console.info(UnicodeTableFormatter.colorize('🚀 TensionMetrics API Started', DesignSystem.status.operational));
+  console.info(UnicodeTableFormatter.colorize(`🌐 Main Server: http://${hostname}:${port}`, DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize(`📊 Demo Page: http://${hostname}:${port}/`, DesignSystem.text.accent.green));
+  console.info(UnicodeTableFormatter.colorize(`📈 Metrics: http://${hostname}:${port}/tension-metrics`, DesignSystem.text.accent.purple));
+  console.info(UnicodeTableFormatter.colorize(`🔗 WebSocket: ws://${hostname}:${wsPort}/ws-inspect`, DesignSystem.text.accent.yellow));
+  console.info(UnicodeTableFormatter.colorize(`🛠️ Utilities: http://${hostname}:${port}/tension-analysis/utilities`, DesignSystem.text.secondary));
   
   // Demonstrate TensionAnalyzer usage
-  console.log(UnicodeTableFormatter.colorize('\n📊 TENSION ANALYZER DEMONSTRATION:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('\n📊 TENSION ANALYZER DEMONSTRATION:', DesignSystem.text.accent.blue));
   
   // Test with different system contexts
   const testContexts = [
@@ -1291,46 +1291,46 @@ async function demonstrateTensionMetrics(): Promise<void> {
   ];
   
   testContexts.forEach(({ name, context }) => {
-    console.log(UnicodeTableFormatter.colorize(`\n🔍 Analyzing: ${name}`, DesignSystem.text.primary));
+    console.info(UnicodeTableFormatter.colorize(`\n🔍 Analyzing: ${name}`, DesignSystem.text.primary));
     
     const metrics = TensionAnalyzer.analyzeContext('test-context', context);
     const description = TensionAnalyzer.getTensionDescription(metrics.value, metrics.trend);
     const recommendations = TensionAnalyzer.getRecommendations(metrics);
     const colors = TensionAwareColorSystem.generateColorsFromMetrics(metrics);
     
-    console.log(`  Tension: ${metrics.value}% (${description})`);
-    console.log(`  Trend: ${metrics.trend}`);
-    console.log(`  Confidence: ${metrics.metadata.analysisConfidence}%`);
-    console.log(`  Contributors: ${metrics.contributors.length}`);
-    console.log(`  Status: ${colors.status}`);
+    console.info(`  Tension: ${metrics.value}% (${description})`);
+    console.info(`  Trend: ${metrics.trend}`);
+    console.info(`  Confidence: ${metrics.metadata.analysisConfidence}%`);
+    console.info(`  Contributors: ${metrics.contributors.length}`);
+    console.info(`  Status: ${colors.status}`);
     
-    console.log(UnicodeTableFormatter.colorize('  Top Contributors:', DesignSystem.text.secondary));
+    console.info(UnicodeTableFormatter.colorize('  Top Contributors:', DesignSystem.text.secondary));
     metrics.contributors
       .sort((a, b) => b.impact - a.impact)
       .slice(0, 3)
       .forEach(c => {
-        console.log(`    ${c.source}: ${c.value.toFixed(1)}% (weight: ${c.weight}) → ${c.impact.toFixed(1)}%`);
+        console.info(`    ${c.source}: ${c.value.toFixed(1)}% (weight: ${c.weight}) → ${c.impact.toFixed(1)}%`);
       });
     
-    console.log(UnicodeTableFormatter.colorize('  Recommendations:', DesignSystem.text.secondary));
+    console.info(UnicodeTableFormatter.colorize('  Recommendations:', DesignSystem.text.secondary));
     recommendations.slice(0, 2).forEach(r => {
-      console.log(`    • ${r}`);
+      console.info(`    • ${r}`);
     });
   });
   
   // Demonstrate real-time monitoring
-  console.log(UnicodeTableFormatter.colorize('\n🔄 REAL-TIME MONITORING DEMONSTRATION:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('\n🔄 REAL-TIME MONITORING DEMONSTRATION:', DesignSystem.text.accent.blue));
   
   const monitoringContext = new TensionMonitoringContext('demo-context', 'ENTERPRISE', 'duoplus');
   
-  console.log(UnicodeTableFormatter.colorize('📡 Starting real-time monitoring...', DesignSystem.text.primary));
+  console.info(UnicodeTableFormatter.colorize('📡 Starting real-time monitoring...', DesignSystem.text.primary));
   
   // Subscribe to updates
   const unsubscribe = monitoringContext.subscribe((metrics) => {
     const description = TensionAnalyzer.getTensionDescription(metrics.value, metrics.trend);
     const topContributor = metrics.contributors.sort((a, b) => b.impact - a.impact)[0];
     
-    console.log(UnicodeTableFormatter.colorize(
+    console.info(UnicodeTableFormatter.colorize(
       `📈 Update: ${metrics.value}% - ${description} | Top: ${topContributor.source} (${topContributor.impact.toFixed(1)}%)`,
       metrics.value > 70 ? DesignSystem.status.downtime : 
       metrics.value > 40 ? DesignSystem.status.degraded : DesignSystem.status.operational
@@ -1341,41 +1341,41 @@ async function demonstrateTensionMetrics(): Promise<void> {
   setTimeout(() => {
     monitoringContext.stop();
     unsubscribe();
-    console.log(UnicodeTableFormatter.colorize('🛑 Real-time monitoring stopped', DesignSystem.text.secondary));
+    console.info(UnicodeTableFormatter.colorize('🛑 Real-time monitoring stopped', DesignSystem.text.secondary));
   }, 8000);
   
-  console.log(EmpireProDashboard.generateFooter());
+  console.info(EmpireProDashboard.generateFooter());
   
-  console.log('\n🎉 TENSION METRICS SYSTEM DEMO COMPLETE!');
-  console.log('✅ Weighted tension analysis with multiple contributors');
-  console.log('✅ Trend detection with historical tracking');
-  console.log('✅ Real-time monitoring with WebSocket integration');
-  console.log('✅ Color-aware visualization based on tension levels');
-  console.log('✅ Intelligent recommendations based on system state');
-  console.log('✅ Comprehensive API with multiple endpoints');
+  console.info('\n🎉 TENSION METRICS SYSTEM DEMO COMPLETE!');
+  console.info('✅ Weighted tension analysis with multiple contributors');
+  console.info('✅ Trend detection with historical tracking');
+  console.info('✅ Real-time monitoring with WebSocket integration');
+  console.info('✅ Color-aware visualization based on tension levels');
+  console.info('✅ Intelligent recommendations based on system state');
+  console.info('✅ Comprehensive API with multiple endpoints');
   
-  console.log('\n📋 TENSION METRICS FEATURES:');
-  console.log('  📊 Weighted Analysis: Error rate, latency, memory, CPU, queue, disk, network, cache');
-  console.log('  📈 Trend Detection: Improving, stable, or degrading based on historical data');
-  console.log('  🎯 Confidence Scoring: Analysis confidence based on data quality and completeness');
-  console.log('  🎨 Color Integration: Dynamic colors based on tension and trend');
-  console.log('  💡 Recommendations: Actionable insights based on top contributors');
-  console.log('  📚 Historical Tracking: Up to 100 data points for trend analysis');
+  console.info('\n📋 TENSION METRICS FEATURES:');
+  console.info('  📊 Weighted Analysis: Error rate, latency, memory, CPU, queue, disk, network, cache');
+  console.info('  📈 Trend Detection: Improving, stable, or degrading based on historical data');
+  console.info('  🎯 Confidence Scoring: Analysis confidence based on data quality and completeness');
+  console.info('  🎨 Color Integration: Dynamic colors based on tension and trend');
+  console.info('  💡 Recommendations: Actionable insights based on top contributors');
+  console.info('  📚 Historical Tracking: Up to 100 data points for trend analysis');
   
-  console.log('\n🔧 USAGE EXAMPLES:');
-  console.log('  // Analyze system tension');
-  console.log('  const metrics = TensionAnalyzer.analyzeContext(contextKey, systemContext);');
-  console.log('  console.log(metrics.value, metrics.trend, metrics.contributors);');
-  console.log('');
-  console.log('  // Get recommendations');
-  console.log('  const recommendations = TensionAnalyzer.getRecommendations(metrics);');
-  console.log('');
-  console.log('  // Generate colors from tension');
-  console.log('  const colors = TensionAwareColorSystem.generateColorsFromMetrics(metrics);');
+  console.info('\n🔧 USAGE EXAMPLES:');
+  console.info('  // Analyze system tension');
+  console.info('  const metrics = TensionAnalyzer.analyzeContext(contextKey, systemContext);');
+  console.info('  console.info(metrics.value, metrics.trend, metrics.contributors);');
+  console.info('');
+  console.info('  // Get recommendations');
+  console.info('  const recommendations = TensionAnalyzer.getRecommendations(metrics);');
+  console.info('');
+  console.info('  // Generate colors from tension');
+  console.info('  const colors = TensionAwareColorSystem.generateColorsFromMetrics(metrics);');
   
   // Handle graceful shutdown
   process.on('SIGINT', () => {
-    console.log(UnicodeTableFormatter.colorize('\n🛑 Shutting down TensionMetrics server...', DesignSystem.text.secondary));
+    console.info(UnicodeTableFormatter.colorize('\n🛑 Shutting down TensionMetrics server...', DesignSystem.text.secondary));
     wsServer.close();
     httpServer.stop();
     process.exit(0);

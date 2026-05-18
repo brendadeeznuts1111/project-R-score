@@ -20,7 +20,7 @@ program
       .option('--scope <scope>', 'Force scope', undefined)
       .action(async (options) => {
         const scope = options.scope || detectDashboardScope();
-        console.log(`🚀 Starting Empire Pro Dashboard [${scope}]...`);
+        console.info(`🚀 Starting Empire Pro Dashboard [${scope}]...`);
         
         // Serve dashboards
         const server = Bun.serve({
@@ -50,14 +50,14 @@ program
           }
         });
 
-        console.log(`✅ Dashboard running at http://localhost:${server.port} (${scope})`);
-        console.log(`✅ System view at http://localhost:${server.port}/system`);
-        console.log(`✅ API endpoints available:`);
-        console.log(`   • GET /api/workflow/97/metrics`);
-        console.log(`   • GET /api/workflow/98/metrics`);
-        console.log(`   • GET /api/workflow/99/metrics`);
-        console.log(`   • GET /api/workflow/100/metrics`);
-        console.log(`   • GET /api/system/metrics`);
+        console.info(`✅ Dashboard running at http://localhost:${server.port} (${scope})`);
+        console.info(`✅ System view at http://localhost:${server.port}/system`);
+        console.info(`✅ API endpoints available:`);
+        console.info(`   • GET /api/workflow/97/metrics`);
+        console.info(`   • GET /api/workflow/98/metrics`);
+        console.info(`   • GET /api/workflow/99/metrics`);
+        console.info(`   • GET /api/workflow/100/metrics`);
+        console.info(`   • GET /api/system/metrics`);
       })
   )
   .addCommand(
@@ -66,7 +66,7 @@ program
       .description('Benchmark dashboard performance')
       .option('--duration <ms>', 'Duration', '10000')
       .action(async (options) => {
-        console.log('📊 Benchmarking dashboard performance...');
+        console.info('📊 Benchmarking dashboard performance...');
         
         const duration = parseInt(options.duration);
         const start = Bun.nanoseconds();
@@ -80,10 +80,10 @@ program
         const elapsed = (Bun.nanoseconds() - start) / 1e6;
         const opsPerSec = 1000 / (elapsed / 1000);
         
-        console.log(`✅ Benchmark complete:`);
-        console.log(`  Duration: ${elapsed.toFixed(2)}ms`);
-        console.log(`  Throughput: ${opsPerSec.toFixed(0)} ops/sec`);
-        console.log(`  Latency: ${(elapsed / 1000).toFixed(3)}ms/op`);
+        console.info(`✅ Benchmark complete:`);
+        console.info(`  Duration: ${elapsed.toFixed(2)}ms`);
+        console.info(`  Throughput: ${opsPerSec.toFixed(0)} ops/sec`);
+        console.info(`  Latency: ${(elapsed / 1000).toFixed(3)}ms/op`);
       })
   );
 

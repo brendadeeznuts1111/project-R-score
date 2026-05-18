@@ -55,7 +55,7 @@ function parseArgs(): TestOptions {
 }
 
 function printHelp() {
-  console.log(`
+  console.info(`
 KYC Test Runner
 
 Usage: bun run src/server/kyc/__tests__/run-tests.ts [options]
@@ -104,8 +104,8 @@ async function runTests() {
   const options = parseArgs();
   const cmd = buildTestCommand(options);
 
-  console.log(`🧪 Running KYC tests...\n`);
-  console.log(`Command: ${cmd.join(" ")}\n`);
+  console.info(`🧪 Running KYC tests...\n`);
+  console.info(`Command: ${cmd.join(" ")}\n`);
 
   const proc = spawn(cmd, {
     stdout: "inherit",
@@ -115,9 +115,9 @@ async function runTests() {
   const exitCode = await proc.exited;
 
   if (exitCode === 0) {
-    console.log(`\n✅ All tests passed!`);
+    console.info(`\n✅ All tests passed!`);
   } else {
-    console.log(`\n❌ Tests failed with exit code ${exitCode}`);
+    console.info(`\n❌ Tests failed with exit code ${exitCode}`);
     process.exit(exitCode);
   }
 }

@@ -15,7 +15,7 @@ function setupDirectories() {
   dirs.forEach(dir => {
     if (!existsSync(dir)) {
       mkdirSync(dir, { recursive: true });
-      console.log(`📁 Created directory: ${dir}`);
+      console.info(`📁 Created directory: ${dir}`);
     }
   });
 }
@@ -29,7 +29,7 @@ function setupEnvironment() {
     if (existsSync(templatePath)) {
       const template = readFileSync(templatePath, 'utf8');
       writeFileSync(envPath, template);
-      console.log(`📄 Created .env.local from template`);
+      console.info(`📄 Created .env.local from template`);
     }
   }
 
@@ -41,13 +41,13 @@ function setupEnvironment() {
       .filter(line => line.includes('=') && !line.startsWith('#'))
       .map(line => line.split('=')[0]);
 
-    console.log(`🔧 Loaded ${envVars.length} environment variables`);
+    console.info(`🔧 Loaded ${envVars.length} environment variables`);
   }
 }
 
 // Setup Bun configuration
 async function setupBunConfig() {
-  console.log(`🔧 Setting up Bun configuration...`);
+  console.info(`🔧 Setting up Bun configuration...`);
 
   // Create .bunfig.toml if it doesn't exist
   if (!existsSync('./.bunfig.local.toml')) {
@@ -70,7 +70,7 @@ parallel = true
 coverage = true
 `;
     writeFileSync('./.bunfig.local.toml', localConfig);
-    console.log(`📄 Created .bunfig.local.toml`);
+    console.info(`📄 Created .bunfig.local.toml`);
   }
 }
 
@@ -98,7 +98,7 @@ echo "✅ Pre-commit checks complete"
   writeFileSync('./.git/hooks/pre-commit', preCommitHook);
   await $`chmod +x ./.git/hooks/pre-commit`;
 
-  console.log(`🔗 Setup Git pre-commit hook`);
+  console.info(`🔗 Setup Git pre-commit hook`);
 }
 
 // Setup development aliases
@@ -115,18 +115,18 @@ alias ff-deploy='cd /Users/nolarose/ff && bun run enterprise:setup'
 alias ff-clean='cd /Users/nolarose/ff && rm -rf .cache .tmp logs/*.log'
 `;
 
-  console.log(`💡 Development aliases available:`);
-  console.log(`   ff-dev     - Start development server`);
-  console.log(`   ff-test    - Run tests`);
-  console.log(`   ff-lint    - Run linter`);
-  console.log(`   ff-build   - Build project`);
-  console.log(`   ff-status  - Check enterprise status`);
-  console.log(`   ff-deploy  - Deploy infrastructure`);
-  console.log(`   ff-clean   - Clean cache and logs`);
+  console.info(`💡 Development aliases available:`);
+  console.info(`   ff-dev     - Start development server`);
+  console.info(`   ff-test    - Run tests`);
+  console.info(`   ff-lint    - Run linter`);
+  console.info(`   ff-build   - Build project`);
+  console.info(`   ff-status  - Check enterprise status`);
+  console.info(`   ff-deploy  - Deploy infrastructure`);
+  console.info(`   ff-clean   - Clean cache and logs`);
 
-  console.log(`\n📝 To add these aliases, run:`);
-  console.log(`   echo '${aliases}' >> ${shellRc}`);
-  console.log(`   source ${shellRc}`);
+  console.info(`\n📝 To add these aliases, run:`);
+  console.info(`   echo '${aliases}' >> ${shellRc}`);
+  console.info(`   source ${shellRc}`);
 }
 
 // Setup VS Code configuration
@@ -187,12 +187,12 @@ function setupVSCode() {
 
   writeFileSync('./.vscode/launch.json', JSON.stringify(launch, null, 2));
 
-  console.log(`🔧 Setup VS Code configuration`);
+  console.info(`🔧 Setup VS Code configuration`);
 }
 
 // Setup Bun secrets
 async function setupBunSecrets() {
-  console.log(`🔐 Setting up Bun secrets...`);
+  console.info(`🔐 Setting up Bun secrets...`);
 
   try {
     // Check if secrets file exists
@@ -217,7 +217,7 @@ async function setupBunSecrets() {
       };
 
       writeFileSync('./secrets.json', JSON.stringify(secrets, null, 2));
-      console.log(`🔑 Created secrets.json template`);
+      console.info(`🔑 Created secrets.json template`);
     }
 
     // Set up Bun secrets
@@ -225,60 +225,60 @@ async function setupBunSecrets() {
     await $`bun secrets set CACHE_KEY "$(cat secrets.json | jq -r '.cache.encryption_key')"`.quiet();
     await $`bun secrets set JWT_SECRET "$(cat secrets.json | jq -r '.jwt.secret')"`.quiet();
 
-    console.log(`✅ Bun secrets configured`);
+    console.info(`✅ Bun secrets configured`);
   } catch (error) {
-    console.log(`⚠️  Bun secrets setup skipped (secrets may not be available)`);
+    console.info(`⚠️  Bun secrets setup skipped (secrets may not be available)`);
   }
 }
 
 // Main setup function
 async function main() {
-  console.log(`🚀 Fantasy42-Fire22 Development Setup`);
-  console.log(`═══════════════════════════════════════\n`);
+  console.info(`🚀 Fantasy42-Fire22 Development Setup`);
+  console.info(`═══════════════════════════════════════\n`);
 
-  console.log(`📁 Setting up directories...`);
+  console.info(`📁 Setting up directories...`);
   setupDirectories();
 
-  console.log(`\n⚙️  Setting up environment...`);
+  console.info(`\n⚙️  Setting up environment...`);
   setupEnvironment();
 
-  console.log(`\n🔧 Configuring Bun...`);
+  console.info(`\n🔧 Configuring Bun...`);
   await setupBunConfig();
 
-  console.log(`\n🔗 Setting up Git hooks...`);
+  console.info(`\n🔗 Setting up Git hooks...`);
   await setupGitHooks();
 
-  console.log(`\n💡 Development aliases:`);
+  console.info(`\n💡 Development aliases:`);
   setupAliases();
 
-  console.log(`\n🔧 Setting up VS Code...`);
+  console.info(`\n🔧 Setting up VS Code...`);
   setupVSCode();
 
-  console.log(`\n🔐 Setting up Bun secrets...`);
+  console.info(`\n🔐 Setting up Bun secrets...`);
   await setupBunSecrets();
 
-  console.log(`\n🎉 Development setup complete!`);
-  console.log(`════════════════════════════════`);
+  console.info(`\n🎉 Development setup complete!`);
+  console.info(`════════════════════════════════`);
 
-  console.log(`\n✅ What's configured:`);
-  console.log(`   📁 Project directories`);
-  console.log(`   ⚙️  Environment variables`);
-  console.log(`   🔧 Bun configuration`);
-  console.log(`   🔗 Git hooks`);
-  console.log(`   💡 Development aliases`);
-  console.log(`   🔧 VS Code integration`);
-  console.log(`   🔐 Bun secrets`);
+  console.info(`\n✅ What's configured:`);
+  console.info(`   📁 Project directories`);
+  console.info(`   ⚙️  Environment variables`);
+  console.info(`   🔧 Bun configuration`);
+  console.info(`   🔗 Git hooks`);
+  console.info(`   💡 Development aliases`);
+  console.info(`   🔧 VS Code integration`);
+  console.info(`   🔐 Bun secrets`);
 
-  console.log(`\n🚀 Quick start commands:`);
-  console.log(`   bun run dev              # Start development server`);
-  console.log(`   bun run test             # Run tests`);
-  console.log(`   bun run enterprise:status # Check status`);
-  console.log(`   bun run enterprise:setup  # Deploy infrastructure`);
+  console.info(`\n🚀 Quick start commands:`);
+  console.info(`   bun run dev              # Start development server`);
+  console.info(`   bun run test             # Run tests`);
+  console.info(`   bun run enterprise:status # Check status`);
+  console.info(`   bun run enterprise:setup  # Deploy infrastructure`);
 
-  console.log(`\n📚 Documentation:`);
-  console.log(`   CLOUDFLARE-SETUP-GUIDE.md`);
-  console.log(`   SECURITY-README.md`);
-  console.log(`   README.md`);
+  console.info(`\n📚 Documentation:`);
+  console.info(`   CLOUDFLARE-SETUP-GUIDE.md`);
+  console.info(`   SECURITY-README.md`);
+  console.info(`   README.md`);
 }
 
 // Run setup

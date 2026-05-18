@@ -14,14 +14,14 @@ export abstract class BaseService {
    * Initialize the service
    */
   async initialize(): Promise<void> {
-    console.log(`Initializing ${this.name} service`);
+    console.info(`Initializing ${this.name} service`);
   }
 
   /**
    * Cleanup service resources
    */
   async cleanup(): Promise<void> {
-    console.log(`Cleaning up ${this.name} service`);
+    console.info(`Cleaning up ${this.name} service`);
   }
 
   /**

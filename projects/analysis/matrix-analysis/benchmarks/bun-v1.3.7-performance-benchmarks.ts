@@ -7,8 +7,8 @@
 
 import { write } from 'bun';
 
-console.log('🚀 Bun v1.3.7 Performance Benchmarks');
-console.log('===================================\n');
+console.info('🚀 Bun v1.3.7 Performance Benchmarks');
+console.info('===================================\n');
 
 // ===== Test Data =====
 const largeObject = {
@@ -33,8 +33,8 @@ const largeObject = {
 const largeBuffer = Buffer.from('a'.repeat(1_000_000) + 'needle');
 
 // ===== Benchmark 1: Response.json() Performance =====
-console.log('1️⃣ Response.json() vs JSON.stringify()');
-console.log('----------------------------------------');
+console.info('1️⃣ Response.json() vs JSON.stringify()');
+console.info('----------------------------------------');
 
 async function benchmarkResponseJson() {
   const iterations = 1000;
@@ -55,15 +55,15 @@ async function benchmarkResponseJson() {
   }
   const stringifyTime = performance.now() - startStringify;
   
-  console.log(`Response.json():        ${jsonTime.toFixed(2)}ms`);
-  console.log(`JSON.stringify() + Response(): ${stringifyTime.toFixed(2)}ms`);
-  console.log(`Performance ratio: ${(jsonTime / stringifyTime).toFixed(2)}x`);
-  console.log(`Status: ${jsonTime / stringifyTime < 1.2 ? '✅ Good parity' : '⚠️ Regression detected'}\n`);
+  console.info(`Response.json():        ${jsonTime.toFixed(2)}ms`);
+  console.info(`JSON.stringify() + Response(): ${stringifyTime.toFixed(2)}ms`);
+  console.info(`Performance ratio: ${(jsonTime / stringifyTime).toFixed(2)}x`);
+  console.info(`Status: ${jsonTime / stringifyTime < 1.2 ? '✅ Good parity' : '⚠️ Regression detected'}\n`);
 }
 
 // ===== Benchmark 2: Buffer.indexOf() SIMD Optimization =====
-console.log('2️⃣ Buffer.indexOf() SIMD Performance');
-console.log('-------------------------------------');
+console.info('2️⃣ Buffer.indexOf() SIMD Performance');
+console.info('-------------------------------------');
 
 function benchmarkBufferSearch() {
   const iterations = 100_000;
@@ -82,14 +82,14 @@ function benchmarkBufferSearch() {
   }
   const includesTime = performance.now() - startIncludes;
   
-  console.log(`Buffer.indexOf():   ${indexOfTime.toFixed(2)}ms`);
-  console.log(`Buffer.includes():  ${includesTime.toFixed(2)}ms`);
-  console.log(`SIMD optimization: ${indexOfTime < 100 ? '✅ Active' : '⚠️ Not optimized'}\n`);
+  console.info(`Buffer.indexOf():   ${indexOfTime.toFixed(2)}ms`);
+  console.info(`Buffer.includes():  ${includesTime.toFixed(2)}ms`);
+  console.info(`SIMD optimization: ${indexOfTime < 100 ? '✅ Active' : '⚠️ Not optimized'}\n`);
 }
 
 // ===== Benchmark 3: Bun.hash.crc32 Hardware Acceleration =====
-console.log('3️⃣ Bun.hash.crc32 Hardware Acceleration');
-console.log('---------------------------------------');
+console.info('3️⃣ Bun.hash.crc32 Hardware Acceleration');
+console.info('---------------------------------------');
 
 function benchmarkCRC32() {
   const iterations = 1000;
@@ -101,14 +101,14 @@ function benchmarkCRC32() {
   }
   const time = performance.now() - start;
   
-  console.log(`CRC32 (1MB x ${iterations}): ${time.toFixed(2)}ms`);
-  console.log(`Per operation: ${(time / iterations).toFixed(3)}ms`);
-  console.log(`Hardware acceleration: ${time / iterations < 0.5 ? '✅ Active' : '⚠️ Software fallback'}\n`);
+  console.info(`CRC32 (1MB x ${iterations}): ${time.toFixed(2)}ms`);
+  console.info(`Per operation: ${(time / iterations).toFixed(3)}ms`);
+  console.info(`Hardware acceleration: ${time / iterations < 0.5 ? '✅ Active' : '⚠️ Software fallback'}\n`);
 }
 
 // ===== Benchmark 4: JSON Serialization Improvements =====
-console.log('4️⃣ JSON Serialization Performance');
-console.log('----------------------------------');
+console.info('4️⃣ JSON Serialization Performance');
+console.info('----------------------------------');
 
 function benchmarkJSONSerialization() {
   const iterations = 10_000;
@@ -116,7 +116,7 @@ function benchmarkJSONSerialization() {
   // Test console.log with %j
   const startConsole = performance.now();
   for (let i = 0; i < iterations; i++) {
-    console.log(`%j`, { id: i, data: 'test' });
+    console.info(`%j`, { id: i, data: 'test' });
   }
   const consoleTime = performance.now() - startConsole;
   
@@ -127,14 +127,14 @@ function benchmarkJSONSerialization() {
   }
   const directTime = performance.now() - startDirect;
   
-  console.log(`console.log(%j):    ${consoleTime.toFixed(2)}ms`);
-  console.log(`JSON.stringify():  ${directTime.toFixed(2)}ms`);
-  console.log(`FastStringifier: ${consoleTime < directTime * 2 ? '✅ Active' : '⚠️ Not optimized'}\n`);
+  console.info(`console.info(%j):    ${consoleTime.toFixed(2)}ms`);
+  console.info(`JSON.stringify():  ${directTime.toFixed(2)}ms`);
+  console.info(`FastStringifier: ${consoleTime < directTime * 2 ? '✅ Active' : '⚠️ Not optimized'}\n`);
 }
 
 // ===== Benchmark 5: async/await Performance =====
-console.log('5️⃣ async/await Performance (15% faster)');
-console.log('------------------------------------------');
+console.info('5️⃣ async/await Performance (15% faster)');
+console.info('------------------------------------------');
 
 async function benchmarkAsyncAwait() {
   const iterations = 100_000;
@@ -149,14 +149,14 @@ async function benchmarkAsyncAwait() {
   }
   const time = performance.now() - start;
   
-  console.log(`async/await x ${iterations}: ${time.toFixed(2)}ms`);
-  console.log(`Per operation: ${(time / iterations * 1000).toFixed(3)}μs`);
-  console.log(`Performance: ${time / iterations < 0.01 ? '✅ Optimized' : '⚠️ Standard'}\n`);
+  console.info(`async/await x ${iterations}: ${time.toFixed(2)}ms`);
+  console.info(`Per operation: ${(time / iterations * 1000).toFixed(3)}μs`);
+  console.info(`Performance: ${time / iterations < 0.01 ? '✅ Optimized' : '⚠️ Standard'}\n`);
 }
 
 // ===== Benchmark 6: Promise.race Performance (30% faster) =====
-console.log('6️⃣ Promise.race Performance (30% faster)');
-console.log('-------------------------------------------');
+console.info('6️⃣ Promise.race Performance (30% faster)');
+console.info('-------------------------------------------');
 
 async function benchmarkPromiseRace() {
   const iterations = 10_000;
@@ -171,59 +171,59 @@ async function benchmarkPromiseRace() {
   }
   const time = performance.now() - start;
   
-  console.log(`Promise.race x ${iterations}: ${time.toFixed(2)}ms`);
-  console.log(`Per operation: ${(time / iterations * 1000).toFixed(3)}μs`);
-  console.log(`Performance: ${time / iterations < 0.1 ? '✅ Optimized' : '⚠️ Standard'}\n`);
+  console.info(`Promise.race x ${iterations}: ${time.toFixed(2)}ms`);
+  console.info(`Per operation: ${(time / iterations * 1000).toFixed(3)}μs`);
+  console.info(`Performance: ${time / iterations < 0.1 ? '✅ Optimized' : '⚠️ Standard'}\n`);
 }
 
 // ===== Benchmark 7: S3 Requester Pays =====
-console.log('7️⃣ S3 Requester Pays Support');
-console.log('---------------------------');
+console.info('7️⃣ S3 Requester Pays Support');
+console.info('---------------------------');
 
 function testS3RequesterPays() {
-  console.log('✅ S3 Requester Pays API available');
-  console.log('   - requestPayer: true option supported');
-  console.log('   - Works with all S3 operations');
-  console.log('   - Supports authentication\n');
+  console.info('✅ S3 Requester Pays API available');
+  console.info('   - requestPayer: true option supported');
+  console.info('   - Works with all S3 operations');
+  console.info('   - Supports authentication\n');
 }
 
 // ===== Benchmark 8: WebSocket Proxy Support =====
-console.log('8️⃣ WebSocket Proxy Support');
-console.log('--------------------------');
+console.info('8️⃣ WebSocket Proxy Support');
+console.info('--------------------------');
 
 function testWebSocketProxy() {
-  console.log('✅ WebSocket proxy API available');
-  console.log('   - HTTP/HTTPS proxy support');
-  console.log('   - Basic authentication');
-  console.log('   - Custom headers');
-  console.log('   - TLS configuration\n');
+  console.info('✅ WebSocket proxy API available');
+  console.info('   - HTTP/HTTPS proxy support');
+  console.info('   - Basic authentication');
+  console.info('   - Custom headers');
+  console.info('   - TLS configuration\n');
 }
 
 // ===== Benchmark 9: SQLite Version =====
-console.log('9️⃣ SQLite Version Update');
-console.log('------------------------');
+console.info('9️⃣ SQLite Version Update');
+console.info('------------------------');
 
 function testSQLiteVersion() {
-  console.log('✅ SQLite updated to 3.51.2');
-  console.log('   - DISTINCT and OFFSET fixes');
-  console.log('   - Improved WAL mode locking');
-  console.log('   - Cursor renumbering improvements\n');
+  console.info('✅ SQLite updated to 3.51.2');
+  console.info('   - DISTINCT and OFFSET fixes');
+  console.info('   - Improved WAL mode locking');
+  console.info('   - Cursor renumbering improvements\n');
 }
 
 // ===== Benchmark 10: Fake Timers with Testing Library =====
-console.log('🔟 Fake Timers Compatibility');
-console.log('-----------------------------');
+console.info('🔟 Fake Timers Compatibility');
+console.info('-----------------------------');
 
 function testFakeTimers() {
-  console.log('✅ Fake timers now work with @testing-library/react');
-  console.log('   - setTimeout.clock = true detection');
-  console.log('   - Immediate timer handling');
-  console.log('   - advanceTimersByTime(0) support\n');
+  console.info('✅ Fake timers now work with @testing-library/react');
+  console.info('   - setTimeout.clock = true detection');
+  console.info('   - Immediate timer handling');
+  console.info('   - advanceTimersByTime(0) support\n');
 }
 
 // ===== Main Execution =====
 async function runBenchmarks(): Promise<void> {
-  console.log('🎯 Running Bun v1.3.7 Performance Benchmarks\n');
+  console.info('🎯 Running Bun v1.3.7 Performance Benchmarks\n');
   
   await benchmarkResponseJson();
   benchmarkBufferSearch();
@@ -263,18 +263,18 @@ async function runBenchmarks(): Promise<void> {
   };
   
   await write('./bun-v1.3.7-benchmark-results.json', JSON.stringify(report, null, 2));
-  console.log('💾 Results saved to ./bun-v1.3.7-benchmark-results.json');
+  console.info('💾 Results saved to ./bun-v1.3.7-benchmark-results.json');
   
-  console.log('\n🎉 Bun v1.3.7 Benchmarks Complete!');
-  console.log('\n🚀 Key Improvements:');
-  console.log('• Response.json() now 3.5x faster');
-  console.log('• Buffer operations 2x faster with SIMD');
-  console.log('• CRC32 hashing 20x faster with hardware acceleration');
-  console.log('• JSON serialization 3x faster across APIs');
-  console.log('• async/await 15% faster');
-  console.log('• Promise.race 30% faster');
-  console.log('• New features: S3 Requester Pays, WebSocket proxy');
-  console.log('• Bug fixes: Fake timers, SQL undefined handling');
+  console.info('\n🎉 Bun v1.3.7 Benchmarks Complete!');
+  console.info('\n🚀 Key Improvements:');
+  console.info('• Response.json() now 3.5x faster');
+  console.info('• Buffer operations 2x faster with SIMD');
+  console.info('• CRC32 hashing 20x faster with hardware acceleration');
+  console.info('• JSON serialization 3x faster across APIs');
+  console.info('• async/await 15% faster');
+  console.info('• Promise.race 30% faster');
+  console.info('• New features: S3 Requester Pays, WebSocket proxy');
+  console.info('• Bug fixes: Fake timers, SQL undefined handling');
 }
 
 // Run benchmarks

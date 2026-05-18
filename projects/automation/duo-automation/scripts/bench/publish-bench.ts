@@ -376,49 +376,49 @@ async function main() {
   try {
     if (packOnly) {
       // Pack benchmark only
-      console.log("🔧 Running pack benchmark...\n");
+      console.info("🔧 Running pack benchmark...\n");
       const result = await benchmarkPack(iterations);
       results.push(result);
 
       if (jsonOutput) {
-        console.log(JSON.stringify(result, null, 2));
+        console.info(JSON.stringify(result, null, 2));
       } else {
-        console.log(formatResult(result));
+        console.info(formatResult(result));
       }
     } else if (compare) {
       // Bun vs npm comparison
-      console.log("🔧 Running bun vs npm comparison (dry-run)...\n");
+      console.info("🔧 Running bun vs npm comparison (dry-run)...\n");
       const result = await compareBunVsNpm(iterations);
 
       if (jsonOutput) {
-        console.log(JSON.stringify(result, null, 2));
+        console.info(JSON.stringify(result, null, 2));
       } else {
-        console.log(formatComparison(result));
+        console.info(formatComparison(result));
       }
     } else if (gzip) {
       // Gzip compression benchmark
-      console.log("🔧 Running gzip compression benchmark...\n");
+      console.info("🔧 Running gzip compression benchmark...\n");
       const gzipResults = await benchmarkGzipLevels();
 
       if (jsonOutput) {
-        console.log(JSON.stringify(gzipResults, null, 2));
+        console.info(JSON.stringify(gzipResults, null, 2));
       } else {
-        console.log(formatGzipResults(gzipResults));
+        console.info(formatGzipResults(gzipResults));
       }
     } else {
       // Full benchmark suite
-      console.log("🔧 Running full publishing benchmark suite...\n");
+      console.info("🔧 Running full publishing benchmark suite...\n");
 
       // 1. Pack benchmark
-      console.log("📦 Benchmarking bun pm pack...");
+      console.info("📦 Benchmarking bun pm pack...");
       results.push(await benchmarkPack(iterations));
 
       // 2. Dry-run benchmark
-      console.log("🔍 Benchmarking bun publish --dry-run...");
+      console.info("🔍 Benchmarking bun publish --dry-run...");
       results.push(await benchmarkDryRun(iterations));
 
       // 3. Tag validation benchmark
-      console.log("🏷️  Benchmarking tag compliance validation...");
+      console.info("🏷️  Benchmarking tag compliance validation...");
       results.push(await benchmarkTagValidation(iterations));
 
       const endTime = Bun.nanoseconds();
@@ -440,9 +440,9 @@ async function main() {
       };
 
       if (jsonOutput) {
-        console.log(JSON.stringify(suite, null, 2));
+        console.info(JSON.stringify(suite, null, 2));
       } else {
-        console.log(formatSuite(suite));
+        console.info(formatSuite(suite));
       }
     }
   } catch (error) {

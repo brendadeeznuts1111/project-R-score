@@ -198,13 +198,13 @@ if (import.meta.main) {
 
   const { score, metadata } = GeometricMeanCalculator.calculateWithMetadata(testData);
 
-  console.log(`\n🏆 SCORE: ${score}`);
-  console.log(`📊 METADATA:`);
+  console.info(`\n🏆 SCORE: ${score}`);
+  console.info(`📊 METADATA:`);
   console.table(metadata);
 
   // Benchmarking invalid data handling
-  console.log("\n🧪 Testing Zero-Protection (Clamp Mode)...");
+  console.info("\n🧪 Testing Zero-Protection (Clamp Mode)...");
   const problematic = { ...testData, crash: 0 };
   const safeScore = GeometricMeanCalculator.calculate(problematic, { handleInvalid: 'clamp' });
-  console.log(`Safe Score (with zero clamped): ${safeScore}`);
+  console.info(`Safe Score (with zero clamped): ${safeScore}`);
 }

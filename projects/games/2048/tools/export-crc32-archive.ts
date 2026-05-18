@@ -22,7 +22,7 @@ async function main() {
   }
 
   if (flags.help) {
-    console.log(`
+    console.info(`
 CRC32 Archive Export Tool
 =========================
 
@@ -50,10 +50,10 @@ API Access:
   const ext = format.split(".").pop() || "gz";
   const output = flags.output || `crc32-benchmark-${Date.now()}.${ext}`;
 
-  console.log("🚀 Generating CRC32 benchmark archive...");
-  console.log(`📦 Format: ${format}`);
-  console.log(`📊 Compression level: ${level}`);
-  console.log(`💾 Output: ${output}`);
+  console.info("🚀 Generating CRC32 benchmark archive...");
+  console.info(`📦 Format: ${format}`);
+  console.info(`📊 Compression level: ${level}`);
+  console.info(`💾 Output: ${output}`);
 
   try {
     await configManager.loadConfig();
@@ -66,8 +66,8 @@ API Access:
 
     const { files, manifest } = await buildOddsDataset();
 
-    console.log(`📁 Generated ${manifest.fileCount} benchmark files`);
-    console.log(`📏 Total size: ${(manifest.totalSize / 1024).toFixed(2)} KB`);
+    console.info(`📁 Generated ${manifest.fileCount} benchmark files`);
+    console.info(`📏 Total size: ${(manifest.totalSize / 1024).toFixed(2)} KB`);
 
     const archiveOptions: Record<string, unknown> = {
       level: Math.max(1, Math.min(12, level)),
@@ -84,9 +84,9 @@ API Access:
 
     await Bun.write(output, bytes);
 
-    console.log(`✅ Archive saved: ${output}`);
-    console.log(`🔒 Archive CRC32: ${crc32.toString(16).padStart(8, "0")}`);
-    console.log(
+    console.info(`✅ Archive saved: ${output}`);
+    console.info(`🔒 Archive CRC32: ${crc32.toString(16).padStart(8, "0")}`);
+    console.info(
       `📉 Compression ratio: ${(
         ((manifest.totalSize - bytes.length) / manifest.totalSize) *
         100
@@ -98,7 +98,7 @@ API Access:
       ".manifest.json"
     );
     await Bun.write(manifestOutput, JSON.stringify(manifest, null, 2));
-    console.log(`📋 Manifest saved: ${manifestOutput}`);
+    console.info(`📋 Manifest saved: ${manifestOutput}`);
   } catch (error) {
     console.error("❌ Failed to generate archive:", error);
     process.exit(1);

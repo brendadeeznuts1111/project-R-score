@@ -4,13 +4,13 @@
  * Demonstrating Bun's built-in HTTP server capabilities
  */
 
-console.log('🌐 Bun.serve() HTTP Server Demo');
-console.log('='.repeat(60));
+console.info('🌐 Bun.serve() HTTP Server Demo');
+console.info('='.repeat(60));
 
 // ============================================================================
 // BASIC HTTP SERVER
 // ============================================================================
-console.log('\n🚀 Starting Fire22 HTTP Server...');
+console.info('\n🚀 Starting Fire22 HTTP Server...');
 
 const server = Bun.serve({
   port: 3001,
@@ -19,7 +19,7 @@ const server = Bun.serve({
   async fetch(request) {
     const url = new URL(request.url);
 
-    console.log(`${request.method} ${url.pathname}`);
+    console.info(`${request.method} ${url.pathname}`);
 
     // Route handling
     switch (url.pathname) {
@@ -115,14 +115,14 @@ const server = Bun.serve({
   },
 });
 
-console.log(`✅ Server running at http://localhost:${server.port}`);
-console.log(`🌐 Server hostname: ${server.hostname}`);
-console.log(`🔌 Server port: ${server.port}`);
+console.info(`✅ Server running at http://localhost:${server.port}`);
+console.info(`🌐 Server hostname: ${server.hostname}`);
+console.info(`🔌 Server port: ${server.port}`);
 
 // ============================================================================
 // SERVER WITH WEBSOCKET SUPPORT
 // ============================================================================
-console.log('\n🔌 Starting Fire22 WebSocket Server...');
+console.info('\n🔌 Starting Fire22 WebSocket Server...');
 
 const wsServer = Bun.serve({
   port: 3002,
@@ -158,7 +158,7 @@ const wsServer = Bun.serve({
 
   websocket: {
     open(ws) {
-      console.log('🔌 WebSocket connection opened');
+      console.info('🔌 WebSocket connection opened');
       ws.send(
         JSON.stringify({
           type: 'welcome',
@@ -169,7 +169,7 @@ const wsServer = Bun.serve({
     },
 
     message(ws, message) {
-      console.log('📨 WebSocket message received:', message);
+      console.info('📨 WebSocket message received:', message);
 
       // Echo the message back
       ws.send(
@@ -182,21 +182,21 @@ const wsServer = Bun.serve({
     },
 
     close(ws, code, reason) {
-      console.log('🔌 WebSocket connection closed:', code, reason);
+      console.info('🔌 WebSocket connection closed:', code, reason);
     },
 
     drain(ws) {
-      console.log('📊 WebSocket buffer drained');
+      console.info('📊 WebSocket buffer drained');
     },
   },
 });
 
-console.log(`✅ WebSocket server running at ws://localhost:${wsServer.port}/ws`);
+console.info(`✅ WebSocket server running at ws://localhost:${wsServer.port}/ws`);
 
 // ============================================================================
 // DEMONSTRATE SERVER CAPABILITIES
 // ============================================================================
-console.log('\n🧪 Testing Server Capabilities...');
+console.info('\n🧪 Testing Server Capabilities...');
 
 async function testServer() {
   const baseUrl = `http://localhost:${server.port}`;
@@ -210,46 +210,46 @@ async function testServer() {
     { path: '/file', description: 'File serving' },
   ];
 
-  console.log('🔍 Testing HTTP endpoints:');
+  console.info('🔍 Testing HTTP endpoints:');
   for (const endpoint of endpoints) {
     try {
       const response = await fetch(`${baseUrl}${endpoint.path}`);
       const status = response.ok ? '✅' : '❌';
-      console.log(`   ${status} ${endpoint.path} - ${response.status} (${endpoint.description})`);
+      console.info(`   ${status} ${endpoint.path} - ${response.status} (${endpoint.description})`);
     } catch (error) {
-      console.log(`   ❌ ${endpoint.path} - Error: ${error.message}`);
+      console.info(`   ❌ ${endpoint.path} - Error: ${error.message}`);
     }
   }
 
   // Test WebSocket
-  console.log('\n🔌 Testing WebSocket connection:');
+  console.info('\n🔌 Testing WebSocket connection:');
   try {
     const ws = new WebSocket(`ws://localhost:${wsServer.port}/ws`);
 
     await new Promise(resolve => {
       ws.onopen = () => {
-        console.log('   ✅ WebSocket connection established');
+        console.info('   ✅ WebSocket connection established');
         ws.send('Hello from test client!');
       };
 
       ws.onmessage = event => {
         const data = JSON.parse(event.data);
-        console.log(`   📨 WebSocket message received: ${data.type}`);
+        console.info(`   📨 WebSocket message received: ${data.type}`);
         ws.close();
       };
 
       ws.onclose = () => {
-        console.log('   ✅ WebSocket connection closed');
+        console.info('   ✅ WebSocket connection closed');
         resolve(void 0);
       };
 
       ws.onerror = error => {
-        console.log(`   ❌ WebSocket error: ${error}`);
+        console.info(`   ❌ WebSocket error: ${error}`);
         resolve(void 0);
       };
     });
   } catch (error) {
-    console.log(`   ❌ WebSocket test failed: ${error.message}`);
+    console.info(`   ❌ WebSocket test failed: ${error.message}`);
   }
 }
 
@@ -259,43 +259,43 @@ await testServer();
 // ============================================================================
 // SERVER METRICS AND INFORMATION
 // ============================================================================
-console.log('\n📊 Server Information:');
-console.log(`   HTTP Server: http://localhost:${server.port}`);
-console.log(`   WebSocket Server: ws://localhost:${wsServer.port}`);
-console.log(`   Server PID: ${process.pid}`);
-console.log(`   Bun Version: ${Bun.version}`);
-console.log(`   Platform: ${process.platform}`);
-console.log(`   Architecture: ${process.arch}`);
+console.info('\n📊 Server Information:');
+console.info(`   HTTP Server: http://localhost:${server.port}`);
+console.info(`   WebSocket Server: ws://localhost:${wsServer.port}`);
+console.info(`   Server PID: ${process.pid}`);
+console.info(`   Bun Version: ${Bun.version}`);
+console.info(`   Platform: ${process.platform}`);
+console.info(`   Architecture: ${process.arch}`);
 
 // ============================================================================
 // CLEANUP
 // ============================================================================
-console.log('\n🛑 Shutting down servers...');
+console.info('\n🛑 Shutting down servers...');
 
 setTimeout(() => {
   server.stop();
   wsServer.stop();
-  console.log('✅ Servers stopped successfully');
-  console.log('🎉 Bun.serve() demo completed!');
+  console.info('✅ Servers stopped successfully');
+  console.info('🎉 Bun.serve() demo completed!');
 }, 2000); // Give time for final requests
 
-console.log('\n🎯 Bun.serve() Features Demonstrated:');
-console.log('   ✅ HTTP server with routing');
-console.log('   ✅ JSON API responses');
-console.log('   ✅ File serving with Bun.file');
-console.log('   ✅ Async operations with Bun.sleep');
-console.log('   ✅ WebSocket support');
-console.log('   ✅ Error handling');
-console.log('   ✅ Request/response headers');
-console.log('   ✅ Cross-origin support');
-console.log('   ✅ Server metrics and information');
+console.info('\n🎯 Bun.serve() Features Demonstrated:');
+console.info('   ✅ HTTP server with routing');
+console.info('   ✅ JSON API responses');
+console.info('   ✅ File serving with Bun.file');
+console.info('   ✅ Async operations with Bun.sleep');
+console.info('   ✅ WebSocket support');
+console.info('   ✅ Error handling');
+console.info('   ✅ Request/response headers');
+console.info('   ✅ Cross-origin support');
+console.info('   ✅ Server metrics and information');
 
-console.log('\n🚀 Enterprise Benefits:');
-console.log('   ⚡ High-performance HTTP server');
-console.log('   🔒 Built-in security features');
-console.log('   📡 Native WebSocket support');
-console.log('   🔧 Zero-config development');
-console.log('   📊 Real-time communication');
-console.log('   🏗️ Scalable architecture');
+console.info('\n🚀 Enterprise Benefits:');
+console.info('   ⚡ High-performance HTTP server');
+console.info('   🔒 Built-in security features');
+console.info('   📡 Native WebSocket support');
+console.info('   🔧 Zero-config development');
+console.info('   📊 Real-time communication');
+console.info('   🏗️ Scalable architecture');
 
-console.log('\n🎉 Ready for Fire22 enterprise deployment!');
+console.info('\n🎉 Ready for Fire22 enterprise deployment!');

@@ -463,7 +463,7 @@ describe.if(isPerformanceTest)("Performance Benchmarks", () => {
     });
 
     try {
-      console.log("🚀 Starting performance benchmark...");
+      console.info("🚀 Starting performance benchmark...");
       
       // Benchmark user agent generation
       const uaStartTime = performance.now();
@@ -473,7 +473,7 @@ describe.if(isPerformanceTest)("Performance Benchmarks", () => {
       const uaDuration = performance.now() - uaStartTime;
       const uaAvgTime = uaDuration / 10000;
       
-      console.log(`📱 User Agent Generation: ${uaAvgTime.toFixed(4)}ms per call`);
+      console.info(`📱 User Agent Generation: ${uaAvgTime.toFixed(4)}ms per call`);
       expect(uaAvgTime).toBeLessThan(0.05);
       
       // Benchmark proxy selection
@@ -484,11 +484,11 @@ describe.if(isPerformanceTest)("Performance Benchmarks", () => {
       const proxyDuration = performance.now() - proxyStartTime;
       const proxyAvgTime = proxyDuration / 10000;
       
-      console.log(`🌐 Proxy Selection: ${proxyAvgTime.toFixed(4)}ms per call`);
+      console.info(`🌐 Proxy Selection: ${proxyAvgTime.toFixed(4)}ms per call`);
       expect(proxyAvgTime).toBeLessThan(0.1);
       
       const finalStats = detector.stats();
-      console.log(`📊 Final Stats:`, finalStats);
+      console.info(`📊 Final Stats:`, finalStats);
       
     } finally {
       detector.destroy();
@@ -518,15 +518,15 @@ describe("BunAntiDetection - Usage Examples", () => {
       
       // Get randomized user agent
       const userAgent = detector.userAgent(agentId);
-      console.log(`User Agent: ${userAgent}`);
+      console.info(`User Agent: ${userAgent}`);
       
       // Get healthy proxy
       const proxy = detector.proxy(agentId);
-      console.log(`Proxy: ${proxy}`);
+      console.info(`Proxy: ${proxy}`);
       
       // View system stats
       const stats = detector.stats();
-      console.log(`Stats:`, stats);
+      console.info(`Stats:`, stats);
       
       // Verify results
       expect(userAgent).toBeValidUserAgent();
@@ -550,7 +550,7 @@ describe("BunAntiDetection - Usage Examples", () => {
       
       // Run multiple agents concurrently
       const promises = agents.map(async (agentId) => {
-        console.log(`Starting agent: ${agentId}`);
+        console.info(`Starting agent: ${agentId}`);
         
         await detector.delay(agentId);
         const userAgent = detector.userAgent(agentId);
@@ -565,9 +565,9 @@ describe("BunAntiDetection - Usage Examples", () => {
       
       const results = await Promise.all(promises);
       
-      console.log("Agent Results:");
+      console.info("Agent Results:");
       results.forEach(result => {
-        console.log(`  ${result.agentId}: ${result.proxy} | ${result.userAgent}`);
+        console.info(`  ${result.agentId}: ${result.proxy} | ${result.userAgent}`);
       });
       
       // Verify all results are valid

@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // urlpattern-simple.ts - Simple URLPattern Demo
 
-console.log('🔍 Testing URLPattern API Features...');
+console.info('🔍 Testing URLPattern API Features...');
 
 // Use dynamic approach to avoid TypeScript conflicts
 async function testURLPattern() {
@@ -15,12 +15,12 @@ async function testURLPattern() {
     cache: new URLPattern({ pathname: '/cache/:category/:key.json' })
   };
 
-  console.log('\n📋 Pattern Definitions:');
+  console.info('\n📋 Pattern Definitions:');
   Object.entries(patterns).forEach(([name, pattern]) => {
-    console.log(`  ${name}: ${pattern.pathname}`);
+    console.info(`  ${name}: ${pattern.pathname}`);
   });
 
-  console.log('\n🧪 Testing Pattern Matching:');
+  console.info('\n🧪 Testing Pattern Matching:');
 
   const urlTests = [
     { pathname: '/apple-ids/user123.json' },
@@ -30,30 +30,30 @@ async function testURLPattern() {
   ];
 
   urlTests.forEach(urlObj => {
-    console.log(`\n📄 Testing: ${urlObj.pathname}`);
+    console.info(`\n📄 Testing: ${urlObj.pathname}`);
     
     Object.entries(patterns).forEach(([name, pattern]) => {
       if (pattern.test(urlObj)) {
         const result = pattern.exec(urlObj);
-        console.log(`  ✅ ${name}: ${JSON.stringify(result?.pathname.groups)}`);
+        console.info(`  ✅ ${name}: ${JSON.stringify(result?.pathname.groups)}`);
       }
     });
   });
 
   // Test pattern properties
-  console.log('\n🏗️ URLPattern Properties:');
+  console.info('\n🏗️ URLPattern Properties:');
   const pattern = patterns.appleId;
-  console.log(`  Protocol: ${pattern.protocol}`);
-  console.log(`  Username: ${pattern.username}`);
-  console.log(`  Password: ${pattern.password}`);
-  console.log(`  Hostname: ${pattern.hostname}`);
-  console.log(`  Port: ${pattern.port}`);
-  console.log(`  Pathname: ${pattern.pathname}`);
-  console.log(`  Search: ${pattern.search}`);
-  console.log(`  Hash: ${pattern.hash}`);
-  console.log(`  Has RegExp Groups: ${pattern.hasRegExpGroups}`);
+  console.info(`  Protocol: ${pattern.protocol}`);
+  console.info(`  Username: ${pattern.username}`);
+  console.info(`  Password: ${pattern.password}`);
+  console.info(`  Hostname: ${pattern.hostname}`);
+  console.info(`  Port: ${pattern.port}`);
+  console.info(`  Pathname: ${pattern.pathname}`);
+  console.info(`  Search: ${pattern.search}`);
+  console.info(`  Hash: ${pattern.hash}`);
+  console.info(`  Has RegExp Groups: ${pattern.hasRegExpGroups}`);
 
-  console.log('\n✅ URLPattern API test complete!');
+  console.info('\n✅ URLPattern API test complete!');
 }
 
 // Run the test

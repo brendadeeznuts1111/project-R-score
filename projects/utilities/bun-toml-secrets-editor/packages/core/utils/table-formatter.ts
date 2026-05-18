@@ -86,7 +86,7 @@ export class TableFormatter {
 	 */
 	print(data: any[]): void {
 		const lines = this.format(data);
-		lines.forEach((line) => console.log(line));
+		lines.forEach((line) => console.info(line));
 	}
 
 	private calculateColumnWidths(data: any[]): void {
@@ -447,7 +447,7 @@ export class TableUtils {
 	 */
 	static printSimpleTable(data: Record<string, any>, title?: string): void {
 		const lines = TableUtils.simpleTable(data, title);
-		lines.forEach((line) => console.log(line));
+		lines.forEach((line) => console.info(line));
 	}
 
 	/**

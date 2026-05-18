@@ -20,7 +20,7 @@ describe("Performance Regression Tests", () => {
     const end = performance.now();
     
     const opsPerSec = (iterations / (end - start)) * 1000;
-    console.log(`Markdown render: ${opsPerSec.toFixed(0)} ops/sec`);
+    console.info(`Markdown render: ${opsPerSec.toFixed(0)} ops/sec`);
     
     // Should maintain at least 20K ops/sec for large docs
     expect(opsPerSec).toBeGreaterThan(20000);
@@ -37,7 +37,7 @@ describe("Performance Regression Tests", () => {
     const end = performance.now();
     
     const timePerOp = ((end - start) / iterations) * 1000000000; // nanoseconds
-    console.log(`startsWith: ${timePerOp.toFixed(2)} ns/op`);
+    console.info(`startsWith: ${timePerOp.toFixed(2)} ns/op`);
     
     // Keep room for host/JIT variance while still guarding against major regressions.
     expect(timePerOp).toBeLessThan(1500);
@@ -54,7 +54,7 @@ describe("Performance Regression Tests", () => {
     const end = performance.now();
     
     const timePerOp = ((end - start) / iterations) * 1000000000;
-    console.log(`Set.size: ${timePerOp.toFixed(2)} ns/op`);
+    console.info(`Set.size: ${timePerOp.toFixed(2)} ns/op`);
     
     // Should be sub-1000 nanoseconds (1 microsecond)
     expect(timePerOp).toBeLessThan(1000);
@@ -71,7 +71,7 @@ describe("Performance Regression Tests", () => {
     const end = performance.now();
     
     const timePerOp = ((end - start) / iterations) * 1000000000;
-    console.log(`Map.size: ${timePerOp.toFixed(2)} ns/op`);
+    console.info(`Map.size: ${timePerOp.toFixed(2)} ns/op`);
     
     // Should be sub-1000 nanoseconds (1 microsecond)
     expect(timePerOp).toBeLessThan(1000);
@@ -89,7 +89,7 @@ describe("Performance Regression Tests", () => {
     const end = performance.now();
     
     const opsPerSec = (iterations / (end - start)) * 1000;
-    console.log(`RegExp fixed-count: ${opsPerSec.toFixed(0)} ops/sec`);
+    console.info(`RegExp fixed-count: ${opsPerSec.toFixed(0)} ops/sec`);
     
     // Keep a stable floor across mixed CI/dev hardware while preserving regression signal.
     expect(opsPerSec).toBeGreaterThan(10000000);
@@ -106,7 +106,7 @@ describe("Performance Regression Tests", () => {
     const end = performance.now();
     
     const timePerOp = ((end - start) / iterations) * 1000000; // microseconds
-    console.log(`AbortSignal.abort(): ${timePerOp.toFixed(2)} µs/op`);
+    console.info(`AbortSignal.abort(): ${timePerOp.toFixed(2)} µs/op`);
     
     // Should be sub-1000 microseconds with optimization
     expect(timePerOp).toBeLessThan(1000);
@@ -123,7 +123,7 @@ describe("Performance Regression Tests", () => {
     const end = performance.now();
     
     const opsPerSec = (iterations / (end - start)) * 1000;
-    console.log(`String.trim: ${(opsPerSec / 1000000).toFixed(1)}M ops/sec`);
+    console.info(`String.trim: ${(opsPerSec / 1000000).toFixed(1)}M ops/sec`);
     
     // Should maintain at least 40M ops/sec
     expect(opsPerSec).toBeGreaterThan(40000000);
@@ -144,4 +144,4 @@ describe("Performance Regression Tests", () => {
   });
 });
 
-console.log("\n🛡️ Performance Regression Tests\n");
+console.info("\n🛡️ Performance Regression Tests\n");

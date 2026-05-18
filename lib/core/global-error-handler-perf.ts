@@ -72,7 +72,7 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
     return () => {
       const existed = this.shutdownHandlers.delete(id);
       if (existed) {
-        console.log(`📝 Shutdown handler "${name}" unregistered`);
+        console.info(`📝 Shutdown handler "${name}" unregistered`);
       }
     };
   }
@@ -102,13 +102,13 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
       const handlers = Array.from(this.shutdownHandlers.values());
       
       if (handlers.length === 0) {
-        console.log('✅ No shutdown handlers registered');
+        console.info('✅ No shutdown handlers registered');
         clearTimeout(timeoutId);
         process.exit(exitCode);
         return;
       }
       
-      console.log(`🔄 Running ${handlers.length} shutdown handlers in parallel...`);
+      console.info(`🔄 Running ${handlers.length} shutdown handlers in parallel...`);
       
       // Calculate per-handler timeout with minimum guarantee
       const perHandlerTimeout = Math.max(
@@ -150,25 +150,25 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
       const succeeded = results.filter(r => r.status === 'fulfilled' && (r.value as any).success);
       const failed = results.filter(r => r.status === 'rejected' || !(r.value as any).success);
       
-      console.log(`\n📊 Shutdown Results:`);
-      console.log(`  ✅ ${succeeded.length} succeeded`);
-      console.log(`  ❌ ${failed.length} failed`);
+      console.info(`\n📊 Shutdown Results:`);
+      console.info(`  ✅ ${succeeded.length} succeeded`);
+      console.info(`  ❌ ${failed.length} failed`);
       
       for (const result of results) {
         if (result.status === 'fulfilled') {
           const info = result.value as any;
           const icon = info.success ? '✅' : '❌';
           const errorInfo = info.error ? ` (${info.error})` : '';
-          console.log(`  ${icon} ${info.name}: ${info.duration}ms${errorInfo}`);
+          console.info(`  ${icon} ${info.name}: ${info.duration}ms${errorInfo}`);
         } else {
-          console.log(`  ❌ Unknown handler failed: ${result.reason}`);
+          console.info(`  ❌ Unknown handler failed: ${result.reason}`);
         }
       }
       
       if (failed.length === 0) {
-        console.log('\n✅ Graceful shutdown complete');
+        console.info('\n✅ Graceful shutdown complete');
       } else {
-        console.log(`\n⚠️  Graceful shutdown with ${failed.length} failures`);
+        console.info(`\n⚠️  Graceful shutdown with ${failed.length} failures`);
       }
     } catch (error) {
       process.stderr.write(`\n🚨 Unexpected error during shutdown: ${error}\n`);
@@ -258,7 +258,7 @@ export function onShutdownWithCleanup(
 
 // Benchmark comparison
 export function benchmarkShutdown(): void {
-  console.log('🔬 Testing parallel shutdown performance\n');
+  console.info('🔬 Testing parallel shutdown performance\n');
   
   const handler = new OptimizedGlobalErrorHandler({
     shutdownTimeout: 10000,
@@ -278,9 +278,9 @@ export function benchmarkShutdown(): void {
     { name: 'slow-handler' }
   );
   
-  console.log('Registered 3 handlers (100ms, 500ms, 1000ms)');
-  console.log('With parallel execution, total time should be ~1000ms (not 1600ms)');
-  console.log('');
+  console.info('Registered 3 handlers (100ms, 500ms, 1000ms)');
+  console.info('With parallel execution, total time should be ~1000ms (not 1600ms)');
+  console.info('');
 }
 
 // Entry guard

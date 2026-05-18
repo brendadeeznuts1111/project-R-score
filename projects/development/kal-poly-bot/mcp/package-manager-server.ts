@@ -365,16 +365,16 @@ async function handleRequest(request: Request): Promise<Response> {
  * Start MCP Server
  */
 export async function startMCPServer(port: number = 8787): Promise<void> {
-  console.log(`🚀 Starting ${MCP_SERVER_NAME} v${MCP_VERSION} on port ${port}`);
-  console.log(`🔗 MCP Discovery: http://localhost:${port}/mcp`);
-  console.log(`❤️  Health Check: http://localhost:${port}/health`);
-  console.log(`\n📦 Components #65-70 Operational:`);
-  console.log(`   #65: No-PeerDeps Optimizer`);
-  console.log(`   #66: Npmrc Email Forwarder`);
-  console.log(`   #67: Selective Hoisting Controller`);
-  console.log(`   #68: FileHandleReadLines Engine`);
-  console.log(`   #69: Bundler Determinism Patch`);
-  console.log(`   #70: Bun Pack Enforcer`);
+  console.info(`🚀 Starting ${MCP_SERVER_NAME} v${MCP_VERSION} on port ${port}`);
+  console.info(`🔗 MCP Discovery: http://localhost:${port}/mcp`);
+  console.info(`❤️  Health Check: http://localhost:${port}/health`);
+  console.info(`\n📦 Components #65-70 Operational:`);
+  console.info(`   #65: No-PeerDeps Optimizer`);
+  console.info(`   #66: Npmrc Email Forwarder`);
+  console.info(`   #67: Selective Hoisting Controller`);
+  console.info(`   #68: FileHandleReadLines Engine`);
+  console.info(`   #69: Bundler Determinism Patch`);
+  console.info(`   #70: Bun Pack Enforcer`);
 
   Bun.serve({
     port,

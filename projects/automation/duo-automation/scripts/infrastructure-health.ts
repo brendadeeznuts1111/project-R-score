@@ -658,42 +658,42 @@ function printReport(report: HealthReport): void {
     unhealthy: '🔴',
   };
 
-  console.log('\n' + '═'.repeat(60));
-  console.log('🏥 Infrastructure Health Report');
-  console.log('═'.repeat(60));
-  console.log(`📅 Timestamp: ${report.timestamp}`);
-  console.log(`⏱️  Duration: ${report.duration}ms`);
-  console.log(`${statusEmoji[report.overall]} Overall: ${report.overall.toUpperCase()}`);
-  console.log('─'.repeat(60));
+  console.info('\n' + '═'.repeat(60));
+  console.info('🏥 Infrastructure Health Report');
+  console.info('═'.repeat(60));
+  console.info(`📅 Timestamp: ${report.timestamp}`);
+  console.info(`⏱️  Duration: ${report.duration}ms`);
+  console.info(`${statusEmoji[report.overall]} Overall: ${report.overall.toUpperCase()}`);
+  console.info('─'.repeat(60));
 
   for (const [name, check] of Object.entries(report.checks)) {
-    console.log(`\n${statusEmoji[check.status]} ${name.toUpperCase()}`);
-    console.log(`   Status: ${check.status} (${check.latency}ms)`);
-    console.log(`   ${check.message}`);
+    console.info(`\n${statusEmoji[check.status]} ${name.toUpperCase()}`);
+    console.info(`   Status: ${check.status} (${check.latency}ms)`);
+    console.info(`   ${check.message}`);
 
     if (check.details) {
       for (const [key, value] of Object.entries(check.details)) {
         if (typeof value === 'object') {
-          console.log(`   ${key}: ${JSON.stringify(value)}`);
+          console.info(`   ${key}: ${JSON.stringify(value)}`);
         } else {
-          console.log(`   ${key}: ${value}`);
+          console.info(`   ${key}: ${value}`);
         }
       }
     }
   }
 
   if (report.errors.length > 0) {
-    console.log('\n❌ Errors:');
+    console.info('\n❌ Errors:');
     for (const error of report.errors) {
-      console.log(`   • ${error}`);
+      console.info(`   • ${error}`);
     }
   }
 
-  console.log('\n' + '═'.repeat(60));
+  console.info('\n' + '═'.repeat(60));
 }
 
 function printJSON(report: HealthReport): void {
-  console.log(JSON.stringify(report, null, 2));
+  console.info(JSON.stringify(report, null, 2));
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -716,7 +716,7 @@ async function main() {
   };
 
   if (options.help) {
-    console.log(`
+    console.info(`
 🏥 Infrastructure Health Check v1.1
 
 Usage:

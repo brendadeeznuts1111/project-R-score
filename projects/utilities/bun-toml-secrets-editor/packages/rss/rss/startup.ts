@@ -16,14 +16,14 @@ const TOP_FEEDS = [
 ];
 
 export function prefetchOnStartup() {
-	console.log("🌐 Prefetching top feed DNS entries...");
+	console.info("🌐 Prefetching top feed DNS entries...");
 
 	for (const host of TOP_FEEDS) {
 		dns.prefetch(host, 443); // HTTPS port
 	}
 
-	console.log(`📡 Prefetched ${TOP_FEEDS.length} hosts`);
-	console.log("Cache stats:", dns.getCacheStats());
+	console.info(`📡 Prefetched ${TOP_FEEDS.length} hosts`);
+	console.info("Cache stats:", dns.getCacheStats());
 }
 
 // Get list of top feeds for reference

@@ -134,7 +134,7 @@ export class ProfileRouteManager {
 
     this.currentProfile = profileId;
     this.applyProfile(profile);
-    console.log(`✅ Switched to profile: ${profile.name}`);
+    console.info(`✅ Switched to profile: ${profile.name}`);
   }
 
   private checkAdminAuthentication(): boolean {
@@ -428,7 +428,7 @@ export class ProfileRouteManager {
 
   // Utility methods
   private executeCommand(command: string, message: string): void {
-    console.log(`🚀 Executing: ${command}`);
+    console.info(`🚀 Executing: ${command}`);
     this.showNotification(message, 'info');
     this.addActivity(message, 'info');
     

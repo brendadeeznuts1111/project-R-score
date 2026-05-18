@@ -9,10 +9,10 @@ async function benchmark(name: string, cmd: string[]) {
   return (end - start) / 1e6; // ms
 }
 
-console.log('🚀 Bundler Minify Bench (Startup Time)...');
+console.info('🚀 Bundler Minify Bench (Startup Time)...');
 
 // First, ensure build is fresh
-console.log('🏗️ Preparing bundle...');
+console.info('🏗️ Preparing bundle...');
 const buildProc = Bun.spawn(['bun', 'scripts/build-empire-cli.ts'], { stdout: 'ignore' });
 await buildProc.exited;
 
@@ -21,14 +21,14 @@ const bundled = await benchmark('Bundled Minify', ['bun', 'dist/e2e-apple-reg.js
 
 const speedup = (unbundled / bundled).toFixed(1);
 
-console.log('-------------------------------------------');
-console.log(`Unbundled: ${unbundled.toFixed(0)}ms`);
-console.log(`Bundled:   ${bundled.toFixed(0)}ms`);
-console.log(`Gain:      ${speedup}x Speedup`);
-console.log('-------------------------------------------');
+console.info('-------------------------------------------');
+console.info(`Unbundled: ${unbundled.toFixed(0)}ms`);
+console.info(`Bundled:   ${bundled.toFixed(0)}ms`);
+console.info(`Gain:      ${speedup}x Speedup`);
+console.info('-------------------------------------------');
 
 if (parseFloat(speedup) >= 5.0) {
-  console.log('⚡ Target reached: 5x+ Startup Performance!');
+  console.info('⚡ Target reached: 5x+ Startup Performance!');
 } else {
-  console.log('⚠️ Speedup lower than expected.');
+  console.info('⚠️ Speedup lower than expected.');
 }

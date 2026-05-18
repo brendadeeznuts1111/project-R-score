@@ -285,7 +285,7 @@ async function main() {
 			}
 
 			const session = await manager.createSession(name, options);
-			console.log(
+			console.info(
 				`${COLORS.green}✓${COLORS.reset} Created session: ${COLORS.cyan}${session.name}${COLORS.reset} (${session.id.slice(0, 8)})`,
 			);
 			break;
@@ -295,7 +295,7 @@ async function main() {
 			const sessions = await manager.listSessions();
 			const current = manager.getCurrentSession();
 
-			console.log(`${COLORS.bold}Sessions:${COLORS.reset}\n`);
+			console.info(`${COLORS.bold}Sessions:${COLORS.reset}\n`);
 
 			for (const session of sessions) {
 				const isCurrent = current?.id === session.id;
@@ -312,16 +312,16 @@ async function main() {
 							? COLORS.yellow
 							: COLORS.gray;
 
-				console.log(
+				console.info(
 					`  ${indicator} ${COLORS.bold}${session.name}${COLORS.reset} ${COLORS.gray}(${session.id.slice(0, 8)})${COLORS.reset}`,
 				);
-				console.log(`    State: ${stateColor}${session.state}${COLORS.reset}`);
-				console.log(`    Profile: ${session.profile || "none"}`);
-				console.log(`    Commands: ${session.history.length}`);
+				console.info(`    State: ${stateColor}${session.state}${COLORS.reset}`);
+				console.info(`    Profile: ${session.profile || "none"}`);
+				console.info(`    Commands: ${session.history.length}`);
 				if (session.metadata.description) {
-					console.log(`    Description: ${session.metadata.description}`);
+					console.info(`    Description: ${session.metadata.description}`);
 				}
-				console.log();
+				console.info();
 			}
 			break;
 		}
@@ -335,7 +335,7 @@ async function main() {
 
 			const success = await manager.switchSession(id);
 			if (success) {
-				console.log(
+				console.info(
 					`${COLORS.green}✓${COLORS.reset} Switched to session: ${COLORS.cyan}${id.slice(0, 8)}${COLORS.reset}`,
 				);
 			} else {
@@ -353,7 +353,7 @@ async function main() {
 			}
 
 			const bundle = await manager.exportSession(id);
-			console.log(bundle);
+			console.info(bundle);
 			break;
 		}
 
@@ -366,7 +366,7 @@ async function main() {
 
 			const bundle = await Bun.file(file).text();
 			const session = await manager.importSession(bundle);
-			console.log(
+			console.info(
 				`${COLORS.green}✓${COLORS.reset} Imported session: ${COLORS.cyan}${session.name}${COLORS.reset} (${session.id.slice(0, 8)})`,
 			);
 			break;
@@ -381,7 +381,7 @@ async function main() {
 
 			const success = await manager.archiveSession(id);
 			if (success) {
-				console.log(
+				console.info(
 					`${COLORS.green}✓${COLORS.reset} Archived session: ${COLORS.cyan}${id.slice(0, 8)}${COLORS.reset}`,
 				);
 			} else {
@@ -400,7 +400,7 @@ async function main() {
 
 			const success = await manager.deleteSession(id);
 			if (success) {
-				console.log(
+				console.info(
 					`${COLORS.green}✓${COLORS.reset} Deleted session: ${COLORS.cyan}${id.slice(0, 8)}${COLORS.reset}`,
 				);
 			} else {
@@ -413,51 +413,51 @@ async function main() {
 		case "current": {
 			const current = manager.getCurrentSession();
 			if (current) {
-				console.log(`${COLORS.bold}Current Session:${COLORS.reset}`);
-				console.log(`  Name: ${COLORS.cyan}${current.name}${COLORS.reset}`);
-				console.log(`  ID: ${current.id}`);
-				console.log(`  Profile: ${current.profile || "none"}`);
-				console.log(`  Commands: ${current.history.length}`);
-				console.log(`  Created: ${new Date(current.createdAt).toLocaleString()}`);
+				console.info(`${COLORS.bold}Current Session:${COLORS.reset}`);
+				console.info(`  Name: ${COLORS.cyan}${current.name}${COLORS.reset}`);
+				console.info(`  ID: ${current.id}`);
+				console.info(`  Profile: ${current.profile || "none"}`);
+				console.info(`  Commands: ${current.history.length}`);
+				console.info(`  Created: ${new Date(current.createdAt).toLocaleString()}`);
 			} else {
-				console.log(`${COLORS.gray}No active session${COLORS.reset}`);
+				console.info(`${COLORS.gray}No active session${COLORS.reset}`);
 			}
 			break;
 		}
 
 		default: {
-			console.log(`${COLORS.bold}🐚 Kimi Session Manager${COLORS.reset}\n`);
-			console.log("Usage:");
-			console.log(
+			console.info(`${COLORS.bold}🐚 Kimi Session Manager${COLORS.reset}\n`);
+			console.info("Usage:");
+			console.info(
 				"  session create <name> [--profile=<p>] [--desc=<d>]  Create new session",
 			);
-			console.log(
+			console.info(
 				"  session list                                         List all sessions",
 			);
-			console.log(
+			console.info(
 				"  session switch <id>                                  Switch to session",
 			);
-			console.log(
+			console.info(
 				"  session current                                      Show current session",
 			);
-			console.log(
+			console.info(
 				"  session export <id> > bundle.json                    Export session",
 			);
-			console.log(
+			console.info(
 				"  session import <bundle.json>                         Import session",
 			);
-			console.log(
+			console.info(
 				"  session archive <id>                                 Archive session",
 			);
-			console.log(
+			console.info(
 				"  session delete <id>                                  Delete session",
 			);
-			console.log("\nExamples:");
-			console.log(
+			console.info("\nExamples:");
+			console.info(
 				"  session create prod-work --profile=production --desc='Production work session'",
 			);
-			console.log("  session switch abc123");
-			console.log("  session export abc123 > my-session.json");
+			console.info("  session switch abc123");
+			console.info("  session export abc123 > my-session.json");
 		}
 	}
 }

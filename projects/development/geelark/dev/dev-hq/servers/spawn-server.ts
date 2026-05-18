@@ -81,8 +81,8 @@ class AutomationServer {
     if (this.config.enableAuth) {
       // Generate a secure token for development
       const devToken = this.generateAuthToken('dev', ['read', 'write', 'execute']);
-      console.log(`🔐 Development Auth Token: ${devToken.token}`);
-      console.log(`🔑 Token expires: ${new Date(devToken.expires).toISOString()}`);
+      console.info(`🔐 Development Auth Token: ${devToken.token}`);
+      console.info(`🔑 Token expires: ${new Date(devToken.expires).toISOString()}`);
     }
   }
 
@@ -361,7 +361,7 @@ class AutomationServer {
 
           const responseTime = Date.now() - startTime;
           if (self.config.enableMetrics) {
-            console.log(`📊 Request: ${req.method} ${url.pathname} - ${responseTime}ms`);
+            console.info(`📊 Request: ${req.method} ${url.pathname} - ${responseTime}ms`);
           }
         }
       },
@@ -372,20 +372,20 @@ class AutomationServer {
       },
     });
 
-    console.log(`🤖 Enhanced Dev HQ Automation Server: http://localhost:${this.server.port}`);
-    console.log(`🎮 Terminal Dashboard: http://localhost:${this.server.port}`);
-    console.log(`📊 Enhanced API Endpoints:`);
-    console.log(`   POST /run - Execute commands (with auth)`);
-    console.log(`   POST /auth - Get authentication token`);
-    console.log(`   GET /git-insights - Git analysis`);
-    console.log(`   GET /cloc - Code analysis`);
-    console.log(`   GET /resources - Resource monitoring`);
-    console.log(`   GET /health - Server health status`);
-    console.log(`   GET /history - Command history`);
-    console.log(`   GET /metrics - Server metrics`);
-    console.log(`🔐 Authentication: ${this.config.enableAuth ? 'Enabled' : 'Disabled'}`);
-    console.log(`📈 Metrics: ${this.config.enableMetrics ? 'Enabled' : 'Disabled'}`);
-    console.log(`🌐 WebSocket: ${this.config.enableWebSocket ? 'Enabled' : 'Disabled'}`);
+    console.info(`🤖 Enhanced Dev HQ Automation Server: http://localhost:${this.server.port}`);
+    console.info(`🎮 Terminal Dashboard: http://localhost:${this.server.port}`);
+    console.info(`📊 Enhanced API Endpoints:`);
+    console.info(`   POST /run - Execute commands (with auth)`);
+    console.info(`   POST /auth - Get authentication token`);
+    console.info(`   GET /git-insights - Git analysis`);
+    console.info(`   GET /cloc - Code analysis`);
+    console.info(`   GET /resources - Resource monitoring`);
+    console.info(`   GET /health - Server health status`);
+    console.info(`   GET /history - Command history`);
+    console.info(`   GET /metrics - Server metrics`);
+    console.info(`🔐 Authentication: ${this.config.enableAuth ? 'Enabled' : 'Disabled'}`);
+    console.info(`📈 Metrics: ${this.config.enableMetrics ? 'Enabled' : 'Disabled'}`);
+    console.info(`🌐 WebSocket: ${this.config.enableWebSocket ? 'Enabled' : 'Disabled'}`);
   }
 
   private generateEnhancedDashboard(port: number): string {
@@ -858,7 +858,7 @@ class AutomationServer {
   public stop(): void {
     if (this.server) {
       this.server.stop();
-      console.log('🛑 Enhanced Dev HQ Server stopped');
+      console.info('🛑 Enhanced Dev HQ Server stopped');
     }
   }
 
@@ -887,13 +887,13 @@ if (import.meta.main) {
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down Enhanced Dev HQ Server...');
+  console.info('\n🛑 Shutting down Enhanced Dev HQ Server...');
   server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n🛑 Shutting down Enhanced Dev HQ Server...');
+  console.info('\n🛑 Shutting down Enhanced Dev HQ Server...');
   server.stop();
   process.exit(0);
 });

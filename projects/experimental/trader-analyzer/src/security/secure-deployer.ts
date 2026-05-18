@@ -61,7 +61,7 @@ export class SecureDeployer {
 			// Generate hash of signature for verification
 			const sigHash = Bun.hash(signature).toString(36);
 
-			console.log(`✅ Binary signed: ${sigHash}`);
+			console.info(`✅ Binary signed: ${sigHash}`);
 			return sigHash;
 		} catch (error) {
 			console.error(`❌ Signing failed: ${(error as Error).message}`);
@@ -113,7 +113,7 @@ export class SecureDeployer {
 			const errorOutput = await (verifyProc.stderr as any).text();
 
 			if (verifyProc.exitCode === 0 && output.includes("Verified OK")) {
-				console.log("✅ Binary signature verified");
+				console.info("✅ Binary signature verified");
 				return true;
 			}
 
@@ -136,7 +136,7 @@ export class SecureDeployer {
 		const sigHash = await this.signBinary(localPath);
 
 		// Copy with Bun's native SCP (requires ssh/scp to be available)
-		console.log(`📦 Copying binary to ${remoteHost}...`);
+		console.info(`📦 Copying binary to ${remoteHost}...`);
 		const scpProc = spawn(
 			[
 				"scp",
@@ -157,7 +157,7 @@ export class SecureDeployer {
 		}
 
 		// Remote verification
-		console.log(`🔍 Verifying binary on remote host...`);
+		console.info(`🔍 Verifying binary on remote host...`);
 		const sshProc = spawn(
 			[
 				"ssh",
@@ -177,8 +177,8 @@ export class SecureDeployer {
 			throw new Error(`Remote verification failed: ${sshError}`);
 		}
 
-		console.log(`🚀 Deployed ${sigHash} to ${remoteHost}`);
-		console.log(sshOutput);
+		console.info(`🚀 Deployed ${sigHash} to ${remoteHost}`);
+		console.info(sshOutput);
 	}
 
 	/**
@@ -191,12 +191,12 @@ export class SecureDeployer {
 			const publicKeyFile = Bun.file(this.publicKeyPath);
 
 			if ((await privateKeyFile.exists()) && (await publicKeyFile.exists())) {
-				console.log("✅ Key pair already exists");
+				console.info("✅ Key pair already exists");
 				return;
 			}
 
 			// Generate private key
-			console.log("🔑 Generating Ed25519 key pair...");
+			console.info("🔑 Generating Ed25519 key pair...");
 			const genKeyProc = spawn(
 				[
 					"openssl",
@@ -239,9 +239,9 @@ export class SecureDeployer {
 				throw new Error("Failed to extract public key");
 			}
 
-			console.log(`✅ Key pair generated:`);
-			console.log(`   Private: ${this.privateKeyPath}`);
-			console.log(`   Public: ${this.publicKeyPath}`);
+			console.info(`✅ Key pair generated:`);
+			console.info(`   Private: ${this.privateKeyPath}`);
+			console.info(`   Public: ${this.publicKeyPath}`);
 		} catch (error) {
 			console.error(`❌ Key generation failed: ${(error as Error).message}`);
 			throw error;

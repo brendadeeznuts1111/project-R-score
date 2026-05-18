@@ -21,7 +21,7 @@ export class Fantasy402AgentClientCore {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🚀 Initializing Fantasy402 Agent Client...');
+      console.info('🚀 Initializing Fantasy402 Agent Client...');
 
       // Initialize authentication
       const authSuccess = await this.auth.initialize();
@@ -34,7 +34,7 @@ export class Fantasy402AgentClientCore {
       await this.fetchAuthorizations();
 
       this.isInitialized = true;
-      console.log('✅ Fantasy402 Agent Client initialized successfully');
+      console.info('✅ Fantasy402 Agent Client initialized successfully');
       return true;
     } catch (error) {
       console.error('❌ Failed to initialize Fantasy402 Agent Client:', error);

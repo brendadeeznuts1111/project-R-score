@@ -3,21 +3,21 @@ import { feature } from "bun:bundle";
 import { readFileSync } from "fs";
 import { join } from "path";
 
-console.log("🔍 DEV HQ Feature Flag Verification");
-console.log("===================================\n");
+console.info("🔍 DEV HQ Feature Flag Verification");
+console.info("===================================\n");
 
 // Load meta.json for configuration data
 let metaConfig: any = {};
 try {
   const metaPath = join(import.meta.dir, "../meta.json");
   metaConfig = JSON.parse(readFileSync(metaPath, "utf-8"));
-  console.log("✅ Loaded meta.json configuration");
+  console.info("✅ Loaded meta.json configuration");
 } catch (error) {
   console.warn("⚠️  Could not load meta.json, using defaults");
 }
 
-console.log("📋 Feature Status Report");
-console.log("----------------------");
+console.info("📋 Feature Status Report");
+console.info("----------------------");
 
 let enabledCount = 0;
 const totalFeatures = 36; // Total number of features we're checking
@@ -25,10 +25,10 @@ const totalFeatures = 36; // Total number of features we're checking
 // Check features using Bun's feature() function directly in if statements
 function checkFeature(flagName: string, flagLiteral: string): boolean {
   if (feature(flagLiteral as any)) {
-    console.log(`✅ ENABLED ${flagName.padEnd(25)}`);
+    console.info(`✅ ENABLED ${flagName.padEnd(25)}`);
     return true;
   } else {
-    console.log(`❌ DISABLED ${flagName.padEnd(25)}`);
+    console.info(`❌ DISABLED ${flagName.padEnd(25)}`);
     return false;
   }
 }
@@ -84,50 +84,50 @@ if (feature("INTEGRATION_EMAIL_SERVICE")) enabledCount++;
 if (feature("INTEGRATION_SMS_SERVICE")) enabledCount++;
 if (feature("INTEGRATION_WEBHOOK")) enabledCount++;
 
-console.log(`\n📊 Summary: ${enabledCount}/${totalFeatures} features enabled (${Math.round(enabledCount/totalFeatures*100)}%)`);
+console.info(`\n📊 Summary: ${enabledCount}/${totalFeatures} features enabled (${Math.round(enabledCount/totalFeatures*100)}%)`);
 
 // A/B Testing Analysis
-console.log("\n🧪 A/B Testing Status");
-console.log("---------------------");
+console.info("\n🧪 A/B Testing Status");
+console.info("---------------------");
 
 const variantAEnabled = feature("FEAT_VARIANT_A" as any);
 const variantBEnabled = feature("FEAT_VARIANT_B" as any);
 const mockApiEnabled = feature("FEAT_MOCK_API" as any);
 
 if (variantAEnabled && variantBEnabled) {
-  console.log("⚠️  Both variants A and B are enabled - this may cause conflicts");
+  console.info("⚠️  Both variants A and B are enabled - this may cause conflicts");
 } else if (variantAEnabled) {
-  console.log("✅ Variant A is active (testing mode)");
+  console.info("✅ Variant A is active (testing mode)");
 } else if (variantBEnabled) {
-  console.log("✅ Variant B is active (testing mode)");
+  console.info("✅ Variant B is active (testing mode)");
 } else {
-  console.log("ℹ️  No A/B testing variants are enabled");
+  console.info("ℹ️  No A/B testing variants are enabled");
 }
 
 if (!mockApiEnabled && (variantAEnabled || variantBEnabled)) {
-  console.log("⚠️  A/B testing variants require FEAT_MOCK_API to be enabled");
+  console.info("⚠️  A/B testing variants require FEAT_MOCK_API to be enabled");
 }
 
 // Security Analysis
-console.log("\n🔒 Security Analysis");
-console.log("-------------------");
+console.info("\n🔒 Security Analysis");
+console.info("-------------------");
 
 const encryptionEnabled = feature("FEAT_ENCRYPTION" as any);
 const validationStrict = feature("FEAT_VALIDATION_STRICT" as any);
 const auditLogging = feature("FEAT_AUDIT_LOGGING" as any);
 const productionEnv = feature("ENV_PRODUCTION" as any);
 
-console.log(`🔐 Encryption: ${encryptionEnabled ? "✅ ENABLED" : "❌ DISABLED"}`);
-console.log(`🛡️  Strict Validation: ${validationStrict ? "✅ ENABLED" : "❌ DISABLED"}`);
-console.log(`📋 Audit Logging: ${auditLogging ? "✅ ENABLED" : "❌ DISABLED"}`);
+console.info(`🔐 Encryption: ${encryptionEnabled ? "✅ ENABLED" : "❌ DISABLED"}`);
+console.info(`🛡️  Strict Validation: ${validationStrict ? "✅ ENABLED" : "❌ DISABLED"}`);
+console.info(`📋 Audit Logging: ${auditLogging ? "✅ ENABLED" : "❌ DISABLED"}`);
 
 if (!encryptionEnabled && productionEnv) {
-  console.log("⚠️  WARNING: Production environment without encryption");
+  console.info("⚠️  WARNING: Production environment without encryption");
 }
 
 // Bundle Analysis Verification
-console.log("\n📦 Bundle Analysis Verification");
-console.log("------------------------------");
+console.info("\n📦 Bundle Analysis Verification");
+console.info("------------------------------");
 
 try {
   const cliCommands = metaConfig?.cli?.commands || {};
@@ -135,22 +135,22 @@ try {
   const hasAnalyzeOption = insightsCommand.options?.some((opt: any) => opt.flag === "--analyze");
 
   if (hasAnalyzeOption) {
-    console.log("✅ Bundle analysis (--analyze) option is available");
-    console.log("   Usage: bunx dev-hq insights --analyze");
+    console.info("✅ Bundle analysis (--analyze) option is available");
+    console.info("   Usage: bunx dev-hq insights --analyze");
   } else {
-    console.log("⚠️  Bundle analysis option not found in CLI configuration");
+    console.info("⚠️  Bundle analysis option not found in CLI configuration");
   }
 
   const buildConfigs = metaConfig?.build?.configurations || [];
-  console.log(`📋 Found ${buildConfigs.length} build configurations`);
+  console.info(`📋 Found ${buildConfigs.length} build configurations`);
 
 } catch (error) {
   console.warn("⚠️  Could not verify bundle analysis configuration");
 }
 
 // Recommendations
-console.log("\n💡 Recommendations");
-console.log("------------------");
+console.info("\n💡 Recommendations");
+console.info("------------------");
 
 const recommendations: string[] = [];
 
@@ -167,12 +167,12 @@ if (enabledCount < totalFeatures * 0.5) {
 }
 
 if (recommendations.length === 0) {
-  console.log("✅ Configuration looks good! No immediate recommendations.");
+  console.info("✅ Configuration looks good! No immediate recommendations.");
 } else {
   recommendations.forEach((rec, index) => {
-    console.log(`${index + 1}. ${rec}`);
+    console.info(`${index + 1}. ${rec}`);
   });
 }
 
-console.log("\n✅ Feature verification complete");
-console.log(`🚀 Dev HQ is running with ${enabledCount} active features`);
+console.info("\n✅ Feature verification complete");
+console.info(`🚀 Dev HQ is running with ${enabledCount} active features`);

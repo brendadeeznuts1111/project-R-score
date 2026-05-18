@@ -1,7 +1,7 @@
 // demo/official-bun-terminal-demo.ts
 import { feature } from "bun:bundle";
 
-console.log(`
+console.info(`
 🎯 **OFFICIAL BUN v1.3.5 TERMINAL API DEMONSTRATION**
 ═══════════════════════════════════════════════════════════════════
 
@@ -24,7 +24,7 @@ Let's recreate the official examples step by step! 🎯
 // ============================================================================
 
 const demonstrateBasicPTY = async () => {
-  console.log(`
+  console.info(`
 🖥️ **OFFICIAL EXAMPLE 1: BASIC PTY WITH BASH**
 ═══════════════════════════════════════════════════════════════════
 
@@ -48,7 +48,7 @@ await proc.exited;
 proc.terminal.close();
 `);
 
-  console.log("🚀 Executing official basic PTY example...");
+  console.info("🚀 Executing official basic PTY example...");
   
   // Exact implementation from the blog
   const commands = ["echo Hello from PTY!", "echo 'This is the official Bun v1.3.5 demo!'", "exit"];
@@ -73,7 +73,7 @@ proc.terminal.close();
   await proc.exited;
   proc.terminal.close();
   
-  console.log("✅ Official basic PTY example completed!\n");
+  console.info("✅ Official basic PTY example completed!\n");
 };
 
 // ============================================================================
@@ -81,7 +81,7 @@ proc.terminal.close();
 // ============================================================================
 
 const demonstrateInteractivePrograms = async () => {
-  console.log(`
+  console.info(`
 🎮 **OFFICIAL EXAMPLE 2: RUNNING INTERACTIVE PROGRAMS**
 ═══════════════════════════════════════════════════════════════════
 
@@ -110,7 +110,7 @@ for await (const chunk of process.stdin) {
 }
 `);
 
-  console.log("🚀 Demonstrating interactive program support (simulated vim)...");
+  console.info("🚀 Demonstrating interactive program support (simulated vim)...");
   
   // Simulate vim-like behavior without actually opening vim
   const proc = Bun.spawn(["bash"], {
@@ -162,14 +162,14 @@ for await (const chunk of process.stdin) {
   
   // Handle exit
   proc.exited.then((code: number) => {
-    console.log(`🎮 Interactive program exited with code: ${code}`);
+    console.info(`🎮 Interactive program exited with code: ${code}`);
   });
   
   // Simulate resize handling
-  console.log(`📐 Terminal resize handling available: ${process.stdout.columns}x${process.stdout.rows}`);
+  console.info(`📐 Terminal resize handling available: ${process.stdout.columns}x${process.stdout.rows}`);
   
   await proc.exited;
-  console.log("✅ Interactive program demonstration completed!\n");
+  console.info("✅ Interactive program demonstration completed!\n");
 };
 
 // ============================================================================
@@ -177,7 +177,7 @@ for await (const chunk of process.stdin) {
 // ============================================================================
 
 const demonstrateReusableTerminals = async () => {
-  console.log(`
+  console.info(`
 🔄 **OFFICIAL EXAMPLE 3: REUSABLE TERMINALS**
 ═══════════════════════════════════════════════════════════════════
 
@@ -198,7 +198,7 @@ await proc2.exited;
 // Terminal is closed automatically by \`await using\`
 `);
 
-  console.log("🚀 Executing official reusable terminal example...");
+  console.info("🚀 Executing official reusable terminal example...");
   
   // Exact implementation from the blog using await using
   await using terminal = new Bun.Terminal({
@@ -209,24 +209,24 @@ await proc2.exited;
     },
   });
 
-  console.log("📝 Running first process with reusable terminal...");
+  console.info("📝 Running first process with reusable terminal...");
   const proc1 = Bun.spawn(["echo", "first"], { terminal });
   await proc1.exited;
 
-  console.log("📝 Running second process with same terminal...");
+  console.info("📝 Running second process with same terminal...");
   const proc2 = Bun.spawn(["echo", "second"], { terminal });
   await proc2.exited;
 
-  console.log("📝 Running third process with Unicode content...");
+  console.info("📝 Running third process with Unicode content...");
   const proc3 = Bun.spawn(["echo", "🌍 third: Unicode test 🇺🇸 👋🏽"], { terminal });
   await proc3.exited;
 
-  console.log("📝 Running fourth process with colors...");
+  console.info("📝 Running fourth process with colors...");
   const proc4 = Bun.spawn(["bash", "-c", "echo -e '\\033[32mfourth: \\033[1mgreen\\033[0m'"], { terminal });
   await proc4.exited;
   
   // Terminal is closed automatically by await using
-  console.log("✅ Reusable terminal example completed! Terminal closed automatically.\n");
+  console.info("✅ Reusable terminal example completed! Terminal closed automatically.\n");
 };
 
 // ============================================================================
@@ -234,7 +234,7 @@ await proc2.exited;
 // ============================================================================
 
 const demonstrateTerminalMethods = async () => {
-  console.log(`
+  console.info(`
 🎛️ **OFFICIAL EXAMPLE 4: TERMINAL METHODS DEMONSTRATION**
 ═══════════════════════════════════════════════════════════════════
 
@@ -248,7 +248,7 @@ const demonstrateTerminalMethods = async () => {
 // Let's demonstrate each method...
 `);
 
-  console.log("🚀 Demonstrating all Terminal API methods...");
+  console.info("🚀 Demonstrating all Terminal API methods...");
   
   const terminal = new Bun.Terminal({
     cols: 80,
@@ -259,7 +259,7 @@ const demonstrateTerminalMethods = async () => {
   });
 
   try {
-    console.log("📝 Method 1: write() - Send commands to terminal");
+    console.info("📝 Method 1: write() - Send commands to terminal");
     
     const proc = Bun.spawn(["bash"], {
       terminal,
@@ -307,7 +307,7 @@ const demonstrateTerminalMethods = async () => {
     await proc.exited;
     
     // Demonstrate close() method
-    console.log("🗑️ Method 6: close() - Close the terminal");
+    console.info("🗑️ Method 6: close() - Close the terminal");
     terminal.close();
     
   } catch (error) {
@@ -315,7 +315,7 @@ const demonstrateTerminalMethods = async () => {
     terminal.close();
   }
   
-  console.log("✅ Terminal methods demonstration completed!\n");
+  console.info("✅ Terminal methods demonstration completed!\n");
 };
 
 // ============================================================================
@@ -323,7 +323,7 @@ const demonstrateTerminalMethods = async () => {
 // ============================================================================
 
 const demonstrateUnicodeColors = async () => {
-  console.log(`
+  console.info(`
 🌍 **OFFICIAL EXAMPLE 5: UNICODE AND COLORS IN TERMINAL**
 ═══════════════════════════════════════════════════════════════════
 
@@ -332,7 +332,7 @@ const demonstrateUnicodeColors = async () => {
 // enabling colored output, cursor movement, and interactive prompts
 `);
 
-  console.log("🚀 Demonstrating Unicode and color support...");
+  console.info("🚀 Demonstrating Unicode and color support...");
   
   const terminal = new Bun.Terminal({
     cols: 100,
@@ -403,7 +403,7 @@ const demonstrateUnicodeColors = async () => {
     terminal.close();
   }
   
-  console.log("✅ Unicode and colors demonstration completed!\n");
+  console.info("✅ Unicode and colors demonstration completed!\n");
 };
 
 // ============================================================================
@@ -411,7 +411,7 @@ const demonstrateUnicodeColors = async () => {
 // ============================================================================
 
 const demonstrateAdvancedPTY = async () => {
-  console.log(`
+  console.info(`
 🚀 **OFFICIAL EXAMPLE 6: ADVANCED PTY FEATURES**
 ═══════════════════════════════════════════════════════════════════
 
@@ -422,7 +422,7 @@ const demonstrateAdvancedPTY = async () => {
 // • Multiple concurrent PTY sessions
 `);
 
-  console.log("🚀 Demonstrating advanced PTY features...");
+  console.info("🚀 Demonstrating advanced PTY features...");
   
   // Create multiple concurrent PTY sessions
   const terminals = [];
@@ -434,7 +434,7 @@ const demonstrateAdvancedPTY = async () => {
       cols: 80,
       rows: 24,
       data(term: any, data: string) {
-        console.log(`[SESSION 1] ${data.trim()}`);
+        console.info(`[SESSION 1] ${data.trim()}`);
       },
     });
     
@@ -455,7 +455,7 @@ const demonstrateAdvancedPTY = async () => {
       cols: 80,
       rows: 24,
       data(term: any, data: string) {
-        console.log(`[SESSION 2] ${data.trim()}`);
+        console.info(`[SESSION 2] ${data.trim()}`);
       },
     });
     
@@ -500,7 +500,7 @@ const demonstrateAdvancedPTY = async () => {
     terminals.forEach(t => t.close());
   }
   
-  console.log("✅ Advanced PTY features demonstration completed!\n");
+  console.info("✅ Advanced PTY features demonstration completed!\n");
 };
 
 // ============================================================================
@@ -508,7 +508,7 @@ const demonstrateAdvancedPTY = async () => {
 // ============================================================================
 
 const runOfficialTerminalDemo = async () => {
-  console.log(`
+  console.info(`
 🎯 **RUNNING COMPLETE OFFICIAL BUN v1.3.5 TERMINAL API DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -521,15 +521,15 @@ https://bun.com/blog/bun-v1.3.5#running-interactive-programs
   try {
     // Check platform compatibility
     if (process.platform === 'win32') {
-      console.log("⚠️ Terminal support is only available on POSIX systems (Linux, macOS)");
-      console.log("💡 If you're interested in Windows support, file an issue at:");
-      console.log("   https://github.com/oven-sh/bun/issues");
+      console.info("⚠️ Terminal support is only available on POSIX systems (Linux, macOS)");
+      console.info("💡 If you're interested in Windows support, file an issue at:");
+      console.info("   https://github.com/oven-sh/bun/issues");
       return;
     }
     
-    console.log(`✅ Platform: ${process.platform} (PTY supported)`);
-    console.log(`🖥️ Terminal: ${process.stdout.columns}x${process.stdout.rows}`);
-    console.log(`🚀 Bun Version: ${Bun.version}`);
+    console.info(`✅ Platform: ${process.platform} (PTY supported)`);
+    console.info(`🖥️ Terminal: ${process.stdout.columns}x${process.stdout.rows}`);
+    console.info(`🚀 Bun Version: ${Bun.version}`);
     
     // Run all official examples
     await demonstrateBasicPTY();
@@ -539,7 +539,7 @@ https://bun.com/blog/bun-v1.3.5#running-interactive-programs
     await demonstrateUnicodeColors();
     await demonstrateAdvancedPTY();
     
-    console.log(`
+    console.info(`
 🎉 **OFFICIAL BUN v1.3.5 TERMINAL API DEMO COMPLETED!**
 ═══════════════════════════════════════════════════════════════════
 
@@ -569,7 +569,7 @@ https://bun.com/blog/bun-v1.3.5#running-interactive-programs
 // 📚 ADDITIONAL EXAMPLES AND BEST PRACTICES
 // ============================================================================
 
-console.log(`
+console.info(`
 📚 **ADDITIONAL EXAMPLES AND BEST PRACTICES**
 ═══════════════════════════════════════════════════════════════════
 

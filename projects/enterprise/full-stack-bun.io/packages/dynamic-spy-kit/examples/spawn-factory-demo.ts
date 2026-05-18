@@ -37,9 +37,9 @@ const NBA_MARKETS = Array.from({ length: 100 }, (_, i) => ({
 // 1. STDIN STREAM - Zero Memory Market Processing
 // =============================================================================
 async function demoStdinStream() {
-	console.log("=".repeat(60));
-	console.log("1. STDIN STREAM - Zero Memory Market Processing");
-	console.log("=".repeat(60));
+	console.info("=".repeat(60));
+	console.info("1. STDIN STREAM - Zero Memory Market Processing");
+	console.info("=".repeat(60));
 
 	// Create a market stream
 	const marketStream = new ReadableStream({
@@ -51,7 +51,7 @@ async function demoStdinStream() {
 		}
 	});
 
-	console.log(`\n📡 Streaming ${NBA_MARKETS.length} markets via stdin...`);
+	console.info(`\n📡 Streaming ${NBA_MARKETS.length} markets via stdin...`);
 
 	// Spawn a process that reads from stdin
 	const proc = spawn({
@@ -60,7 +60,7 @@ async function demoStdinStream() {
 			for await (const line of console) {
 				if (line.trim()) lines.push(line);
 			}
-			console.log(JSON.stringify({ received: lines.length }));
+			console.info(JSON.stringify({ received: lines.length }));
 		`],
 		stdin: marketStream,
 		stdout: "pipe"
@@ -69,59 +69,59 @@ async function demoStdinStream() {
 	const output = await Bun.readableStreamToText(proc.stdout);
 	await proc.exited;
 
-	console.log(`✅ Process output: ${output.trim()}`);
-	console.log(`   Exit code: ${proc.exitCode}`);
+	console.info(`✅ Process output: ${output.trim()}`);
+	console.info(`   Exit code: ${proc.exitCode}`);
 }
 
 // =============================================================================
 // 2. TIMEOUT + MAXBUFFER - Flaky Scraper Protection
 // =============================================================================
 async function demoTimeoutAndMaxBuffer() {
-	console.log("\n" + "=".repeat(60));
-	console.log("2. TIMEOUT + MAXBUFFER - Flaky Scraper Protection");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("2. TIMEOUT + MAXBUFFER - Flaky Scraper Protection");
+	console.info("=".repeat(60));
 
 	// Demo 1: Timeout protection
-	console.log("\n⏱️ Testing timeout (2s limit on 1s sleep)...");
+	console.info("\n⏱️ Testing timeout (2s limit on 1s sleep)...");
 	const fastProc = spawn({
-		cmd: ["bun", "-e", "await Bun.sleep(1000); console.log('done')"],
+		cmd: ["bun", "-e", "await Bun.sleep(1000); console.info('done')"],
 		timeout: 2000,
 		stdout: "pipe"
 	});
 
 	await fastProc.exited;
-	console.log(`   Fast process: exitCode=${fastProc.exitCode}, killed=${fastProc.killed}`);
+	console.info(`   Fast process: exitCode=${fastProc.exitCode}, killed=${fastProc.killed}`);
 
 	// Demo 2: Slow process gets killed
-	console.log("\n⏱️ Testing timeout (500ms limit on 2s sleep)...");
+	console.info("\n⏱️ Testing timeout (500ms limit on 2s sleep)...");
 	const slowProc = spawn({
-		cmd: ["bun", "-e", "await Bun.sleep(2000); console.log('done')"],
+		cmd: ["bun", "-e", "await Bun.sleep(2000); console.info('done')"],
 		timeout: 500,
 		stdout: "pipe"
 	});
 
 	await slowProc.exited;
-	console.log(`   Slow process: exitCode=${slowProc.exitCode}, killed=${slowProc.killed}`);
-	console.log(`   ✅ Timeout protection works!`);
+	console.info(`   Slow process: exitCode=${slowProc.exitCode}, killed=${slowProc.killed}`);
+	console.info(`   ✅ Timeout protection works!`);
 
 	// Demo 3: maxBuffer protection (simulated)
-	console.log("\n💾 MaxBuffer protection enabled:");
-	console.log(`   maxBuffer: 1MB limit prevents OOM`);
-	console.log(`   Large output processes safely terminated`);
+	console.info("\n💾 MaxBuffer protection enabled:");
+	console.info(`   maxBuffer: 1MB limit prevents OOM`);
+	console.info(`   Large output processes safely terminated`);
 }
 
 // =============================================================================
 // 3. PARALLEL SCRAPER FACTORY
 // =============================================================================
 async function demoParallelScrapers() {
-	console.log("\n" + "=".repeat(60));
-	console.log("3. PARALLEL SCRAPER FACTORY - 87 Bookies");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("3. PARALLEL SCRAPER FACTORY - 87 Bookies");
+	console.info("=".repeat(60));
 
 	const startTime = performance.now();
 
 	// Spawn parallel scrapers (simulated with echo)
-	console.log(`\n🏭 Spawning ${SHARP_BOOKIES.length} parallel scrapers...`);
+	console.info(`\n🏭 Spawning ${SHARP_BOOKIES.length} parallel scrapers...`);
 
 	const scrapers = SHARP_BOOKIES.map(bookie =>
 		spawn({
@@ -129,7 +129,7 @@ async function demoParallelScrapers() {
 				const bookie = "${bookie}";
 				const markets = ${NBA_MARKETS.length};
 				await Bun.sleep(Math.random() * 100);
-				console.log(JSON.stringify({ bookie, markets, status: "complete" }));
+				console.info(JSON.stringify({ bookie, markets, status: "complete" }));
 			`],
 			timeout: 5000,
 			stdout: "pipe"
@@ -151,24 +151,24 @@ async function demoParallelScrapers() {
 	const successful = results.filter(r => r.exitCode === 0).length;
 	const killed = results.filter(r => r.killed).length;
 
-	console.log(`\n📊 Factory Results:`);
-	console.log(`   Total scrapers: ${SHARP_BOOKIES.length}`);
-	console.log(`   Successful: ${successful}`);
-	console.log(`   Killed (timeout): ${killed}`);
-	console.log(`   Duration: ${duration.toFixed(2)}ms`);
-	console.log(`   Throughput: ${((SHARP_BOOKIES.length * NBA_MARKETS.length) / (duration / 1000)).toFixed(0)} markets/sec`);
+	console.info(`\n📊 Factory Results:`);
+	console.info(`   Total scrapers: ${SHARP_BOOKIES.length}`);
+	console.info(`   Successful: ${successful}`);
+	console.info(`   Killed (timeout): ${killed}`);
+	console.info(`   Duration: ${duration.toFixed(2)}ms`);
+	console.info(`   Throughput: ${((SHARP_BOOKIES.length * NBA_MARKETS.length) / (duration / 1000)).toFixed(0)} markets/sec`);
 }
 
 // =============================================================================
 // 4. IPC WORKER COORDINATION
 // =============================================================================
 async function demoIPC() {
-	console.log("\n" + "=".repeat(60));
-	console.log("4. IPC WORKER COORDINATION");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("4. IPC WORKER COORDINATION");
+	console.info("=".repeat(60));
 
-	console.log(`\n📡 IPC enables parent ↔ child communication:`);
-	console.log(`
+	console.info(`\n📡 IPC enables parent ↔ child communication:`);
+	console.info(`
    // Parent spawns workers with IPC
    const worker = Bun.spawn(['bun', 'worker.js'], {
      ipc: (msg, child) => {
@@ -197,27 +197,27 @@ async function demoIPC() {
 			});
 		`],
 		ipc: (msg, child) => {
-			console.log(`   📨 Received from child: ${msg}`);
+			console.info(`   📨 Received from child: ${msg}`);
 		}
 	});
 
 	// Send messages
-	console.log(`\n📤 Sending IPC messages...`);
+	console.info(`\n📤 Sending IPC messages...`);
 	ipcWorker.send("ping");
 	ipcWorker.send("ping");
 	ipcWorker.send("done");
 
 	await ipcWorker.exited;
-	console.log(`   ✅ IPC communication complete`);
+	console.info(`   ✅ IPC communication complete`);
 }
 
 // =============================================================================
 // 5. RESOURCE USAGE MONITORING
 // =============================================================================
 async function demoResourceUsage() {
-	console.log("\n" + "=".repeat(60));
-	console.log("5. RESOURCE USAGE MONITORING");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("5. RESOURCE USAGE MONITORING");
+	console.info("=".repeat(60));
 
 	const proc = spawn({
 		cmd: ["bun", "-e", `
@@ -226,7 +226,7 @@ async function demoResourceUsage() {
 			for (let i = 0; i < 10000; i++) {
 				data.push({ id: i, value: Math.random() });
 			}
-			console.log(JSON.stringify({ processed: data.length }));
+			console.info(JSON.stringify({ processed: data.length }));
 		`],
 		stdout: "pipe"
 	});
@@ -237,21 +237,21 @@ async function demoResourceUsage() {
 	// Get resource usage
 	const usage = proc.resourceUsage();
 
-	console.log(`\n📊 Process Resource Usage:`);
-	console.log(`   User CPU time: ${usage?.userCPUTime || 0}µs`);
-	console.log(`   System CPU time: ${usage?.systemCPUTime || 0}µs`);
-	console.log(`   Max RSS: ${((usage?.maxRSS || 0) / 1024).toFixed(2)} KB`);
-	console.log(`   Voluntary context switches: ${usage?.voluntaryContextSwitches || 0}`);
-	console.log(`   Involuntary context switches: ${usage?.involuntaryContextSwitches || 0}`);
+	console.info(`\n📊 Process Resource Usage:`);
+	console.info(`   User CPU time: ${usage?.userCPUTime || 0}µs`);
+	console.info(`   System CPU time: ${usage?.systemCPUTime || 0}µs`);
+	console.info(`   Max RSS: ${((usage?.maxRSS || 0) / 1024).toFixed(2)} KB`);
+	console.info(`   Voluntary context switches: ${usage?.voluntaryContextSwitches || 0}`);
+	console.info(`   Involuntary context switches: ${usage?.involuntaryContextSwitches || 0}`);
 }
 
 // =============================================================================
 // 6. BASKETBALL SPAWN FACTORY (Full Pipeline)
 // =============================================================================
 async function demoBasketballFactory() {
-	console.log("\n" + "=".repeat(60));
-	console.log("6. 🏀 BASKETBALL SPAWN FACTORY");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("6. 🏀 BASKETBALL SPAWN FACTORY");
+	console.info("=".repeat(60));
 
 	// Generate market stream
 	function generateMarketStream() {
@@ -270,7 +270,7 @@ async function demoBasketballFactory() {
 		});
 	}
 
-	console.log(`\n🏭 Spawning basketball factory...`);
+	console.info(`\n🏭 Spawning basketball factory...`);
 	const startTime = performance.now();
 
 	const basketballFactory = spawn({
@@ -287,7 +287,7 @@ async function demoBasketballFactory() {
 					});
 				}
 			}
-			console.log(JSON.stringify({ 
+			console.info(JSON.stringify({ 
 				total: markets.length,
 				sample: markets.slice(0, 3)
 			}));
@@ -303,13 +303,13 @@ async function demoBasketballFactory() {
 	const duration = performance.now() - startTime;
 	const result = JSON.parse(output.trim());
 
-	console.log(`\n📊 Factory Output:`);
-	console.log(`   Markets processed: ${result.total}`);
-	console.log(`   Duration: ${duration.toFixed(2)}ms`);
-	console.log(`   Throughput: ${(result.total / (duration / 1000)).toFixed(0)} markets/sec`);
-	console.log(`\n   Sample:`);
+	console.info(`\n📊 Factory Output:`);
+	console.info(`   Markets processed: ${result.total}`);
+	console.info(`   Duration: ${duration.toFixed(2)}ms`);
+	console.info(`   Throughput: ${(result.total / (duration / 1000)).toFixed(0)} markets/sec`);
+	console.info(`\n   Sample:`);
 	result.sample.forEach((m: any) => {
-		console.log(`     ${m.home} vs ${m.away}: spread=${m.spread}`);
+		console.info(`     ${m.home} vs ${m.away}: spread=${m.spread}`);
 	});
 }
 
@@ -317,15 +317,15 @@ async function demoBasketballFactory() {
 // 7. BENCHMARK MODE
 // =============================================================================
 async function runBenchmark() {
-	console.log("\n" + "=".repeat(60));
-	console.log("🏁 SPAWN FACTORY BENCHMARK");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("🏁 SPAWN FACTORY BENCHMARK");
+	console.info("=".repeat(60));
 
 	const iterations = 100;
 	const results: { name: string; time: number; ops: number }[] = [];
 
 	// Benchmark: Spawn latency
-	console.log(`\n📊 Benchmarking spawn latency (${iterations} spawns)...`);
+	console.info(`\n📊 Benchmarking spawn latency (${iterations} spawns)...`);
 	const spawnStart = performance.now();
 	for (let i = 0; i < iterations; i++) {
 		const proc = spawn({
@@ -338,7 +338,7 @@ async function runBenchmark() {
 	results.push({ name: "spawn latency", time: spawnTime, ops: iterations });
 
 	// Benchmark: Parallel spawns
-	console.log(`📊 Benchmarking parallel spawns (${iterations} concurrent)...`);
+	console.info(`📊 Benchmarking parallel spawns (${iterations} concurrent)...`);
 	const parallelStart = performance.now();
 	const procs = Array.from({ length: iterations }, () =>
 		spawn({
@@ -351,13 +351,13 @@ async function runBenchmark() {
 	results.push({ name: "parallel spawns", time: parallelTime, ops: iterations });
 
 	// Print results
-	console.log("\n📊 Benchmark Results:\n");
-	console.log("Test".padEnd(20) + "Ops".padStart(10) + "Time (ms)".padStart(12) + "Ops/sec".padStart(15));
-	console.log("-".repeat(57));
+	console.info("\n📊 Benchmark Results:\n");
+	console.info("Test".padEnd(20) + "Ops".padStart(10) + "Time (ms)".padStart(12) + "Ops/sec".padStart(15));
+	console.info("-".repeat(57));
 
 	for (const r of results) {
 		const opsPerSec = Math.floor((r.ops / r.time) * 1000);
-		console.log(
+		console.info(
 			r.name.padEnd(20) +
 			r.ops.toString().padStart(10) +
 			r.time.toFixed(2).padStart(12) +
@@ -370,9 +370,9 @@ async function runBenchmark() {
 // SPAWN STATS ENDPOINT SIMULATION
 // =============================================================================
 function printSpawnStats() {
-	console.log("\n" + "=".repeat(60));
-	console.log("📊 SPAWN STATS (curl http://localhost:3000/spawn-stats)");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("📊 SPAWN STATS (curl http://localhost:3000/spawn-stats)");
+	console.info("=".repeat(60));
 
 	const stats = {
 		processes: 87,
@@ -383,15 +383,15 @@ function printSpawnStats() {
 		throughput: "28K markets/min"
 	};
 
-	console.log(`\n${JSON.stringify(stats, null, 2)}`);
+	console.info(`\n${JSON.stringify(stats, null, 2)}`);
 }
 
 // =============================================================================
 // MAIN
 // =============================================================================
 async function main() {
-	console.log("\n⚡ @dynamic-spy/kit v7.2 - BUN.SPAWN INDUSTRIAL FACTORY! 🚀\n");
-	console.log(`Bun version: ${Bun.version}`);
+	console.info("\n⚡ @dynamic-spy/kit v7.2 - BUN.SPAWN INDUSTRIAL FACTORY! 🚀\n");
+	console.info(`Bun version: ${Bun.version}`);
 
 	const args = Bun.argv.slice(2);
 	const runBench = args.includes("--benchmark");
@@ -408,10 +408,10 @@ async function main() {
 		await runBenchmark();
 	}
 
-	console.log("\n" + "=".repeat(60));
-	console.log("✅ SPAWN SUPERPOWERS SUMMARY");
-	console.log("=".repeat(60));
-	console.log(`
+	console.info("\n" + "=".repeat(60));
+	console.info("✅ SPAWN SUPERPOWERS SUMMARY");
+	console.info("=".repeat(60));
+	console.info(`
 | Feature        | Benefit        | Impact          |
 |----------------|----------------|-----------------|
 | stdin Stream   | Zero memory    | 25K markets!    |

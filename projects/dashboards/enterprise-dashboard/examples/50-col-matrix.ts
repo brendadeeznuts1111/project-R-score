@@ -74,7 +74,7 @@ if (Bun.argv.includes("--feedback")) {
     `Args: ${Bun.argv.slice(2).join(" ")}`,
   ].join("\n");
 
-  console.log(`[URLPattern Matrix] Preparing feedback to Bun team...`);
+  console.info(`[URLPattern Matrix] Preparing feedback to Bun team...`);
   console.debug("[GOV-FDB-001] Feedback channel initialized");
 
   // Forward to bun feedback with context prepended if no file/message provided
@@ -92,7 +92,7 @@ if (Bun.argv.includes("--feedback")) {
   const exitCode = await child.exited;
   const success = exitCode === 0;
 
-  console.log(
+  console.info(
     success
       ? `[✓] Feedback delivered to Bun team — thank you!`
       : `[!] Feedback failed (code ${exitCode}) — try \`bun feedback\` manually`
@@ -174,7 +174,7 @@ const V8_SAMPLE_RATE = getNumArg("--v8-sample-rate") || 1; // 1 = trace all, 10 
 
 // --help / -h flag
 if (args.has("--help") || args.has("-h")) {
-  console.log(`
+  console.info(`
 \x1b[1mURLPattern Matrix\x1b[0m - Bun 1.3.6 Column Analysis Tool
 
 \x1b[1mUSAGE:\x1b[0m
@@ -2401,7 +2401,7 @@ ${testCases}
           Count: count,
           Pct: `${((count / results.length) * 100).toFixed(1)}%`,
         }));
-      console.log(Bun.inspect.table(riskTable, { colors: useColor }));
+      console.info(Bun.inspect.table(riskTable, { colors: useColor }));
     }
 
     // Show sample high-risk patterns
@@ -2436,8 +2436,8 @@ ${testCases}
 // ============================================
 
 if (IS_INTERACTIVE) {
-  console.log(`\n\x1b[1mURLPattern Interactive Inspector\x1b[0m`);
-  console.log(`Bun ${Bun.version} │ Type a pattern (or 'exit' to quit)\n`);
+  console.info(`\n\x1b[1mURLPattern Interactive Inspector\x1b[0m`);
+  console.info(`Bun ${Bun.version} │ Type a pattern (or 'exit' to quit)\n`);
 
   const examples = [
     { pattern: "/api/v1/users/:id", base: "https://api.example.com" },
@@ -2448,21 +2448,21 @@ if (IS_INTERACTIVE) {
   const testUrlBase = examples[Math.floor(Math.random() * examples.length)].base;
   const testUrl = testUrlBase + "/test/path";
 
-  console.log("Examples:");
-  for (const ex of examples) console.log(`  ${ex.pattern}`);
-  console.log(`\nTest URL: ${testUrl}\n`);
+  console.info("Examples:");
+  for (const ex of examples) console.info(`  ${ex.pattern}`);
+  console.info(`\nTest URL: ${testUrl}\n`);
   console.write("\x1b[36m❯ \x1b[0m");
 
   for await (const input of console) {
     const trimmed = input.trim();
 
     if (!trimmed || ["exit", "quit", "q"].includes(trimmed.toLowerCase())) {
-      console.log("\n\x1b[32mGoodbye! 👋\x1b[0m");
+      console.info("\n\x1b[32mGoodbye! 👋\x1b[0m");
       process.exit(0);
     }
 
     if (["help", "h", "?"].includes(trimmed)) {
-      console.log(`
+      console.info(`
 Commands: /pattern, test <url>, examples, clear, exit
 Tips: Use :name for named groups, (\\d+) for regex, * for wildcards`);
       console.write("\x1b[36m❯ \x1b[0m");
@@ -2476,8 +2476,8 @@ Tips: Use :name for named groups, (\\d+) for regex, * for wildcards`);
     }
 
     if (trimmed === "examples") {
-      console.log("\nExamples:");
-      for (const ex of examples) console.log(`  ${ex.pattern}`);
+      console.info("\nExamples:");
+      for (const ex of examples) console.info(`  ${ex.pattern}`);
       console.write("\x1b[36m❯ \x1b[0m");
       continue;
     }
@@ -2487,7 +2487,7 @@ Tips: Use :name for named groups, (\\d+) for regex, * for wildcards`);
       try {
         const pat = new URLPattern(examples[0].pattern, examples[0].base);
         const result = pat.exec(urlToTest);
-        console.log(result ? Bun.inspect(result, { depth: CONSOLE_DEPTH, colors: true }) : "❌ No match");
+        console.info(result ? Bun.inspect(result, { depth: CONSOLE_DEPTH, colors: true }) : "❌ No match");
       } catch (e) {
         console.error(`\x1b[31mError: ${(e as Error).message}\x1b[0m`);
       }
@@ -2527,15 +2527,15 @@ Tips: Use :name for named groups, (\\d+) for regex, * for wildcards`);
         testResult: result ? "✅" : "❌",
       };
 
-      console.log("\n" + Bun.inspect.table([row], { depth: CONSOLE_DEPTH, colors: true }));
+      console.info("\n" + Bun.inspect.table([row], { depth: CONSOLE_DEPTH, colors: true }));
 
       if (result) {
         const groups = Object.entries(result.pathname?.groups as Record<string, string> || {})
           .map(([k, v]) => `${k}=${v}`)
           .join(", ");
-        console.log(`\x1b[33m📦 Groups: ${groups || "none"}\x1b[0m`);
+        console.info(`\x1b[33m📦 Groups: ${groups || "none"}\x1b[0m`);
       } else {
-        console.log(`\x1b[31m❌ No match for: ${testUrl}\x1b[0m`);
+        console.info(`\x1b[31m❌ No match for: ${testUrl}\x1b[0m`);
       }
     } catch (e) {
       console.error(`\n\x1b[31m❌ ${(e as Error).message}\x1b[0m`);
@@ -2671,8 +2671,8 @@ const title = SHOW_ALL
   ? `URLPattern Matrix - ALL COLUMNS (${colCount} columns)${modeInfo}`
   : `URLPattern Matrix (${colCount} columns)${modeInfo}`;
 
-console.log(`\n${title}`.padEnd(120, "─"));
-console.log(Bun.inspect.table(rows, { colors: true }));
+console.info(`\n${title}`.padEnd(120, "─"));
+console.info(Bun.inspect.table(rows, { colors: true }));
 
 // JSON output if --output is specified
 if (OUTPUT_FILE) {
@@ -2707,43 +2707,43 @@ if (SAVE_RESULTS) {
 }
 
 // Summary
-console.log("\n" + "─".repeat(80));
-console.log(`Patterns: ${rows.length} │ Columns: ${colCount} │ Bun: ${Bun.version} │ Depth: ${CONSOLE_DEPTH}`);
+console.info("\n" + "─".repeat(80));
+console.info(`Patterns: ${rows.length} │ Columns: ${colCount} │ Bun: ${Bun.version} │ Depth: ${CONSOLE_DEPTH}`);
 
 if (args.size === 0) {
-  console.log("\nUsage: bun 50-col-matrix.ts [options]");
-  console.log("\nColumn Categories (21 categories, 288 total columns):");
-  console.log("  -u, --url         URLPattern (13)      -pa, --pattern    Pattern analysis (15)");
-  console.log("  -k, --cookie      Cookie (8)           -is, --internal   Internal structure (12)");
-  console.log("  -t, --type        Type (11)            -pd, --perf       Performance deep (16)");
-  console.log("  -e, --metrics     Metrics (14)         -ml, --memory     Memory layout (13)");
-  console.log("  -p, --props       Properties (9)       -ws, --web        Web standards (14)");
-  console.log("  -b, --bun-api     Bun API (18)         -u8, --unicode    Unicode (12)");
-  console.log("  -bc, --bundle     Bundle/compile (15)  -ev, --env        Env vars (18)");
-  console.log("  -sec, --security  Security (14)        -enc, --encoding  Encoding (11)");
-  console.log("  -i18n             I18n (13)            -cache            Cache (10)");
-  console.log("  -err, --errors    Errors (12)          -x, --extras      Extras (27)");
-  console.log("  -v8, --v8-internals V8/JSC (17)       -n <count>        Pattern count");
-  console.log("  -a, --all         All columns (288)");
-  console.log("\nFilter & Output Options:");
-  console.log("  -f, --filter <pattern>  Filter patterns (regex or /regex/)");
-  console.log("  -o, --output <file>     Save results to JSON file");
-  console.log("  --save                  Save results to urlpattern-results.json");
-  console.log("\nSpecial Flags:");
-  console.log("  --feedback [...]        Send feedback to Bun team (auto-attaches run context)");
-  console.log("                          Example: --feedback \"SSRF finding\" --email security@bun.sh");
-  console.log("\nV8 Tracing Options:");
-  console.log("  --v8-trace          Enable TurboFan tracing");
-  console.log("  --v8-trace-dir      Output directory (default: ./v8-traces/)");
-  console.log("  --v8-quick, -v8q    Quick mode: tier + deopt count (~fast)");
-  console.log("  --v8-full, -v8f     Full V8 metrics (~500μs/pattern, slow)");
-  console.log("  --v8-sample-rate    Trace 1 in N patterns (default: 1)");
-  console.log("\nShortcut Aliases:");
-  console.log("  -routing          = -u -pa -pd -b      (Routing pattern analysis)");
-  console.log("  -terminal         = -u8 -b -pa         (Terminal/TTY analysis)");
-  console.log("  -bundle           = -bc -b -ws         (Bundle-time analysis)");
-  console.log("  -perf-deep        = -pd -e -ml         (Performance deep-dive)");
-  console.log("  -compat           = -ws -t -u8         (Compatibility analysis)");
-  console.log("  -security-audit   = -sec -enc -err     (Security audit analysis)");
-  console.log("  -i18n-check       = -i18n -enc -u8     (Internationalization check)");
+  console.info("\nUsage: bun 50-col-matrix.ts [options]");
+  console.info("\nColumn Categories (21 categories, 288 total columns):");
+  console.info("  -u, --url         URLPattern (13)      -pa, --pattern    Pattern analysis (15)");
+  console.info("  -k, --cookie      Cookie (8)           -is, --internal   Internal structure (12)");
+  console.info("  -t, --type        Type (11)            -pd, --perf       Performance deep (16)");
+  console.info("  -e, --metrics     Metrics (14)         -ml, --memory     Memory layout (13)");
+  console.info("  -p, --props       Properties (9)       -ws, --web        Web standards (14)");
+  console.info("  -b, --bun-api     Bun API (18)         -u8, --unicode    Unicode (12)");
+  console.info("  -bc, --bundle     Bundle/compile (15)  -ev, --env        Env vars (18)");
+  console.info("  -sec, --security  Security (14)        -enc, --encoding  Encoding (11)");
+  console.info("  -i18n             I18n (13)            -cache            Cache (10)");
+  console.info("  -err, --errors    Errors (12)          -x, --extras      Extras (27)");
+  console.info("  -v8, --v8-internals V8/JSC (17)       -n <count>        Pattern count");
+  console.info("  -a, --all         All columns (288)");
+  console.info("\nFilter & Output Options:");
+  console.info("  -f, --filter <pattern>  Filter patterns (regex or /regex/)");
+  console.info("  -o, --output <file>     Save results to JSON file");
+  console.info("  --save                  Save results to urlpattern-results.json");
+  console.info("\nSpecial Flags:");
+  console.info("  --feedback [...]        Send feedback to Bun team (auto-attaches run context)");
+  console.info("                          Example: --feedback \"SSRF finding\" --email security@bun.sh");
+  console.info("\nV8 Tracing Options:");
+  console.info("  --v8-trace          Enable TurboFan tracing");
+  console.info("  --v8-trace-dir      Output directory (default: ./v8-traces/)");
+  console.info("  --v8-quick, -v8q    Quick mode: tier + deopt count (~fast)");
+  console.info("  --v8-full, -v8f     Full V8 metrics (~500μs/pattern, slow)");
+  console.info("  --v8-sample-rate    Trace 1 in N patterns (default: 1)");
+  console.info("\nShortcut Aliases:");
+  console.info("  -routing          = -u -pa -pd -b      (Routing pattern analysis)");
+  console.info("  -terminal         = -u8 -b -pa         (Terminal/TTY analysis)");
+  console.info("  -bundle           = -bc -b -ws         (Bundle-time analysis)");
+  console.info("  -perf-deep        = -pd -e -ml         (Performance deep-dive)");
+  console.info("  -compat           = -ws -t -u8         (Compatibility analysis)");
+  console.info("  -security-audit   = -sec -enc -err     (Security audit analysis)");
+  console.info("  -i18n-check       = -i18n -enc -u8     (Internationalization check)");
 }

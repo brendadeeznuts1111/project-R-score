@@ -1751,7 +1751,7 @@ async function seedMiddleware(request: Request): Promise<Response | null> {
 
 // Run the server
 if (import.meta.main) {
-  console.log('🚀 Starting ShortcutRegistry Web Manager...');
-  console.log('📱 Open http://localhost:8080 in your browser');
-  console.log('🔗 API available at http://localhost:8080/api/');
+  console.info('🚀 Starting ShortcutRegistry Web Manager...');
+  console.info('📱 Open http://localhost:8080 in your browser');
+  console.info('🔗 API available at http://localhost:8080/api/');
 }

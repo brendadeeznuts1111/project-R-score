@@ -738,7 +738,7 @@ export class PeerGroupManager {
       await this.createPeerGroup(creatorId, name, type, members.slice(1), {});
     } catch (error) {
       // Silently handle auto-creation failures
-      console.log(`Auto-creation of ${name} group failed:`, error);
+      console.info(`Auto-creation of ${name} group failed:`, error);
     }
   }
 

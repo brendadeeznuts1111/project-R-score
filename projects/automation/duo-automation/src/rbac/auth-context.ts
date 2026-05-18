@@ -60,7 +60,7 @@ export class AuthManager {
     if (!this.currentUser) return;
     this.currentUser.preferences = { ...this.currentUser.preferences, ...prefs };
     // In production, this would persist to a database or KV store
-    console.log(`[AUTH] Updated preferences for ${this.currentUser.id}`);
+    console.info(`[AUTH] Updated preferences for ${this.currentUser.id}`);
   }
 }
 

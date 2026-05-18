@@ -32,28 +32,28 @@ async function main() {
       process.exit(1);
     }
 
-    console.log(chalk.cyan(`
+    console.info(chalk.cyan(`
 ╔══════════════════════════════════════════════════════╗
 ║   🛡️  DuoPlus KYC Failsafe Mode (Android 13)       ║
 ║   Automated Device Verification & Recovery         ║
 ╚══════════════════════════════════════════════════════╝
 `));
 
-    console.log(`[${new Date().toISOString()}] 🚀 Starting KYC failsafe for user: ${userId}\n`);
+    console.info(`[${new Date().toISOString()}] 🚀 Starting KYC failsafe for user: ${userId}\n`);
 
     try {
       const kycFailsafeEngine = new KYCFailsafeEngine();
       const result = await kycFailsafeEngine.executeFailsafe(userId, "cli_triggered");
 
-      console.log(chalk.bold("\n📊 Failsafe Result:"));
-      console.log(`  Status: ${chalk[result.status === "approved" ? "green" : result.status === "review" ? "yellow" : "red"](result.status.toUpperCase())}`);
-      console.log(`  Trace ID: ${result.traceId}`);
-      console.log(`  Audit Log Entries: ${result.auditLog.length}`);
+      console.info(chalk.bold("\n📊 Failsafe Result:"));
+      console.info(`  Status: ${chalk[result.status === "approved" ? "green" : result.status === "review" ? "yellow" : "red"](result.status.toUpperCase())}`);
+      console.info(`  Trace ID: ${result.traceId}`);
+      console.info(`  Audit Log Entries: ${result.auditLog.length}`);
 
       // Display audit log
-      console.log(chalk.bold("\n📋 Audit Log:"));
+      console.info(chalk.bold("\n📋 Audit Log:"));
       result.auditLog.forEach((log) => {
-        console.log(`  ${chalk.gray(log)}`);
+        console.info(`  ${chalk.gray(log)}`);
       });
 
       // Save compressed audit log
@@ -64,7 +64,7 @@ async function main() {
         timestamp: new Date().toISOString(),
       }, null, 2));
 
-      console.log(chalk.gray(`\n📁 Audit log saved: ${logPath}`));
+      console.info(chalk.gray(`\n📁 Audit log saved: ${logPath}`));
       process.exit(result.status === "rejected" ? 1 : 0);
     } catch (error) {
       console.error(chalk.red(`\n❌ Error: ${error instanceof Error ? error.message : String(error)}`));
@@ -74,7 +74,7 @@ async function main() {
 
   // Review Queue Processor
   if (args.includes("--review-queue")) {
-    console.log(chalk.cyan(`
+    console.info(chalk.cyan(`
 ╔══════════════════════════════════════════════════════╗
 ║   📋 KYC Review Queue Processor                     ║
 ║   Processing manual review queue                    ║
@@ -85,17 +85,17 @@ async function main() {
       const processor = new ReviewQueueProcessor();
       const report = await processor.processQueue();
 
-      console.log(chalk.bold("\n📊 Processing Report:"));
-      console.log(`  Timestamp: ${report.timestamp.toISOString()}`);
-      console.log(`  Processed: ${chalk.cyan(report.processed)}`);
-      console.log(`  Approved: ${chalk.green(report.approved)}`);
-      console.log(`  Rejected: ${chalk.red(report.rejected)}`);
-      console.log(`  Errors: ${report.errors.length > 0 ? chalk.red(report.errors.length) : chalk.green("0")}`);
+      console.info(chalk.bold("\n📊 Processing Report:"));
+      console.info(`  Timestamp: ${report.timestamp.toISOString()}`);
+      console.info(`  Processed: ${chalk.cyan(report.processed)}`);
+      console.info(`  Approved: ${chalk.green(report.approved)}`);
+      console.info(`  Rejected: ${chalk.red(report.rejected)}`);
+      console.info(`  Errors: ${report.errors.length > 0 ? chalk.red(report.errors.length) : chalk.green("0")}`);
 
       if (report.errors.length > 0) {
-        console.log(chalk.bold("\n⚠️  Errors:"));
+        console.info(chalk.bold("\n⚠️  Errors:"));
         report.errors.forEach((err) => {
-          console.log(`  ${chalk.red(`User ${err.userId}: ${err.error}`)}`);
+          console.info(`  ${chalk.red(`User ${err.userId}: ${err.error}`)}`);
         });
       }
 
@@ -112,18 +112,18 @@ async function main() {
       const dashboard = new KYCDashboard();
       const metrics = dashboard.getMetrics();
 
-      console.log(chalk.cyan(`
+      console.info(chalk.cyan(`
 ╔══════════════════════════════════════════════════════╗
 ║   📊 KYC Metrics                                    ║
 ╚══════════════════════════════════════════════════════╝
 `));
 
-      console.log(chalk.bold("\n📈 Statistics:"));
-      console.log(`  Pending: ${chalk.yellow(metrics.pending)}`);
-      console.log(`  Approved: ${chalk.green(metrics.approved)}`);
-      console.log(`  Rejected: ${chalk.red(metrics.rejected)}`);
-      console.log(`  High Priority: ${chalk.red(metrics.highPriority)}`);
-      console.log(`  Avg Risk Score: ${chalk.cyan(metrics.avgRiskScore.toFixed(1))}`);
+      console.info(chalk.bold("\n📈 Statistics:"));
+      console.info(`  Pending: ${chalk.yellow(metrics.pending)}`);
+      console.info(`  Approved: ${chalk.green(metrics.approved)}`);
+      console.info(`  Rejected: ${chalk.red(metrics.rejected)}`);
+      console.info(`  High Priority: ${chalk.red(metrics.highPriority)}`);
+      console.info(`  Avg Risk Score: ${chalk.cyan(metrics.avgRiskScore.toFixed(1))}`);
 
       process.exit(0);
     } catch (error) {
@@ -134,7 +134,7 @@ async function main() {
 
   // Help
   if (args.includes("--help") || args.length === 0) {
-    console.log(`
+    console.info(`
 ${chalk.bold("KYC Admin CLI")}
 
 ${chalk.bold("Usage:")}

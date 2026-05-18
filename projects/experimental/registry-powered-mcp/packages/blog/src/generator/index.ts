@@ -160,7 +160,7 @@ export class BlogGenerator {
     await Bun.write(`${this.config.output}/feed.xml`, feed);
 
     if (feature("DEBUG")) {
-      console.log(`Generated ${pages.length} pages, ${assets.length} assets`);
+      console.info(`Generated ${pages.length} pages, ${assets.length} assets`);
     }
   }
 

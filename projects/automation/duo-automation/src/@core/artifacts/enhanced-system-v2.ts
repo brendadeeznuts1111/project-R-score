@@ -74,17 +74,17 @@ class EnhancedArtifactSystemV2 {
    * Initialize the enhanced artifact system
    */
   async initialize(): Promise<void> {
-    console.log('🚀 Initializing Enhanced Artifact System v2.0...');
+    console.info('🚀 Initializing Enhanced Artifact System v2.0...');
     
     await this.searchEngine.initialize();
     await this.loadArtifacts();
     await this.buildRelationshipGraph();
     await this.generateAIInsights();
     
-    console.log('✅ Enhanced Artifact System v2.0 initialized');
-    console.log(`   📊 ${this.artifacts.size} artifacts loaded`);
-    console.log(`   🔗 ${this.relationshipGraph.size} relationship nodes`);
-    console.log(`   🤖 ${this.aiInsights.length} AI insights generated`);
+    console.info('✅ Enhanced Artifact System v2.0 initialized');
+    console.info(`   📊 ${this.artifacts.size} artifacts loaded`);
+    console.info(`   🔗 ${this.relationshipGraph.size} relationship nodes`);
+    console.info(`   🤖 ${this.aiInsights.length} AI insights generated`);
   }
 
   /**
@@ -483,40 +483,40 @@ export { EnhancedArtifactSystemV2, ArtifactV2, AIInsight };
 
 // CLI integration function
 async function runArtifactSystemV2() {
-  console.log('🚀 Enhanced Artifact System v2.0 - Next Generation Demo');
-  console.log('========================================================\n');
+  console.info('🚀 Enhanced Artifact System v2.0 - Next Generation Demo');
+  console.info('========================================================\n');
   
   const system = new EnhancedArtifactSystemV2();
   await system.initialize();
   
-  console.log('\n🔍 AI-Powered Discovery:');
+  console.info('\n🔍 AI-Powered Discovery:');
   const discovery = await system.discoverArtifacts('#typescript #security', {
     includeRelated: true,
     aiInsights: true,
     relationshipDepth: 3
   });
   
-  console.log(`Found ${discovery.artifacts.length} enhanced artifacts`);
-  console.log(`Generated ${discovery.insights.length} AI insights`);
+  console.info(`Found ${discovery.artifacts.length} enhanced artifacts`);
+  console.info(`Generated ${discovery.insights.length} AI insights`);
   
-  console.log('\n📊 Analytics Dashboard:');
+  console.info('\n📊 Analytics Dashboard:');
   const analytics = await system.generateAnalytics();
-  console.log(`Total artifacts: ${analytics.overview.totalArtifacts}`);
-  console.log(`Active artifacts: ${analytics.overview.activeArtifacts}`);
-  console.log(`Technologies: ${analytics.overview.technologies.join(', ')}`);
+  console.info(`Total artifacts: ${analytics.overview.totalArtifacts}`);
+  console.info(`Active artifacts: ${analytics.overview.activeArtifacts}`);
+  console.info(`Technologies: ${analytics.overview.technologies.join(', ')}`);
   
-  console.log('\n🤖 AI Insights:');
+  console.info('\n🤖 AI Insights:');
   discovery.insights.slice(0, 3).forEach((insight, index) => {
-    console.log(`${index + 1}. ${insight.message} (${Math.round(insight.confidence * 100)}% confidence)`);
+    console.info(`${index + 1}. ${insight.message} (${Math.round(insight.confidence * 100)}% confidence)`);
   });
   
-  console.log('\n🛡️ Governance & Management:');
+  console.info('\n🛡️ Governance & Management:');
   const management = await system.manageArtifacts();
-  console.log(`Health status: ${management.healthCheck.status}`);
-  console.log(`Cleanup opportunities: ${management.cleanup.archived} artifacts to archive`);
-  console.log(`Optimization opportunities: ${management.optimization.opportunities.length}`);
+  console.info(`Health status: ${management.healthCheck.status}`);
+  console.info(`Cleanup opportunities: ${management.cleanup.archived} artifacts to archive`);
+  console.info(`Optimization opportunities: ${management.optimization.opportunities.length}`);
   
-  console.log('\n✅ Enhanced Artifact System v2.0 Demo Complete!');
+  console.info('\n✅ Enhanced Artifact System v2.0 Demo Complete!');
 }
 
 // Auto-run if executed directly

@@ -16,7 +16,7 @@ export class PredictiveDNS {
 			count === this.prefetchThreshold &&
 			!this.prefetchedHosts.has(hostname)
 		) {
-			console.log(`🔥 Hot domain detected: ${hostname}, prefetching...`);
+			console.info(`🔥 Hot domain detected: ${hostname}, prefetching...`);
 			dns.prefetch(hostname, 443);
 			this.prefetchedHosts.add(hostname);
 		}

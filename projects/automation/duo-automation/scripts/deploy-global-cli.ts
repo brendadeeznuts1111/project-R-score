@@ -95,8 +95,8 @@ class ProductionDeployer {
   }
 
   async deploy(): Promise<void> {
-    console.log('🚀 FactoryWager CLI - Production Deployment');
-    console.log('==========================================');
+    console.info('🚀 FactoryWager CLI - Production Deployment');
+    console.info('==========================================');
     
     try {
       await this.createPackageJson();
@@ -105,11 +105,11 @@ class ProductionDeployer {
       await this.verifyInstallation();
       await this.createSystemdService();
       
-      console.log('✅ Production deployment complete!');
-      console.log('🔧 Available commands:');
-      console.log('   factorywager inspect --help');
-      console.log('   factorywager dashboard --port 8090');
-      console.log('   fw inspect --tui');
+      console.info('✅ Production deployment complete!');
+      console.info('🔧 Available commands:');
+      console.info('   factorywager inspect --help');
+      console.info('   factorywager dashboard --port 8090');
+      console.info('   fw inspect --tui');
       
     } catch (error) {
       console.error('❌ Deployment failed:', error);
@@ -120,13 +120,13 @@ class ProductionDeployer {
   private async createPackageJson(): Promise<void> {
     const packageJsonPath = join(this.projectRoot, 'package.json');
     
-    console.log('📦 Creating package.json...');
+    console.info('📦 Creating package.json...');
     writeFileSync(packageJsonPath, JSON.stringify(PACKAGE_CONFIG, null, 2));
-    console.log('✅ package.json created');
+    console.info('✅ package.json created');
   }
 
   private async buildCLI(): Promise<void> {
-    console.log('🔨 Building CLI for production...');
+    console.info('🔨 Building CLI for production...');
     
     // Ensure dist directory exists
     const distDir = join(this.projectRoot, 'dist');
@@ -143,7 +143,7 @@ class ProductionDeployer {
     return new Promise((resolve, reject) => {
       buildProcess.on('close', (code) => {
         if (code === 0) {
-          console.log('✅ CLI build complete');
+          console.info('✅ CLI build complete');
           resolve();
         } else {
           reject(new Error(`Build failed with code ${code}`));
@@ -155,7 +155,7 @@ class ProductionDeployer {
   }
 
   private async setupGlobalInstall(): Promise<void> {
-    console.log('🌍 Setting up global installation...');
+    console.info('🌍 Setting up global installation...');
     
     // Create executable script
     const executableScript = `#!/bin/bash
@@ -170,8 +170,8 @@ exec bun run "${join(this.projectRoot, 'cli/factorywager-inspector-enhanced.ts')
       writeFileSync(cliPath, executableScript, { mode: 0o755 });
       writeFileSync(fwPath, executableScript, { mode: 0o755 });
       
-      console.log(`✅ CLI installed globally as: ${CLI_NAME}`);
-      console.log(`✅ Short command available: fw`);
+      console.info(`✅ CLI installed globally as: ${CLI_NAME}`);
+      console.info(`✅ Short command available: fw`);
       
     } catch (error) {
       console.warn('⚠️  Global installation failed - using npm link instead');
@@ -185,7 +185,7 @@ exec bun run "${join(this.projectRoot, 'cli/factorywager-inspector-enhanced.ts')
       return new Promise((resolve, reject) => {
         npmLinkProcess.on('close', (code) => {
           if (code === 0) {
-            console.log('✅ CLI linked via npm');
+            console.info('✅ CLI linked via npm');
             resolve();
           } else {
             reject(new Error(`npm link failed with code ${code}`));
@@ -198,7 +198,7 @@ exec bun run "${join(this.projectRoot, 'cli/factorywager-inspector-enhanced.ts')
   }
 
   private async verifyInstallation(): Promise<void> {
-    console.log('🔍 Verifying installation...');
+    console.info('🔍 Verifying installation...');
     
     // Test the CLI
     const testProcess = spawn('factorywager', ['--version'], {
@@ -214,7 +214,7 @@ exec bun run "${join(this.projectRoot, 'cli/factorywager-inspector-enhanced.ts')
       
       testProcess.on('close', (code) => {
         if (code === 0 && output.includes('2.0.0')) {
-          console.log('✅ CLI verification successful');
+          console.info('✅ CLI verification successful');
           resolve();
         } else {
           reject(new Error('CLI verification failed'));
@@ -226,7 +226,7 @@ exec bun run "${join(this.projectRoot, 'cli/factorywager-inspector-enhanced.ts')
   }
 
   private async createSystemdService(): Promise<void> {
-    console.log('🔧 Creating systemd service...');
+    console.info('🔧 Creating systemd service...');
     
     const serviceContent = `[Unit]
 Description=FactoryWager Inspector Dashboard
@@ -259,12 +259,12 @@ WantedBy=multi-user.target
         stdio: 'inherit'
       });
       
-      console.log('✅ Systemd service created and started');
-      console.log('🌐 Dashboard available at: http://localhost:8090/inspector');
+      console.info('✅ Systemd service created and started');
+      console.info('🌐 Dashboard available at: http://localhost:8090/inspector');
       
     } catch (error) {
       console.warn('⚠️  Systemd service creation failed - manual setup required');
-      console.log('   To manually start: factorywager dashboard --live');
+      console.info('   To manually start: factorywager dashboard --live');
     }
   }
 }

@@ -225,8 +225,8 @@ class MCPMatrixRouter {
 }
 
 // Demonstrate MCP routing
-console.log('🛣️  MCP Matrix Router - Intelligent API Routing');
-console.log('='.repeat(50));
+console.info('🛣️  MCP Matrix Router - Intelligent API Routing');
+console.info('='.repeat(50));
 
 const router = new MCPMatrixRouter();
 
@@ -259,13 +259,13 @@ const contexts: MCPRoutingContext[] = [
 ];
 
 contexts.forEach(context => {
-  console.log(`\n📋 Context: ${context.clientId} (${context.environment})`);
-  console.log('─'.repeat(40));
+  console.info(`\n📋 Context: ${context.clientId} (${context.environment})`);
+  console.info('─'.repeat(40));
   
   const report = router.generateSecurityReport(context);
   
-  console.log(`API Access: ${report.allowed}/${report.totalAPIs} allowed`);
-  console.log(`Blocked: ${report.blocked} (Security: ${report.blockedBySecurity}, Platform: ${report.blockedByPlatform}, Version: ${report.blockedByVersion}, Stability: ${report.blockedByStability})`);
+  console.info(`API Access: ${report.allowed}/${report.totalAPIs} allowed`);
+  console.info(`Blocked: ${report.blocked} (Security: ${report.blockedBySecurity}, Platform: ${report.blockedByPlatform}, Version: ${report.blockedByVersion}, Stability: ${report.blockedByStability})`);
   
   // Show some routing decisions
   const testAPIs = ['password', 'secrets', 'Bun.serve', 'Redis', 'mcp'];
@@ -273,13 +273,13 @@ contexts.forEach(context => {
     const decision = router.routeRequest(api, context);
     const status = decision.allowed ? '✅' : '❌';
     const service = decision.routedService ? ` → ${decision.routedService}` : '';
-    console.log(`  ${status} ${api}${service}`);
+    console.info(`  ${status} ${api}${service}`);
     if (!decision.allowed && decision.reason) {
-      console.log(`     ${decision.reason}`);
+      console.info(`     ${decision.reason}`);
     }
   });
 });
 
-console.log('\n✅ MCP Matrix Router ready for ACP integration! 🚀');
+console.info('\n✅ MCP Matrix Router ready for ACP integration! 🚀');
 
 export { MCPMatrixRouter, MCPRoutingContext, MCPRouteDecision };

@@ -72,19 +72,19 @@ function runBenchmark(
 }
 
 async function main() {
-  console.log(colors.bold(colors.cyan('🏁 Fire22 Version Manager Benchmark Suite')));
-  console.log(colors.cyan('=' + '='.repeat(60)));
-  console.log(`Runtime: ${colors.yellow(`Bun ${Bun.version}`)}`);
-  console.log(`Platform: ${colors.yellow(`${process.platform} ${process.arch}`)}`);
-  console.log(`Date: ${colors.yellow(new Date().toISOString())}`);
-  console.log();
+  console.info(colors.bold(colors.cyan('🏁 Fire22 Version Manager Benchmark Suite')));
+  console.info(colors.cyan('=' + '='.repeat(60)));
+  console.info(`Runtime: ${colors.yellow(`Bun ${Bun.version}`)}`);
+  console.info(`Platform: ${colors.yellow(`${process.platform} ${process.arch}`)}`);
+  console.info(`Date: ${colors.yellow(new Date().toISOString())}`);
+  console.info();
 
   const results: BenchmarkResult[] = [];
   const iterations = 100000;
 
   // 1. Version Parsing Benchmark
-  console.log(colors.blue('📊 Version Parsing Performance'));
-  console.log('-'.repeat(40));
+  console.info(colors.blue('📊 Version Parsing Performance'));
+  console.info('-'.repeat(40));
 
   const parseSimple = runBenchmark(
     'Parse Simple Version (3.1.0)',
@@ -108,8 +108,8 @@ async function main() {
   results.push(parsePrerelease);
 
   // 2. Version Comparison Benchmark
-  console.log('\n' + colors.blue('🔄 Version Comparison Performance'));
-  console.log('-'.repeat(40));
+  console.info('\n' + colors.blue('🔄 Version Comparison Performance'));
+  console.info('-'.repeat(40));
 
   const compareSimple = runBenchmark(
     'Compare Simple Versions (3.1.0 vs 3.0.0)',
@@ -133,8 +133,8 @@ async function main() {
   results.push(compareComplex);
 
   // 3. Range Satisfaction Benchmark
-  console.log('\n' + colors.blue('✅ Range Satisfaction Performance'));
-  console.log('-'.repeat(40));
+  console.info('\n' + colors.blue('✅ Range Satisfaction Performance'));
+  console.info('-'.repeat(40));
 
   const satisfiesSimple = runBenchmark(
     'Simple Range (3.1.0 satisfies ^3.0.0)',
@@ -158,8 +158,8 @@ async function main() {
   results.push(satisfiesComplex);
 
   // 4. Version Validation Benchmark
-  console.log('\n' + colors.blue('🔍 Version Validation Performance'));
-  console.log('-'.repeat(40));
+  console.info('\n' + colors.blue('🔍 Version Validation Performance'));
+  console.info('-'.repeat(40));
 
   const validateValid = runBenchmark(
     'Validate Valid Version (3.1.0-beta.1)',
@@ -176,8 +176,8 @@ async function main() {
   results.push(validateInvalid);
 
   // 5. Version Sorting Benchmark
-  console.log('\n' + colors.blue('🔄 Version Sorting Performance'));
-  console.log('-'.repeat(40));
+  console.info('\n' + colors.blue('🔄 Version Sorting Performance'));
+  console.info('-'.repeat(40));
 
   const testVersions = [
     '1.0.0',
@@ -207,8 +207,8 @@ async function main() {
   results.push(filterVersions);
 
   // 6. Next Version Generation Benchmark
-  console.log('\n' + colors.blue('🚀 Version Generation Performance'));
-  console.log('-'.repeat(40));
+  console.info('\n' + colors.blue('🚀 Version Generation Performance'));
+  console.info('-'.repeat(40));
 
   const nextVersions = runBenchmark(
     'Generate Next Versions (patch, minor, major, prerelease)',
@@ -218,8 +218,8 @@ async function main() {
   results.push(nextVersions);
 
   // 7. Memory Usage Test
-  console.log('\n' + colors.blue('💾 Memory Usage Test'));
-  console.log('-'.repeat(40));
+  console.info('\n' + colors.blue('💾 Memory Usage Test'));
+  console.info('-'.repeat(40));
 
   const initialMemory = process.memoryUsage();
 
@@ -232,14 +232,14 @@ async function main() {
   const afterMemory = process.memoryUsage();
   const memoryDelta = afterMemory.heapUsed - initialMemory.heapUsed;
 
-  console.log(
+  console.info(
     `Memory for 10,000 version objects: ${colors.cyan(formatNumber(Math.round(memoryDelta / 1024)))}KB`
   );
-  console.log(`Average per version: ${colors.cyan(Math.round(memoryDelta / 10000))}bytes`);
+  console.info(`Average per version: ${colors.cyan(Math.round(memoryDelta / 10000))}bytes`);
 
   // Results Summary
-  console.log('\n' + colors.bold(colors.green('📊 BENCHMARK RESULTS SUMMARY')));
-  console.log(colors.green('=' + '='.repeat(80)));
+  console.info('\n' + colors.bold(colors.green('📊 BENCHMARK RESULTS SUMMARY')));
+  console.info(colors.green('=' + '='.repeat(80)));
 
   const tableData = results.map(result => [
     result.operation,
@@ -256,20 +256,20 @@ async function main() {
   );
 
   // Print table header
-  console.log();
+  console.info();
   const headerRow = headers.map((header, i) => header.padEnd(colWidths[i])).join(' | ');
-  console.log(colors.bold(headerRow));
-  console.log(colors.bold('-'.repeat(headerRow.length)));
+  console.info(colors.bold(headerRow));
+  console.info(colors.bold('-'.repeat(headerRow.length)));
 
   // Print table rows
   tableData.forEach(row => {
     const formattedRow = row.map((cell, i) => cell.padEnd(colWidths[i])).join(' | ');
-    console.log(formattedRow);
+    console.info(formattedRow);
   });
 
   // Performance Analysis
-  console.log('\n' + colors.bold(colors.yellow('🎯 PERFORMANCE ANALYSIS')));
-  console.log(colors.yellow('=' + '='.repeat(50)));
+  console.info('\n' + colors.bold(colors.yellow('🎯 PERFORMANCE ANALYSIS')));
+  console.info(colors.yellow('=' + '='.repeat(50)));
 
   const fastestParsing = results
     .filter(r => r.operation.includes('Parse'))
@@ -283,22 +283,22 @@ async function main() {
     .filter(r => r.operation.includes('satisfies'))
     .reduce((min, curr) => (curr.avgTime < min.avgTime ? curr : min));
 
-  console.log(`${colors.green('🏆')} Fastest Parsing: ${colors.bold(fastestParsing.operation)}`);
-  console.log(`    ${formatTime(fastestParsing.avgTime)} per operation`);
+  console.info(`${colors.green('🏆')} Fastest Parsing: ${colors.bold(fastestParsing.operation)}`);
+  console.info(`    ${formatTime(fastestParsing.avgTime)} per operation`);
 
-  console.log(
+  console.info(
     `${colors.green('🏆')} Fastest Comparison: ${colors.bold(fastestComparison.operation)}`
   );
-  console.log(`    ${formatTime(fastestComparison.avgTime)} per operation`);
+  console.info(`    ${formatTime(fastestComparison.avgTime)} per operation`);
 
-  console.log(
+  console.info(
     `${colors.green('🏆')} Fastest Satisfaction: ${colors.bold(fastestSatisfies.operation)}`
   );
-  console.log(`    ${formatTime(fastestSatisfies.avgTime)} per operation`);
+  console.info(`    ${formatTime(fastestSatisfies.avgTime)} per operation`);
 
   // Performance Targets
-  console.log('\n' + colors.bold(colors.blue('🎯 PERFORMANCE TARGETS')));
-  console.log(colors.blue('=' + '='.repeat(40)));
+  console.info('\n' + colors.bold(colors.blue('🎯 PERFORMANCE TARGETS')));
+  console.info(colors.blue('=' + '='.repeat(40)));
 
   const targets = {
     parsing: 5, // < 5μs
@@ -314,7 +314,7 @@ async function main() {
     const status = actual <= target ? colors.green('✅ PASS') : colors.red('❌ FAIL');
     const actualStr = formatTime(actual);
     const targetStr = formatTime(target);
-    console.log(`${name}: ${actualStr} (target: ${targetStr}) ${status}`);
+    console.info(`${name}: ${actualStr} (target: ${targetStr}) ${status}`);
   }
 
   if (parsingResult) checkTarget(parsingResult.avgTime, targets.parsing, 'Version Parsing   ');
@@ -324,8 +324,8 @@ async function main() {
     checkTarget(satisfiesResult.avgTime, targets.satisfaction, 'Range Satisfaction');
 
   // Export Results
-  console.log('\n' + colors.bold(colors.cyan('💾 BENCHMARK EXPORT')));
-  console.log(colors.cyan('=' + '='.repeat(30)));
+  console.info('\n' + colors.bold(colors.cyan('💾 BENCHMARK EXPORT')));
+  console.info(colors.cyan('=' + '='.repeat(30)));
 
   const benchmarkReport = {
     timestamp: new Date().toISOString(),
@@ -361,11 +361,11 @@ async function main() {
 
   const reportPath = './packages/version-manager/benchmark-report.json';
   await Bun.write(reportPath, JSON.stringify(benchmarkReport, null, 2));
-  console.log(`Report saved to: ${colors.green(reportPath)}`);
+  console.info(`Report saved to: ${colors.green(reportPath)}`);
 
-  console.log('\n' + colors.bold(colors.green('🎉 BENCHMARK COMPLETE')));
-  console.log(colors.green('All operations completed successfully with Bun.semver!'));
-  console.log(
+  console.info('\n' + colors.bold(colors.green('🎉 BENCHMARK COMPLETE')));
+  console.info(colors.green('All operations completed successfully with Bun.semver!'));
+  console.info(
     `Total benchmark time: ${colors.cyan((results.reduce((sum, r) => sum + r.totalTime, 0) / 1000).toFixed(2))}s`
   );
 }

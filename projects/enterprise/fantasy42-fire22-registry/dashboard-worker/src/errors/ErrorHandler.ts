@@ -349,7 +349,7 @@ export class ErrorHandler {
       // In production, integrate with Sentry, DataDog, etc.
       // For now, just console log for monitoring pickup
       if (error.severity === 'critical' || error.severity === 'high') {
-        console.log({
+        console.info({
           service: 'fire22-dashboard',
           error: error.code,
           severity: error.severity,

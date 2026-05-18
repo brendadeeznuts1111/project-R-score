@@ -27,7 +27,7 @@ describe('Exit Code >1: Unhandled Errors', () => {
 //   Promise.reject(new Error('Unhandled promise rejection outside test'));
 // }, 100);
 
-console.log(
+console.info(
   runFailureDemo
     ? '🚨 Unhandled-error demos enabled (RUN_EXIT_CODE_FAILURE_DEMOS=1).'
     : 'ℹ️ Unhandled-error demos skipped by default (set RUN_EXIT_CODE_FAILURE_DEMOS=1 to enable).'

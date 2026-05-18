@@ -865,7 +865,7 @@ export function initializeDataProcessingService(
   service.registerPipeline(PIPELINE_TEMPLATES.dataIngestion(db));
   service.registerPipeline(PIPELINE_TEMPLATES.analyticsProcessing(db));
 
-  console.log('🚀 Advanced Data Processing Service initialized with default pipelines');
+  console.info('🚀 Advanced Data Processing Service initialized with default pipelines');
 
   return service;
 }

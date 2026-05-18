@@ -130,8 +130,8 @@ const BUNX_PACKAGES: BunxPackageConfig[] = [
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function buildWindowsExecutable(config: WindowsBuildConfig): Promise<boolean> {
-  console.log(`🔨 Building ${config.name} for Windows...`);
-  console.log('═'.repeat(60));
+  console.info(`🔨 Building ${config.name} for Windows...`);
+  console.info('═'.repeat(60));
 
   try {
     // Build command with Windows metadata
@@ -161,43 +161,43 @@ async function buildWindowsExecutable(config: WindowsBuildConfig): Promise<boole
       buildCmd.push('--long-path-support');
     }
 
-    console.log(`📦 Build Command: ${buildCmd.join(' ')}`);
-    console.log('');
+    console.info(`📦 Build Command: ${buildCmd.join(' ')}`);
+    console.info('');
 
     const result = await $`${buildCmd}`.quiet();
 
     if (result.exitCode === 0) {
-      console.log(`✅ Successfully built: ${config.outputName}.exe`);
-      console.log(`📁 Output: ./dist/${config.outputName}.exe`);
+      console.info(`✅ Successfully built: ${config.outputName}.exe`);
+      console.info(`📁 Output: ./dist/${config.outputName}.exe`);
 
       // Display executable information
       const exePath = `./dist/${config.outputName}.exe`;
-      console.log(`\n📋 Executable Metadata:`);
-      console.log(`   Title: ${config.metadata.title}`);
-      console.log(`   Publisher: ${config.metadata.publisher}`);
-      console.log(`   Version: ${config.metadata.version}`);
-      console.log(`   Description: ${config.metadata.description}`);
-      console.log(`   Copyright: ${config.metadata.copyright}`);
-      console.log(`   Company: ${config.metadata.company}`);
-      console.log(`   Product: ${config.metadata.productName}`);
+      console.info(`\n📋 Executable Metadata:`);
+      console.info(`   Title: ${config.metadata.title}`);
+      console.info(`   Publisher: ${config.metadata.publisher}`);
+      console.info(`   Version: ${config.metadata.version}`);
+      console.info(`   Description: ${config.metadata.description}`);
+      console.info(`   Copyright: ${config.metadata.copyright}`);
+      console.info(`   Company: ${config.metadata.company}`);
+      console.info(`   Product: ${config.metadata.productName}`);
 
       // Check file size
       try {
         const stats = await Bun.file(exePath).stat();
         const sizeMB = (stats.size / (1024 * 1024)).toFixed(2);
-        console.log(`   Size: ${sizeMB} MB`);
+        console.info(`   Size: ${sizeMB} MB`);
       } catch {
         // File size check failed, not critical
       }
 
       return true;
     } else {
-      console.log(`❌ Build failed for ${config.name}`);
-      console.log(`Error output: ${result.stderr}`);
+      console.info(`❌ Build failed for ${config.name}`);
+      console.info(`Error output: ${result.stderr}`);
       return false;
     }
   } catch (error) {
-    console.log(`❌ Build error for ${config.name}:`, error.message);
+    console.info(`❌ Build error for ${config.name}:`, error.message);
     return false;
   }
 }
@@ -207,8 +207,8 @@ async function buildWindowsExecutable(config: WindowsBuildConfig): Promise<boole
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function demonstrateBunxPackage(config: BunxPackageConfig): Promise<boolean> {
-  console.log(`📦 Demonstrating bunx with ${config.package}...`);
-  console.log('═'.repeat(60));
+  console.info(`📦 Demonstrating bunx with ${config.package}...`);
+  console.info('═'.repeat(60));
 
   try {
     // Build bunx command with --package flag
@@ -223,7 +223,7 @@ async function demonstrateBunxPackage(config: BunxPackageConfig): Promise<boolea
       bunxCmd.push(...config.args);
     }
 
-    console.log(`🚀 Command: ${bunxCmd.join(' ')}`);
+    console.info(`🚀 Command: ${bunxCmd.join(' ')}`);
 
     // Set environment variables if specified
     const env = { ...process.env, ...config.env };
@@ -231,20 +231,20 @@ async function demonstrateBunxPackage(config: BunxPackageConfig): Promise<boolea
     const result = await $`${bunxCmd}`.env(env).quiet();
 
     if (result.exitCode === 0) {
-      console.log(`✅ Successfully executed ${config.package}`);
+      console.info(`✅ Successfully executed ${config.package}`);
       if (result.stdout) {
-        console.log(`📄 Output: ${result.stdout.slice(0, 200)}...`);
+        console.info(`📄 Output: ${result.stdout.slice(0, 200)}...`);
       }
       return true;
     } else {
-      console.log(`⚠️ Execution completed with warnings for ${config.package}`);
+      console.info(`⚠️ Execution completed with warnings for ${config.package}`);
       if (result.stderr) {
-        console.log(`⚠️ Warnings: ${result.stderr.slice(0, 200)}...`);
+        console.info(`⚠️ Warnings: ${result.stderr.slice(0, 200)}...`);
       }
       return false;
     }
   } catch (error) {
-    console.log(`❌ Failed to execute ${config.package}:`, error.message);
+    console.info(`❌ Failed to execute ${config.package}:`, error.message);
     return false;
   }
 }
@@ -254,10 +254,10 @@ async function demonstrateBunxPackage(config: BunxPackageConfig): Promise<boolea
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function runWindowsBuild(): Promise<void> {
-  console.log('🔥 FIRE22 WINDOWS EXECUTABLE BUILDER');
-  console.log('════════════════════════════════════');
-  console.log('Building enterprise Windows executables with professional metadata');
-  console.log('');
+  console.info('🔥 FIRE22 WINDOWS EXECUTABLE BUILDER');
+  console.info('════════════════════════════════════');
+  console.info('Building enterprise Windows executables with professional metadata');
+  console.info('');
 
   // Create dist directory
   await $`mkdir -p ./dist`.quiet();
@@ -266,55 +266,55 @@ async function runWindowsBuild(): Promise<void> {
   const buildConfigs = [FIRE22_HUB_BUILD, SECURITY_SCANNER_BUILD];
   const buildResults = [];
 
-  console.log('🏗️ BUILDING WINDOWS EXECUTABLES');
-  console.log('═════════════════════════════════');
+  console.info('🏗️ BUILDING WINDOWS EXECUTABLES');
+  console.info('═════════════════════════════════');
 
   for (const config of buildConfigs) {
     const success = await buildWindowsExecutable(config);
     buildResults.push({ config: config.name, success });
-    console.log(''); // Add spacing between builds
+    console.info(''); // Add spacing between builds
   }
 
   // Display build summary
-  console.log('📊 BUILD SUMMARY');
-  console.log('════════════════');
+  console.info('📊 BUILD SUMMARY');
+  console.info('════════════════');
 
   let successCount = 0;
   for (const result of buildResults) {
     const status = result.success ? '✅' : '❌';
-    console.log(`${status} ${result.config}`);
+    console.info(`${status} ${result.config}`);
     if (result.success) successCount++;
   }
 
-  console.log(`\n🎯 Build Success Rate: ${successCount}/${buildResults.length}`);
-  console.log('');
+  console.info(`\n🎯 Build Success Rate: ${successCount}/${buildResults.length}`);
+  console.info('');
 
   // Demonstrate bunx --package feature
-  console.log('📦 DEMONSTRATING BUNX --PACKAGE FEATURE');
-  console.log('═══════════════════════════════════════');
+  console.info('📦 DEMONSTRATING BUNX --PACKAGE FEATURE');
+  console.info('═══════════════════════════════════════');
 
   for (const packageConfig of BUNX_PACKAGES.slice(0, 2)) {
     // Demo first 2 packages
     await demonstrateBunxPackage(packageConfig);
-    console.log('');
+    console.info('');
   }
 
   // Final summary
-  console.log('🎉 WINDOWS BUILD PROCESS COMPLETE!');
-  console.log('═══════════════════════════════════');
-  console.log('');
-  console.log('📁 Generated Executables:');
-  console.log('   • ./dist/fantasy42-fire22-hub.exe');
-  console.log('   • ./dist/fire22-security-scanner.exe');
-  console.log('');
-  console.log('🛠️ Build Features Demonstrated:');
-  console.log('   • Windows executable metadata (--windows-title, --windows-publisher, etc.)');
-  console.log('   • Professional branding and trademarks');
-  console.log('   • Enterprise code signing capabilities');
-  console.log('   • High-DPI and long path support');
-  console.log('   • BunX --package feature for package management');
-  console.log('');
-  console.log('🚀 Ready for enterprise distribution!');
+  console.info('🎉 WINDOWS BUILD PROCESS COMPLETE!');
+  console.info('═══════════════════════════════════');
+  console.info('');
+  console.info('📁 Generated Executables:');
+  console.info('   • ./dist/fantasy42-fire22-hub.exe');
+  console.info('   • ./dist/fire22-security-scanner.exe');
+  console.info('');
+  console.info('🛠️ Build Features Demonstrated:');
+  console.info('   • Windows executable metadata (--windows-title, --windows-publisher, etc.)');
+  console.info('   • Professional branding and trademarks');
+  console.info('   • Enterprise code signing capabilities');
+  console.info('   • High-DPI and long path support');
+  console.info('   • BunX --package feature for package management');
+  console.info('');
+  console.info('🚀 Ready for enterprise distribution!');
 }
 
 // ╔══════════════════════════════════════════════════════════════╗
@@ -322,7 +322,7 @@ async function runWindowsBuild(): Promise<void> {
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function showBuildHelp(): Promise<void> {
-  console.log(`
+  console.info(`
 🔥 FIRE22 WINDOWS EXECUTABLE BUILDER
 Building enterprise Windows executables with professional metadata
 
@@ -391,18 +391,18 @@ async function main(): Promise<void> {
       break;
 
     case 'bunx-demo':
-      console.log('📦 BUNX --PACKAGE FEATURE DEMONSTRATION');
-      console.log('═══════════════════════════════════════');
+      console.info('📦 BUNX --PACKAGE FEATURE DEMONSTRATION');
+      console.info('═══════════════════════════════════════');
       for (const packageConfig of BUNX_PACKAGES) {
         await demonstrateBunxPackage(packageConfig);
-        console.log('');
+        console.info('');
       }
       break;
 
     case 'clean':
-      console.log('🧹 Cleaning build artifacts...');
+      console.info('🧹 Cleaning build artifacts...');
       await $`rm -rf ./dist/*.exe`.quiet();
-      console.log('✅ Build artifacts cleaned');
+      console.info('✅ Build artifacts cleaned');
       break;
 
     case 'help':

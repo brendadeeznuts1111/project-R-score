@@ -6,8 +6,8 @@ import { MasterPerfTracker } from '../src/storage/r2-apple-manager.ts';
 import { initializeScopeTimezone } from '../bootstrap-timezone.ts';
 import { feature } from "bun:bundle";
 
-console.log('🚀 Empire Pro v3.7 - Enhanced Performance Tracker Demo');
-console.log('====================================================\n');
+console.info('🚀 Empire Pro v3.7 - Enhanced Performance Tracker Demo');
+console.info('====================================================\n');
 
 // Initialize timezone for deterministic tracking
 initializeScopeTimezone('ENTERPRISE');
@@ -21,16 +21,16 @@ const tracker = new MasterPerfTracker({
   enableUnicodeFormatting: feature("DEBUG_UNICODE") ? true : false
 });
 
-console.log('📊 Configuration:');
-console.log('================');
-console.log(`Timezone Tracking: ${tracker.isTimezoneTrackingEnabled ? '✅' : '❌'}`);
-console.log(`Feature Flag Tracking: ${tracker.isFeatureFlagTrackingEnabled ? '✅' : '❌'}`);
-console.log(`Location Tracking: ${tracker.isLocationTrackingEnabled ? '✅' : '❌'}`);
-console.log(`Max Metrics: ${tracker.maxMetricsLimit}`);
-console.log(`Unicode Formatting: ${tracker.isUnicodeFormattingEnabled ? '✅' : '❌'}`);
+console.info('📊 Configuration:');
+console.info('================');
+console.info(`Timezone Tracking: ${tracker.isTimezoneTrackingEnabled ? '✅' : '❌'}`);
+console.info(`Feature Flag Tracking: ${tracker.isFeatureFlagTrackingEnabled ? '✅' : '❌'}`);
+console.info(`Location Tracking: ${tracker.isLocationTrackingEnabled ? '✅' : '❌'}`);
+console.info(`Max Metrics: ${tracker.maxMetricsLimit}`);
+console.info(`Unicode Formatting: ${tracker.isUnicodeFormattingEnabled ? '✅' : '❌'}`);
 
-console.log('\n🎯 Adding Sample Metrics:');
-console.log('========================');
+console.info('\n🎯 Adding Sample Metrics:');
+console.info('========================');
 
 // Add sample metrics with different categories
 const sampleMetrics = [
@@ -98,104 +98,104 @@ const sampleMetrics = [
 
 sampleMetrics.forEach((metric, index) => {
   tracker.addMetric(metric);
-  console.log(`✅ Added metric ${index + 1}: ${metric.category}.${metric.type}`);
+  console.info(`✅ Added metric ${index + 1}: ${metric.category}.${metric.type}`);
 });
 
-console.log('\n📈 Performance Matrix Output:');
-console.log('=============================');
+console.info('\n📈 Performance Matrix Output:');
+console.info('=============================');
 
 // Show different output formats
-console.log('\n1️⃣ Standard Matrix Output:');
+console.info('\n1️⃣ Standard Matrix Output:');
 tracker.printMatrix();
 
-console.log('\n2️⃣ Operation Statistics:');
+console.info('\n2️⃣ Operation Statistics:');
 const stats = tracker.getOperationStats();
-console.log('Operation Stats:');
+console.info('Operation Stats:');
 stats.forEach(stat => {
-  console.log(`  ${stat.operation.padEnd(20)} Count: ${stat.count.toString().padStart(3)} | Total: ${stat.total.toString().padStart(6)} | Avg: ${stat.average.toFixed(2).padStart(6)}`);
+  console.info(`  ${stat.operation.padEnd(20)} Count: ${stat.count.toString().padStart(3)} | Total: ${stat.total.toString().padStart(6)} | Avg: ${stat.average.toFixed(2).padStart(6)}`);
 });
 
-console.log('\n3️⃣ Category-Based Metrics:');
+console.info('\n3️⃣ Category-Based Metrics:');
 const categories = ['R2', 'PERFORMANCE', 'SECURITY', 'ERROR'];
 categories.forEach(category => {
   const categoryMetrics = tracker.getMetricsByCategory(category);
-  console.log(`  ${category.padEnd(12)}: ${categoryMetrics.length} metrics`);
+  console.info(`  ${category.padEnd(12)}: ${categoryMetrics.length} metrics`);
 });
 
-console.log('\n4️⃣ Export Formats Demo:');
-console.log('JSON Export (first 200 chars):');
+console.info('\n4️⃣ Export Formats Demo:');
+console.info('JSON Export (first 200 chars):');
 const jsonExport = tracker.exportMetrics('json');
-console.log(jsonExport.substring(0, 200) + '...');
+console.info(jsonExport.substring(0, 200) + '...');
 
-console.log('\nCSV Export (first 200 chars):');
+console.info('\nCSV Export (first 200 chars):');
 const csvExport = tracker.exportMetrics('csv');
-console.log(csvExport.substring(0, 200) + '...');
+console.info(csvExport.substring(0, 200) + '...');
 
-console.log('\n5️⃣ Time Range Query Demo:');
+console.info('\n5️⃣ Time Range Query Demo:');
 const now = new Date();
 const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
 const recentMetrics = tracker.getMetricsByTimeRange(oneHourAgo, now);
-console.log(`Metrics in last hour: ${recentMetrics.length}`);
+console.info(`Metrics in last hour: ${recentMetrics.length}`);
 
-console.log('\n🎯 Feature Flag Integration:');
-console.log('==========================');
+console.info('\n🎯 Feature Flag Integration:');
+console.info('==========================');
 
-console.log('Active Feature Flags:');
-console.log(`  ${feature("ENTERPRISE_SECURITY") ? '✅' : '❌'} ENTERPRISE_SECURITY`);
-console.log(`  ${feature("DEVELOPMENT_TOOLS") ? '✅' : '❌'} DEVELOPMENT_TOOLS`);
-console.log(`  ${feature("DEBUG_UNICODE") ? '✅' : '❌'} DEBUG_UNICODE`);
-console.log(`  ${feature("PREMIUM_ANALYTICS") ? '✅' : '❌'} PREMIUM_ANALYTICS`);
-console.log(`  ${feature("ADVANCED_DASHBOARD") ? '✅' : '❌'} ADVANCED_DASHBOARD`);
-console.log(`  ${feature("AUDIT_EXPORT") ? '✅' : '❌'} AUDIT_EXPORT`);
-console.log(`  ${feature("REAL_TIME_UPDATES") ? '✅' : '❌'} REAL_TIME_UPDATES`);
-console.log(`  ${feature("MULTI_TENANT") ? '✅' : '❌'} MULTI_TENANT`);
-console.log(`  ${feature("V37_DETERMINISTIC_TZ") ? '✅' : '❌'} V37_DETERMINISTIC_TZ`);
-console.log(`  ${feature("V37_NATIVE_R2") ? '✅' : '❌'} V37_NATIVE_R2`);
+console.info('Active Feature Flags:');
+console.info(`  ${feature("ENTERPRISE_SECURITY") ? '✅' : '❌'} ENTERPRISE_SECURITY`);
+console.info(`  ${feature("DEVELOPMENT_TOOLS") ? '✅' : '❌'} DEVELOPMENT_TOOLS`);
+console.info(`  ${feature("DEBUG_UNICODE") ? '✅' : '❌'} DEBUG_UNICODE`);
+console.info(`  ${feature("PREMIUM_ANALYTICS") ? '✅' : '❌'} PREMIUM_ANALYTICS`);
+console.info(`  ${feature("ADVANCED_DASHBOARD") ? '✅' : '❌'} ADVANCED_DASHBOARD`);
+console.info(`  ${feature("AUDIT_EXPORT") ? '✅' : '❌'} AUDIT_EXPORT`);
+console.info(`  ${feature("REAL_TIME_UPDATES") ? '✅' : '❌'} REAL_TIME_UPDATES`);
+console.info(`  ${feature("MULTI_TENANT") ? '✅' : '❌'} MULTI_TENANT`);
+console.info(`  ${feature("V37_DETERMINISTIC_TZ") ? '✅' : '❌'} V37_DETERMINISTIC_TZ`);
+console.info(`  ${feature("V37_NATIVE_R2") ? '✅' : '❌'} V37_NATIVE_R2`);
 
-console.log('\n🌍 Timezone Integration:');
-console.log('======================');
+console.info('\n🌍 Timezone Integration:');
+console.info('======================');
 
 try {
   const tzConfig = { scopeTimezone: 'America/New_York', standardOffset: '-05:00' } as any;
-  console.log(`Active Timezone: ${tzConfig.scopeTimezone} (${tzConfig.standardOffset})`);
-  console.log('✅ Deterministic timezone tracking active');
+  console.info(`Active Timezone: ${tzConfig.scopeTimezone} (${tzConfig.standardOffset})`);
+  console.info('✅ Deterministic timezone tracking active');
 } catch {
-  console.log('ℹ️  Using fallback timezone: UTC');
+  console.info('ℹ️  Using fallback timezone: UTC');
 }
 
-console.log('\n📊 Enhanced Features Summary:');
-console.log('=============================');
-console.log('✅ Enhanced metric tracking with timezone awareness');
-console.log('✅ Feature flag impact analysis');
-console.log('✅ Location-aware performance monitoring');
-console.log('✅ Unicode-formatted table output');
-console.log('✅ Multiple export formats (JSON, CSV, Table)');
-console.log('✅ Operation statistics and aggregation');
-console.log('✅ Time-range based queries');
-console.log('✅ FIFO metric limit management');
-console.log('✅ v3.7 deterministic timezone integration');
+console.info('\n📊 Enhanced Features Summary:');
+console.info('=============================');
+console.info('✅ Enhanced metric tracking with timezone awareness');
+console.info('✅ Feature flag impact analysis');
+console.info('✅ Location-aware performance monitoring');
+console.info('✅ Unicode-formatted table output');
+console.info('✅ Multiple export formats (JSON, CSV, Table)');
+console.info('✅ Operation statistics and aggregation');
+console.info('✅ Time-range based queries');
+console.info('✅ FIFO metric limit management');
+console.info('✅ v3.7 deterministic timezone integration');
 
-console.log('\n🔧 Usage Examples:');
-console.log('================');
-console.log('// Create enhanced tracker');
-console.log('const tracker = new MasterPerfTracker({');
-console.log('  enableTimezoneTracking: true,');
-console.log('  enableFeatureFlagTracking: true,');
-console.log('  enableUnicodeFormatting: true');
-console.log('});');
-console.log('');
-console.log('// Add metrics with enhanced tracking');
-console.log('tracker.addMetric({');
-console.log('  category: "R2",');
-console.log('  type: "upload",');
-console.log('  value: 1024,');
-console.log('  properties: { duration: 150 }');
-console.log('});');
-console.log('');
-console.log('// Export in different formats');
-console.log('const json = tracker.exportMetrics("json");');
-console.log('const csv = tracker.exportMetrics("csv");');
-console.log('const table = tracker.exportMetrics("table");');
+console.info('\n🔧 Usage Examples:');
+console.info('================');
+console.info('// Create enhanced tracker');
+console.info('const tracker = new MasterPerfTracker({');
+console.info('  enableTimezoneTracking: true,');
+console.info('  enableFeatureFlagTracking: true,');
+console.info('  enableUnicodeFormatting: true');
+console.info('});');
+console.info('');
+console.info('// Add metrics with enhanced tracking');
+console.info('tracker.addMetric({');
+console.info('  category: "R2",');
+console.info('  type: "upload",');
+console.info('  value: 1024,');
+console.info('  properties: { duration: 150 }');
+console.info('});');
+console.info('');
+console.info('// Export in different formats');
+console.info('const json = tracker.exportMetrics("json");');
+console.info('const csv = tracker.exportMetrics("csv");');
+console.info('const table = tracker.exportMetrics("table");');
 
-console.log('\n🎉 Enhanced Performance Tracker Demo Completed!');
-console.log('🚀 Empire Pro v3.7 - Enterprise-grade performance monitoring!');
+console.info('\n🎉 Enhanced Performance Tracker Demo Completed!');
+console.info('🚀 Empire Pro v3.7 - Enterprise-grade performance monitoring!');

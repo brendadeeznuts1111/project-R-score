@@ -83,7 +83,7 @@ describe("Process Lifecycle State Machine", () => {
     it("should handle process.exit() for RUNNING → STOPPED transition", async () => {
       const exitScript = join("/tmp", "bun-exit-test.ts");
       writeFileSync(exitScript, `
-        console.log("Running");
+        console.info("Running");
         process.exit(42); // Exit with custom code
       `);
 
@@ -163,7 +163,7 @@ describe("Process Lifecycle State Machine", () => {
     it("should handle stdout during RUNNING state", async () => {
       const outputScript = join("/tmp", "bun-output-test.ts");
       writeFileSync(outputScript, `
-        console.log("Hello from process");
+        console.info("Hello from process");
         console.error("Error output");
         process.exit(0);
       `);

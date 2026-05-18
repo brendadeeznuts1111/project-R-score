@@ -182,7 +182,7 @@ async function main() {
   const [command, ...args] = process.argv.slice(2);
 
   if (!command) {
-    console.log(`
+    console.info(`
 Command Registry - Cursor IDE Slash Commands v1.3.5
 
 Usage:
@@ -211,30 +211,30 @@ Examples:
     switch (command) {
       case 'list':
         const commands = registry.loadCommands();
-        console.log('Available Commands:');
+        console.info('Available Commands:');
         for (const [name, cmd] of commands) {
-          console.log(`  ${cmd.command} - ${cmd.description}`);
+          console.info(`  ${cmd.command} - ${cmd.description}`);
         }
         break;
 
       case 'validate':
         const validation = registry.validateCommands();
         if (validation.valid) {
-          console.log('✅ All commands are valid');
+          console.info('✅ All commands are valid');
         } else {
-          console.log('❌ Validation issues:');
-          validation.issues.forEach(issue => console.log(`  - ${issue}`));
+          console.info('❌ Validation issues:');
+          validation.issues.forEach(issue => console.info(`  - ${issue}`));
           process.exit(1);
         }
         break;
 
       case 'help':
-        console.log(registry.generateHelp());
+        console.info(registry.generateHelp());
         break;
 
       case 'export':
         const exported = registry.exportForCursor();
-        console.log(JSON.stringify(exported, null, 2));
+        console.info(JSON.stringify(exported, null, 2));
         break;
 
       case 'find-tag':
@@ -244,8 +244,8 @@ Examples:
           process.exit(1);
         }
         const taggedCommands = registry.findByTag(tag);
-        console.log(`Commands with tag '${tag}':`);
-        taggedCommands.forEach(cmd => console.log(`  ${cmd.command} - ${cmd.description}`));
+        console.info(`Commands with tag '${tag}':`);
+        taggedCommands.forEach(cmd => console.info(`  ${cmd.command} - ${cmd.description}`));
         break;
 
       case 'search':
@@ -255,8 +255,8 @@ Examples:
           process.exit(1);
         }
         const searchResults = registry.search(pattern);
-        console.log(`Commands matching '${pattern}':`);
-        searchResults.forEach(cmd => console.log(`  ${cmd.command} - ${cmd.description}`));
+        console.info(`Commands matching '${pattern}':`);
+        searchResults.forEach(cmd => console.info(`  ${cmd.command} - ${cmd.description}`));
         break;
 
       default:

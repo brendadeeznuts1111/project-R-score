@@ -48,17 +48,17 @@ export class HyperMetricsCommand {
   }
 
   static async execute(): Promise<void> {
-    console.log('\n📈 EMPIRE PRO METRICS DASHBOARD\n' + '═'.repeat(80));
+    console.info('\n📈 EMPIRE PRO METRICS DASHBOARD\n' + '═'.repeat(80));
 
     // Core Metrics Section
-    console.log('\n🎯 CORE PERFORMANCE METRICS');
+    console.info('\n🎯 CORE PERFORMANCE METRICS');
     const metrics = this.getMetricsData();
     
     metrics.forEach(metric => {
       const trendEmoji = metric.trend === 'up' ? '📈' : metric.trend === 'down' ? '📉' : '➡️';
       const displayText = metric.emoji ? `${metric.emoji} ${metric.name}` : metric.name;
       
-      console.log(HyperlinkFormatter.create({
+      console.info(HyperlinkFormatter.create({
         url: metric.url,
         text: `${displayText} │ ${metric.value} │ ${trendEmoji}`,
         id: `metric:${metric.name.toLowerCase().replace(' ', '-')}`
@@ -66,9 +66,9 @@ export class HyperMetricsCommand {
     });
 
     // Performance Benchmarks
-    console.log('\n⚡ PERFORMANCE BENCHMARKS');
-    console.log('Operation          │ Time      │ Throughput │ Efficiency │ Link');
-    console.log('─'.repeat(80));
+    console.info('\n⚡ PERFORMANCE BENCHMARKS');
+    console.info('Operation          │ Time      │ Throughput │ Efficiency │ Link');
+    console.info('─'.repeat(80));
     
     const performance = this.getPerformanceData();
     performance.forEach(perf => {
@@ -77,7 +77,7 @@ export class HyperMetricsCommand {
       const paddedThroughput = perf.throughput.padEnd(10);
       const paddedEfficiency = perf.efficiency.padEnd(10);
       
-      console.log(HyperlinkFormatter.create({
+      console.info(HyperlinkFormatter.create({
         url: perf.url,
         text: `${paddedOp} │ ${paddedTime} │ ${paddedThroughput} │ ${paddedEfficiency} │ View`,
         id: `perf:${perf.operation.toLowerCase().replace(/[^a-z0-9]/g, '-')}`
@@ -85,15 +85,15 @@ export class HyperMetricsCommand {
     });
 
     // Unicode Width Analysis
-    console.log('\n🌏 UNICODE WIDTH ANALYSIS');
+    console.info('\n🌏 UNICODE WIDTH ANALYSIS');
     this.showUnicodeAnalysis();
 
     // Real-time Stream Demo
-    console.log('\n🔄 REAL-TIME STREAM METRICS');
+    console.info('\n🔄 REAL-TIME STREAM METRICS');
     await this.showStreamMetrics();
 
     // Summary
-    console.log('\n📋 METRICS SUMMARY');
+    console.info('\n📋 METRICS SUMMARY');
     this.showSummary();
   }
 
@@ -110,7 +110,7 @@ export class HyperMetricsCommand {
     unicodeExamples.forEach(example => {
       const status = example.actual === example.expected ? '✅' : '❌';
       const efficiency = example.text.length / example.actual;
-      console.log(`  ${status} ${example.text.padEnd(15)} │ Expected: ${example.expected} │ Actual: ${example.actual} │ ${efficiency.toFixed(2)}x`);
+      console.info(`  ${status} ${example.text.padEnd(15)} │ Expected: ${example.expected} │ Actual: ${example.actual} │ ${efficiency.toFixed(2)}x`);
     });
   }
 
@@ -127,7 +127,7 @@ export class HyperMetricsCommand {
       const bar = '█'.repeat(Math.floor(data.efficiency));
       const emptyBar = '░'.repeat(Math.max(0, 10 - Math.floor(data.efficiency)));
       
-      console.log(`  ${data.chunk.padEnd(16)} │ ${data.raw}→${data.display} │ ${data.efficiency.toFixed(2)}x │ [${bar}${emptyBar}]`);
+      console.info(`  ${data.chunk.padEnd(16)} │ ${data.raw}→${data.display} │ ${data.efficiency.toFixed(2)}x │ [${bar}${emptyBar}]`);
     }
   }
 
@@ -137,12 +137,12 @@ export class HyperMetricsCommand {
     const unicodeSupport = '99.8%';
     const streamPerformance = '2,458/s';
 
-    console.log(`  📊 Total Metrics: ${totalMetrics}`);
-    console.log(`  ⚡ Avg Efficiency: ${avgEfficiency}x`);
-    console.log(`  🌍 Unicode Support: ${unicodeSupport}`);
-    console.log(`  🚀 Stream Performance: ${streamPerformance}`);
+    console.info(`  📊 Total Metrics: ${totalMetrics}`);
+    console.info(`  ⚡ Avg Efficiency: ${avgEfficiency}x`);
+    console.info(`  🌍 Unicode Support: ${unicodeSupport}`);
+    console.info(`  🚀 Stream Performance: ${streamPerformance}`);
     
-    console.log('\n' + HyperlinkFormatter.empireStatus('METRICS HEALTHY', 'https://status.empire/metrics'));
+    console.info('\n' + HyperlinkFormatter.empireStatus('METRICS HEALTHY', 'https://status.empire/metrics'));
   }
 }
 

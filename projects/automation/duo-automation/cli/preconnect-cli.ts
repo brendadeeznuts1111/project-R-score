@@ -284,19 +284,19 @@ class PreconnectCLI {
   }
 
   public listConfigs(): void {
-    console.log('🚀 Available Preconnect Configurations:');
-    console.log('='.repeat(40));
+    console.info('🚀 Available Preconnect Configurations:');
+    console.info('='.repeat(40));
 
     this.configs.forEach((config, name) => {
       const totalDomains = config.domains.length;
       const totalOrigins = config.origins.length;
       const totalResources = Object.values(config.resources).flat().length;
 
-      console.log(`\n📋 ${name}: ${config.name}`);
-      console.log(`   Domains: ${totalDomains}`);
-      console.log(`   Origins: ${totalOrigins}`);
-      console.log(`   Resources: ${totalResources}`);
-      console.log(`   DNS Prefetch: ${config.dnsPrefetch.length}`);
+      console.info(`\n📋 ${name}: ${config.name}`);
+      console.info(`   Domains: ${totalDomains}`);
+      console.info(`   Origins: ${totalOrigins}`);
+      console.info(`   Resources: ${totalResources}`);
+      console.info(`   DNS Prefetch: ${config.dnsPrefetch.length}`);
     });
   }
 
@@ -324,41 +324,41 @@ class PreconnectCLI {
     const filePath = outputPath || join(process.cwd(), defaultFileName);
     writeFileSync(filePath, content);
 
-    console.log(`✅ ${format.toUpperCase()} configuration saved to: ${filePath}`);
+    console.info(`✅ ${format.toUpperCase()} configuration saved to: ${filePath}`);
   }
 
   public showHelp(): void {
-    console.log('🚀 Preconnect Optimization CLI');
-    console.log('='.repeat(35));
-    console.log('');
-    console.log('USAGE:');
-    console.log('  bun run preconnect-cli.ts <command> [options]');
-    console.log('');
-    console.log('COMMANDS:');
-    console.log('  list                    List available configurations');
-    console.log('  generate <config>       Generate HTML preconnect links');
-    console.log('  nginx <config>          Generate nginx configuration');
-    console.log('  report <config>         Generate performance report');
-    console.log('  save <config> <format>  Save configuration to file');
-    console.log('  help                    Show this help message');
-    console.log('');
-    console.log('CONFIGURATIONS:');
-    console.log('  production              Full optimization for production');
-    console.log('  development             Lightweight for development');
-    console.log('  minimal                 Minimal for slow networks');
-    console.log('');
-    console.log('FORMATS:');
-    console.log('  html                    HTML preconnect links');
-    console.log('  nginx                   Nginx configuration');
-    console.log('  report                  Performance report');
-    console.log('');
-    console.log('EXAMPLES:');
-    console.log('  bun run preconnect-cli.ts list');
-    console.log('  bun run preconnect-cli.ts generate production');
-    console.log('  bun run preconnect-cli.ts nginx production');
-    console.log('  bun run preconnect-cli.ts report production');
-    console.log('  bun run preconnect-cli.ts save production html');
-    console.log('');
+    console.info('🚀 Preconnect Optimization CLI');
+    console.info('='.repeat(35));
+    console.info('');
+    console.info('USAGE:');
+    console.info('  bun run preconnect-cli.ts <command> [options]');
+    console.info('');
+    console.info('COMMANDS:');
+    console.info('  list                    List available configurations');
+    console.info('  generate <config>       Generate HTML preconnect links');
+    console.info('  nginx <config>          Generate nginx configuration');
+    console.info('  report <config>         Generate performance report');
+    console.info('  save <config> <format>  Save configuration to file');
+    console.info('  help                    Show this help message');
+    console.info('');
+    console.info('CONFIGURATIONS:');
+    console.info('  production              Full optimization for production');
+    console.info('  development             Lightweight for development');
+    console.info('  minimal                 Minimal for slow networks');
+    console.info('');
+    console.info('FORMATS:');
+    console.info('  html                    HTML preconnect links');
+    console.info('  nginx                   Nginx configuration');
+    console.info('  report                  Performance report');
+    console.info('');
+    console.info('EXAMPLES:');
+    console.info('  bun run preconnect-cli.ts list');
+    console.info('  bun run preconnect-cli.ts generate production');
+    console.info('  bun run preconnect-cli.ts nginx production');
+    console.info('  bun run preconnect-cli.ts report production');
+    console.info('  bun run preconnect-cli.ts save production html');
+    console.info('');
   }
 
   async run(): Promise<void> {
@@ -381,7 +381,7 @@ class PreconnectCLI {
             console.error('❌ Configuration name required');
             process.exit(1);
           }
-          console.log(this.generateHTML(configName));
+          console.info(this.generateHTML(configName));
           break;
         case 'nginx':
           const nginxConfig = args[1];
@@ -389,7 +389,7 @@ class PreconnectCLI {
             console.error('❌ Configuration name required');
             process.exit(1);
           }
-          console.log(this.generateNGINX(nginxConfig));
+          console.info(this.generateNGINX(nginxConfig));
           break;
         case 'report':
           const reportConfig = args[1];
@@ -397,7 +397,7 @@ class PreconnectCLI {
             console.error('❌ Configuration name required');
             process.exit(1);
           }
-          console.log(this.generatePerformanceReport(reportConfig));
+          console.info(this.generatePerformanceReport(reportConfig));
           break;
         case 'save':
           const saveConfig = args[1];
@@ -413,7 +413,7 @@ class PreconnectCLI {
           break;
         default:
           console.error(`❌ Unknown command: ${command}`);
-          console.log('💡 Run "bun run preconnect-cli.ts help" for available commands');
+          console.info('💡 Run "bun run preconnect-cli.ts help" for available commands');
           process.exit(1);
       }
     } catch (error) {

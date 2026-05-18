@@ -33,13 +33,13 @@ describe("Enhanced Testing with Custom Matchers", () => {
   let proxyServerConfiguration: ProxyServerConfig;
 
   beforeAll(async () => {
-    console.log(
+    console.info(
       "🚀 Setting up enhanced test environment with custom matchers..."
     );
   });
 
   afterAll(async () => {
-    console.log("🧹 Cleaning up enhanced test environment...");
+    console.info("🧹 Cleaning up enhanced test environment...");
     if (webSocketProxyServer?.isRunning()) {
       await webSocketProxyServer.stop();
     }
@@ -289,6 +289,6 @@ describe("Custom Matchers Best Practices", () => {
   });
 });
 
-console.log(
+console.info(
   "✅ Enhanced test suite with custom matchers completed successfully!"
 );

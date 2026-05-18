@@ -72,10 +72,10 @@ const enterpriseConfig: EnterpriseConfig = {
 // ============================================================================
 
 async function runCommandAsync(command: string, description: string): Promise<string | null> {
-  console.log(`🔧 ${description}...`);
+  console.info(`🔧 ${description}...`);
   try {
     const result = execSync(command, { encoding: 'utf-8' });
-    console.log(`✅ ${description} completed`);
+    console.info(`✅ ${description} completed`);
     return result.trim();
   } catch (error: any) {
     console.error(`❌ ${description} failed:`, error.message);
@@ -99,7 +99,7 @@ function getPackageInfo() {
     };
   } catch (error) {
     // Fallback to bun pm commands with proper parsing
-    console.log('⚠️ Using fallback package info retrieval...');
+    console.info('⚠️ Using fallback package info retrieval...');
     const name =
       runCommand('bun pm pkg get name', 'Getting package name')?.replace(/"/g, '') || 'unknown';
     const version =
@@ -129,7 +129,7 @@ function createTimestamp(): string {
 function ensureDirectory(dirPath: string): void {
   if (!existsSync(dirPath)) {
     mkdirSync(dirPath, { recursive: true });
-    console.log(`📁 Created directory: ${dirPath}`);
+    console.info(`📁 Created directory: ${dirPath}`);
   }
 }
 
@@ -149,7 +149,7 @@ class EnterprisePackageManager {
     issues: string[];
     recommendations: string[];
   }> {
-    console.log('🔍 Performing enterprise package audit...');
+    console.info('🔍 Performing enterprise package audit...');
 
     const issues: string[] = [];
     const recommendations: string[] = [];
@@ -159,7 +159,7 @@ class EnterprisePackageManager {
     try {
       packageJson = JSON.parse(readFileSync('package.json', 'utf-8'));
     } catch (error) {
-      console.log('⚠️ Using fallback package.json parsing...');
+      console.info('⚠️ Using fallback package.json parsing...');
       // Use a simple approach for package info
       packageJson = {
         name: 'fantasy42-fire22-registry',
@@ -214,7 +214,7 @@ class EnterprisePackageManager {
     blockers: string[];
     warnings: string[];
   }> {
-    console.log('🏢 Validating package for enterprise deployment...');
+    console.info('🏢 Validating package for enterprise deployment...');
 
     const blockers: string[] = [];
     const warnings: string[] = [];
@@ -253,7 +253,7 @@ class EnterprisePackageManager {
     artifacts: string[];
     config: any;
   }> {
-    console.log(`🚀 Preparing for ${environment} deployment...`);
+    console.info(`🚀 Preparing for ${environment} deployment...`);
 
     const timestamp = createTimestamp();
     const artifacts: string[] = [];
@@ -291,7 +291,7 @@ class EnterprisePackageManager {
 
 class EnterpriseGitManager {
   async createFeatureBranch(featureName: string, description: string): Promise<string> {
-    console.log(`🌿 Creating feature branch for: ${featureName}`);
+    console.info(`🌿 Creating feature branch for: ${featureName}`);
 
     const branchName = `feature/${featureName.toLowerCase().replace(/\s+/g, '-')}`;
     const commitMessage = `feat: ${description}\n\n- ${featureName} implementation\n- Enterprise workflow integration`;
@@ -305,7 +305,7 @@ class EnterpriseGitManager {
   }
 
   async createReleaseBranch(version: string): Promise<string> {
-    console.log(`🚀 Creating release branch for v${version}`);
+    console.info(`🚀 Creating release branch for v${version}`);
 
     const branchName = `release/v${version}`;
     const baseBranch = 'develop';
@@ -329,7 +329,7 @@ class EnterpriseGitManager {
     compliant: boolean;
     issues: string[];
   }> {
-    console.log(`🔍 Validating branch compliance: ${branchName}`);
+    console.info(`🔍 Validating branch compliance: ${branchName}`);
 
     const issues: string[] = [];
 
@@ -374,7 +374,7 @@ class EnterpriseDeploymentManager {
     deploymentId: string;
     url?: string;
   }> {
-    console.log(`🚀 Deploying to ${environment} environment...`);
+    console.info(`🚀 Deploying to ${environment} environment...`);
 
     const deploymentId = `deploy-${environment}-${createTimestamp()}`;
 
@@ -400,7 +400,7 @@ class EnterpriseDeploymentManager {
   }
 
   private async runPreDeploymentChecks(environment: string): Promise<void> {
-    console.log('🔍 Running pre-deployment checks...');
+    console.info('🔍 Running pre-deployment checks...');
 
     // Health checks
     if (this.config.deployment.healthChecks) {
@@ -414,12 +414,12 @@ class EnterpriseDeploymentManager {
   }
 
   private async checkEnvironmentHealth(environment: string): Promise<void> {
-    console.log(`🏥 Checking ${environment} environment health...`);
+    console.info(`🏥 Checking ${environment} environment health...`);
     // Implement environment health checks
   }
 
   private async validateSecurityCompliance(): Promise<void> {
-    console.log('🔐 Validating security compliance...');
+    console.info('🔐 Validating security compliance...');
     // Implement security compliance checks
   }
 
@@ -430,11 +430,11 @@ class EnterpriseDeploymentManager {
     success: boolean;
     url?: string;
   }> {
-    console.log(`📦 Deploying ${artifacts.length} artifacts to ${environment}...`);
+    console.info(`📦 Deploying ${artifacts.length} artifacts to ${environment}...`);
 
     // Simulate deployment process
     for (const artifact of artifacts) {
-      console.log(`  📤 Deploying: ${artifact}`);
+      console.info(`  📤 Deploying: ${artifact}`);
     }
 
     return {
@@ -444,7 +444,7 @@ class EnterpriseDeploymentManager {
   }
 
   private async runPostDeploymentChecks(environment: string, deploymentResult: any): Promise<void> {
-    console.log('✅ Running post-deployment validation...');
+    console.info('✅ Running post-deployment validation...');
 
     // Health checks
     await this.validateDeploymentHealth(environment);
@@ -456,12 +456,12 @@ class EnterpriseDeploymentManager {
   }
 
   private async validateDeploymentHealth(environment: string): Promise<void> {
-    console.log(`🏥 Validating deployment health for ${environment}...`);
+    console.info(`🏥 Validating deployment health for ${environment}...`);
     // Implement deployment health validation
   }
 
   private async setupMonitoring(environment: string): Promise<void> {
-    console.log(`📊 Setting up monitoring for ${environment}...`);
+    console.info(`📊 Setting up monitoring for ${environment}...`);
     // Implement monitoring setup
   }
 }
@@ -471,60 +471,60 @@ class EnterpriseDeploymentManager {
 // ============================================================================
 
 async function demonstrateEnterpriseWorkflow() {
-  console.log('🚀 ENTERPRISE WORKFLOW AUTOMATION');
-  console.log('================================');
+  console.info('🚀 ENTERPRISE WORKFLOW AUTOMATION');
+  console.info('================================');
 
   const packageManager = new EnterprisePackageManager();
   const gitManager = new EnterpriseGitManager();
   const deploymentManager = new EnterpriseDeploymentManager();
 
   const { name, version } = getPackageInfo();
-  console.log(`📦 Package: ${name} v${version}`);
-  console.log('');
+  console.info(`📦 Package: ${name} v${version}`);
+  console.info('');
 
   try {
     // 1. Enterprise Package Audit
-    console.log('1. 🔍 Enterprise Package Audit:');
+    console.info('1. 🔍 Enterprise Package Audit:');
     const auditResult = await packageManager.auditPackage();
-    console.log(`✅ Audit ${auditResult.passed ? 'PASSED' : 'FAILED'}`);
+    console.info(`✅ Audit ${auditResult.passed ? 'PASSED' : 'FAILED'}`);
     if (auditResult.issues.length > 0) {
-      auditResult.issues.forEach(issue => console.log(`  ❌ ${issue}`));
+      auditResult.issues.forEach(issue => console.info(`  ❌ ${issue}`));
     }
     if (auditResult.recommendations.length > 0) {
-      auditResult.recommendations.forEach(rec => console.log(`  💡 ${rec}`));
+      auditResult.recommendations.forEach(rec => console.info(`  💡 ${rec}`));
     }
 
     // 2. Enterprise Validation
-    console.log('\n2. 🏢 Enterprise Validation:');
+    console.info('\n2. 🏢 Enterprise Validation:');
     const validationResult = await packageManager.validateForEnterprise();
-    console.log(`✅ Validation ${validationResult.deployable ? 'PASSED' : 'FAILED'}`);
+    console.info(`✅ Validation ${validationResult.deployable ? 'PASSED' : 'FAILED'}`);
     if (validationResult.blockers.length > 0) {
-      validationResult.blockers.forEach(blocker => console.log(`  🚫 ${blocker}`));
+      validationResult.blockers.forEach(blocker => console.info(`  🚫 ${blocker}`));
     }
     if (validationResult.warnings.length > 0) {
-      validationResult.warnings.forEach(warning => console.log(`  ⚠️ ${warning}`));
+      validationResult.warnings.forEach(warning => console.info(`  ⚠️ ${warning}`));
     }
 
     // 3. Git Workflow Demonstration
-    console.log('\n3. 🌿 Git Workflow Demonstration:');
+    console.info('\n3. 🌿 Git Workflow Demonstration:');
     const gitInfo = getGitInfo();
-    console.log(`📋 Current branch: ${gitInfo.branch}`);
-    console.log(`🔗 Current commit: ${gitInfo.commit}`);
+    console.info(`📋 Current branch: ${gitInfo.branch}`);
+    console.info(`🔗 Current commit: ${gitInfo.commit}`);
 
     // Validate current branch
     const branchValidation = await gitManager.validateBranchCompliance(gitInfo.branch);
-    console.log(`✅ Branch validation ${branchValidation.compliant ? 'PASSED' : 'FAILED'}`);
+    console.info(`✅ Branch validation ${branchValidation.compliant ? 'PASSED' : 'FAILED'}`);
     if (branchValidation.issues.length > 0) {
-      branchValidation.issues.forEach(issue => console.log(`  ❌ ${issue}`));
+      branchValidation.issues.forEach(issue => console.info(`  ❌ ${issue}`));
     }
 
     // 4. Deployment Preparation
     if (validationResult.deployable) {
-      console.log('\n4. 🚀 Deployment Preparation:');
+      console.info('\n4. 🚀 Deployment Preparation:');
       const deploymentPrep = await packageManager.prepareForDeployment('staging');
-      console.log(`✅ Deployment preparation completed`);
-      console.log(`📦 Artifacts: ${deploymentPrep.artifacts.join(', ')}`);
-      console.log(`🔗 Deployment manifest: deployment-manifest-staging-*.json`);
+      console.info(`✅ Deployment preparation completed`);
+      console.info(`📦 Artifacts: ${deploymentPrep.artifacts.join(', ')}`);
+      console.info(`🔗 Deployment manifest: deployment-manifest-staging-*.json`);
     }
   } catch (error) {
     console.error('❌ Enterprise workflow failed:', error);
@@ -532,234 +532,234 @@ async function demonstrateEnterpriseWorkflow() {
 }
 
 function demonstratePublishWorkflow() {
-  console.log('📤 PUBLISHING WORKFLOW DEMONSTRATION');
-  console.log('====================================');
+  console.info('📤 PUBLISHING WORKFLOW DEMONSTRATION');
+  console.info('====================================');
 
   const { name, version, description, license } = getPackageInfo();
-  console.log(`📦 Package: ${name} v${version}`);
-  console.log(`📝 Description: ${description}`);
-  console.log(`📄 License: ${license}`);
-  console.log('');
+  console.info(`📦 Package: ${name} v${version}`);
+  console.info(`📝 Description: ${description}`);
+  console.info(`📄 License: ${license}`);
+  console.info('');
 
   // Pre-publish validation
-  console.log('1. 🔍 Pre-publish Validation:');
+  console.info('1. 🔍 Pre-publish Validation:');
   runCommand('bun pm pkg fix', 'Fixing package.json issues');
   runCommand('bun pm pkg get name version author license', 'Validating package metadata');
 
-  console.log('\n2. 📋 Publishing Preview:');
-  console.log('bun publish --dry-run');
-  console.log('✅ Shows what would be published without actually publishing');
-  console.log('✅ Validates package structure and files');
-  console.log('');
+  console.info('\n2. 📋 Publishing Preview:');
+  console.info('bun publish --dry-run');
+  console.info('✅ Shows what would be published without actually publishing');
+  console.info('✅ Validates package structure and files');
+  console.info('');
 
-  console.log('3. 🔐 Authentication Methods:');
-  console.log('# Browser-based 2FA (default)');
-  console.log('bun publish --auth-type web');
-  console.log('');
-  console.log('# CLI-based 2FA');
-  console.log('bun publish --auth-type legacy');
-  console.log('');
-  console.log('# Direct OTP (for automation)');
-  console.log('bun publish --otp 123456');
-  console.log('');
+  console.info('3. 🔐 Authentication Methods:');
+  console.info('# Browser-based 2FA (default)');
+  console.info('bun publish --auth-type web');
+  console.info('');
+  console.info('# CLI-based 2FA');
+  console.info('bun publish --auth-type legacy');
+  console.info('');
+  console.info('# Direct OTP (for automation)');
+  console.info('bun publish --otp 123456');
+  console.info('');
 
-  console.log('4. 🏷️  Tag-based Publishing:');
-  console.log('# Latest release');
-  console.log('bun publish --tag latest');
-  console.log('');
-  console.log('# Beta release');
-  console.log('bun publish --tag beta');
-  console.log('');
-  console.log('# Alpha release');
-  console.log('bun publish --tag alpha');
-  console.log('');
-  console.log('# Enterprise release');
-  console.log('bun publish --tag enterprise');
-  console.log('');
+  console.info('4. 🏷️  Tag-based Publishing:');
+  console.info('# Latest release');
+  console.info('bun publish --tag latest');
+  console.info('');
+  console.info('# Beta release');
+  console.info('bun publish --tag beta');
+  console.info('');
+  console.info('# Alpha release');
+  console.info('bun publish --tag alpha');
+  console.info('');
+  console.info('# Enterprise release');
+  console.info('bun publish --tag enterprise');
+  console.info('');
 
-  console.log('5. 🌍 Registry Options:');
-  console.log('# NPM registry');
-  console.log('bun publish --registry https://registry.npmjs.org/');
-  console.log('');
-  console.log('# Enterprise registry');
-  console.log('bun publish --registry https://registry.fire22.com');
-  console.log('');
-  console.log('# Private registry with token');
-  console.log('NPM_TOKEN=token bun publish --registry https://private-registry.com');
-  console.log('');
+  console.info('5. 🌍 Registry Options:');
+  console.info('# NPM registry');
+  console.info('bun publish --registry https://registry.npmjs.org/');
+  console.info('');
+  console.info('# Enterprise registry');
+  console.info('bun publish --registry https://registry.fire22.com');
+  console.info('');
+  console.info('# Private registry with token');
+  console.info('NPM_TOKEN=token bun publish --registry https://private-registry.com');
+  console.info('');
 }
 
 function demonstrateUpdateWorkflow() {
-  console.log('🔄 DEPENDENCY UPDATE WORKFLOW');
-  console.log('==============================');
+  console.info('🔄 DEPENDENCY UPDATE WORKFLOW');
+  console.info('==============================');
 
-  console.log('1. 📊 Current Dependency Status:');
+  console.info('1. 📊 Current Dependency Status:');
   runCommand('bun pm ls | head -5', 'Checking current dependencies');
 
-  console.log('\n2. 👁️  Update Preview:');
-  console.log('bun update --dry-run');
-  console.log('✅ Shows what would be updated without making changes');
-  console.log('✅ Helps plan update strategy');
-  console.log('');
+  console.info('\n2. 👁️  Update Preview:');
+  console.info('bun update --dry-run');
+  console.info('✅ Shows what would be updated without making changes');
+  console.info('✅ Helps plan update strategy');
+  console.info('');
 
-  console.log('3. 🎯 Interactive Updates:');
-  console.log('bun update --interactive');
-  console.log('✅ Launches terminal interface for package selection');
-  console.log('✅ Shows current vs latest versions');
-  console.log('✅ Allows selective updates');
-  console.log('');
+  console.info('3. 🎯 Interactive Updates:');
+  console.info('bun update --interactive');
+  console.info('✅ Launches terminal interface for package selection');
+  console.info('✅ Shows current vs latest versions');
+  console.info('✅ Allows selective updates');
+  console.info('');
 
-  console.log('4. 📦 Specific Package Updates:');
-  console.log('# Update single package');
-  console.log('bun update lodash');
-  console.log('');
-  console.log('# Update multiple packages');
-  console.log('bun update react @types/node');
-  console.log('');
-  console.log('# Update to latest versions');
-  console.log('bun update --latest');
-  console.log('');
+  console.info('4. 📦 Specific Package Updates:');
+  console.info('# Update single package');
+  console.info('bun update lodash');
+  console.info('');
+  console.info('# Update multiple packages');
+  console.info('bun update react @types/node');
+  console.info('');
+  console.info('# Update to latest versions');
+  console.info('bun update --latest');
+  console.info('');
 
-  console.log('5. 🏭 Enterprise Update Strategies:');
-  console.log('# Security-first updates');
-  console.log('bun update --dry-run | grep -i security');
-  console.log('bun update [security-packages]');
-  console.log('');
-  console.log('# Controlled updates');
-  console.log('bun update --frozen-lockfile  # Fail if lockfile changes');
-  console.log('bun update --ignore-scripts   # Skip potentially problematic scripts');
-  console.log('');
+  console.info('5. 🏭 Enterprise Update Strategies:');
+  console.info('# Security-first updates');
+  console.info('bun update --dry-run | grep -i security');
+  console.info('bun update [security-packages]');
+  console.info('');
+  console.info('# Controlled updates');
+  console.info('bun update --frozen-lockfile  # Fail if lockfile changes');
+  console.info('bun update --ignore-scripts   # Skip potentially problematic scripts');
+  console.info('');
 
-  console.log('6. 🏗️  Workspace Updates:');
-  console.log('# Update all workspaces');
-  console.log('bun update --recursive');
-  console.log('');
-  console.log('# Update specific workspace');
-  console.log("bun update --filter './packages/core'");
-  console.log('');
+  console.info('6. 🏗️  Workspace Updates:');
+  console.info('# Update all workspaces');
+  console.info('bun update --recursive');
+  console.info('');
+  console.info('# Update specific workspace');
+  console.info("bun update --filter './packages/core'");
+  console.info('');
 }
 
 function demonstrateGlobalPackageManagement() {
-  console.log('🌍 GLOBAL PACKAGE MANAGEMENT');
-  console.log('============================');
+  console.info('🌍 GLOBAL PACKAGE MANAGEMENT');
+  console.info('============================');
 
-  console.log('1. 📦 Global Installation:');
-  console.log('# Install CLI tools globally');
-  console.log('bun add --global prettier');
-  console.log('bun add --global eslint');
-  console.log('bun add --global typescript');
-  console.log('');
+  console.info('1. 📦 Global Installation:');
+  console.info('# Install CLI tools globally');
+  console.info('bun add --global prettier');
+  console.info('bun add --global eslint');
+  console.info('bun add --global typescript');
+  console.info('');
 
-  console.log('2. 🔧 Global Binaries:');
-  console.log('# Global packages create symlinks in ~/.bun/bin');
-  console.log('ls -la ~/.bun/bin/');
-  console.log('✅ prettier -> ~/.bun/install/global/prettier');
-  console.log('✅ eslint -> ~/.bun/install/global/eslint');
-  console.log('');
+  console.info('2. 🔧 Global Binaries:');
+  console.info('# Global packages create symlinks in ~/.bun/bin');
+  console.info('ls -la ~/.bun/bin/');
+  console.info('✅ prettier -> ~/.bun/install/global/prettier');
+  console.info('✅ eslint -> ~/.bun/install/global/eslint');
+  console.info('');
 
-  console.log('3. 📋 Global Package Management:');
-  console.log('# List global packages');
-  console.log('bun pm ls -g');
-  console.log('');
-  console.log('# Update global packages');
-  console.log('bun update --global prettier');
-  console.log('');
-  console.log('# Remove global packages');
-  console.log('bun remove --global old-package');
-  console.log('');
+  console.info('3. 📋 Global Package Management:');
+  console.info('# List global packages');
+  console.info('bun pm ls -g');
+  console.info('');
+  console.info('# Update global packages');
+  console.info('bun update --global prettier');
+  console.info('');
+  console.info('# Remove global packages');
+  console.info('bun remove --global old-package');
+  console.info('');
 
-  console.log('4. ⚙️  Global Configuration:');
-  console.log('# In bunfig.toml:');
-  console.log('[install]');
-  console.log('globalDir = "~/.bun/install/global"');
-  console.log('globalBinDir = "~/.bun/bin"');
-  console.log('');
+  console.info('4. ⚙️  Global Configuration:');
+  console.info('# In bunfig.toml:');
+  console.info('[install]');
+  console.info('globalDir = "~/.bun/install/global"');
+  console.info('globalBinDir = "~/.bun/bin"');
+  console.info('');
 }
 
 function demonstrateCICDWorkflows() {
-  console.log('🔄 CI/CD WORKFLOW AUTOMATION');
-  console.log('============================');
+  console.info('🔄 CI/CD WORKFLOW AUTOMATION');
+  console.info('============================');
 
-  console.log('1. 🚀 GitHub Actions Publishing:');
-  console.log('# .github/workflows/publish.yml');
-  console.log('name: Publish Package');
-  console.log('on: release:');
-  console.log('  types: [published]');
-  console.log('');
-  console.log('jobs:');
-  console.log('  publish:');
-  console.log('    runs-on: ubuntu-latest');
-  console.log('    steps:');
-  console.log('      - uses: actions/checkout@v3');
-  console.log('      - uses: oven-sh/setup-bun@v1');
-  console.log('      - run: bun install');
-  console.log('      - run: bun test');
-  console.log('      - run: bun publish --otp ${{ secrets.NPM_OTP }}');
-  console.log('        env:');
-  console.log('          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}');
-  console.log('');
+  console.info('1. 🚀 GitHub Actions Publishing:');
+  console.info('# .github/workflows/publish.yml');
+  console.info('name: Publish Package');
+  console.info('on: release:');
+  console.info('  types: [published]');
+  console.info('');
+  console.info('jobs:');
+  console.info('  publish:');
+  console.info('    runs-on: ubuntu-latest');
+  console.info('    steps:');
+  console.info('      - uses: actions/checkout@v3');
+  console.info('      - uses: oven-sh/setup-bun@v1');
+  console.info('      - run: bun install');
+  console.info('      - run: bun test');
+  console.info('      - run: bun publish --otp ${{ secrets.NPM_OTP }}');
+  console.info('        env:');
+  console.info('          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}');
+  console.info('');
 
-  console.log('2. 🔄 Automated Dependency Updates:');
-  console.log('# Dependabot or Renovate configuration');
-  console.log('# Update dependencies weekly');
-  console.log('bun update --interactive  # Manual review');
-  console.log('bun update --latest       # Automated updates');
-  console.log('bun run test             # Validate updates');
-  console.log('');
+  console.info('2. 🔄 Automated Dependency Updates:');
+  console.info('# Dependabot or Renovate configuration');
+  console.info('# Update dependencies weekly');
+  console.info('bun update --interactive  # Manual review');
+  console.info('bun update --latest       # Automated updates');
+  console.info('bun run test             # Validate updates');
+  console.info('');
 
-  console.log('3. 🏷️  Release Automation:');
-  console.log('# Version bump and publish');
-  console.log('bun pm version patch --no-git-tag-version');
-  console.log('bun run test');
-  console.log('bun publish --tag latest');
-  console.log('');
+  console.info('3. 🏷️  Release Automation:');
+  console.info('# Version bump and publish');
+  console.info('bun pm version patch --no-git-tag-version');
+  console.info('bun run test');
+  console.info('bun publish --tag latest');
+  console.info('');
 
-  console.log('4. 🔒 Security Update Automation:');
-  console.log('# Automated security updates');
-  console.log('bun audit');
-  console.log('bun update [vulnerable-packages]');
-  console.log('bun run test');
-  console.log('bun publish --tag security-patch');
-  console.log('');
+  console.info('4. 🔒 Security Update Automation:');
+  console.info('# Automated security updates');
+  console.info('bun audit');
+  console.info('bun update [vulnerable-packages]');
+  console.info('bun run test');
+  console.info('bun publish --tag security-patch');
+  console.info('');
 }
 
 function demonstrateEnterpriseBestPractices() {
-  console.log('🏢 ENTERPRISE BEST PRACTICES');
-  console.log('============================');
+  console.info('🏢 ENTERPRISE BEST PRACTICES');
+  console.info('============================');
 
-  console.log('1. 📤 Publishing Best Practices:');
-  console.log('✅ Always use --dry-run before publishing');
-  console.log('✅ Use semantic versioning consistently');
-  console.log('✅ Tag releases appropriately (latest, beta, alpha)');
-  console.log('✅ Use --otp for CI/CD automation');
-  console.log('✅ Validate packages before publishing');
-  console.log('✅ Use restricted access for private packages');
-  console.log('');
+  console.info('1. 📤 Publishing Best Practices:');
+  console.info('✅ Always use --dry-run before publishing');
+  console.info('✅ Use semantic versioning consistently');
+  console.info('✅ Tag releases appropriately (latest, beta, alpha)');
+  console.info('✅ Use --otp for CI/CD automation');
+  console.info('✅ Validate packages before publishing');
+  console.info('✅ Use restricted access for private packages');
+  console.info('');
 
-  console.log('2. 🔄 Update Best Practices:');
-  console.log('✅ Use --interactive for controlled updates');
-  console.log('✅ Test thoroughly after major updates');
-  console.log('✅ Update security vulnerabilities immediately');
-  console.log('✅ Use --dry-run to preview changes');
-  console.log('✅ Keep dependencies up to date regularly');
-  console.log('✅ Use --frozen-lockfile in CI/CD');
-  console.log('');
+  console.info('2. 🔄 Update Best Practices:');
+  console.info('✅ Use --interactive for controlled updates');
+  console.info('✅ Test thoroughly after major updates');
+  console.info('✅ Update security vulnerabilities immediately');
+  console.info('✅ Use --dry-run to preview changes');
+  console.info('✅ Keep dependencies up to date regularly');
+  console.info('✅ Use --frozen-lockfile in CI/CD');
+  console.info('');
 
-  console.log('3. 🌍 Global Package Management:');
-  console.log('✅ Use global packages for CLI tools');
-  console.log('✅ Keep global packages updated');
-  console.log('✅ Use globalDir for organized storage');
-  console.log('✅ Ensure globalBinDir is in PATH');
-  console.log('✅ Regularly clean unused global packages');
-  console.log('');
+  console.info('3. 🌍 Global Package Management:');
+  console.info('✅ Use global packages for CLI tools');
+  console.info('✅ Keep global packages updated');
+  console.info('✅ Use globalDir for organized storage');
+  console.info('✅ Ensure globalBinDir is in PATH');
+  console.info('✅ Regularly clean unused global packages');
+  console.info('');
 
-  console.log('4. 🔐 Security Considerations:');
-  console.log('✅ Use NPM_CONFIG_TOKEN for CI/CD');
-  console.log('✅ Enable 2FA for npm accounts');
-  console.log('✅ Use --auth-type legacy for CLI automation');
-  console.log('✅ Regularly audit dependencies');
-  console.log('✅ Use --frozen-lockfile for reproducible builds');
-  console.log('');
+  console.info('4. 🔐 Security Considerations:');
+  console.info('✅ Use NPM_CONFIG_TOKEN for CI/CD');
+  console.info('✅ Enable 2FA for npm accounts');
+  console.info('✅ Use --auth-type legacy for CLI automation');
+  console.info('✅ Regularly audit dependencies');
+  console.info('✅ Use --frozen-lockfile for reproducible builds');
+  console.info('');
 }
 
 // ============================================================================
@@ -770,53 +770,53 @@ async function runCommandLineInterface() {
   const args = process.argv.slice(2);
   const command = args[0];
 
-  console.log('🚀 Fantasy42-Fire22 Enterprise Workflow Automation');
-  console.log('=================================================\n');
+  console.info('🚀 Fantasy42-Fire22 Enterprise Workflow Automation');
+  console.info('=================================================\n');
 
   const packageManager = new EnterprisePackageManager();
   const gitManager = new EnterpriseGitManager();
   const deploymentManager = new EnterpriseDeploymentManager();
 
   const { name, version } = getPackageInfo();
-  console.log(`📦 Package: ${name} v${version}`);
-  console.log('');
+  console.info(`📦 Package: ${name} v${version}`);
+  console.info('');
 
   try {
     switch (command) {
       case 'audit':
-        console.log('🔍 Running Enterprise Package Audit...');
+        console.info('🔍 Running Enterprise Package Audit...');
         const auditResult = await packageManager.auditPackage();
-        console.log(`✅ Audit ${auditResult.passed ? 'PASSED' : 'FAILED'}`);
+        console.info(`✅ Audit ${auditResult.passed ? 'PASSED' : 'FAILED'}`);
         if (auditResult.issues.length > 0) {
-          console.log('❌ Issues:');
-          auditResult.issues.forEach(issue => console.log(`  - ${issue}`));
+          console.info('❌ Issues:');
+          auditResult.issues.forEach(issue => console.info(`  - ${issue}`));
         }
         if (auditResult.recommendations.length > 0) {
-          console.log('💡 Recommendations:');
-          auditResult.recommendations.forEach(rec => console.log(`  - ${rec}`));
+          console.info('💡 Recommendations:');
+          auditResult.recommendations.forEach(rec => console.info(`  - ${rec}`));
         }
         break;
 
       case 'validate':
-        console.log('🏢 Running Enterprise Validation...');
+        console.info('🏢 Running Enterprise Validation...');
         const validationResult = await packageManager.validateForEnterprise();
-        console.log(`✅ Validation ${validationResult.deployable ? 'PASSED' : 'FAILED'}`);
+        console.info(`✅ Validation ${validationResult.deployable ? 'PASSED' : 'FAILED'}`);
         if (validationResult.blockers.length > 0) {
-          console.log('🚫 Blockers:');
-          validationResult.blockers.forEach(blocker => console.log(`  - ${blocker}`));
+          console.info('🚫 Blockers:');
+          validationResult.blockers.forEach(blocker => console.info(`  - ${blocker}`));
         }
         if (validationResult.warnings.length > 0) {
-          console.log('⚠️ Warnings:');
-          validationResult.warnings.forEach(warning => console.log(`  - ${warning}`));
+          console.info('⚠️ Warnings:');
+          validationResult.warnings.forEach(warning => console.info(`  - ${warning}`));
         }
         break;
 
       case 'deploy':
         const environment = args[1] || 'staging';
-        console.log(`🚀 Preparing deployment to ${environment}...`);
+        console.info(`🚀 Preparing deployment to ${environment}...`);
         const deploymentPrep = await packageManager.prepareForDeployment(environment);
-        console.log(`✅ Deployment preparation completed`);
-        console.log(`📦 Artifacts: ${deploymentPrep.artifacts.join(', ')}`);
+        console.info(`✅ Deployment preparation completed`);
+        console.info(`📦 Artifacts: ${deploymentPrep.artifacts.join(', ')}`);
         break;
 
       case 'branch':
@@ -824,18 +824,18 @@ async function runCommandLineInterface() {
         if (action === 'validate') {
           const gitInfo = getGitInfo();
           const branchValidation = await gitManager.validateBranchCompliance(gitInfo.branch);
-          console.log(`✅ Branch validation ${branchValidation.compliant ? 'PASSED' : 'FAILED'}`);
+          console.info(`✅ Branch validation ${branchValidation.compliant ? 'PASSED' : 'FAILED'}`);
           if (branchValidation.issues.length > 0) {
-            branchValidation.issues.forEach(issue => console.log(`  ❌ ${issue}`));
+            branchValidation.issues.forEach(issue => console.info(`  ❌ ${issue}`));
           }
         } else if (action === 'feature') {
           const featureName = args[2];
           const description = args.slice(3).join(' ');
           if (featureName && description) {
             const branchName = await gitManager.createFeatureBranch(featureName, description);
-            console.log(`✅ Created feature branch: ${branchName}`);
+            console.info(`✅ Created feature branch: ${branchName}`);
           } else {
-            console.log(
+            console.info(
               'Usage: bun run enterprise-workflow-automation.bun.ts branch feature <name> <description>'
             );
           }
@@ -843,9 +843,9 @@ async function runCommandLineInterface() {
           const version = args[2];
           if (version) {
             const branchName = await gitManager.createReleaseBranch(version);
-            console.log(`✅ Created release branch: ${branchName}`);
+            console.info(`✅ Created release branch: ${branchName}`);
           } else {
-            console.log(
+            console.info(
               'Usage: bun run enterprise-workflow-automation.bun.ts branch release <version>'
             );
           }
@@ -855,48 +855,48 @@ async function runCommandLineInterface() {
       case 'demo':
         // Run all demonstrations
         await demonstrateEnterpriseWorkflow();
-        console.log('');
+        console.info('');
         demonstratePublishWorkflow();
-        console.log('');
+        console.info('');
         demonstrateUpdateWorkflow();
-        console.log('');
+        console.info('');
         demonstrateGlobalPackageManagement();
-        console.log('');
+        console.info('');
         demonstrateCICDWorkflows();
-        console.log('');
+        console.info('');
         demonstrateEnterpriseBestPractices();
         break;
 
       default:
-        console.log('🎯 Fantasy42-Fire22 Enterprise Workflow Commands:');
-        console.log('');
-        console.log('📦 Package Management:');
-        console.log('  audit          - Run enterprise package audit');
-        console.log('  validate       - Validate package for enterprise deployment');
-        console.log('  deploy <env>   - Prepare deployment (default: staging)');
-        console.log('');
-        console.log('🌿 Git Workflow:');
-        console.log('  branch validate          - Validate current branch compliance');
-        console.log('  branch feature <name> <desc> - Create feature branch');
-        console.log('  branch release <version>     - Create release branch');
-        console.log('');
-        console.log('🎪 Demonstrations:');
-        console.log('  demo           - Run all workflow demonstrations');
-        console.log('');
-        console.log('📚 Legacy Commands:');
-        console.log('  (run without args to see traditional workflow demos)');
-        console.log('');
+        console.info('🎯 Fantasy42-Fire22 Enterprise Workflow Commands:');
+        console.info('');
+        console.info('📦 Package Management:');
+        console.info('  audit          - Run enterprise package audit');
+        console.info('  validate       - Validate package for enterprise deployment');
+        console.info('  deploy <env>   - Prepare deployment (default: staging)');
+        console.info('');
+        console.info('🌿 Git Workflow:');
+        console.info('  branch validate          - Validate current branch compliance');
+        console.info('  branch feature <name> <desc> - Create feature branch');
+        console.info('  branch release <version>     - Create release branch');
+        console.info('');
+        console.info('🎪 Demonstrations:');
+        console.info('  demo           - Run all workflow demonstrations');
+        console.info('');
+        console.info('📚 Legacy Commands:');
+        console.info('  (run without args to see traditional workflow demos)');
+        console.info('');
 
         // Show traditional workflow demos if no command specified
         if (!command) {
           demonstratePublishWorkflow();
-          console.log('');
+          console.info('');
           demonstrateUpdateWorkflow();
-          console.log('');
+          console.info('');
           demonstrateGlobalPackageManagement();
-          console.log('');
+          console.info('');
           demonstrateCICDWorkflows();
-          console.log('');
+          console.info('');
           demonstrateEnterpriseBestPractices();
         }
     }
@@ -905,19 +905,19 @@ async function runCommandLineInterface() {
     process.exit(1);
   }
 
-  console.log('');
-  console.log('🎉 Enterprise Workflow Automation Complete!');
-  console.log('===========================================');
-  console.log('Your Fantasy42-Fire22 registry now has:');
-  console.log('✅ Complete publishing workflows');
-  console.log('✅ Automated dependency management');
-  console.log('✅ Global package organization');
-  console.log('✅ CI/CD integration patterns');
-  console.log('✅ Enterprise security practices');
-  console.log('✅ Git flow automation');
-  console.log('✅ Deployment orchestration');
-  console.log('');
-  console.log('🚀 Ready for enterprise-scale development and deployment!');
+  console.info('');
+  console.info('🎉 Enterprise Workflow Automation Complete!');
+  console.info('===========================================');
+  console.info('Your Fantasy42-Fire22 registry now has:');
+  console.info('✅ Complete publishing workflows');
+  console.info('✅ Automated dependency management');
+  console.info('✅ Global package organization');
+  console.info('✅ CI/CD integration patterns');
+  console.info('✅ Enterprise security practices');
+  console.info('✅ Git flow automation');
+  console.info('✅ Deployment orchestration');
+  console.info('');
+  console.info('🚀 Ready for enterprise-scale development and deployment!');
 }
 
 // Main execution

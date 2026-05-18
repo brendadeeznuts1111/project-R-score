@@ -100,7 +100,7 @@ const patterns = {
 // Main server
 const port = process.env.PORT || 3000;
 
-console.log(`
+console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  Project Server Starting                                 ║
 ║  Entrypoint: ${Bun.main}${' '.repeat(40 - Bun.main.length)}║
@@ -120,9 +120,9 @@ Bun.serve({
     const session = verifySessionCookie(sessionCookie);
 
     if (session) {
-      console.log(`[${projectContext}] Session verified:`, session);
+      console.info(`[${projectContext}] Session verified:`, session);
     } else {
-      console.log(`[${projectContext}] No valid session - new visitor`);
+      console.info(`[${projectContext}] No valid session - new visitor`);
     }
 
     // Route handling with URLPattern
@@ -221,7 +221,7 @@ Bun.serve({
     if (patterns.proxy.test(url) && req.method === 'GET') {
       const targetUrl = url.searchParams.get('url') || 'https://example.com';
 
-      console.log(`[${projectContext}] Proxy request to: ${targetUrl}`);
+      console.info(`[${projectContext}] Proxy request to: ${targetUrl}`);
 
       try {
         // Use our enhanced fetch proxy service
@@ -235,7 +235,7 @@ Bun.serve({
 
         const proxyResponse = await fetchProxy.handleProxy(proxyRequest);
 
-        console.log(`[${projectContext}] Proxy response: ${proxyResponse.status} (${proxyResponse.timing.total.toFixed(2)}ms)`);
+        console.info(`[${projectContext}] Proxy response: ${proxyResponse.status} (${proxyResponse.timing.total.toFixed(2)}ms)`);
 
         // Return HTML response with proxy info
         const htmlResponse = `
@@ -444,14 +444,14 @@ Bun.serve({
 });
 
 const SERVER_HOST = validateHost(process.env.SERVER_HOST) || 'localhost';
-console.log(`Server listening on http://${SERVER_HOST}:${port}`);
-console.log(`Project context: ${Bun.main}`);
-console.log(`Available endpoints:`);
-console.log(`  GET  /              - Main page with session management`);
-console.log(`  GET  /proxy         - Fetch proxy (add ?url=TARGET)`);
-console.log(`  GET  /proxy-stats   - Proxy statistics and cache info`);
-console.log(`  GET  /health        - Health check`);
-console.log(`  GET  /logout        - Clear session`);
+console.info(`Server listening on http://${SERVER_HOST}:${port}`);
+console.info(`Project context: ${Bun.main}`);
+console.info(`Available endpoints:`);
+console.info(`  GET  /              - Main page with session management`);
+console.info(`  GET  /proxy         - Fetch proxy (add ?url=TARGET)`);
+console.info(`  GET  /proxy-stats   - Proxy statistics and cache info`);
+console.info(`  GET  /health        - Health check`);
+console.info(`  GET  /logout        - Clear session`);
 /**
  * 💡 Performance Tip: For better performance, consider:
  * 1. Using preconnect for frequently accessed domains

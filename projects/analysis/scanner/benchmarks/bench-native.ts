@@ -69,13 +69,13 @@ const ANSI_INPUTS = {
 const stripAnsiRegex = (s: string) => s.replace(/\x1b\[[0-9;]*m/g, '');
 
 for (const [name, input] of Object.entries(ANSI_INPUTS)) {
-	console.log(`  ${D}[${name}] (${input.length} raw, ${vw(input)} visible)${R}`);
+	console.info(`  ${D}[${name}] (${input.length} raw, ${vw(input)} visible)${R}`);
 
 	// Verify correctness first
 	const regexOut = stripAnsiRegex(input);
 	const nativeOut = Bun.stripANSI(input);
 	if (regexOut !== nativeOut) {
-		console.log(
+		console.info(
 			`  ${o(S.red)}⚠ OUTPUT MISMATCH: regex=${JSON.stringify(regexOut)} native=${JSON.stringify(nativeOut)}${R}`,
 		);
 	}
@@ -83,7 +83,7 @@ for (const [name, input] of Object.entries(ANSI_INPUTS)) {
 	const old = bench('regex', () => stripAnsiRegex(input));
 	const neo = bench('Bun.stripANSI', () => Bun.stripANSI(input));
 	report(name, old, neo);
-	console.log();
+	console.info();
 }
 
 // ── Bench 2: ReadableStream.text() vs new Response(stream).text() ──
@@ -137,13 +137,13 @@ report('ReadableStream', r2old, r2new);
 	const verifyStream = makeStream();
 	const verifyText = await verifyStream.text();
 	const streamMatch = Bun.deepEquals(verifyText, STREAM_CONTENT);
-	console.log(
+	console.info(
 		`  Stream correctness: ${streamMatch ? `${o(S.green)}pass${R}` : `${o(S.red)}FAIL${R}`} (Bun.deepEquals)`,
 	);
 }
 
 // Real subprocess benchmark (fewer iterations — spawning is expensive)
-console.log(`\n  ${D}[subprocess] real Bun.spawn + read stderr (100 iterations)${R}`);
+console.info(`\n  ${D}[subprocess] real Bun.spawn + read stderr (100 iterations)${R}`);
 
 const r2subOld = await benchAsync(
 	'Response(proc.stderr)',
@@ -184,14 +184,14 @@ const URL_CASES = {
 // simple: relative URL resolution
 {
 	const {base, relative} = URL_CASES.simple;
-	console.log(`  ${D}[simple] new URL("${relative}", "${base}")${R}`);
+	console.info(`  ${D}[simple] new URL("${relative}", "${base}")${R}`);
 
 	const pathA = new URL(relative, base).pathname;
 	const pathB = Bun.fileURLToPath(new URL(relative, base));
-	console.log(`  URL.pathname:      ${pathA}`);
-	console.log(`  fileURLToPath:     ${pathB}`);
+	console.info(`  URL.pathname:      ${pathA}`);
+	console.info(`  fileURLToPath:     ${pathB}`);
 	const match = pathA === pathB;
-	console.log(`  match: ${match ? `${o(S.green)}true${R}` : `${o(S.red)}false${R}`}\n`);
+	console.info(`  match: ${match ? `${o(S.green)}true${R}` : `${o(S.red)}false${R}`}\n`);
 
 	const old = bench('URL.pathname', () => new URL(relative, base).pathname);
 	const neo = bench('fileURLToPath', () => Bun.fileURLToPath(new URL(relative, base)));
@@ -201,16 +201,16 @@ const URL_CASES = {
 // spaces: percent-encoding correctness
 {
 	const {url} = URL_CASES.spaces;
-	console.log(`\n  ${D}[spaces] "${url}"${R}`);
+	console.info(`\n  ${D}[spaces] "${url}"${R}`);
 
 	const pathA = new URL(url).pathname;
 	const pathB = Bun.fileURLToPath(url);
 	const decodedA = pathA.includes(' ');
 	const decodedB = pathB.includes(' ');
-	console.log(
+	console.info(
 		`  URL.pathname:      ${pathA}  (decoded: ${decodedA ? `${o(S.green)}true${R}` : `${o(S.red)}false${R}`})`,
 	);
-	console.log(
+	console.info(
 		`  fileURLToPath:     ${pathB}  (decoded: ${decodedB ? `${o(S.green)}true${R}` : `${o(S.red)}false${R}`})`,
 	);
 
@@ -222,12 +222,12 @@ const URL_CASES = {
 // unicode
 {
 	const {url} = URL_CASES.unicode;
-	console.log(`\n  ${D}[unicode] "${url}"${R}`);
+	console.info(`\n  ${D}[unicode] "${url}"${R}`);
 
 	const pathA = new URL(url).pathname;
 	const pathB = Bun.fileURLToPath(url);
-	console.log(`  URL.pathname:      ${pathA}`);
-	console.log(`  fileURLToPath:     ${pathB}`);
+	console.info(`  URL.pathname:      ${pathA}`);
+	console.info(`  fileURLToPath:     ${pathB}`);
 
 	const old = bench('URL.pathname', () => new URL(url).pathname);
 	const neo = bench('fileURLToPath', () => Bun.fileURLToPath(url));
@@ -237,14 +237,14 @@ const URL_CASES = {
 // deep: deeply nested path resolution
 {
 	const {base, relative} = URL_CASES.deep;
-	console.log(`\n  ${D}[deep] new URL("${relative}", "${base}")${R}`);
+	console.info(`\n  ${D}[deep] new URL("${relative}", "${base}")${R}`);
 
 	const pathA = new URL(relative, base).pathname;
 	const pathB = Bun.fileURLToPath(new URL(relative, base));
-	console.log(`  URL.pathname:      ${pathA}`);
-	console.log(`  fileURLToPath:     ${pathB}`);
+	console.info(`  URL.pathname:      ${pathA}`);
+	console.info(`  fileURLToPath:     ${pathB}`);
 	const match = pathA === pathB;
-	console.log(`  match: ${match ? `${o(S.green)}true${R}` : `${o(S.red)}false${R}`}\n`);
+	console.info(`  match: ${match ? `${o(S.green)}true${R}` : `${o(S.red)}false${R}`}\n`);
 
 	const old = bench('URL.pathname', () => new URL(relative, base).pathname);
 	const neo = bench('fileURLToPath', () => Bun.fileURLToPath(new URL(relative, base)));
@@ -280,7 +280,7 @@ WRAP_INPUTS.noTrimLong = '  ' + WRAP_INPUTS.long + '  ';
 	const wrapLines = wrapped.split('\n');
 	const allColored = wrapLines.every(l => l.includes('\x1b[31m'));
 	const passColor = allColored ? o(S.green) : o(S.red);
-	console.log(
+	console.info(
 		`  Color preservation: ${passColor}${allColored ? 'pass' : 'FAIL'}${R} (${wrapLines.length} lines, all re-open red)`,
 	);
 }
@@ -300,10 +300,10 @@ for (const [name, input, opts] of wrapCases) {
 	wrapRows.push({Case: name, Chars: input.length, Mean: fmt(r.mean_ns), Min: fmt(r.min_ns), Max: fmt(r.max_ns)});
 }
 // @ts-expect-error Bun.inspect.table accepts options as third arg
-console.log(Bun.inspect.table(wrapRows, ['Case', 'Chars', 'Mean', 'Min', 'Max'], {colors: useColor}));
+console.info(Bun.inspect.table(wrapRows, ['Case', 'Chars', 'Mean', 'Min', 'Max'], {colors: useColor}));
 
 // Option variants (all on long input)
-console.log(`  ${D}[option variants] (long input, 20 cols)${R}`);
+console.info(`  ${D}[option variants] (long input, 20 cols)${R}`);
 
 const optCases: [string, Parameters<typeof Bun.wrapAnsi>[2]][] = [
 	['default', undefined],
@@ -319,7 +319,7 @@ for (const [name, opts] of optCases) {
 	optRows.push({Option: name, Mean: fmt(r.mean_ns), Min: fmt(r.min_ns)});
 }
 // @ts-expect-error Bun.inspect.table accepts options as third arg
-console.log(Bun.inspect.table(optRows, ['Option', 'Mean', 'Min'], {colors: useColor}));
+console.info(Bun.inspect.table(optRows, ['Option', 'Mean', 'Min'], {colors: useColor}));
 
 // ── Bench 5: Bun.stringWidth ──────────────────────────────────────────
 // Ref: https://bun.com/docs/api/utils#bun-stringwidth
@@ -382,7 +382,7 @@ const SW_INPUTS: Record<string, {label: string; value: string}> = {
 }
 
 // Size benchmarks (matching Bun doc categories)
-console.log(`\n  ${D}[size scaling — default options]${R}`);
+console.info(`\n  ${D}[size scaling — default options]${R}`);
 
 const swRows: {Input: string; Chars: number; Visible: number; Mean: string; Min: string; Max: string}[] = [];
 for (const [, {label, value}] of Object.entries(SW_INPUTS)) {
@@ -397,10 +397,10 @@ for (const [, {label, value}] of Object.entries(SW_INPUTS)) {
 	});
 }
 // @ts-expect-error Bun.inspect.table accepts options as third arg
-console.log(Bun.inspect.table(swRows, ['Input', 'Chars', 'Visible', 'Mean', 'Min', 'Max'], {colors: useColor}));
+console.info(Bun.inspect.table(swRows, ['Input', 'Chars', 'Visible', 'Mean', 'Min', 'Max'], {colors: useColor}));
 
 // Option variants
-console.log(`  ${D}[option variants] (500 chars ascii)${R}`);
+console.info(`  ${D}[option variants] (500 chars ascii)${R}`);
 
 const swOptCases: [string, Parameters<typeof Bun.stringWidth>[1]][] = [
 	['default', undefined],
@@ -415,7 +415,7 @@ for (const [name, opts] of swOptCases) {
 	swOptRows.push({Option: name, Mean: fmt(r.mean_ns), Min: fmt(r.min_ns)});
 }
 // @ts-expect-error Bun.inspect.table accepts options as third arg
-console.log(Bun.inspect.table(swOptRows, ['Option', 'Mean', 'Min'], {colors: useColor}));
+console.info(Bun.inspect.table(swOptRows, ['Option', 'Mean', 'Min'], {colors: useColor}));
 
 // ── Bench 6: Bun.escapeHTML ────────────────────────────────────────
 // Ref: https://bun.com/docs/api/utils#bun-escapehtml
@@ -487,7 +487,7 @@ const EH_INPUTS: Record<string, {label: string; value: string}> = {
 };
 
 // Head-to-head: userland .replace() chain vs Bun.escapeHTML
-console.log(`\n  ${D}[userland vs native — selected sizes]${R}`);
+console.info(`\n  ${D}[userland vs native — selected sizes]${R}`);
 
 const ehCompare: [string, string][] = [
 	['clean500', 'clean (500)'],
@@ -508,7 +508,7 @@ for (const [key, label] of ehCompare) {
 }
 
 // Size scaling table (native only)
-console.log(`\n  ${D}[size scaling — Bun.escapeHTML]${R}`);
+console.info(`\n  ${D}[size scaling — Bun.escapeHTML]${R}`);
 
 const ehRows: {Input: string; Chars: number; Escaped: number; Mean: string; Min: string; Max: string}[] = [];
 for (const [, {label, value}] of Object.entries(EH_INPUTS)) {
@@ -523,7 +523,7 @@ for (const [, {label, value}] of Object.entries(EH_INPUTS)) {
 	});
 }
 // @ts-expect-error Bun.inspect.table accepts options as third arg
-console.log(Bun.inspect.table(ehRows, ['Input', 'Chars', 'Escaped', 'Mean', 'Min', 'Max'], {colors: useColor}));
+console.info(Bun.inspect.table(ehRows, ['Input', 'Chars', 'Escaped', 'Mean', 'Min', 'Max'], {colors: useColor}));
 
 // ── Bench 7: Bun.deepEquals ────────────────────────────────────────
 // Ref: https://bun.com/docs/api/utils#bun-deepequals
@@ -604,7 +604,7 @@ const DE_CASES: {label: string; a: unknown; b: unknown}[] = [
 ];
 
 // Head-to-head: userland vs Bun.deepEquals
-console.log(`\n  ${D}[userland vs native — equal objects]${R}`);
+console.info(`\n  ${D}[userland vs native — equal objects]${R}`);
 
 for (const {label, a, b} of DE_CASES) {
 	const old = bench('userland', () => deepEqualsUserland(a, b));
@@ -613,7 +613,7 @@ for (const {label, a, b} of DE_CASES) {
 }
 
 // Strict mode variants
-console.log(`\n  ${D}[strict vs non-strict mode]${R}`);
+console.info(`\n  ${D}[strict vs non-strict mode]${R}`);
 
 const strictCases: [string, unknown, unknown][] = [
 	['flat 50', makeFlat(50), makeFlat(50)],
@@ -628,10 +628,10 @@ for (const [label, a, b] of strictCases) {
 	strictRows.push({'Case': label, 'Non-strict': fmt(r1.mean_ns), 'Strict': fmt(r2.mean_ns)});
 }
 // @ts-expect-error Bun.inspect.table accepts options as third arg
-console.log(Bun.inspect.table(strictRows, ['Case', 'Non-strict', 'Strict'], {colors: useColor}));
+console.info(Bun.inspect.table(strictRows, ['Case', 'Non-strict', 'Strict'], {colors: useColor}));
 
 // Early-exit benchmark: unequal objects (first key differs)
-console.log(`\n  ${D}[early-exit — unequal at first key]${R}`);
+console.info(`\n  ${D}[early-exit — unequal at first key]${R}`);
 
 const unequalA = makeFlat(500);
 const unequalB = {...makeFlat(500), k0: -1};
@@ -697,7 +697,7 @@ class HeavyCustomInspectClass {
 }
 
 // Benchmark: custom vs default serialization
-console.log(`\n  ${D}[Bun.inspect.custom — custom vs default class serialization]${R}`);
+console.info(`\n  ${D}[Bun.inspect.custom — custom vs default class serialization]${R}`);
 
 const plainInstances = Array.from({length: 50}, (_, i) => new PlainClass(i, `item-${i}`, [i, i + 1, i + 2]));
 const customInstances = Array.from({length: 50}, (_, i) => new CustomInspectClass(i, `item-${i}`, [i, i + 1, i + 2]));
@@ -724,7 +724,7 @@ const heavyInstances = Array.from(
 	const r = bench('heavy custom (50)', () => {
 		for (const inst of heavyInstances) Bun.inspect(inst);
 	});
-	console.log(`  ${D}[heavy custom × 50] ${fmt(r.mean_ns)} mean (${fmt(r.min_ns)} min)${R}`);
+	console.info(`  ${D}[heavy custom × 50] ${fmt(r.mean_ns)} mean (${fmt(r.min_ns)} min)${R}`);
 }
 
 // ── 8b. Bun.inspect — JSON.stringify comparison ─────────────────
@@ -762,7 +762,7 @@ const INSPECT_CASES: {label: string; value: unknown}[] = [
 }
 
 // Head-to-head: JSON.stringify vs Bun.inspect
-console.log(`\n  ${D}[JSON.stringify vs Bun.inspect — 8b]${R}`);
+console.info(`\n  ${D}[JSON.stringify vs Bun.inspect — 8b]${R}`);
 
 for (const {label, value} of INSPECT_CASES) {
 	// JSON.stringify can't handle Map/Set/TypedArray natively — skip those for fair comparison
@@ -773,13 +773,13 @@ for (const {label, value} of INSPECT_CASES) {
 		report(label, old, neo);
 	} else {
 		const r = bench('Bun.inspect', () => Bun.inspect(value));
-		console.log(`  ${D}[${label}] Bun.inspect only: ${fmt(r.mean_ns)} mean${R}`);
+		console.info(`  ${D}[${label}] Bun.inspect only: ${fmt(r.mean_ns)} mean${R}`);
 	}
 }
 
 // ── 8c. Bun.inspect.table ────────────────────────────────────────
 
-console.log(`\n  ${D}[Bun.inspect.table — scaling by row count]${R}`);
+console.info(`\n  ${D}[Bun.inspect.table — scaling by row count]${R}`);
 
 const tableCols = ['ID', 'Name', 'Value', 'Status'];
 function makeTableData(n: number) {
@@ -803,10 +803,10 @@ for (const rowCount of [5, 25, 100, 500]) {
 	tableRows.push({'Rows': rowCount, 'No color': fmt(r1.mean_ns), 'Color': fmt(r2.mean_ns), 'Chars': outputLen});
 }
 // @ts-expect-error Bun.inspect.table accepts options as third arg
-console.log(Bun.inspect.table(tableRows, ['Rows', 'No color', 'Color', 'Chars'], {colors: useColor}));
+console.info(Bun.inspect.table(tableRows, ['Rows', 'No color', 'Color', 'Chars'], {colors: useColor}));
 
 // Column count scaling
-console.log(`\n  ${D}[Bun.inspect.table — scaling by column count]${R}`);
+console.info(`\n  ${D}[Bun.inspect.table — scaling by column count]${R}`);
 
 function makeWideTableData(rows: number, cols: number) {
 	return Array.from({length: rows}, (_, i) => {
@@ -828,10 +828,10 @@ for (const colCount of [4, 10, 22, 40]) {
 	colRows.push({Cols: colCount, Mean: fmt(r.mean_ns), Min: fmt(r.min_ns), Chars: outputLen});
 }
 // @ts-expect-error Bun.inspect.table accepts options as third arg
-console.log(Bun.inspect.table(colRows, ['Cols', 'Mean', 'Min', 'Chars'], {colors: useColor}));
+console.info(Bun.inspect.table(colRows, ['Cols', 'Mean', 'Min', 'Chars'], {colors: useColor}));
 
 // Property filtering: all columns vs subset
-console.log(`\n  ${D}[Bun.inspect.table — property filtering]${R}`);
+console.info(`\n  ${D}[Bun.inspect.table — property filtering]${R}`);
 
 const filterData = Array.from({length: 50}, (_, i) => ({
 	a: i,
@@ -890,7 +890,7 @@ const filterRows: {Variant: string; Mean: string; Min: string; Chars: number}[] 
 	});
 }
 // @ts-expect-error Bun.inspect.table accepts options as third arg
-console.log(Bun.inspect.table(filterRows, ['Variant', 'Mean', 'Min', 'Chars'], {colors: useColor}));
+console.info(Bun.inspect.table(filterRows, ['Variant', 'Mean', 'Min', 'Chars'], {colors: useColor}));
 
 // ── Bench 9: Bun.color ──────────────────────────────────────────────
 // Ref: https://bun.com/docs/api/utils#bun-color
@@ -938,7 +938,7 @@ checkPass('{rgb} returns {r,g,b}', rgbObj != null && rgbObj.r === 255 && rgbObj.
 // Invalid color returns null
 checkPass('invalid color → null', Bun.color('notacolor', 'number') === null);
 
-console.log();
+console.info();
 
 // ── 9b: Userland baseline (lookup table + regex) ────────────────────
 
@@ -996,7 +996,7 @@ function colorToAnsiUserland(input: string): string | null {
 
 // ── 9c: Named color conversions ─────────────────────────────────────
 
-console.log(`  ${B}Named color → number${R}`);
+console.info(`  ${B}Named color → number${R}`);
 {
 	const rows: {Color: string; Userland: string; Native: string; Speedup: string}[] = [];
 	for (const name of COLOR_NAMES) {
@@ -1011,12 +1011,12 @@ console.log(`  ${B}Named color → number${R}`);
 		});
 	}
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(Bun.inspect.table(rows, ['Color', 'Userland', 'Native', 'Speedup'], {colors: useColor}));
+	console.info(Bun.inspect.table(rows, ['Color', 'Userland', 'Native', 'Speedup'], {colors: useColor}));
 }
 
 // ── 9d: Hex color conversions ───────────────────────────────────────
 
-console.log(`  ${B}Hex string → number${R}`);
+console.info(`  ${B}Hex string → number${R}`);
 {
 	const hexInputs = ['#f00', '#ff6600', '#3498db', '#1a2b3c'];
 	const rows: {Input: string; Userland: string; Native: string; Speedup: string}[] = [];
@@ -1032,12 +1032,12 @@ console.log(`  ${B}Hex string → number${R}`);
 		});
 	}
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(Bun.inspect.table(rows, ['Input', 'Userland', 'Native', 'Speedup'], {colors: useColor}));
+	console.info(Bun.inspect.table(rows, ['Input', 'Userland', 'Native', 'Speedup'], {colors: useColor}));
 }
 
 // ── 9e: ANSI output ─────────────────────────────────────────────────
 
-console.log(`  ${B}Color → ANSI escape${R}`);
+console.info(`  ${B}Color → ANSI escape${R}`);
 {
 	const ansiInputs = ['red', 'cyan', '#ff6600', 'rgb(100, 200, 50)'];
 	const rows: {Input: string; Userland: string; Native: string; Speedup: string}[] = [];
@@ -1053,12 +1053,12 @@ console.log(`  ${B}Color → ANSI escape${R}`);
 		});
 	}
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(Bun.inspect.table(rows, ['Input', 'Userland', 'Native', 'Speedup'], {colors: useColor}));
+	console.info(Bun.inspect.table(rows, ['Input', 'Userland', 'Native', 'Speedup'], {colors: useColor}));
 }
 
 // ── 9f: Format conversion matrix ────────────────────────────────────
 
-console.log(`  ${B}Format conversion speed (native only)${R}`);
+console.info(`  ${B}Format conversion speed (native only)${R}`);
 {
 	const formats = ['number', 'css', 'ansi', '{rgb}'] as const;
 	const rows: {'Format': string; 'red': string; '#ff6600': string; 'rgb(100,200,50)': string}[] = [];
@@ -1074,7 +1074,7 @@ console.log(`  ${B}Format conversion speed (native only)${R}`);
 		});
 	}
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(Bun.inspect.table(rows, ['Format', 'red', '#ff6600', 'rgb(100,200,50)'], {colors: useColor}));
+	console.info(Bun.inspect.table(rows, ['Format', 'red', '#ff6600', 'rgb(100,200,50)'], {colors: useColor}));
 }
 
 // ── Bench 10: Bun.hash ─────────────────────────────────────────────
@@ -1109,7 +1109,7 @@ checkPass('crc32 exists', typeof Bun.hash.crc32 === 'function');
 checkPass('adler32 exists', typeof Bun.hash.adler32 === 'function');
 checkPass('cityHash64 exists', typeof Bun.hash.cityHash64 === 'function');
 
-console.log();
+console.info();
 
 // ── 10b: Userland baselines ─────────────────────────────────────────
 
@@ -1141,7 +1141,7 @@ const hashInputs = {
 	huge: 'z'.repeat(100_000),
 };
 
-console.log(`  ${B}djb2 vs fnv1a vs Bun.hash (wyhash)${R}`);
+console.info(`  ${B}djb2 vs fnv1a vs Bun.hash (wyhash)${R}`);
 {
 	const rows: {
 		'Size': string;
@@ -1167,7 +1167,7 @@ console.log(`  ${B}djb2 vs fnv1a vs Bun.hash (wyhash)${R}`);
 		});
 	}
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(
+	console.info(
 		Bun.inspect.table(rows, ['Size', 'Len', 'djb2', 'fnv1a', 'Bun.hash', 'vs djb2', 'vs fnv1a'], {
 			colors: useColor,
 		}),
@@ -1176,7 +1176,7 @@ console.log(`  ${B}djb2 vs fnv1a vs Bun.hash (wyhash)${R}`);
 
 // ── 10d: Algorithm comparison (native only) ─────────────────────────
 
-console.log(`  ${B}Bun.hash algorithm variants (1k string)${R}`);
+console.info(`  ${B}Bun.hash algorithm variants (1k string)${R}`);
 {
 	const input = 'x'.repeat(1_000);
 	const algorithms = [
@@ -1196,12 +1196,12 @@ console.log(`  ${B}Bun.hash algorithm variants (1k string)${R}`);
 		rows.push({Algorithm: name, Mean: fmt(r.mean_ns), Min: fmt(r.min_ns), Output: String(out).slice(0, 20)});
 	}
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(Bun.inspect.table(rows, ['Algorithm', 'Mean', 'Min', 'Output'], {colors: useColor}));
+	console.info(Bun.inspect.table(rows, ['Algorithm', 'Mean', 'Min', 'Output'], {colors: useColor}));
 }
 
 // ── 10e: Typed array vs string input ────────────────────────────────
 
-console.log(`  ${B}String vs Uint8Array input${R}`);
+console.info(`  ${B}String vs Uint8Array input${R}`);
 {
 	const sizes = [100, 1_000, 10_000];
 	const rows: {Size: number; String: string; Uint8Array: string; Ratio: string}[] = [];
@@ -1218,7 +1218,7 @@ console.log(`  ${B}String vs Uint8Array input${R}`);
 		});
 	}
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(Bun.inspect.table(rows, ['Size', 'String', 'Uint8Array', 'Ratio'], {colors: useColor}));
+	console.info(Bun.inspect.table(rows, ['Size', 'String', 'Uint8Array', 'Ratio'], {colors: useColor}));
 }
 
 // ── Summary ─────────────────────────────────────────────────────────

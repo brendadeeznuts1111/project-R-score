@@ -6,7 +6,7 @@ const nanoseconds = () => performance.now() * 1000000;
 
 // Logging functions
 const logInfo = (domain: string, message: string, data?: any) => {
-  console.log(`ℹ️ [${domain}] ${message}`, data || '');
+  console.info(`ℹ️ [${domain}] ${message}`, data || '');
 };
 
 const logDebug = (domain: string, message: string, data?: any) => {

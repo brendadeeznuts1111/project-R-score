@@ -5,14 +5,14 @@ describe("🎯 Bun Run - File Execution Verification", () => {
   test("✅ bun run index.js - creates and runs index.js", async () => {
     // Create index.js file
     const jsContent = `
-console.log('Hello from index.js!');
+console.info('Hello from index.js!');
 const message = 'Bun is running JavaScript successfully';
-console.log(message);
+console.info(message);
 
 // Test some JavaScript features
 const numbers = [1, 2, 3, 4, 5];
 const doubled = numbers.map(n => n * 2);
-console.log('Doubled numbers:', doubled);
+console.info('Doubled numbers:', doubled);
 `;
 
     await Bun.write("/tmp/index.js", jsContent);
@@ -43,7 +43,7 @@ console.log('Doubled numbers:', doubled);
     // Create index.js in subdirectory
     await Bun.write(
       "/tmp/subdir/index.js",
-      "console.log('From subdir/index.js');"
+      "console.info('From subdir/index.js');"
     );
 
     // Execute with relative path
@@ -63,15 +63,15 @@ console.log('Doubled numbers:', doubled);
 import { readFile } from 'fs/promises';
 
 const message = 'ES Module index.js running';
-console.log(message);
+console.info(message);
 
 // Test async/await
 const main = async () => {
   try {
-    console.log('Async/await working in ES module');
-    console.log('Module type:', import.meta.url);
+    console.info('Async/await working in ES module');
+    console.info('Module type:', import.meta.url);
   } catch (error) {
-    console.log('Error handling works:', error.message);
+    console.info('Error handling works:', error.message);
   }
 };
 
@@ -97,7 +97,7 @@ main().catch(console.error);
 const fs = require('fs');
 
 const message = 'CommonJS index.js running';
-console.log(message);
+console.info(message);
 
 // Test require and module.exports
 const utils = {
@@ -105,8 +105,8 @@ const utils = {
   add: (a, b) => a + b
 };
 
-console.log(utils.greet('World'));
-console.log('2 + 3 =', utils.add(2, 3));
+console.info(utils.greet('World'));
+console.info('2 + 3 =', utils.add(2, 3));
 
 module.exports = utils;
 `;
@@ -136,7 +136,7 @@ module.exports = utils;
     await Bun.write("/tmp/package.json", JSON.stringify(packageJson, null, 2));
     await Bun.write(
       "/tmp/index.js",
-      "console.log('This should not run when using bun run index');"
+      "console.info('This should not run when using bun run index');"
     );
 
     // Test that package.json script takes precedence
@@ -163,7 +163,7 @@ module.exports = utils;
     const tsLikeContent = `
 // TypeScript features in .js file (Bun supports this)
 const message = "TypeScript features in JavaScript";
-console.log(message);
+console.info(message);
 
 // Type annotations (will be ignored by runtime but parsed by Bun)
 const name /*: string */ = "Bun";
@@ -171,15 +171,15 @@ const version /*: number */ = 1.0;
 
 // Arrow functions with implicit typing
 const greet = (name) => \`Hello, \${name}!\`;
-console.log(greet(name));
+console.info(greet(name));
 
 // Destructuring
 const [major, minor] = [1, 3];
-console.log(\`Version \${major}.\${minor}\`);
+console.info(\`Version \${major}.\${minor}\`);
 
 // Optional chaining (if supported)
 const config = { api: { url: "http://localhost:3000" } };
-console.log('API URL:', config?.api?.url);
+console.info('API URL:', config?.api?.url);
 `;
 
     await Bun.write("/tmp/index-ts-like.js", tsLikeContent);
@@ -197,13 +197,13 @@ console.log('API URL:', config?.api?.url);
   test("✅ bun run index.js - with environment variables", async () => {
     // Create index.js that uses environment variables
     const envContent = `
-console.log('NODE_ENV:', process.env.NODE_ENV || 'development');
-console.log('Custom var:', process.env.CUSTOM_VAR || 'not set');
+console.info('NODE_ENV:', process.env.NODE_ENV || 'development');
+console.info('Custom var:', process.env.CUSTOM_VAR || 'not set');
 
 // Test process object
-console.log('Platform:', process.platform);
-console.log('Node version:', process.version);
-console.log('Bun version:', typeof Bun !== 'undefined' ? Bun.version : 'N/A');
+console.info('Platform:', process.platform);
+console.info('Node version:', process.version);
+console.info('Bun version:', typeof Bun !== 'undefined' ? Bun.version : 'N/A');
 `;
 
     await Bun.write("/tmp/index-env.js", envContent);

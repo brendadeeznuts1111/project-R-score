@@ -16,28 +16,28 @@ import {
  * Main execution
  */
 async function main() {
-  console.log('🎲 Odds Movement Integration Demo Runner');
-  console.log('==========================================\n');
+  console.info('🎲 Odds Movement Integration Demo Runner');
+  console.info('==========================================\n');
 
-  console.log('This demo will:');
-  console.log('1. 🏗️ Initialize a demo database');
-  console.log('2. 📊 Generate and ingest sample odds data');
-  console.log('3. 🎯 Analyze bet timing patterns');
-  console.log('4. 📈 Generate comprehensive odds movement reports');
-  console.log('5. 🎪 Perform market impact analysis');
-  console.log('6. 💼 Create enhanced financial reports');
-  console.log('7. 📊 Show system statistics\n');
+  console.info('This demo will:');
+  console.info('1. 🏗️ Initialize a demo database');
+  console.info('2. 📊 Generate and ingest sample odds data');
+  console.info('3. 🎯 Analyze bet timing patterns');
+  console.info('4. 📈 Generate comprehensive odds movement reports');
+  console.info('5. 🎪 Perform market impact analysis');
+  console.info('6. 💼 Create enhanced financial reports');
+  console.info('7. 📊 Show system statistics\n');
 
-  console.log(
+  console.info(
     '⚠️  Note: This demo creates a temporary database file (financial-reporting-demo.db)'
   );
-  console.log('   The file will be cleaned up after the demo completes.\n');
+  console.info('   The file will be cleaned up after the demo completes.\n');
 
   // Check if user wants to proceed
   if (process.argv.includes('--yes') || process.argv.includes('-y')) {
-    console.log('🚀 Starting demo automatically...\n');
+    console.info('🚀 Starting demo automatically...\n');
   } else {
-    console.log('Press Enter to start the demo, or Ctrl+C to cancel...');
+    console.info('Press Enter to start the demo, or Ctrl+C to cancel...');
     await new Promise(resolve => {
       process.stdin.once('data', resolve);
     });
@@ -45,32 +45,32 @@ async function main() {
 
   try {
     await runOddsMovementDemo();
-    console.log('\n🎉 Demo completed successfully!');
-    console.log('\n📖 Next steps:');
-    console.log('   • Review the generated reports and analysis');
-    console.log('   • Check the implementation files for production use');
-    console.log('   • Integrate with your live odds feeds');
-    console.log('   • Set up automated monitoring and alerting');
+    console.info('\n🎉 Demo completed successfully!');
+    console.info('\n📖 Next steps:');
+    console.info('   • Review the generated reports and analysis');
+    console.info('   • Check the implementation files for production use');
+    console.info('   • Integrate with your live odds feeds');
+    console.info('   • Set up automated monitoring and alerting');
   } catch (error) {
     console.error('\n❌ Demo failed:', error.message);
-    console.log('\n🔍 Troubleshooting:');
-    console.log('   • Check that all dependencies are installed');
-    console.log('   • Ensure Bun runtime is available');
-    console.log('   • Verify file permissions for database creation');
+    console.info('\n🔍 Troubleshooting:');
+    console.info('   • Check that all dependencies are installed');
+    console.info('   • Ensure Bun runtime is available');
+    console.info('   • Verify file permissions for database creation');
     process.exit(1);
   }
 }
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n\n🛑 Demo interrupted by user');
-  console.log('Cleaning up...');
+  console.info('\n\n🛑 Demo interrupted by user');
+  console.info('Cleaning up...');
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n\n🛑 Demo terminated');
-  console.log('Cleaning up...');
+  console.info('\n\n🛑 Demo terminated');
+  console.info('Cleaning up...');
   process.exit(0);
 });
 

@@ -43,7 +43,7 @@ int get_value(void) {
 	} catch (error) {
 		// If bun:ffi doesn't support env vars yet, this will fail
 		// That's expected until the feature is implemented
-		console.log(
+		console.info(
 			"Note: C_INCLUDE_PATH support not yet implemented in this Bun version:",
 			error instanceof Error ? error.message : String(error),
 		);
@@ -119,7 +119,7 @@ int simple_function(void) {
 
 		expect(symbols.simple_function()).toBe(42);
 	} catch (error) {
-		console.log(
+		console.info(
 			"Basic bun:ffi test failed:",
 			error instanceof Error ? error.message : String(error),
 		);

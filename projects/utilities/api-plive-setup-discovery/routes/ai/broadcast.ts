@@ -21,7 +21,7 @@ export const handle = async (req: Request) => {
 
     // TODO: Implement WebSocket broadcast to ws://localhost:3003/ws/config-update
     // For now, simulate successful broadcast
-    console.log(`📡 Broadcasting ${request.event} to dashboard:`, request.payload);
+    console.info(`📡 Broadcasting ${request.event} to dashboard:`, request.payload);
 
     // In production, this would use the WebSocket server to publish
     // wsServer.publish('config-update', JSON.stringify(request));

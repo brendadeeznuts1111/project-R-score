@@ -72,7 +72,7 @@ class URLPatternTomlScanner {
   }
   
   async scanAllConfigs(): Promise<TomlSecurityReport> {
-    console.log('🔍 Scanning TOML configs for URLPattern security risks...');
+    console.info('🔍 Scanning TOML configs for URLPattern security risks...');
     
     const allPatterns: PatternRisk[] = [];
     
@@ -80,7 +80,7 @@ class URLPatternTomlScanner {
       const files = await this.globFiles(globPattern);
       
       for (const file of files) {
-        console.log(`   📁 Scanning ${file}...`);
+        console.info(`   📁 Scanning ${file}...`);
         const patterns = await this.scanTOMLFile(file);
         allPatterns.push(...patterns);
         
@@ -308,11 +308,11 @@ class URLPatternTomlScanner {
   
   async injectGuards(report: TomlSecurityReport): Promise<void> {
     if (!this.options.autoInjectGuards) {
-      console.log('⚠️  Guard injection disabled');
+      console.info('⚠️  Guard injection disabled');
       return;
     }
     
-    console.log('🛡️  Injecting security guards...');
+    console.info('🛡️  Injecting security guards...');
     
     for (const pattern of report.risks) {
       if (this.shouldInjectGuard(pattern.risk)) {
@@ -330,7 +330,7 @@ class URLPatternTomlScanner {
   }
   
   private async injectGuardForPattern(pattern: PatternRisk): Promise<void> {
-    console.log(`   🛡️  Injecting guard for ${pattern.risk} risk pattern in ${pattern.file}`);
+    console.info(`   🛡️  Injecting guard for ${pattern.risk} risk pattern in ${pattern.file}`);
     
     // Read the original file
     const content = await Bun.file(pattern.file).text();
@@ -364,23 +364,23 @@ class URLPatternTomlScanner {
   }
   
   async validateBuild(report: TomlSecurityReport): Promise<boolean> {
-    console.log('\n📊 Build Validation Summary:');
-    console.log('================================');
+    console.info('\n📊 Build Validation Summary:');
+    console.info('================================');
     
-    console.log(`   Total patterns: ${report.totalPatterns}`);
-    console.log(`   🚨 Critical: ${report.summary.critical}`);
-    console.log(`   ⚠️  High: ${report.summary.high}`);
-    console.log(`   ⚡ Medium: ${report.summary.medium}`);
-    console.log(`   ℹ️  Low: ${report.summary.low}`);
+    console.info(`   Total patterns: ${report.totalPatterns}`);
+    console.info(`   🚨 Critical: ${report.summary.critical}`);
+    console.info(`   ⚠️  High: ${report.summary.high}`);
+    console.info(`   ⚡ Medium: ${report.summary.medium}`);
+    console.info(`   ℹ️  Low: ${report.summary.low}`);
     
     // Show critical issues
     const criticalIssues = report.risks.filter(r => r.risk === 'critical');
     if (criticalIssues.length > 0) {
-      console.log('\n🚨 Critical Issues:');
+      console.info('\n🚨 Critical Issues:');
       criticalIssues.forEach(issue => {
-        console.log(`   ${issue.file}:${issue.line}:${issue.column} - ${issue.pattern}`);
+        console.info(`   ${issue.file}:${issue.line}:${issue.column} - ${issue.pattern}`);
         issue.issues.forEach(issueDetail => {
-          console.log(`      • ${issueDetail}`);
+          console.info(`      • ${issueDetail}`);
         });
       });
     }
@@ -391,11 +391,11 @@ class URLPatternTomlScanner {
     );
     
     if (shouldFail) {
-      console.log(`\n❌ Build failed: ${this.options.failOnRisk} risk patterns detected`);
+      console.info(`\n❌ Build failed: ${this.options.failOnRisk} risk patterns detected`);
       return false;
     }
     
-    console.log('\n✅ Build passed: No disallowed risk patterns detected');
+    console.info('\n✅ Build passed: No disallowed risk patterns detected');
     return true;
   }
   
@@ -412,7 +412,7 @@ class URLPatternTomlScanner {
       return;
     }
     
-    console.log(`💾 Saving security report to ${this.options.outputReport}`);
+    console.info(`💾 Saving security report to ${this.options.outputReport}`);
     await Bun.write(this.options.outputReport, JSON.stringify(report, null, 2));
   }
   
@@ -438,7 +438,7 @@ export function urlPatternTomlPlugin(options: Partial<PluginOptions> = {}) {
   return {
     name: 'urlpattern-toml-security',
     setup(build: any) {
-      console.log('🛡️  URLPattern TOML Security Plugin activated');
+      console.info('🛡️  URLPattern TOML Security Plugin activated');
       
       build.onStart(async () => {
         const scanner = new URLPatternTomlScanner(finalOptions);
@@ -474,7 +474,7 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help')) {
-    console.log(`
+    console.info(`
 URLPattern TOML Security Scanner
 
 Usage:

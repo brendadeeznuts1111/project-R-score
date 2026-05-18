@@ -79,7 +79,7 @@ export class UltraArbRouter<T = any> {
 				if (event === 'change' && filename.endsWith('.json')) {
 					const isBatch = filename.includes('batch') || filename.includes('feed');
 					if (isBatch) {
-						console.log(`🔥 BATCH HMR: ${filename} detected`);
+						console.info(`🔥 BATCH HMR: ${filename} detected`);
 					}
 					await this.hotReloadPatterns([filename]);
 				}
@@ -90,12 +90,12 @@ export class UltraArbRouter<T = any> {
 				recursive: true
 			}, async (event, filename) => {
 				if (event === 'change' && filename.includes('ai-adaptive-multi-region-patterns.ts')) {
-					console.log(`🔥 HMR: src/${filename} MODIFIED`);
+					console.info(`🔥 HMR: src/${filename} MODIFIED`);
 					await this.hotReloadAdaptivePatterns();
 				}
 			});
 
-			console.log('🔥 HMR: Pattern watcher enabled (Bun.fs.watch, WATCH_PATTERNS=true)');
+			console.info('🔥 HMR: Pattern watcher enabled (Bun.fs.watch, WATCH_PATTERNS=true)');
 		} catch (e) {
 			console.warn('HMR watcher setup failed:', e);
 		}
@@ -125,14 +125,14 @@ export class UltraArbRouter<T = any> {
 			const allPatterns = getAllPatterns();
 			const envPatterns = filterByEnvironment(allPatterns, currentEnv);
 			
-			console.log(`📡 Reloading ${envPatterns.length} AI-adaptive patterns (${currentEnv} environment)`);
+			console.info(`📡 Reloading ${envPatterns.length} AI-adaptive patterns (${currentEnv} environment)`);
 			
 			// Sort by priority (highest first)
 			const sortedPatterns = sortByPriority(envPatterns);
 			
 			// Log each pattern activation (top patterns first)
 			sortedPatterns.slice(0, 10).forEach(pattern => {
-				console.log(`✅ ${pattern.id} (priority ${pattern.priority}) → ACTIVE`);
+				console.info(`✅ ${pattern.id} (priority ${pattern.priority}) → ACTIVE`);
 			});
 			
 			// Convert to URLPatternInit
@@ -147,11 +147,11 @@ export class UltraArbRouter<T = any> {
 			this.neuralNet.retrain(sortedPatterns);
 			
 			const afterCount = beforeCount + envPatterns.length;
-			console.log(`🧠 NeuralNet: Re-ranked by priority (${beforeCount} → ${afterCount} patterns)`);
+			console.info(`🧠 NeuralNet: Re-ranked by priority (${beforeCount} → ${afterCount} patterns)`);
 			
 			// Get priority distribution
 			const distribution = getPriorityDistribution(sortedPatterns);
-			console.log(`📊 Environment filter: ${currentEnv}=${distribution.environment[currentEnv] || 0}, staging=${distribution.environment.staging || 0}`);
+			console.info(`📊 Environment filter: ${currentEnv}=${distribution.environment[currentEnv] || 0}, staging=${distribution.environment.staging || 0}`);
 			
 			// Count by region
 			const regionCounts: Record<string, number> = {};
@@ -161,12 +161,12 @@ export class UltraArbRouter<T = any> {
 				}
 			});
 			const regionStr = Object.entries(regionCounts).map(([r, c]) => `${r}=${c}`).join(', ');
-			console.log(`🌐 Multi-region coverage: ${regionStr}`);
+			console.info(`🌐 Multi-region coverage: ${regionStr}`);
 			
 			const totalTime = performance.now() - startTime;
 			const ffiStats = this.ffiMatcher.getStats();
 			const throughput = Math.floor(ffiStats.matchesPerSec / 1000);
-			console.log(`🚀 HMR COMPLETE: ${afterCount} patterns | ${throughput + 3}K matches/sec ⚡`);
+			console.info(`🚀 HMR COMPLETE: ${afterCount} patterns | ${throughput + 3}K matches/sec ⚡`);
 		} catch (e) {
 			console.error('HMR adaptive pattern reload failed:', e);
 		}
@@ -180,7 +180,7 @@ export class UltraArbRouter<T = any> {
 		
 		try {
 			const changedFile = files[0] || './patterns/ai-generated.json';
-			console.log(`🔥 HMR DETECTED: ${changedFile} (Bun.fs.watch)`);
+			console.info(`🔥 HMR DETECTED: ${changedFile} (Bun.fs.watch)`);
 			
 			const { AIPatternLoader } = await import('./ai-pattern-loader');
 			const { updateAIDrivenFeedPatterns } = await import('./ai-adaptive-multi-region-patterns');
@@ -198,12 +198,12 @@ export class UltraArbRouter<T = any> {
 				const beforeCount = this.patternCache.size || 1249;
 				
 				if (isBatch || isAIDrivenFeed) {
-					console.log(`🔥 BATCH HMR: ${aiPatterns.length} new AI patterns loaded`);
+					console.info(`🔥 BATCH HMR: ${aiPatterns.length} new AI patterns loaded`);
 				}
 				
 				// Log each pattern being loaded
 				aiPatterns.forEach(pattern => {
-					console.log(`📡 Loading AI pattern: ${pattern.id} (priority ${pattern.priority})`);
+					console.info(`📡 Loading AI pattern: ${pattern.id} (priority ${pattern.priority})`);
 				});
 				
 				// Convert to URLPatternInit with priority
@@ -215,7 +215,7 @@ export class UltraArbRouter<T = any> {
 				// Update ai-driven-feed region if this is the feed file
 				if (isAIDrivenFeed) {
 					await updateAIDrivenFeedPatterns();
-					console.log(`✅ Updated ai-driven-feed region with ${aiPatterns.length} patterns`);
+					console.info(`✅ Updated ai-driven-feed region with ${aiPatterns.length} patterns`);
 				}
 				
 				// Update quantum router with AI patterns
@@ -226,7 +226,7 @@ export class UltraArbRouter<T = any> {
 				
 				const afterCount = beforeCount + aiPatterns.length;
 				if (isBatch) {
-					console.log(`📡 ai-live → ${beforeCount} → ${afterCount} patterns`);
+					console.info(`📡 ai-live → ${beforeCount} → ${afterCount} patterns`);
 				}
 				
 				// Retrain neural network
@@ -234,14 +234,14 @@ export class UltraArbRouter<T = any> {
 				this.neuralNet.retrain(aiPatterns);
 				const retrainTime = performance.now() - retrainStart;
 				
-				console.log(`⚡ NeuralNet retraining: ${beforeCount} → ${afterCount} patterns (${retrainTime.toFixed(0)}ms)`);
+				console.info(`⚡ NeuralNet retraining: ${beforeCount} → ${afterCount} patterns (${retrainTime.toFixed(0)}ms)`);
 				
 				// Validate patterns against sample URLs
 				const validationResults = await this.validatePatterns(aiPatterns);
 				validationResults.forEach(result => {
 					const pattern = aiPatterns.find(p => p.id === result.id);
 					const confidence = pattern?.confidence || result.matchRate;
-					console.log(`✅ ${result.id}: ${(confidence * 100).toFixed(1)}% match | ${result.matchRate > 0.99 ? '100%' : `${(result.matchRate * 100).toFixed(1)}%`}`);
+					console.info(`✅ ${result.id}: ${(confidence * 100).toFixed(1)}% match | ${result.matchRate > 0.99 ? '100%' : `${(result.matchRate * 100).toFixed(1)}%`}`);
 				});
 				
 				// Register FFI patterns
@@ -255,21 +255,21 @@ export class UltraArbRouter<T = any> {
 					}
 					
 					// Log pattern activation
-					console.log(`🌐 ${pattern.hostname}:${pattern.pathname} → ACTIVE`);
+					console.info(`🌐 ${pattern.hostname}:${pattern.pathname} → ACTIVE`);
 				});
 				
 				const totalTime = performance.now() - startTime;
-				console.log(`✅ Region 'ai-live' updated with confidence ${aiPatterns[0]?.confidence || 0.992}`);
-				console.log(`🚀 Zero-downtime update COMPLETE (${totalTime.toFixed(0)}ms total)`);
+				console.info(`✅ Region 'ai-live' updated with confidence ${aiPatterns[0]?.confidence || 0.992}`);
+				console.info(`🚀 Zero-downtime update COMPLETE (${totalTime.toFixed(0)}ms total)`);
 				
 				// Update stats
 				const ffiStats = this.ffiMatcher.getStats();
 				const throughput = Math.floor(ffiStats.matchesPerSec / 1000);
-				console.log(`\n📊 STATS UPDATE:`);
-				console.log(`└── Patterns: ${afterCount} | Throughput: ${throughput}K matches/sec ⚡`);
+				console.info(`\n📊 STATS UPDATE:`);
+				console.info(`└── Patterns: ${afterCount} | Throughput: ${throughput}K matches/sec ⚡`);
 				
 				if (isBatch) {
-					console.log(`🚀 Patterns evolved: ${afterCount} total | ${throughput + 5}K matches/sec ⚡`);
+					console.info(`🚀 Patterns evolved: ${afterCount} total | ${throughput + 5}K matches/sec ⚡`);
 				}
 			}
 		} catch (e) {
@@ -302,7 +302,7 @@ export class UltraArbRouter<T = any> {
 			const cachedPattern = patternCache.getPattern(cachedRoute.patternId);
 			if (cachedPattern) {
 				const processingTime = performance.now() - startTime;
-				console.log(`⚡ Cache hit for ${url} (${processingTime.toFixed(2)}ms)`);
+				console.info(`⚡ Cache hit for ${url} (${processingTime.toFixed(2)}ms)`);
 				return {
 					bookie: this.extractBookie(cachedPattern.hostname || ''),
 					confidence: 1.0,
@@ -420,7 +420,7 @@ export class UltraArbRouter<T = any> {
 			// 3. Get spy and execute
 			const spy = this.getSpy(ffiResult.hostname);
 			if (spy) {
-				console.log(`[API] Fetching odds for ${url} (groups:`, ffiResult.groups, ')');
+				console.info(`[API] Fetching odds for ${url} (groups:`, ffiResult.groups, ')');
 				await (spy as any)(url, ffiResult.groups);
 			}
 
@@ -448,7 +448,7 @@ export class UltraArbRouter<T = any> {
 				(result as any).aiGenerated = true;
 				(result as any).patternId = patternId;
 				(result as any).priority = this.getPatternPriority(patternId);
-				console.log(`🆕 ${patternId}: ${(neuralScore * 100).toFixed(1)}% confidence | Priority ${this.getPatternPriority(patternId)} | FFI match`);
+				console.info(`🆕 ${patternId}: ${(neuralScore * 100).toFixed(1)}% confidence | Priority ${this.getPatternPriority(patternId)} | FFI match`);
 			}
 
 			(result as any).processingTime = `${processingTime.toFixed(1)}ms`;

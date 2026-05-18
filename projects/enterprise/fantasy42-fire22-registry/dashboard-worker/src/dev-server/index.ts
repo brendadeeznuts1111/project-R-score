@@ -29,7 +29,7 @@ export class DevelopmentServer {
    */
   async initialize(): Promise<void> {
     try {
-      console.log('🚀 Initializing Development Server...');
+      console.info('🚀 Initializing Development Server...');
 
       // Initialize HMR system
       await this.hmrManager.initialize();
@@ -38,7 +38,7 @@ export class DevelopmentServer {
       this.registerHMRRoutes();
 
       this.initialized = true;
-      console.log('✅ Development Server initialized successfully');
+      console.info('✅ Development Server initialized successfully');
     } catch (error) {
       console.error('❌ Failed to initialize Development Server:', error);
       throw error;
@@ -53,15 +53,15 @@ export class DevelopmentServer {
       await this.initialize();
     }
 
-    console.log('🔥 Starting Development Server...');
+    console.info('🔥 Starting Development Server...');
 
     try {
       await this.serverCore.start();
-      console.log('🎉 Development Server started successfully!');
-      console.log('📡 Server ready at:', `http://localhost:${this.serverCore.getConfig().port}`);
+      console.info('🎉 Development Server started successfully!');
+      console.info('📡 Server ready at:', `http://localhost:${this.serverCore.getConfig().port}`);
 
       if (this.serverCore.getConfig().hmrEnabled) {
-        console.log('🔥 HMR enabled - watching for file changes...');
+        console.info('🔥 HMR enabled - watching for file changes...');
       }
     } catch (error) {
       console.error('❌ Failed to start Development Server:', error);
@@ -73,12 +73,12 @@ export class DevelopmentServer {
    * Stop the development server
    */
   async stop(): Promise<void> {
-    console.log('🛑 Stopping Development Server...');
+    console.info('🛑 Stopping Development Server...');
 
     try {
       await this.serverCore.stop();
       this.hmrManager.cleanup();
-      console.log('✅ Development Server stopped successfully');
+      console.info('✅ Development Server stopped successfully');
     } catch (error) {
       console.error('❌ Failed to stop Development Server:', error);
       throw error;
@@ -499,13 +499,13 @@ export async function runDevServer(options: any = {}): Promise<void> {
 
     // Handle graceful shutdown
     process.on('SIGINT', async () => {
-      console.log('\n📡 Received SIGINT, shutting down gracefully...');
+      console.info('\n📡 Received SIGINT, shutting down gracefully...');
       await server.stop();
       process.exit(0);
     });
 
     process.on('SIGTERM', async () => {
-      console.log('\n📡 Received SIGTERM, shutting down gracefully...');
+      console.info('\n📡 Received SIGTERM, shutting down gracefully...');
       await server.stop();
       process.exit(0);
     });

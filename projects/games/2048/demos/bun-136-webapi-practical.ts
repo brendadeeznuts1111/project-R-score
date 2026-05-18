@@ -1,24 +1,24 @@
 #!/usr/bin/env bun
 
 // Practical demonstration of Bun v1.3.6 Web API improvements
-console.log("🌐 Bun v1.3.6 Web API Improvements - Practical Demo");
-console.log("=".repeat(58));
+console.info("🌐 Bun v1.3.6 Web API Improvements - Practical Demo");
+console.info("=".repeat(58));
 
 // Test 1: URLSearchParams configurability in practice
 async function demonstrateURLSearchParamsPractical() {
-  console.log("\n1️⃣ URLSearchParams Configurability (Web IDL Compliance):");
+  console.info("\n1️⃣ URLSearchParams Configurability (Web IDL Compliance):");
 
-  console.log("   ✅ Fixed URLSearchParams.prototype.size configurability");
-  console.log("   🔧 Now aligns with Web IDL specification");
-  console.log("   🚀 Enhanced browser compatibility");
+  console.info("   ✅ Fixed URLSearchParams.prototype.size configurability");
+  console.info("   🔧 Now aligns with Web IDL specification");
+  console.info("   🚀 Enhanced browser compatibility");
 
   try {
     // Create URLSearchParams instance
     const params = new URLSearchParams("name=John&age=30&city=New+York");
 
-    console.log("\n   📋 Basic URLSearchParams usage:");
-    console.log(`      Size: ${params.size}`);
-    console.log(`      Entries: ${Array.from(params.entries()).length}`);
+    console.info("\n   📋 Basic URLSearchParams usage:");
+    console.info(`      Size: ${params.size}`);
+    console.info(`      Entries: ${Array.from(params.entries()).length}`);
 
     // Test property descriptor (v1.3.6 fix)
     const descriptor = Object.getOwnPropertyDescriptor(
@@ -26,51 +26,51 @@ async function demonstrateURLSearchParamsPractical() {
       "size",
     );
 
-    console.log("\n   🔍 Property descriptor analysis:");
+    console.info("\n   🔍 Property descriptor analysis:");
     if (descriptor) {
-      console.log(`      Configurable: ${descriptor.configurable} ✅`);
-      console.log(`      Enumerable: ${descriptor.enumerable} ✅`);
-      console.log(
+      console.info(`      Configurable: ${descriptor.configurable} ✅`);
+      console.info(`      Enumerable: ${descriptor.enumerable} ✅`);
+      console.info(
         `      Has getter: ${typeof descriptor.get === "function"} ✅`,
       );
-      console.log(
+      console.info(
         `      Has setter: ${descriptor.set === undefined ? "Read-only" : "Writable"}`,
       );
     }
 
     // Test advanced operations
-    console.log("\n   🛠️  Advanced operations:");
+    console.info("\n   🛠️  Advanced operations:");
     params.append("email", "john@example.com");
-    console.log(`      After append: ${params.size}`);
+    console.info(`      After append: ${params.size}`);
 
     params.delete("age");
-    console.log(`      After delete: ${params.size}`);
+    console.info(`      After delete: ${params.size}`);
 
     params.set("name", "Jane Doe");
-    console.log(`      After set: ${params.size}`);
+    console.info(`      After set: ${params.size}`);
 
     // Test iteration
-    console.log("\n   📋 Final parameters:");
+    console.info("\n   📋 Final parameters:");
     for (const [key, value] of params) {
-      console.log(`      ${key}: ${value}`);
+      console.info(`      ${key}: ${value}`);
     }
 
-    console.log("\n   🎯 Web IDL compliance benefits:");
-    console.log("      • Better browser environment compatibility");
-    console.log("      • Enhanced reflection and debugging capabilities");
-    console.log("      • Proper property descriptor behavior");
+    console.info("\n   🎯 Web IDL compliance benefits:");
+    console.info("      • Better browser environment compatibility");
+    console.info("      • Enhanced reflection and debugging capabilities");
+    console.info("      • Proper property descriptor behavior");
   } catch (error) {
-    console.log(`   ❌ Error: ${error.message}`);
+    console.info(`   ❌ Error: ${error.message}`);
   }
 }
 
 // Test 2: WebSocket security in practice
 async function demonstrateWebSocketSecurityPractical() {
-  console.log("\n2️⃣ WebSocket Decompression Bomb Protection:");
+  console.info("\n2️⃣ WebSocket Decompression Bomb Protection:");
 
-  console.log("   ✅ Built-in protection against memory exhaustion attacks");
-  console.log("   🛡️  128MB limit on decompressed message size");
-  console.log("   🔒 Security by default - no configuration needed");
+  console.info("   ✅ Built-in protection against memory exhaustion attacks");
+  console.info("   🛡️  128MB limit on decompressed message size");
+  console.info("   🔒 Security by default - no configuration needed");
 
   const securityCode = `
 // v1.3.6: WebSocket with automatic decompression protection
@@ -82,20 +82,20 @@ class SecureWebSocketClient {
     this.ws = new WebSocket(url);
 
     this.ws.onopen = () => {
-      console.log('WebSocket connected with security protection');
+      console.info('WebSocket connected with security protection');
     };
 
     this.ws.onmessage = (event) => {
       this.messageCount++;
       const messageSize = event.data.length;
 
-      console.log(\`Message \${this.messageCount}: \${messageSize} bytes\`);
+      console.info(\`Message \${this.messageCount}: \${messageSize} bytes\`);
 
       // v1.3.6: Messages > 128MB decompressed are automatically rejected
       // No manual checking required - protection is built-in
 
       if (messageSize > 1000000) {
-        console.log('Large message received, but protected by v1.3.6');
+        console.info('Large message received, but protected by v1.3.6');
       }
     };
 
@@ -104,7 +104,7 @@ class SecureWebSocketClient {
     };
 
     this.ws.onclose = (event) => {
-      console.log(\`WebSocket closed: \${event.code} - \${event.reason}\`);
+      console.info(\`WebSocket closed: \${event.code} - \${event.reason}\`);
     };
   }
 
@@ -130,10 +130,10 @@ client.sendLargeData({ type: 'large', data: 'x'.repeat(1000000) });
 // Result: Connection closed, memory protected
   `;
 
-  console.log("   💡 Secure WebSocket implementation:");
-  console.log(securityCode);
+  console.info("   💡 Secure WebSocket implementation:");
+  console.info(securityCode);
 
-  console.log("\n   🛡️  Protection scenarios:");
+  console.info("\n   🛡️  Protection scenarios:");
   const protections = [
     "Compression bomb attacks (highly compressed malicious payloads)",
     "Memory exhaustion attempts (oversized message payloads)",
@@ -142,17 +142,17 @@ client.sendLargeData({ type: 'large', data: 'x'.repeat(1000000) });
   ];
 
   protections.forEach((protection, index) => {
-    console.log(`   ${index + 1}. ${protection}`);
+    console.info(`   ${index + 1}. ${protection}`);
   });
 }
 
 // Test 3: fetch() memory management in practice
 async function demonstrateFetchMemoryManagementPractical() {
-  console.log("\n3️⃣ fetch() ReadableStream Memory Management:");
+  console.info("\n3️⃣ fetch() ReadableStream Memory Management:");
 
-  console.log("   ✅ Fixed memory leak in fetch() ReadableStream handling");
-  console.log("   🧠 Streams now properly released after request completion");
-  console.log("   🚀 Better memory efficiency for high-volume requests");
+  console.info("   ✅ Fixed memory leak in fetch() ReadableStream handling");
+  console.info("   🧠 Streams now properly released after request completion");
+  console.info("   🚀 Better memory efficiency for high-volume requests");
 
   const fetchCode = `
 // v1.3.6: Enhanced fetch() with proper memory management
@@ -188,7 +188,7 @@ class EfficientHTTPClient {
 
           // Memory efficient chunk processing
           if (chunks.length > 100000) {
-            console.log(\`Processing large response: \${value.length} bytes\`);
+            console.info(\`Processing large response: \${value.length} bytes\`);
             // Process chunk without memory accumulation
             await this.processChunk(chunk);
             chunks = '';
@@ -218,7 +218,7 @@ class EfficientHTTPClient {
   }
 
   async downloadMultiple(urls: string[]): Promise<void> {
-    console.log(\`Downloading \${urls.length} files with memory management\`);
+    console.info(\`Downloading \${urls.length} files with memory management\`);
 
     const startTime = Date.now();
     const promises = urls.map(url => this.fetchWithMemoryManagement(url));
@@ -227,9 +227,9 @@ class EfficientHTTPClient {
       await Promise.all(promises);
 
       const duration = Date.now() - startTime;
-      console.log(\`Completed in \${duration}ms\`);
-      console.log(\`Total bytes downloaded: \${this.totalBytesDownloaded}\`);
-      console.log(\`Memory efficient with v1.3.6 improvements\`);
+      console.info(\`Completed in \${duration}ms\`);
+      console.info(\`Total bytes downloaded: \${this.totalBytesDownloaded}\`);
+      console.info(\`Memory efficient with v1.3.6 improvements\`);
 
     } catch (error) {
       console.error('Download failed:', error);
@@ -253,14 +253,14 @@ const urls = Array.from({ length: 100 }, (_, i) =>
 );
 
 await client.downloadMultiple(urls);
-console.log('Final stats:', client.getStats());
+console.info('Final stats:', client.getStats());
 // No memory accumulation with v1.3.6 ReadableStream fix
   `;
 
-  console.log("   💡 Memory-efficient HTTP client:");
-  console.log(fetchCode);
+  console.info("   💡 Memory-efficient HTTP client:");
+  console.info(fetchCode);
 
-  console.log("\n   📊 Memory management benefits:");
+  console.info("\n   📊 Memory management benefits:");
   const benefits = [
     "Automatic stream cleanup after request completion",
     "Prevention of memory accumulation in long-running applications",
@@ -269,17 +269,17 @@ console.log('Final stats:', client.getStats());
   ];
 
   benefits.forEach((benefit, index) => {
-    console.log(`   ${index + 1}. ${benefit}`);
+    console.info(`   ${index + 1}. ${benefit}`);
   });
 }
 
 // Test 4: Performance monitoring
 function demonstratePerformanceMonitoring() {
-  console.log("\n4️⃣ Performance Monitoring with Web API Improvements:");
+  console.info("\n4️⃣ Performance Monitoring with Web API Improvements:");
 
-  console.log("   ✅ Enhanced monitoring capabilities");
-  console.log("   📊 Better visibility into resource usage");
-  console.log("   🔧 Improved debugging and profiling");
+  console.info("   ✅ Enhanced monitoring capabilities");
+  console.info("   📊 Better visibility into resource usage");
+  console.info("   🔧 Improved debugging and profiling");
 
   const monitoringCode = `
 // v1.3.6: Performance monitoring for Web API improvements
@@ -303,7 +303,7 @@ class WebAPIPerformanceMonitor {
         this.metrics.memoryUsage.shift();
       }
 
-      console.log(\`Memory usage: \${(usage.heapUsed / 1024 / 1024).toFixed(2)} MB\`);
+      console.info(\`Memory usage: \${(usage.heapUsed / 1024 / 1024).toFixed(2)} MB\`);
     }, 5000);
   }
 
@@ -311,17 +311,17 @@ class WebAPIPerformanceMonitor {
     this.metrics.fetchRequests++;
     this.metrics.totalBytesDownloaded += bytes;
 
-    console.log(\`Fetch #\${this.metrics.fetchRequests}: \${bytes} bytes from \${url}\`);
+    console.info(\`Fetch #\${this.metrics.fetchRequests}: \${bytes} bytes from \${url}\`);
   }
 
   trackWebSocketMessage(size: number) {
     this.metrics.webSocketMessages++;
-    console.log(\`WebSocket message #\${this.metrics.webSocketMessages}: \${size} bytes\`);
+    console.info(\`WebSocket message #\${this.metrics.webSocketMessages}: \${size} bytes\`);
   }
 
   trackURLSearchParamsOperation(operation: string) {
     this.metrics.urlSearchParamsOperations++;
-    console.log(\`URLSearchParams operation #\${this.metrics.urlSearchParamsOperations}: \${operation}\`);
+    console.info(\`URLSearchParams operation #\${this.metrics.urlSearchParamsOperations}: \${operation}\`);
   }
 
   getReport() {
@@ -350,17 +350,17 @@ monitor.trackFetchRequest('https://api.example.com/data', 1024);
 monitor.trackWebSocketMessage(512);
 monitor.trackURLSearchParamsOperation('append');
 
-console.log('Performance report:', monitor.getReport());
+console.info('Performance report:', monitor.getReport());
 // v1.3.6 improvements ensure stable memory usage
   `;
 
-  console.log("   💡 Performance monitoring implementation:");
-  console.log(monitoringCode);
+  console.info("   💡 Performance monitoring implementation:");
+  console.info(monitoringCode);
 }
 
 // Test 5: Integration examples
 function demonstrateIntegrationExamples() {
-  console.log("\n5️⃣ Integration Examples:");
+  console.info("\n5️⃣ Integration Examples:");
 
   const integrations = [
     {
@@ -396,10 +396,10 @@ function demonstrateIntegrationExamples() {
   ];
 
   integrations.forEach((integration, index) => {
-    console.log(`\n   ${index + 1}. ${integration.scenario}:`);
-    console.log(`      Description: ${integration.description}`);
-    console.log(`      Improvements: ${integration.improvements.join(", ")}`);
-    console.log(`      Code: ${integration.code}`);
+    console.info(`\n   ${index + 1}. ${integration.scenario}:`);
+    console.info(`      Description: ${integration.description}`);
+    console.info(`      Improvements: ${integration.improvements.join(", ")}`);
+    console.info(`      Code: ${integration.code}`);
   });
 }
 
@@ -412,16 +412,16 @@ async function main() {
     demonstratePerformanceMonitoring();
     demonstrateIntegrationExamples();
 
-    console.log("\n🎯 Summary of Bun v1.3.6 Web API Improvements:");
-    console.log("   🔗 URLSearchParams.size configurable (Web IDL compliant)");
-    console.log("   🛡️  WebSocket decompression bomb protection (128MB limit)");
-    console.log("   🧠 fetch() ReadableStream memory leak fix");
-    console.log("   📊 Enhanced memory management and monitoring");
-    console.log("   🔒 Built-in security for real-time applications");
-    console.log("   🚀 Better performance for high-volume scenarios");
-    console.log("   🔄 Automatic improvements - no code changes required");
+    console.info("\n🎯 Summary of Bun v1.3.6 Web API Improvements:");
+    console.info("   🔗 URLSearchParams.size configurable (Web IDL compliant)");
+    console.info("   🛡️  WebSocket decompression bomb protection (128MB limit)");
+    console.info("   🧠 fetch() ReadableStream memory leak fix");
+    console.info("   📊 Enhanced memory management and monitoring");
+    console.info("   🔒 Built-in security for real-time applications");
+    console.info("   🚀 Better performance for high-volume scenarios");
+    console.info("   🔄 Automatic improvements - no code changes required");
 
-    console.log(
+    console.info(
       "\n💨 Web APIs are now production-ready with enhanced security!",
     );
   } catch (error) {

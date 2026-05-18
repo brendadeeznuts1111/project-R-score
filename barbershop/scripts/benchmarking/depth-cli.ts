@@ -70,7 +70,7 @@ function parseArgs(): CLIOptions {
 }
 
 function showHelp(): void {
-  console.log(`
+  console.info(`
 🎯 Enhanced Depth Configuration CLI
 
 Usage: depth-cli [options] [file]
@@ -97,7 +97,7 @@ Examples:
 }
 
 async function analyzeFile(filePath: string): Promise<void> {
-  console.log(`🔍 Analyzing ${filePath}...`);
+  console.info(`🔍 Analyzing ${filePath}...`);
   
   try {
     // Read and parse the file to analyze its structure
@@ -137,16 +137,16 @@ async function analyzeFile(filePath: string): Promise<void> {
     
     const recommendation = DepthOptimizer.recommendDepth(data, context);
     
-    console.log('\n📊 Analysis Results:');
-    console.log(`   Suggested depth: ${recommendation.suggestedDepth}`);
-    console.log(`   Reasoning: ${recommendation.reasoning}`);
+    console.info('\n📊 Analysis Results:');
+    console.info(`   Suggested depth: ${recommendation.suggestedDepth}`);
+    console.info(`   Reasoning: ${recommendation.reasoning}`);
     
     if (recommendation.warnings.length > 0) {
-      console.log('   ⚠️  Warnings:');
-      recommendation.warnings.forEach(warning => console.log(`      - ${warning}`));
+      console.info('   ⚠️  Warnings:');
+      recommendation.warnings.forEach(warning => console.info(`      - ${warning}`));
     }
     
-    console.log(`   Auto-apply: ${recommendation.autoApply ? '✅ Yes' : '❌ No'}`);
+    console.info(`   Auto-apply: ${recommendation.autoApply ? '✅ Yes' : '❌ No'}`);
     
     // Show performance analysis
     const perfAnalysis = DepthPerformanceAnalyzer.analyzeTradeoffs(
@@ -154,15 +154,15 @@ async function analyzeFile(filePath: string): Promise<void> {
       fileContent.length
     );
     
-    console.log('\n⚡ Performance Impact:');
-    console.log(`   Estimated time: ${perfAnalysis.estimatedTimeMs.toFixed(1)}ms`);
-    console.log(`   Estimated memory: ${perfAnalysis.estimatedMemoryMB.toFixed(1)}MB`);
-    console.log(`   Log size: ${perfAnalysis.estimatedLogSizeKB.toFixed(1)}KB`);
-    console.log(`   ${perfAnalysis.recommendation}`);
+    console.info('\n⚡ Performance Impact:');
+    console.info(`   Estimated time: ${perfAnalysis.estimatedTimeMs.toFixed(1)}ms`);
+    console.info(`   Estimated memory: ${perfAnalysis.estimatedMemoryMB.toFixed(1)}MB`);
+    console.info(`   Log size: ${perfAnalysis.estimatedLogSizeKB.toFixed(1)}KB`);
+    console.info(`   ${perfAnalysis.recommendation}`);
     
     // Show recommended command
-    console.log('\n🚀 Recommended command:');
-    console.log(`   bun --console-depth=${recommendation.suggestedDepth} run ${filePath}`);
+    console.info('\n🚀 Recommended command:');
+    console.info(`   bun --console-depth=${recommendation.suggestedDepth} run ${filePath}`);
     
   } catch (error) {
     console.error(`❌ Error analyzing file: ${error instanceof Error ? error.message : String(error)}`);
@@ -171,7 +171,7 @@ async function analyzeFile(filePath: string): Promise<void> {
 }
 
 async function autoOptimize(filePath: string): Promise<void> {
-  console.log(`🔧 Auto-optimizing depth for ${filePath}...`);
+  console.info(`🔧 Auto-optimizing depth for ${filePath}...`);
   
   try {
     const fileStats = await Bun.file(filePath).stat();
@@ -191,11 +191,11 @@ async function autoOptimize(filePath: string): Promise<void> {
       reason = `Small file (${(fileSize / 1024).toFixed(1)}KB), can use deeper inspection`;
     }
     
-    console.log(`   Recommended depth: ${recommendedDepth}`);
-    console.log(`   Reason: ${reason}`);
+    console.info(`   Recommended depth: ${recommendedDepth}`);
+    console.info(`   Reason: ${reason}`);
     
     // Run with recommended depth
-    console.log(`\n🚀 Running: bun --console-depth=${recommendedDepth} run ${filePath}`);
+    console.info(`\n🚀 Running: bun --console-depth=${recommendedDepth} run ${filePath}`);
     
     // Set environment variable and run
     process.env.BUN_CONSOLE_DEPTH = recommendedDepth.toString();
@@ -210,7 +210,7 @@ async function autoOptimize(filePath: string): Promise<void> {
 }
 
 async function interactiveExplorer(): Promise<void> {
-  console.log('🎮 Starting Interactive Depth Explorer...\n');
+  console.info('🎮 Starting Interactive Depth Explorer...\n');
   
   try {
     await DepthExplorer.interactive();
@@ -223,7 +223,7 @@ async function interactiveExplorer(): Promise<void> {
 function generateEnvironmentScript(environment: string): void {
   try {
     const script = EnvironmentDepthConfig.generateEnvScript(environment);
-    console.log(script);
+    console.info(script);
   } catch (error) {
     console.error(`❌ Error generating script: ${error instanceof Error ? error.message : String(error)}`);
     process.exit(1);
@@ -251,26 +251,26 @@ function showPerformanceAnalysis(depth: number, environment?: string): void {
     const config = EnvironmentDepthConfig.getOptimalDepth(env);
     const analysisDepth = depth || config.defaultDepth;
     
-    console.log(`📊 Performance Analysis for depth ${analysisDepth} (${env} environment):`);
+    console.info(`📊 Performance Analysis for depth ${analysisDepth} (${env} environment):`);
     
     // Show analysis for different data sizes
     const dataSizes = [1000, 10000, 100000, 1000000]; // 1KB, 10KB, 100KB, 1MB
     
-    console.log('\nData Size | Time (ms) | Memory (MB) | Log Size (KB) | Recommendation');
-    console.log('---------|-----------|-------------|---------------|----------------');
+    console.info('\nData Size | Time (ms) | Memory (MB) | Log Size (KB) | Recommendation');
+    console.info('---------|-----------|-------------|---------------|----------------');
     
     dataSizes.forEach(size => {
       const analysis = DepthPerformanceAnalyzer.analyzeTradeoffs(analysisDepth, size);
       const sizeStr = size >= 1000000 ? `${size / 1000000}MB` : `${size / 1000}KB`;
-      console.log(`${sizeStr.padEnd(8)} | ${analysis.estimatedTimeMs.toFixed(1).padEnd(9)} | ${analysis.estimatedMemoryMB.toFixed(1).padEnd(11)} | ${analysis.estimatedLogSizeKB.toFixed(1).padEnd(13)} | ${analysis.recommendation}`);
+      console.info(`${sizeStr.padEnd(8)} | ${analysis.estimatedTimeMs.toFixed(1).padEnd(9)} | ${analysis.estimatedMemoryMB.toFixed(1).padEnd(11)} | ${analysis.estimatedLogSizeKB.toFixed(1).padEnd(13)} | ${analysis.recommendation}`);
     });
     
-    console.log(`\n🎯 Current environment configuration:`);
-    console.log(`   Environment: ${env}`);
-    console.log(`   Default depth: ${config.defaultDepth}`);
-    console.log(`   Max depth: ${config.maxDepth}`);
-    console.log(`   Error depth: ${config.onErrorDepth}`);
-    console.log(`   Log level: ${config.logLevel}`);
+    console.info(`\n🎯 Current environment configuration:`);
+    console.info(`   Environment: ${env}`);
+    console.info(`   Default depth: ${config.defaultDepth}`);
+    console.info(`   Max depth: ${config.maxDepth}`);
+    console.info(`   Error depth: ${config.onErrorDepth}`);
+    console.info(`   Log level: ${config.logLevel}`);
     
   } catch (error) {
     console.error(`❌ Error in performance analysis: ${error instanceof Error ? error.message : String(error)}`);
@@ -281,8 +281,8 @@ function showPerformanceAnalysis(depth: number, environment?: string): void {
 async function main(): Promise<void> {
   const options = parseArgs();
   
-  console.log('🎯 Enhanced Depth Configuration CLI');
-  console.log('='.repeat(50));
+  console.info('🎯 Enhanced Depth Configuration CLI');
+  console.info('='.repeat(50));
   
   // Handle different commands
   if (options.analyze) {
@@ -298,7 +298,7 @@ async function main(): Promise<void> {
   } else if (options.performance) {
     showPerformanceAnalysis(options.depth || 4, options.environment);
   } else {
-    console.log('❌ No command specified. Use --help for usage information.');
+    console.info('❌ No command specified. Use --help for usage information.');
     process.exit(1);
   }
 }

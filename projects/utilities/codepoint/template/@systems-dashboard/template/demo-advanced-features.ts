@@ -2,11 +2,11 @@
 // Advanced Bun Features Demonstration
 // This script showcases string width calculations and feature flags
 
-console.log("🚀 Advanced Bun Features Demonstration\n");
+console.info("🚀 Advanced Bun Features Demonstration\n");
 
 // Test 1: String Width Calculations
-console.log("📏 String Width Tests:");
-console.log("=".repeat(50));
+console.info("📏 String Width Tests:");
+console.info("=".repeat(50));
 
 const stringTests = [
   { text: "🇺🇸", description: "Flag emoji" },
@@ -29,14 +29,14 @@ stringTests.forEach(({ text, description }) => {
     .replace(/\x1b\][0-9;]*;.+\x07/g, "");
   const visibleWidth = Bun.stringWidth(visible);
 
-  console.log(`${description.padEnd(25)}: "${text}"`);
-  console.log(`${"".padEnd(25)}   Width: ${width}, Visible: ${visibleWidth}`);
-  console.log();
+  console.info(`${description.padEnd(25)}: "${text}"`);
+  console.info(`${"".padEnd(25)}   Width: ${width}, Visible: ${visibleWidth}`);
+  console.info();
 });
 
 // Test 2: Table Creation with Proper Alignment
-console.log("📊 Table with Unicode and ANSI:");
-console.log("=".repeat(50));
+console.info("📊 Table with Unicode and ANSI:");
+console.info("=".repeat(50));
 
 const tableHeaders = ["Project", "Status", "Progress", "Notes"];
 const tableRows = [
@@ -72,40 +72,40 @@ const headerRow = createRow(tableHeaders, true);
 const separator = columnWidths.map((width) => "-".repeat(width)).join("-+-");
 const dataRows = tableRows.map((row) => createRow(row));
 
-console.log(headerRow);
-console.log(separator);
-dataRows.forEach((row) => console.log(row));
-console.log();
+console.info(headerRow);
+console.info(separator);
+dataRows.forEach((row) => console.info(row));
+console.info();
 
 // Test 3: Feature Flags Demonstration
-console.log("🏷️ Feature Flags Demonstration:");
-console.log("=".repeat(50));
+console.info("🏷️ Feature Flags Demonstration:");
+console.info("=".repeat(50));
 
 // Create test code with feature flags
 const featureTestCode = `
 import { feature } from "bun:bundle";
 
-console.log("🧪 Testing Feature Flags:");
+console.info("🧪 Testing Feature Flags:");
 
 if (feature("DEBUG")) {
-  console.log("✅ DEBUG feature enabled");
+  console.info("✅ DEBUG feature enabled");
 } else {
-  console.log("❌ DEBUG feature disabled");
+  console.info("❌ DEBUG feature disabled");
 }
 
 if (feature("PERFORMANCE")) {
-  console.log("✅ PERFORMANCE feature enabled");
+  console.info("✅ PERFORMANCE feature enabled");
 } else {
-  console.log("❌ PERFORMANCE feature disabled");
+  console.info("❌ PERFORMANCE feature disabled");
 }
 
 if (feature("EXPERIMENTAL")) {
-  console.log("✅ EXPERIMENTAL feature enabled");
+  console.info("✅ EXPERIMENTAL feature enabled");
 } else {
-  console.log("❌ EXPERIMENTAL feature disabled");
+  console.info("❌ EXPERIMENTAL feature disabled");
 }
 
-console.log("🏁 Feature flag test completed");
+console.info("🏁 Feature flag test completed");
 `;
 
 // Write test file
@@ -120,7 +120,7 @@ const featureConfigs = [
 ];
 
 for (const config of featureConfigs) {
-  console.log(`\n🔨 Building ${config.name}:`);
+  console.info(`\n🔨 Building ${config.name}:`);
 
   try {
     const buildResult = await Bun.build({
@@ -131,7 +131,7 @@ for (const config of featureConfigs) {
     });
 
     if (buildResult.success) {
-      console.log(
+      console.info(
         `✅ Build successful with features: ${config.features.join(", ")}`
       );
 
@@ -139,22 +139,22 @@ for (const config of featureConfigs) {
       const process = Bun.spawn(["bun", "./feature-out/feature-demo.js"]);
       await process.exited;
     } else {
-      console.log(`❌ Build failed`);
+      console.info(`❌ Build failed`);
     }
   } catch (error) {
-    console.log(`❌ Build error: ${(error as Error).message}`);
+    console.info(`❌ Build error: ${(error as Error).message}`);
   }
 }
 
 // Test 4: Advanced String Operations
-console.log("\n🔧 Advanced String Operations:");
-console.log("=".repeat(50));
+console.info("\n🔧 Advanced String Operations:");
+console.info("=".repeat(50));
 
 // Text truncation with proper width handling
 const longText =
   "This is a very long text with emojis 🇺🇸👋🏽 that needs truncation";
-console.log(`Original: "${longText}"`);
-console.log(`Width: ${Bun.stringWidth(longText)}`);
+console.info(`Original: "${longText}"`);
+console.info(`Width: ${Bun.stringWidth(longText)}`);
 
 // Manual truncation demonstration
 const maxWidth = 20;
@@ -169,12 +169,12 @@ for (const char of longText) {
 }
 
 truncated += "...";
-console.log(`Truncated: "${truncated}"`);
-console.log(`Width: ${Bun.stringWidth(truncated)}`);
+console.info(`Truncated: "${truncated}"`);
+console.info(`Width: ${Bun.stringWidth(truncated)}`);
 
 // Test 5: Color and Formatting Demo
-console.log("\n🎨 Color and Formatting Demo:");
-console.log("=".repeat(50));
+console.info("\n🎨 Color and Formatting Demo:");
+console.info("=".repeat(50));
 
 const colors = [
   { name: "Red", code: "\x1b[31m" },
@@ -187,16 +187,16 @@ const colors = [
 
 colors.forEach(({ name, code }) => {
   const text = `${code}${name} Text\x1b[0m`;
-  console.log(`${name.padEnd(8)}: "${text}" (Width: ${Bun.stringWidth(text)})`);
+  console.info(`${name.padEnd(8)}: "${text}" (Width: ${Bun.stringWidth(text)})`);
 });
 
 // Hyperlink demo
 const hyperlink = "\x1b]8;;https://bun.sh\x07🚀 Bun Documentation\x1b]8;;\x07";
-console.log(`Hyperlink: "${hyperlink}" (Width: ${Bun.stringWidth(hyperlink)})`);
+console.info(`Hyperlink: "${hyperlink}" (Width: ${Bun.stringWidth(hyperlink)})`);
 
 // Test 6: Performance Metrics
-console.log("\n⚡ Performance Metrics:");
-console.log("=".repeat(50));
+console.info("\n⚡ Performance Metrics:");
+console.info("=".repeat(50));
 
 const performanceTests = [
   {
@@ -227,27 +227,27 @@ performanceTests.forEach(({ name, text, iterations }) => {
   const duration = end - start;
   const avgTime = duration / iterations;
 
-  console.log(
+  console.info(
     `${name.padEnd(15)}: ${duration.toFixed(2)}ms total, ${avgTime.toFixed(4)}ms avg (${iterations} iterations)`
   );
 });
 
 // Cleanup
-console.log("\n🧹 Cleaning up...");
+console.info("\n🧹 Cleaning up...");
 await Bun.write("feature-demo.ts", "");
 await Bun.$`rm -rf feature-out`;
 
-console.log("\n✅ Advanced Bun Features Demo Complete!");
-console.log("\n📚 Features demonstrated:");
-console.log("  • Bun.stringWidth() for Unicode and ANSI handling");
-console.log("  • Feature flags with Bun.build()");
-console.log("  • Table creation with proper alignment");
-console.log("  • Text truncation with width awareness");
-console.log("  • ANSI color codes and hyperlinks");
-console.log("  • Performance optimization");
-console.log("\n🚀 Try these commands in your template:");
-console.log("  bun run advanced:string-width 'Hello 🌍'");
-console.log("  bun run advanced:table");
-console.log("  bun run advanced:features DEBUG PERFORMANCE");
-console.log("  bun run build:debug");
-console.log("  bun run build:experimental");
+console.info("\n✅ Advanced Bun Features Demo Complete!");
+console.info("\n📚 Features demonstrated:");
+console.info("  • Bun.stringWidth() for Unicode and ANSI handling");
+console.info("  • Feature flags with Bun.build()");
+console.info("  • Table creation with proper alignment");
+console.info("  • Text truncation with width awareness");
+console.info("  • ANSI color codes and hyperlinks");
+console.info("  • Performance optimization");
+console.info("\n🚀 Try these commands in your template:");
+console.info("  bun run advanced:string-width 'Hello 🌍'");
+console.info("  bun run advanced:table");
+console.info("  bun run advanced:features DEBUG PERFORMANCE");
+console.info("  bun run build:debug");
+console.info("  bun run build:experimental");

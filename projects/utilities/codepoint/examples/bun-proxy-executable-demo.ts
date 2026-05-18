@@ -35,12 +35,12 @@ const demoScenarios = [
 
 // Test executable detection
 async function testExecutableDetection() {
-  console.log("🔍 Testing Executable Detection...\n");
+  console.info("🔍 Testing Executable Detection...\n");
 
   const results = [];
 
   for (const scenario of demoScenarios) {
-    console.log(`📋 Checking: ${scenario.name} (${scenario.description})`);
+    console.info(`📋 Checking: ${scenario.name} (${scenario.description})`);
 
     const scenarioResults = {
       'Category': scenario.name,
@@ -78,9 +78,9 @@ async function testExecutableDetection() {
     scenarioResults.Versions = versions.join(' | ');
 
     results.push(scenarioResults);
-    console.log(`   Available: ${availableTools.join(' | ')}`);
-    console.log(`   Detected: ${detectedPaths.join(' | ')}`);
-    console.log(`   Versions: ${versions.join(' | ')}\n`);
+    console.info(`   Available: ${availableTools.join(' | ')}`);
+    console.info(`   Detected: ${detectedPaths.join(' | ')}`);
+    console.info(`   Versions: ${versions.join(' | ')}\n`);
   }
 
   return results;
@@ -88,7 +88,7 @@ async function testExecutableDetection() {
 
 // Display system executable overview
 async function displaySystemOverview() {
-  console.log("🖥️ System Executable Overview:\n");
+  console.info("🖥️ System Executable Overview:\n");
 
   const systemExecutables = await checkSystemExecutables();
   const executableArray = Array.from(systemExecutables.entries()).map(([name, info]) => ({
@@ -99,7 +99,7 @@ async function displaySystemOverview() {
     'Last Checked': info.lastChecked.toLocaleTimeString()
   }));
 
-  console.log(Bun.inspect.table(executableArray, {
+  console.info(Bun.inspect.table(executableArray, {
     colors: true,
     columns: [
       { key: 'Tool', header: 'Tool' },
@@ -114,45 +114,45 @@ async function displaySystemOverview() {
   const available = executableArray.filter(e => e.Available === '✅').length;
   const unavailable = total - available;
 
-  console.log(`\n📊 Summary: ${available}/${total} tools available (${Math.round((available/total) * 100)}%)`);
-  console.log(`   Available: ${available} | Not Found: ${unavailable}`);
+  console.info(`\n📊 Summary: ${available}/${total} tools available (${Math.round((available/total) * 100)}%)`);
+  console.info(`   Available: ${available} | Not Found: ${unavailable}`);
 
   return { total, available, unavailable };
 }
 
 // Test individual executable operations
 async function testExecutableOperations() {
-  console.log("\n🔧 Testing Executable Operations:\n");
+  console.info("\n🔧 Testing Executable Operations:\n");
 
   const testTools = ['bun', 'node', 'curl', 'ffmpeg'];
 
   for (const tool of testTools) {
-    console.log(`🔍 Testing ${tool}:`);
+    console.info(`🔍 Testing ${tool}:`);
 
     try {
       // Test hasExecutable
       const hasTool = await hasExecutable(tool);
-      console.log(`   hasExecutable: ${hasTool ? '✅' : '❌'}`);
+      console.info(`   hasExecutable: ${hasTool ? '✅' : '❌'}`);
 
       // Test getExecutableVersion
       const version = await getExecutableVersion(tool);
-      console.log(`   getVersion: ${version || 'N/A'}`);
+      console.info(`   getVersion: ${version || 'N/A'}`);
 
       // Test findExecutable (detailed info)
       const info = await findExecutable(tool);
-      console.log(`   findExecutable: ${info.available ? '✅' : '❌'} ${info.path || 'N/A'}`);
+      console.info(`   findExecutable: ${info.available ? '✅' : '❌'} ${info.path || 'N/A'}`);
 
     } catch (error) {
-      console.log(`   Error: ${error.message}`);
+      console.info(`   Error: ${error.message}`);
     }
 
-    console.log();
+    console.info();
   }
 }
 
 // Proxy integration demonstration
 async function demonstrateProxyIntegration() {
-  console.log("🔗 Proxy Integration Demonstration:\n");
+  console.info("🔗 Proxy Integration Demonstration:\n");
 
   // Check for tools that enhance proxy functionality
   const enhancementTools = {
@@ -208,10 +208,10 @@ async function demonstrateProxyIntegration() {
     });
   }
 
-  console.log(Bun.inspect.table(integrationResults, { colors: true }));
+  console.info(Bun.inspect.table(integrationResults, { colors: true }));
 
   // Show proxy capability matrix
-  console.log("\n🎯 Proxy Capability Matrix:");
+  console.info("\n🎯 Proxy Capability Matrix:");
 
   const capabilities = [
     {
@@ -264,12 +264,12 @@ async function demonstrateProxyIntegration() {
     }
   ];
 
-  console.log(Bun.inspect.table(capabilities, { colors: true }));
+  console.info(Bun.inspect.table(capabilities, { colors: true }));
 }
 
 // Performance comparison
 function displayPerformanceComparison() {
-  console.log("\n⚡ Executable Detection Performance:\n");
+  console.info("\n⚡ Executable Detection Performance:\n");
 
   const performanceData = [
     {
@@ -298,13 +298,13 @@ function displayPerformanceComparison() {
     }
   ];
 
-  console.log(Bun.inspect.table(performanceData, { colors: true }));
+  console.info(Bun.inspect.table(performanceData, { colors: true }));
 }
 
 // Main demo execution
 async function runExecutableDemo() {
-  console.log("🚀 Bun Proxy Executable Detection Demo");
-  console.log("======================================\n");
+  console.info("🚀 Bun Proxy Executable Detection Demo");
+  console.info("======================================\n");
 
   try {
     // Test executable detection
@@ -323,11 +323,11 @@ async function runExecutableDemo() {
     displayPerformanceComparison();
 
     // Final summary
-    console.log("\n🏆 Executable Detection Demo Complete!");
-    console.log("=====================================");
-    console.log(`📊 Detected ${overviewStats.available}/${overviewStats.total} system tools`);
-    console.log("🔧 Enhanced proxy capabilities based on available executables");
-    console.log("⚡ Optimized detection with caching and multiple search strategies");
+    console.info("\n🏆 Executable Detection Demo Complete!");
+    console.info("=====================================");
+    console.info(`📊 Detected ${overviewStats.available}/${overviewStats.total} system tools`);
+    console.info("🔧 Enhanced proxy capabilities based on available executables");
+    console.info("⚡ Optimized detection with caching and multiple search strategies");
 
   } catch (error) {
     console.error("💥 Demo failed:", error);

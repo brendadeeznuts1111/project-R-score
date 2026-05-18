@@ -14,7 +14,7 @@ import {
   type DNSResolutionOptions,
 } from "../src/networking/dns-resolver";
 
-console.log("\n🔐 [1.0.0.0] DNS Resolution with Security Validation\n");
+console.info("\n🔐 [1.0.0.0] DNS Resolution with Security Validation\n");
 
 // [1.1.0.0] Secure DNS Lookup Function
 /**
@@ -28,7 +28,7 @@ async function secureDNSLookup(
   hostname: string,
   options: DNSResolutionOptions = {}
 ): Promise<DNSResolutionResult> {
-  console.log(`\n📍 Looking up: ${hostname}`);
+  console.info(`\n📍 Looking up: ${hostname}`);
 
   // [1.1.1.0] Simulate DNS resolution (in real code, use Bun.dns.lookup)
   const mockResults: Record<string, DNSResolutionResult[]> = {
@@ -79,8 +79,8 @@ const testCases = [
 ];
 
 // [1.3.0.0] Run Tests
-console.log("🧪 [1.3.0.0] Security Validation Tests");
-console.log("─".repeat(60));
+console.info("🧪 [1.3.0.0] Security Validation Tests");
+console.info("─".repeat(60));
 
 let successCount = 0;
 let failureCount = 0;
@@ -88,19 +88,19 @@ let failureCount = 0;
 for (const { hostname, family, desc } of testCases) {
   try {
     const result = await secureDNSLookup(hostname, { family });
-    console.log(`  ✅ ${desc}`);
-    console.log(`     → ${result.address} (family: ${result.family}, ttl: ${result.ttl}s)`);
+    console.info(`  ✅ ${desc}`);
+    console.info(`     → ${result.address} (family: ${result.family}, ttl: ${result.ttl}s)`);
     successCount++;
   } catch (error) {
-    console.log(`  ❌ ${desc}`);
-    console.log(`     → ${(error as Error).message}`);
+    console.info(`  ❌ ${desc}`);
+    console.info(`     → ${(error as Error).message}`);
     failureCount++;
   }
 }
 
 // [1.4.0.0] Address Classification
-console.log("\n📊 [1.4.0.0] Address Classification");
-console.log("─".repeat(60));
+console.info("\n📊 [1.4.0.0] Address Classification");
+console.info("─".repeat(60));
 
 const addresses = [
   "127.0.0.1",
@@ -122,24 +122,24 @@ for (const addr of addresses) {
           addr.startsWith("172.")
         : addr.startsWith("fe80:") || addr === "::1";
 
-    console.log(`  ${addr.padEnd(20)} → ${type.padEnd(6)} ${isPrivate ? "(private)" : "(public)"}`);
+    console.info(`  ${addr.padEnd(20)} → ${type.padEnd(6)} ${isPrivate ? "(private)" : "(public)"}`);
   } catch (error) {
-    console.log(`  ${addr.padEnd(20)} → Error: ${(error as Error).message}`);
+    console.info(`  ${addr.padEnd(20)} → Error: ${(error as Error).message}`);
   }
 }
 
 // [1.5.0.0] Validation Statistics
-console.log("\n📈 [1.5.0.0] Validation Statistics");
-console.log("─".repeat(60));
+console.info("\n📈 [1.5.0.0] Validation Statistics");
+console.info("─".repeat(60));
 
-console.log(`  Total tests: ${testCases.length}`);
-console.log(`  Successful: ${successCount}`);
-console.log(`  Failed: ${failureCount}`);
-console.log(`  Success rate: ${((successCount / testCases.length) * 100).toFixed(1)}%`);
+console.info(`  Total tests: ${testCases.length}`);
+console.info(`  Successful: ${successCount}`);
+console.info(`  Failed: ${failureCount}`);
+console.info(`  Success rate: ${((successCount / testCases.length) * 100).toFixed(1)}%`);
 
 // [1.6.0.0] Security Checklist
-console.log("\n🔐 [1.6.0.0] Security Checklist");
-console.log("─".repeat(60));
+console.info("\n🔐 [1.6.0.0] Security Checklist");
+console.info("─".repeat(60));
 
 const securityChecks = [
   { check: "Address format validation", status: true },
@@ -154,12 +154,12 @@ const securityChecks = [
 
 for (const { check, status } of securityChecks) {
   const icon = status ? "✅" : "❌";
-  console.log(`  ${icon} ${check}`);
+  console.info(`  ${icon} ${check}`);
 }
 
 // [1.7.0.0] Performance Summary
-console.log("\n⏱️  [1.7.0.0] Performance Summary");
-console.log("─".repeat(60));
+console.info("\n⏱️  [1.7.0.0] Performance Summary");
+console.info("─".repeat(60));
 
 const start = performance.now();
 for (let i = 0; i < 1000; i++) {
@@ -174,10 +174,10 @@ for (let i = 0; i < 1000; i++) {
 const end = performance.now();
 const duration = end - start;
 
-console.log(`  Validations: ${addresses.length * 1000}`);
-console.log(`  Duration: ${duration.toFixed(2)}ms`);
-console.log(`  Per-validation: ${(duration / (addresses.length * 1000)).toFixed(4)}ms`);
-console.log(`  Throughput: ${((addresses.length * 1000) / (duration / 1000)).toFixed(0)} ops/sec`);
+console.info(`  Validations: ${addresses.length * 1000}`);
+console.info(`  Duration: ${duration.toFixed(2)}ms`);
+console.info(`  Per-validation: ${(duration / (addresses.length * 1000)).toFixed(4)}ms`);
+console.info(`  Throughput: ${((addresses.length * 1000) / (duration / 1000)).toFixed(0)} ops/sec`);
 
-console.log("\n✅ DNS security integration complete!\n");
+console.info("\n✅ DNS security integration complete!\n");
 

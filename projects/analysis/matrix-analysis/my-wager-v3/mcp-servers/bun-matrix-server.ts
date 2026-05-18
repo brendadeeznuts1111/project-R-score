@@ -260,9 +260,9 @@ export async function startBunMatrixServer(port = 3001): Promise<void> {
     }
   });
   
-  console.log(`🚀 Bun Matrix MCP Server running on port ${port}`);
-  console.log(`📊 Endpoint: http://localhost:${port}`);
-  console.log(`🔗 Ready for Tier-1380 integration`);
+  console.info(`🚀 Bun Matrix MCP Server running on port ${port}`);
+  console.info(`📊 Endpoint: http://localhost:${port}`);
+  console.info(`🔗 Ready for Tier-1380 integration`);
 }
 
 // Run server if executed directly

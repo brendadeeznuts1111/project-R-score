@@ -352,16 +352,16 @@ export async function createCustomer(request: ValidatedRequest): Promise<Respons
     };
 
     // TODO: Save to database
-    console.log('📝 Creating new customer:', newCustomer);
+    console.info('📝 Creating new customer:', newCustomer);
 
     // TODO: Send welcome email
     if (customerData.email) {
-      console.log('📧 Sending welcome email to:', customerData.email);
+      console.info('📧 Sending welcome email to:', customerData.email);
     }
 
     // TODO: Create Telegram notification if telegramId provided
     if (customerData.telegramId) {
-      console.log('🚨 Setting up Telegram notifications for:', customerData.telegramId);
+      console.info('🚨 Setting up Telegram notifications for:', customerData.telegramId);
     }
 
     const response = {

@@ -171,9 +171,9 @@ export class VersionValidator {
 
     // Success output
     const featureStr = this.formatFeatureReport(features);
-    console.log(`\x1b[32m✅ Bun v${Bun.version}\x1b[0m (SIMD+PTY+Archive ✓)`);
-    console.log(`\x1b[32m✅ Feature Detection:\x1b[0m ${elapsed.toFixed(2)}ms`);
-    console.log(`\x1b[36m📊 Capabilities:\x1b[0m ${featureStr}`);
+    console.info(`\x1b[32m✅ Bun v${Bun.version}\x1b[0m (SIMD+PTY+Archive ✓)`);
+    console.info(`\x1b[32m✅ Feature Detection:\x1b[0m ${elapsed.toFixed(2)}ms`);
+    console.info(`\x1b[36m📊 Capabilities:\x1b[0m ${featureStr}`);
 
     return { valid, features, elapsed };
   }

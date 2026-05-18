@@ -197,7 +197,7 @@ export class BunNativeAIAnalyzer {
     await this.initializeModels();
     await this.initializeWorkerPool();
     this.isInitialized = true;
-    console.log("✅ AI analyzer initialized successfully");
+    console.info("✅ AI analyzer initialized successfully");
   }
 
   // ============================================================================
@@ -205,7 +205,7 @@ export class BunNativeAIAnalyzer {
   // ============================================================================
 
   private async initializeModels(): Promise<void> {
-    console.log("🤖 Initializing AI models...");
+    console.info("🤖 Initializing AI models...");
     
     // Initialize image analysis model
     this.models.set("image-analysis", {
@@ -257,11 +257,11 @@ export class BunNativeAIAnalyzer {
     }
 
     this.isInitialized = true;
-    console.log("✅ AI models initialized");
+    console.info("✅ AI models initialized");
   }
 
   private async loadModel(key: string, model: AIModel): Promise<void> {
-    console.log(`📦 Loading model: ${model.name}`);
+    console.info(`📦 Loading model: ${model.name}`);
     
     // Simulate model loading time
     await Bun.sleep(100);
@@ -270,18 +270,18 @@ export class BunNativeAIAnalyzer {
     model.loaded = true;
     this.models.set(key, model);
     
-    console.log(`✅ Model loaded: ${model.name}`);
+    console.info(`✅ Model loaded: ${model.name}`);
   }
 
   private initializeWorkerPool(): void {
-    console.log(`👷 Initializing worker pool (${this.config.performance.maxConcurrency} workers)`);
+    console.info(`👷 Initializing worker pool (${this.config.performance.maxConcurrency} workers)`);
     
     for (let i = 0; i < this.config.performance.maxConcurrency; i++) {
       const worker = new Worker('./src/ai/ai-worker.ts');
       this.workerPool.push(worker);
     }
     
-    console.log("✅ Worker pool initialized");
+    console.info("✅ Worker pool initialized");
   }
 
   // ============================================================================
@@ -294,7 +294,7 @@ export class BunNativeAIAnalyzer {
     }
 
     const startTime = performance.now();
-    console.log(`🔍 Analyzing evidence: ${evidence.id} (${evidence.type})`);
+    console.info(`🔍 Analyzing evidence: ${evidence.id} (${evidence.type})`);
 
     try {
       let analysis: EvidenceAnalysis;
@@ -321,7 +321,7 @@ export class BunNativeAIAnalyzer {
       const processingTime = performance.now() - startTime;
       analysis.processingTime = processingTime;
 
-      console.log(`✅ Analysis complete: ${evidence.id} (${processingTime.toFixed(2)}ms)`);
+      console.info(`✅ Analysis complete: ${evidence.id} (${processingTime.toFixed(2)}ms)`);
       
       return analysis;
 
@@ -349,7 +349,7 @@ export class BunNativeAIAnalyzer {
     const batchId = `batch-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const startTime = performance.now();
     
-    console.log(`📦 Analyzing batch: ${batchId} (${evidenceList.length} items)`);
+    console.info(`📦 Analyzing batch: ${batchId} (${evidenceList.length} items)`);
 
     // Use Bun's worker threads for parallel processing
     const batchSize = Math.min(evidenceList.length, this.workerPool.length);
@@ -379,7 +379,7 @@ export class BunNativeAIAnalyzer {
       failureCount
     };
 
-    console.log(`✅ Batch complete: ${batchId} (${totalProcessingTime.toFixed(2)}ms, ${successCount}/${evidenceList.length} successful)`);
+    console.info(`✅ Batch complete: ${batchId} (${totalProcessingTime.toFixed(2)}ms, ${successCount}/${evidenceList.length} successful)`);
 
     return batchAnalysis;
   }
@@ -402,7 +402,7 @@ export class BunNativeAIAnalyzer {
   }
 
   private async analyzeImageGPU(evidence: Evidence): Promise<EvidenceAnalysis> {
-    console.log(`🚀 Analyzing image with GPU: ${evidence.id}`);
+    console.info(`🚀 Analyzing image with GPU: ${evidence.id}`);
 
     // Simulate GPU processing (in production, would use WebGPU or CUDA)
     const imageAnalysis = await this.simulateGPUImageAnalysis(evidence.data as ArrayBuffer);
@@ -426,7 +426,7 @@ export class BunNativeAIAnalyzer {
   }
 
   private async anizeImageCPU(evidence: Evidence): Promise<EvidenceAnalysis> {
-    console.log(`💻 Analyzing image with CPU: ${evidence.id}`);
+    console.info(`💻 Analyzing image with CPU: ${evidence.id}`);
 
     // Simulate CPU processing
     const imageAnalysis = await this.simulateCPUImageAnalysis(evidence.data as ArrayBuffer);
@@ -450,7 +450,7 @@ export class BunNativeAIAnalyzer {
   }
 
   private async analyzeText(evidence: Evidence): Promise<EvidenceAnalysis> {
-    console.log(`📝 Analyzing text: ${evidence.id}`);
+    console.info(`📝 Analyzing text: ${evidence.id}`);
 
     // Simulate text analysis
     const textAnalysis = await this.simulateTextAnalysis(evidence.data as ArrayBuffer);
@@ -474,7 +474,7 @@ export class BunNativeAIAnalyzer {
   }
 
   private async analyzeVideo(evidence: Evidence): Promise<EvidenceAnalysis> {
-    console.log(`🎥 Analyzing video: ${evidence.id}`);
+    console.info(`🎥 Analyzing video: ${evidence.id}`);
 
     // Simulate video analysis (keyframe extraction + image analysis)
     const videoAnalysis = await this.simulateVideoAnalysis(evidence.data as ArrayBuffer);
@@ -498,7 +498,7 @@ export class BunNativeAIAnalyzer {
   }
 
   private async analyzeAudio(evidence: Evidence): Promise<EvidenceAnalysis> {
-    console.log(`🎵 Analyzing audio: ${evidence.id}`);
+    console.info(`🎵 Analyzing audio: ${evidence.id}`);
 
     // Simulate audio analysis
     const audioAnalysis = await this.simulateAudioAnalysis(evidence.data as ArrayBuffer);
@@ -756,7 +756,7 @@ export class BunNativeAIAnalyzer {
   }
 
   async shutdown(): Promise<void> {
-    console.log("🛑 Shutting down AI analyzer...");
+    console.info("🛑 Shutting down AI analyzer...");
     
     // Terminate all workers
     for (const worker of this.workerPool) {
@@ -766,6 +766,6 @@ export class BunNativeAIAnalyzer {
     this.workerPool = [];
     this.isInitialized = false;
     
-    console.log("✅ AI analyzer shutdown complete");
+    console.info("✅ AI analyzer shutdown complete");
   }
 }

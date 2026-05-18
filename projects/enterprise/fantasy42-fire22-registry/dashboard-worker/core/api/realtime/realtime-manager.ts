@@ -404,7 +404,7 @@ export class RealTimeManager {
           break;
 
         default:
-          console.log(`Unknown WebSocket message type: ${message.type}`);
+          console.info(`Unknown WebSocket message type: ${message.type}`);
       }
     } catch (error) {
       console.error('Error handling WebSocket message:', error);

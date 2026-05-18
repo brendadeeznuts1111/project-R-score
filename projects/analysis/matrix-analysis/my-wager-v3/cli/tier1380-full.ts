@@ -419,31 +419,31 @@ export class Tier1380FullCLI {
   }
 
   private async deployCloudEmpire(options: any): Promise<CLIResult> {
-    console.log('🚀 DEPLOYING TIER-1380 CLOUD EMPIRE');
-    console.log('='.repeat(60));
+    console.info('🚀 DEPLOYING TIER-1380 CLOUD EMPIRE');
+    console.info('='.repeat(60));
 
     // 1. Initialize R2 buckets
-    console.log('\n☁️  INITIALIZING R2 BUCKETS...');
+    console.info('\n☁️  INITIALIZING R2 BUCKETS...');
     const buckets = ['tier1380-global-artifacts', 'tier1380-rss-feeds'];
     for (const bucket of buckets) {
       await this.r2Storage.initializeBucket(bucket, { quantumSeal: true });
-      console.log(`   ✅ ${bucket}: Initialized`);
+      console.info(`   ✅ ${bucket}: Initialized`);
     }
 
     // 2. Register global domains
-    console.log('\n🌐 REGISTERING GLOBAL DOMAINS...');
+    console.info('\n🌐 REGISTERING GLOBAL DOMAINS...');
     const domains = ['registry.tier1380.com', 'rss.tier1380.com', 'artifacts.tier1380.com'];
     for (const domain of domains) {
       await this.domainManager.registerDomain(domain, { ssl: true });
-      console.log(`   ✅ ${domain}: Registered`);
+      console.info(`   ✅ ${domain}: Registered`);
     }
 
     // 3. Initialize RSS feeds
-    console.log('\n📡 INITIALIZING RSS FEEDS...');
+    console.info('\n📡 INITIALIZING RSS FEEDS...');
     const feeds = ['package-publishes', 'security-alerts', 'team-activities', 'audit-trail', 'registry-updates'];
     for (const feed of feeds) {
       const feedUrl = await this.rssFeeds.getFeedUrl(feed);
-      console.log(`   ✅ ${feed}: ${feedUrl}`);
+      console.info(`   ✅ ${feed}: ${feedUrl}`);
     }
 
     return {
@@ -553,7 +553,7 @@ async function main() {
   const [command, ...args] = process.argv.slice(2);
 
   if (!command) {
-    console.log(`
+    console.info(`
 🌐 TIER-1380 CLOUD EMPIRE CLI
 ============================
 
@@ -598,7 +598,7 @@ Examples:
   const result = await cli.execute(command, args);
 
   if (result.success) {
-    console.log(result.output || '✅ Command completed successfully');
+    console.info(result.output || '✅ Command completed successfully');
   } else {
     console.error('❌ Error:', result.error);
     process.exit(1);

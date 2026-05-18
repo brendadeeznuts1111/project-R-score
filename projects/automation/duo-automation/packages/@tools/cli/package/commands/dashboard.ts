@@ -16,7 +16,7 @@ import { retryDeploy, RetryError } from '../../utils/retry';
 // Create a simple monitor interface for deployment tracking
 const monitor = {
   async recordDeployment(deployment: any) {
-    console.log('📊 Recording deployment metrics...');
+    console.info('📊 Recording deployment metrics...');
     // Simple deployment tracking
     return {
       success: true,
@@ -54,7 +54,7 @@ program
       process.exit(1);
     }
     
-    console.log(`🚀 Deploying dashboards to ${options.scope} scope...`);
+    console.info(`🚀 Deploying dashboards to ${options.scope} scope...`);
     
     try {
       // Initialize R2 manager with config
@@ -78,12 +78,12 @@ program
         scope: options.scope
       });
       
-      console.log('✅ Deployment complete:');
+      console.info('✅ Deployment complete:');
       results.forEach(r => {
-        if (r) console.log(`  ${r.key} → ${r.disposition}`);
+        if (r) console.info(`  ${r.key} → ${r.disposition}`);
       });
-      console.log(`  Deployment ID: ${deployment.deploymentId}`);
-      console.log(`  Setup Score: VALID ✅`);
+      console.info(`  Deployment ID: ${deployment.deploymentId}`);
+      console.info(`  Setup Score: VALID ✅`);
       
       // Register pattern in matrix
       addPattern('CLI', 'DashboardDeploy', {
@@ -112,7 +112,7 @@ program
   .description('Serve dashboards locally (no CDN)')
   .option('--port <port>', 'Port', '3004')
   .action(async (options) => {
-    console.log(`🌐 Starting local dashboard server on port ${options.port}...`);
+    console.info(`🌐 Starting local dashboard server on port ${options.port}...`);
     
     try {
       // Bun-native server
@@ -153,9 +153,9 @@ program
         }
       });
       
-      console.log(`✅ Dashboard server running at http://localhost:${options.port}`);
-      console.log(`  Dashboard: http://localhost:${options.port}/dashboard`);
-      console.log(`  Health API: http://localhost:${options.port}/api/health`);
+      console.info(`✅ Dashboard server running at http://localhost:${options.port}`);
+      console.info(`  Dashboard: http://localhost:${options.port}/dashboard`);
+      console.info(`  Health API: http://localhost:${options.port}/api/health`);
       
       // Register pattern in matrix
       addPattern('CLI', 'DashboardServe', {
@@ -169,7 +169,7 @@ program
       
       // Graceful shutdown
       process.on('SIGINT', () => {
-        console.log('\n🛑 Shutting down server...');
+        console.info('\n🛑 Shutting down server...');
         server.stop();
         process.exit(0);
       });

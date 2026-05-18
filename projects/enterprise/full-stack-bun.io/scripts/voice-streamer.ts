@@ -76,7 +76,7 @@ class VoiceStreamer {
     this.sessions.set(sessionId, session);
     this.activeSessions.add(sessionId);
 
-    console.log(`🎤 Started voice session: ${sessionId} for client: ${clientId}`);
+    console.info(`🎤 Started voice session: ${sessionId} for client: ${clientId}`);
     return session;
   }
 
@@ -88,7 +88,7 @@ class VoiceStreamer {
     session.isActive = false;
     this.activeSessions.delete(sessionId);
 
-    console.log(`🎤 Ended voice session: ${sessionId} (duration: ${(Date.now() - session.startTime) / 1000}s)`);
+    console.info(`🎤 Ended voice session: ${sessionId} (duration: ${(Date.now() - session.startTime) / 1000}s)`);
     return true;
   }
 
@@ -451,7 +451,7 @@ async function main() {
   const [command, ...args] = process.argv.slice(2);
 
   if (!command) {
-    console.log(`
+    console.info(`
 Voice Streamer v1.0.0 - Real-time voice channel over WebSocket
 
 Usage:
@@ -483,7 +483,7 @@ Examples:
           throw new Error('Usage: start-session <client-id> [language]');
         }
         const session = streamer.startSession(clientId, language);
-        console.log(`✅ Started voice session: ${session.id}`);
+        console.info(`✅ Started voice session: ${session.id}`);
         break;
 
       case 'end-session':
@@ -492,32 +492,32 @@ Examples:
           throw new Error('Usage: end-session <session-id>');
         }
         const ended = streamer.endSession(sessionId);
-        console.log(ended ? `✅ Ended session: ${sessionId}` : `❌ Session not found: ${sessionId}`);
+        console.info(ended ? `✅ Ended session: ${sessionId}` : `❌ Session not found: ${sessionId}`);
         break;
 
       case 'list-sessions':
         const sessions = streamer.getActiveSessions();
-        console.log('Active Voice Sessions:');
+        console.info('Active Voice Sessions:');
         sessions.forEach(session => {
           const duration = Math.floor((Date.now() - session.startTime) / 1000);
-          console.log(`  ${session.id}: ${session.clientId} (${duration}s)`);
+          console.info(`  ${session.id}: ${session.clientId} (${duration}s)`);
         });
         break;
 
       case 'stats':
         const active = streamer.getActiveSessions();
-        console.log('Voice Streaming Statistics:');
-        console.log(`  Active Sessions: ${active.length}`);
-        console.log(`  Total Sessions: ${streamer.getActiveSessions().length}`);
+        console.info('Voice Streaming Statistics:');
+        console.info(`  Active Sessions: ${active.length}`);
+        console.info(`  Total Sessions: ${streamer.getActiveSessions().length}`);
         break;
 
       case 'report':
-        console.log(streamer.generateReport());
+        console.info(streamer.generateReport());
         break;
 
       case 'cleanup':
         const cleaned = streamer.cleanupInactiveSessions();
-        console.log(`🧹 Cleaned up ${cleaned} inactive sessions`);
+        console.info(`🧹 Cleaned up ${cleaned} inactive sessions`);
         break;
 
       default:

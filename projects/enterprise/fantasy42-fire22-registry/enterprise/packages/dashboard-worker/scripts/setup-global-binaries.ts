@@ -243,7 +243,7 @@ class GlobalBinaryManager {
   async setupGlobal(): Promise<void> {
     logger.info('GLOBAL', '1.0.0', '🚀 Starting Fire22 Dashboard Worker global setup');
 
-    console.log(`
+    console.info(`
 🔥 Fire22 Dashboard Worker - Global Setup
 !==!==!==!==!==!==!==!==
 Package: fire22-dashboard-worker@4.0.0-staging
@@ -252,30 +252,30 @@ Bun Version: ${Bun.version}
 
     // Step 1: Check Bun installation
     const bunCheck = await this.checkBunInstallation();
-    console.log(bunCheck.message);
+    console.info(bunCheck.message);
     if (!bunCheck.success) return;
 
     // Step 2: Setup shell PATH
     const pathSetup = await this.setupShellPath();
-    console.log(pathSetup.message);
+    console.info(pathSetup.message);
 
     // Step 3: Link global binaries
     const linkSetup = await this.linkGlobalBinaries();
-    console.log(linkSetup.message);
+    console.info(linkSetup.message);
 
     // Step 4: Setup bunx global access
     const bunxSetup = await this.setupBunxGlobal();
-    console.log(bunxSetup.message);
+    console.info(bunxSetup.message);
 
     // Step 5: Verify installation
     const verification = await this.verifyGlobalSetup();
-    console.log('\n🔍 Verification Results:');
+    console.info('\n🔍 Verification Results:');
     if (verification.commands) {
-      verification.commands.forEach(result => console.log(`  ${result}`));
+      verification.commands.forEach(result => console.info(`  ${result}`));
     }
 
     // Final instructions
-    console.log(`
+    console.info(`
 🎉 Global Setup Complete!
 
 📋 Available Commands:
@@ -305,22 +305,22 @@ if (import.meta.main) {
 
   switch (command) {
     case 'check':
-      manager.checkBunInstallation().then(result => console.log(result.message));
+      manager.checkBunInstallation().then(result => console.info(result.message));
       break;
     case 'path':
-      manager.setupShellPath().then(result => console.log(result.message));
+      manager.setupShellPath().then(result => console.info(result.message));
       break;
     case 'link':
-      manager.linkGlobalBinaries().then(result => console.log(result.message));
+      manager.linkGlobalBinaries().then(result => console.info(result.message));
       break;
     case 'bunx':
-      manager.setupBunxGlobal().then(result => console.log(result.message));
+      manager.setupBunxGlobal().then(result => console.info(result.message));
       break;
     case 'verify':
       manager.verifyGlobalSetup().then(result => {
-        console.log(result.message);
+        console.info(result.message);
         if (result.commands) {
-          result.commands.forEach(cmd => console.log(`  ${cmd}`));
+          result.commands.forEach(cmd => console.info(`  ${cmd}`));
         }
       });
       break;

@@ -229,8 +229,8 @@ class GuestSecurityEnforcement {
     // Notify inviter of guest payment
     await this.notifyInviterOfPayment(transaction);
 
-    console.log(`💰 Created guest transaction: ${transactionId} for $${params.amount}`);
-    console.log(`📅 Repayment due: ${repaymentDue.toISOString()}`);
+    console.info(`💰 Created guest transaction: ${transactionId} for $${params.amount}`);
+    console.info(`📅 Repayment due: ${repaymentDue.toISOString()}`);
 
     return transaction;
   }
@@ -265,8 +265,8 @@ class GuestSecurityEnforcement {
     // Start repayment tracking
     await this.startRepaymentTracking(transaction);
 
-    console.log(`✅ Completed guest transaction: ${transactionId}`);
-    console.log(`💳 Repayment tracking started for $${transaction.repaymentAmount}`);
+    console.info(`✅ Completed guest transaction: ${transactionId}`);
+    console.info(`💳 Repayment tracking started for $${transaction.repaymentAmount}`);
 
     return transaction;
   }
@@ -322,9 +322,9 @@ class GuestSecurityEnforcement {
 
     const overpayment = repaymentAmount - transaction.repaymentAmount;
 
-    console.log(`💳 Processed guest repayment: $${repaymentAmount} for transaction ${transactionId}`);
+    console.info(`💳 Processed guest repayment: $${repaymentAmount} for transaction ${transactionId}`);
     if (overpayment > 0) {
-      console.log(`💰 Overpayment: $${overpayment}`);
+      console.info(`💰 Overpayment: $${overpayment}`);
     }
 
     return {
@@ -373,7 +373,7 @@ class GuestSecurityEnforcement {
       }
     }
 
-    console.log(`🚨 Overdue repayment check: ${overdueCount} overdue, ${escalatedCount} escalated, ${alertsCreated} alerts created`);
+    console.info(`🚨 Overdue repayment check: ${overdueCount} overdue, ${escalatedCount} escalated, ${alertsCreated} alerts created`);
 
     return { overdueCount, escalatedCount, alertsCreated };
   }
@@ -533,7 +533,7 @@ class GuestSecurityEnforcement {
    * Start repayment tracking
    */
   private static async startRepaymentTracking(transaction: GuestTransaction): Promise<void> {
-    console.log(`📊 Starting repayment tracking for transaction ${transaction.id}`);
+    console.info(`📊 Starting repayment tracking for transaction ${transaction.id}`);
     // Integration with repayment tracking system
   }
 
@@ -542,7 +542,7 @@ class GuestSecurityEnforcement {
    */
   private static async updateGuestTrustForRepayment(guestId: string, onTime: boolean): Promise<void> {
     const adjustment = onTime ? 5 : -3;
-    console.log(`📈 Updating guest trust for ${guestId}: ${adjustment > 0 ? '+' : ''}${adjustment}`);
+    console.info(`📈 Updating guest trust for ${guestId}: ${adjustment > 0 ? '+' : ''}${adjustment}`);
     // Integration with trust score system
   }
 
@@ -590,7 +590,7 @@ class GuestSecurityEnforcement {
     };
 
     await this.saveSecurityAlert(alert);
-    console.log(`🚨 Security alert created: ${type} - ${severity}`);
+    console.info(`🚨 Security alert created: ${type} - ${severity}`);
   }
 
   /**
@@ -613,15 +613,15 @@ class GuestSecurityEnforcement {
    * Notification methods (placeholders for integration)
    */
   private static async notifyInviterOfPayment(transaction: GuestTransaction): Promise<void> {
-    console.log(`📱 Notifying inviter ${transaction.inviterId} of guest payment: $${transaction.amount}`);
+    console.info(`📱 Notifying inviter ${transaction.inviterId} of guest payment: $${transaction.amount}`);
   }
 
   private static async notifyInviterOfOverduePayment(transaction: GuestTransaction): Promise<void> {
-    console.log(`🚨 Notifying inviter ${transaction.inviterId} of overdue payment: $${transaction.repaymentAmount}`);
+    console.info(`🚨 Notifying inviter ${transaction.inviterId} of overdue payment: $${transaction.repaymentAmount}`);
   }
 
   private static async notifyInviterOfRepayment(transaction: GuestTransaction): Promise<void> {
-    console.log(`✅ Notifying inviter ${transaction.inviterId} of repayment: $${transaction.repaymentAmount}`);
+    console.info(`✅ Notifying inviter ${transaction.inviterId} of repayment: $${transaction.repaymentAmount}`);
   }
 
   private static async logSecurityCheck(
@@ -632,9 +632,9 @@ class GuestSecurityEnforcement {
     checks: string[],
     warnings: string[]
   ): Promise<void> {
-    console.log(`🔒 Security check for guest ${guestId}: $${amount} -> ${allowed ? 'ALLOWED' : 'BLOCKED'}`);
-    if (checks.length > 0) console.log(`  Checks: ${checks.join(', ')}`);
-    if (warnings.length > 0) console.log(`  Warnings: ${warnings.join(', ')}`);
+    console.info(`🔒 Security check for guest ${guestId}: $${amount} -> ${allowed ? 'ALLOWED' : 'BLOCKED'}`);
+    if (checks.length > 0) console.info(`  Checks: ${checks.join(', ')}`);
+    if (warnings.length > 0) console.info(`  Warnings: ${warnings.join(', ')}`);
   }
 
   /**
@@ -801,20 +801,20 @@ if (import.meta.main) {
       const amount = parseFloat(process.argv[4]) || 25.00;
       GuestSecurityEnforcement.enforceGuestPaymentRules(guestId, amount, 'bob-cousin', 'factory-wager')
         .then(result => {
-          console.log('🔒 Security Check Result:');
-          console.log(`Allowed: ${result.allowed}`);
-          console.log(`Requires Fronting: ${result.requiresFronting}`);
+          console.info('🔒 Security Check Result:');
+          console.info(`Allowed: ${result.allowed}`);
+          console.info(`Requires Fronting: ${result.requiresFronting}`);
           if (result.frontingMemberId) {
-            console.log(`Fronting Member: ${result.frontingMemberId}`);
+            console.info(`Fronting Member: ${result.frontingMemberId}`);
           }
           if (result.securityChecks.length > 0) {
-            console.log(`Security Checks: ${result.securityChecks.join(', ')}`);
+            console.info(`Security Checks: ${result.securityChecks.join(', ')}`);
           }
           if (result.warnings.length > 0) {
-            console.log(`Warnings: ${result.warnings.join(', ')}`);
+            console.info(`Warnings: ${result.warnings.join(', ')}`);
           }
           if (result.blockedReason) {
-            console.log(`Blocked: ${result.blockedReason}`);
+            console.info(`Blocked: ${result.blockedReason}`);
           }
         })
         .catch(error => console.error('❌ Error:', error.message));
@@ -832,25 +832,25 @@ if (import.meta.main) {
         inviterId: 'alice-cousin',
         frontingMemberId: 'alice-cousin'
       }).then(transaction => {
-        console.log('💰 Guest Transaction Created:');
-        console.log(`ID: ${transaction.id}`);
-        console.log(`Amount: $${transaction.amount}`);
-        console.log(`Repayment Due: ${transaction.repaymentDue.toISOString()}`);
-        console.log(`Fronting Member: ${transaction.frontingMemberId}`);
+        console.info('💰 Guest Transaction Created:');
+        console.info(`ID: ${transaction.id}`);
+        console.info(`Amount: $${transaction.amount}`);
+        console.info(`Repayment Due: ${transaction.repaymentDue.toISOString()}`);
+        console.info(`Fronting Member: ${transaction.frontingMemberId}`);
       }).catch(error => console.error('❌ Error:', error.message));
       break;
 
     case 'check-overdue':
       GuestSecurityEnforcement.checkOverdueRepayments().then(result => {
-        console.log('🚨 Overdue Repayment Check:');
-        console.log(`Overdue: ${result.overdueCount}`);
-        console.log(`Escalated: ${result.escalatedCount}`);
-        console.log(`Alerts Created: ${result.alertsCreated}`);
+        console.info('🚨 Overdue Repayment Check:');
+        console.info(`Overdue: ${result.overdueCount}`);
+        console.info(`Escalated: ${result.escalatedCount}`);
+        console.info(`Alerts Created: ${result.alertsCreated}`);
       }).catch(error => console.error('❌ Error:', error.message));
       break;
 
     default:
-      console.log(`
+      console.info(`
 🔒 Guest Security Enforcement - ACME's Protection System
 
 Usage:

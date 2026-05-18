@@ -294,6 +294,6 @@ expectTypeOf(new NetworkError('Failed', 500)).toMatchObjectType<NetworkError>();
 expectTypeOf(new NetworkError('Failed', 500).code).toBeNumber();
 expectTypeOf(new NetworkError('Failed', 500).endpoint).toEqualTypeOf<string | undefined>();
 
-console.log('✅ All comprehensive type tests passed!');
-console.log('📊 Coverage: Basic types, objects, functions, arrays, promises, unions, generics, and more!');
-console.log('🚀 Run with: bunx tsc --noEmit bench/comprehensive-type-tests.ts');
+console.info('✅ All comprehensive type tests passed!');
+console.info('📊 Coverage: Basic types, objects, functions, arrays, promises, unions, generics, and more!');
+console.info('🚀 Run with: bunx tsc --noEmit bench/comprehensive-type-tests.ts');

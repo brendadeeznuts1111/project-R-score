@@ -53,9 +53,9 @@ export class KernelPerformanceMonitor {
     const enhanced = metrics.map(m => enhanceMetric(m));
 
     // Display in table format
-    console.log('\n🚀 COMPREHENSIVE PERFORMANCE REPORT');
-    console.log('='.repeat(120));
-    console.log(Bun.inspect.table(enhanced, {
+    console.info('\n🚀 COMPREHENSIVE PERFORMANCE REPORT');
+    console.info('='.repeat(120));
+    console.info(Bun.inspect.table(enhanced, {
       columns: ['category', 'type', 'topic', 'value', 'impact', 'properties'],
       colors: true,
       indent: 2
@@ -110,7 +110,7 @@ export class KernelPerformanceMonitor {
 // Run the monitor if this script is executed directly
 if (import.meta.main) {
   const monitor = new KernelPerformanceMonitor();
-  console.log('✨ Kernel Performance Monitor active.');
+  console.info('✨ Kernel Performance Monitor active.');
   
   // Generate a report after a short delay
   setTimeout(async () => {

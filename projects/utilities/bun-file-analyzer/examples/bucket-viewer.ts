@@ -53,12 +53,12 @@ class BucketViewer {
   }
 
   async loadBundleData(buildDir: string = "./dist"): Promise<void> {
-    console.log("📦 Loading bundle data for bucket viewer...");
+    console.info("📦 Loading bundle data for bucket viewer...");
     
     try {
       const bundleData = await this.analyzeBundle(buildDir);
       this.data = this.transformToBuckets(bundleData);
-      console.log(`✅ Loaded ${this.data.length} buckets for visualization`);
+      console.info(`✅ Loaded ${this.data.length} buckets for visualization`);
     } catch (error) {
       console.error("❌ Failed to load bundle data:", error);
       this.data = this.getFallbackData();
@@ -551,9 +551,9 @@ class BucketViewer {
       }
     });
 
-    console.log("🪣 Bundle Bucket Viewer started!");
-    console.log(`📊 Dashboard: http://localhost:${port}`);
-    console.log(`📊 API: http://localhost:${port}/data`);
+    console.info("🪣 Bundle Bucket Viewer started!");
+    console.info(`📊 Dashboard: http://localhost:${port}`);
+    console.info(`📊 API: http://localhost:${port}/data`);
   }
 }
 
@@ -566,7 +566,7 @@ async function main() {
   const viewer = new BucketViewer();
   
   if (args.includes('--help')) {
-    console.log(`
+    console.info(`
 🪣 Bundle Bucket Viewer
 
 Usage:

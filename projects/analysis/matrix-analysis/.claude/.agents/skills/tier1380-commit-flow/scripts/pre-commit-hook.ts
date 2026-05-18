@@ -65,7 +65,7 @@ async function runPreCommitChecks(
 		];
 	}
 
-	console.log(`📦 Checking ${files.length} staged files...\n`);
+	console.info(`📦 Checking ${files.length} staged files...\n`);
 
 	// Secrets scan
 	if (config.enableSecretsScan) {
@@ -256,29 +256,29 @@ if (import.meta.main) {
 		enableTypeCheck: !quick,
 	};
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Pre-Commit Hook                    ║");
-	console.log(
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Pre-Commit Hook                    ║");
+	console.info(
 		`${`║     Mode: ${quick ? "Quick (no tests/types)" : "Full"}`.padEnd(55)}║`,
 	);
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	const results = await runPreCommitChecks(config);
 
 	// Display results
-	console.log("\n📊 Results:");
-	console.log();
+	console.info("\n📊 Results:");
+	console.info();
 
 	let passed = 0;
 	let failed = 0;
 
 	for (const result of results) {
 		const icon = result.passed ? "✅" : "❌";
-		console.log(`${icon} ${result.name} (${result.duration.toFixed(1)}ms)`);
+		console.info(`${icon} ${result.name} (${result.duration.toFixed(1)}ms)`);
 
 		if (!result.passed && result.details) {
-			console.log(`   ${result.details.split("\n").join("\n   ")}`);
+			console.info(`   ${result.details.split("\n").join("\n   ")}`);
 		}
 
 		if (result.passed) passed++;
@@ -309,22 +309,22 @@ if (import.meta.main) {
 		// Ignore DB errors
 	}
 
-	console.log();
-	console.log(`Total: ${passed} passed, ${failed} failed`);
+	console.info();
+	console.info(`Total: ${passed} passed, ${failed} failed`);
 
 	if (failed > 0) {
-		console.log();
-		console.log("⚠️  Fix failing checks before committing");
-		console.log();
-		console.log("Options:");
-		console.log("  --fix    Auto-fix lint issues");
-		console.log("  --quick  Skip tests and type check");
+		console.info();
+		console.info("⚠️  Fix failing checks before committing");
+		console.info();
+		console.info("Options:");
+		console.info("  --fix    Auto-fix lint issues");
+		console.info("  --quick  Skip tests and type check");
 		process.exit(1);
 	} else {
-		console.log();
-		console.log("✨ All checks passed! Ready to commit.");
-		console.log();
-		console.log('Next: git commit -m "[MESSAGE]"');
+		console.info();
+		console.info("✨ All checks passed! Ready to commit.");
+		console.info();
+		console.info('Next: git commit -m "[MESSAGE]"');
 	}
 }
 

@@ -109,8 +109,8 @@ class HealthMonitor {
   ];
 
   async runHealthChecks(): Promise<void> {
-    console.log('🏥 Starting Automated Health Checks...\n');
-    console.log(`⏰ ${new Date().toISOString()}\n`);
+    console.info('🏥 Starting Automated Health Checks...\n');
+    console.info(`⏰ ${new Date().toISOString()}\n`);
 
     for (const check of this.healthChecks) {
       const result = await this.performHealthCheck(check);
@@ -119,7 +119,7 @@ class HealthMonitor {
       // Display result immediately
       const statusIcon =
         result.status === 'healthy' ? '✅' : result.status === 'warning' ? '⚠️' : '❌';
-      console.log(`${statusIcon} ${result.name}: ${result.details} (${result.responseTime}ms)`);
+      console.info(`${statusIcon} ${result.name}: ${result.details} (${result.responseTime}ms)`);
     }
 
     this.generateHealthReport();
@@ -237,51 +237,51 @@ class HealthMonitor {
     const critical = this.results.filter(r => r.status === 'critical').length;
     const total = this.results.length;
 
-    console.log('\n' + '='.repeat(60));
-    console.log('📊 HEALTH CHECK REPORT');
-    console.log('='.repeat(60));
-    console.log(`⏰ Timestamp: ${new Date().toISOString()}`);
-    console.log(`⏱️  Total Time: ${totalTime}ms`);
-    console.log(`🏥 Total Checks: ${total}`);
-    console.log(`✅ Healthy: ${healthy}`);
-    console.log(`⚠️  Warnings: ${warnings}`);
-    console.log(`❌ Critical: ${critical}`);
-    console.log(`📈 Health Score: ${Math.round((healthy / total) * 100)}%`);
+    console.info('\n' + '='.repeat(60));
+    console.info('📊 HEALTH CHECK REPORT');
+    console.info('='.repeat(60));
+    console.info(`⏰ Timestamp: ${new Date().toISOString()}`);
+    console.info(`⏱️  Total Time: ${totalTime}ms`);
+    console.info(`🏥 Total Checks: ${total}`);
+    console.info(`✅ Healthy: ${healthy}`);
+    console.info(`⚠️  Warnings: ${warnings}`);
+    console.info(`❌ Critical: ${critical}`);
+    console.info(`📈 Health Score: ${Math.round((healthy / total) * 100)}%`);
 
     // Show warnings and critical issues
     if (warnings > 0) {
-      console.log('\n⚠️  WARNINGS:');
+      console.info('\n⚠️  WARNINGS:');
       this.results
         .filter(r => r.status === 'warning')
         .forEach(result => {
-          console.log(`   - ${result.name}: ${result.details}`);
+          console.info(`   - ${result.name}: ${result.details}`);
         });
     }
 
     if (critical > 0) {
-      console.log('\n❌ CRITICAL ISSUES:');
+      console.info('\n❌ CRITICAL ISSUES:');
       this.results
         .filter(r => r.status === 'critical')
         .forEach(result => {
-          console.log(`   - ${result.name}: ${result.details}`);
+          console.info(`   - ${result.name}: ${result.details}`);
         });
     }
 
     // Overall status
     if (critical === 0 && warnings === 0) {
-      console.log('\n🎉 All systems healthy! Dashboard worker is performing optimally.');
+      console.info('\n🎉 All systems healthy! Dashboard worker is performing optimally.');
     } else if (critical === 0) {
-      console.log('\n⚠️  System has warnings but no critical issues. Monitor closely.');
+      console.info('\n⚠️  System has warnings but no critical issues. Monitor closely.');
     } else {
-      console.log('\n🚨 CRITICAL ISSUES DETECTED! Immediate attention required.');
+      console.info('\n🚨 CRITICAL ISSUES DETECTED! Immediate attention required.');
     }
 
     // Performance insights
     const avgResponseTime = this.results.reduce((sum, r) => sum + r.responseTime, 0) / total;
-    console.log(`\n📊 Performance Insights:`);
-    console.log(`   Average Response Time: ${Math.round(avgResponseTime)}ms`);
-    console.log(`   Fastest Response: ${Math.min(...this.results.map(r => r.responseTime))}ms`);
-    console.log(`   Slowest Response: ${Math.max(...this.results.map(r => r.responseTime))}ms`);
+    console.info(`\n📊 Performance Insights:`);
+    console.info(`   Average Response Time: ${Math.round(avgResponseTime)}ms`);
+    console.info(`   Fastest Response: ${Math.min(...this.results.map(r => r.responseTime))}ms`);
+    console.info(`   Slowest Response: ${Math.max(...this.results.map(r => r.responseTime))}ms`);
 
     // 🆕 NEW: Dashboard-specific insights
     const dashboardChecks = this.results.filter(
@@ -292,42 +292,42 @@ class HealthMonitor {
     );
 
     if (dashboardChecks.length > 0) {
-      console.log(`\n🎯 Dashboard Health Insights:`);
+      console.info(`\n🎯 Dashboard Health Insights:`);
       const dashboardHealthy = dashboardChecks.filter(r => r.status === 'healthy').length;
       const dashboardTotal = dashboardChecks.length;
-      console.log(
+      console.info(
         `   Dashboard Health Score: ${Math.round((dashboardHealthy / dashboardTotal) * 100)}%`
       );
 
       if (dashboardHealthy === dashboardTotal) {
-        console.log(`   ✅ Permissions Matrix: All systems operational`);
-        console.log(`   ✅ Agent Configs API: Functioning correctly`);
-        console.log(`   ✅ Dashboard Access: Available and responsive`);
+        console.info(`   ✅ Permissions Matrix: All systems operational`);
+        console.info(`   ✅ Agent Configs API: Functioning correctly`);
+        console.info(`   ✅ Dashboard Access: Available and responsive`);
       } else {
-        console.log(
+        console.info(
           `   ⚠️  Dashboard Issues: ${dashboardTotal - dashboardHealthy} problems detected`
         );
         dashboardChecks
           .filter(r => r.status !== 'healthy')
           .forEach(check => {
-            console.log(`      - ${check.name}: ${check.details}`);
+            console.info(`      - ${check.name}: ${check.details}`);
           });
       }
     }
 
     // Recommendations
     if (avgResponseTime > 3000) {
-      console.log(
+      console.info(
         '\n💡 Recommendation: Consider optimizing response times. Current average is above 3 seconds.'
       );
     }
 
     if (critical > 0) {
-      console.log('\n🚨 IMMEDIATE ACTIONS REQUIRED:');
-      console.log('   1. Investigate critical failures');
-      console.log('   2. Check worker logs: wrangler tail --format=pretty');
-      console.log('   3. Verify database connectivity');
-      console.log('   4. Check Fire22 API status');
+      console.info('\n🚨 IMMEDIATE ACTIONS REQUIRED:');
+      console.info('   1. Investigate critical failures');
+      console.info('   2. Check worker logs: wrangler tail --format=pretty');
+      console.info('   3. Verify database connectivity');
+      console.info('   4. Check Fire22 API status');
     }
 
     // 🆕 NEW: Dashboard-specific recommendations
@@ -340,20 +340,20 @@ class HealthMonitor {
     );
 
     if (dashboardIssues.length > 0) {
-      console.log('\n🎯 DASHBOARD ISSUE RECOMMENDATIONS:');
-      console.log('   1. Check agent_configs table in D1 database');
-      console.log('   2. Verify permissions matrix data structure');
-      console.log(
+      console.info('\n🎯 DASHBOARD ISSUE RECOMMENDATIONS:');
+      console.info('   1. Check agent_configs table in D1 database');
+      console.info('   2. Verify permissions matrix data structure');
+      console.info(
         '   3. Test dashboard manually: https://dashboard-worker.brendawill2233.workers.dev/dashboard'
       );
-      console.log('   4. Check browser console for JavaScript errors');
-      console.log('   5. Verify API response format matches frontend expectations');
+      console.info('   4. Check browser console for JavaScript errors');
+      console.info('   5. Verify API response format matches frontend expectations');
 
       if (dashboardIssues.some(r => r.name.includes('Permissions Matrix'))) {
-        console.log('   6. 🔍 PERMISSIONS MATRIX SPECIFIC:');
-        console.log('      - Verify agent_configs table has correct structure');
-        console.log('      - Check that permissions are properly nested');
-        console.log('      - Ensure commissionRates and status objects exist');
+        console.info('   6. 🔍 PERMISSIONS MATRIX SPECIFIC:');
+        console.info('      - Verify agent_configs table has correct structure');
+        console.info('      - Check that permissions are properly nested');
+        console.info('      - Ensure commissionRates and status objects exist');
       }
     }
   }

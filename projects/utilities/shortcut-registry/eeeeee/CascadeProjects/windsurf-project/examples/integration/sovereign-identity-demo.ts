@@ -10,11 +10,11 @@ class SovereignIdentityDemo {
   private deviceIds: string[] = ["sarah-prod-01", "sarah-prod-02", "sarah-prod-03"];
 
   async runCompleteDemo(): Promise<void> {
-    console.log(`🧬 SOVEREIGN IDENTITY BLUEPRINT - COMPLETE HUMAN PROFILE DEMONSTRATION`);
-    console.log(`🧬 Features: Cryptographic Persona Engine, Encrypted Storage, 2FA Dashboard`);
-    console.log(`⚡ Engine: Bun v1.3.6 (SIMD + SQLite + AES-256-GCM)`);
-    console.log(`🔐 Security: Master key protection, TOTP secrets, Passkey IDs`);
-    console.log(``);
+    console.info(`🧬 SOVEREIGN IDENTITY BLUEPRINT - COMPLETE HUMAN PROFILE DEMONSTRATION`);
+    console.info(`🧬 Features: Cryptographic Persona Engine, Encrypted Storage, 2FA Dashboard`);
+    console.info(`⚡ Engine: Bun v1.3.6 (SIMD + SQLite + AES-256-GCM)`);
+    console.info(`🔐 Security: Master key protection, TOTP secrets, Passkey IDs`);
+    console.info(``);
 
     try {
       // Phase 1: Cryptographic Persona Engine Demonstration
@@ -29,8 +29,8 @@ class SovereignIdentityDemo {
       // Phase 4: Full Sovereign Identity Integration
       await this.demoSovereignIntegration();
       
-      console.log(`\n🧬 SOVEREIGN IDENTITY BLUEPRINT DEMO COMPLETE`);
-      console.log(`💰 Empire Status: Complete Human Profile Generation Dominated!`);
+      console.info(`\n🧬 SOVEREIGN IDENTITY BLUEPRINT DEMO COMPLETE`);
+      console.info(`💰 Empire Status: Complete Human Profile Generation Dominated!`);
       
     } catch (error) {
       console.error(`❌ Demo failed: ${error}`);
@@ -41,18 +41,18 @@ class SovereignIdentityDemo {
    * 🧬 Cryptographic Persona Engine Demonstration
    */
   private async demoPersonaEngine(): Promise<void> {
-    console.log(`🧬 PHASE 1: CRYPTOGRAPHIC PERSONA ENGINE DEMONSTRATION`);
-    console.log(`   🧬 Complete human profile generation with deterministic recovery`);
-    console.log(`   👤 Demographics: Name, age, gender, ethnicity, location`);
-    console.log(`   🎓 Education & Career: Major, profession, company, income`);
-    console.log(`   🏠 Physical Attributes: Height, eye color, hair color, birth date`);
-    console.log(`   🔐 Security Credentials: TOTP secrets, Passkey IDs, MFA methods`);
-    console.log(`   🌐 Social & Preferences: Platforms, interests, hobbies, lifestyle`);
-    console.log(`   🏦 Financial: Bank accounts, credit scores, income brackets`);
-    console.log(``);
+    console.info(`🧬 PHASE 1: CRYPTOGRAPHIC PERSONA ENGINE DEMONSTRATION`);
+    console.info(`   🧬 Complete human profile generation with deterministic recovery`);
+    console.info(`   👤 Demographics: Name, age, gender, ethnicity, location`);
+    console.info(`   🎓 Education & Career: Major, profession, company, income`);
+    console.info(`   🏠 Physical Attributes: Height, eye color, hair color, birth date`);
+    console.info(`   🔐 Security Credentials: TOTP secrets, Passkey IDs, MFA methods`);
+    console.info(`   🌐 Social & Preferences: Platforms, interests, hobbies, lifestyle`);
+    console.info(`   🏦 Financial: Bank accounts, credit scores, income brackets`);
+    console.info(``);
 
     // Generate sample sovereign identities
-    console.log(`   🧬 Generating sample sovereign identities...`);
+    console.info(`   🧬 Generating sample sovereign identities...`);
     const appHashes = [
       "a1b2c3d4e5f6", "f6e5d4c3b2a1", "1234567890ab"
     ];
@@ -67,69 +67,69 @@ class SovereignIdentityDemo {
       
       silos.push(silo);
       
-      console.log(`     👤 Identity ${i + 1}: ${silo.fullName}`);
-      console.log(`        🎂 ${silo.age} years old, ${silo.gender}, ${silo.ethnicity}`);
-      console.log(`        📧 ${silo.email}`);
-      console.log(`        📱 ${silo.phone}`);
-      console.log(`        🏠 ${silo.address}`);
-      console.log(`        🎓 ${silo.education} in ${silo.major}`);
-      console.log(`        💼 ${silo.profession} at ${silo.company}`);
-      console.log(`        💰 Income: ${silo.income} | Credit Score: ${silo.creditScore}`);
-      console.log(`        🏠 ${silo.height} | 👁️ ${silo.eyeColor} | 💇 ${silo.hairColor}`);
-      console.log(`        🎂 Born: ${silo.birthDate}`);
-      console.log(`        🔐 TOTP: ${silo.totpSecret}`);
-      console.log(`        🔑 Passkey: ${silo.passkeyId} (${silo.passkeyAlgorithm})`);
-      console.log(`        🛡️ MFA: ${silo.mfaMethod}`);
-      console.log(`        ❓ Recovery: ${silo.recoveryHint} → ${silo.recoveryAnswer}`);
-      console.log(`        🌐 Social: ${silo.socialPlatforms.join(', ')}`);
-      console.log(`        🎯 Interests: ${silo.interests.join(', ')}`);
-      console.log(`        🎵 Music: ${silo.musicGenre} | 🍕 Food: ${silo.foodPreference}`);
-      console.log(`        🎮 Hobbies: ${silo.hobbies.join(', ')}`);
-      console.log(`        🏦 Bank: ${silo.bankType} | Account: ${silo.bankAccount}`);
-      console.log(`        📧 Recovery: ${silo.recoveryEmail}`);
-      console.log(`        🕐 Generated: ${silo.generatedAt}`);
-      console.log(`        🔢 Version: ${silo.version} | Deterministic: ${silo.deterministic}`);
-      console.log(``);
+      console.info(`     👤 Identity ${i + 1}: ${silo.fullName}`);
+      console.info(`        🎂 ${silo.age} years old, ${silo.gender}, ${silo.ethnicity}`);
+      console.info(`        📧 ${silo.email}`);
+      console.info(`        📱 ${silo.phone}`);
+      console.info(`        🏠 ${silo.address}`);
+      console.info(`        🎓 ${silo.education} in ${silo.major}`);
+      console.info(`        💼 ${silo.profession} at ${silo.company}`);
+      console.info(`        💰 Income: ${silo.income} | Credit Score: ${silo.creditScore}`);
+      console.info(`        🏠 ${silo.height} | 👁️ ${silo.eyeColor} | 💇 ${silo.hairColor}`);
+      console.info(`        🎂 Born: ${silo.birthDate}`);
+      console.info(`        🔐 TOTP: ${silo.totpSecret}`);
+      console.info(`        🔑 Passkey: ${silo.passkeyId} (${silo.passkeyAlgorithm})`);
+      console.info(`        🛡️ MFA: ${silo.mfaMethod}`);
+      console.info(`        ❓ Recovery: ${silo.recoveryHint} → ${silo.recoveryAnswer}`);
+      console.info(`        🌐 Social: ${silo.socialPlatforms.join(', ')}`);
+      console.info(`        🎯 Interests: ${silo.interests.join(', ')}`);
+      console.info(`        🎵 Music: ${silo.musicGenre} | 🍕 Food: ${silo.foodPreference}`);
+      console.info(`        🎮 Hobbies: ${silo.hobbies.join(', ')}`);
+      console.info(`        🏦 Bank: ${silo.bankType} | Account: ${silo.bankAccount}`);
+      console.info(`        📧 Recovery: ${silo.recoveryEmail}`);
+      console.info(`        🕐 Generated: ${silo.generatedAt}`);
+      console.info(`        🔢 Version: ${silo.version} | Deterministic: ${silo.deterministic}`);
+      console.info(``);
     }
 
     // Validate all silos
-    console.log(`   🔍 Validating sovereign identities...`);
+    console.info(`   🔍 Validating sovereign identities...`);
     silos.forEach((silo, index) => {
       const isValid = IdentityFactory.validateSilo(silo);
-      console.log(`     Identity ${index + 1}: ${isValid ? '✅ Valid' : '❌ Invalid'}`);
+      console.info(`     Identity ${index + 1}: ${isValid ? '✅ Valid' : '❌ Invalid'}`);
     });
 
     // Display persona factory statistics
-    console.log(`   📊 Persona Factory Statistics:`);
+    console.info(`   📊 Persona Factory Statistics:`);
     const factoryStats = IdentityFactory.getFactoryStats();
-    console.log(`     🏭 Generation Rate: ${factoryStats.performance.generationRate}`);
-    console.log(`     🛡️ Validation Speed: ${factoryStats.performance.validationSpeed}`);
-    console.log(`     🔄 Batch Capacity: ${factoryStats.performance.batchCapacity}`);
-    console.log(`     🎯 Profile Completeness: ${factoryStats.quality.profileCompleteness}%`);
+    console.info(`     🏭 Generation Rate: ${factoryStats.performance.generationRate}`);
+    console.info(`     🛡️ Validation Speed: ${factoryStats.performance.validationSpeed}`);
+    console.info(`     🔄 Batch Capacity: ${factoryStats.performance.batchCapacity}`);
+    console.info(`     🎯 Profile Completeness: ${factoryStats.quality.profileCompleteness}%`);
 
-    console.log(`✅ Cryptographic Persona Engine Demo Complete`);
-    console.log(``);
+    console.info(`✅ Cryptographic Persona Engine Demo Complete`);
+    console.info(``);
   }
 
   /**
    * 🔐 Encrypted Vault Demonstration
    */
   private async demoEncryptedVault(): Promise<void> {
-    console.log(`🔐 PHASE 2: ENCRYPTED VAULT DEMONSTRATION`);
-    console.log(`   🔐 AES-256-GCM encryption with machine key protection`);
-    console.log(`   🛡️ Data integrity checks with checksums`);
-    console.log(`   📊 Comprehensive audit logging for compliance`);
-    console.log(`   🗜️ Compression support for storage efficiency`);
-    console.log(`   🔒 Secure backup and export capabilities`);
-    console.log(``);
+    console.info(`🔐 PHASE 2: ENCRYPTED VAULT DEMONSTRATION`);
+    console.info(`   🔐 AES-256-GCM encryption with machine key protection`);
+    console.info(`   🛡️ Data integrity checks with checksums`);
+    console.info(`   📊 Comprehensive audit logging for compliance`);
+    console.info(`   🗜️ Compression support for storage efficiency`);
+    console.info(`   🔒 Secure backup and export capabilities`);
+    console.info(``);
 
     // Initialize secure vault
-    console.log(`   🔐 Initializing Secure Vault...`);
+    console.info(`   🔐 Initializing Secure Vault...`);
     await initializeSecureVault();
-    console.log(`   ✅ Secure vault unlocked with master key`);
+    console.info(`   ✅ Secure vault unlocked with master key`);
 
     // Generate and store sample silos
-    console.log(`   💾 Generating and storing encrypted silos...`);
+    console.info(`   💾 Generating and storing encrypted silos...`);
     const sampleSilos = [
       IdentityFactory.generateSilo("demo-001", { useDeterministic: true }),
       IdentityFactory.generateSilo("demo-002", { useDeterministic: true }),
@@ -138,68 +138,68 @@ class SovereignIdentityDemo {
 
     for (const silo of sampleSilos) {
       const success = await storeSilo(silo);
-      console.log(`     💾 Stored: ${silo.fullName} - ${success ? '✅' : '❌'}`);
+      console.info(`     💾 Stored: ${silo.fullName} - ${success ? '✅' : '❌'}`);
     }
 
     // Retrieve and decrypt silos
-    console.log(`   📖 Retrieving and decrypting silos...`);
+    console.info(`   📖 Retrieving and decrypting silos...`);
     for (const silo of sampleSilos) {
       const retrieved = await retrieveSilo(silo.id);
       if (retrieved) {
-        console.log(`     📖 Retrieved: ${retrieved.fullName} - ✅`);
-        console.log(`        🔐 TOTP: ${retrieved.totpSecret}`);
-        console.log(`        🔑 Passkey: ${retrieved.passkeyId}`);
-        console.log(`        📧 Email: ${retrieved.email}`);
-        console.log(`        📱 Phone: ${retrieved.phone}`);
+        console.info(`     📖 Retrieved: ${retrieved.fullName} - ✅`);
+        console.info(`        🔐 TOTP: ${retrieved.totpSecret}`);
+        console.info(`        🔑 Passkey: ${retrieved.passkeyId}`);
+        console.info(`        📧 Email: ${retrieved.email}`);
+        console.info(`        📱 Phone: ${retrieved.phone}`);
       } else {
-        console.log(`     ❌ Failed to retrieve: ${silo.id}`);
+        console.info(`     ❌ Failed to retrieve: ${silo.id}`);
       }
     }
 
     // Display vault statistics
-    console.log(`   📊 Secure Vault Statistics:`);
+    console.info(`   📊 Secure Vault Statistics:`);
     const vaultStats = SecureVaultInstance.getVaultStats();
-    console.log(`     📦 Total Silos: ${vaultStats.total_silos}`);
-    console.log(`     🟢 Active Today: ${vaultStats.active_today}`);
-    console.log(`     🟢 Active Week: ${vaultStats.active_week}`);
-    console.log(`     📊 Avg Access Count: ${vaultStats.avg_access_count?.toFixed(2) || '0'}`);
-    console.log(`     🔐 Encryption: ${vaultStats.encryption_algorithm}`);
-    console.log(`     🗜️ Compression: ${vaultStats.compression_enabled ? 'Enabled' : 'Disabled'}`);
-    console.log(`     📊 Audit: ${vaultStats.audit_enabled ? 'Enabled' : 'Disabled'}`);
-    console.log(`     🔓 Status: ${vaultStats.is_unlocked ? 'Unlocked' : 'Locked'}`);
+    console.info(`     📦 Total Silos: ${vaultStats.total_silos}`);
+    console.info(`     🟢 Active Today: ${vaultStats.active_today}`);
+    console.info(`     🟢 Active Week: ${vaultStats.active_week}`);
+    console.info(`     📊 Avg Access Count: ${vaultStats.avg_access_count?.toFixed(2) || '0'}`);
+    console.info(`     🔐 Encryption: ${vaultStats.encryption_algorithm}`);
+    console.info(`     🗜️ Compression: ${vaultStats.compression_enabled ? 'Enabled' : 'Disabled'}`);
+    console.info(`     📊 Audit: ${vaultStats.audit_enabled ? 'Enabled' : 'Disabled'}`);
+    console.info(`     🔓 Status: ${vaultStats.is_unlocked ? 'Unlocked' : 'Locked'}`);
 
     // Test search functionality
-    console.log(`   🔍 Testing search functionality...`);
+    console.info(`   🔍 Testing search functionality...`);
     const searchResults = await SecureVaultInstance.searchSilos("Sarah");
-    console.log(`     🔍 Found ${searchResults.length} silos matching "Sarah":`);
+    console.info(`     🔍 Found ${searchResults.length} silos matching "Sarah":`);
     searchResults.forEach((silo, index) => {
-      console.log(`       ${index + 1}. ${silo.fullName} - ${silo.email}`);
+      console.info(`       ${index + 1}. ${silo.fullName} - ${silo.email}`);
     });
 
     // Export backup
-    console.log(`   🔒 Exporting encrypted backup...`);
+    console.info(`   🔒 Exporting encrypted backup...`);
     const backupSuccess = await SecureVaultInstance.exportBackup(`./backups/sovereign-vault-backup-${Date.now()}.json`);
-    console.log(`     💾 Backup exported: ${backupSuccess ? '✅' : '❌'}`);
+    console.info(`     💾 Backup exported: ${backupSuccess ? '✅' : '❌'}`);
 
-    console.log(`✅ Encrypted Vault Demo Complete`);
-    console.log(``);
+    console.info(`✅ Encrypted Vault Demo Complete`);
+    console.info(``);
   }
 
   /**
    * 📱 2FA Dashboard Demonstration
    */
   private async demo2FADashboard(): Promise<void> {
-    console.log(`📱 PHASE 3: 2FA DASHBOARD DEMONSTRATION`);
-    console.log(`   📱 Real-time 2FA code generation and display`);
-    console.log(`   🔢 30-second rotating TOTP codes`);
-    console.log(`   📊 Multi-device support with individual tracking`);
-    console.log(`   🎯 Compact displays for dashboard integration`);
-    console.log(`   📋 Copy-to-clipboard functionality`);
-    console.log(`   📊 Access tracking and audit logging`);
-    console.log(``);
+    console.info(`📱 PHASE 3: 2FA DASHBOARD DEMONSTRATION`);
+    console.info(`   📱 Real-time 2FA code generation and display`);
+    console.info(`   🔢 30-second rotating TOTP codes`);
+    console.info(`   📊 Multi-device support with individual tracking`);
+    console.info(`   🎯 Compact displays for dashboard integration`);
+    console.info(`   📋 Copy-to-clipboard functionality`);
+    console.info(`   📊 Access tracking and audit logging`);
+    console.info(``);
 
     // Generate sample identities for 2FA demo
-    console.log(`   📱 Generating sample identities for 2FA demo...`);
+    console.info(`   📱 Generating sample identities for 2FA demo...`);
     const demoIdentities = [
       {
         deviceId: "device-001",
@@ -231,66 +231,66 @@ class SovereignIdentityDemo {
     ];
 
     // Simulate 2FA code generation
-    console.log(`   🔢 Simulating 2FA code generation...`);
+    console.info(`   🔢 Simulating 2FA code generation...`);
     demoIdentities.forEach((identity, index) => {
       const code = this.generateTOTPCode(identity.totpSecret);
-      console.log(`     📱 Device ${index + 1} (${identity.deviceId}):`);
-      console.log(`        👤 ${identity.identity.fullName}`);
-      console.log(`        📧 ${identity.identity.email}`);
-      console.log(`        📱 ${identity.identity.phone}`);
-      console.log(`        🔐 2FA Secret: ${identity.totpSecret}`);
-      console.log(`        🔢 Current Code: ${code}`);
-      console.log(`        ⏰ Refreshes in 30 seconds`);
-      console.log(``);
+      console.info(`     📱 Device ${index + 1} (${identity.deviceId}):`);
+      console.info(`        👤 ${identity.identity.fullName}`);
+      console.info(`        📧 ${identity.identity.email}`);
+      console.info(`        📱 ${identity.identity.phone}`);
+      console.info(`        🔐 2FA Secret: ${identity.totpSecret}`);
+      console.info(`        🔢 Current Code: ${code}`);
+      console.info(`        ⏰ Refreshes in 30 seconds`);
+      console.info(``);
     });
 
     // Display 2FA dashboard mockup
-    console.log(`   📊 2FA Dashboard Mockup:`);
-    console.log(`   ┌─────────────────────────────────────────────────────────────────┐`);
-    console.log(`   │ 📱 MULTI-DEVICE 2FA DASHBOARD                              │`);
-    console.log(`   ├─────────────────────────────────────────────────────────────────┤`);
+    console.info(`   📊 2FA Dashboard Mockup:`);
+    console.info(`   ┌─────────────────────────────────────────────────────────────────┐`);
+    console.info(`   │ 📱 MULTI-DEVICE 2FA DASHBOARD                              │`);
+    console.info(`   ├─────────────────────────────────────────────────────────────────┤`);
     
     demoIdentities.forEach((identity, index) => {
       const code = this.generateTOTPCode(identity.totpSecret);
-      console.log(`   │ Device ${index + 1}: ${identity.deviceId.padEnd(12)} │ ${code.padEnd(6)} │ ${identity.identity.fullName.padEnd(15)} │`);
+      console.info(`   │ Device ${index + 1}: ${identity.deviceId.padEnd(12)} │ ${code.padEnd(6)} │ ${identity.identity.fullName.padEnd(15)} │`);
     });
     
-    console.log(`   ├─────────────────────────────────────────────────────────────────┤`);
-    console.log(`   │ Status: All devices active | Next refresh: 28s                │`);
-    console.log(`   │ Total codes generated: 1,247 | Access attempts: 892          │`);
-    console.log(`   └─────────────────────────────────────────────────────────────────┘`);
+    console.info(`   ├─────────────────────────────────────────────────────────────────┤`);
+    console.info(`   │ Status: All devices active | Next refresh: 28s                │`);
+    console.info(`   │ Total codes generated: 1,247 | Access attempts: 892          │`);
+    console.info(`   └─────────────────────────────────────────────────────────────────┘`);
 
     // Simulate code refresh
-    console.log(`   🔄 Simulating code refresh...`);
+    console.info(`   🔄 Simulating code refresh...`);
     for (let i = 0; i < 3; i++) {
       await Bun.sleep(1000);
-      console.log(`     ⏰ ${30 - i}s until next refresh...`);
+      console.info(`     ⏰ ${30 - i}s until next refresh...`);
     }
     
-    console.log(`     🔄 Codes refreshed!`);
+    console.info(`     🔄 Codes refreshed!`);
     demoIdentities.forEach((identity, index) => {
       const newCode = this.generateTOTPCode(identity.totpSecret);
-      console.log(`       Device ${index + 1}: ${newCode}`);
+      console.info(`       Device ${index + 1}: ${newCode}`);
     });
 
-    console.log(`✅ 2FA Dashboard Demo Complete`);
-    console.log(``);
+    console.info(`✅ 2FA Dashboard Demo Complete`);
+    console.info(``);
   }
 
   /**
    * 🚀 Full Sovereign Identity Integration Demonstration
    */
   private async demoSovereignIntegration(): Promise<void> {
-    console.log(`🚀 PHASE 4: FULL SOVEREIGN IDENTITY INTEGRATION`);
-    console.log(`   🚀 Complete orchestrator with human profile generation`);
-    console.log(`   🧬 Sovereign identity provisioning with encrypted storage`);
-    console.log(`   📱 Real-time 2FA dashboard integration`);
-    console.log(`   🛠️ Enhanced mischief pipeline with complete profiles`);
-    console.log(`   📊 Comprehensive status reporting with security scores`);
-    console.log(``);
+    console.info(`🚀 PHASE 4: FULL SOVEREIGN IDENTITY INTEGRATION`);
+    console.info(`   🚀 Complete orchestrator with human profile generation`);
+    console.info(`   🧬 Sovereign identity provisioning with encrypted storage`);
+    console.info(`   📱 Real-time 2FA dashboard integration`);
+    console.info(`   🛠️ Enhanced mischief pipeline with complete profiles`);
+    console.info(`   📊 Comprehensive status reporting with security scores`);
+    console.info(``);
 
     // Initialize Sovereign Identity Orchestrator
-    console.log(`   🚀 Initializing Sovereign Identity Orchestrator...`);
+    console.info(`   🚀 Initializing Sovereign Identity Orchestrator...`);
     const sovereignConfig = {
       deviceIds: this.deviceIds,
       enableTelemetry: true,
@@ -322,39 +322,39 @@ class SovereignIdentityDemo {
       await sovereign.initialize();
       
       // Display sovereign identity matrix
-      console.log(`   📊 Initial Sovereign Identity Matrix:`);
+      console.info(`   📊 Initial Sovereign Identity Matrix:`);
       sovereign.displaySovereignIdentityMatrix();
       
       // Execute sovereign mischief cycles
-      console.log(`   🔄 Executing Sovereign Identity Mischief Cycles...`);
+      console.info(`   🔄 Executing Sovereign Identity Mischief Cycles...`);
       for (let cycle = 0; cycle < 2; cycle++) {
-        console.log(`\n     📊 Cycle ${cycle + 1}/2:`);
+        console.info(`\n     📊 Cycle ${cycle + 1}/2:`);
         
         for (const deviceId of this.deviceIds) {
-          console.log(`       🧬 Running sovereign mischief on ${deviceId}...`);
+          console.info(`       🧬 Running sovereign mischief on ${deviceId}...`);
           await sovereign.runSovereignMischief(deviceId);
         }
         
         // Display updated matrix
-        console.log(`     📊 Updated Sovereign Identity Matrix:`);
+        console.info(`     📊 Updated Sovereign Identity Matrix:`);
         sovereign.displaySovereignIdentityMatrix();
       }
       
       // Display final statistics
-      console.log(`   📊 Final Sovereign Identity Statistics:`);
+      console.info(`   📊 Final Sovereign Identity Statistics:`);
       const finalStatus = sovereign.getSovereignIdentityMatrix();
-      console.log(`     📱 Total Devices: ${finalStatus.overview.totalDevices}`);
-      console.log(`     ✅ Active Devices: ${finalStatus.overview.activeDevices}`);
-      console.log(`     🧬 Sovereign Identities: ${finalStatus.overview.sovereignIdentitiesEnabled ? 'Enabled' : 'Disabled'}`);
-      console.log(`     🔐 Secure Vault: ${finalStatus.overview.secureVaultEnabled ? 'Enabled' : 'Disabled'}`);
-      console.log(`     📱 2FA Dashboard: ${finalStatus.overview.twoFADashboardEnabled ? 'Enabled' : 'Disabled'}`);
-      console.log(`     🔄 Total Cycles: ${finalStatus.performance.avgCyclesPerDevice * finalStatus.overview.totalDevices}`);
-      console.log(`     💰 Total Revenue: $${finalStatus.performance.totalRevenue}`);
-      console.log(`     🛡️ Average Security Score: ${finalStatus.performance.avgSecurityScore}/100`);
-      console.log(`     🔐 Identities with 2FA: ${finalStatus.performance.identitiesWith2FA}/${finalStatus.overview.totalDevices}`);
-      console.log(`     🔑 Identities with Passkeys: ${finalStatus.performance.identitiesWithPasskeys}/${finalStatus.overview.totalDevices}`);
+      console.info(`     📱 Total Devices: ${finalStatus.overview.totalDevices}`);
+      console.info(`     ✅ Active Devices: ${finalStatus.overview.activeDevices}`);
+      console.info(`     🧬 Sovereign Identities: ${finalStatus.overview.sovereignIdentitiesEnabled ? 'Enabled' : 'Disabled'}`);
+      console.info(`     🔐 Secure Vault: ${finalStatus.overview.secureVaultEnabled ? 'Enabled' : 'Disabled'}`);
+      console.info(`     📱 2FA Dashboard: ${finalStatus.overview.twoFADashboardEnabled ? 'Enabled' : 'Disabled'}`);
+      console.info(`     🔄 Total Cycles: ${finalStatus.performance.avgCyclesPerDevice * finalStatus.overview.totalDevices}`);
+      console.info(`     💰 Total Revenue: $${finalStatus.performance.totalRevenue}`);
+      console.info(`     🛡️ Average Security Score: ${finalStatus.performance.avgSecurityScore}/100`);
+      console.info(`     🔐 Identities with 2FA: ${finalStatus.performance.identitiesWith2FA}/${finalStatus.overview.totalDevices}`);
+      console.info(`     🔑 Identities with Passkeys: ${finalStatus.performance.identitiesWithPasskeys}/${finalStatus.overview.totalDevices}`);
       
-      console.log(`✅ Full Sovereign Identity Integration Demo Complete`);
+      console.info(`✅ Full Sovereign Identity Integration Demo Complete`);
       
     } finally {
       await sovereign.shutdown();
@@ -362,97 +362,97 @@ class SovereignIdentityDemo {
   }
 
   async runPersonaShowcase(): Promise<void> {
-    console.log(`🧬 SOVEREIGN IDENTITY BLUEPRINT - PERSONA ENGINE SHOWCASE`);
-    console.log(``);
+    console.info(`🧬 SOVEREIGN IDENTITY BLUEPRINT - PERSONA ENGINE SHOWCASE`);
+    console.info(``);
 
-    console.log(`🧬 Complete Human Profile Generation:`);
-    console.log(`   👤 Demographics: Name, age, gender, ethnicity, location, coordinates`);
-    console.log(`   🎓 Education: Schools, majors, graduation dates, GPA, honors`);
-    console.log(`   💼 Career: Companies, positions, salaries, promotions, skills`);
-    console.log(`   🏠 Physical: Height, weight, eye color, hair color, medical history`);
-    console.log(`   🧠 Psychology: Personality traits, IQ, emotional intelligence`);
-    console.log(`   👨‍👩‍👧‍👦 Family: Parents, siblings, children, relationships`);
-    console.log(`   🌐 Social: Friends, colleagues, social media, online presence`);
-    console.log(`   💳 Financial: Credit cards, bank accounts, investments, debts`);
-    console.log(`   🏥 Medical: Conditions, medications, allergies, doctors`);
-    console.log(`   🚗 Transportation: Vehicles, licenses, insurance, traffic record`);
-    console.log(`   🏠 Property: Real estate, rentals, utilities, maintenance`);
-    console.log(`   🎮 Entertainment: Subscriptions, purchases, preferences, history`);
-    console.log(`   🍔 Lifestyle: Diet, exercise, habits, routines, preferences`);
-    console.log(`   🔐 Security: Passwords, 2FA, biometrics, security questions`);
-    console.log(`   📱 Digital: Device fingerprints, IP history, browsing patterns`);
-    console.log(`   🌍 Travel: Passport, visas, trips, accommodations, preferences`);
-    console.log(`   📊 Analytics: Behavior patterns, prediction models, risk scores`);
+    console.info(`🧬 Complete Human Profile Generation:`);
+    console.info(`   👤 Demographics: Name, age, gender, ethnicity, location, coordinates`);
+    console.info(`   🎓 Education: Schools, majors, graduation dates, GPA, honors`);
+    console.info(`   💼 Career: Companies, positions, salaries, promotions, skills`);
+    console.info(`   🏠 Physical: Height, weight, eye color, hair color, medical history`);
+    console.info(`   🧠 Psychology: Personality traits, IQ, emotional intelligence`);
+    console.info(`   👨‍👩‍👧‍👦 Family: Parents, siblings, children, relationships`);
+    console.info(`   🌐 Social: Friends, colleagues, social media, online presence`);
+    console.info(`   💳 Financial: Credit cards, bank accounts, investments, debts`);
+    console.info(`   🏥 Medical: Conditions, medications, allergies, doctors`);
+    console.info(`   🚗 Transportation: Vehicles, licenses, insurance, traffic record`);
+    console.info(`   🏠 Property: Real estate, rentals, utilities, maintenance`);
+    console.info(`   🎮 Entertainment: Subscriptions, purchases, preferences, history`);
+    console.info(`   🍔 Lifestyle: Diet, exercise, habits, routines, preferences`);
+    console.info(`   🔐 Security: Passwords, 2FA, biometrics, security questions`);
+    console.info(`   📱 Digital: Device fingerprints, IP history, browsing patterns`);
+    console.info(`   🌍 Travel: Passport, visas, trips, accommodations, preferences`);
+    console.info(`   📊 Analytics: Behavior patterns, prediction models, risk scores`);
     
-    console.log(`\n🧬 Deterministic Generation Features:`);
-    console.log(`   🎲 Seed-based generation for reproducible identities`);
-    console.log(`   🔗 Cross-platform consistency across devices`);
-    console.log(`   🔄 Version control for identity evolution`);
-    console.log(`   🛡️ Tamper-proof validation with checksums`);
-    console.log(`   📊 Statistical distribution matching real populations`);
-    console.log(`   🎯 Targeted generation for specific demographics`);
-    console.log(`   🔍 Searchable and filterable identity database`);
-    console.log(`   📈 Performance metrics and generation analytics`);
+    console.info(`\n🧬 Deterministic Generation Features:`);
+    console.info(`   🎲 Seed-based generation for reproducible identities`);
+    console.info(`   🔗 Cross-platform consistency across devices`);
+    console.info(`   🔄 Version control for identity evolution`);
+    console.info(`   🛡️ Tamper-proof validation with checksums`);
+    console.info(`   📊 Statistical distribution matching real populations`);
+    console.info(`   🎯 Targeted generation for specific demographics`);
+    console.info(`   🔍 Searchable and filterable identity database`);
+    console.info(`   📈 Performance metrics and generation analytics`);
     
-    console.log(`\n🧬 Enterprise Integration:`);
-    console.log(`   🔐 AES-256-GCM encryption for all identity data`);
-    console.log(`   📊 Real-time audit logging for compliance`);
-    console.log(`   🔄 Automated lifecycle management`);
-    console.log(`   📱 RESTful API for external integration`);
-    console.log(`   🌐 Multi-region deployment support`);
-    console.log(`   📊 Advanced analytics and reporting`);
-    console.log(`   🛡️ Role-based access control`);
-    console.log(`   🔒 Zero-knowledge proof architecture`);
+    console.info(`\n🧬 Enterprise Integration:`);
+    console.info(`   🔐 AES-256-GCM encryption for all identity data`);
+    console.info(`   📊 Real-time audit logging for compliance`);
+    console.info(`   🔄 Automated lifecycle management`);
+    console.info(`   📱 RESTful API for external integration`);
+    console.info(`   🌐 Multi-region deployment support`);
+    console.info(`   📊 Advanced analytics and reporting`);
+    console.info(`   🛡️ Role-based access control`);
+    console.info(`   🔒 Zero-knowledge proof architecture`);
     
-    console.log(`\n✅ PERSONA ENGINE SHOWCASE COMPLETE`);
+    console.info(`\n✅ PERSONA ENGINE SHOWCASE COMPLETE`);
   }
 
   async runSecurityShowcase(): Promise<void> {
-    console.log(`🔐 SOVEREIGN IDENTITY BLUEPRINT - SECURITY SHOWCASE`);
-    console.log(``);
+    console.info(`🔐 SOVEREIGN IDENTITY BLUEPRINT - SECURITY SHOWCASE`);
+    console.info(``);
 
-    console.log(`🔐 Enterprise-Grade Security Features:`);
-    console.log(`   🔐 AES-256-GCM encryption with hardware acceleration`);
-    console.log(`   🔑 Master key management with system keychain storage`);
-    console.log(`   📊 Comprehensive audit logging for compliance`);
-    console.log(`   ⏰ Key expiration and automatic rotation`);
-    console.log(`   🗑️ Secure deletion and cleanup procedures`);
-    console.log(`   🔒 Multi-factor authentication support`);
-    console.log(`   🛡️ Zero-knowledge proof architecture`);
-    console.log(`   🔍 Data integrity verification with checksums`);
-    console.log(`   🌐 End-to-end encryption for all communications`);
-    console.log(`   📱 Device fingerprinting and anomaly detection`);
+    console.info(`🔐 Enterprise-Grade Security Features:`);
+    console.info(`   🔐 AES-256-GCM encryption with hardware acceleration`);
+    console.info(`   🔑 Master key management with system keychain storage`);
+    console.info(`   📊 Comprehensive audit logging for compliance`);
+    console.info(`   ⏰ Key expiration and automatic rotation`);
+    console.info(`   🗑️ Secure deletion and cleanup procedures`);
+    console.info(`   🔒 Multi-factor authentication support`);
+    console.info(`   🛡️ Zero-knowledge proof architecture`);
+    console.info(`   🔍 Data integrity verification with checksums`);
+    console.info(`   🌐 End-to-end encryption for all communications`);
+    console.info(`   📱 Device fingerprinting and anomaly detection`);
     
-    console.log(`\n📊 Security Compliance:`);
-    console.log(`   📋 GDPR/CCPA compliant data handling`);
-    console.log(`   🔍 Full audit trail with tamper detection`);
-    console.log(`   🗄️ Encrypted data-at-rest and in-transit`);
-    console.log(`   🔄 Regular security assessments`);
-    console.log(`   📈 Real-time threat monitoring`);
-    console.log(`   🛡️ Enterprise-grade access controls`);
-    console.log(`   📊 Security incident response procedures`);
-    console.log(`   🔒 Penetration testing and vulnerability scanning`);
-    console.log(`   📋 Security policy enforcement`);
-    console.log(`   🎯 Risk assessment and mitigation`);
+    console.info(`\n📊 Security Compliance:`);
+    console.info(`   📋 GDPR/CCPA compliant data handling`);
+    console.info(`   🔍 Full audit trail with tamper detection`);
+    console.info(`   🗄️ Encrypted data-at-rest and in-transit`);
+    console.info(`   🔄 Regular security assessments`);
+    console.info(`   📈 Real-time threat monitoring`);
+    console.info(`   🛡️ Enterprise-grade access controls`);
+    console.info(`   📊 Security incident response procedures`);
+    console.info(`   🔒 Penetration testing and vulnerability scanning`);
+    console.info(`   📋 Security policy enforcement`);
+    console.info(`   🎯 Risk assessment and mitigation`);
     
-    console.log(`\n🧬 Identity Protection:`);
-    console.log(`   🛡️ CRC32 integrity verification (7.84ms)`);
-    console.log(`   🔄 Automatic identity rotation (24h intervals)`);
-    console.log(`   📱 Device fingerprint randomization`);
-    console.log(`   🌐 Proxy rotation and IP masking`);
-    console.log(`   📊 Behavioral analysis and anomaly detection`);
-    console.log(`   🔒 Encrypted credential storage`);
-    console.log(`   🔐 TOTP secret generation and management`);
-    console.log(`   🔑 Passkey creation and storage`);
-    console.log(`   ❓ Security question and answer management`);
-    console.log(`   📊 Security scoring and risk assessment`);
+    console.info(`\n🧬 Identity Protection:`);
+    console.info(`   🛡️ CRC32 integrity verification (7.84ms)`);
+    console.info(`   🔄 Automatic identity rotation (24h intervals)`);
+    console.info(`   📱 Device fingerprint randomization`);
+    console.info(`   🌐 Proxy rotation and IP masking`);
+    console.info(`   📊 Behavioral analysis and anomaly detection`);
+    console.info(`   🔒 Encrypted credential storage`);
+    console.info(`   🔐 TOTP secret generation and management`);
+    console.info(`   🔑 Passkey creation and storage`);
+    console.info(`   ❓ Security question and answer management`);
+    console.info(`   📊 Security scoring and risk assessment`);
     
-    console.log(`\n✅ SECURITY SHOWCASE COMPLETE`);
+    console.info(`\n✅ SECURITY SHOWCASE COMPLETE`);
   }
 
   async runPerformanceBenchmark(): Promise<void> {
-    console.log(`📊 SOVEREIGN IDENTITY BLUEPRINT - PERFORMANCE BENCHMARK`);
-    console.log(``);
+    console.info(`📊 SOVEREIGN IDENTITY BLUEPRINT - PERFORMANCE BENCHMARK`);
+    console.info(``);
 
     const benchmarks = {
       identityGeneration: "25.3 identities/second",
@@ -469,36 +469,36 @@ class SovereignIdentityDemo {
       backupSpeed: "100MB/second encrypted"
     };
 
-    console.log(`⚡ Performance Benchmarks:`);
+    console.info(`⚡ Performance Benchmarks:`);
     for (const [metric, value] of Object.entries(benchmarks)) {
-      console.log(`   📊 ${metric}: ${value}`);
+      console.info(`   📊 ${metric}: ${value}`);
     }
 
-    console.log(`\n🎯 Scalability Metrics:`);
-    console.log(`   📱 Device Capacity: 50,000+ concurrent devices`);
-    console.log(`   💾 Storage Efficiency: 500KB/identity (compressed)`);
-    console.log(`   🔄 Identity Throughput: 250,000 rotations/day`);
-    console.log(`   📊 Query Performance: <1ms average response`);
-    console.log(`   🌐 Network Efficiency: 95% bandwidth reduction`);
-    console.log(`   💰 Cost Efficiency: $0.005 per identity/month`);
-    console.log(`   🔐 Encryption Overhead: <2% performance impact`);
-    console.log(`   📊 Audit Log Size: 100KB/10,000 operations`);
-    console.log(`   🔄 Backup Frequency: Real-time with 1-second RPO`);
-    console.log(`   📱 Dashboard Latency: <100ms for 1000 identities`);
+    console.info(`\n🎯 Scalability Metrics:`);
+    console.info(`   📱 Device Capacity: 50,000+ concurrent devices`);
+    console.info(`   💾 Storage Efficiency: 500KB/identity (compressed)`);
+    console.info(`   🔄 Identity Throughput: 250,000 rotations/day`);
+    console.info(`   📊 Query Performance: <1ms average response`);
+    console.info(`   🌐 Network Efficiency: 95% bandwidth reduction`);
+    console.info(`   💰 Cost Efficiency: $0.005 per identity/month`);
+    console.info(`   🔐 Encryption Overhead: <2% performance impact`);
+    console.info(`   📊 Audit Log Size: 100KB/10,000 operations`);
+    console.info(`   🔄 Backup Frequency: Real-time with 1-second RPO`);
+    console.info(`   📱 Dashboard Latency: <100ms for 1000 identities`);
 
-    console.log(`\n🏆 Competitive Advantages:`);
-    console.log(`   🚀 15x faster identity generation vs competitors`);
-    console.log(`   🛡️ 35× faster security validation`);
-    console.log(`   💾 10× storage efficiency with compression`);
-    console.log(`   🔐 Enterprise-grade security vs basic solutions`);
-    console.log(`   📊 Real-time analytics vs batch reporting`);
-    console.log(`   🔄 Automated lifecycle management`);
-    console.log(`   🧬 Complete human profiles vs basic identity`);
-    console.log(`   📱 Integrated 2FA dashboard vs separate tools`);
-    console.log(`   🔐 End-to-end encryption vs partial protection`);
-    console.log(`   📊 Comprehensive audit vs minimal logging`);
+    console.info(`\n🏆 Competitive Advantages:`);
+    console.info(`   🚀 15x faster identity generation vs competitors`);
+    console.info(`   🛡️ 35× faster security validation`);
+    console.info(`   💾 10× storage efficiency with compression`);
+    console.info(`   🔐 Enterprise-grade security vs basic solutions`);
+    console.info(`   📊 Real-time analytics vs batch reporting`);
+    console.info(`   🔄 Automated lifecycle management`);
+    console.info(`   🧬 Complete human profiles vs basic identity`);
+    console.info(`   📱 Integrated 2FA dashboard vs separate tools`);
+    console.info(`   🔐 End-to-end encryption vs partial protection`);
+    console.info(`   📊 Comprehensive audit vs minimal logging`);
 
-    console.log(`\n✅ PERFORMANCE BENCHMARK COMPLETE`);
+    console.info(`\n✅ PERFORMANCE BENCHMARK COMPLETE`);
   }
 
   // Helper method for TOTP generation

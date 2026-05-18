@@ -25,12 +25,12 @@ globalThis.FIRE22_CONFIG = {
 };
 
 // Enterprise logging setup
-console.log('🔥 Fire22 Enterprise System Preload');
-console.log(`   Environment: ${globalThis.FIRE22_CONFIG.environment}`);
-console.log(`   Version: ${globalThis.FIRE22_CONFIG.version}`);
-console.log(`   Enterprise Mode: ${globalThis.FIRE22_CONFIG.enterprise ? 'Enabled' : 'Disabled'}`);
-console.log(`   Debug Mode: ${globalThis.FIRE22_CONFIG.debug ? 'Enabled' : 'Disabled'}`);
-console.log('');
+console.info('🔥 Fire22 Enterprise System Preload');
+console.info(`   Environment: ${globalThis.FIRE22_CONFIG.environment}`);
+console.info(`   Version: ${globalThis.FIRE22_CONFIG.version}`);
+console.info(`   Enterprise Mode: ${globalThis.FIRE22_CONFIG.enterprise ? 'Enabled' : 'Disabled'}`);
+console.info(`   Debug Mode: ${globalThis.FIRE22_CONFIG.debug ? 'Enabled' : 'Disabled'}`);
+console.info('');
 
 // Global error handler for enterprise monitoring
 process.on('uncaughtException', error => {
@@ -47,41 +47,41 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 // Enterprise plugin registration
-console.log('🔌 Registering Fire22 Enterprise Plugins...');
+console.info('🔌 Registering Fire22 Enterprise Plugins...');
 
 // Plugin 1: Security monitoring
-console.log('   ✅ Security Monitor Plugin');
+console.info('   ✅ Security Monitor Plugin');
 
 // Plugin 2: Performance monitoring
-console.log('   ✅ Performance Monitor Plugin');
+console.info('   ✅ Performance Monitor Plugin');
 
 // Plugin 3: Audit logging
-console.log('   ✅ Audit Logging Plugin');
+console.info('   ✅ Audit Logging Plugin');
 
-console.log('');
+console.info('');
 
 // Environment-specific setup
 if (globalThis.FIRE22_CONFIG.environment === 'production') {
-  console.log('🏭 Production Environment Setup:');
-  console.log('   ✅ Error reporting enabled');
-  console.log('   ✅ Performance monitoring active');
-  console.log('   ✅ Security hardening applied');
+  console.info('🏭 Production Environment Setup:');
+  console.info('   ✅ Error reporting enabled');
+  console.info('   ✅ Performance monitoring active');
+  console.info('   ✅ Security hardening applied');
 } else if (globalThis.FIRE22_CONFIG.environment === 'staging') {
-  console.log('🧪 Staging Environment Setup:');
-  console.log('   ✅ Test data isolation');
-  console.log('   ✅ Debug logging enabled');
-  console.log('   ✅ Performance profiling active');
+  console.info('🧪 Staging Environment Setup:');
+  console.info('   ✅ Test data isolation');
+  console.info('   ✅ Debug logging enabled');
+  console.info('   ✅ Performance profiling active');
 } else {
-  console.log('🔧 Development Environment Setup:');
-  console.log('   ✅ Hot reload enabled');
-  console.log('   ✅ Debug tools active');
-  console.log('   ✅ Development optimizations');
+  console.info('🔧 Development Environment Setup:');
+  console.info('   ✅ Hot reload enabled');
+  console.info('   ✅ Debug tools active');
+  console.info('   ✅ Development optimizations');
 }
 
-console.log('');
-console.log('🎉 Fire22 Enterprise System Ready!');
-console.log('=====================================');
-console.log('');
+console.info('');
+console.info('🎉 Fire22 Enterprise System Ready!');
+console.info('=====================================');
+console.info('');
 
 // Export for use in other scripts
 export {};

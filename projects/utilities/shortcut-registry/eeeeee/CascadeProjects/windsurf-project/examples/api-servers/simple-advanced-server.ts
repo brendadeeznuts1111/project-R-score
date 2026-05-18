@@ -3,8 +3,8 @@
 // Simple Advanced Server Features Demo
 // Focus on the core features that work reliably
 
-console.log('🚀 Simple Advanced Bun Server Features Demo');
-console.log('==========================================\n');
+console.info('🚀 Simple Advanced Bun Server Features Demo');
+console.info('==========================================\n');
 
 // Main server demonstrating key features
 const server = Bun.serve({
@@ -66,7 +66,7 @@ const server = Bun.serve({
     if (url.pathname === '/api/stop' && req.method === 'POST') {
       // Demonstrate graceful shutdown
       setTimeout(() => {
-        console.log('🛑 Shutting down server...');
+        console.info('🛑 Shutting down server...');
         server.stop();
       }, 1000);
       return new Response('Server will shut down in 1 second');
@@ -88,7 +88,7 @@ const server = Bun.serve({
     },
     
     open(ws) {
-      console.log('🔗 WebSocket connected');
+      console.info('🔗 WebSocket connected');
       ws.send(JSON.stringify({
         type: 'welcome',
         message: 'Connected to Bun Advanced Server Demo',
@@ -97,7 +97,7 @@ const server = Bun.serve({
     },
     
     close(ws) {
-      console.log('🔌 WebSocket disconnected');
+      console.info('🔌 WebSocket disconnected');
     }
   }
 });
@@ -312,17 +312,17 @@ function getDashboardHTML(server: any): string {
   `;
 }
 
-console.log('🚀 Advanced Server Features Demo Started!');
-console.log('🌐 Dashboard: http://localhost:3003');
-console.log('⏱️ Idle Timeout: 30 seconds');
-console.log('🔗 WebSocket: ws://localhost:3003');
-console.log('📊 Features: Per-request timeout, metrics, hot reload, WebSockets');
-console.log('\n🛡️ Server is running with advanced security and monitoring features!');
+console.info('🚀 Advanced Server Features Demo Started!');
+console.info('🌐 Dashboard: http://localhost:3003');
+console.info('⏱️ Idle Timeout: 30 seconds');
+console.info('🔗 WebSocket: ws://localhost:3003');
+console.info('📊 Features: Per-request timeout, metrics, hot reload, WebSockets');
+console.info('\n🛡️ Server is running with advanced security and monitoring features!');
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('\n🛑 Shutting down server gracefully...');
+  console.info('\n🛑 Shutting down server gracefully...');
   await server.stop();
-  console.log('✅ Server stopped successfully');
+  console.info('✅ Server stopped successfully');
   process.exit(0);
 });

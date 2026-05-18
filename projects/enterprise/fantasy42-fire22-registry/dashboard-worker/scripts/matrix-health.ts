@@ -173,7 +173,7 @@ class MatrixHealthChecker {
         )
       `);
 
-      console.log('✅ Sample data inserted successfully');
+      console.info('✅ Sample data inserted successfully');
     } catch (error) {
       console.error('Error inserting sample data:', error);
     }
@@ -582,54 +582,54 @@ async function main() {
   const args = process.argv.slice(2);
   const checker = new MatrixHealthChecker();
 
-  console.log('🔍 Fire22 Matrix Health Checker');
-  console.log('!==!==!==!==!==!==\n');
+  console.info('🔍 Fire22 Matrix Health Checker');
+  console.info('!==!==!==!==!==!==\n');
 
   switch (args[0]) {
     case 'validate':
-      console.log('🔍 Validating permissions matrix...\n');
+      console.info('🔍 Validating permissions matrix...\n');
       const validation = await checker.validatePermissionsMatrix();
-      console.log(JSON.stringify(validation, null, 2));
+      console.info(JSON.stringify(validation, null, 2));
       break;
 
     case 'repair':
-      console.log('🔧 Repairing matrix issues...\n');
+      console.info('🔧 Repairing matrix issues...\n');
       const repair = await checker.repairMatrixIssues();
-      console.log(JSON.stringify(repair, null, 2));
+      console.info(JSON.stringify(repair, null, 2));
       break;
 
     case 'status':
-      console.log('📊 Matrix health status...\n');
+      console.info('📊 Matrix health status...\n');
       const status = await checker.checkMatrixHealth();
-      console.log(`Matrix Health Score: ${status.matrix_health_score}/100`);
-      console.log(`Status: ${status.status}`);
+      console.info(`Matrix Health Score: ${status.matrix_health_score}/100`);
+      console.info(`Status: ${status.status}`);
       if (status.matrix_stats) {
-        console.log(`Data Completeness: ${status.matrix_stats.data_completeness}%`);
-        console.log(`Permission Coverage: ${status.matrix_stats.permission_coverage}%`);
-        console.log(`Agent Data Quality: ${status.matrix_stats.agent_data_quality}%`);
+        console.info(`Data Completeness: ${status.matrix_stats.data_completeness}%`);
+        console.info(`Permission Coverage: ${status.matrix_stats.permission_coverage}%`);
+        console.info(`Agent Data Quality: ${status.matrix_stats.agent_data_quality}%`);
       }
       break;
 
     case 'history':
-      console.log('📈 Matrix health history...\n');
+      console.info('📈 Matrix health history...\n');
       const history = checker.getMatrixHealthHistory(parseInt(args[1]) || 5);
-      console.log(JSON.stringify(history, null, 2));
+      console.info(JSON.stringify(history, null, 2));
       break;
 
     case 'summary':
-      console.log('📋 Matrix health summary...\n');
+      console.info('📋 Matrix health summary...\n');
       const summary = checker.getCurrentMatrixStatus();
-      console.log(JSON.stringify(summary, null, 2));
+      console.info(JSON.stringify(summary, null, 2));
       break;
 
     default:
-      console.log('🔍 Checking matrix health...\n');
+      console.info('🔍 Checking matrix health...\n');
       const health = await checker.checkMatrixHealth();
-      console.log(JSON.stringify(health, null, 2));
+      console.info(JSON.stringify(health, null, 2));
 
       if (health.success) {
-        console.log(`\n🎯 Matrix Health Score: ${health.matrix_health_score}/100`);
-        console.log(`📊 Status: ${health.status}`);
+        console.info(`\n🎯 Matrix Health Score: ${health.matrix_health_score}/100`);
+        console.info(`📊 Status: ${health.status}`);
       }
   }
 }

@@ -730,7 +730,7 @@ app.get('/dashboard', async c => {
 // Start server
 const port = process.env.PORT || 3001;
 
-console.log(`
+console.info(`
 🎭 Fire22 Telegram Staging Server
 ══════════════════════════════════
 Environment: staging

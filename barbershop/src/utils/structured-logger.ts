@@ -202,7 +202,7 @@ export class EliteLogger {
     const formatted = this.format(entry);
     
     if (this.config.output === 'stdout' || this.config.output === 'both') {
-      console.log(formatted);
+      console.info(formatted);
     }
     
     if (this.config.output === 'file' || this.config.output === 'both') {
@@ -326,7 +326,7 @@ export const logger = new EliteLogger();
 // ═══════════════════════════════════════════════════════════════════════════════
 
 if (import.meta.main) {
-  console.log(`
+  console.info(`
 ╔══════════════════════════════════════════════════════════════════╗
 ║  📝 ELITE LOGGER                                                 ║
 ╠══════════════════════════════════════════════════════════════════╣
@@ -342,33 +342,33 @@ if (import.meta.main) {
   
   log.setRequestId('req-123-abc');
   
-  console.log('1. Different Log Levels:\n');
+  console.info('1. Different Log Levels:\n');
   
   log.debug('Debug message', { detail: 'verbose info' });
   log.info('User logged in', { userId: 'user-456', ip: '192.168.1.1' });
   log.warn('Cache miss', { key: 'barber:jb', durationMs: 50 });
   log.error('Database connection failed', new Error('ECONNREFUSED'), { retry: 3 });
   
-  console.log('\n2. Child Logger with Context:\n');
+  console.info('\n2. Child Logger with Context:\n');
   
   // Simulate child logger
   log.setRequestId('req-789-xyz');
   log.info('Processing payment', { amount: 45.50, barberId: 'barber_jb' });
   log.info('Payment completed', { transactionId: 'txn-abc-123' });
   
-  console.log('\n3. Performance Timing:\n');
+  console.info('\n3. Performance Timing:\n');
   
   const startNs = nanoseconds();
   for (let i = 0; i < 1000; i++) {
     log.debug('Loop iteration', { i });
   }
   const elapsedMs = Number(nanoseconds() - startNs) / 1e6;
-  console.log(`   Logged 1000 messages in ${elapsedMs.toFixed(2)}ms`);
+  console.info(`   Logged 1000 messages in ${elapsedMs.toFixed(2)}ms`);
   
-  console.log('\n✅ Logger demo complete!');
-  console.log('\nUsage:');
-  console.log('   logger.info("Message", { context });');
-  console.log('   logger.error("Failed", error, { retry: 3 });');
+  console.info('\n✅ Logger demo complete!');
+  console.info('\nUsage:');
+  console.info('   logger.info("Message", { context });');
+  console.info('   logger.error("Failed", error, { retry: 3 });');
   
   await log.close();
 }

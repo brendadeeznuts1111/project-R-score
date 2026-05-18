@@ -90,9 +90,9 @@ function createGradientBar(
 }
 
 /* ---------- Advanced quantum table ----------------------- */
-console.log("\n🚀 Enhanced Quantum stdin Analysis");
-console.log("=====================================");
-console.log(
+console.info("\n🚀 Enhanced Quantum stdin Analysis");
+console.info("=====================================");
+console.info(
   inspect.table(stats, {
     border: true,
     header: true,
@@ -109,16 +109,16 @@ const totalChars = lines.reduce((sum, line) => sum + line.length, 0);
 const avgLineLength = (totalChars / lines.length).toFixed(1);
 const avgWordsPerLine = (totalWords / lines.length).toFixed(1);
 
-console.log("\n📊 Advanced Analytics:");
-console.log(`┌─────────────────┬──────────┐`);
-console.log(`│ Metric          │ Value    │`);
-console.log(`├─────────────────┼──────────┤`);
-console.log(`│ Total lines     │ ${lines.length.toString().padEnd(8)} │`);
-console.log(`│ Total words     │ ${totalWords.toString().padEnd(8)} │`);
-console.log(`│ Total chars     │ ${totalChars.toString().padEnd(8)} │`);
-console.log(`│ Avg line length │ ${avgLineLength.padEnd(8)} │`);
-console.log(`│ Avg words/line  │ ${avgWordsPerLine.padEnd(8)} │`);
-console.log(`└─────────────────┴──────────┘`);
+console.info("\n📊 Advanced Analytics:");
+console.info(`┌─────────────────┬──────────┐`);
+console.info(`│ Metric          │ Value    │`);
+console.info(`├─────────────────┼──────────┤`);
+console.info(`│ Total lines     │ ${lines.length.toString().padEnd(8)} │`);
+console.info(`│ Total words     │ ${totalWords.toString().padEnd(8)} │`);
+console.info(`│ Total chars     │ ${totalChars.toString().padEnd(8)} │`);
+console.info(`│ Avg line length │ ${avgLineLength.padEnd(8)} │`);
+console.info(`│ Avg words/line  │ ${avgWordsPerLine.padEnd(8)} │`);
+console.info(`└─────────────────┴──────────┘`);
 
 /* ---------- Enhanced strict snapshot ---------------------- */
 const snapshot = {
@@ -139,9 +139,9 @@ if (!Bun.deepEquals(snapshot, prev, true)) {
     "/tmp/stdin-snapshot-enhanced.json",
     JSON.stringify(snapshot, null, 2)
   );
-  console.log("✅ Enhanced snapshot updated (strict mode)");
+  console.info("✅ Enhanced snapshot updated (strict mode)");
 } else {
-  console.log("📋 No changes detected (stable snapshot)");
+  console.info("📋 No changes detected (stable snapshot)");
 }
 
 /* ---------- XSS-safe + compressed artefacts ------------- */
@@ -172,8 +172,8 @@ const safe = JSON.stringify(report);
 const gz = gzipSync(new TextEncoder().encode(safe), { level: 9 });
 await Bun.write("/tmp/stdin-quantum-enhanced.json.gz", gz);
 
-console.log(`📊 Enhanced gzipped report: ${gz.byteLength} bytes`);
-console.log(
+console.info(`📊 Enhanced gzipped report: ${gz.byteLength} bytes`);
+console.info(
   `💾 Compression ratio: ${((gz.byteLength / safe.length) * 100).toFixed(1)}%`
 );
 
@@ -185,15 +185,15 @@ const decompressed = new TextDecoder().decode(decompressedBuffer);
 const parsed = JSON.parse(decompressed);
 const perfEnd = performance.now();
 
-console.log(`⚡ Decompression + parse: ${(perfEnd - perfStart).toFixed(2)}ms`);
+console.info(`⚡ Decompression + parse: ${(perfEnd - perfStart).toFixed(2)}ms`);
 
 /* ---------- Visual summary ------------------------------- */
-console.log("\n🎨 Visual Summary:");
+console.info("\n🎨 Visual Summary:");
 const maxTension = Math.max(...stats.map((s) => parseFloat(s.tension)));
 const visualBar = "█".repeat(Math.round(maxTension / 10));
-console.log(`Max tension: ${maxTension.toFixed(1)}% ${visualBar}`);
+console.info(`Max tension: ${maxTension.toFixed(1)}% ${visualBar}`);
 
-console.log("\n🎉 Enhanced Quantum Analysis Complete!");
-console.log("📁 Generated files:");
-console.log("  • /tmp/stdin-snapshot-enhanced.json");
-console.log("  • /tmp/stdin-quantum-enhanced.json.gz");
+console.info("\n🎉 Enhanced Quantum Analysis Complete!");
+console.info("📁 Generated files:");
+console.info("  • /tmp/stdin-snapshot-enhanced.json");
+console.info("  • /tmp/stdin-quantum-enhanced.json.gz");

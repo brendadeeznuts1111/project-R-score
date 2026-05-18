@@ -468,7 +468,7 @@ class DashboardServer {
   }
 
   async start(): Promise<void> {
-    console.log(`🚀 Starting Bun Enterprise Dashboard on http://localhost:${this.port}`);
+    console.info(`🚀 Starting Bun Enterprise Dashboard on http://localhost:${this.port}`);
 
     const server = Bun.serve({
       port: this.port,
@@ -505,8 +505,8 @@ class DashboardServer {
       }.bind(this)
     });
 
-    console.log(`Server running at ${server.url}`);
-    console.log('Press Ctrl+C to stop');
+    console.info(`Server running at ${server.url}`);
+    console.info('Press Ctrl+C to stop');
   }
 
   private serveDashboard(): Response {

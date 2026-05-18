@@ -74,7 +74,7 @@ describe('Timezone Matrix v3.7 - Core Functionality', () => {
 describe('Timezone Matrix v3.7 - Feature Flag Integration', () => {
   test('ENTERPRISE_SECURITY enables enterprise components', () => {
     if (!feature("ENTERPRISE_SECURITY")) {
-      console.log('⏭️  Skipping - ENTERPRISE_SECURITY not enabled');
+      console.info('⏭️  Skipping - ENTERPRISE_SECURITY not enabled');
       return;
     }
     
@@ -87,7 +87,7 @@ describe('Timezone Matrix v3.7 - Feature Flag Integration', () => {
 
   test('DEVELOPMENT_TOOLS enables development components', () => {
     if (!feature("DEVELOPMENT_TOOLS")) {
-      console.log('⏭️  Skipping - DEVELOPMENT_TOOLS not enabled');
+      console.info('⏭️  Skipping - DEVELOPMENT_TOOLS not enabled');
       return;
     }
     
@@ -100,7 +100,7 @@ describe('Timezone Matrix v3.7 - Feature Flag Integration', () => {
 
   test('PREMIUM_ANALYTICS enables analytics components', () => {
     if (!feature("PREMIUM_ANALYTICS")) {
-      console.log('⏭️  Skipping - PREMIUM_ANALYTICS not enabled');
+      console.info('⏭️  Skipping - PREMIUM_ANALYTICS not enabled');
       return;
     }
     
@@ -113,7 +113,7 @@ describe('Timezone Matrix v3.7 - Feature Flag Integration', () => {
 
   test('MULTI_TENANT enables multi-tenant components', () => {
     if (!feature("MULTI_TENANT")) {
-      console.log('⏭️  Skipping - MULTI_TENANT not enabled');
+      console.info('⏭️  Skipping - MULTI_TENANT not enabled');
       return;
     }
     
@@ -144,7 +144,7 @@ describe('Timezone Matrix v3.7 - Scope Integration', () => {
     const proc = await UnifiedDashboardLauncher.launchDashboardChild(
       "-e", // entryPoint as -e for bun eval
       domain,
-      [`console.log(JSON.stringify({
+      [`console.info(JSON.stringify({
         scope: process.env.DASHBOARD_SCOPE,
         tz: process.env.TZ,
         scopeTz: process.env.SCOPE_TIMEZONE
@@ -220,40 +220,40 @@ describe('Timezone Matrix v3.7 - Edge Cases', () => {
 
 // Test runner for manual execution
 if (import.meta.main) {
-  console.log('🧪 Running Timezone Matrix v3.7 Test Suite\n');
+  console.info('🧪 Running Timezone Matrix v3.7 Test Suite\n');
   
   try {
     // Run comprehensive validation
-    console.log('🔍 Running comprehensive validation...');
+    console.info('🔍 Running comprehensive validation...');
     const validation = TimezoneTestUtils.runFullValidation();
     
-    console.log('\n📊 Validation Results:');
-    console.log(`✅ Canonical zones: ${validation.canonicalValid}`);
-    console.log(`✅ Offset accuracy: ${validation.offsetValid}`);
-    console.log(`✅ Feature flag components: ${validation.featureFlagComponents.size} sets`);
-    console.log(`✅ Scope mappings: ${Object.keys(validation.scopeMappings).length} scopes`);
+    console.info('\n📊 Validation Results:');
+    console.info(`✅ Canonical zones: ${validation.canonicalValid}`);
+    console.info(`✅ Offset accuracy: ${validation.offsetValid}`);
+    console.info(`✅ Feature flag components: ${validation.featureFlagComponents.size} sets`);
+    console.info(`✅ Scope mappings: ${Object.keys(validation.scopeMappings).length} scopes`);
     
     // Show feature flag components
     if (validation.featureFlagComponents.size > 0) {
-      console.log('\n🎯 Active Feature Flag Components:');
+      console.info('\n🎯 Active Feature Flag Components:');
       validation.featureFlagComponents.forEach((components, flag) => {
-        console.log(`  ${flag}: ${components.join(', ')}`);
+        console.info(`  ${flag}: ${components.join(', ')}`);
       });
     }
     
     // Show scope mappings
-    console.log('\n🗺️  Scope Mappings:');
+    console.info('\n🗺️  Scope Mappings:');
     Object.entries(validation.scopeMappings).forEach(([scope, timezone]) => {
-      console.log(`  ${scope} → ${timezone}`);
+      console.info(`  ${scope} → ${timezone}`);
     });
     
     // Run individual tests
-    console.log('\n🧪 Running Individual Tests:');
+    console.info('\n🧪 Running Individual Tests:');
     TimezoneMatrixTests.testComponentMapping();
     TimezoneMatrixTests.testFeatureFlagIntegration();
     TimezoneMatrixTests.testCanonicalCompliance();
     
-    console.log('\n✅ All timezone matrix tests completed successfully!');
+    console.info('\n✅ All timezone matrix tests completed successfully!');
     
   } catch (error) {
     console.error('❌ Test suite failed:', error);

@@ -24,7 +24,7 @@ class SmokeTestSuite {
 	private results: TestResult[] = [];
 
 	async runAll(): Promise<void> {
-		console.log(`${BOLD}${CYAN}🧪 Bun v1.3.8 Smoke Test Suite${RESET}\n`);
+		console.info(`${BOLD}${CYAN}🧪 Bun v1.3.8 Smoke Test Suite${RESET}\n`);
 
 		await this.testEnvTyping();
 		await this.testHeaderCasePreservation();
@@ -35,20 +35,20 @@ class SmokeTestSuite {
 	}
 
 	private async testEnvTyping(): Promise<void> {
-		console.log(`${BOLD}Test 1: Environment Variable Typing${RESET}`);
-		console.log(`${CYAN}─".repeat(50)}${RESET}`);
+		console.info(`${BOLD}Test 1: Environment Variable Typing${RESET}`);
+		console.info(`${CYAN}─".repeat(50)}${RESET}`);
 
 		try {
 			// Test 1: String literal typing with satisfies
 			const tierMode = Bun.env.TIER_SECURITY_MODE ?? "strict";
 			const mode = tierMode as "strict" | "permissive" | "audit";
 
-			console.log(`  TIER_SECURITY_MODE: ${YELLOW}${mode}${RESET}`);
-			console.log(`  Type: ${GREEN}satisfies "strict" | "permissive" | "audit"${RESET}`);
+			console.info(`  TIER_SECURITY_MODE: ${YELLOW}${mode}${RESET}`);
+			console.info(`  Type: ${GREEN}satisfies "strict" | "permissive" | "audit"${RESET}`);
 
 			// Test 2: Number parsing with defaults
 			const maxRows = this.getNumberOrDefault("TIER_MAX_ROWS", 100);
-			console.log(`  TIER_MAX_ROWS: ${YELLOW}${maxRows}${RESET} (default: 100)`);
+			console.info(`  TIER_MAX_ROWS: ${YELLOW}${maxRows}${RESET} (default: 100)`);
 
 			this.results.push({
 				name: "Environment Variable Typing",
@@ -63,12 +63,12 @@ class SmokeTestSuite {
 				error: String(error),
 			});
 		}
-		console.log();
+		console.info();
 	}
 
 	private async testHeaderCasePreservation(): Promise<void> {
-		console.log(`${BOLD}Test 2: HTTP Header Case Preservation${RESET}`);
-		console.log(`${CYAN}─".repeat(50)}${RESET}`);
+		console.info(`${BOLD}Test 2: HTTP Header Case Preservation${RESET}`);
+		console.info(`${CYAN}─".repeat(50)}${RESET}`);
 
 		try {
 			// Local test server
@@ -96,9 +96,9 @@ class SmokeTestSuite {
 			const hasCustomCase =
 				"X-Custom-Case" in data.headers || "x-custom-case" in data.headers;
 
-			console.log(`  Sent: ${YELLOW}X-Custom-Case: Value${RESET}`);
-			console.log(`  Received: ${GREEN}${JSON.stringify(data.headers)}${RESET}`);
-			console.log(
+			console.info(`  Sent: ${YELLOW}X-Custom-Case: Value${RESET}`);
+			console.info(`  Received: ${GREEN}${JSON.stringify(data.headers)}${RESET}`);
+			console.info(
 				`  Case preserved: ${hasCustomCase ? GREEN : RED}${hasCustomCase}${RESET}`,
 			);
 
@@ -115,12 +115,12 @@ class SmokeTestSuite {
 				error: String(error),
 			});
 		}
-		console.log();
+		console.info();
 	}
 
 	private async testAnsiWrapping(): Promise<void> {
-		console.log(`${BOLD}Test 3: ANSI Text Wrapping (Native Speed)${RESET}`);
-		console.log(`${CYAN}─".repeat(50)}${RESET}`);
+		console.info(`${BOLD}Test 3: ANSI Text Wrapping (Native Speed)${RESET}`);
+		console.info(`${CYAN}─".repeat(50)}${RESET}`);
 
 		try {
 			const longText = "🏭 FactoryWager ".repeat(20);
@@ -138,10 +138,10 @@ class SmokeTestSuite {
 
 			const duration = performance.now() - start;
 
-			console.log(`  Input length: ${YELLOW}${longText.length}${RESET} chars`);
-			console.log(`  Wrap width: ${YELLOW}40${RESET} cols`);
-			console.log(`  Time: ${GREEN}${duration.toFixed(2)}ms${RESET}`);
-			console.log(`  Output lines: ${YELLOW}${wrapped.split("\n").length}${RESET}`);
+			console.info(`  Input length: ${YELLOW}${longText.length}${RESET} chars`);
+			console.info(`  Wrap width: ${YELLOW}40${RESET} cols`);
+			console.info(`  Time: ${GREEN}${duration.toFixed(2)}ms${RESET}`);
+			console.info(`  Output lines: ${YELLOW}${wrapped.split("\n").length}${RESET}`);
 
 			this.results.push({
 				name: "ANSI Text Wrapping",
@@ -156,12 +156,12 @@ class SmokeTestSuite {
 				error: String(error),
 			});
 		}
-		console.log();
+		console.info();
 	}
 
 	private async testProfileGeneration(): Promise<void> {
-		console.log(`${BOLD}Test 4: CPU/Heap Profile Generation${RESET}`);
-		console.log(`${CYAN}─".repeat(50)}${RESET}`);
+		console.info(`${BOLD}Test 4: CPU/Heap Profile Generation${RESET}`);
+		console.info(`${CYAN}─".repeat(50)}${RESET}`);
 
 		try {
 			// Simulate CPU work
@@ -172,18 +172,18 @@ class SmokeTestSuite {
 			}
 			const duration = performance.now() - start;
 
-			console.log(`  CPU work completed: ${YELLOW}1M iterations${RESET}`);
-			console.log(`  Time: ${GREEN}${duration.toFixed(2)}ms${RESET}`);
-			console.log(`  Result: ${YELLOW}${sum.toFixed(2)}${RESET}`);
+			console.info(`  CPU work completed: ${YELLOW}1M iterations${RESET}`);
+			console.info(`  Time: ${GREEN}${duration.toFixed(2)}ms${RESET}`);
+			console.info(`  Result: ${YELLOW}${sum.toFixed(2)}${RESET}`);
 
 			// Check if --cpu-prof and --heap-prof flags work
 			const hasProfFlags =
 				process.argv.includes("--cpu-prof") || process.argv.includes("--heap-prof");
 
 			if (hasProfFlags) {
-				console.log(`  Profile flags: ${GREEN}detected${RESET}`);
+				console.info(`  Profile flags: ${GREEN}detected${RESET}`);
 			} else {
-				console.log(
+				console.info(
 					`  Profile flags: ${YELLOW}not in args${RESET} (pass --cpu-prof-md --heap-prof-md)`,
 				);
 			}
@@ -201,7 +201,7 @@ class SmokeTestSuite {
 				error: String(error),
 			});
 		}
-		console.log();
+		console.info();
 	}
 
 	private getNumberOrDefault(key: string, defaultValue: number): number {
@@ -232,32 +232,32 @@ class SmokeTestSuite {
 	}
 
 	private printSummary(): void {
-		console.log(`${BOLD}Test Summary${RESET}`);
-		console.log(`${CYAN}═".repeat(50)}${RESET}`);
+		console.info(`${BOLD}Test Summary${RESET}`);
+		console.info(`${CYAN}═".repeat(50)}${RESET}`);
 
 		const passed = this.results.filter((r) => r.passed).length;
 		const failed = this.results.filter((r) => !r.passed).length;
 
 		for (const result of this.results) {
 			const status = result.passed ? `${GREEN}✓ PASS${RESET}` : `${RED}✗ FAIL${RESET}`;
-			console.log(`  ${status} ${result.name}`);
+			console.info(`  ${status} ${result.name}`);
 			if (result.output) {
-				console.log(`    ${CYAN}→${RESET} ${result.output}`);
+				console.info(`    ${CYAN}→${RESET} ${result.output}`);
 			}
 			if (result.error) {
-				console.log(`    ${RED}Error: ${result.error}${RESET}`);
+				console.info(`    ${RED}Error: ${result.error}${RESET}`);
 			}
 		}
 
-		console.log();
-		console.log(
+		console.info();
+		console.info(
 			`  ${GREEN}${passed} passed${RESET}, ${RED}${failed} failed${RESET}, ${this.results.length} total`,
 		);
 
 		if (failed === 0) {
-			console.log(`\n  ${GREEN}🎉 All smoke tests passed!${RESET}`);
+			console.info(`\n  ${GREEN}🎉 All smoke tests passed!${RESET}`);
 		} else {
-			console.log(`\n  ${RED}⚠️  Some tests failed${RESET}`);
+			console.info(`\n  ${RED}⚠️  Some tests failed${RESET}`);
 			process.exit(1);
 		}
 	}

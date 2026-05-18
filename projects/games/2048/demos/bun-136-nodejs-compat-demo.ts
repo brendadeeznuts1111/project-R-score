@@ -1,27 +1,27 @@
 #!/usr/bin/env bun
 
 // Demonstration of Bun v1.3.6 Node.js compatibility improvements
-console.log("🔗 Bun v1.3.6 Node.js Compatibility Improvements");
-console.log("=".repeat(58));
+console.info("🔗 Bun v1.3.6 Node.js Compatibility Improvements");
+console.info("=".repeat(58));
 
 // Test 1: Temp directory resolution fix
-console.log("\n1️⃣ Temp Directory Resolution (os.tmpdir() compatibility):");
+console.info("\n1️⃣ Temp Directory Resolution (os.tmpdir() compatibility):");
 
 async function demonstrateTempDirectoryFix() {
-  console.log("✅ Fixed temp directory resolution to match Node.js behavior:");
-  console.log("   🔧 Now checks TMPDIR, TMP, and TEMP in order");
-  console.log("   🔄 Matches Node.js os.tmpdir() behavior exactly");
+  console.info("✅ Fixed temp directory resolution to match Node.js behavior:");
+  console.info("   🔧 Now checks TMPDIR, TMP, and TEMP in order");
+  console.info("   🔄 Matches Node.js os.tmpdir() behavior exactly");
 
   // Show current environment variables
   const tempVars = ["TMPDIR", "TMP", "TEMP"];
-  console.log("\n   📁 Current temp environment variables:");
+  console.info("\n   📁 Current temp environment variables:");
 
   tempVars.forEach((varName) => {
     const value = process.env[varName];
     if (value) {
-      console.log(`      ${varName}: ${value}`);
+      console.info(`      ${varName}: ${value}`);
     } else {
-      console.log(`      ${varName}: (not set)`);
+      console.info(`      ${varName}: (not set)`);
     }
   });
 
@@ -29,27 +29,27 @@ async function demonstrateTempDirectoryFix() {
   try {
     const os = await import("node:os");
     const tmpDir = os.tmpdir();
-    console.log(`\n   📂 os.tmpdir() result: ${tmpDir}`);
-    console.log("   ✅ Proper temp directory resolution working");
+    console.info(`\n   📂 os.tmpdir() result: ${tmpDir}`);
+    console.info("   ✅ Proper temp directory resolution working");
   } catch (error) {
-    console.log("   ⚠️  node:os module not available in this context");
+    console.info("   ⚠️  node:os module not available in this context");
   }
 
-  console.log("\n   🎯 Benefits:");
-  console.log("      • Consistent behavior with Node.js");
-  console.log("      • Better cross-platform compatibility");
-  console.log("      • Proper temp file handling");
+  console.info("\n   🎯 Benefits:");
+  console.info("      • Consistent behavior with Node.js");
+  console.info("      • Better cross-platform compatibility");
+  console.info("      • Proper temp file handling");
 }
 
 // Test 2: node:zlib memory leak fix
-console.log("\n2️⃣ node:zlib Memory Leak Fix:");
+console.info("\n2️⃣ node:zlib Memory Leak Fix:");
 
 function demonstrateZlibMemoryLeakFix() {
-  console.log("✅ Fixed memory leak in node:zlib compression streams:");
-  console.log(
+  console.info("✅ Fixed memory leak in node:zlib compression streams:");
+  console.info(
     "   🔧 Issue: reset() repeatedly allocated new states without freeing old ones",
   );
-  console.log("   🚀 Fix: Proper cleanup of encoder/decoder states");
+  console.info("   🚀 Fix: Proper cleanup of encoder/decoder states");
 
   const compressionTypes = [
     {
@@ -65,12 +65,12 @@ function demonstrateZlibMemoryLeakFix() {
     { name: "Zlib compression", module: "node:zlib", method: "createGzip" },
   ];
 
-  console.log("\n   📋 Fixed compression types:");
+  console.info("\n   📋 Fixed compression types:");
   compressionTypes.forEach((type) => {
-    console.log(`      • ${type.name}`);
+    console.info(`      • ${type.name}`);
   });
 
-  console.log("\n   💡 Example usage (now memory-safe):");
+  console.info("\n   💡 Example usage (now memory-safe):");
   const exampleCode = `
 import { createGzip, createGunzip } from "node:zlib";
 
@@ -87,28 +87,28 @@ for (let i = 0; i < 1000; i++) {
 }
   `;
 
-  console.log(exampleCode);
+  console.info(exampleCode);
 
-  console.log("   🎯 Benefits:");
-  console.log("      • Prevents memory exhaustion in long-running processes");
-  console.log("      • Better stability for compression-heavy applications");
-  console.log("      • Node.js compatibility restored");
+  console.info("   🎯 Benefits:");
+  console.info("      • Prevents memory exhaustion in long-running processes");
+  console.info("      • Better stability for compression-heavy applications");
+  console.info("      • Node.js compatibility restored");
 }
 
 // Test 3: node:http CONNECT event handler fix
-console.log("\n3️⃣ node:http CONNECT Event Handler Fix:");
+console.info("\n3️⃣ node:http CONNECT Event Handler Fix:");
 
 function demonstrateHttpConnectFix() {
-  console.log("✅ Fixed node:http server CONNECT event handler:");
-  console.log("   🔧 Issue: Pipelined data not received in head parameter");
-  console.log("   🌐 Fixed compatibility with Cloudflare's workerd runtime");
+  console.info("✅ Fixed node:http server CONNECT event handler:");
+  console.info("   🔧 Issue: Pipelined data not received in head parameter");
+  console.info("   🌐 Fixed compatibility with Cloudflare's workerd runtime");
 
-  console.log("\n   📋 Technical details:");
-  console.log(
+  console.info("\n   📋 Technical details:");
+  console.info(
     "      • CONNECT requests with pipelined data now work correctly",
   );
-  console.log("      • Head parameter contains complete pipelined data");
-  console.log("      • Cap'n Proto KJ HTTP library compatibility restored");
+  console.info("      • Head parameter contains complete pipelined data");
+  console.info("      • Cap'n Proto KJ HTTP library compatibility restored");
 
   const exampleCode = `
 import { createServer } from "node:http";
@@ -117,7 +117,7 @@ const server = createServer((req, res) => {
   if (req.method === 'CONNECT') {
     // Before v1.3.6: head parameter missing pipelined data
     // After v1.3.6: head parameter contains complete data
-    console.log('CONNECT request head:', req.head);
+    console.info('CONNECT request head:', req.head);
 
     res.writeHead(200, 'Connection Established');
     res.end();
@@ -127,22 +127,22 @@ const server = createServer((req, res) => {
 server.listen(8080);
   `;
 
-  console.log("\n   💡 Example CONNECT handler:");
-  console.log(exampleCode);
+  console.info("\n   💡 Example CONNECT handler:");
+  console.info(exampleCode);
 
-  console.log("   🎯 Benefits:");
-  console.log("      • Cloudflare workerd runtime compatibility");
-  console.log("      • Proper HTTP tunneling support");
-  console.log("      • Enterprise proxy server compatibility");
+  console.info("   🎯 Benefits:");
+  console.info("      • Cloudflare workerd runtime compatibility");
+  console.info("      • Proper HTTP tunneling support");
+  console.info("      • Enterprise proxy server compatibility");
 }
 
 // Test 4: ws module agent option support
-console.log("\n4️⃣ WebSocket (ws) Module Agent Option Support:");
+console.info("\n4️⃣ WebSocket (ws) Module Agent Option Support:");
 
 function demonstrateWebSocketAgentFix() {
-  console.log("✅ Fixed ws module agent option for proxy connections:");
-  console.log("   🔧 WebSocket connections now properly support agent option");
-  console.log("   🌐 Enhanced proxy connectivity for WebSocket clients");
+  console.info("✅ Fixed ws module agent option for proxy connections:");
+  console.info("   🔧 WebSocket connections now properly support agent option");
+  console.info("   🌐 Enhanced proxy connectivity for WebSocket clients");
 
   const exampleCode = `
 import WebSocket from "ws";
@@ -157,26 +157,26 @@ const ws = new WebSocket("ws://example.com", {
 });
 
 ws.on('open', () => {
-  console.log('WebSocket connected with custom agent');
+  console.info('WebSocket connected with custom agent');
 });
   `;
 
-  console.log("\n   💡 WebSocket with agent example:");
-  console.log(exampleCode);
+  console.info("\n   💡 WebSocket with agent example:");
+  console.info(exampleCode);
 
-  console.log("   🎯 Benefits:");
-  console.log("      • Better connection pooling");
-  console.log("      • Proxy server compatibility");
-  console.log("      • Enterprise network support");
+  console.info("   🎯 Benefits:");
+  console.info("      • Better connection pooling");
+  console.info("      • Proxy server compatibility");
+  console.info("      • Enterprise network support");
 }
 
 // Test 5: node:http2 flow control improvements
-console.log("\n5️⃣ node:http2 Flow Control Improvements:");
+console.info("\n5️⃣ node:http2 Flow Control Improvements:");
 
 function demonstrateHttp2FlowControl() {
-  console.log("✅ Improved node:http2 module flow control:");
-  console.log("   🔧 Better stream management and backpressure handling");
-  console.log("   🚀 Enhanced performance for HTTP/2 connections");
+  console.info("✅ Improved node:http2 module flow control:");
+  console.info("   🔧 Better stream management and backpressure handling");
+  console.info("   🚀 Enhanced performance for HTTP/2 connections");
 
   const exampleCode = `
 import { createServer } from "node:http2";
@@ -184,7 +184,7 @@ import { createServer } from "node:http2";
 const server = createServer((req, res) => {
   // Improved flow control in v1.3.6
   res.stream.on('drain', () => {
-    console.log('Stream drained, ready for more data');
+    console.info('Stream drained, ready for more data');
   });
 
   res.writeHead(200, { 'content-type': 'application/json' });
@@ -194,20 +194,20 @@ const server = createServer((req, res) => {
 server.listen(8443);
   `;
 
-  console.log("\n   💡 HTTP/2 server with improved flow control:");
-  console.log(exampleCode);
+  console.info("\n   💡 HTTP/2 server with improved flow control:");
+  console.info(exampleCode);
 
-  console.log("   🎯 Benefits:");
-  console.log("      • Better memory usage for HTTP/2 streams");
-  console.log("      • Improved backpressure handling");
-  console.log("      • Enhanced streaming performance");
+  console.info("   🎯 Benefits:");
+  console.info("      • Better memory usage for HTTP/2 streams");
+  console.info("      • Improved backpressure handling");
+  console.info("      • Enhanced streaming performance");
 }
 
 // Test 6: Cross-platform compatibility demonstration
-console.log("\n6️⃣ Cross-Platform Node.js Compatibility:");
+console.info("\n6️⃣ Cross-Platform Node.js Compatibility:");
 
 function demonstrateCrossPlatformCompatibility() {
-  console.log("✅ Enhanced Node.js compatibility across platforms:");
+  console.info("✅ Enhanced Node.js compatibility across platforms:");
 
   const platforms = [
     {
@@ -237,18 +237,18 @@ function demonstrateCrossPlatformCompatibility() {
   ];
 
   platforms.forEach((platform) => {
-    console.log(`\n   🖥️  ${platform.name}:`);
+    console.info(`\n   🖥️  ${platform.name}:`);
     platform.improvements.forEach((improvement) => {
-      console.log(`      • ${improvement}`);
+      console.info(`      • ${improvement}`);
     });
   });
 }
 
 // Test 7: Real-world usage scenarios
-console.log("\n7️⃣ Real-World Usage Scenarios:");
+console.info("\n7️⃣ Real-World Usage Scenarios:");
 
 function demonstrateRealWorldUsage() {
-  console.log("✅ How these improvements benefit real applications:");
+  console.info("✅ How these improvements benefit real applications:");
 
   const scenarios = [
     {
@@ -277,17 +277,17 @@ function demonstrateRealWorldUsage() {
   ];
 
   scenarios.forEach((scenario) => {
-    console.log(`\n   📋 ${scenario.scenario}:`);
-    console.log(`      ${scenario.description}`);
-    console.log(`      🔧 Improvements: ${scenario.improvements.join(", ")}`);
+    console.info(`\n   📋 ${scenario.scenario}:`);
+    console.info(`      ${scenario.description}`);
+    console.info(`      🔧 Improvements: ${scenario.improvements.join(", ")}`);
   });
 }
 
 // Test 8: Migration guide for Node.js applications
-console.log("\n8️⃣ Migration Guide for Node.js Applications:");
+console.info("\n8️⃣ Migration Guide for Node.js Applications:");
 
 function demonstrateMigrationGuide() {
-  console.log("✅ Easier migration from Node.js to Bun:");
+  console.info("✅ Easier migration from Node.js to Bun:");
 
   const migrationTips = [
     {
@@ -303,7 +303,7 @@ function demonstrateMigrationGuide() {
     {
       area: "HTTP servers",
       tip: "CONNECT requests now work with pipelined data",
-      code: "server.on('connect', (req, res) => { console.log(req.head); });",
+      code: "server.on('connect', (req, res) => { console.info(req.head); });",
     },
     {
       area: "WebSockets",
@@ -313,9 +313,9 @@ function demonstrateMigrationGuide() {
   ];
 
   migrationTips.forEach((tip) => {
-    console.log(`\n   📝 ${tip.area}:`);
-    console.log(`      💡 ${tip.tip}`);
-    console.log(`      📄 ${tip.code}`);
+    console.info(`\n   📝 ${tip.area}:`);
+    console.info(`      💡 ${tip.tip}`);
+    console.info(`      📄 ${tip.code}`);
   });
 }
 
@@ -331,22 +331,22 @@ async function main() {
     demonstrateRealWorldUsage();
     demonstrateMigrationGuide();
 
-    console.log(
+    console.info(
       "\n🎯 Summary of Bun v1.3.6 Node.js Compatibility Improvements:",
     );
-    console.log(
+    console.info(
       "   📁 Temp Directory: os.tmpdir() now matches Node.js exactly",
     );
-    console.log("   🗜️  zlib: Fixed memory leaks in compression streams");
-    console.log(
+    console.info("   🗜️  zlib: Fixed memory leaks in compression streams");
+    console.info(
       "   🌐 HTTP: CONNECT event handler with pipelined data support",
     );
-    console.log("   🔌 WebSocket: Agent option for proxy connections");
-    console.log("   🚀 HTTP/2: Improved flow control and stream management");
-    console.log("   🖥️  Cross-Platform: Consistent behavior across OS");
-    console.log("   🔄 Migration: Easier Node.js to Bun migration");
+    console.info("   🔌 WebSocket: Agent option for proxy connections");
+    console.info("   🚀 HTTP/2: Improved flow control and stream management");
+    console.info("   🖥️  Cross-Platform: Consistent behavior across OS");
+    console.info("   🔄 Migration: Easier Node.js to Bun migration");
 
-    console.log(
+    console.info(
       "\n🚀 These improvements make Bun a drop-in replacement for Node.js!",
     );
   } catch (error) {

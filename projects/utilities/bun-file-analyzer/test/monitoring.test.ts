@@ -17,7 +17,7 @@ describe("🔐 Security System Tests", () => {
         const module = await import("../src/security/secure-cookie-manager.ts");
         SecureCookieManager = module.SecureCookieManager;
       } catch {
-        console.log("SecureCookieManager module not available, skipping tests");
+        console.info("SecureCookieManager module not available, skipping tests");
         return;
       }
 
@@ -37,7 +37,7 @@ describe("🔐 Security System Tests", () => {
       try {
         cookieManager = new SecureCookieManager(mockRequest);
       } catch {
-        console.log("SecureCookieManager instantiation failed, skipping tests");
+        console.info("SecureCookieManager instantiation failed, skipping tests");
         cookieManager = null;
       }
     });
@@ -48,7 +48,7 @@ describe("🔐 Security System Tests", () => {
 
     it("should set secure authentication cookies", () => {
       if (!SecureCookieManager || !cookieManager) {
-        console.log("SecureCookieManager not available, skipping test");
+        console.info("SecureCookieManager not available, skipping test");
         return;
       }
 
@@ -67,7 +67,7 @@ describe("🔐 Security System Tests", () => {
 
     it("should set analytics cookies", () => {
       if (!SecureCookieManager || !cookieManager) {
-        console.log("SecureCookieManager not available, skipping test");
+        console.info("SecureCookieManager not available, skipping test");
         return;
       }
 
@@ -80,7 +80,7 @@ describe("🔐 Security System Tests", () => {
 
     it("should validate cookie integrity", () => {
       if (!SecureCookieManager || !cookieManager) {
-        console.log("SecureCookieManager not available, skipping test");
+        console.info("SecureCookieManager not available, skipping test");
         return;
       }
 
@@ -99,7 +99,7 @@ describe("🔐 Security System Tests", () => {
 
     it("should clear all cookies", () => {
       if (!SecureCookieManager || !cookieManager) {
-        console.log("SecureCookieManager not available, skipping test");
+        console.info("SecureCookieManager not available, skipping test");
         return;
       }
 
@@ -116,7 +116,7 @@ describe("🔐 Security System Tests", () => {
 
     it("should handle missing cookies gracefully", () => {
       if (!SecureCookieManager || !cookieManager) {
-        console.log("SecureCookieManager not available, skipping test");
+        console.info("SecureCookieManager not available, skipping test");
         return;
       }
 
@@ -134,7 +134,7 @@ describe("🔐 Security System Tests", () => {
         const module = await import("../src/security/secure-cookie-manager.ts");
         SecurityMiddleware = module.SecurityMiddleware;
       } catch {
-        console.log("SecurityMiddleware module not available, skipping tests");
+        console.info("SecurityMiddleware module not available, skipping tests");
         return;
       }
 
@@ -143,14 +143,14 @@ describe("🔐 Security System Tests", () => {
       try {
         middleware = new SecurityMiddleware();
       } catch {
-        console.log("SecurityMiddleware instantiation failed, skipping tests");
+        console.info("SecurityMiddleware instantiation failed, skipping tests");
         middleware = null;
       }
     });
 
     it("should allow legitimate requests", async () => {
       if (!SecurityMiddleware || !middleware) {
-        console.log("SecurityMiddleware not available, skipping test");
+        console.info("SecurityMiddleware not available, skipping test");
         return;
       }
 
@@ -167,7 +167,7 @@ describe("🔐 Security System Tests", () => {
 
     it("should block requests with suspicious user agents", async () => {
       if (!SecurityMiddleware || !middleware) {
-        console.log("SecurityMiddleware not available, skipping test");
+        console.info("SecurityMiddleware not available, skipping test");
         return;
       }
 
@@ -184,7 +184,7 @@ describe("🔐 Security System Tests", () => {
 
     it("should block oversized requests", async () => {
       if (!SecurityMiddleware || !middleware) {
-        console.log("SecurityMiddleware not available, skipping test");
+        console.info("SecurityMiddleware not available, skipping test");
         return;
       }
 
@@ -201,7 +201,7 @@ describe("🔐 Security System Tests", () => {
 
     it("should implement rate limiting", async () => {
       if (!SecurityMiddleware || !middleware) {
-        console.log("SecurityMiddleware not available, skipping test");
+        console.info("SecurityMiddleware not available, skipping test");
         return;
       }
 
@@ -227,7 +227,7 @@ describe("🔐 Security System Tests", () => {
 
     it("should block and unblock IPs", () => {
       if (!SecurityMiddleware || !middleware) {
-        console.log("SecurityMiddleware not available, skipping test");
+        console.info("SecurityMiddleware not available, skipping test");
         return;
       }
 
@@ -253,7 +253,7 @@ describe("📊 Performance Monitoring Tests", () => {
         const module = await import("../src/security/secure-cookie-manager.ts");
         BundleAnalyzer = module.BundleAnalyzer;
       } catch {
-        console.log("BundleAnalyzer module not available, skipping tests");
+        console.info("BundleAnalyzer module not available, skipping tests");
         return;
       }
 
@@ -279,7 +279,7 @@ describe("📊 Performance Monitoring Tests", () => {
         Bun.write("./test-metafile.json", JSON.stringify(mockMetafile));
         analyzer = new BundleAnalyzer("./test-metafile.json");
       } catch {
-        console.log("BundleAnalyzer instantiation failed, skipping tests");
+        console.info("BundleAnalyzer instantiation failed, skipping tests");
         analyzer = null;
       }
     });
@@ -295,7 +295,7 @@ describe("📊 Performance Monitoring Tests", () => {
 
     it("should calculate bundle metrics correctly", () => {
       if (!BundleAnalyzer || !analyzer) {
-        console.log("BundleAnalyzer not available, skipping test");
+        console.info("BundleAnalyzer not available, skipping test");
         return;
       }
 
@@ -309,7 +309,7 @@ describe("📊 Performance Monitoring Tests", () => {
 
     it("should generate recommendations", () => {
       if (!BundleAnalyzer || !analyzer) {
-        console.log("BundleAnalyzer not available, skipping test");
+        console.info("BundleAnalyzer not available, skipping test");
         return;
       }
 
@@ -319,7 +319,7 @@ describe("📊 Performance Monitoring Tests", () => {
 
     it("should generate HTML report", () => {
       if (!BundleAnalyzer || !analyzer) {
-        console.log("BundleAnalyzer not available, skipping test");
+        console.info("BundleAnalyzer not available, skipping test");
         return;
       }
 
@@ -331,7 +331,7 @@ describe("📊 Performance Monitoring Tests", () => {
 
     it("should analyze dependencies", () => {
       if (!BundleAnalyzer || !analyzer) {
-        console.log("BundleAnalyzer not available, skipping test");
+        console.info("BundleAnalyzer not available, skipping test");
         return;
       }
 
@@ -355,7 +355,7 @@ describe("📊 Performance Monitoring Tests", () => {
         const module = await import("../src/security/secure-cookie-manager.ts");
         PerformanceDashboard = module.PerformanceDashboard;
       } catch {
-        console.log("PerformanceDashboard module not available, skipping tests");
+        console.info("PerformanceDashboard module not available, skipping tests");
         return;
       }
 
@@ -364,14 +364,14 @@ describe("📊 Performance Monitoring Tests", () => {
       try {
         dashboard = new PerformanceDashboard();
       } catch {
-        console.log("PerformanceDashboard instantiation failed, skipping tests");
+        console.info("PerformanceDashboard instantiation failed, skipping tests");
         dashboard = null;
       }
     });
 
     it("should record and aggregate metrics", () => {
       if (!PerformanceDashboard || !dashboard) {
-        console.log("PerformanceDashboard not available, skipping test");
+        console.info("PerformanceDashboard not available, skipping test");
         return;
       }
 
@@ -395,7 +395,7 @@ describe("📊 Performance Monitoring Tests", () => {
 
     it("should generate alerts for threshold violations", async () => {
       if (!PerformanceDashboard || !dashboard) {
-        console.log("PerformanceDashboard not available, skipping test");
+        console.info("PerformanceDashboard not available, skipping test");
         return;
       }
 
@@ -417,7 +417,7 @@ describe("📊 Performance Monitoring Tests", () => {
 
     it("should calculate trends correctly", () => {
       if (!PerformanceDashboard || !dashboard) {
-        console.log("PerformanceDashboard not available, skipping test");
+        console.info("PerformanceDashboard not available, skipping test");
         return;
       }
 
@@ -432,7 +432,7 @@ describe("📊 Performance Monitoring Tests", () => {
 
     it("should generate human-readable summary", () => {
       if (!PerformanceDashboard || !dashboard) {
-        console.log("PerformanceDashboard not available, skipping test");
+        console.info("PerformanceDashboard not available, skipping test");
         return;
       }
 
@@ -454,7 +454,7 @@ describe("📊 Performance Monitoring Tests", () => {
         const module = await import("../src/security/secure-cookie-manager.ts");
         AppMonitor = module.AppMonitor;
       } catch {
-        console.log("AppMonitor module not available, skipping tests");
+        console.info("AppMonitor module not available, skipping tests");
         return;
       }
 
@@ -474,7 +474,7 @@ describe("📊 Performance Monitoring Tests", () => {
         Bun.write("./test-integration-metafile.json", JSON.stringify(mockMetafile));
         monitor = new AppMonitor("./test-integration-metafile.json");
       } catch {
-        console.log("AppMonitor instantiation failed, skipping tests");
+        console.info("AppMonitor instantiation failed, skipping tests");
         monitor = null;
       }
     });
@@ -489,7 +489,7 @@ describe("📊 Performance Monitoring Tests", () => {
 
     it("should initialize all components", () => {
       if (!AppMonitor || !monitor) {
-        console.log("AppMonitor not available, skipping test");
+        console.info("AppMonitor not available, skipping test");
         return;
       }
 
@@ -505,7 +505,7 @@ describe("📊 Performance Monitoring Tests", () => {
 
     it("should analyze build and record metrics", async () => {
       if (!AppMonitor || !monitor) {
-        console.log("AppMonitor not available, skipping test");
+        console.info("AppMonitor not available, skipping test");
         return;
       }
 
@@ -536,13 +536,13 @@ describe("🔄 Integration Tests", () => {
       PerformanceDashboard = module.PerformanceDashboard;
       AppMonitor = module.AppMonitor;
     } catch {
-      console.log("Modules not available, skipping integration tests");
+      console.info("Modules not available, skipping integration tests");
     }
   });
 
   it("should handle complete monitoring workflow", async () => {
     if (!AppMonitor) {
-      console.log("AppMonitor not available, skipping test");
+      console.info("AppMonitor not available, skipping test");
       return;
     }
 
@@ -595,7 +595,7 @@ describe("🔄 Integration Tests", () => {
       expect(parseFloat(metrics.totalSizeMB)).toBeCloseTo(4.98, 0); // Less precise
       expect(metrics.recommendations.length).toBeGreaterThan(0);
 
-      console.log("✅ Complete integration workflow successful!");
+      console.info("✅ Complete integration workflow successful!");
 
     } finally {
       // Cleanup
@@ -609,7 +609,7 @@ describe("🔄 Integration Tests", () => {
 
   it("should handle error conditions gracefully", async () => {
     if (!BundleAnalyzer) {
-      console.log("BundleAnalyzer not available, skipping test");
+      console.info("BundleAnalyzer not available, skipping test");
       return;
     }
 
@@ -648,13 +648,13 @@ describe("🎯 Performance Benchmarks", () => {
       PerformanceDashboard = module.PerformanceDashboard;
       BundleAnalyzer = module.BundleAnalyzer;
     } catch {
-      console.log("Modules not available, skipping performance benchmarks");
+      console.info("Modules not available, skipping performance benchmarks");
     }
   });
 
   it("should handle high-frequency metric recording", async () => {
     if (!PerformanceDashboard) {
-      console.log("PerformanceDashboard not available, skipping test");
+      console.info("PerformanceDashboard not available, skipping test");
       return;
     }
 
@@ -675,7 +675,7 @@ describe("🎯 Performance Benchmarks", () => {
 
   it("should efficiently process large metafiles", async () => {
     if (!BundleAnalyzer) {
-      console.log("BundleAnalyzer not available, skipping test");
+      console.info("BundleAnalyzer not available, skipping test");
       return;
     }
 

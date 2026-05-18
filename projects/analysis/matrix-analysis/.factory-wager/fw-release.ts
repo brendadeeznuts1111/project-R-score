@@ -89,8 +89,8 @@ export class ReleaseOrchestrator {
     const t0 = Bun.nanoseconds();
     const mode = this.opts.dryRun ? "dry-run" : this.opts.yes ? "automated" : "interactive";
 
-    console.log(`\n${BOLD}${CYAN}━━━ FACTORYWAGER RELEASE ORCHESTRATOR ━━━${RESET}`);
-    console.log(`${DIM}Mode: ${mode} | Version: ${this.opts.version} | Config: ${this.opts.config}${RESET}\n`);
+    console.info(`\n${BOLD}${CYAN}━━━ FACTORYWAGER RELEASE ORCHESTRATOR ━━━${RESET}`);
+    console.info(`${DIM}Mode: ${mode} | Version: ${this.opts.version} | Config: ${this.opts.config}${RESET}\n`);
 
     // Phase 1: Pre-Release Analysis
     const analysis = await this.phaseAnalysis();
@@ -116,16 +116,16 @@ export class ReleaseOrchestrator {
 
     await this.writeAudit(0, totalMs, mode);
 
-    console.log(`\n${BOLD}${GREEN}━━━ RELEASE ${this.opts.version} COMPLETED ━━━${RESET}`);
+    console.info(`\n${BOLD}${GREEN}━━━ RELEASE ${this.opts.version} COMPLETED ━━━${RESET}`);
 
     const summary = this.phases.map((p) => ({
       Phase: p.name,
       Status: p.exitCode === 0 ? "PASSED" : "FAILED",
       Duration: `${p.durationMs}ms`,
     }));
-    console.log(Bun.inspect.table(summary, ["Phase", "Status", "Duration"], { colors: true }));
+    console.info(Bun.inspect.table(summary, ["Phase", "Status", "Duration"], { colors: true }));
 
-    console.log(`${DIM}Total: ${totalMs}ms | Risk: ${this.riskScores.composite}/100 | Mode: ${mode}${RESET}\n`);
+    console.info(`${DIM}Total: ${totalMs}ms | Risk: ${this.riskScores.composite}/100 | Mode: ${mode}${RESET}\n`);
 
     return 0;
   }
@@ -134,12 +134,12 @@ export class ReleaseOrchestrator {
 
   private async phaseAnalysis(): Promise<PhaseResult> {
     const t0 = Bun.nanoseconds();
-    console.log(`${BOLD}[1/4] Pre-Release Analysis${RESET}`);
+    console.info(`${BOLD}[1/4] Pre-Release Analysis${RESET}`);
 
     // 1a. Read and hash config
     const configFile = Bun.file(this.opts.config);
     if (!(await configFile.exists())) {
-      console.log(`  ${RED}Config not found: ${this.opts.config}${RESET}`);
+      console.info(`  ${RED}Config not found: ${this.opts.config}${RESET}`);
       return this.phase("analysis", 1, t0, { error: "config not found" });
     }
 
@@ -188,16 +188,16 @@ export class ReleaseOrchestrator {
       this.riskScores.validation = sensitiveHits.length * 15;
     }
 
-    console.log(`  Config: ${this.opts.config} (${configSize}B, sha256:${configHash})`);
-    console.log(`  Keys: ${keyCount} | Anchors: ${anchorCount} | Merge keys: ${mergeKeys} | Docs: ${docCount}`);
-    console.log(`  Git changes since ${lastTag}: ${gitChanges} files`);
-    console.log(`  Risk score: ${riskColor(risk)}${risk}/100${RESET}`);
+    console.info(`  Config: ${this.opts.config} (${configSize}B, sha256:${configHash})`);
+    console.info(`  Keys: ${keyCount} | Anchors: ${anchorCount} | Merge keys: ${mergeKeys} | Docs: ${docCount}`);
+    console.info(`  Git changes since ${lastTag}: ${gitChanges} files`);
+    console.info(`  Risk score: ${riskColor(risk)}${risk}/100${RESET}`);
 
     if (sensitiveHits.length > 0) {
-      console.log(`  ${YELLOW}Warning: sensitive patterns found: ${sensitiveHits.join(", ")}${RESET}`);
+      console.info(`  ${YELLOW}Warning: sensitive patterns found: ${sensitiveHits.join(", ")}${RESET}`);
     }
 
-    console.log(`  ${GREEN}Analysis passed${RESET}\n`);
+    console.info(`  ${GREEN}Analysis passed${RESET}\n`);
 
     return this.phase("analysis", 0, t0, {
       configHash, configSize, keyCount, anchorCount, mergeKeys, docCount, gitChanges, risk,
@@ -209,29 +209,29 @@ export class ReleaseOrchestrator {
 
   private async phaseGate(analysis: PhaseResult): Promise<PhaseResult> {
     const t0 = Bun.nanoseconds();
-    console.log(`${BOLD}[2/4] Release Decision Gate${RESET}`);
+    console.info(`${BOLD}[2/4] Release Decision Gate${RESET}`);
 
     const risk = this.riskScores.analysis;
     const data = analysis.data;
     const recommendation = risk <= 30 ? "SAFE TO DEPLOY" : risk <= 60 ? "PROCEED WITH CAUTION" : "HIGH RISK — REVIEW REQUIRED";
 
-    console.log(`\n  ${BOLD}${CYAN}FACTORYWAGER RELEASE CANDIDATE${RESET}`);
-    console.log(`  Version:        ${this.opts.version}`);
-    console.log(`  Config:         ${this.opts.config}`);
-    console.log(`  Risk Score:     ${riskColor(risk)}${risk}/100${RESET}`);
-    console.log(`  Keys Modified:  ${data.keyCount}`);
-    console.log(`  Git Changes:    ${data.gitChanges} files`);
-    console.log(`  Security Gates: ${this.riskScores.validation === 0 ? `${GREEN}5/5 passed${RESET}` : `${YELLOW}review needed${RESET}`}`);
-    console.log(`  Recommendation: ${recommendation}`);
-    console.log();
+    console.info(`\n  ${BOLD}${CYAN}FACTORYWAGER RELEASE CANDIDATE${RESET}`);
+    console.info(`  Version:        ${this.opts.version}`);
+    console.info(`  Config:         ${this.opts.config}`);
+    console.info(`  Risk Score:     ${riskColor(risk)}${risk}/100${RESET}`);
+    console.info(`  Keys Modified:  ${data.keyCount}`);
+    console.info(`  Git Changes:    ${data.gitChanges} files`);
+    console.info(`  Security Gates: ${this.riskScores.validation === 0 ? `${GREEN}5/5 passed${RESET}` : `${YELLOW}review needed${RESET}`}`);
+    console.info(`  Recommendation: ${recommendation}`);
+    console.info();
 
     if (this.opts.dryRun) {
-      console.log(`  ${CYAN}DRY RUN — skipping confirmation${RESET}\n`);
+      console.info(`  ${CYAN}DRY RUN — skipping confirmation${RESET}\n`);
       return this.phase("gate", 0, t0, { mode: "dry-run", recommendation });
     }
 
     if (this.opts.yes) {
-      console.log(`  ${GREEN}--yes flag — auto-confirmed${RESET}\n`);
+      console.info(`  ${GREEN}--yes flag — auto-confirmed${RESET}\n`);
       return this.phase("gate", 0, t0, { mode: "automated", recommendation });
     }
 
@@ -244,11 +244,11 @@ export class ReleaseOrchestrator {
     const input = value ? new TextDecoder().decode(value).trim() : "";
 
     if (input !== "DEPLOY") {
-      console.log(`  ${RED}Release cancelled by user${RESET}\n`);
+      console.info(`  ${RED}Release cancelled by user${RESET}\n`);
       return this.phase("gate", 5, t0, { mode: "interactive", cancelled: true });
     }
 
-    console.log(`  ${GREEN}Confirmed — proceeding to deployment${RESET}\n`);
+    console.info(`  ${GREEN}Confirmed — proceeding to deployment${RESET}\n`);
     return this.phase("gate", 0, t0, { mode: "interactive", recommendation });
   }
 
@@ -256,7 +256,7 @@ export class ReleaseOrchestrator {
 
   private async phaseDeploy(): Promise<PhaseResult> {
     const t0 = Bun.nanoseconds();
-    console.log(`${BOLD}[3/4] Deployment Execution${RESET}`);
+    console.info(`${BOLD}[3/4] Deployment Execution${RESET}`);
 
     const stages = ["development", "staging", "production"];
 
@@ -265,14 +265,14 @@ export class ReleaseOrchestrator {
 
       if (this.opts.dryRun) {
         await Bun.sleep(50); // simulate latency
-        console.log(`  ${CYAN}[DRY RUN]${RESET} ${stage}: simulated (${elapsed(stageT0)}ms)`);
+        console.info(`  ${CYAN}[DRY RUN]${RESET} ${stage}: simulated (${elapsed(stageT0)}ms)`);
       } else {
         // Real deployment simulation — do actual work to make profiling meaningful
         const configText = await Bun.file(this.opts.config).text().catch(() => "");
         const hash = new Bun.CryptoHasher("sha256").update(`${stage}-${configText}-${Date.now()}`).digest("hex").slice(0, 8);
         await Bun.sleep(100); // simulate deployment latency
 
-        console.log(`  ${GREEN}${stage}${RESET}: deployed (hash:${hash}, ${elapsed(stageT0)}ms)`);
+        console.info(`  ${GREEN}${stage}${RESET}: deployed (hash:${hash}, ${elapsed(stageT0)}ms)`);
       }
     }
 
@@ -283,8 +283,8 @@ export class ReleaseOrchestrator {
     const healthT0 = Bun.nanoseconds();
     const memMB = Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
     const health = Math.max(85, 100 - this.riskScores.drift);
-    console.log(`  Health check: ${health}% (heap: ${memMB}MB, ${elapsed(healthT0)}ms)`);
-    console.log(`  ${GREEN}Deployment complete${RESET}\n`);
+    console.info(`  Health check: ${health}% (heap: ${memMB}MB, ${elapsed(healthT0)}ms)`);
+    console.info(`  ${GREEN}Deployment complete${RESET}\n`);
 
     return this.phase("deploy", 0, t0, { stages: stages.length, health, drift: this.riskScores.drift });
   }
@@ -293,7 +293,7 @@ export class ReleaseOrchestrator {
 
   private async phaseFinalize(runT0: number, mode: string): Promise<PhaseResult> {
     const t0 = Bun.nanoseconds();
-    console.log(`${BOLD}[4/4] Release Finalization${RESET}`);
+    console.info(`${BOLD}[4/4] Release Finalization${RESET}`);
 
     const timestamp = tsFile();
     const tagName = `release-${this.opts.version}-${timestamp}`;
@@ -302,24 +302,24 @@ export class ReleaseOrchestrator {
     // 4a. Generate release report
     const report = this.generateReport(tagName, timestamp, mode);
     await Bun.write(reportPath, report);
-    console.log(`  Report: ${reportPath}`);
+    console.info(`  Report: ${reportPath}`);
 
     // 4b. Git tag
     if (this.opts.dryRun) {
-      console.log(`  ${CYAN}[DRY RUN]${RESET} Git tag: ${tagName} (simulated)`);
+      console.info(`  ${CYAN}[DRY RUN]${RESET} Git tag: ${tagName} (simulated)`);
     } else {
       try {
         await $`git tag -a ${tagName} -m ${"Release " + this.opts.version} 2>/dev/null`.quiet();
-        console.log(`  Git tag: ${tagName}`);
+        console.info(`  Git tag: ${tagName}`);
       } catch {
-        console.log(`  ${YELLOW}Git tag skipped (not a git repo or tag exists)${RESET}`);
+        console.info(`  ${YELLOW}Git tag skipped (not a git repo or tag exists)${RESET}`);
       }
     }
 
     // 4c. Audit log
     const auditPath = `${FW_DIR}/audit.log`;
-    console.log(`  Audit: ${auditPath}`);
-    console.log(`  ${GREEN}Finalization complete${RESET}\n`);
+    console.info(`  Audit: ${auditPath}`);
+    console.info(`  ${GREEN}Finalization complete${RESET}\n`);
 
     return this.phase("finalize", 0, t0, { reportPath, tagName });
   }
@@ -399,8 +399,8 @@ ${this.phases.map((p) => `### ${p.name}\n\`\`\`json\n${JSON.stringify(p.data, nu
 
   private async abort(exitCode: number, reason: string, runT0: number, mode: string): Promise<number> {
     const totalMs = elapsed(runT0);
-    console.log(`\n${BOLD}${RED}━━━ RELEASE FAILED — Phase ${this.phases.length + 1}/4 ━━━${RESET}`);
-    console.log(`${DIM}Reason: ${reason} | Exit: ${exitCode} | Duration: ${totalMs}ms${RESET}\n`);
+    console.info(`\n${BOLD}${RED}━━━ RELEASE FAILED — Phase ${this.phases.length + 1}/4 ━━━${RESET}`);
+    console.info(`${DIM}Reason: ${reason} | Exit: ${exitCode} | Duration: ${totalMs}ms${RESET}\n`);
 
     await this.writeAudit(exitCode, totalMs, mode);
     return exitCode;
@@ -437,7 +437,7 @@ export function parseReleaseArgs(args: string[]): ReleaseOptions | null {
 
   if (!version) {
     console.error(`${RED}--version is required${RESET}`);
-    console.log(`Usage: factory-wager release <config> --version=X.Y.Z [--yes] [--dry-run]`);
+    console.info(`Usage: factory-wager release <config> --version=X.Y.Z [--yes] [--dry-run]`);
     return null;
   }
 

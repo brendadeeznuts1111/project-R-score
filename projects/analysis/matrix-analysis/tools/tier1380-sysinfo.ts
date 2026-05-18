@@ -202,8 +202,8 @@ async function runHealthCheck(): Promise<void> {
 	});
 
 	// Display results
-	console.log(`\n${GLYPHS.DRIFT} Tier-1380 Health Check\n`);
-	console.log("-".repeat(70));
+	console.info(`\n${GLYPHS.DRIFT} Tier-1380 Health Check\n`);
+	console.info("-".repeat(70));
 
 	for (const r of results) {
 		const icon =
@@ -219,23 +219,23 @@ async function runHealthCheck(): Promise<void> {
 					? "\x1b[33m"
 					: "\x1b[31m";
 		const reset = "\x1b[39m";
-		console.log(
+		console.info(
 			`${icon} ${r.component.padEnd(25)} ${statusColor}${r.status.toUpperCase()}${reset}`,
 		);
-		console.log(`   ${r.details}`);
+		console.info(`   ${r.details}`);
 	}
 
-	console.log("-".repeat(70));
+	console.info("-".repeat(70));
 
 	const healthy = results.filter((r) => r.status === "healthy").length;
 	const total = results.length;
 
 	if (healthy === total) {
-		console.log(`\n${GLYPHS.LOCKED} All ${total} components healthy`);
+		console.info(`\n${GLYPHS.LOCKED} All ${total} components healthy`);
 	} else {
-		console.log(`\n${GLYPHS.WARN} ${healthy}/${total} components healthy`);
+		console.info(`\n${GLYPHS.WARN} ${healthy}/${total} components healthy`);
 	}
-	console.log();
+	console.info();
 
 	process.exit(healthy === total ? 0 : 1);
 }
@@ -261,7 +261,7 @@ async function main(): Promise<void> {
 
 	// JSON output mode
 	if (jsonMode) {
-		console.log(
+		console.info(
 			JSON.stringify(
 				{
 					timestamp: new Date().toISOString(),
@@ -281,85 +281,85 @@ async function main(): Promise<void> {
 	}
 
 	// Terminal output
-	console.log(`\n${GLYPHS.DRIFT} Tier-1380 System Information Summary\n`);
+	console.info(`\n${GLYPHS.DRIFT} Tier-1380 System Information Summary\n`);
 
 	// Header
-	console.log("-".repeat(70));
-	console.log("  Runtime Environment");
-	console.log("-".repeat(70));
-	console.log(`  Bun Version:     ${bun.version} (${bun.revision.slice(0, 8)})`);
-	console.log(`  Working Dir:     ${process.cwd()}`);
-	console.log(`  Home Dir:        ${process.env.HOME}`);
-	console.log(`  Git Commit:      ${git.commit}`);
+	console.info("-".repeat(70));
+	console.info("  Runtime Environment");
+	console.info("-".repeat(70));
+	console.info(`  Bun Version:     ${bun.version} (${bun.revision.slice(0, 8)})`);
+	console.info(`  Working Dir:     ${process.cwd()}`);
+	console.info(`  Home Dir:        ${process.env.HOME}`);
+	console.info(`  Git Commit:      ${git.commit}`);
 
 	// OpenClaw
-	console.log("\n" + "-".repeat(70));
-	console.log("  OpenClaw Gateway");
-	console.log("-".repeat(70));
+	console.info("\n" + "-".repeat(70));
+	console.info("  OpenClaw Gateway");
+	console.info("-".repeat(70));
 	const ocStatus = openclaw.running ? `${GLYPHS.OK} Running` : `${GLYPHS.FAIL} Stopped`;
-	console.log(`  Status:          ${ocStatus}`);
-	console.log(`  Version:         ${openclaw.version}`);
-	console.log(`  Local Port:      ${openclaw.port}`);
-	console.log(`  Tailscale:       ${openclaw.tailscale}`);
-	console.log(`  Config:          ${openclaw.config}`);
+	console.info(`  Status:          ${ocStatus}`);
+	console.info(`  Version:         ${openclaw.version}`);
+	console.info(`  Local Port:      ${openclaw.port}`);
+	console.info(`  Tailscale:       ${openclaw.tailscale}`);
+	console.info(`  Config:          ${openclaw.config}`);
 
 	// Matrix Agent
-	console.log("\n" + "-".repeat(70));
-	console.log("  Matrix Agent");
-	console.log("-".repeat(70));
-	console.log(`  Name:            ${agent.name}`);
-	console.log(`  Version:         ${agent.version}`);
-	console.log(`  Config:          ${agent.config}`);
-	console.log(`  Primary Model:   ${agent.model}`);
+	console.info("\n" + "-".repeat(70));
+	console.info("  Matrix Agent");
+	console.info("-".repeat(70));
+	console.info(`  Name:            ${agent.name}`);
+	console.info(`  Version:         ${agent.version}`);
+	console.info(`  Config:          ${agent.config}`);
+	console.info(`  Primary Model:   ${agent.model}`);
 
 	// Profiles
-	console.log("\n" + "-".repeat(70));
-	console.log("  Environment Profiles");
-	console.log("-".repeat(70));
-	console.log(`  Total Profiles:  ${profiles.count}`);
+	console.info("\n" + "-".repeat(70));
+	console.info("  Environment Profiles");
+	console.info("-".repeat(70));
+	console.info(`  Total Profiles:  ${profiles.count}`);
 	if (profiles.count > 0) {
-		console.log(
+		console.info(
 			`  Recent:          ${profiles.profiles.join(", ")}${profiles.count > 5 ? " ..." : ""}`,
 		);
 	}
 
 	// Audit System
-	console.log("\n" + "-".repeat(70));
-	console.log("  Tier-1380 Audit System");
-	console.log("-".repeat(70));
+	console.info("\n" + "-".repeat(70));
+	console.info("  Tier-1380 Audit System");
+	console.info("-".repeat(70));
 	const vWarn = audit.violations > 0 ? GLYPHS.WARN + " " : GLYPHS.OK + " ";
-	console.log(`  Col-89 Violations:  ${vWarn}${audit.violations}`);
-	console.log(`  Secure Executions:  ${audit.executions}`);
-	console.log(`  Packages Verified:  ${audit.packages}`);
+	console.info(`  Col-89 Violations:  ${vWarn}${audit.violations}`);
+	console.info(`  Secure Executions:  ${audit.executions}`);
+	console.info(`  Packages Verified:  ${audit.packages}`);
 
 	// Cron Jobs
-	console.log("\n" + "-".repeat(70));
-	console.log("  Scheduled Tasks (Cron)");
-	console.log("-".repeat(70));
-	console.log(`  Active Jobs:     ${cron.count}`);
+	console.info("\n" + "-".repeat(70));
+	console.info("  Scheduled Tasks (Cron)");
+	console.info("-".repeat(70));
+	console.info(`  Active Jobs:     ${cron.count}`);
 	if (cron.jobs.length > 0) {
 		cron.jobs.forEach((job, i) => {
 			const cmd = job.length > 50 ? job.slice(0, 47) + "..." : job;
-			console.log(`  ${i + 1}. ${cmd}`);
+			console.info(`  ${i + 1}. ${cmd}`);
 		});
-		if (cron.count > 3) console.log(`     ... and ${cron.count - 3} more`);
+		if (cron.count > 3) console.info(`     ... and ${cron.count - 3} more`);
 	}
 
 	// Quick Links
-	console.log("\n" + "-".repeat(70));
-	console.log("  Quick Commands");
-	console.log("-".repeat(70));
-	console.log(`  bun run tier1380:sysinfo          Show this summary`);
-	console.log(`  bun run tier1380:sysinfo --json   JSON output`);
-	console.log(`  bun run tier1380:sysinfo --health Health check`);
-	console.log(`  bun run matrix:openclaw:status    Check OpenClaw status`);
-	console.log(`  bun run tier1380:audit db         View audit database`);
-	console.log(`  bun run tier1380:exec:stats       View execution stats`);
+	console.info("\n" + "-".repeat(70));
+	console.info("  Quick Commands");
+	console.info("-".repeat(70));
+	console.info(`  bun run tier1380:sysinfo          Show this summary`);
+	console.info(`  bun run tier1380:sysinfo --json   JSON output`);
+	console.info(`  bun run tier1380:sysinfo --health Health check`);
+	console.info(`  bun run matrix:openclaw:status    Check OpenClaw status`);
+	console.info(`  bun run tier1380:audit db         View audit database`);
+	console.info(`  bun run tier1380:exec:stats       View execution stats`);
 
 	// Footer
-	console.log("\n" + "-".repeat(70));
-	console.log(`  ${GLYPHS.LOCKED} Tier-1380 OMEGA System v1.0.0`);
-	console.log("-".repeat(70) + "\n");
+	console.info("\n" + "-".repeat(70));
+	console.info(`  ${GLYPHS.LOCKED} Tier-1380 OMEGA System v1.0.0`);
+	console.info("-".repeat(70) + "\n");
 }
 
 if (import.meta.main) {

@@ -159,11 +159,11 @@ async function verifyBunRuntime(): Promise<VerificationResult | null> {
 		const bunPath = Bun.which("bun");
 
 		if (!bunPath) {
-			console.log("⚠️  Bun executable not found in PATH");
+			console.info("⚠️  Bun executable not found in PATH");
 			return null;
 		}
 
-		console.log(`🔍 Analyzing Bun runtime: ${bunPath}`);
+		console.info(`🔍 Analyzing Bun runtime: ${bunPath}`);
 		return await verifyBinary(bunPath);
 	} catch (error) {
 		console.error("Failed to verify Bun runtime:", error);
@@ -175,7 +175,7 @@ async function verifyBunRuntime(): Promise<VerificationResult | null> {
  * Print verification results in tactical format
  */
 function printVerificationResults(result: VerificationResult): void {
-	console.log(`
+	console.info(`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                    ARM64 ASSEMBLY VERIFICATION REPORT                        ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
@@ -186,34 +186,34 @@ function printVerificationResults(result: VerificationResult): void {
 `);
 
 	if (result.instructions.size === 0) {
-		console.log("⚠️  No ARM64 optimization patterns detected");
-		console.log("   This may indicate:");
-		console.log("   • Binary is not compiled for ARM64");
-		console.log("   • Compiler optimizations are disabled");
-		console.log("   • Binary is stripped of debug symbols");
+		console.info("⚠️  No ARM64 optimization patterns detected");
+		console.info("   This may indicate:");
+		console.info("   • Binary is not compiled for ARM64");
+		console.info("   • Compiler optimizations are disabled");
+		console.info("   • Binary is stripped of debug symbols");
 		return;
 	}
 
-	console.log("📊 DETECTED OPTIMIZATIONS\n");
+	console.info("📊 DETECTED OPTIMIZATIONS\n");
 
 	for (const [name, count] of result.instructions) {
 		const pattern = ARM64_PATTERNS.find((p) => p.name === name);
 		const samples = result.samples.get(name) || [];
 
-		console.log(`🔹 ${name}`);
-		console.log(`   Count: ${count.toLocaleString()}`);
+		console.info(`🔹 ${name}`);
+		console.info(`   Count: ${count.toLocaleString()}`);
 		if (pattern) {
-			console.log(`   Description: ${pattern.description}`);
-			console.log(`   Optimization: ${pattern.optimization}`);
+			console.info(`   Description: ${pattern.description}`);
+			console.info(`   Optimization: ${pattern.optimization}`);
 		}
 
 		if (samples.length > 0) {
-			console.log("   Sample instructions:");
+			console.info("   Sample instructions:");
 			for (const sample of samples) {
-				console.log(`      ${sample}`);
+				console.info(`      ${sample}`);
 			}
 		}
-		console.log();
+		console.info();
 	}
 }
 
@@ -265,7 +265,7 @@ function generateReport(results: VerificationResult[]): string {
 async function main() {
 	const args = Bun.argv.slice(2);
 
-	console.log(`
+	console.info(`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                    ARM64 ASSEMBLY VERIFICATION TOOL                          ║
 ║                    CCMP/CCMN Instruction Detector v1.0                       ║
@@ -284,7 +284,7 @@ async function main() {
 		const arg = args[i];
 
 		if (arg === "--help" || arg === "-h") {
-			console.log(`
+			console.info(`
 USAGE:
   bun verify-arm64.ts [OPTIONS] [BINARY_PATH...]
 
@@ -329,7 +329,7 @@ EXAMPLES:
 
 	// Verify specified binaries
 	for (const binaryPath of binaryPaths) {
-		console.log(`\n🔍 Analyzing: ${binaryPath}`);
+		console.info(`\n🔍 Analyzing: ${binaryPath}`);
 		const result = await verifyBinary(binaryPath);
 		results.push(result);
 		printVerificationResults(result);
@@ -339,11 +339,11 @@ EXAMPLES:
 	if (outputReport) {
 		const report = generateReport(results);
 		await Bun.write(reportPath, report);
-		console.log(`\n📝 Report saved to: ${reportPath}`);
+		console.info(`\n📝 Report saved to: ${reportPath}`);
 	}
 
 	// Final status
-	console.log(`
+	console.info(`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                         VERIFICATION COMPLETE                                ║
 ╠══════════════════════════════════════════════════════════════════════════════╣

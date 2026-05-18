@@ -37,11 +37,11 @@ export class Farm {
 // R2 Storage Manager
 export class R2Manager {
   async put(key: string, data: any, options?: any): Promise<void> {
-    console.log(`📁 R2 PUT: ${key}`);
+    console.info(`📁 R2 PUT: ${key}`);
   }
 
   async delete(key: string): Promise<void> {
-    console.log(`🗑️ R2 DELETE: ${key}`);
+    console.info(`🗑️ R2 DELETE: ${key}`);
   }
 
   async getMetrics(path: string): Promise<any> {
@@ -53,14 +53,14 @@ export class R2Manager {
   }
 
   async updateTTL(pattern: string, options: any): Promise<void> {
-    console.log(`⏰ R2 TTL Updated: ${pattern}`);
+    console.info(`⏰ R2 TTL Updated: ${pattern}`);
   }
 }
 
 // R2 Query Engine
 export class R2Query {
   async exec(query: string, options?: any): Promise<any[]> {
-    console.log(`🔍 R2 QUERY: ${query}`);
+    console.info(`🔍 R2 QUERY: ${query}`);
     
     // Simulate returning historical data
     return [
@@ -120,12 +120,12 @@ export class NumberRouter {
   }
 
   async releaseNumber(phone: string): Promise<any> {
-    console.log(`📱 Released number: ${phone}`);
+    console.info(`📱 Released number: ${phone}`);
     return { released: true };
   }
 
   async updateProvider(name: string, config: any): Promise<void> {
-    console.log(`🔄 Updated provider ${name}:`, config);
+    console.info(`🔄 Updated provider ${name}:`, config);
   }
 }
 

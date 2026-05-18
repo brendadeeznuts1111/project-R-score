@@ -4,21 +4,21 @@
  * Complete guide on using the @ff/ path alias effectively
  */
 
-console.log('📚 @ff/ Alias Usage Guide - Fire22 Enterprise');
-console.log('='.repeat(60));
+console.info('📚 @ff/ Alias Usage Guide - Fire22 Enterprise');
+console.info('='.repeat(60));
 
 // ============================================================================
 // @FF/ ALIAS QUICK START
 // ============================================================================
-console.log('\n🚀 Quick Start:');
-console.log('   🎯 @ff/ = Project Root (./)');
-console.log('   🔧 Configured in: bunfig.toml + tsconfig.json');
-console.log('   📦 Use for: Config files, scripts, docs, shared utilities');
+console.info('\n🚀 Quick Start:');
+console.info('   🎯 @ff/ = Project Root (./)');
+console.info('   🔧 Configured in: bunfig.toml + tsconfig.json');
+console.info('   📦 Use for: Config files, scripts, docs, shared utilities');
 
 // ============================================================================
 // COMMON @FF/ USAGE PATTERNS
 // ============================================================================
-console.log('\n📋 Common @ff/ Usage Patterns:');
+console.info('\n📋 Common @ff/ Usage Patterns:');
 
 const usagePatterns = [
   {
@@ -58,16 +58,16 @@ const usagePatterns = [
 ];
 
 usagePatterns.forEach(({ category, examples }) => {
-  console.log(`\n   ${category}:`);
+  console.info(`\n   ${category}:`);
   examples.forEach(example => {
-    console.log(`   💻 ${example}`);
+    console.info(`   💻 ${example}`);
   });
 });
 
 // ============================================================================
 // @FF/ VS OTHER ALIASES
 // ============================================================================
-console.log('\n🔄 @ff/ vs Other Path Aliases:');
+console.info('\n🔄 @ff/ vs Other Path Aliases:');
 
 const aliasComparison = [
   {
@@ -96,16 +96,16 @@ const aliasComparison = [
   },
 ];
 
-console.log('   Alias'.padEnd(12) + 'Purpose'.padEnd(20) + 'Example'.padEnd(25) + 'Use Case');
-console.log('   ' + '-'.repeat(70));
+console.info('   Alias'.padEnd(12) + 'Purpose'.padEnd(20) + 'Example'.padEnd(25) + 'Use Case');
+console.info('   ' + '-'.repeat(70));
 aliasComparison.forEach(({ alias, purpose, example, useCase }) => {
-  console.log(`   ${alias.padEnd(12)}${purpose.padEnd(20)}${example.padEnd(25)}${useCase}`);
+  console.info(`   ${alias.padEnd(12)}${purpose.padEnd(20)}${example.padEnd(25)}${useCase}`);
 });
 
 // ============================================================================
 // PRACTICAL FIRE22 EXAMPLES
 // ============================================================================
-console.log('\n🎯 Practical Fire22 Examples:');
+console.info('\n🎯 Practical Fire22 Examples:');
 
 const fire22Examples = [
   {
@@ -117,9 +117,9 @@ import enterpriseConfig from '@ff/fire22-config.toml';
 import runtimeConfig from '@ff/fire22-runtime-config.yaml';
 import buildConfig from '@ff/build.config.js';
 
-console.log('Enterprise System:', packageInfo.name);
-console.log('Version:', enterpriseConfig.version);
-console.log('Runtime Config:', runtimeConfig.name);
+console.info('Enterprise System:', packageInfo.name);
+console.info('Version:', enterpriseConfig.version);
+console.info('Runtime Config:', runtimeConfig.name);
     `,
     benefit: 'Centralized configuration management',
   },
@@ -132,7 +132,7 @@ import testSetup from '@ff/test-setup';
 import timezoneConfig from '@ff/timezone-demo';
 
 // Use in development scripts
-console.log('Dev tools loaded');
+console.info('Dev tools loaded');
 testSetup.configure();
 timezoneConfig.initialize();
     `,
@@ -169,12 +169,12 @@ const mocks = testUtils.loadMocks(mockData);
 ];
 
 fire22Examples.forEach(({ scenario, code, benefit }, index) => {
-  console.log(`\n   ${index + 1}. ${scenario}`);
-  console.log(`   ✅ Benefit: ${benefit}`);
-  console.log(`   💻 Code:`);
+  console.info(`\n   ${index + 1}. ${scenario}`);
+  console.info(`   ✅ Benefit: ${benefit}`);
+  console.info(`   💻 Code:`);
   code.split('\n').forEach(line => {
     if (line.trim()) {
-      console.log(`      ${line}`);
+      console.info(`      ${line}`);
     }
   });
 });
@@ -182,7 +182,7 @@ fire22Examples.forEach(({ scenario, code, benefit }, index) => {
 // ============================================================================
 // @FF/ ALIAS MIGRATION GUIDE
 // ============================================================================
-console.log('\n🔄 Migration from Relative Paths:');
+console.info('\n🔄 Migration from Relative Paths:');
 
 const migrationSteps = [
   {
@@ -208,16 +208,16 @@ const migrationSteps = [
 ];
 
 migrationSteps.forEach(({ before, after, benefit }, index) => {
-  console.log(`\n   ${index + 1}. Migration:`);
-  console.log(`      ❌ Before: ${before}`);
-  console.log(`      ✅ After:  ${after}`);
-  console.log(`      🎯 Benefit: ${benefit}`);
+  console.info(`\n   ${index + 1}. Migration:`);
+  console.info(`      ❌ Before: ${before}`);
+  console.info(`      ✅ After:  ${after}`);
+  console.info(`      🎯 Benefit: ${benefit}`);
 });
 
 // ============================================================================
 // @FF/ ALIAS TROUBLESHOOTING
 // ============================================================================
-console.log('\n🔧 Troubleshooting @ff/ Alias:');
+console.info('\n🔧 Troubleshooting @ff/ Alias:');
 
 const troubleshooting = [
   {
@@ -243,15 +243,15 @@ const troubleshooting = [
 ];
 
 troubleshooting.forEach(({ issue, solution, command }, index) => {
-  console.log(`\n   ${index + 1}. ${issue}`);
-  console.log(`      💡 Solution: ${solution}`);
-  console.log(`      💻 Command: ${command}`);
+  console.info(`\n   ${index + 1}. ${issue}`);
+  console.info(`      💡 Solution: ${solution}`);
+  console.info(`      💻 Command: ${command}`);
 });
 
 // ============================================================================
 // @FF/ ALIAS BEST PRACTICES
 // ============================================================================
-console.log('\n📚 Best Practices for @ff/ Alias:');
+console.info('\n📚 Best Practices for @ff/ Alias:');
 
 const bestPractices = [
   '🎯 Use @ff/ for project-root level files only',
@@ -265,13 +265,13 @@ const bestPractices = [
 ];
 
 bestPractices.forEach((practice, index) => {
-  console.log(`   ${index + 1}. ${practice}`);
+  console.info(`   ${index + 1}. ${practice}`);
 });
 
 // ============================================================================
 // @FF/ ALIAS PRODUCTIVITY TIPS
 // ============================================================================
-console.log('\n⚡ Productivity Tips:');
+console.info('\n⚡ Productivity Tips:');
 
 const productivityTips = [
   '⌨️  Use IDE autocomplete for @ff/ imports',
@@ -285,32 +285,32 @@ const productivityTips = [
 ];
 
 productivityTips.forEach((tip, index) => {
-  console.log(`   ${index + 1}. ${tip}`);
+  console.info(`   ${index + 1}. ${tip}`);
 });
 
 // ============================================================================
 // FIRE22 @FF/ ALIAS CHEAT SHEET
 // ============================================================================
-console.log('\n📋 Fire22 @ff/ Alias Cheat Sheet:');
-console.log('   ┌─────────────────────────────────────────────────────────┐');
-console.log('   │                    @ff/ Import Paths                    │');
-console.log('   ├─────────────────────────────────────────────────────────┤');
-console.log('   │ @ff/package.json          → Project configuration       │');
-console.log('   │ @ff/fire22-config.toml    → Enterprise TOML config      │');
-console.log('   │ @ff/fire22-runtime-config.yaml → Runtime YAML config │');
-console.log('   │ @ff/bunfig.toml           → Bun configuration           │');
-console.log('   │ @ff/scripts/              → Build & utility scripts     │');
-console.log('   │ @ff/test-setup            → Test environment setup      │');
-console.log('   │ @ff/docs/                 → Documentation files         │');
-console.log('   │ @ff/src/                  → Source code (alternative)   │');
-console.log('   │ @ff/build.config.js       → Build configuration        │');
-console.log('   │ @ff/tailwind.config.js    → Styling configuration      │');
-console.log('   └─────────────────────────────────────────────────────────┘');
+console.info('\n📋 Fire22 @ff/ Alias Cheat Sheet:');
+console.info('   ┌─────────────────────────────────────────────────────────┐');
+console.info('   │                    @ff/ Import Paths                    │');
+console.info('   ├─────────────────────────────────────────────────────────┤');
+console.info('   │ @ff/package.json          → Project configuration       │');
+console.info('   │ @ff/fire22-config.toml    → Enterprise TOML config      │');
+console.info('   │ @ff/fire22-runtime-config.yaml → Runtime YAML config │');
+console.info('   │ @ff/bunfig.toml           → Bun configuration           │');
+console.info('   │ @ff/scripts/              → Build & utility scripts     │');
+console.info('   │ @ff/test-setup            → Test environment setup      │');
+console.info('   │ @ff/docs/                 → Documentation files         │');
+console.info('   │ @ff/src/                  → Source code (alternative)   │');
+console.info('   │ @ff/build.config.js       → Build configuration        │');
+console.info('   │ @ff/tailwind.config.js    → Styling configuration      │');
+console.info('   └─────────────────────────────────────────────────────────┘');
 
 // ============================================================================
 // VERIFICATION
 // ============================================================================
-console.log('\n✅ @ff/ Alias Verification:');
+console.info('\n✅ @ff/ Alias Verification:');
 
 const verificationChecks = [
   { check: 'Configuration files accessible', status: true },
@@ -323,12 +323,12 @@ const verificationChecks = [
 
 verificationChecks.forEach(({ check, status }) => {
   const icon = status ? '✅' : '❌';
-  console.log(`   ${icon} ${check}`);
+  console.info(`   ${icon} ${check}`);
 });
 
-console.log('\n🎉 @ff/ Alias Usage Guide Complete!');
-console.log('   Your Fire22 project is now optimized for professional development!');
-console.log('   Happy coding with clean, semantic imports! 🚀');
+console.info('\n🎉 @ff/ Alias Usage Guide Complete!');
+console.info('   Your Fire22 project is now optimized for professional development!');
+console.info('   Happy coding with clean, semantic imports! 🚀');
 
 // ============================================================================
 // EXPORT DEMONSTRATION
@@ -340,4 +340,4 @@ export const ffAliasGuide = {
   compatibility: 'Full Bun + TypeScript support',
 };
 
-console.log(`\n📦 Exported: ${JSON.stringify(ffAliasGuide, null, 2)}`);
+console.info(`\n📦 Exported: ${JSON.stringify(ffAliasGuide, null, 2)}`);

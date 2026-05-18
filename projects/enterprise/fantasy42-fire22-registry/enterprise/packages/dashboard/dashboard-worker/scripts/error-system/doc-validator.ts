@@ -451,7 +451,7 @@ class ErrorDocValidator {
    * Run comprehensive validation
    */
   async validate(): Promise<ValidationResult> {
-    console.log('🔍 Starting error code documentation validation...\n');
+    console.info('🔍 Starting error code documentation validation...\n');
 
     if (!this.loadRegistry()) {
       return {
@@ -476,16 +476,16 @@ class ErrorDocValidator {
       };
     }
 
-    console.log('📋 Validating error codes...');
+    console.info('📋 Validating error codes...');
     const errorCodeValidation = this.validateErrorCodes();
 
-    console.log('🏷️ Validating categories...');
+    console.info('🏷️ Validating categories...');
     const categoryErrors = this.validateCategories();
 
-    console.log('📊 Validating metadata...');
+    console.info('📊 Validating metadata...');
     const metadataErrors = this.validateMetadata();
 
-    console.log('🔧 Checking constants consistency...');
+    console.info('🔧 Checking constants consistency...');
     const constantsErrors = this.validateConstantsConsistency();
 
     // Combine all validation results
@@ -508,31 +508,31 @@ class ErrorDocValidator {
    * Display validation results
    */
   displayResults(result: ValidationResult): void {
-    console.log('\n📊 VALIDATION RESULTS');
-    console.log('='.repeat(80));
+    console.info('\n📊 VALIDATION RESULTS');
+    console.info('='.repeat(80));
 
     // Overall status
     if (result.valid) {
-      console.log(color('#10b981', 'css') + '✅ VALIDATION PASSED');
+      console.info(color('#10b981', 'css') + '✅ VALIDATION PASSED');
     } else {
-      console.log(color('#ef4444', 'css') + '❌ VALIDATION FAILED');
+      console.info(color('#ef4444', 'css') + '❌ VALIDATION FAILED');
     }
 
     // Statistics
-    console.log('\n📈 Statistics:');
-    console.log(`   Total Error Codes: ${result.stats.totalErrorCodes}`);
-    console.log(`   Valid Error Codes: ${result.stats.validErrorCodes}`);
-    console.log(`   Total Categories: ${result.stats.totalCategories}`);
-    console.log(
+    console.info('\n📈 Statistics:');
+    console.info(`   Total Error Codes: ${result.stats.totalErrorCodes}`);
+    console.info(`   Valid Error Codes: ${result.stats.validErrorCodes}`);
+    console.info(`   Total Categories: ${result.stats.totalCategories}`);
+    console.info(
       `   HTTP Status Codes: ${Array.from(result.stats.httpStatusCodes).sort().join(', ')}`
     );
-    console.log(`   Missing Documentation: ${result.stats.missingDocumentation}`);
-    console.log(`   Orphaned References: ${result.stats.orphanedCodes}`);
-    console.log(`   Duplicate Codes: ${result.stats.duplicateCodes}`);
+    console.info(`   Missing Documentation: ${result.stats.missingDocumentation}`);
+    console.info(`   Orphaned References: ${result.stats.orphanedCodes}`);
+    console.info(`   Duplicate Codes: ${result.stats.duplicateCodes}`);
 
     // Errors
     if (result.errors.length > 0) {
-      console.log(`\n❌ ERRORS (${result.errors.length}):`);
+      console.info(`\n❌ ERRORS (${result.errors.length}):`);
       const errorsBySeverity = result.errors.reduce(
         (acc, error) => {
           acc[error.severity] = (acc[error.severity] || 0) + 1;
@@ -541,44 +541,44 @@ class ErrorDocValidator {
         {} as Record<string, number>
       );
 
-      console.log(`   Critical: ${errorsBySeverity.ERROR || 0}`);
-      console.log(`   Warnings: ${errorsBySeverity.WARNING || 0}`);
+      console.info(`   Critical: ${errorsBySeverity.ERROR || 0}`);
+      console.info(`   Warnings: ${errorsBySeverity.WARNING || 0}`);
 
-      console.log('\n🔍 Error Details:');
+      console.info('\n🔍 Error Details:');
       result.errors.forEach((error, index) => {
         const severityColor =
           error.severity === 'ERROR' ? color('#ef4444', 'css') : color('#f59e0b', 'css');
-        console.log(
+        console.info(
           `${index + 1}. ${severityColor}[${error.severity}]${color('#ffffff', 'css')} ${error.code}${error.field ? '.' + error.field : ''}`
         );
-        console.log(`   ${error.message}`);
+        console.info(`   ${error.message}`);
         if (error.suggestion) {
-          console.log(`   💡 Suggestion: ${error.suggestion}`);
+          console.info(`   💡 Suggestion: ${error.suggestion}`);
         }
-        console.log();
+        console.info();
       });
     }
 
     // Warnings
     if (result.warnings.length > 0) {
-      console.log(`\n⚠️ WARNINGS (${result.warnings.length}):`);
+      console.info(`\n⚠️ WARNINGS (${result.warnings.length}):`);
       result.warnings.slice(0, 10).forEach((warning, index) => {
-        console.log(
+        console.info(
           `${index + 1}. ${color('#f59e0b', 'css')}${warning.code}${warning.field ? '.' + warning.field : ''}${color('#ffffff', 'css')}`
         );
-        console.log(`   ${warning.message}`);
+        console.info(`   ${warning.message}`);
         if (warning.suggestion) {
-          console.log(`   💡 ${warning.suggestion}`);
+          console.info(`   💡 ${warning.suggestion}`);
         }
       });
 
       if (result.warnings.length > 10) {
-        console.log(`   ... and ${result.warnings.length - 10} more warnings`);
+        console.info(`   ... and ${result.warnings.length - 10} more warnings`);
       }
     }
 
-    console.log('\n' + '='.repeat(80));
-    console.log(`Validation completed at: ${new Date().toLocaleString()}`);
+    console.info('\n' + '='.repeat(80));
+    console.info(`Validation completed at: ${new Date().toLocaleString()}`);
   }
 }
 

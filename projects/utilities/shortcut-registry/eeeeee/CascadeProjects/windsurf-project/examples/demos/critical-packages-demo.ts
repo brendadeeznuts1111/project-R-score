@@ -70,17 +70,17 @@ app.get('/health', (req, res) => {
 
 // Start server
 app.listen(port, () => {
-  console.log('🚀 Critical Package Pinning Demo');
-  console.log('==================================');
-  console.log(`📡 Server running at http://localhost:${port}`);
-  console.log('📦 Package Versions:');
-  console.log('   - Express: 5.2.1 (pinned - no breaking changes)');
-  console.log('   - Zod: ^4.3.5 (range - allows patches)');
-  console.log('   - Lodash: 4.17.23 (pinned - stable utility)');
-  console.log('');
-  console.log('🔗 Try these endpoints:');
-  console.log(`   GET  http://localhost:${port}/`);
-  console.log(`   GET  http://localhost:${port}/health`);
-  console.log(`   POST http://localhost:${port}/api/process`);
-  console.log('        Body: {"message": "hello world", "priority": "high"}');
+  console.info('🚀 Critical Package Pinning Demo');
+  console.info('==================================');
+  console.info(`📡 Server running at http://localhost:${port}`);
+  console.info('📦 Package Versions:');
+  console.info('   - Express: 5.2.1 (pinned - no breaking changes)');
+  console.info('   - Zod: ^4.3.5 (range - allows patches)');
+  console.info('   - Lodash: 4.17.23 (pinned - stable utility)');
+  console.info('');
+  console.info('🔗 Try these endpoints:');
+  console.info(`   GET  http://localhost:${port}/`);
+  console.info(`   GET  http://localhost:${port}/health`);
+  console.info(`   POST http://localhost:${port}/api/process`);
+  console.info('        Body: {"message": "hello world", "priority": "high"}');
 });

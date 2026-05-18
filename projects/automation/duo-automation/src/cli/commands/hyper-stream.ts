@@ -54,7 +54,7 @@ export class HyperStreamCommand {
   }
 
   static async execute(): Promise<void> {
-    console.log('\n🌊 EMPIRE PRO HYPERLINK STREAM DEPTH VISUALIZATION\n' + '═'.repeat(80));
+    console.info('\n🌊 EMPIRE PRO HYPERLINK STREAM DEPTH VISUALIZATION\n' + '═'.repeat(80));
     
     const streamData = this.getStreamData();
     
@@ -62,7 +62,7 @@ export class HyperStreamCommand {
     const stream = this.createHyperlinkStream(streamData);
     
     // Process stream with width calculations
-    console.log('\n📏 STREAM PROCESSING WITH WIDTH CALCULATIONS:\n');
+    console.info('\n📏 STREAM PROCESSING WITH WIDTH CALCULATIONS:\n');
     
     for await (const chunk of stream) {
       // Simulate async processing delay
@@ -72,15 +72,15 @@ export class HyperStreamCommand {
       const displayWidth = (globalThis as any).Bun?.stringWidth?.(chunk.displayText) ?? chunk.displayText.length;
       const depthWidth = chunk.depth * 2; // 2 spaces per depth level
       
-      console.log(`${chunk.prefix} ${chunk.displayText} │ depth:${chunk.depth} width:${displayWidth} indent:${depthWidth}`);
+      console.info(`${chunk.prefix} ${chunk.displayText} │ depth:${chunk.depth} width:${displayWidth} indent:${depthWidth}`);
     }
     
     // Show width analysis
-    console.log('\n📊 WIDTH ANALYSIS BY DEPTH LEVEL:');
+    console.info('\n📊 WIDTH ANALYSIS BY DEPTH LEVEL:');
     this.analyzeWidthsByDepth(streamData);
     
     // Demonstrate streaming with ANSI and OSC 8
-    console.log('\n🎨 ANSI + OSC 8 STREAM DEMO:');
+    console.info('\n🎨 ANSI + OSC 8 STREAM DEMO:');
     await this.demonstrateAnsiStream();
   }
 
@@ -126,9 +126,9 @@ export class HyperStreamCommand {
     }, {} as Record<number, { text: string; width: number }[]>);
 
     Object.entries(depthGroups).forEach(([depth, items]) => {
-      console.log(`  Depth ${depth}:`);
+      console.info(`  Depth ${depth}:`);
       items.forEach(item => {
-        console.log(`    "${item.text}" → ${item.width} columns`);
+        console.info(`    "${item.text}" → ${item.width} columns`);
       });
     });
   }
@@ -145,7 +145,7 @@ export class HyperStreamCommand {
       await new Promise(resolve => setTimeout(resolve, 100));
       
       const width = (globalThis as any).Bun?.stringWidth?.(example.text) ?? example.text.length;
-      console.log(`  ${example.desc}: "${example.text}" → ${width} columns`);
+      console.info(`  ${example.desc}: "${example.text}" → ${width} columns`);
     }
   }
 }

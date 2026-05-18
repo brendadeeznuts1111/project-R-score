@@ -17,12 +17,12 @@ import { mkdir } from 'fs/promises';
 const OUTPUT_DIR = "./bun-write-demo";
 await mkdir(OUTPUT_DIR, { recursive: true });
 
-console.log(`📁 Output directory: ${OUTPUT_DIR}\n`);
+console.info(`📁 Output directory: ${OUTPUT_DIR}\n`);
 
 // ============================================================================
 // 1. Write string
 // ============================================================================
-console.log("1️⃣  Writing string to file...");
+console.info("1️⃣  Writing string to file...");
 
 const textContent = `Hello from Bun.write()!
 This is a text file written using a string.
@@ -31,22 +31,22 @@ Timestamp: ${new Date().toISOString()}
 
 const textPath = `${OUTPUT_DIR}/text-file.txt`;
 const bytesWritten1 = await Bun.write(textPath, textContent);
-console.log(`   ✅ Wrote ${bytesWritten1} bytes to: ${textPath}`);
+console.info(`   ✅ Wrote ${bytesWritten1} bytes to: ${textPath}`);
 
 // ============================================================================
 // 2. Write Blob
 // ============================================================================
-console.log("\n2️⃣  Writing Blob to file...");
+console.info("\n2️⃣  Writing Blob to file...");
 
 const blobContent = new Blob(["This is blob content!\n", "Written using Bun.write()\n"], { type: "text/plain" });
 const blobPath = `${OUTPUT_DIR}/blob-file.txt`;
 const bytesWritten2 = await Bun.write(blobPath, blobContent);
-console.log(`   ✅ Wrote ${bytesWritten2} bytes to: ${blobPath}`);
+console.info(`   ✅ Wrote ${bytesWritten2} bytes to: ${blobPath}`);
 
 // ============================================================================
 // 3. Write ArrayBuffer
 // ============================================================================
-console.log("\n3️⃣  Writing ArrayBuffer to file...");
+console.info("\n3️⃣  Writing ArrayBuffer to file...");
 
 const arrayBuffer = new ArrayBuffer(100);
 const view = new Uint8Array(arrayBuffer);
@@ -54,54 +54,54 @@ for (let i = 0; i < 100; i++) view[i] = i % 256;
 
 const arrayBufferPath = `${OUTPUT_DIR}/arraybuffer.bin`;
 const bytesWritten3 = await Bun.write(arrayBufferPath, arrayBuffer);
-console.log(`   ✅ Wrote ${bytesWritten3} bytes to: ${arrayBufferPath}`);
+console.info(`   ✅ Wrote ${bytesWritten3} bytes to: ${arrayBufferPath}`);
 
 // ============================================================================
 // 4. Write TypedArray (Uint8Array)
 // ============================================================================
-console.log("\n4️⃣  Writing TypedArray (Uint8Array) to file...");
+console.info("\n4️⃣  Writing TypedArray (Uint8Array) to file...");
 
 const uint8Array = new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33]); // "Hello World!"
 const uint8Path = `${OUTPUT_DIR}/typedarray.txt`;
 const bytesWritten4 = await Bun.write(uint8Path, uint8Array);
-console.log(`   ✅ Wrote ${bytesWritten4} bytes to: ${uint8Path}`);
+console.info(`   ✅ Wrote ${bytesWritten4} bytes to: ${uint8Path}`);
 
 // ============================================================================
 // 5. Write TypedArray (Float64Array)
 // ============================================================================
-console.log("\n5️⃣  Writing TypedArray (Float64Array) to file...");
+console.info("\n5️⃣  Writing TypedArray (Float64Array) to file...");
 
 const float64Array = new Float64Array([3.14159, 2.71828, 1.61803, 1.41421]);
 const float64Path = `${OUTPUT_DIR}/float64array.bin`;
 const bytesWritten5 = await Bun.write(float64Path, float64Array);
-console.log(`   ✅ Wrote ${bytesWritten5} bytes to: ${float64Path}`);
+console.info(`   ✅ Wrote ${bytesWritten5} bytes to: ${float64Path}`);
 
 // ============================================================================
 // 6. Write BunFile
 // ============================================================================
-console.log("\n6️⃣  Writing BunFile to file...");
+console.info("\n6️⃣  Writing BunFile to file...");
 
 const sourceFile = Bun.file(textPath);
 const bunFilePath = `${OUTPUT_DIR}/bunfile-copy.txt`;
 const bytesWritten6 = await Bun.write(bunFilePath, sourceFile);
-console.log(`   ✅ Wrote ${bytesWritten6} bytes to: ${bunFilePath}`);
+console.info(`   ✅ Wrote ${bytesWritten6} bytes to: ${bunFilePath}`);
 
 // ============================================================================
 // 7. Write Response
 // ============================================================================
-console.log("\n7️⃣  Writing Response body to file...");
+console.info("\n7️⃣  Writing Response body to file...");
 
 const response = new Response("This is response content!\nWritten using Bun.write()", {
   headers: { "Content-Type": "text/plain" },
 });
 const responsePath = `${OUTPUT_DIR}/response-file.txt`;
 const bytesWritten7 = await Bun.write(responsePath, response);
-console.log(`   ✅ Wrote ${bytesWritten7} bytes to: ${responsePath}`);
+console.info(`   ✅ Wrote ${bytesWritten7} bytes to: ${responsePath}`);
 
 // ============================================================================
 // 8. Write JSON
 // ============================================================================
-console.log("\n8️⃣  Writing JSON object to file...");
+console.info("\n8️⃣  Writing JSON object to file...");
 
 const jsonData = {
   name: "Bun.write() Demo",
@@ -119,12 +119,12 @@ const jsonData = {
 
 const jsonPath = `${OUTPUT_DIR}/json-file.json`;
 const bytesWritten8 = await Bun.write(jsonPath, JSON.stringify(jsonData, null, 2));
-console.log(`   ✅ Wrote ${bytesWritten8} bytes to: ${jsonPath}`);
+console.info(`   ✅ Wrote ${bytesWritten8} bytes to: ${jsonPath}`);
 
 // ============================================================================
 // 9. Write binary data (PNG header simulation)
 // ============================================================================
-console.log("\n9️⃣  Writing binary data (PNG header simulation)...");
+console.info("\n9️⃣  Writing binary data (PNG header simulation)...");
 
 const pngHeader = new Uint8Array([
   0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
@@ -139,12 +139,12 @@ const pngHeader = new Uint8Array([
 
 const pngPath = `${OUTPUT_DIR}/fake-png.bin`;
 const bytesWritten9 = await Bun.write(pngPath, pngHeader);
-console.log(`   ✅ Wrote ${bytesWritten9} bytes to: ${pngPath}`);
+console.info(`   ✅ Wrote ${bytesWritten9} bytes to: ${pngPath}`);
 
 // ============================================================================
 // 10. Advanced: Stream large data with progress
 // ============================================================================
-console.log("\n🔟 Writing large data with progress tracking...");
+console.info("\n🔟 Writing large data with progress tracking...");
 
 const CHUNK_SIZE = 1024 * 1024; // 1MB chunks
 const TOTAL_SIZE = CHUNK_SIZE * 5; // 5MB total
@@ -175,27 +175,27 @@ for (let i = 0; i < 5; i++) {
 await writer.end();
 clearInterval(progressInterval);
 
-console.log(`   ✅ Wrote ${written} bytes to: ${largeFilePath}`);
+console.info(`   ✅ Wrote ${written} bytes to: ${largeFilePath}`);
 
 // ============================================================================
 // 11. Read and verify files
 // ============================================================================
-console.log("\n📖 Reading and verifying files...\n");
+console.info("\n📖 Reading and verifying files...\n");
 
 // Use Bun.Glob instead of Bun.glob for v1.3.6
 const glob = new Bun.Glob(`${OUTPUT_DIR}/*`);
 const files = await Array.fromAsync(glob.scan('.'));
 
-console.log(`Found ${files.length} files:\n`);
+console.info(`Found ${files.length} files:\n`);
 for (const file of files) {
   const stats = await Bun.file(file).stat();
-  console.log(`   📄 ${file} (${stats.size} bytes)`);
+  console.info(`   📄 ${file} (${stats.size} bytes)`);
 }
 
 // ============================================================================
 // 12. Batch operations
 // ============================================================================
-console.log("\n🔄 Batch file operations...\n");
+console.info("\n🔄 Batch file operations...\n");
 
 // Copy multiple files
 const copiesDir = `${OUTPUT_DIR}/copies`;
@@ -207,10 +207,10 @@ for (const file of files.slice(0, 3)) {
   const source = Bun.file(file);
   const destPath = `${copiesDir}/${filename}`;
   await Bun.write(destPath, source);
-  console.log(`   ✅ Copied: ${filename}`);
+  console.info(`   ✅ Copied: ${filename}`);
 }
 
-console.log(`\n📂 All copies saved to: ${copiesDir}/`);
+console.info(`\n📂 All copies saved to: ${copiesDir}/`);
 
 // Helper: Extract basename from path (handles both "path/file" and "./path/file")
 function basename(path: string): string {
@@ -222,7 +222,7 @@ function basename(path: string): string {
 // ============================================================================
 // Summary
 // ============================================================================
-console.log(`
+console.info(`
 ╔════════════════════════════════════════════════════════════╗
 ║           Bun.write() Enhanced Demo Complete!              ║
 ╠════════════════════════════════════════════════════════════╣
@@ -249,4 +249,4 @@ console.log(`
 ╚════════════════════════════════════════════════════════════╝
 `);
 
-console.log("✨ All operations completed successfully!");
+console.info("✨ All operations completed successfully!");

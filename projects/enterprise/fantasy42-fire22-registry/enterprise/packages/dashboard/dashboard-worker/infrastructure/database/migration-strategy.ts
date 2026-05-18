@@ -70,8 +70,8 @@ export class DatabaseMigrationCoordinator {
     const steps = this.getAllMigrationSteps();
     const results: MigrationResult[] = [];
 
-    console.log('🚀 Starting Fire22 unified schema migration...');
-    console.log(`📋 Total steps: ${steps.length}`);
+    console.info('🚀 Starting Fire22 unified schema migration...');
+    console.info(`📋 Total steps: ${steps.length}`);
 
     // Check migration status table exists
     await this.initializeMigrationTracking();
@@ -82,7 +82,7 @@ export class DatabaseMigrationCoordinator {
       try {
         // Check if step already executed
         if (await this.isStepExecuted(step.id)) {
-          console.log(`⏭️  Step ${step.id} already executed, skipping...`);
+          console.info(`⏭️  Step ${step.id} already executed, skipping...`);
           continue;
         }
 
@@ -91,7 +91,7 @@ export class DatabaseMigrationCoordinator {
           throw new Error(`Dependencies not met for step ${step.id}`);
         }
 
-        console.log(`🔄 Executing step: ${step.name}`);
+        console.info(`🔄 Executing step: ${step.name}`);
 
         // Execute step
         await step.execute(this.db);
@@ -113,7 +113,7 @@ export class DatabaseMigrationCoordinator {
           timestamp: new Date().toISOString(),
         });
 
-        console.log(`✅ Step ${step.id} completed in ${duration}ms`);
+        console.info(`✅ Step ${step.id} completed in ${duration}ms`);
       } catch (error) {
         const duration = Date.now() - startTime;
         results.push({
@@ -137,8 +137,8 @@ export class DatabaseMigrationCoordinator {
     const successCount = results.filter(r => r.success).length;
     const totalTime = results.reduce((sum, r) => sum + r.duration, 0);
 
-    console.log(`🎯 Migration completed: ${successCount}/${results.length} steps successful`);
-    console.log(`⏱️  Total time: ${totalTime}ms`);
+    console.info(`🎯 Migration completed: ${successCount}/${results.length} steps successful`);
+    console.info(`⏱️  Total time: ${totalTime}ms`);
 
     return results;
   }
@@ -473,7 +473,7 @@ export class DatabaseMigrationCoordinator {
       rollbackable: false,
       estimatedDuration: '10 minutes',
       execute: async db => {
-        console.log('🔄 Migrating legacy customer data...');
+        console.info('🔄 Migrating legacy customer data...');
 
         // Get existing customers from old schema
         const legacyCustomers = await db
@@ -484,7 +484,7 @@ export class DatabaseMigrationCoordinator {
           )
           .all();
 
-        console.log(`📊 Found ${legacyCustomers.length} legacy customers to migrate`);
+        console.info(`📊 Found ${legacyCustomers.length} legacy customers to migrate`);
 
         let migratedCount = 0;
         let errorCount = 0;
@@ -540,7 +540,7 @@ export class DatabaseMigrationCoordinator {
           }
         }
 
-        console.log(
+        console.info(
           `✅ Migration completed: ${migratedCount} customers migrated, ${errorCount} errors`
         );
       },

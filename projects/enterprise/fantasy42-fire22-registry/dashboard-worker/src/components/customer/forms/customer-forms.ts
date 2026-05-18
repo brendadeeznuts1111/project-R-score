@@ -56,7 +56,7 @@ export class CustomerForms {
     // Store form reference
     this.activeForms.set(formId, form);
 
-    console.log(`📝 Created customer form: ${formId} (${mode})`);
+    console.info(`📝 Created customer form: ${formId} (${mode})`);
     return { form, formId };
   }
 
@@ -103,7 +103,7 @@ export class CustomerForms {
     // Populate form fields
     this.populateFormFields(form, formData);
 
-    console.log(`📝 Populated form ${formId} with customer data`);
+    console.info(`📝 Populated form ${formId} with customer data`);
   }
 
   /**
@@ -213,7 +213,7 @@ export class CustomerForms {
       // Clean up form
       this.cleanupForm(formId);
 
-      console.log(`✅ Form submitted successfully: ${formId}`);
+      console.info(`✅ Form submitted successfully: ${formId}`);
       return { success: true, customer };
     } catch (error) {
       console.error(`❌ Form submission failed: ${formId}`, error);
@@ -232,7 +232,7 @@ export class CustomerForms {
     this.formData.delete(formId);
     form.removeAttribute('data-validation-status');
 
-    console.log(`🔄 Form reset: ${formId}`);
+    console.info(`🔄 Form reset: ${formId}`);
   }
 
   /**
@@ -247,7 +247,7 @@ export class CustomerForms {
     this.activeForms.delete(formId);
     this.formData.delete(formId);
 
-    console.log(`🗑️ Form removed: ${formId}`);
+    console.info(`🗑️ Form removed: ${formId}`);
   }
 
   /**

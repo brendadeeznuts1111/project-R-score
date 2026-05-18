@@ -149,27 +149,27 @@ export class IntegratedHealingSystem {
     };
 
     try {
-      console.log('🔄 Starting integrated healing system...');
+      console.info('🔄 Starting integrated healing system...');
       
       // 1. Perform filesystem healing (v2.01.05)
-      console.log('📁 Performing filesystem healing...');
+      console.info('📁 Performing filesystem healing...');
       const filesystemResult = await this.performFilesystemHealing();
       result.filesystem = filesystemResult;
       
       // 2. Perform circuit healing (autonomic)
-      console.log('🔌 Performing circuit healing...');
+      console.info('🔌 Performing circuit healing...');
       const circuitResult = await this.performCircuitHealing();
       result.circuits = circuitResult;
       
       // 3. Cross-system integration healing
       if (this.config.integration.enableCrossSystemHealing) {
-        console.log('🔗 Performing cross-system integration healing...');
+        console.info('🔗 Performing cross-system integration healing...');
         const integrationResult = await this.performIntegrationHealing(filesystemResult, circuitResult);
         result.integration = integrationResult;
       }
       
       // 4. Calculate overall health and recommendations
-      console.log('📊 Calculating overall health assessment...');
+      console.info('📊 Calculating overall health assessment...');
       const overallAssessment = this.calculateOverallHealth(result);
       result.overall = overallAssessment;
       
@@ -179,7 +179,7 @@ export class IntegratedHealingSystem {
       }
       
       result.success = true;
-      console.log('✅ Integrated healing completed successfully');
+      console.info('✅ Integrated healing completed successfully');
       
     } catch (error) {
       console.error('❌ Integrated healing failed:', error);
@@ -268,7 +268,7 @@ export class IntegratedHealingSystem {
       // Heal circuits that need it
       for (const circuitHealth of allCircuitsHealth.circuits) {
         if (circuitHealth.healthScore < 0.7 || circuitHealth.issues.length > 0) {
-          console.log(`🔧 Healing circuit: ${circuitHealth.circuitId}`);
+          console.info(`🔧 Healing circuit: ${circuitHealth.circuitId}`);
           
           try {
             const healingResult = await this.dataCircuit.healCircuit(circuitHealth.circuitId);
@@ -558,11 +558,11 @@ export class IntegratedHealingSystem {
 
   async updateConfig(newConfig: Partial<IntegratedHealingConfig>): Promise<void> {
     this.config = { ...this.config, ...newConfig };
-    console.log('📝 Integrated healing configuration updated');
+    console.info('📝 Integrated healing configuration updated');
   }
 
   async shutdown(): Promise<void> {
-    console.log('🛑 Shutting down integrated healing system...');
+    console.info('🛑 Shutting down integrated healing system...');
     // Cleanup resources
     this.healingHistory = [];
     this.isHealing = false;

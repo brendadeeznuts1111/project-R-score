@@ -81,7 +81,7 @@ export async function loadEnvFiles(cwd: string = process.cwd()): Promise<void> {
 		if (fileInfo) {
 			const content = await Bun.file(path).text();
 			parseEnvContent(content);
-			console.log(`📄 Loaded env from ${file}`);
+			console.info(`📄 Loaded env from ${file}`);
 		}
 	}
 }
@@ -110,15 +110,15 @@ function parseEnvContent(content: string): void {
 export function printEnvConfig(): void {
 	const config = getEnvConfig();
 
-	console.log("🔧 Environment Configuration:\n");
-	console.log(`  BUN_SECRETS_DIR:      ${config.secretsDir}`);
-	console.log(`  BUN_CACHE_DIR:        ${config.cacheDir}`);
-	console.log(`  BUN_LOG_LEVEL:        ${config.logLevel}`);
-	console.log(`  BUN_API_BASE_URL:     ${config.apiBaseUrl}`);
-	console.log(`  BUN_REQUEST_TIMEOUT:  ${config.requestTimeout}ms`);
-	console.log(`  BUN_ENABLE_HTTP2:     ${config.enableHttp2}`);
-	console.log(`  BUN_ENABLE_COMPRESSION: ${config.enableCompression}`);
-	console.log(`  BUN_MAX_RETRIES:      ${config.maxRetries}`);
+	console.info("🔧 Environment Configuration:\n");
+	console.info(`  BUN_SECRETS_DIR:      ${config.secretsDir}`);
+	console.info(`  BUN_CACHE_DIR:        ${config.cacheDir}`);
+	console.info(`  BUN_LOG_LEVEL:        ${config.logLevel}`);
+	console.info(`  BUN_API_BASE_URL:     ${config.apiBaseUrl}`);
+	console.info(`  BUN_REQUEST_TIMEOUT:  ${config.requestTimeout}ms`);
+	console.info(`  BUN_ENABLE_HTTP2:     ${config.enableHttp2}`);
+	console.info(`  BUN_ENABLE_COMPRESSION: ${config.enableCompression}`);
+	console.info(`  BUN_MAX_RETRIES:      ${config.maxRetries}`);
 }
 
 // Run if called directly
@@ -128,7 +128,7 @@ if (import.meta.main) {
 	switch (command) {
 		case "init":
 			await initEnv();
-			console.log("✅ Environment initialized");
+			console.info("✅ Environment initialized");
 			break;
 
 		case "show":
@@ -136,7 +136,7 @@ if (import.meta.main) {
 			break;
 
 		default:
-			console.log(`
+			console.info(`
 Usage: bun run src/utils/env-config.ts [command]
 
 Commands:

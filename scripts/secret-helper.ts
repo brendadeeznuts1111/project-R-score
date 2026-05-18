@@ -16,24 +16,24 @@ const command = args[0];
 
 // Helper functions
 function showHeader() {
-  console.log(styled('🔐 FactoryWager Secret Manager v5.0', 'accent'));
-  console.log(styled('═══════════════════════════════════════', 'muted'));
+  console.info(styled('🔐 FactoryWager Secret Manager v5.0', 'accent'));
+  console.info(styled('═══════════════════════════════════════', 'muted'));
 }
 
 function showSuccess(message: string) {
-  console.log(styled(`✅ ${message}`, 'success'));
+  console.info(styled(`✅ ${message}`, 'success'));
 }
 
 function showError(message: string) {
-  console.log(styled(`❌ ${message}`, 'error'));
+  console.info(styled(`❌ ${message}`, 'error'));
 }
 
 function showWarning(message: string) {
-  console.log(styled(`⚠️ ${message}`, 'warning'));
+  console.info(styled(`⚠️ ${message}`, 'warning'));
 }
 
 function showInfo(message: string) {
-  console.log(styled(`ℹ️ ${message}`, 'primary'));
+  console.info(styled(`ℹ️ ${message}`, 'primary'));
 }
 
 // Mask secret value for display
@@ -49,17 +49,17 @@ function showSecret(key: string, value: string, level: SecurityLevel) {
   const config = SECURITY_LEVELS[level];
   const masked = maskSecret(value);
   
-  console.log(styled(`🔑 ${key}`, config.color));
-  console.log(styled(`   Level: ${level}`, 'muted'));
-  console.log(styled(`   Value: ${masked}`, 'primary'));
-  console.log(styled(`   Length: ${value.length} chars`, 'dim'));
-  console.log(styled(`   TTL: ${config.ttl}s`, 'dim'));
-  console.log(styled(`   Cached: ${config.cache ? 'Yes' : 'No'}`, 'dim'));
+  console.info(styled(`🔑 ${key}`, config.color));
+  console.info(styled(`   Level: ${level}`, 'muted'));
+  console.info(styled(`   Value: ${masked}`, 'primary'));
+  console.info(styled(`   Length: ${value.length} chars`, 'dim'));
+  console.info(styled(`   TTL: ${config.ttl}s`, 'dim'));
+  console.info(styled(`   Cached: ${config.cache ? 'Yes' : 'No'}`, 'dim'));
   
   // Show documentation reference
   const docRef = refs.get(config.doc, 'com');
   if (docRef) {
-    console.log(styled(`   Docs: ${docRef.url}`, 'accent'));
+    console.info(styled(`   Docs: ${docRef.url}`, 'accent'));
   }
 }
 
@@ -111,12 +111,12 @@ async function handleGetAll() {
     
     const secrets = await secretManager.getAll(actualKeys, actualLevel);
     
-    console.log(styled('\n📊 Results:', 'primary'));
-    console.log(styled('─'.repeat(40), 'muted'));
+    console.info(styled('\n📊 Results:', 'primary'));
+    console.info(styled('─'.repeat(40), 'muted'));
     
     for (const [key, value] of secrets) {
       showSecret(key, value, actualLevel);
-      console.log('');
+      console.info('');
     }
     
     showSuccess(`Retrieved ${secrets.size}/${actualKeys.length} secrets successfully`);
@@ -181,15 +181,15 @@ function handleCache() {
       return;
     }
     
-    console.log(styled(`\n📊 Cache Size: ${stats.size} entries`, 'primary'));
-    console.log(styled('─'.repeat(50), 'muted'));
+    console.info(styled(`\n📊 Cache Size: ${stats.size} entries`, 'primary'));
+    console.info(styled('─'.repeat(50), 'muted'));
     
     stats.entries.forEach(entry => {
       const ttlMinutes = Math.floor(entry.ttl / 60000);
-      console.log(styled(`   🔑 ${entry.key}`, 'primary'));
-      console.log(styled(`      Access Count: ${entry.accessCount}`, 'dim'));
-      console.log(styled(`      TTL: ${ttlMinutes}m`, 'dim'));
-      console.log('');
+      console.info(styled(`   🔑 ${entry.key}`, 'primary'));
+      console.info(styled(`      Access Count: ${entry.accessCount}`, 'dim'));
+      console.info(styled(`      TTL: ${ttlMinutes}m`, 'dim'));
+      console.info('');
     });
     
   } else if (subcommand === 'clear') {
@@ -212,8 +212,8 @@ function handleDocs() {
   }
   
   showHeader();
-  console.log(styled('📚 Bun Secrets Documentation', 'accent'));
-  console.log(styled('────────────────────────────', 'muted'));
+  console.info(styled('📚 Bun Secrets Documentation', 'accent'));
+  console.info(styled('────────────────────────────', 'muted'));
   
   const docs = refs.getSecretsDocs(domain);
   
@@ -223,34 +223,34 @@ function handleDocs() {
                    key === 'api' ? '🔧' : 
                    key === 'getOptions' ? '⚙️' : 
                    key === 'examples' ? '💡' : '🔒';
-      console.log(styled(`${icon} ${key}:`, 'primary'), styled(doc.url, 'accent'));
+      console.info(styled(`${icon} ${key}:`, 'primary'), styled(doc.url, 'accent'));
     }
   });
   
-  console.log('');
-  console.log(styled('🌐 Domain-specific URLs:', 'muted'));
-  console.log(styled(`   sh (stable): ${BUN_DOCS.secrets.overview}`, 'dim'));
-  console.log(styled(`   com (latest): ${BUN_DOCS.secrets.com.overview}`, 'dim'));
+  console.info('');
+  console.info(styled('🌐 Domain-specific URLs:', 'muted'));
+  console.info(styled(`   sh (stable): ${BUN_DOCS.secrets.overview}`, 'dim'));
+  console.info(styled(`   com (latest): ${BUN_DOCS.secrets.com.overview}`, 'dim'));
 }
 
 function handleLevels() {
   showHeader();
-  console.log(styled('🛡️ Security Levels', 'accent'));
-  console.log(styled('─────────────────', 'muted'));
+  console.info(styled('🛡️ Security Levels', 'accent'));
+  console.info(styled('─────────────────', 'muted'));
   
   Object.entries(SECURITY_LEVELS).forEach(([level, config]) => {
-    console.log(styled(`${level}:`, config.color));
-    console.log(styled(`   Color: ${config.color}`, 'dim'));
-    console.log(styled(`   TTL: ${config.ttl}s (${Math.floor(config.ttl / 60)}m)`, 'dim'));
-    console.log(styled(`   Audit: ${config.audit ? 'Yes' : 'No'}`, 'dim'));
-    console.log(styled(`   Cache: ${config.cache ? 'Yes' : 'No'}`, 'dim'));
-    console.log(styled(`   Region: ${config.region}`, 'dim'));
+    console.info(styled(`${level}:`, config.color));
+    console.info(styled(`   Color: ${config.color}`, 'dim'));
+    console.info(styled(`   TTL: ${config.ttl}s (${Math.floor(config.ttl / 60)}m)`, 'dim'));
+    console.info(styled(`   Audit: ${config.audit ? 'Yes' : 'No'}`, 'dim'));
+    console.info(styled(`   Cache: ${config.cache ? 'Yes' : 'No'}`, 'dim'));
+    console.info(styled(`   Region: ${config.region}`, 'dim'));
     
     const docRef = refs.get(config.doc, 'com');
     if (docRef) {
-      console.log(styled(`   Docs: ${docRef.url}`, 'accent'));
+      console.info(styled(`   Docs: ${docRef.url}`, 'accent'));
     }
-    console.log('');
+    console.info('');
   });
 }
 
@@ -281,11 +281,11 @@ function handleBenchmark() {
   
   const cacheAvg = ((cacheEnd - cacheStart) / iterations) * 1000; // Convert to microseconds
   
-  console.log(styled('📊 Benchmark Results:', 'primary'));
-  console.log(styled('─'.repeat(30), 'muted'));
-  console.log(styled(`   Iterations: ${iterations}`, 'dim'));
-  console.log(styled(`   Cache Hit Avg: ${cacheAvg.toFixed(0)}μs`, 'success'));
-  console.log(styled(`   Target: <300μs`, cacheAvg < 300 ? 'success' : 'warning'));
+  console.info(styled('📊 Benchmark Results:', 'primary'));
+  console.info(styled('─'.repeat(30), 'muted'));
+  console.info(styled(`   Iterations: ${iterations}`, 'dim'));
+  console.info(styled(`   Cache Hit Avg: ${cacheAvg.toFixed(0)}μs`, 'success'));
+  console.info(styled(`   Target: <300μs`, cacheAvg < 300 ? 'success' : 'warning'));
   
   if (cacheAvg < 300) {
     showSuccess('Performance benchmark passed!');
@@ -296,31 +296,31 @@ function handleBenchmark() {
 
 function handleHelp() {
   showHeader();
-  console.log(styled('Usage:', 'primary'));
-  console.log(styled('  bun secret-helper.ts <command> [options]', 'dim'));
-  console.log('');
-  console.log(styled('Commands:', 'accent'));
-  console.log(styled('  get <key> [level]           - Retrieve a secret', 'primary'));
-  console.log(styled('  get-all <key1> <key2> [level] - Retrieve multiple secrets', 'primary'));
-  console.log(styled('  rotate <key> [level]        - Queue secret rotation', 'primary'));
-  console.log(styled('  invalidate <key> [level]    - Invalidate secret cache', 'primary'));
-  console.log(styled('  cache stats                 - Show cache statistics', 'primary'));
-  console.log(styled('  cache clear                 - Clear cache', 'primary'));
-  console.log(styled('  docs [domain]                - Show documentation links', 'primary'));
-  console.log(styled('  levels                       - Show security levels', 'primary'));
-  console.log(styled('  benchmark                    - Performance benchmark', 'primary'));
-  console.log(styled('  help                         - Show this help', 'primary'));
-  console.log('');
-  console.log(styled('Security Levels:', 'accent'));
+  console.info(styled('Usage:', 'primary'));
+  console.info(styled('  bun secret-helper.ts <command> [options]', 'dim'));
+  console.info('');
+  console.info(styled('Commands:', 'accent'));
+  console.info(styled('  get <key> [level]           - Retrieve a secret', 'primary'));
+  console.info(styled('  get-all <key1> <key2> [level] - Retrieve multiple secrets', 'primary'));
+  console.info(styled('  rotate <key> [level]        - Queue secret rotation', 'primary'));
+  console.info(styled('  invalidate <key> [level]    - Invalidate secret cache', 'primary'));
+  console.info(styled('  cache stats                 - Show cache statistics', 'primary'));
+  console.info(styled('  cache clear                 - Clear cache', 'primary'));
+  console.info(styled('  docs [domain]                - Show documentation links', 'primary'));
+  console.info(styled('  levels                       - Show security levels', 'primary'));
+  console.info(styled('  benchmark                    - Performance benchmark', 'primary'));
+  console.info(styled('  help                         - Show this help', 'primary'));
+  console.info('');
+  console.info(styled('Security Levels:', 'accent'));
   Object.keys(SECURITY_LEVELS).forEach(level => {
-    console.log(styled(`  ${level.toLowerCase()}`, 'primary'));
+    console.info(styled(`  ${level.toLowerCase()}`, 'primary'));
   });
-  console.log('');
-  console.log(styled('Examples:', 'accent'));
-  console.log(styled('  bun secret-helper.ts get API_KEY HIGH', 'dim'));
-  console.log(styled('  bun secret-helper.ts get-all KEY1 KEY2 KEY3 STANDARD', 'dim'));
-  console.log(styled('  bun secret-helper.ts cache stats', 'dim'));
-  console.log(styled('  bun secret-helper.ts docs com', 'dim'));
+  console.info('');
+  console.info(styled('Examples:', 'accent'));
+  console.info(styled('  bun secret-helper.ts get API_KEY HIGH', 'dim'));
+  console.info(styled('  bun secret-helper.ts get-all KEY1 KEY2 KEY3 STANDARD', 'dim'));
+  console.info(styled('  bun secret-helper.ts cache stats', 'dim'));
+  console.info(styled('  bun secret-helper.ts docs com', 'dim'));
 }
 
 // Main command router

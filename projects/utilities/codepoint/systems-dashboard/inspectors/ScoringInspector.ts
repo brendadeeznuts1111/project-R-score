@@ -178,8 +178,8 @@ export class ScoringInspector {
    */
   renderDashboard(): void {
     console.clear();
-    console.log(this.inspectSystem());
-    console.log(
+    console.info(this.inspectSystem());
+    console.info(
       "\n" + this.unicode.createDoubleBox(80, 1, { h: 210, s: 15, l: 50 })
     );
   }

@@ -56,6 +56,6 @@ const server = Bun.serve({
   },
 });
 
-console.log(`🚀 Server running at ${server.url}`);
+console.info(`🚀 Server running at ${server.url}`);
 
 export default server;

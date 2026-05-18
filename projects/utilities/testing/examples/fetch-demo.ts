@@ -16,7 +16,7 @@ import { s3 } from "bun";
 async function demoText() {
   const response = await fetch("https://httpbin.org/anything");
   const text: string = await response.text();
-  console.log(`📄 Text length: ${text.length} chars`);
+  console.info(`📄 Text length: ${text.length} chars`);
 }
 
 /**
@@ -26,7 +26,7 @@ async function demoText() {
 async function demoJson() {
   const response = await fetch("https://httpbin.org/json");
   const data: any = await response.json();
-  console.log(`📦 JSON parsed:`, data);
+  console.info(`📦 JSON parsed:`, data);
 }
 
 /**
@@ -39,7 +39,7 @@ async function demoFormData() {
     body: new FormData(),
   });
   const formData: FormData = await response.formData();
-  console.log(`📋 FormData entries: ${formData.entries().length}`);
+  console.info(`📋 FormData entries: ${formData.entries().length}`);
 }
 
 /**
@@ -49,7 +49,7 @@ async function demoFormData() {
 async function demoBytes() {
   const response = await fetch("https://httpbin.org/bytes/100");
   const bytes: Uint8Array = await response.bytes();
-  console.log(`🧊 Bytes received: ${bytes.length}`);
+  console.info(`🧊 Bytes received: ${bytes.length}`);
 }
 
 /**
@@ -59,7 +59,7 @@ async function demoBytes() {
 async function demoArrayBuffer() {
   const response = await fetch("https://httpbin.org/bytes/100");
   const buffer: ArrayBuffer = await response.arrayBuffer();
-  console.log(`📦 ArrayBuffer size: ${buffer.byteLength}`);
+  console.info(`📦 ArrayBuffer size: ${buffer.byteLength}`);
 }
 
 /**
@@ -69,7 +69,7 @@ async function demoArrayBuffer() {
 async function demoBlob() {
   const response = await fetch("https://httpbin.org/image/jpeg");
   const blob: Blob = await response.blob();
-  console.log(`🖼️ Blob type: ${blob.type}, size: ${blob.size}`);
+  console.info(`🖼️ Blob type: ${blob.type}, size: ${blob.size}`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -103,35 +103,35 @@ async function demoHeadersAPI() {
   headers3.set("X-Request-Id", "12345");
   
   // Headers methods
-  console.log(`📋 Total headers: ${headers3.count}`);
-  console.log(`🔍 Content-Type: ${headers3.get("content-type")}`);
-  console.log(`🔑 Header has Authorization: ${headers3.has("authorization")}`);
+  console.info(`📋 Total headers: ${headers3.count}`);
+  console.info(`🔍 Content-Type: ${headers3.get("content-type")}`);
+  console.info(`🔑 Header has Authorization: ${headers3.has("authorization")}`);
   
   // Headers iteration
-  console.log("\n📜 All headers:");
+  console.info("\n📜 All headers:");
   for (const [name, value] of headers3.entries()) {
-    console.log(`   ${name}: ${value}`);
+    console.info(`   ${name}: ${value}`);
   }
   
   // Bun-specific: toJSON() is ~10x faster than Object.fromEntries()
-  console.log("\n⚡ Bun-optimized toJSON():");
+  console.info("\n⚡ Bun-optimized toJSON():");
   const json = headers3.toJSON();
-  console.log(`   Converted to object:`, json);
+  console.info(`   Converted to object:`, json);
   
   // JSON.stringify automatically calls toJSON()
   const stringified = JSON.stringify(headers3);
-  console.log(`   Stringified length: ${stringified.length} chars`);
+  console.info(`   Stringified length: ${stringified.length} chars`);
   
   // getSetCookie() - special method for Set-Cookie headers
   const cookieHeaders = new Headers();
   cookieHeaders.append("Set-Cookie", "session=abc123; Path=/; HttpOnly");
   cookieHeaders.append("Set-Cookie", "tracking=xyz789; Path=/");
-  console.log(`🍪 Set-Cookie values:`, cookieHeaders.getSetCookie());
+  console.info(`🍪 Set-Cookie values:`, cookieHeaders.getSetCookie());
   
   // forEach callback
-  console.log("\n🔄 Using forEach:");
+  console.info("\n🔄 Using forEach:");
   headers3.forEach((value, key, parent) => {
-    console.log(`   ${key}: ${value}`);
+    console.info(`   ${key}: ${value}`);
   });
 }
 
@@ -153,7 +153,7 @@ async function demoStreamingResponse() {
   let count = 0;
   for await (const chunk of response.body!) {
     count++;
-    console.log(`📥 Chunk ${count}: ${chunk.length} bytes`);
+    console.info(`📥 Chunk ${count}: ${chunk.length} bytes`);
   }
 }
 
@@ -171,7 +171,7 @@ async function demoStreamReader() {
     const { value, done } = await reader.read();
     if (done) break;
     count++;
-    console.log(`📖 Read ${count}: ${value.length} bytes`);
+    console.info(`📖 Read ${count}: ${value.length} bytes`);
   }
 }
 
@@ -198,7 +198,7 @@ async function demoStreamingRequest() {
   });
 
   const result = await response.json();
-  console.log(`📤 Streamed data: ${result.data}`);
+  console.info(`📤 Streamed data: ${result.data}`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -213,10 +213,10 @@ async function demoTimeout() {
     const response = await fetch("https://httpbin.org/delay/5", {
       signal: AbortSignal.timeout(1000), // 1 second timeout
     });
-    console.log("✅ Response received");
+    console.info("✅ Response received");
   } catch (error) {
     if (error instanceof Error && error.name === "TimeoutError") {
-      console.log("⏱️ Request timed out!");
+      console.info("⏱️ Request timed out!");
     }
   }
 }
@@ -236,7 +236,7 @@ async function demoCancelRequest() {
     });
   } catch (error) {
     if (error instanceof Error && error.name === "AbortError") {
-      console.log("🚫 Request was cancelled");
+      console.info("🚫 Request was cancelled");
     }
   }
 }
@@ -255,7 +255,7 @@ async function demoUnixSocket() {
     body: JSON.stringify({ message: "Hello from Bun!" }),
     headers: { "Content-Type": "application/json" },
   });
-  console.log(`🔌 Unix socket response: ${response.status}`);
+  console.info(`🔌 Unix socket response: ${response.status}`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -273,7 +273,7 @@ async function demoTLS() {
       // ca: [Bun.file("/path/to/ca.pem")],
     },
   });
-  console.log(`🔐 TLS response: ${response.status}`);
+  console.info(`🔐 TLS response: ${response.status}`);
 }
 
 /**
@@ -290,7 +290,7 @@ async function demoCustomTLSValidation() {
       },
     },
   });
-  console.log(`🔍 Custom TLS check: ${response.status}`);
+  console.info(`🔍 Custom TLS check: ${response.status}`);
 }
 
 /**
@@ -302,7 +302,7 @@ async function demoDisableTLSValidation() {
       rejectUnauthorized: false, // ⚠️ Disables TLS validation
     },
   });
-  console.log(`⚠️ TLS validation disabled: ${response.status}`);
+  console.info(`⚠️ TLS validation disabled: ${response.status}`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -325,7 +325,7 @@ async function demoRequestOptions() {
     verbose: true, // or "curl" for more detailed output
   });
   
-  console.log(`📡 Response: ${response.status}`);
+  console.info(`📡 Response: ${response.status}`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -339,7 +339,7 @@ async function demoFileUrls() {
   // On macOS/Linux
   const response = await fetch("file:///etc/hostname");
   const text = await response.text();
-  console.log(`📁 Local file content (first 50 chars): ${text.slice(0, 50)}...`);
+  console.info(`📁 Local file content (first 50 chars): ${text.slice(0, 50)}...`);
   
   // On Windows, paths are automatically normalized
   // const response2 = await fetch("file:///C:/path/to/file.txt");
@@ -352,12 +352,12 @@ async function demoDataUrls() {
   // Base64 encoded data
   const response = await fetch("data:text/plain;base64,SGVsbG8sIFdvcmxkIQ==");
   const text = await response.text();
-  console.log(`🔗 Data URL decoded: "${text}"`);
+  console.info(`🔗 Data URL decoded: "${text}"`);
   
   // Plain text data URL
   const response2 = await fetch("data:text/html,<h1>Hello!</h1>");
   const html = await response2.text();
-  console.log(`🔗 Data URL HTML: ${html}`);
+  console.info(`🔗 Data URL HTML: ${html}`);
 }
 
 /**
@@ -369,7 +369,7 @@ async function demoBlobUrls() {
   
   const response = await fetch(url);
   const text = await response.text();
-  console.log(`🫧 Blob URL content: "${text}"`);
+  console.info(`🫧 Blob URL content: "${text}"`);
   
   // Clean up
   URL.revokeObjectURL(url);
@@ -385,9 +385,9 @@ async function demoBlobUrls() {
 async function demoDNSPrefetch() {
   const { dns } = await import("bun");
   
-  console.log("🌐 Prefetching DNS for bun.com...");
+  console.info("🌐 Prefetching DNS for bun.com...");
   dns.prefetch("bun.com");
-  console.log("✅ DNS prefetch initiated");
+  console.info("✅ DNS prefetch initiated");
   
   // Now any fetch to bun.com will use the prefetched DNS
 }
@@ -398,19 +398,19 @@ async function demoDNSPrefetch() {
 async function demoDNSCaching() {
   const { dns } = await import("bun");
   
-  console.log("📊 DNS cache statistics:");
+  console.info("📊 DNS cache statistics:");
   const stats = dns.getCacheStats();
-  console.log(`   Cache entries: ${stats.size}`);
-  console.log(`   Cache hit rate: ${(stats.hitRate * 100).toFixed(1)}%`);
+  console.info(`   Cache entries: ${stats.size}`);
+  console.info(`   Cache hit rate: ${(stats.hitRate * 100).toFixed(1)}%`);
 }
 
 /**
  * Preconnect to a host
  */
 async function demoPreconnect() {
-  console.log("🔌 Preconnecting to https://httpbin.org...");
+  console.info("🔌 Preconnecting to https://httpbin.org...");
   await fetch.preconnect("https://httpbin.org");
-  console.log("✅ Preconnect initiated (TCP + TLS handshake started)");
+  console.info("✅ Preconnect initiated (TCP + TLS handshake started)");
   
   // Now fetching from httpbin.org will be faster
 }
@@ -423,7 +423,7 @@ async function demoPreconnect() {
  * keepalive: false can disable connection reuse per request
  */
 async function demoConnectionPooling() {
-  console.log("🔄 Testing connection pooling (automatic)...");
+  console.info("🔄 Testing connection pooling (automatic)...");
   
   // Multiple requests to same host - Bun reuses connections
   const start = performance.now();
@@ -433,7 +433,7 @@ async function demoConnectionPooling() {
   await fetch("https://httpbin.org/get");
   
   const elapsed = performance.now() - start;
-  console.log(`⏱️ 3 sequential requests: ${elapsed.toFixed(0)}ms (connections reused)`);
+  console.info(`⏱️ 3 sequential requests: ${elapsed.toFixed(0)}ms (connections reused)`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -444,7 +444,7 @@ async function demoConnectionPooling() {
  * Bun-specific error handling
  */
 async function demoErrorHandling() {
-  console.log("⚠️ Testing error cases:");
+  console.info("⚠️ Testing error cases:");
   
   // GET/HEAD with body throws an error
   try {
@@ -453,14 +453,14 @@ async function demoErrorHandling() {
       body: "this will throw"
     });
   } catch (error) {
-    console.log("   ✅ GET/HEAD with body correctly throws error");
+    console.info("   ✅ GET/HEAD with body correctly throws error");
   }
   
   // TLS validation failure (when rejectUnauthorized is true)
   try {
     await fetch("https://expired.badssl.com");
   } catch (error) {
-    console.log("   ✅ TLS validation error caught");
+    console.info("   ✅ TLS validation error caught");
   }
 }
 
@@ -483,7 +483,7 @@ async function demoAutoContentType() {
     method: "POST",
     body: blob,
   });
-  console.log(`📦 Blob upload (auto Content-Type: text/plain): ${response1.status}`);
+  console.info(`📦 Blob upload (auto Content-Type: text/plain): ${response1.status}`);
   
   // FormData - Bun sets multipart/form-data with boundary
   const formData = new FormData();
@@ -494,7 +494,7 @@ async function demoAutoContentType() {
     method: "POST",
     body: formData,
   });
-  console.log(`📋 FormData upload (auto multipart boundary): ${response2.status}`);
+  console.info(`📋 FormData upload (auto multipart boundary): ${response2.status}`);
 }
 
 /**
@@ -504,17 +504,17 @@ async function demoAutoContentType() {
  * Note: verbose is Bun-specific, not part of Web standard
  */
 async function demoVerboseDebugging() {
-  console.log("🔍 Verbose debugging output:");
-  console.log("─".repeat(50));
+  console.info("🔍 Verbose debugging output:");
+  console.info("─".repeat(50));
   
   const response = await fetch("https://httpbin.org/headers", {
     verbose: true, // Bun-specific: prints headers to terminal
   });
   
   const data = await response.json();
-  console.log("─".repeat(50));
-  console.log(`✅ Response received: ${response.status}`);
-  console.log(`📋 Headers sent: ${Object.keys(data.headers).length} headers`);
+  console.info("─".repeat(50));
+  console.info(`✅ Response received: ${response.status}`);
+  console.info(`📋 Headers sent: ${Object.keys(data.headers).length} headers`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -527,7 +527,7 @@ async function demoVerboseDebugging() {
 async function demoS3EnvCredentials() {
   const response = await fetch("s3://my-bucket/path/to/object");
   const data = await response.bytes();
-  console.log(`☁️ S3 object size: ${data.length} bytes`);
+  console.info(`☁️ S3 object size: ${data.length} bytes`);
 }
 
 /**
@@ -541,7 +541,7 @@ async function demoS3ExplicitCredentials() {
       region: "us-east-1",
     },
   });
-  console.log(`☁️ S3 response: ${response.status}`);
+  console.info(`☁️ S3 response: ${response.status}`);
 }
 
 /**
@@ -571,7 +571,7 @@ async function demoS3StreamingUpload() {
     },
   });
   
-  console.log("☁️ Streaming upload complete");
+  console.info("☁️ Streaming upload complete");
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -579,59 +579,59 @@ async function demoS3StreamingUpload() {
 // ═══════════════════════════════════════════════════════════
 
 async function runAllDemos() {
-  console.log("🌐 Bun Fetch API Demo");
-  console.log("═".repeat(50));
+  console.info("🌐 Bun Fetch API Demo");
+  console.info("═".repeat(50));
 
   // Simple demos
-  console.log("\n📄 Response Body Methods:");
+  console.info("\n📄 Response Body Methods:");
   await demoText();
   await demoJson();
   
-  console.log("\n📋 Headers API:");
+  console.info("\n📋 Headers API:");
   await demoHeadersAPI();
   
-  console.log("\n🌊 Streaming Responses:");
+  console.info("\n🌊 Streaming Responses:");
   await demoStreamingResponse();
   
-  console.log("\n📤 Streaming Requests:");
+  console.info("\n📤 Streaming Requests:");
   await demoStreamingRequest();
   
-  console.log("\n⏱️ Timeout & Cancellation:");
+  console.info("\n⏱️ Timeout & Cancellation:");
   await demoTimeout();
   await demoCancelRequest();
   
-  console.log("\n🔐 TLS Options:");
+  console.info("\n🔐 TLS Options:");
   await demoRequestOptions();
   
-  console.log("\n📁 File URLs:");
+  console.info("\n📁 File URLs:");
   await demoFileUrls();
   
-  console.log("\n🔗 Data URLs:");
+  console.info("\n🔗 Data URLs:");
   await demoDataUrls();
   
-  console.log("\n🫧 Blob URLs:");
+  console.info("\n🫧 Blob URLs:");
   await demoBlobUrls();
   
-  console.log("\n🌐 DNS & Performance:");
+  console.info("\n🌐 DNS & Performance:");
   await demoDNSPrefetch();
   await demoDNSCaching();
   await demoPreconnect();
   await demoConnectionPooling();
   
-  console.log("\n⚠️ Error Handling:");
+  console.info("\n⚠️ Error Handling:");
   await demoErrorHandling();
   
-  console.log("\n🏷️ Auto Content-Type:");
+  console.info("\n🏷️ Auto Content-Type:");
   await demoAutoContentType();
   
-  console.log("\n🔍 Verbose Debugging:");
+  console.info("\n🔍 Verbose Debugging:");
   await demoVerboseDebugging();
   
-  console.log("\n☁️ S3 Support:");
+  console.info("\n☁️ S3 Support:");
   await demoS3StreamingUpload();
   
-  console.log("\n═".repeat(50));
-  console.log("✅ All demos completed");
+  console.info("\n═".repeat(50));
+  console.info("✅ All demos completed");
 }
 
 // Run if executed directly

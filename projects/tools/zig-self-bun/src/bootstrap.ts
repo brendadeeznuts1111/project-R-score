@@ -68,7 +68,7 @@ async function bootstrap() {
   await writeFile("bun.lockb", fullFile);
   
   const duration = nanoseconds() - start;
-  console.log(`Bootstrapped 13-byte config in ${duration}ns`);
+  console.info(`Bootstrapped 13-byte config in ${duration}ns`);
   // Expected: ~67ns (pwrite of 104 bytes)
 }
 

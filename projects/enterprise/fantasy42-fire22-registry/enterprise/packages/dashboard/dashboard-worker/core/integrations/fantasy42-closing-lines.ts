@@ -146,7 +146,7 @@ export class Fantasy42ClosingLines {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('📊 Initializing Fantasy42 Closing Lines System...');
+      console.info('📊 Initializing Fantasy42 Closing Lines System...');
 
       // Detect closing line table headers
       await this.detectClosingLineHeaders();
@@ -171,7 +171,7 @@ export class Fantasy42ClosingLines {
       }
 
       this.isInitialized = true;
-      console.log('✅ Fantasy42 Closing Lines System initialized');
+      console.info('✅ Fantasy42 Closing Lines System initialized');
 
       return true;
     } catch (error) {
@@ -289,7 +289,7 @@ export class Fantasy42ClosingLines {
           element.textContent?.toLowerCase().includes('line')
         ) {
           closingHeader = element;
-          console.log('✅ Found closing line header:', selector);
+          console.info('✅ Found closing line header:', selector);
           this.setupClosingLineHeader(closingHeader as HTMLTableHeaderCellElement);
           break;
         }
@@ -298,7 +298,7 @@ export class Fantasy42ClosingLines {
     }
 
     if (!closingHeader) {
-      console.log('⚠️ Closing line header not found, system will initialize on demand');
+      console.info('⚠️ Closing line header not found, system will initialize on demand');
     }
   }
 
@@ -321,7 +321,7 @@ export class Fantasy42ClosingLines {
     // Initialize sorting state
     this.initializeSortingState(header);
 
-    console.log('✅ Closing line header setup complete');
+    console.info('✅ Closing line header setup complete');
   }
 
   /**
@@ -543,7 +543,7 @@ export class Fantasy42ClosingLines {
     // Reorder rows
     rows.forEach(row => tbody.appendChild(row));
 
-    console.log(`✅ Table sorted by closing line (${this.sortDirection})`);
+    console.info(`✅ Table sorted by closing line (${this.sortDirection})`);
   }
 
   /**
@@ -586,7 +586,7 @@ export class Fantasy42ClosingLines {
       }, this.config.display.autoRefresh * 1000);
     }
 
-    console.log('✅ Data management initialized');
+    console.info('✅ Data management initialized');
   }
 
   /**
@@ -644,7 +644,7 @@ export class Fantasy42ClosingLines {
       // Update table display
       this.updateTableDisplay();
 
-      console.log(`💰 Loaded ${mockData.length} closing lines`);
+      console.info(`💰 Loaded ${mockData.length} closing lines`);
     } catch (error) {
       console.error('Failed to load closing line data:', error);
     }
@@ -669,7 +669,7 @@ export class Fantasy42ClosingLines {
       tbody.appendChild(row);
     });
 
-    console.log('✅ Table display updated');
+    console.info('✅ Table display updated');
   }
 
   /**
@@ -770,7 +770,7 @@ export class Fantasy42ClosingLines {
       // Update display
       this.updateTableDisplay();
 
-      console.log('🔄 Closing line data refreshed');
+      console.info('🔄 Closing line data refreshed');
     } catch (error) {
       console.error('Failed to refresh closing line data:', error);
     }
@@ -805,7 +805,7 @@ export class Fantasy42ClosingLines {
    */
   private async initializeRealTimeUpdates(): Promise<void> {
     // Setup WebSocket or polling for real-time updates
-    console.log('📡 Real-time updates initialized');
+    console.info('📡 Real-time updates initialized');
   }
 
   /**
@@ -818,7 +818,7 @@ export class Fantasy42ClosingLines {
     // Setup filtering options
     this.setupFilteringSystem();
 
-    console.log('🔍 Sorting and filtering initialized');
+    console.info('🔍 Sorting and filtering initialized');
   }
 
   /**
@@ -908,7 +908,7 @@ export class Fantasy42ClosingLines {
     // Setup filter event listeners
     this.setupFilterListeners();
 
-    console.log('🎛️ Filtering system setup');
+    console.info('🎛️ Filtering system setup');
   }
 
   /**
@@ -1034,7 +1034,7 @@ export class Fantasy42ClosingLines {
       (row as HTMLElement).style.display = show ? '' : 'none';
     });
 
-    console.log('🎛️ Filters applied');
+    console.info('🎛️ Filters applied');
   }
 
   /**
@@ -1042,7 +1042,7 @@ export class Fantasy42ClosingLines {
    */
   private async initializeAnalyticsTracking(): Promise<void> {
     // Setup analytics event tracking
-    console.log('📊 Analytics tracking initialized');
+    console.info('📊 Analytics tracking initialized');
   }
 
   /**
@@ -1050,14 +1050,14 @@ export class Fantasy42ClosingLines {
    */
   private async initializeAlertsSystem(): Promise<void> {
     // Setup custom alerts
-    console.log('🚨 Alerts system initialized');
+    console.info('🚨 Alerts system initialized');
   }
 
   /**
    * Track analytics
    */
   private trackAnalytics(event: string, data: any): void {
-    console.log('📊 Analytics tracked:', event, data);
+    console.info('📊 Analytics tracked:', event, data);
   }
 
   /**
@@ -1146,7 +1146,7 @@ export class Fantasy42ClosingLines {
       }, this.config.display.autoRefresh * 1000);
     }
 
-    console.log('⚙️ Closing lines configuration updated');
+    console.info('⚙️ Closing lines configuration updated');
   }
 
   /**
@@ -1185,7 +1185,7 @@ export class Fantasy42ClosingLines {
     this.eventListeners.clear();
 
     this.isInitialized = false;
-    console.log('🧹 Closing lines system cleaned up');
+    console.info('🧹 Closing lines system cleaned up');
   }
 
   // Private properties

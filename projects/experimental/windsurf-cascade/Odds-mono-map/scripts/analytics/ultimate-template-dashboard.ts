@@ -62,8 +62,8 @@ class UltimateTemplateDashboard {
      * Run complete dashboard with all integrations
      */
     async runCompleteDashboard(): Promise<void> {
-        console.log(chalk.blue.bold('🎯 Ultimate Template System Dashboard'));
-        console.log(chalk.gray('Powered by Bun.inspect.table() + Bun.stringWidth() + Enhanced Progress Bars\n'));
+        console.info(chalk.blue.bold('🎯 Ultimate Template System Dashboard'));
+        console.info(chalk.gray('Powered by Bun.inspect.table() + Bun.stringWidth() + Enhanced Progress Bars\n'));
 
         // System Overview with Progress Bars
         this.displaySystemOverview();
@@ -88,8 +88,8 @@ class UltimateTemplateDashboard {
      * Display system overview with progress bars
      */
     public displaySystemOverview(): void {
-        console.log(chalk.blue.bold('📊 System Overview'));
-        console.log(chalk.gray('═'.repeat(100)));
+        console.info(chalk.blue.bold('📊 System Overview'));
+        console.info(chalk.gray('═'.repeat(100)));
 
         const systemProgress = [
             {
@@ -137,7 +137,7 @@ class UltimateTemplateDashboard {
             };
         });
 
-        console.log(Bun.inspect.table(progressMetrics, [
+        console.info(Bun.inspect.table(progressMetrics, [
             'task',
             'bar',
             'percentage',
@@ -152,8 +152,8 @@ class UltimateTemplateDashboard {
      * Display template analytics table
      */
     private displayTemplateAnalytics(): void {
-        console.log(chalk.blue.bold('\n📈 Template Analytics'));
-        console.log(chalk.gray('═'.repeat(100)));
+        console.info(chalk.blue.bold('\n📈 Template Analytics'));
+        console.info(chalk.gray('═'.repeat(100)));
 
         const templateData: TemplateMetric[] = [
             {
@@ -208,7 +208,7 @@ class UltimateTemplateDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(templateData, [
+        console.info(Bun.inspect.table(templateData, [
             'name',
             'category',
             'usageScore',
@@ -226,8 +226,8 @@ class UltimateTemplateDashboard {
      * Display real-time metrics with progress
      */
     private displayRealTimeMetrics(): void {
-        console.log(chalk.blue.bold('\n⚡ Real-time Metrics'));
-        console.log(chalk.gray('═'.repeat(100)));
+        console.info(chalk.blue.bold('\n⚡ Real-time Metrics'));
+        console.info(chalk.gray('═'.repeat(100)));
 
         const realTimeData: SystemMetric[] = [
             {
@@ -291,7 +291,7 @@ class UltimateTemplateDashboard {
             };
         });
 
-        console.log(Bun.inspect.table(metricsWithProgress, [
+        console.info(Bun.inspect.table(metricsWithProgress, [
             'Metric',
             'Current',
             'Progress',
@@ -307,8 +307,8 @@ class UltimateTemplateDashboard {
      * Display performance benchmarks
      */
     private displayPerformanceBenchmarks(): void {
-        console.log(chalk.blue.bold('\n🚀 Performance Benchmarks'));
-        console.log(chalk.gray('═'.repeat(100)));
+        console.info(chalk.blue.bold('\n🚀 Performance Benchmarks'));
+        console.info(chalk.gray('═'.repeat(100)));
 
         const benchmarkData = [
             {
@@ -367,7 +367,7 @@ class UltimateTemplateDashboard {
             };
         });
 
-        console.log(Bun.inspect.table(benchmarkWithProgress, [
+        console.info(Bun.inspect.table(benchmarkWithProgress, [
             'Operation',
             'Baseline',
             'Current',
@@ -383,8 +383,8 @@ class UltimateTemplateDashboard {
      * Display health score analysis
      */
     private displayHealthScoreAnalysis(): void {
-        console.log(chalk.blue.bold('\n🏥 Health Score Analysis'));
-        console.log(chalk.gray('═'.repeat(100)));
+        console.info(chalk.blue.bold('\n🏥 Health Score Analysis'));
+        console.info(chalk.gray('═'.repeat(100)));
 
         const healthData = [
             {
@@ -442,7 +442,7 @@ class UltimateTemplateDashboard {
             };
         });
 
-        console.log(Bun.inspect.table(healthWithProgress, [
+        console.info(Bun.inspect.table(healthWithProgress, [
             'Category',
             'Health Score',
             'Issues',
@@ -458,8 +458,8 @@ class UltimateTemplateDashboard {
      * Display optimization roadmap
      */
     private displayOptimizationRoadmap(): void {
-        console.log(chalk.blue.bold('\n🗺️ Optimization Roadmap'));
-        console.log(chalk.gray('═'.repeat(100)));
+        console.info(chalk.blue.bold('\n🗺️ Optimization Roadmap'));
+        console.info(chalk.gray('═'.repeat(100)));
 
         const roadmapData = [
             {
@@ -528,7 +528,7 @@ class UltimateTemplateDashboard {
             };
         });
 
-        console.log(Bun.inspect.table(roadmapWithProgress, [
+        console.info(Bun.inspect.table(roadmapWithProgress, [
             'Phase',
             'Focus',
             'Progress',
@@ -569,8 +569,8 @@ class UltimateTemplateDashboard {
      * Demonstrate width calculation capabilities
      */
     demonstrateWidthCalculation(): void {
-        console.log(chalk.blue.bold('\n📏 Bun.stringWidth() Demonstration'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.blue.bold('\n📏 Bun.stringWidth() Demonstration'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         const testStrings = [
             'Simple text',
@@ -585,11 +585,11 @@ class UltimateTemplateDashboard {
             const actualWidth = Bun.stringWidth(str, { countAnsiEscapeCodes: true });
             const diff = actualWidth - visualWidth;
 
-            console.log(chalk.cyan(`\nTest ${index + 1}:`));
-            console.log(chalk.gray(`String: "${str}"`));
-            console.log(chalk.gray(`Visual width: ${visualWidth} chars`));
-            console.log(chalk.gray(`Actual width: ${actualWidth} chars`));
-            console.log(chalk.gray(`ANSI codes: ${diff} chars`));
+            console.info(chalk.cyan(`\nTest ${index + 1}:`));
+            console.info(chalk.gray(`String: "${str}"`));
+            console.info(chalk.gray(`Visual width: ${visualWidth} chars`));
+            console.info(chalk.gray(`Actual width: ${actualWidth} chars`));
+            console.info(chalk.gray(`ANSI codes: ${diff} chars`));
         });
     }
 }
@@ -602,13 +602,13 @@ async function main(): Promise<void> {
     const args = process.argv.slice(2);
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('🎯 Ultimate Template System Dashboard'));
-        console.log(chalk.gray('Usage: bun ultimate-template-dashboard.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --help, -h     Show this help message'));
-        console.log(chalk.gray('  --width-demo   Demonstrate width calculation'));
-        console.log(chalk.gray('  --overview     Show system overview only'));
-        console.log(chalk.gray('\nFeatures: Bun.inspect.table() + Bun.stringWidth() + Progress bars'));
+        console.info(chalk.blue.bold('🎯 Ultimate Template System Dashboard'));
+        console.info(chalk.gray('Usage: bun ultimate-template-dashboard.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --help, -h     Show this help message'));
+        console.info(chalk.gray('  --width-demo   Demonstrate width calculation'));
+        console.info(chalk.gray('  --overview     Show system overview only'));
+        console.info(chalk.gray('\nFeatures: Bun.inspect.table() + Bun.stringWidth() + Progress bars'));
         process.exit(0);
     }
 
@@ -623,8 +623,8 @@ async function main(): Promise<void> {
             await dashboard.runCompleteDashboard();
         }
 
-        console.log(chalk.green.bold('\n🎉 Ultimate Dashboard Demo Complete!'));
-        console.log(chalk.gray('Showcasing the power of Bun.inspect.table() + Bun.stringWidth() integration'));
+        console.info(chalk.green.bold('\n🎉 Ultimate Dashboard Demo Complete!'));
+        console.info(chalk.gray('Showcasing the power of Bun.inspect.table() + Bun.stringWidth() integration'));
 
     } catch (error) {
         console.error(chalk.red(`❌ Error: ${error instanceof Error ? error.message : String(error)}`));

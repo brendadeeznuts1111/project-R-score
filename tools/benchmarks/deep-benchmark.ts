@@ -79,9 +79,9 @@ export class DeepBenchmark {
   constructor(private config: DeepBenchmarkConfig) {}
 
   async run(): Promise<DeepBenchmarkResults> {
-    console.log(`Starting benchmark: ${this.config.name}`);
-    console.log(`  Depth: ${this.config.depth}`);
-    console.log(`  Inspection: ${this.config.inspectionLevel}`);
+    console.info(`Starting benchmark: ${this.config.name}`);
+    console.info(`  Depth: ${this.config.depth}`);
+    console.info(`  Inspection: ${this.config.inspectionLevel}`);
 
     const t0 = Bun.nanoseconds();
     const results: IterationResult[] = [];
@@ -91,7 +91,7 @@ export class DeepBenchmark {
       results.push(iterResult);
 
       if (this.config.inspectionLevel === 'verbose') {
-        console.log(`Iteration ${i}:`, Bun.inspect(iterResult, { depth: this.config.depth }));
+        console.info(`Iteration ${i}:`, Bun.inspect(iterResult, { depth: this.config.depth }));
       }
     }
 
@@ -118,14 +118,14 @@ export class DeepBenchmark {
       },
     };
 
-    console.log('\nBENCHMARK COMPLETE');
-    console.log('='.repeat(50));
-    console.log('Summary:', Bun.inspect(benchmarkResults.summary, { depth: this.config.depth }));
-    console.log('Metadata:', Bun.inspect(benchmarkResults.metadata, { depth: this.config.depth }));
+    console.info('\nBENCHMARK COMPLETE');
+    console.info('='.repeat(50));
+    console.info('Summary:', Bun.inspect(benchmarkResults.summary, { depth: this.config.depth }));
+    console.info('Metadata:', Bun.inspect(benchmarkResults.metadata, { depth: this.config.depth }));
 
     if (this.config.inspectionLevel === 'detailed') {
-      console.log('\nFull Results:');
-      console.log(Bun.inspect(benchmarkResults.data, { depth: this.config.depth }));
+      console.info('\nFull Results:');
+      console.info(Bun.inspect(benchmarkResults.data, { depth: this.config.depth }));
     }
 
     return benchmarkResults;
@@ -268,6 +268,6 @@ if (import.meta.main) {
 
   const results = await benchmark.run();
 
-  console.log('\nFINAL RESULTS (JSON):');
-  console.log(JSON.stringify(results.summary, null, 2));
+  console.info('\nFINAL RESULTS (JSON):');
+  console.info(JSON.stringify(results.summary, null, 2));
 }

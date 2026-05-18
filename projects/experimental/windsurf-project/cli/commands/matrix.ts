@@ -15,7 +15,7 @@ async function main() {
   // Use full columns for the matrix display
   const allCols = Object.keys(data[0]);
   
-  console.log(`📂 Loaded ${data.length} entries from MASTER_MATRIX.md`);
+  console.info(`📂 Loaded ${data.length} entries from MASTER_MATRIX.md`);
   
   // Connect to superTableCli for filtering and table rendering
   await superTableCli(data, process.argv);

@@ -420,10 +420,10 @@ export class DependencyAnalyzer {
  * Display dependency analysis results
  */
 export function displayDependencyResults(report: DependencyReport): void {
-	console.log("\n🔗 Dependency Analysis\n");
+	console.info("\n🔗 Dependency Analysis\n");
 
 	// Summary
-	console.log(
+	console.info(
 		Bun.inspect.table(
 			[
 				{ Metric: "Total Files", Value: report.summary.totalFiles },
@@ -441,58 +441,58 @@ export function displayDependencyResults(report: DependencyReport): void {
 
 	// Circular dependencies
 	if (report.cycles.length > 0) {
-		console.log(
+		console.info(
 			`\n🔄 ${style.error("Circular Dependencies")} (${report.cycles.length})\n`,
 		);
 		for (const cycle of report.cycles.slice(0, 10)) {
-			console.log(`  ${style.yellow("→")} ${cycle.cycle.join(" → ")}`);
+			console.info(`  ${style.yellow("→")} ${cycle.cycle.join(" → ")}`);
 		}
 		if (report.cycles.length > 10) {
-			console.log(`  ... and ${report.cycles.length - 10} more`);
+			console.info(`  ... and ${report.cycles.length - 10} more`);
 		}
 	}
 
 	// Most imported files
 	if (report.mostImported.length > 0) {
-		console.log("\n📥 Most Imported Files\n");
+		console.info("\n📥 Most Imported Files\n");
 		const tableData = report.mostImported.slice(0, 10).map((item, idx) => ({
 			"#": idx + 1,
 			File: item.file,
 			"Imported By": item.count,
 		}));
-		console.log(Bun.inspect.table(tableData, { colors: true }));
+		console.info(Bun.inspect.table(tableData, { colors: true }));
 	}
 
 	// Files with most dependencies
 	if (report.mostDependencies.length > 0) {
-		console.log("\n📤 Files with Most Dependencies\n");
+		console.info("\n📤 Files with Most Dependencies\n");
 		const tableData = report.mostDependencies.slice(0, 10).map((item, idx) => ({
 			"#": idx + 1,
 			File: item.file,
 			Dependencies: item.count,
 		}));
-		console.log(Bun.inspect.table(tableData, { colors: true }));
+		console.info(Bun.inspect.table(tableData, { colors: true }));
 	}
 
 	// Orphan files
 	if (report.orphans.length > 0) {
-		console.log(`\n📭 Orphan Files (${report.orphans.length})\n`);
+		console.info(`\n📭 Orphan Files (${report.orphans.length})\n`);
 		for (const orphan of report.orphans.slice(0, 10)) {
-			console.log(`  ${style.dim("•")} ${orphan}`);
+			console.info(`  ${style.dim("•")} ${orphan}`);
 		}
 		if (report.orphans.length > 10) {
-			console.log(`  ... and ${report.orphans.length - 10} more`);
+			console.info(`  ... and ${report.orphans.length - 10} more`);
 		}
 	}
 
 	// Recommendations
 	if (report.cycles.length > 0) {
-		console.log("\n💡 Recommendations\n");
-		console.log("  To fix circular dependencies:");
-		console.log("  • Extract shared code into a separate module");
-		console.log("  • Use dependency injection instead of direct imports");
-		console.log("  • Consider using interfaces/types to break the cycle");
-		console.log("  • Re-evaluate if the circular dependency is necessary\n");
+		console.info("\n💡 Recommendations\n");
+		console.info("  To fix circular dependencies:");
+		console.info("  • Extract shared code into a separate module");
+		console.info("  • Use dependency injection instead of direct imports");
+		console.info("  • Consider using interfaces/types to break the cycle");
+		console.info("  • Re-evaluate if the circular dependency is necessary\n");
 	}
 }
 
@@ -506,7 +506,7 @@ if (import.meta.main) {
 
 	const analyzer = new DependencyAnalyzer();
 
-	console.log(`Analyzing dependencies in ${path}...`);
+	console.info(`Analyzing dependencies in ${path}...`);
 
 	analyzer
 		.analyzeDirectory(path)

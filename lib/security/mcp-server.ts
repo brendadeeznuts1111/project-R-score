@@ -117,7 +117,7 @@ class Tier1380SecurityMCPServer {
       validateHost(process.env.MCP_SERVER_HOST) ||
       validateHost(process.env.SERVER_HOST) ||
       'localhost';
-    console.log(`📊 Health check: http://${MCP_SERVER_HOST}:${port}/health`);
+    console.info(`📊 Health check: http://${MCP_SERVER_HOST}:${port}/health`);
   }
 
   /**

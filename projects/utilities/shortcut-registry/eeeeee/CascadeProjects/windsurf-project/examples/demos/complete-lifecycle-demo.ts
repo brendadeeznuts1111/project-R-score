@@ -10,7 +10,7 @@ const completeServer: any = Bun.serve({
     const url = new URL(req.url);
     
     // Log all requests for demonstration
-    console.log(`📡 ${req.method} ${url.pathname} from ${server.requestIP(req)?.address}`);
+    console.info(`📡 ${req.method} ${url.pathname} from ${server.requestIP(req)?.address}`);
     
     switch (url.pathname) {
 
@@ -42,7 +42,7 @@ Process ref/unref status: Active
       }
 
       case '/slow': {
-        console.log('⏱️ Starting slow request with 2s timeout...');
+        console.info('⏱️ Starting slow request with 2s timeout...');
         server.timeout(req, 2);          // 2 s idle timeout
         
         // This should timeout before completing
@@ -51,14 +51,14 @@ Process ref/unref status: Active
       }
 
       case '/reload': {
-        console.log('🔄 Hot reloading server handlers...');
+        console.info('🔄 Hot reloading server handlers...');
         server.reload({
           async fetch(req: Request, server: any) {
             const url = new URL(req.url);
             
             if (url.pathname === '/stop') {
               const force = url.searchParams.has('force');
-              console.log(`🛑 Stopping server (force: ${force})`);
+              console.info(`🛑 Stopping server (force: ${force})`);
               await server.stop(force);
               return Response.json({ stopped: true, force });
             }
@@ -86,35 +86,35 @@ Process ref/unref status: Active
   }
 });
 
-console.log(`🚀 Server ${completeServer.id} started at ${completeServer.url}`);
-console.log('');
-console.log('📋 Available endpoints:');
-console.log(`  curl ${completeServer.url}           # Show this menu`);
-console.log(`  curl ${completeServer.url}ip         # Client IP detection`);
-console.log(`  curl ${completeServer.url}slow       # Timeout demonstration`);
-console.log(`  curl ${completeServer.url}reload     # Hot reload handlers`);
-console.log(`  curl ${completeServer.url}metrics    # Server metrics`);
-console.log(`  curl ${completeServer.url}stop       # Graceful shutdown`);
-console.log(`  curl ${completeServer.url}stop?force # Force shutdown`);
-console.log('');
+console.info(`🚀 Server ${completeServer.id} started at ${completeServer.url}`);
+console.info('');
+console.info('📋 Available endpoints:');
+console.info(`  curl ${completeServer.url}           # Show this menu`);
+console.info(`  curl ${completeServer.url}ip         # Client IP detection`);
+console.info(`  curl ${completeServer.url}slow       # Timeout demonstration`);
+console.info(`  curl ${completeServer.url}reload     # Hot reload handlers`);
+console.info(`  curl ${completeServer.url}metrics    # Server metrics`);
+console.info(`  curl ${completeServer.url}stop       # Graceful shutdown`);
+console.info(`  curl ${completeServer.url}stop?force # Force shutdown`);
+console.info('');
 
 /* Demo ref/unref behavior */
-console.log('🔧 Demo ref/unref behavior:');
-console.log('   • server.unref() called - process can exit if server is only thing running');
-console.log('   • server.ref() will be restored after 5 seconds');
+console.info('🔧 Demo ref/unref behavior:');
+console.info('   • server.unref() called - process can exit if server is only thing running');
+console.info('   • server.ref() will be restored after 5 seconds');
 
 completeServer.unref();               // allow exit if nothing else running
 setTimeout(() => {
-  console.log('🔧 server.ref() restored - process will now stay alive for server');
+  console.info('🔧 server.ref() restored - process will now stay alive for server');
   completeServer.ref();
 }, 5_000);
 
 // Graceful shutdown after 60 seconds for demo
 setTimeout(() => {
-  console.log('⏰ Demo timeout reached - shutting down gracefully...');
+  console.info('⏰ Demo timeout reached - shutting down gracefully...');
   completeServer.stop(false);
 }, 60_000);
 
-console.log('');
-console.log('⏰ Server will auto-shutdown after 60 seconds');
-console.log('🛡️ All lifecycle methods are ready for testing!');
+console.info('');
+console.info('⏰ Server will auto-shutdown after 60 seconds');
+console.info('🛡️ All lifecycle methods are ready for testing!');

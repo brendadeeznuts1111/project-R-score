@@ -12,7 +12,7 @@
  * Example 1: Basic MIME type detection
  */
 async function example1_BasicMimeTypes() {
-  console.log('=== Example 1: Basic MIME Type Detection ===\n');
+  console.info('=== Example 1: Basic MIME Type Detection ===\n');
 
   const files = [
     './package.json',
@@ -23,12 +23,12 @@ async function example1_BasicMimeTypes() {
   for (const path of files) {
     try {
       const file = Bun.file(path);
-      console.log(`File: ${path}`);
-      console.log(`  MIME type: ${file.type || 'unknown'}`);
-      console.log(`  Size: ${file.size} bytes`);
-      console.log();
+      console.info(`File: ${path}`);
+      console.info(`  MIME type: ${file.type || 'unknown'}`);
+      console.info(`  Size: ${file.size} bytes`);
+      console.info();
     } catch (error) {
-      console.log(`  ❌ Error reading ${path}: ${error instanceof Error ? error.message : String(error)}`);
+      console.info(`  ❌ Error reading ${path}: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 }
@@ -37,26 +37,26 @@ async function example1_BasicMimeTypes() {
  * Example 2: Common file types
  */
 async function example2_CommonFileTypes() {
-  console.log('=== Example 2: Common File Types ===\n');
+  console.info('=== Example 2: Common File Types ===\n');
 
   // Create test files with different extensions
   const testFiles = [
     { path: '/tmp/test.json', content: '{"test": true}', expectedType: 'application/json' },
     { path: '/tmp/test.html', content: '<html><body>Hello</body></html>', expectedType: 'text/html' },
     { path: '/tmp/test.txt', content: 'Hello, World!', expectedType: 'text/plain' },
-    { path: '/tmp/test.js', content: 'console.log("Hello");', expectedType: 'application/javascript' },
-    { path: '/tmp/test.ts', content: 'console.log("Hello");', expectedType: 'application/typescript' },
+    { path: '/tmp/test.js', content: 'console.info("Hello");', expectedType: 'application/javascript' },
+    { path: '/tmp/test.ts', content: 'console.info("Hello");', expectedType: 'application/typescript' },
   ];
 
   for (const { path, content, expectedType } of testFiles) {
     await Bun.write(path, content);
     const file = Bun.file(path);
 
-    console.log(`File: ${path}`);
-    console.log(`  Detected: ${file.type || 'unknown'}`);
-    console.log(`  Expected: ${expectedType}`);
-    console.log(`  Match: ${file.type === expectedType ? '✅' : '❌'}`);
-    console.log();
+    console.info(`File: ${path}`);
+    console.info(`  Detected: ${file.type || 'unknown'}`);
+    console.info(`  Expected: ${expectedType}`);
+    console.info(`  Match: ${file.type === expectedType ? '✅' : '❌'}`);
+    console.info();
   }
 }
 
@@ -64,7 +64,7 @@ async function example2_CommonFileTypes() {
  * Example 3: MIME type-based file processing
  */
 async function example3_MimeTypeProcessing() {
-  console.log('=== Example 3: MIME Type-Based Processing ===\n');
+  console.info('=== Example 3: MIME Type-Based Processing ===\n');
 
   class FileProcessor {
     async process(file: BunFile): Promise<string> {
@@ -99,19 +99,19 @@ async function example3_MimeTypeProcessing() {
     try {
       const file = Bun.file(path);
       const result = await processor.process(file);
-      console.log(`${path}: ${result}`);
+      console.info(`${path}: ${result}`);
     } catch (error) {
-      console.log(`  ❌ Error: ${error instanceof Error ? error.message : String(error)}`);
+      console.info(`  ❌ Error: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-  console.log();
+  console.info();
 }
 
 /**
  * Example 4: MIME type validation
  */
 async function example4_MimeTypeValidation() {
-  console.log('=== Example 4: MIME Type Validation ===\n');
+  console.info('=== Example 4: MIME Type Validation ===\n');
 
   function validateMimeType(file: BunFile, allowedTypes: string[]): boolean {
     const mimeType = file.type || 'application/octet-stream';
@@ -121,23 +121,23 @@ async function example4_MimeTypeValidation() {
   const jsonFile = Bun.file('./package.json');
   const mdFile = Bun.file('./README.md');
 
-  console.log('JSON file validation:');
-  console.log(`  Type: ${jsonFile.type}`);
-  console.log(`  Allowed: ['json', 'text']`);
-  console.log(`  Valid: ${validateMimeType(jsonFile, ['json', 'text']) ? '✅' : '❌'}`);
+  console.info('JSON file validation:');
+  console.info(`  Type: ${jsonFile.type}`);
+  console.info(`  Allowed: ['json', 'text']`);
+  console.info(`  Valid: ${validateMimeType(jsonFile, ['json', 'text']) ? '✅' : '❌'}`);
 
-  console.log('\nMarkdown file validation:');
-  console.log(`  Type: ${mdFile.type || 'unknown'}`);
-  console.log(`  Allowed: ['text', 'markdown']`);
-  console.log(`  Valid: ${validateMimeType(mdFile, ['text', 'markdown']) ? '✅' : '❌'}`);
-  console.log();
+  console.info('\nMarkdown file validation:');
+  console.info(`  Type: ${mdFile.type || 'unknown'}`);
+  console.info(`  Allowed: ['text', 'markdown']`);
+  console.info(`  Valid: ${validateMimeType(mdFile, ['text', 'markdown']) ? '✅' : '❌'}`);
+  console.info();
 }
 
 /**
  * Example 5: File type categorization
  */
 async function example5_FileCategorization() {
-  console.log('=== Example 5: File Type Categorization ===\n');
+  console.info('=== Example 5: File Type Categorization ===\n');
 
   function categorizeFile(file: BunFile): string {
     const mimeType = file.type || 'application/octet-stream';
@@ -169,12 +169,12 @@ async function example5_FileCategorization() {
     try {
       const file = Bun.file(path);
       const category = categorizeFile(file);
-      console.log(`${path}:`);
-      console.log(`  MIME: ${file.type || 'unknown'}`);
-      console.log(`  Category: ${category}`);
-      console.log();
+      console.info(`${path}:`);
+      console.info(`  MIME: ${file.type || 'unknown'}`);
+      console.info(`  Category: ${category}`);
+      console.info();
     } catch (error) {
-      console.log(`  ❌ Error: ${error instanceof Error ? error.message : String(error)}`);
+      console.info(`  ❌ Error: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 }
@@ -183,7 +183,7 @@ async function example5_FileCategorization() {
  * Example 6: Content-Type header generation
  */
 async function example6_ContentTypeHeaders() {
-  console.log('=== Example 6: Content-Type Header Generation ===\n');
+  console.info('=== Example 6: Content-Type Header Generation ===\n');
 
   function createResponse(file: BunFile, content: string | Uint8Array): Response {
     const contentType = file.type || 'application/octet-stream';
@@ -200,17 +200,17 @@ async function example6_ContentTypeHeaders() {
   const jsonContent = await jsonFile.text();
   const jsonResponse = createResponse(jsonFile, jsonContent);
 
-  console.log('JSON file response:');
-  console.log(`  Content-Type: ${jsonResponse.headers.get('Content-Type')}`);
-  console.log(`  Content-Length: ${jsonResponse.headers.get('Content-Length')}`);
-  console.log();
+  console.info('JSON file response:');
+  console.info(`  Content-Type: ${jsonResponse.headers.get('Content-Type')}`);
+  console.info(`  Content-Length: ${jsonResponse.headers.get('Content-Length')}`);
+  console.info();
 }
 
 /**
  * Example 7: MIME type mapping and extension detection
  */
 async function example7_MimeTypeMapping() {
-  console.log('=== Example 7: MIME Type Mapping ===\n');
+  console.info('=== Example 7: MIME Type Mapping ===\n');
 
   // Common MIME type mappings
   const mimeTypeMap: Record<string, string> = {
@@ -239,12 +239,12 @@ async function example7_MimeTypeMapping() {
     try {
       const file = Bun.file(path);
       const description = getFileTypeDescription(file);
-      console.log(`${path}:`);
-      console.log(`  MIME: ${file.type || 'unknown'}`);
-      console.log(`  Description: ${description}`);
-      console.log();
+      console.info(`${path}:`);
+      console.info(`  MIME: ${file.type || 'unknown'}`);
+      console.info(`  Description: ${description}`);
+      console.info();
     } catch (error) {
-      console.log(`  ❌ Error: ${error instanceof Error ? error.message : String(error)}`);
+      console.info(`  ❌ Error: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 }
@@ -253,7 +253,7 @@ async function example7_MimeTypeMapping() {
  * Example 8: File filtering by MIME type
  */
 async function example8_FileFiltering() {
-  console.log('=== Example 8: File Filtering by MIME Type ===\n');
+  console.info('=== Example 8: File Filtering by MIME Type ===\n');
 
   async function filterFilesByType(
     filePaths: string[],
@@ -283,13 +283,13 @@ async function example8_FileFiltering() {
     './README.md',
   ];
 
-  console.log('Filtering for JSON/text files:');
+  console.info('Filtering for JSON/text files:');
   const jsonFiles = await filterFilesByType(testFiles, ['json', 'text']);
 
   for (const { path, type } of jsonFiles) {
-    console.log(`  ✅ ${path} (${type})`);
+    console.info(`  ✅ ${path} (${type})`);
   }
-  console.log();
+  console.info();
 }
 
 // Run all examples
@@ -304,12 +304,12 @@ async function main() {
     await example7_MimeTypeMapping();
     await example8_FileFiltering();
 
-    console.log('✅ All examples completed!');
-    console.log('\n💡 Key Points:');
-    console.log('  • file.type returns the MIME type as a string');
-    console.log('  • Returns null/undefined for unknown types');
-    console.log('  • Useful for content-type headers and file processing');
-    console.log('  • Based on file extension and content analysis');
+    console.info('✅ All examples completed!');
+    console.info('\n💡 Key Points:');
+    console.info('  • file.type returns the MIME type as a string');
+    console.info('  • Returns null/undefined for unknown types');
+    console.info('  • Useful for content-type headers and file processing');
+    console.info('  • Based on file extension and content analysis');
   } catch (error) {
     console.error('❌ Error:', error instanceof Error ? error.message : String(error));
     process.exit(1);

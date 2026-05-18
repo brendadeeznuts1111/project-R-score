@@ -55,29 +55,29 @@ function highlightCode(code: string): string {
 const styledConsole = {
   primary: (text: string) => {
     const theme = themeManager.getCurrentTheme();
-    console.log(`\x1b[38;2;${hexToRgb(theme.colors.primary)}m${text}\x1b[0m`);
+    console.info(`\x1b[38;2;${hexToRgb(theme.colors.primary)}m${text}\x1b[0m`);
   },
   success: (text: string) => {
     const theme = themeManager.getCurrentTheme();
-    console.log(`\x1b[38;2;${hexToRgb(theme.colors.success)}m${text}\x1b[0m`);
+    console.info(`\x1b[38;2;${hexToRgb(theme.colors.success)}m${text}\x1b[0m`);
   },
   warning: (text: string) => {
     const theme = themeManager.getCurrentTheme();
-    console.log(`\x1b[38;2;${hexToRgb(theme.colors.warning)}m${text}\x1b[0m`);
+    console.info(`\x1b[38;2;${hexToRgb(theme.colors.warning)}m${text}\x1b[0m`);
   },
   error: (text: string) => {
     const theme = themeManager.getCurrentTheme();
-    console.log(`\x1b[38;2;${hexToRgb(theme.colors.error)}m${text}\x1b[0m`);
+    console.info(`\x1b[38;2;${hexToRgb(theme.colors.error)}m${text}\x1b[0m`);
   },
   info: (text: string) => {
     const theme = themeManager.getCurrentTheme();
-    console.log(`\x1b[38;2;${hexToRgb(theme.colors.secondary)}m${text}\x1b[0m`);
+    console.info(`\x1b[38;2;${hexToRgb(theme.colors.secondary)}m${text}\x1b[0m`);
   },
 };
 
 export async function runInteractiveThemeDemo(): Promise<void> {
-  console.log("\n🎨 CRC32 Interactive Theme Demo");
-  console.log("═══════════════════════════════════════════════════════════\n");
+  console.info("\n🎨 CRC32 Interactive Theme Demo");
+  console.info("═══════════════════════════════════════════════════════════\n");
 
   styledConsole.info("Available Themes:");
   const themes = themeManager.getAllThemes();
@@ -111,8 +111,8 @@ if (!result.success) {
 }
 `;
 
-  console.log("\nHighlighted Code:");
-  console.log(highlightCode(sampleCode));
+  console.info("\nHighlighted Code:");
+  console.info(highlightCode(sampleCode));
 
   styledConsole.info("\n🎯 Theme Colors in Action:");
   styledConsole.success("✅ Hardware acceleration active");
@@ -151,12 +151,12 @@ if (!result.success) {
       value > 4000
         ? hexToRgb(theme.colors.success)
         : hexToRgb(theme.colors.primary);
-    console.log(
+    console.info(
       `${label.padEnd(18)} \x1b[38;2;${rgb}m[${bar}]\x1b[0m ${value}`,
     );
   });
 
-  console.log("\n✅ Theme demo complete!");
+  console.info("\n✅ Theme demo complete!");
 }
 
 if (import.meta.main) {

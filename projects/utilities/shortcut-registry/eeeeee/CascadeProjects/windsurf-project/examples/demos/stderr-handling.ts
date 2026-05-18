@@ -3,11 +3,11 @@
 // stderr-handling.ts - Advanced Stderr Management
 // Enterprise-grade stderr handling for revolutionary AI system
 
-console.log("🚀 Advanced Stderr Handling - Revolutionary AI System");
+console.info("🚀 Advanced Stderr Handling - Revolutionary AI System");
 
 // Basic stderr capture
 async function basicStderrCapture() {
-  console.log("\n🚨 Basic Stderr Capture:");
+  console.info("\n🚨 Basic Stderr Capture:");
   
   const proc = Bun.spawn(["sh", "-c", 'echo "🔒 Security Warning: Suspicious activity detected" >&2'], {
     stderr: "pipe"
@@ -15,9 +15,9 @@ async function basicStderrCapture() {
   
   const errors = await proc.stderr.text();
   if (errors) {
-    console.log("   Captured stderr:", errors.trim());
+    console.info("   Captured stderr:", errors.trim());
   } else {
-    console.log("   No stderr output");
+    console.info("   No stderr output");
   }
   
   await proc.exited;
@@ -25,7 +25,7 @@ async function basicStderrCapture() {
 
 // Combined stdout and stderr handling
 async function combinedOutputHandling() {
-  console.log("\n📊 Combined Output Handling:");
+  console.info("\n📊 Combined Output Handling:");
   
   const proc = Bun.spawn(["sh", "-c", `
     echo "🧠 AI Model: 94.51% accuracy"
@@ -42,15 +42,15 @@ async function combinedOutputHandling() {
     proc.stderr.text()
   ]);
   
-  console.log("   Stdout output:");
+  console.info("   Stdout output:");
   stdout.trim().split('\n').forEach(line => {
-    if (line.trim()) console.log(`     ${line}`);
+    if (line.trim()) console.info(`     ${line}`);
   });
   
   if (stderr.trim()) {
-    console.log("   Stderr output:");
+    console.info("   Stderr output:");
     stderr.trim().split('\n').forEach(line => {
-      if (line.trim()) console.log(`     🚨 ${line}`);
+      if (line.trim()) console.info(`     🚨 ${line}`);
     });
   }
   
@@ -59,7 +59,7 @@ async function combinedOutputHandling() {
 
 // Error classification and handling
 async function errorClassification() {
-  console.log("\n📋 Error Classification:");
+  console.info("\n📋 Error Classification:");
   
   const proc = Bun.spawn(["sh", "-c", `
     echo "ERROR: Model accuracy dropped below threshold" >&2
@@ -94,8 +94,8 @@ async function errorClassification() {
   
   Object.entries(classified).forEach(([level, messages]) => {
     if (messages.length > 0) {
-      console.log(`   ${level.toUpperCase()}:`);
-      messages.forEach(msg => console.log(`     ${msg}`));
+      console.info(`   ${level.toUpperCase()}:`);
+      messages.forEach(msg => console.info(`     ${msg}`));
     }
   });
   
@@ -104,7 +104,7 @@ async function errorClassification() {
 
 // Real-time stderr streaming
 async function realtimeStderrStreaming() {
-  console.log("\n⚡ Real-time Stderr Streaming:");
+  console.info("\n⚡ Real-time Stderr Streaming:");
   
   const proc = Bun.spawn(["sh", "-c", `
     for i in {1..3}; do
@@ -115,7 +115,7 @@ async function realtimeStderrStreaming() {
     stderr: "pipe"
   });
   
-  console.log("   Streaming stderr in real-time:");
+  console.info("   Streaming stderr in real-time:");
   
   const reader = proc.stderr.getReader();
   const decoder = new TextDecoder();
@@ -129,12 +129,12 @@ async function realtimeStderrStreaming() {
   }
   
   await proc.exited;
-  console.log("   ✅ Streaming complete");
+  console.info("   ✅ Streaming complete");
 }
 
 // AI system error simulation
 async function aiSystemErrorSimulation() {
-  console.log("\n🤖 AI System Error Simulation:");
+  console.info("\n🤖 AI System Error Simulation:");
   
   const proc = Bun.spawn(["sh", "-c", `
     echo "🧠 Enhanced AI Model Status: OPERATIONAL"
@@ -153,21 +153,21 @@ async function aiSystemErrorSimulation() {
     proc.stderr.text()
   ]);
   
-  console.log("   System Output:");
+  console.info("   System Output:");
   stdout.trim().split('\n').forEach(line => {
-    if (line.trim()) console.log(`     ${line}`);
+    if (line.trim()) console.info(`     ${line}`);
   });
   
   if (stderr.trim()) {
-    console.log("   System Errors & Warnings:");
+    console.info("   System Errors & Warnings:");
     stderr.trim().split('\n').forEach(line => {
       if (line.trim()) {
         if (line.includes('CRITICAL')) {
-          console.log(`     🚨 ${line}`);
+          console.info(`     🚨 ${line}`);
         } else if (line.includes('ERROR')) {
-          console.log(`     ❌ ${line}`);
+          console.info(`     ❌ ${line}`);
         } else if (line.includes('WARN')) {
-          console.log(`     ⚠️ ${line}`);
+          console.info(`     ⚠️ ${line}`);
         }
       }
     });
@@ -178,7 +178,7 @@ async function aiSystemErrorSimulation() {
 
 // Error logging and monitoring
 async function errorLoggingAndMonitoring() {
-  console.log("\n📊 Error Logging and Monitoring:");
+  console.info("\n📊 Error Logging and Monitoring:");
   
   const proc = Bun.spawn(["sh", "-c", `
     echo "$(date): [ERROR] AI Model timeout detected" >&2
@@ -191,9 +191,9 @@ async function errorLoggingAndMonitoring() {
   const errors = await proc.stderr.text();
   const errorLines = errors.trim().split('\n');
   
-  console.log("   Error Log:");
+  console.info("   Error Log:");
   errorLines.forEach((line, index) => {
-    console.log(`     ${index + 1}. ${line.trim()}`);
+    console.info(`     ${index + 1}. ${line.trim()}`);
   });
   
   // Analyze error patterns
@@ -203,10 +203,10 @@ async function errorLoggingAndMonitoring() {
     INFO: errorLines.filter(line => line.includes('[INFO]')).length
   };
   
-  console.log("   Error Summary:");
+  console.info("   Error Summary:");
   Object.entries(errorTypes).forEach(([type, count]) => {
     if (count > 0) {
-      console.log(`     ${type}: ${count} occurrences`);
+      console.info(`     ${type}: ${count} occurrences`);
     }
   });
   
@@ -215,7 +215,7 @@ async function errorLoggingAndMonitoring() {
 
 // Performance impact of stderr handling
 async function stderrPerformanceImpact() {
-  console.log("\n⚡ Stderr Performance Impact:");
+  console.info("\n⚡ Stderr Performance Impact:");
   
   // Test without stderr piping
   const start1 = performance.now();
@@ -232,14 +232,14 @@ async function stderrPerformanceImpact() {
   await proc2.exited;
   const time2 = performance.now() - start2;
   
-  console.log(`   Without stderr piping: ${time1.toFixed(2)}ms`);
-  console.log(`   With stderr piping: ${time2.toFixed(2)}ms`);
-  console.log(`   Performance overhead: ${(time2 - time1).toFixed(2)}ms`);
+  console.info(`   Without stderr piping: ${time1.toFixed(2)}ms`);
+  console.info(`   With stderr piping: ${time2.toFixed(2)}ms`);
+  console.info(`   Performance overhead: ${(time2 - time1).toFixed(2)}ms`);
 }
 
 // Security system error handling
 async function securitySystemErrorHandling() {
-  console.log("\n🔒 Security System Error Handling:");
+  console.info("\n🔒 Security System Error Handling:");
   
   const proc = Bun.spawn(["sh", "-c", `
     echo "🛡️ Security Suite Status: ACTIVE"
@@ -258,21 +258,21 @@ async function securitySystemErrorHandling() {
     proc.stderr.text()
   ]);
   
-  console.log("   Security Status:");
+  console.info("   Security Status:");
   stdout.trim().split('\n').forEach(line => {
-    if (line.trim()) console.log(`     ${line}`);
+    if (line.trim()) console.info(`     ${line}`);
   });
   
   if (stderr.trim()) {
-    console.log("   Security Alerts:");
+    console.info("   Security Alerts:");
     stderr.trim().split('\n').forEach(line => {
       if (line.trim()) {
         if (line.includes('CRITICAL')) {
-          console.log(`     🚨 ${line}`);
+          console.info(`     🚨 ${line}`);
         } else if (line.includes('ALERT')) {
-          console.log(`     🚨 ${line}`);
+          console.info(`     🚨 ${line}`);
         } else if (line.includes('WARNING')) {
-          console.log(`     ⚠️ ${line}`);
+          console.info(`     ⚠️ ${line}`);
         }
       }
     });
@@ -283,8 +283,8 @@ async function securitySystemErrorHandling() {
 
 // Main demonstration
 async function demonstrateStderrHandling() {
-  console.log("🚀 Revolutionary AI System - Advanced Stderr Handling");
-  console.log("=" .repeat(60));
+  console.info("🚀 Revolutionary AI System - Advanced Stderr Handling");
+  console.info("=" .repeat(60));
   
   try {
     await basicStderrCapture();
@@ -296,8 +296,8 @@ async function demonstrateStderrHandling() {
     await stderrPerformanceImpact();
     await securitySystemErrorHandling();
     
-    console.log("\n🎉 Stderr Handling Demo Complete!");
-    console.log("💚 All stderr operations executed successfully!");
+    console.info("\n🎉 Stderr Handling Demo Complete!");
+    console.info("💚 All stderr operations executed successfully!");
     
   } catch (error) {
     console.error("❌ Error in stderr demonstration:", error instanceof Error ? error.message : String(error));

@@ -56,7 +56,7 @@ async function main() {
     process.exit(bench.exitCode || 1);
   }
 
-  console.log(`[validate:demo][pass] id=${id}`);
+  console.info(`[validate:demo][pass] id=${id}`);
 }
 
 await main();

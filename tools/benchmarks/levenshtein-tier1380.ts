@@ -247,7 +247,7 @@ export class LevenshteinEngine {
       this.initializeDatabase();
     }
 
-    console.log(`🚀 Levenshtein Engine v${BUN_LEVENSHTEIN_VERSION} initialized`);
+    console.info(`🚀 Levenshtein Engine v${BUN_LEVENSHTEIN_VERSION} initialized`);
   }
 
   private initializeDatabase(): void {
@@ -853,7 +853,7 @@ if (import.meta.main) {
     const engine = new LevenshteinEngine();
     const result = engine.calculateSimilarity(args[1], args[2]);
     
-    console.log(`
+    console.info(`
 ┌─────────────────────────────────────────────┐
 │ Levenshtein Similarity Result              │
 ├─────────────────────────────────────────────┤
@@ -874,9 +874,9 @@ if (import.meta.main) {
       performanceConfig: BUN_PERFORMANCE_CONFIGS.benchmark
     });
     
-    console.log(`Running benchmark: ${iterations} iterations, ${length} chars`);
+    console.info(`Running benchmark: ${iterations} iterations, ${length} chars`);
     engine.benchmark(iterations, length).then(result => {
-      console.log(`
+      console.info(`
 ┌─────────────────────────────────────────────┐
 │ Benchmark Results                          │
 ├─────────────────────────────────────────────┤
@@ -891,7 +891,7 @@ if (import.meta.main) {
       `);
     });
   } else {
-    console.log(`
+    console.info(`
 Usage:
   bun benchmarks/levenshtein-tier1380.ts compare <string1> <string2>
   bun benchmarks/levenshtein-tier1380.ts benchmark [iterations] [length]

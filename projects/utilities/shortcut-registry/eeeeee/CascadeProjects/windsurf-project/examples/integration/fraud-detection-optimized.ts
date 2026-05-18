@@ -5,8 +5,8 @@
 
 import { fetch } from "bun";
 
-console.log("🛡️ Optimized Fraud Detection System");
-console.log("=" .repeat(45));
+console.info("🛡️ Optimized Fraud Detection System");
+console.info("=" .repeat(45));
 
 // Configuration for production fraud detection system
 interface FraudDetectionConfig {
@@ -40,7 +40,7 @@ class OptimizedFraudDetection {
   };
 
   async initialize() {
-    console.log("🔗 Initializing optimized fraud detection...");
+    console.info("🔗 Initializing optimized fraud detection...");
     
     // Set high concurrency for fraud detection workload
     process.env.BUN_CONFIG_MAX_HTTP_REQUESTS = String(config.maxConcurrent);
@@ -52,7 +52,7 @@ class OptimizedFraudDetection {
     );
     const preconnectTime = performance.now() - preconnectStart;
     
-    console.log(`✅ Preconnected to ${config.preconnectEndpoints.length} services in ${preconnectTime.toFixed(2)}ms`);
+    console.info(`✅ Preconnected to ${config.preconnectEndpoints.length} services in ${preconnectTime.toFixed(2)}ms`);
     this.metrics.preconnectHits = config.preconnectEndpoints.length;
   }
 
@@ -94,7 +94,7 @@ class OptimizedFraudDetection {
 
   // High-throughput batch processing
   async batchAnalyze(transactions: any[]) {
-    console.log(`⚡ Processing ${transactions.length} transactions in parallel...`);
+    console.info(`⚡ Processing ${transactions.length} transactions in parallel...`);
     
     const batchSize = Math.min(config.maxConcurrent, transactions.length);
     const results = [];
@@ -102,7 +102,7 @@ class OptimizedFraudDetection {
     // Process in batches to respect concurrency limits
     for (let i = 0; i < transactions.length; i += batchSize) {
       const batch = transactions.slice(i, i + batchSize);
-      console.log(`Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(transactions.length / batchSize)}...`);
+      console.info(`Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(transactions.length / batchSize)}...`);
       
       const batchPromises = batch.map(transaction => 
         this.analyzeTransaction(transaction)
@@ -116,7 +116,7 @@ class OptimizedFraudDetection {
     const fraudulentCount = results.filter(r => r && 'isFraudulent' in r && r.isFraudulent).length;
     const avgTime = results.reduce((sum, r) => sum + (r && 'analysisTime' in r ? parseFloat(r.analysisTime || '0') : 0), 0) / results.length;
     
-    console.log(`✅ Batch complete: ${fraudulentCount}/${results.length} fraudulent, avg time: ${avgTime.toFixed(2)}ms`);
+    console.info(`✅ Batch complete: ${fraudulentCount}/${results.length} fraudulent, avg time: ${avgTime.toFixed(2)}ms`);
     
     return results;
   }
@@ -218,7 +218,7 @@ class OptimizedFraudDetection {
 
 // Simulate real-time fraud detection workload
 async function simulateFraudDetectionWorkload() {
-  console.log("🎯 Simulating real-time fraud detection workload...");
+  console.info("🎯 Simulating real-time fraud detection workload...");
   
   const fraudDetector = new OptimizedFraudDetection();
   await fraudDetector.initialize();
@@ -235,13 +235,13 @@ async function simulateFraudDetectionWorkload() {
   });
   
   // Test single transaction analysis
-  console.log("\n🔍 Testing single transaction analysis...");
+  console.info("\n🔍 Testing single transaction analysis...");
   const singleTransaction = generateTransaction(1);
   const singleResult = await fraudDetector.analyzeTransaction(singleTransaction);
-  console.log("Single transaction result:", singleResult);
+  console.info("Single transaction result:", singleResult);
   
   // Test high-throughput batch processing
-  console.log("\n⚡ Testing high-throughput batch processing...");
+  console.info("\n⚡ Testing high-throughput batch processing...");
   const batchSize = 100;
   const transactions = Array.from({ length: batchSize }, (_, i) => generateTransaction(i));
   
@@ -252,28 +252,28 @@ async function simulateFraudDetectionWorkload() {
   const fraudulentCount = batchResults.filter(r => r.isFraudulent).length;
   const throughput = (batchSize / batchTime) * 1000;
   
-  console.log(`\n📊 Batch Performance Results:`);
-  console.log(`   Processed: ${batchSize} transactions`);
-  console.log(`   Time: ${batchTime.toFixed(2)}ms`);
-  console.log(`   Throughput: ${throughput.toFixed(0)} transactions/second`);
-  console.log(`   Fraudulent: ${fraudulentCount} (${((fraudulentCount / batchSize) * 100).toFixed(1)}%)`);
+  console.info(`\n📊 Batch Performance Results:`);
+  console.info(`   Processed: ${batchSize} transactions`);
+  console.info(`   Time: ${batchTime.toFixed(2)}ms`);
+  console.info(`   Throughput: ${throughput.toFixed(0)} transactions/second`);
+  console.info(`   Fraudulent: ${fraudulentCount} (${((fraudulentCount / batchSize) * 100).toFixed(1)}%)`);
   
   // Show system metrics
   const metrics = fraudDetector.getMetrics();
-  console.log(`\n📈 System Metrics:`);
-  console.log(`   Total checks: ${metrics.totalChecks}`);
-  console.log(`   Fraud detected: ${metrics.fraudDetected}`);
-  console.log(`   Average response time: ${metrics.avgResponseTime.toFixed(2)}ms`);
-  console.log(`   Preconnect hits: ${metrics.preconnectHits}`);
-  console.log(`   Fraud rate: ${metrics.fraudRate.toFixed(2)}%`);
+  console.info(`\n📈 System Metrics:`);
+  console.info(`   Total checks: ${metrics.totalChecks}`);
+  console.info(`   Fraud detected: ${metrics.fraudDetected}`);
+  console.info(`   Average response time: ${metrics.avgResponseTime.toFixed(2)}ms`);
+  console.info(`   Preconnect hits: ${metrics.preconnectHits}`);
+  console.info(`   Fraud rate: ${metrics.fraudRate.toFixed(2)}%`);
   
   return { batchResults, metrics, throughput };
 }
 
 // Performance comparison demo
 async function performanceComparison() {
-  console.log("\n🏁 Performance Comparison: Optimized vs Standard");
-  console.log("-".repeat(55));
+  console.info("\n🏁 Performance Comparison: Optimized vs Standard");
+  console.info("-".repeat(55));
   
   const testTransactions = Array.from({ length: 50 }, (_, i) => ({
     id: `perf_test_${i}`,
@@ -286,7 +286,7 @@ async function performanceComparison() {
   }));
   
   // Test optimized version
-  console.log("Testing optimized version...");
+  console.info("Testing optimized version...");
   const optimizedDetector = new OptimizedFraudDetection();
   await optimizedDetector.initialize();
   
@@ -295,7 +295,7 @@ async function performanceComparison() {
   const optimizedTime = performance.now() - optimizedStart;
   
   // Test standard version (without preconnect)
-  console.log("Testing standard version...");
+  console.info("Testing standard version...");
   const standardStart = performance.now();
   // Simulate standard fetch without optimization
   await new Promise(resolve => setTimeout(resolve, optimizedTime * 2)); // Simulate slower performance
@@ -303,21 +303,21 @@ async function performanceComparison() {
   
   const improvement = ((standardTime - optimizedTime) / standardTime) * 100;
   
-  console.log(`\n📊 Performance Comparison Results:`);
-  console.log(`   Optimized: ${optimizedTime.toFixed(2)}ms`);
-  console.log(`   Standard: ${standardTime.toFixed(2)}ms`);
-  console.log(`   Improvement: ${improvement.toFixed(1)}% faster`);
-  console.log(`   Throughput gain: ${(testTransactions.length / optimizedTime * 1000).toFixed(0)} vs ${(testTransactions.length / standardTime * 1000).toFixed(0)} tx/sec`);
+  console.info(`\n📊 Performance Comparison Results:`);
+  console.info(`   Optimized: ${optimizedTime.toFixed(2)}ms`);
+  console.info(`   Standard: ${standardTime.toFixed(2)}ms`);
+  console.info(`   Improvement: ${improvement.toFixed(1)}% faster`);
+  console.info(`   Throughput gain: ${(testTransactions.length / optimizedTime * 1000).toFixed(0)} vs ${(testTransactions.length / standardTime * 1000).toFixed(0)} tx/sec`);
 }
 
 // Main demonstration
 async function main() {
   try {
-    console.log(`🔧 Configuration:`);
-    console.log(`   Max concurrent: ${config.maxConcurrent}`);
-    console.log(`   Preconnect endpoints: ${config.preconnectEndpoints.length}`);
-    console.log(`   API timeout: ${config.apiTimeout}ms`);
-    console.log("");
+    console.info(`🔧 Configuration:`);
+    console.info(`   Max concurrent: ${config.maxConcurrent}`);
+    console.info(`   Preconnect endpoints: ${config.preconnectEndpoints.length}`);
+    console.info(`   API timeout: ${config.apiTimeout}ms`);
+    console.info("");
     
     // Run fraud detection workload
     const workloadResults = await simulateFraudDetectionWorkload();
@@ -325,13 +325,13 @@ async function main() {
     // Run performance comparison
     await performanceComparison();
     
-    console.log("\n🎯 Fraud Detection Optimization Complete!");
-    console.log("💡 Key Benefits:");
-    console.log("   • 80-200ms latency reduction with preconnect");
-    console.log("   • 95%+ connection reuse for same-origin requests");
-    console.log("   • High-throughput batch processing capability");
-    console.log("   • Real-time fraud detection with sub-100ms response");
-    console.log("   • Automatic connection pooling and scaling");
+    console.info("\n🎯 Fraud Detection Optimization Complete!");
+    console.info("💡 Key Benefits:");
+    console.info("   • 80-200ms latency reduction with preconnect");
+    console.info("   • 95%+ connection reuse for same-origin requests");
+    console.info("   • High-throughput batch processing capability");
+    console.info("   • Real-time fraud detection with sub-100ms response");
+    console.info("   • Automatic connection pooling and scaling");
     
   } catch (error) {
     console.error("❌ Fraud detection demo failed:", error);

@@ -11,11 +11,11 @@ class DeploymentStatusReport {
   private apiToken = 'V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC';
 
   async generateReport(): Promise<void> {
-    console.log("📊 FactoryWager Deployment Status Report");
-    console.log("=======================================");
-    console.log(`Generated: ${new Date().toISOString()}`);
-    console.log(`Account ID: ${this.accountId}`);
-    console.log(`Zone ID: ${this.zoneId}`);
+    console.info("📊 FactoryWager Deployment Status Report");
+    console.info("=======================================");
+    console.info(`Generated: ${new Date().toISOString()}`);
+    console.info(`Account ID: ${this.accountId}`);
+    console.info(`Zone ID: ${this.zoneId}`);
 
     // Check each component
     await this.checkDNSStatus();
@@ -26,31 +26,31 @@ class DeploymentStatusReport {
   }
 
   private async checkDNSStatus(): Promise<void> {
-    console.log("\n🌐 DNS Configuration Status:");
+    console.info("\n🌐 DNS Configuration Status:");
 
     try {
       const dnsRecord = await Bun.$`curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${this.zoneId}/dns_records/90c9452d7f472babec42fdc627c2ee06" -H "Authorization: Bearer ${this.apiToken}" -H "Content-Type: application/json" | bunx jq -r '.result | {name, type, content, proxied}'`.text();
 
-      console.log("✅ DNS Record Configured:");
-      console.log(`   ${dnsRecord}`);
+      console.info("✅ DNS Record Configured:");
+      console.info(`   ${dnsRecord}`);
 
       // Test resolution
-      console.log("\n🔍 DNS Resolution Test:");
+      console.info("\n🔍 DNS Resolution Test:");
       const resolution = await Bun.$`bunx dig +short ${this.registryDomain} @8.8.8.8`.text().catch(() => '');
 
       if (resolution.trim()) {
-        console.log(`✅ Resolves to: ${resolution.trim()}`);
+        console.info(`✅ Resolves to: ${resolution.trim()}`);
       } else {
-        console.log("⏳ DNS propagation in progress (may take 5-60 minutes)");
+        console.info("⏳ DNS propagation in progress (may take 5-60 minutes)");
       }
 
     } catch (error) {
-      console.log("❌ DNS check failed:", (error as Error).message);
+      console.info("❌ DNS check failed:", (error as Error).message);
     }
   }
 
   private async checkAPIPermissions(): Promise<void> {
-    console.log("\n🔐 API Token Permissions:");
+    console.info("\n🔐 API Token Permissions:");
 
     const permissions = [
       { service: 'Zone:Read', endpoint: `/zones/${this.zoneId}` },
@@ -65,83 +65,83 @@ class DeploymentStatusReport {
         const result = await Bun.$`curl -s -X GET "https://api.cloudflare.com/client/v4${perm.endpoint}" -H "Authorization: Bearer ${this.apiToken}" -H "Content-Type: application/json" | bunx jq -r '.success'`.text();
 
         if (result.trim() === 'true') {
-          console.log(`✅ ${perm.service}`);
+          console.info(`✅ ${perm.service}`);
         } else {
-          console.log(`❌ ${perm.service} - Permission missing`);
+          console.info(`❌ ${perm.service} - Permission missing`);
         }
       } catch {
-        console.log(`❌ ${perm.service} - Access denied`);
+        console.info(`❌ ${perm.service} - Access denied`);
       }
     }
   }
 
   private async checkWorkerStatus(): Promise<void> {
-    console.log("\n🏗️ Worker Status:");
+    console.info("\n🏗️ Worker Status:");
 
     try {
       const workers = await Bun.$`curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/${this.accountId}/workers/services" -H "Authorization: Bearer ${this.apiToken}" -H "Content-Type: application/json" | bunx jq '.result[] | {name, script_created_at}'`.text();
 
       if (workers.trim()) {
-        console.log("✅ Workers found:");
-        console.log(`   ${workers}`);
+        console.info("✅ Workers found:");
+        console.info(`   ${workers}`);
       } else {
-        console.log("⏳ No workers deployed yet");
+        console.info("⏳ No workers deployed yet");
       }
     } catch {
-      console.log("❌ Cannot access Workers API - permission needed");
+      console.info("❌ Cannot access Workers API - permission needed");
     }
   }
 
   private async checkR2Status(): Promise<void> {
-    console.log("\n📦 R2 Storage Status:");
+    console.info("\n📦 R2 Storage Status:");
 
     try {
       const buckets = await Bun.$`curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/${this.accountId}/r2/buckets" -H "Authorization: Bearer ${this.apiToken}" -H "Content-Type: application/json" | bunx jq '.result[] | .name'.text();
 
       if (buckets.trim()) {
-        console.log("✅ R2 Buckets found:");
-        console.log("   " + buckets.trim());
+        console.info("✅ R2 Buckets found:");
+        console.info("   " + buckets.trim());
       } else {
-        console.log("⏳ No R2 buckets created yet");
+        console.info("⏳ No R2 buckets created yet");
       }
     } catch {
-      console.log("❌ Cannot access R2 API - permission needed");
+      console.info("❌ Cannot access R2 API - permission needed");
     }
   }
 
   private async generateNextSteps(): Promise<void> {
-    console.log("\n🚀 Next Steps:");
+    console.info("\n🚀 Next Steps:");
 
-    console.log("\n1. 📋 Update API Token Permissions:");
-    console.log("   Visit: https://dash.cloudflare.com/profile/api-tokens");
-    console.log("   Add permissions:");
-    console.log("   - Zone:Zone:Read");
-    console.log("   - Zone:Zone:Edit");
-    console.log("   - Zone:DNS:Edit");
-    console.log("   - Account:Account:Read");
-    console.log("   - User:User Details::Read");
-    console.log("   - Worker:Script:Edit");
-    console.log("   - Worker:Script:Read");
-    console.log("   - R2:Bucket:Edit");
-    console.log("   - R2:Bucket:Read");
+    console.info("\n1. 📋 Update API Token Permissions:");
+    console.info("   Visit: https://dash.cloudflare.com/profile/api-tokens");
+    console.info("   Add permissions:");
+    console.info("   - Zone:Zone:Read");
+    console.info("   - Zone:Zone:Edit");
+    console.info("   - Zone:DNS:Edit");
+    console.info("   - Account:Account:Read");
+    console.info("   - User:User Details::Read");
+    console.info("   - Worker:Script:Edit");
+    console.info("   - Worker:Script:Read");
+    console.info("   - R2:Bucket:Edit");
+    console.info("   - R2:Bucket:Read");
 
-    console.log("\n2. 🏗️ Deploy Worker:");
-    console.log("   CLOUDFLARE_API_TOKEN=V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC bunx wrangler deploy");
+    console.info("\n2. 🏗️ Deploy Worker:");
+    console.info("   CLOUDFLARE_API_TOKEN=V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC bunx wrangler deploy");
 
-    console.log("\n3. 📦 Create R2 Buckets:");
-    console.log("   CLOUDFLARE_API_TOKEN=V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC bunx wrangler r2 bucket create factory-wager-registry");
-    console.log("   CLOUDFLARE_API_TOKEN=V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC bunx wrangler r2 bucket create factory-wager-artifacts");
+    console.info("\n3. 📦 Create R2 Buckets:");
+    console.info("   CLOUDFLARE_API_TOKEN=V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC bunx wrangler r2 bucket create factory-wager-registry");
+    console.info("   CLOUDFLARE_API_TOKEN=V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC bunx wrangler r2 bucket create factory-wager-artifacts");
 
-    console.log("\n4. 🌐 Update DNS to Worker:");
-    console.log("   After deployment, get worker URL and update CNAME");
+    console.info("\n4. 🌐 Update DNS to Worker:");
+    console.info("   After deployment, get worker URL and update CNAME");
 
-    console.log("\n5. ✅ Validate Deployment:");
-    console.log("   curl -I https://registry.factory-wager.co/health");
-    console.log("   bun run fw-bunx-dns-setup.ts --validate");
+    console.info("\n5. ✅ Validate Deployment:");
+    console.info("   curl -I https://registry.factory-wager.co/health");
+    console.info("   bun run fw-bunx-dns-setup.ts --validate");
 
-    console.log("\n📜 Automation Scripts Ready:");
-    console.log("   .factory-wager/quick-deploy.sh");
-    console.log("   .factory-wager/monitor.sh");
+    console.info("\n📜 Automation Scripts Ready:");
+    console.info("   .factory-wager/quick-deploy.sh");
+    console.info("   .factory-wager/monitor.sh");
 
     await this.createTokenUpdateScript();
   }
@@ -174,7 +174,7 @@ class DeploymentStatusReport {
     await Bun.write(Bun.file('./.factory-wager/update-token-permissions.sh'), script);
     await Bun.$`chmod +x .factory-wager/update-token-permissions.sh`.quiet();
 
-    console.log("💾 Created: .factory-wager/update-token-permissions.sh");
+    console.info("💾 Created: .factory-wager/update-token-permissions.sh");
   }
 }
 

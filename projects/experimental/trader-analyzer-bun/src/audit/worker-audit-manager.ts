@@ -45,11 +45,11 @@ export class WorkerAuditManager {
 		);
 
 		worker.addEventListener("open", () => {
-			console.log(`✅ Worker ${workerId} is ready`);
+			console.info(`✅ Worker ${workerId} is ready`);
 		});
 
 		worker.addEventListener("close", (event) => {
-			console.log(`👋 Worker ${workerId} closed (exit code: ${event.code})`);
+			console.info(`👋 Worker ${workerId} closed (exit code: ${event.code})`);
 			this.workers.delete(workerId);
 		});
 

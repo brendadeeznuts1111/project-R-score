@@ -286,7 +286,7 @@ function getComparativeMetrics(): ComparativeMetrics[] {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function printBenchmarkResult(result: BenchmarkResult): void {
-	console.log(`
+	console.info(`
 🔹 ${result.name}
    Iterations:    ${result.iterations.toLocaleString()}
    Total Time:    ${result.totalTime.toFixed(2)}ms
@@ -301,7 +301,7 @@ function printBenchmarkResult(result: BenchmarkResult): void {
 function printComparativeTable(): void {
 	const metrics = getComparativeMetrics();
 
-	console.log(`
+	console.info(`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                    THEORETICAL ARM64 vs x86_64 COMPARISON                    ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
@@ -314,10 +314,10 @@ function printComparativeTable(): void {
 		const x86 = m.x86_64Estimate.toFixed(2).padStart(8);
 		const speedup = `${m.speedup.toFixed(1)}x`.padStart(7);
 		const note = m.note.slice(0, 19).padEnd(19);
-		console.log(`║ ${name} │ ${arm64} │ ${x86} │ ${speedup} │ ${note} ║`);
+		console.info(`║ ${name} │ ${arm64} │ ${x86} │ ${speedup} │ ${note} ║`);
 	}
 
-	console.log(
+	console.info(
 		`╚══════════════════════════════════════════════════════════════════════════════╝`,
 	);
 }
@@ -371,7 +371,7 @@ function generateReport(results: BenchmarkResult[]): string {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function main() {
-	console.log(`
+	console.info(`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                    ARM64 PERFORMANCE BENCHMARK SUITE                         ║
 ║                    CCMP/NEON Optimization Validator v1.0                     ║
@@ -388,7 +388,7 @@ async function main() {
 		args[args.indexOf("-o") + 1] ||
 		"arm64-benchmark-report.md";
 
-	console.log("\n🏁 Running benchmarks...\n");
+	console.info("\n🏁 Running benchmarks...\n");
 
 	const results: BenchmarkResult[] = [];
 
@@ -401,8 +401,8 @@ async function main() {
 	results.push(await benchmarkMultiCondition());
 
 	// Print results
-	console.log("\n📊 BENCHMARK RESULTS");
-	console.log(
+	console.info("\n📊 BENCHMARK RESULTS");
+	console.info(
 		"═══════════════════════════════════════════════════════════════════════════════",
 	);
 
@@ -417,7 +417,7 @@ async function main() {
 	const totalOps = results.reduce((sum, r) => sum + r.opsPerSecond, 0);
 	const avgOps = totalOps / results.length;
 
-	console.log(`
+	console.info(`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                              BENCHMARK SUMMARY                               ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
@@ -433,12 +433,12 @@ async function main() {
 	if (outputReport) {
 		const report = generateReport(results);
 		await Bun.write(reportPath, report);
-		console.log(`📝 Report saved to: ${reportPath}`);
+		console.info(`📝 Report saved to: ${reportPath}`);
 	}
 
 	// ARM64 specific recommendations
 	if (IS_ARM64 && HAS_ARM64_OPTIMIZATIONS) {
-		console.log(`
+		console.info(`
 🚀 ARM64 OPTIMIZATION NOTES:
    • CCMP chains active: Compound booleans execute as single instruction streams
    • NEON SIMD active: Buffer operations use ldp/stp vector instructions
@@ -446,7 +446,7 @@ async function main() {
    • Branch prediction: Misprediction rate <1% for validated patterns
 `);
 	} else if (!IS_ARM64) {
-		console.log(`
+		console.info(`
 ⚠️  x86_64 LEGACY MODE:
    Consider deploying on Apple Silicon (M1/M2/M3) for:
    • 40% faster compound boolean evaluation

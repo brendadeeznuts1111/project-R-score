@@ -32,7 +32,7 @@ async function main(): Promise<void> {
   const output = run.stdout?.trim() || '{}';
   const parsed = JSON.parse(output);
 
-  console.log(
+  console.info(
     JSON.stringify(
       {
         mode: 'scratch-adapter',

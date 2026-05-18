@@ -82,10 +82,10 @@ async function benchmark() {
 
     // Output
     if (flags.has('-q') || flags.has('--quiet')) {
-      console.log(grade);
+      console.info(grade);
     } else if (flags.has('-j') || flags.has('--json')) {
       const perHeader = (bulk / 7).toFixed(0);
-      console.log(JSON.stringify({
+      console.info(JSON.stringify({
         grade,
         configVersion: cv,
         registryHash: rh,
@@ -97,7 +97,7 @@ async function benchmark() {
         platform: `${process.platform}/${process.arch}`
       }, null, 2));
     } else if (flags.has('-h') || flags.has('--help')) {
-      console.log(`proxy-grade - Proxy Validation Benchmark
+      console.info(`proxy-grade - Proxy Validation Benchmark
 Usage: bun grade [flags]
 
 Flags:
@@ -110,14 +110,14 @@ Examples:
   bun grade -q       # "A" or "B"
   bun grade -j       # JSON for CI`);
     } else {
-      console.log(`\n🏆 Proxy Validation: ${grade}\n${'─'.repeat(35)}`);
-      console.log(`  Config Version      ${cv.toFixed(1).padStart(10)} ns`);
-      console.log(`  Registry Hash       ${rh.toFixed(1).padStart(10)} ns`);
-      console.log(`  Bulk (7 headers)    ${bulk.toFixed(0).padStart(10)} ns`);
-      console.log(`  Per-header          ${(bulk / 7).toFixed(0).padStart(10)} ns`);
-      console.log(`  Checksum            ${cs.toFixed(1).padStart(10)} ns`);
-      console.log(`\n  Throughput           ${Math.floor(1e9 / bulk).toLocaleString()} req/sec`);
-      console.log(`  Bun ${Bun.version} on ${process.platform}/${process.arch}`);
+      console.info(`\n🏆 Proxy Validation: ${grade}\n${'─'.repeat(35)}`);
+      console.info(`  Config Version      ${cv.toFixed(1).padStart(10)} ns`);
+      console.info(`  Registry Hash       ${rh.toFixed(1).padStart(10)} ns`);
+      console.info(`  Bulk (7 headers)    ${bulk.toFixed(0).padStart(10)} ns`);
+      console.info(`  Per-header          ${(bulk / 7).toFixed(0).padStart(10)} ns`);
+      console.info(`  Checksum            ${cs.toFixed(1).padStart(10)} ns`);
+      console.info(`\n  Throughput           ${Math.floor(1e9 / bulk).toLocaleString()} req/sec`);
+      console.info(`  Bun ${Bun.version} on ${process.platform}/${process.arch}`);
     }
 
     return grade;

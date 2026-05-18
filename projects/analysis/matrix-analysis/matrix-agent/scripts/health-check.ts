@@ -153,10 +153,10 @@ async function main() {
     await appendLog(logEntry);
 
     const report = formatReport(checks);
-    console.log(report);
-    console.log(`\nMetrics:`);
-    console.log(`  Bun: ${metrics.bunVersion}`);
-    console.log(`  Platform: ${metrics.platform} (${metrics.arch})`);
+    console.info(report);
+    console.info(`\nMetrics:`);
+    console.info(`  Bun: ${metrics.bunVersion}`);
+    console.info(`  Platform: ${metrics.platform} (${metrics.arch})`);
 
     process.exit(failed > 0 ? 1 : 0);
   } catch (error) {

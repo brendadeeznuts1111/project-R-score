@@ -101,53 +101,53 @@ class TelemetryAnalyzer {
   }
 
   generateReport(): void {
-    console.log('🎯 TELEMETRY ANALYSIS REPORT');
-    console.log('='.repeat(50));
-    console.log(`📅 Timestamp: ${this.telemetry.timestamp}`);
-    console.log(`🏷️  Service: ${this.telemetry.service} v${this.telemetry.version}`);
-    console.log(`⏱️  Uptime: ${this.telemetry.uptime_seconds}s`);
-    console.log(`🌍 Region: ${this.telemetry.region}`);
-    console.log(`🔗 Status: ${this.telemetry.registry_status}`);
-    console.log(`🔒 Topology: ${this.telemetry.topology_verified ? 'VERIFIED' : 'UNVERIFIED'}`);
-    console.log('');
+    console.info('🎯 TELEMETRY ANALYSIS REPORT');
+    console.info('='.repeat(50));
+    console.info(`📅 Timestamp: ${this.telemetry.timestamp}`);
+    console.info(`🏷️  Service: ${this.telemetry.service} v${this.telemetry.version}`);
+    console.info(`⏱️  Uptime: ${this.telemetry.uptime_seconds}s`);
+    console.info(`🌍 Region: ${this.telemetry.region}`);
+    console.info(`🔗 Status: ${this.telemetry.registry_status}`);
+    console.info(`🔒 Topology: ${this.telemetry.topology_verified ? 'VERIFIED' : 'UNVERIFIED'}`);
+    console.info('');
 
     // Latency Analysis
     const latency = this.analyzeLatency();
-    console.log('⚡ LATENCY ANALYSIS');
-    console.log(`   P50: ${latency.p50.toFixed(3)}ms`);
-    console.log(`   P95: ${latency.p95.toFixed(3)}ms`);
-    console.log(`   P99: ${latency.p99.toFixed(3)}ms`);
-    console.log(`   Avg: ${latency.avg.toFixed(3)}ms`);
-    console.log(`   Outliers: ${latency.outliers.length} (${latency.outliers.map(o => o.toFixed(1)).join('ms, ')}ms)`);
-    console.log(`   Status: ${latency.status.toUpperCase()}`);
-    console.log('');
+    console.info('⚡ LATENCY ANALYSIS');
+    console.info(`   P50: ${latency.p50.toFixed(3)}ms`);
+    console.info(`   P95: ${latency.p95.toFixed(3)}ms`);
+    console.info(`   P99: ${latency.p99.toFixed(3)}ms`);
+    console.info(`   Avg: ${latency.avg.toFixed(3)}ms`);
+    console.info(`   Outliers: ${latency.outliers.length} (${latency.outliers.map(o => o.toFixed(1)).join('ms, ')}ms)`);
+    console.info(`   Status: ${latency.status.toUpperCase()}`);
+    console.info('');
 
     // Memory Analysis
     const memory = this.analyzeMemory();
-    console.log('💾 MEMORY ANALYSIS');
-    console.log(`   Initial: ${memory.initial.toFixed(1)}MB`);
-    console.log(`   Final: ${memory.final.toFixed(1)}MB`);
-    console.log(`   Growth: ${memory.growth.toFixed(1)}MB (${memory.growth > 0 ? '+' : ''}${memory.growthRate.toFixed(3)}MB/s)`);
-    console.log(`   Status: ${memory.status.toUpperCase()}`);
-    console.log('');
+    console.info('💾 MEMORY ANALYSIS');
+    console.info(`   Initial: ${memory.initial.toFixed(1)}MB`);
+    console.info(`   Final: ${memory.final.toFixed(1)}MB`);
+    console.info(`   Growth: ${memory.growth.toFixed(1)}MB (${memory.growth > 0 ? '+' : ''}${memory.growthRate.toFixed(3)}MB/s)`);
+    console.info(`   Status: ${memory.status.toUpperCase()}`);
+    console.info('');
 
     // Throughput Analysis
     const throughput = this.analyzeThroughput();
-    console.log('🚀 THROUGHPUT ANALYSIS');
-    console.log(`   Average: ${throughput.avg.toFixed(1)} req/s`);
-    console.log(`   Peak: ${throughput.peak.toFixed(1)} req/s`);
-    console.log(`   Stability: ${(throughput.stability * 100).toFixed(1)}% variation`);
-    console.log(`   Status: ${throughput.status.toUpperCase()}`);
-    console.log('');
+    console.info('🚀 THROUGHPUT ANALYSIS');
+    console.info(`   Average: ${throughput.avg.toFixed(1)} req/s`);
+    console.info(`   Peak: ${throughput.peak.toFixed(1)} req/s`);
+    console.info(`   Stability: ${(throughput.stability * 100).toFixed(1)}% variation`);
+    console.info(`   Status: ${throughput.status.toUpperCase()}`);
+    console.info('');
 
     // PTY Analysis
     const ptySessions = this.telemetry.telemetry_buffers.pty;
     const avgPty = ptySessions.reduce((a, b) => a + b, 0) / ptySessions.length;
-    console.log('🖥️  PTY SESSIONS');
-    console.log(`   Active: ${this.telemetry.active_pty_sessions}`);
-    console.log(`   Average: ${avgPty.toFixed(1)}`);
-    console.log(`   Range: ${Math.min(...ptySessions)}-${Math.max(...ptySessions)}`);
-    console.log('');
+    console.info('🖥️  PTY SESSIONS');
+    console.info(`   Active: ${this.telemetry.active_pty_sessions}`);
+    console.info(`   Average: ${avgPty.toFixed(1)}`);
+    console.info(`   Range: ${Math.min(...ptySessions)}-${Math.max(...ptySessions)}`);
+    console.info('');
 
     // Recommendations
     this.generateRecommendations(latency, memory, throughput);
@@ -158,8 +158,8 @@ class TelemetryAnalyzer {
     memory: any,
     throughput: any
   ): void {
-    console.log('🎯 OPTIMIZATION RECOMMENDATIONS');
-    console.log('-'.repeat(40));
+    console.info('🎯 OPTIMIZATION RECOMMENDATIONS');
+    console.info('-'.repeat(40));
 
     const recommendations: string[] = [];
 
@@ -195,17 +195,17 @@ class TelemetryAnalyzer {
     recommendations.push('🎛️  TUNE: Consider adjusting Bun GC parameters for latency-sensitive workloads');
 
     if (recommendations.length === 0) {
-      console.log('✅ All metrics within optimal ranges - no immediate action required');
+      console.info('✅ All metrics within optimal ranges - no immediate action required');
     } else {
-      recommendations.forEach(rec => console.log(`   ${rec}`));
+      recommendations.forEach(rec => console.info(`   ${rec}`));
     }
 
-    console.log('');
-    console.log('🏆 OVERALL SYSTEM HEALTH: EXCELLENT');
-    console.log('   - Performance targets met');
-    console.log('   - Enhanced URL patterns active');
-    console.log('   - Security validations enabled');
-    console.log('   - Connection pooling optimized');
+    console.info('');
+    console.info('🏆 OVERALL SYSTEM HEALTH: EXCELLENT');
+    console.info('   - Performance targets met');
+    console.info('   - Enhanced URL patterns active');
+    console.info('   - Security validations enabled');
+    console.info('   - Connection pooling optimized');
   }
 }
 

@@ -113,7 +113,7 @@ export class ShadowGraphOrchestrator {
 	 * Initialize the shadow system
 	 */
 	async initialize(): Promise<void> {
-		console.log("🚀 Initializing Hyper-Bun Shadow System...");
+		console.info("🚀 Initializing Hyper-Bun Shadow System...");
 
 		// Start historical data collection
 		this.historicalCollector.startPeriodicSnapshots();
@@ -149,8 +149,8 @@ export class ShadowGraphOrchestrator {
 			60 * 60 * 1000,
 		); // 1 hour
 
-		console.log("🕵️‍♂️ Hyper-Bun Shadow System v1.3.3 Initialized");
-		console.log(`📊 Monitoring ${activeEvents.length} events`);
+		console.info("🕵️‍♂️ Hyper-Bun Shadow System v1.3.3 Initialized");
+		console.info(`📊 Monitoring ${activeEvents.length} events`);
 	}
 
 	/**
@@ -230,7 +230,7 @@ export class ShadowGraphOrchestrator {
 		opportunity: ShadowArbitrageOpportunity,
 	): Promise<void> {
 		// Implement trading logic
-		console.log(
+		console.info(
 			`💰 Shadow Arbitrage Opportunity: ${(opportunity.profit * 100).toFixed(2)}% profit, ` +
 				`capacity: $${opportunity.capacity.toFixed(2)}, ` +
 				`confidence: ${(opportunity.confidence * 100).toFixed(1)}%`,
@@ -258,7 +258,7 @@ export class ShadowGraphOrchestrator {
 		amount: number,
 	): Promise<void> {
 		// In production, implement actual trade placement via bookmaker API
-		console.log(
+		console.info(
 			`📊 Placing ${side} trade on shadow node ${shadowNodeId}, amount: $${amount.toFixed(2)}`,
 		);
 	}
@@ -272,7 +272,7 @@ export class ShadowGraphOrchestrator {
 		opportunity: ShadowArbitrageOpportunity,
 	): Promise<void> {
 		// In production, monitor trade fills and execute hedges
-		console.log(
+		console.info(
 			`👀 Monitoring arbitrage execution: edge ${opportunity.edgeId}, ` +
 				`window: ${(opportunity.windowMs / 1000).toFixed(1)}s`,
 		);

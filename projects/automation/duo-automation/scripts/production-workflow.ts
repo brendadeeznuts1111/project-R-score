@@ -57,8 +57,8 @@ class ProductionArtifactWorkflow {
       throughput: number;
     };
   }> {
-    console.log(`🚀 Starting ${this.config.environment} artifact deployment...`);
-    console.log(`📦 Processing ${artifacts.length} artifacts with hardware-accelerated hashing\n`);
+    console.info(`🚀 Starting ${this.config.environment} artifact deployment...`);
+    console.info(`📦 Processing ${artifacts.length} artifacts with hardware-accelerated hashing\n`);
 
     const startTime = performance.now();
     const deployed: ArtifactWorkflow[] = [];
@@ -69,14 +69,14 @@ class ProductionArtifactWorkflow {
         const result = await this.processArtifact(artifactPath);
         if (result) {
           deployed.push(result);
-          console.log(`✅ ${artifactPath} -> ${result.hash} (${result.duration}ms)`);
+          console.info(`✅ ${artifactPath} -> ${result.hash} (${result.duration}ms)`);
         } else {
           failed.push(artifactPath);
-          console.log(`❌ ${artifactPath} -> Failed to process`);
+          console.info(`❌ ${artifactPath} -> Failed to process`);
         }
       } catch (error) {
         failed.push(artifactPath);
-        console.log(`❌ ${artifactPath} -> Error: ${error}`);
+        console.info(`❌ ${artifactPath} -> Error: ${error}`);
       }
     }
 
@@ -91,12 +91,12 @@ class ProductionArtifactWorkflow {
       throughput: Math.round(throughput * 100) / 100
     };
 
-    console.log(`\n📊 Deployment Summary:`);
-    console.log(`   ✅ Successful: ${deployed.length}`);
-    console.log(`   ❌ Failed: ${failed.length}`);
-    console.log(`   ⏱️  Total Time: ${performance.totalTime}ms`);
-    console.log(`   📈 Average: ${performance.averageTime}ms/artifact`);
-    console.log(`   🚀 Throughput: ${performance.throughput} artifacts/sec`);
+    console.info(`\n📊 Deployment Summary:`);
+    console.info(`   ✅ Successful: ${deployed.length}`);
+    console.info(`   ❌ Failed: ${failed.length}`);
+    console.info(`   ⏱️  Total Time: ${performance.totalTime}ms`);
+    console.info(`   📈 Average: ${performance.averageTime}ms/artifact`);
+    console.info(`   🚀 Throughput: ${performance.throughput} artifacts/sec`);
 
     return {
       success: failed.length === 0,
@@ -187,7 +187,7 @@ class ProductionArtifactWorkflow {
     failed: number;
     issues: string[];
   }> {
-    console.log(`🔍 Verifying deployment integrity for ${artifacts.length} artifacts...`);
+    console.info(`🔍 Verifying deployment integrity for ${artifacts.length} artifacts...`);
 
     const r2Keys = artifacts.map(a => `${a.environment}/${a.name}/${a.version}`);
     const verification = await this.r2Manager.batchVerifyIntegrity(r2Keys);
@@ -198,10 +198,10 @@ class ProductionArtifactWorkflow {
       .filter(r => !r.isValid)
       .map(r => `${r.key}: expected ${r.expectedHash}, got ${r.actualHash}`);
 
-    console.log(`📊 Integrity Verification:`);
-    console.log(`   ✅ Verified: ${verified}`);
-    console.log(`   ❌ Failed: ${failed}`);
-    console.log(`   📈 Success Rate: ${Math.round((verified / artifacts.length) * 100)}%`);
+    console.info(`📊 Integrity Verification:`);
+    console.info(`   ✅ Verified: ${verified}`);
+    console.info(`   ❌ Failed: ${failed}`);
+    console.info(`   📈 Success Rate: ${Math.round((verified / artifacts.length) * 100)}%`);
 
     return {
       isValid: failed === 0,
@@ -219,7 +219,7 @@ class ProductionArtifactWorkflow {
     rolledBack: string[];
     errors: string[];
   }> {
-    console.log(`🔄 Initiating rollback to version ${targetVersion}...`);
+    console.info(`🔄 Initiating rollback to version ${targetVersion}...`);
 
     const rolledBack: string[] = [];
     const errors: string[] = [];
@@ -241,10 +241,10 @@ class ProductionArtifactWorkflow {
         }
 
         rolledBack.push(artifact.name);
-        console.log(`✅ Rolled back: ${artifact.name}`);
+        console.info(`✅ Rolled back: ${artifact.name}`);
       } catch (error) {
         errors.push(`${artifact.name}: ${error}`);
-        console.log(`❌ Rollback failed: ${artifact.name} - ${error}`);
+        console.info(`❌ Rollback failed: ${artifact.name} - ${error}`);
       }
     }
 
@@ -391,49 +391,49 @@ async function main() {
     case 'deploy':
       const artifacts = args.slice(3);
       if (artifacts.length === 0) {
-        console.log('Usage: production-workflow.ts deploy <environment> <path> <artifacts...>');
+        console.info('Usage: production-workflow.ts deploy <environment> <path> <artifacts...>');
         return;
       }
       const deployment = await workflow.deployArtifacts(artifacts);
       
       if (deployment.success) {
-        console.log('\n🎉 Deployment completed successfully!');
+        console.info('\n🎉 Deployment completed successfully!');
         
         // Verify integrity
         const integrity = await workflow.verifyDeploymentIntegrity(deployment.deployed);
         if (integrity.isValid) {
-          console.log('✅ All artifacts verified!');
+          console.info('✅ All artifacts verified!');
         } else {
-          console.log('⚠️  Some artifacts failed verification');
+          console.info('⚠️  Some artifacts failed verification');
         }
       } else {
-        console.log('\n❌ Deployment failed!');
+        console.info('\n❌ Deployment failed!');
       }
       break;
 
     case 'verify':
-      console.log('Verification command requires deployment data');
+      console.info('Verification command requires deployment data');
       break;
 
     case 'rollback':
       if (args[1]) {
         const rollback = await workflow.rollback(args[1]);
-        console.log(`🔄 Rollback ${rollback.success ? 'successful' : 'failed'}`);
-        console.log(`   Rolled back: ${rollback.rolledBack.length}`);
-        console.log(`   Errors: ${rollback.errors.length}`);
+        console.info(`🔄 Rollback ${rollback.success ? 'successful' : 'failed'}`);
+        console.info(`   Rolled back: ${rollback.rolledBack.length}`);
+        console.info(`   Errors: ${rollback.errors.length}`);
       } else {
-        console.log('Usage: production-workflow.ts rollback <version>');
+        console.info('Usage: production-workflow.ts rollback <version>');
       }
       break;
 
     default:
-      console.log(`Unknown command: ${command}`);
+      console.info(`Unknown command: ${command}`);
       showHelp();
   }
 }
 
 function showHelp(): void {
-  console.log(`
+  console.info(`
 🚀 Production Artifact Workflow CLI
 
 USAGE:

@@ -181,18 +181,18 @@ for (const pkgFile of allPackageFiles) {
 }
 
 // ---------- Output ----------
-console.log(`${colors.bold}\n📦 Workspace Coverage Report\n${colors.reset}`);
-console.log(`  Root workspaces globs: ${colors.cyan}${normalizedGlobs.join(", ")}${colors.reset}\n`);
+console.info(`${colors.bold}\n📦 Workspace Coverage Report\n${colors.reset}`);
+console.info(`  Root workspaces globs: ${colors.cyan}${normalizedGlobs.join(", ")}${colors.reset}\n`);
 
-console.log(`${colors.green}✅ Covered packages: ${covered.length}${colors.reset}`);
+console.info(`${colors.green}✅ Covered packages: ${covered.length}${colors.reset}`);
 if (covered.length > 0 && verbose) {
-  covered.forEach((f) => console.log(`   ${relative(rootDir, f)}`));
+  covered.forEach((f) => console.info(`   ${relative(rootDir, f)}`));
 }
 
-console.log(`${colors.red}\n❌ Orphaned packages: ${orphaned.length}${colors.reset}`);
+console.info(`${colors.red}\n❌ Orphaned packages: ${orphaned.length}${colors.reset}`);
 if (orphaned.length > 0) {
-  orphaned.forEach((f) => console.log(`   ${colors.red}${relative(rootDir, f)}${colors.reset}`));
-  console.log(
+  orphaned.forEach((f) => console.info(`   ${colors.red}${relative(rootDir, f)}${colors.reset}`));
+  console.info(
     `${colors.yellow}\n💡 Tip: Use --verbose to see all covered packages. Add missing paths to 'workspaces.packages' or move the package.json.${colors.reset}`
   );
 }
@@ -202,6 +202,6 @@ if (orphaned.length > 0) {
   console.error(`${colors.red}\n❌ Workspace validation failed. Fix the orphaned packages above.\n${colors.reset}`);
   process.exit(1);
 } else {
-  console.log(`${colors.green}\n✅ All packages are correctly covered by root workspaces.\n${colors.reset}`);
+  console.info(`${colors.green}\n✅ All packages are correctly covered by root workspaces.\n${colors.reset}`);
   process.exit(0);
 }

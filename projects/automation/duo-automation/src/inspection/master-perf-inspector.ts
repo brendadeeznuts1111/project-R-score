@@ -217,8 +217,8 @@ export function benchmarkAnsiStripping(): void {
   const testString = '\x1b[38;2;255;68;68mSecurity\x1b[0m \x1b[38;2;68;136;255mR2\x1b[0m';
   const iterations = 100000;
   
-  console.log('🏃 ANSI Stripping Benchmark');
-  console.log('─'.repeat(40));
+  console.info('🏃 ANSI Stripping Benchmark');
+  console.info('─'.repeat(40));
   
   // Bun.stripANSI()
   const startBun = performance.now();
@@ -234,9 +234,9 @@ export function benchmarkAnsiStripping(): void {
   }
   const regexTime = performance.now() - startRegex;
   
-  console.log(`Bun.stripANSI(): ${bunTime.toFixed(2)}ms`);
-  console.log(`Regex fallback: ${regexTime.toFixed(2)}ms`);
-  console.log(`Performance gain: ${(regexTime / bunTime).toFixed(1)}x faster`);
+  console.info(`Bun.stripANSI(): ${bunTime.toFixed(2)}ms`);
+  console.info(`Regex fallback: ${regexTime.toFixed(2)}ms`);
+  console.info(`Performance gain: ${(regexTime / bunTime).toFixed(1)}x faster`);
 }
 
 /**
@@ -245,7 +245,7 @@ export function benchmarkAnsiStripping(): void {
 
 // Terminal Dashboard (Colored)
 export function displayTerminalDashboard(metrics: PerfMetric[]): void {
-  console.log(generateMasterPerfTable(metrics));
+  console.info(generateMasterPerfTable(metrics));
 }
 
 // Log File (Plain Text)
@@ -264,7 +264,7 @@ export async function exportToJson(metrics: PerfMetric[], s3Path: string): Promi
   //   contentType: 'application/json'
   // });
   
-  console.log(`📤 Exported ${metrics.length} metrics to ${s3Path}`);
+  console.info(`📤 Exported ${metrics.length} metrics to ${s3Path}`);
 }
 
 // WebSocket Payload (Minimal)
@@ -300,13 +300,13 @@ export function getColorNumber(category: string): number {
 }
 
 export function validateColorPalette(): void {
-  console.log('🎨 Color Palette Validation');
-  console.log('─'.repeat(40));
+  console.info('🎨 Color Palette Validation');
+  console.info('─'.repeat(40));
   
   Object.entries(CATEGORY_COLORS).forEach(([category, color]) => {
     const hex = getColorHex(category);
     const number = getColorNumber(category);
-    console.log(`${category.padEnd(12)} ANSI: ${color.padEnd(20)} Hex: ${hex.padEnd(8)} Number: ${number}`);
+    console.info(`${category.padEnd(12)} ANSI: ${color.padEnd(20)} Hex: ${hex.padEnd(8)} Number: ${number}`);
   });
 }
 

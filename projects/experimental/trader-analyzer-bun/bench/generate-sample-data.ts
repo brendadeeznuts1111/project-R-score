@@ -17,7 +17,7 @@ function randomDate(start: Date, end: Date) {
 }
 
 const numRecords = parseInt(process.argv[2] || "10000");
-console.log(`Generating ${numRecords} sample executions...`);
+console.info(`Generating ${numRecords} sample executions...`);
 
 const startDate = new Date("2024-01-01");
 const endDate = new Date("2024-12-01");
@@ -77,4 +77,4 @@ for (let i = 0; i < numRecords; i++) {
 
 const outputPath = join(import.meta.dir, "..", "bitmex_executions.csv");
 writeFileSync(outputPath, rows.join("\n"));
-console.log(`✓ Generated ${numRecords} records to ${outputPath}`);
+console.info(`✓ Generated ${numRecords} records to ${outputPath}`);

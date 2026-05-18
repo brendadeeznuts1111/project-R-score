@@ -21,13 +21,13 @@ async function main() {
   const dryRun = args.includes('--dry-run');
   const verbose = args.includes('--verbose');
 
-  console.log(styled('📊 FactoryWager Graph Generation v5.1', 'accent'));
-  console.log(styled('======================================', 'muted'));
-  console.log('');
+  console.info(styled('📊 FactoryWager Graph Generation v5.1', 'accent'));
+  console.info(styled('======================================', 'muted'));
+  console.info('');
 
   if (dryRun) {
-    console.log(styled('🔍 DRY RUN MODE - No graphs will be generated', 'warning'));
-    console.log('');
+    console.info(styled('🔍 DRY RUN MODE - No graphs will be generated', 'warning'));
+    console.info('');
   }
 
   try {
@@ -36,21 +36,21 @@ async function main() {
     if (allSecrets) {
       // Get all secrets with versions (this would need to be implemented)
       secretsToProcess = await getAllVersionedSecrets();
-      console.log(styled(`📋 Processing all ${secretsToProcess.length} versioned secrets`, 'primary'));
+      console.info(styled(`📋 Processing all ${secretsToProcess.length} versioned secrets`, 'primary'));
     } else {
       // Process specific keys from arguments
       const keyArgs = args.filter(arg => !arg.startsWith('--'));
       secretsToProcess = keyArgs;
 
       if (secretsToProcess.length === 0) {
-        console.log(styled('❌ No secrets specified. Use --all-secrets or provide key names', 'error'));
+        console.info(styled('❌ No secrets specified. Use --all-secrets or provide key names', 'error'));
         process.exit(1);
       }
 
-      console.log(styled(`📋 Processing ${secretsToProcess.length} specified secrets`, 'primary'));
+      console.info(styled(`📋 Processing ${secretsToProcess.length} specified secrets`, 'primary'));
     }
 
-    console.log('');
+    console.info('');
 
     let generated = 0;
     let skipped = 0;
@@ -59,41 +59,41 @@ async function main() {
     for (const key of secretsToProcess) {
       try {
         if (verbose) {
-          console.log(styled(`📊 Generating graph for ${key}...`, 'primary'));
+          console.info(styled(`📊 Generating graph for ${key}...`, 'primary'));
         }
 
         if (!dryRun) {
           const { mermaidUrl, d3Url, nodeCount } = await versionedManager.visualize(key);
 
-          console.log(styled(`   ✅ Generated graph with ${nodeCount} versions`, 'success'));
-          console.log(styled(`   Mermaid: ${mermaidUrl}`, 'primary'));
-          console.log(styled(`   D3 JSON: ${d3Url}`, 'primary'));
+          console.info(styled(`   ✅ Generated graph with ${nodeCount} versions`, 'success'));
+          console.info(styled(`   Mermaid: ${mermaidUrl}`, 'primary'));
+          console.info(styled(`   D3 JSON: ${d3Url}`, 'primary'));
 
           generated++;
         } else {
-          console.log(styled(`   🔍 Would generate graph (dry run)`, 'warning'));
+          console.info(styled(`   🔍 Would generate graph (dry run)`, 'warning'));
           generated++;
         }
 
       } catch (error) {
-        console.log(styled(`   ❌ Error: ${error.message}`, 'error'));
+        console.info(styled(`   ❌ Error: ${error.message}`, 'error'));
         errors++;
       }
     }
 
-    console.log('');
-    console.log(styled('📊 Generation Summary:', 'accent'));
-    console.log(styled(`   Generated: ${generated}`, 'success'));
-    console.log(styled(`   Skipped: ${skipped}`, 'muted'));
-    console.log(styled(`   Errors: ${errors}`, 'error'));
+    console.info('');
+    console.info(styled('📊 Generation Summary:', 'accent'));
+    console.info(styled(`   Generated: ${generated}`, 'success'));
+    console.info(styled(`   Skipped: ${skipped}`, 'muted'));
+    console.info(styled(`   Errors: ${errors}`, 'error'));
 
     if (!dryRun && generated > 0) {
-      console.log('');
-      console.log(styled('🎉 Graph generation complete!', 'success'));
-      console.log(styled('📖 Docs: https://bun.com/docs/runtime/secrets/version-visualization', 'accent'));
+      console.info('');
+      console.info(styled('🎉 Graph generation complete!', 'success'));
+      console.info(styled('📖 Docs: https://bun.com/docs/runtime/secrets/version-visualization', 'accent'));
 
       if (outputR2) {
-        console.log(styled('💾 All graphs stored in R2 bucket', 'success'));
+        console.info(styled('💾 All graphs stored in R2 bucket', 'success'));
       }
     }
 

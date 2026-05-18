@@ -28,7 +28,7 @@ export class VenmoWebhookHandler {
       throw new Error('Invalid webhook signature');
     }
 
-    console.log(`Processing Venmo webhook: ${payload.type}`);
+    console.info(`Processing Venmo webhook: ${payload.type}`);
 
     switch (payload.type) {
       case 'dispute.created':
@@ -57,7 +57,7 @@ export class VenmoWebhookHandler {
   // Handle when Venmo creates a dispute case
   private async handleDisputeCreated(payload: VenmoDisputeCreatedPayload): Promise<void> {
     try {
-      console.log(`Venmo dispute created: ${payload.dispute_id} for payment: ${payload.payment_id}`);
+      console.info(`Venmo dispute created: ${payload.dispute_id} for payment: ${payload.payment_id}`);
 
       // Find our internal dispute by Venmo payment ID
       const dispute = await this.db.findDisputeByVenmoPaymentId(payload.payment_id);
@@ -87,7 +87,7 @@ export class VenmoWebhookHandler {
           await this.emailService.sendEscalationNotification(dispute, merchant);
         }
 
-        console.log(`Successfully processed Venmo dispute creation for dispute ${dispute.id}`);
+        console.info(`Successfully processed Venmo dispute creation for dispute ${dispute.id}`);
       } else {
         console.warn(`No internal dispute found for Venmo payment ${payload.payment_id}`);
       }
@@ -100,7 +100,7 @@ export class VenmoWebhookHandler {
   // Handle dispute status updates from Venmo
   private async handleDisputeUpdated(payload: any): Promise<void> {
     try {
-      console.log(`Venmo dispute updated: ${payload.dispute_id}, status: ${payload.status}`);
+      console.info(`Venmo dispute updated: ${payload.dispute_id}, status: ${payload.status}`);
 
       const dispute = await this.db.findDisputeByVenmoId(payload.dispute_id);
       
@@ -121,7 +121,7 @@ export class VenmoWebhookHandler {
         // Update internal status based on Venmo status
         await this.syncInternalStatus(dispute, payload.status);
 
-        console.log(`Successfully processed Venmo dispute update for dispute ${dispute.id}`);
+        console.info(`Successfully processed Venmo dispute update for dispute ${dispute.id}`);
       } else {
         console.warn(`No internal dispute found for Venmo dispute ${payload.dispute_id}`);
       }
@@ -134,7 +134,7 @@ export class VenmoWebhookHandler {
   // Handle when Venmo resolves a dispute
   private async handleDisputeResolved(payload: VenmoDisputeResolvedPayload): Promise<void> {
     try {
-      console.log(`Venmo dispute resolved: ${payload.dispute_id}, resolution: ${payload.resolution}`);
+      console.info(`Venmo dispute resolved: ${payload.dispute_id}, resolution: ${payload.resolution}`);
 
       const dispute = await this.db.findDisputeByVenmoId(payload.dispute_id);
       
@@ -177,7 +177,7 @@ export class VenmoWebhookHandler {
         // Notify both parties of resolution
         await this.notifyPartiesOfVenmoResolution(dispute);
 
-        console.log(`Successfully processed Venmo dispute resolution for dispute ${dispute.id}`);
+        console.info(`Successfully processed Venmo dispute resolution for dispute ${dispute.id}`);
       } else {
         console.warn(`No internal dispute found for Venmo dispute ${payload.dispute_id}`);
       }
@@ -190,7 +190,7 @@ export class VenmoWebhookHandler {
   // Handle when Venmo processes a refund
   private async handleRefundProcessed(payload: any): Promise<void> {
     try {
-      console.log(`Venmo refund processed: ${payload.refund_id}, amount: $${payload.amount}`);
+      console.info(`Venmo refund processed: ${payload.refund_id}, amount: $${payload.amount}`);
 
       // Find dispute by refund ID or original payment ID
       let dispute = await this.db.findDisputeByVenmoId(payload.dispute_id);
@@ -220,7 +220,7 @@ export class VenmoWebhookHandler {
         await this.emailService.sendRefundNotification(dispute, customer, payload.amount);
       }
 
-      console.log(`Successfully processed Venmo refund for dispute ${dispute.id}`);
+      console.info(`Successfully processed Venmo refund for dispute ${dispute.id}`);
     } catch (error) {
       console.error('Error handling refund processed webhook:', error);
       throw error;
@@ -230,7 +230,7 @@ export class VenmoWebhookHandler {
   // Handle when Venmo requests additional evidence
   private async handleEvidenceRequested(payload: any): Promise<void> {
     try {
-      console.log(`Venmo evidence requested: ${payload.dispute_id}`);
+      console.info(`Venmo evidence requested: ${payload.dispute_id}`);
 
       const dispute = await this.db.findDisputeByVenmoId(payload.dispute_id);
       
@@ -251,7 +251,7 @@ export class VenmoWebhookHandler {
           await this.emailService.sendEvidenceRequestNotification(dispute, customer, payload.evidence_types);
         }
 
-        console.log(`Successfully processed evidence request for dispute ${dispute.id}`);
+        console.info(`Successfully processed evidence request for dispute ${dispute.id}`);
       } else {
         console.warn(`No internal dispute found for Venmo dispute ${payload.dispute_id}`);
       }
@@ -264,7 +264,7 @@ export class VenmoWebhookHandler {
   // Handle messages received through Venmo's dispute system
   private async handleMessageReceived(payload: any): Promise<void> {
     try {
-      console.log(`Venmo message received: ${payload.dispute_id} from ${payload.sender_type}`);
+      console.info(`Venmo message received: ${payload.dispute_id} from ${payload.sender_type}`);
 
       const dispute = await this.db.findDisputeByVenmoId(payload.dispute_id);
       
@@ -293,7 +293,7 @@ export class VenmoWebhookHandler {
 
         await this.db.updateDispute(dispute);
 
-        console.log(`Successfully processed Venmo message for dispute ${dispute.id}`);
+        console.info(`Successfully processed Venmo message for dispute ${dispute.id}`);
       } else {
         console.warn(`No internal dispute found for Venmo dispute ${payload.dispute_id}`);
       }
@@ -401,7 +401,7 @@ EmailService.prototype.sendRefundNotification = async function(dispute: Dispute,
   `;
 
   // This would send the actual email
-  console.log(`Refund notification sent to ${customer.email}: $${amount}`);
+  console.info(`Refund notification sent to ${customer.email}: $${amount}`);
 };
 
 EmailService.prototype.sendEvidenceRequestNotification = async function(dispute: Dispute, customer: any, evidenceTypes: string[]): Promise<void> {
@@ -461,5 +461,5 @@ EmailService.prototype.sendEvidenceRequestNotification = async function(dispute:
   `;
 
   // This would send the actual email
-  console.log(`Evidence request sent to ${customer.email} for dispute ${dispute.id}`);
+  console.info(`Evidence request sent to ${customer.email} for dispute ${dispute.id}`);
 };

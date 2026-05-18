@@ -10,8 +10,8 @@
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
-console.log('🎯 Fantasy42 Registry Setup');
-console.log('==========================');
+console.info('🎯 Fantasy42 Registry Setup');
+console.info('==========================');
 
 // ============================================================================
 // CONFIGURATION
@@ -78,7 +78,7 @@ const REGISTRY_CONFIG = {
 // ============================================================================
 
 async function runCommand(command: string, description: string): Promise<boolean> {
-  console.log(`🔧 ${description}...`);
+  console.info(`🔧 ${description}...`);
 
   try {
     const process = Bun.spawn(command.split(' '), {
@@ -96,13 +96,13 @@ async function runCommand(command: string, description: string): Promise<boolean
 function createDirectory(path: string): void {
   if (!existsSync(path)) {
     mkdirSync(path, { recursive: true });
-    console.log(`📁 Created directory: ${path}`);
+    console.info(`📁 Created directory: ${path}`);
   }
 }
 
 function writeJsonFile(path: string, data: any): void {
   writeFileSync(path, JSON.stringify(data, null, 2));
-  console.log(`📝 Created file: ${path}`);
+  console.info(`📝 Created file: ${path}`);
 }
 
 // ============================================================================
@@ -110,7 +110,7 @@ function writeJsonFile(path: string, data: any): void {
 // ============================================================================
 
 async function setupRegistryStructure(): Promise<void> {
-  console.log('\n🏗️ Setting up registry structure...');
+  console.info('\n🏗️ Setting up registry structure...');
 
   const registryPath = join(process.cwd(), 'packages');
   createDirectory(registryPath);
@@ -161,7 +161,7 @@ async function setupRegistryStructure(): Promise<void> {
 
 export class ${name.replace('-', '').replace(/\b\w/g, l => l.toUpperCase())} {
   constructor() {
-    console.log('${name} v${version} initialized');
+    console.info('${name} v${version} initialized');
   }
 
   getVersion(): string {
@@ -173,13 +173,13 @@ export default ${name.replace('-', '').replace(/\b\w/g, l => l.toUpperCase())};
 `;
 
       writeFileSync(join(packagePath, 'src', 'index.ts'), indexContent);
-      console.log(`📦 Created package: ${name}@${version}`);
+      console.info(`📦 Created package: ${name}@${version}`);
     }
   }
 }
 
 async function setupRegistryConfiguration(): Promise<void> {
-  console.log('\n⚙️ Setting up registry configuration...');
+  console.info('\n⚙️ Setting up registry configuration...');
 
   // Create registry configuration
   const registryConfig = {
@@ -253,11 +253,11 @@ sourcemap = true
 serve_dashboard = false
 `;
   writeFileSync('bunfig.toml', bunfigContent);
-  console.log('📝 Created configuration files');
+  console.info('📝 Created configuration files');
 }
 
 async function setupScripts(): Promise<void> {
-  console.log('\n📜 Setting up utility scripts...');
+  console.info('\n📜 Setting up utility scripts...');
 
   const scriptsDir = join(process.cwd(), 'scripts');
   createDirectory(scriptsDir);
@@ -269,7 +269,7 @@ import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
 async function buildAllPackages() {
-  console.log('🏗️ Building all registry packages...');
+  console.info('🏗️ Building all registry packages...');
 
   const packagesDir = join(process.cwd(), 'packages');
 
@@ -277,7 +277,7 @@ async function buildAllPackages() {
     const packageJson = join(packagePath, 'package.json');
 
     if (existsSync(packageJson)) {
-      console.log(\`📦 Building \${packagePath}...\`);
+      console.info(\`📦 Building \${packagePath}...\`);
       const success = await runCommand(\`cd \${packagePath} && bun run build\`, \`Building \${packagePath}\`);
       if (!success) {
         console.error(\`❌ Failed to build \${packagePath}\`);
@@ -300,7 +300,7 @@ async function buildAllPackages() {
   }
 
   await walkDirectory(packagesDir);
-  console.log('✅ Registry build completed');
+  console.info('✅ Registry build completed');
 }
 
 buildAllPackages();
@@ -315,7 +315,7 @@ import { readdirSync, statSync, existsSync } from 'fs';
 import { join } from 'path';
 
 async function testAllPackages() {
-  console.log('🧪 Testing all registry packages...');
+  console.info('🧪 Testing all registry packages...');
 
   const packagesDir = join(process.cwd(), 'packages');
 
@@ -323,7 +323,7 @@ async function testAllPackages() {
     const packageJson = join(packagePath, 'package.json');
 
     if (existsSync(packageJson)) {
-      console.log(\`🧪 Testing \${packagePath}...\`);
+      console.info(\`🧪 Testing \${packagePath}...\`);
       const success = await runCommand(\`cd \${packagePath} && bun test\`, \`Testing \${packagePath}\`);
       if (!success) {
         console.error(\`❌ Tests failed for \${packagePath}\`);
@@ -346,7 +346,7 @@ async function testAllPackages() {
   }
 
   await walkDirectory(packagesDir);
-  console.log('✅ Registry tests completed');
+  console.info('✅ Registry tests completed');
 }
 
 testAllPackages();
@@ -361,7 +361,7 @@ import { readdirSync, statSync, existsSync } from 'fs';
 import { join } from 'path';
 
 async function auditAllPackages() {
-  console.log('🔒 Auditing all registry packages...');
+  console.info('🔒 Auditing all registry packages...');
 
   const packagesDir = join(process.cwd(), 'packages');
   let totalPackages = 0;
@@ -372,7 +372,7 @@ async function auditAllPackages() {
 
     if (existsSync(packageJson)) {
       totalPackages++;
-      console.log(\`🔍 Auditing \${packagePath}...\`);
+      console.info(\`🔍 Auditing \${packagePath}...\`);
 
       // Run security audit
       const success = await runCommand(
@@ -403,14 +403,14 @@ async function auditAllPackages() {
 
   await walkDirectory(packagesDir);
 
-  console.log(\`\\n📊 Security Audit Summary:\`);
-  console.log(\`Total packages: \${totalPackages}\`);
-  console.log(\`Packages with vulnerabilities: \${vulnerabilities}\`);
+  console.info(\`\\n📊 Security Audit Summary:\`);
+  console.info(\`Total packages: \${totalPackages}\`);
+  console.info(\`Packages with vulnerabilities: \${vulnerabilities}\`);
 
   if (vulnerabilities === 0) {
-    console.log('✅ All packages passed security audit');
+    console.info('✅ All packages passed security audit');
   } else {
-    console.log('⚠️ Security issues found - review and fix');
+    console.info('⚠️ Security issues found - review and fix');
     process.exit(1);
   }
 }
@@ -420,11 +420,11 @@ auditAllPackages();
 
   writeFileSync(join(scriptsDir, 'security-audit.ts'), securityScript);
 
-  console.log('📜 Created utility scripts');
+  console.info('📜 Created utility scripts');
 }
 
 async function installDependencies(): Promise<void> {
-  console.log('\n📦 Installing dependencies...');
+  console.info('\n📦 Installing dependencies...');
 
   const success = await runCommand('bun install', 'Installing all dependencies');
   if (!success) {
@@ -432,11 +432,11 @@ async function installDependencies(): Promise<void> {
     return;
   }
 
-  console.log('✅ Dependencies installed successfully');
+  console.info('✅ Dependencies installed successfully');
 }
 
 async function runInitialBuild(): Promise<void> {
-  console.log('\n🏗️ Running initial build...');
+  console.info('\n🏗️ Running initial build...');
 
   const success = await runCommand('bun run build:all', 'Building all packages');
   if (!success) {
@@ -444,7 +444,7 @@ async function runInitialBuild(): Promise<void> {
     return;
   }
 
-  console.log('✅ Initial build completed successfully');
+  console.info('✅ Initial build completed successfully');
 }
 
 // ============================================================================
@@ -452,7 +452,7 @@ async function runInitialBuild(): Promise<void> {
 // ============================================================================
 
 async function main() {
-  console.log('🚀 Starting Fantasy42 Registry Setup...\n');
+  console.info('🚀 Starting Fantasy42 Registry Setup...\n');
 
   try {
     // Step 1: Setup registry structure
@@ -470,44 +470,44 @@ async function main() {
     // Step 5: Run initial build
     await runInitialBuild();
 
-    console.log('\n🎉 Fantasy42 Registry Setup Complete!');
-    console.log('=====================================');
-    console.log('');
-    console.log('📦 Registry packages created:');
-    console.log(`   Core Security: ${REGISTRY_CONFIG.packages['core-security'].length} packages`);
-    console.log(`   Betting Engine: ${REGISTRY_CONFIG.packages['betting-engine'].length} packages`);
-    console.log(
+    console.info('\n🎉 Fantasy42 Registry Setup Complete!');
+    console.info('=====================================');
+    console.info('');
+    console.info('📦 Registry packages created:');
+    console.info(`   Core Security: ${REGISTRY_CONFIG.packages['core-security'].length} packages`);
+    console.info(`   Betting Engine: ${REGISTRY_CONFIG.packages['betting-engine'].length} packages`);
+    console.info(
       `   Payment Processing: ${REGISTRY_CONFIG.packages['payment-processing'].length} packages`
     );
-    console.log(
+    console.info(
       `   Analytics Dashboard: ${REGISTRY_CONFIG.packages['analytics-dashboard'].length} packages`
     );
-    console.log(
+    console.info(
       `   Cloudflare Infrastructure: ${REGISTRY_CONFIG.packages['cloudflare-infrastructure'].length} packages`
     );
-    console.log(
+    console.info(
       `   User Management: ${REGISTRY_CONFIG.packages['user-management'].length} packages`
     );
-    console.log(`   Dev Tooling: ${REGISTRY_CONFIG.packages['dev-tooling'].length} packages`);
-    console.log(`   Compliance: ${REGISTRY_CONFIG.packages['compliance'].length} packages`);
-    console.log('');
-    console.log('🛠️ Available commands:');
-    console.log('   bun run build          # Build all packages');
-    console.log('   bun run test           # Run all tests');
-    console.log('   bun run security:audit # Run security audit');
-    console.log('   bun run compliance:check # Run compliance checks');
-    console.log('');
-    console.log('📚 Next steps:');
-    console.log('   1. Review generated packages in ./packages/');
-    console.log('   2. Customize package implementations');
-    console.log('   3. Run tests: bun run test');
-    console.log('   4. Build packages: bun run build');
-    console.log('   5. Publish to registry when ready');
-    console.log('');
-    console.log('🔗 Useful commands:');
-    console.log('   bun run version:manager load    # Load workspace metadata');
-    console.log('   bun run version:manager bump patch --commit --tag --push');
-    console.log('   bunx wrangler deploy            # Deploy to Cloudflare');
+    console.info(`   Dev Tooling: ${REGISTRY_CONFIG.packages['dev-tooling'].length} packages`);
+    console.info(`   Compliance: ${REGISTRY_CONFIG.packages['compliance'].length} packages`);
+    console.info('');
+    console.info('🛠️ Available commands:');
+    console.info('   bun run build          # Build all packages');
+    console.info('   bun run test           # Run all tests');
+    console.info('   bun run security:audit # Run security audit');
+    console.info('   bun run compliance:check # Run compliance checks');
+    console.info('');
+    console.info('📚 Next steps:');
+    console.info('   1. Review generated packages in ./packages/');
+    console.info('   2. Customize package implementations');
+    console.info('   3. Run tests: bun run test');
+    console.info('   4. Build packages: bun run build');
+    console.info('   5. Publish to registry when ready');
+    console.info('');
+    console.info('🔗 Useful commands:');
+    console.info('   bun run version:manager load    # Load workspace metadata');
+    console.info('   bun run version:manager bump patch --commit --tag --push');
+    console.info('   bunx wrangler deploy            # Deploy to Cloudflare');
   } catch (error) {
     console.error('❌ Setup failed:', error);
     process.exit(1);

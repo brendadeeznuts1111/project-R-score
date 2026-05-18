@@ -65,7 +65,7 @@ export class DependencyContainer {
    * Initialize all services
    */
   async initialize(): Promise<void> {
-    console.log('🚀 Initializing dependency container...');
+    console.info('🚀 Initializing dependency container...');
 
     // Initialize database service first
     const dbService = new DatabaseService(this.config.database);
@@ -77,14 +77,14 @@ export class DependencyContainer {
     await userService.initialize();
     this.register('user', userService);
 
-    console.log('✅ All services initialized successfully');
+    console.info('✅ All services initialized successfully');
   }
 
   /**
    * Cleanup all services
    */
   async cleanup(): Promise<void> {
-    console.log('🧹 Cleaning up services...');
+    console.info('🧹 Cleaning up services...');
 
     for (const [name, service] of this.services) {
       if (service instanceof BaseService) {
@@ -93,7 +93,7 @@ export class DependencyContainer {
     }
 
     this.services.clear();
-    console.log('✅ All services cleaned up');
+    console.info('✅ All services cleaned up');
   }
 
   /**

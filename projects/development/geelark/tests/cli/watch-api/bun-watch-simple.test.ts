@@ -18,8 +18,8 @@ describe("👁️ Bun --watch - Screen Control Demo", () => {
 
     // Create a simple dev file
     const devFile = `
-console.log('Dev server running - screen should not clear on restart');
-console.log('Timestamp:', new Date().toISOString());
+console.info('Dev server running - screen should not clear on restart');
+console.info('Timestamp:', new Date().toISOString());
 `;
 
     await Bun.write("/tmp/dev.ts", devFile);
@@ -48,7 +48,7 @@ console.log('Timestamp:', new Date().toISOString());
 import { test, expect } from "bun:test";
 
 test("preserve output demo", () => {
-  console.log('Test executed - output should be preserved');
+  console.info('Test executed - output should be preserved');
   expect(true).toBe(true);
 });
 `;
@@ -76,9 +76,9 @@ test("preserve output demo", () => {
   test("✅ Combined options demonstration", async () => {
     // Create file for combined test
     const combinedFile = `
-console.log('Combined --no-clear-screen --preserveWatchOutput demo');
-console.log('Screen should not clear, output should be preserved');
-console.log('Timestamp:', new Date().toISOString());
+console.info('Combined --no-clear-screen --preserveWatchOutput demo');
+console.info('Screen should not clear, output should be preserved');
+console.info('Timestamp:', new Date().toISOString());
 `;
 
     await Bun.write("/tmp/combined.ts", combinedFile);
@@ -114,7 +114,7 @@ export function greet(name: string): string {
   return \`Hello, \${name}!\`;
 }
 
-console.log('Source file for build watch demo');
+console.info('Source file for build watch demo');
 `;
 
     await Bun.write("/tmp/build-src.ts", sourceFile);

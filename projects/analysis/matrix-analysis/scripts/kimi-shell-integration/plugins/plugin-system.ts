@@ -79,13 +79,13 @@ async function main(): Promise<void> {
   const registry = new PluginRegistry();
   registry.register(examplePlugin);
   
-  console.log("🔌 Plugin System Demo\n");
-  console.log("Plugins:", registry.list());
+  console.info("🔌 Plugin System Demo\n");
+  console.info("Plugins:", registry.list());
   
   const tool = registry.getTool("example/hello");
   if (tool) {
     const result = await tool.handler({ name: "World" });
-    console.log("Result:", result);
+    console.info("Result:", result);
   }
 }
 

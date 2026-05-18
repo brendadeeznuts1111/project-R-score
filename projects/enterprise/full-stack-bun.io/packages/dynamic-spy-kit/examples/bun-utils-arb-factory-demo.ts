@@ -68,36 +68,36 @@ const NBA_GAMES = [
 // 1. Bun.version/revision - Runtime Info
 // =============================================================================
 function demoVersionInfo() {
-	console.log("=".repeat(60));
-	console.log("1. 📋 BUN VERSION INFO - Canary Detection");
-	console.log("=".repeat(60));
+	console.info("=".repeat(60));
+	console.info("1. 📋 BUN VERSION INFO - Canary Detection");
+	console.info("=".repeat(60));
 
 	const isCanary = Bun.version.includes("canary");
 	const majorVersion = parseInt(Bun.version.split(".")[0]);
 
-	console.log(`\n📋 Runtime Info:`);
-	console.log(`   Bun.version:  ${Bun.version}`);
-	console.log(`   Bun.revision: ${Bun.revision.slice(0, 12)}...`);
-	console.log(`   Is Canary:    ${isCanary}`);
-	console.log(`   Major:        ${majorVersion}`);
-	console.log(`   Bun.main:     ${Bun.main.split("/").slice(-2).join("/")}`);
+	console.info(`\n📋 Runtime Info:`);
+	console.info(`   Bun.version:  ${Bun.version}`);
+	console.info(`   Bun.revision: ${Bun.revision.slice(0, 12)}...`);
+	console.info(`   Is Canary:    ${isCanary}`);
+	console.info(`   Major:        ${majorVersion}`);
+	console.info(`   Bun.main:     ${Bun.main.split("/").slice(-2).join("/")}`);
 
 	// Version compatibility check
 	const minVersion = "1.0.0";
 	const isCompatible = Bun.semver.satisfies(Bun.version.split("-")[0], `>=${minVersion}`);
-	console.log(`\n✅ Compatible with >=${minVersion}: ${isCompatible}`);
+	console.info(`\n✅ Compatible with >=${minVersion}: ${isCompatible}`);
 }
 
 // =============================================================================
 // 2. Bun.sleep() - Precise Arbitrage Timing
 // =============================================================================
 async function demoSleepTiming() {
-	console.log("\n" + "=".repeat(60));
-	console.log("2. ⏱️ Bun.sleep() - PRECISE ARBITRAGE TIMING");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("2. ⏱️ Bun.sleep() - PRECISE ARBITRAGE TIMING");
+	console.info("=".repeat(60));
 
 	// Precision test
-	console.log(`\n📊 Sleep Precision Test:`);
+	console.info(`\n📊 Sleep Precision Test:`);
 	const precisionTests = [10, 50, 100, 250];
 	
 	for (const target of precisionTests) {
@@ -107,11 +107,11 @@ async function demoSleepTiming() {
 		const actual = performance.now() - start;
 		const drift = actual - target;
 		const emoji = Math.abs(drift) < 5 ? "✅" : Math.abs(drift) < 10 ? "⚠️" : "❌";
-		console.log(`   ${target}ms target → ${actual.toFixed(2)}ms actual (${drift > 0 ? "+" : ""}${drift.toFixed(2)}ms drift) ${emoji}`);
+		console.info(`   ${target}ms target → ${actual.toFixed(2)}ms actual (${drift > 0 ? "+" : ""}${drift.toFixed(2)}ms drift) ${emoji}`);
 	}
 
 	// Simulated bookie polling
-	console.log(`\n🔄 Simulated Bookie Polling (3 rounds):`);
+	console.info(`\n🔄 Simulated Bookie Polling (3 rounds):`);
 	for (let round = 0; round < 3; round++) {
 		const roundStart = performance.now();
 		
@@ -122,7 +122,7 @@ async function demoSleepTiming() {
 		}));
 		
 		const roundTime = performance.now() - roundStart;
-		console.log(`   Round ${round + 1}: ${SHARP_BOOKIES.length} bookies in ${roundTime.toFixed(1)}ms`);
+		console.info(`   Round ${round + 1}: ${SHARP_BOOKIES.length} bookies in ${roundTime.toFixed(1)}ms`);
 		
 		// Rate limit between rounds
 		await Bun.sleep(100);
@@ -130,25 +130,25 @@ async function demoSleepTiming() {
 	}
 
 	// Date-based sleep
-	console.log(`\n📅 Date-based Sleep:`);
+	console.info(`\n📅 Date-based Sleep:`);
 	const futureDate = new Date(Date.now() + 100);
 	const dateStart = performance.now();
 	await Bun.sleep(futureDate);
 	utilsStats.sleepCalls++;
-	console.log(`   Slept until ${futureDate.toISOString().split("T")[1].slice(0, 12)}`);
-	console.log(`   Actual: ${(performance.now() - dateStart).toFixed(2)}ms`);
+	console.info(`   Slept until ${futureDate.toISOString().split("T")[1].slice(0, 12)}`);
+	console.info(`   Actual: ${(performance.now() - dateStart).toFixed(2)}ms`);
 }
 
 // =============================================================================
 // 3. Bun.randomUUIDv7() - Monotonic Arb Tracking
 // =============================================================================
 function demoUUIDv7Tracking() {
-	console.log("\n" + "=".repeat(60));
-	console.log("3. 🆔 Bun.randomUUIDv7() - MONOTONIC ARB TRACKING");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("3. 🆔 Bun.randomUUIDv7() - MONOTONIC ARB TRACKING");
+	console.info("=".repeat(60));
 
 	// Generate arb IDs
-	console.log(`\n📋 Arbitrage ID Generation:`);
+	console.info(`\n📋 Arbitrage ID Generation:`);
 	const arbs: ArbitrageOpportunity[] = [];
 	
 	for (let i = 0; i < 5; i++) {
@@ -174,67 +174,67 @@ function demoUUIDv7Tracking() {
 		b1: `${a.bookie1.name} ${a.bookie1.odds.toFixed(2)}`,
 		b2: `${a.bookie2.name} ${a.bookie2.odds.toFixed(2)}`
 	}));
-	console.log(Bun.inspect.table(arbTable));
+	console.info(Bun.inspect.table(arbTable));
 
 	// Monotonic verification
-	console.log(`\n✅ Monotonic Verification:`);
+	console.info(`\n✅ Monotonic Verification:`);
 	const ids = Array.from({ length: 1000 }, () => {
 		utilsStats.uuidsGenerated++;
 		return Bun.randomUUIDv7();
 	});
 	const sorted = [...ids].sort();
 	const isMonotonic = ids.every((id, i) => id === sorted[i]);
-	console.log(`   1000 UUIDs generated: ${isMonotonic ? "✅ All monotonic!" : "❌ Not monotonic"}`);
+	console.info(`   1000 UUIDs generated: ${isMonotonic ? "✅ All monotonic!" : "❌ Not monotonic"}`);
 
 	// Encoding options
-	console.log(`\n📦 Encoding Options:`);
-	console.log(`   hex:       ${Bun.randomUUIDv7("hex")}`);
+	console.info(`\n📦 Encoding Options:`);
+	console.info(`   hex:       ${Bun.randomUUIDv7("hex")}`);
 	utilsStats.uuidsGenerated++;
-	console.log(`   base64:    ${Bun.randomUUIDv7("base64")}`);
+	console.info(`   base64:    ${Bun.randomUUIDv7("base64")}`);
 	utilsStats.uuidsGenerated++;
-	console.log(`   base64url: ${Bun.randomUUIDv7("base64url")}`);
+	console.info(`   base64url: ${Bun.randomUUIDv7("base64url")}`);
 	utilsStats.uuidsGenerated++;
 	
 	const buffer = Bun.randomUUIDv7("buffer");
 	utilsStats.uuidsGenerated++;
-	console.log(`   buffer:    Uint8Array(${buffer.length}) [${Array.from(buffer.slice(0, 4)).join(", ")}...]`);
+	console.info(`   buffer:    Uint8Array(${buffer.length}) [${Array.from(buffer.slice(0, 4)).join(", ")}...]`);
 }
 
 // =============================================================================
 // 4. Bun.which() - Scraper Dependencies
 // =============================================================================
 function demoWhichDiscovery() {
-	console.log("\n" + "=".repeat(60));
-	console.log("4. 🔍 Bun.which() - SCRAPER DEPENDENCIES");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("4. 🔍 Bun.which() - SCRAPER DEPENDENCIES");
+	console.info("=".repeat(60));
 
 	// Essential tools
 	const essentialTools = ["bun", "node", "git", "curl", "jq"];
 	const optionalTools = ["redis-cli", "docker", "kubectl", "ffmpeg"];
 
-	console.log(`\n📋 Essential Tools:`);
+	console.info(`\n📋 Essential Tools:`);
 	essentialTools.forEach(tool => {
 		const path = Bun.which(tool);
 		utilsStats.whichCalls++;
 		const status = path ? `✅ ${path}` : "❌ Not found";
-		console.log(`   ${tool.padEnd(12)} → ${status}`);
+		console.info(`   ${tool.padEnd(12)} → ${status}`);
 	});
 
-	console.log(`\n📋 Optional Tools:`);
+	console.info(`\n📋 Optional Tools:`);
 	optionalTools.forEach(tool => {
 		const path = Bun.which(tool);
 		utilsStats.whichCalls++;
 		const status = path ? `✅ ${path.split("/").slice(-2).join("/")}` : "⚠️ Not installed";
-		console.log(`   ${tool.padEnd(12)} → ${status}`);
+		console.info(`   ${tool.padEnd(12)} → ${status}`);
 	});
 
 	// Custom PATH search
-	console.log(`\n🔧 Custom PATH Search:`);
+	console.info(`\n🔧 Custom PATH Search:`);
 	const customPaths = ["/usr/local/bin", "/opt/homebrew/bin", "/usr/bin"];
 	for (const customPath of customPaths) {
 		const bunPath = Bun.which("bun", { PATH: customPath });
 		utilsStats.whichCalls++;
-		console.log(`   ${customPath.padEnd(20)} → ${bunPath ? "bun found" : "not found"}`);
+		console.info(`   ${customPath.padEnd(20)} → ${bunPath ? "bun found" : "not found"}`);
 	}
 }
 
@@ -242,12 +242,12 @@ function demoWhichDiscovery() {
 // 5. Bun.nanoseconds() - High-Precision Timing
 // =============================================================================
 async function demoNanosecondsTiming() {
-	console.log("\n" + "=".repeat(60));
-	console.log("5. ⚡ Bun.nanoseconds() - HIGH-PRECISION TIMING");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("5. ⚡ Bun.nanoseconds() - HIGH-PRECISION TIMING");
+	console.info("=".repeat(60));
 
 	// Precision comparison
-	console.log(`\n📊 Precision Comparison:`);
+	console.info(`\n📊 Precision Comparison:`);
 	
 	const perfStart = performance.now();
 	const nanoStart = Bun.nanoseconds();
@@ -261,11 +261,11 @@ async function demoNanosecondsTiming() {
 	const perfEnd = performance.now();
 	utilsStats.nanosecondsCalls++;
 
-	console.log(`   performance.now(): ${(perfEnd - perfStart).toFixed(6)} ms`);
-	console.log(`   Bun.nanoseconds(): ${nanoEnd - nanoStart} ns (${((nanoEnd - nanoStart) / 1e6).toFixed(6)} ms)`);
+	console.info(`   performance.now(): ${(perfEnd - perfStart).toFixed(6)} ms`);
+	console.info(`   Bun.nanoseconds(): ${nanoEnd - nanoStart} ns (${((nanoEnd - nanoStart) / 1e6).toFixed(6)} ms)`);
 
 	// Simulated arb execution timing
-	console.log(`\n🏀 Arb Execution Timing:`);
+	console.info(`\n🏀 Arb Execution Timing:`);
 	const arbTimings: { game: string; latency: string }[] = [];
 
 	for (const game of NBA_GAMES.slice(0, 3)) {
@@ -286,16 +286,16 @@ async function demoNanosecondsTiming() {
 		});
 	}
 
-	console.log(Bun.inspect.table(arbTimings));
+	console.info(Bun.inspect.table(arbTimings));
 }
 
 // =============================================================================
 // 6. Bun.deepEquals() - Market Comparison
 // =============================================================================
 function demoDeepEquals() {
-	console.log("\n" + "=".repeat(60));
-	console.log("6. 🔄 Bun.deepEquals() - MARKET COMPARISON");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("6. 🔄 Bun.deepEquals() - MARKET COMPARISON");
+	console.info("=".repeat(60));
 
 	// Compare market snapshots
 	const snapshot1: BookieOdds = {
@@ -322,7 +322,7 @@ function demoDeepEquals() {
 		timestamp: Date.now()
 	};
 
-	console.log(`\n📋 Market Snapshot Comparison:`);
+	console.info(`\n📋 Market Snapshot Comparison:`);
 	
 	// Compare without timestamp
 	const compare1 = { ...snapshot1, timestamp: 0 };
@@ -334,18 +334,18 @@ function demoDeepEquals() {
 	const eq13 = Bun.deepEquals(compare1, compare3);
 	utilsStats.deepEquals++;
 
-	console.log(`   Snapshot 1 vs 2: ${eq12 ? "✅ Same odds" : "❌ Different"}`);
-	console.log(`   Snapshot 1 vs 3: ${eq13 ? "✅ Same odds" : "⚠️ ODDS CHANGED!"}`);
+	console.info(`   Snapshot 1 vs 2: ${eq12 ? "✅ Same odds" : "❌ Different"}`);
+	console.info(`   Snapshot 1 vs 3: ${eq13 ? "✅ Same odds" : "⚠️ ODDS CHANGED!"}`);
 
 	// Detect changes
 	if (!eq13) {
-		console.log(`\n🚨 Odds Movement Detected:`);
-		console.log(`   Home: ${snapshot1.homeOdds} → ${snapshot3.homeOdds} (Δ ${(snapshot3.homeOdds - snapshot1.homeOdds).toFixed(2)})`);
-		console.log(`   Away: ${snapshot1.awayOdds} → ${snapshot3.awayOdds} (Δ ${(snapshot3.awayOdds - snapshot1.awayOdds).toFixed(2)})`);
+		console.info(`\n🚨 Odds Movement Detected:`);
+		console.info(`   Home: ${snapshot1.homeOdds} → ${snapshot3.homeOdds} (Δ ${(snapshot3.homeOdds - snapshot1.homeOdds).toFixed(2)})`);
+		console.info(`   Away: ${snapshot1.awayOdds} → ${snapshot3.awayOdds} (Δ ${(snapshot3.awayOdds - snapshot1.awayOdds).toFixed(2)})`);
 	}
 
 	// Batch comparison
-	console.log(`\n📊 Batch Comparison (1000 markets):`);
+	console.info(`\n📊 Batch Comparison (1000 markets):`);
 	const markets1 = Array.from({ length: 1000 }, (_, i) => ({ id: i, odds: 1.95 }));
 	const markets2 = Array.from({ length: 1000 }, (_, i) => ({ id: i, odds: 1.95 }));
 	markets2[500].odds = 1.93; // One change
@@ -360,17 +360,17 @@ function demoDeepEquals() {
 	}
 	const time = performance.now() - start;
 
-	console.log(`   Compared: 1000 markets in ${time.toFixed(2)}ms`);
-	console.log(`   Changed:  ${changedCount} market(s)`);
+	console.info(`   Compared: 1000 markets in ${time.toFixed(2)}ms`);
+	console.info(`   Changed:  ${changedCount} market(s)`);
 }
 
 // =============================================================================
 // 7. Utils Stats Summary
 // =============================================================================
 function printUtilsStats() {
-	console.log("\n" + "=".repeat(60));
-	console.log("7. 📊 UTILS STATS DASHBOARD");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("7. 📊 UTILS STATS DASHBOARD");
+	console.info("=".repeat(60));
 
 	const dashboard = {
 		bun: {
@@ -391,8 +391,8 @@ function printUtilsStats() {
 		}
 	};
 
-	console.log(`\n📋 curl http://localhost:3000/utils-stats`);
-	console.log(JSON.stringify(dashboard, null, 2));
+	console.info(`\n📋 curl http://localhost:3000/utils-stats`);
+	console.info(JSON.stringify(dashboard, null, 2));
 }
 
 // =============================================================================
@@ -472,7 +472,7 @@ function createUtilsServer(port: number) {
 // Main
 // =============================================================================
 async function main() {
-	console.log("\n⚡ @dynamic-spy/kit v8.1 - BUN UTILS INDUSTRIALIZED! 🚀\n");
+	console.info("\n⚡ @dynamic-spy/kit v8.1 - BUN UTILS INDUSTRIALIZED! 🚀\n");
 
 	const args = Bun.argv.slice(2);
 	const serverMode = args.includes("--server");
@@ -488,22 +488,22 @@ async function main() {
 	if (serverMode) {
 		const port = 3003;
 		const server = createUtilsServer(port);
-		console.log("\n" + "=".repeat(60));
-		console.log("8. 🚀 LIVE UTILS SERVER");
-		console.log("=".repeat(60));
-		console.log(`\n🌐 Server running on http://localhost:${port}`);
-		console.log(`   /utils-stats  → Utils dashboard`);
-		console.log(`   /arb          → Generate arb ID`);
-		console.log(`   /tools        → Check installed tools`);
-		console.log(`   /health       → Health check with timing`);
-		console.log(`\n📡 Server mode - press Ctrl+C to stop`);
+		console.info("\n" + "=".repeat(60));
+		console.info("8. 🚀 LIVE UTILS SERVER");
+		console.info("=".repeat(60));
+		console.info(`\n🌐 Server running on http://localhost:${port}`);
+		console.info(`   /utils-stats  → Utils dashboard`);
+		console.info(`   /arb          → Generate arb ID`);
+		console.info(`   /tools        → Check installed tools`);
+		console.info(`   /health       → Health check with timing`);
+		console.info(`\n📡 Server mode - press Ctrl+C to stop`);
 		return;
 	}
 
-	console.log("\n" + "=".repeat(60));
-	console.log("✅ UTILS SUPERPOWERS SUMMARY");
-	console.log("=".repeat(60));
-	console.log(`
+	console.info("\n" + "=".repeat(60));
+	console.info("✅ UTILS SUPERPOWERS SUMMARY");
+	console.info("=".repeat(60));
+	console.info(`
 | Util            | Arbitrage Use      | Impact        |
 |-----------------|--------------------| --------------|
 | Bun.version     | Canary detection   | Auto-upgrade  |

@@ -50,11 +50,11 @@ class ObsidianBridge {
 
             if (response.ok) {
                 this.isConnected = true;
-                console.log('✅ Connected to Obsidian');
+                console.info('✅ Connected to Obsidian');
                 return true;
             }
         } catch (error) {
-            console.log('⚠️ Obsidian not available - running in standalone mode');
+            console.info('⚠️ Obsidian not available - running in standalone mode');
         }
 
         this.isConnected = false;
@@ -63,7 +63,7 @@ class ObsidianBridge {
 
     async sendMessage(message: BridgeMessage): Promise<boolean> {
         if (!this.isConnected) {
-            console.log(`📢 [${message.command.toUpperCase()}] ${JSON.stringify(message.args)}`);
+            console.info(`📢 [${message.command.toUpperCase()}] ${JSON.stringify(message.args)}`);
             return false;
         }
 
@@ -119,7 +119,7 @@ class ObsidianBridge {
 
     // Service methods for real-time validation
     async startValidationService(): Promise<void> {
-        console.log('🚀 Starting Obsidian Bridge Validation Service...');
+        console.info('🚀 Starting Obsidian Bridge Validation Service...');
 
         // Start HTTP server for Obsidian callbacks
         const server = Bun.serve({
@@ -163,11 +163,11 @@ class ObsidianBridge {
             }
         });
 
-        console.log(`✅ Bridge service running on http://localhost:3999`);
+        console.info(`✅ Bridge service running on http://localhost:3999`);
 
         // Graceful shutdown
         process.on('SIGINT', () => {
-            console.log('\n🛑 Shutting down bridge service...');
+            console.info('\n🛑 Shutting down bridge service...');
             server.stop();
             process.exit(0);
         });
@@ -305,7 +305,7 @@ async function main() {
             // Send test notice
             await bridge.pushNotice('info', 'Bun-Obsidian bridge is working!', 3000);
         } else {
-            console.log('❌ Could not connect to Obsidian');
+            console.info('❌ Could not connect to Obsidian');
             process.exit(1);
         }
     }

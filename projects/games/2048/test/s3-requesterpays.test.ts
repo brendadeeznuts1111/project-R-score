@@ -324,5 +324,5 @@ await client.writeFile("results.json", JSON.stringify({ processed: true }));
   });
 });
 
-console.log("☁️  S3 Requester Pays Tests Loaded!");
-console.log("   Run with: bun test --grep 'S3 Requester Pays'");
+console.info("☁️  S3 Requester Pays Tests Loaded!");
+console.info("   Run with: bun test --grep 'S3 Requester Pays'");

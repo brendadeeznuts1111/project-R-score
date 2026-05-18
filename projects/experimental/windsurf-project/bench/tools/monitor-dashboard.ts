@@ -27,8 +27,8 @@ class R2MonitorDashboard {
   }
 
   async startMonitoring(intervalMs: number = 5000) {
-    console.log('📊 **R2 Performance Monitor Started**');
-    console.log('='.repeat(60));
+    console.info('📊 **R2 Performance Monitor Started**');
+    console.info('='.repeat(60));
     
     this.isRunning = true;
     this.interval = setInterval(() => this.collectMetrics(), intervalMs) as any;
@@ -108,15 +108,15 @@ class R2MonitorDashboard {
     // Clear screen (works in most terminals)
     console.clear();
     
-    console.log('🌐 **R2 Performance Monitor Dashboard**');
-    console.log('='.repeat(60));
-    console.log(`📊 Bucket: ${Bun.env.R2_BUCKET}`);
-    console.log(`🔗 Endpoint: ${Bun.env.S3_ENDPOINT}`);
-    console.log(`⏰ Last Update: ${new Date().toLocaleString()}`);
-    console.log('');
+    console.info('🌐 **R2 Performance Monitor Dashboard**');
+    console.info('='.repeat(60));
+    console.info(`📊 Bucket: ${Bun.env.R2_BUCKET}`);
+    console.info(`🔗 Endpoint: ${Bun.env.S3_ENDPOINT}`);
+    console.info(`⏰ Last Update: ${new Date().toLocaleString()}`);
+    console.info('');
 
     if (this.metrics.length === 0) {
-      console.log('⏳ Collecting initial metrics...');
+      console.info('⏳ Collecting initial metrics...');
       return;
     }
 
@@ -124,35 +124,35 @@ class R2MonitorDashboard {
     const previous = this.metrics[this.metrics.length - 2] || latest;
 
     // Current metrics
-    console.log('📈 **Current Performance**');
-    console.log(`├── Uploads: ${latest.uploads}`);
-    console.log(`├── Avg Time: ${latest.avgTime.toFixed(2)}ms`);
-    console.log(`├── Throughput: ${latest.throughput.toFixed(0)} IDs/s`);
-    console.log(`├── Compression: ${latest.compression.toFixed(1)}%`);
-    console.log(`├── Errors: ${latest.errors}`);
-    console.log(`└── Cost: $${latest.cost.toFixed(6)}`);
-    console.log('');
+    console.info('📈 **Current Performance**');
+    console.info(`├── Uploads: ${latest.uploads}`);
+    console.info(`├── Avg Time: ${latest.avgTime.toFixed(2)}ms`);
+    console.info(`├── Throughput: ${latest.throughput.toFixed(0)} IDs/s`);
+    console.info(`├── Compression: ${latest.compression.toFixed(1)}%`);
+    console.info(`├── Errors: ${latest.errors}`);
+    console.info(`└── Cost: $${latest.cost.toFixed(6)}`);
+    console.info('');
 
     // Trends
     const timeTrend = latest.avgTime - previous.avgTime;
     const throughputTrend = latest.throughput - previous.throughput;
     
-    console.log('📊 **Performance Trends**');
-    console.log(`├── Time: ${timeTrend >= 0 ? '📈' : '📉'} ${timeTrend >= 0 ? '+' : ''}${timeTrend.toFixed(2)}ms`);
-    console.log(`└── Throughput: ${throughputTrend >= 0 ? '📈' : '📉'} ${throughputTrend >= 0 ? '+' : ''}${throughputTrend.toFixed(0)} IDs/s`);
-    console.log('');
+    console.info('📊 **Performance Trends**');
+    console.info(`├── Time: ${timeTrend >= 0 ? '📈' : '📉'} ${timeTrend >= 0 ? '+' : ''}${timeTrend.toFixed(2)}ms`);
+    console.info(`└── Throughput: ${throughputTrend >= 0 ? '📈' : '📉'} ${throughputTrend >= 0 ? '+' : ''}${throughputTrend.toFixed(0)} IDs/s`);
+    console.info('');
 
     // ASCII Performance Graph
     this.drawPerformanceGraph();
     
-    console.log('');
-    console.log('🎮 **Controls**: Press Ctrl+C to stop monitoring');
+    console.info('');
+    console.info('🎮 **Controls**: Press Ctrl+C to stop monitoring');
   }
 
   private drawPerformanceGraph() {
     if (this.metrics.length < 2) return;
 
-    console.log('📊 **Throughput Graph (Last 20 samples)**');
+    console.info('📊 **Throughput Graph (Last 20 samples)**');
     
     const maxThroughput = Math.max(...this.metrics.map(m => m.throughput));
     const graphWidth = 40;
@@ -161,7 +161,7 @@ class R2MonitorDashboard {
       const barLength = Math.round((metric.throughput / maxThroughput) * graphWidth);
       const bar = '█'.repeat(barLength) + '░'.repeat(graphWidth - barLength);
       const label = index === this.metrics.length - 1 ? 'NOW' : `${index}`;
-      console.log(`${label.padEnd(4)} │${bar}│ ${metric.throughput.toFixed(0)}`);
+      console.info(`${label.padEnd(4)} │${bar}│ ${metric.throughput.toFixed(0)}`);
     });
   }
 
@@ -171,7 +171,7 @@ class R2MonitorDashboard {
       clearInterval(this.interval);
       this.interval = null;
     }
-    console.log('\n🛑 Monitoring stopped');
+    console.info('\n🛑 Monitoring stopped');
   }
 }
 

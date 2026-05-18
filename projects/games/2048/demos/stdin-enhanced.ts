@@ -3,63 +3,63 @@
 // Enhanced BunFile stdin demo with advanced file operations
 import { colourKit, pad } from "./quantum-toolkit-patch.ts";
 
-console.log(colourKit(0.8).ansi + "🚀 Enhanced BunFile stdin Demo" + "\x1b[0m");
-console.log("=".repeat(50));
+console.info(colourKit(0.8).ansi + "🚀 Enhanced BunFile stdin Demo" + "\x1b[0m");
+console.info("=".repeat(50));
 
 // Enhanced BunFile operations
 async function enhancedBunFileDemo() {
-  console.log(
+  console.info(
     colourKit(0.6).ansi + "\n📁 Enhanced BunFile Operations" + "\x1b[0m"
   );
-  console.log("Advanced file operations on stdin data\n");
+  console.info("Advanced file operations on stdin data\n");
 
   try {
     const stdinFile = Bun.stdin;
     const size = await stdinFile.size;
 
     if (size === 0) {
-      console.log("ℹ️ No piped data detected.");
-      console.log(
+      console.info("ℹ️ No piped data detected.");
+      console.info(
         'Try: echo "hello world\\n\\nmulti\\nline" | bun run stdin-enhanced'
       );
       return;
     }
 
-    console.log(`📊 File Analysis:`);
-    console.log(`  Size: ${size} bytes`);
-    console.log(`  Type: ${stdinFile.constructor.name}`);
+    console.info(`📊 File Analysis:`);
+    console.info(`  Size: ${size} bytes`);
+    console.info(`  Type: ${stdinFile.constructor.name}`);
 
     // Read as text first (this will consume stdin)
     const textContent = await stdinFile.text();
-    console.log(`  Text length: ${textContent.length} chars`);
+    console.info(`  Text length: ${textContent.length} chars`);
 
     // Content analysis
-    console.log("\n📈 Content Analysis:");
+    console.info("\n📈 Content Analysis:");
     const lines = textContent.split("\n").filter((line) => line.length > 0);
     const words = textContent.split(/\s+/).filter((word) => word.length > 0);
     const chars = textContent.length;
 
-    console.log(`  Lines: ${lines.length}`);
-    console.log(`  Words: ${words.length}`);
-    console.log(`  Characters: ${chars}`);
-    console.log(
+    console.info(`  Lines: ${lines.length}`);
+    console.info(`  Words: ${words.length}`);
+    console.info(`  Characters: ${chars}`);
+    console.info(
       `  Average line length: ${
         lines.length > 0 ? (chars / lines.length).toFixed(1) : 0
       }`
     );
 
     // Show lines with details
-    console.log("\n📋 Line Details:");
-    console.log("┌─────┬──────────┬──────────┬──────────┐");
-    console.log("│ #   │ Length   │ Words    │ Preview  │");
-    console.log("├─────┼──────────┼──────────┼──────────┤");
+    console.info("\n📋 Line Details:");
+    console.info("┌─────┬──────────┬──────────┬──────────┐");
+    console.info("│ #   │ Length   │ Words    │ Preview  │");
+    console.info("├─────┼──────────┼──────────┼──────────┤");
 
     lines.forEach((line, i) => {
       const wordCount = line.split(/\s+/).filter((w) => w.length > 0).length;
       const preview = line.length > 10 ? line.slice(0, 10) + "..." : line;
       const color = colourKit(Math.min(line.length / 50, 1)).ansi;
 
-      console.log(
+      console.info(
         `│ ${pad((i + 1).toString(), 3)} │ ${pad(
           line.length.toString(),
           8
@@ -70,20 +70,20 @@ async function enhancedBunFileDemo() {
       );
     });
 
-    console.log("└─────┴──────────┴──────────┴──────────┘");
+    console.info("└─────┴──────────┴──────────┴──────────┘");
 
     // File operations
-    console.log("\n💾 File Operations:");
+    console.info("\n💾 File Operations:");
 
     // Save to temporary file
     const tempFile = "/tmp/stdin-enhanced-output.txt";
     await Bun.write(tempFile, textContent);
-    console.log(`  ✅ Saved to: ${tempFile}`);
+    console.info(`  ✅ Saved to: ${tempFile}`);
 
     // Read back and verify
     const verifyContent = await Bun.file(tempFile).text();
     const isValid = verifyContent === textContent;
-    console.log(
+    console.info(
       `  ${isValid ? "✅" : "❌"} Verification: ${
         isValid ? "Passed" : "Failed"
       }`
@@ -107,16 +107,16 @@ async function enhancedBunFileDemo() {
 
     const reportFile = "/tmp/stdin-analysis.json";
     await Bun.write(reportFile, JSON.stringify(report, null, 2));
-    console.log(`  📊 Analysis report: ${reportFile}`);
+    console.info(`  📊 Analysis report: ${reportFile}`);
 
     // Show file info
     const savedFile = Bun.file(tempFile);
     const savedStats = await savedFile.exists();
-    console.log(`  📁 Saved file exists: ${savedStats}`);
+    console.info(`  📁 Saved file exists: ${savedStats}`);
 
     if (savedStats) {
-      console.log(`  📏 Saved file size: ${await savedFile.size} bytes`);
-      console.log(
+      console.info(`  📏 Saved file size: ${await savedFile.size} bytes`);
+      console.info(
         `  🕒 Last modified: ${new Date(
           await savedFile.lastModified
         ).toISOString()}`
@@ -126,18 +126,18 @@ async function enhancedBunFileDemo() {
     // Return text content for binary analysis
     return textContent;
   } catch (error) {
-    console.log(`❌ Error: ${error.message}`);
+    console.info(`❌ Error: ${error.message}`);
     return null;
   }
 }
 
 // Binary data processing
 async function binaryDataDemo(textContent) {
-  console.log(colourKit(0.7).ansi + "\n🔢 Binary Data Processing" + "\x1b[0m");
+  console.info(colourKit(0.7).ansi + "\n🔢 Binary Data Processing" + "\x1b[0m");
 
   try {
     if (!textContent) {
-      console.log("ℹ️ No text content to analyze");
+      console.info("ℹ️ No text content to analyze");
       return;
     }
 
@@ -145,8 +145,8 @@ async function binaryDataDemo(textContent) {
     const savedFile = Bun.file("/tmp/stdin-enhanced-output.txt");
     const size = await savedFile.size;
 
-    console.log(`📊 Binary Analysis:`);
-    console.log(`  Total bytes: ${size}`);
+    console.info(`📊 Binary Analysis:`);
+    console.info(`  Total bytes: ${size}`);
 
     // Read as Uint8Array from saved file
     const uint8Array = new Uint8Array(await savedFile.arrayBuffer());
@@ -158,10 +158,10 @@ async function binaryDataDemo(textContent) {
     const nonZeroBytes = frequency.filter(
       (count, byte) => count > 0 && byte !== 10 && byte !== 13
     ).length;
-    console.log(`  Unique non-control bytes: ${nonZeroBytes}`);
+    console.info(`  Unique non-control bytes: ${nonZeroBytes}`);
 
     // Show hex dump of first 64 bytes
-    console.log("\n🔍 Hex Dump (first 64 bytes):");
+    console.info("\n🔍 Hex Dump (first 64 bytes):");
     const displayBytes = uint8Array.slice(0, 64);
 
     for (let i = 0; i < displayBytes.length; i += 16) {
@@ -174,39 +174,39 @@ async function binaryDataDemo(textContent) {
         .join("");
 
       const offset = i.toString(16).padStart(8, "0");
-      console.log(`  ${offset}: ${hex.padEnd(47)} |${ascii}|`);
+      console.info(`  ${offset}: ${hex.padEnd(47)} |${ascii}|`);
     }
 
     // Check for common patterns
-    console.log("\n🔍 Pattern Detection:");
+    console.info("\n🔍 Pattern Detection:");
     const isText = uint8Array.every(
       (b) => b === 10 || b === 13 || (b >= 32 && b <= 126)
     );
     const hasNull = uint8Array.includes(0);
     const isUTF8 = true; // Simplified check
 
-    console.log(`  Text data: ${isText ? "✅ Yes" : "❌ No"}`);
-    console.log(`  Null bytes: ${hasNull ? "⚠️ Found" : "✅ None"}`);
-    console.log(`  UTF-8 compatible: ${isUTF8 ? "✅ Yes" : "❌ No"}`);
+    console.info(`  Text data: ${isText ? "✅ Yes" : "❌ No"}`);
+    console.info(`  Null bytes: ${hasNull ? "⚠️ Found" : "✅ None"}`);
+    console.info(`  UTF-8 compatible: ${isUTF8 ? "✅ Yes" : "❌ No"}`);
   } catch (error) {
-    console.log(`❌ Binary processing error: ${error.message}`);
+    console.info(`❌ Binary processing error: ${error.message}`);
   }
 }
 
 // Performance comparison
 async function performanceDemo() {
-  console.log(colourKit(0.5).ansi + "\n⚡ Performance Comparison" + "\x1b[0m");
+  console.info(colourKit(0.5).ansi + "\n⚡ Performance Comparison" + "\x1b[0m");
 
   try {
     const stdinFile = Bun.stdin;
     const size = await stdinFile.size;
 
     if (size === 0) {
-      console.log("ℹ️ No data for performance test");
+      console.info("ℹ️ No data for performance test");
       return;
     }
 
-    console.log(`🏃 Performance tests on ${size} bytes:`);
+    console.info(`🏃 Performance tests on ${size} bytes:`);
 
     // Test 1: text() method
     const start1 = performance.now();
@@ -232,71 +232,71 @@ async function performanceDemo() {
     reader.releaseLock();
     const time3 = performance.now() - start3;
 
-    console.log("┌─────────────────┬──────────┬──────────┐");
-    console.log("│ Method           │ Time (ms) │ Size     │");
-    console.log("├─────────────────┼──────────┼──────────┤");
-    console.log(
+    console.info("┌─────────────────┬──────────┬──────────┐");
+    console.info("│ Method           │ Time (ms) │ Size     │");
+    console.info("├─────────────────┼──────────┼──────────┤");
+    console.info(
       `│ ${pad("text()", 15)} │ ${pad(time1.toFixed(2), 8)} │ ${pad(
         textContent.length + "B",
         8
       )} │`
     );
-    console.log(
+    console.info(
       `│ ${pad("arrayBuffer()", 15)} │ ${pad(time2.toFixed(2), 8)} │ ${pad(
         arrayBuffer.byteLength + "B",
         8
       )} │`
     );
-    console.log(
+    console.info(
       `│ ${pad("stream()", 15)} │ ${pad(time3.toFixed(2), 8)} │ ${pad(
         streamSize + "B",
         8
       )} │`
     );
-    console.log("└─────────────────┴──────────┴──────────┘");
+    console.info("└─────────────────┴──────────┴──────────┘");
 
     // Find fastest method
     const times = [time1, time2, time3];
     const methods = ["text()", "arrayBuffer()", "stream()"];
     const fastestIndex = times.indexOf(Math.min(...times));
 
-    console.log(
+    console.info(
       `🏆 Fastest method: ${methods[fastestIndex]} (${times[
         fastestIndex
       ].toFixed(2)}ms)`
     );
   } catch (error) {
-    console.log(`❌ Performance test error: ${error.message}`);
+    console.info(`❌ Performance test error: ${error.message}`);
   }
 }
 
 // Main execution
 async function main() {
-  console.log("🎯 Enhanced BunFile capabilities:");
-  console.log("  • Advanced file operations");
-  console.log("  • Binary data processing");
-  console.log("  • Performance analysis");
-  console.log("  • Content statistics");
-  console.log("  • File I/O operations");
+  console.info("🎯 Enhanced BunFile capabilities:");
+  console.info("  • Advanced file operations");
+  console.info("  • Binary data processing");
+  console.info("  • Performance analysis");
+  console.info("  • Content statistics");
+  console.info("  • File I/O operations");
 
   await enhancedBunFileDemo();
   await binaryDataDemo();
   await performanceDemo();
 
-  console.log(
+  console.info(
     "\n" +
       colourKit(0.2).ansi +
       "🎉 Enhanced BunFile Demo Completed!" +
       "\x1b[0m"
   );
-  console.log("💡 Check /tmp/ for generated files:");
-  console.log("  • stdin-enhanced-output.txt");
-  console.log("  • stdin-analysis.json");
+  console.info("💡 Check /tmp/ for generated files:");
+  console.info("  • stdin-enhanced-output.txt");
+  console.info("  • stdin-analysis.json");
 }
 
 // Handle graceful exit
 process.on("SIGINT", () => {
-  console.log("\n\n👋 Enhanced demo - Cleaning up...");
+  console.info("\n\n👋 Enhanced demo - Cleaning up...");
   process.exit(0);
 });
 

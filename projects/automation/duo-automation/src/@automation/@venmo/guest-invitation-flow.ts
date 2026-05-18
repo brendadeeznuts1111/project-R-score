@@ -124,8 +124,8 @@ class GuestInvitationFlow {
     // Send SMS invitation
     await this.sendInvitationSMS(invite);
 
-    console.log(`📱 Created invitation for ${params.guestName} to ${params.familyName}`);
-    console.log(`📲 SMS sent to ${params.guestPhone} with code: ${inviteCode}`);
+    console.info(`📱 Created invitation for ${params.guestName} to ${params.familyName}`);
+    console.info(`📲 SMS sent to ${params.guestPhone} with code: ${inviteCode}`);
 
     return invite;
   }
@@ -157,8 +157,8 @@ class GuestInvitationFlow {
 
     try {
       // Mock SMS sending during development
-      console.log(`📨 [MOCK] Sending SMS to ${invite.guestPhone}:`);
-      console.log(message);
+      console.info(`📨 [MOCK] Sending SMS to ${invite.guestPhone}:`);
+      console.info(message);
       
       // In production, this would use Twilio or similar service:
       // await twilioClient.messages.create({
@@ -364,14 +364,14 @@ class GuestInvitationFlow {
       invitedBy: invite.inviterId
     });
 
-    console.log(`👤 Created guest profile for ${invite.guestName} in ${invite.familyName}`);
+    console.info(`👤 Created guest profile for ${invite.guestName} in ${invite.familyName}`);
   }
 
   /**
    * Setup payment methods for guest
    */
   private static async setupGuestPaymentMethods(inviteId: string, paymentData: Record<string, any>): Promise<void> {
-    console.log(`💳 Setting up payment methods for guest from invite ${inviteId}`);
+    console.info(`💳 Setting up payment methods for guest from invite ${inviteId}`);
     // Integration with payment method setup
   }
 
@@ -396,7 +396,7 @@ class GuestInvitationFlow {
     // Notify inviter
     await this.notifyInviterOfAcceptance(invite);
 
-    console.log(`🎉 Onboarding completed for ${invite.guestName}`);
+    console.info(`🎉 Onboarding completed for ${invite.guestName}`);
   }
 
   /**
@@ -410,8 +410,8 @@ class GuestInvitationFlow {
       tier: this.formatTierForDisplay(invite.tier)
     });
 
-    console.log(`📨 [MOCK] Sending welcome SMS to ${invite.guestPhone}:`);
-    console.log(message);
+    console.info(`📨 [MOCK] Sending welcome SMS to ${invite.guestPhone}:`);
+    console.info(message);
     
     // In production, send via Twilio
   }
@@ -420,7 +420,7 @@ class GuestInvitationFlow {
    * Notify inviter that guest accepted invitation
    */
   private static async notifyInviterOfAcceptance(invite: PoolInvite): Promise<void> {
-    console.log(`📢 Notifying ${invite.inviterName} that ${invite.guestName} accepted the invitation`);
+    console.info(`📢 Notifying ${invite.inviterName} that ${invite.guestName} accepted the invitation`);
     // Integration with notification system
   }
 
@@ -490,8 +490,8 @@ class GuestInvitationFlow {
       inviteCode: invite.code
     });
 
-    console.log(`📨 [MOCK] Sending reminder SMS to ${invite.guestPhone}:`);
-    console.log(message);
+    console.info(`📨 [MOCK] Sending reminder SMS to ${invite.guestPhone}:`);
+    console.info(message);
   }
 
   /**
@@ -512,7 +512,7 @@ class GuestInvitationFlow {
 
     if (cleaned > 0) {
       await this.saveAllInvitations(invites);
-      console.log(`🧹 Cleaned up ${cleaned} expired invitations`);
+      console.info(`🧹 Cleaned up ${cleaned} expired invitations`);
     }
 
     return cleaned;
@@ -639,11 +639,11 @@ if (import.meta.main) {
         guestPhone: '+15551234567',
         tier: 'GUEST' as any
       }).then(invite => {
-        console.log('✅ Invitation created:');
-        console.log(`Code: ${invite.code}`);
-        console.log(`Guest: ${invite.guestName}`);
-        console.log(`Family: ${invite.familyName}`);
-        console.log(`Expires: ${invite.expiresAt.toISOString()}`);
+        console.info('✅ Invitation created:');
+        console.info(`Code: ${invite.code}`);
+        console.info(`Guest: ${invite.guestName}`);
+        console.info(`Family: ${invite.familyName}`);
+        console.info(`Expires: ${invite.expiresAt.toISOString()}`);
       }).catch(error => console.error('❌ Error:', error.message));
       break;
 
@@ -652,12 +652,12 @@ if (import.meta.main) {
       if (code) {
         GuestInvitationFlow.verifyInviteCode(code).then(result => {
           if (result.valid) {
-            console.log('✅ Invite code valid!');
-            console.log(`Guest: ${result.invite?.guestName}`);
-            console.log(`Family: ${result.invite?.familyName}`);
-            console.log(`Session: ${result.session?.sessionId}`);
+            console.info('✅ Invite code valid!');
+            console.info(`Guest: ${result.invite?.guestName}`);
+            console.info(`Family: ${result.invite?.familyName}`);
+            console.info(`Session: ${result.session?.sessionId}`);
           } else {
-            console.log('❌ Invalid invite code:', result.error);
+            console.info('❌ Invalid invite code:', result.error);
           }
         }).catch(error => console.error('❌ Error:', error.message));
       }
@@ -665,18 +665,18 @@ if (import.meta.main) {
 
     case 'reminders':
       GuestInvitationFlow.sendReminders().then(count => {
-        console.log(`📨 Sent ${count} reminder SMS messages`);
+        console.info(`📨 Sent ${count} reminder SMS messages`);
       }).catch(error => console.error('❌ Error:', error.message));
       break;
 
     case 'cleanup':
       GuestInvitationFlow.cleanupExpiredInvitations().then(count => {
-        console.log(`🧹 Cleaned up ${count} expired invitations`);
+        console.info(`🧹 Cleaned up ${count} expired invitations`);
       }).catch(error => console.error('❌ Error:', error.message));
       break;
 
     default:
-      console.log(`
+      console.info(`
 📱 Guest Invitation Flow - SMS Integration & Onboarding
 
 Usage:

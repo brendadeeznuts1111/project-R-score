@@ -2,7 +2,7 @@
 import { APIAppleIDCreator, ConfigManager } from './readmeauth';
 
 async function demonstrateIPBasedConfig() {
-  console.log('🌍 Demonstrating IP-based Device and Timezone Configuration\n');
+  console.info('🌍 Demonstrating IP-based Device and Timezone Configuration\n');
 
   // Test different IP addresses from various regions
   const testIPs = [
@@ -14,23 +14,23 @@ async function demonstrateIPBasedConfig() {
   ];
 
   for (const test of testIPs) {
-    console.log(`\n📍 Testing IP: ${test.ip}`);
-    console.log(`Expected: ${test.expected}`);
+    console.info(`\n📍 Testing IP: ${test.ip}`);
+    console.info(`Expected: ${test.expected}`);
     
     // Show configuration details
     const config = ConfigManager.YAML.parse(test.ip);
-    console.log(`📱 Device: ${config.deviceProfile?.deviceModel || 'Default'}`);
-    console.log(`🌍 Timezone: ${config.deviceProfile?.timezone || config.timezone}`);
-    console.log(`🌐 Locale: ${config.deviceProfile?.locale || config.locale}`);
-    console.log(`📡 Carrier: ${config.deviceProfile?.carrier || 'Default'}`);
-    console.log(`🧪 ATE: ${config.ateProfile?.environment || 'Production'}`);
+    console.info(`📱 Device: ${config.deviceProfile?.deviceModel || 'Default'}`);
+    console.info(`🌍 Timezone: ${config.deviceProfile?.timezone || config.timezone}`);
+    console.info(`🌐 Locale: ${config.deviceProfile?.locale || config.locale}`);
+    console.info(`📡 Carrier: ${config.deviceProfile?.carrier || 'Default'}`);
+    console.info(`🧪 ATE: ${config.ateProfile?.environment || 'Production'}`);
     
     // Initialize creator with IP
     const creator = new APIAppleIDCreator({}, test.ip);
-    console.log('✅ Configuration loaded successfully');
+    console.info('✅ Configuration loaded successfully');
   }
 
-  console.log('\n🎯 IP-based configuration demonstration complete!');
+  console.info('\n🎯 IP-based configuration demonstration complete!');
 }
 
 // Export for use

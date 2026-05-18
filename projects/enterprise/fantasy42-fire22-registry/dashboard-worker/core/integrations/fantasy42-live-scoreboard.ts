@@ -65,7 +65,7 @@ export class Fantasy42LiveScoreboard {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🏆 Initializing Fantasy42 Live Scoreboard...');
+      console.info('🏆 Initializing Fantasy42 Live Scoreboard...');
 
       // Initialize base scoreboard
       const baseReady = await this.scoreboard.initialize();
@@ -102,7 +102,7 @@ export class Fantasy42LiveScoreboard {
         await this.initializeMobileOptimization();
       }
 
-      console.log('✅ Fantasy42 Live Scoreboard initialized with enhanced features');
+      console.info('✅ Fantasy42 Live Scoreboard initialized with enhanced features');
       return true;
     } catch (error) {
       console.error('❌ Failed to initialize live scoreboard:', error);
@@ -123,7 +123,7 @@ export class Fantasy42LiveScoreboard {
     // Initialize notification system
     await this.initializeNotificationSystem();
 
-    console.log('✅ Enhanced features initialized');
+    console.info('✅ Enhanced features initialized');
   }
 
   /**
@@ -138,7 +138,7 @@ export class Fantasy42LiveScoreboard {
       await this.updatePredictions();
     }, 300000); // Update every 5 minutes
 
-    console.log('🤖 AI predictions initialized');
+    console.info('🤖 AI predictions initialized');
   }
 
   /**
@@ -151,7 +151,7 @@ export class Fantasy42LiveScoreboard {
     // Integrate with unified betting system
     await this.integrateWithUnifiedBetting();
 
-    console.log('💰 Betting integration initialized');
+    console.info('💰 Betting integration initialized');
   }
 
   /**
@@ -164,7 +164,7 @@ export class Fantasy42LiveScoreboard {
     // Initialize analytics dashboard
     await this.initializeAnalyticsDashboard();
 
-    console.log('📊 Performance analytics initialized');
+    console.info('📊 Performance analytics initialized');
   }
 
   /**
@@ -177,7 +177,7 @@ export class Fantasy42LiveScoreboard {
     // Initialize community features
     await this.initializeCommunityFeatures();
 
-    console.log('👥 Social features initialized');
+    console.info('👥 Social features initialized');
   }
 
   /**
@@ -190,7 +190,7 @@ export class Fantasy42LiveScoreboard {
     // Optimize for touch interactions
     await this.optimizeForMobile();
 
-    console.log('📱 Mobile optimization initialized');
+    console.info('📱 Mobile optimization initialized');
   }
 
   /**
@@ -249,7 +249,7 @@ export class Fantasy42LiveScoreboard {
     toggleBtn.addEventListener('click', () => this.toggleAIInsights());
     scoreboardElement.appendChild(toggleBtn);
 
-    console.log('✅ Live enhancements added');
+    console.info('✅ Live enhancements added');
   }
 
   /**
@@ -265,7 +265,7 @@ export class Fantasy42LiveScoreboard {
     // Watch for game status changes
     this.setupStatusWatcher();
 
-    console.log('👁️ Game watchers setup');
+    console.info('👁️ Game watchers setup');
   }
 
   /**
@@ -283,7 +283,7 @@ export class Fantasy42LiveScoreboard {
     // Setup vibration for mobile
     this.setupVibrationNotifications();
 
-    console.log('🔔 Notification system initialized');
+    console.info('🔔 Notification system initialized');
   }
 
   /**
@@ -297,7 +297,7 @@ export class Fantasy42LiveScoreboard {
       this.predictions.set(game.gameId, prediction);
     }
 
-    console.log(`🤖 Loaded predictions for ${liveGames.length} games`);
+    console.info(`🤖 Loaded predictions for ${liveGames.length} games`);
   }
 
   /**
@@ -314,7 +314,7 @@ export class Fantasy42LiveScoreboard {
     // Update AI insights display
     await this.updateAIInsights();
 
-    console.log('🔄 Predictions updated');
+    console.info('🔄 Predictions updated');
   }
 
   /**
@@ -355,7 +355,7 @@ export class Fantasy42LiveScoreboard {
       await this.detectBettingOpportunities();
     }, 60000); // Check every minute
 
-    console.log('💰 Betting opportunities setup');
+    console.info('💰 Betting opportunities setup');
   }
 
   /**
@@ -363,7 +363,7 @@ export class Fantasy42LiveScoreboard {
    */
   private async integrateWithUnifiedBetting(): Promise<void> {
     // Connect with Fantasy42 unified betting integration
-    console.log('🔗 Integrated with unified betting system');
+    console.info('🔗 Integrated with unified betting system');
   }
 
   /**
@@ -371,7 +371,7 @@ export class Fantasy42LiveScoreboard {
    */
   private async setupPerformanceTracking(): Promise<void> {
     // Setup performance metrics collection
-    console.log('📈 Performance tracking setup');
+    console.info('📈 Performance tracking setup');
   }
 
   /**
@@ -379,7 +379,7 @@ export class Fantasy42LiveScoreboard {
    */
   private async initializeAnalyticsDashboard(): Promise<void> {
     // Initialize analytics display
-    console.log('📊 Analytics dashboard initialized');
+    console.info('📊 Analytics dashboard initialized');
   }
 
   /**
@@ -387,7 +387,7 @@ export class Fantasy42LiveScoreboard {
    */
   private async setupSocialInteractions(): Promise<void> {
     // Setup social features
-    console.log('👥 Social interactions setup');
+    console.info('👥 Social interactions setup');
   }
 
   /**
@@ -395,7 +395,7 @@ export class Fantasy42LiveScoreboard {
    */
   private async initializeCommunityFeatures(): Promise<void> {
     // Initialize community features
-    console.log('🌐 Community features initialized');
+    console.info('🌐 Community features initialized');
   }
 
   /**
@@ -403,7 +403,7 @@ export class Fantasy42LiveScoreboard {
    */
   private async setupMobileFeatures(): Promise<void> {
     // Setup mobile-specific features
-    console.log('📱 Mobile features setup');
+    console.info('📱 Mobile features setup');
   }
 
   /**
@@ -411,7 +411,7 @@ export class Fantasy42LiveScoreboard {
    */
   private async optimizeForMobile(): Promise<void> {
     // Optimize interactions for mobile
-    console.log('📱 Mobile optimization complete');
+    console.info('📱 Mobile optimization complete');
   }
 
   /**
@@ -419,7 +419,7 @@ export class Fantasy42LiveScoreboard {
    */
   private setupGameStartWatcher(): void {
     // Watch for games transitioning to live
-    console.log('🏁 Game start watcher active');
+    console.info('🏁 Game start watcher active');
   }
 
   /**
@@ -427,7 +427,7 @@ export class Fantasy42LiveScoreboard {
    */
   private setupScoringWatcher(): void {
     // Watch for significant scoring moments
-    console.log('⚽ Scoring watcher active');
+    console.info('⚽ Scoring watcher active');
   }
 
   /**
@@ -435,7 +435,7 @@ export class Fantasy42LiveScoreboard {
    */
   private setupStatusWatcher(): void {
     // Watch for game status changes
-    console.log('📊 Status watcher active');
+    console.info('📊 Status watcher active');
   }
 
   /**
@@ -443,7 +443,7 @@ export class Fantasy42LiveScoreboard {
    */
   private setupSoundNotifications(): void {
     // Setup audio notifications
-    console.log('🔊 Sound notifications setup');
+    console.info('🔊 Sound notifications setup');
   }
 
   /**
@@ -451,7 +451,7 @@ export class Fantasy42LiveScoreboard {
    */
   private setupVibrationNotifications(): void {
     // Setup vibration for mobile
-    console.log('📳 Vibration notifications setup');
+    console.info('📳 Vibration notifications setup');
   }
 
   /**
@@ -502,7 +502,7 @@ export class Fantasy42LiveScoreboard {
       this.bettingOpportunities.set(game.gameId, opportunities);
     }
 
-    console.log('💰 Betting opportunities updated');
+    console.info('💰 Betting opportunities updated');
   }
 
   /**
@@ -692,7 +692,7 @@ export class Fantasy42LiveScoreboard {
     await this.detectBettingOpportunities();
     await this.updateAIInsights();
 
-    console.log('🔄 Live scoreboard data refreshed');
+    console.info('🔄 Live scoreboard data refreshed');
   }
 
   /**
@@ -722,7 +722,7 @@ export class Fantasy42LiveScoreboard {
       }
     }
 
-    console.log(`🔧 Feature ${feature} ${enabled ? 'enabled' : 'disabled'}`);
+    console.info(`🔧 Feature ${feature} ${enabled ? 'enabled' : 'disabled'}`);
   }
 
   /**
@@ -742,7 +742,7 @@ export class Fantasy42LiveScoreboard {
     // Cleanup base scoreboard
     this.scoreboard.cleanup();
 
-    console.log('🧹 Fantasy42 Live Scoreboard cleaned up');
+    console.info('🧹 Fantasy42 Live Scoreboard cleaned up');
   }
 }
 

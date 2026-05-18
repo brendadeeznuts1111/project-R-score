@@ -60,24 +60,24 @@ export class SelfHealingCRC32System {
   }
 
   async selfHeal(): Promise<SelfHealingReport> {
-    console.log("🔧 Starting CRC32 Self-Healing System...");
+    console.info("🔧 Starting CRC32 Self-Healing System...");
 
     const issues = await this.detectIssues();
     const corrections: Correction[] = [];
 
-    console.log(`🔍 Detected ${issues.length} issues requiring attention`);
+    console.info(`🔍 Detected ${issues.length} issues requiring attention`);
 
     for (const issue of issues) {
-      console.log(
+      console.info(
         `🛠️  Applying correction for ${issue.type} issue (severity: ${issue.severity})`
       );
       const correction = await this.applyCorrection(issue);
       corrections.push(correction);
 
       if (correction.success) {
-        console.log(`✅ Successfully corrected: ${correction.correction}`);
+        console.info(`✅ Successfully corrected: ${correction.correction}`);
       } else {
-        console.log(`❌ Failed to correct: ${correction.error}`);
+        console.info(`❌ Failed to correct: ${correction.error}`);
       }
     }
 
@@ -609,33 +609,33 @@ export class SelfHealingCRC32System {
 export async function runSelfHealing(sql: SQLTemplateHelper): Promise<void> {
   const healer = new SelfHealingCRC32System(sql);
 
-  console.log("🚀 CRC32 Self-Healing System");
-  console.log("================================");
+  console.info("🚀 CRC32 Self-Healing System");
+  console.info("================================");
 
   const report = await healer.selfHealing();
 
-  console.log("\n📊 Healing Report:");
-  console.log(`Issues Detected: ${report.issuesDetected}`);
-  console.log(`Issues Resolved: ${report.issuesResolved}`);
-  console.log(
+  console.info("\n📊 Healing Report:");
+  console.info(`Issues Detected: ${report.issuesDetected}`);
+  console.info(`Issues Resolved: ${report.issuesResolved}`);
+  console.info(
     `Success Rate: ${
       report.issuesDetected > 0
         ? ((report.issuesResolved / report.issuesDetected) * 100).toFixed(1)
         : 100
     }%`
   );
-  console.log(`System Health: ${report.systemHealth.overall.toUpperCase()}`);
+  console.info(`System Health: ${report.systemHealth.overall.toUpperCase()}`);
 
-  console.log("\n🔧 Corrections Applied:");
+  console.info("\n🔧 Corrections Applied:");
   for (const correction of report.corrections) {
     const status = correction.success ? "✅" : "❌";
-    console.log(`${status} ${correction.correction}`);
+    console.info(`${status} ${correction.correction}`);
   }
 
-  console.log("\n💡 Recommendations:");
+  console.info("\n💡 Recommendations:");
   for (const recommendation of report.recommendations) {
-    console.log(`• ${recommendation}`);
+    console.info(`• ${recommendation}`);
   }
 
-  console.log("\n🎯 Self-healing complete!");
+  console.info("\n🎯 Self-healing complete!");
 }

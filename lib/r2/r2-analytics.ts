@@ -107,7 +107,7 @@ export class R2Analytics {
    * Initialize analytics system
    */
   async initialize(): Promise<void> {
-    console.log(styled('📊 Initializing R2 Analytics', 'accent'));
+    console.info(styled('📊 Initializing R2 Analytics', 'accent'));
 
     // Subscribe to events for metrics collection
     this.setupEventListeners();
@@ -121,7 +121,7 @@ export class R2Analytics {
     // Create default dashboard
     this.createDefaultDashboard();
 
-    console.log(styled('✅ Analytics system initialized', 'success'));
+    console.info(styled('✅ Analytics system initialized', 'success'));
   }
 
   /**
@@ -175,7 +175,7 @@ export class R2Analytics {
       this.collectSystemMetrics();
     }, 60000); // Every minute
 
-    console.log(styled('📈 Metrics collection started', 'info'));
+    console.info(styled('📈 Metrics collection started', 'info'));
   }
 
   /**
@@ -415,7 +415,7 @@ export class R2Analytics {
     };
 
     this.alerts.set(alert.id, alert);
-    console.log(styled(`🔔 Created alert: ${alert.name}`, 'success'));
+    console.info(styled(`🔔 Created alert: ${alert.name}`, 'success'));
     return alert;
   }
 
@@ -460,12 +460,12 @@ export class R2Analytics {
    * Trigger alert actions
    */
   private triggerAlert(alert: AlertRule, value: number, labels: Record<string, string>): void {
-    console.log(styled(`🚨 Alert triggered: ${alert.name} (${value})`, 'error'));
+    console.info(styled(`🚨 Alert triggered: ${alert.name} (${value})`, 'error'));
 
     for (const action of alert.actions) {
       switch (action.type) {
         case 'log':
-          console.log(
+          console.info(
             styled(`[ALERT] ${alert.name}: ${action.message || 'Threshold exceeded'}`, 'warning')
           );
           break;
@@ -498,7 +498,7 @@ export class R2Analytics {
     };
 
     this.dashboards.set(dashboard.id, dashboard);
-    console.log(styled(`📊 Created dashboard: ${name}`, 'success'));
+    console.info(styled(`📊 Created dashboard: ${name}`, 'success'));
     return dashboard;
   }
 
@@ -699,8 +699,8 @@ if (import.meta.main) {
   const analytics = r2Analytics;
   await analytics.initialize();
 
-  console.log(styled('\n📊 R2 Analytics Demo', 'accent'));
-  console.log(styled('====================', 'accent'));
+  console.info(styled('\n📊 R2 Analytics Demo', 'accent'));
+  console.info(styled('====================', 'accent'));
 
   // Record some sample metrics
   analytics.recordMetric('storage.size', 1024 * 1024 * 100, { bucket: 'scanner-cookies' });
@@ -709,24 +709,24 @@ if (import.meta.main) {
 
   // Get metrics
   const metrics = analytics.getMetrics();
-  console.log(styled('\n📈 Current Metrics:', 'info'));
-  console.log(
+  console.info(styled('\n📈 Current Metrics:', 'info'));
+  console.info(
     styled(`  Storage: ${(metrics.storage.totalSize / 1024 / 1024).toFixed(2)} MB`, 'muted')
   );
-  console.log(styled(`  Objects: ${metrics.storage.objectCount}`, 'muted'));
-  console.log(styled(`  Reads: ${metrics.operations.reads}`, 'muted'));
-  console.log(styled(`  Writes: ${metrics.operations.writes}`, 'muted'));
+  console.info(styled(`  Objects: ${metrics.storage.objectCount}`, 'muted'));
+  console.info(styled(`  Reads: ${metrics.operations.reads}`, 'muted'));
+  console.info(styled(`  Writes: ${metrics.operations.writes}`, 'muted'));
 
   // Get recommendations
   const recommendations = analytics.getRecommendations();
-  console.log(styled('\n💡 Recommendations:', 'info'));
+  console.info(styled('\n💡 Recommendations:', 'info'));
   for (const rec of recommendations) {
-    console.log(
+    console.info(
       styled(
         `  [${rec.priority.toUpperCase()}] ${rec.title}`,
         rec.priority === 'high' ? 'error' : 'warning'
       )
     );
-    console.log(styled(`     ${rec.description}`, 'muted'));
+    console.info(styled(`     ${rec.description}`, 'muted'));
   }
 }

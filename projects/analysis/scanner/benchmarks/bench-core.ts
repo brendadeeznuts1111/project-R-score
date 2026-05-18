@@ -132,14 +132,14 @@ export const vw = (s: string): number => Bun.stringWidth(s);
 // ── Section / check helpers ─────────────────────────────────────────
 
 export function sectionHeader(title: string, ref?: string): void {
-	console.log(`\n${B}═══ ${title} ═══${R}`);
-	if (ref) console.log(`${D}   ref: ${ref}${R}\n`);
-	else console.log();
+	console.info(`\n${B}═══ ${title} ═══${R}`);
+	if (ref) console.info(`${D}   ref: ${ref}${R}\n`);
+	else console.info();
 }
 
 export function checkPass(label: string, ok: boolean, detail?: string): void {
 	const icon = ok ? `${o(S.green)}pass${R}` : `${o(S.red)}FAIL${R}`;
-	console.log(`  ${label}: ${icon}${detail ? ` ${D}(${detail})${R}` : ''}`);
+	console.info(`  ${label}: ${icon}${detail ? ` ${D}(${detail})${R}` : ''}`);
 }
 
 // ── Ratio coloring (HSL via Bun.color) ──────────────────────────────
@@ -159,10 +159,10 @@ export function report(label: string, old: BenchResult, neo: BenchResult): void 
 		{' ': `new (${label})`, 'Mean': fmt(neo.mean_ns), 'Min': fmt(neo.min_ns), 'Max': fmt(neo.max_ns)},
 	];
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(Bun.inspect.table(rows, [' ', 'Mean', 'Min', 'Max'], {colors: useColor}));
+	console.info(Bun.inspect.table(rows, [' ', 'Mean', 'Min', 'Max'], {colors: useColor}));
 	const deltaColor = diff > 0 ? o(S.green) : diff < 0 ? o(S.red) : '';
 	const rc = ratioColor(ratio);
-	console.log(
+	console.info(
 		`  ${deltaColor}Δ: ${diff > 0 ? '+' : ''}${fmt(diff)}/op  ${rc}ratio: ${ratio.toFixed(2)}x${R}  ${ratio > 1 ? '(new is faster)' : ratio < 1 ? '(old is faster)' : '(equal)'}${R}`,
 	);
 }
@@ -219,5 +219,5 @@ export function renderSummary(opts: {
 	}
 
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(Bun.inspect.table(rows, ['Field', 'Value'], {colors: useColor}));
+	console.info(Bun.inspect.table(rows, ['Field', 'Value'], {colors: useColor}));
 }

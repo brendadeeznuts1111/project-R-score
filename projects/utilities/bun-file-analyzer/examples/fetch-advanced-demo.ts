@@ -12,7 +12,7 @@ import { log } from "../src/utils/logger";
 const API_BASE = process.env.API_URL || "http://localhost:3007";
 const API_PORT = process.env.API_PORT || "3007";
 
-console.log(`🌐 API Configuration: ${API_BASE}:${API_PORT}`);
+console.info(`🌐 API Configuration: ${API_BASE}:${API_PORT}`);
 
 /**
  * 1. Basic Fetch with Manual Error Handling
@@ -37,7 +37,7 @@ async function basicFetchWithErrorHandling() {
 
     const data = await response.json();
     log.success("✅ Basic fetch successful", { prefix: "FETCH" });
-    console.log("Config data:", data);
+    console.info("Config data:", data);
     
   } catch (error) {
     log.error(`❌ Fetch failed: ${error.message}`, { prefix: "FETCH" });
@@ -79,7 +79,7 @@ async function cookieEnabledFetch() {
     const setCookies = loginResponse.headers.getSetCookie();
     if (setCookies.length > 0) {
       log.info(`🍪 Received ${setCookies.length} cookies`, { prefix: "AUTH" });
-      setCookies.forEach(cookie => console.log("  Set-Cookie:", cookie));
+      setCookies.forEach(cookie => console.info("  Set-Cookie:", cookie));
     }
 
     // Subsequent request with automatic cookie injection
@@ -91,7 +91,7 @@ async function cookieEnabledFetch() {
     if (protectedResponse.ok) {
       const profileData = await protectedResponse.json();
       log.success("✅ Protected resource accessed", { prefix: "AUTH" });
-      console.log("Profile data:", profileData);
+      console.info("Profile data:", profileData);
     } else {
       log.warning("⚠️ Protected resource denied", { prefix: "AUTH" });
     }
@@ -132,7 +132,7 @@ async function fileUploadDemo() {
 
     const uploadResult = await uploadResponse.json();
     log.success("✅ File uploaded successfully", { prefix: "UPLOAD" });
-    console.log("Upload result:", uploadResult);
+    console.info("Upload result:", uploadResult);
 
   } catch (error) {
     log.error(`❌ Upload failed: ${error.message}`, { prefix: "UPLOAD" });
@@ -163,10 +163,10 @@ async function bundleAnalysisDemo() {
     log.success("✅ Bundle analysis retrieved", { prefix: "ANALYSIS" });
     
     // Display key metrics
-    console.log("📊 Bundle Metrics:");
-    console.log(`  Total Size: ${(analysisData.totalSize / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`  Chunks: ${analysisData.chunks?.length || 0}`);
-    console.log(`  Dependencies: ${analysisData.dependencies?.length || 0}`);
+    console.info("📊 Bundle Metrics:");
+    console.info(`  Total Size: ${(analysisData.totalSize / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`  Chunks: ${analysisData.chunks?.length || 0}`);
+    console.info(`  Dependencies: ${analysisData.dependencies?.length || 0}`);
 
   } catch (error) {
     log.error(`❌ Analysis failed: ${error.message}`, { prefix: "ANALYSIS" });
@@ -195,17 +195,17 @@ async function urlPatternFetchDemo() {
     ];
 
     for (const endpoint of endpoints) {
-      console.log(`\n🔍 Testing endpoint: ${endpoint}`);
+      console.info(`\n🔍 Testing endpoint: ${endpoint}`);
       
       // Match against patterns
       if (patterns.userDetail.test(endpoint)) {
         const match = patterns.userDetail.exec(endpoint)!;
-        console.log(`  Matched user detail pattern, ID: ${match.pathname.groups.id}`);
+        console.info(`  Matched user detail pattern, ID: ${match.pathname.groups.id}`);
       } else if (patterns.fileAction.test(endpoint)) {
         const match = patterns.fileAction.exec(endpoint)!;
-        console.log(`  Matched file action pattern, Action: ${match.pathname.groups.action}`);
+        console.info(`  Matched file action pattern, Action: ${match.pathname.groups.action}`);
       } else if (patterns.userList.test(endpoint)) {
-        console.log(`  Matched user list pattern`);
+        console.info(`  Matched user list pattern`);
       }
 
       // Make actual request
@@ -214,8 +214,8 @@ async function urlPatternFetchDemo() {
         credentials: "include",
       });
 
-      console.log(`  Status: ${response.status} ${response.statusText}`);
-      console.log(`  OK: ${response.ok}`);
+      console.info(`  Status: ${response.status} ${response.statusText}`);
+      console.info(`  OK: ${response.ok}`);
     }
 
     log.success("✅ URLPattern routing demo completed", { prefix: "ROUTING" });
@@ -266,7 +266,7 @@ async function advancedErrorHandling() {
         if (attempt < maxRetries) {
           // Exponential backoff
           const delay = Math.pow(2, attempt) * 1000;
-          console.log(`  Retrying in ${delay}ms...`);
+          console.info(`  Retrying in ${delay}ms...`);
           await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
@@ -284,7 +284,7 @@ async function advancedErrorHandling() {
 
     const data = await response.json();
     log.success("✅ Retry mechanism succeeded", { prefix: "RETRY" });
-    console.log("Data:", data);
+    console.info("Data:", data);
 
   } catch (error) {
     log.error(`❌ All retries failed: ${error.message}`, { prefix: "RETRY" });
@@ -295,27 +295,27 @@ async function advancedErrorHandling() {
  * Main demo runner
  */
 async function runFetchDemo() {
-  console.log("🚀 Starting Advanced Bun Fetch Demo");
-  console.log("=" .repeat(60));
+  console.info("🚀 Starting Advanced Bun Fetch Demo");
+  console.info("=" .repeat(60));
   
   await basicFetchWithErrorHandling();
-  console.log("\n" + "-".repeat(40));
+  console.info("\n" + "-".repeat(40));
   
   await cookieEnabledFetch();
-  console.log("\n" + "-".repeat(40));
+  console.info("\n" + "-".repeat(40));
   
   await fileUploadDemo();
-  console.log("\n" + "-".repeat(40));
+  console.info("\n" + "-".repeat(40));
   
   await bundleAnalysisDemo();
-  console.log("\n" + "-".repeat(40));
+  console.info("\n" + "-".repeat(40));
   
   await urlPatternFetchDemo();
-  console.log("\n" + "-".repeat(40));
+  console.info("\n" + "-".repeat(40));
   
   await advancedErrorHandling();
   
-  console.log("\n" + "=" .repeat(60));
+  console.info("\n" + "=" .repeat(60));
   log.success("🎉 Fetch demo completed successfully!", { prefix: "DEMO" });
 }
 

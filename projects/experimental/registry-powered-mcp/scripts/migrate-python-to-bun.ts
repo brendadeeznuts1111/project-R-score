@@ -31,7 +31,7 @@ async function patch(
 	const abs = `${ROOT}/${filePath}`;
 	const file = Bun.file(abs);
 	if (!(await file.exists())) {
-		console.log(`  SKIP  ${filePath} (not found)`);
+		console.info(`  SKIP  ${filePath} (not found)`);
 		skipped++;
 		return false;
 	}
@@ -46,18 +46,18 @@ async function patch(
 	}
 
 	if (!touched) {
-		console.log(`  SKIP  ${filePath} (already migrated)`);
+		console.info(`  SKIP  ${filePath} (already migrated)`);
 		skipped++;
 		return false;
 	}
 
 	if (DRY_RUN) {
-		console.log(`  WOULD ${description}`);
-		console.log(`         ${filePath}`);
+		console.info(`  WOULD ${description}`);
+		console.info(`         ${filePath}`);
 	} else {
 		await Bun.write(abs, content);
-		console.log(`  DONE  ${description}`);
-		console.log(`         ${filePath}`);
+		console.info(`  DONE  ${description}`);
+		console.info(`         ${filePath}`);
 	}
 	changed++;
 	return true;
@@ -65,7 +65,7 @@ async function patch(
 
 // ── 1. LSP Orchestrator — remove pylsp ──────────────────────────────
 
-console.log('\n1. LSP Orchestrator');
+console.info('\n1. LSP Orchestrator');
 
 const LSP_FILES = ['packages/core/src/control/lsp-orchestrator.ts'];
 
@@ -77,7 +77,7 @@ for (const f of LSP_FILES) {
 
 // ── 2. UI Components — replace Python labels ────────────────────────
 
-console.log('\n2. UI Components');
+console.info('\n2. UI Components');
 
 const PKG_CLI_FILES = [
 	'components/PackageManagerCLI.tsx',
@@ -92,7 +92,7 @@ for (const f of PKG_CLI_FILES) {
 
 // ── 3. PatternDetector — rewrite Python algorithm as TypeScript ──────
 
-console.log('\n3. Pattern Detector Algorithm');
+console.info('\n3. Pattern Detector Algorithm');
 
 const TS_CODE = `function detectPattern17(volumeSeries: number[], priceSeries: number[], T: number) {
   // 1. Fit AC trajectory
@@ -139,18 +139,18 @@ for (const f of PATTERN_FILES) {
 		content = content.replace(codeRe, `<pre>{\`${TS_CODE}\`}</pre>`);
 		if (!DRY_RUN) {
 			await Bun.write(abs, content);
-			console.log(`  DONE  Rewrite detection algorithm to TypeScript`);
+			console.info(`  DONE  Rewrite detection algorithm to TypeScript`);
 		} else {
-			console.log(`  WOULD Rewrite detection algorithm to TypeScript`);
+			console.info(`  WOULD Rewrite detection algorithm to TypeScript`);
 		}
-		console.log(`         ${f}`);
+		console.info(`         ${f}`);
 		changed++;
 	}
 }
 
 // ── 4. Multi-project audit ───────────────────────────────────────────
 
-console.log('\n4. Auditing all projects for Python references...\n');
+console.info('\n4. Auditing all projects for Python references...\n');
 
 const PROJECTS_ROOT = `${ROOT}/..`;
 const IGNORE_PATTERNS = [
@@ -269,8 +269,8 @@ for (const [project, hits] of [...byProject.entries()].sort((a, b) => a[0].local
 	totalFiles += uniqueFiles.size;
 	totalLines += hits.length;
 
-	console.log(`  ${project}/`);
-	console.log(`    ${hits.length} line(s) across ${uniqueFiles.size} file(s) in ${uniqueFolders.size} folder(s)`);
+	console.info(`  ${project}/`);
+	console.info(`    ${hits.length} line(s) across ${uniqueFiles.size} file(s) in ${uniqueFolders.size} folder(s)`);
 
 	// Category breakdown
 	const byCat = new Map<HitCategory, Hit[]>();
@@ -282,44 +282,44 @@ for (const [project, hits] of [...byProject.entries()].sort((a, b) => a[0].local
 		const catHits = byCat.get(cat);
 		if (!catHits) continue;
 		const catFiles = new Set(catHits.map((h) => `${h.folder}/${h.file}`));
-		console.log(`      ${CATEGORY_LABEL[cat]}: ${catHits.length} line(s) in ${catFiles.size} file(s)`);
+		console.info(`      ${CATEGORY_LABEL[cat]}: ${catHits.length} line(s) in ${catFiles.size} file(s)`);
 		for (const h of catHits.slice(0, 3)) {
 			const loc = h.folder === '.' ? h.file : `${h.folder}/${h.file}`;
-			console.log(`        ${loc}:${h.line}  ${h.text.slice(0, 80)}`);
+			console.info(`        ${loc}:${h.line}  ${h.text.slice(0, 80)}`);
 		}
 		if (catHits.length > 3) {
-			console.log(`        ... and ${catHits.length - 3} more`);
+			console.info(`        ... and ${catHits.length - 3} more`);
 		}
 	}
-	console.log('');
+	console.info('');
 }
 
 // ── Totals ───────────────────────────────────────────────────────────
 
-console.log('  Audit totals');
-console.log(`    Projects : ${totalProjects}`);
-console.log(`    Folders  : ${new Set(allHits.map((h) => `${h.project}/${h.folder}`)).size}`);
-console.log(`    Files    : ${totalFiles}`);
-console.log(`    Lines    : ${totalLines}`);
+console.info('  Audit totals');
+console.info(`    Projects : ${totalProjects}`);
+console.info(`    Folders  : ${new Set(allHits.map((h) => `${h.project}/${h.folder}`)).size}`);
+console.info(`    Files    : ${totalFiles}`);
+console.info(`    Lines    : ${totalLines}`);
 const typeCt = allHits.filter((h) => h.category === 'type').length;
 const pkgCt = allHits.filter((h) => h.category === 'package').length;
 const codeCt = allHits.filter((h) => h.category === 'code').length;
 const cfgCt = allHits.filter((h) => h.category === 'config').length;
 const docCt = allHits.filter((h) => h.category === 'docs').length;
-console.log(`    Types    : ${typeCt}`);
-console.log(`    Packages : ${pkgCt}`);
-console.log(`    Code     : ${codeCt}`);
-console.log(`    Config   : ${cfgCt}`);
-console.log(`    Docs     : ${docCt}`);
+console.info(`    Types    : ${typeCt}`);
+console.info(`    Packages : ${pkgCt}`);
+console.info(`    Code     : ${codeCt}`);
+console.info(`    Config   : ${cfgCt}`);
+console.info(`    Docs     : ${docCt}`);
 
 if (totalLines === 0) {
-	console.log('\n  No Python references found across any project.');
+	console.info('\n  No Python references found across any project.');
 }
 
 // ── Summary ─────────────────────────────────────────────────────────
 
-console.log(`\n${DRY_RUN ? 'DRY RUN ' : ''}Migration: ${changed} file(s) patched, ${skipped} skipped`);
-console.log(`Audit: ${totalLines} Python reference(s) across ${totalProjects} project(s), ${totalFiles} file(s)`);
+console.info(`\n${DRY_RUN ? 'DRY RUN ' : ''}Migration: ${changed} file(s) patched, ${skipped} skipped`);
+console.info(`Audit: ${totalLines} Python reference(s) across ${totalProjects} project(s), ${totalFiles} file(s)`);
 if (DRY_RUN) {
-	console.log('Re-run without --dry-run to apply changes.\n');
+	console.info('Re-run without --dry-run to apply changes.\n');
 }

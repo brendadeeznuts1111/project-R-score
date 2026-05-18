@@ -22,13 +22,13 @@ const file = process.argv[3];
 const outFlag = process.argv.find((a) => a.startsWith("--out="))?.split("=")[1];
 
 if (!cmd || cmd === "--help" || !COMMANDS[cmd]) {
-	console.log("Usage: bun run tools/bun-loaders.ts <command> [file]");
-	console.log("");
+	console.info("Usage: bun run tools/bun-loaders.ts <command> [file]");
+	console.info("");
 	const rows = Object.entries(COMMANDS).map(([k, v]) => ({
 		command: k,
 		description: v,
 	}));
-	console.log(Bun.inspect.table(rows, ["command", "description"]));
+	console.info(Bun.inspect.table(rows, ["command", "description"]));
 	process.exit(cmd === "--help" ? 0 : 1);
 }
 
@@ -45,7 +45,7 @@ if (!exists) {
 
 if (cmd === "jsonc") {
 	const mod = await import(file, { with: { type: "jsonc" } });
-	console.log(Bun.inspect(mod.default, { depth: 5, colors: true }));
+	console.info(Bun.inspect(mod.default, { depth: 5, colors: true }));
 }
 
 if (cmd === "html") {
@@ -53,20 +53,20 @@ if (cmd === "html") {
 	const text = mod.default as string;
 	const preview =
 		Bun.stringWidth(text) > 89 ? Bun.wrapAnsi(text, 89, { wordWrap: true }) : text;
-	console.log(preview);
+	console.info(preview);
 }
 
 if (cmd === "toml") {
 	const mod = await import(file, { with: { type: "toml" } });
-	console.log(Bun.inspect(mod.default, { depth: 5, colors: true }));
+	console.info(Bun.inspect(mod.default, { depth: 5, colors: true }));
 }
 
 if (cmd === "wasm-hash") {
 	const buf = await Bun.file(file).arrayBuffer();
 	const hash = Bun.hash.wyhash(Buffer.from(buf));
-	console.log(`file:  ${file}`);
-	console.log(`size:  ${buf.byteLength} bytes`);
-	console.log(`hash:  ${hash.toString(16)}`);
+	console.info(`file:  ${file}`);
+	console.info(`size:  ${buf.byteLength} bytes`);
+	console.info(`hash:  ${hash.toString(16)}`);
 }
 
 if (cmd === "compile") {
@@ -81,7 +81,7 @@ if (cmd === "compile") {
 		for (const log of logs) console.error(log);
 		process.exit(1);
 	}
-	console.log(`Compiled: ${outfile}`);
+	console.info(`Compiled: ${outfile}`);
 }
 
 if (cmd === "bundle") {
@@ -98,5 +98,5 @@ if (cmd === "bundle") {
 		kind: o.kind,
 		file: o.path.split("/").pop(),
 	}));
-	console.log(Bun.inspect.table(rows, ["kind", "file"]));
+	console.info(Bun.inspect.table(rows, ["kind", "file"]));
 }

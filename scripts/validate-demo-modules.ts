@@ -128,7 +128,7 @@ function main() {
     fail(errors);
   }
 
-  console.log(`[demo-contract][pass] demos=${demoIds.length} contracts=${contractIds.length}`);
+  console.info(`[demo-contract][pass] demos=${demoIds.length} contracts=${contractIds.length}`);
 }
 
 main();

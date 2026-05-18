@@ -27,10 +27,10 @@ process.env.BUILD_DATE = new Date().toISOString();
 const entrypoint = './scripts/bun-console.ts';
 const outfile = './dist/hyper-bun-cli';
 
-console.log(`Building standalone Hyper-Bun CLI...`);
-console.log(`Git commit: ${gitCommit}`);
-console.log(`Entrypoint: ${entrypoint}`);
-console.log(`Output: ${outfile}`);
+console.info(`Building standalone Hyper-Bun CLI...`);
+console.info(`Git commit: ${gitCommit}`);
+console.info(`Entrypoint: ${entrypoint}`);
+console.info(`Output: ${outfile}`);
 
 try {
 	const result = await Bun.build({
@@ -59,15 +59,15 @@ try {
 	await $`mv ${result.outputs[0].path} ${outfile}`;
 	await $`chmod +x ${outfile}`;
 
-	console.log(`✅ Build successful: ${outfile}`);
+	console.info(`✅ Build successful: ${outfile}`);
 	const fileSize = (await Bun.file(outfile).arrayBuffer()).byteLength;
-	console.log(`   Size: ${(fileSize / 1024 / 1024).toFixed(2)} MB`);
-	console.log(`   Git commit: ${gitCommit}`);
-	console.log(`\nTo distribute:`);
-	console.log(`  scp ${outfile} analyst@research-laptop:/usr/local/bin/`);
-	console.log(`\nAnalyst usage:`);
-	console.log(`  hyper-bun-cli`);
-	console.log(`  > mlgs.correlationEngine.calculateFractionalSpreadDeviation('NBA-2025-001', {...})`);
+	console.info(`   Size: ${(fileSize / 1024 / 1024).toFixed(2)} MB`);
+	console.info(`   Git commit: ${gitCommit}`);
+	console.info(`\nTo distribute:`);
+	console.info(`  scp ${outfile} analyst@research-laptop:/usr/local/bin/`);
+	console.info(`\nAnalyst usage:`);
+	console.info(`  hyper-bun-cli`);
+	console.info(`  > mlgs.correlationEngine.calculateFractionalSpreadDeviation('NBA-2025-001', {...})`);
 } catch (error) {
 	console.error('Build error:', error);
 	process.exit(1);

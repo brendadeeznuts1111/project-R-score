@@ -108,7 +108,7 @@ export class R2MCPIntegration {
       // Also store in searchable index
       await this.updateDiagnosisIndex(diagnosis);
 
-      console.log(styled(`✅ Diagnosis stored: ${key}`, 'success'));
+      console.info(styled(`✅ Diagnosis stored: ${key}`, 'success'));
       return key;
     } catch (error) {
       console.error(styled(`❌ Failed to store diagnosis: ${error.message}`, 'error'));
@@ -128,7 +128,7 @@ export class R2MCPIntegration {
       // Update audit index
       await this.updateAuditIndex(audit);
 
-      console.log(styled(`✅ Audit entry stored: ${key}`, 'success'));
+      console.info(styled(`✅ Audit entry stored: ${key}`, 'success'));
       return key;
     } catch (error) {
       console.error(styled(`❌ Failed to store audit entry: ${error.message}`, 'error'));
@@ -237,7 +237,7 @@ export class R2MCPIntegration {
       // For now, return a mock implementation
       const url = `https://pub-${this.config.accountId}.r2.dev/${this.bucketName}/${key}`;
 
-      console.log(styled(`🔗 Generated signed URL for: ${key}`, 'info'));
+      console.info(styled(`🔗 Generated signed URL for: ${key}`, 'info'));
       return url;
     } catch (error) {
       console.error(styled(`❌ Failed to generate signed URL: ${error.message}`, 'error'));
@@ -253,7 +253,7 @@ export class R2MCPIntegration {
   ): Promise<Array<{ key: string; size: number; lastModified: string }>> {
     try {
       // This would use your existing R2 CLI infrastructure
-      console.log(styled(`📋 Listing MCP data with prefix: ${prefix}`, 'info'));
+      console.info(styled(`📋 Listing MCP data with prefix: ${prefix}`, 'info'));
 
       // Mock implementation - replace with actual R2 listing
       return [
@@ -302,14 +302,14 @@ export class R2MCPIntegration {
   private async putJSON(key: string, data: any): Promise<any> {
     // This would use your existing R2 infrastructure
     // For now, mock implementation
-    console.log(styled(`📤 Storing JSON: ${key}`, 'muted'));
+    console.info(styled(`📤 Storing JSON: ${key}`, 'muted'));
     return { key, etag: 'mock-etag' };
   }
 
   private async getJSON(key: string): Promise<any> {
     // This would use your existing R2 infrastructure
     // For now, mock implementation
-    console.log(styled(`📥 Retrieving JSON: ${key}`, 'muted'));
+    console.info(styled(`📥 Retrieving JSON: ${key}`, 'muted'));
     return null;
   }
 
@@ -432,7 +432,7 @@ export class R2MCPIntegration {
       const retrieved = await this.getJSON(testKey);
 
       if (retrieved && retrieved.test === true) {
-        console.log(styled('✅ R2 connection test successful', 'success'));
+        console.info(styled('✅ R2 connection test successful', 'success'));
         return true;
       }
 
@@ -473,31 +473,31 @@ export const r2MCPIntegration = new R2MCPIntegration();
 if (import.meta.main) {
   const r2 = new R2MCPIntegration();
 
-  console.log(styled('🔗 FactoryWager MCP R2 Integration Test', 'accent'));
-  console.log(styled('=====================================', 'accent'));
+  console.info(styled('🔗 FactoryWager MCP R2 Integration Test', 'accent'));
+  console.info(styled('=====================================', 'accent'));
 
   const status = r2.getConfigStatus();
-  console.log(styled('Configuration Status:', 'info'));
-  console.log(
+  console.info(styled('Configuration Status:', 'info'));
+  console.info(
     styled(
       `  Configured: ${status.configured ? '✅' : '❌'}`,
       status.configured ? 'success' : 'error'
     )
   );
-  console.log(styled(`  Bucket: ${status.bucketName}`, 'muted'));
-  console.log(styled(`  Account: ${status.accountId}`, 'muted'));
+  console.info(styled(`  Bucket: ${status.bucketName}`, 'muted'));
+  console.info(styled(`  Account: ${status.accountId}`, 'muted'));
 
   if (status.missing.length > 0) {
-    console.log(styled('Missing Environment Variables:', 'warning'));
+    console.info(styled('Missing Environment Variables:', 'warning'));
     status.missing.forEach(varName => {
-      console.log(styled(`  - ${varName}`, 'warning'));
+      console.info(styled(`  - ${varName}`, 'warning'));
     });
   }
 
   if (status.configured) {
-    console.log(styled('\n🧪 Testing connection...', 'info'));
+    console.info(styled('\n🧪 Testing connection...', 'info'));
     const connected = await r2.testConnection();
-    console.log(
+    console.info(
       styled(
         `Connection: ${connected ? '✅ Success' : '❌ Failed'}`,
         connected ? 'success' : 'error'
@@ -505,11 +505,11 @@ if (import.meta.main) {
     );
 
     if (connected) {
-      console.log(styled('\n📊 Getting bucket stats...', 'info'));
+      console.info(styled('\n📊 Getting bucket stats...', 'info'));
       const stats = await r2.getBucketStats();
-      console.log(styled(`Objects: ${stats.objectCount}`, 'muted'));
-      console.log(styled(`Total Size: ${stats.totalSize}`, 'muted'));
-      console.log(
+      console.info(styled(`Objects: ${stats.objectCount}`, 'muted'));
+      console.info(styled(`Total Size: ${stats.totalSize}`, 'muted'));
+      console.info(
         styled(`MCP Data: ${stats.mcpDataCount} objects (${stats.mcpDataSize})`, 'muted')
       );
     }

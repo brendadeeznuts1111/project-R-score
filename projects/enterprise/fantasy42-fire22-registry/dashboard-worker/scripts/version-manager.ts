@@ -97,7 +97,7 @@ class EnhancedVersionManager {
   }
 
   async bumpVersion(type: 'patch' | 'minor' | 'major' | 'prerelease'): Promise<void> {
-    console.log(`🚀 Bumping version (${type})...`);
+    console.info(`🚀 Bumping version (${type})...`);
 
     try {
       // Check if this is a git repository
@@ -114,7 +114,7 @@ class EnhancedVersionManager {
 
       // Get the new version
       const newVersion = await this.getCurrentVersion();
-      console.log(`✅ Version bumped to ${newVersion}`);
+      console.info(`✅ Version bumped to ${newVersion}`);
 
       // Update metadata
       await this.updateVersionMetadata(newVersion, type);
@@ -140,7 +140,7 @@ class EnhancedVersionManager {
   }
 
   private async manualVersionBump(type: 'patch' | 'minor' | 'major' | 'prerelease'): Promise<void> {
-    console.log(`📝 Manual version bump for non-git repository...`);
+    console.info(`📝 Manual version bump for non-git repository...`);
 
     try {
       const packageJson = JSON.parse(readFileSync(this.packagePath, 'utf8'));
@@ -151,7 +151,7 @@ class EnhancedVersionManager {
       packageJson.version = newVersion;
       writeFileSync(this.packagePath, JSON.stringify(packageJson, null, 2));
 
-      console.log(`✅ Version updated: ${currentVersion} → ${newVersion}`);
+      console.info(`✅ Version updated: ${currentVersion} → ${newVersion}`);
     } catch (error) {
       throw new Error(`Manual version bump failed: ${error.message}`);
     }
@@ -199,7 +199,7 @@ class EnhancedVersionManager {
       };
 
       writeFileSync(this.packagePath, JSON.stringify(packageJson, null, 2));
-      console.log(`✅ Updated version metadata`);
+      console.info(`✅ Updated version metadata`);
     } catch (error) {
       console.error(`⚠️ Failed to update metadata: ${error.message}`);
     }
@@ -240,7 +240,7 @@ class EnhancedVersionManager {
 
     // Add to changelog
     await this.addToChangelog(entry);
-    console.log(`✅ Generated changelog entry for ${version}`);
+    console.info(`✅ Generated changelog entry for ${version}`);
   }
 
   private async addToChangelog(entry: ChangelogEntry): Promise<void> {
@@ -358,7 +358,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     const releaseFile = `${this.releasesPath}/release-${version}.md`;
 
     writeFileSync(releaseFile, releaseContent);
-    console.log(`✅ Created release notes: ${releaseFile}`);
+    console.info(`✅ Created release notes: ${releaseFile}`);
   }
 
   private generateReleaseNotes(release: ReleaseInfo): string {
@@ -461,28 +461,28 @@ ${release.securityUpdates.length > 0 ? release.securityUpdates.map(s => `- ${s}`
     const currentVersion = await this.getCurrentVersion();
     const metadata = await this.getMetadata('metadata.versioning');
 
-    console.log('🚀 Fire22 Dashboard Version Status\n');
-    console.log(`Current Version: ${currentVersion}`);
-    console.log(`Last Release: ${await this.getPreviousVersion()}`);
-    console.log(`Build Number: ${Date.now()}`);
-    console.log(`Build Date: ${new Date().toISOString()}`);
+    console.info('🚀 Fire22 Dashboard Version Status\n');
+    console.info(`Current Version: ${currentVersion}`);
+    console.info(`Last Release: ${await this.getPreviousVersion()}`);
+    console.info(`Build Number: ${Date.now()}`);
+    console.info(`Build Date: ${new Date().toISOString()}`);
 
     if (metadata !== 'unknown') {
-      console.log(`\nVersion Metadata:\n${metadata}`);
+      console.info(`\nVersion Metadata:\n${metadata}`);
     }
 
-    console.log('\nAvailable Commands:');
-    console.log('  bun run version:manager status      # Show this status');
-    console.log('  bun run version:manager bump patch  # Increment patch version');
-    console.log('  bun run version:manager bump minor  # Increment minor version');
-    console.log('  bun run version:manager bump major  # Increment major version');
-    console.log('  bun run version:manager changelog   # Generate changelog');
-    console.log('  bun run version:manager validate    # Validate configuration');
-    console.log('  bun run version:manager release     # Create release notes');
+    console.info('\nAvailable Commands:');
+    console.info('  bun run version:manager status      # Show this status');
+    console.info('  bun run version:manager bump patch  # Increment patch version');
+    console.info('  bun run version:manager bump minor  # Increment minor version');
+    console.info('  bun run version:manager bump major  # Increment major version');
+    console.info('  bun run version:manager changelog   # Generate changelog');
+    console.info('  bun run version:manager validate    # Validate configuration');
+    console.info('  bun run version:manager release     # Create release notes');
   }
 
   async validateConfiguration(): Promise<void> {
-    console.log('🔍 Validating version configuration...\n');
+    console.info('🔍 Validating version configuration...\n');
 
     const checks = [
       { name: 'Package.json exists', check: () => existsSync(this.packagePath) },
@@ -522,26 +522,26 @@ ${release.securityUpdates.length > 0 ? release.securityUpdates.map(s => `- ${s}`
     for (const check of checks) {
       const result = await check.check();
       const status = result ? '✅' : '❌';
-      console.log(`${status} ${check.name}`);
+      console.info(`${status} ${check.name}`);
       if (result) passedChecks++;
     }
 
-    console.log(`\nValidation Results: ${passedChecks}/${checks.length} checks passed`);
+    console.info(`\nValidation Results: ${passedChecks}/${checks.length} checks passed`);
 
     if (passedChecks === checks.length) {
-      console.log('🎉 Version configuration is valid!');
+      console.info('🎉 Version configuration is valid!');
     } else {
-      console.log('⚠️ Some configuration issues found. Run version:manager init to fix.');
+      console.info('⚠️ Some configuration issues found. Run version:manager init to fix.');
     }
   }
 
   async initializeVersioning(): Promise<void> {
-    console.log('🔧 Initializing enhanced versioning system...\n');
+    console.info('🔧 Initializing enhanced versioning system...\n');
 
     // Create changelog if it doesn't exist
     if (!existsSync(this.changelogPath)) {
       writeFileSync(this.changelogPath, this.getDefaultChangelog());
-      console.log('✅ Created CHANGELOG.md');
+      console.info('✅ Created CHANGELOG.md');
     }
 
     // Create .versionrc if it doesn't exist
@@ -570,18 +570,18 @@ ${release.securityUpdates.length > 0 ? release.securityUpdates.map(s => `- ${s}`
       };
 
       writeFileSync(this.versionRcPath, JSON.stringify(versionRc, null, 2));
-      console.log('✅ Created .versionrc');
+      console.info('✅ Created .versionrc');
     }
 
     // Ensure releases directory exists
     this.ensureReleasesDirectory();
-    console.log('✅ Created releases directory');
+    console.info('✅ Created releases directory');
 
     // Update package.json scripts
     await this.updatePackageScripts();
 
-    console.log('\n🎉 Enhanced versioning system initialized!');
-    console.log('📝 Run "bun run version:manager status" to see current status');
+    console.info('\n🎉 Enhanced versioning system initialized!');
+    console.info('📝 Run "bun run version:manager status" to see current status');
   }
 
   private async updatePackageScripts(): Promise<void> {
@@ -604,7 +604,7 @@ ${release.securityUpdates.length > 0 ? release.securityUpdates.map(s => `- ${s}`
       Object.assign(packageJson.scripts, versionScripts);
       writeFileSync(this.packagePath, JSON.stringify(packageJson, null, 2));
 
-      console.log('✅ Updated package.json scripts');
+      console.info('✅ Updated package.json scripts');
     } catch (error) {
       console.error(`⚠️ Failed to update package.json: ${error.message}`);
     }
@@ -627,7 +627,7 @@ async function main() {
 
       case 'bump':
         if (!subcommand || !['patch', 'minor', 'major', 'prerelease'].includes(subcommand)) {
-          console.log('❌ Invalid bump type. Use: patch, minor, major, or prerelease');
+          console.info('❌ Invalid bump type. Use: patch, minor, major, or prerelease');
           process.exit(1);
         }
         await manager.bumpVersion(subcommand as any);
@@ -652,21 +652,21 @@ async function main() {
         break;
 
       default:
-        console.log('🚀 Fire22 Dashboard Enhanced Version Manager\n');
-        console.log('Usage:');
-        console.log('  bun run version:manager status      # Show version status');
-        console.log('  bun run version:manager bump patch  # Increment patch version');
-        console.log('  bun run version:manager bump minor  # Increment minor version');
-        console.log('  bun run version:manager bump major  # Increment major version');
-        console.log('  bun run version:manager changelog   # Generate changelog');
-        console.log('  bun run version:manager validate    # Validate configuration');
-        console.log('  bun run version:manager release     # Create release notes');
-        console.log('  bun run version:manager init        # Initialize versioning');
-        console.log('\nExamples:');
-        console.log('  bun run version:manager status      # Check current status');
-        console.log('  bun run version:manager bump patch  # 1.0.0 → 1.0.1');
-        console.log('  bun run version:manager bump minor  # 1.0.0 → 1.1.0');
-        console.log('  bun run version:manager bump major  # 1.0.0 → 2.0.0');
+        console.info('🚀 Fire22 Dashboard Enhanced Version Manager\n');
+        console.info('Usage:');
+        console.info('  bun run version:manager status      # Show version status');
+        console.info('  bun run version:manager bump patch  # Increment patch version');
+        console.info('  bun run version:manager bump minor  # Increment minor version');
+        console.info('  bun run version:manager bump major  # Increment major version');
+        console.info('  bun run version:manager changelog   # Generate changelog');
+        console.info('  bun run version:manager validate    # Validate configuration');
+        console.info('  bun run version:manager release     # Create release notes');
+        console.info('  bun run version:manager init        # Initialize versioning');
+        console.info('\nExamples:');
+        console.info('  bun run version:manager status      # Check current status');
+        console.info('  bun run version:manager bump patch  # 1.0.0 → 1.0.1');
+        console.info('  bun run version:manager bump minor  # 1.0.0 → 1.1.0');
+        console.info('  bun run version:manager bump major  # 1.0.0 → 2.0.0');
         process.exit(1);
     }
   } catch (error) {

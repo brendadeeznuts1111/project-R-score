@@ -41,12 +41,12 @@ interface BuildResult {
 }
 
 async function buildAll(): Promise<void> {
-  console.log("🏗️  Building Dashboard for Multiple Environments\n");
+  console.info("🏗️  Building Dashboard for Multiple Environments\n");
 
   const results: Record<string, BuildResult> = {};
 
   for (const [env, config] of Object.entries(buildConfigs)) {
-    console.log(
+    console.info(
       `📦 Building ${env} with features: ${config.features.join(", ")}`
     );
 
@@ -66,7 +66,7 @@ async function buildAll(): Promise<void> {
 
       const buildCmd = `bun build ${featuresFlag} ${minifyFlag} src/main.ts --outdir ${config.outdir}`;
 
-      console.log(`  Running: ${buildCmd}`);
+      console.info(`  Running: ${buildCmd}`);
 
       const result = await Bun.$`${buildCmd}`.quiet();
 
@@ -88,7 +88,7 @@ async function buildAll(): Promise<void> {
             outputPath: config.outdir,
           };
 
-          console.log(
+          console.info(
             `  ✅ ${env}: ${(size / 1024).toFixed(2)} KB (${duration.toFixed(0)}ms)`
           );
 
@@ -102,7 +102,7 @@ async function buildAll(): Promise<void> {
             duration,
             outputPath: config.outdir,
           };
-          console.log(
+          console.info(
             `  ⚠️  ${env}: Build completed but couldn't read output file`
           );
         }
@@ -115,7 +115,7 @@ async function buildAll(): Promise<void> {
           outputPath: config.outdir,
         };
 
-        console.log(
+        console.info(
           `  ❌ ${env}: Build failed (exit code: ${result.exitCode})`
         );
       }
@@ -129,10 +129,10 @@ async function buildAll(): Promise<void> {
         outputPath: config.outdir,
       };
 
-      console.log(`  ❌ ${env}: ${error}`);
+      console.info(`  ❌ ${env}: ${error}`);
     }
 
-    console.log("");
+    console.info("");
   }
 
   // Show comparison table
@@ -149,15 +149,15 @@ async function verifyFeatures(
   try {
     const content = readFileSync(bundlePath, "utf-8");
 
-    console.log("  🔍 Feature verification:");
+    console.info("  🔍 Feature verification:");
 
     // Check that expected features are present
     for (const feature of expectedFeatures) {
       const featurePattern = new RegExp(`["']${feature}["']`, "i");
       if (featurePattern.test(content)) {
-        console.log(`    ✅ ${feature}: Present`);
+        console.info(`    ✅ ${feature}: Present`);
       } else {
-        console.log(`    ⚠️  ${feature}: Not found (may be tree-shaken)`);
+        console.info(`    ⚠️  ${feature}: Not found (may be tree-shaken)`);
       }
     }
 
@@ -169,9 +169,9 @@ async function verifyFeatures(
       );
 
       if (!debugFound) {
-        console.log(`    ✅ Debug code: Eliminated`);
+        console.info(`    ✅ Debug code: Eliminated`);
       } else {
-        console.log(`    ⚠️  Debug code: Still present`);
+        console.info(`    ⚠️  Debug code: Still present`);
       }
     }
   } catch (error) {
@@ -180,22 +180,22 @@ async function verifyFeatures(
 }
 
 function showComparisonTable(results: Record<string, BuildResult>): void {
-  console.log("📊 Build Comparison:");
-  console.log("┌─────────────┬─────────────┬─────────────┬─────────────┐");
-  console.log("│ Environment │ Size (KB)   │ Duration    │ Features    │");
-  console.log("├─────────────┼─────────────┼─────────────┼─────────────┤");
+  console.info("📊 Build Comparison:");
+  console.info("┌─────────────┬─────────────┬─────────────┬─────────────┐");
+  console.info("│ Environment │ Size (KB)   │ Duration    │ Features    │");
+  console.info("├─────────────┼─────────────┼─────────────┼─────────────┤");
 
   for (const [env, result] of Object.entries(results)) {
     const size = result.success ? `${(result.size / 1024).toFixed(2)}` : "N/A";
     const duration = `${result.duration.toFixed(0)}ms`;
     const features = result.features.length.toString();
 
-    console.log(
+    console.info(
       `│ ${env.padEnd(11)} │ ${size.padEnd(11)} │ ${duration.padEnd(11)} │ ${features.padEnd(11)} │`
     );
   }
 
-  console.log("└─────────────┴─────────────┴─────────────┴─────────────┘");
+  console.info("└─────────────┴─────────────┴─────────────┴─────────────┘");
 
   // Calculate size savings
   const premium = results.premium;
@@ -204,7 +204,7 @@ function showComparisonTable(results: Record<string, BuildResult>): void {
   if (premium.success && production.success) {
     const savings = premium.size - production.size;
     const savingsPercent = ((savings / premium.size) * 100).toFixed(1);
-    console.log(
+    console.info(
       `\n💰 Size savings (Production vs Premium): ${(savings / 1024).toFixed(2)} KB (${savingsPercent}% smaller)`
     );
   }
@@ -213,7 +213,7 @@ function showComparisonTable(results: Record<string, BuildResult>): void {
 async function generateDeploymentScripts(
   results: Record<string, BuildResult>
 ): Promise<void> {
-  console.log("🚀 Generating deployment scripts...");
+  console.info("🚀 Generating deployment scripts...");
 
   // Generate deployment script for each environment
   for (const [env, result] of Object.entries(results)) {
@@ -225,7 +225,7 @@ async function generateDeploymentScripts(
     writeFileSync(scriptPath, script);
     await Bun.$`chmod +x ${scriptPath}`;
 
-    console.log(`  📜 ${env}: ${scriptPath}`);
+    console.info(`  📜 ${env}: ${scriptPath}`);
   }
 }
 

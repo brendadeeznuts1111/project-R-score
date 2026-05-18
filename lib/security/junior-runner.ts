@@ -438,8 +438,8 @@ export class JuniorRunnerCLI {
       return;
     }
 
-    console.log('🍪 JuniorRunner Cookie Inspector v3.25');
-    console.log('='.repeat(50));
+    console.info('🍪 JuniorRunner Cookie Inspector v3.25');
+    console.info('='.repeat(50));
 
     // Simulate request profiling
     const testRequest = new Request('http://localhost:3000/test', {
@@ -452,30 +452,30 @@ export class JuniorRunnerCLI {
     try {
       const profile = await JuniorRunnerCookieProfiler.profileWithCookies('test.md', testRequest);
       
-      console.log('📊 Cookie Profile Results:');
-      console.log(`Session ID: ${profile.sessionId || 'N/A'}`);
-      console.log(`User ID: ${profile.userId || 'N/A'}`);
-      console.log(`Cookie Count: ${profile.cookies.count}`);
-      console.log(`Valid Cookies: ${profile.cookies.valid}`);
-      console.log(`Security Score: ${profile.security.overallScore}/100`);
-      console.log(`Processing Time: ${profile.performance.totalTime}ms`);
+      console.info('📊 Cookie Profile Results:');
+      console.info(`Session ID: ${profile.sessionId || 'N/A'}`);
+      console.info(`User ID: ${profile.userId || 'N/A'}`);
+      console.info(`Cookie Count: ${profile.cookies.count}`);
+      console.info(`Valid Cookies: ${profile.cookies.valid}`);
+      console.info(`Security Score: ${profile.security.overallScore}/100`);
+      console.info(`Processing Time: ${profile.performance.totalTime}ms`);
       
       if (profile.csrf?.tokenGenerated) {
-        console.log(`CSRF Token: Generated (${profile.csrf.tokenValue?.substring(0, 8)}...)`);
+        console.info(`CSRF Token: Generated (${profile.csrf.tokenValue?.substring(0, 8)}...)`);
       }
       
       if (profile.abTesting) {
-        console.log(`A/B Variant: ${profile.abTesting.variant} (${profile.abTesting.valid ? 'Valid' : 'Invalid'})`);
+        console.info(`A/B Variant: ${profile.abTesting.variant} (${profile.abTesting.valid ? 'Valid' : 'Invalid'})`);
       }
       
       if (profile.security.criticalIssues.length > 0) {
-        console.log('\n🚨 Critical Issues:');
-        profile.security.criticalIssues.forEach(issue => console.log(`  ❌ ${issue}`));
+        console.info('\n🚨 Critical Issues:');
+        profile.security.criticalIssues.forEach(issue => console.info(`  ❌ ${issue}`));
       }
       
       if (profile.security.recommendations.length > 0) {
-        console.log('\n💡 Recommendations:');
-        profile.security.recommendations.forEach(rec => console.log(`  💡 ${rec}`));
+        console.info('\n💡 Recommendations:');
+        profile.security.recommendations.forEach(rec => console.info(`  💡 ${rec}`));
       }
 
     } catch (error) {
@@ -484,7 +484,7 @@ export class JuniorRunnerCLI {
   }
 
   private static showCookieInspectHelp(): void {
-    console.log(`
+    console.info(`
 🍪 JuniorRunner Cookie Inspector
 
 Usage: junior-runner --cookie-inspect [options]
@@ -632,6 +632,6 @@ if (import.meta.main) {
   if (args.includes('--cookie-inspect')) {
     JuniorRunnerCLI.handleCookieInspect(args);
   } else {
-    console.log('Use --cookie-inspect to run cookie inspection demo');
+    console.info('Use --cookie-inspect to run cookie inspection demo');
   }
 }

@@ -54,10 +54,10 @@ export class TikTokMatrixAutomation {
     const numbers: any[] = [];
     const accounts: TikTokAccount[] = [];
 
-    console.log(`🚀 Starting TikTok Matrix Setup for ${config.accountCount} accounts...`);
+    console.info(`🚀 Starting TikTok Matrix Setup for ${config.accountCount} accounts...`);
 
     // 1. Purchase Cloud Phones (up to 500 per batch)
-    console.log(`📱 Provisioning ${config.accountCount} cloud phones...`);
+    console.info(`📱 Provisioning ${config.accountCount} cloud phones...`);
     
     const agentConfig: AgentConfig = {
       androidVersion: '12B', // Optimized for anti-detection
@@ -100,7 +100,7 @@ export class TikTokMatrixAutomation {
       baseConfig: agentConfig,
       batchSize: 500,
       progressCallback: (completed, total) => {
-        console.log(`📊 Progress: ${completed}/${total} agents deployed (${Math.round(completed/total * 100)}%)`);
+        console.info(`📊 Progress: ${completed}/${total} agents deployed (${Math.round(completed/total * 100)}%)`);
       }
     });
 
@@ -125,7 +125,7 @@ export class TikTokMatrixAutomation {
     }
 
     // 2. Start RPA Account Warming
-    console.log(`🔥 Starting account warming for ${config.warmingDays} days...`);
+    console.info(`🔥 Starting account warming for ${config.warmingDays} days...`);
     const warmingTasks: any[] = [];
     
     for (let i = 0; i < agents.length; i++) {
@@ -136,18 +136,18 @@ export class TikTokMatrixAutomation {
 
     // 3. Upload Content Files
     if (config.contentStrategy === 'unique') {
-      console.log(`📤 Uploading unique content for each account...`);
+      console.info(`📤 Uploading unique content for each account...`);
       await this.uploadUniqueContent(phones, accounts.length);
     } else if (config.contentStrategy === 'varied') {
-      console.log(`📤 Uploading varied content library...`);
+      console.info(`📤 Uploading varied content library...`);
       await this.uploadVariedContent();
     }
 
-    console.log(`✅ TikTok Matrix Setup Complete!`);
-    console.log(`   📱 ${phones.length} Cloud Phones provisioned`);
-    console.log(`   📞 ${numbers.length} Cloud Numbers configured`);
-    console.log(`   🔥 ${warmingTasks.length} Warming tasks started`);
-    console.log(`   📊 ${accounts.length} TikTok accounts ready`);
+    console.info(`✅ TikTok Matrix Setup Complete!`);
+    console.info(`   📱 ${phones.length} Cloud Phones provisioned`);
+    console.info(`   📞 ${numbers.length} Cloud Numbers configured`);
+    console.info(`   🔥 ${warmingTasks.length} Warming tasks started`);
+    console.info(`   📊 ${accounts.length} TikTok accounts ready`);
 
     return {
       phones,
@@ -232,7 +232,7 @@ export class TikTokMatrixAutomation {
    * Monitor account health
    */
   async monitorAccountHealth(matrix: AgentMatrix): Promise<HealthReport> {
-    console.log(`🔍 Monitoring account health for ${matrix.accounts.length} accounts...`);
+    console.info(`🔍 Monitoring account health for ${matrix.accounts.length} accounts...`);
 
     const phoneIds = matrix.phones.map(p => p.id);
     const healthData = await this.duoplus.getAgentHealth(phoneIds);
@@ -269,7 +269,7 @@ export class TikTokMatrixAutomation {
     dailyLimit: number;
     duration: number; // days
   }): Promise<any> {
-    console.log(`🚀 Starting ${campaign.type} campaign...`);
+    console.info(`🚀 Starting ${campaign.type} campaign...`);
 
     const tasks = [];
     
@@ -307,13 +307,13 @@ export class TikTokMatrixAutomation {
     phoneNumber: string;
     code: string | null;
   }>> {
-    console.log(`📱 Checking verification codes for ${matrix.accounts.length} accounts...`);
+    console.info(`📱 Checking verification codes for ${matrix.accounts.length} accounts...`);
 
     const phoneNumbers = matrix.numbers.map(n => n.phoneNumber);
     const results = await this.duoplus.getVerificationCodes(phoneNumbers, 'tiktok');
 
     const validCodes = results.filter(r => r.code !== null);
-    console.log(`✅ Found ${validCodes.length} verification codes`);
+    console.info(`✅ Found ${validCodes.length} verification codes`);
 
     return results;
   }
@@ -322,7 +322,7 @@ export class TikTokMatrixAutomation {
    * Scale up matrix with new accounts
    */
   async scaleUpMatrix(currentMatrix: AgentMatrix, additionalAccounts: number): Promise<AgentMatrix> {
-    console.log(`📈 Scaling up matrix by ${additionalAccounts} accounts...`);
+    console.info(`📈 Scaling up matrix by ${additionalAccounts} accounts...`);
 
     const newConfig: TikTokMatrixConfig = {
       accountCount: additionalAccounts,
@@ -364,7 +364,7 @@ export class TikTokMatrixAutomation {
     }>;
     recommendations: string[];
   }> {
-    console.log(`📊 Generating performance report...`);
+    console.info(`📊 Generating performance report...`);
 
     const health = await this.monitorAccountHealth(matrix);
     const activeAccounts = matrix.accounts.filter(a => a.status === 'active').length;
@@ -421,9 +421,9 @@ export async function runTikTokMatrixExample() {
     return;
   }
   
-  console.log('✅ Connected to DuoPlus API');
-  console.log(`   Account: ${connection.accountInfo.email}`);
-  console.log(`   Plan: ${connection.accountInfo.plan}`);
+  console.info('✅ Connected to DuoPlus API');
+  console.info(`   Account: ${connection.accountInfo.email}`);
+  console.info(`   Plan: ${connection.accountInfo.plan}`);
 
   // Create automation instance
   const automation = new TikTokMatrixAutomation(duoplus);
@@ -440,27 +440,27 @@ export async function runTikTokMatrixExample() {
     }
   };
 
-  console.log('🚀 Setting up TikTok Matrix...');
+  console.info('🚀 Setting up TikTok Matrix...');
   const matrix = await automation.setupAccountMatrix(matrixConfig);
 
   // Monitor health
-  console.log('🔍 Monitoring account health...');
+  console.info('🔍 Monitoring account health...');
   const health = await automation.monitorAccountHealth(matrix);
-  console.log(`   Health: ${health.successRate * 100}% success rate`);
-  console.log(`   Issues: ${health.issues.length} accounts need attention`);
+  console.info(`   Health: ${health.successRate * 100}% success rate`);
+  console.info(`   Issues: ${health.issues.length} accounts need attention`);
 
   // Get verification codes
-  console.log('📱 Getting verification codes...');
+  console.info('📱 Getting verification codes...');
   const codes = await automation.getVerificationCodes(matrix);
   const validCodes = codes.filter(c => c.code !== null);
-  console.log(`   Found ${validCodes.length} verification codes`);
+  console.info(`   Found ${validCodes.length} verification codes`);
 
   // Generate performance report
-  console.log('📊 Generating performance report...');
+  console.info('📊 Generating performance report...');
   const report = await automation.generatePerformanceReport(matrix);
-  console.log(`   Total Accounts: ${report.summary.totalAccounts}`);
-  console.log(`   Active Accounts: ${report.summary.activeAccounts}`);
-  console.log(`   Total Followers: ${report.summary.totalFollowers}`);
+  console.info(`   Total Accounts: ${report.summary.totalAccounts}`);
+  console.info(`   Active Accounts: ${report.summary.activeAccounts}`);
+  console.info(`   Total Followers: ${report.summary.totalFollowers}`);
 
   return {
     matrix,
@@ -473,6 +473,6 @@ export async function runTikTokMatrixExample() {
 // Run if called directly
 if (import.meta.main) {
   runTikTokMatrixExample()
-    .then(() => console.log('✅ TikTok Matrix Example Complete'))
+    .then(() => console.info('✅ TikTok Matrix Example Complete'))
     .catch(error => console.error('❌ Error:', error.message));
 }

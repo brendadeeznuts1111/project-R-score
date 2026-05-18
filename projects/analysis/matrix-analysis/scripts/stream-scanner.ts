@@ -27,31 +27,31 @@ class StreamScannerCLI {
   private benchmark = new StreamBenchmarkEngine();
 
   async scan(options: ScanOptions): Promise<void> {
-    console.log(`🔍 Scanning ${options.directory} for stream conversion opportunities...`);
+    console.info(`🔍 Scanning ${options.directory} for stream conversion opportunities...`);
     
     const opportunities = this.scanDirectory(options.directory, options.extensions, options.recursive);
     
-    console.log(`📊 Found ${opportunities.length} opportunities across ${this.getUniqueFiles(opportunities).length} files`);
+    console.info(`📊 Found ${opportunities.length} opportunities across ${this.getUniqueFiles(opportunities).length} files`);
     
     const report = this.scanner.generateReport(opportunities);
     writeFileSync(options.output, report);
     
-    console.log(`📄 Report generated: ${options.output}`);
+    console.info(`📄 Report generated: ${options.output}`);
     
     // Show summary
     const summary = this.generateSummary(opportunities);
-    console.log(`\n📈 Summary:`);
-    console.log(`- P0 (Critical): ${summary.P0} opportunities`);
-    console.log(`- P1 (High): ${summary.P1} opportunities`);
-    console.log(`- P2 (Medium): ${summary.P2} opportunities`);
-    console.log(`- Average R-Score: ${summary.avgRScore.toFixed(6)}`);
+    console.info(`\n📈 Summary:`);
+    console.info(`- P0 (Critical): ${summary.P0} opportunities`);
+    console.info(`- P1 (High): ${summary.P1} opportunities`);
+    console.info(`- P2 (Medium): ${summary.P2} opportunities`);
+    console.info(`- Average R-Score: ${summary.avgRScore.toFixed(6)}`);
   }
 
   async migrate(options: MigrateOptions): Promise<void> {
-    console.log(options.dryRun ? "🔍 Previewing migrations..." : "🚀 Applying migrations...");
+    console.info(options.dryRun ? "🔍 Previewing migrations..." : "🚀 Applying migrations...");
     
     if (options.backup && !options.dryRun) {
-      console.log("💾 Creating backup...");
+      console.info("💾 Creating backup...");
       // Implementation would create git commit or backup files
     }
     
@@ -59,35 +59,35 @@ class StreamScannerCLI {
     
     const result = await this.scanner.applyMigrations(opportunities, options.dryRun);
     
-    console.log(`\n📈 Results:`);
-    console.log(`- Applied: ${result.applied}`);
-    console.log(`- Failed: ${result.failed}`);
-    console.log(`- Skipped: ${result.skipped}`);
+    console.info(`\n📈 Results:`);
+    console.info(`- Applied: ${result.applied}`);
+    console.info(`- Failed: ${result.failed}`);
+    console.info(`- Skipped: ${result.skipped}`);
     
     if (!options.dryRun && result.applied > 0) {
-      console.log(`\n✅ Successfully migrated ${result.applied} stream conversions to native Bun APIs`);
-      console.log(`💡 Run 'bun test tests/stream-converters-enhanced.test.ts' to verify`);
+      console.info(`\n✅ Successfully migrated ${result.applied} stream conversions to native Bun APIs`);
+      console.info(`💡 Run 'bun test tests/stream-converters-enhanced.test.ts' to verify`);
     }
   }
 
   async benchmark(): Promise<void> {
-    console.log(`🏃 Running stream converter benchmarks...`);
+    console.info(`🏃 Running stream converter benchmarks...`);
     
     // Generate sample data for benchmarking
     const results = await this.runBenchmarks();
     const report = this.benchmark.generateBenchmarkReport(results);
     
     writeFileSync("stream-benchmark-report.md", report);
-    console.log(`📊 Benchmark report generated: stream-benchmark-report.md`);
+    console.info(`📊 Benchmark report generated: stream-benchmark-report.md`);
     
     // Show performance summary
     const avgSpeedup = results.reduce((sum, r) => sum + r.speedup, 0) / results.length;
     const maxSpeedup = Math.max(...results.map(r => r.speedup));
     
-    console.log(`\n🚀 Performance Summary:`);
-    console.log(`- Average Speedup: ${avgSpeedup.toFixed(1)}×`);
-    console.log(`- Maximum Speedup: ${maxSpeedup.toFixed(1)}×`);
-    console.log(`- All R-Scores: 1.000000 (Quantum Perfect)`);
+    console.info(`\n🚀 Performance Summary:`);
+    console.info(`- Average Speedup: ${avgSpeedup.toFixed(1)}×`);
+    console.info(`- Maximum Speedup: ${maxSpeedup.toFixed(1)}×`);
+    console.info(`- All R-Scores: 1.000000 (Quantum Perfect)`);
   }
 
   private scanDirectory(directory: string, extensions: string[], recursive: boolean): any[] {
@@ -207,7 +207,7 @@ if (import.meta.path === Bun.main) {
       }
       
       default: {
-        console.log(`
+        console.info(`
 🌊 Stream Conversion Annihilation Matrix v4.1 CLI
 
 Usage:

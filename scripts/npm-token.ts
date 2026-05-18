@@ -48,8 +48,8 @@ registry=${targetRegistry}
 `;
 
   await Bun.write(".npmrc", npmrcContent);
-  console.log(`✅ NPM token saved to .npmrc`);
-  console.log(`   Registry: ${targetRegistry}`);
+  console.info(`✅ NPM token saved to .npmrc`);
+  console.info(`   Registry: ${targetRegistry}`);
 
   // Also save to env for current session
   const envContent = `NPM_TOKEN=${token}
@@ -57,15 +57,15 @@ REGISTRY_URL=${targetRegistry}
 `;
   try {
     await Bun.write(".env.local", envContent);
-    console.log(`✅ NPM token saved to .env.local`);
+    console.info(`✅ NPM token saved to .env.local`);
   } catch {
     // Ignore
   }
 
-  console.log("\n🔒 Token saved securely (not committed to git)");
-  console.log("\n🚀 Next steps:");
-  console.log(`   1. Verify: npm whoami --registry=${targetRegistry}`);
-  console.log(`   2. Publish: npm publish --registry=${targetRegistry}`);
+  console.info("\n🔒 Token saved securely (not committed to git)");
+  console.info("\n🚀 Next steps:");
+  console.info(`   1. Verify: npm whoami --registry=${targetRegistry}`);
+  console.info(`   2. Publish: npm publish --registry=${targetRegistry}`);
 }
 
 await main();

@@ -3,10 +3,10 @@
  * Advanced inheritance diff visualization for configuration evolution
  */
 
-console.log('🚀 INHERITANCE DIFF VIEW v4.5 - REVOLUTIONARY IMPLEMENTATION!')
-console.log('=' .repeat(80))
+console.info('🚀 INHERITANCE DIFF VIEW v4.5 - REVOLUTIONARY IMPLEMENTATION!')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 🎯 REVOLUTIONARY INHERITANCE DIFF SYSTEM DEPLOYED!
 
 ✅ ADVANCED DIFF VISUALIZATION FEATURES IMPLEMENTED:
@@ -143,9 +143,9 @@ The inheritance diff view provides unprecedented visibility into configuration e
 🚀 FACTORYWAGER YAML-NATIVE TABULAR v4.5 - INHERITANCE DIFF REVOLUTION COMPLETE! 🚀
 `)
 
-console.log('🚀✅ INHERITANCE DIFF VIEW v4.5 - REVOLUTIONARY IMPLEMENTATION!')
-console.log('🔄 Advanced diff algorithm - Change detection mastered!')
-console.log('🎨 Professional visualization - ASCII box rendering!')
-console.log('📊 Smart classification - Change type detection!')
-console.log('🔧 CLI integration - Seamless --diff-inheritance flag!')
-console.log('💎 FactoryWager v4.5 - Inheritance diff revolution complete!')
+console.info('🚀✅ INHERITANCE DIFF VIEW v4.5 - REVOLUTIONARY IMPLEMENTATION!')
+console.info('🔄 Advanced diff algorithm - Change detection mastered!')
+console.info('🎨 Professional visualization - ASCII box rendering!')
+console.info('📊 Smart classification - Change type detection!')
+console.info('🔧 CLI integration - Seamless --diff-inheritance flag!')
+console.info('💎 FactoryWager v4.5 - Inheritance diff revolution complete!')

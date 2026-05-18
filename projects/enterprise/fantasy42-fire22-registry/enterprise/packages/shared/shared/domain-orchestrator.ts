@@ -68,7 +68,7 @@ export class DomainOrchestrator {
     const processId = `deposit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const startTime = Date.now();
 
-    console.log(`💰 Starting customer deposit process: ${processId}`);
+    console.info(`💰 Starting customer deposit process: ${processId}`);
 
     const steps: BusinessProcessStep[] = [
       {
@@ -141,7 +141,7 @@ export class DomainOrchestrator {
 
       this.activeProcesses.set(processId, result);
 
-      console.log(`✅ Customer deposit process completed: ${processId}`);
+      console.info(`✅ Customer deposit process completed: ${processId}`);
       return result;
     } catch (error) {
       // Mark failed steps
@@ -183,7 +183,7 @@ export class DomainOrchestrator {
     const processId = `bet_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const startTime = Date.now();
 
-    console.log(`🎯 Starting agent bet placement process: ${processId}`);
+    console.info(`🎯 Starting agent bet placement process: ${processId}`);
 
     const steps: BusinessProcessStep[] = [
       {
@@ -283,7 +283,7 @@ export class DomainOrchestrator {
 
       this.activeProcesses.set(processId, result);
 
-      console.log(`✅ Agent bet placement process completed: ${processId}`);
+      console.info(`✅ Agent bet placement process completed: ${processId}`);
       return result;
     } catch (error) {
       // Mark failed steps
@@ -327,7 +327,7 @@ export class DomainOrchestrator {
     const processId = `onboarding_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const startTime = Date.now();
 
-    console.log(`🎉 Starting customer onboarding process: ${processId}`);
+    console.info(`🎉 Starting customer onboarding process: ${processId}`);
 
     const steps: BusinessProcessStep[] = [
       {
@@ -431,7 +431,7 @@ export class DomainOrchestrator {
 
       this.activeProcesses.set(processId, result);
 
-      console.log(`✅ Customer onboarding process completed: ${processId}`);
+      console.info(`✅ Customer onboarding process completed: ${processId}`);
       return result;
     } catch (error) {
       // Mark failed steps

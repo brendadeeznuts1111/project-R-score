@@ -160,8 +160,8 @@ export class TerminalWidth {
   static testUnicodeHandling(): void {
     if (!feature("ENV_DEVELOPMENT")) return;
 
-    console.log("🧪 Testing Bun.stringWidth improvements:");
-    console.log("─".repeat(50));
+    console.info("🧪 Testing Bun.stringWidth improvements:");
+    console.info("─".repeat(50));
 
     const testCases = [
       { text: "🇺🇸", expected: 2, description: "Flag emoji" },
@@ -183,17 +183,17 @@ export class TerminalWidth {
       const width = Bun.stringWidth(test.text);
       const pass = width === test.expected;
       const icon = pass ? "✅" : "❌";
-      console.log(`${icon} ${test.description.padEnd(25)}: ${width} (expected ${test.expected})`);
+      console.info(`${icon} ${test.description.padEnd(25)}: ${width} (expected ${test.expected})`);
 
       if (pass) passed++;
       else failed++;
     }
 
-    console.log("─".repeat(50));
-    console.log(`📊 Results: ${passed} passed, ${failed} failed`);
+    console.info("─".repeat(50));
+    console.info(`📊 Results: ${passed} passed, ${failed} failed`);
 
     // Test table formatting
-    console.log("\n📋 Table Formatting Test:");
+    console.info("\n📋 Table Formatting Test:");
     const table = this.createTable(
       ["Name", "Status", "Progress"],
       [
@@ -202,7 +202,7 @@ export class TerminalWidth {
         ["กำ ไทย", "❌ Error", "░░░░░░░░░░ 0%"],
       ]
     );
-    table.forEach(line => console.log(line));
+    table.forEach(line => console.info(line));
   }
 
   // Create a feature status dashboard

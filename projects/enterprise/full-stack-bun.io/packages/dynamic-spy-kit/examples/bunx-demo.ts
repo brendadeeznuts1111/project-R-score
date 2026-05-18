@@ -37,11 +37,11 @@ interface PackageInfo {
 // 1. Bunx Overview
 // =============================================================================
 function demoBunxOverview() {
-	console.log("=".repeat(70));
-	console.log("1. ⚡ BUNX OVERVIEW - 100x FASTER THAN NPX");
-	console.log("=".repeat(70));
+	console.info("=".repeat(70));
+	console.info("1. ⚡ BUNX OVERVIEW - 100x FASTER THAN NPX");
+	console.info("=".repeat(70));
 
-	console.log(`
+	console.info(`
 📋 What is bunx?
    Run packages from npm - Bun's equivalent of npx or yarn dlx.
    Auto-installs and runs package executables instantly!
@@ -63,9 +63,9 @@ function demoBunxOverview() {
 // 2. Basic Commands
 // =============================================================================
 function demoBunxCommands() {
-	console.log("\n" + "=".repeat(70));
-	console.log("2. 📋 BUNX COMMANDS");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("2. 📋 BUNX COMMANDS");
+	console.info("=".repeat(70));
 
 	const commands: BunxCommand[] = [
 		{ cmd: "bunx cowsay 'Hello!'", description: "Run cowsay", category: "Fun" },
@@ -78,17 +78,17 @@ function demoBunxCommands() {
 		{ cmd: "bunx uglify-js@3.14.0 app.js", description: "Run specific version", category: "Versioning" },
 	];
 
-	console.log(`\n📋 Common Commands:\n`);
-	console.log(Bun.inspect.table(commands));
+	console.info(`\n📋 Common Commands:\n`);
+	console.info(Bun.inspect.table(commands));
 }
 
 // =============================================================================
 // 3. Flags Reference
 // =============================================================================
 function demoBunxFlags() {
-	console.log("\n" + "=".repeat(70));
-	console.log("3. 🚩 BUNX FLAGS");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("3. 🚩 BUNX FLAGS");
+	console.info("=".repeat(70));
 
 	const flags = [
 		{ flag: "--bun", type: "boolean", desc: "Force Bun runtime (ignore Node shebang)" },
@@ -98,10 +98,10 @@ function demoBunxFlags() {
 		{ flag: "--silent", type: "boolean", desc: "Suppress installation output" },
 	];
 
-	console.log(`\n📋 Available Flags:\n`);
-	console.log(Bun.inspect.table(flags));
+	console.info(`\n📋 Available Flags:\n`);
+	console.info(Bun.inspect.table(flags));
 
-	console.log(`
+	console.info(`
 ⚠️ Flag Order Matters:
    bunx --bun my-cli      ✅ Correct (--bun before package)
    bunx my-cli --bun      ❌ Wrong (--bun passed to package)
@@ -112,9 +112,9 @@ function demoBunxFlags() {
 // 4. Arbitrage Tool Commands
 // =============================================================================
 function demoArbCommands() {
-	console.log("\n" + "=".repeat(70));
-	console.log("4. 🏀 ARBITRAGE TOOL COMMANDS");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("4. 🏀 ARBITRAGE TOOL COMMANDS");
+	console.info("=".repeat(70));
 
 	const arbCommands: BunxCommand[] = [
 		{ cmd: "bunx --bun ccxt-cli fetch binance BTC/USDT", description: "Fetch crypto prices", category: "Crypto" },
@@ -127,19 +127,19 @@ function demoArbCommands() {
 		{ cmd: "bunx concurrently 'bun scrape' 'bun analyze'", description: "Run parallel tasks", category: "Parallel" },
 	];
 
-	console.log(`\n📋 Arbitrage Tooling:\n`);
-	console.log(Bun.inspect.table(arbCommands));
+	console.info(`\n📋 Arbitrage Tooling:\n`);
+	console.info(Bun.inspect.table(arbCommands));
 }
 
 // =============================================================================
 // 5. --package Flag Examples
 // =============================================================================
 function demoPackageFlag() {
-	console.log("\n" + "=".repeat(70));
-	console.log("5. 📦 --PACKAGE FLAG (Binary ≠ Package Name)");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("5. 📦 --PACKAGE FLAG (Binary ≠ Package Name)");
+	console.info("=".repeat(70));
 
-	console.log(`
+	console.info(`
 🔧 When binary name differs from package name:
 
    # Angular CLI (package: @angular/cli, binary: ng)
@@ -168,19 +168,19 @@ function demoPackageFlag() {
 		{ package: "typescript", binary: "tsc", example: "bunx tsc --init" },
 	];
 
-	console.log(`\n📋 Package → Binary Mapping:\n`);
-	console.log(Bun.inspect.table(packageExamples));
+	console.info(`\n📋 Package → Binary Mapping:\n`);
+	console.info(Bun.inspect.table(packageExamples));
 }
 
 // =============================================================================
 // 6. --bun Flag (Force Bun Runtime)
 // =============================================================================
 function demoBunFlag() {
-	console.log("\n" + "=".repeat(70));
-	console.log("6. 🏃 --BUN FLAG (Force Bun Runtime)");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("6. 🏃 --BUN FLAG (Force Bun Runtime)");
+	console.info("=".repeat(70));
 
-	console.log(`
+	console.info(`
 🔧 Force Bun instead of Node.js:
 
    # Many packages have #!/usr/bin/env node shebang
@@ -212,11 +212,11 @@ function demoBunFlag() {
 // 7. Shebang Examples
 // =============================================================================
 function demoShebangs() {
-	console.log("\n" + "=".repeat(70));
-	console.log("7. 📜 SHEBANGS");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("7. 📜 SHEBANGS");
+	console.info("=".repeat(70));
 
-	console.log(`
+	console.info(`
 📜 Shebang determines which runtime executes the file:
 
    #!/usr/bin/env node    → Runs with Node.js
@@ -233,7 +233,7 @@ function demoShebangs() {
    const args = Bun.argv.slice(2);
    const sport = args[0] || 'nba';
    
-   console.log(\`Scanning \${sport} markets...\`);
+   console.info(\`Scanning \${sport} markets...\`);
    // ... scanner logic
 
 📦 package.json bin field:
@@ -257,11 +257,11 @@ function demoShebangs() {
 // 8. Arbitrage Scripts
 // =============================================================================
 function demoArbScripts() {
-	console.log("\n" + "=".repeat(70));
-	console.log("8. 🏀 ARBITRAGE BUNX SCRIPTS");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("8. 🏀 ARBITRAGE BUNX SCRIPTS");
+	console.info("=".repeat(70));
 
-	console.log(`
+	console.info(`
 📜 package.json scripts using bunx:
 
 {
@@ -861,18 +861,18 @@ async function main() {
 			process.exit(1);
 		}
 		
-		console.log(`\n⚡ BUNX SERVER | Bun ${Bun.version} | Port ${port}\n`);
-		console.log(`📡 Endpoints:`);
-		console.log(`   curl http://localhost:${port}/bunx-stats`);
-		console.log(`   curl http://localhost:${port}/patch-stats`);
-		console.log(`   curl http://localhost:${port}/bunx?pkg=vitest`);
-		console.log(`\n🟢 Ready`);
+		console.info(`\n⚡ BUNX SERVER | Bun ${Bun.version} | Port ${port}\n`);
+		console.info(`📡 Endpoints:`);
+		console.info(`   curl http://localhost:${port}/bunx-stats`);
+		console.info(`   curl http://localhost:${port}/patch-stats`);
+		console.info(`   curl http://localhost:${port}/bunx?pkg=vitest`);
+		console.info(`\n🟢 Ready`);
 		return;
 	}
 
 	// Demo mode: full output
-	console.log("\n⚡ @dynamic-spy/kit v8.3 - BUNX DEMO ⚡\n");
-	console.log(`Bun version: ${Bun.version}`);
+	console.info("\n⚡ @dynamic-spy/kit v8.3 - BUNX DEMO ⚡\n");
+	console.info(`Bun version: ${Bun.version}`);
 
 	demoBunxOverview();
 	demoBunxCommands();
@@ -883,10 +883,10 @@ async function main() {
 	demoShebangs();
 	demoArbScripts();
 
-	console.log("\n" + "=".repeat(70));
-	console.log("✅ BUNX SUMMARY");
-	console.log("=".repeat(70));
-	console.log(`
+	console.info("\n" + "=".repeat(70));
+	console.info("✅ BUNX SUMMARY");
+	console.info("=".repeat(70));
+	console.info(`
 ⚡ Quick Reference:
 
    bunx <package>              # Run package

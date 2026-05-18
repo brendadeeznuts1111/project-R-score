@@ -155,7 +155,7 @@ export class Fantasy42AgentMenu {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🎯 Initializing Fantasy42 Agent Menu System...');
+      console.info('🎯 Initializing Fantasy42 Agent Menu System...');
 
       // Locate menu selector element
       const menuSelector = this.xpathHandler.findElementByXPath(
@@ -206,7 +206,7 @@ export class Fantasy42AgentMenu {
       }
 
       this.isInitialized = true;
-      console.log('✅ Fantasy42 Agent Menu System initialized');
+      console.info('✅ Fantasy42 Agent Menu System initialized');
 
       return true;
     } catch (error) {
@@ -313,7 +313,7 @@ export class Fantasy42AgentMenu {
     // Add visual feedback for current selection
     this.updateSelectorVisualState(selector);
 
-    console.log('✅ Menu selector event listeners setup');
+    console.info('✅ Menu selector event listeners setup');
   }
 
   /**
@@ -394,7 +394,7 @@ export class Fantasy42AgentMenu {
       const container = document.querySelector(selector) as HTMLElement;
       if (container) {
         this.menuContainer = container;
-        console.log(`✅ Found menu container: ${selector}`);
+        console.info(`✅ Found menu container: ${selector}`);
         return;
       }
     }
@@ -420,7 +420,7 @@ export class Fantasy42AgentMenu {
     }
 
     this.menuContainer = container;
-    console.log('✅ Created fallback menu container');
+    console.info('✅ Created fallback menu container');
   }
 
   /**
@@ -446,7 +446,7 @@ export class Fantasy42AgentMenu {
         }
       }
 
-      console.log('✅ User preferences loaded');
+      console.info('✅ User preferences loaded');
     } catch (error) {
       console.warn('⚠️ Failed to load user preferences:', error);
     }
@@ -471,7 +471,7 @@ export class Fantasy42AgentMenu {
       attributeFilter: ['class', 'style'],
     });
 
-    console.log('✅ Style observer setup');
+    console.info('✅ Style observer setup');
   }
 
   /**
@@ -514,7 +514,7 @@ export class Fantasy42AgentMenu {
     // Save configuration
     this.saveConfiguration();
 
-    console.log(`🎨 Switched to menu style: ${newStyle.name}`);
+    console.info(`🎨 Switched to menu style: ${newStyle.name}`);
   }
 
   /**
@@ -567,7 +567,7 @@ export class Fantasy42AgentMenu {
       const renderTime = Date.now() - startTime;
       this.analytics.performanceMetrics.renderTime = renderTime;
 
-      console.log(`✅ Applied menu style: ${style.name} (${renderTime}ms)`);
+      console.info(`✅ Applied menu style: ${style.name} (${renderTime}ms)`);
     } catch (error) {
       console.error('❌ Failed to apply menu style:', error);
       this.analytics.performanceMetrics.errorRate++;
@@ -766,7 +766,7 @@ export class Fantasy42AgentMenu {
     // Add focus management
     this.setupFocusManagement();
 
-    console.log('♿ Accessibility features applied');
+    console.info('♿ Accessibility features applied');
   }
 
   /**
@@ -974,14 +974,14 @@ export class Fantasy42AgentMenu {
       }
     }
 
-    console.log('✅ Structure interactions setup');
+    console.info('✅ Structure interactions setup');
   }
 
   /**
    * Handle menu action
    */
   private handleMenuAction(action: string): void {
-    console.log(`🎯 Menu action: ${action}`);
+    console.info(`🎯 Menu action: ${action}`);
 
     // Track interaction
     this.analytics.interactionPatterns[action] =
@@ -1005,7 +1005,7 @@ export class Fantasy42AgentMenu {
         this.navigateToSettings();
         break;
       default:
-        console.log(`Unknown action: ${action}`);
+        console.info(`Unknown action: ${action}`);
     }
   }
 
@@ -1025,7 +1025,7 @@ export class Fantasy42AgentMenu {
       }
     });
 
-    console.log('📊 Analytics tracking setup');
+    console.info('📊 Analytics tracking setup');
   }
 
   /**
@@ -1062,7 +1062,7 @@ export class Fantasy42AgentMenu {
       }
     });
 
-    console.log('⌨️ Keyboard shortcuts setup');
+    console.info('⌨️ Keyboard shortcuts setup');
   }
 
   /**
@@ -1091,7 +1091,7 @@ export class Fantasy42AgentMenu {
       }
     });
 
-    console.log('♿ Keyboard navigation setup');
+    console.info('♿ Keyboard navigation setup');
   }
 
   /**
@@ -1124,7 +1124,7 @@ export class Fantasy42AgentMenu {
       }
     });
 
-    console.log('🎯 Focus management setup');
+    console.info('🎯 Focus management setup');
   }
 
   /**
@@ -1199,7 +1199,7 @@ export class Fantasy42AgentMenu {
       });
     });
 
-    console.log('⚡ Quick actions initialized');
+    console.info('⚡ Quick actions initialized');
   }
 
   /**
@@ -1255,7 +1255,7 @@ export class Fantasy42AgentMenu {
     this.applyInlineStyles(styles);
     document.body.appendChild(notificationContainer);
 
-    console.log('🔔 Notifications initialized');
+    console.info('🔔 Notifications initialized');
   }
 
   /**
@@ -1342,7 +1342,7 @@ export class Fantasy42AgentMenu {
       }
     });
 
-    console.log('🔍 Search functionality initialized');
+    console.info('🔍 Search functionality initialized');
   }
 
   /**
@@ -1412,7 +1412,7 @@ export class Fantasy42AgentMenu {
     mediaQuery.addEventListener('change', handleScreenChange);
     toggleBtn.style.display = mediaQuery.matches ? 'block' : 'none';
 
-    console.log('📱 Mobile menu toggle added');
+    console.info('📱 Mobile menu toggle added');
   }
 
   /**
@@ -1432,7 +1432,7 @@ export class Fantasy42AgentMenu {
    * Handle quick action
    */
   private handleQuickAction(action: string): void {
-    console.log(`⚡ Quick action: ${action}`);
+    console.info(`⚡ Quick action: ${action}`);
 
     // Handle different quick actions
     switch (action) {
@@ -1455,7 +1455,7 @@ export class Fantasy42AgentMenu {
    * Perform search
    */
   private performSearch(query: string): void {
-    console.log(`🔍 Searching for: ${query}`);
+    console.info(`🔍 Searching for: ${query}`);
 
     // Implement search functionality
     // This would integrate with Fantasy42 search API
@@ -1484,27 +1484,27 @@ export class Fantasy42AgentMenu {
    * Navigation methods
    */
   private navigateToDashboard(): void {
-    console.log('📊 Navigating to Dashboard');
+    console.info('📊 Navigating to Dashboard');
     // Implement navigation logic
   }
 
   private navigateToPlayers(): void {
-    console.log('👥 Navigating to Players');
+    console.info('👥 Navigating to Players');
     // Implement navigation logic
   }
 
   private navigateToTransactions(): void {
-    console.log('💰 Navigating to Transactions');
+    console.info('💰 Navigating to Transactions');
     // Implement navigation logic
   }
 
   private navigateToReports(): void {
-    console.log('📈 Navigating to Reports');
+    console.info('📈 Navigating to Reports');
     // Implement navigation logic
   }
 
   private navigateToSettings(): void {
-    console.log('⚙️ Navigating to Settings');
+    console.info('⚙️ Navigating to Settings');
     // Implement navigation logic
   }
 
@@ -1512,22 +1512,22 @@ export class Fantasy42AgentMenu {
    * Quick action methods
    */
   private openDepositModal(): void {
-    console.log('💰 Opening deposit modal');
+    console.info('💰 Opening deposit modal');
     // Implement deposit modal logic
   }
 
   private openWithdrawalModal(): void {
-    console.log('💸 Opening withdrawal modal');
+    console.info('💸 Opening withdrawal modal');
     // Implement withdrawal modal logic
   }
 
   private openBettingInterface(): void {
-    console.log('🎯 Opening betting interface');
+    console.info('🎯 Opening betting interface');
     // Implement betting interface logic
   }
 
   private openPlayerSearch(): void {
-    console.log('🔍 Opening player search');
+    console.info('🔍 Opening player search');
     // Implement player search logic
   }
 
@@ -1569,7 +1569,7 @@ export class Fantasy42AgentMenu {
       await this.initialize();
     }
 
-    console.log('⚙️ Configuration updated');
+    console.info('⚙️ Configuration updated');
   }
 
   /**
@@ -1577,7 +1577,7 @@ export class Fantasy42AgentMenu {
    */
   addCustomStyle(style: MenuStyle): void {
     this.currentConfig.availableStyles.push(style);
-    console.log(`🎨 Added custom style: ${style.name}`);
+    console.info(`🎨 Added custom style: ${style.name}`);
   }
 
   /**
@@ -1587,7 +1587,7 @@ export class Fantasy42AgentMenu {
     this.currentConfig.availableStyles = this.currentConfig.availableStyles.filter(
       s => s.id !== styleId
     );
-    console.log(`🗑️ Removed style: ${styleId}`);
+    console.info(`🗑️ Removed style: ${styleId}`);
   }
 
   /**
@@ -1604,7 +1604,7 @@ export class Fantasy42AgentMenu {
     try {
       const importedConfig = JSON.parse(configJson);
       await this.updateConfiguration(importedConfig);
-      console.log('📥 Configuration imported');
+      console.info('📥 Configuration imported');
     } catch (error) {
       console.error('❌ Failed to import configuration:', error);
     }
@@ -1621,7 +1621,7 @@ export class Fantasy42AgentMenu {
       await this.initialize();
     }
 
-    console.log('🔄 Reset to default configuration');
+    console.info('🔄 Reset to default configuration');
   }
 
   /**
@@ -1643,7 +1643,7 @@ export class Fantasy42AgentMenu {
     localStorage.removeItem('fantasy42-last-menu-style');
 
     this.isInitialized = false;
-    console.log('🧹 Agent menu system cleaned up');
+    console.info('🧹 Agent menu system cleaned up');
   }
 }
 

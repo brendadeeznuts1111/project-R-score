@@ -392,8 +392,8 @@ if (import.meta.main) {
       break;
 
     default:
-      console.log('Usage: bun workspace-smol-builder.ts [build-all]');
-      console.log('  build-all - Build all workspaces with SMOL optimization');
+      console.info('Usage: bun workspace-smol-builder.ts [build-all]');
+      console.info('  build-all - Build all workspaces with SMOL optimization');
       process.exit(1);
   }
 }

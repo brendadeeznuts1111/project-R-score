@@ -2358,7 +2358,7 @@ warmupDns(DNS_WARMUP_HOSTS).catch(() => {});
 // Initialize cookie monitor
 const cookieMonitor = new CookieMonitor();
 
-console.log(`
+console.info(`
 🎉 ${SERVER_NAME.toUpperCase()}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -2401,7 +2401,7 @@ function shutdown(signal: string) {
   try {
     server.stop(true);
   } catch (err) {}
-  console.log(`[${SERVER_NAME}] graceful shutdown via ${signal}`);
+  console.info(`[${SERVER_NAME}] graceful shutdown via ${signal}`);
   process.exit(0);
 }
 

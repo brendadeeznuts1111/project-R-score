@@ -212,9 +212,9 @@ const servingDomain = Bun.env.HOST || "localhost";
 const scope = detectScope(servingDomain);
 const row = getMatrixRow(servingDomain);
 
-console.log(\`Scope: \${scope}\`);
-console.log(\`Storage: \${row?.storagePath}\`);
-console.log(\`Secrets: \${row?.secretsBackend}\`);
+console.info(\`Scope: \${scope}\`);
+console.info(\`Storage: \${row?.storagePath}\`);
+console.info(\`Secrets: \${row?.secretsBackend}\`);
 \`\`\`
 
 **Examples:**
@@ -292,9 +292,9 @@ async function main() {
     const outputPath = './docs/SCOPING_MATRIX_AUTO.md';
     writeFileSync(outputPath, markdown);
     
-    console.log(`✅ Generated ${outputPath}`);
-    console.log(`📊 Documented ${DUOPLUS_SCOPING_MATRIX.length} matrix rows`);
-    console.log(`📝 ${(markdown.split('\n').length)} lines total`);
+    console.info(`✅ Generated ${outputPath}`);
+    console.info(`📊 Documented ${DUOPLUS_SCOPING_MATRIX.length} matrix rows`);
+    console.info(`📝 ${(markdown.split('\n').length)} lines total`);
   } catch (err) {
     console.error('❌ Failed to generate documentation:', err);
     Bun.exit(1);

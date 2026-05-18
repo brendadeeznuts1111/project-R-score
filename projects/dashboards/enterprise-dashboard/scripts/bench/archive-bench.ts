@@ -2,7 +2,7 @@
 const FILE_COUNT = 100;
 
 async function benchArchive() {
-  console.log("Bun v1.3.6 Archive Benchmark\n");
+  console.info("Bun v1.3.6 Archive Benchmark\n");
 
   // Generate test files in memory
   const files: Record<string, string> = {};
@@ -49,9 +49,9 @@ async function benchArchive() {
     },
   ];
 
-  console.log(Bun.inspect.table(results, { colors: true }));
-  console.log(`\nCompression: ${totalSize} bytes → ${archiveSize} bytes (${((1 - archiveSize/totalSize) * 100).toFixed(1)}% reduction)`);
-  console.log("Archive written to: /tmp/bench-archive.tar.gz");
+  console.info(Bun.inspect.table(results, { colors: true }));
+  console.info(`\nCompression: ${totalSize} bytes → ${archiveSize} bytes (${((1 - archiveSize/totalSize) * 100).toFixed(1)}% reduction)`);
+  console.info("Archive written to: /tmp/bench-archive.tar.gz");
 }
 
 benchArchive();

@@ -622,7 +622,7 @@ export class VersionTracker {
     // 4. Restart services
     // 5. Run health checks
 
-    console.log(`Performing rollback for ${componentUri}: ${fromVersion} -> ${toVersion}`);
+    console.info(`Performing rollback for ${componentUri}: ${fromVersion} -> ${toVersion}`);
 
     // Simulate rollback delay
     await Bun.sleep(100);
@@ -633,7 +633,7 @@ export class VersionTracker {
     versions: VersionMetadata[]
   ): Promise<void> {
     // Clean up old version files, backups, etc.
-    console.log(`Cleaning up ${versions.length} old versions for ${componentUri}`);
+    console.info(`Cleaning up ${versions.length} old versions for ${componentUri}`);
   }
 
   private addAuditEntry(entry: AuditEntry): void {
@@ -676,7 +676,7 @@ export class VersionTracker {
         this.config = { ...this.config, ...parsed.config };
       }
     } catch (error) {
-      console.log('No existing version tracker data found, starting fresh');
+      console.info('No existing version tracker data found, starting fresh');
     }
   }
 }

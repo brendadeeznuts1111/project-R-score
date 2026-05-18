@@ -413,8 +413,8 @@ export class CrossBookSecurity {
 
   // Performance monitoring
   static benchmarkSecurity(iterations: number = 10000): void {
-    console.log("🧪 Cross-Book Security Benchmark");
-    console.log("===================================");
+    console.info("🧪 Cross-Book Security Benchmark");
+    console.info("===================================");
 
     const testData = this.generateTestData(74);
 
@@ -440,32 +440,32 @@ export class CrossBookSecurity {
     }
     const bookIdTime = performance.now() - bookIdStart;
 
-    console.log(
+    console.info(
       `   Pattern Validation: ${validationTime.toFixed(2)}ms (${(validationTime / iterations).toFixed(4)}ms per call)`
     );
-    console.log(
+    console.info(
       `   Book ID Validation: ${bookIdTime.toFixed(2)}ms (${(bookIdTime / iterations).toFixed(4)}ms per call)`
     );
-    console.log(`   Total: ${(validationTime + bookIdTime).toFixed(2)}ms`);
-    console.log(`   Security: ✅ CVE-2024 mitigated`);
+    console.info(`   Total: ${(validationTime + bookIdTime).toFixed(2)}ms`);
+    console.info(`   Security: ✅ CVE-2024 mitigated`);
   }
 
   // Demonstration function
   static demonstrate(): void {
-    console.log("🚀 Cross-Book Security Layer");
-    console.log("==============================");
+    console.info("🚀 Cross-Book Security Layer");
+    console.info("==============================");
 
     // Test book ID validation
     const validBookIds = ["sportradar-123", "genius-456", "pinnacle-789"];
     const invalidBookIds = ["../etc/passwd", "book/../../", "book<script>"];
 
-    console.log("📝 Book ID Validation:");
+    console.info("📝 Book ID Validation:");
     validBookIds.forEach((id) => {
       try {
         const validated = this.validateBookId(id);
-        console.log(`   ✅ ${id} → ${validated}`);
+        console.info(`   ✅ ${id} → ${validated}`);
       } catch (error: unknown) {
-        console.log(
+        console.info(
           `   ❌ ${id} → ${error instanceof Error ? error.message : String(error)}`
         );
       }
@@ -474,16 +474,16 @@ export class CrossBookSecurity {
     invalidBookIds.forEach((id) => {
       try {
         this.validateBookId(id);
-        console.log(`   ❌ ${id} → Should have failed`);
+        console.info(`   ❌ ${id} → Should have failed`);
       } catch (error: unknown) {
-        console.log(
+        console.info(
           `   ✅ ${id} → ${error instanceof Error ? error.message : String(error)}`
         );
       }
     });
 
     // Test market data validation
-    console.log("\n📊 Market Data Validation:");
+    console.info("\n📊 Market Data Validation:");
     const validData = {
       timestamp: Date.now(),
       price: 100.5,
@@ -497,26 +497,26 @@ export class CrossBookSecurity {
       eventId: "",
     };
 
-    console.log(
+    console.info(
       `   Valid data: ${this.validateMarketData(validData) ? "✅" : "❌"}`
     );
-    console.log(
+    console.info(
       `   Invalid data: ${this.validateMarketData(invalidData) ? "❌" : "✅"}`
     );
 
     // Security audit
     const audit = this.auditSystem([74, 81, 85, 88]);
-    console.log(`\n🔒 Security Audit: ${audit.secure ? "✅" : "❌"}`);
+    console.info(`\n🔒 Security Audit: ${audit.secure ? "✅" : "❌"}`);
     if (!audit.secure) {
       audit.violations.forEach((violation) =>
-        console.log(`   ⚠️  ${violation}`)
+        console.info(`   ⚠️  ${violation}`)
       );
     }
 
     // Performance benchmark
     this.benchmarkSecurity(1000);
 
-    console.log("\n✅ Security layer demonstration complete");
+    console.info("\n✅ Security layer demonstration complete");
   }
 }
 

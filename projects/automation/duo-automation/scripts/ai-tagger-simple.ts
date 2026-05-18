@@ -197,27 +197,27 @@ export class SimpleAITagger {
   }
 
   async benchmark(files: string[]): Promise<void> {
-    console.log('🎯 Running benchmark on sample files...');
+    console.info('🎯 Running benchmark on sample files...');
     
     let processed = 0;
     
     for (const filePath of files) {
       try {
         const tags = await this.autoTag(filePath);
-        console.log(`📁 ${filePath}:`);
-        console.log(`   [${tags.DOMAIN}][${tags.SCOPE}][${tags.TYPE}][META:{${Object.keys(tags.META).join(',')}}][${tags.CLASS}][#REF:${tags.REF}][${tags.BUN}]`);
+        console.info(`📁 ${filePath}:`);
+        console.info(`   [${tags.DOMAIN}][${tags.SCOPE}][${tags.TYPE}][META:{${Object.keys(tags.META).join(',')}}][${tags.CLASS}][#REF:${tags.REF}][${tags.BUN}]`);
         processed++;
       } catch (error) {
         console.error(`❌ Error processing ${filePath}:`, error);
       }
     }
     
-    console.log(`📊 Benchmark completed: ${processed} files processed`);
-    console.log(`🎯 Estimated accuracy: ~78% (based on heuristics)`);
+    console.info(`📊 Benchmark completed: ${processed} files processed`);
+    console.info(`🎯 Estimated accuracy: ~78% (based on heuristics)`);
   }
 
   async exportTags(outputPath: string): Promise<void> {
-    console.log('📤 Exporting tags...');
+    console.info('📤 Exporting tags...');
     
     // For demo, create sample export
     const sampleTags = [
@@ -260,7 +260,7 @@ export class SimpleAITagger {
     ];
     
     await writeFile(outputPath, JSON.stringify(sampleTags, null, 2));
-    console.log(`✅ Exported ${sampleTags.length} sample tags to ${outputPath}`);
+    console.info(`✅ Exported ${sampleTags.length} sample tags to ${outputPath}`);
   }
 }
 
@@ -271,12 +271,12 @@ async function main() {
 
   switch (command) {
     case '--train':
-      console.log('🎯 Training AI Tagger (simple mode)...');
-      console.log('📚 Simple heuristic-based training completed');
+      console.info('🎯 Training AI Tagger (simple mode)...');
+      console.info('📚 Simple heuristic-based training completed');
       break;
       
     case '--onboarding':
-      console.log('🚀 Setting up AI Tagger for onboarding...');
+      console.info('🚀 Setting up AI Tagger for onboarding...');
       
       // Create training data template
       const trainingTemplate = {
@@ -303,8 +303,8 @@ async function main() {
       };
       
       await writeFile('./training-data.json', JSON.stringify(trainingTemplate, null, 2));
-      console.log('✅ Created training-data.json template');
-      console.log('🎯 Ready to start tagging with ~78% accuracy');
+      console.info('✅ Created training-data.json template');
+      console.info('🎯 Ready to start tagging with ~78% accuracy');
       break;
       
     case '--benchmark':
@@ -324,7 +324,7 @@ async function main() {
       break;
       
     default:
-      console.log(`
+      console.info(`
 🏷️  DUOPLUS AI Tagger v4.1 (Simple Mode)
 
 Usage:

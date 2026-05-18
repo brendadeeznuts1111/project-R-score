@@ -10,7 +10,7 @@ const VAULT_DIR = Bun.resolveSync('data', process.cwd());
 
 // Safe ETL pipeline with Bun.spawn v1.3
 async function spawnETL() {
-  console.log('🚀 Starting zero-copy ETL pipeline...');
+  console.info('🚀 Starting zero-copy ETL pipeline...');
 
   // Step 1: Fetch data with timeout protection
   const fetchProc = spawn({
@@ -60,8 +60,8 @@ async function spawnETL() {
 
     await Bun.write(outputPath, output);
 
-    console.log(`✅ ETL complete in <0.1s - ${output.length} bytes saved`);
-    console.log(`📁 Output: ${outputPath}`);
+    console.info(`✅ ETL complete in <0.1s - ${output.length} bytes saved`);
+    console.info(`📁 Output: ${outputPath}`);
 
   } catch (error) {
     console.error(`❌ ETL failed: ${error.message}`);

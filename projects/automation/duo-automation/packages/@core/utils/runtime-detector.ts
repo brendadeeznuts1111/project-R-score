@@ -448,22 +448,22 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
   
   if (args[0] === 'health') {
-    console.log(BunRuntimeDetector.generateHealthReport());
+    console.info(BunRuntimeDetector.generateHealthReport());
   } else if (args[0] === 'memory') {
     const agents = { agents: Array.from({ length: 10000 }, (_, i) => ({ id: i, balance: Math.random() * 1000 })) };
     const analysis = BunRuntimeDetector.analyzeMemoryUsage(agents);
     
-    console.log('=== Memory Analysis ===');
-    console.log(`Shallow: ${(analysis.shallowBytes / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`Heap Used: ${(analysis.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`Heap Total: ${(analysis.heapTotal / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`Pressure: ${analysis.pressure.toUpperCase()}`);
-    console.log(`Ratio: ${(analysis.ratio * 100).toFixed(1)}%`);
+    console.info('=== Memory Analysis ===');
+    console.info(`Shallow: ${(analysis.shallowBytes / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`Heap Used: ${(analysis.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`Heap Total: ${(analysis.heapTotal / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`Pressure: ${analysis.pressure.toUpperCase()}`);
+    console.info(`Ratio: ${(analysis.ratio * 100).toFixed(1)}%`);
     
     if (analysis.recommendations.length > 0) {
-      console.log('\nRecommendations:');
+      console.info('\nRecommendations:');
       for (const rec of analysis.recommendations) {
-        console.log(`  • ${rec}`);
+        console.info(`  • ${rec}`);
       }
     }
   } else if (args[0] === 'benchmark') {
@@ -473,29 +473,29 @@ if (import.meta.main) {
       100
     );
     
-    console.log('=== Benchmark Result ===');
-    console.log(`Function: ${result.name}`);
-    console.log(`Iterations: ${result.iterations}`);
-    console.log(`Total Time: ${result.totalTime.toFixed(2)}ms`);
-    console.log(`Average Time: ${result.averageTime.toFixed(4)}ms`);
-    console.log(`Memory Before: ${(result.memoryBefore.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`Memory After: ${(result.memoryAfter.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+    console.info('=== Benchmark Result ===');
+    console.info(`Function: ${result.name}`);
+    console.info(`Iterations: ${result.iterations}`);
+    console.info(`Total Time: ${result.totalTime.toFixed(2)}ms`);
+    console.info(`Average Time: ${result.averageTime.toFixed(4)}ms`);
+    console.info(`Memory Before: ${(result.memoryBefore.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`Memory After: ${(result.memoryAfter.heapUsed / 1024 / 1024).toFixed(2)} MB`);
   } else if (args[0] === 'monitor') {
     const duration = parseInt(args[1]) || 5000;
-    console.log(`Monitoring memory for ${duration}ms...`);
+    console.info(`Monitoring memory for ${duration}ms...`);
     
     const readings = await BunRuntimeDetector.monitorMemory(duration, 1000);
     
-    console.log('\n=== Memory Monitor Results ===');
+    console.info('\n=== Memory Monitor Results ===');
     for (let i = 0; i < readings.length; i++) {
       const reading = readings[i];
-      console.log(`Reading ${i + 1}: ${(reading.heapUsed / 1024 / 1024).toFixed(2)} MB (${reading.pressure})`);
+      console.info(`Reading ${i + 1}: ${(reading.heapUsed / 1024 / 1024).toFixed(2)} MB (${reading.pressure})`);
     }
   } else {
-    console.log('Usage:');
-    console.log('  bun runtime-detector.ts health');
-    console.log('  bun runtime-detector.ts memory');
-    console.log('  bun runtime-detector.ts benchmark');
-    console.log('  bun runtime-detector.ts monitor [duration]');
+    console.info('Usage:');
+    console.info('  bun runtime-detector.ts health');
+    console.info('  bun runtime-detector.ts memory');
+    console.info('  bun runtime-detector.ts benchmark');
+    console.info('  bun runtime-detector.ts monitor [duration]');
   }
 }

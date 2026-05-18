@@ -5,14 +5,14 @@
 
 import { serve } from 'bun';
 
-console.log('🔍 Bun Network Request Debugging Demo');
-console.log('=====================================\n');
+console.info('🔍 Bun Network Request Debugging Demo');
+console.info('=====================================\n');
 
 // Enable verbose fetch logging
 process.env.BUN_CONFIG_VERBOSE_FETCH = "curl";
 
-console.log('✅ BUN_CONFIG_VERBOSE_FETCH set to "curl"');
-console.log('📡 All fetch requests will be logged as curl commands\n');
+console.info('✅ BUN_CONFIG_VERBOSE_FETCH set to "curl"');
+console.info('📡 All fetch requests will be logged as curl commands\n');
 
 // Test server that makes various fetch requests
 const testServer = serve({
@@ -59,14 +59,14 @@ const testServer = serve({
 
     <script>
         async function testGetRequest() {
-            console.log('🔍 Testing GET request...');
+            console.info('🔍 Testing GET request...');
             const response = await fetch('/api/test-get');
             const data = await response.json();
             updateDisplay('GET', data);
         }
 
         async function testPostRequest() {
-            console.log('🔍 Testing POST request...');
+            console.info('🔍 Testing POST request...');
             const response = await fetch('/api/test-post', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -77,7 +77,7 @@ const testServer = serve({
         }
 
         async function testPutRequest() {
-            console.log('🔍 Testing PUT request...');
+            console.info('🔍 Testing PUT request...');
             const response = await fetch('/api/test-put', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -88,7 +88,7 @@ const testServer = serve({
         }
 
         async function testDeleteRequest() {
-            console.log('🔍 Testing DELETE request...');
+            console.info('🔍 Testing DELETE request...');
             const response = await fetch('/api/test-delete/123', {
                 method: 'DELETE'
             });
@@ -97,7 +97,7 @@ const testServer = serve({
         }
 
         async function testFileUpload() {
-            console.log('🔍 Testing file upload...');
+            console.info('🔍 Testing file upload...');
             const formData = new FormData();
             formData.append('file', new Blob(['test file content'], { type: 'text/plain' }), 'test.txt');
             formData.append('description', 'Test file upload');
@@ -126,7 +126,7 @@ const testServer = serve({
     }
 
     if (url.pathname === '/api/test-get') {
-      console.log('📡 Processing GET request...');
+      console.info('📡 Processing GET request...');
       return Response.json({
         method: 'GET',
         timestamp: new Date().toISOString(),
@@ -137,7 +137,7 @@ const testServer = serve({
 
     if (url.pathname === '/api/test-post') {
       const body = await req.json();
-      console.log('📡 Processing POST request with body:', body);
+      console.info('📡 Processing POST request with body:', body);
       return Response.json({
         method: 'POST',
         timestamp: new Date().toISOString(),
@@ -149,7 +149,7 @@ const testServer = serve({
 
     if (url.pathname === '/api/test-put') {
       const body = await req.json();
-      console.log('📡 Processing PUT request with body:', body);
+      console.info('📡 Processing PUT request with body:', body);
       return Response.json({
         method: 'PUT',
         timestamp: new Date().toISOString(),
@@ -160,7 +160,7 @@ const testServer = serve({
     }
 
     if (url.pathname === '/api/test-delete/123') {
-      console.log('📡 Processing DELETE request...');
+      console.info('📡 Processing DELETE request...');
       return Response.json({
         method: 'DELETE',
         timestamp: new Date().toISOString(),
@@ -172,7 +172,7 @@ const testServer = serve({
 
     if (url.pathname === '/api/upload') {
       const formData = await req.formData();
-      console.log('📡 Processing file upload...');
+      console.info('📡 Processing file upload...');
       const file = formData.get('file');
       const description = formData.get('description');
       
@@ -192,46 +192,46 @@ const testServer = serve({
   }
 });
 
-console.log('🚀 Debug server started on http://localhost:3001');
-console.log('');
-console.log('📋 Available endpoints:');
-console.log('  GET  /api/test-get');
-console.log('  POST /api/test-post');
-console.log('  PUT  /api/test-put');
-console.log('  DELETE /api/test-delete/123');
-console.log('  POST /api/upload (multipart)');
-console.log('');
-console.log('🌐 Open http://localhost:3001 to test different request types');
-console.log('🐳 Watch your terminal for curl commands!');
-console.log('');
+console.info('🚀 Debug server started on http://localhost:3001');
+console.info('');
+console.info('📋 Available endpoints:');
+console.info('  GET  /api/test-get');
+console.info('  POST /api/test-post');
+console.info('  PUT  /api/test-put');
+console.info('  DELETE /api/test-delete/123');
+console.info('  POST /api/upload (multipart)');
+console.info('');
+console.info('🌐 Open http://localhost:3001 to test different request types');
+console.info('🐳 Watch your terminal for curl commands!');
+console.info('');
 
 // Demonstrate programmatic fetch requests
-console.log('🔍 Demonstrating programmatic fetch requests...\n');
+console.info('🔍 Demonstrating programmatic fetch requests...\n');
 
 async function demonstrateFetchRequests() {
-  console.log('--- GET Request ---');
+  console.info('--- GET Request ---');
   await fetch('http://localhost:3001/api/test-get');
   
-  console.log('\n--- POST Request ---');
+  console.info('\n--- POST Request ---');
   await fetch('http://localhost:3001/api/test-post', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ demo: 'data', timestamp: Date.now() })
   });
   
-  console.log('\n--- PUT Request ---');
+  console.info('\n--- PUT Request ---');
   await fetch('http://localhost:3001/api/test-put', {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id: 456, status: 'updated' })
   });
   
-  console.log('\n--- DELETE Request ---');
+  console.info('\n--- DELETE Request ---');
   await fetch('http://localhost:3001/api/test-delete/456', {
     method: 'DELETE'
   });
   
-  console.log('\n--- File Upload ---');
+  console.info('\n--- File Upload ---');
   const formData = new FormData();
   formData.append('file', new Blob(['demo content'], { type: 'text/plain' }), 'demo.txt');
   formData.append('description', 'Demo file upload');
@@ -241,8 +241,8 @@ async function demonstrateFetchRequests() {
     body: formData
   });
   
-  console.log('\n✅ All fetch requests demonstrated!');
-  console.log('🌐 Check http://localhost:3001 for interactive testing');
+  console.info('\n✅ All fetch requests demonstrated!');
+  console.info('🌐 Check http://localhost:3001 for interactive testing');
 }
 
 // Wait a moment for server to start, then demonstrate

@@ -67,7 +67,7 @@ class GenesisTOTPVault {
     // Persist to vault
     await this.persistSeed(seed);
     
-    console.log(`🔐 TOTP Seed Generated for ${unitId}: ${seed.seed.substring(0, 8)}...`);
+    console.info(`🔐 TOTP Seed Generated for ${unitId}: ${seed.seed.substring(0, 8)}...`);
     return seed;
   }
 
@@ -85,7 +85,7 @@ class GenesisTOTPVault {
       // Write back to vault
       await writeFile(this.config.vaultPath, JSON.stringify(vaultData, null, 2));
       
-      console.log(`💾 Seed persisted to vault: ${seed.unitId}`);
+      console.info(`💾 Seed persisted to vault: ${seed.unitId}`);
     } catch (error) {
       console.error(`❌ Failed to persist seed for ${seed.unitId}:`, error);
       throw error;
@@ -117,7 +117,7 @@ class GenesisTOTPVault {
       if (seed) {
         // Check if expired
         if (seed.expiresAt && new Date(seed.expiresAt) < new Date()) {
-          console.log(`⏰ TOTP seed expired for ${unitId}`);
+          console.info(`⏰ TOTP seed expired for ${unitId}`);
           return null;
         }
         
@@ -144,7 +144,7 @@ class GenesisTOTPVault {
       
       await writeFile(this.config.vaultPath, JSON.stringify(vaultData, null, 2));
       
-      console.log(`🗑️ TOTP seed revoked for ${unitId}`);
+      console.info(`🗑️ TOTP seed revoked for ${unitId}`);
       return true;
     } catch (error) {
       console.error(`❌ Failed to revoke seed for ${unitId}:`, error);
@@ -197,7 +197,7 @@ class GenesisTOTPVault {
     
     if (cleaned > 0) {
       await writeFile(this.config.vaultPath, JSON.stringify(vaultData, null, 2));
-      console.log(`🧹 Cleaned up ${cleaned} expired seeds`);
+      console.info(`🧹 Cleaned up ${cleaned} expired seeds`);
     }
     
     return cleaned;
@@ -249,13 +249,13 @@ if (import.meta.main) {
         expiresIn: 86400 * 30 // 30 days
       });
       
-      console.log(`🔐 TOTP Seed Generated:`);
-      console.log(`   Unit: ${seed.unitId}`);
-      console.log(`   Seed: ${seed.seed}`);
-      console.log(`   Algorithm: ${seed.algorithm}`);
-      console.log(`   Digits: ${seed.digits}`);
-      console.log(`   Period: ${seed.period}s`);
-      console.log(`   Expires: ${seed.expiresAt || 'Never'}`);
+      console.info(`🔐 TOTP Seed Generated:`);
+      console.info(`   Unit: ${seed.unitId}`);
+      console.info(`   Seed: ${seed.seed}`);
+      console.info(`   Algorithm: ${seed.algorithm}`);
+      console.info(`   Digits: ${seed.digits}`);
+      console.info(`   Period: ${seed.period}s`);
+      console.info(`   Expires: ${seed.expiresAt || 'Never'}`);
       break;
     }
     
@@ -267,17 +267,17 @@ if (import.meta.main) {
       
       const seed = await vault.getSeed(unitId);
       if (seed) {
-        console.log(`✅ TOTP Seed Found:`);
-        console.log(`   Unit: ${seed.unitId}`);
-        console.log(`   Seed: ${seed.seed}`);
-        console.log(`   Created: ${seed.createdAt}`);
-        console.log(`   Expires: ${seed.expiresAt || 'Never'}`);
+        console.info(`✅ TOTP Seed Found:`);
+        console.info(`   Unit: ${seed.unitId}`);
+        console.info(`   Seed: ${seed.seed}`);
+        console.info(`   Created: ${seed.createdAt}`);
+        console.info(`   Expires: ${seed.expiresAt || 'Never'}`);
         
         // Generate current code
         const code = vault.generateTOTPCode(seed);
-        console.log(`   Current Code: ${code}`);
+        console.info(`   Current Code: ${code}`);
       } else {
-        console.log(`❌ No TOTP seed found for unit: ${unitId}`);
+        console.info(`❌ No TOTP seed found for unit: ${unitId}`);
         process.exit(1);
       }
       break;
@@ -291,9 +291,9 @@ if (import.meta.main) {
       
       const success = await vault.revokeSeed(unitId);
       if (success) {
-        console.log(`✅ TOTP seed revoked for unit: ${unitId}`);
+        console.info(`✅ TOTP seed revoked for unit: ${unitId}`);
       } else {
-        console.log(`❌ Failed to revoke seed for unit: ${unitId}`);
+        console.info(`❌ Failed to revoke seed for unit: ${unitId}`);
         process.exit(1);
       }
       break;
@@ -301,34 +301,34 @@ if (import.meta.main) {
     
     case 'stats': {
       const stats = await vault.getVaultStats();
-      console.log(`📊 TOTP Vault Statistics:`);
-      console.log(`   Total Seeds: ${stats.totalSeeds}`);
-      console.log(`   Active Seeds: ${stats.activeSeeds}`);
-      console.log(`   Expired Seeds: ${stats.expiredSeeds}`);
-      console.log(`   Vault Path: ${stats.vaultPath}`);
+      console.info(`📊 TOTP Vault Statistics:`);
+      console.info(`   Total Seeds: ${stats.totalSeeds}`);
+      console.info(`   Active Seeds: ${stats.activeSeeds}`);
+      console.info(`   Expired Seeds: ${stats.expiredSeeds}`);
+      console.info(`   Vault Path: ${stats.vaultPath}`);
       break;
     }
     
     case 'cleanup': {
       const cleaned = await vault.cleanupExpired();
-      console.log(`🧹 Cleanup completed: ${cleaned} expired seeds removed`);
+      console.info(`🧹 Cleanup completed: ${cleaned} expired seeds removed`);
       break;
     }
     
     default:
-      console.log('🔐 Genesis TOTP Vault System');
-      console.log('');
-      console.log('Usage: bun totp-vault.ts [command] [unitId]');
-      console.log('');
-      console.log('Commands:');
-      console.log('  generate [unitId]       Generate new TOTP seed');
-      console.log('  get [unitId]            Retrieve TOTP seed and code');
-      console.log('  revoke [unitId]         Revoke TOTP seed');
-      console.log('  stats                   Show vault statistics');
-      console.log('  cleanup                 Remove expired seeds');
-      console.log('');
-      console.log('Environment Variables:');
-      console.log('  VAULT_ENCRYPTION_KEY    Vault encryption key');
+      console.info('🔐 Genesis TOTP Vault System');
+      console.info('');
+      console.info('Usage: bun totp-vault.ts [command] [unitId]');
+      console.info('');
+      console.info('Commands:');
+      console.info('  generate [unitId]       Generate new TOTP seed');
+      console.info('  get [unitId]            Retrieve TOTP seed and code');
+      console.info('  revoke [unitId]         Revoke TOTP seed');
+      console.info('  stats                   Show vault statistics');
+      console.info('  cleanup                 Remove expired seeds');
+      console.info('');
+      console.info('Environment Variables:');
+      console.info('  VAULT_ENCRYPTION_KEY    Vault encryption key');
       break;
   }
 }

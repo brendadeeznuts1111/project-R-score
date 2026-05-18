@@ -346,18 +346,18 @@ class ArtifactFinder {
    */
   formatOutput(artifacts: Artifact[], format: string, verbose: boolean = false): void {
     if (artifacts.length === 0) {
-      console.log('No artifacts found matching your criteria.');
+      console.info('No artifacts found matching your criteria.');
       return;
     }
 
     switch (format) {
       case 'json':
-        console.log(JSON.stringify(artifacts, null, 2));
+        console.info(JSON.stringify(artifacts, null, 2));
         break;
       
       case 'list':
         artifacts.forEach(artifact => {
-          console.log(`${artifact.path} (${artifact.type})`);
+          console.info(`${artifact.path} (${artifact.type})`);
         });
         break;
       
@@ -394,28 +394,28 @@ class ArtifactFinder {
       byTech: this.groupBy(this.artifacts.flatMap(a => a.tech))
     };
 
-    console.log('📊 Artifact Statistics');
-    console.log('===================');
-    console.log(`Total Artifacts: ${stats.total}\n`);
+    console.info('📊 Artifact Statistics');
+    console.info('===================');
+    console.info(`Total Artifacts: ${stats.total}\n`);
 
-    console.log('By Type:');
+    console.info('By Type:');
     Object.entries(stats.byType).forEach(([type, count]) => {
-      console.log(`  ${type}: ${count}`);
+      console.info(`  ${type}: ${count}`);
     });
 
-    console.log('\nBy Domain:');
+    console.info('\nBy Domain:');
     Object.entries(stats.byDomain).forEach(([domain, count]) => {
-      console.log(`  ${domain}: ${count}`);
+      console.info(`  ${domain}: ${count}`);
     });
 
-    console.log('\nBy Priority:');
+    console.info('\nBy Priority:');
     Object.entries(stats.byPriority).forEach(([priority, count]) => {
-      console.log(`  ${priority}: ${count}`);
+      console.info(`  ${priority}: ${count}`);
     });
 
-    console.log('\nBy Status:');
+    console.info('\nBy Status:');
     Object.entries(stats.byStatus).forEach(([status, count]) => {
-      console.log(`  ${status}: ${count}`);
+      console.info(`  ${status}: ${count}`);
     });
   }
 
@@ -434,7 +434,7 @@ class ArtifactFinder {
    * Show help
    */
   showHelp(): void {
-    console.log(`
+    console.info(`
 🔍 Artifact Finder - Search and discover project artifacts
 
 Usage: bun run tools/artifact-finder.ts [command] [options]

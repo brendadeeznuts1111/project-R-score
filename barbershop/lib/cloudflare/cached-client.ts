@@ -470,14 +470,14 @@ export class CachedCloudflareClient {
 
   printStats(): void {
     const stats = this.getStats();
-    console.log('\n📊 Cached Cloudflare Client Stats');
-    console.log('═══════════════════════════════════════');
-    console.log(`Cache Hit Rate:    ${stats.cache.hitRate.toFixed(1)}%`);
-    console.log(`Cache Hits:        ${stats.cache.hits}`);
-    console.log(`Cache Misses:      ${stats.cache.misses}`);
-    console.log(`Cache Size:        ${stats.cache.size} entries`);
-    console.log(`Cache Evictions:   ${stats.cache.evictions}`);
-    console.log('═══════════════════════════════════════\n');
+    console.info('\n📊 Cached Cloudflare Client Stats');
+    console.info('═══════════════════════════════════════');
+    console.info(`Cache Hit Rate:    ${stats.cache.hitRate.toFixed(1)}%`);
+    console.info(`Cache Hits:        ${stats.cache.hits}`);
+    console.info(`Cache Misses:      ${stats.cache.misses}`);
+    console.info(`Cache Size:        ${stats.cache.size} entries`);
+    console.info(`Cache Evictions:   ${stats.cache.evictions}`);
+    console.info('═══════════════════════════════════════\n');
   }
 }
 

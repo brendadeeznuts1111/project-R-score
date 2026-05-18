@@ -54,8 +54,8 @@ export class Fantasy42SpecificElementManager {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🎯 Initializing Fantasy42 Specific Element Integration...');
-      console.log('📍 Target XPath:', this.targetXPath);
+      console.info('🎯 Initializing Fantasy42 Specific Element Integration...');
+      console.info('📍 Target XPath:', this.targetXPath);
 
       // Wait for page to be ready
       if (document.readyState !== 'complete') {
@@ -73,7 +73,7 @@ export class Fantasy42SpecificElementManager {
       // Try to find the element
       const element = this.xpathHandler.findElementByXPath(this.targetXPath);
       if (element) {
-        console.log('✅ Found target element:', element.tagName);
+        console.info('✅ Found target element:', element.tagName);
         this.currentElement = element;
         this.setupElement(element);
       } else {
@@ -87,7 +87,7 @@ export class Fantasy42SpecificElementManager {
       }
 
       this.isInitialized = true;
-      console.log('✅ Fantasy42 Specific Element Integration initialized');
+      console.info('✅ Fantasy42 Specific Element Integration initialized');
       return true;
     } catch (error) {
       console.error('❌ Failed to initialize specific element integration:', error);
@@ -126,7 +126,7 @@ export class Fantasy42SpecificElementManager {
       this.readElementData();
     }
 
-    console.log('✅ Element setup complete for:', element.tagName);
+    console.info('✅ Element setup complete for:', element.tagName);
   }
 
   /**
@@ -138,7 +138,7 @@ export class Fantasy42SpecificElementManager {
         if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
           const element = this.xpathHandler.findElementByXPath(this.targetXPath);
           if (element) {
-            console.log('🎯 Target element found via DOM watcher');
+            console.info('🎯 Target element found via DOM watcher');
             observer.disconnect();
             this.setupElement(element);
             return;
@@ -157,7 +157,7 @@ export class Fantasy42SpecificElementManager {
       const element = this.xpathHandler.findElementByXPath(this.targetXPath);
       if (element) {
         clearInterval(intervalId);
-        console.log('🎯 Target element found via interval check');
+        console.info('🎯 Target element found via interval check');
         this.setupElement(element);
       }
     }, 1000);
@@ -255,7 +255,7 @@ export class Fantasy42SpecificElementManager {
         }
       }
 
-      console.log('✅ Element data written successfully');
+      console.info('✅ Element data written successfully');
       return true;
     } catch (error) {
       console.error('❌ Failed to write element data:', error);
@@ -267,7 +267,7 @@ export class Fantasy42SpecificElementManager {
    * Handle click events
    */
   private handleClick(event: Event): void {
-    console.log('🖱️ Element clicked');
+    console.info('🖱️ Element clicked');
     // Add your click handling logic here
   }
 
@@ -276,7 +276,7 @@ export class Fantasy42SpecificElementManager {
    */
   private handleSubmit(event: Event): void {
     event.preventDefault();
-    console.log('📝 Form submitted');
+    console.info('📝 Form submitted');
     // Add your form submission logic here
   }
 
@@ -354,7 +354,7 @@ export class Fantasy42SpecificElementManager {
     this.lastData = null;
     this.isInitialized = false;
 
-    console.log('🧹 Specific element integration cleaned up');
+    console.info('🧹 Specific element integration cleaned up');
   }
 }
 
@@ -382,11 +382,11 @@ export const createSpecificElementManager = (client: Fantasy42AgentClient) => {
     autoUpdate: true,
     updateInterval: 5000,
     onDataChange: (newData, element) => {
-      console.log('📊 Element data changed:', newData);
+      console.info('📊 Element data changed:', newData);
       // Add your data change handling logic here
     },
     onElementFound: element => {
-      console.log('🎯 Specific element found:', element.tagName);
+      console.info('🎯 Specific element found:', element.tagName);
       // Add your element found handling logic here
     },
   };

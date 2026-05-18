@@ -81,7 +81,7 @@ async function start(): Promise<void> {
     env: config.nodeEnv,
   });
   
-  console.log(`
+  console.info(`
 ╔════════════════════════════════════════════════════════════════╗
 ║  💰 Payment Routing Server                                     ║
 ╠════════════════════════════════════════════════════════════════╣

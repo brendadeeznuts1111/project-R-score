@@ -54,22 +54,22 @@ const DNS_CONFIG = {
 };
 
 async function checkCloudflareAuth() {
-  console.log(`🔐 Checking Cloudflare authentication...`);
+  console.info(`🔐 Checking Cloudflare authentication...`);
 
   try {
     const result = await $`wrangler whoami`.quiet();
-    console.log(`✅ Authenticated with Cloudflare`);
+    console.info(`✅ Authenticated with Cloudflare`);
     return true;
   } catch (error) {
-    console.log(`❌ Not authenticated with Cloudflare`);
-    console.log(`🔑 Please run: wrangler auth login`);
+    console.info(`❌ Not authenticated with Cloudflare`);
+    console.info(`🔑 Please run: wrangler auth login`);
     return false;
   }
 }
 
 async function showCurrentDNS() {
-  console.log(`📋 Current DNS Configuration for apexodds.com`);
-  console.log('═'.repeat(60));
+  console.info(`📋 Current DNS Configuration for apexodds.com`);
+  console.info('═'.repeat(60));
 
   try {
     const result = await $`curl -s "https://api.cloudflare.com/client/v4/zones" \
@@ -78,53 +78,53 @@ async function showCurrentDNS() {
 
     const zones = JSON.parse(result.stdout);
     if (zones.success && zones.result.length > 0) {
-      console.log(`Found ${zones.result.length} zone(s)`);
+      console.info(`Found ${zones.result.length} zone(s)`);
       zones.result.forEach((zone: any) => {
-        console.log(`- ${zone.name} (${zone.status})`);
+        console.info(`- ${zone.name} (${zone.status})`);
       });
     }
   } catch (error) {
-    console.log(`⚠️  Could not fetch current DNS (API token may not be set)`);
-    console.log(`💡 Manual DNS setup required in Cloudflare Dashboard`);
+    console.info(`⚠️  Could not fetch current DNS (API token may not be set)`);
+    console.info(`💡 Manual DNS setup required in Cloudflare Dashboard`);
   }
 }
 
 async function generateDNSCommands() {
-  console.log(`🔧 DNS Configuration Commands for apexodds.com`);
-  console.log('═'.repeat(60));
+  console.info(`🔧 DNS Configuration Commands for apexodds.com`);
+  console.info('═'.repeat(60));
 
-  console.log(`\n# CNAME Records (add these in Cloudflare DNS settings)`);
-  console.log(`# Go to: https://dash.cloudflare.com/ > apexodds.com > DNS`);
+  console.info(`\n# CNAME Records (add these in Cloudflare DNS settings)`);
+  console.info(`# Go to: https://dash.cloudflare.com/ > apexodds.com > DNS`);
 
   DNS_CONFIG.cnames.forEach(cname => {
-    console.log(`CNAME ${cname.name}.apexodds.com ${cname.target} # ${cname.comment}`);
+    console.info(`CNAME ${cname.name}.apexodds.com ${cname.target} # ${cname.comment}`);
   });
 
-  console.log(`\n# MX Records for Email Routing`);
+  console.info(`\n# MX Records for Email Routing`);
   DNS_CONFIG.mx.forEach(mx => {
-    console.log(`MX ${mx.name} ${mx.target} ${mx.priority}`);
+    console.info(`MX ${mx.name} ${mx.target} ${mx.priority}`);
   });
 
-  console.log(`\n# TXT Records for Email Security`);
+  console.info(`\n# TXT Records for Email Security`);
   DNS_CONFIG.txt.forEach(txt => {
-    console.log(`TXT ${txt.name} "${txt.content}"`);
+    console.info(`TXT ${txt.name} "${txt.content}"`);
   });
 
-  console.log(`\n# Wildcard CNAME for dynamic subdomains`);
+  console.info(`\n# Wildcard CNAME for dynamic subdomains`);
   DNS_CONFIG.wildcard.forEach(wc => {
-    console.log(`CNAME ${wc.name} ${wc.target} # ${wc.comment}`);
+    console.info(`CNAME ${wc.name} ${wc.target} # ${wc.comment}`);
   });
 }
 
 async function showEmailRoutingSetup() {
-  console.log(`📧 Email Routing Configuration`);
-  console.log('═'.repeat(60));
+  console.info(`📧 Email Routing Configuration`);
+  console.info('═'.repeat(60));
 
-  console.log(`\n# 1. Enable Email Routing in Cloudflare Dashboard`);
-  console.log(`# Go to: https://dash.cloudflare.com/ > apexodds.com > Email > Email Routing`);
-  console.log(`# Click "Create address" or "Create catch-all"`);
+  console.info(`\n# 1. Enable Email Routing in Cloudflare Dashboard`);
+  console.info(`# Go to: https://dash.cloudflare.com/ > apexodds.com > Email > Email Routing`);
+  console.info(`# Click "Create address" or "Create catch-all"`);
 
-  console.log(`\n# 2. Create Email Routing Rules:`);
+  console.info(`\n# 2. Create Email Routing Rules:`);
 
   const rules = [
     {
@@ -150,54 +150,54 @@ async function showEmailRoutingSetup() {
   ];
 
   rules.forEach((rule, index) => {
-    console.log(`\n${index + 1}. ${rule.name}`);
-    console.log(`   Matcher: ${rule.matcher}`);
-    console.log(`   Action: ${rule.action}`);
+    console.info(`\n${index + 1}. ${rule.name}`);
+    console.info(`   Matcher: ${rule.matcher}`);
+    console.info(`   Action: ${rule.action}`);
   });
 
-  console.log(`\n# 3. Create Catch-All Rule:`);
-  console.log(`   - Matcher: *@apexodds.com`);
-  console.log(`   - Action: Forward to catchall@fire22.com`);
-  console.log(`   - Enable: Yes`);
+  console.info(`\n# 3. Create Catch-All Rule:`);
+  console.info(`   - Matcher: *@apexodds.com`);
+  console.info(`   - Action: Forward to catchall@fire22.com`);
+  console.info(`   - Enable: Yes`);
 }
 
 async function verifyDNSSetup() {
-  console.log(`🔍 Verifying DNS Setup`);
-  console.log('═'.repeat(60));
+  console.info(`🔍 Verifying DNS Setup`);
+  console.info('═'.repeat(60));
 
   const subdomains = ['dev', 'staging', 'api', 'docs', 'registry', 'dashboard'];
 
   for (const subdomain of subdomains) {
     try {
-      console.log(`\n🔍 Checking ${subdomain}.apexodds.com...`);
+      console.info(`\n🔍 Checking ${subdomain}.apexodds.com...`);
       const result = await $`dig ${subdomain}.apexodds.com CNAME +short`.quiet();
 
       if (result.stdout.trim()) {
-        console.log(`✅ CNAME found: ${result.stdout.trim()}`);
+        console.info(`✅ CNAME found: ${result.stdout.trim()}`);
       } else {
-        console.log(`❌ No CNAME found for ${subdomain}.apexodds.com`);
+        console.info(`❌ No CNAME found for ${subdomain}.apexodds.com`);
       }
     } catch (error) {
-      console.log(`❌ Could not check ${subdomain}.apexodds.com`);
+      console.info(`❌ Could not check ${subdomain}.apexodds.com`);
     }
   }
 
-  console.log(`\n🔍 Checking MX records...`);
+  console.info(`\n🔍 Checking MX records...`);
   try {
     const mxResult = await $`dig apexodds.com MX +short`.quiet();
     if (mxResult.stdout.trim()) {
-      console.log(`✅ MX records found:`);
-      console.log(mxResult.stdout);
+      console.info(`✅ MX records found:`);
+      console.info(mxResult.stdout);
     } else {
-      console.log(`❌ No MX records found`);
+      console.info(`❌ No MX records found`);
     }
   } catch (error) {
-    console.log(`❌ Could not check MX records`);
+    console.info(`❌ Could not check MX records`);
   }
 }
 
 async function showHelp() {
-  console.log(`
+  console.info(`
 🌐 Fantasy42-Fire22 DNS & Email Setup
 Automated DNS configuration and email routing setup
 
@@ -239,13 +239,13 @@ NOTES:
 }
 
 async function showAll() {
-  console.log(`🌐 COMPLETE DNS & EMAIL SETUP FOR apexodds.com`);
-  console.log('═'.repeat(80));
+  console.info(`🌐 COMPLETE DNS & EMAIL SETUP FOR apexodds.com`);
+  console.info('═'.repeat(80));
 
   await generateDNSCommands();
-  console.log('\n' + '='.repeat(60));
+  console.info('\n' + '='.repeat(60));
   await showEmailRoutingSetup();
-  console.log('\n' + '='.repeat(60));
+  console.info('\n' + '='.repeat(60));
   await verifyDNSSetup();
 }
 

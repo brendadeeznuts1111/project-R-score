@@ -31,7 +31,7 @@ class HTMLImportDemo {
   ];
 
   constructor() {
-    console.log('🚀 HTML Import Demo Starting...\n');
+    console.info('🚀 HTML Import Demo Starting...\n');
   }
 
   /**
@@ -40,24 +40,24 @@ class HTMLImportDemo {
   async runDemo(): Promise<void> {
     try {
       // 1. Import all HTML files
-      console.log('📥 Step 1: Importing HTML files...');
+      console.info('📥 Step 1: Importing HTML files...');
       const htmlContents = await bunUtils.importMultipleHTML(this.htmlFiles);
-      console.log(`✅ Successfully imported ${Object.keys(htmlContents).length} HTML files\n`);
+      console.info(`✅ Successfully imported ${Object.keys(htmlContents).length} HTML files\n`);
 
       // 2. Analyze each file
-      console.log('🔍 Step 2: Analyzing HTML files...');
+      console.info('🔍 Step 2: Analyzing HTML files...');
       const analyses = await this.analyzeHTMLFiles(htmlContents);
 
       // 3. Display analysis results
-      console.log('📊 Step 3: Analysis Results');
+      console.info('📊 Step 3: Analysis Results');
       this.displayAnalysisResults(analyses);
 
       // 4. Demonstrate live watching
-      console.log('\n👀 Step 4: Setting up file watching...');
+      console.info('\n👀 Step 4: Setting up file watching...');
       await this.demonstrateFileWatching();
 
       // 5. Show standardization recommendations
-      console.log('\n💡 Step 5: Standardization Recommendations');
+      console.info('\n💡 Step 5: Standardization Recommendations');
       this.showStandardizationRecommendations(analyses);
     } catch (error) {
       console.error('❌ Demo failed:', error);
@@ -103,16 +103,16 @@ class HTMLImportDemo {
    * Display analysis results in a formatted table
    */
   private displayAnalysisResults(analyses: HTMLAnalysis[]): void {
-    console.log('\n📋 HTML Files Analysis:');
-    console.log('─'.repeat(100));
-    console.log(
+    console.info('\n📋 HTML Files Analysis:');
+    console.info('─'.repeat(100));
+    console.info(
       'Filename'.padEnd(30) +
         'Size'.padEnd(10) +
         'Framework CSS'.padEnd(15) +
         'Inline Styles'.padEnd(15) +
         'Score'.padEnd(10)
     );
-    console.log('─'.repeat(100));
+    console.info('─'.repeat(100));
 
     for (const analysis of analyses) {
       const sizeKB = (analysis.size / 1024).toFixed(1) + 'KB';
@@ -120,7 +120,7 @@ class HTMLImportDemo {
       const inlineStatus = analysis.hasInlineStyles ? '⚠️ Yes' : '✅ No';
       const score = analysis.standardizationScore.toString().padEnd(10);
 
-      console.log(
+      console.info(
         analysis.filename.padEnd(30) +
           sizeKB.padEnd(10) +
           frameworkStatus.padEnd(15) +
@@ -129,7 +129,7 @@ class HTMLImportDemo {
       );
     }
 
-    console.log('─'.repeat(100));
+    console.info('─'.repeat(100));
 
     // Calculate overall statistics
     const totalFiles = analyses.length;
@@ -137,15 +137,15 @@ class HTMLImportDemo {
     const filesWithoutInline = analyses.filter(a => !a.hasInlineStyles).length;
     const avgScore = analyses.reduce((sum, a) => sum + a.standardizationScore, 0) / totalFiles;
 
-    console.log(`\n📊 Overall Statistics:`);
-    console.log(`   Total Files: ${totalFiles}`);
-    console.log(
+    console.info(`\n📊 Overall Statistics:`);
+    console.info(`   Total Files: ${totalFiles}`);
+    console.info(
       `   Using Framework CSS: ${filesWithFramework}/${totalFiles} (${((filesWithFramework / totalFiles) * 100).toFixed(1)}%)`
     );
-    console.log(
+    console.info(
       `   No Inline Styles: ${filesWithoutInline}/${totalFiles} (${((filesWithoutInline / totalFiles) * 100).toFixed(1)}%)`
     );
-    console.log(`   Average Standardization Score: ${avgScore.toFixed(1)}/100`);
+    console.info(`   Average Standardization Score: ${avgScore.toFixed(1)}/100`);
   }
 
   /**
@@ -154,19 +154,19 @@ class HTMLImportDemo {
   private async demonstrateFileWatching(): Promise<void> {
     const demoFile = './docs/@packages.html';
 
-    console.log(`   Watching ${demoFile} for changes...`);
-    console.log('   (Make changes to the file to see live updates)');
+    console.info(`   Watching ${demoFile} for changes...`);
+    console.info('   (Make changes to the file to see live updates)');
 
     const unwatch = bunUtils.watchHTML(demoFile, newContent => {
       const size = new Blob([newContent]).size;
       const timestamp = new Date().toLocaleTimeString();
-      console.log(`   🔄 File updated at ${timestamp} - New size: ${(size / 1024).toFixed(1)}KB`);
+      console.info(`   🔄 File updated at ${timestamp} - New size: ${(size / 1024).toFixed(1)}KB`);
     });
 
     // Keep watching for a few seconds to demonstrate
     await new Promise(resolve => setTimeout(resolve, 5000));
     unwatch();
-    console.log('   ✅ File watching demonstration complete');
+    console.info('   ✅ File watching demonstration complete');
   }
 
   /**
@@ -176,32 +176,32 @@ class HTMLImportDemo {
     const needsImprovement = analyses.filter(a => a.standardizationScore < 70);
 
     if (needsImprovement.length === 0) {
-      console.log('🎉 All files are well standardized!');
+      console.info('🎉 All files are well standardized!');
       return;
     }
 
-    console.log(`⚠️  ${needsImprovement.length} files need standardization improvements:`);
+    console.info(`⚠️  ${needsImprovement.length} files need standardization improvements:`);
 
     for (const analysis of needsImprovement) {
-      console.log(`\n📁 ${analysis.filename} (Score: ${analysis.standardizationScore}/100)`);
+      console.info(`\n📁 ${analysis.filename} (Score: ${analysis.standardizationScore}/100)`);
 
       if (!analysis.hasFrameworkCSS) {
-        console.log('   ➕ Add framework.css import');
+        console.info('   ➕ Add framework.css import');
       }
 
       if (analysis.hasInlineStyles) {
-        console.log('   🔄 Convert inline styles to CSS classes');
+        console.info('   🔄 Convert inline styles to CSS classes');
       }
 
       if (!analysis.content.includes('var(--')) {
-        console.log('   🎨 Use CSS custom properties for consistent theming');
+        console.info('   🎨 Use CSS custom properties for consistent theming');
       }
     }
 
-    console.log('\n💡 Quick Fix Commands:');
-    console.log('   bun run standardize:html    # Apply standardization to all HTML files');
-    console.log('   bun run validate:css        # Validate CSS framework usage');
-    console.log('   bun run audit:styles        # Audit inline styles and suggest improvements');
+    console.info('\n💡 Quick Fix Commands:');
+    console.info('   bun run standardize:html    # Apply standardization to all HTML files');
+    console.info('   bun run validate:css        # Validate CSS framework usage');
+    console.info('   bun run audit:styles        # Audit inline styles and suggest improvements');
   }
 
   /**
@@ -238,7 +238,7 @@ async function main() {
   // Check if --report flag is provided
   if (process.argv.includes('--report')) {
     const report = await demo.generateReport();
-    console.log(report);
+    console.info(report);
     return;
   }
 

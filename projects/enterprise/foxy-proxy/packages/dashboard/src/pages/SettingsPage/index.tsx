@@ -44,7 +44,7 @@ export const SettingsPage: React.FC = () => {
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     // Save settings logic here
-    console.log("Settings saved");
+    console.info("Settings saved");
   };
 
   return (

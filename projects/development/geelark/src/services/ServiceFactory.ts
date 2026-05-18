@@ -60,7 +60,7 @@ export class ServiceFactory {
 
     // Mock API only included in development builds
     if (featureFn("FEAT_MOCK_API")) {
-      console.log("🧪 Creating mock API service (development only)");
+      console.info("🧪 Creating mock API service (development only)");
       return {
         async request(endpoint: string) {
           // Mock implementation - eliminated in production
@@ -82,13 +82,13 @@ export class ServiceFactory {
         },
 
         setMockData(data: any) {
-          console.log("📝 Mock data set:", data);
+          console.info("📝 Mock data set:", data);
         },
       };
     }
 
     // Production API service
-    console.log("🚀 Creating production API service");
+    console.info("🚀 Creating production API service");
     return {
       async request(endpoint: string, options?: any): Promise<any> {
         // Real implementation with feature-based configuration
@@ -118,7 +118,7 @@ export class ServiceFactory {
         } catch (error) {
           // Retry logic if enabled
           if (featureFn("FEAT_RETRY_LOGIC") && retryAttempts > 0) {
-            console.log(
+            console.info(
               `🔄 Retrying API request (${retryAttempts} attempts remaining)`
             );
             return this.request(endpoint, options);
@@ -143,7 +143,7 @@ export class ServiceFactory {
 
     // Extended logging only included when feature is enabled
     if (featureFn("FEAT_EXTENDED_LOGGING")) {
-      console.log("📝 Creating extended logging service");
+      console.info("📝 Creating extended logging service");
       return {
         log(message: string, metadata?: any) {
           const level = COMPILE_TIME_CONFIG.LOGGING.LEVEL;
@@ -160,14 +160,14 @@ export class ServiceFactory {
               tier: COMPILE_TIME_FEATURES.TIER,
             };
 
-            console.log(JSON.stringify(logEntry));
+            console.info(JSON.stringify(logEntry));
 
             // Send to external logging if enabled
             if (COMPILE_TIME_CONFIG.LOGGING.EXTERNAL_LOGGING) {
               this.sendToExternalLogging(logEntry);
             }
           } else {
-            console.log(`[${timestamp}] ${level}: ${message}`, metadata);
+            console.info(`[${timestamp}] ${level}: ${message}`, metadata);
           }
         },
 
@@ -207,10 +207,10 @@ export class ServiceFactory {
     }
 
     // Basic logging implementation
-    console.log("📋 Creating basic logging service");
+    console.info("📋 Creating basic logging service");
     return {
       log(message: string) {
-        console.log(`📋 ${message}`);
+        console.info(`📋 ${message}`);
       },
     };
   }
@@ -224,13 +224,13 @@ export class ServiceFactory {
 
     // Advanced monitoring only included in premium builds
     if (featureFn("FEAT_ADVANCED_MONITORING")) {
-      console.log("📈 Creating advanced monitoring service");
+      console.info("📈 Creating advanced monitoring service");
       return {
         metrics: new Map(),
 
         trackMetric(name: string, value: number) {
           this.metrics.set(name, value);
-          console.log(`📈 Metric: ${name} = ${value}`);
+          console.info(`📈 Metric: ${name} = ${value}`);
 
           // Premium monitoring features
           if (featureFn("FEAT_PREMIUM")) {
@@ -250,7 +250,7 @@ export class ServiceFactory {
           const history = this.getMetricHistory(name);
           if (history.length > 1) {
             const trend = this.calculateTrendDirection(history);
-            console.log(`📊 Trend for ${name}: ${trend}`);
+            console.info(`📊 Trend for ${name}: ${trend}`);
           }
         },
 
@@ -260,7 +260,7 @@ export class ServiceFactory {
           if (history.length > 10) {
             const anomaly = this.detectAnomaly(history, value);
             if (anomaly) {
-              console.log(`⚠️ Anomaly detected for ${name}: ${anomaly}`);
+              console.info(`⚠️ Anomaly detected for ${name}: ${anomaly}`);
 
               // Send notifications if enabled
               if (featureFn("FEAT_NOTIFICATIONS")) {
@@ -272,7 +272,7 @@ export class ServiceFactory {
 
         updateDashboard(name: string, value: number) {
           // Real-time dashboard update
-          console.log(`🖥️ Dashboard updated: ${name} = ${value}`);
+          console.info(`🖥️ Dashboard updated: ${name} = ${value}`);
         },
 
         getMetricHistory(name: string): number[] {
@@ -300,16 +300,16 @@ export class ServiceFactory {
 
         sendAlert(name: string, value: number, anomaly: string) {
           // Send alert notification
-          console.log(`🚨 Alert: ${name} = ${value} (${anomaly})`);
+          console.info(`🚨 Alert: ${name} = ${value} (${anomaly})`);
         },
       };
     }
 
     // Basic monitoring
-    console.log("📊 Creating basic monitoring service");
+    console.info("📊 Creating basic monitoring service");
     return {
       trackMetric(name: string, value: number) {
-        console.log(`📊 ${name}: ${value}`);
+        console.info(`📊 ${name}: ${value}`);
       },
     };
   }
@@ -319,7 +319,7 @@ export class ServiceFactory {
    * Creates different service implementations based on features
    */
   createPhoneManager() {
-    console.log("📱 Creating phone manager");
+    console.info("📱 Creating phone manager");
 
     const featureFn = this.featureFn;
 
@@ -371,7 +371,7 @@ export class ServiceFactory {
 
         // Log creation if extended logging is enabled
         if (featureFn("FEAT_EXTENDED_LOGGING")) {
-          console.log(`📱 Phone created: ${phone.id}`);
+          console.info(`📱 Phone created: ${phone.id}`);
         }
 
         return phone;
@@ -380,7 +380,7 @@ export class ServiceFactory {
       getPhoneMethods() {
         const methods: any = {
           // Basic methods always available
-          basic: () => console.log("Basic phone operation"),
+          basic: () => console.info("Basic phone operation"),
           getStatus: () => ({ active: true, synced: this.realTimeSync }),
         };
 
@@ -410,7 +410,7 @@ export class ServiceFactory {
       },
 
       analyzePerformance() {
-        console.log("📊 Analyzing phone performance...");
+        console.info("📊 Analyzing phone performance...");
         // Performance analysis logic
         return {
           efficiency: 0.85,
@@ -419,7 +419,7 @@ export class ServiceFactory {
       },
 
       getPerformanceInsights() {
-        console.log("💡 Getting performance insights...");
+        console.info("💡 Getting performance insights...");
         // Insights generation logic
         return {
           trends: ["increasing_efficiency"],
@@ -428,40 +428,40 @@ export class ServiceFactory {
       },
 
       exportAnalyticsData() {
-        console.log("📤 Exporting analytics data...");
+        console.info("📤 Exporting analytics data...");
         // Data export logic
         return { data: "analytics_data", format: "json" };
       },
 
       runAutomation() {
-        console.log("🤖 Running automation...");
+        console.info("🤖 Running automation...");
         return { automated: true, tasksCompleted: 5 };
       },
 
       scheduleTasks() {
-        console.log("📅 Scheduling automation tasks...");
+        console.info("📅 Scheduling automation tasks...");
         return { scheduled: 3, nextRun: "in 1 hour" };
       },
 
       optimizeSettings() {
-        console.log("⚡ Optimizing phone settings...");
+        console.info("⚡ Optimizing phone settings...");
         return { optimized: true, efficiencyGain: "15%" };
       },
 
       bulkUpdatePhones(updates: any[]) {
-        console.log(`🔄 Bulk updating ${updates.length} phones...`);
+        console.info(`🔄 Bulk updating ${updates.length} phones...`);
         // Bulk update logic
         return { updated: updates.length, success: true };
       },
 
       bulkDeletePhones(ids: string[]) {
-        console.log(`🗑️ Bulk deleting ${ids.length} phones...`);
+        console.info(`🗑️ Bulk deleting ${ids.length} phones...`);
         // Bulk delete logic
         return { deleted: ids.length, success: true };
       },
 
       bulkExportPhones() {
-        console.log("📦 Bulk exporting phones...");
+        console.info("📦 Bulk exporting phones...");
         // Bulk export logic
         return { data: Array.from(this.phones.values()), format: "json" };
       },
@@ -476,18 +476,18 @@ export class ServiceFactory {
     const featureFn = this.featureFn;
 
     if (!featureFn("FEAT_NOTIFICATIONS")) {
-      console.log("🔕 Notifications disabled");
+      console.info("🔕 Notifications disabled");
       return {
         send: async (message: string) => {
-          console.log(`🔕 Notification suppressed: ${message}`);
+          console.info(`🔕 Notification suppressed: ${message}`);
         },
       };
     }
 
-    console.log("🔔 Creating notification service");
+    console.info("🔔 Creating notification service");
     return {
       async send(message: string) {
-        console.log(`🔔 Sending notification: ${message}`);
+        console.info(`🔔 Sending notification: ${message}`);
 
         // Email notifications
         if (featureFn("INTEGRATION_EMAIL_SERVICE")) {
@@ -507,17 +507,17 @@ export class ServiceFactory {
 
       // Channel-specific methods (eliminated when integrations are disabled)
       async sendEmail(message: string) {
-        console.log(`📧 Email sent: ${message}`);
+        console.info(`📧 Email sent: ${message}`);
         // Email implementation
       },
 
       async sendSMS(message: string) {
-        console.log(`💬 SMS sent: ${message}`);
+        console.info(`💬 SMS sent: ${message}`);
         // SMS implementation
       },
 
       async sendWebhook(message: string) {
-        console.log(`🔗 Webhook sent: ${message}`);
+        console.info(`🔗 Webhook sent: ${message}`);
         // Webhook implementation
       },
     };
@@ -531,7 +531,7 @@ export class ServiceFactory {
     const featureFn = this.featureFn;
 
     if (!featureFn("FEAT_CACHE_OPTIMIZED")) {
-      console.log("💾 Basic cache (no optimization)");
+      console.info("💾 Basic cache (no optimization)");
       // Use in-memory Map instead of localStorage (browser-specific)
       const cache = new Map<string, string>();
       return {
@@ -542,7 +542,7 @@ export class ServiceFactory {
       };
     }
 
-    console.log("⚡ Creating optimized cache service");
+    console.info("⚡ Creating optimized cache service");
     return {
       cache: new Map<string, {
         value: any;

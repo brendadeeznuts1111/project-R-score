@@ -107,13 +107,13 @@ export class HistoricalAnalyzer {
     if (await file.exists()) {
       try {
         this.data = await file.json();
-        console.log(`📚 Loaded ${this.data.length} historical data points`);
+        console.info(`📚 Loaded ${this.data.length} historical data points`);
       } catch (err) {
         console.error('❌ Failed to load historical data:', err);
         this.data = [];
       }
     } else {
-      console.log('📝 No historical data found, starting fresh');
+      console.info('📝 No historical data found, starting fresh');
       this.data = [];
     }
   }
@@ -121,7 +121,7 @@ export class HistoricalAnalyzer {
   private async saveData(): Promise<void> {
     try {
       await Bun.write(this.DATA_FILE, JSON.stringify(this.data, null, 2));
-      console.log(`💾 Saved ${this.data.length} data points to ${this.DATA_FILE}`);
+      console.info(`💾 Saved ${this.data.length} data points to ${this.DATA_FILE}`);
     } catch (err) {
       console.error('❌ Failed to save historical data:', err);
     }
@@ -742,7 +742,7 @@ if (import.meta.main) {
   const analyzer = await HistoricalAnalyzer.create();
 
   // Generate sample historical data
-  console.log('📊 Generating sample historical data...');
+  console.info('📊 Generating sample historical data...');
   const now = Date.now();
   const dayMs = 24 * 60 * 60 * 1000;
 
@@ -771,11 +771,11 @@ if (import.meta.main) {
   }
 
   // Analyze the data
-  console.log('🔍 Analyzing historical patterns...');
+  console.info('🔍 Analyzing historical patterns...');
   const report = analyzer.analyzePeriod();
 
   // Export reports in different formats
-  console.log('📄 Exporting reports...');
+  console.info('📄 Exporting reports...');
 
   const jsonReport = analyzer.exportReport(report, 'json');
   await Bun.write('./tension-analysis-report.json', jsonReport);
@@ -786,15 +786,15 @@ if (import.meta.main) {
   const csvReport = analyzer.exportReport(report, 'csv');
   await Bun.write('./tension-analysis-report.csv', csvReport);
 
-  console.log('✅ Analysis complete!');
-  console.log('📊 Reports generated:');
-  console.log('  - tension-analysis-report.json');
-  console.log('  - tension-analysis-report.html');
-  console.log('  - tension-analysis-report.csv');
+  console.info('✅ Analysis complete!');
+  console.info('📊 Reports generated:');
+  console.info('  - tension-analysis-report.json');
+  console.info('  - tension-analysis-report.html');
+  console.info('  - tension-analysis-report.csv');
 
-  console.log('\n🎯 Risk Assessment:', report.riskAssessment.overallRisk);
-  console.log('📈 Key Recommendations:');
-  report.recommendations.slice(0, 3).forEach(rec => console.log(`  - ${rec}`));
+  console.info('\n🎯 Risk Assessment:', report.riskAssessment.overallRisk);
+  console.info('📈 Key Recommendations:');
+  report.recommendations.slice(0, 3).forEach(rec => console.info(`  - ${rec}`));
 }
 // [TENSION-VOLUME-001]
 // [TENSION-LINK-002]

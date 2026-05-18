@@ -57,11 +57,11 @@ export class HMRManager {
    */
   async initialize(): Promise<void> {
     if (!this.config.enabled) {
-      console.log('ℹ️ HMR is disabled');
+      console.info('ℹ️ HMR is disabled');
       return;
     }
 
-    console.log('🔥 Initializing HMR system...');
+    console.info('🔥 Initializing HMR system...');
 
     try {
       // Initialize plugin manager first
@@ -69,7 +69,7 @@ export class HMRManager {
 
       await this.setupFileWatchers();
       this.startHeartbeat();
-      console.log('✅ HMR system initialized successfully');
+      console.info('✅ HMR system initialized successfully');
     } catch (error) {
       console.error('❌ Failed to initialize HMR system:', error);
       throw error;
@@ -87,7 +87,7 @@ export class HMRManager {
         const watcher = this.createMockWatcher(watchPath);
         this.watchers.set(watchPath, watcher);
 
-        console.log(`👀 Watching: ${watchPath}`);
+        console.info(`👀 Watching: ${watchPath}`);
       } catch (error) {
         console.error(`❌ Failed to watch path ${watchPath}:`, error);
       }
@@ -98,7 +98,7 @@ export class HMRManager {
    * Handle file change event
    */
   async handleFileChange(change: FileChangeEvent): Promise<void> {
-    console.log(`📝 File ${change.type}: ${change.path}`);
+    console.info(`📝 File ${change.type}: ${change.path}`);
 
     // Add to queue for debounced processing
     this.changeQueue.push(change);
@@ -133,7 +133,7 @@ export class HMRManager {
         try {
           // First check if change should be ignored based on watch config
           if (this.shouldIgnoreChange(change)) {
-            console.log(`⏭️ Ignored: ${change.path} (watch config)`);
+            console.info(`⏭️ Ignored: ${change.path} (watch config)`);
             processedChanges.push({
               change,
               result: {
@@ -150,7 +150,7 @@ export class HMRManager {
           processedChanges.push({ change, result });
 
           if (result.action === 'ignore') {
-            console.log(`⏭️ Ignored: ${change.path} (${result.data?.reason || 'no plugin'})`);
+            console.info(`⏭️ Ignored: ${change.path} (${result.data?.reason || 'no plugin'})`);
           }
         } catch (error) {
           console.error(`❌ Failed to process change for ${change.path}:`, error);
@@ -186,7 +186,7 @@ export class HMRManager {
 
       // Process custom actions
       for (const customChange of customChanges) {
-        console.log(`🔧 Custom action for ${customChange.change.path}:`, customChange.result.data);
+        console.info(`🔧 Custom action for ${customChange.change.path}:`, customChange.result.data);
         // Custom actions can be handled here based on the plugin's data
       }
     } catch (error) {
@@ -223,7 +223,7 @@ export class HMRManager {
       timestamp: new Date(),
     });
 
-    console.log(`🔗 HMR client connected: ${clientId}`);
+    console.info(`🔗 HMR client connected: ${clientId}`);
     return clientId;
   }
 
@@ -234,7 +234,7 @@ export class HMRManager {
     const client = this.clients.get(clientId);
     if (client) {
       this.clients.delete(clientId);
-      console.log(`🔌 HMR client disconnected: ${clientId}`);
+      console.info(`🔌 HMR client disconnected: ${clientId}`);
     }
   }
 
@@ -259,7 +259,7 @@ export class HMRManager {
         this.unregisterClient(clientId);
         break;
       default:
-        console.log(`📨 HMR message from ${clientId}:`, message);
+        console.info(`📨 HMR message from ${clientId}:`, message);
     }
   }
 
@@ -271,7 +271,7 @@ export class HMRManager {
     if (client && client.socket) {
       try {
         // In a real implementation, this would send via WebSocket
-        console.log(`📤 HMR message to ${clientId}:`, message.type);
+        console.info(`📤 HMR message to ${clientId}:`, message.type);
       } catch (error) {
         console.error(`❌ Failed to send HMR message to ${clientId}:`, error);
       }
@@ -306,7 +306,7 @@ export class HMRManager {
 
     // Update stats
     changes.forEach(change => {
-      console.log(`🔄 HMR update triggered for: ${change.path}`);
+      console.info(`🔄 HMR update triggered for: ${change.path}`);
     });
   }
 
@@ -325,7 +325,7 @@ export class HMRManager {
     };
 
     this.broadcastMessage(reloadMessage);
-    console.log(`🔄 Full page reload triggered (${changes.length} changes)`);
+    console.info(`🔄 Full page reload triggered (${changes.length} changes)`);
   }
 
   /**
@@ -340,7 +340,7 @@ export class HMRManager {
         const timeSinceActivity = now - client.lastActivity.getTime();
 
         if (timeSinceActivity > timeoutMs) {
-          console.log(`💔 HMR client timeout: ${clientId}`);
+          console.info(`💔 HMR client timeout: ${clientId}`);
           client.isAlive = false;
           // In a real implementation, you might remove the client or ping it
         } else {
@@ -367,7 +367,7 @@ export class HMRManager {
    * Handle client connection
    */
   private handleClientConnect(clientId: string, client: WebSocketClient): void {
-    console.log(`🤝 HMR client handshake: ${clientId}`);
+    console.info(`🤝 HMR client handshake: ${clientId}`);
 
     // Send current state to client
     this.sendMessageToClient(clientId, {
@@ -446,18 +446,18 @@ export class HMRManager {
     };
 
     this.broadcastMessage(reloadMessage);
-    console.log(`🔄 Manual reload triggered: ${reason}`);
+    console.info(`🔄 Manual reload triggered: ${reason}`);
   }
 
   /**
    * Cleanup resources
    */
   async cleanup(): Promise<void> {
-    console.log('🧹 Cleaning up HMR system...');
+    console.info('🧹 Cleaning up HMR system...');
 
     // Stop watchers
     for (const [path, watcher] of this.watchers) {
-      console.log(`🛑 Stopping watcher: ${path}`);
+      console.info(`🛑 Stopping watcher: ${path}`);
       // In real implementation, stop the actual watcher
     }
     this.watchers.clear();
@@ -471,6 +471,6 @@ export class HMRManager {
     // Cleanup plugin manager
     await this.pluginManager.cleanup();
 
-    console.log('✅ HMR system cleaned up');
+    console.info('✅ HMR system cleaned up');
   }
 }

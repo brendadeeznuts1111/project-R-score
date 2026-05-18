@@ -27,7 +27,7 @@ const logWarning = (context: string, message: string): void => {
 };
 
 const logInfo = (context: string, message: string): void => {
-  console.log(`[WikiIntegration:${context}]`, message);
+  console.info(`[WikiIntegration:${context}]`, message);
 };
 
 // Wiki integration types
@@ -81,7 +81,7 @@ export class BunWikiIntegration {
    * Initialize the wiki integration
    */
   async initialize(): Promise<void> {
-    console.log('📚 Initializing Bun Wiki Integration...');
+    console.info('📚 Initializing Bun Wiki Integration...');
     
     // Initialize documentation integration
     await this.docIntegration.initialize();
@@ -94,7 +94,7 @@ export class BunWikiIntegration {
     // Generate initial wiki pages
     await this.generateWikiPages();
     
-    console.log('✅ Bun Wiki Integration initialized');
+    console.info('✅ Bun Wiki Integration initialized');
   }
 
   /**
@@ -474,9 +474,9 @@ export class BunWikiIntegration {
     this.syncTimer = setInterval(async () => {
       await this.syncMutex.withLock(async () => {
         try {
-          console.log('🔄 Auto-syncing wiki documentation...');
+          console.info('🔄 Auto-syncing wiki documentation...');
           await this.generateWikiPages();
-          console.log('✅ Wiki documentation synced');
+          console.info('✅ Wiki documentation synced');
         } catch (error) {
           console.error('❌ Wiki sync failed:', error);
         }
@@ -520,7 +520,7 @@ export class BunWikiIntegration {
 
     const jsonPayload = JSON.stringify(wikiData, null, 2);
     const checksum = crc32(jsonPayload);
-    console.log(`   CRC32 checksum for wiki data: ${checksum.hex}`);
+    console.info(`   CRC32 checksum for wiki data: ${checksum.hex}`);
 
     await withCircuitBreaker('wiki-r2-storage', () =>
       this.config.storage.upload('bun-wiki.json', jsonPayload)
@@ -532,7 +532,7 @@ export class BunWikiIntegration {
       this.config.storage.upload('bun-wiki.md', markdownWiki)
     );
 
-    console.log('💾 Wiki saved to storage');
+    console.info('💾 Wiki saved to storage');
   }
 
   /**
@@ -563,7 +563,7 @@ export class BunWikiIntegration {
             }
           }
 
-          console.log('✅ Loaded wiki data from cache');
+          console.info('✅ Loaded wiki data from cache');
         } catch (parseError) {
           console.warn('Failed to parse cached wiki data:', parseError);
           // Continue with empty cache

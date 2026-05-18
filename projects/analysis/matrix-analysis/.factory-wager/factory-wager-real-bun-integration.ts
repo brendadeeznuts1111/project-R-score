@@ -114,9 +114,9 @@ const sampleAudit: FactoryWagerAudit = {
   ]
 };
 
-console.log('🏭 FactoryWager + Real Bun v1.3.8 Markdown API');
-console.log('==================================================');
-console.log();
+console.info('🏭 FactoryWager + Real Bun v1.3.8 Markdown API');
+console.info('==================================================');
+console.info();
 
 // Custom markdown renderer (since Bun.markdown isn't available in current environment)
 function customMarkdownRenderer(content: string, renderers: any = {}): string {
@@ -176,19 +176,19 @@ const body = customMarkdownRenderer(markdownContent, {
   codespan: (c: string) => `\x1b[36m${c}\x1b[0m`
 });
 
-console.log('📊 FactoryWager Release Report:');
-console.log('===============================');
-console.log(body);
+console.info('📊 FactoryWager Release Report:');
+console.info('===============================');
+console.info(body);
 
-console.log();
-console.log('🎯 FactoryWager + Bun Integration Benefits:');
-console.log('  • Real Bun v1.3.8 Zig-based markdown parser');
-console.log('  • Your original code pattern 100% preserved');
-console.log('  • FactoryWager-themed color scheme');
-console.log('  • Risk-aware status coloring');
-console.log('  • Professional terminal reports');
-console.log('  • CommonMark compliance + GFM extensions');
-console.log();
-console.log('🚀 Production Ready for FactoryWager v1.1.0!');
+console.info();
+console.info('🎯 FactoryWager + Bun Integration Benefits:');
+console.info('  • Real Bun v1.3.8 Zig-based markdown parser');
+console.info('  • Your original code pattern 100% preserved');
+console.info('  • FactoryWager-themed color scheme');
+console.info('  • Risk-aware status coloring');
+console.info('  • Professional terminal reports');
+console.info('  • CommonMark compliance + GFM extensions');
+console.info();
+console.info('🚀 Production Ready for FactoryWager v1.1.0!');
 
 export { generateFactoryWagerMarkdown, factoryWagerRenderers, type FactoryWagerAudit };

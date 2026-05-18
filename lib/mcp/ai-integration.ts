@@ -168,8 +168,8 @@ export class AIIntegrationSystem {
    * Initialize AI integration with all domains
    */
   async initialize(): Promise<void> {
-    console.log(styled('🤖 Initializing AI Integration System', 'accent'));
-    console.log(styled('=====================================', 'accent'));
+    console.info(styled('🤖 Initializing AI Integration System', 'accent'));
+    console.info(styled('=====================================', 'accent'));
 
     // Initialize the AI analyzer
     await this.aiAnalyzer.initialize();
@@ -183,14 +183,14 @@ export class AIIntegrationSystem {
     // Store AI configuration in R2
     await this.storeAIConfiguration();
 
-    console.log(styled('✅ AI integration system initialized', 'success'));
+    console.info(styled('✅ AI integration system initialized', 'success'));
   }
 
   /**
    * Initialize AI integration for all domains
    */
   private async initializeDomainIntegrations(): Promise<void> {
-    console.log(styled('🌐 Initializing domain AI integrations...', 'info'));
+    console.info(styled('🌐 Initializing domain AI integrations...', 'info'));
 
     // FactoryWager domain integration
     const factoryWagerIntegration: AIDomainIntegration = {
@@ -227,14 +227,14 @@ export class AIIntegrationSystem {
       ),
     });
 
-    console.log(styled('✅ Domain AI integrations initialized', 'success'));
+    console.info(styled('✅ Domain AI integrations initialized', 'success'));
   }
 
   /**
    * Setup cross-domain learning and intelligence sharing
    */
   private async setupCrossDomainLearning(): Promise<void> {
-    console.log(styled('🧠 Setting up cross-domain learning...', 'info'));
+    console.info(styled('🧠 Setting up cross-domain learning...', 'info'));
 
     const learningConfig = {
       timestamp: new Date().toISOString(),
@@ -260,14 +260,14 @@ export class AIIntegrationSystem {
 
     await this.r2.putJSON('integrations/ai/cross-domain-learning.json', learningConfig);
 
-    console.log(styled('✅ Cross-domain learning configured', 'success'));
+    console.info(styled('✅ Cross-domain learning configured', 'success'));
   }
 
   /**
    * Store AI configuration and metrics in R2
    */
   private async storeAIConfiguration(): Promise<void> {
-    console.log(styled('💾 Storing AI configuration...', 'info'));
+    console.info(styled('💾 Storing AI configuration...', 'info'));
 
     // Update metrics with current AI analyzer status
     const modelStatus = this.aiAnalyzer.getModelStatus();
@@ -302,14 +302,14 @@ export class AIIntegrationSystem {
       metrics: this.metrics,
     });
 
-    console.log(styled('✅ AI configuration stored', 'success'));
+    console.info(styled('✅ AI configuration stored', 'success'));
   }
 
   /**
    * Analyze evidence with AI and store results
    */
   async analyzeEvidence(evidence: Evidence, domain: string): Promise<EvidenceAnalysis> {
-    console.log(styled(`🔍 Analyzing evidence for ${domain}: ${evidence.id}`, 'info'));
+    console.info(styled(`🔍 Analyzing evidence for ${domain}: ${evidence.id}`, 'info'));
 
     try {
       // Perform AI analysis
@@ -486,8 +486,8 @@ export class AIIntegrationSystem {
    * Demonstrate AI integration capabilities
    */
   async demonstrateAIIntegration(): Promise<void> {
-    console.log(styled('\n🤖 Demonstrating AI Integration', 'accent'));
-    console.log(styled('==============================', 'accent'));
+    console.info(styled('\n🤖 Demonstrating AI Integration', 'accent'));
+    console.info(styled('==============================', 'accent'));
 
     // Create sample evidence
     const sampleEvidence: Evidence = {
@@ -505,23 +505,23 @@ export class AIIntegrationSystem {
 
     try {
       // Analyze for FactoryWager domain
-      console.log(styled('\n🏭 FactoryWager Domain Analysis:', 'info'));
+      console.info(styled('\n🏭 FactoryWager Domain Analysis:', 'info'));
       const fwAnalysis = await this.analyzeEvidence(sampleEvidence, 'factory-wager.com');
-      console.log(styled(`   Confidence: ${(fwAnalysis.confidence * 100).toFixed(1)}%`, 'success'));
-      console.log(styled(`   Recommendations: ${fwAnalysis.recommendations.length}`, 'muted'));
+      console.info(styled(`   Confidence: ${(fwAnalysis.confidence * 100).toFixed(1)}%`, 'success'));
+      console.info(styled(`   Recommendations: ${fwAnalysis.recommendations.length}`, 'muted'));
 
       // Analyze for DuoPlus domain
-      console.log(styled('\n🎭 DuoPlus Domain Analysis:', 'info'));
+      console.info(styled('\n🎭 DuoPlus Domain Analysis:', 'info'));
       const dpAnalysis = await this.analyzeEvidence(sampleEvidence, 'duoplus.com');
-      console.log(styled(`   Confidence: ${(dpAnalysis.confidence * 100).toFixed(1)}%`, 'success'));
-      console.log(styled(`   Recommendations: ${dpAnalysis.recommendations.length}`, 'muted'));
+      console.info(styled(`   Confidence: ${(dpAnalysis.confidence * 100).toFixed(1)}%`, 'success'));
+      console.info(styled(`   Recommendations: ${dpAnalysis.recommendations.length}`, 'muted'));
 
       // Show cross-domain intelligence
-      console.log(styled('\n🧠 Cross-Domain Intelligence:', 'info'));
-      console.log(
+      console.info(styled('\n🧠 Cross-Domain Intelligence:', 'info'));
+      console.info(
         styled(`   Shared Patterns: ${this.crossDomainIntelligence.sharedPatterns.length}`, 'muted')
       );
-      console.log(
+      console.info(
         styled(
           `   Threat Intelligence: ${this.crossDomainIntelligence.threatIntelligence.length} threats`,
           'muted'
@@ -530,10 +530,10 @@ export class AIIntegrationSystem {
 
       // Show AI system metrics
       const status = await this.getAIStatus();
-      console.log(styled('\n📊 AI System Metrics:', 'info'));
-      console.log(styled(`   Models Loaded: ${status.aiSystem.modelsLoaded}`, 'muted'));
-      console.log(styled(`   Total Processed: ${status.aiSystem.totalProcessed}`, 'muted'));
-      console.log(
+      console.info(styled('\n📊 AI System Metrics:', 'info'));
+      console.info(styled(`   Models Loaded: ${status.aiSystem.modelsLoaded}`, 'muted'));
+      console.info(styled(`   Total Processed: ${status.aiSystem.totalProcessed}`, 'muted'));
+      console.info(
         styled(`   Average Accuracy: ${(status.performance.accuracy * 100).toFixed(1)}%`, 'muted')
       );
     } catch (error) {
@@ -545,48 +545,48 @@ export class AIIntegrationSystem {
    * Display comprehensive AI integration status
    */
   async displayStatus(): Promise<void> {
-    console.log(styled('\n🤖 AI Integration System Status', 'accent'));
-    console.log(styled('==============================', 'accent'));
+    console.info(styled('\n🤖 AI Integration System Status', 'accent'));
+    console.info(styled('==============================', 'accent'));
 
     const status = await this.getAIStatus();
 
-    console.log(styled('\n🔧 AI System Components:', 'info'));
-    console.log(styled(`  🤖 AI Analyzer: ✅ Ready`, 'success'));
-    console.log(styled(`  🧠 Cross-Domain Learning: ✅ Active`, 'success'));
-    console.log(styled(`  📊 Pattern Recognition: ✅ Enabled`, 'success'));
-    console.log(styled(`  🛡️ Threat Intelligence: ✅ Monitoring`, 'success'));
+    console.info(styled('\n🔧 AI System Components:', 'info'));
+    console.info(styled(`  🤖 AI Analyzer: ✅ Ready`, 'success'));
+    console.info(styled(`  🧠 Cross-Domain Learning: ✅ Active`, 'success'));
+    console.info(styled(`  📊 Pattern Recognition: ✅ Enabled`, 'success'));
+    console.info(styled(`  🛡️ Threat Intelligence: ✅ Monitoring`, 'success'));
 
-    console.log(styled('\n📈 Performance Metrics:', 'info'));
-    console.log(styled(`  Models Loaded: ${status.aiSystem.modelsLoaded}`, 'muted'));
-    console.log(styled(`  Processing Queue: ${status.aiSystem.processingQueue}`, 'muted'));
-    console.log(styled(`  Total Processed: ${status.aiSystem.totalProcessed}`, 'muted'));
-    console.log(
+    console.info(styled('\n📈 Performance Metrics:', 'info'));
+    console.info(styled(`  Models Loaded: ${status.aiSystem.modelsLoaded}`, 'muted'));
+    console.info(styled(`  Processing Queue: ${status.aiSystem.processingQueue}`, 'muted'));
+    console.info(styled(`  Total Processed: ${status.aiSystem.totalProcessed}`, 'muted'));
+    console.info(
       styled(`  Throughput: ${status.performance.throughput.toFixed(2)} analyses/sec`, 'muted')
     );
-    console.log(styled(`  Accuracy: ${(status.performance.accuracy * 100).toFixed(1)}%`, 'muted'));
-    console.log(styled(`  Latency: ${status.performance.latency.toFixed(2)}ms`, 'muted'));
+    console.info(styled(`  Accuracy: ${(status.performance.accuracy * 100).toFixed(1)}%`, 'muted'));
+    console.info(styled(`  Latency: ${status.performance.latency.toFixed(2)}ms`, 'muted'));
 
-    console.log(styled('\n🌐 Domain Integrations:', 'info'));
+    console.info(styled('\n🌐 Domain Integrations:', 'info'));
     for (const [domain, integration] of this.domains) {
-      console.log(styled(`  ${domain}:`, 'muted'));
-      console.log(styled(`    Dispute Types: ${integration.disputeTypes.length}`, 'muted'));
-      console.log(styled(`    AI Models: ${integration.aiModels.length}`, 'muted'));
-      console.log(
+      console.info(styled(`  ${domain}:`, 'muted'));
+      console.info(styled(`    Dispute Types: ${integration.disputeTypes.length}`, 'muted'));
+      console.info(styled(`    AI Models: ${integration.aiModels.length}`, 'muted'));
+      console.info(
         styled(`    Success Rate: ${(integration.successRate * 100).toFixed(1)}%`, 'muted')
       );
     }
 
-    console.log(styled('\n🧠 Intelligence Summary:', 'info'));
-    console.log(
+    console.info(styled('\n🧠 Intelligence Summary:', 'info'));
+    console.info(
       styled(`  Shared Patterns: ${this.crossDomainIntelligence.sharedPatterns.length}`, 'muted')
     );
-    console.log(
+    console.info(
       styled(
         `  Model Performance: ${Object.keys(this.crossDomainIntelligence.modelPerformance).length} models`,
         'muted'
       )
     );
-    console.log(
+    console.info(
       styled(
         `  Threat Intelligence: ${this.crossDomainIntelligence.threatIntelligence.length} threats`,
         'muted'
@@ -606,8 +606,8 @@ if (import.meta.main) {
   await aiSystem.demonstrateAIIntegration();
   await aiSystem.displayStatus();
 
-  console.log(styled('\n🎉 AI integration system complete!', 'success'));
-  console.log(
+  console.info(styled('\n🎉 AI integration system complete!', 'success'));
+  console.info(
     styled('AI-powered dispute resolution is now integrated across all domains! 🤖', 'info')
   );
 }

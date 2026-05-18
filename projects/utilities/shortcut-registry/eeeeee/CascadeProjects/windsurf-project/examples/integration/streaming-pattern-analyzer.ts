@@ -193,13 +193,13 @@ class StreamingURLPatternAnalyzer {
       FROM cached_results
     `).get() as any;
 
-    console.log('📊 Pattern Analysis Report');
-    console.log('==========================');
-    console.log(`Total Patterns: ${stats.total_patterns}`);
-    console.log(`Avg Security Score: ${stats.avg_security?.toFixed(2)}`);
-    console.log(`Avg ReDoS Score: ${stats.avg_redos?.toFixed(3)}`);
-    console.log(`High Risk Patterns: ${stats.high_risk}`);
-    console.log(`ReDoS Risk Patterns: ${stats.redos_risk}`);
+    console.info('📊 Pattern Analysis Report');
+    console.info('==========================');
+    console.info(`Total Patterns: ${stats.total_patterns}`);
+    console.info(`Avg Security Score: ${stats.avg_security?.toFixed(2)}`);
+    console.info(`Avg ReDoS Score: ${stats.avg_redos?.toFixed(3)}`);
+    console.info(`High Risk Patterns: ${stats.high_risk}`);
+    console.info(`ReDoS Risk Patterns: ${stats.redos_risk}`);
   }
 
   cleanup(): void {
@@ -218,12 +218,12 @@ async function main() {
     chunkSize: parseInt(args.find(arg => arg.startsWith('--chunk-size='))?.split('=')[1] || '65536')
   };
 
-  console.log('🚀 Production Pattern Analyzer');
-  console.log('==============================');
-  console.log(`Input: ${options.inputFile}`);
-  console.log(`Cache: ${options.cacheDb}`);
-  console.log(`Workers: ${options.workerThreads}`);
-  console.log(`Chunk Size: ${options.chunkSize} bytes`);
+  console.info('🚀 Production Pattern Analyzer');
+  console.info('==============================');
+  console.info(`Input: ${options.inputFile}`);
+  console.info(`Cache: ${options.cacheDb}`);
+  console.info(`Workers: ${options.workerThreads}`);
+  console.info(`Chunk Size: ${options.chunkSize} bytes`);
 
   const analyzer = new StreamingURLPatternAnalyzer(options);
   
@@ -232,12 +232,12 @@ async function main() {
     const results = await analyzer.analyzePatterns(options);
     const duration = (Bun.nanoseconds() - startTime) / 1e9;
 
-    console.log('\n✅ Analysis Complete');
-    console.log(`Duration: ${duration.toFixed(2)}s`);
-    console.log(`Processed: ${results.totalProcessed}`);
-    console.log(`Cache Hits: ${results.cacheHits}`);
-    console.log(`Security Issues: ${results.securityIssues}`);
-    console.log(`ReDoS Risks: ${results.redosRisks}`);
+    console.info('\n✅ Analysis Complete');
+    console.info(`Duration: ${duration.toFixed(2)}s`);
+    console.info(`Processed: ${results.totalProcessed}`);
+    console.info(`Cache Hits: ${results.cacheHits}`);
+    console.info(`Security Issues: ${results.securityIssues}`);
+    console.info(`ReDoS Risks: ${results.redosRisks}`);
 
     analyzer.generateReport();
   } finally {

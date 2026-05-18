@@ -329,11 +329,11 @@ export class DataViewStreamProcessor {
     }
     
     const endTime = performance.now();
-    console.log(`🔪 Zero-copy chunking performance:`);
-    console.log(`   📦 Chunks created: ${chunkCount}`);
-    console.log(`   📊 Total bytes: ${totalBytesProcessed.toLocaleString()}`);
-    console.log(`   ⚡ Processing time: ${(endTime - startTime).toFixed(2)}ms`);
-    console.log(`   🚀 Throughput: ${(totalBytesProcessed / (endTime - startTime) * 1000 / 1024 / 1024).toFixed(2)}MB/sec`);
+    console.info(`🔪 Zero-copy chunking performance:`);
+    console.info(`   📦 Chunks created: ${chunkCount}`);
+    console.info(`   📊 Total bytes: ${totalBytesProcessed.toLocaleString()}`);
+    console.info(`   ⚡ Processing time: ${(endTime - startTime).toFixed(2)}ms`);
+    console.info(`   🚀 Throughput: ${(totalBytesProcessed / (endTime - startTime) * 1000 / 1024 / 1024).toFixed(2)}MB/sec`);
   }
   
   // Optimized large data processing with zero-copy chunks and memory monitoring
@@ -360,12 +360,12 @@ export class DataViewStreamProcessor {
     const endTime = performance.now();
     const endMemory = process.memoryUsage();
     
-    console.log(`🌊 Stream processing performance:`);
-    console.log(`   📦 Total chunks: ${totalChunks}`);
-    console.log(`   📊 Total bytes: ${(totalBytes / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`   ⏱️  Duration: ${(endTime - startTime).toFixed(2)}ms`);
-    console.log(`   💾 Memory delta: ${((endMemory.heapUsed - startMemory.heapUsed) / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`   🚀 Throughput: ${(totalBytes / (endTime - startTime) * 1000 / 1024 / 1024).toFixed(2)}MB/sec`);
+    console.info(`🌊 Stream processing performance:`);
+    console.info(`   📦 Total chunks: ${totalChunks}`);
+    console.info(`   📊 Total bytes: ${(totalBytes / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`   ⏱️  Duration: ${(endTime - startTime).toFixed(2)}ms`);
+    console.info(`   💾 Memory delta: ${((endMemory.heapUsed - startMemory.heapUsed) / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`   🚀 Throughput: ${(totalBytes / (endTime - startTime) * 1000 / 1024 / 1024).toFixed(2)}MB/sec`);
   }
   
   private async processChunk(chunk: Uint8Array): Promise<void> {

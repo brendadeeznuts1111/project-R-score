@@ -20,7 +20,7 @@ describe("🚀 Bun v1.3.6+ APIs Integration", () => {
     process.env.ADMIN_USER = TEST_USER;
     process.env.ADMIN_PASS = TEST_PASS;
     
-    console.log(
+    console.info(
       `🧪 Test server started at ${server.url}` 
     );
   });
@@ -35,7 +35,7 @@ describe("🚀 Bun v1.3.6+ APIs Integration", () => {
       Bun.$`rm -rf ./archives/archive-*`.quiet(),
     ]);
     
-    console.log("🧪 Test server stopped");
+    console.info("🧪 Test server stopped");
   });
 
   beforeEach(() => {
@@ -320,7 +320,7 @@ describe("🚀 Bun v1.3.6+ APIs Integration", () => {
       // Log size report
       Object.entries(metafile.outputs).forEach(([path, meta]: [string, any]) => {
         const sizeKB = meta.bytes / 1024;
-        console.log(`  ${path}: ${sizeKB.toFixed(2)} KB`);
+        console.info(`  ${path}: ${sizeKB.toFixed(2)} KB`);
       });
     });
   });
@@ -453,9 +453,9 @@ describe("🚀 Bun v1.3.6+ APIs Integration", () => {
       expect(newResponse.headers.get("content-type")).toContain("application/json");
 
       // Log performance comparison
-      console.log(`JSON.stringify: ${oldTime.toFixed(2)}ms`);
-      console.log(`Response.json: ${newTime.toFixed(2)}ms`);
-      console.log(`Speedup: ${(oldTime / newTime).toFixed(2)}x`);
+      console.info(`JSON.stringify: ${oldTime.toFixed(2)}ms`);
+      console.info(`Response.json: ${newTime.toFixed(2)}ms`);
+      console.info(`Speedup: ${(oldTime / newTime).toFixed(2)}x`);
     });
   });
 
@@ -519,7 +519,7 @@ describe("🚀 Bun v1.3.6+ APIs Integration", () => {
 
       expect(logoutRes.ok).toBe(true);
 
-      console.log("✅ Complete integration workflow successful!");
+      console.info("✅ Complete integration workflow successful!");
     });
   });
 });

@@ -5,12 +5,12 @@
 
 import { parseArgs } from "util";
 
-console.log("🚀 Revolutionary AI System - Advanced CLI Arguments");
+console.info("🚀 Revolutionary AI System - Advanced CLI Arguments");
 
 // Basic argv demonstration
-console.log("\n📊 Basic Argument Vector:");
-console.log("Full argv:", Bun.argv);
-console.log("Arguments:", Bun.argv.slice(2)); // Remove bun and script path
+console.info("\n📊 Basic Argument Vector:");
+console.info("Full argv:", Bun.argv);
+console.info("Arguments:", Bun.argv.slice(2)); // Remove bun and script path
 
 // Advanced argument parsing
 function parseCommandLine() {
@@ -92,7 +92,7 @@ function parseCommandLine() {
 
 // Show help message
 function showHelp() {
-  console.log(`
+  console.info(`
 🧠 Revolutionary AI System - Enterprise CLI
 
 Usage: bun run cli-args.ts [options] [commands]
@@ -131,71 +131,71 @@ Usage: bun run cli-args.ts [options] [commands]
 
 // Process and display parsed arguments
 function processArguments({ values, positionals }: { values: any; positionals: string[] }) {
-  console.log("\n⚙️ Parsed Configuration:");
+  console.info("\n⚙️ Parsed Configuration:");
   
   // AI Model Configuration
   if (values.model || values.accuracy) {
-    console.log("\n🤖 AI Model Settings:");
-    console.log(`   Model Type: ${values.model || 'enhanced'}`);
-    console.log(`   Target Accuracy: ${values.accuracy || '94.51'}%`);
-    console.log(`   Status: ${values.model === 'enhanced' ? '✅ Enterprise Ready' : '⚠️ Basic Mode'}`);
+    console.info("\n🤖 AI Model Settings:");
+    console.info(`   Model Type: ${values.model || 'enhanced'}`);
+    console.info(`   Target Accuracy: ${values.accuracy || '94.51'}%`);
+    console.info(`   Status: ${values.model === 'enhanced' ? '✅ Enterprise Ready' : '⚠️ Basic Mode'}`);
   }
   
   // Security Configuration
   if (values.security || values.biometric) {
-    console.log("\n🔒 Security Configuration:");
-    if (values.security) console.log("   Enhanced Security: ✅ Enabled");
-    if (values.biometric) console.log("   Biometric Auth: ✅ 4-Factor Active");
-    console.log("   Zero-Trust Architecture: ✅ Operational");
+    console.info("\n🔒 Security Configuration:");
+    if (values.security) console.info("   Enhanced Security: ✅ Enabled");
+    if (values.biometric) console.info("   Biometric Auth: ✅ 4-Factor Active");
+    console.info("   Zero-Trust Architecture: ✅ Operational");
   }
   
   // Monitoring Configuration
   if (values.monitoring || values.verbose) {
-    console.log("\n📊 Monitoring Configuration:");
-    if (values.monitoring) console.log("   Real-time Monitoring: ✅ Active");
-    if (values.verbose) console.log("   Verbose Logging: ✅ Enabled");
-    console.log("   Predictive Analytics: ✅ Running");
+    console.info("\n📊 Monitoring Configuration:");
+    if (values.monitoring) console.info("   Real-time Monitoring: ✅ Active");
+    if (values.verbose) console.info("   Verbose Logging: ✅ Enabled");
+    console.info("   Predictive Analytics: ✅ Running");
   }
   
   // Shopping Platform Configuration
   if (values.port || values.dashboard) {
-    console.log("\n🛍️ Shopping Platform:");
-    console.log(`   Server Port: ${values.port || '3005'}`);
-    if (values.dashboard) console.log("   Enterprise Dashboard: ✅ Launching");
-    console.log("   RBAC System: ✅ 5 Roles Active");
+    console.info("\n🛍️ Shopping Platform:");
+    console.info(`   Server Port: ${values.port || '3005'}`);
+    if (values.dashboard) console.info("   Enterprise Dashboard: ✅ Launching");
+    console.info("   RBAC System: ✅ 5 Roles Active");
   }
   
   // Performance Configuration
   if (values.threads || values.memory) {
-    console.log("\n⚡ Performance Settings:");
-    console.log(`   Processing Threads: ${values.threads || 'auto'}`);
-    console.log(`   Memory Limit: ${values.memory || 'unlimited'}MB`);
-    console.log("   Optimization: ✅ High Performance Mode");
+    console.info("\n⚡ Performance Settings:");
+    console.info(`   Processing Threads: ${values.threads || 'auto'}`);
+    console.info(`   Memory Limit: ${values.memory || 'unlimited'}MB`);
+    console.info("   Optimization: ✅ High Performance Mode");
   }
   
   // Positional arguments (commands)
   if (positionals.length > 2) {
-    console.log("\n🎯 Commands:");
+    console.info("\n🎯 Commands:");
     const commands = positionals.slice(2); // Remove bun and script path
     commands.forEach((cmd, index) => {
-      console.log(`   ${index + 1}. ${cmd}`);
+      console.info(`   ${index + 1}. ${cmd}`);
     });
   }
   
   // Default configuration if no arguments provided
   if (Object.keys(values).length === 0 && positionals.length <= 2) {
-    console.log("\n🚀 Default Configuration:");
-    console.log("   AI Model: Enhanced (94.51% accuracy)");
-    console.log("   Security: Zero-Trust with Biometrics");
-    console.log("   Monitoring: Real-time Analytics");
-    console.log("   Shopping: Enterprise Platform Ready");
-    console.log("   Performance: Optimized for Production");
+    console.info("\n🚀 Default Configuration:");
+    console.info("   AI Model: Enhanced (94.51% accuracy)");
+    console.info("   Security: Zero-Trust with Biometrics");
+    console.info("   Monitoring: Real-time Analytics");
+    console.info("   Shopping: Enterprise Platform Ready");
+    console.info("   Performance: Optimized for Production");
   }
 }
 
 // Demonstrate different argument combinations
 function demonstrateArgumentCombinations() {
-  console.log("\n🎮 Argument Combination Examples:");
+  console.info("\n🎮 Argument Combination Examples:");
   
   const examples = [
     {
@@ -221,9 +221,9 @@ function demonstrateArgumentCombinations() {
   ];
   
   examples.forEach((example, index) => {
-    console.log(`\n${index + 1}. ${example.name}:`);
-    console.log(`   Command: bun run cli-args.ts ${example.args.join(' ')}`);
-    console.log(`   Description: ${example.description}`);
+    console.info(`\n${index + 1}. ${example.name}:`);
+    console.info(`   Command: bun run cli-args.ts ${example.args.join(' ')}`);
+    console.info(`   Description: ${example.description}`);
   });
 }
 
@@ -244,12 +244,12 @@ function main() {
     // Show examples
     demonstrateArgumentCombinations();
     
-    console.log("\n🎉 CLI Argument Processing Complete!");
-    console.log("💚 Revolutionary AI System configured successfully!");
+    console.info("\n🎉 CLI Argument Processing Complete!");
+    console.info("💚 Revolutionary AI System configured successfully!");
     
   } catch (error) {
     console.error("❌ Error parsing arguments:", error instanceof Error ? error.message : String(error));
-    console.log("\n💡 Use --help for usage information");
+    console.info("\n💡 Use --help for usage information");
     process.exit(1);
   }
 }

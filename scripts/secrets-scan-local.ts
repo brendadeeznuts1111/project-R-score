@@ -84,9 +84,9 @@ function isIgnoredByGit(filePath: string): boolean {
 }
 
 async function main() {
-  console.log('Local secret scan');
-  console.log(`cwd=${ROOT}`);
-  console.log('');
+  console.info('Local secret scan');
+  console.info(`cwd=${ROOT}`);
+  console.info('');
 
   const trackedEnvFiles = getTrackedEnvFiles();
   const trackedAbsolute = trackedEnvFiles.map((file) => resolve(ROOT, file));
@@ -112,44 +112,44 @@ async function main() {
   const localFindings = findings.filter((f) => !f.tracked);
 
   if (trackedFindings.length > 0) {
-    console.log('FAIL tracked plaintext secrets found:');
+    console.info('FAIL tracked plaintext secrets found:');
     for (const finding of trackedFindings) {
-      console.log(`  ${finding.file}:${finding.line} ${finding.key} (${finding.reason})`);
+      console.info(`  ${finding.file}:${finding.line} ${finding.key} (${finding.reason})`);
     }
   } else {
-    console.log('PASS no high-confidence plaintext secrets in tracked .env files');
+    console.info('PASS no high-confidence plaintext secrets in tracked .env files');
   }
 
   const requiredLocalFiles = ['.env.local', '.env.secret.local'];
   for (const file of requiredLocalFiles) {
     const ignored = isIgnoredByGit(file);
     if (ignored) {
-      console.log(`PASS gitignore-local ${file} ignored`);
+      console.info(`PASS gitignore-local ${file} ignored`);
     } else {
-      console.log(`FAIL gitignore-local ${file} is not ignored`);
+      console.info(`FAIL gitignore-local ${file} is not ignored`);
     }
   }
 
   if (localFindings.length > 0) {
-    console.log('WARN local secret-like values detected in untracked env files:');
+    console.info('WARN local secret-like values detected in untracked env files:');
     const dedup = new Set<string>();
     for (const finding of localFindings) {
       const line = `${finding.file}:${finding.line} ${finding.key}`;
       if (dedup.has(line)) continue;
       dedup.add(line);
-      console.log(`  ${line}`);
+      console.info(`  ${line}`);
     }
-    console.log('WARN ensure these values are rotated if previously exposed and remain untracked.');
+    console.info('WARN ensure these values are rotated if previously exposed and remain untracked.');
   } else {
-    console.log('PASS no local secret-like values detected in scanned local files');
+    console.info('PASS no local secret-like values detected in scanned local files');
   }
 
-  console.log('');
-  console.log('Rotation checklist');
-  console.log('1. Rotate any credential that has ever appeared in tracked history.');
-  console.log('2. Update runtime secret stores and local untracked env files.');
-  console.log('3. Validate with `bun run security:secrets:local` and deploy smoke checks.');
-  console.log('4. Revoke old credentials after successful rollout validation.');
+  console.info('');
+  console.info('Rotation checklist');
+  console.info('1. Rotate any credential that has ever appeared in tracked history.');
+  console.info('2. Update runtime secret stores and local untracked env files.');
+  console.info('3. Validate with `bun run security:secrets:local` and deploy smoke checks.');
+  console.info('4. Revoke old credentials after successful rollout validation.');
 
   const hasGitIgnoreFailure = requiredLocalFiles.some((file) => !isIgnoredByGit(file));
   process.exit(trackedFindings.length > 0 || hasGitIgnoreFailure ? 1 : 0);

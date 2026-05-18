@@ -168,7 +168,7 @@ export function createServer(port: number = 0) {
           id: ws.data.id,
           config: getConfig(),
         }));
-        console.log(`[ws] Client connected: ${ws.data.id}`);
+        console.info(`[ws] Client connected: ${ws.data.id}`);
       },
 
       message(ws, message) {
@@ -183,7 +183,7 @@ export function createServer(port: number = 0) {
 
       close(ws) {
         wsClients.delete(ws);
-        console.log(`[ws] Client disconnected: ${ws.data.id}`);
+        console.info(`[ws] Client disconnected: ${ws.data.id}`);
       },
     },
 
@@ -203,7 +203,7 @@ export { broadcast };
 if (import.meta.main) {
   const port = Number(Bun.env.PORT) || 3003;
   const server = createServer(port);
-  console.log(`[hft] Freeze predictor server: http://localhost:${server.port}`);
-  console.log(`[hft] WebSocket: ws://localhost:${server.port}/ws/hft/stream`);
-  console.log(`[hft] Routes: /health, /api/hft/status, /api/hft/ingest, /api/hft/events, /api/hft/stats`);
+  console.info(`[hft] Freeze predictor server: http://localhost:${server.port}`);
+  console.info(`[hft] WebSocket: ws://localhost:${server.port}/ws/hft/stream`);
+  console.info(`[hft] Routes: /health, /api/hft/status, /api/hft/ingest, /api/hft/events, /api/hft/stats`);
 }

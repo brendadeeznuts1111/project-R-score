@@ -214,9 +214,9 @@ Status: ${success ? "✅ READY" : "⚠️ NEEDS ATTENTION"}
 if (require.main === module) {
   verifyNebulaFlow()
     .then((result) => {
-      console.log("\n" + "=".repeat(60));
-      console.log("Nebula-Flow™ Hardening Pack v1.4 - Verification");
-      console.log("=".repeat(60) + "\n");
+      console.info("\n" + "=".repeat(60));
+      console.info("Nebula-Flow™ Hardening Pack v1.4 - Verification");
+      console.info("=".repeat(60) + "\n");
 
       // Group results by status
       const grouped = {
@@ -226,39 +226,39 @@ if (require.main === module) {
       };
 
       if (grouped.passed.length > 0) {
-        console.log("✅ PASSED:");
+        console.info("✅ PASSED:");
         grouped.passed.forEach(r => {
-          console.log(`  ${r.component.padEnd(30)} ${r.message}`);
+          console.info(`  ${r.component.padEnd(30)} ${r.message}`);
         });
-        console.log();
+        console.info();
       }
 
       if (grouped.warnings.length > 0) {
-        console.log("⚠️  WARNINGS:");
+        console.info("⚠️  WARNINGS:");
         grouped.warnings.forEach(r => {
-          console.log(`  ${r.component.padEnd(30)} ${r.message}`);
+          console.info(`  ${r.component.padEnd(30)} ${r.message}`);
         });
-        console.log();
+        console.info();
       }
 
       if (grouped.failed.length > 0) {
-        console.log("❌ FAILED:");
+        console.info("❌ FAILED:");
         grouped.failed.forEach(r => {
-          console.log(`  ${r.component.padEnd(30)} ${r.message}`);
+          console.info(`  ${r.component.padEnd(30)} ${r.message}`);
         });
-        console.log();
+        console.info();
       }
 
-      console.log(result.summary);
+      console.info(result.summary);
 
       if (result.success) {
-        console.log("🎉 Nebula-Flow™ is ready for deployment!");
-        console.log("\nNext Steps:");
-        console.log("  1. cp .env.example .env");
-        console.log("  2. Edit .env with your settings");
-        console.log("  3. bun run nebula:deploy");
+        console.info("🎉 Nebula-Flow™ is ready for deployment!");
+        console.info("\nNext Steps:");
+        console.info("  1. cp .env.example .env");
+        console.info("  2. Edit .env with your settings");
+        console.info("  3. bun run nebula:deploy");
       } else {
-        console.log("⚠️  Please fix the issues above before deployment");
+        console.info("⚠️  Please fix the issues above before deployment");
       }
 
       process.exit(result.success ? 0 : 1);

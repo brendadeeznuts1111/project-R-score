@@ -5,7 +5,7 @@ import { CRC32SQLHelper } from "./utils/crc32-sql-helper";
 // Mock SQL helper for demonstration
 const mockSQL = {
   sql: (template: any, ...values: any[]) => {
-    console.log("🔍 SQL Query executed");
+    console.info("🔍 SQL Query executed");
     return Promise.resolve([
       {
         id: crypto.randomUUID(),
@@ -21,14 +21,14 @@ const mockSQL = {
 };
 
 async function demonstrateCRC32SQLIntegration() {
-  console.log("🔧 CRC32 SQL Integration Demo");
-  console.log("=".repeat(50));
+  console.info("🔧 CRC32 SQL Integration Demo");
+  console.info("=".repeat(50));
 
   const crc32Helper = new CRC32SQLHelper(mockSQL.sql as any);
 
   // Test 1: Basic insert with CRC32 validation
-  console.log("\n📊 Test 1: Basic CRC32 Validation");
-  console.log("-".repeat(30));
+  console.info("\n📊 Test 1: Basic CRC32 Validation");
+  console.info("-".repeat(30));
 
   const testData = {
     id: Bun.randomUUIDv7(),
@@ -54,14 +54,14 @@ async function demonstrateCRC32SQLIntegration() {
     }
   );
 
-  console.log(`✅ Insert completed`);
-  console.log(`   ID: ${result1.id}`);
-  console.log(`   Duration: ${result1.duration?.toFixed(2)}ms`);
-  console.log(`   Throughput: ${result1.throughput?.toFixed(2)} MB/s`);
+  console.info(`✅ Insert completed`);
+  console.info(`   ID: ${result1.id}`);
+  console.info(`   Duration: ${result1.duration?.toFixed(2)}ms`);
+  console.info(`   Throughput: ${result1.throughput?.toFixed(2)} MB/s`);
 
   // Test 2: Undefined handling
-  console.log("\n🧪 Test 2: Undefined Value Handling");
-  console.log("-".repeat(30));
+  console.info("\n🧪 Test 2: Undefined Value Handling");
+  console.info("-".repeat(30));
 
   const undefinedData = {
     id: Bun.randomUUIDv7(),
@@ -83,13 +83,13 @@ async function demonstrateCRC32SQLIntegration() {
     }
   );
 
-  console.log(`✅ Undefined handling successful`);
-  console.log(`   Database defaults preserved`);
-  console.log(`   No constraint violations`);
+  console.info(`✅ Undefined handling successful`);
+  console.info(`   Database defaults preserved`);
+  console.info(`   No constraint violations`);
 
   // Test 3: Null handling
-  console.log("\n🧪 Test 3: Explicit NULL Handling");
-  console.log("-".repeat(30));
+  console.info("\n🧪 Test 3: Explicit NULL Handling");
+  console.info("-".repeat(30));
 
   const nullData = {
     id: Bun.randomUUIDv7(),
@@ -111,13 +111,13 @@ async function demonstrateCRC32SQLIntegration() {
     }
   );
 
-  console.log(`✅ NULL handling successful`);
-  console.log(`   Explicit NULL values preserved`);
-  console.log(`   Mixed data types handled correctly`);
+  console.info(`✅ NULL handling successful`);
+  console.info(`   Explicit NULL values preserved`);
+  console.info(`   Mixed data types handled correctly`);
 
   // Test 4: Bulk insert
-  console.log("\n📦 Test 4: Bulk Insert with CRC32");
-  console.log("-".repeat(30));
+  console.info("\n📦 Test 4: Bulk Insert with CRC32");
+  console.info("-".repeat(30));
 
   const bulkData = Array(5)
     .fill(null)
@@ -147,43 +147,43 @@ async function demonstrateCRC32SQLIntegration() {
     }
   );
 
-  console.log(`✅ Bulk insert completed`);
-  console.log(`   Records: ${bulkResults.length}`);
+  console.info(`✅ Bulk insert completed`);
+  console.info(`   Records: ${bulkResults.length}`);
 
   const avgBulkThroughput =
     bulkResults.reduce((sum, r) => sum + (r.throughput || 0), 0) /
     bulkResults.length;
-  console.log(`   Avg throughput: ${avgBulkThroughput.toFixed(2)} MB/s`);
+  console.info(`   Avg throughput: ${avgBulkThroughput.toFixed(2)} MB/s`);
 
   // Test 5: Analytics queries
-  console.log("\n📈 Test 5: Analytics Queries");
-  console.log("-".repeat(30));
+  console.info("\n📈 Test 5: Analytics Queries");
+  console.info("-".repeat(30));
 
-  console.log("🔍 Performance trends...");
+  console.info("🔍 Performance trends...");
   const trends = await crc32Analytics.performanceTrends(mockSQL.sql as any, 7);
-  console.log(`   ✅ Retrieved ${trends.length} trend points`);
+  console.info(`   ✅ Retrieved ${trends.length} trend points`);
 
-  console.log("🔍 Integrity summary...");
+  console.info("🔍 Integrity summary...");
   const integrity = await crc32Analytics.integritySummary(mockSQL.sql as any);
-  console.log(`   ✅ Retrieved ${integrity.length} entity summaries`);
+  console.info(`   ✅ Retrieved ${integrity.length} entity summaries`);
 
-  console.log("🔍 Corruption detection...");
+  console.info("🔍 Corruption detection...");
   const corruption = await crc32Analytics.corruptionDetection(
     mockSQL.sql as any,
     0.95
   );
-  console.log(`   ✅ Found ${corruption.length} corruption alerts`);
+  console.info(`   ✅ Found ${corruption.length} corruption alerts`);
 
-  console.log("🔍 Hardware metrics...");
+  console.info("🔍 Hardware metrics...");
   const hardware = await crc32Analytics.hardwareMetrics(
     mockSQL.sql as any,
     "24h"
   );
-  console.log(`   ✅ Retrieved ${hardware.length} hardware metric points`);
+  console.info(`   ✅ Retrieved ${hardware.length} hardware metric points`);
 
   // Summary
-  console.log("\n📊 Integration Summary");
-  console.log("=".repeat(50));
+  console.info("\n📊 Integration Summary");
+  console.info("=".repeat(50));
 
   const allResults = [result1, result2, result3, ...bulkResults];
   const totalThroughput = allResults.reduce(
@@ -194,31 +194,31 @@ async function demonstrateCRC32SQLIntegration() {
     allResults.reduce((sum, r) => sum + (r.duration || 0), 0) /
     allResults.length;
 
-  console.log(`✅ All tests passed successfully`);
-  console.log(`📈 Total operations: ${allResults.length}`);
-  console.log(`🚀 Total throughput: ${totalThroughput.toFixed(2)} MB/s`);
-  console.log(`⏱️  Average duration: ${avgDuration.toFixed(2)}ms`);
-  console.log(`🔒 CRC32 validation: 100%`);
-  console.log(`🏗️  Database defaults: Preserved`);
-  console.log(`📝 Audit trail: Complete`);
-  console.log(`📊 Analytics: Functional`);
+  console.info(`✅ All tests passed successfully`);
+  console.info(`📈 Total operations: ${allResults.length}`);
+  console.info(`🚀 Total throughput: ${totalThroughput.toFixed(2)} MB/s`);
+  console.info(`⏱️  Average duration: ${avgDuration.toFixed(2)}ms`);
+  console.info(`🔒 CRC32 validation: 100%`);
+  console.info(`🏗️  Database defaults: Preserved`);
+  console.info(`📝 Audit trail: Complete`);
+  console.info(`📊 Analytics: Functional`);
 
-  console.log("\n🎯 Key Features Demonstrated:");
-  console.log("  ✅ CRC32 computation and validation");
-  console.log("  ✅ Undefined value handling (database defaults)");
-  console.log("  ✅ Explicit NULL value handling");
-  console.log("  ✅ Bulk insert with batch processing");
-  console.log("  ✅ Audit trail creation");
-  console.log("  ✅ Performance analytics");
-  console.log("  ✅ Error detection and reporting");
-  console.log("  ✅ Hardware utilization tracking");
+  console.info("\n🎯 Key Features Demonstrated:");
+  console.info("  ✅ CRC32 computation and validation");
+  console.info("  ✅ Undefined value handling (database defaults)");
+  console.info("  ✅ Explicit NULL value handling");
+  console.info("  ✅ Bulk insert with batch processing");
+  console.info("  ✅ Audit trail creation");
+  console.info("  ✅ Performance analytics");
+  console.info("  ✅ Error detection and reporting");
+  console.info("  ✅ Hardware utilization tracking");
 
-  console.log("\n🚀 Ready for production deployment!");
+  console.info("\n🚀 Ready for production deployment!");
 }
 
 if (import.meta.main) {
   demonstrateCRC32SQLIntegration()
-    .then(() => console.log("\n✅ CRC32 SQL integration demo completed"))
+    .then(() => console.info("\n✅ CRC32 SQL integration demo completed"))
     .catch((error) => {
       console.error("❌ Demo failed:", error);
       process.exit(1);

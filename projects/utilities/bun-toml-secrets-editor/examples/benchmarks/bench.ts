@@ -65,7 +65,7 @@ async function benchmarkAsync(
 	return { name, time, iterations, opsPerSecond };
 }
 
-console.log(`
+console.info(`
 ╔══════════════════════════════════════════════════════════╗
 ║   🚀 Performance Benchmark: Matrix Generation            ║
 ║   Testing: Hoisting, Response Buffering, DNS Preconnect ║
@@ -81,7 +81,7 @@ Configuration:
 // Benchmark 1: Matrix Generation (Standard vs Optimized)
 // ============================================================================
 
-console.log("\n📊 Benchmark 1: Matrix Generation\n");
+console.info("\n📊 Benchmark 1: Matrix Generation\n");
 
 const results: BenchmarkResult[] = [];
 
@@ -119,7 +119,7 @@ results.push(
 // Benchmark 2: HTTP Response Generation
 // ============================================================================
 
-console.log("\n📊 Benchmark 2: HTTP Response Generation\n");
+console.info("\n📊 Benchmark 2: HTTP Response Generation\n");
 
 results.push(
 	benchmark(
@@ -158,7 +158,7 @@ results.push(
 // Benchmark 3: Memory Allocation Patterns
 // ============================================================================
 
-console.log("\n📊 Benchmark 3: Memory Allocation\n");
+console.info("\n📊 Benchmark 3: Memory Allocation\n");
 
 const standardMemory: number[] = [];
 const optimizedMemory: number[] = [];
@@ -201,7 +201,7 @@ results.push(
 // Benchmark 4: DNS Preconnect Impact
 // ============================================================================
 
-console.log("\n📊 Benchmark 4: DNS Preconnect Simulation\n");
+console.info("\n📊 Benchmark 4: DNS Preconnect Simulation\n");
 
 const { DNSPreconnectManager, fetchWithPreconnect } = await import(
 	"./50-col-matrix"
@@ -244,7 +244,7 @@ results.push(
 // Benchmark 5: Throughput Test (Requests per Second)
 // ============================================================================
 
-console.log("\n📊 Benchmark 5: Throughput (Requests/Second)\n");
+console.info("\n📊 Benchmark 5: Throughput (Requests/Second)\n");
 
 bench(
 	"Standard Throughput",
@@ -280,17 +280,17 @@ bench(
 // Display Results
 // ============================================================================
 
-console.log("\n\n╔══════════════════════════════════════════════════════════╗");
-console.log("║   📈 Benchmark Results                                 ║");
-console.log("╚══════════════════════════════════════════════════════════╝\n");
+console.info("\n\n╔══════════════════════════════════════════════════════════╗");
+console.info("║   📈 Benchmark Results                                 ║");
+console.info("╚══════════════════════════════════════════════════════════╝\n");
 
 // Display all results
 results.forEach((result) => {
 	const opsPerSec = result.opsPerSecond.toFixed(0);
 	const timeMs = result.time.toFixed(3);
-	console.log(`${result.name}:`);
-	console.log(`  Time: ${timeMs}ms (${result.iterations} iterations)`);
-	console.log(`  Throughput: ${opsPerSec} ops/sec\n`);
+	console.info(`${result.name}:`);
+	console.info(`  Time: ${timeMs}ms (${result.iterations} iterations)`);
+	console.info(`  Throughput: ${opsPerSec} ops/sec\n`);
 });
 
 // Calculate improvements
@@ -303,9 +303,9 @@ const bufferedTime =
 		(r) => r.name.includes("Buffered Response") && !r.name.includes("HTTP"),
 	)?.time || 0;
 
-console.log("╔══════════════════════════════════════════════════════════╗");
-console.log("║   📊 Performance Improvements                            ║");
-console.log("╚══════════════════════════════════════════════════════════╝\n");
+console.info("╔══════════════════════════════════════════════════════════╗");
+console.info("║   📊 Performance Improvements                            ║");
+console.info("╚══════════════════════════════════════════════════════════╝\n");
 
 if (standardTime > 0 && optimizedTime > 0) {
 	const hoistingImprovement = (
@@ -313,11 +313,11 @@ if (standardTime > 0 && optimizedTime > 0) {
 		100
 	).toFixed(1);
 	const speedup = (standardTime / optimizedTime).toFixed(2);
-	console.log(
+	console.info(
 		`✅ Hoisting Optimization: ${hoistingImprovement}% faster (${speedup}x speedup)`,
 	);
-	console.log(`   Standard: ${standardTime.toFixed(3)}ms`);
-	console.log(`   Optimized: ${optimizedTime.toFixed(3)}ms\n`);
+	console.info(`   Standard: ${standardTime.toFixed(3)}ms`);
+	console.info(`   Optimized: ${optimizedTime.toFixed(3)}ms\n`);
 }
 
 if (standardTime > 0 && bufferedTime > 0) {
@@ -326,11 +326,11 @@ if (standardTime > 0 && bufferedTime > 0) {
 		100
 	).toFixed(1);
 	const speedup = (standardTime / bufferedTime).toFixed(2);
-	console.log(
+	console.info(
 		`✅ Response Buffering: ${bufferingImprovement}% faster (${speedup}x speedup)`,
 	);
-	console.log(`   Standard: ${standardTime.toFixed(3)}ms`);
-	console.log(`   Buffered: ${bufferedTime.toFixed(3)}ms\n`);
+	console.info(`   Standard: ${standardTime.toFixed(3)}ms`);
+	console.info(`   Buffered: ${bufferedTime.toFixed(3)}ms\n`);
 }
 
 // Memory comparison
@@ -365,20 +365,20 @@ if (
 			? bufferedMemory.reduce((a, b) => a + b, 0) / bufferedMemory.length
 			: 0;
 
-	console.log("💾 Memory Usage:");
+	console.info("💾 Memory Usage:");
 	if (avgStandardMem > 0)
-		console.log(`   Standard: ${(avgStandardMem / 1024).toFixed(2)} KB`);
+		console.info(`   Standard: ${(avgStandardMem / 1024).toFixed(2)} KB`);
 	if (avgOptimizedMem > 0)
-		console.log(`   Optimized: ${(avgOptimizedMem / 1024).toFixed(2)} KB`);
+		console.info(`   Optimized: ${(avgOptimizedMem / 1024).toFixed(2)} KB`);
 	if (avgBufferedMem > 0)
-		console.log(`   Buffered: ${(avgBufferedMem / 1024).toFixed(2)} KB`);
+		console.info(`   Buffered: ${(avgBufferedMem / 1024).toFixed(2)} KB`);
 
 	if (avgStandardMem > 0 && avgOptimizedMem > 0) {
 		const memReduction = (
 			((avgStandardMem - avgOptimizedMem) / avgStandardMem) *
 			100
 		).toFixed(1);
-		console.log(`   Memory Reduction: ${memReduction}%\n`);
+		console.info(`   Memory Reduction: ${memReduction}%\n`);
 	}
 }
 
@@ -394,15 +394,15 @@ if (coldConnTime > 0 && warmConnTime > 0) {
 		100
 	).toFixed(1);
 	const speedup = (coldConnTime / warmConnTime).toFixed(2);
-	console.log(
+	console.info(
 		`✅ DNS Preconnect: ${dnsImprovement}% faster (${speedup}x speedup)`,
 	);
-	console.log(`   Cold Connection: ${coldConnTime.toFixed(3)}ms`);
-	console.log(`   Warm Connection: ${warmConnTime.toFixed(3)}ms\n`);
+	console.info(`   Cold Connection: ${coldConnTime.toFixed(3)}ms`);
+	console.info(`   Warm Connection: ${warmConnTime.toFixed(3)}ms\n`);
 }
 
-console.log("✅ Benchmark complete!\n");
-console.log("💡 Expected Production Results:");
-console.log("   • Hoisting: 6-8x faster execution");
-console.log("   • Response Buffering: 2-3x faster, 70% less GC");
-console.log("   • DNS Preconnect: 30x faster (150ms → 5ms)\n");
+console.info("✅ Benchmark complete!\n");
+console.info("💡 Expected Production Results:");
+console.info("   • Hoisting: 6-8x faster execution");
+console.info("   • Response Buffering: 2-3x faster, 70% less GC");
+console.info("   • DNS Preconnect: 30x faster (150ms → 5ms)\n");

@@ -78,11 +78,11 @@ class DevFlow {
 
   private async findPattern(options: FlowOptions): Promise<void> {
     if (!options.pattern) {
-      console.log('❌ Pattern required. Usage: dev-flow find "pattern"');
+      console.info('❌ Pattern required. Usage: dev-flow find "pattern"');
       return;
     }
 
-    console.log(`🔍 Searching for: ${options.pattern}\n`);
+    console.info(`🔍 Searching for: ${options.pattern}\n`);
 
     try {
       const pattern = new RegExp(options.pattern, 'i'); // Smart case by default
@@ -91,12 +91,12 @@ class DevFlow {
       for (const dir of searchDirs) {
         const results = await this.searchInDirectory(dir, pattern, options);
         if (results.length > 0) {
-          console.log(`\n📁 ${dir}:`);
+          console.info(`\n📁 ${dir}:`);
           this.displaySearchResults(results, options.context);
         }
       }
     } catch (error) {
-      console.log(`❌ Invalid regex pattern: ${options.pattern}`);
+      console.info(`❌ Invalid regex pattern: ${options.pattern}`);
     }
   }
 
@@ -171,14 +171,14 @@ class DevFlow {
     }
 
     for (const [file, fileResults] of grouped) {
-      console.log(`\n🔸 ${file}:`);
+      console.info(`\n🔸 ${file}:`);
       for (const result of fileResults) {
-        console.log(`  ${result.line}:  ${result.content}`);
+        console.info(`  ${result.line}:  ${result.content}`);
         if (contextLines && result.context) {
           result.context.forEach((contextLine, i) => {
             const lineNum = result.line - contextLines + i;
             if (lineNum !== result.line) {
-              console.log(`  ${lineNum}:  ${contextLine}`);
+              console.info(`  ${lineNum}:  ${contextLine}`);
             }
           });
         }
@@ -189,12 +189,12 @@ class DevFlow {
   private async searchTags(options: FlowOptions): Promise<void> {
     const tag = options.tag || options.pattern;
     if (!tag) {
-      console.log('Available tags:');
+      console.info('Available tags:');
       await this.showAvailableTags();
       return;
     }
 
-    console.log(`🏷️  Searching for tag: ${tag}\n`);
+    console.info(`🏷️  Searching for tag: ${tag}\n`);
 
     // Search for common tag patterns using native search
     const patterns = [
@@ -214,18 +214,18 @@ class DevFlow {
         for (const dir of searchDirs) {
           const results = await this.searchInDirectory(dir, pattern, options);
           if (results.length > 0) {
-            console.log(`\n📋 Pattern "${patternStr}" in ${dir}:`);
+            console.info(`\n📋 Pattern "${patternStr}" in ${dir}:`);
             this.displaySearchResults(results);
           }
         }
       } catch (error) {
-        console.log(`❌ Invalid pattern: ${patternStr}`);
+        console.info(`❌ Invalid pattern: ${patternStr}`);
       }
     }
   }
 
   private async findApiEndpoints(): Promise<void> {
-    console.log('🌐 Finding API endpoints...\n');
+    console.info('🌐 Finding API endpoints...\n');
 
     const patterns = [
       'app\\.(get|post|put|delete|patch)',
@@ -245,17 +245,17 @@ class DevFlow {
         });
 
         if (results.length > 0) {
-          console.log(`\n🔍 Pattern "${patternStr}":`);
+          console.info(`\n🔍 Pattern "${patternStr}":`);
           this.displaySearchResults(results, 2);
         }
       } catch (error) {
-        console.log(`❌ Invalid pattern: ${patternStr}`);
+        console.info(`❌ Invalid pattern: ${patternStr}`);
       }
     }
   }
 
   private async findTests(options: FlowOptions): Promise<void> {
-    console.log('🧪 Finding tests...\n');
+    console.info('🧪 Finding tests...\n');
 
     if (options.pattern) {
       // Search for pattern in test files
@@ -274,14 +274,14 @@ class DevFlow {
         if (await file.exists()) {
           const content = await file.text();
           if (pattern.test(content)) {
-            console.log(`🔸 ${filePath}`);
+            console.info(`🔸 ${filePath}`);
             foundResults = true;
           }
         }
       }
 
       if (!foundResults) {
-        console.log(`No test files found matching pattern: ${options.pattern}`);
+        console.info(`No test files found matching pattern: ${options.pattern}`);
       }
     } else {
       // 🚀 BUN 1.1.X OPTIMIZATION: Enhanced fs.glob for listing all test files
@@ -293,18 +293,18 @@ class DevFlow {
       );
 
       if (files.length > 0) {
-        console.log('Test files found:');
+        console.info('Test files found:');
         for (const file of files.sort()) {
-          console.log(`🔸 ${file}`);
+          console.info(`🔸 ${file}`);
         }
       } else {
-        console.log('No test files found.');
+        console.info('No test files found.');
       }
     }
   }
 
   private async findConfig(): Promise<void> {
-    console.log('⚙️  Configuration files...\n');
+    console.info('⚙️  Configuration files...\n');
 
     const configPatterns = [
       'package.json',
@@ -325,14 +325,14 @@ class DevFlow {
       );
       for (const file of files) {
         if (await Bun.file(file).exists()) {
-          console.log(`⚙️  ${file}`);
+          console.info(`⚙️  ${file}`);
         }
       }
     }
   }
 
   private async showPatterns(): Promise<void> {
-    console.log('🕸️  Pattern Weaver System...\n');
+    console.info('🕸️  Pattern Weaver System...\n');
 
     // 🚀 BUN 1.1.X OPTIMIZATION: Enhanced fs.glob for pattern files
     const patternFiles = await Array.fromAsync(
@@ -347,14 +347,14 @@ class DevFlow {
         const content = await file.text();
         const lines = content.split('\n');
 
-        console.log(`\n🔸 ${filePath}:`);
+        console.info(`\n🔸 ${filePath}:`);
         lines.forEach((line, index) => {
           if (line.match(/readonly patternTypes|PATTERN_|pattern.*:/)) {
-            console.log(`  ${index + 1}: ${line.trim()}`);
+            console.info(`  ${index + 1}: ${line.trim()}`);
             // Show next few lines for context
             for (let i = 1; i <= 3; i++) {
               if (index + i < lines.length) {
-                console.log(`  ${index + i + 1}: ${lines[index + i].trim()}`);
+                console.info(`  ${index + i + 1}: ${lines[index + i].trim()}`);
               }
             }
           }
@@ -364,26 +364,26 @@ class DevFlow {
   }
 
   private async workspaceInfo(): Promise<void> {
-    console.log('🏗️  Workspace Information...\n');
+    console.info('🏗️  Workspace Information...\n');
 
     // Check if workspace-config.json exists using Bun.file
     const workspaceConfigFile = Bun.file('workspace-config.json');
     if (await workspaceConfigFile.exists()) {
       try {
         const config = await workspaceConfigFile.json();
-        console.log('📋 Workspace Configuration:');
+        console.info('📋 Workspace Configuration:');
         if (config.workspaces) {
           const workspaceNames = Object.keys(config.workspaces);
-          console.log(`   Workspaces (${workspaceNames.length}):`);
-          workspaceNames.forEach(name => console.log(`   • ${name}`));
+          console.info(`   Workspaces (${workspaceNames.length}):`);
+          workspaceNames.forEach(name => console.info(`   • ${name}`));
         }
       } catch (error) {
-        console.log('❌ Invalid workspace-config.json format');
+        console.info('❌ Invalid workspace-config.json format');
       }
     }
 
     // Show workspace orchestrator commands by searching scripts
-    console.log('\n🚀 Workspace Commands:');
+    console.info('\n🚀 Workspace Commands:');
     const pattern = new RegExp('case.*workspace|workspace.*command', 'i');
     const results = await this.searchInDirectory('scripts/', pattern, {
       command: 'workspace',
@@ -393,39 +393,39 @@ class DevFlow {
     if (results.length > 0) {
       this.displaySearchResults(results, 2);
     } else {
-      console.log('  No workspace commands found in scripts/');
+      console.info('  No workspace commands found in scripts/');
     }
   }
 
   private async quickHealth(): Promise<void> {
-    console.log('🏥 Quick Health Check...\n');
+    console.info('🏥 Quick Health Check...\n');
 
     // Check Bun version using Bun.spawn
-    console.log('📊 Bun Version:');
+    console.info('📊 Bun Version:');
     try {
       const versionProc = Bun.spawn(['bun', '--version'], { stdout: 'pipe' });
       const version = await versionProc.text();
-      console.log(`   ✅ Bun ${version.trim()}`);
+      console.info(`   ✅ Bun ${version.trim()}`);
     } catch {
-      console.log('   ❌ Bun not available');
+      console.info('   ❌ Bun not available');
     }
 
     // Check dependencies using package.json
-    console.log('\n📊 Dependencies:');
+    console.info('\n📊 Dependencies:');
     try {
       const packageFile = Bun.file('package.json');
       if (await packageFile.exists()) {
         const pkg = await packageFile.json();
         const depCount = Object.keys(pkg.dependencies || {}).length;
         const devDepCount = Object.keys(pkg.devDependencies || {}).length;
-        console.log(`   ✅ ${depCount} production, ${devDepCount} dev dependencies`);
+        console.info(`   ✅ ${depCount} production, ${devDepCount} dev dependencies`);
       }
     } catch {
-      console.log('   ❌ Cannot read package.json');
+      console.info('   ❌ Cannot read package.json');
     }
 
     // Check build status
-    console.log('\n📊 Build Status:');
+    console.info('\n📊 Build Status:');
     // 🚀 BUN 1.1.X OPTIMIZATION: Enhanced fs.glob for build status
     const distFiles = await Array.fromAsync(
       fs.glob('dist/*', {
@@ -433,14 +433,14 @@ class DevFlow {
       })
     );
     if (distFiles.length > 0) {
-      console.log(`   ✅ ${distFiles.length} files in dist/`);
-      distFiles.slice(0, 3).forEach(file => console.log(`      • ${file}`));
+      console.info(`   ✅ ${distFiles.length} files in dist/`);
+      distFiles.slice(0, 3).forEach(file => console.info(`      • ${file}`));
     } else {
-      console.log('   ⚠️  No build output found in dist/');
+      console.info('   ⚠️  No build output found in dist/');
     }
 
     // Check database files
-    console.log('\n📊 Database Connection:');
+    console.info('\n📊 Database Connection:');
     // 🚀 BUN 1.1.X OPTIMIZATION: Enhanced fs.glob for database files
     const dbFiles = await Array.fromAsync(
       fs.glob('*.db', {
@@ -448,15 +448,15 @@ class DevFlow {
       })
     );
     if (dbFiles.length > 0) {
-      console.log(`   ✅ ${dbFiles.length} database files found`);
-      dbFiles.forEach(file => console.log(`      • ${file}`));
+      console.info(`   ✅ ${dbFiles.length} database files found`);
+      dbFiles.forEach(file => console.info(`      • ${file}`));
     } else {
-      console.log('   ⚠️  No .db files found');
+      console.info('   ⚠️  No .db files found');
     }
   }
 
   private async devSetup(): Promise<void> {
-    console.log('🛠️  Development Setup...\n');
+    console.info('🛠️  Development Setup...\n');
 
     const setupSteps = [
       { name: 'Install Dependencies', cmd: ['bun', 'install', '--frozen-lockfile'] },
@@ -466,7 +466,7 @@ class DevFlow {
     ];
 
     for (const step of setupSteps) {
-      console.log(`\n⚡ ${step.name}...`);
+      console.info(`\n⚡ ${step.name}...`);
       try {
         // Use Bun.spawn for better performance
         const proc = Bun.spawn(step.cmd, {
@@ -478,17 +478,17 @@ class DevFlow {
         const success = proc.exitCode === 0;
 
         if (success) {
-          console.log(`✅ ${step.name} completed`);
+          console.info(`✅ ${step.name} completed`);
           if (output.trim()) {
-            console.log(`   ${output.trim().split('\n')[0]}`); // Show first line of output
+            console.info(`   ${output.trim().split('\n')[0]}`); // Show first line of output
           }
         } else {
-          console.log(`❌ ${step.name} failed`);
-          console.log(`   Try manually: ${step.cmd.join(' ')}`);
+          console.info(`❌ ${step.name} failed`);
+          console.info(`   Try manually: ${step.cmd.join(' ')}`);
         }
       } catch (error) {
-        console.log(`❌ ${step.name} failed`);
-        console.log(`   Command: ${step.cmd.join(' ')}`);
+        console.info(`❌ ${step.name} failed`);
+        console.info(`   Command: ${step.cmd.join(' ')}`);
       }
     }
   }
@@ -511,12 +511,12 @@ class DevFlow {
       'DEPLOY',
     ];
 
-    console.log('Common tags to search:');
+    console.info('Common tags to search:');
     for (const tag of commonTags) {
-      console.log(`  ${tag.toLowerCase()}`);
+      console.info(`  ${tag.toLowerCase()}`);
     }
 
-    console.log('\nUsage: dev-flow tags <tag-name>');
+    console.info('\nUsage: dev-flow tags <tag-name>');
   }
 
   private parseArgs(args: string[]): FlowOptions {
@@ -534,7 +534,7 @@ class DevFlow {
   }
 
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🚀 Fire22 Developer Flow Script - Bun Native
 
 USAGE:

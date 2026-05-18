@@ -62,8 +62,8 @@ class TestLogger {
       error: '\x1b[31m', // Red
       debug: '\x1b[36m', // Cyan
     };
-    console.log(`${colors[level]}[${level.toUpperCase()}]\x1b[0m [${test}] ${message}`);
-    if (data) console.log('  Data:', JSON.stringify(data, null, 2));
+    console.info(`${colors[level]}[${level.toUpperCase()}]\x1b[0m [${test}] ${message}`);
+    if (data) console.info('  Data:', JSON.stringify(data, null, 2));
   }
 
   info(test: string, message: string, data?: any) {
@@ -513,7 +513,7 @@ Local backup: ./logs/test-${this.testRunId}.json
 ═══════════════════════════════════════════════════════════════════════════════
 `;
 
-    console.log(report);
+    console.info(report);
 
     // Save report locally
     Bun.write(`./logs/report-${this.testRunId}.txt`, report);
@@ -522,7 +522,7 @@ Local backup: ./logs/test-${this.testRunId}.json
 
 // ==================== MAIN ====================
 async function main() {
-  console.log('🧪 Starting Barbershop Integration Tests...\n');
+  console.info('🧪 Starting Barbershop Integration Tests...\n');
 
   // Ensure logs directory exists
   try {

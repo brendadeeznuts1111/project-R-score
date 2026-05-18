@@ -61,7 +61,7 @@ const getNumArg = (flag: string): number | null => {
 
 // --help / -h flag
 if (args.has("--help") || args.has("-h")) {
-  console.log(`
+  console.info(`
 \x1b[1mKeyboard Shortcuts Help System\x1b[0m - Enterprise Dashboard v3.0
 
 \x1b[1mUSAGE:\x1b[0m
@@ -438,12 +438,12 @@ function validateShortcuts(shortcutsList: Shortcut[]): ValidationReport {
 // ──────────────────────────────────────────────────────────────
 
 function renderHeader(text: string, emoji: string = "") {
-  console.log(`\n${c.bold}${c.cyan}${emoji}  ${text}${c.reset}\n`);
+  console.info(`\n${c.bold}${c.cyan}${emoji}  ${text}${c.reset}\n`);
 }
 
 function renderCategoryHeader(cat: string, count: number) {
   const color = categoryColors[cat] || c.dim;
-  console.log(`${color}${c.bold}\u250F\u2501\u2501\u2501 ${cat} (${count}) \u2501\u2501\u2501${c.reset}`);
+  console.info(`${color}${c.bold}\u250F\u2501\u2501\u2501 ${cat} (${count}) \u2501\u2501\u2501${c.reset}`);
 }
 
 function renderTable(shortcutsList: Shortcut[], compact: boolean = false): void {
@@ -455,7 +455,7 @@ function renderTable(shortcutsList: Shortcut[], compact: boolean = false): void 
 
   if (compact) {
     // Compact mode: single table with all shortcuts
-    console.log(
+    console.info(
       Bun.inspect.table(
         filtered.map((s) => ({
           "#": filtered.indexOf(s) + 1,
@@ -472,7 +472,7 @@ function renderTable(shortcutsList: Shortcut[], compact: boolean = false): void 
       const catShortcuts = filtered.filter((s) => s.Category === cat);
       renderCategoryHeader(cat, catShortcuts.length);
 
-      console.log(
+      console.info(
         Bun.inspect.table(
           catShortcuts.map((s) => ({
             Key: s.Key,
@@ -491,7 +491,7 @@ function renderTable(shortcutsList: Shortcut[], compact: boolean = false): void 
     ? ` (filtered from ${totalAll})`
     : "";
 
-  console.log(
+  console.info(
     `${c.dim}${totalFiltered} shortcuts${filterInfo} \u2022 Press ${c.bold}?${c.reset}${c.dim} in dashboard to view modal${c.reset}\n`
   );
 }
@@ -510,7 +510,7 @@ function renderJSON(shortcutsList: Shortcut[]): void {
       categories: categories.length,
     },
   };
-  console.log(JSON.stringify(exportData, null, 2));
+  console.info(JSON.stringify(exportData, null, 2));
 }
 
 function renderMarkdown(shortcutsList: Shortcut[]): void {
@@ -518,34 +518,34 @@ function renderMarkdown(shortcutsList: Shortcut[]): void {
   const filtered = shortcutsList.filter((s) => CATEGORY_FILTER[s.Category]);
   const categories = [...new Set(filtered.map((s) => s.Category))];
 
-  console.log(`# Keyboard Shortcuts Reference\n`);
-  console.log(`> Auto-generated from \`shortcuts.toml\` using \`bun scripts/shortcuts-help.ts\`\n`);
-  console.log(`| Property | Value |`);
-  console.log(`|----------|-------|`);
-  console.log(`| Generated | ${new Date().toISOString()} |`);
-  console.log(`| Platform | ${PLATFORM} |`);
-  console.log(`| Total | ${filtered.length} shortcuts |`);
-  console.log(`| Categories | ${categories.length} |`);
-  console.log(`| Version | 3.0.0 |`);
-  console.log();
+  console.info(`# Keyboard Shortcuts Reference\n`);
+  console.info(`> Auto-generated from \`shortcuts.toml\` using \`bun scripts/shortcuts-help.ts\`\n`);
+  console.info(`| Property | Value |`);
+  console.info(`|----------|-------|`);
+  console.info(`| Generated | ${new Date().toISOString()} |`);
+  console.info(`| Platform | ${PLATFORM} |`);
+  console.info(`| Total | ${filtered.length} shortcuts |`);
+  console.info(`| Categories | ${categories.length} |`);
+  console.info(`| Version | 3.0.0 |`);
+  console.info();
 
   for (const cat of categories) {
     const catShortcuts = filtered.filter((s) => s.Category === cat);
-    console.log(`## ${cat} (${catShortcuts.length})\n`);
-    console.log(`| Key | Description |`);
-    console.log(`|-----|-------------|`);
+    console.info(`## ${cat} (${catShortcuts.length})\n`);
+    console.info(`| Key | Description |`);
+    console.info(`|-----|-------------|`);
 
     for (const s of catShortcuts) {
       // Escape pipe characters in markdown
       const key = s.Key.replace(/\|/g, "\\|");
       const desc = s.Description.replace(/\|/g, "\\|");
-      console.log(`| \`${key}\` | ${desc} |`);
+      console.info(`| \`${key}\` | ${desc} |`);
     }
-    console.log();
+    console.info();
   }
 
-  console.log(`---\n`);
-  console.log(`*Press \`?\` in the dashboard to view the interactive shortcuts modal.*`);
+  console.info(`---\n`);
+  console.info(`*Press \`?\` in the dashboard to view the interactive shortcuts modal.*`);
 }
 
 function renderHTML(shortcutsList: Shortcut[]): void {
@@ -553,7 +553,7 @@ function renderHTML(shortcutsList: Shortcut[]): void {
   const filtered = shortcutsList.filter((s) => CATEGORY_FILTER[s.Category]);
   const categories = [...new Set(filtered.map((s) => s.Category))];
 
-  console.log(`<!DOCTYPE html>
+  console.info(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -662,32 +662,32 @@ function renderHTML(shortcutsList: Shortcut[]): void {
     const catShortcuts = filtered.filter((s) => s.Category === cat);
     const color = catColors[cat] || "#94a3b8";
 
-    console.log(`  <div class="category">`);
-    console.log(
+    console.info(`  <div class="category">`);
+    console.info(
       `    <h2 style="color: ${color}">${cat} <span>(${catShortcuts.length})</span></h2>`
     );
-    console.log(`    <table>`);
-    console.log(`      <thead><tr><th>Key</th><th>Description</th></tr></thead>`);
-    console.log(`      <tbody>`);
+    console.info(`    <table>`);
+    console.info(`      <thead><tr><th>Key</th><th>Description</th></tr></thead>`);
+    console.info(`      <tbody>`);
 
     for (const s of catShortcuts) {
       const escapedKey = s.Key.replace(/</g, "&lt;").replace(/>/g, "&gt;");
       const escapedDesc = s.Description.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-      console.log(
+      console.info(
         `        <tr><td><span class="key">${escapedKey}</span></td><td>${escapedDesc}</td></tr>`
       );
     }
 
-    console.log(`      </tbody>`);
-    console.log(`    </table>`);
-    console.log(`  </div>`);
+    console.info(`      </tbody>`);
+    console.info(`    </table>`);
+    console.info(`  </div>`);
   }
 
-  console.log(`  <div class="footer">`);
-  console.log(`    Press <span class="key">?</span> in the dashboard to view the interactive modal`);
-  console.log(`  </div>`);
-  console.log(`</body>`);
-  console.log(`</html>`);
+  console.info(`  <div class="footer">`);
+  console.info(`    Press <span class="key">?</span> in the dashboard to view the interactive modal`);
+  console.info(`  </div>`);
+  console.info(`</body>`);
+  console.info(`</html>`);
 }
 
 function renderValidation(report: ValidationReport): void {
@@ -697,7 +697,7 @@ function renderValidation(report: ValidationReport): void {
     ? `${c.green}\u2713 Valid${c.reset}`
     : `${c.red}\u2717 Invalid${c.reset}`;
 
-  console.log(
+  console.info(
     Bun.inspect.table(
       [
         {
@@ -730,30 +730,30 @@ function renderValidation(report: ValidationReport): void {
     )
   );
 
-  console.log(`\n${c.bold}Overall: ${status}${c.reset}\n`);
+  console.info(`\n${c.bold}Overall: ${status}${c.reset}\n`);
 
   if (report.duplicates.length > 0) {
-    console.log(`${c.yellow}\u26A0  Duplicates:${c.reset}`);
+    console.info(`${c.yellow}\u26A0  Duplicates:${c.reset}`);
     for (const d of report.duplicates) {
-      console.log(`   - ${d}`);
+      console.info(`   - ${d}`);
     }
-    console.log();
+    console.info();
   }
 
   if (report.invalidKeys.length > 0) {
-    console.log(`${c.red}\u2717 Invalid Keys:${c.reset}`);
+    console.info(`${c.red}\u2717 Invalid Keys:${c.reset}`);
     for (const k of report.invalidKeys) {
-      console.log(`   - ${k}`);
+      console.info(`   - ${k}`);
     }
-    console.log();
+    console.info();
   }
 
   if (report.missingActions.length > 0) {
-    console.log(`${c.red}\u2717 Missing Actions:${c.reset}`);
+    console.info(`${c.red}\u2717 Missing Actions:${c.reset}`);
     for (const a of report.missingActions) {
-      console.log(`   - ${a}`);
+      console.info(`   - ${a}`);
     }
-    console.log();
+    console.info();
   }
 }
 
@@ -773,7 +773,7 @@ function renderCliFlags(): void {
     { Flag: "-h, --help", Description: "Show help message" },
   ];
 
-  console.log(Bun.inspect.table(cliFlags, { colors: true }));
+  console.info(Bun.inspect.table(cliFlags, { colors: true }));
 }
 
 function renderSummary(shortcutsList: Shortcut[]): void {
@@ -782,7 +782,7 @@ function renderSummary(shortcutsList: Shortcut[]): void {
 
   renderHeader("System Summary", "\uD83D\uDCCA");
 
-  console.log(
+  console.info(
     Bun.inspect.table(
       [
         {
@@ -810,53 +810,53 @@ function renderSummary(shortcutsList: Shortcut[]): void {
 }
 
 function renderUsage(): void {
-  console.log(`${c.bold}Usage:${c.reset}`);
-  console.log(`  bun scripts/shortcuts-help.ts [FLAGS] [OPTIONS]\n`);
+  console.info(`${c.bold}Usage:${c.reset}`);
+  console.info(`  bun scripts/shortcuts-help.ts [FLAGS] [OPTIONS]\n`);
 
-  console.log(`${c.bold}Category Flags:${c.reset}`);
-  console.log(`  -g, --global      Global shortcuts (6)`);
-  console.log(`  -t, --tabs        Tab navigation (8)`);
-  console.log(`  -d, --data        Data operations (6)`);
-  console.log(`  -v, --view        View controls (7)`);
-  console.log(`  -p, --projects    Project actions (7)`);
-  console.log(`  -n, --network     Network status (3)`);
-  console.log(`  -x, --dev         Developer tools (5)`);
-  console.log(`  -c, --chords      Vim chords (8)`);
-  console.log(`  -a, --all         All shortcuts (50)\n`);
+  console.info(`${c.bold}Category Flags:${c.reset}`);
+  console.info(`  -g, --global      Global shortcuts (6)`);
+  console.info(`  -t, --tabs        Tab navigation (8)`);
+  console.info(`  -d, --data        Data operations (6)`);
+  console.info(`  -v, --view        View controls (7)`);
+  console.info(`  -p, --projects    Project actions (7)`);
+  console.info(`  -n, --network     Network status (3)`);
+  console.info(`  -x, --dev         Developer tools (5)`);
+  console.info(`  -c, --chords      Vim chords (8)`);
+  console.info(`  -a, --all         All shortcuts (50)\n`);
 
-  console.log(`${c.bold}Aliases:${c.reset}`);
-  console.log(`  -nav              Navigation (global + tabs)`);
-  console.log(`  -edit             Editing (data + projects)`);
-  console.log(`  -power            Power user (dev + chords)`);
-  console.log(`  -essential        Essential (global + tabs + data + view)\n`);
+  console.info(`${c.bold}Aliases:${c.reset}`);
+  console.info(`  -nav              Navigation (global + tabs)`);
+  console.info(`  -edit             Editing (data + projects)`);
+  console.info(`  -power            Power user (dev + chords)`);
+  console.info(`  -essential        Essential (global + tabs + data + view)\n`);
 
-  console.log(`${c.bold}Options:${c.reset}`);
-  console.log(`  --format=<fmt>    Export: json, md, html`);
-  console.log(`  --validate        Validate shortcuts.toml`);
-  console.log(`  --interactive,-i  Interactive search mode`);
-  console.log(`  --os=<platform>   Force keymap: mac, win, linux`);
-  console.log(`  --compact         Single table output`);
-  console.log(`  --flags           Show CLI flags only`);
-  console.log(`  --help, -h        Show full help\n`);
+  console.info(`${c.bold}Options:${c.reset}`);
+  console.info(`  --format=<fmt>    Export: json, md, html`);
+  console.info(`  --validate        Validate shortcuts.toml`);
+  console.info(`  --interactive,-i  Interactive search mode`);
+  console.info(`  --os=<platform>   Force keymap: mac, win, linux`);
+  console.info(`  --compact         Single table output`);
+  console.info(`  --flags           Show CLI flags only`);
+  console.info(`  --help, -h        Show full help\n`);
 
-  console.log(`${c.bold}Examples:${c.reset}`);
-  console.log(`  bun scripts/shortcuts-help.ts -g -t          ${c.dim}# Global + Tabs${c.reset}`);
-  console.log(`  bun scripts/shortcuts-help.ts -nav           ${c.dim}# Navigation alias${c.reset}`);
-  console.log(`  bun scripts/shortcuts-help.ts --format=json  ${c.dim}# Export to JSON${c.reset}`);
-  console.log(`  bun scripts/shortcuts-help.ts -c --os=win    ${c.dim}# Chords with Windows keys${c.reset}\n`);
+  console.info(`${c.bold}Examples:${c.reset}`);
+  console.info(`  bun scripts/shortcuts-help.ts -g -t          ${c.dim}# Global + Tabs${c.reset}`);
+  console.info(`  bun scripts/shortcuts-help.ts -nav           ${c.dim}# Navigation alias${c.reset}`);
+  console.info(`  bun scripts/shortcuts-help.ts --format=json  ${c.dim}# Export to JSON${c.reset}`);
+  console.info(`  bun scripts/shortcuts-help.ts -c --os=win    ${c.dim}# Chords with Windows keys${c.reset}\n`);
 }
 
 async function interactiveMode(shortcutsList: Shortcut[]): Promise<void> {
   // Check if stdin is a TTY
   if (!process.stdin.isTTY) {
     console.error(`${c.red}Error: Interactive mode requires a TTY${c.reset}`);
-    console.log(`${c.dim}Use the default table view instead${c.reset}`);
+    console.info(`${c.dim}Use the default table view instead${c.reset}`);
     renderTable(shortcutsList);
     return;
   }
 
-  console.log(`${c.bold}${c.cyan}\uD83D\uDD0D Interactive Search Mode${c.reset}`);
-  console.log(`${c.dim}Type to filter shortcuts, Ctrl+C to exit${c.reset}\n`);
+  console.info(`${c.bold}${c.cyan}\uD83D\uDD0D Interactive Search Mode${c.reset}`);
+  console.info(`${c.dim}Type to filter shortcuts, Ctrl+C to exit${c.reset}\n`);
 
   // Pre-compute search text
   const searchText = shortcutsList.map(
@@ -873,28 +873,28 @@ async function interactiveMode(shortcutsList: Shortcut[]): Promise<void> {
   // Initial render
   const render = () => {
     console.clear();
-    console.log(`${c.bold}${c.cyan}Search: ${c.reset}${query}${c.dim}_${c.reset}\n`);
+    console.info(`${c.bold}${c.cyan}Search: ${c.reset}${query}${c.dim}_${c.reset}\n`);
 
     const filtered = shortcutsList.filter((_, i) =>
       query === "" ? true : searchText[i].includes(query.toLowerCase())
     );
 
     if (filtered.length === 0) {
-      console.log(`${c.red}No matches found${c.reset}`);
+      console.info(`${c.red}No matches found${c.reset}`);
     } else {
       // Group and render
       const cats = [...new Set(filtered.map((s) => s.Category))];
       for (const cat of cats) {
         const catShortcuts = filtered.filter((s) => s.Category === cat);
         renderCategoryHeader(cat, catShortcuts.length);
-        console.log(
+        console.info(
           Bun.inspect.table(
             catShortcuts.map((s) => ({ Key: s.Key, Description: s.Description })),
             { colors: true }
           )
         );
       }
-      console.log(`${c.dim}${filtered.length} matches${c.reset}`);
+      console.info(`${c.dim}${filtered.length} matches${c.reset}`);
     }
   };
 
@@ -906,7 +906,7 @@ async function interactiveMode(shortcutsList: Shortcut[]): Promise<void> {
 
     // Ctrl+C to exit
     if (char === "\u0003") {
-      console.log(`\n${c.dim}Exiting...${c.reset}`);
+      console.info(`\n${c.dim}Exiting...${c.reset}`);
       process.exit(0);
     }
 
@@ -947,7 +947,7 @@ async function main() {
     renderValidation(report);
 
     const elapsed = (Bun.nanoseconds() - startTime) / 1e6;
-    console.log(`${c.dim}Validated in ${elapsed.toFixed(2)}ms${c.reset}\n`);
+    console.info(`${c.dim}Validated in ${elapsed.toFixed(2)}ms${c.reset}\n`);
 
     if (!report.isValid) {
       process.exit(1);
@@ -972,7 +972,7 @@ async function main() {
         break;
       default:
         console.error(`${c.red}Unknown format: ${format}${c.reset}`);
-        console.log(`${c.dim}Supported: json, md, html${c.reset}`);
+        console.info(`${c.dim}Supported: json, md, html${c.reset}`);
         process.exit(1);
     }
     return;
@@ -989,8 +989,8 @@ async function main() {
   const enabledCount = Object.values(CATEGORY_FILTER).filter(Boolean).length;
   const catInfo = enabledCount === 8 ? "all" : `${enabledCount} categories`;
 
-  console.log(`\n${c.bold}${c.cyan}\u2728 Enterprise Dashboard - Help System v3.0${c.reset}`);
-  console.log(`${c.dim}Platform: ${os} | Detected: ${PLATFORM} | Showing: ${catInfo}${c.reset}`);
+  console.info(`\n${c.bold}${c.cyan}\u2728 Enterprise Dashboard - Help System v3.0${c.reset}`);
+  console.info(`${c.dim}Platform: ${os} | Detected: ${PLATFORM} | Showing: ${catInfo}${c.reset}`);
 
   const showFlags = args.has("--flags");
 
@@ -1010,7 +1010,7 @@ async function main() {
   const elapsed = (Bun.nanoseconds() - startTime) / 1e6;
   const mem = process.memoryUsage();
   const filteredCount = shortcutsList.filter((s) => CATEGORY_FILTER[s.Category]).length;
-  console.log(
+  console.info(
     `${c.dim}${filteredCount} shortcuts | Rendered in ${elapsed.toFixed(2)}ms | Memory: ${(mem.heapUsed / 1024).toFixed(0)} KB${c.reset}\n`
   );
 }

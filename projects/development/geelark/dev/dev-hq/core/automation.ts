@@ -76,7 +76,7 @@ export class AutomationService {
     options: ExecutionOptions = {}
   ): Promise<EnhancedExecutionResult | Subprocess> {
     const startTime = Date.now();
-    console.log(`▶️  Executing: ${command.join(" ")}`);
+    console.info(`▶️  Executing: ${command.join(" ")}`);
 
     try {
       // @ts-ignore - Bun is available at runtime
@@ -210,9 +210,9 @@ export class AutomationService {
           // Only kill processes that have already exited
           if (proc.exitCode !== null) {
             proc.kill();
-            console.log(`🧹 Cleaned up process: ${label}`);
+            console.info(`🧹 Cleaned up process: ${label}`);
           } else {
-            console.log(`⏸️ Keeping running process: ${label}`);
+            console.info(`⏸️ Keeping running process: ${label}`);
           }
         }
       } catch (error) {
@@ -241,10 +241,10 @@ export class AutomationService {
 
     if (signal) {
       proc.kill(signal);
-      console.log(`❌ Terminated process: ${label} with signal ${signal}`);
+      console.info(`❌ Terminated process: ${label} with signal ${signal}`);
     } else {
       proc.kill();
-      console.log(`❌ Terminated process: ${label}`);
+      console.info(`❌ Terminated process: ${label}`);
     }
 
     return true;
@@ -258,7 +258,7 @@ export class AutomationService {
     options: ExecutionOptions = {}
   ): Promise<EnhancedExecutionResult> {
     const startTime = Date.now();
-    console.log(`🌊 Executing with streams: ${command.join(" ")}`);
+    console.info(`🌊 Executing with streams: ${command.join(" ")}`);
 
     try {
       // @ts-ignore - Bun is available at runtime
@@ -375,14 +375,14 @@ export class AutomationService {
     killSignal: Signal = 'SIGTERM',
     options: ExecutionOptions = {}
   ): Promise<EnhancedExecutionResult> {
-    console.log(`⏱️ Executing with ${timeoutMs}ms timeout: ${command.join(" ")}`);
+    console.info(`⏱️ Executing with ${timeoutMs}ms timeout: ${command.join(" ")}`);
 
     const result = await this.executeCommand(label, command, {
       ...options,
       timeout: timeoutMs,
       killSignal: killSignal,
       onExit: (proc, exitCode, signalCode, error) => {
-        console.log(`🏁 Process ${label} exited: code=${exitCode}, signal=${signalCode}`);
+        console.info(`🏁 Process ${label} exited: code=${exitCode}, signal=${signalCode}`);
         if (options.onExit) {
           options.onExit(proc, exitCode, signalCode, error);
         }
@@ -398,7 +398,7 @@ export class AutomationService {
     command: string[],
     maxBuffer?: number
   ): { stdout: string; stderr: string; exitCode: number; success: boolean } {
-    console.log(`🔄 Executing sync: ${command.join(" ")}`);
+    console.info(`🔄 Executing sync: ${command.join(" ")}`);
 
     try {
       // @ts-ignore - Bun.spawnSync is available at runtime
@@ -409,7 +409,7 @@ export class AutomationService {
         maxBuffer: maxBuffer,
       });
 
-      console.log(`✅ Sync command completed: exitCode=${result.exitCode}`);
+      console.info(`✅ Sync command completed: exitCode=${result.exitCode}`);
 
       return {
         stdout: result.stdout?.toString() || "",
@@ -435,7 +435,7 @@ export class AutomationService {
     onMessage: (message: any, subprocess: Subprocess) => void,
     options: ExecutionOptions = {}
   ): Promise<Subprocess> {
-    console.log(`🌐 Executing with IPC: ${command.join(" ")}`);
+    console.info(`🌐 Executing with IPC: ${command.join(" ")}`);
 
     // @ts-ignore - Bun.spawn with IPC is available at runtime
     const proc = Bun.spawn(command, {
@@ -447,7 +447,7 @@ export class AutomationService {
       signal: options.signal,
       onExit: options.onExit,
       ipc: (message: any, subprocess: Subprocess) => {
-        console.log(`📨 IPC message received from ${label}:`, message);
+        console.info(`📨 IPC message received from ${label}:`, message);
         onMessage(message, subprocess);
       },
       serialization: options.serialization || "advanced",
@@ -466,7 +466,7 @@ export class AutomationService {
 
     try {
       proc.send(message);
-      console.log(`📤 IPC message sent to ${label}:`, message);
+      console.info(`📤 IPC message sent to ${label}:`, message);
     } catch (error) {
       throw new Error(`Failed to send IPC message to ${label}: ${error}`);
     }
@@ -481,7 +481,7 @@ export class AutomationService {
 
     try {
       proc.disconnect();
-      console.log(`🔌 IPC channel disconnected for ${label}`);
+      console.info(`🔌 IPC channel disconnected for ${label}`);
     } catch (error) {
       throw new Error(`Failed to disconnect IPC for ${label}: ${error}`);
     }
@@ -494,7 +494,7 @@ export class AutomationService {
     onMessage: (message: any, subprocess: Subprocess) => void,
     options: ExecutionOptions = {}
   ): Promise<Subprocess> {
-    console.log(`🔗 Executing Node.js IPC: ${nodeScript}`);
+    console.info(`🔗 Executing Node.js IPC: ${nodeScript}`);
 
     return this.executeCommandWithIPC(
       label,
@@ -513,7 +513,7 @@ export class AutomationService {
     command: string[],
     options: ExecutionOptions = {}
   ): Promise<Subprocess> {
-    console.log(`🔄 Executing detached: ${command.join(" ")}`);
+    console.info(`🔄 Executing detached: ${command.join(" ")}`);
 
     // @ts-ignore - Bun.spawn with detachment is available at runtime
     const proc = Bun.spawn(command, {
@@ -530,7 +530,7 @@ export class AutomationService {
 
     // Detach from parent process
     proc.unref();
-    console.log(`🚀 Detached process started with PID: ${proc.pid}`);
+    console.info(`🚀 Detached process started with PID: ${proc.pid}`);
 
     return proc;
   }
@@ -541,7 +541,7 @@ export class AutomationService {
     memoryThreshold: number = 100 * 1024 * 1024, // 100MB
     cpuThreshold: number = 1000000 // 1 second in microseconds
   ): Promise<void> {
-    console.log('📊 Starting real-time resource monitoring...');
+    console.info('📊 Starting real-time resource monitoring...');
 
     const monitor = setInterval(async () => {
       const stats = await this.getResourceStatistics();
@@ -570,7 +570,7 @@ export class AutomationService {
             console.warn(`🚨 MEMORY PRESSURE: ${label} swapped ${usage.swapCount} times`);
           }
 
-          console.log(`📈 ${label}: CPU=${usage.cpuTime.total}µs, Memory=${usage.maxRSS}B, ContextSwitches=${usage.contextSwitches.voluntary + usage.contextSwitches.involuntary}`);
+          console.info(`📈 ${label}: CPU=${usage.cpuTime.total}µs, Memory=${usage.maxRSS}B, ContextSwitches=${usage.contextSwitches.voluntary + usage.contextSwitches.involuntary}`);
         }
       }
     }, thresholdMs);
@@ -578,45 +578,45 @@ export class AutomationService {
     // Auto-stop after 30 seconds for demo
     setTimeout(() => {
       clearInterval(monitor);
-      console.log('📊 Real-time monitoring stopped');
+      console.info('📊 Real-time monitoring stopped');
     }, 30000);
   }
 
   // 🧪 Demonstrate maxBuffer behavior with detailed analysis
   demonstrateMaxBufferBehavior(): void {
-    console.log('🧪 Testing maxBuffer behavior...');
+    console.info('🧪 Testing maxBuffer behavior...');
 
     // Test 1: Small buffer with infinite output
-    console.log('\n📊 Test 1: Small buffer (50 bytes) with infinite output');
+    console.info('\n📊 Test 1: Small buffer (50 bytes) with infinite output');
     const result1 = this.executeCommandSync(
       'test-small-buffer',
       ['yes'], // Infinite output command
       50 // 50 byte limit
     );
 
-    console.log('Result after buffer overflow:');
-    console.log(`  Exit code: ${result1.exitCode}`);
-    console.log(`  Success: ${result1.success}`);
-    console.log(`  Stdout length: ${result1.stdout.length} bytes`);
-    console.log(`  Stdout content: "${result1.stdout}"`);
-    console.log(`  Stderr: "${result1.stderr}"`);
+    console.info('Result after buffer overflow:');
+    console.info(`  Exit code: ${result1.exitCode}`);
+    console.info(`  Success: ${result1.success}`);
+    console.info(`  Stdout length: ${result1.stdout.length} bytes`);
+    console.info(`  Stdout content: "${result1.stdout}"`);
+    console.info(`  Stderr: "${result1.stderr}"`);
 
     // Test 2: Large buffer that won't overflow
-    console.log('\n📊 Test 2: Large buffer (1000 bytes) with limited output');
+    console.info('\n📊 Test 2: Large buffer (1000 bytes) with limited output');
     const result2 = this.executeCommandSync(
       'test-large-buffer',
       ['echo', 'This is a test output that fits within the buffer limit'],
       1000 // 1000 byte limit
     );
 
-    console.log('Result within buffer limit:');
-    console.log(`  Exit code: ${result2.exitCode}`);
-    console.log(`  Success: ${result2.success}`);
-    console.log(`  Stdout length: ${result2.stdout.length} bytes`);
-    console.log(`  Stdout content: "${result2.stdout}"`);
+    console.info('Result within buffer limit:');
+    console.info(`  Exit code: ${result2.exitCode}`);
+    console.info(`  Success: ${result2.success}`);
+    console.info(`  Stdout length: ${result2.stdout.length} bytes`);
+    console.info(`  Stdout content: "${result2.stdout}"`);
 
     // Test 3: Exact buffer boundary
-    console.log('\n📊 Test 3: Exact buffer boundary test');
+    console.info('\n📊 Test 3: Exact buffer boundary test');
     const exactOutput = 'x'.repeat(100); // Exactly 100 bytes
     const result3 = this.executeCommandSync(
       'test-exact-buffer',
@@ -624,32 +624,32 @@ export class AutomationService {
       100 // Exactly 100 bytes
     );
 
-    console.log('Result at exact buffer boundary:');
-    console.log(`  Exit code: ${result3.exitCode}`);
-    console.log(`  Success: ${result3.success}`);
-    console.log(`  Stdout length: ${result3.stdout.length} bytes`);
-    console.log(`  Matches expected: ${result3.stdout === exactOutput}`);
+    console.info('Result at exact buffer boundary:');
+    console.info(`  Exit code: ${result3.exitCode}`);
+    console.info(`  Success: ${result3.success}`);
+    console.info(`  Stdout length: ${result3.stdout.length} bytes`);
+    console.info(`  Matches expected: ${result3.stdout === exactOutput}`);
 
     // Test 4: No buffer limit (unbounded)
-    console.log('\n📊 Test 4: No buffer limit (potential memory risk)');
+    console.info('\n📊 Test 4: No buffer limit (potential memory risk)');
     const result4 = this.executeCommandSync(
       'test-unlimited',
       ['echo', 'This runs without buffer limits'],
       undefined // No limit
     );
 
-    console.log('Result without buffer limit:');
-    console.log(`  Exit code: ${result4.exitCode}`);
-    console.log(`  Success: ${result4.success}`);
-    console.log(`  Stdout length: ${result4.stdout.length} bytes`);
+    console.info('Result without buffer limit:');
+    console.info(`  Exit code: ${result4.exitCode}`);
+    console.info(`  Success: ${result4.success}`);
+    console.info(`  Stdout length: ${result4.stdout.length} bytes`);
   }
 
   // 🧪 Demonstrate advanced timeout and signal scenarios
   async demonstrateAdvancedTimeoutScenarios(): Promise<void> {
-    console.log('🧪 Testing advanced timeout and signal scenarios...');
+    console.info('🧪 Testing advanced timeout and signal scenarios...');
 
     // Scenario 1: Default SIGTERM timeout
-    console.log('\n⏰ Scenario 1: Default SIGTERM timeout (3 seconds)');
+    console.info('\n⏰ Scenario 1: Default SIGTERM timeout (3 seconds)');
     const result1 = await this.executeCommandWithTimeout(
       'sigterm-timeout',
       ['sleep', '10'], // Runs for 10 seconds, but timeout is 3
@@ -657,14 +657,14 @@ export class AutomationService {
       'SIGTERM' // Default graceful termination
     );
 
-    console.log('SIGTERM timeout result:');
-    console.log(`  Exit code: ${result1.exitCode}`);
-    console.log(`  Signal: ${result1.signalCode}`);
-    console.log(`  Error: ${result1.error}`);
-    console.log(`  Stderr: ${result1.stderr}`);
+    console.info('SIGTERM timeout result:');
+    console.info(`  Exit code: ${result1.exitCode}`);
+    console.info(`  Signal: ${result1.signalCode}`);
+    console.info(`  Error: ${result1.error}`);
+    console.info(`  Stderr: ${result1.stderr}`);
 
     // Scenario 2: Forceful SIGKILL timeout
-    console.log('\n⚡ Scenario 2: Forceful SIGKILL timeout (2 seconds)');
+    console.info('\n⚡ Scenario 2: Forceful SIGKILL timeout (2 seconds)');
     const result2 = await this.executeCommandWithTimeout(
       'sigkill-timeout',
       ['sleep', '10'], // Runs for 10 seconds, but timeout is 2
@@ -672,14 +672,14 @@ export class AutomationService {
       'SIGKILL' // Forceful termination
     );
 
-    console.log('SIGKILL timeout result:');
-    console.log(`  Exit code: ${result2.exitCode}`);
-    console.log(`  Signal: ${result2.signalCode}`);
-    console.log(`  Error: ${result2.error}`);
-    console.log(`  Stderr: ${result2.stderr}`);
+    console.info('SIGKILL timeout result:');
+    console.info(`  Exit code: ${result2.exitCode}`);
+    console.info(`  Signal: ${result2.signalCode}`);
+    console.info(`  Error: ${result2.error}`);
+    console.info(`  Stderr: ${result2.stderr}`);
 
     // Scenario 3: Custom signal (SIGINT)
-    console.log('\n🛑 Scenario 3: SIGINT timeout (1.5 seconds)');
+    console.info('\n🛑 Scenario 3: SIGINT timeout (1.5 seconds)');
     const result3 = await this.executeCommandWithTimeout(
       'sigint-timeout',
       ['bash', '-c', 'trap "echo SIGINT received; exit 130" SIGINT; sleep 10'], // Handles SIGINT
@@ -687,14 +687,14 @@ export class AutomationService {
       'SIGINT' // Interrupt signal
     );
 
-    console.log('SIGINT timeout result:');
-    console.log(`  Exit code: ${result3.exitCode}`);
-    console.log(`  Signal: ${result3.signalCode}`);
-    console.log(`  Error: ${result3.error}`);
-    console.log(`  Stderr: ${result3.stderr}`);
+    console.info('SIGINT timeout result:');
+    console.info(`  Exit code: ${result3.exitCode}`);
+    console.info(`  Signal: ${result3.signalCode}`);
+    console.info(`  Error: ${result3.error}`);
+    console.info(`  Stderr: ${result3.stderr}`);
 
     // Scenario 4: Timeout vs AbortSignal
-    console.log('\n🚫 Scenario 4: AbortSignal vs timeout comparison');
+    console.info('\n🚫 Scenario 4: AbortSignal vs timeout comparison');
 
     // Test with AbortController
     const controller = new AbortController();
@@ -705,16 +705,16 @@ export class AutomationService {
       timeout: 3000, // 3 second timeout (longer than abort)
       killSignal: 'SIGTERM',
       onExit: (proc, exitCode, signalCode, error) => {
-        console.log(`  Abort test exited: code=${exitCode}, signal=${signalCode}`);
+        console.info(`  Abort test exited: code=${exitCode}, signal=${signalCode}`);
       },
     }) as EnhancedExecutionResult;
 
-    console.log('AbortSignal result:');
-    console.log(`  Exit code: ${result4.exitCode}`);
-    console.log(`  Signal: ${result4.signalCode}`);
-    console.log(`  Error: ${result4.error}`);
+    console.info('AbortSignal result:');
+    console.info(`  Exit code: ${result4.exitCode}`);
+    console.info(`  Signal: ${result4.signalCode}`);
+    console.info(`  Error: ${result4.error}`);
 
-    console.log('\n✅ Advanced timeout scenarios completed');
+    console.info('\n✅ Advanced timeout scenarios completed');
   }
 
   // 📈 Post-execution performance analysis
@@ -797,7 +797,7 @@ export class AutomationService {
     cors?: boolean;
     rateLimit?: number;
   } = {}) {
-    console.log('🌐 Creating secure server with Bun.serve...');
+    console.info('🌐 Creating secure server with Bun.serve...');
 
     // @ts-ignore - Bun.serve is available at runtime
     const server = Bun.serve({
@@ -853,7 +853,7 @@ export class AutomationService {
       },
     });
 
-    console.log(`🚀 Secure server running on ${options.tls ? 'https' : 'http'}://${options.hostname || 'localhost'}:${options.port || 3000}`);
+    console.info(`🚀 Secure server running on ${options.tls ? 'https' : 'http'}://${options.hostname || 'localhost'}:${options.port || 3000}`);
     return server;
   }
 
@@ -908,20 +908,20 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
 
   // 🌍 Network configuration with IPv4/IPv6 support
   async configureNetworking(preferIPv6: boolean = false) {
-    console.log(`🌍 Configuring networking (IPv6: ${preferIPv6})...`);
+    console.info(`🌍 Configuring networking (IPv6: ${preferIPv6})...`);
 
     // Set network preferences
     if (preferIPv6) {
       process.env.BUN_PREFER_IPV6 = '1';
-      console.log('✅ IPv6 preference enabled');
+      console.info('✅ IPv6 preference enabled');
     } else {
       process.env.BUN_PREFER_IPV4 = '1';
-      console.log('✅ IPv4 preference enabled');
+      console.info('✅ IPv4 preference enabled');
     }
 
     // Test network connectivity
     const connectivity = await this.testNetworkConnectivity();
-    console.log('🌐 Network connectivity:', connectivity);
+    console.info('🌐 Network connectivity:', connectivity);
 
     return connectivity;
   }
@@ -959,7 +959,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
 
   // 🔒 Security hardening
   async hardenSecurity() {
-    console.log('🔒 Applying security hardening...');
+    console.info('🔒 Applying security hardening...');
 
     // Set secure environment variables
     process.env.NODE_ENV = 'production';
@@ -974,14 +974,14 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
       'Referrer-Policy': 'strict-origin-when-cross-origin',
     };
 
-    console.log('🛡️ Security headers configured:', Object.keys(securityHeaders));
+    console.info('🛡️ Security headers configured:', Object.keys(securityHeaders));
 
     return securityHeaders;
   }
 
   // 🌐 Redis integration with connection pooling
   async createRedisPool(connectionString?: string) {
-    console.log('🔗 Creating Redis connection pool...');
+    console.info('🔗 Creating Redis connection pool...');
 
     const redisUrl = connectionString || process.env.REDIS_URL || 'redis://localhost:6379';
 
@@ -990,7 +990,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
       const testResult = await this.executeCommand('redis-test', ['redis-cli', '-u', redisUrl, 'ping'], { timeout: 5000 });
 
       if (testResult.exitCode === 0) {
-        console.log('✅ Redis connection established');
+        console.info('✅ Redis connection established');
         return {
           url: redisUrl,
           status: 'connected',
@@ -1023,7 +1023,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
     strict?: boolean;
     define?: Record<string, string>;
   } = {}) {
-    console.log('📝 Configuring TypeScript transpilation...');
+    console.info('📝 Configuring TypeScript transpilation...');
 
     // Create enhanced tsconfig.json
     const tsconfig = {
@@ -1059,13 +1059,13 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
     // @ts-ignore - Bun.write is available at runtime
     await Bun.write('./tsconfig.json', JSON.stringify(tsconfig, null, 2));
 
-    console.log('✅ TypeScript configuration created');
+    console.info('✅ TypeScript configuration created');
     return tsconfig;
   }
 
   // 🎯 Custom file loaders for different file types
   async configureLoaders() {
-    console.log('🔧 Configuring custom file loaders...');
+    console.info('🔧 Configuring custom file loaders...');
 
     const loaders = {
       // Custom loader for .env files
@@ -1080,7 +1080,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
       '.sql': 'text',
     };
 
-    console.log('📦 Loaders configured:', Object.keys(loaders));
+    console.info('📦 Loaders configured:', Object.keys(loaders));
     return loaders;
   }
 
@@ -1091,7 +1091,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
     target?: 'browser' | 'node' | 'bun';
     define?: Record<string, string>;
   } = {}) {
-    console.log('⚡ Optimizing build with advanced transpilation...');
+    console.info('⚡ Optimizing build with advanced transpilation...');
 
     const buildConfig = {
       entrypoints: ['./src/index.ts'],
@@ -1127,7 +1127,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
       sourcemap: 'external',
     };
 
-    console.log('🎯 Build optimization configured:', {
+    console.info('🎯 Build optimization configured:', {
       target: buildConfig.target,
       minify: buildConfig.minify,
       dropConsole: buildConfig.drop.length > 0,
@@ -1143,7 +1143,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
     jsxImportSource?: string;
     typescript?: boolean;
   } = {}) {
-    console.log('⚛️ Configuring React JSX transformation...');
+    console.info('⚛️ Configuring React JSX transformation...');
 
     const reactConfig = {
       jsx: options.jsxRuntime || 'automatic',
@@ -1166,7 +1166,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
       ],
     };
 
-    console.log('⚛️ React configuration:', {
+    console.info('⚛️ React configuration:', {
       jsxRuntime: reactConfig.jsx,
       importSource: reactConfig.jsxImportSource,
       typescript: reactConfig.typescript,
@@ -1177,7 +1177,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
 
   // 📊 Advanced transpilation pipeline
   async createTranspilationPipeline() {
-    console.log('🏗️ Creating advanced transpilation pipeline...');
+    console.info('🏗️ Creating advanced transpilation pipeline...');
 
     const pipeline = {
       // Stage 1: TypeScript compilation
@@ -1214,13 +1214,13 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
       loaders: await this.configureLoaders(),
     };
 
-    console.log('✅ Transpilation pipeline created with 4 stages');
+    console.info('✅ Transpilation pipeline created with 4 stages');
     return pipeline;
   }
 
   // 🔍 Code analysis with transpilation metrics
   async analyzeTranspilation() {
-    console.log('📊 Analyzing transpilation metrics...');
+    console.info('📊 Analyzing transpilation metrics...');
 
     // Analyze TypeScript files
     const tsAnalysis = await this.executeCommand('ts-analysis', [
@@ -1256,7 +1256,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
       },
     };
 
-    console.log('📈 Transpilation analysis:', metrics);
+    console.info('📈 Transpilation analysis:', metrics);
     return metrics;
   }
 
@@ -1264,7 +1264,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
 
   // 🔧 Read bunfig.toml configuration
   async readBunfig(path?: string) {
-    console.log('📖 Reading Bun configuration...');
+    console.info('📖 Reading Bun configuration...');
 
     const configPath = path || './bunfig.toml';
 
@@ -1274,13 +1274,13 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
       const exists = await configFile.exists();
 
       if (!exists) {
-        console.log('⚠️ bunfig.toml not found, using defaults');
+        console.info('⚠️ bunfig.toml not found, using defaults');
         return this.getDefaultBunfig();
       }
 
       // @ts-ignore - Bun.file.text() is available at runtime
       const configContent = await configFile.text();
-      console.log('✅ bunfig.toml loaded successfully');
+      console.info('✅ bunfig.toml loaded successfully');
 
       // Parse TOML content (basic parsing)
       const config = this.parseBunfig(configContent);
@@ -1294,7 +1294,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
 
   // 🔧 Read package.json with Bun enhancements
   async readPackageJson(path?: string) {
-    console.log('📦 Reading package.json...');
+    console.info('📦 Reading package.json...');
 
     const packagePath = path || './package.json';
 
@@ -1309,7 +1309,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
 
       // @ts-ignore - Bun.file.json() is available at runtime
       const packageData = await packageFile.json();
-      console.log('✅ package.json loaded successfully');
+      console.info('✅ package.json loaded successfully');
 
       // Enhance with Bun-specific metadata
       const enhanced = {
@@ -1356,7 +1356,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
 
   // 🎯 Comprehensive configuration analysis
   async analyzeConfiguration() {
-    console.log('🔍 Analyzing project configuration...');
+    console.info('🔍 Analyzing project configuration...');
 
     const analysis = {
       bunfig: await this.readBunfig(),
@@ -1375,7 +1375,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
       },
     };
 
-    console.log('📊 Configuration analysis complete');
+    console.info('📊 Configuration analysis complete');
     return analysis;
   }
 
@@ -1464,7 +1464,7 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
 
   // 📝 Read TypeScript configuration
   async readTsConfig(path?: string) {
-    console.log('📝 Reading TypeScript configuration...');
+    console.info('📝 Reading TypeScript configuration...');
 
     const configPath = path || './tsconfig.json';
 
@@ -1474,13 +1474,13 @@ SIb3DQEBCwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdA==
       const exists = await configFile.exists();
 
       if (!exists) {
-        console.log('⚠️ tsconfig.json not found');
+        console.info('⚠️ tsconfig.json not found');
         return null;
       }
 
       // @ts-ignore - Bun.file.json() is available at runtime
       const tsConfig = await configFile.json();
-      console.log('✅ tsconfig.json loaded successfully');
+      console.info('✅ tsconfig.json loaded successfully');
 
       return tsConfig;
 

@@ -61,7 +61,7 @@ export class DesignTeamIntegrationService {
    */
   async requestDesignReview(request: DesignReviewRequest) {
     try {
-      console.log(`🎨 Creating design review request for task: ${request.taskUuid}`);
+      console.info(`🎨 Creating design review request for task: ${request.taskUuid}`);
 
       // Determine the best reviewer based on request type
       const assigneeId = this.determineReviewer(request.reviewType, request.specificReviewer);
@@ -208,7 +208,7 @@ export class DesignTeamIntegrationService {
    */
   async notifyDesignSystemUpdate(update: DesignSystemUpdate) {
     try {
-      console.log(`🔄 Processing design system update for component: ${update.component}`);
+      console.info(`🔄 Processing design system update for component: ${update.component}`);
 
       // Create notification tasks for affected projects
       for (const taskUuid of update.affectedTasks) {
@@ -336,7 +336,7 @@ export class DesignTeamIntegrationService {
         )
       `;
 
-      console.log('✅ Design team integration tables initialized');
+      console.info('✅ Design team integration tables initialized');
       return { success: true };
     } catch (error) {
       console.error('❌ Error initializing design integration:', error);

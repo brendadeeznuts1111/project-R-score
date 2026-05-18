@@ -17,7 +17,7 @@ test('production smoke test - health endpoint', async () => {
 		expect(data.status).toBeDefined();
 	} catch (error) {
 		// Server might not be running - skip test
-		console.log('Server not available, skipping smoke test');
+		console.info('Server not available, skipping smoke test');
 	}
 });
 
@@ -28,7 +28,7 @@ test('production smoke test - markets endpoint', async () => {
 		expect(res.status).toBeLessThan(600);
 	} catch (error) {
 		// Server might not be running - skip test
-		console.log('Server not available, skipping smoke test');
+		console.info('Server not available, skipping smoke test');
 	}
 });
 
@@ -39,7 +39,7 @@ test('production smoke test - arbs endpoint', async () => {
 		expect(res.status).toBeLessThan(600);
 	} catch (error) {
 		// Server might not be running - skip test
-		console.log('Server not available, skipping smoke test');
+		console.info('Server not available, skipping smoke test');
 	}
 });
 
@@ -50,7 +50,7 @@ test('production smoke test - config endpoint', async () => {
 		expect(res.status).toBeLessThan(600);
 	} catch (error) {
 		// Server might not be running - skip test
-		console.log('Server not available, skipping smoke test');
+		console.info('Server not available, skipping smoke test');
 	}
 });
 

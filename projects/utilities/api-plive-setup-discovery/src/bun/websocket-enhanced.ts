@@ -85,7 +85,7 @@ export class EnhancedWebSocketServer {
             ws.data = wsData;
             this.connections.set(ws, wsData);
 
-            console.log("Enhanced WebSocket connection opened", {
+            console.info("Enhanced WebSocket connection opened", {
               userId: wsData.userId,
               protocol: wsData.protocol,
               extensions: wsData.extensions,
@@ -131,7 +131,7 @@ export class EnhancedWebSocketServer {
             await this.processMessage(ws, parsedMessage);
 
             const duration = performance.now() - start;
-            console.log("WebSocket message processed", {
+            console.info("WebSocket message processed", {
               userId: ws.data.userId,
               duration: `${duration.toFixed(2)}ms`,
               compressed: message instanceof Buffer,
@@ -146,7 +146,7 @@ export class EnhancedWebSocketServer {
 
         close(ws, code, reason) {
           const wsData = this.connections.get(ws);
-          console.log("WebSocket connection closed", {
+          console.info("WebSocket connection closed", {
             userId: wsData?.userId,
             code,
             reason: reason.toString(),
@@ -252,7 +252,7 @@ export class EnhancedWebSocketServer {
       }
     });
 
-    console.log(`🚀 Enhanced WebSocket Server running on port ${this.server.port}`);
+    console.info(`🚀 Enhanced WebSocket Server running on port ${this.server.port}`);
     return this.server;
   }
 
@@ -500,7 +500,7 @@ export class EnhancedWebSocketServer {
       // Check if client is still responsive
       const timeSinceLastPing = Date.now() - wsData.lastPing;
       if (timeSinceLastPing > config.websocket.heartbeat_interval * 2) {
-        console.log(`Client ${wsData.userId} unresponsive, closing connection`);
+        console.info(`Client ${wsData.userId} unresponsive, closing connection`);
         ws.close(1001, "Heartbeat timeout");
         clearInterval(interval);
         return;

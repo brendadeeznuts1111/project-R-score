@@ -28,12 +28,12 @@ export async function matrixCommand(args: string[]) {
 }
 
 async function showMatrixOverview() {
-  console.log('🌐 Col 93 Matrix Overview');
+  console.info('🌐 Col 93 Matrix Overview');
   
   const report = await BUN_DOC_MAP.generateReport();
   const stats = await BUN_DOC_MAP.getMatrixStats();
   
-  console.log(`
+  console.info(`
 📊 MATRIX OVERVIEW
 ┌─────────────────────────────────────────┐
 │ Total Entries: ${report.totalEntries.toString().padEnd(27)} │
@@ -46,7 +46,7 @@ async function showMatrixOverview() {
 `);
   
   if (report.totalEntries > 0) {
-    console.log('\n🔍 RECENT ENTRIES:');
+    console.info('\n🔍 RECENT ENTRIES:');
     const recentEntries = await BUN_DOC_MAP.searchMatrix({});
     const sorted = recentEntries
       .sort((a, b) => new Date(b.lastVerified).getTime() - new Date(a.lastVerified).getTime())
@@ -57,25 +57,25 @@ async function showMatrixOverview() {
                    entry.integrityScore >= 0.95 ? '🟡' : 
                    entry.integrityScore >= 0.9 ? '🟠' : '🔴';
       const date = new Date(entry.lastVerified).toLocaleDateString();
-      console.log(`   ${icon} ${entry.term} - ${(entry.integrityScore * 100).toFixed(1)}% - ${date}`);
+      console.info(`   ${icon} ${entry.term} - ${(entry.integrityScore * 100).toFixed(1)}% - ${date}`);
     });
   }
   
   if (report.violations.length > 0) {
-    console.log(`\n⚠️  ${report.violations.length} violations detected`);
-    console.log('   Run --search threatLevel=HIGH to see high-threat entries');
+    console.info(`\n⚠️  ${report.violations.length} violations detected`);
+    console.info('   Run --search threatLevel=HIGH to see high-threat entries');
   }
   
   return { report, stats };
 }
 
 async function searchMatrix(options: any) {
-  console.log(`🔍 Searching matrix with criteria:`, options.search);
+  console.info(`🔍 Searching matrix with criteria:`, options.search);
   
   const searchQuery = parseSearchQuery(options.search);
   const results = await BUN_DOC_MAP.searchMatrix(searchQuery);
   
-  console.log(`
+  console.info(`
 📊 SEARCH RESULTS
 ┌─────────────────────────────────────────┐
 │ Query: ${options.search.padEnd(35)} │
@@ -84,21 +84,21 @@ async function searchMatrix(options: any) {
 `);
   
   if (results.length === 0) {
-    console.log('No entries found matching the search criteria.');
+    console.info('No entries found matching the search criteria.');
     return [];
   }
   
-  console.log('\n🔍 MATCHING ENTRIES:');
+  console.info('\n🔍 MATCHING ENTRIES:');
   results.forEach(entry => {
     const icon = entry.integrityScore >= 0.99 ? '🟢' : 
                  entry.integrityScore >= 0.95 ? '🟡' : 
                  entry.integrityScore >= 0.9 ? '🟠' : '🔴';
     
-    console.log(`   ${icon} ${entry.term}@${entry.minVer}`);
-    console.log(`      Integrity: ${(entry.integrityScore * 100).toFixed(1)}%`);
-    console.log(`      Security: ${entry.securityProfile}`);
-    console.log(`      Last Verified: ${new Date(entry.lastVerified).toLocaleDateString()}`);
-    console.log('');
+    console.info(`   ${icon} ${entry.term}@${entry.minVer}`);
+    console.info(`      Integrity: ${(entry.integrityScore * 100).toFixed(1)}%`);
+    console.info(`      Security: ${entry.securityProfile}`);
+    console.info(`      Last Verified: ${new Date(entry.lastVerified).toLocaleDateString()}`);
+    console.info('');
   });
   
   return results;
@@ -106,7 +106,7 @@ async function searchMatrix(options: any) {
 
 async function exportMatrix(options: any) {
   const format = options.format || 'json';
-  console.log(`📤 Exporting matrix in ${format.toUpperCase()} format...`);
+  console.info(`📤 Exporting matrix in ${format.toUpperCase()} format...`);
   
   try {
     const exportData = await BUN_DOC_MAP.exportMatrix(format as 'json' | 'csv' | 'xml');
@@ -114,8 +114,8 @@ async function exportMatrix(options: any) {
     
     await Bun.write(filename, exportData);
     
-    console.log(`✅ Matrix exported to: ${filename}`);
-    console.log(`📊 File size: ${formatBytes(exportData.length)}`);
+    console.info(`✅ Matrix exported to: ${filename}`);
+    console.info(`📊 File size: ${formatBytes(exportData.length)}`);
     
     return { filename, size: exportData.length, format };
   } catch (error) {
@@ -125,12 +125,12 @@ async function exportMatrix(options: any) {
 }
 
 async function showMatrixStats() {
-  console.log('📊 Detailed Matrix Statistics');
+  console.info('📊 Detailed Matrix Statistics');
   
   const stats = await BUN_DOC_MAP.getMatrixStats();
   const report = await BUN_DOC_MAP.generateReport();
   
-  console.log(`
+  console.info(`
 📈 MATRIX STATISTICS
 ┌─────────────────────────────────────────┐
 │ Total Entries: ${stats.totalEntries.toString().padEnd(27)} │
@@ -145,21 +145,21 @@ async function showMatrixStats() {
   if (report.integrityScores.length > 0) {
     const distribution = calculateScoreDistribution(report.integrityScores);
     
-    console.log('\n📊 INTEGRITY DISTRIBUTION:');
+    console.info('\n📊 INTEGRITY DISTRIBUTION:');
     Object.entries(distribution).forEach(([range, count]) => {
       const percentage = (count / report.integrityScores.length * 100).toFixed(1);
       const bar = '█'.repeat(Math.floor(count / report.integrityScores.length * 20));
-      console.log(`   ${range}: ${count.toString().padEnd(4)} (${percentage}%) ${bar}`);
+      console.info(`   ${range}: ${count.toString().padEnd(4)} (${percentage}%) ${bar}`);
     });
   }
   
   // Performance metrics
-  console.log('\n⚡ PERFORMANCE METRICS:');
-  console.log(`   • Avg Processing Time: ${report.performanceMetrics.avgProcessingTime.toFixed(2)}ms`);
-  console.log(`   • Avg Tarball Size: ${formatBytes(report.performanceMetrics.avgTarballSize)}`);
-  console.log(`   • Avg Compression: ${report.performanceMetrics.avgCompressionRatio.toFixed(1)}%`);
-  console.log(`   • Total Processed: ${report.performanceMetrics.totalProcessed}`);
-  console.log(`   • Success Rate: ${(report.performanceMetrics.successRate * 100).toFixed(1)}%`);
+  console.info('\n⚡ PERFORMANCE METRICS:');
+  console.info(`   • Avg Processing Time: ${report.performanceMetrics.avgProcessingTime.toFixed(2)}ms`);
+  console.info(`   • Avg Tarball Size: ${formatBytes(report.performanceMetrics.avgTarballSize)}`);
+  console.info(`   • Avg Compression: ${report.performanceMetrics.avgCompressionRatio.toFixed(1)}%`);
+  console.info(`   • Total Processed: ${report.performanceMetrics.totalProcessed}`);
+  console.info(`   • Success Rate: ${(report.performanceMetrics.successRate * 100).toFixed(1)}%`);
   
   // Security profile breakdown
   const entries = await BUN_DOC_MAP.searchMatrix({});
@@ -168,42 +168,42 @@ async function showMatrixStats() {
     return acc;
   }, {} as Record<string, number>);
   
-  console.log('\n🛡️  SECURITY PROFILE BREAKDOWN:');
+  console.info('\n🛡️  SECURITY PROFILE BREAKDOWN:');
   Object.entries(profileBreakdown).forEach(([profile, count]) => {
     const percentage = (count / entries.length * 100).toFixed(1);
-    console.log(`   • ${profile}: ${count} (${percentage}%)`);
+    console.info(`   • ${profile}: ${count} (${percentage}%)`);
   });
   
   return { stats, report, distribution: report.integrityScores.length > 0 ? calculateScoreDistribution(report.integrityScores) : {} };
 }
 
 async function clearMatrix() {
-  console.log('⚠️  WARNING: This will clear the entire Col 93 Matrix');
-  console.log('   All audit data will be lost except for backups');
+  console.info('⚠️  WARNING: This will clear the entire Col 93 Matrix');
+  console.info('   All audit data will be lost except for backups');
   
   // In a real CLI, you'd want to prompt for confirmation
-  console.log('   Run with --confirm to proceed');
+  console.info('   Run with --confirm to proceed');
   
   if (process.argv.includes('--confirm')) {
     await BUN_DOC_MAP.clearMatrix();
-    console.log('✅ Matrix cleared successfully');
-    console.log('   Backup saved to bun_pm_pack.backup.json');
+    console.info('✅ Matrix cleared successfully');
+    console.info('   Backup saved to bun_pm_pack.backup.json');
   } else {
-    console.log('   Operation cancelled. Use --confirm to proceed.');
+    console.info('   Operation cancelled. Use --confirm to proceed.');
   }
 }
 
 async function queryMatrix(term: string) {
-  console.log(`🔍 Querying matrix for term: ${term}`);
+  console.info(`🔍 Querying matrix for term: ${term}`);
   
   const entry = await BUN_DOC_MAP.query(term);
   
   if (!entry) {
-    console.log('❌ No entry found for this term');
+    console.info('❌ No entry found for this term');
     return null;
   }
   
-  console.log(`
+  console.info(`
 📋 MATRIX ENTRY DETAILS
 ┌─────────────────────────────────────────┐
 │ Term: ${entry.term.padEnd(35)} │
@@ -215,20 +215,20 @@ async function queryMatrix(term: string) {
 └─────────────────────────────────────────┘
 `);
   
-  console.log('\n🔧 LIFECYCLE SCRIPTS:');
+  console.info('\n🔧 LIFECYCLE SCRIPTS:');
   entry.lifecycleScripts.forEach(script => {
-    console.log(`   • ${script}`);
+    console.info(`   • ${script}`);
   });
   
-  console.log('\n🛡️  SECURITY FEATURES:');
-  console.log(`   • Quantum Seal: ${entry.quantumSeal ? '✅' : '❌'}`);
-  console.log(`   • Mutation Guarded: ${entry.mutationGuarded ? '✅' : '❌'}`);
-  console.log(`   • Audit Trail: ${entry.auditTrail ? '✅' : '❌'}`);
-  console.log(`   • Zero Trust: ${entry.zeroTrust ? '✅' : '❌'}`);
+  console.info('\n🛡️  SECURITY FEATURES:');
+  console.info(`   • Quantum Seal: ${entry.quantumSeal ? '✅' : '❌'}`);
+  console.info(`   • Mutation Guarded: ${entry.mutationGuarded ? '✅' : '❌'}`);
+  console.info(`   • Audit Trail: ${entry.auditTrail ? '✅' : '❌'}`);
+  console.info(`   • Zero Trust: ${entry.zeroTrust ? '✅' : '❌'}`);
   
-  console.log(`\n📊 PERFORMANCE:`);
-  console.log(`   • Performance Arb: ${entry.performanceArb}`);
-  console.log(`   • Compression Ratio: ${entry.compressionRatio}`);
+  console.info(`\n📊 PERFORMANCE:`);
+  console.info(`   • Performance Arb: ${entry.performanceArb}`);
+  console.info(`   • Compression Ratio: ${entry.compressionRatio}`);
   
   return entry;
 }
@@ -325,7 +325,7 @@ function calculateScoreDistribution(scores: number[]): Record<string, number> {
 }
 
 function displayMatrixHelp() {
-  console.log(`
+  console.info(`
 🌐 BUN PM MATRIX CLI - COL 93
 
 USAGE:

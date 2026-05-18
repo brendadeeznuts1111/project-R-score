@@ -4,7 +4,7 @@
 async function debugURLPattern() {
   const { URLPattern } = globalThis as any;
   
-  console.log('🔍 **Debugging URLPattern Matching** 🔍');
+  console.info('🔍 **Debugging URLPattern Matching** 🔍');
   
   // Test different pattern formats
   const patterns = {
@@ -21,7 +21,7 @@ async function debugURLPattern() {
   ];
   
   Object.entries(patterns).forEach(([patternName, pattern]) => {
-    console.log(`\n📋 Pattern: ${patternName} - ${pattern.pathname}`);
+    console.info(`\n📋 Pattern: ${patternName} - ${pattern.pathname}`);
     
     testPaths.forEach((testPath, index) => {
       let matches = false;
@@ -36,12 +36,12 @@ async function debugURLPattern() {
           result = matches ? pattern.exec(testPath) : null;
         }
         
-        console.log(`  Test ${index + 1}: ${matches ? '✅' : '❌'} ${JSON.stringify(testPath)}`);
+        console.info(`  Test ${index + 1}: ${matches ? '✅' : '❌'} ${JSON.stringify(testPath)}`);
         if (result) {
-          console.log(`    Groups: ${JSON.stringify(result.pathname.groups)}`);
+          console.info(`    Groups: ${JSON.stringify(result.pathname.groups)}`);
         }
       } catch (error: any) {
-        console.log(`  Test ${index + 1}: ❌ Error - ${error.message}`);
+        console.info(`  Test ${index + 1}: ❌ Error - ${error.message}`);
       }
     });
   });

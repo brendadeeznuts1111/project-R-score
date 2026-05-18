@@ -691,12 +691,12 @@ class RealTimeFraudDetector {
 		}
 
 		// Log signal
-		console.log(
+		console.info(
 			`🚨 FRAUD DETECTED: ${signal.riskLevel.toUpperCase()} (Score: ${signal.score.toFixed(3)})`,
 		);
-		console.log(`   Event: ${signal.eventId}`);
-		console.log(`   Factors: ${signal.factors.join(", ")}`);
-		console.log(`   Recommendations: ${signal.recommendations.join(", ")}`);
+		console.info(`   Event: ${signal.eventId}`);
+		console.info(`   Factors: ${signal.factors.join(", ")}`);
+		console.info(`   Recommendations: ${signal.recommendations.join(", ")}`);
 	}
 
 	private async triggerImmediateAction(signal: FraudSignal): Promise<void> {
@@ -710,7 +710,7 @@ class RealTimeFraudDetector {
 		// - Send alerts
 		// - Notify security team
 
-		console.log(
+		console.info(
 			`⚡ Immediate action triggered for ${signal.eventId} (${responseTime}ms)`,
 		);
 	}
@@ -990,7 +990,7 @@ class RealTimeFraudDetector {
 		this.processingQueue = [];
 		this.signalBuffer = [];
 		this.timeWindows.clear();
-		console.log("🗑️ Stream buffers cleared");
+		console.info("🗑️ Stream buffers cleared");
 	}
 }
 
@@ -1005,19 +1005,19 @@ export {
 
 // Demo and testing section
 async function demonstrateRealTimeFraudDetection() {
-	console.log("🔥 Real-Time Fraud Detection - Streaming Analytics Demo");
-	console.log("=" .repeat(60));
+	console.info("🔥 Real-Time Fraud Detection - Streaming Analytics Demo");
+	console.info("=" .repeat(60));
 
 	// Initialize the real-time fraud detector
 	const detector = new RealTimeFraudDetector();
 
-	console.log("✅ Real-Time Fraud Detector initialized");
+	console.info("✅ Real-Time Fraud Detector initialized");
 	const metrics = detector.getStreamMetrics();
-	console.log(`📊 Total events: ${metrics.totalEvents}`);
-	console.log(`⚡ Processing active: Yes`); // Constructor auto-starts processing
+	console.info(`📊 Total events: ${metrics.totalEvents}`);
+	console.info(`⚡ Processing active: Yes`); // Constructor auto-starts processing
 
 	// Simulate real-time events
-	console.log("\n📡 Simulating real-time event stream...");
+	console.info("\n📡 Simulating real-time event stream...");
 	
 	const generateEvent = (type: StreamEvent['type'], risk: 'low' | 'medium' | 'high' | 'critical'): StreamEvent => ({
 		id: `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -1053,11 +1053,11 @@ async function demonstrateRealTimeFraudDetection() {
 		if (recentSignals.length > 0) {
 			const latestSignal = recentSignals[recentSignals.length - 1];
 			if (latestSignal && latestSignal.riskLevel !== 'low') {
-				console.log(`🚨 ${latestSignal.riskLevel.toUpperCase()} RISK DETECTED:`);
-				console.log(`   Event ID: ${latestSignal.eventId}`);
-				console.log(`   Score: ${(latestSignal.score * 100).toFixed(2)}%`);
-				console.log(`   Confidence: ${(latestSignal.confidence * 100).toFixed(2)}%`);
-				console.log(`   Factors: ${latestSignal.factors.join(', ')}`);
+				console.info(`🚨 ${latestSignal.riskLevel.toUpperCase()} RISK DETECTED:`);
+				console.info(`   Event ID: ${latestSignal.eventId}`);
+				console.info(`   Score: ${(latestSignal.score * 100).toFixed(2)}%`);
+				console.info(`   Confidence: ${(latestSignal.confidence * 100).toFixed(2)}%`);
+				console.info(`   Factors: ${latestSignal.factors.join(', ')}`);
 			}
 		}
 		
@@ -1066,16 +1066,16 @@ async function demonstrateRealTimeFraudDetection() {
 	}
 
 	// Get processing metrics
-	console.log("\n📊 Stream Processing Metrics:");
+	console.info("\n📊 Stream Processing Metrics:");
 	const finalMetrics = detector.getStreamMetrics();
-	console.log(`   Events Processed: ${finalMetrics.totalEvents}`);
-	console.log(`   Events Per Second: ${finalMetrics.eventsPerSecond.toFixed(2)}`);
-	console.log(`   Average Processing Time: ${finalMetrics.averageProcessingTime.toFixed(2)}ms`);
-	console.log(`   Fraud Detection Rate: ${(finalMetrics.fraudDetectionRate * 100).toFixed(2)}%`);
-	console.log(`   Throughput: ${finalMetrics.throughput.toFixed(2)} events/sec`);
+	console.info(`   Events Processed: ${finalMetrics.totalEvents}`);
+	console.info(`   Events Per Second: ${finalMetrics.eventsPerSecond.toFixed(2)}`);
+	console.info(`   Average Processing Time: ${finalMetrics.averageProcessingTime.toFixed(2)}ms`);
+	console.info(`   Fraud Detection Rate: ${(finalMetrics.fraudDetectionRate * 100).toFixed(2)}%`);
+	console.info(`   Throughput: ${finalMetrics.throughput.toFixed(2)} events/sec`);
 
 	// Test pattern detection
-	console.log("\n🔍 Testing pattern detection...");
+	console.info("\n🔍 Testing pattern detection...");
 	const suspiciousEvents = [
 		generateEvent('transaction', 'high'),
 		generateEvent('transaction', 'high'),
@@ -1095,11 +1095,11 @@ async function demonstrateRealTimeFraudDetection() {
 	);
 	
 	if (suspiciousSignals.length > 0) {
-		console.log(`🎯 Pattern detected for suspicious_user_123: ${suspiciousSignals.length} high-risk signals`);
+		console.info(`🎯 Pattern detected for suspicious_user_123: ${suspiciousSignals.length} high-risk signals`);
 	}
 
 	// Test alert system
-	console.log("\n🚨 Testing alert system...");
+	console.info("\n🚨 Testing alert system...");
 	const criticalEvent = generateEvent('transaction', 'critical');
 	criticalEvent.data.amount = 50000; // High amount transaction
 	await detector.ingestEvent(criticalEvent);
@@ -1109,22 +1109,22 @@ async function demonstrateRealTimeFraudDetection() {
 	const latestCritical = criticalSignals.find(signal => signal.riskLevel === 'critical');
 	
 	if (latestCritical) {
-		console.log("💥 CRITICAL ALERT TRIGGERED!");
-		console.log(`   Immediate action required for event ${latestCritical.eventId}`);
-		console.log(`   Risk score: ${(latestCritical.score * 100).toFixed(2)}%`);
+		console.info("💥 CRITICAL ALERT TRIGGERED!");
+		console.info(`   Immediate action required for event ${latestCritical.eventId}`);
+		console.info(`   Risk score: ${(latestCritical.score * 100).toFixed(2)}%`);
 	}
 
 	// Final metrics and status
 	const finalStatus = detector.getStreamMetrics();
 	const processorStatus = detector.getProcessorStatus();
-	console.log("\n🎯 Final Performance Metrics:");
-	console.log(`   Total Events: ${finalStatus.totalEvents}`);
-	console.log(`   Fraud Detection Rate: ${(finalStatus.fraudDetectionRate * 100).toFixed(2)}%`);
-	console.log(`   Processing Efficiency: ${finalStatus.averageProcessingTime < 10 ? 'Excellent' : 'Good'}`);
-	console.log(`   Active Processors: ${processorStatus.length}`);
+	console.info("\n🎯 Final Performance Metrics:");
+	console.info(`   Total Events: ${finalStatus.totalEvents}`);
+	console.info(`   Fraud Detection Rate: ${(finalStatus.fraudDetectionRate * 100).toFixed(2)}%`);
+	console.info(`   Processing Efficiency: ${finalStatus.averageProcessingTime < 10 ? 'Excellent' : 'Good'}`);
+	console.info(`   Active Processors: ${processorStatus.length}`);
 
-	console.log("\n🎉 Real-Time Fraud Detection Demo Complete!");
-	console.log("💚 Streaming analytics with immediate fraud detection operational!");
+	console.info("\n🎉 Real-Time Fraud Detection Demo Complete!");
+	console.info("💚 Streaming analytics with immediate fraud detection operational!");
 }
 
 // Run the demo if this file is executed directly

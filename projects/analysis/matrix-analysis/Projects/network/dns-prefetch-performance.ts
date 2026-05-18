@@ -30,13 +30,13 @@ class MetricsCollector {
 
   gauge(name: string, value: number): void {
     this.gauges.set(name, value);
-    console.log(`📊 [METRIC] ${name} = ${value.toFixed(2)}`);
+    console.info(`📊 [METRIC] ${name} = ${value.toFixed(2)}`);
   }
 
   counter(name: string, value: number = 1): void {
     const current = this.counters.get(name) || 0;
     this.counters.set(name, current + value);
-    console.log(`📈 [COUNTER] ${name} = ${this.counters.get(name)}`);
+    console.info(`📈 [COUNTER] ${name} = ${this.counters.get(name)}`);
   }
 
   getGauge(name: string): number | undefined {
@@ -63,8 +63,8 @@ const metrics = new MetricsCollector();
  * Measures the improvement from prefetching DNS before making requests
  */
 async function trackDNSPerformance(host: string = "api.example.com", port: number = 443) {
-  console.log(`\n🔍 DNS Performance Tracking for ${host}:${port}`);
-  console.log("=".repeat(60));
+  console.info(`\n🔍 DNS Performance Tracking for ${host}:${port}`);
+  console.info("=".repeat(60));
 
   // Check if dns API is available
   if (!dns) {
@@ -79,21 +79,21 @@ async function trackDNSPerformance(host: string = "api.example.com", port: numbe
   const ttlDisplay = configuredTtl 
     ? `${configuredTtl}s (configured via BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS)` 
     : `30s (default - set BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS to customize)`;
-  console.log(`\n⚙️  DNS Cache TTL: ${ttlDisplay}`);
+  console.info(`\n⚙️  DNS Cache TTL: ${ttlDisplay}`);
 
   // Get initial DNS cache stats
   const initialStats = dns.getCacheStats?.() as DNSCacheStats | null;
   
   if (initialStats) {
-    console.log(`\n📊 Initial DNS Cache Stats:`);
-    console.log(`   Cache Size: ${initialStats.size} entries`);
-    console.log(`   Total Requests: ${initialStats.totalCount}`);
-    console.log(`   Cache Hits: ${initialStats.cacheHitsCompleted}`);
-    console.log(`   Cache Misses: ${initialStats.cacheMisses}`);
+    console.info(`\n📊 Initial DNS Cache Stats:`);
+    console.info(`   Cache Size: ${initialStats.size} entries`);
+    console.info(`   Total Requests: ${initialStats.totalCount}`);
+    console.info(`   Cache Hits: ${initialStats.cacheHitsCompleted}`);
+    console.info(`   Cache Misses: ${initialStats.cacheMisses}`);
   }
 
   // Test 1: Measure without prefetch
-  console.log(`\n1️⃣  Testing WITHOUT DNS prefetch...`);
+  console.info(`\n1️⃣  Testing WITHOUT DNS prefetch...`);
   const start1 = performance.now();
   
   try {
@@ -105,23 +105,23 @@ async function trackDNSPerformance(host: string = "api.example.com", port: numbe
   } catch (error: any) {
     // Expected if endpoint doesn't exist - we're just measuring DNS time
     if (error.name !== "AbortError") {
-      console.log(`   ⚠️  Request failed (expected): ${error.message}`);
+      console.info(`   ⚠️  Request failed (expected): ${error.message}`);
     }
   }
   
   const withoutPrefetch = performance.now() - start1;
-  console.log(`   ⏱️  Time: ${withoutPrefetch.toFixed(2)}ms`);
+  console.info(`   ⏱️  Time: ${withoutPrefetch.toFixed(2)}ms`);
 
   // Small delay to ensure DNS cache is ready
   await new Promise(resolve => setTimeout(resolve, 100));
 
   // Test 2: Prefetch DNS, then measure
-  console.log(`\n2️⃣  Prefetching DNS for ${host}:${port}...`);
+  console.info(`\n2️⃣  Prefetching DNS for ${host}:${port}...`);
   
   try {
       // Use dns.prefetch() - the correct API
       dns.prefetch(host, port);
-      console.log(`   ✅ DNS prefetch initiated`);
+      console.info(`   ✅ DNS prefetch initiated`);
       
       // Wait a bit for prefetch to complete
       await new Promise(resolve => setTimeout(resolve, 50));
@@ -137,16 +137,16 @@ async function trackDNSPerformance(host: string = "api.example.com", port: numbe
       } | null;
       
       if (afterPrefetchStats) {
-        console.log(`   📊 DNS Cache Stats after prefetch:`);
-        console.log(`      Cache Size: ${afterPrefetchStats.size} entries`);
-        console.log(`      Total Requests: ${afterPrefetchStats.totalCount}`);
+        console.info(`   📊 DNS Cache Stats after prefetch:`);
+        console.info(`      Cache Size: ${afterPrefetchStats.size} entries`);
+        console.info(`      Total Requests: ${afterPrefetchStats.totalCount}`);
       }
   } catch (error: any) {
-    console.log(`   ⚠️  Prefetch failed: ${error.message}`);
+    console.info(`   ⚠️  Prefetch failed: ${error.message}`);
   }
 
   // Test 3: Measure with prefetch
-  console.log(`\n3️⃣  Testing WITH DNS prefetch...`);
+  console.info(`\n3️⃣  Testing WITH DNS prefetch...`);
   const start2 = performance.now();
   
   try {
@@ -157,12 +157,12 @@ async function trackDNSPerformance(host: string = "api.example.com", port: numbe
     await response2.text();
   } catch (error: any) {
     if (error.name !== "AbortError") {
-      console.log(`   ⚠️  Request failed (expected): ${error.message}`);
+      console.info(`   ⚠️  Request failed (expected): ${error.message}`);
     }
   }
   
   const withPrefetch = performance.now() - start2;
-  console.log(`   ⏱️  Time: ${withPrefetch.toFixed(2)}ms`);
+  console.info(`   ⏱️  Time: ${withPrefetch.toFixed(2)}ms`);
 
   // Calculate improvement
   const improvement = withoutPrefetch - withPrefetch;
@@ -170,10 +170,10 @@ async function trackDNSPerformance(host: string = "api.example.com", port: numbe
     ? ((improvement / withoutPrefetch) * 100).toFixed(1)
     : "0.0";
 
-  console.log(`\n📈 Results:`);
-  console.log(`   Without prefetch: ${withoutPrefetch.toFixed(2)}ms`);
-  console.log(`   With prefetch:    ${withPrefetch.toFixed(2)}ms`);
-  console.log(`   Improvement:     ${improvement.toFixed(2)}ms (${improvementPercent}% faster)`);
+  console.info(`\n📈 Results:`);
+  console.info(`   Without prefetch: ${withoutPrefetch.toFixed(2)}ms`);
+  console.info(`   With prefetch:    ${withPrefetch.toFixed(2)}ms`);
+  console.info(`   Improvement:     ${improvement.toFixed(2)}ms (${improvementPercent}% faster)`);
 
   // Send to metrics system
   metrics.gauge("dns.prefetch.benefit_ms", improvement);
@@ -185,13 +185,13 @@ async function trackDNSPerformance(host: string = "api.example.com", port: numbe
   const finalStats = dns.getCacheStats?.() as DNSCacheStats | null;
   
   if (finalStats) {
-    console.log(`\n📊 Final DNS Cache Stats:`);
-    console.log(`   Cache Hits (Completed): ${finalStats.cacheHitsCompleted}`);
-    console.log(`   Cache Hits (In Flight): ${finalStats.cacheHitsInflight}`);
-    console.log(`   Cache Misses: ${finalStats.cacheMisses}`);
-    console.log(`   Cache Size: ${finalStats.size} entries`);
-    console.log(`   Errors: ${finalStats.errors}`);
-    console.log(`   Total Requests: ${finalStats.totalCount}`);
+    console.info(`\n📊 Final DNS Cache Stats:`);
+    console.info(`   Cache Hits (Completed): ${finalStats.cacheHitsCompleted}`);
+    console.info(`   Cache Hits (In Flight): ${finalStats.cacheHitsInflight}`);
+    console.info(`   Cache Misses: ${finalStats.cacheMisses}`);
+    console.info(`   Cache Size: ${finalStats.size} entries`);
+    console.info(`   Errors: ${finalStats.errors}`);
+    console.info(`   Total Requests: ${finalStats.totalCount}`);
     
     // Calculate hit rate
     const totalHits = finalStats.cacheHitsCompleted + finalStats.cacheHitsInflight;
@@ -199,7 +199,7 @@ async function trackDNSPerformance(host: string = "api.example.com", port: numbe
     
     if (totalRequests > 0) {
       const hitRate = ((totalHits / totalRequests) * 100).toFixed(1);
-      console.log(`   Cache Hit Rate: ${hitRate}%`);
+      console.info(`   Cache Hit Rate: ${hitRate}%`);
       metrics.gauge("dns.cache.hit_rate_percent", parseFloat(hitRate));
     }
     
@@ -228,19 +228,19 @@ async function trackMultipleHosts(hosts: string[] = [
   "registry.npmjs.org",
   "bun.sh",
 ]) {
-  console.log(`\n🌐 Testing DNS Prefetch for Multiple Hosts`);
-  console.log("=".repeat(60));
+  console.info(`\n🌐 Testing DNS Prefetch for Multiple Hosts`);
+  console.info("=".repeat(60));
 
   const results: Array<{ host: string; improvement: number }> = [];
 
   for (const host of hosts) {
-    console.log(`\n📡 Testing ${host}...`);
+    console.info(`\n📡 Testing ${host}...`);
     
     try {
       // Prefetch all hosts in parallel
       dns.prefetch(host, 443);
     } catch (error: any) {
-      console.log(`   ⚠️  Prefetch failed: ${error.message}`);
+      console.info(`   ⚠️  Prefetch failed: ${error.message}`);
     }
   }
 
@@ -263,9 +263,9 @@ async function trackMultipleHosts(hosts: string[] = [
 
   const fetchResults = await Promise.all(fetchPromises);
   
-  console.log(`\n📊 Results:`);
+  console.info(`\n📊 Results:`);
   fetchResults.forEach(({ host, time }) => {
-    console.log(`   ${host}: ${time.toFixed(2)}ms`);
+    console.info(`   ${host}: ${time.toFixed(2)}ms`);
     results.push({ host, improvement: time });
   });
 
@@ -282,24 +282,24 @@ async function trackMultipleHosts(hosts: string[] = [
  * Note: This is a workaround - Bun's DNS cache is internal
  */
 async function clearDNSCacheWorkaround() {
-  console.log(`\n🧹 Attempting to clear DNS cache...`);
+  console.info(`\n🧹 Attempting to clear DNS cache...`);
   
   // Bun doesn't expose DNS cache clearing directly
   // The cache has a TTL and will expire naturally
   // For testing, we can wait or use different hosts
   
-  console.log(`   ℹ️  Bun's DNS cache uses TTL-based expiration`);
-  console.log(`   ℹ️  Cache will clear automatically after TTL expires`);
-  console.log(`   ℹ️  For accurate tests, use different hostnames or wait for TTL`);
+  console.info(`   ℹ️  Bun's DNS cache uses TTL-based expiration`);
+  console.info(`   ℹ️  Cache will clear automatically after TTL expires`);
+  console.info(`   ℹ️  For accurate tests, use different hostnames or wait for TTL`);
   
   // Alternative: Use a unique subdomain to bypass cache
   const uniqueHost = `test-${Date.now()}.example.com`;
-  console.log(`   💡 Tip: Use unique hostnames like: ${uniqueHost}`);
+  console.info(`   💡 Tip: Use unique hostnames like: ${uniqueHost}`);
 }
 
 // Main execution
 if (import.meta.main) {
-  console.log("🚀 DNS Prefetch Performance Tracker\n");
+  console.info("🚀 DNS Prefetch Performance Tracker\n");
 
   // Test single host
   await trackDNSPerformance("api.example.com", 443);
@@ -308,8 +308,8 @@ if (import.meta.main) {
   await trackMultipleHosts();
 
   // Show all metrics
-  console.log(`\n📊 All Metrics:`);
-  console.log(JSON.stringify(metrics.getAllMetrics(), null, 2));
+  console.info(`\n📊 All Metrics:`);
+  console.info(JSON.stringify(metrics.getAllMetrics(), null, 2));
 
   // Cache clearing info
   await clearDNSCacheWorkaround();

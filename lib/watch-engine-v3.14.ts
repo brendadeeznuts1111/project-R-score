@@ -137,7 +137,7 @@ export async function createWatchSession(
   const matched = packages.filter(p => glob.match(p.name));
   
   if (matched.length === 0) {
-    console.log(c.yellow(`⚠️  No packages match: ${pattern}`));
+    console.info(c.yellow(`⚠️  No packages match: ${pattern}`));
     return '';
   }
 
@@ -195,7 +195,7 @@ async function setupPackageWatcher(
     
     const startMs = performance.now();
     
-    console.log(c.cyan(`\n[${fmtTime()}] 🔄 ${pkg.name}: ${event} ${c.bold(filename || '')}`));
+    console.info(c.cyan(`\n[${fmtTime()}] 🔄 ${pkg.name}: ${event} ${c.bold(filename || '')}`));
 
     try {
       // Kill existing process if any
@@ -235,11 +235,11 @@ async function setupPackageWatcher(
 
       if (exitCode === 0) {
         pkg.status = 'idle';
-        console.log(c.green(`[${fmtTime()}] ✅ ${pkg.name} ready (${duration.toFixed(0)}ms)`));
+        console.info(c.green(`[${fmtTime()}] ✅ ${pkg.name} ready (${duration.toFixed(0)}ms)`));
       } else {
         pkg.status = 'error';
         session.metrics.errors++;
-        console.log(c.red(`[${fmtTime()}] ❌ ${pkg.name} exited ${exitCode}`));
+        console.info(c.red(`[${fmtTime()}] ❌ ${pkg.name} exited ${exitCode}`));
       }
 
       session.restartCount++;
@@ -271,7 +271,7 @@ function streamWithPrefix(stream: ReadableStream, pkgName: string, type: 'stdout
         const lines = text.trim().split('\n');
         lines.forEach(line => {
           if (line.trim()) {
-            console.log(`${prefix} ${color(line)}`);
+            console.info(`${prefix} ${color(line)}`);
           }
         });
       }
@@ -286,7 +286,7 @@ function renderSessionDashboard(session: WatchSession): void {
   if (!sessions.has(session.id)) return; // Session was stopped
   
   console.clear();
-  console.log(c.bold(`\n👁️  WATCH SESSION: ${session.pattern}\n`));
+  console.info(c.bold(`\n👁️  WATCH SESSION: ${session.pattern}\n`));
   
   const tableData = session.packages.map(p => [
     p.name,
@@ -296,23 +296,23 @@ function renderSessionDashboard(session: WatchSession): void {
     `${Math.round(performance.now() - session.startTime / 1000)}s`
   ]);
 
-  console.log(inspect.table(tableData, {
+  console.info(inspect.table(tableData, {
     headers: ['Package', 'Status', 'PID', 'Last Restart', 'Uptime'],
     colors: true
   }));
 
-  console.log(c.bold(`\n📈 Metrics:`));
-  console.log(`  Restarts: ${session.metrics.totalRestarts} | ` +
+  console.info(c.bold(`\n📈 Metrics:`));
+  console.info(`  Restarts: ${session.metrics.totalRestarts} | ` +
     `Avg: ${session.metrics.avgRestartMs.toFixed(0)}ms | ` +
     `Errors: ${session.metrics.errors > 0 ? c.red(String(session.metrics.errors)) : '0'}`);
   
-  console.log(c.bold(`\n⚡ Performance:`));
-  console.log(`  Session: ${session.id} | ` +
+  console.info(c.bold(`\n⚡ Performance:`));
+  console.info(`  Session: ${session.id} | ` +
     `Packages: ${session.packages.length} | ` +
     `Pattern: ${c.cyan(session.pattern)} | ` +
     `Script: ${c.green(session.script)}`);
   
-  console.log(c.yellow(`\nPress Ctrl+C to stop\n`));
+  console.info(c.yellow(`\nPress Ctrl+C to stop\n`));
 }
 
 function updateSessionDashboard(session: WatchSession): void {
@@ -364,7 +364,7 @@ function startHealthCheck(session: WatchSession, url: string): void {
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
     } catch {
-      console.log(c.yellow(`[${fmtTime()}] ⚠️  Health check failed, triggering restart...`));
+      console.info(c.yellow(`[${fmtTime()}] ⚠️  Health check failed, triggering restart...`));
       // Trigger restart of all packages
       session.packages.forEach(p => {
         if (p.pid) {
@@ -395,7 +395,7 @@ export function startWebSocketDashboard(port: number = 3001): void {
     },
     websocket: {
       open(ws) {
-        console.log(c.blue(`📡 Dashboard client connected`));
+        console.info(c.blue(`📡 Dashboard client connected`));
         // Send initial state
         ws.send(JSON.stringify({
           type: 'init',
@@ -441,12 +441,12 @@ export function startWebSocketDashboard(port: number = 3001): void {
         }
       },
       close(ws) {
-        console.log(c.yellow(`📡 Dashboard client disconnected`));
+        console.info(c.yellow(`📡 Dashboard client disconnected`));
       }
     }
   });
   
-  console.log(c.green(`🌐 Watch dashboard running on http://localhost:${port}`));
+  console.info(c.green(`🌐 Watch dashboard running on http://localhost:${port}`));
 }
 
 function getWatchDashboardHTML(): string {
@@ -541,7 +541,7 @@ function getWatchDashboardHTML(): string {
             ws.onopen = () => {
                 document.getElementById('connection').className = 'connection connected';
                 document.getElementById('connection').textContent = '🔌 Connected';
-                console.log('Connected to watch dashboard');
+                console.info('Connected to watch dashboard');
             };
             
             ws.onmessage = (event) => {
@@ -670,7 +670,7 @@ export function stopWatchSession(sessionId: string): void {
   const session = sessions.get(sessionId);
   if (!session) return;
   
-  console.log(c.yellow(`🛑 Stopping watch session: ${session.pattern}`));
+  console.info(c.yellow(`🛑 Stopping watch session: ${session.pattern}`));
   
   session.packages.forEach(pkg => {
     if (pkg.pid) {
@@ -683,7 +683,7 @@ export function stopWatchSession(sessionId: string): void {
 }
 
 export function stopAllWatchSessions(): void {
-  console.log(c.yellow('\n\n🛑 Stopping all watch sessions...'));
+  console.info(c.yellow('\n\n🛑 Stopping all watch sessions...'));
   sessions.forEach((session, id) => {
     stopWatchSession(id);
   });
@@ -716,7 +716,7 @@ export async function runWatchCLI(): Promise<void> {
   };
 
   if (flags.watch || flags.hot) {
-    console.log(c.bold('🚀 Starting Enhanced Watch Engine v3.14'));
+    console.info(c.bold('🚀 Starting Enhanced Watch Engine v3.14'));
     
     // Start WebSocket dashboard
     startWebSocketDashboard(3001);
@@ -733,9 +733,9 @@ export async function runWatchCLI(): Promise<void> {
     });
     
     if (sessionId) {
-      console.log(c.green(`✅ Watch session started: ${sessionId}`));
+      console.info(c.green(`✅ Watch session started: ${sessionId}`));
     } else {
-      console.log(c.red('❌ Failed to start watch session'));
+      console.info(c.red('❌ Failed to start watch session'));
       process.exit(1);
     }
   }

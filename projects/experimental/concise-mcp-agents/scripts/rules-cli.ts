@@ -17,65 +17,65 @@ async function main() {
 
       if (category) {
         rules = govEngine.getRulesByCategory(category as any);
-        console.log(`\n📋 GOV Rules - ${category} (${rules.length})\n`);
+        console.info(`\n📋 GOV Rules - ${category} (${rules.length})\n`);
       } else {
         rules = govEngine.getAllRules();
-        console.log(`\n🚀 SYNDICATE GOV RULES – ENFORCED *PR-gated. Auto-validate. ${rules.length} Rules (active). Profit/Compliance = 100%.*\n`);
+        console.info(`\n🚀 SYNDICATE GOV RULES – ENFORCED *PR-gated. Auto-validate. ${rules.length} Rules (active). Profit/Compliance = 100%.*\n`);
       }
 
-      console.log(formatRulesTable(rules.slice(0, 20)));
+      console.info(formatRulesTable(rules.slice(0, 20)));
 
       if (rules.length > 20) {
-        console.log(`\n... and ${rules.length - 20} more rules. Use 'bun rules:list <category>' to filter.`);
+        console.info(`\n... and ${rules.length - 20} more rules. Use 'bun rules:list <category>' to filter.`);
       }
       break;
 
     case "validate":
-      console.log(`🔍 Validating all active rules...\n`);
+      console.info(`🔍 Validating all active rules...\n`);
 
       const results = await govEngine.validateAllRules();
       const summary = govEngine.getValidationSummary();
 
-      console.log(`📊 GOV Validation Summary:`);
-      console.log(`   ✅ Passed: ${summary.passed}/${summary.total}`);
-      console.log(`   ❌ Failed: ${summary.failed}/${summary.total}`);
-      console.log(`   ⚠️  Warnings: ${summary.warnings}/${summary.total}`);
-      console.log(`   📊 Compliance: ${summary.compliance}%`);
+      console.info(`📊 GOV Validation Summary:`);
+      console.info(`   ✅ Passed: ${summary.passed}/${summary.total}`);
+      console.info(`   ❌ Failed: ${summary.failed}/${summary.total}`);
+      console.info(`   ⚠️  Warnings: ${summary.warnings}/${summary.total}`);
+      console.info(`   📊 Compliance: ${summary.compliance}%`);
 
       if (summary.failed > 0) {
-        console.log(`\n❌ Critical Failures:`);
+        console.info(`\n❌ Critical Failures:`);
         summary.criticalFailures.forEach(failure => {
           const result = results.find(r => r.ruleId === failure && r.status === 'FAIL');
           if (result) {
-            console.log(`   ${failure}: ${result.message}`);
+            console.info(`   ${failure}: ${result.message}`);
           }
         });
       }
 
       if (summary.compliance === 100) {
-        console.log(`\n🎉 All rules compliant! GOV GREEN ✅`);
+        console.info(`\n🎉 All rules compliant! GOV GREEN ✅`);
       }
       break;
 
     case "enforce":
       const ruleId = args[0];
       if (!ruleId) {
-        console.log('Usage: bun rules:enforce <rule-id>');
-        console.log('Example: bun rules:enforce SEC-ENV-001');
+        console.info('Usage: bun rules:enforce <rule-id>');
+        console.info('Example: bun rules:enforce SEC-ENV-001');
         break;
       }
 
-      console.log(`🔧 Enforcing rule: ${ruleId}\n`);
+      console.info(`🔧 Enforcing rule: ${ruleId}\n`);
 
       const enforcement = await govEngine.enforceRule(ruleId);
       if (enforcement.success) {
-        console.log(`✅ ${enforcement.message}`);
+        console.info(`✅ ${enforcement.message}`);
         if (enforcement.actions) {
-          console.log('\n📋 Actions taken:');
-          enforcement.actions.forEach(action => console.log(`   • ${action}`));
+          console.info('\n📋 Actions taken:');
+          enforcement.actions.forEach(action => console.info(`   • ${action}`));
         }
       } else {
-        console.log(`❌ ${enforcement.message}`);
+        console.info(`❌ ${enforcement.message}`);
         process.exit(1);
       }
       break;
@@ -83,33 +83,33 @@ async function main() {
     case "stats":
       const stats = govEngine.generateRuleStats();
 
-      console.log(`\n📊 GOV Rules Statistics:`);
-      console.log(`   📈 Total Rules: ${stats.total}`);
-      console.log(`   🤖 Automated: ${stats.automated}`);
-      console.log(`   👤 Manual: ${stats.manual}`);
-      console.log(`   📊 Automation Rate: ${Math.round((stats.automated / stats.total) * 100)}%`);
+      console.info(`\n📊 GOV Rules Statistics:`);
+      console.info(`   📈 Total Rules: ${stats.total}`);
+      console.info(`   🤖 Automated: ${stats.automated}`);
+      console.info(`   👤 Manual: ${stats.manual}`);
+      console.info(`   📊 Automation Rate: ${Math.round((stats.automated / stats.total) * 100)}%`);
 
-      console.log(`\n📂 By Category:`);
+      console.info(`\n📂 By Category:`);
       Object.entries(stats.byCategory).forEach(([cat, count]) => {
-        console.log(`   ${cat}: ${count}`);
+        console.info(`   ${cat}: ${count}`);
       });
 
-      console.log(`\n🎯 By Priority:`);
+      console.info(`\n🎯 By Priority:`);
       Object.entries(stats.byPriority).forEach(([pri, count]) => {
-        console.log(`   ${pri}: ${count}`);
+        console.info(`   ${pri}: ${count}`);
       });
 
-      console.log(`\n📊 By Status:`);
+      console.info(`\n📊 By Status:`);
       Object.entries(stats.byStatus).forEach(([status, count]) => {
-        console.log(`   ${status}: ${count}`);
+        console.info(`   ${status}: ${count}`);
       });
       break;
 
     case "pr":
       const ruleToModify = args[0];
       if (!ruleToModify) {
-        console.log('Usage: bun rules:pr <rule-id> [description]');
-        console.log('Example: bun rules:pr NEW-RULE-001 "New security rule"');
+        console.info('Usage: bun rules:pr <rule-id> [description]');
+        console.info('Example: bun rules:pr NEW-RULE-001 "New security rule"');
         break;
       }
 
@@ -147,21 +147,21 @@ ${description}
 
         await Bun.write(`pr-template-${ruleToModify}.md`, prTemplate);
 
-        console.log(`✅ PR Branch Created:`);
-        console.log(`   Branch: ${branchName}`);
-        console.log(`   Template: pr-template-${ruleToModify}.md`);
-        console.log(`   Ready for: git add . && git commit -m "feat: ${description}"`);
+        console.info(`✅ PR Branch Created:`);
+        console.info(`   Branch: ${branchName}`);
+        console.info(`   Template: pr-template-${ruleToModify}.md`);
+        console.info(`   Ready for: git add . && git commit -m "feat: ${description}"`);
 
       } catch (error) {
-        console.log(`❌ PR creation failed: ${error.message}`);
+        console.info(`❌ PR creation failed: ${error.message}`);
       }
       break;
 
     case "search":
       const query = args.join(' ');
       if (!query) {
-        console.log('Usage: bun rules:search <query>');
-        console.log('Example: bun rules:search security');
+        console.info('Usage: bun rules:search <query>');
+        console.info('Example: bun rules:search security');
         break;
       }
 
@@ -174,18 +174,18 @@ ${description}
         rule.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
       );
 
-      console.log(`🔍 Rules matching "${query}": ${matches.length}\n`);
+      console.info(`🔍 Rules matching "${query}": ${matches.length}\n`);
 
       matches.forEach(rule => {
-        console.log(`${rule.id} (${rule.category})`);
-        console.log(`   ${rule.trigger}`);
-        console.log(`   → ${rule.action}`);
-        console.log('');
+        console.info(`${rule.id} (${rule.category})`);
+        console.info(`   ${rule.trigger}`);
+        console.info(`   → ${rule.action}`);
+        console.info('');
       });
       break;
 
     case "audit":
-      console.log(`🔬 Running comprehensive GOV audit...\n`);
+      console.info(`🔬 Running comprehensive GOV audit...\n`);
 
       // Run all validations
       const auditResults = await govEngine.validateAllRules();
@@ -201,19 +201,19 @@ ${description}
 
       await Bun.write('audit-report.json', JSON.stringify(auditReport, null, 2));
 
-      console.log(`📋 Audit Report Generated:`);
-      console.log(`   File: audit-report.json`);
-      console.log(`   Compliance: ${auditSummary.compliance}%`);
-      console.log(`   Issues: ${auditSummary.failed + auditSummary.warnings}`);
+      console.info(`📋 Audit Report Generated:`);
+      console.info(`   File: audit-report.json`);
+      console.info(`   Compliance: ${auditSummary.compliance}%`);
+      console.info(`   Issues: ${auditSummary.failed + auditSummary.warnings}`);
 
       if (auditSummary.compliance < 100) {
-        console.log(`\n⚠️  Recommendations:`);
-        auditReport.recommendations.forEach(rec => console.log(`   • ${rec}`));
+        console.info(`\n⚠️  Recommendations:`);
+        auditReport.recommendations.forEach(rec => console.info(`   • ${rec}`));
       }
       break;
 
     default:
-      console.log(`🚀 GOV Rules CLI v3.0.0
+      console.info(`🚀 GOV Rules CLI v3.0.0
 
 USAGE:
   bun rules:list [category]     # List rules (filter by category)

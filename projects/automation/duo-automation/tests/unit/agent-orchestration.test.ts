@@ -27,7 +27,7 @@ class AgentOrchestrator {
 
     if (!fromAgent || !toAgent) throw new Error('Agent not found');
 
-    console.log(`🔄 Task ${taskId} handover: ${fromAgent.name} -> ${toAgent.name}`);
+    console.info(`🔄 Task ${taskId} handover: ${fromAgent.name} -> ${toAgent.name}`);
 
     // Simulation of handover protocol
     fromAgent.status = 'handover';

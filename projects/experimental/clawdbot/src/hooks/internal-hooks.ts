@@ -55,7 +55,7 @@ const handlers = new Map<string, InternalHookHandler[]>();
  * ```ts
  * // Listen to all command events
  * registerInternalHook('command', async (event) => {
- *   console.log('Command:', event.action);
+ *   console.info('Command:', event.action);
  * });
  *
  * // Listen only to /new commands

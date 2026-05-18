@@ -135,7 +135,7 @@ async function main() {
   const args = process.argv.slice(2);
   const force = args.includes("--force") || args.includes("-f");
 
-  console.log(`\n${c.bold}Server Restart${c.reset}\n`);
+  console.info(`\n${c.bold}Server Restart${c.reset}\n`);
 
   // Check for existing server
   const existing = await getRunningServer();
@@ -143,27 +143,27 @@ async function main() {
   if (existing) {
     const uptimeStr = existing.uptime ? ` (uptime: ${formatUptime(existing.uptime)})` : "";
     const versionStr = existing.version ? ` v${existing.version}` : "";
-    console.log(`${c.dim}├─${c.reset} Found server${versionStr} on port ${PORT}${uptimeStr}`);
-    console.log(`${c.dim}├─${c.reset} PID: ${existing.pid}`);
+    console.info(`${c.dim}├─${c.reset} Found server${versionStr} on port ${PORT}${uptimeStr}`);
+    console.info(`${c.dim}├─${c.reset} PID: ${existing.pid}`);
 
     if (force) {
-      console.log(`${c.dim}├─${c.reset} ${c.warn}Force killing...${c.reset}`);
+      console.info(`${c.dim}├─${c.reset} ${c.warn}Force killing...${c.reset}`);
       await $`kill -KILL ${existing.pid}`.quiet().catch(() => {});
       await Bun.sleep(100);
     } else {
-      console.log(`${c.dim}├─${c.reset} Graceful shutdown...`);
+      console.info(`${c.dim}├─${c.reset} Graceful shutdown...`);
       const stopped = await gracefulShutdown(existing.pid);
       if (!stopped) {
-        console.log(`${c.dim}├─${c.reset} ${c.warn}Graceful shutdown failed, force killing${c.reset}`);
+        console.info(`${c.dim}├─${c.reset} ${c.warn}Graceful shutdown failed, force killing${c.reset}`);
       }
     }
-    console.log(`${c.dim}├─${c.reset} ${c.ok}◆${c.reset} Previous server stopped`);
+    console.info(`${c.dim}├─${c.reset} ${c.ok}◆${c.reset} Previous server stopped`);
   } else {
-    console.log(`${c.dim}├─${c.reset} No existing server on port ${PORT}`);
+    console.info(`${c.dim}├─${c.reset} No existing server on port ${PORT}`);
   }
 
   // Start new server
-  console.log(`${c.dim}├─${c.reset} Starting server...`);
+  console.info(`${c.dim}├─${c.reset} Starting server...`);
 
   // Build command with preconnect flags
   const bunArgs = ["bun", "--hot"];
@@ -173,7 +173,7 @@ async function main() {
   bunArgs.push(SERVER_SCRIPT);
 
   if (PRECONNECT_HOSTS.length > 0) {
-    console.log(`${c.dim}├─${c.reset} Preconnecting to ${PRECONNECT_HOSTS.length} host(s)`);
+    console.info(`${c.dim}├─${c.reset} Preconnecting to ${PRECONNECT_HOSTS.length} host(s)`);
   }
 
   const proc = Bun.spawn(bunArgs, {
@@ -185,16 +185,16 @@ async function main() {
   proc.unref();
 
   // Wait for health check
-  console.log(`${c.dim}├─${c.reset} Waiting for health check...`);
+  console.info(`${c.dim}├─${c.reset} Waiting for health check...`);
   const health = await waitForHealth();
 
   if (!health.success) {
-    console.log(`${c.dim}└─${c.reset} ${c.err}✖ Health check failed: ${health.error}${c.reset}`);
+    console.info(`${c.dim}└─${c.reset} ${c.err}✖ Health check failed: ${health.error}${c.reset}`);
     process.exit(1);
   }
 
   // Success output
-  console.log(`${c.dim}└─${c.reset} ${c.ok}◆ Server ready${c.reset}\n`);
+  console.info(`${c.dim}└─${c.reset} ${c.ok}◆ Server ready${c.reset}\n`);
 
   // Status table
   const network = health.data?.network;
@@ -209,7 +209,7 @@ async function main() {
     { Key: "Integrity", Value: health.data?.integrity?.verified ? `${c.ok}◆ verified${c.reset}` : `${c.err}✖ failed${c.reset}` },
   ];
 
-  console.log(Bun.inspect.table(status, { colors: true }));
+  console.info(Bun.inspect.table(status, { colors: true }));
 }
 
 main().catch(err => {

@@ -9,10 +9,10 @@ import shellUtils from '../src/cli/shellUtils';
 
 const commands = {
   async build() {
-    console.log('🔨 Building project...');
+    console.info('🔨 Building project...');
     const result = await shellUtils.runBuild();
     if (result.success) {
-      console.log('✅ Build completed successfully');
+      console.info('✅ Build completed successfully');
     } else {
       console.error('❌ Build failed:', result.stderr);
       process.exit(1);
@@ -20,9 +20,9 @@ const commands = {
   },
 
   async test() {
-    console.log('🧪 Running tests...');
+    console.info('🧪 Running tests...');
     const result = await shellUtils.runTests();
-    console.log(result.stdout);
+    console.info(result.stdout);
     if (!result.success) {
       console.error('❌ Tests failed');
       process.exit(1);
@@ -30,25 +30,25 @@ const commands = {
   },
 
   async lint() {
-    console.log('🔍 Linting code...');
+    console.info('🔍 Linting code...');
     const result = await shellUtils.lintCode(['src/', 'cli/']);
-    console.log(result.stdout);
+    console.info(result.stdout);
     if (!result.success) {
       console.warn('⚠️ Linting issues found');
     }
   },
 
   async format() {
-    console.log('✨ Formatting code...');
+    console.info('✨ Formatting code...');
     const result = await shellUtils.formatCode(['src/', 'cli/', 'web-app/']);
-    console.log(result.stdout);
+    console.info(result.stdout);
   },
 
   async typecheck() {
-    console.log('📝 Type checking...');
+    console.info('📝 Type checking...');
     const result = await shellUtils.checkTypeScript();
     if (result.success) {
-      console.log('✅ No type errors');
+      console.info('✅ No type errors');
     } else {
       console.error('❌ Type errors found:', result.stderr);
       process.exit(1);
@@ -56,10 +56,10 @@ const commands = {
   },
 
   async install() {
-    console.log('📦 Installing dependencies...');
+    console.info('📦 Installing dependencies...');
     const result = await shellUtils.installDependencies('bun');
     if (result.success) {
-      console.log('✅ Dependencies installed');
+      console.info('✅ Dependencies installed');
     } else {
       console.error('❌ Installation failed:', result.stderr);
       process.exit(1);
@@ -67,38 +67,38 @@ const commands = {
   },
 
   async clean() {
-    console.log('🧹 Cleaning build artifacts...');
+    console.info('🧹 Cleaning build artifacts...');
     await shellUtils.removeFiles(['dist/', 'build/', '.bun/', 'node_modules/.cache']);
-    console.log('✅ Cleaned');
+    console.info('✅ Cleaned');
   },
 
   async status() {
-    console.log('📊 Git Status:');
+    console.info('📊 Git Status:');
     const status = await shellUtils.getGitStatus();
-    console.log(status || 'Working directory clean');
+    console.info(status || 'Working directory clean');
 
-    console.log('\n📜 Recent Commits:');
+    console.info('\n📜 Recent Commits:');
     const log = await shellUtils.getGitLog(5);
-    console.log(log);
+    console.info(log);
   },
 
   async info() {
-    console.log('ℹ️ System Information:');
+    console.info('ℹ️ System Information:');
     const info = await shellUtils.getSystemInfo();
     Object.entries(info).forEach(([key, value]) => {
-      console.log(`  ${key}: ${value}`);
+      console.info(`  ${key}: ${value}`);
     });
 
-    console.log('\n📊 Project Statistics:');
+    console.info('\n📊 Project Statistics:');
     const lines = await shellUtils.countLines('src/');
-    console.log(`  Lines of code: ${lines}`);
+    console.info(`  Lines of code: ${lines}`);
 
     const size = await shellUtils.getFileSize('.');
-    console.log(`  Project size: ${size}`);
+    console.info(`  Project size: ${size}`);
   },
 
   async dev() {
-    console.log('🚀 Starting development server...');
+    console.info('🚀 Starting development server...');
     const result = await shellUtils.executeCommand('bun run web-app/server.js', {
       verbose: true,
     });
@@ -109,10 +109,10 @@ const commands = {
   },
 
   async deploy(target: string = 'production') {
-    console.log(`🚀 Deploying to ${target}...`);
+    console.info(`🚀 Deploying to ${target}...`);
     
     // Run tests first
-    console.log('Running tests before deployment...');
+    console.info('Running tests before deployment...');
     const testResult = await shellUtils.runTests();
     if (!testResult.success) {
       console.error('❌ Tests failed, aborting deployment');
@@ -120,18 +120,18 @@ const commands = {
     }
 
     // Build
-    console.log('Building for deployment...');
+    console.info('Building for deployment...');
     const buildResult = await shellUtils.runBuild();
     if (!buildResult.success) {
       console.error('❌ Build failed, aborting deployment');
       process.exit(1);
     }
 
-    console.log(`✅ Ready to deploy to ${target}`);
+    console.info(`✅ Ready to deploy to ${target}`);
   },
 
   async help() {
-    console.log(`
+    console.info(`
 DuoPlus Development Tools
 
 Usage: bun run cli/dev-tools.ts <command> [options]

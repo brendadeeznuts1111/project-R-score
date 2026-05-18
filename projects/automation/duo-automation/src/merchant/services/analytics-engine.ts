@@ -33,7 +33,7 @@ export class MerchantAnalyticsEngine {
   }
   
   private initializeEngine(): void {
-    console.log('📊 Initializing Analytics Engine');
+    console.info('📊 Initializing Analytics Engine');
   }
   
   // Generate comprehensive analytics report
@@ -46,7 +46,7 @@ export class MerchantAnalyticsEngine {
       return cached;
     }
     
-    console.log(`📈 Generating analytics report for merchant ${merchantId} (${timeframe})`);
+    console.info(`📈 Generating analytics report for merchant ${merchantId} (${timeframe})`);
     
     const report: MerchantAnalyticsReport = {
       merchantId,

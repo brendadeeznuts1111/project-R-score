@@ -1,14 +1,14 @@
 #!/usr/bin/env bun
 
 export async function demoRSSReader() {
-  console.log('📡 RSS Reader Demo');
-  console.log('='.repeat(40));
+  console.info('📡 RSS Reader Demo');
+  console.info('='.repeat(40));
   
   try {
     // 1. RSS Feed Parser
-    console.log('\n1. 📰 RSS Feed Parser:');
+    console.info('\n1. 📰 RSS Feed Parser:');
     const parseRSSFeed = async (xmlContent) => {
-      console.log('   🔍 Parsing RSS XML...');
+      console.info('   🔍 Parsing RSS XML...');
       
       // Simulate RSS parsing (in real implementation, use fast-xml-parser)
       const parsedFeed = {
@@ -44,8 +44,8 @@ export async function demoRSSReader() {
         ]
       };
       
-      console.log(`   ✅ Parsed feed: ${parsedFeed.title}`);
-      console.log(`   📄 Found ${parsedFeed.items.length} items`);
+      console.info(`   ✅ Parsed feed: ${parsedFeed.title}`);
+      console.info(`   📄 Found ${parsedFeed.items.length} items`);
       
       return parsedFeed;
     };
@@ -63,7 +63,7 @@ export async function demoRSSReader() {
     const feed = await parseRSSFeed(mockRSSContent);
     
     // 2. Feed categorization
-    console.log('\n2. 📂 Feed Categorization:');
+    console.info('\n2. 📂 Feed Categorization:');
     const categorizeItems = (items) => {
       const categories = {};
       
@@ -74,9 +74,9 @@ export async function demoRSSReader() {
         categories[item.category].push(item);
       });
       
-      console.log('   📋 Categories:');
+      console.info('   📋 Categories:');
       Object.entries(categories).forEach(([category, items]) => {
-        console.log(`      • ${category}: ${items.length} items`);
+        console.info(`      • ${category}: ${items.length} items`);
       });
       
       return categories;
@@ -85,7 +85,7 @@ export async function demoRSSReader() {
     const categories = categorizeItems(feed.items);
     
     // 3. Content analysis
-    console.log('\n3. 🔍 Content Analysis:');
+    console.info('\n3. 🔍 Content Analysis:');
     const analyzeContent = (items) => {
       const analysis = {
         totalItems: items.length,
@@ -122,11 +122,11 @@ export async function demoRSSReader() {
         }
       });
       
-      console.log('   📊 Analysis Results:');
-      console.log(`      📄 Total items: ${analysis.totalItems}`);
-      console.log(`      📅 Date range: ${analysis.dateRange.oldest?.toLocaleDateString()} to ${analysis.dateRange.newest?.toLocaleDateString()}`);
-      console.log(`      📝 Total words: ${analysis.wordCount}`);
-      console.log(`      🔤 Keywords: ${Array.from(analysis.keywords).join(', ')}`);
+      console.info('   📊 Analysis Results:');
+      console.info(`      📄 Total items: ${analysis.totalItems}`);
+      console.info(`      📅 Date range: ${analysis.dateRange.oldest?.toLocaleDateString()} to ${analysis.dateRange.newest?.toLocaleDateString()}`);
+      console.info(`      📝 Total words: ${analysis.wordCount}`);
+      console.info(`      🔤 Keywords: ${Array.from(analysis.keywords).join(', ')}`);
       
       return analysis;
     };
@@ -134,19 +134,19 @@ export async function demoRSSReader() {
     const contentAnalysis = analyzeContent(feed.items);
     
     // 4. Search functionality
-    console.log('\n4. 🔍 Search Functionality:');
+    console.info('\n4. 🔍 Search Functionality:');
     const searchItems = (items, query) => {
-      console.log(`   🔎 Searching for: "${query}"`);
+      console.info(`   🔎 Searching for: "${query}"`);
       
       const results = items.filter(item => {
         const searchText = `${item.title} ${item.description}`.toLowerCase();
         return searchText.includes(query.toLowerCase());
       });
       
-      console.log(`   📋 Found ${results.length} results:`);
+      console.info(`   📋 Found ${results.length} results:`);
       results.forEach((result, index) => {
-        console.log(`      ${index + 1}. ${result.title}`);
-        console.log(`         ${result.description.substring(0, 100)}...`);
+        console.info(`      ${index + 1}. ${result.title}`);
+        console.info(`         ${result.description.substring(0, 100)}...`);
       });
       
       return results;
@@ -156,15 +156,15 @@ export async function demoRSSReader() {
     searchItems(feed.items, 'security');
     
     // 5. Feed filtering
-    console.log('\n5. 🎛️ Feed Filtering:');
+    console.info('\n5. 🎛️ Feed Filtering:');
     const filterFeed = (items, filters) => {
-      console.log('   🎛️ Applying filters...');
+      console.info('   🎛️ Applying filters...');
       
       let filteredItems = [...items];
       
       if (filters.category) {
         filteredItems = filteredItems.filter(item => item.category === filters.category);
-        console.log(`      📂 Category filter: ${filters.category}`);
+        console.info(`      📂 Category filter: ${filters.category}`);
       }
       
       if (filters.dateRange) {
@@ -173,7 +173,7 @@ export async function demoRSSReader() {
           const itemDate = new Date(item.pubDate);
           return itemDate >= start && itemDate <= end;
         });
-        console.log(`      📅 Date range: ${start.toLocaleDateString()} to ${end.toLocaleDateString()}`);
+        console.info(`      📅 Date range: ${start.toLocaleDateString()} to ${end.toLocaleDateString()}`);
       }
       
       if (filters.keyword) {
@@ -181,10 +181,10 @@ export async function demoRSSReader() {
           item.title.toLowerCase().includes(filters.keyword.toLowerCase()) ||
           item.description.toLowerCase().includes(filters.keyword.toLowerCase())
         );
-        console.log(`      🔤 Keyword: ${filters.keyword}`);
+        console.info(`      🔤 Keyword: ${filters.keyword}`);
       }
       
-      console.log(`      📊 Filtered to ${filteredItems.length} items`);
+      console.info(`      📊 Filtered to ${filteredItems.length} items`);
       
       return filteredItems;
     };
@@ -199,9 +199,9 @@ export async function demoRSSReader() {
     });
     
     // 6. Feed aggregation
-    console.log('\n6. 🔗 Feed Aggregation:');
+    console.info('\n6. 🔗 Feed Aggregation:');
     const aggregateFeeds = async () => {
-      console.log('   🌐 Aggregating multiple feeds...');
+      console.info('   🌐 Aggregating multiple feeds...');
       
       const feeds = [
         { name: 'Bun Blog', url: 'https://bun.sh/rss.xml' },
@@ -212,7 +212,7 @@ export async function demoRSSReader() {
       const aggregatedResults = [];
       
       for (const feed of feeds) {
-        console.log(`   📡 Fetching ${feed.name}...`);
+        console.info(`   📡 Fetching ${feed.name}...`);
         
         // Simulate feed fetching
         await new Promise(resolve => setTimeout(resolve, 300));
@@ -230,14 +230,14 @@ export async function demoRSSReader() {
         aggregatedResults.push(...mockItems);
       }
       
-      console.log(`   ✅ Aggregated ${aggregatedResults.length} items from ${feeds.length} feeds`);
+      console.info(`   ✅ Aggregated ${aggregatedResults.length} items from ${feeds.length} feeds`);
       
       // Sort by date
       aggregatedResults.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
       
-      console.log('   📋 Latest aggregated items:');
+      console.info('   📋 Latest aggregated items:');
       aggregatedResults.slice(0, 3).forEach((item, index) => {
-        console.log(`      ${index + 1}. ${item.title} (${item.source})`);
+        console.info(`      ${index + 1}. ${item.title} (${item.source})`);
       });
       
       return aggregatedResults;
@@ -246,9 +246,9 @@ export async function demoRSSReader() {
     await aggregateFeeds();
     
     // 7. Notifications
-    console.log('\n7. 🔔 Notification System:');
+    console.info('\n7. 🔔 Notification System:');
     const setupNotifications = (items) => {
-      console.log('   🔔 Setting up notifications...');
+      console.info('   🔔 Setting up notifications...');
       
       const notificationRules = [
         { type: 'keyword', value: 'security', action: 'immediate' },
@@ -282,9 +282,9 @@ export async function demoRSSReader() {
         });
       });
       
-      console.log('   📬 Notification triggers:');
+      console.info('   📬 Notification triggers:');
       triggeredNotifications.forEach(notification => {
-        console.log(`      • "${notification.item}" - ${notification.rule} (${notification.action})`);
+        console.info(`      • "${notification.item}" - ${notification.rule} (${notification.action})`);
       });
       
       return triggeredNotifications;
@@ -293,9 +293,9 @@ export async function demoRSSReader() {
     const notifications = setupNotifications(feed.items);
     
     // 8. Export functionality
-    console.log('\n8. 📤 Export Functionality:');
+    console.info('\n8. 📤 Export Functionality:');
     const exportFeed = (items, format) => {
-      console.log(`   📤 Exporting ${items.length} items as ${format}...`);
+      console.info(`   📤 Exporting ${items.length} items as ${format}...`);
       
       let exportedContent = '';
       
@@ -327,7 +327,7 @@ export async function demoRSSReader() {
           break;
       }
       
-      console.log(`   ✅ Exported ${exportedContent.length} characters`);
+      console.info(`   ✅ Exported ${exportedContent.length} characters`);
       
       return exportedContent;
     };
@@ -336,7 +336,7 @@ export async function demoRSSReader() {
     const csvExport = exportFeed(feed.items, 'csv');
     
     // 9. Performance metrics
-    console.log('\n9. 📊 Performance Metrics:');
+    console.info('\n9. 📊 Performance Metrics:');
     const performanceMetrics = {
       parseTime: 45, // ms
       searchTime: 12, // ms
@@ -346,28 +346,28 @@ export async function demoRSSReader() {
       itemsProcessed: feed.items.length
     };
     
-    console.log('   ⚡ Performance Metrics:');
-    console.log(`      📊 Parse time: ${performanceMetrics.parseTime}ms`);
-    console.log(`      🔍 Search time: ${performanceMetrics.searchTime}ms`);
-    console.log(`      🎛️ Filter time: ${performanceMetrics.filterTime}ms`);
-    console.log(`      📤 Export time: ${performanceMetrics.exportTime}ms`);
-    console.log(`      💾 Memory usage: ${performanceMetrics.memoryUsage}MB`);
-    console.log(`      📄 Items processed: ${performanceMetrics.itemsProcessed}`);
-    console.log(`      📈 Processing rate: ${(performanceMetrics.itemsProcessed / (performanceMetrics.parseTime / 1000)).toFixed(1)} items/sec`);
+    console.info('   ⚡ Performance Metrics:');
+    console.info(`      📊 Parse time: ${performanceMetrics.parseTime}ms`);
+    console.info(`      🔍 Search time: ${performanceMetrics.searchTime}ms`);
+    console.info(`      🎛️ Filter time: ${performanceMetrics.filterTime}ms`);
+    console.info(`      📤 Export time: ${performanceMetrics.exportTime}ms`);
+    console.info(`      💾 Memory usage: ${performanceMetrics.memoryUsage}MB`);
+    console.info(`      📄 Items processed: ${performanceMetrics.itemsProcessed}`);
+    console.info(`      📈 Processing rate: ${(performanceMetrics.itemsProcessed / (performanceMetrics.parseTime / 1000)).toFixed(1)} items/sec`);
     
-    console.log('\n✅ RSS Reader demo completed!');
-    console.log('\n💡 RSS Reader features demonstrated:');
-    console.log('   • XML parsing and feed extraction');
-    console.log('   • Content categorization and analysis');
-    console.log('   • Full-text search functionality');
-    console.log('   • Advanced filtering options');
-    console.log('   • Multi-feed aggregation');
-    console.log('   • Notification system');
-    console.log('   • Multiple export formats');
-    console.log('   • Performance monitoring');
+    console.info('\n✅ RSS Reader demo completed!');
+    console.info('\n💡 RSS Reader features demonstrated:');
+    console.info('   • XML parsing and feed extraction');
+    console.info('   • Content categorization and analysis');
+    console.info('   • Full-text search functionality');
+    console.info('   • Advanced filtering options');
+    console.info('   • Multi-feed aggregation');
+    console.info('   • Notification system');
+    console.info('   • Multiple export formats');
+    console.info('   • Performance monitoring');
     
   } catch (error) {
-    console.log(`❌ RSS Reader error: ${error.message}`);
+    console.info(`❌ RSS Reader error: ${error.message}`);
   }
 }
 

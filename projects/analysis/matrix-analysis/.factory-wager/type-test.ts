@@ -161,12 +161,12 @@ function isValidLogLevel(level: string): level is "debug" | "info" | "warn" | "e
 const validatedMode = fwMode && isValidMode(fwMode) ? fwMode : "development";
 const validatedLogLevel = fwLogLevel && isValidLogLevel(fwLogLevel) ? fwLogLevel : "info";
 
-console.log("✅ All TypeScript type checks passed!");
-console.log(`🔧 Mode: ${validatedMode}`);
-console.log(`📝 Log Level: ${validatedLogLevel}`);
-console.log(`🔒 SSL Validation: ${bunConfig.nodeTlsRejectUnauthorized ? "enabled" : "disabled"}`);
-console.log(`🌍 Environment: ${fwConfig.mode}`);
-console.log(`🐛 Debug: ${fwConfig.debug ? "enabled" : "disabled"}`);
+console.info("✅ All TypeScript type checks passed!");
+console.info(`🔧 Mode: ${validatedMode}`);
+console.info(`📝 Log Level: ${validatedLogLevel}`);
+console.info(`🔒 SSL Validation: ${bunConfig.nodeTlsRejectUnauthorized ? "enabled" : "disabled"}`);
+console.info(`🌍 Environment: ${fwConfig.mode}`);
+console.info(`🐛 Debug: ${fwConfig.debug ? "enabled" : "disabled"}`);
 
 // Export types for external use
 export type { CLIOptions, SecurityValidation, BunConfiguration, FactoryWagerConfiguration };

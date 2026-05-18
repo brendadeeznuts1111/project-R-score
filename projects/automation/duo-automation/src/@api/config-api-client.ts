@@ -200,35 +200,35 @@ export async function exampleUsage() {
   try {
     // Get API documentation
     const docs = await client.getApiDocs();
-    console.log('API Documentation:', docs);
+    console.info('API Documentation:', docs);
 
     // Check health
     const health = await client.healthCheck();
-    console.log('Health Status:', health);
+    console.info('Health Status:', health);
 
     // Get all configuration
     const config = await client.getAllConfig();
-    console.log('All Config:', config);
+    console.info('All Config:', config);
 
     // Get specific value
     const dbUrl = await client.getConfig('DATABASE_URL');
-    console.log('Database URL:', dbUrl);
+    console.info('Database URL:', dbUrl);
 
     // Set configuration
     await client.setConfig('NEW_VALUE', 'test-value');
-    console.log('Configuration set successfully');
+    console.info('Configuration set successfully');
 
     // Validate configuration
     const validation = await client.validateConfig();
-    console.log('Validation:', validation);
+    console.info('Validation:', validation);
 
     // Get configuration summary
     const summary = await client.getConfigSummary();
-    console.log('Summary:', summary);
+    console.info('Summary:', summary);
 
     // Export as environment variables
     const envExport = await client.exportConfig();
-    console.log('Environment Export:', envExport);
+    console.info('Environment Export:', envExport);
 
   } catch (error) {
     console.error('API Error:', error);

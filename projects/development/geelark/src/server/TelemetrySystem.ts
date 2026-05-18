@@ -375,7 +375,7 @@ export class TelemetrySystem {
 
     // Log to console
     const emoji = alert.severity === "critical" ? "🚨" : alert.severity === "warning" ? "⚠️" : "ℹ️";
-    console.log(`${emoji} [${alert.type.toUpperCase()}] ${alert.message}`);
+    console.info(`${emoji} [${alert.type.toUpperCase()}] ${alert.message}`);
 
     return alert;
   }
@@ -473,7 +473,7 @@ export class TelemetrySystem {
   private async sendEmailNotification(alert: TelemetryAlert, config: { smtp: string; to: string[] }): Promise<void> {
     // Note: This would require an SMTP library
     // For now, just log to console
-    console.log(`📧 Email notification to ${config.to.join(", ")}: ${alert.message}`);
+    console.info(`📧 Email notification to ${config.to.join(", ")}: ${alert.message}`);
   }
 
   /**
@@ -516,7 +516,7 @@ export class TelemetrySystem {
 
     // Log slow operations
     if (trace.duration > 1000) {
-      console.log(`⏱️ SLOW: ${trace.className}.${trace.methodName} took ${trace.duration.toFixed(2)}ms`);
+      console.info(`⏱️ SLOW: ${trace.className}.${trace.methodName} took ${trace.duration.toFixed(2)}ms`);
     }
   }
 
@@ -650,7 +650,7 @@ export class TelemetrySystem {
 
     try {
       Bun.write(filepath, JSON.stringify(snapshot, null, 2));
-      console.log(`📸 Snapshot saved: ${filename}`);
+      console.info(`📸 Snapshot saved: ${filename}`);
     } catch (error) {
       console.error("Failed to save snapshot to file:", error);
     }
@@ -1229,7 +1229,7 @@ export function tracePerformance(
 
       // Log slow operations
       if (duration > 100) {
-        console.log(`⏱️ ${className}.${key} took ${duration.toFixed(2)}ms`);
+        console.info(`⏱️ ${className}.${key} took ${duration.toFixed(2)}ms`);
       }
 
       return result;
@@ -1237,7 +1237,7 @@ export function tracePerformance(
       const end = performance.now();
       const duration = end - start;
 
-      console.log(`❌ ${className}.${key} failed after ${duration.toFixed(2)}ms:`, error);
+      console.info(`❌ ${className}.${key} failed after ${duration.toFixed(2)}ms:`, error);
 
       throw error;
     }

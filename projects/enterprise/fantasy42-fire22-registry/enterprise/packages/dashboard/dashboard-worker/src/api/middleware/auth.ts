@@ -296,12 +296,12 @@ export function logRequest(req: Request, res: Response, next: NextFunction): voi
   (req as any).requestId = requestId;
 
   // Log request
-  console.log(`[${requestId}] ${req.method} ${req.path} - ${req.ip}`);
+  console.info(`[${requestId}] ${req.method} ${req.path} - ${req.ip}`);
 
   // Log response when finished
   res.on('finish', () => {
     const duration = Date.now() - startTime;
-    console.log(`[${requestId}] ${res.statusCode} - ${duration}ms`);
+    console.info(`[${requestId}] ${res.statusCode} - ${duration}ms`);
   });
 
   next();

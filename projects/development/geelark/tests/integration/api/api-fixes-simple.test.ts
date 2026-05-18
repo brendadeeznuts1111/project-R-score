@@ -24,7 +24,7 @@ describe("🛠️ Bun APIs - All Fixes Verified", () => {
       expect(view).toBeInstanceOf(Uint8Array);
     } catch (e: any) {
       // Should not throw with valid inputs
-      console.log("mmap error:", e.message);
+      console.info("mmap error:", e.message);
       // For now, just test that the API exists
       expect(typeof Bun.mmap).toBe("function");
     }
@@ -224,7 +224,7 @@ describe("🚀 Production Standalone Features", () => {
     // Create a simple server file
     const serverCode = `
       const server = Bun.serve({ port: 3000, fetch: () => new Response('OK') });
-      console.log('Server running on', server.url);
+      console.info('Server running on', server.url);
     `;
 
     const testFile = "/tmp/test-server.ts";

@@ -3,10 +3,10 @@
 // Enhanced IPC Demo with Advanced Communication Patterns
 import { colourKit, pad, rgbaLattice, sse } from "./quantum-toolkit-patch.ts";
 
-console.log(
+console.info(
   colourKit(0.9).ansi + "🚀 Enhanced IPC Communication Suite" + "\x1b[0m"
 );
-console.log("=".repeat(70));
+console.info("=".repeat(70));
 
 // Enhanced message types and interfaces
 interface IPCMessage {
@@ -293,7 +293,7 @@ class WorkerFactory {
 
 // Enhanced IPC with load balancing
 async function loadBalancedIPC() {
-  console.log(
+  console.info(
     colourKit(0.7).ansi + "\n⚖️ Load-Balanced IPC with Worker Pool" + "\x1b[0m"
   );
 
@@ -308,7 +308,7 @@ async function loadBalancedIPC() {
     broker.registerWorker(`${type}-1`, worker);
   }
 
-  console.log(`Created ${workers.length} specialized workers`);
+  console.info(`Created ${workers.length} specialized workers`);
 
   // Wait for workers to be ready
   await new Promise((resolve) => setTimeout(resolve, 200));
@@ -328,7 +328,7 @@ async function loadBalancedIPC() {
     { type: "echo", data: "Hello Enhanced IPC!" },
   ];
 
-  console.log("📤 Distributing tasks across workers...");
+  console.info("📤 Distributing tasks across workers...");
 
   for (const task of tasks) {
     const message: IPCMessage = {
@@ -340,23 +340,23 @@ async function loadBalancedIPC() {
 
     try {
       const response = await broker.routeMessage(message);
-      console.log(`✅ ${task.type} task completed`);
+      console.info(`✅ ${task.type} task completed`);
     } catch (error) {
-      console.log(`❌ ${task.type} task failed: ${error.message}`);
+      console.info(`❌ ${task.type} task failed: ${error.message}`);
     }
   }
 
   // Show metrics
-  console.log("\n📊 Worker Metrics:");
-  console.log("┌─────────┬──────────┬──────────┬──────────┐");
-  console.log("│ Worker  │ Tasks    │ Avg Time │ Memory   │");
-  console.log("├─────────┼──────────┼──────────┼──────────┤");
+  console.info("\n📊 Worker Metrics:");
+  console.info("┌─────────┬──────────┬──────────┬──────────┐");
+  console.info("│ Worker  │ Tasks    │ Avg Time │ Memory   │");
+  console.info("├─────────┼──────────┼──────────┼──────────┤");
 
   const metrics = broker.getMetrics();
   metrics.forEach((metric) => {
     const memory = (metric.memoryUsage / 1024 / 1024).toFixed(1);
     const time = metric.avgResponseTime.toFixed(1);
-    console.log(
+    console.info(
       `│ ${pad(metric.id, 7)} │ ${pad(
         metric.tasksCompleted.toString(),
         8
@@ -364,7 +364,7 @@ async function loadBalancedIPC() {
     );
   });
 
-  console.log("└─────────┴──────────┴──────────┴──────────┘");
+  console.info("└─────────┴──────────┴──────────┴──────────┘");
 
   // Cleanup workers
   for (const worker of workers) {
@@ -374,7 +374,7 @@ async function loadBalancedIPC() {
 
 // IPC with streaming data
 async function streamingIPC() {
-  console.log(
+  console.info(
     colourKit(0.6).ansi + "\n📡 Streaming IPC Communication" + "\x1b[0m"
   );
 
@@ -424,7 +424,7 @@ async function streamingIPC() {
   });
 
   // Start streaming
-  console.log("🌊 Starting data stream...");
+  console.info("🌊 Starting data stream...");
   streamWorker.send({
     id: "stream-1",
     type: "start-stream",
@@ -449,10 +449,10 @@ async function streamingIPC() {
       }
     });
 
-  console.log(`📊 Received ${streamData.length} stream messages:`);
+  console.info(`📊 Received ${streamData.length} stream messages:`);
   streamData.slice(0, 5).forEach((data, i) => {
     const color = colourKit(data.value / 100).ansi;
-    console.log(
+    console.info(
       `  ${i + 1}: ${color}${data.value.toFixed(2)}\x1b[0m (seq: ${
         data.sequence
       })`
@@ -460,7 +460,7 @@ async function streamingIPC() {
   });
 
   if (streamData.length > 5) {
-    console.log(`  ... and ${streamData.length - 5} more messages`);
+    console.info(`  ... and ${streamData.length - 5} more messages`);
   }
 
   await streamWorker.exited;
@@ -468,7 +468,7 @@ async function streamingIPC() {
 
 // IPC with event-driven architecture
 async function eventDrivenIPC() {
-  console.log(
+  console.info(
     colourKit(0.8).ansi + "\n🎯 Event-Driven IPC Architecture" + "\x1b[0m"
   );
 
@@ -566,7 +566,7 @@ async function eventDrivenIPC() {
     { type: "unknown", data: { test: "data" } },
   ];
 
-  console.log("📨 Sending events to worker...");
+  console.info("📨 Sending events to worker...");
 
   for (const event of events) {
     eventWorker.send({
@@ -578,10 +578,10 @@ async function eventDrivenIPC() {
 
   const stdout = await eventWorker.stdout.text();
 
-  console.log("📥 Event processing results:");
-  console.log("┌─────────┬─────────────────┬──────────────────────────────┐");
-  console.log("│ Event   │ Handler         │ Result                        │");
-  console.log("├─────────┼─────────────────┼──────────────────────────────┤");
+  console.info("📥 Event processing results:");
+  console.info("┌─────────┬─────────────────┬──────────────────────────────┐");
+  console.info("│ Event   │ Handler         │ Result                        │");
+  console.info("├─────────┼─────────────────┼──────────────────────────────┤");
 
   stdout
     .trim()
@@ -592,21 +592,21 @@ async function eventDrivenIPC() {
           const response = JSON.parse(line);
           if (response.type === "event-result") {
             const result = JSON.stringify(response.data.result).slice(0, 30);
-            console.log(
+            console.info(
               `│ ${pad(response.data.eventType, 7)} │ ${pad(
                 "processed",
                 15
               )} │ ${pad(result, 30)} │`
             );
           } else if (response.type === "event-error") {
-            console.log(
+            console.info(
               `│ ${pad(response.data.eventType, 7)} │ ${pad(
                 "error",
                 15
               )} │ ${pad(response.data.error, 30)} │`
             );
           } else if (response.type === "event-unknown") {
-            console.log(
+            console.info(
               `│ ${pad(response.data.eventType, 7)} │ ${pad(
                 "unknown",
                 15
@@ -617,14 +617,14 @@ async function eventDrivenIPC() {
       }
     });
 
-  console.log("└─────────┴─────────────────┴──────────────────────────────┘");
+  console.info("└─────────┴─────────────────┴──────────────────────────────┘");
 
   await eventWorker.exited;
 }
 
 // IPC with real-time monitoring
 async function monitoredIPC() {
-  console.log(colourKit(0.5).ansi + "\n📈 Real-Time Monitored IPC" + "\x1b[0m");
+  console.info(colourKit(0.5).ansi + "\n📈 Real-Time Monitored IPC" + "\x1b[0m");
 
   const monitorWorkerCode = `
     let operations = 0;
@@ -702,7 +702,7 @@ async function monitoredIPC() {
     { type: "memory-intensive", data: { arrays: 5, size: 2000 } },
   ];
 
-  console.log("🔍 Running monitored operations...");
+  console.info("🔍 Running monitored operations...");
 
   for (const op of operations) {
     const start = performance.now();
@@ -715,10 +715,10 @@ async function monitoredIPC() {
 
   const stdout = await monitorWorker.stdout.text();
 
-  console.log("\n📊 Operation Monitoring Results:");
-  console.log("┌─────────────────┬──────────┬──────────┬──────────┐");
-  console.log("│ Operation       │ Duration │ Memory   │ Ops      │");
-  console.log("├─────────────────┼──────────┼──────────┼──────────┤");
+  console.info("\n📊 Operation Monitoring Results:");
+  console.info("┌─────────────────┬──────────┬──────────┬──────────┐");
+  console.info("│ Operation       │ Duration │ Memory   │ Ops      │");
+  console.info("├─────────────────┼──────────┼──────────┼──────────┤");
 
   stdout
     .trim()
@@ -731,7 +731,7 @@ async function monitoredIPC() {
             const data = response.data;
             const memory = (data.memory.heapUsed / 1024 / 1024).toFixed(1);
             const duration = data.duration.toFixed(1);
-            console.log(
+            console.info(
               `│ ${pad(data.operation, 15)} │ ${pad(
                 duration + "ms",
                 8
@@ -753,7 +753,7 @@ async function monitoredIPC() {
       }
     });
 
-  console.log("└─────────────────┴──────────┴──────────┴──────────┘");
+  console.info("└─────────────────┴──────────┴──────────┴──────────┘");
 
   await monitorWorker.exited;
 }
@@ -766,7 +766,7 @@ async function main() {
     await eventDrivenIPC();
     await monitoredIPC();
 
-    console.log(
+    console.info(
       "\n" +
         colourKit(0.2).ansi +
         "🎉 Enhanced IPC Suite Completed!" +
@@ -774,19 +774,19 @@ async function main() {
     );
 
     // Show final visualization
-    console.log("\n🎨 IPC Performance Visualization:");
+    console.info("\n🎨 IPC Performance Visualization:");
     const performance = Math.random(); // Simulate performance metric
-    console.log(rgbaLattice(performance * 10));
+    console.info(rgbaLattice(performance * 10));
 
-    console.log("\n💡 Enhanced Features Demonstrated:");
-    console.log("  • Load-balanced worker pool");
-    console.log("  • Streaming data communication");
-    console.log("  • Event-driven architecture");
-    console.log("  • Real-time monitoring and metrics");
-    console.log("  • Specialized worker types");
-    console.log("  • Advanced error handling");
+    console.info("\n💡 Enhanced Features Demonstrated:");
+    console.info("  • Load-balanced worker pool");
+    console.info("  • Streaming data communication");
+    console.info("  • Event-driven architecture");
+    console.info("  • Real-time monitoring and metrics");
+    console.info("  • Specialized worker types");
+    console.info("  • Advanced error handling");
   } catch (error) {
-    console.log(
+    console.info(
       colourKit(0.8).ansi +
         `❌ Enhanced IPC Error: ${error.message}` +
         "\x1b[0m"
@@ -796,9 +796,9 @@ async function main() {
 
 // Enhanced cleanup
 process.on("SIGINT", () => {
-  console.log("\n\n👋 Enhanced IPC Suite - Cleaning up...");
-  console.log("📊 Final metrics collected");
-  console.log("🧹 Temporary files removed");
+  console.info("\n\n👋 Enhanced IPC Suite - Cleaning up...");
+  console.info("📊 Final metrics collected");
+  console.info("🧹 Temporary files removed");
   process.exit(0);
 });
 

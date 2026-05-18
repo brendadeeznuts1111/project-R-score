@@ -1351,7 +1351,7 @@ ${text}
   async sendNotificationByUsername(username: string, message: string) {
     try {
       const notificationId = await this.notificationService.sendToUsername(username, message);
-      console.log(`📋 Notification queued for @${username} (ID: ${notificationId})`);
+      console.info(`📋 Notification queued for @${username} (ID: ${notificationId})`);
       return notificationId;
     } catch (error) {
       console.error('❌ Error queuing notification:', error);
@@ -1365,7 +1365,7 @@ ${text}
   async sendNotificationById(telegramId: number, message: string) {
     try {
       const notificationId = await this.notificationService.sendToUser(telegramId, message);
-      console.log(`📋 Notification queued for user ${telegramId} (ID: ${notificationId})`);
+      console.info(`📋 Notification queued for user ${telegramId} (ID: ${notificationId})`);
       return notificationId;
     } catch (error) {
       console.error('❌ Error queuing notification:', error);
@@ -1382,7 +1382,7 @@ ${text}
   ) {
     try {
       const notificationIds = await this.notificationService.sendBulk(recipients, message);
-      console.log(`📋 Bulk notification queued for ${recipients.length} recipients`);
+      console.info(`📋 Bulk notification queued for ${recipients.length} recipients`);
       return notificationIds;
     } catch (error) {
       console.error('❌ Error queuing bulk notifications:', error);

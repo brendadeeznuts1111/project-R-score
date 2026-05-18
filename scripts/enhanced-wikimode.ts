@@ -290,7 +290,7 @@ class EnhancedWikiMode {
   private setupExitHandlers(): void {
     const cleanup = () => {
       if (this.isRunning) {
-        console.log(styled('\n👋 Shutting down Enhanced WikiMode...', 'muted'));
+        console.info(styled('\n👋 Shutting down Enhanced WikiMode...', 'muted'));
         this.cleanup();
         exitWithCode(EXIT_CODES.SUCCESS);
       }
@@ -325,7 +325,7 @@ class EnhancedWikiMode {
         throw new Error(`Template "${templateName}" not found`);
       }
 
-      console.log(styled(`🔧 Generating wiki using template: ${templateName}`, 'info'));
+      console.info(styled(`🔧 Generating wiki using template: ${templateName}`, 'info'));
 
       // Base wiki generation
       const generator = new MCPWikiGenerator();
@@ -336,12 +336,12 @@ class EnhancedWikiMode {
       let barbershopData = null;
 
       if (this.config.profileMode) {
-        console.log(styled('📊 Running performance profile...', 'muted'));
+        console.info(styled('📊 Running performance profile...', 'muted'));
         profileData = await this.runPerformanceProfile(baseResult.content);
       }
 
       if (this.config.barbershopMode) {
-        console.log(styled('🏗️ Integrating with Barbershop system...', 'muted'));
+        console.info(styled('🏗️ Integrating with Barbershop system...', 'muted'));
         barbershopData = await this.integrateWithBarbershop(template, baseResult.content);
       }
 
@@ -367,7 +367,7 @@ class EnhancedWikiMode {
       // Store in history
       this.generationHistory.push(result);
       
-      console.log(styled(`✅ Wiki generated in ${generationTime.toFixed(2)}ms`, 'success'));
+      console.info(styled(`✅ Wiki generated in ${generationTime.toFixed(2)}ms`, 'success'));
       return result;
 
     } catch (error) {
@@ -581,8 +581,8 @@ class EnhancedWikiMode {
    * Display enhanced wiki matrix dashboard
    */
   async displayEnhancedMatrix(): Promise<void> {
-    console.log(styled('\n🏗️ Enhanced WikiMode - Barbershop Integration Dashboard', 'enterprise'));
-    console.log(colorBar('enterprise', 60));
+    console.info(styled('\n🏗️ Enhanced WikiMode - Barbershop Integration Dashboard', 'enterprise'));
+    console.info(colorBar('enterprise', 60));
 
     // Display templates with enhanced information
     const tableData = this.config.templates.map(template => ({
@@ -595,12 +595,12 @@ class EnhancedWikiMode {
       'Collaboration': template.collaboration?.sharedEditing ? styled('✅', 'success') : styled('❌', 'error'),
     }));
 
-    console.log(Bun.inspect.table(tableData));
-    console.log('');
+    console.info(Bun.inspect.table(tableData));
+    console.info('');
 
     // Display generation history
     if (this.generationHistory.length > 0) {
-      console.log(styled('📊 Recent Generation History:', 'info'));
+      console.info(styled('📊 Recent Generation History:', 'info'));
       const historyData = this.generationHistory.slice(-5).map((result, index) => ({
         '#': index + 1,
         'Template': result.template.name,
@@ -609,26 +609,26 @@ class EnhancedWikiMode {
         'Score': result.performance?.optimizationScore ? `${result.performance.optimizationScore}%` : 'N/A',
       }));
 
-      console.log(Bun.inspect.table(historyData));
-      console.log('');
+      console.info(Bun.inspect.table(historyData));
+      console.info('');
     }
 
     // Display configuration
-    console.log(styled('⚙️ Configuration:', 'info'));
-    console.log(`  Profile Mode: ${this.config.profileMode ? styled('Enabled', 'success') : styled('Disabled', 'error')}`);
-    console.log(`  Barbershop Mode: ${this.config.barbershopMode ? styled('Enabled', 'success') : styled('Disabled', 'error')}`);
-    console.log(`  Real-time Profiling: ${this.config.realTimeProfiling ? styled('Enabled', 'success') : styled('Disabled', 'error')}`);
-    console.log(`  Collaborative Editing: ${this.config.collaborativeEditing ? styled('Enabled', 'success') : styled('Disabled', 'error')}`);
-    console.log(`  Analytics: ${this.config.analyticsEnabled ? styled('Enabled', 'success') : styled('Disabled', 'error')}`);
-    console.log('');
+    console.info(styled('⚙️ Configuration:', 'info'));
+    console.info(`  Profile Mode: ${this.config.profileMode ? styled('Enabled', 'success') : styled('Disabled', 'error')}`);
+    console.info(`  Barbershop Mode: ${this.config.barbershopMode ? styled('Enabled', 'success') : styled('Disabled', 'error')}`);
+    console.info(`  Real-time Profiling: ${this.config.realTimeProfiling ? styled('Enabled', 'success') : styled('Disabled', 'error')}`);
+    console.info(`  Collaborative Editing: ${this.config.collaborativeEditing ? styled('Enabled', 'success') : styled('Disabled', 'error')}`);
+    console.info(`  Analytics: ${this.config.analyticsEnabled ? styled('Enabled', 'success') : styled('Disabled', 'error')}`);
+    console.info('');
   }
 
   /**
    * Run interactive mode with enhanced features
    */
   async runInteractiveMode(): Promise<void> {
-    console.log(styled('\n🎯 Enhanced WikiMode Interactive Mode', 'enterprise'));
-    console.log(styled('Type "help" for commands or "exit" to quit', 'muted'));
+    console.info(styled('\n🎯 Enhanced WikiMode Interactive Mode', 'enterprise'));
+    console.info(styled('Type "help" for commands or "exit" to quit', 'muted'));
 
     this.isRunning = true;
 
@@ -657,7 +657,7 @@ class EnhancedWikiMode {
 
           case 'generate':
             if (args.length === 0) {
-              console.log(styled('Usage: generate <template-name>', 'warning'));
+              console.info(styled('Usage: generate <template-name>', 'warning'));
               break;
             }
             await this.generateAndDisplay(args[0]);
@@ -665,7 +665,7 @@ class EnhancedWikiMode {
 
           case 'profile':
             if (args.length === 0) {
-              console.log(styled('Usage: profile <template-name>', 'warning'));
+              console.info(styled('Usage: profile <template-name>', 'warning'));
               break;
             }
             await this.generateWithProfile(args[0]);
@@ -690,8 +690,8 @@ class EnhancedWikiMode {
 
           default:
             if (command) {
-              console.log(styled(`Unknown command: ${command}`, 'error'));
-              console.log(styled('Type "help" for available commands', 'muted'));
+              console.info(styled(`Unknown command: ${command}`, 'error'));
+              console.info(styled('Type "help" for available commands', 'muted'));
             }
         }
       } catch (error) {
@@ -703,38 +703,38 @@ class EnhancedWikiMode {
   }
 
   private displayHelp(): void {
-    console.log(styled('\n📚 Enhanced WikiMode Commands:', 'info'));
-    console.log(styled('  help                    Show this help message', 'muted'));
-    console.log(styled('  list                    Display enhanced template matrix', 'muted'));
-    console.log(styled('  generate <template>     Generate wiki content', 'muted'));
-    console.log(styled('  profile <template>      Generate with performance profiling', 'muted'));
-    console.log(styled('  barbershop              Show Barbershop integration status', 'muted'));
-    console.log(styled('  history                 Show generation history', 'muted'));
-    console.log(styled('  export [format]         Export results (json|markdown|html)', 'muted'));
-    console.log(styled('  exit                    Exit interactive mode', 'muted'));
-    console.log('');
+    console.info(styled('\n📚 Enhanced WikiMode Commands:', 'info'));
+    console.info(styled('  help                    Show this help message', 'muted'));
+    console.info(styled('  list                    Display enhanced template matrix', 'muted'));
+    console.info(styled('  generate <template>     Generate wiki content', 'muted'));
+    console.info(styled('  profile <template>      Generate with performance profiling', 'muted'));
+    console.info(styled('  barbershop              Show Barbershop integration status', 'muted'));
+    console.info(styled('  history                 Show generation history', 'muted'));
+    console.info(styled('  export [format]         Export results (json|markdown|html)', 'muted'));
+    console.info(styled('  exit                    Exit interactive mode', 'muted'));
+    console.info('');
   }
 
   private async generateAndDisplay(templateName: string): Promise<void> {
     try {
       const result = await this.generateWiki(templateName);
       
-      console.log(styled('\n📄 Generated Content Preview:', 'success'));
-      console.log(colorBar('success', 40));
+      console.info(styled('\n📄 Generated Content Preview:', 'success'));
+      console.info(colorBar('success', 40));
       
       // Show first 500 characters of content
       const preview = result.content.substring(0, 500) + (result.content.length > 500 ? '...' : '');
-      console.log(preview);
-      console.log('');
+      console.info(preview);
+      console.info('');
 
       // Show metadata
-      console.log(styled('📊 Metadata:', 'info'));
-      console.log(`  Generated: ${result.metadata.generatedAt}`);
-      console.log(`  Time: ${result.metadata.generationTime.toFixed(2)}ms`);
-      console.log(`  Barbershop Integration: ${result.metadata.barbershopIntegration ? 'Yes' : 'No'}`);
+      console.info(styled('📊 Metadata:', 'info'));
+      console.info(`  Generated: ${result.metadata.generatedAt}`);
+      console.info(`  Time: ${result.metadata.generationTime.toFixed(2)}ms`);
+      console.info(`  Barbershop Integration: ${result.metadata.barbershopIntegration ? 'Yes' : 'No'}`);
       
       if (result.performance) {
-        console.log(`  Optimization Score: ${result.performance.optimizationScore}%`);
+        console.info(`  Optimization Score: ${result.performance.optimizationScore}%`);
       }
     } catch (error) {
       console.error(styled('Generation failed:', 'error'), error);
@@ -745,25 +745,25 @@ class EnhancedWikiMode {
     try {
       const result = await this.generateWiki(templateName);
       
-      console.log(styled('\n📊 Performance Profile Results:', 'info'));
-      console.log(colorBar('info', 40));
+      console.info(styled('\n📊 Performance Profile Results:', 'info'));
+      console.info(colorBar('info', 40));
 
       if (result.performance) {
-        console.log(`Optimization Score: ${result.performance.optimizationScore}%`);
+        console.info(`Optimization Score: ${result.performance.optimizationScore}%`);
         
         if (result.performance.recommendations.length > 0) {
-          console.log(styled('\n💡 Recommendations:', 'warning'));
+          console.info(styled('\n💡 Recommendations:', 'warning'));
           result.performance.recommendations.forEach(rec => {
-            console.log(`  • ${rec}`);
+            console.info(`  • ${rec}`);
           });
         }
       }
 
       if (result.barbershopData) {
-        console.log(styled('\n🏗️ Barbershop Integration:', 'success'));
-        console.log(`  Dashboard Widgets: ${result.barbershopData.dashboardWidgets?.length || 0}`);
-        console.log(`  Analytics Data: ${result.barbershopData.analyticsData ? 'Available' : 'N/A'}`);
-        console.log(`  Barber Profiles: ${result.barbershopData.barberProfiles?.length || 0}`);
+        console.info(styled('\n🏗️ Barbershop Integration:', 'success'));
+        console.info(`  Dashboard Widgets: ${result.barbershopData.dashboardWidgets?.length || 0}`);
+        console.info(`  Analytics Data: ${result.barbershopData.analyticsData ? 'Available' : 'N/A'}`);
+        console.info(`  Barber Profiles: ${result.barbershopData.barberProfiles?.length || 0}`);
       }
     } catch (error) {
       console.error(styled('Profile generation failed:', 'error'), error);
@@ -771,17 +771,17 @@ class EnhancedWikiMode {
   }
 
   private async showBarbershopIntegration(): Promise<void> {
-    console.log(styled('\n🏗️ Barbershop Integration Status:', 'info'));
-    console.log(colorBar('enterprise', 50));
+    console.info(styled('\n🏗️ Barbershop Integration Status:', 'info'));
+    console.info(colorBar('enterprise', 50));
     
-    console.log(`Endpoint: ${this.config.barbershopEndpoint || 'Not configured'}`);
-    console.log(`Dashboard Widgets: ${this.config.dashboardWidgets?.join(', ') || 'None'}`);
-    console.log(`Analytics: ${this.config.analyticsEnabled ? 'Enabled' : 'Disabled'}`);
-    console.log(`Mode: ${this.config.barbershopMode ? 'Active' : 'Inactive'}`);
-    console.log('');
+    console.info(`Endpoint: ${this.config.barbershopEndpoint || 'Not configured'}`);
+    console.info(`Dashboard Widgets: ${this.config.dashboardWidgets?.join(', ') || 'None'}`);
+    console.info(`Analytics: ${this.config.analyticsEnabled ? 'Enabled' : 'Disabled'}`);
+    console.info(`Mode: ${this.config.barbershopMode ? 'Active' : 'Inactive'}`);
+    console.info('');
 
     // Show template integration status
-    console.log(styled('Template Integration Status:', 'muted'));
+    console.info(styled('Template Integration Status:', 'muted'));
     const integrationData = this.config.templates.map(template => ({
       'Template': template.name,
       'Enabled': template.barbershopIntegration?.enabled ? styled('✅', 'success') : styled('❌', 'error'),
@@ -789,15 +789,15 @@ class EnhancedWikiMode {
       'Analytics': template.barbershopIntegration?.analyticsTracking ? styled('✅', 'success') : styled('❌', 'error'),
     }));
 
-    console.log(Bun.inspect.table(integrationData));
+    console.info(Bun.inspect.table(integrationData));
   }
 
   private showGenerationHistory(): void {
-    console.log(styled('\n📜 Generation History:', 'info'));
-    console.log(colorBar('muted', 40));
+    console.info(styled('\n📜 Generation History:', 'info'));
+    console.info(colorBar('muted', 40));
 
     if (this.generationHistory.length === 0) {
-      console.log(styled('No generation history yet', 'muted'));
+      console.info(styled('No generation history yet', 'muted'));
       return;
     }
 
@@ -810,12 +810,12 @@ class EnhancedWikiMode {
       'Generated': new Date(result.metadata.generatedAt).toLocaleTimeString(),
     }));
 
-    console.log(Bun.inspect.table(historyData));
+    console.info(Bun.inspect.table(historyData));
   }
 
   private async exportResults(format: string = 'json'): Promise<void> {
     if (this.generationHistory.length === 0) {
-      console.log(styled('No results to export', 'warning'));
+      console.info(styled('No results to export', 'warning'));
       return;
     }
 
@@ -840,13 +840,13 @@ class EnhancedWikiMode {
         break;
 
       default:
-        console.log(styled('Unsupported format. Use: json, markdown, or html', 'error'));
+        console.info(styled('Unsupported format. Use: json, markdown, or html', 'error'));
         return;
     }
 
     try {
       await Bun.write(filename, content);
-      console.log(styled(`✅ Exported to ${filename}`, 'success'));
+      console.info(styled(`✅ Exported to ${filename}`, 'success'));
     } catch (error) {
       console.error(styled('Export failed:', 'error'), error);
     }
@@ -953,23 +953,23 @@ async function main() {
 
       case 'help':
       case 'h':
-        console.log(styled('🎯 Enhanced WikiMode - Barbershop Integration', 'enterprise'));
-        console.log('');
-        console.log(styled('Usage:', 'info'));
-        console.log('  bun run enhanced-wikimode.ts <command> [options]');
-        console.log('');
-        console.log(styled('Commands:', 'info'));
-        console.log('  interactive, i          Start interactive mode');
-        console.log('  list, l                 Display enhanced template matrix');
-        console.log('  generate, g <template>  Generate wiki content');
-        console.log('  profile, p <template>   Generate with performance profiling');
-        console.log('  help, h                 Show this help');
-        console.log('');
+        console.info(styled('🎯 Enhanced WikiMode - Barbershop Integration', 'enterprise'));
+        console.info('');
+        console.info(styled('Usage:', 'info'));
+        console.info('  bun run enhanced-wikimode.ts <command> [options]');
+        console.info('');
+        console.info(styled('Commands:', 'info'));
+        console.info('  interactive, i          Start interactive mode');
+        console.info('  list, l                 Display enhanced template matrix');
+        console.info('  generate, g <template>  Generate wiki content');
+        console.info('  profile, p <template>   Generate with performance profiling');
+        console.info('  help, h                 Show this help');
+        console.info('');
         break;
 
       default:
-        console.log(styled('🎯 Enhanced WikiMode - Barbershop Integration', 'enterprise'));
-        console.log(styled('Starting interactive mode...', 'info'));
+        console.info(styled('🎯 Enhanced WikiMode - Barbershop Integration', 'enterprise'));
+        console.info(styled('Starting interactive mode...', 'info'));
         await wikiMode.runInteractiveMode();
         break;
     }

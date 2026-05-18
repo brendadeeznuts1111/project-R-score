@@ -27,7 +27,7 @@ export class CLIDocumentationMCPServer {
   private initializeServer(): void {
     try {
       // This would integrate with your MCP server framework
-      console.log(styled('📚 CLI Documentation MCP Server initialized', 'success'));
+      console.info(styled('📚 CLI Documentation MCP Server initialized', 'success'));
       this.initialized = true;
     } catch (error) {
       handleError(error, 'CLIDocumentationMCPServer.initializeServer', 'high');
@@ -252,30 +252,30 @@ export class CLIDocumentationMCPServer {
    */
   async displayStatus(): Promise<void> {
     try {
-      console.log(styled('\n📚 CLI Documentation MCP Server Status', 'accent'));
-      console.log(styled('=====================================', 'accent'));
+      console.info(styled('\n📚 CLI Documentation MCP Server Status', 'accent'));
+      console.info(styled('=====================================', 'accent'));
 
-      console.log(styled('\n🔧 Server Components:', 'info'));
-      console.log(styled(`  📚 Documentation Handler: ✅ Active`, 'success'));
-      console.log(styled(`  🔍 Search Engine: ✅ Ready`, 'success'));
-      console.log(styled(`  🔗 URL Generator: ✅ Operational`, 'success'));
-      console.log(styled(`  🧩 Fragment Support: ✅ Enabled`, 'success'));
+      console.info(styled('\n🔧 Server Components:', 'info'));
+      console.info(styled(`  📚 Documentation Handler: ✅ Active`, 'success'));
+      console.info(styled(`  🔍 Search Engine: ✅ Ready`, 'success'));
+      console.info(styled(`  🔗 URL Generator: ✅ Operational`, 'success'));
+      console.info(styled(`  🧩 Fragment Support: ✅ Enabled`, 'success'));
 
       // Display quick reference URLs
       const quickRefs = await this.getQuickReferenceURLs();
-      console.log(styled('\n🚀 Quick Reference URLs:', 'info'));
+      console.info(styled('\n🚀 Quick Reference URLs:', 'info'));
       Object.entries(quickRefs).forEach(([name, url]) => {
-        console.log(styled(`  ${name}: ${url}`, 'muted'));
+        console.info(styled(`  ${name}: ${url}`, 'muted'));
       });
 
       // Display navigation structure summary
       const navigation = await this.getNavigationStructure();
-      console.log(styled('\n📋 Available Categories:', 'info'));
+      console.info(styled('\n📋 Available Categories:', 'info'));
       navigation.forEach(({ category, pages }) => {
-        console.log(styled(`  ${category}: ${pages.length} pages`, 'muted'));
+        console.info(styled(`  ${category}: ${pages.length} pages`, 'muted'));
       });
 
-      console.log(styled('\n✅ CLI Documentation server is ready for use!', 'success'));
+      console.info(styled('\n✅ CLI Documentation server is ready for use!', 'success'));
     } catch (error) {
       handleError(error, 'CLIDocumentationMCPServer.displayStatus', 'medium');
     }
@@ -286,54 +286,54 @@ export class CLIDocumentationMCPServer {
    */
   async demonstrateFeatures(): Promise<void> {
     try {
-      console.log(styled('\n🎯 CLI Documentation Feature Demonstration', 'accent'));
-      console.log(styled('==========================================', 'accent'));
+      console.info(styled('\n🎯 CLI Documentation Feature Demonstration', 'accent'));
+      console.info(styled('==========================================', 'accent'));
 
       // Generate documentation URLs
-      console.log(styled('\n📖 Generating Documentation URLs:', 'info'));
+      console.info(styled('\n📖 Generating Documentation URLs:', 'info'));
 
       const installURL = await this.getDocumentationURL(CLICategory.INSTALLATION, 'WINDOWS', {
         platform: 'windows',
         version: 'latest',
       });
-      console.log(`  Installation (Windows): ${installURL.url}`);
+      console.info(`  Installation (Windows): ${installURL.url}`);
 
       const testURL = await this.getDocumentationURL(CLICategory.COMMANDS, 'TEST', {
         example: 'basic',
         highlight: 'true',
       });
-      console.log(`  Test Command: ${testURL.url}`);
+      console.info(`  Test Command: ${testURL.url}`);
 
       // Search functionality
-      console.log(styled('\n🔍 Search Functionality:', 'info'));
+      console.info(styled('\n🔍 Search Functionality:', 'info'));
       const searchResults = await this.searchDocumentation('build');
-      console.log(`  Found ${searchResults.results.length} results for "build"`);
+      console.info(`  Found ${searchResults.results.length} results for "build"`);
       searchResults.results.slice(0, 3).forEach(result => {
-        console.log(`    - ${result.command}: ${result.description}`);
+        console.info(`    - ${result.command}: ${result.description}`);
       });
 
       // Generate examples
-      console.log(styled('\n💡 Example Generation:', 'info'));
+      console.info(styled('\n💡 Example Generation:', 'info'));
       const exampleURL = await this.generateCommandExample('BASIC', 'TEST', 'bun test');
-      console.log(`  Test Example: ${exampleURL.url}`);
+      console.info(`  Test Example: ${exampleURL.url}`);
 
       const interactiveURL = await this.generateInteractiveExample('bun run dev', {
         runnable: true,
         editable: true,
         theme: 'dark',
       });
-      console.log(`  Interactive Example: ${interactiveURL.url}`);
+      console.info(`  Interactive Example: ${interactiveURL.url}`);
 
       // Parse URL demonstration
-      console.log(styled('\n🔗 URL Parsing:', 'info'));
+      console.info(styled('\n🔗 URL Parsing:', 'info'));
       const parsed = await this.parseDocumentationURL(testURL.url);
       if (parsed.valid) {
-        console.log(`  Category: ${parsed.category}`);
-        console.log(`  Page: ${parsed.page}`);
-        console.log(`  Fragment: ${JSON.stringify(parsed.fragment, null, 2)}`);
+        console.info(`  Category: ${parsed.category}`);
+        console.info(`  Page: ${parsed.page}`);
+        console.info(`  Fragment: ${JSON.stringify(parsed.fragment, null, 2)}`);
       }
 
-      console.log(styled('\n✅ Feature demonstration completed!', 'success'));
+      console.info(styled('\n✅ Feature demonstration completed!', 'success'));
     } catch (error) {
       handleError(error, 'CLIDocumentationMCPServer.demonstrateFeatures', 'medium');
     }
@@ -401,23 +401,23 @@ export class CLIDocumentationCLI {
   private async handleSearch(args: string[]): Promise<void> {
     const query = args[0];
     if (!query) {
-      console.log(styled('❌ Search query required', 'error'));
+      console.info(styled('❌ Search query required', 'error'));
       return;
     }
 
     const results = await this.server.searchDocumentation(query);
 
-    console.log(styled(`\n🔍 Search results for "${query}":`, 'info'));
-    console.log(styled(`Found ${results.results.length} results`, 'muted'));
+    console.info(styled(`\n🔍 Search results for "${query}":`, 'info'));
+    console.info(styled(`Found ${results.results.length} results`, 'muted'));
 
     results.results.forEach(result => {
-      console.log(styled(`\n  📋 ${result.command}`, 'accent'));
-      console.log(styled(`     Category: ${result.category}`, 'muted'));
-      console.log(styled(`     Description: ${result.description}`, 'muted'));
-      console.log(styled(`     URL: ${result.url}`, 'muted'));
+      console.info(styled(`\n  📋 ${result.command}`, 'accent'));
+      console.info(styled(`     Category: ${result.category}`, 'muted'));
+      console.info(styled(`     Description: ${result.description}`, 'muted'));
+      console.info(styled(`     URL: ${result.url}`, 'muted'));
     });
 
-    console.log(styled(`\n🔗 Search URL: ${results.searchURL}`, 'success'));
+    console.info(styled(`\n🔗 Search URL: ${results.searchURL}`, 'success'));
   }
 
   /**
@@ -428,19 +428,19 @@ export class CLIDocumentationCLI {
     const page = args[1];
 
     if (!category) {
-      console.log(styled('❌ Category required', 'error'));
-      console.log(styled('Available categories:', 'muted'));
-      console.log('  installation, commands, options, debugging, integration');
+      console.info(styled('❌ Category required', 'error'));
+      console.info(styled('Available categories:', 'muted'));
+      console.info('  installation, commands, options, debugging, integration');
       return;
     }
 
     const result = await this.server.getDocumentationURL(category, page);
 
     if (result.valid) {
-      console.log(styled(`\n📖 Documentation URL:`, 'success'));
-      console.log(result.url);
+      console.info(styled(`\n📖 Documentation URL:`, 'success'));
+      console.info(result.url);
     } else {
-      console.log(styled('❌ Invalid documentation request', 'error'));
+      console.info(styled('❌ Invalid documentation request', 'error'));
     }
   }
 
@@ -450,19 +450,19 @@ export class CLIDocumentationCLI {
   private async handleParse(args: string[]): Promise<void> {
     const url = args[0];
     if (!url) {
-      console.log(styled('❌ URL required', 'error'));
+      console.info(styled('❌ URL required', 'error'));
       return;
     }
 
     const result = await this.server.parseDocumentationURL(url);
 
-    console.log(styled(`\n🔍 Parsed URL:`, 'info'));
-    console.log(`  Valid: ${result.valid ? '✅' : '❌'}`);
+    console.info(styled(`\n🔍 Parsed URL:`, 'info'));
+    console.info(`  Valid: ${result.valid ? '✅' : '❌'}`);
 
     if (result.valid) {
-      console.log(`  Category: ${result.category}`);
-      console.log(`  Page: ${result.page}`);
-      console.log(`  Fragment: ${JSON.stringify(result.fragment, null, 2)}`);
+      console.info(`  Category: ${result.category}`);
+      console.info(`  Page: ${result.page}`);
+      console.info(`  Fragment: ${JSON.stringify(result.fragment, null, 2)}`);
     }
   }
 
@@ -475,18 +475,18 @@ export class CLIDocumentationCLI {
     const command = args[2];
 
     if (!category || !commandName || !command) {
-      console.log(styled('❌ Category, command name, and command required', 'error'));
-      console.log(styled('Example: cli-docs example BASIC TEST "bun test"', 'muted'));
+      console.info(styled('❌ Category, command name, and command required', 'error'));
+      console.info(styled('Example: cli-docs example BASIC TEST "bun test"', 'muted'));
       return;
     }
 
     const result = await this.server.generateCommandExample(category, commandName, command);
 
     if (result.valid) {
-      console.log(styled(`\n💡 Example URL:`, 'success'));
-      console.log(result.url);
+      console.info(styled(`\n💡 Example URL:`, 'success'));
+      console.info(result.url);
     } else {
-      console.log(styled('❌ Invalid example request', 'error'));
+      console.info(styled('❌ Invalid example request', 'error'));
     }
   }
 
@@ -494,7 +494,7 @@ export class CLIDocumentationCLI {
    * Show help information
    */
   private showHelp(): void {
-    console.log(
+    console.info(
       styled(
         `
 📚 CLI Documentation MCP Server CLI

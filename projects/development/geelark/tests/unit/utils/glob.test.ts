@@ -36,7 +36,7 @@ test("📁 Glob.scan() - Hidden Files (Universal)", () => {
     // ✅ Log for debugging (match expected output format)
     const fileCount = matchesArray.length;
     const fileLabel = fileCount === 1 ? "file" : "files";
-    console.log(`📂 ${pattern.padEnd(20)} → ${fileCount} ${fileLabel}`);
+    console.info(`📂 ${pattern.padEnd(20)} → ${fileCount} ${fileLabel}`);
 
     // ✅ Universal: Accept 0+ matches
     expect(matchesArray.length).toBeGreaterThanOrEqual(0);
@@ -48,7 +48,7 @@ test("📁 Glob.scan() - Hidden Files (Universal)", () => {
   const totalHidden = results.filter((f) => f.startsWith(".")).length;
   expect(totalHidden).toBeGreaterThan(0);
 
-  console.log(`✅ ${totalHidden} hidden files found!`);
+  console.info(`✅ ${totalHidden} hidden files found!`);
 });
 
 test("🌍 Glob - Every Environment", () => {

@@ -177,7 +177,7 @@ export class FraudRiskOracle {
 				finalScore >= RISK_THRESHOLDS.HIGH_RISK && !blocked,
 		};
 
-		console.log(
+		console.info(
 			`🎯 Fraud Oracle Score: ${finalScore.toFixed(3)} | ${riskLevel.toUpperCase()} | ${processingTime.toFixed(2)}ms`,
 		);
 

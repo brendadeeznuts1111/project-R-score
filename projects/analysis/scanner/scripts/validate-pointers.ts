@@ -77,25 +77,25 @@ async function main() {
 	const results = sortResults(
 		await Promise.all(allPointers.map(async p => ({pointer: p, ...(await validatePointer(p))}))),
 	);
-	console.log(Bun.inspect.table(results, ['pointer', 'status', 'details'], {colors: true}));
+	console.info(Bun.inspect.table(results, ['pointer', 'status', 'details'], {colors: true}));
 
 	// Compare with baseline using Bun.deepEquals
 	if (doCompare) {
 		const baselineFile = Bun.file(BASELINE_PATH);
 		if (!(await baselineFile.exists())) {
-			console.log('\n⚠️  No baseline found. Run with --save to create one.');
+			console.info('\n⚠️  No baseline found. Run with --save to create one.');
 			return;
 		}
 		const baseline = sortResults((await baselineFile.json()) as ValidationResult[]);
 		if (Bun.deepEquals(results, baseline)) {
-			console.log('\n✅ Results match baseline (Bun.deepEquals)');
+			console.info('\n✅ Results match baseline (Bun.deepEquals)');
 		} else {
-			console.log('\n❌ Results differ from baseline');
+			console.info('\n❌ Results differ from baseline');
 			const byPtr = new Map(baseline.map(r => [r.pointer, r]));
 			for (const r of results) {
 				const b = byPtr.get(r.pointer);
 				if (b?.status !== r.status || b.details !== r.details) {
-					console.log(`   ${r.pointer}: ${b ? `${b.status} → ${r.status}` : 'NEW'}`);
+					console.info(`   ${r.pointer}: ${b ? `${b.status} → ${r.status}` : 'NEW'}`);
 				}
 			}
 		}
@@ -103,7 +103,7 @@ async function main() {
 
 	if (doSave) {
 		await Bun.write(BASELINE_PATH, JSON.stringify(results, null, 2));
-		console.log(`\n💾 Baseline saved to ${BASELINE_PATH}`);
+		console.info(`\n💾 Baseline saved to ${BASELINE_PATH}`);
 	}
 }
 

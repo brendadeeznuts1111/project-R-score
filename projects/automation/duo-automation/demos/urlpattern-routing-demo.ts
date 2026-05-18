@@ -764,7 +764,7 @@ const enhancedMockData = {
 // Enhanced route handlers with comprehensive error handling
 async function handlePhoneAnalysis(request: Request, params: any, context: RequestContext): Promise<Response> {
   const phone = params.pathname.groups.phone;
-  console.log(`🔍 [${context.requestId}] Analyzing phone: ${phone}`);
+  console.info(`🔍 [${context.requestId}] Analyzing phone: ${phone}`);
   
   try {
     // Simulate processing time
@@ -802,7 +802,7 @@ async function handlePhoneAnalysis(request: Request, params: any, context: Reque
 
 async function handlePhoneRiskAssessment(request: Request, params: any, context: RequestContext): Promise<Response> {
   const phone = params.pathname.groups.phone;
-  console.log(`⚠️ [${context.requestId}] Assessing risk for: ${phone}`);
+  console.info(`⚠️ [${context.requestId}] Assessing risk for: ${phone}`);
   
   try {
     const analysis = enhancedMockData.phoneAnalysis.get(phone);
@@ -852,7 +852,7 @@ async function handleMLRiskPrediction(request: Request, params: any, context: Re
   const phone = params.pathname.groups.phone;
   const model = params.pathname.groups.model || 'ensemble-v1';
   
-  console.log(`🤖 [${context.requestId}] ML risk prediction for: ${phone} using model: ${model}`);
+  console.info(`🤖 [${context.requestId}] ML risk prediction for: ${phone} using model: ${model}`);
   
   try {
     const modelInfo = enhancedMockData.mlModels.riskPrediction[model];
@@ -916,7 +916,7 @@ async function handleMLRiskPrediction(request: Request, params: any, context: Re
 async function handleRealtimeAlerts(request: Request, params: any, context: RequestContext): Promise<Response> {
   const severity = params.pathname.groups.severity;
   
-  console.log(`🚨 [${context.requestId}] Fetching realtime alerts${severity ? ` with severity: ${severity}` : ''}`);
+  console.info(`🚨 [${context.requestId}] Fetching realtime alerts${severity ? ` with severity: ${severity}` : ''}`);
   
   try {
     let alerts = enhancedMockData.realtimeAlerts;
@@ -961,7 +961,7 @@ async function handleCrossPlatformIdentityGraph(request: Request, params: any, c
   const phone = params.pathname.groups.phone;
   const depth = parseInt(params.pathname.groups.depth) || 2;
   
-  console.log(`🕸️ [${context.requestId}] Building identity graph for: ${phone} (depth: ${depth})`);
+  console.info(`🕸️ [${context.requestId}] Building identity graph for: ${phone} (depth: ${depth})`);
   
   try {
     // Simulate graph construction
@@ -1050,7 +1050,7 @@ async function handlePlatformAnalysis(request: Request, params: any, context: Re
   const userId = params.pathname.groups.userId;
   const version = params.pathname.groups.version;
   
-  console.log(`🏦 [${context.requestId}] Analyzing ${platform} user: ${userId} (v${version})`);
+  console.info(`🏦 [${context.requestId}] Analyzing ${platform} user: ${userId} (v${version})`);
   
   try {
     // Validate platform
@@ -1094,7 +1094,7 @@ async function handlePlatformAnalysis(request: Request, params: any, context: Re
 }
 
 async function handleBatchSubmit(request: Request, params: any, context: RequestContext): Promise<Response> {
-  console.log(`📦 [${context.requestId}] Submitting batch job`);
+  console.info(`📦 [${context.requestId}] Submitting batch job`);
   
   try {
     const body = await request.json();
@@ -1160,7 +1160,7 @@ async function handleBatchSubmit(request: Request, params: any, context: Request
 async function handleBatchStatus(request: Request, params: any, context: RequestContext): Promise<Response> {
   const jobId = params.pathname.groups.jobId;
   
-  console.log(`📊 [${context.requestId}] Checking batch status: ${jobId}`);
+  console.info(`📊 [${context.requestId}] Checking batch status: ${jobId}`);
   
   try {
     const job = enhancedMockData.batchJobs.get(jobId);
@@ -1239,7 +1239,7 @@ async function handleDashboardMetrics(request: Request, params: any, context: Re
 }
 
 async function handleTestAndroidVM(request: Request, params: any, context: RequestContext): Promise<Response> {
-  console.log(`📱 [${context.requestId}] Testing Android VM connection`);
+  console.info(`📱 [${context.requestId}] Testing Android VM connection`);
   
   try {
     // Simulate VM connection test
@@ -1277,7 +1277,7 @@ async function handleTestAndroidVM(request: Request, params: any, context: Reque
 }
 
 async function handleTestProxy(request: Request, params: any, context: RequestContext): Promise<Response> {
-  console.log(`🌐 [${context.requestId}] Testing proxy server`);
+  console.info(`🌐 [${context.requestId}] Testing proxy server`);
   
   try {
     // Simulate proxy test
@@ -1315,7 +1315,7 @@ async function handleTestProxy(request: Request, params: any, context: RequestCo
 }
 
 async function handleTestEmail(request: Request, params: any, context: RequestContext): Promise<Response> {
-  console.log(`📧 [${context.requestId}] Testing email integration`);
+  console.info(`📧 [${context.requestId}] Testing email integration`);
   
   try {
     // Simulate email test
@@ -1354,7 +1354,7 @@ async function handleTestEmail(request: Request, params: any, context: RequestCo
 
 // R2 Bucket Integration Handlers
 async function handleR2ListFiles(request: Request, params: any, context: RequestContext): Promise<Response> {
-  console.log(`📁 [${context.requestId}] Listing R2 files`);
+  console.info(`📁 [${context.requestId}] Listing R2 files`);
   
   try {
     const prefix = params.pathname.groups.prefix || '';
@@ -1408,7 +1408,7 @@ async function handleR2ListFiles(request: Request, params: any, context: Request
 }
 
 async function handleR2UploadFile(request: Request, params: any, context: RequestContext): Promise<Response> {
-  console.log(`📤 [${context.requestId}] Uploading file to R2`);
+  console.info(`📤 [${context.requestId}] Uploading file to R2`);
   
   try {
     const formData = await request.formData();
@@ -1450,7 +1450,7 @@ async function handleR2UploadFile(request: Request, params: any, context: Reques
 }
 
 async function handleR2DownloadFile(request: Request, params: any, context: RequestContext): Promise<Response> {
-  console.log(`📥 [${context.requestId}] Downloading file from R2`);
+  console.info(`📥 [${context.requestId}] Downloading file from R2`);
   
   try {
     const key = params.pathname.groups.key;
@@ -1484,7 +1484,7 @@ async function handleR2DownloadFile(request: Request, params: any, context: Requ
 }
 
 async function handleR2DeleteFile(request: Request, params: any, context: RequestContext): Promise<Response> {
-  console.log(`🗑️ [${context.requestId}] Deleting file from R2`);
+  console.info(`🗑️ [${context.requestId}] Deleting file from R2`);
   
   try {
     const key = params.pathname.groups.key;
@@ -1512,7 +1512,7 @@ async function handleR2DeleteFile(request: Request, params: any, context: Reques
 }
 
 async function handleR2GetSignedUrl(request: Request, params: any, context: RequestContext): Promise<Response> {
-  console.log(`🔗 [${context.requestId}] Generating signed URL for R2`);
+  console.info(`🔗 [${context.requestId}] Generating signed URL for R2`);
   
   try {
     const key = params.pathname.groups.key;
@@ -1544,7 +1544,7 @@ async function handleR2GetSignedUrl(request: Request, params: any, context: Requ
 }
 
 async function handleR2Stats(request: Request, params: any, context: RequestContext): Promise<Response> {
-  console.log(`📊 [${context.requestId}] Getting R2 bucket stats`);
+  console.info(`📊 [${context.requestId}] Getting R2 bucket stats`);
   
   try {
     // Simulate R2 bucket statistics
@@ -1593,7 +1593,7 @@ async function handleR2Stats(request: Request, params: any, context: RequestCont
 
 // Agent CLI Integration Handlers
 async function handleAgentListTasks(request: Request, params: any, context: RequestContext): Promise<Response> {
-  console.log(`🤖 [${context.requestId}] Listing agent tasks for user: ${context.user.id}`);
+  console.info(`🤖 [${context.requestId}] Listing agent tasks for user: ${context.user.id}`);
   
   // Check agent permissions
   if (!context.user.scopes?.includes('agent')) {
@@ -1654,7 +1654,7 @@ async function handleAgentListTasks(request: Request, params: any, context: Requ
 
 async function handleAgentExecuteTask(request: Request, params: any, context: RequestContext): Promise<Response> {
   const taskId = params.pathname.groups.taskId;
-  console.log(`🚀 [${context.requestId}] Executing agent task: ${taskId}`);
+  console.info(`🚀 [${context.requestId}] Executing agent task: ${taskId}`);
   
   if (!context.user.scopes?.includes('agent')) {
     return Response.json({
@@ -1690,7 +1690,7 @@ async function handleAgentExecuteTask(request: Request, params: any, context: Re
 
 async function handleSocialAuthLogin(request: Request, params: any, context: RequestContext): Promise<Response> {
   const provider = params.pathname.groups.provider;
-  console.log(`🔐 [${context.requestId}] Social auth login with: ${provider}`);
+  console.info(`🔐 [${context.requestId}] Social auth login with: ${provider}`);
   
   if (!context.user.scopes?.includes('social')) {
     return Response.json({
@@ -1727,7 +1727,7 @@ async function handleSocialAuthLogin(request: Request, params: any, context: Req
 }
 
 async function handleSocialShare(request: Request, params: any, context: RequestContext): Promise<Response> {
-  console.log(`📤 [${context.requestId}] Social share request`);
+  console.info(`📤 [${context.requestId}] Social share request`);
   
   if (!context.user.scopes?.includes('social')) {
     return Response.json({
@@ -1765,7 +1765,7 @@ async function handleSocialShare(request: Request, params: any, context: Request
 }
 
 async function handleBillingGetPlans(request: Request, params: any, context: RequestContext): Promise<Response> {
-  console.log(`💳 [${context.requestId}] Getting billing plans`);
+  console.info(`💳 [${context.requestId}] Getting billing plans`);
   
   if (!context.user.scopes?.includes('billing')) {
     return Response.json({
@@ -1822,7 +1822,7 @@ async function handleBillingGetPlans(request: Request, params: any, context: Req
 }
 
 async function handleBillingGetSubscription(request: Request, params: any, context: RequestContext): Promise<Response> {
-  console.log(`📊 [${context.requestId}] Getting subscription for user: ${context.user.id}`);
+  console.info(`📊 [${context.requestId}] Getting subscription for user: ${context.user.id}`);
   
   if (!context.user.scopes?.includes('billing')) {
     return Response.json({
@@ -1867,7 +1867,7 @@ async function handleBillingGetSubscription(request: Request, params: any, conte
 }
 
 async function handleApiKeyGenerate(request: Request, params: any, context: RequestContext): Promise<Response> {
-  console.log(`🔑 [${context.requestId}] Generating API key for user: ${context.user.id}`);
+  console.info(`🔑 [${context.requestId}] Generating API key for user: ${context.user.id}`);
   
   if (!context.user.permissions?.includes('*') && !context.user.permissions?.includes('write:admin')) {
     return Response.json({
@@ -1940,7 +1940,7 @@ async function handleRequest(request: Request): Promise<Response> {
     metadata: {}
   };
   
-  console.log(`\n🌐 [${context.requestId}] ${request.method} ${url.pathname}`);
+  console.info(`\n🌐 [${context.requestId}] ${request.method} ${url.pathname}`);
   
   try {
     // Execute middleware stack
@@ -1954,8 +1954,8 @@ async function handleRequest(request: Request): Promise<Response> {
       const match = pattern.exec(url);
       
       if (match) {
-        console.log(`✅ [${context.requestId}] Matched route: ${routeName}`);
-        console.log(`   Parameters:`, match.pathname.groups);
+        console.info(`✅ [${context.requestId}] Matched route: ${routeName}`);
+        console.info(`   Parameters:`, match.pathname.groups);
         context.params = match.pathname.groups;
         
         // Route to appropriate handler
@@ -2106,7 +2106,7 @@ async function handleRequest(request: Request): Promise<Response> {
     }
     
     // No route matched
-    console.log(`❌ [${context.requestId}] No route matched`);
+    console.info(`❌ [${context.requestId}] No route matched`);
     return Response.json({
       success: false,
       error: 'Route not found',
@@ -2173,53 +2173,53 @@ async function processBatchAsync(jobId: string, body: any): Promise<void> {
 
 // Demonstration of URLPattern capabilities
 function demonstrateURLPatternFeatures() {
-  console.log('🚀 Enhanced URLPattern API Features Demo');
-  console.log('==========================================\n');
+  console.info('🚀 Enhanced URLPattern API Features Demo');
+  console.info('==========================================\n');
   
   // 1. Advanced pattern matching
-  console.log('1. Advanced Pattern Matching:');
+  console.info('1. Advanced Pattern Matching:');
   const phonePattern = ENHANCED_ROUTES.phoneAnalysis;
-  console.log(`   ✅ Phone pattern: ${phonePattern.pathname}`);
-  console.log(`   ✅ Matches: ${phonePattern.test('https://api.example.com/api/analyze/phone/+15551234567')}`);
-  console.log(`   ❌ Non-match: ${phonePattern.test('https://api.example.com/api/analyze/email/test')}`);
+  console.info(`   ✅ Phone pattern: ${phonePattern.pathname}`);
+  console.info(`   ✅ Matches: ${phonePattern.test('https://api.example.com/api/analyze/phone/+15551234567')}`);
+  console.info(`   ❌ Non-match: ${phonePattern.test('https://api.example.com/api/analyze/email/test')}`);
   
   // 2. Version extraction
-  console.log('\n2. Version Parameter Extraction:');
+  console.info('\n2. Version Parameter Extraction:');
   const platformPattern = ENHANCED_ROUTES.platformAnalysis;
   const platformMatch = platformPattern.exec('https://api.example.com/api/v1/platform/cashapp/users/johnsmith');
   if (platformMatch) {
-    console.log(`   Version: ${platformMatch.pathname.groups.version}`);
-    console.log(`   Platform: ${platformMatch.pathname.groups.platform}`);
-    console.log(`   User ID: ${platformMatch.pathname.groups.userId}`);
+    console.info(`   Version: ${platformMatch.pathname.groups.version}`);
+    console.info(`   Platform: ${platformMatch.pathname.groups.platform}`);
+    console.info(`   User ID: ${platformMatch.pathname.groups.userId}`);
   }
   
   // 3. Optional parameters
-  console.log('\n3. Optional Parameters:');
+  console.info('\n3. Optional Parameters:');
   const metricsPattern = ENHANCED_ROUTES.dashboardMetrics;
   
   const withTimeframe = metricsPattern.exec('https://api.example.com/api/dashboard/metrics/7d');
   const withoutTimeframe = metricsPattern.exec('https://api.example.com/api/dashboard/metrics');
   
-  console.log(`   With timeframe: ${withTimeframe?.pathname.groups.timeframe || 'default'}`);
-  console.log(`   Without timeframe: ${withoutTimeframe?.pathname.groups.timeframe || 'default'}`);
+  console.info(`   With timeframe: ${withTimeframe?.pathname.groups.timeframe || 'default'}`);
+  console.info(`   Without timeframe: ${withoutTimeframe?.pathname.groups.timeframe || 'default'}`);
   
   // 4. Complex pattern with multiple parameters
-  console.log('\n4. Complex Multi-Parameter Patterns:');
+  console.info('\n4. Complex Multi-Parameter Patterns:');
   const reportPattern = ENHANCED_ROUTES.reportGenerate;
   const reportMatch = reportPattern.exec('https://api.example.com/api/reports/fraud/2024-01-15/csv');
   if (reportMatch) {
-    console.log(`   Report Type: ${reportMatch.pathname.groups.type}`);
-    console.log(`   Date: ${reportMatch.pathname.groups.date}`);
-    console.log(`   Format: ${reportMatch.pathname.groups.format}`);
+    console.info(`   Report Type: ${reportMatch.pathname.groups.type}`);
+    console.info(`   Date: ${reportMatch.pathname.groups.date}`);
+    console.info(`   Format: ${reportMatch.pathname.groups.format}`);
   }
   
   // 5. Pattern validation
-  console.log('\n5. Pattern Validation:');
-  console.log(`   Phone pattern has regex groups: ${phonePattern.hasRegExpGroups}`);
-  console.log(`   Platform pattern has regex groups: ${platformPattern.hasRegExpGroups}`);
+  console.info('\n5. Pattern Validation:');
+  console.info(`   Phone pattern has regex groups: ${phonePattern.hasRegExpGroups}`);
+  console.info(`   Platform pattern has regex groups: ${platformPattern.hasRegExpGroups}`);
   
   // 6. Performance characteristics
-  console.log('\n6. Performance Characteristics:');
+  console.info('\n6. Performance Characteristics:');
   const startTime = performance.now();
   
   // Test pattern matching performance
@@ -2228,8 +2228,8 @@ function demonstrateURLPatternFeatures() {
   }
   
   const endTime = performance.now();
-  console.log(`   1000 pattern matches in ${(endTime - startTime).toFixed(2)}ms`);
-  console.log(`   Average per match: ${((endTime - startTime) / 1000).toFixed(4)}ms`);
+  console.info(`   1000 pattern matches in ${(endTime - startTime).toFixed(2)}ms`);
+  console.info(`   Average per match: ${((endTime - startTime) / 1000).toFixed(4)}ms`);
 }
 
 // Agent Pool Handler Functions
@@ -2625,64 +2625,64 @@ const server = serve({
   }
 });
 
-console.log('🌟 Enhanced URLPattern Routing Server Started');
-console.log('============================================');
-console.log('🚀 Server running on http://localhost:3002');
-console.log('\n📋 Enhanced Routes with Middleware:');
+console.info('🌟 Enhanced URLPattern Routing Server Started');
+console.info('============================================');
+console.info('🚀 Server running on http://localhost:3002');
+console.info('\n📋 Enhanced Routes with Middleware:');
 Object.entries(ENHANCED_ROUTES).forEach(([name, pattern]) => {
-  console.log(`   ${name}: ${pattern.pathname}`);
+  console.info(`   ${name}: ${pattern.pathname}`);
 });
 
-console.log('\n🛡️ Middleware Stack:');
+console.info('\n🛡️ Middleware Stack:');
 middlewareStack.sort((a, b) => a.priority - b.priority).forEach(middleware => {
-  console.log(`   ${middleware.priority}. ${middleware.name}`);
+  console.info(`   ${middleware.priority}. ${middleware.name}`);
 });
 
-console.log('\n🧪 Enhanced API Examples:');
-console.log('   GET  http://localhost:3002/api/analyze/phone/+15551234567');
-console.log('   GET  http://localhost:3002/api/analyze/phone/+15551234567/risk');
-console.log('   GET  http://localhost:3002/api/ml/predict/risk/+15551234567/ensemble-v1');
-console.log('   GET  http://localhost:3002/api/cross-platform/graph/+15551234567/3');
-console.log('   GET  http://localhost:3002/api/realtime/alerts/critical');
-console.log('   GET  http://localhost:3002/api/v1/platform/cashapp/users/johnsmith');
-console.log('   POST http://localhost:3002/api/batch/submit');
-console.log('   GET  http://localhost:3002/api/batch/batch_12345/status');
-console.log('   GET  http://localhost:3002/api/dashboard/metrics/24h');
-console.log('   GET  http://localhost:3002/api/health/database');
-console.log('   GET  http://localhost:3002/api/metrics/response-time/1h');
+console.info('\n🧪 Enhanced API Examples:');
+console.info('   GET  http://localhost:3002/api/analyze/phone/+15551234567');
+console.info('   GET  http://localhost:3002/api/analyze/phone/+15551234567/risk');
+console.info('   GET  http://localhost:3002/api/ml/predict/risk/+15551234567/ensemble-v1');
+console.info('   GET  http://localhost:3002/api/cross-platform/graph/+15551234567/3');
+console.info('   GET  http://localhost:3002/api/realtime/alerts/critical');
+console.info('   GET  http://localhost:3002/api/v1/platform/cashapp/users/johnsmith');
+console.info('   POST http://localhost:3002/api/batch/submit');
+console.info('   GET  http://localhost:3002/api/batch/batch_12345/status');
+console.info('   GET  http://localhost:3002/api/dashboard/metrics/24h');
+console.info('   GET  http://localhost:3002/api/health/database');
+console.info('   GET  http://localhost:3002/api/metrics/response-time/1h');
 
-console.log('\n🔐 Authentication Examples:');
-console.log('   # Use API Key: demo-key-super-admin (full access)');
-console.log('   # Use API Key: demo-key-analyst (analyst access)');
-console.log('   curl -H "X-API-Key: demo-key-super-admin" http://localhost:3002/api/admin/config');
+console.info('\n🔐 Authentication Examples:');
+console.info('   # Use API Key: demo-key-super-admin (full access)');
+console.info('   # Use API Key: demo-key-analyst (analyst access)');
+console.info('   curl -H "X-API-Key: demo-key-super-admin" http://localhost:3002/api/admin/config');
 
-console.log('\n🔧 Advanced Features:');
-console.log('   • 7-layer middleware stack with authentication, authorization, rate limiting');
-console.log('   • AI/ML risk prediction with multiple models');
-console.log('   • Real-time alerts and monitoring');
-console.log('   • Cross-platform identity graph construction');
-console.log('   • Enhanced batch processing with pause/resume');
-console.log('   • Comprehensive error handling with detailed responses');
-console.log('   • Request tracking with unique IDs and timing');
-console.log('   • Role-based access control (RBAC)');
-console.log('   • Intelligent caching with cache headers');
-console.log('   • Input validation and sanitization');
-console.log('   • CORS support for web applications');
+console.info('\n🔧 Advanced Features:');
+console.info('   • 7-layer middleware stack with authentication, authorization, rate limiting');
+console.info('   • AI/ML risk prediction with multiple models');
+console.info('   • Real-time alerts and monitoring');
+console.info('   • Cross-platform identity graph construction');
+console.info('   • Enhanced batch processing with pause/resume');
+console.info('   • Comprehensive error handling with detailed responses');
+console.info('   • Request tracking with unique IDs and timing');
+console.info('   • Role-based access control (RBAC)');
+console.info('   • Intelligent caching with cache headers');
+console.info('   • Input validation and sanitization');
+console.info('   • CORS support for web applications');
 
-console.log('\n📊 Test Data:');
-console.log('   Phone Numbers: +15551234567 (LOW), +15551112222 (MEDIUM), +15559876543 (HIGH)');
-console.log('   ML Models: ensemble-v1, neural-v2, gradient-boost');
-console.log('   Alert Severities: critical, warning, info');
+console.info('\n📊 Test Data:');
+console.info('   Phone Numbers: +15551234567 (LOW), +15551112222 (MEDIUM), +15559876543 (HIGH)');
+console.info('   ML Models: ensemble-v1, neural-v2, gradient-boost');
+console.info('   Alert Severities: critical, warning, info');
 
 // Run the demonstration
 demonstrateURLPatternFeatures();
 
 // Keep server running
-console.log('\n⏳ Enhanced server is running... Press Ctrl+C to stop');
+console.info('\n⏳ Enhanced server is running... Press Ctrl+C to stop');
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down enhanced server...');
+  console.info('\n🛑 Shutting down enhanced server...');
   server.stop();
   process.exit(0);
 });

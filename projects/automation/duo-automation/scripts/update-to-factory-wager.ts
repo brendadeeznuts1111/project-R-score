@@ -36,7 +36,7 @@ class FactoryWagerUpdater {
   ];
 
   async updateDirectory(dirPath: string, recursive: boolean = true): Promise<void> {
-    console.log(`🔍 Scanning directory: ${dirPath}`);
+    console.info(`🔍 Scanning directory: ${dirPath}`);
     
     const entries = readdirSync(dirPath);
     
@@ -85,7 +85,7 @@ class FactoryWagerUpdater {
           changes: changeCount,
           updated: true
         });
-        console.log(`✅ Updated: ${filePath} (${changeCount} changes)`);
+        console.info(`✅ Updated: ${filePath} (${changeCount} changes)`);
       } else {
         this.updates.push({
           path: filePath,
@@ -130,8 +130,8 @@ class FactoryWagerUpdater {
   }
 
   async run(rootPath: string = './src'): Promise<void> {
-    console.log('🏭 STARTING FACTORY-WAGER UPDATE');
-    console.log('='.repeat(50));
+    console.info('🏭 STARTING FACTORY-WAGER UPDATE');
+    console.info('='.repeat(50));
     
     const startTime = Date.now();
     
@@ -140,16 +140,16 @@ class FactoryWagerUpdater {
     const endTime = Date.now();
     const duration = endTime - startTime;
     
-    console.log('\n' + this.generateReport());
-    console.log(`⏱️  Completed in ${duration}ms`);
+    console.info('\n' + this.generateReport());
+    console.info(`⏱️  Completed in ${duration}ms`);
     
     if (this.updates.some(u => u.updated)) {
-      console.log('\n✅ UPDATE SUCCESSFUL!');
-      console.log('🧪 Please run tests to verify changes');
-      console.log('📝 Consider committing changes: git add . && git commit -m "🏭 Update to factory-wager branding"');
+      console.info('\n✅ UPDATE SUCCESSFUL!');
+      console.info('🧪 Please run tests to verify changes');
+      console.info('📝 Consider committing changes: git add . && git commit -m "🏭 Update to factory-wager branding"');
     } else {
-      console.log('\n✅ NO CHANGES NEEDED');
-      console.log('📊 All files already use factory-wager naming');
+      console.info('\n✅ NO CHANGES NEEDED');
+      console.info('📊 All files already use factory-wager naming');
     }
   }
 }

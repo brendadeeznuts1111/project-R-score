@@ -36,7 +36,7 @@ export class DomainEventHandlers {
    * Set up all domain event handlers
    */
   private setupEventHandlers(): void {
-    console.log('🔄 Setting up domain event handlers...');
+    console.info('🔄 Setting up domain event handlers...');
 
     // Collections Domain Event Handlers
     this.setupCollectionsEventHandlers();
@@ -50,7 +50,7 @@ export class DomainEventHandlers {
     // Cross-domain Business Process Handlers
     this.setupBusinessProcessHandlers();
 
-    console.log('✅ Domain event handlers configured successfully');
+    console.info('✅ Domain event handlers configured successfully');
   }
 
   /**
@@ -59,7 +59,7 @@ export class DomainEventHandlers {
   private setupCollectionsEventHandlers(): void {
     // When a payment is processed, update balance and send notifications
     this.events.subscribe('payment.processed', async event => {
-      console.log('💳 Processing payment event:', event.payload);
+      console.info('💳 Processing payment event:', event.payload);
 
       try {
         // Update customer balance
@@ -82,7 +82,7 @@ export class DomainEventHandlers {
 
     // Handle payment failures
     this.events.subscribe('payment.failed', async event => {
-      console.log('❌ Processing payment failure:', event.payload);
+      console.info('❌ Processing payment failure:', event.payload);
 
       // Log failure for audit
       await this.events.publish('audit.payment_failure_logged', {
@@ -99,7 +99,7 @@ export class DomainEventHandlers {
   private setupBalanceEventHandlers(): void {
     // Handle low balance alerts
     this.events.subscribe('balance.threshold.exceeded', async event => {
-      console.log('⚠️ Processing low balance alert:', event.payload);
+      console.info('⚠️ Processing low balance alert:', event.payload);
 
       // Send balance warning notification
       await this.events.publish('notification.balance_warning', {
@@ -112,7 +112,7 @@ export class DomainEventHandlers {
 
     // Handle balance freeze/unfreeze events
     this.events.subscribe('balance.frozen', async event => {
-      console.log('🧊 Processing balance freeze:', event.payload);
+      console.info('🧊 Processing balance freeze:', event.payload);
 
       // Notify relevant parties
       await this.events.publish('notification.account_frozen', {
@@ -123,7 +123,7 @@ export class DomainEventHandlers {
     });
 
     this.events.subscribe('balance.unfrozen', async event => {
-      console.log('🧊 Processing balance unfreeze:', event.payload);
+      console.info('🧊 Processing balance unfreeze:', event.payload);
 
       await this.events.publish('notification.account_unfrozen', {
         customerId: event.payload.customerId,
@@ -138,7 +138,7 @@ export class DomainEventHandlers {
   private setupExternalEventHandlers(): void {
     // Handle external sport events
     this.events.subscribe('external.sport_event.live', async event => {
-      console.log('🏈 Processing live sport event:', event.payload);
+      console.info('🏈 Processing live sport event:', event.payload);
 
       // Update any relevant internal state
       await this.events.publish('internal.sport_event_available', {
@@ -152,7 +152,7 @@ export class DomainEventHandlers {
 
     // Handle external bet placements
     this.events.subscribe('external.bet.received', async event => {
-      console.log('🎯 Processing external bet:', event.payload);
+      console.info('🎯 Processing external bet:', event.payload);
 
       // Validate agent balance
       await this.validateBetBalance(event.payload);
@@ -169,7 +169,7 @@ export class DomainEventHandlers {
 
     // Handle external bet settlements
     this.events.subscribe('external.bet.settled', async event => {
-      console.log('💰 Processing bet settlement:', event.payload);
+      console.info('💰 Processing bet settlement:', event.payload);
 
       // Update agent balance based on settlement
       if (event.payload.result === 'won') {
@@ -181,7 +181,7 @@ export class DomainEventHandlers {
 
     // Handle external balance updates
     this.events.subscribe('external.agent.balance_updated', async event => {
-      console.log('💵 Processing external balance update:', event.payload);
+      console.info('💵 Processing external balance update:', event.payload);
 
       // Sync internal balance with external system
       await this.syncAgentBalance(event.payload);
@@ -194,7 +194,7 @@ export class DomainEventHandlers {
   private setupBusinessProcessHandlers(): void {
     // Handle customer onboarding completion
     this.events.subscribe('customer.onboarding_completed', async event => {
-      console.log('🎉 Processing customer onboarding:', event.payload);
+      console.info('🎉 Processing customer onboarding:', event.payload);
 
       // Create initial balance account
       await this.createInitialBalance(event.payload);
@@ -208,7 +208,7 @@ export class DomainEventHandlers {
 
     // Handle bonus eligibility
     this.events.subscribe('bonus.eligibility_checked', async event => {
-      console.log('🎁 Processing bonus eligibility:', event.payload);
+      console.info('🎁 Processing bonus eligibility:', event.payload);
 
       if (event.payload.eligible) {
         await this.awardBonus(event.payload);
@@ -217,7 +217,7 @@ export class DomainEventHandlers {
 
     // Handle risk assessment triggers
     this.events.subscribe('risk.assessment_required', async event => {
-      console.log('🔍 Processing risk assessment:', event.payload);
+      console.info('🔍 Processing risk assessment:', event.payload);
 
       // Perform risk assessment
       const riskScore = await this.performRiskAssessment(event.payload);

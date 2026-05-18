@@ -193,8 +193,8 @@ await Bun.dns.resolve("example.com", "TXT");`,
   },
 });
 
-console.log(server.port);  // Actual bound port
-console.log(server.url);   // URL object
+console.info(server.port);  // Actual bound port
+console.info(server.url);   // URL object
 
 // Hot-swap handler without restart
 server.reload({
@@ -320,7 +320,7 @@ export function SettingsTab({
     try {
       const res = await fetch(`/api/snapshots/${filename}`);
       const data = await res.json();
-      console.log("Snapshot preview:", data);
+      console.info("Snapshot preview:", data);
       showGlobalToast(`Snapshot has ${data.data?.projectCount || 0} projects`, "info");
     } catch {
       showGlobalToast("Failed to preview snapshot", "error");

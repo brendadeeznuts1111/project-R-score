@@ -533,7 +533,7 @@ const server = Bun.serve({
   },
 });
 
-console.log(`
+console.info(`
 🎯 Response Time Distribution Monitor
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 

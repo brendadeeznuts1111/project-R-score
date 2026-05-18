@@ -14,8 +14,8 @@ import { TerminalWidth, testStringWidth } from "./utils/TerminalWidth";
 
 // Main application entry point
 async function main() {
-  console.log("🚀 Dev HQ - Advanced Codebase Analysis Platform");
-  console.log("=".repeat(50));
+  console.info("🚀 Dev HQ - Advanced Codebase Analysis Platform");
+  console.info("=".repeat(50));
 
   // Show build analysis in development
   if (feature("ENV_DEVELOPMENT")) {
@@ -34,36 +34,36 @@ async function main() {
   const mode = initializeApp();
 
   // Show configuration based on features
-  console.log("\n🔧 Configuration:");
-  console.log("─".repeat(30));
-  console.log(`🎯 Mode: ${mode}`);
-  console.log(`🔧 Debug: ${FeatureFlags.DEBUG}`);
-  console.log(`🌐 API: ${FeatureFlags.getApiEndpoint()}`);
-  console.log(`🔒 Encryption: ${FeatureFlags.ENCRYPTION_ENABLED}`);
-  console.log(`📊 Advanced Monitoring: ${FeatureFlags.ADVANCED_MONITORING}`);
-  console.log(`🔄 Auto-heal: ${FeatureFlags.AUTO_HEAL_ENABLED}`);
-  console.log(`📱 Phone Automation: ${FeatureFlags.PHONE_AUTOMATION}`);
+  console.info("\n🔧 Configuration:");
+  console.info("─".repeat(30));
+  console.info(`🎯 Mode: ${mode}`);
+  console.info(`🔧 Debug: ${FeatureFlags.DEBUG}`);
+  console.info(`🌐 API: ${FeatureFlags.getApiEndpoint()}`);
+  console.info(`🔒 Encryption: ${FeatureFlags.ENCRYPTION_ENABLED}`);
+  console.info(`📊 Advanced Monitoring: ${FeatureFlags.ADVANCED_MONITORING}`);
+  console.info(`🔄 Auto-heal: ${FeatureFlags.AUTO_HEAL_ENABLED}`);
+  console.info(`📱 Phone Automation: ${FeatureFlags.PHONE_AUTOMATION}`);
 
   // Platform-specific information
   const platformConfig = getPlatformConfig();
-  console.log(`🖥️  Platform Config:`, platformConfig);
+  console.info(`🖥️  Platform Config:`, platformConfig);
 
   // API configuration
   const apiConfig = getApiConfig();
-  console.log(`⚙️  API Config:`, apiConfig);
+  console.info(`⚙️  API Config:`, apiConfig);
 
   // Feature description
-  console.log(`📝 Description: ${getFeatureDescription()}`);
+  console.info(`📝 Description: ${getFeatureDescription()}`);
 
   // Start dashboard if monitoring is enabled
   if (feature("FEAT_ADVANCED_MONITORING")) {
-    console.log("\n📈 Starting advanced monitoring dashboard...");
+    console.info("\n📈 Starting advanced monitoring dashboard...");
     // Dashboard would be initialized here
-    console.log("✅ Dashboard started");
+    console.info("✅ Dashboard started");
 
     // Clean shutdown
     process.on("SIGINT", () => {
-      console.log("\n🛑 Shutting down dashboard...");
+      console.info("\n🛑 Shutting down dashboard...");
       process.exit(0);
     });
   }
@@ -95,22 +95,22 @@ async function main() {
       "PLATFORM_WEB": feature("PLATFORM_WEB"),
     };
 
-    console.log("\n" + TerminalWidth.createFeatureDashboard(features).join("\n"));
+    console.info("\n" + TerminalWidth.createFeatureDashboard(features).join("\n"));
 
     // Show tooltip-enhanced table
-    console.log("\n📋 Feature Table with Tooltip Indicators:");
+    console.info("\n📋 Feature Table with Tooltip Indicators:");
     const tooltipTable = InteractiveTooltipCLI.createTooltipEnhancedTable();
-    tooltipTable.forEach(line => console.log(line));
+    tooltipTable.forEach(line => console.info(line));
 
-    console.log("\n💡 Type 'bun run --features=ENV_DEVELOPMENT ./src/main.ts --interactive' for tooltip mode");
+    console.info("\n💡 Type 'bun run --features=ENV_DEVELOPMENT ./src/main.ts --interactive' for tooltip mode");
   }
 
   // Show system status
-  console.log("\n🎉 System initialized successfully!");
+  console.info("\n🎉 System initialized successfully!");
 
   // Keep alive for dashboard
   if (feature("FEAT_ADVANCED_MONITORING")) {
-    console.log("\n⏳ Keeping process alive for dashboard...");
+    console.info("\n⏳ Keeping process alive for dashboard...");
     await new Promise(() => {
       // Keep process alive
     });
@@ -138,7 +138,7 @@ async function handleCliArgs(): Promise<boolean> {
 
   if (args.includes("--validate-features")) {
     const isValid = validateFeatureCombination();
-    console.log(isValid ? "✅ Features are valid" : "❌ Features are invalid");
+    console.info(isValid ? "✅ Features are valid" : "❌ Features are invalid");
     return true;
   }
 
@@ -148,7 +148,7 @@ async function handleCliArgs(): Promise<boolean> {
   }
 
   if (args.includes("--generate-report")) {
-    console.log(BuildOptimizer.generateBuildReport());
+    console.info(BuildOptimizer.generateBuildReport());
     return true;
   }
 
@@ -158,7 +158,7 @@ async function handleCliArgs(): Promise<boolean> {
   }
 
   if (args.includes("--interactive")) {
-    console.log("🖱️  Starting Interactive Tooltip Mode...");
+    console.info("🖱️  Starting Interactive Tooltip Mode...");
     await InteractiveTooltipCLI.startInteractiveMode();
     return true;
   }
@@ -169,11 +169,11 @@ async function handleCliArgs(): Promise<boolean> {
 
     if (!featureName) {
       console.error("❌ Please provide a feature name: --tooltip <FEATURE_NAME>");
-      console.log("💡 Example: --tooltip FEAT_PREMIUM");
+      console.info("💡 Example: --tooltip FEAT_PREMIUM");
       return true;
     }
 
-    console.log(`📋 Tooltip for ${featureName}:`);
+    console.info(`📋 Tooltip for ${featureName}:`);
     TooltipCLI.show(featureName);
     return true;
   }
@@ -184,7 +184,7 @@ async function handleCliArgs(): Promise<boolean> {
 
     if (!keyword) {
       console.error("❌ Please provide a search keyword: --search <keyword>");
-      console.log("💡 Example: --search encryption");
+      console.info("💡 Example: --search encryption");
       return true;
     }
 
@@ -207,7 +207,7 @@ async function handleCliArgs(): Promise<boolean> {
       console.error("❌ Advanced monitoring feature not enabled");
       process.exit(1);
     }
-    console.log("📈 Dashboard mode activated");
+    console.info("📈 Dashboard mode activated");
     return false; // Continue to main
   }
 
@@ -271,13 +271,13 @@ function showHelp(): void {
     "",
   ];
 
-  console.log(help.join("\n"));
+  console.info(help.join("\n"));
 }
 
 // Show system status
 function showStatus(): void {
-  console.log("🔍 System Status:");
-  console.log("─".repeat(30));
+  console.info("🔍 System Status:");
+  console.info("─".repeat(30));
 
   const status = [
     `Environment: ${FeatureUtils.getCurrentEnvironment()}`,
@@ -290,7 +290,7 @@ function showStatus(): void {
     `Monitoring: ${FeatureFlags.ADVANCED_MONITORING ? "Advanced" : "Basic"}`,
   ];
 
-  status.forEach(line => console.log(`  ${line}`));
+  status.forEach(line => console.info(`  ${line}`));
 }
 
 // Main execution wrapper

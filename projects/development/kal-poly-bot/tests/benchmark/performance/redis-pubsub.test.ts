@@ -39,10 +39,10 @@ describe("Redis Pub/Sub Performance Benchmarks", () => {
     }
 
     const stats = measurer.getStats("redis-publish");
-    console.log(`📡 Redis Pub/Sub Performance:`);
-    console.log(`   Average Publish: ${stats!.average.toFixed(2)}ms`);
-    console.log(`   P95 Publish: ${stats!.p95.toFixed(2)}ms`);
-    console.log(`   Max Publish: ${stats!.max.toFixed(2)}ms`);
+    console.info(`📡 Redis Pub/Sub Performance:`);
+    console.info(`   Average Publish: ${stats!.average.toFixed(2)}ms`);
+    console.info(`   P95 Publish: ${stats!.p95.toFixed(2)}ms`);
+    console.info(`   Max Publish: ${stats!.max.toFixed(2)}ms`);
 
     TestAssertions.assertPerformance(
       stats!.average,
@@ -110,10 +110,10 @@ describe("Redis Pub/Sub Performance Benchmarks", () => {
     const totalTime = endTime - startTime;
     const throughput = highVolumeCount / (totalTime / 1000);
 
-    console.log(`⚡ High-Volume Publishing:`);
-    console.log(`   Total Events: ${highVolumeCount}`);
-    console.log(`   Total Time: ${totalTime.toFixed(2)}ms`);
-    console.log(`   Throughput: ${throughput.toFixed(0)} events/second`);
+    console.info(`⚡ High-Volume Publishing:`);
+    console.info(`   Total Events: ${highVolumeCount}`);
+    console.info(`   Total Time: ${totalTime.toFixed(2)}ms`);
+    console.info(`   Throughput: ${throughput.toFixed(0)} events/second`);
 
     TestAssertions.assertThroughput(
       throughput,
@@ -148,10 +148,10 @@ describe("Redis Pub/Sub Performance Benchmarks", () => {
     const avgLatency = latencies.reduce((a, b) => a + b, 0) / latencies.length;
     const maxLatency = Math.max(...latencies);
 
-    console.log(`🚨 Anomaly Detection Publishing:`);
-    console.log(`   Average: ${avgLatency.toFixed(2)}ms`);
-    console.log(`   Max: ${maxLatency.toFixed(2)}ms`);
-    console.log(`   Events: ${anomalyCount}`);
+    console.info(`🚨 Anomaly Detection Publishing:`);
+    console.info(`   Average: ${avgLatency.toFixed(2)}ms`);
+    console.info(`   Max: ${maxLatency.toFixed(2)}ms`);
+    console.info(`   Events: ${anomalyCount}`);
 
     TestAssertions.assertPerformance(
       avgLatency,
@@ -183,10 +183,10 @@ describe("Redis Pub/Sub Performance Benchmarks", () => {
     const totalTime = endTime - startTime;
     const avgLatency = totalTime / complianceEvents.length;
 
-    console.log(`📋 Compliance Event Publishing:`);
-    console.log(`   Events: ${complianceEvents.length}`);
-    console.log(`   Total Time: ${totalTime.toFixed(2)}ms`);
-    console.log(`   Average: ${avgLatency.toFixed(2)}ms`);
+    console.info(`📋 Compliance Event Publishing:`);
+    console.info(`   Events: ${complianceEvents.length}`);
+    console.info(`   Total Time: ${totalTime.toFixed(2)}ms`);
+    console.info(`   Average: ${avgLatency.toFixed(2)}ms`);
 
     TestAssertions.assertPerformance(
       avgLatency,

@@ -187,7 +187,7 @@ const metrics = {
 function trackMetric(testId: string, variant: string, action: "view" | "click") {
   if (metrics[testId] && metrics[testId][variant]) {
     metrics[testId][variant][action]++;
-    console.log(`📊 ${testId}/${variant}: ${action} (${metrics[testId][variant][action]} total)`);
+    console.info(`📊 ${testId}/${variant}: ${action} (${metrics[testId][variant][action]} total)`);
   }
 }
 
@@ -896,20 +896,20 @@ const server = serve({
 });
 
 const PRODUCTION_AB_TESTING_HOST = process.env.PRODUCTION_AB_TESTING_HOST || process.env.SERVER_HOST || 'localhost';
-console.log(`🧪 Production A/B Testing Server running on http://${PRODUCTION_AB_TESTING_HOST}:${PRODUCTION_AB_TESTING_PORT}`);
-console.log(`📊 Admin Dashboard: http://${PRODUCTION_AB_TESTING_HOST}:${PRODUCTION_AB_TESTING_PORT}/admin`);
-console.log(`📈 Metrics API: http://${PRODUCTION_AB_TESTING_HOST}:${PRODUCTION_AB_TESTING_PORT}/api/metrics`);
-console.log("🎲 Force assignment: POST /force/{testId}/{variant}");
-console.log("🗑️ Clear assignment: POST /clear/{testId}");
-console.log("");
-console.log("Active Tests:");
-console.log("  • url_structure: direct vs fragments (50/50)");
-console.log("  • doc_layout: sidebar vs topnav (60/40)");
-console.log("  • cta_color: blue vs green vs orange (34/33/33)");
-console.log("  • content_density: compact vs balanced vs spacious (20/60/20)");
-console.log("  • pricing_display: monthly vs annual vs lifetime (70/25/5)");
-console.log("");
-console.log("✅ Strict weight validation enforced (must sum to 100)");
+console.info(`🧪 Production A/B Testing Server running on http://${PRODUCTION_AB_TESTING_HOST}:${PRODUCTION_AB_TESTING_PORT}`);
+console.info(`📊 Admin Dashboard: http://${PRODUCTION_AB_TESTING_HOST}:${PRODUCTION_AB_TESTING_PORT}/admin`);
+console.info(`📈 Metrics API: http://${PRODUCTION_AB_TESTING_HOST}:${PRODUCTION_AB_TESTING_PORT}/api/metrics`);
+console.info("🎲 Force assignment: POST /force/{testId}/{variant}");
+console.info("🗑️ Clear assignment: POST /clear/{testId}");
+console.info("");
+console.info("Active Tests:");
+console.info("  • url_structure: direct vs fragments (50/50)");
+console.info("  • doc_layout: sidebar vs topnav (60/40)");
+console.info("  • cta_color: blue vs green vs orange (34/33/33)");
+console.info("  • content_density: compact vs balanced vs spacious (20/60/20)");
+console.info("  • pricing_display: monthly vs annual vs lifetime (70/25/5)");
+console.info("");
+console.info("✅ Strict weight validation enforced (must sum to 100)");
 
 /**
  * 💡 Performance Tip: For better performance, consider:

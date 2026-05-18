@@ -10,34 +10,34 @@ import {
 // FILE I/O EXAMPLES
 // ──────────────────────────────────────────────────────────────────────────────
 
-console.log("📁 File I/O Examples\n");
+console.info("📁 File I/O Examples\n");
 
 // 1. Lazy-loaded file handle (zero-copy, fast)
 async function demonstrateFileIO() {
-  console.log("1. Lazy-loaded file operations:");
+  console.info("1. Lazy-loaded file operations:");
   
   const start = nanoseconds();
   
   // Bun.file() creates a lazy file handle - doesn't load until accessed
   const configFile = file("./package.json");
-  console.log(`   File handle created: ${configFile.name}`);
-  console.log(`   File size: ${configFile.size} bytes`);
-  console.log(`   Last modified: ${new Date(configFile.lastModified)}`);
+  console.info(`   File handle created: ${configFile.name}`);
+  console.info(`   File size: ${configFile.size} bytes`);
+  console.info(`   Last modified: ${new Date(configFile.lastModified)}`);
   
   // Actual read happens here (zero-copy if possible)
   const content = await configFile.text();
   const pkg = JSON.parse(content);
   
   const elapsed = (nanoseconds() - start) / 1e6;
-  console.log(`   ✅ Read and parsed in ${elapsed.toFixed(2)}ms`);
-  console.log(`   Project: ${pkg.name} v${pkg.version}\n`);
+  console.info(`   ✅ Read and parsed in ${elapsed.toFixed(2)}ms`);
+  console.info(`   Project: ${pkg.name} v${pkg.version}\n`);
   
   return { content, pkg };
 }
 
 // 2. Fast write with sendfile optimization
 async function demonstrateFastWrite() {
-  console.log("2. Fast write operations:");
+  console.info("2. Fast write operations:");
   
   const start = nanoseconds();
   
@@ -55,14 +55,14 @@ Status: Complete
   await write("binary-data.bin", binaryData);
   
   const elapsed = (nanoseconds() - start) / 1e6;
-  console.log(`   ✅ Wrote 2 files in ${elapsed.toFixed(2)}ms\n`);
+  console.info(`   ✅ Wrote 2 files in ${elapsed.toFixed(2)}ms\n`);
   
   return { reportContent, binaryData };
 }
 
 // 3. Streaming write with FileSink
 async function demonstrateStreamingWrite() {
-  console.log("3. Streaming write operations:");
+  console.info("3. Streaming write operations:");
   
   const start = nanoseconds();
   
@@ -79,18 +79,18 @@ async function demonstrateStreamingWrite() {
   await writer.end();
   
   const elapsed = (nanoseconds() - start) / 1e6;
-  console.log(`   ✅ Streamed log file in ${elapsed.toFixed(2)}ms\n`);
+  console.info(`   ✅ Streamed log file in ${elapsed.toFixed(2)}ms\n`);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
 // STRING / ANSI EXAMPLES
 // ──────────────────────────────────────────────────────────────────────────────
 
-console.log("📝 String / ANSI Examples\n");
+console.info("📝 String / ANSI Examples\n");
 
 // 4. Terminal-aware string width calculation
 function demonstrateStringWidth() {
-  console.log("4. String width calculations:");
+  console.info("4. String width calculations:");
   
   const examples = [
     "Simple text",
@@ -104,36 +104,36 @@ function demonstrateStringWidth() {
     const width = stringWidth(text);
     const plainWidth = text.length;
     const padded = text.padEnd(width + 5);
-    console.log(`   "${text}" → width: ${width} (plain: ${plainWidth}) → "${padded}"`);
+    console.info(`   "${text}" → width: ${width} (plain: ${plainWidth}) → "${padded}"`);
   });
-  console.log();
+  console.info();
 }
 
 // 5. ANSI code manipulation
 function demonstrateANSI() {
-  console.log("5. ANSI code operations:");
+  console.info("5. ANSI code operations:");
   
   const coloredText = "\x1b[32m\x1b[1mSuccess\x1b[0m \x1b[31m\x1b[1mError\x1b[0m \x1b[33mWarning\x1b[0m";
-  console.log(`   Original: ${coloredText}`);
+  console.info(`   Original: ${coloredText}`);
   
   const stripped = stripANSI(coloredText);
-  console.log(`   Stripped: ${stripped}`);
+  console.info(`   Stripped: ${stripped}`);
   
   // Wrap text preserving ANSI (much faster than npm alternatives)
   const longColoredText = "\x1b[32mThis is a very long colored message that needs to be wrapped properly while preserving the ANSI escape codes for terminal display\x1b[0m";
   const wrapped = wrapAnsi(longColoredText, 40);
-  console.log(`   Wrapped:\n${wrapped.split('\n').map(line => `   ${line}`).join('\n')}\n`);
+  console.info(`   Wrapped:\n${wrapped.split('\n').map(line => `   ${line}`).join('\n')}\n`);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
 // COLOR EXAMPLES
 // ──────────────────────────────────────────────────────────────────────────────
 
-console.log("🎨 Color Examples\n");
+console.info("🎨 Color Examples\n");
 
 // 6. Dynamic HSL coloring
 function demonstrateColor() {
-  console.log("6. HSL color generation:");
+  console.info("6. HSL color generation:");
   
   const profiles = [
     { name: "production", hue: 120 },  // Green
@@ -143,15 +143,15 @@ function demonstrateColor() {
   
   profiles.forEach(profile => {
     const ansi = color(`hsl(${profile.hue}, 100%, 50%)`, "ansi");
-    console.log(`   ${ansi}${profile.name.padEnd(12)}\x1b[0m Profile (HSL: ${profile.hue}°)`);
+    console.info(`   ${ansi}${profile.name.padEnd(12)}\x1b[0m Profile (HSL: ${profile.hue}°)`);
   });
   
   // RGB and HEX examples
   const rgbAnsi = color("rgb(255, 99, 71)", "ansi");    // Tomato
   const hexAnsi = color("#ff6b6b", "ansi");              // Red
   
-  console.log(`   ${rgbAnsi}RGB Color\x1b[0m`);
-  console.log(`   ${hexAnsi}HEX Color\x1b[0m\n`);
+  console.info(`   ${rgbAnsi}RGB Color\x1b[0m`);
+  console.info(`   ${hexAnsi}HEX Color\x1b[0m\n`);
 }
 
 // 7. Profile-aware status coloring
@@ -170,7 +170,7 @@ function createStatusCell(status: "success" | "warning" | "error", profile: stri
 }
 
 function demonstrateProfileColoring() {
-  console.log("7. Profile-aware status colors:");
+  console.info("7. Profile-aware status colors:");
   
   const statuses = ["success", "warning", "error"] as const;
   const profiles = ["production", "staging", "development"];
@@ -179,20 +179,20 @@ function demonstrateProfileColoring() {
     const statusLine = statuses.map(status => 
       createStatusCell(status, profile)
     ).join(" ");
-    console.log(`   ${profile}: ${statusLine}`);
+    console.info(`   ${profile}: ${statusLine}`);
   });
-  console.log();
+  console.info();
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
 // INSPECTION EXAMPLES
 // ──────────────────────────────────────────────────────────────────────────────
 
-console.log("📊 Inspection Examples\n");
+console.info("📊 Inspection Examples\n");
 
 // 8. ASCII table generation
 function demonstrateTableInspection() {
-  console.log("8. Table inspection:");
+  console.info("8. Table inspection:");
   
   const data = [
     { service: "API Gateway", status: "running", uptime: "99.9%", memory: "256MB" },
@@ -203,13 +203,13 @@ function demonstrateTableInspection() {
   
   const columns = ["service", "status", "uptime", "memory"];
   
-  console.log(inspect.table(data, columns, { colors: true }));
-  console.log();
+  console.info(inspect.table(data, columns, { colors: true }));
+  console.info();
 }
 
 // 9. Deep equality for regression testing
 function demonstrateDeepEquals() {
-  console.log("9. Deep equality testing:");
+  console.info("9. Deep equality testing:");
   
   const baseline = {
     services: ["api", "database", "cache"],
@@ -229,47 +229,47 @@ function demonstrateDeepEquals() {
     metadata: { version: "1.0.1", env: "production" }
   };
   
-  console.log(`   Baseline vs Current: ${deepEquals(baseline, current) ? "✅ Equal" : "❌ Different"}`);
-  console.log(`   Baseline vs Changed: ${deepEquals(baseline, changed) ? "✅ Equal" : "❌ Different"}`);
-  console.log();
+  console.info(`   Baseline vs Current: ${deepEquals(baseline, current) ? "✅ Equal" : "❌ Different"}`);
+  console.info(`   Baseline vs Changed: ${deepEquals(baseline, changed) ? "✅ Equal" : "❌ Different"}`);
+  console.info();
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
 // EDITOR INTEGRATION
 // ──────────────────────────────────────────────────────────────────────────────
 
-console.log("🔧 Editor Integration Examples\n");
+console.info("🔧 Editor Integration Examples\n");
 
 // 10. Dynamic error navigation
 function demonstrateEditorIntegration() {
-  console.log("10. Editor integration:");
+  console.info("10. Editor integration:");
   
   try {
     // Simulate an error location
     const errorLine = 42;
     const errorFile = import.meta.url;
     
-    console.log(`   Would open editor at: ${errorFile}:${errorLine}`);
-    console.log(`   Editor command: Bun.openInEditor("${errorFile}", { line: ${errorLine} })`);
+    console.info(`   Would open editor at: ${errorFile}:${errorLine}`);
+    console.info(`   Editor command: Bun.openInEditor("${errorFile}", { line: ${errorLine} })`);
     
     // Uncomment to actually open editor:
     // openInEditor(errorFile, { line: errorLine });
     
   } catch (error) {
-    console.log(`   Editor integration: ${error instanceof Error ? error.message : String(error)}`);
+    console.info(`   Editor integration: ${error instanceof Error ? error.message : String(error)}`);
   }
-  console.log();
+  console.info();
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
 // TIMING EXAMPLES
 // ──────────────────────────────────────────────────────────────────────────────
 
-console.log("⏱️ Timing Examples\n");
+console.info("⏱️ Timing Examples\n");
 
 // 11. High-resolution profiling
 async function demonstrateTiming() {
-  console.log("11. High-resolution timing:");
+  console.info("11. High-resolution timing:");
   
   const operations = [];
   
@@ -291,20 +291,20 @@ async function demonstrateTiming() {
   operations.forEach(op => {
     const ms = op.time / 1e6;
     const μs = op.time / 1e3;
-    console.log(`   ${op.name.padEnd(12)}: ${ms.toFixed(3)}ms (${μs.toFixed(0)}μs)`);
+    console.info(`   ${op.name.padEnd(12)}: ${ms.toFixed(3)}ms (${μs.toFixed(0)}μs)`);
   });
-  console.log();
+  console.info();
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
 // FILE SYSTEM EXAMPLES
 // ──────────────────────────────────────────────────────────────────────────────
 
-console.log("📂 File System Examples\n");
+console.info("📂 File System Examples\n");
 
 // 12. Pattern-based file scanning
 async function demonstrateGlob() {
-  console.log("12. Glob pattern scanning:");
+  console.info("12. Glob pattern scanning:");
   
   const patterns = [
     "*.json",
@@ -314,18 +314,18 @@ async function demonstrateGlob() {
   ];
   
   for (const pattern of patterns) {
-    console.log(`   Pattern: ${pattern}`);
+    console.info(`   Pattern: ${pattern}`);
     const glob = new Glob(pattern);
     let count = 0;
     
     for await (const path of glob.scan(".")) {
       if (count < 3) { // Show first 3 results
-        console.log(`     Found: ${path}`);
+        console.info(`     Found: ${path}`);
       }
       count++;
     }
     
-    console.log(`     Total: ${count} files\n`);
+    console.info(`     Total: ${count} files\n`);
   }
 }
 
@@ -333,11 +333,11 @@ async function demonstrateGlob() {
 // PARSING EXAMPLES
 // ──────────────────────────────────────────────────────────────────────────────
 
-console.log("📄 Parsing Examples\n");
+console.info("📄 Parsing Examples\n");
 
 // 13. TOML configuration parsing
 async function demonstrateTOML() {
-  console.log("13. TOML parsing:");
+  console.info("13. TOML parsing:");
   
   // Create a sample TOML config
   const sampleTOML = `
@@ -358,28 +358,28 @@ debug = false
   
   try {
     const parsed = TOML.parse(sampleTOML);
-    console.log("   Parsed TOML structure:");
-    console.log(inspect.table([
+    console.info("   Parsed TOML structure:");
+    console.info(inspect.table([
       { section: "server", key: "host", value: parsed.server.host },
       { section: "server", key: "port", value: parsed.server.port },
       { section: "database", key: "url", value: parsed.database.url },
       { section: "features", key: "logging", value: parsed.features.logging }
     ], ["section", "key", "value"]));
   } catch (error) {
-    console.log(`   TOML parse error: ${error instanceof Error ? error.message : String(error)}`);
+    console.info(`   TOML parse error: ${error instanceof Error ? error.message : String(error)}`);
   }
-  console.log();
+  console.info();
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
 // INTEGRATED EXAMPLE
 // ──────────────────────────────────────────────────────────────────────────────
 
-console.log("🔗 Integrated Example\n");
+console.info("🔗 Integrated Example\n");
 
 // 14. Complete project status report
 async function generateProjectStatusReport() {
-  console.log("14. Integrated project status report:");
+  console.info("14. Integrated project status report:");
   
   const start = nanoseconds();
   
@@ -416,15 +416,15 @@ async function generateProjectStatusReport() {
   ];
   
   // Generate colored table
-  console.log(inspect.table(statusData, ["metric", "value", "status"], { colors: true }));
+  console.info(inspect.table(statusData, ["metric", "value", "status"], { colors: true }));
   
   // Save report to file
   const reportContent = `# Project Status Report\n\nGenerated: ${new Date().toISOString()}\n\n## Metrics\n\n${statusData.map(row => `- **${row.metric}**: ${row.value}`).join('\n')}\n`;
   await write("project-status.md", reportContent);
   
   const elapsed = (nanoseconds() - start) / 1e6;
-  console.log(`   ✅ Report generated in ${elapsed.toFixed(2)}ms`);
-  console.log(`   📄 Saved to: project-status.md\n`);
+  console.info(`   ✅ Report generated in ${elapsed.toFixed(2)}ms`);
+  console.info(`   📄 Saved to: project-status.md\n`);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -432,8 +432,8 @@ async function generateProjectStatusReport() {
 // ──────────────────────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log("🚀 Bun APIs Practical Guide\n");
-  console.log("=" .repeat(50) + "\n");
+  console.info("🚀 Bun APIs Practical Guide\n");
+  console.info("=" .repeat(50) + "\n");
   
   try {
     await demonstrateFileIO();
@@ -457,14 +457,14 @@ async function main() {
     
     await generateProjectStatusReport();
     
-    console.log("🎉 All demonstrations completed successfully!");
-    console.log("\n💡 Key Takeaways:");
-    console.log("   • Bun.file() provides zero-copy, lazy-loaded file access");
-    console.log("   • Bun.stringWidth() handles emoji and ANSI codes correctly");
-    console.log("   • Bun.color() with HSL enables dynamic theming");
-    console.log("   • Bun.inspect.table() creates beautiful ASCII tables");
-    console.log("   • Bun.Glob() offers fast, async file scanning");
-    console.log("   • All operations are highly optimized for performance");
+    console.info("🎉 All demonstrations completed successfully!");
+    console.info("\n💡 Key Takeaways:");
+    console.info("   • Bun.file() provides zero-copy, lazy-loaded file access");
+    console.info("   • Bun.stringWidth() handles emoji and ANSI codes correctly");
+    console.info("   • Bun.color() with HSL enables dynamic theming");
+    console.info("   • Bun.inspect.table() creates beautiful ASCII tables");
+    console.info("   • Bun.Glob() offers fast, async file scanning");
+    console.info("   • All operations are highly optimized for performance");
     
   } catch (error) {
     console.error("❌ Error during demonstration:", error instanceof Error ? error.message : String(error));

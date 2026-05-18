@@ -76,81 +76,81 @@ class RealityAwareChangelog {
   }
 
   async generateChangelog(): Promise<RealityAwareChangelog> {
-    console.log("📋 FactoryWager Reality-Aware Configuration Changelog");
-    console.log("=" .repeat(60));
-    console.log(`From: ${this.fromRef}`);
-    console.log(`To: ${this.toRef}`);
-    console.log(`Time: ${new Date().toISOString()}`);
-    console.log("");
+    console.info("📋 FactoryWager Reality-Aware Configuration Changelog");
+    console.info("=" .repeat(60));
+    console.info(`From: ${this.fromRef}`);
+    console.info(`To: ${this.toRef}`);
+    console.info(`Time: ${new Date().toISOString()}`);
+    console.info("");
 
     // Phase 1: Reality Check
-    console.log("🌐 Phase 1: Infrastructure Reality Assessment");
-    console.log("============================================");
+    console.info("🌐 Phase 1: Infrastructure Reality Assessment");
+    console.info("============================================");
 
     const realityStatus = await RealityCheck.overall.getRealityStatus();
     
-    console.log(`📊 Reality Mode: ${realityStatus.overall}`);
-    console.log(`   R2 Storage: ${realityStatus.r2.mode}`);
-    console.log(`   MCP Servers: ${realityStatus.mcp.installed}/${realityStatus.mcp.total}`);
-    console.log(`   Secrets: ${realityStatus.secrets.real}/${realityStatus.secrets.total}`);
-    console.log("");
+    console.info(`📊 Reality Mode: ${realityStatus.overall}`);
+    console.info(`   R2 Storage: ${realityStatus.r2.mode}`);
+    console.info(`   MCP Servers: ${realityStatus.mcp.installed}/${realityStatus.mcp.total}`);
+    console.info(`   Secrets: ${realityStatus.secrets.real}/${realityStatus.secrets.total}`);
+    console.info("");
 
     // Phase 2: Load Configurations
-    console.log("📂 Phase 2: Configuration Loading");
-    console.log("===============================");
+    console.info("📂 Phase 2: Configuration Loading");
+    console.info("===============================");
 
     const fromConfig = this.loadConfiguration(this.fromRef);
     const toConfig = this.loadConfiguration(this.toRef);
     
-    console.log(`✅ From configuration loaded: ${this.fromRef}`);
-    console.log(`✅ To configuration loaded: ${this.toRef}`);
-    console.log("");
+    console.info(`✅ From configuration loaded: ${this.fromRef}`);
+    console.info(`✅ To configuration loaded: ${this.toRef}`);
+    console.info("");
 
     // Phase 3: Generate Semantic Diff
-    console.log("🔍 Phase 3: Semantic Diff Analysis");
-    console.log("=================================");
+    console.info("🔍 Phase 3: Semantic Diff Analysis");
+    console.info("=================================");
 
     const changelog = this.generateSemanticDiff(fromConfig, toConfig);
     
     this.displayChangelogTable(changelog);
     this.displayInheritanceDrift(changelog);
-    console.log("");
+    console.info("");
 
     // Phase 4: Security Scan
-    console.log("🔒 Phase 4: Security Analysis");
-    console.log("===========================");
+    console.info("🔒 Phase 4: Security Analysis");
+    console.info("===========================");
 
     const securityAnalysis = this.performSecurityScan(changelog);
     
     if (securityAnalysis.secrets_detected && !this.force) {
-      console.log("🚨 SECURITY HALT: Secrets detected in changes!");
-      console.log("   Use --force to proceed (requires explicit acknowledgment)");
-      console.log("   Or review changes before applying");
+      console.info("🚨 SECURITY HALT: Secrets detected in changes!");
+      console.info("   Use --force to proceed (requires explicit acknowledgment)");
+      console.info("   Or review changes before applying");
       process.exit(3);
     }
 
-    console.log(`🔐 Secrets detected: ${securityAnalysis.secrets_detected ? 'YES' : 'NO'}`);
-    console.log(`🔑 New interpolations: ${securityAnalysis.interpolations_added}`);
-    console.log("");
+    console.info(`🔐 Secrets detected: ${securityAnalysis.secrets_detected ? 'YES' : 'NO'}`);
+    console.info(`🔑 New interpolations: ${securityAnalysis.interpolations_added}`);
+    console.info("");
 
     // Phase 5: Reality-Integrated Assessment
-    console.log("🌐 Phase 5: Reality-Integrated Assessment");
-    console.log("=======================================");
+    console.info("🌐 Phase 5: Reality-Integrated Assessment");
+    console.info("=======================================");
 
     const deploymentAssessment = this.assessDeploymentSafety(changelog, realityStatus, securityAnalysis);
     
-    console.log(`🚀 Safe to apply: ${deploymentAssessment.safe_to_apply ? '✅ YES' : '❌ NO'}`);
+    console.info(`🚀 Safe to apply: ${deploymentAssessment.safe_to_apply ? '✅ YES' : '❌ NO'}`);
     
     if (deploymentAssessment.reality_warnings.length > 0) {
-      console.log("⚠️  Reality warnings:");
-      deploymentAssessment.reality_warnings.forEach(warning => console.log(`      • ${warning}`));
+      console.info("⚠️  Reality warnings:");
+      deploymentAssessment.reality_warnings.forEach(warning => console.info(`      • ${warning}`));
     }
     
     if (deploymentAssessment.recommendations.length > 0) {
-      console.log("💡 Recommendations:");
-      deploymentAssessment.recommendations.forEach(rec => console.log(`      • ${rec}`));
+      console.info("💡 Recommendations:");
+      deploymentAssessment.recommendations.forEach(rec => console.info(`      • ${rec}`));
     }
-    console.log("");
+    console.info("");
 
     // Phase 6: Apply Changes (if requested)
     if (this.apply) {
@@ -180,7 +180,7 @@ class RealityAwareChangelog {
     const reportFile = join(this.reportsDir, `fw-changelog-reality-${timestamp}.json`);
     
     writeFileSync(reportFile, JSON.stringify(realityAwareChangelog, null, 2));
-    console.log(`📄 Reality-aware changelog saved: ${reportFile}`);
+    console.info(`📄 Reality-aware changelog saved: ${reportFile}`);
 
     return realityAwareChangelog;
   }
@@ -254,20 +254,20 @@ class RealityAwareChangelog {
   }
 
   private displayChangelogTable(changelog: ChangelogResult): void {
-    console.log("📊 Configuration Changes:");
-    console.log("┌──────┬───────────┬──────────────────┬──────────────┬──────────────┬─────────┬──────┐");
-    console.log("│Change│ Env       │ Key              │ Before       │ After        │ Type    │ Risk │");
-    console.log("├──────┼───────────┼──────────────────┼──────────────┼──────────────┼─────────┼──────┤");
+    console.info("📊 Configuration Changes:");
+    console.info("┌──────┬───────────┬──────────────────┬──────────────┬──────────────┬─────────┬──────┐");
+    console.info("│Change│ Env       │ Key              │ Before       │ After        │ Type    │ Risk │");
+    console.info("├──────┼───────────┼──────────────────┼──────────────┼──────────────┼─────────┼──────┤");
     
     changelog.changes.forEach(change => {
       const changeIcon = this.getChangeIcon(change.change);
       const before = change.before || '—';
       const after = change.after || '—';
       
-      console.log(`│ ${changeIcon}    │ ${change.environment.padEnd(9)} │ ${change.key.padEnd(16)} │ ${before.padEnd(12)} │ ${after.padEnd(12)} │ ${change.type.padEnd(7)} │ ${change.risk.toString().padEnd(4)} │`);
+      console.info(`│ ${changeIcon}    │ ${change.environment.padEnd(9)} │ ${change.key.padEnd(16)} │ ${before.padEnd(12)} │ ${after.padEnd(12)} │ ${change.type.padEnd(7)} │ ${change.risk.toString().padEnd(4)} │`);
     });
     
-    console.log("└──────┴───────────┴──────────────────┴──────────────┴──────────────┴─────────┴──────┘");
+    console.info("└──────┴───────────┴──────────────────┴──────────────┴──────────────┴─────────┴──────┘");
   }
 
   private getChangeIcon(change: string): string {
@@ -281,14 +281,14 @@ class RealityAwareChangelog {
   }
 
   private displayInheritanceDrift(changelog: ChangelogResult): void {
-    console.log("\n📈 Inheritance Drift:");
+    console.info("\n📈 Inheritance Drift:");
     Object.entries(changelog.inheritanceDrift).forEach(([env, drift]) => {
       const driftIcon = drift === 0 ? '✅' : drift > 20 ? '🔴' : '🟡';
-      console.log(`   ${driftIcon} ${env.padEnd(11)}: ${drift}% (changed)`);
+      console.info(`   ${driftIcon} ${env.padEnd(11)}: ${drift}% (changed)`);
     });
     
-    console.log(`\n📊 Risk Delta: ${changelog.riskDelta > 0 ? '+' : ''}${changelog.riskDelta} (${changelog.fromRisk} → ${changelog.toRisk})`);
-    console.log(`🛡️  Hardening Level: ${changelog.hardeningLevel}`);
+    console.info(`\n📊 Risk Delta: ${changelog.riskDelta > 0 ? '+' : ''}${changelog.riskDelta} (${changelog.fromRisk} → ${changelog.toRisk})`);
+    console.info(`🛡️  Hardening Level: ${changelog.hardeningLevel}`);
   }
 
   private performSecurityScan(changelog: ChangelogResult) {
@@ -350,17 +350,17 @@ class RealityAwareChangelog {
 
   private async applyChanges(changelog: ChangelogResult, assessment: any): Promise<void> {
     if (!assessment.safe_to_apply) {
-      console.log("❌ Cannot apply changes - safety checks failed");
+      console.info("❌ Cannot apply changes - safety checks failed");
       return;
     }
 
-    console.log("🚀 Phase 6: Apply Changes");
-    console.log("========================");
+    console.info("🚀 Phase 6: Apply Changes");
+    console.info("========================");
 
     // Generate semantic commit message
     const commitMessage = this.generateCommitMessage(changelog);
     
-    console.log(`📝 Commit message: ${commitMessage}`);
+    console.info(`📝 Commit message: ${commitMessage}`);
     
     if (!this.apply) {
       return;
@@ -368,7 +368,7 @@ class RealityAwareChangelog {
 
     // Interactive confirmation
     if (this.apply) {
-      console.log("\nCommit these changes? [y/N]");
+      console.info("\nCommit these changes? [y/N]");
       process.stdin.resume();
       process.stdin.setEncoding('utf8');
       
@@ -378,13 +378,13 @@ class RealityAwareChangelog {
           try {
             execSync(`git add config.yaml`, { stdio: 'inherit' });
             execSync(`git commit -m "${commitMessage}" --signoff`, { stdio: 'inherit' });
-            console.log("✅ Changes committed successfully");
+            console.info("✅ Changes committed successfully");
           } catch (error) {
             console.error("❌ Failed to commit changes:", (error as Error).message);
           }
           break;
         } else {
-          console.log("❌ Changes reviewed but not committed");
+          console.info("❌ Changes reviewed but not committed");
           break;
         }
       }

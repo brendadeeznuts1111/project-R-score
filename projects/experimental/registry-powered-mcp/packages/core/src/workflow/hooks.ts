@@ -63,7 +63,7 @@ class InMemoryTelemetryCollector implements TelemetryCollector {
 
   async flush(): Promise<void> {
     // In production, this would send to metrics endpoint
-    console.log(`📊 Flushing ${this.data.length} telemetry records`);
+    console.info(`📊 Flushing ${this.data.length} telemetry records`);
   }
 
   getData(): readonly TelemetryData[] {
@@ -198,7 +198,7 @@ export interface WorkflowLogger {
  * Console logger implementation
  */
 const consoleLogger: WorkflowLogger = {
-  info: (message, data) => console.log(`ℹ️  ${message}`, data ? JSON.stringify(data) : ''),
+  info: (message, data) => console.info(`ℹ️  ${message}`, data ? JSON.stringify(data) : ''),
   warn: (message, data) => console.warn(`⚠️  ${message}`, data ? JSON.stringify(data) : ''),
   error: (message, data) => console.error(`❌ ${message}`, data ? JSON.stringify(data) : ''),
   debug: (message, data) => console.debug(`🔍 ${message}`, data ? JSON.stringify(data) : ''),

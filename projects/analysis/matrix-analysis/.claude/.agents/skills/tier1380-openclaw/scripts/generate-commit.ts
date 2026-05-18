@@ -136,7 +136,7 @@ const main = async () => {
 
 	try {
 		const message = await generateMessage(userMessage || undefined);
-		console.log(message);
+		console.info(message);
 	} catch (err) {
 		console.error("Error generating commit message:", err);
 		process.exit(1);

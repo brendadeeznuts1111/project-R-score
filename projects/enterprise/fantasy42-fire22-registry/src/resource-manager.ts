@@ -644,12 +644,12 @@ export function setupGracefulShutdown(): void {
 
   const shutdown = async (signal: string) => {
     if (isShuttingDown) {
-      console.log('Shutdown already in progress...');
+      console.info('Shutdown already in progress...');
       return;
     }
 
     isShuttingDown = true;
-    console.log(`\n🛑 Received ${signal}, initiating graceful shutdown...`);
+    console.info(`\n🛑 Received ${signal}, initiating graceful shutdown...`);
 
     try {
       // Close database connections
@@ -658,7 +658,7 @@ export function setupGracefulShutdown(): void {
       // Clean up all resources
       await resourceManager.cleanup();
 
-      console.log('✅ All resources cleaned up successfully');
+      console.info('✅ All resources cleaned up successfully');
       process.exit(0);
     } catch (error) {
       console.error('❌ Error during graceful shutdown:', error);
@@ -681,7 +681,7 @@ export function setupGracefulShutdown(): void {
     shutdown('unhandledRejection');
   });
 
-  console.log('🛡️ Resource cleanup handlers configured');
+  console.info('🛡️ Resource cleanup handlers configured');
 }
 
 // ============================================================================

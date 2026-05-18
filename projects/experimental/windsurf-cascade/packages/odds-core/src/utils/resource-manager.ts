@@ -57,7 +57,7 @@ export class TickProcessor {
   private acquireDatabaseConnection() {
     return {
       [Symbol.dispose]() {
-        console.log('🔌 Database connection closed');
+        console.info('🔌 Database connection closed');
         // Actual cleanup logic here
       },
       
@@ -71,7 +71,7 @@ export class TickProcessor {
   private acquireCacheConnection() {
     return {
       [Symbol.dispose]() {
-        console.log('🔌 Cache connection closed');
+        console.info('🔌 Cache connection closed');
         // Actual cleanup logic here
       },
       
@@ -89,7 +89,7 @@ export class TickProcessor {
   private acquireLogFile() {
     return {
       [Symbol.dispose]() {
-        console.log('📝 Log file closed');
+        console.info('📝 Log file closed');
         // Actual cleanup logic here
       },
       
@@ -156,7 +156,7 @@ export class TickProcessor {
   private createBatchProcessor() {
     return {
       [Symbol.asyncDispose]: async () => {
-        console.log('🔄 Batch processor disposed');
+        console.info('🔄 Batch processor disposed');
       },
       
       process: async (batch: OddsTick[], resources: any) => {
@@ -168,12 +168,12 @@ export class TickProcessor {
   private createProgressTracker() {
     return {
       [Symbol.asyncDispose]: async () => {
-        console.log('📊 Progress tracker disposed');
+        console.info('📊 Progress tracker disposed');
       },
       
       update: async (current: number, total: number) => {
         const percent = ((current / total) * 100).toFixed(1);
-        console.log(`Progress: ${percent}% (${current}/${total})`);
+        console.info(`Progress: ${percent}% (${current}/${total})`);
       }
     };
   }
@@ -181,7 +181,7 @@ export class TickProcessor {
   private acquireBatchResources() {
     return {
       [Symbol.asyncDispose]: async () => {
-        console.log('📦 Batch resources disposed');
+        console.info('📦 Batch resources disposed');
       }
     };
   }

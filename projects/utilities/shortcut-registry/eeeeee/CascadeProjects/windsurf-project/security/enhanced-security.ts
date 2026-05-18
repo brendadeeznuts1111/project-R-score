@@ -3,7 +3,7 @@
 // ai/enhanced-security.ts - Advanced Security Suite
 // Enterprise-grade security with biometric authentication and zero-trust architecture
 
-console.log("🔒 Enhanced Security Suite - Advanced Protection Starting...");
+console.info("🔒 Enhanced Security Suite - Advanced Protection Starting...");
 
 export interface BiometricData {
   fingerprint: string;
@@ -192,7 +192,7 @@ export class EnhancedSecuritySuite {
       const encryptedData = this.encryptBiometricData(biometricData);
       this.biometricProfiles.set(userId, encryptedData);
 
-      console.log(`🔐 Biometric enrollment completed for user ${userId}`);
+      console.info(`🔐 Biometric enrollment completed for user ${userId}`);
       return true;
     } catch (error) {
       console.error(`❌ Biometric enrollment failed for user ${userId}:`, error);
@@ -211,10 +211,10 @@ export class EnhancedSecuritySuite {
       const matchScore = this.compareBiometricData(storedProfile, biometricData);
       
       if (matchScore > 0.95) {
-        console.log(`✅ Biometric authentication successful for user ${userId}`);
+        console.info(`✅ Biometric authentication successful for user ${userId}`);
         return true;
       } else {
-        console.log(`❌ Biometric authentication failed for user ${userId} (score: ${matchScore})`);
+        console.info(`❌ Biometric authentication failed for user ${userId} (score: ${matchScore})`);
         return false;
       }
     } catch (error) {
@@ -375,7 +375,7 @@ export class EnhancedSecuritySuite {
       biometricVerified
     });
 
-    console.log(`🔐 Secure session created: ${sessionId} (risk: ${riskScore.toFixed(3)})`);
+    console.info(`🔐 Secure session created: ${sessionId} (risk: ${riskScore.toFixed(3)})`);
     return sessionId;
   }
 
@@ -396,7 +396,7 @@ export class EnhancedSecuritySuite {
 
     // Check for session hijacking
     if (currentContext.deviceFingerprint !== session.deviceFingerprint) {
-      console.log(`🚨 Session hijacking detected for session ${sessionId}`);
+      console.info(`🚨 Session hijacking detected for session ${sessionId}`);
       this.activeSessions.delete(sessionId);
       return false;
     }
@@ -553,12 +553,12 @@ export class EnhancedSecuritySuite {
       this.securityEvents = this.securityEvents.slice(-10000);
     }
 
-    console.log(`🔒 Security event logged: ${event.type} - ${event.severity} - User: ${event.userId}`);
+    console.info(`🔒 Security event logged: ${event.type} - ${event.severity} - User: ${event.userId}`);
   }
 
   private performSecurityScan() {
     // Perform regular security scans
-    console.log('🔍 Performing security scan...');
+    console.info('🔍 Performing security scan...');
     
     // Check for suspicious patterns
     const suspiciousEvents = this.securityEvents.filter(event => 
@@ -566,13 +566,13 @@ export class EnhancedSecuritySuite {
     );
 
     if (suspiciousEvents.length > 0) {
-      console.log(`🚨 Found ${suspiciousEvents.length} suspicious events in the last hour`);
+      console.info(`🚨 Found ${suspiciousEvents.length} suspicious events in the last hour`);
     }
   }
 
   private updateThreatIntelligence() {
     // Update threat intelligence feeds
-    console.log('📡 Updating threat intelligence...');
+    console.info('📡 Updating threat intelligence...');
   }
 
   private cleanupExpiredSessions() {
@@ -590,20 +590,20 @@ export class EnhancedSecuritySuite {
     });
 
     if (expiredSessions.length > 0) {
-      console.log(`🧹 Cleaned up ${expiredSessions.length} expired sessions`);
+      console.info(`🧹 Cleaned up ${expiredSessions.length} expired sessions`);
     }
   }
 }
 
 // Demo and testing
 async function demonstrateEnhancedSecurity() {
-  console.log("🔒 Enhanced Security Suite - Advanced Protection Demo");
-  console.log("=" .repeat(60));
+  console.info("🔒 Enhanced Security Suite - Advanced Protection Demo");
+  console.info("=" .repeat(60));
 
   const security = new EnhancedSecuritySuite();
 
   // Enroll biometrics
-  console.log("\n🔐 Enrolling biometric profiles...");
+  console.info("\n🔐 Enrolling biometric profiles...");
   const biometricData: BiometricData = {
     fingerprint: 'fp_1234567890abcdef',
     faceId: 'face_fedcba0987654321',
@@ -615,12 +615,12 @@ async function demonstrateEnhancedSecurity() {
   await security.enrollBiometrics('user-001', biometricData);
 
   // Test biometric authentication
-  console.log("\n🔍 Testing biometric authentication...");
+  console.info("\n🔍 Testing biometric authentication...");
   const authResult = await security.authenticateWithBiometrics('user-001', biometricData);
-  console.log(`Authentication result: ${authResult ? '✅ Success' : '❌ Failed'}`);
+  console.info(`Authentication result: ${authResult ? '✅ Success' : '❌ Failed'}`);
 
   // Test zero-trust evaluation
-  console.log("\n🛡️ Testing zero-trust access evaluation...");
+  console.info("\n🛡️ Testing zero-trust access evaluation...");
   const accessResult = await security.evaluateAccessRequest('user-001', 'admin-access', {
     ipAddress: '192.168.1.50',
     deviceFingerprint: 'trusted_device_001',
@@ -629,10 +629,10 @@ async function demonstrateEnhancedSecurity() {
     action: 'admin_login'
   });
   
-  console.log(`Access evaluation:`, accessResult);
+  console.info(`Access evaluation:`, accessResult);
 
   // Test anomaly detection
-  console.log("\n🚨 Testing AI anomaly detection...");
+  console.info("\n🚨 Testing AI anomaly detection...");
   const anomalyResult = await security.detectAnomalies('user-001', {
     ipAddress: '192.168.1.50',
     deviceFingerprint: 'trusted_device_001',
@@ -643,31 +643,31 @@ async function demonstrateEnhancedSecurity() {
     dayOfWeek: 3
   });
   
-  console.log(`Anomaly detection:`, anomalyResult);
+  console.info(`Anomaly detection:`, anomalyResult);
 
   // Create secure session
-  console.log("\n🔐 Creating secure session...");
+  console.info("\n🔐 Creating secure session...");
   const sessionId = await security.createSecureSession('user-001', 'trusted_device_001', true);
-  console.log(`Session created: ${sessionId}`);
+  console.info(`Session created: ${sessionId}`);
 
   // Validate session
-  console.log("\n✅ Validating session...");
+  console.info("\n✅ Validating session...");
   const sessionValid = await security.validateSession(sessionId, {
     deviceFingerprint: 'trusted_device_001'
   });
-  console.log(`Session valid: ${sessionValid}`);
+  console.info(`Session valid: ${sessionValid}`);
 
   // Show security metrics
-  console.log("\n📊 Security Metrics:");
+  console.info("\n📊 Security Metrics:");
   const metrics = security.getSecurityMetrics();
-  console.log(`   Total Events: ${metrics.totalEvents}`);
-  console.log(`   Recent Events: ${metrics.recentEvents}`);
-  console.log(`   Active Sessions: ${metrics.activeSessions}`);
-  console.log(`   Biometric Enrollments: ${metrics.biometricEnrollments}`);
-  console.log(`   Average Risk Score: ${metrics.averageRiskScore.toFixed(3)}`);
+  console.info(`   Total Events: ${metrics.totalEvents}`);
+  console.info(`   Recent Events: ${metrics.recentEvents}`);
+  console.info(`   Active Sessions: ${metrics.activeSessions}`);
+  console.info(`   Biometric Enrollments: ${metrics.biometricEnrollments}`);
+  console.info(`   Average Risk Score: ${metrics.averageRiskScore.toFixed(3)}`);
 
-  console.log("\n🎉 Enhanced Security Suite Demo Complete!");
-  console.log("💚 Advanced protection with biometrics, zero-trust, and AI threat detection operational!");
+  console.info("\n🎉 Enhanced Security Suite Demo Complete!");
+  console.info("💚 Advanced protection with biometrics, zero-trust, and AI threat detection operational!");
 }
 
 // Run demo if executed directly

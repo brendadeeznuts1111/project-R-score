@@ -239,33 +239,33 @@ if (import.meta.main) {
   if (args.length === 0) {
     // Default: validate DuoPlus binaries
     const result = BunBinaryValidator.validateDuoPlusBinaries();
-    console.log(BunBinaryValidator.generateValidationReport(result));
+    console.info(BunBinaryValidator.generateValidationReport(result));
     process.exit(result.valid ? 0 : 1);
   } else if (args[0] === 'system') {
     // System binary info
-    console.log('=== System Binary Information ===');
+    console.info('=== System Binary Information ===');
     const info = await BunBinaryValidator.getSystemBinaryInfo();
     for (const [binary, { path, version }] of info) {
-      console.log(`${binary}:`);
-      console.log(`  Path: ${path}`);
-      console.log(`  Version: ${version || 'Unknown'}`);
-      console.log('');
+      console.info(`${binary}:`);
+      console.info(`  Path: ${path}`);
+      console.info(`  Version: ${version || 'Unknown'}`);
+      console.info('');
     }
   } else if (args[0] === 'check' && args[1]) {
     // Check specific binary
     const available = BunBinaryValidator.isBinaryAvailable(args[1]);
-    console.log(`${args[1]}: ${available ? '✅ Available' : '❌ Not found'}`);
+    console.info(`${args[1]}: ${available ? '✅ Available' : '❌ Not found'}`);
     if (available) {
       const version = await BunBinaryValidator.getBinaryVersion(args[1]);
       if (version) {
-        console.log(`Version: ${version}`);
+        console.info(`Version: ${version}`);
       }
     }
   } else {
     // Check provided binaries
     const binaries = args;
     const result = BunBinaryValidator.validateBinaries(binaries);
-    console.log(BunBinaryValidator.generateValidationReport(result));
+    console.info(BunBinaryValidator.generateValidationReport(result));
     process.exit(result.valid ? 0 : 1);
   }
 }

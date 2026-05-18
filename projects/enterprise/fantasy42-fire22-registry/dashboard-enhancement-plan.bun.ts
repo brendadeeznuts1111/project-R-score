@@ -333,54 +333,54 @@ ${roadmap[2].enhancements
 
 // Main Enhancement Analysis
 async function analyzeEnhancements() {
-  console.log('🚀 Fire22 Dashboard Enhancement Analysis');
-  console.log('=======================================\n');
+  console.info('🚀 Fire22 Dashboard Enhancement Analysis');
+  console.info('=======================================\n');
 
   const tracker = new EnhancementTracker(ENHANCEMENT_OPPORTUNITIES);
 
   // Review original task completion
-  console.log('📋 Original Task Review:');
-  console.log(`   ✅ Completion: ${ORIGINAL_TASK_REVIEW.completion.percentage}%`);
-  console.log(
+  console.info('📋 Original Task Review:');
+  console.info(`   ✅ Completion: ${ORIGINAL_TASK_REVIEW.completion.percentage}%`);
+  console.info(
     `   🎯 Original Scope: ${ORIGINAL_TASK_REVIEW.completion.originalScope.length} items`
   );
-  console.log(
+  console.info(
     `   🚀 Expanded Scope: ${ORIGINAL_TASK_REVIEW.completion.expandedScope.length} items\n`
   );
 
   // Current system analysis
   const totalEffort = tracker.getTotalEffort();
-  console.log('📊 Enhancement Analysis:');
-  console.log(`   🎯 Total Enhancements: ${tracker.enhancements.size}`);
-  console.log(`   ⏱️  Total Effort: ${totalEffort.hours} hours (${totalEffort.weeks} weeks)`);
-  console.log(`   🔥 Critical Priority: ${tracker.getByPriority('critical').length}`);
-  console.log(`   📈 High Priority: ${tracker.getByPriority('high').length}\n`);
+  console.info('📊 Enhancement Analysis:');
+  console.info(`   🎯 Total Enhancements: ${tracker.enhancements.size}`);
+  console.info(`   ⏱️  Total Effort: ${totalEffort.hours} hours (${totalEffort.weeks} weeks)`);
+  console.info(`   🔥 Critical Priority: ${tracker.getByPriority('critical').length}`);
+  console.info(`   📈 High Priority: ${tracker.getByPriority('high').length}\n`);
 
   // Category breakdown
-  console.log('📂 Category Distribution:');
+  console.info('📂 Category Distribution:');
   Object.values(EnhancementCategory).forEach(cat => {
     const count = tracker.getByCategory(cat).length;
     if (count > 0) {
-      console.log(`   ${cat.replace('_', ' ').toUpperCase()}: ${count}`);
+      console.info(`   ${cat.replace('_', ' ').toUpperCase()}: ${count}`);
     }
   });
-  console.log('');
+  console.info('');
 
   // Generate comprehensive report
   const report = tracker.generateReport();
   await Bun.write('./dashboard-enhancement-report.md', report);
 
-  console.log('📄 Generated Enhancement Report: ./dashboard-enhancement-report.md\n');
+  console.info('📄 Generated Enhancement Report: ./dashboard-enhancement-report.md\n');
 
   // Implementation recommendations
-  console.log('🎯 Implementation Recommendations:');
-  console.log('   1. Start with critical accessibility and compliance enhancements');
-  console.log('   2. Implement mobile-first responsive design improvements');
-  console.log('   3. Add real-time collaboration features');
-  console.log('   4. Integrate AI-powered insights and analytics');
-  console.log('   5. Enhance security with advanced monitoring\n');
+  console.info('🎯 Implementation Recommendations:');
+  console.info('   1. Start with critical accessibility and compliance enhancements');
+  console.info('   2. Implement mobile-first responsive design improvements');
+  console.info('   3. Add real-time collaboration features');
+  console.info('   4. Integrate AI-powered insights and analytics');
+  console.info('   5. Enhance security with advanced monitoring\n');
 
-  console.log(
+  console.info(
     '✨ Enhancement analysis complete! Review the generated report for detailed implementation plans.'
   );
 }

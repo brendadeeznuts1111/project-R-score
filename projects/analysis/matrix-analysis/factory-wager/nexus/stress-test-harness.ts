@@ -151,7 +151,7 @@ export class StressTestHarness {
    * Execute comprehensive stress test
    */
   async executeStressTest(config: StressTestConfig): Promise<StressTestResult> {
-    console.log(`🚀 Starting ${config.rowCount.toLocaleString()} row stress test...`);
+    console.info(`🚀 Starting ${config.rowCount.toLocaleString()} row stress test...`);
 
     // Initial memory snapshot
     const initialMemory = process.memoryUsage();
@@ -161,7 +161,7 @@ export class StressTestHarness {
     const testData = this.generateTestData(config);
     const dataGenTime = (Bun.nanoseconds() - dataGenStart) / 1e6;
 
-    console.log(`📊 Generated ${testData.length.toLocaleString()} rows in ${dataGenTime.toFixed(2)}ms`);
+    console.info(`📊 Generated ${testData.length.toLocaleString()} rows in ${dataGenTime.toFixed(2)}ms`);
 
     // Peak memory before rendering
     const peakMemory = process.memoryUsage();
@@ -251,7 +251,7 @@ export class StressTestHarness {
     const results: StressTestResult[] = [];
 
     for (const scenario of scenarios) {
-      console.log(`\n🎯 Executing scenario: ${scenario.rowCount.toLocaleString()} rows`);
+      console.info(`\n🎯 Executing scenario: ${scenario.rowCount.toLocaleString()} rows`);
       const result = await this.executeStressTest(scenario);
       results.push(result);
 
@@ -303,8 +303,8 @@ export class StressTestHarness {
 
 // CLI execution
 async function main() {
-  console.log('🚀 FactoryWager Tabular v4.3 - 100k Row Stress Test');
-  console.log('Vector A Execution: Performance Validation\n');
+  console.info('🚀 FactoryWager Tabular v4.3 - 100k Row Stress Test');
+  console.info('Vector A Execution: Performance Validation\n');
 
   // Get system profile
   const { getSystemProfile } = await import("/Users/nolarose/.factory-wager/system-probe-v431");
@@ -318,11 +318,11 @@ async function main() {
 
   // Generate and display report
   const report = harness.generateReport(results);
-  console.log(report);
+  console.info(report);
 
   // Save results
   await Bun.write('./stress-test-results.json', JSON.stringify(results, null, 2));
-  console.log('💾 Results saved to: stress-test-results.json');
+  console.info('💾 Results saved to: stress-test-results.json');
 }
 
 if (import.meta.main) {

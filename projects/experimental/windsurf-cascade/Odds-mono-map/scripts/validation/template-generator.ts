@@ -383,7 +383,7 @@ ${sections}
                 const subfolder = this.getSubfolderForType(type);
                 const filePath = await this.saveTemplate(template, subfolder);
                 createdFiles.push(filePath);
-                console.log(`✅ Created: ${template.filename}`);
+                console.info(`✅ Created: ${template.filename}`);
             } catch (error) {
                 console.error(`❌ Failed to create ${type} template:`, error);
             }
@@ -408,13 +408,13 @@ async function main(): Promise<void> {
     const args = process.argv.slice(2);
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log('📋 Template Generator');
-        console.log('Usage: bun template-generator.ts [options]');
-        console.log('\nOptions:');
-        console.log('  --help, -h              Show this help message');
-        console.log('  --create-all            Create all standard templates');
-        console.log('  --type <type>           Create specific template type (project|meeting|research)');
-        console.log('  --validate              Validate template naming conventions');
+        console.info('📋 Template Generator');
+        console.info('Usage: bun template-generator.ts [options]');
+        console.info('\nOptions:');
+        console.info('  --help, -h              Show this help message');
+        console.info('  --create-all            Create all standard templates');
+        console.info('  --type <type>           Create specific template type (project|meeting|research)');
+        console.info('  --validate              Validate template naming conventions');
         process.exit(0);
     }
 
@@ -423,10 +423,10 @@ async function main(): Promise<void> {
         const generator = new TemplateGenerator(templatesPath);
 
         if (args.includes('--create-all')) {
-            console.log('🚀 Creating all standard templates...');
+            console.info('🚀 Creating all standard templates...');
             const createdFiles = await generator.createAllStandardTemplates();
-            console.log(`\n✅ Created ${createdFiles.length} templates`);
-            createdFiles.forEach(file => console.log(`  📄 ${file}`));
+            console.info(`\n✅ Created ${createdFiles.length} templates`);
+            createdFiles.forEach(file => console.info(`  📄 ${file}`));
         } else if (args.includes('--type')) {
             const typeIndex = args.indexOf('--type');
             const type = args[typeIndex + 1] as 'project' | 'meeting' | 'research';
@@ -436,16 +436,16 @@ async function main(): Promise<void> {
                 process.exit(1);
             }
 
-            console.log(`🚀 Creating ${type} template...`);
+            console.info(`🚀 Creating ${type} template...`);
             const template = await generator.generatePredefinedTemplate(type);
             const filePath = await generator.saveTemplate(template);
-            console.log(`✅ Created: ${filePath}`);
+            console.info(`✅ Created: ${filePath}`);
         } else if (args.includes('--validate')) {
-            console.log('🔍 Validating template naming conventions...');
+            console.info('🔍 Validating template naming conventions...');
             // Implementation would check existing templates
-            console.log('✅ Validation complete');
+            console.info('✅ Validation complete');
         } else {
-            console.log('Use --help to see available options');
+            console.info('Use --help to see available options');
         }
 
     } catch (error) {

@@ -118,7 +118,7 @@ export class BunGlobalsIntegration {
   static createStructuredLogger(context: string) {
     return {
       info: (message: string, data?: any) => {
-        console.log(JSON.stringify({
+        console.info(JSON.stringify({
           level: 'info',
           context,
           message,

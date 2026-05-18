@@ -25,22 +25,22 @@ class EnterpriseSuiteCLI {
   private qrSystem = new QROnboardSystem();
 
   async displayRoadmap() {
-    console.log(chalk.blue.bold('\n🏢 ENTERPRISE SUITE ENHANCEMENT ROADMAP'));
-    console.log(chalk.blue.bold('factory-wager.com → $1B ARR Trajectory\n'));
+    console.info(chalk.blue.bold('\n🏢 ENTERPRISE SUITE ENHANCEMENT ROADMAP'));
+    console.info(chalk.blue.bold('factory-wager.com → $1B ARR Trajectory\n'));
     
-    console.log(chalk.yellow('📈 Revenue Projection by Phase:'));
-    console.log(chalk.white('┌───────────┬──────────────┬───────────────┬─────────────────┐'));
-    console.log(chalk.white('│ Phase     │ MRR Growth    │ ARR Target     │ Key Driver      │'));
-    console.log(chalk.white('├───────────┼──────────────┼───────────────┼─────────────────┤'));
-    console.log(chalk.white('│ Current   │ $7.3K         │ $28.5M         │ 19 Merchants    │'));
-    console.log(chalk.white('│ Phase 1   │ +$25K         │ $50M           │ Performance     │'));
-    console.log(chalk.white('│ Phase 2   │ +$75K         │ $125M          │ Merchant v2     │'));
-    console.log(chalk.white('│ Phase 3   │ +$150K        │ $275M          │ Partners        │'));
-    console.log(chalk.white('│ Phase 4   │ +$300K        │ $575M          │ Enterprise      │'));
-    console.log(chalk.white('│ Phase 5   │ +$425K        │ $1B            │ AI + Blockchain │'));
-    console.log(chalk.white('└───────────┴──────────────┴───────────────┴─────────────────┘'));
+    console.info(chalk.yellow('📈 Revenue Projection by Phase:'));
+    console.info(chalk.white('┌───────────┬──────────────┬───────────────┬─────────────────┐'));
+    console.info(chalk.white('│ Phase     │ MRR Growth    │ ARR Target     │ Key Driver      │'));
+    console.info(chalk.white('├───────────┼──────────────┼───────────────┼─────────────────┤'));
+    console.info(chalk.white('│ Current   │ $7.3K         │ $28.5M         │ 19 Merchants    │'));
+    console.info(chalk.white('│ Phase 1   │ +$25K         │ $50M           │ Performance     │'));
+    console.info(chalk.white('│ Phase 2   │ +$75K         │ $125M          │ Merchant v2     │'));
+    console.info(chalk.white('│ Phase 3   │ +$150K        │ $275M          │ Partners        │'));
+    console.info(chalk.white('│ Phase 4   │ +$300K        │ $575M          │ Enterprise      │'));
+    console.info(chalk.white('│ Phase 5   │ +$425K        │ $1B            │ AI + Blockchain │'));
+    console.info(chalk.white('└───────────┴──────────────┴───────────────┴─────────────────┘'));
     
-    console.log(chalk.blue.bold('\n⚡ Prioritized Enhancement Schedule:'));
+    console.info(chalk.blue.bold('\n⚡ Prioritized Enhancement Schedule:'));
     const timeline = [
       { period: 'Week 1', task: '✅ Performance (85% → 98% Cache)', status: 'ready' },
       { period: 'Week 2', task: '✅ Security Hardening (WAF/mTLS)', status: 'ready' },
@@ -54,22 +54,22 @@ class EnterpriseSuiteCLI {
     
     timeline.forEach(item => {
       const status = item.status === 'ready' ? chalk.green('▶') : chalk.yellow('○');
-      console.log(chalk.white(`   ${item.period.padEnd(10)} ${status} ${item.task}`));
+      console.info(chalk.white(`   ${item.period.padEnd(10)} ${status} ${item.task}`));
     });
     
-    console.log(chalk.green.bold('\n🎯 Target: $1B ARR by EOY 2026'));
+    console.info(chalk.green.bold('\n🎯 Target: $1B ARR by EOY 2026'));
   }
 
   async executeFullDeployment(phases: string = '1-5') {
-    console.log(chalk.blue.bold('\n🚀 Starting Full Enterprise Roadmap Deployment'));
-    console.log(chalk.blue.bold('Phases to deploy: ' + phases + '\n'));
+    console.info(chalk.blue.bold('\n🚀 Starting Full Enterprise Roadmap Deployment'));
+    console.info(chalk.blue.bold('Phases to deploy: ' + phases + '\n'));
 
     const phaseArray = phases.split('-');
     const startPhase = parseInt(phaseArray[0]);
     const endPhase = parseInt(phaseArray[1] || phaseArray[0]);
 
     for (let i = startPhase; i <= endPhase; i++) {
-      console.log(chalk.yellow(`\n--- Executing Phase ${i} ---`));
+      console.info(chalk.yellow(`\n--- Executing Phase ${i} ---`));
       switch (i) {
         case 1:
           await new Phase1PerformanceOptimization().execute();
@@ -87,20 +87,20 @@ class EnterpriseSuiteCLI {
           await new AIAutopilotPhase().execute();
           break;
       }
-      console.log(chalk.gray('\n' + '='.repeat(60)));
+      console.info(chalk.gray('\n' + '='.repeat(60)));
     }
 
-    console.log(chalk.green.bold('\n🎉 FULL ROADMAP DEPLOYMENT COMPLETE!'));
-    console.log(chalk.green.bold('factory-wager.com is now fully supercharged for $1B ARR.'));
+    console.info(chalk.green.bold('\n🎉 FULL ROADMAP DEPLOYMENT COMPLETE!'));
+    console.info(chalk.green.bold('factory-wager.com is now fully supercharged for $1B ARR.'));
   }
 
   async generateQR(dashboard: string) {
     this.spinner.start(chalk.cyan(`Generating QR code for ${dashboard}...`));
     const qr = await this.qrSystem.generateQRCode('mobile');
     this.spinner.succeed(chalk.green(`✅ QR Code Generated for ${dashboard}`));
-    console.log(chalk.white(`   • Token: ${qr.token}`));
-    console.log(chalk.white(`   • URL: ${qr.qrUrl}`));
-    console.log(chalk.white(`   • Signature: ${qr.signature}`));
+    console.info(chalk.white(`   • Token: ${qr.token}`));
+    console.info(chalk.white(`   • URL: ${qr.qrUrl}`));
+    console.info(chalk.white(`   • Signature: ${qr.signature}`));
   }
 
   async pairDevice(token: string, type: string) {
@@ -116,22 +116,22 @@ class EnterpriseSuiteCLI {
     };
     const status = await this.qrSystem.handleScan({ token, deviceId: deviceInfo.deviceId, deviceInfo });
     this.spinner.succeed(chalk.green(`✅ Device Paired Successfully`));
-    console.log(chalk.white(`   • Status: ${status.status}`));
-    console.log(chalk.white(`   • Health Checks: ${status.checks.score * 100}% Passed (${status.checks.total}/${status.checks.total})`));
+    console.info(chalk.white(`   • Status: ${status.status}`));
+    console.info(chalk.white(`   • Health Checks: ${status.checks.score * 100}% Passed (${status.checks.total}/${status.checks.total})`));
   }
 
   async bulkOnboard(merchant: string, count: number) {
-    console.log(chalk.blue.bold(`\n🚀 Bulk Onboarding ${count} devices for ${merchant}`));
+    console.info(chalk.blue.bold(`\n🚀 Bulk Onboarding ${count} devices for ${merchant}`));
     for (let i = 1; i <= count; i++) {
       this.spinner.start(chalk.cyan(`Onboarding device ${i}/${count}...`));
       await new Promise(resolve => setTimeout(resolve, 100));
       this.spinner.succeed(chalk.green(`✅ Device ${i} paired and production ready`));
     }
-    console.log(chalk.green.bold(`\n🎉 Bulk onboarding complete for ${merchant}`));
+    console.info(chalk.green.bold(`\n🎉 Bulk onboarding complete for ${merchant}`));
   }
 
   async qrStatus(domain: string) {
-    console.log(chalk.blue.bold(`\n📊 QR Onboarding Status: ${domain}`));
+    console.info(chalk.blue.bold(`\n📊 QR Onboarding Status: ${domain}`));
     const stats = {
       totalScans: 47,
       successfulPairs: 42,
@@ -140,11 +140,11 @@ class EnterpriseSuiteCLI {
       merchantCoverage: '100%',
       avgTime: '28s'
     };
-    console.log(chalk.white(`   • Total Scans (24h): ${stats.totalScans}`));
-    console.log(chalk.white(`   • Successful Pairs: ${stats.successfulPairs} (${((stats.successfulPairs/stats.totalScans)*100).toFixed(1)}%)`));
-    console.log(chalk.white(`   • Production Ready: ${stats.productionReady}`));
-    console.log(chalk.white(`   • Merchant Coverage: ${stats.merchantCoverage}`));
-    console.log(chalk.white(`   • Avg Onboarding Time: ${stats.avgTime}`));
+    console.info(chalk.white(`   • Total Scans (24h): ${stats.totalScans}`));
+    console.info(chalk.white(`   • Successful Pairs: ${stats.successfulPairs} (${((stats.successfulPairs/stats.totalScans)*100).toFixed(1)}%)`));
+    console.info(chalk.white(`   • Production Ready: ${stats.productionReady}`));
+    console.info(chalk.white(`   • Merchant Coverage: ${stats.merchantCoverage}`));
+    console.info(chalk.white(`   • Avg Onboarding Time: ${stats.avgTime}`));
   }
 }
 

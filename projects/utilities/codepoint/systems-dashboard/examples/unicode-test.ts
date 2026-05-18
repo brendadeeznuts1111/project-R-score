@@ -17,22 +17,22 @@ const config: Config13Byte = {
 };
 
 // Test Unicode components
-console.log("🎯 Unicode Inspector Test");
-console.log("========================");
+console.info("🎯 Unicode Inspector Test");
+console.info("========================");
 
 // Double box
-console.log("\n📦 Double Box:");
-console.log(inspector.createDoubleBox(30, 3, { h: 120, s: 70, l: 45 }));
+console.info("\n📦 Double Box:");
+console.info(inspector.createDoubleBox(30, 3, { h: 120, s: 70, l: 45 }));
 
 // Status panel
-console.log("📊 Status Panel:");
+console.info("📊 Status Panel:");
 const statusItems = [
   { label: "Service", value: "OPERATIONAL", status: "success" as const },
   { label: "Cache", value: "47 entries", status: "info" as const },
   { label: "Hit Rate", value: "89.1%", status: "success" as const },
   { label: "Errors", value: "0", status: "success" as const },
 ];
-console.log(
+console.info(
   inspector.createStatusPanel("System Status", statusItems, {
     h: 210,
     s: 15,
@@ -41,7 +41,7 @@ console.log(
 );
 
 // Matrix table
-console.log("📋 Matrix Table:");
+console.info("📋 Matrix Table:");
 const matrix = inspector.createMatrixTable(
   ["Operation", "Time", "Status"],
   [
@@ -59,10 +59,10 @@ const matrix = inspector.createMatrixTable(
     align: ["left", "right", "center"],
   }
 );
-console.log(matrix);
+console.info(matrix);
 
 // Tree structure
-console.log("🌳 Tree Structure:");
+console.info("🌳 Tree Structure:");
 const tree = inspector.createTree(
   [
     {
@@ -84,10 +84,10 @@ const tree = inspector.createTree(
   ],
   { h: 280, s: 40, l: 50 }
 );
-console.log(tree);
+console.info(tree);
 
 // Progress bar
-console.log("📈 Progress Bar:");
-console.log(inspector.createProgressBar(75, 100));
+console.info("📈 Progress Bar:");
+console.info(inspector.createProgressBar(75, 100));
 
-console.log("\n✅ Unicode Inspector test completed!");
+console.info("\n✅ Unicode Inspector test completed!");

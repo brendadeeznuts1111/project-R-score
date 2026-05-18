@@ -104,7 +104,7 @@ export class RuntimeOptimization {
    */
   logWithDepth(data: any, depth?: number): void {
     const maxDepth = depth ?? this.consoleDepth;
-    console.log(JSON.stringify(data, null, 2, (key, value) => {
+    console.info(JSON.stringify(data, null, 2, (key, value) => {
       // Simple depth limiting
       if (key && this.getDepth(key, value) > maxDepth) {
         return '[Object]';
@@ -185,10 +185,10 @@ export class RuntimeOptimization {
    * Display runtime configuration
    */
   displayConfig(): void {
-    console.log('🔧 Runtime Configuration:');
-    console.log(`  Console Depth: ${this.consoleDepth}`);
-    console.log(`  GC Exposed: ${this.gcExposed ? '✅' : '❌ (using Bun.gc())'}`);
-    console.log(`  Memory: ${this.formatMemoryStats()}`);
+    console.info('🔧 Runtime Configuration:');
+    console.info(`  Console Depth: ${this.consoleDepth}`);
+    console.info(`  GC Exposed: ${this.gcExposed ? '✅' : '❌ (using Bun.gc())'}`);
+    console.info(`  Memory: ${this.formatMemoryStats()}`);
   }
 
   /**
@@ -263,7 +263,7 @@ export const RuntimeExamples = {
       return temp.length;
     });
 
-    console.log(`Memory delta: ${(memoryDelta / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`Memory delta: ${(memoryDelta / 1024 / 1024).toFixed(2)} MB`);
     return { memoryDelta, before, after };
   },
 };

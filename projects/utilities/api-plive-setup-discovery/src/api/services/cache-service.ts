@@ -81,7 +81,7 @@ export class HybridCache {
         this.redisEnabled = isHealthy === true;
         
         if (this.redisEnabled) {
-          console.log('✅ Using Bun native Redis client (7.9x faster)');
+          console.info('✅ Using Bun native Redis client (7.9x faster)');
         }
       } catch (bunError) {
         // Fallback to npm redis package if Bun native isn't available

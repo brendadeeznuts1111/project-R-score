@@ -51,7 +51,7 @@ export const CloudNumberRecoveryPanel = feature("PREMIUM") ? function() {
       await CloudNumberRecoveryFlow!.sendApprovalSMS(selectedGuardian, code);
       
       setVerificationStatus('sent');
-      console.log(`📱 Approval SMS sent to ${selectedGuardian} via cloud number ${cloudNumber}`);
+      console.info(`📱 Approval SMS sent to ${selectedGuardian} via cloud number ${cloudNumber}`);
     } catch (error) {
       console.error('Failed to send approval SMS:', error);
       setVerificationStatus('failed');

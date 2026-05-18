@@ -22,7 +22,7 @@ async function getRealBundleAnalysis() {
       buildSystem: await detectBuildSystem(buildDir)
     };
     
-    console.log(`📊 Bundle analysis completed: ${(analysis.totalSize / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`📊 Bundle analysis completed: ${(analysis.totalSize / 1024 / 1024).toFixed(2)}MB`);
     return analysis;
   } catch (error) {
     console.error('❌ Bundle analysis failed:', error);
@@ -300,7 +300,7 @@ class BuildMonitor {
   
   private startWatching() {
     if (!existsSync(this.buildDir)) {
-      console.log(`📁 Build directory ${this.buildDir} not found, creating...`);
+      console.info(`📁 Build directory ${this.buildDir} not found, creating...`);
       mkdirSync(this.buildDir, { recursive: true });
     }
     
@@ -312,14 +312,14 @@ class BuildMonitor {
       });
       
       this.watchers.push(watcher);
-      console.log('👀 Started watching build directory for changes');
+      console.info('👀 Started watching build directory for changes');
     } catch (error) {
       console.error('Error starting file watcher:', error);
     }
   }
   
   private async onBuildChange(filename: string) {
-    console.log(`🔄 Build change detected: ${filename}`);
+    console.info(`🔄 Build change detected: ${filename}`);
     this.lastBuild = Date.now();
     
     // Analyze the new build
@@ -367,7 +367,7 @@ class BuildMonitor {
   
   private broadcastUpdate(update: any) {
     // This would be implemented with WebSocket connections
-    console.log('📡 Broadcasting update:', update.type);
+    console.info('📡 Broadcasting update:', update.type);
   }
   
   async getBuildHistory() {
@@ -488,7 +488,7 @@ async function generateBuildAlerts(analysis: any) {
 // Trigger Build
 async function triggerNewBuild() {
   try {
-    console.log('🔨 Starting new build...');
+    console.info('🔨 Starting new build...');
     
     const buildDir = "./dist";
     const buildLockPath = join(buildDir, ".build-lock");
@@ -523,7 +523,7 @@ async function triggerNewBuild() {
       duration: Date.now() - Date.now()
     };
     
-    console.log(`🏗️ Build ${result.success ? 'completed' : 'failed'} in ${result.duration}ms`);
+    console.info(`🏗️ Build ${result.success ? 'completed' : 'failed'} in ${result.duration}ms`);
     return result;
     
   } catch (error) {
@@ -547,7 +547,7 @@ export {
 
 // Start the monitoring server if run directly
 if (import.meta.main) {
-  console.log('🚀 Starting Real-time Bundle Monitoring Server...');
+  console.info('🚀 Starting Real-time Bundle Monitoring Server...');
   
   const buildMonitor = new BuildMonitor();
   
@@ -601,15 +601,15 @@ if (import.meta.main) {
     }
   });
   
-  console.log(`📊 Real-time monitoring server running on http://localhost:${server.port}`);
-  console.log('🔗 Available endpoints:');
-  console.log('  GET  /                 - Dashboard UI');
-  console.log('  GET  /bundle-analysis  - Real bundle analysis');
-  console.log('  GET  /metrics          - Live metrics');
-  console.log('  GET  /build-status     - Current build status');
-  console.log('  POST /trigger-build    - Trigger new build');
-  console.log('  GET  /build-history    - Build history');
-  console.log('  GET  /health           - Health check');
+  console.info(`📊 Real-time monitoring server running on http://localhost:${server.port}`);
+  console.info('🔗 Available endpoints:');
+  console.info('  GET  /                 - Dashboard UI');
+  console.info('  GET  /bundle-analysis  - Real bundle analysis');
+  console.info('  GET  /metrics          - Live metrics');
+  console.info('  GET  /build-status     - Current build status');
+  console.info('  POST /trigger-build    - Trigger new build');
+  console.info('  GET  /build-history    - Build history');
+  console.info('  GET  /health           - Health check');
 }
 
 function createRealtimeDashboard(): string {

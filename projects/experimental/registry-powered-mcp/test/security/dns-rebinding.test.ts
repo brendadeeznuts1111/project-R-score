@@ -518,9 +518,9 @@ describe("Package Security Scanning", () => {
 
       // Log any vulnerabilities found for visibility
       if (results.length > 0) {
-        console.log(`Found ${results.length} security issue(s):`);
+        console.info(`Found ${results.length} security issue(s):`);
         for (const { package: pkg, severity } of results) {
-          console.log(`  [${severity}] ${pkg}`);
+          console.info(`  [${severity}] ${pkg}`);
         }
       }
 
@@ -595,7 +595,7 @@ describe("Package Security Scanning", () => {
 
       // Log grouped results for visibility
       if (byPackage.size > 0) {
-        console.log(`Vulnerabilities grouped by ${byPackage.size} package(s)`);
+        console.info(`Vulnerabilities grouped by ${byPackage.size} package(s)`);
       }
     });
   });
@@ -611,7 +611,7 @@ describe("Package Security Scanning", () => {
       // Security scan should complete within 5 seconds
       expect(durationMs).toBeLessThan(5000);
 
-      console.log(`Security scan completed in ${durationMs.toFixed(2)}ms`);
+      console.info(`Security scan completed in ${durationMs.toFixed(2)}ms`);
     });
 
     test.skipIf(!hasSecurityScan)("multiple scans are cached/optimized", async () => {
@@ -629,7 +629,7 @@ describe("Package Security Scanning", () => {
       expect(duration1).toBeLessThan(5000);
       expect(duration2).toBeLessThan(5000);
 
-      console.log(`First scan: ${duration1.toFixed(2)}ms, Second scan: ${duration2.toFixed(2)}ms`);
+      console.info(`First scan: ${duration1.toFixed(2)}ms, Second scan: ${duration2.toFixed(2)}ms`);
     });
   });
 });

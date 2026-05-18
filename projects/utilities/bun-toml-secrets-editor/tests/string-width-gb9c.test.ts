@@ -117,7 +117,7 @@ describe("Bun.stringWidth() with GB9c Support", () => {
 
 		// Should complete quickly (under 100ms for 10,000 operations)
 		expect(time).toBeLessThan(100);
-		console.log(`Performance test completed in ${time.toFixed(2)}ms`);
+		console.info(`Performance test completed in ${time.toFixed(2)}ms`);
 	});
 
 	test("Practical text alignment scenarios", () => {
@@ -192,28 +192,28 @@ describe("Bun.stringWidth() with GB9c Support", () => {
 
 // Run the tests if this file is executed directly
 if (import.meta.main) {
-	console.log("🧪 Running Bun.stringWidth GB9c Support Tests...\n");
+	console.info("🧪 Running Bun.stringWidth GB9c Support Tests...\n");
 
 	// Test basic functionality
-	console.log("✅ Basic Devanagari conjuncts:");
-	console.log(`   क्ष: ${Bun.stringWidth("क्ष")} (expected: 2)`);
-	console.log(`   क्‍ष: ${Bun.stringWidth("क्‍ष")} (expected: 2)`);
-	console.log(`   क्क्क: ${Bun.stringWidth("क्क्क")} (expected: 3)`);
+	console.info("✅ Basic Devanagari conjuncts:");
+	console.info(`   क्ष: ${Bun.stringWidth("क्ष")} (expected: 2)`);
+	console.info(`   क्‍ष: ${Bun.stringWidth("क्‍ष")} (expected: 2)`);
+	console.info(`   क्क्क: ${Bun.stringWidth("क्क्क")} (expected: 3)`);
 
 	// Test other scripts
-	console.log("\n✅ Other Indic scripts:");
-	console.log(`   Bengali: ${Bun.stringWidth("স্বাধীনতা")}`);
-	console.log(`   Gujarati: ${Bun.stringWidth("સ્વતંત્રતા")}`);
-	console.log(`   Tamil: ${Bun.stringWidth("சுதந்திரம்")}`);
+	console.info("\n✅ Other Indic scripts:");
+	console.info(`   Bengali: ${Bun.stringWidth("স্বাধীনতা")}`);
+	console.info(`   Gujarati: ${Bun.stringWidth("સ્વતંત્રતા")}`);
+	console.info(`   Tamil: ${Bun.stringWidth("சுதந்திரம்")}`);
 
 	// Performance test
-	console.log("\n✅ Performance test:");
+	console.info("\n✅ Performance test:");
 	const start = performance.now();
 	for (let i = 0; i < 10000; i++) {
 		Bun.stringWidth("क्ष");
 	}
 	const end = performance.now();
-	console.log(`   10,000 calls in ${(end - start).toFixed(2)}ms`);
+	console.info(`   10,000 calls in ${(end - start).toFixed(2)}ms`);
 
-	console.log("\n🎉 All GB9c support tests completed successfully!");
+	console.info("\n🎉 All GB9c support tests completed successfully!");
 }

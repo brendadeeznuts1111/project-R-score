@@ -549,7 +549,7 @@ class AIInsightsEngine {
     }
 
     if (cleaned > 0) {
-      console.log(`🧹 Cleaned up ${cleaned} expired insights`);
+      console.info(`🧹 Cleaned up ${cleaned} expired insights`);
     }
 
     return cleaned;
@@ -692,8 +692,8 @@ Based on current insights:
 
 // Demonstration and testing
 async function demonstrateAIInsights() {
-  console.log('🤖 AI Insights Integration Demonstration');
-  console.log('=======================================\n');
+  console.info('🤖 AI Insights Integration Demonstration');
+  console.info('=======================================\n');
 
   const dashboardAI = new DashboardAIIntegration('demo-dashboard');
 
@@ -740,35 +740,35 @@ async function demonstrateAIInsights() {
     },
   ];
 
-  console.log('📊 Processing dashboard metrics...\n');
+  console.info('📊 Processing dashboard metrics...\n');
 
   for (const metrics of sampleMetrics) {
     const insights = await dashboardAI.processMetrics(metrics);
-    console.log(`📈 Processed metrics for ${metrics.timestamp.toLocaleTimeString()}`);
-    console.log(`   Generated ${insights.length} new insights`);
+    console.info(`📈 Processed metrics for ${metrics.timestamp.toLocaleTimeString()}`);
+    console.info(`   Generated ${insights.length} new insights`);
 
     if (insights.length > 0) {
-      console.log('   Key insights:');
+      console.info('   Key insights:');
       insights.slice(0, 2).forEach(insight => {
-        console.log(`   • ${insight.title} (${insight.priority} priority)`);
+        console.info(`   • ${insight.title} (${insight.priority} priority)`);
       });
     }
-    console.log('');
+    console.info('');
   }
 
   // Get current insights summary
   const currentInsights = dashboardAI.getCurrentInsights();
   const highPriorityInsights = dashboardAI.getHighPriorityInsights();
 
-  console.log('📋 Current Insights Summary:');
-  console.log(`   Total Active Insights: ${currentInsights.length}`);
-  console.log(`   High Priority Insights: ${highPriorityInsights.length}`);
+  console.info('📋 Current Insights Summary:');
+  console.info(`   Total Active Insights: ${currentInsights.length}`);
+  console.info(`   High Priority Insights: ${highPriorityInsights.length}`);
 
   if (highPriorityInsights.length > 0) {
-    console.log('\n🚨 High Priority Insights:');
+    console.info('\n🚨 High Priority Insights:');
     highPriorityInsights.slice(0, 3).forEach(insight => {
-      console.log(`   • ${insight.title} (${Math.round(insight.confidence * 100)}% confidence)`);
-      console.log(`     ${insight.description}`);
+      console.info(`   • ${insight.title} (${Math.round(insight.confidence * 100)}% confidence)`);
+      console.info(`     ${insight.description}`);
     });
   }
 
@@ -776,18 +776,18 @@ async function demonstrateAIInsights() {
   const report = await dashboardAI.generateInsightsReport();
   await Bun.write('./ai-insights-report.md', report);
 
-  console.log('\n📄 Generated AI Insights Report: ./ai-insights-report.md');
-  console.log('\n✨ AI insights integration demonstration complete!');
+  console.info('\n📄 Generated AI Insights Report: ./ai-insights-report.md');
+  console.info('\n✨ AI insights integration demonstration complete!');
 
-  console.log('\n🎯 AI Features Demonstrated:');
-  console.log('  ✅ Real-time metrics analysis');
-  console.log('  ✅ Performance monitoring');
-  console.log('  ✅ Security threat detection');
-  console.log('  ✅ Usage pattern analysis');
-  console.log('  ✅ Predictive forecasting');
-  console.log('  ✅ Intelligent recommendations');
-  console.log('  ✅ Automated alerting');
-  console.log('  ✅ Confidence scoring');
+  console.info('\n🎯 AI Features Demonstrated:');
+  console.info('  ✅ Real-time metrics analysis');
+  console.info('  ✅ Performance monitoring');
+  console.info('  ✅ Security threat detection');
+  console.info('  ✅ Usage pattern analysis');
+  console.info('  ✅ Predictive forecasting');
+  console.info('  ✅ Intelligent recommendations');
+  console.info('  ✅ Automated alerting');
+  console.info('  ✅ Confidence scoring');
 }
 
 // Run demonstration if called directly

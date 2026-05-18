@@ -108,7 +108,7 @@ class BetsIntegrationSystem {
   async fetchPliveBets(from?: number, to?: number, url?: string): Promise<BetEvent[]> {
     const targetUrl = url || this.buildPliveUrl(from, to);
 
-    console.log(`📡 Fetching bets from: ${targetUrl}`);
+    console.info(`📡 Fetching bets from: ${targetUrl}`);
 
     try {
       const headers: Record<string, string> = {};
@@ -136,7 +136,7 @@ class BetsIntegrationSystem {
         player: event.player
       })) || [];
 
-      console.log(`✅ Fetched ${events.length} bet events`);
+      console.info(`✅ Fetched ${events.length} bet events`);
       return events;
 
     } catch (error) {
@@ -187,7 +187,7 @@ class BetsIntegrationSystem {
     });
 
     if (newBets.length === 0) {
-      console.log(`ℹ️  No new bets to add`);
+      console.info(`ℹ️  No new bets to add`);
       return;
     }
 
@@ -195,7 +195,7 @@ class BetsIntegrationSystem {
 
     // Write back to YAML
     writeFileSync(yamlFile, YAML.stringify(existingData));
-    console.log(`✅ Added ${newBets.length} new bets to ${yamlFile}`);
+    console.info(`✅ Added ${newBets.length} new bets to ${yamlFile}`);
 
     // Check for volume alerts
     await this.checkVolumeAlerts(newBets);
@@ -207,7 +207,7 @@ class BetsIntegrationSystem {
     const highVolumeBets = bets.filter(bet => bet.volume > threshold);
 
     if (highVolumeBets.length > 0) {
-      console.log(`🚨 Volume alerts triggered for ${highVolumeBets.length} bets`);
+      console.info(`🚨 Volume alerts triggered for ${highVolumeBets.length} bets`);
 
       for (const bet of highVolumeBets) {
         const alertMessage = `💥 *Volume Spike Alert*\n\n` +
@@ -283,20 +283,20 @@ class BetsIntegrationSystem {
   }
 
   async integratePlive(url?: string, from?: number, to?: number): Promise<void> {
-    console.log(`🚀 Starting plive integration...`);
+    console.info(`🚀 Starting plive integration...`);
 
     // Fetch bets
     const bets = await this.fetchPliveBets(from, to, url);
 
     if (bets.length === 0) {
-      console.log(`ℹ️  No bets found`);
+      console.info(`ℹ️  No bets found`);
       return;
     }
 
     // Process through ETL
     await this.runETL(bets);
 
-    console.log(`✅ plive integration complete: ${bets.length} events processed`);
+    console.info(`✅ plive integration complete: ${bets.length} events processed`);
   }
 
   async exportToCSV(date?: string): Promise<string> {
@@ -336,7 +336,7 @@ class BetsIntegrationSystem {
     const csvFile = `exports/bets-${date || 'all'}.csv`;
     writeFileSync(csvFile, csvContent);
 
-    console.log(`✅ Exported ${filteredBets.length} bets to ${csvFile}`);
+    console.info(`✅ Exported ${filteredBets.length} bets to ${csvFile}`);
     return csvFile;
   }
 
@@ -371,7 +371,7 @@ async function main() {
   const bets = new BetsIntegrationSystem();
 
   if (args.length === 0) {
-    console.log(`🏀 BETS Integration System v3.0
+    console.info(`🏀 BETS Integration System v3.0
 
 USAGE:
   bun bets:integrate plive [url]          # Sync from plive API
@@ -400,11 +400,11 @@ INTEGRATION:
   - Enforces GOV rules automatically
 `);
     const stats = bets.getStats();
-    console.log(`\n📊 Current Stats:`);
-    console.log(`   Total Bets: ${stats.totalBets}`);
-    console.log(`   Total Volume: $${stats.totalVolume.toLocaleString()}`);
-    console.log(`   Alerts: ${stats.alertsTriggered}`);
-    console.log(`   Last Sync: ${stats.lastSync}`);
+    console.info(`\n📊 Current Stats:`);
+    console.info(`   Total Bets: ${stats.totalBets}`);
+    console.info(`   Total Volume: $${stats.totalVolume.toLocaleString()}`);
+    console.info(`   Alerts: ${stats.alertsTriggered}`);
+    console.info(`   Last Sync: ${stats.lastSync}`);
     return;
   }
 
@@ -421,7 +421,7 @@ INTEGRATION:
         const from = args[1] ? parseInt(args[1]) : undefined;
         const to = args[2] ? parseInt(args[2]) : undefined;
         const fetchedBets = await bets.fetchPliveBets(from, to);
-        console.log(`Fetched ${fetchedBets.length} bets`);
+        console.info(`Fetched ${fetchedBets.length} bets`);
         // Save to temp file for ETL
         writeFileSync('bets-temp.json', JSON.stringify(fetchedBets, null, 2));
         break;
@@ -436,15 +436,15 @@ INTEGRATION:
 
       case 'alerts':
         // This is handled automatically in ETL, but can be run standalone
-        console.log(`🔍 Volume alerts are checked during ETL process`);
-        console.log(`Run: bun bets:integrate plive`);
+        console.info(`🔍 Volume alerts are checked during ETL process`);
+        console.info(`Run: bun bets:integrate plive`);
         break;
 
       case 'export':
         if (args[1] === 'csv') {
           const date = args[2];
           const csvFile = await bets.exportToCSV(date);
-          console.log(`📄 CSV exported: ${csvFile}`);
+          console.info(`📄 CSV exported: ${csvFile}`);
         } else {
           console.error('Usage: bun bets:export csv [date]');
         }
@@ -452,16 +452,16 @@ INTEGRATION:
 
       case 'stats':
         const stats = bets.getStats();
-        console.log(`📊 BETS Integration Stats:`);
-        console.log(`   Total Bets: ${stats.totalBets}`);
-        console.log(`   Total Volume: $${stats.totalVolume.toLocaleString()}`);
-        console.log(`   Volume Alerts: ${stats.alertsTriggered}`);
-        console.log(`   Last Sync: ${stats.lastSync}`);
+        console.info(`📊 BETS Integration Stats:`);
+        console.info(`   Total Bets: ${stats.totalBets}`);
+        console.info(`   Total Volume: $${stats.totalVolume.toLocaleString()}`);
+        console.info(`   Volume Alerts: ${stats.alertsTriggered}`);
+        console.info(`   Last Sync: ${stats.lastSync}`);
         break;
 
       default:
         console.error(`Unknown command: ${command}`);
-        console.log('Use: bun bets --help');
+        console.info('Use: bun bets --help');
         process.exit(1);
     }
   } catch (error) {

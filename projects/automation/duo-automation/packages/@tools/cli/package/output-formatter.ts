@@ -500,31 +500,31 @@ if (import.meta.main) {
       balance: Math.random() * 1000
     }));
     
-    console.log(BunOutputFormatter.formatAgentTable(agents, { maxRows: 10 }));
+    console.info(BunOutputFormatter.formatAgentTable(agents, { maxRows: 10 }));
   } else if (args[0] === 'progress') {
     // Demo progress bar
     for (let i = 0; i <= 100; i += 10) {
-      console.log(BunOutputFormatter.progressBar(i, 100, 30));
+      console.info(BunOutputFormatter.progressBar(i, 100, 30));
       Bun.sleep(100);
     }
   } else if (args[0] === 'clean') {
     // Demo ANSI cleaning
     const colored = `${BunOutputFormatter.colors.red}Error${BunOutputFormatter.colors.reset} message`;
     const clean = BunOutputFormatter.cleanLogs(colored);
-    console.log(`Original: ${colored}`);
-    console.log(`Cleaned: ${clean}`);
-    console.log(`Visible width: ${Bun.stringWidth(clean)}`);
+    console.info(`Original: ${colored}`);
+    console.info(`Cleaned: ${clean}`);
+    console.info(`Visible width: ${Bun.stringWidth(clean)}`);
   } else if (args[0] === 'status') {
     // Demo status badges
     const statuses = ['active', 'pending', 'error', 'success', 'warning'];
     for (const status of statuses) {
-      console.log(BunOutputFormatter.statusBadge(status));
+      console.info(BunOutputFormatter.statusBadge(status));
     }
   } else {
-    console.log('Usage:');
-    console.log('  bun output-formatter.ts table');
-    console.log('  bun output-formatter.ts progress');
-    console.log('  bun output-formatter.ts clean');
-    console.log('  bun output-formatter.ts status');
+    console.info('Usage:');
+    console.info('  bun output-formatter.ts table');
+    console.info('  bun output-formatter.ts progress');
+    console.info('  bun output-formatter.ts clean');
+    console.info('  bun output-formatter.ts status');
   }
 }

@@ -48,7 +48,7 @@ describe('Node.js Compatibility Fixes', () => {
     } catch (e: any) {
       expect(e.name).toBe('AssertionError');
     }
-    console.log('✅ assert.deepStrictEqual now correctly distinguishes boxed primitives');
+    console.info('✅ assert.deepStrictEqual now correctly distinguishes boxed primitives');
   });
 });
 
@@ -79,7 +79,7 @@ describe('Bun APIs & Glob Fixes', () => {
     const files = await Array.fromAsync(glob.scan({ dot: true }));
     // Just verify it runs without escaping boundary/crashing
     expect(Array.isArray(files)).toBe(true);
-    console.log('✅ Glob.scan boundary check verified');
+    console.info('✅ Glob.scan boundary check verified');
   });
 });
 
@@ -183,7 +183,7 @@ describe('WebSocket Improvements', () => {
 
     ws.close();
     server.stop();
-    console.log('✅ WebSocket subprotocol negotiation verified');
+    console.info('✅ WebSocket subprotocol negotiation verified');
   });
 
   test('Custom WebSocket headers support', () => {
@@ -244,7 +244,7 @@ describe('Bun.SQL', () => {
     // WHERE IN with arrays helper
     const inFragment = sql([1, 2, 3]);
     expect(inFragment).toBeDefined();
-    console.log('✅ Bun.SQL dynamic helpers verified');
+    console.info('✅ Bun.SQL dynamic helpers verified');
   });
 
   test('PostgreSQL configuration options and explicit resource management', () => {
@@ -263,7 +263,7 @@ describe('Bun.SQL', () => {
     expect(sqlClient[Symbol.asyncDispose] || typeof sqlClient.close === 'function').toBeDefined();
     sqlClient.close();
     
-    console.log('✅ Bun.SQL PostgreSQL config & Disposable interface verified');
+    console.info('✅ Bun.SQL PostgreSQL config & Disposable interface verified');
   });
 });
 
@@ -288,7 +288,7 @@ describe('SQLite Enhancements', () => {
     expect(stmt.columnTypes).toEqual(["INTEGER", "TEXT"]);
     
     db.close();
-    console.log('✅ SQLite type introspection verified');
+    console.info('✅ SQLite type introspection verified');
   });
 
   test('Database.deserialize support', () => {
@@ -347,7 +347,7 @@ describe('Standalone Executables', () => {
     // We won't actually perform a build to avoid slow/complex IO in tests
     // @ts-ignore
     expect(Bun.build).toBeDefined();
-    console.log('✅ Bun.build API supports standalone executable compilation');
+    console.info('✅ Bun.build API supports standalone executable compilation');
   });
 
   test('Behavior documentation: Config file loading', () => {
@@ -363,7 +363,7 @@ describe('Standalone Executables', () => {
       },
     };
     expect(buildOptions.compile.autoloadTsconfig).toBe(true);
-    console.log('✅ Standalone Executables behavior verified (config file skip by default)');
+    console.info('✅ Standalone Executables behavior verified (config file skip by default)');
   });
 });
 
@@ -407,7 +407,7 @@ describe('Bun.serve() Routes', () => {
     expect(await healthRes.json()).toEqual({ status: 'ok' });
 
     server.stop();
-    console.log('✅ Bun.serve() Internal Router verified');
+    console.info('✅ Bun.serve() Internal Router verified');
   });
 });
 
@@ -419,7 +419,7 @@ describe('CLI & Env Enhancements', () => {
   test('BUN_INSPECT_PRELOAD documentation', () => {
     // Check if the env var is recognizable (documentation level)
     expect(process.env.BUN_INSPECT_PRELOAD).toBeDefined;
-    console.log('✅ BUN_INSPECT_PRELOAD env var supported for preloading');
+    console.info('✅ BUN_INSPECT_PRELOAD env var supported for preloading');
   });
 
   test('bunx --package capability verification', () => {
@@ -428,13 +428,13 @@ describe('CLI & Env Enhancements', () => {
     const { stdout, stderr } = Bun.spawnSync(['bunx', '--help']);
     const output = (stdout?.toString() || '') + (stderr?.toString() || '');
     expect(output).toMatch(/--package|-p/);
-    console.log('✅ bunx supports --package flag for multi-binary packages');
+    console.info('✅ bunx supports --package flag for multi-binary packages');
   });
 
   test('BUN_BE_BUN documentation', () => {
     // Documentation check for standalone executable control
     expect(process.env.BUN_BE_BUN).toBeDefined;
-    console.log('✅ BUN_BE_BUN env var supported for debug control of compiled apps');
+    console.info('✅ BUN_BE_BUN env var supported for debug control of compiled apps');
   });
 
   test('bun feedback command availability', () => {
@@ -442,7 +442,7 @@ describe('CLI & Env Enhancements', () => {
     const { stdout, stderr } = Bun.spawnSync(['bun', '--help']);
     const output = (stdout?.toString() || '') + (stderr?.toString() || '');
     expect(output).toContain('feedback');
-    console.log('✅ bun feedback command is available');
+    console.info('✅ bun feedback command is available');
   });
 });
 
@@ -464,7 +464,7 @@ describe('Bun built-in Cookie API', () => {
     cookie.value = "456";
     expect(cookie.value).toBe("456");
     expect(cookie.serialize()).toContain("sessionId=456");
-    console.log('✅ Bun.Cookie serialization verified');
+    console.info('✅ Bun.Cookie serialization verified');
   });
 
   test('Bun.CookieMap parsing and headers', () => {
@@ -477,7 +477,7 @@ describe('Bun built-in Cookie API', () => {
     const headers = cookieMap.toSetCookieHeaders();
     expect(Array.isArray(headers)).toBe(true);
     expect(headers.some((h: string) => h.includes("user1=hello"))).toBe(true);
-    console.log('✅ Bun.CookieMap verified');
+    console.info('✅ Bun.CookieMap verified');
   });
 });
 
@@ -497,7 +497,7 @@ describe('ReadableStream Convenience Methods', () => {
     // @ts-ignore
     const text = await stream.text();
     expect(text).toBe("Hello Streams");
-    console.log('✅ ReadableStream.text() convenience method verified');
+    console.info('✅ ReadableStream.text() convenience method verified');
   });
 
   test('ReadableStream supports .json()', async () => {
@@ -512,7 +512,7 @@ describe('ReadableStream Convenience Methods', () => {
     // @ts-ignore
     const json = await stream.json();
     expect(json).toEqual(data);
-    console.log('✅ ReadableStream.json() convenience method verified');
+    console.info('✅ ReadableStream.json() convenience method verified');
   });
 });
 
@@ -530,7 +530,7 @@ describe('Zstandard (zstd) Compression', () => {
     // @ts-ignore
     const decompressed = zstdDecompressSync(compressed);
     expect(decompressed.toString()).toBe(input);
-    console.log('✅ node:zlib synchronous zstd verified');
+    console.info('✅ node:zlib synchronous zstd verified');
   });
 
   test('asynchronous zstd APIs (bun)', async () => {
@@ -542,7 +542,7 @@ describe('Zstandard (zstd) Compression', () => {
     // @ts-ignore
     const decompressed = await zstdDecompress(compressed);
     expect(new TextDecoder().decode(decompressed)).toBe(input);
-    console.log('✅ bun asynchronous zstd verified');
+    console.info('✅ bun asynchronous zstd verified');
   });
 });
 
@@ -562,7 +562,7 @@ describe('Bun Configuration (bunfig.toml)', () => {
     };
     expect(config.install.lockfile.save).toBe(true);
     expect(config.install.lockfile.print).toBe("yarn");
-    console.log('✅ bunfig [install] schema verified');
+    console.info('✅ bunfig [install] schema verified');
   });
 
   test('Test Runner configuration availability', () => {
@@ -576,7 +576,7 @@ describe('Bun Configuration (bunfig.toml)', () => {
     };
     expect(config.test.timeout).toBe(5000);
     expect(config.test.randomize).toBe(true);
-    console.log('✅ bunfig [test] schema verified');
+    console.info('✅ bunfig [test] schema verified');
   });
 
   test('Runtime & Run configuration availability', () => {
@@ -591,7 +591,7 @@ describe('Bun Configuration (bunfig.toml)', () => {
     };
     expect(config.run.autoAlias.nodeToBun).toBe(true);
     expect(config.runtime.experimental).toBe(true);
-    console.log('✅ bunfig [run] and [runtime] schema verified');
+    console.info('✅ bunfig [run] and [runtime] schema verified');
   });
 });
 
@@ -606,7 +606,7 @@ describe('LSP Integration & Secure Discovery', () => {
     const bunxPath = Bun.which('bunx');
     expect(bunxPath).toBeDefined();
     expect(typeof bunxPath).toBe('string');
-    console.log(`✅ bunx discovered at: ${bunxPath}`);
+    console.info(`✅ bunx discovered at: ${bunxPath}`);
   });
 
   test('Secure LSP initialization logic (contract check)', () => {
@@ -626,7 +626,7 @@ describe('LSP Integration & Secure Discovery', () => {
     } else {
       expect(discovery.fallback).toBe('proxy-mode');
     }
-    console.log('✅ Secure LSP discovery patterns verified');
+    console.info('✅ Secure LSP discovery patterns verified');
   });
 
   test('LSP Host capability (Bun.serve)', async () => {
@@ -642,7 +642,7 @@ describe('LSP Integration & Secure Discovery', () => {
     const res = await fetch(`http://127.0.0.1:${server.port}`);
     expect(await res.text()).toBe('SurgicalLSP Ready');
     server.stop();
-    console.log('✅ Bun.serve LSP host capability verified');
+    console.info('✅ Bun.serve LSP host capability verified');
   });
 });
 
@@ -655,7 +655,7 @@ describe('IDE Tooling & AST Awareness', () => {
     // @ts-ignore
     const sgPath = Bun.which('ast-grep');
     expect(sgPath).toBeDefined();
-    console.log(`✅ ast-grep available for AST-aware structural search: ${sgPath}`);
+    console.info(`✅ ast-grep available for AST-aware structural search: ${sgPath}`);
   });
 
   test('LSP Hover proxy concept validation', () => {
@@ -663,7 +663,7 @@ describe('IDE Tooling & AST Awareness', () => {
     const lspRequest = { uri: 'file:///test.ts', line: 10, character: 5 };
     const response = `⚠️ LSP Hover proxy for ${lspRequest.uri} at ${lspRequest.line}:${lspRequest.character}`;
     expect(response).toContain('LSP Hover proxy');
-    console.log('✅ LSP proxy patterns verified');
+    console.info('✅ LSP proxy patterns verified');
   });
 });
 
@@ -679,7 +679,7 @@ describe('Syndicate Detection & High-Frequency Resolution', () => {
     const procs = commands.map(cmd => Bun.spawn(cmd));
     const results = await Promise.all(procs.map(p => p.exited));
     expect(results.every((code: any) => code === 0)).toBe(true);
-    console.log(`✅ Bun.spawn parallel execution verified for ${procs.length} ingestion paths`);
+    console.info(`✅ Bun.spawn parallel execution verified for ${procs.length} ingestion paths`);
   });
 
   test('URLPattern-based routing for Alerts (Bun.serve)', async () => {
@@ -703,14 +703,14 @@ describe('Syndicate Detection & High-Frequency Resolution', () => {
     expect(await res.json()).toEqual({ status: 'alerted', type: 'whale-activity' });
     
     server.stop();
-    console.log('✅ URLPattern + Bun.serve routing verified for surgical alerts');
+    console.info('✅ URLPattern + Bun.serve routing verified for surgical alerts');
   });
 
   test('Live Monitoring API (Bun.Terminal)', () => {
     // Reference: Resolution strategy for real_time_frequency
     // @ts-ignore
     expect(typeof Bun.Terminal).toBe('function');
-    console.log('✅ Bun.Terminal live monitoring API available');
+    console.info('✅ Bun.Terminal live monitoring API available');
   });
 });
 
@@ -858,7 +858,7 @@ describe('fetch() Proxy Custom Headers', () => {
       },
     };
     expect(proxyOptions.headers['Proxy-Authorization']).toBe('Bearer token-takes-precedence');
-    console.log('✅ Proxy-Authorization in headers takes precedence over URL credentials');
+    console.info('✅ Proxy-Authorization in headers takes precedence over URL credentials');
   });
 });
 
@@ -913,7 +913,7 @@ describe('http.Agent Connection Pooling', () => {
 
     server.stop();
     expect(true).toBe(true); // If we get here without error, pooling logic works
-    console.log('✅ http.Agent correctly handles keep-alive and connection reuse');
+    console.info('✅ http.Agent correctly handles keep-alive and connection reuse');
   });
 });
 
@@ -925,10 +925,10 @@ describe('console.log %j Support', () => {
   const { jest } = require('bun:test');
 
   test('%j formats object as JSON', () => {
-    const spy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const spy = jest.spyOn(console, 'info').mockImplementation(() => {});
     const data = { foo: 'bar' };
     
-    console.log('%j', data);
+    console.info('%j', data);
     
     expect(spy).toHaveBeenCalledWith('%j', data); 
     // Note: In Bun's actual output it will format, 
@@ -937,7 +937,7 @@ describe('console.log %j Support', () => {
     // and doesn't cause issues.
     
     spy.mockRestore();
-    console.log('✅ console.log supports %j format specifier');
+    console.info('✅ console.log supports %j format specifier');
   });
 });
 
@@ -953,7 +953,7 @@ describe('SQLite 3.51.1', () => {
     const result = query.get() as { version: string };
     
     expect(result.version).toBeDefined();
-    console.log(`SQLite Version: ${result.version}`);
+    console.info(`SQLite Version: ${result.version}`);
     
     // Check if it's at least 3.45.0 (which Bun 1.1 had) 
     // The release notes say 3.51.1
@@ -1096,7 +1096,7 @@ describe('Bun.Semaphore', () => {
     await Promise.all([worker(), worker(), worker(), worker()]);
     
     expect(maxActive).toBe(2); // Never more than 2 concurrent
-    console.log('✅ Semaphore polyfill: concurrent access limited to 2');
+    console.info('✅ Semaphore polyfill: concurrent access limited to 2');
   });
 
   test('Semaphore tryAcquire non-blocking', () => {
@@ -1136,7 +1136,7 @@ describe('Bun.RWLock', () => {
     await Promise.all([reader(), reader(), reader()]);
     
     expect(maxReaders).toBe(3); // All readers ran concurrently
-    console.log('✅ RWLock polyfill: 3 concurrent readers');
+    console.info('✅ RWLock polyfill: 3 concurrent readers');
   });
 
   test('RWLock polyfill exclusive writes', async () => {
@@ -1149,7 +1149,7 @@ describe('Bun.RWLock', () => {
     
     expect(lock.tryAcquireRead()).toBe(true);
     lock.releaseRead();
-    console.log('✅ RWLock polyfill: exclusive write verified');
+    console.info('✅ RWLock polyfill: exclusive write verified');
   });
 });
 
@@ -1162,7 +1162,7 @@ describe('Bun.Terminal (PTY)', () => {
   test('Terminal availability check', () => {
     const hasTerminal = 'Terminal' in Bun;
     expect(typeof hasTerminal).toBe('boolean');
-    console.log(`PTY Available: ${hasTerminal ? '✅' : '❌'}`);
+    console.info(`PTY Available: ${hasTerminal ? '✅' : '❌'}`);
   });
 
   test('Terminal can be used via Bun.spawn with terminal option', async () => {
@@ -1231,7 +1231,7 @@ describe('Reusable Terminals (bun-v1.3.5)', () => {
     if (typeof Bun !== 'undefined' && 'Terminal' in Bun) {
       expect(typeof (Bun as any).Terminal).toBe('function');
     } else {
-      console.log('Terminal API not available in current runtime context - skipping');
+      console.info('Terminal API not available in current runtime context - skipping');
     }
   });
 
@@ -1317,7 +1317,7 @@ describe('Reusable Terminals (bun-v1.3.5)', () => {
     expect(combinedOutput).toContain('First');
     expect(combinedOutput).toContain('Second');
     expect(combinedOutput).toContain('Third');
-    console.log('✅ Terminal successfully reused for 3 sequential processes');
+    console.info('✅ Terminal successfully reused for 3 sequential processes');
   });
 
   test('Inline terminal option works per-spawn', async () => {
@@ -1367,7 +1367,7 @@ describe('Reusable Terminals (bun-v1.3.5)', () => {
     terminal.close();
 
     expect(output).toContain('hello from write');
-    console.log('✅ Terminal write() successfully sends input to process');
+    console.info('✅ Terminal write() successfully sends input to process');
   });
 });
 
@@ -1554,7 +1554,7 @@ describe('.npmrc Environment Variable Expansion', () => {
     const content = await Bun.file(npmrcPath).text();
     // Check for ${VAR?} syntax with optional modifier
     expect(content).toMatch(/\$\{[A-Z_]+\?\}/);
-    console.log('✅ .npmrc uses ${VAR?} syntax for graceful undefined handling');
+    console.info('✅ .npmrc uses ${VAR?} syntax for graceful undefined handling');
   });
 
   test('Environment variable expansion with ? modifier behavior', () => {
@@ -1572,7 +1572,7 @@ describe('.npmrc Environment Variable Expansion', () => {
     // When env var is undefined, ? modifier returns empty string
     expect(withOptionalModifier(undefined)).toBe('');
     
-    console.log('✅ ? modifier correctly handles undefined → empty string');
+    console.info('✅ ? modifier correctly handles undefined → empty string');
   });
 
   test('All three syntax patterns are equivalent in Bun v1.3.5', () => {
@@ -1593,7 +1593,7 @@ describe('.npmrc Environment Variable Expansion', () => {
       expect(pattern).toContain('}');
     });
 
-    console.log('✅ All 3 .npmrc syntaxes (unquoted, double-quoted, single-quoted) now expand');
+    console.info('✅ All 3 .npmrc syntaxes (unquoted, double-quoted, single-quoted) now expand');
   });
 
   test('.npmrc auth token config follows security best practices', async () => {
@@ -1606,7 +1606,7 @@ describe('.npmrc Environment Variable Expansion', () => {
     // Should use environment variable reference
     expect(content).toContain('_authToken=${');
     
-    console.log('✅ .npmrc uses env var for auth token (no hardcoded secrets)');
+    console.info('✅ .npmrc uses env var for auth token (no hardcoded secrets)');
   });
 });
 
@@ -1621,7 +1621,7 @@ describe('Feature Flags', () => {
 
     expect(typeof debugFlag).toBe('boolean');
     expect(typeof prodFlag).toBe('boolean');
-    console.log('✅ Environment-based feature flags working');
+    console.info('✅ Environment-based feature flags working');
   });
 
   test('Feature flag defaults work', () => {
@@ -1629,12 +1629,12 @@ describe('Feature Flags', () => {
     const version = process.env.SURGICAL_VERSION || '1.1.0';
     expect(version).toBeDefined();
     expect(typeof version).toBe('string');
-    console.log('✅ Feature flag defaults working');
+    console.info('✅ Feature flag defaults working');
   });
 
   test.skip('bun:bundle feature() API (not yet available)', async () => {
     // Skip until bun:bundle is implemented in future Bun version
-    console.log('⏭️ bun:bundle not available in v1.3.5 - test skipped');
+    console.info('⏭️ bun:bundle not available in v1.3.5 - test skipped');
   });
 });
 
@@ -1683,7 +1683,7 @@ describe('Test Suite Summary', () => {
 
     // This test documents the coverage
     expect(featureGroups.length).toBeGreaterThanOrEqual(35);
-    console.log(`\n📋 Tested ${featureGroups.length} Bun v1.3.5 feature groups`);
-    console.log('Reference: https://bun.sh/blog/bun-v1.3.5');
+    console.info(`\n📋 Tested ${featureGroups.length} Bun v1.3.5 feature groups`);
+    console.info('Reference: https://bun.sh/blog/bun-v1.3.5');
   });
 });

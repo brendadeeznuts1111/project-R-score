@@ -176,7 +176,7 @@ class MDXSanitizer {
         ignore: ['**/node_modules/**', '**/build/**', '**/dist/**'],
       });
 
-      console.log(`🔍 Found ${markdownFiles.length} markdown files to sanitize`);
+      console.info(`🔍 Found ${markdownFiles.length} markdown files to sanitize`);
       await this.log(`Starting sanitization of ${markdownFiles.length} files in ${dirPath}`);
 
       let processedCount = 0;
@@ -190,18 +190,18 @@ class MDXSanitizer {
         processedCount++;
 
         if (processedCount % 10 === 0) {
-          console.log(`📊 Progress: ${processedCount}/${markdownFiles.length} processed`);
+          console.info(`📊 Progress: ${processedCount}/${markdownFiles.length} processed`);
         }
       }
 
-      console.log(`\n✨ Sanitization Complete!`);
-      console.log(`📁 Processed: ${processedCount} files`);
-      console.log(`🔧 Fixed: ${fixedCount} files`);
-      console.log(`❌ Errors: ${this.errorCount}`);
+      console.info(`\n✨ Sanitization Complete!`);
+      console.info(`📁 Processed: ${processedCount} files`);
+      console.info(`🔧 Fixed: ${fixedCount} files`);
+      console.info(`❌ Errors: ${this.errorCount}`);
 
       if (this.fixedFiles.length > 0) {
-        console.log(`\n📝 Fixed Files:`);
-        this.fixedFiles.forEach(file => console.log(`   • ${file}`));
+        console.info(`\n📝 Fixed Files:`);
+        this.fixedFiles.forEach(file => console.info(`   • ${file}`));
       }
 
       await this.log(`Sanitization completed. ${fixedCount}/${processedCount} files fixed.`);
@@ -239,7 +239,7 @@ class MDXSanitizer {
     };
 
     await fs.writeFile(reportPath, JSON.stringify(report, null, 2));
-    console.log(`📋 Report saved: ${reportPath}`);
+    console.info(`📋 Report saved: ${reportPath}`);
   }
 }
 
@@ -248,11 +248,11 @@ async function main() {
   const args = process.argv.slice(2);
   const targetDir = args[0] || 'docs';
 
-  console.log('🥖 Fire22 Dashboard - MDX Sanitizer');
-  console.log('!==!==!==!==!==!==!==');
-  console.log(`🎯 Target directory: ${targetDir}`);
-  console.log(`📅 Started at: ${new Date().toISOString()}`);
-  console.log();
+  console.info('🥖 Fire22 Dashboard - MDX Sanitizer');
+  console.info('!==!==!==!==!==!==!==');
+  console.info(`🎯 Target directory: ${targetDir}`);
+  console.info(`📅 Started at: ${new Date().toISOString()}`);
+  console.info();
 
   const sanitizer = new MDXSanitizer();
 
@@ -267,8 +267,8 @@ async function main() {
   await sanitizer.sanitizeDirectory(targetDir);
   await sanitizer.generateReport();
 
-  console.log('\n🎉 MDX Sanitization completed successfully!');
-  console.log('💡 You can now restart Docusaurus to see if the errors are resolved.');
+  console.info('\n🎉 MDX Sanitization completed successfully!');
+  console.info('💡 You can now restart Docusaurus to see if the errors are resolved.');
 }
 
 if (import.meta.main) {

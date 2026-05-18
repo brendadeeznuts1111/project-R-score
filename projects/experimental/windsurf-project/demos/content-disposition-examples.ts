@@ -5,8 +5,8 @@ export {}; // Make this a module
 
 import { R2ContentManager } from '../src/storage/r2-content-manager';
 
-console.log('🎯 CONTENT-DISPOSITION EXAMPLES');
-console.log('='.repeat(50));
+console.info('🎯 CONTENT-DISPOSITION EXAMPLES');
+console.info('='.repeat(50));
 
 // Mock R2ContentManager for demonstration
 class MockR2ContentManager {
@@ -34,8 +34,8 @@ class MockR2ContentManager {
   }
 
   async demonstrateContentDisposition() {
-    console.log('\n📁 FILE TYPE EXAMPLES:');
-    console.log('─'.repeat(30));
+    console.info('\n📁 FILE TYPE EXAMPLES:');
+    console.info('─'.repeat(30));
 
     const examples = [
       // Dashboard assets (inline)
@@ -61,76 +61,76 @@ class MockR2ContentManager {
       const disposition = this.getSmartDisposition(ext, example.file);
       const status = disposition === example.expected ? '✅' : '❌';
       
-      console.log(`${status} ${example.file}`);
-      console.log(`   Disposition: ${disposition}`);
-      console.log(`   Expected: ${example.expected}`);
-      console.log(`   Reason: ${example.reason}`);
-      console.log('');
+      console.info(`${status} ${example.file}`);
+      console.info(`   Disposition: ${disposition}`);
+      console.info(`   Expected: ${example.expected}`);
+      console.info(`   Reason: ${example.reason}`);
+      console.info('');
     });
   }
 
   async demonstrateDeployment() {
-    console.log('🚀 DEPLOYMENT SCENARIOS:');
-    console.log('─'.repeat(30));
+    console.info('🚀 DEPLOYMENT SCENARIOS:');
+    console.info('─'.repeat(30));
 
-    console.log('\n1. Dashboard Deployment (Inline):');
-    console.log('   bun run dashboard:deploy');
-    console.log('   ✅ dashboards/index.html → inline (browser renders)');
-    console.log('   ✅ dashboards/styles.css → inline');
-    console.log('   ✅ dashboards/enhanced.js → inline');
-    console.log('   ✅ assets/logo.png → inline (display in browser)');
+    console.info('\n1. Dashboard Deployment (Inline):');
+    console.info('   bun run dashboard:deploy');
+    console.info('   ✅ dashboards/index.html → inline (browser renders)');
+    console.info('   ✅ dashboards/styles.css → inline');
+    console.info('   ✅ dashboards/enhanced.js → inline');
+    console.info('   ✅ assets/logo.png → inline (display in browser)');
 
-    console.log('\n2. Report Generation (Attachment):');
-    console.log('   const link = await manager.createReport(data, "json");');
-    console.log('   ✅ reports/report-2024-01-13.json → attachment; filename="report-2024-01-13.json"');
-    console.log('   ✅ Browser downloads file automatically');
+    console.info('\n2. Report Generation (Attachment):');
+    console.info('   const link = await manager.createReport(data, "json");');
+    console.info('   ✅ reports/report-2024-01-13.json → attachment; filename="report-2024-01-13.json"');
+    console.info('   ✅ Browser downloads file automatically');
 
-    console.log('\n3. Bulk Asset Deployment:');
-    console.log('   const assets = [');
-    console.log('     { localPath: "./dist/index.html", r2Key: "dashboards/index.html" },');
-    console.log('     { localPath: "./data/export.json", r2Key: "reports/export.json" }');
-    console.log('   ];');
-    console.log('   await manager.bulkDeployAssets(assets);');
-    console.log('   ✅ Smart disposition applied automatically');
+    console.info('\n3. Bulk Asset Deployment:');
+    console.info('   const assets = [');
+    console.info('     { localPath: "./dist/index.html", r2Key: "dashboards/index.html" },');
+    console.info('     { localPath: "./data/export.json", r2Key: "reports/export.json" }');
+    console.info('   ];');
+    console.info('   await manager.bulkDeployAssets(assets);');
+    console.info('   ✅ Smart disposition applied automatically');
   }
 
   async demonstratePerformance() {
-    console.log('\n⚡ PERFORMANCE BENEFITS:');
-    console.log('─'.repeat(30));
+    console.info('\n⚡ PERFORMANCE BENEFITS:');
+    console.info('─'.repeat(30));
 
-    console.log('\nOld Way (Manual Headers):');
-    console.log('   const res = new Response(html);');
-    console.log('   res.headers.set("Content-Disposition", "inline"); // 2ms overhead');
-    console.log('   ❌ Manual header management');
+    console.info('\nOld Way (Manual Headers):');
+    console.info('   const res = new Response(html);');
+    console.info('   res.headers.set("Content-Disposition", "inline"); // 2ms overhead');
+    console.info('   ❌ Manual header management');
 
-    console.log('\nNew Way (Native API):');
-    console.log('   await s3.file(key, { contentDisposition: "inline" }).write(file); // 0.5ms overhead');
-    console.log('   ✅ 4x faster, zero manual header management');
+    console.info('\nNew Way (Native API):');
+    console.info('   await s3.file(key, { contentDisposition: "inline" }).write(file); // 0.5ms overhead');
+    console.info('   ✅ 4x faster, zero manual header management');
 
-    console.log('\nCache Strategy Benefits:');
-    console.log('   • Static assets (CSS/JS): 1 year cache');
-    console.log('   • Dynamic content (JSON/HTML): 5 minutes cache');
-    console.log('   • Downloads (PDF/CSV): no cache');
-    console.log('   ✅ Optimized CDN performance');
+    console.info('\nCache Strategy Benefits:');
+    console.info('   • Static assets (CSS/JS): 1 year cache');
+    console.info('   • Dynamic content (JSON/HTML): 5 minutes cache');
+    console.info('   • Downloads (PDF/CSV): no cache');
+    console.info('   ✅ Optimized CDN performance');
   }
 
   async demonstrateAPI() {
-    console.log('\n🌐 API VERIFICATION:');
-    console.log('─'.repeat(30));
+    console.info('\n🌐 API VERIFICATION:');
+    console.info('─'.repeat(30));
 
-    console.log('\nInline Content Test:');
-    console.log('   $ curl -I https://dashboards.empire-pro.com/enterprise/index.html');
-    console.log('   Content-Disposition: inline');
-    console.log('   ✅ Browser shows HTML page');
+    console.info('\nInline Content Test:');
+    console.info('   $ curl -I https://dashboards.empire-pro.com/enterprise/index.html');
+    console.info('   Content-Disposition: inline');
+    console.info('   ✅ Browser shows HTML page');
 
-    console.log('\nAttachment Content Test:');
-    console.log('   $ curl -I https://dashboards.empire-pro.com/enterprise/reports/roi-report.json');
-    console.log('   Content-Disposition: attachment; filename="roi-report.json"');
-    console.log('   ✅ Browser downloads as "roi-report.json"');
+    console.info('\nAttachment Content Test:');
+    console.info('   $ curl -I https://dashboards.empire-pro.com/enterprise/reports/roi-report.json');
+    console.info('   Content-Disposition: attachment; filename="roi-report.json"');
+    console.info('   ✅ Browser downloads as "roi-report.json"');
 
-    console.log('\nDownload Command:');
-    console.log('   $ curl -O https://dashboards.empire-pro.com/enterprise/reports/roi-report.json');
-    console.log('   ✅ Automatically saves with correct filename');
+    console.info('\nDownload Command:');
+    console.info('   $ curl -O https://dashboards.empire-pro.com/enterprise/reports/roi-report.json');
+    console.info('   ✅ Automatically saves with correct filename');
   }
 }
 
@@ -143,11 +143,11 @@ async function runExamples() {
   await manager.demonstratePerformance();
   await manager.demonstrateAPI();
   
-  console.log('\n🎉 CONTENT-DISPOSITION EXAMPLES COMPLETE!');
-  console.log('✅ §Pattern:123.1 - Smart disposition handling verified');
-  console.log('✅ Inline vs Attachment behavior demonstrated');
-  console.log('✅ Performance benefits confirmed');
-  console.log('✅ Deployment scenarios validated');
+  console.info('\n🎉 CONTENT-DISPOSITION EXAMPLES COMPLETE!');
+  console.info('✅ §Pattern:123.1 - Smart disposition handling verified');
+  console.info('✅ Inline vs Attachment behavior demonstrated');
+  console.info('✅ Performance benefits confirmed');
+  console.info('✅ Deployment scenarios validated');
 }
 
 // Run if called directly

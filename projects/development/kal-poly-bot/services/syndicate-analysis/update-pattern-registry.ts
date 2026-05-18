@@ -128,4 +128,4 @@ const updatedContent = updates.reduce((currentContent, update) => {
 }, content);
 
 await Bun.write(filePath, updatedContent);
-console.log('Pattern registry updated!');
+console.info('Pattern registry updated!');

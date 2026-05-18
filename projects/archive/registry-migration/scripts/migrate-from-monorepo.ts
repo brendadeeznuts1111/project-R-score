@@ -75,20 +75,20 @@ const MIGRATION: MigrationConfig = {
 };
 
 async function migrate() {
-  console.log(styled('🔄 Registry Migration Tool', 'accent'));
-  console.log(styled('=========================', 'accent'));
+  console.info(styled('🔄 Registry Migration Tool', 'accent'));
+  console.info(styled('=========================', 'accent'));
   
   const sourceDir = MIGRATION.sourcePath;
   const sourceRegistryDir = `${sourceDir}/lib/registry`;
   
-  console.log(styled(`\n📂 Source: ${sourceRegistryDir}`, 'info'));
-  console.log(styled(`📂 Target: ${MIGRATION.targetPath}`, 'info'));
+  console.info(styled(`\n📂 Source: ${sourceRegistryDir}`, 'info'));
+  console.info(styled(`📂 Target: ${MIGRATION.targetPath}`, 'info'));
   
   // Check source exists
   const sourceExists = await Bun.file(sourceRegistryDir).exists();
   if (!sourceExists) {
     console.error(styled(`❌ Source directory not found: ${sourceRegistryDir}`, 'error'));
-    console.log(styled('Usage: bun run migrate.ts <path-to-monorepo>', 'muted'));
+    console.info(styled('Usage: bun run migrate.ts <path-to-monorepo>', 'muted'));
     process.exit(1);
   }
   
@@ -105,7 +105,7 @@ async function migrate() {
         // Check if source exists
         const sourceFile = Bun.file(sourcePath);
         if (!await sourceFile.exists()) {
-          console.log(styled(`⚠️ Skip: ${file} (not found)`, 'warning'));
+          console.info(styled(`⚠️ Skip: ${file} (not found)`, 'warning'));
           results.skipped++;
           continue;
         }
@@ -122,7 +122,7 @@ async function migrate() {
         // Write to target
         await Bun.write(targetPath, updatedContent);
         
-        console.log(styled(`✅ Copied: ${file} → ${targetDir}`, 'success'));
+        console.info(styled(`✅ Copied: ${file} → ${targetDir}`, 'success'));
         results.copied++;
       } catch (error) {
         console.error(styled(`❌ Error copying ${file}: ${error.message}`, 'error'));
@@ -132,22 +132,22 @@ async function migrate() {
   }
   
   // Create index.ts files
-  console.log(styled('\n📦 Creating index files...', 'info'));
+  console.info(styled('\n📦 Creating index files...', 'info'));
   await createIndexFiles();
   
   // Summary
-  console.log(styled('\n📊 Migration Summary:', 'accent'));
-  console.log(styled(`  ✅ Copied: ${results.copied}`, 'success'));
-  console.log(styled(`  ⚠️ Skipped: ${results.skipped}`, 'warning'));
-  console.log(styled(`  ❌ Errors: ${results.errors}`, results.errors > 0 ? 'error' : 'muted'));
+  console.info(styled('\n📊 Migration Summary:', 'accent'));
+  console.info(styled(`  ✅ Copied: ${results.copied}`, 'success'));
+  console.info(styled(`  ⚠️ Skipped: ${results.skipped}`, 'warning'));
+  console.info(styled(`  ❌ Errors: ${results.errors}`, results.errors > 0 ? 'error' : 'muted'));
   
   if (results.errors === 0) {
-    console.log(styled('\n🎉 Migration complete! Next steps:', 'success'));
-    console.log(styled('  1. bun install', 'muted'));
-    console.log(styled('  2. bun run build', 'muted'));
-    console.log(styled('  3. bun run test', 'muted'));
-    console.log(styled('  4. git init && git add .', 'muted'));
-    console.log(styled('  5. git commit -m "Initial registry commit"', 'muted'));
+    console.info(styled('\n🎉 Migration complete! Next steps:', 'success'));
+    console.info(styled('  1. bun install', 'muted'));
+    console.info(styled('  2. bun run build', 'muted'));
+    console.info(styled('  3. bun run test', 'muted'));
+    console.info(styled('  4. git init && git add .', 'muted'));
+    console.info(styled('  5. git commit -m "Initial registry commit"', 'muted'));
   }
 }
 

@@ -552,12 +552,12 @@ export class PropertyMatrixManager {
 			.filter(Boolean)
 			.join(compact ? " | " : "  ");
 
-		console.log(`${c.bold}${c.cyan}${"=".repeat(120)}${c.reset}`);
-		console.log(
+		console.info(`${c.bold}${c.cyan}${"=".repeat(120)}${c.reset}`);
+		console.info(
 			`${c.bold}${c.cyan}PROPERTY MATRIX${c.reset} ${c.dim}(${entries.length} properties)${c.reset}`,
 		);
-		console.log(`${c.bold}${c.cyan}${"=".repeat(120)}${c.reset}`);
-		console.log(`${c.bold}${header}${c.reset}`);
+		console.info(`${c.bold}${c.cyan}${"=".repeat(120)}${c.reset}`);
+		console.info(`${c.bold}${header}${c.reset}`);
 
 		// Table rows
 		entries.forEach((entry, index) => {
@@ -573,10 +573,10 @@ export class PropertyMatrixManager {
 				.filter(Boolean)
 				.join(compact ? " | " : "  ");
 
-			console.log(row);
+			console.info(row);
 		});
 
-		console.log(`${c.bold}${c.cyan}${"=".repeat(120)}${c.reset}`);
+		console.info(`${c.bold}${c.cyan}${"=".repeat(120)}${c.reset}`);
 	}
 
 	/**
@@ -618,7 +618,7 @@ export class PropertyMatrixManager {
 			description: entry.property.metadata.description,
 		}));
 
-		console.log(JSON.stringify(data, null, 2));
+		console.info(JSON.stringify(data, null, 2));
 	}
 
 	/**
@@ -629,7 +629,7 @@ export class PropertyMatrixManager {
 		options: TableDisplayOptions,
 	): void {
 		// CSV header
-		console.log("id,category,type,namespace,version,usage_count,description");
+		console.info("id,category,type,namespace,version,usage_count,description");
 
 		// CSV rows
 		entries.forEach((entry) => {
@@ -643,7 +643,7 @@ export class PropertyMatrixManager {
 				`"${entry.property.metadata.description.replace(/"/g, '""')}"`,
 			].join(",");
 
-			console.log(row);
+			console.info(row);
 		});
 	}
 
@@ -654,8 +654,8 @@ export class PropertyMatrixManager {
 		entries: PropertyMatrixEntry[],
 		options: TableDisplayOptions,
 	): void {
-		console.log("| ID | Category | Type | Namespace | Usage | Description |");
-		console.log("|----|----------|------|-----------|-------|-------------|");
+		console.info("| ID | Category | Type | Namespace | Usage | Description |");
+		console.info("|----|----------|------|-----------|-------|-------------|");
 
 		entries.forEach((entry) => {
 			const row = [
@@ -667,7 +667,7 @@ export class PropertyMatrixManager {
 				entry.property.metadata.description.slice(0, 50),
 			].join(" | ");
 
-			console.log(`| ${row} |`);
+			console.info(`| ${row} |`);
 		});
 	}
 
@@ -687,10 +687,10 @@ export class PropertyMatrixManager {
 		};
 
 		entries.forEach((entry, index) => {
-			console.log(`\n${"=".repeat(80)}`);
-			console.log(`Property ${index + 1}: ${entry.property.id}`);
-			console.log("=".repeat(80));
-			console.log(Bun.inspect(entry, inspectOptions));
+			console.info(`\n${"=".repeat(80)}`);
+			console.info(`Property ${index + 1}: ${entry.property.id}`);
+			console.info("=".repeat(80));
+			console.info(Bun.inspect(entry, inspectOptions));
 		});
 	}
 
@@ -801,21 +801,21 @@ export class PropertyMatrixManager {
 	): void {
 		const matrix = this.getTypeMatrix(type) || this.buildTypeMatrix(type);
 
-		console.log(`\n${"=".repeat(80)}`);
-		console.log(`TYPE MATRIX: ${type.toUpperCase()}`);
-		console.log("=".repeat(80));
-		console.log(`Total Properties: ${matrix.stats.totalProperties}`);
-		console.log(`\nCategories:`);
+		console.info(`\n${"=".repeat(80)}`);
+		console.info(`TYPE MATRIX: ${type.toUpperCase()}`);
+		console.info("=".repeat(80));
+		console.info(`Total Properties: ${matrix.stats.totalProperties}`);
+		console.info(`\nCategories:`);
 		for (const [category, count] of Object.entries(matrix.stats.categories)) {
 			if (count > 0) {
-				console.log(`  ${category}: ${count}`);
+				console.info(`  ${category}: ${count}`);
 			}
 		}
-		console.log(
+		console.info(
 			`\nRequired Properties: ${matrix.patterns.required.join(", ")}`,
 		);
-		console.log(`Optional Properties: ${matrix.patterns.optional.length}`);
-		console.log(`Derived Properties: ${matrix.patterns.derived.length}`);
+		console.info(`Optional Properties: ${matrix.patterns.optional.length}`);
+		console.info(`Derived Properties: ${matrix.patterns.derived.length}`);
 
 		this.displayProperties({
 			...options,

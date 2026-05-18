@@ -125,10 +125,10 @@ export class WorkspaceOrchestrator {
     workspaces: Map<string, { packages: string[]; status: 'created' | 'updated' | 'failed' }>;
     summary: { total: number; created: number; updated: number; failed: number };
   }> {
-    console.log('🔄 Starting workspace splitting process...');
+    console.info('🔄 Starting workspace splitting process...');
 
     if (options.dryRun) {
-      console.log('🧪 DRY RUN MODE - No actual changes will be made');
+      console.info('🧪 DRY RUN MODE - No actual changes will be made');
     }
 
     const results = new Map<
@@ -154,7 +154,7 @@ export class WorkspaceOrchestrator {
         continue;
       }
 
-      console.log(`📦 Processing ${domain} workspace with ${packages.length} packages`);
+      console.info(`📦 Processing ${domain} workspace with ${packages.length} packages`);
 
       try {
         const result = await this.createDomainWorkspace(workspaceConfig, packages, options);
@@ -172,10 +172,10 @@ export class WorkspaceOrchestrator {
 
     const summary = { total: domainGroups.size, created, updated, failed };
 
-    console.log('\n📊 Workspace Splitting Summary:');
-    console.log(`✅ Created: ${created}`);
-    console.log(`🔄 Updated: ${updated}`);
-    console.log(`❌ Failed: ${failed}`);
+    console.info('\n📊 Workspace Splitting Summary:');
+    console.info(`✅ Created: ${created}`);
+    console.info(`🔄 Updated: ${updated}`);
+    console.info(`❌ Failed: ${failed}`);
 
     return { workspaces: results, summary };
   }
@@ -194,7 +194,7 @@ export class WorkspaceOrchestrator {
     published: Map<string, { registry: string; version: string; status: 'success' | 'failed' }>;
     summary: { total: number; success: number; failed: number };
   }> {
-    console.log('📦 Starting multi-registry publishing process...');
+    console.info('📦 Starting multi-registry publishing process...');
 
     const published = new Map<
       string,
@@ -213,7 +213,7 @@ export class WorkspaceOrchestrator {
         continue;
       }
 
-      console.log(`📦 Publishing ${workspaceName} to ${workspaceConfig.registry} registry`);
+      console.info(`📦 Publishing ${workspaceName} to ${workspaceConfig.registry} registry`);
 
       try {
         const result = await this.publishToRegistry(workspaceConfig, strategy, options);
@@ -234,9 +234,9 @@ export class WorkspaceOrchestrator {
 
     const summary = { total: workspacesToPublish.length, success, failed };
 
-    console.log('\n📊 Publishing Summary:');
-    console.log(`✅ Success: ${success}`);
-    console.log(`❌ Failed: ${failed}`);
+    console.info('\n📊 Publishing Summary:');
+    console.info(`✅ Success: ${success}`);
+    console.info(`❌ Failed: ${failed}`);
 
     return { published, summary };
   }
@@ -256,7 +256,7 @@ export class WorkspaceOrchestrator {
     tests: { passed: number; failed: number };
     status: 'success' | 'partial' | 'failed';
   }> {
-    console.log('🔄 Starting workspace reunification process...');
+    console.info('🔄 Starting workspace reunification process...');
 
     const mode = options.mode || 'development';
     const dependencies = new Map<string, string>();
@@ -265,14 +265,14 @@ export class WorkspaceOrchestrator {
 
     // Update package dependencies based on published versions
     if (options.updateDependencies) {
-      console.log('🔄 Updating cross-workspace dependencies...');
+      console.info('🔄 Updating cross-workspace dependencies...');
 
       for (const workspace of this.config.workspaces) {
         const latestVersions = await this.getLatestVersions(workspace);
 
         for (const [pkg, version] of latestVersions) {
           dependencies.set(pkg, version);
-          console.log(`📦 ${pkg}: ${version}`);
+          console.info(`📦 ${pkg}: ${version}`);
         }
       }
 
@@ -281,7 +281,7 @@ export class WorkspaceOrchestrator {
 
     // Run integration tests
     if (options.runTests) {
-      console.log('🧪 Running integration tests...');
+      console.info('🧪 Running integration tests...');
       const testResults = await this.runIntegrationTests(mode);
       testsPassed = testResults.passed;
       testsFailed = testResults.failed;
@@ -289,11 +289,11 @@ export class WorkspaceOrchestrator {
 
     const status = testsFailed === 0 ? 'success' : testsPassed > 0 ? 'partial' : 'failed';
 
-    console.log('\n📊 Reunification Summary:');
-    console.log(`📦 Dependencies updated: ${dependencies.size}`);
-    console.log(`✅ Tests passed: ${testsPassed}`);
-    console.log(`❌ Tests failed: ${testsFailed}`);
-    console.log(`🎯 Status: ${status}`);
+    console.info('\n📊 Reunification Summary:');
+    console.info(`📦 Dependencies updated: ${dependencies.size}`);
+    console.info(`✅ Tests passed: ${testsPassed}`);
+    console.info(`❌ Tests failed: ${testsFailed}`);
+    console.info(`🎯 Status: ${status}`);
 
     return { dependencies, tests: { passed: testsPassed, failed: testsFailed }, status };
   }
@@ -314,7 +314,7 @@ export class WorkspaceOrchestrator {
     budgets: { passed: number; failed: number };
     status: 'success' | 'warning' | 'failed';
   }> {
-    console.log('📊 Starting comprehensive benchmark suite...');
+    console.info('📊 Starting comprehensive benchmark suite...');
 
     const suites = options.suites || ['package', 'integration', 'deployment', 'performance'];
     const results = new Map<string, any>();
@@ -322,7 +322,7 @@ export class WorkspaceOrchestrator {
       budgetsFailed = 0;
 
     for (const suite of suites) {
-      console.log(`🏃 Running ${suite} benchmarks...`);
+      console.info(`🏃 Running ${suite} benchmarks...`);
 
       try {
         const suiteResults = await this.runBenchmarkSuite(suite, options);
@@ -351,10 +351,10 @@ export class WorkspaceOrchestrator {
       await this.sendPerformanceAlerts(results);
     }
 
-    console.log('\n📊 Benchmark Summary:');
-    console.log(`✅ Budgets passed: ${budgetsPassed}`);
-    console.log(`❌ Budgets failed: ${budgetsFailed}`);
-    console.log(`🎯 Status: ${status}`);
+    console.info('\n📊 Benchmark Summary:');
+    console.info(`✅ Budgets passed: ${budgetsPassed}`);
+    console.info(`❌ Budgets failed: ${budgetsFailed}`);
+    console.info(`🎯 Status: ${status}`);
 
     return { results, budgets: { passed: budgetsPassed, failed: budgetsFailed }, status };
   }
@@ -508,7 +508,7 @@ export class WorkspaceOrchestrator {
     options: any
   ): Promise<{ status: 'created' | 'updated' | 'failed' }> {
     if (options.dryRun) {
-      console.log(`🧪 Would create workspace: ${config.name}`);
+      console.info(`🧪 Would create workspace: ${config.name}`);
       return { status: 'created' };
     }
 
@@ -518,7 +518,7 @@ export class WorkspaceOrchestrator {
       // Create workspace directory
       if (!existsSync(workspaceDir)) {
         mkdirSync(workspaceDir, { recursive: true });
-        console.log(`📁 Created workspace directory: ${workspaceDir}`);
+        console.info(`📁 Created workspace directory: ${workspaceDir}`);
 
         // Initialize git repository
         if (options.createRepos) {
@@ -553,7 +553,7 @@ export class WorkspaceOrchestrator {
         if (existsSync(srcDir)) {
           await this.copyDirectory(srcDir, destDir);
           await this.updatePackageDependenciesInWorkspace(destDir, config, packages);
-          console.log(`📦 Copied ${packageName} to workspace`);
+          console.info(`📦 Copied ${packageName} to workspace`);
         }
       }
 
@@ -562,7 +562,7 @@ export class WorkspaceOrchestrator {
         await this.createInitialCommit(workspaceDir, config);
       }
 
-      console.log(`✅ Successfully created workspace: ${config.name}`);
+      console.info(`✅ Successfully created workspace: ${config.name}`);
       return { status: 'created' };
     } catch (error) {
       console.error(`❌ Failed to create workspace ${config.name}: ${error}`);
@@ -642,7 +642,7 @@ export class WorkspaceOrchestrator {
     config: WorkspaceConfig,
     options: any
   ): Promise<void> {
-    console.log(`🔧 Initializing git repository for ${config.name}`);
+    console.info(`🔧 Initializing git repository for ${config.name}`);
 
     // Initialize git repository
     await this.processManager.execute({
@@ -678,7 +678,7 @@ export class WorkspaceOrchestrator {
         cwd: workspaceDir,
         timeout: 10000,
       });
-      console.log(`📡 Added remote origin: ${config.repository.url}`);
+      console.info(`📡 Added remote origin: ${config.repository.url}`);
     }
   }
 
@@ -987,7 +987,7 @@ coverage/
   }
 
   private async createInitialCommit(workspaceDir: string, config: WorkspaceConfig): Promise<void> {
-    console.log(`📝 Creating initial commit for ${config.name}`);
+    console.info(`📝 Creating initial commit for ${config.name}`);
 
     // Add all files
     await this.processManager.execute({
@@ -1013,7 +1013,7 @@ Registry: ${config.registry}
       timeout: 30000,
     });
 
-    console.log(`✅ Created initial commit for ${config.name}`);
+    console.info(`✅ Created initial commit for ${config.name}`);
   }
 }
 

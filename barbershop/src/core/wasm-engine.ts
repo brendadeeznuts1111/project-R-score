@@ -56,7 +56,7 @@ export class WasmEngine {
     this.modules.set(moduleName, module);
     
     const elapsedNs = nanoseconds() - startNs;
-    console.log(`[WASM] Module ${moduleName} loaded in ${(elapsedNs / 1e6).toFixed(2)}ms`);
+    console.info(`[WASM] Module ${moduleName} loaded in ${(elapsedNs / 1e6).toFixed(2)}ms`);
     
     return module;
   }
@@ -130,7 +130,7 @@ export class WasmEngine {
     const p99 = sorted[Math.floor(sorted.length * 0.99)];
     
     const elapsedNs = nanoseconds() - startNs;
-    console.log(`[WASM] Stats computed for ${values.length} values in ${(elapsedNs / 1e3).toFixed(2)}μs`);
+    console.info(`[WASM] Stats computed for ${values.length} values in ${(elapsedNs / 1e3).toFixed(2)}μs`);
     
     return { mean, variance, stdDev, min, max, p50, p95, p99 };
   }

@@ -146,7 +146,7 @@ export const FEATURE_MATRIX = {
 export const debug = {
   log: (...args: unknown[]) => {
     if (COMPILE_TIME_FEATURES.DEBUG) {
-      console.log("[DEBUG]", ...args);
+      console.info("[DEBUG]", ...args);
     }
   },
   warn: (...args: unknown[]) => {

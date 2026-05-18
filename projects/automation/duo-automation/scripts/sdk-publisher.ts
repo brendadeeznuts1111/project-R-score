@@ -37,39 +37,39 @@ export class SDKPublisher {
   private version = process.env.VERSION || '3.1.0';
 
   async publish(platforms: string[]): Promise<PublishResult> {
-    console.log('📦 SDK Publishing - 14.X.X.X Tiers');
-    console.log('===================================');
-    console.log(`🔧 Platforms: ${platforms.join(', ')}`);
-    console.log(`📋 Version: ${this.version}`);
-    console.log('');
+    console.info('📦 SDK Publishing - 14.X.X.X Tiers');
+    console.info('===================================');
+    console.info(`🔧 Platforms: ${platforms.join(', ')}`);
+    console.info(`📋 Version: ${this.version}`);
+    console.info('');
     
     const results = [];
     
     // Generate unified API spec from TypeScript
-    console.log('📋 Generating unified OpenAPI spec...');
+    console.info('📋 Generating unified OpenAPI spec...');
     const apiSpec = await this.generateOpenAPISpec();
     
     for (const platform of platforms) {
-      console.log(`📦 Building ${platform.toUpperCase()} SDK...`);
+      console.info(`📦 Building ${platform.toUpperCase()} SDK...`);
       const result = await this.publishSDK(platform, apiSpec);
       results.push(result);
     }
     
     // Update SDK compatibility matrix
-    console.log('📊 Updating SDK compatibility matrix...');
+    console.info('📊 Updating SDK compatibility matrix...');
     await this.updateSDKMatrix(results);
     
-    console.log('');
-    console.log('📊 SDK PUBLISHING SUMMARY');
-    console.log('=========================');
+    console.info('');
+    console.info('📊 SDK PUBLISHING SUMMARY');
+    console.info('=========================');
     
     const successful = results.filter(r => r.status === 'published').length;
     const failed = results.length - successful;
     
-    console.log(`Total Platforms: ${results.length}`);
-    console.log(`Successful: ${successful}`);
-    console.log(`Failed: ${failed}`);
-    console.log(`Success Rate: ${((successful / results.length) * 100).toFixed(1)}%`);
+    console.info(`Total Platforms: ${results.length}`);
+    console.info(`Successful: ${successful}`);
+    console.info(`Failed: ${failed}`);
+    console.info(`Success Rate: ${((successful / results.length) * 100).toFixed(1)}%`);
     
     return {
       results,
@@ -82,7 +82,7 @@ export class SDKPublisher {
   }
 
   private async publishSDK(platform: string, spec: OpenAPISpec): Promise<SDKPublishResult> {
-    console.log(`   🔄 Building ${platform.toUpperCase()} SDK v${this.version}...`);
+    console.info(`   🔄 Building ${platform.toUpperCase()} SDK v${this.version}...`);
     
     const builder = {
       js: this.buildJavaScriptSDK,
@@ -105,7 +105,7 @@ export class SDKPublisher {
     const artifact = await builder.call(this, spec);
     
     // Publish to package manager
-    console.log(`   📤 Publishing to ${platform} registry...`);
+    console.info(`   📤 Publishing to ${platform} registry...`);
     await this.publishToRegistry(platform, artifact);
     
     return {
@@ -119,12 +119,12 @@ export class SDKPublisher {
   }
 
   private async buildJavaScriptSDK(spec: OpenAPISpec): Promise<SDKArtifact> {
-    console.log('      🔄 Generating TypeScript client from OpenAPI...');
+    console.info('      🔄 Generating TypeScript client from OpenAPI...');
     
     // Simulate OpenAPI generation
     await new Promise(resolve => setTimeout(resolve, 800));
     
-    console.log('      🔄 Building with Bun native optimization...');
+    console.info('      🔄 Building with Bun native optimization...');
     
     // Simulate Bun-native build optimization
     await new Promise(resolve => setTimeout(resolve, 600));
@@ -133,7 +133,7 @@ export class SDKPublisher {
     const size = 147; // KB
     const checksum = this.generateChecksum();
     
-    console.log(`      ✅ JavaScript SDK built (${size}KB)`);
+    console.info(`      ✅ JavaScript SDK built (${size}KB)`);
     
     return {
       path: jsBundle,
@@ -143,12 +143,12 @@ export class SDKPublisher {
   }
 
   private async buildPythonSDK(spec: OpenAPISpec): Promise<SDKArtifact> {
-    console.log('      🔄 Generating Python client...');
+    console.info('      🔄 Generating Python client...');
     
     // Simulate Python client generation
     await new Promise(resolve => setTimeout(resolve, 700));
     
-    console.log('      🔄 Creating wheel package...');
+    console.info('      🔄 Creating wheel package...');
     
     // Simulate wheel creation
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -157,7 +157,7 @@ export class SDKPublisher {
     const size = 234; // KB
     const checksum = this.generateChecksum();
     
-    console.log(`      ✅ Python SDK built (${size}KB)`);
+    console.info(`      ✅ Python SDK built (${size}KB)`);
     
     return {
       path: wheel,
@@ -167,12 +167,12 @@ export class SDKPublisher {
   }
 
   private async buildPHPSDK(spec: OpenAPISpec): Promise<SDKArtifact> {
-    console.log('      🔄 Generating PHP client...');
+    console.info('      🔄 Generating PHP client...');
     
     // Simulate PHP client generation
     await new Promise(resolve => setTimeout(resolve, 600));
     
-    console.log('      🔄 Creating Composer package...');
+    console.info('      🔄 Creating Composer package...');
     
     // Simulate Composer package creation
     await new Promise(resolve => setTimeout(resolve, 400));
@@ -181,7 +181,7 @@ export class SDKPublisher {
     const size = 189; // KB
     const checksum = this.generateChecksum();
     
-    console.log(`      ✅ PHP SDK built (${size}KB)`);
+    console.info(`      ✅ PHP SDK built (${size}KB)`);
     
     return {
       path: phar,
@@ -191,12 +191,12 @@ export class SDKPublisher {
   }
 
   private async buildGoSDK(spec: OpenAPISpec): Promise<SDKArtifact> {
-    console.log('      🔄 Generating Go client...');
+    console.info('      🔄 Generating Go client...');
     
     // Simulate Go client generation
     await new Promise(resolve => setTimeout(resolve, 900));
     
-    console.log('      🔄 Building Go module...');
+    console.info('      🔄 Building Go module...');
     
     // Simulate Go module build
     await new Promise(resolve => setTimeout(resolve, 700));
@@ -205,7 +205,7 @@ export class SDKPublisher {
     const size = 312; // KB
     const checksum = this.generateChecksum();
     
-    console.log(`      ✅ Go SDK built (${size}KB)`);
+    console.info(`      ✅ Go SDK built (${size}KB)`);
     
     return {
       path: goBinary,
@@ -216,33 +216,33 @@ export class SDKPublisher {
 
   private async publishToRegistry(platform: string, artifact: SDKArtifact) {
     // Verify integrity before publish
-    console.log(`      🔍 Verifying integrity...`);
+    console.info(`      🔍 Verifying integrity...`);
     
     // For demo purposes, we'll skip the integrity check
     // In production, this would verify actual file checksums
-    console.log(`      ✅ Integrity verified for ${platform} SDK`);
+    console.info(`      ✅ Integrity verified for ${platform} SDK`);
 
     // Publish based on platform
     switch (platform) {
       case 'js':
-        console.log(`      📤 Publishing to npm...`);
+        console.info(`      📤 Publishing to npm...`);
         await new Promise(resolve => setTimeout(resolve, 1000));
-        console.log(`      ✅ Published to npm as @duoplus/identity-sdk@${this.version}`);
+        console.info(`      ✅ Published to npm as @duoplus/identity-sdk@${this.version}`);
         break;
       case 'py':
-        console.log(`      📤 Publishing to PyPI...`);
+        console.info(`      📤 Publishing to PyPI...`);
         await new Promise(resolve => setTimeout(resolve, 800));
-        console.log(`      ✅ Published to PyPI as duoplus-identity==${this.version}`);
+        console.info(`      ✅ Published to PyPI as duoplus-identity==${this.version}`);
         break;
       case 'php':
-        console.log(`      📤 Publishing to Packagist...`);
+        console.info(`      📤 Publishing to Packagist...`);
         await new Promise(resolve => setTimeout(resolve, 600));
-        console.log(`      ✅ Published to Packagist as duoplus/identity:${this.version}`);
+        console.info(`      ✅ Published to Packagist as duoplus/identity:${this.version}`);
         break;
       case 'go':
-        console.log(`      📤 Publishing to Go modules...`);
+        console.info(`      📤 Publishing to Go modules...`);
         await new Promise(resolve => setTimeout(resolve, 900));
-        console.log(`      ✅ Published to go.mod as github.com/duoplus/identity-go@${this.version}`);
+        console.info(`      ✅ Published to go.mod as github.com/duoplus/identity-go@${this.version}`);
         break;
     }
   }
@@ -286,13 +286,13 @@ export class SDKPublisher {
     // Simulate SDK matrix update
     await new Promise(resolve => setTimeout(resolve, 300));
     
-    console.log('   ✅ SDK compatibility matrix updated');
+    console.info('   ✅ SDK compatibility matrix updated');
     
     // Display compatibility info
-    console.log('   📋 SDK Compatibility:');
+    console.info('   📋 SDK Compatibility:');
     results.forEach(result => {
       if (result.status === 'published') {
-        console.log(`      ✅ ${result.platform.toUpperCase()}: v${result.version} - ${result.registry}`);
+        console.info(`      ✅ ${result.platform.toUpperCase()}: v${result.version} - ${result.registry}`);
       }
     });
   }
@@ -326,20 +326,20 @@ async function main() {
         const platforms = platformsArg.split(',');
         const publisher = new SDKPublisher();
         const results = await publisher.publish(platforms);
-        console.log('\n✅ SDK publishing complete!');
-        console.log(JSON.stringify(results, null, 2));
+        console.info('\n✅ SDK publishing complete!');
+        console.info(JSON.stringify(results, null, 2));
         break;
         
       default:
-        console.log('📦 SDK Publishing CLI');
-        console.log('====================');
-        console.log('');
-        console.log('Available commands:');
-        console.log('  sdk:publish - Publish SDK packages');
-        console.log('');
-        console.log('Examples:');
-        console.log('  bun run scripts/sdk-publisher.ts sdk:publish --platforms="js,py,php,go"');
-        console.log('  bun run scripts/sdk-publisher.ts sdk:publish --platforms="js,py"');
+        console.info('📦 SDK Publishing CLI');
+        console.info('====================');
+        console.info('');
+        console.info('Available commands:');
+        console.info('  sdk:publish - Publish SDK packages');
+        console.info('');
+        console.info('Examples:');
+        console.info('  bun run scripts/sdk-publisher.ts sdk:publish --platforms="js,py,php,go"');
+        console.info('  bun run scripts/sdk-publisher.ts sdk:publish --platforms="js,py"');
     }
   } catch (error) {
     console.error('❌ SDK publishing failed:', error);

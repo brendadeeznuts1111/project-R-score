@@ -158,9 +158,9 @@ function generateDeepLink(name: string, fragment: string): GitHubValidationResul
 }
 
 async function runAdvancedValidation(): Promise<void> {
-  console.log(colorize('🔬 Advanced Bun GitHub & Documentation Validation', 'bright'));
-  console.log(colorize('===================================================', 'cyan'));
-  console.log();
+  console.info(colorize('🔬 Advanced Bun GitHub & Documentation Validation', 'bright'));
+  console.info(colorize('===================================================', 'cyan'));
+  console.info();
 
   // Test cases
   const docsUrls = [
@@ -176,8 +176,8 @@ async function runAdvancedValidation(): Promise<void> {
     { name: 'fetch API', fragment: 'fetch' }
   ];
 
-  console.log(colorize('Running advanced validation checks...', 'yellow'));
-  console.log();
+  console.info(colorize('Running advanced validation checks...', 'yellow'));
+  console.info();
 
   // Run all validations
   const results: GitHubValidationResult[] = [];
@@ -185,70 +185,70 @@ async function runAdvancedValidation(): Promise<void> {
   // 1. Latest commit fetch
   const latestCommitResult = await fetchLatestCommit();
   results.push(latestCommitResult);
-  console.log(`🔍 ${latestCommitResult.check}: ${latestCommitResult.message}`);
+  console.info(`🔍 ${latestCommitResult.check}: ${latestCommitResult.message}`);
 
   // 2. Check current stable release commit
   const stableCommit = 'b64edcb490b486fb8af90cb2cb2dc51590453064';
   const commitCheckResult = await checkCommitExists(stableCommit);
   results.push(commitCheckResult);
-  console.log(`🔍 ${commitCheckResult.check}: ${commitCheckResult.message}`);
+  console.info(`🔍 ${commitCheckResult.check}: ${commitCheckResult.message}`);
 
   // 3. Raw file content check
   const rawFileResult = await getRawFileSnippet();
   results.push(rawFileResult);
-  console.log(`🔍 ${rawFileResult.check}: ${rawFileResult.message}`);
+  console.info(`🔍 ${rawFileResult.check}: ${rawFileResult.message}`);
 
   // 4. Documentation URL checks
-  console.log();
-  console.log(colorize('📚 Documentation URL Checks:', 'bright'));
+  console.info();
+  console.info(colorize('📚 Documentation URL Checks:', 'bright'));
   for (const { url, name } of docsUrls) {
     const result = await checkDocsUrl(url, name);
     results.push(result);
-    console.log(`  ${result.message}`);
+    console.info(`  ${result.message}`);
   }
 
   // 5. Deep link generation
-  console.log();
-  console.log(colorize('🔗 Generated Deep Links:', 'bright'));
+  console.info();
+  console.info(colorize('🔗 Generated Deep Links:', 'bright'));
   for (const { name, fragment } of deepLinks) {
     const result = generateDeepLink(name, fragment);
     results.push(result);
-    console.log(`  ${result.message}`);
+    console.info(`  ${result.message}`);
   }
 
   // Summary
-  console.log();
-  console.log(colorize('📊 Validation Summary', 'bright'));
-  console.log(colorize('=====================', 'cyan'));
+  console.info();
+  console.info(colorize('📊 Validation Summary', 'bright'));
+  console.info(colorize('=====================', 'cyan'));
 
   const successCount = results.filter(r => r.status === 'success').length;
   const warningCount = results.filter(r => r.status === 'warning').length;
   const errorCount = results.filter(r => r.status === 'error').length;
 
-  console.log(`✅ Successful: ${colorize(successCount.toString(), 'green')}`);
-  console.log(`⚠️  Warnings: ${colorize(warningCount.toString(), 'yellow')}`);
-  console.log(`❌ Errors: ${colorize(errorCount.toString(), 'red')}`);
-  console.log(`📈 Total checks: ${results.length}`);
+  console.info(`✅ Successful: ${colorize(successCount.toString(), 'green')}`);
+  console.info(`⚠️  Warnings: ${colorize(warningCount.toString(), 'yellow')}`);
+  console.info(`❌ Errors: ${colorize(errorCount.toString(), 'red')}`);
+  console.info(`📈 Total checks: ${results.length}`);
 
   if (errorCount > 0) {
-    console.log();
-    console.log(colorize('🔧 Failed checks:', 'red'));
+    console.info();
+    console.info(colorize('🔧 Failed checks:', 'red'));
     results.filter(r => r.status === 'error').forEach(result => {
-      console.log(`  • ${result.check}: ${result.message}`);
+      console.info(`  • ${result.check}: ${result.message}`);
     });
   }
 
   // Latest commit info
   const latestCommitData = results.find(r => r.check === 'Latest Commit Fetch' && r.data)?.data;
   if (latestCommitData) {
-    console.log();
-    console.log(colorize('📋 Latest Information:', 'bright'));
-    console.log(`Latest commit: ${colorize(latestCommitData.commit, 'blue')}`);
-    console.log(`Short hash: ${colorize(latestCommitData.commit.slice(0, 12), 'blue')}`);
+    console.info();
+    console.info(colorize('📋 Latest Information:', 'bright'));
+    console.info(`Latest commit: ${colorize(latestCommitData.commit, 'blue')}`);
+    console.info(`Short hash: ${colorize(latestCommitData.commit.slice(0, 12), 'blue')}`);
   }
 
-  console.log();
-  console.log(colorize('🎯 Advanced validation complete!', 'green'));
+  console.info();
+  console.info(colorize('🎯 Advanced validation complete!', 'green'));
 }
 
 // Run the validation

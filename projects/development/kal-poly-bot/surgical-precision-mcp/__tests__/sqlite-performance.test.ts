@@ -49,7 +49,7 @@ test("SQLite 3.51.1 EXISTS-to-JOIN Optimization Benchmark", () => {
   const db = new Database(':memory:');
   const matcher = new PatternMatcher(db);
 
-  console.log('\n🧪 SQLite 3.51.1 EXISTS-to-JOIN Optimization Benchmark');
+  console.info('\n🧪 SQLite 3.51.1 EXISTS-to-JOIN Optimization Benchmark');
 
   // Create test data that benefits from EXISTS-to-JOIN optimization
   console.time('[SQLite] Creating test dataset (10k patterns)');
@@ -78,7 +78,7 @@ test("SQLite 3.51.1 EXISTS-to-JOIN Optimization Benchmark", () => {
   const existsTime = console.timeEnd('[SQLite] EXISTS query (10k rows, optimized)');
 
   expect(existsResults.length).toBe(1000); // All 1000 matrices should match
-  console.log(`✅ EXISTS optimization: Found ${existsResults.length} matches`);
+  console.info(`✅ EXISTS optimization: Found ${existsResults.length} matches`);
 
   // Compare with manual JOIN query to verify optimization
   console.time('[SQLite] Manual JOIN equivalent');
@@ -90,12 +90,12 @@ test("SQLite 3.51.1 EXISTS-to-JOIN Optimization Benchmark", () => {
   console.timeEnd('[SQLite] Manual JOIN equivalent');
 
   expect(joinResults.length).toBe(existsResults.length);
-  console.log(`✅ JOIN consistency: Both queries returned ${joinResults.length} results`);
+  console.info(`✅ JOIN consistency: Both queries returned ${joinResults.length} results`);
 
   // Test query planner hints with different patterns
   const testPatterns = ['rapid_betting', 'nonexistent_pattern', 'pattern_0_0'];
 
-  console.log('\n📊 Query Performance Comparison:');
+  console.info('\n📊 Query Performance Comparison:');
   for (const pattern of testPatterns) {
     const start = performance.now();
     const count = db.query(`
@@ -107,7 +107,7 @@ test("SQLite 3.51.1 EXISTS-to-JOIN Optimization Benchmark", () => {
     `).get(pattern) as any;
     const time = performance.now() - start;
 
-    console.log(`  Pattern "${pattern}": ${count.count} matches in ${(time).toFixed(4)}ms`);
+    console.info(`  Pattern "${pattern}": ${count.count} matches in ${(time).toFixed(4)}ms`);
   }
 
   db.close();
@@ -116,7 +116,7 @@ test("SQLite 3.51.1 EXISTS-to-JOIN Optimization Benchmark", () => {
 test("SQLite 3.51.1 Query Planner Improvements", () => {
   const db = new Database(':memory:');
 
-  console.log('\n🔍 SQLite 3.51.1 Query Planner Analysis');
+  console.info('\n🔍 SQLite 3.51.1 Query Planner Analysis');
 
   // Test various query patterns that benefit from planner improvements
   db.exec(`
@@ -161,19 +161,19 @@ test("SQLite 3.51.1 Query Planner Improvements", () => {
     }
   ];
 
-  console.log('Query Performance Results:');
+  console.info('Query Performance Results:');
   for (const query of queries) {
     const start = performance.now();
     const results = db.query(query.sql).all(...query.params);
     const time = performance.now() - start;
 
-    console.log(`  ${query.name}: ${results.length} rows in ${(time).toFixed(4)}ms`);
+    console.info(`  ${query.name}: ${results.length} rows in ${(time).toFixed(4)}ms`);
   }
 
   // Check SQLite version
   const version = db.query('SELECT sqlite_version() as version').get() as any;
-  console.log(`\n📋 SQLite Version: ${version.version}`);
-  console.log('🎯 Query planner improvements in 3.51.1 should optimize EXISTS-to-JOIN conversions');
+  console.info(`\n📋 SQLite Version: ${version.version}`);
+  console.info('🎯 Query planner improvements in 3.51.1 should optimize EXISTS-to-JOIN conversions');
 
   db.close();
 });

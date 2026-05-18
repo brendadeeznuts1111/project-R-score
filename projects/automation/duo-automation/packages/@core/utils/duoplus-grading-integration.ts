@@ -202,7 +202,7 @@ export class DuoPlusGradingIntegration extends AppleIDGradingSystem {
     batchSize: number = 10
   ): Promise<any> {
     try {
-      console.log('🚀 Deploying DuoPlus Apple ID creation workflow...');
+      console.info('🚀 Deploying DuoPlus Apple ID creation workflow...');
 
       // Deploy RPA templates based on configuration
       const rpaDeployment = await this.duoPlusSDK.deployRPATemplate({
@@ -216,7 +216,7 @@ export class DuoPlusGradingIntegration extends AppleIDGradingSystem {
         }
       });
 
-      console.log('✅ DuoPlus workflow deployed successfully');
+      console.info('✅ DuoPlus workflow deployed successfully');
       return rpaDeployment;
 
     } catch (error) {

@@ -70,7 +70,7 @@ export class LSPClient extends EventEmitter {
   private async startServer(): Promise<void> {
     // In a real implementation, this would spawn the actual LSP server
     // For demo purposes, we'll simulate the server
-    console.log(`Starting LSP server with command: ${this.config.serverCommand.join(' ')}`);
+    console.info(`Starting LSP server with command: ${this.config.serverCommand.join(' ')}`);
     
     // Simulate server startup delay
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -138,7 +138,7 @@ export class LSPClient extends EventEmitter {
 
     // Simulate handshake response
     await new Promise(resolve => setTimeout(resolve, 500));
-    console.log('LSP handshake completed');
+    console.info('LSP handshake completed');
   }
 
   /**
@@ -199,7 +199,7 @@ export class LSPClient extends EventEmitter {
     this.state.lastActivity = Date.now();
     
     // Simulate opening file
-    console.log(`Opening file: ${filename}`);
+    console.info(`Opening file: ${filename}`);
     
     // Generate diagnostics for the file
     setTimeout(() => {
@@ -222,9 +222,9 @@ export class LSPClient extends EventEmitter {
         {
           label: 'console.log',
           kind: 1, // Text
-          detail: 'console.log(value: any): void',
+          detail: 'console.info(value: any): void',
           documentation: 'Outputs a message to the web console',
-          insertText: 'console.log($1);$0'
+          insertText: 'console.info($1);$0'
         },
         {
           label: 'function',
@@ -270,7 +270,7 @@ export class LSPClient extends EventEmitter {
       // Simulate applying quick fix
       await new Promise(resolve => setTimeout(resolve, 200));
       
-      console.log(`Applying quick fix for: ${code}`);
+      console.info(`Applying quick fix for: ${code}`);
       
       // In a real implementation, this would apply the actual fix
       const responseTime = Date.now() - startTime;
@@ -301,7 +301,7 @@ export class LSPClient extends EventEmitter {
       // Simulate formatting
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      console.log(`Formatting document: ${filename}`);
+      console.info(`Formatting document: ${filename}`);
       
       const responseTime = Date.now() - startTime;
       this.responseTimes.push(responseTime);
@@ -403,7 +403,7 @@ export class LSPClient extends EventEmitter {
   async disconnect(): Promise<void> {
     if (this.process) {
       // In a real implementation, this would terminate the process
-      console.log('Disconnecting from LSP server');
+      console.info('Disconnecting from LSP server');
     }
     
     this.state.isConnected = false;

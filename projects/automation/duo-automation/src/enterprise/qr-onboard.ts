@@ -308,7 +308,7 @@ export class GlobalDeviceOnboardingSystem implements IGlobalDeviceOnboardingServ
     };
 
     // In production, send to secure logging service
-    console.log(' SECURITY AUDIT:', JSON.stringify(auditEntry));
+    console.info(' SECURITY AUDIT:', JSON.stringify(auditEntry));
 
     // Emit security event for monitoring
     this.emit('securityEvent', auditEntry);
@@ -374,7 +374,7 @@ export class GlobalDeviceOnboardingSystem implements IGlobalDeviceOnboardingServ
     deviceCategory: DeviceCategory,
     geographicScope: string = 'GLOBAL'
   ): Promise<IOnboardingGenerationResult> {
-    console.log(` Generating Global QR Code for Enterprise: ${merchantIdentifier}`);
+    console.info(` Generating Global QR Code for Enterprise: ${merchantIdentifier}`);
 
     // Security: Input validation
     if (!this.validateMerchantIdentifier(merchantIdentifier)) {
@@ -511,7 +511,7 @@ export class GlobalDeviceOnboardingSystem implements IGlobalDeviceOnboardingServ
   async processGlobalDeviceOnboarding(
     onboardingRequest: IDeviceOnboardingRequest
   ): Promise<IGlobalOnboardingResult> {
-    console.log(`🌍 Processing global device onboarding: ${onboardingRequest.deviceIdentifier}`);
+    console.info(`🌍 Processing global device onboarding: ${onboardingRequest.deviceIdentifier}`);
     
     // 1. Validate JWT token and expiration
     const tokenValidation = await this.validateEnterpriseToken(onboardingRequest.authenticationToken);
@@ -571,7 +571,7 @@ export class GlobalDeviceOnboardingSystem implements IGlobalDeviceOnboardingServ
   private async executeComprehensiveComplianceValidation(
     deviceSpecification: IGlobalDeviceSpecification
   ): Promise<IComprehensiveHealthResults> {
-    console.log(`🔍 Executing comprehensive global compliance validation...`);
+    console.info(`🔍 Executing comprehensive global compliance validation...`);
     
     const validations: ISystemHealthValidation[] = [
       // Operating System Security Validations
@@ -624,7 +624,7 @@ export class GlobalDeviceOnboardingSystem implements IGlobalDeviceOnboardingServ
     merchantIdentifier: string,
     geographicLocation: { country: string; region: string; timezone: string }
   ): Promise<IDeviceConfigurationDeployment> {
-    console.log(`⚙️ Deploying global configuration profiles to device: ${deviceIdentifier}`);
+    console.info(`⚙️ Deploying global configuration profiles to device: ${deviceIdentifier}`);
     
     // Determine service tier based on compliance score and geographic requirements
     const serviceTier = complianceValidations.overallScore >= 95 ? 'ENTERPRISE' : 
@@ -1182,7 +1182,7 @@ export class GlobalDeviceOnboardingSystem implements IGlobalDeviceOnboardingServ
   private async executeEnterpriseMutualTLS(
     deviceSpecification: IGlobalDeviceSpecification
   ): Promise<IMutualTLSResult> {
-    console.log('🤝 Executing enterprise mutual TLS handshake...');
+    console.info('🤝 Executing enterprise mutual TLS handshake...');
     
     try {
       const deviceCertificate = deviceSpecification.cryptographicIdentity.deviceCertificate || 'enterprise-device-cert';
@@ -1536,7 +1536,7 @@ export class GlobalDeviceOnboardingSystem implements IGlobalDeviceOnboardingServ
             .then(data => {
               if (data.newQR) {
                 document.querySelector('.qr-container img').src = data.newQR;
-                console.log('Global QR code refreshed');
+                console.info('Global QR code refreshed');
               }
             });
         }, 270000); // 4.5 minutes

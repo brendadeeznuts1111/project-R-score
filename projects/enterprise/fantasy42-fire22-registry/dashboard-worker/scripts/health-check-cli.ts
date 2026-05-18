@@ -53,8 +53,8 @@ class HealthCheckCLI {
     const startTime = Date.now();
 
     try {
-      console.log('💚 API Health Check');
-      console.log('🔍 Scanning all endpoints...\n');
+      console.info('💚 API Health Check');
+      console.info('🔍 Scanning all endpoints...\n');
 
       // Get system health
       const healthStatus = await this.monitor.getSystemHealth();
@@ -131,7 +131,7 @@ class HealthCheckCLI {
         timestamp: new Date().toISOString(),
         executionTime: `${executionTime}ms`,
       };
-      console.log(JSON.stringify(jsonOutput, null, 2));
+      console.info(JSON.stringify(jsonOutput, null, 2));
       return;
     }
 
@@ -152,44 +152,44 @@ class HealthCheckCLI {
     // Display component status
     checks.forEach(check => {
       if (check.status === 'healthy') {
-        console.log(
+        console.info(
           `${check.icon} ${check.name}: ${check.status.charAt(0).toUpperCase() + check.status.slice(1)}`
         );
       } else {
-        console.log(
+        console.info(
           `❌ ${check.name}: ${check.status.charAt(0).toUpperCase() + check.status.slice(1)}`
         );
       }
     });
 
-    console.log('');
+    console.info('');
 
     // Performance metrics
-    console.log('📊 Performance:');
-    console.log(`• Response Time: ${metrics.responseTime}ms`);
-    console.log(`• Success Rate: ${metrics.successRate}%`);
-    console.log(`• Uptime: ${metrics.uptime}%`);
-    console.log(`• Error Rate: ${metrics.errorRate}%`);
-    console.log('');
+    console.info('📊 Performance:');
+    console.info(`• Response Time: ${metrics.responseTime}ms`);
+    console.info(`• Success Rate: ${metrics.successRate}%`);
+    console.info(`• Uptime: ${metrics.uptime}%`);
+    console.info(`• Error Rate: ${metrics.errorRate}%`);
+    console.info('');
 
     // Security status
-    console.log('🛡️ Security:');
-    console.log('• SSL: Active');
-    console.log('• Firewall: Enabled');
-    console.log('• DDoS Protection: Active');
-    console.log('• Encryption: AES-256');
-    console.log('');
+    console.info('🛡️ Security:');
+    console.info('• SSL: Active');
+    console.info('• Firewall: Enabled');
+    console.info('• DDoS Protection: Active');
+    console.info('• Encryption: AES-256');
+    console.info('');
 
     // Overall status
     if (status === 'healthy') {
-      console.log('✅ All systems operational!');
+      console.info('✅ All systems operational!');
     } else {
-      console.log(`⚠️ System status: ${status.toUpperCase()}`);
+      console.info(`⚠️ System status: ${status.toUpperCase()}`);
     }
 
     // Execution time
     if (this.options.verbose) {
-      console.log(`\n⏱️ Health check completed in ${executionTime}ms`);
+      console.info(`\n⏱️ Health check completed in ${executionTime}ms`);
     }
   }
 
@@ -206,17 +206,17 @@ class HealthCheckCLI {
    */
   async checkComponent(componentName: string): Promise<void> {
     try {
-      console.log(`🔍 Checking component: ${componentName}`);
+      console.info(`🔍 Checking component: ${componentName}`);
 
       const health = await this.monitor.checkComponent(componentName);
 
       if (this.options.format === 'json') {
-        console.log(JSON.stringify(health, null, 2));
+        console.info(JSON.stringify(health, null, 2));
       } else {
-        console.log(`Status: ${health.status.toUpperCase()}`);
-        console.log(`Message: ${health.message}`);
+        console.info(`Status: ${health.status.toUpperCase()}`);
+        console.info(`Message: ${health.message}`);
         if (health.metrics) {
-          console.log('Metrics:', JSON.stringify(health.metrics, null, 2));
+          console.info('Metrics:', JSON.stringify(health.metrics, null, 2));
         }
       }
     } catch (error) {
@@ -235,7 +235,7 @@ class HealthCheckCLI {
     const url = endpointUrl || this.options.endpoint || 'http://localhost:3001/api/health';
 
     try {
-      console.log(`🌐 Testing health endpoint: ${url}`);
+      console.info(`🌐 Testing health endpoint: ${url}`);
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), this.options.timeout);
@@ -251,22 +251,22 @@ class HealthCheckCLI {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('✅ Endpoint responding');
+        console.info('✅ Endpoint responding');
 
         if (this.options.verbose) {
-          console.log('Response:', JSON.stringify(data, null, 2));
+          console.info('Response:', JSON.stringify(data, null, 2));
         } else {
-          console.log(`Status: ${data.status || 'unknown'}`);
-          console.log(`Components: ${Object.keys(data.components || {}).length}`);
+          console.info(`Status: ${data.status || 'unknown'}`);
+          console.info(`Components: ${Object.keys(data.components || {}).length}`);
         }
       } else {
-        console.log(`❌ Endpoint returned status: ${response.status}`);
+        console.info(`❌ Endpoint returned status: ${response.status}`);
       }
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
-        console.log(`⏰ Endpoint timeout after ${this.options.timeout}ms`);
+        console.info(`⏰ Endpoint timeout after ${this.options.timeout}ms`);
       } else {
-        console.log(
+        console.info(
           `❌ Endpoint test failed:`,
           error instanceof Error ? error.message : 'Unknown error'
         );
@@ -278,21 +278,21 @@ class HealthCheckCLI {
    * 📈 Show health statistics
    */
   async showStatistics(): Promise<void> {
-    console.log('📈 Health Check Statistics');
-    console.log('!==!==!==!====');
+    console.info('📈 Health Check Statistics');
+    console.info('!==!==!==!====');
 
     const health = await this.monitor.getSystemHealth();
     const score = HealthUtils.calculateHealthScore(health.components);
 
-    console.log(`Overall Health Score: ${score}/100`);
-    console.log(`System Status: ${health.status.toUpperCase()}`);
-    console.log(`Components Monitored: ${Object.keys(health.components).length}`);
-    console.log(`Last Updated: ${new Date(health.lastUpdated).toLocaleString()}`);
+    console.info(`Overall Health Score: ${score}/100`);
+    console.info(`System Status: ${health.status.toUpperCase()}`);
+    console.info(`Components Monitored: ${Object.keys(health.components).length}`);
+    console.info(`Last Updated: ${new Date(health.lastUpdated).toLocaleString()}`);
 
     if (this.options.verbose) {
-      console.log('\n📋 Component Details:');
+      console.info('\n📋 Component Details:');
       Object.entries(health.components).forEach(([name, component]: [string, any]) => {
-        console.log(`• ${name}: ${component.status} (${component.message})`);
+        console.info(`• ${name}: ${component.status} (${component.message})`);
       });
     }
   }
@@ -357,7 +357,7 @@ function parseArgs(): {
 }
 
 function showHelp(): void {
-  console.log(`
+  console.info(`
 🩺 Fire22 Health Check CLI
 
 USAGE:

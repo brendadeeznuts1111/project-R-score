@@ -39,18 +39,18 @@ class TestRunner {
    * Setup test environment
    */
   async setup(): Promise<void> {
-    console.log('🔧 Setting up test environment...');
+    console.info('🔧 Setting up test environment...');
 
     // Clean up previous test database
     if (existsSync(this.testDatabase)) {
       unlinkSync(this.testDatabase);
-      console.log('🗑️ Cleaned up previous test database');
+      console.info('🗑️ Cleaned up previous test database');
     }
 
     // Create coverage directory
     if (this.options.coverage && !existsSync(this.coverageDir)) {
       mkdirSync(this.coverageDir, { recursive: true });
-      console.log('📊 Created coverage directory');
+      console.info('📊 Created coverage directory');
     }
 
     // Set test environment variables
@@ -60,22 +60,22 @@ class TestRunner {
     process.env.TEST_API_KEY = 'test_key_123';
     process.env.TEST_DEBUG = this.options.verbose ? 'true' : 'false';
 
-    console.log('✅ Test environment setup complete');
+    console.info('✅ Test environment setup complete');
   }
 
   /**
    * Cleanup test environment
    */
   async cleanup(): Promise<void> {
-    console.log('🧹 Cleaning up test environment...');
+    console.info('🧹 Cleaning up test environment...');
 
     // Remove test database
     if (existsSync(this.testDatabase)) {
       unlinkSync(this.testDatabase);
-      console.log('🗑️ Removed test database');
+      console.info('🗑️ Removed test database');
     }
 
-    console.log('✅ Test environment cleanup complete');
+    console.info('✅ Test environment cleanup complete');
   }
 
   /**
@@ -127,7 +127,7 @@ class TestRunner {
     await this.setup();
 
     const command = this.buildCommand();
-    console.log('🚀 Running tests:', command.join(' '));
+    console.info('🚀 Running tests:', command.join(' '));
 
     return new Promise(resolve => {
       const child = spawn(command[0], command.slice(1), {
@@ -154,14 +154,14 @@ class TestRunner {
    * Generate test report
    */
   async generateReport(): Promise<void> {
-    console.log('📊 Generating test report...');
+    console.info('📊 Generating test report...');
 
     if (existsSync(join(this.coverageDir, 'coverage-final.json'))) {
-      console.log(`📈 Coverage report available at: ${join(this.coverageDir, 'index.html')}`);
+      console.info(`📈 Coverage report available at: ${join(this.coverageDir, 'index.html')}`);
     }
 
     // Additional reporting logic can be added here
-    console.log('✅ Test report generated');
+    console.info('✅ Test report generated');
   }
 }
 
@@ -215,7 +215,7 @@ function parseArgs(): TestOptions {
  * Print help message
  */
 function printHelp(): void {
-  console.log(`
+  console.info(`
 🧪 Fire22 Dashboard Test Runner
 
 Usage: bun run scripts/run-tests.ts [options]
@@ -247,8 +247,8 @@ async function main(): Promise<void> {
     const options = parseArgs();
     const runner = new TestRunner(options);
 
-    console.log('🧪 Fire22 Dashboard Test Runner');
-    console.log('!==!==!==!==!==!==');
+    console.info('🧪 Fire22 Dashboard Test Runner');
+    console.info('!==!==!==!==!==!==');
 
     const exitCode = await runner.run();
 
@@ -257,9 +257,9 @@ async function main(): Promise<void> {
     }
 
     if (exitCode === 0) {
-      console.log('✅ All tests passed!');
+      console.info('✅ All tests passed!');
     } else {
-      console.log('❌ Some tests failed!');
+      console.info('❌ Some tests failed!');
     }
 
     process.exit(exitCode);

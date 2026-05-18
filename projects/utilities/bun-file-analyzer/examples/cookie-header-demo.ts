@@ -10,12 +10,12 @@ import { createCookieClient } from "../src/api/authenticated-client";
 // Type guard for Bun availability
 declare const Bun: any | undefined;
 
-console.log("🍪 Cookie Header Writing Demo");
-console.log("=" .repeat(50));
+console.info("🍪 Cookie Header Writing Demo");
+console.info("=" .repeat(50));
 
 // ====== 1. Basic Cookie Header Writing ======
 
-console.log("\n📝 1. Basic Cookie Header Writing");
+console.info("\n📝 1. Basic Cookie Header Writing");
 
 // Create cookie client with proper Request object
 const client = createCookieClient({
@@ -53,33 +53,33 @@ client.setCookie("analyticsId", "GA-XYZ-789", {
 });
 
 // Demonstrate different ways to get cookie headers
-console.log("\n📋 Cookie Header Formats:");
+console.info("\n📋 Cookie Header Formats:");
 
 // Method 1: Simple header string for outgoing requests
 const cookieHeaderString = client.toHeaderString();
-console.log("🔗 Cookie Header String:");
-console.log(`   ${cookieHeaderString}`);
+console.info("🔗 Cookie Header String:");
+console.info(`   ${cookieHeaderString}`);
 
 // Method 2: Individual Set-Cookie headers for server responses
 const setCookieHeaders = client.getSetCookieHeaders();
-console.log("\n📤 Set-Cookie Headers (for server responses):");
+console.info("\n📤 Set-Cookie Headers (for server responses):");
 setCookieHeaders.forEach((header, index) => {
-  console.log(`   ${index + 1}. ${header}`);
+  console.info(`   ${index + 1}. ${header}`);
 });
 
 // Method 3: Raw cookie object
-console.log("\n🍪 Raw Cookie Objects:");
-console.log(`   Session: ${client.getCookie("sessionId")}`);
-console.log(`   Preferences: ${client.getCookie("userPreferences")}`);
-console.log(`   Analytics: ${client.getCookie("analyticsId")}`);
+console.info("\n🍪 Raw Cookie Objects:");
+console.info(`   Session: ${client.getCookie("sessionId")}`);
+console.info(`   Preferences: ${client.getCookie("userPreferences")}`);
+console.info(`   Analytics: ${client.getCookie("analyticsId")}`);
 
 // ====== 2. Request Headers Demo ======
 
-console.log("\n🌐 2. Request Headers Demo");
+console.info("\n🌐 2. Request Headers Demo");
 
 async function demonstrateRequestHeaders() {
   try {
-    console.log("📤 Making request with automatic cookie headers...");
+    console.info("📤 Making request with automatic cookie headers...");
     
     // The client automatically adds cookies to the Cookie header
     const response = await client.fetch("https://httpbin.org/headers", {
@@ -92,9 +92,9 @@ async function demonstrateRequestHeaders() {
     
     if (response.ok) {
       const data = await response.json();
-      console.log("✅ Request headers sent:");
-      console.log(`   Cookie: ${data.headers.Cookie || "(none)"}`);
-      console.log(`   User-Agent: ${data.headers["User-Agent"]}`);
+      console.info("✅ Request headers sent:");
+      console.info(`   Cookie: ${data.headers.Cookie || "(none)"}`);
+      console.info(`   User-Agent: ${data.headers["User-Agent"]}`);
     }
     
   } catch (error) {
@@ -104,7 +104,7 @@ async function demonstrateRequestHeaders() {
 
 // ====== 3. Response Headers Demo ======
 
-console.log("\n📥 3. Response Headers Demo");
+console.info("\n📥 3. Response Headers Demo");
 
 // Simulate server response with Set-Cookie headers
 function createServerResponse(): Response {
@@ -129,30 +129,30 @@ function createServerResponse(): Response {
 }
 
 function demonstrateResponseHeaders() {
-  console.log("📤 Creating server response with Set-Cookie headers...");
+  console.info("📤 Creating server response with Set-Cookie headers...");
   
   const response = createServerResponse();
   const setCookieHeaders = response.headers.getSetCookie();
   
-  console.log("✅ Set-Cookie headers in response:");
+  console.info("✅ Set-Cookie headers in response:");
   setCookieHeaders.forEach((header, index) => {
-    console.log(`   ${index + 1}. ${header}`);
+    console.info(`   ${index + 1}. ${header}`);
   });
   
   // Show how the client would process these headers
-  console.log("\n🔄 Simulating client processing of Set-Cookie headers...");
+  console.info("\n🔄 Simulating client processing of Set-Cookie headers...");
   
   // In a real scenario, the client would automatically parse and store these
   // cookies when receiving the response
-  console.log("   (Client would automatically store these cookies)");
+  console.info("   (Client would automatically store these cookies)");
 }
 
 // ====== 4. Advanced Cookie Header Patterns ======
 
-console.log("\n🔧 4. Advanced Cookie Header Patterns");
+console.info("\n🔧 4. Advanced Cookie Header Patterns");
 
 function demonstrateAdvancedPatterns() {
-  console.log("📋 Advanced cookie header operations:");
+  console.info("📋 Advanced cookie header operations:");
   
   // Pattern 1: Conditional cookie headers
   const conditionalHeaders = new Headers();
@@ -163,7 +163,7 @@ function demonstrateAdvancedPatterns() {
     const existing = conditionalHeaders.get("Cookie") || "";
     conditionalHeaders.set("Cookie", `${existing}; userPreferences=${client.getCookie("userPreferences")}`);
   }
-  console.log(`   Conditional: ${conditionalHeaders.get("Cookie")}`);
+  console.info(`   Conditional: ${conditionalHeaders.get("Cookie")}`);
   
   // Pattern 2: Scoped cookie headers (API vs UI)
   const apiHeaders = new Headers();
@@ -176,8 +176,8 @@ function demonstrateAdvancedPatterns() {
     `analyticsId=${client.getCookie("analyticsId")}`
   ].join("; "));
   
-  console.log(`   API Headers: ${apiHeaders.get("Cookie")}`);
-  console.log(`   UI Headers: ${uiHeaders.get("Cookie")}`);
+  console.info(`   API Headers: ${apiHeaders.get("Cookie")}`);
+  console.info(`   UI Headers: ${uiHeaders.get("Cookie")}`);
   
   // Pattern 3: Cookie filtering by domain/path
   const allCookies = client.getCookies();
@@ -185,33 +185,33 @@ function demonstrateAdvancedPatterns() {
     .filter(([name, value]) => name !== "analyticsId") // Exclude analytics
     .map(([name, value]) => `${name}=${value}`)
     .join("; ");
-  console.log(`   Filtered: ${filteredCookies}`);
+  console.info(`   Filtered: ${filteredCookies}`);
 }
 
 // ====== 5. Security Considerations ======
 
-console.log("\n🔒 5. Security Considerations");
+console.info("\n🔒 5. Security Considerations");
 
 function demonstrateSecurityPatterns() {
-  console.log("🛡️ Security best practices for cookie headers:");
+  console.info("🛡️ Security best practices for cookie headers:");
   
   // 1. Secure flag for HTTPS
-  console.log("   ✅ Secure cookies only sent over HTTPS");
+  console.info("   ✅ Secure cookies only sent over HTTPS");
   
   // 2. HttpOnly prevents XSS
-  console.log("   ✅ HttpOnly cookies inaccessible to JavaScript");
+  console.info("   ✅ HttpOnly cookies inaccessible to JavaScript");
   
   // 3. SameSite prevents CSRF
-  console.log("   ✅ SameSite=Strict prevents cross-site requests");
+  console.info("   ✅ SameSite=Strict prevents cross-site requests");
   
   // 4. Domain scoping
-  console.log("   ✅ Domain-specific cookies limit exposure");
+  console.info("   ✅ Domain-specific cookies limit exposure");
   
   // 5. Path scoping
-  console.log("   ✅ Path-specific cookies limit scope");
+  console.info("   ✅ Path-specific cookies limit scope");
   
   // 6. Expiration
-  console.log("   ✅ MaxAge/Expires prevent persistent sessions");
+  console.info("   ✅ MaxAge/Expires prevent persistent sessions");
   
   // Demonstrate secure cookie creation
   const secureCookie = {
@@ -227,48 +227,48 @@ function demonstrateSecurityPatterns() {
     }
   };
   
-  console.log(`   🔐 Example: ${secureCookie.name} with security flags`);
+  console.info(`   🔐 Example: ${secureCookie.name} with security flags`);
 }
 
 // ====== 6. Performance Optimization ======
 
-console.log("\n⚡ 6. Performance Optimization");
+console.info("\n⚡ 6. Performance Optimization");
 
 function demonstratePerformancePatterns() {
-  console.log("🚀 Performance tips for cookie headers:");
+  console.info("🚀 Performance tips for cookie headers:");
   
   // 1. Minimize cookie size
-  console.log("   📦 Keep cookie values small (<4KB per header)");
+  console.info("   📦 Keep cookie values small (<4KB per header)");
   
   // 2. Limit cookie count
-  console.log("   🔢 Limit to essential cookies (<50 per domain)");
+  console.info("   🔢 Limit to essential cookies (<50 per domain)");
   
   // 3. Use appropriate domains
-  console.log("   🌐 Use specific domains to reduce transmission");
+  console.info("   🌐 Use specific domains to reduce transmission");
   
   // 4. Compress when possible
-  console.log("   🗜️ Compress JSON values in cookies");
+  console.info("   🗜️ Compress JSON values in cookies");
   
   // 5. Cache cookie headers
-  console.log("   💾 Cache generated headers for repeated requests");
+  console.info("   💾 Cache generated headers for repeated requests");
   
   // Demonstrate cookie size analysis
   const headerString = client.toHeaderString();
   const headerSize = new Blob([headerString]).size;
-  console.log(`   📊 Current header size: ${headerSize} bytes`);
-  console.log(`   📊 Cookie count: ${client.size}`);
+  console.info(`   📊 Current header size: ${headerSize} bytes`);
+  console.info(`   📊 Cookie count: ${client.size}`);
   
   if (headerSize > 4096) {
-    console.log("   ⚠️  Warning: Header exceeds 4KB recommendation");
+    console.info("   ⚠️  Warning: Header exceeds 4KB recommendation");
   } else {
-    console.log("   ✅ Header size within recommended limits");
+    console.info("   ✅ Header size within recommended limits");
   }
 }
 
 // ====== Run All Demonstrations ======
 
 async function runCookieHeaderDemo() {
-  console.log("\n🎬 Starting Cookie Header Writing Demo\n");
+  console.info("\n🎬 Starting Cookie Header Writing Demo\n");
   
   // Run all demonstrations
   await demonstrateRequestHeaders();
@@ -277,20 +277,20 @@ async function runCookieHeaderDemo() {
   demonstrateSecurityPatterns();
   demonstratePerformancePatterns();
   
-  console.log("\n📈 Summary of Cookie Header Writing:");
-  console.log("✅ Automatic cookie header generation for requests");
-  console.log("✅ Set-Cookie header generation for responses");
-  console.log("✅ Flexible cookie filtering and scoping");
-  console.log("✅ Security-conscious cookie handling");
-  console.log("✅ Performance-optimized header generation");
-  console.log("✅ Cross-environment compatibility");
+  console.info("\n📈 Summary of Cookie Header Writing:");
+  console.info("✅ Automatic cookie header generation for requests");
+  console.info("✅ Set-Cookie header generation for responses");
+  console.info("✅ Flexible cookie filtering and scoping");
+  console.info("✅ Security-conscious cookie handling");
+  console.info("✅ Performance-optimized header generation");
+  console.info("✅ Cross-environment compatibility");
   
-  console.log("\n🎯 Key Takeaways:");
-  console.log("• Bun.CookieMap handles cookie-to-header conversion automatically");
-  console.log("• Use toHeaderString() for request headers");
-  console.log("• Use getSetCookieHeaders() for response headers");
-  console.log("• Apply security flags based on cookie sensitivity");
-  console.log("• Monitor header size to avoid performance issues");
+  console.info("\n🎯 Key Takeaways:");
+  console.info("• Bun.CookieMap handles cookie-to-header conversion automatically");
+  console.info("• Use toHeaderString() for request headers");
+  console.info("• Use getSetCookieHeaders() for response headers");
+  console.info("• Apply security flags based on cookie sensitivity");
+  console.info("• Monitor header size to avoid performance issues");
 }
 
 // Start the demonstration

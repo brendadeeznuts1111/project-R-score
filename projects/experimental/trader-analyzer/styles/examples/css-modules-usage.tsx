@@ -58,9 +58,9 @@ export function ConditionalClassesExample({ isPrimary }: { isPrimary: boolean })
 
 // Example 5: Inspecting module object
 export function InspectModuleExample() {
-	console.log("Styles object:", styles);
-	console.log("Button class:", styles.button);
-	console.log("Card class:", styles.card);
+	console.info("Styles object:", styles);
+	console.info("Button class:", styles.button);
+	console.info("Card class:", styles.card);
 	
 	// Output:
 	// {

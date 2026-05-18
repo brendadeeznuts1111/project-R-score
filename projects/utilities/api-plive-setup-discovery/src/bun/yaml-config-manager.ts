@@ -9,7 +9,7 @@ export class YamlConfigManager {
   private fileWatchers: Map<string, { stop: () => void }> = new Map();
 
   constructor() {
-    console.log("🔧 Initializing YAML Config Manager with Bun.YAML");
+    console.info("🔧 Initializing YAML Config Manager with Bun.YAML");
   }
 
   /**
@@ -26,7 +26,7 @@ export class YamlConfigManager {
       const config = YAML.parse(yamlContent);
 
       this.configCache.set(filePath, config);
-      console.log(`✅ Loaded YAML config: ${filePath}`);
+      console.info(`✅ Loaded YAML config: ${filePath}`);
 
       return config;
     } catch (error) {
@@ -43,7 +43,7 @@ export class YamlConfigManager {
       const yamlContent = YAML.stringify(config, 0, 2);
       await Bun.write(filePath, yamlContent);
       this.configCache.set(filePath, config);
-      console.log(`💾 Saved YAML config: ${filePath}`);
+      console.info(`💾 Saved YAML config: ${filePath}`);
     } catch (error) {
       console.error(`❌ Failed to save YAML config ${filePath}:`, error);
       throw error;
@@ -164,7 +164,7 @@ export class YamlConfigManager {
     }, async (event) => {
       if (event.type === 'change') {
         try {
-          console.log(`🔄 Config file changed: ${filePath}`);
+          console.info(`🔄 Config file changed: ${filePath}`);
           this.configCache.delete(filePath);
           const newConfig = await this.YAML.parse(filePath);
           callback(newConfig);
@@ -175,7 +175,7 @@ export class YamlConfigManager {
     });
 
     this.fileWatchers.set(filePath, watcher);
-    console.log(`👀 Watching config file: ${filePath}`);
+    console.info(`👀 Watching config file: ${filePath}`);
   }
 
   /**
@@ -186,7 +186,7 @@ export class YamlConfigManager {
     if (watcher) {
       watcher.stop();
       this.fileWatchers.delete(filePath);
-      console.log(`🛑 Stopped watching: ${filePath}`);
+      console.info(`🛑 Stopped watching: ${filePath}`);
     }
   }
 
@@ -195,7 +195,7 @@ export class YamlConfigManager {
    */
   clearCache(): void {
     this.configCache.clear();
-    console.log("🧹 Cleared config cache");
+    console.info("🧹 Cleared config cache");
   }
 
   /**

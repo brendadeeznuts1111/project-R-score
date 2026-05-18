@@ -46,15 +46,15 @@ export class MicroBenchmarks {
   ): Promise<MicroBenchmarkResult> {
     const { samples = 1000, minTime = 0.05, maxTime = 5 } = options;
 
-    console.log(`\n🎯 Microbenchmark: ${name}`);
-    console.log(`   Target samples: ${samples}`);
+    console.info(`\n🎯 Microbenchmark: ${name}`);
+    console.info(`   Target samples: ${samples}`);
 
     const timings: number[] = [];
     let iterations = 1;
     let totalTime = 0;
 
     // Warmup phase
-    console.log('   Warming up...');
+    console.info('   Warming up...');
     for (let i = 0; i < 100; i++) {
       await fn();
     }
@@ -67,7 +67,7 @@ export class MicroBenchmarks {
 
     if (singleRunTime < minTime) {
       iterations = Math.ceil(minTime / singleRunTime);
-      console.log(`   Calibrated to ${iterations} iterations per sample`);
+      console.info(`   Calibrated to ${iterations} iterations per sample`);
     }
 
     // Collect samples
@@ -89,11 +89,11 @@ export class MicroBenchmarks {
 
       totalTime += time / 1_000_000_000;
       if (totalTime > maxTime) {
-        console.log(` (stopped at ${i} samples due to time limit)`);
+        console.info(` (stopped at ${i} samples due to time limit)`);
         break;
       }
     }
-    console.log(' ✅');
+    console.info(' ✅');
 
     // Statistical analysis
     const sorted = [...timings].sort((a, b) => a - b);
@@ -133,8 +133,8 @@ export class MicroBenchmarks {
    * Benchmark API handlers
    */
   async benchmarkApiHandlers(): Promise<void> {
-    console.log('\n🌐 API Handler Benchmarks');
-    console.log('='.repeat(50));
+    console.info('\n🌐 API Handler Benchmarks');
+    console.info('='.repeat(50));
 
     // Mock request/response objects
     const mockRequest = () =>
@@ -172,8 +172,8 @@ export class MicroBenchmarks {
    * Benchmark database operations
    */
   async benchmarkDatabaseOps(): Promise<void> {
-    console.log('\n💾 Database Operation Benchmarks');
-    console.log('='.repeat(50));
+    console.info('\n💾 Database Operation Benchmarks');
+    console.info('='.repeat(50));
 
     // SQL query generation benchmarks
     await this.microBenchmark('SQL Query Building', () => {
@@ -213,8 +213,8 @@ export class MicroBenchmarks {
    * Benchmark data transformations
    */
   async benchmarkDataTransformations(): Promise<void> {
-    console.log('\n🔄 Data Transformation Benchmarks');
-    console.log('='.repeat(50));
+    console.info('\n🔄 Data Transformation Benchmarks');
+    console.info('='.repeat(50));
 
     const sampleData = {
       users: Array(100)
@@ -267,8 +267,8 @@ export class MicroBenchmarks {
    * Benchmark string operations
    */
   async benchmarkStringOps(): Promise<void> {
-    console.log('\n📝 String Operation Benchmarks');
-    console.log('='.repeat(50));
+    console.info('\n📝 String Operation Benchmarks');
+    console.info('='.repeat(50));
 
     const shortString = 'The quick brown fox';
     const longString = 'Lorem ipsum dolor sit amet, '.repeat(100);
@@ -310,8 +310,8 @@ export class MicroBenchmarks {
    * Benchmark crypto operations
    */
   async benchmarkCryptoOps(): Promise<void> {
-    console.log('\n🔐 Crypto Operation Benchmarks');
-    console.log('='.repeat(50));
+    console.info('\n🔐 Crypto Operation Benchmarks');
+    console.info('='.repeat(50));
 
     const data = 'The quick brown fox jumps over the lazy dog';
     const encoder = new TextEncoder();
@@ -357,8 +357,8 @@ export class MicroBenchmarks {
    * Benchmark validation operations
    */
   async benchmarkValidation(): Promise<void> {
-    console.log('\n✅ Validation Benchmarks');
-    console.log('='.repeat(50));
+    console.info('\n✅ Validation Benchmarks');
+    console.info('='.repeat(50));
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^\+?[1-9]\d{1,14}$/;
@@ -400,17 +400,17 @@ export class MicroBenchmarks {
    * Print formatted result
    */
   private printResult(result: MicroBenchmarkResult): void {
-    console.log(`\n   ✅ ${result.name}`);
-    console.log(`      Samples: ${result.samples}`);
-    console.log(
+    console.info(`\n   ✅ ${result.name}`);
+    console.info(`      Samples: ${result.samples}`);
+    console.info(
       `      Mean: ${this.formatNanoseconds(result.mean)} ± ${this.formatNanoseconds(result.confidence)}`
     );
-    console.log(`      Median: ${this.formatNanoseconds(result.median)}`);
-    console.log(
+    console.info(`      Median: ${this.formatNanoseconds(result.median)}`);
+    console.info(
       `      Min/Max: ${this.formatNanoseconds(result.min)} / ${this.formatNanoseconds(result.max)}`
     );
-    console.log(`      StdDev: ${this.formatNanoseconds(result.stdDev)}`);
-    console.log(`      Ops/sec: ${result.opsPerSecond.toLocaleString()}`);
+    console.info(`      StdDev: ${this.formatNanoseconds(result.stdDev)}`);
+    console.info(`      Ops/sec: ${result.opsPerSecond.toLocaleString()}`);
   }
 
   /**
@@ -427,10 +427,10 @@ export class MicroBenchmarks {
    * Run all microbenchmarks
    */
   async runAll(): Promise<void> {
-    console.log('🎯 Fire22 Micro-Benchmarks Suite');
-    console.log('='.repeat(50));
-    console.log(`Bun Version: ${process.versions.bun}`);
-    console.log(`Started: ${new Date().toISOString()}`);
+    console.info('🎯 Fire22 Micro-Benchmarks Suite');
+    console.info('='.repeat(50));
+    console.info(`Bun Version: ${process.versions.bun}`);
+    console.info(`Started: ${new Date().toISOString()}`);
 
     await this.benchmarkApiHandlers();
     await this.benchmarkDatabaseOps();
@@ -439,8 +439,8 @@ export class MicroBenchmarks {
     await this.benchmarkCryptoOps();
     await this.benchmarkValidation();
 
-    console.log('\n' + '='.repeat(50));
-    console.log('✅ All microbenchmarks completed!');
+    console.info('\n' + '='.repeat(50));
+    console.info('✅ All microbenchmarks completed!');
   }
 }
 

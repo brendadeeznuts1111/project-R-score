@@ -41,7 +41,7 @@ const flags = {
 
 async function main() {
   if (flags.help) {
-    console.log(`
+    console.info(`
 🌐 Network Preconnection CLI (Bun Native)
 
 Uses Bun's native APIs:
@@ -108,15 +108,15 @@ Bun CLI Preconnect Flags:
               100
             ).toFixed(1)
           : "0.0";
-      console.log("\n📊 DNS Cache Statistics:");
-      console.log(`   Hit Ratio:    ${hitRatio}%`);
-      console.log(
+      console.info("\n📊 DNS Cache Statistics:");
+      console.info(`   Hit Ratio:    ${hitRatio}%`);
+      console.info(
         `   Hits:         ${s.cacheHitsCompleted} completed + ${s.cacheHitsInflight} in-flight`
       );
-      console.log(`   Misses:       ${s.cacheMisses}`);
-      console.log(`   Errors:       ${s.errors}`);
-      console.log(`   Cache Size:   ${s.size}/255`);
-      console.log(`   Total Reqs:   ${s.totalCount}\n`);
+      console.info(`   Misses:       ${s.cacheMisses}`);
+      console.info(`   Errors:       ${s.errors}`);
+      console.info(`   Cache Size:   ${s.size}/255`);
+      console.info(`   Total Reqs:   ${s.totalCount}\n`);
       process.exit(0);
     }
 
@@ -124,31 +124,31 @@ Bun CLI Preconnect Flags:
     if (flags.poolInfo) {
       const maxReqs = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS ?? "256";
       const dnsTTL = process.env.BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS ?? "30";
-      console.log("\n🔌 Connection Pool Configuration:");
-      console.log(
+      console.info("\n🔌 Connection Pool Configuration:");
+      console.info(
         `   Max HTTP Requests:  ${maxReqs} (BUN_CONFIG_MAX_HTTP_REQUESTS)`
       );
-      console.log(
+      console.info(
         `   DNS TTL:            ${dnsTTL}s (BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS)`
       );
-      console.log(`\n💡 To increase pool size:`);
-      console.log(`   BUN_CONFIG_MAX_HTTP_REQUESTS=2048 bun ./server.ts`);
-      console.log(`\n💡 To reduce DNS TTL:`);
-      console.log(`   BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS=5 bun ./server.ts\n`);
+      console.info(`\n💡 To increase pool size:`);
+      console.info(`   BUN_CONFIG_MAX_HTTP_REQUESTS=2048 bun ./server.ts`);
+      console.info(`\n💡 To reduce DNS TTL:`);
+      console.info(`   BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS=5 bun ./server.ts\n`);
       process.exit(0);
     }
 
     // DNS prefetch only mode
     if (flags.dnsOnly) {
       if (flags.all) {
-        console.log("\n🔍 DNS Prefetch Only Mode\n");
+        console.info("\n🔍 DNS Prefetch Only Mode\n");
         for (const target of DEFAULT_PRECONNECT_TARGETS) {
           dnsPrefetch(target.host, target.port || 443, flags.verbose);
         }
-        console.log("\n✅ DNS prefetch complete\n");
+        console.info("\n✅ DNS prefetch complete\n");
       } else if (flags.host) {
         dnsPrefetch(flags.host, flags.port, flags.verbose);
-        console.log("\n✅ DNS prefetch complete\n");
+        console.info("\n✅ DNS prefetch complete\n");
       } else {
         console.error(
           "❌ Please specify --all or --host=<host> with --dns-only"
@@ -161,7 +161,7 @@ Bun CLI Preconnect Flags:
     if (flags.all) {
       // Preconnect to all default targets
       if (flags.verbose) {
-        console.log(
+        console.info(
           "\n📍 Preconnecting to default infrastructure targets...\n"
         );
       }
@@ -183,19 +183,19 @@ Bun CLI Preconnect Flags:
                 100
               ).toFixed(1)
             : "0.0";
-        console.log("\n📊 Preconnection Statistics:");
-        console.log(`   Total:      ${stats.total}`);
-        console.log(`   Successful: ${stats.successful}`);
-        console.log(`   Failed:     ${stats.failed}`);
-        console.log(`   Avg Latency: ${stats.avgLatency}ms`);
-        console.log(`   Min Latency: ${stats.minLatency}ms`);
-        console.log(`   Max Latency: ${stats.maxLatency}ms`);
-        console.log(`\n📦 DNS Cache (${hitRatio}% hit ratio):`);
-        console.log(
+        console.info("\n📊 Preconnection Statistics:");
+        console.info(`   Total:      ${stats.total}`);
+        console.info(`   Successful: ${stats.successful}`);
+        console.info(`   Failed:     ${stats.failed}`);
+        console.info(`   Avg Latency: ${stats.avgLatency}ms`);
+        console.info(`   Min Latency: ${stats.minLatency}ms`);
+        console.info(`   Max Latency: ${stats.maxLatency}ms`);
+        console.info(`\n📦 DNS Cache (${hitRatio}% hit ratio):`);
+        console.info(
           `   Hits:   ${d.cacheHitsCompleted} completed + ${d.cacheHitsInflight} in-flight`
         );
-        console.log(`   Misses: ${d.cacheMisses} | Errors: ${d.errors}`);
-        console.log(`   Size:   ${d.size}/255 | Total: ${d.totalCount}\n`);
+        console.info(`   Misses: ${d.cacheMisses} | Errors: ${d.errors}`);
+        console.info(`   Size:   ${d.size}/255 | Total: ${d.totalCount}\n`);
       }
 
       const allSuccess = results.every((r) => r.success);
@@ -219,20 +219,20 @@ Bun CLI Preconnect Flags:
                 100
               ).toFixed(1)
             : "0.0";
-        console.log(`\n📊 Connection Statistics:`);
-        console.log(`   Host:    ${result.host}`);
-        console.log(`   Port:    ${result.port}`);
-        console.log(`   Protocol: ${result.protocol}`);
-        console.log(`   Latency: ${result.latency.toFixed(2)}ms`);
-        console.log(
+        console.info(`\n📊 Connection Statistics:`);
+        console.info(`   Host:    ${result.host}`);
+        console.info(`   Port:    ${result.port}`);
+        console.info(`   Protocol: ${result.protocol}`);
+        console.info(`   Latency: ${result.latency.toFixed(2)}ms`);
+        console.info(
           `   Status:  ${result.success ? "✅ Success" : "❌ Failed"}`
         );
-        console.log(`\n📦 DNS Cache (${hitRatio}% hit ratio):`);
-        console.log(
+        console.info(`\n📦 DNS Cache (${hitRatio}% hit ratio):`);
+        console.info(
           `   Hits:   ${d.cacheHitsCompleted} completed + ${d.cacheHitsInflight} in-flight`
         );
-        console.log(`   Misses: ${d.cacheMisses} | Errors: ${d.errors}`);
-        console.log(`   Size:   ${d.size}/255 | Total: ${d.totalCount}\n`);
+        console.info(`   Misses: ${d.cacheMisses} | Errors: ${d.errors}`);
+        console.info(`   Size:   ${d.size}/255 | Total: ${d.totalCount}\n`);
       }
 
       process.exit(result.success ? 0 : 1);

@@ -415,7 +415,7 @@ Usage:
 \`\`\`typescript
 const pattern = new URLPattern({ pathname: '${route.pattern}' });
 const match = pattern.exec('${route.example}');
-console.log(match.pathname.groups); // { ${route.parameters.map(p => `${p}: 'value'`).join(', ')} }
+console.info(match.pathname.groups); // { ${route.parameters.map(p => `${p}: 'value'`).join(', ')} }
 \`\`\`
     `.trim();
   }

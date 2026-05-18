@@ -149,7 +149,7 @@ class CustomerProfileManager {
     };
 
     await this.saveProfile(profile);
-    console.log(`👤 Created customer profile: ${customerId} for ${params.name}`);
+    console.info(`👤 Created customer profile: ${customerId} for ${params.name}`);
 
     return profile;
   }
@@ -196,7 +196,7 @@ class CustomerProfileManager {
     });
 
     await this.saveProfile(profile);
-    console.log(`🔄 Updated customer profile: ${customerId}`);
+    console.info(`🔄 Updated customer profile: ${customerId}`);
 
     return profile;
   }
@@ -230,7 +230,7 @@ class CustomerProfileManager {
     profile.updatedAt = new Date();
 
     await this.saveProfile(profile);
-    console.log(`💰 Added transaction to profile: ${customerId}`);
+    console.info(`💰 Added transaction to profile: ${customerId}`);
 
     return profile;
   }
@@ -257,7 +257,7 @@ class CustomerProfileManager {
     profile.lastActiveAt = new Date();
 
     await this.saveProfile(profile);
-    console.log(`⚙️ Updated payment preferences: ${customerId}`);
+    console.info(`⚙️ Updated payment preferences: ${customerId}`);
 
     return profile;
   }
@@ -285,7 +285,7 @@ class CustomerProfileManager {
     profile.lastActiveAt = new Date();
 
     await this.saveProfile(profile);
-    console.log(`💳 Added payment method: ${method.type} to ${customerId}`);
+    console.info(`💳 Added payment method: ${method.type} to ${customerId}`);
 
     return profile;
   }
@@ -558,10 +558,10 @@ if (import.meta.main) {
         email: 'john@example.com',
         familyIds: ['FAM123']
       }).then(profile => {
-        console.log('✅ Created profile:', profile.id);
-        console.log(`Name: ${profile.name}`);
-        console.log(`Email: ${profile.email}`);
-        console.log(`Families: ${profile.familyIds.join(', ')}`);
+        console.info('✅ Created profile:', profile.id);
+        console.info(`Name: ${profile.name}`);
+        console.info(`Email: ${profile.email}`);
+        console.info(`Families: ${profile.familyIds.join(', ')}`);
       }).catch(error => console.error('❌ Error:', error.message));
       break;
 
@@ -569,15 +569,15 @@ if (import.meta.main) {
       if (customerId) {
         CustomerProfileManager.getProfile(customerId).then(profile => {
           if (profile) {
-            console.log('👤 Profile Details:');
-            console.log(`ID: ${profile.id}`);
-            console.log(`Name: ${profile.name}`);
-            console.log(`Email: ${profile.email}`);
-            console.log(`Status: ${profile.status}`);
-            console.log(`Transactions: ${profile.transactionHistory.length}`);
-            console.log(`Last Active: ${profile.lastActiveAt.toISOString()}`);
+            console.info('👤 Profile Details:');
+            console.info(`ID: ${profile.id}`);
+            console.info(`Name: ${profile.name}`);
+            console.info(`Email: ${profile.email}`);
+            console.info(`Status: ${profile.status}`);
+            console.info(`Transactions: ${profile.transactionHistory.length}`);
+            console.info(`Last Active: ${profile.lastActiveAt.toISOString()}`);
           } else {
-            console.log('❌ Profile not found');
+            console.info('❌ Profile not found');
           }
         }).catch(error => console.error('❌ Error:', error.message));
       }
@@ -586,13 +586,13 @@ if (import.meta.main) {
     case 'stats':
       if (customerId) {
         CustomerProfileManager.getStatistics(customerId).then(stats => {
-          console.log('📊 Customer Statistics:');
-          console.log(`Total Transactions: ${stats.totalTransactions}`);
-          console.log(`Total Amount: $${stats.totalAmount.toFixed(2)}`);
-          console.log(`Average Amount: $${stats.averageAmount.toFixed(2)}`);
-          console.log(`Favorite Recipient: ${stats.favoriteRecipient || 'None'}`);
-          console.log(`Preferred Method: ${stats.preferredMethod}`);
-          console.log(`Active Families: ${stats.activeFamilies.join(', ')}`);
+          console.info('📊 Customer Statistics:');
+          console.info(`Total Transactions: ${stats.totalTransactions}`);
+          console.info(`Total Amount: $${stats.totalAmount.toFixed(2)}`);
+          console.info(`Average Amount: $${stats.averageAmount.toFixed(2)}`);
+          console.info(`Favorite Recipient: ${stats.favoriteRecipient || 'None'}`);
+          console.info(`Preferred Method: ${stats.preferredMethod}`);
+          console.info(`Active Families: ${stats.activeFamilies.join(', ')}`);
         }).catch(error => console.error('❌ Error:', error.message));
       }
       break;
@@ -600,12 +600,12 @@ if (import.meta.main) {
     case 'recommendations':
       if (customerId) {
         CustomerProfileManager.getSmartRecommendations(customerId).then(recs => {
-          console.log('🤖 Smart Recommendations:');
+          console.info('🤖 Smart Recommendations:');
           recs.forEach(rec => {
-            console.log(`  ${rec.recipientName} (${rec.familyId}) - ${Math.round(rec.confidence * 100)}% confidence`);
-            console.log(`    Reason: ${rec.reason}`);
+            console.info(`  ${rec.recipientName} (${rec.familyId}) - ${Math.round(rec.confidence * 100)}% confidence`);
+            console.info(`    Reason: ${rec.reason}`);
             if (rec.suggestedAmount) {
-              console.log(`    Suggested Amount: $${rec.suggestedAmount}`);
+              console.info(`    Suggested Amount: $${rec.suggestedAmount}`);
             }
           });
         }).catch(error => console.error('❌ Error:', error.message));
@@ -613,7 +613,7 @@ if (import.meta.main) {
       break;
 
     default:
-      console.log(`
+      console.info(`
 👤 Customer Profile Management System
 
 Usage:

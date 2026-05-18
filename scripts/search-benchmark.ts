@@ -559,7 +559,7 @@ export async function main(): Promise<void> {
 
   summaries.sort((a, b) => b.qualityScore - a.qualityScore);
 
-  console.log(JSON.stringify({
+  console.info(JSON.stringify({
     path,
     limit,
     queryPack,

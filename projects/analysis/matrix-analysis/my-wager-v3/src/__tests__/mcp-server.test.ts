@@ -260,4 +260,4 @@ describe('MCP Integration', () => {
   });
 });
 
-console.log('✅ MCP Server Tests Complete');
+console.info('✅ MCP Server Tests Complete');

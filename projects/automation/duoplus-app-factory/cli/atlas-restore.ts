@@ -10,7 +10,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length < 2 || args[0] !== '--from-tar' || !args[1].includes('--birth-key')) {
-    console.log(`
+    console.info(`
 🌌 Nebula-Flow™ Atlas Restore
 
 Usage:
@@ -36,13 +36,13 @@ Example:
     process.exit(1);
   }
 
-  console.log("🔄 Starting Atlas restore...");
-  console.log(`📦 Tarball: ${tarUrl}`);
-  console.log(`🔑 Birth key: ${birthKey.substring(0, 16)}...`);
+  console.info("🔄 Starting Atlas restore...");
+  console.info(`📦 Tarball: ${tarUrl}`);
+  console.info(`🔑 Birth key: ${birthKey.substring(0, 16)}...`);
 
   try {
     // Download encrypted tarball
-    console.log("📥 Downloading encrypted tarball...");
+    console.info("📥 Downloading encrypted tarball...");
     const response = await fetch(tarUrl);
     if (!response.ok) {
       throw new Error(`Download failed: ${response.status}`);
@@ -51,7 +51,7 @@ Example:
     const encrypted = await response.arrayBuffer();
 
     // Decrypt with birth key
-    console.log("🔓 Decrypting with birth key...");
+    console.info("🔓 Decrypting with birth key...");
     const key = await crypto.subtle.importKey(
       "raw",
       Buffer.from(birthKey, "hex"),
@@ -72,14 +72,14 @@ Example:
     );
 
     // Extract tarball to temp directory
-    console.log("📂 Extracting tarball...");
+    console.info("📂 Extracting tarball...");
     const tempDir = `/tmp/atlas-restore-${Date.now()}`;
     await Bun.$`mkdir -p ${tempDir}`;
     await Bun.$`cd ${tempDir} && cat > restore.tar.gz`.stdin(decrypted);
     await Bun.$`cd ${tempDir} && tar -xzf restore.tar.gz`;
 
     // Read atlas.db and restore data
-    console.log("🗂️  Restoring Atlas data...");
+    console.info("🗂️  Restoring Atlas data...");
     const { Database } = await import("sqlite");
     const restoreDb = new Database(`${tempDir}/atlas.db`);
 
@@ -114,7 +114,7 @@ Example:
     }
 
     // Recreate device from last snapshot
-    console.log("🔄 Recreating device from last snapshot...");
+    console.info("🔄 Recreating device from last snapshot...");
 
     const lastSnap = await restoreDb.get(`
       SELECT * FROM snapshots
@@ -188,17 +188,17 @@ Example:
         }),
       });
 
-      console.log(`✅ Device ${deviceRow.handle} restored as ${newDeviceId}`);
-      console.log("🔄 Atlas agent restarted - device is now self-monitoring");
+      console.info(`✅ Device ${deviceRow.handle} restored as ${newDeviceId}`);
+      console.info("🔄 Atlas agent restarted - device is now self-monitoring");
     }
 
     // Cleanup
     await Bun.$`rm -rf ${tempDir}`;
 
-    console.log("🎉 Atlas restore completed successfully!");
-    console.log(`📍 Device: ${deviceRow.handle}`);
-    console.log(`🆔 ID: ${deviceRow.id}`);
-    console.log(`⏰ Birth: ${new Date(deviceRow.birth_ts).toLocaleString()}`);
+    console.info("🎉 Atlas restore completed successfully!");
+    console.info(`📍 Device: ${deviceRow.handle}`);
+    console.info(`🆔 ID: ${deviceRow.id}`);
+    console.info(`⏰ Birth: ${new Date(deviceRow.birth_ts).toLocaleString()}`);
 
   } catch (error: any) {
     console.error(`❌ Restore failed: ${error.message}`);

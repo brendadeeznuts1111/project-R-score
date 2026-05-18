@@ -369,7 +369,7 @@ export class SecurityEngineImpl implements SecurityEngine {
     this.auditLog.push(event);
 
     // In a real implementation, this would write to a secure audit log
-    console.log(`SECURITY AUDIT: ${event.eventType} - ${event.resource.type}:${event.resource.action} by ${event.actor.id} (${event.severity})`);
+    console.info(`SECURITY AUDIT: ${event.eventType} - ${event.resource.type}:${event.resource.action} by ${event.actor.id} (${event.severity})`);
 
     // Keep only last 1000 events in memory
     if (this.auditLog.length > 1000) {

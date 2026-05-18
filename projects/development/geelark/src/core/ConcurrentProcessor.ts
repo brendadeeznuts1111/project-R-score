@@ -242,7 +242,7 @@ export async function processWithProgress<T, R>(
     const result = await processor(item, (current, totalItems) => {
       const progress = Math.round((current / totalItems) * 100);
       if (current % Math.max(1, Math.floor(totalItems / 20)) === 0) { // Log every 5%
-        console.log(`📊 Progress: ${progress}% (${current}/${totalItems})`);
+        console.info(`📊 Progress: ${progress}% (${current}/${totalItems})`);
       }
     });
     completed++;
@@ -251,7 +251,7 @@ export async function processWithProgress<T, R>(
 
   const results = await processConcurrently(items, wrappedProcessor, options);
 
-  console.log(`✅ Processing complete: ${results.processed}/${total} items processed`);
+  console.info(`✅ Processing complete: ${results.processed}/${total} items processed`);
   return results;
 }
 

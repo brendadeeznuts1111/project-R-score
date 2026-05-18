@@ -51,14 +51,14 @@ export function createMetricsBroadcaster(params: {
     if (!config.enabled) return;
 
     intervalId = setInterval(broadcastMetrics, config.updateInterval);
-    console.log(`[metrics] Broadcast started (interval: ${config.updateInterval}ms)`);
+    console.info(`[metrics] Broadcast started (interval: ${config.updateInterval}ms)`);
   };
 
   const stop = () => {
     if (intervalId) {
       clearInterval(intervalId);
       intervalId = null;
-      console.log("[metrics] Broadcast stopped");
+      console.info("[metrics] Broadcast stopped");
     }
   };
 

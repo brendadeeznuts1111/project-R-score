@@ -96,37 +96,37 @@ function validateEnvironment() {
 }
 
 // Test 6: Demonstrate full type safety
-console.log("✅ Global Bun.env Interface Merging Test");
-console.log("=========================================");
+console.info("✅ Global Bun.env Interface Merging Test");
+console.info("=========================================");
 
 const fwConfig = getFactoryWagerConfig();
 const bunConfig = getBunConfig();
 const warnings = validateEnvironment();
 
-console.log("🏭 FactoryWager Configuration:");
-console.log(`  Mode: ${fwConfig.mode}`);
-console.log(`  Log Level: ${fwConfig.logLevel}`);
-console.log(`  Report Format: ${fwConfig.reportFormat}`);
-console.log(`  Debug: ${fwConfig.debug ? "enabled" : "disabled"}`);
+console.info("🏭 FactoryWager Configuration:");
+console.info(`  Mode: ${fwConfig.mode}`);
+console.info(`  Log Level: ${fwConfig.logLevel}`);
+console.info(`  Report Format: ${fwConfig.reportFormat}`);
+console.info(`  Debug: ${fwConfig.debug ? "enabled" : "disabled"}`);
 
-console.log("\n🥟 Bun Configuration:");
-console.log(`  TLS Validation: ${bunConfig.tlsRejectUnauthorized ? "enabled" : "disabled"}`);
-console.log(`  Verbose Fetch: ${bunConfig.verboseFetch}`);
-console.log(`  Max HTTP Requests: ${bunConfig.maxHttpRequests}`);
-console.log(`  Force Color: ${bunConfig.forceColor ? "enabled" : "disabled"}`);
+console.info("\n🥟 Bun Configuration:");
+console.info(`  TLS Validation: ${bunConfig.tlsRejectUnauthorized ? "enabled" : "disabled"}`);
+console.info(`  Verbose Fetch: ${bunConfig.verboseFetch}`);
+console.info(`  Max HTTP Requests: ${bunConfig.maxHttpRequests}`);
+console.info(`  Force Color: ${bunConfig.forceColor ? "enabled" : "disabled"}`);
 
 if (warnings.length > 0) {
-  console.log("\n⚠️  Warnings:");
-  warnings.forEach(warning => console.log(`  ${warning}`));
+  console.info("\n⚠️  Warnings:");
+  warnings.forEach(warning => console.info(`  ${warning}`));
 } else {
-  console.log("\n✅ No warnings - Configuration is secure");
+  console.info("\n✅ No warnings - Configuration is secure");
 }
 
-console.log("\n🎯 Type Safety Status:");
-console.log("  ✅ All FactoryWager variables typed");
-console.log("  ✅ All Bun variables typed");
-console.log("  ✅ Full auto-completion available");
-console.log("  ✅ Compile-time validation active");
-console.log("  ✅ Runtime validation working");
+console.info("\n🎯 Type Safety Status:");
+console.info("  ✅ All FactoryWager variables typed");
+console.info("  ✅ All Bun variables typed");
+console.info("  ✅ Full auto-completion available");
+console.info("  ✅ Compile-time validation active");
+console.info("  ✅ Runtime validation working");
 
 export { getFactoryWagerConfig, getBunConfig, validateEnvironment };

@@ -356,7 +356,7 @@ class DashboardServerV42 {
       // Store session
       this.ptySessions.set(sessionId, { terminal, cliProc });
 
-      console.log(`🖥️ PTY session created: ${sessionId}`);
+      console.info(`🖥️ PTY session created: ${sessionId}`);
       return { terminal, cliProc };
     } catch (error) {
       console.error('Failed to create PTY session:', error);
@@ -376,7 +376,7 @@ class DashboardServerV42 {
       session.cliProc.kill();
       session.terminal.close();
       this.ptySessions.delete(sessionId);
-      console.log(`🖥️ PTY session closed: ${sessionId}`);
+      console.info(`🖥️ PTY session closed: ${sessionId}`);
     }
   }
 
@@ -794,7 +794,7 @@ $
             try {
                 const response = await fetch('/api/metrics');
                 const metrics = await response.json();
-                console.log('🖥️ v4.2 PTY Metrics updated:', metrics);
+                console.info('🖥️ v4.2 PTY Metrics updated:', metrics);
                 loadDashboards();
             } catch (error) {
                 console.error('Failed to refresh metrics:', error);
@@ -808,7 +808,7 @@ $
             setInterval(updateUptime, 1000);
             setInterval(() => {
                 fetch('/api/metrics').then(r => r.json()).then(metrics => {
-                    console.log('🖥️ v4.2 PTY Metrics updated:', metrics);
+                    console.info('🖥️ v4.2 PTY Metrics updated:', metrics);
                 });
             }, 30000);
         });
@@ -890,14 +890,14 @@ $
   // 🔥 Hot Reload Method
   public hotReload(newRoutes?: any): void {
     if (this.server && this.hotReloadEnabled) {
-      console.log("🔥 Performing hot reload...");
+      console.info("🔥 Performing hot reload...");
 
       if (newRoutes) {
-        console.log("🔄 Routes reloaded with new patterns");
+        console.info("🔄 Routes reloaded with new patterns");
       }
 
       this.updateMetrics();
-      console.log("✅ Hot reload completed - serving v4.2 patterns");
+      console.info("✅ Hot reload completed - serving v4.2 patterns");
     }
   }
 
@@ -1050,27 +1050,27 @@ $
     // Override with Unix socket if provided
     if (unixSocket) {
       serverConfig.unix = unixSocket;
-      console.log(`📡 Starting Unix socket server: ${unixSocket} `);
+      console.info(`📡 Starting Unix socket server: ${unixSocket} `);
     }
 
-    console.log(`🚀 DuoPlus Dashboard Server v4.2 starting...`);
-    console.log(`🖥️ Bun.Terminal PTY + Feature Flags`);
-    console.log(`🌐 Port: ${this.port} | Hostname: 0.0.0.0`);
-    console.log(`🔥 Hot Reload: ${this.hotReloadEnabled ? 'Enabled' : 'Disabled'} `);
-    console.log(`🖥️ PTY Terminal: ${this.metrics.ptyTerminal ? 'Enabled' : 'Disabled'} `);
-    console.log(`🏳️ Feature Flags: ${this.metrics.featureFlags.join(', ')} `);
-    console.log(`📊 Dashboards: ${this.dashboards.length} | Bundle: ${FEATURES.PTY_TERMINAL ? '1.45MB' : '1.2MB'} `);
+    console.info(`🚀 DuoPlus Dashboard Server v4.2 starting...`);
+    console.info(`🖥️ Bun.Terminal PTY + Feature Flags`);
+    console.info(`🌐 Port: ${this.port} | Hostname: 0.0.0.0`);
+    console.info(`🔥 Hot Reload: ${this.hotReloadEnabled ? 'Enabled' : 'Disabled'} `);
+    console.info(`🖥️ PTY Terminal: ${this.metrics.ptyTerminal ? 'Enabled' : 'Disabled'} `);
+    console.info(`🏳️ Feature Flags: ${this.metrics.featureFlags.join(', ')} `);
+    console.info(`📊 Dashboards: ${this.dashboards.length} | Bundle: ${FEATURES.PTY_TERMINAL ? '1.45MB' : '1.2MB'} `);
 
     this.server = serve(serverConfig);
 
     // Keep process alive for main server
     this.server.ref();
 
-    console.log(`✅ DuoPlus Dashboard Server v4.2 is running!`);
-    console.log(`🔗 Dashboard: http://localhost:${this.port}/`);
-    console.log(`🏥 Health: http://localhost:${this.port}/health`);
-    console.log(`📊 Metrics: http://localhost:${this.port}/api/metrics`);
-    console.log(`🖥️ PTY Demo: http://localhost:${this.port}/demos/@web/cli-security-demo.html`);
+    console.info(`✅ DuoPlus Dashboard Server v4.2 is running!`);
+    console.info(`🔗 Dashboard: http://localhost:${this.port}/`);
+    console.info(`🏥 Health: http://localhost:${this.port}/health`);
+    console.info(`📊 Metrics: http://localhost:${this.port}/api/metrics`);
+    console.info(`🖥️ PTY Demo: http://localhost:${this.port}/demos/@web/cli-security-demo.html`);
 
     // Start metrics logging
     setInterval(async () => {
@@ -1085,10 +1085,10 @@ $
     }
 
     if (this.server) {
-      console.log(`🛑 Stopping DuoPlus Dashboard Server v4.2 (force: ${force})...`);
+      console.info(`🛑 Stopping DuoPlus Dashboard Server v4.2 (force: ${force})...`);
       this.server.stop(force);
       this.server = null;
-      console.log('✅ Server stopped successfully');
+      console.info('✅ Server stopped successfully');
     }
   }
 
@@ -1105,7 +1105,7 @@ $
   // Enable/disable hot reload
   public setHotReload(enabled: boolean): void {
     this.hotReloadEnabled = enabled;
-    console.log(`🔥 Hot Reload ${enabled ? 'enabled' : 'disabled'}`);
+    console.info(`🔥 Hot Reload ${enabled ? 'enabled' : 'disabled'}`);
   }
 }
 
@@ -1114,13 +1114,13 @@ const server = new DashboardServerV42();
 
 // Handle graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('\n🛑 Received SIGINT, shutting down gracefully...');
+  console.info('\n🛑 Received SIGINT, shutting down gracefully...');
   await server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-  console.log('\n🛑 Received SIGTERM, shutting down gracefully...');
+  console.info('\n🛑 Received SIGTERM, shutting down gracefully...');
   await server.stop();
   process.exit(0);
 });

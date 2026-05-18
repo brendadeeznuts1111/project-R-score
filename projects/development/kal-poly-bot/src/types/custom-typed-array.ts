@@ -83,15 +83,15 @@ export class CustomTypedArray extends Uint8Array {
    * const arr = new CustomTypedArray(256, 'odds-feed');
    * 
    * // Depth 0: Shallow (nested objects)
-   * console.log({ data: arr });
+   * console.info({ data: arr });
    * // Output: { data: CustomTypedArray(256) [ ... ] }
    * 
    * // Depth 1: Preview (first 32 bytes)
-   * console.log(arr);
+   * console.info(arr);
    * // Output: CustomTypedArray(256) [ 4255465578a3d601... ]
    * 
    * // Depth 2+: Full hex dump
-   * console.log(Bun.inspect(arr, { depth: 3 }));
+   * console.info(Bun.inspect(arr, { depth: 3 }));
    * // Output: CustomTypedArray(256) { buffer: ..., content: 00000000: ... }
    * ```
    */
@@ -270,31 +270,31 @@ export class BinaryProtocolDebugger {
     const customArray = new CustomTypedArray(256, 'odds-feed-message');
     customArray.set(new Uint8Array(buffer));
     
-    console.log('=== DEPTH-AWARE INSPECTION EXAMPLES ===\n');
+    console.info('=== DEPTH-AWARE INSPECTION EXAMPLES ===\n');
     
     // Depth 0: Top-level object inspection
-    console.log('Depth 0 (Top-Level Object):');
-    console.log({ message: customArray });
-    console.log('→ Shows: { message: CustomTypedArray(256) [ ... ] }\n');
+    console.info('Depth 0 (Top-Level Object):');
+    console.info({ message: customArray });
+    console.info('→ Shows: { message: CustomTypedArray(256) [ ... ] }\n');
     
     // Depth 1: Direct inspection
-    console.log('Depth 1 (Direct Inspection):');
-    console.log(customArray);
-    console.log('→ Shows: CustomTypedArray(256) [ 4255465578a3d601... ]\n');
+    console.info('Depth 1 (Direct Inspection):');
+    console.info(customArray);
+    console.info('→ Shows: CustomTypedArray(256) [ 4255465578a3d601... ]\n');
     
     // Depth 2+: Full hex dump
-    console.log('Depth 2+ (Full Hex Dump):');
+    console.info('Depth 2+ (Full Hex Dump):');
     const BunInspect = (globalThis as any).Bun?.inspect;
     if (BunInspect) {
-      console.log(BunInspect(customArray, { depth: 3 }));
+      console.info(BunInspect(customArray, { depth: 3 }));
     } else {
-      console.log('Bun.inspect not available, showing manual format:');
-      console.log(customArray.inspect(2, {}, (v: any) => JSON.stringify(v)));
+      console.info('Bun.inspect not available, showing manual format:');
+      console.info(customArray.inspect(2, {}, (v: any) => JSON.stringify(v)));
     }
-    console.log('→ Shows: Complete hex dump with ASCII preview\n');
+    console.info('→ Shows: Complete hex dump with ASCII preview\n');
     
     // Nested in complex object
-    console.log('Nested in Complex Object (Depth < 1):');
+    console.info('Nested in Complex Object (Depth < 1):');
     const complex = {
       feed: {
         timestamp: Date.now(),
@@ -302,8 +302,8 @@ export class BinaryProtocolDebugger {
         metadata: { source: 'provider-1' }
       }
     };
-    console.log(complex);
-    console.log('→ Shows nested arrays as [ ... ] to prevent log bloat\n');
+    console.info(complex);
+    console.info('→ Shows nested arrays as [ ... ] to prevent log bloat\n');
   }
   
   /**
@@ -320,16 +320,16 @@ export class BinaryProtocolDebugger {
     // Wrap in CustomTypedArray
     const customArray = CustomTypedArray.fromUint8Array(binaryData, 'secure-view');
     
-    console.log('\n=== SECURE DATAVIEW INTEGRATION ===');
-    console.log('Magic number:', 0x42554655);
-    console.log('Raw buffer:  ', customArray);
-    console.log('→ Shows: CustomTypedArray(13) [ 4255465501000000... ]\n');
+    console.info('\n=== SECURE DATAVIEW INTEGRATION ===');
+    console.info('Magic number:', 0x42554655);
+    console.info('Raw buffer:  ', customArray);
+    console.info('→ Shows: CustomTypedArray(13) [ 4255465501000000... ]\n');
     
     // Subarray inspection
     const payload = customArray.subarray(8);
-    console.log('Payload subarray:');
-    console.log(payload);
-    console.log('→ Shows: CustomTypedArray(5) [@8] [ ... ]\n');
+    console.info('Payload subarray:');
+    console.info(payload);
+    console.info('→ Shows: CustomTypedArray(5) [@8] [ ... ]\n');
   }
   
   /**
@@ -340,11 +340,11 @@ export class BinaryProtocolDebugger {
     const custom = new CustomTypedArray(1024, 'benchmark');
     custom.set(regular);
     
-    console.log('\n=== INSPECTION PERFORMANCE ===');
+    console.info('\n=== INSPECTION PERFORMANCE ===');
     
     const BunInspect = (globalThis as any).Bun?.inspect;
     if (!BunInspect) {
-      console.log('Bun.inspect not available for benchmarking');
+      console.info('Bun.inspect not available for benchmarking');
       return;
     }
     
@@ -362,7 +362,7 @@ export class BinaryProtocolDebugger {
     }
     console.timeEnd('Custom inspection');
     
-    console.log('\nNote: Custom is slightly slower due to hex conversion, but safer for debugging');
+    console.info('\nNote: Custom is slightly slower due to hex conversion, but safer for debugging');
   }
 }
 
@@ -423,7 +423,7 @@ export class IntegratedBinaryLogger {
     };
     
     // Log with security context
-    console.log('%j', logEntry);
+    console.info('%j', logEntry);
     
     // Report high-severity events
     if (severity === 'error' && this.threatIntel) {
@@ -460,7 +460,7 @@ export class IntegratedBinaryLogger {
       ? BunInspect(customArray, { depth: 1 })
       : customArray.toHex().substring(0, 32);
     
-    console.log('%j', {
+    console.info('%j', {
       type: 'market-update',
       marketId: update.marketId,
       status: update.status,
@@ -489,7 +489,7 @@ export class IntegratedBinaryLogger {
       ? BunInspect(customArray, { depth: 1 })
       : customArray.toHex().substring(0, 32);
     
-    console.log('%j', {
+    console.info('%j', {
       type: 'order-match',
       orderId: engineEvent.orderId,
       price: engineEvent.matchPrice,

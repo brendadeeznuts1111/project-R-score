@@ -30,11 +30,11 @@ export class ErrorHandlingStrategy {
 		// Use the router's internal `allActivePatterns` to ensure accurate global check
 		if (!router['regionSpies']?.has('global-hyper-ranked') || 
 			HyperCoreURLPatternSpyFactory.createMulti({} as any, 'temp', router.allActivePatterns).test(url)) {
-			console.log(`Attempting fallback to 'global-hyper-ranked' for ${url}.`);
+			console.info(`Attempting fallback to 'global-hyper-ranked' for ${url}.`);
 			try {
 				const result = await router.routeRequest(url, 'global-hyper-ranked');
 				// If fallback succeeded, log it as a successful recovery
-				console.log(`Fallback successful to 'global-hyper-ranked' for ${url}. Matched pattern: ${result.matchedPattern}`);
+				console.info(`Fallback successful to 'global-hyper-ranked' for ${url}. Matched pattern: ${result.matchedPattern}`);
 				return result;
 			} catch (e: any) {
 				console.warn(`Global Hyper-Ranked fallback also failed for ${url}:`, e.message);
@@ -42,7 +42,7 @@ export class ErrorHandlingStrategy {
 		}
 
 		// 9.2.0.0 Strategy 2: Use generic wildcard if all else fails
-		console.log(`Final attempt: generic wildcard match for ${url}.`);
+		console.info(`Final attempt: generic wildcard match for ${url}.`);
 		const genericFallback = HyperCoreURLPatternSpyFactory.createMulti(
 			{} as any,
 			'genericFallbackHandler',

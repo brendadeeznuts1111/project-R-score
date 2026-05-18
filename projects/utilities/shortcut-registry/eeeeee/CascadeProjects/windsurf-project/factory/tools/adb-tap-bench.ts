@@ -34,10 +34,10 @@ class ADBTapBenchmark {
 
   // 🎯 Execute tap benchmark
   async runBenchmark(tapCount: number = 1000): Promise<TapBenchmark> {
-    console.log(`🎯 ADB Tap Benchmark Starting`);
-    console.log(`📱 Resolution: ${this.resolution}`);
-    console.log(`🔢 Taps: ${tapCount}`);
-    console.log(`🆔 Trace: ${this.traceId}`);
+    console.info(`🎯 ADB Tap Benchmark Starting`);
+    console.info(`📱 Resolution: ${this.resolution}`);
+    console.info(`🔢 Taps: ${tapCount}`);
+    console.info(`🆔 Trace: ${this.traceId}`);
 
     const coordinates = this.generateTestCoordinates(tapCount);
     const latencies: number[] = [];
@@ -56,7 +56,7 @@ class ADBTapBenchmark {
 
       // Progress indicator
       if ((i + 1) % 100 === 0) {
-        console.log(`📊 Progress: ${i + 1}/${tapCount} (${Math.round((i + 1) / tapCount * 100)}%)`);
+        console.info(`📊 Progress: ${i + 1}/${tapCount} (${Math.round((i + 1) / tapCount * 100)}%)`);
       }
     }
 
@@ -161,51 +161,51 @@ class ADBTapBenchmark {
     const filename = `./factory/benchmarks/tap-benchmark-${result.traceId || 'unknown'}.json`;
     await writeFile(filename, JSON.stringify(result, null, 2));
     
-    console.log(`💾 Results saved: ${filename}`);
+    console.info(`💾 Results saved: ${filename}`);
   }
 
   // 📊 Display benchmark results
   displayResults(result: TapBenchmark): void {
-    console.log('\n🎯 ADB TAP BENCHMARK RESULTS');
-    console.log('================================');
-    console.log(`🆔 Trace ID:     ${result.traceId}`);
-    console.log(`📱 Resolution:   ${result.resolution}`);
-    console.log(`🔢 Total Taps:   ${result.taps}`);
-    console.log(`✅ Success Rate: ${result.successRate.toFixed(2)}%`);
-    console.log(`⏱️  Avg Latency:  ${result.avgLatency.toFixed(3)}ms`);
-    console.log(`🚀 Min Latency:  ${result.minLatency.toFixed(3)}ms`);
-    console.log(`🐌 Max Latency:  ${result.maxLatency.toFixed(3)}ms`);
-    console.log(`📅 Timestamp:    ${result.timestamp}`);
+    console.info('\n🎯 ADB TAP BENCHMARK RESULTS');
+    console.info('================================');
+    console.info(`🆔 Trace ID:     ${result.traceId}`);
+    console.info(`📱 Resolution:   ${result.resolution}`);
+    console.info(`🔢 Total Taps:   ${result.taps}`);
+    console.info(`✅ Success Rate: ${result.successRate.toFixed(2)}%`);
+    console.info(`⏱️  Avg Latency:  ${result.avgLatency.toFixed(3)}ms`);
+    console.info(`🚀 Min Latency:  ${result.minLatency.toFixed(3)}ms`);
+    console.info(`🐌 Max Latency:  ${result.maxLatency.toFixed(3)}ms`);
+    console.info(`📅 Timestamp:    ${result.timestamp}`);
     
     // Performance classification
     if (result.avgLatency < 1) {
-      console.log('🏆 Performance: EXCELLENT (Sub-millisecond)');
+      console.info('🏆 Performance: EXCELLENT (Sub-millisecond)');
     } else if (result.avgLatency < 5) {
-      console.log('🥈 Performance: GOOD (Under 5ms)');
+      console.info('🥈 Performance: GOOD (Under 5ms)');
     } else if (result.avgLatency < 10) {
-      console.log('🥉 Performance: ACCEPTABLE (Under 10ms)');
+      console.info('🥉 Performance: ACCEPTABLE (Under 10ms)');
     } else {
-      console.log('⚠️  Performance: NEEDS OPTIMIZATION');
+      console.info('⚠️  Performance: NEEDS OPTIMIZATION');
     }
     
     if (result.successRate > 99) {
-      console.log('🎯 Reliability: OUTSTANDING (>99%)');
+      console.info('🎯 Reliability: OUTSTANDING (>99%)');
     } else if (result.successRate > 95) {
-      console.log('✅ Reliability: GOOD (>95%)');
+      console.info('✅ Reliability: GOOD (>95%)');
     } else {
-      console.log('❌ Reliability: POOR (<95%)');
+      console.info('❌ Reliability: POOR (<95%)');
     }
   }
 
   // 🔄 Run comparative benchmark
   async runComparativeBenchmark(): Promise<void> {
-    console.log('🔄 Running Comparative ADB Tap Benchmark');
+    console.info('🔄 Running Comparative ADB Tap Benchmark');
     
     const resolutions = ['1080x1920', '1440x2560', '720x1280'];
     const results: TapBenchmark[] = [];
     
     for (const resolution of resolutions) {
-      console.log(`\n📱 Testing resolution: ${resolution}`);
+      console.info(`\n📱 Testing resolution: ${resolution}`);
       this.resolution = resolution;
       
       const result = await this.runBenchmark(500);
@@ -217,11 +217,11 @@ class ADBTapBenchmark {
     }
     
     // Summary comparison
-    console.log('\n📊 COMPARATIVE SUMMARY');
-    console.log('======================');
+    console.info('\n📊 COMPARATIVE SUMMARY');
+    console.info('======================');
     
     results.forEach(result => {
-      console.log(`${result.resolution}: ${result.avgLatency.toFixed(3)}ms avg, ${result.successRate.toFixed(1)}% success`);
+      console.info(`${result.resolution}: ${result.avgLatency.toFixed(3)}ms avg, ${result.successRate.toFixed(1)}% success`);
     });
     
     // Find best performing resolution
@@ -229,7 +229,7 @@ class ADBTapBenchmark {
       prev.avgLatency < current.avgLatency ? prev : current
     );
     
-    console.log(`\n🏆 Best performing resolution: ${best.resolution} (${best.avgLatency.toFixed(3)}ms avg)`);
+    console.info(`\n🏆 Best performing resolution: ${best.resolution} (${best.avgLatency.toFixed(3)}ms avg)`);
   }
 }
 
@@ -247,7 +247,7 @@ if (import.meta.main) {
   switch (command) {
     case 'run':
     case 'benchmark': {
-      console.log('🎯 Starting ADB Tap Benchmark');
+      console.info('🎯 Starting ADB Tap Benchmark');
       
       // Check ADB connection
       const adbCheck = spawn('adb', ['devices'], { stdio: 'pipe' });
@@ -262,10 +262,10 @@ if (import.meta.main) {
           benchmark.displayResults(result);
           
           if (result.avgLatency < 5 && result.successRate > 95) {
-            console.log('\n✅ BENCHMARK PASSED - ADB performance is optimal for Genesis Phase-01');
+            console.info('\n✅ BENCHMARK PASSED - ADB performance is optimal for Genesis Phase-01');
             process.exit(0);
           } else {
-            console.log('\n⚠️  BENCHMARK WARNING - ADB performance may impact Phase-01 success rate');
+            console.info('\n⚠️  BENCHMARK WARNING - ADB performance may impact Phase-01 success rate');
             process.exit(1);
           }
         });
@@ -274,38 +274,38 @@ if (import.meta.main) {
     }
     
     case 'compare': {
-      console.log('🔄 Starting Comparative Benchmark');
+      console.info('🔄 Starting Comparative Benchmark');
       benchmark.runComparativeBenchmark();
       break;
     }
     
     case 'quick': {
-      console.log('⚡ Quick Tap Test (100 taps)');
+      console.info('⚡ Quick Tap Test (100 taps)');
       benchmark.runBenchmark(100).then(result => {
-        console.log(`⚡ Quick test result: ${result.avgLatency.toFixed(3)}ms avg, ${result.successRate.toFixed(1)}% success`);
+        console.info(`⚡ Quick test result: ${result.avgLatency.toFixed(3)}ms avg, ${result.successRate.toFixed(1)}% success`);
       });
       break;
     }
     
     default:
-      console.log('🎯 ADB Tap Performance Benchmark');
-      console.log('');
-      console.log('Usage: bun adb-tap-bench.ts [command] [resolution] [tapCount]');
-      console.log('');
-      console.log('Commands:');
-      console.log('  run [resolution] [count]    Run full benchmark');
-      console.log('  compare                       Run comparative benchmark');
-      console.log('  quick                         Quick 100-tap test');
-      console.log('');
-      console.log('Resolutions:');
-      console.log('  1080x1920  (Standard Android)');
-      console.log('  1440x2560  (High DPI)');
-      console.log('  720x1280   (Compact)');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun adb-tap-bench.ts run 1080x1920 1000');
-      console.log('  bun adb-tap-bench.ts compare');
-      console.log('  bun adb-tap-bench.ts quick');
+      console.info('🎯 ADB Tap Performance Benchmark');
+      console.info('');
+      console.info('Usage: bun adb-tap-bench.ts [command] [resolution] [tapCount]');
+      console.info('');
+      console.info('Commands:');
+      console.info('  run [resolution] [count]    Run full benchmark');
+      console.info('  compare                       Run comparative benchmark');
+      console.info('  quick                         Quick 100-tap test');
+      console.info('');
+      console.info('Resolutions:');
+      console.info('  1080x1920  (Standard Android)');
+      console.info('  1440x2560  (High DPI)');
+      console.info('  720x1280   (Compact)');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun adb-tap-bench.ts run 1080x1920 1000');
+      console.info('  bun adb-tap-bench.ts compare');
+      console.info('  bun adb-tap-bench.ts quick');
       break;
   }
 }

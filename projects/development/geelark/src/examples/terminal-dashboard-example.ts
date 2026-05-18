@@ -296,7 +296,7 @@ setInterval(() => {
 // STARTUP
 // =============================================================================
 
-console.log(`
+console.info(`
 ╔═══════════════════════════════════════════════════════════════════════════╗
 ║                                                                           ║
 ║  📊 Geelark Monitoring Dashboard with Bun Terminal API                    ║
@@ -321,4 +321,4 @@ setTimeout(() => {
 // Example: Spawn a process with PTY (commented out)
 // spawnProcessWithPTY("ls", ["-la", "/Users/nolarose/geelark"]);
 
-console.log("\n✓ Dashboard started. Use arrow keys to navigate, Enter to select, 'q' to quit.\n");
+console.info("\n✓ Dashboard started. Use arrow keys to navigate, Enter to select, 'q' to quit.\n");

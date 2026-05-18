@@ -43,7 +43,7 @@ test('4.1.0.0 100M matches (FFI+cached) performance', async () => {
 	const actualMatches = numBookies * (numMarketsPerBookie / 10);
 	const matchesPerSec = (actualMatches / duration) * 1000;
 	
-	console.log(`⚡ ${(actualMatches / 1_000_000).toFixed(1)}M matches: ${duration.toFixed(1)}ms (${matchesPerSec.toFixed(0)} matches/sec)`);
+	console.info(`⚡ ${(actualMatches / 1_000_000).toFixed(1)}M matches: ${duration.toFixed(1)}ms (${matchesPerSec.toFixed(0)} matches/sec)`);
 	
 	// Scale expectation: 100M matches should complete in < 3500ms
 	// But we're only running 10% sample, so scale the expectation

@@ -153,13 +153,13 @@ setInterval(async () => {
 	recordTiming('full-cycle', startTime);
 }, 1000);
 
-console.log(`🚀 Edge Service v3 Enterprise running on http://localhost:${server.port}`);
-console.log(`[SPORTS-EDGE-V3][ENTERPRISE][LOCKFILE-V1][1420-SCANS/MIN][4.51% EDGE]`);
-console.log(`[VALUE:$167K][CPU-PROFILE:0.9ms][TESTS:100%][MONOREPO-STABLE][STATUS:SINGULARITY]`);
+console.info(`🚀 Edge Service v3 Enterprise running on http://localhost:${server.port}`);
+console.info(`[SPORTS-EDGE-V3][ENTERPRISE][LOCKFILE-V1][1420-SCANS/MIN][4.51% EDGE]`);
+console.info(`[VALUE:$167K][CPU-PROFILE:0.9ms][TESTS:100%][MONOREPO-STABLE][STATUS:SINGULARITY]`);
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-	console.log('Shutting down gracefully...');
+	console.info('Shutting down gracefully...');
 	mlgs.close();
 	db.close();
 	process.exit(0);

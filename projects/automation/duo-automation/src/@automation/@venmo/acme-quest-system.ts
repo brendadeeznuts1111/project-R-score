@@ -229,7 +229,7 @@ class ACMEQuestSystem {
       }
       
       await this.saveUserProgress(progress);
-      console.log(`🎮 Initialized quests for user: ${userId}`);
+      console.info(`🎮 Initialized quests for user: ${userId}`);
     }
   }
 
@@ -270,7 +270,7 @@ class ACMEQuestSystem {
         // Unlock new quests based on completion
         await this.unlockNewQuests(event.userId, quest);
         
-        console.log(`🎉 Quest completed: ${quest.name} by ${event.userId}`);
+        console.info(`🎉 Quest completed: ${quest.name} by ${event.userId}`);
       }
     }
     
@@ -372,7 +372,7 @@ class ACMEQuestSystem {
    * Apply quest reward to user
    */
   private static async applyQuestReward(userId: string, reward: QuestReward): Promise<void> {
-    console.log(`🎁 Applying reward to ${userId}: ${reward.description}`);
+    console.info(`🎁 Applying reward to ${userId}: ${reward.description}`);
     
     switch (reward.type) {
       case 'trust_score':
@@ -420,7 +420,7 @@ class ACMEQuestSystem {
         lastUpdated: new Date()
       };
       
-      console.log(`🔓 Unlocked new quest: ${quest.name} for ${userId}`);
+      console.info(`🔓 Unlocked new quest: ${quest.name} for ${userId}`);
     }
     
     await this.saveUserProgress(progress);
@@ -564,7 +564,7 @@ class ACMEQuestSystem {
    * Trigger celebration effects
    */
   private static async triggerCelebration(userId: string, completion: QuestCompletion): Promise<void> {
-    console.log(`🎊 Triggering celebration for ${userId}: ${completion.celebrationData?.animation}`);
+    console.info(`🎊 Triggering celebration for ${userId}: ${completion.celebrationData?.animation}`);
     // In production, this would trigger animations, sounds, notifications
   }
 
@@ -572,27 +572,27 @@ class ACMEQuestSystem {
    * Reward application methods (placeholders for integration)
    */
   private static async addTrustScore(userId: string, amount: number): Promise<void> {
-    console.log(`📈 Adding ${amount} trust score to ${userId}`);
+    console.info(`📈 Adding ${amount} trust score to ${userId}`);
     // Integration with user trust system
   }
 
   private static async addPoolCredits(userId: string, amount: number): Promise<void> {
-    console.log(`💰 Adding $${amount} pool credits to ${userId}`);
+    console.info(`💰 Adding $${amount} pool credits to ${userId}`);
     // Integration with pool credit system
   }
 
   private static async awardBadge(userId: string, badge: string): Promise<void> {
-    console.log(`🏆 Awarding badge ${badge} to ${userId}`);
+    console.info(`🏆 Awarding badge ${badge} to ${userId}`);
     // Integration with badge system
   }
 
   private static async unlockEmoji(userId: string, emoji: string): Promise<void> {
-    console.log(`😀 Unlocking emoji ${emoji} for ${userId}`);
+    console.info(`😀 Unlocking emoji ${emoji} for ${userId}`);
     // Integration with emoji system
   }
 
   private static async applyCustomReward(userId: string, reward: string): Promise<void> {
-    console.log(`🎁 Applying custom reward ${reward} to ${userId}`);
+    console.info(`🎁 Applying custom reward ${reward} to ${userId}`);
     // Integration with custom reward system
   }
 
@@ -692,22 +692,22 @@ if (import.meta.main) {
   switch (command) {
     case 'init':
       ACMEQuestSystem.initializeUserQuests(userId).then(() => {
-        console.log('🎮 Quest system initialized');
+        console.info('🎮 Quest system initialized');
       }).catch(error => console.error('❌ Error:', error.message));
       break;
 
     case 'progress':
       ACMEQuestSystem.getUserQuestProgress(userId).then(progress => {
-        console.log('📊 Quest Progress:');
-        console.log(`Active: ${progress.active.length} quests`);
-        console.log(`Completed: ${progress.completed.length} quests`);
-        console.log(`Statistics:`, progress.statistics);
+        console.info('📊 Quest Progress:');
+        console.info(`Active: ${progress.active.length} quests`);
+        console.info(`Completed: ${progress.completed.length} quests`);
+        console.info(`Statistics:`, progress.statistics);
         
         if (progress.active.length > 0) {
-          console.log('\n🎯 Active Quests:');
+          console.info('\n🎯 Active Quests:');
           progress.active.forEach(quest => {
             const progressPercent = Math.round((quest.progress / quest.target) * 100);
-            console.log(`  ${quest.icon} ${quest.name}: ${quest.progress}/${quest.target} (${progressPercent}%)`);
+            console.info(`  ${quest.icon} ${quest.name}: ${quest.progress}/${quest.target} (${progressPercent}%)`);
           });
         }
       }).catch(error => console.error('❌ Error:', error.message));
@@ -724,11 +724,11 @@ if (import.meta.main) {
         };
 
         ACMEQuestSystem.processQuestEvent(event).then(completions => {
-          console.log(`🎉 Processed ${eventType} event`);
-          console.log(`Completions: ${completions.length}`);
+          console.info(`🎉 Processed ${eventType} event`);
+          console.info(`Completions: ${completions.length}`);
           
           completions.forEach(completion => {
-            console.log(`  ✅ ${completion.questId}: ${completion.reward.description}`);
+            console.info(`  ✅ ${completion.questId}: ${completion.reward.description}`);
           });
         }).catch(error => console.error('❌ Error:', error.message));
       }
@@ -736,16 +736,16 @@ if (import.meta.main) {
 
     case 'library':
       const library = ACMEQuestSystem.getQuestLibrary();
-      console.log('📚 ACME Quest Library:');
+      console.info('📚 ACME Quest Library:');
       library.forEach(quest => {
         const status = quest.hidden ? '(Hidden)' : '';
-        console.log(`  ${quest.icon} ${quest.name}: ${quest.description} ${status}`);
-        console.log(`    Reward: ${quest.reward.description} | Target: ${quest.target}`);
+        console.info(`  ${quest.icon} ${quest.name}: ${quest.description} ${status}`);
+        console.info(`    Reward: ${quest.reward.description} | Target: ${quest.target}`);
       });
       break;
 
     default:
-      console.log(`
+      console.info(`
 🎮 ACME Quest System - Gamifying Family Payments Since 1972
 
 Usage:

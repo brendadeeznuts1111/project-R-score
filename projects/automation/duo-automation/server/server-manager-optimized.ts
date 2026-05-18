@@ -1,7 +1,7 @@
 // server/server-manager-optimized.ts
 import { s3 } from 'bun';
 
-console.log(`
+console.info(`
 🚀 **OPTIMIZED PRODUCTION SERVER MANAGER - BUN v1.3.5**
 ═══════════════════════════════════════════════════════════════════
 
@@ -122,7 +122,7 @@ export class OptimizedServerManager {
   }
 
   async findAvailablePort(startPort: number): Promise<number> {
-    console.log(`🔍 Optimized port search starting from ${startPort}...`);
+    console.info(`🔍 Optimized port search starting from ${startPort}...`);
     
     for (let port = startPort; port < startPort + this.MAX_PORT_ATTEMPTS; port++) {
       try {
@@ -133,11 +133,11 @@ export class OptimizedServerManager {
           timeout: 1000 // 1 second timeout for port check
         });
         testServer.stop();
-        console.log(`✅ Port ${port} is available`);
+        console.info(`✅ Port ${port} is available`);
         return port;
       } catch (error) {
         if ((error as any).code === 'EADDRINUSE') {
-          console.log(`⚡ Port ${port} busy, checking ${port + 1}...`);
+          console.info(`⚡ Port ${port} busy, checking ${port + 1}...`);
           continue;
         }
         throw error;
@@ -150,7 +150,7 @@ export class OptimizedServerManager {
   async start(): Promise<{ url: string; port: number }> {
     const startTime = performance.now();
     
-    console.log('🚀 Starting optimized production server...');
+    console.info('🚀 Starting optimized production server...');
     
     // Get port from environment or use default
     const requestedPort = parseInt(process.env.PORT || String(this.DEFAULT_PORT), 10);
@@ -218,7 +218,7 @@ export class OptimizedServerManager {
           const cookies = this.cookieManager.parse(req);
           
           // Log request with enhanced context
-          console.log(`📡 ${req.method} ${req.url} | User: ${cookies.get('user_id') || 'anonymous'} | IP: ${clientIP}`);
+          console.info(`📡 ${req.method} ${req.url} | User: ${cookies.get('user_id') || 'anonymous'} | IP: ${clientIP}`);
           
           const url = new URL(req.url);
           
@@ -293,7 +293,7 @@ export class OptimizedServerManager {
     const url = `http://${this.server.hostname}:${this.server.port}`;
     const startupTime = performance.now() - startTime;
     
-    console.log(`
+    console.info(`
 🚀 **OPTIMIZED DUOPLUS SERVER RUNNING**
 ═══════════════════════════════════════════════
 📡 URL: ${url}
@@ -630,13 +630,13 @@ export class OptimizedServerManager {
 
   private setupGracefulShutdown(): void {
     const shutdown = (signal: string) => {
-      console.log(`\n🛑 Received ${signal}, initiating graceful shutdown...`);
+      console.info(`\n🛑 Received ${signal}, initiating graceful shutdown...`);
       
       if (this.server) {
         this.server.stop();
       }
       
-      console.log('✅ Optimized server stopped gracefully');
+      console.info('✅ Optimized server stopped gracefully');
       process.exit(0);
     };
     
@@ -656,7 +656,7 @@ export class OptimizedServerManager {
       
       // Log health metrics
       if (this.healthMetrics.totalRequests % 50 === 0) {
-        console.log(`📊 Health Check: ${this.healthMetrics.totalRequests} requests, ${Math.round(this.healthMetrics.averageResponseTime)}ms avg response`);
+        console.info(`📊 Health Check: ${this.healthMetrics.totalRequests} requests, ${Math.round(this.healthMetrics.averageResponseTime)}ms avg response`);
       }
     }, 30000); // Every 30 seconds
   }
@@ -667,7 +667,7 @@ export class OptimizedServerManager {
 // ============================================================================
 
 async function runOptimizedDemo() {
-  console.log(`
+  console.info(`
 🚀 **OPTIMIZED BUN v1.3.5 PRODUCTION DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -681,48 +681,48 @@ async function runOptimizedDemo() {
 `);
   
   try {
-    console.log('🚀 Starting optimized production server...\n');
+    console.info('🚀 Starting optimized production server...\n');
     
     const serverManager = new OptimizedServerManager();
     const { url, port } = await serverManager.start();
     
     // Show enhanced endpoints
-    console.log(`📋 Enhanced endpoints available:`);
-    console.log(`   GET  ${url}/                    - Optimized dashboard`);
-    console.log(`   GET  ${url}/health             - Enhanced health check`);
-    console.log(`   GET  ${url}/metrics            - Performance metrics`);
-    console.log(`   GET  ${url}/auth/status        - Authentication status`);
-    console.log(`   GET  ${url}/environment        - Environment info`);
+    console.info(`📋 Enhanced endpoints available:`);
+    console.info(`   GET  ${url}/                    - Optimized dashboard`);
+    console.info(`   GET  ${url}/health             - Enhanced health check`);
+    console.info(`   GET  ${url}/metrics            - Performance metrics`);
+    console.info(`   GET  ${url}/auth/status        - Authentication status`);
+    console.info(`   GET  ${url}/environment        - Environment info`);
     
     // Show optimization features
-    console.log(`\n⚡ Optimization features:`);
-    console.log(`   🔥 Rate limiting: 100 requests/minute per IP`);
-    console.log(`   🚀 Max concurrent: 1000 requests`);
-    console.log(`   📊 Real-time metrics: Active`);
-    console.log(`   🛡️ Enhanced security: HTTP-only cookies`);
-    console.log(`   💾 Memory management: Auto-cleanup`);
+    console.info(`\n⚡ Optimization features:`);
+    console.info(`   🔥 Rate limiting: 100 requests/minute per IP`);
+    console.info(`   🚀 Max concurrent: 1000 requests`);
+    console.info(`   📊 Real-time metrics: Active`);
+    console.info(`   🛡️ Enhanced security: HTTP-only cookies`);
+    console.info(`   💾 Memory management: Auto-cleanup`);
     
     // Open browser if not in CI
     if (process.env.NODE_ENV !== 'ci' && process.stdin.isTTY) {
-      console.log(`\n🌐 Opening ${url} in browser...`);
+      console.info(`\n🌐 Opening ${url} in browser...`);
       try {
         await Bun.$`open ${url}`;
       } catch (error) {
-        console.log(`⚠️  Could not open browser automatically`);
+        console.info(`⚠️  Could not open browser automatically`);
       }
     }
     
-    console.log(`\n✅ Optimized server running on port ${port}. Press Ctrl+C to stop.`);
-    console.log(`📊 View metrics: curl ${url}/metrics | jq .`);
-    console.log(`🔥 Check rate limiting: curl -H "X-Forwarded-For: test" ${url}/health`);
+    console.info(`\n✅ Optimized server running on port ${port}. Press Ctrl+C to stop.`);
+    console.info(`📊 View metrics: curl ${url}/metrics | jq .`);
+    console.info(`🔥 Check rate limiting: curl -H "X-Forwarded-For: test" ${url}/health`);
     
     // Keep server running
     if (process.stdin.isTTY) {
-      console.log(`\n📮 Enhanced commands:`);
-      console.log(`   [R]efresh metrics`);
-      console.log(`   [H]ealth check`);
-      console.log(`   [S]tatistics`);
-      console.log(`   [Q]uit server`);
+      console.info(`\n📮 Enhanced commands:`);
+      console.info(`   [R]efresh metrics`);
+      console.info(`   [H]ealth check`);
+      console.info(`   [S]tatistics`);
+      console.info(`   [Q]uit server`);
       
       process.stdin.setRawMode(true);
       
@@ -734,13 +734,13 @@ async function runOptimizedDemo() {
             try {
               const metricsResponse = await fetch(`${url}/metrics`);
               const metrics = await metricsResponse.json();
-              console.log(`\n📊 Current Metrics:`);
-              console.log(`   Requests/sec: ${metrics.totalRequests}`);
-              console.log(`   Avg Response: ${metrics.averageResponseTime.toFixed(2)}ms`);
-              console.log(`   Active Requests: ${metrics.activeConnections}`);
-              console.log(`   Memory: ${Math.round(metrics.memoryUsage.heapUsed / 1024 / 1024)}MB\n`);
+              console.info(`\n📊 Current Metrics:`);
+              console.info(`   Requests/sec: ${metrics.totalRequests}`);
+              console.info(`   Avg Response: ${metrics.averageResponseTime.toFixed(2)}ms`);
+              console.info(`   Active Requests: ${metrics.activeConnections}`);
+              console.info(`   Memory: ${Math.round(metrics.memoryUsage.heapUsed / 1024 / 1024)}MB\n`);
             } catch (error) {
-              console.log(`❌ Failed to get metrics: ${(error as Error).message}\n`);
+              console.info(`❌ Failed to get metrics: ${(error as Error).message}\n`);
             }
             break;
             
@@ -748,25 +748,25 @@ async function runOptimizedDemo() {
             try {
               const healthResponse = await fetch(`${url}/health`);
               const health = await healthResponse.json();
-              console.log(`\n🏥 Health Status: ${health.status.toUpperCase()}`);
-              console.log(`   Total Requests: ${health.performance.totalRequests}`);
-              console.log(`   Success Rate: ${((health.performance.successfulRequests / health.performance.totalRequests) * 100).toFixed(1)}%`);
-              console.log(`   Rate Limited IPs: ${health.rateLimit.activeClients}\n`);
+              console.info(`\n🏥 Health Status: ${health.status.toUpperCase()}`);
+              console.info(`   Total Requests: ${health.performance.totalRequests}`);
+              console.info(`   Success Rate: ${((health.performance.successfulRequests / health.performance.totalRequests) * 100).toFixed(1)}%`);
+              console.info(`   Rate Limited IPs: ${health.rateLimit.activeClients}\n`);
             } catch (error) {
-              console.log(`❌ Failed to get health status: ${(error as Error).message}\n`);
+              console.info(`❌ Failed to get health status: ${(error as Error).message}\n`);
             }
             break;
             
           case 's':
-            console.log(`\n📈 Server Statistics:`);
-            console.log(`   Process ID: ${process.pid}`);
-            console.log(`   Uptime: ${Math.round((Date.now() - Date.now()) / 1000)}s`);
-            console.log(`   Memory: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`);
-            console.log(`   Rate Limit Map Size: ${serverManager['rateLimitMap'].size}\n`);
+            console.info(`\n📈 Server Statistics:`);
+            console.info(`   Process ID: ${process.pid}`);
+            console.info(`   Uptime: ${Math.round((Date.now() - Date.now()) / 1000)}s`);
+            console.info(`   Memory: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`);
+            console.info(`   Rate Limit Map Size: ${serverManager['rateLimitMap'].size}\n`);
             break;
             
           case 'q':
-            console.log(`\n👋 Shutting down optimized server...`);
+            console.info(`\n👋 Shutting down optimized server...`);
             process.exit(0);
             break;
         }

@@ -9,7 +9,7 @@ import {
   SCOPE_STRATEGIES 
 } from '../src/utils/s3Exports.js';
 
-console.log(`
+console.info(`
 📎 **BUN v1.3.5 S3 CONTENT-DISPOSITION DEMONSTRATION**
 ═══════════════════════════════════════════════════════════════════
 
@@ -30,7 +30,7 @@ Let's explore this powerful new feature! 📎
 // ============================================================================
 
 const explainContentDisposition = () => {
-  console.log(`
+  console.info(`
 📚 **CONTENT-DISPOSITION THEORY**
 ═══════════════════════════════════════════════════════════════════
 
@@ -62,7 +62,7 @@ Content-Disposition: attachment; filename*=UTF-8''%E2%9C%85%20report.pdf
 // ============================================================================
 
 const demonstrateOfficialExamples = () => {
-  console.log(`
+  console.info(`
 📎 **OFFICIAL EXAMPLES FROM BUN BLOG**
 ═══════════════════════════════════════════════════════════════════
 
@@ -95,11 +95,11 @@ class S3ContentDispositionDemo {
   private testResults: Record<string, boolean> = {};
   
   constructor() {
-    console.log("🔧 Initializing S3 Content-Disposition demonstration...");
+    console.info("🔧 Initializing S3 Content-Disposition demonstration...");
   }
   
   async runAllDemos() {
-    console.log("🚀 Running comprehensive S3 Content-Disposition demos...\n");
+    console.info("🚀 Running comprehensive S3 Content-Disposition demos...\n");
     
     // Demo 1: Basic Content-Disposition
     await this.demoBasicContentDisposition();
@@ -127,7 +127,7 @@ class S3ContentDispositionDemo {
   }
   
   private async demoBasicContentDisposition() {
-    console.log(`
+    console.info(`
 📎 **DEMO 1: BASIC CONTENT-DISPOSITION**
 ═══════════════════════════════════════════════════════════════════
 
@@ -146,25 +146,25 @@ await s3.write("image.png", imageData, {
 `);
     
     try {
-      console.log("🔧 Testing basic Content-Disposition...");
+      console.info("🔧 Testing basic Content-Disposition...");
       
       // Test 1: Attachment filename
-      console.log("📄 Testing attachment with custom filename...");
+      console.info("📄 Testing attachment with custom filename...");
       const attachmentFile = s3.file("test-report.pdf", {
         contentDisposition: 'attachment; filename="quarterly-report.pdf"',
       });
       
-      console.log("✅ Attachment Content-Disposition created successfully");
-      console.log(`   Header: ${attachmentFile.contentDisposition}`);
+      console.info("✅ Attachment Content-Disposition created successfully");
+      console.info(`   Header: ${attachmentFile.contentDisposition}`);
       
       // Test 2: Inline display
-      console.log("🖼️ Testing inline display...");
+      console.info("🖼️ Testing inline display...");
       const inlineFile = s3.file("test-image.png", {
         contentDisposition: "inline",
       });
       
-      console.log("✅ Inline Content-Disposition created successfully");
-      console.log(`   Header: ${inlineFile.contentDisposition}`);
+      console.info("✅ Inline Content-Disposition created successfully");
+      console.info(`   Header: ${inlineFile.contentDisposition}`);
       
       this.testResults.basic_content_disposition = true;
       
@@ -175,7 +175,7 @@ await s3.write("image.png", imageData, {
   }
   
   private async demoAttachmentVsInline() {
-    console.log(`
+    console.info(`
 📎 **DEMO 2: ATTACHMENT VS INLINE**
 ═══════════════════════════════════════════════════════════════════
 
@@ -194,27 +194,27 @@ const viewFile = s3.file("photo.jpg", {
 `);
     
     try {
-      console.log("🔧 Testing attachment vs inline behavior...");
+      console.info("🔧 Testing attachment vs inline behavior...");
       
       // Test attachment
-      console.log("📄 Creating attachment file (forces download)...");
+      console.info("📄 Creating attachment file (forces download)...");
       const attachmentFile = s3.file("document.pdf", {
         contentDisposition: 'attachment; filename="annual-report-2024.pdf"',
       });
       
-      console.log("✅ Attachment file created");
-      console.log(`   Browser behavior: Force download dialog`);
-      console.log(`   Filename: annual-report-2024.pdf`);
+      console.info("✅ Attachment file created");
+      console.info(`   Browser behavior: Force download dialog`);
+      console.info(`   Filename: annual-report-2024.pdf`);
       
       // Test inline
-      console.log("🖼️ Creating inline file (displays in browser)...");
+      console.info("🖼️ Creating inline file (displays in browser)...");
       const inlineFile = s3.file("photo.jpg", {
         contentDisposition: "inline",
       });
       
-      console.log("✅ Inline file created");
-      console.log(`   Browser behavior: Display in browser if possible`);
-      console.log(`   Fallback: Download if browser cannot display`);
+      console.info("✅ Inline file created");
+      console.info(`   Browser behavior: Display in browser if possible`);
+      console.info(`   Fallback: Download if browser cannot display`);
       
       this.testResults.attachment_vs_inline = true;
       
@@ -225,7 +225,7 @@ const viewFile = s3.file("photo.jpg", {
   }
   
   private async demoCustomFilenames() {
-    console.log(`
+    console.info(`
 📎 **DEMO 3: CUSTOM FILENAMES**
 ═══════════════════════════════════════════════════════════════════
 
@@ -249,7 +249,7 @@ const versionedFile = s3.file("latest.docx", {
 `);
     
     try {
-      console.log("🔧 Testing custom filename scenarios...");
+      console.info("🔧 Testing custom filename scenarios...");
       
       const filenameExamples = [
         {
@@ -273,15 +273,15 @@ const versionedFile = s3.file("latest.docx", {
       ];
       
       for (const example of filenameExamples) {
-        console.log(`📄 Creating ${example.name}...`);
+        console.info(`📄 Creating ${example.name}...`);
         const file = s3.file(example.key, {
           contentDisposition: example.disposition,
         });
         
-        console.log(`✅ ${example.name} created`);
-        console.log(`   Description: ${example.description}`);
-        console.log(`   Content-Disposition: ${file.contentDisposition}`);
-        console.log("");
+        console.info(`✅ ${example.name} created`);
+        console.info(`   Description: ${example.description}`);
+        console.info(`   Content-Disposition: ${file.contentDisposition}`);
+        console.info("");
       }
       
       this.testResults.custom_filenames = true;
@@ -293,7 +293,7 @@ const versionedFile = s3.file("latest.docx", {
   }
   
   private async demoUTF8Filenames() {
-    console.log(`
+    console.info(`
 📎 **DEMO 4: UTF-8 FILENAME SUPPORT**
 ═══════════════════════════════════════════════════════════════════
 
@@ -312,28 +312,28 @@ const unicodeFile2 = s3.file("data.pdf", {
 `);
     
     try {
-      console.log("🔧 Testing UTF-8 filename support...");
+      console.info("🔧 Testing UTF-8 filename support...");
       
       // Test RFC 5987 encoded filename
-      console.log("🌍 Testing RFC 5987 encoded UTF-8 filename...");
+      console.info("🌍 Testing RFC 5987 encoded UTF-8 filename...");
       const encodedFile = s3.file("data.pdf", {
         contentDisposition: 'attachment; filename*=UTF-8\'\'%E2%9C%85%20report.pdf',
       });
       
-      console.log("✅ UTF-8 encoded filename created");
-      console.log(`   Original: ✅ report.pdf`);
-      console.log(`   Encoded: filename*=UTF-8''%E2%9C%85%20report.pdf`);
-      console.log(`   Browser support: Modern browsers only`);
+      console.info("✅ UTF-8 encoded filename created");
+      console.info(`   Original: ✅ report.pdf`);
+      console.info(`   Encoded: filename*=UTF-8''%E2%9C%85%20report.pdf`);
+      console.info(`   Browser support: Modern browsers only`);
       
       // Test direct Unicode (may have compatibility issues)
-      console.log("🌍 Testing direct Unicode filename...");
+      console.info("🌍 Testing direct Unicode filename...");
       const unicodeFile = s3.file("data.pdf", {
         contentDisposition: 'attachment; filename="✅ report.pdf"',
       });
       
-      console.log("✅ Direct Unicode filename created");
-      console.log(`   Filename: ✅ report.pdf`);
-      console.log(`   Browser support: Limited (use RFC 5987 for better support)`);
+      console.info("✅ Direct Unicode filename created");
+      console.info(`   Filename: ✅ report.pdf`);
+      console.info(`   Browser support: Limited (use RFC 5987 for better support)`);
       
       // More examples
       const internationalExamples = [
@@ -343,9 +343,9 @@ const unicodeFile2 = s3.file("data.pdf", {
         { name: "Emoji", filename: "🎉report.pdf", encoded: "%F0%9F%8E%89report.pdf" }
       ];
       
-      console.log("🌍 International filename examples:");
+      console.info("🌍 International filename examples:");
       internationalExamples.forEach(example => {
-        console.log(`   ${example.name}: ${example.filename} → ${example.encoded}`);
+        console.info(`   ${example.name}: ${example.filename} → ${example.encoded}`);
       });
       
       this.testResults.utf8_filenames = true;
@@ -357,7 +357,7 @@ const unicodeFile2 = s3.file("data.pdf", {
   }
   
   private async demoFormDataUploads() {
-    console.log(`
+    console.info(`
 📎 **DEMO 5: FORM DATA UPLOADS**
 ═══════════════════════════════════════════════════════════════════
 
@@ -376,29 +376,29 @@ const multiField = s3.file("data", {
 `);
     
     try {
-      console.log("🔧 Testing form data uploads...");
+      console.info("🔧 Testing form data uploads...");
       
       // Test form data upload
-      console.log("📝 Creating form data upload...");
+      console.info("📝 Creating form data upload...");
       const formData = s3.file("upload", {
         contentDisposition: 'form-data; name="file"; filename="user-upload.csv"',
       });
       
-      console.log("✅ Form data upload created");
-      console.log(`   Form field: file`);
-      console.log(`   Filename: user-upload.csv`);
-      console.log(`   Use case: File upload forms`);
+      console.info("✅ Form data upload created");
+      console.info(`   Form field: file`);
+      console.info(`   Filename: user-upload.csv`);
+      console.info(`   Use case: File upload forms`);
       
       // Test multiple form fields
-      console.log("📝 Creating multi-field form data...");
+      console.info("📝 Creating multi-field form data...");
       const multiField = s3.file("document", {
         contentDisposition: 'form-data; name="document"; filename="contract.pdf"',
       });
       
-      console.log("✅ Multi-field form data created");
-      console.log(`   Form field: document`);
-      console.log(`   Filename: contract.pdf`);
-      console.log(`   Use case: Complex form submissions`);
+      console.info("✅ Multi-field form data created");
+      console.info(`   Form field: document`);
+      console.info(`   Filename: contract.pdf`);
+      console.info(`   Use case: Complex form submissions`);
       
       // Additional form data examples
       const formExamples = [
@@ -419,12 +419,12 @@ const multiField = s3.file("data", {
         }
       ];
       
-      console.log("📝 Additional form data examples:");
+      console.info("📝 Additional form data examples:");
       formExamples.forEach(example => {
         const file = s3.file("upload", {
           contentDisposition: example.disposition,
         });
-        console.log(`   ${example.name}: ${example.use}`);
+        console.info(`   ${example.name}: ${example.use}`);
       });
       
       this.testResults.form_data_uploads = true;
@@ -436,7 +436,7 @@ const multiField = s3.file("data", {
   }
   
   private async demoAllUploadMethods() {
-    console.log(`
+    console.info(`
 📎 **DEMO 6: ALL S3 UPLOAD METHODS**
 ═══════════════════════════════════════════════════════════════════
 
@@ -466,46 +466,46 @@ const file = s3.file("document.pdf", {
 `);
     
     try {
-      console.log("🔧 testing Content-Disposition across all upload methods...");
+      console.info("🔧 testing Content-Disposition across all upload methods...");
       
       // Test 1: Simple upload
-      console.log("📄 Testing simple upload with Content-Disposition...");
+      console.info("📄 Testing simple upload with Content-Disposition...");
       const simpleData = "This is a simple file upload test";
       const simpleUpload = s3.file("simple.txt", {
         contentDisposition: 'attachment; filename="simple-upload.txt"',
       });
       
-      console.log("✅ Simple upload with Content-Disposition works");
+      console.info("✅ Simple upload with Content-Disposition works");
       
       // Test 2: Multipart upload simulation
-      console.log("📦 Testing multipart upload with Content-Disposition...");
+      console.info("📦 Testing multipart upload with Content-Disposition...");
       const multipartFile = s3.file("large-file.zip", {
         contentDisposition: 'attachment; filename="backup-2024.zip"',
       });
       
-      console.log("✅ Multipart upload with Content-Disposition works");
-      console.log(`   Use case: Large files (>100MB)`);
-      console.log(`   Benefit: Reliable uploads with resume capability`);
+      console.info("✅ Multipart upload with Content-Disposition works");
+      console.info(`   Use case: Large files (>100MB)`);
+      console.info(`   Benefit: Reliable uploads with resume capability`);
       
       // Test 3: Streaming upload simulation
-      console.log("🌊 Testing streaming upload with Content-Disposition...");
+      console.info("🌊 Testing streaming upload with Content-Disposition...");
       const streamFile = s3.file("video.mp4", {
         contentDisposition: 'attachment; filename="presentation-video.mp4"',
       });
       
-      console.log("✅ Streaming upload with Content-Disposition works");
-      console.log(`   Use case: Video/audio streams, large data transfers`);
-      console.log(`   Benefit: Memory-efficient uploads`);
+      console.info("✅ Streaming upload with Content-Disposition works");
+      console.info(`   Use case: Video/audio streams, large data transfers`);
+      console.info(`   Benefit: Memory-efficient uploads`);
       
       // Test 4: File object creation
-      console.log("📁 Testing file object creation with Content-Disposition...");
+      console.info("📁 Testing file object creation with Content-Disposition...");
       const fileObject = s3.file("document.pdf", {
         contentDisposition: 'attachment; filename="official-document.pdf"',
       });
       
-      console.log("✅ File object creation with Content-Disposition works");
-      console.log(`   Use case: Reference to existing S3 objects`);
-      console.log(`   Benefit: Reusable file references`);
+      console.info("✅ File object creation with Content-Disposition works");
+      console.info(`   Use case: Reference to existing S3 objects`);
+      console.info(`   Benefit: Reusable file references`);
       
       this.testResults.all_upload_methods = true;
       
@@ -516,7 +516,7 @@ const file = s3.file("document.pdf", {
   }
   
   private async demoAdvancedScenarios() {
-    console.log(`
+    console.info(`
 📎 **DEMO 7: ADVANCED SCENARIOS**
 ═══════════════════════════════════════════════════════════════════
 
@@ -553,10 +553,10 @@ const userFile = s3.file("data.csv", {
 `);
     
     try {
-      console.log("🔧 Testing advanced Content-Disposition scenarios...");
+      console.info("🔧 Testing advanced Content-Disposition scenarios...");
       
       // Test 1: Conditional Content-Disposition
-      console.log("🧠 Testing conditional Content-Disposition based on file type...");
+      console.info("🧠 Testing conditional Content-Disposition based on file type...");
       
       const getContentDisposition = (filename: string, forceDownload = false) => {
         const extension = filename.split('.').pop()?.toLowerCase();
@@ -581,35 +581,35 @@ const userFile = s3.file("data.csv", {
         "video.mp4"
       ];
       
-      console.log("📄 File type-based Content-Disposition:");
+      console.info("📄 File type-based Content-Disposition:");
       testFiles.forEach(filename => {
         const disposition = getContentDisposition(filename);
-        console.log(`   ${filename}: ${disposition}`);
+        console.info(`   ${filename}: ${disposition}`);
       });
       
       // Test 2: Dynamic filename generation
-      console.log("🕒 Testing dynamic filename generation...");
+      console.info("🕒 Testing dynamic filename generation...");
       const timestamp = new Date().toISOString().split('T')[0];
       const dynamicFile = s3.file("report.pdf", {
         contentDisposition: `attachment; filename="report-${timestamp}.pdf"`,
       });
       
-      console.log("✅ Dynamic filename generated");
-      console.log(`   Pattern: report-YYYY-MM-DD.pdf`);
-      console.log(`   Example: report-${timestamp}.pdf`);
+      console.info("✅ Dynamic filename generated");
+      console.info(`   Pattern: report-YYYY-MM-DD.pdf`);
+      console.info(`   Example: report-${timestamp}.pdf`);
       
       // Test 3: User-specific filenames
-      console.log("👤 Testing user-specific filenames...");
+      console.info("👤 Testing user-specific filenames...");
       const userFile = s3.file("data.csv", {
         contentDisposition: `attachment; filename="user-123-export-${Date.now()}.csv"`,
       });
       
-      console.log("✅ User-specific filename generated");
-      console.log(`   Pattern: user-{id}-export-{timestamp}.csv`);
-      console.log(`   Use case: Personalized exports, audit trails`);
+      console.info("✅ User-specific filename generated");
+      console.info(`   Pattern: user-{id}-export-{timestamp}.csv`);
+      console.info(`   Use case: Personalized exports, audit trails`);
       
       // Test 4: Business logic examples
-      console.log("💼 Testing business logic examples...");
+      console.info("💼 Testing business logic examples...");
       
       const businessExamples = [
         {
@@ -632,12 +632,12 @@ const userFile = s3.file("data.csv", {
         }
       ];
       
-      console.log("💼 Business logic examples:");
+      console.info("💼 Business logic examples:");
       businessExamples.forEach(example => {
         const file = s3.file("data", {
           contentDisposition: `${example.disposition}; filename="${example.filename}"`,
         });
-        console.log(`   ${example.scenario}: ${example.disposition} - ${example.reason}`);
+        console.info(`   ${example.scenario}: ${example.disposition} - ${example.reason}`);
       });
       
       this.testResults.advanced_scenarios = true;
@@ -649,7 +649,7 @@ const userFile = s3.file("data.csv", {
   }
   
   private generateSummary() {
-    console.log(`
+    console.info(`
 📊 **S3 CONTENT-DISPOSITION DEMO SUMMARY**
 ═══════════════════════════════════════════════════════════════════
 
@@ -700,7 +700,7 @@ ${Object.entries(this.testResults).map(([test, passed]) =>
 // ============================================================================
 
 const runS3ContentDispositionDemo = async () => {
-  console.log(`
+  console.info(`
 🚀 **STARTING COMPREHENSIVE S3 CONTENT-DISPOSITION DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -727,7 +727,7 @@ Let's explore this powerful new feature! 📎
     const demo = new S3ContentDispositionDemo();
     await demo.runAllDemos();
     
-    console.log(`
+    console.info(`
 🎉 **S3 CONTENT-DISPOSITION DEMO COMPLETED!**
 ═══════════════════════════════════════════════════════════════════
 
@@ -757,7 +757,7 @@ Let's explore this powerful new feature! 📎
 // 📚 USAGE EXAMPLES AND REFERENCE
 // ============================================================================
 
-console.log(`
+console.info(`
 📚 **USAGE EXAMPLES AND REFERENCE**
 ═══════════════════════════════════════════════════════════════════
 

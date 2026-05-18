@@ -67,7 +67,7 @@ class IntelligentFileDiscovery {
    * Build comprehensive file indexes
    */
   private buildIndexes(): void {
-    console.log('🔍 Building file discovery indexes...');
+    console.info('🔍 Building file discovery indexes...');
     
     const directories = ['src', 'packages', 'demos', 'scripts', 'tests'];
     
@@ -75,9 +75,9 @@ class IntelligentFileDiscovery {
       this.indexDirectory(dir);
     }
 
-    console.log(`📊 Indexed ${this.fileIndex.size} files`);
-    console.log(`🏷️ Token groups: ${this.tokenIndex.size}`);
-    console.log(`🔤 Keyword groups: ${this.keywordIndex.size}`);
+    console.info(`📊 Indexed ${this.fileIndex.size} files`);
+    console.info(`🏷️ Token groups: ${this.tokenIndex.size}`);
+    console.info(`🔤 Keyword groups: ${this.keywordIndex.size}`);
   }
 
   /**
@@ -321,7 +321,7 @@ class IntelligentFileDiscovery {
    */
   public search(query: SearchQuery): SearchResult {
     const startTime = Date.now();
-    console.log(`🔍 Searching files with query:`, query);
+    console.info(`🔍 Searching files with query:`, query);
 
     let candidateFiles = Array.from(this.fileIndex.values());
 
@@ -353,7 +353,7 @@ class IntelligentFileDiscovery {
       }
     };
 
-    console.log(`📊 Found ${result.total} files in ${searchTime}ms`);
+    console.info(`📊 Found ${result.total} files in ${searchTime}ms`);
     return result;
   }
 
@@ -593,9 +593,9 @@ if (import.meta.main) {
           sortOrder: 'desc'
         };
         const result = discovery.search(searchQuery);
-        console.log('\n🔍 Search Results:');
+        console.info('\n🔍 Search Results:');
         result.files.forEach(file => {
-          console.log(`  📄 ${file.path} (${file.token}, relevance: ${file.relevance})`);
+          console.info(`  📄 ${file.path} (${file.token}, relevance: ${file.relevance})`);
         });
       }
       break;
@@ -603,9 +603,9 @@ if (import.meta.main) {
     case 'similar':
       if (query) {
         const similar = discovery.findSimilarFiles(query);
-        console.log(`\n📄 Files similar to ${query}:`);
+        console.info(`\n📄 Files similar to ${query}:`);
         similar.forEach(file => {
-          console.log(`  📄 ${file.path} (${file.token})`);
+          console.info(`  📄 ${file.path} (${file.token})`);
         });
       }
       break;
@@ -613,24 +613,24 @@ if (import.meta.main) {
     case 'token':
       if (query) {
         const files = discovery.getFilesByToken(query);
-        console.log(`\n📁 Files with token ${query}:`);
+        console.info(`\n📁 Files with token ${query}:`);
         files.forEach(file => {
-          console.log(`  📄 ${file.path}`);
+          console.info(`  📄 ${file.path}`);
         });
       }
       break;
 
     case 'stats':
-      console.log('\n📊 File Discovery Statistics:');
-      console.log(JSON.stringify(discovery.getStatistics(), null, 2));
+      console.info('\n📊 File Discovery Statistics:');
+      console.info(JSON.stringify(discovery.getStatistics(), null, 2));
       break;
 
     case 'export':
-      console.log(discovery.exportIndex());
+      console.info(discovery.exportIndex());
       break;
 
     default:
-      console.log(`
+      console.info(`
 Intelligent File Discovery System
 
 Usage:

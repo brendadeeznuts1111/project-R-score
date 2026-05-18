@@ -97,7 +97,7 @@ export class HyperCoreArbRouter extends QuantumArbRouter {
 				}
 			});
 			
-			console.log('🔥 HMR: Pattern watcher enabled (Bun.watch)');
+			console.info('🔥 HMR: Pattern watcher enabled (Bun.watch)');
 		} catch (e) {
 			console.warn('Pattern watcher setup failed:', e);
 		}
@@ -116,7 +116,7 @@ export class HyperCoreArbRouter extends QuantumArbRouter {
 				// If we get here, patterns are valid
 				const newPatterns = convertedPatterns;
 
-				console.log(`🔥 HMR: ${newPatterns.length} valid pattern(s) detected in ${filename}`);
+				console.info(`🔥 HMR: ${newPatterns.length} valid pattern(s) detected in ${filename}`);
 
 				// Build spy for new patterns
 				const newSpy = this.buildSpy(newPatterns);
@@ -134,7 +134,7 @@ export class HyperCoreArbRouter extends QuantumArbRouter {
 				// Update allActivePatterns
 				this.updateAllActivePatterns();
 
-				console.log(`✅ HMR: Updated ${regionName} region with ${newPatterns.length} valid pattern(s)`);
+				console.info(`✅ HMR: Updated ${regionName} region with ${newPatterns.length} valid pattern(s)`);
 			} catch (e: any) {
 				// ✅ Bun 1.1: Use event.message fallback (event.error can be null)
 				const errorMessage = e.message || e.error?.message || e.toString() || 'Unknown error';

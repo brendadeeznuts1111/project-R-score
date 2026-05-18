@@ -16,8 +16,8 @@ class WidgetPerformanceBenchmark {
 	private results: BenchmarkResult[] = [];
 
 	async runAllBenchmarks(): Promise<void> {
-		console.log("🚀 Bun v1.3.7 Widget Performance Benchmarks");
-		console.log("==========================================\n");
+		console.info("🚀 Bun v1.3.7 Widget Performance Benchmarks");
+		console.info("==========================================\n");
 
 		// 1. Buffer.from() Performance Test
 		await this.benchmarkBufferFrom();
@@ -41,7 +41,7 @@ class WidgetPerformanceBenchmark {
 	}
 
 	private async benchmarkBufferFrom(): Promise<void> {
-		console.log("📊 Testing Buffer.from() Performance...");
+		console.info("📊 Testing Buffer.from() Performance...");
 
 		const testSizes = [8, 64, 1024, 8192];
 
@@ -71,14 +71,14 @@ class WidgetPerformanceBenchmark {
 				improvement: expectedImprovement,
 			});
 
-			console.log(
+			console.info(
 				`  ${size} elements: ${time.toFixed(2)}ms (${opsPerSecond.toFixed(0)} ops/sec) ${expectedImprovement}`,
 			);
 		}
 	}
 
 	private async benchmarkAsyncAwait(): Promise<void> {
-		console.log("\n⚡ Testing Async/Await Performance...");
+		console.info("\n⚡ Testing Async/Await Performance...");
 
 		const iterations = 5000;
 
@@ -97,13 +97,13 @@ class WidgetPerformanceBenchmark {
 			opsPerSecond,
 		});
 
-		console.log(
+		console.info(
 			`  ${iterations} operations: ${time.toFixed(2)}ms (${opsPerSecond.toFixed(0)} ops/sec)`,
 		);
 	}
 
 	private async benchmarkStringOperations(): Promise<void> {
-		console.log("\n🔤 Testing String Operations...");
+		console.info("\n🔤 Testing String Operations...");
 
 		const testStrings = [
 			"hello",
@@ -138,13 +138,13 @@ class WidgetPerformanceBenchmark {
 			opsPerSecond,
 		});
 
-		console.log(
+		console.info(
 			`  ${iterations * testStrings.length} operations: ${time.toFixed(2)}ms (${opsPerSecond.toFixed(0)} ops/sec)`,
 		);
 	}
 
 	private async benchmarkCompoundBooleans(): Promise<void> {
-		console.log("\n🔍 Testing Compound Boolean Expressions...");
+		console.info("\n🔍 Testing Compound Boolean Expressions...");
 
 		const iterations = 100000;
 
@@ -183,13 +183,13 @@ class WidgetPerformanceBenchmark {
 			opsPerSecond,
 		});
 
-		console.log(
+		console.info(
 			`  ${iterations} operations: ${time.toFixed(2)}ms (${opsPerSecond.toFixed(0)} ops/sec)`,
 		);
 	}
 
 	private async benchmarkArrayOperations(): Promise<void> {
-		console.log("\n📋 Testing Array Operations...");
+		console.info("\n📋 Testing Array Operations...");
 
 		const iterations = 5000;
 
@@ -225,13 +225,13 @@ class WidgetPerformanceBenchmark {
 			opsPerSecond,
 		});
 
-		console.log(
+		console.info(
 			`  ${iterations} operations: ${time.toFixed(2)}ms (${opsPerSecond.toFixed(0)} ops/sec)`,
 		);
 	}
 
 	private async benchmarkWidgetStatusMonitoring(): Promise<void> {
-		console.log("\n📡 Testing Widget Status Monitoring Simulation...");
+		console.info("\n📡 Testing Widget Status Monitoring Simulation...");
 
 		const iterations = 1000;
 
@@ -253,7 +253,7 @@ class WidgetPerformanceBenchmark {
 			opsPerSecond,
 		});
 
-		console.log(
+		console.info(
 			`  ${iterations} monitoring cycles: ${time.toFixed(2)}ms (${opsPerSecond.toFixed(0)} ops/sec)`,
 		);
 	}
@@ -324,22 +324,22 @@ class WidgetPerformanceBenchmark {
 	}
 
 	private printResults(): void {
-		console.log("\n📈 Performance Results Summary");
-		console.log("================================");
+		console.info("\n📈 Performance Results Summary");
+		console.info("================================");
 
 		// Sort by operations per second
 		const sortedResults = this.results.sort(
 			(a, b) => b.opsPerSecond - a.opsPerSecond,
 		);
 
-		console.log("\n📊 Benchmark Results:");
-		console.log(
+		console.info("\n📊 Benchmark Results:");
+		console.info(
 			"┌─────────────────────────────────────────┬──────────────┬──────────────┬─────────────────┐",
 		);
-		console.log(
+		console.info(
 			"│ Operation                               │ Time (ms)    │ Ops/Second   │ Improvement     │",
 		);
-		console.log(
+		console.info(
 			"├─────────────────────────────────────────┼──────────────┼──────────────┼─────────────────┤",
 		);
 
@@ -351,16 +351,16 @@ class WidgetPerformanceBenchmark {
 				? result.improvement.padStart(15)
 				: " ".repeat(15);
 
-			console.log(`│ ${name} │ ${time} │ ${ops} │ ${improvement} │`);
+			console.info(`│ ${name} │ ${time} │ ${ops} │ ${improvement} │`);
 		}
 
-		console.log(
+		console.info(
 			"└─────────────────────────────────────────┴──────────────┴──────────────┴─────────────────┘",
 		);
 
 		// Performance insights
-		console.log("\n💡 Performance Insights:");
-		console.log("========================");
+		console.info("\n💡 Performance Insights:");
+		console.info("========================");
 
 		const bufferResults = this.results.filter((r) =>
 			r.name.includes("Buffer.from()"),
@@ -371,45 +371,45 @@ class WidgetPerformanceBenchmark {
 		);
 
 		if (bufferAvgImprovement > 0) {
-			console.log("✅ Buffer.from() operations show significant improvements");
-			console.log("   - Leverage this for faster network response processing");
-			console.log("   - Optimize buffer creation in widget data handling");
+			console.info("✅ Buffer.from() operations show significant improvements");
+			console.info("   - Leverage this for faster network response processing");
+			console.info("   - Optimize buffer creation in widget data handling");
 		}
 
 		const asyncResult = this.results.find((r) =>
 			r.name.includes("Async/Await"),
 		);
 		if (asyncResult && asyncResult.opsPerSecond > 10000) {
-			console.log("✅ Async/await performance is excellent");
-			console.log("   - Widget status monitoring will be more responsive");
-			console.log("   - Faster API polling and data fetching");
+			console.info("✅ Async/await performance is excellent");
+			console.info("   - Widget status monitoring will be more responsive");
+			console.info("   - Faster API polling and data fetching");
 		}
 
 		const stringResult = this.results.find((r) =>
 			r.name.includes("String Operations"),
 		);
 		if (stringResult && stringResult.opsPerSecond > 50000) {
-			console.log("✅ String operations are highly optimized");
-			console.log("   - Console output formatting will be faster");
-			console.log("   - Status display updates will be more responsive");
+			console.info("✅ String operations are highly optimized");
+			console.info("   - Console output formatting will be faster");
+			console.info("   - Status display updates will be more responsive");
 		}
 
 		const booleanResult = this.results.find((r) =>
 			r.name.includes("Compound Boolean"),
 		);
 		if (booleanResult && booleanResult.opsPerSecond > 500000) {
-			console.log("✅ Compound boolean expressions are highly optimized");
-			console.log("   - Widget status checks will be faster on ARM64");
-			console.log("   - Better performance on Apple Silicon devices");
+			console.info("✅ Compound boolean expressions are highly optimized");
+			console.info("   - Widget status checks will be faster on ARM64");
+			console.info("   - Better performance on Apple Silicon devices");
 		}
 
-		console.log("\n🎯 Optimization Recommendations:");
-		console.log("===============================");
-		console.log("1. Use Buffer.from() for all buffer operations");
-		console.log("2. Leverage compound boolean expressions for status checks");
-		console.log("3. Use padStart/padEnd for string formatting");
-		console.log("4. Optimize async/await patterns for better responsiveness");
-		console.log("5. Consider array.flat() for nested array operations");
+		console.info("\n🎯 Optimization Recommendations:");
+		console.info("===============================");
+		console.info("1. Use Buffer.from() for all buffer operations");
+		console.info("2. Leverage compound boolean expressions for status checks");
+		console.info("3. Use padStart/padEnd for string formatting");
+		console.info("4. Optimize async/await patterns for better responsiveness");
+		console.info("5. Consider array.flat() for nested array operations");
 	}
 }
 

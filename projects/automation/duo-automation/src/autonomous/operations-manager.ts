@@ -67,13 +67,13 @@ class AutonomousOperationsManager {
   }
 
   async initialize(): Promise<void> {
-    console.log('🤖 AUTONOMOUS OPERATIONS MANAGER - 11.X.X.X TIERS');
-    console.log('===============================================');
-    console.log(`🔧 Auto-Scaling: ${this.config.autoScale ? 'Enabled' : 'Disabled'}`);
-    console.log(`🔍 Anomaly Detection: ${this.config.anomalyDetection ? 'Enabled' : 'Disabled'}`);
-    console.log(`💰 Cost Optimization: ${this.config.costOptimization ? 'Enabled' : 'Disabled'}`);
-    console.log(`⛓️ Governance: ${this.config.governance ? 'Enabled' : 'Disabled'}`);
-    console.log('');
+    console.info('🤖 AUTONOMOUS OPERATIONS MANAGER - 11.X.X.X TIERS');
+    console.info('===============================================');
+    console.info(`🔧 Auto-Scaling: ${this.config.autoScale ? 'Enabled' : 'Disabled'}`);
+    console.info(`🔍 Anomaly Detection: ${this.config.anomalyDetection ? 'Enabled' : 'Disabled'}`);
+    console.info(`💰 Cost Optimization: ${this.config.costOptimization ? 'Enabled' : 'Disabled'}`);
+    console.info(`⛓️ Governance: ${this.config.governance ? 'Enabled' : 'Disabled'}`);
+    console.info('');
 
     if (this.config.autoScale) {
       await this.enableAutoScaling();
@@ -95,14 +95,14 @@ class AutonomousOperationsManager {
   }
 
   private async enableAutoScaling(): Promise<void> {
-    console.log('📈 11.1.1.0 | AUTO-SCALING ENABLED');
-    console.log('-----------------------------------');
-    console.log('🎯 Scaling Threshold: 124 req/sec');
-    console.log('📊 Pod Range: 3-100 pods');
-    console.log('⚡ Scale-up Time: <30 seconds');
-    console.log('🔄 Scale-down Time: <5 minutes');
-    console.log('✅ Auto-Scaling: ACTIVE');
-    console.log('');
+    console.info('📈 11.1.1.0 | AUTO-SCALING ENABLED');
+    console.info('-----------------------------------');
+    console.info('🎯 Scaling Threshold: 124 req/sec');
+    console.info('📊 Pod Range: 3-100 pods');
+    console.info('⚡ Scale-up Time: <30 seconds');
+    console.info('🔄 Scale-down Time: <5 minutes');
+    console.info('✅ Auto-Scaling: ACTIVE');
+    console.info('');
 
     // Simulate auto-scaling logic
     setInterval(() => {
@@ -110,7 +110,7 @@ class AutonomousOperationsManager {
       const optimalPods = Math.min(Math.max(targetPods, 3), this.metrics.maxPods);
       
       if (optimalPods !== this.metrics.activePods) {
-        console.log(`🔄 Auto-scaling: ${this.metrics.activePods} → ${optimalPods} pods`);
+        console.info(`🔄 Auto-scaling: ${this.metrics.activePods} → ${optimalPods} pods`);
         this.metrics.activePods = optimalPods;
         this.addToGovernanceLedger('auto-scaling', {
           from: this.metrics.activePods,
@@ -122,14 +122,14 @@ class AutonomousOperationsManager {
   }
 
   private async enableAnomalyDetection(): Promise<void> {
-    console.log('🔍 11.1.3.0 | ANOMALY DETECTION ENABLED');
-    console.log('--------------------------------------');
-    console.log('📊 ML Baseline: 7-day historical data');
-    console.log('🎯 Detection Accuracy: 99.2%');
-    console.log('⚠️ Alert Threshold: 3σ deviation');
-    console.log('📈 Real-time Monitoring: ACTIVE');
-    console.log('✅ Anomaly Detection: ACTIVE');
-    console.log('');
+    console.info('🔍 11.1.3.0 | ANOMALY DETECTION ENABLED');
+    console.info('--------------------------------------');
+    console.info('📊 ML Baseline: 7-day historical data');
+    console.info('🎯 Detection Accuracy: 99.2%');
+    console.info('⚠️ Alert Threshold: 3σ deviation');
+    console.info('📈 Real-time Monitoring: ACTIVE');
+    console.info('✅ Anomaly Detection: ACTIVE');
+    console.info('');
 
     // Simulate anomaly detection
     setInterval(() => {
@@ -139,7 +139,7 @@ class AutonomousOperationsManager {
       
       if (this.anomalyDetection.deviation > 15) {
         const alert = `Anomaly detected: ${this.anomalyDetection.deviation.toFixed(1)}% deviation`;
-        console.log(`⚠️ ${alert}`);
+        console.info(`⚠️ ${alert}`);
         this.anomalyDetection.alerts.push(alert);
         this.addToGovernanceLedger('anomaly-detection', {
           deviation: this.anomalyDetection.deviation,
@@ -151,14 +151,14 @@ class AutonomousOperationsManager {
   }
 
   private async enableCostOptimization(): Promise<void> {
-    console.log('💰 11.1.2.0 | COST OPTIMIZATION ENABLED');
-    console.log('------------------------------------');
-    console.log('📦 Dynamic R2 Tiering: Hot/Cold/Archive');
-    console.log('💵 Cost Savings: 35% vs static provisioning');
-    console.log('🔄 Optimization Frequency: Hourly');
-    console.log('📊 Usage Analytics: Real-time');
-    console.log('✅ Cost Optimization: ACTIVE');
-    console.log('');
+    console.info('💰 11.1.2.0 | COST OPTIMIZATION ENABLED');
+    console.info('------------------------------------');
+    console.info('📦 Dynamic R2 Tiering: Hot/Cold/Archive');
+    console.info('💵 Cost Savings: 35% vs static provisioning');
+    console.info('🔄 Optimization Frequency: Hourly');
+    console.info('📊 Usage Analytics: Real-time');
+    console.info('✅ Cost Optimization: ACTIVE');
+    console.info('');
 
     // Simulate cost optimization
     setInterval(() => {
@@ -169,7 +169,7 @@ class AutonomousOperationsManager {
       this.costOptimization.r2Tiering = { hot: hotData, cold: coldData, archive: archiveData };
       this.costOptimization.monthlySavings = (hotData * 0.023 + coldData * 0.012 + archiveData * 0.004) * 0.35;
       
-      console.log(`💰 Cost optimization: $${this.costOptimization.monthlySavings.toFixed(2)} monthly savings`);
+      console.info(`💰 Cost optimization: $${this.costOptimization.monthlySavings.toFixed(2)} monthly savings`);
       this.addToGovernanceLedger('cost-optimization', {
         savings: this.costOptimization.monthlySavings,
         tiering: this.costOptimization.r2Tiering
@@ -178,14 +178,14 @@ class AutonomousOperationsManager {
   }
 
   private async enableGovernance(): Promise<void> {
-    console.log('⛓️ 11.2.0.0 | GOVERNANCE & AUDIT TRAIL ENABLED');
-    console.log('--------------------------------------------');
-    console.log('📋 Immutable Ledger: Every operation logged');
-    console.log('🔐 Retention Policy: 7 years (Financial Compliance)');
-    console.log('👥 Role-based Access: SOC (Read) | Compliance (Export)');
-    console.log('🔒 Blockchain Storage: Immutable audit trail');
-    console.log('✅ Governance: ACTIVE');
-    console.log('');
+    console.info('⛓️ 11.2.0.0 | GOVERNANCE & AUDIT TRAIL ENABLED');
+    console.info('--------------------------------------------');
+    console.info('📋 Immutable Ledger: Every operation logged');
+    console.info('🔐 Retention Policy: 7 years (Financial Compliance)');
+    console.info('👥 Role-based Access: SOC (Read) | Compliance (Export)');
+    console.info('🔒 Blockchain Storage: Immutable audit trail');
+    console.info('✅ Governance: ACTIVE');
+    console.info('');
 
     // Add initial governance record
     this.addToGovernanceLedger('system-initialization', {
@@ -196,14 +196,14 @@ class AutonomousOperationsManager {
   }
 
   private async startContinuousOptimization(): Promise<void> {
-    console.log('🔄 CONTINUOUS OPTIMIZATION STARTED');
-    console.log('==================================');
-    console.log('📊 Monitoring: Real-time metrics');
-    console.log('🎯 Optimization: Multi-objective (cost, performance, reliability)');
-    console.log('📈 Learning: Reinforcement learning enabled');
-    console.log('⚡ Response: Sub-second optimization');
-    console.log('✅ Continuous Optimization: ACTIVE');
-    console.log('');
+    console.info('🔄 CONTINUOUS OPTIMIZATION STARTED');
+    console.info('==================================');
+    console.info('📊 Monitoring: Real-time metrics');
+    console.info('🎯 Optimization: Multi-objective (cost, performance, reliability)');
+    console.info('📈 Learning: Reinforcement learning enabled');
+    console.info('⚡ Response: Sub-second optimization');
+    console.info('✅ Continuous Optimization: ACTIVE');
+    console.info('');
 
     // Main optimization loop
     setInterval(() => {
@@ -219,19 +219,19 @@ class AutonomousOperationsManager {
     this.metrics.cpuUsage = Math.floor(Math.random() * 40) + 20;
     this.metrics.memoryUsage = Math.floor(Math.random() * 30) + 40;
     
-    console.log(`⚡ Performance optimized: ${this.metrics.currentRequests} req/sec, ${this.metrics.cpuUsage}% CPU`);
+    console.info(`⚡ Performance optimized: ${this.metrics.currentRequests} req/sec, ${this.metrics.cpuUsage}% CPU`);
   }
 
   private optimizeCosts(): void {
     // Simulate cost optimization
     const currentCost = this.metrics.activePods * 0.05 + this.costOptimization.r2Tiering.hot * 0.023;
-    console.log(`💰 Cost optimized: $${currentCost.toFixed(2)}/hour`);
+    console.info(`💰 Cost optimized: $${currentCost.toFixed(2)}/hour`);
   }
 
   private optimizeReliability(): void {
     // Simulate reliability optimization
     const uptime = 99.9 + Math.random() * 0.09; // 99.9% - 99.99%
-    console.log(`🛡️ Reliability optimized: ${uptime.toFixed(2)}% uptime`);
+    console.info(`🛡️ Reliability optimized: ${uptime.toFixed(2)}% uptime`);
   }
 
   private addToGovernanceLedger(operation: string, data: any): void {
@@ -274,20 +274,20 @@ class AutonomousOperationsManager {
   }
 
   async enableAutonomousMode(): Promise<void> {
-    console.log('🤖 ENABLING FULL AUTONOMOUS MODE');
-    console.log('=================================');
-    console.log('🎯 Self-Optimization: ENABLED');
-    console.log('🔍 Anomaly Detection: ENABLED');
-    console.log('💰 Cost Optimization: ENABLED');
-    console.log('⛓️ Governance: ENABLED');
-    console.log('📈 Learning: ENABLED');
-    console.log('🔄 Continuous Operations: ACTIVE');
-    console.log('');
-    console.log('🚀 Autonomous Operations: FULLY ENABLED');
-    console.log('💰 Revenue Impact: +$750K ARR');
-    console.log('🛡️ Compliance: Automated');
-    console.log('⚡ Performance: Self-Optimizing');
-    console.log('✅ System Status: AUTONOMOUS');
+    console.info('🤖 ENABLING FULL AUTONOMOUS MODE');
+    console.info('=================================');
+    console.info('🎯 Self-Optimization: ENABLED');
+    console.info('🔍 Anomaly Detection: ENABLED');
+    console.info('💰 Cost Optimization: ENABLED');
+    console.info('⛓️ Governance: ENABLED');
+    console.info('📈 Learning: ENABLED');
+    console.info('🔄 Continuous Operations: ACTIVE');
+    console.info('');
+    console.info('🚀 Autonomous Operations: FULLY ENABLED');
+    console.info('💰 Revenue Impact: +$750K ARR');
+    console.info('🛡️ Compliance: Automated');
+    console.info('⚡ Performance: Self-Optimizing');
+    console.info('✅ System Status: AUTONOMOUS');
   }
 }
 

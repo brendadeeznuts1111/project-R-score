@@ -36,7 +36,7 @@ export class RewritableTerminal {
       cols: options.cols || process.stdout.columns || 80,
       rows: options.rows || process.stdout.rows || 24,
       onData: options.onData || ((data) => process.stdout.write(data)),
-      onExit: options.onExit || ((code) => console.log(`[PTY] Process exited with code: ${code}`)),
+      onExit: options.onExit || ((code) => console.info(`[PTY] Process exited with code: ${code}`)),
       onError: options.onError || ((error) => console.error('[PTY] Terminal error:', error)),
       rewriters: options.rewriters || [],
       filters: options.filters || [],

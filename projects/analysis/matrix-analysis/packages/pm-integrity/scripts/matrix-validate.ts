@@ -34,7 +34,7 @@ class MatrixValidator {
       throw new Error(`Unknown region: ${region}`);
     }
     
-    console.log(`🔍 Validating ${region} region with check ${check} against column ${col}`);
+    console.info(`🔍 Validating ${region} region with check ${check} against column ${col}`);
     
     const startTime = performance.now();
     
@@ -65,12 +65,12 @@ class MatrixValidator {
         violations
       };
       
-      console.log(`✅ ${region}: ${integrityValid ? 'VALID' : 'INVALID'} (${latency.toFixed(2)}ms)`);
+      console.info(`✅ ${region}: ${integrityValid ? 'VALID' : 'INVALID'} (${latency.toFixed(2)}ms)`);
       
       return result;
     } catch (error) {
       const latency = performance.now() - startTime;
-      console.log(`❌ ${region}: FAILED (${latency.toFixed(2)}ms) - ${error}`);
+      console.info(`❌ ${region}: FAILED (${latency.toFixed(2)}ms) - ${error}`);
       
       return {
         region,
@@ -83,8 +83,8 @@ class MatrixValidator {
   }
   
   async validateAllRegions(check: string, col: number): Promise<ValidationResult[]> {
-    console.log(`🌐 Starting 5-region matrix validation...`);
-    console.log(`📋 Check: ${check}, Column: ${col}`);
+    console.info(`🌐 Starting 5-region matrix validation...`);
+    console.info(`📋 Check: ${check}, Column: ${col}`);
     
     const promises = Object.entries(this.REGIONS).map(async ([region]) => 
       this.validateRegion(region, check, col)
@@ -96,7 +96,7 @@ class MatrixValidator {
     const validCount = results.filter(r => r.integrity).length;
     const avgLatency = results.reduce((sum, r) => sum + r.latency, 0) / results.length;
     
-    console.log(`
+    console.info(`
 📊 VALIDATION SUMMARY
 ┌─────────────────────────────────────────┐
 │ Valid Regions: ${validCount}/5                           │
@@ -106,9 +106,9 @@ class MatrixValidator {
 `);
     
     if (validCount < 5) {
-      console.log('\n⚠️ REGION VIOLATIONS:');
+      console.info('\n⚠️ REGION VIOLATIONS:');
       results.filter(r => !r.integrity).forEach(r => {
-        console.log(`   • ${r.region}: ${r.violations.join(', ')}`);
+        console.info(`   • ${r.region}: ${r.violations.join(', ')}`);
       });
     }
     
@@ -172,7 +172,7 @@ async function main() {
   if (region) {
     // Single region validation
     const result = await validator.validateRegion(region, check, col);
-    console.log('\n📋 VALIDATION RESULT:', result);
+    console.info('\n📋 VALIDATION RESULT:', result);
   } else {
     // Full 5-region validation
     const results = await validator.validateAllRegions(check, col);

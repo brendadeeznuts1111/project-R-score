@@ -30,8 +30,8 @@ const server = Bun.serve({
   },
 });
 
-console.log(`🍎 Apple ID Integration Demo Server`);
-console.log(`🚀 Running at http://localhost:${server.port}`);
-console.log(`📱 Main Demo: http://localhost:${server.port}/apple-id-demo.html`);
-console.log(`🔧 Simple Demo: http://localhost:${server.port}/demo.html`);
-console.log(`📚 API Demo: http://localhost:${server.port}/api-demo.html`);
+console.info(`🍎 Apple ID Integration Demo Server`);
+console.info(`🚀 Running at http://localhost:${server.port}`);
+console.info(`📱 Main Demo: http://localhost:${server.port}/apple-id-demo.html`);
+console.info(`🔧 Simple Demo: http://localhost:${server.port}/demo.html`);
+console.info(`📚 API Demo: http://localhost:${server.port}/api-demo.html`);

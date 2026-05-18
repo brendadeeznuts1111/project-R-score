@@ -1902,6 +1902,6 @@ export class BunApiMatrixRenderer {
 
 		const columns = ['API', 'Topic', 'Type', 'Params', 'Protocol', 'Status', 'Surface', 'Scanner', 'Doc URL'];
 		// @ts-expect-error Bun.inspect.table accepts options as third arg
-		console.log(Bun.inspect.table(rows, columns, {colors: true}));
+		console.info(Bun.inspect.table(rows, columns, {colors: true}));
 	}
 }

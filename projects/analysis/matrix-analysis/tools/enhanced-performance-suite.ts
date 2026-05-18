@@ -24,7 +24,7 @@ const colors = {
 };
 
 function colorLog(color: keyof typeof colors, message: string) {
-	console.log(`${colors[color]}${message}${colors.reset}`);
+	console.info(`${colors[color]}${message}${colors.reset}`);
 }
 
 // Enhanced Col-89 with analytics and suggestions
@@ -57,12 +57,12 @@ async function checkCol89Enhanced(filePath: string = Bun.main) {
 
 			// Top 10 worst violations
 			const worst = violations.sort((a, b) => b.width - a.width).slice(0, 10);
-			console.log(`\n📊 Top 10 Worst Violations:`);
+			console.info(`\n📊 Top 10 Worst Violations:`);
 			worst.forEach((v) => {
 				const severity =
 					v.width > 200 ? colors.bright_red : v.width > 150 ? colors.red : colors.yellow;
-				console.log(`   ${severity}Line ${v.line}: ${v.width} chars${colors.reset}`);
-				console.log(`   ${colors.dim}└─ ${v.preview}${colors.reset}`);
+				console.info(`   ${severity}Line ${v.line}: ${v.width} chars${colors.reset}`);
+				console.info(`   ${colors.dim}└─ ${v.preview}${colors.reset}`);
 			});
 
 			// Statistics
@@ -70,16 +70,16 @@ async function checkCol89Enhanced(filePath: string = Bun.main) {
 			const maxWidth = Math.max(...widths);
 			const violationRate = ((violations.length / lines.length) * 100).toFixed(1);
 
-			console.log(`\n📈 Statistics:`);
-			console.log(`   • Average line width: ${avgWidth} chars`);
-			console.log(`   • Maximum line width: ${maxWidth} chars`);
-			console.log(`   • Violation rate: ${violationRate}%`);
-			console.log(
+			console.info(`\n📈 Statistics:`);
+			console.info(`   • Average line width: ${avgWidth} chars`);
+			console.info(`   • Maximum line width: ${maxWidth} chars`);
+			console.info(`   • Violation rate: ${violationRate}%`);
+			console.info(
 				`   • Lines over 150 chars: ${violations.filter((v) => v.width > 150).length}`,
 			);
 
 			// Suggestions
-			console.log(`\n💡 Suggestions:`);
+			console.info(`\n💡 Suggestions:`);
 			if (parseFloat(violationRate) > 20) {
 				colorLog("yellow", "   • Consider breaking down very long paragraphs");
 			}
@@ -155,7 +155,7 @@ async function benchmarkHardwareEnhanced() {
 	const score =
 		avgThroughput > 1000 ? "excellent" : avgThroughput > 500 ? "good" : "moderate";
 
-	console.log(
+	console.info(
 		`\n🏆 Overall Performance: ${avgThroughput.toLocaleString()} MB/s (${score})`,
 	);
 
@@ -202,16 +202,16 @@ async function analyzeViolationsEnhanced() {
     `)
 			.all(dayAgo) as Array<{ file: string; count: number; max_width: number }>;
 
-		console.log(`📈 Violation Trends:`);
-		console.log(`   • Total: ${queries.total.c}`);
-		console.log(`   • Last hour: ${queries.lastHour.c}`);
-		console.log(`   • Today: ${queries.today.c}`);
-		console.log(`   • This week: ${queries.thisWeek.c}`);
+		console.info(`📈 Violation Trends:`);
+		console.info(`   • Total: ${queries.total.c}`);
+		console.info(`   • Last hour: ${queries.lastHour.c}`);
+		console.info(`   • Today: ${queries.today.c}`);
+		console.info(`   • This week: ${queries.thisWeek.c}`);
 
 		if (fileStats.length > 0) {
-			console.log(`\n📁 Top Files Today:`);
+			console.info(`\n📁 Top Files Today:`);
 			fileStats.forEach((stat) => {
-				console.log(
+				console.info(
 					`   • ${stat.file}: ${stat.count} violations (max: ${stat.max_width} chars)`,
 				);
 			});
@@ -222,7 +222,7 @@ async function analyzeViolationsEnhanced() {
 		const trend =
 			hourlyRate > 10 ? "🔴 High" : hourlyRate > 5 ? "🟡 Moderate" : "🟢 Low";
 
-		console.log(`\n📊 Trend Analysis: ${trend} (${hourlyRate}/hour)`);
+		console.info(`\n📊 Trend Analysis: ${trend} (${hourlyRate}/hour)`);
 
 		db.close();
 		return {
@@ -254,11 +254,11 @@ async function analyzeCSSEnhanced(cssFile: string = "app.css") {
 		const rules = (cssContent.match(/[^{}]+\{[^{}]*\}/g) || []).length;
 		const selectors = (cssContent.match(/[^{}]+(?=\{)/g) || []).length;
 
-		console.log(`📊 CSS Statistics:`);
-		console.log(`   • File size: ${(cssContent.length / 1024).toFixed(1)} KB`);
-		console.log(`   • Lines: ${lines}`);
-		console.log(`   • Rules: ${rules}`);
-		console.log(`   • Selectors: ${selectors}`);
+		console.info(`📊 CSS Statistics:`);
+		console.info(`   • File size: ${(cssContent.length / 1024).toFixed(1)} KB`);
+		console.info(`   • Lines: ${lines}`);
+		console.info(`   • Rules: ${rules}`);
+		console.info(`   • Selectors: ${selectors}`);
 
 		// LightningCSS optimization
 		const lightningcss = await import("lightningcss").catch(() => null);
@@ -277,11 +277,11 @@ async function analyzeCSSEnhanced(cssFile: string = "app.css") {
 			).toFixed(1);
 			const compressionRatio = (cssContent.length / result.code.length).toFixed(2);
 
-			console.log(`\n🗜️  Optimization Results:`);
-			console.log(`   • Original: ${cssContent.length.toLocaleString()} bytes`);
-			console.log(`   • Minified: ${result.code.length.toLocaleString()} bytes`);
-			console.log(`   • Saved: ${savedPercentage}%`);
-			console.log(`   • Compression: ${compressionRatio}x`);
+			console.info(`\n🗜️  Optimization Results:`);
+			console.info(`   • Original: ${cssContent.length.toLocaleString()} bytes`);
+			console.info(`   • Minified: ${result.code.length.toLocaleString()} bytes`);
+			console.info(`   • Saved: ${savedPercentage}%`);
+			console.info(`   • Compression: ${compressionRatio}x`);
 
 			// Write minified version
 			const outputPath = cssFile.replace(".css", ".min.css");
@@ -349,14 +349,14 @@ async function analyzeRSSEnhanced(feedUrl: string = "https://bun.sh/rss.xml") {
 				lastUpdated: pubDateMatch?.[1] || "Unknown",
 			};
 
-			console.log(`📊 Feed Health:`);
-			console.log(`   • Title: ${feed.title}`);
-			console.log(`   • Items: ${feed.itemCount}`);
-			console.log(`   • Size: ${(feed.feedSize / 1024).toFixed(1)} KB`);
-			console.log(`   • Last updated: ${feed.lastUpdated}`);
-			console.log(`   • Fetch time: ${fetchTime.toFixed(0)}ms`);
-			console.log(`   • Parse time: ${parseTime.toFixed(0)}ms`);
-			console.log(`   • Method: ${method}`);
+			console.info(`📊 Feed Health:`);
+			console.info(`   • Title: ${feed.title}`);
+			console.info(`   • Items: ${feed.itemCount}`);
+			console.info(`   • Size: ${(feed.feedSize / 1024).toFixed(1)} KB`);
+			console.info(`   • Last updated: ${feed.lastUpdated}`);
+			console.info(`   • Fetch time: ${fetchTime.toFixed(0)}ms`);
+			console.info(`   • Parse time: ${parseTime.toFixed(0)}ms`);
+			console.info(`   • Method: ${method}`);
 
 			return feed;
 		}
@@ -365,13 +365,13 @@ async function analyzeRSSEnhanced(feedUrl: string = "https://bun.sh/rss.xml") {
 		const channel = xml.rss?.channel;
 		const items = channel?.item || [];
 
-		console.log(`📊 Feed Health:`);
-		console.log(`   • Title: ${channel?.title || "Unknown"}`);
-		console.log(`   • Items: ${items.length}`);
-		console.log(`   • Size: ${(text.length / 1024).toFixed(1)} KB`);
-		console.log(`   • Fetch time: ${fetchTime.toFixed(0)}ms`);
-		console.log(`   • Parse time: ${parseTime.toFixed(0)}ms`);
-		console.log(`   • Method: ${method}`);
+		console.info(`📊 Feed Health:`);
+		console.info(`   • Title: ${channel?.title || "Unknown"}`);
+		console.info(`   • Items: ${items.length}`);
+		console.info(`   • Size: ${(text.length / 1024).toFixed(1)} KB`);
+		console.info(`   • Fetch time: ${fetchTime.toFixed(0)}ms`);
+		console.info(`   • Parse time: ${parseTime.toFixed(0)}ms`);
+		console.info(`   • Method: ${method}`);
 
 		return {
 			title: channel?.title || "Unknown Feed",
@@ -445,16 +445,16 @@ async function runEnhancedSuite() {
 	colorLog("bright_magenta", "\n📋 Enhanced Summary Report");
 	colorLog("bright_white", "=".repeat(60));
 
-	console.log(
+	console.info(
 		`🔍 Col-89: ${results.col89.violations === 0 ? "✅ PASS" : results.col89.violations < 10 ? "⚠️  PARTIAL" : "❌ FAIL"} (${results.col89.violations} violations)`,
 	);
 	if (results.col89.stats) {
-		console.log(
+		console.info(
 			`   └─ Avg width: ${results.col89.stats.avgWidth} chars, Max: ${results.col89.stats.maxWidth} chars`,
 		);
 	}
 
-	console.log(
+	console.info(
 		`🚀 Hardware: ${results.hardware.avgThroughput.toLocaleString()} MB/s (${results.hardware.status})`,
 	);
 	const hourlyRate =
@@ -462,13 +462,13 @@ async function runEnhancedSuite() {
 		(results.violations as any)?.lastHour?.c ||
 		"N/A";
 	const trend = (results.violations as any)?.trend || "unknown";
-	console.log(
+	console.info(
 		`📊 Violations: ${typeof results.violations.total === "number" ? results.violations.total : "N/A"} total, ${hourlyRate}/hour (${trend})`,
 	);
-	console.log(
+	console.info(
 		`🎨 CSS: ${results.css.status === "success" ? `✅ ${results.css.saved}% saved` : results.css.status === "no_optimizer" ? "⚠️  No optimizer" : "❌ Error"}`,
 	);
-	console.log(
+	console.info(
 		`📰 RSS: ${results.rss.status === "success" ? `✅ ${results.rss.itemCount} items` : "❌ Error"}`,
 	);
 
@@ -476,10 +476,10 @@ async function runEnhancedSuite() {
 		healthColor,
 		`\n🏥 Enhanced Health Score: ${healthPercent}% (${score.toFixed(1)}/${maxScore})`,
 	);
-	console.log(`⏱️  Total analysis time: ${totalTime.toFixed(0)}ms`);
+	console.info(`⏱️  Total analysis time: ${totalTime.toFixed(0)}ms`);
 
 	// Recommendations
-	console.log(`\n💡 Recommendations:`);
+	console.info(`\n💡 Recommendations:`);
 	if (results.col89.violations > 0) {
 		colorLog("yellow", `   • Fix ${results.col89.violations} Col-89 violations`);
 	}

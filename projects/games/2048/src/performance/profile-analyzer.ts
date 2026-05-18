@@ -245,7 +245,7 @@ class ProfileAnalyzer {
 
       for (const file of files) {
         const filePath = join(profileDir, file);
-        console.log(`🔍 Analyzing ${file}...`);
+        console.info(`🔍 Analyzing ${file}...`);
 
         const profile = await this.loadProfile(filePath);
         const analysis = this.analyzeProfile(profile);
@@ -259,35 +259,35 @@ class ProfileAnalyzer {
   }
 
   printAnalysis(results: Map<string, AnalysisResult>) {
-    console.log('🔬 CPU Profile Analysis Report');
-    console.log('='.repeat(50));
+    console.info('🔬 CPU Profile Analysis Report');
+    console.info('='.repeat(50));
 
     for (const [fileName, result] of results) {
-      console.log(`\n📊 Profile: ${fileName}`);
-      console.log(`Total Time: ${(result.totalTime / 1000).toFixed(2)}ms`);
-      console.log(`Samples: ${result.sampleCount.toLocaleString()}`);
+      console.info(`\n📊 Profile: ${fileName}`);
+      console.info(`Total Time: ${(result.totalTime / 1000).toFixed(2)}ms`);
+      console.info(`Samples: ${result.sampleCount.toLocaleString()}`);
 
-      console.log('\n🏆 Top Functions:');
+      console.info('\n🏆 Top Functions:');
       result.topFunctions.slice(0, 10).forEach((fn, index) => {
-        console.log(`${index + 1}. ${fn.name}`);
-        console.log(`   Total: ${(fn.totalTime / 1000).toFixed(2)}ms (${fn.percentage.toFixed(1)}%)`);
-        console.log(`   Self: ${(fn.selfTime / 1000).toFixed(2)}ms, Calls: ${fn.callCount}`);
+        console.info(`${index + 1}. ${fn.name}`);
+        console.info(`   Total: ${(fn.totalTime / 1000).toFixed(2)}ms (${fn.percentage.toFixed(1)}%)`);
+        console.info(`   Self: ${(fn.selfTime / 1000).toFixed(2)}ms, Calls: ${fn.callCount}`);
       });
 
       if (result.bottlenecks.length > 0) {
-        console.log('\n🚨 Bottlenecks:');
+        console.info('\n🚨 Bottlenecks:');
         result.bottlenecks.forEach(b => {
           const icon = b.impact === 'high' ? '🔴' : b.impact === 'medium' ? '🟡' : '🟢';
-          console.log(`${icon} ${b.function}: ${b.issue}`);
-          console.log(`   💡 ${b.recommendation}`);
+          console.info(`${icon} ${b.function}: ${b.issue}`);
+          console.info(`   💡 ${b.recommendation}`);
         });
       }
 
       if (result.optimizationOpportunities.length > 0) {
-        console.log('\n⚡ Optimization Opportunities:');
+        console.info('\n⚡ Optimization Opportunities:');
         result.optimizationOpportunities.forEach(opp => {
-          console.log(`🚀 ${opp.type}: ${opp.description}`);
-          console.log(`   📈 Potential gain: ${(opp.potentialGain / 1000).toFixed(2)}ms`);
+          console.info(`🚀 ${opp.type}: ${opp.description}`);
+          console.info(`   📈 Potential gain: ${(opp.potentialGain / 1000).toFixed(2)}ms`);
         });
       }
     }
@@ -299,16 +299,16 @@ async function main() {
   const analyzer = new ProfileAnalyzer();
 
   try {
-    console.log('🔬 Starting CPU Profile Analysis...');
+    console.info('🔬 Starting CPU Profile Analysis...');
     const results = await analyzer.analyzeAllProfiles();
     analyzer.printAnalysis(results);
 
-    console.log('\n✅ Analysis complete!');
-    console.log('\n💡 Recommendations:');
-    console.log('1. Load profiles in Chrome DevTools for visual analysis');
-    console.log('2. Focus on high-impact bottlenecks first');
-    console.log('3. Implement suggested optimizations iteratively');
-    console.log('4. Re-profile after changes to measure improvements');
+    console.info('\n✅ Analysis complete!');
+    console.info('\n💡 Recommendations:');
+    console.info('1. Load profiles in Chrome DevTools for visual analysis');
+    console.info('2. Focus on high-impact bottlenecks first');
+    console.info('3. Implement suggested optimizations iteratively');
+    console.info('4. Re-profile after changes to measure improvements');
 
   } catch (error) {
     console.error('❌ Analysis failed:', error);

@@ -40,8 +40,8 @@ class ReportGenerator {
   }
 
   async generateReport(benchmarkData: any[]): Promise<BenchmarkReport> {
-    console.log('📊 **Generating Automated Performance Report**');
-    console.log('='.repeat(50));
+    console.info('📊 **Generating Automated Performance Report**');
+    console.info('='.repeat(50));
 
     const report: BenchmarkReport = {
       timestamp: new Date().toISOString(),
@@ -247,7 +247,7 @@ class ReportGenerator {
 
     const filename = `r2-performance-report-${Date.now()}.html`;
     writeFileSync(filename, html);
-    console.log(`📄 HTML report saved: ${filename}`);
+    console.info(`📄 HTML report saved: ${filename}`);
     
     return filename;
   }
@@ -255,7 +255,7 @@ class ReportGenerator {
   private async uploadReport(report: BenchmarkReport) {
     try {
       await this.manager.uploadReport(report, `performance-report-${Date.now()}.json`);
-      console.log('📤 Report uploaded to R2 bucket');
+      console.info('📤 Report uploaded to R2 bucket');
     } catch (error: any) {
       console.error('❌ Failed to upload report:', error.message);
     }

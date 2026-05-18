@@ -538,7 +538,7 @@ const empireProStatusHTML = (statusData: ReturnType<typeof getEmpireProStatus>) 
         
         // Performance monitoring
         if (performance.navigation.type === 1) {
-            console.log('🚀 Empire Pro v3.7 - Page refreshed via auto-refresh');
+            console.info('🚀 Empire Pro v3.7 - Page refreshed via auto-refresh');
         }
     </script>
 </body>

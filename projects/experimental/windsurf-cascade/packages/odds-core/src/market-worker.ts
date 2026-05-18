@@ -148,6 +148,6 @@ self.onmessage = async (event: MessageEvent<WorkerMessage>) => {
 };
 
 // Initialize worker
-console.log(`🏭 Market data worker ${workerId} initialized`);
+console.info(`🏭 Market data worker ${workerId} initialized`);
 
 export {};

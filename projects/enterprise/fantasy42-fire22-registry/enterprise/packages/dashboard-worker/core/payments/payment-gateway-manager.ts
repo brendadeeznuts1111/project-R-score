@@ -525,7 +525,7 @@ export class PaymentGatewayManager {
     }
 
     // In real implementation, would call Stripe API
-    console.log(`Creating Stripe intent for ${intent.amount} ${intent.currency}`);
+    console.info(`Creating Stripe intent for ${intent.amount} ${intent.currency}`);
   }
 
   /**
@@ -535,7 +535,7 @@ export class PaymentGatewayManager {
     intent: PaymentIntent
   ): Promise<{ success: boolean; gatewayIntentId?: string; error?: string }> {
     // In real implementation, would confirm Stripe payment
-    console.log(`Processing Stripe payment for intent ${intent.id}`);
+    console.info(`Processing Stripe payment for intent ${intent.id}`);
 
     // Simulate processing
     return {
@@ -553,7 +553,7 @@ export class PaymentGatewayManager {
       throw new Error('PayPal not configured');
     }
 
-    console.log(`Creating PayPal intent for ${intent.amount} ${intent.currency}`);
+    console.info(`Creating PayPal intent for ${intent.amount} ${intent.currency}`);
   }
 
   /**
@@ -562,7 +562,7 @@ export class PaymentGatewayManager {
   private async processPayPalPayment(
     intent: PaymentIntent
   ): Promise<{ success: boolean; gatewayIntentId?: string; error?: string }> {
-    console.log(`Processing PayPal payment for intent ${intent.id}`);
+    console.info(`Processing PayPal payment for intent ${intent.id}`);
 
     return {
       success: Math.random() > 0.03, // 97% success rate
@@ -579,7 +579,7 @@ export class PaymentGatewayManager {
       throw new Error('Crypto not configured');
     }
 
-    console.log(`Creating crypto intent for ${intent.amount} ${intent.currency}`);
+    console.info(`Creating crypto intent for ${intent.amount} ${intent.currency}`);
   }
 
   /**
@@ -588,7 +588,7 @@ export class PaymentGatewayManager {
   private async processCryptoPayment(
     intent: PaymentIntent
   ): Promise<{ success: boolean; gatewayIntentId?: string; error?: string }> {
-    console.log(`Processing crypto payment for intent ${intent.id}`);
+    console.info(`Processing crypto payment for intent ${intent.id}`);
 
     return {
       success: Math.random() > 0.1, // 90% success rate
@@ -605,7 +605,7 @@ export class PaymentGatewayManager {
       throw new Error('Banking not configured');
     }
 
-    console.log(`Creating banking intent for ${intent.amount} ${intent.currency}`);
+    console.info(`Creating banking intent for ${intent.amount} ${intent.currency}`);
   }
 
   /**
@@ -614,7 +614,7 @@ export class PaymentGatewayManager {
   private async processBankingPayment(
     intent: PaymentIntent
   ): Promise<{ success: boolean; gatewayIntentId?: string; error?: string }> {
-    console.log(`Processing banking payment for intent ${intent.id}`);
+    console.info(`Processing banking payment for intent ${intent.id}`);
 
     return {
       success: Math.random() > 0.02, // 98% success rate

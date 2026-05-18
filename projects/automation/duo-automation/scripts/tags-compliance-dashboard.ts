@@ -193,7 +193,7 @@ function getComplianceStatus(score: number): 'compliant' | 'at-risk' | 'non-comp
 // ═══════════════════════════════════════════════════════════
 
 function displayHeader() {
-  console.log(`
+  console.info(`
 ╔═══════════════════════════════════════════════════════════════════╗
 ║           DUOPLUS TAG COMPLIANCE DASHBOARD v1.0                   ║
 ║           SOC2 Type II | ISO-27001 Compliant                      ║
@@ -204,7 +204,7 @@ function displayHeader() {
 function displayStats(stats: TagStats) {
   const coverageEmoji = stats.coveragePercent >= 95 ? '✅' : stats.coveragePercent >= 80 ? '🟡' : '🔴';
 
-  console.log(`
+  console.info(`
 📊 COVERAGE METRICS (Last 30 Days)
 ${'─'.repeat(50)}
 Total Commits:     ${stats.totalCommits}
@@ -215,7 +215,7 @@ AI-Generated:      ${stats.aiGeneratedCount} commits
 }
 
 function displayDomainBreakdown(stats: TagStats) {
-  console.log(`
+  console.info(`
 📁 DOMAIN BREAKDOWN
 ${'─'.repeat(50)}`);
 
@@ -225,12 +225,12 @@ ${'─'.repeat(50)}`);
 
   for (const [domain, count] of sortedDomains) {
     const bar = '█'.repeat(Math.min(20, Math.round(count / Math.max(...Object.values(stats.byDomain)) * 20)));
-    console.log(`${domain.padEnd(15)} ${bar} ${count}`);
+    console.info(`${domain.padEnd(15)} ${bar} ${count}`);
   }
 }
 
 function displayClassBreakdown(stats: TagStats) {
-  console.log(`
+  console.info(`
 🎯 SEVERITY BREAKDOWN
 ${'─'.repeat(50)}`);
 
@@ -243,13 +243,13 @@ ${'─'.repeat(50)}`);
   };
 
   for (const [cls, count] of Object.entries(stats.byClass)) {
-    console.log(`${classColors[cls] || '⚪'} ${cls.padEnd(12)} ${count}`);
+    console.info(`${classColors[cls] || '⚪'} ${cls.padEnd(12)} ${count}`);
   }
 }
 
 function displayViolations(stats: TagStats) {
   if (stats.violations.length === 0) {
-    console.log(`
+    console.info(`
 ✅ NO VIOLATIONS
 ${'─'.repeat(50)}
 All commits are compliant with DuoPlus tagging standards.
@@ -257,22 +257,22 @@ All commits are compliant with DuoPlus tagging standards.
     return;
   }
 
-  console.log(`
+  console.info(`
 ⚠️  VIOLATIONS (${stats.violations.length} total)
 ${'─'.repeat(70)}`);
 
-  console.log('Commit   | Author          | Type   | Level | Status    | Description');
-  console.log('─'.repeat(70));
+  console.info('Commit   | Author          | Type   | Level | Status    | Description');
+  console.info('─'.repeat(70));
 
   for (const v of stats.violations.slice(0, 10)) {
     const levelEmoji = v.level === 1 ? '🟡' : v.level === 2 ? '🟠' : '🔴';
-    console.log(
+    console.info(
       `${v.commit.padEnd(8)} | ${v.author.substring(0, 15).padEnd(15)} | ${v.type.padEnd(6)} | ${levelEmoji} ${v.level}   | ${v.status.padEnd(9)} | ${v.description.substring(0, 30)}`
     );
   }
 
   if (stats.violations.length > 10) {
-    console.log(`... and ${stats.violations.length - 10} more violations`);
+    console.info(`... and ${stats.violations.length - 10} more violations`);
   }
 }
 
@@ -280,7 +280,7 @@ function displayComplianceScore(score: number, status: string) {
   const statusEmoji = status === 'compliant' ? '✅' : status === 'at-risk' ? '⚠️' : '🚨';
   const scoreBar = '█'.repeat(Math.round(score / 5)) + '░'.repeat(20 - Math.round(score / 5));
 
-  console.log(`
+  console.info(`
 🏆 COMPLIANCE SCORE
 ${'─'.repeat(50)}
 Score: [${scoreBar}] ${score}/100
@@ -308,11 +308,11 @@ function displayRecommendations(stats: TagStats, score: number) {
   }
 
   if (recommendations.length > 0) {
-    console.log(`
+    console.info(`
 💡 RECOMMENDATIONS
 ${'─'.repeat(50)}`);
     for (const rec of recommendations) {
-      console.log(`  ${rec}`);
+      console.info(`  ${rec}`);
     }
   }
 }
@@ -340,7 +340,7 @@ async function main() {
         status,
         recommendations: [],
       };
-      console.log(JSON.stringify(report, null, 2));
+      console.info(JSON.stringify(report, null, 2));
     } else {
       displayHeader();
       displayStats(stats);
@@ -350,7 +350,7 @@ async function main() {
       displayComplianceScore(score, status);
       displayRecommendations(stats, score);
 
-      console.log(`
+      console.info(`
 ${'─'.repeat(50)}
 Generated: ${new Date().toISOString()}
 Dashboard: https://duoplus.dev/dashboard/compliance

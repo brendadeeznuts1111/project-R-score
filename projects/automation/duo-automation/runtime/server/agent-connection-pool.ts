@@ -98,7 +98,7 @@ export class AgentConnectionPool {
     // Test connection
     await this.testConnection(agentData.id);
     
-    console.log(`✅ Agent ${agentData.id} added to connection pool`);
+    console.info(`✅ Agent ${agentData.id} added to connection pool`);
     return connection;
   }
 
@@ -106,7 +106,7 @@ export class AgentConnectionPool {
   removeAgent(agentId: string): boolean {
     const removed = this.connections.delete(agentId);
     if (removed) {
-      console.log(`🗑️ Agent ${agentId} removed from connection pool`);
+      console.info(`🗑️ Agent ${agentId} removed from connection pool`);
     }
     return removed;
   }
@@ -143,7 +143,7 @@ export class AgentConnectionPool {
         connection.status = 'active'; // Recover from error state
       }
       
-      console.log(`📡 Agent ${agentId} request completed in ${connection.responseTime}ms`);
+      console.info(`📡 Agent ${agentId} request completed in ${connection.responseTime}ms`);
       return response;
       
     } catch (error) {
@@ -202,7 +202,7 @@ export class AgentConnectionPool {
     if (options.proxy && this.config.proxyConfig) {
       // Note: Bun doesn't have built-in proxy support like Node's https-proxy-agent
       // This would require a proxy implementation or external proxy service
-      console.log(`🌐 Proxy request through ${this.config.proxyConfig.host}:${this.config.proxyConfig.port}`);
+      console.info(`🌐 Proxy request through ${this.config.proxyConfig.host}:${this.config.proxyConfig.port}`);
     }
 
     let attempt = 0;
@@ -330,13 +330,13 @@ export class AgentConnectionPool {
   // Update pool configuration
   updateConfig(newConfig: Partial<ConnectionPoolConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    console.log('⚙️ Connection pool configuration updated');
+    console.info('⚙️ Connection pool configuration updated');
   }
 
   // Clear all connections
   clear(): void {
     this.connections.clear();
-    console.log('🧹 Connection pool cleared');
+    console.info('🧹 Connection pool cleared');
   }
 
   // Generate unique request ID
@@ -372,7 +372,7 @@ export class AgentConnectionPool {
       this.connections.set(connection.id, connection);
     }
 
-    console.log(`📥 Imported ${data.connections.length} connections to pool`);
+    console.info(`📥 Imported ${data.connections.length} connections to pool`);
   }
 }
 
@@ -456,7 +456,7 @@ export class AgentPoolManager {
       }
     }
 
-    console.log(`🧹 Cleaned up ${cleaned} inactive agents`);
+    console.info(`🧹 Cleaned up ${cleaned} inactive agents`);
     return cleaned;
   }
 }

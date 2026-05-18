@@ -148,7 +148,7 @@ class EnhancedSecretConfig implements SecretConfig {
 
 // Demo function to show Bun.inspect.custom in action
 function demonstrateBunInspectCustom() {
-  console.log(EmpireProDashboard.generateHeader(
+  console.info(EmpireProDashboard.generateHeader(
     'BUN.INSPECT.CUSTOM DEMO - FIXED VERSION',
     'Custom Object Formatting for Enhanced CLI Display'
   ));
@@ -167,8 +167,8 @@ function demonstrateBunInspectCustom() {
     'operational'
   );
 
-  console.log(UnicodeTableFormatter.colorize('🔍 Custom System Metrics Display:', DesignSystem.text.accent.blue));
-  console.log(metrics[Symbol.for("Bun.inspect.custom")]()); // Explicitly call custom inspector
+  console.info(UnicodeTableFormatter.colorize('🔍 Custom System Metrics Display:', DesignSystem.text.accent.blue));
+  console.info(metrics[Symbol.for("Bun.inspect.custom")]()); // Explicitly call custom inspector
 
   // Create enhanced secret config with custom inspector
   const secretConfig = new EnhancedSecretConfig(
@@ -183,11 +183,11 @@ function demonstrateBunInspectCustom() {
     'admin'
   );
 
-  console.log('\n' + UnicodeTableFormatter.colorize('🔐 Custom Secret Config Display:', DesignSystem.text.accent.blue));
-  console.log(secretConfig[Symbol.for("Bun.inspect.custom")]()); // Explicitly call custom inspector
+  console.info('\n' + UnicodeTableFormatter.colorize('🔐 Custom Secret Config Display:', DesignSystem.text.accent.blue));
+  console.info(secretConfig[Symbol.for("Bun.inspect.custom")]()); // Explicitly call custom inspector
 
   // Show comparison with regular objects
-  console.log('\n' + UnicodeTableFormatter.colorize('📊 Comparison: Regular vs Custom Objects', DesignSystem.text.accent.blue));
+  console.info('\n' + UnicodeTableFormatter.colorize('📊 Comparison: Regular vs Custom Objects', DesignSystem.text.accent.blue));
   
   const regularMetrics = {
     cpu: 94.2,
@@ -198,72 +198,72 @@ function demonstrateBunInspectCustom() {
     timestamp: new Date()
   };
 
-  console.log('\n🔍 Regular Object (Bun.inspect default):');
-  console.log(Bun.inspect(regularMetrics, { colors: true }));
+  console.info('\n🔍 Regular Object (Bun.inspect default):');
+  console.info(Bun.inspect(regularMetrics, { colors: true }));
 
-  console.log('\n🎨 Enhanced Object (Bun.inspect.custom):');
-  console.log(metrics[Symbol.for("Bun.inspect.custom")]());
+  console.info('\n🎨 Enhanced Object (Bun.inspect.custom):');
+  console.info(metrics[Symbol.for("Bun.inspect.custom")]());
 
   // Demonstrate Bun.inspect with options
-  console.log('\n' + UnicodeTableFormatter.colorize('⚙️  Bun.inspect Options Demo', DesignSystem.text.accent.blue));
+  console.info('\n' + UnicodeTableFormatter.colorize('⚙️  Bun.inspect Options Demo', DesignSystem.text.accent.blue));
   
-  console.log('\n🔍 Bun.inspect with custom options:');
-  console.log(Bun.inspect(metrics, { colors: true, depth: 10 }));
+  console.info('\n🔍 Bun.inspect with custom options:');
+  console.info(Bun.inspect(metrics, { colors: true, depth: 10 }));
 
   // Show how to use in CLI commands
-  console.log('\n' + UnicodeTableFormatter.colorize('💡 CLI Integration Examples', DesignSystem.text.accent.blue));
+  console.info('\n' + UnicodeTableFormatter.colorize('💡 CLI Integration Examples', DesignSystem.text.accent.blue));
   
-  console.log('\n📋 Example 1: Status Command with Custom Display');
-  console.log('// In your CLI command:');
-  console.log('if (flags["--verbose"]) {');
-  console.log('  console.log(metrics[Symbol.for("Bun.inspect.custom")]());');
-  console.log('} else {');
-  console.log('  console.log(`Status: ${metrics.status}`);');
-  console.log('}');
+  console.info('\n📋 Example 1: Status Command with Custom Display');
+  console.info('// In your CLI command:');
+  console.info('if (flags["--verbose"]) {');
+  console.info('  console.info(metrics[Symbol.for("Bun.inspect.custom")]());');
+  console.info('} else {');
+  console.info('  console.info(`Status: ${metrics.status}`);');
+  console.info('}');
 
-  console.log('\n📋 Example 2: Debug Command with Full Details');
-  console.log('// In your debug command:');
-  console.log('function debugObject(obj: any, name: string) {');
-  console.log('  console.log(`🔍 Debug: ${name}`);');
-  console.log('  if (obj[Symbol.for("Bun.inspect.custom")]) {');
-  console.log('    console.log(obj[Symbol.for("Bun.inspect.custom")]());');
-  console.log('  } else {');
-  console.log('    console.log(Bun.inspect(obj, { colors: true }));');
-  console.log('  }');
-  console.log('}');
+  console.info('\n📋 Example 2: Debug Command with Full Details');
+  console.info('// In your debug command:');
+  console.info('function debugObject(obj: any, name: string) {');
+  console.info('  console.info(`🔍 Debug: ${name}`);');
+  console.info('  if (obj[Symbol.for("Bun.inspect.custom")]) {');
+  console.info('    console.info(obj[Symbol.for("Bun.inspect.custom")]());');
+  console.info('  } else {');
+  console.info('    console.info(Bun.inspect(obj, { colors: true }));');
+  console.info('  }');
+  console.info('}');
 
-  console.log('\n📋 Example 3: Table Integration');
-  console.log('// Convert custom object to table row:');
-  console.log('function objectToTableRow(obj: any) {');
-  console.log('  if (obj[Symbol.for("Bun.inspect.custom")]) {');
-  console.log('    // Extract key data from custom object');
-  console.log('    return {');
-  console.log('      Name: obj.name || "Unknown",');
-  console.log('      Status: obj.status || "unknown",');
-  console.log('      Performance: obj.performance || 0');
-  console.log('    };');
-  console.log('  }');
-  console.log('  return obj;');
-  console.log('}');
+  console.info('\n📋 Example 3: Table Integration');
+  console.info('// Convert custom object to table row:');
+  console.info('function objectToTableRow(obj: any) {');
+  console.info('  if (obj[Symbol.for("Bun.inspect.custom")]) {');
+  console.info('    // Extract key data from custom object');
+  console.info('    return {');
+  console.info('      Name: obj.name || "Unknown",');
+  console.info('      Status: obj.status || "unknown",');
+  console.info('      Performance: obj.performance || 0');
+  console.info('    };');
+  console.info('  }');
+  console.info('  return obj;');
+  console.info('}');
 
-  console.log(EmpireProDashboard.generateFooter());
+  console.info(EmpireProDashboard.generateFooter());
 }
 
 // Main execution
 demonstrateBunInspectCustom();
 
-console.log('\n🎉 BUN.INSPECT.CUSTOM DEMO COMPLETE!');
-console.log('✅ Custom object formatting for enhanced CLI display');
-console.log('✅ Integration with Empire Pro v3.7 color system');
-console.log('✅ Professional object visualization with UnicodeTableFormatter');
-console.log('✅ CLI integration examples and best practices');
-console.log('✅ Comparison with regular Bun.inspect behavior');
-console.log('\n📋 KEY BENEFITS:');
-console.log('  🎨 Beautiful colored output with Empire Pro branding');
-console.log('  📊 Structured data presentation with sections');
-console.log('  🔍 Detailed debugging information when needed');
-console.log('  🚀 Professional CLI experience');
-console.log('  📱 Consistent object display across commands');
-console.log('\n🔧 IMPLEMENTATION TIP:');
-console.log('  Always call obj[Symbol.for("Bun.inspect.custom")]()');
-console.log('  explicitly to ensure custom formatting is applied');
+console.info('\n🎉 BUN.INSPECT.CUSTOM DEMO COMPLETE!');
+console.info('✅ Custom object formatting for enhanced CLI display');
+console.info('✅ Integration with Empire Pro v3.7 color system');
+console.info('✅ Professional object visualization with UnicodeTableFormatter');
+console.info('✅ CLI integration examples and best practices');
+console.info('✅ Comparison with regular Bun.inspect behavior');
+console.info('\n📋 KEY BENEFITS:');
+console.info('  🎨 Beautiful colored output with Empire Pro branding');
+console.info('  📊 Structured data presentation with sections');
+console.info('  🔍 Detailed debugging information when needed');
+console.info('  🚀 Professional CLI experience');
+console.info('  📱 Consistent object display across commands');
+console.info('\n🔧 IMPLEMENTATION TIP:');
+console.info('  Always call obj[Symbol.for("Bun.inspect.custom")]()');
+console.info('  explicitly to ensure custom formatting is applied');

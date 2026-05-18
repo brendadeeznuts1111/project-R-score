@@ -1,13 +1,13 @@
 #!/usr/bin/env bun
 // scripts/help.ts - Help system for my-demo-app
 
-console.log('🖥️  my-demo-app - Surgical Precision Platform');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log('');
-console.log('MCP server with ripgrep codebase search');
-console.log('');
-console.log('📋 Available Commands:');
-console.log('');
+console.info('🖥️  my-demo-app - Surgical Precision Platform');
+console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.info('');
+console.info('MCP server with ripgrep codebase search');
+console.info('');
+console.info('📋 Available Commands:');
+console.info('');
 
 // Group commands by category
 const commands = {
@@ -39,14 +39,14 @@ commands['Benchmarks'] = {
 };
 
 for (const [category, cmds] of Object.entries(commands)) {
-  console.log(`${category}:`);
+  console.info(`${category}:`);
   for (const [cmd, desc] of Object.entries(cmds)) {
-    console.log(`  ${cmd.padEnd(20)} - ${desc}`);
+    console.info(`  ${cmd.padEnd(20)} - ${desc}`);
   }
-  console.log('');
+  console.info('');
 }
 
-console.log('📚 For more information:');
-console.log('  README.md          - Project documentation');
-console.log('  docs/              - Additional documentation');
-console.log('');
+console.info('📚 For more information:');
+console.info('  README.md          - Project documentation');
+console.info('  docs/              - Additional documentation');
+console.info('');

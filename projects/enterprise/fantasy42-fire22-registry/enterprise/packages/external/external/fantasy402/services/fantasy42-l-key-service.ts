@@ -344,7 +344,7 @@ export class Fantasy42LKeyService {
    */
   clearMappings(): void {
     // This would clear the internal maps - implementation depends on the mapper
-    console.log('Fantasy42 L-Key mappings cleared');
+    console.info('Fantasy42 L-Key mappings cleared');
   }
 }
 
@@ -363,18 +363,18 @@ export class Fantasy42LKeyEventHandlers {
    * Handle account creation event
    */
   async handleAccountCreated(event: BaseDomainEvent): Promise<void> {
-    console.log(`🔄 Processing account creation for L-Key mapping: ${event.aggregateId}`);
+    console.info(`🔄 Processing account creation for L-Key mapping: ${event.aggregateId}`);
 
     // The event would contain account data - in a real implementation,
     // we'd fetch the account and map it
-    console.log(`✅ Account ${event.aggregateId} L-Key mapping processed`);
+    console.info(`✅ Account ${event.aggregateId} L-Key mapping processed`);
   }
 
   /**
    * Handle bet placement event
    */
   async handleBetPlaced(event: BaseDomainEvent): Promise<void> {
-    console.log(`🔄 Processing bet placement for L-Key mapping: ${event.aggregateId}`);
+    console.info(`🔄 Processing bet placement for L-Key mapping: ${event.aggregateId}`);
 
     // Extract bet data from event payload
     const betData = event.payload;
@@ -382,16 +382,16 @@ export class Fantasy42LKeyEventHandlers {
     // Create a temporary bet entity for mapping
     // In a real implementation, we'd reconstruct the entity from event data
 
-    console.log(`✅ Bet ${event.aggregateId} L-Key mapping processed`);
+    console.info(`✅ Bet ${event.aggregateId} L-Key mapping processed`);
   }
 
   /**
    * Handle agent login event
    */
   async handleAgentLogin(event: BaseDomainEvent): Promise<void> {
-    console.log(`🔄 Processing agent login for L-Key mapping: ${event.aggregateId}`);
+    console.info(`🔄 Processing agent login for L-Key mapping: ${event.aggregateId}`);
 
-    console.log(`✅ Agent ${event.aggregateId} L-Key mapping updated`);
+    console.info(`✅ Agent ${event.aggregateId} L-Key mapping updated`);
   }
 }
 

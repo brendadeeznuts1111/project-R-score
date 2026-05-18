@@ -44,7 +44,7 @@ const versions = [
 // In a real macro, this line would be: versions.sort(semverSort());
 versions.sort(semverComparator);
 
-console.log("→", versions);
+console.info("→", versions);
 
 // --- What macro expansion would generate ---
 // The macro would transform: versions.sort(semverSort());

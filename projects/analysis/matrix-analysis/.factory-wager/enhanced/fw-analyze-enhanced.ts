@@ -223,13 +223,13 @@ class EnhancedFactoryWagerAnalyzer {
   async execute(): Promise<EnhancedAnalysisResult> {
     const startTime = Date.now();
 
-    console.log(`🧠 FactoryWager Enhanced Configuration Analyzer v2.0`);
-    console.log(`========================================================`);
-    console.log(`AI Analysis: ENABLED`);
-    console.log(`Predictive Analytics: ENABLED`);
-    console.log(`Automation Detection: ENABLED`);
-    console.log(`Compliance Checking: ENABLED`);
-    console.log('');
+    console.info(`🧠 FactoryWager Enhanced Configuration Analyzer v2.0`);
+    console.info(`========================================================`);
+    console.info(`AI Analysis: ENABLED`);
+    console.info(`Predictive Analytics: ENABLED`);
+    console.info(`Automation Detection: ENABLED`);
+    console.info(`Compliance Checking: ENABLED`);
+    console.info('');
 
     // Enhanced analysis pipeline
     const rows = await this.analyzeDocuments();
@@ -1010,11 +1010,11 @@ echo "Fix applied successfully"
       writeFileSync(scriptPath, scriptContent);
     }
 
-    console.log(`📄 Enhanced reports generated:`);
-    console.log(`   JSON: ${jsonPath}`);
-    console.log(`   HTML: ${htmlPath}`);
+    console.info(`📄 Enhanced reports generated:`);
+    console.info(`   JSON: ${jsonPath}`);
+    console.info(`   HTML: ${htmlPath}`);
     if (result.automation.autoFixable > 0) {
-      console.log(`   Automation script: .factory-wager/scripts/auto-fix-${Date.now()}.sh`);
+      console.info(`   Automation script: .factory-wager/scripts/auto-fix-${Date.now()}.sh`);
     }
   }
 
@@ -1176,50 +1176,50 @@ echo "📊 Fixed ${result.automation.autoFixable} issues"
   }
 
   private printEnhancedResults(result: EnhancedAnalysisResult): void {
-    console.log(`\n🧠 Enhanced Analysis Results:`);
-    console.log(`============================`);
+    console.info(`\n🧠 Enhanced Analysis Results:`);
+    console.info(`============================`);
 
-    console.log(`📊 Configuration Statistics:`);
-    console.log(`   Documents: ${result.stats.docs}`);
-    console.log(`   Keys: ${result.stats.keys}`);
-    console.log(`   Environment Variables: ${result.stats.interpolations}`);
-    console.log(`   Complexity Score: ${result.stats.complexity.toFixed(1)}`);
+    console.info(`📊 Configuration Statistics:`);
+    console.info(`   Documents: ${result.stats.docs}`);
+    console.info(`   Keys: ${result.stats.keys}`);
+    console.info(`   Environment Variables: ${result.stats.interpolations}`);
+    console.info(`   Complexity Score: ${result.stats.complexity.toFixed(1)}`);
 
-    console.log(`\n🎯 Risk Assessment:`);
-    console.log(`   Current Risk Score: ${result.riskScore}/100`);
-    console.log(`   Predictive Risk: ${result.predictiveRisk}/100`);
-    console.log(`   High-Risk Configurations: ${result.rows.filter(r => r.riskScore > 70).length}`);
+    console.info(`\n🎯 Risk Assessment:`);
+    console.info(`   Current Risk Score: ${result.riskScore}/100`);
+    console.info(`   Predictive Risk: ${result.predictiveRisk}/100`);
+    console.info(`   High-Risk Configurations: ${result.rows.filter(r => r.riskScore > 70).length}`);
 
-    console.log(`\n🤖 AI Analysis Summary:`);
-    console.log(`   Patterns Detected: ${result.aiAnalysis.patterns.length}`);
-    console.log(`   Anomalies Found: ${result.aiAnalysis.anomalies.length}`);
-    console.log(`   Predictions Generated: ${result.aiAnalysis.predictions.length}`);
-    console.log(`   Optimization Opportunities: ${result.aiAnalysis.optimizations.length}`);
+    console.info(`\n🤖 AI Analysis Summary:`);
+    console.info(`   Patterns Detected: ${result.aiAnalysis.patterns.length}`);
+    console.info(`   Anomalies Found: ${result.aiAnalysis.anomalies.length}`);
+    console.info(`   Predictions Generated: ${result.aiAnalysis.predictions.length}`);
+    console.info(`   Optimization Opportunities: ${result.aiAnalysis.optimizations.length}`);
 
-    console.log(`\n🔧 Automation Opportunities:`);
-    console.log(`   Auto-fixable Issues: ${result.automation.autoFixable}`);
-    console.log(`   Scriptable Configurations: ${result.automation.scriptable}`);
-    console.log(`   Monitored Components: ${result.automation.monitored}`);
+    console.info(`\n🔧 Automation Opportunities:`);
+    console.info(`   Auto-fixable Issues: ${result.automation.autoFixable}`);
+    console.info(`   Scriptable Configurations: ${result.automation.scriptable}`);
+    console.info(`   Monitored Components: ${result.automation.monitored}`);
 
-    console.log(`\n🛡️ Compliance Status:`);
-    console.log(`   Overall Score: ${result.compliance.overallScore}/100`);
-    console.log(`   Violations: ${result.compliance.violations.length}`);
+    console.info(`\n🛡️ Compliance Status:`);
+    console.info(`   Overall Score: ${result.compliance.overallScore}/100`);
+    console.info(`   Violations: ${result.compliance.violations.length}`);
 
-    console.log(`\n💡 Top Recommendations:`);
+    console.info(`\n💡 Top Recommendations:`);
     result.recommendations.slice(0, 3).forEach((rec, index) => {
-      console.log(`   ${index + 1}. [${rec.priority.toUpperCase()}] ${rec.title}`);
-      console.log(`      ${rec.description}`);
+      console.info(`   ${index + 1}. [${rec.priority.toUpperCase()}] ${rec.title}`);
+      console.info(`      ${rec.description}`);
     });
 
-    console.log(`\n📈 Performance Metrics:`);
-    console.log(`   Parse Time: ${result.performanceMetrics.parseTime}ms`);
-    console.log(`   Analysis Time: ${result.performanceMetrics.analysisTime}ms`);
-    console.log(`   Complexity Score: ${result.performanceMetrics.complexityScore.toFixed(1)}`);
-    console.log(`   Scalability Score: ${result.performanceMetrics.scalabilityScore}/100`);
-    console.log(`   Maintainability Index: ${result.performanceMetrics.maintainabilityIndex}/100`);
+    console.info(`\n📈 Performance Metrics:`);
+    console.info(`   Parse Time: ${result.performanceMetrics.parseTime}ms`);
+    console.info(`   Analysis Time: ${result.performanceMetrics.analysisTime}ms`);
+    console.info(`   Complexity Score: ${result.performanceMetrics.complexityScore.toFixed(1)}`);
+    console.info(`   Scalability Score: ${result.performanceMetrics.scalabilityScore}/100`);
+    console.info(`   Maintainability Index: ${result.performanceMetrics.maintainabilityIndex}/100`);
 
     if (result.automation.autoFixable > 0) {
-      console.log(`\n🚀 Ready for Automation: ${result.automation.autoFixable} issues can be auto-fixed`);
+      console.info(`\n🚀 Ready for Automation: ${result.automation.autoFixable} issues can be auto-fixed`);
     }
   }
 }

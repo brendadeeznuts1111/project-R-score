@@ -62,17 +62,17 @@ class TemplateLineLengthFixer {
      * Scan templates directory for line length issues
      */
     async scanTemplates(): Promise<void> {
-        console.log(chalk.blue.bold(`🔍 Scanning templates for lines > ${this.maxLineLength} characters...`));
+        console.info(chalk.blue.bold(`🔍 Scanning templates for lines > ${this.maxLineLength} characters...`));
 
         try {
             const files = await this.getAllTemplateFiles();
-            console.log(chalk.cyan(`Found ${files.length} template files to analyze`));
+            console.info(chalk.cyan(`Found ${files.length} template files to analyze`));
 
             for (const filePath of files) {
                 await this.analyzeFile(filePath);
             }
 
-            console.log(chalk.green(`\n✅ Analysis complete: ${this.issues.length} lines exceed ${this.maxLineLength} characters`));
+            console.info(chalk.green(`\n✅ Analysis complete: ${this.issues.length} lines exceed ${this.maxLineLength} characters`));
         } catch (error) {
             console.error(chalk.red(`❌ Error scanning templates: ${error.message}`));
             throw error;
@@ -177,11 +177,11 @@ class TemplateLineLengthFixer {
      */
     async fixIssues(): Promise<void> {
         if (this.issues.length === 0) {
-            console.log(chalk.green(`✅ No lines exceed ${this.maxLineLength} characters!`));
+            console.info(chalk.green(`✅ No lines exceed ${this.maxLineLength} characters!`));
             return;
         }
 
-        console.log(chalk.blue.bold(`\n🔧 ${this.dryRun ? 'DRY RUN: Would fix' : 'Fixing'} ${this.issues.length} line length issues...`));
+        console.info(chalk.blue.bold(`\n🔧 ${this.dryRun ? 'DRY RUN: Would fix' : 'Fixing'} ${this.issues.length} line length issues...`));
 
         // Group issues by file
         const issuesByFile = this.issues.reduce((acc, issue) => {
@@ -205,23 +205,23 @@ class TemplateLineLengthFixer {
 
                     if (!this.dryRun) {
                         await writeFile(filePath, fixOperation.fixedContent, 'utf-8');
-                        console.log(chalk.green(`   ✅ Fixed ${filePath} (${fixOperation.linesFixed} lines)`));
+                        console.info(chalk.green(`   ✅ Fixed ${filePath} (${fixOperation.linesFixed} lines)`));
                     } else {
-                        console.log(chalk.cyan(`   🔧 Would fix ${filePath}: ${fixOperation.linesFixed} lines`));
+                        console.info(chalk.cyan(`   🔧 Would fix ${filePath}: ${fixOperation.linesFixed} lines`));
                     }
                     results.success++;
                     results.totalLinesFixed += fixOperation.linesFixed;
                 }
             } catch (error) {
-                console.log(chalk.red(`   ❌ Failed to fix ${filePath}: ${error.message}`));
+                console.info(chalk.red(`   ❌ Failed to fix ${filePath}: ${error.message}`));
                 results.failed++;
             }
         }
 
-        console.log(chalk.blue.bold(`\n📊 Results:`));
-        console.log(chalk.green(`   ✅ Success: ${results.success} files`));
-        console.log(chalk.blue(`   📝 Lines fixed: ${results.totalLinesFixed}`));
-        console.log(chalk.red(`   ❌ Failed: ${results.failed}`));
+        console.info(chalk.blue.bold(`\n📊 Results:`));
+        console.info(chalk.green(`   ✅ Success: ${results.success} files`));
+        console.info(chalk.blue(`   📝 Lines fixed: ${results.totalLinesFixed}`));
+        console.info(chalk.red(`   ❌ Failed: ${results.failed}`));
     }
 
     /**
@@ -301,12 +301,12 @@ class TemplateLineLengthFixer {
      */
     displayReport(): void {
         if (this.issues.length === 0) {
-            console.log(chalk.green(`✅ No lines exceed ${this.maxLineLength} characters!`));
+            console.info(chalk.green(`✅ No lines exceed ${this.maxLineLength} characters!`));
             return;
         }
 
-        console.log(chalk.blue.bold(`\n📋 Line Length Issues Report (> ${this.maxLineLength} chars):`));
-        console.log(chalk.gray('='.repeat(80)));
+        console.info(chalk.blue.bold(`\n📋 Line Length Issues Report (> ${this.maxLineLength} chars):`));
+        console.info(chalk.gray('='.repeat(80)));
 
         // Group by file
         const byFile = this.issues.reduce((acc, issue) => {
@@ -317,21 +317,21 @@ class TemplateLineLengthFixer {
 
         for (const [filePath, fileIssues] of Object.entries(byFile)) {
             const relativePath = filePath.replace(this.vaultPath + '/', '');
-            console.log(chalk.cyan(`\n📄 ${relativePath} (${fileIssues.length} lines):`));
+            console.info(chalk.cyan(`\n📄 ${relativePath} (${fileIssues.length} lines):`));
 
             // Show the worst offenders
             const sortedIssues = fileIssues.sort((a, b) => b.length - a.length);
             for (const issue of sortedIssues.slice(0, 3)) {
                 const preview = issue.lineContent.substring(0, 50) + (issue.lineContent.length > 50 ? '...' : '');
-                console.log(chalk.gray(`   Line ${issue.lineNumber} (${issue.length} chars): ${preview}`));
+                console.info(chalk.gray(`   Line ${issue.lineNumber} (${issue.length} chars): ${preview}`));
             }
 
             if (fileIssues.length > 3) {
-                console.log(chalk.gray(`   ... and ${fileIssues.length - 3} more lines`));
+                console.info(chalk.gray(`   ... and ${fileIssues.length - 3} more lines`));
             }
         }
 
-        console.log(chalk.blue.bold(`\n📊 Summary: ${this.issues.length} lines exceed ${this.maxLineLength} characters`));
+        console.info(chalk.blue.bold(`\n📊 Summary: ${this.issues.length} lines exceed ${this.maxLineLength} characters`));
     }
 
     /**
@@ -347,11 +347,11 @@ class TemplateLineLengthFixer {
         const maxLength = Math.max(...lengths);
         const minLength = Math.min(...lengths);
 
-        console.log(chalk.blue.bold('\n📊 Line Length Statistics:'));
-        console.log(chalk.gray(`   Total issues: ${this.issues.length}`));
-        console.log(chalk.gray(`   Average length: ${avgLength.toFixed(1)} characters`));
-        console.log(chalk.gray(`   Max length: ${maxLength} characters`));
-        console.log(chalk.gray(`   Min length: ${minLength} characters`));
+        console.info(chalk.blue.bold('\n📊 Line Length Statistics:'));
+        console.info(chalk.gray(`   Total issues: ${this.issues.length}`));
+        console.info(chalk.gray(`   Average length: ${avgLength.toFixed(1)} characters`));
+        console.info(chalk.gray(`   Max length: ${maxLength} characters`));
+        console.info(chalk.gray(`   Min length: ${minLength} characters`));
 
         // Distribution
         const distribution = {
@@ -368,10 +368,10 @@ class TemplateLineLengthFixer {
             else distribution['200+']++;
         }
 
-        console.log(chalk.blue.bold('\n📈 Distribution:'));
+        console.info(chalk.blue.bold('\n📈 Distribution:'));
         for (const [range, count] of Object.entries(distribution)) {
             const percentage = ((count / this.issues.length) * 100).toFixed(1);
-            console.log(chalk.gray(`   ${range} chars: ${count} (${percentage}%)`));
+            console.info(chalk.gray(`   ${range} chars: ${count} (${percentage}%)`));
         }
     }
 }
@@ -398,14 +398,14 @@ async function main(): Promise<void> {
     }
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('📏 Template Line Length Fix Script'));
-        console.log(chalk.gray('Usage: bun fix-template-line-length.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --dry-run         Show what would be fixed without doing it'));
-        console.log(chalk.gray('  --report          Show detailed report of issues found'));
-        console.log(chalk.gray('  --stats           Show statistics about line length issues'));
-        console.log(chalk.gray('  --max-length=N    Set maximum line length (default: 100)'));
-        console.log(chalk.gray('  --help, -h        Show this help message'));
+        console.info(chalk.blue.bold('📏 Template Line Length Fix Script'));
+        console.info(chalk.gray('Usage: bun fix-template-line-length.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --dry-run         Show what would be fixed without doing it'));
+        console.info(chalk.gray('  --report          Show detailed report of issues found'));
+        console.info(chalk.gray('  --stats           Show statistics about line length issues'));
+        console.info(chalk.gray('  --max-length=N    Set maximum line length (default: 100)'));
+        console.info(chalk.gray('  --help, -h        Show this help message'));
         process.exit(0);
     }
 

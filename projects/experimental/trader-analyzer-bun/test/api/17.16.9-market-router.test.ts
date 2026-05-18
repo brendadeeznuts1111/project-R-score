@@ -278,7 +278,7 @@ describe('MarketDataRouter17', () => {
 		
 		try {
 			// Simulate debug logging
-			console.log('Router:', Bun.inspect(router, { depth: 1 }));
+			console.info('Router:', Bun.inspect(router, { depth: 1 }));
 			
 			const logText = logs.join('\n');
 			expect(logText).toContain('MarketDataRouter17');

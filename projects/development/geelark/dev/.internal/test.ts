@@ -94,14 +94,14 @@
 //   },
 // };
 //
-// console.log("📊 Deep Object Test:");
-// console.log(deepObject);
+// console.info("📊 Deep Object Test:");
+// console.info(deepObject);
 //
-// console.log("\n📋 Deep Array Test:");
-// console.log(deepArray);
+// console.info("\n📋 Deep Array Test:");
+// console.info(deepArray);
 //
-// console.log("\n🔁 Circular Reference Test:");
-// console.log(circular);
+// console.info("\n🔁 Circular Reference Test:");
+// console.info(circular);
 //
-// console.log("\n💡 Tip: Run with --console-depth=<number> to control output depth");
-// console.log("   Example: bun --console-depth=5 .dev/test.ts");
+// console.info("\n💡 Tip: Run with --console-depth=<number> to control output depth");
+// console.info("   Example: bun --console-depth=5 .dev/test.ts");

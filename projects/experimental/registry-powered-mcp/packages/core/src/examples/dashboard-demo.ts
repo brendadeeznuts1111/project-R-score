@@ -31,7 +31,7 @@ const dashboard = new TerminalDashboard({
 handler.attachDashboard(dashboard);
 
 // Start both
-console.log('\x1b[2J\x1b[H'); // Clear screen
+console.info('\x1b[2J\x1b[H'); // Clear screen
 dashboard.start();
 handler.start();
 
@@ -39,9 +39,9 @@ handler.start();
 process.on('SIGINT', () => {
   dashboard.stop();
   handler.stop();
-  console.log('\n\n📊 Dashboard demo stopped.');
-  console.log('Final metrics:', JSON.stringify(handler.getMetrics(), null, 2));
+  console.info('\n\n📊 Dashboard demo stopped.');
+  console.info('Final metrics:', JSON.stringify(handler.getMetrics(), null, 2));
   process.exit(0);
 });
 
-console.log('🎰 Live Dashboard Demo started. Press Ctrl+C to exit.\n');
+console.info('🎰 Live Dashboard Demo started. Press Ctrl+C to exit.\n');

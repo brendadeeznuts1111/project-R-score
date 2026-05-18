@@ -23,8 +23,8 @@ class DeploymentValidator {
   private results: ValidationResult[] = [];
 
   async validate(target?: string): Promise<void> {
-    console.log('🔍 Deployment Validation');
-    console.log('!==!==!==!====');
+    console.info('🔍 Deployment Validation');
+    console.info('!==!==!==!====');
 
     const targets = target ? [target] : ['github-pages', 'cloudflare-pages', 'wiki-mirror'];
 
@@ -44,8 +44,8 @@ class DeploymentValidator {
   }
 
   private async validateTarget(target: string): Promise<void> {
-    console.log(`\n🎯 Validating: ${target}`);
-    console.log('-'.repeat(40));
+    console.info(`\n🎯 Validating: ${target}`);
+    console.info('-'.repeat(40));
 
     const result: ValidationResult = {
       target,
@@ -267,32 +267,32 @@ class DeploymentValidator {
   }
 
   private generateSummary(): void {
-    console.log('\n' + '='.repeat(50));
-    console.log('📊 VALIDATION SUMMARY');
-    console.log('='.repeat(50));
+    console.info('\n' + '='.repeat(50));
+    console.info('📊 VALIDATION SUMMARY');
+    console.info('='.repeat(50));
 
     for (const result of this.results) {
       const icon = result.status === 'success' ? '✅' : result.status === 'warning' ? '⚠️' : '❌';
       const passed = result.checks.filter(c => c.passed).length;
       const total = result.checks.length;
 
-      console.log(`\n${icon} ${result.target}: ${passed}/${total} checks passed`);
+      console.info(`\n${icon} ${result.target}: ${passed}/${total} checks passed`);
 
       // Show failed checks
       const failed = result.checks.filter(c => !c.passed);
       if (failed.length > 0) {
-        console.log('  Failed checks:');
+        console.info('  Failed checks:');
         for (const check of failed) {
-          console.log(`    ❌ ${check.name}: ${check.message}`);
+          console.info(`    ❌ ${check.name}: ${check.message}`);
         }
       }
 
       // Show slow checks
       const slow = result.checks.filter(c => c.duration && c.duration > 1000);
       if (slow.length > 0) {
-        console.log('  Slow checks (>1s):');
+        console.info('  Slow checks (>1s):');
         for (const check of slow) {
-          console.log(`    ⏱️ ${check.name}: ${check.duration?.toFixed(2)}ms`);
+          console.info(`    ⏱️ ${check.name}: ${check.duration?.toFixed(2)}ms`);
         }
       }
     }
@@ -302,13 +302,13 @@ class DeploymentValidator {
     const hasWarnings = this.results.some(r => r.status === 'warning');
     const hasFailures = this.results.some(r => r.status === 'failure');
 
-    console.log('\n' + '='.repeat(50));
+    console.info('\n' + '='.repeat(50));
     if (allPassed) {
-      console.log('✅ All deployments validated successfully!');
+      console.info('✅ All deployments validated successfully!');
     } else if (hasFailures) {
-      console.log('❌ Some deployments have critical failures');
+      console.info('❌ Some deployments have critical failures');
     } else if (hasWarnings) {
-      console.log('⚠️ Deployments validated with warnings');
+      console.info('⚠️ Deployments validated with warnings');
     }
   }
 
@@ -321,7 +321,7 @@ class DeploymentValidator {
 
       // Save validation results
       await Bun.write(reportPath, JSON.stringify(this.results, null, 2));
-      console.log(`\n📁 Validation report saved to: ${reportPath}`);
+      console.info(`\n📁 Validation report saved to: ${reportPath}`);
     } catch (error) {
       console.error(`❌ Failed to save report: ${error}`);
     }

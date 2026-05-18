@@ -11,27 +11,27 @@ async function testEndpoint(name: string, url: string, init?: RequestInit): Prom
   try {
     const res = await fetch(url, init);
     if (res.ok) {
-      console.log(`✅ HTTP ${res.status}`);
+      console.info(`✅ HTTP ${res.status}`);
       return true;
     } else {
-      console.log(`❌ HTTP ${res.status}`);
+      console.info(`❌ HTTP ${res.status}`);
       return false;
     }
   } catch (err: any) {
     if (err.code === 'ConnectionRefused') {
-      console.log(`⚠️  Server not running at ${url}`);
+      console.info(`⚠️  Server not running at ${url}`);
     } else {
-      console.log(`❌ ${err.message}`);
+      console.info(`❌ ${err.message}`);
     }
     return false;
   }
 }
 
 async function testProxy() {
-  console.log('╔════════════════════════════════════════════════════════════╗');
-  console.log('║  💈 P2P Proxy Quick Test                                   ║');
-  console.log('╚════════════════════════════════════════════════════════════╝\n');
-  console.log(`Proxy URL: ${PROXY_URL}\n`);
+  console.info('╔════════════════════════════════════════════════════════════╗');
+  console.info('║  💈 P2P Proxy Quick Test                                   ║');
+  console.info('╚════════════════════════════════════════════════════════════╝\n');
+  console.info(`Proxy URL: ${PROXY_URL}\n`);
   
   const results = [];
   
@@ -91,19 +91,19 @@ async function testProxy() {
   const passed = results.filter(r => r).length;
   const total = results.length;
   
-  console.log('\n╔════════════════════════════════════════════════════════════╗');
-  console.log(`║  Results: ${passed}/${total} tests passed                        ║`);
-  console.log('╚════════════════════════════════════════════════════════════╝');
+  console.info('\n╔════════════════════════════════════════════════════════════╗');
+  console.info(`║  Results: ${passed}/${total} tests passed                        ║`);
+  console.info('╚════════════════════════════════════════════════════════════╝');
   
   if (passed === 0) {
-    console.log('\n⚠️  Server not running. Start it with:');
-    console.log('   bun run start:p2p-proxy:bun');
-    console.log('   # or');
-    console.log('   bun run start:p2p-proxy:v2');
+    console.info('\n⚠️  Server not running. Start it with:');
+    console.info('   bun run start:p2p-proxy:bun');
+    console.info('   # or');
+    console.info('   bun run start:p2p-proxy:v2');
   } else if (passed < total) {
-    console.log('\n⚠️  Some tests failed. Check server logs.');
+    console.info('\n⚠️  Some tests failed. Check server logs.');
   } else {
-    console.log('\n✨ All tests passed!');
+    console.info('\n✨ All tests passed!');
   }
   
   process.exit(passed === total ? 0 : 1);

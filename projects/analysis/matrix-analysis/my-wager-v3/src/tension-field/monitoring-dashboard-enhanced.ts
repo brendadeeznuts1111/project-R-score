@@ -65,7 +65,7 @@ class EnhancedMonitoringDashboard {
     this.initializeDatabase();
     this.startRealtimeUpdates();
 
-    console.log(`🚀 Enhanced Monitoring Dashboard running on port ${port}`);
+    console.info(`🚀 Enhanced Monitoring Dashboard running on port ${port}`);
   }
 
   private initializeDatabase() {
@@ -168,7 +168,7 @@ class EnhancedMonitoringDashboard {
     this.clients.set(clientId, client);
     this.wsToClientMap.set(ws, client);
 
-    console.log(`📡 Client connected: ${clientId}`);
+    console.info(`📡 Client connected: ${clientId}`);
 
     // Send initial data
     this.sendToClient(client, {
@@ -183,7 +183,7 @@ class EnhancedMonitoringDashboard {
     if (client) {
       this.clients.delete(client.id);
       this.wsToClientMap.delete(ws);
-      console.log(`📡 Client disconnected: ${client.id}`);
+      console.info(`📡 Client disconnected: ${client.id}`);
     }
   }
 
@@ -522,7 +522,7 @@ class EnhancedMonitoringDashboard {
                     addAlert(data.data);
                     break;
                 case 'propagationResult':
-                    console.log('Propagation result:', data.data);
+                    console.info('Propagation result:', data.data);
                     break;
             }
         };

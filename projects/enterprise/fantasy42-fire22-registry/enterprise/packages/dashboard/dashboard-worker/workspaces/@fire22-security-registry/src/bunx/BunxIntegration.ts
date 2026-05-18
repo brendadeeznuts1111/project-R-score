@@ -59,7 +59,7 @@ export class BunxIntegration {
         await this.installGlobalPackages();
       }
 
-      console.log('✅ Bunx integration with Fire22 security configured');
+      console.info('✅ Bunx integration with Fire22 security configured');
     } catch (error) {
       throw new Error(`Bunx setup failed: ${error.message}`);
     }
@@ -100,7 +100,7 @@ export class BunxIntegration {
       const isInstalled = await this.isGloballyInstalled(packageName);
 
       if (isInstalled && !options.force) {
-        console.log(`Package ${packageName} is already installed globally`);
+        console.info(`Package ${packageName} is already installed globally`);
         return;
       }
 
@@ -165,9 +165,9 @@ export class BunxIntegration {
     for (const packageName of globalPackages) {
       try {
         if (options.dryRun) {
-          console.log(`Would update: ${packageName}`);
+          console.info(`Would update: ${packageName}`);
         } else {
-          console.log(`Updating ${packageName}...`);
+          console.info(`Updating ${packageName}...`);
           await this.installGlobal(packageName, { force: true });
         }
       } catch (error) {
@@ -227,7 +227,7 @@ scan = true
 
       if (!existingConfig.includes('@fire22')) {
         await Bun.write(bunfigPath, existingConfig + registryConfig);
-        console.log('✅ Fire22 registry configured in ~/.bunfig.toml');
+        console.info('✅ Fire22 registry configured in ~/.bunfig.toml');
       }
     } catch (error) {
       console.warn(`Warning: Could not configure registry: ${error.message}`);
@@ -249,11 +249,11 @@ if (!packageName) {
   process.exit(1);
 }
 
-console.log('🔍 Validating package security...');
+console.info('🔍 Validating package security...');
 
 // This would call the Fire22 security scanner
 // For now, just log the validation
-console.log('✅ Package security validated');
+console.info('✅ Package security validated');
 `;
 
     const hookPath = `${process.env.HOME}/.fire22/bunx-security-hook.js`;
@@ -265,7 +265,7 @@ console.log('✅ Package security validated');
       const proc = Bun.spawn(['chmod', '+x', hookPath]);
       await proc.exited;
 
-      console.log('✅ Security hooks configured');
+      console.info('✅ Security hooks configured');
     } catch (error) {
       console.warn(`Warning: Could not setup security hooks: ${error.message}`);
     }
@@ -323,7 +323,7 @@ console.log('✅ Package security validated');
         throw new Error(`Security validation failed for ${packageName}`);
       }
 
-      console.log(`✅ Package ${packageName} passed security validation`);
+      console.info(`✅ Package ${packageName} passed security validation`);
     } catch (error) {
       if (this.config.registry.security.strict) {
         throw error;

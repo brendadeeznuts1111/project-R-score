@@ -96,72 +96,72 @@ const demoMetrics: PerfMetric[] = [
  * 🎯 Complete Demo Suite
  */
 export function runMasterPerfDemo(): void {
-  console.log('\n🚀 MASTER_PERF Inspector Demo Suite');
-  console.log('='.repeat(60));
+  console.info('\n🚀 MASTER_PERF Inspector Demo Suite');
+  console.info('='.repeat(60));
   
   // 1. Validate color palette
   MasterPerfInspector.validateColors();
-  console.log();
+  console.info();
   
   // 2. Show colored terminal output
-  console.log('📊 1. Colored Terminal Output');
-  console.log('─'.repeat(40));
+  console.info('📊 1. Colored Terminal Output');
+  console.info('─'.repeat(40));
   MasterPerfInspector.displayTerminal(demoMetrics);
-  console.log();
+  console.info();
   
   // 3. Show plain text export
-  console.log('📄 2. Plain Text Export (ANSI stripped)');
-  console.log('─'.repeat(40));
+  console.info('📄 2. Plain Text Export (ANSI stripped)');
+  console.info('─'.repeat(40));
   const plainText = MasterPerfInspector.generatePlainText(demoMetrics);
-  console.log(plainText);
-  console.log();
+  console.info(plainText);
+  console.info();
   
   // 4. Show JSON export with normalized colors
-  console.log('📦 3. JSON Export with Normalized Colors');
-  console.log('─'.repeat(40));
+  console.info('📦 3. JSON Export with Normalized Colors');
+  console.info('─'.repeat(40));
   const jsonData = MasterPerfInspector.generateJson(demoMetrics);
-  console.log(jsonData.substring(0, 500) + '...');
-  console.log();
+  console.info(jsonData.substring(0, 500) + '...');
+  console.info();
   
   // 5. Show WebSocket payload (minimal)
-  console.log('🌐 4. WebSocket Payload (Minimal)');
-  console.log('─'.repeat(40));
+  console.info('🌐 4. WebSocket Payload (Minimal)');
+  console.info('─'.repeat(40));
   const wsPayload = MasterPerfInspector.createWebSocketPayload(demoMetrics);
-  console.log(wsPayload);
-  console.log();
+  console.info(wsPayload);
+  console.info();
   
   // 6. Performance benchmark
-  console.log('⚡ 5. Performance Benchmark');
-  console.log('─'.repeat(40));
+  console.info('⚡ 5. Performance Benchmark');
+  console.info('─'.repeat(40));
   MasterPerfInspector.benchmark();
-  console.log();
+  console.info();
   
   // 7. Write log file example
-  console.log('📝 6. Log File Export');
-  console.log('─'.repeat(40));
+  console.info('📝 6. Log File Export');
+  console.info('─'.repeat(40));
   MasterPerfInspector.writeLogfile(demoMetrics, 'demo-master-perf.log');
-  console.log('✅ Log file written to: demo-master-perf.log');
-  console.log();
+  console.info('✅ Log file written to: demo-master-perf.log');
+  console.info();
   
   // 8. Color utility examples
-  console.log('🎨 7. Color Utility Examples');
-  console.log('─'.repeat(40));
+  console.info('🎨 7. Color Utility Examples');
+  console.info('─'.repeat(40));
   ['Security', 'R2', 'Isolation', 'Zstd', 'Demo'].forEach(category => {
     const hex = MasterPerfInspector.getColorHex(category);
     const number = MasterPerfInspector.getColorNumber(category);
     const ansi = MasterPerfInspector.generateTable([demoMetrics.find(m => m.category === category)!]);
-    console.log(`${category}: Hex=${hex}, Number=${number}`);
+    console.info(`${category}: Hex=${hex}, Number=${number}`);
   });
   
-  console.log('\n✨ Demo Complete! All dual-mode outputs tested.');
+  console.info('\n✨ Demo Complete! All dual-mode outputs tested.');
 }
 
 /**
  * 🧪 Individual Test Functions
  */
 export function testColorAccuracy(): void {
-  console.log('\n🎨 Testing Color Accuracy');
-  console.log('─'.repeat(40));
+  console.info('\n🎨 Testing Color Accuracy');
+  console.info('─'.repeat(40));
   
   const testMetric: PerfMetric = {
     id: 'color-test-001',
@@ -174,14 +174,14 @@ export function testColorAccuracy(): void {
   };
   
   const formatted = new MasterPerfInspector.FormattedPerfMetric(testMetric);
-  console.log('Category (should be red):', formatted.category);
-  console.log('Value (should be red error):', formatted.value);
-  console.log('Raw ANSI codes preserved for terminal output');
+  console.info('Category (should be red):', formatted.category);
+  console.info('Value (should be red error):', formatted.value);
+  console.info('Raw ANSI codes preserved for terminal output');
 }
 
 export function testUnicodeHandling(): void {
-  console.log('\n🌍 Testing Unicode & Emoji Handling');
-  console.log('─'.repeat(40));
+  console.info('\n🌍 Testing Unicode & Emoji Handling');
+  console.info('─'.repeat(40));
   
   const unicodeMetric: PerfMetric = {
     id: 'unicode-test-001',
@@ -194,14 +194,14 @@ export function testUnicodeHandling(): void {
   };
   
   const formatted = new MasterPerfInspector.FormattedPerfMetric(unicodeMetric);
-  console.log('ID with scope flag:', formatted.id);
-  console.log('Unicode locations:', formatted.locations);
-  console.log('Unicode impact:', formatted.impact);
+  console.info('ID with scope flag:', formatted.id);
+  console.info('Unicode locations:', formatted.locations);
+  console.info('Unicode impact:', formatted.impact);
 }
 
 export function testPerformanceScaling(): void {
-  console.log('\n📈 Testing Performance Scaling');
-  console.log('─'.repeat(40));
+  console.info('\n📈 Testing Performance Scaling');
+  console.info('─'.repeat(40));
   
   const sizes = [100, 1000, 10000];
   
@@ -215,7 +215,7 @@ export function testPerformanceScaling(): void {
     MasterPerfInspector.generatePlainText(largeMetrics);
     const end = performance.now();
     
-    console.log(`${size.toLocaleString()} metrics: ${(end - start).toFixed(2)}ms`);
+    console.info(`${size.toLocaleString()} metrics: ${(end - start).toFixed(2)}ms`);
   });
 }
 
@@ -223,14 +223,14 @@ export function testPerformanceScaling(): void {
  * 🏋️ Stress Test
  */
 export function runStressTest(): void {
-  console.log('\n🔥 MASTER_PERF Stress Test');
-  console.log('='.repeat(40));
+  console.info('\n🔥 MASTER_PERF Stress Test');
+  console.info('='.repeat(40));
   
   testColorAccuracy();
   testUnicodeHandling();
   testPerformanceScaling();
   
-  console.log('\n✅ All stress tests passed!');
+  console.info('\n✅ All stress tests passed!');
 }
 
 // Auto-run demo if this file is executed directly

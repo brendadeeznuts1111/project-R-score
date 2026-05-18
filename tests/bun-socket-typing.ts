@@ -11,7 +11,7 @@ async function bunSocketTypingFixture() {
         socket.data.arg.toLocaleLowerCase();
       },
       open() {
-        console.log("asdf");
+        console.info("asdf");
       },
     },
     hostname: "adsf",
@@ -25,7 +25,7 @@ async function bunSocketTypingFixture() {
         socket.data.arg.toLowerCase();
       },
       open() {
-        console.log("asdf");
+        console.info("asdf");
       },
     },
     hostname: "adsf",
@@ -39,7 +39,7 @@ async function bunSocketTypingFixture() {
         socket.data.arg.toLowerCase();
       },
       open() {
-        console.log("asdf");
+        console.info("asdf");
       },
     },
     unix: "asdf",
@@ -52,7 +52,7 @@ async function bunSocketTypingFixture() {
         socket.data.arg.toLowerCase();
       },
       open() {
-        console.log("asdf");
+        console.info("asdf");
       },
     },
     unix: "asdf",
@@ -65,7 +65,7 @@ async function bunSocketTypingFixture() {
         socket.data.arg.toLowerCase();
       },
       open() {
-        console.log("asdf");
+        console.info("asdf");
       },
     },
     hostname: "adsf",
@@ -79,7 +79,7 @@ async function bunSocketTypingFixture() {
         socket.data.arg.toLowerCase();
       },
       open() {
-        console.log("asdf");
+        console.info("asdf");
       },
     },
     hostname: "adsf",
@@ -97,7 +97,7 @@ async function bunSocketTypingFixture() {
         socket.data.arg.toLowerCase();
       },
       open() {
-        console.log("asdf");
+        console.info("asdf");
       },
     },
     hostname: "adsf",
@@ -116,7 +116,7 @@ async function bunSocketTypingFixture() {
         socket.data.arg.toLowerCase();
       },
       open() {
-        console.log("asdf");
+        console.info("asdf");
       },
     },
     unix: "asdf",
@@ -129,7 +129,7 @@ async function bunSocketTypingFixture() {
         socket.data.arg.toLowerCase();
       },
       open() {
-        console.log("asdf");
+        console.info("asdf");
       },
     },
     unix: "asdf",

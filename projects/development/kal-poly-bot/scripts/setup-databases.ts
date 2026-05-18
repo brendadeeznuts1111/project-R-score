@@ -10,7 +10,7 @@ import { join } from "path";
  */
 
 const setupDatabases = () => {
-  console.log("🗄️ Initializing Surgical Precision Platform databases...");
+  console.info("🗄️ Initializing Surgical Precision Platform databases...");
 
   // Ensure database directory exists
   const dbDir = "data/databases";
@@ -70,7 +70,7 @@ const setupDatabases = () => {
     )
   `);
 
-  console.log("✅ Platform database initialized");
+  console.info("✅ Platform database initialized");
 
   // Initialize component coordination database
   const coordinationDb = new Database(join(dbDir, "component-coordination.db"));
@@ -98,7 +98,7 @@ const setupDatabases = () => {
     )
   `);
 
-  console.log("✅ Component coordination database initialized");
+  console.info("✅ Component coordination database initialized");
 
   // Initialize test coordination database
   const testDb = new Database(join(dbDir, "test-coordination.db"));
@@ -127,7 +127,7 @@ const setupDatabases = () => {
     )
   `);
 
-  console.log("✅ Test coordination database initialized");
+  console.info("✅ Test coordination database initialized");
 
   // Create database initialization script for reference
   const initScript = `
@@ -156,12 +156,12 @@ const setupDatabases = () => {
   coordinationDb.close();
   testDb.close();
 
-  console.log("🎉 All databases initialized successfully!");
-  console.log(`📍 Database location: ${dbDir}/`);
-  console.log("📋 Available databases:");
-  console.log("   - platform.db (Main operations and metrics)");
-  console.log("   - component-coordination.db (Service orchestration)");
-  console.log("   - test-coordination.db (Testing framework)");
+  console.info("🎉 All databases initialized successfully!");
+  console.info(`📍 Database location: ${dbDir}/`);
+  console.info("📋 Available databases:");
+  console.info("   - platform.db (Main operations and metrics)");
+  console.info("   - component-coordination.db (Service orchestration)");
+  console.info("   - test-coordination.db (Testing framework)");
 };
 
 // Run database setup

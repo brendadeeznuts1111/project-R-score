@@ -91,7 +91,7 @@ class ARBDesignDocValidator {
   ];
 
   async validateDesignDoc(designDocPath: string): Promise<ValidationResult> {
-    console.log(`🔍 Validating ARB Design Document: ${designDocPath}`);
+    console.info(`🔍 Validating ARB Design Document: ${designDocPath}`);
 
     const result: ValidationResult = {
       isValid: true,
@@ -131,7 +131,7 @@ class ARBDesignDocValidator {
       // Calculate final score
       result.score = this.calculateScore(result.issues);
 
-      console.log(`✅ Design document validation complete (Score: ${result.score}%)`);
+      console.info(`✅ Design document validation complete (Score: ${result.score}%)`);
 
       return result;
     } catch (error) {
@@ -361,7 +361,7 @@ class ARBDesignDocValidator {
   }
 
   async validatePR(prNumber: number, repo: string): Promise<ValidationResult> {
-    console.log(`🔍 Validating PR #${prNumber} in ${repo}`);
+    console.info(`🔍 Validating PR #${prNumber} in ${repo}`);
 
     const result: ValidationResult = {
       isValid: false,
@@ -514,7 +514,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log(`
+    console.info(`
 🏛️ ARB Design Document Validator
 
 Usage:
@@ -546,14 +546,14 @@ Examples:
 
     // Output result
     const report = validator.generateReport(result, 'console');
-    console.log(report);
+    console.info(report);
 
     // Exit with appropriate code
     if (result.isValid && result.score >= 80) {
-      console.log('✅ ARB Design Document validation PASSED');
+      console.info('✅ ARB Design Document validation PASSED');
       process.exit(0);
     } else {
-      console.log('❌ ARB Design Document validation FAILED');
+      console.info('❌ ARB Design Document validation FAILED');
       process.exit(1);
     }
   } catch (error) {

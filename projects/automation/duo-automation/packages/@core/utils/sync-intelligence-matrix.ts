@@ -104,4 +104,4 @@ addPattern('Workflow', 'Autonomic', {
   verified: syncDate
 });
 
-console.log('🚀 Empire Pro Matrix Synchronized (§Filter:89-93, §Workflow:96-100)');
+console.info('🚀 Empire Pro Matrix Synchronized (§Filter:89-93, §Workflow:96-100)');

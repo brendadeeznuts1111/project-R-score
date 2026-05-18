@@ -420,7 +420,7 @@ class MobileWalletSimulator {
 
 // Run if executed directly
 if (import.meta.main) {
-  console.log('📱 Mobile Wallet Simulator starting...');
+  console.info('📱 Mobile Wallet Simulator starting...');
 
   let hasEmulator = false;
   let hasAdb = false;

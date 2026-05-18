@@ -9,11 +9,11 @@
 import { $ } from 'bun';
 
 async function quickBuild() {
-  console.log('🚀 Fire22 Quick Build Starting...\n');
+  console.info('🚀 Fire22 Quick Build Starting...\n');
 
   try {
     // Step 1: Build packages only
-    console.log('📦 Building packages...');
+    console.info('📦 Building packages...');
     const packageDirs = await $`ls packages`.text();
     const packageList = packageDirs.trim().split('\n');
 
@@ -22,10 +22,10 @@ async function quickBuild() {
       const packageJsonPath = `${packagePath}/package.json`;
 
       if (await Bun.file(packageJsonPath).exists()) {
-        console.log(`  📦 Building ${pkg}...`);
+        console.info(`  📦 Building ${pkg}...`);
         try {
           await $`cd ${packagePath} && bun run build`.quiet();
-          console.log(`  ✅ ${pkg} built successfully`);
+          console.info(`  ✅ ${pkg} built successfully`);
         } catch (error) {
           console.error(`  ❌ ${pkg} build failed:`, error);
           throw error;
@@ -34,10 +34,10 @@ async function quickBuild() {
     }
 
     // Step 2: Quick main build
-    console.log('\n🏗️ Building main application...');
+    console.info('\n🏗️ Building main application...');
     await $`bun build ./src/index.ts --target=bun --outdir ./dist`;
 
-    console.log('\n✅ Quick build completed successfully!');
+    console.info('\n✅ Quick build completed successfully!');
   } catch (error) {
     console.error('\n❌ Quick build failed:', error);
     process.exit(1);

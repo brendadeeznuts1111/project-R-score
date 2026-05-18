@@ -39,11 +39,11 @@ async function main() {
   const ITERATIONS = 100;
   const WARMUP = 10;
 
-  console.log("Bun.spawnSync() + CRC32 Benchmark Suite");
-  console.log("=".repeat(50));
-  console.log(`Platform: ${process.platform}-${process.arch}`);
-  console.log(`Bun: ${Bun.version}`);
-  console.log(`Iterations: ${ITERATIONS} (warmup: ${WARMUP})\n`);
+  console.info("Bun.spawnSync() + CRC32 Benchmark Suite");
+  console.info("=".repeat(50));
+  console.info(`Platform: ${process.platform}-${process.arch}`);
+  console.info(`Bun: ${Bun.version}`);
+  console.info(`Iterations: ${ITERATIONS} (warmup: ${WARMUP})\n`);
 
   // Warmup
   for (let i = 0; i < WARMUP; i++) {
@@ -54,22 +54,22 @@ async function main() {
   const results: BenchResult[] = [];
 
   // Test 1: Raw Bun.spawnSync
-  console.log("1. Raw Bun.spawnSync(['true'])");
+  console.info("1. Raw Bun.spawnSync(['true'])");
   const rawTimes = runTimings(() => Bun.spawnSync(["true"]), ITERATIONS);
   results.push(summarize("Raw spawnSync", rawTimes));
-  console.log(`   avg: ${results[0].avgTime.toFixed(3)}ms\n`);
+  console.info(`   avg: ${results[0].avgTime.toFixed(3)}ms\n`);
 
   // Test 2: Tier1380SpawnManager.spawnSync (wrapper overhead)
-  console.log("2. Tier1380SpawnManager.spawnSync(['true'])");
+  console.info("2. Tier1380SpawnManager.spawnSync(['true'])");
   const managerTimes = runTimings(
     () => Tier1380SpawnManager.spawnSync(["true"]),
     ITERATIONS
   );
   results.push(summarize("Manager spawnSync", managerTimes));
-  console.log(`   avg: ${results[1].avgTime.toFixed(3)}ms\n`);
+  console.info(`   avg: ${results[1].avgTime.toFixed(3)}ms\n`);
 
   // Test 3: Cached spawn
-  console.log("3. Tier1380SpawnManager.spawnSync (cached)");
+  console.info("3. Tier1380SpawnManager.spawnSync (cached)");
   // Prime the cache
   Tier1380SpawnManager.spawnSync(["true"], { cache: true, cacheTTL: 10000 });
   const cachedTimes = runTimings(
@@ -77,7 +77,7 @@ async function main() {
     ITERATIONS
   );
   results.push(summarize("Cached spawnSync", cachedTimes));
-  console.log(`   avg: ${results[2].avgTime.toFixed(3)}ms\n`);
+  console.info(`   avg: ${results[2].avgTime.toFixed(3)}ms\n`);
 
   // Test 4: CRC32 performance at various sizes
   const sizes = [1024, 1024 * 100, 1024 * 1024];
@@ -87,34 +87,34 @@ async function main() {
     const buf = Buffer.alloc(sizes[s]);
     for (let i = 0; i < buf.length; i++) buf[i] = i % 256;
 
-    console.log(`4.${s + 1}. CRC32 (${sizeNames[s]})`);
+    console.info(`4.${s + 1}. CRC32 (${sizeNames[s]})`);
     const crcTimes = runTimings(() => Bun.hash.crc32(buf), ITERATIONS);
     results.push(summarize(`CRC32 ${sizeNames[s]}`, crcTimes));
-    console.log(`   avg: ${results[results.length - 1].avgTime.toFixed(4)}ms\n`);
+    console.info(`   avg: ${results[results.length - 1].avgTime.toFixed(4)}ms\n`);
   }
 
   // Test 5: CRC32 vs SHA-256 comparison
-  console.log("5. CRC32 vs SHA-256 (1MB)");
+  console.info("5. CRC32 vs SHA-256 (1MB)");
   const hashBench = await Tier1380HashSystem.benchmark(1024 * 1024);
-  console.log(`   CRC32:  ${hashBench.crc32.time.toFixed(4)}ms (${hashBench.crc32.speed})`);
-  console.log(`   SHA256: ${hashBench.sha256.time.toFixed(4)}ms (${hashBench.sha256.speed})`);
-  console.log(`   Speedup: ${hashBench.speedup}x\n`);
+  console.info(`   CRC32:  ${hashBench.crc32.time.toFixed(4)}ms (${hashBench.crc32.speed})`);
+  console.info(`   SHA256: ${hashBench.sha256.time.toFixed(4)}ms (${hashBench.sha256.speed})`);
+  console.info(`   Speedup: ${hashBench.speedup}x\n`);
 
   // Test 6: Batch spawn
-  console.log("6. Batch spawn (50 commands)");
+  console.info("6. Batch spawn (50 commands)");
   const batchStart = performance.now();
   const batchResult = Tier1380SpawnManager.spawnSyncBatch(
     Array(50).fill(null).map(() => ({ command: ["true"] })),
     { concurrency: 10 }
   );
   const batchTime = performance.now() - batchStart;
-  console.log(`   total: ${batchTime.toFixed(2)}ms`);
-  console.log(`   avg/cmd: ${batchResult.summary.averageTime.toFixed(3)}ms`);
-  console.log(`   throughput: ${batchResult.summary.throughput.toFixed(0)} cmds/s\n`);
+  console.info(`   total: ${batchTime.toFixed(2)}ms`);
+  console.info(`   avg/cmd: ${batchResult.summary.averageTime.toFixed(3)}ms`);
+  console.info(`   throughput: ${batchResult.summary.throughput.toFixed(0)} cmds/s\n`);
 
   // Summary table
-  console.log("=".repeat(50));
-  console.log("Summary\n");
+  console.info("=".repeat(50));
+  console.info("Summary\n");
 
   if (typeof Bun !== "undefined") {
     Bun.inspect.table(
@@ -130,13 +130,13 @@ async function main() {
 
   // FD optimization status
   const fdStatus = Tier1380SpawnManager.getFDOptimizationStatus();
-  console.log(`\nFD Optimization: ${fdStatus.optimization}`);
-  console.log(`Platform: ${fdStatus.platform}`);
-  console.log(`Impact: ${fdStatus.performanceImpact}`);
+  console.info(`\nFD Optimization: ${fdStatus.optimization}`);
+  console.info(`Platform: ${fdStatus.platform}`);
+  console.info(`Impact: ${fdStatus.performanceImpact}`);
 
   // Cache stats
   const cacheStats = Tier1380HashSystem.getCacheStats();
-  console.log(`\nHash Cache: ${cacheStats.crc32CacheSize} entries, ${cacheStats.hits} hits, ${cacheStats.misses} misses`);
+  console.info(`\nHash Cache: ${cacheStats.crc32CacheSize} entries, ${cacheStats.hits} hits, ${cacheStats.misses} misses`);
 }
 
 main().catch((err) => { console.error(err); process.exit(1); });

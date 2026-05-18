@@ -70,7 +70,7 @@ export class EnhancedS3Storage {
       const url = `https://${this.bucket}.s3.amazonaws.com/${filename}`;
 
       if (feature("DEBUG")) {
-        console.log(`Stored weave: ${filename}`, {
+        console.info(`Stored weave: ${filename}`, {
           disposition: contentDisposition,
           metadata: uploadParams.Metadata,
           url
@@ -315,7 +315,7 @@ export class EnhancedS3Storage {
       );
 
       if (feature("DEBUG")) {
-        console.log(`Deleted weave: ${filename}`);
+        console.info(`Deleted weave: ${filename}`);
       }
 
       return true;
@@ -389,11 +389,11 @@ export class S3HeaderUtils {
    */
   static debugHeaders(headers: Headers, context: string): void {
     if (feature("DEBUG")) {
-      console.log(`🔍 Headers for ${context}:`);
+      console.info(`🔍 Headers for ${context}:`);
 
       // Using Headers.entries() for iteration
       for (const [key, value] of headers.entries()) {
-        console.log(`  ${key}: ${value}`);
+        console.info(`  ${key}: ${value}`);
       }
     }
   }
@@ -485,40 +485,40 @@ export async function demonstrateHeadersEntries(storage: EnhancedS3Storage, file
     // Retrieve file with enhanced header processing
     const result = await storage.retrieveWeaveWithHeaders(filename);
 
-    console.log("🔍 Headers.entries() Demonstration:");
-    console.log("=====================================");
+    console.info("🔍 Headers.entries() Demonstration:");
+    console.info("=====================================");
 
     // 1. Basic iteration using Headers.entries()
-    console.log("\n1. All Headers (using Headers.entries()):");
+    console.info("\n1. All Headers (using Headers.entries()):");
     for (const [key, value] of result.headers.entries()) {
-      console.log(`   ${key}: ${value}`);
+      console.info(`   ${key}: ${value}`);
     }
 
     // 2. Convert to array using Headers.entries()
-    console.log("\n2. Headers as Array (using [...headers.entries()]):");
+    console.info("\n2. Headers as Array (using [...headers.entries()]):");
     const headersArray = [...result.headers.entries()];
-    console.log(`   Total headers: ${headersArray.length}`);
+    console.info(`   Total headers: ${headersArray.length}`);
     headersArray.slice(0, 3).forEach(([key, value]) => {
-      console.log(`   ${key}: ${value}`);
+      console.info(`   ${key}: ${value}`);
     });
 
     // 3. Convert to object using Bun's optimized approach
-    console.log("\n3. Headers as Object (Bun optimization):");
+    console.info("\n3. Headers as Object (Bun optimization):");
     const headersObject = S3HeaderUtils.convertHeadersToObject(result.headers);
-    console.log("   Content-Type:", headersObject["content-type"]);
-    console.log("   Content-Length:", headersObject["content-length"]);
+    console.info("   Content-Type:", headersObject["content-type"]);
+    console.info("   Content-Length:", headersObject["content-length"]);
 
     // 4. Filter headers using Headers.entries()
-    console.log("\n4. S3-Specific Headers (filtered using Headers.entries()):");
+    console.info("\n4. S3-Specific Headers (filtered using Headers.entries()):");
     const s3Headers = S3HeaderUtils.getS3Headers(result.headers);
     Object.entries(s3Headers).forEach(([key, value]) => {
-      console.log(`   ${key}: ${value}`);
+      console.info(`   ${key}: ${value}`);
     });
 
     // 5. Debug information
-    console.log("\n5. Debug Information:");
+    console.info("\n5. Debug Information:");
     Object.entries(result.debugInfo).forEach(([key, value]) => {
-      console.log(`   ${key}: ${value}`);
+      console.info(`   ${key}: ${value}`);
     });
 
     return {
@@ -553,10 +553,10 @@ export function compareHeaderPerformance(headers: Headers) {
   }
   const time2 = performance.now() - start2;
 
-  console.log("🚀 Performance Comparison:");
-  console.log(`   Headers.entries(): ${time1.toFixed(2)}ms`);
-  console.log(`   Bun optimization: ${time2.toFixed(2)}ms`);
-  console.log(`   Speed improvement: ${(time1 / time2).toFixed(1)}x faster`);
+  console.info("🚀 Performance Comparison:");
+  console.info(`   Headers.entries(): ${time1.toFixed(2)}ms`);
+  console.info(`   Bun optimization: ${time2.toFixed(2)}ms`);
+  console.info(`   Speed improvement: ${(time1 / time2).toFixed(1)}x faster`);
 
   return { traditionalTime: time1, optimizedTime: time2, speedup: time1 / time2 };
 }

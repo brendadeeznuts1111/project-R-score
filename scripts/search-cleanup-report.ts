@@ -116,7 +116,7 @@ async function main(): Promise<void> {
 
   const reportPath = 'reports/slop-cleanup-lib-latest.md';
   await Bun.write(reportPath, `${lines.join('\n')}\n`);
-  console.log(`[search:cleanup:report] wrote ${reportPath}`);
+  console.info(`[search:cleanup:report] wrote ${reportPath}`);
 }
 
 await main();

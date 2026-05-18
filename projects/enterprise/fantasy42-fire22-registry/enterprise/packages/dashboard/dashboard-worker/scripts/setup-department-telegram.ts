@@ -23,9 +23,9 @@ const channelsToCreate = [
   '@fire22_help',
 ];
 
-console.log('📱 TELEGRAM CHANNELS TO CREATE:');
+console.info('📱 TELEGRAM CHANNELS TO CREATE:');
 channelsToCreate.forEach(channel => {
-  console.log(`- ${channel}`);
+  console.info(`- ${channel}`);
 });
 
 // 2. Bot setup commands
@@ -38,9 +38,9 @@ const botCommands = [
   'language - Change language (en/es/pt/fr)',
 ];
 
-console.log('\n🤖 BOT COMMANDS TO CONFIGURE:');
+console.info('\n🤖 BOT COMMANDS TO CONFIGURE:');
 botCommands.forEach(cmd => {
-  console.log(cmd);
+  console.info(cmd);
 });
 
 // 3. Channel configuration
@@ -55,11 +55,11 @@ const channelConfig = {
   ],
 };
 
-console.log('\n⚙️ CHANNEL CONFIGURATION:');
-console.log(`Description template: ${channelConfig.description}`);
-console.log('Rules:');
+console.info('\n⚙️ CHANNEL CONFIGURATION:');
+console.info(`Description template: ${channelConfig.description}`);
+console.info('Rules:');
 channelConfig.rules.forEach(rule => {
-  console.log(`- ${rule}`);
+  console.info(`- ${rule}`);
 });
 
 export { channelsToCreate, botCommands, channelConfig };

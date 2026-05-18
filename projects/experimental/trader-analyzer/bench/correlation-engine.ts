@@ -254,7 +254,7 @@ group("Correlation Engine - Cold-Cache Propagation Test (4.2.2.6.0.0.0)", () => 
 				console.warn(`[WARNING] Depth 8 (${(depth8Time / 1_000_000).toFixed(2)}ms) only ${ratio.toFixed(2)}x slower than depth 2 (${(depth2Time / 1_000_000).toFixed(2)}ms) - possible caching issue`);
 				console.warn(`[WARNING] Expected O(n) scaling but got near-constant time - verify cold cache test`);
 			} else {
-				console.log(`[OK] Depth 8 is ${ratio.toFixed(2)}x slower than depth 2 - O(n) scaling verified`);
+				console.info(`[OK] Depth 8 is ${ratio.toFixed(2)}x slower than depth 2 - O(n) scaling verified`);
 			}
 		}
 		

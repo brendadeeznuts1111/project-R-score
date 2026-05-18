@@ -37,7 +37,7 @@ export type {
  * @example
  * const result: Result<Trade[]> = await provider.fetchTrades();
  * if (result.ok) {
- *   console.log(result.data); // Trade[]
+ *   console.info(result.data); // Trade[]
  * } else {
  *   console.error(result.error); // Error
  * }
@@ -267,8 +267,8 @@ export interface PositionSession {
  *
  * @example
  * const stats = calculateStats(trades, orders);
- * console.log(`Win Rate: ${stats.winRate}%`);
- * console.log(`Profit Factor: ${stats.profitFactor}`);
+ * console.info(`Win Rate: ${stats.winRate}%`);
+ * console.info(`Profit Factor: ${stats.profitFactor}`);
  */
 export interface TradingStats {
 	// Volume metrics
@@ -381,8 +381,8 @@ export type DifficultyLevel = "beginner" | "intermediate" | "advanced";
  *
  * @example
  * const profile = analyzeTraderProfile(stats, trades, orders, sessions);
- * console.log(`Style: ${profile.style}`);
- * console.log(`Strengths: ${profile.insights.strengths.join(', ')}`);
+ * console.info(`Style: ${profile.style}`);
+ * console.info(`Strengths: ${profile.insights.strengths.join(', ')}`);
  */
 export interface TraderProfile {
 	/** Identified trading style */
@@ -709,8 +709,8 @@ export interface PredictionPosition {
  *
  * @example
  * const mmStats = calculateMMStats(trades, orders, quotes);
- * console.log(`Maker Ratio: ${(mmStats.makerRatio * 100).toFixed(1)}%`);
- * console.log(`Net PnL: ${mmStats.netPnl}`);
+ * console.info(`Maker Ratio: ${(mmStats.makerRatio * 100).toFixed(1)}%`);
+ * console.info(`Net PnL: ${mmStats.netPnl}`);
  */
 export interface MarketMakingStats {
 	// Volume & Activity

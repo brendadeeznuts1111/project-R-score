@@ -128,7 +128,7 @@ class PackageOrganizer {
     };
 
     writeFileSync(packagePath, JSON.stringify(mergedPackage, null, 2));
-    console.log('✅ Enhanced root package.json');
+    console.info('✅ Enhanced root package.json');
   }
 
   /**
@@ -232,7 +232,7 @@ class PackageOrganizer {
       };
 
       writeFileSync(fullPath, JSON.stringify(enhancedPackage, null, 2));
-      console.log(`✅ Enhanced ${packagePath}`);
+      console.info(`✅ Enhanced ${packagePath}`);
     } catch (error) {
       console.warn(`⚠️  Could not enhance ${packagePath}:`, error);
     }
@@ -486,7 +486,7 @@ LogFormat
 `;
 
     writeFileSync(join(process.cwd(), 'docs/NAMING_STANDARDS.md'), guide);
-    console.log('✅ Generated naming standards guide');
+    console.info('✅ Generated naming standards guide');
   }
 
   /**
@@ -540,23 +540,23 @@ LogFormat
     };
 
     writeFileSync(join(process.cwd(), 'docs/PACKAGE_OVERVIEW.json'), JSON.stringify(overview, null, 2));
-    console.log('✅ Generated package overview');
+    console.info('✅ Generated package overview');
   }
 
   /**
    * 🚀 Run complete organization
    */
   static async organize(): Promise<void> {
-    console.log('🏗️  Organizing FactoryWager packages and naming standards...\n');
+    console.info('🏗️  Organizing FactoryWager packages and naming standards...\n');
 
     this.enhanceRootPackage();
     this.enhancePackages();
     this.generateNamingGuide();
     this.generatePackageOverview();
 
-    console.log('\n✅ Package organization complete!');
-    console.log('📚 Check docs/NAMING_STANDARDS.md for complete naming guidelines');
-    console.log('📊 Check docs/PACKAGE_OVERVIEW.json for package overview');
+    console.info('\n✅ Package organization complete!');
+    console.info('📚 Check docs/NAMING_STANDARDS.md for complete naming guidelines');
+    console.info('📊 Check docs/PACKAGE_OVERVIEW.json for package overview');
   }
 }
 
@@ -575,10 +575,10 @@ if (import.meta.main) {
       PackageOrganizer.generatePackageOverview();
       break;
     default:
-      console.log('Available commands:');
-      console.log('  organize   - Organize all packages and naming standards');
-      console.log('  guide      - Generate naming standards guide');
-      console.log('  overview   - Generate package overview');
+      console.info('Available commands:');
+      console.info('  organize   - Organize all packages and naming standards');
+      console.info('  guide      - Generate naming standards guide');
+      console.info('  overview   - Generate package overview');
       break;
   }
 }

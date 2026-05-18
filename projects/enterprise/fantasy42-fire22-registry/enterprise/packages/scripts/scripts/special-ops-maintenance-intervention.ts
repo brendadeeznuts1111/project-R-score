@@ -46,11 +46,11 @@ class SpecialOpsMaintenanceIntervention {
    * 🚨 Execute Special Ops emergency maintenance intervention
    */
   async executeEmergencyIntervention(): Promise<void> {
-    console.log('🚨 FIRE22 SPECIAL OPS MAINTENANCE INTERVENTION');
-    console.log('!==!==!==!==!==!==!==!=====');
-    console.log(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
-    console.log(`⏰ Time: ${new Date().toLocaleTimeString()}`);
-    console.log(`🎯 Mission: EMERGENCY MAINTENANCE RESPONSE\n`);
+    console.info('🚨 FIRE22 SPECIAL OPS MAINTENANCE INTERVENTION');
+    console.info('!==!==!==!==!==!==!==!=====');
+    console.info(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
+    console.info(`⏰ Time: ${new Date().toLocaleTimeString()}`);
+    console.info(`🎯 Mission: EMERGENCY MAINTENANCE RESPONSE\n`);
 
     // Analyze critical maintenance failures
     await this.analyzeCriticalFailures();
@@ -67,17 +67,17 @@ class SpecialOpsMaintenanceIntervention {
     // Generate Special Ops report
     await this.generateSpecialOpsReport();
 
-    console.log('\n🚨 SPECIAL OPS MAINTENANCE INTERVENTION COMPLETE');
-    console.log('✅ Critical issues resolved');
-    console.log('✅ Missing components restored');
-    console.log('✅ Enhanced monitoring deployed');
+    console.info('\n🚨 SPECIAL OPS MAINTENANCE INTERVENTION COMPLETE');
+    console.info('✅ Critical issues resolved');
+    console.info('✅ Missing components restored');
+    console.info('✅ Enhanced monitoring deployed');
   }
 
   /**
    * 🔍 Analyze critical maintenance failures
    */
   private async analyzeCriticalFailures(): Promise<void> {
-    console.log('🔍 Analyzing critical maintenance failures...');
+    console.info('🔍 Analyzing critical maintenance failures...');
 
     this.detectedIssues = [
       {
@@ -139,16 +139,16 @@ class SpecialOpsMaintenanceIntervention {
     const criticalCount = this.detectedIssues.filter(i => i.severity === 'CRITICAL').length;
     const warningCount = this.detectedIssues.filter(i => i.severity === 'WARNING').length;
 
-    console.log(`  🚨 Critical issues: ${criticalCount}`);
-    console.log(`  ⚠️ Warning issues: ${warningCount}`);
-    console.log(`  📊 Total issues: ${this.detectedIssues.length}`);
+    console.info(`  🚨 Critical issues: ${criticalCount}`);
+    console.info(`  ⚠️ Warning issues: ${warningCount}`);
+    console.info(`  📊 Total issues: ${this.detectedIssues.length}`);
   }
 
   /**
    * 🔧 Deploy immediate fixes for critical issues
    */
   private async deployImmediateFixes(): Promise<void> {
-    console.log('🔧 Deploying immediate fixes...');
+    console.info('🔧 Deploying immediate fixes...');
 
     // Fix 1: Create comprehensive dashboard
     await this.createComprehensiveDashboard();
@@ -162,14 +162,14 @@ class SpecialOpsMaintenanceIntervention {
     // Fix 4: Secure sensitive files
     await this.secureSensitiveFiles();
 
-    console.log('  ✅ Immediate fixes deployed');
+    console.info('  ✅ Immediate fixes deployed');
   }
 
   /**
    * 📊 Create comprehensive dashboard
    */
   private async createComprehensiveDashboard(): Promise<void> {
-    console.log('  📊 Creating comprehensive dashboard...');
+    console.info('  📊 Creating comprehensive dashboard...');
 
     const dashboardHTML = `<!DOCTYPE html>
 <html lang="en">
@@ -410,14 +410,14 @@ class SpecialOpsMaintenanceIntervention {
     const dashboardPath = join(process.cwd(), 'index.html');
     writeFileSync(dashboardPath, dashboardHTML);
 
-    console.log('    ✅ Comprehensive dashboard created and deployed');
+    console.info('    ✅ Comprehensive dashboard created and deployed');
   }
 
   /**
    * 📡 Restore RSS feed system
    */
   private async restoreRSSFeedSystem(): Promise<void> {
-    console.log('  📡 Restoring RSS feed system...');
+    console.info('  📡 Restoring RSS feed system...');
 
     const departments = [
       'finance',
@@ -475,14 +475,14 @@ class SpecialOpsMaintenanceIntervention {
       writeFileSync(join(feedsDir, `${dept}.atom`), atomFeed);
     }
 
-    console.log(`    ✅ RSS feed system restored (${departments.length * 2} feeds created)`);
+    console.info(`    ✅ RSS feed system restored (${departments.length * 2} feeds created)`);
   }
 
   /**
    * 🔌 Restore missing API endpoints
    */
   private async restoreMissingAPIEndpoints(): Promise<void> {
-    console.log('  🔌 Restoring missing API endpoints...');
+    console.info('  🔌 Restoring missing API endpoints...');
 
     const apiDir = join(process.cwd(), 'api');
     if (!existsSync(apiDir)) {
@@ -551,14 +551,14 @@ class SpecialOpsMaintenanceIntervention {
     }
     writeFileSync(join(tasksDir, 'events.ts'), eventsAPI);
 
-    console.log('    ✅ Missing API endpoints restored');
+    console.info('    ✅ Missing API endpoints restored');
   }
 
   /**
    * 🔒 Secure sensitive files
    */
   private async secureSensitiveFiles(): Promise<void> {
-    console.log('  🔒 Securing sensitive files...');
+    console.info('  🔒 Securing sensitive files...');
 
     // Create .gitignore to secure sensitive files
     const gitignorePath = join(process.cwd(), '..', '.gitignore');
@@ -603,14 +603,14 @@ communications/escalation/level3-*
 
     writeFileSync(join(securityDir, 'scan-config.json'), JSON.stringify(securityConfig, null, 2));
 
-    console.log('    ✅ Sensitive files secured and scanning configured');
+    console.info('    ✅ Sensitive files secured and scanning configured');
   }
 
   /**
    * 🔧 Restore missing components
    */
   private async restoreMissingComponents(): Promise<void> {
-    console.log('🔧 Restoring missing components...');
+    console.info('🔧 Restoring missing components...');
 
     // Create persistent database
     await this.createPersistentDatabase();
@@ -618,14 +618,14 @@ communications/escalation/level3-*
     // Complete documentation
     await this.completeDocumentation();
 
-    console.log('  ✅ Missing components restored');
+    console.info('  ✅ Missing components restored');
   }
 
   /**
    * 🗄️ Create persistent database
    */
   private async createPersistentDatabase(): Promise<void> {
-    console.log('  🗄️ Creating persistent database...');
+    console.info('  🗄️ Creating persistent database...');
 
     const dbDir = join(process.cwd(), 'database');
     if (!existsSync(dbDir)) {
@@ -681,14 +681,14 @@ communications/escalation/level3-*
 
     writeFileSync(join(dbDir, 'fire22-security.json'), JSON.stringify(dbSchema, null, 2));
 
-    console.log('    ✅ Persistent database created');
+    console.info('    ✅ Persistent database created');
   }
 
   /**
    * 📚 Complete documentation
    */
   private async completeDocumentation(): Promise<void> {
-    console.log('  📚 Completing documentation...');
+    console.info('  📚 Completing documentation...');
 
     const docsDir = join(process.cwd(), '..', 'docs');
     if (!existsSync(docsDir)) {
@@ -768,14 +768,14 @@ Last Updated: ${new Date().toISOString()}`;
     writeFileSync(join(docsDir, 'DEPLOYMENT.md'), deploymentGuide);
     writeFileSync(join(docsDir, 'MAINTENANCE.md'), maintenanceGuide);
 
-    console.log('    ✅ Documentation completed (3/3 key docs)');
+    console.info('    ✅ Documentation completed (3/3 key docs)');
   }
 
   /**
    * 📊 Implement enhanced monitoring
    */
   private async implementEnhancedMonitoring(): Promise<void> {
-    console.log('📊 Implementing enhanced monitoring...');
+    console.info('📊 Implementing enhanced monitoring...');
 
     const monitoringScript = `#!/usr/bin/env bun
 
@@ -804,7 +804,7 @@ class EnhancedMonitoring {
     const reportPath = join(process.cwd(), 'maintenance', 'reports', \`enhanced-monitoring-\${Date.now()}.json\`);
     writeFileSync(reportPath, JSON.stringify(status, null, 2));
     
-    console.log('📊 Enhanced monitoring active - all systems operational');
+    console.info('📊 Enhanced monitoring active - all systems operational');
   }
 }
 
@@ -818,14 +818,14 @@ monitoring.runContinuousMonitoring();`;
     const monitoringPath = join(scriptsDir, 'enhanced-monitoring.ts');
     writeFileSync(monitoringPath, monitoringScript);
 
-    console.log('  ✅ Enhanced monitoring system deployed');
+    console.info('  ✅ Enhanced monitoring system deployed');
   }
 
   /**
    * 📋 Generate Special Ops intervention report
    */
   private async generateSpecialOpsReport(): Promise<void> {
-    console.log('📋 Generating Special Ops intervention report...');
+    console.info('📋 Generating Special Ops intervention report...');
 
     const response: SpecialOpsResponse = {
       timestamp: new Date().toISOString(),
@@ -970,7 +970,7 @@ ${response.specialOpsTeamDeployed.map(member => `- ✅ ${member}`).join('\n')}
       JSON.stringify(response, null, 2)
     );
 
-    console.log('  ✅ Special Ops intervention report generated');
+    console.info('  ✅ Special Ops intervention report generated');
   }
 
   // Helper methods
@@ -987,17 +987,17 @@ async function main() {
     const intervention = new SpecialOpsMaintenanceIntervention();
     await intervention.executeEmergencyIntervention();
 
-    console.log('\n🎉 SPECIAL OPS EMERGENCY INTERVENTION COMPLETE!');
-    console.log('!==!==!==!==!==!==!==!==!==');
-    console.log('✅ All critical maintenance issues resolved');
-    console.log('✅ Missing components restored');
-    console.log('✅ Enhanced monitoring deployed');
-    console.log('✅ System security hardened');
-    console.log('✅ Documentation completed');
+    console.info('\n🎉 SPECIAL OPS EMERGENCY INTERVENTION COMPLETE!');
+    console.info('!==!==!==!==!==!==!==!==!==');
+    console.info('✅ All critical maintenance issues resolved');
+    console.info('✅ Missing components restored');
+    console.info('✅ Enhanced monitoring deployed');
+    console.info('✅ System security hardened');
+    console.info('✅ Documentation completed');
 
-    console.log('\n📊 System Status: ALL SYSTEMS OPERATIONAL');
-    console.log('🔒 Security Status: ENHANCED');
-    console.log('📋 Maintenance: SPECIAL OPS INTERVENTION SUCCESSFUL');
+    console.info('\n📊 System Status: ALL SYSTEMS OPERATIONAL');
+    console.info('🔒 Security Status: ENHANCED');
+    console.info('📋 Maintenance: SPECIAL OPS INTERVENTION SUCCESSFUL');
   } catch (error) {
     console.error('❌ Special Ops intervention failed:', error);
     process.exit(1);

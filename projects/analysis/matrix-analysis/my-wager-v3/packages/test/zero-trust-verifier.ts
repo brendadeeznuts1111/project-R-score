@@ -200,7 +200,7 @@ export class ZeroTrustTestVerifier {
   }
 
   async verifyTestEnvironment(): Promise<void> {
-    console.log('🔍 Verifying Zero-Trust test environment...');
+    console.info('🔍 Verifying Zero-Trust test environment...');
 
     this.violations = [];
 
@@ -226,7 +226,7 @@ export class ZeroTrustTestVerifier {
       throw new ZeroTrustViolationError(this.violations);
     }
 
-    console.log('✅ Zero-trust environment verified');
+    console.info('✅ Zero-trust environment verified');
   }
 
   private async verifyCSRFProtection(): Promise<void> {
@@ -268,7 +268,7 @@ export class ZeroTrustTestVerifier {
         });
       }
 
-      console.log('✅ CSRF protection verified');
+      console.info('✅ CSRF protection verified');
 
     } catch (error) {
       this.violations.push({
@@ -304,7 +304,7 @@ export class ZeroTrustTestVerifier {
             verified: true
           });
 
-          console.log(`📝 Created naming convention entry: ${convention}`);
+          console.info(`📝 Created naming convention entry: ${convention}`);
         }
 
         // Verify the entry
@@ -330,7 +330,7 @@ export class ZeroTrustTestVerifier {
       }
     }
 
-    console.log('✅ Naming conventions verified');
+    console.info('✅ Naming conventions verified');
   }
 
   private async verifyTokenStorage(): Promise<void> {
@@ -382,7 +382,7 @@ export class ZeroTrustTestVerifier {
         });
       }
 
-      console.log('✅ Token storage verified');
+      console.info('✅ Token storage verified');
 
     } catch (error) {
       this.violations.push({
@@ -425,7 +425,7 @@ export class ZeroTrustTestVerifier {
       }
     }
 
-    console.log('✅ Network policies verified');
+    console.info('✅ Network policies verified');
   }
 
   private async verifyQuantumResistance(): Promise<void> {
@@ -466,7 +466,7 @@ export class ZeroTrustTestVerifier {
         });
       }
 
-      console.log('✅ Quantum resistance verified');
+      console.info('✅ Quantum resistance verified');
 
     } catch (error) {
       this.violations.push({
@@ -511,7 +511,7 @@ export class ZeroTrustTestVerifier {
 
       await this.secureStore.set(auditKey, auditEntry);
 
-      console.log('✅ Audit trail verified');
+      console.info('✅ Audit trail verified');
 
     } catch (error) {
       this.violations.push({
@@ -574,13 +574,13 @@ export class ZeroTrustTestVerifier {
 if (import.meta.main) {
   const verifier = new ZeroTrustTestVerifier();
 
-  console.log('🔒 Tier-1380 Zero-Trust Test Environment Verifier');
-  console.log('='.repeat(60));
+  console.info('🔒 Tier-1380 Zero-Trust Test Environment Verifier');
+  console.info('='.repeat(60));
 
   verifier.verifyTestEnvironment().then(async () => {
     const reportPath = await verifier.generateSecurityReport();
-    console.log(`\n✅ Zero-trust verification complete`);
-    console.log(`📄 Report saved to: ${reportPath}`);
+    console.info(`\n✅ Zero-trust verification complete`);
+    console.info(`📄 Report saved to: ${reportPath}`);
 
   }).catch(async (error) => {
     if (error instanceof ZeroTrustViolationError) {

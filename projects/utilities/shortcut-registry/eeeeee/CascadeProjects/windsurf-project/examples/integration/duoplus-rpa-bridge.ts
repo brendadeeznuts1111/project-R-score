@@ -50,22 +50,22 @@ export const DuoPlusRPABridge = feature("PREMIUM") ? class {
 
   // Initialize cloud phone matrix with anti-detection upgrades
   private async initializeCloudPhoneMatrix(): Promise<void> {
-    console.log('📱 Initializing DuoPlus Cloud Phone Matrix...');
-    console.log('   🔧 Anti-Detection: Android 10-12B DNS Leak Fix Active');
-    console.log('   🛡️ Fingerprint Upgrade: Reddit + TikTok Evasion v2.1');
-    console.log('   🌐 Cloud Number Pool: 500+ Isolated VOIP Numbers Ready');
-    console.log('   🤖 RPA Templates: Guardian Nomination + Recovery Flows Loaded');
+    console.info('📱 Initializing DuoPlus Cloud Phone Matrix...');
+    console.info('   🔧 Anti-Detection: Android 10-12B DNS Leak Fix Active');
+    console.info('   🛡️ Fingerprint Upgrade: Reddit + TikTok Evasion v2.1');
+    console.info('   🌐 Cloud Number Pool: 500+ Isolated VOIP Numbers Ready');
+    console.info('   🤖 RPA Templates: Guardian Nomination + Recovery Flows Loaded');
   }
 
   // Trigger guardian nomination RPA workflow on risk spikes
   async triggerGuardianNominationRPA(teenId: string, riskScore: number): Promise<string> {
     if (riskScore < 0.75) {
-      console.log(`📊 Risk score ${riskScore} below threshold (0.75) - no RPA trigger`);
+      console.info(`📊 Risk score ${riskScore} below threshold (0.75) - no RPA trigger`);
       return 'no-action';
     }
 
     try {
-      console.log(`🚨 High risk detected (${(riskScore * 100).toFixed(1)}%) - triggering RPA nomination workflow`);
+      console.info(`🚨 High risk detected (${(riskScore * 100).toFixed(1)}%) - triggering RPA nomination workflow`);
 
       // 1. Create RPA task via DuoPlus API
       const rpaTask = await this.createRPATask({
@@ -88,10 +88,10 @@ export const DuoPlusRPABridge = feature("PREMIUM") ? class {
       // 4. Execute RPA workflow
       const result = await this.executeRPATask(rpaTask.id);
 
-      console.log(`✅ RPA nomination workflow spawned for teen ${teenId}`);
-      console.log(`   🤖 Task ID: ${rpaTask.id}`);
-      console.log(`   📱 Cloud Number: ${cloudNumber.phoneNumber}`);
-      console.log(`   ⚡ Risk Level: ${(riskScore * 100).toFixed(1)}%`);
+      console.info(`✅ RPA nomination workflow spawned for teen ${teenId}`);
+      console.info(`   🤖 Task ID: ${rpaTask.id}`);
+      console.info(`   📱 Cloud Number: ${cloudNumber.phoneNumber}`);
+      console.info(`   ⚡ Risk Level: ${(riskScore * 100).toFixed(1)}%`);
 
       return rpaTask.id;
     } catch (error) {
@@ -116,10 +116,10 @@ export const DuoPlusRPABridge = feature("PREMIUM") ? class {
     };
 
     // Mock API call to DuoPlus
-    console.log(`🔗 DuoPlus API: Creating RPA task ${task.id}`);
-    console.log(`   📋 Template: ${task.template}`);
-    console.log(`   🎯 Target: ${task.target}`);
-    console.log(`   ⚙️ Params:`, task.params);
+    console.info(`🔗 DuoPlus API: Creating RPA task ${task.id}`);
+    console.info(`   📋 Template: ${task.template}`);
+    console.info(`   🎯 Target: ${task.target}`);
+    console.info(`   ⚙️ Params:`, task.params);
 
     this.activeRPATasks.set(task.id, task);
     return task;
@@ -127,23 +127,23 @@ export const DuoPlusRPABridge = feature("PREMIUM") ? class {
 
   // Propagate tension field to cloud phone instances
   private async propagateTensionToCloudInstances(teenId: string, riskScore: number): Promise<void> {
-    console.log(`🌊 Propagating tension field to cloud instances...`);
+    console.info(`🌊 Propagating tension field to cloud instances...`);
     
     // Get network guardians
     const networkData = guardianNetwork.getNetworkVisualization(teenId);
     const cloudInstances = networkData.nodes.length;
 
-    console.log(`   📱 Cloud Instances: ${cloudInstances}`);
-    console.log(`   🚨 Risk Score: ${(riskScore * 100).toFixed(1)}%`);
-    console.log(`   ⚡ Propagation Latency: <30ms`);
+    console.info(`   📱 Cloud Instances: ${cloudInstances}`);
+    console.info(`   🚨 Risk Score: ${(riskScore * 100).toFixed(1)}%`);
+    console.info(`   ⚡ Propagation Latency: <30ms`);
 
     // Simulate cloud instance updates
     for (const node of networkData.nodes) {
-      console.log(`   📲 Updating ${node.name}'s cloud phone with tension data`);
+      console.info(`   📲 Updating ${node.name}'s cloud phone with tension data`);
     }
 
     // Log tension propagation
-    console.log(`🔗 TENSION_PROPAGATION: {"timestamp":"${new Date().toISOString()}","teenId":"${teenId}","riskScore":${riskScore},"cloudInstances":${cloudInstances}}`);
+    console.info(`🔗 TENSION_PROPAGATION: {"timestamp":"${new Date().toISOString()}","teenId":"${teenId}","riskScore":${riskScore},"cloudInstances":${cloudInstances}}`);
   }
 
   // Assign isolated cloud number for guardian verification
@@ -161,12 +161,12 @@ export const DuoPlusRPABridge = feature("PREMIUM") ? class {
 
     this.cloudNumbers.set(cloudNumber.id, cloudNumber);
 
-    console.log(`📱 Cloud Number Assigned:`);
-    console.log(`   📞 Number: ${cloudNumber.phoneNumber}`);
-    console.log(`   🌐 Region: ${cloudNumber.region}`);
-    console.log(`   🔒 Isolated: ${cloudNumber.isIsolated}`);
-    console.log(`   🛡️ DNS Protection: ${cloudNumber.dnsLeakProtection}`);
-    console.log(`   👤 Purpose: ${purpose}`);
+    console.info(`📱 Cloud Number Assigned:`);
+    console.info(`   📞 Number: ${cloudNumber.phoneNumber}`);
+    console.info(`   🌐 Region: ${cloudNumber.region}`);
+    console.info(`   🔒 Isolated: ${cloudNumber.isIsolated}`);
+    console.info(`   🛡️ DNS Protection: ${cloudNumber.dnsLeakProtection}`);
+    console.info(`   👤 Purpose: ${purpose}`);
 
     return cloudNumber;
   }
@@ -176,7 +176,7 @@ export const DuoPlusRPABridge = feature("PREMIUM") ? class {
     const task = this.activeRPATasks.get(taskId);
     if (!task) throw new Error(`RPA task ${taskId} not found`);
 
-    console.log(`🤖 Executing RPA task ${taskId}...`);
+    console.info(`🤖 Executing RPA task ${taskId}...`);
     task.status = 'running';
 
     // Simulate RPA execution steps
@@ -191,37 +191,37 @@ export const DuoPlusRPABridge = feature("PREMIUM") ? class {
     ];
 
     for (const step of steps) {
-      console.log(`   ⚙️ ${step}...`);
+      console.info(`   ⚙️ ${step}...`);
       await new Promise(resolve => setTimeout(resolve, 100));
     }
 
     task.status = 'completed';
     task.completedAt = new Date().toISOString();
 
-    console.log(`✅ RPA task ${taskId} completed successfully`);
+    console.info(`✅ RPA task ${taskId} completed successfully`);
     return { taskId, status: 'completed', result: 'guardian_nomination_successful' };
   }
 
   // Batch push cloud drive - sync configs across households
   async batchPushConfigs(teenId: string, configData: any): Promise<void> {
-    console.log(`📂 Batch pushing configs to cloud drive...`);
+    console.info(`📂 Batch pushing configs to cloud drive...`);
     
     const networkData = guardianNetwork.getNetworkVisualization(teenId);
     const guardians = networkData.nodes;
 
-    console.log(`   👥 Target Guardians: ${guardians.length}`);
-    console.log(`   📦 Config Size: ${JSON.stringify(configData).length} bytes`);
-    console.log(`   🚀 Transfer Speed: 50MB/s`);
+    console.info(`   👥 Target Guardians: ${guardians.length}`);
+    console.info(`   📦 Config Size: ${JSON.stringify(configData).length} bytes`);
+    console.info(`   🚀 Transfer Speed: 50MB/s`);
 
     // Simulate batch push to each guardian's cloud phone
     for (const guardian of guardians) {
-      console.log(`   📲 Pushing to ${guardian.name}'s cloud phone...`);
-      console.log(`      📁 Wallet configs synced`);
-      console.log(`      🔗 Network graph updated`);
-      console.log(`      📊 Recovery thresholds set`);
+      console.info(`   📲 Pushing to ${guardian.name}'s cloud phone...`);
+      console.info(`      📁 Wallet configs synced`);
+      console.info(`      🔗 Network graph updated`);
+      console.info(`      📊 Recovery thresholds set`);
     }
 
-    console.log(`✅ Batch push completed - all guardians synced`);
+    console.info(`✅ Batch push completed - all guardians synced`);
   }
 
   // API Interface - Create RPA Task endpoint
@@ -230,13 +230,13 @@ export const DuoPlusRPABridge = feature("PREMIUM") ? class {
     target: string;
     params: Record<string, any>;
   }): Promise<RPATask> {
-    console.log(`🔗 API: Creating RPA task via endpoint`);
+    console.info(`🔗 API: Creating RPA task via endpoint`);
     return await this.createRPATask(request);
   }
 
   // API Interface - Workflow Management
   async getWorkflowList(): Promise<RPATask[]> {
-    console.log(`📋 API: Retrieving workflow list`);
+    console.info(`📋 API: Retrieving workflow list`);
     return Array.from(this.activeRPATasks.values());
   }
 
@@ -281,40 +281,40 @@ export const DuoPlusRPABridge = feature("PREMIUM") ? class {
 export const CloudNumberRecoveryFlow = feature("PREMIUM") ? {
   // Send approval SMS via cloud number
   async sendApprovalSMS(guardianId: string, approvalCode: string): Promise<void> {
-    console.log(`📱 Sending approval SMS via Cloud Number...`);
-    console.log(`   👤 Guardian: ${guardianId}`);
-    console.log(`   🔢 Code: ${approvalCode}`);
-    console.log(`   🔒 Isolated VOIP: No SIM leak`);
-    console.log(`   🛡️ DNS Protection: Active`);
+    console.info(`📱 Sending approval SMS via Cloud Number...`);
+    console.info(`   👤 Guardian: ${guardianId}`);
+    console.info(`   🔢 Code: ${approvalCode}`);
+    console.info(`   🔒 Isolated VOIP: No SIM leak`);
+    console.info(`   🛡️ DNS Protection: Active`);
     
     // Simulate SMS sending
     await new Promise(resolve => setTimeout(resolve, 500));
-    console.log(`✅ Approval SMS sent successfully`);
+    console.info(`✅ Approval SMS sent successfully`);
   },
 
   // Auto-verify approval code with RPA bot
   async autoVerifyApproval(approvalCode: string): Promise<boolean> {
-    console.log(`🤖 RPA Bot auto-verifying approval code...`);
-    console.log(`   🔢 Code: ${approvalCode}`);
+    console.info(`🤖 RPA Bot auto-verifying approval code...`);
+    console.info(`   🔢 Code: ${approvalCode}`);
     
     // Simulate verification
     await new Promise(resolve => setTimeout(resolve, 200));
     
     const isValid = approvalCode.length === 6 && /^\d+$/.test(approvalCode);
-    console.log(`${isValid ? '✅' : '❌'} Verification ${isValid ? 'successful' : 'failed'}`);
+    console.info(`${isValid ? '✅' : '❌'} Verification ${isValid ? 'successful' : 'failed'}`);
     
     return isValid;
   },
 
   // Trigger on-chain key rotation
   async triggerKeyRotation(teenId: string, newGuardians: string[]): Promise<void> {
-    console.log(`🔗 Triggering on-chain key rotation...`);
-    console.log(`   👶 Teen: ${teenId}`);
-    console.log(`   👥 New Guardians: ${newGuardians.join(', ')}`);
+    console.info(`🔗 Triggering on-chain key rotation...`);
+    console.info(`   👶 Teen: ${teenId}`);
+    console.info(`   👥 New Guardians: ${newGuardians.join(', ')}`);
     
     // Simulate blockchain operation
     await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log(`✅ Key rotation completed on-chain`);
+    console.info(`✅ Key rotation completed on-chain`);
   }
 } : undefined as any;
 
@@ -322,30 +322,30 @@ export const CloudNumberRecoveryFlow = feature("PREMIUM") ? {
 export const TensionDuoPlusIntegration = feature("PREMIUM") ? {
   // Real-time risk diffusion to cloud instances
   async diffuseRiskToCloudPhones(teenId: string, riskScore: number): Promise<void> {
-    console.log(`🌊 Diffusing risk to cloud phone instances...`);
-    console.log(`   👶 Teen: ${teenId}`);
-    console.log(`   🚨 Risk: ${(riskScore * 100).toFixed(1)}%`);
+    console.info(`🌊 Diffusing risk to cloud phone instances...`);
+    console.info(`   👶 Teen: ${teenId}`);
+    console.info(`   🚨 Risk: ${(riskScore * 100).toFixed(1)}%`);
     
     // Get network and propagate to cloud phones
     const networkData = guardianNetwork.getNetworkVisualization(teenId);
     
     for (const node of networkData.nodes) {
-      console.log(`   📱 ${node.name}: Risk alert received`);
-      console.log(`      🚨 Tension: ${(riskScore * 100).toFixed(1)}%`);
-      console.log(`      ⚡ Response: Auto-safeguard activated`);
+      console.info(`   📱 ${node.name}: Risk alert received`);
+      console.info(`      🚨 Tension: ${(riskScore * 100).toFixed(1)}%`);
+      console.info(`      ⚡ Response: Auto-safeguard activated`);
     }
   },
 
   // WebSocket integration for real-time sync
   initializeWebSocketSync(): void {
-    console.log(`🔌 Initializing WebSocket sync with DuoPlus cloud instances...`);
-    console.log(`   📡 Channel: duoplus-tension-sync`);
-    console.log(`   ⚡ Latency: <30ms`);
-    console.log(`   🔄 Real-time: Active`);
+    console.info(`🔌 Initializing WebSocket sync with DuoPlus cloud instances...`);
+    console.info(`   📡 Channel: duoplus-tension-sync`);
+    console.info(`   ⚡ Latency: <30ms`);
+    console.info(`   🔄 Real-time: Active`);
   }
 } : undefined as any;
 
-console.log('📱 DuoPlus RPA Bridge + Cloud Phone Integration Loaded');
-console.log('🔗 Features: Cloud Numbers, RPA Templates, Batch Push, API Hooks');
-console.log('🛡️ Anti-Detection: DNS Leak Fix, Fingerprint v2.1, 96% Protection');
-console.log('⚡ Performance: <80ms tension-to-action, 1250ms RPA execution');
+console.info('📱 DuoPlus RPA Bridge + Cloud Phone Integration Loaded');
+console.info('🔗 Features: Cloud Numbers, RPA Templates, Batch Push, API Hooks');
+console.info('🛡️ Anti-Detection: DNS Leak Fix, Fingerprint v2.1, 96% Protection');
+console.info('⚡ Performance: <80ms tension-to-action, 1250ms RPA execution');

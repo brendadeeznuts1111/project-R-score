@@ -45,7 +45,7 @@ const priorityManager = {
   addToQueue: (userId: string, method: string) => Math.floor(Math.random() * 10) + 1,
   removeFromQueue: (userId: string) => {
     // Mock removal logic
-    console.log(`Removed ${userId} from queue`);
+    console.info(`Removed ${userId} from queue`);
   }
 };
 
@@ -154,13 +154,13 @@ export const PremiumBillingPanel = feature("PREMIUM") ? function() {
       const status = await cashAppManager.verifyPayment(paymentState.sessionId);
       
       if (status.status === 'completed') {
-        console.log('✅ Cash App Pay successful — team seats unlocked!');
+        console.info('✅ Cash App Pay successful — team seats unlocked!');
         setPaymentState(prev => ({ ...prev, loading: false, qrCode: null }));
         if (typeof priorityManager !== 'undefined') {
           priorityManager.removeFromQueue(getCurrentUserId());
       }
     } else if (status.status === 'failed' || status.status === 'cancelled') {
-      console.log('❌ Payment failed or cancelled');
+      console.info('❌ Payment failed or cancelled');
       setPaymentState(prev => ({ ...prev, loading: false, qrCode: null }));
       if (typeof priorityManager !== 'undefined') {
         priorityManager.removeFromQueue(getCurrentUserId());
@@ -203,7 +203,7 @@ export const PremiumBillingPanel = feature("PREMIUM") ? function() {
       // Send approval request to guardian
       await familyManager.sendGuardianApproval(sponsorship.sponsorshipId);
       
-      console.log('👨‍👩‍👧‍👦 Family sponsorship request sent to guardian');
+      console.info('👨‍👩‍👧‍👦 Family sponsorship request sent to guardian');
     } catch (error) {
       console.error('Family sponsorship error:', error);
       setPaymentState(prev => ({ ...prev, loading: false }));
@@ -244,7 +244,7 @@ export const PremiumBillingPanel = feature("PREMIUM") ? function() {
           businessVerified: true,
           loading: false,
         }));
-        console.log('🏢 Business account verified instantly!');
+        console.info('🏢 Business account verified instantly!');
       } else if (business.verificationUrl) {
         // Redirect to verification flow
         if (typeof globalThis !== 'undefined' && (globalThis as any).location) {
@@ -527,13 +527,13 @@ export const DebugConsole = feature("DEBUG") ? function() {
     ),
     React.createElement('div', { className: 'debug-controls' },
       React.createElement('button', { 
-        onClick: () => console.log('Debug trace generated') 
+        onClick: () => console.info('Debug trace generated') 
       }, 'Generate Trace'),
       React.createElement('button', { 
-        onClick: () => console.log('Performance profile captured') 
+        onClick: () => console.info('Performance profile captured') 
       }, 'Profile Performance'),
       React.createElement('button', { 
-        onClick: () => console.log('Feature flags reloaded') 
+        onClick: () => console.info('Feature flags reloaded') 
       }, 'Reload Features')
     )
   );
@@ -612,10 +612,10 @@ export const MockApiPanel = feature("MOCK_API") ? function() {
     ),
     React.createElement('div', { className: 'mock-actions' },
       React.createElement('button', { 
-        onClick: () => console.log('Mock data reset') 
+        onClick: () => console.info('Mock data reset') 
       }, 'Reset Mock Data'),
       React.createElement('button', { 
-        onClick: () => console.log('Mock scenarios loaded') 
+        onClick: () => console.info('Mock scenarios loaded') 
       }, 'Load Test Scenarios')
     )
   );

@@ -17,10 +17,10 @@ describe('Schema Validation Tests', () => {
       expect(schemas.PaginationQuerySchema).toBeDefined();
       expect(schemas.getSchemaForEndpoint).toBeDefined();
 
-      console.log('✅ Schemas loaded successfully');
+      console.info('✅ Schemas loaded successfully');
     } catch (error) {
       console.warn('⚠️ Schema loading failed:', error.message);
-      console.log('This is expected if @fire22/validator package is not installed');
+      console.info('This is expected if @fire22/validator package is not installed');
     }
   });
 
@@ -48,7 +48,7 @@ describe('Schema Validation Tests', () => {
         });
       }).toThrow();
 
-      console.log('✅ Login schema validation working');
+      console.info('✅ Login schema validation working');
     } catch (error) {
       console.warn('⚠️ Schema validation test skipped:', error.message);
     }
@@ -73,7 +73,7 @@ describe('Schema Validation Tests', () => {
         });
       }).toThrow();
 
-      console.log('✅ Agent ID schema validation working');
+      console.info('✅ Agent ID schema validation working');
     } catch (error) {
       console.warn('⚠️ Agent ID schema test skipped:', error.message);
     }
@@ -95,7 +95,7 @@ describe('Schema Validation Tests', () => {
       expect(result.limit).toBe(10); // Converted to number
       expect(result.offset).toBe(0); // Converted to number
 
-      console.log('✅ Pagination schema validation working');
+      console.info('✅ Pagination schema validation working');
     } catch (error) {
       console.warn('⚠️ Pagination schema test skipped:', error.message);
     }
@@ -112,7 +112,7 @@ describe('Schema Validation Tests', () => {
       const unknownSchema = getSchemaForEndpoint('/api/unknown', 'GET');
       expect(unknownSchema).toBeNull();
 
-      console.log('✅ Schema endpoint mapping working');
+      console.info('✅ Schema endpoint mapping working');
     } catch (error) {
       console.warn('⚠️ Schema endpoint mapping test skipped:', error.message);
     }

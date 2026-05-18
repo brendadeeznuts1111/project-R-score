@@ -12,7 +12,7 @@ import { publishingService } from '../src/services/publishingService';
 
 const commands = {
   async createPost(title: string, author: string) {
-    console.log(`📝 Creating blog post: ${title}`);
+    console.info(`📝 Creating blog post: ${title}`);
 
     const post = await blogService.createPost({
       title,
@@ -28,46 +28,46 @@ const commands = {
       metaDescription: `Learn about ${title}`,
     });
 
-    console.log(`✅ Post created: ${post.slug}`);
-    console.log(`   ID: ${post.id}`);
-    console.log(`   Status: ${post.status}`);
+    console.info(`✅ Post created: ${post.slug}`);
+    console.info(`   ID: ${post.id}`);
+    console.info(`   Status: ${post.status}`);
   },
 
   async publishPost(postId: string) {
-    console.log(`📤 Publishing post: ${postId}`);
+    console.info(`📤 Publishing post: ${postId}`);
 
     const post = await blogService.publishPost(postId);
-    console.log(`✅ Post published: ${post.slug}`);
-    console.log(`   URL: https://blog.duoplus.dev/${post.slug}`);
+    console.info(`✅ Post published: ${post.slug}`);
+    console.info(`   URL: https://blog.duoplus.dev/${post.slug}`);
   },
 
   async listPosts(status: string = 'published') {
-    console.log(`📚 Listing ${status} posts...`);
+    console.info(`📚 Listing ${status} posts...`);
 
     const posts = await blogService.listPosts({ status, limit: 20 });
-    console.log(`\nFound ${posts.length} posts:\n`);
+    console.info(`\nFound ${posts.length} posts:\n`);
 
     posts.forEach((post, i) => {
-      console.log(`${i + 1}. ${post.title}`);
-      console.log(`   Author: ${post.author}`);
-      console.log(`   Status: ${post.status}`);
-      console.log(`   Views: ${post.views}`);
-      console.log(`   Slug: ${post.slug}\n`);
+      console.info(`${i + 1}. ${post.title}`);
+      console.info(`   Author: ${post.author}`);
+      console.info(`   Status: ${post.status}`);
+      console.info(`   Views: ${post.views}`);
+      console.info(`   Slug: ${post.slug}\n`);
     });
   },
 
   async generateRSS() {
-    console.log('📡 Generating RSS feed...');
+    console.info('📡 Generating RSS feed...');
 
     const feed = await blogService.generateRSSFeed();
     const feedPath = './data/blog-feed.xml';
 
     await Bun.write(feedPath, feed);
-    console.log(`✅ RSS feed generated: ${feedPath}`);
+    console.info(`✅ RSS feed generated: ${feedPath}`);
   },
 
   async createMetadata(title: string, author: string) {
-    console.log(`📋 Creating metadata: ${title}`);
+    console.info(`📋 Creating metadata: ${title}`);
 
     const meta = metadataService.createMetadata({
       title,
@@ -91,11 +91,11 @@ const commands = {
       dependencies: [],
     });
 
-    console.log(`✅ Metadata created: ${meta.id}`);
+    console.info(`✅ Metadata created: ${meta.id}`);
   },
 
   async publishContent(title: string, author: string) {
-    console.log(`📤 Publishing content: ${title}`);
+    console.info(`📤 Publishing content: ${title}`);
 
     const meta = metadataService.createMetadata({
       title,
@@ -130,12 +130,12 @@ const commands = {
       metadata: meta,
     });
 
-    console.log(`✅ Content published: ${published.slug}`);
-    console.log(`   URL: ${published.url}`);
+    console.info(`✅ Content published: ${published.slug}`);
+    console.info(`   URL: ${published.url}`);
   },
 
   async schedulePost(title: string, author: string, daysFromNow: number = 7) {
-    console.log(`⏰ Scheduling post for ${daysFromNow} days from now...`);
+    console.info(`⏰ Scheduling post for ${daysFromNow} days from now...`);
 
     const meta = metadataService.createMetadata({
       title,
@@ -174,29 +174,29 @@ const commands = {
       scheduledFor
     );
 
-    console.log(`✅ Post scheduled for ${new Date(scheduledFor).toISOString()}`);
+    console.info(`✅ Post scheduled for ${new Date(scheduledFor).toISOString()}`);
   },
 
   async stats() {
-    console.log('📊 Content Statistics:\n');
+    console.info('📊 Content Statistics:\n');
 
     const blogStats = await blogService.getBlogStats();
-    console.log('Blog:');
-    console.log(`  Total posts: ${blogStats.totalPosts}`);
-    console.log(`  Published: ${blogStats.publishedPosts}`);
-    console.log(`  Total views: ${blogStats.totalViews}`);
-    console.log(`  Total likes: ${blogStats.totalLikes}\n`);
+    console.info('Blog:');
+    console.info(`  Total posts: ${blogStats.totalPosts}`);
+    console.info(`  Published: ${blogStats.publishedPosts}`);
+    console.info(`  Total views: ${blogStats.totalViews}`);
+    console.info(`  Total likes: ${blogStats.totalLikes}\n`);
 
     const pubStats = await publishingService.getPublishingStats();
-    console.log('Publishing:');
-    console.log(`  Published content: ${pubStats.totalPublished}`);
-    console.log(`  Scheduled: ${pubStats.totalScheduled}`);
-    console.log(`  Total views: ${pubStats.totalViews}`);
-    console.log(`  Total likes: ${pubStats.totalLikes}`);
+    console.info('Publishing:');
+    console.info(`  Published content: ${pubStats.totalPublished}`);
+    console.info(`  Scheduled: ${pubStats.totalScheduled}`);
+    console.info(`  Total views: ${pubStats.totalViews}`);
+    console.info(`  Total likes: ${pubStats.totalLikes}`);
   },
 
   async backup() {
-    console.log('💾 Backing up content...');
+    console.info('💾 Backing up content...');
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const backupDir = `./backups/content-${timestamp}`;
@@ -204,11 +204,11 @@ const commands = {
     await shellUtils.createDirectories([backupDir]);
     await shellUtils.copyFiles('./data', `${backupDir}/data`);
 
-    console.log(`✅ Backup created: ${backupDir}`);
+    console.info(`✅ Backup created: ${backupDir}`);
   },
 
   async help() {
-    console.log(`
+    console.info(`
 Content Manager CLI
 
 Usage: bun run cli/content-manager.ts <command> [options]

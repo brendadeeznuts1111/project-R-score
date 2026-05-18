@@ -927,7 +927,7 @@ interface RouteStats {
 
 // Example middleware functions
 export async function loggingMiddleware(request: Request, params: Record<string, string>): Promise<Request> {
-  console.log(`[Middleware] ${request.method} ${request.url} - Params:`, params);
+  console.info(`[Middleware] ${request.method} ${request.url} - Params:`, params);
   return request;
 }
 
@@ -945,7 +945,7 @@ export async function authMiddleware(request: Request, params: Record<string, st
 export async function rateLimitMiddleware(request: Request, params: Record<string, string>): Promise<Request | Response> {
   // Simple rate limiting logic
   const clientIP = request.headers.get('X-Forwarded-For') || 'unknown';
-  console.log(`[RateLimit] Request from ${clientIP}`);
+  console.info(`[RateLimit] Request from ${clientIP}`);
   return request;
 }
 
@@ -957,7 +957,7 @@ if (import.meta.main) {
   router.addMiddleware(loggingMiddleware);
   router.addMiddleware(rateLimitMiddleware);
 
-  console.log('🚀 Starting Enhanced LSP Router with URLPattern API...');
+  console.info('🚀 Starting Enhanced LSP Router with URLPattern API...');
 
   Bun.serve({
     port: 50045,
@@ -988,6 +988,6 @@ if (import.meta.main) {
     }
   });
 
-  console.log('✅ Enhanced LSP Router started on port 50045');
-  console.log('📊 Route patterns:', router.getRouteStats());
+  console.info('✅ Enhanced LSP Router started on port 50045');
+  console.info('📊 Route patterns:', router.getRouteStats());
 }

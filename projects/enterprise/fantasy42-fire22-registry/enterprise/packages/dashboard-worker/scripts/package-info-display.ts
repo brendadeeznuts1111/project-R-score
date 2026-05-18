@@ -69,8 +69,8 @@ class PackageInfoDisplay {
   async displayCoreInfo() {
     await this.ensurePackageInfo();
 
-    console.log('🔥 Fire22 Dashboard - Core Package Information');
-    console.log('!==!==!==!==!==!==!==!=====\n');
+    console.info('🔥 Fire22 Dashboard - Core Package Information');
+    console.info('!==!==!==!==!==!==!==!=====\n');
 
     const coreInfo = [
       ['Package Name', this.packageInfo.name],
@@ -85,8 +85,8 @@ class PackageInfoDisplay {
   }
 
   displayAuthorInfo() {
-    console.log('\n👥 Author & Contributors');
-    console.log('!==!==!==!====\n');
+    console.info('\n👥 Author & Contributors');
+    console.info('!==!==!==!====\n');
 
     const authorInfo = [
       ['Author Name', this.packageInfo.author.name],
@@ -97,7 +97,7 @@ class PackageInfoDisplay {
     console.table(authorInfo);
 
     if (this.packageInfo.contributors && this.packageInfo.contributors.length > 0) {
-      console.log('\n📋 Contributors:');
+      console.info('\n📋 Contributors:');
       const contributorsTable = this.packageInfo.contributors.map(contributor => [
         contributor.name,
         contributor.email || 'N/A',
@@ -110,8 +110,8 @@ class PackageInfoDisplay {
   }
 
   displayRepositoryInfo() {
-    console.log('\n📁 Repository Information');
-    console.log('!==!==!==!==!==\n');
+    console.info('\n📁 Repository Information');
+    console.info('!==!==!==!==!==\n');
 
     const repoInfo = [
       ['Repository Type', this.packageInfo.repository.type],
@@ -124,20 +124,20 @@ class PackageInfoDisplay {
   }
 
   displayKeywords() {
-    console.log('\n🏷️ Keywords');
-    console.log('!==!==\n');
+    console.info('\n🏷️ Keywords');
+    console.info('!==!==\n');
 
     if (this.packageInfo.keywords && this.packageInfo.keywords.length > 0) {
       const keywordsTable = this.packageInfo.keywords.map(keyword => [keyword]);
       console.table(keywordsTable);
     } else {
-      console.log('No keywords defined');
+      console.info('No keywords defined');
     }
   }
 
   displayDependencies() {
-    console.log('\n📦 Dependencies');
-    console.log('!==!==!==\n');
+    console.info('\n📦 Dependencies');
+    console.info('!==!==!==\n');
 
     if (this.packageInfo.dependencies && Object.keys(this.packageInfo.dependencies).length > 0) {
       const depsTable = Object.entries(this.packageInfo.dependencies).map(([name, version]) => [
@@ -146,13 +146,13 @@ class PackageInfoDisplay {
       ]);
       console.table(depsTable);
     } else {
-      console.log('No dependencies defined');
+      console.info('No dependencies defined');
     }
   }
 
   displayScripts() {
-    console.log('\n⚡ Available Scripts');
-    console.log('!==!==!=====\n');
+    console.info('\n⚡ Available Scripts');
+    console.info('!==!==!=====\n');
 
     if (this.packageInfo.scripts && Object.keys(this.packageInfo.scripts).length > 0) {
       const scriptsTable = Object.entries(this.packageInfo.scripts).map(([name, command]) => [
@@ -161,13 +161,13 @@ class PackageInfoDisplay {
       ]);
       console.table(scriptsTable);
     } else {
-      console.log('No scripts defined');
+      console.info('No scripts defined');
     }
   }
 
   displayEngines() {
-    console.log('\n🔧 Engine Requirements');
-    console.log('!==!==!==!===\n');
+    console.info('\n🔧 Engine Requirements');
+    console.info('!==!==!==!===\n');
 
     if (this.packageInfo.engines && Object.keys(this.packageInfo.engines).length > 0) {
       const enginesTable = Object.entries(this.packageInfo.engines).map(([engine, version]) => [
@@ -176,13 +176,13 @@ class PackageInfoDisplay {
       ]);
       console.table(enginesTable);
     } else {
-      console.log('No engine requirements specified');
+      console.info('No engine requirements specified');
     }
   }
 
   displayMatrixHealthInfo() {
-    console.log('\n🔍 Matrix Health System Status');
-    console.log('!==!==!==!==!==!==\n');
+    console.info('\n🔍 Matrix Health System Status');
+    console.info('!==!==!==!==!==!==\n');
 
     const matrixCommands = [
       ['matrix:health', 'Check matrix health'],
@@ -201,8 +201,8 @@ class PackageInfoDisplay {
   }
 
   displayQuickStart() {
-    console.log('\n🚀 Quick Start Commands');
-    console.log('!==!==!==!====\n');
+    console.info('\n🚀 Quick Start Commands');
+    console.info('!==!==!==!====\n');
 
     const quickStartCommands = [
       ['bun run matrix:health', 'Check system health'],
@@ -216,8 +216,8 @@ class PackageInfoDisplay {
   }
 
   displayBunxExamples() {
-    console.log('\n⚡ Bunx Examples with --package Flag');
-    console.log('!==!==!==!==!==!==!==\n');
+    console.info('\n⚡ Bunx Examples with --package Flag');
+    console.info('!==!==!==!==!==!==!==\n');
 
     const bunxExamples = [
       ['bunx --package renovate renovate-config-validator', 'Run renovate config validator'],
@@ -246,8 +246,8 @@ class PackageInfoDisplay {
   async displaySummary() {
     await this.ensurePackageInfo();
 
-    console.log('\n📊 Package Summary');
-    console.log('!==!==!====\n');
+    console.info('\n📊 Package Summary');
+    console.info('!==!==!====\n');
 
     const summary = [
       ['Total Dependencies', Object.keys(this.packageInfo.dependencies || {}).length],
@@ -308,19 +308,19 @@ if (import.meta.main) {
           await display.displaySummary();
           break;
         default:
-          console.log('Available commands:');
-          console.log('  core       - Core package information');
-          console.log('  author     - Author and contributors');
-          console.log('  repo       - Repository information');
-          console.log('  keywords   - Package keywords');
-          console.log('  deps       - Dependencies');
-          console.log('  scripts    - Available scripts');
-          console.log('  engines    - Engine requirements');
-          console.log('  matrix     - Matrix health commands');
-          console.log('  quickstart - Quick start commands');
-          console.log('  bunx       - Bunx examples');
-          console.log('  summary    - Package summary');
-          console.log('  (no args)  - Display all information');
+          console.info('Available commands:');
+          console.info('  core       - Core package information');
+          console.info('  author     - Author and contributors');
+          console.info('  repo       - Repository information');
+          console.info('  keywords   - Package keywords');
+          console.info('  deps       - Dependencies');
+          console.info('  scripts    - Available scripts');
+          console.info('  engines    - Engine requirements');
+          console.info('  matrix     - Matrix health commands');
+          console.info('  quickstart - Quick start commands');
+          console.info('  bunx       - Bunx examples');
+          console.info('  summary    - Package summary');
+          console.info('  (no args)  - Display all information');
           break;
       }
     }

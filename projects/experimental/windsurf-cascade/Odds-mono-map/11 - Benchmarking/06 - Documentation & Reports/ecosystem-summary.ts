@@ -7,17 +7,17 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.bold.magenta('🎯 Complete Bun.stringWidth() & Bun.inspect.table() Ecosystem'));
-console.log(chalk.gray('From Official Documentation to Production-Ready Solutions'));
-console.log(chalk.gray('='.repeat(80)));
+console.info(chalk.bold.magenta('🎯 Complete Bun.stringWidth() & Bun.inspect.table() Ecosystem'));
+console.info(chalk.gray('From Official Documentation to Production-Ready Solutions'));
+console.info(chalk.gray('='.repeat(80)));
 
 // =============================================================================
 // OFFICIAL DOCUMENTATION COVERAGE
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📚 Official Documentation Coverage (bun.com/docs/runtime/utils)'));
+console.info(chalk.bold.cyan('\n📚 Official Documentation Coverage (bun.com/docs/runtime/utils)'));
 
-console.log(chalk.yellow('\n🔸 What Official Docs Cover:'));
+console.info(chalk.yellow('\n🔸 What Official Docs Cover:'));
 const officialCoverage = [
     { feature: 'Basic Bun.inspect.table() usage', status: '✅', description: 'Simple array of objects' },
     { feature: 'Properties filter array', status: '✅', description: '["a", "c"] column selection' },
@@ -27,10 +27,10 @@ const officialCoverage = [
 ];
 
 officialCoverage.forEach(item => {
-    console.log(`${item.status} ${item.feature.padEnd(25)} - ${item.description}`);
+    console.info(`${item.status} ${item.feature.padEnd(25)} - ${item.description}`);
 });
 
-console.log(chalk.yellow('\n🔸 What Official Docs DON\'T Cover:'));
+console.info(chalk.yellow('\n🔸 What Official Docs DON\'T Cover:'));
 const missingCoverage = [
     { feature: 'Bun.stringWidth() ANSI parameters', status: '❌', description: 'countAnsiEscapeCodes, ambiguousIsNarrow' },
     { feature: 'Advanced table options', status: '❌', description: 'maxEntryWidth, compact, maxLines' },
@@ -43,16 +43,16 @@ const missingCoverage = [
 ];
 
 missingCoverage.forEach(item => {
-    console.log(`${item.status} ${item.feature.padEnd(25)} - ${item.description}`);
+    console.info(`${item.status} ${item.feature.padEnd(25)} - ${item.description}`);
 });
 
 // =============================================================================
 // OUR ECOSYSTEM COMPLETENESS
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🏗️  Our Ecosystem Completeness'));
+console.info(chalk.bold.cyan('\n🏗️  Our Ecosystem Completeness'));
 
-console.log(chalk.yellow('\n🔸 Our Complete Implementation:'));
+console.info(chalk.yellow('\n🔸 Our Complete Implementation:'));
 const ourCoverage = [
     {
         feature: 'Official basics',
@@ -111,18 +111,18 @@ const ourCoverage = [
 ];
 
 ourCoverage.forEach(item => {
-    console.log(`${item.status} ${item.feature.padEnd(30)} - ${item.description}`);
-    console.log(chalk.gray(`   → bun run ${item.script}`));
+    console.info(`${item.status} ${item.feature.padEnd(30)} - ${item.description}`);
+    console.info(chalk.gray(`   → bun run ${item.script}`));
 });
 
 // =============================================================================
 // TECHNICAL ADVANCEMENTS BEYOND OFFICIAL DOCS
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🚀 Technical Advancements Beyond Official Docs'));
+console.info(chalk.bold.cyan('\n🚀 Technical Advancements Beyond Official Docs'));
 
-console.log(chalk.yellow('\n🔸 1. ANSI-Aware Width Management:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 1. ANSI-Aware Width Management:'));
+console.info(chalk.white(`
 // Official: Basic width only
 Bun.stringWidth("hello") // => 5
 
@@ -131,8 +131,8 @@ Bun.stringWidth("\\u001b[31mhello\\u001b[0m") // => 5 (visual)
 Bun.stringWidth("\\u001b[31mhello\\u001b[0m", { countAnsiEscapeCodes: true }) // => 12 (total)
 `));
 
-console.log(chalk.yellow('\n🔸 2. Width Tracking System:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 2. Width Tracking System:'));
+console.info(chalk.white(`
 // Our Innovation: Visual vs Total width tracking
 class EnhancedVaultFile {
   [Bun.inspect.custom]() {
@@ -144,8 +144,8 @@ class EnhancedVaultFile {
 }
 `));
 
-console.log(chalk.yellow('\n🔸 3. Smart Truncation:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 3. Smart Truncation:'));
+console.info(chalk.white(`
 // Our Innovation: Width-aware truncation
 function smartTruncate(text, maxWidth) {
   if (Bun.stringWidth(text) <= maxWidth) return text;
@@ -164,8 +164,8 @@ function smartTruncate(text, maxWidth) {
 }
 `));
 
-console.log(chalk.yellow('\n🔸 4. Dynamic Column Optimization:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 4. Dynamic Column Optimization:'));
+console.info(chalk.white(`
 // Our Innovation: Responsive table layouts
 function calculateOptimalWidths(data, availableWidth = 80) {
   const widths = {};
@@ -196,26 +196,26 @@ function calculateOptimalWidths(data, availableWidth = 80) {
 // PRODUCTION-READY PATTERNS
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🏭 Production-Ready Patterns'));
+console.info(chalk.bold.cyan('\n🏭 Production-Ready Patterns'));
 
-console.log(chalk.yellow('\n🔸 Pattern 1: Vault Data Structures:'));
-console.log(chalk.green(`
+console.info(chalk.yellow('\n🔸 Pattern 1: Vault Data Structures:'));
+console.info(chalk.green(`
 ✅ Mapped Files: fileName, directory, sizeKB, modified, tags, hasFrontmatter
 ✅ Mapped Issues: type, ruleCategory, file, line, message, suggestion  
 ✅ Task Statuses: symbol, name, nextStatusSymbol, type, progress
 ✅ All with chalk formatting and width awareness
 `));
 
-console.log(chalk.yellow('\n🔸 Pattern 2: Error Handling:'));
-console.log(chalk.green(`
+console.info(chalk.yellow('\n🔸 Pattern 2: Error Handling:'));
+console.info(chalk.green(`
 ✅ Graceful fallback for width calculation failures
 ✅ ANSI parsing error recovery
 ✅ Table overflow protection
 ✅ Memory-efficient processing
 `));
 
-console.log(chalk.yellow('\n🔸 Pattern 3: Performance Optimization:'));
-console.log(chalk.green(`
+console.info(chalk.yellow('\n🔸 Pattern 3: Performance Optimization:'));
+console.info(chalk.green(`
 ✅ Cached width calculations
 ✅ Efficient ANSI parsing
 ✅ Minimal string allocations
@@ -226,7 +226,7 @@ console.log(chalk.green(`
 // ECOSYSTEM COMMAND REFERENCE
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📋 Complete Ecosystem Command Reference'));
+console.info(chalk.bold.cyan('\n📋 Complete Ecosystem Command Reference'));
 
 const commands = [
     {
@@ -277,19 +277,19 @@ const commands = [
 ];
 
 commands.forEach((cmd, index) => {
-    console.log(chalk.bold(`\n${index + 1}. ${cmd.command}`));
-    console.log(chalk.gray(`   Purpose: ${cmd.purpose}`));
-    console.log(chalk.cyan(`   Focus: ${cmd.focus}`));
+    console.info(chalk.bold(`\n${index + 1}. ${cmd.command}`));
+    console.info(chalk.gray(`   Purpose: ${cmd.purpose}`));
+    console.info(chalk.cyan(`   Focus: ${cmd.focus}`));
 });
 
 // =============================================================================
 // REAL-WORLD IMPACT SUMMARY
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🌍 Real-World Impact Summary'));
+console.info(chalk.bold.cyan('\n🌍 Real-World Impact Summary'));
 
-console.log(chalk.yellow('\n📈 Before Our Implementation:'));
-console.log(chalk.red(`
+console.info(chalk.yellow('\n📈 Before Our Implementation:'));
+console.info(chalk.red(`
 ❌ Tables break with long filenames
 ❌ No ANSI width awareness
 ❌ Inconsistent formatting
@@ -300,8 +300,8 @@ console.log(chalk.red(`
 ❌ Poor user experience
 `));
 
-console.log(chalk.yellow('\n📈 After Our Implementation:'));
-console.log(chalk.green(`
+console.info(chalk.yellow('\n📈 After Our Implementation:'));
+console.info(chalk.green(`
 ✅ Perfect table layouts every time
 ✅ Complete ANSI width awareness
 ✅ Consistent professional formatting
@@ -316,7 +316,7 @@ console.log(chalk.green(`
 // COMPLETENESS SCORE
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📊 Ecosystem Completeness Score'));
+console.info(chalk.bold.cyan('\n📊 Ecosystem Completeness Score'));
 
 const completenessMetrics = [
     { category: 'Official API Coverage', score: 100, details: 'All official functionality implemented' },
@@ -333,31 +333,31 @@ const totalScore = completenessMetrics.reduce((sum, metric) => sum + metric.scor
 
 completenessMetrics.forEach(metric => {
     const bar = '█'.repeat(Math.floor(metric.score / 10));
-    console.log(`${bar.padEnd(10)} ${metric.category.padEnd(25)} - ${metric.score}% - ${metric.details}`);
+    console.info(`${bar.padEnd(10)} ${metric.category.padEnd(25)} - ${metric.score}% - ${metric.details}`);
 });
 
-console.log(chalk.bold.magenta(`\n🎯 Overall Ecosystem Score: ${totalScore.toFixed(1)}%`));
+console.info(chalk.bold.magenta(`\n🎯 Overall Ecosystem Score: ${totalScore.toFixed(1)}%`));
 
 // =============================================================================
 // FINAL RECOMMENDATIONS
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🎯 Final Recommendations'));
+console.info(chalk.bold.cyan('\n🎯 Final Recommendations'));
 
-console.log(chalk.yellow('\n🚀 For Development:'));
-console.log(chalk.gray('• Start with bun run benchmark:comparison to understand the evolution'));
-console.log(chalk.gray('• Use bun run benchmark:enhanced for custom inspection patterns'));
-console.log(chalk.gray('• Implement bun run benchmark:width for layout management'));
+console.info(chalk.yellow('\n🚀 For Development:'));
+console.info(chalk.gray('• Start with bun run benchmark:comparison to understand the evolution'));
+console.info(chalk.gray('• Use bun run benchmark:enhanced for custom inspection patterns'));
+console.info(chalk.gray('• Implement bun run benchmark:width for layout management'));
 
-console.log(chalk.yellow('\n🏭 For Production:'));
-console.log(chalk.gray('• Deploy bun run benchmark:utils for table formatting utilities'));
-console.log(chalk.gray('• Use bun run benchmark:examples as templates for data structures'));
-console.log(chalk.gray('• Reference bun run benchmark:review for system architecture'));
+console.info(chalk.yellow('\n🏭 For Production:'));
+console.info(chalk.gray('• Deploy bun run benchmark:utils for table formatting utilities'));
+console.info(chalk.gray('• Use bun run benchmark:examples as templates for data structures'));
+console.info(chalk.gray('• Reference bun run benchmark:review for system architecture'));
 
-console.log(chalk.yellow('\n📚 For Learning:'));
-console.log(chalk.gray('• Study bun run benchmark:complete for API mastery'));
-console.log(chalk.gray('• Analyze bun run benchmark:preprocessing for advanced techniques'));
-console.log(chalk.gray('• Review all scripts for comprehensive understanding'));
+console.info(chalk.yellow('\n📚 For Learning:'));
+console.info(chalk.gray('• Study bun run benchmark:complete for API mastery'));
+console.info(chalk.gray('• Analyze bun run benchmark:preprocessing for advanced techniques'));
+console.info(chalk.gray('• Review all scripts for comprehensive understanding'));
 
-console.log(chalk.bold.magenta('\n🎉 Complete Bun.stringWidth() & Bun.inspect.table() Ecosystem Ready!'));
-console.log(chalk.gray('From basic documentation to enterprise-grade solutions - fully implemented and tested!'));
+console.info(chalk.bold.magenta('\n🎉 Complete Bun.stringWidth() & Bun.inspect.table() Ecosystem Ready!'));
+console.info(chalk.gray('From basic documentation to enterprise-grade solutions - fully implemented and tested!'));

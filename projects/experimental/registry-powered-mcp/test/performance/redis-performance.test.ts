@@ -36,7 +36,7 @@ describe('Redis Performance', () => {
       let multiplier = 1.0;
       if (normalizedLoad > 0.5) multiplier = Math.min(5.0, 1.0 + normalizedLoad); // Generous adjustment
 
-      console.log(`Redis performance targets adjusted by ${multiplier.toFixed(1)}x (load: ${loadAvg.toFixed(2)}, CPUs: ${cpuCount})`);
+      console.info(`Redis performance targets adjusted by ${multiplier.toFixed(1)}x (load: ${loadAvg.toFixed(2)}, CPUs: ${cpuCount})`);
 
       return Object.fromEntries(
         Object.entries(baseTargets).map(([key, value]) => [key, value * multiplier])
@@ -66,7 +66,7 @@ describe('Redis Performance', () => {
         return;
       }
       REDIS_CONNECTED = true;
-      console.log('Connected to Redis for performance tests');
+      console.info('Connected to Redis for performance tests');
     } catch (error) {
       console.error('Failed to connect to Redis for performance tests:', error);
       // Don't throw - just skip the tests
@@ -126,7 +126,7 @@ describe('Redis Performance', () => {
     const setEnd = performance.now();
     const setAvg = (setEnd - setStart) / iterations;
 
-    console.log(`Redis SET: ${setAvg.toFixed(3)}ms per operation`);
+    console.info(`Redis SET: ${setAvg.toFixed(3)}ms per operation`);
     expect(setAvg).toBeLessThan(PERFORMANCE_TARGETS.STRING_SET);
 
     // Benchmark GET operations
@@ -137,7 +137,7 @@ describe('Redis Performance', () => {
     const getEnd = performance.now();
     const getAvg = (getEnd - getStart) / iterations;
 
-    console.log(`Redis GET: ${getAvg.toFixed(3)}ms per operation (threshold: ${PERFORMANCE_TARGETS.STRING_GET.toFixed(3)}ms)`);
+    console.info(`Redis GET: ${getAvg.toFixed(3)}ms per operation (threshold: ${PERFORMANCE_TARGETS.STRING_GET.toFixed(3)}ms)`);
     expect(getAvg).toBeLessThan(PERFORMANCE_TARGETS.STRING_GET);
   });
 
@@ -160,7 +160,7 @@ describe('Redis Performance', () => {
     const hsetEnd = performance.now();
     const hsetAvg = (hsetEnd - hsetStart) / iterations;
 
-    console.log(`Redis HSET: ${hsetAvg.toFixed(3)}ms per operation`);
+    console.info(`Redis HSET: ${hsetAvg.toFixed(3)}ms per operation`);
     expect(hsetAvg).toBeLessThan(PERFORMANCE_TARGETS.HASH_HSET);
 
     // Benchmark HGET operations
@@ -171,7 +171,7 @@ describe('Redis Performance', () => {
     const hgetEnd = performance.now();
     const hgetAvg = (hgetEnd - hgetStart) / iterations;
 
-    console.log(`Redis HGET: ${hgetAvg.toFixed(3)}ms per operation`);
+    console.info(`Redis HGET: ${hgetAvg.toFixed(3)}ms per operation`);
     expect(hgetAvg).toBeLessThan(PERFORMANCE_TARGETS.HASH_HGET);
 
     // Benchmark HGETALL operations
@@ -182,7 +182,7 @@ describe('Redis Performance', () => {
     const hgetallEnd = performance.now();
     const hgetallAvg = (hgetallEnd - hgetallStart) / Math.min(iterations, 10);
 
-    console.log(`Redis HGETALL (10 fields): ${hgetallAvg.toFixed(3)}ms per operation`);
+    console.info(`Redis HGETALL (10 fields): ${hgetallAvg.toFixed(3)}ms per operation`);
     expect(hgetallAvg).toBeLessThan(PERFORMANCE_TARGETS.HASH_HGETALL);
   });
 
@@ -200,7 +200,7 @@ describe('Redis Performance', () => {
     const lpushEnd = performance.now();
     const lpushAvg = (lpushEnd - lpushStart) / iterations;
 
-    console.log(`Redis LPUSH: ${lpushAvg.toFixed(3)}ms per operation`);
+    console.info(`Redis LPUSH: ${lpushAvg.toFixed(3)}ms per operation`);
     expect(lpushAvg).toBeLessThan(PERFORMANCE_TARGETS.LIST_LPUSH);
 
     // Benchmark LRANGE operations
@@ -211,7 +211,7 @@ describe('Redis Performance', () => {
     const lrangeEnd = performance.now();
     const lrangeAvg = (lrangeEnd - lrangeStart) / iterations;
 
-    console.log(`Redis LRANGE (10 items): ${lrangeAvg.toFixed(3)}ms per operation`);
+    console.info(`Redis LRANGE (10 items): ${lrangeAvg.toFixed(3)}ms per operation`);
     expect(lrangeAvg).toBeLessThan(PERFORMANCE_TARGETS.LIST_LRANGE_10);
   });
 
@@ -229,7 +229,7 @@ describe('Redis Performance', () => {
     const saddEnd = performance.now();
     const saddAvg = (saddEnd - saddStart) / iterations;
 
-    console.log(`Redis SADD: ${saddAvg.toFixed(3)}ms per operation`);
+    console.info(`Redis SADD: ${saddAvg.toFixed(3)}ms per operation`);
     expect(saddAvg).toBeLessThan(PERFORMANCE_TARGETS.SET_SADD);
   });
 
@@ -238,7 +238,7 @@ describe('Redis Performance', () => {
     const iterations = 100;
 
     // Benchmark raw command operations - API not available in current Bun version
-    console.log('Raw command benchmarking skipped - API not implemented');
+    console.info('Raw command benchmarking skipped - API not implemented');
   });
 
   test.skip('should benchmark pipelined operations', { tags: ["redis", "performance", "slow"] }, async () => {
@@ -247,7 +247,7 @@ describe('Redis Performance', () => {
     const key = `${testPrefix}perf:pipeline`;
 
     // Benchmark pipelined operations - API not available in current Bun version
-    console.log('Pipeline benchmarking skipped - API not implemented');
+    console.info('Pipeline benchmarking skipped - API not implemented');
   });
 
   test('should benchmark connection overhead', { tags: ["redis", "performance"] }, async () => {
@@ -262,7 +262,7 @@ describe('Redis Performance', () => {
     const existsEnd = performance.now();
     const existsAvg = (existsEnd - existsStart) / iterations;
 
-    console.log(`Redis EXISTS (connection overhead): ${existsAvg.toFixed(3)}ms per operation`);
+    console.info(`Redis EXISTS (connection overhead): ${existsAvg.toFixed(3)}ms per operation`);
     expect(existsAvg).toBeLessThan(2.0); // Allow up to 2ms (highly variable in CI environments)
   });
 
@@ -279,7 +279,7 @@ describe('Redis Performance', () => {
     const end = performance.now();
 
     const avgLatency = (end - start) / iterations;
-    console.log(`Performance regression check: ${avgLatency.toFixed(3)}ms per SET`);
+    console.info(`Performance regression check: ${avgLatency.toFixed(3)}ms per SET`);
 
     // Ensure we don't have major performance regression
     expect(avgLatency).toBeLessThan(2.0); // Allow up to 2ms per operation (CI environments have high variance)

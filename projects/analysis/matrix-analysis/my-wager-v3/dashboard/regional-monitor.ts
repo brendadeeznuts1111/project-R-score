@@ -137,12 +137,12 @@ class RegionalMonitor {
   // WindowProxy management
   addWindowProxy(proxyInfo: WindowProxyInfo): void {
     this.windowProxies.set(proxyInfo.id, proxyInfo);
-    console.log(`🔗 Added WindowProxy ${proxyInfo.id} from ${proxyInfo.origin}`);
+    console.info(`🔗 Added WindowProxy ${proxyInfo.id} from ${proxyInfo.origin}`);
   }
 
   removeWindowProxy(id: string): void {
     if (this.windowProxies.delete(id)) {
-      console.log(`🔌 Removed WindowProxy ${id}`);
+      console.info(`🔌 Removed WindowProxy ${id}`);
     }
   }
 
@@ -665,7 +665,7 @@ function generateDashboard(): string {
 
             // Handle WindowProxy broadcast
             if (data.type === 'window-proxy-broadcast') {
-                console.log(\`📨 Broadcast from WindowProxy \${data.proxyId}:\`, data.data);
+                console.info(\`📨 Broadcast from WindowProxy \${data.proxyId}:\`, data.data);
             }
         };
 
@@ -771,7 +771,7 @@ const server = serve({
   websocket: {
     open(ws) {
       wsConnections.add(ws);
-      console.log('📡 Dashboard client connected');
+      console.info('📡 Dashboard client connected');
 
       // Send initial data
       ws.send(JSON.stringify({
@@ -824,7 +824,7 @@ const server = serve({
 
         // Note: Bun's WebSocket message doesn't have a source property
         // The WebSocket itself is the source
-        console.log(`📨 Message from ${wsConnections.has(ws) ? 'connected' : 'unknown'} client:`, data.type);
+        console.info(`📨 Message from ${wsConnections.has(ws) ? 'connected' : 'unknown'} client:`, data.type);
 
         // Additional security checks
         if (!data.type || typeof data.type !== 'string') {
@@ -904,13 +904,13 @@ const server = serve({
     },
     close(ws) {
       wsConnections.delete(ws);
-      console.log('📡 Dashboard client disconnected');
+      console.info('📡 Dashboard client disconnected');
     }
   }
 });
 
-console.log('🚀 Tier-1380 Performance Dashboard running on http://localhost:3002');
-console.log('📊 Real-time monitoring active for 5 regions');
+console.info('🚀 Tier-1380 Performance Dashboard running on http://localhost:3002');
+console.info('📊 Real-time monitoring active for 5 regions');
 
 // Simulate regional updates
 setInterval(() => {

@@ -59,14 +59,14 @@ class ARM64OptimizedWidget extends FetchOptimizedWidget {
 			lastUpdate: Date.now(),
 		};
 
-		console.log("🍎 ARM64-Optimized Widget Initialized");
-		console.log(`📡 API Health URL: ${this.widgetConfig.apiHealthUrl}`);
-		console.log(`☁️  R2 Bucket URL: ${this.widgetConfig.r2BucketUrl}`);
-		console.log(`🔄 Update Interval: ${this.widgetConfig.updateInterval}ms`);
-		console.log(
+		console.info("🍎 ARM64-Optimized Widget Initialized");
+		console.info(`📡 API Health URL: ${this.widgetConfig.apiHealthUrl}`);
+		console.info(`☁️  R2 Bucket URL: ${this.widgetConfig.r2BucketUrl}`);
+		console.info(`🔄 Update Interval: ${this.widgetConfig.updateInterval}ms`);
+		console.info(
 			`⚡ Fetch Optimizations: ${this.widgetConfig.enableFetchOptimizations ? "Enabled" : "Disabled"}`,
 		);
-		console.log("");
+		console.info("");
 
 		this.initializeWorkerPool();
 		this.startMonitoring();
@@ -74,11 +74,11 @@ class ARM64OptimizedWidget extends FetchOptimizedWidget {
 	}
 
 	private initializeWorkerPool(): void {
-		console.log("🔧 Initializing worker pool for heavy operations...");
+		console.info("🔧 Initializing worker pool for heavy operations...");
 	}
 
 	private async startMonitoring() {
-		console.log("📊 Starting ARM64-optimized status monitoring...");
+		console.info("📊 Starting ARM64-optimized status monitoring...");
 		this.isRunning = true;
 
 		while (this.isRunning) {
@@ -177,29 +177,29 @@ class ARM64OptimizedWidget extends FetchOptimizedWidget {
 
 	private displayStatus(): void {
 		console.clear();
-		console.log("🍎 ARM64-Optimized Status Bar Widget");
-		console.log("=====================================");
-		console.log(
+		console.info("🍎 ARM64-Optimized Status Bar Widget");
+		console.info("=====================================");
+		console.info(
 			`📡 API Status: ${this.getStatusIcon(this.status.api)} ${this.status.api}`,
 		);
-		console.log(
+		console.info(
 			`☁️  Bucket Status: ${this.getStatusIcon(this.status.bucket)} ${this.status.bucket}`,
 		);
-		console.log(`📊 Profiles: ${this.status.profiles}`);
-		console.log(
+		console.info(`📊 Profiles: ${this.status.profiles}`);
+		console.info(
 			`⚡ API Latency: ${this.performanceMetrics.apiLatency.toFixed(0)}ms`,
 		);
-		console.log(
+		console.info(
 			`⚡ Bucket Latency: ${this.performanceMetrics.bucketLatency.toFixed(0)}ms`,
 		);
-		console.log(
+		console.info(
 			`💾 Memory Usage: ${(this.widgetMetrics.memoryUsage / 1024 / 1024).toFixed(1)}MB`,
 		);
-		console.log(
+		console.info(
 			`🕐 Last Update: ${new Date(this.widgetMetrics.lastUpdate).toLocaleTimeString()}`,
 		);
-		console.log("");
-		console.log("Press Ctrl+C to exit");
+		console.info("");
+		console.info("Press Ctrl+C to exit");
 	}
 
 	private getStatusIcon(status: string): string {
@@ -219,7 +219,7 @@ class ARM64OptimizedWidget extends FetchOptimizedWidget {
 
 	private setupGracefulShutdown(): void {
 		process.on("SIGINT", () => {
-			console.log("\n👋 Shutting down ARM64-optimized widget...");
+			console.info("\n👋 Shutting down ARM64-optimized widget...");
 			this.isRunning = false;
 			this.cleanupConnectionPool();
 			process.exit(0);

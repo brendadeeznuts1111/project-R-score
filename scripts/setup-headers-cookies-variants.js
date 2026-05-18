@@ -11,7 +11,7 @@ class HeadersCookiesVariantsSetup {
     }
 
     async setup() {
-        console.log('🚀 Setting up Headers, Cookies, and Variants System...\n');
+        console.info('🚀 Setting up Headers, Cookies, and Variants System...\n');
 
         try {
             await this.createDirectories();
@@ -22,12 +22,12 @@ class HeadersCookiesVariantsSetup {
             await this.createExamples();
             await this.updatePackageJson();
             
-            console.log('✅ Headers, Cookies, and Variants setup complete!');
-            console.log('\n📋 Next Steps:');
-            console.log('1. Import the integration script in your main application');
-            console.log('2. Initialize the system: initializeFactoryWagerSystem()');
-            console.log('3. Use the APIs for headers, cookies, and variants');
-            console.log('4. Check examples in the examples/ directory');
+            console.info('✅ Headers, Cookies, and Variants setup complete!');
+            console.info('\n📋 Next Steps:');
+            console.info('1. Import the integration script in your main application');
+            console.info('2. Initialize the system: initializeFactoryWagerSystem()');
+            console.info('3. Use the APIs for headers, cookies, and variants');
+            console.info('4. Check examples in the examples/ directory');
             
         } catch (error) {
             console.error('❌ Setup failed:', error.message);
@@ -36,7 +36,7 @@ class HeadersCookiesVariantsSetup {
     }
 
     async createDirectories() {
-        console.log('📁 Creating directories...');
+        console.info('📁 Creating directories...');
         
         const dirs = [
             this.configDir,
@@ -49,15 +49,15 @@ class HeadersCookiesVariantsSetup {
         dirs.forEach(dir => {
             if (!fs.existsSync(dir)) {
                 fs.mkdirSync(dir, { recursive: true });
-                console.log(`   ✓ Created ${dir}`);
+                console.info(`   ✓ Created ${dir}`);
             }
         });
 
-        console.log('');
+        console.info('');
     }
 
     async setupHeaders() {
-        console.log('🔧 Setting up headers configuration...');
+        console.info('🔧 Setting up headers configuration...');
 
         const headersConfig = {
             security: {
@@ -113,12 +113,12 @@ class HeadersCookiesVariantsSetup {
             JSON.stringify(headersConfig, null, 2)
         );
 
-        console.log('   ✓ Created headers configuration');
-        console.log('');
+        console.info('   ✓ Created headers configuration');
+        console.info('');
     }
 
     async setupCookies() {
-        console.log('🍪 Setting up cookie management...');
+        console.info('🍪 Setting up cookie management...');
 
         const cookieConfig = {
             session: {
@@ -157,12 +157,12 @@ class HeadersCookiesVariantsSetup {
             JSON.stringify(cookieConfig, null, 2)
         );
 
-        console.log('   ✓ Created cookie configuration');
-        console.log('');
+        console.info('   ✓ Created cookie configuration');
+        console.info('');
     }
 
     async setupVariants() {
-        console.log('🧪 Setting up variant testing...');
+        console.info('🧪 Setting up variant testing...');
 
         const variantConfig = {
             experiments: [
@@ -199,12 +199,12 @@ class HeadersCookiesVariantsSetup {
             JSON.stringify(variantConfig, null, 2)
         );
 
-        console.log('   ✓ Created variant configuration');
-        console.log('');
+        console.info('   ✓ Created variant configuration');
+        console.info('');
     }
 
     async createIntegrationScript() {
-        console.log('🔗 Creating integration script...');
+        console.info('🔗 Creating integration script...');
 
         const integrationScript = `/**
  * FactoryWager System Integration
@@ -230,7 +230,7 @@ class FactoryWagerSystem {
     async initialize(options = {}) {
         if (this.isInitialized) return;
 
-        console.log('🚀 Initializing FactoryWager System...');
+        console.info('🚀 Initializing FactoryWager System...');
 
         try {
             // Initialize cookie management
@@ -253,7 +253,7 @@ class FactoryWagerSystem {
             });
 
             this.isInitialized = true;
-            console.log('✅ FactoryWager System initialized successfully!');
+            console.info('✅ FactoryWager System initialized successfully!');
 
         } catch (error) {
             console.error('❌ Failed to initialize FactoryWager System:', error);
@@ -262,7 +262,7 @@ class FactoryWagerSystem {
     }
 
     async initializeCookies() {
-        console.log('🍪 Initializing cookie management...');
+        console.info('🍪 Initializing cookie management...');
         
         // Set essential cookies
         this.cookieManager.setCookie({
@@ -284,7 +284,7 @@ class FactoryWagerSystem {
     }
 
     async initializePrefetching() {
-        console.log('⚡ Initializing prefetching...');
+        console.info('⚡ Initializing prefetching...');
         
         // Adaptive prefetching based on variant
         this.prefetchManager.adaptivePrefetch();
@@ -297,7 +297,7 @@ class FactoryWagerSystem {
     }
 
     setupHeaders() {
-        console.log('🔧 Setting up headers...');
+        console.info('🔧 Setting up headers...');
         
         const variant = this.variantTesting.getCurrentVariant();
         const sessionId = this.cookieManager.getCookie('fw_session');
@@ -417,12 +417,12 @@ export default FactoryWagerSystem;
             integrationScript
         );
 
-        console.log('   ✓ Created integration script');
-        console.log('');
+        console.info('   ✓ Created integration script');
+        console.info('');
     }
 
     async createExamples() {
-        console.log('📚 Creating examples...');
+        console.info('📚 Creating examples...');
 
         // Basic usage example
         const basicExample = `<!DOCTYPE html>
@@ -542,7 +542,7 @@ class AdvancedExample {
 
     loadEnhancedUI() {
         // Load enhanced UI components
-        console.log('Loading enhanced UI...');
+        console.info('Loading enhanced UI...');
     }
 
     setupSmartPrefetching() {
@@ -573,12 +573,12 @@ example.init();
             advancedExample
         );
 
-        console.log('   ✓ Created examples');
-        console.log('');
+        console.info('   ✓ Created examples');
+        console.info('');
     }
 
     async updatePackageJson() {
-        console.log('📦 Updating package.json...');
+        console.info('📦 Updating package.json...');
 
         const packageJsonPath = path.join(this.projectRoot, 'package.json');
         
@@ -601,10 +601,10 @@ example.init();
             }
 
             fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-            console.log('   ✓ Updated package.json');
+            console.info('   ✓ Updated package.json');
         }
 
-        console.log('');
+        console.info('');
     }
 }
 

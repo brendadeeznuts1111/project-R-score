@@ -171,7 +171,7 @@ const server = Bun.serve({
   },
 });
 
-console.log(`
+console.info(`
 🎯 Fire22 Response Time Distribution Monitor
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -206,7 +206,7 @@ Monitoring Endpoints:
 
 // Simulate some initial traffic for demo
 setTimeout(async () => {
-  console.log('\n🚀 Generating sample traffic...\n');
+  console.info('\n🚀 Generating sample traffic...\n');
 
   const endpoints = [
     '/health',
@@ -228,12 +228,12 @@ setTimeout(async () => {
     const response = await fetch(`${server.url}api/monitoring/response-times`);
     const stats = await response.json();
 
-    console.log('📊 Sample Statistics:');
-    console.log(`├─ Total Requests: ${stats.summary.totalRequests}`);
-    console.log(`├─ Average Response: ${stats.global.stats.mean.toFixed(2)}ms`);
-    console.log(`├─ P95 Response: ${stats.global.stats.p95.toFixed(2)}ms`);
-    console.log(`├─ P99 Response: ${stats.global.stats.p99.toFixed(2)}ms`);
-    console.log(`└─ Active Endpoints: ${stats.summary.totalEndpoints}`);
+    console.info('📊 Sample Statistics:');
+    console.info(`├─ Total Requests: ${stats.summary.totalRequests}`);
+    console.info(`├─ Average Response: ${stats.global.stats.mean.toFixed(2)}ms`);
+    console.info(`├─ P95 Response: ${stats.global.stats.p95.toFixed(2)}ms`);
+    console.info(`├─ P99 Response: ${stats.global.stats.p99.toFixed(2)}ms`);
+    console.info(`└─ Active Endpoints: ${stats.summary.totalEndpoints}`);
   }, 3000);
 }, 1000);
 

@@ -177,7 +177,7 @@ export class FamilyNotificationManager {
     this.ws = new WebSocket(wsUrl);
     
     this.ws.onopen = () => {
-      console.log('🔔 Family notifications connected');
+      console.info('🔔 Family notifications connected');
     };
     
     this.ws.onmessage = (event) => {
@@ -193,7 +193,7 @@ export class FamilyNotificationManager {
     };
     
     this.ws.onclose = () => {
-      console.log('WebSocket closed, attempting reconnect...');
+      console.info('WebSocket closed, attempting reconnect...');
       setTimeout(() => this.connect(guardianEmail), 5000);
     };
   }

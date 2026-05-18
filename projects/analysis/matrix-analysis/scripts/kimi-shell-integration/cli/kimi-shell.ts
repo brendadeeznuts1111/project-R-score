@@ -74,12 +74,12 @@ async function cmdStart(args: string[]): Promise<void> {
     all: false,
   });
 
-  console.log("🚀 Starting Kimi Shell Bridge...\n");
+  console.info("🚀 Starting Kimi Shell Bridge...\n");
 
   // Start bridge
   const bridgePid = await readPid(CONFIG.bridgePidFile);
   if (bridgePid && await isProcessRunning(bridgePid)) {
-    console.log("⚠️  Bridge already running (PID: " + bridgePid + ")");
+    console.info("⚠️  Bridge already running (PID: " + bridgePid + ")");
   } else {
     const proc = Bun.spawn(["bun", "run", CONFIG.bridgeScript], {
       detached: true,
@@ -87,7 +87,7 @@ async function cmdStart(args: string[]): Promise<void> {
       stderr: Bun.file(join(CONFIG.logDir, "bridge.error.log")),
     });
     await writePid(CONFIG.bridgePidFile, proc.pid);
-    console.log(`✅ Bridge started (PID: ${proc.pid})`);
+    console.info(`✅ Bridge started (PID: ${proc.pid})`);
   }
 
   // Start dashboard if requested
@@ -95,7 +95,7 @@ async function cmdStart(args: string[]): Promise<void> {
     await Bun.sleep(500);
     const dashboardPid = await readPid(CONFIG.dashboardPidFile);
     if (dashboardPid && await isProcessRunning(dashboardPid)) {
-      console.log("⚠️  Dashboard already running (PID: " + dashboardPid + ")");
+      console.info("⚠️  Dashboard already running (PID: " + dashboardPid + ")");
     } else {
       const proc = Bun.spawn(["bun", "run", CONFIG.dashboardScript], {
         detached: true,
@@ -103,8 +103,8 @@ async function cmdStart(args: string[]): Promise<void> {
         stderr: Bun.file(join(CONFIG.logDir, "dashboard.error.log")),
       });
       await writePid(CONFIG.dashboardPidFile, proc.pid);
-      console.log(`✅ Dashboard started (PID: ${proc.pid})`);
-      console.log(`📊 http://localhost:18790/dashboard`);
+      console.info(`✅ Dashboard started (PID: ${proc.pid})`);
+      console.info(`📊 http://localhost:18790/dashboard`);
     }
   }
 
@@ -113,7 +113,7 @@ async function cmdStart(args: string[]): Promise<void> {
     await Bun.sleep(500);
     const connectorPid = await readPid(CONFIG.connectorPidFile);
     if (connectorPid && await isProcessRunning(connectorPid)) {
-      console.log("⚠️  Connector already running (PID: " + connectorPid + ")");
+      console.info("⚠️  Connector already running (PID: " + connectorPid + ")");
     } else {
       const proc = Bun.spawn(["bun", "run", CONFIG.connectorScript], {
         detached: true,
@@ -121,17 +121,17 @@ async function cmdStart(args: string[]): Promise<void> {
         stderr: Bun.file(join(CONFIG.logDir, "connector.error.log")),
       });
       await writePid(CONFIG.connectorPidFile, proc.pid);
-      console.log(`✅ Connector started (PID: ${proc.pid})`);
+      console.info(`✅ Connector started (PID: ${proc.pid})`);
     }
   }
 
-  console.log("\n💡 Use 'kimi-shell status' to check status");
+  console.info("\n💡 Use 'kimi-shell status' to check status");
 }
 
 async function cmdStop(args: string[]): Promise<void> {
   const options = parseOptions(args, { all: false });
 
-  console.log("🛑 Stopping Kimi Shell Bridge...\n");
+  console.info("🛑 Stopping Kimi Shell Bridge...\n");
 
   const services = options.all
     ? ["bridge", "dashboard", "connector"]
@@ -151,23 +151,23 @@ async function cmdStop(args: string[]): Promise<void> {
           if (await isProcessRunning(pid)) {
             process.kill(pid, "SIGKILL");
           }
-          console.log(`✅ ${service} stopped (PID: ${pid})`);
+          console.info(`✅ ${service} stopped (PID: ${pid})`);
         } catch (e) {
-          console.log(`❌ Failed to stop ${service}: ${e}`);
+          console.info(`❌ Failed to stop ${service}: ${e}`);
         }
       } else {
-        console.log(`⚠️  ${service} not running (stale PID: ${pid})`);
+        console.info(`⚠️  ${service} not running (stale PID: ${pid})`);
       }
       await removePid(pidFile);
     } else {
-      console.log(`⚠️  ${service} not running`);
+      console.info(`⚠️  ${service} not running`);
     }
   }
 }
 
 async function cmdStatus(): Promise<void> {
-  console.log("📊 Kimi Shell Status\n");
-  console.log("====================\n");
+  console.info("📊 Kimi Shell Status\n");
+  console.info("====================\n");
 
   const services = [
     { name: "Bridge (MCP Server)", file: CONFIG.bridgePidFile, port: undefined },
@@ -175,8 +175,8 @@ async function cmdStatus(): Promise<void> {
     { name: "Zsh Connector", file: CONFIG.connectorPidFile, port: undefined },
   ];
 
-  console.log("Service              Status     PID        Port");
-  console.log("─".repeat(55));
+  console.info("Service              Status     PID        Port");
+  console.info("─".repeat(55));
 
   for (const svc of services) {
     const pid = await readPid(svc.file);
@@ -184,7 +184,7 @@ async function cmdStatus(): Promise<void> {
     const status = running ? "🟢 running" : "🔴 stopped";
     const pidStr = running ? pid?.toString() : "-";
     const portStr = svc.port?.toString() || "-";
-    console.log(`${svc.name.padEnd(20)} ${status.padEnd(10)} ${(pidStr || "-").padEnd(10)} ${portStr}`);
+    console.info(`${svc.name.padEnd(20)} ${status.padEnd(10)} ${(pidStr || "-").padEnd(10)} ${portStr}`);
   }
 
   // Try to get health from dashboard
@@ -192,10 +192,10 @@ async function cmdStatus(): Promise<void> {
     const response = await fetch("http://127.0.0.1:18790/api/health");
     if (response.ok) {
       const health = await response.json();
-      console.log("\n📈 Bridge Health:");
-      console.log(`   Status: ${health.status}`);
-      console.log(`   Commands: ${health.telemetry?.commandsExecuted || 0}`);
-      console.log(`   Errors: ${health.telemetry?.errors || 0}`);
+      console.info("\n📈 Bridge Health:");
+      console.info(`   Status: ${health.status}`);
+      console.info(`   Commands: ${health.telemetry?.commandsExecuted || 0}`);
+      console.info(`   Errors: ${health.telemetry?.errors || 0}`);
     }
   } catch {
     // Ignore
@@ -209,30 +209,30 @@ async function cmdLogs(args: string[]): Promise<void> {
   const logPath = join(CONFIG.logDir, logFile);
 
   if (!existsSync(logPath)) {
-    console.log(`❌ No logs found for ${options.service}`);
+    console.info(`❌ No logs found for ${options.service}`);
     return;
   }
 
   if (options.follow) {
-    console.log(`📋 Following ${options.service} logs (Ctrl+C to exit)...\n`);
+    console.info(`📋 Following ${options.service} logs (Ctrl+C to exit)...\n`);
     const proc = Bun.spawn(["tail", "-f", logPath]);
     await proc.exited;
   } else {
-    console.log(`📋 ${options.service} logs:\n`);
+    console.info(`📋 ${options.service} logs:\n`);
     const content = await Bun.file(logPath).text();
     const lines = content.split("\n").slice(-50);
-    console.log(lines.join("\n"));
+    console.info(lines.join("\n"));
   }
 }
 
 async function cmdInstall(): Promise<void> {
-  console.log("📦 Installing Kimi Shell Bridge...\n");
+  console.info("📦 Installing Kimi Shell Bridge...\n");
 
   try {
     const version = await $`bun --version`.text();
-    console.log(`✅ Bun ${version.trim()} detected`);
+    console.info(`✅ Bun ${version.trim()} detected`);
   } catch {
-    console.log("❌ Bun not found. Install from https://bun.sh");
+    console.info("❌ Bun not found. Install from https://bun.sh");
     return;
   }
 
@@ -245,11 +245,11 @@ async function cmdInstall(): Promise<void> {
   for (const dir of dirs) {
     if (!existsSync(dir)) {
       await $`mkdir -p ${dir}`;
-      console.log(`✅ Created ${dir}`);
+      console.info(`✅ Created ${dir}`);
     }
   }
 
-  console.log("\n✅ Installation complete!");
+  console.info("\n✅ Installation complete!");
 }
 
 function parseOptions(args: string[], defaults: Record<string, any>): Record<string, any> {
@@ -266,7 +266,7 @@ function parseOptions(args: string[], defaults: Record<string, any>): Record<str
 }
 
 function showHelp(): void {
-  console.log(`
+  console.info(`
 🚀 Kimi Shell CLI
 
 Usage: kimi-shell <command> [options]

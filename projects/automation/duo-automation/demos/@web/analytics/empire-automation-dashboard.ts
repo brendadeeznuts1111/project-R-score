@@ -36,7 +36,7 @@ class EmpireAutomationDashboard {
     const formatted = `[${timestamp}] ${message}`;
     this.stats.logs.push(formatted);
     if (this.stats.logs.length > 50) this.stats.logs.shift();
-    console.log(formatted);
+    console.info(formatted);
   }
 
   async runEmpireCLI(scale: number = 1) {
@@ -165,7 +165,7 @@ class EmpireAutomationDashboard {
   }
 
   start(port: number = 3008) {
-    console.log(`🏰 Empire Dashboard starting on port ${port}...`);
+    console.info(`🏰 Empire Dashboard starting on port ${port}...`);
     serve({
       port,
       fetch: async (req) => {

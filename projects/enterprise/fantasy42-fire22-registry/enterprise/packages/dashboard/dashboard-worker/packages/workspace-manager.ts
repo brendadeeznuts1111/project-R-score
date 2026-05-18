@@ -99,27 +99,27 @@ export class WorkspaceManager {
    * List all workspace packages
    */
   async listPackages(): Promise<void> {
-    console.log('📦 Dashboard Worker Packages');
-    console.log('='.repeat(60));
-    console.log();
+    console.info('📦 Dashboard Worker Packages');
+    console.info('='.repeat(60));
+    console.info();
 
     for (const pkg of this.packages) {
       const exists = existsSync(join(process.cwd(), pkg.path));
       const status = exists ? '✅' : '❌';
 
-      console.log(`${status} ${pkg.name} v${pkg.version}`);
-      console.log(`   📁 ${pkg.path}`);
-      console.log(`   📝 ${pkg.description}`);
+      console.info(`${status} ${pkg.name} v${pkg.version}`);
+      console.info(`   📁 ${pkg.path}`);
+      console.info(`   📝 ${pkg.description}`);
 
       if (exists) {
         const features = [];
         if (pkg.hasTests) features.push('tests');
         if (pkg.hasDist) features.push('dist');
         if (features.length > 0) {
-          console.log(`   🔧 Features: ${features.join(', ')}`);
+          console.info(`   🔧 Features: ${features.join(', ')}`);
         }
       }
-      console.log();
+      console.info();
     }
   }
 
@@ -127,22 +127,22 @@ export class WorkspaceManager {
    * Build all packages
    */
   async buildAll(): Promise<void> {
-    console.log('🏗️  Building All Packages');
-    console.log('='.repeat(60));
+    console.info('🏗️  Building All Packages');
+    console.info('='.repeat(60));
 
     for (const pkg of this.packages) {
       const pkgPath = join(process.cwd(), pkg.path);
       if (!existsSync(pkgPath)) {
-        console.log(`⏭️  Skipping ${pkg.name} (not found)`);
+        console.info(`⏭️  Skipping ${pkg.name} (not found)`);
         continue;
       }
 
-      console.log(`\n📦 Building ${pkg.name}...`);
+      console.info(`\n📦 Building ${pkg.name}...`);
       try {
         await $`bun run build`.cwd(pkgPath);
-        console.log(`   ✅ Built successfully`);
+        console.info(`   ✅ Built successfully`);
       } catch (error) {
-        console.log(`   ⚠️  Build failed or no build script`);
+        console.info(`   ⚠️  Build failed or no build script`);
       }
     }
   }
@@ -151,22 +151,22 @@ export class WorkspaceManager {
    * Test all packages
    */
   async testAll(): Promise<void> {
-    console.log('🧪 Testing All Packages');
-    console.log('='.repeat(60));
+    console.info('🧪 Testing All Packages');
+    console.info('='.repeat(60));
 
     for (const pkg of this.packages.filter(p => p.hasTests)) {
       const pkgPath = join(process.cwd(), pkg.path);
       if (!existsSync(pkgPath)) {
-        console.log(`⏭️  Skipping ${pkg.name} (not found)`);
+        console.info(`⏭️  Skipping ${pkg.name} (not found)`);
         continue;
       }
 
-      console.log(`\n🧪 Testing ${pkg.name}...`);
+      console.info(`\n🧪 Testing ${pkg.name}...`);
       try {
         await $`bun test`.cwd(pkgPath);
-        console.log(`   ✅ Tests passed`);
+        console.info(`   ✅ Tests passed`);
       } catch (error) {
-        console.log(`   ❌ Tests failed`);
+        console.info(`   ❌ Tests failed`);
       }
     }
   }
@@ -175,41 +175,41 @@ export class WorkspaceManager {
    * Link all packages
    */
   async linkAll(): Promise<void> {
-    console.log('🔗 Linking All Packages');
-    console.log('='.repeat(60));
+    console.info('🔗 Linking All Packages');
+    console.info('='.repeat(60));
 
     // First, register each package
     for (const pkg of this.packages) {
       const pkgPath = join(process.cwd(), pkg.path);
       if (!existsSync(pkgPath)) {
-        console.log(`⏭️  Skipping ${pkg.name} (not found)`);
+        console.info(`⏭️  Skipping ${pkg.name} (not found)`);
         continue;
       }
 
-      console.log(`\n📦 Registering ${pkg.name}...`);
+      console.info(`\n📦 Registering ${pkg.name}...`);
       try {
         await $`bun link`.cwd(pkgPath);
-        console.log(`   ✅ Registered`);
+        console.info(`   ✅ Registered`);
       } catch (error) {
-        console.log(`   ❌ Registration failed`);
+        console.info(`   ❌ Registration failed`);
       }
     }
 
-    console.log('\n✅ All packages linked!');
+    console.info('\n✅ All packages linked!');
   }
 
   /**
    * Update all packages to use workspace protocol
    */
   async updateWorkspaceProtocol(): Promise<void> {
-    console.log('🔄 Updating Workspace Protocol');
-    console.log('='.repeat(60));
+    console.info('🔄 Updating Workspace Protocol');
+    console.info('='.repeat(60));
 
     for (const pkg of this.packages) {
       const pkgPath = join(process.cwd(), pkg.path, 'package.json');
       if (!existsSync(pkgPath)) continue;
 
-      console.log(`\n📦 Updating ${pkg.name}...`);
+      console.info(`\n📦 Updating ${pkg.name}...`);
 
       // Read package.json
       const packageJson = await Bun.file(pkgPath).json();
@@ -219,7 +219,7 @@ export class WorkspaceManager {
         for (const dep of Object.keys(packageJson.dependencies)) {
           if (dep.startsWith('@fire22/')) {
             packageJson.dependencies[dep] = 'workspace:*';
-            console.log(`   Updated ${dep} to workspace:*`);
+            console.info(`   Updated ${dep} to workspace:*`);
           }
         }
       }
@@ -228,53 +228,53 @@ export class WorkspaceManager {
       await Bun.write(pkgPath, JSON.stringify(packageJson, null, 2) + '\n');
     }
 
-    console.log('\n✅ All packages updated!');
+    console.info('\n✅ All packages updated!');
   }
 
   /**
    * Clean all packages
    */
   async cleanAll(): Promise<void> {
-    console.log('🧹 Cleaning All Packages');
-    console.log('='.repeat(60));
+    console.info('🧹 Cleaning All Packages');
+    console.info('='.repeat(60));
 
     for (const pkg of this.packages) {
       const pkgPath = join(process.cwd(), pkg.path);
       if (!existsSync(pkgPath)) continue;
 
-      console.log(`\n🧹 Cleaning ${pkg.name}...`);
+      console.info(`\n🧹 Cleaning ${pkg.name}...`);
 
       // Remove dist directory
       const distPath = join(pkgPath, 'dist');
       if (existsSync(distPath)) {
         await $`rm -rf ${distPath}`;
-        console.log(`   ✅ Removed dist/`);
+        console.info(`   ✅ Removed dist/`);
       }
 
       // Remove node_modules
       const nodeModulesPath = join(pkgPath, 'node_modules');
       if (existsSync(nodeModulesPath)) {
         await $`rm -rf ${nodeModulesPath}`;
-        console.log(`   ✅ Removed node_modules/`);
+        console.info(`   ✅ Removed node_modules/`);
       }
     }
 
-    console.log('\n✅ All packages cleaned!');
+    console.info('\n✅ All packages cleaned!');
   }
 
   /**
    * Install dependencies for all packages
    */
   async installAll(options: { production?: boolean; frozen?: boolean } = {}): Promise<void> {
-    console.log('📦 Installing Dependencies');
-    console.log('='.repeat(60));
+    console.info('📦 Installing Dependencies');
+    console.info('='.repeat(60));
 
     const args = ['install'];
     if (options.production) args.push('--production');
     if (options.frozen) args.push('--frozen-lockfile');
 
     // Install root dependencies
-    console.log('\n📦 Installing root dependencies...');
+    console.info('\n📦 Installing root dependencies...');
     await $`bun ${args}`;
 
     // Install package dependencies
@@ -282,20 +282,20 @@ export class WorkspaceManager {
       const pkgPath = join(process.cwd(), pkg.path);
       if (!existsSync(pkgPath)) continue;
 
-      console.log(`\n📦 Installing ${pkg.name} dependencies...`);
+      console.info(`\n📦 Installing ${pkg.name} dependencies...`);
       await $`bun ${args}`.cwd(pkgPath);
     }
 
-    console.log('\n✅ All dependencies installed!');
+    console.info('\n✅ All dependencies installed!');
   }
 
   /**
    * Create a dependency graph
    */
   async createDependencyGraph(): Promise<void> {
-    console.log('📊 Dependency Graph');
-    console.log('='.repeat(60));
-    console.log();
+    console.info('📊 Dependency Graph');
+    console.info('='.repeat(60));
+    console.info();
 
     const graph: Record<string, string[]> = {};
 
@@ -320,16 +320,16 @@ export class WorkspaceManager {
 
     // Display graph
     for (const [pkg, deps] of Object.entries(graph)) {
-      console.log(`📦 ${pkg}`);
+      console.info(`📦 ${pkg}`);
       if (deps.length > 0) {
         deps.forEach((dep, i) => {
           const prefix = i === deps.length - 1 ? '└──' : '├──';
-          console.log(`   ${prefix} ${dep}`);
+          console.info(`   ${prefix} ${dep}`);
         });
       } else {
-        console.log('   └── (no internal dependencies)');
+        console.info('   └── (no internal dependencies)');
       }
-      console.log();
+      console.info();
     }
   }
 
@@ -337,19 +337,19 @@ export class WorkspaceManager {
    * Run a script in all packages
    */
   async runScript(script: string): Promise<void> {
-    console.log(`🚀 Running Script: ${script}`);
-    console.log('='.repeat(60));
+    console.info(`🚀 Running Script: ${script}`);
+    console.info('='.repeat(60));
 
     for (const pkg of this.packages) {
       const pkgPath = join(process.cwd(), pkg.path);
       if (!existsSync(pkgPath)) continue;
 
-      console.log(`\n📦 ${pkg.name}...`);
+      console.info(`\n📦 ${pkg.name}...`);
       try {
         await $`bun run ${script}`.cwd(pkgPath);
-        console.log(`   ✅ Success`);
+        console.info(`   ✅ Success`);
       } catch (error) {
-        console.log(`   ⏭️  Script not found or failed`);
+        console.info(`   ⏭️  Script not found or failed`);
       }
     }
   }
@@ -358,19 +358,19 @@ export class WorkspaceManager {
    * Version bump all packages
    */
   async versionBump(type: 'patch' | 'minor' | 'major' = 'patch'): Promise<void> {
-    console.log(`📝 Version Bump: ${type}`);
-    console.log('='.repeat(60));
+    console.info(`📝 Version Bump: ${type}`);
+    console.info('='.repeat(60));
 
     for (const pkg of this.packages) {
       const pkgPath = join(process.cwd(), pkg.path);
       if (!existsSync(pkgPath)) continue;
 
-      console.log(`\n📦 Bumping ${pkg.name}...`);
+      console.info(`\n📦 Bumping ${pkg.name}...`);
       try {
         await $`bun pm version ${type} --no-git-tag-version`.cwd(pkgPath);
-        console.log(`   ✅ Bumped to new version`);
+        console.info(`   ✅ Bumped to new version`);
       } catch (error) {
-        console.log(`   ❌ Version bump failed`);
+        console.info(`   ❌ Version bump failed`);
       }
     }
   }
@@ -428,7 +428,7 @@ if (import.meta.main) {
       break;
 
     default:
-      console.log(`
+      console.info(`
 🏗️  Fire22 Workspace Manager
 !==!==!==!==!===
 

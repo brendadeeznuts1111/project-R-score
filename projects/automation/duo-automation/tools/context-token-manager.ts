@@ -237,28 +237,28 @@ if (import.meta.main) {
 
   switch (command) {
     case 'export':
-      console.log(manager.exportForAI());
+      console.info(manager.exportForAI());
       break;
     case 'types':
-      console.log(manager.generateTypes());
+      console.info(manager.generateTypes());
       break;
     case 'map':
       const directory = process.argv[3] || '.';
-      console.log(JSON.stringify(manager.generateContextMap(directory), null, 2));
+      console.info(JSON.stringify(manager.generateContextMap(directory), null, 2));
       break;
     case 'token':
       const filePath = process.argv[3];
       if (filePath) {
         const token = manager.getTokenForPath(filePath);
-        console.log(`Token for ${filePath}: ${token}`);
+        console.info(`Token for ${filePath}: ${token}`);
         if (token) {
-          console.log(`Description: ${manager.getTokenDescription(token)}`);
-          console.log(`Related: ${manager.getRelatedTokens(token).join(', ')}`);
+          console.info(`Description: ${manager.getTokenDescription(token)}`);
+          console.info(`Related: ${manager.getRelatedTokens(token).join(', ')}`);
         }
       }
       break;
     default:
-      console.log(`
+      console.info(`
 Context Token Manager CLI
 
 Usage:

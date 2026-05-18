@@ -36,7 +36,7 @@ async function isDir(path: string): Promise<boolean> {
 
 async function runWorkspaceTests(workspace: string): Promise<TestResult> {
     const start = Date.now();
-    console.log(`🧪 Running tests for ${workspace}...`);
+    console.info(`🧪 Running tests for ${workspace}...`);
 
     try {
         const result = await $`bun --filter=${workspace} test --config ${CONFIG} --coverage`;
@@ -58,7 +58,7 @@ async function runWorkspaceTests(workspace: string): Promise<TestResult> {
 }
 
 async function main() {
-    console.log('🚀 Test Matrix Orchestrator - Odds Protocol\n');
+    console.info('🚀 Test Matrix Orchestrator - Odds Protocol\n');
 
     const results: TestResult[] = [];
     const promises = WORKSPACES.map(runWorkspaceTests);
@@ -73,13 +73,13 @@ async function main() {
     // Summary
     const passed = results.filter(r => r.status === 'pass').length;
     const total = results.length;
-    console.log('\n📊 Test Matrix Summary:');
-    console.log(`Passed: ${passed}/${total}`);
-    console.log(`Failed: ${total - passed}/${total}`);
+    console.info('\n📊 Test Matrix Summary:');
+    console.info(`Passed: ${passed}/${total}`);
+    console.info(`Failed: ${total - passed}/${total}`);
 
     // Performance
     const avgDuration = results.reduce((sum, r) => sum + r.duration, 0) / total;
-    console.log(`Average duration: ${avgDuration.toFixed(0)}ms`);
+    console.info(`Average duration: ${avgDuration.toFixed(0)}ms`);
 
     process.exit(total === passed ? 0 : 1);
 }

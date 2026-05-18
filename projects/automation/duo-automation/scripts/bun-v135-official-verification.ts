@@ -2,11 +2,11 @@
 // scripts/bun-v135-official-verification.ts
 // Official verification of Empire Pro v3.7 against Bun v1.3.5 blog post improvements
 
-console.log('🎯 Empire Pro v3.7 vs Bun v1.3.5 Official Verification\n');
+console.info('🎯 Empire Pro v3.7 vs Bun v1.3.5 Official Verification\n');
 
 // === EXACT BLOG POST EXAMPLES ===
-console.log('📝 Exact Blog Post Examples:');
-console.log('='.repeat(50));
+console.info('📝 Exact Blog Post Examples:');
+console.info('='.repeat(50));
 
 const blogExamples = [
   { 
@@ -42,14 +42,14 @@ const blogExamples = [
 blogExamples.forEach(test => {
   const status = test.actual === test.newWidth ? '✅' : '❌';
   const improvement = test.actual === test.newWidth ? 'PERFECT' : 'NEEDS FIX';
-  console.log(`${status} ${test.description}:`);
-  console.log(`   ${test.example} width: ${test.oldWidth} → ${test.actual} (${improvement})`);
-  console.log();
+  console.info(`${status} ${test.description}:`);
+  console.info(`   ${test.example} width: ${test.oldWidth} → ${test.actual} (${improvement})`);
+  console.info();
 });
 
 // === ZERO-WIDTH CHARACTER SUPPORT ===
-console.log('📏 Zero-width Character Support:');
-console.log('='.repeat(50));
+console.info('📏 Zero-width Character Support:');
+console.info('='.repeat(50));
 
 const zeroWidthTests = [
   { char: '\u00AD', name: 'Soft hyphen (U+00AD)', expected: 0 },
@@ -65,12 +65,12 @@ const zeroWidthTests = [
 zeroWidthTests.forEach(test => {
   const actual = Bun.stringWidth(test.char);
   const status = actual === test.expected ? '✅' : '❌';
-  console.log(`${status} ${test.name}: ${actual} (expected: ${test.expected})`);
+  console.info(`${status} ${test.name}: ${actual} (expected: ${test.expected})`);
 });
 
 // === ARABIC FORMATTING CHARACTERS ===
-console.log('\n🕌 Arabic Formatting Characters:');
-console.log('='.repeat(50));
+console.info('\n🕌 Arabic Formatting Characters:');
+console.info('='.repeat(50));
 
 const arabicTests = [
   { char: '\u061C', name: 'Arabic letter mark (U+061C)' },
@@ -84,12 +84,12 @@ const arabicTests = [
 
 arabicTests.forEach(test => {
   const actual = Bun.stringWidth(test.char);
-  console.log(`✅ ${test.name}: ${actual}`);
+  console.info(`✅ ${test.name}: ${actual}`);
 });
 
 // === INDIC SCRIPT COMBINING MARKS ===
-console.log('\n🕉️ Indic Script Combining Marks:');
-console.log('='.repeat(50));
+console.info('\n🕉️ Indic Script Combining Marks:');
+console.info('='.repeat(50));
 
 const indicTests = [
   // Devanagari
@@ -107,12 +107,12 @@ const indicTests = [
 
 indicTests.forEach(test => {
   const actual = Bun.stringWidth(test.char);
-  console.log(`✅ ${test.name}: ${actual}`);
+  console.info(`✅ ${test.name}: ${actual}`);
 });
 
 // === THAI AND LAO COMBINING MARKS ===
-console.log('\n🐘 Thai and Lao Combining Marks:');
-console.log('='.repeat(50));
+console.info('\n🐘 Thai and Lao Combining Marks:');
+console.info('='.repeat(50));
 
 const thaiLaoTests = [
   // Thai
@@ -130,12 +130,12 @@ const thaiLaoTests = [
 
 thaiLaoTests.forEach(test => {
   const actual = Bun.stringWidth(test.char);
-  console.log(`✅ ${test.name}: ${actual}`);
+  console.info(`✅ ${test.name}: ${actual}`);
 });
 
 // === ANSI ESCAPE SEQUENCE HANDLING ===
-console.log('\n🎨 ANSI Escape Sequence Handling:');
-console.log('='.repeat(50));
+console.info('\n🎨 ANSI Escape Sequence Handling:');
+console.info('='.repeat(50));
 
 const ansiTests = [
   // CSI sequences (0x40-0x7E final bytes)
@@ -164,12 +164,12 @@ ansiTests.forEach(test => {
   const stripped = test.text.replace(/\x1b\[[0-9;]*[a-zA-Z]|\x1b\][0-9];.*?\x07|\x1b\].*?\x1b\\/g, '');
   const expected = Bun.stringWidth(stripped);
   const status = actual === expected ? '✅' : '❌';
-  console.log(`${status} ${test.name}: ${actual} (visible: ${expected})`);
+  console.info(`${status} ${test.name}: ${actual} (visible: ${expected})`);
 });
 
 // === GRAPHEME-AWARE EMOJI WIDTH ===
-console.log('\n😀 Grapheme-aware Emoji Width:');
-console.log('='.repeat(50));
+console.info('\n😀 Grapheme-aware Emoji Width:');
+console.info('='.repeat(50));
 
 const emojiTests = [
   { emoji: '🇺🇸', name: 'Flag emoji', expected: 2 },
@@ -185,8 +185,8 @@ const emojiTests = [
 emojiTests.forEach(test => {
   const actual = Bun.stringWidth(test.emoji);
   const status = actual === test.expected ? '✅' : '❌';
-  console.log(`${status} ${test.name}: ${actual} (expected: ${test.expected})`);
+  console.info(`${status} ${test.name}: ${actual} (expected: ${test.expected})`);
 });
 
-console.log('\n🎉 Empire Pro v3.7 - 100% Bun v1.3.5 Compliance Verified!');
-console.log('🚀 All official blog post improvements working perfectly!');
+console.info('\n🎉 Empire Pro v3.7 - 100% Bun v1.3.5 Compliance Verified!');
+console.info('🚀 All official blog post improvements working perfectly!');

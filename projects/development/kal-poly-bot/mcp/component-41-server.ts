@@ -80,7 +80,7 @@ class MCPEngine {
       const match = pathname.match(pattern);
       if (match) {
         // Audit log all MCP access (Component #11)
-        console.log(`[MCP-41] Access: ${name} -> ${pathname}`);
+        console.info(`[MCP-41] Access: ${name} -> ${pathname}`);
 
         // Extract groups from regex match
         const groups: Record<string, string> = {};
@@ -414,14 +414,14 @@ if (import.meta.main) {
     },
   });
 
-  console.log(`🚀 Component #41 MCP Server running on http://${HOST}:${PORT}`);
-  console.log(
+  console.info(`🚀 Component #41 MCP Server running on http://${HOST}:${PORT}`);
+  console.info(
     `📊 Matrix Status: http://${HOST}:${PORT}/mcp/infrastructure/status`
   );
-  console.log(
+  console.info(
     `🔍 Component Health: http://${HOST}:${PORT}/mcp/infrastructure/component/41`
   );
-  console.log(`⚡ Zero-Cost MCP Engine Ready!`);
+  console.info(`⚡ Zero-Cost MCP Engine Ready!`);
 }
 
 // Export MCPEngine for testing

@@ -165,14 +165,14 @@ export class Tier1380SecureScannerCLI {
       { hard: true, trim: false }
     )
 
-    console.log(wrapped)
+    console.info(wrapped)
   }
 
   /**
    * Display summary with security information
    */
   displaySummary(): void {
-    console.log({
+    console.info({
       projectId: this.config.projectId,
       sessionId: `${this.config.sessionId.slice(0, 8)}...`,
       bundle: `${this.data.compressedSize}B`,
@@ -302,7 +302,7 @@ export class Tier1380SecureScannerCLI {
    * Setup secure storage for first time
    */
   async setupSecureStorage(): Promise<void> {
-    console.log("🔐 Setting up secure storage for Tier-1380 Scanner...");
+    console.info("🔐 Setting up secure storage for Tier-1380 Scanner...");
 
     // Check if R2 credentials exist in environment
     const r2AccessKeyId = process.env.R2_ACCESS_KEY_ID
@@ -310,23 +310,23 @@ export class Tier1380SecureScannerCLI {
 
     if (r2AccessKeyId && r2SecretAccessKey) {
       await Tier1380SecretsManager.storeR2Credentials(r2AccessKeyId, r2SecretAccessKey)
-      console.log("✅ R2 credentials migrated to secure storage")
+      console.info("✅ R2 credentials migrated to secure storage")
     } else {
-      console.log("⚠️ R2 credentials not found in environment variables")
-      console.log("   Set R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY to migrate")
+      console.info("⚠️ R2 credentials not found in environment variables")
+      console.info("   Set R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY to migrate")
     }
 
     // Check database URL
     const databaseUrl = process.env.DATABASE_URL
     if (databaseUrl) {
       await Tier1380SecretsManager.storeDatabaseUrl(databaseUrl)
-      console.log("✅ Database URL migrated to secure storage")
+      console.info("✅ Database URL migrated to secure storage")
     }
 
     // Health check
     const health = await Tier1380SecretsManager.healthCheck()
-    console.log(`🏥 Secrets health: ${health.status}`)
-    console.log(`   Message: ${health.message}`)
+    console.info(`🏥 Secrets health: ${health.status}`)
+    console.info(`   Message: ${health.message}`)
   }
 
   /**
@@ -383,11 +383,11 @@ if (import.meta.path === Bun.main) {
     if (process.env.SCANNER_EXPORT_R2 === 'true') {
       try {
         const r2Data = scanner.exportForR2()
-        console.log('\n📦 R2 Export Data:')
-        console.log(`   Key: ${r2Data.key}`)
-        console.log(`   Size: ${r2Data.data.length}B`)
-        console.log(`   Metadata: ${Object.keys(r2Data.metadata).length} fields`)
-        console.log(`   Security Level: ${r2Data.metadata['security-level']}`)
+        console.info('\n📦 R2 Export Data:')
+        console.info(`   Key: ${r2Data.key}`)
+        console.info(`   Size: ${r2Data.data.length}B`)
+        console.info(`   Metadata: ${Object.keys(r2Data.metadata).length} fields`)
+        console.info(`   Security Level: ${r2Data.metadata['security-level']}`)
       } catch (error) {
         console.error('❌ R2 export failed:', error.message)
       }

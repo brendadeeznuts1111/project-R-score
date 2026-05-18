@@ -90,7 +90,7 @@ async function main(): Promise<void> {
     interrupted: shutdown.requested,
   };
 
-  console.log(JSON.stringify(payload, null, 2));
+  console.info(JSON.stringify(payload, null, 2));
   process.exit(exitCode ?? 1);
 }
 

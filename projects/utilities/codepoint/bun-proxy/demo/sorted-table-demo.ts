@@ -20,56 +20,56 @@ const sortedTable: TableData = {
 };
 
 // Display with sorting and filtering
-console.log("=== Sorted and Filtered Table Demo ===\n");
+console.info("=== Sorted and Filtered Table Demo ===\n");
 
 // Original table
-console.log("📊 Original Table:");
-console.log(inspect.table(sortedTable));
+console.info("📊 Original Table:");
+console.info(inspect.table(sortedTable));
 
-console.log("\n" + "==================================================\n");
+console.info("\n" + "==================================================\n");
 
 // Sorted by connections (descending)
-console.log("📈 Sorted by Connections (Descending):");
-console.log(inspect.table(sortedTable, {
+console.info("📈 Sorted by Connections (Descending):");
+console.info(inspect.table(sortedTable, {
   sortBy: "connections",
   sortOrder: "desc"
 }));
 
-console.log("\n" + "==================================================\n");
+console.info("\n" + "==================================================\n");
 
 // Filtered to exclude inactive services
-console.log("🔍 Filtered (excluding inactive):");
-console.log(inspect.table(sortedTable, {
+console.info("🔍 Filtered (excluding inactive):");
+console.info(inspect.table(sortedTable, {
   filter: (row) => row.status !== "inactive"
 }));
 
-console.log("\n" + "==================================================\n");
+console.info("\n" + "==================================================\n");
 
 // Combined: Sorted and Filtered
-console.log("🎯 Sorted by Connections (Descending) + Filtered:");
-console.log(inspect.table(sortedTable, {
+console.info("🎯 Sorted by Connections (Descending) + Filtered:");
+console.info(inspect.table(sortedTable, {
   sortBy: "connections",
   sortOrder: "desc",
   filter: (row) => row.status !== "inactive"
 }));
 
-console.log("\n" + "==================================================\n");
+console.info("\n" + "==================================================\n");
 
 // Additional demos
-console.log("🔄 Sorted by Latency (Ascending):");
-console.log(inspect.table(sortedTable, {
+console.info("🔄 Sorted by Latency (Ascending):");
+console.info(inspect.table(sortedTable, {
   sortBy: "latency",
   sortOrder: "asc"
 }));
 
-console.log("\n" + "==================================================\n");
+console.info("\n" + "==================================================\n");
 
-console.log("📝 String Filter (contains 'S'):");
-console.log(inspect.table(sortedTable, {
+console.info("📝 String Filter (contains 'S'):");
+console.info(inspect.table(sortedTable, {
   filter: "S"
 }));
 
-console.log("\n" + "==================================================\n");
+console.info("\n" + "==================================================\n");
 
 // Demo with more complex data
 const complexTable: TableData = {
@@ -89,17 +89,17 @@ const complexTable: TableData = {
   ]
 };
 
-console.log("🔧 Complex Table - Sorted by CPU Usage:");
-console.log(inspect.table(complexTable, {
+console.info("🔧 Complex Table - Sorted by CPU Usage:");
+console.info(inspect.table(complexTable, {
   sortBy: "cpu",
   sortOrder: "desc",
   showBorder: true,
   zebra: true
 }));
 
-console.log("\n✅ Demo Complete! The inspect.table() function supports:");
-console.log("• Sorting by any column (ascending/descending)");
-console.log("• Function-based filtering for complex conditions");
-console.log("• String-based filtering for simple text search");
-console.log("• Combined sorting and filtering");
-console.log("• Custom styling options (borders, zebra striping)");
+console.info("\n✅ Demo Complete! The inspect.table() function supports:");
+console.info("• Sorting by any column (ascending/descending)");
+console.info("• Function-based filtering for complex conditions");
+console.info("• String-based filtering for simple text search");
+console.info("• Combined sorting and filtering");
+console.info("• Custom styling options (borders, zebra striping)");

@@ -16,8 +16,8 @@ class IntegratedCheatsheetSystem {
     // Load additional modules
     await this.loadModules();
     
-    console.log('🚀 Integrated Cheatsheet System Ready!');
-    console.log('💡 Type "help" to see all available commands\n');
+    console.info('🚀 Integrated Cheatsheet System Ready!');
+    console.info('💡 Type "help" to see all available commands\n');
     
     this.startInteractiveMode();
   }
@@ -33,7 +33,7 @@ class IntegratedCheatsheetSystem {
 ║                                                               ║
 ╚═══════════════════════════════════════════════════════════════╝
     `;
-    console.log(banner);
+    console.info(banner);
   }
 
   async loadModules() {
@@ -49,10 +49,10 @@ class IntegratedCheatsheetSystem {
         if (existsSync(join(process.cwd(), module.path))) {
           const mod = await import(module.path);
           this.modules[module.name.toLowerCase().replace(/\s+/g, '-')] = mod;
-          console.log(`✅ ${module.name} loaded`);
+          console.info(`✅ ${module.name} loaded`);
         }
       } catch (error) {
-        console.log(`⚠️  ${module.name} failed to load: ${error.message}`);
+        console.info(`⚠️  ${module.name} failed to load: ${error.message}`);
       }
     }
   }
@@ -124,8 +124,8 @@ class IntegratedCheatsheetSystem {
           if (['tip', 'list'].includes(command)) {
             await this.handleCoreCommand(command, args);
           } else {
-            console.log(`❌ Unknown command: ${command}`);
-            console.log('💡 Type "help" for available commands');
+            console.info(`❌ Unknown command: ${command}`);
+            console.info('💡 Type "help" for available commands');
           }
           break;
       }
@@ -133,7 +133,7 @@ class IntegratedCheatsheetSystem {
 
     rl.on('line', handleCommand);
     rl.on('close', () => {
-      console.log('\n👋 Goodbye! Happy coding with Bun!');
+      console.info('\n👋 Goodbye! Happy coding with Bun!');
       process.exit(0);
     });
 
@@ -141,8 +141,8 @@ class IntegratedCheatsheetSystem {
   }
 
   showHelp() {
-    console.log('\n📚 Integrated Cheatsheet Commands:');
-    console.log('='.repeat(50));
+    console.info('\n📚 Integrated Cheatsheet Commands:');
+    console.info('='.repeat(50));
     
     const commands = [
       { cmd: 'help', desc: 'Show this help message' },
@@ -161,48 +161,48 @@ class IntegratedCheatsheetSystem {
     ];
     
     commands.forEach(item => {
-      console.log(`  ${item.cmd.padEnd(25)} ${item.desc}`);
+      console.info(`  ${item.cmd.padEnd(25)} ${item.desc}`);
     });
     
-    console.log('\n🤖 AI Commands:');
-    console.log('  ai generate <prompt>    - Generate code');
-    console.log('  ai review <code>       - Review code');
-    console.log('  ai docs <code>         - Generate docs');
+    console.info('\n🤖 AI Commands:');
+    console.info('  ai generate <prompt>    - Generate code');
+    console.info('  ai review <code>       - Review code');
+    console.info('  ai docs <code>         - Generate docs');
     
-    console.log('\n📡 RSS Commands:');
-    console.log('  rss parse <url>         - Parse RSS feed');
-    console.log('  rss search <query>     - Search feed items');
+    console.info('\n📡 RSS Commands:');
+    console.info('  rss parse <url>         - Parse RSS feed');
+    console.info('  rss search <query>     - Search feed items');
     
-    console.log('\n🐙 GitHub Commands:');
-    console.log('  github repo <owner/repo> - Get repository info');
-    console.log('  github commits <repo>   - Show commit history');
+    console.info('\n🐙 GitHub Commands:');
+    console.info('  github repo <owner/repo> - Get repository info');
+    console.info('  github commits <repo>   - Show commit history');
     
-    console.log('\n🔧 Workflow Commands:');
-    console.log('  workflow testing        - Testing workflow demo');
-    console.log('  workflow deployment     - Deployment workflow demo');
-    console.log('  workflow pre-commit     - Pre-commit workflow demo');
+    console.info('\n🔧 Workflow Commands:');
+    console.info('  workflow testing        - Testing workflow demo');
+    console.info('  workflow deployment     - Deployment workflow demo');
+    console.info('  workflow pre-commit     - Pre-commit workflow demo');
   }
 
   async handleSearch(query) {
     if (!query) {
-      console.log('Usage: search <query>');
+      console.info('Usage: search <query>');
       return;
     }
     
-    console.log(`🔍 Searching for: "${query}"`);
+    console.info(`🔍 Searching for: "${query}"`);
     const results = this.core.search(query);
     this.core.displayResults(results);
     
     // Also search in loaded modules
-    console.log('\n🔍 Searching in integrated modules...');
+    console.info('\n🔍 Searching in integrated modules...');
     for (const [moduleName, module] of Object.entries(this.modules)) {
       if (module.search && typeof module.search === 'function') {
         try {
           const moduleResults = await module.search(query);
           if (moduleResults && moduleResults.length > 0) {
-            console.log(`\n📦 Found in ${moduleName}:`);
+            console.info(`\n📦 Found in ${moduleName}:`);
             moduleResults.slice(0, 3).forEach(result => {
-              console.log(`   • ${result}`);
+              console.info(`   • ${result}`);
             });
           }
         } catch (error) {
@@ -216,35 +216,35 @@ class IntegratedCheatsheetSystem {
     const subcommand = args[0];
     
     if (!subcommand) {
-      console.log('AI Commands: generate, review, docs, optimize');
+      console.info('AI Commands: generate, review, docs, optimize');
       return;
     }
     
     const aiModule = this.modules['ai-playground'];
     if (!aiModule) {
-      console.log('❌ AI Playground module not loaded');
+      console.info('❌ AI Playground module not loaded');
       return;
     }
     
     switch (subcommand) {
       case 'generate':
         const prompt = args.slice(1).join(' ') || 'create a simple HTTP server';
-        console.log(`🤖 Generating code for: "${prompt}"`);
+        console.info(`🤖 Generating code for: "${prompt}"`);
         await aiModule.demoAIPlayground();
         break;
         
       case 'review':
-        console.log('🔍 AI Code Review Demo:');
+        console.info('🔍 AI Code Review Demo:');
         await aiModule.demoAIPlayground();
         break;
         
       case 'docs':
-        console.log('📚 AI Documentation Demo:');
+        console.info('📚 AI Documentation Demo:');
         await aiModule.demoAIPlayground();
         break;
         
       default:
-        console.log('🤖 Running AI Playground Demo:');
+        console.info('🤖 Running AI Playground Demo:');
         await aiModule.demoAIPlayground();
         break;
     }
@@ -254,17 +254,17 @@ class IntegratedCheatsheetSystem {
     const subcommand = args[0];
     
     if (!subcommand) {
-      console.log('RSS Commands: parse, search, analyze');
+      console.info('RSS Commands: parse, search, analyze');
       return;
     }
     
     const rssModule = this.modules['rss-reader'];
     if (!rssModule) {
-      console.log('❌ RSS Reader module not loaded');
+      console.info('❌ RSS Reader module not loaded');
       return;
     }
     
-    console.log('📡 Running RSS Reader Demo:');
+    console.info('📡 Running RSS Reader Demo:');
     await rssModule.demoRSSReader();
   }
 
@@ -272,17 +272,17 @@ class IntegratedCheatsheetSystem {
     const subcommand = args[0];
     
     if (!subcommand) {
-      console.log('GitHub Commands: repo, commits, issues, releases');
+      console.info('GitHub Commands: repo, commits, issues, releases');
       return;
     }
     
     const githubModule = this.modules['github-explorer'];
     if (!githubModule) {
-      console.log('❌ GitHub Explorer module not loaded');
+      console.info('❌ GitHub Explorer module not loaded');
       return;
     }
     
-    console.log('🐙 Running GitHub Explorer Demo:');
+    console.info('🐙 Running GitHub Explorer Demo:');
     await githubModule.demoGitHubExplorer();
   }
 
@@ -290,7 +290,7 @@ class IntegratedCheatsheetSystem {
     const workflowType = args[0];
     
     if (!workflowType) {
-      console.log('Available workflows: testing, deployment, pre-commit');
+      console.info('Available workflows: testing, deployment, pre-commit');
       return;
     }
     
@@ -298,30 +298,30 @@ class IntegratedCheatsheetSystem {
       const workflowPath = `../examples/workflows/${workflowType}.js`;
       if (existsSync(join(process.cwd(), workflowPath))) {
         const workflow = await import(workflowPath);
-        console.log(`🔧 Running ${workflowType} workflow demo:`);
+        console.info(`🔧 Running ${workflowType} workflow demo:`);
         await workflow[`demo${workflowType.charAt(0).toUpperCase() + workflowType.slice(1)}Workflow`]();
       } else {
-        console.log(`❌ Workflow not found: ${workflowType}`);
+        console.info(`❌ Workflow not found: ${workflowType}`);
       }
     } catch (error) {
-      console.log(`❌ Workflow error: ${error.message}`);
+      console.info(`❌ Workflow error: ${error.message}`);
     }
   }
 
   showModules() {
-    console.log('\n📦 Loaded Modules:');
-    console.log('='.repeat(30));
+    console.info('\n📦 Loaded Modules:');
+    console.info('='.repeat(30));
     
     Object.keys(this.modules).forEach(name => {
-      console.log(`  • ${name}`);
+      console.info(`  • ${name}`);
     });
     
-    console.log(`\n📊 Total modules: ${Object.keys(this.modules).length}`);
+    console.info(`\n📊 Total modules: ${Object.keys(this.modules).length}`);
   }
 
   async runDemo(type) {
     if (!type) {
-      console.log('Available demos: ai, rss, github, testing, deployment, pre-commit');
+      console.info('Available demos: ai, rss, github, testing, deployment, pre-commit');
       return;
     }
     
@@ -342,8 +342,8 @@ class IntegratedCheatsheetSystem {
   }
 
   showStats() {
-    console.log('\n📊 System Statistics:');
-    console.log('='.repeat(30));
+    console.info('\n📊 System Statistics:');
+    console.info('='.repeat(30));
     
     const stats = {
       cheatsheets: Object.keys(this.core.cheatsheets).length,
@@ -352,17 +352,17 @@ class IntegratedCheatsheetSystem {
       examples: this.getTotalExamples()
     };
     
-    console.log(`📚 Cheatsheets: ${stats.cheatsheets}`);
-    console.log(`📦 Modules: ${stats.modules}`);
-    console.log(`⚡ Commands: ${stats.commands}`);
-    console.log(`📝 Examples: ${stats.examples}`);
+    console.info(`📚 Cheatsheets: ${stats.cheatsheets}`);
+    console.info(`📦 Modules: ${stats.modules}`);
+    console.info(`⚡ Commands: ${stats.commands}`);
+    console.info(`📝 Examples: ${stats.examples}`);
     
     // Memory usage
     const memUsage = process.memoryUsage();
-    console.log(`💾 Memory: ${(memUsage.heapUsed / 1024 / 1024).toFixed(1)}MB`);
+    console.info(`💾 Memory: ${(memUsage.heapUsed / 1024 / 1024).toFixed(1)}MB`);
     
     // Bun version
-    console.log(`🔧 Bun version: ${Bun.version}`);
+    console.info(`🔧 Bun version: ${Bun.version}`);
   }
 
   getTotalCommands() {
@@ -393,14 +393,14 @@ class IntegratedCheatsheetSystem {
     switch (command) {
       case 'tip':
         const tip = this.core.getRandomTip();
-        console.log('💡 Cheatsheet Tip:');
-        console.log(tip.type === 'command' ? `$ ${tip.content}` : tip.content);
+        console.info('💡 Cheatsheet Tip:');
+        console.info(tip.type === 'command' ? `$ ${tip.content}` : tip.content);
         break;
         
       case 'list':
-        console.log('📚 Available Cheatsheets:');
+        console.info('📚 Available Cheatsheets:');
         Object.keys(this.core.cheatsheets).forEach(cat => {
-          console.log(`  • ${cat}`);
+          console.info(`  • ${cat}`);
         });
         break;
     }

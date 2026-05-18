@@ -688,6 +688,6 @@ describe('Performance Benchmarks', () => {
     expect(metrics.smallUpload).toBeLessThan(50); // Under 50ms
     expect(metrics.presignedUrl).toBeLessThan(10); // Under 10ms
 
-    console.log('Performance Metrics:', metrics);
+    console.info('Performance Metrics:', metrics);
   });
 });

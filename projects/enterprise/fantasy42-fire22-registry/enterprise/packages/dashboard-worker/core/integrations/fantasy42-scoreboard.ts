@@ -101,7 +101,7 @@ export class Fantasy42Scoreboard {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('📊 Initializing Fantasy42 Scoreboard Integration...');
+      console.info('📊 Initializing Fantasy42 Scoreboard Integration...');
 
       // Locate scoreboard elements
       const elementsFound = await this.locateScoreboardElements();
@@ -128,7 +128,7 @@ export class Fantasy42Scoreboard {
       await this.loadInitialGames();
 
       this.isActive = true;
-      console.log('✅ Fantasy42 Scoreboard Integration initialized');
+      console.info('✅ Fantasy42 Scoreboard Integration initialized');
 
       return true;
     } catch (error) {
@@ -152,7 +152,7 @@ export class Fantasy42Scoreboard {
     for (const element of elements) {
       const found = this.xpathHandler.findElementByXPath(element.xpath);
       if (found) {
-        console.log(`✅ Found ${element.name} element:`, found.tagName);
+        console.info(`✅ Found ${element.name} element:`, found.tagName);
       } else {
         console.warn(`⚠️ ${element.name} element not found at: ${element.xpath}`);
         allFound = false;
@@ -182,7 +182,7 @@ export class Fantasy42Scoreboard {
       scoreboard.addEventListener('change', e => this.handleFilterChange(e));
     }
 
-    console.log('✅ Scoreboard event listeners setup');
+    console.info('✅ Scoreboard event listeners setup');
   }
 
   /**
@@ -195,7 +195,7 @@ export class Fantasy42Scoreboard {
     // Setup game status monitoring
     this.setupGameStatusMonitoring();
 
-    console.log('✅ Live game tracking initialized');
+    console.info('✅ Live game tracking initialized');
   }
 
   /**
@@ -215,7 +215,7 @@ export class Fantasy42Scoreboard {
       }
     }, this.config.refreshInterval);
 
-    console.log(`✅ Live updates started (${this.config.refreshInterval}ms interval)`);
+    console.info(`✅ Live updates started (${this.config.refreshInterval}ms interval)`);
   }
 
   /**
@@ -251,7 +251,7 @@ export class Fantasy42Scoreboard {
       await this.addBettingIntegration(scoreboard);
     }
 
-    console.log('✅ Scoreboard enhancements applied');
+    console.info('✅ Scoreboard enhancements applied');
   }
 
   /**
@@ -471,7 +471,7 @@ export class Fantasy42Scoreboard {
     // Add filter event listeners
     this.setupFilterListeners();
 
-    console.log('✅ Game filters added');
+    console.info('✅ Game filters added');
   }
 
   /**
@@ -512,7 +512,7 @@ export class Fantasy42Scoreboard {
       panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
     });
 
-    console.log('✅ Notification controls added');
+    console.info('✅ Notification controls added');
   }
 
   /**
@@ -537,7 +537,7 @@ export class Fantasy42Scoreboard {
       ?.addEventListener('click', () => this.exportGames('json'));
     document.getElementById('export-pdf')?.addEventListener('click', () => this.exportGames('pdf'));
 
-    console.log('✅ Export controls added');
+    console.info('✅ Export controls added');
   }
 
   /**
@@ -559,7 +559,7 @@ export class Fantasy42Scoreboard {
     document.getElementById('quick-bet')?.addEventListener('click', () => this.handleQuickBet());
     document.getElementById('view-odds')?.addEventListener('click', () => this.toggleOddsDisplay());
 
-    console.log('✅ Betting integration added');
+    console.info('✅ Betting integration added');
   }
 
   /**
@@ -592,7 +592,7 @@ export class Fantasy42Scoreboard {
    * Handle scoreboard close
    */
   private async handleScoreboardClose(): Promise<void> {
-    console.log('📊 Scoreboard closed');
+    console.info('📊 Scoreboard closed');
 
     // Stop live updates
     this.stopLiveUpdates();
@@ -795,7 +795,7 @@ export class Fantasy42Scoreboard {
     const game = this.liveGames.get(gameId);
     if (!game) return;
 
-    console.log(`🎯 Selected game: ${game.homeTeam} vs ${game.awayTeam}`);
+    console.info(`🎯 Selected game: ${game.homeTeam} vs ${game.awayTeam}`);
 
     // Show detailed game view or trigger betting interface
     await this.showGameDetails(game);
@@ -806,7 +806,7 @@ export class Fantasy42Scoreboard {
    */
   private async showGameDetails(game: LiveGame): Promise<void> {
     // Implementation for showing detailed game view
-    console.log('📊 Showing game details:', game);
+    console.info('📊 Showing game details:', game);
   }
 
   /**
@@ -883,7 +883,7 @@ export class Fantasy42Scoreboard {
    */
   private async exportToPDF(games: LiveGame[]): Promise<void> {
     // Implementation for PDF export
-    console.log('📄 PDF export not yet implemented');
+    console.info('📄 PDF export not yet implemented');
   }
 
   /**
@@ -938,7 +938,7 @@ export class Fantasy42Scoreboard {
    */
   private async handleQuickBet(): Promise<void> {
     // Implementation for quick bet functionality
-    console.log('⚡ Quick bet functionality');
+    console.info('⚡ Quick bet functionality');
   }
 
   /**
@@ -1009,7 +1009,7 @@ export class Fantasy42Scoreboard {
       element.classList.remove('fantasy42-scoreboard-enhanced');
     });
 
-    console.log('🧹 Fantasy42 Scoreboard Integration cleaned up');
+    console.info('🧹 Fantasy42 Scoreboard Integration cleaned up');
   }
 }
 

@@ -52,8 +52,8 @@ export class CIBenchmarks {
    * Run all CI benchmarks
    */
   async runCIBenchmarks(): Promise<boolean> {
-    console.log('🤖 Fire22 CI Benchmarking');
-    console.log('='.repeat(50));
+    console.info('🤖 Fire22 CI Benchmarking');
+    console.info('='.repeat(50));
 
     const startTime = Date.now();
     let allPassed = true;
@@ -61,16 +61,16 @@ export class CIBenchmarks {
     try {
       // Get git info
       const gitInfo = await this.getGitInfo();
-      console.log(`📍 Branch: ${gitInfo.branch}`);
-      console.log(`📍 Commit: ${gitInfo.commit}`);
-      console.log(`📍 Author: ${gitInfo.author}`);
-      console.log('');
+      console.info(`📍 Branch: ${gitInfo.branch}`);
+      console.info(`📍 Commit: ${gitInfo.commit}`);
+      console.info(`📍 Author: ${gitInfo.author}`);
+      console.info('');
 
       // Load baseline
       const baseline = await this.loadBaseline();
 
       // Run benchmarks
-      console.log('🚀 Running benchmarks...\n');
+      console.info('🚀 Running benchmarks...\n');
 
       // 1. Core benchmarks
       const coreResults = await this.runCoreBenchmarks();
@@ -94,7 +94,7 @@ export class CIBenchmarks {
 
       // Compare with baseline
       if (baseline) {
-        console.log('\n📊 Comparing with baseline...');
+        console.info('\n📊 Comparing with baseline...');
         const regression = this.compareWithBaseline(allResults, baseline);
 
         if (!regression.passed) {
@@ -102,16 +102,16 @@ export class CIBenchmarks {
           this.printRegressionReport(regression);
           allPassed = false;
         } else {
-          console.log('\n✅ No regressions detected!');
+          console.info('\n✅ No regressions detected!');
           if (regression.improvements.length > 0) {
-            console.log('\n🎉 Performance improvements:');
+            console.info('\n🎉 Performance improvements:');
             regression.improvements.forEach(imp => {
-              console.log(`   ${imp.name}: ${imp.percentChange.toFixed(1)}% faster`);
+              console.info(`   ${imp.name}: ${imp.percentChange.toFixed(1)}% faster`);
             });
           }
         }
       } else {
-        console.log('\n📝 No baseline found, creating new baseline...');
+        console.info('\n📝 No baseline found, creating new baseline...');
         await this.saveBaseline(allResults, gitInfo);
       }
 
@@ -121,11 +121,11 @@ export class CIBenchmarks {
       // Update baseline if on main branch
       if (gitInfo.branch === 'main' && allPassed) {
         await this.saveBaseline(allResults, gitInfo);
-        console.log('\n✅ Baseline updated');
+        console.info('\n✅ Baseline updated');
       }
 
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-      console.log(`\n⏱️  Total time: ${duration}s`);
+      console.info(`\n⏱️  Total time: ${duration}s`);
 
       return allPassed;
     } catch (error) {
@@ -153,8 +153,8 @@ export class CIBenchmarks {
    * Run core performance benchmarks
    */
   private async runCoreBenchmarks(): Promise<Record<string, number>> {
-    console.log('📈 Core Benchmarks');
-    console.log('-'.repeat(30));
+    console.info('📈 Core Benchmarks');
+    console.info('-'.repeat(30));
 
     const results: Record<string, number> = {};
 
@@ -207,8 +207,8 @@ export class CIBenchmarks {
    * Run memory benchmarks
    */
   private async runMemoryBenchmarks(): Promise<Record<string, number>> {
-    console.log('\n🧠 Memory Benchmarks');
-    console.log('-'.repeat(30));
+    console.info('\n🧠 Memory Benchmarks');
+    console.info('-'.repeat(30));
 
     const results: Record<string, number> = {};
     const profiler = new MemoryProfiler('CI Memory Test');
@@ -227,9 +227,9 @@ export class CIBenchmarks {
       memory.finalMemory.objectCount - memory.initialMemory.objectCount;
     results['memory.gc_runs'] = memory.gcRuns;
 
-    console.log(`   Heap Growth: ${(results['memory.heap_growth'] / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`   Object Growth: ${results['memory.object_growth']} objects`);
-    console.log(`   GC Runs: ${results['memory.gc_runs']}`);
+    console.info(`   Heap Growth: ${(results['memory.heap_growth'] / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`   Object Growth: ${results['memory.object_growth']} objects`);
+    console.info(`   GC Runs: ${results['memory.gc_runs']}`);
 
     return results;
   }
@@ -238,8 +238,8 @@ export class CIBenchmarks {
    * Run API benchmarks
    */
   private async runAPIBenchmarks(): Promise<Record<string, number>> {
-    console.log('\n🌐 API Benchmarks');
-    console.log('-'.repeat(30));
+    console.info('\n🌐 API Benchmarks');
+    console.info('-'.repeat(30));
 
     const results: Record<string, number> = {};
 
@@ -277,7 +277,7 @@ export class CIBenchmarks {
     }
 
     results['api.throughput'] = requestCount / (duration / 1000);
-    console.log(`   Throughput: ${results['api.throughput'].toFixed(0)} req/s`);
+    console.info(`   Throughput: ${results['api.throughput'].toFixed(0)} req/s`);
 
     server.stop();
 
@@ -288,8 +288,8 @@ export class CIBenchmarks {
    * Run build benchmarks
    */
   private async runBuildBenchmarks(): Promise<Record<string, number>> {
-    console.log('\n🏗️  Build Benchmarks');
-    console.log('-'.repeat(30));
+    console.info('\n🏗️  Build Benchmarks');
+    console.info('-'.repeat(30));
 
     const results: Record<string, number> = {};
 
@@ -297,12 +297,12 @@ export class CIBenchmarks {
     const tsStart = Date.now();
     await $`bun build ./src/index.ts --target=bun --outdir=./dist-test`.quiet();
     results['build.typescript'] = Date.now() - tsStart;
-    console.log(`   TypeScript Build: ${results['build.typescript']}ms`);
+    console.info(`   TypeScript Build: ${results['build.typescript']}ms`);
 
     // Bundle size
     const bundleInfo = await $`du -sk ./dist-test`.text();
     results['build.bundle_size'] = parseInt(bundleInfo.split('\t')[0]) * 1024; // Convert to bytes
-    console.log(`   Bundle Size: ${(results['build.bundle_size'] / 1024).toFixed(2)} KB`);
+    console.info(`   Bundle Size: ${(results['build.bundle_size'] / 1024).toFixed(2)} KB`);
 
     // Cleanup
     await $`rm -rf ./dist-test`.quiet();
@@ -311,7 +311,7 @@ export class CIBenchmarks {
     const installStart = Date.now();
     await $`bun install --frozen-lockfile`.quiet();
     results['build.install'] = Date.now() - installStart;
-    console.log(`   Dependency Install: ${results['build.install']}ms`);
+    console.info(`   Dependency Install: ${results['build.install']}ms`);
 
     return results;
   }
@@ -339,7 +339,7 @@ export class CIBenchmarks {
     const end = Bun.nanoseconds();
 
     const avgTime = Number(end - start) / iterations;
-    console.log(` ${(avgTime / 1_000_000).toFixed(3)}ms`);
+    console.info(` ${(avgTime / 1_000_000).toFixed(3)}ms`);
 
     return avgTime;
   }
@@ -427,12 +427,12 @@ export class CIBenchmarks {
    */
   private printRegressionReport(report: RegressionReport): void {
     if (report.regressions.length > 0) {
-      console.log('\n🔴 Regressions:');
+      console.info('\n🔴 Regressions:');
       for (const reg of report.regressions) {
-        console.log(`   ${reg.name}:`);
-        console.log(`     Baseline: ${this.formatTime(reg.baseline)}`);
-        console.log(`     Current: ${this.formatTime(reg.current)}`);
-        console.log(`     Change: +${reg.percentChange.toFixed(1)}% slower`);
+        console.info(`   ${reg.name}:`);
+        console.info(`     Baseline: ${this.formatTime(reg.baseline)}`);
+        console.info(`     Current: ${this.formatTime(reg.current)}`);
+        console.info(`     Change: +${reg.percentChange.toFixed(1)}% slower`);
       }
     }
   }
@@ -487,9 +487,9 @@ export class CIBenchmarks {
 
     await Bun.write('benchmark-ci-report.md', mdReport.join('\n'));
 
-    console.log('\n📄 Reports generated:');
-    console.log('   - benchmark-ci-results.json');
-    console.log('   - benchmark-ci-report.md');
+    console.info('\n📄 Reports generated:');
+    console.info('   - benchmark-ci-results.json');
+    console.info('   - benchmark-ci-report.md');
   }
 
   /**
@@ -520,18 +520,18 @@ export class CIBenchmarks {
     // Output for GitHub Actions
     if (process.env.GITHUB_ACTIONS) {
       if (!report.passed) {
-        console.log('::error::Performance regressions detected');
+        console.info('::error::Performance regressions detected');
 
         for (const reg of report.regressions) {
-          console.log(`::warning::${reg.name} is ${reg.percentChange.toFixed(1)}% slower`);
+          console.info(`::warning::${reg.name} is ${reg.percentChange.toFixed(1)}% slower`);
         }
 
         process.exit(1);
       } else {
-        console.log('::notice::All benchmarks passed');
+        console.info('::notice::All benchmarks passed');
 
         for (const imp of report.improvements) {
-          console.log(`::notice::${imp.name} is ${imp.percentChange.toFixed(1)}% faster`);
+          console.info(`::notice::${imp.name} is ${imp.percentChange.toFixed(1)}% faster`);
         }
       }
     }

@@ -12,7 +12,7 @@ const SESSIONS_DIR = `${process.env.HOME}/.openclaw/agents/main/sessions`;
 const STALE_HOURS = 48;
 
 async function cleanupSessions() {
-  console.log("🧹 Cleaning up stale sessions...");
+  console.info("🧹 Cleaning up stale sessions...");
   
   try {
     const files = await readdir(SESSIONS_DIR);
@@ -29,11 +29,11 @@ async function cleanupSessions() {
       if (ageHours > STALE_HOURS) {
         await unlink(filepath);
         cleaned++;
-        console.log(`  🗑️  ${file} (${ageHours.toFixed(1)}h old)`);
+        console.info(`  🗑️  ${file} (${ageHours.toFixed(1)}h old)`);
       }
     }
     
-    console.log(`✅ Cleaned ${cleaned} stale sessions`);
+    console.info(`✅ Cleaned ${cleaned} stale sessions`);
     
   } catch (error) {
     console.error("❌ Session cleanup failed:", error);

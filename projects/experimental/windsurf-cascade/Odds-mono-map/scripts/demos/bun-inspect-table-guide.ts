@@ -33,8 +33,8 @@ class BunInspectTableGuide {
      * Run comprehensive demonstration of Bun.inspect.table()
      */
     async runCompleteDemo(): Promise<void> {
-        console.log(chalk.blue.bold('🎯 Complete Bun.inspect.table() Reference Guide'));
-        console.log(chalk.gray('Master all features and capabilities\n'));
+        console.info(chalk.blue.bold('🎯 Complete Bun.inspect.table() Reference Guide'));
+        console.info(chalk.gray('Master all features and capabilities\n'));
 
         this.demonstrateBasicUsage();
         this.demonstratePropertiesParameter();
@@ -49,8 +49,8 @@ class BunInspectTableGuide {
      * Basic usage demonstration
      */
     private demonstrateBasicUsage(): void {
-        console.log(chalk.blue.bold('\n📚 1. Basic Usage'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.blue.bold('\n📚 1. Basic Usage'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         // Simple array of objects
         const basicData = [
@@ -59,14 +59,14 @@ class BunInspectTableGuide {
             { name: 'Charlie', age: 35, city: 'Chicago' }
         ];
 
-        console.log(chalk.cyan('\n🔹 Simple Array of Objects:'));
-        console.log(Bun.inspect.table(basicData));
+        console.info(chalk.cyan('\n🔹 Simple Array of Objects:'));
+        console.info(Bun.inspect.table(basicData));
 
         // Array of primitives
         const primitiveData = ['Apple', 'Banana', 'Cherry', 'Date'];
 
-        console.log(chalk.cyan('\n🔹 Array of Primitives:'));
-        console.log(Bun.inspect.table(primitiveData));
+        console.info(chalk.cyan('\n🔹 Array of Primitives:'));
+        console.info(Bun.inspect.table(primitiveData));
 
         // Single object
         const singleObject = {
@@ -76,16 +76,16 @@ class BunInspectTableGuide {
             templates: 35
         };
 
-        console.log(chalk.cyan('\n🔹 Single Object:'));
-        console.log(Bun.inspect.table([singleObject]));
+        console.info(chalk.cyan('\n🔹 Single Object:'));
+        console.info(Bun.inspect.table([singleObject]));
     }
 
     /**
      * Properties parameter demonstration
      */
     private demonstratePropertiesParameter(): void {
-        console.log(chalk.blue.bold('\n📋 2. Properties Parameter'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.blue.bold('\n📋 2. Properties Parameter'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         const data = [
             {
@@ -118,12 +118,12 @@ class BunInspectTableGuide {
         ];
 
         // Using string array for column selection and ordering
-        console.log(chalk.cyan('\n🔹 String Array - Select & Order Columns:'));
-        console.log(Bun.inspect.table(data, ['name', 'type', 'usage']));
+        console.info(chalk.cyan('\n🔹 String Array - Select & Order Columns:'));
+        console.info(Bun.inspect.table(data, ['name', 'type', 'usage']));
 
         // Using object for custom column names
-        console.log(chalk.cyan('\n🔹 Object - Custom Column Names:'));
-        console.log(Bun.inspect.table(data, {
+        console.info(chalk.cyan('\n🔹 Object - Custom Column Names:'));
+        console.info(Bun.inspect.table(data, {
             'Template Name': 'name',
             'Type': 'type',
             'Usage Score': 'usage',
@@ -131,8 +131,8 @@ class BunInspectTableGuide {
         }));
 
         // Mixed - custom names with selection
-        console.log(chalk.cyan('\n🔹 Mixed - Custom Names + Selection:'));
-        console.log(Bun.inspect.table(data, {
+        console.info(chalk.cyan('\n🔹 Mixed - Custom Names + Selection:'));
+        console.info(Bun.inspect.table(data, {
             'ID': 'id',
             'Template': 'name',
             'Score': 'usage'
@@ -143,8 +143,8 @@ class BunInspectTableGuide {
      * Options configuration demonstration
      */
     private demonstrateOptionsConfiguration(): void {
-        console.log(chalk.blue.bold('\n⚙️ 3. Options Configuration'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.blue.bold('\n⚙️ 3. Options Configuration'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         const complexData = [
             {
@@ -164,28 +164,28 @@ class BunInspectTableGuide {
         ];
 
         // Default options
-        console.log(chalk.cyan('\n🔹 Default Options:'));
-        console.log(Bun.inspect.table(complexData));
+        console.info(chalk.cyan('\n🔹 Default Options:'));
+        console.info(Bun.inspect.table(complexData));
 
         // With colors enabled
-        console.log(chalk.cyan('\n🔹 Colors Enabled:'));
-        console.log(Bun.inspect.table(complexData, {}, { colors: true }));
+        console.info(chalk.cyan('\n🔹 Colors Enabled:'));
+        console.info(Bun.inspect.table(complexData, {}, { colors: true }));
 
         // Limited string length
-        console.log(chalk.cyan('\n🔹 Max String Length (30 chars):'));
-        console.log(Bun.inspect.table(complexData, {}, { maxStringLength: 30 }));
+        console.info(chalk.cyan('\n🔹 Max String Length (30 chars):'));
+        console.info(Bun.inspect.table(complexData, {}, { maxStringLength: 30 }));
 
         // Compact mode
-        console.log(chalk.cyan('\n🔹 Compact Mode:'));
-        console.log(Bun.inspect.table(complexData, {}, { compact: true }));
+        console.info(chalk.cyan('\n🔹 Compact Mode:'));
+        console.info(Bun.inspect.table(complexData, {}, { compact: true }));
 
         // Depth control
-        console.log(chalk.cyan('\n🔹 Depth Control (depth: 1):'));
-        console.log(Bun.inspect.table(complexData, {}, { depth: 1 }));
+        console.info(chalk.cyan('\n🔹 Depth Control (depth: 1):'));
+        console.info(Bun.inspect.table(complexData, {}, { depth: 1 }));
 
         // Combined options
-        console.log(chalk.cyan('\n🔹 Combined Options:'));
-        console.log(Bun.inspect.table(complexData, {
+        console.info(chalk.cyan('\n🔹 Combined Options:'));
+        console.info(Bun.inspect.table(complexData, {
             'Template': 'name',
             'Description': 'description',
             'Features': 'features'
@@ -201,8 +201,8 @@ class BunInspectTableGuide {
      * Advanced data types demonstration
      */
     private demonstrateAdvancedDataTypes(): void {
-        console.log(chalk.blue.bold('\n🔬 4. Advanced Data Types'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.blue.bold('\n🔬 4. Advanced Data Types'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         // Mixed data types
         const mixedData = [
@@ -221,8 +221,8 @@ class BunInspectTableGuide {
             }
         ];
 
-        console.log(chalk.cyan('\n🔹 Mixed Data Types:'));
-        console.log(Bun.inspect.table(mixedData));
+        console.info(chalk.cyan('\n🔹 Mixed Data Types:'));
+        console.info(Bun.inspect.table(mixedData));
 
         // Nested objects and arrays
         const nestedData = [
@@ -246,8 +246,8 @@ class BunInspectTableGuide {
             }
         ];
 
-        console.log(chalk.cyan('\n🔹 Nested Objects (depth: 3):'));
-        console.log(Bun.inspect.table(nestedData, {}, { depth: 3 }));
+        console.info(chalk.cyan('\n🔹 Nested Objects (depth: 3):'));
+        console.info(Bun.inspect.table(nestedData, {}, { depth: 3 }));
 
         // Large dataset
         const largeData = Array.from({ length: 10 }, (_, i) => ({
@@ -260,16 +260,16 @@ class BunInspectTableGuide {
             lastModified: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000)
         }));
 
-        console.log(chalk.cyan('\n🔹 Large Dataset (10 rows):'));
-        console.log(Bun.inspect.table(largeData));
+        console.info(chalk.cyan('\n🔹 Large Dataset (10 rows):'));
+        console.info(Bun.inspect.table(largeData));
     }
 
     /**
      * Real-world use cases demonstration
      */
     private demonstrateRealWorldUseCases(): void {
-        console.log(chalk.blue.bold('\n🌍 5. Real-World Use Cases'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.blue.bold('\n🌍 5. Real-World Use Cases'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         // Use case 1: System monitoring dashboard
         const systemMetrics = [
@@ -307,8 +307,8 @@ class BunInspectTableGuide {
             }
         ];
 
-        console.log(chalk.cyan('\n🔹 System Monitoring Dashboard:'));
-        console.log(Bun.inspect.table(systemMetrics, {
+        console.info(chalk.cyan('\n🔹 System Monitoring Dashboard:'));
+        console.info(Bun.inspect.table(systemMetrics, {
             'Metric': 'metric',
             'Value': 'value',
             'Unit': 'unit',
@@ -347,8 +347,8 @@ class BunInspectTableGuide {
             }
         ];
 
-        console.log(chalk.cyan('\n🔹 Template Analytics Summary:'));
-        console.log(Bun.inspect.table(templateAnalytics, {
+        console.info(chalk.cyan('\n🔹 Template Analytics Summary:'));
+        console.info(Bun.inspect.table(templateAnalytics, {
             'Category': 'category',
             'Templates': 'count',
             'Avg Usage': 'avgUsage',
@@ -393,8 +393,8 @@ class BunInspectTableGuide {
             }
         ];
 
-        console.log(chalk.cyan('\n🔹 Performance Benchmark Results:'));
-        console.log(Bun.inspect.table(benchmarkResults, {
+        console.info(chalk.cyan('\n🔹 Performance Benchmark Results:'));
+        console.info(Bun.inspect.table(benchmarkResults, {
             'Test': 'test',
             'Baseline': 'baseline',
             'Current': 'current',
@@ -408,11 +408,11 @@ class BunInspectTableGuide {
      * Performance optimization demonstration
      */
     private demonstratePerformanceOptimization(): void {
-        console.log(chalk.blue.bold('\n⚡ 6. Performance Optimization'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.blue.bold('\n⚡ 6. Performance Optimization'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         // Generate large dataset for performance testing
-        console.log(chalk.cyan('\n🔹 Performance Test with Large Dataset:'));
+        console.info(chalk.cyan('\n🔹 Performance Test with Large Dataset:'));
 
         const startTime = performance.now();
 
@@ -431,7 +431,7 @@ class BunInspectTableGuide {
         }));
 
         const generationTime = performance.now() - startTime;
-        console.log(chalk.gray(`Data generation: ${generationTime.toFixed(2)}ms`));
+        console.info(chalk.gray(`Data generation: ${generationTime.toFixed(2)}ms`));
 
         const renderStart = performance.now();
         const tableOutput = Bun.inspect.table(largeDataset.slice(0, 10), {
@@ -448,17 +448,17 @@ class BunInspectTableGuide {
         });
 
         const renderTime = performance.now() - renderStart;
-        console.log(tableOutput);
-        console.log(chalk.gray(`Table rendering: ${renderTime.toFixed(2)}ms`));
-        console.log(chalk.green(`✅ Performance: Excellent (${renderTime.toFixed(2)}ms for 1000+ data points)`));
+        console.info(tableOutput);
+        console.info(chalk.gray(`Table rendering: ${renderTime.toFixed(2)}ms`));
+        console.info(chalk.green(`✅ Performance: Excellent (${renderTime.toFixed(2)}ms for 1000+ data points)`));
     }
 
     /**
      * Custom formatting demonstration
      */
     private demonstrateCustomFormatting(): void {
-        console.log(chalk.blue.bold('\n🎨 7. Custom Formatting Techniques'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.blue.bold('\n🎨 7. Custom Formatting Techniques'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         // Custom formatted data with emojis and colors
         const formattedData = [
@@ -494,8 +494,8 @@ class BunInspectTableGuide {
             }
         ];
 
-        console.log(chalk.cyan('\n🔹 Server Status Dashboard:'));
-        console.log(Bun.inspect.table(formattedData, {
+        console.info(chalk.cyan('\n🔹 Server Status Dashboard:'));
+        console.info(Bun.inspect.table(formattedData, {
             'Status': 'status',
             'Server': 'name',
             'CPU %': 'cpu',
@@ -537,8 +537,8 @@ class BunInspectTableGuide {
             }
         ];
 
-        console.log(chalk.cyan('\n🔹 Progress Tracking Dashboard:'));
-        console.log(Bun.inspect.table(progressData, {
+        console.info(chalk.cyan('\n🔹 Progress Tracking Dashboard:'));
+        console.info(Bun.inspect.table(progressData, {
             'Task': 'task',
             'Progress': 'progress',
             'Visual': 'bar',
@@ -577,8 +577,8 @@ class BunInspectTableGuide {
             }
         ];
 
-        console.log(chalk.cyan('\n🔹 Financial Performance Dashboard:'));
-        console.log(Bun.inspect.table(financialData, {
+        console.info(chalk.cyan('\n🔹 Financial Performance Dashboard:'));
+        console.info(Bun.inspect.table(financialData, {
             'Period': 'period',
             'Revenue': 'revenue',
             'Costs': 'costs',
@@ -598,11 +598,11 @@ async function main(): Promise<void> {
     const args = process.argv.slice(2);
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('🎯 Complete Bun.inspect.table() Reference Guide'));
-        console.log(chalk.gray('Usage: bun bun-inspect-table-guide.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
-        console.log(chalk.gray('\nComprehensive demonstration of Bun.inspect.table() features'));
+        console.info(chalk.blue.bold('🎯 Complete Bun.inspect.table() Reference Guide'));
+        console.info(chalk.gray('Usage: bun bun-inspect-table-guide.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.gray('\nComprehensive demonstration of Bun.inspect.table() features'));
         process.exit(0);
     }
 
@@ -610,8 +610,8 @@ async function main(): Promise<void> {
         const guide = new BunInspectTableGuide();
         await guide.runCompleteDemo();
 
-        console.log(chalk.blue.bold('\n🎉 Bun.inspect.table() Reference Complete!'));
-        console.log(chalk.gray('You now have mastered all features of Bun.inspect.table()'));
+        console.info(chalk.blue.bold('\n🎉 Bun.inspect.table() Reference Complete!'));
+        console.info(chalk.gray('You now have mastered all features of Bun.inspect.table()'));
 
     } catch (error) {
         console.error(chalk.red(`❌ Error: ${error.message}`));

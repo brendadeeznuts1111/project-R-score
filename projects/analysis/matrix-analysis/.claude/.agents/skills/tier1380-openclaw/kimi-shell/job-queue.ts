@@ -278,10 +278,10 @@ async function main() {
 			const jobArgs = args.slice(2);
 			const job = await queue.submit(cmd, jobArgs);
 
-			console.log(
+			console.info(
 				`${COLORS.green}✓${COLORS.reset} Job submitted: ${COLORS.cyan}${job.id.slice(0, 8)}${COLORS.reset}`,
 			);
-			console.log(`${COLORS.gray}  Command: ${cmd} ${jobArgs.join(" ")}${COLORS.reset}`);
+			console.info(`${COLORS.gray}  Command: ${cmd} ${jobArgs.join(" ")}${COLORS.reset}`);
 
 			// Run immediately in background
 			queue.run(job.id).catch(() => {});
@@ -292,7 +292,7 @@ async function main() {
 			const status = args[1] as JobStatus | undefined;
 			const jobs = queue.list(status);
 
-			console.log(`${COLORS.bold}Jobs:${COLORS.reset}\n`);
+			console.info(`${COLORS.bold}Jobs:${COLORS.reset}\n`);
 
 			for (const job of jobs) {
 				const statusColor = {
@@ -312,19 +312,19 @@ async function main() {
 								? "✗"
 								: "○";
 
-				console.log(
+				console.info(
 					`  ${statusColor}${indicator}${COLORS.reset} ${job.command.slice(0, 30).padEnd(30)} ${statusColor}${job.status}${COLORS.reset}`,
 				);
-				console.log(
+				console.info(
 					`    ${COLORS.gray}ID: ${job.id.slice(0, 8)} | Created: ${new Date(job.createdAt).toLocaleTimeString()}${COLORS.reset}`,
 				);
 
 				if (job.exitCode !== undefined) {
-					console.log(
+					console.info(
 						`    Exit: ${job.exitCode === 0 ? COLORS.green : COLORS.red}${job.exitCode}${COLORS.reset}`,
 					);
 				}
-				console.log();
+				console.info();
 			}
 			break;
 		}
@@ -342,19 +342,19 @@ async function main() {
 				process.exit(1);
 			}
 
-			console.log(`${COLORS.bold}Job ${id.slice(0, 8)}:${COLORS.reset}`);
-			console.log(`  Status: ${job.status}`);
-			console.log(`  Command: ${job.command} ${job.args.join(" ")}`);
-			console.log(`  Created: ${new Date(job.createdAt).toLocaleString()}`);
+			console.info(`${COLORS.bold}Job ${id.slice(0, 8)}:${COLORS.reset}`);
+			console.info(`  Status: ${job.status}`);
+			console.info(`  Command: ${job.command} ${job.args.join(" ")}`);
+			console.info(`  Created: ${new Date(job.createdAt).toLocaleString()}`);
 
 			if (job.output) {
-				console.log(`\n${COLORS.bold}Output:${COLORS.reset}`);
-				console.log(job.output);
+				console.info(`\n${COLORS.bold}Output:${COLORS.reset}`);
+				console.info(job.output);
 			}
 
 			if (job.error) {
-				console.log(`\n${COLORS.red}Error:${COLORS.reset}`);
-				console.log(job.error);
+				console.info(`\n${COLORS.red}Error:${COLORS.reset}`);
+				console.info(job.error);
 			}
 			break;
 		}
@@ -372,7 +372,7 @@ async function main() {
 				process.exit(1);
 			}
 
-			if (job.output) console.log(job.output);
+			if (job.output) console.info(job.output);
 			if (job.error) console.error(job.error);
 			break;
 		}
@@ -386,7 +386,7 @@ async function main() {
 
 			const success = queue.cancel(id);
 			if (success) {
-				console.log(
+				console.info(
 					`${COLORS.green}✓${COLORS.reset} Job cancelled: ${COLORS.cyan}${id.slice(0, 8)}${COLORS.reset}`,
 				);
 			} else {
@@ -407,7 +407,7 @@ async function main() {
 
 			const success = queue.delete(id);
 			if (success) {
-				console.log(
+				console.info(
 					`${COLORS.green}✓${COLORS.reset} Job deleted: ${COLORS.cyan}${id.slice(0, 8)}${COLORS.reset}`,
 				);
 			} else {
@@ -419,34 +419,34 @@ async function main() {
 
 		case "cleanup": {
 			const deleted = queue.cleanup();
-			console.log(`${COLORS.green}✓${COLORS.reset} Cleaned up ${deleted} old jobs`);
+			console.info(`${COLORS.green}✓${COLORS.reset} Cleaned up ${deleted} old jobs`);
 			break;
 		}
 
 		case "process": {
-			console.log(`${COLORS.cyan}Processing job queue...${COLORS.reset}`);
+			console.info(`${COLORS.cyan}Processing job queue...${COLORS.reset}`);
 			await queue.processQueue();
-			console.log(`${COLORS.green}✓${COLORS.reset} Done`);
+			console.info(`${COLORS.green}✓${COLORS.reset} Done`);
 			break;
 		}
 
 		default: {
-			console.log(`${COLORS.bold}🐚 Kimi Job Queue${COLORS.reset}\n`);
-			console.log("Usage:");
-			console.log("  job run <command> [args...]     Submit a background job");
-			console.log(
+			console.info(`${COLORS.bold}🐚 Kimi Job Queue${COLORS.reset}\n`);
+			console.info("Usage:");
+			console.info("  job run <command> [args...]     Submit a background job");
+			console.info(
 				"  job list [status]               List jobs (pending|running|completed|failed)",
 			);
-			console.log("  job status <id>                 Show job details");
-			console.log("  job logs <id>                   Show job output");
-			console.log("  job cancel <id>                 Cancel a pending job");
-			console.log("  job delete <id>                 Delete a job");
-			console.log("  job cleanup                     Remove old completed jobs");
-			console.log("  job process                     Process pending jobs");
-			console.log("\nExamples:");
-			console.log("  job run 'sleep 10 && echo done'");
-			console.log("  job run openclaw status");
-			console.log("  job list running");
+			console.info("  job status <id>                 Show job details");
+			console.info("  job logs <id>                   Show job output");
+			console.info("  job cancel <id>                 Cancel a pending job");
+			console.info("  job delete <id>                 Delete a job");
+			console.info("  job cleanup                     Remove old completed jobs");
+			console.info("  job process                     Process pending jobs");
+			console.info("\nExamples:");
+			console.info("  job run 'sleep 10 && echo done'");
+			console.info("  job run openclaw status");
+			console.info("  job list running");
 		}
 	}
 

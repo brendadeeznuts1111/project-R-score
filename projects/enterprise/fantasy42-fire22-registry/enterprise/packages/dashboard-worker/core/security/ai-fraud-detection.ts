@@ -90,7 +90,7 @@ export class AIFraudDetection {
    * Initialize the fraud detection system
    */
   private async initializeSystem(): Promise<void> {
-    console.log('🤖 Initializing AI Fraud Detection System...');
+    console.info('🤖 Initializing AI Fraud Detection System...');
 
     // Load or create initial model
     await this.loadModel();
@@ -98,7 +98,7 @@ export class AIFraudDetection {
     // Start periodic model updates
     this.startModelUpdates();
 
-    console.log('✅ AI Fraud Detection System initialized');
+    console.info('✅ AI Fraud Detection System initialized');
   }
 
   /**
@@ -397,7 +397,7 @@ export class AIFraudDetection {
       trainingSamples: 10000,
     };
 
-    console.log('📊 Fraud detection model loaded:', this.currentModel);
+    console.info('📊 Fraud detection model loaded:', this.currentModel);
   }
 
   /**
@@ -421,7 +421,7 @@ export class AIFraudDetection {
     if (this.isTraining) return;
 
     this.isTraining = true;
-    console.log('🔄 Updating fraud detection model...');
+    console.info('🔄 Updating fraud detection model...');
 
     try {
       // In a real implementation, this would retrain the ML model
@@ -436,7 +436,7 @@ export class AIFraudDetection {
         this.currentModel.trainingSamples += 100; // Simulate new training data
       }
 
-      console.log('✅ Fraud detection model updated');
+      console.info('✅ Fraud detection model updated');
     } catch (error) {
       console.error('❌ Model update failed:', error);
     } finally {
@@ -503,7 +503,7 @@ export class AIFraudDetection {
 
   private async logAnalysis(prediction: FraudPrediction, processingTime: number): Promise<void> {
     // In a real implementation, this would log to a database or monitoring system
-    console.log(`🔍 Fraud analysis completed for ${prediction.transactionId}:`, {
+    console.info(`🔍 Fraud analysis completed for ${prediction.transactionId}:`, {
       risk: prediction.riskLevel,
       probability: prediction.fraudProbability.toFixed(3),
       confidence: prediction.confidence.toFixed(3),

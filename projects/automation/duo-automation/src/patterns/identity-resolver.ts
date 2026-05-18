@@ -188,12 +188,12 @@ export class CrossPlatformIdentityResolver {
     if (attempt === 1) {
       const cached = await this.cache.get<SyntheticIdentityResult>(cacheKey);
       if (cached) {
-        console.log(`Cache hit for identity: ${sanitized.e164}`);
+        console.info(`Cache hit for identity: ${sanitized.e164}`);
         return cached;
       }
     }
 
-    console.log(`Resolving identity for: ${sanitized.e164} (attempt ${attempt}/${this.fallbackConfig.maxRetries})`);
+    console.info(`Resolving identity for: ${sanitized.e164} (attempt ${attempt}/${this.fallbackConfig.maxRetries})`);
 
     try {
       // Build identity graph
@@ -258,7 +258,7 @@ export class CrossPlatformIdentityResolver {
       
       // Retry logic
       if (attempt < this.fallbackConfig.maxRetries) {
-        console.log(`Retrying identity resolution for ${sanitized.e164} in ${this.fallbackConfig.retryDelayMs}ms...`);
+        console.info(`Retrying identity resolution for ${sanitized.e164} in ${this.fallbackConfig.retryDelayMs}ms...`);
         await new Promise(resolve => setTimeout(resolve, this.fallbackConfig.retryDelayMs));
         return this.resolveIdentity(phone, attempt + 1);
       }
@@ -367,7 +367,7 @@ export class CrossPlatformIdentityResolver {
       ...data
     };
     
-    console.log('AUDIT:', JSON.stringify(auditEntry));
+    console.info('AUDIT:', JSON.stringify(auditEntry));
   }
 
   // Public method to check system health
@@ -387,7 +387,7 @@ export class CrossPlatformIdentityResolver {
   // Public method to update configuration at runtime
   updateFallbackConfig(newConfig: Partial<FallbackConfig>): void {
     this.fallbackConfig = { ...this.fallbackConfig, ...newConfig };
-    console.log('Fallback configuration updated:', this.fallbackConfig);
+    console.info('Fallback configuration updated:', this.fallbackConfig);
   }
 
   // Helper method to create enhanced multi-platform results

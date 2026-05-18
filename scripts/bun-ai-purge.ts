@@ -224,26 +224,26 @@ Focus on identifying opportunities to migrate from Node.js patterns to Bun-speci
    * Run AI purge on codebase
    */
   async purgeCommand(directory: string = '.'): Promise<void> {
-    console.log('🤖 FACTORYWAGER AI PURGE v4.0 - Local Llama Analysis');
-    console.log('═══════════════════════════════════════════════════════════════');
+    console.info('🤖 FACTORYWAGER AI PURGE v4.0 - Local Llama Analysis');
+    console.info('═══════════════════════════════════════════════════════════════');
 
     try {
       // Check Ollama availability
       const hasOllama = await this.checkOllamaAvailability();
-      console.log(`🔧 AI Engine: ${hasOllama ? '✅ Ollama + Llama available' : '⚠️  Using rule-based fallback'}`);
+      console.info(`🔧 AI Engine: ${hasOllama ? '✅ Ollama + Llama available' : '⚠️  Using rule-based fallback'}`);
 
-      console.log(`📁 Analyzing directory: ${directory}`);
-      console.log('🧠 Performing intelligent code analysis...');
+      console.info(`📁 Analyzing directory: ${directory}`);
+      console.info('🧠 Performing intelligent code analysis...');
 
       // Scan codebase
       const startTime = Date.now();
       const report = await scanDirectory(directory);
       const scanTime = Date.now() - startTime;
 
-      console.log(`\n📊 Scan Results:`);
-      console.log(`  Scan Time: ${scanTime}ms`);
-      console.log(`  Files Analyzed: ${report.totalFiles}`);
-      console.log(`  Issues Detected: ${report.issuesFound}`);
+      console.info(`\n📊 Scan Results:`);
+      console.info(`  Scan Time: ${scanTime}ms`);
+      console.info(`  Files Analyzed: ${report.totalFiles}`);
+      console.info(`  Issues Detected: ${report.issuesFound}`);
 
       // Calculate initial purity score
       const initialScore = this.calculatePurityScore(report);
@@ -277,71 +277,71 @@ Please provide:
 Respond with JSON format containing: purityScore, recommendations, criticalIssues, transmutations, summary
       `;
 
-      console.log('\n🤖 Running AI analysis...');
+      console.info('\n🤖 Running AI analysis...');
       const aiStartTime = Date.now();
       
       const aiResponse = await this.callLlama(prompt);
       const analysis = this.parseAnalysis(aiResponse);
       
       const aiTime = Date.now() - aiStartTime;
-      console.log(`⚡ AI Analysis completed in ${aiTime}ms`);
+      console.info(`⚡ AI Analysis completed in ${aiTime}ms`);
 
       // Display results
-      console.log('\n🎯 AI PURITY SCORES:');
-      console.log(`  Overall Score: ${analysis.purityScore.overall}/100 ${this.getScoreEmoji(analysis.purityScore.overall)}`);
-      console.log(`  Bun Compliance: ${analysis.purityScore.bun_compliance}/100 ${this.getScoreEmoji(analysis.purityScore.bun_compliance)}`);
-      console.log(`  Security: ${analysis.purityScore.security}/100 ${this.getScoreEmoji(analysis.purityScore.security)}`);
-      console.log(`  Performance: ${analysis.purityScore.performance}/100 ${this.getScoreEmoji(analysis.purityScore.performance)}`);
-      console.log(`  Maintainability: ${analysis.purityScore.maintainability}/100 ${this.getScoreEmoji(analysis.purityScore.maintainability)}`);
+      console.info('\n🎯 AI PURITY SCORES:');
+      console.info(`  Overall Score: ${analysis.purityScore.overall}/100 ${this.getScoreEmoji(analysis.purityScore.overall)}`);
+      console.info(`  Bun Compliance: ${analysis.purityScore.bun_compliance}/100 ${this.getScoreEmoji(analysis.purityScore.bun_compliance)}`);
+      console.info(`  Security: ${analysis.purityScore.security}/100 ${this.getScoreEmoji(analysis.purityScore.security)}`);
+      console.info(`  Performance: ${analysis.purityScore.performance}/100 ${this.getScoreEmoji(analysis.purityScore.performance)}`);
+      console.info(`  Maintainability: ${analysis.purityScore.maintainability}/100 ${this.getScoreEmoji(analysis.purityScore.maintainability)}`);
 
       if (analysis.criticalIssues.length > 0) {
-        console.log('\n🚨 CRITICAL ISSUES:');
+        console.info('\n🚨 CRITICAL ISSUES:');
         analysis.criticalIssues.forEach((issue, i) => {
-          console.log(`  ${i + 1}. ${issue}`);
+          console.info(`  ${i + 1}. ${issue}`);
         });
       }
 
       if (analysis.recommendations.length > 0) {
-        console.log('\n💡 RECOMMENDATIONS:');
+        console.info('\n💡 RECOMMENDATIONS:');
         analysis.recommendations.forEach((rec, i) => {
-          console.log(`  ${i + 1}. ${rec}`);
+          console.info(`  ${i + 1}. ${rec}`);
         });
       }
 
       if (analysis.transmutations.length > 0) {
-        console.log('\n🔄 SUGGESTED TRANSMUTATIONS:');
+        console.info('\n🔄 SUGGESTED TRANSMUTATIONS:');
         analysis.transmutations.forEach((trans, i) => {
-          console.log(`  ${i + 1}. ${trans}`);
+          console.info(`  ${i + 1}. ${trans}`);
         });
       }
 
-      console.log('\n📝 AI SUMMARY:');
-      console.log(`  ${analysis.summary}`);
+      console.info('\n📝 AI SUMMARY:');
+      console.info(`  ${analysis.summary}`);
 
       // Generate AI purge signature
-      console.log('\n🔥 Generating AI Purge Signature...');
+      console.info('\n🔥 Generating AI Purge Signature...');
       const purge = await this.engine.purgeRipgrep({
         scope: 'AI',
         type: 'PURGE',
         pattern: `ai-purity-${analysis.purityScore.overall}-score`
       });
 
-      console.log(`  🆔 Purge ID: ${purge.id}`);
-      console.log(`  🔐 Signature: ${purge.grepable}`);
-      console.log(`  📊 Hash: ${purge.contentHash.substring(0, 16)}...`);
+      console.info(`  🆔 Purge ID: ${purge.id}`);
+      console.info(`  🔐 Signature: ${purge.grepable}`);
+      console.info(`  📊 Hash: ${purge.contentHash.substring(0, 16)}...`);
 
       // Performance summary
-      console.log('\n⚡ PERFORMANCE METRICS:');
-      console.log(`  Code Scan: ${scanTime}ms`);
-      console.log(`  AI Analysis: ${aiTime}ms`);
-      console.log(`  Total Time: ${scanTime + aiTime}ms`);
+      console.info('\n⚡ PERFORMANCE METRICS:');
+      console.info(`  Code Scan: ${scanTime}ms`);
+      console.info(`  AI Analysis: ${aiTime}ms`);
+      console.info(`  Total Time: ${scanTime + aiTime}ms`);
 
     } catch (error) {
       console.error('❌ AI purge failed:', error.message);
       process.exit(1);
     }
 
-    console.log('\n═══════════════════════════════════════════════════════════════');
+    console.info('\n═══════════════════════════════════════════════════════════════');
   }
 
   /**
@@ -372,7 +372,7 @@ async function main() {
     case 'help':
     case '--help':
     case '-h':
-      console.log(`
+      console.info(`
 🤖 FACTORYWAGER AI PURGE v4.0 CLI
 
 USAGE:
@@ -404,7 +404,7 @@ INSTALLATION:
       
     default:
       console.error(`❌ Unknown command: ${command}`);
-      console.log('Run "bun run scripts/bun-ai-purge.ts help" for available commands');
+      console.info('Run "bun run scripts/bun-ai-purge.ts help" for available commands');
       process.exit(1);
   }
 }

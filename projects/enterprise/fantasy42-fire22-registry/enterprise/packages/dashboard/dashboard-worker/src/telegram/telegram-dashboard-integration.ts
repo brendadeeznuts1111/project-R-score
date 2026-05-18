@@ -149,7 +149,7 @@ export class TelegramDashboardIntegration {
   // !==!==!==!==!==!==!==!==!==!==!==!==!==!====
 
   public async start(): Promise<void> {
-    console.log('🔗 Starting Telegram Dashboard Integration...');
+    console.info('🔗 Starting Telegram Dashboard Integration...');
 
     // Start telegram integration
     await this.telegramIntegration.start();
@@ -157,11 +157,11 @@ export class TelegramDashboardIntegration {
     // Start data collection
     this.startDataCollection();
 
-    console.log('✅ Telegram Dashboard Integration started');
+    console.info('✅ Telegram Dashboard Integration started');
   }
 
   public async stop(): Promise<void> {
-    console.log('🛑 Stopping Telegram Dashboard Integration...');
+    console.info('🛑 Stopping Telegram Dashboard Integration...');
 
     // Stop data collection
     if (this.intervalId) {
@@ -172,7 +172,7 @@ export class TelegramDashboardIntegration {
     // Stop telegram integration
     await this.telegramIntegration.stop();
 
-    console.log('✅ Telegram Dashboard Integration stopped');
+    console.info('✅ Telegram Dashboard Integration stopped');
   }
 
   // !==!==!==!==!==!==!==!==!==!==!==!==!==!====

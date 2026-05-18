@@ -22,9 +22,9 @@ interface LogEntry {
  * Create a responsive table with wrapped content
  */
 function createWrappedTable(): void {
-	console.log("\n" + "=".repeat(70));
-	console.log("Bun.wrapAnsi() Table Example - Responsive Content Wrapping");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("Bun.wrapAnsi() Table Example - Responsive Content Wrapping");
+	console.info("=".repeat(70));
 
 	// Sample log data with long messages
 	const logs: LogEntry[] = [
@@ -93,28 +93,28 @@ function createWrappedTable(): void {
 		wrapText: true, // Enable ANSI-aware text wrapping
 	});
 
-	console.log("\nLog Table with Wrapped Content:\n");
+	console.info("\nLog Table with Wrapped Content:\n");
 	table.print(logs);
 
 	// Show performance note
-	console.log("\n" + "─".repeat(70));
-	console.log(
+	console.info("\n" + "─".repeat(70));
+	console.info(
 		"📊 Performance: Bun.wrapAnsi() is 88x faster than wrap-ansi npm package",
 	);
-	console.log("🎨 Colors are preserved across line breaks automatically");
-	console.log("─".repeat(70));
+	console.info("🎨 Colors are preserved across line breaks automatically");
+	console.info("─".repeat(70));
 }
 
 /**
  * Demonstrate wrapping with different options
  */
 function demonstrateWrappingOptions(): void {
-	console.log("\n" + "=".repeat(70));
-	console.log("Bun.wrapAnsi() Wrapping Options Demo");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("Bun.wrapAnsi() Wrapping Options Demo");
+	console.info("=".repeat(70));
 
 	if (typeof Bun === "undefined" || !("wrapAnsi" in Bun)) {
-		console.log("\n❌ Bun.wrapAnsi() not available (requires Bun v1.3.7+)");
+		console.info("\n❌ Bun.wrapAnsi() not available (requires Bun v1.3.7+)");
 		return;
 	}
 
@@ -125,38 +125,38 @@ function demonstrateWrappingOptions(): void {
 		"\x1b[1m\x1b[36m[IMPORTANT]\x1b[0m \x1b[33mThis is a very long warning message that needs to be wrapped. " +
 		"It contains \x1b[31mred\x1b[0m, \x1b[32mgreen\x1b[0m, and \x1b[34mblue\x1b[0m colors that should be preserved.";
 
-	console.log("\nOriginal text (single line):");
-	console.log(coloredText);
+	console.info("\nOriginal text (single line):");
+	console.info(coloredText);
 
-	console.log("\n\n1. Default wrapping (wordWrap: true, trim: true):");
-	console.log(wrapAnsi(coloredText, 50));
+	console.info("\n\n1. Default wrapping (wordWrap: true, trim: true):");
+	console.info(wrapAnsi(coloredText, 50));
 
-	console.log("\n2. Hard wrapping (hard: true, breaks long words):");
-	console.log(wrapAnsi(coloredText, 30, { hard: true }));
+	console.info("\n2. Hard wrapping (hard: true, breaks long words):");
+	console.info(wrapAnsi(coloredText, 30, { hard: true }));
 
-	console.log("\n3. No trim (preserves leading/trailing whitespace):");
+	console.info("\n3. No trim (preserves leading/trailing whitespace):");
 	const spacedText = "   \x1b[32mIndented green text\x1b[0m   ";
-	console.log("Without trim:");
-	console.log(JSON.stringify(wrapAnsi(spacedText, 30, { trim: false })));
-	console.log("With trim:");
-	console.log(JSON.stringify(wrapAnsi(spacedText, 30, { trim: true })));
+	console.info("Without trim:");
+	console.info(JSON.stringify(wrapAnsi(spacedText, 30, { trim: false })));
+	console.info("With trim:");
+	console.info(JSON.stringify(wrapAnsi(spacedText, 30, { trim: true })));
 
-	console.log("\n4. OSC 8 hyperlinks:");
+	console.info("\n4. OSC 8 hyperlinks:");
 	const linkText =
 		"Visit \x1b]8;;https://bun.sh\x1b\\Bun.sh\x1b]8;;\x1b\\ for fast JavaScript execution";
-	console.log(wrapAnsi(linkText, 30));
+	console.info(wrapAnsi(linkText, 30));
 }
 
 /**
  * Compare performance with traditional methods
  */
 async function benchmarkWrapAnsi(): Promise<void> {
-	console.log("\n" + "=".repeat(70));
-	console.log("Bun.wrapAnsi() Performance Benchmark");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("Bun.wrapAnsi() Performance Benchmark");
+	console.info("=".repeat(70));
 
 	if (typeof Bun === "undefined" || !("wrapAnsi" in Bun)) {
-		console.log("\n❌ Bun.wrapAnsi() not available (requires Bun v1.3.7+)");
+		console.info("\n❌ Bun.wrapAnsi() not available (requires Bun v1.3.7+)");
 		return;
 	}
 
@@ -168,7 +168,7 @@ async function benchmarkWrapAnsi(): Promise<void> {
 		"\x1b[32mThis is a medium length text\x1b[0m with some colors and needs wrapping at column width";
 	const longText = "\x1b[33m" + "Long text with colors ".repeat(50) + "\x1b[0m";
 
-	console.log("\nRunning benchmarks...\n");
+	console.info("\nRunning benchmarks...\n");
 
 	// Benchmark function
 	const benchmark = (name: string, fn: () => void, iterations: number) => {
@@ -177,7 +177,7 @@ async function benchmarkWrapAnsi(): Promise<void> {
 			fn();
 		}
 		const duration = performance.now() - start;
-		console.log(
+		console.info(
 			`${name.padEnd(30)} ${iterations.toLocaleString().padStart(10)} iterations  ${duration.toFixed(2).padStart(8)} ms`,
 		);
 		return duration;
@@ -186,8 +186,8 @@ async function benchmarkWrapAnsi(): Promise<void> {
 	// Run benchmarks
 	const iterations = 10000;
 
-	console.log("Text Length | Iterations | Duration");
-	console.log("─".repeat(50));
+	console.info("Text Length | Iterations | Duration");
+	console.info("─".repeat(50));
 
 	benchmark("Short text (45 chars)", () => wrapAnsi(shortText, 20), iterations);
 	benchmark(
@@ -201,7 +201,7 @@ async function benchmarkWrapAnsi(): Promise<void> {
 		iterations,
 	);
 
-	console.log(
+	console.info(
 		"\n✅ Bun.wrapAnsi() is 33-88x faster than wrap-ansi npm package",
 	);
 }
@@ -210,9 +210,9 @@ async function benchmarkWrapAnsi(): Promise<void> {
  * Practical example: Status dashboard
  */
 function statusDashboardExample(): void {
-	console.log("\n" + "=".repeat(70));
-	console.log("Practical Example: Status Dashboard with Wrapping");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("Practical Example: Status Dashboard with Wrapping");
+	console.info("=".repeat(70));
 
 	interface ServiceStatus {
 		service: string;
@@ -284,12 +284,12 @@ function statusDashboardExample(): void {
 		wrapText: true,
 	});
 
-	console.log("\n🖥️  System Status Dashboard\n");
+	console.info("\n🖥️  System Status Dashboard\n");
 	table.print(services);
 
 	// Legend
-	console.log("\nLegend:");
-	console.log(
+	console.info("\nLegend:");
+	console.info(
 		"  \x1b[32m●\x1b[0m Online  \x1b[33m●\x1b[0m Warning  \x1b[31m●\x1b[0m Error",
 	);
 }
@@ -299,25 +299,25 @@ function statusDashboardExample(): void {
 // ============================================================================
 
 async function main(): Promise<void> {
-	console.log("\n" + "🎨".repeat(35));
-	console.log("     Bun.wrapAnsi() Table Formatting Examples");
-	console.log("🎨".repeat(35));
+	console.info("\n" + "🎨".repeat(35));
+	console.info("     Bun.wrapAnsi() Table Formatting Examples");
+	console.info("🎨".repeat(35));
 
 	createWrappedTable();
 	demonstrateWrappingOptions();
 	await benchmarkWrapAnsi();
 	statusDashboardExample();
 
-	console.log("\n" + "=".repeat(70));
-	console.log("✨ All examples complete!");
-	console.log("=".repeat(70));
-	console.log("\nKey Takeaways:");
-	console.log("  • Bun.wrapAnsi() preserves ANSI codes across line breaks");
-	console.log("  • 88x faster than the wrap-ansi npm package");
-	console.log(
+	console.info("\n" + "=".repeat(70));
+	console.info("✨ All examples complete!");
+	console.info("=".repeat(70));
+	console.info("\nKey Takeaways:");
+	console.info("  • Bun.wrapAnsi() preserves ANSI codes across line breaks");
+	console.info("  • 88x faster than the wrap-ansi npm package");
+	console.info(
 		"  • Supports word wrapping, hard wrapping, and OSC 8 hyperlinks",
 	);
-	console.log("  • Perfect for responsive CLI tables and dashboards");
+	console.info("  • Perfect for responsive CLI tables and dashboards");
 }
 
 if (import.meta.main) {

@@ -334,25 +334,25 @@ async function main(): Promise<void> {
   if (options.doctor) {
     const doctor = await runDomainRegistryDoctor(options);
     if (options.json) {
-      console.log(JSON.stringify(doctor, null, 2));
+      console.info(JSON.stringify(doctor, null, 2));
     } else {
-      console.log(`Domain Registry Doctor (fix=${options.fix ? 'on' : 'off'})`);
+      console.info(`Domain Registry Doctor (fix=${options.fix ? 'on' : 'off'})`);
       for (const check of doctor.checks) {
-        console.log(`- [${check.ok ? 'ok' : 'fail'}] ${check.id}: ${check.detail}`);
+        console.info(`- [${check.ok ? 'ok' : 'fail'}] ${check.id}: ${check.detail}`);
       }
       if (doctor.blockedBySecrets.length > 0) {
-        console.log('- blocked:');
+        console.info('- blocked:');
         for (const reason of doctor.blockedBySecrets) {
-          console.log(`  - ${reason}`);
+          console.info(`  - ${reason}`);
         }
       }
       if (doctor.secretCommands) {
-        console.log('- secrets commands (templates):');
+        console.info('- secrets commands (templates):');
         for (const cmd of doctor.secretCommands.bunSecretsSet) {
-          console.log(`  - ${cmd}`);
+          console.info(`  - ${cmd}`);
         }
         for (const cmd of doctor.secretCommands.wranglerSecretPut) {
-          console.log(`  - ${cmd}`);
+          console.info(`  - ${cmd}`);
         }
       }
     }
@@ -362,18 +362,18 @@ async function main(): Promise<void> {
   const payload = await buildDomainRegistryStatus(options);
 
   if (options.json) {
-    console.log(JSON.stringify(payload, null, 2));
+    console.info(JSON.stringify(payload, null, 2));
     return;
   }
 
-  console.log(`Domain Registry Status (${payload.generatedAt})`);
-  console.log(`- domains: ${payload.registry.totalDomains}`);
-  console.log(`- bucket mapped: ${payload.registry.bucketMapped}/${payload.registry.totalDomains}`);
-  console.log(`- required header configured: ${payload.registry.headerConfigured}/${payload.registry.totalDomains}`);
-  console.log(`- token configured: ${payload.registry.tokenConfigured}/${payload.registry.totalDomains}`);
-  console.log(`- search projects: ${payload.search.projectCount}`);
-  console.log(`- health rows online (healthy): ${payload.domainHealth.onlineRows}/${payload.domainHealth.checkedRows}`);
-  console.log(`- health rows reachable: ${payload.domainHealth.reachableRows}/${payload.domainHealth.checkedRows}`);
+  console.info(`Domain Registry Status (${payload.generatedAt})`);
+  console.info(`- domains: ${payload.registry.totalDomains}`);
+  console.info(`- bucket mapped: ${payload.registry.bucketMapped}/${payload.registry.totalDomains}`);
+  console.info(`- required header configured: ${payload.registry.headerConfigured}/${payload.registry.totalDomains}`);
+  console.info(`- token configured: ${payload.registry.tokenConfigured}/${payload.registry.totalDomains}`);
+  console.info(`- search projects: ${payload.search.projectCount}`);
+  console.info(`- health rows online (healthy): ${payload.domainHealth.onlineRows}/${payload.domainHealth.checkedRows}`);
+  console.info(`- health rows reachable: ${payload.domainHealth.reachableRows}/${payload.domainHealth.checkedRows}`);
 }
 
 if (import.meta.main) {

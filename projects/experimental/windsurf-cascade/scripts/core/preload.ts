@@ -2,7 +2,7 @@ import { apiTracker } from '../packages/odds-core/src/monitoring/api-tracker.js'
 #!/usr/bin/env bun
 // scripts/preload.ts - Bun v1.3 Full-Stack Preload
 
-console.log('🚀 Bun v1.3 Full-Stack Preload Initializing...');
+console.info('🚀 Bun v1.3 Full-Stack Preload Initializing...');
 
 // Bun v1.3: 500x faster postMessage optimization
 if (typeof Bun !== 'undefined') {
@@ -23,7 +23,7 @@ try {
 async function preWarmDatabase() {
   try {
     if (process.env.DATABASE_URL) {
-      console.log('🔗 Pre-warming database connections...');
+      console.info('🔗 Pre-warming database connections...');
       
       // Bun v1.3: SQL preconnection for immediate database access
       // Make pg import optional in case it's not installed
@@ -42,7 +42,7 @@ async function preWarmDatabase() {
       
       try {
         await client.connect();
-        console.log('✅ Database preconnected successfully');
+        console.info('✅ Database preconnected successfully');
         
         // Create tables if they don't exist
         await client.query(`
@@ -75,7 +75,7 @@ async function preWarmDatabase() {
 }
 
 // Pre-initialize Bun utilities
-console.log('⚡ Pre-initializing Bun v1.3 utilities...');
+console.info('⚡ Pre-initializing Bun v1.3 utilities...');
 
 // Bun v1.3: Rapidhash for fast hashing
 (globalThis as any).rapidHash = (data: string) => Bun.hash.rapidhash(data);
@@ -86,7 +86,7 @@ console.log('⚡ Pre-initializing Bun v1.3 utilities...');
 // Pre-load ML models and caches in development
 function initializeModelCache() {
   if (process.env.NODE_ENV === 'development') {
-    console.log('🧠 Initializing ML model cache...');
+    console.info('🧠 Initializing ML model cache...');
     
     const modelCache = new Map<string, any>();
     
@@ -101,7 +101,7 @@ function initializeModelCache() {
     });
     
     (globalThis as any).modelCache = modelCache;
-    console.log(`✅ Pre-loaded ${commonModels.length} ML models`);
+    console.info(`✅ Pre-loaded ${commonModels.length} ML models`);
   }
 }
 
@@ -126,13 +126,13 @@ function initializeWorkerPool() {
         };
         
         ((globalThis as any).workerPool as Worker[]).push(worker);
-        console.log(`✅ Worker ${i} pre-spawned with smol optimization`);
+        console.info(`✅ Worker ${i} pre-spawned with smol optimization`);
       } catch (error) {
         console.warn(`⚠️ Failed to spawn worker ${i}:`, error);
       }
     }
     
-    console.log(`🔄 ${workerCount} worker threads pre-spawned with smol mode`);
+    console.info(`🔄 ${workerCount} worker threads pre-spawned with smol mode`);
   }
 }
 
@@ -176,15 +176,15 @@ async function initializePreload() {
     ]);
     
     const initTime = performance.now() - startTime;
-    console.log(`✅ Bun v1.3 Full-Stack Preload Complete in ${initTime.toFixed(2)}ms`);
+    console.info(`✅ Bun v1.3 Full-Stack Preload Complete in ${initTime.toFixed(2)}ms`);
     
     // Log initialization summary
-    console.log('📋 Preload Summary:');
-    console.log(`  - Workers: ((globalThis as any).workerPool as Worker[])?.length || 0`);
-    console.log(`  - ML Models: ((globalThis as any).modelCache as Map<string, any>)?.size || 0`);
-    console.log(`  - RapidHash: ${typeof (globalThis as any).rapidHash === 'function' ? 'enabled' : 'disabled'}`);
-    console.log(`  - StripANSI: ${typeof (globalThis as any).stripANSI === 'function' ? 'enabled' : 'disabled'}`);
-    console.log(`  - Performance Monitor: ${typeof (globalThis as any).performanceMonitor === 'object' ? 'enabled' : 'disabled'}`);
+    console.info('📋 Preload Summary:');
+    console.info(`  - Workers: ((globalThis as any).workerPool as Worker[])?.length || 0`);
+    console.info(`  - ML Models: ((globalThis as any).modelCache as Map<string, any>)?.size || 0`);
+    console.info(`  - RapidHash: ${typeof (globalThis as any).rapidHash === 'function' ? 'enabled' : 'disabled'}`);
+    console.info(`  - StripANSI: ${typeof (globalThis as any).stripANSI === 'function' ? 'enabled' : 'disabled'}`);
+    console.info(`  - Performance Monitor: ${typeof (globalThis as any).performanceMonitor === 'object' ? 'enabled' : 'disabled'}`);
     
   } catch (error) {
     console.error('❌ Preload initialization failed:', error);
@@ -194,7 +194,7 @@ async function initializePreload() {
 
 // Handle graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('🔄 Graceful shutdown initiated...');
+  console.info('🔄 Graceful shutdown initiated...');
   
   // Cleanup workers
   if ((globalThis as any).workerPool) {

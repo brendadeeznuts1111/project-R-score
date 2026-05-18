@@ -84,12 +84,12 @@ export class PerformanceBenchmark {
   }
 
   async runBenchmark(url?: string): Promise<BenchmarkResult[]> {
-    console.log('📊 Starting Performance Benchmark');
-    console.log('='.repeat(40));
-    console.log(`📋 Configuration: ${this.config.name}`);
-    console.log(`🔄 Iterations: ${this.config.iterations}`);
-    console.log(`🔥 Warmup: ${this.config.warmupIterations}`);
-    console.log('');
+    console.info('📊 Starting Performance Benchmark');
+    console.info('='.repeat(40));
+    console.info(`📋 Configuration: ${this.config.name}`);
+    console.info(`🔄 Iterations: ${this.config.iterations}`);
+    console.info(`🔥 Warmup: ${this.config.warmupIterations}`);
+    console.info('');
 
     // Clear previous results
     this.results = [];
@@ -99,31 +99,31 @@ export class PerformanceBenchmark {
 
     // Warmup phase
     if (this.config.warmupIterations > 0) {
-      console.log('🔥 Running warmup phase...');
+      console.info('🔥 Running warmup phase...');
       for (let i = 0; i < this.config.warmupIterations; i++) {
         await this.runSingleIteration(url, true);
       }
-      console.log('✅ Warmup completed');
-      console.log('');
+      console.info('✅ Warmup completed');
+      console.info('');
     }
 
     // Main benchmark phase
-    console.log('📊 Running main benchmark phase...');
+    console.info('📊 Running main benchmark phase...');
     for (let i = 0; i < this.config.iterations; i++) {
-      console.log(`🔄 Iteration ${i + 1}/${this.config.iterations}`);
+      console.info(`🔄 Iteration ${i + 1}/${this.config.iterations}`);
       const result = await this.runSingleIteration(url, false);
       this.results.push(result);
       
       // Show progress
       const progress = ((i + 1) / this.config.iterations * 100).toFixed(1);
-      console.log(`📈 Progress: ${progress}% - Duration: ${result.duration}ms`);
+      console.info(`📈 Progress: ${progress}% - Duration: ${result.duration}ms`);
     }
 
     // Cleanup observers
     this.cleanupObservers();
 
-    console.log('');
-    console.log('✅ Benchmark completed successfully');
+    console.info('');
+    console.info('✅ Benchmark completed successfully');
     return this.results;
   }
 
@@ -133,7 +133,7 @@ export class PerformanceBenchmark {
       const vitalsObserver = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
           if (entry.entryType === 'paint') {
-            console.log(`🎨 Paint: ${entry.name} - ${entry.startTime}ms`);
+            console.info(`🎨 Paint: ${entry.name} - ${entry.startTime}ms`);
           }
         }
       });
@@ -147,7 +147,7 @@ export class PerformanceBenchmark {
         for (const entry of list.getEntries()) {
           if (entry.entryType === 'resource') {
             const resource = entry as PerformanceResourceTiming;
-            console.log(`📦 Resource: ${resource.name} - ${resource.duration}ms`);
+            console.info(`📦 Resource: ${resource.name} - ${resource.duration}ms`);
           }
         }
       });

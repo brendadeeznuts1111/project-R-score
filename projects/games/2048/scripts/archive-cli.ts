@@ -13,10 +13,10 @@ async function main() {
     args.find((arg) => arg.startsWith("--level="))?.split("=")[1] || "9"
   );
 
-  console.log("🚀 Generating CRC32 benchmark archive...");
-  console.log(`📦 Format: ${format}`);
-  console.log(`📊 Compression level: ${level}`);
-  console.log(`💾 Output: ${output}`);
+  console.info("🚀 Generating CRC32 benchmark archive...");
+  console.info(`📦 Format: ${format}`);
+  console.info(`📊 Compression level: ${level}`);
+  console.info(`💾 Output: ${output}`);
 
   try {
     await configManager.loadConfig();
@@ -31,8 +31,8 @@ async function main() {
 
     const { files, manifest } = await buildOddsDataset();
 
-    console.log(`📁 Generated ${manifest.fileCount} benchmark files`);
-    console.log(`📏 Total size: ${(manifest.totalSize / 1024).toFixed(2)} KB`);
+    console.info(`📁 Generated ${manifest.fileCount} benchmark files`);
+    console.info(`📏 Total size: ${(manifest.totalSize / 1024).toFixed(2)} KB`);
 
     const archive = new Bun.Archive(files, {
       compress: format.includes("gz") ? "gzip" : "none",
@@ -44,9 +44,9 @@ async function main() {
 
     await Bun.write(output, bytes);
 
-    console.log(`✅ Archive saved: ${output}`);
-    console.log(`🔒 Archive CRC32: ${crc32.toString(16).padStart(8, "0")}`);
-    console.log(
+    console.info(`✅ Archive saved: ${output}`);
+    console.info(`🔒 Archive CRC32: ${crc32.toString(16).padStart(8, "0")}`);
+    console.info(
       `📉 Compression ratio: ${(
         ((manifest.totalSize - bytes.length) / manifest.totalSize) *
         100
@@ -58,7 +58,7 @@ async function main() {
       ".manifest.json"
     );
     await Bun.write(manifestOutput, JSON.stringify(manifest, null, 2));
-    console.log(`📋 Manifest saved: ${manifestOutput}`);
+    console.info(`📋 Manifest saved: ${manifestOutput}`);
   } catch (error) {
     console.error("❌ Failed to generate archive:", error);
     process.exit(1);

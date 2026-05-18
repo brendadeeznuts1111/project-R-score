@@ -11,21 +11,21 @@ export {}; // Make this file a module to enable top-level await
 
 import { $ } from "bun";
 
-console.log("🔧 Shell Command Execution Examples\n");
+console.info("🔧 Shell Command Execution Examples\n");
 
 // Example 1: Basic shell command execution
-console.log("1. Basic command execution:");
+console.info("1. Basic command execution:");
 await $`echo Hello, world!`; // => "Hello, world!"
 
 // Example 2: Capturing output as text
-console.log("\n2. Capturing command output:");
+console.info("\n2. Capturing command output:");
 const output = await $`ls -l`.text();
-console.log("Directory listing:\n", output);
+console.info("Directory listing:\n", output);
 
 // Example 3: Processing output line by line
-console.log("\n3. Processing output line by line:");
+console.info("\n3. Processing output line by line:");
 for await (const line of $`ls -l`.lines()) {
-  console.log(`Line: ${line}`);
+  console.info(`Line: ${line}`);
 }
 
-console.log("\n✅ Shell command examples completed!");
+console.info("\n✅ Shell command examples completed!");

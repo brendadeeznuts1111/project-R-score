@@ -602,14 +602,14 @@ const server = serve({
   }
 });
 
-console.log(c.cyan(`🎯 Gateway Dashboard Server`));
-console.log(c.gray(`   Dashboard: http://${HOST}:${PORT}`));
-console.log(c.gray(`   API Base:  http://${HOST}:${PORT}/api`));
-console.log('');
+console.info(c.cyan(`🎯 Gateway Dashboard Server`));
+console.info(c.gray(`   Dashboard: http://${HOST}:${PORT}`));
+console.info(c.gray(`   API Base:  http://${HOST}:${PORT}/api`));
+console.info('');
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log(c.yellow('\n🛑 Shutting down Gateway Dashboard...'));
+  console.info(c.yellow('\n🛑 Shutting down Gateway Dashboard...'));
   lockManager.close();
   server.stop();
   process.exit(0);

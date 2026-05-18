@@ -447,8 +447,8 @@ describe("Layer4 Cross-Sport Correlation Detection", () => {
 		const endTime = performance.now();
 		const duration = endTime - startTime;
 
-		console.log(`Detection completed in ${duration.toFixed(2)}ms`);
-		console.log(`Found ${anomalies?.length || 0} anomalies`);
+		console.info(`Detection completed in ${duration.toFixed(2)}ms`);
+		console.info(`Found ${anomalies?.length || 0} anomalies`);
 
 		// Performance assertion (adjust based on requirements)
 		expect(duration).toBeLessThan(1000); // Should complete within 1 second

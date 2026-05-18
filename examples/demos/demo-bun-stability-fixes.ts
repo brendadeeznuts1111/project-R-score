@@ -14,26 +14,26 @@
 
 import { serve } from 'bun';
 
-console.log('🚀 Bun Stability & Reliability Fixes Demo');
-console.log('=' .repeat(50));
+console.info('🚀 Bun Stability & Reliability Fixes Demo');
+console.info('=' .repeat(50));
 
 // 🎯 FIX 1: Global ~/.bunfig.toml Loading
-console.log('\n📝 Fix 1: Global ~/.bunfig.toml Loading');
-console.log('-' .repeat(40));
+console.info('\n📝 Fix 1: Global ~/.bunfig.toml Loading');
+console.info('-' .repeat(40));
 
 class ConfigLoadingDemo {
   private loadCount = 0;
   
   simulateConfigLoad(): void {
     this.loadCount++;
-    console.log(`📁 Config load attempt #${this.loadCount}`);
+    console.info(`📁 Config load attempt #${this.loadCount}`);
     
     // 🎯 FIX: Config now loaded at most once per run
     if (this.loadCount === 1) {
-      console.log('✅ ~/.bunfig.toml loaded for the first time');
-      console.log('🔒 Subsequent loads will use cached config');
+      console.info('✅ ~/.bunfig.toml loaded for the first time');
+      console.info('🔒 Subsequent loads will use cached config');
     } else {
-      console.log('🔄 Using cached config (no duplicate loading)');
+      console.info('🔄 Using cached config (no duplicate loading)');
     }
     
     // Simulate config content
@@ -44,11 +44,11 @@ class ConfigLoadingDemo {
       logLevel: 'info'
     };
     
-    console.log('⚙️  Config applied:', mockConfig);
+    console.info('⚙️  Config applied:', mockConfig);
   }
   
   demonstrateMultipleLoads(): void {
-    console.log('🧪 Testing multiple config load attempts...');
+    console.info('🧪 Testing multiple config load attempts...');
     
     // Simulate multiple operations that might load config
     this.simulateConfigLoad();
@@ -56,48 +56,48 @@ class ConfigLoadingDemo {
     this.simulateConfigLoad();
     this.simulateConfigLoad();
     
-    console.log('✅ Config loaded only once - no duplicate application!');
+    console.info('✅ Config loaded only once - no duplicate application!');
   }
 }
 
 // 🗄️ FIX 2: MySQL OK Packet Parsing Safety
-console.log('\n🗄️  Fix 2: MySQL OK Packet Parsing Safety');
-console.log('-' .repeat(45));
+console.info('\n🗄️  Fix 2: MySQL OK Packet Parsing Safety');
+console.info('-' .repeat(45));
 
 class MySQLPacketDemo {
   private safeParsePacket(data: Buffer, description: string): void {
-    console.log(`📦 Parsing ${description} (${data.length} bytes)`);
+    console.info(`📦 Parsing ${description} (${data.length} bytes)`);
     
     try {
       // 🎯 FIX: Safe parsing with byte clamping
       if (data.length === 0) {
-        console.log('⚠️  Empty packet - handled safely');
+        console.info('⚠️  Empty packet - handled safely');
         return;
       }
       
       if (data.length < 4) {
-        console.log('⚠️  Truncated packet - safely clamped');
+        console.info('⚠️  Truncated packet - safely clamped');
         return;
       }
       
       // Simulate safe MySQL packet parsing
       const packetLength = Math.min(data.readUInt32LE(0) & 0x00ffffff, data.length);
-      console.log(`📊 Packet length: ${packetLength} (clamped to ${data.length})`);
+      console.info(`📊 Packet length: ${packetLength} (clamped to ${data.length})`);
       
       if (packetLength > data.length) {
-        console.log('🔒 Oversized read prevented - using safe bounds');
+        console.info('🔒 Oversized read prevented - using safe bounds');
         return;
       }
       
-      console.log('✅ Packet parsed safely');
+      console.info('✅ Packet parsed safely');
       
     } catch (error) {
-      console.log('❌ Parse error handled gracefully:', error.message);
+      console.info('❌ Parse error handled gracefully:', error.message);
     }
   }
   
   demonstratePacketSafety(): void {
-    console.log('🧪 Testing various MySQL packet scenarios...');
+    console.info('🧪 Testing various MySQL packet scenarios...');
     
     // Test cases that previously could cause issues
     this.safeParsePacket(Buffer.from([]), 'Empty packet');
@@ -109,36 +109,36 @@ class MySQLPacketDemo {
     const problematicPacket = Buffer.from([0xff, 0xff, 0xff, 0xff]); // Large length
     this.safeParsePacket(problematicPacket, 'Large length packet (underflow risk)');
     
-    console.log('✅ All packets handled safely - no overflow panics!');
+    console.info('✅ All packets handled safely - no overflow panics!');
   }
 }
 
 // 🍪 FIX 3: CookieMap Delete Crash Fix
-console.log('\n🍪 Fix 3: CookieMap Delete Crash Fix');
-console.log('-' .repeat(35));
+console.info('\n🍪 Fix 3: CookieMap Delete Crash Fix');
+console.info('-' .repeat(35));
 
 class CookieMapDemo {
   private cookieStore = new Map<string, { value: string; expires?: Date }>();
   
   addCookie(name: string, value: string, expires?: Date): void {
     this.cookieStore.set(name, { value, expires });
-    console.log(`🍪 Added cookie: ${name} = ${value}`);
+    console.info(`🍪 Added cookie: ${name} = ${value}`);
   }
   
   deleteCookie(name: string): void {
-    console.log(`🗑️  Deleting cookie: ${name}`);
+    console.info(`🗑️  Deleting cookie: ${name}`);
     
     try {
       // 🎯 FIX: Safe cookie deletion without crashes
       if (this.cookieStore.has(name)) {
         this.cookieStore.delete(name);
-        console.log(`✅ Cookie ${name} deleted successfully`);
+        console.info(`✅ Cookie ${name} deleted successfully`);
       } else {
-        console.log(`ℹ️  Cookie ${name} not found - no action needed`);
+        console.info(`ℹ️  Cookie ${name} not found - no action needed`);
       }
       
       // Test edge cases that previously could crash
-      console.log('🧪 Testing edge cases...');
+      console.info('🧪 Testing edge cases...');
       
       // Delete non-existent cookie
       this.cookieStore.delete('non-existent');
@@ -148,15 +148,15 @@ class CookieMapDemo {
       mapAny.delete(undefined);
       mapAny.delete(null);
       
-      console.log('✅ All edge cases handled safely');
+      console.info('✅ All edge cases handled safely');
       
     } catch (error) {
-      console.log('❌ Cookie delete error handled:', error.message);
+      console.info('❌ Cookie delete error handled:', error.message);
     }
   }
   
   demonstrateCookieSafety(): void {
-    console.log('🧪 Testing CookieMap delete safety...');
+    console.info('🧪 Testing CookieMap delete safety...');
     
     // Add some cookies
     this.addCookie('session', 'abc123', new Date(Date.now() + 3600000));
@@ -167,18 +167,18 @@ class CookieMapDemo {
     this.deleteCookie('session');
     this.deleteCookie('non-existent');
     
-    console.log(`📊 Remaining cookies: ${this.cookieStore.size}`);
+    console.info(`📊 Remaining cookies: ${this.cookieStore.size}`);
     
     // Show current state
     for (const [name, cookie] of this.cookieStore) {
-      console.log(`  🍪 ${name}: ${cookie.value}`);
+      console.info(`  🍪 ${name}: ${cookie.value}`);
     }
   }
 }
 
 // 🎨 FIX 4 & 5: ANSI Color Detection & Interactive UI Support
-console.log('\n🎨 Fix 4 & 5: ANSI Color Detection & Interactive UI');
-console.log('-' .repeat(50));
+console.info('\n🎨 Fix 4 & 5: ANSI Color Detection & Interactive UI');
+console.info('-' .repeat(50));
 
 class ANSIColorDemo {
   private supportsColor(stream: 'stdout' | 'stderr'): boolean {
@@ -188,8 +188,8 @@ class ANSIColorDemo {
     const colorterm = process.env.COLORTERM || '';
     
     const hasColor = isTTY && (term !== 'dumb' || colorterm !== '');
-    console.log(`📺 ${stream} color support: ${hasColor ? 'YES' : 'NO'}`);
-    console.log(`   TTY: ${isTTY}, TERM: ${term}, COLORTERM: ${colorterm}`);
+    console.info(`📺 ${stream} color support: ${hasColor ? 'YES' : 'NO'}`);
+    console.info(`   TTY: ${isTTY}, TERM: ${term}, COLORTERM: ${colorterm}`);
     
     return hasColor;
   }
@@ -198,7 +198,7 @@ class ANSIColorDemo {
     const hasColor = this.supportsColor(stream);
     
     if (!hasColor) {
-      console.log(`⚠️  No color support for ${stream} - using plain text`);
+      console.info(`⚠️  No color support for ${stream} - using plain text`);
       return text;
     }
     
@@ -217,11 +217,11 @@ class ANSIColorDemo {
   }
   
   demonstrateColorDetection(): void {
-    console.log('🧪 Testing per-stream color detection...');
+    console.info('🧪 Testing per-stream color detection...');
     
     // Test stdout color support
     const stdoutText = this.colorizeText('This text has color (stdout)', 'green', 'stdout');
-    console.log('📱 STDOUT:', stdoutText);
+    console.info('📱 STDOUT:', stdoutText);
     
     // Test stderr color support  
     const stderrText = this.colorizeText('This text has color (stderr)', 'red', 'stderr');
@@ -232,60 +232,60 @@ class ANSIColorDemo {
   }
   
   private demonstrateBoxDrawing(): void {
-    console.log('\n📐 Testing box-drawing character support...');
+    console.info('\n📐 Testing box-drawing character support...');
     
     const hasStdoutColor = this.supportsColor('stdout');
     
     if (hasStdoutColor) {
-      console.log('✅ Terminal supports color - showing enhanced box:');
-      console.log('┌─────────────────────────────────┐');
-      console.log('│ 🎨 Enhanced Box with Colors      │');
-      console.log('│ ✅ Status: SUCCESS               │');
-      console.log('│ 📊 Data: 42 items processed       │');
-      console.log('└─────────────────────────────────┘');
+      console.info('✅ Terminal supports color - showing enhanced box:');
+      console.info('┌─────────────────────────────────┐');
+      console.info('│ 🎨 Enhanced Box with Colors      │');
+      console.info('│ ✅ Status: SUCCESS               │');
+      console.info('│ 📊 Data: 42 items processed       │');
+      console.info('└─────────────────────────────────┘');
     } else {
-      console.log('⚠️  No color support - showing plain box:');
-      console.log('+---------------------------------+');
-      console.log('| Plain Box (No Colors)          |');
-      console.log('| Status: SUCCESS                 |');
-      console.log('| Data: 42 items processed        |');
-      console.log('+---------------------------------+');
+      console.info('⚠️  No color support - showing plain box:');
+      console.info('+---------------------------------+');
+      console.info('| Plain Box (No Colors)          |');
+      console.info('| Status: SUCCESS                 |');
+      console.info('| Data: 42 items processed        |');
+      console.info('+---------------------------------+');
     }
   }
 }
 
 // 💥 FIX 6: Enhanced Crash Reports
-console.log('\n💥 Fix 6: Enhanced Crash Reports');
-console.log('-' .repeat(35));
+console.info('\n💥 Fix 6: Enhanced Crash Reports');
+console.info('-' .repeat(35));
 
 class CrashReportDemo {
   private simulateStackTrace(): void {
-    console.log('🧪 Simulating enhanced crash report generation...');
+    console.info('🧪 Simulating enhanced crash report generation...');
     
     try {
       // 🎯 FIX: Enhanced stack trace capture
       this.deepFunctionCall1();
     } catch (error) {
-      console.log('💥 Simulated crash caught');
-      console.log('📊 Enhanced stack trace features:');
-      console.log('  ✅ Complete frame capture using Zig\'s std.debug.captureStackTrace');
-      console.log('  ✅ Fallback to glibc backtrace() when beneficial');
-      console.log('  ✅ Better ARM system support');
-      console.log('  ✅ No more truncated stack traces');
+      console.info('💥 Simulated crash caught');
+      console.info('📊 Enhanced stack trace features:');
+      console.info('  ✅ Complete frame capture using Zig\'s std.debug.captureStackTrace');
+      console.info('  ✅ Fallback to glibc backtrace() when beneficial');
+      console.info('  ✅ Better ARM system support');
+      console.info('  ✅ No more truncated stack traces');
       
       // Simulate enhanced stack trace
-      console.log('\n📋 Enhanced Stack Trace:');
-      console.log('  at deepFunctionCall3 (demo-bun-stability-fixes.ts:XXX:XX)');
-      console.log('  at deepFunctionCall2 (demo-bun-stability-fixes.ts:XXX:XX)');
-      console.log('  at deepFunctionCall1 (demo-bun-stability-fixes.ts:XXX:XX)');
-      console.log('  at simulateStackTrace (demo-bun-stability-fixes.ts:XXX:XX)');
-      console.log('  at main (demo-bun-stability-fixes.ts:XXX:XX)');
-      console.log('  at <anonymous> (demo-bun-stability-fixes.ts:XXX:XX)');
+      console.info('\n📋 Enhanced Stack Trace:');
+      console.info('  at deepFunctionCall3 (demo-bun-stability-fixes.ts:XXX:XX)');
+      console.info('  at deepFunctionCall2 (demo-bun-stability-fixes.ts:XXX:XX)');
+      console.info('  at deepFunctionCall1 (demo-bun-stability-fixes.ts:XXX:XX)');
+      console.info('  at simulateStackTrace (demo-bun-stability-fixes.ts:XXX:XX)');
+      console.info('  at main (demo-bun-stability-fixes.ts:XXX:XX)');
+      console.info('  at <anonymous> (demo-bun-stability-fixes.ts:XXX:XX)');
       
-      console.log('\n🔧 System Info:');
-      console.log('  Platform: glibc-based Linux simulation');
-      console.log('  Architecture: ARM64 simulation');
-      console.log('  Capture Method: Zig std.debug + glibc fallback');
+      console.info('\n🔧 System Info:');
+      console.info('  Platform: glibc-based Linux simulation');
+      console.info('  Architecture: ARM64 simulation');
+      console.info('  Capture Method: Zig std.debug + glibc fallback');
     }
   }
   
@@ -302,14 +302,14 @@ class CrashReportDemo {
   }
   
   demonstrateEnhancedReports(): void {
-    console.log('🧪 Demonstrating enhanced crash reports...');
+    console.info('🧪 Demonstrating enhanced crash reports...');
     this.simulateStackTrace();
   }
 }
 
 // 🌐 Web Demo Server
-console.log('\n🌐 Starting Web Demo Server...');
-console.log('-' .repeat(30));
+console.info('\n🌐 Starting Web Demo Server...');
+console.info('-' .repeat(30));
 
 const demoServer = serve({
   port: 3009,
@@ -381,7 +381,7 @@ const demoServer = serve({
   }
 });
 
-console.log(`🚀 Demo server running on http://localhost:3009`);
+console.info(`🚀 Demo server running on http://localhost:3009`);
 
 // HTML Template
 function getDemoHTML(): string {
@@ -487,7 +487,7 @@ function getDemoHTML(): string {
         // Auto-test all fixes on load
         window.addEventListener('load', () => {
             setTimeout(() => {
-                console.log('🚀 Auto-testing all stability fixes...');
+                console.info('🚀 Auto-testing all stability fixes...');
                 ['config', 'mysql', 'cookies', 'colors', 'crash'].forEach((fix, index) => {
                     setTimeout(() => testFix(fix), index * 1000);
                 });
@@ -499,8 +499,8 @@ function getDemoHTML(): string {
 }
 
 // Run all demos
-console.log('\n🧪 Running All Stability Fix Demos...');
-console.log('=' .repeat(45));
+console.info('\n🧪 Running All Stability Fix Demos...');
+console.info('=' .repeat(45));
 
 const configDemo = new ConfigLoadingDemo();
 configDemo.demonstrateMultipleLoads();
@@ -517,21 +517,21 @@ colorDemo.demonstrateColorDetection();
 const crashDemo = new CrashReportDemo();
 crashDemo.demonstrateEnhancedReports();
 
-console.log('\n📊 Summary of Stability Fixes:');
-console.log('=' .repeat(35));
-console.log('✅ Config loading: Once per run, no duplicates');
-console.log('✅ MySQL parsing: Safe byte clamping, no overflows');
-console.log('✅ CookieMap: Safe deletion, no crashes');
-console.log('✅ ANSI colors: Per-stream detection');
-console.log('✅ Interactive UI: Smart box-drawing usage');
-console.log('✅ Crash reports: Complete stack traces');
+console.info('\n📊 Summary of Stability Fixes:');
+console.info('=' .repeat(35));
+console.info('✅ Config loading: Once per run, no duplicates');
+console.info('✅ MySQL parsing: Safe byte clamping, no overflows');
+console.info('✅ CookieMap: Safe deletion, no crashes');
+console.info('✅ ANSI colors: Per-stream detection');
+console.info('✅ Interactive UI: Smart box-drawing usage');
+console.info('✅ Crash reports: Complete stack traces');
 
-console.log('\n🌐 Open http://localhost:3009 for interactive demo');
-console.log('⏹️  Press Ctrl+C to stop the server');
+console.info('\n🌐 Open http://localhost:3009 for interactive demo');
+console.info('⏹️  Press Ctrl+C to stop the server');
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down stability demo server...');
+  console.info('\n🛑 Shutting down stability demo server...');
   demoServer.stop();
   process.exit(0);
 });

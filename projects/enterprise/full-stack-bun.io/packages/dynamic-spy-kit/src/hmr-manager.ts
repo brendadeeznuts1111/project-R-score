@@ -24,7 +24,7 @@ export class HMRManager {
 		this.lastUpdate = new Date();
 		this.updateCount++;
 		
-		console.log(`HMR triggered${region ? ` for region: ${region}` : ''}`);
+		console.info(`HMR triggered${region ? ` for region: ${region}` : ''}`);
 		
 		this.updateCallbacks.forEach(callback => {
 			try {

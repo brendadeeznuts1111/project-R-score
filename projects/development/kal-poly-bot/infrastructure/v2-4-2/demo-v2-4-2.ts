@@ -12,12 +12,12 @@ import { UnicodeStringWidthEngine } from "./stringwidth-engine";
 import { V8TypeCheckingBridge } from "./v8-type-bridge";
 import { YAML12StrictParser } from "./yaml-1-2-parser";
 
-console.log("🌟 Golden Matrix v2.4.2: Complete Infrastructure Demo");
-console.log("====================================================");
+console.info("🌟 Golden Matrix v2.4.2: Complete Infrastructure Demo");
+console.info("====================================================");
 
 async function demonstrateAllComponents() {
-  console.log("\n🔧 Component #42: Unicode StringWidth Engine");
-  console.log("==============================================");
+  console.info("\n🔧 Component #42: Unicode StringWidth Engine");
+  console.info("==============================================");
 
   const unicodeTests = [
     "Hello World",
@@ -30,18 +30,18 @@ async function demonstrateAllComponents() {
     "漢字 Chinese Characters",
   ];
 
-  console.log("📏 Unicode Width Calculations:");
+  console.info("📏 Unicode Width Calculations:");
   for (const test of unicodeTests) {
     const width = UnicodeStringWidthEngine.calculateWidth(test);
     const stripped = UnicodeStringWidthEngine.stripANSI(test);
-    console.log(`   "${test}" → ${width} cells (clean: "${stripped}")`);
+    console.info(`   "${test}" → ${width} cells (clean: "${stripped}")`);
   }
 
-  console.log("\n🔧 Component #43: V8 Type Checking Bridge");
-  console.log("==========================================");
+  console.info("\n🔧 Component #43: V8 Type Checking Bridge");
+  console.info("==========================================");
 
   V8TypeCheckingBridge.registerTypeChecks("demo-addon");
-  console.log("📝 Registered native addon type checks");
+  console.info("📝 Registered native addon type checks");
 
   const v8Tests = [
     { value: new Map([["key", "value"]]), name: "Map" },
@@ -55,7 +55,7 @@ async function demonstrateAllComponents() {
     { value: new Uint8Array([1, 2, 3]), name: "TypedArray" },
   ];
 
-  console.log("🔍 V8 Type Checking Results:");
+  console.info("🔍 V8 Type Checking Results:");
   for (const { value, name } of v8Tests) {
     const results = {
       isMap: V8TypeCheckingBridge.isMap(value),
@@ -72,11 +72,11 @@ async function demonstrateAllComponents() {
     const matches = Object.entries(results)
       .filter(([, isMatch]) => isMatch)
       .map(([type]) => type);
-    console.log(`   ${name}: ${matches.join(", ") || "no matches"}`);
+    console.info(`   ${name}: ${matches.join(", ") || "no matches"}`);
   }
 
-  console.log("\n🔧 Component #44: YAML 1.2 Strict Parser");
-  console.log("==========================================");
+  console.info("\n🔧 Component #44: YAML 1.2 Strict Parser");
+  console.info("==========================================");
 
   const yamlConfig = `
 # Bun configuration with security considerations
@@ -94,26 +94,26 @@ allowFile = "yes"
 experimental = "on"
 `;
 
-  console.log("📝 YAML Configuration:");
-  console.log(yamlConfig);
+  console.info("📝 YAML Configuration:");
+  console.info(yamlConfig);
 
-  console.log("\n🔍 YAML 1.2 Strict Parsing:");
+  console.info("\n🔍 YAML 1.2 Strict Parsing:");
   const parsedConfig = YAML12StrictParser.parseConfig(yamlConfig) as Record<
     string,
     unknown
   >;
-  console.log(JSON.stringify(parsedConfig, null, 2));
+  console.info(JSON.stringify(parsedConfig, null, 2));
 
-  console.log("\n⚠️  Security Validation:");
+  console.info("\n⚠️  Security Validation:");
   const warnings = YAML12StrictParser.validateYAMLContent(yamlConfig);
   if (warnings.length === 0) {
-    console.log("   ✅ No security issues detected");
+    console.info("   ✅ No security issues detected");
   } else {
-    warnings.forEach((warning) => console.log(`   ⚠️  ${warning}`));
+    warnings.forEach((warning) => console.info(`   ⚠️  ${warning}`));
   }
 
-  console.log("\n🔧 Component #45: Security Hardening Layer");
-  console.log("===========================================");
+  console.info("\n🔧 Component #45: Security Hardening Layer");
+  console.info("===========================================");
 
   const securityTests = [
     { pkg: "react", source: "npm" },
@@ -123,54 +123,54 @@ experimental = "on"
     { pkg: "suspicious", source: "ssh:attacker@server" },
   ];
 
-  console.log("🛡️  Trusted Dependency Validation:");
+  console.info("🛡️  Trusted Dependency Validation:");
   for (const { pkg, source } of securityTests) {
     const isValid = SecurityHardeningLayer.validateTrustedDependency(
       pkg,
       source
     );
-    console.log(`   ${pkg} from ${source}: ${isValid ? "✅" : "❌"}`);
+    console.info(`   ${pkg} from ${source}: ${isValid ? "✅" : "❌"}`);
   }
 
-  console.log("\n🔒 Isolated Context Creation:");
+  console.info("\n🔒 Isolated Context Creation:");
   const isolatedContext = SecurityHardeningLayer.createIsolatedContext();
-  console.log(
+  console.info(
     `   Safe globals available: ${Object.keys(isolatedContext).length}`
   );
-  console.log(
+  console.info(
     `   Bun access blocked: ${(isolatedContext as any).Bun === undefined ? "✅" : "❌"}`
   );
-  console.log(
+  console.info(
     `   Internal APIs blocked: ${(isolatedContext as any).__bun_jsc_loader__ === undefined ? "✅" : "❌"}`
   );
 
-  console.log("\n🔧 Golden Matrix v2.4.2 Integration");
-  console.log("=====================================");
+  console.info("\n🔧 Golden Matrix v2.4.2 Integration");
+  console.info("=====================================");
 
   const manager = GoldenMatrixManager.getInstance();
 
-  console.log("\n📊 System Status:");
+  console.info("\n📊 System Status:");
   const status = manager.getSystemStatus() as Record<string, unknown>;
-  console.log(JSON.stringify(status, null, 2));
+  console.info(JSON.stringify(status, null, 2));
 
-  console.log("\n🧪 Component Integration Test:");
+  console.info("\n🧪 Component Integration Test:");
   await manager.runSystemTest();
 
-  console.log("\n🎯 Performance Metrics:");
-  console.log("   Unicode StringWidth: +300% emoji accuracy");
-  console.log("   YAML 1.2 Parser: CVE-2024 mitigated");
-  console.log("   V8 Type Bridge: Native addon compatible");
-  console.log("   Security Layer: Zero-trust validation");
-  console.log("   Zero-Cost Elimination: 95%");
-  console.log("   Bundle Size: 2.8MB → 45KB");
+  console.info("\n🎯 Performance Metrics:");
+  console.info("   Unicode StringWidth: +300% emoji accuracy");
+  console.info("   YAML 1.2 Parser: CVE-2024 mitigated");
+  console.info("   V8 Type Bridge: Native addon compatible");
+  console.info("   Security Layer: Zero-trust validation");
+  console.info("   Zero-Cost Elimination: 95%");
+  console.info("   Bundle Size: 2.8MB → 45KB");
 
-  console.log("\n✅ Golden Matrix v2.4.2: COMPLETE");
-  console.log("==================================");
-  console.log("🚀 All 45 components deployed and operational");
-  console.log("🔒 Security hardening active");
-  console.log("⚡ Zero-cost abstractions enabled");
-  console.log("🌟 Quantum-ready infrastructure");
-  console.log("🛡️  CVE-2024 mitigated");
+  console.info("\n✅ Golden Matrix v2.4.2: COMPLETE");
+  console.info("==================================");
+  console.info("🚀 All 45 components deployed and operational");
+  console.info("🔒 Security hardening active");
+  console.info("⚡ Zero-cost abstractions enabled");
+  console.info("🌟 Quantum-ready infrastructure");
+  console.info("🛡️  CVE-2024 mitigated");
 }
 
 // Run the complete demonstration

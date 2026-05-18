@@ -92,7 +92,7 @@ export class FactoryWagerVault {
 
       await this.saveMetadata();
 
-      console.log(`🔐 Credential stored: ${service}.${key} (CRC32: ${checksum})`);
+      console.info(`🔐 Credential stored: ${service}.${key} (CRC32: ${checksum})`);
 
     } catch (error) {
       console.error(`❌ Failed to store credential ${service}.${key}: ${(error as Error).message}`);
@@ -149,7 +149,7 @@ export class FactoryWagerVault {
     const services = ["registry", "r2", "domain", "mcp"] as const;
     const newKeys: Record<string, string> = {};
 
-    console.log("🔄 Initiating credential rotation...");
+    console.info("🔄 Initiating credential rotation...");
 
     for (const service of services) {
       try {
@@ -165,7 +165,7 @@ export class FactoryWagerVault {
         if (oldKey) {
           // Store old key as backup (30 day grace period)
           await this.setCredential(service, "api_key_backup", oldKey);
-          console.log(`💾 Backup created for ${service}.api_key`);
+          console.info(`💾 Backup created for ${service}.api_key`);
         }
 
         // Set new key
@@ -177,9 +177,9 @@ export class FactoryWagerVault {
       }
     }
 
-    console.log("✅ Rotation complete:");
+    console.info("✅ Rotation complete:");
     console.table(newKeys);
-    console.log("⚠️  Backup keys valid for 30 days");
+    console.info("⚠️  Backup keys valid for 30 days");
   }
 
   /**
@@ -194,7 +194,7 @@ export class FactoryWagerVault {
 
     let allPass = true;
 
-    console.log("🔍 Running vault health check...");
+    console.info("🔍 Running vault health check...");
 
     for (const { service, key, test } of tests) {
       const value = await this.getCredential(service, key);
@@ -206,18 +206,18 @@ export class FactoryWagerVault {
 
       try {
         const pass = await test.call(this, value);
-        console.log(`${pass ? "✅" : "❌"} ${service}.${key}`);
+        console.info(`${pass ? "✅" : "❌"} ${service}.${key}`);
         if (!pass) allPass = false;
       } catch (error) {
-        console.log(`❌ ${service}.${key} (${(error as Error).message})`);
+        console.info(`❌ ${service}.${key} (${(error as Error).message})`);
         allPass = false;
       }
     }
 
     if (allPass) {
-      console.log("🔐 All vault credentials healthy");
+      console.info("🔐 All vault credentials healthy");
     } else {
-      console.log("⚠️  Some vault credentials failed health check");
+      console.info("⚠️  Some vault credentials failed health check");
     }
 
     return allPass;
@@ -227,19 +227,19 @@ export class FactoryWagerVault {
    * List all stored credentials (metadata only)
    */
   async listCredentials(): Promise<void> {
-    console.log("📋 FactoryWager Vault Credentials:");
-    console.log("=====================================");
+    console.info("📋 FactoryWager Vault Credentials:");
+    console.info("=====================================");
 
     for (const [key, metadata] of Object.entries(this.metadata)) {
       const age = Math.floor((Date.now() - new Date(metadata.rotatedAt).getTime()) / (1000 * 60 * 60 * 24));
       const expires = Math.floor((new Date(metadata.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
-      console.log(`${key}:`);
-      console.log(`  Service: ${metadata.service}`);
-      console.log(`  Rotated: ${age} days ago`);
-      console.log(`  Expires: ${expires} days`);
-      console.log(`  Checksum: ${metadata.checksum}`);
-      console.log("");
+      console.info(`${key}:`);
+      console.info(`  Service: ${metadata.service}`);
+      console.info(`  Rotated: ${age} days ago`);
+      console.info(`  Expires: ${expires} days`);
+      console.info(`  Checksum: ${metadata.checksum}`);
+      console.info("");
     }
   }
 
@@ -264,9 +264,9 @@ export class FactoryWagerVault {
       await this.saveMetadata();
 
       if (deleted) {
-        console.log(`🗑️  Credential deleted: ${service}.${key}`);
+        console.info(`🗑️  Credential deleted: ${service}.${key}`);
       } else {
-        console.log(`⚠️  Credential not found: ${service}.${key}`);
+        console.info(`⚠️  Credential not found: ${service}.${key}`);
       }
 
       return deleted;
@@ -315,11 +315,11 @@ export class FactoryWagerVault {
    * List all available vault keys with diagnostic information
    */
   async listKeys(): Promise<void> {
-    console.log("🔍 Available vault keys:");
-    console.log("========================");
+    console.info("🔍 Available vault keys:");
+    console.info("========================");
 
     if (Object.keys(this.metadata).length === 0) {
-      console.log("❌ No metadata found - vault may be empty");
+      console.info("❌ No metadata found - vault may be empty");
       return;
     }
 
@@ -329,14 +329,14 @@ export class FactoryWagerVault {
       const status = expiresAt > now ? "✅" : "⚠️";
       const daysUntilExpiry = Math.floor((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
-      console.log(`  ${status} ${key}`);
-      console.log(`     Expires: ${new Date(data.expiresAt).toISOString().slice(0, 10)} (${daysUntilExpiry} days)`);
-      console.log(`     Checksum: ${data.checksum}`);
-      console.log(`     Service: ${data.service}`);
-      console.log("");
+      console.info(`  ${status} ${key}`);
+      console.info(`     Expires: ${new Date(data.expiresAt).toISOString().slice(0, 10)} (${daysUntilExpiry} days)`);
+      console.info(`     Checksum: ${data.checksum}`);
+      console.info(`     Service: ${data.service}`);
+      console.info("");
     });
 
-    console.log(`📊 Summary: ${Object.keys(this.metadata).length} keys total`);
+    console.info(`📊 Summary: ${Object.keys(this.metadata).length} keys total`);
   }
 
   /**
@@ -367,7 +367,7 @@ export class FactoryWagerVault {
 
       // Create the alias
       await this.setCredential(aliasService as any, aliasActualKey, sourceValue);
-      console.log(`✅ Alias created: ${aliasKey} → ${sourceKey}`);
+      console.info(`✅ Alias created: ${aliasKey} → ${sourceKey}`);
       return true;
 
     } catch (error) {
@@ -376,7 +376,7 @@ export class FactoryWagerVault {
     }
   }
   async initializeDemo(): Promise<void> {
-    console.log("🚀 Initializing FactoryWager Vault with demo credentials...");
+    console.info("🚀 Initializing FactoryWager Vault with demo credentials...");
 
     const demoCredentials = [
       { service: "registry" as const, key: "token", value: "demo-registry-token-12345678901234567890" },
@@ -389,7 +389,7 @@ export class FactoryWagerVault {
       await this.setCredential(service, key, value);
     }
 
-    console.log("✅ Demo credentials initialized");
+    console.info("✅ Demo credentials initialized");
     await this.listCredentials();
   }
 }
@@ -403,7 +403,7 @@ async function main(): Promise<void> {
   const cmd = process.argv[2];
 
   if (!cmd || cmd === "--help" || cmd === "-h") {
-    console.log(`
+    console.info(`
 🔐 FactoryWager Secure Vault v1.3.8
 
 Usage:
@@ -467,7 +467,7 @@ Features:
           process.exit(1);
         }
         const val = await vault.getCredential(getService as any, getKey);
-        console.log(val ? `Found: ${val.slice(0, 8)}...` : "Not found");
+        console.info(val ? `Found: ${val.slice(0, 8)}...` : "Not found");
         break;
       case "delete":
         const [delService, delKey] = process.argv.slice(3);
@@ -491,7 +491,7 @@ Features:
         break;
       default:
         console.error(`❌ Unknown command: ${cmd}`);
-        console.log("Use --help for usage information");
+        console.info("Use --help for usage information");
         process.exit(1);
     }
   } catch (error) {

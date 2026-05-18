@@ -38,8 +38,8 @@ export class BunIntegrationManager {
       ...config
     };
 
-    console.log('🚀 Bun Integration Manager initialized');
-    console.log('📋 Config:', this.config);
+    console.info('🚀 Bun Integration Manager initialized');
+    console.info('📋 Config:', this.config);
   }
 
   /**
@@ -53,7 +53,7 @@ export class BunIntegrationManager {
       // Cache the module for performance
       this.loadedModules.set(filePath, module);
       
-      console.log(`✅ Loaded TSX module: ${filePath}`);
+      console.info(`✅ Loaded TSX module: ${filePath}`);
       return module;
     } catch (error) {
       console.error(`❌ Failed to load TSX module ${filePath}:`, error);
@@ -185,7 +185,7 @@ export class BunIntegrationManager {
       }
     });
     
-    console.log(`🌐 Static server running on http://localhost:${port}`);
+    console.info(`🌐 Static server running on http://localhost:${port}`);
     return server;
   }
 
@@ -222,7 +222,7 @@ export class BunIntegrationManager {
       }
       
       await Bun.build(buildOptions);
-      console.log(`📦 Bundle created: ${outfile}`);
+      console.info(`📦 Bundle created: ${outfile}`);
     } catch (error) {
       console.error(`❌ Bundling failed:`, error);
       throw error;
@@ -280,12 +280,12 @@ export class BunIntegrationManager {
    * Demonstrate advanced language features
    */
   async demonstrateFeatures(): Promise<void> {
-    console.log('\n🎯 Demonstrating Bun Language Features:');
+    console.info('\n🎯 Demonstrating Bun Language Features:');
     
     // 1. Top-level await (Bun supports this natively)
     const startTime = Date.now();
     await new Promise(resolve => setTimeout(resolve, 100));
-    console.log(`✅ Top-level await: ${Date.now() - startTime}ms`);
+    console.info(`✅ Top-level await: ${Date.now() - startTime}ms`);
     
     // 2. TypeScript with JSX (handled automatically)
     const jsxCode = `
@@ -295,16 +295,16 @@ export class BunIntegrationManager {
     
     try {
       const result = await this.executeTSX(jsxCode);
-      console.log('✅ JSX transpilation: Success');
+      console.info('✅ JSX transpilation: Success');
     } catch (error) {
-      console.log('⚠️ JSX demo: Limited in this context');
+      console.info('⚠️ JSX demo: Limited in this context');
     }
     
     // 3. Fast file operations
     const testFile = '/tmp/bun-test.txt';
     await BunGlobal.write(testFile, 'Hello Bun!');
     const content = await BunGlobal.file(testFile).text();
-    console.log(`✅ Fast file I/O: ${content}`);
+    console.info(`✅ Fast file I/O: ${content}`);
     await BunGlobal.file(testFile).delete();
     
     // 4. Built-in SQLite (if available)
@@ -314,13 +314,13 @@ export class BunIntegrationManager {
         db.run('CREATE TABLE test (id INTEGER, name TEXT)');
         db.run('INSERT INTO test VALUES (1, "Bun")');
         const result = db.query('SELECT * FROM test').all();
-        console.log('✅ Built-in SQLite:', result);
+        console.info('✅ Built-in SQLite:', result);
         db.close();
       } else {
-        console.log('⚠️ SQLite not available in this environment');
+        console.info('⚠️ SQLite not available in this environment');
       }
     } catch (error) {
-      console.log('⚠️ SQLite demo skipped:', error);
+      console.info('⚠️ SQLite demo skipped:', error);
     }
   }
 }

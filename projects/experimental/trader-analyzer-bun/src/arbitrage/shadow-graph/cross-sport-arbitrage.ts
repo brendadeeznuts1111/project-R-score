@@ -398,7 +398,7 @@ export class CrossSportArbitrage {
 	 */
 	private async executeCrossSportTrade(edge: CrossSportEdge): Promise<boolean> {
 		// Placeholder: implement actual trade execution
-		console.log(`Executing cross-sport trade: ${edge.sportA} ↔ ${edge.sportB}`);
+		console.info(`Executing cross-sport trade: ${edge.sportA} ↔ ${edge.sportB}`);
 		return true;
 	}
 }

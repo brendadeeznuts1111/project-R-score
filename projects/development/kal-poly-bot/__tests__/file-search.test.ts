@@ -39,7 +39,7 @@ const TEST_FILES: string[] = [];
 
 describe('File Search Utility Test Suite', () => {
   beforeAll(async () => {
-    console.log('🔧 Setting up test files...');
+    console.info('🔧 Setting up test files...');
     
     // Create test directory
     try {
@@ -65,7 +65,7 @@ Line 6: ERROR at the end
 
     // Test file 2: Code-like content
     await writeFile(testFile2, `function test() {
-  console.log('test');
+  console.info('test');
   const error = new Error('test error');
   return error;
 }
@@ -95,7 +95,7 @@ class TestClass {
   });
 
   afterAll(async () => {
-    console.log('🧹 Cleaning up test files...');
+    console.info('🧹 Cleaning up test files...');
     
     // Clean up test files
     for (const file of TEST_FILES) {

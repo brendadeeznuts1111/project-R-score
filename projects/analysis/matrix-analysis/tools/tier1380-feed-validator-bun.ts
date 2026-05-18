@@ -2,12 +2,12 @@
 // @bun v1.3.7+
 // Tier-1380 RSS/XML Feed Validation (Bun Compatible)
 
-console.log("🔍 Tier-1380 Feed Validation Suite (Bun Compatible)\n");
+console.info("🔍 Tier-1380 Feed Validation Suite (Bun Compatible)\n");
 
 // ─── Bun-Compatible Feed Validation ───────────────────
 // @ts-expect-error - Implicit any types for runtime compatibility
 async function validateFeedXML(url) {
-	console.log(`📡 Validating: ${url}`);
+	console.info(`📡 Validating: ${url}`);
 
 	try {
 		const response = await fetch(url);
@@ -16,10 +16,10 @@ async function validateFeedXML(url) {
 		}
 
 		const contentType = response.headers.get("content-type") ?? "missing";
-		console.log(`   Content-Type: ${contentType}`);
+		console.info(`   Content-Type: ${contentType}`);
 
 		const text = await response.text();
-		console.log(`   Size: ${text.length} bytes`);
+		console.info(`   Size: ${text.length} bytes`);
 
 		// Basic XML structure validation (regex-based)
 		const xmlPattern = /^\s*<\?xml[^>]*\?>/;
@@ -29,7 +29,7 @@ async function validateFeedXML(url) {
 		const hasItems = text.includes("<item") || text.includes("<entry");
 
 		if (!hasRSS && !hasAtom) {
-			console.log(`   ⚠️  Not RSS/Atom feed`);
+			console.info(`   ⚠️  Not RSS/Atom feed`);
 			return {
 				valid: false,
 				error: "Not RSS/Atom feed",
@@ -39,7 +39,7 @@ async function validateFeedXML(url) {
 		}
 
 		if (!hasItems) {
-			console.log(`   ⚠️  No items found`);
+			console.info(`   ⚠️  No items found`);
 			return { valid: false, error: "No items in feed", contentType, size: text.length };
 		}
 
@@ -62,7 +62,7 @@ async function validateFeedXML(url) {
 		const wellFormed = Math.abs(openTags - closeTags) <= 1; // Allow for self-closing tags
 
 		if (!wellFormed) {
-			console.log(`   ⚠️  Possible XML structure issue`);
+			console.info(`   ⚠️  Possible XML structure issue`);
 			return {
 				valid: false,
 				error: "XML structure issue",
@@ -71,10 +71,10 @@ async function validateFeedXML(url) {
 			};
 		}
 
-		console.log(`   ✅ Valid ${hasRSS ? "RSS" : "Atom"} ${version}`);
-		console.log(`   📰 Title: ${title}`);
-		console.log(`   📄 Items: ${items}`);
-		console.log(`   🏷️  XML Declaration: ${hasXMLDeclaration ? "Yes" : "No"}`);
+		console.info(`   ✅ Valid ${hasRSS ? "RSS" : "Atom"} ${version}`);
+		console.info(`   📰 Title: ${title}`);
+		console.info(`   📄 Items: ${items}`);
+		console.info(`   🏷️  XML Declaration: ${hasXMLDeclaration ? "Yes" : "No"}`);
 
 		return {
 			valid: true,
@@ -92,17 +92,17 @@ async function validateFeedXML(url) {
 			error && typeof error === "object" && "message" in error
 				? error.message
 				: String(error);
-		console.log(`   ❌ Error: ${errorMsg}`);
+		console.info(`   ❌ Error: ${errorMsg}`);
 		return { valid: false, error: errorMsg };
 	}
 }
 
 // ─── Quick Health Checks (Bun One-Liner Style) ───────
 async function quickHealthChecks() {
-	console.log("⚡ Quick Health Checks (Bun One-Liner Style):\n");
+	console.info("⚡ Quick Health Checks (Bun One-Liner Style):\n");
 
 	// 1. Basic feed structure check
-	console.log("1. Feed Structure Check:");
+	console.info("1. Feed Structure Check:");
 	try {
 		const structureCheck = await fetch("https://bun.com/rss.xml")
 			.then((r) => ({
@@ -119,30 +119,30 @@ async function quickHealthChecks() {
 					hasXML: content.includes("<?xml"),
 				};
 			});
-		console.log(`   Result: ${JSON.stringify(structureCheck, null, 6)}`);
+		console.info(`   Result: ${JSON.stringify(structureCheck, null, 6)}`);
 	} catch (e) {
 		const errorMsg =
 			e && typeof e === "object" && "message" in e ? e.message : String(e);
-		console.log(`   Error: ${errorMsg}`);
+		console.info(`   Error: ${errorMsg}`);
 	}
 
 	// 2. Content-Type validation
-	console.log("\n2. Content-Type Validation:");
+	console.info("\n2. Content-Type Validation:");
 	try {
 		const contentType = await fetch("https://bun.com/rss.xml").then(
 			(r) => r.headers.get("content-type") ?? "missing",
 		);
 		const isValid = contentType.includes("xml") || contentType.includes("rss");
-		console.log(`   Content-Type: ${contentType}`);
-		console.log(`   Valid: ${isValid ? "✅" : "❌"}`);
+		console.info(`   Content-Type: ${contentType}`);
+		console.info(`   Valid: ${isValid ? "✅" : "❌"}`);
 	} catch (e) {
 		const errorMsg =
 			e && typeof e === "object" && "message" in e ? e.message : String(e);
-		console.log(`   Error: ${errorMsg}`);
+		console.info(`   Error: ${errorMsg}`);
 	}
 
 	// 3. Feed size and basic metrics
-	console.log("\n3. Feed Metrics:");
+	console.info("\n3. Feed Metrics:");
 	try {
 		const metrics = await fetch("https://bun.com/rss.xml")
 			.then((r) => r.text())
@@ -153,21 +153,21 @@ async function quickHealthChecks() {
 				hasItems: (text.match(/<item/g) || []).length,
 				hasTitle: text.includes("<title"),
 			}));
-		console.log(`   Size: ${metrics.size} bytes`);
-		console.log(`   Lines: ${metrics.lines}`);
-		console.log(`   RSS format: ${metrics.hasRSS ? "Yes" : "No"}`);
-		console.log(`   Items: ${metrics.hasItems}`);
-		console.log(`   Has title: ${metrics.hasTitle ? "Yes" : "No"}`);
+		console.info(`   Size: ${metrics.size} bytes`);
+		console.info(`   Lines: ${metrics.lines}`);
+		console.info(`   RSS format: ${metrics.hasRSS ? "Yes" : "No"}`);
+		console.info(`   Items: ${metrics.hasItems}`);
+		console.info(`   Has title: ${metrics.hasTitle ? "Yes" : "No"}`);
 	} catch (e) {
 		const errorMsg =
 			e && typeof e === "object" && "message" in e ? e.message : String(e);
-		console.log(`   Error: ${errorMsg}`);
+		console.info(`   Error: ${errorMsg}`);
 	}
 }
 
 // ─── Batch Feed Monitoring ─────────────────────────
 async function monitorFeeds() {
-	console.log("\n📊 Batch Feed Monitoring:\n");
+	console.info("\n📊 Batch Feed Monitoring:\n");
 
 	const feeds = [
 		"https://bun.com/rss.xml",
@@ -181,37 +181,37 @@ async function monitorFeeds() {
 	for (const feed of feeds) {
 		const result = await validateFeedXML(feed);
 		results.push({ url: feed, ...result });
-		console.log(""); // Add spacing between feeds
+		console.info(""); // Add spacing between feeds
 	}
 
 	// Summary
-	console.log("📈 Monitoring Summary:");
+	console.info("📈 Monitoring Summary:");
 	const valid = results.filter((r) => r.valid).length;
 	const invalid = results.filter((r) => !r.valid).length;
 	const totalSize = results.reduce((sum, r) => sum + (r.size || 0), 0);
 	const totalItems = results.reduce((sum, r) => sum + (r.items || 0), 0);
 
-	console.log(`   Total feeds: ${results.length}`);
-	console.log(`   Valid: ${valid} ✅`);
-	console.log(`   Invalid: ${invalid} ❌`);
-	console.log(`   Total size: ${(totalSize / 1024).toFixed(1)}KB`);
-	console.log(`   Total items: ${totalItems}`);
+	console.info(`   Total feeds: ${results.length}`);
+	console.info(`   Valid: ${valid} ✅`);
+	console.info(`   Invalid: ${invalid} ❌`);
+	console.info(`   Total size: ${(totalSize / 1024).toFixed(1)}KB`);
+	console.info(`   Total items: ${totalItems}`);
 
 	// Show successful feeds
 	const successful = results.filter((r) => r.valid);
 	if (successful.length > 0) {
-		console.log("\n✅ Valid Feeds:");
+		console.info("\n✅ Valid Feeds:");
 		successful.forEach((f) => {
-			console.log(`   ${f.url}: ${f.type} ${f.version} (${f.items} items)`);
+			console.info(`   ${f.url}: ${f.type} ${f.version} (${f.items} items)`);
 		});
 	}
 
 	// Show failed feeds
 	const failed = results.filter((r) => !r.valid);
 	if (failed.length > 0) {
-		console.log("\n❌ Failed Feeds:");
+		console.info("\n❌ Failed Feeds:");
 		failed.forEach((f) => {
-			console.log(`   ${f.url}: ${f.error}`);
+			console.info(`   ${f.url}: ${f.error}`);
 		});
 	}
 
@@ -220,13 +220,13 @@ async function monitorFeeds() {
 
 // ─── Feed Performance Analysis ─────────────────────
 async function analyzePerformance() {
-	console.log("\n⚡ Performance Analysis:\n");
+	console.info("\n⚡ Performance Analysis:\n");
 
 	const url = "https://bun.com/rss.xml";
 	const iterations = 3;
 	const times = [];
 
-	console.log(`Testing ${url} (${iterations} iterations)...`);
+	console.info(`Testing ${url} (${iterations} iterations)...`);
 
 	for (let i = 0; i < iterations; i++) {
 		const start = Date.now();
@@ -243,11 +243,11 @@ async function analyzePerformance() {
 
 			const duration = Date.now() - start;
 			times.push(duration);
-			console.log(`   Iteration ${i + 1}: ${duration}ms`);
+			console.info(`   Iteration ${i + 1}: ${duration}ms`);
 		} catch (e) {
 			const errorMsg =
 				e && typeof e === "object" && "message" in e ? e.message : String(e);
-			console.log(`   Iteration ${i + 1}: Error - ${errorMsg}`);
+			console.info(`   Iteration ${i + 1}: Error - ${errorMsg}`);
 		}
 	}
 
@@ -256,38 +256,38 @@ async function analyzePerformance() {
 		const min = Math.min(...times);
 		const max = Math.max(...times);
 
-		console.log(`\n📊 Performance Stats:`);
-		console.log(`   Average: ${avg.toFixed(1)}ms`);
-		console.log(`   Min: ${min}ms`);
-		console.log(`   Max: ${max}ms`);
-		console.log(`   Success rate: ${((times.length / iterations) * 100).toFixed(1)}%`);
+		console.info(`\n📊 Performance Stats:`);
+		console.info(`   Average: ${avg.toFixed(1)}ms`);
+		console.info(`   Min: ${min}ms`);
+		console.info(`   Max: ${max}ms`);
+		console.info(`   Success rate: ${((times.length / iterations) * 100).toFixed(1)}%`);
 	}
 }
 
 // ─── Main Execution ─────────────────────────────────
 async function main() {
-	console.log("🎯 Tier-1380 RSS/XML Feed Validation (Bun Compatible)\n");
+	console.info("🎯 Tier-1380 RSS/XML Feed Validation (Bun Compatible)\n");
 
 	// Quick one-liner style health checks
 	await quickHealthChecks();
 
 	// Comprehensive feed validation
-	console.log("\n" + "=".repeat(60));
+	console.info("\n" + "=".repeat(60));
 	await monitorFeeds();
 
 	// Performance analysis
-	console.log("\n" + "=".repeat(60));
+	console.info("\n" + "=".repeat(60));
 	await analyzePerformance();
 
-	console.log("\n💡 Bun One-Liner Examples:");
-	console.log(
+	console.info("\n💡 Bun One-Liner Examples:");
+	console.info(
 		'   1. Feed structure: bun -e \'fetch("url").then(r=>({ct:r.headers.get("content-type"),t:r.text()})).then(async ({ct,t})=>({ct,size:(await t).length,hasRSS:(await t).includes("<rss")})).then(console.log)\'',
 	);
-	console.log(
-		'   2. Content-Type: bun -e \'fetch("url").then(r=>console.log(r.headers.get("content-type")))\'',
+	console.info(
+		'   2. Content-Type: bun -e \'fetch("url").then(r=>console.info(r.headers.get("content-type")))\'',
 	);
-	console.log(
-		"   3. Basic metrics: bun -e 'fetch(\"url\").then(r=>r.text()).then(t=>console.log({size:t.length,items:(t.match(/<item/g)||[]).length}))'",
+	console.info(
+		"   3. Basic metrics: bun -e 'fetch(\"url\").then(r=>r.text()).then(t=>console.info({size:t.length,items:(t.match(/<item/g)||[]).length}))'",
 	);
 }
 

@@ -63,7 +63,7 @@ function printKvTable(
 			: { key: e.key, value: truncated };
 	});
 
-	console.log(Bun.inspect.table(rows, columns));
+	console.info(Bun.inspect.table(rows, columns));
 }
 
 /**
@@ -80,12 +80,12 @@ export async function frontmatterDebug(filePath: string): Promise<void> {
 	const result = extractFrontmatter(md);
 	const normalized = normalizeFrontmatter(result.data, { seoMapping: true });
 
-	console.log(`Format: ${result.format}`);
+	console.info(`Format: ${result.format}`);
 	if (result.errors.length > 0) {
-		console.log(`Errors: ${result.errors.join(", ")}`);
+		console.info(`Errors: ${result.errors.join(", ")}`);
 	}
-	console.log(`Fields: ${Object.keys(result.data).length}`);
-	console.log();
+	console.info(`Fields: ${Object.keys(result.data).length}`);
+	console.info();
 
 	if (Object.keys(normalized).length > 0) {
 		const rows = Object.entries(normalized)
@@ -100,10 +100,10 @@ export async function frontmatterDebug(filePath: string): Promise<void> {
 			([, v]) => typeof v === "object" && v !== null,
 		);
 		for (const [key, value] of nested) {
-			console.log(`${key}:`, JSON.stringify(value, null, 2));
+			console.info(`${key}:`, JSON.stringify(value, null, 2));
 		}
 	} else {
-		console.log("No frontmatter found.");
+		console.info("No frontmatter found.");
 	}
 }
 
@@ -141,7 +141,7 @@ export async function frontmatterBatch(
 		{ metric: "Errors", value: result.errorCount },
 		{ metric: "Elapsed", value: `${result.elapsedMs.toFixed(2)}ms` },
 	];
-	console.log(Bun.inspect.table(summary, ["metric", "value"]));
+	console.info(Bun.inspect.table(summary, ["metric", "value"]));
 
 	// Format breakdown
 	const formatCounts: Record<string, number> = {};
@@ -153,25 +153,25 @@ export async function frontmatterBatch(
 		format,
 		count,
 	}));
-	console.log(Bun.inspect.table(formatRows, ["format", "count"]));
+	console.info(Bun.inspect.table(formatRows, ["format", "count"]));
 
 	// Show errors if any
 	const errors = result.entries.filter((e) => e.frontmatter.errors.length > 0);
 	if (errors.length > 0) {
-		console.log("\nErrors:");
+		console.info("\nErrors:");
 		for (const entry of errors) {
-			console.log(`  ${entry.path}: ${entry.frontmatter.errors.join(", ")}`);
+			console.info(`  ${entry.path}: ${entry.frontmatter.errors.join(", ")}`);
 		}
 	}
 
 	// Show validation failures if schema was provided
 	const failures = result.entries.filter((e) => e.validation && !e.validation.valid);
 	if (failures.length > 0) {
-		console.log("\nValidation failures:");
+		console.info("\nValidation failures:");
 		for (const entry of failures) {
-			console.log(`  ${entry.path}:`);
+			console.info(`  ${entry.path}:`);
 			for (const err of entry.validation!.errors) {
-				console.log(`    ${err.field}: ${err.message}`);
+				console.info(`    ${err.field}: ${err.message}`);
 			}
 		}
 	}
@@ -179,7 +179,7 @@ export async function frontmatterBatch(
 	// Write index if requested
 	if (options.indexJson) {
 		await writeIndex(result, options.indexJson);
-		console.log(`\nIndex written to: ${options.indexJson}`);
+		console.info(`\nIndex written to: ${options.indexJson}`);
 	}
 }
 
@@ -197,7 +197,7 @@ export async function frontmatterValidate(
 
 	const extracted = extractFrontmatter(fileContent);
 	if (extracted.format === "none") {
-		console.log("No frontmatter found.");
+		console.info("No frontmatter found.");
 		return;
 	}
 
@@ -205,11 +205,11 @@ export async function frontmatterValidate(
 	const result = validateFrontmatter(normalized, schemaContent as FrontmatterSchema);
 
 	if (result.valid) {
-		console.log("Validation passed.");
+		console.info("Validation passed.");
 	} else {
-		console.log("Validation failed:");
+		console.info("Validation failed:");
 		for (const err of result.errors) {
-			console.log(
+			console.info(
 				`  ${err.field}: ${err.message}${err.actual ? ` (got: ${err.actual})` : ""}`,
 			);
 		}
@@ -290,17 +290,17 @@ export async function frontmatterRender(
 	// ANSI terminal preview mode
 	if (options.ansi) {
 		if (Object.keys(normalized).length > 0) {
-			console.log(`\x1b[2m--- frontmatter (${extracted.format}) ---\x1b[0m`);
+			console.info(`\x1b[2m--- frontmatter (${extracted.format}) ---\x1b[0m`);
 			const rows = Object.entries(normalized)
 				.filter(([, v]) => typeof v !== "object")
 				.map(([key, value]) => ({ key, value: String(value) }));
 			if (rows.length > 0) {
 				printKvTable(rows);
 			}
-			console.log(`\x1b[2m---\x1b[0m\n`);
+			console.info(`\x1b[2m---\x1b[0m\n`);
 		}
 		const html = Bun.markdown.html(extracted.content);
-		console.log(htmlToAnsi(html));
+		console.info(htmlToAnsi(html));
 		return;
 	}
 
@@ -326,8 +326,8 @@ ${bodyHtml}
 
 	if (options.output) {
 		await Bun.write(options.output, fullHtml);
-		console.log(`Written to: ${options.output}`);
+		console.info(`Written to: ${options.output}`);
 	} else {
-		console.log(fullHtml);
+		console.info(fullHtml);
 	}
 }

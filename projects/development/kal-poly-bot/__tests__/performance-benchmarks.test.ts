@@ -56,10 +56,10 @@ describe("Performance Benchmarks - Phase 3 Zero-Trust", () => {
         latencies.reduce((a, b) => a + b, 0) / latencies.length;
       const maxLatency = Math.max(...latencies);
 
-      console.log(`🔍 Threat Detection Performance:`);
-      console.log(`   Average: ${avgLatency.toFixed(2)}ms`);
-      console.log(`   Max: ${maxLatency.toFixed(2)}ms`);
-      console.log(
+      console.info(`🔍 Threat Detection Performance:`);
+      console.info(`   Average: ${avgLatency.toFixed(2)}ms`);
+      console.info(`   Max: ${maxLatency.toFixed(2)}ms`);
+      console.info(
         `   P95: ${latencies.sort((a, b) => a - b)[Math.floor(latencies.length * 0.95)].toFixed(2)}ms`
       );
 
@@ -87,9 +87,9 @@ describe("Performance Benchmarks - Phase 3 Zero-Trust", () => {
       const totalTime = endTime - startTime;
       const throughput = concurrentRequests / (totalTime / 1000);
 
-      console.log(`⚡ Concurrent Threat Detection:`);
-      console.log(`   Total Time: ${totalTime.toFixed(2)}ms`);
-      console.log(`   Throughput: ${throughput.toFixed(0)} requests/second`);
+      console.info(`⚡ Concurrent Threat Detection:`);
+      console.info(`   Total Time: ${totalTime.toFixed(2)}ms`);
+      console.info(`   Throughput: ${throughput.toFixed(0)} requests/second`);
 
       expect(throughput).toBeGreaterThan(500); // 500+ requests/second
       expect(totalTime).toBeLessThan(5000); // Under 5 seconds
@@ -118,9 +118,9 @@ describe("Performance Benchmarks - Phase 3 Zero-Trust", () => {
         latencies.reduce((a, b) => a + b, 0) / latencies.length;
       const maxLatency = Math.max(...latencies);
 
-      console.log(`🛡️ Compliance Enforcement Performance:`);
-      console.log(`   Average: ${avgLatency.toFixed(2)}ms`);
-      console.log(`   Max: ${maxLatency.toFixed(2)}ms`);
+      console.info(`🛡️ Compliance Enforcement Performance:`);
+      console.info(`   Average: ${avgLatency.toFixed(2)}ms`);
+      console.info(`   Max: ${maxLatency.toFixed(2)}ms`);
 
       expect(avgLatency).toBeLessThan(100);
       expect(maxLatency).toBeLessThan(200);
@@ -138,10 +138,10 @@ describe("Performance Benchmarks - Phase 3 Zero-Trust", () => {
 
       const latency = endTime - startTime;
 
-      console.log(`📋 Multi-Framework Compliance:`);
-      console.log(`   Latency: ${latency.toFixed(2)}ms`);
-      console.log(`   Overall Score: ${compliance.score}%`);
-      console.log(
+      console.info(`📋 Multi-Framework Compliance:`);
+      console.info(`   Latency: ${latency.toFixed(2)}ms`);
+      console.info(`   Overall Score: ${compliance.score}%`);
+      console.info(
         `   Compliance Status: ${compliance.compliant ? "Pass" : "Fail"}`
       );
 
@@ -171,9 +171,9 @@ describe("Performance Benchmarks - Phase 3 Zero-Trust", () => {
         latencies.reduce((a, b) => a + b, 0) / latencies.length;
       const maxLatency = Math.max(...latencies);
 
-      console.log(`📡 Redis Pub/Sub Performance:`);
-      console.log(`   Average Publish: ${avgLatency.toFixed(2)}ms`);
-      console.log(`   Max Publish: ${maxLatency.toFixed(2)}ms`);
+      console.info(`📡 Redis Pub/Sub Performance:`);
+      console.info(`   Average Publish: ${avgLatency.toFixed(2)}ms`);
+      console.info(`   Max Publish: ${maxLatency.toFixed(2)}ms`);
 
       expect(avgLatency).toBeLessThan(20);
       expect(maxLatency).toBeLessThan(50);
@@ -207,10 +207,10 @@ describe("Performance Benchmarks - Phase 3 Zero-Trust", () => {
       const endTime = performance.now();
       const totalTime = endTime - startTime;
 
-      console.log(`🌍 Cross-Region Replication:`);
-      console.log(`   Total Time: ${totalTime.toFixed(2)}ms`);
-      console.log(`   Events Published: ${events.length}`);
-      console.log(
+      console.info(`🌍 Cross-Region Replication:`);
+      console.info(`   Total Time: ${totalTime.toFixed(2)}ms`);
+      console.info(`   Events Published: ${events.length}`);
+      console.info(
         `   Avg per Event: ${(totalTime / events.length).toFixed(2)}ms`
       );
 
@@ -237,10 +237,10 @@ describe("Performance Benchmarks - Phase 3 Zero-Trust", () => {
 
       const latency = endTime - startTime;
 
-      console.log(`🏗️ SBOM Generation Performance:`);
-      console.log(`   Latency: ${latency.toFixed(2)}ms`);
-      console.log(`   Components: ${sbom.components.length}`);
-      console.log(
+      console.info(`🏗️ SBOM Generation Performance:`);
+      console.info(`   Latency: ${latency.toFixed(2)}ms`);
+      console.info(`   Components: ${sbom.components.length}`);
+      console.info(
         `   Quantum Signed: ${sbom.metadata.component?.signature ? "Yes" : "No"}`
       );
 
@@ -266,11 +266,11 @@ describe("Performance Benchmarks - Phase 3 Zero-Trust", () => {
 
       const latency = endTime - startTime;
 
-      console.log(`🔐 Quantum Operations Performance:`);
-      console.log(`   Stats Retrieval: ${latency.toFixed(2)}ms`);
-      console.log(`   Quantum Ready: ${stats.quantumReadiness}`);
-      console.log(`   Total Builds: ${stats.totalBuilds}`);
-      console.log(`   Quantum Signed: ${stats.quantumSignedBuilds}`);
+      console.info(`🔐 Quantum Operations Performance:`);
+      console.info(`   Stats Retrieval: ${latency.toFixed(2)}ms`);
+      console.info(`   Quantum Ready: ${stats.quantumReadiness}`);
+      console.info(`   Total Builds: ${stats.totalBuilds}`);
+      console.info(`   Quantum Signed: ${stats.quantumSignedBuilds}`);
 
       expect(latency).toBeLessThan(50);
       expect(stats.quantumReadiness).toBe(true);
@@ -315,13 +315,13 @@ describe("Performance Benchmarks - Phase 3 Zero-Trust", () => {
       const endTime = performance.now();
       const totalTime = endTime - startTime;
 
-      console.log(`🔄 End-to-End Integration Performance:`);
-      console.log(`   Total Time: ${totalTime.toFixed(2)}ms`);
-      console.log(`   Risk Score: ${riskScore.score} (${riskScore.level})`);
-      console.log(
+      console.info(`🔄 End-to-End Integration Performance:`);
+      console.info(`   Total Time: ${totalTime.toFixed(2)}ms`);
+      console.info(`   Risk Score: ${riskScore.score} (${riskScore.level})`);
+      console.info(
         `   Compliance: ${compliance.score}% (${compliance.compliant ? "Pass" : "Fail"})`
       );
-      console.log(`   SBOM Components: ${sbom.components.length}`);
+      console.info(`   SBOM Components: ${sbom.components.length}`);
 
       expect(totalTime).toBeLessThan(2000);
       expect(riskScore.score).toBeGreaterThan(0);

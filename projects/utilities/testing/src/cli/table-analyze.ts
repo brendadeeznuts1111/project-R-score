@@ -36,16 +36,16 @@ async function analyzeCSV(filePath: string) {
   
   // Bun.inspect/console.log will trigger Symbol.for("bun.table.inspect.custom") 
   // if Bun supports it in this version and it's implemented correctly.
-  console.log("\n--- Table Display ---");
+  console.info("\n--- Table Display ---");
   // @ts-ignore
   if (typeof Bun.table === "function") {
-    console.log(Bun.table(data)); // Show actual table
+    console.info(Bun.table(data)); // Show actual table
   } else {
-    console.log(data);
+    console.info(data);
   }
   
-  console.log("\n--- Metrics Analysis ---");
-  console.log(Bun.inspect(table)); // This should show our custom inspection output
+  console.info("\n--- Metrics Analysis ---");
+  console.info(Bun.inspect(table)); // This should show our custom inspection output
   
   // Export if requested
   if (args.includes("--export")) {
@@ -62,7 +62,7 @@ async function analyzeCSV(filePath: string) {
       JSON.stringify(exportData, null, 2)
     );
     
-    console.log(`\n✅ Analysis exported to ${outPath}`);
+    console.info(`\n✅ Analysis exported to ${outPath}`);
   }
 }
 
@@ -86,12 +86,12 @@ switch (command) {
     break;
     
   case "demo":
-    console.log("Active features:", Array.from(detectActiveFeatures()));
-    console.log("To run the demo, build and run one of the dist outputs.");
+    console.info("Active features:", Array.from(detectActiveFeatures()));
+    console.info("To run the demo, build and run one of the dist outputs.");
     break;
     
   default:
-    console.log(`
+    console.info(`
 Table Analysis CLI
 
 Commands:

@@ -53,8 +53,8 @@ export class HyperBunDiagnostics {
 		severity: "info" | "warn" | "error",
 	): void {
 		// 7.4.1.3.0: Terminal output using Bun.inspect.table
-		console.log(`[${severity.toUpperCase()}] Session: ${this.sessionId}`);
-		console.log(
+		console.info(`[${severity.toUpperCase()}] Session: ${this.sessionId}`);
+		console.info(
 			inspectMarketData([context], ["userRole", "apiBaseUrl", "featureFlags"]),
 		);
 
@@ -69,10 +69,10 @@ export class HyperBunDiagnostics {
 			// Send to Telegram monitoring (see 9.1.1.4.1.0)
 			// This would integrate with Telegram sender:
 			// await sendTelegramMessage('```\n' + lines.join('\n') + '\n```');
-			console.log("Telegram Alert (would send):");
-			console.log("```");
-			console.log(lines.join("\n"));
-			console.log("```");
+			console.info("Telegram Alert (would send):");
+			console.info("```");
+			console.info(lines.join("\n"));
+			console.info("```");
 		}
 	}
 

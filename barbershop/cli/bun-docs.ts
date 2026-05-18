@@ -88,7 +88,7 @@ async function isCacheValid(): Promise<boolean> {
 async function fetchIndex(): Promise<SearchIndex> {
   const startNs = nanoseconds();
 
-  console.log(c.yellow('📡 Fetching index from bun.com...'));
+  console.info(c.yellow('📡 Fetching index from bun.com...'));
 
   try {
     const response = await fetch(INDEX_URL, {
@@ -118,7 +118,7 @@ async function fetchIndex(): Promise<SearchIndex> {
 
     const elapsedMs = Number(nanoseconds() - startNs) / 1e6;
     const sizeKB = (content.length / 1024).toFixed(1);
-    console.log(c.green(`✓ Indexed ${entries.length} pages (${sizeKB}KB) in ${elapsedMs.toFixed(1)}ms`));
+    console.info(c.green(`✓ Indexed ${entries.length} pages (${sizeKB}KB) in ${elapsedMs.toFixed(1)}ms`));
 
     return index;
   } catch (error) {
@@ -127,7 +127,7 @@ async function fetchIndex(): Promise<SearchIndex> {
     // Try to load stale cache as fallback
     try {
       const staleIndex = await loadIndex();
-      console.log(c.yellow('⚠️  Using cached index (may be outdated)'));
+      console.info(c.yellow('⚠️  Using cached index (may be outdated)'));
       return staleIndex;
     } catch {
       throw error;
@@ -273,8 +273,8 @@ async function search(
   const { maxResults = MAX_RESULTS, minScore = MIN_FUZZY_SCORE } = options;
 
   if (!query) {
-    console.log(c.red('Error: Search query required'));
-    console.log('Usage: bun-docs search "<query>"');
+    console.info(c.red('Error: Search query required'));
+    console.info('Usage: bun-docs search "<query>"');
     process.exit(1);
   }
 
@@ -314,37 +314,37 @@ async function search(
   const elapsedMs = Number(nanoseconds() - startNs) / 1e6;
 
   if (results.length === 0) {
-    console.log(c.yellow(`No results found for "${query}"`));
-    console.log(c.gray('Try: bun-docs index (to refresh cache)'));
+    console.info(c.yellow(`No results found for "${query}"`));
+    console.info(c.gray('Try: bun-docs index (to refresh cache)'));
     return [];
   }
 
-  console.log();
-  console.log(c.bold(c.cyan(`🔍 Results for "${query}" (${elapsedMs.toFixed(2)}ms)`)));
-  console.log();
+  console.info();
+  console.info(c.bold(c.cyan(`🔍 Results for "${query}" (${elapsedMs.toFixed(2)}ms)`)));
+  console.info();
 
   const domain = options.sh ? 'bun.sh' : 'bun.com';
 
   results.forEach((result, i) => {
     const url = result.url.replace('bun.com', domain).replace('bun.sh', domain);
 
-    console.log(`${c.bold(c.green(`${i + 1}.`))} ${c.bold(result.title)}`);
+    console.info(`${c.bold(c.green(`${i + 1}.`))} ${c.bold(result.title)}`);
     if (result.category) {
-      console.log(`   ${c.gray('Category:')} ${c.yellow(result.category)}`);
+      console.info(`   ${c.gray('Category:')} ${c.yellow(result.category)}`);
     }
-    console.log(`   ${c.cyan(url)}`);
-    console.log(`   ${c.gray(`Score: ${result.score.toFixed(0)}`)} ${c.gray(`[${result.matches.slice(0, 3).join(', ')}]`)}`);
-    console.log();
+    console.info(`   ${c.cyan(url)}`);
+    console.info(`   ${c.gray(`Score: ${result.score.toFixed(0)}`)} ${c.gray(`[${result.matches.slice(0, 3).join(', ')}]`)}`);
+    console.info();
   });
 
   // Print copy-pasteable command
   const topResult = results[0];
   const topUrl = topResult.url.replace('bun.com', domain).replace('bun.sh', domain);
 
-  console.log(c.gray('─'.repeat(60)));
-  console.log(c.gray('Open top result:'));
-  console.log(c.yellow(`  bun-docs open "${topUrl}"`));
-  console.log();
+  console.info(c.gray('─'.repeat(60)));
+  console.info(c.gray('Open top result:'));
+  console.info(c.yellow(`  bun-docs open "${topUrl}"`));
+  console.info();
 
   return results;
 }
@@ -355,7 +355,7 @@ async function search(
 
 async function openUrl(url: string, options: { app?: boolean } = {}): Promise<void> {
   if (!url) {
-    console.log(c.red('Error: URL required'));
+    console.info(c.red('Error: URL required'));
     process.exit(1);
   }
 
@@ -365,7 +365,7 @@ async function openUrl(url: string, options: { app?: boolean } = {}): Promise<vo
     normalizedUrl = `https://${url}`;
   }
 
-  console.log(c.yellow(`🌐 Opening ${normalizedUrl}...`));
+  console.info(c.yellow(`🌐 Opening ${normalizedUrl}...`));
 
   const platform = process.platform;
   let command: string[];
@@ -382,7 +382,7 @@ async function openUrl(url: string, options: { app?: boolean } = {}): Promise<vo
     if (chromePaths.length > 0) {
       command = [chromePaths[0]!, '--app=' + normalizedUrl];
     } else {
-      console.log(c.yellow('Chrome not found, using default browser'));
+      console.info(c.yellow('Chrome not found, using default browser'));
       command =
         platform === 'darwin'
           ? ['open', normalizedUrl]
@@ -412,7 +412,7 @@ async function openUrl(url: string, options: { app?: boolean } = {}): Promise<vo
     process.exit(1);
   }
 
-  console.log(c.green('✓ Opened in browser'));
+  console.info(c.green('✓ Opened in browser'));
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -420,8 +420,8 @@ async function openUrl(url: string, options: { app?: boolean } = {}): Promise<vo
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function showStatus(): Promise<void> {
-  console.log(c.bold(c.cyan('📊 bun-docs Status v2.0')));
-  console.log();
+  console.info(c.bold(c.cyan('📊 bun-docs Status v2.0')));
+  console.info();
 
   const indexPath = await getIndexPath();
 
@@ -438,12 +438,12 @@ async function showStatus(): Promise<void> {
       return c.yellow(`${ageDays.toFixed(1)} days ago`);
     };
 
-    console.log(`${c.bold('Cache Location:')} ${indexPath}`);
-    console.log(`${c.bold('Bun Version:')} ${Bun.version}`);
-    console.log(`${c.bold('Index Version:')} ${index.version}`);
-    console.log(`${c.bold('Pages Indexed:')} ${c.green(index.entries.length.toString())}`);
-    console.log(`${c.bold('Last Updated:')} ${formatAge()}`);
-    console.log(`${c.bold('Cache Valid:')} ${age < CACHE_TTL_MS ? c.green('✓ Yes') : c.red('✗ Expired')}`);
+    console.info(`${c.bold('Cache Location:')} ${indexPath}`);
+    console.info(`${c.bold('Bun Version:')} ${Bun.version}`);
+    console.info(`${c.bold('Index Version:')} ${index.version}`);
+    console.info(`${c.bold('Pages Indexed:')} ${c.green(index.entries.length.toString())}`);
+    console.info(`${c.bold('Last Updated:')} ${formatAge()}`);
+    console.info(`${c.bold('Cache Valid:')} ${age < CACHE_TTL_MS ? c.green('✓ Yes') : c.red('✗ Expired')}`);
 
     // Show category breakdown
     const categories = new Map<string, number>();
@@ -453,24 +453,24 @@ async function showStatus(): Promise<void> {
     }
 
     if (categories.size > 0) {
-      console.log();
-      console.log(c.bold('Categories:'));
+      console.info();
+      console.info(c.bold('Categories:'));
       const sorted = [...categories.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
       for (const [cat, count] of sorted) {
-        console.log(`  ${c.cyan(cat)}: ${count}`);
+        console.info(`  ${c.cyan(cat)}: ${count}`);
       }
     }
   } catch {
-    console.log(c.yellow('No index found. Run: bun-docs index'));
+    console.info(c.yellow('No index found. Run: bun-docs index'));
   }
 
-  console.log();
-  console.log(c.gray('Commands:'));
-  console.log(`  ${c.cyan('bun-docs index')}      - Update documentation index`);
-  console.log(`  ${c.cyan('bun-docs search')}     - Search documentation`);
-  console.log(`  ${c.cyan('bun-docs open')}       - Open URL in browser`);
-  console.log(`  ${c.cyan('bun-docs status')}     - Show this status`);
-  console.log(`  ${c.cyan('bun-docs clear')}      - Clear cache`);
+  console.info();
+  console.info(c.gray('Commands:'));
+  console.info(`  ${c.cyan('bun-docs index')}      - Update documentation index`);
+  console.info(`  ${c.cyan('bun-docs search')}     - Search documentation`);
+  console.info(`  ${c.cyan('bun-docs open')}       - Open URL in browser`);
+  console.info(`  ${c.cyan('bun-docs status')}     - Show this status`);
+  console.info(`  ${c.cyan('bun-docs clear')}      - Clear cache`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -478,7 +478,7 @@ async function showStatus(): Promise<void> {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function showHelp(): void {
-  console.log(c.bold(c.cyan(`
+  console.info(c.bold(c.cyan(`
 ╔════════════════════════════════════════════════════════════════╗
 ║  🔍 bun-docs - Elite Bun Documentation Search v2.0            ║
 ╠════════════════════════════════════════════════════════════════╣
@@ -486,41 +486,41 @@ function showHelp(): void {
 ╚════════════════════════════════════════════════════════════════╝
 `)));
 
-  console.log(c.bold('Usage:'));
-  console.log(`  ${c.cyan('bun-docs')} ${c.yellow('<command>')} [options]`);
-  console.log();
+  console.info(c.bold('Usage:'));
+  console.info(`  ${c.cyan('bun-docs')} ${c.yellow('<command>')} [options]`);
+  console.info();
 
-  console.log(c.bold('Commands:'));
-  console.log(`  ${c.yellow('index')}              Update local documentation index`);
-  console.log(`  ${c.yellow('search')} ${c.gray('<query>')}      Search documentation`);
-  console.log(`  ${c.yellow('open')} ${c.gray('<url>')}         Open URL in browser`);
-  console.log(`  ${c.yellow('status')}             Show cache status`);
-  console.log(`  ${c.yellow('clear')}              Clear cache`);
-  console.log(`  ${c.yellow('help')}               Show this help`);
-  console.log();
+  console.info(c.bold('Commands:'));
+  console.info(`  ${c.yellow('index')}              Update local documentation index`);
+  console.info(`  ${c.yellow('search')} ${c.gray('<query>')}      Search documentation`);
+  console.info(`  ${c.yellow('open')} ${c.gray('<url>')}         Open URL in browser`);
+  console.info(`  ${c.yellow('status')}             Show cache status`);
+  console.info(`  ${c.yellow('clear')}              Clear cache`);
+  console.info(`  ${c.yellow('help')}               Show this help`);
+  console.info();
 
-  console.log(c.bold('Search Options:'));
-  console.log(`  ${c.cyan('--com')}              Use bun.com domain (default)`);
-  console.log(`  ${c.cyan('--sh')}               Use bun.sh domain`);
-  console.log(`  ${c.cyan('--max <n>')}         Maximum results (default: 10)`);
-  console.log();
+  console.info(c.bold('Search Options:'));
+  console.info(`  ${c.cyan('--com')}              Use bun.com domain (default)`);
+  console.info(`  ${c.cyan('--sh')}               Use bun.sh domain`);
+  console.info(`  ${c.cyan('--max <n>')}         Maximum results (default: 10)`);
+  console.info();
 
-  console.log(c.bold('Open Options:'));
-  console.log(`  ${c.cyan('--app')}              Open in Chrome app mode`);
-  console.log();
+  console.info(c.bold('Open Options:'));
+  console.info(`  ${c.cyan('--app')}              Open in Chrome app mode`);
+  console.info();
 
-  console.log(c.bold('Examples:'));
-  console.log(`  ${c.gray('# Search for Bun.serve API')}`);
-  console.log(`  bun-docs search "Bun.serve"`);
-  console.log();
-  console.log(`  ${c.gray('# Search for SQLite with bun.sh links')}`);
-  console.log(`  bun-docs search "sqlite" --sh`);
-  console.log();
-  console.log(`  ${c.gray('# Open a specific URL')}`);
-  console.log(`  bun-docs open "https://bun.com/docs/api/sqlite"`);
-  console.log();
-  console.log(`  ${c.gray('# Open in Chrome app mode')}`);
-  console.log(`  bun-docs open "https://bun.com/docs" --app`);
+  console.info(c.bold('Examples:'));
+  console.info(`  ${c.gray('# Search for Bun.serve API')}`);
+  console.info(`  bun-docs search "Bun.serve"`);
+  console.info();
+  console.info(`  ${c.gray('# Search for SQLite with bun.sh links')}`);
+  console.info(`  bun-docs search "sqlite" --sh`);
+  console.info();
+  console.info(`  ${c.gray('# Open a specific URL')}`);
+  console.info(`  bun-docs open "https://bun.com/docs/api/sqlite"`);
+  console.info();
+  console.info(`  ${c.gray('# Open in Chrome app mode')}`);
+  console.info(`  bun-docs open "https://bun.com/docs" --app`);
 }
 
 async function clearCache(): Promise<void> {
@@ -529,19 +529,19 @@ async function clearCache(): Promise<void> {
 
   try {
     await Bun.file(indexPath).unlink();
-    console.log(c.green(`✓ Removed ${indexPath}`));
+    console.info(c.green(`✓ Removed ${indexPath}`));
   } catch {
-    console.log(c.gray(`  (index not found)`));
+    console.info(c.gray(`  (index not found)`));
   }
 
   try {
     await Bun.file(flatPath).unlink();
-    console.log(c.green(`✓ Removed ${flatPath}`));
+    console.info(c.green(`✓ Removed ${flatPath}`));
   } catch {
     // Ignore
   }
 
-  console.log(c.green('✓ Cache cleared'));
+  console.info(c.green('✓ Cache cleared'));
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -616,8 +616,8 @@ async function main(): Promise<void> {
       if (!command) {
         await showStatus();
       } else {
-        console.log(c.red(`Unknown command: ${command}`));
-        console.log();
+        console.info(c.red(`Unknown command: ${command}`));
+        console.info();
         showHelp();
         process.exit(1);
       }

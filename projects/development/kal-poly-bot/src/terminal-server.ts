@@ -157,7 +157,7 @@ class TerminalManager {
       session.lastActivity = new Date();
     }
 
-    console.log(`[${sessionId}] ${output.trim()}`);
+    console.info(`[${sessionId}] ${output.trim()}`);
   }
 
   static getSession(sessionId: string): TerminalSession | undefined {
@@ -204,7 +204,7 @@ class TerminalManager {
 
       sessions.delete(sessionId);
       sessionOutputs.delete(sessionId);
-      console.log(`Session ${sessionId} cleaned up`);
+      console.info(`Session ${sessionId} cleaned up`);
     }
   }
 
@@ -399,7 +399,7 @@ class TerminalWebSocket {
       return;
     }
 
-    console.log(`WebSocket connected for session ${sessionId}`);
+    console.info(`WebSocket connected for session ${sessionId}`);
 
     // Send existing output
     const output = TerminalManager.getSessionOutput(sessionId);
@@ -437,7 +437,7 @@ class TerminalWebSocket {
 
     // Handle cleanup on disconnect
     ws.close = () => {
-      console.log(`WebSocket disconnected for session ${sessionId}`);
+      console.info(`WebSocket disconnected for session ${sessionId}`);
     };
 
     // Stream new output to WebSocket
@@ -588,18 +588,18 @@ setInterval(
   5 * 60 * 1000
 ); // Every 5 minutes
 
-console.log("🚀 Starting Bun Terminal API (PTY Support) Server...");
-console.log(`📡 Server: http://${HOST}:${PORT}`);
-console.log(`🔌 WebSocket: ws://${HOST}:${PORT}/ws?sessionId=<id>`);
-console.log(`📚 API: http://${HOST}:${PORT}/api/sessions`);
-console.log("");
-console.log("Features:");
-console.log("✓ PTY support with TTY-aware applications");
-console.log("✓ Interactive bash, zsh, sh, fish shells");
-console.log("✓ Real-time WebSocket streaming");
-console.log("✓ Session management and auto-cleanup");
-console.log("✓ Security validation and input sanitization");
-console.log("✓ Terminal resize support");
-console.log("✓ Memory-efficient output buffering");
-console.log("");
-console.log("Press Ctrl+C to stop");
+console.info("🚀 Starting Bun Terminal API (PTY Support) Server...");
+console.info(`📡 Server: http://${HOST}:${PORT}`);
+console.info(`🔌 WebSocket: ws://${HOST}:${PORT}/ws?sessionId=<id>`);
+console.info(`📚 API: http://${HOST}:${PORT}/api/sessions`);
+console.info("");
+console.info("Features:");
+console.info("✓ PTY support with TTY-aware applications");
+console.info("✓ Interactive bash, zsh, sh, fish shells");
+console.info("✓ Real-time WebSocket streaming");
+console.info("✓ Session management and auto-cleanup");
+console.info("✓ Security validation and input sanitization");
+console.info("✓ Terminal resize support");
+console.info("✓ Memory-efficient output buffering");
+console.info("");
+console.info("Press Ctrl+C to stop");

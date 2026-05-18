@@ -323,11 +323,11 @@ describe('Test Coverage Statistics', () => {
     };
 
     // In a real implementation, you'd get actual coverage data
-    console.log('📊 Fire22 Security Scanner Test Coverage:');
-    console.log(`✅ Statements: ${expectedCoverage.statements}%`);
-    console.log(`✅ Branches: ${expectedCoverage.branches}%`);
-    console.log(`✅ Functions: ${expectedCoverage.functions}%`);
-    console.log(`✅ Lines: ${expectedCoverage.lines}%`);
+    console.info('📊 Fire22 Security Scanner Test Coverage:');
+    console.info(`✅ Statements: ${expectedCoverage.statements}%`);
+    console.info(`✅ Branches: ${expectedCoverage.branches}%`);
+    console.info(`✅ Functions: ${expectedCoverage.functions}%`);
+    console.info(`✅ Lines: ${expectedCoverage.lines}%`);
 
     expect(expectedCoverage.statements).toBeGreaterThanOrEqual(90);
     expect(expectedCoverage.branches).toBeGreaterThanOrEqual(85);

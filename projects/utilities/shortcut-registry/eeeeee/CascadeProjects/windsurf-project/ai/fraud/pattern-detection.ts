@@ -183,7 +183,7 @@ export class FraudPatternDetector {
 			this.detectedPatterns.splice(0, 500);
 		}
 
-		console.log(
+		console.info(
 			`🔍 Pattern Detection: Found ${detectedPatterns.length} patterns for session ${sessionId}`,
 		);
 

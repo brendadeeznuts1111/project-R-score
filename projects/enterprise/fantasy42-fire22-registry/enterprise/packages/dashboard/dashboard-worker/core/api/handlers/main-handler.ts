@@ -5,11 +5,11 @@
 
 export class MainWorker {
   constructor() {
-    console.log('MainWorker initialized');
+    console.info('MainWorker initialized');
   }
 
   async initialize(): Promise<void> {
-    console.log('MainWorker initialized successfully');
+    console.info('MainWorker initialized successfully');
   }
 
   async handleRequest(request: Request): Promise<Response> {

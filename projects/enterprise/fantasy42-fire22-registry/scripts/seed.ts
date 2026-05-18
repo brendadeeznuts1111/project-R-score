@@ -8,28 +8,28 @@ import { createDatabaseConnection } from '../lib/database';
 import { config } from '../config';
 
 async function seedDatabase(): Promise<void> {
-  console.log('🌱 Starting database seeding...');
+  console.info('🌱 Starting database seeding...');
 
   try {
     const { db, initialize } = createDatabaseConnection();
 
     // Initialize database (creates tables)
     await initialize();
-    console.log('✅ Database schema initialized');
+    console.info('✅ Database schema initialized');
 
     // Read and execute seed data
     const seedPath = './seed.sql';
     const seedExists = await Bun.file(seedPath).exists();
 
     if (seedExists) {
-      console.log('📄 Loading seed data...');
+      console.info('📄 Loading seed data...');
       const seedContent = await Bun.file(seedPath).text();
 
       // Execute seed SQL
       db.exec(seedContent);
-      console.log('✅ Seed data loaded successfully');
+      console.info('✅ Seed data loaded successfully');
     } else {
-      console.log('⚠️ No seed.sql file found, skipping data seeding');
+      console.info('⚠️ No seed.sql file found, skipping data seeding');
     }
 
     // Additional programmatic seeding if needed
@@ -37,7 +37,7 @@ async function seedDatabase(): Promise<void> {
 
     // Close database connection
     db.close();
-    console.log('✅ Database seeding completed');
+    console.info('✅ Database seeding completed');
   } catch (error) {
     console.error('❌ Database seeding failed:', error);
     process.exit(1);
@@ -45,14 +45,14 @@ async function seedDatabase(): Promise<void> {
 }
 
 async function seedDevelopmentData(db: any): Promise<void> {
-  console.log('🔧 Adding development-specific seed data...');
+  console.info('🔧 Adding development-specific seed data...');
 
   // Add development-specific data here if needed
   // For example, test users, sample packages, etc.
 
   if (config.isDevelopment) {
     // Development-only seeding
-    console.log('🏗️ Seeding development data...');
+    console.info('🏗️ Seeding development data...');
 
     // Example: Add test packages
     const testPackages = [
@@ -86,7 +86,7 @@ async function seedDevelopmentData(db: any): Promise<void> {
         `
         ).run(result.lastInsertRowid, pkg.version);
 
-        console.log(`📦 Added test package: ${pkg.name}@${pkg.version}`);
+        console.info(`📦 Added test package: ${pkg.name}@${pkg.version}`);
       }
     }
   }

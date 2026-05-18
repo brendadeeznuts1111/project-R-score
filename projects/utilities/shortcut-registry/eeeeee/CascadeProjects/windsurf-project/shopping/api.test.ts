@@ -315,4 +315,4 @@ describe('Shopping API with RBAC', () => {
     });
 });
 
-console.log("🛒 Shopping API Tests Complete!");
+console.info("🛒 Shopping API Tests Complete!");

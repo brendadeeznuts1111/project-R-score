@@ -150,7 +150,7 @@ export class EliteGraphQLSchema {
     const result = await this.parseAndExecute(query, variables, context);
     
     const elapsedMs = Number(nanoseconds() - startNs) / 1e6;
-    console.log(`[GRAPHQL] Query executed in ${elapsedMs.toFixed(2)}ms`);
+    console.info(`[GRAPHQL] Query executed in ${elapsedMs.toFixed(2)}ms`);
     
     return result;
   }
@@ -297,7 +297,7 @@ export function createBarberShopSchema(): EliteGraphQLSchema {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 if (import.meta.main) {
-  console.log(`
+  console.info(`
 ╔══════════════════════════════════════════════════════════════════╗
 ║  📡 ELITE GRAPHQL                                                ║
 ╠══════════════════════════════════════════════════════════════════╣
@@ -308,38 +308,38 @@ if (import.meta.main) {
   const schema = createBarberShopSchema();
   
   // Show SDL
-  console.log('1. GraphQL Schema (SDL):\n');
-  console.log(schema.buildSDL());
+  console.info('1. GraphQL Schema (SDL):\n');
+  console.info(schema.buildSDL());
   
   // Execute queries
-  console.log('2. Executing Queries:\n');
+  console.info('2. Executing Queries:\n');
   
   // Query barbers
-  console.log('   Query: { barbers }');
+  console.info('   Query: { barbers }');
   const barbersResult = await schema.execute('{ barbers }');
-  console.log('   Result:', JSON.stringify(barbersResult, null, 2).slice(0, 200), '...\n');
+  console.info('   Result:', JSON.stringify(barbersResult, null, 2).slice(0, 200), '...\n');
   
   // Query metrics
-  console.log('   Query: { metrics }');
+  console.info('   Query: { metrics }');
   const metricsResult = await schema.execute('{ metrics }');
-  console.log('   Result:', JSON.stringify(metricsResult, null, 2));
+  console.info('   Result:', JSON.stringify(metricsResult, null, 2));
   
   // Mutation
-  console.log('\n3. Executing Mutation:\n');
-  console.log('   Mutation: createTicket(customerName: "Bob", services: ["Haircut"], totalAmount: 25)');
+  console.info('\n3. Executing Mutation:\n');
+  console.info('   Mutation: createTicket(customerName: "Bob", services: ["Haircut"], totalAmount: 25)');
   const createResult = await schema.execute(
     'mutation { createTicket(customerName: "Bob", services: ["Haircut"], totalAmount: 25) }'
   );
-  console.log('   Result:', JSON.stringify(createResult, null, 2));
+  console.info('   Result:', JSON.stringify(createResult, null, 2));
   
-  console.log('\n✅ GraphQL demo complete!');
-  console.log('\nIntegration:');
-  console.log('   Bun.serve({');
-  console.log('     fetch(req) {');
-  console.log('       const { query } = await req.json();');
-  console.log('       return Response.json(await schema.execute(query));');
-  console.log('     }');
-  console.log('   });');
+  console.info('\n✅ GraphQL demo complete!');
+  console.info('\nIntegration:');
+  console.info('   Bun.serve({');
+  console.info('     fetch(req) {');
+  console.info('       const { query } = await req.json();');
+  console.info('       return Response.json(await schema.execute(query));');
+  console.info('     }');
+  console.info('   });');
 }
 
 export default EliteGraphQLSchema;

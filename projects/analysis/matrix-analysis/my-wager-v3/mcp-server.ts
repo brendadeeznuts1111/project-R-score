@@ -461,15 +461,15 @@ const server = serve({
   }
 });
 
-console.log(`🚀 Tension Field MCP Server running on http://${MCP_SERVER_CONFIG.host}:${MCP_SERVER_CONFIG.port}`);
-console.log('\n📋 Available Tools:');
+console.info(`🚀 Tension Field MCP Server running on http://${MCP_SERVER_CONFIG.host}:${MCP_SERVER_CONFIG.port}`);
+console.info('\n📋 Available Tools:');
 Object.values(MCP_TOOLS).forEach(tool => {
-  console.log(`  - ${tool.name}: ${tool.description}`);
+  console.info(`  - ${tool.name}: ${tool.description}`);
 });
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down MCP server...');
+  console.info('\n🛑 Shutting down MCP server...');
   server.stop();
   process.exit(EXIT_CODES.SUCCESS);
 });

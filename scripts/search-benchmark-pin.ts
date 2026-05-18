@@ -142,7 +142,7 @@ export type CompareResultPayload = {
 };
 
 export function usage(): void {
-  console.log(`
+  console.info(`
 Search Benchmark Pinning
 
 USAGE:
@@ -593,10 +593,10 @@ export async function pin(fromPath: string, outPath: string, rationale: string, 
   await mkdir(dirname(outPath), { recursive: true });
   await writeFile(outPath, `${JSON.stringify(baseline, null, 2)}\n`, 'utf8');
 
-  console.log(`[search:bench:pin] baseline saved: ${outPath}`);
-  console.log(`[search:bench:pin] snapshot=${baseline.snapshot.id} pack=${baseline.snapshot.queryPack}`);
-  console.log(`[search:bench:pin] rationale="${baseline.rationale}" pinnedBy="${baseline.pinnedBy}" previous=${baseline.previousSnapshotId || 'none'}`);
-  console.log(
+  console.info(`[search:bench:pin] baseline saved: ${outPath}`);
+  console.info(`[search:bench:pin] snapshot=${baseline.snapshot.id} pack=${baseline.snapshot.queryPack}`);
+  console.info(`[search:bench:pin] rationale="${baseline.rationale}" pinnedBy="${baseline.pinnedBy}" previous=${baseline.previousSnapshotId || 'none'}`);
+  console.info(
     `[search:bench:pin] strict p95=${baseline.strict.latencyP95Ms.toFixed(2)}ms heap=${baseline.strict.peakHeapUsedMB.toFixed(2)}MB quality=${baseline.strict.qualityScore.toFixed(2)} reliability=${baseline.strict.reliabilityPct.toFixed(2)}`
   );
 }
@@ -839,33 +839,33 @@ export async function compare(
   );
 
   if (asJson) {
-    console.log(JSON.stringify(payload, null, 2));
+    console.info(JSON.stringify(payload, null, 2));
   } else {
-    console.log(`[search:bench:compare] baseline=${payload.baseline.snapshot.id} current=${payload.current.snapshot.id}`);
-    console.log(
+    console.info(`[search:bench:compare] baseline=${payload.baseline.snapshot.id} current=${payload.current.snapshot.id}`);
+    console.info(
       `[search:bench:compare] Δp95=${payload.delta.absolute.latencyP95Ms}ms (${payload.delta.percent.latencyP95Ms ?? 'n/a'}%) Δheap=${payload.delta.absolute.peakHeapUsedMB}MB (${payload.delta.percent.peakHeapUsedMB ?? 'n/a'}%) Δquality=${payload.delta.absolute.qualityScore} Δreliability=${payload.delta.absolute.reliabilityPct}`
     );
-    console.log(
+    console.info(
       `[search:bench:compare] compatibility=${payload.compatibility.queryPackMatch ? 'aligned' : 'mismatch'} baselinePack=${payload.compatibility.baselineQueryPack || 'none'} currentPack=${payload.compatibility.currentQueryPack || 'none'}`
     );
-    console.log(`[search:bench:compare] anomalyType=${payload.anomalyType}`);
+    console.info(`[search:bench:compare] anomalyType=${payload.anomalyType}`);
     if (payload.failures.length > 0) {
-      console.log(`[search:bench:compare] fail metrics: ${payload.failures.join(', ')}`);
+      console.info(`[search:bench:compare] fail metrics: ${payload.failures.join(', ')}`);
     } else {
-      console.log('[search:bench:compare] no threshold regressions');
+      console.info('[search:bench:compare] no threshold regressions');
     }
     if (payload.warnings.length > 0) {
-      console.log(`[search:bench:compare] warn metrics: ${payload.warnings.join(', ')}`);
+      console.info(`[search:bench:compare] warn metrics: ${payload.warnings.join(', ')}`);
     }
     if (payload.trend.enabled) {
-      console.log(
+      console.info(
         `[search:bench:compare] trend window=${payload.trend.window ?? 'n/a'} samples=${payload.trend.sampleSize} strict=${payload.trend.strict ? 'on' : 'off'} note=${payload.trend.note}`
       );
       if (payload.trend.failures.length > 0) {
-        console.log(`[search:bench:compare] trend fail metrics: ${payload.trend.failures.join(', ')}`);
+        console.info(`[search:bench:compare] trend fail metrics: ${payload.trend.failures.join(', ')}`);
       }
       if (payload.trend.warnings.length > 0) {
-        console.log(`[search:bench:compare] trend warn metrics: ${payload.trend.warnings.join(', ')}`);
+        console.info(`[search:bench:compare] trend warn metrics: ${payload.trend.warnings.join(', ')}`);
       }
     }
   }

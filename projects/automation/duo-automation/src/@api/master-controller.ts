@@ -11,7 +11,7 @@ const app = new Elysia()
   
   // POST /v3/agent/deploy: Full provisioning with R2 packages
   .post("/v3/agent/deploy", ({ body }) => {
-    console.log(`🚀 Provisioning agent: ${body.agentId} with package ${body.packageId}`);
+    console.info(`🚀 Provisioning agent: ${body.agentId} with package ${body.packageId}`);
     return {
       success: true,
       data: {
@@ -71,4 +71,4 @@ const app = new Elysia()
 
   .listen(3002);
 
-console.log(`🌐 Empire Pro Master Controller running at ${app.server?.hostname}:${app.server?.port}`);
+console.info(`🌐 Empire Pro Master Controller running at ${app.server?.hostname}:${app.server?.port}`);

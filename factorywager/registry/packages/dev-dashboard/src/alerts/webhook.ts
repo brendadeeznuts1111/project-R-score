@@ -146,7 +146,7 @@ export interface WebhookResult {
  * );
  * 
  * if (result.success) {
- *   console.log(`Webhook delivered in ${result.durationMs}ms`);
+ *   console.info(`Webhook delivered in ${result.durationMs}ms`);
  * } else {
  *   console.error(`Failed: ${result.error}`);
  * }
@@ -584,7 +584,7 @@ export function preconnectWebhook(webhookUrl: string): void {
  * const stats = getDNSCacheStats();
  * if (stats) {
  *   const hitRatio = ((stats.cacheHitsCompleted + stats.cacheHitsInflight) / stats.totalCount) * 100;
- *   console.log(`DNS cache hit ratio: ${hitRatio.toFixed(1)}%`);
+ *   console.info(`DNS cache hit ratio: ${hitRatio.toFixed(1)}%`);
  * }
  * ```
  */
@@ -664,7 +664,7 @@ export interface WebhookMetrics {
  *   console.error(`⚠️ High webhook failure rate: ${metrics.failureRate.toFixed(1)}%`);
  * }
  * 
- * console.log(`Webhook metrics: ${metrics.attemptCount} attempts, ${metrics.failureRate?.toFixed(1) || 0}% failure rate`);
+ * console.info(`Webhook metrics: ${metrics.attemptCount} attempts, ${metrics.failureRate?.toFixed(1) || 0}% failure rate`);
  * ```
  * 
  * @example
@@ -673,14 +673,14 @@ export interface WebhookMetrics {
  * const metrics = getWebhookMetrics();
  * const dnsStats = getDNSCacheStats();
  * 
- * console.log('Webhook Health:');
- * console.log(`  Last preconnect: ${metrics.lastPreconnect ? new Date(metrics.lastPreconnect).toISOString() : 'Never'}`);
- * console.log(`  Total attempts: ${metrics.attemptCount}`);
- * console.log(`  Failure rate: ${metrics.failureRate?.toFixed(2) || 0}%`);
+ * console.info('Webhook Health:');
+ * console.info(`  Last preconnect: ${metrics.lastPreconnect ? new Date(metrics.lastPreconnect).toISOString() : 'Never'}`);
+ * console.info(`  Total attempts: ${metrics.attemptCount}`);
+ * console.info(`  Failure rate: ${metrics.failureRate?.toFixed(2) || 0}%`);
  * 
  * if (dnsStats) {
  *   const hitRatio = calculateDNSCacheHitRatio(dnsStats);
- *   console.log(`  DNS cache hit ratio: ${hitRatio?.toFixed(1) || 0}%`);
+ *   console.info(`  DNS cache hit ratio: ${hitRatio?.toFixed(1) || 0}%`);
  * }
  * ```
  */

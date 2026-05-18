@@ -23,12 +23,12 @@ export class MainWorker {
 
   constructor() {
     this.startTime = Date.now();
-    console.log('MainWorker initialized with health check capabilities');
+    console.info('MainWorker initialized with health check capabilities');
   }
 
   public async initialize(): Promise<void> {
-    console.log('Initializing MainWorker...');
-    console.log('MainWorker initialization complete.');
+    console.info('Initializing MainWorker...');
+    console.info('MainWorker initialization complete.');
   }
 
   public getUptime(): number {
@@ -393,7 +393,7 @@ export class MainWorker {
             }
 
             async initialize() {
-                console.log('🔥 Initializing Enhanced Fire22 Dashboard with Charts...');
+                console.info('🔥 Initializing Enhanced Fire22 Dashboard with Charts...');
                 await this.loadDashboardData();
                 this.initializeCharts();
                 this.setupWebSocketConnection();
@@ -406,7 +406,7 @@ export class MainWorker {
                     const response = await fetch('/api/dashboard/agents');
                     this.data = await response.json();
                     this.updateStatsDisplay();
-                    console.log('✅ Dashboard data loaded successfully');
+                    console.info('✅ Dashboard data loaded successfully');
                 } catch (error) {
                     console.error('❌ Failed to load dashboard data:', error);
                 }
@@ -649,7 +649,7 @@ export class MainWorker {
             }
 
             setupWebSocketConnection() {
-                console.log('🔌 Setting up WebSocket connection...');
+                console.info('🔌 Setting up WebSocket connection...');
 
                 try {
                     // Use a mock WebSocket server endpoint for demonstration
@@ -659,7 +659,7 @@ export class MainWorker {
                         this.websocket = new WebSocket(wsUrl);
 
                         this.websocket.onopen = () => {
-                            console.log('✅ WebSocket connection established');
+                            console.info('✅ WebSocket connection established');
                             this.updateConnectionStatus('🟢 Connected', '#10b981');
                             this.sendWebSocketMessage({ type: 'subscribe', data: 'dashboard-updates' });
                         };
@@ -669,12 +669,12 @@ export class MainWorker {
                                 const data = JSON.parse(event.data);
                                 this.handleWebSocketMessage(data);
                             } catch (error) {
-                                console.log('Received WebSocket message:', event.data);
+                                console.info('Received WebSocket message:', event.data);
                             }
                         };
 
                         this.websocket.onclose = () => {
-                            console.log('🔌 WebSocket connection closed');
+                            console.info('🔌 WebSocket connection closed');
                             this.updateConnectionStatus('🔴 Disconnected', '#ef4444');
                             // Attempt to reconnect after 5 seconds
                             setTimeout(() => this.setupWebSocketConnection(), 5000);
@@ -701,7 +701,7 @@ export class MainWorker {
             }
 
             handleWebSocketMessage(data) {
-                console.log('📡 WebSocket message received:', data);
+                console.info('📡 WebSocket message received:', data);
 
                 // Simulate real-time updates based on WebSocket messages
                 if (data.type === 'agent-update') {
@@ -897,7 +897,7 @@ export class MainWorker {
                     return;
                 }
 
-                console.log('🎯 Applying filters:', filters);
+                console.info('🎯 Applying filters:', filters);
                 this.updateChartsWithFilters(filters);
                 this.updateActiveFiltersDisplay();
                 this.showToast('Filters applied successfully!', 'success');
@@ -1091,7 +1091,7 @@ export class MainWorker {
             }
 
             async refreshDashboard() {
-                console.log('🔄 Refreshing dashboard data...');
+                console.info('🔄 Refreshing dashboard data...');
                 await this.loadDashboardData();
                 this.updateChartsWithNewData();
                 this.showToast('Dashboard refreshed successfully!', 'success');
@@ -1158,7 +1158,7 @@ export class MainWorker {
                     }
                 });
 
-                console.log('🔥 Enhanced Dashboard destroyed');
+                console.info('🔥 Enhanced Dashboard destroyed');
             }
         }
 
@@ -1178,7 +1178,7 @@ export class MainWorker {
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', () => {
             window.dashboard = new EnhancedDashboard();
-            console.log('🔥 Enhanced Fire22 Dashboard with Charts initialized');
+            console.info('🔥 Enhanced Fire22 Dashboard with Charts initialized');
         });
 
         // Cleanup on page unload

@@ -98,9 +98,9 @@ class EnhancedExecutableBuilder {
    * 🚀 Build all executables
    */
   async buildAll(): Promise<void> {
-    console.log('🔨 Fire22 Enhanced Executable Builder');
-    console.log('='.repeat(60));
-    console.log('📦 Using new Bun.build() API with compilation support\n');
+    console.info('🔨 Fire22 Enhanced Executable Builder');
+    console.info('='.repeat(60));
+    console.info('📦 Using new Bun.build() API with compilation support\n');
 
     // Build each workspace (focus on working ones first)
     const workspaces: WorkspaceBuild[] = [
@@ -135,21 +135,21 @@ class EnhancedExecutableBuilder {
     // Create distribution packages
     await this.createDistributions();
 
-    console.log('\n✅ All executables built successfully!');
-    console.log(`📁 Output directory: ${this.distPath}`);
+    console.info('\n✅ All executables built successfully!');
+    console.info(`📁 Output directory: ${this.distPath}`);
   }
 
   /**
    * 🔨 Build executables for a workspace
    */
   private async buildWorkspace(config: WorkspaceBuild): Promise<void> {
-    console.log(`\n📦 Building ${config.workspace}...`);
+    console.info(`\n📦 Building ${config.workspace}...`);
 
     const workspacePath = join(this.workspacesPath, config.workspace);
     const entrypointPath = join(workspacePath, config.entrypoint);
 
     for (const target of config.targets) {
-      console.log(`  🎯 Building for ${target.name}...`);
+      console.info(`  🎯 Building for ${target.name}...`);
 
       const outdir = join(this.distPath, config.outdir, target.name);
       const outfile = join(outdir, this.getExecutableName(config.workspace, target));
@@ -192,7 +192,7 @@ class EnhancedExecutableBuilder {
         const result = await Bun.build(buildConfig);
 
         if (result.success) {
-          console.log(`    ✅ Bundle created successfully`);
+          console.info(`    ✅ Bundle created successfully`);
 
           // Now compile to executable using Bun.compile
           try {
@@ -206,7 +206,7 @@ class EnhancedExecutableBuilder {
             // Add Windows metadata if needed
             if (target.windows && target.platform === 'windows') {
               // For now, skip Windows metadata to avoid icon issues
-              console.log(`    ⚠️  Windows metadata skipped (icon file not ready)`);
+              console.info(`    ⚠️  Windows metadata skipped (icon file not ready)`);
             }
 
             // Create directory if it doesn't exist
@@ -219,21 +219,21 @@ class EnhancedExecutableBuilder {
               await $`chmod +x ${outfile}`;
 
               const size = (await Bun.file(outfile).size) / 1024 / 1024;
-              console.log(`    ✅ Executable: ${outfile} (${size.toFixed(2)}MB)`);
+              console.info(`    ✅ Executable: ${outfile} (${size.toFixed(2)}MB)`);
 
               // Log embedded arguments
               if (target.execArgv && target.execArgv.length > 0) {
-                console.log(`    📌 Runtime args: ${target.execArgv.join(' ')}`);
+                console.info(`    📌 Runtime args: ${target.execArgv.join(' ')}`);
               }
             }
           } catch (compileError) {
-            console.log(`    ⚠️  Compilation skipped: ${compileError}`);
+            console.info(`    ⚠️  Compilation skipped: ${compileError}`);
             // Fallback to bundle
             const bundlePath = result.outputs[0]?.path;
             if (bundlePath) {
               await $`cp ${bundlePath} ${outfile}`;
               const size = (await Bun.file(outfile).size) / 1024 / 1024;
-              console.log(`    ✅ Bundle: ${outfile} (${size.toFixed(2)}MB)`);
+              console.info(`    ✅ Bundle: ${outfile} (${size.toFixed(2)}MB)`);
             }
           }
         } else {
@@ -271,7 +271,7 @@ class EnhancedExecutableBuilder {
    * 🚀 Generate launcher scripts
    */
   private async generateLaunchers(): Promise<void> {
-    console.log('\n🚀 Generating launcher scripts...');
+    console.info('\n🚀 Generating launcher scripts...');
 
     // Windows batch launcher
     const windowsBat = `@echo off
@@ -364,21 +364,21 @@ ENTRYPOINT ["/app/fire22-dashboard"]
 
     await Bun.write(join(this.distPath, 'Dockerfile'), dockerfile);
 
-    console.log('  ✅ Launcher scripts generated');
+    console.info('  ✅ Launcher scripts generated');
   }
 
   /**
    * 📦 Create distribution packages
    */
   private async createDistributions(): Promise<void> {
-    console.log('\n📦 Creating distribution packages...');
+    console.info('\n📦 Creating distribution packages...');
 
     // Create platform-specific archives
     const platforms = ['windows', 'linux', 'macos', 'docker'];
 
     for (const platform of platforms) {
       const archiveName = `fire22-dashboard-${platform}-3.0.9`;
-      console.log(`  📦 Creating ${archiveName}.tar.gz...`);
+      console.info(`  📦 Creating ${archiveName}.tar.gz...`);
 
       try {
         // Check if platform directory exists and has files
@@ -394,22 +394,22 @@ ENTRYPOINT ["/app/fire22-dashboard"]
         if (platformExists) {
           // Create tar.gz archive with correct paths
           await $`cd ${this.distPath} && tar -czf ${archiveName}.tar.gz api-client/${platform}/* fire22-dashboard.*`;
-          console.log(`    ✅ Created ${archiveName}.tar.gz`);
+          console.info(`    ✅ Created ${archiveName}.tar.gz`);
         } else {
-          console.log(`    ⚠️  Skipped ${platform} - no files built`);
+          console.info(`    ⚠️  Skipped ${platform} - no files built`);
         }
       } catch (error) {
-        console.log(`    ⚠️  Skipped ${platform} archive:`, (error as Error).message);
+        console.info(`    ⚠️  Skipped ${platform} archive:`, (error as Error).message);
       }
     }
 
     // Create checksums (only if tar.gz files exist)
-    console.log('  🔒 Generating checksums...');
+    console.info('  🔒 Generating checksums...');
     try {
       await $`cd ${this.distPath} && ls *.tar.gz > /dev/null 2>&1 && sha256sum *.tar.gz > checksums.sha256`;
-      console.log('  ✅ Checksums generated');
+      console.info('  ✅ Checksums generated');
     } catch (error) {
-      console.log('  ⚠️  No archives to checksum');
+      console.info('  ⚠️  No archives to checksum');
     }
 
     // Create README
@@ -478,7 +478,7 @@ sha256sum -c checksums.sha256
 `;
 
     await Bun.write(join(this.distPath, 'README.md'), readme);
-    console.log('  ✅ README generated');
+    console.info('  ✅ README generated');
   }
 }
 

@@ -187,8 +187,8 @@ class BenchmarksIntegration {
    * Run all benchmarks
    */
   async runAllBenchmarks(): Promise<BenchmarkReport> {
-    console.log('🏃 Running Quantum Hash System Benchmarks...');
-    console.log('='.repeat(60));
+    console.info('🏃 Running Quantum Hash System Benchmarks...');
+    console.info('='.repeat(60));
     
     const startTime = performance.now();
     const allResults: BenchmarkResult[] = [];
@@ -196,13 +196,13 @@ class BenchmarksIntegration {
     let failedTests = 0;
 
     for (const suite of this.benchmarkSuites) {
-      console.log(`\n📊 ${suite.name}`);
-      console.log(`   ${suite.description}`);
-      console.log('─'.repeat(50));
+      console.info(`\n📊 ${suite.name}`);
+      console.info(`   ${suite.description}`);
+      console.info('─'.repeat(50));
 
       for (const test of suite.tests) {
-        console.log(`\n🔍 ${test.name}`);
-        console.log(`   ${test.description}`);
+        console.info(`\n🔍 ${test.name}`);
+        console.info(`   ${test.description}`);
 
         try {
           const result = await test.run();
@@ -210,16 +210,16 @@ class BenchmarksIntegration {
 
           if (result.success) {
             passedTests++;
-            console.log(`   ✅ PASSED (${result.duration.toFixed(2)}ms)`);
+            console.info(`   ✅ PASSED (${result.duration.toFixed(2)}ms)`);
             if (result.throughput) {
-              console.log(`   📈 Throughput: ${result.throughput.toFixed(0)} KB/s`);
+              console.info(`   📈 Throughput: ${result.throughput.toFixed(0)} KB/s`);
             }
             if (result.operations) {
-              console.log(`   🔄 Operations: ${result.operations}`);
+              console.info(`   🔄 Operations: ${result.operations}`);
             }
           } else {
             failedTests++;
-            console.log(`   ❌ FAILED: ${result.error}`);
+            console.info(`   ❌ FAILED: ${result.error}`);
           }
 
           // Check thresholds
@@ -236,7 +236,7 @@ class BenchmarksIntegration {
             error: error.message
           };
           allResults.push(errorResult);
-          console.log(`   ❌ ERROR: ${error.message}`);
+          console.info(`   ❌ ERROR: ${error.message}`);
         }
       }
     }
@@ -246,18 +246,18 @@ class BenchmarksIntegration {
     // Generate report
     const report = this.generateReport(allResults, passedTests, failedTests, totalDuration);
     
-    console.log('\n📊 Benchmark Summary');
-    console.log('═'.repeat(60));
-    console.log(`Total Tests: ${report.totalTests}`);
-    console.log(`Passed: ${report.passedTests} ✅`);
-    console.log(`Failed: ${report.failedTests} ${failedTests > 0 ? '❌' : '✅'}`);
-    console.log(`Duration: ${totalDuration.toFixed(2)}ms`);
-    console.log(`Average Throughput: ${report.summary.averageThroughput.toFixed(0)} KB/s`);
-    console.log(`Quantum Speedup: ${report.summary.quantumPerformance.speedup}x`);
+    console.info('\n📊 Benchmark Summary');
+    console.info('═'.repeat(60));
+    console.info(`Total Tests: ${report.totalTests}`);
+    console.info(`Passed: ${report.passedTests} ✅`);
+    console.info(`Failed: ${report.failedTests} ${failedTests > 0 ? '❌' : '✅'}`);
+    console.info(`Duration: ${totalDuration.toFixed(2)}ms`);
+    console.info(`Average Throughput: ${report.summary.averageThroughput.toFixed(0)} KB/s`);
+    console.info(`Quantum Speedup: ${report.summary.quantumPerformance.speedup}x`);
     
     if (report.recommendations.length > 0) {
-      console.log('\n💡 Recommendations:');
-      report.recommendations.forEach(rec => console.log(`   • ${rec}`));
+      console.info('\n💡 Recommendations:');
+      report.recommendations.forEach(rec => console.info(`   • ${rec}`));
     }
 
     return report;
@@ -601,15 +601,15 @@ class BenchmarksIntegration {
    */
   private checkThresholds(result: BenchmarkResult, threshold: any): void {
     if (threshold.maxTime && result.duration > threshold.maxTime) {
-      console.log(`   ⚠️  Time threshold exceeded: ${result.duration.toFixed(2)}ms > ${threshold.maxTime}ms`);
+      console.info(`   ⚠️  Time threshold exceeded: ${result.duration.toFixed(2)}ms > ${threshold.maxTime}ms`);
     }
     
     if (threshold.minThroughput && result.throughput && result.throughput < threshold.minThroughput) {
-      console.log(`   ⚠️  Throughput threshold exceeded: ${result.throughput.toFixed(0)} < ${threshold.minThroughput}`);
+      console.info(`   ⚠️  Throughput threshold exceeded: ${result.throughput.toFixed(0)} < ${threshold.minThroughput}`);
     }
     
     if (threshold.maxMemory && result.memoryUsage && result.memoryUsage > threshold.maxMemory) {
-      console.log(`   ⚠️  Memory threshold exceeded: ${result.memoryUsage.toFixed(1)}MB > ${threshold.maxMemory}MB`);
+      console.info(`   ⚠️  Memory threshold exceeded: ${result.memoryUsage.toFixed(1)}MB > ${threshold.maxMemory}MB`);
     }
   }
 
@@ -660,7 +660,7 @@ class BenchmarksIntegration {
    * Run pre-deploy benchmark check
    */
   async runPreDeployCheck(): Promise<boolean> {
-    console.log('🔍 Running pre-deploy benchmark check...');
+    console.info('🔍 Running pre-deploy benchmark check...');
     
     const report = await this.runAllBenchmarks();
     
@@ -670,13 +670,13 @@ class BenchmarksIntegration {
     const criticalPassed = criticalResults.every(r => r.success);
     
     if (criticalPassed) {
-      console.log('✅ Pre-deploy benchmark check passed');
+      console.info('✅ Pre-deploy benchmark check passed');
       return true;
     } else {
-      console.log('❌ Pre-deploy benchmark check failed');
-      console.log('Critical tests that failed:');
+      console.info('❌ Pre-deploy benchmark check failed');
+      console.info('Critical tests that failed:');
       criticalResults.filter(r => !r.success).forEach(r => {
-        console.log(`   • ${r.testName}: ${r.error}`);
+        console.info(`   • ${r.testName}: ${r.error}`);
       });
       return false;
     }
@@ -687,16 +687,16 @@ class BenchmarksIntegration {
 if (import.meta.main) {
   const benchmarks = new BenchmarksIntegration();
   
-  console.log('🎯 Benchmarks Integration - Quantum Hash System');
-  console.log('================================================\n');
+  console.info('🎯 Benchmarks Integration - Quantum Hash System');
+  console.info('================================================\n');
   
   benchmarks.runPreDeployCheck()
     .then((passed) => {
       if (passed) {
-        console.log('\n🎉 All benchmarks passed - Ready for deployment!');
+        console.info('\n🎉 All benchmarks passed - Ready for deployment!');
         process.exit(0);
       } else {
-        console.log('\n❌ Some benchmarks failed - Fix issues before deployment');
+        console.info('\n❌ Some benchmarks failed - Fix issues before deployment');
         process.exit(1);
       }
     })

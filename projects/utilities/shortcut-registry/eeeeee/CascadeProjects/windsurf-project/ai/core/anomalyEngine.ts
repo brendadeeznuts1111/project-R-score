@@ -6,7 +6,7 @@
 import { infer } from './inference.js';
 import { NebulaLogger } from '../nebula/logger.js';
 
-console.log("🤖 Nebula-Flow™ Anomaly Engine v1.0 - Loading");
+console.info("🤖 Nebula-Flow™ Anomaly Engine v1.0 - Loading");
 
 export interface LegSignal {
   deviceId: string;

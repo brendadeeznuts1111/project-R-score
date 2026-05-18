@@ -59,14 +59,14 @@ export class HookRegistry {
     for (const hook of hooks) {
       // Skip disabled hooks
       if (hook.disabled) {
-        console.log(`⏭️  Skipping disabled hook ${hook.id}`);
+        console.info(`⏭️  Skipping disabled hook ${hook.id}`);
         continue;
       }
       
       try {
         // Adaptive: Skip if condition fails
         if (hook.condition && !(await hook.condition(context))) {
-          console.log(`⏭️  Skipping hook ${hook.id}: condition false`);
+          console.info(`⏭️  Skipping hook ${hook.id}: condition false`);
           continue;
         }
         

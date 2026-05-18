@@ -50,20 +50,20 @@ export class SyntheticArbitrageUnifiedExamples {
      * Example 1: Create V1 NBA Synthetic Arbitrage (Core functionality)
      */
     static createV1NBAExample(): SyntheticArbitrageV1 {
-        console.log('🏀 Creating V1 NBA Synthetic Arbitrage...');
+        console.info('🏀 Creating V1 NBA Synthetic Arbitrage...');
 
         const arbitrage = SyntheticArbitrageV1Factory.createNBAExample();
 
-        console.log('✅ V1 Created:');
-        console.log(`   ID: ${arbitrage.id}`);
-        console.log(`   Markets: ${arbitrage.markets[0].period} vs ${arbitrage.markets[1].period}`);
-        console.log(`   Expected Value: ${(arbitrage.expectedValue * 100).toFixed(2)}%`);
-        console.log(`   Hedge Ratio: ${(arbitrage.hedgeRatio * 100).toFixed(1)}%`);
-        console.log(`   Confidence: ${(arbitrage.confidence * 100).toFixed(1)}%`);
+        console.info('✅ V1 Created:');
+        console.info(`   ID: ${arbitrage.id}`);
+        console.info(`   Markets: ${arbitrage.markets[0].period} vs ${arbitrage.markets[1].period}`);
+        console.info(`   Expected Value: ${(arbitrage.expectedValue * 100).toFixed(2)}%`);
+        console.info(`   Hedge Ratio: ${(arbitrage.hedgeRatio * 100).toFixed(1)}%`);
+        console.info(`   Confidence: ${(arbitrage.confidence * 100).toFixed(1)}%`);
 
         // Validate
         const validation = validateSyntheticArbitrageComplete(arbitrage, 'v1');
-        console.log(`   Validation: ${validation.isValid ? '✅ PASS' : '❌ FAIL'}`);
+        console.info(`   Validation: ${validation.isValid ? '✅ PASS' : '❌ FAIL'}`);
 
         return arbitrage;
     }
@@ -72,21 +72,21 @@ export class SyntheticArbitrageUnifiedExamples {
      * Example 2: Create V2 NFL Synthetic Arbitrage (Enhanced with risk metrics)
      */
     static createV2NFLExample(): SyntheticArbitrageV2 {
-        console.log('\n🏈 Creating V2 NFL Synthetic Arbitrage...');
+        console.info('\n🏈 Creating V2 NFL Synthetic Arbitrage...');
 
         const arbitrage = SyntheticArbitrageV2Factory.createNFLExample();
 
-        console.log('✅ V2 Created:');
-        console.log(`   ID: ${arbitrage.id}`);
-        console.log(`   Markets: ${arbitrage.markets.length} markets`);
-        console.log(`   Expected Return: ${(arbitrage.expectedReturn.percent * 100).toFixed(2)}%`);
-        console.log(`   Risk Score: ${arbitrage.riskMetrics.riskScore.toFixed(2)}`);
-        console.log(`   Max Drawdown: ${(arbitrage.riskMetrics.maxDrawdown * 100).toFixed(2)}%`);
-        console.log(`   Execution Plan: ${arbitrage.executionPlan.strategy}`);
+        console.info('✅ V2 Created:');
+        console.info(`   ID: ${arbitrage.id}`);
+        console.info(`   Markets: ${arbitrage.markets.length} markets`);
+        console.info(`   Expected Return: ${(arbitrage.expectedReturn.percent * 100).toFixed(2)}%`);
+        console.info(`   Risk Score: ${arbitrage.riskMetrics.riskScore.toFixed(2)}`);
+        console.info(`   Max Drawdown: ${(arbitrage.riskMetrics.maxDrawdown * 100).toFixed(2)}%`);
+        console.info(`   Execution Plan: ${arbitrage.executionPlan.strategy}`);
 
         // Validate
         const validation = validateSyntheticArbitrageComplete(arbitrage, 'v2');
-        console.log(`   Validation: ${validation.isValid ? '✅ PASS' : '❌ FAIL'}`);
+        console.info(`   Validation: ${validation.isValid ? '✅ PASS' : '❌ FAIL'}`);
 
         return arbitrage;
     }
@@ -95,20 +95,20 @@ export class SyntheticArbitrageUnifiedExamples {
      * Example 3: Create V3 MLB Synthetic Arbitrage (Advanced with correlation matrix)
      */
     static createV3MLBExample(): SyntheticArbitrageV3 {
-        console.log('\n⚾ Creating V3 MLB Synthetic Arbitrage...');
+        console.info('\n⚾ Creating V3 MLB Synthetic Arbitrage...');
 
         const arbitrage = SyntheticArbitrageV3Factory.createMLBExample();
 
-        console.log('✅ V3 Created:');
-        console.log(`   ID: ${arbitrage.id}`);
-        console.log(`   Markets: ${arbitrage.markets.length} markets`);
-        console.log(`   Expected Return: ${(arbitrage.expectedReturn.percent * 100).toFixed(2)}%`);
-        console.log(`   Correlation Matrix: ${arbitrage.correlationMatrix.markets.length}x${arbitrage.correlationMatrix.markets.length}`);
-        console.log(`   Monitoring Active: ${arbitrage.monitoringMetrics.active}`);
+        console.info('✅ V3 Created:');
+        console.info(`   ID: ${arbitrage.id}`);
+        console.info(`   Markets: ${arbitrage.markets.length} markets`);
+        console.info(`   Expected Return: ${(arbitrage.expectedReturn.percent * 100).toFixed(2)}%`);
+        console.info(`   Correlation Matrix: ${arbitrage.correlationMatrix.markets.length}x${arbitrage.correlationMatrix.markets.length}`);
+        console.info(`   Monitoring Active: ${arbitrage.monitoringMetrics.active}`);
 
         // Validate
         const validation = validateSyntheticArbitrageComplete(arbitrage, 'v3');
-        console.log(`   Validation: ${validation.isValid ? '✅ PASS' : '❌ FAIL'}`);
+        console.info(`   Validation: ${validation.isValid ? '✅ PASS' : '❌ FAIL'}`);
 
         return arbitrage;
     }
@@ -119,7 +119,7 @@ export class SyntheticArbitrageUnifiedExamples {
      * Example 4: Basic opportunity detection
      */
     static async demonstrateDetection(): Promise<void> {
-        console.log('\n🎯 Opportunity Detection Demo\n');
+        console.info('\n🎯 Opportunity Detection Demo\n');
 
         // Create detector
         const detector = SyntheticArbitrageDetectorFactory.createConservativeDetector();
@@ -128,7 +128,7 @@ export class SyntheticArbitrageUnifiedExamples {
         const factory = new SyntheticArbitrageBatchFactory();
         const markets = factory.createMixedSportMarkets(100);
 
-        console.log(`📊 Generated ${markets.length} markets across multiple sports`);
+        console.info(`📊 Generated ${markets.length} markets across multiple sports`);
 
         // Detect opportunities
         const startTime = performance.now();
@@ -139,16 +139,16 @@ export class SyntheticArbitrageUnifiedExamples {
         });
         const detectionTime = performance.now() - startTime;
 
-        console.log(`\n🎯 Detection Results:`);
-        console.log(`   Processing Time: ${detectionTime.toFixed(2)}ms`);
-        console.log(`   Opportunities Found: ${opportunities.length}`);
-        console.log(`   Success Rate: ${((opportunities.length / markets.length) * 100).toFixed(1)}%`);
+        console.info(`\n🎯 Detection Results:`);
+        console.info(`   Processing Time: ${detectionTime.toFixed(2)}ms`);
+        console.info(`   Opportunities Found: ${opportunities.length}`);
+        console.info(`   Success Rate: ${((opportunities.length / markets.length) * 100).toFixed(1)}%`);
 
         // Show top opportunities
         if (opportunities.length > 0) {
-            console.log('\n🏆 Top Opportunities:');
+            console.info('\n🏆 Top Opportunities:');
             opportunities.slice(0, 3).forEach((opp, index) => {
-                console.log(`   ${index + 1}. ${opp.id}: ${(opp.confidence * 100).toFixed(1)}% confidence, ${(opp.expectedReturn?.percent * 100 || 0).toFixed(2)}% return`);
+                console.info(`   ${index + 1}. ${opp.id}: ${(opp.confidence * 100).toFixed(1)}% confidence, ${(opp.expectedReturn?.percent * 100 || 0).toFixed(2)}% return`);
             });
         }
     }
@@ -157,7 +157,7 @@ export class SyntheticArbitrageUnifiedExamples {
      * Example 5: High-frequency detection
      */
     static async demonstrateHFTDetection(): Promise<void> {
-        console.log('\n⚡ High-Frequency Detection Demo\n');
+        console.info('\n⚡ High-Frequency Detection Demo\n');
 
         // Create HFT detector
         const detector = SyntheticArbitrageDetectorFactory.createHFTDetector();
@@ -166,7 +166,7 @@ export class SyntheticArbitrageUnifiedExamples {
         const factory = new SyntheticArbitrageBatchFactory();
         const markets = factory.createHighVolumeMarkets(1000);
 
-        console.log(`📊 Generated ${markets.length} high-volume markets`);
+        console.info(`📊 Generated ${markets.length} high-volume markets`);
 
         // Measure detection performance
         const startTime = performance.now();
@@ -180,11 +180,11 @@ export class SyntheticArbitrageUnifiedExamples {
 
         const throughput = markets.length / (detectionTime / 1000);
 
-        console.log(`\n⚡ HFT Performance:`);
-        console.log(`   Processing Time: ${detectionTime.toFixed(2)}ms`);
-        console.log(`   Throughput: ${throughput.toFixed(0)} markets/second`);
-        console.log(`   Opportunities Found: ${opportunities.length}`);
-        console.log(`   Detection Rate: ${(opportunities.length / (detectionTime / 1000)).toFixed(1)} opportunities/second`);
+        console.info(`\n⚡ HFT Performance:`);
+        console.info(`   Processing Time: ${detectionTime.toFixed(2)}ms`);
+        console.info(`   Throughput: ${throughput.toFixed(0)} markets/second`);
+        console.info(`   Opportunities Found: ${opportunities.length}`);
+        console.info(`   Detection Rate: ${(opportunities.length / (detectionTime / 1000)).toFixed(1)} opportunities/second`);
     }
 
     // ===== MULTI-PERIOD PROCESSING EXAMPLES =====
@@ -193,7 +193,7 @@ export class SyntheticArbitrageUnifiedExamples {
      * Example 6: Multi-period stream processing
      */
     static async demonstrateMultiPeriodProcessing(): Promise<void> {
-        console.log('\n📊 Multi-Period Stream Processing Demo\n');
+        console.info('\n📊 Multi-Period Stream Processing Demo\n');
 
         // Create stream processor
         const processor = MultiPeriodStreamProcessorFactory.createLiveProcessor();
@@ -202,7 +202,7 @@ export class SyntheticArbitrageUnifiedExamples {
         const factory = new SyntheticArbitrageBatchFactory();
         const marketStream = factory.createMarketStream(50);
 
-        console.log(`📈 Processing ${marketStream.length} market updates`);
+        console.info(`📈 Processing ${marketStream.length} market updates`);
 
         // Process stream
         const startTime = performance.now();
@@ -213,12 +213,12 @@ export class SyntheticArbitrageUnifiedExamples {
         });
         const processingTime = performance.now() - startTime;
 
-        console.log(`\n📊 Stream Processing Results:`);
-        console.log(`   Processing Time: ${processingTime.toFixed(2)}ms`);
-        console.log(`   Markets Processed: ${results.marketsProcessed}`);
-        console.log(`   Opportunities Detected: ${results.opportunitiesDetected}`);
-        console.log(`   Immediate Alerts: ${results.immediateAlerts}`);
-        console.log(`   Average Latency: ${results.averageLatency.toFixed(2)}ms`);
+        console.info(`\n📊 Stream Processing Results:`);
+        console.info(`   Processing Time: ${processingTime.toFixed(2)}ms`);
+        console.info(`   Markets Processed: ${results.marketsProcessed}`);
+        console.info(`   Opportunities Detected: ${results.opportunitiesDetected}`);
+        console.info(`   Immediate Alerts: ${results.immediateAlerts}`);
+        console.info(`   Average Latency: ${results.averageLatency.toFixed(2)}ms`);
     }
 
     // ===== POSITION TRACKING EXAMPLES =====
@@ -227,7 +227,7 @@ export class SyntheticArbitrageUnifiedExamples {
      * Example 7: Position tracking and risk management
      */
     static async demonstratePositionTracking(): Promise<void> {
-        console.log('\n🛡️ Position Tracking & Risk Management Demo\n');
+        console.info('\n🛡️ Position Tracking & Risk Management Demo\n');
 
         // Create position tracker
         const tracker = SyntheticPositionTrackerFactory.createConservativeTracker();
@@ -243,31 +243,31 @@ export class SyntheticArbitrageUnifiedExamples {
             v3Factory.createMLBExample()
         ];
 
-        console.log(`📈 Adding ${opportunities.length} positions to tracker`);
+        console.info(`📈 Adding ${opportunities.length} positions to tracker`);
 
         // Add positions
         opportunities.forEach((opportunity, index) => {
             const position = tracker.addPosition(opportunity);
-            console.log(`   ${index + 1}. Added position: ${position.id} (${position.status})`);
+            console.info(`   ${index + 1}. Added position: ${position.id} (${position.status})`);
         });
 
         // Get portfolio metrics
         const metrics = tracker.getPortfolioMetrics();
-        console.log(`\n📊 Portfolio Metrics:`);
-        console.log(`   Active Positions: ${metrics.activePositions}`);
-        console.log(`   Total Exposure: $${metrics.totalExposure.toFixed(2)}`);
-        console.log(`   Portfolio VaR (95%): $${metrics.valueAtRisk95.toFixed(2)}`);
-        console.log(`   Sharpe Ratio: ${metrics.sharpeRatio.toFixed(2)}`);
+        console.info(`\n📊 Portfolio Metrics:`);
+        console.info(`   Active Positions: ${metrics.activePositions}`);
+        console.info(`   Total Exposure: $${metrics.totalExposure.toFixed(2)}`);
+        console.info(`   Portfolio VaR (95%): $${metrics.valueAtRisk95.toFixed(2)}`);
+        console.info(`   Sharpe Ratio: ${metrics.sharpeRatio.toFixed(2)}`);
 
         // Check for risk alerts
         const alerts = tracker.getRiskAlerts();
         if (alerts.length > 0) {
-            console.log(`\n⚠️ Risk Alerts:`);
+            console.info(`\n⚠️ Risk Alerts:`);
             alerts.forEach(alert => {
-                console.log(`   • ${alert.type}: ${alert.message}`);
+                console.info(`   • ${alert.type}: ${alert.message}`);
             });
         } else {
-            console.log(`\n✅ No risk alerts - Portfolio within limits`);
+            console.info(`\n✅ No risk alerts - Portfolio within limits`);
         }
     }
 
@@ -277,7 +277,7 @@ export class SyntheticArbitrageUnifiedExamples {
      * Example 8: Enhanced metadata validation
      */
     static demonstrateEnhancedValidation(): void {
-        console.log('\n🔍 Enhanced Metadata Validation Demo\n');
+        console.info('\n🔍 Enhanced Metadata Validation Demo\n');
 
         // Create validator
         const validator = new MetadataValidator();
@@ -340,19 +340,19 @@ export class SyntheticArbitrageUnifiedExamples {
             { includeWarnings: true }
         );
 
-        console.log('📋 Validation Results:');
-        console.log(`   Valid: ${validationResult.valid}`);
-        console.log(`   Errors: ${validationResult.errors.length}`);
-        console.log(`   Warnings: ${validationResult.warnings.length}`);
+        console.info('📋 Validation Results:');
+        console.info(`   Valid: ${validationResult.valid}`);
+        console.info(`   Errors: ${validationResult.errors.length}`);
+        console.info(`   Warnings: ${validationResult.warnings.length}`);
 
         if (validationResult.errors.length > 0) {
-            console.log('\n❌ Errors:');
-            validationResult.errors.forEach(error => console.log(`   • ${error}`));
+            console.info('\n❌ Errors:');
+            validationResult.errors.forEach(error => console.info(`   • ${error}`));
         }
 
         if (validationResult.warnings.length > 0) {
-            console.log('\n⚠️ Warnings:');
-            validationResult.warnings.forEach(warning => console.log(`   • ${warning}`));
+            console.info('\n⚠️ Warnings:');
+            validationResult.warnings.forEach(warning => console.info(`   • ${warning}`));
         }
     }
 
@@ -362,7 +362,7 @@ export class SyntheticArbitrageUnifiedExamples {
      * Example 9: Complete synthetic arbitrage workflow
      */
     static async demonstrateCompleteWorkflow(): Promise<void> {
-        console.log('\n🔄 Complete Synthetic Arbitrage Workflow Demo\n');
+        console.info('\n🔄 Complete Synthetic Arbitrage Workflow Demo\n');
 
         // 1. Initialize components
         const detector = SyntheticArbitrageDetectorFactory.createHFTDetector();
@@ -370,13 +370,13 @@ export class SyntheticArbitrageUnifiedExamples {
         const tracker = SyntheticPositionTrackerFactory.createHFTTracker();
         const validator = new MetadataValidator();
 
-        console.log('✅ Components initialized');
+        console.info('✅ Components initialized');
 
         // 2. Generate market data
         const factory = new SyntheticArbitrageBatchFactory();
         const markets = factory.createHighVolumeMarkets(500);
 
-        console.log(`📊 Generated ${markets.length} markets`);
+        console.info(`📊 Generated ${markets.length} markets`);
 
         // 3. Detect opportunities
         const opportunities = await detector.detectOpportunities(markets, {
@@ -384,7 +384,7 @@ export class SyntheticArbitrageUnifiedExamples {
             includeRiskMetrics: true
         });
 
-        console.log(`🎯 Detected ${opportunities.length} opportunities`);
+        console.info(`🎯 Detected ${opportunities.length} opportunities`);
 
         // 4. Validate top opportunities
         const validOpportunities = opportunities.filter(opp => {
@@ -395,22 +395,22 @@ export class SyntheticArbitrageUnifiedExamples {
             return validation.valid;
         });
 
-        console.log(`✅ Validated ${validOpportunities.length} opportunities`);
+        console.info(`✅ Validated ${validOpportunities.length} opportunities`);
 
         // 5. Add positions to tracker
         validOpportunities.slice(0, 10).forEach((opp, index) => {
             const position = tracker.addPosition(opp);
-            console.log(`   ${index + 1}. Position added: ${position.id}`);
+            console.info(`   ${index + 1}. Position added: ${position.id}`);
         });
 
         // 6. Get final portfolio status
         const finalMetrics = tracker.getPortfolioMetrics();
-        console.log(`\n📊 Final Portfolio Status:`);
-        console.log(`   Active Positions: ${finalMetrics.activePositions}`);
-        console.log(`   Total Exposure: $${finalMetrics.totalExposure.toFixed(2)}`);
-        console.log(`   Expected Return: ${(finalMetrics.expectedReturn * 100).toFixed(2)}%`);
-        console.log(`   Portfolio VaR (95%): $${finalMetrics.valueAtRisk95.toFixed(2)}`);
-        console.log(`   Sharpe Ratio: ${finalMetrics.sharpeRatio.toFixed(2)}`);
+        console.info(`\n📊 Final Portfolio Status:`);
+        console.info(`   Active Positions: ${finalMetrics.activePositions}`);
+        console.info(`   Total Exposure: $${finalMetrics.totalExposure.toFixed(2)}`);
+        console.info(`   Expected Return: ${(finalMetrics.expectedReturn * 100).toFixed(2)}%`);
+        console.info(`   Portfolio VaR (95%): $${finalMetrics.valueAtRisk95.toFixed(2)}`);
+        console.info(`   Sharpe Ratio: ${finalMetrics.sharpeRatio.toFixed(2)}`);
     }
 
     // ===== PERFORMANCE BENCHMARKS =====
@@ -419,14 +419,14 @@ export class SyntheticArbitrageUnifiedExamples {
      * Example 10: Performance benchmarks
      */
     static async demonstratePerformanceBenchmarks(): Promise<void> {
-        console.log('\n⚡ Performance Benchmarks Demo\n');
+        console.info('\n⚡ Performance Benchmarks Demo\n');
 
         const testSizes = [100, 500, 1000, 2000];
         const detector = SyntheticArbitrageDetectorFactory.createHFTDetector();
 
-        console.log('📊 Performance Test Results:');
-        console.log('Markets\tTime(ms)\tThroughput/sec\tOpportunities\tDetection Rate/sec');
-        console.log('-------\t-------\t-----------\t------------\t----------------');
+        console.info('📊 Performance Test Results:');
+        console.info('Markets\tTime(ms)\tThroughput/sec\tOpportunities\tDetection Rate/sec');
+        console.info('-------\t-------\t-----------\t------------\t----------------');
 
         for (const size of testSizes) {
             // Generate test data
@@ -445,7 +445,7 @@ export class SyntheticArbitrageUnifiedExamples {
             const throughput = size / (detectionTime / 1000);
             const detectionRate = opportunities.length / (detectionTime / 1000);
 
-            console.log(`${size}\t${detectionTime.toFixed(1)}\t${throughput.toFixed(0)}\t\t${opportunities.length}\t\t${detectionRate.toFixed(1)}`);
+            console.info(`${size}\t${detectionTime.toFixed(1)}\t${throughput.toFixed(0)}\t\t${opportunities.length}\t\t${detectionRate.toFixed(1)}`);
         }
     }
 
@@ -453,55 +453,55 @@ export class SyntheticArbitrageUnifiedExamples {
      * Run all unified synthetic arbitrage examples
      */
     static async runAllExamples(): Promise<void> {
-        console.log('🚀 Unified Synthetic Arbitrage Examples\n');
-        console.log('='.repeat(80));
+        console.info('🚀 Unified Synthetic Arbitrage Examples\n');
+        console.info('='.repeat(80));
 
         // Core creation examples
         this.createV1NBAExample();
         this.createV2NFLExample();
         this.createV3MLBExample();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Detection examples
         await this.demonstrateDetection();
         await this.demonstrateHFTDetection();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Processing examples
         await this.demonstrateMultiPeriodProcessing();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Position tracking examples
         await this.demonstratePositionTracking();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Validation examples
         this.demonstrateEnhancedValidation();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Integration examples
         await this.demonstrateCompleteWorkflow();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Performance benchmarks
         await this.demonstratePerformanceBenchmarks();
 
-        console.log('\n✅ All unified synthetic arbitrage examples completed!');
-        console.log('\n🎯 Key Capabilities Demonstrated:');
-        console.log('   • V1/V2/V3 synthetic arbitrage creation and validation');
-        console.log('   • High-performance opportunity detection (HFT capable)');
-        console.log('   • Multi-period stream processing with real-time alerts');
-        console.log('   • Institutional-grade position tracking and risk management');
-        console.log('   • Enhanced metadata validation with custom rules and schemas');
-        console.log('   • Complete workflow integration across all components');
-        console.log('   • Performance benchmarks and scalability testing');
-        console.log('   • Production-ready synthetic arbitrage platform');
+        console.info('\n✅ All unified synthetic arbitrage examples completed!');
+        console.info('\n🎯 Key Capabilities Demonstrated:');
+        console.info('   • V1/V2/V3 synthetic arbitrage creation and validation');
+        console.info('   • High-performance opportunity detection (HFT capable)');
+        console.info('   • Multi-period stream processing with real-time alerts');
+        console.info('   • Institutional-grade position tracking and risk management');
+        console.info('   • Enhanced metadata validation with custom rules and schemas');
+        console.info('   • Complete workflow integration across all components');
+        console.info('   • Performance benchmarks and scalability testing');
+        console.info('   • Production-ready synthetic arbitrage platform');
     }
 }
 

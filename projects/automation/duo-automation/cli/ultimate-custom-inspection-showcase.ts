@@ -103,55 +103,55 @@ const ultimateCheck = {
   }
 };
 
-console.log("🔍 DuoPlus CLI v3.0+ - Ultimate Custom Inspection Showcase");
-console.log("=".repeat(90));
-console.log("Advanced zero-width analysis with Bun's stringWidth and Unicode support");
-console.log("");
+console.info("🔍 DuoPlus CLI v3.0+ - Ultimate Custom Inspection Showcase");
+console.info("=".repeat(90));
+console.info("Advanced zero-width analysis with Bun's stringWidth and Unicode support");
+console.info("");
 
 // Display the ultimate check
-console.log("🎯 Ultimate Inspection Result:");
-console.log("");
-console.log(ultimateCheck[inspectCustom]());
-console.log("");
+console.info("🎯 Ultimate Inspection Result:");
+console.info("");
+console.info(ultimateCheck[inspectCustom]());
+console.info("");
 
 // Detailed analysis
-console.log("📊 Detailed Zero-Width Analysis:");
-console.log("");
+console.info("📊 Detailed Zero-Width Analysis:");
+console.info("");
 const analysis = ultimateCheck.zeroWidthAnalysis;
-console.log(`Raw URI: ${ultimateCheck.rawUri}`);
-console.log(`Decoded URI: ${ultimateCheck.decodedUri}`);
-console.log(`Display Width: ${ultimateCheck.displayWidth} characters`);
-console.log(`Raw Length: ${ultimateCheck.decodedUri.length} characters`);
-console.log(`Zero-Width Characters: ${analysis.count}`);
-console.log(`Security Risk: ${ultimateCheck.securityRisk}`);
+console.info(`Raw URI: ${ultimateCheck.rawUri}`);
+console.info(`Decoded URI: ${ultimateCheck.decodedUri}`);
+console.info(`Display Width: ${ultimateCheck.displayWidth} characters`);
+console.info(`Raw Length: ${ultimateCheck.decodedUri.length} characters`);
+console.info(`Zero-Width Characters: ${analysis.count}`);
+console.info(`Security Risk: ${ultimateCheck.securityRisk}`);
 
 if (analysis.has) {
-  console.log("");
-  console.log("🔍 Zero-Width Character Details:");
+  console.info("");
+  console.info("🔍 Zero-Width Character Details:");
   analysis.positions.forEach((pos, index) => {
-    console.log(`   ${index + 1}. Position ${pos}: ${analysis.types[index]}`);
+    console.info(`   ${index + 1}. Position ${pos}: ${analysis.types[index]}`);
   });
 }
 
-console.log("");
-console.log("🛡️ Security Implications:");
-console.log("");
-console.log("⚠️  Zero-width characters can be used for:");
-console.log("   • Data hiding and steganography");
-console.log("   • Bypassing security filters");
-console.log("   • Phishing and domain spoofing");
-console.log("   • Log injection and obfuscation");
-console.log("");
-console.log("✅ Detection Methods:");
-console.log("   • Unicode pattern matching with \\p{Cf}");
-console.log("   • Position analysis and counting");
-console.log("   • Display width vs raw length comparison");
-console.log("   • Character type identification");
+console.info("");
+console.info("🛡️ Security Implications:");
+console.info("");
+console.info("⚠️  Zero-width characters can be used for:");
+console.info("   • Data hiding and steganography");
+console.info("   • Bypassing security filters");
+console.info("   • Phishing and domain spoofing");
+console.info("   • Log injection and obfuscation");
+console.info("");
+console.info("✅ Detection Methods:");
+console.info("   • Unicode pattern matching with \\p{Cf}");
+console.info("   • Position analysis and counting");
+console.info("   • Display width vs raw length comparison");
+console.info("   • Character type identification");
 
 // Comparison with simpler checks
-console.log("");
-console.log("📋 Comparison with Basic Detection:");
-console.log("");
+console.info("");
+console.info("📋 Comparison with Basic Detection:");
+console.info("");
 
 const basicCheck = {
   longName: "Basic CORS Check",
@@ -168,12 +168,12 @@ const basicCheck = {
   }
 };
 
-console.log("Basic Detection:");
-console.log(`   ${basicCheck[inspectCustom]()}`);
+console.info("Basic Detection:");
+console.info(`   ${basicCheck[inspectCustom]()}`);
 
-console.log("");
-console.log("Advanced Detection:");
-console.log(`   ${ultimateCheck[inspectCustom]()}`);
+console.info("");
+console.info("Advanced Detection:");
+console.info(`   ${ultimateCheck[inspectCustom]()}`);
 
-console.log("");
-console.log("🎉 Ultimate Custom Inspection Showcase Complete!");
+console.info("");
+console.info("🎉 Ultimate Custom Inspection Showcase Complete!");

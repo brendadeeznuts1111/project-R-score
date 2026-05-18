@@ -5,7 +5,7 @@ import { file, YAML } from 'bun';
 import { spawn } from 'child_process';
 
 async function validateETLFlow() {
-  console.log('🔍 Validating Login-to-ETL flow...');
+  console.info('🔍 Validating Login-to-ETL flow...');
 
   const config = YAML.parse(await file('bun.yaml').text());
   const { auth, etl } = config.api;
@@ -15,7 +15,7 @@ async function validateETLFlow() {
 
   // Check ETL files
   const etlFiles = ['etl/stream.ts'];
-  console.log(`📄 Found ${etlFiles.length} ETL files`);
+  console.info(`📄 Found ${etlFiles.length} ETL files`);
 
   for (const filePath of etlFiles) {
     try {
@@ -49,7 +49,7 @@ async function validateETLFlow() {
       }
 
       valid++;
-      console.log(`🟢 ${filePath}: ETL + Auth [${etl.stream.types.join(', ')}]`);
+      console.info(`🟢 ${filePath}: ETL + Auth [${etl.stream.types.join(', ')}]`);
     } catch (error) {
       errors.push(`❌ ${filePath}: ${error.message}`);
     }
@@ -57,7 +57,7 @@ async function validateETLFlow() {
 
   // Check auth handler
   const authFiles = ['routes/auth/login.ts'];
-  console.log(`📄 Found ${authFiles.length} auth files`);
+  console.info(`📄 Found ${authFiles.length} auth files`);
 
   for (const filePath of authFiles) {
     try {
@@ -83,7 +83,7 @@ async function validateETLFlow() {
         warnings.push(`⚠️  ${filePath}: Missing CSRF token`);
       }
 
-      console.log(`🟢 ${filePath}: Auth handler validated`);
+      console.info(`🟢 ${filePath}: Auth handler validated`);
     } catch (error) {
       errors.push(`❌ ${filePath}: ${error.message}`);
     }
@@ -91,7 +91,7 @@ async function validateETLFlow() {
 
   // Check WebSocket handlers
   const wsFiles = ['routes/ws/telemetry.ts'];
-  console.log(`📄 Found ${wsFiles.length} WebSocket files`);
+  console.info(`📄 Found ${wsFiles.length} WebSocket files`);
 
   for (const filePath of wsFiles) {
     try {
@@ -107,22 +107,22 @@ async function validateETLFlow() {
         warnings.push(`⚠️  ${filePath}: Missing heartbeat support`);
       }
 
-      console.log(`🟢 ${filePath}: WebSocket handler validated`);
+      console.info(`🟢 ${filePath}: WebSocket handler validated`);
     } catch (error) {
       errors.push(`❌ ${filePath}: ${error.message}`);
     }
   }
 
   // Build ETL index using ripgrep
-  console.log('📄 Building ETL index...');
+  console.info('📄 Building ETL index...');
   try {
     const rgResult = await runRipgrep('startETL', 'etl/', ['--files-with-matches']);
     const foundETLHandlers = rgResult.trim().split('\n').filter(Boolean);
-    console.log(`📄 Found ${foundETLHandlers.length} ETL handlers in index`);
+    console.info(`📄 Found ${foundETLHandlers.length} ETL handlers in index`);
 
     // Write to .etl.index
     await file('.etl.index').write(foundETLHandlers.join('\n'));
-    console.log('🟢 ETL index built: .etl.index');
+    console.info('🟢 ETL index built: .etl.index');
   } catch (error) {
     warnings.push(`⚠️  Failed to build ETL index: ${error.message}`);
   }
@@ -140,7 +140,7 @@ async function validateETLFlow() {
   }
 
   if (errors.length === 0) {
-    console.log(`\n🎉 All ${valid} ETL flows valid & telemetry-ready!`);
+    console.info(`\n🎉 All ${valid} ETL flows valid & telemetry-ready!`);
   }
 }
 

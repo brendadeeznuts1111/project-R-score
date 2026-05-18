@@ -83,7 +83,7 @@ export async function setupTestDatabase(): Promise<Database> {
   `);
 
   if (TEST_CONFIG.DEBUG) {
-    console.log('🗄️ Test database created:', TEST_CONFIG.DATABASE_PATH);
+    console.info('🗄️ Test database created:', TEST_CONFIG.DATABASE_PATH);
   }
 
   return testDb;
@@ -174,7 +174,7 @@ export async function seedTestDatabase(db: Database): Promise<void> {
   }
 
   if (TEST_CONFIG.DEBUG) {
-    console.log('🌱 Test database seeded with sample data');
+    console.info('🌱 Test database seeded with sample data');
   }
 }
 
@@ -192,7 +192,7 @@ export async function cleanupTestDatabase(): Promise<void> {
   }
 
   if (TEST_CONFIG.DEBUG) {
-    console.log('🧹 Test database cleaned up');
+    console.info('🧹 Test database cleaned up');
   }
 }
 
@@ -229,7 +229,7 @@ export async function resetTestDatabase(): Promise<void> {
   }
 
   if (TEST_CONFIG.DEBUG) {
-    console.log('🔄 Test database reset');
+    console.info('🔄 Test database reset');
   }
 }
 
@@ -238,7 +238,7 @@ export async function resetTestDatabase(): Promise<void> {
  */
 export async function globalSetup(): Promise<void> {
   if (TEST_CONFIG.DEBUG) {
-    console.log('🚀 Starting global test setup...');
+    console.info('🚀 Starting global test setup...');
   }
 
   // Set test environment variables
@@ -248,7 +248,7 @@ export async function globalSetup(): Promise<void> {
   process.env.API_KEYS = TEST_CONFIG.API_KEY;
 
   if (TEST_CONFIG.DEBUG) {
-    console.log('✅ Global test setup complete');
+    console.info('✅ Global test setup complete');
   }
 }
 
@@ -257,13 +257,13 @@ export async function globalSetup(): Promise<void> {
  */
 export async function globalTeardown(): Promise<void> {
   if (TEST_CONFIG.DEBUG) {
-    console.log('🧹 Starting global test teardown...');
+    console.info('🧹 Starting global test teardown...');
   }
 
   await cleanupTestDatabase();
 
   if (TEST_CONFIG.DEBUG) {
-    console.log('✅ Global test teardown complete');
+    console.info('✅ Global test teardown complete');
   }
 }
 

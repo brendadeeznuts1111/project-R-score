@@ -319,9 +319,9 @@ if (import.meta.path === Bun.main) {
   }
 
   // Log tool locations using Omega resolver
-  console.log('🔧 Tool Resolution (Omega Strategy):');
+  console.info('🔧 Tool Resolution (Omega Strategy):');
   Object.entries(validation.found).forEach(([tool, path]) => {
-    console.log(`  ${tool}: ${path}`);
+    console.info(`  ${tool}: ${path}`);
   });
 
   // Set Omega PATH for all subprocess calls
@@ -338,7 +338,7 @@ if (import.meta.path === Bun.main) {
   Bun.env.PATH = omegaPathOrder.join(':');
 
   // Add a small synchronous delay to ensure all initialization is complete
-  console.log("🔄 Initializing server with Omega tool resolver...");
+  console.info("🔄 Initializing server with Omega tool resolver...");
   Bun.sleepSync(100); // Brief pause for clean startup
 
   await logInfo('Omega Dashboard Server Started', {
@@ -353,15 +353,15 @@ if (import.meta.path === Bun.main) {
     main: Bun.main
   });
 
-  console.log(`🏟️ Omega Dashboard: http://localhost:${server.port}`);
-  console.log(`📊 Telemetry SSE: http://localhost:${server.port}/telemetry`);
-  console.log(`🔗 Matrix API: http://localhost:${server.port}/api/matrix/telemetry`);
-  console.log(`🔧 System Info: http://localhost:${server.port}/api/system`);
-  console.log(`💪 Stress Test: curl -X POST http://localhost:${server.port}/api/stress-test?duration=5000`);
+  console.info(`🏟️ Omega Dashboard: http://localhost:${server.port}`);
+  console.info(`📊 Telemetry SSE: http://localhost:${server.port}/telemetry`);
+  console.info(`🔗 Matrix API: http://localhost:${server.port}/api/matrix/telemetry`);
+  console.info(`🔧 System Info: http://localhost:${server.port}/api/system`);
+  console.info(`💪 Stress Test: curl -X POST http://localhost:${server.port}/api/stress-test?duration=5000`);
 
   // Graceful shutdown
   process.on('SIGINT', async () => {
-    console.log("\n🛑 Shutting down gracefully...");
+    console.info("\n🛑 Shutting down gracefully...");
     Bun.sleepSync(100); // Brief pause for cleanup
     await logCrit('Server shutting down', {
       final_connections: activeConnections,

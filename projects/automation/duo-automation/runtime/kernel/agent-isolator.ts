@@ -173,7 +173,7 @@ export class BunNamespaceIsolator {
     
     this.agentSandboxes.delete(agentId);
     
-    console.log(`Memory cleanup completed for agent ${agentId}`);
+    console.info(`Memory cleanup completed for agent ${agentId}`);
   }
 
   /**

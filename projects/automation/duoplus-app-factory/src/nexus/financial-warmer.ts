@@ -82,7 +82,7 @@ export class FinancialWarmer {
     integrity: boolean;
     latency: number;
   }> {
-    console.log(`\x1b[36m🔄 Warming Loop: ${senderId} -> ${receiverId}\x1b[0m`);
+    console.info(`\x1b[36m🔄 Warming Loop: ${senderId} -> ${receiverId}\x1b[0m`);
 
     const start = performance.now();
 
@@ -103,12 +103,12 @@ export class FinancialWarmer {
     );
 
     // Step 1: OPEN VENMO ON SENDER
-    console.log(`\x1b[36m  1. Opening Venmo on ${senderId}\x1b[0m`);
+    console.info(`\x1b[36m  1. Opening Venmo on ${senderId}\x1b[0m`);
     await senderNexus.shell("am start -n com.venmo/com.venmo.main.MainActivity");
     await this.simulateHumanDelay();
 
     // Step 2: UI SNIPE - Find Pay Button (CRC32 Verification)
-    console.log(`\x1b[36m  2. UI Snipe: Pay Button detection\x1b[0m`);
+    console.info(`\x1b[36m  2. UI Snipe: Pay Button detection\x1b[0m`);
     const payButtonFound = await senderNexus.checkScreenIntegrity("btn_pay_hex_v1");
     
     if (payButtonFound) {
@@ -134,25 +134,25 @@ export class FinancialWarmer {
       await this.simulateHumanDelay(2000); // Wait for processing
 
       // Step 3: VERIFY TRANSACTION SUCCESS (CRC32 Checksum)
-      console.log(`\x1b[36m  3. Verifying transaction integrity\x1b[0m`);
+      console.info(`\x1b[36m  3. Verifying transaction integrity\x1b[0m`);
       const success = await this.verifyTransactionSuccess(senderNexus, "venmo");
 
       if (success) {
         // Step 4: SWITCH TO RECEIVER (CASHAPP)
-        console.log(`\x1b[36m  4. Switching to CashApp on ${receiverId}\x1b[0m`);
+        console.info(`\x1b[36m  4. Switching to CashApp on ${receiverId}\x1b[0m`);
         await receiverNexus.shell("am start -n com.square.cash/com.cardinalblue.main.MainActivity");
         await this.simulateHumanDelay();
 
         // Step 5: VERIFY RECEIPT (SIMD Detection)
-        console.log(`\x1b[36m  5. Verifying receipt via SIMD\x1b[0m`);
+        console.info(`\x1b[36m  5. Verifying receipt via SIMD\x1b[0m`);
         const received = await this.verifyTransactionSuccess(receiverNexus, "cashapp");
 
         if (received) {
           const latency = performance.now() - start;
 
-          console.log(`\x1b[32m✅ Financial Warmup Success: ${senderId} <-> ${receiverId}\x1b[0m`);
-          console.log(`\x1b[32m   Amount: $${amount} | Note: ${note}\x1b[0m`);
-          console.log(`\x1b[32m   Latency: ${latency.toFixed(2)}ms | Integrity: 100%\x1b[0m`);
+          console.info(`\x1b[32m✅ Financial Warmup Success: ${senderId} <-> ${receiverId}\x1b[0m`);
+          console.info(`\x1b[32m   Amount: $${amount} | Note: ${note}\x1b[0m`);
+          console.info(`\x1b[32m   Latency: ${latency.toFixed(2)}ms | Integrity: 100%\x1b[0m`);
 
           // Update Vault with "Warmed" status
           Vault.markAsWarmed(senderId);
@@ -169,7 +169,7 @@ export class FinancialWarmer {
     }
 
     // Failure path
-    console.log(`\x1b[31m❌ Warmup failed for ${senderId} -> ${receiverId}\x1b[0m`);
+    console.info(`\x1b[31m❌ Warmup failed for ${senderId} -> ${receiverId}\x1b[0m`);
     return {
       success: false,
       transaction: metadata,
@@ -193,31 +193,31 @@ export class FinancialWarmer {
     const results = [];
     const delayBetweenCycles = 172800000; // 48 hours in ms
 
-    console.log(`\x1b[36m🔄 Starting Batch Warmup: ${siloIds.length} silos, ${cycles} cycles\x1b[0m`);
+    console.info(`\x1b[36m🔄 Starting Batch Warmup: ${siloIds.length} silos, ${cycles} cycles\x1b[0m`);
 
     for (let cycle = 0; cycle < cycles; cycle++) {
       for (let i = 0; i < siloIds.length; i++) {
         const sender = siloIds[i];
         const receiver = siloIds[(i + 1) % siloIds.length]; // Next silo in loop
 
-        console.log(`\x1b[36m🔄 Cycle ${cycle + 1}/${cycles}: ${sender} -> ${receiver}\x1b[0m`);
+        console.info(`\x1b[36m🔄 Cycle ${cycle + 1}/${cycles}: ${sender} -> ${receiver}\x1b[0m`);
 
         const result = await this.crossPollinate(sender, receiver, 1.00);
         results.push({ sender, receiver, result });
 
         // Random delay between transactions (1-3 hours)
         const randomDelay = (1 + Math.random() * 2) * 3600000;
-        console.log(`\x1b[36m   Waiting ${randomDelay / 3600000}h before next transaction...\x1b[0m`);
+        console.info(`\x1b[36m   Waiting ${randomDelay / 3600000}h before next transaction...\x1b[0m`);
         await new Promise(resolve => setTimeout(resolve, randomDelay));
       }
 
       if (cycle < cycles - 1) {
-        console.log(`\x1b[36m   Waiting 48h before next cycle...\x1b[0m`);
+        console.info(`\x1b[36m   Waiting 48h before next cycle...\x1b[0m`);
         await new Promise(resolve => setTimeout(resolve, delayBetweenCycles));
       }
     }
 
-    console.log(`\x1b[32m✅ Batch Warmup Complete: ${results.length} transactions\x1b[0m`);
+    console.info(`\x1b[32m✅ Batch Warmup Complete: ${results.length} transactions\x1b[0m`);
     return results;
   }
 
@@ -409,7 +409,7 @@ export class Vault {
 
   static markAsWarmed(id: string): void {
     this.warmed.add(id);
-    console.log(`\x1b[32m   Vault: ${id} marked as "Low Risk"\x1b[0m`);
+    console.info(`\x1b[32m   Vault: ${id} marked as "Low Risk"\x1b[0m`);
   }
 
   static isWarmed(id: string): boolean {

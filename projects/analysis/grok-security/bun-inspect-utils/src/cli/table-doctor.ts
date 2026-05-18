@@ -68,7 +68,7 @@ function parseCliArgs(): Options {
  * Print help message
  */
 function printHelp(): void {
-  console.log(`
+  console.info(`
 🏥 bun table-doctor - Table Enforcement CLI
 
 Usage:
@@ -111,7 +111,7 @@ Documentation:
 async function interactiveMode(): Promise<Options> {
   const { question } = await import("util");
 
-  console.log("\n🏥 Table Doctor - Interactive Mode\n");
+  console.info("\n🏥 Table Doctor - Interactive Mode\n");
 
   const domainOptions = ["general", "medical", "financial", "ecommerce"];
   const defaultDomain = "general";
@@ -197,13 +197,13 @@ async function analyzeWithDomain(
   domain: string,
   minColumns: number
 ): Promise<void> {
-  console.log(`\n🔍 Analyzing with domain enforcement: ${domain}\n`);
+  console.info(`\n🔍 Analyzing with domain enforcement: ${domain}\n`);
 
   const parser = new ASTParser({ minColumns });
   const tableCalls = await parser.analyze(pattern);
 
   if (tableCalls.length === 0) {
-    console.log("✅ No table calls found!");
+    console.info("✅ No table calls found!");
     return;
   }
 
@@ -236,31 +236,31 @@ async function analyzeWithDomain(
     });
 
     const statusIcon = isCompliant ? "✅" : "⚠️";
-    console.log(`${statusIcon} ${call.file}:${call.line}`);
-    console.log(`   Function: ${call.functionName}`);
-    console.log(`   Properties: [${call.properties.join(", ")}]`);
-    console.log(`   Domain: ${domain}`);
-    console.log(`   Message: ${validation.message}`);
+    console.info(`${statusIcon} ${call.file}:${call.line}`);
+    console.info(`   Function: ${call.functionName}`);
+    console.info(`   Properties: [${call.properties.join(", ")}]`);
+    console.info(`   Domain: ${domain}`);
+    console.info(`   Message: ${validation.message}`);
 
     if (!isCompliant && validation.suggestions.length > 0) {
-      console.log(`   Suggestions: ${validation.suggestions.join(", ")}`);
+      console.info(`   Suggestions: ${validation.suggestions.join(", ")}`);
     }
-    console.log("");
+    console.info("");
   }
 
   const total = compliant + nonCompliant;
-  console.log(`📈 Summary:`);
-  console.log(`   Total table calls: ${total}`);
-  console.log(`   Compliant: ${compliant}`);
-  console.log(`   Non-compliant: ${nonCompliant}`);
-  console.log(
+  console.info(`📈 Summary:`);
+  console.info(`   Total table calls: ${total}`);
+  console.info(`   Compliant: ${compliant}`);
+  console.info(`   Non-compliant: ${nonCompliant}`);
+  console.info(
     `   Compliance rate: ${((compliant / total) * 100).toFixed(1)}%\n`
   );
 
   // Save results
   const resultsFile = "table-analysis-results.json";
   writeFileSync(resultsFile, JSON.stringify({ results, summary: { compliant, nonCompliant, total } }, null, 2));
-  console.log(`📄 Results saved to: ${resultsFile}\n`);
+  console.info(`📄 Results saved to: ${resultsFile}\n`);
 }
 
 /**
@@ -271,7 +271,7 @@ async function generateDomainReport(
   domain: string,
   minColumns: number
 ): Promise<void> {
-  console.log(`\n📋 Generating ${domain.toUpperCase()} Compliance Report\n`);
+  console.info(`\n📋 Generating ${domain.toUpperCase()} Compliance Report\n`);
 
   const parser = new ASTParser({ minColumns });
   const tableCalls = await parser.analyze(pattern);
@@ -339,27 +339,27 @@ async function generateDomainReport(
     };
   }
 
-  console.log(`Configuration:`);
-  console.log(`  Domain: ${domain}`);
-  console.log(`  Minimum columns: ${minColumns}`);
-  console.log(`  Pattern: ${pattern}\n`);
+  console.info(`Configuration:`);
+  console.info(`  Domain: ${domain}`);
+  console.info(`  Minimum columns: ${minColumns}`);
+  console.info(`  Pattern: ${pattern}\n`);
 
-  console.log(`Results:`);
-  console.log(`  Total table calls: ${report.summary.totalCalls}`);
-  console.log(`  Compliant: ${report.summary.compliant}`);
-  console.log(`  Non-compliant: ${report.summary.nonCompliant}`);
-  console.log(`  Compliance rate: ${report.summary.complianceRate.toFixed(1)}%`);
-  console.log(`\nCompliance Flags:`);
-  console.log(`  HIPAA: ${report.compliance.hipaa ? "✅" : "❌"}`);
-  console.log(`  SOX: ${report.compliance.sox ? "✅" : "❌"}`);
-  console.log(`  PCI-DSS: ${report.compliance.pciDss ? "✅" : "❌"}`);
-  console.log(`  GDPR: ${report.compliance.gdpr ? "✅" : "❌"}`);
-  console.log(`  CCPA: ${report.compliance.ccpa ? "✅" : "❌"}\n`);
+  console.info(`Results:`);
+  console.info(`  Total table calls: ${report.summary.totalCalls}`);
+  console.info(`  Compliant: ${report.summary.compliant}`);
+  console.info(`  Non-compliant: ${report.summary.nonCompliant}`);
+  console.info(`  Compliance rate: ${report.summary.complianceRate.toFixed(1)}%`);
+  console.info(`\nCompliance Flags:`);
+  console.info(`  HIPAA: ${report.compliance.hipaa ? "✅" : "❌"}`);
+  console.info(`  SOX: ${report.compliance.sox ? "✅" : "❌"}`);
+  console.info(`  PCI-DSS: ${report.compliance.pciDss ? "✅" : "❌"}`);
+  console.info(`  GDPR: ${report.compliance.gdpr ? "✅" : "❌"}`);
+  console.info(`  CCPA: ${report.compliance.ccpa ? "✅" : "❌"}\n`);
 
   // Save report
   const reportFile = `table-${domain}-compliance-report.json`;
   writeFileSync(reportFile, JSON.stringify(report, null, 2));
-  console.log(`✅ Report saved to: ${reportFile}\n`);
+  console.info(`✅ Report saved to: ${reportFile}\n`);
 }
 
 /**
@@ -370,15 +370,15 @@ async function watchMode(
   domain: string,
   minColumns: number
 ): Promise<void> {
-  console.log(`\n👀 Watch mode enabled`);
-  console.log(`   Pattern: ${pattern}`);
-  console.log(`   Domain: ${domain}`);
-  console.log(`   Press Ctrl+C to stop\n`);
+  console.info(`\n👀 Watch mode enabled`);
+  console.info(`   Pattern: ${pattern}`);
+  console.info(`   Domain: ${domain}`);
+  console.info(`   Press Ctrl+C to stop\n`);
 
   const baseDir = process.cwd();
 
   // Initial analysis
-  console.log("📊 Running initial analysis...\n");
+  console.info("📊 Running initial analysis...\n");
   await analyzeWithDomain(pattern, domain, minColumns);
 
   // Set up file watcher
@@ -403,18 +403,18 @@ async function watchMode(
 
   collectWatchDirs(baseDir);
 
-  console.log(`👀 Watching ${watchedDirs.size} directories for changes...\n`);
+  console.info(`👀 Watching ${watchedDirs.size} directories for changes...\n`);
 
   // Simple polling-based watch using setInterval
   const interval = setInterval(async () => {
-    console.log("📊 Re-analyzing...\n");
+    console.info("📊 Re-analyzing...\n");
     await analyzeWithDomain(pattern, domain, minColumns);
   }, 30000); // Re-analyze every 30 seconds
 
   // Handle interrupt
   process.on("SIGINT", () => {
     clearInterval(interval);
-    console.log("\n👋 Watch mode stopped\n");
+    console.info("\n👋 Watch mode stopped\n");
     process.exit(0);
   });
 
@@ -430,7 +430,7 @@ async function fixIssues(
   domain: string,
   minColumns: number
 ): Promise<void> {
-  console.log(`\n🔧 Fixing table enforcement issues...\n`);
+  console.info(`\n🔧 Fixing table enforcement issues...\n`);
 
   const parser = new ASTParser({ minColumns });
   const tableCalls = await parser.analyze(pattern);
@@ -452,20 +452,20 @@ async function fixIssues(
       }
 
       fixed++;
-      console.log(`🔧 Fixed: ${call.file}:${call.line}`);
-      console.log(`   New properties: [${call.properties.join(", ")}]\n`);
+      console.info(`🔧 Fixed: ${call.file}:${call.line}`);
+      console.info(`   New properties: [${call.properties.join(", ")}]\n`);
     }
   }
 
-  console.log(`📈 Summary:`);
-  console.log(`   Total table calls: ${tableCalls.length}`);
-  console.log(`   Fixed: ${fixed}`);
-  console.log(`   Skipped: ${tableCalls.length - fixed}\n`);
+  console.info(`📈 Summary:`);
+  console.info(`   Total table calls: ${tableCalls.length}`);
+  console.info(`   Fixed: ${fixed}`);
+  console.info(`   Skipped: ${tableCalls.length - fixed}\n`);
 
   if (fixed > 0) {
-    console.log(`✅ Fixed ${fixed} table call(s)\n`);
+    console.info(`✅ Fixed ${fixed} table call(s)\n`);
   } else {
-    console.log(`✅ No issues found\n`);
+    console.info(`✅ No issues found\n`);
   }
 }
 

@@ -77,7 +77,7 @@ export class ValidationOrchestrator {
             results.push(...batchResults);
         }
 
-        console.log(`🔍 Validated ${files.length} files in ${Date.now() - startTime}ms`);
+        console.info(`🔍 Validated ${files.length} files in ${Date.now() - startTime}ms`);
         return results;
     }
 

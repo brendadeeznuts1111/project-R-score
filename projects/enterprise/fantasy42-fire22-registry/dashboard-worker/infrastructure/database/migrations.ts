@@ -62,12 +62,12 @@ export class MigrationRunner {
     const appliedVersions = await this.getAppliedMigrations();
     const migrations = this.getMigrations();
 
-    console.log(`📋 Found ${migrations.length} total migrations`);
-    console.log(`✅ ${appliedVersions.length} migrations already applied`);
+    console.info(`📋 Found ${migrations.length} total migrations`);
+    console.info(`✅ ${appliedVersions.length} migrations already applied`);
 
     for (const migration of migrations) {
       if (!appliedVersions.includes(migration.version)) {
-        console.log(`🔄 Running migration ${migration.version}: ${migration.name}`);
+        console.info(`🔄 Running migration ${migration.version}: ${migration.name}`);
 
         try {
           await this.dbManager.transaction(async db => {
@@ -83,7 +83,7 @@ export class MigrationRunner {
             }
           });
 
-          console.log(`✅ Migration ${migration.version} completed successfully`);
+          console.info(`✅ Migration ${migration.version} completed successfully`);
         } catch (error) {
           console.error(`❌ Migration ${migration.version} failed:`, error);
           throw error;
@@ -91,7 +91,7 @@ export class MigrationRunner {
       }
     }
 
-    console.log(`🎉 All migrations completed successfully`);
+    console.info(`🎉 All migrations completed successfully`);
   }
 
   async rollbackMigration(targetVersion: number): Promise<void> {
@@ -102,7 +102,7 @@ export class MigrationRunner {
 
     for (const migration of migrations) {
       if (appliedVersions.includes(migration.version) && migration.version > targetVersion) {
-        console.log(`🔄 Rolling back migration ${migration.version}: ${migration.name}`);
+        console.info(`🔄 Rolling back migration ${migration.version}: ${migration.name}`);
 
         try {
           await this.dbManager.transaction(async db => {
@@ -116,7 +116,7 @@ export class MigrationRunner {
             }
           });
 
-          console.log(`✅ Migration ${migration.version} rolled back successfully`);
+          console.info(`✅ Migration ${migration.version} rolled back successfully`);
         } catch (error) {
           console.error(`❌ Rollback of migration ${migration.version} failed:`, error);
           throw error;
@@ -393,7 +393,7 @@ export class MigrationRunner {
       stmt.run(dept.id, dept.name, dept.display_name, dept.icon, dept.description, dept.color);
     }
 
-    console.log(`✅ Seeded ${departments.length} departments`);
+    console.info(`✅ Seeded ${departments.length} departments`);
 
     // Seed some sample team members
     const sampleMembers = [
@@ -428,7 +428,7 @@ export class MigrationRunner {
       stmt.run(memberId, deptId, member.name, member.role, member.email);
     }
 
-    console.log(`✅ Seeded ${sampleMembers.length} team members`);
+    console.info(`✅ Seeded ${sampleMembers.length} team members`);
   }
 }
 

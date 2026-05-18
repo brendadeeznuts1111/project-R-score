@@ -11,20 +11,20 @@ plugin({
     // Count all files
     build.onLoad({ filter: /\.(ts|js)$/ }, () => {
       fileCount++;
-      console.log(`📁 File #${fileCount} processed`);
+      console.info(`📁 File #${fileCount} processed`);
       return undefined;
     });
 
     // Generate report using defer()
     build.onLoad({ filter: /report\.ts$/ }, async ({ defer }) => {
-      console.log(`📊 Report requested - current count: ${fileCount}`);
+      console.info(`📊 Report requested - current count: ${fileCount}`);
       await defer();
-      console.log(`✅ Defer resolved - final count: ${fileCount}`);
+      console.info(`✅ Defer resolved - final count: ${fileCount}`);
 
       return {
         contents: `
-console.log('🎯 FINAL REPORT');
-console.log('Total files processed:', ${fileCount});
+console.info('🎯 FINAL REPORT');
+console.info('Total files processed:', ${fileCount});
         `,
         loader: "ts"
       };

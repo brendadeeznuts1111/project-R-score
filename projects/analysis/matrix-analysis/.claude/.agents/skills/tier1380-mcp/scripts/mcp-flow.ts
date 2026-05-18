@@ -297,20 +297,20 @@ async function executeFlow(
 	const flow = FLOWS[flowName];
 	if (!flow) {
 		console.error(`Unknown flow: ${flowName}`);
-		console.log(`Available flows: ${Object.keys(FLOWS).join(", ")}`);
+		console.info(`Available flows: ${Object.keys(FLOWS).join(", ")}`);
 		process.exit(1);
 	}
 
-	console.log(`\n🔄 Executing flow: ${flow.name}\n`);
-	console.log(`Description: ${flow.description}\n`);
-	console.log("─".repeat(70));
+	console.info(`\n🔄 Executing flow: ${flow.name}\n`);
+	console.info(`Description: ${flow.description}\n`);
+	console.info("─".repeat(70));
 
 	const results: { step: string; success: boolean; result: any }[] = [];
 
 	for (let i = 0; i < flow.steps.length; i++) {
 		const step = flow.steps[i];
-		console.log(`\n[${i + 1}/${flow.steps.length}] ${step.name}`);
-		console.log(`    Tool: ${step.tool}`);
+		console.info(`\n[${i + 1}/${flow.steps.length}] ${step.name}`);
+		console.info(`    Tool: ${step.tool}`);
 
 		// Substitute parameters
 		const args: Record<string, any> = {};
@@ -332,25 +332,25 @@ async function executeFlow(
 			results.push({ step: step.name, success, result });
 
 			if (success) {
-				console.log(`    ✅ Success`);
+				console.info(`    ✅ Success`);
 				if (result.stdout) {
 					const lines = result.stdout.split("\n").slice(0, 5);
 					for (const line of lines) {
-						if (line.trim()) console.log(`       ${line}`);
+						if (line.trim()) console.info(`       ${line}`);
 					}
 				}
 			} else {
-				console.log(`    ⚠️  Warning/Error`);
-				if (result.error) console.log(`       Error: ${result.error}`);
-				if (result.stderr) console.log(`       ${result.stderr}`);
+				console.info(`    ⚠️  Warning/Error`);
+				if (result.error) console.info(`       Error: ${result.error}`);
+				if (result.stderr) console.info(`       ${result.stderr}`);
 
 				if (step.onError === "stop") {
-					console.log(`\n❌ Flow stopped due to error in step: ${step.name}`);
+					console.info(`\n❌ Flow stopped due to error in step: ${step.name}`);
 					break;
 				}
 			}
 		} catch (e) {
-			console.log(`    ❌ Exception: ${e}`);
+			console.info(`    ❌ Exception: ${e}`);
 			results.push({
 				step: step.name,
 				success: false,
@@ -358,31 +358,31 @@ async function executeFlow(
 			});
 
 			if (step.onError === "stop") {
-				console.log(`\n❌ Flow stopped due to exception in step: ${step.name}`);
+				console.info(`\n❌ Flow stopped due to exception in step: ${step.name}`);
 				break;
 			}
 		}
 	}
 
-	console.log(`\n${"─".repeat(70)}`);
-	console.log("\n📊 Flow Summary\n");
+	console.info(`\n${"─".repeat(70)}`);
+	console.info("\n📊 Flow Summary\n");
 
 	const successful = results.filter((r) => r.success).length;
 	const total = results.length;
 
-	console.log(`Steps completed: ${total}`);
-	console.log(`Successful: ${successful}`);
-	console.log(`Failed: ${total - successful}`);
+	console.info(`Steps completed: ${total}`);
+	console.info(`Successful: ${successful}`);
+	console.info(`Failed: ${total - successful}`);
 
 	if (successful === total) {
-		console.log("\n✅ Flow completed successfully!");
+		console.info("\n✅ Flow completed successfully!");
 	} else if (successful >= total / 2) {
-		console.log("\n⚠️  Flow completed with warnings");
+		console.info("\n⚠️  Flow completed with warnings");
 	} else {
-		console.log("\n❌ Flow completed with errors");
+		console.info("\n❌ Flow completed with errors");
 	}
 
-	console.log();
+	console.info();
 }
 
 // Main
@@ -391,7 +391,7 @@ const main = async () => {
 	const flowName = args[0];
 
 	if (!flowName || flowName === "--help" || flowName === "-h") {
-		console.log(`
+		console.info(`
 🔄 Tier-1380 MCP Flow Executor
 
 Usage: mcp-flow.ts <flow-name> [params...]
@@ -414,12 +414,12 @@ Examples:
 	}
 
 	if (flowName === "list") {
-		console.log("\nAvailable flows:\n");
+		console.info("\nAvailable flows:\n");
 		for (const [key, flow] of Object.entries(FLOWS)) {
-			console.log(`  ${key}`);
-			console.log(`    ${flow.description}`);
-			console.log(`    Steps: ${flow.steps.length}`);
-			console.log();
+			console.info(`  ${key}`);
+			console.info(`    ${flow.description}`);
+			console.info(`    Steps: ${flow.steps.length}`);
+			console.info();
 		}
 		process.exit(0);
 	}

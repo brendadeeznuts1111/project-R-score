@@ -22,7 +22,7 @@ const testConfig: VenmoConfig = {
 
 // Example 1: Basic Barbershop Payment
 async function basicBarbershopPayment() {
-  console.log('=== Basic Barbershop Payment ===');
+  console.info('=== Basic Barbershop Payment ===');
   
   const gateway = createVenmoGateway(testConfig);
   
@@ -42,7 +42,7 @@ async function basicBarbershopPayment() {
     };
 
     const payment = await gateway.createPayment(paymentRequest);
-    console.log('✅ Payment created:', {
+    console.info('✅ Payment created:', {
       paymentId: payment.paymentId,
       status: payment.status,
       amount: `$${(payment.amount / 100).toFixed(2)}`,
@@ -51,7 +51,7 @@ async function basicBarbershopPayment() {
 
     // Generate QR code for in-person payment
     const qrCode = await gateway.generateQRCode(payment.paymentId);
-    console.log('📱 QR Code generated:', {
+    console.info('📱 QR Code generated:', {
       data: qrCode.data.substring(0, 20) + '...',
       expiresAt: qrCode.expiresAt
     });
@@ -65,7 +65,7 @@ async function basicBarbershopPayment() {
 
 // Example 2: Group Booking Split Payment
 async function groupBookingSplitPayment() {
-  console.log('\n=== Group Booking Split Payment ===');
+  console.info('\n=== Group Booking Split Payment ===');
   
   const gateway = createVenmoGateway(testConfig);
   
@@ -111,7 +111,7 @@ async function groupBookingSplitPayment() {
     };
 
     const payment = await gateway.createPayment(paymentRequest);
-    console.log('✅ Split payment created:', {
+    console.info('✅ Split payment created:', {
       paymentId: payment.paymentId,
       totalAmount: `$${(payment.amount / 100).toFixed(2)}`,
       participants: payment.splitDetails?.totalParticipants,
@@ -128,14 +128,14 @@ async function groupBookingSplitPayment() {
 
 // Example 3: Payment Status Monitoring
 async function monitorPaymentStatus(paymentId: string) {
-  console.log('\n=== Payment Status Monitoring ===');
+  console.info('\n=== Payment Status Monitoring ===');
   
   const gateway = createVenmoGateway(testConfig);
   
   try {
     // Check initial status
     let payment = await gateway.getPaymentStatus(paymentId);
-    console.log('📊 Initial status:', payment.status);
+    console.info('📊 Initial status:', payment.status);
 
     // Simulate status polling (in real app, you'd use webhooks)
     const maxAttempts = 10;
@@ -143,13 +143,13 @@ async function monitorPaymentStatus(paymentId: string) {
       await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
       
       payment = await gateway.getPaymentStatus(paymentId);
-      console.log(`📊 Check ${attempt}: ${payment.status}`);
+      console.info(`📊 Check ${attempt}: ${payment.status}`);
 
       if (payment.status === 'completed') {
-        console.log('✅ Payment completed successfully!');
+        console.info('✅ Payment completed successfully!');
         break;
       } else if (payment.status === 'failed' || payment.status === 'cancelled') {
-        console.log('❌ Payment failed or cancelled');
+        console.info('❌ Payment failed or cancelled');
         break;
       }
     }
@@ -163,7 +163,7 @@ async function monitorPaymentStatus(paymentId: string) {
 
 // Example 4: Payment History and Analytics
 async function paymentAnalytics() {
-  console.log('\n=== Payment Analytics ===');
+  console.info('\n=== Payment Analytics ===');
   
   const gateway = createVenmoGateway(testConfig);
   
@@ -179,23 +179,23 @@ async function paymentAnalytics() {
       status: 'completed'
     });
 
-    console.log('📈 Payment Analytics (Last 30 days):');
-    console.log(`Total payments: ${history.total}`);
-    console.log(`Retrieved: ${history.payments.length}`);
+    console.info('📈 Payment Analytics (Last 30 days):');
+    console.info(`Total payments: ${history.total}`);
+    console.info(`Retrieved: ${history.payments.length}`);
 
     // Calculate statistics
     const totalRevenue = history.payments.reduce((sum, payment) => sum + payment.amount, 0);
     const averagePayment = totalRevenue / history.payments.length;
     const privatePayments = history.payments.filter(p => p.privateTransaction).length;
 
-    console.log(`Total revenue: $${(totalRevenue / 100).toFixed(2)}`);
-    console.log(`Average payment: $${(averagePayment / 100).toFixed(2)}`);
-    console.log(`Private payments: ${privatePayments}/${history.payments.length}`);
+    console.info(`Total revenue: $${(totalRevenue / 100).toFixed(2)}`);
+    console.info(`Average payment: $${(averagePayment / 100).toFixed(2)}`);
+    console.info(`Private payments: ${privatePayments}/${history.payments.length}`);
 
     // Show recent payments
-    console.log('\nRecent payments:');
+    console.info('\nRecent payments:');
     history.payments.slice(0, 5).forEach((payment, index) => {
-      console.log(`  ${index + 1}. $${(payment.amount / 100).toFixed(2)} - ${payment.description} (${payment.status})`);
+      console.info(`  ${index + 1}. $${(payment.amount / 100).toFixed(2)} - ${payment.description} (${payment.status})`);
     });
 
     return history;
@@ -207,14 +207,14 @@ async function paymentAnalytics() {
 
 // Example 5: Refund Processing
 async function processRefund(paymentId: string, refundAmount?: number) {
-  console.log('\n=== Refund Processing ===');
+  console.info('\n=== Refund Processing ===');
   
   const gateway = createVenmoGateway(testConfig);
   
   try {
     // Get payment details first
     const payment = await gateway.getPaymentStatus(paymentId);
-    console.log('💳 Original payment:', {
+    console.info('💳 Original payment:', {
       id: payment.paymentId,
       amount: `$${(payment.amount / 100).toFixed(2)}`,
       status: payment.status
@@ -227,7 +227,7 @@ async function processRefund(paymentId: string, refundAmount?: number) {
       refundAmount ? 'Partial refund for customer satisfaction' : 'Full refund - service cancelled'
     );
 
-    console.log('✅ Refund processed:', refund);
+    console.info('✅ Refund processed:', refund);
     return refund;
   } catch (error) {
     console.error('❌ Refund failed:', error.message);
@@ -237,7 +237,7 @@ async function processRefund(paymentId: string, refundAmount?: number) {
 
 // Example 6: Webhook Processing
 async function processWebhookExample() {
-  console.log('\n=== Webhook Processing ===');
+  console.info('\n=== Webhook Processing ===');
   
   const gateway = createVenmoGateway(testConfig);
   
@@ -262,7 +262,7 @@ async function processWebhookExample() {
 
   try {
     const result = await gateway.processWebhook(webhookPayload, signature);
-    console.log('✅ Webhook processed:', result);
+    console.info('✅ Webhook processed:', result);
     
     // In a real application, you would:
     // 1. Update your database
@@ -279,13 +279,13 @@ async function processWebhookExample() {
 
 // Example 7: User Information Lookup
 async function lookupUserInfo(userId: string) {
-  console.log('\n=== User Information Lookup ===');
+  console.info('\n=== User Information Lookup ===');
   
   const gateway = createVenmoGateway(testConfig);
   
   try {
     const user = await gateway.getUserInfo(userId);
-    console.log('👤 User Information:', {
+    console.info('👤 User Information:', {
       userId: user.userId,
       username: user.username,
       displayName: user.displayName,
@@ -296,11 +296,11 @@ async function lookupUserInfo(userId: string) {
 
     // Business logic based on user info
     if (user.isVerified) {
-      console.log('✅ Verified user - eligible for premium services');
+      console.info('✅ Verified user - eligible for premium services');
     }
     
     if (user.accountType === 'business') {
-      console.log('🏢 Business account - apply corporate rates');
+      console.info('🏢 Business account - apply corporate rates');
     }
 
     return user;
@@ -312,7 +312,7 @@ async function lookupUserInfo(userId: string) {
 
 // Example 8: Error Handling and Edge Cases
 async function errorHandlingExamples() {
-  console.log('\n=== Error Handling Examples ===');
+  console.info('\n=== Error Handling Examples ===');
   
   const gateway = createVenmoGateway(testConfig);
   
@@ -324,21 +324,21 @@ async function errorHandlingExamples() {
       description: 'Invalid payment'
     });
   } catch (error) {
-    console.log('✅ Caught invalid amount error:', error.message);
+    console.info('✅ Caught invalid amount error:', error.message);
   }
 
   // Test 2: Invalid payment ID
   try {
     await gateway.getPaymentStatus('invalid_payment_id');
   } catch (error) {
-    console.log('✅ Caught invalid payment ID error:', error.message);
+    console.info('✅ Caught invalid payment ID error:', error.message);
   }
 
   // Test 3: Invalid webhook signature
   try {
     await gateway.processWebhook('invalid payload', 'invalid_signature');
   } catch (error) {
-    console.log('✅ Caught invalid webhook signature error:', error.message);
+    console.info('✅ Caught invalid webhook signature error:', error.message);
   }
 
   // Test 4: Configuration validation
@@ -350,13 +350,13 @@ async function errorHandlingExamples() {
       apiVersion: '2.0'
     });
   } catch (error) {
-    console.log('✅ Caught configuration validation error:', error.message);
+    console.info('✅ Caught configuration validation error:', error.message);
   }
 }
 
 // Example 9: Integration with Booking System
 async function bookingSystemIntegration() {
-  console.log('\n=== Booking System Integration ===');
+  console.info('\n=== Booking System Integration ===');
   
   // Simulate a booking system integration
   class BookingSystem {
@@ -374,7 +374,7 @@ async function bookingSystemIntegration() {
       isGroup?: boolean;
       participants?: string[];
     }) {
-      console.log(`📅 Creating booking: ${bookingData.serviceType}`);
+      console.info(`📅 Creating booking: ${bookingData.serviceType}`);
 
       try {
         // Create payment request
@@ -408,7 +408,7 @@ async function bookingSystemIntegration() {
         // Create payment
         const payment = await this.venmoGateway.createPayment(paymentRequest);
         
-        console.log('✅ Booking and payment created:', {
+        console.info('✅ Booking and payment created:', {
           bookingId: paymentRequest.metadata?.booking_id,
           paymentId: payment.paymentId,
           amount: `$${(payment.amount / 100).toFixed(2)}`
@@ -456,7 +456,7 @@ async function bookingSystemIntegration() {
 
 // Example 10: Production Deployment Patterns
 async function productionPatterns() {
-  console.log('\n=== Production Deployment Patterns ===');
+  console.info('\n=== Production Deployment Patterns ===');
   
   // Environment-specific configuration
   function getProductionConfig(): VenmoConfig {
@@ -493,7 +493,7 @@ async function productionPatterns() {
           throw error;
         }
         
-        console.log(`⚠️ Attempt ${attempt} failed, retrying in ${delay}ms...`);
+        console.info(`⚠️ Attempt ${attempt} failed, retrying in ${delay}ms...`);
         await new Promise(resolve => setTimeout(resolve, delay));
         delay *= 2; // Exponential backoff
       }
@@ -514,14 +514,14 @@ async function productionPatterns() {
       const startTime = Date.now();
       
       try {
-        console.log('🚀 Processing payment with monitoring...');
+        console.info('🚀 Processing payment with monitoring...');
         
         const payment = await withRetry(() => 
           this.gateway.createPayment(request)
         );
         
         const processingTime = Date.now() - startTime;
-        console.log(`✅ Payment processed in ${processingTime}ms`);
+        console.info(`✅ Payment processed in ${processingTime}ms`);
         
         // Log metrics (in production, send to your monitoring system)
         this.logMetrics({
@@ -552,7 +552,7 @@ async function productionPatterns() {
 
     private logMetrics(metrics: any) {
       // In production, send to Datadog, New Relic, etc.
-      console.log('📊 Metrics:', metrics);
+      console.info('📊 Metrics:', metrics);
     }
   }
 
@@ -566,15 +566,15 @@ async function productionPatterns() {
       privateTransaction: true
     });
     
-    console.log('✅ Production patterns test successful');
+    console.info('✅ Production patterns test successful');
   } catch (error) {
-    console.log('⚠️ Production patterns test (expected in sandbox):', error.message);
+    console.info('⚠️ Production patterns test (expected in sandbox):', error.message);
   }
 }
 
 // Main execution function
 async function runAllExamples() {
-  console.log('🚀 Starting Venmo Payment Gateway Examples\n');
+  console.info('🚀 Starting Venmo Payment Gateway Examples\n');
   
   try {
     // Run all examples
@@ -586,7 +586,7 @@ async function runAllExamples() {
     await bookingSystemIntegration();
     await productionPatterns();
     
-    console.log('\n✅ All examples completed successfully!');
+    console.info('\n✅ All examples completed successfully!');
   } catch (error) {
     console.error('\n❌ Example execution failed:', error.message);
   }

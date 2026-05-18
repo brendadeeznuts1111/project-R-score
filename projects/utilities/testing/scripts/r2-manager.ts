@@ -47,15 +47,15 @@ function parseArgs(): CliArgs {
  */
 function log(message: string, dryRun: boolean = false): void {
   const prefix = dryRun ? `🟡 ${DRY_RUN_PREFIX}` : "✅";
-  console.log(`${prefix} ${message}`);
+  console.info(`${prefix} ${message}`);
 }
 
 function warn(message: string): void {
-  console.log(`⚠️ ${message}`);
+  console.info(`⚠️ ${message}`);
 }
 
 function info(message: string): void {
-  console.log(`ℹ️ ${message}`);
+  console.info(`ℹ️ ${message}`);
 }
 
 /**
@@ -100,59 +100,59 @@ function getConfig(): R2Config | null {
  * Setup R2 bucket and configuration
  */
 async function setup(dryRun: boolean): Promise<void> {
-  console.log("\n" + "═".repeat(60));
-  console.log("🌐 Cloudflare R2 Bucket Setup");
-  console.log("═".repeat(60));
+  console.info("\n" + "═".repeat(60));
+  console.info("🌐 Cloudflare R2 Bucket Setup");
+  console.info("═".repeat(60));
 
   const wranglerInstalled = await checkWrangler();
   const config = getConfig();
 
   // Step 1: Check wrangler
-  console.log("\n📦 Step 1: Wrangler Check");
+  console.info("\n📦 Step 1: Wrangler Check");
   if (!wranglerInstalled) {
     info("Install wrangler first: npm install -g wrangler");
   }
 
   // Step 2: R2 Bucket Creation
-  console.log("\n🪣 Step 2: R2 Bucket Creation");
+  console.info("\n🪣 Step 2: R2 Bucket Creation");
   info(`Bucket name: ${BUCKET_NAME}`);
-  console.log("\n📋 To create the bucket, choose ONE option:");
+  console.info("\n📋 To create the bucket, choose ONE option:");
   
-  console.log("\n   Option A - Dashboard:");
-  console.log("   1. Go to: https://dash.cloudflare.com/?to=/:account/r2");
-  console.log("   2. Click 'Create bucket'");
-  console.log("   3. Enter: " + BUCKET_NAME);
-  console.log("   4. Click 'Create bucket'");
-  console.log("   5. Click 'Manage R2 API tokens'");
-  console.log("   6. Create token with R2 permissions");
+  console.info("\n   Option A - Dashboard:");
+  console.info("   1. Go to: https://dash.cloudflare.com/?to=/:account/r2");
+  console.info("   2. Click 'Create bucket'");
+  console.info("   3. Enter: " + BUCKET_NAME);
+  console.info("   4. Click 'Create bucket'");
+  console.info("   5. Click 'Manage R2 API tokens'");
+  console.info("   6. Create token with R2 permissions");
   
-  console.log("\n   Option B - CLI (after logging in):");
-  console.log("   bunx wrangler login");
-  console.log("   # Note: R2 bucket creation via CLI requires API call");
+  console.info("\n   Option B - CLI (after logging in):");
+  console.info("   bunx wrangler login");
+  console.info("   # Note: R2 bucket creation via CLI requires API call");
   
-  console.log("\n   Option C - API:");
-  console.log(`   curl -X POST "https://api.cloudflare.com/client/v4/accounts/<ACCOUNT_ID>/r2/buckets" \\`);
-  console.log('     -H "Authorization: Bearer <API_TOKEN>" \\');
-  console.log('     -H "Content-Type: application/json" \\');
-  console.log(`     -d '{"name":"${BUCKET_NAME}"}'`);
+  console.info("\n   Option C - API:");
+  console.info(`   curl -X POST "https://api.cloudflare.com/client/v4/accounts/<ACCOUNT_ID>/r2/buckets" \\`);
+  console.info('     -H "Authorization: Bearer <API_TOKEN>" \\');
+  console.info('     -H "Content-Type: application/json" \\');
+  console.info(`     -d '{"name":"${BUCKET_NAME}"}'`);
 
   // Step 3: Environment Configuration
-  console.log("\n🔧 Step 3: Environment Configuration");
+  console.info("\n🔧 Step 3: Environment Configuration");
   if (config) {
     log("R2 configuration detected from environment");
     info(`Account ID: ${config.accountId.slice(0, 8)}...`);
     info(`Bucket: ${config.bucketName}`);
   } else {
     warn("R2 environment variables not set");
-    console.log("\n📝 Create a .env file with:");
-    console.log("   R2_ACCOUNT_ID=your-account-id");
-    console.log("   R2_ACCESS_KEY_ID=your-access-key");
-    console.log("   R2_SECRET_ACCESS_KEY=your-secret-key");
-    console.log("   R2_BUCKET_NAME=dev-hq-assets");
+    console.info("\n📝 Create a .env file with:");
+    console.info("   R2_ACCOUNT_ID=your-account-id");
+    console.info("   R2_ACCESS_KEY_ID=your-access-key");
+    console.info("   R2_SECRET_ACCESS_KEY=your-secret-key");
+    console.info("   R2_BUCKET_NAME=dev-hq-assets");
   }
 
   // Step 4: Update wrangler.toml
-  console.log("\n📄 Step 4: wrangler.toml Configuration");
+  console.info("\n📄 Step 4: wrangler.toml Configuration");
   if (dryRun) {
     log("Would update wrangler.toml with R2 configuration");
   } else {
@@ -196,22 +196,22 @@ renderer = "bun"
     log("Updated wrangler.toml");
   }
 
-  console.log("\n" + "═".repeat(60));
-  console.log("✅ Setup guide complete!");
-  console.log("\n📋 Next Steps:");
-  console.log("   1. Create R2 bucket in dashboard");
-  console.log("   2. Set R2_* environment variables");
-  console.log("   3. Run: bun run scripts/r2-manager.ts upload <file>");
-  console.log("═".repeat(60));
+  console.info("\n" + "═".repeat(60));
+  console.info("✅ Setup guide complete!");
+  console.info("\n📋 Next Steps:");
+  console.info("   1. Create R2 bucket in dashboard");
+  console.info("   2. Set R2_* environment variables");
+  console.info("   3. Run: bun run scripts/r2-manager.ts upload <file>");
+  console.info("═".repeat(60));
 }
 
 /**
  * Upload a file to R2
  */
 async function upload(file: string, dryRun: boolean): Promise<void> {
-  console.log("\n" + "═".repeat(60));
-  console.log("📤 R2 File Upload");
-  console.log("═".repeat(60));
+  console.info("\n" + "═".repeat(60));
+  console.info("📤 R2 File Upload");
+  console.info("═".repeat(60));
 
   const config = getConfig();
   if (!config) {
@@ -232,18 +232,18 @@ async function upload(file: string, dryRun: boolean): Promise<void> {
   const key = file.split("/").pop() || file;
   const url = `https://${config.accountId}.r2.cloudflarestorage.com/${config.bucketName}/${key}`;
 
-  console.log(`\n📁 File: ${file}`);
-  console.log(`📦 Size: ${(fileInfo.size / 1024).toFixed(2)} KB`);
-  console.log(`🗂️  Key: ${key}`);
-  console.log(`🌐 URL: ${url}`);
+  console.info(`\n📁 File: ${file}`);
+  console.info(`📦 Size: ${(fileInfo.size / 1024).toFixed(2)} KB`);
+  console.info(`🗂️  Key: ${key}`);
+  console.info(`🌐 URL: ${url}`);
 
   // Confirm upload
-  console.log("\n🔍 Upload Confirmation:");
-  console.log("   This will upload the file to R2 bucket.");
-  console.log("   Confirm by typing 'yes' or skip with Ctrl+C");
+  console.info("\n🔍 Upload Confirmation:");
+  console.info("   This will upload the file to R2 bucket.");
+  console.info("   Confirm by typing 'yes' or skip with Ctrl+C");
   
   // Perform upload
-  console.log("\n📤 Uploading...");
+  console.info("\n📤 Uploading...");
   if (dryRun) {
     log(`Would upload ${file} to R2 bucket ${config.bucketName}`);
   } else {
@@ -260,8 +260,8 @@ async function upload(file: string, dryRun: boolean): Promise<void> {
       if (response.ok) {
         const etag = response.headers.get("etag");
         log("Upload successful!");
-        console.log(`   ETag: ${etag}`);
-        console.log(`   Dashboard: https://dash.cloudflare.com/?to=/:account/r2/${config.bucketName}`);
+        console.info(`   ETag: ${etag}`);
+        console.info(`   Dashboard: https://dash.cloudflare.com/?to=/:account/r2/${config.bucketName}`);
       } else {
         warn(`Upload failed: ${response.status} ${response.statusText}`);
       }
@@ -270,16 +270,16 @@ async function upload(file: string, dryRun: boolean): Promise<void> {
     }
   }
 
-  console.log("\n" + "═".repeat(60));
+  console.info("\n" + "═".repeat(60));
 }
 
 /**
  * List files in R2 bucket
  */
 async function listFiles(dryRun: boolean): Promise<void> {
-  console.log("\n" + "═".repeat(60));
-  console.log("📋 R2 Bucket Contents");
-  console.log("═".repeat(60));
+  console.info("\n" + "═".repeat(60));
+  console.info("📋 R2 Bucket Contents");
+  console.info("═".repeat(60));
 
   const config = getConfig();
   if (!config) {
@@ -303,29 +303,29 @@ async function listFiles(dryRun: boolean): Promise<void> {
         const result = await response.json();
         const objects = result.objects || [];
         
-        console.log(`\n📦 Found ${objects.length} objects in bucket: ${config.bucketName}\n`);
+        console.info(`\n📦 Found ${objects.length} objects in bucket: ${config.bucketName}\n`);
         
         if (objects.length === 0) {
           info("Bucket is empty");
         } else {
-          console.log("   Name".padEnd(40) + "Size".padEnd(12) + "Modified");
-          console.log("   " + "─".repeat(60));
+          console.info("   Name".padEnd(40) + "Size".padEnd(12) + "Modified");
+          console.info("   " + "─".repeat(60));
           
           for (const obj of objects.slice(0, 20)) {
             const size = obj.size < 1024 
               ? `${obj.size} B` 
               : `${(obj.size / 1024).toFixed(1)} KB`;
             const modified = new Date(obj.modified).toLocaleDateString();
-            console.log(`   ${obj.key.slice(0, 38).padEnd(40)}${size.padEnd(12)}${modified}`);
+            console.info(`   ${obj.key.slice(0, 38).padEnd(40)}${size.padEnd(12)}${modified}`);
           }
           
           if (objects.length > 20) {
-            console.log(`   ... and ${objects.length - 20} more objects`);
+            console.info(`   ... and ${objects.length - 20} more objects`);
           }
         }
         
-        console.log(`\n🌐 View in Dashboard:`);
-        console.log(`   https://dash.cloudflare.com/?to=/:account/r2/${config.bucketName}`);
+        console.info(`\n🌐 View in Dashboard:`);
+        console.info(`   https://dash.cloudflare.com/?to=/:account/r2/${config.bucketName}`);
       } else {
         warn(`List failed: ${response.status}`);
       }
@@ -334,19 +334,19 @@ async function listFiles(dryRun: boolean): Promise<void> {
     }
   }
 
-  console.log("\n" + "═".repeat(60));
+  console.info("\n" + "═".repeat(60));
 }
 
 /**
  * Verify R2 configuration and connectivity
  */
 async function verify(): Promise<void> {
-  console.log("\n" + "═".repeat(60));
-  console.log("🔍 R2 Configuration Verification");
-  console.log("═".repeat(60));
+  console.info("\n" + "═".repeat(60));
+  console.info("🔍 R2 Configuration Verification");
+  console.info("═".repeat(60));
 
   // Check environment variables
-  console.log("\n📋 Environment Variables:");
+  console.info("\n📋 Environment Variables:");
   const checks = [
     { name: "R2_ACCOUNT_ID", key: "R2_ACCOUNT_ID" },
     { name: "R2_ACCESS_KEY_ID", key: "R2_ACCESS_KEY_ID" },
@@ -358,17 +358,17 @@ async function verify(): Promise<void> {
   for (const check of checks) {
     const value = process.env[check.key] || check.default;
     const status = value ? "✅" : "❌";
-    console.log(`   ${status} ${check.name}: ${value ? "set" : "not set"}`);
+    console.info(`   ${status} ${check.name}: ${value ? "set" : "not set"}`);
     if (!value) allPassed = false;
   }
 
   // Check wrangler
-  console.log("\n📦 Wrangler:");
+  console.info("\n📦 Wrangler:");
   const wranglerOk = await checkWrangler();
   if (!wranglerOk) allPassed = false;
 
   // Check bucket (API call)
-  console.log("\n🪣 R2 Bucket:");
+  console.info("\n🪣 R2 Bucket:");
   const config = getConfig();
   if (config) {
     try {
@@ -381,38 +381,38 @@ async function verify(): Promise<void> {
 
       if (response.ok) {
         const result = await response.json();
-        console.log(`   ✅ Bucket exists: ${config.bucketName}`);
+        console.info(`   ✅ Bucket exists: ${config.bucketName}`);
         if (result.location) {
-          console.log(`   📍 Location: ${result.location}`);
+          console.info(`   📍 Location: ${result.location}`);
         }
       } else if (response.status === 404) {
-        console.log(`   ❌ Bucket not found: ${config.bucketName}`);
-        console.log(`   💡 Create at: https://dash.cloudflare.com/?to=/:account/r2`);
+        console.info(`   ❌ Bucket not found: ${config.bucketName}`);
+        console.info(`   💡 Create at: https://dash.cloudflare.com/?to=/:account/r2`);
         allPassed = false;
       } else {
-        console.log(`   ⚠️ Check failed: ${response.status}`);
+        console.info(`   ⚠️ Check failed: ${response.status}`);
       }
     } catch (error) {
-      console.log(`   ❌ Connection error: ${error}`);
+      console.info(`   ❌ Connection error: ${error}`);
       allPassed = false;
     }
   } else {
-    console.log("   ❌ Cannot check bucket (missing credentials)");
+    console.info("   ❌ Cannot check bucket (missing credentials)");
     allPassed = false;
   }
 
   // Summary
-  console.log("\n" + "═".repeat(60));
+  console.info("\n" + "═".repeat(60));
   if (allPassed) {
-    console.log("✅ All checks passed! R2 is ready to use.");
+    console.info("✅ All checks passed! R2 is ready to use.");
   } else {
-    console.log("⚠️ Some checks failed. Review the output above.");
-    console.log("\n📋 Quick Actions:");
-    console.log("   1. Create bucket in dashboard");
-    console.log("   2. Set R2_* environment variables");
-    console.log("   3. Run this verification again");
+    console.info("⚠️ Some checks failed. Review the output above.");
+    console.info("\n📋 Quick Actions:");
+    console.info("   1. Create bucket in dashboard");
+    console.info("   2. Set R2_* environment variables");
+    console.info("   3. Run this verification again");
   }
-  console.log("═".repeat(60));
+  console.info("═".repeat(60));
 }
 
 /**
@@ -421,9 +421,9 @@ async function verify(): Promise<void> {
 async function main() {
   const args = parseArgs();
   
-  console.log(`\n🌐 Dev HQ R2 Manager`);
-  console.log(`   Command: ${args.command}`);
-  console.log(`   Dry Run: ${args.dryRun ? "Yes" : "No"}`);
+  console.info(`\n🌐 Dev HQ R2 Manager`);
+  console.info(`   Command: ${args.command}`);
+  console.info(`   Dry Run: ${args.dryRun ? "Yes" : "No"}`);
   
   switch (args.command) {
     case "setup":
@@ -434,7 +434,7 @@ async function main() {
         await upload(args.file, args.dryRun);
       } else {
         warn("Please specify a file to upload");
-        console.log("   Usage: bun run scripts/r2-manager.ts upload <file>");
+        console.info("   Usage: bun run scripts/r2-manager.ts upload <file>");
       }
       break;
     case "list":
@@ -446,7 +446,7 @@ async function main() {
       break;
     case "help":
     case "--help":
-      console.log(`
+      console.info(`
 ☁️ Dev HQ R2 Manager
 
 Usage:
@@ -475,7 +475,7 @@ Dashboard:
       break;
     default:
       warn(`Unknown command: ${args.command}`);
-      console.log("   Run 'bun run scripts/r2-manager.ts help' for usage");
+      console.info("   Run 'bun run scripts/r2-manager.ts help' for usage");
   }
 }
 

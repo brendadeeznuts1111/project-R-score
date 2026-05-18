@@ -33,7 +33,7 @@ export class TensionVisualizer {
     this.wss = new WebSocketServer({ port });
 
     this.wss.on('connection', (ws) => {
-      console.log('🔌 Client connected to tension visualization');
+      console.info('🔌 Client connected to tension visualization');
       this.clients.add(ws);
 
       // Send current buffer to new client
@@ -46,7 +46,7 @@ export class TensionVisualizer {
 
       ws.on('close', () => {
         this.clients.delete(ws);
-        console.log('🔌 Client disconnected');
+        console.info('🔌 Client disconnected');
       });
 
       ws.on('error', (err) => {
@@ -55,7 +55,7 @@ export class TensionVisualizer {
       });
     });
 
-    console.log(`📊 Tension visualization server running on ws://localhost:${port}`);
+    console.info(`📊 Tension visualization server running on ws://localhost:${port}`);
   }
 
   addDataPoint(point: VisualizationPoint): void {
@@ -105,7 +105,7 @@ export class TensionVisualizer {
   }
 
   async startRealtimeVisualization(): Promise<void> {
-    console.log('🎬 Starting real-time tension visualization...');
+    console.info('🎬 Starting real-time tension visualization...');
 
     while (true) {
       const point: VisualizationPoint = {
@@ -405,7 +405,7 @@ if (import.meta.main) {
   // Generate HTML dashboard
   const html = visualizer.generateHTMLDashboard();
   await Bun.write('./tension-dashboard.html', html);
-  console.log('📄 Dashboard saved to tension-dashboard.html');
+  console.info('📄 Dashboard saved to tension-dashboard.html');
 
   // Start real-time visualization
   await visualizer.startRealtimeVisualization();

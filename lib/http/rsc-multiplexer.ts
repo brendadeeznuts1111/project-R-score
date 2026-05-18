@@ -45,7 +45,7 @@ export class RSCMultiplexer {
     await this.mux.connect(this.hostname, this.port);
     this.connected = true;
 
-    console.log(`🚀 RSC HTTP/2 connected to ${this.hostname}:${this.port}`);
+    console.info(`🚀 RSC HTTP/2 connected to ${this.hostname}:${this.port}`);
   }
 
   /**
@@ -109,7 +109,7 @@ export class RSCMultiplexer {
       await this.connect();
     }
 
-    console.log(`📦 RSC batch: ${requests.length} components on single HTTP/2 connection`);
+    console.info(`📦 RSC batch: ${requests.length} components on single HTTP/2 connection`);
 
     // Fire all prefetches concurrently on single connection
     const streamPromises = requests.map(async (request, index) => {
@@ -146,7 +146,7 @@ export class RSCMultiplexer {
     const successful = results.filter(r => !('error' in r));
     const avgLatency = successful.reduce((sum, r) => sum + (r.latency || 0), 0) / successful.length;
 
-    console.log(
+    console.info(
       `📊 RSC batch complete: ${successful.length}/${requests.length} successful, ${avgLatency.toFixed(2)}ms avg latency`
     );
 
@@ -200,7 +200,7 @@ export class RSCMultiplexer {
       this.mux.disconnect();
       this.mux = null;
       this.connected = false;
-      console.log(`🔌 RSC HTTP/2 disconnected from ${this.hostname}`);
+      console.info(`🔌 RSC HTTP/2 disconnected from ${this.hostname}`);
     }
   }
 
@@ -213,7 +213,7 @@ export class RSCMultiplexer {
     speedup: number;
     p_ratio: number;
   }> {
-    console.log(`🧪 RSC Performance Test: ${paths.length} paths`);
+    console.info(`🧪 RSC Performance Test: ${paths.length} paths`);
 
     // Test serial HTTP/1.1 (simulated)
     const serialStart = performance.now();
@@ -230,11 +230,11 @@ export class RSCMultiplexer {
     const speedup = serialTime / multiplexedTime;
     const p_ratio = Math.min(speedup * 0.833, 1.15); // Scale to P_ratio range
 
-    console.log(`📈 Performance Results:`);
-    console.log(`  Serial HTTP/1.1: ${serialTime.toFixed(2)}ms`);
-    console.log(`  HTTP/2 Multiplex: ${multiplexedTime.toFixed(2)}ms`);
-    console.log(`  Speedup: ${speedup.toFixed(2)}x`);
-    console.log(`  P_ratio: ${p_ratio.toFixed(3)}`);
+    console.info(`📈 Performance Results:`);
+    console.info(`  Serial HTTP/1.1: ${serialTime.toFixed(2)}ms`);
+    console.info(`  HTTP/2 Multiplex: ${multiplexedTime.toFixed(2)}ms`);
+    console.info(`  Speedup: ${speedup.toFixed(2)}x`);
+    console.info(`  P_ratio: ${p_ratio.toFixed(3)}`);
 
     return { serialTime, multiplexedTime, speedup, p_ratio };
   }

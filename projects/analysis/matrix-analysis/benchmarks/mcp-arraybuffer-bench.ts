@@ -128,13 +128,13 @@ function formatResult(r: BenchmarkResult, baseline?: BenchmarkResult): string {
 
 /** Main benchmark */
 async function main() {
-  console.log("\n╔══════════════════════════════════════════════════════════════════╗");
-  console.log("║  MCP arrayBuffer() Benchmark (Tier-1380)                          ║");
-  console.log("║  Bun.peek() Zero-Copy • wyhash • Baseline Comparison              ║");
-  console.log("╚══════════════════════════════════════════════════════════════════╝\n");
+  console.info("\n╔══════════════════════════════════════════════════════════════════╗");
+  console.info("║  MCP arrayBuffer() Benchmark (Tier-1380)                          ║");
+  console.info("║  Bun.peek() Zero-Copy • wyhash • Baseline Comparison              ║");
+  console.info("╚══════════════════════════════════════════════════════════════════╝\n");
 
-  console.log(`${COLORS.dim}Runtime: Bun v${Bun.version} on ${process.arch}${COLORS.reset}`);
-  console.log(`${COLORS.dim}Date: ${new Date().toISOString()}${COLORS.reset}\n`);
+  console.info(`${COLORS.dim}Runtime: Bun v${Bun.version} on ${process.arch}${COLORS.reset}`);
+  console.info(`${COLORS.dim}Date: ${new Date().toISOString()}${COLORS.reset}\n`);
 
   // Create artifact (simulating MCP response)
   const artifact = new MCPArtifact(4096); // 4KB artifact
@@ -161,26 +161,26 @@ async function main() {
   );
 
   // Print results
-  console.log("─".repeat(70));
-  console.log(formatResult(baselineResult));
-  console.log();
-  console.log(formatResult(bunResult, baselineResult));
-  console.log("─".repeat(70));
+  console.info("─".repeat(70));
+  console.info(formatResult(baselineResult));
+  console.info();
+  console.info(formatResult(bunResult, baselineResult));
+  console.info("─".repeat(70));
 
   // Summary
   const improvement = ((baselineResult.mean / bunResult.mean - 1) * 100);
-  console.log(`\n${COLORS.bold}Summary:${COLORS.reset}`);
-  console.log(`  Zero-copy peek improvement: ${COLORS.green}${improvement.toFixed(0)}%${COLORS.reset}`);
-  console.log(`  p99 latency: ${COLORS.cyan}${bunResult.p99.toFixed(2)}μs${COLORS.reset}`);
-  console.log(`  Memory efficiency: ${COLORS.green}${bunResult.memoryPeak}${COLORS.reset}`);
+  console.info(`\n${COLORS.bold}Summary:${COLORS.reset}`);
+  console.info(`  Zero-copy peek improvement: ${COLORS.green}${improvement.toFixed(0)}%${COLORS.reset}`);
+  console.info(`  p99 latency: ${COLORS.cyan}${bunResult.p99.toFixed(2)}μs${COLORS.reset}`);
+  console.info(`  Memory efficiency: ${COLORS.green}${bunResult.memoryPeak}${COLORS.reset}`);
 
   // Additional context
-  console.log(`\n${COLORS.dim}Techniques used:${COLORS.reset}`);
-  console.log(`  • Bun.peek() - Zero-copy promise inspection`);
-  console.log(`  • Bun.hash.wyhash() - Fast non-cryptographic hash`);
-  console.log(`  • Uint8Array view - No buffer copy`);
+  console.info(`\n${COLORS.dim}Techniques used:${COLORS.reset}`);
+  console.info(`  • Bun.peek() - Zero-copy promise inspection`);
+  console.info(`  • Bun.hash.wyhash() - Fast non-cryptographic hash`);
+  console.info(`  • Uint8Array view - No buffer copy`);
 
-  console.log(`\n${COLORS.dim}Tier-1380 OMEGA | MCP Optimization Benchmark${COLORS.reset}\n`);
+  console.info(`\n${COLORS.dim}Tier-1380 OMEGA | MCP Optimization Benchmark${COLORS.reset}\n`);
 }
 
 main().catch(console.error);

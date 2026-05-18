@@ -149,14 +149,14 @@ async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
   const summary = await verifyDecisionEvidence(options);
   if (options.json) {
-    console.log(JSON.stringify(summary, null, 2));
+    console.info(JSON.stringify(summary, null, 2));
   } else {
     for (const result of summary.results) {
       const status = result.valid ? 'ok' : 'fail';
-      console.log(`[${status}] ${result.decisionId} digest=${result.digestMatches ? 'match' : 'mismatch'} status=${result.statusDeclared}`);
+      console.info(`[${status}] ${result.decisionId} digest=${result.digestMatches ? 'match' : 'mismatch'} status=${result.statusDeclared}`);
       if (result.errors.length > 0) {
         for (const error of result.errors) {
-          console.log(`  - ${error}`);
+          console.info(`  - ${error}`);
         }
       }
     }

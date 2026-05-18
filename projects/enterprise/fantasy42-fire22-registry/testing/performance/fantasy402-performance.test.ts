@@ -382,11 +382,11 @@ describe('Fantasy402 Performance Tests', () => {
   test('API Response Time Performance', async () => {
     const responseTimes = await tester.testApiResponseTimes();
 
-    console.log('📊 API Response Times:');
-    console.log(`   Health Check: ${responseTimes.healthCheck}ms`);
-    console.log(`   Authentication: ${responseTimes.authentication}ms`);
-    console.log(`   User Retrieval: ${responseTimes.userRetrieval}ms`);
-    console.log(`   Data Sync: ${responseTimes.dataSync}ms`);
+    console.info('📊 API Response Times:');
+    console.info(`   Health Check: ${responseTimes.healthCheck}ms`);
+    console.info(`   Authentication: ${responseTimes.authentication}ms`);
+    console.info(`   User Retrieval: ${responseTimes.userRetrieval}ms`);
+    console.info(`   Data Sync: ${responseTimes.dataSync}ms`);
 
     // Performance assertions (adjusted for mock service)
     expect(responseTimes.healthCheck).toBeLessThan(100); // < 100ms (mock)
@@ -398,10 +398,10 @@ describe('Fantasy402 Performance Tests', () => {
   test('WebSocket Performance', async () => {
     const wsPerformance = await tester.testWebSocketPerformance();
 
-    console.log('🔌 WebSocket Performance:');
-    console.log(`   Connection Time: ${wsPerformance.connectionTime}ms`);
-    console.log(`   Message Latency: ${wsPerformance.messageLatency}ms`);
-    console.log(`   Throughput: ${wsPerformance.throughput.toFixed(2)} msg/s`);
+    console.info('🔌 WebSocket Performance:');
+    console.info(`   Connection Time: ${wsPerformance.connectionTime}ms`);
+    console.info(`   Message Latency: ${wsPerformance.messageLatency}ms`);
+    console.info(`   Throughput: ${wsPerformance.throughput.toFixed(2)} msg/s`);
 
     // Performance assertions
     expect(wsPerformance.connectionTime).toBeLessThan(5000); // < 5s
@@ -412,11 +412,11 @@ describe('Fantasy402 Performance Tests', () => {
   test('Token Refresh Performance', async () => {
     const tokenPerformance = await tester.testTokenRefreshPerformance();
 
-    console.log('🔄 Token Refresh Performance:');
-    console.log(`   Refresh Time: ${tokenPerformance.refreshTime}ms`);
-    console.log(`   Refresh Success: ${tokenPerformance.refreshSuccess}`);
+    console.info('🔄 Token Refresh Performance:');
+    console.info(`   Refresh Time: ${tokenPerformance.refreshTime}ms`);
+    console.info(`   Refresh Success: ${tokenPerformance.refreshSuccess}`);
     if (tokenPerformance.automaticRefreshTime) {
-      console.log(`   Automatic Refresh Time: ${tokenPerformance.automaticRefreshTime}ms`);
+      console.info(`   Automatic Refresh Time: ${tokenPerformance.automaticRefreshTime}ms`);
     }
 
     // Performance assertions
@@ -431,11 +431,11 @@ describe('Fantasy402 Performance Tests', () => {
     const concurrency = 5;
     const result = await tester.testConcurrentRequests(concurrency);
 
-    console.log(`🔀 Concurrent Requests (${concurrency}):`);
-    console.log(`   Total Time: ${result.totalTime}ms`);
-    console.log(`   Average Response Time: ${result.averageResponseTime.toFixed(2)}ms`);
-    console.log(`   Success Rate: ${(result.successRate * 100).toFixed(1)}%`);
-    console.log(`   Throughput: ${result.throughput.toFixed(2)} req/s`);
+    console.info(`🔀 Concurrent Requests (${concurrency}):`);
+    console.info(`   Total Time: ${result.totalTime}ms`);
+    console.info(`   Average Response Time: ${result.averageResponseTime.toFixed(2)}ms`);
+    console.info(`   Success Rate: ${(result.successRate * 100).toFixed(1)}%`);
+    console.info(`   Throughput: ${result.throughput.toFixed(2)} req/s`);
 
     // Performance assertions
     expect(result.successRate).toBeGreaterThan(0.9); // > 90% success rate
@@ -447,11 +447,11 @@ describe('Fantasy402 Performance Tests', () => {
     const concurrency = 20;
     const result = await tester.testConcurrentRequests(concurrency);
 
-    console.log(`🔀 Concurrent Requests (${concurrency}):`);
-    console.log(`   Total Time: ${result.totalTime}ms`);
-    console.log(`   Average Response Time: ${result.averageResponseTime.toFixed(2)}ms`);
-    console.log(`   Success Rate: ${(result.successRate * 100).toFixed(1)}%`);
-    console.log(`   Throughput: ${result.throughput.toFixed(2)} req/s`);
+    console.info(`🔀 Concurrent Requests (${concurrency}):`);
+    console.info(`   Total Time: ${result.totalTime}ms`);
+    console.info(`   Average Response Time: ${result.averageResponseTime.toFixed(2)}ms`);
+    console.info(`   Success Rate: ${(result.successRate * 100).toFixed(1)}%`);
+    console.info(`   Throughput: ${result.throughput.toFixed(2)} req/s`);
 
     // Performance assertions
     expect(result.successRate).toBeGreaterThan(0.8); // > 80% success rate
@@ -469,16 +469,16 @@ describe('Fantasy402 Performance Tests', () => {
       }
     );
 
-    console.log('📈 Load Test Results (Health Check):');
-    console.log(`   Duration: ${loadTestResult.duration}ms`);
-    console.log(`   Total Requests: ${loadTestResult.totalRequests}`);
-    console.log(`   Successful: ${loadTestResult.successfulRequests}`);
-    console.log(`   Failed: ${loadTestResult.failedRequests}`);
-    console.log(`   Average Response Time: ${loadTestResult.averageResponseTime.toFixed(2)}ms`);
-    console.log(`   Min Response Time: ${loadTestResult.minResponseTime}ms`);
-    console.log(`   Max Response Time: ${loadTestResult.maxResponseTime}ms`);
-    console.log(`   Requests/Second: ${loadTestResult.requestsPerSecond.toFixed(2)}`);
-    console.log(`   Memory Usage: ${loadTestResult.memoryUsage.initial.toFixed(2)}MB → ${loadTestResult.memoryUsage.peak.toFixed(2)}MB → ${loadTestResult.memoryUsage.final.toFixed(2)}MB`);
+    console.info('📈 Load Test Results (Health Check):');
+    console.info(`   Duration: ${loadTestResult.duration}ms`);
+    console.info(`   Total Requests: ${loadTestResult.totalRequests}`);
+    console.info(`   Successful: ${loadTestResult.successfulRequests}`);
+    console.info(`   Failed: ${loadTestResult.failedRequests}`);
+    console.info(`   Average Response Time: ${loadTestResult.averageResponseTime.toFixed(2)}ms`);
+    console.info(`   Min Response Time: ${loadTestResult.minResponseTime}ms`);
+    console.info(`   Max Response Time: ${loadTestResult.maxResponseTime}ms`);
+    console.info(`   Requests/Second: ${loadTestResult.requestsPerSecond.toFixed(2)}`);
+    console.info(`   Memory Usage: ${loadTestResult.memoryUsage.initial.toFixed(2)}MB → ${loadTestResult.memoryUsage.peak.toFixed(2)}MB → ${loadTestResult.memoryUsage.final.toFixed(2)}MB`);
 
     // Performance assertions
     expect(loadTestResult.successfulRequests).toBeGreaterThan(0);
@@ -505,11 +505,11 @@ describe('Fantasy402 Performance Tests', () => {
     const finalMemory = process.memoryUsage();
     const memoryIncrease = (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024; // MB
 
-    console.log('💾 Memory Usage Analysis:');
-    console.log(`   Initial Memory: ${(initialMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`   Final Memory: ${(finalMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`   Memory Increase: ${memoryIncrease.toFixed(2)}MB`);
-    console.log(`   Peak Memory: ${Math.max(...memorySnapshots).toFixed(2)}MB`);
+    console.info('💾 Memory Usage Analysis:');
+    console.info(`   Initial Memory: ${(initialMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`   Final Memory: ${(finalMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`   Memory Increase: ${memoryIncrease.toFixed(2)}MB`);
+    console.info(`   Peak Memory: ${Math.max(...memorySnapshots).toFixed(2)}MB`);
 
     // Memory assertions
     expect(memoryIncrease).toBeLessThan(100); // < 100MB increase
@@ -537,11 +537,11 @@ describe('Fantasy402 Performance Tests', () => {
       concurrentThroughput: concurrentResult.throughput
     };
 
-    console.log('📉 Performance Regression Analysis:');
-    console.log(`   Health Check: ${current.healthCheckTime}ms (baseline: ${baseline.healthCheckTime}ms)`);
-    console.log(`   Authentication: ${current.authTime}ms (baseline: ${baseline.authTime}ms)`);
-    console.log(`   WebSocket Connection: ${current.wsConnectionTime}ms (baseline: ${baseline.wsConnectionTime}ms)`);
-    console.log(`   Concurrent Throughput: ${current.concurrentThroughput.toFixed(2)} req/s (baseline: ${baseline.concurrentThroughput} req/s)`);
+    console.info('📉 Performance Regression Analysis:');
+    console.info(`   Health Check: ${current.healthCheckTime}ms (baseline: ${baseline.healthCheckTime}ms)`);
+    console.info(`   Authentication: ${current.authTime}ms (baseline: ${baseline.authTime}ms)`);
+    console.info(`   WebSocket Connection: ${current.wsConnectionTime}ms (baseline: ${baseline.wsConnectionTime}ms)`);
+    console.info(`   Concurrent Throughput: ${current.concurrentThroughput.toFixed(2)} req/s (baseline: ${baseline.concurrentThroughput} req/s)`);
 
     // Regression detection (allow 50% degradation)
     const regressionThreshold = 1.5;
@@ -558,8 +558,8 @@ describe('Fantasy402 Performance Tests', () => {
 // ============================================================================
 
 export async function runPerformanceBenchmark(): Promise<void> {
-  console.log('⚡ Fantasy402 Performance Benchmark');
-  console.log('===================================');
+  console.info('⚡ Fantasy402 Performance Benchmark');
+  console.info('===================================');
 
   const tester = new PerformanceTester();
   
@@ -597,8 +597,8 @@ export async function runPerformanceBenchmark(): Promise<void> {
     // Save performance report
     await Bun.write('./performance-benchmark-report.json', JSON.stringify(report, null, 2));
     
-    console.log('\n📊 Performance Benchmark Complete!');
-    console.log('📄 Report saved to: performance-benchmark-report.json');
+    console.info('\n📊 Performance Benchmark Complete!');
+    console.info('📄 Report saved to: performance-benchmark-report.json');
 
   } finally {
     await tester.cleanup();

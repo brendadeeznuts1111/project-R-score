@@ -108,15 +108,15 @@ function parseFlags(args: string[]): { command: string; options: CLIOptions; arg
 // Logging
 function log(level: keyof CLIOptions, message: string, options: CLIOptions) {
   if (level === 'error' || (options.verbose && level === 'info')) {
-    if (!options.quiet) console.log(`[${level.toUpperCase()}] ${message}`);
+    if (!options.quiet) console.info(`[${level.toUpperCase()}] ${message}`);
   }
 }
 
 function output(data: any, options: CLIOptions) {
   if (options.json) {
-    console.log(JSON.stringify(data, null, 2));
+    console.info(JSON.stringify(data, null, 2));
   } else if (!options.quiet) {
-    console.log(data);
+    console.info(data);
   }
 }
 
@@ -136,9 +136,9 @@ function showStats(options: CLIOptions) {
   output(stats, options);
   if (!options.json && !options.quiet) {
     Object.entries(stats).forEach(([label, value]) => {
-      console.log(`${label.padEnd(16)}: ${value}`);
+      console.info(`${label.padEnd(16)}: ${value}`);
     });
-    console.log("═".repeat(60));
+    console.info("═".repeat(60));
   }
 }
 
@@ -168,12 +168,12 @@ async function showHealth(options: CLIOptions) {
   } else {
     output(health, options);
     if (!options.json && !options.quiet) {
-      console.log("═".repeat(60));
-      console.log(`Status: ✅ ${health.status.toUpperCase()}`);
-      console.log(`Components: ${health.components} loaded`);
-      console.log(`Memory: ${health.memory}MB used`);
-      console.log(`Uptime: ${health.uptime}s`);
-      console.log("═".repeat(60));
+      console.info("═".repeat(60));
+      console.info(`Status: ✅ ${health.status.toUpperCase()}`);
+      console.info(`Components: ${health.components} loaded`);
+      console.info(`Memory: ${health.memory}MB used`);
+      console.info(`Uptime: ${health.uptime}s`);
+      console.info("═".repeat(60));
     }
   }
 }
@@ -239,37 +239,37 @@ async function startDashboardServer(port: string, options: CLIOptions) {
 
 function showHelp(options: CLIOptions) {
   if (!options.quiet) {
-    console.log("🚀 T3-Lattice Registry Plugin");
-    console.log("═".repeat(60));
-    console.log("Unified interface for all T3-Lattice components\n");
+    console.info("🚀 T3-Lattice Registry Plugin");
+    console.info("═".repeat(60));
+    console.info("Unified interface for all T3-Lattice components\n");
   }
 
   if (!options.quiet) {
-    console.log("Available Commands:");
-    console.log("  stats         Show registry statistics");
-    console.log("  health        System health check");
-    console.log("  prefetch <type> Prefetch DNS/database resources");
-    console.log("  dashboard [port] Start web dashboard");
-    console.log("  help          Show this help message");
+    console.info("Available Commands:");
+    console.info("  stats         Show registry statistics");
+    console.info("  health        System health check");
+    console.info("  prefetch <type> Prefetch DNS/database resources");
+    console.info("  dashboard [port] Start web dashboard");
+    console.info("  help          Show this help message");
 
-    console.log("\nCLI Flags:");
-    console.log("  -v, --verbose     Enable verbose output");
-    console.log("  -q, --quiet       Suppress output");
-    console.log("  --json           JSON output format");
-    console.log("  -w, --watch      Watch mode for monitoring");
-    console.log("  --interval <ms>  Watch interval (default: 5000)");
-    console.log("  --dry-run        Test without execution");
-    console.log("  -p, --port <port>     Server port (default: 8080)");
-    console.log("  -H, --host <host>     Server host (default: localhost)");
-    console.log("  -h, --header <k:v>    Custom header (can be used multiple times)");
-    console.log("  -t, --timeout <ms>    Request timeout (default: 30000)");
+    console.info("\nCLI Flags:");
+    console.info("  -v, --verbose     Enable verbose output");
+    console.info("  -q, --quiet       Suppress output");
+    console.info("  --json           JSON output format");
+    console.info("  -w, --watch      Watch mode for monitoring");
+    console.info("  --interval <ms>  Watch interval (default: 5000)");
+    console.info("  --dry-run        Test without execution");
+    console.info("  -p, --port <port>     Server port (default: 8080)");
+    console.info("  -H, --host <host>     Server host (default: localhost)");
+    console.info("  -h, --header <k:v>    Custom header (can be used multiple times)");
+    console.info("  -t, --timeout <ms>    Request timeout (default: 30000)");
 
-    console.log("\nExamples:");
-    console.log("  t3 stats --json");
-    console.log("  t3 health --watch --interval 2000");
-    console.log("  t3 dashboard --port 3000 --host 0.0.0.0");
-    console.log("  t3 dashboard --header 'Authorization: Bearer token'");
-    console.log("  t3 prefetch all --dry-run");
+    console.info("\nExamples:");
+    console.info("  t3 stats --json");
+    console.info("  t3 health --watch --interval 2000");
+    console.info("  t3 dashboard --port 3000 --host 0.0.0.0");
+    console.info("  t3 dashboard --header 'Authorization: Bearer token'");
+    console.info("  t3 prefetch all --dry-run");
   }
 }
 

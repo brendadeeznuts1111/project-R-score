@@ -98,13 +98,13 @@ export class MetadataVersionManager {
    * 📊 Load and analyze all package metadata
    */
   async loadWorkspaceMetadata(): Promise<WorkspaceVersionInfo> {
-    console.log('🔍 Loading workspace metadata...');
+    console.info('🔍 Loading workspace metadata...');
 
     // Load root package
     const rootPkg = await this.loadPackageMetadata(this.rootPath);
     if (rootPkg) {
       this.workspace.rootVersion = rootPkg.version;
-      console.log(`📦 Root package: ${rootPkg.name}@${rootPkg.version}`);
+      console.info(`📦 Root package: ${rootPkg.name}@${rootPkg.version}`);
     }
 
     // Load all packages in packages/ directory
@@ -117,7 +117,7 @@ export class MetadataVersionManager {
         if (pkg) {
           this.workspace.packages.set(pkg.name, pkg);
           const component = pkg.metadata?.component || pkg.name;
-          console.log(`📦 Loaded ${pkg.name}@${pkg.version} (${component})`);
+          console.info(`📦 Loaded ${pkg.name}@${pkg.version} (${component})`);
         }
       }
     }
@@ -128,7 +128,7 @@ export class MetadataVersionManager {
     // Generate build constants
     this.workspace.buildConstants = this.generateBuildConstants();
 
-    console.log(`✅ Loaded ${this.workspace.packages.size} packages`);
+    console.info(`✅ Loaded ${this.workspace.packages.size} packages`);
     return this.workspace;
   }
 
@@ -144,7 +144,7 @@ export class MetadataVersionManager {
       verbose?: boolean;
     } = {}
   ): Promise<Map<string, string>> {
-    console.log(`🏷️ Bumping versions with strategy: ${strategy.type}`);
+    console.info(`🏷️ Bumping versions with strategy: ${strategy.type}`);
     const changes = new Map<string, string>();
 
     // Determine packages to version
@@ -190,7 +190,7 @@ export class MetadataVersionManager {
       await this.performGitOperations(strategy, changes, options);
     }
 
-    console.log(`✅ Updated ${changes.size} package versions`);
+    console.info(`✅ Updated ${changes.size} package versions`);
     return changes;
   }
 
@@ -258,14 +258,14 @@ export class MetadataVersionManager {
    * 🚀 Build workspace with version integration
    */
   async buildWorkspaceWithVersions(options: BuildOptions = {}): Promise<BuildResult> {
-    console.log('🏗️ Building workspace with version integration...');
+    console.info('🏗️ Building workspace with version integration...');
 
     const packagesToBuild = options.packages || Array.from(this.workspace.packages.keys());
     const results = new Map<string, { success: boolean; skipped: boolean; reason?: string }>();
 
     // Update build constants if requested
     if (options.updateConstants) {
-      console.log('🔧 Updating build constants...');
+      console.info('🔧 Updating build constants...');
       this.workspace.buildConstants = this.generateBuildConstants();
       await this.saveBuildConstants();
     }
@@ -276,7 +276,7 @@ export class MetadataVersionManager {
       skipped = 0,
       failed = 0;
 
-    console.log(`📦 Building ${buildOrder.length} packages in dependency order...`);
+    console.info(`📦 Building ${buildOrder.length} packages in dependency order...`);
 
     for (const packageName of buildOrder) {
       const pkg = this.workspace.packages.get(packageName);
@@ -287,7 +287,7 @@ export class MetadataVersionManager {
       }
 
       if (!options.verbose) {
-        console.log(`📦 Building ${packageName}@${pkg.version}...`);
+        console.info(`📦 Building ${packageName}@${pkg.version}...`);
       }
 
       const buildResult = await this.buildPackage(packageName, options);
@@ -304,12 +304,12 @@ export class MetadataVersionManager {
     }
 
     // Print summary
-    console.log('\n📊 Build Summary:');
-    console.log(`✅ Built: ${built}`);
-    console.log(`⏭️  Skipped: ${skipped}`);
-    console.log(`❌ Failed: ${failed}`);
+    console.info('\n📊 Build Summary:');
+    console.info(`✅ Built: ${built}`);
+    console.info(`⏭️  Skipped: ${skipped}`);
+    console.info(`❌ Failed: ${failed}`);
 
-    console.log('✅ Workspace build completed');
+    console.info('✅ Workspace build completed');
 
     return {
       totalPackages: packagesToBuild.length,
@@ -599,7 +599,7 @@ export class MetadataVersionManager {
     options: { commit?: boolean; tag?: boolean; push?: boolean; verbose?: boolean }
   ): Promise<void> {
     if (options.verbose) {
-      console.log('🔀 Performing git operations...');
+      console.info('🔀 Performing git operations...');
     }
 
     if (options.commit) {
@@ -610,23 +610,23 @@ export class MetadataVersionManager {
 
       // Commit changes
       await this.execCommand(['git', 'commit', '-m', commitMessage]);
-      console.log(`✅ Git commit created: ${commitMessage}`);
+      console.info(`✅ Git commit created: ${commitMessage}`);
 
       // Create tag if requested
       if (options.tag) {
         const tagName = `v${this.workspace.rootVersion}`;
         await this.execCommand(['git', 'tag', tagName, '-m', `Release ${tagName}`]);
-        console.log(`✅ Git tag created: ${tagName}`);
+        console.info(`✅ Git tag created: ${tagName}`);
       }
 
       // Push changes if requested
       if (options.push) {
         await this.execCommand(['git', 'push']);
-        console.log(`✅ Changes pushed to remote`);
+        console.info(`✅ Changes pushed to remote`);
 
         if (options.tag) {
           await this.execCommand(['git', 'push', '--tags']);
-          console.log(`✅ Tags pushed to remote`);
+          console.info(`✅ Tags pushed to remote`);
         }
       }
     }
@@ -713,7 +713,7 @@ async function main() {
     switch (command) {
       case 'load':
         await versionManager.loadWorkspaceMetadata();
-        console.log(versionManager.generateVersionReport());
+        console.info(versionManager.generateVersionReport());
         break;
 
       case 'bump':
@@ -733,9 +733,9 @@ async function main() {
           }
         );
 
-        console.log('\n📊 Version Changes:');
+        console.info('\n📊 Version Changes:');
         for (const [pkg, change] of changes) {
-          console.log(`  ${pkg}: ${change}`);
+          console.info(`  ${pkg}: ${change}`);
         }
         break;
 
@@ -748,7 +748,7 @@ async function main() {
           verbose: args.includes('--verbose'),
         });
 
-        console.log(
+        console.info(
           `\n📊 Build Complete: ${buildResult.built}/${buildResult.totalPackages} packages built`
         );
         break;
@@ -756,16 +756,16 @@ async function main() {
       case 'changelog':
         await versionManager.loadWorkspaceMetadata();
         const changelog = await versionManager.generateChangelog();
-        console.log(changelog);
+        console.info(changelog);
         break;
 
       case 'report':
         await versionManager.loadWorkspaceMetadata();
-        console.log(versionManager.generateVersionReport());
+        console.info(versionManager.generateVersionReport());
         break;
 
       default:
-        console.log(`
+        console.info(`
 🏷️  Metadata Version Manager
 
 Usage:

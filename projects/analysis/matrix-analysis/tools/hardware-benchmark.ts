@@ -16,6 +16,6 @@ const endTime = performance.now();
 const duration = endTime - startTime;
 const throughput = ((iterations / duration) * 1000).toFixed(0);
 
-console.log(`🚀 Hardware-accelerated CRC32 throughput: ${throughput} MB/s`);
-console.log(`⏱️  Duration: ${duration.toFixed(2)}ms for ${iterations} iterations`);
-console.log(`📊 Buffer size: ${buffer.length} bytes`);
+console.info(`🚀 Hardware-accelerated CRC32 throughput: ${throughput} MB/s`);
+console.info(`⏱️  Duration: ${duration.toFixed(2)}ms for ${iterations} iterations`);
+console.info(`📊 Buffer size: ${buffer.length} bytes`);

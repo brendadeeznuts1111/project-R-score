@@ -237,8 +237,8 @@ export class LatestFixesCLI {
           );
           
           // Fixed: Now properly typed
-          console.log(result.changes);        // number
-          console.log(result.lastInsertRowid); // number
+          console.info(result.changes);        // number
+          console.info(result.lastInsertRowid); // number
         `,
         typesFixed: ['changes: number', 'lastInsertRowid: number'],
         benefit: 'No more undefined or Database instance confusion',
@@ -487,62 +487,62 @@ export class LatestEnhancedCLI {
    * Run complete latest fixes demonstration
    */
   async runLatestFixesDemo(): Promise<void> {
-    console.log('🔧 Latest Fixes Enhancement Demo');
-    console.log('='.repeat(60));
+    console.info('🔧 Latest Fixes Enhancement Demo');
+    console.info('='.repeat(60));
     
     // Demonstrate CSS parser fixes
-    console.log('\n🎨 CSS Parser Fixes:');
+    console.info('\n🎨 CSS Parser Fixes:');
     const cssResult = await this.fixesCLI.demonstrateCSSParserFixes();
-    console.log(`   CSS examples: ${cssResult.cssExamples.length}`);
+    console.info(`   CSS examples: ${cssResult.cssExamples.length}`);
     cssResult.cssExamples.forEach(example => {
-      console.log(`   ${example.name}: ${example.propertiesPreserved.length} properties preserved`);
-      console.log(`   Status: ${example.status}`);
+      console.info(`   ${example.name}: ${example.propertiesPreserved.length} properties preserved`);
+      console.info(`   Status: ${example.status}`);
     });
-    console.log(`   Properties fixed: ${cssResult.metrics.cssPropertiesFixed}`);
+    console.info(`   Properties fixed: ${cssResult.metrics.cssPropertiesFixed}`);
     
     // Demonstrate TypeScript types
-    console.log('\n🔷 TypeScript Types Fixes:');
+    console.info('\n🔷 TypeScript Types Fixes:');
     const typesResult = await this.fixesCLI.demonstrateTypeScriptTypes();
-    console.log(`   Type examples: ${typesResult.typeExamples.length}`);
+    console.info(`   Type examples: ${typesResult.typeExamples.length}`);
     typesResult.typeExamples.forEach(example => {
-      console.log(`   ${example.name}: ${example.typesFixed.length} types fixed`);
-      console.log(`   Status: ${example.status}`);
+      console.info(`   ${example.name}: ${example.typesFixed.length} types fixed`);
+      console.info(`   Status: ${example.status}`);
     });
-    console.log(`   Types added: ${typesResult.metrics.typeDefinitionsAdded}`);
+    console.info(`   Types added: ${typesResult.metrics.typeDefinitionsAdded}`);
     
     // Show comprehensive type definitions
-    console.log('\n📋 Comprehensive Type Definitions:');
+    console.info('\n📋 Comprehensive Type Definitions:');
     const typeDefs = this.fixesCLI.createComprehensiveTypeDefinitions();
-    console.log(`   Build types: ${Object.keys(typeDefs.buildTypes).length} definitions`);
-    console.log(`   Database types: ${Object.keys(typeDefs.databaseTypes).length} definitions`);
-    console.log(`   File types: ${Object.keys(typeDefs.fileTypes).length} definitions`);
-    console.log(`   CSS types: ${Object.keys(typeDefs.cssTypes).length} definitions`);
+    console.info(`   Build types: ${Object.keys(typeDefs.buildTypes).length} definitions`);
+    console.info(`   Database types: ${Object.keys(typeDefs.databaseTypes).length} definitions`);
+    console.info(`   File types: ${Object.keys(typeDefs.fileTypes).length} definitions`);
+    console.info(`   CSS types: ${Object.keys(typeDefs.cssTypes).length} definitions`);
     
     // Validate all fixes
-    console.log('\n✅ Fix Validation:');
+    console.info('\n✅ Fix Validation:');
     const validation = await this.fixesCLI.validateFixes();
-    console.log(`   Components validated: ${validation.validationResults.length}`);
+    console.info(`   Components validated: ${validation.validationResults.length}`);
     validation.validationResults.forEach(result => {
-      console.log(`   ${result.component}: ${result.status}`);
+      console.info(`   ${result.component}: ${result.status}`);
     });
-    console.log(`   Total issues fixed: ${validation.metrics.compilationErrorsFixed}`);
+    console.info(`   Total issues fixed: ${validation.metrics.compilationErrorsFixed}`);
     
     // Show comprehensive metrics
-    console.log('\n📊 Latest Fixes Metrics:');
+    console.info('\n📊 Latest Fixes Metrics:');
     const metrics = this.fixesCLI.getFixMetrics();
-    console.log(`   Total CSS properties fixed: ${metrics.totalCSSPropertiesFixed}`);
-    console.log(`   Total type definitions added: ${metrics.totalTypeDefinitionsAdded}`);
-    console.log(`   Total compilation errors fixed: ${metrics.totalCompilationErrorsFixed}`);
-    console.log(`   Developer experience score: ${metrics.averageDeveloperExperienceScore.toFixed(1)}/100`);
+    console.info(`   Total CSS properties fixed: ${metrics.totalCSSPropertiesFixed}`);
+    console.info(`   Total type definitions added: ${metrics.totalTypeDefinitionsAdded}`);
+    console.info(`   Total compilation errors fixed: ${metrics.totalCompilationErrorsFixed}`);
+    console.info(`   Developer experience score: ${metrics.averageDeveloperExperienceScore.toFixed(1)}/100`);
     
-    console.log('\n🎉 Latest Fixes Enhancement Complete!');
-    console.log('\n💡 Key Benefits Achieved:');
-    console.log('   🎨 CSS logical properties preserved with nested pseudo-elements');
-    console.log('   🔷 autoloadTsconfig and autoloadPackageJson types properly defined');
-    console.log('   🗄️ bun:sqlite .run() returns correct Changes object');
-    console.log('   📁 FileSink.write() includes Promise<number> return type');
-    console.log('   ✅ Enhanced IntelliSense and compile-time safety');
-    console.log('   🚀 Improved developer experience across all areas');
+    console.info('\n🎉 Latest Fixes Enhancement Complete!');
+    console.info('\n💡 Key Benefits Achieved:');
+    console.info('   🎨 CSS logical properties preserved with nested pseudo-elements');
+    console.info('   🔷 autoloadTsconfig and autoloadPackageJson types properly defined');
+    console.info('   🗄️ bun:sqlite .run() returns correct Changes object');
+    console.info('   📁 FileSink.write() includes Promise<number> return type');
+    console.info('   ✅ Enhanced IntelliSense and compile-time safety');
+    console.info('   🚀 Improved developer experience across all areas');
   }
 }
 

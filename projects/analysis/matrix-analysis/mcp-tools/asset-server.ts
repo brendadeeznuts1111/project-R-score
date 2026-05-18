@@ -55,9 +55,9 @@ export class AssetServer {
     // Load and validate manifest
     this.manifest = this.validateManifest(manifestJson);
 
-    console.log(`🚀 Asset Server initialized`);
-    console.log(`📦 Serving ${this.manifest.length} assets from manifest`);
-    console.log(`🔐 Integrity checks: ${this.config.cacheControl.immutable ? 'ENABLED' : 'DISABLED'}`);
+    console.info(`🚀 Asset Server initialized`);
+    console.info(`📦 Serving ${this.manifest.length} assets from manifest`);
+    console.info(`🔐 Integrity checks: ${this.config.cacheControl.immutable ? 'ENABLED' : 'DISABLED'}`);
   }
 
   private validatePort(port: number): number {
@@ -267,7 +267,7 @@ export class AssetServer {
 
     // Log requests in development
     if (this.config.development) {
-      console.log(`📡 ${req.method} ${url.pathname}`);
+      console.info(`📡 ${req.method} ${url.pathname}`);
     }
 
     // Handle health check
@@ -300,7 +300,7 @@ export class AssetServer {
     // Handle SPA fallback (serve index.html for non-asset routes)
     const indexAsset = this.manifest.find(a => a.path.endsWith('index.html'));
     if (indexAsset && !url.pathname.includes('.')) {
-      console.log(`🔄 SPA fallback: serving index.html for ${url.pathname}`);
+      console.info(`🔄 SPA fallback: serving index.html for ${url.pathname}`);
       return await this.handleAssetRequest(indexAsset, url, req);
     }
 
@@ -324,19 +324,19 @@ export class AssetServer {
       }
     });
 
-    console.log(`🚀 Asset server running on port ${this.config.port}`);
-    console.log(`📊 Health check: http://localhost:${this.config.port}/health`);
-    console.log(`📋 Manifest: http://localhost:${this.config.port}/manifest.json`);
+    console.info(`🚀 Asset server running on port ${this.config.port}`);
+    console.info(`📊 Health check: http://localhost:${this.config.port}/health`);
+    console.info(`📋 Manifest: http://localhost:${this.config.port}/manifest.json`);
 
     if (this.config.development) {
-      console.log(`🔧 Development mode: SPA fallback enabled`);
+      console.info(`🔧 Development mode: SPA fallback enabled`);
     }
   }
 
   public stop(): void {
     if (this.server) {
       this.server.stop();
-      console.log('👋 Asset server stopped');
+      console.info('👋 Asset server stopped');
     }
   }
 
@@ -377,13 +377,13 @@ if (import.meta.main) {
 
     // Graceful shutdown
     process.on('SIGINT', () => {
-      console.log('\n👋 Shutting down asset server...');
+      console.info('\n👋 Shutting down asset server...');
       server.stop();
       process.exit(0);
     });
 
     process.on('SIGTERM', () => {
-      console.log('\n👋 Shutting down asset server...');
+      console.info('\n👋 Shutting down asset server...');
       server.stop();
       process.exit(0);
     });
@@ -393,10 +393,10 @@ if (import.meta.main) {
 
     // Show stats
     const stats = server.getStats();
-    console.log(`📊 Asset Statistics:`);
-    console.log(`  Total assets: ${stats.totalAssets}`);
-    console.log(`  Total size: ${(stats.totalSize / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`  Asset types:`, Object.entries(stats.assetTypes).map(([type, count]) => `${type} (${count})`).join(', '));
+    console.info(`📊 Asset Statistics:`);
+    console.info(`  Total assets: ${stats.totalAssets}`);
+    console.info(`  Total size: ${(stats.totalSize / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`  Asset types:`, Object.entries(stats.assetTypes).map(([type, count]) => `${type} (${count})`).join(', '));
 
   } catch (error) {
     console.error('❌ Failed to start asset server:', error);

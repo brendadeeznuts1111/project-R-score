@@ -94,9 +94,9 @@ class MasterPerfCLI {
       // Output to console or file
       if (this.options.output) {
         await writeFile(this.options.output, output);
-        console.log(`✅ Performance report saved to: ${this.options.output}`);
+        console.info(`✅ Performance report saved to: ${this.options.output}`);
       } else {
-        console.log(output);
+        console.info(output);
       }
 
       // Always save full data to JSON file for archival
@@ -105,7 +105,7 @@ class MasterPerfCLI {
       await writeFile(jsonFile, formatter.generateJsonExport());
       
       if (this.options.verbose) {
-        console.log(`📊 Full data archived to: ${jsonFile}`);
+        console.info(`📊 Full data archived to: ${jsonFile}`);
       }
 
       // Show summary if verbose
@@ -123,7 +123,7 @@ class MasterPerfCLI {
    * Show help information
    */
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🚀 Master Performance CLI Tool
 
 Usage: bun run cli/master-perf-cli.ts [options]
@@ -178,25 +178,25 @@ Files Generated:
    * Show performance summary
    */
   private showSummary(metrics: any): void {
-    console.log('\n📊 Performance Summary');
-    console.log('====================');
+    console.info('\n📊 Performance Summary');
+    console.info('====================');
     
     // Extract key metrics (this would depend on your actual metrics structure)
     if (metrics.system) {
-      console.log(`System: ${metrics.system.os || 'Unknown'} (${metrics.system.arch || 'Unknown'})`);
+      console.info(`System: ${metrics.system.os || 'Unknown'} (${metrics.system.arch || 'Unknown'})`);
     }
     
     if (metrics.performance) {
-      console.log(`Memory Usage: ${metrics.performance.memoryUsed || 'N/A'} MB`);
-      console.log(`CPU Usage: ${metrics.performance.cpuUsage || 'N/A'}%`);
+      console.info(`Memory Usage: ${metrics.performance.memoryUsed || 'N/A'} MB`);
+      console.info(`CPU Usage: ${metrics.performance.cpuUsage || 'N/A'}%`);
     }
     
     if (metrics.bundles) {
-      console.log(`Bundle Count: ${Object.keys(metrics.bundles).length}`);
-      console.log(`Total Size: ${metrics.totalSize || 'N/A'} KB`);
+      console.info(`Bundle Count: ${Object.keys(metrics.bundles).length}`);
+      console.info(`Total Size: ${metrics.totalSize || 'N/A'} KB`);
     }
     
-    console.log(`Generated: ${new Date().toISOString()}`);
+    console.info(`Generated: ${new Date().toISOString()}`);
   }
 }
 

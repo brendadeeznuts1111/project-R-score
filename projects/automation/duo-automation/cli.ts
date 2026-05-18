@@ -309,18 +309,18 @@ class CLIErrorHandler {
     console.error('\n❌ Error:', error.message);
     
     if (suggestions.length > 0) {
-      console.log('\n💡 Suggested fixes:');
+      console.info('\n💡 Suggested fixes:');
       suggestions.forEach((suggestion, i) => {
-        console.log(`   ${i + 1}. ${suggestion}`);
+        console.info(`   ${i + 1}. ${suggestion}`);
       });
     }
     
     // Show follow-up suggestions
     const followUps = this.sessionManager.suggestFollowUp();
     if (followUps.length > 0) {
-      console.log('\n🔗 Related commands:');
+      console.info('\n🔗 Related commands:');
       followUps.forEach((suggestion, i) => {
-        console.log(`   ${i + 1}. ${suggestion}`);
+        console.info(`   ${i + 1}. ${suggestion}`);
       });
     }
   }
@@ -420,7 +420,7 @@ function showHelp(): void {
   const artifactStatus = '✅'; // Will be replaced by feature('ARTIFACT_INTEGRATION') ? '✅' : '❌'
   const ptyStatus = '✅'; // Will be replaced by feature('TERMINAL_PTY') ? '✅' : '❌'
   
-  console.log(`
+  console.info(`
 🚀 DuoPlus CLI v3.0 - Enhanced with Artifact System Integration
 
 USAGE:
@@ -513,15 +513,15 @@ async function main() {
   }
   
   // Show welcome banner
-  console.log('🚀 DuoPlus CLI v3.0 - Enhanced with Artifact System');
+  console.info('🚀 DuoPlus CLI v3.0 - Enhanced with Artifact System');
   
   // Check feature flags
   const ptyAvailable = true; // Will be replaced by feature('TERMINAL_PTY')
   const artifactAvailable = true; // Will be replaced by feature('ARTIFACT_INTEGRATION')
   
-  console.log(`   PTY Support: ${ptyAvailable ? '✅' : '❌'}`);
-  console.log(`   Artifact Integration: ${artifactAvailable ? '✅' : '❌'}`);
-  console.log(`   Build Features: ${getActiveFeatures()}\n`);
+  console.info(`   PTY Support: ${ptyAvailable ? '✅' : '❌'}`);
+  console.info(`   Artifact Integration: ${artifactAvailable ? '✅' : '❌'}`);
+  console.info(`   Build Features: ${getActiveFeatures()}\n`);
   
   // Route to appropriate mode
   if (ptyAvailable && !options.noPty && (options.interactive || args.length === 0)) {
@@ -544,7 +544,7 @@ async function main() {
  * Run in non-interactive mode
  */
 async function runNonInteractiveMode(args: string[], options: CLIOptions): Promise<void> {
-  console.log('📟 DuoPlus CLI v4.0 - Enhanced Mode\n');
+  console.info('📟 DuoPlus CLI v4.0 - Enhanced Mode\n');
   
   // Route to enhanced CLI if enhanced features are requested
   if (options.enhanced || options.matrix || options.docs) {
@@ -572,13 +572,13 @@ async function runNonInteractiveMode(args: string[], options: CLIOptions): Promi
   if (options.artifactIntegration) {
     await runArtifactCommands(args);
   } else {
-    console.log('📋 Available Options:');
-    console.log('   --enhanced, -e     : Enable enhanced CLI with matrix & docs');
-    console.log('   --matrix, -m       : Show scope matrix');
-    console.log('   --docs, -d         : Access documentation system');
-    console.log('   --artifact-integration, -a : Enable artifact system');
-    console.log('');
-    console.log('💡 Try: --enhanced for full featured CLI');
+    console.info('📋 Available Options:');
+    console.info('   --enhanced, -e     : Enable enhanced CLI with matrix & docs');
+    console.info('   --matrix, -m       : Show scope matrix');
+    console.info('   --docs, -d         : Access documentation system');
+    console.info('   --artifact-integration, -a : Enable artifact system');
+    console.info('');
+    console.info('💡 Try: --enhanced for full featured CLI');
   }
 }
 
@@ -591,17 +591,17 @@ async function runArtifactCommands(args: string[]): Promise<void> {
   if (args.includes('--search') || args.includes('-s')) {
     const searchArgs = args.filter(arg => arg !== '--search' && arg !== '-s');
     // Note: These methods need to be made public in DuoPlusTerminalShell
-    console.log('Search functionality requires public method access in DuoPlusTerminalShell');
+    console.info('Search functionality requires public method access in DuoPlusTerminalShell');
   } else if (args.includes('--validate') || args.includes('-v')) {
     const validateArgs = args.filter(arg => arg !== '--validate' && arg !== '-v');
-    console.log('Validate functionality requires public method access in DuoPlusTerminalShell');
+    console.info('Validate functionality requires public method access in DuoPlusTerminalShell');
   } else if (args.includes('--stats')) {
-    console.log('Stats functionality requires public method access in DuoPlusTerminalShell');
+    console.info('Stats functionality requires public method access in DuoPlusTerminalShell');
   } else if (args.includes('--help')) {
     showArtifactHelp();
   } else {
-    console.log('ℹ️  No command specified');
-    console.log('   Use --search, --validate, --stats, or --help');
+    console.info('ℹ️  No command specified');
+    console.info('   Use --search, --validate, --stats, or --help');
   }
 }
 
@@ -609,7 +609,7 @@ async function runArtifactCommands(args: string[]): Promise<void> {
  * Show artifact-specific help
  */
 function showArtifactHelp(): void {
-  console.log(`
+  console.info(`
 🔍 Artifact System Commands:
 
 SEARCH OPTIONS:

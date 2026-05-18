@@ -238,23 +238,23 @@ const server = serve({
   }
 });
 
-console.log('💰 API MARKETPLACE SERVER STARTED');
-console.log(`🌐 Server: http://${HOST}:${PORT}`);
-console.log('📊 Identity Resolution: POST /v1/identity');
-console.log('🛡️ KYC Compliance: POST /v1/kyc');
-console.log('📈 Metrics: GET /v1/metrics');
-console.log('📋 Status: GET /v1/status');
-console.log('✅ DuoPlus API Marketplace - Revenue Engine Active!');
+console.info('💰 API MARKETPLACE SERVER STARTED');
+console.info(`🌐 Server: http://${HOST}:${PORT}`);
+console.info('📊 Identity Resolution: POST /v1/identity');
+console.info('🛡️ KYC Compliance: POST /v1/kyc');
+console.info('📈 Metrics: GET /v1/metrics');
+console.info('📋 Status: GET /v1/status');
+console.info('✅ DuoPlus API Marketplace - Revenue Engine Active!');
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('🛑 Marketplace server shutting down gracefully...');
+  console.info('🛑 Marketplace server shutting down gracefully...');
   server.stop();
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
-  console.log('🛑 Marketplace server shutting down gracefully...');
+  console.info('🛑 Marketplace server shutting down gracefully...');
   server.stop();
   process.exit(0);
 });

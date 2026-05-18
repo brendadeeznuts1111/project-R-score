@@ -201,7 +201,7 @@ export class IntelligentAutoScaler {
   private async adjustBatchProcessing(batchSize: number): Promise<void> {
     // Update configuration with actual value assignment
     process.env.BATCH_SIZE = batchSize.toString();
-    console.log(`[AutoScaler] Adjusted batch size to ${batchSize}`);
+    console.info(`[AutoScaler] Adjusted batch size to ${batchSize}`);
   }
 
   /**
@@ -209,7 +209,7 @@ export class IntelligentAutoScaler {
    */
   private updateActionDelays(delay: number): void {
     process.env.PERFORMANCE_ACTION_DELAY_MS = delay.toString();
-    console.log(`[AutoScaler] Updated action delay to ${delay}ms`);
+    console.info(`[AutoScaler] Updated action delay to ${delay}ms`);
   }
 
   /**
@@ -218,15 +218,15 @@ export class IntelligentAutoScaler {
   private async executeScaling(decision: ScalingDecision): Promise<void> {
     switch (decision.action) {
       case 'scale_up':
-        console.log(`[AutoScaler] Scaling up by ${decision.percentage}%: ${decision.reason}`);
+        console.info(`[AutoScaler] Scaling up by ${decision.percentage}%: ${decision.reason}`);
         await this.scaleUp(decision.percentage);
         break;
       case 'scale_down':
-        console.log(`[AutoScaler] Scaling down by ${decision.percentage}%: ${decision.reason}`);
+        console.info(`[AutoScaler] Scaling down by ${decision.percentage}%: ${decision.reason}`);
         await this.scaleDown(decision.percentage);
         break;
       case 'maintain':
-        console.log(`[AutoScaler] Maintaining current state: ${decision.reason}`);
+        console.info(`[AutoScaler] Maintaining current state: ${decision.reason}`);
         break;
     }
   }
@@ -235,14 +235,14 @@ export class IntelligentAutoScaler {
     // Implementation for scaling up resources
     const currentProxies = parseInt(process.env.PROXY_COUNT || '10');
     const additionalProxies = Math.floor(currentProxies * (percentage / 100));
-    console.log(`[AutoScaler] Adding ${additionalProxies} proxies`);
+    console.info(`[AutoScaler] Adding ${additionalProxies} proxies`);
   }
 
   private async scaleDown(percentage: number): Promise<void> {
     // Implementation for scaling down resources
     const currentProxies = parseInt(process.env.PROXY_COUNT || '10');
     const removeProxies = Math.floor(currentProxies * (percentage / 100));
-    console.log(`[AutoScaler] Removing ${removeProxies} proxies`);
+    console.info(`[AutoScaler] Removing ${removeProxies} proxies`);
   }
 
   private async collectCurrentMetrics(): Promise<Map<string, number>> {

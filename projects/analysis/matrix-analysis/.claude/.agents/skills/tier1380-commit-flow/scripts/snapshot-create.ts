@@ -85,7 +85,7 @@ async function createTenantSnapshot(
 
 	// Col-89 safe log
 	const logLine = `Snapshot: ${filename} | Size: ${Math.round(bytes.byteLength / 1024)} KiB | SHA-256: ${sha256.slice(0, 16)}…`;
-	console.log(Bun.stringWidth(logLine) > 89 ? `${logLine.slice(0, 86)}…` : logLine);
+	console.info(Bun.stringWidth(logLine) > 89 ? `${logLine.slice(0, 86)}…` : logLine);
 
 	return { path, sha256, size: bytes.byteLength, filename };
 }
@@ -97,23 +97,23 @@ if (import.meta.main) {
 	const outputDir = args[1] || "./snapshots";
 
 	if (!tenant) {
-		console.log("Usage: snapshot-create.ts <tenant> [output-dir]");
+		console.info("Usage: snapshot-create.ts <tenant> [output-dir]");
 		process.exit(1);
 	}
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Snapshot Creator                   ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
-	console.log(`Creating snapshot for tenant: ${tenant}`);
-	console.log(`Output directory: ${outputDir}`);
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Snapshot Creator                   ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
+	console.info(`Creating snapshot for tenant: ${tenant}`);
+	console.info(`Output directory: ${outputDir}`);
+	console.info();
 
 	try {
 		const result = await createTenantSnapshot(tenant, outputDir);
 
 		// Output JSON for programmatic use
-		console.log(JSON.stringify(result));
+		console.info(JSON.stringify(result));
 
 		process.exit(0);
 	} catch (error) {

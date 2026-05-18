@@ -111,7 +111,7 @@ function parseArgs(args: string[]): CLIOptions {
 }
 
 function showHelp(): void {
-  console.log(`
+  console.info(`
 🔒 @fire22/security-audit - Enterprise Security Audit Tool
 
 USAGE:
@@ -165,14 +165,14 @@ For more information, visit: https://fire22.com/docs/security-audit
 }
 
 function showVersion(): void {
-  console.log('🔒 @fire22/security-audit v1.0.0');
-  console.log('Enterprise Security Audit Tool for Fantasy42-Fire22');
-  console.log('Built with Bun runtime and TypeScript');
+  console.info('🔒 @fire22/security-audit v1.0.0');
+  console.info('Enterprise Security Audit Tool for Fantasy42-Fire22');
+  console.info('Built with Bun runtime and TypeScript');
 }
 
 async function runAudit(options: CLIOptions): Promise<CLIResult> {
   try {
-    console.log('🔍 Starting Fantasy42 Enterprise Security Audit...\n');
+    console.info('🔍 Starting Fantasy42 Enterprise Security Audit...\n');
 
     const auditor = new EnhancedFantasy42SecurityAuditor();
     const auditOptions = {
@@ -203,7 +203,7 @@ async function runAudit(options: CLIOptions): Promise<CLIResult> {
       message = `❌ Security audit failed: ${summary.highIssues} high-severity issues found`;
     }
 
-    console.log(`\n${message}`);
+    console.info(`\n${message}`);
 
     return {
       success: exitCode === 0,
@@ -223,35 +223,35 @@ async function runAudit(options: CLIOptions): Promise<CLIResult> {
 }
 
 function displayResults(summary: any, fullResults: any): void {
-  console.log('\n📊 Enterprise Security Audit Results');
-  console.log('=====================================');
+  console.info('\n📊 Enterprise Security Audit Results');
+  console.info('=====================================');
 
-  console.log(`\n🎯 Overall Security Score: ${summary.overallScore}/100`);
-  console.log(`🚨 Risk Level: ${summary.riskLevel}`);
-  console.log(`⏱️  Execution Time: ${summary.executionTime}ms`);
+  console.info(`\n🎯 Overall Security Score: ${summary.overallScore}/100`);
+  console.info(`🚨 Risk Level: ${summary.riskLevel}`);
+  console.info(`⏱️  Execution Time: ${summary.executionTime}ms`);
 
-  console.log('\n📦 Package Summary:');
-  console.log(`   Total Packages: ${summary.totalPackages}`);
-  console.log(`   ✅ Secure: ${summary.securePackages}`);
-  console.log(`   ⚠️  Vulnerable: ${summary.vulnerablePackages}`);
+  console.info('\n📦 Package Summary:');
+  console.info(`   Total Packages: ${summary.totalPackages}`);
+  console.info(`   ✅ Secure: ${summary.securePackages}`);
+  console.info(`   ⚠️  Vulnerable: ${summary.vulnerablePackages}`);
 
-  console.log('\n🔍 Issues by Severity:');
-  console.log(`   🚨 Critical: ${summary.criticalIssues}`);
-  console.log(`   🔴 High: ${summary.highIssues}`);
-  console.log(`   🟡 Medium: ${summary.mediumIssues}`);
-  console.log(`   🟢 Low: ${summary.lowIssues}`);
+  console.info('\n🔍 Issues by Severity:');
+  console.info(`   🚨 Critical: ${summary.criticalIssues}`);
+  console.info(`   🔴 High: ${summary.highIssues}`);
+  console.info(`   🟡 Medium: ${summary.mediumIssues}`);
+  console.info(`   🟢 Low: ${summary.lowIssues}`);
 
   if (fullResults.recommendations?.length > 0) {
-    console.log('\n💡 Key Recommendations:');
+    console.info('\n💡 Key Recommendations:');
     fullResults.recommendations.forEach((rec: string, index: number) => {
-      console.log(`   ${index + 1}. ${rec}`);
+      console.info(`   ${index + 1}. ${rec}`);
     });
   }
 
   // Display top issues
   const issues = fullResults.issues || [];
   if (issues.length > 0) {
-    console.log('\n🚨 Top Security Issues:');
+    console.info('\n🚨 Top Security Issues:');
     const topIssues = issues
       .sort((a: any, b: any) => {
         const severityOrder = { CRITICAL: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
@@ -268,10 +268,10 @@ function displayResults(summary: any, fullResults: any): void {
             : issue.severity === 'MEDIUM'
               ? '🟡'
               : '🟢';
-      console.log(`   ${index + 1}. ${severityIcon} ${issue.code}: ${issue.title}`);
-      console.log(`      📍 ${issue.file || 'Unknown file'}`);
+      console.info(`   ${index + 1}. ${severityIcon} ${issue.code}: ${issue.title}`);
+      console.info(`      📍 ${issue.file || 'Unknown file'}`);
       if (issue.line) {
-        console.log(`      📝 Line ${issue.line}: ${issue.evidence?.substring(0, 60)}...`);
+        console.info(`      📝 Line ${issue.line}: ${issue.evidence?.substring(0, 60)}...`);
       }
     });
   }

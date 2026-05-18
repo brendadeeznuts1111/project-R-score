@@ -72,17 +72,17 @@ export function renderStatus(p: SystemProfile): void {
   const cyan = useColor ? (Bun as any).color("hsl(180, 60%, 55%)", "ansi-16m") : "\x1b[36m";
   const reset = "\x1b[0m";
 
-  console.log(`${gray}═══════════════════════════════════════════════════════════════${reset}`);
-  console.log(`${gold}  ▵ FACTORYWAGER SYSTEM PROBE v4.3.1${reset}`);
-  console.log(`${cyan}  ${p.platform.os} ${p.platform.arch} • ${p.platform.cpus} cores • OPTIMAL${reset}`);
-  console.log(`${gray}═══════════════════════════════════════════════════════════════${reset}`);
-  console.log(`  Bun: ${green}${p.runtime.bun}${reset} | PID: ${p.runtime.pid}`);
-  console.log(`  Memory: ${Math.round(p.memory.rss / 1024 / 1024)}MB RSS | ${Math.round(p.memory.heapUsed / 1024)}KB heap`);
-  console.log(`${gray}  Capabilities:${reset}`);
+  console.info(`${gray}═══════════════════════════════════════════════════════════════${reset}`);
+  console.info(`${gold}  ▵ FACTORYWAGER SYSTEM PROBE v4.3.1${reset}`);
+  console.info(`${cyan}  ${p.platform.os} ${p.platform.arch} • ${p.platform.cpus} cores • OPTIMAL${reset}`);
+  console.info(`${gray}═══════════════════════════════════════════════════════════════${reset}`);
+  console.info(`  Bun: ${green}${p.runtime.bun}${reset} | PID: ${p.runtime.pid}`);
+  console.info(`  Memory: ${Math.round(p.memory.rss / 1024 / 1024)}MB RSS | ${Math.round(p.memory.heapUsed / 1024)}KB heap`);
+  console.info(`${gray}  Capabilities:${reset}`);
   Object.entries(p.capabilities).forEach(([k, v]) => {
-    console.log(`    ${v ? green + '✓' : gray + '○'}${reset} ${k}${v ? '' : gray + ' (fallback)' + reset}`);
+    console.info(`    ${v ? green + '✓' : gray + '○'}${reset} ${k}${v ? '' : gray + ' (fallback)' + reset}`);
   });
-  console.log(`${gray}═══════════════════════════════════════════════════════════════${reset}`);
+  console.info(`${gray}═══════════════════════════════════════════════════════════════${reset}`);
 }
 
 if (import.meta.main) getSystemProfile().then(renderStatus);

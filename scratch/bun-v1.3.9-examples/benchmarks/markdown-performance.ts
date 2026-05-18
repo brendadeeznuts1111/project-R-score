@@ -21,7 +21,7 @@ This is a **small** markdown document with some *formatting*.
 - Item 3
 
 \`\`\`javascript
-console.log("Hello");
+console.info("Hello");
 \`\`\``,
 
   medium: `# Performance Benchmarks
@@ -128,7 +128,7 @@ import { Bun } from "bun";
 
 const markdown = "# Hello World\\n\\nThis is **bold** text.";
 const html = Bun.markdown.html(markdown);
-console.log(html);
+console.info(html);
 // Output: <h1>Hello World</h1><p>This is <strong>bold</strong> text.</p>
 \`\`\`
 
@@ -199,12 +199,12 @@ function formatTime(ms: number): string {
 
 // Main benchmark
 async function runBenchmark() {
-  console.log("=".repeat(70));
-  console.log("Bun v1.3.9 Markdown Performance Benchmarks");
-  console.log("=".repeat(70));
-  console.log(`Bun version: ${Bun.version}`);
-  console.log(`Platform: ${process.platform} ${process.arch}`);
-  console.log("");
+  console.info("=".repeat(70));
+  console.info("Bun v1.3.9 Markdown Performance Benchmarks");
+  console.info("=".repeat(70));
+  console.info(`Bun version: ${Bun.version}`);
+  console.info(`Platform: ${process.platform} ${process.arch}`);
+  console.info("");
   
   const ITERATIONS = {
     small: 100_000,
@@ -212,8 +212,8 @@ async function runBenchmark() {
     large: 1_000,
   };
   
-  console.log("📊 Markdown-to-HTML Rendering (Bun.markdown.html)");
-  console.log("-".repeat(70));
+  console.info("📊 Markdown-to-HTML Rendering (Bun.markdown.html)");
+  console.info("-".repeat(70));
   
   for (const [size, markdown] of Object.entries(MARKDOWN_DOCS)) {
     const iterations = ITERATIONS[size as keyof typeof ITERATIONS];
@@ -225,12 +225,12 @@ async function runBenchmark() {
     const avgTime = time / iterations;
     const chars = markdown.length;
     
-    console.log(`${size.padEnd(8)} | ${formatTime(avgTime).padEnd(12)} | ${chars.toLocaleString().padStart(6)} chars | ${iterations.toLocaleString()} iterations`);
+    console.info(`${size.padEnd(8)} | ${formatTime(avgTime).padEnd(12)} | ${chars.toLocaleString().padStart(6)} chars | ${iterations.toLocaleString()} iterations`);
   }
   
-  console.log("");
-  console.log("⚛️  React Component Rendering (Bun.markdown.react)");
-  console.log("-".repeat(70));
+  console.info("");
+  console.info("⚛️  React Component Rendering (Bun.markdown.react)");
+  console.info("-".repeat(70));
   
   // Note: React rendering is more complex, so fewer iterations
   for (const [size, markdown] of Object.entries(MARKDOWN_DOCS)) {
@@ -244,27 +244,27 @@ async function runBenchmark() {
       const avgTime = time / iterations;
       const chars = markdown.length;
       
-      console.log(`${size.padEnd(8)} | ${formatTime(avgTime).padEnd(12)} | ${chars.toLocaleString().padStart(6)} chars | ${iterations.toLocaleString()} iterations`);
+      console.info(`${size.padEnd(8)} | ${formatTime(avgTime).padEnd(12)} | ${chars.toLocaleString().padStart(6)} chars | ${iterations.toLocaleString()} iterations`);
     } catch (e) {
-      console.log(`${size.padEnd(8)} | Error: ${e}`);
+      console.info(`${size.padEnd(8)} | Error: ${e}`);
     }
   }
   
-  console.log("");
-  console.log("=".repeat(70));
-  console.log("EXPECTED IMPROVEMENTS (v1.3.9)");
-  console.log("=".repeat(70));
-  console.log("• Small documents:   ~28% faster (React renderer)");
-  console.log("• Medium documents:  ~7% faster (React renderer)");
-  console.log("• Large documents:   ~7.4% faster (React renderer)");
-  console.log("• HTML escaping:     3-15% faster (SIMD acceleration)");
-  console.log("• String allocations: 40% reduction");
-  console.log("• Heap size:         6% reduction");
-  console.log("");
+  console.info("");
+  console.info("=".repeat(70));
+  console.info("EXPECTED IMPROVEMENTS (v1.3.9)");
+  console.info("=".repeat(70));
+  console.info("• Small documents:   ~28% faster (React renderer)");
+  console.info("• Medium documents:  ~7% faster (React renderer)");
+  console.info("• Large documents:   ~7.4% faster (React renderer)");
+  console.info("• HTML escaping:     3-15% faster (SIMD acceleration)");
+  console.info("• String allocations: 40% reduction");
+  console.info("• Heap size:         6% reduction");
+  console.info("");
   
   // Test HTML escaping performance specifically
-  console.log("🔍 HTML Escaping Performance Test");
-  console.log("-".repeat(70));
+  console.info("🔍 HTML Escaping Performance Test");
+  console.info("-".repeat(70));
   
   const escapingTest = "This has & < > \" characters that need escaping!".repeat(1000);
   const iterations = 10_000;
@@ -276,11 +276,11 @@ async function runBenchmark() {
   );
   const avgEscapeTime = escapeTime / iterations;
   
-  console.log(`Average time per render: ${formatTime(avgEscapeTime)}`);
-  console.log(`Document size: ${escapingTest.length.toLocaleString()} characters`);
-  console.log(`Special chars: ${(escapingTest.match(/[&<>"]/g) || []).length.toLocaleString()}`);
-  console.log("");
-  console.log("Note: SIMD acceleration is most noticeable with many special characters.");
+  console.info(`Average time per render: ${formatTime(avgEscapeTime)}`);
+  console.info(`Document size: ${escapingTest.length.toLocaleString()} characters`);
+  console.info(`Special chars: ${(escapingTest.match(/[&<>"]/g) || []).length.toLocaleString()}`);
+  console.info("");
+  console.info("Note: SIMD acceleration is most noticeable with many special characters.");
 }
 
 runBenchmark().catch(console.error);

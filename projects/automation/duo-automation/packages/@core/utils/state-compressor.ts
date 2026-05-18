@@ -462,7 +462,7 @@ if (import.meta.main) {
   
   if (args[0] === 'demo') {
     // Demo with 1000 agent states
-    console.log('=== State Compression Demo ===');
+    console.info('=== State Compression Demo ===');
     
     const states = new Map(Array.from({ length: 1000 }, (_, i) => [
       `AG${i}`,
@@ -473,11 +473,11 @@ if (import.meta.main) {
     const compressed = BunStateCompressor.batchCompress(states);
     const end = Bun.nanoseconds();
     
-    console.log(`Compressed ${compressed.results.size} states`);
-    console.log(`Original: ${(compressed.totalOriginalSize / 1024).toFixed(2)} KB`);
-    console.log(`Compressed: ${(compressed.totalCompressedSize / 1024).toFixed(2)} KB`);
-    console.log(`Ratio: ${compressed.averageCompressionRatio.toFixed(2)}x`);
-    console.log(`Time: ${((end - start) / 1e6).toFixed(2)}ms`);
+    console.info(`Compressed ${compressed.results.size} states`);
+    console.info(`Original: ${(compressed.totalOriginalSize / 1024).toFixed(2)} KB`);
+    console.info(`Compressed: ${(compressed.totalCompressedSize / 1024).toFixed(2)} KB`);
+    console.info(`Ratio: ${compressed.averageCompressionRatio.toFixed(2)}x`);
+    console.info(`Time: ${((end - start) / 1e6).toFixed(2)}ms`);
   } else if (args[0] === 'compare') {
     // Compare algorithms
     const testData = {
@@ -488,25 +488,25 @@ if (import.meta.main) {
     };
     
     const comparison = BunStateCompressor.compareAlgorithms(testData);
-    console.log('=== Algorithm Comparison ===');
-    console.log(`GZIP: ${comparison.gzip.compressionRatio.toFixed(2)}x ratio, ${comparison.gzip.compressionTime.toFixed(2)}ms`);
-    console.log(`ZSTD: ${comparison.zstd.compressionRatio.toFixed(2)}x ratio, ${comparison.zstd.compressionTime.toFixed(2)}ms`);
-    console.log(`Winner: ${comparison.winner} (${comparison.speedup.toFixed(2)}x better)`);
+    console.info('=== Algorithm Comparison ===');
+    console.info(`GZIP: ${comparison.gzip.compressionRatio.toFixed(2)}x ratio, ${comparison.gzip.compressionTime.toFixed(2)}ms`);
+    console.info(`ZSTD: ${comparison.zstd.compressionRatio.toFixed(2)}x ratio, ${comparison.zstd.compressionTime.toFixed(2)}ms`);
+    console.info(`Winner: ${comparison.winner} (${comparison.speedup.toFixed(2)}x better)`);
   } else if (args[0] === 'base64') {
     // Base64 demo
     const data = { message: 'Hello, DuoPlus!', timestamp: Date.now() };
     const compressed = BunStateCompressor.compressToBase64(data);
     const decompressed = BunStateCompressor.decompressFromBase64(compressed);
     
-    console.log('=== Base64 Compression Demo ===');
-    console.log(`Original: ${JSON.stringify(data)}`);
-    console.log(`Compressed (base64): ${compressed.substring(0, 50)}...`);
-    console.log(`Decompressed: ${JSON.stringify(decompressed)}`);
-    console.log(`Match: ${JSON.stringify(data) === JSON.stringify(decompressed) ? '✅' : '❌'}`);
+    console.info('=== Base64 Compression Demo ===');
+    console.info(`Original: ${JSON.stringify(data)}`);
+    console.info(`Compressed (base64): ${compressed.substring(0, 50)}...`);
+    console.info(`Decompressed: ${JSON.stringify(decompressed)}`);
+    console.info(`Match: ${JSON.stringify(data) === JSON.stringify(decompressed) ? '✅' : '❌'}`);
   } else {
-    console.log('Usage:');
-    console.log('  bun state-compressor.ts demo');
-    console.log('  bun state-compressor.ts compare');
-    console.log('  bun state-compressor.ts base64');
+    console.info('Usage:');
+    console.info('  bun state-compressor.ts demo');
+    console.info('  bun state-compressor.ts compare');
+    console.info('  bun state-compressor.ts base64');
   }
 }

@@ -179,13 +179,13 @@ async function verifyRoutes(probePort: number): Promise<void> {
 }
 
 async function main() {
-  console.log('Dashboard preflight');
-  console.log(`cwd=${ROOT}`);
-  console.log(`bun=${Bun.version}`);
-  console.log(`revision=${readBunRevision()}`);
-  console.log(`platform=${process.platform}`);
-  console.log(`arch=${process.arch}`);
-  console.log('');
+  console.info('Dashboard preflight');
+  console.info(`cwd=${ROOT}`);
+  console.info(`bun=${Bun.version}`);
+  console.info(`revision=${readBunRevision()}`);
+  console.info(`platform=${process.platform}`);
+  console.info(`arch=${process.arch}`);
+  console.info('');
 
   const bunParsed = parseSemver(Bun.version);
   if (compareSemver(bunParsed, MIN_BUN) < 0) {
@@ -245,13 +245,13 @@ async function main() {
 
   for (const check of checks) {
     const prefix = check.level === 'PASS' ? 'PASS' : check.level === 'WARN' ? 'WARN' : 'FAIL';
-    console.log(`${prefix} ${check.name}: ${check.detail}`);
+    console.info(`${prefix} ${check.name}: ${check.detail}`);
   }
 
   const failCount = checks.filter((c) => c.level === 'FAIL').length;
   const warnCount = checks.filter((c) => c.level === 'WARN').length;
-  console.log('');
-  console.log(`Summary: ${checks.length - failCount - warnCount} pass, ${warnCount} warn, ${failCount} fail`);
+  console.info('');
+  console.info(`Summary: ${checks.length - failCount - warnCount} pass, ${warnCount} warn, ${failCount} fail`);
   process.exit(failCount > 0 ? 1 : 0);
 }
 

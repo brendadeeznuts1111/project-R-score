@@ -3,8 +3,8 @@
 // Enhanced Demo script for HMR Event Tracker with advanced table formatting
 import { CustomProxyServer, exportHMRData } from "./hmr-event-tracker";
 
-console.log("🚀 Enhanced HMR Event Tracker Demo");
-console.log("==================================\n");
+console.info("🚀 Enhanced HMR Event Tracker Demo");
+console.info("==================================\n");
 
 // Create servers with different configurations
 const servers = [
@@ -62,15 +62,15 @@ if (servers[2]) {
   });
 }
 
-console.log("📊 Enhanced Server Overview with HMR Status:");
+console.info("📊 Enhanced Server Overview with HMR Status:");
 // Use enhanced formatting with sorting and computed columns
 const serverTable = CustomProxyServer.formatServerTable(servers, {
   sortBy: "connections",
   includeComputed: true,
 });
-console.log(Bun.inspect.table(serverTable, { colors: true }));
+console.info(Bun.inspect.table(serverTable, { colors: true }));
 
-console.log("\n📈 Detailed HMR Events (Sorted by Duration):");
+console.info("\n📈 Detailed HMR Events (Sorted by Duration):");
 const hmrEventsTable = devServer
   ? CustomProxyServer.formatHMREventsTable(devServer, {
       sortBy: "duration",
@@ -78,18 +78,18 @@ const hmrEventsTable = devServer
       limit: 10,
     })
   : [];
-console.log(Bun.inspect.table(hmrEventsTable, { colors: true }));
+console.info(Bun.inspect.table(hmrEventsTable, { colors: true }));
 
-console.log("\n🔍 Error Events Only:");
+console.info("\n🔍 Error Events Only:");
 const errorEventsTable = devServer
   ? CustomProxyServer.formatHMREventsTable(devServer, {
       filterBy: ["error"],
       includeDetails: true,
     })
   : [];
-console.log(Bun.inspect.table(errorEventsTable, { colors: true }));
+console.info(Bun.inspect.table(errorEventsTable, { colors: true }));
 
-console.log("\n📊 Server Health Overview:");
+console.info("\n📊 Server Health Overview:");
 const healthTable = CustomProxyServer.formatServerTable(servers, {
   columns: [
     "name",
@@ -102,9 +102,9 @@ const healthTable = CustomProxyServer.formatServerTable(servers, {
   ],
   includeComputed: true,
 });
-console.log(Bun.inspect.table(healthTable, { colors: true }));
+console.info(Bun.inspect.table(healthTable, { colors: true }));
 
-console.log("\n🔄 Recent Events (Last 5, Newest First):");
+console.info("\n🔄 Recent Events (Last 5, Newest First):");
 const recentEventsTable = devServer
   ? CustomProxyServer.formatHMREventsTable(devServer, {
       sortBy: "timestamp",
@@ -112,11 +112,11 @@ const recentEventsTable = devServer
       includeDetails: false,
     })
   : [];
-console.log(Bun.inspect.table(recentEventsTable, { colors: true }));
+console.info(Bun.inspect.table(recentEventsTable, { colors: true }));
 
-console.log("\n📊 HMR Statistics (Nested Object Display):");
+console.info("\n📊 HMR Statistics (Nested Object Display):");
 if (devServer) {
-  console.log(
+  console.info(
     Bun.inspect(devServer.hmrStats, {
       colors: true,
       depth: 3,
@@ -126,19 +126,19 @@ if (devServer) {
   );
 }
 
-console.log("\n📤 HMR Data Export (JSON):");
+console.info("\n📤 HMR Data Export (JSON):");
 if (devServer) {
-  console.log(exportHMRData(devServer, "json"));
+  console.info(exportHMRData(devServer, "json"));
 }
 
-console.log("\n📤 HMR Data Export (Markdown Table):");
+console.info("\n📤 HMR Data Export (Markdown Table):");
 if (devServer) {
-  console.log(exportHMRData(devServer, "markdown"));
+  console.info(exportHMRData(devServer, "markdown"));
 }
 
 // Real-time monitoring simulation
-console.log("\n🔄 Starting Real-time Monitoring Demo...");
-console.log("=====================================");
+console.info("\n🔄 Starting Real-time Monitoring Demo...");
+console.info("=====================================");
 
 let eventCount = 0;
 const maxEvents = 15;
@@ -146,15 +146,15 @@ const maxEvents = 15;
 const simulationInterval = setInterval(() => {
   if (eventCount >= maxEvents) {
     clearInterval(simulationInterval);
-    console.log("\n✅ Real-time simulation complete!");
+    console.info("\n✅ Real-time simulation complete!");
 
     // Show final statistics
-    console.log("\n📊 Final Server Status:");
+    console.info("\n📊 Final Server Status:");
     const finalTable = CustomProxyServer.formatServerTable(servers, {
       includeComputed: true,
       sortBy: "HMR Total",
     });
-    console.log(Bun.inspect.table(finalTable, { colors: true }));
+    console.info(Bun.inspect.table(finalTable, { colors: true }));
 
     return;
   }
@@ -189,13 +189,13 @@ const simulationInterval = setInterval(() => {
 
   // Update display every 3 events
   if (eventCount % 3 === 0) {
-    console.log(`\n📊 Update ${Math.floor(eventCount / 3)}:`);
+    console.info(`\n📊 Update ${Math.floor(eventCount / 3)}:`);
     const updateTable = CustomProxyServer.formatServerTable(servers, {
       columns: ["name", "HMR Total", "Last HMR", "Health", "Status"],
       includeComputed: true,
     });
-    console.log(Bun.inspect.table(updateTable, { colors: true }));
+    console.info(Bun.inspect.table(updateTable, { colors: true }));
   }
 }, 800);
 
-console.log("📡 Monitoring HMR events across all servers...");
+console.info("📡 Monitoring HMR events across all servers...");

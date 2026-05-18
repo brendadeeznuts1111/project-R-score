@@ -17,19 +17,19 @@ switch (command) {
     
   case "status":
     const status = configFreeze.isConfigurationFrozen();
-    console.log(status ? "🔒 FROZEN" : "🔓 Unfrozen");
+    console.info(status ? "🔒 FROZEN" : "🔓 Unfrozen");
     
     const freezeStatus = configFreeze.getFreezeStatus();
     if (freezeStatus) {
-      console.log(`Reason: ${freezeStatus.reason}`);
-      console.log(`Since: ${freezeStatus.timestamp}`);
+      console.info(`Reason: ${freezeStatus.reason}`);
+      console.info(`Since: ${freezeStatus.timestamp}`);
     }
     break;
     
   default:
-    console.log("Usage:");
-    console.log("  bun run config-freeze-cli.ts freeze [reason]");
-    console.log("  bun run config-freeze-cli.ts unfreeze");
-    console.log("  bun run config-freeze-cli.ts status");
+    console.info("Usage:");
+    console.info("  bun run config-freeze-cli.ts freeze [reason]");
+    console.info("  bun run config-freeze-cli.ts unfreeze");
+    console.info("  bun run config-freeze-cli.ts status");
     process.exit(1);
 }

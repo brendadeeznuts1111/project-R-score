@@ -248,9 +248,9 @@ function createSSEServer(port: number) {
 // SSE Client Demo
 // =============================================================================
 async function demoSSEClient(url: string, duration: number = 5000) {
-	console.log("\n" + "=".repeat(60));
-	console.log("📡 SSE CLIENT - Consuming odds stream");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("📡 SSE CLIENT - Consuming odds stream");
+	console.info("=".repeat(60));
 	
 	const controller = new AbortController();
 	const timeout = setTimeout(() => controller.abort(), duration);
@@ -267,8 +267,8 @@ async function demoSSEClient(url: string, duration: number = 5000) {
 		const decoder = new TextDecoder();
 		let eventCount = 0;
 		
-		console.log(`\n🔌 Connected to ${url}`);
-		console.log(`⏱️ Streaming for ${duration / 1000}s...\n`);
+		console.info(`\n🔌 Connected to ${url}`);
+		console.info(`⏱️ Streaming for ${duration / 1000}s...\n`);
 		
 		while (true) {
 			const { done, value } = await reader.read();
@@ -281,13 +281,13 @@ async function demoSSEClient(url: string, duration: number = 5000) {
 				if (line.startsWith("data: ")) {
 					eventCount++;
 					const data = line.slice(6);
-					console.log(`   ${eventCount}. data: ${data}`);
+					console.info(`   ${eventCount}. data: ${data}`);
 				}
 			}
 		}
 	} catch (e: any) {
 		if (e.name === "AbortError") {
-			console.log(`\n✅ Stream closed after ${duration / 1000}s`);
+			console.info(`\n✅ Stream closed after ${duration / 1000}s`);
 		} else {
 			throw e;
 		}
@@ -320,9 +320,9 @@ function parseSSELine(line: string): { event?: string; data?: any; id?: string }
 // Demo: Manual SSE Encoding
 // =============================================================================
 function demoSSEEncoding() {
-	console.log("=".repeat(60));
-	console.log("1. SSE MESSAGE ENCODING");
-	console.log("=".repeat(60));
+	console.info("=".repeat(60));
+	console.info("1. SSE MESSAGE ENCODING");
+	console.info("=".repeat(60));
 	
 	// Example 1: Odds update
 	const oddsData: OddsUpdate = {
@@ -331,8 +331,8 @@ function demoSSEEncoding() {
 		spread: { pinnacle: 1.91 }
 	};
 	
-	console.log("\n📦 Odds Update:");
-	console.log(encodeSSE(oddsData, "odds", "msg-001"));
+	console.info("\n📦 Odds Update:");
+	console.info(encodeSSE(oddsData, "odds", "msg-001"));
 	
 	// Example 2: Correlation update  
 	const corrData: CorrelationUpdate = {
@@ -342,17 +342,17 @@ function demoSSEEncoding() {
 		]
 	};
 	
-	console.log("📦 Correlation Update:");
-	console.log(encodeSSE(corrData, "correlation", "msg-002"));
+	console.info("📦 Correlation Update:");
+	console.info(encodeSSE(corrData, "correlation", "msg-002"));
 }
 
 // =============================================================================
 // Demo: Hash-based Message IDs
 // =============================================================================
 function demoMessageIds() {
-	console.log("=".repeat(60));
-	console.log("2. RAPIDHASH MESSAGE IDs");
-	console.log("=".repeat(60));
+	console.info("=".repeat(60));
+	console.info("2. RAPIDHASH MESSAGE IDs");
+	console.info("=".repeat(60));
 	
 	const messages = [
 		{ game: "Lakers-Celtics", type: "odds" },
@@ -360,10 +360,10 @@ function demoMessageIds() {
 		{ game: "Warriors-Suns", type: "odds" }
 	];
 	
-	console.log("\n📋 Message IDs using Bun.hash.rapidhash():");
+	console.info("\n📋 Message IDs using Bun.hash.rapidhash():");
 	messages.forEach((msg, i) => {
 		const id = hash.rapidhash(`${i}-${msg.game}-${Date.now()}`).toString(16);
-		console.log(`   ${msg.game}: id=${id.slice(0, 16)}...`);
+		console.info(`   ${msg.game}: id=${id.slice(0, 16)}...`);
 	});
 }
 
@@ -371,7 +371,7 @@ function demoMessageIds() {
 // Main
 // =============================================================================
 async function main() {
-	console.log("\n⚡ @dynamic-spy/kit v7.2 - SSE ODDS STREAM DEMO 📡\n");
+	console.info("\n⚡ @dynamic-spy/kit v7.2 - SSE ODDS STREAM DEMO 📡\n");
 	
 	const args = Bun.argv.slice(2);
 	const serverOnly = args.includes("--server");
@@ -382,20 +382,20 @@ async function main() {
 	demoMessageIds();
 	
 	// Start server
-	console.log("\n" + "=".repeat(60));
-	console.log("3. SSE SERVER");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("3. SSE SERVER");
+	console.info("=".repeat(60));
 	
 	const sse = createSSEServer(port);
-	console.log(`\n🚀 SSE server running on http://localhost:${port}`);
-	console.log(`   Stream: http://localhost:${port}/stream`);
-	console.log(`   Demo:   http://localhost:${port}/demo`);
-	console.log(`   Stats:  http://localhost:${port}/stats`);
+	console.info(`\n🚀 SSE server running on http://localhost:${port}`);
+	console.info(`   Stream: http://localhost:${port}/stream`);
+	console.info(`   Demo:   http://localhost:${port}/demo`);
+	console.info(`   Stats:  http://localhost:${port}/stats`);
 	
 	if (serverOnly) {
-		console.log(`\n📡 Server mode - press Ctrl+C to stop`);
-		console.log(`\nTest with:`);
-		console.log(`   curl -N http://localhost:${port}/stream`);
+		console.info(`\n📡 Server mode - press Ctrl+C to stop`);
+		console.info(`\nTest with:`);
+		console.info(`   curl -N http://localhost:${port}/stream`);
 		return;
 	}
 	
@@ -406,10 +406,10 @@ async function main() {
 	// Cleanup
 	sse.stop();
 	
-	console.log("\n" + "=".repeat(60));
-	console.log("✅ SSE DEMO COMPLETE");
-	console.log("=".repeat(60));
-	console.log(`
+	console.info("\n" + "=".repeat(60));
+	console.info("✅ SSE DEMO COMPLETE");
+	console.info("=".repeat(60));
+	console.info(`
 📡 SSE Format:
    event: odds
    id: abc123

@@ -9,8 +9,8 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 
-console.log("🚀 Bun v1.3.9: Script Orchestration Demo\n");
-console.log("=" .repeat(70));
+console.info("🚀 Bun v1.3.9: Script Orchestration Demo\n");
+console.info("=" .repeat(70));
 
 // Create a temporary workspace for the demo
 const demoDir = join(tmpdir(), `bun-parallel-demo-${Date.now()}`);
@@ -67,9 +67,9 @@ async function cleanup() {
 }
 
 async function demo1_basicParallel() {
-  console.log("\n📦 Demo 1: Basic Parallel Execution");
-  console.log("Command: bun run --parallel build:js build:css build:types");
-  console.log("-".repeat(70));
+  console.info("\n📦 Demo 1: Basic Parallel Execution");
+  console.info("Command: bun run --parallel build:js build:css build:types");
+  console.info("-".repeat(70));
   
   const proc = Bun.spawn({
     cmd: ["bun", "run", "--parallel", "build:js", "build:css", "build:types"],
@@ -79,13 +79,13 @@ async function demo1_basicParallel() {
   });
   
   await proc.exited;
-  console.log("\n✅ Parallel builds complete! (All ran simultaneously)\n");
+  console.info("\n✅ Parallel builds complete! (All ran simultaneously)\n");
 }
 
 async function demo2_basicSequential() {
-  console.log("\n📦 Demo 2: Sequential Execution");
-  console.log("Command: bun run --sequential lint:js lint:ts");
-  console.log("-".repeat(70));
+  console.info("\n📦 Demo 2: Sequential Execution");
+  console.info("Command: bun run --sequential lint:js lint:ts");
+  console.info("-".repeat(70));
   
   const proc = Bun.spawn({
     cmd: ["bun", "run", "--sequential", "lint:js", "lint:ts"],
@@ -95,13 +95,13 @@ async function demo2_basicSequential() {
   });
   
   await proc.exited;
-  console.log("\n✅ Sequential tasks complete! (Ran one after another)\n");
+  console.info("\n✅ Sequential tasks complete! (Ran one after another)\n");
 }
 
 async function demo3_globPatterns() {
-  console.log("\n📦 Demo 3: Glob Pattern Matching");
-  console.log("Command: bun run --parallel \"build:*\"");
-  console.log("-".repeat(70));
+  console.info("\n📦 Demo 3: Glob Pattern Matching");
+  console.info("Command: bun run --parallel \"build:*\"");
+  console.info("-".repeat(70));
   
   const proc = Bun.spawn({
     cmd: ["bun", "run", "--parallel", "build:*"],
@@ -111,13 +111,13 @@ async function demo3_globPatterns() {
   });
   
   await proc.exited;
-  console.log("\n✅ Glob pattern matched all 'build:*' scripts!\n");
+  console.info("\n✅ Glob pattern matched all 'build:*' scripts!\n");
 }
 
 async function demo4_workspaceParallel() {
-  console.log("\n📦 Demo 4: Workspace Parallel Execution");
-  console.log("Command: bun run --parallel --filter '*' build");
-  console.log("-".repeat(70));
+  console.info("\n📦 Demo 4: Workspace Parallel Execution");
+  console.info("Command: bun run --parallel --filter '*' build");
+  console.info("-".repeat(70));
   
   const proc = Bun.spawn({
     cmd: ["bun", "run", "--parallel", "--filter", "*", "build"],
@@ -127,13 +127,13 @@ async function demo4_workspaceParallel() {
   });
   
   await proc.exited;
-  console.log("\n✅ Workspace builds complete!\n");
+  console.info("\n✅ Workspace builds complete!\n");
 }
 
 async function demo5_multipleScriptsWorkspace() {
-  console.log("\n📦 Demo 5: Multiple Scripts Across Workspaces");
-  console.log("Command: bun run --parallel --filter '*' build test");
-  console.log("-".repeat(70));
+  console.info("\n📦 Demo 5: Multiple Scripts Across Workspaces");
+  console.info("Command: bun run --parallel --filter '*' build test");
+  console.info("-".repeat(70));
   
   const proc = Bun.spawn({
     cmd: ["bun", "run", "--parallel", "--filter", "*", "build", "test"],
@@ -143,14 +143,14 @@ async function demo5_multipleScriptsWorkspace() {
   });
   
   await proc.exited;
-  console.log("\n✅ Multiple scripts across workspaces complete!\n");
+  console.info("\n✅ Multiple scripts across workspaces complete!\n");
 }
 
 async function showKeyDifferences() {
-  console.log("\n" + "=".repeat(70));
-  console.log("🔑 Key Differences: --filter vs --parallel/--sequential");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("🔑 Key Differences: --filter vs --parallel/--sequential");
+  console.info("=".repeat(70));
+  console.info(`
 ┌─────────────────┬─────────────────────┬──────────────────────────────┐
 │ Feature         │ --filter            │ --parallel / --sequential    │
 ├─────────────────┼─────────────────────┼──────────────────────────────┤
@@ -164,10 +164,10 @@ async function showKeyDifferences() {
 }
 
 async function showCommandReference() {
-  console.log("\n" + "=".repeat(70));
-  console.log("📚 Command Reference");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("📚 Command Reference");
+  console.info("=".repeat(70));
+  console.info(`
 # Parallel execution (all scripts start immediately)
 bun run --parallel script1 script2 script3
 
@@ -213,7 +213,7 @@ async function main() {
     await showKeyDifferences();
     await showCommandReference();
     
-    console.log("\n✨ All demos complete!\n");
+    console.info("\n✨ All demos complete!\n");
   } catch (error) {
     console.error("❌ Error:", error);
   } finally {

@@ -75,7 +75,7 @@ export class AdvancedErrorHandler extends EventEmitter {
   }
 
   private initializeErrorHandling(): void {
-    console.log('🚨 Initializing Advanced Error Handler...');
+    console.info('🚨 Initializing Advanced Error Handler...');
 
     // Setup error classification system
     this.setupErrorClassification();
@@ -86,7 +86,7 @@ export class AdvancedErrorHandler extends EventEmitter {
     // Setup error analytics
     this.setupErrorAnalytics();
 
-    console.log('✅ Advanced Error Handler initialized');
+    console.info('✅ Advanced Error Handler initialized');
   }
 
   private setupErrorClassification(): void {
@@ -157,7 +157,7 @@ export class AdvancedErrorHandler extends EventEmitter {
 
   private setupRemoteReporting(): void {
     // Setup remote error reporting
-    console.log('📡 Setting up remote error reporting...');
+    console.info('📡 Setting up remote error reporting...');
 
     // Batch error reporting to reduce network calls
     this.errorBatch = [];
@@ -190,7 +190,7 @@ export class AdvancedErrorHandler extends EventEmitter {
       name: 'network-retry',
       condition: error => error.type === this.errorTypes.NETWORK,
       action: async error => {
-        console.log('🔄 Retrying network request...');
+        console.info('🔄 Retrying network request...');
         // Implement network retry logic
         await this.delay(1000);
         // Retry the failed request
@@ -204,7 +204,7 @@ export class AdvancedErrorHandler extends EventEmitter {
       name: 'token-refresh',
       condition: error => error.type === this.errorTypes.TOKEN_EXPIRED,
       action: async error => {
-        console.log('🔑 Refreshing authentication token...');
+        console.info('🔑 Refreshing authentication token...');
         // Implement token refresh logic
         await this.refreshToken();
       },
@@ -216,7 +216,7 @@ export class AdvancedErrorHandler extends EventEmitter {
       name: 'component-reload',
       condition: error => error.type === this.errorTypes.COMPONENT_ERROR,
       action: async error => {
-        console.log('🔄 Reloading component...');
+        console.info('🔄 Reloading component...');
         // Implement component reload logic
         await this.reloadComponent(error.context.component);
       },
@@ -228,7 +228,7 @@ export class AdvancedErrorHandler extends EventEmitter {
       name: 'websocket-reconnect',
       condition: error => error.type === this.errorTypes.WEBSOCKET_ERROR,
       action: async error => {
-        console.log('🔌 Reconnecting WebSocket...');
+        console.info('🔌 Reconnecting WebSocket...');
         // Implement WebSocket reconnection logic
         await this.reconnectWebSocket();
       },
@@ -240,7 +240,7 @@ export class AdvancedErrorHandler extends EventEmitter {
       name: 'data-recovery',
       condition: error => error.type === this.errorTypes.DATA_CORRUPTION,
       action: async error => {
-        console.log('💾 Recovering corrupted data...');
+        console.info('💾 Recovering corrupted data...');
         // Implement data recovery logic
         await this.recoverCorruptedData(error);
       },
@@ -425,7 +425,7 @@ export class AdvancedErrorHandler extends EventEmitter {
 
     for (const strategy of applicableStrategies) {
       try {
-        console.log(`🔧 Executing recovery strategy: ${strategy.name}`);
+        console.info(`🔧 Executing recovery strategy: ${strategy.name}`);
 
         const timeoutPromise = strategy.timeout
           ? this.timeout(strategy.timeout)
@@ -433,7 +433,7 @@ export class AdvancedErrorHandler extends EventEmitter {
 
         await Promise.race([strategy.action(errorReport), timeoutPromise]);
 
-        console.log(`✅ Recovery strategy ${strategy.name} completed`);
+        console.info(`✅ Recovery strategy ${strategy.name} completed`);
         break; // Stop at first successful recovery
       } catch (recoveryError) {
         console.error(`❌ Recovery strategy ${strategy.name} failed:`, recoveryError);
@@ -610,7 +610,7 @@ export class AdvancedErrorHandler extends EventEmitter {
         // Re-queue failed reports
         this.errorBatch.unshift(...batch);
       } else {
-        console.log(`📡 Reported ${batch.length} errors remotely`);
+        console.info(`📡 Reported ${batch.length} errors remotely`);
       }
     } catch (error) {
       console.error('❌ Error reporting failed:', error);
@@ -756,22 +756,22 @@ export class AdvancedErrorHandler extends EventEmitter {
 
   private async refreshToken(): Promise<void> {
     // Implementation for token refresh
-    console.log('🔑 Token refresh implementation needed');
+    console.info('🔑 Token refresh implementation needed');
   }
 
   private async reloadComponent(componentName?: string): Promise<void> {
     // Implementation for component reload
-    console.log(`🔄 Component reload implementation needed for: ${componentName}`);
+    console.info(`🔄 Component reload implementation needed for: ${componentName}`);
   }
 
   private async reconnectWebSocket(): Promise<void> {
     // Implementation for WebSocket reconnection
-    console.log('🔌 WebSocket reconnection implementation needed');
+    console.info('🔌 WebSocket reconnection implementation needed');
   }
 
   private async recoverCorruptedData(error: ErrorReport): Promise<void> {
     // Implementation for data recovery
-    console.log('💾 Data recovery implementation needed');
+    console.info('💾 Data recovery implementation needed');
   }
 
   // ============================================================================
@@ -820,7 +820,7 @@ export class AdvancedErrorHandler extends EventEmitter {
   clearErrorHistory(): void {
     this.errorHistory = [];
     this.errorReports.clear();
-    console.log('🧹 Error history cleared');
+    console.info('🧹 Error history cleared');
   }
 
   /**
@@ -932,7 +932,7 @@ export class ErrorBoundary {
    * Attempt to recover from error
    */
   private async attemptRecovery(errorReport: ErrorReport): Promise<void> {
-    console.log(
+    console.info(
       `🔄 Attempting recovery for ${this.componentName} (attempt ${this.recoveryAttempts})`
     );
 
@@ -952,7 +952,7 @@ export class ErrorBoundary {
           await this.recoverGeneric();
       }
 
-      console.log(`✅ Recovery successful for ${this.componentName}`);
+      console.info(`✅ Recovery successful for ${this.componentName}`);
       this.resetErrorState();
     } catch (recoveryError) {
       console.error(`❌ Recovery failed for ${this.componentName}:`, recoveryError);
@@ -998,25 +998,25 @@ export class ErrorBoundary {
 
   private async recoverDashboard(): Promise<void> {
     // Reload dashboard data
-    console.log('🔄 Recovering dashboard...');
+    console.info('🔄 Recovering dashboard...');
     // Implementation would reload dashboard data
   }
 
   private async recoverWebSocket(): Promise<void> {
     // Reconnect WebSocket
-    console.log('🔌 Recovering WebSocket...');
+    console.info('🔌 Recovering WebSocket...');
     // Implementation would reconnect WebSocket
   }
 
   private async recoverChart(): Promise<void> {
     // Redraw chart
-    console.log('📊 Recovering chart...');
+    console.info('📊 Recovering chart...');
     // Implementation would redraw chart
   }
 
   private async recoverGeneric(): Promise<void> {
     // Generic recovery - reload component
-    console.log('🔄 Generic recovery...');
+    console.info('🔄 Generic recovery...');
     // Implementation would reload component
   }
 
@@ -1098,12 +1098,12 @@ export class BrowserErrorHandler extends AdvancedErrorHandler {
   }
 
   private async handleOnline(): Promise<void> {
-    console.log('🌐 Connection restored');
+    console.info('🌐 Connection restored');
     // Implement online recovery logic
   }
 
   private async handleOffline(): Promise<void> {
-    console.log('📴 Connection lost');
+    console.info('📴 Connection lost');
     await this.handleError(new Error('Network connection lost'), {
       component: 'network',
       metadata: { type: 'offline' },
@@ -1112,16 +1112,16 @@ export class BrowserErrorHandler extends AdvancedErrorHandler {
 
   private async handleVisibilityChange(): Promise<void> {
     if (document.hidden) {
-      console.log('👁️ Page hidden');
+      console.info('👁️ Page hidden');
     } else {
-      console.log('👁️ Page visible');
+      console.info('👁️ Page visible');
       // Implement visibility recovery logic
     }
   }
 
   private handleBeforeUnload(): void {
     // Perform cleanup before page unload
-    console.log('🔄 Page unloading...');
+    console.info('🔄 Page unloading...');
   }
 
   /**

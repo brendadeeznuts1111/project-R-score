@@ -111,7 +111,7 @@ async function getMarkdownFiles(pattern: string[]): Promise<string[]> {
 
 function formatResults(errors: LintResult[], widthErrors: WidthResult[], json: boolean = false): void {
   if (json) {
-    console.log(JSON.stringify({
+    console.info(JSON.stringify({
       markdownlint: errors,
       width: widthErrors
     }));
@@ -119,21 +119,21 @@ function formatResults(errors: LintResult[], widthErrors: WidthResult[], json: b
   }
 
   if (errors.length === 0 && widthErrors.length === 0) {
-    console.log("✅ All checks passed");
+    console.info("✅ All checks passed");
     return;
   }
 
   if (errors.length > 0) {
-    console.log("🔍 Markdownlint issues:");
+    console.info("🔍 Markdownlint issues:");
     for (const error of errors) {
-      console.log(`  ${error.file}:${error.line}:${error.column} - ${error.rule}: ${error.message}`);
+      console.info(`  ${error.file}:${error.line}:${error.column} - ${error.rule}: ${error.message}`);
     }
   }
 
   if (widthErrors.length > 0) {
-    console.log(`📏 Line width issues (> ${MAX_WIDTH} chars):`);
+    console.info(`📏 Line width issues (> ${MAX_WIDTH} chars):`);
     for (const error of widthErrors) {
-      console.log(`  ${error.file}:${error.line}:${error.column} - ${error.length} characters`);
+      console.info(`  ${error.file}:${error.line}:${error.column} - ${error.length} characters`);
     }
   }
 }
@@ -144,7 +144,7 @@ async function main(): Promise<void> {
   const files = args.filter(arg => !arg.startsWith('--'));
 
   if (files.length === 0) {
-    console.log("Usage: bun run lint-md.ts [--json] <files...>");
+    console.info("Usage: bun run lint-md.ts [--json] <files...>");
     process.exit(1);
   }
 

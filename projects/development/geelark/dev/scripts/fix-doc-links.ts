@@ -254,7 +254,7 @@ function applyFixes(): {
   let filesModified = 0;
   let totalReplacements = 0;
 
-  console.log(`\n🔧 Fixing broken links in ${mdFiles.length} markdown files...\n`);
+  console.info(`\n🔧 Fixing broken links in ${mdFiles.length} markdown files...\n`);
 
   for (const filePath of mdFiles) {
     let content = fs.readFileSync(filePath, "utf-8");
@@ -276,7 +276,7 @@ function applyFixes(): {
       filesModified++;
       totalReplacements += fileReplacements;
       const relativePath = filePath.replace(DOCS_DIR, "");
-      console.log(`✅ Fixed ${fileReplacements} links in ${relativePath}`);
+      console.info(`✅ Fixed ${fileReplacements} links in ${relativePath}`);
     }
   }
 
@@ -288,16 +288,16 @@ function applyFixes(): {
 }
 
 // Main execution
-console.log("📄 Documentation Link Fixer");
-console.log("===========================\n");
+console.info("📄 Documentation Link Fixer");
+console.info("===========================\n");
 
 const result = applyFixes();
 
-console.log(`\n✨ Link fixing complete!`);
-console.log(`   Total files scanned: ${result.totalFiles}`);
-console.log(`   Files modified: ${result.filesModified}`);
-console.log(`   Total replacements: ${result.totalReplacements}`);
-console.log(
+console.info(`\n✨ Link fixing complete!`);
+console.info(`   Total files scanned: ${result.totalFiles}`);
+console.info(`   Files modified: ${result.filesModified}`);
+console.info(`   Total replacements: ${result.totalReplacements}`);
+console.info(
   `\n📊 Next step: Run validation script to verify remaining broken links`
 );
-console.log(`   Command: bun scripts/validate-doc-links.ts\n`);
+console.info(`   Command: bun scripts/validate-doc-links.ts\n`);

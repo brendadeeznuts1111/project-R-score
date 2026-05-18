@@ -128,8 +128,8 @@ export class GraphQLServer {
 	 */
 	async start(): Promise<void> {
 		// In production, would use GraphQL server (e.g., Apollo Server)
-		console.log(`GraphQL server starting on port ${this.config.port}`);
-		console.log('Schema:', this.schema);
+		console.info(`GraphQL server starting on port ${this.config.port}`);
+		console.info('Schema:', this.schema);
 	}
 
 	/**

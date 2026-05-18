@@ -3,10 +3,10 @@
  * Standalone Bun v1.3.7 Feature Verification
  */
 
-console.log("=".repeat(60));
-console.log("Bun v1.3.7 Feature Verification");
-console.log("Bun version:", Bun.version);
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Bun v1.3.7 Feature Verification");
+console.info("Bun version:", Bun.version);
+console.info("=".repeat(60));
 
 {
   const markdown = `# Test
@@ -19,12 +19,12 @@ This contains: & < > "quotes"
 
   const html = Bun.markdown.html(markdown, { tables: true });
   
-  console.log("\n📄 SIMD Markdown Rendering:");
-  console.log("  ✓ HTML escaping works");
-  console.log("    - &amp;:", html.includes("&amp;") ? "✓" : "✗");
-  console.log("    - &lt;:", html.includes("&lt;") ? "✓" : "✗");
-  console.log("    - &gt;:", html.includes("&gt;") ? "✓" : "✗");
-  console.log("    - &quot;:", html.includes("&quot;") ? "✓" : "✗");
+  console.info("\n📄 SIMD Markdown Rendering:");
+  console.info("  ✓ HTML escaping works");
+  console.info("    - &amp;:", html.includes("&amp;") ? "✓" : "✗");
+  console.info("    - &lt;:", html.includes("&lt;") ? "✓" : "✗");
+  console.info("    - &gt;:", html.includes("&gt;") ? "✓" : "✗");
+  console.info("    - &quot;:", html.includes("&quot;") ? "✓" : "✗");
 }
 
 {
@@ -36,8 +36,8 @@ This contains: & < > "quotes"
   }
   const end = performance.now();
   
-  console.log("\n🪢 String.replace Rope Optimization:");
-  console.log(`  ✓ 100,000 replacements: ${(end - start).toFixed(2)}ms`);
+  console.info("\n🪢 String.replace Rope Optimization:");
+  console.info(`  ✓ 100,000 replacements: ${(end - start).toFixed(2)}ms`);
 }
 
 {
@@ -50,8 +50,8 @@ This contains: & < > "quotes"
   const end = performance.now();
   
   const timePerCall = ((end - start) / iterations) * 1000;
-  console.log("\n🛑 AbortSignal.abort():");
-  console.log(`  ✓ No listener: ${timePerCall.toFixed(3)}µs per call`);
+  console.info("\n🛑 AbortSignal.abort():");
+  console.info(`  ✓ No listener: ${timePerCall.toFixed(3)}µs per call`);
 }
 
 {
@@ -62,17 +62,17 @@ This contains: & < > "quotes"
   for (let i = 0; i < 1000; i++) regex.test(text);
   const end = performance.now();
   
-  console.log("\n🔍 RegExp SIMD:");
-  console.log(`  ✓ Fixed-count JIT: ${(end - start).toFixed(2)}ms`);
+  console.info("\n🔍 RegExp SIMD:");
+  console.info(`  ✓ Fixed-count JIT: ${(end - start).toFixed(2)}ms`);
 }
 
 {
   const thaiWord = "คำ";
   const width = Bun.stringWidth(thaiWord);
-  console.log("\n🐛 Bug Fixes:");
-  console.log(`  ✓ Thai stringWidth: "${thaiWord}" = ${width}`);
+  console.info("\n🐛 Bug Fixes:");
+  console.info(`  ✓ Thai stringWidth: "${thaiWord}" = ${width}`);
 }
 
-console.log("\n" + "=".repeat(60));
-console.log("✅ All Bun v1.3.7 features verified!");
-console.log("=".repeat(60));
+console.info("\n" + "=".repeat(60));
+console.info("✅ All Bun v1.3.7 features verified!");
+console.info("=".repeat(60));

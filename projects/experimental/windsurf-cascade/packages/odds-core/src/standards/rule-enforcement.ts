@@ -66,7 +66,7 @@ export class GoldenRuleEnforcer {
    * Validate all golden rules against the codebase
    */
   async validateCodebase(rootDir: string = process.cwd()): Promise<RuleValidationResult> {
-    console.log('🔍 Validating Golden Rules...\n');
+    console.info('🔍 Validating Golden Rules...\n');
     
     this.violations = [];
     const tsFiles = await this.findTypeScriptFiles(rootDir);
@@ -82,7 +82,7 @@ export class GoldenRuleEnforcer {
    * Validate specific rule
    */
   async validateRule(rule: GoldenRule, files: string[]): Promise<void> {
-    console.log(`📋 ${rule.name}...`);
+    console.info(`📋 ${rule.name}...`);
 
     for (const file of files) {
       try {

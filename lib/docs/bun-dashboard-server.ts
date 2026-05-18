@@ -47,27 +47,27 @@ const zenServer = (Bun as any).serve({
   },
 });
 
-console.log('🎪 Zen Dashboard Server - Bun File Protocol Edition');
-console.log('=' .repeat(60));
-console.log(`🌐 Server running on port ${zenServer.port}`);
-console.log('');
-console.log('📱 Access Methods:');
-console.log(`   📋 Standard: http://localhost:${zenServer.port}/dashboard`);
-console.log(`   🔗 Bun URL:  bun://localhost:${zenServer.port}/dashboard`);
-console.log(`   📊 Metrics:  http://localhost:${zenServer.port}/api/metrics`);
-console.log(`   🔍 Bun Info: http://localhost:${zenServer.port}/api/bunfile`);
-console.log('');
-console.log('🎯 Bun File Protocol Benefits:');
-console.log('   ✅ Direct file access without HTTP overhead');
-console.log('   ✅ Built-in caching and optimization');
-console.log('   ✅ Seamless integration with Bun ecosystem');
-console.log('   ✅ Zero-configuration file serving');
-console.log('');
-console.log('🚀 Try opening: bun://localhost:3001/dashboard');
-console.log('🔄 Press Ctrl+C to stop the server');
+console.info('🎪 Zen Dashboard Server - Bun File Protocol Edition');
+console.info('=' .repeat(60));
+console.info(`🌐 Server running on port ${zenServer.port}`);
+console.info('');
+console.info('📱 Access Methods:');
+console.info(`   📋 Standard: http://localhost:${zenServer.port}/dashboard`);
+console.info(`   🔗 Bun URL:  bun://localhost:${zenServer.port}/dashboard`);
+console.info(`   📊 Metrics:  http://localhost:${zenServer.port}/api/metrics`);
+console.info(`   🔍 Bun Info: http://localhost:${zenServer.port}/api/bunfile`);
+console.info('');
+console.info('🎯 Bun File Protocol Benefits:');
+console.info('   ✅ Direct file access without HTTP overhead');
+console.info('   ✅ Built-in caching and optimization');
+console.info('   ✅ Seamless integration with Bun ecosystem');
+console.info('   ✅ Zero-configuration file serving');
+console.info('');
+console.info('🚀 Try opening: bun://localhost:3001/dashboard');
+console.info('🔄 Press Ctrl+C to stop the server');
 
 // Keep the process alive
 process.on('SIGINT', () => {
-  console.log('\n👋 Zen Dashboard Server stopped.');
+  console.info('\n👋 Zen Dashboard Server stopped.');
   process.exit(0);
 });

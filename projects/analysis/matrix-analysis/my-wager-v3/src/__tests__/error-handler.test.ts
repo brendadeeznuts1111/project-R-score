@@ -305,4 +305,4 @@ describe('Integration Tests', () => {
   });
 });
 
-console.log('✅ Error Handler Tests Complete');
+console.info('✅ Error Handler Tests Complete');

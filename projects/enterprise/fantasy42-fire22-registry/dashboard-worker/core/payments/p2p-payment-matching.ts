@@ -530,30 +530,30 @@ export class P2PPaymentMatching {
     // 3. Update internal balances
     // 4. Send confirmation notifications
 
-    console.log(
+    console.info(
       `Processing completed match ${match.id}: ${match.amount} via ${match.paymentMethod}`
     );
   }
 
   private async sendMatchNotifications(match: P2PMatch): Promise<void> {
     // Send notifications to both customers
-    console.log(`Sending match notifications for ${match.id}`);
+    console.info(`Sending match notifications for ${match.id}`);
   }
 
   private async sendPaymentSentNotification(match: P2PMatch): Promise<void> {
-    console.log(`Payment sent notification for ${match.id}`);
+    console.info(`Payment sent notification for ${match.id}`);
   }
 
   private async sendPaymentReceivedNotification(match: P2PMatch): Promise<void> {
-    console.log(`Payment received notification for ${match.id}`);
+    console.info(`Payment received notification for ${match.id}`);
   }
 
   private async sendMatchCompletedNotifications(match: P2PMatch): Promise<void> {
-    console.log(`Match completed notifications for ${match.id}`);
+    console.info(`Match completed notifications for ${match.id}`);
   }
 
   private async sendDisputeNotification(match: P2PMatch): Promise<void> {
-    console.log(`Dispute notification for ${match.id}: ${match.disputeReason}`);
+    console.info(`Dispute notification for ${match.id}: ${match.disputeReason}`);
   }
 
   private generateRequestId(): string {

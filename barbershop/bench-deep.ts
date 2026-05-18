@@ -6,7 +6,7 @@
 
 export {}; // Make this file a module
 
-console.log('🚀 Starting deep benchmark...');
+console.info('🚀 Starting deep benchmark...');
 
 // Create a complex nested object that will show different output at different depths
 const complexData = {
@@ -50,8 +50,8 @@ const complexData = {
 // Create circular reference
 complexData.circular.self = complexData.circular;
 
-console.log('📊 Complex data structure created');
-console.log('🔍 Logging the object to test depth levels:');
-console.log(complexData);
+console.info('📊 Complex data structure created');
+console.info('🔍 Logging the object to test depth levels:');
+console.info(complexData);
 
-console.log('\n✅ Deep benchmark completed');
+console.info('\n✅ Deep benchmark completed');

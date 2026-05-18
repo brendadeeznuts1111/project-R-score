@@ -180,7 +180,7 @@ export class Logger {
     if (!this.shouldLog('debug')) return;
 
     const entry = this.createLogEntry('debug', message, context);
-    console.log(this.formatLogEntry(entry));
+    console.info(this.formatLogEntry(entry));
   }
 
   /**
@@ -199,7 +199,7 @@ export class Logger {
     if (!this.shouldLog('info')) return;
 
     const entry = this.createLogEntry('info', message, context);
-    console.log(this.formatLogEntry(entry));
+    console.info(this.formatLogEntry(entry));
   }
 
   /**

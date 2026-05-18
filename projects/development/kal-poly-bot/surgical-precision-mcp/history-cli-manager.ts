@@ -365,15 +365,15 @@ export class HistoryCLIManager {
    * Display formatted history
    */
   displayHistory(limit: number = 20): void {
-    console.log('\n' + TableUtils.color.bold('📚 Recent Command History'));
-    console.log('━'.repeat(70));
+    console.info('\n' + TableUtils.color.bold('📚 Recent Command History'));
+    console.info('━'.repeat(70));
 
     const recent = this.history.slice(-limit).reverse();
     recent.forEach((entry, idx) => {
-      console.log(`${String(idx + 1).padStart(2)}. ${this.formatEntry(entry)}`);
+      console.info(`${String(idx + 1).padStart(2)}. ${this.formatEntry(entry)}`);
     });
 
-    console.log('');
+    console.info('');
   }
 
   /**
@@ -408,14 +408,14 @@ export async function browseHistory(historyPath?: string): Promise<void> {
 
   const stats = manager.getStats();
 
-  console.log('\n' + TableUtils.color.bold('🔍 Command History Browser'));
-  console.log('━'.repeat(70));
-  console.log(`Total Commands: ${TableUtils.color.alice(stats.totalCommands.toString())}`);
-  console.log(`Unique Commands: ${TableUtils.color.bob(stats.uniqueCommands.toString())}`);
-  console.log(`Success Rate: ${TableUtils.color.dave(stats.successRate.toFixed(1))}%`);
-  console.log(`Average Duration: ${TableUtils.color.carol(stats.averageDurationMs.toFixed(2))}ms`);
-  console.log(`Memory: ${TableUtils.color.yellow(stats.memorySizeBytes.toLocaleString())} bytes`);
-  console.log('');
+  console.info('\n' + TableUtils.color.bold('🔍 Command History Browser'));
+  console.info('━'.repeat(70));
+  console.info(`Total Commands: ${TableUtils.color.alice(stats.totalCommands.toString())}`);
+  console.info(`Unique Commands: ${TableUtils.color.bob(stats.uniqueCommands.toString())}`);
+  console.info(`Success Rate: ${TableUtils.color.dave(stats.successRate.toFixed(1))}%`);
+  console.info(`Average Duration: ${TableUtils.color.carol(stats.averageDurationMs.toFixed(2))}ms`);
+  console.info(`Memory: ${TableUtils.color.yellow(stats.memorySizeBytes.toLocaleString())} bytes`);
+  console.info('');
 
   manager.displayHistory(30);
 }
@@ -430,21 +430,21 @@ export async function searchHistoryCLI(pattern: string, historyPath?: string): P
   const results = manager.searchHistory(pattern, 20);
 
   if (results.length === 0) {
-    console.log(`No history entries matching: ${TableUtils.color.yellow(pattern)}`);
+    console.info(`No history entries matching: ${TableUtils.color.yellow(pattern)}`);
     return;
   }
 
-  console.log(
+  console.info(
     `\nFound ${TableUtils.color.alice(results.length.toString())} ` +
     `entries matching: ${TableUtils.color.cyan(pattern)}`
   );
-  console.log('━'.repeat(70));
+  console.info('━'.repeat(70));
 
   results.forEach((entry, idx) => {
-    console.log(`${String(idx + 1).padStart(2)}. ${manager.formatEntry(entry)}`);
+    console.info(`${String(idx + 1).padStart(2)}. ${manager.formatEntry(entry)}`);
   });
 
-  console.log('');
+  console.info('');
 }
 
 // Codebase search using ripgrep MCP
@@ -456,11 +456,11 @@ export async function searchCodebaseCLI(query: string, options: {
 } = {}): Promise<void> {
   const { path = '.', type = 'ts', context = 2, maxResults = 10 } = options;
 
-  console.log(`🔍 Searching codebase: ${TableUtils.color.cyan(query)}`);
-  console.log(`   Path: ${TableUtils.color.yellow(path)}`);
-  console.log(`   Type: ${TableUtils.color.green(type)}`);
-  console.log(`   Context: ${context} lines`);
-  console.log('━'.repeat(70));
+  console.info(`🔍 Searching codebase: ${TableUtils.color.cyan(query)}`);
+  console.info(`   Path: ${TableUtils.color.yellow(path)}`);
+  console.info(`   Type: ${TableUtils.color.green(type)}`);
+  console.info(`   Context: ${context} lines`);
+  console.info('━'.repeat(70));
 
   try {
     // Import ripgrep MCP dynamically to avoid circular dependencies
@@ -476,57 +476,57 @@ export async function searchCodebaseCLI(query: string, options: {
     });
 
     if (result.matches.length === 0) {
-      console.log(`\n❌ No matches found for: ${TableUtils.color.yellow(query)}`);
+      console.info(`\n❌ No matches found for: ${TableUtils.color.yellow(query)}`);
       return;
     }
 
-    console.log(`\n🎯 Found ${TableUtils.color.alice(result.matches.length.toString())} matches ` +
+    console.info(`\n🎯 Found ${TableUtils.color.alice(result.matches.length.toString())} matches ` +
                 `in ${TableUtils.color.green(result.files.length.toString())} files`);
-    console.log(`⚡ Search completed in ${TableUtils.color.cyan(result.stats.timeMs.toFixed(1) + 'ms')}`);
+    console.info(`⚡ Search completed in ${TableUtils.color.cyan(result.stats.timeMs.toFixed(1) + 'ms')}`);
 
     result.matches.forEach((match, idx) => {
-      console.log(`\n${String(idx + 1).padStart(2)}. ${TableUtils.color.cyan(match.file)}:${TableUtils.color.yellow(match.line.toString())}`);
-      console.log(`   ${match.content}`);
+      console.info(`\n${String(idx + 1).padStart(2)}. ${TableUtils.color.cyan(match.file)}:${TableUtils.color.yellow(match.line.toString())}`);
+      console.info(`   ${match.content}`);
 
       if (match.context.before.length > 0) {
         match.context.before.forEach(line => {
-          console.log(`   ${TableUtils.color.gray('│')} ${line}`);
+          console.info(`   ${TableUtils.color.gray('│')} ${line}`);
         });
       }
 
       if (match.context.after.length > 0) {
         match.context.after.forEach(line => {
-          console.log(`   ${TableUtils.color.gray('│')} ${line}`);
+          console.info(`   ${TableUtils.color.gray('│')} ${line}`);
         });
       }
     });
 
-    console.log(`\n📊 Stats: ${result.stats.matchesFound} matches, ${result.stats.filesSearched} files searched`);
+    console.info(`\n📊 Stats: ${result.stats.matchesFound} matches, ${result.stats.filesSearched} files searched`);
 
   } catch (error) {
     console.error(`❌ Search failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    console.log('\n💡 Make sure MCP server is running: bun run mcp:start');
+    console.info('\n💡 Make sure MCP server is running: bun run mcp:start');
   }
 }
 
 // Enhanced CLI with both history and codebase search
 export async function enhancedHistoryCLI(args: string[]): Promise<void> {
   if (args.length === 0) {
-    console.log('🖥️  Enhanced HistoryCLI - Command History + Codebase Search');
-    console.log('━'.repeat(70));
-    console.log('');
-    console.log('📋 Commands:');
-    console.log('  history <pattern>     - Search command history');
-    console.log('  search <query>        - Search codebase (TypeScript by default)');
-    console.log('  search <query> --type=js    - Search JavaScript files');
-    console.log('  search <query> --type=all   - Search all file types');
-    console.log('  search <query> --path=src   - Search specific directory');
-    console.log('');
-    console.log('📖 Examples:');
-    console.log('  history npm           - Find npm commands in history');
-    console.log('  search Bun\\.Terminal     - Find Terminal usage in code');
-    console.log('  search interface --type=ts - Find interfaces in TypeScript');
-    console.log('  search TODO --type=md      - Find TODOs in markdown');
+    console.info('🖥️  Enhanced HistoryCLI - Command History + Codebase Search');
+    console.info('━'.repeat(70));
+    console.info('');
+    console.info('📋 Commands:');
+    console.info('  history <pattern>     - Search command history');
+    console.info('  search <query>        - Search codebase (TypeScript by default)');
+    console.info('  search <query> --type=js    - Search JavaScript files');
+    console.info('  search <query> --type=all   - Search all file types');
+    console.info('  search <query> --path=src   - Search specific directory');
+    console.info('');
+    console.info('📖 Examples:');
+    console.info('  history npm           - Find npm commands in history');
+    console.info('  search Bun\\.Terminal     - Find Terminal usage in code');
+    console.info('  search interface --type=ts - Find interfaces in TypeScript');
+    console.info('  search TODO --type=md      - Find TODOs in markdown');
     return;
   }
 
@@ -552,44 +552,44 @@ export async function enhancedHistoryCLI(args: string[]): Promise<void> {
 
 // Demo if run directly
 if (import.meta.main) {
-  console.log('🖥️  Surgical Precision HistoryCLI Manager Demo');
-  console.log('━'.repeat(70));
-  console.log('');
+  console.info('🖥️  Surgical Precision HistoryCLI Manager Demo');
+  console.info('━'.repeat(70));
+  console.info('');
 
   const manager = new HistoryCLIManager();
   await manager.YAML.parse();
 
-  console.log('✅ History loaded successfully');
-  console.log('');
+  console.info('✅ History loaded successfully');
+  console.info('');
 
   // Show stats
   const stats = manager.getStats();
-  console.log('📊 History Statistics:');
-  console.log(`  • Total Commands: ${stats.totalCommands}`);
-  console.log(`  • Unique Commands: ${stats.uniqueCommands}`);
-  console.log(`  • Success Rate: ${stats.successRate.toFixed(1)}%`);
-  console.log(`  • Avg Duration: ${stats.averageDurationMs.toFixed(2)}ms`);
+  console.info('📊 History Statistics:');
+  console.info(`  • Total Commands: ${stats.totalCommands}`);
+  console.info(`  • Unique Commands: ${stats.uniqueCommands}`);
+  console.info(`  • Success Rate: ${stats.successRate.toFixed(1)}%`);
+  console.info(`  • Avg Duration: ${stats.averageDurationMs.toFixed(2)}ms`);
 
   // Add sample entry
   manager.addEntry('ls -la', 0, 45, process.cwd());
   manager.addEntry('npm test', 0, 2500, process.cwd());
-  console.log('\n✅ Sample entries added');
+  console.info('\n✅ Sample entries added');
 
   // Get completions
   const completions = await manager.getCompletions('npm', 3, 'npm');
-  console.log(`\n💡 Completions for 'npm': ${completions.suggestions.slice(0, 3).join(', ')}`);
+  console.info(`\n💡 Completions for 'npm': ${completions.suggestions.slice(0, 3).join(', ')}`);
 
   // Search history
   const searchResults = manager.searchHistory('npm');
-  console.log(`\n🔍 Search results for 'npm': ${searchResults.length} found`);
+  console.info(`\n🔍 Search results for 'npm': ${searchResults.length} found`);
 
-   console.log('\n📋 Use Cases:');
-   console.log('  • browseHistory() - Interactive history browser');
-   console.log('  • searchHistoryCLI() - Command-line history search');
-   console.log('  • searchCodebaseCLI() - Lightning-fast codebase search');
-   console.log('  • enhancedHistoryCLI() - Unified history + codebase search');
-   console.log('  • getCompletions() - Tab completion suggestions');
-   console.log('  • verifyZeroCollateral() - State verification');
+   console.info('\n📋 Use Cases:');
+   console.info('  • browseHistory() - Interactive history browser');
+   console.info('  • searchHistoryCLI() - Command-line history search');
+   console.info('  • searchCodebaseCLI() - Lightning-fast codebase search');
+   console.info('  • enhancedHistoryCLI() - Unified history + codebase search');
+   console.info('  • getCompletions() - Tab completion suggestions');
+   console.info('  • verifyZeroCollateral() - State verification');
 }
 
 export default HistoryCLIManager;

@@ -16,7 +16,7 @@ export async function packCommand(args: string[]) {
       options
     );
     
-    console.log(`
+    console.info(`
 🎉 TIER-1380 LIFECYCLE INTEGRITY SEAL VERIFIED
 ┌─────────────────────────────────────────┐
 │ Package: ${result.manifest.name.padEnd(30)} │
@@ -31,12 +31,12 @@ export async function packCommand(args: string[]) {
     
     if (options.output) {
       await Bun.write(options.output, result.tarball);
-      console.log(`Tarball saved to: ${options.output}`);
+      console.info(`Tarball saved to: ${options.output}`);
     }
     
     // Display audit ID for tracking
-    console.log(`🔍 Audit ID: ${result.auditId}`);
-    console.log(`🛡️  Integrity Seal: ${result.integritySeal}`);
+    console.info(`🔍 Audit ID: ${result.auditId}`);
+    console.info(`🛡️  Integrity Seal: ${result.integritySeal}`);
     
     return result;
     
@@ -67,12 +67,12 @@ export async function packCommand(args: string[]) {
 }
 
 async function dryRunPack(options: any) {
-  console.log('🔍 Running integrity verification dry-run...');
+  console.info('🔍 Running integrity verification dry-run...');
   
   const packager = new SecurePackager();
   const result = await packager.dryRunValidation(options.packagePath || '.');
   
-  console.log(`
+  console.info(`
 📊 DRY-RUN INTEGRITY REPORT
 ┌─────────────────────────────────────────┐
 │ Package: ${result.manifest.name.padEnd(30)} │
@@ -84,20 +84,20 @@ async function dryRunPack(options: any) {
 `);
   
   if (result.mutationRisks.length > 0) {
-    console.log('\n⚠️  IDENTIFIED RISKS:');
+    console.info('\n⚠️  IDENTIFIED RISKS:');
     result.mutationRisks.forEach(risk => {
-      console.log(`   • ${risk}`);
+      console.info(`   • ${risk}`);
     });
   }
   
   if (!result.scriptValidation) {
-    console.log('\n❌ SCRIPT VALIDATION FAILED');
-    console.log('   Suspicious patterns detected in lifecycle scripts');
+    console.info('\n❌ SCRIPT VALIDATION FAILED');
+    console.info('   Suspicious patterns detected in lifecycle scripts');
   }
   
   if (result.integrityScore < 0.95) {
-    console.log('\n⚠️  LOW INTEGRITY SCORE');
-    console.log('   Consider reviewing package configuration');
+    console.info('\n⚠️  LOW INTEGRITY SCORE');
+    console.info('   Consider reviewing package configuration');
   }
   
   return { manifest: result.manifest, report: result };
@@ -157,7 +157,7 @@ function parseArgs(args: string[]): PackOptions {
 }
 
 function displayHelp() {
-  console.log(`
+  console.info(`
 🛡️  BUN PM INTEGRITY SEAL CLI - TIER-1380
 
 USAGE:

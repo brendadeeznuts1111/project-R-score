@@ -33,16 +33,16 @@ if (command === 'matrix') {
     ensureWCAG: false
   });
 
-  console.log(colorize('🎯 SINGLE STATUS DISPLAY', 'cyan', true));
-  console.log(display.ansi);
-  console.log(`Hex: ${display.hex}`);
-  console.log(`HSL: ${display.hsl}`);
-  console.log(`Brightness: ${(display.brightness * 100).toFixed(1)}%`);
+  console.info(colorize('🎯 SINGLE STATUS DISPLAY', 'cyan', true));
+  console.info(display.ansi);
+  console.info(`Hex: ${display.hex}`);
+  console.info(`HSL: ${display.hsl}`);
+  console.info(`Brightness: ${(display.brightness * 100).toFixed(1)}%`);
 
 } else if (command === 'routine') {
-  console.log(colorize('🚀 DAILY DEVELOPMENT ROUTINE - ENHANCED', 'cyan', true));
-  console.log(colorize('Using Advanced HSL Status Matrix', 'gray'));
-  console.log();
+  console.info(colorize('🚀 DAILY DEVELOPMENT ROUTINE - ENHANCED', 'cyan', true));
+  console.info(colorize('Using Advanced HSL Status Matrix', 'gray'));
+  console.info();
 
   // Simulate daily routine with enhanced status displays
   const routineSteps = [
@@ -60,21 +60,21 @@ if (command === 'matrix') {
       context: 'dark'
     });
 
-    console.log(`${i + 1}. ${display.ansi}`);
-    console.log(`   ${step.message}`);
-    console.log();
+    console.info(`${i + 1}. ${display.ansi}`);
+    console.info(`   ${step.message}`);
+    console.info();
   });
 
-  console.log(colorize('✨ All systems operational with perceptual color optimization!', 'green', true));
+  console.info(colorize('✨ All systems operational with perceptual color optimization!', 'green', true));
 
 } else if (command === 'compare') {
-  console.log(colorize('🔄 STATUS MATRIX COMPARISON', 'magenta', true));
-  console.log();
+  console.info(colorize('🔄 STATUS MATRIX COMPARISON', 'magenta', true));
+  console.info();
 
   const status = (args[1] as 'success' | 'warning' | 'error' | 'info') || 'error';
 
-  console.log(colorize(`Comparing "${status}" across all severities:`, 'yellow'));
-  console.log();
+  console.info(colorize(`Comparing "${status}" across all severities:`, 'yellow'));
+  console.info();
 
   ['low', 'medium', 'high', 'critical'].forEach(severity => {
     const oldDisplay = colorize(`${status} (${severity})`, status as any);
@@ -84,25 +84,25 @@ if (command === 'matrix') {
       context: 'dark'
     });
 
-    console.log(colorize(`${severity.toUpperCase()}:`, 'white', true));
-    console.log(`  Old: ${oldDisplay}`);
-    console.log(`  New: ${newDisplay.ansi}`);
-    console.log(`  Hex: ${newDisplay.hex} | Brightness: ${(newDisplay.brightness * 100).toFixed(1)}%`);
-    console.log();
+    console.info(colorize(`${severity.toUpperCase()}:`, 'white', true));
+    console.info(`  Old: ${oldDisplay}`);
+    console.info(`  New: ${newDisplay.ansi}`);
+    console.info(`  Hex: ${newDisplay.hex} | Brightness: ${(newDisplay.brightness * 100).toFixed(1)}%`);
+    console.info();
   });
 
 } else {
-  console.log(colorize('🎯 Enhanced Status Matrix Demo', 'cyan', true));
-  console.log(colorize('Usage:', 'yellow'));
-  console.log('  bun run bun-status-matrix-demo.ts matrix [dark|light] [contrast]  # Full matrix');
-  console.log('  bun run bun-status-matrix-demo.ts single [status] [severity] [context]  # Single status');
-  console.log('  bun run bun-status-matrix-demo.ts routine                    # Daily routine demo');
-  console.log('  bun run bun-status-matrix-demo.ts compare [status]           # Compare old vs new');
-  console.log();
-  console.log(colorize('Examples:', 'gray'));
-  console.log('  bun run bun-status-matrix-demo.ts matrix dark contrast');
-  console.log('  bun run bun-status-matrix-demo.ts single error critical dark');
-  console.log('  bun run bun-status-matrix-demo.ts compare warning');
-  console.log();
-  console.log(colorize('Run without args for this help', 'cyan'));
+  console.info(colorize('🎯 Enhanced Status Matrix Demo', 'cyan', true));
+  console.info(colorize('Usage:', 'yellow'));
+  console.info('  bun run bun-status-matrix-demo.ts matrix [dark|light] [contrast]  # Full matrix');
+  console.info('  bun run bun-status-matrix-demo.ts single [status] [severity] [context]  # Single status');
+  console.info('  bun run bun-status-matrix-demo.ts routine                    # Daily routine demo');
+  console.info('  bun run bun-status-matrix-demo.ts compare [status]           # Compare old vs new');
+  console.info();
+  console.info(colorize('Examples:', 'gray'));
+  console.info('  bun run bun-status-matrix-demo.ts matrix dark contrast');
+  console.info('  bun run bun-status-matrix-demo.ts single error critical dark');
+  console.info('  bun run bun-status-matrix-demo.ts compare warning');
+  console.info();
+  console.info(colorize('Run without args for this help', 'cyan'));
 }

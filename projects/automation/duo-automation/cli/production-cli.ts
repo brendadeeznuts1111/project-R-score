@@ -40,8 +40,8 @@ function parseArgs(args: string[]): CLIArgs {
 const commands = {
   // Original deployment commands
   'test:full': async (args: CLIArgs) => {
-    console.log('🧪 COMPLETE TEST MATRIX - 12.X.X.X TIERS');
-    console.log('===========================================');
+    console.info('🧪 COMPLETE TEST MATRIX - 12.X.X.X TIERS');
+    console.info('===========================================');
     
     const orchestrator = new TestOrchestrator();
     return await orchestrator.runFullMatrix({
@@ -52,8 +52,8 @@ const commands = {
   },
   
   'test:compliance': async (args: CLIArgs) => {
-    console.log('⚖️ COMPLIANCE TESTING - 12.X.X.X TIERS');
-    console.log('========================================');
+    console.info('⚖️ COMPLIANCE TESTING - 12.X.X.X TIERS');
+    console.info('========================================');
     
     const standards = args.get('--standards')?.split(',') || ['aml5', 'gdpr', 'pci-dss'];
     const tester = new TestOrchestrator();
@@ -61,8 +61,8 @@ const commands = {
   },
   
   'mobile:build': async (args: CLIArgs) => {
-    console.log('📱 MOBILE APP DEPLOYMENT - 13.X.X.X TIERS');
-    console.log('===========================================');
+    console.info('📱 MOBILE APP DEPLOYMENT - 13.X.X.X TIERS');
+    console.info('===========================================');
     
     const platforms = args.get('--platforms')?.split(',') || ['ios', 'android'];
     const deployer = new MobileDeployOrchestrator();
@@ -70,8 +70,8 @@ const commands = {
   },
   
   'partner:deploy': async (args: CLIArgs) => {
-    console.log('🤝 PARTNER INTEGRATION DEPLOYMENT - 13.X.X.X');
-    console.log('============================================');
+    console.info('🤝 PARTNER INTEGRATION DEPLOYMENT - 13.X.X.X');
+    console.info('============================================');
     
     const partners = args.get('--partners')?.split(',') || ['square', 'twilio', 'stripe'];
     const deployer = new PartnerDeployer();
@@ -79,8 +79,8 @@ const commands = {
   },
   
   'sdk:publish': async (args: CLIArgs) => {
-    console.log('📦 SDK PUBLISHING - 14.X.X.X TIERS');
-    console.log('===================================');
+    console.info('📦 SDK PUBLISHING - 14.X.X.X TIERS');
+    console.info('===================================');
     
     const platforms = args.get('--platforms')?.split(',') || ['js', 'py', 'php', 'go'];
     const publisher = new SDKPublisher();
@@ -89,8 +89,8 @@ const commands = {
 
   // Cloudflare integration commands
   'cloudflare:import': async (args: CLIArgs) => {
-    console.log('🌐 CLOUDFLARE METRICS IMPORT');
-    console.log('===============================');
+    console.info('🌐 CLOUDFLARE METRICS IMPORT');
+    console.info('===============================');
     
     const zoneId = args.get('--zone') || 'a3b7ba4bb62cb1b177b04b8675250674';
     const integration = new CloudflareIntegration();
@@ -98,72 +98,72 @@ const commands = {
   },
   
   'cloudflare:dev-mode': async (args: CLIArgs) => {
-    console.log('🛠️ CLOUDFLARE DEVELOPER MODE');
-    console.log('=============================');
+    console.info('🛠️ CLOUDFLARE DEVELOPER MODE');
+    console.info('=============================');
     
     if (args.has('--enable')) {
       const integration = new CloudflareIntegration();
       await integration.enableDevMode();
-      console.log('✅ Developer mode enabled');
+      console.info('✅ Developer mode enabled');
     } else {
-      console.log('❌ Please specify --enable flag');
+      console.info('❌ Please specify --enable flag');
     }
   },
   
   'cloudflare:security': async (args: CLIArgs) => {
-    console.log('🛡️ CLOUDFLARE SECURITY CONFIGURATION');
-    console.log('===================================');
+    console.info('🛡️ CLOUDFLARE SECURITY CONFIGURATION');
+    console.info('===================================');
     
     if (args.has('--ai-blockers=true')) {
       const integration = new CloudflareIntegration();
       await integration.enableSecurity();
-      console.log('✅ AI blockers enabled');
+      console.info('✅ AI blockers enabled');
     } else {
-      console.log('❌ Please specify --ai-blockers=true');
+      console.info('❌ Please specify --ai-blockers=true');
     }
   },
   
   'monitoring:cloudflare': async (args: CLIArgs) => {
-    console.log('📊 CLOUDFLARE MONITORING SETUP');
-    console.log('===============================');
+    console.info('📊 CLOUDFLARE MONITORING SETUP');
+    console.info('===============================');
     
     const endpoints = args.get('--endpoints') || 'api.duoplus.com,developers.duoplus.com';
     const integration = new CloudflareIntegration();
     await integration.addMonitoringEndpoints();
-    console.log('✅ Monitoring endpoints added');
+    console.info('✅ Monitoring endpoints added');
   },
 
   // Cloudflare optimization commands
   'optimize:all': async (args: CLIArgs) => {
-    console.log('⚡ CLOUDFLARE PRODUCTION OPTIMIZATION');
-    console.log('=======================================');
+    console.info('⚡ CLOUDFLARE PRODUCTION OPTIMIZATION');
+    console.info('=======================================');
     
     const optimizer = new CloudflareOptimizer();
     return await optimizer.optimizeAll();
   },
   
   'optimize:report': async (args: CLIArgs) => {
-    console.log('📋 OPTIMIZATION REPORT GENERATION');
-    console.log('=================================');
+    console.info('📋 OPTIMIZATION REPORT GENERATION');
+    console.info('=================================');
     
     const optimizer = new CloudflareOptimizer();
     return await optimizer.generateOptimizationReport();
   },
   
   'optimize:enterprise': async (args: CLIArgs) => {
-    console.log('🏢 ENTERPRISE FEATURES ENABLEMENT');
-    console.log('===============================');
+    console.info('🏢 ENTERPRISE FEATURES ENABLEMENT');
+    console.info('===============================');
     
     const optimizer = new CloudflareOptimizer();
     await optimizer.enableEnterpriseFeatures();
-    console.log('✅ Enterprise features enabled');
+    console.info('✅ Enterprise features enabled');
   },
 
   // Production pipeline commands
   'production:cloudflare': async (args: CLIArgs) => {
-    console.log('🚀 PRODUCTION CLOUDFLARE INTEGRATION');
-    console.log('===================================');
-    console.log('');
+    console.info('🚀 PRODUCTION CLOUDFLARE INTEGRATION');
+    console.info('===================================');
+    console.info('');
     
     const zoneId = args.get('--zone') || 'a3b7ba4bb62cb1b177b04b8675250674';
     const results = {
@@ -175,38 +175,38 @@ const commands = {
     
     try {
       // 1. Import metrics
-      console.log('🌐 STEP 1: Import Cloudflare Metrics');
+      console.info('🌐 STEP 1: Import Cloudflare Metrics');
       const integration = new CloudflareIntegration();
       results.metrics = await integration.importMetrics();
-      console.log('✅ Metrics imported\n');
+      console.info('✅ Metrics imported\n');
       
       // 2. Optimize settings
-      console.log('⚡ STEP 2: Optimize Cloudflare Settings');
+      console.info('⚡ STEP 2: Optimize Cloudflare Settings');
       const optimizer = new CloudflareOptimizer();
       results.optimization = await optimizer.optimizeAll();
-      console.log('✅ Optimization complete\n');
+      console.info('✅ Optimization complete\n');
       
       // 3. Enable security
-      console.log('🛡️ STEP 3: Enable Security Features');
+      console.info('🛡️ STEP 3: Enable Security Features');
       await integration.enableSecurity();
       results.security = { status: 'enabled' };
-      console.log('✅ Security enabled\n');
+      console.info('✅ Security enabled\n');
       
       // 4. Setup monitoring
-      console.log('📊 STEP 4: Setup Monitoring');
+      console.info('📊 STEP 4: Setup Monitoring');
       await integration.addMonitoringEndpoints();
       results.monitoring = { status: 'active' };
-      console.log('✅ Monitoring active\n');
+      console.info('✅ Monitoring active\n');
       
-      console.log('🎊 CLOUDFLARE PRODUCTION INTEGRATION COMPLETE');
-      console.log('=============================================');
-      console.log('✅ Metrics imported and analyzed');
-      console.log('✅ Performance optimized (2.95% → 85% cache hit rate)');
-      console.log('✅ Security features enabled');
-      console.log('✅ Real-time monitoring active');
-      console.log('✅ Revenue tracking configured');
-      console.log('');
-      console.log('🚀 Cloudflare Production Integration - COMPLETE!');
+      console.info('🎊 CLOUDFLARE PRODUCTION INTEGRATION COMPLETE');
+      console.info('=============================================');
+      console.info('✅ Metrics imported and analyzed');
+      console.info('✅ Performance optimized (2.95% → 85% cache hit rate)');
+      console.info('✅ Security features enabled');
+      console.info('✅ Real-time monitoring active');
+      console.info('✅ Revenue tracking configured');
+      console.info('');
+      console.info('🚀 Cloudflare Production Integration - COMPLETE!');
       
       return results;
     } catch (error) {
@@ -216,27 +216,27 @@ const commands = {
   },
   
   'marketing:developers': async (args: CLIArgs) => {
-    console.log('📧 DEVELOPER NURTURE CAMPAIGN');
-    console.log('=============================');
+    console.info('📧 DEVELOPER NURTURE CAMPAIGN');
+    console.info('=============================');
     
     const nurtureType = args.get('--nurture') || 'sdk-users';
     
-    console.log(`🔄 Starting nurture campaign for: ${nurtureType}`);
-    console.log('📧 Sending onboarding emails...');
+    console.info(`🔄 Starting nurture campaign for: ${nurtureType}`);
+    console.info('📧 Sending onboarding emails...');
     await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('📚 Providing SDK documentation links...');
+    console.info('📚 Providing SDK documentation links...');
     await new Promise(resolve => setTimeout(resolve, 800));
-    console.log('🎯 Offering Pro tier upgrade incentives...');
+    console.info('🎯 Offering Pro tier upgrade incentives...');
     await new Promise(resolve => setTimeout(resolve, 600));
     
-    console.log('✅ Developer nurture campaign launched');
-    console.log('📊 Expected conversion: 19 devs → 6 Pro users ($294 MRR)');
+    console.info('✅ Developer nurture campaign launched');
+    console.info('📊 Expected conversion: 19 devs → 6 Pro users ($294 MRR)');
   },
   
   'pipeline:complete': async (args: CLIArgs) => {
-    console.log('🚀 COMPLETE PRODUCTION PIPELINE - DEPLOYMENT + CLOUDFLARE');
-    console.log('=========================================================');
-    console.log('');
+    console.info('🚀 COMPLETE PRODUCTION PIPELINE - DEPLOYMENT + CLOUDFLARE');
+    console.info('=========================================================');
+    console.info('');
     
     const results = {
       deployment: null,
@@ -245,7 +245,7 @@ const commands = {
     
     try {
       // 1. Run complete deployment pipeline
-      console.log('🚀 STEP 1: Complete Deployment Pipeline (12-14 Tiers)');
+      console.info('🚀 STEP 1: Complete Deployment Pipeline (12-14 Tiers)');
       const deployCommands = [
         commands['test:full'],
         commands['test:compliance'],
@@ -256,34 +256,34 @@ const commands = {
       
       for (const command of deployCommands) {
         await command(args);
-        console.log('✅ Deployment step completed\n');
+        console.info('✅ Deployment step completed\n');
       }
       
       // 2. Run Cloudflare integration
-      console.log('🌐 STEP 2: Cloudflare Production Integration');
+      console.info('🌐 STEP 2: Cloudflare Production Integration');
       results.cloudflare = await commands['production:cloudflare'](args);
-      console.log('✅ Cloudflare integration complete\n');
+      console.info('✅ Cloudflare integration complete\n');
       
       // 3. Launch marketing campaign
-      console.log('📧 STEP 3: Developer Marketing Campaign');
+      console.info('📧 STEP 3: Developer Marketing Campaign');
       await commands['marketing:developers'](args);
-      console.log('✅ Marketing campaign active\n');
+      console.info('✅ Marketing campaign active\n');
       
-      console.log('🎊 COMPLETE PRODUCTION PIPELINE EXECUTED');
-      console.log('=======================================');
-      console.log('✅ All 14 tiers deployed and production-ready');
-      console.log('✅ Cloudflare optimized (85% cache hit rate)');
-      console.log('✅ Security features enabled');
-      console.log('✅ Real-time monitoring active');
-      console.log('✅ Developer marketing launched');
-      console.log('✅ Revenue tracking configured');
-      console.log('');
-      console.log('💰 UPDATED REVENUE FORECAST:');
-      console.log('Developer Pipeline: 19 devs × $49 = $931 MRR');
-      console.log('Cloudflare Boost: +$10,800 annual impact');
-      console.log('Total Projection: $22.5M ARR');
-      console.log('');
-      console.log('🚀 DuoPlus Automation - COMPLETE PRODUCTION PLATFORM!');
+      console.info('🎊 COMPLETE PRODUCTION PIPELINE EXECUTED');
+      console.info('=======================================');
+      console.info('✅ All 14 tiers deployed and production-ready');
+      console.info('✅ Cloudflare optimized (85% cache hit rate)');
+      console.info('✅ Security features enabled');
+      console.info('✅ Real-time monitoring active');
+      console.info('✅ Developer marketing launched');
+      console.info('✅ Revenue tracking configured');
+      console.info('');
+      console.info('💰 UPDATED REVENUE FORECAST:');
+      console.info('Developer Pipeline: 19 devs × $49 = $931 MRR');
+      console.info('Cloudflare Boost: +$10,800 annual impact');
+      console.info('Total Projection: $22.5M ARR');
+      console.info('');
+      console.info('🚀 DuoPlus Automation - COMPLETE PRODUCTION PLATFORM!');
       
       return results;
     } catch (error) {
@@ -299,37 +299,37 @@ async function main() {
   const command = args.positionals[0];
 
   if (!command) {
-    console.log('🚀 DuoPlus Production CLI - Complete Platform + Cloudflare');
-    console.log('============================================================');
-    console.log('');
-    console.log('🧪 Deployment Commands (12-14 Tiers):');
-    console.log('  test:full                    - Run complete test matrix');
-    console.log('  test:compliance              - Run compliance tests');
-    console.log('  mobile:build                 - Build mobile apps');
-    console.log('  partner:deploy               - Deploy partner integrations');
-    console.log('  sdk:publish                  - Publish SDK packages');
-    console.log('');
-    console.log('🌐 Cloudflare Commands:');
-    console.log('  cloudflare:import --zone=<id>     - Import Cloudflare metrics');
-    console.log('  cloudflare:dev-mode --enable       - Enable developer mode');
-    console.log('  cloudflare:security --ai-blockers=true - Enable AI blockers');
-    console.log('  monitoring:cloudflare --endpoints=<domains> - Add monitoring');
-    console.log('');
-    console.log('⚡ Optimization Commands:');
-    console.log('  optimize:all                 - Optimize all Cloudflare settings');
-    console.log('  optimize:report              - Generate optimization report');
-    console.log('  optimize:enterprise          - Enable enterprise features');
-    console.log('');
-    console.log('🚀 Production Pipeline Commands:');
-    console.log('  production:cloudflare --zone=<id> - Complete Cloudflare integration');
-    console.log('  marketing:developers --nurture=<type> - Launch developer campaign');
-    console.log('  pipeline:complete             - Execute complete production pipeline');
-    console.log('');
-    console.log('Examples:');
-    console.log('  bun run production-cli.ts cloudflare:import --zone="a3b7ba4bb62cb1b177b04b8675250674"');
-    console.log('  bun run production-cli.ts optimize:all');
-    console.log('  bun run production-cli.ts production:cloudflare --zone="a3b7ba4bb62cb1b177b04b8675250674"');
-    console.log('  bun run production-cli.ts pipeline:complete');
+    console.info('🚀 DuoPlus Production CLI - Complete Platform + Cloudflare');
+    console.info('============================================================');
+    console.info('');
+    console.info('🧪 Deployment Commands (12-14 Tiers):');
+    console.info('  test:full                    - Run complete test matrix');
+    console.info('  test:compliance              - Run compliance tests');
+    console.info('  mobile:build                 - Build mobile apps');
+    console.info('  partner:deploy               - Deploy partner integrations');
+    console.info('  sdk:publish                  - Publish SDK packages');
+    console.info('');
+    console.info('🌐 Cloudflare Commands:');
+    console.info('  cloudflare:import --zone=<id>     - Import Cloudflare metrics');
+    console.info('  cloudflare:dev-mode --enable       - Enable developer mode');
+    console.info('  cloudflare:security --ai-blockers=true - Enable AI blockers');
+    console.info('  monitoring:cloudflare --endpoints=<domains> - Add monitoring');
+    console.info('');
+    console.info('⚡ Optimization Commands:');
+    console.info('  optimize:all                 - Optimize all Cloudflare settings');
+    console.info('  optimize:report              - Generate optimization report');
+    console.info('  optimize:enterprise          - Enable enterprise features');
+    console.info('');
+    console.info('🚀 Production Pipeline Commands:');
+    console.info('  production:cloudflare --zone=<id> - Complete Cloudflare integration');
+    console.info('  marketing:developers --nurture=<type> - Launch developer campaign');
+    console.info('  pipeline:complete             - Execute complete production pipeline');
+    console.info('');
+    console.info('Examples:');
+    console.info('  bun run production-cli.ts cloudflare:import --zone="a3b7ba4bb62cb1b177b04b8675250674"');
+    console.info('  bun run production-cli.ts optimize:all');
+    console.info('  bun run production-cli.ts production:cloudflare --zone="a3b7ba4bb62cb1b177b04b8675250674"');
+    console.info('  bun run production-cli.ts pipeline:complete');
     return;
   }
 
@@ -339,11 +339,11 @@ async function main() {
       const result = await commands[command](args);
       const duration = Date.now() - startTime;
       
-      console.log(`\n⏱️ Command completed in ${duration}ms`);
+      console.info(`\n⏱️ Command completed in ${duration}ms`);
       
       if (result && typeof result === 'object') {
-        console.log('\n📊 Result:');
-        console.log(JSON.stringify(result, null, 2));
+        console.info('\n📊 Result:');
+        console.info(JSON.stringify(result, null, 2));
       }
       
     } catch (error) {
@@ -352,7 +352,7 @@ async function main() {
     }
   } else {
     console.error(`❌ Unknown command: ${command}`);
-    console.log('Run "bun run production-cli.ts" to see available commands');
+    console.info('Run "bun run production-cli.ts" to see available commands');
     process.exit(1);
   }
 }

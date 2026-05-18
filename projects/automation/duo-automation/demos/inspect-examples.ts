@@ -11,7 +11,7 @@ import {
 } from '../ecosystem/inspect-custom';
 
 export function demonstrateInspection() {
-  console.log('\n🎨 CUSTOM INSPECTION DEMONSTRATION\n');
+  console.info('\n🎨 CUSTOM INSPECTION DEMONSTRATION\n');
   
   // 1. Scope Inspection
   const scope = new ScopeInspectable(
@@ -23,8 +23,8 @@ export function demonstrateInspection() {
     { activeConnections: 3, totalRequests: 150, averageResponseTime: 245.67 }
   );
   
-  console.log(scope);
-  console.log('');
+  console.info(scope);
+  console.info('');
   
   // 2. Connection Stats
   const stats = new ConnectionStatsInspectable(
@@ -37,8 +37,8 @@ export function demonstrateInspection() {
     new Date()
   );
   
-  console.log(stats);
-  console.log('');
+  console.info(stats);
+  console.info('');
   
   // 3. Security Check
   const securityCheck = new SecurityCheckInspectable(
@@ -48,8 +48,8 @@ export function demonstrateInspection() {
     { uri: 'https%3A%2F%2Fex\u200Bample.com', severity: 'high' }
   );
   
-  console.log(securityCheck);
-  console.log('');
+  console.info(securityCheck);
+  console.info('');
   
   // 4. Payment Request
   const payment = new PaymentRequestInspectable(
@@ -64,8 +64,8 @@ export function demonstrateInspection() {
     { note: 'BBQ supplies', fees: 0.25 }
   );
   
-  console.log(payment);
-  console.log('');
+  console.info(payment);
+  console.info('');
   
   // 5. Family Member
   const familyMember = new FamilyMemberInspectable(
@@ -79,8 +79,8 @@ export function demonstrateInspection() {
     50
   );
   
-  console.log(familyMember);
-  console.log('');
+  console.info(familyMember);
+  console.info('');
   
   // 6. Table Formatting
   const connections = [
@@ -89,10 +89,10 @@ export function demonstrateInspection() {
     new ConnectionStatsInspectable('api.service3.com', 0, 10, 300, 210.8, 5, new Date()),
   ];
   
-  console.log(InspectionUtils.formatList(connections));
-  console.log('');
+  console.info(InspectionUtils.formatList(connections));
+  console.info('');
   
-  console.log(InspectionUtils.createSummaryCard('Connection Summary', connections));
+  console.info(InspectionUtils.createSummaryCard('Connection Summary', connections));
 }
 
 // ============================================
@@ -120,7 +120,7 @@ class SecurityConfigInspectable {
 }
 
 export function demonstrateDecoratorUsage() {
-  console.log('\n🎨 DECORATOR DEMONSTRATION\n');
+  console.info('\n🎨 DECORATOR DEMONSTRATION\n');
   
   const enterpriseConfig = new EnterpriseConfigInspectable(
     1000,
@@ -129,8 +129,8 @@ export function demonstrateDecoratorUsage() {
     365
   );
   
-  console.log(enterpriseConfig);
-  console.log('');
+  console.info(enterpriseConfig);
+  console.info('');
   
   const securityConfig = new SecurityConfigInspectable(
     true,
@@ -139,8 +139,8 @@ export function demonstrateDecoratorUsage() {
     2555
   );
   
-  console.log(securityConfig);
-  console.log('');
+  console.info(securityConfig);
+  console.info('');
 }
 
 // ============================================
@@ -148,7 +148,7 @@ export function demonstrateDecoratorUsage() {
 // ============================================
 
 export function demonstrateAdvancedUsage() {
-  console.log('\n🎨 ADVANCED INSPECTION EXAMPLES\n');
+  console.info('\n🎨 ADVANCED INSPECTION EXAMPLES\n');
   
   // Complex security audit
   const securityChecks = [
@@ -165,16 +165,16 @@ export function demonstrateAdvancedUsage() {
     new SecurityCheckInspectable('Authentication', 'PASS', 'All auth methods functional'),
   ];
   
-  console.log('🔒 SECURITY AUDIT RESULTS');
-  console.log('═'.repeat(60));
+  console.info('🔒 SECURITY AUDIT RESULTS');
+  console.info('═'.repeat(60));
   securityChecks.forEach((check, index) => {
-    console.log(check);
-    if (index < securityChecks.length - 1) console.log('');
+    console.info(check);
+    if (index < securityChecks.length - 1) console.info('');
   });
   
-  console.log('');
-  console.log(InspectionUtils.createSummaryCard('Security Audit Summary', securityChecks));
-  console.log('');
+  console.info('');
+  console.info(InspectionUtils.createSummaryCard('Security Audit Summary', securityChecks));
+  console.info('');
   
   // Database cluster status
   const databaseConnections = [
@@ -184,16 +184,16 @@ export function demonstrateAdvancedUsage() {
     new DatabaseConnectionInspectable('analytics-db-01', 'error', 25, 0, 0, 15),
   ];
   
-  console.log('🗄️ DATABASE CLUSTER STATUS');
-  console.log('═'.repeat(60));
+  console.info('🗄️ DATABASE CLUSTER STATUS');
+  console.info('═'.repeat(60));
   databaseConnections.forEach((db, index) => {
-    console.log(db);
-    if (index < databaseConnections.length - 1) console.log('');
+    console.info(db);
+    if (index < databaseConnections.length - 1) console.info('');
   });
   
-  console.log('');
-  console.log(InspectionUtils.createSummaryCard('Database Cluster Summary', databaseConnections));
-  console.log('');
+  console.info('');
+  console.info(InspectionUtils.createSummaryCard('Database Cluster Summary', databaseConnections));
+  console.info('');
   
   // Payment workflow tracking
   const payments = [
@@ -211,10 +211,10 @@ export function demonstrateAdvancedUsage() {
     ),
   ];
   
-  console.log('💰 PAYMENT WORKFLOW TRACKING');
-  console.log('═'.repeat(60));
-  console.log(InspectionUtils.formatList(payments));
-  console.log('');
+  console.info('💰 PAYMENT WORKFLOW TRACKING');
+  console.info('═'.repeat(60));
+  console.info(InspectionUtils.formatList(payments));
+  console.info('');
   
   // Family group management
   const familyMembers = [
@@ -225,12 +225,12 @@ export function demonstrateAdvancedUsage() {
     new FamilyMemberInspectable('user_friend1', 'John', 'friend', false, 0, 30, 70),
   ];
   
-  console.log('👨‍👩‍👧‍👦 FAMILY GROUP MANAGEMENT');
-  console.log('═'.repeat(60));
-  console.log(InspectionUtils.formatList(familyMembers));
-  console.log('');
+  console.info('👨‍👩‍👧‍👦 FAMILY GROUP MANAGEMENT');
+  console.info('═'.repeat(60));
+  console.info(InspectionUtils.formatList(familyMembers));
+  console.info('');
   
-  console.log(InspectionUtils.createSummaryCard('Family Group Summary', familyMembers));
+  console.info(InspectionUtils.createSummaryCard('Family Group Summary', familyMembers));
 }
 
 // ============================================
@@ -238,7 +238,7 @@ export function demonstrateAdvancedUsage() {
 // ============================================
 
 export function benchmarkInspection() {
-  console.log('\n⚡ INSPECTION PERFORMANCE BENCHMARK\n');
+  console.info('\n⚡ INSPECTION PERFORMANCE BENCHMARK\n');
   
   const iterations = 1000;
   const testObjects = [
@@ -249,7 +249,7 @@ export function benchmarkInspection() {
     new FamilyMemberInspectable('user_test', 'Test', 'guest', true, 0, 0, 50),
   ];
   
-  console.log(`Running ${iterations} iterations per object type...`);
+  console.info(`Running ${iterations} iterations per object type...`);
   
   testObjects.forEach((obj, index) => {
     const start = performance.now();
@@ -262,7 +262,7 @@ export function benchmarkInspection() {
     const avgTime = (end - start) / iterations;
     const className = obj.constructor.name.replace('Inspectable', '');
     
-    console.log(`${className.padEnd(20)}: ${avgTime.toFixed(4)}ms avg (${(end - start).toFixed(2)}ms total)`);
+    console.info(`${className.padEnd(20)}: ${avgTime.toFixed(4)}ms avg (${(end - start).toFixed(2)}ms total)`);
   });
 }
 

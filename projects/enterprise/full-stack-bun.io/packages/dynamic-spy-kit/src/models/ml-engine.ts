@@ -39,7 +39,7 @@ export class MLEngine {
 		//   this.replicas.push(new MLR(features, targets));
 		// }
 
-		console.log(`Initialized ${this.config.replicas} ML.js model replicas`);
+		console.info(`Initialized ${this.config.replicas} ML.js model replicas`);
 	}
 
 	/**

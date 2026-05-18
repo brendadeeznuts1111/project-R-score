@@ -9,7 +9,7 @@
 
 self.onmessage = async ({ data: { agent, state = '2' } }) => {
   try {
-    console.log(`🔄 Processing agent: ${agent}`);
+    console.info(`🔄 Processing agent: ${agent}`);
 
     // Simulate fetching agent bets (in real implementation, call actual API)
     const bets = await fetchAgentBets(agent, state);

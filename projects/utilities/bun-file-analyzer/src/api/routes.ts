@@ -38,7 +38,7 @@ export async function handleRequest(req: Request): Promise<Response> {
     DELETE: Palette.security.primary,
   }[method] || Palette.frontend.primary;
   
-  console.log(
+  console.info(
     `%c[${method}] ${url.pathname}`, 
     `color: ${Bun.color(methodColor, "ansi")}; font-weight: bold` 
   );

@@ -57,13 +57,13 @@ class FactoryWagerRelease {
   }
 
   async execute(): Promise<ReleaseResult> {
-    console.log(`🚀 FactoryWager Release Orchestrator v1.3.8`);
-    console.log(`==========================================`);
-    console.log(`Version: ${this.version}`);
-    console.log(`Config: ${this.config}`);
-    console.log(`Mode: ${this.dryRun ? 'DRY RUN' : 'PRODUCTION'}`);
-    console.log(`From: ${this.fromRef}`);
-    console.log('');
+    console.info(`🚀 FactoryWager Release Orchestrator v1.3.8`);
+    console.info(`==========================================`);
+    console.info(`Version: ${this.version}`);
+    console.info(`Config: ${this.config}`);
+    console.info(`Mode: ${this.dryRun ? 'DRY RUN' : 'PRODUCTION'}`);
+    console.info(`From: ${this.fromRef}`);
+    console.info('');
 
     const result: ReleaseResult = {
       version: this.version,
@@ -118,11 +118,11 @@ class FactoryWagerRelease {
   }
 
   private async phase1Analysis(result: ReleaseResult): Promise<void> {
-    console.log(`📍 Phase 1: Pre-Release Analysis`);
-    console.log(`=================================`);
+    console.info(`📍 Phase 1: Pre-Release Analysis`);
+    console.info(`=================================`);
 
     // 1. Configuration Analysis
-    console.log(`🔍 Running configuration analysis...`);
+    console.info(`🔍 Running configuration analysis...`);
     const analysisStart = Date.now();
     try {
       const analysisOutput = execSync(`bun run factory-wager/tabular/parser-v45.ts ${this.config} --json-only`, { 
@@ -133,7 +133,7 @@ class FactoryWagerRelease {
       
       // Extract risk score from analysis (simplified)
       result.riskScores.analysis = 19; // From previous run
-      console.log(`✅ Analysis complete - Risk score: ${result.riskScores.analysis}/100`);
+      console.info(`✅ Analysis complete - Risk score: ${result.riskScores.analysis}/100`);
     } catch (error) {
       result.phases.analysis = { name: 'analysis', exitCode: 1, duration: Date.now() - analysisStart };
       console.error(`❌ Analysis failed: ${(error as Error).message}`);
@@ -142,7 +142,7 @@ class FactoryWagerRelease {
     }
 
     // 2. Security Validation
-    console.log(`🔒 Running security validation...`);
+    console.info(`🔒 Running security validation...`);
     const validationStart = Date.now();
     try {
       const validationOutput = execSync(`bun run fw-validate.ts ${this.config} --env=production --strict`, { 
@@ -151,7 +151,7 @@ class FactoryWagerRelease {
       });
       result.phases.validation = { name: 'validation', exitCode: 0, duration: Date.now() - validationStart };
       result.riskScores.validation = 0;
-      console.log(`✅ Validation complete - All security gates passed`);
+      console.info(`✅ Validation complete - All security gates passed`);
     } catch (error) {
       result.phases.validation = { name: 'validation', exitCode: 2, duration: Date.now() - validationStart };
       console.error(`❌ Validation failed: ${(error as Error).message}`);
@@ -160,7 +160,7 @@ class FactoryWagerRelease {
     }
 
     // 3. Change Assessment
-    console.log(`📊 Running change assessment...`);
+    console.info(`📊 Running change assessment...`);
     const changelogStart = Date.now();
     try {
       const changelogOutput = execSync(`bun run fw-changelog.ts --from=${this.fromRef} --to=${this.config} --force="I understand the risks"`, { 
@@ -169,7 +169,7 @@ class FactoryWagerRelease {
       });
       result.phases.changelog = { name: 'changelog', exitCode: 0, duration: Date.now() - changelogStart };
       result.riskScores.drift = 65; // From previous run
-      console.log(`✅ Change assessment complete - Risk delta: +${result.riskScores.drift}`);
+      console.info(`✅ Change assessment complete - Risk delta: +${result.riskScores.drift}`);
     } catch (error) {
       result.phases.changelog = { name: 'changelog', exitCode: 1, duration: Date.now() - changelogStart };
       console.error(`❌ Change assessment failed: ${(error as Error).message}`);
@@ -178,42 +178,42 @@ class FactoryWagerRelease {
 
     // Calculate composite risk score
     result.riskScores.composite = Math.round((result.riskScores.analysis + result.riskScores.validation + result.riskScores.drift) / 3);
-    console.log(`📈 Composite risk score: ${result.riskScores.composite}/100`);
-    console.log(`✅ Phase 1 complete\n`);
+    console.info(`📈 Composite risk score: ${result.riskScores.composite}/100`);
+    console.info(`✅ Phase 1 complete\n`);
   }
 
   private async phase2DecisionGate(result: ReleaseResult): Promise<void> {
-    console.log(`📍 Phase 2: Release Decision Gate`);
-    console.log(`===============================`);
+    console.info(`📍 Phase 2: Release Decision Gate`);
+    console.info(`===============================`);
 
     // Generate release summary
     this.printReleaseSummary(result);
 
     if (!this.force && !this.dryRun) {
-      console.log(`\n🎯 RELEASE CONFIRMATION`);
-      console.log(`==================================================`);
-      console.log(`Type "RELEASE" to deploy ${this.version} to production:`);
-      console.log(`__________________________________________________`);
+      console.info(`\n🎯 RELEASE CONFIRMATION`);
+      console.info(`==================================================`);
+      console.info(`Type "RELEASE" to deploy ${this.version} to production:`);
+      console.info(`__________________________________________________`);
       
       // For automation, we'll skip the interactive prompt
-      console.log(`\n⚠️  Skipping confirmation in automated mode`);
-      console.log(`💡 Use --force to bypass confirmation in CI/CD`);
+      console.info(`\n⚠️  Skipping confirmation in automated mode`);
+      console.info(`💡 Use --force to bypass confirmation in CI/CD`);
     }
 
     if (this.dryRun) {
-      console.log(`\n🔍 DRY RUN MODE - Skipping deployment`);
+      console.info(`\n🔍 DRY RUN MODE - Skipping deployment`);
     }
 
-    console.log(`✅ Phase 2 complete\n`);
+    console.info(`✅ Phase 2 complete\n`);
   }
 
   private async phase3Deployment(result: ReleaseResult): Promise<void> {
-    console.log(`📍 Phase 3: Deployment Execution`);
-    console.log(`===============================`);
+    console.info(`📍 Phase 3: Deployment Execution`);
+    console.info(`===============================`);
 
     const deployStart = Date.now();
     try {
-      console.log(`🚀 Starting staged deployment...`);
+      console.info(`🚀 Starting staged deployment...`);
       
       // Simulate deployment (would call fw-deploy.sh in real scenario)
       if (!this.dryRun) {
@@ -221,11 +221,11 @@ class FactoryWagerRelease {
           encoding: 'utf8',
           cwd: process.cwd()
         });
-        console.log(deployOutput);
+        console.info(deployOutput);
       }
       
       result.phases.deployment = { name: 'deployment', exitCode: 0, duration: Date.now() - deployStart };
-      console.log(`✅ Deployment complete`);
+      console.info(`✅ Deployment complete`);
     } catch (error) {
       result.phases.deployment = { name: 'deployment', exitCode: 3, duration: Date.now() - deployStart };
       console.error(`❌ Deployment failed: ${(error as Error).message}`);
@@ -233,21 +233,21 @@ class FactoryWagerRelease {
       return;
     }
 
-    console.log(`✅ Phase 3 complete\n`);
+    console.info(`✅ Phase 3 complete\n`);
   }
 
   private async phase4Verification(result: ReleaseResult): Promise<void> {
-    console.log(`📍 Phase 4: Post-Deployment Verification`);
-    console.log(`=========================================`);
+    console.info(`📍 Phase 4: Post-Deployment Verification`);
+    console.info(`=========================================`);
 
     const verifyStart = Date.now();
     try {
-      console.log(`🔍 Running health checks...`);
+      console.info(`🔍 Running health checks...`);
       
       // Simulate health verification
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate health check
-      console.log(`✅ Infrastructure health: 100%`);
-      console.log(`✅ All services responding normally`);
+      console.info(`✅ Infrastructure health: 100%`);
+      console.info(`✅ All services responding normally`);
       
       result.phases.verification = { name: 'verification', exitCode: 0, duration: Date.now() - verifyStart };
     } catch (error) {
@@ -257,12 +257,12 @@ class FactoryWagerRelease {
       return;
     }
 
-    console.log(`✅ Phase 4 complete\n`);
+    console.info(`✅ Phase 4 complete\n`);
   }
 
   private async phase5Finalization(result: ReleaseResult): Promise<void> {
-    console.log(`📍 Phase 5: Release Finalization`);
-    console.log(`===============================`);
+    console.info(`📍 Phase 5: Release Finalization`);
+    console.info(`===============================`);
 
     // Create release tag
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -271,7 +271,7 @@ class FactoryWagerRelease {
     try {
       if (!this.dryRun) {
         execSync(`git tag -a ${tagName} -m "Release ${this.version}"`, { encoding: 'utf8' });
-        console.log(`🏷️  Created git tag: ${tagName}`);
+        console.info(`🏷️  Created git tag: ${tagName}`);
       }
       result.artifacts.gitTag = tagName;
     } catch (error) {
@@ -282,33 +282,33 @@ class FactoryWagerRelease {
     const reportPath = await this.generateReleaseReport(result, timestamp);
     result.artifacts.releaseReport = reportPath;
 
-    console.log(`✅ Phase 5 complete\n`);
+    console.info(`✅ Phase 5 complete\n`);
   }
 
   private printReleaseSummary(result: ReleaseResult): void {
-    console.log(`\n🚀 FACTORYWAGER RELEASE CANDIDATE`);
-    console.log(`==================================`);
-    console.log(`Version: ${this.version}`);
-    console.log(`Config: ${this.config}`);
-    console.log(`Risk Score: ${result.riskScores.composite}/100`);
-    console.log(`Changes: 46 keys modified (from changelog)`);
-    console.log(``);
-    console.log(`Analysis Summary:`);
-    console.log(`- Risk Score: ${result.riskScores.analysis}/100`);
-    console.log(`- Documents: 1`);
-    console.log(`- Hardening: DEVELOPMENT`);
-    console.log(``);
-    console.log(`Validation Status: ❌ FAILED (Security gates not passed)`);
-    console.log(`Security Gates: 4/5 passed`);
-    console.log(``);
-    console.log(`Inheritance Drift:`);
-    console.log(`- Development: 100%`);
-    console.log(`- Staging: 100%`);
-    console.log(`- Production: 100%`);
-    console.log(``);
+    console.info(`\n🚀 FACTORYWAGER RELEASE CANDIDATE`);
+    console.info(`==================================`);
+    console.info(`Version: ${this.version}`);
+    console.info(`Config: ${this.config}`);
+    console.info(`Risk Score: ${result.riskScores.composite}/100`);
+    console.info(`Changes: 46 keys modified (from changelog)`);
+    console.info(``);
+    console.info(`Analysis Summary:`);
+    console.info(`- Risk Score: ${result.riskScores.analysis}/100`);
+    console.info(`- Documents: 1`);
+    console.info(`- Hardening: DEVELOPMENT`);
+    console.info(``);
+    console.info(`Validation Status: ❌ FAILED (Security gates not passed)`);
+    console.info(`Security Gates: 4/5 passed`);
+    console.info(``);
+    console.info(`Inheritance Drift:`);
+    console.info(`- Development: 100%`);
+    console.info(`- Staging: 100%`);
+    console.info(`- Production: 100%`);
+    console.info(``);
     
     const recommendation = result.riskScores.composite > 50 ? '❌ DO NOT DEPLOY - High risk detected' : '✅ Safe to deploy';
-    console.log(`Recommended Action: ${recommendation}`);
+    console.info(`Recommended Action: ${recommendation}`);
   }
 
   private async generateReleaseReport(result: ReleaseResult, timestamp: string): Promise<string> {
@@ -321,7 +321,7 @@ class FactoryWagerRelease {
     const reportContent = this.generateReportContent(result, timestamp);
     
     await Bun.write(Bun.file(reportPath), reportContent);
-    console.log(`📄 Release report: ${reportPath}`);
+    console.info(`📄 Release report: ${reportPath}`);
     
     return reportPath;
   }
@@ -403,34 +403,34 @@ If deployment fails:
   }
 
   private printSuccessSummary(result: ReleaseResult): void {
-    console.log(`🎉 FACTORYWAGER RELEASE ${result.version} COMPLETED`);
-    console.log(`============================================`);
-    console.log(`Duration: ${result.totalDuration} seconds`);
-    console.log(`Risk Score: ${result.riskScores.composite}/100`);
-    console.log(`Health Status: 100%`);
-    console.log(``);
-    console.log(`Artifacts Created:`);
-    console.log(`- Release Report: ${result.artifacts.releaseReport}`);
-    console.log(`- Git Tag: ${result.artifacts.gitTag}`);
-    console.log(``);
-    console.log(`Next Steps:`);
-    console.log(`- Monitor production for 30 minutes`);
-    console.log(`- Review release report with team`);
-    console.log(`- Update documentation if needed`);
+    console.info(`🎉 FACTORYWAGER RELEASE ${result.version} COMPLETED`);
+    console.info(`============================================`);
+    console.info(`Duration: ${result.totalDuration} seconds`);
+    console.info(`Risk Score: ${result.riskScores.composite}/100`);
+    console.info(`Health Status: 100%`);
+    console.info(``);
+    console.info(`Artifacts Created:`);
+    console.info(`- Release Report: ${result.artifacts.releaseReport}`);
+    console.info(`- Git Tag: ${result.artifacts.gitTag}`);
+    console.info(``);
+    console.info(`Next Steps:`);
+    console.info(`- Monitor production for 30 minutes`);
+    console.info(`- Review release report with team`);
+    console.info(`- Update documentation if needed`);
   }
 
   private printFailureSummary(result: ReleaseResult): void {
     const failedPhase = Object.entries(result.phases).find(([_, phase]) => phase.exitCode !== 0);
-    console.log(`❌ RELEASE FAILED - Phase ${failedPhase?.[0] || 'Unknown'}`);
-    console.log(`====================================`);
-    console.log(`Error: Release validation failed`);
-    console.log(`Impact: High - Security issues detected in configuration`);
-    console.log(`Recovery: Fix security validation issues before retrying`);
-    console.log(``);
-    console.log(`Debug Information:`);
-    console.log(`- Risk Score: ${result.riskScores.composite}/100`);
-    console.log(`- Exit Code: ${result.exitCode}`);
-    console.log(`- Timestamp: ${new Date().toISOString()}`);
+    console.info(`❌ RELEASE FAILED - Phase ${failedPhase?.[0] || 'Unknown'}`);
+    console.info(`====================================`);
+    console.info(`Error: Release validation failed`);
+    console.info(`Impact: High - Security issues detected in configuration`);
+    console.info(`Recovery: Fix security validation issues before retrying`);
+    console.info(``);
+    console.info(`Debug Information:`);
+    console.info(`- Risk Score: ${result.riskScores.composite}/100`);
+    console.info(`- Exit Code: ${result.exitCode}`);
+    console.info(`- Timestamp: ${new Date().toISOString()}`);
   }
 
   private detectVersion(): string {

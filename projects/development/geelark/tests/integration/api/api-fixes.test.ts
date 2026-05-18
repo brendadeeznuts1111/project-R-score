@@ -282,7 +282,7 @@ describe("🚀 Production Standalone Features", () => {
     const serverCode = `
       // @ts-ignore - Bun.serve is available at runtime
       const server = Bun.serve({ port: 3000, fetch: () => new Response('OK') });
-      console.log('Server running on', server.url);
+      console.info('Server running on', server.url);
     `;
 
     const testFile = "/tmp/test-server.ts";

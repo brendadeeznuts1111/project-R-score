@@ -24,20 +24,20 @@ class BunV137OptimizedWidget {
 	private startTime = Date.now();
 
 	constructor() {
-		console.log("🚀 Bun v1.3.7 Optimized Widget");
-		console.log("==========================================");
-		console.log("✅ Leveraging Buffer.from() optimizations");
-		console.log("✅ Optimized async/await performance");
-		console.log("✅ Enhanced string operations");
-		console.log("✅ ARM64 compound boolean optimizations");
-		console.log("");
+		console.info("🚀 Bun v1.3.7 Optimized Widget");
+		console.info("==========================================");
+		console.info("✅ Leveraging Buffer.from() optimizations");
+		console.info("✅ Optimized async/await performance");
+		console.info("✅ Enhanced string operations");
+		console.info("✅ ARM64 compound boolean optimizations");
+		console.info("");
 
 		this.startMonitoring();
 		this.setupGracefulShutdown();
 	}
 
 	private async startMonitoring() {
-		console.log("📊 Starting optimized status monitoring...");
+		console.info("📊 Starting optimized status monitoring...");
 
 		while (this.isRunning) {
 			await this.checkStatus();
@@ -131,30 +131,30 @@ class BunV137OptimizedWidget {
 		const uptime = Date.now() - this.startTime;
 		const uptimeText = this.formatUptime(uptime);
 
-		console.log("🚀 Bun v1.3.7 Optimized Widget");
-		console.log("==========================================");
-		console.log("");
-		console.log(
+		console.info("🚀 Bun v1.3.7 Optimized Widget");
+		console.info("==========================================");
+		console.info("");
+		console.info(
 			`📊 Status: ${apiIcon} API  ${bucketIcon} R2 Bucket  📁 ${this.status.profiles.toString().padStart(3, "0")} Profiles`,
 		);
-		console.log("");
-		console.log("🔗 Services:");
-		console.log(`   API:     ${this.getStatusText(this.status.api)}`);
-		console.log(`   R2:      ${this.getStatusText(this.status.bucket)}`);
-		console.log(`   Profiles: ${this.status.profiles} files organized`);
-		console.log("");
-		console.log("⚡ Quick Actions:");
-		console.log("   [1] Open Dashboard    http://localhost:3001");
-		console.log("   [2] Open API Docs     http://localhost:3001/api");
-		console.log(
+		console.info("");
+		console.info("🔗 Services:");
+		console.info(`   API:     ${this.getStatusText(this.status.api)}`);
+		console.info(`   R2:      ${this.getStatusText(this.status.bucket)}`);
+		console.info(`   Profiles: ${this.status.profiles} files organized`);
+		console.info("");
+		console.info("⚡ Quick Actions:");
+		console.info("   [1] Open Dashboard    http://localhost:3001");
+		console.info("   [2] Open API Docs     http://localhost:3001/api");
+		console.info(
 			"   [3] Open R2 Bucket    https://pub-a471e86af24446498311933a2eca2454.r2.dev",
 		);
-		console.log("   [4] View Profiles     ./profiles/");
-		console.log("   [q] Quit Widget");
-		console.log("");
-		console.log(`🕐 Last Update: ${lastUpdate}`);
-		console.log(`⏱️  Uptime: ${uptimeText}`);
-		console.log("==========================================");
+		console.info("   [4] View Profiles     ./profiles/");
+		console.info("   [q] Quit Widget");
+		console.info("");
+		console.info(`🕐 Last Update: ${lastUpdate}`);
+		console.info(`⏱️  Uptime: ${uptimeText}`);
+		console.info("==========================================");
 	}
 
 	private formatUptime(uptime: number): string {
@@ -211,12 +211,12 @@ class BunV137OptimizedWidget {
 
 	private setupGracefulShutdown() {
 		// Simple control setup for Bun environment
-		console.log("💡 Controls: Press Ctrl+C to quit");
-		console.log("💡 Quick Actions: 1=Dashboard, 2=API Docs, 3=R2 Bucket");
+		console.info("💡 Controls: Press Ctrl+C to quit");
+		console.info("💡 Quick Actions: 1=Dashboard, 2=API Docs, 3=R2 Bucket");
 
 		// Set up basic signal handling
 		process.on("SIGINT", () => {
-			console.log("\n👋 Shutting down optimized widget...");
+			console.info("\n👋 Shutting down optimized widget...");
 			this.isRunning = false;
 			process.exit(0);
 		});
@@ -238,7 +238,7 @@ class BunV137OptimizedWidget {
 				break;
 			case "q":
 			case "\u0003": // Ctrl+C
-				console.log("\n👋 Shutting down widget...");
+				console.info("\n👋 Shutting down widget...");
 				this.isRunning = false;
 				process.exit(0);
 				break;
@@ -254,7 +254,7 @@ class BunV137OptimizedWidget {
 					: "xdg-open";
 
 		spawn(command, [url], { detached: true, stdio: "ignore" });
-		console.log(`🌐 Opening: ${url}`);
+		console.info(`🌐 Opening: ${url}`);
 	}
 
 	private sleep(ms: number): Promise<void> {

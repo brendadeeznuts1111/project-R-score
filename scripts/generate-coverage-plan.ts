@@ -52,4 +52,4 @@ lines.push("- Prioritize error-handling and boundary-condition tests.");
 lines.push("- Re-run coverage and close gaps until all components meet target.");
 lines.push("- Lock each improved slice with a focused commit.");
 
-console.log(lines.join("\n"));
+console.info(lines.join("\n"));

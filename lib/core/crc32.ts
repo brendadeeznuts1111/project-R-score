@@ -38,7 +38,7 @@ export interface FileChecksumResult extends CRC32Result {
  * 
  * // Hash string
  * const checksum = crc32('hello world');
- * console.log(checksum.hex); // "E2B54E9A"
+ * console.info(checksum.hex); // "E2B54E9A"
  * 
  * // Verify file
  * const valid = await verifyFile('data.bin', 'E2B54E9A');
@@ -54,8 +54,8 @@ export interface FileChecksumResult extends CRC32Result {
  * @example
  * ```typescript
  * const result = crc32('hello');
- * console.log(result.value); // 907060870
- * console.log(result.hex);   // "3610A686"
+ * console.info(result.value); // 907060870
+ * console.info(result.hex);   // "3610A686"
  * ```
  */
 export function crc32(data: string | Buffer | Uint8Array): CRC32Result {
@@ -85,7 +85,7 @@ export function crc32(data: string | Buffer | Uint8Array): CRC32Result {
  * @example
  * ```typescript
  * const result = await crc32File('large.bin');
- * console.log(`${result.throughput} MB/s`);
+ * console.info(`${result.throughput} MB/s`);
  * ```
  */
 export async function crc32File(filePath: string): Promise<FileChecksumResult> {
@@ -281,23 +281,23 @@ export function benchmark(sizeKB: number): {
  * Run comprehensive benchmark suite
  */
 export async function runBenchmarks(): Promise<void> {
-  console.log('🚀 Bun.hash.crc32 Performance Benchmark\n');
-  console.log('Hardware-accelerated (PCLMULQDQ/CRC32)\n');
+  console.info('🚀 Bun.hash.crc32 Performance Benchmark\n');
+  console.info('Hardware-accelerated (PCLMULQDQ/CRC32)\n');
   
   const sizes = [1, 10, 100, 1024, 10240]; // KB
   
-  console.log('Size    | Time (ms) | Throughput   | Ops/sec');
-  console.log('--------|-----------|--------------|----------');
+  console.info('Size    | Time (ms) | Throughput   | Ops/sec');
+  console.info('--------|-----------|--------------|----------');
   
   for (const size of sizes) {
     const result = benchmark(size);
-    console.log(
+    console.info(
       `${result.size.padEnd(7)} | ${result.timeMs.toFixed(3).padStart(9)} | ` +
       `${result.throughput.padStart(12)} | ${result.opsPerSecond.toLocaleString()}`
     );
   }
   
-  console.log('\n✅ Hardware acceleration verified');
+  console.info('\n✅ Hardware acceleration verified');
 }
 
 // Entry guard for CLI usage
@@ -313,10 +313,10 @@ if (import.meta.main) {
     case 'hash':
       const input = args.slice(1).join(' ') || 'Hello, World!';
       const result = crc32(input);
-      console.log(`Input: "${input}"`);
-      console.log(`CRC32: 0x${result.hex}`);
-      console.log(`Value: ${result.value}`);
-      console.log(`Time: ${result.durationMs.toFixed(3)}ms`);
+      console.info(`Input: "${input}"`);
+      console.info(`CRC32: 0x${result.hex}`);
+      console.info(`Value: ${result.value}`);
+      console.info(`Time: ${result.durationMs.toFixed(3)}ms`);
       break;
       
     case 'file':
@@ -326,11 +326,11 @@ if (import.meta.main) {
         process.exit(1);
       }
       const fileResult = await crc32File(filePath);
-      console.log(`File: ${fileResult.filePath}`);
-      console.log(`CRC32: 0x${fileResult.hex}`);
-      console.log(`Size: ${(fileResult.size / 1024).toFixed(2)} KB`);
-      console.log(`Time: ${fileResult.durationMs.toFixed(2)}ms`);
-      console.log(`Speed: ${fileResult.throughput.toFixed(2)} MB/s`);
+      console.info(`File: ${fileResult.filePath}`);
+      console.info(`CRC32: 0x${fileResult.hex}`);
+      console.info(`Size: ${(fileResult.size / 1024).toFixed(2)} KB`);
+      console.info(`Time: ${fileResult.durationMs.toFixed(2)}ms`);
+      console.info(`Speed: ${fileResult.throughput.toFixed(2)} MB/s`);
       break;
       
     case 'verify':
@@ -341,11 +341,11 @@ if (import.meta.main) {
         process.exit(1);
       }
       const valid = verify(data, checksum);
-      console.log(valid ? '✅ Valid' : '❌ Invalid');
+      console.info(valid ? '✅ Valid' : '❌ Invalid');
       break;
       
     default:
-      console.log(`
+      console.info(`
 ⚡ Bun.hash.crc32 CLI
 
 Usage:

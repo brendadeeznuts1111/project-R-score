@@ -93,7 +93,7 @@ function checkStatus(avgMs: number, target: number): "pass" | "fail" | "warn" {
 }
 
 // Banner
-console.log(
+console.info(
 	box(
 		`
 ${colors.cyan("NEXUS")} ${colors.gray("Benchmark Suite")}
@@ -114,19 +114,19 @@ const compressionResults: CompressionResult[] = [];
 // Performance monitoring available via timing utilities
 
 // ============ Cache Benchmarks ============
-console.log("\n" + box("Cache Operations", "Cache Benchmarks"));
+console.info("\n" + box("Cache Operations", "Cache Benchmarks"));
 
 const cache = getInspectableCacheManager("./data/bench-cache.db");
 
 // Warmup (following Bun's benchmark pattern: warmup ~10% of iterations)
 const warmupIterations = Math.max(10, Math.floor(CACHE_OPS / 10));
-console.log(colors.gray(`  Warming up cache (${warmupIterations} iterations)...`));
+console.info(colors.gray(`  Warming up cache (${warmupIterations} iterations)...`));
 for (let i = 0; i < warmupIterations; i++) {
 	await cache.set(`warmup-${i}`, "polymarket", `uuid-${i}`, { warmup: true });
 }
 
 // SET benchmark
-console.log(colors.gray(`  Running ${CACHE_OPS.toLocaleString()} SET operations...`));
+console.info(colors.gray(`  Running ${CACHE_OPS.toLocaleString()} SET operations...`));
 const setTimes: number[] = [];
 for (let i = 0; i < CACHE_OPS; i++) {
 	const start = nanoseconds();
@@ -152,12 +152,12 @@ results.push({
 const setOpsPerSec = setStats.opsPerSecond >= 1000 
 	? `${(setStats.opsPerSecond / 1000).toFixed(1)}k ops/s`
 	: `${setStats.opsPerSecond.toFixed(0)} ops/s`;
-console.log(
+console.info(
 	`  ${statusColor(setStatus)("SET")}  avg=${nsToMs(setStats.avg)}ms  p99=${nsToMs(setStats.p99)}ms  ${setOpsPerSec}  target=<${TARGETS.cacheSet}ms`,
 );
 
 // GET benchmark (memory + db)
-console.log(colors.gray(`  Running ${CACHE_OPS.toLocaleString()} GET operations...`));
+console.info(colors.gray(`  Running ${CACHE_OPS.toLocaleString()} GET operations...`));
 const getTimes: number[] = [];
 for (let i = 0; i < CACHE_OPS; i++) {
 	const start = nanoseconds();
@@ -178,20 +178,20 @@ results.push({
 const getOpsPerSec = getStats.opsPerSecond >= 1000 
 	? `${(getStats.opsPerSecond / 1000).toFixed(1)}k ops/s`
 	: `${getStats.opsPerSecond.toFixed(0)} ops/s`;
-console.log(
+console.info(
 	`  ${statusColor(getStatus)("GET")}  avg=${nsToMs(getStats.avg)}ms  p99=${nsToMs(getStats.p99)}ms  ${getOpsPerSec}  target=<${TARGETS.cacheGet}ms`,
 );
 
 // Cache stats
 const cacheStats = cache.getStats();
-console.log(`\n  ${colors.gray("Cache Statistics:")}`);
-console.log(`    ${colors.gray("Entries:")} ${cacheStats.total.toLocaleString()}`);
-console.log(`    ${colors.gray("Memory:")} ${cacheStats.memory.toLocaleString()}`);
-console.log(
+console.info(`\n  ${colors.gray("Cache Statistics:")}`);
+console.info(`    ${colors.gray("Entries:")} ${cacheStats.total.toLocaleString()}`);
+console.info(`    ${colors.gray("Memory:")} ${cacheStats.memory.toLocaleString()}`);
+console.info(
 	`    ${colors.gray("Size:")} ${formatBytes(cacheStats.totalSize)} -> ${formatBytes(cacheStats.compressedSize)}`,
 );
-console.log(`    ${colors.gray("Compression:")} ${formatPercent(cacheStats.compressionRatio)}`);
-console.log(`    ${colors.gray("Hit Rate:")} ${formatPercent(cacheStats.hitRate)}`);
+console.info(`    ${colors.gray("Compression:")} ${formatPercent(cacheStats.compressionRatio)}`);
+console.info(`    ${colors.gray("Hit Rate:")} ${formatPercent(cacheStats.hitRate)}`);
 
 // Compression ratio check
 const compressionRatio = cacheStats.compressionRatio;
@@ -205,7 +205,7 @@ compressionResults.push({
 });
 
 // ============ HTTP Benchmarks ============
-console.log("\n" + box("HTTP Endpoints", "HTTP Benchmarks"));
+console.info("\n" + box("HTTP Endpoints", "HTTP Benchmarks"));
 
 async function benchEndpoint(path: string, target: number): Promise<BenchResult> {
 	const times: number[] = [];
@@ -234,7 +234,7 @@ async function benchEndpoint(path: string, target: number): Promise<BenchResult>
 	const status = checkStatus(avgMs, target);
 
 	if (errors > 0) {
-		console.log(
+		console.info(
 			`  ${colors.yellow(`⚠️  ${path} - ${errors} errors out of ${HTTP_OPS} requests`)}`,
 		);
 	}
@@ -251,13 +251,13 @@ const endpoints = [
 for (const { path, target } of endpoints) {
 	const result = await benchEndpoint(path, target);
 	results.push(result);
-	console.log(
+	console.info(
 		`  ${statusColor(result.status)(path.padEnd(30))} avg=${nsToMs(result.avg)}ms  p99=${nsToMs(result.p99)}ms  target=<${target}ms`,
 	);
 }
 
 // ============ Memory Benchmarks ============
-console.log("\n" + box("Memory Usage", "Memory Benchmarks"));
+console.info("\n" + box("Memory Usage", "Memory Benchmarks"));
 
 async function getMemoryFromAPI(): Promise<{ heapUsed: number; heapTotal: number; rss: number } | null> {
 	try {
@@ -281,16 +281,16 @@ async function getMemoryFromAPI(): Promise<{ heapUsed: number; heapTotal: number
 // Get baseline memory
 const baselineMemory = await getMemoryFromAPI();
 if (baselineMemory) {
-	console.log(`  ${colors.gray("Baseline (from API):")}`);
-	console.log(`    ${colors.gray("Heap Used:")} ${formatBytes(baselineMemory.heapUsed)}`);
-	console.log(`    ${colors.gray("Heap Total:")} ${formatBytes(baselineMemory.heapTotal)}`);
-	console.log(`    ${colors.gray("RSS:")} ${formatBytes(baselineMemory.rss)}`);
+	console.info(`  ${colors.gray("Baseline (from API):")}`);
+	console.info(`    ${colors.gray("Heap Used:")} ${formatBytes(baselineMemory.heapUsed)}`);
+	console.info(`    ${colors.gray("Heap Total:")} ${formatBytes(baselineMemory.heapTotal)}`);
+	console.info(`    ${colors.gray("RSS:")} ${formatBytes(baselineMemory.rss)}`);
 } else {
-	console.log(`  ${colors.yellow("⚠️  /api/debug/memory endpoint not available, using runtime memory")}`);
+	console.info(`  ${colors.yellow("⚠️  /api/debug/memory endpoint not available, using runtime memory")}`);
 }
 
 // Fill cache with test entries
-console.log(colors.gray(`  Filling cache with ${MEMORY_TEST_ENTRIES.toLocaleString()} entries...`));
+console.info(colors.gray(`  Filling cache with ${MEMORY_TEST_ENTRIES.toLocaleString()} entries...`));
 const memoryStart = nanoseconds();
 for (let i = 0; i < MEMORY_TEST_ENTRIES; i++) {
 	await cache.set(
@@ -306,11 +306,11 @@ const memoryFillTime = nanoseconds() - memoryStart;
 const afterMemory = await getMemoryFromAPI();
 const runtimeMemory = runtime.memoryFormatted();
 
-console.log(`\n  ${colors.gray("After cache fill:")}`);
+console.info(`\n  ${colors.gray("After cache fill:")}`);
 if (afterMemory) {
-	console.log(`    ${colors.gray("Heap Used:")} ${formatBytes(afterMemory.heapUsed)}`);
-	console.log(`    ${colors.gray("Heap Total:")} ${formatBytes(afterMemory.heapTotal)}`);
-	console.log(`    ${colors.gray("RSS:")} ${formatBytes(afterMemory.rss)}`);
+	console.info(`    ${colors.gray("Heap Used:")} ${formatBytes(afterMemory.heapUsed)}`);
+	console.info(`    ${colors.gray("Heap Total:")} ${formatBytes(afterMemory.heapTotal)}`);
+	console.info(`    ${colors.gray("RSS:")} ${formatBytes(afterMemory.rss)}`);
 	
 	const memoryDelta = afterMemory.heapUsed - (baselineMemory?.heapUsed || 0);
 	const memoryStatus = memoryDelta < TARGETS.memory10kEntries ? "pass" : memoryDelta < TARGETS.memory10kEntries * 1.5 ? "warn" : "fail";
@@ -330,17 +330,17 @@ if (afterMemory) {
 		unit: "bytes",
 	});
 	
-	console.log(`    ${colors.gray("Delta:")} ${formatBytes(memoryDelta)}  ${statusColor(memoryStatus)(memoryStatus.toUpperCase())}`);
+	console.info(`    ${colors.gray("Delta:")} ${formatBytes(memoryDelta)}  ${statusColor(memoryStatus)(memoryStatus.toUpperCase())}`);
 } else {
-	console.log(`    ${colors.gray("Heap Used:")} ${runtimeMemory.heapUsed}`);
-	console.log(`    ${colors.gray("Heap Total:")} ${runtimeMemory.heapTotal}`);
-	console.log(`    ${colors.gray("RSS:")} ${runtimeMemory.rss}`);
+	console.info(`    ${colors.gray("Heap Used:")} ${runtimeMemory.heapUsed}`);
+	console.info(`    ${colors.gray("Heap Total:")} ${runtimeMemory.heapTotal}`);
+	console.info(`    ${colors.gray("RSS:")} ${runtimeMemory.rss}`);
 }
 
-console.log(`  ${colors.gray("Fill time:")} ${formatDuration(memoryFillTime / 1_000_000)}`);
+console.info(`  ${colors.gray("Fill time:")} ${formatDuration(memoryFillTime / 1_000_000)}`);
 
 // ============ Compression by Exchange ============
-console.log("\n" + box("Compression Ratios", "Compression Analysis"));
+console.info("\n" + box("Compression Ratios", "Compression Analysis"));
 
 // Test compression for different exchanges
 const exchanges = ["polymarket", "kalshi", "deribit"];
@@ -378,7 +378,7 @@ for (const exchange of exchanges) {
 				status: compStatus,
 			});
 			
-			console.log(
+			console.info(
 				`  ${exchange.padEnd(15)} ${formatBytes(originalSize)} -> ${formatBytes(compressedSize)}  ${formatPercent(ratio)}  ${statusColor(compStatus)(compStatus.toUpperCase())}`,
 			);
 		}
@@ -388,7 +388,7 @@ for (const exchange of exchanges) {
 cache.close();
 
 // ============ Results Summary ============
-console.log("\n" + box("Results Summary", "Benchmark Results"));
+console.info("\n" + box("Results Summary", "Benchmark Results"));
 
 // Results formatted with printTable below
 
@@ -444,7 +444,7 @@ const tableColumns: TableColumn<BenchResult>[] = [
 	printTable(results, tableColumns);
 	
 	// Also available via BunUtilities:
-	// console.log(BunUtilities.formatTable(results.map(r => ({
+	// console.info(BunUtilities.formatTable(results.map(r => ({
 	//   Benchmark: r.name,
 	//   Avg: `${nsToMs(r.avg)}ms`,
 	//   P99: `${nsToMs(r.p99)}ms`,
@@ -454,8 +454,8 @@ const tableColumns: TableColumn<BenchResult>[] = [
 
 // Compression results table
 if (compressionResults.length > 0) {
-	console.log("\n" + colors.cyan("Compression Ratios by Exchange"));
-	console.log(colors.gray("─".repeat(70)));
+	console.info("\n" + colors.cyan("Compression Ratios by Exchange"));
+	console.info(colors.gray("─".repeat(70)));
 	
 	const compTableColumns: TableColumn<CompressionResult>[] = [
 		{ key: "exchange", header: "Exchange", width: 15 },
@@ -502,12 +502,12 @@ const compPassed = compressionResults.filter((r) => r.status === "pass").length;
 const compWarned = compressionResults.filter((r) => r.status === "warn").length;
 const compFailed = compressionResults.filter((r) => r.status === "fail").length;
 
-console.log(
+console.info(
 	`\n${colors.green(`${passed} passed`)}  ${colors.yellow(`${warned} warned`)}  ${colors.red(`${failed} failed`)}`,
 );
 
 if (compressionResults.length > 0) {
-	console.log(
+	console.info(
 		`Compression: ${colors.green(`${compPassed} passed`)}  ${colors.yellow(`${compWarned} warned`)}  ${colors.red(`${compFailed} failed`)}`,
 	);
 }

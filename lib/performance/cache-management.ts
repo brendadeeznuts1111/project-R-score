@@ -203,7 +203,7 @@ export class AdvancedCache<T> {
     }
 
     this.clear();
-    console.log('🗑️ Cache destroyed and resources cleaned up');
+    console.info('🗑️ Cache destroyed and resources cleaned up');
   }
 
   // ============================================================================
@@ -362,7 +362,7 @@ export class AdvancedCache<T> {
     this.cleanupInterval = setInterval(() => {
       const cleaned = this.cleanup();
       if (cleaned > 0) {
-        console.log(`🧹 Cache cleanup: removed ${cleaned} expired entries`);
+        console.info(`🧹 Cache cleanup: removed ${cleaned} expired entries`);
       }
     }, this.options.cleanupInterval);
   }

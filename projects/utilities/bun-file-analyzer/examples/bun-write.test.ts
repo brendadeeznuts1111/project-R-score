@@ -172,5 +172,5 @@ describe("Bun.Glob Tests", () => {
   });
 });
 
-console.log("🧪 Bun Test Suite Ready!");
-console.log("Run with: bun test bun-write.test.ts");
+console.info("🧪 Bun Test Suite Ready!");
+console.info("Run with: bun test bun-write.test.ts");

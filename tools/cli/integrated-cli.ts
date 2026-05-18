@@ -74,7 +74,7 @@ class IntegratedCLI {
   async initPackage(args: string[]) {
     const packageName = args[0] || (await Bun.$`basename ${Bun.env.PWD || process.cwd()}`.text()).trim();
     
-    console.log(`🚀 Initializing ${packageName}...`);
+    console.info(`🚀 Initializing ${packageName}...`);
     
     // Create package.json if it doesn't exist
     const packageJsonPath = './package.json';
@@ -100,13 +100,13 @@ class IntegratedCLI {
       };
       
       await Bun.write(packageJsonPath, JSON.stringify(packageJson, null, 2));
-      console.log('✅ Created package.json');
+      console.info('✅ Created package.json');
     }
     
     // Set up R2 bucket
     if (this.r2Storage) {
       const bucket = await this.r2Storage.createBucketForPackage(packageName);
-      console.log(`✅ Created R2 bucket: ${bucket}`);
+      console.info(`✅ Created R2 bucket: ${bucket}`);
     }
     
     // Subscribe to RSS feeds
@@ -115,54 +115,54 @@ class IntegratedCLI {
       'Bun Blog',
       'bun'
     );
-    console.log('✅ Subscribed to Bun RSS feed');
+    console.info('✅ Subscribed to Bun RSS feed');
     
     // Install dependencies
     await this.packageManager.installMissingDocs();
     
-    console.log('\n🎉 Package initialized!');
-    console.log('Next steps:');
-    console.log('  bun-docs analyze      # Analyze package for Bun APIs');
-    console.log('  bun-docs serve        # Start documentation server');
-    console.log('  bun-docs sync         # Sync with R2');
+    console.info('\n🎉 Package initialized!');
+    console.info('Next steps:');
+    console.info('  bun-docs analyze      # Analyze package for Bun APIs');
+    console.info('  bun-docs serve        # Start documentation server');
+    console.info('  bun-docs sync         # Sync with R2');
   }
   
   async analyzePackage(args: string[]) {
     const packageInfo = await this.packageManager.analyzePackage();
     
-    console.log(`📦 ${packageInfo.name}@${packageInfo.version}`);
-    console.log(`📝 ${packageInfo.description || 'No description'}`);
+    console.info(`📦 ${packageInfo.name}@${packageInfo.version}`);
+    console.info(`📝 ${packageInfo.description || 'No description'}`);
     
     if (packageInfo.bunDocs && packageInfo.bunDocs.length > 0) {
-      console.log('\n🚀 Bun APIs used:');
+      console.info('\n🚀 Bun APIs used:');
       packageInfo.bunDocs.forEach(doc => {
-        console.log(`  • ${doc.api} (${doc.category})`);
-        console.log(`    📚 ${doc.url}`);
+        console.info(`  • ${doc.api} (${doc.category})`);
+        console.info(`    📚 ${doc.url}`);
       });
     }
     
     if (packageInfo.r2Config) {
-      console.log(`\n☁️  R2 Storage: ${packageInfo.r2Config.bucket}`);
+      console.info(`\n☁️  R2 Storage: ${packageInfo.r2Config.bucket}`);
     }
     
     if (packageInfo.rssFeed) {
-      console.log(`\n📰 RSS Feed: ${packageInfo.rssFeed}`);
+      console.info(`\n📰 RSS Feed: ${packageInfo.rssFeed}`);
     }
     
     // Generate dependency graph
     if (args.includes('--graph')) {
       const graph = await this.packageManager.generateDependencyGraph();
-      console.log('\n🌳 Dependency Graph:');
+      console.info('\n🌳 Dependency Graph:');
       this.printDependencyGraph(graph, 0);
     }
   }
   
   private printDependencyGraph(graph: any, depth: number) {
     const indent = '  '.repeat(depth);
-    console.log(`${indent}${graph.name}@${graph.version} (${graph.size} bytes)`);
+    console.info(`${indent}${graph.name}@${graph.version} (${graph.size} bytes)`);
     
     if (graph.docsUrls.length > 0) {
-      console.log(`${indent}  📚 Docs: ${graph.docsUrls[0]}`);
+      console.info(`${indent}  📚 Docs: ${graph.docsUrls[0]}`);
     }
     
     for (const dep of graph.dependencies) {
@@ -173,16 +173,16 @@ class IntegratedCLI {
   async analyzeDependencies(args: string[]) {
     const graph = await this.packageManager.generateDependencyGraph();
     
-    console.log('📊 Dependency Analysis:');
-    console.log(`Total packages: ${this.countDependencies(graph)}`);
-    console.log(`Total size: ${this.formatBytes(graph.size)}`);
+    console.info('📊 Dependency Analysis:');
+    console.info(`Total packages: ${this.countDependencies(graph)}`);
+    console.info(`Total size: ${this.formatBytes(graph.size)}`);
     
     // Check for Bun-compatible packages
     const bunPackages = await this.findBunCompatiblePackages(graph);
     if (bunPackages.length > 0) {
-      console.log('\n⚡ Bun-compatible packages:');
+      console.info('\n⚡ Bun-compatible packages:');
       bunPackages.forEach(pkg => {
-        console.log(`  • ${pkg.name} - ${pkg.docsUrls[0] || 'No docs'}`);
+        console.info(`  • ${pkg.name} - ${pkg.docsUrls[0] || 'No docs'}`);
       });
     }
   }
@@ -213,7 +213,7 @@ class IntegratedCLI {
   async r2Operations(args: string[]) {
     if (!this.r2Storage) {
       console.error('❌ R2 storage not configured');
-      console.log('Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY environment variables');
+      console.info('Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY environment variables');
       return;
     }
     
@@ -222,10 +222,10 @@ class IntegratedCLI {
     switch (operation) {
       case 'list':
         const packages = await this.r2Storage.listPackages();
-        console.log('📦 Packages in R2:');
+        console.info('📦 Packages in R2:');
         packages.forEach(pkg => {
-          console.log(`  • ${pkg.name} (${pkg.versions.length} versions)`);
-          console.log(`    Last updated: ${pkg.lastUpdated}`);
+          console.info(`  • ${pkg.name} (${pkg.versions.length} versions)`);
+          console.info(`    Last updated: ${pkg.lastUpdated}`);
         });
         break;
         
@@ -235,7 +235,7 @@ class IntegratedCLI {
           packageInfo.name,
           packageInfo
         );
-        console.log(`✅ Uploaded to: ${url}`);
+        console.info(`✅ Uploaded to: ${url}`);
         break;
         
       case 'sync':
@@ -247,7 +247,7 @@ class IntegratedCLI {
         break;
         
       default:
-        console.log('Available R2 operations: list, upload, sync');
+        console.info('Available R2 operations: list, upload, sync');
         break;
     }
   }
@@ -259,18 +259,18 @@ class IntegratedCLI {
       case 'subscribe':
         const [url, name] = args.slice(1);
         await this.rssManager.subscribe(url, name);
-        console.log(`✅ Subscribed to ${name}`);
+        console.info(`✅ Subscribed to ${name}`);
         break;
         
       case 'fetch':
         const feeds = await this.rssManager.fetchAll();
-        console.log('📰 Latest updates:');
+        console.info('📰 Latest updates:');
         
         for (const [name, feed] of feeds) {
-          console.log(`\n${name}:`);
+          console.info(`\n${name}:`);
           feed.items.slice(0, 3).forEach(item => {
-            console.log(`  • ${item.title}`);
-            console.log(`    ${item.link}`);
+            console.info(`  • ${item.title}`);
+            console.info(`    ${item.link}`);
           });
         }
         break;
@@ -279,11 +279,11 @@ class IntegratedCLI {
         const packageName = args[1] || (await this.packageManager.analyzePackage()).name;
         const packageFeeds = await this.rssManager.getPackageFeeds(packageName);
         
-        console.log(`📦 RSS feeds for ${packageName}:`);
+        console.info(`📦 RSS feeds for ${packageName}:`);
         packageFeeds.forEach(feed => {
-          console.log(`\n${feed.title}:`);
+          console.info(`\n${feed.title}:`);
           feed.items.slice(0, 2).forEach(item => {
-            console.log(`  • ${item.title}`);
+            console.info(`  • ${item.title}`);
           });
         });
         break;
@@ -294,42 +294,42 @@ class IntegratedCLI {
         
         if (this.r2Storage) {
           const feedUrl = await this.rssManager.publishPackageFeed(pkgInfo.name, feed);
-          console.log(`✅ Published RSS feed: ${feedUrl}`);
+          console.info(`✅ Published RSS feed: ${feedUrl}`);
         } else {
           const xml = generateRSS(feed);
           await Bun.write('./docs/feed.rss', xml);
-          console.log('✅ Generated feed.rss');
+          console.info('✅ Generated feed.rss');
         }
         break;
         
       default:
-        console.log('Available RSS operations: subscribe, fetch, package, generate');
+        console.info('Available RSS operations: subscribe, fetch, package, generate');
         break;
     }
   }
   
   async syncAll(args: string[]) {
-    console.log('🔄 Synchronizing everything...');
+    console.info('🔄 Synchronizing everything...');
     
     // Sync package to R2
     if (this.r2Storage) {
       const packageInfo = await this.packageManager.analyzePackage();
       await this.r2Storage.uploadPackageDocs(packageInfo.name, packageInfo);
-      console.log('✅ Package docs uploaded to R2');
+      console.info('✅ Package docs uploaded to R2');
     }
     
     // Update RSS feeds
     await this.rssManager.fetchAll();
-    console.log('✅ RSS feeds updated');
+    console.info('✅ RSS feeds updated');
     
-    console.log('\n🎉 All systems synchronized!');
+    console.info('\n🎉 All systems synchronized!');
   }
   
   async serveDocs(args: string[]) {
     const portArg = args.find(arg => arg.startsWith('--port='));
     const port = parseInt(portArg?.split('=')[1] || '3000', 10);
     
-    console.log(`🌐 Starting documentation server on http://localhost:${port}`);
+    console.info(`🌐 Starting documentation server on http://localhost:${port}`);
     
     const server = Bun.serve({
       port,
@@ -365,12 +365,12 @@ class IntegratedCLI {
       }
     });
     
-    console.log(`Server running at ${server.url}`);
-    console.log('Press Ctrl+C to stop');
+    console.info(`Server running at ${server.url}`);
+    console.info('Press Ctrl+C to stop');
   }
   
   async publishPackage(args: string[]) {
-    console.log('🚀 Publishing package documentation...');
+    console.info('🚀 Publishing package documentation...');
     
     const packageInfo = await this.packageManager.analyzePackage();
     
@@ -384,7 +384,7 @@ class IntegratedCLI {
     // Upload to R2
     if (this.r2Storage) {
       const url = await this.r2Storage.uploadPackageDocs(packageInfo.name, docs);
-      console.log(`✅ Published to: ${url}`);
+      console.info(`✅ Published to: ${url}`);
     }
     
     // Generate RSS feed
@@ -392,7 +392,7 @@ class IntegratedCLI {
     
     if (this.r2Storage) {
       const feedUrl = await this.rssManager.publishPackageFeed(packageInfo.name, feed);
-      console.log(`✅ RSS feed: ${feedUrl}`);
+      console.info(`✅ RSS feed: ${feedUrl}`);
     }
     
     // Create deployment summary
@@ -408,7 +408,7 @@ class IntegratedCLI {
     };
     
     await Bun.write('./docs/deployment.json', JSON.stringify(summary, null, 2));
-    console.log('✅ Deployment summary saved to docs/deployment.json');
+    console.info('✅ Deployment summary saved to docs/deployment.json');
   }
   
   private hasR2Credentials(): boolean {
@@ -440,7 +440,7 @@ class IntegratedCLI {
   }
   
   private showHelp() {
-    console.log(`
+    console.info(`
 🚀 Bun Documentation CLI
 
 Commands:

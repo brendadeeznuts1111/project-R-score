@@ -238,7 +238,7 @@ async function main() {
 
       if (vaultSync) {
         // TODO: Implement vault synchronization
-        console.log('🔐 Vault sync enabled (mock implementation)');
+        console.info('🔐 Vault sync enabled (mock implementation)');
       }
 
       // Add metadata
@@ -250,9 +250,9 @@ async function main() {
       };
 
       const hash = await registry.storeYAML(content, options);
-      console.log(`📦 Stored YAML with hash: ${hash}`);
+      console.info(`📦 Stored YAML with hash: ${hash}`);
       if (scopeFlag && typeFlag) {
-        console.log(`🏷️  Tagged as: ${scopeFlag}/${typeFlag}`);
+        console.info(`🏷️  Tagged as: ${scopeFlag}/${typeFlag}`);
       }
       break;
 
@@ -265,7 +265,7 @@ async function main() {
       }
 
       const yaml = await registry.getYAML(getHash, format);
-      console.log(yaml);
+      console.info(yaml);
       break;
 
     case 'diff':
@@ -283,9 +283,9 @@ async function main() {
 
       if (outputFormat === 'html') {
         const htmlDiff = generateHTMLDiff(hash1, hash2, diff);
-        console.log(htmlDiff);
+        console.info(htmlDiff);
       } else {
-        console.log(diff);
+        console.info(diff);
       }
       break;
 
@@ -302,7 +302,7 @@ async function main() {
 
       // Find files matching pattern
       const files = await findFilesForBatch(pattern);
-      console.log(`📦 Found ${files.length} files to process`);
+      console.info(`📦 Found ${files.length} files to process`);
 
       if (parallel) {
         await processBatchParallel(files, maxConcurrency, showProgress);
@@ -312,7 +312,7 @@ async function main() {
       break;
 
     default:
-      console.log(`
+      console.info(`
 Bun YAML Registry v3.0
 
 Commands:
@@ -397,7 +397,7 @@ async function processBatchSequential(files: string[], showProgress: boolean): P
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     if (showProgress) {
-      console.log(`📄 Processing ${i + 1}/${files.length}: ${file}`);
+      console.info(`📄 Processing ${i + 1}/${files.length}: ${file}`);
     }
 
     try {
@@ -409,12 +409,12 @@ async function processBatchSequential(files: string[], showProgress: boolean): P
     }
   }
 
-  console.log('\n📊 Batch Results:');
+  console.info('\n📊 Batch Results:');
   results.forEach(result => {
     if (result.hash) {
-      console.log(`✅ ${result.file} → ${result.hash}`);
+      console.info(`✅ ${result.file} → ${result.hash}`);
     } else {
-      console.log(`❌ ${result.file} → ${result.error}`);
+      console.info(`❌ ${result.file} → ${result.error}`);
     }
   });
 }
@@ -427,7 +427,7 @@ async function processBatchParallel(files: string[], maxConcurrency: number, sho
     await semaphore.acquire();
     try {
       if (showProgress) {
-        console.log(`📄 Processing ${index + 1}/${files.length}: ${file}`);
+        console.info(`📄 Processing ${index + 1}/${files.length}: ${file}`);
       }
 
       const content = await Bun.file(file).text();
@@ -442,12 +442,12 @@ async function processBatchParallel(files: string[], maxConcurrency: number, sho
 
   await Promise.all(promises);
 
-  console.log('\n📊 Batch Results:');
+  console.info('\n📊 Batch Results:');
   results.forEach(result => {
     if (result.hash) {
-      console.log(`✅ ${result.file} → ${result.hash}`);
+      console.info(`✅ ${result.file} → ${result.hash}`);
     } else {
-      console.log(`❌ ${result.file} → ${result.error}`);
+      console.info(`❌ ${result.file} → ${result.error}`);
     }
   });
 }

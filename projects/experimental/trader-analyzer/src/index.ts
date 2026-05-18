@@ -1064,8 +1064,8 @@ if (import.meta.hot?.data.server) {
 			"./17.14.0.0.0.0.0-nexus/registry-monitor"
 		);
 		startRegistryMonitoring(server);
-		console.log("[17.14.0] ✅ NEXUS Registry System Radiance Integration active");
-		console.log("[17.14.0] 📡 All registries now emit radiance events");
+		console.info("[17.14.0] ✅ NEXUS Registry System Radiance Integration active");
+		console.info("[17.14.0] 📡 All registries now emit radiance events");
 	} catch (error) {
 		console.error("[17.14.0] Failed to start registry monitoring:", error);
 	}
@@ -1129,7 +1129,7 @@ ${colors.magenta("HMR")}        Enabled (use bun --hot)
 ${colors.gray(`Startup: ${((timing.now() - startTime) / 1_000_000).toFixed(2)}ms`)}
 `;
 
-console.log(
+console.info(
 	box(
 		banner.trim(),
 		isHMR ? `NEXUS HMR #${hmrData.reloadCount}` : "NEXUS v1.0.0",
@@ -1191,7 +1191,7 @@ if (server) {
 			"./17.14.0.0.0.0.0-nexus/registry-monitor"
 		);
 		startRegistryMonitoring(server);
-		console.log("[17.14.0] ✅ NEXUS Registry System Radiance Integration active");
+		console.info("[17.14.0] ✅ NEXUS Registry System Radiance Integration active");
 	} catch (error) {
 		console.error("[17.14.0] Failed to start registry monitoring:", error);
 	}

@@ -139,13 +139,13 @@ const TERMINAL_WIDTH = process.stdout.columns || 80;
 // Utility functions with improved width handling
 function printHeader(title: string): void {
   const header = `🔬 SURGICAL PRECISION MCP - ${title.toUpperCase()}`;
-  console.log(header);
+  console.info(header);
   // Use StringWidth for accurate rule length
-  console.log(StringWidth.rule('━', Math.min(StringWidth.width(header), TERMINAL_WIDTH)));
+  console.info(StringWidth.rule('━', Math.min(StringWidth.width(header), TERMINAL_WIDTH)));
 }
 
 function printSuccess(message: string): void {
-  console.log(`✅ ${message}`);
+  console.info(`✅ ${message}`);
 }
 
 function printError(message: string): void {
@@ -153,7 +153,7 @@ function printError(message: string): void {
 }
 
 function printInfo(message: string): void {
-  console.log(`ℹ️  ${message}`);
+  console.info(`ℹ️  ${message}`);
 }
 
 function ensureBuilt(): boolean {
@@ -167,7 +167,7 @@ function ensureBuilt(): boolean {
 function runCommand(cmd: string, description: string): void {
   printInfo(`Running: ${cmd}`);
   printInfo(description);
-  console.log();
+  console.info();
 
   try {
     // Ensure we're using the right shell and environment
@@ -220,9 +220,9 @@ const commands: CLICommand[] = [
       if (subCommand) {
         const cmd = commands.find(c => c.name === subCommand);
         if (cmd) {
-          console.log(`Command: ${cmd.name}`);
-          console.log(`Description: ${cmd.description}`);
-          console.log(`Usage: ${cmd.usage}`);
+          console.info(`Command: ${cmd.name}`);
+          console.info(`Description: ${cmd.description}`);
+          console.info(`Usage: ${cmd.usage}`);
           return;
         } else {
           printError(`Unknown command: ${subCommand}`);
@@ -230,19 +230,19 @@ const commands: CLICommand[] = [
       }
 
       printHeader('Local CLI Management Tool');
-      console.log('Comprehensive management tool for Surgical Precision MCP Server\n');
+      console.info('Comprehensive management tool for Surgical Precision MCP Server\n');
 
-      console.log('Available Commands:');
+      console.info('Available Commands:');
       commands.forEach(cmd => {
-        console.log(`  ${StringWidth.pad(cmd.name, 15)} ${cmd.description}`);
+        console.info(`  ${StringWidth.pad(cmd.name, 15)} ${cmd.description}`);
       });
 
-      console.log('\nUsage: bun run cli.ts <command> [options]');
-      console.log('Examples:');
-      console.log('  bun run cli.ts build          # Build the project');
-      console.log('  bun run cli.ts test           # Run all tests');
-      console.log('  bun run cli.ts bench          # Run performance benchmarks');
-      console.log('  bun run cli.ts server         # Start MCP server');
+      console.info('\nUsage: bun run cli.ts <command> [options]');
+      console.info('Examples:');
+      console.info('  bun run cli.ts build          # Build the project');
+      console.info('  bun run cli.ts test           # Run all tests');
+      console.info('  bun run cli.ts bench          # Run performance benchmarks');
+      console.info('  bun run cli.ts server         # Start MCP server');
     }
   },
 
@@ -273,8 +273,8 @@ const commands: CLICommand[] = [
         : 'bun test --verbose --concurrent';
 
       printInfo('Running comprehensive test suite...');
-      console.log(`Command: ${testCommand}`);
-      console.log();
+      console.info(`Command: ${testCommand}`);
+      console.info();
 
       try {
         execSync(testCommand, { stdio: 'inherit', cwd: PROJECT_ROOT });
@@ -301,7 +301,7 @@ const commands: CLICommand[] = [
 
       printInfo('Running performance benchmark suite...');
       printInfo(`Mode: ${flagType === 'flags' ? 'Feature Flags Disabled' : 'Optimized Mode'}`);
-      console.log();
+      console.info();
 
       try {
         execSync(benchCommand, { stdio: 'inherit', cwd: PROJECT_ROOT, shell: '/bin/bash' });
@@ -323,17 +323,17 @@ const commands: CLICommand[] = [
       if (!ensureBuilt()) return;
 
       printInfo('Running comparative benchmark analysis...');
-      console.log();
+      console.info();
 
       try {
         // Run optimized mode first
-        console.log('🏃 OPTIMIZED MODE (Default):');
+        console.info('🏃 OPTIMIZED MODE (Default):');
         execSync('bun run compare-benchmark.ts', { stdio: 'inherit', cwd: PROJECT_ROOT });
 
-        console.log('\n' + '='.repeat(70) + '\n');
+        console.info('\n' + '='.repeat(70) + '\n');
 
         // Run with feature flags
-        console.log('🏃 COMPATIBILITY MODE (Flags Disabled):');
+        console.info('🏃 COMPATIBILITY MODE (Flags Disabled):');
         execSync('BUN_FEATURE_FLAG_DISABLE_NATIVE_DEPENDENCY_LINKER=1 BUN_FEATURE_FLAG_DISABLE_IGNORE_SCRIPTS=1 bun run compare-benchmark.ts',
           { stdio: 'inherit', cwd: PROJECT_ROOT });
 
@@ -358,7 +358,7 @@ const commands: CLICommand[] = [
 
       printInfo(`Starting MCP server (${mode === 'dev' ? 'development' : 'production'})...`);
       printInfo('Press Ctrl+C to stop the server');
-      console.log();
+      console.info();
 
       try {
         execSync(serverCmd, { stdio: 'inherit', cwd: PROJECT_ROOT });
@@ -455,13 +455,13 @@ const commands: CLICommand[] = [
         printError('Documentation: MISSING');
       }
 
-      console.log();
+      console.info();
       const percentage = Math.round((healthScore / totalChecks) * 100);
       const status = percentage >= 90 ? '🏆 EXCELLENT' : percentage >= 70 ? '✅ GOOD' : percentage >= 50 ? '⚠️  AVERAGE' : '❌ POOR';
 
       printHeader(`Health Score: ${status} (${percentage}%)`);
-      console.log(`Passed: ${healthScore}/${totalChecks} checks`);
-      console.log();
+      console.info(`Passed: ${healthScore}/${totalChecks} checks`);
+      console.info();
 
       const recommendations: string[] = [];
       if (healthScore < totalChecks) {
@@ -471,7 +471,7 @@ const commands: CLICommand[] = [
 
       if (recommendations.length > 0) {
         printInfo('Recommendations:');
-        recommendations.forEach(rec => console.log(`  ${rec}`));
+        recommendations.forEach(rec => console.info(`  ${rec}`));
       }
     }
   },
@@ -503,7 +503,7 @@ const commands: CLICommand[] = [
             current = current[k];
           }
 
-          console.log(`${key}: ${JSON.stringify(current, null, 2)}`);
+          console.info(`${key}: ${JSON.stringify(current, null, 2)}`);
         } catch (error) {
           printError('Failed to read configuration');
         }
@@ -521,15 +521,15 @@ const commands: CLICommand[] = [
         if (existsSync(CONFIG_PATH)) {
           const configContent = readFileSync(CONFIG_PATH, 'utf8');
           printInfo('Current bunfig.toml:');
-          console.log(configContent);
+          console.info(configContent);
         } else {
           printError('No bunfig.toml found');
         }
 
-        console.log();
+        console.info();
         printInfo('Usage:');
-        console.log('  cli config get <key>     # Get config value');
-        console.log('  cli config set <key> <value> # Set config value');
+        console.info('  cli config get <key>     # Get config value');
+        console.info('  cli config set <key> <value> # Set config value');
       }
     }
   },
@@ -570,23 +570,23 @@ const commands: CLICommand[] = [
         // Read package.json
         const pkgPath = join(PROJECT_ROOT, 'package.json');
         const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
-        console.log(`📦 Package:    ${pkg.name}@${pkg.version}`);
-        console.log(`🔧 Bun Version: v${execSync('bun --version').toString().trim()}`);
-        console.log(`🎯 Platform:   ${process.platform} ${process.arch}`);
-        console.log(`📁 Node.js:    ${process.version}`);
+        console.info(`📦 Package:    ${pkg.name}@${pkg.version}`);
+        console.info(`🔧 Bun Version: v${execSync('bun --version').toString().trim()}`);
+        console.info(`🎯 Platform:   ${process.platform} ${process.arch}`);
+        console.info(`📁 Node.js:    ${process.version}`);
 
         // Check lockfile version
         if (existsSync(LOCKFILE_PATH)) {
           try {
             const lockfile = JSON.parse(readFileSync(LOCKFILE_PATH, 'utf8'));
-            console.log(`🔒 Lockfile:    v${lockfile.lockfileVersion}`);
-            console.log(`⚙️  Config:     v${lockfile.configVersion}`);
+            console.info(`🔒 Lockfile:    v${lockfile.lockfileVersion}`);
+            console.info(`⚙️  Config:     v${lockfile.configVersion}`);
           } catch (lockfileError) {
-            console.log(`🔒 Lockfile:    v1 (unable to parse)`);
+            console.info(`🔒 Lockfile:    v1 (unable to parse)`);
           }
         }
 
-        console.log();
+        console.info();
         printSuccess('Version information retrieved successfully');
 
       } catch (error) {
@@ -605,17 +605,17 @@ const commands: CLICommand[] = [
 
       if (linkArgs.length === 0) {
         printError('Please provide a URL or HTML file path');
-        console.log();
+        console.info();
         printInfo('Usage:');
-        console.log('  cli extract-links https://example.com');
-        console.log('  cli extract-links ./index.html --base-url https://example.com');
-        console.log('  cli extract-links https://bun.sh --category external --format compact');
-        console.log();
+        console.info('  cli extract-links https://example.com');
+        console.info('  cli extract-links ./index.html --base-url https://example.com');
+        console.info('  cli extract-links https://bun.sh --category external --format compact');
+        console.info();
         printInfo('Options:');
-        console.log('  --category <type>  Filter by: navigation, resource, external, internal, anchor, all (default: all)');
-        console.log('  --format <fmt>     Output: detailed, compact, json (default: detailed)');
-        console.log('  --max <n>          Maximum links to show (default: 50)');
-        console.log('  --base-url <url>   Base URL for relative links (required for file input)');
+        console.info('  --category <type>  Filter by: navigation, resource, external, internal, anchor, all (default: all)');
+        console.info('  --format <fmt>     Output: detailed, compact, json (default: detailed)');
+        console.info('  --max <n>          Maximum links to show (default: 50)');
+        console.info('  --base-url <url>   Base URL for relative links (required for file input)');
         return;
       }
 
@@ -646,7 +646,7 @@ const commands: CLICommand[] = [
       try {
         printInfo(`Extracting links from: ${source}`);
         printInfo(`Filter: ${category} | Format: ${format} | Max: ${maxLinks}`);
-        console.log();
+        console.info();
 
         let result;
 
@@ -670,29 +670,29 @@ const commands: CLICommand[] = [
 
         // Output based on format
         if (format === 'json') {
-          console.log(JSON.stringify(result, null, 2));
+          console.info(JSON.stringify(result, null, 2));
         } else if (format === 'compact') {
-          console.log(`✅ SURGICAL LINK EXTRACTION (Bun HTMLRewriter)`);
-          console.log(`Base URL: ${result.baseUrl}`);
-          console.log(`Processing Time: ${result.processingTimeMs.toFixed(2)}ms`);
-          console.log(`Total Links: ${result.totalLinks}`);
-          console.log();
+          console.info(`✅ SURGICAL LINK EXTRACTION (Bun HTMLRewriter)`);
+          console.info(`Base URL: ${result.baseUrl}`);
+          console.info(`Processing Time: ${result.processingTimeMs.toFixed(2)}ms`);
+          console.info(`Total Links: ${result.totalLinks}`);
+          console.info();
           result.links.forEach((link, idx) => {
-            console.log(`${idx + 1}. ${link.absoluteUrl}`);
+            console.info(`${idx + 1}. ${link.absoluteUrl}`);
           });
         } else {
           // Detailed format
-          console.log(HTMLRewriterUtils.formatExtractionResult(result));
+          console.info(HTMLRewriterUtils.formatExtractionResult(result));
         }
 
         // Show warnings
         if (result.errors.length > 0) {
-          console.log();
+          console.info();
           printError('Warnings:');
-          result.errors.forEach(err => console.log(`  ⚠️  ${err}`));
+          result.errors.forEach(err => console.info(`  ⚠️  ${err}`));
         }
 
-        console.log();
+        console.info();
         printSuccess(`Extracted ${result.totalLinks} links in ${result.processingTimeMs.toFixed(2)}ms`);
 
         // Show category summary
@@ -700,10 +700,10 @@ const commands: CLICommand[] = [
           .filter(([_, count]) => count > 0);
 
         if (nonZeroCategories.length > 0) {
-          console.log();
+          console.info();
           printInfo('Category breakdown:');
           nonZeroCategories.forEach(([cat, count]) => {
-            console.log(`  • ${cat}: ${count}`);
+            console.info(`  • ${cat}: ${count}`);
           });
         }
 
@@ -733,7 +733,7 @@ const commands: CLICommand[] = [
       printInfo(`Update interval: ${dashboardOptions.interval}ms`);
       printInfo(`Logs enabled: ${dashboardOptions.showLogs}`);
       printInfo(`Team colors: ${dashboardOptions.teamColors}`);
-      console.log();
+      console.info();
 
       try {
         const { TerminalManager } = await import('./terminal-manager');
@@ -777,7 +777,7 @@ const commands: CLICommand[] = [
 
       printInfo(`Creating collaborative session: ${session}`);
       printInfo('Windows: monitor (health), bot (trading), logs (tail)');
-      console.log();
+      console.info();
 
       try {
         const { TerminalManager } = await import('./terminal-manager');
@@ -815,7 +815,7 @@ const commands: CLICommand[] = [
 
       printInfo(`Launching: ${command.join(' ')}`);
       printInfo('Full PTY support with Bun Terminal API');
-      console.log();
+      console.info();
 
       try {
         const { TerminalManager } = await import('./terminal-manager');
@@ -850,8 +850,8 @@ const commands: CLICommand[] = [
 
 // Main CLI execution logic
 if (import.meta.main) {
-  console.log();
-  console.log('🎯 Endeavor with surgical precision. #BunWhy #RipgrepSpeed');
+  console.info();
+  console.info('🎯 Endeavor with surgical precision. #BunWhy #RipgrepSpeed');
 
   // Parse arguments using minimist
   const argv = minimist(process.argv.slice(2));
@@ -864,12 +864,12 @@ if (import.meta.main) {
 
   if (!command) {
     printError(`Unknown command: ${commandName}`);
-    console.log();
+    console.info();
     printInfo('Available commands:');
     commands.forEach(cmd => {
-      console.log(`  ${StringWidth.pad(cmd.name, 15)} ${cmd.description}`);
+      console.info(`  ${StringWidth.pad(cmd.name, 15)} ${cmd.description}`);
     });
-    console.log();
+    console.info();
     printInfo('Run: bun run cli.ts help  # For detailed usage');
     process.exit(1);
   }

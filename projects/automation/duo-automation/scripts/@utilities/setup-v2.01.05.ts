@@ -34,11 +34,11 @@ class SetupManager {
   }
 
   async run(): Promise<void> {
-    console.log('🚀 Duo Automation v2.01.05 Setup');
-    console.log('=====================================');
-    console.log(`Environment: ${this.config.environment}`);
-    console.log(`Features: ${this.config.enableAllFeatures ? 'All Enabled' : 'Selective'}`);
-    console.log('');
+    console.info('🚀 Duo Automation v2.01.05 Setup');
+    console.info('=====================================');
+    console.info(`Environment: ${this.config.environment}`);
+    console.info(`Features: ${this.config.enableAllFeatures ? 'All Enabled' : 'Selective'}`);
+    console.info('');
 
     try {
       await this.validatePrerequisites();
@@ -67,13 +67,13 @@ class SetupManager {
   }
 
   private async validatePrerequisites(): Promise<void> {
-    console.log('🔍 Validating prerequisites...');
+    console.info('🔍 Validating prerequisites...');
     
     // Check Bun version
     try {
       const bunVersion = await $`bun --version`.text();
       const version = bunVersion.trim();
-      console.log(`   ✅ Bun: ${version}`);
+      console.info(`   ✅ Bun: ${version}`);
       
       const majorVersion = parseInt(version.split('.')[0]);
       if (majorVersion < 1) {
@@ -86,27 +86,27 @@ class SetupManager {
     // Check Node.js (optional)
     try {
       const nodeVersion = await $`node --version`.text();
-      console.log(`   ✅ Node.js: ${nodeVersion.trim()}`);
+      console.info(`   ✅ Node.js: ${nodeVersion.trim()}`);
     } catch (error) {
-      console.log('   ⚠️  Node.js not found (optional)');
+      console.info('   ⚠️  Node.js not found (optional)');
     }
 
     // Check system resources
     const memory = await $`free -h`.text() || 'N/A';
     const disk = await $`df -h .`.text() || 'N/A';
-    console.log(`   📊 Memory: ${memory.split('\n')[1]?.split(/\s+/)[2] || 'Unknown'}`);
-    console.log(`   💾 Disk: ${disk.split('\n')[1]?.split(/\s+/)[3] || 'Unknown'}`);
+    console.info(`   📊 Memory: ${memory.split('\n')[1]?.split(/\s+/)[2] || 'Unknown'}`);
+    console.info(`   💾 Disk: ${disk.split('\n')[1]?.split(/\s+/)[3] || 'Unknown'}`);
     
-    console.log('   ✅ Prerequisites validated\n');
+    console.info('   ✅ Prerequisites validated\n');
   }
 
   private async createDirectories(): Promise<void> {
     if (!this.config.createDirectories) {
-      console.log('⏭️  Skipping directory creation');
+      console.info('⏭️  Skipping directory creation');
       return;
     }
 
-    console.log('📁 Creating directories...');
+    console.info('📁 Creating directories...');
     
     const directories = [
       './logs',
@@ -121,23 +121,23 @@ class SetupManager {
     for (const dir of directories) {
       try {
         await mkdir(dir, { recursive: true });
-        console.log(`   ✅ Created: ${dir}`);
+        console.info(`   ✅ Created: ${dir}`);
       } catch (error) {
-        console.log(`   ⚠️  Directory exists: ${dir}`);
+        console.info(`   ⚠️  Directory exists: ${dir}`);
       }
     }
     
-    console.log('   ✅ Directories created\n');
+    console.info('   ✅ Directories created\n');
   }
 
   private async generateConfiguration(): Promise<void> {
-    console.log('⚙️  Generating configuration...');
+    console.info('⚙️  Generating configuration...');
     
     const envFile = `.env.${this.config.environment}`;
     const envContent = await this.generateEnvContent();
     
     await writeFile(envFile, envContent);
-    console.log(`   ✅ Generated: ${envFile}`);
+    console.info(`   ✅ Generated: ${envFile}`);
     
     // Create configuration files
     const configFiles = [
@@ -168,10 +168,10 @@ class SetupManager {
 
     for (const file of configFiles) {
       await writeFile(file.path, file.content);
-      console.log(`   ✅ Created: ${file.path}`);
+      console.info(`   ✅ Created: ${file.path}`);
     }
     
-    console.log('   ✅ Configuration generated\n');
+    console.info('   ✅ Configuration generated\n');
   }
 
   private async generateEnvContent(): Promise<string> {
@@ -231,7 +231,7 @@ CPU_LIMIT_PERCENT=${this.config.environment === 'production' ? '80' : '50'}
   }
 
   private async generateSecureTokens(): Promise<{ [key: string]: string }> {
-    console.log('   🔐 Generating secure tokens...');
+    console.info('   🔐 Generating secure tokens...');
     
     const generateToken = (length: number): string => {
       return createHash('sha256').update(`${Date.now()}-${Math.random()}`).digest('hex').slice(0, length);
@@ -247,7 +247,7 @@ CPU_LIMIT_PERCENT=${this.config.environment === 'production' ? '80' : '50'}
   }
 
   private async setupSecurity(): Promise<void> {
-    console.log('🔒 Setting up security...');
+    console.info('🔒 Setting up security...');
     
     // Create .gitignore entries
     const gitignoreContent = `
@@ -286,62 +286,62 @@ Thumbs.db
 `;
 
     await writeFile('.gitignore', gitignoreContent);
-    console.log('   ✅ Updated .gitignore');
+    console.info('   ✅ Updated .gitignore');
     
     // Set file permissions
     try {
       await $`chmod 600 .env.${this.config.environment}`.quiet();
       await $`chmod 755 logs backups data config temp`.quiet();
-      console.log('   ✅ Set file permissions');
+      console.info('   ✅ Set file permissions');
     } catch (error) {
-      console.log('   ⚠️  Could not set permissions');
+      console.info('   ⚠️  Could not set permissions');
     }
     
-    console.log('   ✅ Security configured\n');
+    console.info('   ✅ Security configured\n');
   }
 
   private async installDependencies(): Promise<void> {
-    console.log('📦 Installing dependencies...');
+    console.info('📦 Installing dependencies...');
     
     try {
       await $`bun install`.quiet();
-      console.log('   ✅ Dependencies installed');
+      console.info('   ✅ Dependencies installed');
     } catch (error) {
       throw new Error('Failed to install dependencies');
     }
     
-    console.log('   ✅ Installation complete\n');
+    console.info('   ✅ Installation complete\n');
   }
 
   private async runVerificationTests(): Promise<void> {
-    console.log('🧪 Running verification tests...');
+    console.info('🧪 Running verification tests...');
     
     try {
       // Quick health check
-      console.log('   🔍 Running health check...');
+      console.info('   🔍 Running health check...');
       const healthResult = await $`bun run scripts/run-v2.01.05-tests.ts --quick`.text();
-      console.log('   ✅ Health check passed');
+      console.info('   ✅ Health check passed');
       
       // Core functionality tests
-      console.log('   🧪 Testing core functionality...');
+      console.info('   🧪 Testing core functionality...');
       const coreResult = await $`bun test tests/self-heal-v2.01.05.test.ts`.text();
-      console.log('   ✅ Core tests passed');
+      console.info('   ✅ Core tests passed');
       
       // CLI integration tests
-      console.log('   🔌 Testing CLI integration...');
+      console.info('   🔌 Testing CLI integration...');
       const cliResult = await $`bun test tests/cli-enhanced-v2.01.05.test.ts`.text();
-      console.log('   ✅ CLI tests passed');
+      console.info('   ✅ CLI tests passed');
       
     } catch (error) {
-      console.log('   ⚠️  Some tests failed, but setup continues');
-      console.log('   📋 Check test reports for details');
+      console.info('   ⚠️  Some tests failed, but setup continues');
+      console.info('   📋 Check test reports for details');
     }
     
-    console.log('   ✅ Verification completed\n');
+    console.info('   ✅ Verification completed\n');
   }
 
   private async setupMonitoring(): Promise<void> {
-    console.log('📊 Setting up monitoring...');
+    console.info('📊 Setting up monitoring...');
     
     const monitoringScript = `#!/bin/bash
 # monitoring/health-check.sh
@@ -386,7 +386,7 @@ echo "Health check completed at $(date)"
 
     await writeFile('./monitoring/health-check.sh', monitoringScript);
     await $`chmod +x ./monitoring/health-check.sh`.quiet();
-    console.log('   ✅ Created health check script');
+    console.info('   ✅ Created health check script');
     
     // Create metrics collector
     const metricsCollector = `// monitoring/metrics-collector.ts
@@ -423,7 +423,7 @@ async function collectMetrics(): Promise<void> {
   }
 
   await writeFile('./data/metrics.json', JSON.stringify(metrics, null, 2));
-  console.log('Metrics collected:', new Date(metrics.timestamp).toISOString());
+  console.info('Metrics collected:', new Date(metrics.timestamp).toISOString());
 }
 
 if (import.meta.main) {
@@ -434,13 +434,13 @@ export { collectMetrics };
 `;
 
     await writeFile('./monitoring/metrics-collector.ts', metricsCollector);
-    console.log('   ✅ Created metrics collector');
+    console.info('   ✅ Created metrics collector');
     
-    console.log('   ✅ Monitoring setup complete\n');
+    console.info('   ✅ Monitoring setup complete\n');
   }
 
   private async createStartupScripts(): Promise<void> {
-    console.log('🚀 Creating startup scripts...');
+    console.info('🚀 Creating startup scripts...');
     
     const startScript = `#!/bin/bash
 # start-v2.01.05.sh
@@ -492,7 +492,7 @@ wait $DASHBOARD_PID
 
     await writeFile('./start-v2.01.05.sh', startScript);
     await $`chmod +x ./start-v2.01.05.sh`.quiet();
-    console.log('   ✅ Created startup script');
+    console.info('   ✅ Created startup script');
     
     const stopScript = `#!/bin/bash
 # stop-v2.01.05.sh
@@ -527,23 +527,23 @@ echo "🎉 Duo Automation v2.01.05 stopped"
 
     await writeFile('./stop-v2.01.05.sh', stopScript);
     await $`chmod +x ./stop-v2.01.05.sh`.quiet();
-    console.log('   ✅ Created shutdown script');
+    console.info('   ✅ Created shutdown script');
     
-    console.log('   ✅ Startup scripts created\n');
+    console.info('   ✅ Startup scripts created\n');
   }
 
   private async deployInfrastructureDashboard(): Promise<void> {
-    console.log('🌐 Deploying Infrastructure Dashboard...');
+    console.info('🌐 Deploying Infrastructure Dashboard...');
     
     try {
       // Test dashboard deployment
       const result = await $`INFRA_PORT=3004 NODE_ENV=${this.config.environment} timeout 10s bun run server/infrastructure-dashboard-server.ts`.text();
-      console.log('   ✅ Dashboard deployment test passed');
+      console.info('   ✅ Dashboard deployment test passed');
     } catch (error) {
-      console.log('   ⚠️  Dashboard test failed, but configuration is ready');
+      console.info('   ⚠️  Dashboard test failed, but configuration is ready');
     }
     
-    console.log('   ✅ Dashboard configured\n');
+    console.info('   ✅ Dashboard configured\n');
   }
 
   private async generateSummary(): Promise<void> {
@@ -599,11 +599,11 @@ ${this.config.environment === 'production' ? '
 Setup completed at: ${new Date().toISOString()}
 `;
 
-    console.log(summary);
+    console.info(summary);
     
     // Save summary to file
     await writeFile('./SETUP_SUMMARY_v2.01.05.md', summary);
-    console.log('📋 Summary saved to: SETUP_SUMMARY_v2.01.05.md');
+    console.info('📋 Summary saved to: SETUP_SUMMARY_v2.01.05.md');
   }
 }
 
@@ -612,7 +612,7 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🚀 Duo Automation v2.01.05 Setup Script
 
 Usage: bun run scripts/setup-v2.01.05.ts [options]

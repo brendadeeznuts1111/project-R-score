@@ -434,7 +434,7 @@ export function formatChangelog(changelog: SkillChangelog, limit = 5): string {
 }
 
 export function displayChangelog(changelog: SkillChangelog, limit = 5): void {
-  console.log(formatChangelog(changelog, limit));
+  console.info(formatChangelog(changelog, limit));
 }
 
 export function formatVersionComparison(skillName: string, comparison: VersionComparison): string {
@@ -449,7 +449,7 @@ export function formatVersionComparison(skillName: string, comparison: VersionCo
 }
 
 export function displayVersionComparison(skillName: string, comparison: VersionComparison): void {
-  console.log(formatVersionComparison(skillName, comparison));
+  console.info(formatVersionComparison(skillName, comparison));
 }
 
 export function formatUpgradePath(result: UpgradeResult): string {
@@ -486,7 +486,7 @@ export function formatUpgradePath(result: UpgradeResult): string {
 }
 
 export function displayUpgradePath(result: UpgradeResult): void {
-  console.log(formatUpgradePath(result));
+  console.info(formatUpgradePath(result));
 }
 
 export default {

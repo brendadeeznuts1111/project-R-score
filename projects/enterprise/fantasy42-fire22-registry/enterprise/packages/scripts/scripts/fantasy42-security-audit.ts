@@ -14,8 +14,8 @@
 import { readdirSync, statSync, existsSync, readFileSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
 
-console.log('🔒 Fantasy42 Security Audit System');
-console.log('==================================');
+console.info('🔒 Fantasy42 Security Audit System');
+console.info('==================================');
 
 // ============================================================================
 // SECURITY CONFIGURATION
@@ -85,7 +85,7 @@ class Fantasy42SecurityAuditor {
       fix?: boolean;
     } = {}
   ): Promise<AuditSummary> {
-    console.log('🔍 Starting Fantasy42 Security Audit...');
+    console.info('🔍 Starting Fantasy42 Security Audit...');
 
     try {
       const packagesToAudit = options.packages || (await this.discoverPackages());
@@ -110,14 +110,14 @@ class Fantasy42SecurityAuditor {
         await this.autoFixIssues();
       }
 
-      console.log('\n📊 Security Audit Summary:');
-      console.log('========================');
-      console.log(`✅ Secure Packages: ${this.auditResults.summary.securePackages}`);
-      console.log(`⚠️  Vulnerable Packages: ${this.auditResults.summary.vulnerablePackages}`);
-      console.log(`🚨 Critical Issues: ${this.auditResults.summary.criticalIssues}`);
-      console.log(`🔴 High Issues: ${this.auditResults.summary.highIssues}`);
-      console.log(`🟡 Medium Issues: ${this.auditResults.summary.mediumIssues}`);
-      console.log(`🟢 Low Issues: ${this.auditResults.summary.lowIssues}`);
+      console.info('\n📊 Security Audit Summary:');
+      console.info('========================');
+      console.info(`✅ Secure Packages: ${this.auditResults.summary.securePackages}`);
+      console.info(`⚠️  Vulnerable Packages: ${this.auditResults.summary.vulnerablePackages}`);
+      console.info(`🚨 Critical Issues: ${this.auditResults.summary.criticalIssues}`);
+      console.info(`🔴 High Issues: ${this.auditResults.summary.highIssues}`);
+      console.info(`🟡 Medium Issues: ${this.auditResults.summary.mediumIssues}`);
+      console.info(`🟢 Low Issues: ${this.auditResults.summary.lowIssues}`);
 
       return this.auditResults.summary;
     } catch (error) {
@@ -131,7 +131,7 @@ class Fantasy42SecurityAuditor {
     const packagesDir = join(process.cwd(), 'packages');
 
     if (!existsSync(packagesDir)) {
-      console.log('⚠️ No packages directory found');
+      console.info('⚠️ No packages directory found');
       return packages;
     }
 
@@ -160,7 +160,7 @@ class Fantasy42SecurityAuditor {
 
   private async auditPackage(packagePath: string, options: any): Promise<void> {
     const packageName = packagePath.split('/').pop() || 'unknown';
-    console.log(`🔍 Auditing ${packageName}...`);
+    console.info(`🔍 Auditing ${packageName}...`);
 
     const result: PackageAuditResult = {
       packageName,
@@ -208,8 +208,8 @@ class Fantasy42SecurityAuditor {
       }
 
       if (options.verbose) {
-        console.log(`  📊 Security Score: ${result.securityScore}/100`);
-        console.log(`  🚨 Issues: ${result.issues.length}`);
+        console.info(`  📊 Security Score: ${result.securityScore}/100`);
+        console.info(`  🚨 Issues: ${result.issues.length}`);
       }
     } catch (error) {
       console.error(`❌ Failed to audit ${packageName}:`, error);
@@ -684,16 +684,16 @@ class Fantasy42SecurityAuditor {
     };
 
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log('📊 Security audit report saved to security-audit-report.json');
+    console.info('📊 Security audit report saved to security-audit-report.json');
   }
 
   private async autoFixIssues(): Promise<void> {
-    console.log('🔧 Attempting to auto-fix security issues...');
+    console.info('🔧 Attempting to auto-fix security issues...');
 
     // This would implement automatic fixes for common issues
     // For example: updating dependencies, fixing simple code issues, etc.
 
-    console.log('✅ Auto-fix completed');
+    console.info('✅ Auto-fix completed');
   }
 }
 
@@ -735,7 +735,7 @@ interface AuditSummary {
 // ============================================================================
 
 async function runCommand(command: string, description: string): Promise<boolean> {
-  console.log(`🔧 ${description}...`);
+  console.info(`🔧 ${description}...`);
 
   try {
     const process = Bun.spawn(command.split(' '), {
@@ -776,11 +776,11 @@ async function main() {
 
     // Exit with error code if there are critical issues
     if (summary.criticalIssues > 0) {
-      console.log('\n❌ Security audit failed - critical issues found');
+      console.info('\n❌ Security audit failed - critical issues found');
       process.exit(1);
     }
 
-    console.log('\n✅ Security audit passed');
+    console.info('\n✅ Security audit passed');
   } catch (error) {
     console.error('❌ Security audit failed:', error);
     process.exit(1);
@@ -804,20 +804,20 @@ if (import.meta.main) {
       const reportPath = join(process.cwd(), 'security-audit-report.json');
       if (existsSync(reportPath)) {
         const report = JSON.parse(readFileSync(reportPath, 'utf-8'));
-        console.log(JSON.stringify(report, null, 2));
+        console.info(JSON.stringify(report, null, 2));
       } else {
-        console.log('❌ No security audit report found');
+        console.info('❌ No security audit report found');
       }
       break;
 
     case 'fix':
-      console.log('🔧 Running security auto-fix...');
+      console.info('🔧 Running security auto-fix...');
       const auditor = new Fantasy42SecurityAuditor();
       auditor.runFullSecurityAudit({ fix: true });
       break;
 
     default:
-      console.log(`
+      console.info(`
 🔒 Fantasy42 Security Audit System
 
 Usage:

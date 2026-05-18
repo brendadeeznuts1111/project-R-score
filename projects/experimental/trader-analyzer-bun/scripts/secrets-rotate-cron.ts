@@ -254,13 +254,13 @@ async function main() {
       break;
 
     case "dry-run":
-      console.log("🔄 DRY RUN: Would rotate the following secrets:");
+      console.info("🔄 DRY RUN: Would rotate the following secrets:");
       await checkRotationStatus();
-      console.log("Run with 'rotate' to perform actual rotation");
+      console.info("Run with 'rotate' to perform actual rotation");
       break;
 
     default:
-      console.log(`
+      console.info(`
 🔐 Secrets Rotation Cron Job
 
 Usage:

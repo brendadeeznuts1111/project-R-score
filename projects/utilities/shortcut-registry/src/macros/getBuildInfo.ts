@@ -12,8 +12,8 @@
  * import { getBuildInfo } from './macros/getBuildInfo.ts' with { type: 'macro' };
  * 
  * const buildInfo = getBuildInfo();
- * console.log(`Version: ${buildInfo.version}`);
- * console.log(`Built: ${buildInfo.buildTime}`);
+ * console.info(`Version: ${buildInfo.version}`);
+ * console.info(`Built: ${buildInfo.buildTime}`);
  * ```
  */
 

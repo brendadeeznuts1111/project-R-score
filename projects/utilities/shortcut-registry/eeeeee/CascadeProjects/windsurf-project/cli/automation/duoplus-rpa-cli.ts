@@ -23,7 +23,7 @@ class DuoPlusRPACLI {
         }
       });
     } else {
-      console.log('❌ DuoPlus RPA Engine not available - feature gate disabled');
+      console.info('❌ DuoPlus RPA Engine not available - feature gate disabled');
     }
   }
 
@@ -34,7 +34,7 @@ class DuoPlusRPACLI {
     proxyId?: string;
     fingerprintRotation?: boolean;
   }) {
-    console.log('🔄 Batch updating cloud phone parameters...');
+    console.info('🔄 Batch updating cloud phone parameters...');
     
     const imageIds = options.ids?.split(',') || ['cloud-001', 'cloud-002', 'cloud-003'];
     const gpsType = parseInt(options.gpsType || '1');
@@ -43,15 +43,15 @@ class DuoPlusRPACLI {
 
     try {
       if (!this.rpaEngine) {
-        console.log('❌ RPA Engine not available - using mock data');
-        console.log('✅ Batch Update (Mock):');
-        console.log(`   📱 Target Devices: ${imageIds.length}`);
-        console.log(`   🌐 GPS Type: ${gpsType} (${gpsType === 1 ? 'Proxy-based' : 'Fixed'})`);
-        console.log(`   🔒 Proxy ID: ${proxyId}`);
-        console.log(`   🔄 Fingerprint Rotation: ${rotateFingerprints ? 'Enabled' : 'Disabled'}`);
-        console.log(`   ⚡ Execution Time: 1.8s`);
-        console.log(`   ✅ Success: ${imageIds.length - 1}/${imageIds.length} devices`);
-        console.log(`   ❌ Failed: 1 device (cloud-003: network timeout)`);
+        console.info('❌ RPA Engine not available - using mock data');
+        console.info('✅ Batch Update (Mock):');
+        console.info(`   📱 Target Devices: ${imageIds.length}`);
+        console.info(`   🌐 GPS Type: ${gpsType} (${gpsType === 1 ? 'Proxy-based' : 'Fixed'})`);
+        console.info(`   🔒 Proxy ID: ${proxyId}`);
+        console.info(`   🔄 Fingerprint Rotation: ${rotateFingerprints ? 'Enabled' : 'Disabled'}`);
+        console.info(`   ⚡ Execution Time: 1.8s`);
+        console.info(`   ✅ Success: ${imageIds.length - 1}/${imageIds.length} devices`);
+        console.info(`   ❌ Failed: 1 device (cloud-003: network timeout)`);
         return;
       }
 
@@ -74,20 +74,20 @@ class DuoPlusRPACLI {
 
       const result = await this.rpaEngine.batchUpdateCloudPhones(updates);
       
-      console.log('✅ Batch Update Completed:');
-      console.log(`   📱 Target Devices: ${imageIds.length}`);
-      console.log(`   ✅ Successful: ${result.success.length}`);
-      console.log(`   ❌ Failed: ${result.fail.length}`);
+      console.info('✅ Batch Update Completed:');
+      console.info(`   📱 Target Devices: ${imageIds.length}`);
+      console.info(`   ✅ Successful: ${result.success.length}`);
+      console.info(`   ❌ Failed: ${result.fail.length}`);
       
       if (result.fail.length > 0) {
-        console.log('   Failures:');
+        console.info('   Failures:');
         Object.entries(result.fail_reason).forEach(([id, reason]) => {
-          console.log(`      ${id}: ${reason}`);
+          console.info(`      ${id}: ${reason}`);
         });
       }
     } catch (error) {
-      console.log('❌ Batch update failed');
-      console.log(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
+      console.info('❌ Batch update failed');
+      console.info(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
     }
   }
 
@@ -99,7 +99,7 @@ class DuoPlusRPACLI {
     schedule?: string;
     risk?: string;
   }) {
-    console.log('🤖 Creating RPA task...');
+    console.info('🤖 Creating RPA task...');
     
     const templateId = options.template || 'guardian_nomination_auto_approve';
     const deviceIds = options.devices?.split(',') || ['cloud-001', 'cloud-002'];
@@ -109,15 +109,15 @@ class DuoPlusRPACLI {
 
     try {
       if (!this.rpaEngine) {
-        console.log('❌ RPA Engine not available - using mock data');
-        console.log('✅ RPA Task Created (Mock):');
-        console.log(`   🆔 Task ID: rpa-${Date.now()}-mock`);
-        console.log(`   📋 Template: ${templateId}`);
-        console.log(`   📱 Target Devices: ${deviceIds.length}`);
-        console.log(`   ⚙️ Variables: riskScore=${riskScore}, urgency=high`);
-        console.log(`   ⏰ Schedule: ${schedule || 'Immediate'}`);
-        console.log(`   🔄 Loop: ${loopCount === Infinity ? 'Infinite' : loopCount + ' iterations'}`);
-        console.log(`   ⚡ Spawn Time: 280ms`);
+        console.info('❌ RPA Engine not available - using mock data');
+        console.info('✅ RPA Task Created (Mock):');
+        console.info(`   🆔 Task ID: rpa-${Date.now()}-mock`);
+        console.info(`   📋 Template: ${templateId}`);
+        console.info(`   📱 Target Devices: ${deviceIds.length}`);
+        console.info(`   ⚙️ Variables: riskScore=${riskScore}, urgency=high`);
+        console.info(`   ⏰ Schedule: ${schedule || 'Immediate'}`);
+        console.info(`   🔄 Loop: ${loopCount === Infinity ? 'Infinite' : loopCount + ' iterations'}`);
+        console.info(`   ⚡ Spawn Time: 280ms`);
         return;
       }
 
@@ -126,24 +126,24 @@ class DuoPlusRPACLI {
 
       if (schedule) {
         taskId = await this.rpaEngine.createScheduledTask(templateId, deviceIds, variables, schedule);
-        console.log(`   ⏰ Scheduled with cron: ${schedule}`);
+        console.info(`   ⏰ Scheduled with cron: ${schedule}`);
       } else if (loopCount > 1) {
         taskId = await this.rpaEngine.createLoopTask(templateId, deviceIds, variables, loopCount);
-        console.log(`   🔄 Loop task: ${loopCount === Infinity ? 'Infinite' : loopCount + ' iterations'}`);
+        console.info(`   🔄 Loop task: ${loopCount === Infinity ? 'Infinite' : loopCount + ' iterations'}`);
       } else {
         taskId = await this.rpaEngine.createRPATask(templateId, deviceIds, variables);
-        console.log(`   ⚡ Immediate execution`);
+        console.info(`   ⚡ Immediate execution`);
       }
 
-      console.log('✅ RPA Task Created:');
-      console.log(`   🆔 Task ID: ${taskId}`);
-      console.log(`   📋 Template: ${templateId}`);
-      console.log(`   📱 Target Devices: ${deviceIds.length}`);
-      console.log(`   ⚙️ Variables:`, Object.keys(variables));
+      console.info('✅ RPA Task Created:');
+      console.info(`   🆔 Task ID: ${taskId}`);
+      console.info(`   📋 Template: ${templateId}`);
+      console.info(`   📱 Target Devices: ${deviceIds.length}`);
+      console.info(`   ⚙️ Variables:`, Object.keys(variables));
       
     } catch (error) {
-      console.log('❌ Failed to create RPA task');
-      console.log(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
+      console.info('❌ Failed to create RPA task');
+      console.info(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
     }
   }
 
@@ -151,78 +151,78 @@ class DuoPlusRPACLI {
   async listTemplates(options: {
     type?: string;
   }) {
-    console.log('📋 Listing RPA templates...');
+    console.info('📋 Listing RPA templates...');
     
     const templateType = options.type as 'custom' | 'official' | undefined;
 
     try {
       if (!this.rpaEngine) {
-        console.log('❌ RPA Engine not available - using mock data');
-        console.log('✅ Available Templates (Mock):');
-        console.log('   🤖 guardian_nomination_auto_approve (Official)');
-        console.log('      Category: Guardian Networks');
-        console.log('      Variables: riskScore, suggestedBackup, urgency, autoApprove');
-        console.log('   🔍 google_verification_bypass (Official)');
-        console.log('      Category: Anti-Detection');
-        console.log('      Variables: proxyId, gpsType, fingerprintRotation');
-        console.log('   🔗 recovery_approval_flow (Official)');
-        console.log('      Category: Social Recovery');
-        console.log('      Variables: recoveryId, guardianNumber, approvalCode');
-        console.log('   📂 batch_config_sync (Official)');
-        console.log('      Category: Batch Operations');
-        console.log('      Variables: configType, targetGuardians, configData');
-        console.log(`   Total: 4 templates (${templateType || 'all'})`);
+        console.info('❌ RPA Engine not available - using mock data');
+        console.info('✅ Available Templates (Mock):');
+        console.info('   🤖 guardian_nomination_auto_approve (Official)');
+        console.info('      Category: Guardian Networks');
+        console.info('      Variables: riskScore, suggestedBackup, urgency, autoApprove');
+        console.info('   🔍 google_verification_bypass (Official)');
+        console.info('      Category: Anti-Detection');
+        console.info('      Variables: proxyId, gpsType, fingerprintRotation');
+        console.info('   🔗 recovery_approval_flow (Official)');
+        console.info('      Category: Social Recovery');
+        console.info('      Variables: recoveryId, guardianNumber, approvalCode');
+        console.info('   📂 batch_config_sync (Official)');
+        console.info('      Category: Batch Operations');
+        console.info('      Variables: configType, targetGuardians, configData');
+        console.info(`   Total: 4 templates (${templateType || 'all'})`);
         return;
       }
 
       const templates = this.rpaEngine.getTemplateList(templateType);
       
-      console.log(`✅ Available Templates (${templateType || 'all'}):`);
-      console.log(`   Total: ${templates.length} templates`);
+      console.info(`✅ Available Templates (${templateType || 'all'}):`);
+      console.info(`   Total: ${templates.length} templates`);
       
       templates.forEach((template: any) => {
-        console.log(`   📋 ${template.name} (${template.type})`);
-        console.log(`      ID: ${template.id}`);
-        console.log(`      Category: ${template.category}`);
-        console.log(`      Variables: ${Object.keys(template.variables).join(', ')}`);
-        console.log(`      Steps: ${template.steps.length}`);
-        console.log('');
+        console.info(`   📋 ${template.name} (${template.type})`);
+        console.info(`      ID: ${template.id}`);
+        console.info(`      Category: ${template.category}`);
+        console.info(`      Variables: ${Object.keys(template.variables).join(', ')}`);
+        console.info(`      Steps: ${template.steps.length}`);
+        console.info('');
       });
       
     } catch (error) {
-      console.log('❌ Failed to list templates');
-      console.log(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
+      console.info('❌ Failed to list templates');
+      console.info(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
     }
   }
 
   // List Tasks
   async listTasks() {
-    console.log('📋 Listing RPA tasks...');
+    console.info('📋 Listing RPA tasks...');
     
     try {
       if (!this.rpaEngine) {
-        console.log('❌ RPA Engine not available - using mock data');
-        console.log('✅ Active Tasks (Mock):');
-        console.log('   🤖 rpa-1642879500000-abc123 (Running)');
-        console.log('      Template: Guardian Nomination Auto-Approve');
-        console.log('      Devices: 3');
-        console.log('      Progress: 2/3 completed');
-        console.log('   🔍 rpa-1642879600000-def456 (Completed)');
-        console.log('      Template: Google Verification Bypass');
-        console.log('      Devices: 5');
-        console.log('      Result: 4/5 successful');
-        console.log('   🔗 rpa-1642879700000-ghi789 (Pending)');
-        console.log('      Template: Recovery Approval Flow');
-        console.log('      Devices: 2');
-        console.log('      Schedule: Loop (∞ iterations)');
-        console.log(`   Total: 3 tasks`);
+        console.info('❌ RPA Engine not available - using mock data');
+        console.info('✅ Active Tasks (Mock):');
+        console.info('   🤖 rpa-1642879500000-abc123 (Running)');
+        console.info('      Template: Guardian Nomination Auto-Approve');
+        console.info('      Devices: 3');
+        console.info('      Progress: 2/3 completed');
+        console.info('   🔍 rpa-1642879600000-def456 (Completed)');
+        console.info('      Template: Google Verification Bypass');
+        console.info('      Devices: 5');
+        console.info('      Result: 4/5 successful');
+        console.info('   🔗 rpa-1642879700000-ghi789 (Pending)');
+        console.info('      Template: Recovery Approval Flow');
+        console.info('      Devices: 2');
+        console.info('      Schedule: Loop (∞ iterations)');
+        console.info(`   Total: 3 tasks`);
         return;
       }
 
       const tasks = this.rpaEngine.getTaskList();
       
-      console.log(`✅ Active Tasks:`);
-      console.log(`   Total: ${tasks.length} tasks`);
+      console.info(`✅ Active Tasks:`);
+      console.info(`   Total: ${tasks.length} tasks`);
       
       tasks.forEach((task: any) => {
         const statusIcon: Record<string, string> = {
@@ -235,25 +235,25 @@ class DuoPlusRPACLI {
         
         const icon = statusIcon[task.status] || '❓';
         
-        console.log(`   ${icon} ${task.id} (${task.status})`);
-        console.log(`      Template: ${task.template_id}`);
-        console.log(`      Devices: ${task.image_ids.length}`);
-        console.log(`      Created: ${new Date(task.created_at).toLocaleString()}`);
+        console.info(`   ${icon} ${task.id} (${task.status})`);
+        console.info(`      Template: ${task.template_id}`);
+        console.info(`      Devices: ${task.image_ids.length}`);
+        console.info(`      Created: ${new Date(task.created_at).toLocaleString()}`);
         
         if (task.schedule) {
-          console.log(`      Schedule: ${task.schedule.type} ${task.schedule.pattern || task.schedule.loop_count || 'once'}`);
+          console.info(`      Schedule: ${task.schedule.type} ${task.schedule.pattern || task.schedule.loop_count || 'once'}`);
         }
         
         if (task.results.length > 0) {
           const successCount = task.results.filter((r: any) => r.status === 'success').length;
-          console.log(`      Progress: ${successCount}/${task.results.length} successful`);
+          console.info(`      Progress: ${successCount}/${task.results.length} successful`);
         }
-        console.log('');
+        console.info('');
       });
       
     } catch (error) {
-      console.log('❌ Failed to list tasks');
-      console.log(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
+      console.info('❌ Failed to list tasks');
+      console.info(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
     }
   }
 
@@ -262,22 +262,22 @@ class DuoPlusRPACLI {
     devices?: string;
     proxyId?: string;
   }) {
-    console.log('🔍 Testing Google verification bypass...');
+    console.info('🔍 Testing Google verification bypass...');
     
     const deviceIds = options.devices?.split(',') || ['cloud-001', 'cloud-002'];
     const proxyId = options.proxyId || 'proxy-google-safe-001';
 
     try {
       if (!this.rpaEngine) {
-        console.log('❌ RPA Engine not available - using mock data');
-        console.log('✅ Google Verification Test (Mock):');
-        console.log(`   📱 Target Devices: ${deviceIds.length}`);
-        console.log(`   🔒 Proxy ID: ${proxyId}`);
-        console.log(`   🎯 Success Rate: 87% (up from 55% baseline)`);
-        console.log(`   ⚡ Average Time: 45s per device`);
-        console.log(`   ✅ Passed: ${Math.floor(deviceIds.length * 0.87)}/${deviceIds.length}`);
-        console.log(`   ❌ Failed: ${Math.ceil(deviceIds.length * 0.13)}/${deviceIds.length}`);
-        console.log('   🛡️ Anti-Detection: Fingerprint rotation + GPS simulation');
+        console.info('❌ RPA Engine not available - using mock data');
+        console.info('✅ Google Verification Test (Mock):');
+        console.info(`   📱 Target Devices: ${deviceIds.length}`);
+        console.info(`   🔒 Proxy ID: ${proxyId}`);
+        console.info(`   🎯 Success Rate: 87% (up from 55% baseline)`);
+        console.info(`   ⚡ Average Time: 45s per device`);
+        console.info(`   ✅ Passed: ${Math.floor(deviceIds.length * 0.87)}/${deviceIds.length}`);
+        console.info(`   ❌ Failed: ${Math.ceil(deviceIds.length * 0.13)}/${deviceIds.length}`);
+        console.info('   🛡️ Anti-Detection: Fingerprint rotation + GPS simulation');
         return;
       }
 
@@ -310,16 +310,16 @@ class DuoPlusRPACLI {
         }
       );
 
-      console.log('✅ Google Verification Test Started:');
-      console.log(`   📱 Target Devices: ${batchResult.success.length}`);
-      console.log(`   🔒 Proxy ID: ${proxyId}`);
-      console.log(`   🆔 RPA Task: ${taskId}`);
-      console.log(`   🎯 Expected Success: 85-92% (vs 40-55% baseline)`);
-      console.log(`   ⏱️ Estimated Time: 45s per device`);
+      console.info('✅ Google Verification Test Started:');
+      console.info(`   📱 Target Devices: ${batchResult.success.length}`);
+      console.info(`   🔒 Proxy ID: ${proxyId}`);
+      console.info(`   🆔 RPA Task: ${taskId}`);
+      console.info(`   🎯 Expected Success: 85-92% (vs 40-55% baseline)`);
+      console.info(`   ⏱️ Estimated Time: 45s per device`);
       
     } catch (error) {
-      console.log('❌ Google verification test failed');
-      console.log(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
+      console.info('❌ Google verification test failed');
+      console.info(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
     }
   }
 
@@ -328,79 +328,79 @@ class DuoPlusRPACLI {
     teen?: string;
     risk?: string;
   }) {
-    console.log('🕸️ Testing Guardian Network RPA integration...');
+    console.info('🕸️ Testing Guardian Network RPA integration...');
     
     const teenId = options.teen || 'teen-001';
     const riskScore = parseFloat(options.risk || '0.88');
 
     try {
       if (!this.rpaEngine) {
-        console.log('❌ RPA Engine not available - using mock data');
-        console.log('✅ Guardian Integration Test (Mock):');
-        console.log(`   👶 Teen ID: ${teenId}`);
-        console.log(`   🚨 Risk Score: ${(riskScore * 100).toFixed(1)}%`);
-        console.log(`   🤖 RPA Triggered: guardian_nomination_auto_approve`);
-        console.log(`   📱 Target Guardians: 3`);
-        console.log(`   ⚡ Response Time: 78ms`);
-        console.log(`   🔄 Batch Sync: Completed in 1.2s`);
-        console.log(`   ✅ Result: Auto-approval enabled (risk > 85%)`);
+        console.info('❌ RPA Engine not available - using mock data');
+        console.info('✅ Guardian Integration Test (Mock):');
+        console.info(`   👶 Teen ID: ${teenId}`);
+        console.info(`   🚨 Risk Score: ${(riskScore * 100).toFixed(1)}%`);
+        console.info(`   🤖 RPA Triggered: guardian_nomination_auto_approve`);
+        console.info(`   📱 Target Guardians: 3`);
+        console.info(`   ⚡ Response Time: 78ms`);
+        console.info(`   🔄 Batch Sync: Completed in 1.2s`);
+        console.info(`   ✅ Result: Auto-approval enabled (risk > 85%)`);
         return;
       }
 
       // Trigger guardian nomination on high risk
       const taskId = await this.rpaEngine.triggerGuardianNominationOnRisk(teenId, riskScore);
       
-      console.log('✅ Guardian Integration Test Results:');
-      console.log(`   👶 Teen ID: ${teenId}`);
-      console.log(`   🚨 Risk Score: ${(riskScore * 100).toFixed(1)}%`);
-      console.log(`   🤖 RPA Task: ${taskId}`);
-      console.log(`   ⚡ Trigger Time: <100ms`);
-      console.log(`   📱 Guardians Updated: 3 cloud phones`);
-      console.log(`   🔄 Fingerprints Rotated: Yes`);
-      console.log(`   ✅ Auto-Approve: ${riskScore > 0.85 ? 'Enabled' : 'Disabled'}`);
+      console.info('✅ Guardian Integration Test Results:');
+      console.info(`   👶 Teen ID: ${teenId}`);
+      console.info(`   🚨 Risk Score: ${(riskScore * 100).toFixed(1)}%`);
+      console.info(`   🤖 RPA Task: ${taskId}`);
+      console.info(`   ⚡ Trigger Time: <100ms`);
+      console.info(`   📱 Guardians Updated: 3 cloud phones`);
+      console.info(`   🔄 Fingerprints Rotated: Yes`);
+      console.info(`   ✅ Auto-Approve: ${riskScore > 0.85 ? 'Enabled' : 'Disabled'}`);
       
     } catch (error) {
-      console.log('❌ Guardian integration test failed');
-      console.log(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
+      console.info('❌ Guardian integration test failed');
+      console.info(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
     }
   }
 
   // Performance Metrics
   async getMetrics() {
-    console.log('📊 Retrieving RPA performance metrics...');
+    console.info('📊 Retrieving RPA performance metrics...');
     
     try {
       if (!this.rpaEngine) {
-        console.log('❌ RPA Engine not available - using mock data');
-        console.log('✅ RPA Performance Metrics (Mock):');
-        console.log('   📊 Total Tasks: 47');
-        console.log('   ✅ Completed Tasks: 44');
-        console.log('   🎯 Success Rate: 93.6%');
-        console.log('   ⚡ Avg Execution Time: 2,450ms');
-        console.log('   📋 Templates Loaded: 4');
-        console.log('   🔄 Queue Length: 2');
-        console.log('   📱 Batch Operations: 156 (20 devices avg)');
-        console.log('   🔍 Google Verify Pass Rate: 87%');
-        console.log('   🛡️ Ban Resistance: 96%');
+        console.info('❌ RPA Engine not available - using mock data');
+        console.info('✅ RPA Performance Metrics (Mock):');
+        console.info('   📊 Total Tasks: 47');
+        console.info('   ✅ Completed Tasks: 44');
+        console.info('   🎯 Success Rate: 93.6%');
+        console.info('   ⚡ Avg Execution Time: 2,450ms');
+        console.info('   📋 Templates Loaded: 4');
+        console.info('   🔄 Queue Length: 2');
+        console.info('   📱 Batch Operations: 156 (20 devices avg)');
+        console.info('   🔍 Google Verify Pass Rate: 87%');
+        console.info('   🛡️ Ban Resistance: 96%');
         return;
       }
 
       const metrics = this.rpaEngine.getPerformanceMetrics();
       
-      console.log('✅ RPA Performance Metrics:');
-      console.log(`   📊 Total Tasks: ${metrics.totalTasks}`);
-      console.log(`   ✅ Completed Tasks: ${metrics.completedTasks}`);
-      console.log(`   🎯 Success Rate: ${(metrics.successRate * 100).toFixed(1)}%`);
-      console.log(`   ⚡ Avg Execution Time: ${metrics.averageExecutionTime}ms`);
-      console.log(`   📋 Templates Loaded: ${metrics.templatesLoaded}`);
-      console.log(`   🔄 Queue Length: ${metrics.queueLength}`);
-      console.log('   📱 Batch Operations: 156 (20 devices avg)');
-      console.log('   🔍 Google Verify Pass Rate: 87%');
-      console.log('   🛡️ Ban Resistance: 96%');
+      console.info('✅ RPA Performance Metrics:');
+      console.info(`   📊 Total Tasks: ${metrics.totalTasks}`);
+      console.info(`   ✅ Completed Tasks: ${metrics.completedTasks}`);
+      console.info(`   🎯 Success Rate: ${(metrics.successRate * 100).toFixed(1)}%`);
+      console.info(`   ⚡ Avg Execution Time: ${metrics.averageExecutionTime}ms`);
+      console.info(`   📋 Templates Loaded: ${metrics.templatesLoaded}`);
+      console.info(`   🔄 Queue Length: ${metrics.queueLength}`);
+      console.info('   📱 Batch Operations: 156 (20 devices avg)');
+      console.info('   🔍 Google Verify Pass Rate: 87%');
+      console.info('   🛡️ Ban Resistance: 96%');
       
     } catch (error) {
-      console.log('❌ Failed to get metrics');
-      console.log(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
+      console.info('❌ Failed to get metrics');
+      console.info(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
     }
   }
 
@@ -486,23 +486,23 @@ async function handleCLICommand() {
       break;
       
     default:
-      console.log('🤖 DuoPlus RPA Automation CLI');
-      console.log('');
-      console.log('Batch Operations:');
-      console.log('  bun run duoplus-rpa-cli.ts batch-update --ids=cloud1,cloud2 --gpsType=1 --proxyId=safe_proxy --fingerprint-rotation');
-      console.log('');
-      console.log('Task Management:');
-      console.log('  bun run duoplus-rpa-cli.ts create-task --template=guardian_nomination_auto_approve --devices=cloud1,cloud2 --loop=∞');
-      console.log('  bun run duoplus-rpa-cli.ts create-task --template=recovery_approval_flow --schedule="0 3 * * *"');
-      console.log('  bun run duoplus-rpa-cli.ts list-templates --type=official');
-      console.log('  bun run duoplus-rpa-cli.ts list-tasks');
-      console.log('');
-      console.log('Integration Tests:');
-      console.log('  bun run duoplus-rpa-cli.ts google-verify --devices=cloud1,cloud2,cloud3 --proxyId=google_safe');
-      console.log('  bun run duoplus-rpa-cli.ts guardian-integration --teen=teen-001 --risk=0.88');
-      console.log('');
-      console.log('Metrics:');
-      console.log('  bun run duoplus-rpa-cli.ts metrics');
+      console.info('🤖 DuoPlus RPA Automation CLI');
+      console.info('');
+      console.info('Batch Operations:');
+      console.info('  bun run duoplus-rpa-cli.ts batch-update --ids=cloud1,cloud2 --gpsType=1 --proxyId=safe_proxy --fingerprint-rotation');
+      console.info('');
+      console.info('Task Management:');
+      console.info('  bun run duoplus-rpa-cli.ts create-task --template=guardian_nomination_auto_approve --devices=cloud1,cloud2 --loop=∞');
+      console.info('  bun run duoplus-rpa-cli.ts create-task --template=recovery_approval_flow --schedule="0 3 * * *"');
+      console.info('  bun run duoplus-rpa-cli.ts list-templates --type=official');
+      console.info('  bun run duoplus-rpa-cli.ts list-tasks');
+      console.info('');
+      console.info('Integration Tests:');
+      console.info('  bun run duoplus-rpa-cli.ts google-verify --devices=cloud1,cloud2,cloud3 --proxyId=google_safe');
+      console.info('  bun run duoplus-rpa-cli.ts guardian-integration --teen=teen-001 --risk=0.88');
+      console.info('');
+      console.info('Metrics:');
+      console.info('  bun run duoplus-rpa-cli.ts metrics');
       break;
   }
 }

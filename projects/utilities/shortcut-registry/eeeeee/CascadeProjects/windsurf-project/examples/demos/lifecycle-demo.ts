@@ -42,12 +42,12 @@ const lifecycleServer = Bun.serve({
   }
 });
 
-console.log(`Server ${lifecycleServer.id} at ${lifecycleServer.url}`);
-console.log('Try:');
-console.log('  curl ' + lifecycleServer.url + 'ip');
-console.log('  curl ' + lifecycleServer.url + 'slow        # will timeout');
-console.log('  curl ' + lifecycleServer.url + 'reload');
-console.log('  curl ' + lifecycleServer.url + 'stop?force  # kills server');
+console.info(`Server ${lifecycleServer.id} at ${lifecycleServer.url}`);
+console.info('Try:');
+console.info('  curl ' + lifecycleServer.url + 'ip');
+console.info('  curl ' + lifecycleServer.url + 'slow        # will timeout');
+console.info('  curl ' + lifecycleServer.url + 'reload');
+console.info('  curl ' + lifecycleServer.url + 'stop?force  # kills server');
 
 /* demo ref/unref */
 lifecycleServer.unref();               // allow exit if nothing else running
@@ -55,6 +55,6 @@ setTimeout(() => lifecycleServer.ref(), 5_000); // restore keep-alive after 5 s
 
 // Keep server alive for testing
 setTimeout(() => {
-  console.log('Server demo completed - shutting down...');
+  console.info('Server demo completed - shutting down...');
   lifecycleServer.stop(true);
 }, 30000);

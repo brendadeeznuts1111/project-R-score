@@ -67,7 +67,7 @@ const dashboardHTML = `
 			ws = new WebSocket(\`\${protocol}//\${window.location.host}/ws/arb\`);
 
 			ws.onopen = () => {
-				console.log('✅ WebSocket connected');
+				console.info('✅ WebSocket connected');
 			};
 
 			ws.onmessage = (e) => {
@@ -105,7 +105,7 @@ const dashboardHTML = `
 			};
 
 			ws.onclose = () => {
-				console.log('WebSocket closed, reconnecting...');
+				console.info('WebSocket closed, reconnecting...');
 				setTimeout(connectWebSocket, 3000);
 			};
 		}
@@ -144,7 +144,7 @@ const dashboardHTML = `
 			fetch(\`/api/execute/\${arbId}\`, { method: 'POST' })
 				.then(res => res.json())
 				.then(data => {
-					console.log('Arb executed:', data);
+					console.info('Arb executed:', data);
 				})
 				.catch(err => console.error('Execute error:', err));
 		}

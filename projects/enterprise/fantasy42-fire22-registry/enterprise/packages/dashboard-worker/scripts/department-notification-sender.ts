@@ -105,14 +105,14 @@ class DepartmentNotificationSender {
     const environment = this.detectEnvironment();
     const targetTimezone = this.timezoneConfig[environment];
 
-    console.log(`🕒 Environment: ${environment}`);
-    console.log(`🌍 Current TZ: ${process.env.TZ || 'system default'}`);
-    console.log(`🎯 Target TZ: ${targetTimezone}`);
+    console.info(`🕒 Environment: ${environment}`);
+    console.info(`🌍 Current TZ: ${process.env.TZ || 'system default'}`);
+    console.info(`🎯 Target TZ: ${targetTimezone}`);
 
     // Set timezone if not already set (except for development which uses system default)
     if (!process.env.TZ && environment !== 'development') {
       process.env.TZ = targetTimezone;
-      console.log(`✅ Set TZ to: ${targetTimezone}`);
+      console.info(`✅ Set TZ to: ${targetTimezone}`);
     }
   }
 
@@ -170,10 +170,10 @@ class DepartmentNotificationSender {
   async sendCriticalIssueNotification(issueNumber: number): Promise<void> {
     const timestamp = this.createTxTimestamp();
 
-    console.log(`🚨 Sending CRITICAL issue notifications for #${issueNumber}`);
-    console.log(`⏰ Timestamp: ${timestamp.full}`);
-    console.log(`🕒 Environment: ${this.detectEnvironment()}`);
-    console.log(
+    console.info(`🚨 Sending CRITICAL issue notifications for #${issueNumber}`);
+    console.info(`⏰ Timestamp: ${timestamp.full}`);
+    console.info(`🕒 Environment: ${this.detectEnvironment()}`);
+    console.info(
       `🌍 Timezone: ${process.env.TZ || Intl.DateTimeFormat().resolvedOptions().timeZone}`
     );
 
@@ -195,9 +195,9 @@ class DepartmentNotificationSender {
 
       notifications.push(notification);
 
-      console.log(`\n📧 ${department.toUpperCase()}:`);
+      console.info(`\n📧 ${department.toUpperCase()}:`);
       emails.forEach(email => {
-        console.log(`   └─ ${email}`);
+        console.info(`   └─ ${email}`);
       });
     });
 
@@ -205,19 +205,19 @@ class DepartmentNotificationSender {
     const notificationsPath = join(process.cwd(), 'data', 'critical-issue-notifications.json');
     writeFileSync(notificationsPath, JSON.stringify(notifications, null, 2));
 
-    console.log(`\n✅ Saved ${notifications.length} notifications to: ${notificationsPath}`);
-    console.log(`🕐 Total emails to send: ${Object.values(this.departmentEmails).flat().length}`);
+    console.info(`\n✅ Saved ${notifications.length} notifications to: ${notificationsPath}`);
+    console.info(`🕐 Total emails to send: ${Object.values(this.departmentEmails).flat().length}`);
 
     // Generate email templates
     await this.generateCriticalEmailTemplates(notifications);
 
-    console.log(`\n📊 CRITICAL NOTIFICATION SUMMARY ${timestamp.full}:`);
-    console.log('='.repeat(60));
-    console.log(`📧 Total notifications: ${notifications.length}`);
-    console.log(`🏢 Departments alerted: ${Object.keys(this.departmentEmails).join(', ')}`);
-    console.log(`🚨 Priority level: P0-CRITICAL`);
-    console.log(`⏰ Timestamp format: ${timestamp.full}`);
-    console.log(
+    console.info(`\n📊 CRITICAL NOTIFICATION SUMMARY ${timestamp.full}:`);
+    console.info('='.repeat(60));
+    console.info(`📧 Total notifications: ${notifications.length}`);
+    console.info(`🏢 Departments alerted: ${Object.keys(this.departmentEmails).join(', ')}`);
+    console.info(`🚨 Priority level: P0-CRITICAL`);
+    console.info(`⏰ Timestamp format: ${timestamp.full}`);
+    console.info(
       `🌍 Timezone: ${process.env.TZ || Intl.DateTimeFormat().resolvedOptions().timeZone}`
     );
   }
@@ -233,10 +233,10 @@ class DepartmentNotificationSender {
   ): Promise<void> {
     const timestamp = this.createTxTimestamp();
 
-    console.log(`📋 Sending task notification for task #${taskId}`);
-    console.log(`🏢 Department: ${department}`);
-    console.log(`📧 Notification type: ${notificationType}`);
-    console.log(`⏰ Timestamp: ${timestamp.full}`);
+    console.info(`📋 Sending task notification for task #${taskId}`);
+    console.info(`🏢 Department: ${department}`);
+    console.info(`📧 Notification type: ${notificationType}`);
+    console.info(`⏰ Timestamp: ${timestamp.full}`);
 
     try {
       // Import department tasks data
@@ -274,9 +274,9 @@ class DepartmentNotificationSender {
       // Generate email template
       await this.generateTaskEmailTemplate(notification);
 
-      console.log(`✅ Task notification sent successfully`);
-      console.log(`📧 Recipient: ${assigneeEmail}`);
-      console.log(`🎯 Action: ${notification.actionRequired}`);
+      console.info(`✅ Task notification sent successfully`);
+      console.info(`📧 Recipient: ${assigneeEmail}`);
+      console.info(`🎯 Action: ${notification.actionRequired}`);
     } catch (error) {
       console.error('❌ Error sending task notification:', error);
     }
@@ -356,7 +356,7 @@ class DepartmentNotificationSender {
     notifications.push(notification);
     writeFileSync(taskNotificationsPath, JSON.stringify(notifications, null, 2));
 
-    console.log(`📝 Task notification saved to: ${taskNotificationsPath}`);
+    console.info(`📝 Task notification saved to: ${taskNotificationsPath}`);
   }
 
   /**
@@ -369,7 +369,7 @@ class DepartmentNotificationSender {
     const filepath = join(process.cwd(), 'src', 'notifications', filename);
 
     writeFileSync(filepath, template);
-    console.log(`📧 Task email template created: ${filename}`);
+    console.info(`📧 Task email template created: ${filename}`);
   }
 
   /**
@@ -484,7 +484,7 @@ curl -X POST "http://localhost:3000/api/departments/${department}/tasks/${notifi
    * Send demonstration task notifications for all departments
    */
   async sendTaskNotificationDemo(): Promise<void> {
-    console.log('📋 Sending task notification demonstrations...\n');
+    console.info('📋 Sending task notification demonstrations...\n');
 
     const demoTasks = [
       { taskId: '1', department: 'compliance', type: 'deadline_reminder' as const },
@@ -493,19 +493,19 @@ curl -X POST "http://localhost:3000/api/departments/${department}/tasks/${notifi
       { taskId: '3', department: 'marketing', type: 'overdue_alert' as const },
     ];
 
-    console.log('🎯 TASK NOTIFICATION DEMO SUMMARY:');
-    console.log('!==!==!==!==!==!====');
+    console.info('🎯 TASK NOTIFICATION DEMO SUMMARY:');
+    console.info('!==!==!==!==!==!====');
 
     for (const demo of demoTasks) {
-      console.log(
+      console.info(
         `\n📧 Sending ${demo.type} notification for task #${demo.taskId} in ${demo.department} department...`
       );
       await this.sendTaskNotification(demo.taskId, demo.department, demo.type);
     }
 
-    console.log('\n✅ Task notification demo completed!');
-    console.log('📂 Check src/notifications/ for generated email templates');
-    console.log('📋 Check src/notifications/task-notifications.json for notification log');
+    console.info('\n✅ Task notification demo completed!');
+    console.info('📂 Check src/notifications/ for generated email templates');
+    console.info('📋 Check src/notifications/task-notifications.json for notification log');
   }
 
   /**
@@ -523,7 +523,7 @@ curl -X POST "http://localhost:3000/api/departments/${department}/tasks/${notifi
       const filepath = join(templatesDir, filename);
 
       writeFileSync(filepath, template);
-      console.log(`📝 Created critical email template: ${filename}`);
+      console.info(`📝 Created critical email template: ${filename}`);
     }
   }
 
@@ -640,16 +640,16 @@ ${this.getDepartmentActions(department)}
    * Test timezone behavior across environments
    */
   testTimezoneConfiguration(): void {
-    console.log('\n🧪 Testing Timezone Configuration\n');
-    console.log('Bun Timezone Behavior:');
-    console.log('- Development: Uses system timezone');
-    console.log('- Testing (bun test): Automatically uses UTC');
-    console.log('- Production: Uses process.env.TZ or America/New_York\n');
+    console.info('\n🧪 Testing Timezone Configuration\n');
+    console.info('Bun Timezone Behavior:');
+    console.info('- Development: Uses system timezone');
+    console.info('- Testing (bun test): Automatically uses UTC');
+    console.info('- Production: Uses process.env.TZ or America/New_York\n');
 
     const environments = ['development', 'testing', 'production'] as const;
 
     environments.forEach(env => {
-      console.log(`\n--- ${env.toUpperCase()} ENVIRONMENT ---`);
+      console.info(`\n--- ${env.toUpperCase()} ENVIRONMENT ---`);
 
       // Simulate environment
       const originalTZ = process.env.TZ;
@@ -663,30 +663,30 @@ ${this.getDepartmentActions(department)}
       const now = new Date();
       const timestamp = this.createTxTimestamp();
 
-      console.log(`TZ Setting: ${process.env.TZ || 'system default'}`);
-      console.log(`Date.getHours(): ${now.getHours()}`);
-      console.log(`TX Timestamp: ${timestamp.full}`);
-      console.log(`Local String: ${now.toString()}`);
+      console.info(`TZ Setting: ${process.env.TZ || 'system default'}`);
+      console.info(`Date.getHours(): ${now.getHours()}`);
+      console.info(`TX Timestamp: ${timestamp.full}`);
+      console.info(`Local String: ${now.toString()}`);
 
       // Restore original settings
       process.env.TZ = originalTZ;
       process.env.NODE_ENV = originalEnv;
     });
 
-    console.log('\n✅ Timezone configuration test completed');
+    console.info('\n✅ Timezone configuration test completed');
 
     // Test current environment
-    console.log('\n🔍 Current Environment Test:');
+    console.info('\n🔍 Current Environment Test:');
     const currentTimestamp = this.createTxTimestamp();
-    console.log(`Environment: ${this.detectEnvironment()}`);
-    console.log(`Current TZ: ${process.env.TZ || 'system default'}`);
-    console.log(`System TZ: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`);
-    console.log(`Date.getHours(): ${new Date().getHours()}`);
-    console.log(`TX Format: ${currentTimestamp.full}`);
+    console.info(`Environment: ${this.detectEnvironment()}`);
+    console.info(`Current TZ: ${process.env.TZ || 'system default'}`);
+    console.info(`System TZ: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`);
+    console.info(`Date.getHours(): ${new Date().getHours()}`);
+    console.info(`TX Format: ${currentTimestamp.full}`);
   }
 
   async sendNotifications() {
-    console.log('📧 Sending department package assignment notifications...\n');
+    console.info('📧 Sending department package assignment notifications...\n');
 
     if (!existsSync(this.templatesPath)) {
       console.error('❌ Email templates not found. Run: bun run deps:notify first');
@@ -696,8 +696,8 @@ ${this.getDepartmentActions(department)}
     const templates: EmailTemplate[] = JSON.parse(readFileSync(this.templatesPath, 'utf8'));
     const notifications = JSON.parse(readFileSync(this.notificationsPath, 'utf8'));
 
-    console.log('🎯 DEPARTMENT NOTIFICATION SUMMARY:');
-    console.log('!==!==!==!==!==!==!==');
+    console.info('🎯 DEPARTMENT NOTIFICATION SUMMARY:');
+    console.info('!==!==!==!==!==!==!==');
 
     templates.forEach((template, index) => {
       const notification = notifications[index];
@@ -705,36 +705,36 @@ ${this.getDepartmentActions(department)}
       const isUrgent = template.body.includes('🔴 **URGENT**');
       const packagesCount = template.body.match(/\((\d+) total\)/)?.[1] || '0';
 
-      console.log(`\n📨 ${department.toUpperCase()} DEPARTMENT:`);
-      console.log(`   To: ${template.to}`);
-      console.log(`   Subject: ${template.subject}`);
-      console.log(`   Packages: ${packagesCount}`);
-      console.log(
+      console.info(`\n📨 ${department.toUpperCase()} DEPARTMENT:`);
+      console.info(`   To: ${template.to}`);
+      console.info(`   Subject: ${template.subject}`);
+      console.info(`   Packages: ${packagesCount}`);
+      console.info(
         `   Priority: ${isUrgent ? '🔴 URGENT - Assign Department Head' : '✅ Review & Acknowledge'}`
       );
-      console.log(`   Status: ${notification?.content?.actionRequired || 'Review assignments'}`);
+      console.info(`   Status: ${notification?.content?.actionRequired || 'Review assignments'}`);
     });
 
-    console.log('\n📋 NEXT STEPS FOR DEPARTMENT HEADS:');
-    console.log('!==!==!==!==!==!=====');
+    console.info('\n📋 NEXT STEPS FOR DEPARTMENT HEADS:');
+    console.info('!==!==!==!==!==!=====');
 
-    console.log('\n1. 🔴 **URGENT ACTIONS REQUIRED:**');
+    console.info('\n1. 🔴 **URGENT ACTIONS REQUIRED:**');
     templates.forEach(template => {
       if (template.body.includes('🔴 **URGENT**')) {
         const department = template.subject.match(/- (\w+) Department/)?.[1];
-        console.log(`   • ${department}: Assign department head immediately`);
+        console.info(`   • ${department}: Assign department head immediately`);
       }
     });
 
-    console.log('\n2. 📝 **DEPENDENCY SUBMISSIONS NEEDED:**');
+    console.info('\n2. 📝 **DEPENDENCY SUBMISSIONS NEEDED:**');
     templates.forEach(template => {
       const department = template.subject.match(/- (\w+) Department/)?.[1];
-      console.log(
+      console.info(
         `   • ${department}: bun run deps:submit --department "${department}" --deps "list" --justification "reason"`
       );
     });
 
-    console.log('\n3. 📊 **PACKAGE ASSIGNMENTS BY PRIORITY:**');
+    console.info('\n3. 📊 **PACKAGE ASSIGNMENTS BY PRIORITY:**');
 
     // Critical packages
     const criticalDepts: string[] = [];
@@ -748,7 +748,7 @@ ${this.getDepartmentActions(department)}
       }
     });
     if (criticalDepts.length > 0) {
-      console.log(`   🔴 Critical: ${criticalDepts.join(', ')}`);
+      console.info(`   🔴 Critical: ${criticalDepts.join(', ')}`);
     }
 
     // High priority packages
@@ -763,47 +763,47 @@ ${this.getDepartmentActions(department)}
       }
     });
     if (highDepts.length > 0) {
-      console.log(`   🟡 High: ${highDepts.join(', ')}`);
+      console.info(`   🟡 High: ${highDepts.join(', ')}`);
     }
 
-    console.log('\n4. 🛠️ **DEPARTMENT SETUP COMMANDS:**');
-    console.log('   • Check status: bun run deps:status');
-    console.log('   • Submit dependencies: bun run deps:submit --help');
-    console.log('   • Health check: bun run packages:health-check');
-    console.log('   • Verify access: bun run verify:department-access');
+    console.info('\n4. 🛠️ **DEPARTMENT SETUP COMMANDS:**');
+    console.info('   • Check status: bun run deps:status');
+    console.info('   • Submit dependencies: bun run deps:submit --help');
+    console.info('   • Health check: bun run packages:health-check');
+    console.info('   • Verify access: bun run verify:department-access');
 
-    console.log('\n📬 **EMAIL DELIVERY SIMULATION:**');
-    console.log('!==!==!==!==!==!===');
-    console.log('(In production, these emails would be sent via SMTP/SendGrid/etc.)');
+    console.info('\n📬 **EMAIL DELIVERY SIMULATION:**');
+    console.info('!==!==!==!==!==!===');
+    console.info('(In production, these emails would be sent via SMTP/SendGrid/etc.)');
 
     templates.forEach((template, index) => {
       const department = template.subject.match(/- (\w+) Department/)?.[1];
-      console.log(`\n📮 Would send email to: ${template.to}`);
-      console.log(`   CC: ${template.cc}`);
-      console.log(`   Subject: ${template.subject}`);
-      console.log(`   Department: ${department}`);
-      console.log(`   Length: ${template.body.length} characters`);
-      console.log(`   Status: ✅ Ready to send`);
+      console.info(`\n📮 Would send email to: ${template.to}`);
+      console.info(`   CC: ${template.cc}`);
+      console.info(`   Subject: ${template.subject}`);
+      console.info(`   Department: ${department}`);
+      console.info(`   Length: ${template.body.length} characters`);
+      console.info(`   Status: ✅ Ready to send`);
     });
 
-    console.log('\n🎉 **NOTIFICATION SUMMARY:**');
-    console.log('!==!==!==!==!===');
-    console.log(`📧 Total emails prepared: ${templates.length}`);
-    console.log(`🏢 Departments notified: ${templates.length}`);
-    console.log(`📦 Total packages assigned: ${this.getTotalPackages(templates)}`);
-    console.log(
+    console.info('\n🎉 **NOTIFICATION SUMMARY:**');
+    console.info('!==!==!==!==!===');
+    console.info(`📧 Total emails prepared: ${templates.length}`);
+    console.info(`🏢 Departments notified: ${templates.length}`);
+    console.info(`📦 Total packages assigned: ${this.getTotalPackages(templates)}`);
+    console.info(
       `🔴 Urgent actions required: ${templates.filter(t => t.body.includes('🔴 **URGENT**')).length}`
     );
-    console.log(`⚡ Technology Dept (Active): Mike Hunt - 4 packages (2 critical, 2 high)`);
-    console.log(`⏳ Other departments: Need department head assignment`);
+    console.info(`⚡ Technology Dept (Active): Mike Hunt - 4 packages (2 critical, 2 high)`);
+    console.info(`⏳ Other departments: Need department head assignment`);
 
-    console.log('\n💡 **RECOMMENDED ACTIONS:**');
-    console.log('!==!==!==!==!===');
-    console.log('1. Assign department heads for Security (critical package), Finance, Operations');
-    console.log('2. Set up recurring dependency submission reminders');
-    console.log('3. Create package health monitoring dashboard');
-    console.log('4. Establish department maintenance workflows');
-    console.log('5. Schedule regular package assignment reviews');
+    console.info('\n💡 **RECOMMENDED ACTIONS:**');
+    console.info('!==!==!==!==!===');
+    console.info('1. Assign department heads for Security (critical package), Finance, Operations');
+    console.info('2. Set up recurring dependency submission reminders');
+    console.info('3. Create package health monitoring dashboard');
+    console.info('4. Establish department maintenance workflows');
+    console.info('5. Schedule regular package assignment reviews');
 
     return templates;
   }
@@ -816,8 +816,8 @@ ${this.getDepartmentActions(department)}
   }
 
   async displayPackageMatrix() {
-    console.log('\n📊 PACKAGE MAINTENANCE RESPONSIBILITY MATRIX:');
-    console.log('!==!==!==!==!==!==!==!=====');
+    console.info('\n📊 PACKAGE MAINTENANCE RESPONSIBILITY MATRIX:');
+    console.info('!==!==!==!==!==!==!==!=====');
 
     const packageAssignments = [
       {
@@ -894,8 +894,8 @@ ${this.getDepartmentActions(department)}
       },
     ];
 
-    console.log('| Package | Department | Maintainer | Email | Employee ID | Priority | Status |');
-    console.log('|---------|------------|------------|-------|-------------|----------|--------|');
+    console.info('| Package | Department | Maintainer | Email | Employee ID | Priority | Status |');
+    console.info('|---------|------------|------------|-------|-------------|----------|--------|');
 
     packageAssignments.forEach(item => {
       const status = item.maintainer === 'TBD' ? '🔴 Need Head' : '✅ Assigned';
@@ -905,30 +905,30 @@ ${this.getDepartmentActions(department)}
           : item.priority === 'HIGH'
             ? '🟡 HIGH'
             : '🟢 MEDIUM';
-      console.log(
+      console.info(
         `| ${item.pkg.padEnd(24)} | ${item.dept.padEnd(10)} | ${item.maintainer.padEnd(10)} | ${item.email.padEnd(25)} | ${item.employeeId.padEnd(11)} | ${priority.padEnd(12)} | ${status} |`
       );
     });
 
-    console.log('\n📈 PRIORITY BREAKDOWN:');
-    console.log('!==!==!==!===');
+    console.info('\n📈 PRIORITY BREAKDOWN:');
+    console.info('!==!==!==!===');
     const critical = packageAssignments.filter(p => p.priority === 'CRITICAL');
     const high = packageAssignments.filter(p => p.priority === 'HIGH');
     const medium = packageAssignments.filter(p => p.priority === 'MEDIUM');
 
-    console.log(`🔴 Critical: ${critical.length} packages`);
+    console.info(`🔴 Critical: ${critical.length} packages`);
     critical.forEach(p =>
-      console.log(`   • ${p.pkg} (${p.dept} - ${p.maintainer} - ${p.email} - ${p.employeeId})`)
+      console.info(`   • ${p.pkg} (${p.dept} - ${p.maintainer} - ${p.email} - ${p.employeeId})`)
     );
 
-    console.log(`🟡 High: ${high.length} packages`);
+    console.info(`🟡 High: ${high.length} packages`);
     high.forEach(p =>
-      console.log(`   • ${p.pkg} (${p.dept} - ${p.maintainer} - ${p.email} - ${p.employeeId})`)
+      console.info(`   • ${p.pkg} (${p.dept} - ${p.maintainer} - ${p.email} - ${p.employeeId})`)
     );
 
-    console.log(`🟢 Medium: ${medium.length} packages`);
+    console.info(`🟢 Medium: ${medium.length} packages`);
     medium.forEach(p =>
-      console.log(`   • ${p.pkg} (${p.dept} - ${p.maintainer} - ${p.email} - ${p.employeeId})`)
+      console.info(`   • ${p.pkg} (${p.dept} - ${p.maintainer} - ${p.email} - ${p.employeeId})`)
     );
   }
 
@@ -955,10 +955,10 @@ ${this.getDepartmentActions(department)}
         const [taskId, department, notificationType] = args;
         if (!taskId || !department || !notificationType) {
           console.error('❌ Usage: task <taskId> <department> <notificationType>');
-          console.log(
+          console.info(
             '📧 Notification types: assignment, deadline_reminder, status_change, overdue_alert'
           );
-          console.log(
+          console.info(
             '🏢 Departments: compliance, customer-support, finance, management, marketing, operations, team-contributors, technology, product-management, onboarding, design'
           );
           return;
@@ -973,7 +973,7 @@ ${this.getDepartmentActions(department)}
         await this.sendTaskNotificationDemo();
         break;
       default:
-        console.log(`
+        console.info(`
 🏢 Fire22 Department Notification Sender with Task API Integration
 
 Usage:

@@ -3,10 +3,10 @@
  * Critical TypeScript error in merge key implementation resolved
  */
 
-console.log('🔧 TYPESCRIPT ERROR v4.5 - MERGE KEY JS TYPE FIX COMPLETE!')
-console.log('=' .repeat(80))
+console.info('🔧 TYPESCRIPT ERROR v4.5 - MERGE KEY JS TYPE FIX COMPLETE!')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 ✅ CRITICAL TYPESCRIPT ERROR RESOLVED FOR MERGE KEY IMPLEMENTATION!
 
 📋 ERROR DETAILS:
@@ -124,8 +124,8 @@ All TypeScript errors have been comprehensively resolved while maintaining and e
 🚀 FACTORYWAGER YAML-NATIVE TABULAR v4.5 - ABSOLUTE TYPESCRIPT MASTERY ACHIEVED! 🚀
 `)
 
-console.log('🔧✅ TYPESCRIPT ERROR v4.5 - MERGE KEY JS TYPE FIX COMPLETE!')
-console.log('🛡️ Merge key type safety - Robust inference implemented!')
-console.log('🎯 Zero TypeScript errors - Absolute compilation success!')
-console.log('🚀 Revolutionary YAML processing - Enterprise quality!')
-console.log('💎 FactoryWager v4.5 - TypeScript perfection complete!')
+console.info('🔧✅ TYPESCRIPT ERROR v4.5 - MERGE KEY JS TYPE FIX COMPLETE!')
+console.info('🛡️ Merge key type safety - Robust inference implemented!')
+console.info('🎯 Zero TypeScript errors - Absolute compilation success!')
+console.info('🚀 Revolutionary YAML processing - Enterprise quality!')
+console.info('💎 FactoryWager v4.5 - TypeScript perfection complete!')

@@ -29,28 +29,28 @@ interface CommandResult {
 
 class MatrixAgentCLI {
   async status(): Promise<void> {
-    console.log("📊 Matrix Agent Status");
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.info("📊 Matrix Agent Status");
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
     // Profile system status
     const profiles = await listProfiles();
     const activeProfile = getActiveProfile();
-    console.log(`Profiles: ${profiles.length} available`);
-    console.log(`Active: ${activeProfile || "none"}`);
+    console.info(`Profiles: ${profiles.length} available`);
+    console.info(`Active: ${activeProfile || "none"}`);
 
     // Kimi integration status
     const kimiAvailable = await isKimiAvailable();
-    console.log(`\nKimi Shell: ${kimiAvailable ? "✅ connected" : "❌ not found"}`);
+    console.info(`\nKimi Shell: ${kimiAvailable ? "✅ connected" : "❌ not found"}`);
     if (kimiAvailable) {
       const version = await getKimiVersion();
-      console.log(`Version: ${version}`);
+      console.info(`Version: ${version}`);
     }
 
     // Profile stats
     const stats = await getProfileStats();
-    console.log("\nProfile Distribution:");
+    console.info("\nProfile Distribution:");
     for (const [env, count] of Object.entries(stats.environments)) {
-      console.log(`  ${env}: ${count}`);
+      console.info(`  ${env}: ${count}`);
     }
   }
 
@@ -58,20 +58,20 @@ class MatrixAgentCLI {
     const profiles = await listProfiles();
 
     if (profiles.length === 0) {
-      console.log("No profiles found. Create one with: matrix-agent profile create <name>");
+      console.info("No profiles found. Create one with: matrix-agent profile create <name>");
       return;
     }
 
     const active = getActiveProfile();
 
-    console.log("Available Profiles:");
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.info("Available Profiles:");
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
     for (const p of profiles) {
       const marker = p.name === active ? "● " : "  ";
-      console.log(`${marker}${p.name} (${p.environment})`);
+      console.info(`${marker}${p.name} (${p.environment})`);
       if (p.description) {
-        console.log(`     ${p.description.slice(0, 50)}`);
+        console.info(`     ${p.description.slice(0, 50)}`);
       }
     }
   }
@@ -83,21 +83,21 @@ class MatrixAgentCLI {
       process.exit(1);
     }
 
-    console.log(`Profile: ${profile.name}`);
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    console.log(`Version: ${profile.version}`);
-    console.log(`Environment: ${profile.environment || "not set"}`);
-    console.log(`Description: ${profile.description || "none"}`);
-    console.log(`Author: ${profile.author || "unknown"}`);
-    console.log(`Created: ${profile.created || "unknown"}`);
+    console.info(`Profile: ${profile.name}`);
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.info(`Version: ${profile.version}`);
+    console.info(`Environment: ${profile.environment || "not set"}`);
+    console.info(`Description: ${profile.description || "none"}`);
+    console.info(`Author: ${profile.author || "unknown"}`);
+    console.info(`Created: ${profile.created || "unknown"}`);
 
-    console.log("\nEnvironment Variables:");
+    console.info("\nEnvironment Variables:");
     const envVars = applyProfileEnv(profile);
     for (const [key, value] of Object.entries(envVars)) {
       const displayValue = key.includes("KEY") || key.includes("SECRET") || key.includes("TOKEN")
         ? "***"
         : value;
-      console.log(`  ${key}=${displayValue}`);
+      console.info(`  ${key}=${displayValue}`);
     }
   }
 
@@ -110,32 +110,32 @@ class MatrixAgentCLI {
 
     const envVars = applyProfileEnv(profile);
 
-    console.log(`# Activate profile: ${name}`);
-    console.log("# Run these commands in your shell:");
-    console.log();
+    console.info(`# Activate profile: ${name}`);
+    console.info("# Run these commands in your shell:");
+    console.info();
 
     for (const [key, value] of Object.entries(envVars)) {
-      console.log(`export ${key}="${value}"`);
+      console.info(`export ${key}="${value}"`);
     }
 
-    console.log();
-    console.log("# Or use: eval $(matrix-agent profile use-export " + name + ")");
+    console.info();
+    console.info("# Or use: eval $(matrix-agent profile use-export " + name + ")");
   }
 
   async kimiStatus(): Promise<void> {
-    console.log("🤖 Kimi Shell Integration");
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.info("🤖 Kimi Shell Integration");
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
     const available = await isKimiAvailable();
-    console.log(`Status: ${available ? "✅ available" : "❌ not installed"}`);
+    console.info(`Status: ${available ? "✅ available" : "❌ not installed"}`);
 
     if (available) {
       const version = await getKimiVersion();
-      console.log(`Version: ${version}`);
+      console.info(`Version: ${version}`);
 
       const sessionId = process.env.KIMI_SESSION_ID;
-      console.log(`Session: ${sessionId || "none (new session)"}`);
-      console.log(`Work Dir: ${process.cwd()}`);
+      console.info(`Session: ${sessionId || "none (new session)"}`);
+      console.info(`Work Dir: ${process.cwd()}`);
     }
   }
 
@@ -146,8 +146,8 @@ class MatrixAgentCLI {
       process.exit(1);
     }
 
-    console.log(`Asking Kimi: ${prompt.slice(0, 50)}...`);
-    console.log();
+    console.info(`Asking Kimi: ${prompt.slice(0, 50)}...`);
+    console.info();
 
     const result = await runKimiWithContext(prompt, {
       profile: options.profile,
@@ -155,7 +155,7 @@ class MatrixAgentCLI {
     });
 
     if (result.success) {
-      console.log(result.output);
+      console.info(result.output);
     } else {
       console.error("Error:", result.output);
       process.exit(1);
@@ -165,8 +165,8 @@ class MatrixAgentCLI {
   async kimiSync(profileName: string): Promise<void> {
     const success = await syncProfileWithKimi(profileName);
     if (success) {
-      console.log(`✅ Profile "${profileName}" synced with Kimi environment`);
-      console.log(`Location: ~/.kimi/.matrix-env`);
+      console.info(`✅ Profile "${profileName}" synced with Kimi environment`);
+      console.info(`Location: ~/.kimi/.matrix-env`);
     } else {
       console.error(`❌ Failed to sync profile "${profileName}"`);
       process.exit(1);
@@ -174,8 +174,8 @@ class MatrixAgentCLI {
   }
 
   async health(): Promise<void> {
-    console.log("🏥 Matrix Agent Health Check");
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.info("🏥 Matrix Agent Health Check");
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
     const checks: { name: string; check: () => Promise<boolean> | boolean }[] = [
       { name: "Config directory", check: () => Bun.file(join(MATRIX_DIR, "agent/config.json")).exists() },
@@ -187,15 +187,15 @@ class MatrixAgentCLI {
     let passed = 0;
     for (const { name, check } of checks) {
       const ok = await check();
-      console.log(`  ${ok ? "✅" : "❌"} ${name}`);
+      console.info(`  ${ok ? "✅" : "❌"} ${name}`);
       if (ok) passed++;
     }
 
-    console.log(`\n${passed}/${checks.length} checks passed`);
+    console.info(`\n${passed}/${checks.length} checks passed`);
   }
 
   showHelp(): void {
-    console.log(`
+    console.info(`
 Matrix Agent CLI - Profile & Kimi Integration
 
 USAGE:
@@ -261,11 +261,11 @@ async function main() {
       break;
     case "profile stats":
       const stats = await getProfileStats();
-      console.log("Profile Statistics:");
-      console.log(`  Total: ${stats.total}`);
-      console.log("  Environments:");
+      console.info("Profile Statistics:");
+      console.info(`  Total: ${stats.total}`);
+      console.info("  Environments:");
       for (const [env, count] of Object.entries(stats.environments)) {
-        console.log(`    ${env}: ${count}`);
+        console.info(`    ${env}: ${count}`);
       }
       break;
 

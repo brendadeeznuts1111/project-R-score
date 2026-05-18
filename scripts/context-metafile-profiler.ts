@@ -100,8 +100,8 @@ function parseArgs(): CLIOptions {
 }
 
 async function main() {
-  console.log(c.bold('🎯 Context Engine v3.17 - Metafile Profiler'));
-  console.log(c.cyan('Advanced metafile analysis and profiling\n'));
+  console.info(c.bold('🎯 Context Engine v3.17 - Metafile Profiler'));
+  console.info(c.cyan('Advanced metafile analysis and profiling\n'));
   
   const options = parseArgs();
   const cwd = options.cwd || process.cwd();
@@ -127,24 +127,24 @@ async function main() {
       }
     : {};
   
-  console.log(c.yellow('📁 Configuration:'));
-    console.log(c.gray(`  Working Directory: ${cwd}`));
-    console.log(c.gray(`  Entrypoint: ${options.entrypoint || 'auto-detect'}`));
-    console.log(c.gray(`  Output Format: ${options.format || 'json'}`));
-    console.log(c.gray(`  Metafile Output Dir: ${outputDir}`));
-    console.log(c.gray(`  Build Out Dir: ${buildOutDir}`));
-    console.log(c.gray(`  Memory-only Build: ${options.memoryOnly ? 'enabled' : 'disabled'}`));
-    if (nativeMetafileJsonPath) console.log(c.gray(`  Native Metafile JSON: ${nativeMetafileJsonPath}`));
-    if (nativeMetafileMdPath) console.log(c.gray(`  Native Metafile MD: ${nativeMetafileMdPath}`));
-    console.log(c.gray(`  Virtual Files Build Mode: ${options.useVirtualFiles ? 'enabled' : 'disabled'}`));
-    if (options.overrideConfig) console.log(c.gray(`  Config Override: ${options.overrideConfig} (./src/config.ts)`));
-    console.log(c.gray(`  React Fast Refresh: ${options.reactFastRefresh ? 'enabled' : 'disabled'}`));
-    console.log(c.gray(`  Profile Mode: ${options.profile ? 'enabled' : 'disabled'}`));
-    console.log(c.gray(`  Analysis Mode: ${options.analyze ? 'enabled' : 'disabled'}\n`));
+  console.info(c.yellow('📁 Configuration:'));
+    console.info(c.gray(`  Working Directory: ${cwd}`));
+    console.info(c.gray(`  Entrypoint: ${options.entrypoint || 'auto-detect'}`));
+    console.info(c.gray(`  Output Format: ${options.format || 'json'}`));
+    console.info(c.gray(`  Metafile Output Dir: ${outputDir}`));
+    console.info(c.gray(`  Build Out Dir: ${buildOutDir}`));
+    console.info(c.gray(`  Memory-only Build: ${options.memoryOnly ? 'enabled' : 'disabled'}`));
+    if (nativeMetafileJsonPath) console.info(c.gray(`  Native Metafile JSON: ${nativeMetafileJsonPath}`));
+    if (nativeMetafileMdPath) console.info(c.gray(`  Native Metafile MD: ${nativeMetafileMdPath}`));
+    console.info(c.gray(`  Virtual Files Build Mode: ${options.useVirtualFiles ? 'enabled' : 'disabled'}`));
+    if (options.overrideConfig) console.info(c.gray(`  Config Override: ${options.overrideConfig} (./src/config.ts)`));
+    console.info(c.gray(`  React Fast Refresh: ${options.reactFastRefresh ? 'enabled' : 'disabled'}`));
+    console.info(c.gray(`  Profile Mode: ${options.profile ? 'enabled' : 'disabled'}`));
+    console.info(c.gray(`  Analysis Mode: ${options.analyze ? 'enabled' : 'disabled'}\n`));
   
   try {
     // Step 1: Load Global Configuration
-    console.log(c.yellow('🔧 Step 1: Loading Global Configuration...'));
+    console.info(c.yellow('🔧 Step 1: Loading Global Configuration...'));
     const startTime = performance.now();
     
     const flags = {
@@ -162,14 +162,14 @@ async function main() {
     };
     const configTime = performance.now() - startTime;
     
-    console.log(c.green('✅ Global Configuration Loaded:'));
-    console.log(c.gray(`  CWD: ${globalConfig.cwd}`));
-    console.log(c.gray(`  TSConfig Options: ${Object.keys(globalConfig.tsconfig?.compilerOptions || {}).length}`));
-    console.log(c.gray(`  Virtual Files: ${Object.keys(globalConfig.virtualFiles || {}).length}`));
-    console.log(c.gray(`  Load Time: ${configTime.toFixed(2)}ms\n`));
+    console.info(c.green('✅ Global Configuration Loaded:'));
+    console.info(c.gray(`  CWD: ${globalConfig.cwd}`));
+    console.info(c.gray(`  TSConfig Options: ${Object.keys(globalConfig.tsconfig?.compilerOptions || {}).length}`));
+    console.info(c.gray(`  Virtual Files: ${Object.keys(globalConfig.virtualFiles || {}).length}`));
+    console.info(c.gray(`  Load Time: ${configTime.toFixed(2)}ms\n`));
     
     // Step 2: Context Build with Metafile
-    console.log(c.yellow('🏗️  Step 2: Context Build with Metafile Analysis...'));
+    console.info(c.yellow('🏗️  Step 2: Context Build with Metafile Analysis...'));
     const buildStartTime = performance.now();
     
     const entrypoints = options.entrypoint ? [options.entrypoint] : ['junior-runner.ts'];
@@ -201,20 +201,20 @@ async function main() {
     
     const buildTime = performance.now() - buildStartTime;
     
-    console.log(c.green('✅ Metafile Analysis Complete:'));
-    console.log(c.gray(`  Inputs: ${Object.keys(buildResultWithMetafile.inputs || {}).length}`));
-    console.log(c.gray(`  Outputs: ${Object.keys(buildResultWithMetafile.outputs || {}).length}`));
-    console.log(c.gray(`  Bundle Size: ${((buildResultWithMetafile.bundleSize || 0) / 1024).toFixed(2)}KB`));
-    console.log(c.gray(`  Build Time: ${buildTime.toFixed(2)}ms\n`));
-    console.log(c.gray(`  Build Artifacts: ${(buildResult.outputs || []).length}`));
+    console.info(c.green('✅ Metafile Analysis Complete:'));
+    console.info(c.gray(`  Inputs: ${Object.keys(buildResultWithMetafile.inputs || {}).length}`));
+    console.info(c.gray(`  Outputs: ${Object.keys(buildResultWithMetafile.outputs || {}).length}`));
+    console.info(c.gray(`  Bundle Size: ${((buildResultWithMetafile.bundleSize || 0) / 1024).toFixed(2)}KB`));
+    console.info(c.gray(`  Build Time: ${buildTime.toFixed(2)}ms\n`));
+    console.info(c.gray(`  Build Artifacts: ${(buildResult.outputs || []).length}`));
     for (const artifact of (buildResult.outputs || [])) {
       const size = typeof artifact.size === 'number' ? `${artifact.size} bytes` : 'unknown';
-      console.log(c.gray(`    - kind=${artifact.kind}, loader=${artifact.loader}, path=${artifact.path}, size=${size}`));
+      console.info(c.gray(`    - kind=${artifact.kind}, loader=${artifact.loader}, path=${artifact.path}, size=${size}`));
     }
-    console.log('');
+    console.info('');
 
     if (nativeMetafileJsonPath || nativeMetafileMdPath) {
-      console.log(c.yellow('🧾 Step 2b: Emitting Native Bun Metafile Outputs...'));
+      console.info(c.yellow('🧾 Step 2b: Emitting Native Bun Metafile Outputs...'));
       const nativeStart = performance.now();
       await Bun.build({
         entrypoints: entrypoints.map(e => join(cwd, e)),
@@ -229,17 +229,17 @@ async function main() {
         reactFastRefresh: options.reactFastRefresh
       });
       const nativeTime = performance.now() - nativeStart;
-      console.log(c.green('✅ Native Bun Metafiles Emitted:'));
-      if (nativeMetafileJsonPath) console.log(c.gray(`  JSON: ${nativeMetafileJsonPath}`));
-      if (nativeMetafileMdPath) console.log(c.gray(`  Markdown: ${nativeMetafileMdPath}`));
-      console.log(c.gray(`  Native Emit Time: ${nativeTime.toFixed(2)}ms\n`));
+      console.info(c.green('✅ Native Bun Metafiles Emitted:'));
+      if (nativeMetafileJsonPath) console.info(c.gray(`  JSON: ${nativeMetafileJsonPath}`));
+      if (nativeMetafileMdPath) console.info(c.gray(`  Markdown: ${nativeMetafileMdPath}`));
+      console.info(c.gray(`  Native Emit Time: ${nativeTime.toFixed(2)}ms\n`));
     }
     
     // Step 3: Enhanced Profile (if requested)
     let profileResult = null;
     let profileTime = 0;
     if (options.profile) {
-      console.log(c.yellow('👤 Step 3: Enhanced Profile Generation...'));
+      console.info(c.yellow('👤 Step 3: Enhanced Profile Generation...'));
       const profileStartTime = performance.now();
       
       const testMdFile = join(cwd, 'test.md');
@@ -247,16 +247,16 @@ async function main() {
       
       profileTime = performance.now() - profileStartTime;
       
-      console.log(c.green('✅ Enhanced Profile Created:'));
-      console.log(c.gray(`  Profile ID: ${profileResult.id}`));
-      console.log(c.gray(`  Name: ${profileResult.name}`));
-      console.log(c.gray(`  Bundle Size: ${(profileResult.bundleSize / 1024).toFixed(2)}KB`));
-      console.log(c.gray(`  Dependencies: ${profileResult.dependencies.length}`));
-      console.log(c.gray(`  Profile Time: ${profileTime.toFixed(2)}ms\n`));
+      console.info(c.green('✅ Enhanced Profile Created:'));
+      console.info(c.gray(`  Profile ID: ${profileResult.id}`));
+      console.info(c.gray(`  Name: ${profileResult.name}`));
+      console.info(c.gray(`  Bundle Size: ${(profileResult.bundleSize / 1024).toFixed(2)}KB`));
+      console.info(c.gray(`  Dependencies: ${profileResult.dependencies.length}`));
+      console.info(c.gray(`  Profile Time: ${profileTime.toFixed(2)}ms\n`));
     }
     
     // Step 4: Export Results
-    console.log(c.yellow('📤 Step 4: Exporting Results...'));
+    console.info(c.yellow('📤 Step 4: Exporting Results...'));
     const exportStartTime = performance.now();
     
     const format = options.format || 'json';
@@ -264,13 +264,13 @@ async function main() {
     
     const exportTime = performance.now() - exportStartTime;
     
-    console.log(c.green(`✅ Results Exported (${format.toUpperCase()}):`));
-    console.log(c.gray(`  Export Time: ${exportTime.toFixed(2)}ms\n`));
+    console.info(c.green(`✅ Results Exported (${format.toUpperCase()}):`));
+    console.info(c.gray(`  Export Time: ${exportTime.toFixed(2)}ms\n`));
     
     // Step 5: Analysis Summary
     const totalTime = configTime + buildTime + (profileResult ? profileTime : 0) + exportTime;
     
-    console.log(c.bold('📊 Context Engine v3.17 Analysis Summary'));
+    console.info(c.bold('📊 Context Engine v3.17 Analysis Summary'));
     console.table({
       'Configuration Load': `${configTime.toFixed(2)}ms`,
       'Metafile Build': `${buildTime.toFixed(2)}ms`,
@@ -284,7 +284,7 @@ async function main() {
     });
     
     if (options.analyze) {
-      console.log(c.bold('🔍 Advanced Analysis'));
+      console.info(c.bold('🔍 Advanced Analysis'));
       
       // Analyze dependencies
       const inputs = buildResultWithMetafile.inputs || {};
@@ -303,23 +303,23 @@ async function main() {
         .sort(([, a], [, b]) => b - a)
         .slice(0, 10);
       
-      console.log(c.yellow('Top Dependencies:'));
+      console.info(c.yellow('Top Dependencies:'));
       topDependencies.forEach(([path, count]) => {
-        console.log(c.gray(`  ${path}: ${count} imports`));
+        console.info(c.gray(`  ${path}: ${count} imports`));
       });
       
       // Performance analysis
       const throughput = ((buildResultWithMetafile.bundleSize || 0) / 1024) / (buildTime / 1000); // KB/s
-      console.log(c.yellow('\nPerformance Metrics:'));
-      console.log(c.gray(`  Build Throughput: ${throughput.toFixed(2)}KB/s`));
-      console.log(c.gray(`  Efficiency Score: ${Math.min(100, (1000 / buildTime) * 100).toFixed(1)}%`));
+      console.info(c.yellow('\nPerformance Metrics:'));
+      console.info(c.gray(`  Build Throughput: ${throughput.toFixed(2)}KB/s`));
+      console.info(c.gray(`  Efficiency Score: ${Math.min(100, (1000 / buildTime) * 100).toFixed(1)}%`));
     }
     
-    console.log(c.green('\n🎉 Context Engine v3.17 Metafile Profiling Complete!'));
-    console.log(c.cyan('All metafile analysis and profiling tasks completed successfully.\n'));
+    console.info(c.green('\n🎉 Context Engine v3.17 Metafile Profiling Complete!'));
+    console.info(c.cyan('All metafile analysis and profiling tasks completed successfully.\n'));
     
   } catch (error) {
-    console.log(c.red(`❌ Error: ${error instanceof Error ? error.message : String(error)}`));
+    console.info(c.red(`❌ Error: ${error instanceof Error ? error.message : String(error)}`));
     process.exit(1);
   }
 }

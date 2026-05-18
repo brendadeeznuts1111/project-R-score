@@ -4,45 +4,45 @@
  * Demonstrates the new performance improvements and features
  */
 
-console.log('🚀 Bun 1.1.x Performance Showcase');
-console.log('═'.repeat(50));
+console.info('🚀 Bun 1.1.x Performance Showcase');
+console.info('═'.repeat(50));
 
 // ============================================================================
 // 1. FASTER STARTUP TIME (~1ms improvement)
 // ============================================================================
 
-console.log('\n⚡ 1. Faster Startup Time Demonstration');
-console.log('   - Bun 1.1.x provides ~1ms faster startup');
-console.log('   - Reduced memory usage (~3MB less RAM)');
-console.log('   - These improvements are automatic');
+console.info('\n⚡ 1. Faster Startup Time Demonstration');
+console.info('   - Bun 1.1.x provides ~1ms faster startup');
+console.info('   - Reduced memory usage (~3MB less RAM)');
+console.info('   - These improvements are automatic');
 
 // ============================================================================
 // 2. --sql-preconnect FEATURE DEMO
 // ============================================================================
 
-console.log('\n🗄️  2. SQL Preconnect Feature');
-console.log('   - Reduces first-query latency for PostgreSQL');
-console.log('   - Pre-connects to database at startup');
-console.log('   - Gracefully handles connection failures');
+console.info('\n🗄️  2. SQL Preconnect Feature');
+console.info('   - Reduces first-query latency for PostgreSQL');
+console.info('   - Pre-connects to database at startup');
+console.info('   - Gracefully handles connection failures');
 
 if (process.env.DATABASE_URL) {
-  console.log(
+  console.info(
     `   ✅ DATABASE_URL detected: ${process.env.DATABASE_URL.replace(/:\/\/.*@/, '://***:***@')}`
   );
-  console.log('   💡 Use: bun --sql-preconnect your-script.ts');
+  console.info('   💡 Use: bun --sql-preconnect your-script.ts');
 } else {
-  console.log('   ℹ️  No DATABASE_URL set - using SQLite optimizations');
-  console.log('   💡 For PostgreSQL: export DATABASE_URL="postgres://..."');
+  console.info('   ℹ️  No DATABASE_URL set - using SQLite optimizations');
+  console.info('   💡 For PostgreSQL: export DATABASE_URL="postgres://..."');
 }
 
 // ============================================================================
 // 3. --console-depth FEATURE DEMO
 // ============================================================================
 
-console.log('\n📊 3. Console Depth Configuration');
-console.log('   - Configure console.log inspection depth');
-console.log('   - Default depth: 2 (matches Node.js)');
-console.log('   - Can be set via CLI flag or bunfig.toml');
+console.info('\n📊 3. Console Depth Configuration');
+console.info('   - Configure console.log inspection depth');
+console.info('   - Default depth: 2 (matches Node.js)');
+console.info('   - Can be set via CLI flag or bunfig.toml');
 
 const nestedObject = {
   level1: {
@@ -59,17 +59,17 @@ const nestedObject = {
   },
 };
 
-console.log('\n   🔍 Current console depth test:');
-console.log('   nestedObject:', nestedObject);
+console.info('\n   🔍 Current console depth test:');
+console.info('   nestedObject:', nestedObject);
 
 // ============================================================================
 // 4. SIMD-ACCELERATED MULTILINE COMMENT PARSING
 // ============================================================================
 
-console.log('\n⚡ 4. SIMD-Accelerated Multiline Comment Parsing');
-console.log('   - Faster parsing of large multiline comments');
-console.log('   - Uses SIMD instructions for performance');
-console.log('   - Automatic optimization - no code changes needed');
+console.info('\n⚡ 4. SIMD-Accelerated Multiline Comment Parsing');
+console.info('   - Faster parsing of large multiline comments');
+console.info('   - Uses SIMD instructions for performance');
+console.info('   - Automatic optimization - no code changes needed');
 
 /*
 This is a demonstration of the SIMD-accelerated multiline comment parsing.
@@ -91,10 +91,10 @@ so larger comments see greater benefits.
 // 5. IMPROVED TREE-SHAKING FOR DEAD CODE
 // ============================================================================
 
-console.log('\n🗑️  5. Improved Tree-Shaking for Dead Code');
-console.log('   - Better elimination of unreachable try...catch blocks');
-console.log('   - Removes unused Symbol.for() calls');
-console.log('   - Smaller bundle sizes automatically');
+console.info('\n🗑️  5. Improved Tree-Shaking for Dead Code');
+console.info('   - Better elimination of unreachable try...catch blocks');
+console.info('   - Removes unused Symbol.for() calls');
+console.info('   - Smaller bundle sizes automatically');
 
 // Demonstration of dead code that would be removed
 function exampleFunction() {
@@ -102,44 +102,44 @@ function exampleFunction() {
 
   // The following code is unreachable and will be removed by Bun's bundler
   try {
-    console.log('This will never execute');
+    console.info('This will never execute');
     return 'Unreachable';
   } catch (error) {
-    console.log('This catch block is also unreachable');
+    console.info('This catch block is also unreachable');
   }
 }
 
-console.log('   📦 Function result:', exampleFunction());
+console.info('   📦 Function result:', exampleFunction());
 
 // ============================================================================
 // 6. NODE.JS COMPATIBILITY IMPROVEMENTS
 // ============================================================================
 
-console.log('\n🔧 6. Node.js Compatibility Improvements');
+console.info('\n🔧 6. Node.js Compatibility Improvements');
 
 // Check process.features
-console.log('   📋 process.features:');
-console.log(`     - TypeScript: ${process.features.typescript}`);
-console.log(`     - Require Module: ${process.features.require_module}`);
-console.log(`     - BoringSSL: ${process.features.openssl_is_boringssl}`);
+console.info('   📋 process.features:');
+console.info(`     - TypeScript: ${process.features.typescript}`);
+console.info(`     - Require Module: ${process.features.require_module}`);
+console.info(`     - BoringSSL: ${process.features.openssl_is_boringssl}`);
 
 // Network interfaces with scopeid
-console.log('\n   🌐 Network Interfaces (with scopeid):');
+console.info('\n   🌐 Network Interfaces (with scopeid):');
 try {
   const { networkInterfaces } = await import('os');
   const interfaces = networkInterfaces();
   const interfaceNames = Object.keys(interfaces);
-  console.log(`     - Found ${interfaceNames.length} network interfaces`);
-  console.log(`     - IPv6 interfaces now correctly return 'scopeid' property`);
+  console.info(`     - Found ${interfaceNames.length} network interfaces`);
+  console.info(`     - IPv6 interfaces now correctly return 'scopeid' property`);
 } catch (error) {
-  console.log(`     - Network interface check failed: ${error.message}`);
+  console.info(`     - Network interface check failed: ${error.message}`);
 }
 
 // ============================================================================
 // 7. PERFORMANCE METRICS
 // ============================================================================
 
-console.log('\n📈 7. Performance Metrics');
+console.info('\n📈 7. Performance Metrics');
 
 const startTime = performance.now();
 const startMemory = performance.memory
@@ -162,43 +162,43 @@ const endMemory = performance.memory
     }
   : null;
 
-console.log(`   ⏱️  Execution time: ${(endTime - startTime).toFixed(2)}ms`);
+console.info(`   ⏱️  Execution time: ${(endTime - startTime).toFixed(2)}ms`);
 
 if (startMemory && endMemory) {
   const memoryDelta = endMemory.used - startMemory.used;
-  console.log(
+  console.info(
     `   💾 Memory delta: ${memoryDelta > 0 ? '+' : ''}${Math.round(memoryDelta / 1024)}KB`
   );
-  console.log(
+  console.info(
     `   📊 Memory usage: ${Math.round((endMemory.used / 1024 / 1024) * 100) / 100}MB / ${Math.round((endMemory.limit / 1024 / 1024) * 100) / 100}MB`
   );
 } else {
-  console.log('   💾 Memory monitoring not available in this environment');
+  console.info('   💾 Memory monitoring not available in this environment');
 }
 
 // ============================================================================
 // 8. SUMMARY AND RECOMMENDATIONS
 // ============================================================================
 
-console.log('\n🎯 8. Summary & Recommendations');
-console.log('   ✅ Automatic improvements (no code changes needed):');
-console.log('     - 1ms faster startup time');
-console.log('     - 3MB less memory usage');
-console.log('     - SIMD-accelerated comment parsing');
-console.log('     - Better tree-shaking');
-console.log('');
-console.log('   🔧 New features to leverage:');
-console.log('     - Use --sql-preconnect for database applications');
-console.log('     - Configure --console-depth for debugging');
-console.log('     - Take advantage of improved Node.js compatibility');
-console.log('');
-console.log('   🚀 Performance tips:');
-console.log('     - Use bun --sql-preconnect for database-heavy apps');
-console.log('     - Leverage new fs.glob array support for file operations');
-console.log('     - Use vm.constants.DONT_CONTEXTIFY for better VM performance');
-console.log('     - Monitor memory usage with the new performance.memory API');
+console.info('\n🎯 8. Summary & Recommendations');
+console.info('   ✅ Automatic improvements (no code changes needed):');
+console.info('     - 1ms faster startup time');
+console.info('     - 3MB less memory usage');
+console.info('     - SIMD-accelerated comment parsing');
+console.info('     - Better tree-shaking');
+console.info('');
+console.info('   🔧 New features to leverage:');
+console.info('     - Use --sql-preconnect for database applications');
+console.info('     - Configure --console-depth for debugging');
+console.info('     - Take advantage of improved Node.js compatibility');
+console.info('');
+console.info('   🚀 Performance tips:');
+console.info('     - Use bun --sql-preconnect for database-heavy apps');
+console.info('     - Leverage new fs.glob array support for file operations');
+console.info('     - Use vm.constants.DONT_CONTEXTIFY for better VM performance');
+console.info('     - Monitor memory usage with the new performance.memory API');
 
-console.log('\n✨ Bun 1.1.x is ready to supercharge your development experience!');
+console.info('\n✨ Bun 1.1.x is ready to supercharge your development experience!');
 
 // ============================================================================
 // EXPORT FOR USE AS MODULE

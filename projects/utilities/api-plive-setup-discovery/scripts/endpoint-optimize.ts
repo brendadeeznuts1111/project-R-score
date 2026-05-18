@@ -6,33 +6,33 @@ import { endpointOptimizer } from '../src/api/services/endpoint-optimizer';
 const args = process.argv.slice(2);
 
 async function analyzeEndpoint(path: string, method: string) {
-  console.log(`🔍 Analyzing endpoint: ${method} ${path}...\n`);
+  console.info(`🔍 Analyzing endpoint: ${method} ${path}...\n`);
 
   const recommendations = await endpointOptimizer.analyzeEndpoint(path, method);
 
   if (recommendations.length === 0) {
-    console.log('✅ No optimizations needed - endpoint is performing well!');
+    console.info('✅ No optimizations needed - endpoint is performing well!');
     return;
   }
 
-  console.log(`📊 Found ${recommendations.length} optimization recommendations:\n`);
+  console.info(`📊 Found ${recommendations.length} optimization recommendations:\n`);
 
   recommendations.forEach((rec, index) => {
     const icon = rec.priority === 'high' ? '🔴' : rec.priority === 'medium' ? '🟡' : '🟢';
-    console.log(`${index + 1}. ${icon} [${rec.priority.toUpperCase()}] ${rec.type.toUpperCase()}`);
-    console.log(`   Impact: ${rec.impact}`);
-    console.log(`   Improvement: ${rec.estimatedImprovement}`);
-    console.log(`   Implementation: ${rec.implementation}\n`);
+    console.info(`${index + 1}. ${icon} [${rec.priority.toUpperCase()}] ${rec.type.toUpperCase()}`);
+    console.info(`   Impact: ${rec.impact}`);
+    console.info(`   Improvement: ${rec.estimatedImprovement}`);
+    console.info(`   Implementation: ${rec.implementation}\n`);
   });
 }
 
 async function analyzeAll() {
-  console.log('🔍 Analyzing all endpoints from bun.yaml...\n');
+  console.info('🔍 Analyzing all endpoints from bun.yaml...\n');
 
   const allRecommendations = await endpointOptimizer.analyzeAllEndpoints();
 
   if (allRecommendations.size === 0) {
-    console.log('✅ No optimizations needed - all endpoints are performing well!');
+    console.info('✅ No optimizations needed - all endpoints are performing well!');
     return;
   }
 
@@ -49,26 +49,26 @@ async function analyzeAll() {
     totalMedium += medium;
     totalLow += low;
 
-    console.log(`\n📍 ${routeId}:`);
-    console.log(`   High: ${high}, Medium: ${medium}, Low: ${low}`);
+    console.info(`\n📍 ${routeId}:`);
+    console.info(`   High: ${high}, Medium: ${medium}, Low: ${low}`);
   }
 
-  console.log(`\n📊 Summary:`);
-  console.log(`   Total Endpoints Analyzed: ${allRecommendations.size}`);
-  console.log(`   High Priority: ${totalHigh}`);
-  console.log(`   Medium Priority: ${totalMedium}`);
-  console.log(`   Low Priority: ${totalLow}`);
+  console.info(`\n📊 Summary:`);
+  console.info(`   Total Endpoints Analyzed: ${allRecommendations.size}`);
+  console.info(`   High Priority: ${totalHigh}`);
+  console.info(`   Medium Priority: ${totalMedium}`);
+  console.info(`   Low Priority: ${totalLow}`);
 }
 
 async function generateReport() {
-  console.log('📝 Generating optimization report...\n');
+  console.info('📝 Generating optimization report...\n');
 
   const report = await endpointOptimizer.generateReport();
   const reportPath = `docs/endpoint-optimization-report.md`;
   
   await Bun.write(reportPath, report);
   
-  console.log(`✅ Report generated: ${reportPath}`);
+  console.info(`✅ Report generated: ${reportPath}`);
 }
 
 // Main CLI handler

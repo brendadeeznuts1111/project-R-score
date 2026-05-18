@@ -25,7 +25,7 @@ class DataProcessorWorker {
 		this.widgetId = workerData.widgetId || "default";
 		this.performanceMode = workerData.performanceMode || false;
 
-		console.log(
+		console.info(
 			`🔧 Data processor worker initialized for widget: ${this.widgetId}`,
 		);
 	}
@@ -54,7 +54,7 @@ class DataProcessorWorker {
 		}
 
 		const duration = performance.now() - start;
-		console.log(
+		console.info(
 			`📊 Worker processed ${data.length} items in ${duration.toFixed(2)}ms`,
 		);
 

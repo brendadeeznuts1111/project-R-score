@@ -369,41 +369,41 @@ class LinkChecker {
   printResults(): void {
     const stats = this.getStats();
 
-    console.log('\n🔗 Link Check Results');
-    console.log('==================');
-    console.log(`Total links checked: ${stats.total}`);
-    console.log(`✅ OK: ${stats.total - stats.broken - stats.warnings}`);
-    console.log(`⚠️  Warnings: ${stats.warnings}`);
-    console.log(`❌ Broken: ${stats.broken}`);
+    console.info('\n🔗 Link Check Results');
+    console.info('==================');
+    console.info(`Total links checked: ${stats.total}`);
+    console.info(`✅ OK: ${stats.total - stats.broken - stats.warnings}`);
+    console.info(`⚠️  Warnings: ${stats.warnings}`);
+    console.info(`❌ Broken: ${stats.broken}`);
 
-    console.log('\n📊 By Type:');
+    console.info('\n📊 By Type:');
     for (const [type, count] of Object.entries(stats.byType)) {
-      console.log(`  ${type}: ${count}`);
+      console.info(`  ${type}: ${count}`);
     }
 
     if (this.verbose || stats.broken > 0 || stats.warnings > 0) {
-      console.log('\n📋 Detailed Results:');
-      console.log('-------------------');
+      console.info('\n📋 Detailed Results:');
+      console.info('-------------------');
 
       const broken = this.results.filter(r => r.status === 'broken');
       const warnings = this.results.filter(r => r.status === 'warning');
 
       if (broken.length > 0) {
-        console.log('\n❌ Broken Links:');
+        console.info('\n❌ Broken Links:');
         for (const result of broken) {
-          console.log(`  ${result.file}:${result.line} - ${result.link}`);
+          console.info(`  ${result.file}:${result.line} - ${result.link}`);
           if (result.error) {
-            console.log(`    Error: ${result.error}`);
+            console.info(`    Error: ${result.error}`);
           }
         }
       }
 
       if (warnings.length > 0) {
-        console.log('\n⚠️  Warnings:');
+        console.info('\n⚠️  Warnings:');
         for (const result of warnings) {
-          console.log(`  ${result.file}:${result.line} - ${result.link}`);
+          console.info(`  ${result.file}:${result.line} - ${result.link}`);
           if (result.error) {
-            console.log(`    Warning: ${result.error}`);
+            console.info(`    Warning: ${result.error}`);
           }
         }
       }
@@ -436,7 +436,7 @@ class LinkChecker {
       await Bun.write(filename, csv);
     }
 
-    console.log(`\n📄 Results exported to: ${filename}`);
+    console.info(`\n📄 Results exported to: ${filename}`);
   }
 }
 
@@ -462,9 +462,9 @@ async function main() {
     }
   }
 
-  console.log(`🔍 Checking links in: ${dir}`);
+  console.info(`🔍 Checking links in: ${dir}`);
   if (checkExternal) {
-    console.log('🌐 External link checking enabled');
+    console.info('🌐 External link checking enabled');
   }
 
   const checker = new LinkChecker(dir, verbose, checkExternal);

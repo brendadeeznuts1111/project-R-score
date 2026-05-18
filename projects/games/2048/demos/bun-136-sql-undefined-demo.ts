@@ -3,8 +3,8 @@
 import { Database } from "bun:sqlite";
 
 // Demonstration of Bun v1.3.6 SQL INSERT helper undefined handling
-console.log("🚀 Bun v1.3.6 SQL INSERT Helper - Undefined Values Demo");
-console.log("=" * 60);
+console.info("🚀 Bun v1.3.6 SQL INSERT Helper - Undefined Values Demo");
+console.info("=" * 60);
 
 // Create test database with DEFAULT values
 const db = new Database(":memory:");
@@ -27,10 +27,10 @@ db.exec(`
 const { sql } = db as any;
 
 async function demonstrateUndefinedHandling() {
-  console.log("\n📝 Testing undefined value handling in INSERT operations...");
+  console.info("\n📝 Testing undefined value handling in INSERT operations...");
 
   // Test 1: Single insert with undefined values
-  console.log("\n1️⃣ Single INSERT with undefined values:");
+  console.info("\n1️⃣ Single INSERT with undefined values:");
 
   try {
     // Before v1.3.6: This would insert NULL for undefined values
@@ -47,19 +47,19 @@ async function demonstrateUndefinedHandling() {
       })}
     `;
 
-    console.log(
+    console.info(
       "✅ Success: undefined values filtered out, DEFAULT values used",
     );
 
     // Verify the inserted record
     const user1 = sql`SELECT * FROM users WHERE id = 'user_1'`.get();
-    console.log("📊 Inserted record:", user1);
+    console.info("📊 Inserted record:", user1);
   } catch (error) {
     console.error("❌ Failed:", error.message);
   }
 
   // Test 2: Bulk insert with mixed undefined values
-  console.log("\n2️⃣ Bulk INSERT with mixed undefined values:");
+  console.info("\n2️⃣ Bulk INSERT with mixed undefined values:");
 
   const users = [
     {
@@ -94,18 +94,18 @@ async function demonstrateUndefinedHandling() {
       INSERT INTO users ${sql(users)}
     `;
 
-    console.log(`✅ Success: Bulk inserted ${users.length} users`);
+    console.info(`✅ Success: Bulk inserted ${users.length} users`);
 
     // Verify all records
     const allUsers =
       sql`SELECT id, name, email, status, metadata FROM users WHERE id != 'user_1'`.all();
-    console.log("📊 Bulk inserted records:", allUsers);
+    console.info("📊 Bulk inserted records:", allUsers);
   } catch (error) {
     console.error("❌ Failed:", error.message);
   }
 
   // Test 3: Demonstrate the data loss bug fix
-  console.log("\n3️⃣ Data loss bug fix demonstration:");
+  console.info("\n3️⃣ Data loss bug fix demonstration:");
 
   const testData = [
     { id: "test_1", name: "Test 1" }, // First object - minimal columns
@@ -130,18 +130,18 @@ async function demonstrateUndefinedHandling() {
       INSERT INTO users ${sql(testData)}
     `;
 
-    console.log("✅ Success: All columns preserved in bulk insert");
+    console.info("✅ Success: All columns preserved in bulk insert");
 
     // Verify no data loss
     const testUsers =
       sql`SELECT * FROM users WHERE id LIKE 'test_%' ORDER BY id`.all();
-    console.log("📊 Records with all columns preserved:", testUsers);
+    console.info("📊 Records with all columns preserved:", testUsers);
   } catch (error) {
     console.error("❌ Failed:", error.message);
   }
 
   // Test 4: Performance comparison
-  console.log(
+  console.info(
     "\n4️⃣ Performance comparison: undefined handling vs manual filtering",
   );
 
@@ -183,18 +183,18 @@ async function demonstrateUndefinedHandling() {
   tx();
   const time2 = performance.now() - start2;
 
-  console.log(`📊 Bun v1.3.6 undefined handling: ${time1.toFixed(2)}ms`);
-  console.log(`📊 Manual filtering approach: ${time2.toFixed(2)}ms`);
-  console.log(
+  console.info(`📊 Bun v1.3.6 undefined handling: ${time1.toFixed(2)}ms`);
+  console.info(`📊 Manual filtering approach: ${time2.toFixed(2)}ms`);
+  console.info(
     `🚀 Performance improvement: ${(time2 / time1).toFixed(1)}x faster`,
   );
 }
 
 async function demonstrateRealWorldUsage() {
-  console.log("\n🌍 Real-world usage examples:");
+  console.info("\n🌍 Real-world usage examples:");
 
   // Example 1: User registration with optional fields
-  console.log("\n👤 User registration with optional profile fields:");
+  console.info("\n👤 User registration with optional profile fields:");
 
   const registerUser = (userData: any) => {
     return sql`
@@ -216,7 +216,7 @@ async function demonstrateRealWorldUsage() {
   // Register user with minimal data
   const minimalUser = { name: "Minimal User", email: "minimal@example.com" };
   const result1 = registerUser(minimalUser);
-  console.log("✅ Minimal registration - DEFAULTs used");
+  console.info("✅ Minimal registration - DEFAULTs used");
 
   // Register user with full data
   const fullUser = {
@@ -227,10 +227,10 @@ async function demonstrateRealWorldUsage() {
     loginImmediately: true,
   };
   const result2 = registerUser(fullUser);
-  console.log("✅ Full registration - all values specified");
+  console.info("✅ Full registration - all values specified");
 
   // Example 2: Batch operations with mixed data
-  console.log("\n📦 Batch import with mixed data quality:");
+  console.info("\n📦 Batch import with mixed data quality:");
 
   const importData = [
     { name: "Import 1", email: "import1@example.com" }, // Minimal
@@ -246,9 +246,9 @@ async function demonstrateRealWorldUsage() {
   try {
     // This will handle the mixed data gracefully
     sql`INSERT INTO users ${sql(importData.filter((u) => u.email))}`; // Filter out invalid rows first
-    console.log("✅ Batch import completed with mixed data");
+    console.info("✅ Batch import completed with mixed data");
   } catch (error) {
-    console.log("⚠️  Batch import handled gracefully:", error.message);
+    console.info("⚠️  Batch import handled gracefully:", error.message);
   }
 }
 
@@ -258,15 +258,15 @@ async function main() {
     await demonstrateUndefinedHandling();
     await demonstrateRealWorldUsage();
 
-    console.log("\n🎯 Key Benefits of Bun v1.3.6 SQL INSERT Helper:");
-    console.log("   • undefined values are automatically filtered out");
-    console.log("   • Database DEFAULT values are properly used");
-    console.log(
+    console.info("\n🎯 Key Benefits of Bun v1.3.6 SQL INSERT Helper:");
+    console.info("   • undefined values are automatically filtered out");
+    console.info("   • Database DEFAULT values are properly used");
+    console.info(
       "   • No more 'null value violates not-null constraint' errors",
     );
-    console.log("   • Bulk inserts preserve all columns from all objects");
-    console.log("   • Cleaner code - no manual undefined filtering needed");
-    console.log("   • Better performance than manual approaches");
+    console.info("   • Bulk inserts preserve all columns from all objects");
+    console.info("   • Cleaner code - no manual undefined filtering needed");
+    console.info("   • Better performance than manual approaches");
   } catch (error) {
     console.error("❌ Demo failed:", error);
   } finally {

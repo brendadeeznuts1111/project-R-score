@@ -116,14 +116,14 @@ export const createSSEAlertServer = () => {
     }
   });
 
-  console.log(`🔴 SSE Alert Server listening on port ${server.port}`);
+  console.info(`🔴 SSE Alert Server listening on port ${server.port}`);
   return server;
 };
 
 // Mock Redis subscription for demonstration
 async function mockSubscribeToViolations(tenantFilter: string, callback: (v: WidthViolation) => void) {
   // In production, this would be actual Redis subscription
-  console.log(`📡 Subscribed to violations for tenant: ${tenantFilter}`);
+  console.info(`📡 Subscribed to violations for tenant: ${tenantFilter}`);
 
   // Simulate occasional violations for demonstration
   if (process.env.NODE_ENV === "development") {
@@ -145,7 +145,7 @@ async function mockSubscribeToViolations(tenantFilter: string, callback: (v: Wid
 
 // Redis-backed broadcast for multi-instance deployments
 export async function broadcastViolation(violation: WidthViolation) {
-  console.log(`🚨 Broadcasting violation: ${violation.tenant}:${violation.file}:${violation.line} (${violation.column}c)`);
+  console.info(`🚨 Broadcasting violation: ${violation.tenant}:${violation.file}:${violation.line} (${violation.column}c)`);
 
   // 1. Persist to immutable audit log (using existing audit/log tool)
   try {
@@ -157,7 +157,7 @@ export async function broadcastViolation(violation: WidthViolation) {
     });
 
     if (validationResult.valid) {
-      console.log(`📝 Audit log entry validated for ${violation.tenant}`);
+      console.info(`📝 Audit log entry validated for ${violation.tenant}`);
     }
   } catch (error) {
     console.error(`❌ Failed to log audit entry:`, error);
@@ -179,19 +179,19 @@ export async function broadcastViolation(violation: WidthViolation) {
 
       const r2Result = await r2Logger.uploadViolationLog(logEntry);
       if (r2Result.success) {
-        console.log(`📦 R2 storage successful: ${r2Result.url}`);
+        console.info(`📦 R2 storage successful: ${r2Result.url}`);
       } else {
         console.warn(`⚠️ R2 storage failed: ${r2Result.error}`);
       }
     } else {
-      console.log(`ℹ️ R2 logger not initialized - skipping persistent storage`);
+      console.info(`ℹ️ R2 logger not initialized - skipping persistent storage`);
     }
   } catch (error) {
     console.error(`❌ R2 storage error:`, error);
   }
 
   // 3. Mock Redis broadcast for SSE distribution
-  console.log(`📡 Broadcasting to channel: ${VIOLATION_CHANNEL}`);
+  console.info(`📡 Broadcasting to channel: ${VIOLATION_CHANNEL}`);
 
   // 4. Broadcast to connected SSE clients
   for (const [connId, conn] of CONNECTIONS) {
@@ -225,11 +225,11 @@ export async function broadcastViolation(violation: WidthViolation) {
 
 async function updateViolationMetrics(v: WidthViolation) {
   // Mock Redis metrics update
-  console.log(`📊 Updating metrics for ${v.tenant}: ${v.severity} violations`);
+  console.info(`📊 Updating metrics for ${v.tenant}: ${v.severity} violations`);
 
   // In production, this would update Redis counters
   const key = `tier1380:metrics:${v.tenant}:${new Date().toISOString().slice(0, 10)}`;
-  console.log(`📈 Metrics key: ${key}`);
+  console.info(`📈 Metrics key: ${key}`);
 }
 
 // CLI Monitor Command
@@ -239,8 +239,8 @@ export const runViolationMonitor = () => {
     severity: process.argv.find(a => a.startsWith("--severity="))?.split("=")[1] || "warning"
   };
 
-  console.log(`🔴 Monitoring violations for tenant: ${args.tenant}`);
-  console.log("=".repeat(89));
+  console.info(`🔴 Monitoring violations for tenant: ${args.tenant}`);
+  console.info("=".repeat(89));
 
   // Connect to SSE stream
   const source = new EventSource(`http://localhost:1381/mcp/alerts/stream?tenant=${args.tenant}`);
@@ -250,7 +250,7 @@ export const runViolationMonitor = () => {
     if (v.severity === args.severity || args.severity === "all") {
       const color = v.severity === 'critical' ? '\x1b[31m' : '\x1b[33m';
       const reset = '\x1b[0m';
-      console.log(
+      console.info(
         color +
         `${v.tenant.padEnd(12)} │ ${v.file}:${v.line.toString().padStart(4)} │ ` +
         `${v.column.toString().padStart(3)}c │ ${v.preview.slice(0, 60)}` +
@@ -260,7 +260,7 @@ export const runViolationMonitor = () => {
   });
 
   source.addEventListener("connected", (e) => {
-    console.log(`✅ Connected to violation stream: ${e.data}`);
+    console.info(`✅ Connected to violation stream: ${e.data}`);
   });
 
   source.addEventListener("error", (e) => {
@@ -269,7 +269,7 @@ export const runViolationMonitor = () => {
 
   // Handle graceful shutdown
   process.on('SIGINT', () => {
-    console.log('\n👋 Shutting down violation monitor...');
+    console.info('\n👋 Shutting down violation monitor...');
     source.close();
     process.exit(0);
   });

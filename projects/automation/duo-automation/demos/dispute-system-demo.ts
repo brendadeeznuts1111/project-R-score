@@ -3,7 +3,7 @@ import { DeepLinkGenerator } from '../src/deeplinks/deeplink-generator';
 import { DisputeMatrix } from '../src/disputes/dispute-matrix';
 import { Dispute, DisputeStatus, QRTransaction } from '../src/deeplinks/deeplink-generator';
 
-console.log(`
+console.info(`
 🔥 **COMPLETE DISPUTE HANDLING SYSTEM + ENCODED DEEP LINKS**
 ═══════════════════════════════════════════════════════════════════
 
@@ -38,7 +38,7 @@ const qrTransaction: QRTransaction = {
   location: { lat: 37.7749, lng: -122.4194 }
 };
 
-console.log(`
+console.info(`
 📊 **DISPUTE RESOLUTION MATRIX TABLE**
 ═══════════════════════════════════════════════════════════════════
 
@@ -53,90 +53,90 @@ matrixData.forEach(row => {
   const merchantActions = row.merchantActions.slice(0, 2).join('<br>');
   const systemActions = row.systemActions.slice(0, 2).join('<br>');
   
-  console.log(`| ${row.icon} ${row.status} | ${customerActions} | ${merchantActions} | ${systemActions} | ${row.timeline} | \`${row.deepLink}\` |`);
+  console.info(`| ${row.icon} ${row.status} | ${customerActions} | ${merchantActions} | ${systemActions} | ${row.timeline} | \`${row.deepLink}\` |`);
 });
 
-console.log(`
+console.info(`
 🔗 **URI-ENCODED DEEP LINK GENERATION SYSTEM**
 ═══════════════════════════════════════════════════════════════════
 
 // Generate dispute deep links with proper encoding
 const deepLink = deeplinkGenerator.generateDisputeDeepLink(sampleDispute, 'view');
-console.log('Generated Deep Link:', deepLink);
+console.info('Generated Deep Link:', deepLink);
 
 // Parse incoming deep links
 const parsed = deeplinkGenerator.parseDeepLink(deepLink);
-console.log('Parsed Link:', parsed);
+console.info('Parsed Link:', parsed);
 
 // Generate QR-specific dispute links
 const qrLink = deeplinkGenerator.generateQRDisputeDeepLink(qrTransaction, 'wrong-item', 2);
-console.log('QR Dispute Link:', qrLink);
+console.info('QR Dispute Link:', qrLink);
 
 // Generate secure one-time links
 const secureLink = deeplinkGenerator.generateSecureDisputeLink(sampleDispute, 24);
-console.log('Secure Link:', secureLink.link);
-console.log('Expires At:', secureLink.expiresAt);
+console.info('Secure Link:', secureLink.link);
+console.info('Expires At:', secureLink.expiresAt);
 `);
 
 // Demonstrate deep link generation
-console.log(`
+console.info(`
 🔗 **GENERATING ENCODED DEEP LINKS**
 ═══════════════════════════════════════════════════════════════════
 
 1. **Simple Dispute View Link:`
 );
 const simpleLink = deeplinkGenerator.generateDisputeDeepLink(sampleDispute);
-console.log(`   ${simpleLink}`);
+console.info(`   ${simpleLink}`);
 
-console.log(`
+console.info(`
 2. **Dispute with Action Link:`
 );
 const actionLink = deeplinkGenerator.generateDisputeDeepLink(sampleDispute, 'upload-evidence');
-console.log(`   ${actionLink}`);
+console.info(`   ${actionLink}`);
 
-console.log(`
+console.info(`
 3. **QR Dispute Link (Base64 Encoded):`
 );
 const qrDisputeLink = deeplinkGenerator.generateQRDisputeDeepLink(qrTransaction, 'damaged-item', 3);
-console.log(`   ${qrDisputeLink}`);
+console.info(`   ${qrDisputeLink}`);
 
-console.log(`
+console.info(`
 4. **Secure One-Time Link:`
 );
 const secureDisputeLink = deeplinkGenerator.generateSecureDisputeLink(sampleDispute, 48);
-console.log(`   ${secureDisputeLink.link}`);
-console.log(`   Expires: ${secureDisputeLink.expiresAt.toISOString()}`);
+console.info(`   ${secureDisputeLink.link}`);
+console.info(`   Expires: ${secureDisputeLink.expiresAt.toISOString()}`);
 
-console.log(`
+console.info(`
 5. **Web Fallback Link:`
 );
 const webFallback = deeplinkGenerator.generateWebFallbackLink(simpleLink);
-console.log(`   ${webFallback}`);
+console.info(`   ${webFallback}`);
 
-console.log(`
+console.info(`
 6. **Android Intent URI:`
 );
 const androidIntent = deeplinkGenerator.generateAndroidIntentURI(simpleLink);
-console.log(`   ${androidIntent}`);
+console.info(`   ${androidIntent}`);
 
 // Demonstrate deep link parsing
-console.log(`
+console.info(`
 🔍 **PARSING DEEP LINKS**
 ═══════════════════════════════════════════════════════════════════
 
 Parsing simple dispute link:
 `);
 const parsedSimple = deeplinkGenerator.parseDeepLink(simpleLink);
-console.log(JSON.stringify(parsedSimple, null, 2));
+console.info(JSON.stringify(parsedSimple, null, 2));
 
-console.log(`
+console.info(`
 Parsing QR dispute link:
 `);
 const parsedQR = deeplinkGenerator.parseDeepLink(qrDisputeLink);
-console.log(JSON.stringify(parsedQR, null, 2));
+console.info(JSON.stringify(parsedQR, null, 2));
 
 // Demonstrate dispute matrix functionality
-console.log(`
+console.info(`
 📊 **DISPUTE MATRIX FUNCTIONALITY**
 ═══════════════════════════════════════════════════════════════════
 
@@ -144,36 +144,36 @@ Current Status for Dispute ${sampleDispute.id}:
 `);
 const currentStatus = DisputeMatrix.getCurrentStatusRow(sampleDispute);
 if (currentStatus) {
-  console.log(`Status: ${currentStatus.icon} ${currentStatus.status}`);
-  console.log(`Description: ${currentStatus.description}`);
-  console.log(`Timeline: ${currentStatus.timeline}`);
-  console.log(`Customer Actions: ${currentStatus.customerActions.join(', ')}`);
-  console.log(`Merchant Actions: ${currentStatus.merchantActions.join(', ')}`);
-  console.log(`System Actions: ${currentStatus.systemActions.join(', ')}`);
+  console.info(`Status: ${currentStatus.icon} ${currentStatus.status}`);
+  console.info(`Description: ${currentStatus.description}`);
+  console.info(`Timeline: ${currentStatus.timeline}`);
+  console.info(`Customer Actions: ${currentStatus.customerActions.join(', ')}`);
+  console.info(`Merchant Actions: ${currentStatus.merchantActions.join(', ')}`);
+  console.info(`System Actions: ${currentStatus.systemActions.join(', ')}`);
 }
 
-console.log(`
+console.info(`
 Quick Actions Available:
 `);
 const quickActions = DisputeMatrix.getQuickActions(sampleDispute);
 quickActions.forEach(action => {
-  console.log(`• ${action.icon} ${action.title}: ${action.description}`);
-  console.log(`  Link: ${action.deepLink}`);
-  console.log(`  Priority: ${action.priority}`);
+  console.info(`• ${action.icon} ${action.title}: ${action.description}`);
+  console.info(`  Link: ${action.deepLink}`);
+  console.info(`  Priority: ${action.priority}`);
 });
 
-console.log(`
+console.info(`
 Timeline Progress:
 `);
 const timeline = DisputeMatrix.getTimelineProgress(sampleDispute);
-console.log(`Progress: ${timeline.progressPercentage}% (${timeline.currentStep}/${timeline.totalSteps})`);
+console.info(`Progress: ${timeline.progressPercentage}% (${timeline.currentStep}/${timeline.totalSteps})`);
 timeline.steps.forEach(step => {
   const status = step.completed ? '✅' : step.active ? '🔄' : '⏳';
-  console.log(`${status} ${step.icon} ${step.title}: ${step.description}`);
+  console.info(`${status} ${step.icon} ${step.title}: ${step.description}`);
 });
 
 // Demonstrate status transitions
-console.log(`
+console.info(`
 🔄 **STATUS TRANSITION VALIDATION**
 ═══════════════════════════════════════════════════════════════════
 
@@ -188,11 +188,11 @@ const validTransitions = [
 
 validTransitions.forEach(status => {
   const isValid = DisputeMatrix.validateStatusTransition(DisputeStatus.SUBMITTED, status);
-  console.log(`${isValid ? '✅' : '❌'} SUBMITTED → ${status}`);
+  console.info(`${isValid ? '✅' : '❌'} SUBMITTED → ${status}`);
 });
 
 // Generate example encoded deep links
-console.log(`
+console.info(`
 💾 **EXAMPLE ENCODED DEEP LINKS**
 ═══════════════════════════════════════════════════════════════════
 
@@ -211,19 +211,19 @@ const examples = {
 };
 
 // Usage examples:
-console.log('1. Customer receives SMS with encoded link:');
-console.log('   "DuoPlus: Dispute DSP-12345 submitted ✅ Track: duoplus%3A%2F%2Fdispute%2FDSP-12345"');
+console.info('1. Customer receives SMS with encoded link:');
+console.info('   "DuoPlus: Dispute DSP-12345 submitted ✅ Track: duoplus%3A%2F%2Fdispute%2FDSP-12345"');
 
-console.log('2. Email contains clickable deep links:');
-console.log('   <a href="duoplus://dispute/DSP-12345">📱 Open in App</a>');
-console.log('   <a href="https://duoplus.com/deeplink/redirect?target=duoplus%3A%2F%2Fdispute%2FDSP-12345">🌐 View in Browser</a>');
+console.info('2. Email contains clickable deep links:');
+console.info('   <a href="duoplus://dispute/DSP-12345">📱 Open in App</a>');
+console.info('   <a href="https://duoplus.com/deeplink/redirect?target=duoplus%3A%2F%2Fdispute%2FDSP-12345">🌐 View in Browser</a>');
 
-console.log('3. QR code contains encoded dispute data:');
-console.log('   Scan: duoplus://dispute/qr/eyJ0... (base64url encoded)');
+console.info('3. QR code contains encoded dispute data:');
+console.info('   Scan: duoplus://dispute/qr/eyJ0... (base64url encoded)');
 `);
 
 // Demonstrate notification templates
-console.log(`
+console.info(`
 📱 **NOTIFICATION TEMPLATES WITH ENCODED LINKS**
 ═══════════════════════════════════════════════════════════════════
 
@@ -258,7 +258,7 @@ Push Notification Example:
 `);
 
 // Android implementation examples
-console.log(`
+console.info(`
 🤖 **ANDROID DEEP LINK HANDLER EXAMPLES**
 ═══════════════════════════════════════════════════════════════════
 
@@ -297,7 +297,7 @@ fun handleDisputeDeepLink(context: Context, uri: Uri): Boolean {
 `);
 
 // Security validation examples
-console.log(`
+console.info(`
 🔐 **SECURITY VALIDATION EXAMPLES**
 ═══════════════════════════════════════════════════════════════════
 
@@ -306,10 +306,10 @@ const validator = new DeepLinkValidator('secret-key');
 const result = validator.validateDeepLink(simpleLink);
 
 if (result.valid) {
-    console.log('✅ Deep link is valid');
-    console.log('Payload:', result.payload);
+    console.info('✅ Deep link is valid');
+    console.info('Payload:', result.payload);
 } else {
-    console.log('❌ Invalid deep link:', result.error);
+    console.info('❌ Invalid deep link:', result.error);
 }
 
 // QR dispute signature verification
@@ -326,10 +326,10 @@ const qrData = {
 };
 
 const isValid = validator.verifyQRDisputeSignature(qrData);
-console.log('QR signature valid:', isValid);
+console.info('QR signature valid:', isValid);
 `);
 
-console.log(`
+console.info(`
 🚀 **IMPLEMENTATION CHECKLIST**
 ═══════════════════════════════════════════════════════════════════
 

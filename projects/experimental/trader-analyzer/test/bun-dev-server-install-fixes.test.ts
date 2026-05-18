@@ -97,7 +97,7 @@ test("bundler handles Promise rejections correctly", async () => {
  */
 test("standalone executable builds and runs", async () => {
 	const testFile = `
-		console.log("Hello from compiled executable!");
+		console.info("Hello from compiled executable!");
 	`;
 
 	const testPath = "/tmp/bun-standalone-test.ts";
@@ -253,7 +253,7 @@ test("security scanner collects workspace dependencies", async () => {
 	const bunfigExists = await Bun.file(bunfigPath).exists();
 	
 	if (!bunfigExists) {
-		console.log("Skipping: bunfig.toml not found in test context");
+		console.info("Skipping: bunfig.toml not found in test context");
 		return;
 	}
 
@@ -262,7 +262,7 @@ test("security scanner collects workspace dependencies", async () => {
 	const hasSecurityScanner = bunfigContent.includes("[install.security]");
 
 	if (!hasSecurityScanner) {
-		console.log("Skipping: Security scanner not configured");
+		console.info("Skipping: Security scanner not configured");
 		return;
 	}
 
@@ -271,7 +271,7 @@ test("security scanner collects workspace dependencies", async () => {
 	const packageJsonExists = await Bun.file(packageJsonPath).exists();
 	
 	if (!packageJsonExists) {
-		console.log("Skipping: package.json not found in test context");
+		console.info("Skipping: package.json not found in test context");
 		return;
 	}
 
@@ -280,7 +280,7 @@ test("security scanner collects workspace dependencies", async () => {
 		packageJson.workspaces && Array.isArray(packageJson.workspaces);
 
 	if (!hasWorkspaces) {
-		console.log("Skipping: No workspaces configured");
+		console.info("Skipping: No workspaces configured");
 		return;
 	}
 

@@ -13,18 +13,18 @@ import { registerAllProperties } from "../src/properties/registrations";
  * Main registration script
  */
 async function main() {
-	console.log("🚀 Registering properties for all data sources...\n");
+	console.info("🚀 Registering properties for all data sources...\n");
 
 	// Initialize registry
 	const registry = new PropertyRegistry();
 	const matrix = new PropertyMatrixManager();
 
 	// Register all properties
-	console.log("📝 Registering properties...");
+	console.info("📝 Registering properties...");
 	registerAllProperties(registry);
 
 	// Add properties to matrix
-	console.log("📊 Building property matrix...");
+	console.info("📊 Building property matrix...");
 	const allProperties = registry.query({});
 	for (const property of allProperties) {
 		matrix.addProperty(property, {
@@ -35,26 +35,26 @@ async function main() {
 	}
 
 	// Display statistics
-	console.log("\n✅ Property registration complete!\n");
+	console.info("\n✅ Property registration complete!\n");
 	const stats = matrix.getStats();
-	console.log(`Total Properties: ${stats.totalProperties}`);
-	console.log(`Total Namespaces: ${stats.totalNamespaces}`);
-	console.log(`Total Categories: ${stats.totalCategories}`);
+	console.info(`Total Properties: ${stats.totalProperties}`);
+	console.info(`Total Namespaces: ${stats.totalNamespaces}`);
+	console.info(`Total Categories: ${stats.totalCategories}`);
 
 	// Display by category
-	console.log("\n📊 Properties by Category:");
+	console.info("\n📊 Properties by Category:");
 	const categories = matrix.getCategories();
 	for (const category of categories) {
 		const entries = matrix.getProperties({
 			filterCategory: category,
 		});
 		if (entries.length > 0) {
-			console.log(`  ${category}: ${entries.length}`);
+			console.info(`  ${category}: ${entries.length}`);
 		}
 	}
 
 	// Display by namespace
-	console.log("\n📦 Properties by Namespace:");
+	console.info("\n📦 Properties by Namespace:");
 	const namespaces = new Set(
 		allProperties.map((p) => p.namespace),
 	);
@@ -62,11 +62,11 @@ async function main() {
 		const entries = matrix.getProperties({
 			filterNamespace: namespace,
 		});
-		console.log(`  ${namespace}: ${entries.length}`);
+		console.info(`  ${namespace}: ${entries.length}`);
 	}
 
 	// Display matrix
-	console.log("\n📋 Property Matrix:");
+	console.info("\n📋 Property Matrix:");
 	matrix.displayProperties({
 		format: "table",
 		sortBy: "namespace",
@@ -78,7 +78,7 @@ async function main() {
 	// Cleanup
 	registry.close();
 
-	console.log("\n✅ Done!");
+	console.info("\n✅ Done!");
 }
 
 // Run if executed directly

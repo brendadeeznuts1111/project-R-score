@@ -66,7 +66,7 @@ async function createMinimalTestScript(projectPath: string): Promise<string | nu
 try {
   // Attempt common import patterns
   const pkg = await import('./package.json');
-  console.log('Project:', pkg.name || 'unknown');
+  console.info('Project:', pkg.name || 'unknown');
   
   // Try importing index files
   try {
@@ -84,7 +84,7 @@ try {
   // Small delay to ensure profiling captures the state
   await new Promise(resolve => setTimeout(resolve, 100));
   
-  console.log('Profile test completed');
+  console.info('Profile test completed');
 } catch (error) {
   console.error('Error in profile test:', error);
 }
@@ -350,23 +350,23 @@ async function generateProfile(
   const heapProfileV8Path = join(heapDir, `${project.name}.heapsnapshot`);
   const result = { cpu: false, heap: false };
 
-  console.log(`\n📊 ${dryRun ? '[DRY RUN] ' : ''}Generating profile for: ${project.name}`);
-  console.log(`   Path: ${project.path}`);
+  console.info(`\n📊 ${dryRun ? '[DRY RUN] ' : ''}Generating profile for: ${project.name}`);
+  console.info(`   Path: ${project.path}`);
   
   // Handle missing entry point
   if (!project.entryPoint) {
     if (dryRun) {
-      console.log(`   ⚠️  No entry point found`);
-      console.log(`   🔍 [DRY RUN] Would try to create test script or skip`);
+      console.info(`   ⚠️  No entry point found`);
+      console.info(`   🔍 [DRY RUN] Would try to create test script or skip`);
       return result;
     } else {
       // Try to create a test script as fallback
-      console.log(`   ⚠️  No entry point found, attempting to create test script...`);
+      console.info(`   ⚠️  No entry point found, attempting to create test script...`);
       try {
         const testScript = await createMinimalTestScript(project.path);
         if (testScript) {
           project.entryPoint = testScript;
-          console.log(`   ✅ Created minimal test script: ${testScript}`);
+          console.info(`   ✅ Created minimal test script: ${testScript}`);
         } else {
           const error = createProfilingError(
             ProfilingErrorCode.ENTRY_POINT_NOT_FOUND,
@@ -388,33 +388,33 @@ async function generateProfile(
   }
   
   // Entry point exists (either found or created)
-  console.log(`   Entry point: ${project.entryPoint}`);
+  console.info(`   Entry point: ${project.entryPoint}`);
   if (project.entryPoint === '__profile_test__.ts') {
-    console.log(`   ⚠️  Using auto-generated test script (no root entry point found)`);
+    console.info(`   ⚠️  Using auto-generated test script (no root entry point found)`);
   }
   
-  console.log(`   CPU Profiling: ${cpuProf ? '✅' : '❌'}`);
+  console.info(`   CPU Profiling: ${cpuProf ? '✅' : '❌'}`);
   if (cpuProf && cpuProfDir) {
-    console.log(`   CPU Output Dir: ${cpuProfDir}`);
+    console.info(`   CPU Output Dir: ${cpuProfDir}`);
   }
-  console.log(`   Heap Profiling: ${heapProf ? '✅' : '❌'}`);
+  console.info(`   Heap Profiling: ${heapProf ? '✅' : '❌'}`);
   if (heapProf) {
-    console.log(`   Heap Format: ${heapFormat === 'both' ? 'Markdown + V8' : heapFormat === 'v8' ? 'V8 Snapshot' : 'Markdown'}`);
+    console.info(`   Heap Format: ${heapFormat === 'both' ? 'Markdown + V8' : heapFormat === 'v8' ? 'V8 Snapshot' : 'Markdown'}`);
     if (heapProfDir) {
-      console.log(`   Heap Output Dir: ${heapProfDir}`);
+      console.info(`   Heap Output Dir: ${heapProfDir}`);
     }
   }
 
   if (dryRun) {
     if (cpuProf) {
-      console.log(`   🔍 [DRY RUN] Would generate CPU profile at: ${cpuProfilePath}`);
+      console.info(`   🔍 [DRY RUN] Would generate CPU profile at: ${cpuProfilePath}`);
     }
     if (heapProf) {
       if (heapFormat === 'md' || heapFormat === 'both') {
-        console.log(`   🔍 [DRY RUN] Would generate heap markdown at: ${heapProfileMdPath}`);
+        console.info(`   🔍 [DRY RUN] Would generate heap markdown at: ${heapProfileMdPath}`);
       }
       if (heapFormat === 'v8' || heapFormat === 'both') {
-        console.log(`   🔍 [DRY RUN] Would generate heap snapshot at: ${heapProfileV8Path}`);
+        console.info(`   🔍 [DRY RUN] Would generate heap snapshot at: ${heapProfileV8Path}`);
       }
     }
     return { cpu: cpuProf, heap: heapProf }; // Return true for dry run
@@ -425,7 +425,7 @@ async function generateProfile(
     
     // Verify entry point exists
     if (!existsSync(entryPointPath)) {
-      console.log(`   ⚠️  Entry point not found: ${entryPointPath}`);
+      console.info(`   ⚠️  Entry point not found: ${entryPointPath}`);
       return false;
     }
 
@@ -488,14 +488,14 @@ async function generateProfile(
           if (existsSync(cpuProfilePath)) {
             try {
               const stats = statSync(cpuProfilePath);
-              console.log(`   ✅ CPU profile generated: ${(stats.size / 1024).toFixed(2)} KB`);
+              console.info(`   ✅ CPU profile generated: ${(stats.size / 1024).toFixed(2)} KB`);
               result.cpu = true;
             } catch (e) {
-              console.log(`   ⚠️  CPU profile created but could not read stats`);
+              console.info(`   ⚠️  CPU profile created but could not read stats`);
               result.cpu = true; // Still count as success
             }
           } else {
-            console.log(`   ⚠️  CPU profile command succeeded but cpu-profile.md not found`);
+            console.info(`   ⚠️  CPU profile command succeeded but cpu-profile.md not found`);
           }
         }
 
@@ -507,14 +507,14 @@ async function generateProfile(
             if (existsSync(heapProfileMdPath)) {
               try {
                 const stats = statSync(heapProfileMdPath);
-                console.log(`   ✅ Heap markdown generated: ${(stats.size / 1024).toFixed(2)} KB`);
+                console.info(`   ✅ Heap markdown generated: ${(stats.size / 1024).toFixed(2)} KB`);
                 heapSuccess = true;
               } catch (e) {
-                console.log(`   ⚠️  Heap markdown created but could not read stats`);
+                console.info(`   ⚠️  Heap markdown created but could not read stats`);
                 heapSuccess = true;
               }
             } else if (heapFormat === 'md') {
-              console.log(`   ⚠️  Heap markdown command succeeded but profile.md not found`);
+              console.info(`   ⚠️  Heap markdown command succeeded but profile.md not found`);
             }
           }
           
@@ -522,10 +522,10 @@ async function generateProfile(
             if (existsSync(heapProfileV8Path)) {
               try {
                 const stats = statSync(heapProfileV8Path);
-                console.log(`   ✅ Heap snapshot generated: ${(stats.size / 1024).toFixed(2)} KB`);
+                console.info(`   ✅ Heap snapshot generated: ${(stats.size / 1024).toFixed(2)} KB`);
                 heapSuccess = true;
               } catch (e) {
-                console.log(`   ⚠️  Heap snapshot created but could not read stats`);
+                console.info(`   ⚠️  Heap snapshot created but could not read stats`);
                 heapSuccess = true;
               }
             } else if (heapFormat === 'v8') {
@@ -604,29 +604,29 @@ async function main() {
   
   try {
     if (DRY_RUN) {
-      console.log('🔍 [DRY RUN MODE] Discovering projects...\n');
+      console.info('🔍 [DRY RUN MODE] Discovering projects...\n');
     } else {
-      console.log('🔍 Discovering projects...\n');
+      console.info('🔍 Discovering projects...\n');
     }
     
     const projects = await discoverProjects(ROOT_DIR);
     
-    console.log(`Found ${projects.length} projects:\n`);
+    console.info(`Found ${projects.length} projects:\n`);
     projects.forEach(p => {
-      console.log(`  - ${p.name} (${p.path})`);
+      console.info(`  - ${p.name} (${p.path})`);
       if (p.entryPoint) {
-        console.log(`    Entry: ${p.entryPoint}`);
+        console.info(`    Entry: ${p.entryPoint}`);
       } else {
-        console.log(`    ⚠️  No entry point`);
+        console.info(`    ⚠️  No entry point`);
       }
     });
 
   const profileType = BOTH ? 'CPU + Heap' : CPU_PROF_FINAL && !HEAP_PROF_FINAL ? 'CPU' : HEAP_PROF_FINAL && !CPU_PROF_FINAL ? 'Heap' : 'CPU + Heap';
   
   if (DRY_RUN) {
-    console.log(`\n\n🔍 [DRY RUN MODE] Would generate ${profileType} profiles for ${projects.filter(p => p.entryPoint).length} projects...\n`);
+    console.info(`\n\n🔍 [DRY RUN MODE] Would generate ${profileType} profiles for ${projects.filter(p => p.entryPoint).length} projects...\n`);
   } else {
-    console.log(`\n\n🚀 Generating ${profileType} profiles...\n`);
+    console.info(`\n\n🚀 Generating ${profileType} profiles...\n`);
   }
 
   const results = {
@@ -682,44 +682,44 @@ async function main() {
       }
   }
 
-  console.log(`\n\n📈 Summary:`);
+  console.info(`\n\n📈 Summary:`);
   if (DRY_RUN) {
     if (CPU_PROF_FINAL) {
-      console.log(`   🔍 [DRY RUN] CPU profiles would succeed: ${results.cpuSuccess}`);
-      console.log(`   🔍 [DRY RUN] CPU profiles would fail: ${results.cpuFailed}`);
+      console.info(`   🔍 [DRY RUN] CPU profiles would succeed: ${results.cpuSuccess}`);
+      console.info(`   🔍 [DRY RUN] CPU profiles would fail: ${results.cpuFailed}`);
     }
     if (HEAP_PROF_FINAL) {
-      console.log(`   🔍 [DRY RUN] Heap profiles would succeed: ${results.heapSuccess}`);
-      console.log(`   🔍 [DRY RUN] Heap profiles would fail: ${results.heapFailed}`);
+      console.info(`   🔍 [DRY RUN] Heap profiles would succeed: ${results.heapSuccess}`);
+      console.info(`   🔍 [DRY RUN] Heap profiles would fail: ${results.heapFailed}`);
     }
-    console.log(`   ⏭️  Skipped: ${results.skipped}`);
+    console.info(`   ⏭️  Skipped: ${results.skipped}`);
   } else {
     if (CPU_PROF_FINAL) {
-      console.log(`   ✅ CPU Success: ${results.cpuSuccess}`);
-      console.log(`   ❌ CPU Failed: ${results.cpuFailed}`);
+      console.info(`   ✅ CPU Success: ${results.cpuSuccess}`);
+      console.info(`   ❌ CPU Failed: ${results.cpuFailed}`);
     }
     if (HEAP_PROF_FINAL) {
-      console.log(`   ✅ Heap Success: ${results.heapSuccess}`);
-      console.log(`   ❌ Heap Failed: ${results.heapFailed}`);
+      console.info(`   ✅ Heap Success: ${results.heapSuccess}`);
+      console.info(`   ❌ Heap Failed: ${results.heapFailed}`);
     }
-    console.log(`   ⏭️  Skipped: ${results.skipped}`);
+    console.info(`   ⏭️  Skipped: ${results.skipped}`);
   }
-  console.log(`   📊 Total: ${projects.length}`);
+  console.info(`   📊 Total: ${projects.length}`);
   
   if (!DRY_RUN) {
-    console.log(`\n💡 Usage:`);
-    console.log(`   CPU only:              bun run scripts/generate-all-profiles.ts --cpu-prof`);
-    console.log(`   Heap markdown:         bun run scripts/generate-all-profiles.ts (default)`);
-    console.log(`   Heap V8 snapshot:      bun run scripts/generate-all-profiles.ts --heap-format=v8`);
-    console.log(`   Heap both formats:     bun run scripts/generate-all-profiles.ts --heap-format=both`);
-    console.log(`   Both CPU + Heap:       bun run scripts/generate-all-profiles.ts --both`);
-    console.log(`   Custom output dir:     bun run scripts/generate-all-profiles.ts --heap-prof-dir=./profiles`);
-    console.log(`   Dry run:               bun run scripts/generate-all-profiles.ts --dry-run`);
-    console.log(`\n   Examples:`);
-    console.log(`   # Generate V8 snapshots in ./profiles:`);
-    console.log(`   bun run scripts/generate-all-profiles.ts --heap-format=v8 --heap-prof-dir=./profiles`);
-    console.log(`   # Generate both markdown and V8 formats:`);
-    console.log(`   bun run scripts/generate-all-profiles.ts --heap-format=both`);
+    console.info(`\n💡 Usage:`);
+    console.info(`   CPU only:              bun run scripts/generate-all-profiles.ts --cpu-prof`);
+    console.info(`   Heap markdown:         bun run scripts/generate-all-profiles.ts (default)`);
+    console.info(`   Heap V8 snapshot:      bun run scripts/generate-all-profiles.ts --heap-format=v8`);
+    console.info(`   Heap both formats:     bun run scripts/generate-all-profiles.ts --heap-format=both`);
+    console.info(`   Both CPU + Heap:       bun run scripts/generate-all-profiles.ts --both`);
+    console.info(`   Custom output dir:     bun run scripts/generate-all-profiles.ts --heap-prof-dir=./profiles`);
+    console.info(`   Dry run:               bun run scripts/generate-all-profiles.ts --dry-run`);
+    console.info(`\n   Examples:`);
+    console.info(`   # Generate V8 snapshots in ./profiles:`);
+    console.info(`   bun run scripts/generate-all-profiles.ts --heap-format=v8 --heap-prof-dir=./profiles`);
+    console.info(`   # Generate both markdown and V8 formats:`);
+    console.info(`   bun run scripts/generate-all-profiles.ts --heap-format=both`);
   }
     
     // Ensure we're back in original directory

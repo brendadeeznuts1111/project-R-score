@@ -22,7 +22,7 @@ test("time format matches CLI dashboard", () => {
 	
 	// Format should match CLI dashboard format
 	// CLI uses: new Date().toLocaleTimeString()
-	console.log(`Formatted time: ${formatted}`);
+	console.info(`Formatted time: ${formatted}`);
 });
 
 test("setSystemTime works correctly", () => {
@@ -119,7 +119,7 @@ test("timezone defaults to UTC in bun test", () => {
 	
 	// In UTC, offset should be 0 (or close to it)
 	// Note: getTimezoneOffset() returns offset in minutes, UTC = 0
-	console.log(`Timezone: ${timeZone}, Offset: ${offset} minutes`);
+	console.info(`Timezone: ${timeZone}, Offset: ${offset} minutes`);
 	
 	// Verify we can format with timezone
 	const formatted = new Intl.DateTimeFormat().format(new Date());
@@ -147,7 +147,7 @@ test("timezone can be set via process.env.TZ", () => {
 		
 		// Verify timezone is set (may not immediately reflect in Intl API)
 		const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-		console.log(`LA Timezone: ${timeZone}, Offset: ${offset}`);
+		console.info(`LA Timezone: ${timeZone}, Offset: ${offset}`);
 		
 		// Set to New York (EST/EDT)
 		process.env.TZ = "America/New_York";
@@ -155,7 +155,7 @@ test("timezone can be set via process.env.TZ", () => {
 		expect(nyOffset).toBeGreaterThanOrEqual(0);
 		
 		const nyTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-		console.log(`NY Timezone: ${nyTimeZone}, Offset: ${nyOffset}`);
+		console.info(`NY Timezone: ${nyTimeZone}, Offset: ${nyOffset}`);
 		
 		// Format should work with different timezone
 		const nyFormatted = new Date().toLocaleTimeString();
@@ -181,7 +181,7 @@ test("formatSystemTime respects timezone", () => {
 	// In UTC, should show 12:00
 	// In other timezones, will show different time
 	const hours = new Date().getHours();
-	console.log(`UTC 12:00 formatted as: ${formatted}, hours: ${hours}`);
+	console.info(`UTC 12:00 formatted as: ${formatted}, hours: ${hours}`);
 	
 	setSystemTime();
 });
@@ -210,8 +210,8 @@ test("timezone changes work multiple times (unlike Jest)", () => {
 		
 		// Verify we can set TZ multiple times without error
 		// Offsets may differ based on timezone
-		console.log(`Timezone offsets: LA=${offset1}, NY=${offset2}, London=${offset3}`);
-		console.log(`Formatted times: ${formatted1}, ${formatted2}, ${formatted3}`);
+		console.info(`Timezone offsets: LA=${offset1}, NY=${offset2}, London=${offset3}`);
+		console.info(`Formatted times: ${formatted1}, ${formatted2}, ${formatted3}`);
 		
 		// All should be valid formatted strings
 		expect(formatted1.length).toBeGreaterThan(0);

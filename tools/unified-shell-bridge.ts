@@ -95,7 +95,7 @@ function log(level: BridgeConfig['logLevel'], message: string, meta?: Record<str
   } else if (level === 'warn') {
     console.warn(JSON.stringify(entry));
   } else {
-    console.log(JSON.stringify(entry));
+    console.info(JSON.stringify(entry));
   }
 }
 
@@ -537,7 +537,7 @@ async function startMcpServer(): Promise<void> {
   });
   
   // Send initialization response
-  console.log(JSON.stringify({
+  console.info(JSON.stringify({
     jsonrpc: "2.0",
     id: 0,
     result: {
@@ -561,7 +561,7 @@ async function startMcpServer(): Promise<void> {
       const request = JSON.parse(line);
       
       if (request.method === "tools/list") {
-        console.log(JSON.stringify({
+        console.info(JSON.stringify({
           jsonrpc: "2.0",
           id: request.id,
           result: {
@@ -655,7 +655,7 @@ async function startMcpServer(): Promise<void> {
         }));
       } else if (request.method === "tools/call") {
         const result = await handleToolCall(request.params.name, request.params.arguments);
-        console.log(JSON.stringify({
+        console.info(JSON.stringify({
           jsonrpc: "2.0",
           id: request.id,
           result: {

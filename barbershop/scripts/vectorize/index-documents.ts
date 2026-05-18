@@ -99,7 +99,7 @@ async function processDocument(filepath: string, filename: string): Promise<Docu
 }
 
 async function indexDocuments() {
-  console.log('📚 Indexing knowledge base documents...\n');
+  console.info('📚 Indexing knowledge base documents...\n');
 
   // Check if Vectorize is available
   const available = await vectorizeClient.isAvailable();
@@ -116,10 +116,10 @@ async function indexDocuments() {
     const files = await readdir(DOCS_DIR);
     const mdFiles = files.filter(f => f.endsWith('.md'));
 
-    console.log(`Found ${mdFiles.length} documents to index\n`);
+    console.info(`Found ${mdFiles.length} documents to index\n`);
 
     if (mdFiles.length === 0) {
-      console.log('No documents to index.');
+      console.info('No documents to index.');
       return;
     }
 
@@ -128,26 +128,26 @@ async function indexDocuments() {
 
     for (const file of mdFiles) {
       const filepath = join(DOCS_DIR, file);
-      console.log(`Processing ${file}...`);
+      console.info(`Processing ${file}...`);
       
       const chunks = await processDocument(filepath, file);
       allChunks.push(...chunks);
-      console.log(`  ✅ Created ${chunks.length} chunks`);
+      console.info(`  ✅ Created ${chunks.length} chunks`);
     }
 
-    console.log(`\nTotal chunks: ${allChunks.length}\n`);
-    console.log('Indexing chunks in Vectorize...\n');
+    console.info(`\nTotal chunks: ${allChunks.length}\n`);
+    console.info('Indexing chunks in Vectorize...\n');
 
     // Index all chunks
     const result = await vectorizeClient.indexDocuments(allChunks);
 
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log(`✅ Successfully indexed ${allChunks.length} document chunks`);
-    console.log(`   Mutation ID: ${result.mutationId}`);
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+    console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.info(`✅ Successfully indexed ${allChunks.length} document chunks`);
+    console.info(`   Mutation ID: ${result.mutationId}`);
+    console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
-    console.log('Note: V2 mutations are async. Vectors may take a few seconds to be queryable.');
-    console.log('Check mutation status with: npx wrangler vectorize describe barbershop-docs-index\n');
+    console.info('Note: V2 mutations are async. Vectors may take a few seconds to be queryable.');
+    console.info('Check mutation status with: npx wrangler vectorize describe barbershop-docs-index\n');
   } catch (error: any) {
     console.error('Fatal error:', error);
     process.exit(1);

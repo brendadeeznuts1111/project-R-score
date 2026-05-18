@@ -70,9 +70,9 @@ export async function testDNSLatency(
  * Note: dns.prefetch(hostname, port) requires both arguments
  */
 export function dnsPrefetch(host: string, port = 443, verbose = false): void {
-  if (verbose) console.log(`🔍 DNS prefetching ${host}:${port}...`);
+  if (verbose) console.info(`🔍 DNS prefetching ${host}:${port}...`);
   dns.prefetch(host, port);
-  if (verbose) console.log(`✅ DNS prefetch issued for ${host}:${port}`);
+  if (verbose) console.info(`✅ DNS prefetch issued for ${host}:${port}`);
 }
 
 /**
@@ -98,7 +98,7 @@ export async function preconnectHost(
   const startTime = performance.now();
 
   try {
-    if (verbose) console.log(`🔗 Preconnecting to ${url}...`);
+    if (verbose) console.info(`🔗 Preconnecting to ${url}...`);
 
     // Use Bun's native fetch.preconnect() for TCP+TLS warm-up
     await fetch.preconnect(url);
@@ -106,12 +106,12 @@ export async function preconnectHost(
     const latency = performance.now() - startTime;
 
     if (verbose)
-      console.log(`✅ Preconnected to ${url} (${latency.toFixed(2)}ms)`);
+      console.info(`✅ Preconnected to ${url} (${latency.toFixed(2)}ms)`);
     return { host, port, protocol, success: true, latency };
   } catch (error) {
     const latency = performance.now() - startTime;
     const errorMsg = error instanceof Error ? error.message : String(error);
-    if (verbose) console.log(`⚠️  Failed to preconnect to ${url}: ${errorMsg}`);
+    if (verbose) console.info(`⚠️  Failed to preconnect to ${url}: ${errorMsg}`);
     return { host, port, protocol, success: false, latency, error: errorMsg };
   }
 }
@@ -131,11 +131,11 @@ export async function preconnectAll(
   } = config;
 
   if (verbose) {
-    console.log(
+    console.info(
       `\n🌐 Network Preconnection (${parallel ? "parallel" : "sequential"})`
     );
-    console.log(`📍 Targets: ${targets.length}`);
-    if (doDnsPrefetch) console.log(`🔍 DNS prefetch: enabled`);
+    console.info(`📍 Targets: ${targets.length}`);
+    if (doDnsPrefetch) console.info(`🔍 DNS prefetch: enabled`);
   }
 
   // Optional: DNS prefetch first (async, non-blocking)
@@ -199,10 +199,10 @@ export async function downloadFile(
   outputPath: string,
   verbose = false
 ): Promise<void> {
-  if (verbose) console.log(`📥 Downloading ${url} → ${outputPath}`);
+  if (verbose) console.info(`📥 Downloading ${url} → ${outputPath}`);
   const response = await fetch(url);
   await Bun.write(outputPath, response); // Zero-copy when possible
-  if (verbose) console.log(`✅ Downloaded to ${outputPath}`);
+  if (verbose) console.info(`✅ Downloaded to ${outputPath}`);
 }
 
 /**
@@ -215,12 +215,12 @@ export async function uploadFile(
   method: "POST" | "PUT" = "POST",
   verbose = false
 ): Promise<Response> {
-  if (verbose) console.log(`📤 Uploading ${filePath} → ${url}`);
+  if (verbose) console.info(`📤 Uploading ${filePath} → ${url}`);
   const response = await fetch(url, {
     method,
     body: Bun.file(filePath), // Uses sendfile for ≥32 KB files
   });
-  if (verbose) console.log(`✅ Uploaded (status: ${response.status})`);
+  if (verbose) console.info(`✅ Uploaded (status: ${response.status})`);
   return response;
 }
 

@@ -10,7 +10,7 @@ import { ReportType } from '../entities/financial-report';
 // Mock domain services for demonstration
 class MockCollectionsService {
   async calculateRevenue(timeRange: { start: Date; end: Date }) {
-    console.log(
+    console.info(
       `📊 Calculating revenue from ${timeRange.start.toISOString()} to ${timeRange.end.toISOString()}`
     );
 
@@ -27,7 +27,7 @@ class MockCollectionsService {
   }
 
   async getCollectionMetrics(period: string) {
-    console.log(`📈 Getting collection metrics for ${period}`);
+    console.info(`📈 Getting collection metrics for ${period}`);
     return {
       volume: 125000,
       successRate: 98,
@@ -42,7 +42,7 @@ class MockSettlementsService {
     merchantId: string | undefined,
     dateRange: { start: Date; end: Date }
   ) {
-    console.log(`💰 Getting settlement analytics for period`);
+    console.info(`💰 Getting settlement analytics for period`);
 
     return {
       totalSettlements: 245,
@@ -63,7 +63,7 @@ class MockSettlementsService {
   }
 
   async getSettlementSchedule() {
-    console.log('📅 Getting settlement schedule');
+    console.info('📅 Getting settlement schedule');
     return {
       nextSettlement: new Date(Date.now() + 24 * 60 * 60 * 1000),
       pendingAmount: 15000,
@@ -74,7 +74,7 @@ class MockSettlementsService {
 
 class MockBalanceService {
   async getSystemBalanceSummary() {
-    console.log('🏦 Getting system balance summary');
+    console.info('🏦 Getting system balance summary');
 
     return {
       totalActiveBalances: 1500,
@@ -88,7 +88,7 @@ class MockBalanceService {
   }
 
   async getBalanceTrends(period: string) {
-    console.log(`📊 Getting balance trends for ${period}`);
+    console.info(`📊 Getting balance trends for ${period}`);
     return {
       growth: 12.5,
       volatility: 3.2,
@@ -101,8 +101,8 @@ class MockBalanceService {
  * Example 1: Generate a Monthly Financial Report
  */
 export async function exampleMonthlyReport() {
-  console.log('\n📊 Example 1: Generate Monthly Financial Report');
-  console.log('='.repeat(50));
+  console.info('\n📊 Example 1: Generate Monthly Financial Report');
+  console.info('='.repeat(50));
 
   // Initialize services
   const collectionsService = new MockCollectionsService();
@@ -123,7 +123,7 @@ export async function exampleMonthlyReport() {
     const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
-    console.log(
+    console.info(
       `📅 Generating report for: ${firstDayOfMonth.toISOString().split('T')[0]} to ${lastDayOfMonth.toISOString().split('T')[0]}`
     );
 
@@ -140,29 +140,29 @@ export async function exampleMonthlyReport() {
 
     if (response.success) {
       const report = response.data.report;
-      console.log('✅ Report generated successfully!');
-      console.log(`📄 Report ID: ${report.id}`);
-      console.log(`📊 Total Revenue: $${report.summary.totalRevenue.toLocaleString()}`);
-      console.log(`💰 Net Profit: $${report.summary.netProfit.toLocaleString()}`);
-      console.log(`📈 Collections: ${report.summary.totalCollections}`);
-      console.log(`💳 Settlements: ${report.summary.totalSettlements}`);
-      console.log(`⚖️ Compliance Status: ${report.complianceStatus}`);
-      console.log(`📅 Generated: ${new Date(report.generatedAt).toLocaleString()}`);
+      console.info('✅ Report generated successfully!');
+      console.info(`📄 Report ID: ${report.id}`);
+      console.info(`📊 Total Revenue: $${report.summary.totalRevenue.toLocaleString()}`);
+      console.info(`💰 Net Profit: $${report.summary.netProfit.toLocaleString()}`);
+      console.info(`📈 Collections: ${report.summary.totalCollections}`);
+      console.info(`💳 Settlements: ${report.summary.totalSettlements}`);
+      console.info(`⚖️ Compliance Status: ${report.complianceStatus}`);
+      console.info(`📅 Generated: ${new Date(report.generatedAt).toLocaleString()}`);
 
       // Demonstrate compliance checking
-      console.log('\n🔍 Performing compliance check...');
+      console.info('\n🔍 Performing compliance check...');
       const complianceResponse = await controller.checkCompliance({
         reportId: report.id,
       });
 
       if (complianceResponse.success) {
-        console.log(
+        console.info(
           `✅ Compliance Check: ${complianceResponse.data.isCompliant ? 'PASSED' : 'ISSUES FOUND'}`
         );
         if (complianceResponse.data.issues.length > 0) {
-          console.log('⚠️ Issues found:');
+          console.info('⚠️ Issues found:');
           complianceResponse.data.issues.forEach((issue, index) => {
-            console.log(`   ${index + 1}. ${issue.issue} (${issue.severity})`);
+            console.info(`   ${index + 1}. ${issue.issue} (${issue.severity})`);
           });
         }
       }
@@ -180,8 +180,8 @@ export async function exampleMonthlyReport() {
  * Example 2: Comprehensive Compliance Monitoring
  */
 export async function exampleComplianceMonitoring() {
-  console.log('\n🔍 Example 2: Comprehensive Compliance Monitoring');
-  console.log('='.repeat(50));
+  console.info('\n🔍 Example 2: Comprehensive Compliance Monitoring');
+  console.info('='.repeat(50));
 
   const repository = FinancialReportingRepositoryFactory.createInMemoryRepository();
   const controller = FinancialReportingControllerFactory.create(repository);
@@ -192,20 +192,20 @@ export async function exampleComplianceMonitoring() {
 
     if (analyticsResponse.success) {
       const analytics = analyticsResponse.data.analytics;
-      console.log('📊 Compliance Analytics:');
-      console.log(`   Total Reports: ${analytics.summary.totalReports}`);
-      console.log(`   Compliance Rate: ${analytics.summary.complianceRate}%`);
-      console.log(`   Pending Reviews: ${analytics.summary.reportsByStatus.pending_review || 0}`);
-      console.log(`   Overdue Reports: ${analytics.summary.reportsByStatus.draft || 0}`);
+      console.info('📊 Compliance Analytics:');
+      console.info(`   Total Reports: ${analytics.summary.totalReports}`);
+      console.info(`   Compliance Rate: ${analytics.summary.complianceRate}%`);
+      console.info(`   Pending Reviews: ${analytics.summary.reportsByStatus.pending_review || 0}`);
+      console.info(`   Overdue Reports: ${analytics.summary.reportsByStatus.draft || 0}`);
 
       // Check for alerts
       if (analytics.alerts.length > 0) {
-        console.log('\n🚨 Active Alerts:');
+        console.info('\n🚨 Active Alerts:');
         analytics.alerts.forEach((alert, index) => {
-          console.log(`   ${index + 1}. ${alert.message} (${alert.severity})`);
+          console.info(`   ${index + 1}. ${alert.message} (${alert.severity})`);
         });
       } else {
-        console.log('\n✅ No active alerts');
+        console.info('\n✅ No active alerts');
       }
 
       return analytics;
@@ -219,15 +219,15 @@ export async function exampleComplianceMonitoring() {
  * Example 3: Automated Report Approval Workflow
  */
 export async function exampleApprovalWorkflow() {
-  console.log('\n🔄 Example 3: Automated Report Approval Workflow');
-  console.log('='.repeat(50));
+  console.info('\n🔄 Example 3: Automated Report Approval Workflow');
+  console.info('='.repeat(50));
 
   const repository = FinancialReportingRepositoryFactory.createInMemoryRepository();
   const controller = FinancialReportingControllerFactory.create(repository);
 
   try {
     // 1. Generate report
-    console.log('📝 Step 1: Generating report...');
+    console.info('📝 Step 1: Generating report...');
     const generateResponse = await controller.generateReport({
       reportType: ReportType.WEEKLY,
       periodStart: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
@@ -239,48 +239,48 @@ export async function exampleApprovalWorkflow() {
     }
 
     const reportId = generateResponse.data.report.id;
-    console.log(`✅ Report generated: ${reportId}`);
+    console.info(`✅ Report generated: ${reportId}`);
 
     // 2. Check compliance
-    console.log('🔍 Step 2: Checking compliance...');
+    console.info('🔍 Step 2: Checking compliance...');
     const complianceResponse = await controller.checkCompliance({
       reportId,
     });
 
     if (complianceResponse.success && complianceResponse.data.isCompliant) {
-      console.log('✅ Compliance check passed');
+      console.info('✅ Compliance check passed');
 
       // 3. Approve report
-      console.log('👨‍💼 Step 3: Approving report...');
+      console.info('👨‍💼 Step 3: Approving report...');
       const approvalResponse = await controller.approveReport({
         reportId,
         approvedBy: 'compliance_officer@company.com',
       });
 
       if (approvalResponse.success) {
-        console.log('✅ Report approved successfully');
+        console.info('✅ Report approved successfully');
         const approvedReport = approvalResponse.data.report;
 
         // 4. Publish report
-        console.log('📤 Step 4: Publishing report...');
+        console.info('📤 Step 4: Publishing report...');
         const publishResponse = await controller.publishReport({
           reportId,
         });
 
         if (publishResponse.success) {
-          console.log('✅ Report published successfully');
-          console.log(`📊 Final Status: ${approvedReport.status}`);
-          console.log(`📅 Published: ${new Date(approvedReport.publishedAt).toLocaleString()}`);
+          console.info('✅ Report published successfully');
+          console.info(`📊 Final Status: ${approvedReport.status}`);
+          console.info(`📅 Published: ${new Date(approvedReport.publishedAt).toLocaleString()}`);
 
           return approvedReport;
         }
       }
     } else {
-      console.log('❌ Compliance check failed');
+      console.info('❌ Compliance check failed');
       if (complianceResponse.data.issues.length > 0) {
-        console.log('Issues:');
+        console.info('Issues:');
         complianceResponse.data.issues.forEach((issue, index) => {
-          console.log(`   ${index + 1}. ${issue.issue}`);
+          console.info(`   ${index + 1}. ${issue.issue}`);
         });
       }
     }
@@ -293,15 +293,15 @@ export async function exampleApprovalWorkflow() {
  * Example 4: Advanced Search and Filtering
  */
 export async function exampleAdvancedSearch() {
-  console.log('\n🔍 Example 4: Advanced Search and Filtering');
-  console.log('='.repeat(50));
+  console.info('\n🔍 Example 4: Advanced Search and Filtering');
+  console.info('='.repeat(50));
 
   const repository = FinancialReportingRepositoryFactory.createInMemoryRepository();
   const controller = FinancialReportingControllerFactory.create(repository);
 
   try {
     // Generate multiple reports for demonstration
-    console.log('📝 Generating sample reports...');
+    console.info('📝 Generating sample reports...');
     const reportTypes = [ReportType.DAILY, ReportType.WEEKLY, ReportType.MONTHLY];
     const statuses = ['draft', 'pending_review', 'approved', 'published'];
 
@@ -316,39 +316,39 @@ export async function exampleAdvancedSearch() {
       });
     }
 
-    console.log('✅ Generated 10 sample reports');
+    console.info('✅ Generated 10 sample reports');
 
     // Search by type
-    console.log('\n📊 Searching by report type...');
+    console.info('\n📊 Searching by report type...');
     const monthlyReports = await controller.searchReports({
       reportType: ReportType.MONTHLY,
     });
 
     if (monthlyReports.success) {
-      console.log(`📈 Found ${monthlyReports.data.reports.length} monthly reports`);
+      console.info(`📈 Found ${monthlyReports.data.reports.length} monthly reports`);
     }
 
     // Search with date range
-    console.log('\n📅 Searching by date range...');
+    console.info('\n📅 Searching by date range...');
     const dateRangeReports = await controller.searchReports({
       periodStart: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
       periodEnd: new Date().toISOString(),
     });
 
     if (dateRangeReports.success) {
-      console.log(`📊 Found ${dateRangeReports.data.reports.length} reports in last 30 days`);
+      console.info(`📊 Found ${dateRangeReports.data.reports.length} reports in last 30 days`);
     }
 
     // Search with pagination
-    console.log('\n📄 Searching with pagination...');
+    console.info('\n📄 Searching with pagination...');
     const paginatedReports = await controller.searchReports({
       limit: 5,
       offset: 5,
     });
 
     if (paginatedReports.success) {
-      console.log(`📋 Page results: ${paginatedReports.data.reports.length} reports`);
-      console.log(`📊 Total available: ${paginatedReports.data.total}`);
+      console.info(`📋 Page results: ${paginatedReports.data.reports.length} reports`);
+      console.info(`📊 Total available: ${paginatedReports.data.total}`);
     }
 
     return {
@@ -365,60 +365,60 @@ export async function exampleAdvancedSearch() {
  * Example 5: Real-time Monitoring Dashboard
  */
 export async function exampleMonitoringDashboard() {
-  console.log('\n📊 Example 5: Real-time Monitoring Dashboard');
-  console.log('='.repeat(50));
+  console.info('\n📊 Example 5: Real-time Monitoring Dashboard');
+  console.info('='.repeat(50));
 
   const repository = FinancialReportingRepositoryFactory.createInMemoryRepository();
   const controller = FinancialReportingControllerFactory.create(repository);
 
   try {
     // Health check
-    console.log('🏥 System Health Check:');
+    console.info('🏥 System Health Check:');
     const healthResponse = await controller.healthCheck();
 
     if (healthResponse.success) {
       const health = healthResponse.data;
-      console.log(`   Status: ${health.status}`);
-      console.log(`   Uptime: ${health.uptime}s`);
-      console.log(`   Reports: ${health.statistics.totalReports}`);
-      console.log(`   Features: ${health.features.length} active`);
+      console.info(`   Status: ${health.status}`);
+      console.info(`   Uptime: ${health.uptime}s`);
+      console.info(`   Reports: ${health.statistics.totalReports}`);
+      console.info(`   Features: ${health.features.length} active`);
     }
 
     // Get analytics
-    console.log('\n📈 Current Analytics:');
+    console.info('\n📈 Current Analytics:');
     const analyticsResponse = await controller.getAnalytics();
 
     if (analyticsResponse.success) {
       const analytics = analyticsResponse.data.analytics;
-      console.log(
+      console.info(
         `   Period: ${analytics.period.start.split('T')[0]} to ${analytics.period.end.split('T')[0]}`
       );
-      console.log(`   Total Reports: ${analytics.summary.totalReports}`);
-      console.log(`   Compliance Rate: ${analytics.summary.complianceRate}%`);
-      console.log(`   Average Processing: ${analytics.summary.averageProcessingTime}ms`);
+      console.info(`   Total Reports: ${analytics.summary.totalReports}`);
+      console.info(`   Compliance Rate: ${analytics.summary.complianceRate}%`);
+      console.info(`   Average Processing: ${analytics.summary.averageProcessingTime}ms`);
 
       // Revenue trends
       if (analytics.trends.revenue.length > 0) {
-        console.log('\n💰 Recent Revenue:');
+        console.info('\n💰 Recent Revenue:');
         analytics.trends.revenue.slice(-3).forEach(trend => {
-          console.log(`   ${trend.date}: $${trend.amount.toLocaleString()}`);
+          console.info(`   ${trend.date}: $${trend.amount.toLocaleString()}`);
         });
       }
     }
 
     // Check for attention items
-    console.log('\n🚨 Reports Requiring Attention:');
+    console.info('\n🚨 Reports Requiring Attention:');
     const attentionResponse = await controller.getReportsRequiringAttention();
 
     if (attentionResponse.success) {
       if (attentionResponse.data.reports.length > 0) {
         attentionResponse.data.reports.forEach((report, index) => {
-          console.log(
+          console.info(
             `   ${index + 1}. ${report.id} - ${report.status} (${report.complianceStatus})`
           );
         });
       } else {
-        console.log('   ✅ No reports require attention');
+        console.info('   ✅ No reports require attention');
       }
     }
 
@@ -436,9 +436,9 @@ export async function exampleMonitoringDashboard() {
  * Main demonstration runner
  */
 export async function runAllExamples() {
-  console.log('🚀 Financial Reporting Domain - Complete Usage Examples');
-  console.log('='.repeat(70));
-  console.log('');
+  console.info('🚀 Financial Reporting Domain - Complete Usage Examples');
+  console.info('='.repeat(70));
+  console.info('');
 
   try {
     // Run all examples
@@ -448,8 +448,8 @@ export async function runAllExamples() {
     await exampleAdvancedSearch();
     await exampleMonitoringDashboard();
 
-    console.log('\n🎉 All examples completed successfully!');
-    console.log('='.repeat(70));
+    console.info('\n🎉 All examples completed successfully!');
+    console.info('='.repeat(70));
   } catch (error) {
     console.error('❌ Example execution failed:', error.message);
   }

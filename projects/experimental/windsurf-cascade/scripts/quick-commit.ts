@@ -35,11 +35,11 @@ const categories = [
     }
 ];
 
-console.log('🚀 Quick Commit - Organizing changes by category...');
+console.info('🚀 Quick Commit - Organizing changes by category...');
 
 try {
     for (const category of categories) {
-        console.log(`\n📝 Processing ${category.name}...`);
+        console.info(`\n📝 Processing ${category.name}...`);
 
         // Try to add files for this category
         for (const pattern of category.patterns) {
@@ -62,12 +62,12 @@ try {
 
         if (stagedFiles.length > 0) {
             execSync(`git commit -m "${category.message}"`, { stdio: 'inherit' });
-            console.log(`✅ Committed ${stagedFiles.length} files: ${category.message}`);
+            console.info(`✅ Committed ${stagedFiles.length} files: ${category.message}`);
         }
     }
 
     // Add any remaining files
-    console.log('\n📝 Processing remaining files...');
+    console.info('\n📝 Processing remaining files...');
     execSync('git add .', { stdio: 'pipe' });
 
     const finalStatus = execSync('git status --porcelain', { encoding: 'utf8' });
@@ -77,11 +77,11 @@ try {
 
     if (finalStaged.length > 0) {
         execSync('git commit -m "chore: add remaining files and configuration"', { stdio: 'inherit' });
-        console.log(`✅ Committed ${finalStaged.length} remaining files`);
+        console.info(`✅ Committed ${finalStaged.length} remaining files`);
     }
 
-    console.log('\n🎉 All changes committed successfully!');
-    console.log('\n📋 Recent commits:');
+    console.info('\n🎉 All changes committed successfully!');
+    console.info('\n📋 Recent commits:');
     execSync('git log --oneline -5', { stdio: 'inherit' });
 
 } catch (error) {

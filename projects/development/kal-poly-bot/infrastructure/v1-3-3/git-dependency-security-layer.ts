@@ -83,7 +83,7 @@ export class GitDependencySecurityLayer {
 
     if (parsed.isGitHub) {
       this.securityMetrics.githubResolutions++;
-      console.log(`[GIT_SECURITY] Using GitHub tarball for: ${spec}`);
+      console.info(`[GIT_SECURITY] Using GitHub tarball for: ${spec}`);
     }
 
     return parsed;

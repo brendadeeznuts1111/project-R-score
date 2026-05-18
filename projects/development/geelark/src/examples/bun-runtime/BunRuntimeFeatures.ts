@@ -47,16 +47,16 @@ function renderTable(headers: string[], rows: string[][]) {
   const renderRow = (row: string[]) =>
     row.map((cell, i) => (cell ?? "").padEnd(widths[i] + 2)).join("|");
 
-  console.log(colors.bold + renderRow(headers) + colors.reset);
-  console.log(widths.map((w) => "─".repeat(w + 2)).join("+"));
-  rows.forEach((row) => console.log(renderRow(row)));
+  console.info(colors.bold + renderRow(headers) + colors.reset);
+  console.info(widths.map((w) => "─".repeat(w + 2)).join("+"));
+  rows.forEach((row) => console.info(renderRow(row)));
 }
 
 function renderOutput(title: string, status: "success" | "error" | "warning" | "info", message: string) {
   const color = colors[status];
   const icon = icons[status];
-  console.log(`\n${color}${colors.bold}${title}${colors.reset}`);
-  console.log(`${icon} ${message}`);
+  console.info(`\n${color}${colors.bold}${title}${colors.reset}`);
+  console.info(`${icon} ${message}`);
 }
 
 function renderProgress(value: number, max = 100, label = "") {
@@ -64,7 +64,7 @@ function renderProgress(value: number, max = 100, label = "") {
   const filled = Math.round(percentage / 5);
   const empty = 20 - filled;
   const bar = colors.success + "█".repeat(filled) + colors.dim + "░".repeat(empty) + colors.reset;
-  console.log(`${label} ${bar} ${percentage.toFixed(0)}%`);
+  console.info(`${label} ${bar} ${percentage.toFixed(0)}%`);
 }
 
 // ============================================================================
@@ -144,14 +144,14 @@ function createServer() {
   // WebSocket echo server
   server.websocket({
     open(ws) {
-      console.log("📡 WebSocket connected");
+      console.info("📡 WebSocket connected");
       ws.subscribe("chat");
     },
     message(ws, message) {
       ws.publish("chat", `Echo: ${message}`);
     },
     close(ws, code, message) {
-      console.log(`📡 WebSocket disconnected: ${code} ${message}`);
+      console.info(`📡 WebSocket disconnected: ${code} ${message}`);
     },
   });
 
@@ -163,11 +163,11 @@ function createServer() {
 // ============================================================================
 
 function showBunContext() {
-  console.log("\n" + "=".repeat(60));
-  console.log("🔧 Bun Context Demo");
-  console.log("=".repeat(60));
+  console.info("\n" + "=".repeat(60));
+  console.info("🔧 Bun Context Demo");
+  console.info("=".repeat(60));
 
-  console.log(`
+  console.info(`
     Bun Version:        ${BunContext.version}
     Is Main:            ${BunContext.isMain}
     Main Entry:         ${BunContext.mainEntry ?? "unknown"}
@@ -180,10 +180,10 @@ function showBunContext() {
     Is Test:            ${BunContext.isTest}
   `.trim().split("\n").map((line) => "    " + line).join("\n"));
 
-  console.log("\n📋 Environment Variables:");
-  console.log(`    NODE_ENV:           ${getEnv("NODE_ENV") ?? "not set"}`);
-  console.log(`    PORT:               ${getEnv("PORT") ?? "3000 (default)"}`);
-  console.log(`    BUN_VERSION:        ${getEnv("BUN_VERSION") ?? "not set"}`);
+  console.info("\n📋 Environment Variables:");
+  console.info(`    NODE_ENV:           ${getEnv("NODE_ENV") ?? "not set"}`);
+  console.info(`    PORT:               ${getEnv("PORT") ?? "3000 (default)"}`);
+  console.info(`    BUN_VERSION:        ${getEnv("BUN_VERSION") ?? "not set"}`);
 }
 
 // ============================================================================
@@ -191,38 +191,38 @@ function showBunContext() {
 // ============================================================================
 
 async function showConfigLoading() {
-  console.log("\n" + "=".repeat(60));
-  console.log("⚙️  Config Loading Demo (Bun.file)");
-  console.log("=".repeat(60));
+  console.info("\n" + "=".repeat(60));
+  console.info("⚙️  Config Loading Demo (Bun.file)");
+  console.info("=".repeat(60));
 
   // Load bun.toml
   try {
     const bunConfig = await loadConfig<any>("bun.toml");
-    console.log("\n📄 bun.toml loaded:");
-    console.log(`    Test root:          ${bunConfig.test?.root ?? "not set"}`);
-    console.log(`    Lockfile:           ${bunConfig.lockfile?.print ?? "not set"}`);
+    console.info("\n📄 bun.toml loaded:");
+    console.info(`    Test root:          ${bunConfig.test?.root ?? "not set"}`);
+    console.info(`    Lockfile:           ${bunConfig.lockfile?.print ?? "not set"}`);
   } catch (error) {
-    console.log("\n⚠️  bun.toml not found (this is okay if running from different dir)");
+    console.info("\n⚠️  bun.toml not found (this is okay if running from different dir)");
   }
 
   // Load package.json
   try {
     const packageConfig = await loadConfig<any>("package.json");
-    console.log("\n📄 package.json loaded:");
-    console.log(`    Name:               ${packageConfig.name}`);
-    console.log(`    Version:            ${packageConfig.version}`);
+    console.info("\n📄 package.json loaded:");
+    console.info(`    Name:               ${packageConfig.name}`);
+    console.info(`    Version:            ${packageConfig.version}`);
   } catch (error) {
-    console.log("\n❌ Failed to load package.json");
+    console.info("\n❌ Failed to load package.json");
   }
 
   // Load tsconfig.json
   try {
     const tsConfig = await loadConfig<any>("tsconfig.json");
-    console.log("\n📄 tsconfig.json loaded:");
-    console.log(`    JSX:                ${tsConfig.compilerOptions?.jsx ?? "not set"}`);
-    console.log(`    Decorators:         ${tsConfig.compilerOptions?.experimentalDecorators ?? "false"}`);
+    console.info("\n📄 tsconfig.json loaded:");
+    console.info(`    JSX:                ${tsConfig.compilerOptions?.jsx ?? "not set"}`);
+    console.info(`    Decorators:         ${tsConfig.compilerOptions?.experimentalDecorators ?? "false"}`);
   } catch (error) {
-    console.log("\n⚠️  tsconfig.json not found");
+    console.info("\n⚠️  tsconfig.json not found");
   }
 }
 
@@ -231,21 +231,21 @@ async function showConfigLoading() {
 // ============================================================================
 
 function showUI() {
-  console.log("\n" + "=".repeat(60));
-  console.log("📦 CLI UI Components Demo");
-  console.log("=".repeat(60));
+  console.info("\n" + "=".repeat(60));
+  console.info("📦 CLI UI Components Demo");
+  console.info("=".repeat(60));
 
   renderOutput("System Status", "success", "All systems operational");
   renderOutput("Warnings", "warning", "High memory usage detected");
 
-  console.log("\n📊 Service Status:");
+  console.info("\n📊 Service Status:");
   renderTable(["Service", "Status", "Uptime"], [
     ["API", icons.success + " Running", "99.9%"],
     ["Database", icons.success + " Connected", "99.5%"],
     ["Cache", icons.info + " Warm", "98.2%"],
   ]);
 
-  console.log("\n📈 Resource Usage:");
+  console.info("\n📈 Resource Usage:");
   renderProgress(75, 100, "CPU Usage");
   renderProgress(45, 100, "Memory");
   renderProgress(90, 100, "Disk");
@@ -256,24 +256,24 @@ function showUI() {
 // ============================================================================
 
 async function showNetworking() {
-  console.log("\n" + "=".repeat(60));
-  console.log("🌐 Networking Demo (Bun.serve)");
-  console.log("=".repeat(60));
+  console.info("\n" + "=".repeat(60));
+  console.info("🌐 Networking Demo (Bun.serve)");
+  console.info("=".repeat(60));
 
   // Test fetch with Bun
   try {
     const response = await fetch("https://httpbun.org/get");
     const data = await response.json();
-    console.log("\n✅ Fetch test successful:");
-    console.log(`    URL:               ${data.url}`);
-    console.log(`    Status:            ${response.status}`);
-    console.log(`    Headers:           ${Object.keys(data.headers as object).length}`);
+    console.info("\n✅ Fetch test successful:");
+    console.info(`    URL:               ${data.url}`);
+    console.info(`    Status:            ${response.status}`);
+    console.info(`    Headers:           ${Object.keys(data.headers as object).length}`);
   } catch (error) {
-    console.log("\n⚠️  Fetch test failed (network may be unavailable)");
+    console.info("\n⚠️  Fetch test failed (network may be unavailable)");
   }
 
   // Show security headers
-  console.log("\n🔒 Security Headers configured:");
+  console.info("\n🔒 Security Headers configured:");
   const headers = [
     "X-Frame-Options: DENY",
     "X-Content-Type-Options: nosniff",
@@ -281,7 +281,7 @@ async function showNetworking() {
     "Content-Security-Policy: default-src 'self'",
     "Referrer-Policy: strict-origin-when-cross-origin",
   ];
-  headers.forEach((h) => console.log(`    ${h}`));
+  headers.forEach((h) => console.info(`    ${h}`));
 }
 
 // ============================================================================
@@ -289,10 +289,10 @@ async function showNetworking() {
 // ============================================================================
 
 async function main() {
-  console.log("\n" + "=".repeat(60));
-  console.log("🚀 Bun Runtime Features Demo");
-  console.log("=".repeat(60));
-  console.log("Demonstrating: Transpilation, Global Config, Networking, Security");
+  console.info("\n" + "=".repeat(60));
+  console.info("🚀 Bun Runtime Features Demo");
+  console.info("=".repeat(60));
+  console.info("Demonstrating: Transpilation, Global Config, Networking, Security");
 
   // Show Bun context info
   showBunContext();
@@ -308,24 +308,24 @@ async function main() {
 
   // Only start server if this is the main module
   if (BunContext.isMain) {
-    console.log("\n" + "=".repeat(60));
-    console.log("🌐 Starting HTTP Server with Bun.serve");
-    console.log("=".repeat(60));
+    console.info("\n" + "=".repeat(60));
+    console.info("🌐 Starting HTTP Server with Bun.serve");
+    console.info("=".repeat(60));
 
     const server = createServer();
     server.start();
 
-    console.log("\n📡 WebSocket endpoint: ws://localhost:3000");
-    console.log("🔗 API endpoints:");
-    console.log("   GET  /api/health");
-    console.log("   GET  /api/users");
-    console.log("   GET  /api/users/:id");
-    console.log("   POST /api/users");
-    console.log("\nPress Ctrl+C to stop\n");
+    console.info("\n📡 WebSocket endpoint: ws://localhost:3000");
+    console.info("🔗 API endpoints:");
+    console.info("   GET  /api/health");
+    console.info("   GET  /api/users");
+    console.info("   GET  /api/users/:id");
+    console.info("   POST /api/users");
+    console.info("\nPress Ctrl+C to stop\n");
 
     // Keep process alive
     process.on("SIGINT", () => {
-      console.log("\n🛑 Shutting down server...");
+      console.info("\n🛑 Shutting down server...");
       server.stop();
       process.exit(0);
     });

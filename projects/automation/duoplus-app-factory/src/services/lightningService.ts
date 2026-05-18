@@ -220,7 +220,7 @@ export class LightningService {
       final_cltv_delta: 40,
     };
     
-    console.log("🔄 Rebalancing channels:", circularPayment);
+    console.info("🔄 Rebalancing channels:", circularPayment);
     
     // Implementation would use LND's router API
     // For now, log the intent
@@ -241,7 +241,7 @@ export class LightningService {
     // Close channel and sweep to on-chain wallet
     await this.savingsOptimizer.routeToSavings("system", amountUsd);
     
-    console.log(`💰 Consolidated ${amountSats} sats → $${amountUsd} to savings`);
+    console.info(`💰 Consolidated ${amountSats} sats → $${amountUsd} to savings`);
     
     await this.logLightningTransaction({
       type: "CONSOLIDATION_COMPLETED",
@@ -293,7 +293,7 @@ export class LightningService {
         "UPDATE quests SET status = 'completed', settled_sats = ?, completed_at = ? WHERE id = ?",
         [parseInt(amountSats, 10), new Date(), questId]
       );
-      console.log(`✅ Quest ${questId} completed: ${amountSats} sats`);
+      console.info(`✅ Quest ${questId} completed: ${amountSats} sats`);
     } catch (error) {
       console.error(`Failed to complete quest ${questId}:`, error);
       throw error;

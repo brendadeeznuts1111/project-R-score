@@ -7,10 +7,10 @@ const PORT = validatePort(process.env.SERVER_PORT || process.env.PORT, 3000);
 const HOST = validateHost(process.env.SERVER_HOST) || 'localhost';
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-console.log(`🚀 Starting Staging Test Server`);
-console.log(`📍 Environment: ${NODE_ENV}`);
-console.log(`🌐 Host: ${HOST}`);
-console.log(`🔌 Port: ${PORT}`);
+console.info(`🚀 Starting Staging Test Server`);
+console.info(`📍 Environment: ${NODE_ENV}`);
+console.info(`🌐 Host: ${HOST}`);
+console.info(`🔌 Port: ${PORT}`);
 
 const server = Bun.serve({
   port: PORT,
@@ -48,7 +48,7 @@ const server = Bun.serve({
       }, { headers });
       
       if (process.env.DEBUG === '1') {
-        console.log(`✅ Health check - ${Date.now() - startTime}ms`);
+        console.info(`✅ Health check - ${Date.now() - startTime}ms`);
       }
       return response;
     }
@@ -81,7 +81,7 @@ const server = Bun.serve({
 
         const response = Response.json(validation, { headers });
         if (process.env.DEBUG === '1') {
-          console.log(`✅ Validation test - ${Date.now() - startTime}ms`);
+          console.info(`✅ Validation test - ${Date.now() - startTime}ms`);
         }
         return response;
       } catch (error) {
@@ -91,7 +91,7 @@ const server = Bun.serve({
         }, { status: 400, headers });
         
         if (process.env.DEBUG === '1') {
-          console.log(`❌ Validation test failed - ${Date.now() - startTime}ms`);
+          console.info(`❌ Validation test failed - ${Date.now() - startTime}ms`);
         }
         return response;
       }
@@ -115,7 +115,7 @@ const server = Bun.serve({
       });
       
       if (process.env.DEBUG === '1') {
-        console.log(`⚠️ Error test (${errorType}) - ${Date.now() - startTime}ms`);
+        console.info(`⚠️ Error test (${errorType}) - ${Date.now() - startTime}ms`);
       }
       return response;
     }
@@ -137,16 +137,16 @@ const server = Bun.serve({
     }, { headers });
 
     if (process.env.DEBUG === '1') {
-      console.log(`✅ Default response - ${Date.now() - startTime}ms`);
+      console.info(`✅ Default response - ${Date.now() - startTime}ms`);
     }
     return response;
   }
 });
 
-console.log(`🎉 Staging Test Server running on http://${HOST}:${PORT}`);
-console.log(`🏥 Health check: http://${HOST}:${PORT}/health`);
-console.log(`🧪 Validation test: http://${HOST}:${PORT}/api/test-validation`);
-console.log(`⚠️  Error test: http://${HOST}:${PORT}/api/test-error`);
-console.log(`📊 Environment: ${NODE_ENV}`);
-console.log(`🔒 Security: Enabled`);
-console.log(`📝 Logging: ${process.env.DEBUG === '1' ? 'Debug' : 'Standard'}`);
+console.info(`🎉 Staging Test Server running on http://${HOST}:${PORT}`);
+console.info(`🏥 Health check: http://${HOST}:${PORT}/health`);
+console.info(`🧪 Validation test: http://${HOST}:${PORT}/api/test-validation`);
+console.info(`⚠️  Error test: http://${HOST}:${PORT}/api/test-error`);
+console.info(`📊 Environment: ${NODE_ENV}`);
+console.info(`🔒 Security: Enabled`);
+console.info(`📝 Logging: ${process.env.DEBUG === '1' ? 'Debug' : 'Standard'}`);

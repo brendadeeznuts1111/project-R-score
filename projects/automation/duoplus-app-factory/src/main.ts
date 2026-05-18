@@ -36,7 +36,7 @@ const corsHeaders = (origin: string | null) => {
 const authenticateRequest = (req: Request): boolean => {
   // Skip auth for health check and public endpoints
   const url = new URL(req.url);
-  console.log(`Authenticating request to ${url.pathname}`);
+  console.info(`Authenticating request to ${url.pathname}`);
   
   if (url.pathname === "/" || url.pathname === "/health") {
     return true;
@@ -44,10 +44,10 @@ const authenticateRequest = (req: Request): boolean => {
   
   // Check for valid JWT token
   const authHeader = req.headers.get("Authorization");
-  console.log(`Authorization header: ${authHeader}`);
+  console.info(`Authorization header: ${authHeader}`);
   
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    console.log("Missing or invalid Authorization header");
+    console.info("Missing or invalid Authorization header");
     return false;
   }
   
@@ -55,10 +55,10 @@ const authenticateRequest = (req: Request): boolean => {
   // TODO: Implement proper JWT verification
   // For now, accept a simple test token
   const VALID_TOKEN = process.env.API_TOKEN || "test-token-123";
-  console.log(`Token: ${token}, Valid token: ${VALID_TOKEN}`);
+  console.info(`Token: ${token}, Valid token: ${VALID_TOKEN}`);
   
   const isValid = token === VALID_TOKEN;
-  console.log(`Token valid: ${isValid}`);
+  console.info(`Token valid: ${isValid}`);
   
   return isValid;
 };
@@ -310,19 +310,19 @@ if (versionDisplay) {
   },
 });
 
-console.log(`⚡ DuoPlus Lightning v3.5 running on http://localhost:${PORT}`);
-console.log("📋 Available endpoints:");
-console.log("  GET  /health");
-console.log("  GET  /api/node/balance");
-console.log("  POST /api/invoice/generate");
-console.log("  GET  /api/payment/quest?questId=...&userId=...&amount=...");
-console.log("  POST /webhook/settlement");
-console.log("  GET  /api/payment/status?questId=...");
-console.log("  POST /api/leg/score");
-console.log("  POST /api/terminal/create");
-console.log("  GET  /api/terminal/list");
-console.log("  POST /api/terminal/write?sessionId=...");
-console.log("  POST /api/terminal/resize?sessionId=...&cols=...&rows=...");
-console.log("  DELETE /api/terminal/close?sessionId=...");
-console.log("  GET  /api/terminal/stats");
-console.log("  GET  /ws/terminal?sessionId=... (WebSocket)");
+console.info(`⚡ DuoPlus Lightning v3.5 running on http://localhost:${PORT}`);
+console.info("📋 Available endpoints:");
+console.info("  GET  /health");
+console.info("  GET  /api/node/balance");
+console.info("  POST /api/invoice/generate");
+console.info("  GET  /api/payment/quest?questId=...&userId=...&amount=...");
+console.info("  POST /webhook/settlement");
+console.info("  GET  /api/payment/status?questId=...");
+console.info("  POST /api/leg/score");
+console.info("  POST /api/terminal/create");
+console.info("  GET  /api/terminal/list");
+console.info("  POST /api/terminal/write?sessionId=...");
+console.info("  POST /api/terminal/resize?sessionId=...&cols=...&rows=...");
+console.info("  DELETE /api/terminal/close?sessionId=...");
+console.info("  GET  /api/terminal/stats");
+console.info("  GET  /ws/terminal?sessionId=... (WebSocket)");

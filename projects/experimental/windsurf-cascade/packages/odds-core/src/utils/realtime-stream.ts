@@ -62,7 +62,7 @@ export class RealtimeMetadataStream extends EventEmitter {
       await this.startMetricsCollection();
       
       this.emit('streamStarted', { timestamp: Date.now() });
-      console.log('🚀 Real-time metadata stream started');
+      console.info('🚀 Real-time metadata stream started');
     } catch (error) {
       this.isRunning = false;
       throw error;
@@ -91,7 +91,7 @@ export class RealtimeMetadataStream extends EventEmitter {
 
     this.streams.clear();
     this.emit('streamStopped', { timestamp: Date.now() });
-    console.log('🛑 Real-time metadata stream stopped');
+    console.info('🛑 Real-time metadata stream stopped');
   }
 
   /**
@@ -231,7 +231,7 @@ export class RealtimeMetadataStream extends EventEmitter {
       this.ws = new WebSocket('wss://ws.example.com/marketdata'); // Example endpoint
 
       this.ws.on('open', () => {
-        console.log('🔌 WebSocket connected');
+        console.info('🔌 WebSocket connected');
         this.reconnectAttempts = 0;
         resolve();
       });
@@ -254,7 +254,7 @@ export class RealtimeMetadataStream extends EventEmitter {
       });
 
       this.ws.on('close', () => {
-        console.log('🔌 WebSocket disconnected');
+        console.info('🔌 WebSocket disconnected');
         this.emit('disconnected');
         
         if (this.isRunning) {
@@ -282,12 +282,12 @@ export class RealtimeMetadataStream extends EventEmitter {
     }
 
     this.reconnectAttempts++;
-    console.log(`🔄 Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
+    console.info(`🔄 Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
 
     setTimeout(async () => {
       try {
         await this.initializeWebSocket();
-        console.log('✅ Reconnected successfully');
+        console.info('✅ Reconnected successfully');
         this.emit('reconnected');
       } catch (error) {
         console.error('❌ Reconnection failed:', error);

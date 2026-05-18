@@ -52,7 +52,7 @@ export class Fantasy402UnifiedClient {
    */
   async initialize(): Promise<ApiResponse> {
     try {
-      console.log('🚀 Initializing Fantasy402 Unified Client...');
+      console.info('🚀 Initializing Fantasy402 Unified Client...');
 
       // Initialize auth client
       this.auth = new Fantasy402Auth(this.config.username, this.config.password);
@@ -72,7 +72,7 @@ export class Fantasy402UnifiedClient {
       }
 
       this.initialized = true;
-      console.log('✅ Fantasy402 Unified Client initialized successfully');
+      console.info('✅ Fantasy402 Unified Client initialized successfully');
 
       return {
         success: true,

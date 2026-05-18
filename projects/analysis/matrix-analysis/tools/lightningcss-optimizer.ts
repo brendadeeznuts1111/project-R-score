@@ -25,17 +25,17 @@ try {
 	const savedBytes = originalSize - minifiedSize;
 	const savedPercentage = ((savedBytes / originalSize) * 100).toFixed(1);
 
-	console.log(`🎨 LightningCSS Optimization Report`);
-	console.log(`📁 File: ${cssFile}`);
-	console.log(`📊 Original: ${originalSize.toLocaleString()} bytes`);
-	console.log(`🗜️  Minified: ${minifiedSize.toLocaleString()} bytes`);
-	console.log(`💾 Saved: ${savedBytes.toLocaleString()} bytes (${savedPercentage}%)`);
-	console.log(`⚡ Compression ratio: ${(originalSize / minifiedSize).toFixed(2)}x`);
+	console.info(`🎨 LightningCSS Optimization Report`);
+	console.info(`📁 File: ${cssFile}`);
+	console.info(`📊 Original: ${originalSize.toLocaleString()} bytes`);
+	console.info(`🗜️  Minified: ${minifiedSize.toLocaleString()} bytes`);
+	console.info(`💾 Saved: ${savedBytes.toLocaleString()} bytes (${savedPercentage}%)`);
+	console.info(`⚡ Compression ratio: ${(originalSize / minifiedSize).toFixed(2)}x`);
 
 	// Write minified output
 	const outputPath = cssFile.replace(".css", ".min.css");
 	await Bun.write(outputPath, new TextDecoder().decode(result.code));
-	console.log(`✅ Minified file written to: ${outputPath}`);
+	console.info(`✅ Minified file written to: ${outputPath}`);
 } catch (error: any) {
 	console.error(`❌ Error processing CSS: ${error?.message || error}`);
 	if (error?.message?.includes("lightningcss")) {

@@ -205,9 +205,9 @@ class EnvironmentURLManager {
    * Generate environment-specific configuration files
    */
   generateConfigFiles(): void {
-    console.log('🔧 Generating Environment Configuration Files');
-    console.log('============================================');
-    console.log('');
+    console.info('🔧 Generating Environment Configuration Files');
+    console.info('============================================');
+    console.info('');
 
     // Generate .env files
     this.generateEnvFile('production');
@@ -217,7 +217,7 @@ class EnvironmentURLManager {
     // Generate TypeScript config
     this.generateTSConfig();
 
-    console.log('✅ Configuration files generated');
+    console.info('✅ Configuration files generated');
   }
 
   private generateEnvFile(environment: string): void {
@@ -258,7 +258,7 @@ DASHBOARD_ANALYTICS=${config.dashboards.analytics}
 NODE_ENV=${environment}
     `.trim();
 
-    console.log(`📝 Generated .env.${environment}`);
+    console.info(`📝 Generated .env.${environment}`);
     // In production, this would write to actual files
     // await Bun.write(`./.env.${environment}`, envContent);
   }
@@ -283,7 +283,7 @@ export const currentConfig = ENVIRONMENT_CONFIG;
 export const environment = '${config.name}';
     `.trim();
 
-    console.log('📝 Generated environment-config.ts');
+    console.info('📝 Generated environment-config.ts');
     // In production, this would write to actual file
     // await Bun.write('./src/config/environment-config.ts', tsContent);
   }
@@ -292,9 +292,9 @@ export const environment = '${config.name}';
    * Update existing files with environment-specific URLs
    */
   updateExistingFiles(): void {
-    console.log('🔄 Updating Existing Files with Environment URLs');
-    console.log('===============================================');
-    console.log('');
+    console.info('🔄 Updating Existing Files with Environment URLs');
+    console.info('===============================================');
+    console.info('');
 
     const criticalFiles = [
       './src/registry/deploy-registry.ts',
@@ -305,18 +305,18 @@ export const environment = '${config.name}';
     ];
 
     criticalFiles.forEach(file => {
-      console.log(`📝 Update strategy for ${file}:`);
-      console.log(`   • Replace hardcoded URLs with environment variables`);
-      console.log(`   • Import environment config at runtime`);
-      console.log(`   • Use conditional logic based on NODE_ENV`);
-      console.log('');
+      console.info(`📝 Update strategy for ${file}:`);
+      console.info(`   • Replace hardcoded URLs with environment variables`);
+      console.info(`   • Import environment config at runtime`);
+      console.info(`   • Use conditional logic based on NODE_ENV`);
+      console.info('');
     });
 
-    console.log('🎯 Implementation Plan:');
-    console.log('   1. Import environment config in each file');
-    console.log('   2. Replace hardcoded URLs with config values');
-    console.log('   3. Add environment-specific logic');
-    console.log('   4. Test with different NODE_ENV values');
+    console.info('🎯 Implementation Plan:');
+    console.info('   1. Import environment config in each file');
+    console.info('   2. Replace hardcoded URLs with config values');
+    console.info('   3. Add environment-specific logic');
+    console.info('   4. Test with different NODE_ENV values');
   }
 }
 
@@ -324,22 +324,22 @@ export const environment = '${config.name}';
 if (import.meta.main) {
   const manager = new EnvironmentURLManager();
   
-  console.log('🚀 Environment-Specific URL Manager');
-  console.log('===================================');
-  console.log('');
+  console.info('🚀 Environment-Specific URL Manager');
+  console.info('===================================');
+  console.info('');
   
-  console.log(`📊 Current Environment: ${manager.getConfig().name}`);
-  console.log(`🌐 Registry URL: ${manager.getRegistryURL()}`);
-  console.log(`📁 Storage URL: ${manager.getStorageURL()}`);
-  console.log(`📧 Email Domain: ${manager.getEmailDomain()}`);
-  console.log('');
+  console.info(`📊 Current Environment: ${manager.getConfig().name}`);
+  console.info(`🌐 Registry URL: ${manager.getRegistryURL()}`);
+  console.info(`📁 Storage URL: ${manager.getStorageURL()}`);
+  console.info(`📧 Email Domain: ${manager.getEmailDomain()}`);
+  console.info('');
   
   manager.generateConfigFiles();
   manager.updateExistingFiles();
   
-  console.log('');
-  console.log('✅ Environment configuration complete!');
-  console.log('🎯 Next: Update files to use environment-specific URLs');
+  console.info('');
+  console.info('✅ Environment configuration complete!');
+  console.info('🎯 Next: Update files to use environment-specific URLs');
 }
 
 export { EnvironmentURLManager };

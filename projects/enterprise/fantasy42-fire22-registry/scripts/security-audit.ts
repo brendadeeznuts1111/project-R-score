@@ -83,7 +83,7 @@ class SecurityAuditor {
   }
 
   async auditVulnerabilities(): Promise<void> {
-    console.log('🔍 Running vulnerability audit...');
+    console.info('🔍 Running vulnerability audit...');
 
     try {
       // Use Bun's native audit command
@@ -99,29 +99,29 @@ class SecurityAuditor {
         );
       }
 
-      console.log(
+      console.info(
         `✅ Bun audit completed: ${auditData.metadata.vulnerabilities.total} issues found`
       );
     } catch (error) {
-      console.log('⚠️  Bun audit failed, trying npm audit...');
+      console.info('⚠️  Bun audit failed, trying npm audit...');
       try {
         const npmAuditOutput = await this.runCommand('npm', ['audit', '--json']);
         const npmAuditData = JSON.parse(npmAuditOutput);
-        console.log(
+        console.info(
           `✅ NPM audit completed: ${Object.keys(npmAuditData.vulnerabilities || {}).length} issues found`
         );
       } catch (npmError) {
-        console.log('❌ Both Bun and NPM audit failed');
+        console.info('❌ Both Bun and NPM audit failed');
         this.reports.audit.issues.push('Unable to run dependency audit');
       }
     }
   }
 
   async scanWithSnyk(): Promise<void> {
-    console.log('🔍 Running Snyk vulnerability scan...');
+    console.info('🔍 Running Snyk vulnerability scan...');
 
     if (!(await this.checkToolAvailability('snyk'))) {
-      console.log('⚠️  Snyk not installed. Run: bun add -d snyk');
+      console.info('⚠️  Snyk not installed. Run: bun add -d snyk');
       this.reports.recommendations.push('Install Snyk: bun add -d snyk');
       return;
     }
@@ -145,20 +145,20 @@ class SecurityAuditor {
         });
       }
 
-      console.log(
+      console.info(
         `✅ Snyk scan completed: ${this.reports.vulnerabilities.total} vulnerabilities found`
       );
     } catch (error) {
-      console.log('❌ Snyk scan failed');
+      console.info('❌ Snyk scan failed');
       this.reports.audit.issues.push('Snyk scan encountered errors');
     }
   }
 
   async checkLicenses(): Promise<void> {
-    console.log('🔍 Checking license compliance...');
+    console.info('🔍 Checking license compliance...');
 
     if (!(await this.checkToolAvailability('license-checker'))) {
-      console.log('⚠️  license-checker not installed. Run: bun add -d license-checker');
+      console.info('⚠️  license-checker not installed. Run: bun add -d license-checker');
       this.reports.recommendations.push('Install license-checker: bun add -d license-checker');
       return;
     }
@@ -182,12 +182,12 @@ class SecurityAuditor {
         }
       });
 
-      console.log(
+      console.info(
         `✅ License check completed: ${Object.keys(licenseData).length} packages analyzed`
       );
-      console.log(`📊 License summary: ${JSON.stringify(this.reports.licenses.summary, null, 2)}`);
+      console.info(`📊 License summary: ${JSON.stringify(this.reports.licenses.summary, null, 2)}`);
     } catch (error) {
-      console.log('❌ License check failed');
+      console.info('❌ License check failed');
       this.reports.audit.issues.push('License compliance check encountered errors');
     }
   }
@@ -209,39 +209,39 @@ class SecurityAuditor {
 
     // Write the report using Bun's optimized file writing
     await Bun.write(reportFile, JSON.stringify(this.reports, null, 2));
-    console.log(`📄 Security report saved to: ${reportFile}`);
+    console.info(`📄 Security report saved to: ${reportFile}`);
 
     // Generate summary
-    console.log('\n📊 Security Audit Summary');
-    console.log('========================');
+    console.info('\n📊 Security Audit Summary');
+    console.info('========================');
 
-    console.log(`🔍 Vulnerabilities Found: ${this.reports.vulnerabilities.total}`);
-    console.log(`   - Critical: ${this.reports.vulnerabilities.critical}`);
-    console.log(`   - High: ${this.reports.vulnerabilities.high}`);
-    console.log(`   - Moderate: ${this.reports.vulnerabilities.moderate}`);
-    console.log(`   - Low: ${this.reports.vulnerabilities.low}`);
+    console.info(`🔍 Vulnerabilities Found: ${this.reports.vulnerabilities.total}`);
+    console.info(`   - Critical: ${this.reports.vulnerabilities.critical}`);
+    console.info(`   - High: ${this.reports.vulnerabilities.high}`);
+    console.info(`   - Moderate: ${this.reports.vulnerabilities.moderate}`);
+    console.info(`   - Low: ${this.reports.vulnerabilities.low}`);
 
-    console.log(
+    console.info(
       `📋 License Compliance: ${this.reports.licenses.compliant ? '✅ PASS' : '❌ FAIL'}`
     );
     if (this.reports.licenses.violations.length > 0) {
-      console.log(`   Violations: ${this.reports.licenses.violations.join(', ')}`);
+      console.info(`   Violations: ${this.reports.licenses.violations.join(', ')}`);
     }
 
-    console.log(`🔒 Audit Status: ${this.reports.audit.passed ? '✅ PASS' : '❌ ISSUES FOUND'}`);
+    console.info(`🔒 Audit Status: ${this.reports.audit.passed ? '✅ PASS' : '❌ ISSUES FOUND'}`);
     if (this.reports.audit.issues.length > 0) {
-      this.reports.audit.issues.forEach(issue => console.log(`   - ${issue}`));
+      this.reports.audit.issues.forEach(issue => console.info(`   - ${issue}`));
     }
 
     if (this.reports.recommendations.length > 0) {
-      console.log('\n💡 Recommendations:');
-      this.reports.recommendations.forEach(rec => console.log(`   • ${rec}`));
+      console.info('\n💡 Recommendations:');
+      this.reports.recommendations.forEach(rec => console.info(`   • ${rec}`));
     }
   }
 
   async runFullAudit(): Promise<void> {
-    console.log('🚀 Starting Fantasy42-Fire22 Security Audit');
-    console.log('==========================================');
+    console.info('🚀 Starting Fantasy42-Fire22 Security Audit');
+    console.info('==========================================');
 
     try {
       await this.auditVulnerabilities();
@@ -249,7 +249,7 @@ class SecurityAuditor {
       await this.checkLicenses();
       await this.generateReport();
 
-      console.log('\n🎉 Security audit completed successfully!');
+      console.info('\n🎉 Security audit completed successfully!');
     } catch (error) {
       console.error('❌ Security audit failed:', error);
       process.exit(1);

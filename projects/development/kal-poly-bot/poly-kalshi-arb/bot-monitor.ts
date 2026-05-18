@@ -34,8 +34,8 @@ class BotMonitor {
 
   async startMonitoring(): Promise<void> {
     console.clear();
-    console.log("📊 Arb Bot Monitor (Live Dashboard)");
-    console.log("═".repeat(50));
+    console.info("📊 Arb Bot Monitor (Live Dashboard)");
+    console.info("═".repeat(50));
 
     // Watch for log updates
     const logPath = ".discovery_cache.json";
@@ -44,7 +44,7 @@ class BotMonitor {
       this.displayMetrics();
       this.watchLogs();
     } else {
-      console.log("⏳ Waiting for bot to start...");
+      console.info("⏳ Waiting for bot to start...");
     }
 
     // Refresh every 2 seconds
@@ -52,23 +52,23 @@ class BotMonitor {
   }
 
   private displayMetrics(): void {
-    console.log("\n📈 Performance Metrics");
-    console.log("─".repeat(50));
-    console.log(`Total Trades:     ${this.metrics.totalTrades}`);
-    console.log(
+    console.info("\n📈 Performance Metrics");
+    console.info("─".repeat(50));
+    console.info(`Total Trades:     ${this.metrics.totalTrades}`);
+    console.info(
       `Total Profit:     $${(this.metrics.totalProfit / 100).toFixed(2)}`
     );
-    console.log(`Win Rate:         ${(this.metrics.winRate * 100).toFixed(1)}%`);
-    console.log(
+    console.info(`Win Rate:         ${(this.metrics.winRate * 100).toFixed(1)}%`);
+    console.info(
       `Avg Profit/Trade: $${(this.metrics.avgProfit / 100).toFixed(2)}`
     );
 
     if (this.metrics.lastTrade) {
-      console.log("\n🔄 Last Trade");
-      console.log("─".repeat(50));
-      console.log(`Time:   ${this.metrics.lastTrade.timestamp}`);
-      console.log(`Market: ${this.metrics.lastTrade.market}`);
-      console.log(
+      console.info("\n🔄 Last Trade");
+      console.info("─".repeat(50));
+      console.info(`Time:   ${this.metrics.lastTrade.timestamp}`);
+      console.info(`Market: ${this.metrics.lastTrade.market}`);
+      console.info(
         `Profit: $${(this.metrics.lastTrade.profit / 100).toFixed(2)}`
       );
     }
@@ -101,6 +101,6 @@ monitor.startMonitoring();
 
 // Handle exit
 process.on("SIGINT", () => {
-  console.log("\n\n👋 Monitor stopped");
+  console.info("\n\n👋 Monitor stopped");
   process.exit(0);
 });

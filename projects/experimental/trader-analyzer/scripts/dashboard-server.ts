@@ -337,7 +337,7 @@ const server = serve({
         const shouldError = url.searchParams.get('error') === 'true';
         const testType = url.searchParams.get('type') || 'simple';
         
-        console.log(`⏱️  Timeout test: ${duration}ms, error: ${shouldError}, type: ${testType}`);
+        console.info(`⏱️  Timeout test: ${duration}ms, error: ${shouldError}, type: ${testType}`);
         
         if (shouldError) {
           switch (testType) {
@@ -805,15 +805,15 @@ const server = serve({
 });
 
 // Server startup
-console.log('🚀 Starting Trader Analyzer Dashboard Server v0.2.0-standalone');
-console.log(`📁 Dashboard directory: ${DASHBOARD_DIR}`);
-console.log(`🌐 Server running at: http://localhost:${PORT}`);
-console.log('📊 Endpoints:');
-console.log('   📈 Dashboard: http://localhost:8080/multi-layer-graph.html');
-console.log('   ⚙️  Config: http://localhost:8080/config');
-console.log('   ⏱️  Timeout: http://localhost:8080/timeout');
-console.log('   🔍 Health: http://localhost:8080/api/v17/mcp/health');
-console.log('   📡 Pool: http://localhost:8080/api/v17/connection-pool/stats');
-console.log('');
+console.info('🚀 Starting Trader Analyzer Dashboard Server v0.2.0-standalone');
+console.info(`📁 Dashboard directory: ${DASHBOARD_DIR}`);
+console.info(`🌐 Server running at: http://localhost:${PORT}`);
+console.info('📊 Endpoints:');
+console.info('   📈 Dashboard: http://localhost:8080/multi-layer-graph.html');
+console.info('   ⚙️  Config: http://localhost:8080/config');
+console.info('   ⏱️  Timeout: http://localhost:8080/timeout');
+console.info('   🔍 Health: http://localhost:8080/api/v17/mcp/health');
+console.info('   📡 Pool: http://localhost:8080/api/v17/connection-pool/stats');
+console.info('');
 
 export { server };

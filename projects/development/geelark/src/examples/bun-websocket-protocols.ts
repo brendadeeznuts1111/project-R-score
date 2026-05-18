@@ -14,7 +14,7 @@
  * Example 1: Server with protocol support
  */
 function example1_ServerWithProtocols() {
-  console.log('=== Example 1: Server with Protocol Support ===\n');
+  console.info('=== Example 1: Server with Protocol Support ===\n');
 
   const server = Bun.serve({
     port: 0,
@@ -63,24 +63,24 @@ function example1_ServerWithProtocols() {
     websocket: {
       message(ws, message) {
         // Access the selected protocol
-        console.log(`  Protocol: ${ws.protocol || 'none'}`);
+        console.info(`  Protocol: ${ws.protocol || 'none'}`);
         ws.send(`Echo (${ws.protocol || 'default'}): ${message}`);
       },
       open(ws) {
-        console.log(`  ✅ WebSocket opened with protocol: ${ws.protocol || 'none'}`);
+        console.info(`  ✅ WebSocket opened with protocol: ${ws.protocol || 'none'}`);
       },
       close(ws, code, reason) {
-        console.log(`  ❌ WebSocket closed: ${code} - ${reason}`);
+        console.info(`  ❌ WebSocket closed: ${code} - ${reason}`);
       },
     },
   });
 
-  console.log(`Server running at: ${server.url.href}`);
-  console.log(`WebSocket endpoints:`);
-  console.log(`  - ${server.url.href}ws (protocol: chat-v1)`);
-  console.log(`  - ${server.url.href}ws-multi (protocols: [chat-v1, chat-v2, binary-v1])`);
-  console.log(`  - ${server.url.href}ws-string (protocols: json-v1)`);
-  console.log('\nNote: In a real scenario, you would connect from a client.');
+  console.info(`Server running at: ${server.url.href}`);
+  console.info(`WebSocket endpoints:`);
+  console.info(`  - ${server.url.href}ws (protocol: chat-v1)`);
+  console.info(`  - ${server.url.href}ws-multi (protocols: [chat-v1, chat-v2, binary-v1])`);
+  console.info(`  - ${server.url.href}ws-string (protocols: json-v1)`);
+  console.info('\nNote: In a real scenario, you would connect from a client.');
 
   // Return server for testing
   return server;
@@ -90,7 +90,7 @@ function example1_ServerWithProtocols() {
  * Example 2: Type-safe protocol handling
  */
 function example2_TypeSafeProtocols() {
-  console.log('\n=== Example 2: Type-Safe Protocol Handling ===\n');
+  console.info('\n=== Example 2: Type-Safe Protocol Handling ===\n');
 
   type ProtocolConfig =
     | { protocol: string }
@@ -105,11 +105,11 @@ function example2_TypeSafeProtocols() {
 
   for (const config of configs) {
     if ('protocol' in config) {
-      console.log(`  Single protocol: ${config.protocol}`);
+      console.info(`  Single protocol: ${config.protocol}`);
     } else if (Array.isArray(config.protocols)) {
-      console.log(`  Multiple protocols: ${config.protocols.join(', ')}`);
+      console.info(`  Multiple protocols: ${config.protocols.join(', ')}`);
     } else {
-      console.log(`  Protocol string: ${config.protocols}`);
+      console.info(`  Protocol string: ${config.protocols}`);
     }
   }
 }
@@ -156,27 +156,27 @@ class ProtocolNegotiator {
 }
 
 function example3_ProtocolNegotiation() {
-  console.log('\n=== Example 3: Protocol Negotiation ===\n');
+  console.info('\n=== Example 3: Protocol Negotiation ===\n');
 
   const negotiator = new ProtocolNegotiator(['chat-v1', 'chat-v2', 'binary-v1']);
 
   // Client requests protocols in preference order
   const clientProtocols1 = ['chat-v2', 'chat-v1', 'json-v1'];
   const negotiated1 = negotiator.negotiate(clientProtocols1);
-  console.log(`  Client: [${clientProtocols1.join(', ')}]`);
-  console.log(`  Negotiated: ${negotiated1 || 'none'}`);
+  console.info(`  Client: [${clientProtocols1.join(', ')}]`);
+  console.info(`  Negotiated: ${negotiated1 || 'none'}`);
 
   const clientProtocols2 = ['json-v1', 'xml-v1'];
   const negotiated2 = negotiator.negotiate(clientProtocols2);
-  console.log(`  Client: [${clientProtocols2.join(', ')}]`);
-  console.log(`  Negotiated: ${negotiated2 || 'none'}`);
+  console.info(`  Client: [${clientProtocols2.join(', ')}]`);
+  console.info(`  Negotiated: ${negotiated2 || 'none'}`);
 
   // Create upgrade options
   const options1 = negotiator.createUpgradeOptions(clientProtocols1);
-  console.log(`  Upgrade options: ${JSON.stringify(options1)}`);
+  console.info(`  Upgrade options: ${JSON.stringify(options1)}`);
 
   const options2 = negotiator.createUpgradeOptions(clientProtocols2);
-  console.log(`  Upgrade options: ${JSON.stringify(options2)}`);
+  console.info(`  Upgrade options: ${JSON.stringify(options2)}`);
 }
 
 /**
@@ -203,7 +203,7 @@ class BinaryProtocolHandler implements ProtocolMessageHandler {
 }
 
 function example4_ProtocolHandlers() {
-  console.log('\n=== Example 4: Protocol-Based Handlers ===\n');
+  console.info('\n=== Example 4: Protocol-Based Handlers ===\n');
 
   const handlers: Map<string, ProtocolMessageHandler> = new Map([
     ['chat-v1', new ChatProtocolHandler()],
@@ -215,10 +215,10 @@ function example4_ProtocolHandlers() {
   const simulateWS = (protocol: string, message: string | ArrayBuffer) => {
     const handler = handlers.get(protocol);
     if (handler) {
-      console.log(`  [${protocol}] Handling message`);
-      handler.handle({ send: (msg: any) => console.log(`    Response: ${msg}`) }, message);
+      console.info(`  [${protocol}] Handling message`);
+      handler.handle({ send: (msg: any) => console.info(`    Response: ${msg}`) }, message);
     } else {
-      console.log(`  [${protocol}] No handler found`);
+      console.info(`  [${protocol}] No handler found`);
     }
   };
 
@@ -231,7 +231,7 @@ function example4_ProtocolHandlers() {
  * Example 5: Real server implementation
  */
 function example5_RealServer() {
-  console.log('\n=== Example 5: Real Server Implementation ===\n');
+  console.info('\n=== Example 5: Real Server Implementation ===\n');
 
   const server = Bun.serve({
     port: 0,
@@ -244,7 +244,7 @@ function example5_RealServer() {
 
         if (requestedProtocols) {
           const protocols = requestedProtocols.split(',').map(p => p.trim());
-          console.log(`  Client requested protocols: ${protocols.join(', ')}`);
+          console.info(`  Client requested protocols: ${protocols.join(', ')}`);
 
           // Negotiate protocol
           const negotiator = new ProtocolNegotiator(['chat-v1', 'chat-v2']);
@@ -270,8 +270,8 @@ function example5_RealServer() {
             <p>Open browser console and run:</p>
             <pre>
 const ws = new WebSocket('ws://localhost:${server.port}/ws', ['chat-v1', 'chat-v2']);
-ws.onopen = () => console.log('Protocol:', ws.protocol);
-ws.onmessage = (e) => console.log('Message:', e.data);
+ws.onopen = () => console.info('Protocol:', ws.protocol);
+ws.onmessage = (e) => console.info('Message:', e.data);
 ws.send('Hello');
             </pre>
           </body>
@@ -285,23 +285,23 @@ ws.send('Hello');
         ws.send(`Server received (protocol: ${ws.protocol || 'none'}): ${message}`);
       },
       open(ws) {
-        console.log(`  ✅ Client connected with protocol: ${ws.protocol || 'none'}`);
+        console.info(`  ✅ Client connected with protocol: ${ws.protocol || 'none'}`);
       },
       close(ws) {
-        console.log(`  ❌ Client disconnected`);
+        console.info(`  ❌ Client disconnected`);
       },
     },
   });
 
-  console.log(`Server running at: ${server.url.href}`);
-  console.log(`WebSocket endpoint: ws://localhost:${server.port}/ws`);
-  console.log(`\nTo test, open: ${server.url.href}`);
+  console.info(`Server running at: ${server.url.href}`);
+  console.info(`WebSocket endpoint: ws://localhost:${server.port}/ws`);
+  console.info(`\nTo test, open: ${server.url.href}`);
 
   return server;
 }
 
 // Run examples
-console.log('🔌 Bun WebSocket Protocol Options Examples\n');
+console.info('🔌 Bun WebSocket Protocol Options Examples\n');
 
 example1_ServerWithProtocols();
 example2_TypeSafeProtocols();
@@ -309,17 +309,17 @@ example3_ProtocolNegotiation();
 example4_ProtocolHandlers();
 const testServer = example5_RealServer();
 
-console.log('\n✅ All examples completed!');
-console.log('\n💡 Key Points:');
-console.log('  • Use { protocol: string } for single protocol');
-console.log('  • Use { protocols: string | string[] } for multiple protocols');
-console.log('  • Server selects matching protocol from client request');
-console.log('  • Access selected protocol via ws.protocol');
-console.log('\nPress Ctrl+C to stop the test server...\n');
+console.info('\n✅ All examples completed!');
+console.info('\n💡 Key Points:');
+console.info('  • Use { protocol: string } for single protocol');
+console.info('  • Use { protocols: string | string[] } for multiple protocols');
+console.info('  • Server selects matching protocol from client request');
+console.info('  • Access selected protocol via ws.protocol');
+console.info('\nPress Ctrl+C to stop the test server...\n');
 
 // Keep server running
 process.on('SIGINT', () => {
-  console.log('\n👋 Shutting down server...');
+  console.info('\n👋 Shutting down server...');
   testServer.stop();
   process.exit(0);
 });

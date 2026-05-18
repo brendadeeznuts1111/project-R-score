@@ -45,7 +45,7 @@ class WebExportServer {
   }
 
   async start(): Promise<void> {
-    console.log(`🌐 Starting Web Export Server on ${this.config.host}:${this.config.port}`);
+    console.info(`🌐 Starting Web Export Server on ${this.config.host}:${this.config.port}`);
 
     // Generate initial data
     await this.refreshData();
@@ -112,9 +112,9 @@ class WebExportServer {
       }
     });
 
-    console.log(`✅ Web Export Server running at http://${this.config.host}:${this.config.port}`);
-    console.log(`📊 Dashboard: http://${this.config.host}:${this.config.port}/dashboard`);
-    console.log(`🔌 API: http://${this.config.host}:${this.config.port}/api/data`);
+    console.info(`✅ Web Export Server running at http://${this.config.host}:${this.config.port}`);
+    console.info(`📊 Dashboard: http://${this.config.host}:${this.config.port}/dashboard`);
+    console.info(`🔌 API: http://${this.config.host}:${this.config.port}/api/data`);
   }
 
   private async handleAPI(request: Request, url: URL): Promise<Response> {
@@ -233,7 +233,7 @@ class WebExportServer {
   }
 
   private async refreshData(): Promise<void> {
-    console.log('📊 Refreshing dashboard data...');
+    console.info('📊 Refreshing dashboard data...');
 
     // Agents data
     const rankings = new AgentRankingsSystem();
@@ -263,7 +263,7 @@ class WebExportServer {
       system
     };
 
-    console.log('✅ Dashboard data refreshed');
+    console.info('✅ Dashboard data refreshed');
   }
 
   private generateDashboardHTML(): string {
@@ -395,7 +395,7 @@ class WebExportServer {
                 updateTables(data);
                 updateViolations(data);
 
-                console.log('✅ Dashboard updated');
+                console.info('✅ Dashboard updated');
             } catch (error) {
                 console.error('❌ Failed to load data:', error);
             }
@@ -486,7 +486,7 @@ class WebExportServer {
         }
 
         async function refreshData() {
-            console.log('🔄 Refreshing data...');
+            console.info('🔄 Refreshing data...');
             await loadData();
         }
 
@@ -525,7 +525,7 @@ class WebExportServer {
   async stop(): Promise<void> {
     if (this.server) {
       this.server.stop();
-      console.log('🛑 Web Export Server stopped');
+      console.info('🛑 Web Export Server stopped');
     }
   }
 
@@ -544,7 +544,7 @@ async function main() {
   const server = new WebExportServer();
 
   if (args.length === 0) {
-    console.log(`🌐 Web Export Dashboard v3.0
+    console.info(`🌐 Web Export Dashboard v3.0
 
 USAGE:
   bun web:serve [port]          # Start web server (default: 3000)
@@ -592,7 +592,7 @@ ACCESS DASHBOARD:
 
         // Keep running
         process.on('SIGINT', async () => {
-          console.log('\n🛑 Shutting down...');
+          console.info('\n🛑 Shutting down...');
           await serverWithPort.stop();
           process.exit(0);
         });
@@ -607,12 +607,12 @@ ACCESS DASHBOARD:
           const jsonData = server['data'];
           const filename = `syndicate-dashboard-${new Date().toISOString().slice(0, 10)}.json`;
           await Bun.write(filename, JSON.stringify(jsonData, null, 2));
-          console.log(`✅ Exported dashboard data to ${filename}`);
+          console.info(`✅ Exported dashboard data to ${filename}`);
         } else if (args[1] === 'html') {
           const html = server['generateDashboardHTML']();
           const filename = `syndicate-dashboard-${new Date().toISOString().slice(0, 10)}.html`;
           await Bun.write(filename, html);
-          console.log(`✅ Exported dashboard HTML to ${filename}`);
+          console.info(`✅ Exported dashboard HTML to ${filename}`);
         } else {
           console.error('Usage: bun web:export json|html');
           process.exit(1);
@@ -620,7 +620,7 @@ ACCESS DASHBOARD:
         break;
 
       case 'build':
-        console.log('🏗️ Building static dashboard files...');
+        console.info('🏗️ Building static dashboard files...');
 
         // Generate HTML
         const html = server['generateDashboardHTML']();
@@ -631,12 +631,12 @@ ACCESS DASHBOARD:
         const jsonData = server['data'];
         await Bun.write('dist/data.json', JSON.stringify(jsonData, null, 2));
 
-        console.log('✅ Static files built in ./dist/');
+        console.info('✅ Static files built in ./dist/');
         break;
 
       default:
         console.error(`Unknown command: ${command}`);
-        console.log('Use: bun web --help');
+        console.info('Use: bun web --help');
         process.exit(1);
     }
   } catch (error) {

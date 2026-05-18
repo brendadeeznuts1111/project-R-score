@@ -141,7 +141,7 @@ class YAMLMigrator {
         if (matches) {
           content = content.replace(pattern.find, pattern.replace);
           result.changes += matches.length;
-          console.log(`  ✅ ${pattern.description}: ${matches.length} replacements`);
+          console.info(`  ✅ ${pattern.description}: ${matches.length} replacements`);
         }
       }
 
@@ -149,19 +149,19 @@ class YAMLMigrator {
       const fsYamlPattern = /fs\.readFileSync\([^,]+,\s*['"]utf8['"]\)\s*\)\s*[,;]?\s*\n\s*.*load\(/g;
       const fsMatches = content.match(fsYamlPattern);
       if (fsMatches) {
-        console.log(`  ⚠️  Manual review needed: ${fsMatches.length} fs.readFileSync + Bun.yaml.parse patterns`);
+        console.info(`  ⚠️  Manual review needed: ${fsMatches.length} fs.readFileSync + Bun.yaml.parse patterns`);
         result.issues.push("Manual review required for fs.readFileSync + Bun.yaml.parse patterns");
       }
 
       // Write back if changed
       if (content !== originalContent) {
         writeFileSync(filePath, content);
-        console.log(`  📝 Updated: ${filePath}`);
+        console.info(`  📝 Updated: ${filePath}`);
       }
 
     } catch (error) {
       result.issues.push(`Failed to process file: ${error instanceof Error ? error.message : String(error)}`);
-      console.log(`  ❌ Error processing ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
+      console.info(`  ❌ Error processing ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
     }
 
     return result;
@@ -171,10 +171,10 @@ class YAMLMigrator {
    * Run migration on all files
    */
   async migrate(basePath: string = "."): Promise<void> {
-    console.log("🔍 Scanning for YAML library usage...\n");
+    console.info("🔍 Scanning for YAML library usage...\n");
 
     const files = await this.findYAMLFiles(basePath);
-    console.log(`📁 Found ${files.length} files to check\n`);
+    console.info(`📁 Found ${files.length} files to check\n`);
 
     for (const file of files) {
       try {
@@ -184,18 +184,18 @@ class YAMLMigrator {
         const hasYAMLUsage = /require\(['"](yaml|js-yaml)['"]\)|import.*from\s*['"](yaml|js-yaml)['"]|yaml\.(load|parse|dump|stringify)\(|\b(load|dump)\(/.test(content);
         
         if (hasYAMLUsage) {
-          console.log(`🔄 Processing: ${file}`);
+          console.info(`🔄 Processing: ${file}`);
           const result = this.migrateFile(file);
           this.results.push(result);
           
           if (result.issues.length > 0) {
-            console.log(`  ⚠️  Issues: ${result.issues.join(", ")}`);
+            console.info(`  ⚠️  Issues: ${result.issues.join(", ")}`);
           }
           
-          console.log("");
+          console.info("");
         }
       } catch (error) {
-        console.log(`❌ Failed to read ${file}: ${error instanceof Error ? error.message : String(error)}`);
+        console.info(`❌ Failed to read ${file}: ${error instanceof Error ? error.message : String(error)}`);
       }
     }
 
@@ -206,37 +206,37 @@ class YAMLMigrator {
    * Print migration summary
    */
   private printSummary(): void {
-    console.log("📊 Migration Summary");
-    console.log("=" .repeat(50));
+    console.info("📊 Migration Summary");
+    console.info("=" .repeat(50));
 
     const totalFiles = this.results.length;
     const totalChanges = this.results.reduce((sum, r) => sum + r.changes, 0);
     const filesWithIssues = this.results.filter(r => r.issues.length > 0).length;
 
-    console.log(`📁 Files processed: ${totalFiles}`);
-    console.log(`🔄 Total changes: ${totalChanges}`);
-    console.log(`⚠️  Files with issues: ${filesWithIssues}\n`);
+    console.info(`📁 Files processed: ${totalFiles}`);
+    console.info(`🔄 Total changes: ${totalChanges}`);
+    console.info(`⚠️  Files with issues: ${filesWithIssues}\n`);
 
     if (filesWithIssues > 0) {
-      console.log("⚠️  Files requiring manual review:");
+      console.info("⚠️  Files requiring manual review:");
       this.results
         .filter(r => r.issues.length > 0)
         .forEach(r => {
-          console.log(`  - ${r.file}: ${r.issues.join(", ")}`);
+          console.info(`  - ${r.file}: ${r.issues.join(", ")}`);
         });
-      console.log("");
+      console.info("");
     }
 
-    console.log("🎯 Next Steps:");
-    console.log("1. Review files with issues manually");
-    console.log("2. Run tests to verify functionality");
-    console.log("3. Update package.json to remove yaml/js-yaml dependencies");
-    console.log("4. Commit changes\n");
+    console.info("🎯 Next Steps:");
+    console.info("1. Review files with issues manually");
+    console.info("2. Run tests to verify functionality");
+    console.info("3. Update package.json to remove yaml/js-yaml dependencies");
+    console.info("4. Commit changes\n");
 
     if (totalChanges > 0) {
-      console.log("✅ Migration completed successfully!");
+      console.info("✅ Migration completed successfully!");
     } else {
-      console.log("ℹ️  No YAML library usage found - already compliant!");
+      console.info("ℹ️  No YAML library usage found - already compliant!");
     }
   }
 
@@ -244,8 +244,8 @@ class YAMLMigrator {
    * Generate a report of current YAML usage
    */
   async generateReport(basePath: string = "."): Promise<void> {
-    console.log("📋 YAML Usage Report");
-    console.log("=" .repeat(50));
+    console.info("📋 YAML Usage Report");
+    console.info("=" .repeat(50));
 
     const files = await this.findYAMLFiles(basePath);
     const usage: { [key: string]: string[] } = {};
@@ -279,21 +279,21 @@ class YAMLMigrator {
     }
 
     for (const [type, files] of Object.entries(usage)) {
-      console.log(`\n${type}: ${files.length} files`);
-      files.slice(0, 5).forEach(file => console.log(`  - ${file}`));
+      console.info(`\n${type}: ${files.length} files`);
+      files.slice(0, 5).forEach(file => console.info(`  - ${file}`));
       if (files.length > 5) {
-        console.log(`  ... and ${files.length - 5} more`);
+        console.info(`  ... and ${files.length - 5} more`);
       }
     }
 
     const hasNonBunUsage = Object.keys(usage).filter(key => !key.includes("Bun.YAML")).length > 0;
     
-    console.log("\n" + "=".repeat(50));
+    console.info("\n" + "=".repeat(50));
     if (hasNonBunUsage) {
-      console.log("⚠️  Non-Bun YAML usage detected - migration needed!");
-      console.log("Run: bun yaml-migration-helper.ts migrate");
+      console.info("⚠️  Non-Bun YAML usage detected - migration needed!");
+      console.info("Run: bun yaml-migration-helper.ts migrate");
     } else {
-      console.log("✅ All YAML usage is Bun-compliant!");
+      console.info("✅ All YAML usage is Bun-compliant!");
     }
   }
 }
@@ -305,7 +305,7 @@ const command = process.argv[2];
 async function main() {
   switch (command) {
     case "migrate":
-      console.log("🚀 Starting YAML Migration to Bun.YAML\n");
+      console.info("🚀 Starting YAML Migration to Bun.YAML\n");
       await migrator.migrate();
       break;
       
@@ -315,7 +315,7 @@ async function main() {
       
     case "--help":
     case "-h":
-      console.log(`
+      console.info(`
 YAML Migration Helper - Migrate to Bun.YAML
 
 Usage:
@@ -333,8 +333,8 @@ Examples:
       break;
       
     default:
-      console.log("❌ Unknown command. Use 'report' or 'migrate'");
-      console.log("Run 'bun yaml-migration-helper.ts --help' for usage");
+      console.info("❌ Unknown command. Use 'report' or 'migrate'");
+      console.info("Run 'bun yaml-migration-helper.ts --help' for usage");
       process.exit(1);
   }
 }

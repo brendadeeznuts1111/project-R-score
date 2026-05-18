@@ -27,7 +27,7 @@ describe("BunFile Performance", () => {
     const duration = performance.now() - start;
     const perFile = (duration / iterations) * 1_000_000; // Convert to ns
 
-    console.log(`Bun.file() creation: ${perFile.toFixed(1)}ns`);
+    console.info(`Bun.file() creation: ${perFile.toFixed(1)}ns`);
     // Threshold adjusted for environment, but still ensuring it's "fast" (< 1us)
     expect(perFile).toBeLessThan(1000);
   });
@@ -44,7 +44,7 @@ describe("BunFile Performance", () => {
     const duration = performance.now() - start;
     const perFile = (duration / iterations) * 1_000_000;
 
-    console.log(`Bun.file() with MOCK_S3: ${perFile.toFixed(1)}ns`);
+    console.info(`Bun.file() with MOCK_S3: ${perFile.toFixed(1)}ns`);
     expect(perFile).toBeLessThan(1000);
   });
 
@@ -58,7 +58,7 @@ describe("BunFile Performance", () => {
     expect(text).toBe("Hello, World!");
     expect(f.size).toBeGreaterThan(0);
 
-    console.log(`First read: ${duration.toFixed(2)}ms`);
+    console.info(`First read: ${duration.toFixed(2)}ms`);
   });
 
   test("Second read uses cache", async () => {
@@ -72,7 +72,7 @@ describe("BunFile Performance", () => {
     await f.text();
     const duration2 = performance.now() - start2;
 
-    console.log(`Second read (cached): ${duration2.toFixed(2)}ms`);
+    console.info(`Second read (cached): ${duration2.toFixed(2)}ms`);
     expect(duration2).toBeLessThan(1.0); // Should be very fast
   });
 
@@ -84,7 +84,7 @@ describe("BunFile Performance", () => {
     await Bun.write(f, data);
     const duration = performance.now() - start;
 
-    console.log(
+    console.info(
       `Write 1MB: ${duration.toFixed(2)}ms (${(data.length / duration / 1000).toFixed(2)} MB/s)`
     );
     expect(duration).toBeLessThan(100);

@@ -174,9 +174,9 @@ export function renderInheritanceDiff(diff: DiffConfig): void {
   const c = (hsl: string) => (Bun.color(hsl) ?? "").toString();
   const reset = "\x1b[0m";
   
-  console.log('\n' + "┌".repeat(58) + "┐");
-  console.log(`│  ${c("hsl(280, 60%, 60%)")}🔄 INHERITANCE DIFF: dev → staging → production${reset}      │`);
-  console.log("├".repeat(58) + "┤");
+  console.info('\n' + "┌".repeat(58) + "┐");
+  console.info(`│  ${c("hsl(280, 60%, 60%)")}🔄 INHERITANCE DIFF: dev → staging → production${reset}      │`);
+  console.info("├".repeat(58) + "┤");
   
   for (const change of diff.changes) {
     let icon = "✓";
@@ -207,10 +207,10 @@ export function renderInheritanceDiff(diff: DiffConfig): void {
     if (change.changeType === 'env-var') description = "(env var)";
     if (change.changeType === 'added') description = "(added)";
     
-    console.log(`│  ${keyDisplay} ${devDisplay} → ${stagingDisplay} → ${prodDisplay} ${color}${icon}${reset} ${description.padEnd(16)} │`);
+    console.info(`│  ${keyDisplay} ${devDisplay} → ${stagingDisplay} → ${prodDisplay} ${color}${icon}${reset} ${description.padEnd(16)} │`);
   }
   
-  console.log("└".repeat(58) + "┘");
-  console.log(`\n${c("hsl(210, 20%, 50%)")}Base anchor: ${diff.baseAnchor}${reset}`);
-  console.log(`${c("hsl(210, 20%, 50%)")}Environments: ${diff.environments.join(" → ")}${reset}\n`);
+  console.info("└".repeat(58) + "┘");
+  console.info(`\n${c("hsl(210, 20%, 50%)")}Base anchor: ${diff.baseAnchor}${reset}`);
+  console.info(`${c("hsl(210, 20%, 50%)")}Environments: ${diff.environments.join(" → ")}${reset}\n`);
 }

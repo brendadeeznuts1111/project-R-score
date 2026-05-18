@@ -297,7 +297,7 @@ export function extractAnomalyPerformanceMetrics(
  * );
  *
  * if (analysis.meanDifference.test.isSignificant) {
- *   console.log(`Performance regression detected: ${analysis.meanDifference.effectSize.magnitude} effect`);
+ *   console.info(`Performance regression detected: ${analysis.meanDifference.effectSize.magnitude} effect`);
  * }
  * ```
  */
@@ -382,7 +382,7 @@ export async function analyzeHistoricalPerformance(
  * );
  *
  * if (analysis.meanDifference.test.isSignificant) {
- *   console.log(`Anomalies cause ${analysis.meanDifference.effectSize.magnitude} performance impact`);
+ *   console.info(`Anomalies cause ${analysis.meanDifference.effectSize.magnitude} performance impact`);
  * }
  * ```
  */

@@ -138,7 +138,7 @@ export class ThemeManager {
   private applyTheme(name: string): void {
     const theme = this.themes.get(name);
     if (!theme) return;
-    console.log(
+    console.info(
       `\x1b[38;2;${this.hexToRgb(theme.colors.primary)}m🎨 Theme switched to: ${theme.name}\x1b[0m`,
     );
   }
@@ -167,26 +167,26 @@ export const styledConsole = {
   primary: (text: string) => {
     const theme = themeManager.getCurrentTheme();
     const rgb = themeManager.hexToRgb(theme.colors.primary);
-    console.log(`\x1b[38;2;${rgb}m${text}\x1b[0m`);
+    console.info(`\x1b[38;2;${rgb}m${text}\x1b[0m`);
   },
   success: (text: string) => {
     const theme = themeManager.getCurrentTheme();
     const rgb = themeManager.hexToRgb(theme.colors.success);
-    console.log(`\x1b[38;2;${rgb}m${text}\x1b[0m`);
+    console.info(`\x1b[38;2;${rgb}m${text}\x1b[0m`);
   },
   warning: (text: string) => {
     const theme = themeManager.getCurrentTheme();
     const rgb = themeManager.hexToRgb(theme.colors.warning);
-    console.log(`\x1b[38;2;${rgb}m${text}\x1b[0m`);
+    console.info(`\x1b[38;2;${rgb}m${text}\x1b[0m`);
   },
   error: (text: string) => {
     const theme = themeManager.getCurrentTheme();
     const rgb = themeManager.hexToRgb(theme.colors.error);
-    console.log(`\x1b[38;2;${rgb}m${text}\x1b[0m`);
+    console.info(`\x1b[38;2;${rgb}m${text}\x1b[0m`);
   },
   info: (text: string) => {
     const theme = themeManager.getCurrentTheme();
     const rgb = themeManager.hexToRgb(theme.colors.secondary);
-    console.log(`\x1b[38;2;${rgb}m${text}\x1b[0m`);
+    console.info(`\x1b[38;2;${rgb}m${text}\x1b[0m`);
   },
 };

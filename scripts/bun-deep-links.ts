@@ -66,12 +66,12 @@ async function runDeepLinkGenerator(): Promise<void> {
   const searchText = process.argv[2];
   const page = process.argv[3] || 'reference';
 
-  console.log(colorize('🔗 Bun Deep Link Generator', 'bright'));
-  console.log(colorize('===========================', 'cyan'));
+  console.info(colorize('🔗 Bun Deep Link Generator', 'bright'));
+  console.info(colorize('===========================', 'cyan'));
 
   if (!searchText) {
-    console.log(colorize('\n📚 Popular Bun API Deep Links:', 'bright'));
-    console.log();
+    console.info(colorize('\n📚 Popular Bun API Deep Links:', 'bright'));
+    console.info();
 
     // Generate popular deep links
     const popularTerms = [
@@ -100,68 +100,68 @@ async function runDeepLinkGenerator(): Promise<void> {
       const statusIcon = result.valid ? '✅' : '❌';
       const statusColor = result.valid ? 'green' : 'red';
 
-      console.log(`${statusIcon} ${colorize(`"${result.searchText}"`, 'cyan')}: ${colorize('valid', statusColor)}`);
-      console.log(`   ${colorize(result.url, 'blue')}`);
+      console.info(`${statusIcon} ${colorize(`"${result.searchText}"`, 'cyan')}: ${colorize('valid', statusColor)}`);
+      console.info(`   ${colorize(result.url, 'blue')}`);
 
       if (!result.valid) {
-        console.log(`   ${colorize(`Status: ${result.statusCode}`, 'red')}`);
+        console.info(`   ${colorize(`Status: ${result.statusCode}`, 'red')}`);
       }
 
-      console.log();
+      console.info();
     }
 
     // Summary
     const validCount = results.filter(r => r.valid).length;
     const invalidCount = results.filter(r => !r.valid).length;
 
-    console.log(colorize('📊 Summary:', 'bright'));
-    console.log(`✅ Valid deep links: ${colorize(validCount.toString(), 'green')}`);
-    console.log(`❌ Invalid deep links: ${colorize(invalidCount.toString(), 'red')}`);
-    console.log(`📈 Total generated: ${results.length}`);
+    console.info(colorize('📊 Summary:', 'bright'));
+    console.info(`✅ Valid deep links: ${colorize(validCount.toString(), 'green')}`);
+    console.info(`❌ Invalid deep links: ${colorize(invalidCount.toString(), 'red')}`);
+    console.info(`📈 Total generated: ${results.length}`);
 
-    console.log();
-    console.log(colorize('💡 Usage Tips:', 'bright'));
-    console.log('• Click any link to jump to that text in Bun documentation');
-    console.log('• Text fragments work in Chrome, Edge, and Safari');
-    console.log('• Links are shareable and bookmarkable');
-    console.log('• Use quotes for multi-word searches');
+    console.info();
+    console.info(colorize('💡 Usage Tips:', 'bright'));
+    console.info('• Click any link to jump to that text in Bun documentation');
+    console.info('• Text fragments work in Chrome, Edge, and Safari');
+    console.info('• Links are shareable and bookmarkable');
+    console.info('• Use quotes for multi-word searches');
 
   } else {
-    console.log(colorize(`\n🔍 Generating deep link for: "${searchText}"`, 'yellow'));
-    console.log();
+    console.info(colorize(`\n🔍 Generating deep link for: "${searchText}"`, 'yellow'));
+    console.info();
 
     const result = await createDeepLink(searchText, page);
 
     const statusIcon = result.valid ? '✅' : '❌';
     const statusColor = result.valid ? 'green' : 'red';
 
-    console.log(`${statusIcon} ${colorize('Deep Link Generated:', 'bright')}`);
-    console.log(`   Search Text: ${colorize(`"${result.searchText}"`, 'cyan')}`);
-    console.log(`   Page: ${colorize(result.page, 'cyan')}`);
-    console.log(`   Encoded: ${colorize(result.encodedText, 'gray')}`);
-    console.log(`   URL: ${colorize(result.url, 'blue')}`);
-    console.log(`   Status: ${colorize(result.valid ? 'Valid' : 'Invalid', statusColor)}`);
+    console.info(`${statusIcon} ${colorize('Deep Link Generated:', 'bright')}`);
+    console.info(`   Search Text: ${colorize(`"${result.searchText}"`, 'cyan')}`);
+    console.info(`   Page: ${colorize(result.page, 'cyan')}`);
+    console.info(`   Encoded: ${colorize(result.encodedText, 'gray')}`);
+    console.info(`   URL: ${colorize(result.url, 'blue')}`);
+    console.info(`   Status: ${colorize(result.valid ? 'Valid' : 'Invalid', statusColor)}`);
 
     if (!result.valid) {
-      console.log(`   Error Code: ${colorize(result.statusCode?.toString() || 'Unknown', 'red')}`);
+      console.info(`   Error Code: ${colorize(result.statusCode?.toString() || 'Unknown', 'red')}`);
     }
 
-    console.log();
-    console.log(colorize('🚀 Ready to use!', 'green'));
+    console.info();
+    console.info(colorize('🚀 Ready to use!', 'green'));
 
     if (result.valid) {
-      console.log(colorize('💡 Tip: Click the link above to test it in your browser', 'gray'));
+      console.info(colorize('💡 Tip: Click the link above to test it in your browser', 'gray'));
     } else {
-      console.log(colorize('⚠️  This text may not exist in the documentation', 'yellow'));
-      console.log(colorize('   Try different wording or check the actual text on the page', 'gray'));
+      console.info(colorize('⚠️  This text may not exist in the documentation', 'yellow'));
+      console.info(colorize('   Try different wording or check the actual text on the page', 'gray'));
     }
   }
 
-  console.log();
-  console.log(colorize('🎯 Examples:', 'bright'));
-  console.log(`   bun run bun-deep-links.ts "Bun.env"`);
-  console.log(`   bun run bun-deep-links.ts "WebSocket" docs`);
-  console.log(`   bun run bun-deep-links.ts  # Show popular links`);
+  console.info();
+  console.info(colorize('🎯 Examples:', 'bright'));
+  console.info(`   bun run bun-deep-links.ts "Bun.env"`);
+  console.info(`   bun run bun-deep-links.ts "WebSocket" docs`);
+  console.info(`   bun run bun-deep-links.ts  # Show popular links`);
 }
 
 // Run the deep link generator

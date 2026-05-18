@@ -1004,13 +1004,13 @@ export default function SystemsDashboard() {
       {
         label: "View Details",
         icon: "👁️",
-        action: (row, index) => console.log("View details:", row),
+        action: (row, index) => console.info("View details:", row),
         condition: (row) => row.status !== "critical"
       },
       {
         label: "Restart",
         icon: "🔄",
-        action: (row, index) => console.log("Restart server:", row.name),
+        action: (row, index) => console.info("Restart server:", row.name),
         condition: (row) => row.status === "critical"
       }
     ]
@@ -1332,10 +1332,10 @@ export default function SystemsDashboard() {
 const tableData = ${JSON.stringify(processedData, null, 2)};
 
 // Basic table with enhanced options
-console.log(Bun.inspect.table(tableData, ${JSON.stringify(options, null, 2)}));
+console.info(Bun.inspect.table(tableData, ${JSON.stringify(options, null, 2)}));
 
 // Custom column selection
-console.log(Bun.inspect.table(tableData, ["name", "cpu", "status"], ${JSON.stringify(options, null, 2)}));`;
+console.info(Bun.inspect.table(tableData, ["name", "cpu", "status"], ${JSON.stringify(options, null, 2)}));`;
   };
 
   const getMethodColor = (method: string) => {
@@ -1395,13 +1395,13 @@ const serverData = ${JSON.stringify(servers.map(s => ({
 })), null, 2)};
 
 // Basic Bun table output
-console.log(Bun.inspect.table(serverData));
+console.info(Bun.inspect.table(serverData));
 
 // With custom column selection
-console.log(Bun.inspect.table(serverData, ["name", "cpu", "memory", "status"]));
+console.info(Bun.inspect.table(serverData, ["name", "cpu", "memory", "status"]));
 
 // With colors enabled
-console.log(Bun.inspect.table(serverData, { colors: true }));
+console.info(Bun.inspect.table(serverData, { colors: true }));
 
 // Utility functions for formatting
 function formatBytes(bytes) {
@@ -1419,7 +1419,7 @@ function formatHealthCheckIcon(status) {
       code = `// API Endpoints Table with Bun.inspect.table()
 const apiData = ${JSON.stringify(apiEndpoints, null, 2)};
 
-console.log(Bun.inspect.table(apiData, ["method", "path", "latency"], { colors: true }));`;
+console.info(Bun.inspect.table(apiData, ["method", "path", "latency"], { colors: true }));`;
     } else if (type === "performance") {
       code = `// Performance Metrics Table with Bun.inspect.table()
 const metricsData = ${JSON.stringify(performanceMetrics.map(m => ({
@@ -1431,7 +1431,7 @@ const metricsData = ${JSON.stringify(performanceMetrics.map(m => ({
   status: m.status
 })), null, 2)};
 
-console.log(Bun.inspect.table(metricsData, ["metric", "value", "status"], { colors: true }));`;
+console.info(Bun.inspect.table(metricsData, ["metric", "value", "status"], { colors: true }));`;
     } else if (type === "bun-apis") {
       code = `// Bun APIs Configuration Matrix
 const bunAPIs = {
@@ -1441,10 +1441,10 @@ const bunAPIs = {
   developmentWorkflow: ${JSON.stringify(developmentWorkflow, null, 2)}
 };
 
-console.log(Bun.inspect.table(bunAPIs.transpilation));
-console.log(Bun.inspect.table(bunAPIs.networking));
-console.log(Bun.inspect.table(bunAPIs.global));
-console.log(Bun.inspect.table(bunAPIs.developmentWorkflow));`;
+console.info(Bun.inspect.table(bunAPIs.transpilation));
+console.info(Bun.inspect.table(bunAPIs.networking));
+console.info(Bun.inspect.table(bunAPIs.global));
+console.info(Bun.inspect.table(bunAPIs.developmentWorkflow));`;
     } else if (type === "development-workflow") {
       code = `// Bun Development Workflow Configuration
 const devConfig = ${JSON.stringify(developmentWorkflow, null, 2)};
@@ -1461,7 +1461,7 @@ declare global {
 }
 
 globalThis.reloadCount ??= 0;
-console.log(\`Reloaded \${globalThis.reloadCount} times\`);
+console.info(\`Reloaded \${globalThis.reloadCount} times\`);
 globalThis.reloadCount++;
 
 // Keep process alive
@@ -1558,19 +1558,19 @@ const commandConfig = ${JSON.stringify(commandLine, null, 2)};
 
 // Optimization Configuration for Bun
 const { optimization } = commandConfig;
-console.log("⚡ Optimization Configuration Applied:");
-console.log("Smol Mode:", ${commandLine.optimization?.smol || false});
-console.log("Minify:", ${commandLine.optimization?.minify || false});
-console.log("Compress:", ${commandLine.optimization?.compress || true});
-console.log("Tree Shaking:", ${commandLine.optimization?.treeShaking || true});
-console.log("Bundle Size:", "${commandLine.optimization?.bundleSize || 'default'}");
-console.log("Target:", "${commandLine.optimization?.target || 'bun'}");
+console.info("⚡ Optimization Configuration Applied:");
+console.info("Smol Mode:", ${commandLine.optimization?.smol || false});
+console.info("Minify:", ${commandLine.optimization?.minify || false});
+console.info("Compress:", ${commandLine.optimization?.compress || true});
+console.info("Tree Shaking:", ${commandLine.optimization?.treeShaking || true});
+console.info("Bundle Size:", "${commandLine.optimization?.bundleSize || 'default'}");
+console.info("Target:", "${commandLine.optimization?.target || 'bun'}");
 
 // Configure optimization settings
 const configureOptimization = () => {
   // Apply smol mode optimizations
   if (${commandLine.optimization?.smol || false}) {
-    console.log("🔥 Smol mode activated - Maximum optimization enabled");
+    console.info("🔥 Smol mode activated - Maximum optimization enabled");
     // Smol mode enables all optimizations
     globalThis.BUN_SMOL = true;
   }
@@ -1604,7 +1604,7 @@ configureConsole();
 const optimizationUtils = {
   // Enable smol mode for maximum performance
   enableSmolMode: () => {
-    console.log("🚀 Enabling smol mode...");
+    console.info("🚀 Enabling smol mode...");
     // Enable all optimizations
     const optimizations = {
       minify: true,
@@ -1616,7 +1616,7 @@ const optimizationUtils = {
     };
 
     Object.entries(optimizations).forEach(([opt, enabled]) => {
-      console.log(\`  ✅ \${opt}: \${enabled}\`);
+      console.info(\`  ✅ \${opt}: \${enabled}\`);
     });
 
     return optimizations;
@@ -1690,92 +1690,92 @@ const deepObject = {
   }
 };
 
-console.log("🔍 Testing Console Depth:");
-console.log(deepObject);
+console.info("🔍 Testing Console Depth:");
+console.info(deepObject);
 
 // Test array and buffer limits
 const largeArray = Array.from({ length: 150 }, (_, i) => ({ index: i, data: \`Item \${i}\` }));
 const largeBuffer = Buffer.from("A".repeat(1500));
 
-console.log("📊 Testing Array Limits:");
-console.log(largeArray);
+console.info("📊 Testing Array Limits:");
+console.info(largeArray);
 
-console.log("📋 Testing Buffer Limits:");
-console.log(largeBuffer);
+console.info("📋 Testing Buffer Limits:");
+console.info(largeBuffer);
 
 // Demonstrate optimization features
-console.log("⚡ Optimization Features:");
-console.log("Status:", optimizationUtils.getOptimizationStatus());
+console.info("⚡ Optimization Features:");
+console.info("Status:", optimizationUtils.getOptimizationStatus());
 
 // Calculate size savings example
 const exampleSize = 1024 * 1024; // 1MB
 const savings = optimizationUtils.calculateSavings(exampleSize);
-console.log("💾 Size Savings Example:");
-console.log("Original:", (savings.original / 1024).toFixed(1) + "KB");
-console.log("Final:", (savings.final / 1024).toFixed(1) + "KB");
-console.log("Savings:", savings.savings);
+console.info("💾 Size Savings Example:");
+console.info("Original:", (savings.original / 1024).toFixed(1) + "KB");
+console.info("Final:", (savings.final / 1024).toFixed(1) + "KB");
+console.info("Savings:", savings.savings);
 
 ${commandLine.optimization?.smol ? `
 // Smol mode specific optimizations
-console.log("🔥 Smol Mode Active:");
-console.log("- Maximum code elimination");
-console.log("- Aggressive minification");
-console.log("- Tree shaking enabled");
-console.log("- Dead code removal");
-console.log("- Constant folding");
-console.log("- Function inlining");
-console.log("- Bundle size optimization");
+console.info("🔥 Smol Mode Active:");
+console.info("- Maximum code elimination");
+console.info("- Aggressive minification");
+console.info("- Tree shaking enabled");
+console.info("- Dead code removal");
+console.info("- Constant folding");
+console.info("- Function inlining");
+console.info("- Bundle size optimization");
 ` : ''}
 
 // STDIN Pipe Examples with bun run -
 // Read from stdin and execute as TypeScript with JSX support
 ${commandLine.stdin?.enabled ? `
 // Basic stdin execution
-console.log("📡 Basic stdin execution:");
-// Example: echo "console.log('Hello')" | bun run -
+console.info("📡 Basic stdin execution:");
+// Example: echo "console.info('Hello')" | bun run -
 // Output: Hello
 
 // TypeScript in stdin
-console.log("🔷 TypeScript execution:");
-// Example: echo "const x: number = 42; console.log(x);" | bun run -
+console.info("🔷 TypeScript execution:");
+// Example: echo "const x: number = 42; console.info(x);" | bun run -
 // Output: 42
 
 // JSX in stdin
-console.log("⚛️ JSX execution:");
-// Example: echo "const jsx = <div>Hello JSX</div>; console.log(jsx);" | bun run -
+console.info("⚛️ JSX execution:");
+// Example: echo "const jsx = <div>Hello JSX</div>; console.info(jsx);" | bun run -
 // Output: <div>Hello JSX</div>
 
 // File redirection examples
-console.log("📁 File redirection:");
+console.info("📁 File redirection:");
 // Example: echo "console.log!('This is TypeScript!' as any)" > secretly-typescript.js
 //          bun run - < secretly-typescript.js
 // Output: This is TypeScript!
 
 // BunFile instances for stdin, stdout, stderr
-console.log("📂 BunFile Stream Management:");
-console.log("Bun.stdin (readonly):", typeof Bun.stdin);
-console.log("Bun.stdout (writable):", typeof Bun.stdout);
-console.log("Bun.stderr (writable):", typeof Bun.stderr);
+console.info("📂 BunFile Stream Management:");
+console.info("Bun.stdin (readonly):", typeof Bun.stdin);
+console.info("Bun.stdout (writable):", typeof Bun.stdout);
+console.info("Bun.stderr (writable):", typeof Bun.stderr);
 
 // Advanced stdin processing with Bun.stdin
 const processStdinWithBunFile = async () => {
-  console.log("🔧 Processing stdin with Bun.stdin...");
+  console.info("🔧 Processing stdin with Bun.stdin...");
 
   // Bun.stdin is a readonly BunFile instance
   const stdin = Bun.stdin;
-  console.log("✅ stdin type:", stdin.constructor.name);
-  console.log("📏 stdin size:", await stdin.size());
+  console.info("✅ stdin type:", stdin.constructor.name);
+  console.info("📏 stdin size:", await stdin.size());
 
   // Read from stdin as text
   const decoder = new TextDecoder("${commandLine.stdin.encoding}");
 
   for await (const chunk of stdin) {
     const data = decoder.decode(chunk);
-    console.log("📥 Received from stdin:", data);
+    console.info("📥 Received from stdin:", data);
 
     ${commandLine.stdin.transform ? `// Transform data
     const transformed = data.toUpperCase().trim();
-    console.log("🔄 Transformed:", transformed);` : ''}
+    console.info("🔄 Transformed:", transformed);` : ''}
 
     // Write to stdout using Bun.stdout
     if (Bun.stdout) {
@@ -1786,11 +1786,11 @@ const processStdinWithBunFile = async () => {
 
 // Advanced stdout management with Bun.stdout
 const manageStdoutWithBunFile = async () => {
-  console.log("📤 Managing stdout with Bun.stdout...");
+  console.info("📤 Managing stdout with Bun.stdout...");
 
   // Bun.stdout is a writable BunFile instance
   const stdout = Bun.stdout;
-  console.log("✅ stdout type:", stdout.constructor.name);
+  console.info("✅ stdout type:", stdout.constructor.name);
 
   ${commandLine.stdout?.pipeTo ? `
   // Redirect stdout to file
@@ -1801,19 +1801,19 @@ const manageStdoutWithBunFile = async () => {
   await writer.write("📝 Custom output from Bun.stdout\\n");
   await writer.end();
 
-  console.log("✅ Stdout redirected to: ${commandLine.stdout.pipeTo}");` : `
+  console.info("✅ Stdout redirected to: ${commandLine.stdout.pipeTo}");` : `
   // Write directly to stdout
   await stdout.write("📝 Direct write to Bun.stdout\\n");
-  console.log("✅ Output written to console");`}
+  console.info("✅ Output written to console");`}
 };
 
 // Advanced stderr management with Bun.stderr
 const manageStderrWithBunFile = async () => {
-  console.log("❌ Managing stderr with Bun.stderr...");
+  console.info("❌ Managing stderr with Bun.stderr...");
 
   // Bun.stderr is a writable BunFile instance
   const stderr = Bun.stderr;
-  console.log("✅ stderr type:", stderr.constructor.name);
+  console.info("✅ stderr type:", stderr.constructor.name);
 
   ${commandLine.stderr?.pipeTo ? `
   // Redirect stderr to file
@@ -1824,17 +1824,17 @@ const manageStderrWithBunFile = async () => {
   await errorWriter.write("❌ Error output from Bun.stderr\\n");
   await errorWriter.end();
 
-  console.log("✅ Stderr redirected to: ${commandLine.stderr.pipeTo}");` : `
+  console.info("✅ Stderr redirected to: ${commandLine.stderr.pipeTo}");` : `
   // Write directly to stderr
   await stderr.write("❌ Direct write to Bun.stderr\\n");
-  console.log("✅ Error output written to console");`}
+  console.info("✅ Error output written to console");`}
 };
 
 // Stream manipulation utilities
 const streamUtils = {
   // Pipe between streams
   pipeStream: async (source, destination) => {
-    console.log("🔄 Piping stream:", source.constructor.name, "→", destination.constructor.name);
+    console.info("🔄 Piping stream:", source.constructor.name, "→", destination.constructor.name);
 
     for await (const chunk of source) {
       await destination.write(chunk);
@@ -1863,22 +1863,22 @@ const streamUtils = {
 
   // Demonstrate all streams
   demonstrateStreams: async () => {
-    console.log("📊 Stream Information:");
+    console.info("📊 Stream Information:");
 
     const stdinInfo = await streamUtils.getStreamInfo(Bun.stdin, "stdin");
     const stdoutInfo = await streamUtils.getStreamInfo(Bun.stdout, "stdout");
     const stderrInfo = await streamUtils.getStreamInfo(Bun.stderr, "stderr");
 
-    console.log("📥 stdin:", stdinInfo);
-    console.log("📤 stdout:", stdoutInfo);
-    console.log("❌ stderr:", stderrInfo);
+    console.info("📥 stdin:", stdinInfo);
+    console.info("📤 stdout:", stdoutInfo);
+    console.info("❌ stderr:", stderrInfo);
   }
 };
 
 // File redirect simulation with BunFile API
 ${commandLine.stdin?.fileRedirect ? `
 const simulateFileRedirectWithBunFile = async () => {
-  console.log("📂 File redirect with BunFile API:");
+  console.info("📂 File redirect with BunFile API:");
 
   // Create a file with TypeScript code
   const typescriptFile = Bun.file("secretly-typescript.js");
@@ -1888,11 +1888,11 @@ const simulateFileRedirectWithBunFile = async () => {
 
   // Read the file and pipe to stdin simulation
   const content = await typescriptFile.text();
-  console.log("📄 File content:", content);
+  console.info("📄 File content:", content);
 
   // Simulate bun run - < secretly-typescript.js
-  console.log("🚀 Simulating: bun run - < secretly-typescript.js");
-  console.log("✅ TypeScript code executed via stdin");
+  console.info("🚀 Simulating: bun run - < secretly-typescript.js");
+  console.info("✅ TypeScript code executed via stdin");
 
   // Clean up
   await Bun.file("secretly-typescript.js").delete();
@@ -1901,7 +1901,7 @@ const simulateFileRedirectWithBunFile = async () => {
 simulateFileRedirectWithBunFile();` : ''}
 
 // Execute stream demonstrations
-console.log("🔧 BunFile Stream Examples:");
+console.info("🔧 BunFile Stream Examples:");
 await processStdinWithBunFile();
 await manageStdoutWithBunFile();
 await manageStderrWithBunFile();
@@ -1913,33 +1913,33 @@ const decoder = new TextDecoder("${commandLine.stdin.encoding}");
 
 for await (const chunk of stdin) {
   const data = decoder.decode(chunk);
-  console.log("📥 Received from stdin:", data);
+  console.info("📥 Received from stdin:", data);
 
   ${commandLine.stdin.transform ? `// Transform data
   const transformed = data.toUpperCase().trim();
-  console.log("🔄 Transformed:", transformed);` : ''}
+  console.info("🔄 Transformed:", transformed);` : ''}
 }
 
 // Advanced stdin processing
 const processStdinCode = async (code) => {
-  console.log("🔧 Processing stdin code...");
+  console.info("🔧 Processing stdin code...");
 
   // All stdin code is treated as TypeScript with JSX support
   const { treatAsTypeScript, jsxSupport } = ${JSON.stringify(commandLine.stdin)};
 
   if (treatAsTypeScript) {
-    console.log("✅ TypeScript support enabled");
+    console.info("✅ TypeScript support enabled");
   }
 
   if (jsxSupport) {
-    console.log("⚛️ JSX support enabled");
+    console.info("⚛️ JSX support enabled");
   }
 
   // Execute the code without temporary files
   try {
     const { directExecution } = ${JSON.stringify(commandLine.stdin)};
     if (directExecution) {
-      console.log("⚡ Direct execution mode - no temporary files");
+      console.info("⚡ Direct execution mode - no temporary files");
       // Code is executed directly from stdin
     }
 
@@ -1954,18 +1954,18 @@ const processStdinCode = async (code) => {
 const stdinUtils = {
   // Execute code from stdin
   executeFromStdin: async (code) => {
-    console.log("🚀 Executing from stdin...");
-    console.log("📝 Code:", code);
-    console.log("🔷 TypeScript: ${commandLine.stdin?.treatAsTypeScript ? 'enabled' : 'disabled'}");
-    console.log("⚛️ JSX: ${commandLine.stdin?.jsxSupport ? 'enabled' : 'disabled'}");
-    console.log("⚡ Direct execution: ${commandLine.stdin?.directExecution ? 'enabled' : 'disabled'}");
+    console.info("🚀 Executing from stdin...");
+    console.info("📝 Code:", code);
+    console.info("🔷 TypeScript: ${commandLine.stdin?.treatAsTypeScript ? 'enabled' : 'disabled'}");
+    console.info("⚛️ JSX: ${commandLine.stdin?.jsxSupport ? 'enabled' : 'disabled'}");
+    console.info("⚡ Direct execution: ${commandLine.stdin?.directExecution ? 'enabled' : 'disabled'}");
   },
 
   // Process file redirection
   processFileRedirect: (filename) => {
-    console.log("📁 Processing file redirect:", filename);
-    console.log("🔷 Treated as TypeScript with JSX support");
-    console.log("⚡ No temporary files created");
+    console.info("📁 Processing file redirect:", filename);
+    console.info("🔷 Treated as TypeScript with JSX support");
+    console.info("⚡ No temporary files created");
   },
 
   // Show stdin capabilities
@@ -1986,35 +1986,35 @@ const stdinUtils = {
 };
 
 // Demonstrate stdin capabilities
-console.log("🔧 Stdin Configuration:");
-console.log(JSON.stringify(stdinUtils.showCapabilities(), null, 2));
+console.info("🔧 Stdin Configuration:");
+console.info(JSON.stringify(stdinUtils.showCapabilities(), null, 2));
 
 // Example usage scenarios
-console.log("💻 Usage Examples:");
-console.log("1. Basic execution:");
-console.log("   echo 'console.log('Hello')' | bun run -");
-console.log("");
-console.log("2. TypeScript execution:");
-console.log("   echo 'const x: number = 42; console.log(x);' | bun run -");
-console.log("");
-console.log("3. JSX execution:");
-console.log("   echo 'const jsx = <div>Hello</div>; console.log(jsx);' | bun run -");
-console.log("");
-console.log("4. File redirection:");
-console.log("   bun run - < script.js");
-console.log("");
-console.log("5. Data processing:");
-console.log("   cat data.json | bun run -");
+console.info("💻 Usage Examples:");
+console.info("1. Basic execution:");
+console.info("   echo 'console.info('Hello')' | bun run -");
+console.info("");
+console.info("2. TypeScript execution:");
+console.info("   echo 'const x: number = 42; console.info(x);' | bun run -");
+console.info("");
+console.info("3. JSX execution:");
+console.info("   echo 'const jsx = <div>Hello</div>; console.info(jsx);' | bun run -");
+console.info("");
+console.info("4. File redirection:");
+console.info("   bun run - < script.js");
+console.info("");
+console.info("5. Data processing:");
+console.info("   cat data.json | bun run -");
 
 // Pipe from file example
 const fileContent = await Bun.file("${commandLine.stdin?.pipeFrom || 'input.txt'}").text();
-console.log("📄 File content processed via stdin:");
-console.log(fileContent);
+console.info("📄 File content processed via stdin:");
+console.info(fileContent);
 
 // Filter and process
 const lines = fileContent.split('\\n');
 ${commandLine.stdin?.filter ? `const filtered = lines.filter(line => line.includes("${commandLine.stdin.filter}"));` : 'const filtered = lines;'}
-console.log("🔍 Filtered lines:", filtered);
+console.info("🔍 Filtered lines:", filtered);
 
 ` : '// STDIN disabled'}
 
@@ -2025,10 +2025,10 @@ const outputFile = Bun.file("${commandLine.stdout.pipeTo}");
 const writer = outputFile.writer();
 await writer.write("Hello from Bun.stdout!");
 await writer.end();
-console.log("✅ Output written to ${commandLine.stdout.pipeTo}");` : `
+console.info("✅ Output written to ${commandLine.stdout.pipeTo}");` : `
 // Write to console using Bun.stdout
 await Bun.stdout.write("Hello from Bun.stdout!\\n");
-console.log("✅ Output written to console");`}
+console.info("✅ Output written to console");`}
 
 // STDERR Configuration with Bun.stderr
 ${commandLine.stderr?.pipeTo ? `
@@ -2037,10 +2037,10 @@ const errorFile = Bun.file("${commandLine.stderr?.pipeTo}");
 const errorWriter = errorFile.writer();
 await errorWriter.write("Error occurred!");
 await errorWriter.end();
-console.log("✅ Errors written to ${commandLine.stderr.pipeTo}");` : `
+console.info("✅ Errors written to ${commandLine.stderr.pipeTo}");` : `
 // Write errors to console using Bun.stderr
 await Bun.stderr.write("Error occurred!\\n");
-console.log("✅ Errors written to console");`}
+console.info("✅ Errors written to console");`}
 
 // Command Line Flags Usage
 const { flags } = commandConfig;
@@ -2114,29 +2114,29 @@ const consoleUtils = {
   inspectDeep: (obj, customDepth = ${commandLine.console?.depth || 10}) => {
     const originalDepth = Bun.inspect.defaultOptions.depth;
     Bun.inspect.defaultOptions.depth = customDepth;
-    console.log(obj);
+    console.info(obj);
     Bun.inspect.defaultOptions.depth = originalDepth;
   },
 
   logCompact: (obj) => {
     const originalCompact = Bun.inspect.defaultOptions.compact;
     Bun.inspect.defaultOptions.compact = true;
-    console.log(obj);
+    console.info(obj);
     Bun.inspect.defaultOptions.compact = originalCompact;
   },
 
   logColorless: (obj) => {
     const originalColors = Bun.inspect.defaultOptions.colors;
     Bun.inspect.defaultOptions.colors = false;
-    console.log(obj);
+    console.info(obj);
     Bun.inspect.defaultOptions.colors = originalColors;
   }
 };
 
 // Example usage
-console.log("Generated command:", buildCommand());
-console.log("Working directory:", commandConfig.execution?.workingDirectory);
-console.log("Memory limit:", commandConfig.execution?.heapLimit);
+console.info("Generated command:", buildCommand());
+console.info("Working directory:", commandConfig.execution?.workingDirectory);
+console.info("Memory limit:", commandConfig.execution?.heapLimit);
 
 // Process stdin data with transformation
 const processData = async (input) => {
@@ -2169,7 +2169,7 @@ const processData = async (input) => {
 // Usage examples:
 // bun --smol run script.js
 // bun --smol --minify --compress run script.js
-// bun --smol --console-depth 15 --eval "console.log(optimizationUtils.getOptimizationStatus())"
+// bun --smol --console-depth 15 --eval "console.info(optimizationUtils.getOptimizationStatus())"
 // cat data.txt | bun --smol run script.js`;
     }
 
@@ -2226,48 +2226,48 @@ const handleS3Upload = async () => {
     setUploadStatus(`☁️ Uploading CSV report to ${provider}...`);
 
     // Example: Force download with custom filename
-    console.log(`// 📄 Force download with custom filename`);
-    console.log(`await s3.write("reports/data.csv", csvData, {`);
-    console.log(`  contentDisposition: 'attachment; filename="report-2024.csv"'`);
-    console.log(`});`);
+    console.info(`// 📄 Force download with custom filename`);
+    console.info(`await s3.write("reports/data.csv", csvData, {`);
+    console.info(`  contentDisposition: 'attachment; filename="report-2024.csv"'`);
+    console.info(`});`);
 
     await new Promise(resolve => setTimeout(resolve, 800));
     setUploadStatus(`🖼️ Uploading image to ${provider}...`);
 
     // Example: Show inline in browser
-    console.log(`// 🖼️ Show inline in browser`);
-    console.log(`await s3.write("assets/image.png", imageData, {`);
-    console.log(`  contentDisposition: "inline"`);
-    console.log(`});`);
+    console.info(`// 🖼️ Show inline in browser`);
+    console.info(`await s3.write("assets/image.png", imageData, {`);
+    console.info(`  contentDisposition: "inline"`);
+    console.info(`});`);
 
     await new Promise(resolve => setTimeout(resolve, 800));
     setUploadStatus(`📋 Uploading PDF invoice to ${provider}...`);
 
     // Example: Dynamic filenames
-    console.log(`// 📋 Dynamic filenames`);
-    console.log(`const user = { id: "user123", name: "John Doe" };`);
-    console.log(`await s3.write(\`\${user.id}.pdf\`, pdfData, {`);
-    console.log(`  contentDisposition: \`attachment; filename="\${user.name}-invoice.pdf"\``);
-    console.log(`});`);
+    console.info(`// 📋 Dynamic filenames`);
+    console.info(`const user = { id: "user123", name: "John Doe" };`);
+    console.info(`await s3.write(\`\${user.id}.pdf\`, pdfData, {`);
+    console.info(`  contentDisposition: \`attachment; filename="\${user.name}-invoice.pdf"\``);
+    console.info(`});`);
 
     await new Promise(resolve => setTimeout(resolve, 800));
     setUploadStatus(`✅ Upload completed! Check console for ${provider} examples.`);
 
     // Instructions for the user
     if (uploadProvider === "r2") {
-      console.log("\n📋 To upload to Cloudflare R2, run: bun run r2:upload");
-      console.log("Make sure to set CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_R2_ACCESS_KEY_ID, CLOUDFLARE_R2_SECRET_ACCESS_KEY, and R2_BUCKET environment variables");
-      console.log("\n🔧 Content-Disposition Examples for R2:");
-      console.log("// Force download: attachment; filename='report.csv'");
-      console.log("// Inline display: inline");
-      console.log("// Dynamic: attachment; filename='user-invoice.pdf'");
+      console.info("\n📋 To upload to Cloudflare R2, run: bun run r2:upload");
+      console.info("Make sure to set CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_R2_ACCESS_KEY_ID, CLOUDFLARE_R2_SECRET_ACCESS_KEY, and R2_BUCKET environment variables");
+      console.info("\n🔧 Content-Disposition Examples for R2:");
+      console.info("// Force download: attachment; filename='report.csv'");
+      console.info("// Inline display: inline");
+      console.info("// Dynamic: attachment; filename='user-invoice.pdf'");
     } else {
-      console.log("\n📋 To upload to S3, run: bun run s3:upload");
-      console.log("Make sure to set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and S3_BUCKET environment variables");
-      console.log("\n🔧 Content-Disposition Examples for S3:");
-      console.log("// Force download: attachment; filename='report.csv'");
-      console.log("// Inline display: inline");
-      console.log("// Dynamic: attachment; filename='user-invoice.pdf'");
+      console.info("\n📋 To upload to S3, run: bun run s3:upload");
+      console.info("Make sure to set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and S3_BUCKET environment variables");
+      console.info("\n🔧 Content-Disposition Examples for S3:");
+      console.info("// Force download: attachment; filename='report.csv'");
+      console.info("// Inline display: inline");
+      console.info("// Dynamic: attachment; filename='user-invoice.pdf'");
     }
 
   } catch (error) {
@@ -2725,7 +2725,7 @@ headers.append('Set-Cookie', 'theme=dark');
 const jsonString = JSON.stringify(headers);
 const headersObject = JSON.parse(jsonString);
 
-console.log(headersObject);
+console.info(headersObject);
 // Output:
 // {
 //   "content-type": "application/json", // Well-known header lowercased
@@ -3416,7 +3416,7 @@ declare global {
 }
 
 globalThis.reloadCount ??= 0;
-console.log(\`🔥 Reloaded \${globalThis.reloadCount} times\`);
+console.info(\`🔥 Reloaded \${globalThis.reloadCount} times\`);
 globalThis.reloadCount++;
 
 import { serve } from "bun";
@@ -4722,10 +4722,10 @@ cat log.txt | bun run -`}
                   <h4 className="text-purple-200 font-medium mb-2">Language Examples:</h4>
                   <pre className="text-purple-300 text-xs bg-black/30 p-2 rounded overflow-x-auto">
 {`# JavaScript (auto-converted to TypeScript)
-echo "console.log('Hello')" | bun run -
+echo "console.info('Hello')" | bun run -
 
 # TypeScript with types
-echo "const x: number = 42; console.log(x);" | bun run -
+echo "const x: number = 42; console.info(x);" | bun run -
 
 # JSX components
 echo "const jsx = <div>Hello JSX</div>;" | bun run -
@@ -4927,7 +4927,7 @@ echo "const Component = (props: any) => <div>{props.name}</div>;" | bun run -`}
               <h3 className="text-white font-semibold mb-2">Basic Usage</h3>
               <pre className="text-xs text-green-400 overflow-x-auto">
                 {`import { inspect } from "bun";
-console.log(inspect.table(data));`}
+console.info(inspect.table(data));`}
               </pre>
             </div>
             <div className="bg-black/30 rounded-lg p-4 border border-white/10">
@@ -5174,7 +5174,7 @@ inspect.table(data, {
                                 // Handle generics (basic)
                                 transpiled = transpiled.replace(/<\\w+>/g, '');
 
-                                console.log('🔧 TypeScript transpilation applied');
+                                console.info('🔧 TypeScript transpilation applied');
                                 return transpiled;
                               }
 
@@ -5188,7 +5188,7 @@ inspect.table(data, {
                                 transpiled = transpiled.replace(/<\\/([A-Z][\\w]*)>/g, ')');
 
                                 if (transpiled !== code) {
-                                  console.log('⚛️ JSX transpilation applied');
+                                  console.info('⚛️ JSX transpilation applied');
                                   // Add React import if needed
                                   if (!transpiled.includes('import React')) {
                                     transpiled = 'const React = { createElement: (type, props, ...children) => ({ type, props, children }) };\\n' + transpiled;
@@ -5208,14 +5208,14 @@ inspect.table(data, {
                                 // Handle top-level await (wrap in async IIFE)
                                 if (transpiled.includes('await ') && !transpiled.includes('async')) {
                                   transpiled = '(async () => {\\n' + transpiled + '\\n})();';
-                                  console.log('⏳ Top-level await wrapped in async IIFE');
+                                  console.info('⏳ Top-level await wrapped in async IIFE');
                                 }
 
                                 // Handle class fields (basic)
                                 transpiled = transpiled.replace(/class\\s+(\\w+)\\s*{([^}]*)}/g,
                                   'class $1 { constructor() {$2}}');
 
-                                console.log('🍞 Bun-specific features transpiled');
+                                console.info('🍞 Bun-specific features transpiled');
                                 return transpiled;
                               }
 
@@ -5250,19 +5250,19 @@ inspect.table(data, {
                                 try {
                                   // Detect language and transpile
                                   currentLanguage = detectLanguage(originalCode);
-                                  console.log('🔍 Detected language: ' + currentLanguage);
+                                  console.info('🔍 Detected language: ' + currentLanguage);
 
                                   updatePerformanceBar(30);
                                   let codeToRun = transpileCode(originalCode, currentLanguage);
 
                                   updatePerformanceBar(50);
-                                  console.log('🕐 Execution started at: ' + new Date().toLocaleTimeString());
-                                  console.log('🔧 Transpilation: ' + (transpilationEnabled ? 'Enabled' : 'Disabled'));
-                                  console.log('📝 Language: ' + currentLanguage);
+                                  console.info('🕐 Execution started at: ' + new Date().toLocaleTimeString());
+                                  console.info('🔧 Transpilation: ' + (transpilationEnabled ? 'Enabled' : 'Disabled'));
+                                  console.info('📝 Language: ' + currentLanguage);
 
                                   eval(codeToRun);
                                   updatePerformanceBar(100);
-                                  console.log('✅ Code executed successfully!');
+                                  console.info('✅ Code executed successfully!');
                                   updateStatus('Success');
 
                                 } catch (error) {
@@ -5275,7 +5275,7 @@ inspect.table(data, {
                                 const endTime = performance.now();
                                 const executionTime = (endTime - startTime).toFixed(2);
                                 document.getElementById('last-runtime').textContent = executionTime + 'ms';
-                                console.log('🏁 Execution finished at: ' + new Date().toLocaleTimeString());
+                                console.info('🏁 Execution finished at: ' + new Date().toLocaleTimeString());
 
                                 setTimeout(() => {
                                   updateStatus('Ready');
@@ -5284,14 +5284,14 @@ inspect.table(data, {
                               }
 
                               function runCodeWithDebug() {
-                                console.log('🐛 Debug mode enabled');
-                                console.log('📊 Code length: ' + originalCode.length + ' characters');
-                                console.log('📝 Code lines: ' + originalCode.split('\\n').length);
-                                console.log('🔍 Detected language: ' + detectLanguage(originalCode));
-                                console.log('⏰ Current time: ' + new Date().toISOString());
-                                console.log('🔧 Available Bun features:');
+                                console.info('🐛 Debug mode enabled');
+                                console.info('📊 Code length: ' + originalCode.length + ' characters');
+                                console.info('📝 Code lines: ' + originalCode.split('\\n').length);
+                                console.info('🔍 Detected language: ' + detectLanguage(originalCode));
+                                console.info('⏰ Current time: ' + new Date().toISOString());
+                                console.info('🔧 Available Bun features:');
                                 Object.entries(bunFeatures).forEach(([feature, enabled]) => {
-                                  console.log('  ' + (enabled ? '✅' : '❌') + ' ' + feature);
+                                  console.info('  ' + (enabled ? '✅' : '❌') + ' ' + feature);
                                 });
                                 runCode();
                               }
@@ -5306,12 +5306,12 @@ inspect.table(data, {
                                 const codeBlock = document.querySelector('.code-block');
                                 lineNumbersVisible = !lineNumbersVisible;
                                 codeBlock.classList.toggle('line-numbers');
-                                console.log('📝 Line numbers ' + (lineNumbersVisible ? 'enabled' : 'disabled'));
+                                console.info('📝 Line numbers ' + (lineNumbersVisible ? 'enabled' : 'disabled'));
                               }
 
                               function toggleTranspilation() {
                                 transpilationEnabled = !transpilationEnabled;
-                                console.log('🔧 Transpilation ' + (transpilationEnabled ? 'enabled' : 'disabled'));
+                                console.info('🔧 Transpilation ' + (transpilationEnabled ? 'enabled' : 'disabled'));
                               }
 
                               function formatCode() {
@@ -5324,17 +5324,17 @@ inspect.table(data, {
                                     formatted = formatted.replace(/;/g, ';\\n');
                                     formatted = formatted.replace(/{/g, '{\\n  ');
                                     formatted = formatted.replace(/}/g, '\\n}');
-                                    console.log('✨ TypeScript code formatted');
+                                    console.info('✨ TypeScript code formatted');
                                   } else if (currentLanguage === 'jsx') {
                                     // JSX formatting
                                     formatted = formatted.replace(/(<[^>]+>)/g, '\\n$1\\n');
-                                    console.log('✨ JSX code formatted');
+                                    console.info('✨ JSX code formatted');
                                   } else {
                                     // JavaScript formatting
                                     formatted = formatted.replace(/;/g, ';\\n');
                                     formatted = formatted.replace(/{/g, '{\\n');
                                     formatted = formatted.replace(/}/g, '\\n}');
-                                    console.log('✨ JavaScript code formatted');
+                                    console.info('✨ JavaScript code formatted');
                                   }
 
                                 } catch (e) {
@@ -5349,7 +5349,7 @@ inspect.table(data, {
                                 clearOutput();
                                 updatePerformanceBar(0);
                                 transpilationEnabled = true;
-                                console.log('🔄 All stats reset');
+                                console.info('🔄 All stats reset');
                               }
 
                               function copyCode() {
@@ -5364,11 +5364,11 @@ inspect.table(data, {
 
                               // Auto-run on load
                               setTimeout(() => {
-                                console.log('🎯 Bun Code Runner ready!');
-                                console.log('📝 Code loaded: ' + originalCode.split('\\n').length + ' lines');
-                                console.log('🔍 Detected language: ' + detectLanguage(originalCode));
-                                console.log('🔧 Transpilation features enabled');
-                                console.log('🍞 Supporting Bun runtime features');
+                                console.info('🎯 Bun Code Runner ready!');
+                                console.info('📝 Code loaded: ' + originalCode.split('\\n').length + ' lines');
+                                console.info('🔍 Detected language: ' + detectLanguage(originalCode));
+                                console.info('🔧 Transpilation features enabled');
+                                console.info('🍞 Supporting Bun runtime features');
                               }, 500);
                             </script>
                           </body>
@@ -5397,9 +5397,9 @@ inspect.table(data, {
                     // Try native share first
                     if (navigator.share && navigator.canShare && navigator.canShare(shareOptions)) {
                       navigator.share(shareOptions)
-                        .then(() => console.log('✅ Code shared successfully'))
+                        .then(() => console.info('✅ Code shared successfully'))
                         .catch((error) => {
-                          console.log('❌ Share cancelled or failed:', error);
+                          console.info('❌ Share cancelled or failed:', error);
                           // Fallback to clipboard
                           fallbackShare();
                         });

@@ -60,7 +60,7 @@ const BENCH_DIR = join(process.cwd(), '.bench-files');
 const BENCH_FILES: Map<string, string> = new Map();
 
 async function setupBenchmarkFiles() {
-  console.log('🔧 Setting up benchmark files...');
+  console.info('🔧 Setting up benchmark files...');
   
   try {
     await mkdir(BENCH_DIR, { recursive: true });
@@ -88,12 +88,12 @@ async function setupBenchmarkFiles() {
     BENCH_FILES.set(sizeName, filePath);
     
     const stats = await getFileStats(filePath);
-    console.log(`  Created ${sizeName} file: ${stats.lineCount} lines, ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`  Created ${sizeName} file: ${stats.lineCount} lines, ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
   }
 }
 
 async function cleanupBenchmarkFiles() {
-  console.log('🧹 Cleaning up benchmark files...');
+  console.info('🧹 Cleaning up benchmark files...');
   
   for (const filePath of BENCH_FILES.values()) {
     try {
@@ -185,8 +185,8 @@ class FileSearchBenchmark {
   private results: BenchmarkResult[] = [];
 
   async runAllBenchmarks() {
-    console.log('\n🚀 Starting File Search Benchmarks\n');
-    console.log('=' .repeat(80));
+    console.info('\n🚀 Starting File Search Benchmarks\n');
+    console.info('=' .repeat(80));
 
     await setupBenchmarkFiles();
 
@@ -205,7 +205,7 @@ class FileSearchBenchmark {
   }
 
   async benchmarkSearchSpeed() {
-    console.log('\n📊 Benchmark: Search Speed Across File Sizes\n');
+    console.info('\n📊 Benchmark: Search Speed Across File Sizes\n');
 
     for (const [sizeName, filePath] of BENCH_FILES.entries()) {
       const stats = await getFileStats(filePath);
@@ -218,15 +218,15 @@ class FileSearchBenchmark {
       result.throughput = stats.lineCount / (result.duration / 1000);
       this.results.push(result);
 
-      console.log(`  ${result.name}:`);
-      console.log(`    Duration: ${result.duration.toFixed(2)}ms`);
-      console.log(`    Throughput: ${result.throughput.toLocaleString()} lines/sec`);
-      console.log(`    Matches: ${result.matchesFound}`);
+      console.info(`  ${result.name}:`);
+      console.info(`    Duration: ${result.duration.toFixed(2)}ms`);
+      console.info(`    Throughput: ${result.throughput.toLocaleString()} lines/sec`);
+      console.info(`    Matches: ${result.matchesFound}`);
     }
   }
 
   async benchmarkMemoryUsage() {
-    console.log('\n💾 Benchmark: Memory Usage\n');
+    console.info('\n💾 Benchmark: Memory Usage\n');
 
     for (const [sizeName, filePath] of BENCH_FILES.entries()) {
       const initialMemory = measureMemory();
@@ -238,15 +238,15 @@ class FileSearchBenchmark {
       const stats = await getFileStats(filePath);
       const memoryPerLine = memoryUsed / stats.lineCount;
 
-      console.log(`  ${sizeName} file:`);
-      console.log(`    Memory used: ${(memoryUsed / 1024).toFixed(2)} KB`);
-      console.log(`    Memory per line: ${memoryPerLine.toFixed(4)} bytes`);
-      console.log(`    File size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
+      console.info(`  ${sizeName} file:`);
+      console.info(`    Memory used: ${(memoryUsed / 1024).toFixed(2)} KB`);
+      console.info(`    Memory per line: ${memoryPerLine.toFixed(4)} bytes`);
+      console.info(`    File size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
     }
   }
 
   async benchmarkRegexVsString() {
-    console.log('\n🔍 Benchmark: Regex vs String Pattern Performance\n');
+    console.info('\n🔍 Benchmark: Regex vs String Pattern Performance\n');
 
     const filePath = BENCH_FILES.get('medium')!;
     const pattern = 'ERROR';
@@ -263,13 +263,13 @@ class FileSearchBenchmark {
 
     this.results.push(stringResult, regexResult);
 
-    console.log(`  String search: ${stringResult.duration.toFixed(2)}ms`);
-    console.log(`  Regex search: ${regexResult.duration.toFixed(2)}ms`);
-    console.log(`  Speed difference: ${((regexResult.duration / stringResult.duration - 1) * 100).toFixed(1)}%`);
+    console.info(`  String search: ${stringResult.duration.toFixed(2)}ms`);
+    console.info(`  Regex search: ${regexResult.duration.toFixed(2)}ms`);
+    console.info(`  Speed difference: ${((regexResult.duration / stringResult.duration - 1) * 100).toFixed(1)}%`);
   }
 
   async benchmarkConcurrentSearches() {
-    console.log('\n⚡ Benchmark: Concurrent Search Performance\n');
+    console.info('\n⚡ Benchmark: Concurrent Search Performance\n');
 
     const filePath = BENCH_FILES.get('medium')!;
     const concurrentCounts = [1, 5, 10, 20];
@@ -286,15 +286,15 @@ class FileSearchBenchmark {
       const duration = performance.now() - start;
       const throughput = count / (duration / 1000);
 
-      console.log(`  ${count} concurrent searches:`);
-      console.log(`    Total time: ${duration.toFixed(2)}ms`);
-      console.log(`    Throughput: ${throughput.toFixed(2)} searches/sec`);
-      console.log(`    Avg per search: ${(duration / count).toFixed(2)}ms`);
+      console.info(`  ${count} concurrent searches:`);
+      console.info(`    Total time: ${duration.toFixed(2)}ms`);
+      console.info(`    Throughput: ${throughput.toFixed(2)} searches/sec`);
+      console.info(`    Avg per search: ${(duration / count).toFixed(2)}ms`);
     }
   }
 
   async benchmarkCountVsSearch() {
-    console.log('\n🔢 Benchmark: Count vs Search Performance\n');
+    console.info('\n🔢 Benchmark: Count vs Search Performance\n');
 
     const filePath = BENCH_FILES.get('large')!;
 
@@ -310,21 +310,21 @@ class FileSearchBenchmark {
 
     this.results.push(searchResult, countResult);
 
-    console.log(`  Search (with results): ${searchResult.duration.toFixed(2)}ms`);
-    console.log(`  Count (no results): ${countResult.duration.toFixed(2)}ms`);
-    console.log(`  Speedup: ${(searchResult.duration / countResult.duration).toFixed(2)}x faster`);
-    console.log(`  Memory saved: ${((searchResult.memoryUsed - countResult.memoryUsed) / 1024).toFixed(2)} KB`);
+    console.info(`  Search (with results): ${searchResult.duration.toFixed(2)}ms`);
+    console.info(`  Count (no results): ${countResult.duration.toFixed(2)}ms`);
+    console.info(`  Speedup: ${(searchResult.duration / countResult.duration).toFixed(2)}x faster`);
+    console.info(`  Memory saved: ${((searchResult.memoryUsed - countResult.memoryUsed) / 1024).toFixed(2)} KB`);
   }
 
   async benchmarkLargeFileHandling() {
-    console.log('\n📈 Benchmark: Large File Handling\n');
+    console.info('\n📈 Benchmark: Large File Handling\n');
 
     const xlargeFile = BENCH_FILES.get('xlarge');
     if (!xlargeFile) return;
 
     const stats = await getFileStats(xlargeFile);
-    console.log(`  File size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`  Lines: ${stats.lineCount.toLocaleString()}`);
+    console.info(`  File size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`  Lines: ${stats.lineCount.toLocaleString()}`);
 
     const start = performance.now();
     const initialMemory = measureMemory();
@@ -333,7 +333,7 @@ class FileSearchBenchmark {
       maxMatches: 1000,
       onProgress: (lines, matches) => {
         if (lines % 100000 === 0) {
-          console.log(`    Progress: ${lines.toLocaleString()} lines, ${matches} matches`);
+          console.info(`    Progress: ${lines.toLocaleString()} lines, ${matches} matches`);
         }
       }
     });
@@ -343,43 +343,43 @@ class FileSearchBenchmark {
     const memoryUsed = finalMemory - initialMemory;
     const throughput = stats.lineCount / (duration / 1000);
 
-    console.log(`  Duration: ${(duration / 1000).toFixed(2)}s`);
-    console.log(`  Throughput: ${throughput.toLocaleString()} lines/sec`);
-    console.log(`  Memory used: ${(memoryUsed / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`  Memory per line: ${(memoryUsed / stats.lineCount).toFixed(4)} bytes`);
-    console.log(`  Matches found: ${results.length}`);
+    console.info(`  Duration: ${(duration / 1000).toFixed(2)}s`);
+    console.info(`  Throughput: ${throughput.toLocaleString()} lines/sec`);
+    console.info(`  Memory used: ${(memoryUsed / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`  Memory per line: ${(memoryUsed / stats.lineCount).toFixed(4)} bytes`);
+    console.info(`  Matches found: ${results.length}`);
   }
 
   printResults() {
-    console.log('\n' + '='.repeat(80));
-    console.log('\n📋 Benchmark Summary\n');
+    console.info('\n' + '='.repeat(80));
+    console.info('\n📋 Benchmark Summary\n');
 
     const successfulResults = this.results.filter(r => r.success);
     
     if (successfulResults.length === 0) {
-      console.log('No successful benchmarks to report.');
+      console.info('No successful benchmarks to report.');
       return;
     }
 
-    console.log('Average Performance:');
+    console.info('Average Performance:');
     successfulResults.forEach(result => {
-      console.log(`  ${result.name}:`);
-      console.log(`    Duration: ${result.duration.toFixed(2)}ms`);
+      console.info(`  ${result.name}:`);
+      console.info(`    Duration: ${result.duration.toFixed(2)}ms`);
       if (result.throughput > 0) {
-        console.log(`    Throughput: ${result.throughput.toLocaleString()} lines/sec`);
+        console.info(`    Throughput: ${result.throughput.toLocaleString()} lines/sec`);
       }
-      console.log(`    Memory: ${(result.memoryUsed / 1024).toFixed(2)} KB`);
+      console.info(`    Memory: ${(result.memoryUsed / 1024).toFixed(2)} KB`);
     });
 
     // Performance comparison
     const searchResults = successfulResults.filter(r => r.name.startsWith('Search-'));
     if (searchResults.length > 1) {
-      console.log('\nPerformance Scaling:');
+      console.info('\nPerformance Scaling:');
       searchResults.forEach((result, i) => {
         if (i > 0) {
           const prev = searchResults[i - 1];
           const speedup = prev.throughput / result.throughput;
-          console.log(`  ${result.name} vs ${prev.name}: ${speedup.toFixed(2)}x slower`);
+          console.info(`  ${result.name} vs ${prev.name}: ${speedup.toFixed(2)}x slower`);
         }
       });
     }

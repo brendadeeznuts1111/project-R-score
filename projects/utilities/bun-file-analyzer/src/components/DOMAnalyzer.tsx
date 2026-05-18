@@ -23,11 +23,11 @@ export const DOMAnalyzer = () => {
     const allButtons = getElementsByTagName(parent, 'button');
     const allSpans = getElementsByTagName(parent, 'span');
     
-    console.log('Direct getElementsByTagName results:');
-    console.log('All divs:', allDivs);
-    console.log('All buttons:', allButtons);
-    console.log('All spans:', allSpans);
-    console.log('Number of divs:', countElementsByTagName(parent, 'div'));
+    console.info('Direct getElementsByTagName results:');
+    console.info('All divs:', allDivs);
+    console.info('All buttons:', allButtons);
+    console.info('All spans:', allSpans);
+    console.info('Number of divs:', countElementsByTagName(parent, 'div'));
     
     // Convert HTMLCollection to array for easier manipulation
     const divArray = Array.from(allDivs);

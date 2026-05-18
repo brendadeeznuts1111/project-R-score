@@ -52,8 +52,8 @@ class DependencyManager {
     const [name, version] = packageSpec.split('@').filter(Boolean);
     const packageName = packageSpec.startsWith('@') ? `@${name}` : name;
 
-    console.log(`\n📦 Adding package: ${packageName}${version ? `@${version}` : ''}`);
-    console.log(`   Type: ${options.dev ? 'Dev Dependency' : 'Production Dependency'}\n`);
+    console.info(`\n📦 Adding package: ${packageName}${version ? `@${version}` : ''}`);
+    console.info(`   Type: ${options.dev ? 'Dev Dependency' : 'Production Dependency'}\n`);
 
     // Step 1: Check compatibility
     const compatible = await this.checkCompatibility(packageName);
@@ -86,12 +86,12 @@ class DependencyManager {
     // Step 6: Document the dependency
     await this.documentDependency(info);
 
-    console.log(`\n✅ Successfully added ${packageName}!`);
-    console.log(`   Remember to test in Cloudflare Workers environment: wrangler dev\n`);
+    console.info(`\n✅ Successfully added ${packageName}!`);
+    console.info(`   Remember to test in Cloudflare Workers environment: wrangler dev\n`);
   }
 
   private async checkCompatibility(packageName: string): Promise<boolean> {
-    console.log('🔍 Checking Cloudflare Workers compatibility...');
+    console.info('🔍 Checking Cloudflare Workers compatibility...');
 
     // Check if it's a known incompatible package
     if (this.INCOMPATIBLE_PACKAGES.includes(packageName)) {
@@ -99,7 +99,7 @@ class DependencyManager {
 
       const replacement = this.CLOUDFLARE_REPLACEMENTS[packageName];
       if (replacement) {
-        console.log(`   💡 Use ${replacement} instead\n`);
+        console.info(`   💡 Use ${replacement} instead\n`);
       }
 
       return false;
@@ -111,12 +111,12 @@ class DependencyManager {
       return false;
     }
 
-    console.log('   ✓ Package name check passed');
+    console.info('   ✓ Package name check passed');
     return true;
   }
 
   private async fetchPackageInfo(name: string, version?: string): Promise<DependencyInfo | null> {
-    console.log('📊 Fetching package information from npm...');
+    console.info('📊 Fetching package information from npm...');
 
     try {
       const url = `${this.NPM_REGISTRY}${name}${version ? `/${version}` : '/latest'}`;
@@ -129,8 +129,8 @@ class DependencyManager {
 
       const data = await response.json();
 
-      console.log(`   ✓ Found: ${data.name}@${data.version}`);
-      console.log(`   📝 License: ${data.license || 'Unknown'}`);
+      console.info(`   ✓ Found: ${data.name}@${data.version}`);
+      console.info(`   📝 License: ${data.license || 'Unknown'}`);
 
       return {
         name: data.name,
@@ -150,7 +150,7 @@ class DependencyManager {
   private async checkNodeDependencies(info: DependencyInfo): Promise<void> {
     if (!info.dependencies) return;
 
-    console.log('🔍 Checking dependencies for Node.js modules...');
+    console.info('🔍 Checking dependencies for Node.js modules...');
 
     const nodeModules = Object.keys(info.dependencies).filter(
       dep => this.INCOMPATIBLE_PACKAGES.includes(dep) || dep.startsWith('node:')
@@ -162,16 +162,16 @@ class DependencyManager {
         console.warn(`      - ${mod}`);
         const replacement = this.CLOUDFLARE_REPLACEMENTS[mod];
         if (replacement) {
-          console.log(`        💡 Consider: ${replacement}`);
+          console.info(`        💡 Consider: ${replacement}`);
         }
       });
     } else {
-      console.log('   ✓ No problematic Node.js dependencies found');
+      console.info('   ✓ No problematic Node.js dependencies found');
     }
   }
 
   private async installPackage(packageSpec: string, isDev: boolean): Promise<boolean> {
-    console.log('\n📥 Installing package...');
+    console.info('\n📥 Installing package...');
 
     try {
       const env = {
@@ -183,7 +183,7 @@ class DependencyManager {
       const result = await $`bun add ${flags} ${packageSpec}`.env(env).quiet();
 
       if (result.exitCode === 0) {
-        console.log('   ✓ Package installed successfully');
+        console.info('   ✓ Package installed successfully');
         return true;
       } else {
         console.error('   ✗ Installation failed');
@@ -197,13 +197,13 @@ class DependencyManager {
   }
 
   private async testImport(packageName: string): Promise<boolean> {
-    console.log('🧪 Testing import...');
+    console.info('🧪 Testing import...');
 
     try {
       const testCode = `
         try {
           const mod = await import('${packageName}');
-          console.log('✓ Import successful');
+          console.info('✓ Import successful');
           process.exit(0);
         } catch (e) {
           console.error('✗ Import failed:', e.message);
@@ -214,20 +214,20 @@ class DependencyManager {
       const result = await $`bun eval ${testCode}`.quiet();
 
       if (result.exitCode === 0) {
-        console.log('   ✓ Import test passed');
+        console.info('   ✓ Import test passed');
         return true;
       } else {
-        console.log('   ✗ Import test failed');
+        console.info('   ✗ Import test failed');
         return false;
       }
     } catch (error) {
-      console.log('   ✗ Import test error');
+      console.info('   ✗ Import test error');
       return false;
     }
   }
 
   private async documentDependency(info: DependencyInfo): Promise<void> {
-    console.log('📝 Documenting dependency...');
+    console.info('📝 Documenting dependency...');
 
     const depsFile = 'docs/DEPENDENCIES.md';
 
@@ -248,17 +248,17 @@ class DependencyManager {
 `;
 
     await appendFile(depsFile, entry);
-    console.log(`   ✓ Documented in ${depsFile}`);
+    console.info(`   ✓ Documented in ${depsFile}`);
   }
 
   async remove(packageName: string): Promise<void> {
-    console.log(`\n🗑️  Removing package: ${packageName}`);
+    console.info(`\n🗑️  Removing package: ${packageName}`);
 
     try {
       const result = await $`bun remove ${packageName}`.quiet();
 
       if (result.exitCode === 0) {
-        console.log('✅ Package removed successfully');
+        console.info('✅ Package removed successfully');
       } else {
         console.error('❌ Failed to remove package');
       }
@@ -268,7 +268,7 @@ class DependencyManager {
   }
 
   async list(): Promise<void> {
-    console.log('\n📋 Installed packages:\n');
+    console.info('\n📋 Installed packages:\n');
 
     try {
       await $`bun pm ls`;
@@ -283,7 +283,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log(`
+    console.info(`
 Fire22 Dependency Manager - Cloudflare Workers Compatible
 
 Usage:

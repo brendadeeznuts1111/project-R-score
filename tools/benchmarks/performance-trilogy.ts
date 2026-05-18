@@ -45,5 +45,5 @@ if (!focus || focus === "abort-signal-optimize") {
   }));
 }
 
-console.log(JSON.stringify({ generatedAt: new Date().toISOString(), rows }, null, 2));
+console.info(JSON.stringify({ generatedAt: new Date().toISOString(), rows }, null, 2));
 

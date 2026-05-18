@@ -20,9 +20,9 @@ export class RateLimiter {
   }
 
   checkLimit(ip: string, maxRequests: number = 10, windowMs: number = 60000): boolean {
-    console.log(`RateLimiter.checkLimit called for IP: ${ip}`);
+    console.info(`RateLimiter.checkLimit called for IP: ${ip}`);
     const result = this._checkLimit(ip, maxRequests, windowMs);
-    console.log(`RateLimiter.checkLimit result: ${result}`);
+    console.info(`RateLimiter.checkLimit result: ${result}`);
     return result;
   }
 

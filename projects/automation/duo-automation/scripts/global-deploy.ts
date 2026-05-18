@@ -16,48 +16,48 @@ interface AutonomousEnableOptions {
 class GlobalOperationsCLI {
   
   async globalDeploy(options: GlobalDeployOptions) {
-    console.log('🌍 GLOBAL SCALE DEPLOYMENT - 9.X.X.X TIERS');
-    console.log('===========================================');
-    console.log(`🗺️ Target Regions: ${options.regions}`);
-    console.log('');
+    console.info('🌍 GLOBAL SCALE DEPLOYMENT - 9.X.X.X TIERS');
+    console.info('===========================================');
+    console.info(`🗺️ Target Regions: ${options.regions}`);
+    console.info('');
 
     try {
       const regions = options.regions.split(',');
       
-      console.log('🚀 9.1.0.0 | INTERNATIONAL CARRIER EXPANSION');
-      console.log('--------------------------------------------');
+      console.info('🚀 9.1.0.0 | INTERNATIONAL CARRIER EXPANSION');
+      console.info('--------------------------------------------');
       
       for (const region of regions) {
         const regionInfo = this.getRegionInfo(region.trim());
-        console.log(`📍 Deploying to ${regionInfo.name} (${region})`);
-        console.log(`   Carrier Hub: ${regionInfo.carrierHub}`);
-        console.log(`   Compliance: ${regionInfo.compliance}`);
-        console.log(`   Status: ✅ DEPLOYED`);
-        console.log('');
+        console.info(`📍 Deploying to ${regionInfo.name} (${region})`);
+        console.info(`   Carrier Hub: ${regionInfo.carrierHub}`);
+        console.info(`   Compliance: ${regionInfo.compliance}`);
+        console.info(`   Status: ✅ DEPLOYED`);
+        console.info('');
       }
 
-      console.log('🔄 9.2.0.0 | GEO-REDUNDANT ARCHITECTURE');
-      console.log('--------------------------------------');
-      console.log('🏛️ Primary: us-east-1 (847MB active) ✅');
-      console.log('🏛️ Secondary: eu-central-1 (Mirror sync: 99.9%) ✅');
-      console.log('🏛️ Tertiary: ap-southeast-1 (Hot standby) ✅');
-      console.log('');
+      console.info('🔄 9.2.0.0 | GEO-REDUNDANT ARCHITECTURE');
+      console.info('--------------------------------------');
+      console.info('🏛️ Primary: us-east-1 (847MB active) ✅');
+      console.info('🏛️ Secondary: eu-central-1 (Mirror sync: 99.9%) ✅');
+      console.info('🏛️ Tertiary: ap-southeast-1 (Hot standby) ✅');
+      console.info('');
 
-      console.log('📊 Global Deployment Summary:');
-      console.log('-----------------------------');
-      console.log(`Regions Deployed: ${regions.length}`);
-      console.log('Total Capacity: 2.5GB across 3 regions');
-      console.log('Sync Latency: <200ms inter-region');
-      console.log('Uptime SLA: 99.99% geo-redundant');
-      console.log('Compliance: GDPR, CCPA, LGPD active');
-      console.log('');
+      console.info('📊 Global Deployment Summary:');
+      console.info('-----------------------------');
+      console.info(`Regions Deployed: ${regions.length}`);
+      console.info('Total Capacity: 2.5GB across 3 regions');
+      console.info('Sync Latency: <200ms inter-region');
+      console.info('Uptime SLA: 99.99% geo-redundant');
+      console.info('Compliance: GDPR, CCPA, LGPD active');
+      console.info('');
 
-      console.log('💰 Global Expansion Revenue Impact:');
-      console.log('-----------------------------------');
-      console.log('Q1 Additional Revenue: +$250K');
-      console.log('Annual Run Rate: +$2.8M');
-      console.log('Market Coverage: 12 new countries');
-      console.log('Carrier Partnerships: 47 global carriers');
+      console.info('💰 Global Expansion Revenue Impact:');
+      console.info('-----------------------------------');
+      console.info('Q1 Additional Revenue: +$250K');
+      console.info('Annual Run Rate: +$2.8M');
+      console.info('Market Coverage: 12 new countries');
+      console.info('Carrier Partnerships: 47 global carriers');
 
       return {
         regions: regions,
@@ -73,45 +73,45 @@ class GlobalOperationsCLI {
   }
 
   async marketplaceLaunch(options: MarketplaceLaunchOptions) {
-    console.log('💰 API MARKETPLACE LAUNCH - 10.X.X.X TIERS');
-    console.log('===========================================');
-    console.log(`🎯 Pricing Tiers: ${options.tiering}`);
-    console.log('');
+    console.info('💰 API MARKETPLACE LAUNCH - 10.X.X.X TIERS');
+    console.info('===========================================');
+    console.info(`🎯 Pricing Tiers: ${options.tiering}`);
+    console.info('');
 
     try {
       const tiers = options.tiering.split(',');
       
-      console.log('🚀 10.1.0.0 | DEVELOPER API PORTAL');
-      console.log('------------------------------------');
-      console.log('🌐 Endpoint: https://api.duoplus.com/v1/identity ✅');
-      console.log('⚡ Rate Limits: 10,000 req/min (Enterprise: Unlimited) ✅');
-      console.log('');
+      console.info('🚀 10.1.0.0 | DEVELOPER API PORTAL');
+      console.info('------------------------------------');
+      console.info('🌐 Endpoint: https://api.duoplus.com/v1/identity ✅');
+      console.info('⚡ Rate Limits: 10,000 req/min (Enterprise: Unlimited) ✅');
+      console.info('');
 
-      console.log('💳 10.2.0.0 | USAGE-BASED BILLING');
-      console.log('------------------------------');
+      console.info('💳 10.2.0.0 | USAGE-BASED BILLING');
+      console.info('------------------------------');
       
       for (const tier of tiers) {
         const tierInfo = this.getTierInfo(tier.trim());
-        console.log(`📦 ${tierInfo.name} Tier:`);
-        console.log(`   Requests: ${tierInfo.requests}`);
-        console.log(`   Pricing: ${tierInfo.pricing}`);
-        console.log(`   Features: ${tierInfo.features.join(', ')}`);
-        console.log('');
+        console.info(`📦 ${tierInfo.name} Tier:`);
+        console.info(`   Requests: ${tierInfo.requests}`);
+        console.info(`   Pricing: ${tierInfo.pricing}`);
+        console.info(`   Features: ${tierInfo.features.join(', ')}`);
+        console.info('');
       }
 
-      console.log('💸 Per-Verification Pricing:');
-      console.log('---------------------------');
-      console.log('Identity Resolution: $0.15/verification');
-      console.log('KYC/AML5 Compliance: $0.25/verification');
-      console.log('Volume Discounts: 50% off at 1M+ verifications/month');
-      console.log('');
+      console.info('💸 Per-Verification Pricing:');
+      console.info('---------------------------');
+      console.info('Identity Resolution: $0.15/verification');
+      console.info('KYC/AML5 Compliance: $0.25/verification');
+      console.info('Volume Discounts: 50% off at 1M+ verifications/month');
+      console.info('');
 
-      console.log('📈 Marketplace Revenue Projection:');
-      console.log('---------------------------------');
-      console.log('Q1 Revenue: $675K (450K verifications)');
-      console.log('Annual Run Rate: +$4.5M');
-      console.log('Active Developers: 1,200+');
-      console.log('API Calls: 10M+ per month');
+      console.info('📈 Marketplace Revenue Projection:');
+      console.info('---------------------------------');
+      console.info('Q1 Revenue: $675K (450K verifications)');
+      console.info('Annual Run Rate: +$4.5M');
+      console.info('Active Developers: 1,200+');
+      console.info('API Calls: 10M+ per month');
 
       return {
         endpoint: 'https://api.duoplus.com/v1/identity',
@@ -127,42 +127,42 @@ class GlobalOperationsCLI {
   }
 
   async autonomousEnable(options: AutonomousEnableOptions) {
-    console.log('🤖 AUTONOMOUS OPERATIONS - 11.X.X.X TIERS');
-    console.log('==========================================');
-    console.log(`🔧 Auto-Scaling: ${options.autoScale ? 'Enabled' : 'Disabled'}`);
-    console.log(`🔍 Anomaly Detection: ${options.anomalyDetection ? 'Enabled' : 'Disabled'}`);
-    console.log('');
+    console.info('🤖 AUTONOMOUS OPERATIONS - 11.X.X.X TIERS');
+    console.info('==========================================');
+    console.info(`🔧 Auto-Scaling: ${options.autoScale ? 'Enabled' : 'Disabled'}`);
+    console.info(`🔍 Anomaly Detection: ${options.anomalyDetection ? 'Enabled' : 'Disabled'}`);
+    console.info('');
 
     try {
-      console.log('🚀 11.1.0.0 | SELF-OPTIMIZING PIPELINE');
-      console.log('-------------------------------------');
-      console.log('📈 Auto-Scaling: Horizontal pod scaling based on 124 req/sec threshold ✅');
-      console.log('💰 Cost Optimization: Dynamic R2 tiering (Hot/Cold/Archive) ✅');
-      console.log('🔍 Anomaly Detection: 7-day ML baseline for fraud pattern detection ✅');
-      console.log('');
+      console.info('🚀 11.1.0.0 | SELF-OPTIMIZING PIPELINE');
+      console.info('-------------------------------------');
+      console.info('📈 Auto-Scaling: Horizontal pod scaling based on 124 req/sec threshold ✅');
+      console.info('💰 Cost Optimization: Dynamic R2 tiering (Hot/Cold/Archive) ✅');
+      console.info('🔍 Anomaly Detection: 7-day ML baseline for fraud pattern detection ✅');
+      console.info('');
 
-      console.log('🛡️ 11.2.0.0 | GOVERNANCE & AUDIT TRAIL');
-      console.log('------------------------------------');
-      console.log('⛓️ Immutable Ledger: Every verification logged to audit-blockchain ✅');
-      console.log('📅 Retention Policy: 7 years (Financial Regulation Compliance) ✅');
-      console.log('🔐 Query Access: Role-based (SOC: Read | Compliance: Export) ✅');
-      console.log('');
+      console.info('🛡️ 11.2.0.0 | GOVERNANCE & AUDIT TRAIL');
+      console.info('------------------------------------');
+      console.info('⛓️ Immutable Ledger: Every verification logged to audit-blockchain ✅');
+      console.info('📅 Retention Policy: 7 years (Financial Regulation Compliance) ✅');
+      console.info('🔐 Query Access: Role-based (SOC: Read | Compliance: Export) ✅');
+      console.info('');
 
-      console.log('📊 Autonomous Operations Summary:');
-      console.log('----------------------------------');
-      console.log('Scaling Mode: Auto (0-1000 pods)');
-      console.log('Cost Savings: 35% vs static provisioning');
-      console.log('Anomaly Detection: 99.2% accuracy');
-      console.log('Audit Trail: Immutable blockchain storage');
-      console.log('Compliance: SOX, GDPR, PCI-DSS automated');
+      console.info('📊 Autonomous Operations Summary:');
+      console.info('----------------------------------');
+      console.info('Scaling Mode: Auto (0-1000 pods)');
+      console.info('Cost Savings: 35% vs static provisioning');
+      console.info('Anomaly Detection: 99.2% accuracy');
+      console.info('Audit Trail: Immutable blockchain storage');
+      console.info('Compliance: SOX, GDPR, PCI-DSS automated');
 
-      console.log('');
-      console.log('💰 Autonomous Operations Revenue Impact:');
-      console.log('---------------------------------------');
-      console.log('Q1 Additional Revenue: +$300K');
-      console.log('Annual Run Rate: +$6.8M');
-      console.log('Cost Reduction: -$450K/year');
-      console.log('Net Revenue Impact: +$750K ARR');
+      console.info('');
+      console.info('💰 Autonomous Operations Revenue Impact:');
+      console.info('---------------------------------------');
+      console.info('Q1 Additional Revenue: +$300K');
+      console.info('Annual Run Rate: +$6.8M');
+      console.info('Cost Reduction: -$450K/year');
+      console.info('Net Revenue Impact: +$750K ARR');
 
       return {
         autoScaling: options.autoScale,
@@ -251,18 +251,18 @@ async function main() {
         break;
 
       default:
-        console.log('🌍 Global Operations CLI');
-        console.log('=======================');
-        console.log('');
-        console.log('Available commands:');
-        console.log('  global:deploy      - Deploy to global regions');
-        console.log('  marketplace:launch - Launch API marketplace');
-        console.log('  autonomous:enable  - Enable autonomous operations');
-        console.log('');
-        console.log('Examples:');
-        console.log('  bun run scripts/global-deploy.ts global:deploy --regions="us-east-1,eu-central-1,ap-southeast-1"');
-        console.log('  bun run scripts/global-deploy.ts marketplace:launch --tiering="free,pro,enterprise"');
-        console.log('  bun run scripts/global-deploy.ts autonomous:enable --auto-scale --anomaly-detection');
+        console.info('🌍 Global Operations CLI');
+        console.info('=======================');
+        console.info('');
+        console.info('Available commands:');
+        console.info('  global:deploy      - Deploy to global regions');
+        console.info('  marketplace:launch - Launch API marketplace');
+        console.info('  autonomous:enable  - Enable autonomous operations');
+        console.info('');
+        console.info('Examples:');
+        console.info('  bun run scripts/global-deploy.ts global:deploy --regions="us-east-1,eu-central-1,ap-southeast-1"');
+        console.info('  bun run scripts/global-deploy.ts marketplace:launch --tiering="free,pro,enterprise"');
+        console.info('  bun run scripts/global-deploy.ts autonomous:enable --auto-scale --anomaly-detection');
     }
   } catch (error) {
     console.error('❌ Command failed:', error);

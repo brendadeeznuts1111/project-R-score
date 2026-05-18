@@ -7,12 +7,12 @@
 
 import { BUILD_METADATA, getBuildInfo } from "../src/core/build-metadata.js";
 
-console.log("🔨 Building Edge-Suite Dashboard...");
-console.log(`📦 Build Info: ${getBuildInfo()}`);
-console.log(`📅 Build Time: ${new Date(BUILD_METADATA.buildTime).toLocaleString()}`);
-console.log(`🔐 Git Hash: ${BUILD_METADATA.gitHash}`);
-console.log(`📊 Version: ${BUILD_METADATA.version}`);
-console.log(`✅ Build metadata ready for dashboard`);
+console.info("🔨 Building Edge-Suite Dashboard...");
+console.info(`📦 Build Info: ${getBuildInfo()}`);
+console.info(`📅 Build Time: ${new Date(BUILD_METADATA.buildTime).toLocaleString()}`);
+console.info(`🔐 Git Hash: ${BUILD_METADATA.gitHash}`);
+console.info(`📊 Version: ${BUILD_METADATA.version}`);
+console.info(`✅ Build metadata ready for dashboard`);
 
 // Export build metadata for server to use
 export { BUILD_METADATA, getBuildInfo };

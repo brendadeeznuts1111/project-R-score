@@ -384,4 +384,4 @@ describe("Edge Cases", () => {
   });
 });
 
-console.log("\n✅ All tests completed!");
+console.info("\n✅ All tests completed!");

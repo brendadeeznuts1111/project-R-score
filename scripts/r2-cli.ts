@@ -48,7 +48,7 @@ const {values: flags, positionals} = parseArgs({
 });
 
 function usage(): void {
-	console.log(`
+	console.info(`
   bun r2-cli.ts <command> [args] [flags]
 
   Commands:
@@ -197,7 +197,7 @@ async function listObjects(cfg: R2Config, prefix = ''): Promise<void> {
 	if (!res.ok) throw new Error(`R2 list failed: ${res.status} ${res.statusText}`);
 	const data = await res.json();
 	if (flags.json) {
-		console.log(JSON.stringify(data, null, 2));
+		console.info(JSON.stringify(data, null, 2));
 		return;
 	}
 	const rows = (data.objects ?? []).map((o: any, idx: number) => ({
@@ -206,7 +206,7 @@ async function listObjects(cfg: R2Config, prefix = ''): Promise<void> {
 		Size: o.size,
 		ETag: o.etag,
 	}));
-	console.log(Bun.inspect.table(rows, ['#', 'Key', 'Size', 'ETag']));
+	console.info(Bun.inspect.table(rows, ['#', 'Key', 'Size', 'ETag']));
 }
 
 async function uploadFile(
@@ -220,7 +220,7 @@ async function uploadFile(
 		'Content-Type': contentType,
 	});
 	if (!res.ok) throw new Error(`R2 put failed: ${res.status} ${res.statusText}`);
-	console.log(`uploaded: ${key}`);
+	console.info(`uploaded: ${key}`);
 }
 
 async function main(): Promise<void> {
@@ -244,7 +244,7 @@ async function main(): Promise<void> {
 			await r2Fetch(cfg, 'GET', `bench/${i}`);
 		}
 		const ms = (Bun.nanoseconds() - start) / 1e6;
-		console.log(`bench: ${iter} signed requests in ${ms.toFixed(1)}ms`);
+		console.info(`bench: ${iter} signed requests in ${ms.toFixed(1)}ms`);
 		return;
 	}
 
@@ -264,7 +264,7 @@ async function main(): Promise<void> {
 			const buf = new Uint8Array(await res.arrayBuffer());
 			if (flags.json) {
 				const json = JSON.parse(new TextDecoder().decode(buf));
-				console.log(JSON.stringify(json, null, 2));
+				console.info(JSON.stringify(json, null, 2));
 			} else {
 				await Bun.write(Bun.stdout, buf);
 			}
@@ -275,7 +275,7 @@ async function main(): Promise<void> {
 			const res = await r2Fetch(cfg, 'GET', key);
 			if (!res.ok) throw new Error(`R2 get failed: ${res.status} ${res.statusText}`);
 			const json = await res.json();
-			console.log(JSON.stringify(json, null, 2));
+			console.info(JSON.stringify(json, null, 2));
 			break;
 		}
 		case 'put': {
@@ -294,7 +294,7 @@ async function main(): Promise<void> {
 			}
 			const res = await r2Fetch(cfg, 'PUT', key, new Uint8Array(data), headers);
 			if (!res.ok) throw new Error(`R2 put failed: ${res.status} ${res.statusText}`);
-			console.log(`uploaded: ${key}`);
+			console.info(`uploaded: ${key}`);
 			break;
 		}
 		case 'put-json': {
@@ -304,14 +304,14 @@ async function main(): Promise<void> {
 			const raw = filePath === '-' ? await Bun.stdin.text() : await Bun.file(filePath).text();
 			const res = await r2Fetch(cfg, 'PUT', key, raw, {'Content-Type': 'application/json'});
 			if (!res.ok) throw new Error(`R2 put failed: ${res.status} ${res.statusText}`);
-			console.log(`uploaded: ${key}`);
+			console.info(`uploaded: ${key}`);
 			break;
 		}
 		case 'delete': {
 			if (!key) throw new Error('Missing key');
 			const res = await r2Fetch(cfg, 'DELETE', key);
 			if (!res.ok) throw new Error(`R2 delete failed: ${res.status} ${res.statusText}`);
-			console.log(`deleted: ${key}`);
+			console.info(`deleted: ${key}`);
 			break;
 		}
 		case 'rss:list': {
@@ -340,7 +340,7 @@ async function main(): Promise<void> {
 			const rssKey = withPrefix(key, rssPrefix);
 			const res = await r2Fetch(cfg, 'DELETE', rssKey);
 			if (!res.ok) throw new Error(`R2 delete failed: ${res.status} ${res.statusText}`);
-			console.log(`deleted: ${rssKey}`);
+			console.info(`deleted: ${rssKey}`);
 			break;
 		}
 		case 'rss:publish-scan': {
@@ -368,7 +368,7 @@ async function main(): Promise<void> {
 
 	if (flags.profile) {
 		const ms = (Bun.nanoseconds() - t0) / 1e6;
-		console.log(`elapsed: ${ms.toFixed(1)}ms`);
+		console.info(`elapsed: ${ms.toFixed(1)}ms`);
 	}
 }
 

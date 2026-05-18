@@ -62,7 +62,7 @@ export class SuggestionEngine {
     if (this.initialized) return;
     this.initialized = true;
 
-    console.log("🔍 Analyzing codebase patterns for suggestions...");
+    console.info("🔍 Analyzing codebase patterns for suggestions...");
 
     // Use synchronous glob from bun
     try {
@@ -85,7 +85,7 @@ export class SuggestionEngine {
       // Glob failed, continue without pattern analysis
     }
 
-    console.log(`✅ Analyzed ${this.columnPatterns.size} column patterns`);
+    console.info(`✅ Analyzed ${this.columnPatterns.size} column patterns`);
   }
 
   /**

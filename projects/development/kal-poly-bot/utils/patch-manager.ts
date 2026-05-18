@@ -105,8 +105,8 @@ class EnterprisePatchManager {
     // Load or create patch manifest
     await this.loadManifest();
 
-    console.log(`🔧 Enterprise Patch Manager initialized at: ${this.projectRoot}`);
-    console.log(`📁 Patches directory: ${this.patchesDir}`);
+    console.info(`🔧 Enterprise Patch Manager initialized at: ${this.projectRoot}`);
+    console.info(`📁 Patches directory: ${this.patchesDir}`);
   }
 
   private async ensureDirectory(dirPath: string): Promise<void> {
@@ -186,10 +186,10 @@ class EnterprisePatchManager {
    */
   async preparePatch(options: PatchOptions): Promise<{ success: boolean; editablePath?: string; error?: string }> {
     try {
-      console.log(`🔧 Preparing package for patching: ${options.packageName}`);
+      console.info(`🔧 Preparing package for patching: ${options.packageName}`);
 
       if (options.dryRun) {
-        console.log('🏃 Dry run mode - would prepare package but not making changes');
+        console.info('🏃 Dry run mode - would prepare package but not making changes');
         return { success: true };
       }
 
@@ -222,9 +222,9 @@ class EnterprisePatchManager {
       // Get the editable path
       const editablePath = path.join(this.projectRoot, 'node_modules', options.packageName);
 
-      console.log(`✅ Package prepared for patching: ${editablePath}`);
-      console.log(`📝 Edit files in: ${editablePath}`);
-      console.log(`🔄 Then run: bun patch --commit ${options.packageName}`);
+      console.info(`✅ Package prepared for patching: ${editablePath}`);
+      console.info(`📝 Edit files in: ${editablePath}`);
+      console.info(`🔄 Then run: bun patch --commit ${options.packageName}`);
 
       return { success: true, editablePath };
 
@@ -239,10 +239,10 @@ class EnterprisePatchManager {
    */
   async commitPatch(options: PatchOptions): Promise<{ success: boolean; patchPath?: string; error?: string }> {
     try {
-      console.log(`🔄 Committing patch for: ${options.packageName}`);
+      console.info(`🔄 Committing patch for: ${options.packageName}`);
 
       if (options.dryRun) {
-        console.log('🏃 Dry run mode - would commit patch but not making changes');
+        console.info('🏃 Dry run mode - would commit patch but not making changes');
         return { success: true };
       }
 
@@ -262,7 +262,7 @@ class EnterprisePatchManager {
       const patchInfo = await this.registerPatch(options);
       patchInfo.patchPath = patchPath || 'unknown';
 
-      console.log(`✅ Patch committed successfully: ${patchInfo.patchPath}`);
+      console.info(`✅ Patch committed successfully: ${patchInfo.patchPath}`);
       return { success: true, patchPath: patchInfo.patchPath };
 
     } catch (error) {
@@ -277,8 +277,8 @@ class EnterprisePatchManager {
    */
   async createPatch(options: PatchOptions): Promise<{ success: boolean; patchPath?: string; instructions?: string[]; error?: string }> {
     try {
-      console.log(`🚀 Creating patch for: ${options.packageName}`);
-      console.log(`Step 1: Preparing package for editing...`);
+      console.info(`🚀 Creating patch for: ${options.packageName}`);
+      console.info(`Step 1: Preparing package for editing...`);
 
       // Step 1: Prepare the package
       const prepareResult = await this.preparePatch({ ...options, dryRun: false });
@@ -298,9 +298,9 @@ class EnterprisePatchManager {
         `   bun run patch-manager.ts commit ${options.packageName} "${options.description || 'Patch description'}"`
       ];
 
-      console.log('⏳ Waiting for you to edit the package...');
-      console.log('📋 Instructions:');
-      instructions.forEach(instr => console.log(`   ${instr}`));
+      console.info('⏳ Waiting for you to edit the package...');
+      console.info('📋 Instructions:');
+      instructions.forEach(instr => console.info(`   ${instr}`));
 
       // Return instructions instead of completing automatically
       return {
@@ -320,7 +320,7 @@ class EnterprisePatchManager {
    */
   async applyPatches(options: PatchApplyOptions = {}): Promise<{ success: boolean; appliedPatches?: string[]; failedPatches?: string[]; error?: string }> {
     try {
-      console.log(`🔄 Applying patches...`);
+      console.info(`🔄 Applying patches...`);
 
       if (!this.manifest) {
         return { success: false, error: 'Patch manifest not loaded' };
@@ -337,11 +337,11 @@ class EnterprisePatchManager {
           const patchName = path.basename(patchFile, '.patch');
 
           if (options.dryRun) {
-            console.log(`🏃 Would apply patch: ${patchName}`);
+            console.info(`🏃 Would apply patch: ${patchName}`);
             continue;
           }
 
-          console.log(`📥 Applying patch: ${patchName}`);
+          console.info(`📥 Applying patch: ${patchName}`);
 
           // Create backup if requested
           if (options.backupOriginal) {
@@ -357,12 +357,12 @@ class EnterprisePatchManager {
 
           if (result.exitCode === 0) {
             appliedPatches.push(patchName);
-            console.log(`✅ Applied patch: ${patchName}`);
+            console.info(`✅ Applied patch: ${patchName}`);
           } else {
             failedPatches.push(patchName);
 
             if (options.rollbackOnFailure) {
-              console.log(`🔄 Attempting rollback for: ${patchName}`);
+              console.info(`🔄 Attempting rollback for: ${patchName}`);
               await this.rollbackPatch(patchName);
             }
 
@@ -376,7 +376,7 @@ class EnterprisePatchManager {
       }
 
       const success = failedPatches.length === 0;
-      console.log(`📊 Patch application summary: ${appliedPatches.length} applied, ${failedPatches.length} failed`);
+      console.info(`📊 Patch application summary: ${appliedPatches.length} applied, ${failedPatches.length} failed`);
 
       return { success, appliedPatches, failedPatches };
 
@@ -391,7 +391,7 @@ class EnterprisePatchManager {
    */
   async rollbackPatch(packageName: string): Promise<{ success: boolean; error?: string }> {
     try {
-      console.log(`🔄 Rolling back patch for: ${packageName}`);
+      console.info(`🔄 Rolling back patch for: ${packageName}`);
 
       // Use bun patch to remove the patch
       const result = await $`bun patch ${packageName} --remove`.catch(error => error);
@@ -403,7 +403,7 @@ class EnterprisePatchManager {
       // Restore from backup if available
       await this.restoreFromBackup(packageName);
 
-      console.log(`✅ Patch rolled back successfully: ${packageName}`);
+      console.info(`✅ Patch rolled back successfully: ${packageName}`);
       return { success: true };
 
     } catch (error) {
@@ -571,7 +571,7 @@ class EnterprisePatchManager {
 
     try {
       await $`cp -r ${packagePath} ${backupPath}`;
-      console.log(`💾 Backup created: ${backupPath}`);
+      console.info(`💾 Backup created: ${backupPath}`);
     } catch (error) {
       console.warn(`⚠️ Failed to create backup for ${packageName}:`, error);
     }
@@ -590,7 +590,7 @@ class EnterprisePatchManager {
 
     try {
       await $`cp -r ${latestBackup} ${packagePath}`;
-      console.log(`🔄 Restored from backup: ${latestBackup}`);
+      console.info(`🔄 Restored from backup: ${latestBackup}`);
     } catch (error) {
       console.error(`❌ Failed to restore backup for ${packageName}:`, error);
     }
@@ -635,7 +635,7 @@ class EnterprisePatchManager {
    * Import patches from another patch management system
    */
   async importPatches(sourceDir: string): Promise<{ imported: number; skipped: number; errors: string[] }> {
-    console.log(`📥 Importing patches from: ${sourceDir}`);
+    console.info(`📥 Importing patches from: ${sourceDir}`);
 
     let imported = 0;
     let skipped = 0;
@@ -671,7 +671,7 @@ class EnterprisePatchManager {
           this.manifest!.patches.push(patchInfo);
 
           imported++;
-          console.log(`📋 Imported patch: ${packageName}`);
+          console.info(`📋 Imported patch: ${packageName}`);
 
         } catch (error) {
           errors.push(`Failed to import ${patchFile}: ${error}`);
@@ -680,7 +680,7 @@ class EnterprisePatchManager {
       }
 
       await this.saveManifest();
-      console.log(`✅ Import complete: ${imported} imported, ${skipped} skipped`);
+      console.info(`✅ Import complete: ${imported} imported, ${skipped} skipped`);
 
     } catch (error) {
       errors.push(`Import failed: ${error}`);
@@ -693,7 +693,7 @@ class EnterprisePatchManager {
    * Export patches to a distribution-ready format
    */
   async exportPatches(destDir: string): Promise<{ exported: number; error?: string }> {
-    console.log(`📤 Exporting patches to: ${destDir}`);
+    console.info(`📤 Exporting patches to: ${destDir}`);
 
     try {
       // Ensure destination directory exists
@@ -715,7 +715,7 @@ class EnterprisePatchManager {
       const manifestDest = path.join(destDir, 'patches-manifest.json');
       await writeFile(manifestDest, JSON.stringify(this.manifest, null, 2));
 
-      console.log(`✅ Exported ${exported} patches to ${destDir}`);
+      console.info(`✅ Exported ${exported} patches to ${destDir}`);
       return { exported };
 
     } catch (error) {
@@ -837,7 +837,7 @@ class EnterprisePatchManager {
     incompatible: CacheBackend['name'][];
     recommendations: string[];
   }> {
-    console.log(`🧪 Testing cache backend compatibility for: ${packageName}`);
+    console.info(`🧪 Testing cache backend compatibility for: ${packageName}`);
 
     const compatible: CacheBackend['name'][] = [];
     const incompatible: CacheBackend['name'][] = [];
@@ -845,7 +845,7 @@ class EnterprisePatchManager {
 
     for (const backend of backends) {
       try {
-        console.log(`Testing ${backend} backend...`);
+        console.info(`Testing ${backend} backend...`);
 
         // Create a temporary test directory
         const testDir = path.join(process.cwd(), '.cache-backend-test');
@@ -857,10 +857,10 @@ class EnterprisePatchManager {
 
         if (result.exitCode === 0) {
           compatible.push(backend);
-          console.log(`✅ ${backend} backend compatible`);
+          console.info(`✅ ${backend} backend compatible`);
         } else {
           incompatible.push(backend);
-          console.log(`❌ ${backend} backend incompatible`);
+          console.info(`❌ ${backend} backend incompatible`);
         }
 
         // Clean up
@@ -885,7 +885,7 @@ class EnterprisePatchManager {
       recommendations.push(`Avoid backends: ${incompatible.join(', ')}`);
     }
 
-    console.log(`📊 Backend compatibility test complete: ${compatible.length} compatible, ${incompatible.length} incompatible`);
+    console.info(`📊 Backend compatibility test complete: ${compatible.length} compatible, ${incompatible.length} incompatible`);
 
     return { compatible, incompatible, recommendations };
   }
@@ -898,7 +898,7 @@ class EnterprisePatchManager {
     cacheSizeReduction: number;
     performanceImprovements: string[];
   }> {
-    console.log('🔧 Optimizing cache operations for patch management...');
+    console.info('🔧 Optimizing cache operations for patch management...');
 
     const optimizations: string[] = [];
     let cacheSizeReduction = 0;
@@ -962,7 +962,7 @@ class EnterprisePatchManager {
     performanceImprovements.push('Parallel patch application');
     performanceImprovements.push('Lazy patch loading');
 
-    console.log(`✅ Cache optimization complete: ${optimizations.length} optimizations identified`);
+    console.info(`✅ Cache optimization complete: ${optimizations.length} optimizations identified`);
 
     return {
       optimizations,
@@ -1002,7 +1002,7 @@ class EnterprisePatchManager {
     // Save updated manifest
     await this.saveManifest();
 
-    console.log(`✅ Updated ${packageName} cache awareness: impact=${cacheImpact}, backends=${backendTest.compatible.length}`);
+    console.info(`✅ Updated ${packageName} cache awareness: impact=${cacheImpact}, backends=${backendTest.compatible.length}`);
 
     return { updated: true, cacheImpact };
   }
@@ -1257,9 +1257,9 @@ class PatchCLI {
     });
 
     if (result.success) {
-      console.log('✅ Patch created successfully');
+      console.info('✅ Patch created successfully');
       if (result.patchPath) {
-        console.log(`📁 Patch file: ${result.patchPath}`);
+        console.info(`📁 Patch file: ${result.patchPath}`);
       }
     } else {
       console.error('❌ Failed to create patch:', result.error);
@@ -1278,14 +1278,14 @@ class PatchCLI {
     });
 
     if (result.success) {
-      console.log('✅ All patches applied successfully');
+      console.info('✅ All patches applied successfully');
       if (result.appliedPatches) {
-        console.log(`📋 Applied patches: ${result.appliedPatches.join(', ')}`);
+        console.info(`📋 Applied patches: ${result.appliedPatches.join(', ')}`);
       }
     } else {
       console.error('❌ Failed to apply some patches');
       if (result.failedPatches) {
-        console.log(`❌ Failed patches: ${result.failedPatches.join(', ')}`);
+        console.info(`❌ Failed patches: ${result.failedPatches.join(', ')}`);
       }
       if (result.error) {
         console.error(`Error: ${result.error}`);
@@ -1302,7 +1302,7 @@ class PatchCLI {
 
     const result = await this.patchManager.rollbackPatch(args.packageName);
     if (result.success) {
-      console.log('✅ Patch rolled back successfully');
+      console.info('✅ Patch rolled back successfully');
     } else {
       console.error('❌ Failed to rollback patch:', result.error);
       process.exit(1);
@@ -1312,23 +1312,23 @@ class PatchCLI {
   private async handleList(): Promise<void> {
     const patches = await this.patchManager.listPatches();
 
-    console.log('\n📋 Available Patches:');
-    console.log('='.repeat(60));
+    console.info('\n📋 Available Patches:');
+    console.info('='.repeat(60));
 
     if (patches.length === 0) {
-      console.log('No patches found');
+      console.info('No patches found');
       return;
     }
 
     patches.forEach(patch => {
-      console.log(`🔧 ${patch.packageName}@${patch.packageVersion}`);
-      console.log(`   Patch v${patch.patchVersion} by ${patch.author}`);
-      console.log(`   ${patch.description}`);
-      console.log(`   Created: ${new Date(patch.createdAt).toLocaleDateString()}`);
-      console.log('');
+      console.info(`🔧 ${patch.packageName}@${patch.packageVersion}`);
+      console.info(`   Patch v${patch.patchVersion} by ${patch.author}`);
+      console.info(`   ${patch.description}`);
+      console.info(`   Created: ${new Date(patch.createdAt).toLocaleDateString()}`);
+      console.info('');
     });
 
-    console.log(`📊 Total: ${patches.length} patches`);
+    console.info(`📊 Total: ${patches.length} patches`);
   }
 
   private async handleValidate(args: PatchCLIArgs): Promise<void> {
@@ -1339,19 +1339,19 @@ class PatchCLI {
 
     const result = await this.patchManager.validatePatch(args.packageName);
 
-    console.log(`\n🔍 Validation Result for: ${args.packageName}`);
-    console.log('='.repeat(40));
+    console.info(`\n🔍 Validation Result for: ${args.packageName}`);
+    console.info('='.repeat(40));
 
-    console.log(`Status: ${result.valid ? '✅ Valid' : '❌ Invalid'}`);
+    console.info(`Status: ${result.valid ? '✅ Valid' : '❌ Invalid'}`);
 
     if (result.errors.length > 0) {
-      console.log('\n❌ Errors:');
-      result.errors.forEach(error => console.log(`   • ${error}`));
+      console.info('\n❌ Errors:');
+      result.errors.forEach(error => console.info(`   • ${error}`));
     }
 
     if (result.warnings.length > 0) {
-      console.log('\n⚠️ Warnings:');
-      result.warnings.forEach(warning => console.log(`   • ${warning}`));
+      console.info('\n⚠️ Warnings:');
+      result.warnings.forEach(warning => console.info(`   • ${warning}`));
     }
 
     if (!result.valid) {
@@ -1366,11 +1366,11 @@ class PatchCLI {
     }
 
     const result = await this.patchManager.importPatches(args.sourceDir);
-    console.log(`📥 Import complete: ${result.imported} imported, ${result.skipped} skipped`);
+    console.info(`📥 Import complete: ${result.imported} imported, ${result.skipped} skipped`);
 
     if (result.errors.length > 0) {
       console.error('\n❌ Import errors:');
-      result.errors.forEach(error => console.log(`   • ${error}`));
+      result.errors.forEach(error => console.info(`   • ${error}`));
     }
   }
 
@@ -1383,7 +1383,7 @@ class PatchCLI {
     const result = await this.patchManager.exportPatches(args.destDir);
 
     if (result.exported > 0) {
-      console.log(`📤 Exported ${result.exported} patches to ${args.destDir}`);
+      console.info(`📤 Exported ${result.exported} patches to ${args.destDir}`);
     } else {
       console.error('❌ Export failed:', result.error);
       process.exit(1);
@@ -1393,71 +1393,71 @@ class PatchCLI {
   private async handleReport(): Promise<void> {
     const report = await this.patchManager.generateReport();
 
-    console.log('\n📊 Patch Management Report');
-    console.log('='.repeat(40));
+    console.info('\n📊 Patch Management Report');
+    console.info('='.repeat(40));
 
-    console.log('\n📈 Summary:');
+    console.info('\n📈 Summary:');
     Object.entries(report.summary).forEach(([key, value]) => {
-      console.log(`   ${key}: ${value}`);
+      console.info(`   ${key}: ${value}`);
     });
 
-    console.log(`\n🏥 Health Status: ${report.health.status.toUpperCase()}`);
+    console.info(`\n🏥 Health Status: ${report.health.status.toUpperCase()}`);
     if (report.health.issues.length > 0) {
-      console.log('\n⚠️ Issues:');
-      report.health.issues.forEach(issue => console.log(`   • ${issue}`));
+      console.info('\n⚠️ Issues:');
+      report.health.issues.forEach(issue => console.info(`   • ${issue}`));
     }
 
-    console.log(`\n📋 Total Patches: ${report.patches.length}`);
+    console.info(`\n📋 Total Patches: ${report.patches.length}`);
   }
 
   private async handleCacheInfo(): Promise<void> {
-    console.log('🔍 Analyzing global cache information...\n');
+    console.info('🔍 Analyzing global cache information...\n');
 
     const cacheInfo = await this.patchManager.getGlobalCacheInfo();
     if (!cacheInfo) {
-      console.log('❌ Failed to analyze cache information');
+      console.info('❌ Failed to analyze cache information');
       return;
     }
 
-    console.log('📊 Global Cache Information');
-    console.log('='.repeat(40));
-    console.log(`📍 Location: ${cacheInfo.location}`);
-    console.log(`📦 Package Count: ${cacheInfo.packageCount.toLocaleString()}`);
-    console.log(`💾 Size: ${(cacheInfo.size / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`📅 Last Updated: ${cacheInfo.lastUpdated.toLocaleString()}`);
+    console.info('📊 Global Cache Information');
+    console.info('='.repeat(40));
+    console.info(`📍 Location: ${cacheInfo.location}`);
+    console.info(`📦 Package Count: ${cacheInfo.packageCount.toLocaleString()}`);
+    console.info(`💾 Size: ${(cacheInfo.size / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`📅 Last Updated: ${cacheInfo.lastUpdated.toLocaleString()}`);
 
     if (cacheInfo.backend) {
-      console.log('\n🔧 Current Backend Configuration:');
-      console.log(`   Name: ${cacheInfo.backend.name}`);
-      console.log(`   Platform: ${cacheInfo.backend.platform}`);
-      console.log(`   Description: ${cacheInfo.backend.description}`);
-      console.log('   Benefits:');
+      console.info('\n🔧 Current Backend Configuration:');
+      console.info(`   Name: ${cacheInfo.backend.name}`);
+      console.info(`   Platform: ${cacheInfo.backend.platform}`);
+      console.info(`   Description: ${cacheInfo.backend.description}`);
+      console.info('   Benefits:');
       cacheInfo.backend.benefits.forEach(benefit => {
-        console.log(`     • ${benefit}`);
+        console.info(`     • ${benefit}`);
       });
     }
   }
 
   private async handleCacheOptimize(): Promise<void> {
-    console.log('🔧 Running cache optimization...\n');
+    console.info('🔧 Running cache optimization...\n');
 
     const optimization = await this.patchManager.optimizeCacheOperations();
 
-    console.log('📊 Cache Optimization Results');
-    console.log('='.repeat(40));
+    console.info('📊 Cache Optimization Results');
+    console.info('='.repeat(40));
 
-    console.log('\n🔄 Optimizations Identified:');
+    console.info('\n🔄 Optimizations Identified:');
     optimization.optimizations.forEach((opt, index) => {
-      console.log(`   ${index + 1}. ${opt}`);
+      console.info(`   ${index + 1}. ${opt}`);
     });
 
-    console.log('\n🚀 Performance Improvements:');
+    console.info('\n🚀 Performance Improvements:');
     optimization.performanceImprovements.forEach((imp, index) => {
-      console.log(`   ${index + 1}. ${imp}`);
+      console.info(`   ${index + 1}. ${imp}`);
     });
 
     const reductionMB = (optimization.cacheSizeReduction / 1024 / 1024).toFixed(2);
-    console.log(`\n💾 Potential Disk Space Reduction: ${reductionMB} MB`);
+    console.info(`\n💾 Potential Disk Space Reduction: ${reductionMB} MB`);
   }
 
   private async handleCacheTest(args: PatchCLIArgs): Promise<void> {
@@ -1466,39 +1466,39 @@ class PatchCLI {
       return;
     }
 
-    console.log(`🧪 Testing cache backend compatibility for: ${args.packageName}\n`);
+    console.info(`🧪 Testing cache backend compatibility for: ${args.packageName}\n`);
 
     const result = await this.patchManager.testCacheBackendCompatibility(args.packageName);
 
-    console.log('📊 Cache Backend Compatibility Test Results');
-    console.log('='.repeat(50));
+    console.info('📊 Cache Backend Compatibility Test Results');
+    console.info('='.repeat(50));
 
-    console.log('\n✅ Compatible Backends:');
+    console.info('\n✅ Compatible Backends:');
     if (result.compatible.length > 0) {
       result.compatible.forEach(backend => {
-        console.log(`   • ${backend}`);
+        console.info(`   • ${backend}`);
       });
     } else {
-      console.log('   None found');
+      console.info('   None found');
     }
 
-    console.log('\n❌ Incompatible Backends:');
+    console.info('\n❌ Incompatible Backends:');
     if (result.incompatible.length > 0) {
       result.incompatible.forEach(backend => {
-        console.log(`   • ${backend}`);
+        console.info(`   • ${backend}`);
       });
     } else {
-      console.log('   None identified');
+      console.info('   None identified');
     }
 
-    console.log('\n💡 Recommendations:');
+    console.info('\n💡 Recommendations:');
     result.recommendations.forEach((rec, index) => {
-      console.log(`   ${index + 1}. ${rec}`);
+      console.info(`   ${index + 1}. ${rec}`);
     });
   }
 
   private showUsage(): void {
-    console.log(`
+    console.info(`
 🔧 Enterprise Patch Manager CLI
 
 USAGE:

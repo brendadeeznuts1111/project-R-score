@@ -74,7 +74,7 @@ export class MetadataVersionManager {
    * 📊 Load and analyze all package metadata
    */
   async loadWorkspaceMetadata(): Promise<WorkspaceVersionInfo> {
-    console.log('🔍 Loading workspace metadata...');
+    console.info('🔍 Loading workspace metadata...');
 
     // Load root package
     const rootPkg = await this.loadPackageMetadata(this.rootPath);
@@ -92,7 +92,7 @@ export class MetadataVersionManager {
         if (pkg) {
           this.workspace.packages.set(pkg.name, pkg);
           const component = pkg.metadata?.component || pkg.name;
-          console.log(`📦 Loaded ${pkg.name}@${pkg.version} (${component})`);
+          console.info(`📦 Loaded ${pkg.name}@${pkg.version} (${component})`);
         }
       }
     }
@@ -103,7 +103,7 @@ export class MetadataVersionManager {
     // Generate build constants with versioning info
     this.workspace.buildConstants = await this.generateVersionedBuildConstants();
 
-    console.log(`✅ Loaded ${this.workspace.packages.size} packages`);
+    console.info(`✅ Loaded ${this.workspace.packages.size} packages`);
     return this.workspace;
   }
 
@@ -164,7 +164,7 @@ export class MetadataVersionManager {
       verbose?: boolean;
     } = {}
   ): Promise<Map<string, string>> {
-    console.log(`🏷️ Bumping versions with strategy: ${strategy.type}`);
+    console.info(`🏷️ Bumping versions with strategy: ${strategy.type}`);
     const changes = new Map<string, string>();
 
     // Determine packages to version
@@ -203,7 +203,7 @@ export class MetadataVersionManager {
         changes.set('root', `${oldRootVersion} → ${newRootVersion}`);
         await this.updateRootPackageVersion(newRootVersion);
         this.workspace.rootVersion = newRootVersion;
-        console.log(`📦 Root package: ${oldRootVersion} → ${newRootVersion}`);
+        console.info(`📦 Root package: ${oldRootVersion} → ${newRootVersion}`);
       }
     }
 
@@ -215,7 +215,7 @@ export class MetadataVersionManager {
       await this.performGitOperations(strategy, changes, options);
     }
 
-    console.log(`✅ Updated ${changes.size} package versions`);
+    console.info(`✅ Updated ${changes.size} package versions`);
     return changes;
   }
 
@@ -316,14 +316,14 @@ export class MetadataVersionManager {
     failed: number;
     results: Map<string, { success: boolean; skipped: boolean; reason?: string }>;
   }> {
-    console.log('🏗️ Building workspace with version integration...');
+    console.info('🏗️ Building workspace with version integration...');
 
     const packagesToBuild = options.packages || Array.from(this.workspace.packages.keys());
     const results = new Map<string, { success: boolean; skipped: boolean; reason?: string }>();
 
     // Update build constants if requested
     if (options.updateConstants) {
-      console.log('🔧 Updating build constants...');
+      console.info('🔧 Updating build constants...');
       this.workspace.buildConstants = await this.generateVersionedBuildConstants();
       await this.saveBuildConstants();
     }
@@ -334,7 +334,7 @@ export class MetadataVersionManager {
       skipped = 0,
       failed = 0;
 
-    console.log(`📦 Building ${buildOrder.length} packages in dependency order...`);
+    console.info(`📦 Building ${buildOrder.length} packages in dependency order...`);
 
     for (const packageName of buildOrder) {
       const pkg = this.workspace.packages.get(packageName);
@@ -345,7 +345,7 @@ export class MetadataVersionManager {
       }
 
       if (!options.verbose) {
-        console.log(`📦 Building ${packageName}@${pkg.version}...`);
+        console.info(`📦 Building ${packageName}@${pkg.version}...`);
       }
 
       const buildResult = await this.buildPackage(packageName, {
@@ -366,21 +366,21 @@ export class MetadataVersionManager {
     }
 
     // Print summary
-    console.log('\n📊 Build Summary:');
-    console.log(`✅ Built: ${built}`);
-    console.log(`⏭️  Skipped: ${skipped}`);
-    console.log(`❌ Failed: ${failed}`);
+    console.info('\n📊 Build Summary:');
+    console.info(`✅ Built: ${built}`);
+    console.info(`⏭️  Skipped: ${skipped}`);
+    console.info(`❌ Failed: ${failed}`);
 
     if (failed > 0) {
-      console.log('\n❌ Failed Builds:');
+      console.info('\n❌ Failed Builds:');
       for (const [packageName, result] of results) {
         if (!result.success && !result.skipped) {
-          console.log(`  - ${packageName}: ${result.reason || 'Unknown error'}`);
+          console.info(`  - ${packageName}: ${result.reason || 'Unknown error'}`);
         }
       }
     }
 
-    console.log('✅ Workspace build completed');
+    console.info('✅ Workspace build completed');
 
     return {
       totalPackages: packagesToBuild.length,
@@ -451,7 +451,7 @@ export class MetadataVersionManager {
     options: { commit?: boolean; tag?: boolean; push?: boolean; verbose?: boolean }
   ): Promise<void> {
     if (options.verbose) {
-      console.log('🔀 Performing git operations...');
+      console.info('🔀 Performing git operations...');
     }
 
     // Create commit if requested
@@ -476,7 +476,7 @@ export class MetadataVersionManager {
       });
 
       if (commitResult.success) {
-        console.log(`✅ Git commit created: ${commitMessage}`);
+        console.info(`✅ Git commit created: ${commitMessage}`);
       } else {
         console.warn(`⚠️ Git commit failed: ${commitResult.error}`);
         return;
@@ -491,7 +491,7 @@ export class MetadataVersionManager {
         });
 
         if (tagResult.success) {
-          console.log(`✅ Git tag created: ${tagName}`);
+          console.info(`✅ Git tag created: ${tagName}`);
         } else {
           console.warn(`⚠️ Git tag failed: ${tagResult.error}`);
         }
@@ -505,7 +505,7 @@ export class MetadataVersionManager {
         });
 
         if (pushResult.success) {
-          console.log(`✅ Changes pushed to remote`);
+          console.info(`✅ Changes pushed to remote`);
 
           // Push tags if created
           if (options.tag) {
@@ -515,7 +515,7 @@ export class MetadataVersionManager {
             });
 
             if (pushTagResult.success) {
-              console.log(`✅ Tags pushed to remote`);
+              console.info(`✅ Tags pushed to remote`);
             } else {
               console.warn(`⚠️ Push tags failed: ${pushTagResult.error}`);
             }
@@ -728,7 +728,7 @@ export class MetadataVersionManager {
     // Check if build script exists
     if (!pkg.scripts || !pkg.scripts.build) {
       if (options.verbose) {
-        console.log(`⏭️  Skipping ${packageName} - no build script`);
+        console.info(`⏭️  Skipping ${packageName} - no build script`);
       }
       return { success: true, output: '', skipped: true, reason: 'No build script' };
     }
@@ -749,7 +749,7 @@ export class MetadataVersionManager {
 
       if (result.success) {
         if (options.verbose) {
-          console.log(`✅ Built ${packageName}@${pkg.version}`);
+          console.info(`✅ Built ${packageName}@${pkg.version}`);
         }
         return { success: true, output: result.output || '', skipped: false };
       } else {

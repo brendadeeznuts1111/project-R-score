@@ -4,7 +4,7 @@
 import { $ } from 'bun';
 import { hash, stripANSI } from "bun";
 
-console.log('🏎️  Bun v1.3 Performance Benchmark Suite');
+console.info('🏎️  Bun v1.3 Performance Benchmark Suite');
 
 const benchmarks = {
   'postMessage - Small String': async () => {
@@ -67,30 +67,30 @@ const benchmarks = {
 };
 
 async function runBenchmarks() {
-  console.log('\n📊 Running Bun v1.3 Benchmarks...\n');
+  console.info('\n📊 Running Bun v1.3 Benchmarks...\n');
   
   for (const [name, benchmark] of Object.entries(benchmarks)) {
     try {
       const duration = await benchmark();
-      console.log(`✅ ${name}: ${duration.toFixed(2)}ms`);
+      console.info(`✅ ${name}: ${duration.toFixed(2)}ms`);
     } catch (error) {
-      console.log(`❌ ${name}: Failed - ${(error as Error).message}`);
+      console.info(`❌ ${name}: Failed - ${(error as Error).message}`);
     }
   }
   
   // Memory usage comparison
-  console.log('\n💾 Memory Usage:');
+  console.info('\n💾 Memory Usage:');
   const memory = process.memoryUsage();
-  console.log(`   Heap Used: ${(memory.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`   Heap Total: ${(memory.heapTotal / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`   External: ${(memory.external / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`   Heap Used: ${(memory.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`   Heap Total: ${(memory.heapTotal / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`   External: ${(memory.external / 1024 / 1024).toFixed(2)} MB`);
   
-  console.log('\n🎉 Bun v1.3 Benchmark Complete!');
-  console.log('Expected improvements:');
-  console.log('  • postMessage: 500x faster for strings');
-  console.log('  • stripANSI: 6-57x faster');
-  console.log('  • Memory: 10-30% reduction');
-  console.log('  • Builds: 60% faster on macOS');
+  console.info('\n🎉 Bun v1.3 Benchmark Complete!');
+  console.info('Expected improvements:');
+  console.info('  • postMessage: 500x faster for strings');
+  console.info('  • stripANSI: 6-57x faster');
+  console.info('  • Memory: 10-30% reduction');
+  console.info('  • Builds: 60% faster on macOS');
 }
 
 await runBenchmarks();

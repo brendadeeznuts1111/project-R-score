@@ -258,7 +258,7 @@ describe('ConcurrentOperationsManager', () => {
     });
 
     test('should handle rollback failures gracefully', async () => {
-      using _log = spyOn(console, 'log').mockImplementation(() => {});
+      using _log = spyOn(console, 'info').mockImplementation(() => {});
 
       const operations: TransactionOperation<string>[] = [
         {

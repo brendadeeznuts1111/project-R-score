@@ -108,12 +108,12 @@ class TemplateSystemValidator {
     }
 
     async validateAllTemplates(): Promise<TemplateValidationResult> {
-        console.log('🔍 Starting comprehensive template validation...');
+        console.info('🔍 Starting comprehensive template validation...');
 
         const startTime = Date.now();
         const templateFiles = this.findTemplateFiles();
 
-        console.log(`📁 Found ${templateFiles.length} template files`);
+        console.info(`📁 Found ${templateFiles.length} template files`);
 
         let totalValid = 0;
         let totalInvalid = 0;
@@ -157,7 +157,7 @@ class TemplateSystemValidator {
             metrics: overallMetrics
         };
 
-        console.log(`✅ Validation completed in ${Date.now() - startTime}ms`);
+        console.info(`✅ Validation completed in ${Date.now() - startTime}ms`);
         return overallResult;
     }
 
@@ -946,47 +946,47 @@ async function main() {
     const autoFix = args.includes('--fix');
     const reportPath = args.includes('--report') ? 'template-validation-report.md' : null;
 
-    console.log('🚀 Template System Validator v2.0.0');
-    console.log(`📁 Vault Path: ${vaultPath}`);
-    console.log(`🔧 Auto Fix: ${autoFix ? 'Enabled' : 'Disabled'}`);
+    console.info('🚀 Template System Validator v2.0.0');
+    console.info(`📁 Vault Path: ${vaultPath}`);
+    console.info(`🔧 Auto Fix: ${autoFix ? 'Enabled' : 'Disabled'}`);
 
     const validator = new TemplateSystemValidator(vaultPath);
     const result = await validator.validateAllTemplates();
 
     // Display results
-    console.log('\n📊 Validation Results:');
-    console.log(`✅ Valid Templates: ${result.metrics.validTemplates}`);
-    console.log(`❌ Invalid Templates: ${result.metrics.invalidTemplates}`);
-    console.log(`📈 Compliance Score: ${result.metrics.complianceScore.toFixed(1)}%`);
-    console.log(`⚡ Average Processing Time: ${result.metrics.averageProcessingTime.toFixed(1)}ms`);
+    console.info('\n📊 Validation Results:');
+    console.info(`✅ Valid Templates: ${result.metrics.validTemplates}`);
+    console.info(`❌ Invalid Templates: ${result.metrics.invalidTemplates}`);
+    console.info(`📈 Compliance Score: ${result.metrics.complianceScore.toFixed(1)}%`);
+    console.info(`⚡ Average Processing Time: ${result.metrics.averageProcessingTime.toFixed(1)}ms`);
 
     if (result.errors.length > 0) {
-        console.log(`\n❌ Errors: ${result.errors.length}`);
+        console.info(`\n❌ Errors: ${result.errors.length}`);
         result.errors.slice(0, 5).forEach(error => {
-            console.log(`   • ${error.message}`);
+            console.info(`   • ${error.message}`);
         });
     }
 
     if (result.warnings.length > 0) {
-        console.log(`\n⚠️ Warnings: ${result.warnings.length}`);
+        console.info(`\n⚠️ Warnings: ${result.warnings.length}`);
         result.warnings.slice(0, 5).forEach(warning => {
-            console.log(`   • ${warning.message}`);
+            console.info(`   • ${warning.message}`);
         });
     }
 
     // Auto fix if requested
     if (autoFix) {
-        console.log('\n🔧 Applying auto fixes...');
+        console.info('\n🔧 Applying auto fixes...');
         const fixedCount = await validator.fixTemplateIssues(true);
-        console.log(`✅ Fixed ${fixedCount} templates`);
+        console.info(`✅ Fixed ${fixedCount} templates`);
     }
 
     // Generate report if requested
     if (reportPath) {
-        console.log(`\n📄 Generating report: ${reportPath}`);
+        console.info(`\n📄 Generating report: ${reportPath}`);
         const report = validator.generateReport(result);
         writeFileSync(reportPath, report);
-        console.log('✅ Report generated successfully');
+        console.info('✅ Report generated successfully');
     }
 
     // Exit with appropriate code

@@ -26,11 +26,11 @@ import { guardianNetwork } from './guardian-network-engine';
 
 // Demo scenarios
 async function runCrossFamilyNetworkDemo() {
-  console.log('🕸️ CROSS-FAMILY GUARDIAN NETWORKS DEMO - Inter-Household Sponsorship Webs');
-  console.log('=========================================================================\n');
+  console.info('🕸️ CROSS-FAMILY GUARDIAN NETWORKS DEMO - Inter-Household Sponsorship Webs');
+  console.info('=========================================================================\n');
 
   // Start the Cross-Family Network API server first
-  console.log('🌐 Starting Cross-Family Network API Server...');
+  console.info('🌐 Starting Cross-Family Network API Server...');
   const apiServer = Bun.spawn(['bun', 'cross-family-network-api-server.ts'], {
     cwd: process.cwd(),
     detached: true
@@ -40,8 +40,8 @@ async function runCrossFamilyNetworkDemo() {
   await new Promise(resolve => setTimeout(resolve, 1000));
 
   // 1. Initialize Teen Network
-  console.log('👶 1. Teen Network Initialization');
-  console.log('-----------------------------------');
+  console.info('👶 1. Teen Network Initialization');
+  console.info('-----------------------------------');
   try {
     const teenId = 'teen-001';
     const primaryGuardian = {
@@ -64,25 +64,25 @@ async function runCrossFamilyNetworkDemo() {
     
     const network = await guardianNetwork.initializeTeenNetwork(teenId, primaryGuardian);
     
-    console.log('✅ Teen Network Initialized:');
-    console.log(`   👶 Teen ID: ${network.teenId}`);
-    console.log(`   👤 Primary Guardian: ${primaryGuardian.name} (${primaryGuardian.household})`);
-    console.log(`   🏠 Household: ${primaryGuardian.household}`);
-    console.log(`   🔗 Network Status: Active`);
-    console.log(`   ⚙️ Shared Settings: Collective limits enabled\n`);
+    console.info('✅ Teen Network Initialized:');
+    console.info(`   👶 Teen ID: ${network.teenId}`);
+    console.info(`   👤 Primary Guardian: ${primaryGuardian.name} (${primaryGuardian.household})`);
+    console.info(`   🏠 Household: ${primaryGuardian.household}`);
+    console.info(`   🔗 Network Status: Active`);
+    console.info(`   ⚙️ Shared Settings: Collective limits enabled\n`);
   } catch (error) {
-    console.log('❌ Network Initialization Failed: Using mock data');
-    console.log('✅ Teen Network (Mock):');
-    console.log(`   👶 Teen ID: teen-001`);
-    console.log(`   👤 Primary Guardian: Sarah Johnson (Primary Household)`);
-    console.log(`   🏠 Household: Primary Household`);
-    console.log(`   🔗 Network Status: Active`);
-    console.log(`   ⚙️ Shared Settings: Collective limits enabled\n`);
+    console.info('❌ Network Initialization Failed: Using mock data');
+    console.info('✅ Teen Network (Mock):');
+    console.info(`   👶 Teen ID: teen-001`);
+    console.info(`   👤 Primary Guardian: Sarah Johnson (Primary Household)`);
+    console.info(`   🏠 Household: Primary Household`);
+    console.info(`   🔗 Network Status: Active`);
+    console.info(`   ⚙️ Shared Settings: Collective limits enabled\n`);
   }
 
   // 2. Add Cross-Family Guardians
-  console.log('👨‍👩‍👧‍👦 2. Cross-Family Guardian Network Building');
-  console.log('--------------------------------------------');
+  console.info('👨‍👩‍👧‍👦 2. Cross-Family Guardian Network Building');
+  console.info('--------------------------------------------');
   try {
     const teenId = 'teen-001';
     
@@ -106,11 +106,11 @@ async function runCrossFamilyNetworkDemo() {
     };
     
     await guardianNetwork.addCrossFamilyLink(teenId, dadGuardian, 'guardian-mom-001', 'CROSS_HOUSEHOLD');
-    console.log('✅ Cross-Household Guardian Added:');
-    console.log(`   👤 Guardian: ${dadGuardian.name}`);
-    console.log(`   🏠 Household: ${dadGuardian.household}`);
-    console.log(`   🔗 Link Type: Cross-Household`);
-    console.log(`   ✅ VPC Status: Verified\n`);
+    console.info('✅ Cross-Household Guardian Added:');
+    console.info(`   👤 Guardian: ${dadGuardian.name}`);
+    console.info(`   🏠 Household: ${dadGuardian.household}`);
+    console.info(`   🔗 Link Type: Cross-Household`);
+    console.info(`   ✅ VPC Status: Verified\n`);
     
     // Add Grandma from maternal household
     const grandmaGuardian = {
@@ -132,11 +132,11 @@ async function runCrossFamilyNetworkDemo() {
     };
     
     await guardianNetwork.addCrossFamilyLink(teenId, grandmaGuardian, 'guardian-mom-001', 'EXTENDED_FAMILY');
-    console.log('✅ Extended Family Guardian Added:');
-    console.log(`   👤 Guardian: ${grandmaGuardian.name}`);
-    console.log(`   🏠 Household: ${grandmaGuardian.household}`);
-    console.log(`   🔗 Link Type: Extended Family`);
-    console.log(`   👀 Permissions: View + Approve only\n`);
+    console.info('✅ Extended Family Guardian Added:');
+    console.info(`   👤 Guardian: ${grandmaGuardian.name}`);
+    console.info(`   🏠 Household: ${grandmaGuardian.household}`);
+    console.info(`   🔗 Link Type: Extended Family`);
+    console.info(`   👀 Permissions: View + Approve only\n`);
     
     // Add Aunt from paternal household
     const auntGuardian = {
@@ -158,156 +158,156 @@ async function runCrossFamilyNetworkDemo() {
     };
     
     await guardianNetwork.addCrossFamilyLink(teenId, auntGuardian, 'guardian-mom-001', 'BACKUP');
-    console.log('✅ Backup Guardian Added:');
-    console.log(`   👤 Guardian: ${auntGuardian.name}`);
-    console.log(`   🏠 Household: ${auntGuardian.household}`);
-    console.log(`   🔗 Link Type: Backup`);
-    console.log(`   👀 Permissions: View + Alerts only\n`);
+    console.info('✅ Backup Guardian Added:');
+    console.info(`   👤 Guardian: ${auntGuardian.name}`);
+    console.info(`   🏠 Household: ${auntGuardian.household}`);
+    console.info(`   🔗 Link Type: Backup`);
+    console.info(`   👀 Permissions: View + Alerts only\n`);
     
   } catch (error) {
-    console.log('❌ Cross-Family Network Building Failed: Using mock data');
-    console.log('✅ Cross-Family Guardians (Mock):');
-    console.log('   👤 Mike Johnson (Ex-Primary Household) - Cross-Household');
-    console.log('   👤 Margaret Wilson (Maternal Grandparents) - Extended Family');
-    console.log('   👤 Jennifer Davis (Paternal Extended) - Backup\n');
+    console.info('❌ Cross-Family Network Building Failed: Using mock data');
+    console.info('✅ Cross-Family Guardians (Mock):');
+    console.info('   👤 Mike Johnson (Ex-Primary Household) - Cross-Household');
+    console.info('   👤 Margaret Wilson (Maternal Grandparents) - Extended Family');
+    console.info('   👤 Jennifer Davis (Paternal Extended) - Backup\n');
   }
 
   // 3. Network Visualization and Analytics
-  console.log('📊 3. Network Visualization & Analytics');
-  console.log('--------------------------------------');
+  console.info('📊 3. Network Visualization & Analytics');
+  console.info('--------------------------------------');
   try {
     const teenId = 'teen-001';
     const networkViz = guardianNetwork.getNetworkVisualization(teenId);
     const analytics = guardianNetwork.getNetworkAnalytics(teenId);
     
-    console.log('✅ Network Visualization Data:');
-    console.log(`   📍 Nodes: ${networkViz.nodes.length} guardians`);
-    console.log(`   🔗 Edges: ${networkViz.edges.length} connections`);
-    console.log(`   🕸️ Network Tension: ${(networkViz.tension * 100).toFixed(1)}%`);
-    console.log(`   🏠 Cross-Household Links: ${networkViz.edges.filter((e: any) => e.householdLink).length}`);
-    console.log('');
+    console.info('✅ Network Visualization Data:');
+    console.info(`   📍 Nodes: ${networkViz.nodes.length} guardians`);
+    console.info(`   🔗 Edges: ${networkViz.edges.length} connections`);
+    console.info(`   🕸️ Network Tension: ${(networkViz.tension * 100).toFixed(1)}%`);
+    console.info(`   🏠 Cross-Household Links: ${networkViz.edges.filter((e: any) => e.householdLink).length}`);
+    console.info('');
     
-    console.log('✅ Network Analytics:');
-    console.log(`   💪 Network Strength: ${(analytics.networkStrength * 100).toFixed(1)}%`);
-    console.log(`   🛡️ Redundancy Score: ${(analytics.redundancyScore * 100).toFixed(1)}%`);
-    console.log(`   🔗 Cross-Household Connectivity: ${(analytics.crossHouseholdConnectivity * 100).toFixed(1)}%`);
-    console.log(`   📊 Risk Distribution: ${analytics.riskDistribution.size} guardians tracked`);
-    console.log(`   💡 Recommendations: ${analytics.recommendations.length}`);
+    console.info('✅ Network Analytics:');
+    console.info(`   💪 Network Strength: ${(analytics.networkStrength * 100).toFixed(1)}%`);
+    console.info(`   🛡️ Redundancy Score: ${(analytics.redundancyScore * 100).toFixed(1)}%`);
+    console.info(`   🔗 Cross-Household Connectivity: ${(analytics.crossHouseholdConnectivity * 100).toFixed(1)}%`);
+    console.info(`   📊 Risk Distribution: ${analytics.riskDistribution.size} guardians tracked`);
+    console.info(`   💡 Recommendations: ${analytics.recommendations.length}`);
     
     if (analytics.recommendations.length > 0) {
-      console.log('   💡 Recommendation Details:');
+      console.info('   💡 Recommendation Details:');
       analytics.recommendations.forEach((rec: string, index: number) => {
-        console.log(`      ${index + 1}. ${rec}`);
+        console.info(`      ${index + 1}. ${rec}`);
       });
     }
-    console.log('');
+    console.info('');
   } catch (error) {
-    console.log('❌ Network Analytics Failed: Using mock data');
-    console.log('✅ Network Analytics (Mock):');
-    console.log(`   💪 Network Strength: 85.0%`);
-    console.log(`   🛡️ Redundancy Score: 66.7%`);
-    console.log(`   🔗 Cross-Household Connectivity: 75.0%`);
-    console.log(`   📊 Risk Distribution: 4 guardians tracked`);
-    console.log(`   💡 Recommendations: 1`);
-    console.log(`      1. Add more cross-household guardians for better redundancy\n`);
+    console.info('❌ Network Analytics Failed: Using mock data');
+    console.info('✅ Network Analytics (Mock):');
+    console.info(`   💪 Network Strength: 85.0%`);
+    console.info(`   🛡️ Redundancy Score: 66.7%`);
+    console.info(`   🔗 Cross-Household Connectivity: 75.0%`);
+    console.info(`   📊 Risk Distribution: 4 guardians tracked`);
+    console.info(`   💡 Recommendations: 1`);
+    console.info(`      1. Add more cross-household guardians for better redundancy\n`);
   }
 
   // 4. Shared Dashboard Demonstration
-  console.log('📋 4. Shared Dashboard & Collective Oversight');
-  console.log('---------------------------------------------');
+  console.info('📋 4. Shared Dashboard & Collective Oversight');
+  console.info('---------------------------------------------');
   try {
     const teenId = 'teen-001';
     const dashboard = guardianNetwork.getSharedDashboard(teenId);
     
-    console.log('✅ Shared Dashboard Data:');
-    console.log(`   👥 Total Guardians: ${dashboard.collectiveMetrics.totalGuardians}`);
-    console.log(`   ✅ Active Guardians: ${dashboard.collectiveMetrics.activeGuardians}`);
-    console.log(`   🔗 Cross-Household Links: ${dashboard.collectiveMetrics.crossHouseholdLinks}`);
-    console.log(`   💚 Network Health: ${(dashboard.collectiveMetrics.networkHealth * 100).toFixed(1)}%`);
-    console.log('');
+    console.info('✅ Shared Dashboard Data:');
+    console.info(`   👥 Total Guardians: ${dashboard.collectiveMetrics.totalGuardians}`);
+    console.info(`   ✅ Active Guardians: ${dashboard.collectiveMetrics.activeGuardians}`);
+    console.info(`   🔗 Cross-Household Links: ${dashboard.collectiveMetrics.crossHouseholdLinks}`);
+    console.info(`   💚 Network Health: ${(dashboard.collectiveMetrics.networkHealth * 100).toFixed(1)}%`);
+    console.info('');
     
-    console.log('✅ Recent Network Activity:');
+    console.info('✅ Recent Network Activity:');
     dashboard.activityFeed.slice(0, 3).forEach((activity: any, index: number) => {
-      console.log(`   ${index + 1}. ${activity.guardian}: ${activity.message}`);
-      console.log(`      📅 ${new Date(activity.timestamp).toLocaleString()}`);
+      console.info(`   ${index + 1}. ${activity.guardian}: ${activity.message}`);
+      console.info(`      📅 ${new Date(activity.timestamp).toLocaleString()}`);
     });
-    console.log('');
+    console.info('');
     
-    console.log('✅ Shared Settings:');
-    console.log(`   💰 Collective Spend Limit: $${dashboard.network.sharedSettings.collectiveSpendLimit}`);
-    console.log(`   👀 Shared Visibility: ${dashboard.network.sharedSettings.sharedVisibility ? 'Enabled' : 'Disabled'}`);
-    console.log(`   🚨 Cross-Household Alerts: ${dashboard.network.sharedSettings.crossHouseholdAlerts ? 'Enabled' : 'Disabled'}`);
-    console.log(`   🛡️ Auto Failover: ${dashboard.network.sharedSettings.autoFailover ? 'Enabled' : 'Disabled'}\n`);
+    console.info('✅ Shared Settings:');
+    console.info(`   💰 Collective Spend Limit: $${dashboard.network.sharedSettings.collectiveSpendLimit}`);
+    console.info(`   👀 Shared Visibility: ${dashboard.network.sharedSettings.sharedVisibility ? 'Enabled' : 'Disabled'}`);
+    console.info(`   🚨 Cross-Household Alerts: ${dashboard.network.sharedSettings.crossHouseholdAlerts ? 'Enabled' : 'Disabled'}`);
+    console.info(`   🛡️ Auto Failover: ${dashboard.network.sharedSettings.autoFailover ? 'Enabled' : 'Disabled'}\n`);
     
   } catch (error) {
-    console.log('❌ Shared Dashboard Failed: Using mock data');
-    console.log('✅ Shared Dashboard (Mock):');
-    console.log(`   👥 Total Guardians: 4`);
-    console.log(`   ✅ Active Guardians: 4`);
-    console.log(`   🔗 Cross-Household Links: 3`);
-    console.log(`   💚 Network Health: 85.0%\n`);
+    console.info('❌ Shared Dashboard Failed: Using mock data');
+    console.info('✅ Shared Dashboard (Mock):');
+    console.info(`   👥 Total Guardians: 4`);
+    console.info(`   ✅ Active Guardians: 4`);
+    console.info(`   🔗 Cross-Household Links: 3`);
+    console.info(`   💚 Network Health: 85.0%\n`);
   }
 
   // 5. Distributed Failover Testing
-  console.log('🛡️ 5. Distributed Failover & Resilience Testing');
-  console.log('-----------------------------------------------');
+  console.info('🛡️ 5. Distributed Failover & Resilience Testing');
+  console.info('-----------------------------------------------');
   try {
     const teenId = 'teen-001';
     const failedGuardianId = 'guardian-mom-001';
     
-    console.log(`⚠️ Simulating guardian failure: ${failedGuardianId}`);
+    console.info(`⚠️ Simulating guardian failure: ${failedGuardianId}`);
     const backupGuardians = await guardianNetwork.activateDistributedFailover(teenId, failedGuardianId);
     
-    console.log('✅ Distributed Failover Activated:');
-    console.log(`   🚨 Failed Guardian: ${failedGuardianId}`);
-    console.log(`   🛡️ Backup Guardians Activated: ${backupGuardians.length}`);
-    console.log(`   📋 Backup Guardian IDs: ${backupGuardians.join(', ')}`);
-    console.log(`   ⚡ Response Time: <100ms`);
-    console.log(`   🔄 Service Continuity: Maintained`);
-    console.log(`   📊 Network Impact: Minimal (2-8% downtime)\n`);
+    console.info('✅ Distributed Failover Activated:');
+    console.info(`   🚨 Failed Guardian: ${failedGuardianId}`);
+    console.info(`   🛡️ Backup Guardians Activated: ${backupGuardians.length}`);
+    console.info(`   📋 Backup Guardian IDs: ${backupGuardians.join(', ')}`);
+    console.info(`   ⚡ Response Time: <100ms`);
+    console.info(`   🔄 Service Continuity: Maintained`);
+    console.info(`   📊 Network Impact: Minimal (2-8% downtime)\n`);
     
   } catch (error) {
-    console.log('❌ Failover Testing Failed: Using mock data');
-    console.log('✅ Distributed Failover (Mock):');
-    console.log(`   🚨 Failed Guardian: guardian-mom-001`);
-    console.log(`   🛡️ Backup Guardians Activated: 2`);
-    console.log(`   📋 Backup Guardian IDs: guardian-dad-002, guardian-grandma-003`);
-    console.log(`   ⚡ Response Time: <100ms`);
-    console.log(`   🔄 Service Continuity: Maintained`);
-    console.log(`   📊 Network Impact: Minimal (2-8% downtime)\n`);
+    console.info('❌ Failover Testing Failed: Using mock data');
+    console.info('✅ Distributed Failover (Mock):');
+    console.info(`   🚨 Failed Guardian: guardian-mom-001`);
+    console.info(`   🛡️ Backup Guardians Activated: 2`);
+    console.info(`   📋 Backup Guardian IDs: guardian-dad-002, guardian-grandma-003`);
+    console.info(`   ⚡ Response Time: <100ms`);
+    console.info(`   🔄 Service Continuity: Maintained`);
+    console.info(`   📊 Network Impact: Minimal (2-8% downtime)\n`);
   }
 
   // 6. Tension Field Diffusion
-  console.log('🌊 6. Tension Field Diffusion Across Network');
-  console.log('--------------------------------------------');
+  console.info('🌊 6. Tension Field Diffusion Across Network');
+  console.info('--------------------------------------------');
   try {
     const teenId = 'teen-001';
     
-    console.log('🔍 Propagating tension across network...');
+    console.info('🔍 Propagating tension across network...');
     await guardianNetwork.propagateTensionAcrossNetwork(teenId);
     
     const networkViz = guardianNetwork.getNetworkVisualization(teenId);
     
-    console.log('✅ Tension Field Diffusion Complete:');
-    console.log(`   🌊 Network Tension: ${(networkViz.tension * 100).toFixed(1)}%`);
-    console.log(`   📡 Alert Propagation: Real-time`);
-    console.log(`   🔔 Guardians Notified: ${networkViz.nodes.length}`);
-    console.log(`   🚨 Risk Level: ${networkViz.tension > 0.8 ? 'HIGH' : networkViz.tension > 0.6 ? 'MEDIUM' : 'LOW'}`);
-    console.log(`   📊 Cross-Household Impact: ${networkViz.edges.filter((e: any) => e.householdLink).length} households\n`);
+    console.info('✅ Tension Field Diffusion Complete:');
+    console.info(`   🌊 Network Tension: ${(networkViz.tension * 100).toFixed(1)}%`);
+    console.info(`   📡 Alert Propagation: Real-time`);
+    console.info(`   🔔 Guardians Notified: ${networkViz.nodes.length}`);
+    console.info(`   🚨 Risk Level: ${networkViz.tension > 0.8 ? 'HIGH' : networkViz.tension > 0.6 ? 'MEDIUM' : 'LOW'}`);
+    console.info(`   📊 Cross-Household Impact: ${networkViz.edges.filter((e: any) => e.householdLink).length} households\n`);
     
   } catch (error) {
-    console.log('❌ Tension Diffusion Failed: Using mock data');
-    console.log('✅ Tension Field Diffusion (Mock):');
-    console.log(`   🌊 Network Tension: 35.2%`);
-    console.log(`   📡 Alert Propagation: Real-time`);
-    console.log(`   🔔 Guardians Notified: 4`);
-    console.log(`   🚨 Risk Level: MEDIUM`);
-    console.log(`   📊 Cross-Household Impact: 3 households\n`);
+    console.info('❌ Tension Diffusion Failed: Using mock data');
+    console.info('✅ Tension Field Diffusion (Mock):');
+    console.info(`   🌊 Network Tension: 35.2%`);
+    console.info(`   📡 Alert Propagation: Real-time`);
+    console.info(`   🔔 Guardians Notified: 4`);
+    console.info(`   🚨 Risk Level: MEDIUM`);
+    console.info(`   📊 Cross-Household Impact: 3 households\n`);
   }
 
   // 7. Performance Metrics
-  console.log('📈 7. Cross-Family Network Performance Metrics');
-  console.log('----------------------------------------------');
+  console.info('📈 7. Cross-Family Network Performance Metrics');
+  console.info('----------------------------------------------');
   const performanceMetrics = {
     networkSetupTime: 1.2, // seconds
     linkEstablishmentTime: 0.8, // seconds
@@ -319,19 +319,19 @@ async function runCrossFamilyNetworkDemo() {
     collectiveOversightEfficiency: 0.88 // 88% efficiency in collective decisions
   };
   
-  console.log('✅ Performance Metrics Achieved:');
-  console.log(`   ⚡ Network Setup Time: ${performanceMetrics.networkSetupTime}s`);
-  console.log(`   🔗 Link Establishment: ${performanceMetrics.linkEstablishmentTime}s`);
-  console.log(`   🛡️ Failover Activation: ${performanceMetrics.failoverActivationTime * 1000}ms`);
-  console.log(`   🌊 Tension Propagation: ${performanceMetrics.tensionPropagationLatency * 1000}ms`);
-  console.log(`   💪 Network Resilience: ${(performanceMetrics.networkResilience * 100).toFixed(1)}%`);
-  console.log(`   🏠 Cross-Household Success: ${(performanceMetrics.crossHouseholdSuccess * 100).toFixed(1)}%`);
-  console.log(`   👀 Shared Visibility Latency: ${performanceMetrics.sharedVisibilityLatency * 1000}ms`);
-  console.log(`   👥 Collective Oversight: ${(performanceMetrics.collectiveOversightEfficiency * 100).toFixed(1)}% efficiency\n`);
+  console.info('✅ Performance Metrics Achieved:');
+  console.info(`   ⚡ Network Setup Time: ${performanceMetrics.networkSetupTime}s`);
+  console.info(`   🔗 Link Establishment: ${performanceMetrics.linkEstablishmentTime}s`);
+  console.info(`   🛡️ Failover Activation: ${performanceMetrics.failoverActivationTime * 1000}ms`);
+  console.info(`   🌊 Tension Propagation: ${performanceMetrics.tensionPropagationLatency * 1000}ms`);
+  console.info(`   💪 Network Resilience: ${(performanceMetrics.networkResilience * 100).toFixed(1)}%`);
+  console.info(`   🏠 Cross-Household Success: ${(performanceMetrics.crossHouseholdSuccess * 100).toFixed(1)}%`);
+  console.info(`   👀 Shared Visibility Latency: ${performanceMetrics.sharedVisibilityLatency * 1000}ms`);
+  console.info(`   👥 Collective Oversight: ${(performanceMetrics.collectiveOversightEfficiency * 100).toFixed(1)}% efficiency\n`);
 
   // 8. Impact Analysis
-  console.log('💰 8. Cross-Family Network Impact Analysis');
-  console.log('------------------------------------------');
+  console.info('💰 8. Cross-Family Network Impact Analysis');
+  console.info('------------------------------------------');
   const impactMetrics = {
     baseline: {
       singleGuardianFailureImpact: 0.95, // 95% service impact
@@ -349,16 +349,16 @@ async function runCrossFamilyNetworkDemo() {
     }
   };
 
-  console.log('📊 Impact Comparison (Baseline vs Cross-Family Network):');
-  console.log(`   🚨 Single Guardian Failure Impact: ${(impactMetrics.baseline.singleGuardianFailureImpact * 100).toFixed(0)}% → ${(impactMetrics.crossFamilyNetwork.singleGuardianFailureImpact * 100).toFixed(0)}% (-${((1 - impactMetrics.crossFamilyNetwork.singleGuardianFailureImpact / impactMetrics.baseline.singleGuardianFailureImpact) * 100).toFixed(0)}%)`);
-  console.log(`   👪 Blended Family Continuity: ${(impactMetrics.baseline.blendedFamilyContinuity * 100).toFixed(0)}% → ${(impactMetrics.crossFamilyNetwork.blendedFamilyContinuity * 100).toFixed(0)}% (+${((impactMetrics.crossFamilyNetwork.blendedFamilyContinuity / impactMetrics.baseline.blendedFamilyContinuity - 1) * 100).toFixed(0)}%)`);
-  console.log(`   🏠 Cross-Household Engagement: ${(impactMetrics.baseline.crossHouseholdEngagement * 100).toFixed(0)}% → ${(impactMetrics.crossFamilyNetwork.crossHouseholdEngagement * 100).toFixed(0)}% (+${((impactMetrics.crossFamilyNetwork.crossHouseholdEngagement / impactMetrics.baseline.crossHouseholdEngagement - 1) * 100).toFixed(0)}%)`);
-  console.log(`   😌 Caregiver Burden: ${(impactMetrics.baseline.caregiverBurden * 100).toFixed(0)}% → ${(impactMetrics.crossFamilyNetwork.caregiverBurden * 100).toFixed(0)}% (-${((1 - impactMetrics.crossFamilyNetwork.caregiverBurden / impactMetrics.baseline.caregiverBurden) * 100).toFixed(0)}%)`);
-  console.log(`   🤝 Teen Support Network: ${(impactMetrics.baseline.teenSupportNetwork * 100).toFixed(0)}% → ${(impactMetrics.crossFamilyNetwork.teenSupportNetwork * 100).toFixed(0)}% (+${((impactMetrics.crossFamilyNetwork.teenSupportNetwork / impactMetrics.baseline.teenSupportNetwork - 1) * 100).toFixed(0)}%)\n`);
+  console.info('📊 Impact Comparison (Baseline vs Cross-Family Network):');
+  console.info(`   🚨 Single Guardian Failure Impact: ${(impactMetrics.baseline.singleGuardianFailureImpact * 100).toFixed(0)}% → ${(impactMetrics.crossFamilyNetwork.singleGuardianFailureImpact * 100).toFixed(0)}% (-${((1 - impactMetrics.crossFamilyNetwork.singleGuardianFailureImpact / impactMetrics.baseline.singleGuardianFailureImpact) * 100).toFixed(0)}%)`);
+  console.info(`   👪 Blended Family Continuity: ${(impactMetrics.baseline.blendedFamilyContinuity * 100).toFixed(0)}% → ${(impactMetrics.crossFamilyNetwork.blendedFamilyContinuity * 100).toFixed(0)}% (+${((impactMetrics.crossFamilyNetwork.blendedFamilyContinuity / impactMetrics.baseline.blendedFamilyContinuity - 1) * 100).toFixed(0)}%)`);
+  console.info(`   🏠 Cross-Household Engagement: ${(impactMetrics.baseline.crossHouseholdEngagement * 100).toFixed(0)}% → ${(impactMetrics.crossFamilyNetwork.crossHouseholdEngagement * 100).toFixed(0)}% (+${((impactMetrics.crossFamilyNetwork.crossHouseholdEngagement / impactMetrics.baseline.crossHouseholdEngagement - 1) * 100).toFixed(0)}%)`);
+  console.info(`   😌 Caregiver Burden: ${(impactMetrics.baseline.caregiverBurden * 100).toFixed(0)}% → ${(impactMetrics.crossFamilyNetwork.caregiverBurden * 100).toFixed(0)}% (-${((1 - impactMetrics.crossFamilyNetwork.caregiverBurden / impactMetrics.baseline.caregiverBurden) * 100).toFixed(0)}%)`);
+  console.info(`   🤝 Teen Support Network: ${(impactMetrics.baseline.teenSupportNetwork * 100).toFixed(0)}% → ${(impactMetrics.crossFamilyNetwork.teenSupportNetwork * 100).toFixed(0)}% (+${((impactMetrics.crossFamilyNetwork.teenSupportNetwork / impactMetrics.baseline.teenSupportNetwork - 1) * 100).toFixed(0)}%)\n`);
 
   // 9. Feature Flag Summary
-  console.log('🚩 9. Feature Flag Status');
-  console.log('--------------------------');
+  console.info('🚩 9. Feature Flag Status');
+  console.info('--------------------------');
   const features = [
     { name: 'PREMIUM', status: '✅ Active', desc: 'Cross-family networks enabled' },
     { name: 'CROSS_FAMILY_NETWORKS', status: '✅ Active', desc: 'Graph-based sponsorship webs' },
@@ -369,30 +369,30 @@ async function runCrossFamilyNetworkDemo() {
   ];
 
   features.forEach(feature => {
-    console.log(`   ${feature.status} ${feature.name}: ${feature.desc}`);
+    console.info(`   ${feature.status} ${feature.name}: ${feature.desc}`);
   });
-  console.log('');
+  console.info('');
 
   // Final Summary
-  console.log('🎆 CROSS-FAMILY GUARDIAN NETWORKS EMPIRE - DEPLOYMENT COMPLETE!');
-  console.log('==================================================================');
-  console.log('✅ Inter-Household Sponsorship Supremacy Achieved:');
-  console.log('   🕸️ Graph-Based Networks: Multi-household guardian webs with 96% resilience');
-  console.log('   🛡️ Distributed Failover: 95ms activation with 92-98% downtime reduction');
-  console.log('   👥 Shared Visibility: Real-time collective oversight across households');
-  console.log('   🌊 Tension Diffusion: Sub-30ms risk propagation across entire network');
-  console.log('   💪 Blended Family Support: 60% improvement in continuity for divorced/blended families');
-  console.log('   🔗 Cross-Household Engagement: 252% increase in extended family participation');
-  console.log('   😌 Caregiver Burden: 59% reduction through distributed responsibility');
-  console.log('   🤝 Teen Support Network: 130% stronger support systems');
-  console.log('');
-  console.log('🚀 Next Phase Ready:');
-  console.log('   🔥 Quantum GNN-Optimized Guardian Matching for auto-network expansion');
-  console.log('   ⚡ Multi-guardian failover chains with intelligent escalation');
-  console.log('   🎯 Advanced behavioral biometrics for cross-household trust scoring');
-  console.log('   🌍 Global compliance expansion with international family law support');
-  console.log('');
-  console.log('💎 Cross-Family Guardian Networks? Web-godded into immortal kinship empire!');
+  console.info('🎆 CROSS-FAMILY GUARDIAN NETWORKS EMPIRE - DEPLOYMENT COMPLETE!');
+  console.info('==================================================================');
+  console.info('✅ Inter-Household Sponsorship Supremacy Achieved:');
+  console.info('   🕸️ Graph-Based Networks: Multi-household guardian webs with 96% resilience');
+  console.info('   🛡️ Distributed Failover: 95ms activation with 92-98% downtime reduction');
+  console.info('   👥 Shared Visibility: Real-time collective oversight across households');
+  console.info('   🌊 Tension Diffusion: Sub-30ms risk propagation across entire network');
+  console.info('   💪 Blended Family Support: 60% improvement in continuity for divorced/blended families');
+  console.info('   🔗 Cross-Household Engagement: 252% increase in extended family participation');
+  console.info('   😌 Caregiver Burden: 59% reduction through distributed responsibility');
+  console.info('   🤝 Teen Support Network: 130% stronger support systems');
+  console.info('');
+  console.info('🚀 Next Phase Ready:');
+  console.info('   🔥 Quantum GNN-Optimized Guardian Matching for auto-network expansion');
+  console.info('   ⚡ Multi-guardian failover chains with intelligent escalation');
+  console.info('   🎯 Advanced behavioral biometrics for cross-household trust scoring');
+  console.info('   🌍 Global compliance expansion with international family law support');
+  console.info('');
+  console.info('💎 Cross-Family Guardian Networks? Web-godded into immortal kinship empire!');
 }
 
 // CLI Tools for Network Management
@@ -415,14 +415,14 @@ class CrossFamilyNetworkCLI {
         networks.forEach((network: any) => {
           this.persistentNetworks.set(network.teenId, network);
         });
-        console.log('📂 Loaded persistent network state from file');
-        console.log(`   Found ${networks.length} network(s) in storage`);
+        console.info('📂 Loaded persistent network state from file');
+        console.info(`   Found ${networks.length} network(s) in storage`);
       } else {
-        console.log('📝 No storage file found, starting fresh');
+        console.info('📝 No storage file found, starting fresh');
       }
     } catch (error) {
-      console.log('📝 Error loading persistent state, starting fresh');
-      console.log(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
+      console.info('📝 Error loading persistent state, starting fresh');
+      console.info(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
     }
   }
 
@@ -432,10 +432,10 @@ class CrossFamilyNetworkCLI {
       const storageFile = './cross-family-networks.json';
       const networks = Array.from(this.persistentNetworks.values());
       writeFileSync(storageFile, JSON.stringify(networks, null, 2));
-      console.log('💾 Saved network state to file');
+      console.info('💾 Saved network state to file');
     } catch (error) {
-      console.log('⚠️ Could not save persistent state');
-      console.log(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
+      console.info('⚠️ Could not save persistent state');
+      console.info(`   Error: ${error instanceof Error ? error.message : 'Unknown'}`);
     }
   }
 
@@ -443,7 +443,7 @@ class CrossFamilyNetworkCLI {
     teen?: string;
     guardian?: string;
   }) {
-    console.log('🕸️ Initializing Cross-Family Network...');
+    console.info('🕸️ Initializing Cross-Family Network...');
     
     const teenId = options.teen || 'teen-001';
     const guardianName = options.guardian || 'Primary Guardian';
@@ -477,12 +477,12 @@ class CrossFamilyNetworkCLI {
       });
       this.savePersistentState();
       
-      console.log('✅ Network initialized successfully');
-      console.log(`   Teen: ${teenId}`);
-      console.log(`   Primary Guardian: ${guardianName}`);
-      console.log(`   Network ID: ${network.teenId}`);
+      console.info('✅ Network initialized successfully');
+      console.info(`   Teen: ${teenId}`);
+      console.info(`   Primary Guardian: ${guardianName}`);
+      console.info(`   Network ID: ${network.teenId}`);
     } catch (error) {
-      console.log('❌ Network initialization failed');
+      console.info('❌ Network initialization failed');
     }
   }
 
@@ -492,7 +492,7 @@ class CrossFamilyNetworkCLI {
     household?: string;
     role?: string;
   }) {
-    console.log('👤 Adding Guardian to Network...');
+    console.info('👤 Adding Guardian to Network...');
     
     const teenId = options.teen || 'teen-001';
     const guardianName = options.name || 'New Guardian';
@@ -502,7 +502,7 @@ class CrossFamilyNetworkCLI {
     try {
       // Check if network exists in persistent state
       if (!this.persistentNetworks.has(teenId)) {
-        console.log('❌ Network not found. Please initialize the network first.');
+        console.info('❌ Network not found. Please initialize the network first.');
         return;
       }
       
@@ -513,7 +513,7 @@ class CrossFamilyNetworkCLI {
           await this.engine.initializeTeenNetwork(teenId, persistentNetwork.primaryGuardian);
         } catch (error) {
           // Network might already exist, which is fine
-          console.log('📝 Network already exists in engine');
+          console.info('📝 Network already exists in engine');
         }
       }
       
@@ -548,13 +548,13 @@ class CrossFamilyNetworkCLI {
         this.savePersistentState();
       }
       
-      console.log('✅ Guardian added successfully');
-      console.log(`   Name: ${guardianName}`);
-      console.log(`   Household: ${household}`);
-      console.log(`   Role: ${role}`);
+      console.info('✅ Guardian added successfully');
+      console.info(`   Name: ${guardianName}`);
+      console.info(`   Household: ${household}`);
+      console.info(`   Role: ${role}`);
     } catch (error) {
-      console.log('❌ Failed to add guardian');
-      console.log(`   Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.info('❌ Failed to add guardian');
+      console.info(`   Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -562,7 +562,7 @@ class CrossFamilyNetworkCLI {
     teen?: string;
     guardian?: string;
   }) {
-    console.log('🛡️ Testing Distributed Failover...');
+    console.info('🛡️ Testing Distributed Failover...');
     
     const teenId = options.teen || 'teen-001';
     const failedGuardianId = options.guardian || 'guardian-mom-001';
@@ -570,7 +570,7 @@ class CrossFamilyNetworkCLI {
     try {
       // Check if network exists in persistent state
       if (!this.persistentNetworks.has(teenId)) {
-        console.log('❌ Network not found. Please initialize the network first.');
+        console.info('❌ Network not found. Please initialize the network first.');
         return;
       }
       
@@ -581,7 +581,7 @@ class CrossFamilyNetworkCLI {
           await this.engine.initializeTeenNetwork(teenId, persistentNetwork.primaryGuardian);
         } catch (error) {
           // Network might already exist, which is fine
-          console.log('📝 Network already exists in engine');
+          console.info('📝 Network already exists in engine');
         }
         
         // Add existing guardians to the engine
@@ -590,7 +590,7 @@ class CrossFamilyNetworkCLI {
             try {
               await this.engine.addCrossFamilyLink(teenId, guardian, 'guardian-mom-001', 'EXTENDED_FAMILY');
             } catch (error) {
-              console.log(`⚠️ Could not restore guardian ${guardian.name}: ${error instanceof Error ? error.message : 'Unknown'}`);
+              console.info(`⚠️ Could not restore guardian ${guardian.name}: ${error instanceof Error ? error.message : 'Unknown'}`);
             }
           }
         }
@@ -610,20 +610,20 @@ class CrossFamilyNetworkCLI {
         this.savePersistentState();
       }
       
-      console.log('✅ Failover test completed');
-      console.log(`   Failed Guardian: ${failedGuardianId}`);
-      console.log(`   Backup Guardians: ${backupGuardians.length}`);
-      console.log(`   Response Time: <100ms`);
+      console.info('✅ Failover test completed');
+      console.info(`   Failed Guardian: ${failedGuardianId}`);
+      console.info(`   Backup Guardians: ${backupGuardians.length}`);
+      console.info(`   Response Time: <100ms`);
     } catch (error) {
-      console.log('❌ Failover test failed');
-      console.log(`   Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.info('❌ Failover test failed');
+      console.info(`   Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
   async analyzeNetwork(options: {
     teen?: string;
   }) {
-    console.log('📊 Analyzing Network...');
+    console.info('📊 Analyzing Network...');
     
     const teenId = options.teen || 'teen-001';
     
@@ -631,7 +631,7 @@ class CrossFamilyNetworkCLI {
       // Check if network exists in persistent state
       const persistentNetwork = this.persistentNetworks.get(teenId);
       if (!persistentNetwork) {
-        console.log('❌ Network not found. Please initialize the network first.');
+        console.info('❌ Network not found. Please initialize the network first.');
         return;
       }
       
@@ -641,7 +641,7 @@ class CrossFamilyNetworkCLI {
           await this.engine.initializeTeenNetwork(teenId, persistentNetwork.primaryGuardian);
         } catch (error) {
           // Network might already exist, which is fine
-          console.log('📝 Network already exists in engine');
+          console.info('📝 Network already exists in engine');
         }
         
         // Add existing guardians to the engine
@@ -650,7 +650,7 @@ class CrossFamilyNetworkCLI {
             try {
               await this.engine.addCrossFamilyLink(teenId, guardian, 'guardian-mom-001', 'EXTENDED_FAMILY');
             } catch (error) {
-              console.log(`⚠️ Could not restore guardian ${guardian.name}: ${error instanceof Error ? error.message : 'Unknown'}`);
+              console.info(`⚠️ Could not restore guardian ${guardian.name}: ${error instanceof Error ? error.message : 'Unknown'}`);
             }
           }
         }
@@ -659,27 +659,27 @@ class CrossFamilyNetworkCLI {
       const networkViz = this.engine.getNetworkVisualization(teenId);
       const analytics = this.engine.getNetworkAnalytics(teenId);
       
-      console.log('✅ Network Analysis Complete:');
-      console.log(`   Nodes: ${networkViz.nodes.length}`);
-      console.log(`   Edges: ${networkViz.edges.length}`);
-      console.log(`   Network Tension: ${(networkViz.tension * 100).toFixed(1)}%`);
-      console.log(`   Network Strength: ${(analytics.networkStrength * 100).toFixed(1)}%`);
-      console.log(`   Redundancy Score: ${(analytics.redundancyScore * 100).toFixed(1)}%`);
-      console.log(`   Cross-Household Connectivity: ${(analytics.crossHouseholdConnectivity * 100).toFixed(1)}%`);
+      console.info('✅ Network Analysis Complete:');
+      console.info(`   Nodes: ${networkViz.nodes.length}`);
+      console.info(`   Edges: ${networkViz.edges.length}`);
+      console.info(`   Network Tension: ${(networkViz.tension * 100).toFixed(1)}%`);
+      console.info(`   Network Strength: ${(analytics.networkStrength * 100).toFixed(1)}%`);
+      console.info(`   Redundancy Score: ${(analytics.redundancyScore * 100).toFixed(1)}%`);
+      console.info(`   Cross-Household Connectivity: ${(analytics.crossHouseholdConnectivity * 100).toFixed(1)}%`);
       
       // Show persistent state info
       if (persistentNetwork.createdAt) {
-        console.log(`   Created: ${new Date(persistentNetwork.createdAt).toLocaleString()}`);
+        console.info(`   Created: ${new Date(persistentNetwork.createdAt).toLocaleString()}`);
       }
       if (persistentNetwork.lastUpdated) {
-        console.log(`   Last Updated: ${new Date(persistentNetwork.lastUpdated).toLocaleString()}`);
+        console.info(`   Last Updated: ${new Date(persistentNetwork.lastUpdated).toLocaleString()}`);
       }
       if (persistentNetwork.failoverResults) {
-        console.log(`   Last Failover Test: ${persistentNetwork.failoverResults.backupCount} backup guardians`);
+        console.info(`   Last Failover Test: ${persistentNetwork.failoverResults.backupCount} backup guardians`);
       }
     } catch (error) {
-      console.log('❌ Network analysis failed');
-      console.log(`   Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.info('❌ Network analysis failed');
+      console.info(`   Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 }
@@ -725,12 +725,12 @@ async function handleCLICommand() {
       break;
       
     default:
-      console.log('🕸️ Cross-Family Guardian Networks CLI');
-      console.log('Usage:');
-      console.log('  bun run cross-family-network-demo.ts init --teen=teen-001 --guardian="Sarah Johnson"');
-      console.log('  bun run cross-family-network-demo.ts add --teen=teen-001 --name="Mike Johnson" --household="Ex-Primary" --role=SECONDARY');
-      console.log('  bun run cross-family-network-demo.ts failover --teen=teen-001 --guardian=guardian-mom-001');
-      console.log('  bun run cross-family-network-demo.ts analyze --teen=teen-001');
+      console.info('🕸️ Cross-Family Guardian Networks CLI');
+      console.info('Usage:');
+      console.info('  bun run cross-family-network-demo.ts init --teen=teen-001 --guardian="Sarah Johnson"');
+      console.info('  bun run cross-family-network-demo.ts add --teen=teen-001 --name="Mike Johnson" --household="Ex-Primary" --role=SECONDARY');
+      console.info('  bun run cross-family-network-demo.ts failover --teen=teen-001 --guardian=guardian-mom-001');
+      console.info('  bun run cross-family-network-demo.ts analyze --teen=teen-001');
       break;
   }
 }

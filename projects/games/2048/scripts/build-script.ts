@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 
 // Build script demonstrating Bun v1.3.6 spawnSync performance improvements
-console.log("🔨 Build Script with Bun v1.3.6 spawnSync Optimizations");
-console.log("=".repeat(60));
+console.info("🔨 Build Script with Bun v1.3.6 spawnSync Optimizations");
+console.info("=".repeat(60));
 
 import { spawnSync } from "bun";
 
@@ -31,7 +31,7 @@ class BuildScript {
         success: true,
       });
 
-      console.log(`✅ ${name}: ${duration.toFixed(2)}ms`);
+      console.info(`✅ ${name}: ${duration.toFixed(2)}ms`);
       return result;
     } catch (error) {
       const duration = performance.now() - start;
@@ -42,13 +42,13 @@ class BuildScript {
         success: false,
       });
 
-      console.log(`❌ ${name}: ${duration.toFixed(2)}ms (failed)`);
+      console.info(`❌ ${name}: ${duration.toFixed(2)}ms (failed)`);
       throw error;
     }
   }
 
   async cleanDist() {
-    console.log("\n🧹 Cleaning dist directory...");
+    console.info("\n🧹 Cleaning dist directory...");
 
     return this.measureOperation("Clean dist", () => {
       // Use spawnSync for directory operations - benefits from v1.3.6 improvements
@@ -72,7 +72,7 @@ class BuildScript {
   }
 
   async runTypeCheck() {
-    console.log("\n📋 Running type check...");
+    console.info("\n📋 Running type check...");
 
     return this.measureOperation("Type check", () => {
       // TypeScript compilation - spawnSync benefits from performance fix
@@ -95,7 +95,7 @@ class BuildScript {
   }
 
   async runTests() {
-    console.log("\n🧪 Running tests...");
+    console.info("\n🧪 Running tests...");
 
     return this.measureOperation("Run tests", () => {
       // Test execution - uses spawnSync with v1.3.6 performance improvements
@@ -108,30 +108,30 @@ class BuildScript {
         throw new Error("Tests failed");
       }
 
-      console.log(testResult.stdout.toString());
+      console.info(testResult.stdout.toString());
       return true;
     });
   }
 
   async runSpecificTests(pattern: string) {
-    console.log(`\n🎯 Running tests matching: ${pattern}`);
+    console.info(`\n🎯 Running tests matching: ${pattern}`);
 
     return this.measureOperation(`Run tests (${pattern})`, () => {
       // Demonstrate --grep flag functionality (v1.3.6 improvement)
       const testResult = spawnSync(["bun", "test", "--grep", pattern]);
 
       if (testResult.exitCode !== 0) {
-        console.log("No tests matched pattern or tests failed");
+        console.info("No tests matched pattern or tests failed");
         return false;
       }
 
-      console.log(testResult.stdout.toString());
+      console.info(testResult.stdout.toString());
       return true;
     });
   }
 
   async buildProject() {
-    console.log("\n🏗️ Building project...");
+    console.info("\n🏗️ Building project...");
 
     return this.measureOperation("Build project", () => {
       // Build process - spawnSync performance critical here
@@ -156,7 +156,7 @@ class BuildScript {
   }
 
   async optimizeAssets() {
-    console.log("\n⚡ Optimizing assets...");
+    console.info("\n⚡ Optimizing assets...");
 
     return this.measureOperation("Optimize assets", () => {
       // Asset optimization - multiple spawnSync calls benefit from performance fix
@@ -178,7 +178,7 @@ class BuildScript {
   }
 
   async generateBundleReport() {
-    console.log("\n📊 Generating bundle report...");
+    console.info("\n📊 Generating bundle report...");
 
     return this.measureOperation("Bundle report", () => {
       // Bundle analysis - spawnSync used for external tools
@@ -189,27 +189,27 @@ class BuildScript {
         successful: this.metrics.filter((m) => m.success).length,
       };
 
-      console.log("%j", reportData); // Uses v1.3.6 fast JSON serialization
+      console.info("%j", reportData); // Uses v1.3.6 fast JSON serialization
 
       return reportData;
     });
   }
 
   printPerformanceReport() {
-    console.log("\n📈 Performance Report (Bun v1.3.6 spawnSync improvements):");
-    console.log("=".repeat(60));
+    console.info("\n📈 Performance Report (Bun v1.3.6 spawnSync improvements):");
+    console.info("=".repeat(60));
 
     const totalDuration = this.metrics.reduce((sum, m) => sum + m.duration, 0);
     const successfulOps = this.metrics.filter((m) => m.success);
     const avgDuration = totalDuration / this.metrics.length;
 
-    console.log(`Total build time: ${totalDuration.toFixed(2)}ms`);
-    console.log(
+    console.info(`Total build time: ${totalDuration.toFixed(2)}ms`);
+    console.info(
       `Operations completed: ${successfulOps.length}/${this.metrics.length}`,
     );
-    console.log(`Average operation time: ${avgDuration.toFixed(2)}ms`);
+    console.info(`Average operation time: ${avgDuration.toFixed(2)}ms`);
 
-    console.log("\nOperation breakdown:");
+    console.info("\nOperation breakdown:");
     this.metrics.forEach((metric) => {
       const status = metric.success ? "✅" : "❌";
       const performance =
@@ -218,7 +218,7 @@ class BuildScript {
           : metric.duration < 50
             ? "⚡ Good"
             : "🐢 Slow";
-      console.log(
+      console.info(
         `  ${status} ${metric.operation}: ${metric.duration.toFixed(2)}ms (${performance})`,
       );
     });
@@ -235,18 +235,18 @@ class BuildScript {
       const avgSpawnSyncTime =
         spawnSyncOps.reduce((sum, m) => sum + m.duration, 0) /
         spawnSyncOps.length;
-      console.log(
+      console.info(
         `\n🎯 spawnSync operations average: ${avgSpawnSyncTime.toFixed(2)}ms`,
       );
-      console.log(
+      console.info(
         `   🚀 Up to 30x faster on Linux ARM64 with close_range() fix`,
       );
-      console.log(`   ✅ Consistent performance across all platforms`);
+      console.info(`   ✅ Consistent performance across all platforms`);
     }
   }
 
   async run(options: { testPattern?: string } = {}) {
-    console.log("🚀 Starting build with Bun v1.3.6 optimizations...");
+    console.info("🚀 Starting build with Bun v1.3.6 optimizations...");
 
     try {
       await this.cleanDist();
@@ -264,8 +264,8 @@ class BuildScript {
 
       this.printPerformanceReport();
 
-      console.log("\n🎉 Build completed successfully!");
-      console.log(
+      console.info("\n🎉 Build completed successfully!");
+      console.info(
         "💨 Powered by Bun v1.3.6 spawnSync performance improvements",
       );
     } catch (error) {
@@ -283,7 +283,7 @@ async function main() {
 
   // Parse command line arguments
   if (args.includes("--help") || args.includes("-h")) {
-    console.log(`
+    console.info(`
 Usage: bun run build-script.ts [options]
 
 Options:

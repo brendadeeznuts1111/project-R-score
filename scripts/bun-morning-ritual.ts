@@ -153,13 +153,13 @@ async function runMorningRitual(): Promise<void> {
   const timeString = now.toLocaleTimeString();
   const dateString = now.toLocaleDateString();
 
-  console.log(colorize('🌅 Bun Morning Ritual', 'bright'));
-  console.log(colorize('=====================', 'cyan'));
-  console.log(colorize(`${dateString} ${timeString}`, 'gray'));
-  console.log();
+  console.info(colorize('🌅 Bun Morning Ritual', 'bright'));
+  console.info(colorize('=====================', 'cyan'));
+  console.info(colorize(`${dateString} ${timeString}`, 'gray'));
+  console.info();
 
-  console.log(colorize('🔍 Running comprehensive status checks...', 'yellow'));
-  console.log();
+  console.info(colorize('🔍 Running comprehensive status checks...', 'yellow'));
+  console.info();
 
   // Run all checks in parallel for speed
   const [systemStatus, githubStatus, aiStatus] = await Promise.all([
@@ -175,14 +175,14 @@ async function runMorningRitual(): Promise<void> {
     const icon = status.status === 'good' ? '✅' :
                  status.status === 'warning' ? '⚠️' : '❌';
 
-    console.log(`${icon} ${colorize(status.component, 'bright')}: ${status.message}`);
+    console.info(`${icon} ${colorize(status.component, 'bright')}: ${status.message}`);
 
     if (status.details) {
       for (const detail of status.details) {
-        console.log(`   ${detail}`);
+        console.info(`   ${detail}`);
       }
     }
-    console.log();
+    console.info();
   }
 
   // Overall assessment
@@ -190,43 +190,43 @@ async function runMorningRitual(): Promise<void> {
   const warnings = allStatuses.filter(s => s.status === 'warning').length;
   const goods = allStatuses.filter(s => s.status === 'good').length;
 
-  console.log(colorize('📊 Overall Assessment:', 'bright'));
-  console.log(colorize('====================', 'cyan'));
+  console.info(colorize('📊 Overall Assessment:', 'bright'));
+  console.info(colorize('====================', 'cyan'));
 
   if (errors > 0) {
-    console.log(colorize(`❌ ${errors} system${errors > 1 ? 's' : ''} need${errors === 1 ? 's' : ''} attention`, 'red'));
+    console.info(colorize(`❌ ${errors} system${errors > 1 ? 's' : ''} need${errors === 1 ? 's' : ''} attention`, 'red'));
   }
 
   if (warnings > 0) {
-    console.log(colorize(`⚠️ ${warnings} system${warnings > 1 ? 's' : ''} have${warnings === 1 ? 's' : ''} warnings`, 'yellow'));
+    console.info(colorize(`⚠️ ${warnings} system${warnings > 1 ? 's' : ''} have${warnings === 1 ? 's' : ''} warnings`, 'yellow'));
   }
 
   if (goods > 0) {
-    console.log(colorize(`✅ ${goods} system${goods > 1 ? 's' : ''} healthy`, 'green'));
+    console.info(colorize(`✅ ${goods} system${goods > 1 ? 's' : ''} healthy`, 'green'));
   }
 
-  console.log();
+  console.info();
 
   // Actionable recommendations
-  console.log(colorize('🚀 Quick Actions:', 'bright'));
+  console.info(colorize('🚀 Quick Actions:', 'bright'));
 
   if (warnings > 0 || errors > 0) {
-    console.log(`  ${colorize('bun run mcp-monitor', 'yellow')}     - Detailed system health`);
-    console.log(`  ${colorize('bun run github-integration', 'yellow')} - Full GitHub status`);
-    console.log(`  ${colorize('bun run ai-demo', 'yellow')}       - AI optimization insights`);
+    console.info(`  ${colorize('bun run mcp-monitor', 'yellow')}     - Detailed system health`);
+    console.info(`  ${colorize('bun run github-integration', 'yellow')} - Full GitHub status`);
+    console.info(`  ${colorize('bun run ai-demo', 'yellow')}       - AI optimization insights`);
   }
 
-  console.log(`  ${colorize('bun run validate:bun-urls', 'yellow')} - URL validation`);
-  console.log(`  ${colorize('bun run deep-links', 'yellow')}       - Generate doc links`);
+  console.info(`  ${colorize('bun run validate:bun-urls', 'yellow')} - URL validation`);
+  console.info(`  ${colorize('bun run deep-links', 'yellow')}       - Generate doc links`);
 
-  console.log();
-  console.log(colorize('🎯 Development environment status: ', 'bright') +
+  console.info();
+  console.info(colorize('🎯 Development environment status: ', 'bright') +
               (errors > 0 ? colorize('NEEDS ATTENTION', 'red') :
                warnings > 0 ? colorize('MONITOR CLOSELY', 'yellow') :
                colorize('ALL SYSTEMS GO', 'green')));
 
-  console.log();
-  console.log(colorize('✨ Morning ritual complete! Ready for development.', 'green'));
+  console.info();
+  console.info(colorize('✨ Morning ritual complete! Ready for development.', 'green'));
 }
 
 // Run the morning ritual

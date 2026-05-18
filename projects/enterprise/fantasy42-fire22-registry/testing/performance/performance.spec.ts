@@ -697,10 +697,10 @@ describe('Performance Tests', () => {
       operations.update = timer.elapsed();
 
       // Log performance results
-      console.log('Database Performance Benchmarks:');
-      console.log(`  Inserts (1000): ${operations.insert}ms`);
-      console.log(`  Selects (100): ${operations.select}ms`);
-      console.log(`  Updates (100): ${operations.update}ms`);
+      console.info('Database Performance Benchmarks:');
+      console.info(`  Inserts (1000): ${operations.insert}ms`);
+      console.info(`  Selects (100): ${operations.select}ms`);
+      console.info(`  Updates (100): ${operations.update}ms`);
 
       // Assert reasonable performance
       expect(operations.insert).toBeLessThan(2000); // Less than 2 seconds for 1000 inserts
@@ -741,7 +741,7 @@ describe('Performance Tests', () => {
       const finalMemory = process.memoryUsage();
       const memoryIncrease = finalMemory.heapUsed - initialMemory.heapUsed;
 
-      console.log(`Memory usage: ${(memoryIncrease / 1024 / 1024).toFixed(2)} MB increase`);
+      console.info(`Memory usage: ${(memoryIncrease / 1024 / 1024).toFixed(2)} MB increase`);
 
       // Assert reasonable memory usage
       expect(memoryIncrease).toBeLessThan(50 * 1024 * 1024); // Less than 50MB increase

@@ -27,7 +27,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
   
   constructor() {
     super();
-    console.log(`🎯 Initializing DataView-Enhanced Telemetry Pool...`);
+    console.info(`🎯 Initializing DataView-Enhanced Telemetry Pool...`);
     
     this.serializer = new DataViewProfileSerializer();
     this.metrics = new DataViewPoolMetrics();
@@ -41,7 +41,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
   }
   
   private initDataViewSchema(): void {
-    console.log(`📊 Initializing DataView binary schema...`);
+    console.info(`📊 Initializing DataView binary schema...`);
     
     // Use the main database connection instead of pool for schema creation
     try {
@@ -76,7 +76,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
         )
       `);
       
-      console.log(`✅ DataView schema initialized successfully`);
+      console.info(`✅ DataView schema initialized successfully`);
     } catch (error) {
       console.error(`❌ Failed to initialize DataView schema:`, error);
       throw error;
@@ -85,13 +85,13 @@ export class DataViewTelemetryPool extends TelemetryPool {
   
   private populateDataViewPool(dbPath: string): void {
     const dvPoolSize = parseInt(process.env.DV_POOL_SIZE || '10');
-    console.log(`🏊 Populating DataView pool with ${dvPoolSize} connections...`);
+    console.info(`🏊 Populating DataView pool with ${dvPoolSize} connections...`);
     
     for (let i = 0; i < dvPoolSize; i++) {
       this.dvPool.push(new Database(dbPath));
     }
     
-    console.log(`✅ DataView pool ready: ${this.dvPool.length} connections`);
+    console.info(`✅ DataView pool ready: ${this.dvPool.length} connections`);
   }
   
   async insertDataViewProfile(
@@ -263,10 +263,10 @@ export class DataViewTelemetryPool extends TelemetryPool {
       
       if (gcBefore.available) {
         const memoryDelta = endMemory.heapUsed - startMemory.heapUsed;
-        console.log(`🧠 GC Performance Impact:`);
-        console.log(`   💾 Memory delta: ${(memoryDelta / 1024 / 1024).toFixed(2)}MB`);
-        console.log(`   ⚡ Latency: ${latency.toFixed(2)}ms`);
-        console.log(`   📊 Throughput: ${(profiles.length / latency * 1000).toFixed(0)} profiles/sec`);
+        console.info(`🧠 GC Performance Impact:`);
+        console.info(`   💾 Memory delta: ${(memoryDelta / 1024 / 1024).toFixed(2)}MB`);
+        console.info(`   ⚡ Latency: ${latency.toFixed(2)}ms`);
+        console.info(`   📊 Throughput: ${(profiles.length / latency * 1000).toFixed(0)} profiles/sec`);
       }
       
       return results;
@@ -276,7 +276,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
         const gcStart = performance.now();
         (Bun as any).gc(true); // Suggest a more aggressive collection
         const gcEnd = performance.now();
-        console.log(`🗑️  GC cleanup time: ${(gcEnd - gcStart).toFixed(2)}ms`);
+        console.info(`🗑️  GC cleanup time: ${(gcEnd - gcStart).toFixed(2)}ms`);
       }
       
       this.dvPool.push(db);
@@ -297,7 +297,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
       
       stmt.run(binaryMetrics, summary.operationCount, Date.now());
       
-      console.log(`📊 Synced ${summary.operationCount} metrics to database`);
+      console.info(`📊 Synced ${summary.operationCount} metrics to database`);
     } finally {
       this.dvPool.push(db);
     }
@@ -370,7 +370,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
   
   clearDataViewMetrics(): void {
     this.metrics.clear();
-    console.log(`🧹 DataView metrics cleared`);
+    console.info(`🧹 DataView metrics cleared`);
   }
   
   // Utility methods
@@ -395,7 +395,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
   
   // Cleanup method
   async close(): Promise<void> {
-    console.log(`🔒 Closing DataView pool...`);
+    console.info(`🔒 Closing DataView pool...`);
     
     // Sync metrics before closing
     await this.syncDataViewMetrics();
@@ -409,6 +409,6 @@ export class DataViewTelemetryPool extends TelemetryPool {
     // Close main DataView database
     this.dvDb.close();
     
-    console.log(`✅ DataView pool closed`);
+    console.info(`✅ DataView pool closed`);
   }
 }

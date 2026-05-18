@@ -49,11 +49,11 @@ export async function monitorConnections(
 				connectedAt: Date.now(),
 			};
 
-			console.log(`✅ Connected to ${feed.id}:`);
-			console.log(`  Local: ${info.localEndpoint}`);
-			console.log(`  Remote: ${info.remoteEndpoint}`);
-			console.log(`  Type: ${feed.type} (Priority: ${feed.priority})`);
-			console.log(`  Format: ${formatSocketInfo({
+			console.info(`✅ Connected to ${feed.id}:`);
+			console.info(`  Local: ${info.localEndpoint}`);
+			console.info(`  Remote: ${info.remoteEndpoint}`);
+			console.info(`  Type: ${feed.type} (Priority: ${feed.priority})`);
+			console.info(`  Format: ${formatSocketInfo({
 				localAddress: socket.localAddress,
 				localPort: socket.localPort,
 				localFamily: socket.localFamily,

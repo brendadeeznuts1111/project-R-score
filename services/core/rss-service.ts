@@ -86,11 +86,11 @@ export class RSSService {
         if (Array.isArray(data)) {
           this.cache = data;
           this.lastFetch = Date.now();
-          console.log(`✅ Loaded ${this.cache.length} RSS items from cache`);
+          console.info(`✅ Loaded ${this.cache.length} RSS items from cache`);
         } else if (data.items && Array.isArray(data.items)) {
           this.cache = data.items;
           this.lastFetch = data.timestamp || Date.now();
-          console.log(`✅ Loaded ${this.cache.length} RSS items from structured cache`);
+          console.info(`✅ Loaded ${this.cache.length} RSS items from structured cache`);
         }
       }
     } catch (error) {
@@ -107,11 +107,11 @@ export class RSSService {
     
     // Use cache if recent
     if (Date.now() - this.lastFetch < this.config.updateInterval! && this.cache.length > 0) {
-      console.log(`📦 Using cached RSS feed (${this.cache.length} items)`);
+      console.info(`📦 Using cached RSS feed (${this.cache.length} items)`);
       return this.cache;
     }
     
-    console.log(`🌐 Fetching RSS feed from: ${url}`);
+    console.info(`🌐 Fetching RSS feed from: ${url}`);
     
     try {
       const response = await fetch(url, {
@@ -147,7 +147,7 @@ export class RSSService {
       };
       
       await Bun.write(this.cacheFile, JSON.stringify(cacheData, null, 2));
-      console.log(`✅ Cached ${limitedItems.length} RSS items to ${this.cacheFile}`);
+      console.info(`✅ Cached ${limitedItems.length} RSS items to ${this.cacheFile}`);
       
       return limitedItems;
       
@@ -156,7 +156,7 @@ export class RSSService {
       
       // Return stale cache if available
       if (this.cache.length > 0) {
-        console.log(`📦 Using stale cache (${this.cache.length} items)`);
+        console.info(`📦 Using stale cache (${this.cache.length} items)`);
         return this.cache;
       }
       
@@ -417,7 +417,7 @@ export class RSSService {
    * Force refresh the feed
    */
   async refreshFeed(): Promise<RSSItem[]> {
-    console.log('🔄 Forcing RSS feed refresh...');
+    console.info('🔄 Forcing RSS feed refresh...');
     this.lastFetch = 0; // Force refresh
     return await this.fetchFeed();
   }

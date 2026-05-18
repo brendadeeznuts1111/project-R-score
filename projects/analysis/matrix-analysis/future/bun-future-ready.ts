@@ -15,7 +15,7 @@ export async function copyWithProgress(source: string, dest: string): Promise<vo
     
     // Progress reporting (future Bun might have native)
     const percent = (bytesCopied / stats.size) * 100
-    console.log(`Copying: ${percent.toFixed(1)}%`)
+    console.info(`Copying: ${percent.toFixed(1)}%`)
     
     // Yield to event loop every 64KB
     if (chunk.length >= 65536) {
@@ -46,15 +46,15 @@ export function createFutureWebSocketServer(port: number = 3000) {
       // compression: true,
       
       message(ws, message) {
-        console.log('Received:', message)
+        console.info('Received:', message)
       },
       
       open(ws) {
-        console.log('WebSocket opened')
+        console.info('WebSocket opened')
       },
       
       close(ws, code, message) {
-        console.log('WebSocket closed:', code, message)
+        console.info('WebSocket closed:', code, message)
       }
     }
   })
@@ -72,7 +72,7 @@ export const futureServer = {
   }) {
     // Check for experimental flags
     if (process.env.BUN_EXPERIMENTAL_HTTP3) {
-      console.log('HTTP/3 experimental support enabled')
+      console.info('HTTP/3 experimental support enabled')
     }
     
     return Bun.serve({
@@ -126,7 +126,7 @@ export class SIMDArrays {
   private static gpuMultiply(a: Float32Array, b: Float32Array, size: number): Float32Array {
     // Placeholder for GPU matrix multiplication
     // Would use WebGPU compute shaders
-    console.log('GPU matrix multiplication not yet implemented, using CPU fallback')
+    console.info('GPU matrix multiplication not yet implemented, using CPU fallback')
     return this.multiplyMatrices(a, b, size)
   }
   
@@ -170,7 +170,7 @@ export class FutureFileOperations {
     for await (const chunk of stream) {
       const processed = await processor(chunk)
       // Future: might have direct stream-to-stream writing
-      console.log(`Processed chunk of size: ${processed.length}`)
+      console.info(`Processed chunk of size: ${processed.length}`)
     }
   }
   
@@ -197,11 +197,11 @@ export class FutureFileOperations {
     callback: (event: { type: string; path: string }) => void
   ): () => void {
     // Future: Bun might have native file watching
-    console.log(`Watching directory: ${dirPath}`)
+    console.info(`Watching directory: ${dirPath}`)
     
     // Placeholder implementation
     const watcher = {
-      close: () => console.log('Directory watcher closed')
+      close: () => console.info('Directory watcher closed')
     }
     
     return () => watcher.close()

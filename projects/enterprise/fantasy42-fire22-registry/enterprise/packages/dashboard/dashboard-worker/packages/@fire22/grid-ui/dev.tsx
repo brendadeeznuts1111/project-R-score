@@ -349,9 +349,9 @@ export default function PackageReviewGrid() {
 
 // Mount if running directly (explicit DOM mounting)
 if (import.meta.main) {
-  console.log('🔥 Fire22 Package Review Grid');
-  console.log('📦 Rendered with Bun JSX');
-  console.log('🎨 Styled with @fire22/shared-styles');
+  console.info('🔥 Fire22 Package Review Grid');
+  console.info('📦 Rendered with Bun JSX');
+  console.info('🎨 Styled with @fire22/shared-styles');
 
   // Bun's JSX runtime returns DOM nodes, not virtual trees
   const root = document.getElementById('app') ?? document.body;

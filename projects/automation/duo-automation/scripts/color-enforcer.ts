@@ -164,5 +164,5 @@ export class ColorEnforcer {
 if (import.meta.main) {
   const enforcer = new ColorEnforcer();
   const report = await enforcer.auditRepo();
-  console.log(JSON.stringify(report, null, 2));
+  console.info(JSON.stringify(report, null, 2));
 }

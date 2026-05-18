@@ -161,25 +161,25 @@ async function main() {
 	const dryRun = !args.includes("--apply");
 	const targetDir = args.find((arg) => !arg.startsWith("--")) || ".";
 
-	console.log(`\n${"=".repeat(60)}`);
-	console.log(`${COLORS.bright}  IMPORT PATH FIXER${COLORS.reset}`);
-	console.log(`${"=".repeat(60)}\n`);
+	console.info(`\n${"=".repeat(60)}`);
+	console.info(`${COLORS.bright}  IMPORT PATH FIXER${COLORS.reset}`);
+	console.info(`${"=".repeat(60)}\n`);
 
 	if (dryRun) {
-		console.log(
+		console.info(
 			`${COLORS.yellow}🔍 DRY RUN MODE - No files will be modified${COLORS.reset}`,
 		);
-		console.log("   Run with --apply to make changes\n");
+		console.info("   Run with --apply to make changes\n");
 	} else {
-		console.log(
+		console.info(
 			`${COLORS.green}✏️  APPLY MODE - Files will be modified${COLORS.reset}\n`,
 		);
 	}
 
-	console.log(`Scanning ${targetDir} for TypeScript/JavaScript files...\n`);
+	console.info(`Scanning ${targetDir} for TypeScript/JavaScript files...\n`);
 
 	const files = await findTypeScriptFiles(targetDir);
-	console.log(`Found ${files.length} files to process\n`);
+	console.info(`Found ${files.length} files to process\n`);
 
 	let totalChanges = 0;
 	let modifiedFiles = 0;
@@ -187,7 +187,7 @@ async function main() {
 	for (const file of files) {
 		const changes = await fixImportsInFile(file, dryRun);
 		if (changes > 0) {
-			console.log(
+			console.info(
 				`${COLORS.cyan}${file}${COLORS.reset}: ${changes} import(s) fixed`,
 			);
 			totalChanges += changes;
@@ -195,21 +195,21 @@ async function main() {
 		}
 	}
 
-	console.log(`\n${"=".repeat(60)}`);
-	console.log(`${COLORS.bright}  SUMMARY${COLORS.reset}`);
-	console.log("=".repeat(60));
-	console.log(`Files scanned: ${files.length}`);
-	console.log(`Files modified: ${modifiedFiles}`);
-	console.log(`Total imports fixed: ${totalChanges}`);
+	console.info(`\n${"=".repeat(60)}`);
+	console.info(`${COLORS.bright}  SUMMARY${COLORS.reset}`);
+	console.info("=".repeat(60));
+	console.info(`Files scanned: ${files.length}`);
+	console.info(`Files modified: ${modifiedFiles}`);
+	console.info(`Total imports fixed: ${totalChanges}`);
 
 	if (dryRun && totalChanges > 0) {
-		console.log(
+		console.info(
 			`\n${COLORS.yellow}⚠️  This was a dry run. No files were modified.${COLORS.reset}`,
 		);
-		console.log(
+		console.info(
 			`${COLORS.cyan}   Run with --apply to make changes:${COLORS.reset}`,
 		);
-		console.log(`   bun run scripts/fix-imports.ts --apply\n`);
+		console.info(`   bun run scripts/fix-imports.ts --apply\n`);
 	}
 }
 

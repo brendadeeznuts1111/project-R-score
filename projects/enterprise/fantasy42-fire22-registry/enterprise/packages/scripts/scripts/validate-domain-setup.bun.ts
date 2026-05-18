@@ -108,7 +108,7 @@ function log(message: string, level: 'INFO' | 'SUCCESS' | 'ERROR' | 'WARNING' = 
     WARNING: '⚠️',
   }[level];
 
-  console.log(`${timestamp} ${emoji} ${message}`);
+  console.info(`${timestamp} ${emoji} ${message}`);
 }
 
 async function validateDNS(): Promise<ValidationResult> {
@@ -282,8 +282,8 @@ function generateReport(results: ValidationResult[]): DomainHealthReport {
 }
 
 function displayReport(report: DomainHealthReport): void {
-  console.log('\n📊 Domain Health Report');
-  console.log('!==!==!==!===');
+  console.info('\n📊 Domain Health Report');
+  console.info('!==!==!==!===');
 
   const statusEmoji = {
     HEALTHY: '✅',
@@ -291,12 +291,12 @@ function displayReport(report: DomainHealthReport): void {
     UNHEALTHY: '❌',
   }[report.overallStatus];
 
-  console.log(`Domain: ${report.domain}`);
-  console.log(`Status: ${statusEmoji} ${report.overallStatus}`);
-  console.log(`Timestamp: ${report.timestamp}`);
-  console.log('');
+  console.info(`Domain: ${report.domain}`);
+  console.info(`Status: ${statusEmoji} ${report.overallStatus}`);
+  console.info(`Timestamp: ${report.timestamp}`);
+  console.info('');
 
-  console.log('Validation Results:');
+  console.info('Validation Results:');
   report.checks.forEach((check, index) => {
     const emoji = {
       PASS: '✅',
@@ -304,28 +304,28 @@ function displayReport(report: DomainHealthReport): void {
       WARN: '⚠️',
     }[check.status];
 
-    console.log(`${index + 1}. ${emoji} ${check.check}: ${check.message}`);
+    console.info(`${index + 1}. ${emoji} ${check.check}: ${check.message}`);
     if (check.details) {
-      console.log(`   Details: ${check.details}`);
+      console.info(`   Details: ${check.details}`);
     }
   });
 
   if (report.recommendations.length > 0) {
-    console.log('\n🔧 Recommendations:');
+    console.info('\n🔧 Recommendations:');
     report.recommendations.forEach((rec, index) => {
-      console.log(`${index + 1}. ${rec}`);
+      console.info(`${index + 1}. ${rec}`);
     });
   }
 
-  console.log('\n📈 Summary:');
-  console.log(`   Passed: ${report.checks.filter(c => c.status === 'PASS').length}`);
-  console.log(`   Warnings: ${report.checks.filter(c => c.status === 'WARN').length}`);
-  console.log(`   Failed: ${report.checks.filter(c => c.status === 'FAIL').length}`);
+  console.info('\n📈 Summary:');
+  console.info(`   Passed: ${report.checks.filter(c => c.status === 'PASS').length}`);
+  console.info(`   Warnings: ${report.checks.filter(c => c.status === 'WARN').length}`);
+  console.info(`   Failed: ${report.checks.filter(c => c.status === 'FAIL').length}`);
 }
 
 async function main(): Promise<void> {
-  console.log('🔍 Crystal Clear Architecture - Domain Validation');
-  console.log('!==!==!==!==!==!==!==!==!==');
+  console.info('🔍 Crystal Clear Architecture - Domain Validation');
+  console.info('!==!==!==!==!==!==!==!==!==');
 
   // Check required tools
   const hasDig = await checkCommandAvailability('dig');
@@ -349,7 +349,7 @@ async function main(): Promise<void> {
   const exitCode =
     report.overallStatus === 'HEALTHY' ? 0 : report.overallStatus === 'DEGRADED' ? 1 : 2;
 
-  console.log(`\n🏁 Validation completed with exit code: ${exitCode}`);
+  console.info(`\n🏁 Validation completed with exit code: ${exitCode}`);
   process.exit(exitCode);
 }
 
@@ -364,26 +364,26 @@ switch (command) {
 
   case 'dns':
     const dnsResult = await validateDNS();
-    console.log(JSON.stringify(dnsResult, null, 2));
+    console.info(JSON.stringify(dnsResult, null, 2));
     break;
 
   case 'http':
     const httpResult = await validateHTTP();
-    console.log(JSON.stringify(httpResult, null, 2));
+    console.info(JSON.stringify(httpResult, null, 2));
     break;
 
   case 'ssl':
     const sslResult = await validateSSL();
-    console.log(JSON.stringify(sslResult, null, 2));
+    console.info(JSON.stringify(sslResult, null, 2));
     break;
 
   case 'api':
     const apiResult = await validatePagesAPI();
-    console.log(JSON.stringify(apiResult, null, 2));
+    console.info(JSON.stringify(apiResult, null, 2));
     break;
 
   case 'help':
-    console.log(`
+    console.info(`
 🚀 Domain Validation Tool
 
 Usage:
@@ -405,8 +405,8 @@ Exit Codes:
     break;
 
   default:
-    console.log(`Unknown command: ${command}`);
-    console.log('Run with --help for usage information');
+    console.info(`Unknown command: ${command}`);
+    console.info('Run with --help for usage information');
     process.exit(1);
 }
 

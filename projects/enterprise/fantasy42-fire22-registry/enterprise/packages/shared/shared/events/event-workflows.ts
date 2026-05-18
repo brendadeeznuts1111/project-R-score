@@ -337,7 +337,7 @@ export class EventWorkflows {
     }
 
     const workflowId = `wf_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    console.log(`🚀 Starting workflow: ${workflowName} (${workflowId})`);
+    console.info(`🚀 Starting workflow: ${workflowName} (${workflowId})`);
 
     const context: WorkflowContext = {
       workflowId,
@@ -353,7 +353,7 @@ export class EventWorkflows {
 
     try {
       await this.executeWorkflow(workflow, context, initialPayload);
-      console.log(`✅ Workflow completed: ${workflowName} (${workflowId})`);
+      console.info(`✅ Workflow completed: ${workflowName} (${workflowId})`);
     } catch (error) {
       console.error(`❌ Workflow failed: ${workflowName} (${workflowId})`, error);
       context.failedSteps.push(`workflow_error: ${error.message}`);
@@ -377,11 +377,11 @@ export class EventWorkflows {
       context.currentStep = i;
 
       try {
-        console.log(`📋 Executing step: ${step.name} (${step.id})`);
+        console.info(`📋 Executing step: ${step.name} (${step.id})`);
 
         // Check condition if specified
         if (step.condition && !step.condition(currentPayload)) {
-          console.log(`⏭️ Skipping step: ${step.name} (condition not met)`);
+          console.info(`⏭️ Skipping step: ${step.name} (condition not met)`);
           continue;
         }
 
@@ -393,7 +393,7 @@ export class EventWorkflows {
 
         // Mark step as completed
         context.completedSteps.push(step.id);
-        console.log(`✅ Step completed: ${step.name} (${step.id})`);
+        console.info(`✅ Step completed: ${step.name} (${step.id})`);
       } catch (error) {
         context.failedSteps.push(step.id);
 

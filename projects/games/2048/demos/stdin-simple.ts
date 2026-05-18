@@ -1,13 +1,13 @@
 #!/usr/bin/env bun
 
 // Simple stdin demo - Core patterns from Bun documentation
-console.log("📥 Simple Bun stdin Demo");
-console.log("========================");
+console.info("📥 Simple Bun stdin Demo");
+console.info("========================");
 
 // Demo 1: Basic console AsyncIterable (from documentation)
 async function basicConsoleStdin() {
-  console.log("\n🔤 Basic Console stdin (AsyncIterable)");
-  console.log('Type messages (press Enter after each). Type "quit" to exit.\n');
+  console.info("\n🔤 Basic Console stdin (AsyncIterable)");
+  console.info('Type messages (press Enter after each). Type "quit" to exit.\n');
 
   const prompt = "Type something: ";
   process.stdout.write(prompt);
@@ -18,24 +18,24 @@ async function basicConsoleStdin() {
     const trimmed = line.trim();
 
     if (trimmed === "quit" || trimmed === "exit") {
-      console.log("👋 Exiting basic stdin demo...");
+      console.info("👋 Exiting basic stdin demo...");
       break;
     }
 
     messageCount++;
-    console.log(`You typed (${messageCount}): ${trimmed}`);
-    console.log(`Length: ${trimmed.length} characters`);
+    console.info(`You typed (${messageCount}): ${trimmed}`);
+    console.info(`Length: ${trimmed.length} characters`);
 
     process.stdout.write(prompt);
   }
 
-  console.log(`✅ Processed ${messageCount} messages\n`);
+  console.info(`✅ Processed ${messageCount} messages\n`);
 }
 
 // Demo 2: Bun.stdin as BunFile for piped input
 async function bunFileStdin() {
-  console.log("\n📦 Bun.stdin as BunFile");
-  console.log("This demo reads piped data as a file.\n");
+  console.info("\n📦 Bun.stdin as BunFile");
+  console.info("This demo reads piped data as a file.\n");
 
   try {
     // Use Bun.stdin as a BunFile
@@ -43,57 +43,57 @@ async function bunFileStdin() {
     const size = await stdinFile.size;
 
     if (size === 0) {
-      console.log("ℹ️ No piped data detected.");
-      console.log('Try: echo "hello world" | bun run stdin-simple');
+      console.info("ℹ️ No piped data detected.");
+      console.info('Try: echo "hello world" | bun run stdin-simple');
       return;
     }
 
-    console.log(`📊 stdin file size: ${size} bytes`);
+    console.info(`📊 stdin file size: ${size} bytes`);
 
     // Read the entire stdin content
     const content = await stdinFile.text();
-    console.log(`📄 Content: "${content}"`);
-    console.log(`📏 Content length: ${content.length} characters`);
+    console.info(`📄 Content: "${content}"`);
+    console.info(`📏 Content length: ${content.length} characters`);
 
     // Split into lines
     const lines = content.split("\n").filter((line) => line.length > 0);
-    console.log(`📝 Lines: ${lines.length}`);
+    console.info(`📝 Lines: ${lines.length}`);
 
     lines.forEach((line, i) => {
-      console.log(`  Line ${i + 1}: "${line}"`);
+      console.info(`  Line ${i + 1}: "${line}"`);
     });
   } catch (error) {
-    console.log(`❌ Error reading stdin: ${error.message}`);
+    console.info(`❌ Error reading stdin: ${error.message}`);
   }
 }
 
 // Main execution
 async function main() {
-  console.log(
+  console.info(
     "🎯 This demo covers core stdin patterns from Bun documentation:"
   );
-  console.log("  • console as AsyncIterable");
-  console.log("  • Bun.stdin as BunFile");
+  console.info("  • console as AsyncIterable");
+  console.info("  • Bun.stdin as BunFile");
 
   // Check if data is being piped in
   const stdinFile = Bun.stdin;
   const size = await stdinFile.size;
 
   if (size > 0) {
-    console.log("\n📡 Piped data detected - running BunFile demo...");
+    console.info("\n📡 Piped data detected - running BunFile demo...");
     await bunFileStdin();
   } else {
-    console.log("\n💡 No piped data - running interactive demo...");
+    console.info("\n💡 No piped data - running interactive demo...");
     await basicConsoleStdin();
   }
 
-  console.log("\n🎉 stdin demo completed!");
-  console.log('💡 Try piping data: echo "hello world" | bun run stdin-simple');
+  console.info("\n🎉 stdin demo completed!");
+  console.info('💡 Try piping data: echo "hello world" | bun run stdin-simple');
 }
 
 // Handle graceful exit
 process.on("SIGINT", () => {
-  console.log("\n\n👋 stdin demo interrupted gracefully!");
+  console.info("\n\n👋 stdin demo interrupted gracefully!");
   process.exit(0);
 });
 

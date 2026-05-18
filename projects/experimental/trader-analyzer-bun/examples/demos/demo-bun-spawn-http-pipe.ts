@@ -52,11 +52,11 @@ class ResourceMonitor {
     const usage = proc.resourceUsage();
 
     if (usage) {
-      console.log(`📊 Resource Usage:`);
-      console.log(`   Max memory: ${usage.maxRSS} bytes`);
-      console.log(`   CPU time (user): ${usage.cpuTime.user} µs`);
-      console.log(`   CPU time (system): ${usage.cpuTime.system} µs`);
-      console.log(`   Total CPU time: ${usage.cpuTime.total} µs`);
+      console.info(`📊 Resource Usage:`);
+      console.info(`   Max memory: ${usage.maxRSS} bytes`);
+      console.info(`   CPU time (user): ${usage.cpuTime.user} µs`);
+      console.info(`   CPU time (system): ${usage.cpuTime.system} µs`);
+      console.info(`   Total CPU time: ${usage.cpuTime.total} µs`);
     }
   }
 }
@@ -65,22 +65,22 @@ class ResourceMonitor {
  * Example 1: Basic HTTP response piping with validation and monitoring
  */
 async function basicHttpPipe() {
-  console.log("=== Basic HTTP Response Piping ===");
+  console.info("=== Basic HTTP Response Piping ===");
 
   const url = "https://httpbin.org/get";
 
   // Pre-validate URL with spawnSync
-  console.log("🔍 Validating URL...");
+  console.info("🔍 Validating URL...");
   const isValid = await HttpValidator.checkUrl(url);
   if (!isValid) {
-    console.log("❌ URL not accessible");
+    console.info("❌ URL not accessible");
     return;
   }
-  console.log("✅ URL accessible");
+  console.info("✅ URL accessible");
 
   // Get content type
   const contentType = await HttpValidator.getContentType(url);
-  console.log(`📄 Content-Type: ${contentType || "unknown"}`);
+  console.info(`📄 Content-Type: ${contentType || "unknown"}`);
 
   const proc = Bun.spawn(["cat"], {
     stdin: await fetch(url),
@@ -96,8 +96,8 @@ async function basicHttpPipe() {
 
   // Use proper Response wrapper for .text() method
   const text = await new Response(proc.stdout).text();
-  console.log("Fetched content length:", text.length);
-  console.log("First 100 chars:", text.substring(0, 100) + "...");
+  console.info("Fetched content length:", text.length);
+  console.info("First 100 chars:", text.substring(0, 100) + "...");
 
   // Wait for process to complete
   await proc.exited;
@@ -107,32 +107,32 @@ async function basicHttpPipe() {
  * Example 2: Using $ template literal with HTTP piping
  */
 async function templateHttpPipe() {
-  console.log("\n=== Template Literal HTTP Piping ===");
+  console.info("\n=== Template Literal HTTP Piping ===");
 
   // Fetch and pipe to grep
   const result = await $`curl -s https://raw.githubusercontent.com/oven-sh/bun/main/package.json | grep -o '"version": "[^"]*"'`;
-  console.log("Bun version from package.json:", result.stdout.toString().trim());
+  console.info("Bun version from package.json:", result.stdout.toString().trim());
 }
 
 /**
  * Example 3: Processing JSON data through pipeline
  */
 async function jsonProcessingPipe() {
-  console.log("\n=== JSON Processing Pipeline ===");
+  console.info("\n=== JSON Processing Pipeline ===");
 
   try {
     // Fetch package.json and extract devDependencies count
     const result = await $`curl -s https://raw.githubusercontent.com/oven-sh/bun/main/package.json | jq '.devDependencies | length'`;
 
-    console.log("Bun has", result.stdout.toString().trim(), "devDependencies");
+    console.info("Bun has", result.stdout.toString().trim(), "devDependencies");
   } catch (error) {
-    console.log("JSON processing failed, trying fallback...");
+    console.info("JSON processing failed, trying fallback...");
 
     // Fallback: simpler approach
     const response = await fetch("https://raw.githubusercontent.com/oven-sh/bun/main/package.json");
     const packageJson = await response.json();
     const depCount = Object.keys(packageJson.devDependencies || {}).length;
-    console.log("Bun has", depCount, "devDependencies (fallback method)");
+    console.info("Bun has", depCount, "devDependencies (fallback method)");
   }
 }
 
@@ -140,7 +140,7 @@ async function jsonProcessingPipe() {
  * Example 4: Streaming large files with progress
  */
 async function streamingLargeFile() {
-  console.log("\n=== Streaming Large File Processing ===");
+  console.info("\n=== Streaming Large File Processing ===");
 
   // Download and process a large text file
   const proc = Bun.spawn(["wc", "-l"], {
@@ -149,14 +149,14 @@ async function streamingLargeFile() {
 
   // Bun provides native .text() method on stdout/stderr streams
   const lineCount = await (proc.stdout as any).text();
-  console.log("Lines in bun.js source:", lineCount.trim());
+  console.info("Lines in bun.js source:", lineCount.trim());
 }
 
 /**
  * Example 5: Error handling with HTTP pipes
  */
 async function errorHandling() {
-  console.log("\n=== Error Handling ===");
+  console.info("\n=== Error Handling ===");
 
   try {
     // Try to fetch non-existent URL
@@ -166,9 +166,9 @@ async function errorHandling() {
 
     // Bun provides native .text() method on stdout/stderr streams
     const result = await (proc.stdout as any).text();
-    console.log("Unexpected success:", result.length, "chars");
+    console.info("Unexpected success:", result.length, "chars");
   } catch (error) {
-    console.log("Expected error caught:", error.message);
+    console.info("Expected error caught:", error.message);
   }
 }
 
@@ -176,15 +176,15 @@ async function errorHandling() {
  * Example 6: Real-world use case - API data processing
  */
 async function apiDataProcessing() {
-  console.log("\n=== API Data Processing ===");
+  console.info("\n=== API Data Processing ===");
 
   try {
     // Fetch GitHub API and process with jq
     const result = await $`curl -s https://api.github.com/repos/oven-sh/bun | jq -r '"Stars: " + (.stargazers_count | tostring) + ", Forks: " + (.forks_count | tostring)'`;
 
-    console.log("Bun repository stats:", result.stdout.toString().trim());
+    console.info("Bun repository stats:", result.stdout.toString().trim());
   } catch (error) {
-    console.log("API processing failed:", error.message);
+    console.info("API processing failed:", error.message);
   }
 }
 
@@ -192,37 +192,37 @@ async function apiDataProcessing() {
  * Example 7: IPC Communication Demo
  */
 async function ipcCommunicationDemo() {
-  console.log("\n=== IPC Communication Demo ===");
+  console.info("\n=== IPC Communication Demo ===");
 
   try {
     // Create a subprocess that communicates via IPC
     const proc = Bun.spawn(["node", "-e", `
       process.on('message', (msg) => {
-        console.log('📨 Child received:', JSON.stringify(msg));
+        console.info('📨 Child received:', JSON.stringify(msg));
         process.send({ response: 'Hello from child!', data: msg, timestamp: Date.now() });
         setTimeout(() => process.exit(0), 100); // Exit after sending response
       });
 
       // Timeout if no message received
       setTimeout(() => {
-        console.log('⏰ Child timeout - no message received');
+        console.info('⏰ Child timeout - no message received');
         process.exit(1);
       }, 3000);
     `], {
       ipc: (message, subprocess) => {
-        console.log('📬 Parent received IPC message:', JSON.stringify(message));
+        console.info('📬 Parent received IPC message:', JSON.stringify(message));
       },
       timeout: 5000, // 5 second timeout
     });
 
     // Send message to child process
-    console.log('📤 Parent sending message to child...');
+    console.info('📤 Parent sending message to child...');
     proc.send({ type: 'test', payload: 'IPC message from parent', timestamp: Date.now() });
 
     await proc.exited;
-    console.log('✅ IPC demo completed');
+    console.info('✅ IPC demo completed');
   } catch (error) {
-    console.log('❌ IPC demo failed:', error.message);
+    console.info('❌ IPC demo failed:', error.message);
   }
 }
 
@@ -230,7 +230,7 @@ async function ipcCommunicationDemo() {
  * Example 8: Timeout Handling
  */
 async function timeoutHandlingDemo() {
-  console.log("\n=== Timeout Handling Demo ===");
+  console.info("\n=== Timeout Handling Demo ===");
 
   try {
     // Process with timeout - should complete normally
@@ -238,11 +238,11 @@ async function timeoutHandlingDemo() {
       timeout: 3000, // 3 seconds
     });
 
-    console.log("Process started with 3s timeout...");
+    console.info("Process started with 3s timeout...");
     await proc.exited;
-    console.log("✅ Process completed within timeout");
+    console.info("✅ Process completed within timeout");
   } catch (error) {
-    console.log("❌ Process timed out:", error.message);
+    console.info("❌ Process timed out:", error.message);
   }
 
   try {
@@ -251,11 +251,11 @@ async function timeoutHandlingDemo() {
       timeout: 2000, // 2 seconds
     });
 
-    console.log("Process started with 2s timeout (5s sleep)...");
+    console.info("Process started with 2s timeout (5s sleep)...");
     await proc.exited;
-    console.log("✅ Process completed (unexpected)");
+    console.info("✅ Process completed (unexpected)");
   } catch (error) {
-    console.log("❌ Process timed out as expected:", error.message);
+    console.info("❌ Process timed out as expected:", error.message);
   }
 }
 
@@ -263,7 +263,7 @@ async function timeoutHandlingDemo() {
  * Example 9: AbortSignal Integration
  */
 async function abortSignalDemo() {
-  console.log("\n=== AbortSignal Integration Demo ===");
+  console.info("\n=== AbortSignal Integration Demo ===");
 
   const controller = new AbortController();
   const { signal } = controller;
@@ -273,19 +273,19 @@ async function abortSignalDemo() {
     signal, // Connect abort signal
   });
 
-  console.log("Started long-running process (10s sleep)...");
+  console.info("Started long-running process (10s sleep)...");
 
   // Abort after 2 seconds
   setTimeout(() => {
-    console.log("🛑 Aborting process after 2 seconds...");
+    console.info("🛑 Aborting process after 2 seconds...");
     controller.abort();
   }, 2000);
 
   try {
     await proc.exited;
-    console.log("✅ Process completed normally");
+    console.info("✅ Process completed normally");
   } catch (error) {
-    console.log("❌ Process aborted:", error.message);
+    console.info("❌ Process aborted:", error.message);
   }
 }
 
@@ -293,7 +293,7 @@ async function abortSignalDemo() {
  * Example 10: Memory Limits and Resource Constraints
  */
 async function memoryLimitsDemo() {
-  console.log("\n=== Memory Limits Demo ===");
+  console.info("\n=== Memory Limits Demo ===");
 
   try {
     // Try to allocate a lot of memory in subprocess
@@ -302,15 +302,15 @@ async function memoryLimitsDemo() {
       for (let i = 0; i < 1000000; i++) {
         arr.push(new Array(1000).fill('x').join(''));
       }
-      console.log('Memory allocation completed');
+      console.info('Memory allocation completed');
     `], {
       maxBuffer: 1024 * 1024, // 1MB limit
     });
 
     await proc.exited;
-    console.log("✅ Process completed within memory limits");
+    console.info("✅ Process completed within memory limits");
   } catch (error) {
-    console.log("❌ Process exceeded memory limits:", error.message);
+    console.info("❌ Process exceeded memory limits:", error.message);
   }
 }
 
@@ -318,32 +318,32 @@ async function memoryLimitsDemo() {
  * Example 11: Hybrid Sync/Async Pipeline Pattern
  */
 async function hybridPipelineDemo() {
-  console.log("\n=== Hybrid Sync/Async Pipeline Demo ===");
+  console.info("\n=== Hybrid Sync/Async Pipeline Demo ===");
 
   const url = "https://httpbin.org/json";
 
   // Check content size first
   const contentLength = await HttpValidator.getContentLength(url);
-  console.log(`Content length: ${contentLength} bytes`);
+  console.info(`Content length: ${contentLength} bytes`);
 
   if (contentLength && contentLength < 10000) {
     // Small content: use spawnSync for immediate result
-    console.log("Using spawnSync for small content...");
+    console.info("Using spawnSync for small content...");
     const result = Bun.spawnSync({
       cmd: ["curl", "-s", url],
     });
 
     if (result.success) {
       const data = result.stdout.toString();
-      console.log("Sync result length:", data.length);
+      console.info("Sync result length:", data.length);
     }
   } else {
     // Large content: use async spawn
-    console.log("Using async spawn for larger content...");
+    console.info("Using async spawn for larger content...");
     const proc = Bun.spawn(["curl", "-s", url]);
 
     const data = await new Response(proc.stdout).text();
-    console.log("Async result length:", data.length);
+    console.info("Async result length:", data.length);
 
     await proc.exited;
   }
@@ -353,12 +353,12 @@ async function hybridPipelineDemo() {
  * Example 12: Performance Benchmarking
  */
 async function performanceBenchmarkDemo() {
-  console.log("\n=== Performance Benchmarking Demo ===");
+  console.info("\n=== Performance Benchmarking Demo ===");
 
   const url = "https://httpbin.org/json";
   const iterations = 5;
 
-  console.log(`Benchmarking ${iterations} iterations of HTTP fetch + processing...`);
+  console.info(`Benchmarking ${iterations} iterations of HTTP fetch + processing...`);
 
   // Benchmark spawnSync approach
   const syncTimes: number[] = [];
@@ -388,14 +388,14 @@ async function performanceBenchmarkDemo() {
   const avgSync = syncTimes.reduce((a, b) => a + b, 0) / syncTimes.length;
   const avgAsync = asyncTimes.reduce((a, b) => a + b, 0) / asyncTimes.length;
 
-  console.log(`SpawnSync average: ${avgSync.toFixed(2)}ms`);
-  console.log(`Async spawn average: ${avgAsync.toFixed(2)}ms`);
-  console.log(`Performance ratio: ${(avgAsync / avgSync).toFixed(2)}x ${avgAsync > avgSync ? '(async slower)' : '(async faster)'}`);
+  console.info(`SpawnSync average: ${avgSync.toFixed(2)}ms`);
+  console.info(`Async spawn average: ${avgAsync.toFixed(2)}ms`);
+  console.info(`Performance ratio: ${(avgAsync / avgSync).toFixed(2)}x ${avgAsync > avgSync ? '(async slower)' : '(async faster)'}`);
 }
 
 // Run all examples
 async function main() {
-  console.log("🚀 Bun Spawn HTTP Piping Examples\n");
+  console.info("🚀 Bun Spawn HTTP Piping Examples\n");
 
   await basicHttpPipe();
   await templateHttpPipe();
@@ -410,7 +410,7 @@ async function main() {
   await hybridPipelineDemo();
   await performanceBenchmarkDemo();
 
-  console.log("\n✅ All examples completed!");
+  console.info("\n✅ All examples completed!");
 }
 
 // Run if called directly

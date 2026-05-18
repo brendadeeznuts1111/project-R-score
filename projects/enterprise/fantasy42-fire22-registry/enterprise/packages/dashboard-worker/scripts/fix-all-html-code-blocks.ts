@@ -26,7 +26,7 @@ const htmlFilesWithCodeBlocks = [
 
 function fixHtmlCodeBlocks(filePath: string) {
   if (!existsSync(filePath)) {
-    console.log(`⚠️ File not found: ${filePath}`);
+    console.info(`⚠️ File not found: ${filePath}`);
     return;
   }
 
@@ -53,15 +53,15 @@ function fixHtmlCodeBlocks(filePath: string) {
 
   if (modified) {
     writeFileSync(filePath, newLines.join('\n'));
-    console.log(`✅ Fixed ${filePath.split('/').pop()}`);
+    console.info(`✅ Fixed ${filePath.split('/').pop()}`);
   } else {
-    console.log(`⏭️ No changes needed for ${filePath.split('/').pop()}`);
+    console.info(`⏭️ No changes needed for ${filePath.split('/').pop()}`);
   }
 }
 
-console.log('🔧 Fixing code block line numbering in HTML files...\n');
+console.info('🔧 Fixing code block line numbering in HTML files...\n');
 
 // Fix all HTML files with code blocks
 htmlFilesWithCodeBlocks.forEach(fixHtmlCodeBlocks);
 
-console.log('\n✅ HTML code block formatting complete!');
+console.info('\n✅ HTML code block formatting complete!');

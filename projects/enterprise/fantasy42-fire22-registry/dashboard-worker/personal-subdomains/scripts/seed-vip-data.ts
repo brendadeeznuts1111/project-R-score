@@ -35,38 +35,38 @@ const vipEmployeeData: EmployeeData = {
 };
 
 async function seedVIPData(): Promise<void> {
-  console.log('🔥 Seeding VIP Employee Data for Fire22');
-  console.log('!==!==!==!==!==!==!==');
+  console.info('🔥 Seeding VIP Employee Data for Fire22');
+  console.info('!==!==!==!==!==!==!==');
 
   try {
     // This would normally connect to Cloudflare KV
     // For now, we'll simulate the seeding process
     const employeeKey = `employee:vinny2times`;
 
-    console.log(`📝 Preparing data for: ${vipEmployeeData.name}`);
-    console.log(`🏷️  Employee ID: ${vipEmployeeData.id}`);
-    console.log(`👑 Tier: ${vipEmployeeData.tier} (VIP)`);
-    console.log(`🏢 Department: ${vipEmployeeData.department}`);
-    console.log(`📧 Email: ${vipEmployeeData.email}`);
+    console.info(`📝 Preparing data for: ${vipEmployeeData.name}`);
+    console.info(`🏷️  Employee ID: ${vipEmployeeData.id}`);
+    console.info(`👑 Tier: ${vipEmployeeData.tier} (VIP)`);
+    console.info(`🏢 Department: ${vipEmployeeData.department}`);
+    console.info(`📧 Email: ${vipEmployeeData.email}`);
 
-    console.log('\n🎯 VIP Features:');
+    console.info('\n🎯 VIP Features:');
     vipEmployeeData.features.forEach(feature => {
-      console.log(`   ✅ ${feature}`);
+      console.info(`   ✅ ${feature}`);
     });
 
-    console.log('\n💾 In a real deployment, this data would be stored in:');
-    console.log(`   EMPLOYEE_DATA KV Namespace`);
-    console.log(`   Key: ${employeeKey}`);
+    console.info('\n💾 In a real deployment, this data would be stored in:');
+    console.info(`   EMPLOYEE_DATA KV Namespace`);
+    console.info(`   Key: ${employeeKey}`);
 
-    console.log('\n🚀 VIP Dashboard will be available at:');
-    console.log(`   https://vinny2times.sportsfire.co`);
-    console.log(`   https://vinny2times.sportsfire.co/profile`);
-    console.log(`   https://vinny2times.sportsfire.co/tools`);
+    console.info('\n🚀 VIP Dashboard will be available at:');
+    console.info(`   https://vinny2times.sportsfire.co`);
+    console.info(`   https://vinny2times.sportsfire.co/profile`);
+    console.info(`   https://vinny2times.sportsfire.co/tools`);
 
-    console.log('\n🎰 Fantasy402 Integration:');
-    console.log(`   ✅ Agent: billy666`);
-    console.log(`   ✅ Domain: apexodds.net`);
-    console.log(`   ✅ Live betting data ready`);
+    console.info('\n🎰 Fantasy402 Integration:');
+    console.info(`   ✅ Agent: billy666`);
+    console.info(`   ✅ Domain: apexodds.net`);
+    console.info(`   ✅ Live betting data ready`);
   } catch (error) {
     console.error('❌ Error seeding VIP data:', error);
     process.exit(1);

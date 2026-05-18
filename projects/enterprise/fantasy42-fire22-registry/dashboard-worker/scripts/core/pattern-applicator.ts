@@ -135,10 +135,10 @@ async function enhancedBuildScript(
           );
         }
 
-        console.log(`🚀 Starting enhanced build for target: ${config.target}`);
-        console.log(`   Optimization: ${config.optimize ? 'Enabled' : 'Disabled'}`);
-        console.log(`   Parallel jobs: ${config.parallel}`);
-        console.log(`   Output directory: ${config.outputDir}`);
+        console.info(`🚀 Starting enhanced build for target: ${config.target}`);
+        console.info(`   Optimization: ${config.optimize ? 'Enabled' : 'Disabled'}`);
+        console.info(`   Parallel jobs: ${config.parallel}`);
+        console.info(`   Output directory: ${config.outputDir}`);
 
         // Simulate build steps
         const buildSteps = [
@@ -154,7 +154,7 @@ async function enhancedBuildScript(
 
         for (let i = 0; i < buildSteps.length; i++) {
           const step = buildSteps[i];
-          console.log(`   📦 ${step}...`);
+          console.info(`   📦 ${step}...`);
 
           // Simulate work
           await Bun.sleep(200 + Math.random() * 300);
@@ -163,12 +163,12 @@ async function enhancedBuildScript(
           const artifact = `${config.outputDir}/artifact-${i + 1}.js`;
           artifacts.push(artifact);
 
-          console.log(`   ✅ ${step} completed`);
+          console.info(`   ✅ ${step} completed`);
         }
 
-        console.log(`\n🎉 Build completed successfully!`);
-        console.log(`   Generated ${artifacts.length} artifacts`);
-        console.log(`   Target: ${config.target}`);
+        console.info(`\n🎉 Build completed successfully!`);
+        console.info(`   Generated ${artifacts.length} artifacts`);
+        console.info(`   Target: ${config.target}`);
 
         return {
           success: true,
@@ -225,11 +225,11 @@ async function enhancedTestScript(
           );
         }
 
-        console.log(`🧪 Starting enhanced test suite`);
-        console.log(`   Environment: ${config.environment}`);
-        console.log(`   Coverage: ${config.coverage ? 'Enabled' : 'Disabled'}`);
-        console.log(`   Timeout: ${config.timeout}ms`);
-        console.log(`   Parallel: ${config.parallel ? 'Enabled' : 'Disabled'}`);
+        console.info(`🧪 Starting enhanced test suite`);
+        console.info(`   Environment: ${config.environment}`);
+        console.info(`   Coverage: ${config.coverage ? 'Enabled' : 'Disabled'}`);
+        console.info(`   Timeout: ${config.timeout}ms`);
+        console.info(`   Parallel: ${config.parallel ? 'Enabled' : 'Disabled'}`);
 
         // Simulate test execution
         const testSuites = [
@@ -245,7 +245,7 @@ async function enhancedTestScript(
         let failed = 0;
 
         for (const suite of testSuites) {
-          console.log(`   🔍 Running ${suite}...`);
+          console.info(`   🔍 Running ${suite}...`);
 
           // Simulate test execution
           const suiteTests = 10 + Math.floor(Math.random() * 20);
@@ -258,19 +258,19 @@ async function enhancedTestScript(
 
           await Bun.sleep(300 + Math.random() * 400);
 
-          console.log(`   ✅ ${suite}: ${suitePassed}/${suiteTests} passed`);
+          console.info(`   ✅ ${suite}: ${suitePassed}/${suiteTests} passed`);
           if (suiteFailed > 0) {
-            console.log(`   ❌ ${suite}: ${suiteFailed} failed`);
+            console.info(`   ❌ ${suite}: ${suiteFailed} failed`);
           }
         }
 
         const success = failed === 0;
-        console.log(
+        console.info(
           `\n${success ? '🎉' : '⚠️'} Test suite ${success ? 'completed successfully' : 'completed with failures'}`
         );
-        console.log(`   Total tests: ${testsRun}`);
-        console.log(`   Passed: ${passed}`);
-        console.log(`   Failed: ${failed}`);
+        console.info(`   Total tests: ${testsRun}`);
+        console.info(`   Passed: ${passed}`);
+        console.info(`   Failed: ${failed}`);
 
         return {
           success,
@@ -328,11 +328,11 @@ async function enhancedDeployScript(
           );
         }
 
-        console.log(`🚀 Starting enhanced deployment`);
-        console.log(`   Environment: ${config.environment}`);
-        console.log(`   Region: ${config.region}`);
-        console.log(`   Version: ${config.version}`);
-        console.log(`   Rollback: ${config.rollback ? 'Enabled' : 'Disabled'}`);
+        console.info(`🚀 Starting enhanced deployment`);
+        console.info(`   Environment: ${config.environment}`);
+        console.info(`   Region: ${config.region}`);
+        console.info(`   Version: ${config.version}`);
+        console.info(`   Rollback: ${config.rollback ? 'Enabled' : 'Disabled'}`);
 
         // Simulate deployment steps
         const deploymentSteps = [
@@ -347,25 +347,25 @@ async function enhancedDeployScript(
         const deploymentId = `deploy_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
         for (const step of deploymentSteps) {
-          console.log(`   🔧 ${step}...`);
+          console.info(`   🔧 ${step}...`);
 
           // Simulate work
           await Bun.sleep(400 + Math.random() * 600);
 
-          console.log(`   ✅ ${step} completed`);
+          console.info(`   ✅ ${step} completed`);
         }
 
         // Simulate health check
         if (config.healthCheck) {
-          console.log(`   🏥 Running health checks...`);
+          console.info(`   🏥 Running health checks...`);
           await Bun.sleep(200);
-          console.log(`   ✅ Health checks passed`);
+          console.info(`   ✅ Health checks passed`);
         }
 
-        console.log(`\n🎉 Deployment completed successfully!`);
-        console.log(`   Deployment ID: ${deploymentId}`);
-        console.log(`   Environment: ${config.environment}`);
-        console.log(`   Version: ${config.version}`);
+        console.info(`\n🎉 Deployment completed successfully!`);
+        console.info(`   Deployment ID: ${deploymentId}`);
+        console.info(`   Environment: ${config.environment}`);
+        console.info(`   Version: ${config.version}`);
 
         return {
           success: true,
@@ -398,13 +398,13 @@ async function enhancedDeployScript(
 
 // Pattern application examples
 async function demonstratePatternApplication() {
-  console.log('🔧 Fire22 Pattern Application Examples');
-  console.log('!==!==!==!==!==!==!===\n');
+  console.info('🔧 Fire22 Pattern Application Examples');
+  console.info('!==!==!==!==!==!==!===\n');
 
   try {
     // 1. Enhanced Build Script Example
-    console.log('📦 Example 1: Enhanced Build Script');
-    console.log('------------------------------------');
+    console.info('📦 Example 1: Enhanced Build Script');
+    console.info('------------------------------------');
 
     const buildConfig = {
       target: 'production',
@@ -415,13 +415,13 @@ async function demonstratePatternApplication() {
     };
 
     const buildResult = await enhancedBuildScript(buildConfig);
-    console.log(`✅ Build completed: ${buildResult.success ? 'Success' : 'Failed'}`);
-    console.log(`   Artifacts: ${buildResult.artifacts.length}`);
-    console.log(`   Duration: ${buildResult.duration}ms\n`);
+    console.info(`✅ Build completed: ${buildResult.success ? 'Success' : 'Failed'}`);
+    console.info(`   Artifacts: ${buildResult.artifacts.length}`);
+    console.info(`   Duration: ${buildResult.duration}ms\n`);
 
     // 2. Enhanced Test Script Example
-    console.log('🧪 Example 2: Enhanced Test Script');
-    console.log('----------------------------------');
+    console.info('🧪 Example 2: Enhanced Test Script');
+    console.info('----------------------------------');
 
     const testConfig = {
       environment: 'integration',
@@ -432,14 +432,14 @@ async function demonstratePatternApplication() {
     };
 
     const testResult = await enhancedTestScript(testConfig);
-    console.log(`✅ Test suite completed: ${testResult.success ? 'Success' : 'Failed'}`);
-    console.log(`   Tests run: ${testResult.testsRun}`);
-    console.log(`   Passed: ${testResult.passed}`);
-    console.log(`   Failed: ${testResult.failed}\n`);
+    console.info(`✅ Test suite completed: ${testResult.success ? 'Success' : 'Failed'}`);
+    console.info(`   Tests run: ${testResult.testsRun}`);
+    console.info(`   Passed: ${testResult.passed}`);
+    console.info(`   Failed: ${testResult.failed}\n`);
 
     // 3. Enhanced Deployment Script Example
-    console.log('🚀 Example 3: Enhanced Deployment Script');
-    console.log('----------------------------------------');
+    console.info('🚀 Example 3: Enhanced Deployment Script');
+    console.info('----------------------------------------');
 
     const deployConfig = {
       environment: 'staging',
@@ -450,19 +450,19 @@ async function demonstratePatternApplication() {
     };
 
     const deployResult = await enhancedDeployScript(deployConfig);
-    console.log(`✅ Deployment completed: ${deployResult.success ? 'Success' : 'Failed'}`);
-    console.log(`   Deployment ID: ${deployResult.deploymentId}`);
-    console.log(`   Status: ${deployResult.status}\n`);
+    console.info(`✅ Deployment completed: ${deployResult.success ? 'Success' : 'Failed'}`);
+    console.info(`   Deployment ID: ${deployResult.deploymentId}`);
+    console.info(`   Status: ${deployResult.status}\n`);
 
     // 4. Pattern Summary
-    console.log('📋 Pattern Application Summary');
-    console.log('-------------------------------');
-    console.log('✅ All enhanced patterns applied successfully!');
-    console.log('✅ Configuration validation working');
-    console.log('✅ Performance monitoring active');
-    console.log('✅ Error handling robust');
-    console.log('✅ ScriptRunner integration complete');
-    console.log('\n🚀 Your scripts are now enterprise-grade!');
+    console.info('📋 Pattern Application Summary');
+    console.info('-------------------------------');
+    console.info('✅ All enhanced patterns applied successfully!');
+    console.info('✅ Configuration validation working');
+    console.info('✅ Performance monitoring active');
+    console.info('✅ Error handling robust');
+    console.info('✅ ScriptRunner integration complete');
+    console.info('\n🚀 Your scripts are now enterprise-grade!');
   } catch (error) {
     await handleError(error, {
       scriptName: 'pattern-applicator',
@@ -486,7 +486,7 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
 
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🔧 Fire22 Pattern Applicator
 
 Usage: bun run pattern-applicator.ts [options]

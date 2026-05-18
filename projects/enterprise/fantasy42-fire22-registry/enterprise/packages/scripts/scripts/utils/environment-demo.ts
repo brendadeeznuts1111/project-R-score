@@ -9,91 +9,91 @@ import { EnvironmentConfiguration, envConfig } from './src/shared/environment-co
 import { TimezoneUtils, SupportedTimezone } from './src/shared/timezone-configuration';
 
 async function demonstrateEnvironmentConfiguration() {
-  console.log('🌍 Environment Configuration Demo\n');
+  console.info('🌍 Environment Configuration Demo\n');
 
   // 1. Show current environment information
-  console.log('📋 Current Environment:');
-  console.log(`   NODE_ENV: ${Bun.env.NODE_ENV || 'undefined'}`);
-  console.log(`   BUN_ENV: ${Bun.env.BUN_ENV || 'undefined'}`);
-  console.log(`   TZ: ${Bun.env.TZ || process.env.TZ || 'undefined'}`);
-  console.log(`   BUN_TIMEZONE: ${Bun.env.BUN_TIMEZONE || 'undefined'}\n`);
+  console.info('📋 Current Environment:');
+  console.info(`   NODE_ENV: ${Bun.env.NODE_ENV || 'undefined'}`);
+  console.info(`   BUN_ENV: ${Bun.env.BUN_ENV || 'undefined'}`);
+  console.info(`   TZ: ${Bun.env.TZ || process.env.TZ || 'undefined'}`);
+  console.info(`   BUN_TIMEZONE: ${Bun.env.BUN_TIMEZONE || 'undefined'}\n`);
 
   // 2. Show configuration loaded from environment
-  console.log('⚙️  Configuration Summary:');
+  console.info('⚙️  Configuration Summary:');
   const summary = envConfig.getConfigurationSummary();
-  console.log(`   Environment: ${summary.environment}`);
-  console.log(`   Timezone: ${summary.timezone}`);
-  console.log(`   Database: ${summary.database.type} (pool: ${summary.database.poolSize})`);
-  console.log(`   Enabled Features: ${summary.features.join(', ')}`);
-  console.log(
+  console.info(`   Environment: ${summary.environment}`);
+  console.info(`   Timezone: ${summary.timezone}`);
+  console.info(`   Database: ${summary.database.type} (pool: ${summary.database.poolSize})`);
+  console.info(`   Enabled Features: ${summary.features.join(', ')}`);
+  console.info(
     `   Business Rules: ${summary.businessRules.betLimits} USD, Risk: ${summary.businessRules.riskThreshold}%, Auto-settlement: ${summary.businessRules.autoSettlement}\n`
   );
 
   // 3. Demonstrate environment variable access patterns
-  console.log('🔑 Environment Variable Access Patterns:');
-  console.log(`   Bun.env.DATABASE_URL: ${Bun.env.DATABASE_URL || 'undefined'}`);
-  console.log(`   process.env.DATABASE_URL: ${process.env.DATABASE_URL || 'undefined'}`);
-  console.log(`   Config.database.url: ${envConfig.database.url}\n`);
+  console.info('🔑 Environment Variable Access Patterns:');
+  console.info(`   Bun.env.DATABASE_URL: ${Bun.env.DATABASE_URL || 'undefined'}`);
+  console.info(`   process.env.DATABASE_URL: ${process.env.DATABASE_URL || 'undefined'}`);
+  console.info(`   Config.database.url: ${envConfig.database.url}\n`);
 
   // 4. Show timezone integration with environment
-  console.log('🕐 Timezone Integration:');
+  console.info('🕐 Timezone Integration:');
   const timezoneInfo = TimezoneUtils.getCurrentContextInfo();
-  console.log(`   Context: ${timezoneInfo.context}`);
-  console.log(`   Timezone: ${timezoneInfo.timezone}`);
-  console.log(`   Business Hours: ${timezoneInfo.isBusinessHours}`);
-  console.log(`   Current Time: ${timezoneInfo.currentTime.toISOString()}\n`);
+  console.info(`   Context: ${timezoneInfo.context}`);
+  console.info(`   Timezone: ${timezoneInfo.timezone}`);
+  console.info(`   Business Hours: ${timezoneInfo.isBusinessHours}`);
+  console.info(`   Current Time: ${timezoneInfo.currentTime.toISOString()}\n`);
 
   // 5. Demonstrate feature flag usage
-  console.log('🚩 Feature Flags:');
-  console.log(`   Advanced Analytics: ${envConfig.isFeatureEnabled('advancedAnalytics')}`);
-  console.log(`   Real-time Reporting: ${envConfig.isFeatureEnabled('realTimeReporting')}`);
-  console.log(`   Multi-currency: ${envConfig.isFeatureEnabled('multiCurrency')}`);
-  console.log(`   Auto-settlement: ${envConfig.isFeatureEnabled('autoSettlement')}\n`);
+  console.info('🚩 Feature Flags:');
+  console.info(`   Advanced Analytics: ${envConfig.isFeatureEnabled('advancedAnalytics')}`);
+  console.info(`   Real-time Reporting: ${envConfig.isFeatureEnabled('realTimeReporting')}`);
+  console.info(`   Multi-currency: ${envConfig.isFeatureEnabled('multiCurrency')}`);
+  console.info(`   Auto-settlement: ${envConfig.isFeatureEnabled('autoSettlement')}\n`);
 
   // 6. Show business rules from environment
-  console.log('💼 Business Rules from Environment:');
-  console.log(
+  console.info('💼 Business Rules from Environment:');
+  console.info(
     `   Bet Limits: ${envConfig.businessRules.minBetAmount} - ${envConfig.businessRules.maxBetAmount} USD`
   );
-  console.log(`   Risk Threshold: ${envConfig.businessRules.riskScoreThreshold}%`);
-  console.log(`   Manual Review Threshold: ${envConfig.businessRules.manualReviewThreshold} USD`);
-  console.log(`   Credit Limit Multiplier: ${envConfig.businessRules.creditLimitMultiplier}x\n`);
+  console.info(`   Risk Threshold: ${envConfig.businessRules.riskScoreThreshold}%`);
+  console.info(`   Manual Review Threshold: ${envConfig.businessRules.manualReviewThreshold} USD`);
+  console.info(`   Credit Limit Multiplier: ${envConfig.businessRules.creditLimitMultiplier}x\n`);
 
   // 7. Demonstrate environment validation
-  console.log('✅ Configuration Validation:');
+  console.info('✅ Configuration Validation:');
   const validation = envConfig.validateConfiguration();
-  console.log(`   Is Valid: ${validation.isValid}`);
+  console.info(`   Is Valid: ${validation.isValid}`);
   if (!validation.isValid) {
-    console.log(`   Errors: ${validation.errors.join(', ')}`);
+    console.info(`   Errors: ${validation.errors.join(', ')}`);
   } else {
-    console.log('   All required configurations are properly set!');
+    console.info('   All required configurations are properly set!');
   }
-  console.log('');
+  console.info('');
 
   // 8. Show how to set environment variables programmatically
-  console.log('🔧 Programmatic Environment Variable Setting:');
-  console.log('   // You can set environment variables in code:');
-  console.log('   process.env.CUSTOM_VAR = "custom_value";');
-  console.log('   Bun.env.DYNAMIC_CONFIG = "runtime_value";');
-  console.log('');
+  console.info('🔧 Programmatic Environment Variable Setting:');
+  console.info('   // You can set environment variables in code:');
+  console.info('   process.env.CUSTOM_VAR = "custom_value";');
+  console.info('   Bun.env.DYNAMIC_CONFIG = "runtime_value";');
+  console.info('');
 
   // 9. Show different environment file precedence
-  console.log('📁 Environment File Precedence (Bun loads in this order):');
-  console.log('   1. .env');
-  console.log('   2. .env.production (when NODE_ENV=production)');
-  console.log('   3. .env.development (when NODE_ENV=development)');
-  console.log('   4. .env.test (when NODE_ENV=test)');
-  console.log('   5. .env.local (not loaded when NODE_ENV=test)');
-  console.log('');
+  console.info('📁 Environment File Precedence (Bun loads in this order):');
+  console.info('   1. .env');
+  console.info('   2. .env.production (when NODE_ENV=production)');
+  console.info('   3. .env.development (when NODE_ENV=development)');
+  console.info('   4. .env.test (when NODE_ENV=test)');
+  console.info('   5. .env.local (not loaded when NODE_ENV=test)');
+  console.info('');
 
-  console.log('🎉 Environment Configuration Demo Complete!');
-  console.log('Your domain system now uses environment variables for:');
-  console.log('  • Database connections');
-  console.log('  • External service configurations');
-  console.log('  • Security settings');
-  console.log('  • Business rules');
-  console.log('  • Feature flags');
-  console.log('  • Timezone settings');
+  console.info('🎉 Environment Configuration Demo Complete!');
+  console.info('Your domain system now uses environment variables for:');
+  console.info('  • Database connections');
+  console.info('  • External service configurations');
+  console.info('  • Security settings');
+  console.info('  • Business rules');
+  console.info('  • Feature flags');
+  console.info('  • Timezone settings');
 }
 
 if (import.meta.main) {

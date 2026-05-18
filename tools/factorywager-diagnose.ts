@@ -73,7 +73,7 @@ async function runDiagnostics() {
   coloredReport = coloredReport.replace(/(\d+(?:\.\d+)?)\s*(KB|MB|GB)/g, (_, size, unit) =>
     styled(`${size}${unit}`, "primary"));
 
-  console.log(coloredReport);
+  console.info(coloredReport);
 
   // Extract and tag dominant issue color
   const errorMatch = report.match(/Errors: (.+)/);
@@ -90,7 +90,7 @@ async function runDiagnostics() {
   log.metric('Dominant color', Bun.color(dominantColor, "hex"), 'accent');
   log.metric('Has errors', metadata["diagnostic:has-errors"], errorMatch ? 'error' : 'success');
 
-  console.log('\n' + styled('🎯 Diagnostic complete!', 'success'));
+  console.info('\n' + styled('🎯 Diagnostic complete!', 'success'));
 }
 
 // Run if called directly

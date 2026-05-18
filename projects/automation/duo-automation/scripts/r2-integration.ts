@@ -102,9 +102,9 @@ class R2ArtifactManager {
       customDomain: this.config.customDomain,
     };
 
-    console.log(`🚀 Uploaded with hardware-accelerated hashing:`);
-    console.log(`   CRC32: ${crc32Hash}`);
-    console.log(`   Duration: ${Math.round(endTime - startTime)}ms`);
+    console.info(`🚀 Uploaded with hardware-accelerated hashing:`);
+    console.info(`   CRC32: ${crc32Hash}`);
+    console.info(`   Duration: ${Math.round(endTime - startTime)}ms`);
 
     // Update CDN cache if custom domain is configured
     if (this.config.customDomain) {
@@ -315,7 +315,7 @@ class R2ArtifactManager {
       // Update configuration
       this.config.customDomain = domain;
       
-      console.log(`✅ Custom domain ${domain} configured for bucket ${this.config.bucketName}`);
+      console.info(`✅ Custom domain ${domain} configured for bucket ${this.config.bucketName}`);
       return true;
     } catch (error) {
       console.error('Failed to setup custom domain:', error);
@@ -331,7 +331,7 @@ class R2ArtifactManager {
 
     try {
       await this.cloudflareAPI.purgeCache([`https://${this.config.customDomain}/${key}`]);
-      console.log(`🗑️  CDN cache purged for: ${key}`);
+      console.info(`🗑️  CDN cache purged for: ${key}`);
     } catch (error) {
       console.error('Failed to purge CDN cache:', error);
     }
@@ -396,12 +396,12 @@ class CloudflareAPI {
   async setupCustomDomain(bucketName: string, domain: string): Promise<void> {
     // Implementation for Cloudflare custom domain setup
     // This would use Cloudflare API to configure custom domain for R2 bucket
-    console.log(`🌐 Setting up custom domain ${domain} for bucket ${bucketName}`);
+    console.info(`🌐 Setting up custom domain ${domain} for bucket ${bucketName}`);
   }
 
   async purgeCache(urls: string[]): Promise<void> {
     // Implementation for CDN cache purging
-    console.log(`🗑️  Purging cache for ${urls.length} URLs`);
+    console.info(`🗑️  Purging cache for ${urls.length} URLs`);
   }
 }
 
@@ -442,9 +442,9 @@ async function main() {
             contentType: file.type,
           }
         );
-        console.log('✅ Artifact uploaded:', metadata);
+        console.info('✅ Artifact uploaded:', metadata);
       } else {
-        console.log('Usage: r2-integration upload <file> <key>');
+        console.info('Usage: r2-integration upload <file> <key>');
       }
       break;
 
@@ -452,67 +452,67 @@ async function main() {
       if (args[1]) {
         const result = await r2Manager.getArtifact(args[1]);
         if (result) {
-          console.log('📦 Artifact found:');
-          console.log(`  URL: ${result.url}`);
-          console.log(`  Name: ${result.metadata.name}`);
-          console.log(`  Type: ${result.metadata.type}`);
-          console.log(`  Size: ${result.metadata.size} bytes`);
-          console.log(`  Tags: ${result.metadata.tags.join(', ')}`);
-          console.log(`  Custom Domain: ${result.metadata.customDomain || 'None'}`);
+          console.info('📦 Artifact found:');
+          console.info(`  URL: ${result.url}`);
+          console.info(`  Name: ${result.metadata.name}`);
+          console.info(`  Type: ${result.metadata.type}`);
+          console.info(`  Size: ${result.metadata.size} bytes`);
+          console.info(`  Tags: ${result.metadata.tags.join(', ')}`);
+          console.info(`  Custom Domain: ${result.metadata.customDomain || 'None'}`);
         } else {
-          console.log('❌ Artifact not found');
+          console.info('❌ Artifact not found');
         }
       } else {
-        console.log('Usage: r2-integration get <key>');
+        console.info('Usage: r2-integration get <key>');
       }
       break;
 
     case 'list':
       const tagFilter = args.includes('--tags') ? args[args.indexOf('--tags') + 1]?.split(',') : undefined;
       const artifacts = await r2Manager.listArtifacts(undefined, tagFilter);
-      console.log(`📋 Found ${artifacts.length} artifacts:`);
+      console.info(`📋 Found ${artifacts.length} artifacts:`);
       artifacts.forEach((artifact, index) => {
-        console.log(`${index + 1}. ${artifact.name} (${artifact.type}) - ${artifact.tags.join(', ')}`);
+        console.info(`${index + 1}. ${artifact.name} (${artifact.type}) - ${artifact.tags.join(', ')}`);
       });
       break;
 
     case 'delete':
       if (args[1]) {
         const success = await r2Manager.deleteArtifact(args[1]);
-        console.log(success ? '✅ Artifact deleted' : '❌ Failed to delete artifact');
+        console.info(success ? '✅ Artifact deleted' : '❌ Failed to delete artifact');
       } else {
-        console.log('Usage: r2-integration delete <key>');
+        console.info('Usage: r2-integration delete <key>');
       }
       break;
 
     case 'setup-domain':
       if (args[1]) {
         const success = await r2Manager.setupCustomDomain(args[1]);
-        console.log(success ? '✅ Custom domain configured' : '❌ Failed to configure domain');
+        console.info(success ? '✅ Custom domain configured' : '❌ Failed to configure domain');
       } else {
-        console.log('Usage: r2-integration setup-domain <domain>');
+        console.info('Usage: r2-integration setup-domain <domain>');
       }
       break;
 
     case 'stats':
       const stats = await r2Manager.getBucketStats();
-      console.log('📊 Bucket Statistics:');
-      console.log(`  Total Objects: ${stats.totalObjects}`);
-      console.log(`  Total Size: ${(stats.totalSize / 1024 / 1024).toFixed(2)} MB`);
-      console.log(`  Custom Domain: ${stats.customDomain || 'Not configured'}`);
+      console.info('📊 Bucket Statistics:');
+      console.info(`  Total Objects: ${stats.totalObjects}`);
+      console.info(`  Total Size: ${(stats.totalSize / 1024 / 1024).toFixed(2)} MB`);
+      console.info(`  Custom Domain: ${stats.customDomain || 'Not configured'}`);
       break;
 
     case 'verify-integrity':
       if (args[1]) {
         const result = await r2Manager.verifyArtifactIntegrity(args[1]);
-        console.log('🔍 Artifact Integrity Check:');
-        console.log(`  Key: ${args[1]}`);
-        console.log(`  Valid: ${result.isValid ? '✅' : '❌'}`);
-        console.log(`  Expected: ${result.expectedHash}`);
-        console.log(`  Actual: ${result.actualHash}`);
-        console.log(`  Duration: ${result.duration}ms`);
+        console.info('🔍 Artifact Integrity Check:');
+        console.info(`  Key: ${args[1]}`);
+        console.info(`  Valid: ${result.isValid ? '✅' : '❌'}`);
+        console.info(`  Expected: ${result.expectedHash}`);
+        console.info(`  Actual: ${result.actualHash}`);
+        console.info(`  Duration: ${result.duration}ms`);
       } else {
-        console.log('Usage: r2-integration verify-integrity <key>');
+        console.info('Usage: r2-integration verify-integrity <key>');
       }
       break;
 
@@ -520,37 +520,37 @@ async function main() {
       if (args[1]) {
         const artifacts = await r2Manager.listArtifacts();
         const keys = artifacts.slice(0, parseInt(args[1]) || 10).map(a => a.name);
-        console.log(`🔍 Verifying ${keys.length} artifacts...`);
+        console.info(`🔍 Verifying ${keys.length} artifacts...`);
         
         const result = await r2Manager.batchVerifyIntegrity(keys);
-        console.log('\n📊 Batch Verification Results:');
-        console.log(`  Total: ${result.summary.total}`);
-        console.log(`  Valid: ${result.summary.valid}`);
-        console.log(`  Invalid: ${result.summary.invalid}`);
-        console.log(`  Duration: ${result.summary.totalDuration}ms`);
-        console.log(`  Speed: ${result.summary.averageSpeed} files/sec`);
+        console.info('\n📊 Batch Verification Results:');
+        console.info(`  Total: ${result.summary.total}`);
+        console.info(`  Valid: ${result.summary.valid}`);
+        console.info(`  Invalid: ${result.summary.invalid}`);
+        console.info(`  Duration: ${result.summary.totalDuration}ms`);
+        console.info(`  Speed: ${result.summary.averageSpeed} files/sec`);
         
         // Show invalid files
         const invalid = result.results.filter(r => !r.isValid);
         if (invalid.length > 0) {
-          console.log('\n❌ Invalid Files:');
+          console.info('\n❌ Invalid Files:');
           invalid.forEach(item => {
-            console.log(`  - ${item.key}: ${item.actualHash} (expected ${item.expectedHash})`);
+            console.info(`  - ${item.key}: ${item.actualHash} (expected ${item.expectedHash})`);
           });
         }
       } else {
-        console.log('Usage: r2-integration batch-verify [count]');
+        console.info('Usage: r2-integration batch-verify [count]');
       }
       break;
 
     default:
-      console.log(`Unknown command: ${command}`);
+      console.info(`Unknown command: ${command}`);
       showHelp();
   }
 }
 
 function showHelp(): void {
-  console.log(`
+  console.info(`
 🚀 Cloudflare R2 Integration CLI
 
 USAGE:

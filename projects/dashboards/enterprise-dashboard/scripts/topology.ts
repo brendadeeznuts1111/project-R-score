@@ -93,11 +93,11 @@ function printTree(node: TreeNode, prefix = "", isLast = true, depth = 0): void 
       const authBadge = route.auth !== "none" ? ` 🔒${route.auth}` : "";
       const devBadge = route.devOnly ? ` ${DIM}(dev)${RESET}` : "";
 
-      console.log(
+      console.info(
         `${prefix}${connector}${icon} ${nodeName} ${DIM}[${methods}]${RESET}${riskColor}${authBadge}${RESET}${devBadge}`
       );
     } else {
-      console.log(`${prefix}${connector}${BOLD}${nodeName}${RESET}`);
+      console.info(`${prefix}${connector}${BOLD}${nodeName}${RESET}`);
     }
 
     printTree(child, prefix + extension, isChildLast, depth + 1);
@@ -109,17 +109,17 @@ function printTree(node: TreeNode, prefix = "", isLast = true, depth = 0): void 
 // =============================================================================
 
 function printTreeView(): void {
-  console.log(`\n${BOLD}Route Topology${RESET}`);
-  console.log(`${"─".repeat(60)}\n`);
+  console.info(`\n${BOLD}Route Topology${RESET}`);
+  console.info(`${"─".repeat(60)}\n`);
 
   const tree = buildTree(ROUTES);
   printTree(tree);
 
   // Legend
-  console.log(`\n${DIM}${"─".repeat(60)}${RESET}`);
-  console.log(`${BOLD}Legend:${RESET}`);
-  console.log(`  ${RISK_COLORS[0]}●${RESET} None  ${RISK_COLORS[1]}●${RESET} Low  ${RISK_COLORS[2]}●${RESET} Medium  ${RISK_COLORS[3]}●${RESET} High  ${RISK_COLORS[4]}●${RESET} Critical  ${RISK_COLORS[5]}●${RESET} Severe`);
-  console.log(`  🔒 = Requires authentication\n`);
+  console.info(`\n${DIM}${"─".repeat(60)}${RESET}`);
+  console.info(`${BOLD}Legend:${RESET}`);
+  console.info(`  ${RISK_COLORS[0]}●${RESET} None  ${RISK_COLORS[1]}●${RESET} Low  ${RISK_COLORS[2]}●${RESET} Medium  ${RISK_COLORS[3]}●${RESET} High  ${RISK_COLORS[4]}●${RESET} Critical  ${RISK_COLORS[5]}●${RESET} Severe`);
+  console.info(`  🔒 = Requires authentication\n`);
 }
 
 function printJsonView(): void {
@@ -133,12 +133,12 @@ function printJsonView(): void {
     routes: ROUTES,
   };
 
-  console.log(JSON.stringify(output, null, 2));
+  console.info(JSON.stringify(output, null, 2));
 }
 
 function printRiskView(): void {
-  console.log(`\n${BOLD}Route Risk Heatmap${RESET}`);
-  console.log(`${"─".repeat(70)}\n`);
+  console.info(`\n${BOLD}Route Risk Heatmap${RESET}`);
+  console.info(`${"─".repeat(70)}\n`);
 
   const riskBlocks = ["░", "▒", "▓", "█", "█", "█"];
   const stats = getTopologyStats();
@@ -153,33 +153,33 @@ function printRiskView(): void {
     const bar = riskBlocks[risk].repeat(Math.min(routes.length, 30));
     const count = `(${routes.length})`.padStart(4);
 
-    console.log(`${color}${label}${RESET} ${color}${bar}${RESET} ${count}`);
+    console.info(`${color}${label}${RESET} ${color}${bar}${RESET} ${count}`);
 
     // Show high-risk routes
     if (risk >= 3) {
       for (const route of routes.slice(0, 5)) {
         const methods = route.methods.join(",");
-        console.log(`${DIM}         └─ ${route.path} [${methods}] ${route.auth}${RESET}`);
+        console.info(`${DIM}         └─ ${route.path} [${methods}] ${route.auth}${RESET}`);
       }
       if (routes.length > 5) {
-        console.log(`${DIM}         └─ ... and ${routes.length - 5} more${RESET}`);
+        console.info(`${DIM}         └─ ... and ${routes.length - 5} more${RESET}`);
       }
     }
   }
 
   // Summary
-  console.log(`\n${DIM}${"─".repeat(70)}${RESET}`);
-  console.log(`${BOLD}Summary:${RESET}`);
-  console.log(`  Average Risk Score: ${stats.avgRiskScore.toFixed(2)} / 5.0`);
-  console.log(`  High/Critical Routes: ${stats.highRisk}`);
+  console.info(`\n${DIM}${"─".repeat(70)}${RESET}`);
+  console.info(`${BOLD}Summary:${RESET}`);
+  console.info(`  Average Risk Score: ${stats.avgRiskScore.toFixed(2)} / 5.0`);
+  console.info(`  High/Critical Routes: ${stats.highRisk}`);
   if (stats.unauthHighRisk > 0) {
-    console.log(`  ${RISK_COLORS[4]}⚠ Unauthenticated High-Risk: ${stats.unauthHighRisk}${RESET}`);
+    console.info(`  ${RISK_COLORS[4]}⚠ Unauthenticated High-Risk: ${stats.unauthHighRisk}${RESET}`);
     const exposed = getExposedHighRiskRoutes(3);
     for (const route of exposed) {
-      console.log(`    ${RISK_COLORS[4]}└─ ${route.path}${RESET}`);
+      console.info(`    ${RISK_COLORS[4]}└─ ${route.path}${RESET}`);
     }
   }
-  console.log();
+  console.info();
 }
 
 function printTableView(): void {
@@ -191,8 +191,8 @@ function printTableView(): void {
     Risk: "●".repeat(r.risk + 1).padEnd(6, "○"),
   }));
 
-  console.log(`\n${BOLD}Route Table${RESET} (${ROUTES.length} routes)\n`);
-  console.log(Bun.inspect.table(formatted, { colors: true }));
+  console.info(`\n${BOLD}Route Table${RESET} (${ROUTES.length} routes)\n`);
+  console.info(Bun.inspect.table(formatted, { colors: true }));
 }
 
 // =============================================================================

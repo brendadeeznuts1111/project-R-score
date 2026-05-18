@@ -11,12 +11,12 @@ interface ColorTest {
 }
 
 async function testAccessibility(): Promise<void> {
-  console.log('🧪 Testing Accessibility and Color Quality...\n');
+  console.info('🧪 Testing Accessibility and Color Quality...\n');
   
   const results: any[] = [];
   
   // Test 1: Color Contrast Analysis
-  console.log('1. Testing color contrast ratios...');
+  console.info('1. Testing color contrast ratios...');
   try {
     const response = await fetch('http://localhost:3000/');
     const html = await response.text();
@@ -118,7 +118,7 @@ async function testAccessibility(): Promise<void> {
   }
   
   // Test 2: Semantic HTML Structure
-  console.log('2. Testing semantic HTML structure...');
+  console.info('2. Testing semantic HTML structure...');
   try {
     const response = await fetch('http://localhost:3000/');
     const html = await response.text();
@@ -162,7 +162,7 @@ async function testAccessibility(): Promise<void> {
   }
   
   // Test 3: Accessibility Attributes
-  console.log('3. Testing accessibility attributes...');
+  console.info('3. Testing accessibility attributes...');
   try {
     const response = await fetch('http://localhost:3000/');
     const html = await response.text();
@@ -205,7 +205,7 @@ async function testAccessibility(): Promise<void> {
   }
   
   // Test 4: Responsive Design
-  console.log('4. Testing responsive design...');
+  console.info('4. Testing responsive design...');
   try {
     const response = await fetch('http://localhost:3000/');
     const html = await response.text();
@@ -247,7 +247,7 @@ async function testAccessibility(): Promise<void> {
   }
   
   // Test 5: Color Implementation Quality
-  console.log('5. Testing color implementation quality...');
+  console.info('5. Testing color implementation quality...');
   try {
     const response = await fetch('http://localhost:3000/');
     const html = await response.text();
@@ -300,8 +300,8 @@ async function testAccessibility(): Promise<void> {
   }
   
   // Results Summary
-  console.log('\n📊 Accessibility Test Results:');
-  console.log('='.repeat(50));
+  console.info('\n📊 Accessibility Test Results:');
+  console.info('='.repeat(50));
   
   const passCount = results.filter(r => r.status === 'PASS').length;
   const failCount = results.filter(r => r.status === 'FAIL').length;
@@ -309,36 +309,36 @@ async function testAccessibility(): Promise<void> {
   
   results.forEach(result => {
     const icon = result.status === 'PASS' ? '✅' : result.status === 'FAIL' ? '❌' : '⚠️';
-    console.log(`${icon} ${result.test}: ${result.status}`);
-    console.log(`   ${result.details}`);
+    console.info(`${icon} ${result.test}: ${result.status}`);
+    console.info(`   ${result.details}`);
     if (result.evidence) {
-      console.log(`   Evidence: ${JSON.stringify(result.evidence, null, 2)}`);
+      console.info(`   Evidence: ${JSON.stringify(result.evidence, null, 2)}`);
     }
-    console.log('');
+    console.info('');
   });
   
-  console.log(`📈 Summary: ${passCount} PASS, ${partialCount} PARTIAL, ${failCount} FAIL`);
+  console.info(`📈 Summary: ${passCount} PASS, ${partialCount} PARTIAL, ${failCount} FAIL`);
   
   if (failCount === 0 && partialCount === 0) {
-    console.log('🎉 Excellent accessibility and color quality!');
+    console.info('🎉 Excellent accessibility and color quality!');
   } else if (failCount === 0) {
-    console.log('⚠️  Good accessibility with room for improvement.');
+    console.info('⚠️  Good accessibility with room for improvement.');
   } else {
-    console.log('❌ Accessibility issues need attention.');
+    console.info('❌ Accessibility issues need attention.');
   }
   
   // Recommendations
-  console.log('\n💡 Recommendations:');
+  console.info('\n💡 Recommendations:');
   if (partialCount > 0 || failCount > 0) {
-    console.log('- Add more semantic HTML elements');
-    console.log('- Include accessibility attributes (alt, aria-*)');
-    console.log('- Improve color contrast for WCAG compliance');
-    console.log('- Add CSS variables for better color management');
-    console.log('- Include focus states for keyboard navigation');
+    console.info('- Add more semantic HTML elements');
+    console.info('- Include accessibility attributes (alt, aria-*)');
+    console.info('- Improve color contrast for WCAG compliance');
+    console.info('- Add CSS variables for better color management');
+    console.info('- Include focus states for keyboard navigation');
   } else {
-    console.log('- Consider adding CSS custom properties for better maintainability');
-    console.log('- Add more ARIA labels for enhanced screen reader support');
-    console.log('- Test with actual screen readers and keyboard navigation');
+    console.info('- Consider adding CSS custom properties for better maintainability');
+    console.info('- Add more ARIA labels for enhanced screen reader support');
+    console.info('- Test with actual screen readers and keyboard navigation');
   }
 }
 

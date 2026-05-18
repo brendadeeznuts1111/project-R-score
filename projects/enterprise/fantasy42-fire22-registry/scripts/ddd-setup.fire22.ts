@@ -132,7 +132,7 @@ const DOMAIN_CONFIGS: DomainConfig[] = [
 async function createDomainStructure(domain: DomainConfig): Promise<void> {
   const domainPath = `src/domains/${domain.name}`;
 
-  console.log(`🏗️ Creating ${domain.name} domain structure...`);
+  console.info(`🏗️ Creating ${domain.name} domain structure...`);
 
   // Create domain directory
   await $`mkdir -p ${domainPath}`.quiet();
@@ -157,13 +157,13 @@ async function createDomainStructure(domain: DomainConfig): Promise<void> {
     await $`mkdir -p ${domainPath}/${dir}`.quiet();
   }
 
-  console.log(`✅ Created ${domain.name} domain structure`);
+  console.info(`✅ Created ${domain.name} domain structure`);
 }
 
 async function createDomainFiles(domain: DomainConfig): Promise<void> {
   const domainPath = `src/domains/${domain.name}`;
 
-  console.log(`📝 Creating ${domain.name} domain files...`);
+  console.info(`📝 Creating ${domain.name} domain files...`);
 
   // Create domain README
   const readmeContent = `# ${domain.name.charAt(0).toUpperCase() + domain.name.slice(1)} Domain
@@ -253,7 +253,7 @@ ${domain.boundedContexts.map(ctx => `export * from './${ctx}'`).join('\n')}
 
   await Bun.write(`${domainPath}/index.ts`, indexContent);
 
-  console.log(`✅ Created ${domain.name} domain files`);
+  console.info(`✅ Created ${domain.name} domain files`);
 }
 
 async function createBoundedContextFiles(domain: DomainConfig, context: string): Promise<void> {
@@ -320,7 +320,7 @@ async function validateCODEOWNERS(): Promise<boolean> {
     // Check if all domains have owners
     for (const domain of DOMAIN_CONFIGS) {
       if (!codeowners.includes(`src/domains/${domain.name}/`)) {
-        console.log(`❌ Missing CODEOWNERS for ${domain.name} domain`);
+        console.info(`❌ Missing CODEOWNERS for ${domain.name} domain`);
         return false;
       }
     }
@@ -336,14 +336,14 @@ async function validateCODEOWNERS(): Promise<boolean> {
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function runDDDSetup(): Promise<void> {
-  console.log('🔥 FIRE22 DDD SETUP');
-  console.log('═══════════════════');
-  console.log('Creating Domain-Driven Design structure for Fantasy42-Fire22');
-  console.log('');
+  console.info('🔥 FIRE22 DDD SETUP');
+  console.info('═══════════════════');
+  console.info('Creating Domain-Driven Design structure for Fantasy42-Fire22');
+  console.info('');
 
   // Phase 1: Create domain structures
-  console.log('🏗️ PHASE 1: CREATING DOMAIN STRUCTURES');
-  console.log('══════════════════════════════════════');
+  console.info('🏗️ PHASE 1: CREATING DOMAIN STRUCTURES');
+  console.info('══════════════════════════════════════');
 
   for (const domain of DOMAIN_CONFIGS) {
     await createDomainStructure(domain);
@@ -356,66 +356,66 @@ async function runDDDSetup(): Promise<void> {
   }
 
   // Phase 2: Validate structures
-  console.log('');
-  console.log('🔍 PHASE 2: VALIDATING DOMAIN STRUCTURES');
-  console.log('════════════════════════════════════════');
+  console.info('');
+  console.info('🔍 PHASE 2: VALIDATING DOMAIN STRUCTURES');
+  console.info('════════════════════════════════════════');
 
   let validCount = 0;
   for (const domain of DOMAIN_CONFIGS) {
     const isValid = await validateDomainStructure(domain);
     if (isValid) {
-      console.log(`✅ ${domain.name} domain structure valid`);
+      console.info(`✅ ${domain.name} domain structure valid`);
       validCount++;
     } else {
-      console.log(`❌ ${domain.name} domain structure invalid`);
+      console.info(`❌ ${domain.name} domain structure invalid`);
     }
   }
 
   // Phase 3: Validate CODEOWNERS
-  console.log('');
-  console.log('👥 PHASE 3: VALIDATING CODEOWNERS');
-  console.log('═════════════════════════════════');
+  console.info('');
+  console.info('👥 PHASE 3: VALIDATING CODEOWNERS');
+  console.info('═════════════════════════════════');
 
   const codeownersValid = await validateCODEOWNERS();
   if (codeownersValid) {
-    console.log('✅ CODEOWNERS configuration valid');
+    console.info('✅ CODEOWNERS configuration valid');
   } else {
-    console.log('❌ CODEOWNERS configuration needs attention');
+    console.info('❌ CODEOWNERS configuration needs attention');
   }
 
   // Summary
-  console.log('');
-  console.log('📊 DDD SETUP SUMMARY');
-  console.log('════════════════════');
-  console.log(`Domains Created: ${DOMAIN_CONFIGS.length}`);
-  console.log(`Valid Structures: ${validCount}/${DOMAIN_CONFIGS.length}`);
-  console.log(`CODEOWNERS Status: ${codeownersValid ? 'Valid' : 'Needs Attention'}`);
+  console.info('');
+  console.info('📊 DDD SETUP SUMMARY');
+  console.info('════════════════════');
+  console.info(`Domains Created: ${DOMAIN_CONFIGS.length}`);
+  console.info(`Valid Structures: ${validCount}/${DOMAIN_CONFIGS.length}`);
+  console.info(`CODEOWNERS Status: ${codeownersValid ? 'Valid' : 'Needs Attention'}`);
 
   if (validCount === DOMAIN_CONFIGS.length && codeownersValid) {
-    console.log('');
-    console.log('🎉 DDD SETUP COMPLETE!');
-    console.log('═════════════════════');
-    console.log('');
-    console.log('🔥 Your Fantasy42-Fire22 system now follows Domain-Driven Design principles!');
-    console.log('');
-    console.log('🏗️ NEXT STEPS:');
-    console.log("1. Implement domain entities in each domain's entities/ directory");
-    console.log('2. Create value objects in value-objects/ directories');
-    console.log('3. Define domain events in domain-events/ directories');
-    console.log('4. Implement domain services in domain-services/ directories');
-    console.log('5. Create repository interfaces in repositories/ directories');
-    console.log('');
-    console.log('📚 RESOURCES:');
-    console.log('• Domain-specific README files created');
-    console.log('• .github/COMMIT_CONVENTION.md updated with domain scopes');
-    console.log('• .github/CODEOWNERS configured for domain ownership');
-    console.log('');
-    console.log('🎯 Ready to implement domain-driven features!');
+    console.info('');
+    console.info('🎉 DDD SETUP COMPLETE!');
+    console.info('═════════════════════');
+    console.info('');
+    console.info('🔥 Your Fantasy42-Fire22 system now follows Domain-Driven Design principles!');
+    console.info('');
+    console.info('🏗️ NEXT STEPS:');
+    console.info("1. Implement domain entities in each domain's entities/ directory");
+    console.info('2. Create value objects in value-objects/ directories');
+    console.info('3. Define domain events in domain-events/ directories');
+    console.info('4. Implement domain services in domain-services/ directories');
+    console.info('5. Create repository interfaces in repositories/ directories');
+    console.info('');
+    console.info('📚 RESOURCES:');
+    console.info('• Domain-specific README files created');
+    console.info('• .github/COMMIT_CONVENTION.md updated with domain scopes');
+    console.info('• .github/CODEOWNERS configured for domain ownership');
+    console.info('');
+    console.info('🎯 Ready to implement domain-driven features!');
   } else {
-    console.log('');
-    console.log('⚠️ SOME ISSUES DETECTED');
-    console.log('══════════════════════');
-    console.log('Please review the errors above and run setup again.');
+    console.info('');
+    console.info('⚠️ SOME ISSUES DETECTED');
+    console.info('══════════════════════');
+    console.info('Please review the errors above and run setup again.');
   }
 }
 
@@ -424,7 +424,7 @@ async function runDDDSetup(): Promise<void> {
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function showDDDHelp(): Promise<void> {
-  console.log(`
+  console.info(`
 🔥 FIRE22 DDD SETUP
 Domain-Driven Design structure creation and validation
 
@@ -498,53 +498,53 @@ async function main(): Promise<void> {
       break;
 
     case 'validate':
-      console.log('🔍 VALIDATING DDD STRUCTURE');
-      console.log('═══════════════════════════');
+      console.info('🔍 VALIDATING DDD STRUCTURE');
+      console.info('═══════════════════════════');
 
       let validCount = 0;
       for (const domain of DOMAIN_CONFIGS) {
         const isValid = await validateDomainStructure(domain);
         if (isValid) {
-          console.log(`✅ ${domain.name} domain valid`);
+          console.info(`✅ ${domain.name} domain valid`);
           validCount++;
         } else {
-          console.log(`❌ ${domain.name} domain invalid`);
+          console.info(`❌ ${domain.name} domain invalid`);
         }
       }
 
       const codeownersValid = await validateCODEOWNERS();
-      console.log(`✅ CODEOWNERS: ${codeownersValid ? 'Valid' : 'Invalid'}`);
+      console.info(`✅ CODEOWNERS: ${codeownersValid ? 'Valid' : 'Invalid'}`);
 
-      console.log(`\n📊 Validation: ${validCount}/${DOMAIN_CONFIGS.length} domains valid`);
+      console.info(`\n📊 Validation: ${validCount}/${DOMAIN_CONFIGS.length} domains valid`);
       break;
 
     case 'create':
       const domainName = args[1];
       if (!domainName) {
-        console.log('❌ Please specify a domain name');
-        console.log('Usage: bun run scripts/ddd-setup.fire22.ts create <domain>');
+        console.info('❌ Please specify a domain name');
+        console.info('Usage: bun run scripts/ddd-setup.fire22.ts create <domain>');
         return;
       }
 
       const domain = DOMAIN_CONFIGS.find(d => d.name === domainName);
       if (!domain) {
-        console.log(`❌ Domain '${domainName}' not found`);
-        console.log('Available domains:', DOMAIN_CONFIGS.map(d => d.name).join(', '));
+        console.info(`❌ Domain '${domainName}' not found`);
+        console.info('Available domains:', DOMAIN_CONFIGS.map(d => d.name).join(', '));
         return;
       }
 
       await createDomainStructure(domain);
       await createDomainFiles(domain);
-      console.log(`✅ Created ${domainName} domain structure`);
+      console.info(`✅ Created ${domainName} domain structure`);
       break;
 
     case 'list':
-      console.log('🔥 CONFIGURED DOMAINS');
-      console.log('═════════════════════');
+      console.info('🔥 CONFIGURED DOMAINS');
+      console.info('═════════════════════');
       DOMAIN_CONFIGS.forEach(domain => {
-        console.log(`🏗️  ${domain.name.padEnd(12)} - ${domain.description}`);
+        console.info(`🏗️  ${domain.name.padEnd(12)} - ${domain.description}`);
       });
-      console.log(`\n📊 Total: ${DOMAIN_CONFIGS.length} domains`);
+      console.info(`\n📊 Total: ${DOMAIN_CONFIGS.length} domains`);
       break;
 
     case 'help':

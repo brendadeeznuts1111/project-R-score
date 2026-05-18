@@ -11,8 +11,8 @@ const strings = {
   large: "Hello World!!!".repeat(1024 * 256),
 };
 
-console.log("🧬 T3-Lattice structuredClone Fast-Path Benchmarks");
-console.log("==================================================");
+console.info("🧬 T3-Lattice structuredClone Fast-Path Benchmarks");
+console.info("==================================================");
 
 // Pure strings (Fast Path)
 bench("structuredClone(small string)", () => {

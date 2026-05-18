@@ -271,7 +271,7 @@ export class AIEvidenceAnalyzer {
   }
 
   async analyzeDispute(dispute: Dispute): Promise<AIAnalysis> {
-    console.log(`🤖 Starting AI analysis for dispute ${dispute.id}`);
+    console.info(`🤖 Starting AI analysis for dispute ${dispute.id}`);
     const startTime = Date.now();
 
     try {
@@ -334,7 +334,7 @@ export class AIEvidenceAnalyzer {
         }
       };
 
-      console.log(`✅ AI analysis completed for dispute ${dispute.id} in ${Date.now() - startTime}ms`);
+      console.info(`✅ AI analysis completed for dispute ${dispute.id} in ${Date.now() - startTime}ms`);
       return aiAnalysis;
 
     } catch (error) {
@@ -429,7 +429,7 @@ export class AIEvidenceAnalyzer {
   }
 
   private async analyzeImage(imageUrl: string): Promise<ImageAnalysis> {
-    console.log(`🖼️ Analyzing image: ${imageUrl}`);
+    console.info(`🖼️ Analyzing image: ${imageUrl}`);
 
     const analysis: ImageAnalysis = {
       findings: [],
@@ -525,7 +525,7 @@ export class AIEvidenceAnalyzer {
   }
 
   private async analyzeReceipt(receiptUrl: string, dispute: Dispute): Promise<ReceiptAnalysis> {
-    console.log(`🧾 Analyzing receipt: ${receiptUrl}`);
+    console.info(`🧾 Analyzing receipt: ${receiptUrl}`);
 
     const analysis: ReceiptAnalysis = {
       findings: [],
@@ -638,7 +638,7 @@ export class AIEvidenceAnalyzer {
   }
 
   private async analyzeText(textUrl: string): Promise<TextAnalysis> {
-    console.log(`📝 Analyzing text: ${textUrl}`);
+    console.info(`📝 Analyzing text: ${textUrl}`);
 
     const analysis: TextAnalysis = {
       findings: [],
@@ -702,7 +702,7 @@ export class AIEvidenceAnalyzer {
   }
 
   private async analyzePDF(pdfUrl: string): Promise<ImageAnalysis> {
-    console.log(`📄 Analyzing PDF: ${pdfUrl}`);
+    console.info(`📄 Analyzing PDF: ${pdfUrl}`);
 
     const analysis: ImageAnalysis = {
       findings: [],

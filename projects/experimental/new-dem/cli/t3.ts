@@ -122,7 +122,7 @@ function parseFlags(args: string[]): { command: string; options: CLIOptions; arg
 function log(level: CLIOptions['logLevel'], message: string, options: CLIOptions) {
   const levels = { error: 0, warn: 1, info: 2, debug: 3 };
   if (levels[level] <= levels[options.logLevel] && !options.quiet && !options.json) {
-    console.log(`[${level.toUpperCase()}] ${message}`);
+    console.info(`[${level.toUpperCase()}] ${message}`);
   }
 }
 
@@ -130,9 +130,9 @@ function output(data: any, options: CLIOptions) {
   // Check if we should output JSON by looking for --json in the process args
   const shouldJson = process.argv.includes('--json');
   if (shouldJson) {
-    console.log(JSON.stringify(data, null, 2));
+    console.info(JSON.stringify(data, null, 2));
   } else if (!options.quiet) {
-    console.log(data);
+    console.info(data);
   }
 }
 
@@ -303,9 +303,9 @@ class T3LatticePlugin {
     output(stats, options);
     if (!options.json && !options.quiet) {
       Object.entries(stats).forEach(([label, value]) => {
-        console.log(`${label.padEnd(16)}: ${value}`);
+        console.info(`${label.padEnd(16)}: ${value}`);
       });
-      console.log("═".repeat(60));
+      console.info("═".repeat(60));
     }
   }
 
@@ -334,18 +334,18 @@ class T3LatticePlugin {
     output(result, options || { json: false, quiet: false, verbose: false, watch: false, interval: 5000, dryRun: false, force: false, port: 8080, host: 'localhost', logLevel: 'info', config: '', threshold: 80 });
 
     if (!options?.json && !options?.quiet) {
-      console.log(`📦 Components (${components.length})`);
-      console.log("═".repeat(80));
+      console.info(`📦 Components (${components.length})`);
+      console.info("═".repeat(80));
 
       components.forEach(comp => {
         const status = comp.status?.toUpperCase().padEnd(12) || "UNKNOWN".padEnd(12);
         const category = (comp.category || "N/A").padEnd(12);
         const color = comp.hex || "#000000";
         const name = comp.name.padEnd(20);
-        console.log(`${color}● #${comp.id.toString().padStart(2, "0")} ${name} ${category} ${status}`);
+        console.info(`${color}● #${comp.id.toString().padStart(2, "0")} ${name} ${category} ${status}`);
       });
 
-      console.log("═".repeat(80));
+      console.info("═".repeat(80));
     }
   }
 
@@ -356,18 +356,18 @@ class T3LatticePlugin {
     } else {
       output(comp, options);
       if (!options.json && !options.quiet) {
-        console.log(`\n📦 Component #${comp.id}: ${comp.name}`);
-        console.log("═".repeat(60));
-        console.log(`Color:      ${comp.hex} (${comp.hsl})`);
-        console.log(`Slot:       ${comp.slot}`);
-        console.log(`Pattern:    ${comp.pattern}`);
-        console.log(`Category:   ${comp.category}`);
-        console.log(`Status:     ${comp.status}`);
-        console.log(`Bun Ver:    ${comp.bunVersion}`);
-        console.log(`Groups:     ${comp.groups?.join(", ") || "none"}`);
-        console.log(`Views:      ${comp.views?.join(", ") || "none"}`);
-        console.log(`\n${comp.description}`);
-        console.log("═".repeat(60) + "\n");
+        console.info(`\n📦 Component #${comp.id}: ${comp.name}`);
+        console.info("═".repeat(60));
+        console.info(`Color:      ${comp.hex} (${comp.hsl})`);
+        console.info(`Slot:       ${comp.slot}`);
+        console.info(`Pattern:    ${comp.pattern}`);
+        console.info(`Category:   ${comp.category}`);
+        console.info(`Status:     ${comp.status}`);
+        console.info(`Bun Ver:    ${comp.bunVersion}`);
+        console.info(`Groups:     ${comp.groups?.join(", ") || "none"}`);
+        console.info(`Views:      ${comp.views?.join(", ") || "none"}`);
+        console.info(`\n${comp.description}`);
+        console.info("═".repeat(60) + "\n");
       }
     }
   }
@@ -383,36 +383,36 @@ class T3LatticePlugin {
     output({ views: viewsData }, options);
 
     if (!options.json && !options.quiet) {
-      console.log("👁️  Available Views");
-      console.log("═".repeat(60));
+      console.info("👁️  Available Views");
+      console.info("═".repeat(60));
 
       Object.entries(VIEWS).forEach(([name, view]) => {
         const count = view.componentIds.length;
         const icon = view.icon || "●";
-        console.log(`${icon} ${name.padEnd(10)} (${count} components) - ${view.description}`);
+        console.info(`${icon} ${name.padEnd(10)} (${count} components) - ${view.description}`);
       });
 
-      console.log("═".repeat(60));
+      console.info("═".repeat(60));
     }
   }
 
   private showView(viewName: string) {
     if (!VIEWS[viewName as keyof typeof VIEWS]) {
-      console.log(`❌ View '${viewName}' not found. Available: ${Object.keys(VIEWS).join(", ")}`);
+      console.info(`❌ View '${viewName}' not found. Available: ${Object.keys(VIEWS).join(", ")}`);
       return;
     }
 
     const components = getViewComponents(viewName as keyof typeof VIEWS);
-    console.log(`\n📋 ${VIEWS[viewName as keyof typeof VIEWS].name} View (${components.length} components):`);
+    console.info(`\n📋 ${VIEWS[viewName as keyof typeof VIEWS].name} View (${components.length} components):`);
 
     components.forEach(comp => {
-      console.log(`   ${comp.hex}● ${comp.name} (${comp.category})`);
+      console.info(`   ${comp.hex}● ${comp.name} (${comp.category})`);
     });
-    console.log();
+    console.info();
   }
 
   private showGraph() {
-    console.log(renderGraphASCII());
+    console.info(renderGraphASCII());
   }
 
   private async startDashboard(port?: string, options?: CLIOptions) {
@@ -432,20 +432,20 @@ class T3LatticePlugin {
   private generateHTML(view?: string) {
     const viewName = (view || "overview") as keyof typeof VIEWS;
     if (!VIEWS[viewName]) {
-      console.log(`❌ View '${view}' not found`);
+      console.info(`❌ View '${view}' not found`);
       return;
     }
 
     const html = generateDashboardHTML(viewName);
-    console.log(`📄 Generated HTML for '${viewName}' view (${html.length} characters)`);
-    console.log("💡 Use 't3 export html > dashboard.html' to save to file");
-    console.log("💡 Use 't3 dashboard' to start interactive server");
+    console.info(`📄 Generated HTML for '${viewName}' view (${html.length} characters)`);
+    console.info("💡 Use 't3 export html > dashboard.html' to save to file");
+    console.info("💡 Use 't3 dashboard' to start interactive server");
   }
 
   private exportData(format?: string) {
     if (format === "html") {
       const html = generateDashboardHTML("overview");
-      console.log(html);
+      console.info(html);
     } else {
       const data = {
         version: "3.3.0",
@@ -453,7 +453,7 @@ class T3LatticePlugin {
         views: VIEWS,
         timestamp: new Date().toISOString()
       };
-      console.log(JSON.stringify(data, null, 2));
+      console.info(JSON.stringify(data, null, 2));
     }
   }
 
@@ -465,24 +465,24 @@ class T3LatticePlugin {
       c.bunVersion !== "any" && !matchVersion(c.bunVersion, version)
     );
 
-    console.log(`🔍 Bun ${version} Compatibility Check`);
-    console.log("═".repeat(50));
-    console.log(`✅ Compatible:   ${compatible.length} components`);
-    console.log(`❌ Incompatible: ${incompatible.length} components`);
+    console.info(`🔍 Bun ${version} Compatibility Check`);
+    console.info("═".repeat(50));
+    console.info(`✅ Compatible:   ${compatible.length} components`);
+    console.info(`❌ Incompatible: ${incompatible.length} components`);
 
     if (incompatible.length > 0) {
-      console.log("\nIncompatible components:");
+      console.info("\nIncompatible components:");
       incompatible.forEach(comp => {
-        console.log(`  ${comp.hex}● ${comp.name} (requires ${comp.bunVersion})`);
+        console.info(`  ${comp.hex}● ${comp.name} (requires ${comp.bunVersion})`);
       });
     }
 
-    console.log("═".repeat(50));
+    console.info("═".repeat(50));
   }
 
   private showColors() {
-    console.log("🎨 Color Palette & Usage");
-    console.log("═".repeat(60));
+    console.info("🎨 Color Palette & Usage");
+    console.info("═".repeat(60));
 
     const colorGroups = new Map<string, typeof COMPONENTS>();
     COMPONENTS.forEach(comp => {
@@ -495,15 +495,15 @@ class T3LatticePlugin {
     for (const [hex, comps] of colorGroups) {
       const hsl = comps[0].hsl;
       const ids = comps.map(c => c.id.toString().padStart(2, "0")).join(" ");
-      console.log(`${hex} ${hsl.padEnd(18)} [${ids}] ${comps[0].name}`);
+      console.info(`${hex} ${hsl.padEnd(18)} [${ids}] ${comps[0].name}`);
     }
 
-    console.log("═".repeat(60));
+    console.info("═".repeat(60));
   }
 
   private showPatterns() {
-    console.log("🔷 Pattern Distribution");
-    console.log("═".repeat(50));
+    console.info("🔷 Pattern Distribution");
+    console.info("═".repeat(50));
 
     const patternCounts = new Map<string, number>();
     COMPONENTS.forEach(comp => {
@@ -514,27 +514,27 @@ class T3LatticePlugin {
       .sort((a, b) => b[1] - a[1]);
 
     sortedPatterns.forEach(([pattern, count]) => {
-      console.log(`${pattern.padEnd(15)}: ${count} components`);
+      console.info(`${pattern.padEnd(15)}: ${count} components`);
     });
 
-    console.log("═".repeat(50));
+    console.info("═".repeat(50));
   }
 
   private showGlyphs() {
-    console.log("🎯 Opening glyph renderer...");
-    console.log("💡 File: glyph-renderer.html");
-    console.log("💡 Run: open glyph-renderer.html");
+    console.info("🎯 Opening glyph renderer...");
+    console.info("💡 File: glyph-renderer.html");
+    console.info("💡 Run: open glyph-renderer.html");
 
     // Try to open in browser
     try {
       const { exec } = require("child_process");
       exec("open glyph-renderer.html", (error: any) => {
         if (error) {
-          console.log("❌ Could not auto-open browser. Open glyph-renderer.html manually.");
+          console.info("❌ Could not auto-open browser. Open glyph-renderer.html manually.");
         }
       });
     } catch {
-      console.log("❌ Could not auto-open browser. Open glyph-renderer.html manually.");
+      console.info("❌ Could not auto-open browser. Open glyph-renderer.html manually.");
     }
   }
 
@@ -589,14 +589,14 @@ class T3LatticePlugin {
       // Only show formatted output if not in JSON mode
       const shouldJson = process.argv.includes('--json');
       if (!options.quiet && !shouldJson) {
-        console.log("═".repeat(60));
-        console.log(`Status: ${health.status === 'healthy' ? '✅' : '⚠️'} ${health.status.toUpperCase()}`);
-        console.log(`Components: ${health.components} loaded`);
-        console.log(`Memory: ${health.memory.used}MB used / ${health.memory.total}MB total`);
-        console.log(`Uptime: ${health.uptime}s`);
-        console.log(`Platform: ${health.platform}`);
-        console.log(`Bun Version: ${health.bunVersion}`);
-        console.log("═".repeat(60));
+        console.info("═".repeat(60));
+        console.info(`Status: ${health.status === 'healthy' ? '✅' : '⚠️'} ${health.status.toUpperCase()}`);
+        console.info(`Components: ${health.components} loaded`);
+        console.info(`Memory: ${health.memory.used}MB used / ${health.memory.total}MB total`);
+        console.info(`Uptime: ${health.uptime}s`);
+        console.info(`Platform: ${health.platform}`);
+        console.info(`Bun Version: ${health.bunVersion}`);
+        console.info("═".repeat(60));
       }
     }
   }
@@ -718,42 +718,42 @@ class T3LatticePlugin {
 
   private showHelp(options: CLIOptions) {
     if (!options.quiet) {
-      console.log("🚀 T3-Lattice Registry Plugin");
-      console.log("═".repeat(60));
-      console.log("Unified interface for all T3-Lattice components\n");
+      console.info("🚀 T3-Lattice Registry Plugin");
+      console.info("═".repeat(60));
+      console.info("Unified interface for all T3-Lattice components\n");
     }
 
     if (!options.quiet) {
-      console.log("Available Commands:");
+      console.info("Available Commands:");
       this.commands.forEach((cmd, name) => {
         if (!cmd.aliases || !cmd.aliases.includes(name)) {
           const aliases = cmd.aliases ? ` (${cmd.aliases.join(", ")})` : "";
-          console.log(`  ${name.padEnd(12)}${aliases} - ${cmd.description}`);
+          console.info(`  ${name.padEnd(12)}${aliases} - ${cmd.description}`);
         }
       });
 
-      console.log("\nCLI Flags:");
-      console.log("  -v, --verbose         Enable verbose output");
-      console.log("  -q, --quiet           Suppress output");
-      console.log("  --json                JSON output format");
-      console.log("  -w, --watch           Watch mode for monitoring");
-      console.log("  --interval <ms>       Watch interval (default: 5000)");
-      console.log("  --dry-run             Test without execution");
-      console.log("  --force               Override safety checks");
-      console.log("  -p, --port <port>     Server port (default: 8080)");
-      console.log("  -H, --host <host>     Server host (default: localhost)");
-      console.log("  --log-level <level>   Log level: error|warn|info|debug");
-      console.log("  -t, --threshold <%>   Alert threshold (default: 80)");
-      console.log("  -c, --config <file>   Config file path");
+      console.info("\nCLI Flags:");
+      console.info("  -v, --verbose         Enable verbose output");
+      console.info("  -q, --quiet           Suppress output");
+      console.info("  --json                JSON output format");
+      console.info("  -w, --watch           Watch mode for monitoring");
+      console.info("  --interval <ms>       Watch interval (default: 5000)");
+      console.info("  --dry-run             Test without execution");
+      console.info("  --force               Override safety checks");
+      console.info("  -p, --port <port>     Server port (default: 8080)");
+      console.info("  -H, --host <host>     Server host (default: localhost)");
+      console.info("  --log-level <level>   Log level: error|warn|info|debug");
+      console.info("  -t, --threshold <%>   Alert threshold (default: 80)");
+      console.info("  -c, --config <file>   Config file path");
 
-      console.log("\nExamples:");
-      console.log("  t3 stats --json                    # JSON metrics");
-      console.log("  t3 health --watch --interval 2000 # Monitor every 2s");
-      console.log("  t3 dashboard --port 3000          # Custom port");
-      console.log("  t3 monitor --threshold 90 --verbose # Resource monitoring");
-      console.log("  t3 prefetch all --dry-run         # Test prefetching");
-      console.log("  t3 config --json                  # Show configuration");
-       console.log("\nUse 't3 help --verbose' for detailed help");
+      console.info("\nExamples:");
+      console.info("  t3 stats --json                    # JSON metrics");
+      console.info("  t3 health --watch --interval 2000 # Monitor every 2s");
+      console.info("  t3 dashboard --port 3000          # Custom port");
+      console.info("  t3 monitor --threshold 90 --verbose # Resource monitoring");
+      console.info("  t3 prefetch all --dry-run         # Test prefetching");
+      console.info("  t3 config --json                  # Show configuration");
+       console.info("\nUse 't3 help --verbose' for detailed help");
    }
    }
 
@@ -787,16 +787,16 @@ class T3LatticePlugin {
     if (options.json) {
       output(stats, options);
     } else {
-      console.log(`Total DNS Entries: ${stats.totalEntries}`);
-      console.log(`Total Cache Hits: ${stats.totalHits}`);
-      console.log(`Prefetch Queue Size: ${stats.prefetchQueueSize}`);
-      console.log(`Average Cache Age: ${stats.averageCacheAge}s`);
-      console.log(`Cache Hit Rate: ${stats.cacheHitRate.toFixed(1)}%`);
+      console.info(`Total DNS Entries: ${stats.totalEntries}`);
+      console.info(`Total Cache Hits: ${stats.totalHits}`);
+      console.info(`Prefetch Queue Size: ${stats.prefetchQueueSize}`);
+      console.info(`Average Cache Age: ${stats.averageCacheAge}s`);
+      console.info(`Cache Hit Rate: ${stats.cacheHitRate.toFixed(1)}%`);
 
       // Clear expired entries if requested
       if (options.force) {
         const cleared = dnsCacheManager.clearExpired();
-        console.log(`Cleared ${cleared} expired entries`);
+        console.info(`Cleared ${cleared} expired entries`);
       }
     }
   }
@@ -839,22 +839,22 @@ class T3LatticePlugin {
       if (options.json) {
         output(configData, options);
       } else {
-        console.log("📋 Configuration Status:");
-        console.log(`  Enterprise Mode: ${config.features?.enterprise ? '✅' : '❌'}`);
-        console.log(`  WebSocket Support: ${config.features?.websocket ? '✅' : '❌'}`);
-        console.log(`  DNS Prefetch: ${config.features?.dns_prefetch ? '✅' : '❌'}`);
-        console.log(`  Security Audit: ${config.features?.security_audit ? '✅' : '❌'}`);
-        console.log(`  Metrics: ${config.features?.metrics_collection ? '✅' : '❌'}`);
+        console.info("📋 Configuration Status:");
+        console.info(`  Enterprise Mode: ${config.features?.enterprise ? '✅' : '❌'}`);
+        console.info(`  WebSocket Support: ${config.features?.websocket ? '✅' : '❌'}`);
+        console.info(`  DNS Prefetch: ${config.features?.dns_prefetch ? '✅' : '❌'}`);
+        console.info(`  Security Audit: ${config.features?.security_audit ? '✅' : '❌'}`);
+        console.info(`  Metrics: ${config.features?.metrics_collection ? '✅' : '❌'}`);
 
-        console.log("\n🍪 Cookie Test Results:");
-        console.log(`  Session Cookie: ${configData.cookies.session ? '✅ Set' : '❌ Not set'}`);
-        console.log(`  CSRF Cookie: ${configData.cookies.csrf ? '✅ Set' : '❌ Not set'}`);
-        console.log(`  Cookie Headers: ${Object.keys(configData.cookies.headers).length} headers`);
+        console.info("\n🍪 Cookie Test Results:");
+        console.info(`  Session Cookie: ${configData.cookies.session ? '✅ Set' : '❌ Not set'}`);
+        console.info(`  CSRF Cookie: ${configData.cookies.csrf ? '✅ Set' : '❌ Not set'}`);
+        console.info(`  Cookie Headers: ${Object.keys(configData.cookies.headers).length} headers`);
 
-        console.log("\n🌐 DNS Cache Status:");
-        console.log(`  Entries: ${configData.dns.totalEntries}`);
-        console.log(`  Cache Hits: ${configData.dns.totalHits}`);
-        console.log(`  Hit Rate: ${configData.dns.cacheHitRate.toFixed(1)}%`);
+        console.info("\n🌐 DNS Cache Status:");
+        console.info(`  Entries: ${configData.dns.totalEntries}`);
+        console.info(`  Cache Hits: ${configData.dns.totalHits}`);
+        console.info(`  Hit Rate: ${configData.dns.cacheHitRate.toFixed(1)}%`);
       }
     } catch (error) {
       log('error', `Configuration test failed: ${error}`, options);

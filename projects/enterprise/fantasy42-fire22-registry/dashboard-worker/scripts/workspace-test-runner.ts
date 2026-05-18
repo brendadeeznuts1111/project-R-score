@@ -146,13 +146,13 @@ export class WorkspaceTestRunner {
    */
   private setupSignalHandlers(): void {
     process.on('SIGINT', async () => {
-      console.log('\n🛑 Test runner shutdown initiated...');
+      console.info('\n🛑 Test runner shutdown initiated...');
       this.isShuttingDown = true;
       await this.gracefulTestShutdown();
     });
 
     process.on('SIGTERM', async () => {
-      console.log('\n🛑 SIGTERM received. Shutting down test runner...');
+      console.info('\n🛑 SIGTERM received. Shutting down test runner...');
       this.isShuttingDown = true;
       await this.gracefulTestShutdown();
     });
@@ -163,7 +163,7 @@ export class WorkspaceTestRunner {
    */
   private async gracefulTestShutdown(): Promise<void> {
     try {
-      console.log('⏳ Waiting for active tests to complete...');
+      console.info('⏳ Waiting for active tests to complete...');
 
       const shutdownPromise = Promise.allSettled(this.activeTests);
       const timeoutPromise = new Promise((_, reject) =>
@@ -172,9 +172,9 @@ export class WorkspaceTestRunner {
 
       try {
         await Promise.race([shutdownPromise, timeoutPromise]);
-        console.log('✅ Test runner shutdown completed gracefully');
+        console.info('✅ Test runner shutdown completed gracefully');
       } catch {
-        console.log('⚠️ Some tests may have been interrupted');
+        console.info('⚠️ Some tests may have been interrupted');
       }
 
       process.exit(0);
@@ -189,15 +189,15 @@ export class WorkspaceTestRunner {
    */
   async runTests(options: TestRunnerOptions = {}): Promise<TestResults> {
     const startTime = Bun.nanoseconds();
-    console.log('🧪 Starting Fire22 Workspace Test Suite');
-    console.log('='.repeat(50));
+    console.info('🧪 Starting Fire22 Workspace Test Suite');
+    console.info('='.repeat(50));
 
     if (options.smol) {
-      console.log('💾 Memory-efficient mode enabled (--smol)');
+      console.info('💾 Memory-efficient mode enabled (--smol)');
     }
 
     if (options.watch) {
-      console.log('👀 Watch mode enabled - tests will re-run on changes');
+      console.info('👀 Watch mode enabled - tests will re-run on changes');
     }
 
     const suites = options.suites || ['unit', 'integration', 'performance'];
@@ -217,28 +217,28 @@ export class WorkspaceTestRunner {
       for (const suite of suites) {
         if (this.isShuttingDown) break;
 
-        console.log(`\n📋 Running ${suite} test suite...`);
+        console.info(`\n📋 Running ${suite} test suite...`);
         const suiteResult = await this.runTestSuite(suite, options);
 
         totalPassed += suiteResult.passed;
         totalFailed += suiteResult.failed;
         totalSkipped += suiteResult.skipped;
 
-        console.log(`   ✅ Passed: ${suiteResult.passed}`);
-        console.log(`   ❌ Failed: ${suiteResult.failed}`);
-        console.log(`   ⏭️  Skipped: ${suiteResult.skipped}`);
+        console.info(`   ✅ Passed: ${suiteResult.passed}`);
+        console.info(`   ❌ Failed: ${suiteResult.failed}`);
+        console.info(`   ⏭️  Skipped: ${suiteResult.skipped}`);
       }
 
       // Performance regression analysis
       if (suites.includes('performance')) {
-        console.log('\n📊 Analyzing performance regressions...');
+        console.info('\n📊 Analyzing performance regressions...');
         const perfAnalysis = await this.analyzePerformanceRegressions();
         results.performance = perfAnalysis;
       }
 
       // Coverage analysis if requested
       if (options.coverage) {
-        console.log('\n📈 Generating coverage report...');
+        console.info('\n📈 Generating coverage report...');
         const coverage = await this.generateCoverageReport(options);
         results.coverage = coverage;
       }
@@ -252,21 +252,21 @@ export class WorkspaceTestRunner {
       results.duration = `${duration.toFixed(2)}ms`;
 
       // Display final results
-      console.log('\n🎯 Test Suite Results:');
-      console.log('='.repeat(30));
-      console.log(`✅ Passed: ${totalPassed}`);
-      console.log(`❌ Failed: ${totalFailed}`);
-      console.log(`⏭️  Skipped: ${totalSkipped}`);
-      console.log(`⏱️  Duration: ${results.duration}`);
+      console.info('\n🎯 Test Suite Results:');
+      console.info('='.repeat(30));
+      console.info(`✅ Passed: ${totalPassed}`);
+      console.info(`❌ Failed: ${totalFailed}`);
+      console.info(`⏭️  Skipped: ${totalSkipped}`);
+      console.info(`⏱️  Duration: ${results.duration}`);
 
       if (results.coverage) {
-        console.log(
+        console.info(
           `📊 Coverage: ${results.coverage.lines}% lines, ${results.coverage.functions}% functions`
         );
       }
 
       if (results.performance?.regressions?.length) {
-        console.log(`⚠️  Performance regressions: ${results.performance.regressions.length}`);
+        console.info(`⚠️  Performance regressions: ${results.performance.regressions.length}`);
       }
 
       return results;
@@ -285,7 +285,7 @@ export class WorkspaceTestRunner {
     const testPath = join(this.rootPath, 'test', 'workspace', suite);
 
     if (!existsSync(testPath)) {
-      console.log(`⚠️  Test suite directory not found: ${testPath}`);
+      console.info(`⚠️  Test suite directory not found: ${testPath}`);
       return { passed: 0, failed: 0, skipped: 0, duration: '0ms' };
     }
 
@@ -347,7 +347,7 @@ export class WorkspaceTestRunner {
 
         // Display output if verbose
         if (output.trim()) {
-          console.log(`[${suite}] ${output.trim()}`);
+          console.info(`[${suite}] ${output.trim()}`);
         }
       }
 
@@ -415,9 +415,9 @@ export class WorkspaceTestRunner {
    * 👀 Run tests in watch mode
    */
   async runInWatchMode(options: TestRunnerOptions = {}): Promise<void> {
-    console.log('👀 Starting workspace tests in watch mode...');
-    console.log('🔄 Tests will re-run automatically on file changes');
-    console.log('🛑 Press Ctrl+C to stop');
+    console.info('👀 Starting workspace tests in watch mode...');
+    console.info('🔄 Tests will re-run automatically on file changes');
+    console.info('🛑 Press Ctrl+C to stop');
 
     const watchOptions = { ...options, watch: true };
 
@@ -448,7 +448,7 @@ import { join } from 'path';
 const TEST_WORKSPACE_DIR = join(process.cwd(), 'test-workspaces');
 
 beforeAll(async () => {
-  console.log('🏗️  Setting up test workspace environment...');
+  console.info('🏗️  Setting up test workspace environment...');
   
   // Create test workspace directory
   if (!existsSync(TEST_WORKSPACE_DIR)) {
@@ -459,18 +459,18 @@ beforeAll(async () => {
   process.env.NODE_ENV = 'test';
   process.env.BUN_ENV = 'test';
   
-  console.log('✅ Test environment setup complete');
+  console.info('✅ Test environment setup complete');
 });
 
 afterAll(async () => {
-  console.log('🧹 Cleaning up test workspace environment...');
+  console.info('🧹 Cleaning up test workspace environment...');
   
   // Clean up test workspaces
   if (existsSync(TEST_WORKSPACE_DIR)) {
     rmSync(TEST_WORKSPACE_DIR, { recursive: true, force: true });
   }
   
-  console.log('✨ Test cleanup complete');
+  console.info('✨ Test cleanup complete');
 });
 
 // Export test utilities
@@ -516,7 +516,7 @@ TEST_NPM_REGISTRY=http://localhost:4873
       writeFileSync(testEnvPath, testEnvContent);
     }
 
-    console.log('📝 Test configuration files created successfully');
+    console.info('📝 Test configuration files created successfully');
   }
 }
 

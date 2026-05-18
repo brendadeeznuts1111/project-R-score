@@ -6,7 +6,7 @@
 import { spawnSync } from 'bun';
 
 async function runCITests() {
-  console.log('🏗️ Starting Deterministic Validation Runner (CI Mode)');
+  console.info('🏗️ Starting Deterministic Validation Runner (CI Mode)');
   
   // Settings from Ticket 10.1.1.1.2
   const ciArgs = [
@@ -18,7 +18,7 @@ async function runCITests() {
     '--rerun-each', '3'   // Rerun 3 times to detect race conditions
   ];
 
-  console.log(`🚀 Executing: bun ${ciArgs.join(' ')}`);
+  console.info(`🚀 Executing: bun ${ciArgs.join(' ')}`);
 
   const result = spawnSync(['bun', ...ciArgs], {
     stdio: 'inherit',
@@ -33,7 +33,7 @@ async function runCITests() {
     process.exit(result.status || 1);
   }
 
-  console.log('✅ Deterministic validation completed successfully in CI.');
+  console.info('✅ Deterministic validation completed successfully in CI.');
 }
 
 runCITests().catch(err => {

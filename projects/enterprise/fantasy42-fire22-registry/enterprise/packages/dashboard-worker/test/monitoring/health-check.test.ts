@@ -3,14 +3,14 @@ import { HealthStatus, ComponentHealth } from '../../src/types/enhanced-types';
 
 // Simple test implementation without Jest
 const describe = (name: string, fn: () => void) => {
-  console.log(`\n=== ${name} ===`);
+  console.info(`\n=== ${name} ===`);
   fn();
 };
 
 const it = (name: string, fn: () => void) => {
   try {
     fn();
-    console.log(`✓ ${name}`);
+    console.info(`✓ ${name}`);
   } catch (error) {
     console.error(`✗ ${name}:`, error);
   }
@@ -386,9 +386,9 @@ describe('HealthUtils', () => {
 });
 
 // Run the tests
-console.log('Running Health Check Tests...');
+console.info('Running Health Check Tests...');
 describe('Health Check Tests Suite', () => {
   it('All tests completed', () => {
-    console.log('Health check tests completed successfully!');
+    console.info('Health check tests completed successfully!');
   });
 });

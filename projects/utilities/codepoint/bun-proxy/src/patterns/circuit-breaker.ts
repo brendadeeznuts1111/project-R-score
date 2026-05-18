@@ -172,7 +172,7 @@ export class CircuitBreaker extends EventEmitter {
         reason: 'failure_threshold_exceeded'
       });
 
-      console.log(`=4 Circuit breaker ${this.config.name} opened`);
+      console.info(`=4 Circuit breaker ${this.config.name} opened`);
     }
   }
 
@@ -191,7 +191,7 @@ export class CircuitBreaker extends EventEmitter {
         reason: 'recovery_successful'
       });
 
-      console.log(`=â Circuit breaker ${this.config.name} closed`);
+      console.info(`=ï¿½ Circuit breaker ${this.config.name} closed`);
     }
   }
 
@@ -209,7 +209,7 @@ export class CircuitBreaker extends EventEmitter {
         reason: 'recovery_attempt'
       });
 
-      console.log(`=á Circuit breaker ${this.config.name} half-opened`);
+      console.info(`=ï¿½ Circuit breaker ${this.config.name} half-opened`);
     }
   }
 
@@ -246,7 +246,7 @@ export class CircuitBreaker extends EventEmitter {
     };
 
     this.emit('reset');
-    console.log(`= Circuit breaker ${this.config.name} reset`);
+    console.info(`= Circuit breaker ${this.config.name} reset`);
   }
 
   // Force open the circuit

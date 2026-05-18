@@ -190,9 +190,9 @@ if (import.meta.main) {
     },
   });
   
-  console.log(`🚀 Health check server running on http://localhost:${server.port}/health`);
-  console.log(`📊 Metrics endpoint: http://localhost:${server.port}/metrics`);
-  console.log(`🎯 Development Dashboard: http://localhost:${server.port}/dashboard`);
-  console.log(`⚖️ Dispute Dashboard: http://localhost:${server.port}/disputes`);
-  console.log(`🌐 Web Dashboard: http://localhost:${server.port}/`);
+  console.info(`🚀 Health check server running on http://localhost:${server.port}/health`);
+  console.info(`📊 Metrics endpoint: http://localhost:${server.port}/metrics`);
+  console.info(`🎯 Development Dashboard: http://localhost:${server.port}/dashboard`);
+  console.info(`⚖️ Dispute Dashboard: http://localhost:${server.port}/disputes`);
+  console.info(`🌐 Web Dashboard: http://localhost:${server.port}/`);
 }

@@ -13,9 +13,9 @@ interface BroadcastOptions {
 }
 
 async function broadcastConfig(options: BroadcastOptions): Promise<void> {
-  console.log(`📡 Broadcasting config: ${options.filePath}`);
-  console.log(`   Deflate: ${options.deflate ? '✅' : '❌'}`);
-  console.log(`   Subprotocol: ${options.subprotocol}`);
+  console.info(`📡 Broadcasting config: ${options.filePath}`);
+  console.info(`   Deflate: ${options.deflate ? '✅' : '❌'}`);
+  console.info(`   Subprotocol: ${options.subprotocol}`);
 
   try {
     // Read and parse config
@@ -28,7 +28,7 @@ async function broadcastConfig(options: BroadcastOptions): Promise<void> {
     const hashHex = typeof hash === 'bigint' ? hash.toString(16) : hash.toString(16);
     const shortHash = hashHex.substring(0, 8);
 
-    console.log(`✅ Config loaded (hash: ${shortHash})`);
+    console.info(`✅ Config loaded (hash: ${shortHash})`);
 
     // Prepare message
     const message = {
@@ -43,7 +43,7 @@ async function broadcastConfig(options: BroadcastOptions): Promise<void> {
     };
 
     const wsUrl = options.url || 'ws://localhost:8080/ws/config-broadcast';
-    console.log(`\n🔌 Connecting to: ${wsUrl}`);
+    console.info(`\n🔌 Connecting to: ${wsUrl}`);
 
     // Connect to WebSocket
     const ws = new WebSocket(wsUrl, {
@@ -55,17 +55,17 @@ async function broadcastConfig(options: BroadcastOptions): Promise<void> {
 
     await new Promise<void>((resolve, reject) => {
       ws.onopen = () => {
-        console.log('✅ WebSocket connected');
+        console.info('✅ WebSocket connected');
         
         // Send config update
         const messageStr = JSON.stringify(message);
         ws.send(messageStr);
         
-        console.log(`📤 Config broadcast sent:`);
-        console.log(`   Hash: ${shortHash}`);
-        console.log(`   Size: ${messageStr.length} bytes`);
+        console.info(`📤 Config broadcast sent:`);
+        console.info(`   Hash: ${shortHash}`);
+        console.info(`   Size: ${messageStr.length} bytes`);
         if (options.deflate) {
-          console.log(`   Compressed: Yes (permessage-deflate)`);
+          console.info(`   Compressed: Yes (permessage-deflate)`);
         }
 
         // Wait for acknowledgment
@@ -78,9 +78,9 @@ async function broadcastConfig(options: BroadcastOptions): Promise<void> {
       ws.onmessage = (event) => {
         try {
           const response = JSON.parse(event.data as string);
-          console.log(`📥 Response:`, response);
+          console.info(`📥 Response:`, response);
         } catch (error) {
-          console.log(`📥 Raw response:`, event.data);
+          console.info(`📥 Raw response:`, event.data);
         }
       };
 
@@ -92,12 +92,12 @@ async function broadcastConfig(options: BroadcastOptions): Promise<void> {
       };
 
       ws.onclose = () => {
-        console.log('✅ WebSocket closed');
+        console.info('✅ WebSocket closed');
         resolve();
       };
     });
 
-    console.log(`\n✅ Broadcast completed`);
+    console.info(`\n✅ Broadcast completed`);
 
   } catch (error) {
     if (error.message.includes('Failed to connect')) {

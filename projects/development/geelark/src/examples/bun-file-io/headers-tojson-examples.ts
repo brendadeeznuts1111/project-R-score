@@ -10,7 +10,7 @@
 import { performance } from 'perf_hooks';
 
 // Example 1: Performance Comparison
-console.log('⚡ Performance Comparison: toJSON() vs Object.fromEntries()');
+console.info('⚡ Performance Comparison: toJSON() vs Object.fromEntries()');
 
 async function performanceComparison() {
   const iterations = 10000;
@@ -29,7 +29,7 @@ async function performanceComparison() {
   headers.append('Set-Cookie', 'theme=dark; Path=/; Max-Age=3600');
   headers.append('Set-Cookie', 'lang=en; Path=/; Secure');
 
-  console.log(`🔄 Testing with ${iterations} iterations...`);
+  console.info(`🔄 Testing with ${iterations} iterations...`);
 
   // Test Bun's toJSON() method
   const toJSONStart = performance.now();
@@ -47,16 +47,16 @@ async function performanceComparison() {
 
   const speedup = fromEntriesTime / toJSONTime;
 
-  console.log(`📊 Results:`);
-  console.log(`   toJSON(): ${toJSONTime.toFixed(2)}ms`);
-  console.log(`   Object.fromEntries(): ${fromEntriesTime.toFixed(2)}ms`);
-  console.log(`   Speedup: ${speedup.toFixed(1)}x faster`);
+  console.info(`📊 Results:`);
+  console.info(`   toJSON(): ${toJSONTime.toFixed(2)}ms`);
+  console.info(`   Object.fromEntries(): ${fromEntriesTime.toFixed(2)}ms`);
+  console.info(`   Speedup: ${speedup.toFixed(1)}x faster`);
 
   return { toJSONTime, fromEntriesTime, speedup };
 }
 
 // Example 2: Behavioral Analysis - Case Handling
-console.log('\n🔍 Behavioral Analysis: Case Handling');
+console.info('\n🔍 Behavioral Analysis: Case Handling');
 
 function caseHandlingDemo() {
   const headers = new Headers();
@@ -73,24 +73,24 @@ function caseHandlingDemo() {
   const toJSONResult = headers.toJSON();
   const fromEntriesResult = Object.fromEntries((headers as any).entries());
 
-  console.log('📋 toJSON() result:');
-  console.log(JSON.stringify(toJSONResult, null, 2));
+  console.info('📋 toJSON() result:');
+  console.info(JSON.stringify(toJSONResult, null, 2));
 
-  console.log('\n📋 Object.fromEntries() result:');
-  console.log(JSON.stringify(fromEntriesResult, null, 2));
+  console.info('\n📋 Object.fromEntries() result:');
+  console.info(JSON.stringify(fromEntriesResult, null, 2));
 
-  console.log('\n🔍 Key Differences:');
-  console.log('   Well-known headers (Content-Type, Authorization, User-Agent):');
-  console.log(`     toJSON(): "${toJSONResult['content-type']}" (lowercased)`);
-  console.log(`     fromEntries(): "${fromEntriesResult['Content-Type']}" (preserved)`);
+  console.info('\n🔍 Key Differences:');
+  console.info('   Well-known headers (Content-Type, Authorization, User-Agent):');
+  console.info(`     toJSON(): "${toJSONResult['content-type']}" (lowercased)`);
+  console.info(`     fromEntries(): "${fromEntriesResult['Content-Type']}" (preserved)`);
 
-  console.log('\n   Custom headers (X-Custom-Header, x-another-custom):');
-  console.log(`     toJSON(): "${toJSONResult['X-Custom-Header']}" (preserved)`);
-  console.log(`     fromEntries(): "${fromEntriesResult['X-Custom-Header']}" (preserved)`);
+  console.info('\n   Custom headers (X-Custom-Header, x-another-custom):');
+  console.info(`     toJSON(): "${toJSONResult['X-Custom-Header']}" (preserved)`);
+  console.info(`     fromEntries(): "${fromEntriesResult['X-Custom-Header']}" (preserved)`);
 }
 
 // Example 3: Set-Cookie Special Handling
-console.log('\n🍪 Set-Cookie Special Handling');
+console.info('\n🍪 Set-Cookie Special Handling');
 
 function setCookieHandlingDemo() {
   const headers = new Headers();
@@ -103,21 +103,21 @@ function setCookieHandlingDemo() {
   const toJSONResult = headers.toJSON();
   const fromEntriesResult = Object.fromEntries((headers as any).entries());
 
-  console.log('📋 toJSON() Set-Cookie handling:');
-  console.log(`   Type: ${Array.isArray(toJSONResult['set-cookie']) ? 'array' : typeof toJSONResult['set-cookie']}`);
-  console.log(`   Values: ${JSON.stringify(toJSONResult['set-cookie'])}`);
+  console.info('📋 toJSON() Set-Cookie handling:');
+  console.info(`   Type: ${Array.isArray(toJSONResult['set-cookie']) ? 'array' : typeof toJSONResult['set-cookie']}`);
+  console.info(`   Values: ${JSON.stringify(toJSONResult['set-cookie'])}`);
 
-  console.log('\n📋 Object.fromEntries() Set-Cookie handling:');
-  console.log(`   Type: ${typeof fromEntriesResult['Set-Cookie']}`);
-  console.log(`   Values: ${JSON.stringify(fromEntriesResult['Set-Cookie'])}`);
+  console.info('\n📋 Object.fromEntries() Set-Cookie handling:');
+  console.info(`   Type: ${typeof fromEntriesResult['Set-Cookie']}`);
+  console.info(`   Values: ${JSON.stringify(fromEntriesResult['Set-Cookie'])}`);
 
-  console.log('\n⚠️  Important Note:');
-  console.log('   toJSON() always returns set-cookie as an array');
-  console.log('   Object.fromEntries() only returns the last Set-Cookie value');
+  console.info('\n⚠️  Important Note:');
+  console.info('   toJSON() always returns set-cookie as an array');
+  console.info('   Object.fromEntries() only returns the last Set-Cookie value');
 }
 
 // Example 4: Insertion Order Behavior
-console.log('\n📦 Insertion Order Behavior');
+console.info('\n📦 Insertion Order Behavior');
 
 function insertionOrderDemo() {
   const headers = new Headers();
@@ -132,21 +132,21 @@ function insertionOrderDemo() {
   const toJSONResult = headers.toJSON();
   const fromEntriesResult = Object.fromEntries((headers as any).entries());
 
-  console.log('📋 Headers added in order: Z → A → M → Content-Type → X-Custom');
+  console.info('📋 Headers added in order: Z → A → M → Content-Type → X-Custom');
 
-  console.log('\n📋 toJSON() order (not preserved):');
-  console.log(`   Keys: ${Object.keys(toJSONResult).join(' → ')}`);
+  console.info('\n📋 toJSON() order (not preserved):');
+  console.info(`   Keys: ${Object.keys(toJSONResult).join(' → ')}`);
 
-  console.log('\n📋 Object.fromEntries() order (preserved):');
-  console.log(`   Keys: ${Object.keys(fromEntriesResult).join(' → ')}`);
+  console.info('\n📋 Object.fromEntries() order (preserved):');
+  console.info(`   Keys: ${Object.keys(fromEntriesResult).join(' → ')}`);
 
-  console.log('\n💡 Insight:');
-  console.log('   toJSON() reorders headers (well-known headers first, then alphabetical)');
-  console.log('   Object.fromEntries() preserves insertion order');
+  console.info('\n💡 Insight:');
+  console.info('   toJSON() reorders headers (well-known headers first, then alphabetical)');
+  console.info('   Object.fromEntries() preserves insertion order');
 }
 
 // Example 5: JSON.stringify() Integration
-console.log('\n🔄 JSON.stringify() Integration');
+console.info('\n🔄 JSON.stringify() Integration');
 
 function jsonStringifyIntegration() {
   const headers = new Headers();
@@ -155,26 +155,26 @@ function jsonStringifyIntegration() {
   headers.append('Set-Cookie', 'session=xyz');
   headers.append('Set-Cookie', 'theme=light');
 
-  console.log('📋 Direct JSON.stringify() usage:');
+  console.info('📋 Direct JSON.stringify() usage:');
 
   // toJSON() is called automatically by JSON.stringify()
   const jsonString = JSON.stringify(headers, null, 2);
-  console.log(jsonString);
+  console.info(jsonString);
 
-  console.log('\n📋 Manual toJSON() then JSON.stringify():');
+  console.info('\n📋 Manual toJSON() then JSON.stringify():');
   const manualResult = JSON.stringify(headers.toJSON(), null, 2);
-  console.log(manualResult);
+  console.info(manualResult);
 
-  console.log('\n✅ Both approaches produce identical results');
-  console.log('💡 Use JSON.stringify(headers) directly - toJSON() is called automatically');
+  console.info('\n✅ Both approaches produce identical results');
+  console.info('💡 Use JSON.stringify(headers) directly - toJSON() is called automatically');
 }
 
 // Example 6: Real-World Usage Scenarios
-console.log('\n🌐 Real-World Usage Scenarios');
+console.info('\n🌐 Real-World Usage Scenarios');
 
 function realWorldScenarios() {
   // Scenario 1: API Response Logging
-  console.log('📝 Scenario 1: API Response Logging');
+  console.info('📝 Scenario 1: API Response Logging');
 
   const responseHeaders = new Headers();
   responseHeaders.append('Content-Type', 'application/json');
@@ -188,11 +188,11 @@ function realWorldScenarios() {
     headers: responseHeaders.toJSON() // Fast serialization for logging
   };
 
-  console.log('📊 Log entry with serialized headers:');
-  console.log(JSON.stringify(logEntry, null, 2));
+  console.info('📊 Log entry with serialized headers:');
+  console.info(JSON.stringify(logEntry, null, 2));
 
   // Scenario 2: Client Response Headers
-  console.log('\n🌐 Scenario 2: Client Response Headers');
+  console.info('\n🌐 Scenario 2: Client Response Headers');
 
   const clientHeaders = new Headers();
   clientHeaders.append('Content-Type', 'text/html');
@@ -207,11 +207,11 @@ function realWorldScenarios() {
     headers: clientHeaders.toJSON()
   };
 
-  console.log('📤 Client response with optimized headers:');
-  console.log(JSON.stringify(clientResponse, null, 2));
+  console.info('📤 Client response with optimized headers:');
+  console.info(JSON.stringify(clientResponse, null, 2));
 
   // Scenario 3: Header Analysis
-  console.log('\n🔍 Scenario 3: Header Analysis');
+  console.info('\n🔍 Scenario 3: Header Analysis');
 
   const analysisHeaders = new Headers();
   analysisHeaders.append('Content-Type', 'application/json');
@@ -221,28 +221,28 @@ function realWorldScenarios() {
 
   const headersObj = analysisHeaders.toJSON();
 
-  console.log('📊 Header Analysis:');
-  console.log(`   Content-Type: ${headersObj['content-type']}`);
-  console.log(`   Content-Length: ${headersObj['content-length']}`);
-  console.log(`   Authorization: ${headersObj.authorization ? 'Present' : 'Missing'}`);
-  console.log(`   Rate Limit: ${headersObj['x-rate-limit-remaining']} requests remaining`);
+  console.info('📊 Header Analysis:');
+  console.info(`   Content-Type: ${headersObj['content-type']}`);
+  console.info(`   Content-Length: ${headersObj['content-length']}`);
+  console.info(`   Authorization: ${headersObj.authorization ? 'Present' : 'Missing'}`);
+  console.info(`   Rate Limit: ${headersObj['x-rate-limit-remaining']} requests remaining`);
 }
 
 // Example 7: Best Practices and When to Use
-console.log('\n💡 Best Practices and Usage Guidelines');
+console.info('\n💡 Best Practices and Usage Guidelines');
 
 function bestPracticesDemo() {
-  console.log('✅ Use toJSON() when:');
-  console.log('   • Performance is critical (high-volume servers)');
-  console.log('   • You need a plain object representation');
-  console.log('   • You\'re serializing for JSON responses');
-  console.log('   • Header case normalization is acceptable');
+  console.info('✅ Use toJSON() when:');
+  console.info('   • Performance is critical (high-volume servers)');
+  console.info('   • You need a plain object representation');
+  console.info('   • You\'re serializing for JSON responses');
+  console.info('   • Header case normalization is acceptable');
 
-  console.log('\n❌ Avoid toJSON() when:');
-  console.log('   • You need to preserve exact header casing');
-  console.log('   • Insertion order is important');
-  console.log('   • You need to iterate over headers in order');
-  console.log('   • You need individual Set-Cookie values (not arrays)');
+  console.info('\n❌ Avoid toJSON() when:');
+  console.info('   • You need to preserve exact header casing');
+  console.info('   • Insertion order is important');
+  console.info('   • You need to iterate over headers in order');
+  console.info('   • You need individual Set-Cookie values (not arrays)');
 
   // Demonstration of when to use each approach
   const headers = new Headers();
@@ -250,19 +250,19 @@ function bestPracticesDemo() {
   headers.append('X-Custom', 'value');
   headers.append('Set-Cookie', 'session=abc');
 
-  console.log('\n📊 Fast serialization (use toJSON()):');
+  console.info('\n📊 Fast serialization (use toJSON()):');
   const fastResult = headers.toJSON();
-  console.log(JSON.stringify(fastResult));
+  console.info(JSON.stringify(fastResult));
 
-  console.log('\n📊 Ordered iteration (use entries()):');
+  console.info('\n📊 Ordered iteration (use entries()):');
   const orderedResult = Array.from((headers as any).entries());
-  console.log(JSON.stringify(orderedResult));
+  console.info(JSON.stringify(orderedResult));
 }
 
 // Main execution function
 async function runAllExamples() {
-  console.log('🚀 Bun Headers toJSON() - Comprehensive Examples');
-  console.log('===============================================\n');
+  console.info('🚀 Bun Headers toJSON() - Comprehensive Examples');
+  console.info('===============================================\n');
 
   try {
     await performanceComparison();
@@ -273,8 +273,8 @@ async function runAllExamples() {
     realWorldScenarios();
     bestPracticesDemo();
 
-    console.log('\n🎉 All toJSON() examples completed!');
-    console.log('💡 Key takeaway: Use toJSON() for performance-critical serialization');
+    console.info('\n🎉 All toJSON() examples completed!');
+    console.info('💡 Key takeaway: Use toJSON() for performance-critical serialization');
 
   } catch (error) {
     console.error('\n❌ Error:', error);

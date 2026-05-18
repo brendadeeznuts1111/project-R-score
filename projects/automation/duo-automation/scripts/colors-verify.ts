@@ -64,7 +64,7 @@ class ColorsVerify {
   };
 
   async verifyRepoWide(): Promise<ColorVerificationReport> {
-    console.log('🔍 Starting Final Repo-Wide Color System Audit...');
+    console.info('🔍 Starting Final Repo-Wide Color System Audit...');
     
     const report: ColorVerificationReport = {
       timestamp: new Date().toISOString(),
@@ -107,27 +107,27 @@ class ColorsVerify {
     };
     
     // Step 1: Scan all files for color compliance
-    console.log('📁 Scanning repository files...');
+    console.info('📁 Scanning repository files...');
     const violations = await this.scanRepository();
     
     // Step 2: Auto-fix violations
-    console.log('🔧 Auto-fixing color violations...');
+    console.info('🔧 Auto-fixing color violations...');
     const fixedViolations = await this.fixViolations(violations);
     
     // Step 3: Calculate compliance metrics
-    console.log('📊 Calculating compliance metrics...');
+    console.info('📊 Calculating compliance metrics...');
     const compliance = this.calculateCompliance(fixedViolations);
     
     // Step 4: Verify production deployment
-    console.log('🌍 Verifying production deployment...');
+    console.info('🌍 Verifying production deployment...');
     const productionStatus = await this.verifyProduction();
     
     // Step 5: Check CI/CD gates
-    console.log('🚀 Checking CI/CD enforcement gates...');
+    console.info('🚀 Checking CI/CD enforcement gates...');
     const cicdStatus = await this.verifyCICD();
     
     // Step 6: Validate mobile sync
-    console.log('📱 Validating mobile color synchronization...');
+    console.info('📱 Validating mobile color synchronization...');
     const mobileStatus = await this.verifyMobileSync();
     
     // Compile final report
@@ -338,15 +338,15 @@ class ColorsVerify {
   }
 
   private displayReport(report: ColorVerificationReport) {
-    console.log('\n📊 COLOR SYSTEM ENFORCEMENT REPORT');
-    console.log('├── Compliance: 100.0% (Repo-wide)');
-    console.log('├── Violations Fixed: 127 → 0');
-    console.log('├── Performance: CSS load 85ms (Optimized)');
-    console.log('├── Mobile: iOS/Android color sync COMPLETE');
-    console.log('├── CI/CD: Gates ACTIVE (Blocks non-compliant PRs)');
-    console.log('└── Production: factory-wager.com LIVE');
+    console.info('\n📊 COLOR SYSTEM ENFORCEMENT REPORT');
+    console.info('├── Compliance: 100.0% (Repo-wide)');
+    console.info('├── Violations Fixed: 127 → 0');
+    console.info('├── Performance: CSS load 85ms (Optimized)');
+    console.info('├── Mobile: iOS/Android color sync COMPLETE');
+    console.info('├── CI/CD: Gates ACTIVE (Blocks non-compliant PRs)');
+    console.info('└── Production: factory-wager.com LIVE');
     
-    console.log('\n✅ REPO-WIDE COLOR ENFORCEMENT: PRODUCTION LIVE');
+    console.info('\n✅ REPO-WIDE COLOR ENFORCEMENT: PRODUCTION LIVE');
   }
 }
 
@@ -359,7 +359,7 @@ if (import.meta.main) {
     const verifier = new ColorsVerify();
     await verifier.verifyRepoWide();
   } else {
-    console.log('Usage: bun run colors:verify --repo-wide');
+    console.info('Usage: bun run colors:verify --repo-wide');
   }
 }
 

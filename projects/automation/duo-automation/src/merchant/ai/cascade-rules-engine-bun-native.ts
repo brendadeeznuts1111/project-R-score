@@ -24,11 +24,11 @@ const createDatabase = (path?: string): Database => {
   // In real Bun: new Database(path || ":memory:")
   return {
     run: (sql: string, ...args: any[]) => {
-      console.log(`[DB] ${sql}`, args);
+      console.info(`[DB] ${sql}`, args);
       return { lastInsertRowid: 1, changes: 1 };
     },
     prepare: (sql: string) => ({
-      run: (...args: any[]) => console.log(`[Prepared] ${sql}`, args),
+      run: (...args: any[]) => console.info(`[Prepared] ${sql}`, args),
       all: (...args: any[]) => [],
       get: (...args: any[]) => ({ count: 0 })
     }),
@@ -36,7 +36,7 @@ const createDatabase = (path?: string): Database => {
       get: () => ({ count: 0 }),
       all: () => []
     }),
-    close: () => console.log("Database closed")
+    close: () => console.info("Database closed")
   };
 };
 
@@ -99,7 +99,7 @@ export class CascadeRulesEngineBunNative {
     // Load rules from YAML configuration
     this.loadRulesFromConfig();
     
-    console.log("🚀 Cascade Rules Engine (Bun Native) initialized");
+    console.info("🚀 Cascade Rules Engine (Bun Native) initialized");
   }
   
   private initializeDatabase(): void {
@@ -144,7 +144,7 @@ export class CascadeRulesEngineBunNative {
     this.db.run("CREATE INDEX IF NOT EXISTS idx_executions_ruleId ON rule_executions(ruleId)");
     this.db.run("CREATE INDEX IF NOT EXISTS idx_executions_timestamp ON rule_executions(timestamp DESC)");
     
-    console.log("📊 Database initialized with optimized indexes");
+    console.info("📊 Database initialized with optimized indexes");
   }
   
   private loadRulesFromConfig(): void {
@@ -176,7 +176,7 @@ export class CascadeRulesEngineBunNative {
       this.rulesCache.set(rule.id, rule);
     }
     
-    console.log(`📋 Loaded ${globalRules.length} rules into database`);
+    console.info(`📋 Loaded ${globalRules.length} rules into database`);
   }
   
   private parseGlobalRules(): BunRule[] {
@@ -368,7 +368,7 @@ export class CascadeRulesEngineBunNative {
     }
     
     const totalTime = performance.now() - startTime;
-    console.log(`⚡ Evaluated ${activeRules.length} rules in ${totalTime.toFixed(2)}ms`);
+    console.info(`⚡ Evaluated ${activeRules.length} rules in ${totalTime.toFixed(2)}ms`);
     
     return executions;
   }
@@ -528,73 +528,73 @@ export class CascadeRulesEngineBunNative {
   
   // Action implementations (optimized for Bun)
   private enforceRule(value: string, context: BunRuleContext): boolean {
-    console.log(`🔒 Enforcing: ${value || 'unknown'}`);
+    console.info(`🔒 Enforcing: ${value || 'unknown'}`);
     // Implementation would use Bun's native crypto and security features
     return true;
   }
   
   private requireFeature(value: string, context: BunRuleContext): boolean {
-    console.log(`✅ Requiring: ${value || 'unknown'}`);
+    console.info(`✅ Requiring: ${value || 'unknown'}`);
     return true;
   }
   
   private runCheck(value: string, context: BunRuleContext): boolean {
-    console.log(`🏃 Running check: ${value || 'unknown'}`);
+    console.info(`🏃 Running check: ${value || 'unknown'}`);
     return true;
   }
   
   private applyStyle(value: string, context: BunRuleContext): boolean {
-    console.log(`🎨 Applying style: ${value || 'unknown'}`);
+    console.info(`🎨 Applying style: ${value || 'unknown'}`);
     return true;
   }
   
   private calculateMetric(value: string, context: BunRuleContext): boolean {
-    console.log(`📊 Calculating metric: ${value || 'unknown'}`);
+    console.info(`📊 Calculating metric: ${value || 'unknown'}`);
     return true;
   }
   
   private logData(value: string, context: BunRuleContext): boolean {
-    console.log(`📝 Logging data: ${value || 'unknown'}`);
+    console.info(`📝 Logging data: ${value || 'unknown'}`);
     return true;
   }
   
   private generateReport(value: string, context: BunRuleContext): boolean {
-    console.log(`📄 Generating report: ${value || 'unknown'}`);
+    console.info(`📄 Generating report: ${value || 'unknown'}`);
     return true;
   }
   
   private applyOptimization(value: string, context: BunRuleContext): boolean {
-    console.log(`⚡ Applying optimization: ${value || 'unknown'}`);
+    console.info(`⚡ Applying optimization: ${value || 'unknown'}`);
     return true;
   }
   
   private cacheData(value: string, context: BunRuleContext): boolean {
-    console.log(`💾 Caching data: ${value || 'unknown'}`);
+    console.info(`💾 Caching data: ${value || 'unknown'}`);
     return true;
   }
   
   private prefetchData(value: string, context: BunRuleContext): boolean {
-    console.log(`📡 Prefetching data: ${value || 'unknown'}`);
+    console.info(`📡 Prefetching data: ${value || 'unknown'}`);
     return true;
   }
   
   private applySetting(value: string, context: BunRuleContext): boolean {
-    console.log(`⚙️ Applying setting: ${value || 'unknown'}`);
+    console.info(`⚙️ Applying setting: ${value || 'unknown'}`);
     return true;
   }
   
   private syncData(value: string, context: BunRuleContext): boolean {
-    console.log(`🔄 Syncing data: ${value || 'unknown'}`);
+    console.info(`🔄 Syncing data: ${value || 'unknown'}`);
     return true;
   }
   
   private enableFeature(value: string, context: BunRuleContext): boolean {
-    console.log(`✅ Enabling feature: ${value || 'unknown'}`);
+    console.info(`✅ Enabling feature: ${value || 'unknown'}`);
     return true;
   }
   
   private trackMetric(value: string, context: BunRuleContext): boolean {
-    console.log(`📈 Tracking metric: ${value || 'unknown'}`);
+    console.info(`📈 Tracking metric: ${value || 'unknown'}`);
     return true;
   }
   
@@ -663,7 +663,7 @@ export class CascadeRulesEngineBunNative {
     // Update cache
     this.rulesCache.set(fullRule.id, fullRule);
     
-    console.log(`📋 Added custom rule: ${fullRule.name}`);
+    console.info(`📋 Added custom rule: ${fullRule.name}`);
   }
   
   enableRule(ruleId: string): void {
@@ -674,7 +674,7 @@ export class CascadeRulesEngineBunNative {
     if (rule) {
       rule.enabled = true;
       rule.updatedAt = new Date();
-      console.log(`✅ Enabled rule: ${rule.name}`);
+      console.info(`✅ Enabled rule: ${rule.name}`);
     }
   }
   
@@ -686,7 +686,7 @@ export class CascadeRulesEngineBunNative {
     if (rule) {
       rule.enabled = false;
       rule.updatedAt = new Date();
-      console.log(`❌ Disabled rule: ${rule.name}`);
+      console.info(`❌ Disabled rule: ${rule.name}`);
     }
   }
   
@@ -745,7 +745,7 @@ export class CascadeRulesEngineBunNative {
     // Run SQLite optimization commands
     this.db.run("VACUUM");
     this.db.run("ANALYZE");
-    console.log("🔧 Database optimized");
+    console.info("🔧 Database optimized");
   }
   
   exportRules(): string {
@@ -755,7 +755,7 @@ export class CascadeRulesEngineBunNative {
   
   close(): void {
     this.db.close();
-    console.log("🔌 Database connection closed");
+    console.info("🔌 Database connection closed");
   }
 }
 

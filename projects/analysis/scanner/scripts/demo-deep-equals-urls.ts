@@ -6,8 +6,8 @@
  * Run: bun scripts/demo-deep-equals-urls.ts
  */
 
-console.log('Bun.deepEquals URL comparison demo\n');
-console.log('─'.repeat(70));
+console.info('Bun.deepEquals URL comparison demo\n');
+console.info('─'.repeat(70));
 
 const comparisons: Array<{label: string; a: unknown; b: unknown}> = [
 	{
@@ -27,8 +27,8 @@ const comparisons: Array<{label: string; a: unknown; b: unknown}> = [
 	},
 ];
 
-console.log('Comparison\t\t\t\t\tStrict\tResult\tReason');
-console.log('─'.repeat(70));
+console.info('Comparison\t\t\t\t\tStrict\tResult\tReason');
+console.info('─'.repeat(70));
 
 for (const {label, a, b} of comparisons) {
 	const loose = Bun.deepEquals(a, b);
@@ -47,17 +47,17 @@ for (const {label, a, b} of comparisons) {
 		} else reason = 'Object Mismatch';
 	}
 	if (!strict && loose) reason = 'Strict Undefined';
-	console.log(`${label.slice(0, 45).padEnd(45)}\t${strict}\t${loose}\t${reason || '-'}`);
+	console.info(`${label.slice(0, 45).padEnd(45)}\t${strict}\t${loose}\t${reason || '-'}`);
 }
 
-console.log('\n' + '─'.repeat(70));
-console.log('Direct Bun.deepEquals results:\n');
+console.info('\n' + '─'.repeat(70));
+console.info('Direct Bun.deepEquals results:\n');
 
 for (const {label, a, b} of comparisons) {
 	const loose = Bun.deepEquals(a, b);
 	const strict = Bun.deepEquals(a, b, true);
-	console.log(label);
-	console.log(`  Loose (default): ${loose}`);
-	console.log(`  Strict (3rd arg true): ${strict}`);
-	console.log();
+	console.info(label);
+	console.info(`  Loose (default): ${loose}`);
+	console.info(`  Strict (3rd arg true): ${strict}`);
+	console.info();
 }

@@ -157,37 +157,37 @@ export function commitLink(sha: string, repoUrl?: string): string {
 
 // CLI demo
 async function main() {
-  console.log('🔗 Terminal Hyperlink Demo');
-  console.log('═'.repeat(50));
-  console.log();
+  console.info('🔗 Terminal Hyperlink Demo');
+  console.info('═'.repeat(50));
+  console.info();
 
-  console.log('📁 File Links:');
-  console.log(`   ${fileLink('./scripts/tty-hyperlink.ts')}`);
-  console.log(`   ${fileLinkWithLine('./scripts/ai-tagger.ts', 50, 'ai-tagger.ts:50 (AITagger class)')}`);
-  console.log();
+  console.info('📁 File Links:');
+  console.info(`   ${fileLink('./scripts/tty-hyperlink.ts')}`);
+  console.info(`   ${fileLinkWithLine('./scripts/ai-tagger.ts', 50, 'ai-tagger.ts:50 (AITagger class)')}`);
+  console.info();
 
-  console.log('🌐 URL Links:');
-  console.log(`   ${urlLink('https://bun.sh', 'Bun Documentation')}`);
-  console.log(`   ${urlLink('https://github.com/oven-sh/bun')}`);
-  console.log();
+  console.info('🌐 URL Links:');
+  console.info(`   ${urlLink('https://bun.sh', 'Bun Documentation')}`);
+  console.info(`   ${urlLink('https://github.com/oven-sh/bun')}`);
+  console.info();
 
-  console.log('📦 npm Links:');
-  console.log(`   ${npmLink('commander')}`);
-  console.log(`   ${npmLink('zod')}`);
-  console.log();
+  console.info('📦 npm Links:');
+  console.info(`   ${npmLink('commander')}`);
+  console.info(`   ${npmLink('zod')}`);
+  console.info();
 
-  console.log('🐙 GitHub Links:');
-  console.log(`   Issue: ${githubLink('duoplus/factorywager-cli', 42)}`);
-  console.log(`   PR: ${githubLink('duoplus/factorywager-cli', 123, 'pull')}`);
-  console.log();
+  console.info('🐙 GitHub Links:');
+  console.info(`   Issue: ${githubLink('duoplus/factorywager-cli', 42)}`);
+  console.info(`   PR: ${githubLink('duoplus/factorywager-cli', 123, 'pull')}`);
+  console.info();
 
-  console.log('🔑 Commit Links:');
-  console.log(`   ${commitLink('abc123def456', 'https://github.com/duoplus/factorywager-cli')}`);
-  console.log();
+  console.info('🔑 Commit Links:');
+  console.info(`   ${commitLink('abc123def456', 'https://github.com/duoplus/factorywager-cli')}`);
+  console.info();
 
-  console.log('═'.repeat(50));
-  console.log(`✅ Hyperlinks supported: ${supportsHyperlinks() ? 'Yes' : 'No'}`);
-  console.log(`   Terminal: ${process.env.TERM_PROGRAM || process.env.TERM || 'unknown'}`);
+  console.info('═'.repeat(50));
+  console.info(`✅ Hyperlinks supported: ${supportsHyperlinks() ? 'Yes' : 'No'}`);
+  console.info(`   Terminal: ${process.env.TERM_PROGRAM || process.env.TERM || 'unknown'}`);
 }
 
 if (import.meta.main) {

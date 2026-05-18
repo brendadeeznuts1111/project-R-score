@@ -59,14 +59,14 @@ class InspectionCLI {
     const depth = args[0] ? parseInt(args[0]) : 6;
     const useColors = args.includes('--color') || args.includes('-c');
     
-    console.log('🧩 FactoryWager Inspection Tree');
-    console.log('='.repeat(50));
-    console.log(`Domain: ${config.DOMAIN}`);
-    console.log(`Scope: ${config.SCOPE}`);
-    console.log(`Platform: ${config.PLATFORM}`);
-    console.log('');
+    console.info('🧩 FactoryWager Inspection Tree');
+    console.info('='.repeat(50));
+    console.info(`Domain: ${config.DOMAIN}`);
+    console.info(`Scope: ${config.SCOPE}`);
+    console.info(`Platform: ${config.PLATFORM}`);
+    console.info('');
 
-    console.log(Bun.inspect(this.domainCtx, {
+    console.info(Bun.inspect(this.domainCtx, {
       depth,
       colors: useColors,
       maxArrayLength: 10,
@@ -82,9 +82,9 @@ class InspectionCLI {
       return;
     }
 
-    console.log(`🎯 Scope: ${scopeName}`);
-    console.log('='.repeat(30));
-    console.log(Bun.inspect(scope, {
+    console.info(`🎯 Scope: ${scopeName}`);
+    console.info('='.repeat(30));
+    console.info(Bun.inspect(scope, {
       depth: 4,
       colors: true,
       maxArrayLength: 10,
@@ -106,9 +106,9 @@ class InspectionCLI {
       return;
     }
 
-    console.log(`⚙️ Type: ${typeName || 'STORAGE'} (${scopeName || config.SCOPE})`);
-    console.log('='.repeat(40));
-    console.log(Bun.inspect(type, {
+    console.info(`⚙️ Type: ${typeName || 'STORAGE'} (${scopeName || config.SCOPE})`);
+    console.info('='.repeat(40));
+    console.info(Bun.inspect(type, {
       depth: 3,
       colors: true,
       maxArrayLength: 10,
@@ -136,9 +136,9 @@ class InspectionCLI {
       return;
     }
 
-    console.log(`📌 Property: ${propertyName || '{PROPERTY}'} (${typeName || 'STORAGE'} / ${scopeName || config.SCOPE})`);
-    console.log('='.repeat(60));
-    console.log(Bun.inspect(property, {
+    console.info(`📌 Property: ${propertyName || '{PROPERTY}'} (${typeName || 'STORAGE'} / ${scopeName || config.SCOPE})`);
+    console.info('='.repeat(60));
+    console.info(Bun.inspect(property, {
       depth: 2,
       colors: true,
       maxArrayLength: 10,
@@ -172,9 +172,9 @@ class InspectionCLI {
       return;
     }
 
-    console.log(`🏷️ Class: ${className || 'R2AppleManager'} (${propertyName || '{PROPERTY}'} / ${typeName || 'STORAGE'} / ${scopeName || config.SCOPE})`);
-    console.log('='.repeat(80));
-    console.log(Bun.inspect(classRef, {
+    console.info(`🏷️ Class: ${className || 'R2AppleManager'} (${propertyName || '{PROPERTY}'} / ${typeName || 'STORAGE'} / ${scopeName || config.SCOPE})`);
+    console.info('='.repeat(80));
+    console.info(Bun.inspect(classRef, {
       depth: 2,
       colors: true,
       maxArrayLength: 10,
@@ -188,8 +188,8 @@ class InspectionCLI {
       return;
     }
 
-    console.log(`🔍 Searching for: "${query}"`);
-    console.log('='.repeat(30));
+    console.info(`🔍 Searching for: "${query}"`);
+    console.info('='.repeat(30));
 
     const results: Array<{
       path: string;
@@ -231,11 +231,11 @@ class InspectionCLI {
     searchInObject(this.domainCtx);
 
     if (results.length === 0) {
-      console.log('No results found.');
+      console.info('No results found.');
     } else {
-      console.log(`Found ${results.length} results:`);
+      console.info(`Found ${results.length} results:`);
       results.forEach(result => {
-        console.log(`  📍 ${result.path} (${result.type})`);
+        console.info(`  📍 ${result.path} (${result.type})`);
       });
     }
   }
@@ -243,12 +243,12 @@ class InspectionCLI {
   private async startServer(args: string[]): Promise<void> {
     const port = args[0] ? parseInt(args[0]) : 8765;
     
-    console.log(`🚀 Starting inspection server on port ${port}`);
+    console.info(`🚀 Starting inspection server on port ${port}`);
     
     // Import and start the server
     const { server } = await import('./server.js');
-    console.log(`✅ Server started successfully`);
-    console.log(`🌐 Open http://localhost:${port}/debug in your browser`);
+    console.info(`✅ Server started successfully`);
+    console.info(`🌐 Open http://localhost:${port}/debug in your browser`);
   }
 
   private async showMetrics(): Promise<void> {
@@ -283,13 +283,13 @@ class InspectionCLI {
       });
     }
 
-    console.log('📊 System Metrics');
-    console.log('='.repeat(20));
-    console.log(JSON.stringify(metrics, null, 2));
+    console.info('📊 System Metrics');
+    console.info('='.repeat(20));
+    console.info(JSON.stringify(metrics, null, 2));
   }
 
   showHelp(): void {
-    console.log(`
+    console.info(`
 🧩 FactoryWager Inspection CLI
 ==========================
 

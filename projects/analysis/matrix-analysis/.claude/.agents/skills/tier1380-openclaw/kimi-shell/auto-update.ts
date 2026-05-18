@@ -77,7 +77,7 @@ class AutoUpdateManager {
 	 * Check for updates
 	 */
 	async check(): Promise<ReleaseInfo | null> {
-		console.log(`${COLORS.cyan}Checking for updates...${COLORS.reset}`);
+		console.info(`${COLORS.cyan}Checking for updates...${COLORS.reset}`);
 
 		try {
 			const response = await fetch(UPDATE_CHECK_URL, {
@@ -113,7 +113,7 @@ class AutoUpdateManager {
 				};
 			}
 
-			console.log(
+			console.info(
 				`${COLORS.green}✓${COLORS.reset} You are running the latest version (${CURRENT_VERSION})`,
 			);
 			return null;
@@ -145,19 +145,19 @@ class AutoUpdateManager {
 	 * Show update information
 	 */
 	async showUpdate(info: ReleaseInfo): Promise<void> {
-		console.log(`\n${COLORS.bold}Update Available!${COLORS.reset}\n`);
-		console.log(`Current version: ${COLORS.gray}${CURRENT_VERSION}${COLORS.reset}`);
-		console.log(`Latest version:  ${COLORS.green}${info.version}${COLORS.reset}`);
-		console.log(`Published:       ${new Date(info.publishedAt).toLocaleDateString()}`);
-		console.log(`\n${COLORS.bold}Changelog:${COLORS.reset}`);
-		console.log(info.changelog.slice(0, 500) + "...");
+		console.info(`\n${COLORS.bold}Update Available!${COLORS.reset}\n`);
+		console.info(`Current version: ${COLORS.gray}${CURRENT_VERSION}${COLORS.reset}`);
+		console.info(`Latest version:  ${COLORS.green}${info.version}${COLORS.reset}`);
+		console.info(`Published:       ${new Date(info.publishedAt).toLocaleDateString()}`);
+		console.info(`\n${COLORS.bold}Changelog:${COLORS.reset}`);
+		console.info(info.changelog.slice(0, 500) + "...");
 	}
 
 	/**
 	 * Install update
 	 */
 	async install(version: string): Promise<boolean> {
-		console.log(`${COLORS.cyan}Installing update to ${version}...${COLORS.reset}`);
+		console.info(`${COLORS.cyan}Installing update to ${version}...${COLORS.reset}`);
 
 		// Create backup
 		const backupDir = join(homedir(), ".kimi", "backups", `v${CURRENT_VERSION}`);
@@ -167,16 +167,16 @@ class AutoUpdateManager {
 		const { $ } = await import("bun");
 		try {
 			await $`cp -r ${join(homedir(), ".kimi", "skills")} ${backupDir}/`.nothrow();
-			console.log(`${COLORS.gray}Backup created at ${backupDir}${COLORS.reset}`);
+			console.info(`${COLORS.gray}Backup created at ${backupDir}${COLORS.reset}`);
 		} catch {
 			console.warn(`${COLORS.yellow}⚠ Could not create backup${COLORS.reset}`);
 		}
 
 		// Download and install would happen here
 		// For now, show instructions
-		console.log(`\n${COLORS.yellow}Manual update required:${COLORS.reset}`);
-		console.log("1. git pull origin main");
-		console.log("2. Restart kimi shell");
+		console.info(`\n${COLORS.yellow}Manual update required:${COLORS.reset}`);
+		console.info("1. git pull origin main");
+		console.info("2. Restart kimi shell");
 
 		this.state.updateAvailable = false;
 		await this.saveState();
@@ -191,7 +191,7 @@ class AutoUpdateManager {
 		this.state.skippedVersions.push(version);
 		this.state.updateAvailable = false;
 		await this.saveState();
-		console.log(`${COLORS.gray}Skipped version ${version}${COLORS.reset}`);
+		console.info(`${COLORS.gray}Skipped version ${version}${COLORS.reset}`);
 	}
 
 	/**
@@ -200,7 +200,7 @@ class AutoUpdateManager {
 	async setAutoUpdate(enabled: boolean): Promise<void> {
 		this.state.autoUpdate = enabled;
 		await this.saveState();
-		console.log(
+		console.info(
 			`${COLORS.green}✓${COLORS.reset} Auto-update ${enabled ? "enabled" : "disabled"}`,
 		);
 	}
@@ -253,9 +253,9 @@ class AutoUpdateManager {
 			return false;
 		}
 
-		console.log(`${COLORS.yellow}Rolling back...${COLORS.reset}`);
+		console.info(`${COLORS.yellow}Rolling back...${COLORS.reset}`);
 		// Restore from backup logic would go here
-		console.log(`${COLORS.green}✓${COLORS.reset} Rollback complete`);
+		console.info(`${COLORS.green}✓${COLORS.reset} Rollback complete`);
 		return true;
 	}
 }
@@ -294,13 +294,13 @@ async function main() {
 
 		case "status": {
 			const info = updater.getVersionInfo();
-			console.log(`${COLORS.bold}Version Information:${COLORS.reset}\n`);
-			console.log(`Current version:  ${COLORS.cyan}${info.current}${COLORS.reset}`);
-			console.log(`Latest version:   ${info.latest}`);
-			console.log(
+			console.info(`${COLORS.bold}Version Information:${COLORS.reset}\n`);
+			console.info(`Current version:  ${COLORS.cyan}${info.current}${COLORS.reset}`);
+			console.info(`Latest version:   ${info.latest}`);
+			console.info(
 				`Update available: ${info.updateAvailable ? `${COLORS.green}Yes${COLORS.reset}` : "No"}`,
 			);
-			console.log(`Last check:       ${info.lastCheck?.toLocaleString() || "Never"}`);
+			console.info(`Last check:       ${info.lastCheck?.toLocaleString() || "Never"}`);
 			break;
 		}
 
@@ -310,21 +310,21 @@ async function main() {
 		}
 
 		default: {
-			console.log("🐚 Kimi Auto-Update System\n");
-			console.log(`Current version: ${COLORS.cyan}${CURRENT_VERSION}${COLORS.reset}\n`);
-			console.log("Usage:");
-			console.log("  auto-update.ts check       Check for updates");
-			console.log("  auto-update.ts install [v] Install update");
-			console.log("  auto-update.ts skip [v]    Skip this version");
-			console.log("  auto-update.ts auto on|off Enable/disable auto-update");
-			console.log("  auto-update.ts status      Show version status");
-			console.log("  auto-update.ts rollback    Rollback to previous");
-			console.log("\nFeatures:");
-			console.log("  • Daily update checks");
-			console.log("  • Automatic backup before update");
-			console.log("  • Changelog display");
-			console.log("  • Version skipping");
-			console.log("  • Rollback support");
+			console.info("🐚 Kimi Auto-Update System\n");
+			console.info(`Current version: ${COLORS.cyan}${CURRENT_VERSION}${COLORS.reset}\n`);
+			console.info("Usage:");
+			console.info("  auto-update.ts check       Check for updates");
+			console.info("  auto-update.ts install [v] Install update");
+			console.info("  auto-update.ts skip [v]    Skip this version");
+			console.info("  auto-update.ts auto on|off Enable/disable auto-update");
+			console.info("  auto-update.ts status      Show version status");
+			console.info("  auto-update.ts rollback    Rollback to previous");
+			console.info("\nFeatures:");
+			console.info("  • Daily update checks");
+			console.info("  • Automatic backup before update");
+			console.info("  • Changelog display");
+			console.info("  • Version skipping");
+			console.info("  • Rollback support");
 		}
 	}
 }

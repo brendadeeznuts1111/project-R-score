@@ -20,7 +20,7 @@ class NetworkTriage {
   private registry = "registry.factory-wager.co";
 
   async execute(): Promise<TriageResult> {
-    console.log("=== TIER-1380 NETWORK TRIAGE ===");
+    console.info("=== TIER-1380 NETWORK TRIAGE ===");
 
     const result: TriageResult = {
       timestamp: Date.now(),
@@ -75,7 +75,7 @@ class NetworkTriage {
       result.assessment = this.assess(result);
 
       // Log results
-      console.log(triage);
+      console.info(triage);
       await Bun.write(Bun.file('./.factory-wager/triage.log'), `[${new Date().toISOString()}] ${JSON.stringify(result)}\n`);
 
       return result;
@@ -104,8 +104,8 @@ async function main() {
   const triage = new NetworkTriage();
   const result = await triage.execute();
   
-  console.log("\n=== ASSESSMENT ===");
-  console.log(result.assessment);
+  console.info("\n=== ASSESSMENT ===");
+  console.info(result.assessment);
   
   if (result.assessment.includes('CRITICAL')) {
     process.exit(1);

@@ -317,7 +317,7 @@ class NamingStandards {
         // Apply fixes based on issue type
         if (issue.issue.includes('SCREAMING_SNAKE_CASE')) {
           // This would need more sophisticated parsing
-          console.log(`Manual fix needed: ${issue.file}:${issue.line}`);
+          console.info(`Manual fix needed: ${issue.file}:${issue.line}`);
           skipped++;
         } else if (issue.issue.includes('kebab-case')) {
           // Simple string replacements
@@ -348,22 +348,22 @@ async function main() {
 
   switch (command) {
     case 'analyze':
-      console.log('🔍 Analyzing project naming standards...');
+      console.info('🔍 Analyzing project naming standards...');
       const analysis = await namingStandards.analyzeProject(projectRoot);
       const report = await namingStandards.generateReport(analysis);
-      console.log(report);
+      console.info(report);
       break;
 
     case 'fix':
-      console.log('🔧 Fixing naming issues...');
+      console.info('🔧 Fixing naming issues...');
       const analysisForFix = await namingStandards.analyzeProject(projectRoot);
       const result = await namingStandards.fixIssues(analysisForFix.issues);
-      console.log(`✅ Fixed ${result.fixed} issues`);
-      console.log(`⏭️  Skipped ${result.skipped} issues (manual review needed)`);
+      console.info(`✅ Fixed ${result.fixed} issues`);
+      console.info(`⏭️  Skipped ${result.skipped} issues (manual review needed)`);
       break;
 
     case 'help':
-      console.log(`
+      console.info(`
 🚀 Crystal Clear Architecture - Naming Standards Tool
 
 Usage:
@@ -382,7 +382,7 @@ Examples:
       break;
 
     default:
-      console.log('Unknown command. Use "help" for usage information.');
+      console.info('Unknown command. Use "help" for usage information.');
   }
 }
 

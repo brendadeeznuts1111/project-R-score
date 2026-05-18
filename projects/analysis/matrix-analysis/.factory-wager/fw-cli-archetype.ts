@@ -278,12 +278,12 @@ class BunRuntimeConfigManager {
 
     // Apply HTTP agent settings
     if (config.http.maxConcurrentRequests !== 256) {
-      console.log(`🔧 HTTP max requests: ${config.http.maxConcurrentRequests}`);
+      console.info(`🔧 HTTP max requests: ${config.http.maxConcurrentRequests}`);
     }
 
     // Log configuration in debug mode
     if (FactoryWagerEnvManager.getBoolean("FW_DEBUG")) {
-      console.log("🔧 Bun Runtime Config:", JSON.stringify(config, null, 2));
+      console.info("🔧 Bun Runtime Config:", JSON.stringify(config, null, 2));
     }
   }
 
@@ -399,7 +399,7 @@ class FactoryWagerServer {
       // WebSocket support with typed messages
       websocket: {
         open: (ws) => {
-          console.log(`🔌 FactoryWager WebSocket connected: ${ws.remoteAddress}`);
+          console.info(`🔌 FactoryWager WebSocket connected: ${ws.remoteAddress}`);
         },
         message: (ws, message: string | Buffer) => {
           // Handle typed messages
@@ -417,7 +417,7 @@ class FactoryWagerServer {
           }
         },
         close: (ws) => {
-          console.log(`🔌 FactoryWager WebSocket disconnected: ${ws.remoteAddress}`);
+          console.info(`🔌 FactoryWager WebSocket disconnected: ${ws.remoteAddress}`);
         }
       },
 
@@ -431,14 +431,14 @@ class FactoryWagerServer {
       }
     } as ServeOptions);
 
-    console.log(`🏭 FactoryWager server running at http://localhost:${server.port}`);
-    console.log(`🔧 Mode: ${this.fwConfig.mode} | Debug: ${this.fwConfig.debug}`);
+    console.info(`🏭 FactoryWager server running at http://localhost:${server.port}`);
+    console.info(`🔧 Mode: ${this.fwConfig.mode} | Debug: ${this.fwConfig.debug}`);
 
     // Show security warnings
     const warnings = BunRuntimeConfigManager.getSecurityWarnings();
     if (warnings.length > 0) {
-      console.log("⚠️  Security Warnings:");
-      warnings.forEach(warning => console.log(`   ${warning}`));
+      console.info("⚠️  Security Warnings:");
+      warnings.forEach(warning => console.info(`   ${warning}`));
     }
   }
 
@@ -532,50 +532,50 @@ async function main(): Promise<void> {
     }
 
     case "profile": {
-      console.log(`👤 Profile management: ${options.subcommand || "list"}`);
+      console.info(`👤 Profile management: ${options.subcommand || "list"}`);
       break;
     }
 
     case "report": {
-      console.log(`📊 Report generation: ${options.subcommand || "html"} in ${options.format} format`);
+      console.info(`📊 Report generation: ${options.subcommand || "html"} in ${options.format} format`);
       break;
     }
 
     case "config": {
-      console.log(`⚙️ Configuration: ${options.subcommand || "show"}`);
+      console.info(`⚙️ Configuration: ${options.subcommand || "show"}`);
       break;
     }
 
     case "status": {
-      console.log(`📋 System status: ${options.subcommand || "overview"}`);
+      console.info(`📋 System status: ${options.subcommand || "overview"}`);
       break;
     }
 
     case "util": {
-      console.log(`🔧 Utilities: ${options.subcommand || "version"}`);
+      console.info(`🔧 Utilities: ${options.subcommand || "version"}`);
       break;
     }
 
     case "dev": {
-      console.log("🛠️ Development mode activated");
+      console.info("🛠️ Development mode activated");
       (Bun.env as Record<string, string>).FW_MODE = "development";
       break;
     }
 
     case "prod": {
-      console.log("🚀 Production mode activated");
+      console.info("🚀 Production mode activated");
       (Bun.env as Record<string, string>).FW_MODE = "production";
       break;
     }
 
     case "demo": {
-      console.log("🎭 Demo mode activated");
+      console.info("🎭 Demo mode activated");
       (Bun.env as Record<string, string>).FW_MODE = "demo";
       break;
     }
 
     default:
-      console.log(`
+      console.info(`
 ╔══════════════════════════════════════════════════════════════╗
 ║     🏭 FactoryWager CLI — Type-Safe Bun Environment          ║
 ╠══════════════════════════════════════════════════════════════╣

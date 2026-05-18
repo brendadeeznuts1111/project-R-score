@@ -124,31 +124,31 @@ class WorkspaceOrchestratorCLI {
    * 📊 Show comprehensive workspace status
    */
   private async showWorkspaceStatus(options: CLIOptions): Promise<void> {
-    console.log('🚀 Fire22 Workspace Orchestrator Status');
-    console.log('='.repeat(60));
+    console.info('🚀 Fire22 Workspace Orchestrator Status');
+    console.info('='.repeat(60));
 
     // Get workspace metadata
     const workspace = await this.versionManager.loadWorkspaceMetadata();
-    console.log(`📦 Total packages: ${workspace.packages.size}`);
-    console.log(`🏗️ Root version: ${workspace.rootVersion}`);
-    console.log(`📅 Last updated: ${workspace.lastUpdate.toISOString()}`);
+    console.info(`📦 Total packages: ${workspace.packages.size}`);
+    console.info(`🏗️ Root version: ${workspace.rootVersion}`);
+    console.info(`📅 Last updated: ${workspace.lastUpdate.toISOString()}`);
 
     // Show package breakdown by domain
     const domainGroups = this.groupPackagesByDomain(workspace.packages);
-    console.log('\n🏷️ Package Distribution:');
+    console.info('\n🏷️ Package Distribution:');
     for (const [domain, packages] of domainGroups) {
-      console.log(`  ${domain}: ${packages.length} packages`);
+      console.info(`  ${domain}: ${packages.length} packages`);
       if (options.verbose) {
-        packages.forEach(pkg => console.log(`    • ${pkg}`));
+        packages.forEach(pkg => console.info(`    • ${pkg}`));
       }
     }
 
     // Check workspace health using the existing health monitor
-    console.log('\n🏥 Running workspace health check...');
+    console.info('\n🏥 Running workspace health check...');
     await this.healthMonitor.runHealthCheck();
 
     // Show split workspace status
-    console.log('\n🔄 Split Workspaces:');
+    console.info('\n🔄 Split Workspaces:');
     const splitWorkspaces = [
       { name: 'fire22-core-packages', path: '../fire22-core-packages' },
       { name: 'fire22-benchmarking-suite', path: '../fire22-benchmarking-suite' },
@@ -158,7 +158,7 @@ class WorkspaceOrchestratorCLI {
     for (const ws of splitWorkspaces) {
       const exists = existsSync(join(this.rootPath, ws.path));
       const status = exists ? '✅ Created' : '❌ Not created';
-      console.log(`  ${ws.name}: ${status}`);
+      console.info(`  ${ws.name}: ${status}`);
     }
   }
 
@@ -166,7 +166,7 @@ class WorkspaceOrchestratorCLI {
    * 🏥 Run comprehensive health check
    */
   private async runHealthCheck(options: CLIOptions): Promise<void> {
-    console.log('🏥 Running comprehensive workspace health check...');
+    console.info('🏥 Running comprehensive workspace health check...');
 
     // Use the existing health monitor's method
     await this.healthMonitor.runHealthCheck();
@@ -176,16 +176,16 @@ class WorkspaceOrchestratorCLI {
    * 📈 Start real-time health monitoring
    */
   private async startHealthMonitoring(options: CLIOptions): Promise<void> {
-    console.log('📈 Starting real-time workspace health monitoring...');
+    console.info('📈 Starting real-time workspace health monitoring...');
 
     const interval = options.interval || 60000; // Default 1 minute
-    console.log(`🔄 Check interval: ${interval / 1000}s`);
+    console.info(`🔄 Check interval: ${interval / 1000}s`);
 
     // Simple monitoring loop
     const monitoringLoop = async () => {
-      console.log('\n' + '='.repeat(60));
-      console.log('🔍 Health Check - ' + new Date().toLocaleString());
-      console.log('='.repeat(60));
+      console.info('\n' + '='.repeat(60));
+      console.info('🔍 Health Check - ' + new Date().toLocaleString());
+      console.info('='.repeat(60));
 
       await this.healthMonitor.runHealthCheck();
 
@@ -193,7 +193,7 @@ class WorkspaceOrchestratorCLI {
         await this.generateSimpleDashboard();
       }
 
-      console.log(`\n⏰ Next check in ${interval / 1000}s...`);
+      console.info(`\n⏰ Next check in ${interval / 1000}s...`);
     };
 
     // Initial check
@@ -203,12 +203,12 @@ class WorkspaceOrchestratorCLI {
     const intervalId = setInterval(monitoringLoop, interval);
 
     process.on('SIGINT', () => {
-      console.log('\n🛑 Stopping health monitoring...');
+      console.info('\n🛑 Stopping health monitoring...');
       clearInterval(intervalId);
       process.exit(0);
     });
 
-    console.log('🔄 Monitoring started. Press Ctrl+C to stop.');
+    console.info('🔄 Monitoring started. Press Ctrl+C to stop.');
 
     // Keep alive
     await new Promise(() => {}); // Run indefinitely
@@ -218,16 +218,16 @@ class WorkspaceOrchestratorCLI {
    * 📊 Generate interactive dashboard
    */
   private async generateDashboard(options: CLIOptions): Promise<void> {
-    console.log('📊 Generating interactive workspace dashboard...');
+    console.info('📊 Generating interactive workspace dashboard...');
 
     await this.healthMonitor.runHealthCheck();
     await this.generateSimpleDashboard();
 
     const dashboardPath = join(this.rootPath, 'workspace-health-dashboard.html');
-    console.log(`✅ Dashboard available at: file://${dashboardPath}`);
+    console.info(`✅ Dashboard available at: file://${dashboardPath}`);
 
     if (options.monitor) {
-      console.log('🔄 Starting dashboard auto-refresh...');
+      console.info('🔄 Starting dashboard auto-refresh...');
       await this.startHealthMonitoring({ ...options, dashboard: true });
     }
   }
@@ -336,7 +336,7 @@ class WorkspaceOrchestratorCLI {
    * 🔄 Split workspaces into domain repositories
    */
   private async splitWorkspaces(options: CLIOptions): Promise<void> {
-    console.log('🔄 Splitting workspace into domain-specific repositories...');
+    console.info('🔄 Splitting workspace into domain-specific repositories...');
 
     const result = await this.orchestrator.splitWorkspace({
       dryRun: options.dryRun,
@@ -345,21 +345,21 @@ class WorkspaceOrchestratorCLI {
       preserveHistory: true,
     });
 
-    console.log('\n📊 Split Results:');
-    console.log(`✅ Created: ${result.summary.created}`);
-    console.log(`🔄 Updated: ${result.summary.updated}`);
-    console.log(`❌ Failed: ${result.summary.failed}`);
+    console.info('\n📊 Split Results:');
+    console.info(`✅ Created: ${result.summary.created}`);
+    console.info(`🔄 Updated: ${result.summary.updated}`);
+    console.info(`❌ Failed: ${result.summary.failed}`);
 
     if (options.verbose) {
       for (const [workspace, info] of result.workspaces) {
-        console.log(`\n${workspace}:`);
-        console.log(`  Status: ${info.status}`);
-        console.log(`  Packages: ${info.packages.join(', ')}`);
+        console.info(`\n${workspace}:`);
+        console.info(`  Status: ${info.status}`);
+        console.info(`  Packages: ${info.packages.join(', ')}`);
       }
     }
 
     if (result.summary.failed === 0) {
-      console.log('\n✅ All workspaces split successfully!');
+      console.info('\n✅ All workspaces split successfully!');
     }
   }
 
@@ -367,7 +367,7 @@ class WorkspaceOrchestratorCLI {
    * 🔄 Reunify workspaces for development
    */
   private async reunifyWorkspaces(options: CLIOptions): Promise<void> {
-    console.log('🔄 Reunifying workspaces for integrated development...');
+    console.info('🔄 Reunifying workspaces for integrated development...');
 
     const result = await this.orchestrator.reunifyWorkspaces({
       mode: 'development',
@@ -376,17 +376,17 @@ class WorkspaceOrchestratorCLI {
       verbose: options.verbose,
     });
 
-    console.log('\n📊 Reunification Results:');
-    console.log(`📦 Dependencies updated: ${result.dependencies.size}`);
-    console.log(`🧪 Tests: ${result.tests.passed} passed, ${result.tests.failed} failed`);
-    console.log(`🎯 Status: ${result.status}`);
+    console.info('\n📊 Reunification Results:');
+    console.info(`📦 Dependencies updated: ${result.dependencies.size}`);
+    console.info(`🧪 Tests: ${result.tests.passed} passed, ${result.tests.failed} failed`);
+    console.info(`🎯 Status: ${result.status}`);
 
     if (result.status === 'success') {
-      console.log('✅ Workspaces reunified successfully!');
+      console.info('✅ Workspaces reunified successfully!');
     } else if (result.status === 'partial') {
-      console.log('⚠️ Workspaces partially reunified with warnings');
+      console.info('⚠️ Workspaces partially reunified with warnings');
     } else {
-      console.log('❌ Reunification failed');
+      console.info('❌ Reunification failed');
       process.exit(1);
     }
   }
@@ -395,7 +395,7 @@ class WorkspaceOrchestratorCLI {
    * 📊 Run comprehensive benchmarks
    */
   private async runBenchmarks(options: CLIOptions): Promise<void> {
-    console.log('📊 Running comprehensive workspace benchmarks...');
+    console.info('📊 Running comprehensive workspace benchmarks...');
 
     const result = await this.orchestrator.runBenchmarks({
       suites: ['package', 'integration', 'deployment', 'performance'],
@@ -405,24 +405,24 @@ class WorkspaceOrchestratorCLI {
       verbose: options.verbose,
     });
 
-    console.log('\n📊 Benchmark Results:');
-    console.log(`✅ Performance budgets passed: ${result.budgets.passed}`);
-    console.log(`❌ Performance budgets failed: ${result.budgets.failed}`);
-    console.log(`🎯 Overall status: ${result.status}`);
+    console.info('\n📊 Benchmark Results:');
+    console.info(`✅ Performance budgets passed: ${result.budgets.passed}`);
+    console.info(`❌ Performance budgets failed: ${result.budgets.failed}`);
+    console.info(`🎯 Overall status: ${result.status}`);
 
     if (result.status === 'failed') {
-      console.log('❌ Some performance budgets failed');
+      console.info('❌ Some performance budgets failed');
       process.exit(1);
     }
 
-    console.log('✅ All benchmarks completed successfully!');
+    console.info('✅ All benchmarks completed successfully!');
   }
 
   /**
    * 📦 Publish workspaces to registries
    */
   private async publishWorkspaces(options: CLIOptions): Promise<void> {
-    console.log('📦 Publishing workspaces to registries...');
+    console.info('📦 Publishing workspaces to registries...');
 
     const result = await this.orchestrator.publishWorkspaces({
       workspaces: options.workspaces,
@@ -431,14 +431,14 @@ class WorkspaceOrchestratorCLI {
       verbose: options.verbose,
     });
 
-    console.log('\n📊 Publishing Results:');
-    console.log(`✅ Successfully published: ${result.summary.success}`);
-    console.log(`❌ Failed to publish: ${result.summary.failed}`);
+    console.info('\n📊 Publishing Results:');
+    console.info(`✅ Successfully published: ${result.summary.success}`);
+    console.info(`❌ Failed to publish: ${result.summary.failed}`);
 
     if (result.summary.failed === 0) {
-      console.log('✅ All workspaces published successfully!');
+      console.info('✅ All workspaces published successfully!');
     } else {
-      console.log('❌ Some workspaces failed to publish');
+      console.info('❌ Some workspaces failed to publish');
       process.exit(1);
     }
   }
@@ -447,18 +447,18 @@ class WorkspaceOrchestratorCLI {
    * 🧪 Run workspace tests
    */
   private async runTests(options: CLIOptions): Promise<void> {
-    console.log('🧪 Running workspace test suites...');
+    console.info('🧪 Running workspace test suites...');
 
     // Import the test runner (would need to implement this)
-    console.log('⚠️ Test runner integration coming soon...');
-    console.log('Use `bun test` for now to run tests');
+    console.info('⚠️ Test runner integration coming soon...');
+    console.info('Use `bun test` for now to run tests');
   }
 
   /**
    * 🚀 Initialize new workspace setup
    */
   private async initializeWorkspace(options: CLIOptions): Promise<void> {
-    console.log('🚀 Initializing Fire22 workspace orchestration...');
+    console.info('🚀 Initializing Fire22 workspace orchestration...');
 
     // Create necessary configuration files
     await this.createOrchestratorConfig();
@@ -469,11 +469,11 @@ class WorkspaceOrchestratorCLI {
     // Generate initial dashboard
     await this.generateSimpleDashboard();
 
-    console.log('✅ Workspace orchestration initialized!');
-    console.log('💡 Next steps:');
-    console.log('  - Run `bun run workspace status` to see current state');
-    console.log('  - Run `bun run workspace dashboard` to view the health dashboard');
-    console.log('  - Run `bun run workspace monitor` to start real-time monitoring');
+    console.info('✅ Workspace orchestration initialized!');
+    console.info('💡 Next steps:');
+    console.info('  - Run `bun run workspace status` to see current state');
+    console.info('  - Run `bun run workspace dashboard` to view the health dashboard');
+    console.info('  - Run `bun run workspace monitor` to start real-time monitoring');
   }
 
   /**
@@ -483,7 +483,7 @@ class WorkspaceOrchestratorCLI {
     const configPath = join(this.rootPath, 'workspace-orchestrator.config.json');
 
     if (existsSync(configPath)) {
-      console.log('✅ Configuration already exists');
+      console.info('✅ Configuration already exists');
       return;
     }
 
@@ -577,7 +577,7 @@ class WorkspaceOrchestratorCLI {
     };
 
     writeFileSync(configPath, JSON.stringify(config, null, 2));
-    console.log(`✅ Created configuration: ${configPath}`);
+    console.info(`✅ Created configuration: ${configPath}`);
   }
 
   // === UTILITY METHODS ===
@@ -641,7 +641,7 @@ class WorkspaceOrchestratorCLI {
   }
 
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🚀 **Fire22 Workspace Orchestrator CLI**
 
 USAGE:

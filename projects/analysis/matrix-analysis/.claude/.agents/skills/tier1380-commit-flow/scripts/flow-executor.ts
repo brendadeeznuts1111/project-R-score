@@ -15,11 +15,11 @@ interface FlowConfig {
 }
 
 async function executeFlow(config: FlowConfig): Promise<boolean> {
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Flow Executor                      ║");
-	console.log(`║     Step: ${config.step.padEnd(43)} ║`);
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Flow Executor                      ║");
+	console.info(`║     Step: ${config.step.padEnd(43)} ║`);
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	switch (config.step) {
 		case "lint":
@@ -39,53 +39,53 @@ async function executeFlow(config: FlowConfig): Promise<boolean> {
 }
 
 async function runLint(autoFix: boolean): Promise<boolean> {
-	console.log("🔍 Running Biome lint...");
+	console.info("🔍 Running Biome lint...");
 	try {
 		if (autoFix) {
 			await $`bunx @biomejs/biome check --write --staged`;
 		} else {
 			await $`bunx @biomejs/biome check --staged`;
 		}
-		console.log("✅ Lint passed");
+		console.info("✅ Lint passed");
 		return true;
 	} catch {
-		console.log("❌ Lint failed");
-		console.log("   Run with --fix to auto-fix issues");
+		console.info("❌ Lint failed");
+		console.info("   Run with --fix to auto-fix issues");
 		return false;
 	}
 }
 
 async function runTests(): Promise<boolean> {
-	console.log("🧪 Running tests...");
+	console.info("🧪 Running tests...");
 	try {
 		await $`bun test`;
-		console.log("✅ Tests passed");
+		console.info("✅ Tests passed");
 		return true;
 	} catch {
-		console.log("❌ Tests failed");
+		console.info("❌ Tests failed");
 		return false;
 	}
 }
 
 async function runTypeCheck(): Promise<boolean> {
-	console.log("📐 Running TypeScript type check...");
+	console.info("📐 Running TypeScript type check...");
 	try {
 		await $`bun tsc --noEmit`;
-		console.log("✅ Type check passed");
+		console.info("✅ Type check passed");
 		return true;
 	} catch {
-		console.log("❌ Type check failed");
+		console.info("❌ Type check failed");
 		return false;
 	}
 }
 
 async function generateCommitMessage(): Promise<boolean> {
-	console.log("📝 Generating commit message...");
+	console.info("📝 Generating commit message...");
 	try {
 		await $`bun .agents/skills/tier1380-commit-flow/scripts/generate-message.ts`;
 		return true;
 	} catch {
-		console.log("❌ Failed to generate message");
+		console.info("❌ Failed to generate message");
 		return false;
 	}
 }
@@ -100,20 +100,20 @@ async function runFullFlow(config: FlowConfig): Promise<boolean> {
 	];
 
 	for (const step of steps) {
-		console.log(`\n▶️  ${step.name}...`);
+		console.info(`\n▶️  ${step.name}...`);
 		const success = await step.fn();
 		if (!success) {
-			console.log(`\n❌ Flow failed at: ${step.name}`);
+			console.info(`\n❌ Flow failed at: ${step.name}`);
 			return false;
 		}
 	}
 
-	console.log("\n✨ Full flow completed!");
-	console.log("\nNext steps:");
-	console.log("  1. Review the generated commit message");
-	console.log('  2. Run: git commit -m "[message]"');
+	console.info("\n✨ Full flow completed!");
+	console.info("\nNext steps:");
+	console.info("  1. Review the generated commit message");
+	console.info('  2. Run: git commit -m "[message]"');
 	if (config.push) {
-		console.log("  3. Run: git push origin main");
+		console.info("  3. Run: git push origin main");
 	}
 
 	return true;
@@ -122,10 +122,10 @@ async function runFullFlow(config: FlowConfig): Promise<boolean> {
 async function stageChanges(): Promise<boolean> {
 	try {
 		await $`git add -A`;
-		console.log("✅ Changes staged");
+		console.info("✅ Changes staged");
 		return true;
 	} catch {
-		console.log("❌ Failed to stage changes");
+		console.info("❌ Failed to stage changes");
 		return false;
 	}
 }

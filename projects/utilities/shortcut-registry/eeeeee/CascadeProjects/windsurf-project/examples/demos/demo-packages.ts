@@ -21,23 +21,23 @@ const shuffled = _.shuffle(data);
 const now = new Date();
 const formatted = format(now, 'yyyy-MM-dd HH:mm:ss');
 
-console.log('🚀 Bun Package Manager Demo');
-console.log('============================');
+console.info('🚀 Bun Package Manager Demo');
+console.info('============================');
 
 // Test Zod validation
 try {
   const user = { name: 'John', email: 'john@example.com', age: 25 };
   const validated = UserSchema.parse(user);
-  console.log('✅ Zod validation:', validated);
+  console.info('✅ Zod validation:', validated);
 } catch (error) {
-  console.log('❌ Zod validation error:', error instanceof Error ? error.message : String(error));
+  console.info('❌ Zod validation error:', error instanceof Error ? error.message : String(error));
 }
 
 // Test Lodash
-console.log('✅ Lodash doubled:', doubled);
-console.log('✅ Lodash shuffled:', shuffled);
+console.info('✅ Lodash doubled:', doubled);
+console.info('✅ Lodash shuffled:', shuffled);
 
 // Test date-fns
-console.log('✅ Date-fns formatted:', formatted);
+console.info('✅ Date-fns formatted:', formatted);
 
-console.log('🎉 All packages working correctly!');
+console.info('🎉 All packages working correctly!');

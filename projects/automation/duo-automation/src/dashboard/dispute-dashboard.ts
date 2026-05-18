@@ -126,7 +126,7 @@ export class DisputeDashboard {
     
     // Initialize scope detector
     this.scopeConfig = ScopeDetector.getScopeConfig();
-    console.log(`🎯 ScopeDetector initialized: ${this.scopeConfig.scope} for ${this.scopeConfig.domain}`);
+    console.info(`🎯 ScopeDetector initialized: ${this.scopeConfig.scope} for ${this.scopeConfig.domain}`);
   }
   
   /**
@@ -175,7 +175,7 @@ export class DisputeDashboard {
   private async initializeScope(): Promise<void> {
     try {
       this.currentScope = await this.matrixManager.detectScope();
-      console.log(`🎯 Scope initialized: ${this.currentScope.detectedScope} for ${this.currentScope.servingDomain}`);
+      console.info(`🎯 Scope initialized: ${this.currentScope.detectedScope} for ${this.currentScope.servingDomain}`);
     } catch (error) {
       console.error('Failed to initialize scope:', error);
       // Fallback to default scope
@@ -1104,15 +1104,15 @@ export class DisputeDashboard {
   // Private helper methods
   private handleDisputeDeepLink(parsed: any): boolean {
     // In a real app, this would navigate to the appropriate screen
-    console.log('Navigating to dispute:', parsed.disputeId);
-    console.log('Action:', parsed.action);
-    console.log('Status:', parsed.status);
+    console.info('Navigating to dispute:', parsed.disputeId);
+    console.info('Action:', parsed.action);
+    console.info('Status:', parsed.status);
     return true;
   }
   
   private handleQRDisputeDeepLink(parsed: any): boolean {
     // In a real app, this would open the QR dispute creation flow
-    console.log('Opening QR dispute flow with data:', parsed.data);
+    console.info('Opening QR dispute flow with data:', parsed.data);
     return true;
   }
   

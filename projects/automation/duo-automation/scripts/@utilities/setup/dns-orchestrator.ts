@@ -29,7 +29,7 @@ class DNSOrchestrator {
   constructor(private mode: AuthMode = AuthMode.ENV) {}
 
   async initialize(): Promise<void> {
-    console.log(`🔐 Initializing DNS Orchestrator in [${this.mode.toUpperCase()}] mode...`);
+    console.info(`🔐 Initializing DNS Orchestrator in [${this.mode.toUpperCase()}] mode...`);
 
     switch (this.mode) {
       case AuthMode.ENV:
@@ -93,14 +93,14 @@ class DNSOrchestrator {
   }
 
   async validateR2(): Promise<boolean> {
-    console.log('📦 Validating R2 Storage connection...');
+    console.info('📦 Validating R2 Storage connection...');
     try {
       const response = await fetch(`${CLOUDFLARE_R2_CONFIG.endpoint}/${CLOUDFLARE_R2_CONFIG.bucket}`, { 
         method: 'HEAD',
         headers: { 'Authorization': `AWS4-HMAC-SHA256 Credential=${CLOUDFLARE_R2_CONFIG.accessKeyId}` }
       });
       if (response.ok || response.status === 403) {
-        console.log('✅ R2 Storage connection validated');
+        console.info('✅ R2 Storage connection validated');
         return true;
       }
       return false;
@@ -111,7 +111,7 @@ class DNSOrchestrator {
   }
 
   async setupDNS(): Promise<void> {
-    console.log('🌐 Setting up Empire Pro DNS Records...');
+    console.info('🌐 Setting up Empire Pro DNS Records...');
     
     const requiredRecords: DNSRecord[] = [
       { name: 'apple', type: 'A', content: '192.0.2.1', proxied: true },
@@ -130,23 +130,23 @@ class DNSOrchestrator {
         const existing = existingRecords.find((r: any) => r.name === record.name && r.type === record.type);
         if (existing) {
           if (existing.content !== record.content) {
-            console.log(`🔄 Updating: ${record.name} → ${record.content}`);
+            console.info(`🔄 Updating: ${record.name} → ${record.content}`);
             await this.makeRequest(`/dns_records/${existing.id}`, {
               method: 'PUT',
               body: JSON.stringify({ ...record, ttl: 300 })
             });
           } else {
-            console.log(`✅ Matches: ${record.name}`);
+            console.info(`✅ Matches: ${record.name}`);
           }
         } else {
-          console.log(`🔧 Creating: ${record.name} → ${record.content}`);
+          console.info(`🔧 Creating: ${record.name} → ${record.content}`);
           await this.makeRequest('/dns_records', {
             method: 'POST',
             body: JSON.stringify({ ...record, ttl: 300 })
           });
         }
       }
-      console.log('🎉 DNS Setup Complete!');
+      console.info('🎉 DNS Setup Complete!');
     } catch (error: any) {
       console.error('❌ DNS operation failed:', error?.message || error);
     }

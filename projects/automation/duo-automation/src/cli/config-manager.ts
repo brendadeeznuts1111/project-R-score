@@ -258,34 +258,34 @@ export class CLIConfigManager {
    */
   show(): void {
     console.clear();
-    console.log(chalk.cyan('⚙️ Empire Pro CLI Configuration\n'));
+    console.info(chalk.cyan('⚙️ Empire Pro CLI Configuration\n'));
 
-    console.log(chalk.green('General Settings:'));
-    console.log(`  Output Format: ${chalk.yellow(this.config.format)}`);
-    console.log(`  Debug Mode: ${chalk.yellow(this.config.debug ? 'Enabled' : 'Disabled')}`);
-    console.log(`  Timeout: ${chalk.yellow(this.config.timeout + 'ms')}`);
-    console.log(`  Parallel Processing: ${chalk.yellow(this.config.parallel.toString())}`);
+    console.info(chalk.green('General Settings:'));
+    console.info(`  Output Format: ${chalk.yellow(this.config.format)}`);
+    console.info(`  Debug Mode: ${chalk.yellow(this.config.debug ? 'Enabled' : 'Disabled')}`);
+    console.info(`  Timeout: ${chalk.yellow(this.config.timeout + 'ms')}`);
+    console.info(`  Parallel Processing: ${chalk.yellow(this.config.parallel.toString())}`);
 
-    console.log(chalk.green('\nCashApp Settings:'));
-    console.log(`  API Key: ${chalk.yellow(this.config.cashapp.apiKey ? '*** Set ***' : 'Not set')}`);
-    console.log(`  API Secret: ${chalk.yellow(this.config.cashapp.apiSecret ? '*** Set ***' : 'Not set')}`);
-    console.log(`  Sandbox Mode: ${chalk.yellow(this.config.cashapp.sandbox ? 'Enabled' : 'Disabled')}`);
-    console.log(`  Rate Limit: ${chalk.yellow(this.config.cashapp.rateLimit.requestsPerSecond + '/s')}`);
+    console.info(chalk.green('\nCashApp Settings:'));
+    console.info(`  API Key: ${chalk.yellow(this.config.cashapp.apiKey ? '*** Set ***' : 'Not set')}`);
+    console.info(`  API Secret: ${chalk.yellow(this.config.cashapp.apiSecret ? '*** Set ***' : 'Not set')}`);
+    console.info(`  Sandbox Mode: ${chalk.yellow(this.config.cashapp.sandbox ? 'Enabled' : 'Disabled')}`);
+    console.info(`  Rate Limit: ${chalk.yellow(this.config.cashapp.rateLimit.requestsPerSecond + '/s')}`);
 
-    console.log(chalk.green('\nOutput Settings:'));
-    console.log(`  Directory: ${chalk.yellow(this.config.output.directory)}`);
-    console.log(`  Timestamp: ${chalk.yellow(this.config.output.timestamp ? 'Enabled' : 'Disabled')}`);
-    console.log(`  Compression: ${chalk.yellow(this.config.output.compression ? 'Enabled' : 'Disabled')}`);
+    console.info(chalk.green('\nOutput Settings:'));
+    console.info(`  Directory: ${chalk.yellow(this.config.output.directory)}`);
+    console.info(`  Timestamp: ${chalk.yellow(this.config.output.timestamp ? 'Enabled' : 'Disabled')}`);
+    console.info(`  Compression: ${chalk.yellow(this.config.output.compression ? 'Enabled' : 'Disabled')}`);
 
-    console.log(chalk.green('\nMonitoring Settings:'));
-    console.log(`  Default Interval: ${chalk.yellow(this.config.monitoring.defaultInterval + 's')}`);
-    console.log(`  Risk Threshold: ${chalk.yellow(this.config.monitoring.alertThresholds.riskScore.toString())}`);
+    console.info(chalk.green('\nMonitoring Settings:'));
+    console.info(`  Default Interval: ${chalk.yellow(this.config.monitoring.defaultInterval + 's')}`);
+    console.info(`  Risk Threshold: ${chalk.yellow(this.config.monitoring.alertThresholds.riskScore.toString())}`);
 
-    console.log(chalk.green('\nAnalytics Settings:'));
-    console.log(`  Retention: ${chalk.yellow(this.config.analytics.retention + ' days')}`);
-    console.log(`  Aggregation: ${chalk.yellow(this.config.analytics.aggregation)}`);
+    console.info(chalk.green('\nAnalytics Settings:'));
+    console.info(`  Retention: ${chalk.yellow(this.config.analytics.retention + ' days')}`);
+    console.info(`  Aggregation: ${chalk.yellow(this.config.analytics.aggregation)}`);
 
-    console.log(chalk.gray(`\nConfiguration file: ${this.configPath}`));
+    console.info(chalk.gray(`\nConfiguration file: ${this.configPath}`));
   }
 
   /**
@@ -340,7 +340,7 @@ export class CLIConfigManager {
     if (!validation.valid) {
       empireLog.error('❌ Configuration validation failed:');
       validation.errors.forEach(error => {
-        console.log(`  • ${error}`);
+        console.info(`  • ${error}`);
       });
       return false;
     }

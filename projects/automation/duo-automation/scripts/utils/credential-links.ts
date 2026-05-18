@@ -454,21 +454,21 @@ class CredentialLinksManager {
     // Save markdown links
     const markdownContent = this.generateMarkdownLinks();
     writeFileSync('CREDENTIAL_LINKS.md', markdownContent);
-    console.log('✅ Created: CREDENTIAL_LINKS.md');
+    console.info('✅ Created: CREDENTIAL_LINKS.md');
 
     // Save HTML links
     const htmlContent = this.generateHtmlLinks();
     writeFileSync('dashboards/credentials/credential-links.html', htmlContent);
-    console.log('✅ Created: dashboards/credentials/credential-links.html');
+    console.info('✅ Created: dashboards/credentials/credential-links.html');
 
     // Save benchmark report
     const benchmarkContent = this.generateBenchmarkReport();
     writeFileSync('CREDENTIAL_BENCHMARK_REPORT.md', benchmarkContent);
-    console.log('✅ Created: CREDENTIAL_BENCHMARK_REPORT.md');
+    console.info('✅ Created: CREDENTIAL_BENCHMARK_REPORT.md');
 
-    console.log('\n🔗 All credential links generated successfully!');
-    console.log('📱 Open: dashboards/credentials/credential-links.html');
-    console.log('📊 View: CREDENTIAL_BENCHMARK_REPORT.md');
+    console.info('\n🔗 All credential links generated successfully!');
+    console.info('📱 Open: dashboards/credentials/credential-links.html');
+    console.info('📊 View: CREDENTIAL_BENCHMARK_REPORT.md');
   }
 }
 

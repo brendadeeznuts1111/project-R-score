@@ -17,7 +17,7 @@ describe('DNS Performance Tests', () => {
 
   test('Bun DNS API availability', () => {
     const stats = dns.getCacheStats();
-    console.log('DNS Cache Stats:', stats);
+    console.info('DNS Cache Stats:', stats);
 
     // Verify DNS stats structure
     expect(stats).toBeDefined();
@@ -42,7 +42,7 @@ describe('DNS Performance Tests', () => {
 
     // Get updated stats
     const stats = dns.getCacheStats();
-    console.log('Post-prefetch stats:', stats);
+    console.info('Post-prefetch stats:', stats);
 
     // Should have some DNS activity
     expect(stats.totalCount).toBeGreaterThanOrEqual(0);
@@ -50,7 +50,7 @@ describe('DNS Performance Tests', () => {
 
   test('Fire22Integration DNS stats', () => {
     const dnsStats = fire22.getDnsStats();
-    console.log('Fire22 DNS Stats:', dnsStats);
+    console.info('Fire22 DNS Stats:', dnsStats);
 
     // Verify Fire22 DNS stats structure
     expect(dnsStats).toBeDefined();
@@ -85,9 +85,9 @@ describe('DNS Performance Tests', () => {
     const avgTime = timings.reduce((a, b) => a + b, 0) / timings.length;
     const maxTime = Math.max(...timings);
 
-    console.log(`Average time: ${avgTime.toFixed(1)}ms`);
-    console.log(`Max time: ${maxTime}ms`);
-    console.log(`All timings: ${timings.join(', ')}ms`);
+    console.info(`Average time: ${avgTime.toFixed(1)}ms`);
+    console.info(`Max time: ${maxTime}ms`);
+    console.info(`All timings: ${timings.join(', ')}ms`);
 
     // Performance assertions
     expect(avgTime).toBeLessThan(50); // Should be very fast in demo mode
@@ -97,7 +97,7 @@ describe('DNS Performance Tests', () => {
 
   test('Environment configuration validation', () => {
     const config = fire22.getDebuggingConfig();
-    console.log('Debug config:', config);
+    console.info('Debug config:', config);
 
     // Verify configuration structure
     expect(config).toHaveProperty('verboseFetch');
@@ -128,7 +128,7 @@ describe('DNS Performance Tests', () => {
     const statsAfter = fire22.getDnsStats();
     const timeAfter = statsAfter.lastPrefetch;
 
-    console.log('DNS refresh test:', {
+    console.info('DNS refresh test:', {
       before: timeBefore,
       after: timeAfter,
       difference: timeAfter - timeBefore,
@@ -170,12 +170,12 @@ describe('DNS Performance Tests', () => {
     }
 
     const stats = fire22.getDnsStats();
-    console.log('Cache hit rate test stats:', stats);
+    console.info('Cache hit rate test stats:', stats);
 
     // Calculate hit rate
     const hitRate = stats.totalCount > 0 ? (stats.cacheHitsCompleted / stats.totalCount) * 100 : 0;
 
-    console.log(`Cache hit rate: ${hitRate.toFixed(1)}%`);
+    console.info(`Cache hit rate: ${hitRate.toFixed(1)}%`);
 
     // Hit rate should be a valid percentage
     expect(hitRate).toBeGreaterThanOrEqual(0);
@@ -197,7 +197,7 @@ describe('DNS Performance Tests', () => {
     expect(stats.databaseDomains.length).toBeGreaterThan(0);
     expect(stats.databaseDomains.length).toBeLessThan(20); // Sanity check
 
-    console.log('Database domains:', stats.databaseDomains);
+    console.info('Database domains:', stats.databaseDomains);
   });
 
   test('DNS error handling', async () => {
@@ -207,6 +207,6 @@ describe('DNS Performance Tests', () => {
     expect(typeof stats.errors).toBe('number');
     expect(stats.errors).toBeGreaterThanOrEqual(0);
 
-    console.log('DNS errors recorded:', stats.errors);
+    console.info('DNS errors recorded:', stats.errors);
   });
 });

@@ -12,40 +12,40 @@ import "./url-pattern-types.js";
 class OfficialURLPatternDemo {
   // Test the exact examples from the Bun documentation
   testOfficialExamples(): void {
-    console.log("🎯 Official Bun v1.3.4 URLPattern API Examples\n");
-    console.log("=".repeat(60));
+    console.info("🎯 Official Bun v1.3.4 URLPattern API Examples\n");
+    console.info("=".repeat(60));
 
     // Example 1: Match URLs with a user ID parameter
-    console.log("📋 Example 1: User ID Parameter Matching");
+    console.info("📋 Example 1: User ID Parameter Matching");
     const pattern = new URLPattern({ pathname: "/users/:id" });
 
-    console.log('Pattern: { pathname: "/users/:id" }');
-    console.log(
+    console.info('Pattern: { pathname: "/users/:id" }');
+    console.info(
       'pattern.test("https://example.com/users/123");',
       pattern.test("https://example.com/users/123")
     ); // true
-    console.log(
+    console.info(
       'pattern.test("https://example.com/posts/456");',
       pattern.test("https://example.com/posts/456")
     ); // false
 
     const result = pattern.exec("https://example.com/users/123");
-    console.log(
-      "console.log(result.pathname.groups.id);",
+    console.info(
+      "console.info(result.pathname.groups.id);",
       result?.pathname.groups.id
     ); // "123"
-    console.log("");
+    console.info("");
 
     // Example 2: Wildcard matching
-    console.log("📋 Example 2: Wildcard Matching");
+    console.info("📋 Example 2: Wildcard Matching");
     const filesPattern = new URLPattern({ pathname: "/files/*" });
     const match = filesPattern.exec("https://example.com/files/image.png");
-    console.log('Pattern: { pathname: "/files/*" }');
-    console.log(
-      "console.log(match.pathname.groups[0]);",
+    console.info('Pattern: { pathname: "/files/*" }');
+    console.info(
+      "console.info(match.pathname.groups[0]);",
       match?.pathname.groups[0]
     ); // "image.png"
-    console.log("");
+    console.info("");
 
     // Verify all implementation features
     this.verifyImplementationFeatures();
@@ -53,78 +53,78 @@ class OfficialURLPatternDemo {
 
   // Verify all features mentioned in the official documentation
   verifyImplementationFeatures(): void {
-    console.log("🔍 Implementation Features Verification\n");
+    console.info("🔍 Implementation Features Verification\n");
 
     const pattern = new URLPattern({ pathname: "/users/:id" });
 
     // 1. Constructor: Create patterns from strings or URLPatternInit dictionaries
-    console.log("✅ Constructor Support:");
-    console.log("   - From URLPatternInit:", pattern.constructor.name);
+    console.info("✅ Constructor Support:");
+    console.info("   - From URLPatternInit:", pattern.constructor.name);
     const stringPattern = new URLPattern({ pathname: "/users/:id" });
-    console.log(
+    console.info(
       "   - From object (string pattern):",
       stringPattern.constructor.name
     );
     const fullStringPattern = new URLPattern("https://example.com/users/:id");
-    console.log(
+    console.info(
       "   - From full string URL:",
       fullStringPattern.constructor.name
     );
-    console.log("");
+    console.info("");
 
     // 2. test(): Check if a URL matches the pattern (returns boolean)
-    console.log("✅ test() Method:");
-    console.log(
+    console.info("✅ test() Method:");
+    console.info(
       "   - Returns boolean:",
       typeof pattern.test("https://example.com/users/123")
     );
-    console.log(
+    console.info(
       "   - True for match:",
       pattern.test("https://example.com/users/123")
     );
-    console.log(
+    console.info(
       "   - False for non-match:",
       pattern.test("https://example.com/posts/456")
     );
-    console.log("");
+    console.info("");
 
     // 3. exec(): Extract matched groups from a URL (returns URLPatternResult or null)
-    console.log("✅ exec() Method:");
+    console.info("✅ exec() Method:");
     const execResult = pattern.exec("https://example.com/users/123");
-    console.log(
+    console.info(
       "   - Returns URLPatternResult or null:",
       execResult === null ? "null" : "URLPatternResult"
     );
-    console.log("   - Has pathname.groups:", execResult?.pathname.groups);
-    console.log("   - Extracted group:", execResult?.pathname.groups.id);
-    console.log("");
+    console.info("   - Has pathname.groups:", execResult?.pathname.groups);
+    console.info("   - Extracted group:", execResult?.pathname.groups.id);
+    console.info("");
 
     // 4. Pattern properties: protocol, username, password, hostname, port, pathname, search, hash
-    console.log("✅ Pattern Properties:");
+    console.info("✅ Pattern Properties:");
     const fullPattern = new URLPattern(
       "https://user:pass@example.com:8080/path?query=value#hash"
     );
-    console.log("   - protocol:", fullPattern.protocol);
-    console.log("   - username:", fullPattern.username);
-    console.log("   - password:", fullPattern.password);
-    console.log("   - hostname:", fullPattern.hostname);
-    console.log("   - port:", fullPattern.port);
-    console.log("   - pathname:", fullPattern.pathname);
-    console.log("   - search:", fullPattern.search);
-    console.log("   - hash:", fullPattern.hash);
-    console.log("");
+    console.info("   - protocol:", fullPattern.protocol);
+    console.info("   - username:", fullPattern.username);
+    console.info("   - password:", fullPattern.password);
+    console.info("   - hostname:", fullPattern.hostname);
+    console.info("   - port:", fullPattern.port);
+    console.info("   - pathname:", fullPattern.pathname);
+    console.info("   - search:", fullPattern.search);
+    console.info("   - hash:", fullPattern.hash);
+    console.info("");
 
     // 5. hasRegExpGroups: Detect if the pattern uses custom regular expressions
-    console.log("✅ hasRegExpGroups Property:");
-    console.log("   - Simple pattern:", pattern.hasRegExpGroups);
+    console.info("✅ hasRegExpGroups Property:");
+    console.info("   - Simple pattern:", pattern.hasRegExpGroups);
     const regexPattern = new URLPattern({ pathname: "/files/:name(.*)" });
-    console.log("   - Regex pattern:", regexPattern.hasRegExpGroups);
-    console.log("");
+    console.info("   - Regex pattern:", regexPattern.hasRegExpGroups);
+    console.info("");
   }
 
   // Test comprehensive pattern matching scenarios
   testComprehensivePatterns(): void {
-    console.log("🌐 Comprehensive Pattern Testing\n");
+    console.info("🌐 Comprehensive Pattern Testing\n");
 
     const testCases = [
       {
@@ -187,37 +187,37 @@ class OfficialURLPatternDemo {
     ];
 
     testCases.forEach((testCase) => {
-      console.log(`📋 ${testCase.name}:`);
+      console.info(`📋 ${testCase.name}:`);
       const urlPattern = new URLPattern(testCase.pattern);
 
       testCase.tests.forEach((test) => {
         const result = urlPattern.exec(test.url);
         const match = urlPattern.test(test.url);
 
-        console.log(`   ${test.url}`);
-        console.log(`     test(): ${match}`);
-        console.log(`     exec(): ${result ? "URLPatternResult" : "null"}`);
+        console.info(`   ${test.url}`);
+        console.info(`     test(): ${match}`);
+        console.info(`     exec(): ${result ? "URLPatternResult" : "null"}`);
 
         if (result && test.expected) {
-          console.log(`     groups: ${JSON.stringify(result.pathname.groups)}`);
-          console.log(`     expected: ${JSON.stringify(test.expected)}`);
+          console.info(`     groups: ${JSON.stringify(result.pathname.groups)}`);
+          console.info(`     expected: ${JSON.stringify(test.expected)}`);
           const matches =
             JSON.stringify(result.pathname.groups) ===
             JSON.stringify(test.expected);
-          console.log(`     ✅ ${matches ? "PASS" : "FAIL"}`);
+          console.info(`     ✅ ${matches ? "PASS" : "FAIL"}`);
         } else if (test.expected === null) {
-          console.log(`     ✅ PASS (correctly null)`);
+          console.info(`     ✅ PASS (correctly null)`);
         } else {
-          console.log(`     ❌ FAIL (expected result)`);
+          console.info(`     ❌ FAIL (expected result)`);
         }
-        console.log("");
+        console.info("");
       });
     });
   }
 
   // Performance testing
   testPerformance(): void {
-    console.log("⚡ Performance Testing\n");
+    console.info("⚡ Performance Testing\n");
 
     const pattern = new URLPattern({ pathname: "/users/:id" });
     const testUrl = "https://example.com/users/123456";
@@ -237,31 +237,31 @@ class OfficialURLPatternDemo {
     }
     const execTime = performance.now() - execStart;
 
-    console.log(
+    console.info(
       `🏃‍♂️ Performance Test (${iterations.toLocaleString()} iterations):`
     );
-    console.log(
+    console.info(
       `   test() method: ${testTime.toFixed(2)}ms (${((testTime / iterations) * 1000).toFixed(4)}μs per call)`
     );
-    console.log(
+    console.info(
       `   exec() method: ${execTime.toFixed(2)}ms (${((execTime / iterations) * 1000).toFixed(4)}μs per call)`
     );
-    console.log(
+    console.info(
       `   test() calls/sec: ${(iterations / (testTime / 1000)).toLocaleString()}`
     );
-    console.log(
+    console.info(
       `   exec() calls/sec: ${(iterations / (execTime / 1000)).toLocaleString()}`
     );
-    console.log("");
+    console.info("");
   }
 
   // Web Platform Tests compliance
   testWebPlatformCompliance(): void {
-    console.log("🌍 Web Platform Tests Compliance\n");
+    console.info("🌍 Web Platform Tests Compliance\n");
 
-    console.log("✅ 408 Web Platform Tests pass for this implementation");
-    console.log("   (Thanks to the WebKit team for implementing!)");
-    console.log("");
+    console.info("✅ 408 Web Platform Tests pass for this implementation");
+    console.info("   (Thanks to the WebKit team for implementing!)");
+    console.info("");
 
     // Test some edge cases that would be covered by WPT
     const edgeCases = [
@@ -283,51 +283,51 @@ class OfficialURLPatternDemo {
       },
     ];
 
-    console.log("🔍 Edge Case Testing:");
+    console.info("🔍 Edge Case Testing:");
     edgeCases.forEach(({ pattern, url, description }) => {
       try {
         const urlPattern = new URLPattern({ pathname: pattern });
         const match = urlPattern.test(url);
         const exec = urlPattern.exec(url);
 
-        console.log(`   ${description}:`);
-        console.log(`     Pattern: ${pattern}`);
-        console.log(`     URL: ${url}`);
-        console.log(`     Match: ${match}`);
-        console.log(`     Groups: ${JSON.stringify(exec?.pathname.groups)}`);
-        console.log("");
+        console.info(`   ${description}:`);
+        console.info(`     Pattern: ${pattern}`);
+        console.info(`     URL: ${url}`);
+        console.info(`     Match: ${match}`);
+        console.info(`     Groups: ${JSON.stringify(exec?.pathname.groups)}`);
+        console.info("");
       } catch (error) {
-        console.log(`   ${description}: Error - ${(error as Error).message}`);
-        console.log("");
+        console.info(`   ${description}: Error - ${(error as Error).message}`);
+        console.info("");
       }
     });
   }
 
   // Run all verification tests
   runAll(): void {
-    console.log("🎯 Official Bun v1.3.4 URLPattern API Verification\n");
-    console.log("📖 Based on: https://bun.com/blog/bun-v1.3.4#urlpattern-api");
-    console.log("=".repeat(80));
-    console.log("");
+    console.info("🎯 Official Bun v1.3.4 URLPattern API Verification\n");
+    console.info("📖 Based on: https://bun.com/blog/bun-v1.3.4#urlpattern-api");
+    console.info("=".repeat(80));
+    console.info("");
 
     this.testOfficialExamples();
-    console.log("=".repeat(60));
-    console.log("");
+    console.info("=".repeat(60));
+    console.info("");
 
     this.testComprehensivePatterns();
-    console.log("=".repeat(60));
-    console.log("");
+    console.info("=".repeat(60));
+    console.info("");
 
     this.testPerformance();
-    console.log("=".repeat(60));
-    console.log("");
+    console.info("=".repeat(60));
+    console.info("");
 
     this.testWebPlatformCompliance();
-    console.log("=".repeat(60));
-    console.log("");
+    console.info("=".repeat(60));
+    console.info("");
 
-    console.log("✅ Verification Complete!");
-    console.log(
+    console.info("✅ Verification Complete!");
+    console.info(
       "🎉 Our implementation fully matches the official Bun URLPattern API specification!"
     );
   }

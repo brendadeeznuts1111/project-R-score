@@ -25,9 +25,9 @@ const DOMAINS = [
 let requestCount = 0;
 let dnsLookupCount = 0;
 
-console.log("🚀 DNS Demo App starting on http://localhost:3003");
-console.log("📊 Making repeated DNS lookups to demonstrate caching");
-console.log("🌐 Run 'bun bun-dns-live-stats.ts' in another terminal to monitor\n");
+console.info("🚀 DNS Demo App starting on http://localhost:3003");
+console.info("📊 Making repeated DNS lookups to demonstrate caching");
+console.info("🌐 Run 'bun bun-dns-live-stats.ts' in another terminal to monitor\n");
 
 serve({
   port: 3003,
@@ -94,7 +94,7 @@ serve({
         });
 
         await Promise.all(promises);
-        console.log(`[${new Date().toLocaleTimeString()}] Triggered DNS lookups (${count}/15)`);
+        console.info(`[${new Date().toLocaleTimeString()}] Triggered DNS lookups (${count}/15)`);
       }, 2000);
 
       return Response.json({
@@ -128,11 +128,11 @@ Watch the DNS cache dashboard update in real-time!
   },
 });
 
-console.log("📝 Endpoints:");
-console.log("   GET /health  - Check app status");
-console.log("   GET /trigger - Make one round of DNS lookups");
-console.log("   GET /auto    - Auto-trigger lookups every 2s for 30s");
-console.log("\n🧪 Test with:");
-console.log("   curl http://localhost:3003/trigger");
-console.log("   curl http://localhost:3003/auto\n");
+console.info("📝 Endpoints:");
+console.info("   GET /health  - Check app status");
+console.info("   GET /trigger - Make one round of DNS lookups");
+console.info("   GET /auto    - Auto-trigger lookups every 2s for 30s");
+console.info("\n🧪 Test with:");
+console.info("   curl http://localhost:3003/trigger");
+console.info("   curl http://localhost:3003/auto\n");
 

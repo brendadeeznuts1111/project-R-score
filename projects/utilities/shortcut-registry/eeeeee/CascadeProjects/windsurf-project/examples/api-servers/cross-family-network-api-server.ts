@@ -118,19 +118,19 @@ if (feature("PREMIUM")) {
     }
   });
 
-  console.log(`🕸️ Cross-Family Guardian Networks API Server running on port ${PORT}`);
-  console.log('🔗 Available endpoints:');
-  console.log('  POST /api/family/network/initialize - Initialize teen network');
-  console.log('  GET  /api/family/network/:id - Get network data');
-  console.log('  POST /api/family/cross-link - Add cross-family link');
-  console.log('  POST /api/family/failover - Activate distributed failover');
-  console.log('  GET  /api/family/dashboard/:id - Get shared dashboard');
-  console.log('  GET  /api/family/analytics/:id - Get network analytics');
-  console.log('  GET  /api/family/visualization/:id - Get network visualization');
-  console.log('  POST /api/family/guardians - Add guardian');
-  console.log('  PUT  /api/family/guardians/:id - Update guardian');
-  console.log('  DELETE /api/family/guardians/:id - Remove guardian');
-  console.log('  POST /api/family/broadcast - Broadcast network alert');
+  console.info(`🕸️ Cross-Family Guardian Networks API Server running on port ${PORT}`);
+  console.info('🔗 Available endpoints:');
+  console.info('  POST /api/family/network/initialize - Initialize teen network');
+  console.info('  GET  /api/family/network/:id - Get network data');
+  console.info('  POST /api/family/cross-link - Add cross-family link');
+  console.info('  POST /api/family/failover - Activate distributed failover');
+  console.info('  GET  /api/family/dashboard/:id - Get shared dashboard');
+  console.info('  GET  /api/family/analytics/:id - Get network analytics');
+  console.info('  GET  /api/family/visualization/:id - Get network visualization');
+  console.info('  POST /api/family/guardians - Add guardian');
+  console.info('  PUT  /api/family/guardians/:id - Update guardian');
+  console.info('  DELETE /api/family/guardians/:id - Remove guardian');
+  console.info('  POST /api/family/broadcast - Broadcast network alert');
 }
 
 // Initialize Teen Network
@@ -346,7 +346,7 @@ async function handleUpdateGuardian(guardianId: string, req: Request): Promise<R
     }
     
     // Mock update - in production would update actual guardian
-    console.log(`Updating guardian ${guardianId} in network ${teenId}:`, updates);
+    console.info(`Updating guardian ${guardianId} in network ${teenId}:`, updates);
     
     return Response.json({
       success: true,
@@ -373,7 +373,7 @@ async function handleRemoveGuardian(guardianId: string, req: Request): Promise<R
     }
     
     // Mock removal - in production would remove actual guardian
-    console.log(`Removing guardian ${guardianId} from network ${teenId}`);
+    console.info(`Removing guardian ${guardianId} from network ${teenId}`);
     
     return Response.json({
       success: true,
@@ -400,7 +400,7 @@ async function handleUpdateNetworkSettings(teenId: string, req: Request): Promis
     }
     
     // Mock settings update - in production would update actual network settings
-    console.log(`Updating network settings for ${teenId}:`, settings);
+    console.info(`Updating network settings for ${teenId}:`, settings);
     
     return Response.json({
       success: true,
@@ -545,7 +545,7 @@ async function handleBroadcastNetworkAlert(req: Request): Promise<Response> {
     }
     
     // Mock broadcast - in production would send WebSocket notifications
-    console.log(`Broadcasting network alert for ${teenId}:`, alertData);
+    console.info(`Broadcasting network alert for ${teenId}:`, alertData);
     
     return Response.json({
       success: true,

@@ -126,30 +126,30 @@ class SafeScraper {
 
 // ==================== MAIN ====================
 async function main() {
-	console.log('🛡️  Safe Scraper - Timeout Protection\n');
+	console.info('🛡️  Safe Scraper - Timeout Protection\n');
 	
 	const scraper = new SafeScraper();
 	
 	// Test 1: Successful scrape
-	console.log('Test 1: Successful scrape');
+	console.info('Test 1: Successful scrape');
 	const result1 = await scraper.scrape('https://httpbin.org/json', { timeoutMs: 3000 });
-	console.log(`   Success: ${result1.success}`);
-	console.log(`   Duration: ${result1.duration.toFixed(2)}ms`);
-	console.log(`   Timed out: ${result1.timedOut}`);
+	console.info(`   Success: ${result1.success}`);
+	console.info(`   Duration: ${result1.duration.toFixed(2)}ms`);
+	console.info(`   Timed out: ${result1.timedOut}`);
 	
 	// Test 2: Timeout protection
-	console.log('\nTest 2: Timeout protection (short timeout)');
+	console.info('\nTest 2: Timeout protection (short timeout)');
 	const result2 = await scraper.scrape('https://httpbin.org/delay/10', { 
 		timeoutMs: 1000,
 		retries: 2
 	});
-	console.log(`   Success: ${result2.success}`);
-	console.log(`   Duration: ${result2.duration.toFixed(2)}ms`);
-	console.log(`   Timed out: ${result2.timedOut}`);
-	console.log(`   Error: ${result2.error ?? 'none'}`);
+	console.info(`   Success: ${result2.success}`);
+	console.info(`   Duration: ${result2.duration.toFixed(2)}ms`);
+	console.info(`   Timed out: ${result2.timedOut}`);
+	console.info(`   Error: ${result2.error ?? 'none'}`);
 	
 	// Test 3: Batch scraping
-	console.log('\nTest 3: Batch scraping (5 URLs)');
+	console.info('\nTest 3: Batch scraping (5 URLs)');
 	const urls = [
 		'https://httpbin.org/json',
 		'https://httpbin.org/uuid',
@@ -168,13 +168,13 @@ async function main() {
 	const successful = batchResults.filter(r => r.success).length;
 	const timedOut = batchResults.filter(r => r.timedOut).length;
 	
-	console.log(`   Total: ${batchResults.length}`);
-	console.log(`   Successful: ${successful}`);
-	console.log(`   Timed out: ${timedOut}`);
-	console.log(`   Duration: ${batchDuration.toFixed(2)}ms`);
+	console.info(`   Total: ${batchResults.length}`);
+	console.info(`   Successful: ${successful}`);
+	console.info(`   Timed out: ${timedOut}`);
+	console.info(`   Duration: ${batchDuration.toFixed(2)}ms`);
 	
-	console.log('\n✅ Safe scraper tests complete!');
-	console.log('🛡️  0 hangs guaranteed with timeout protection!');
+	console.info('\n✅ Safe scraper tests complete!');
+	console.info('🛡️  0 hangs guaranteed with timeout protection!');
 }
 
 if (import.meta.main) {

@@ -20,12 +20,12 @@
 
 import { inspect } from "bun";
 
-console.log('🔧 Bun Utilities Complete Examples\n');
+console.info('🔧 Bun Utilities Complete Examples\n');
 
 // ============================================================================
 // 1. Bun.inspect.table() - Format tabular data
 // ============================================================================
-console.log('=== 1. Bun.inspect.table() ===\n');
+console.info('=== 1. Bun.inspect.table() ===\n');
 
 const tableData = [
   { name: 'Alice', age: 30, role: 'Developer' },
@@ -33,19 +33,19 @@ const tableData = [
   { name: 'Charlie', age: 35, role: 'Manager' },
 ];
 
-console.log('Full table:');
-console.log(inspect.table(tableData));
+console.info('Full table:');
+console.info(inspect.table(tableData));
 
-console.log('\nSelected columns (name, role):');
-console.log(inspect.table(tableData, ['name', 'role']));
+console.info('\nSelected columns (name, role):');
+console.info(inspect.table(tableData, ['name', 'role']));
 
-console.log('\nTable with colors:');
-console.log(inspect.table(tableData, { colors: true }));
+console.info('\nTable with colors:');
+console.info(inspect.table(tableData, { colors: true }));
 
 // ============================================================================
 // 2. Bun.inspect.custom - Custom object representation
 // ============================================================================
-console.log('\n=== 2. Bun.inspect.custom ===\n');
+console.info('\n=== 2. Bun.inspect.custom ===\n');
 
 class User {
   constructor(
@@ -61,20 +61,20 @@ class User {
 }
 
 const user = new User('Alice', 'alice@example.com', true);
-console.log('Custom inspect:');
-console.log(user);
+console.info('Custom inspect:');
+console.info(user);
 
 // ============================================================================
 // 3. Bun.deepEquals() - Deep equality comparison
 // ============================================================================
-console.log('\n=== 3. Bun.deepEquals() ===\n');
+console.info('\n=== 3. Bun.deepEquals() ===\n');
 
 // Basic comparisons
-console.log('Basic comparisons:');
-console.log(`  [1, 2, 3] === [1, 2, 3]: ${Bun.deepEquals([1, 2, 3], [1, 2, 3])}`);
-console.log(`  [1, 2, 3] === [1, 2, 4]: ${Bun.deepEquals([1, 2, 3], [1, 2, 4])}`);
-console.log(`  {a: 1} === {a: 1}: ${Bun.deepEquals({ a: 1 }, { a: 1 })}`);
-console.log(`  {a: 1} === {b: 1}: ${Bun.deepEquals({ a: 1 }, { b: 1 })}`);
+console.info('Basic comparisons:');
+console.info(`  [1, 2, 3] === [1, 2, 3]: ${Bun.deepEquals([1, 2, 3], [1, 2, 3])}`);
+console.info(`  [1, 2, 3] === [1, 2, 4]: ${Bun.deepEquals([1, 2, 3], [1, 2, 4])}`);
+console.info(`  {a: 1} === {a: 1}: ${Bun.deepEquals({ a: 1 }, { a: 1 })}`);
+console.info(`  {a: 1} === {b: 1}: ${Bun.deepEquals({ a: 1 }, { b: 1 })}`);
 
 // Nested objects
 const obj1 = {
@@ -92,38 +92,38 @@ const obj3 = {
   tags: ['developer', 'typescript'],
 };
 
-console.log('\nNested objects:');
-console.log(`  obj1 === obj2: ${Bun.deepEquals(obj1, obj2)}`);
-console.log(`  obj1 === obj3: ${Bun.deepEquals(obj1, obj3)}`);
+console.info('\nNested objects:');
+console.info(`  obj1 === obj2: ${Bun.deepEquals(obj1, obj2)}`);
+console.info(`  obj1 === obj3: ${Bun.deepEquals(obj1, obj3)}`);
 
 // Arrays
-console.log('\nArrays:');
-console.log(`  [1, [2, [3]]] === [1, [2, [3]]]: ${Bun.deepEquals([1, [2, [3]]], [1, [2, [3]]])}`);
-console.log(`  [1, [2, [3]]] === [1, [2, [4]]]: ${Bun.deepEquals([1, [2, [3]]], [1, [2, [4]]])}`);
+console.info('\nArrays:');
+console.info(`  [1, [2, [3]]] === [1, [2, [3]]]: ${Bun.deepEquals([1, [2, [3]]], [1, [2, [3]]])}`);
+console.info(`  [1, [2, [3]]] === [1, [2, [4]]]: ${Bun.deepEquals([1, [2, [3]]], [1, [2, [4]]])}`);
 
 // Strict mode
-console.log('\nStrict mode:');
-console.log(`  '42' === 42 (loose): ${Bun.deepEquals('42', 42, false)}`);
-console.log(`  '42' === 42 (strict): ${Bun.deepEquals('42', 42, true)}`);
+console.info('\nStrict mode:');
+console.info(`  '42' === 42 (loose): ${Bun.deepEquals('42', 42, false)}`);
+console.info(`  '42' === 42 (strict): ${Bun.deepEquals('42', 42, true)}`);
 
 // ============================================================================
 // 4. Bun.escapeHTML() - Escape HTML entities
 // ============================================================================
-console.log('\n=== 4. Bun.escapeHTML() ===\n');
+console.info('\n=== 4. Bun.escapeHTML() ===\n');
 
 const unsafeHTML = '<script>alert("XSS")</script>';
 const userInput = 'Hello & <world> & "quotes"';
 const htmlContent = `<div onclick="alert('xss')">Click me</div>`;
 
-console.log('HTML escaping:');
-console.log(`  Input: ${unsafeHTML}`);
-console.log(`  Escaped: ${Bun.escapeHTML(unsafeHTML)}`);
+console.info('HTML escaping:');
+console.info(`  Input: ${unsafeHTML}`);
+console.info(`  Escaped: ${Bun.escapeHTML(unsafeHTML)}`);
 
-console.log(`\n  Input: ${userInput}`);
-console.log(`  Escaped: ${Bun.escapeHTML(userInput)}`);
+console.info(`\n  Input: ${userInput}`);
+console.info(`  Escaped: ${Bun.escapeHTML(userInput)}`);
 
-console.log(`\n  Input: ${htmlContent}`);
-console.log(`  Escaped: ${Bun.escapeHTML(htmlContent)}`);
+console.info(`\n  Input: ${htmlContent}`);
+console.info(`  Escaped: ${Bun.escapeHTML(htmlContent)}`);
 
 // Safe HTML generation example
 function safeHTML(template: string, ...values: any[]): string {
@@ -132,16 +132,16 @@ function safeHTML(template: string, ...values: any[]): string {
   });
 }
 
-console.log('\nSafe HTML template:');
+console.info('\nSafe HTML template:');
 const name = '<script>alert("xss")</script>';
 const message = 'Hello & welcome!';
 const safeOutput = safeHTML('<div>Hello, {{0}}! {{1}}</div>', name, message);
-console.log(`  Safe output: ${safeOutput}`);
+console.info(`  Safe output: ${safeOutput}`);
 
 // ============================================================================
 // 5. Bun.stringWidth() - Accurate Unicode width calculation
 // ============================================================================
-console.log('\n=== 5. Bun.stringWidth() ===\n');
+console.info('\n=== 5. Bun.stringWidth() ===\n');
 
 const testStrings = [
   { label: 'ASCII', text: 'Hello', width: 5 },
@@ -154,15 +154,15 @@ const testStrings = [
   { label: 'ANSI colors', text: '\x1b[32mGreen\x1b[0m', width: 5 },
 ];
 
-console.log('String width calculation:');
+console.info('String width calculation:');
 for (const { label, text, width } of testStrings) {
   const calculated = Bun.stringWidth(text);
   const match = calculated === width ? '✅' : '❌';
-  console.log(`  ${match} ${label.padEnd(12)}: "${text}" → ${calculated} (expected: ${width})`);
+  console.info(`  ${match} ${label.padEnd(12)}: "${text}" → ${calculated} (expected: ${width})`);
 }
 
 // Table alignment example
-console.log('\nTable alignment with Unicode:');
+console.info('\nTable alignment with Unicode:');
 const rows = [
   { country: '🇺🇸 USA', status: '✅ Active', score: 95 },
   { country: '🇬🇧 UK', status: '✅ Active', score: 88 },
@@ -173,22 +173,22 @@ const rows = [
 const countryWidth = Math.max(...rows.map(r => Bun.stringWidth(r.country)));
 const statusWidth = Math.max(...rows.map(r => Bun.stringWidth(r.status)));
 
-console.log('┌' + '─'.repeat(countryWidth + 2) + '┬' + '─'.repeat(statusWidth + 2) + '┬───┐');
-console.log('│ ' + 'Country'.padEnd(countryWidth) + ' │ ' + 'Status'.padEnd(statusWidth) + ' │ Score │');
-console.log('├' + '─'.repeat(countryWidth + 2) + '┼' + '─'.repeat(statusWidth + 2) + '┼───┤');
+console.info('┌' + '─'.repeat(countryWidth + 2) + '┬' + '─'.repeat(statusWidth + 2) + '┬───┐');
+console.info('│ ' + 'Country'.padEnd(countryWidth) + ' │ ' + 'Status'.padEnd(statusWidth) + ' │ Score │');
+console.info('├' + '─'.repeat(countryWidth + 2) + '┼' + '─'.repeat(statusWidth + 2) + '┼───┤');
 
 for (const row of rows) {
   const countryPadded = row.country + ' '.repeat(countryWidth - Bun.stringWidth(row.country));
   const statusPadded = row.status + ' '.repeat(statusWidth - Bun.stringWidth(row.status));
-  console.log(`│ ${countryPadded} │ ${statusPadded} │ ${row.score.toString().padStart(5)} │`);
+  console.info(`│ ${countryPadded} │ ${statusPadded} │ ${row.score.toString().padStart(5)} │`);
 }
 
-console.log('└' + '─'.repeat(countryWidth + 2) + '┴' + '─'.repeat(statusWidth + 2) + '┴───┘');
+console.info('└' + '─'.repeat(countryWidth + 2) + '┴' + '─'.repeat(statusWidth + 2) + '┴───┘');
 
 // ============================================================================
 // Combined Example: All utilities working together
 // ============================================================================
-console.log('\n=== Combined Example ===\n');
+console.info('\n=== Combined Example ===\n');
 
 class SafeUser {
   constructor(
@@ -224,11 +224,11 @@ class SafeUser {
 const user1 = new SafeUser('Alice <script>', 'alice@example.com', 'Hello & welcome!');
 const user2 = new SafeUser('Alice <script>', 'alice@example.com', 'Different bio');
 
-console.log('SafeUser with all utilities:');
-console.log(user1);
-console.log('\nSafe HTML:');
-console.log(user1.toSafeHTML());
-console.log(`\nuser1.equals(user2): ${user1.equals(user2)}`);
+console.info('SafeUser with all utilities:');
+console.info(user1);
+console.info('\nSafe HTML:');
+console.info(user1.toSafeHTML());
+console.info(`\nuser1.equals(user2): ${user1.equals(user2)}`);
 
-console.log('\n✅ All Bun utilities examples completed!');
+console.info('\n✅ All Bun utilities examples completed!');
 

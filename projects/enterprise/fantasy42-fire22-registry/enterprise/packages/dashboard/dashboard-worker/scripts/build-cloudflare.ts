@@ -25,8 +25,8 @@ export class CloudflareBuildSystem {
    * Build for Cloudflare Workers
    */
   async buildWorker(options: CloudflareOptions = {}): Promise<void> {
-    console.log('☁️  Building for Cloudflare Workers');
-    console.log('='.repeat(50));
+    console.info('☁️  Building for Cloudflare Workers');
+    console.info('='.repeat(50));
 
     const env = options.environment || 'development';
 
@@ -35,41 +35,41 @@ export class CloudflareBuildSystem {
       mkdirSync(this.distDir, { recursive: true });
     }
 
-    console.log(`\n📦 Environment: ${env}`);
+    console.info(`\n📦 Environment: ${env}`);
 
     // Build the worker bundle
     if (options.minify) {
-      console.log('🔨 Building minified worker...');
+      console.info('🔨 Building minified worker...');
       await $`bun build ./src/worker.ts --target=browser --outfile=${this.distDir}/worker.js --minify`;
     } else {
-      console.log('🔨 Building worker...');
+      console.info('🔨 Building worker...');
       await $`bun build ./src/worker.ts --target=browser --outfile=${this.distDir}/worker.js`;
     }
 
     // Get build size
     const stats = await Bun.file(join(this.distDir, 'worker.js')).size;
     const sizeKB = (stats / 1024).toFixed(2);
-    console.log(`   ✅ Built: ${sizeKB}KB`);
+    console.info(`   ✅ Built: ${sizeKB}KB`);
   }
 
   /**
    * Deploy to Cloudflare
    */
   async deploy(options: CloudflareOptions = {}): Promise<void> {
-    console.log('🚀 Deploying to Cloudflare Workers');
-    console.log('='.repeat(50));
+    console.info('🚀 Deploying to Cloudflare Workers');
+    console.info('='.repeat(50));
 
     const env = options.environment || 'development';
 
     if (options.dryRun) {
-      console.log('🔍 DRY RUN - Would deploy with:');
-      console.log(`   Environment: ${env}`);
-      console.log(`   Command: wrangler deploy${env !== 'development' ? ` --env ${env}` : ''}`);
+      console.info('🔍 DRY RUN - Would deploy with:');
+      console.info(`   Environment: ${env}`);
+      console.info(`   Command: wrangler deploy${env !== 'development' ? ` --env ${env}` : ''}`);
       return;
     }
 
     // Deploy based on environment
-    console.log(`\n📦 Deploying to ${env}...`);
+    console.info(`\n📦 Deploying to ${env}...`);
 
     try {
       if (env === 'development') {
@@ -78,7 +78,7 @@ export class CloudflareBuildSystem {
         await $`wrangler deploy --env ${env}`;
       }
 
-      console.log('✅ Deployment successful!');
+      console.info('✅ Deployment successful!');
 
       // Get deployment URL
       const workerName = 'dashboard-worker';
@@ -88,14 +88,14 @@ export class CloudflareBuildSystem {
           ? `https://${workerName}.${accountSubdomain}.workers.dev`
           : `https://${workerName}-${env}.${accountSubdomain}.workers.dev`;
 
-      console.log(`\n🌐 Deployed to: ${url}`);
+      console.info(`\n🌐 Deployed to: ${url}`);
 
       // Test the deployment
-      console.log('\n🧪 Testing deployment...');
+      console.info('\n🧪 Testing deployment...');
       const response = await fetch(url);
       const data = await response.json();
-      console.log('   Status:', data.status);
-      console.log('   Version:', data.version);
+      console.info('   Status:', data.status);
+      console.info('   Version:', data.version);
     } catch (error) {
       console.error('❌ Deployment failed:', error);
       throw error;
@@ -106,11 +106,11 @@ export class CloudflareBuildSystem {
    * Run local development server
    */
   async runLocal(port: number = 8787): Promise<void> {
-    console.log('🖥️  Starting Local Development Server');
-    console.log('='.repeat(50));
+    console.info('🖥️  Starting Local Development Server');
+    console.info('='.repeat(50));
 
-    console.log(`\n📦 Port: ${port}`);
-    console.log('   Press Ctrl+C to stop\n');
+    console.info(`\n📦 Port: ${port}`);
+    console.info('   Press Ctrl+C to stop\n');
 
     await $`wrangler dev --port ${port} --local`;
   }
@@ -119,21 +119,21 @@ export class CloudflareBuildSystem {
    * Create D1 database tables
    */
   async setupDatabase(): Promise<void> {
-    console.log('🗄️  Setting up D1 Database');
-    console.log('='.repeat(50));
+    console.info('🗄️  Setting up D1 Database');
+    console.info('='.repeat(50));
 
     const schemaFile = join(process.cwd(), 'schema.sql');
 
     if (!existsSync(schemaFile)) {
-      console.log('⚠️  No schema.sql file found');
+      console.info('⚠️  No schema.sql file found');
       return;
     }
 
-    console.log('\n📦 Applying database schema...');
+    console.info('\n📦 Applying database schema...');
 
     try {
       await $`wrangler d1 execute fire22-dashboard --file=${schemaFile}`;
-      console.log('✅ Database schema applied');
+      console.info('✅ Database schema applied');
     } catch (error) {
       console.error('❌ Database setup failed:', error);
     }
@@ -143,44 +143,44 @@ export class CloudflareBuildSystem {
    * Update secrets
    */
   async updateSecrets(secrets: Record<string, string>): Promise<void> {
-    console.log('🔐 Updating Cloudflare Secrets');
-    console.log('='.repeat(50));
+    console.info('🔐 Updating Cloudflare Secrets');
+    console.info('='.repeat(50));
 
     for (const [key, value] of Object.entries(secrets)) {
-      console.log(`\n🔑 Setting ${key}...`);
+      console.info(`\n🔑 Setting ${key}...`);
       await $`echo ${value} | wrangler secret put ${key}`;
     }
 
-    console.log('\n✅ All secrets updated');
+    console.info('\n✅ All secrets updated');
   }
 
   /**
    * Full build and deploy pipeline
    */
   async pipeline(options: CloudflareOptions = {}): Promise<void> {
-    console.log('🔄 Full Cloudflare Pipeline');
-    console.log('='.repeat(50));
+    console.info('🔄 Full Cloudflare Pipeline');
+    console.info('='.repeat(50));
 
     // 1. Build
-    console.log('\n1️⃣  Building worker...');
+    console.info('\n1️⃣  Building worker...');
     await this.buildWorker(options);
 
     // 2. Test locally (optional)
     if (options.local) {
-      console.log('\n2️⃣  Testing locally...');
+      console.info('\n2️⃣  Testing locally...');
       // This would run in background normally
-      console.log('   Skipping local test (would block)');
+      console.info('   Skipping local test (would block)');
     }
 
     // 3. Deploy
-    console.log('\n3️⃣  Deploying...');
+    console.info('\n3️⃣  Deploying...');
     await this.deploy(options);
 
     // 4. Verify
-    console.log('\n4️⃣  Verifying deployment...');
+    console.info('\n4️⃣  Verifying deployment...');
     await this.verifyDeployment();
 
-    console.log('\n✅ Pipeline complete!');
+    console.info('\n✅ Pipeline complete!');
   }
 
   /**
@@ -193,11 +193,11 @@ export class CloudflareBuildSystem {
       const response = await fetch(url);
       const data = await response.json();
 
-      console.log('📊 Deployment Status:');
-      console.log(`   ✅ Status: ${data.status}`);
-      console.log(`   📦 Version: ${data.version}`);
-      console.log(`   🌍 Environment: ${data.environment}`);
-      console.log(`   🕐 Timestamp: ${data.timestamp}`);
+      console.info('📊 Deployment Status:');
+      console.info(`   ✅ Status: ${data.status}`);
+      console.info(`   📦 Version: ${data.version}`);
+      console.info(`   🌍 Environment: ${data.environment}`);
+      console.info(`   🕐 Timestamp: ${data.timestamp}`);
     } catch (error) {
       console.error('❌ Verification failed:', error);
     }
@@ -207,27 +207,27 @@ export class CloudflareBuildSystem {
    * Show Cloudflare info
    */
   async showInfo(): Promise<void> {
-    console.log('ℹ️  Cloudflare Workers Information');
-    console.log('='.repeat(50));
+    console.info('ℹ️  Cloudflare Workers Information');
+    console.info('='.repeat(50));
 
     // Account info
-    console.log('\n👤 Account:');
+    console.info('\n👤 Account:');
     await $`wrangler whoami`;
 
     // Database info
-    console.log('\n🗄️  Databases:');
+    console.info('\n🗄️  Databases:');
     await $`wrangler d1 list`;
 
     // KV namespaces
-    console.log('\n📦 KV Namespaces:');
+    console.info('\n📦 KV Namespaces:');
     await $`wrangler kv:namespace list`;
 
     // Deployments
-    console.log('\n🚀 Recent Deployments:');
+    console.info('\n🚀 Recent Deployments:');
     try {
       await $`wrangler deployments list --limit 5`;
     } catch {
-      console.log('   No recent deployments or unable to fetch');
+      console.info('   No recent deployments or unable to fetch');
     }
   }
 }
@@ -279,7 +279,7 @@ if (import.meta.main) {
         break;
 
       default:
-        console.log(`
+        console.info(`
 ☁️  Cloudflare Build System
 !==!==!==!==!===
 

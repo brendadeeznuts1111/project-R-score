@@ -15,7 +15,7 @@ class RegistrySetup {
     }
 
     async setup() {
-        console.log('🚀 Setting up FactoryWager Private Registry...\n');
+        console.info('🚀 Setting up FactoryWager Private Registry...\n');
 
         try {
             await this.checkPrerequisites();
@@ -25,11 +25,11 @@ class RegistrySetup {
             await this.testConfiguration();
             await this.createEnvironmentTemplate();
             
-            console.log('✅ Registry setup complete!');
-            console.log('\n📋 Next Steps:');
-            console.log('1. Set your FACTORY_WAGER_TOKEN environment variable');
-            console.log('2. Run: npm install or bun install');
-            console.log('3. Test with: node scripts/registry-client.js stats');
+            console.info('✅ Registry setup complete!');
+            console.info('\n📋 Next Steps:');
+            console.info('1. Set your FACTORY_WAGER_TOKEN environment variable');
+            console.info('2. Run: npm install or bun install');
+            console.info('3. Test with: node scripts/registry-client.js stats');
             
         } catch (error) {
             console.error('❌ Setup failed:', error.message);
@@ -38,12 +38,12 @@ class RegistrySetup {
     }
 
     async checkPrerequisites() {
-        console.log('🔍 Checking prerequisites...');
+        console.info('🔍 Checking prerequisites...');
         
         // Check Node.js
         try {
             const nodeVersion = execSync('node --version', { encoding: 'utf8' }).trim();
-            console.log(`   ✓ Node.js: ${nodeVersion}`);
+            console.info(`   ✓ Node.js: ${nodeVersion}`);
         } catch (error) {
             throw new Error('Node.js is required but not installed');
         }
@@ -51,17 +51,17 @@ class RegistrySetup {
         // Check npm
         try {
             const npmVersion = execSync('npm --version', { encoding: 'utf8' }).trim();
-            console.log(`   ✓ npm: ${npmVersion}`);
+            console.info(`   ✓ npm: ${npmVersion}`);
         } catch (error) {
-            console.log('   ⚠️  npm not found (optional if using Bun)');
+            console.info('   ⚠️  npm not found (optional if using Bun)');
         }
 
         // Check Bun
         try {
             const bunVersion = execSync('bun --version', { encoding: 'utf8' }).trim();
-            console.log(`   ✓ Bun: ${bunVersion}`);
+            console.info(`   ✓ Bun: ${bunVersion}`);
         } catch (error) {
-            console.log('   ⚠️  Bun not found (optional if using npm)');
+            console.info('   ⚠️  Bun not found (optional if using npm)');
         }
 
         // Check DNS resolution
@@ -72,19 +72,19 @@ class RegistrySetup {
             const working = results.filter(r => r.success);
             
             if (working.length >= 2) {
-                console.log(`   ✓ DNS Resolution: ${working.length}/4 servers working`);
+                console.info(`   ✓ DNS Resolution: ${working.length}/4 servers working`);
             } else {
-                console.log(`   ⚠️  DNS Resolution: Only ${working.length}/4 servers working`);
+                console.info(`   ⚠️  DNS Resolution: Only ${working.length}/4 servers working`);
             }
         } catch (error) {
-            console.log('   ⚠️  DNS check failed, but continuing...');
+            console.info('   ⚠️  DNS check failed, but continuing...');
         }
         
-        console.log('');
+        console.info('');
     }
 
     async setupNpmConfig() {
-        console.log('📦 Setting up npm configuration...');
+        console.info('📦 Setting up npm configuration...');
         
         const npmrcPath = path.join(this.projectRoot, '.npmrc');
         const npmrcContent = `# FactoryWager Private Registry Configuration
@@ -131,16 +131,16 @@ fund=true`;
 
         if (!fs.existsSync(npmrcPath)) {
             fs.writeFileSync(npmrcPath, npmrcContent);
-            console.log('   ✓ Created .npmrc');
+            console.info('   ✓ Created .npmrc');
         } else {
-            console.log('   ℹ️  .npmrc already exists');
+            console.info('   ℹ️  .npmrc already exists');
         }
         
-        console.log('');
+        console.info('');
     }
 
     async setupBunConfig() {
-        console.log('🥟 Setting up Bun configuration...');
+        console.info('🥟 Setting up Bun configuration...');
         
         const bunfigPath = path.join(this.projectRoot, 'bunfig.toml');
         const bunfigContent = `[install]
@@ -248,16 +248,16 @@ anonymous = false`;
 
         if (!fs.existsSync(bunfigPath)) {
             fs.writeFileSync(bunfigPath, bunfigContent);
-            console.log('   ✓ Created bunfig.toml');
+            console.info('   ✓ Created bunfig.toml');
         } else {
-            console.log('   ℹ️  bunfig.toml already exists');
+            console.info('   ℹ️  bunfig.toml already exists');
         }
         
-        console.log('');
+        console.info('');
     }
 
     async setupPackageJson() {
-        console.log('📋 Setting up package.json configuration...');
+        console.info('📋 Setting up package.json configuration...');
         
         const packageJsonPath = path.join(this.projectRoot, 'package.json');
         
@@ -283,16 +283,16 @@ anonymous = false`;
             packageJson.scripts['registry:clear-cache'] = 'node scripts/registry-client.js clear-cache';
             
             fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-            console.log('   ✓ Updated package.json');
+            console.info('   ✓ Updated package.json');
         } else {
-            console.log('   ℹ️  package.json not found');
+            console.info('   ℹ️  package.json not found');
         }
         
-        console.log('');
+        console.info('');
     }
 
     async testConfiguration() {
-        console.log('🧪 Testing configuration...');
+        console.info('🧪 Testing configuration...');
         
         try {
             // Test DNS health
@@ -302,9 +302,9 @@ anonymous = false`;
             const working = results.filter(r => r.success);
             
             if (working.length >= 2) {
-                console.log(`   ✓ DNS health check passed (${working.length}/4 servers)`);
+                console.info(`   ✓ DNS health check passed (${working.length}/4 servers)`);
             } else {
-                console.log(`   ⚠️  DNS health check warning (${working.length}/4 servers)`);
+                console.info(`   ⚠️  DNS health check warning (${working.length}/4 servers)`);
             }
             
             // Test registry client
@@ -313,17 +313,17 @@ anonymous = false`;
             await client.initialize();
             const stats = client.getStats();
             
-            console.log(`   ✓ Registry client initialized (${stats.workingRegistries}/${stats.totalRegistries} servers)`);
+            console.info(`   ✓ Registry client initialized (${stats.workingRegistries}/${stats.totalRegistries} servers)`);
             
         } catch (error) {
-            console.log(`   ⚠️  Configuration test failed: ${error.message}`);
+            console.info(`   ⚠️  Configuration test failed: ${error.message}`);
         }
         
-        console.log('');
+        console.info('');
     }
 
     async createEnvironmentTemplate() {
-        console.log('📝 Creating environment template...');
+        console.info('📝 Creating environment template...');
         
         const envTemplatePath = path.join(this.projectRoot, '.env.template');
         const envContent = `# FactoryWager Registry Configuration
@@ -352,12 +352,12 @@ LOG_LEVEL=info`;
 
         if (!fs.existsSync(envTemplatePath)) {
             fs.writeFileSync(envTemplatePath, envContent);
-            console.log('   ✓ Created .env.template');
+            console.info('   ✓ Created .env.template');
         } else {
-            console.log('   ℹ️  .env.template already exists');
+            console.info('   ℹ️  .env.template already exists');
         }
         
-        console.log('');
+        console.info('');
     }
 }
 

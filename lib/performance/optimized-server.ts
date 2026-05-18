@@ -5,7 +5,7 @@ if (import.meta.main) {
   // Only run when executed directly
   main().catch(console.error);
 } else {
-  console.log('ℹ️  Script was imported, not executed directly');
+  console.info('ℹ️  Script was imported, not executed directly');
 }
 
 import { performance } from 'perf_hooks';
@@ -83,7 +83,7 @@ class OptimizedServer {
    * Create optimized server with performance enhancements
    */
   private createServer(port: number): any {
-    console.log(`🚀 Starting optimized server on port ${port}...`);
+    console.info(`🚀 Starting optimized server on port ${port}...`);
 
     return Bun.serve({
       port,
@@ -320,7 +320,7 @@ class OptimizedServer {
       }
 
       if (cleaned > 0) {
-        console.log(`🧹 Cleaned ${cleaned} expired cache entries`);
+        console.info(`🧹 Cleaned ${cleaned} expired cache entries`);
       }
     }, 60000); // Cleanup every minute
   }
@@ -353,7 +353,7 @@ class OptimizedServer {
 
     // Release the port allocation
     PortManager.releasePort(this.projectPath);
-    console.log('🛑 Optimized server stopped and port released');
+    console.info('🛑 Optimized server stopped and port released');
   }
 
   /**
@@ -361,7 +361,7 @@ class OptimizedServer {
    */
   public clearCache(): void {
     this.responseCache.clear();
-    console.log('🧹 Server cache cleared');
+    console.info('🧹 Server cache cleared');
   }
 }
 
@@ -374,14 +374,14 @@ class ServerBenchmark {
    * Benchmark server performance
    */
   static async benchmarkServer(server: OptimizedServer): Promise<void> {
-    console.log('📊 SERVER PERFORMANCE BENCHMARK');
-    console.log('='.repeat(50));
+    console.info('📊 SERVER PERFORMANCE BENCHMARK');
+    console.info('='.repeat(50));
 
     const baseUrl = 'http://example.com';
     const endpoints = ['/', '/health', '/api/data', '/api/stats'];
 
     // Warm up cache
-    console.log('Warming up cache...');
+    console.info('Warming up cache...');
     for (const endpoint of endpoints) {
       await fetch(`${baseUrl}${endpoint}`);
     }
@@ -389,7 +389,7 @@ class ServerBenchmark {
 
     // Benchmark each endpoint
     for (const endpoint of endpoints) {
-      console.log(`\nTesting ${endpoint}:`);
+      console.info(`\nTesting ${endpoint}:`);
 
       const times: number[] = [];
       const iterations = 50;
@@ -402,7 +402,7 @@ class ServerBenchmark {
           const text = await response.text();
           times.push(performance.now() - start);
         } catch (error) {
-          console.log(`❌ Request failed: ${error.message}`);
+          console.info(`❌ Request failed: ${error.message}`);
         }
       }
 
@@ -412,27 +412,27 @@ class ServerBenchmark {
         const max = Math.max(...times);
         const p95 = times.sort((a, b) => a - b)[Math.floor(times.length * 0.95)];
 
-        console.log(`   Average: ${avg.toFixed(2)}ms`);
-        console.log(`   Min: ${min.toFixed(2)}ms`);
-        console.log(`   Max: ${max.toFixed(2)}ms`);
-        console.log(`   95th percentile: ${p95.toFixed(2)}ms`);
+        console.info(`   Average: ${avg.toFixed(2)}ms`);
+        console.info(`   Min: ${min.toFixed(2)}ms`);
+        console.info(`   Max: ${max.toFixed(2)}ms`);
+        console.info(`   95th percentile: ${p95.toFixed(2)}ms`);
 
         if (avg <= 10) {
-          console.log(`   ✅ MEETS TARGET (≤10ms)`);
+          console.info(`   ✅ MEETS TARGET (≤10ms)`);
         } else {
-          console.log(`   ⚠️  EXCEEDS TARGET (>${avg.toFixed(2)}ms)`);
+          console.info(`   ⚠️  EXCEEDS TARGET (>${avg.toFixed(2)}ms)`);
         }
       }
     }
 
     // Show final metrics
     const info = server.getInfo();
-    console.log('\n📈 Final Server Metrics:');
-    console.log(`   Total requests: ${info.metrics.totalRequests}`);
-    console.log(`   Average response time: ${info.metrics.averageResponseTime.toFixed(2)}ms`);
-    console.log(`   Cache hit rate: ${(info.metrics.cacheHitRate * 100).toFixed(1)}%`);
-    console.log(`   Error rate: ${(info.metrics.errorRate * 100).toFixed(1)}%`);
-    console.log(`   Cache size: ${info.cacheSize} entries`);
+    console.info('\n📈 Final Server Metrics:');
+    console.info(`   Total requests: ${info.metrics.totalRequests}`);
+    console.info(`   Average response time: ${info.metrics.averageResponseTime.toFixed(2)}ms`);
+    console.info(`   Cache hit rate: ${(info.metrics.cacheHitRate * 100).toFixed(1)}%`);
+    console.info(`   Error rate: ${(info.metrics.errorRate * 100).toFixed(1)}%`);
+    console.info(`   Cache size: ${info.cacheSize} entries`);
   }
 }
 
@@ -447,8 +447,8 @@ export { OptimizedServer, ServerBenchmark };
 // ============================================================================
 
 async function main(): Promise<void> {
-  console.log('🚀 HIGH-PERFORMANCE OPTIMIZED SERVER WITH PORT MANAGEMENT');
-  console.log('='.repeat(60));
+  console.info('🚀 HIGH-PERFORMANCE OPTIMIZED SERVER WITH PORT MANAGEMENT');
+  console.info('='.repeat(60));
 
   // Use current working directory as project path
   const projectPath = process.cwd();
@@ -457,33 +457,33 @@ async function main(): Promise<void> {
   // Wait for server to start
   await Bun.sleep(100);
 
-  console.log('✅ Server started successfully!');
-  console.log('📊 Running performance benchmark...\n');
+  console.info('✅ Server started successfully!');
+  console.info('📊 Running performance benchmark...\n');
 
   try {
     await ServerBenchmark.benchmarkServer(server);
 
-    console.log('\n🎯 Optimization Results:');
-    console.log('   • Port management: ✅ Dedicated allocation');
-    console.log('   • Connection pooling: ✅ Optimized with Bun limits');
-    console.log('   • Response caching: ✅ Implemented');
-    console.log('   • Fast routing: ✅ Active');
-    console.log('   • Metrics tracking: ✅ Live');
+    console.info('\n🎯 Optimization Results:');
+    console.info('   • Port management: ✅ Dedicated allocation');
+    console.info('   • Connection pooling: ✅ Optimized with Bun limits');
+    console.info('   • Response caching: ✅ Implemented');
+    console.info('   • Fast routing: ✅ Active');
+    console.info('   • Metrics tracking: ✅ Live');
 
     const info = server.getInfo();
-    console.log('\n🌐 Server Information:');
-    console.log(`   Project: ${info.projectPath}`);
-    console.log(`   Allocated Port: ${info.allocatedPort}`);
-    console.log(`   Max Connections: ${info.portConfig?.maxConnections || 'N/A'}`);
-    console.log(`   Connection Pool: ${JSON.stringify(info.connectionPool)}`);
+    console.info('\n🌐 Server Information:');
+    console.info(`   Project: ${info.projectPath}`);
+    console.info(`   Allocated Port: ${info.allocatedPort}`);
+    console.info(`   Max Connections: ${info.portConfig?.maxConnections || 'N/A'}`);
+    console.info(`   Connection Pool: ${JSON.stringify(info.connectionPool)}`);
 
-    console.log('\n🌐 Server is running with dedicated port management');
-    console.log('   Available endpoints: /, /health, /api/data, /api/stats');
-    console.log('   Press Ctrl+C to stop');
+    console.info('\n🌐 Server is running with dedicated port management');
+    console.info('   Available endpoints: /, /health, /api/data, /api/stats');
+    console.info('   Press Ctrl+C to stop');
 
     // Keep server running
     process.on('SIGINT', () => {
-      console.log('\n🛑 Shutting down server...');
+      console.info('\n🛑 Shutting down server...');
       server.stop();
       process.exit(0);
     });

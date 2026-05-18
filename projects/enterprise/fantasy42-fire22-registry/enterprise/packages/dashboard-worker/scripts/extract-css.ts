@@ -55,11 +55,11 @@ async function extractStylesFromHTML(filePath: string): Promise<ExtractedStyles>
 }
 
 async function consolidateStyles() {
-  console.log('🎨 Starting CSS extraction and consolidation...');
+  console.info('🎨 Starting CSS extraction and consolidation...');
 
   // Find all HTML files in src directory
   const srcFiles = await findHTMLFiles('src');
-  console.log(`📁 Found ${srcFiles.length} HTML files in src/`);
+  console.info(`📁 Found ${srcFiles.length} HTML files in src/`);
 
   // Extract styles from each file
   const extractedStyles: ExtractedStyles[] = [];
@@ -68,7 +68,7 @@ async function consolidateStyles() {
     if (styles.styles.length > 0 || styles.styleBlocks.length > 0) {
       extractedStyles.push(styles);
       const relPath = relative(process.cwd(), file);
-      console.log(
+      console.info(
         `  ✓ ${relPath}: ${styles.styles.length} inline, ${styles.styleBlocks.length} blocks`
       );
     }
@@ -134,7 +134,7 @@ async function consolidateStyles() {
 
   // Write consolidated CSS
   await writeFile('public/css/styles.css', consolidatedCSS);
-  console.log(`\n✅ Consolidated CSS written to public/css/styles.css`);
+  console.info(`\n✅ Consolidated CSS written to public/css/styles.css`);
 
   // Generate summary
   const totalInlineStyles = Array.from(inlineStyleMap.values()).reduce(
@@ -143,11 +143,11 @@ async function consolidateStyles() {
   );
   const totalStyleBlocks = extractedStyles.reduce((sum, e) => sum + e.styleBlocks.length, 0);
 
-  console.log(`\n📊 Summary:`);
-  console.log(`  - Files processed: ${srcFiles.length}`);
-  console.log(`  - Files with styles: ${extractedStyles.length}`);
-  console.log(`  - Style blocks extracted: ${totalStyleBlocks}`);
-  console.log(`  - Inline styles converted: ${totalInlineStyles}`);
+  console.info(`\n📊 Summary:`);
+  console.info(`  - Files processed: ${srcFiles.length}`);
+  console.info(`  - Files with styles: ${extractedStyles.length}`);
+  console.info(`  - Style blocks extracted: ${totalStyleBlocks}`);
+  console.info(`  - Inline styles converted: ${totalInlineStyles}`);
 
   // Generate migration guide
   const migrationGuide = `# CSS Migration Guide
@@ -171,7 +171,7 @@ ${extractedStyles.map(e => `- ${relative(process.cwd(), e.file)}`).join('\n')}
 `;
 
   await writeFile('public/css/MIGRATION_GUIDE.md', migrationGuide);
-  console.log(`\n📝 Migration guide written to public/css/MIGRATION_GUIDE.md`);
+  console.info(`\n📝 Migration guide written to public/css/MIGRATION_GUIDE.md`);
 }
 
 // Run the consolidation

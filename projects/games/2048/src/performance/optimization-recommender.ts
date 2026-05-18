@@ -141,7 +141,7 @@ class OptimizationRecommender {
   private profileAnalyzer = new ProfileAnalyzer();
 
   async analyzeCodebase(sourceDir: string = './'): Promise<PerformanceReport> {
-    console.log('🔍 Analyzing codebase for optimization opportunities...');
+    console.info('🔍 Analyzing codebase for optimization opportunities...');
 
     const files = this.getSourceFiles(sourceDir);
     const recommendations: OptimizationRecommendation[] = [];
@@ -259,57 +259,57 @@ class OptimizationRecommender {
   }
 
   printReport(report: PerformanceReport) {
-    console.log('🚀 Performance Optimization Report');
-    console.log('='.repeat(50));
+    console.info('🚀 Performance Optimization Report');
+    console.info('='.repeat(50));
 
-    console.log('\n📊 Summary:');
-    console.log(`Files analyzed: ${report.summary.totalFiles}`);
-    console.log(`Issues found: ${report.summary.totalIssues}`);
-    console.log(`High priority: ${report.summary.highPriority}`);
-    console.log(`Medium priority: ${report.summary.mediumPriority}`);
-    console.log(`Low priority: ${report.summary.lowPriority}`);
+    console.info('\n📊 Summary:');
+    console.info(`Files analyzed: ${report.summary.totalFiles}`);
+    console.info(`Issues found: ${report.summary.totalIssues}`);
+    console.info(`High priority: ${report.summary.highPriority}`);
+    console.info(`Medium priority: ${report.summary.mediumPriority}`);
+    console.info(`Low priority: ${report.summary.lowPriority}`);
 
-    console.log('\n📈 Issues by Category:');
+    console.info('\n📈 Issues by Category:');
     Object.entries(report.categories)
       .sort(([,a], [,b]) => b - a)
       .forEach(([category, count]) => {
-        console.log(`${category}: ${count}`);
+        console.info(`${category}: ${count}`);
       });
 
     if (report.recommendations.length > 0) {
-      console.log('\n🔧 Top Recommendations:');
+      console.info('\n🔧 Top Recommendations:');
       report.recommendations.slice(0, 15).forEach((rec, index) => {
         const icon = rec.severity === 'high' ? '🔴' : rec.severity === 'medium' ? '🟡' : '🟢';
-        console.log(`\n${index + 1}. ${icon} ${rec.issue}`);
-        console.log(`   📁 ${rec.file}:${rec.line}`);
-        console.log(`   💻 ${rec.codeSnippet}`);
-        console.log(`   💡 ${rec.recommendation}`);
-        console.log(`   📈 ${rec.potentialImpact}`);
+        console.info(`\n${index + 1}. ${icon} ${rec.issue}`);
+        console.info(`   📁 ${rec.file}:${rec.line}`);
+        console.info(`   💻 ${rec.codeSnippet}`);
+        console.info(`   💡 ${rec.recommendation}`);
+        console.info(`   📈 ${rec.potentialImpact}`);
       });
     }
 
     if (report.profileInsights && report.profileInsights.length > 0) {
-      console.log('\n🔬 CPU Profile Insights:');
+      console.info('\n🔬 CPU Profile Insights:');
       report.profileInsights.forEach((insight, index) => {
-        console.log(`\nProfile ${index + 1}:`);
-        console.log(`   Total time: ${(insight.totalTime / 1000).toFixed(2)}ms`);
-        console.log(`   Samples: ${insight.sampleCount.toLocaleString()}`);
+        console.info(`\nProfile ${index + 1}:`);
+        console.info(`   Total time: ${(insight.totalTime / 1000).toFixed(2)}ms`);
+        console.info(`   Samples: ${insight.sampleCount.toLocaleString()}`);
 
         if (insight.bottlenecks.length > 0) {
-          console.log('   🚨 Top bottlenecks:');
+          console.info('   🚨 Top bottlenecks:');
           insight.bottlenecks.slice(0, 3).forEach(b => {
-            console.log(`      ${b.function}: ${b.issue}`);
+            console.info(`      ${b.function}: ${b.issue}`);
           });
         }
       });
     }
 
-    console.log('\n✅ Analysis complete!');
-    console.log('\n💡 Next Steps:');
-    console.log('1. Address high-priority issues first');
-    console.log('2. Test performance improvements after changes');
-    console.log('3. Re-run analysis to track progress');
-    console.log('4. Consider automated testing for regressions');
+    console.info('\n✅ Analysis complete!');
+    console.info('\n💡 Next Steps:');
+    console.info('1. Address high-priority issues first');
+    console.info('2. Test performance improvements after changes');
+    console.info('3. Re-run analysis to track progress');
+    console.info('4. Consider automated testing for regressions');
   }
 
   generateActionPlan(report: PerformanceReport): string[] {
@@ -357,8 +357,8 @@ async function main() {
     recommender.printReport(report);
 
     const actionPlan = recommender.generateActionPlan(report);
-    console.log('\n📋 Action Plan:');
-    actionPlan.forEach(action => console.log(`• ${action}`));
+    console.info('\n📋 Action Plan:');
+    actionPlan.forEach(action => console.info(`• ${action}`));
 
   } catch (error) {
     console.error('❌ Analysis failed:', error);

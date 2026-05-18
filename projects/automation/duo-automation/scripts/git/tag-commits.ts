@@ -100,16 +100,16 @@ async function main() {
   try {
     const changedFiles = await getChangedFiles();
     if (changedFiles.length === 0) {
-      console.log('No changes to commit');
+      console.info('No changes to commit');
       process.exit(0);
     }
     
     const tags = determineTags(changedFiles);
     const formattedMessage = formatCommitMessage(tags, message);
     
-    console.log('Generated commit message:', formattedMessage);
-    console.log('Changed files:', changedFiles);
-    console.log('Applied tags:', tags);
+    console.info('Generated commit message:', formattedMessage);
+    console.info('Changed files:', changedFiles);
+    console.info('Applied tags:', tags);
     
     // Write to temp file for pre-commit hook
     await Bun.write('.git/COMMIT_EDITMSG', formattedMessage);

@@ -99,7 +99,7 @@ export const handle = async (req: Request) => {
 
   server.onclose = () => {
     subscriptions.clear();
-    console.log('WebSocket connection closed');
+    console.info('WebSocket connection closed');
   };
 
   // TODO: Set up config change listeners and broadcast diffs

@@ -93,10 +93,10 @@ export class QuantumResistantSecureDataRepository {
 
   async initialize(): Promise<void> {
     // Initialize quantum-resistant cryptography
-    console.log("Initializing quantum-resistant secure data repository...");
-    console.log("Master key generated and secured");
-    console.log("Quantum-resistant key pairs initialized");
-    console.log("Repository ready for post-quantum security");
+    console.info("Initializing quantum-resistant secure data repository...");
+    console.info("Master key generated and secured");
+    console.info("Quantum-resistant key pairs initialized");
+    console.info("Repository ready for post-quantum security");
   }
 
   async store(
@@ -157,7 +157,7 @@ export class QuantumResistantSecureDataRepository {
 
     this.storage.set(key, { data: storedData, metadata });
 
-    console.log(`Stored encrypted data with key: ${key}`);
+    console.info(`Stored encrypted data with key: ${key}`);
     return key;
   }
 
@@ -397,13 +397,13 @@ export class QuantumResistantSecureDataRepository {
   }
 
   async rotateKeys(): Promise<void> {
-    console.log("Initiating quantum key rotation...");
+    console.info("Initiating quantum key rotation...");
 
     // Generate new quantum key pairs
     await this.initializeQuantumKeys();
 
     // Re-encrypt existing data with new keys (in a real implementation)
-    console.log("Key rotation completed");
+    console.info("Key rotation completed");
   }
 
   delete(key: string): boolean {

@@ -68,7 +68,7 @@ export class VirtualDuoPlusBuilder {
       
       export async function main() {
         const matrix = await inspectMatrix();
-        console.log('🔍 DuoPlus Matrix Loaded:', matrix.summary.totalFiles, 'files');
+        console.info('🔍 DuoPlus Matrix Loaded:', matrix.summary.totalFiles, 'files');
         return launchDuoPlus(matrix);
       }
       
@@ -215,7 +215,7 @@ export class VirtualDuoPlusBuilder {
           await next();
           
           const duration = Date.now() - start;
-          console.log(\`[\${ctx.req.method}] \${ctx.req.path} - \${duration}ms\`);
+          console.info(\`[\${ctx.req.method}] \${ctx.req.path} - \${duration}ms\`);
         };
       };
     `;

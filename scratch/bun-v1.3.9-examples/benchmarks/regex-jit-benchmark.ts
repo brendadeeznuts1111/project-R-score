@@ -85,12 +85,12 @@ function formatMs(ms: number): string {
 
 // Main benchmark
 async function runBenchmark() {
-  console.log("=".repeat(70));
-  console.log("Bun v1.3.9 RegExp JIT Benchmark");
-  console.log("=".repeat(70));
-  console.log(`Bun version: ${Bun.version}`);
-  console.log(`Platform: ${process.platform} ${process.arch}`);
-  console.log("");
+  console.info("=".repeat(70));
+  console.info("Bun v1.3.9 RegExp JIT Benchmark");
+  console.info("=".repeat(70));
+  console.info(`Bun version: ${Bun.version}`);
+  console.info(`Platform: ${process.platform} ${process.arch}`);
+  console.info("");
   
   const ITERATIONS = 10_000_000;
   const results: Array<{
@@ -100,36 +100,36 @@ async function runBenchmark() {
     type: "jit" | "interpreter";
   }> = [];
   
-  console.log(`Running ${ITERATIONS.toLocaleString()} iterations per pattern...\n`);
+  console.info(`Running ${ITERATIONS.toLocaleString()} iterations per pattern...\n`);
   
   // JIT-optimized patterns
-  console.log("⚡ JIT-OPTIMIZED PATTERNS (v1.3.9+)");
-  console.log("-".repeat(70));
+  console.info("⚡ JIT-OPTIMIZED PATTERNS (v1.3.9+)");
+  console.info("-".repeat(70));
   
   for (const [name, config] of Object.entries(PATTERNS)) {
     if (!name.startsWith("jit_")) continue;
     
     const time = benchmark(name, config.pattern, config.testString, ITERATIONS);
     results.push({ name, description: config.description, time, type: "jit" });
-    console.log(`${formatMs(time)} | ${config.pattern.toString().padEnd(20)} | ${config.description}`);
+    console.info(`${formatMs(time)} | ${config.pattern.toString().padEnd(20)} | ${config.description}`);
   }
   
-  console.log("");
-  console.log("🐢 INTERPRETER PATTERNS (no JIT)");
-  console.log("-".repeat(70));
+  console.info("");
+  console.info("🐢 INTERPRETER PATTERNS (no JIT)");
+  console.info("-".repeat(70));
   
   for (const [name, config] of Object.entries(PATTERNS)) {
     if (!name.startsWith("interpreter_")) continue;
     
     const time = benchmark(name, config.pattern, config.testString, ITERATIONS);
     results.push({ name, description: config.description, time, type: "interpreter" });
-    console.log(`${formatMs(time)} | ${config.pattern.toString().padEnd(20)} | ${config.description}`);
+    console.info(`${formatMs(time)} | ${config.pattern.toString().padEnd(20)} | ${config.description}`);
   }
   
   // Summary
-  console.log("\n" + "=".repeat(70));
-  console.log("SUMMARY");
-  console.log("=".repeat(70));
+  console.info("\n" + "=".repeat(70));
+  console.info("SUMMARY");
+  console.info("=".repeat(70));
   
   const jitResults = results.filter(r => r.type === "jit");
   const interpreterResults = results.filter(r => r.type === "interpreter");
@@ -138,15 +138,15 @@ async function runBenchmark() {
   const avgInterpreter = interpreterResults.reduce((a, b) => a + b.time, 0) / interpreterResults.length;
   const speedup = avgInterpreter / avgJit;
   
-  console.log(`Average JIT time:      ${formatMs(avgJit)}`);
-  console.log(`Average Interpreter:   ${formatMs(avgInterpreter)}`);
-  console.log(`Speedup factor:        ${speedup.toFixed(2)}x`);
-  console.log(`Expected (v1.3.9):     ~3.9x for fixed-count patterns`);
-  console.log("");
+  console.info(`Average JIT time:      ${formatMs(avgJit)}`);
+  console.info(`Average Interpreter:   ${formatMs(avgInterpreter)}`);
+  console.info(`Speedup factor:        ${speedup.toFixed(2)}x`);
+  console.info(`Expected (v1.3.9):     ~3.9x for fixed-count patterns`);
+  console.info("");
   
   // Per-pattern comparison
-  console.log("PATTERN COMPARISONS:");
-  console.log("-".repeat(70));
+  console.info("PATTERN COMPARISONS:");
+  console.info("-".repeat(70));
   
   const comparisons = [
     { jit: "jit_noncapturing", interp: "interpreter_plus", label: "Fixed vs Variable count" },
@@ -157,23 +157,23 @@ async function runBenchmark() {
     const interpResult = results.find(r => r.name === comp.interp);
     if (jitResult && interpResult) {
       const ratio = interpResult.time / jitResult.time;
-      console.log(`${comp.label}:`);
-      console.log(`  ${PATTERNS[comp.jit as keyof typeof PATTERNS].pattern.toString()} vs`);
-      console.log(`  ${PATTERNS[comp.interp as keyof typeof PATTERNS].pattern.toString()}`);
-      console.log(`  Speedup: ${ratio.toFixed(2)}x\n`);
+      console.info(`${comp.label}:`);
+      console.info(`  ${PATTERNS[comp.jit as keyof typeof PATTERNS].pattern.toString()} vs`);
+      console.info(`  ${PATTERNS[comp.interp as keyof typeof PATTERNS].pattern.toString()}`);
+      console.info(`  Speedup: ${ratio.toFixed(2)}x\n`);
     }
   }
   
   // Regex optimization tips
-  console.log("=".repeat(70));
-  console.log("REGEX OPTIMIZATION TIPS (v1.3.9+)");
-  console.log("=".repeat(70));
-  console.log("✓ USE fixed-count quantifiers: {3}, {2,5} (when max=min)");
-  console.log("✓ USE non-capturing groups: (?:...) when capture not needed");
-  console.log("✓ USE literal alternatives: /abc|def/ with common prefixes");
-  console.log("✗ AVOID variable quantifiers: +, *, +?, *? in hot paths");
-  console.log("✗ AVOID nested quantifiers: (a+)*, (b+)+");
-  console.log("");
+  console.info("=".repeat(70));
+  console.info("REGEX OPTIMIZATION TIPS (v1.3.9+)");
+  console.info("=".repeat(70));
+  console.info("✓ USE fixed-count quantifiers: {3}, {2,5} (when max=min)");
+  console.info("✓ USE non-capturing groups: (?:...) when capture not needed");
+  console.info("✓ USE literal alternatives: /abc|def/ with common prefixes");
+  console.info("✗ AVOID variable quantifiers: +, *, +?, *? in hot paths");
+  console.info("✗ AVOID nested quantifiers: (a+)*, (b+)+");
+  console.info("");
 }
 
 runBenchmark().catch(console.error);

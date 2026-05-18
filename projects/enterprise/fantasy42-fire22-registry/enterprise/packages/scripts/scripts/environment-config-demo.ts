@@ -4,22 +4,22 @@
  * Demonstrating different bunfig.toml configurations for various environments
  */
 
-console.log('🌍 Environment-Specific Configuration Demo');
-console.log('='.repeat(60));
+console.info('🌍 Environment-Specific Configuration Demo');
+console.info('='.repeat(60));
 
 // ============================================================================
 // CONFIGURATION FILES OVERVIEW
 // ============================================================================
-console.log('\n📁 Available Configuration Files:');
-console.log('   📄 bunfig.toml              → Default/development configuration');
-console.log('   📄 bunfig.development.toml  → Local development optimization');
-console.log('   📄 bunfig.production.toml   → Production deployment optimization');
-console.log('   📄 bunfig.ci.toml          → CI/CD pipeline optimization');
+console.info('\n📁 Available Configuration Files:');
+console.info('   📄 bunfig.toml              → Default/development configuration');
+console.info('   📄 bunfig.development.toml  → Local development optimization');
+console.info('   📄 bunfig.production.toml   → Production deployment optimization');
+console.info('   📄 bunfig.ci.toml          → CI/CD pipeline optimization');
 
 // ============================================================================
 // ENVIRONMENT CONFIGURATIONS
 // ============================================================================
-console.log('\n🏭 Environment Configuration Comparison:');
+console.info('\n🏭 Environment Configuration Comparison:');
 
 const environments = [
   {
@@ -79,26 +79,26 @@ const environments = [
 ];
 
 environments.forEach((env, index) => {
-  console.log(`\n   ${index + 1}. 🏗️  ${env.name} Environment:`);
-  console.log(`      📄 Config: ${env.configFile}`);
-  console.log(`      🎯 Target: ${env.target}`);
-  console.log(`      🔒 Frozen: ${env.frozenLockfile}`);
-  console.log(`      📦 Production: ${env.production}`);
-  console.log(`      🔧 Optional: ${env.optional}`);
-  console.log(`      🛡️  Trusted Deps: ${env.trustedDeps}`);
-  console.log(`      📊 Coverage: ${env.coverage}`);
-  console.log(`      📝 Log Level: ${env.logLevel}`);
+  console.info(`\n   ${index + 1}. 🏗️  ${env.name} Environment:`);
+  console.info(`      📄 Config: ${env.configFile}`);
+  console.info(`      🎯 Target: ${env.target}`);
+  console.info(`      🔒 Frozen: ${env.frozenLockfile}`);
+  console.info(`      📦 Production: ${env.production}`);
+  console.info(`      🔧 Optional: ${env.optional}`);
+  console.info(`      🛡️  Trusted Deps: ${env.trustedDeps}`);
+  console.info(`      📊 Coverage: ${env.coverage}`);
+  console.info(`      📝 Log Level: ${env.logLevel}`);
 
-  console.log(`      🎯 Key Features:`);
+  console.info(`      🎯 Key Features:`);
   env.keyFeatures.forEach(feature => {
-    console.log(`         ✅ ${feature}`);
+    console.info(`         ✅ ${feature}`);
   });
 });
 
 // ============================================================================
 // USAGE EXAMPLES
 // ============================================================================
-console.log('\n💻 Usage Examples:');
+console.info('\n💻 Usage Examples:');
 
 const usageExamples = [
   {
@@ -128,16 +128,16 @@ const usageExamples = [
 ];
 
 usageExamples.forEach((example, index) => {
-  console.log(`\n   ${index + 1}. ${example.environment}:`);
-  console.log(`      💻 ${example.command}`);
-  console.log(`      📄 Using: ${example.config}`);
-  console.log(`      📝 ${example.description}`);
+  console.info(`\n   ${index + 1}. ${example.environment}:`);
+  console.info(`      💻 ${example.command}`);
+  console.info(`      📄 Using: ${example.config}`);
+  console.info(`      📝 ${example.description}`);
 });
 
 // ============================================================================
 // CONFIGURATION SWITCHING
 // ============================================================================
-console.log('\n🔄 Configuration Switching Methods:');
+console.info('\n🔄 Configuration Switching Methods:');
 
 const switchingMethods = [
   {
@@ -167,16 +167,16 @@ const switchingMethods = [
 ];
 
 switchingMethods.forEach((method, index) => {
-  console.log(`\n   ${index + 1}. ${method.method}:`);
-  console.log(`      💻 ${method.command}`);
-  console.log(`      📝 ${method.description}`);
-  console.log(`      🎯 Use Case: ${method.useCase}`);
+  console.info(`\n   ${index + 1}. ${method.method}:`);
+  console.info(`      💻 ${method.command}`);
+  console.info(`      📝 ${method.description}`);
+  console.info(`      🎯 Use Case: ${method.useCase}`);
 });
 
 // ============================================================================
 // PRACTICAL FIRE22 WORKFLOW
 // ============================================================================
-console.log('\n🚀 Practical Fire22 Workflow:');
+console.info('\n🚀 Practical Fire22 Workflow:');
 
 const workflowSteps = [
   {
@@ -215,18 +215,18 @@ const workflowSteps = [
 ];
 
 workflowSteps.forEach((step, index) => {
-  console.log(`\n   ${index + 1}. ${step.step}:`);
-  console.log(`      📄 Config: ${step.config}`);
-  console.log(`      🎯 Actions:`);
+  console.info(`\n   ${index + 1}. ${step.step}:`);
+  console.info(`      📄 Config: ${step.config}`);
+  console.info(`      🎯 Actions:`);
   step.actions.forEach(action => {
-    console.log(`         💻 ${action}`);
+    console.info(`         💻 ${action}`);
   });
 });
 
 // ============================================================================
 // CONFIGURATION BEST PRACTICES
 // ============================================================================
-console.log('\n📚 Environment Configuration Best Practices:');
+console.info('\n📚 Environment Configuration Best Practices:');
 
 const bestPractices = [
   '🏗️  Use separate configs for different environments',
@@ -240,13 +240,13 @@ const bestPractices = [
 ];
 
 bestPractices.forEach((practice, index) => {
-  console.log(`   ${index + 1}. ${practice}`);
+  console.info(`   ${index + 1}. ${practice}`);
 });
 
 // ============================================================================
 // CONFIGURATION VALIDATION
 // ============================================================================
-console.log('\n✅ Configuration Validation:');
+console.info('\n✅ Configuration Validation:');
 
 const configFiles = [
   'bunfig.toml',
@@ -255,7 +255,7 @@ const configFiles = [
   'bunfig.ci.toml',
 ];
 
-console.log('   📁 Configuration Files:');
+console.info('   📁 Configuration Files:');
 for (const file of configFiles) {
   try {
     const content = await Bun.file(file).text();
@@ -263,19 +263,19 @@ for (const file of configFiles) {
     const hasScopes = content.includes('scopes');
     const hasTrustedDeps = content.includes('trustedDependencies');
 
-    console.log(`   ✅ ${file}:`);
-    console.log(`      📦 [install] section: ${hasInstallSection ? '✅' : '❌'}`);
-    console.log(`      🔗 Scopes configured: ${hasScopes ? '✅' : '❌'}`);
-    console.log(`      🛡️  Trusted deps: ${hasTrustedDeps ? '✅' : '❌'}`);
+    console.info(`   ✅ ${file}:`);
+    console.info(`      📦 [install] section: ${hasInstallSection ? '✅' : '❌'}`);
+    console.info(`      🔗 Scopes configured: ${hasScopes ? '✅' : '❌'}`);
+    console.info(`      🛡️  Trusted deps: ${hasTrustedDeps ? '✅' : '❌'}`);
   } catch (error) {
-    console.log(`   ❌ ${file}: File not found or unreadable`);
+    console.info(`   ❌ ${file}: File not found or unreadable`);
   }
 }
 
 // ============================================================================
 // PERFORMANCE COMPARISON
 // ============================================================================
-console.log('\n⚡ Performance Comparison:');
+console.info('\n⚡ Performance Comparison:');
 
 const performanceData = [
   {
@@ -304,10 +304,10 @@ const performanceData = [
   },
 ];
 
-console.log('   Environment     │ Install Time │ Dependencies │ Notes');
-console.log('   ─────────────────┼──────────────┼──────────────┼─────────────────────');
+console.info('   Environment     │ Install Time │ Dependencies │ Notes');
+console.info('   ─────────────────┼──────────────┼──────────────┼─────────────────────');
 performanceData.forEach(env => {
-  console.log(
+  console.info(
     `   ${env.environment.padEnd(16)} │ ${env.installTime.padEnd(12)} │ ${env.dependencies.padEnd(12)} │ ${env.notes}`
   );
 });
@@ -315,27 +315,27 @@ performanceData.forEach(env => {
 // ============================================================================
 // QUICK REFERENCE
 // ============================================================================
-console.log('\n📋 Quick Reference:');
+console.info('\n📋 Quick Reference:');
 
-console.log('   Development:');
-console.log('   💻 bun install');
-console.log('   📄 bunfig.development.toml');
+console.info('   Development:');
+console.info('   💻 bun install');
+console.info('   📄 bunfig.development.toml');
 
-console.log('\n   Production:');
-console.log('   💻 bun install --production --frozen-lockfile');
-console.log('   📄 bunfig.production.toml');
+console.info('\n   Production:');
+console.info('   💻 bun install --production --frozen-lockfile');
+console.info('   📄 bunfig.production.toml');
 
-console.log('\n   CI/CD:');
-console.log('   💻 bun install --frozen-lockfile');
-console.log('   📄 bunfig.ci.toml');
+console.info('\n   CI/CD:');
+console.info('   💻 bun install --frozen-lockfile');
+console.info('   📄 bunfig.ci.toml');
 
-console.log('\n   Switch Config:');
-console.log('   💻 BUN_CONFIG_FILE=bunfig.production.toml bun install');
-console.log('   💻 bun --config bunfig.ci.toml install');
+console.info('\n   Switch Config:');
+console.info('   💻 BUN_CONFIG_FILE=bunfig.production.toml bun install');
+console.info('   💻 bun --config bunfig.ci.toml install');
 
-console.log('\n🎉 Environment Configuration Demo Complete!');
-console.log('   Your Fire22 project is now optimized for all deployment scenarios!');
-console.log('   Choose the right configuration for each environment! 🚀');
+console.info('\n🎉 Environment Configuration Demo Complete!');
+console.info('   Your Fire22 project is now optimized for all deployment scenarios!');
+console.info('   Choose the right configuration for each environment! 🚀');
 
 // ============================================================================
 // EXPORT SUMMARY
@@ -348,4 +348,4 @@ export const environmentSummary = {
   status: 'multi-environment-ready',
 };
 
-console.log(`\n📦 Environment Summary: ${JSON.stringify(environmentSummary, null, 2)}`);
+console.info(`\n📦 Environment Summary: ${JSON.stringify(environmentSummary, null, 2)}`);

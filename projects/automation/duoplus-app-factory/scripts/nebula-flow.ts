@@ -195,24 +195,24 @@ async function generateTagsIndex() {
   }));
 
   await Bun.write(TAGS_INDEX, JSON.stringify(index));
-  console.log(`🟢 Tags index generated → ${TAGS_INDEX} (${index.length} entries)`);
+  console.info(`🟢 Tags index generated → ${TAGS_INDEX} (${index.length} entries)`);
 }
 
 async function validateConfiguration() {
   const result = await validateAndExtractPatterns();
   
   if (result.valid) {
-    console.log("🟢 Configuration valid");
+    console.info("🟢 Configuration valid");
   } else {
     console.error("🔴 Configuration invalid:");
     result.errors.forEach(error => console.error(`  - ${error}`));
   }
   
   if (result.patterns.length > 0) {
-    console.log(`\n🔍 Detected ${result.patterns.length} URLPattern candidates:`);
+    console.info(`\n🔍 Detected ${result.patterns.length} URLPattern candidates:`);
     result.patterns.forEach(pattern => {
       const type = pattern.dynamic ? "🔄 Dynamic" : "📎 Static";
-      console.log(`  ${type}: ${pattern.path} = "${pattern.value}"`);
+      console.info(`  ${type}: ${pattern.path} = "${pattern.value}"`);
     });
   }
   
@@ -272,7 +272,7 @@ async function exportToToml() {
     });
     
     await Bun.write(CONFIG_TOML, tomlString);
-    console.log(`✅ Configuration exported to TOML → ${CONFIG_TOML}`);
+    console.info(`✅ Configuration exported to TOML → ${CONFIG_TOML}`);
   } catch (error: any) {
     console.error(`🔴 Error exporting to TOML: ${error.message}`);
     process.exit(1);
@@ -300,7 +300,7 @@ async function importFromToml() {
     });
     
     await Bun.write(CONFIG_JSON, JSON.stringify(projects, null, 2));
-    console.log(`✅ Configuration imported from TOML → ${CONFIG_JSON}`);
+    console.info(`✅ Configuration imported from TOML → ${CONFIG_JSON}`);
     await generateTagsIndex();
   } catch (error: any) {
     console.error(`🔴 Error importing from TOML: ${error.message}`);
@@ -310,9 +310,9 @@ async function importFromToml() {
 
 async function startPTYEditor() {
   try {
-    console.log("🚀 Nebula Flow Interactive Editor v3.6");
-    console.log("=============================================");
-    console.log("(PTY mode temporarily disabled - using simple interface)\n");
+    console.info("🚀 Nebula Flow Interactive Editor v3.6");
+    console.info("=============================================");
+    console.info("(PTY mode temporarily disabled - using simple interface)\n");
     
     simpleInteractiveMode();
   } catch (error: any) {
@@ -323,13 +323,13 @@ async function startPTYEditor() {
 }
 
 function simpleInteractiveMode() {
-  console.log("🚀 Simple Interactive Mode");
-  console.log("==========================");
-  console.log("\n1. Display Configuration");
-  console.log("2. Validate Configuration");
-  console.log("3. Generate Tags Index");
-  console.log("4. Save Changes");
-  console.log("5. Exit");
+  console.info("🚀 Simple Interactive Mode");
+  console.info("==========================");
+  console.info("\n1. Display Configuration");
+  console.info("2. Validate Configuration");
+  console.info("3. Generate Tags Index");
+  console.info("4. Save Changes");
+  console.info("5. Exit");
   
   const readline = require('readline');
   const rl = readline.createInterface({
@@ -341,8 +341,8 @@ function simpleInteractiveMode() {
     switch (answer.trim()) {
       case '1':
         const content = await Bun.file(CONFIG_JSON).text();
-        console.log("\nCurrent Configuration:");
-        console.log(JSON.stringify(JSON.parse(content), null, 2));
+        console.info("\nCurrent Configuration:");
+        console.info(JSON.stringify(JSON.parse(content), null, 2));
         simpleInteractiveMode();
         break;
       case '2':
@@ -354,16 +354,16 @@ function simpleInteractiveMode() {
         simpleInteractiveMode();
         break;
       case '4':
-        console.log("No changes to save");
+        console.info("No changes to save");
         simpleInteractiveMode();
         break;
       case '5':
-        console.log("✅ Exiting...");
+        console.info("✅ Exiting...");
         rl.close();
         process.exit(0);
         break;
       default:
-        console.log("❌ Invalid choice. Please enter 1-5.");
+        console.info("❌ Invalid choice. Please enter 1-5.");
         simpleInteractiveMode();
         break;
     }
@@ -372,10 +372,10 @@ function simpleInteractiveMode() {
 
 async function startDashboard() {
   try {
-    console.log("🚀 Nebula Flow Interactive Dashboard v3.6");
-    console.log("=============================================");
-    console.log("Real-time configuration monitoring and management");
-    console.log("(PTY mode temporarily disabled - using simple interface)\n");
+    console.info("🚀 Nebula Flow Interactive Dashboard v3.6");
+    console.info("=============================================");
+    console.info("Real-time configuration monitoring and management");
+    console.info("(PTY mode temporarily disabled - using simple interface)\n");
     
     await simpleDashboardMode();
   } catch (error: any) {
@@ -386,9 +386,9 @@ async function startDashboard() {
 }
 
 async function simpleDashboardMode() {
-  console.log("🚀 Simple Dashboard Mode");
-  console.log("========================");
-  console.log("\n📊 System Overview:");
+  console.info("🚀 Simple Dashboard Mode");
+  console.info("========================");
+  console.info("\n📊 System Overview:");
   
   const content = await Bun.file(CONFIG_JSON).text();
   const projects = JSON.parse(content);
@@ -400,18 +400,18 @@ async function simpleDashboardMode() {
     profiles: new Set(projects.map((p: any) => p.profile)).size
   };
   
-  console.log(`  Total Projects:    ${stats.total}`);
-  console.log(`  Production:        ${stats.production}`);
-  console.log(`  Groups:            ${stats.groups}`);
-  console.log(`  Profiles:          ${stats.profiles}`);
+  console.info(`  Total Projects:    ${stats.total}`);
+  console.info(`  Production:        ${stats.production}`);
+  console.info(`  Groups:            ${stats.groups}`);
+  console.info(`  Profiles:          ${stats.profiles}`);
   
-  console.log("\n🎯 Available Actions:");
-  console.log("1. Interactive Editor");
-  console.log("2. Configuration Validation");
-  console.log("3. Performance Metrics");
-  console.log("4. Topology Generation");
-  console.log("5. Sync Status");
-  console.log("6. Exit");
+  console.info("\n🎯 Available Actions:");
+  console.info("1. Interactive Editor");
+  console.info("2. Configuration Validation");
+  console.info("3. Performance Metrics");
+  console.info("4. Topology Generation");
+  console.info("5. Sync Status");
+  console.info("6. Exit");
   
   const readline = require('readline');
   const rl = readline.createInterface({
@@ -442,12 +442,12 @@ async function simpleDashboardMode() {
         await simpleDashboardMode();
         break;
       case '6':
-        console.log("✅ Exiting...");
+        console.info("✅ Exiting...");
         rl.close();
         process.exit(0);
         break;
       default:
-        console.log("❌ Invalid choice. Please enter 1-6.");
+        console.info("❌ Invalid choice. Please enter 1-6.");
         await simpleDashboardMode();
         break;
     }
@@ -467,14 +467,14 @@ async function generateTopologyDiagram(format: string = 'text', output: string =
   }
   
   if (output === 'stdout') {
-    console.log(diagram);
+    console.info(diagram);
   } else {
     const outputDir = output.split('/').slice(0, -1).join('/');
     if (outputDir) {
       await Bun.$`mkdir -p ${outputDir}`.text();
     }
     await Bun.write(output, diagram);
-    console.log(`✅ Topology diagram generated → ${output}`);
+    console.info(`✅ Topology diagram generated → ${output}`);
   }
 }
 
@@ -554,41 +554,41 @@ function generateTextFormat(projects: any[]): string {
 }
 
 async function runAudit(failOnCritical: boolean = false, exportPath: string | null = null) {
-  console.log("🔍 Nebula Flow Configuration Audit");
-  console.log("==================================");
+  console.info("🔍 Nebula Flow Configuration Audit");
+  console.info("==================================");
   
   const result = await validateAndExtractPatterns();
   
-  console.log(`\n📊 Audit Summary:`);
-  console.log(`  Projects:          ${result.patterns.length}`);
-  console.log(`  Valid Config:      ${result.valid ? "✅ Passed" : "🔴 Failed"}`);
-  console.log(`  Errors:            ${result.errors.length}`);
+  console.info(`\n📊 Audit Summary:`);
+  console.info(`  Projects:          ${result.patterns.length}`);
+  console.info(`  Valid Config:      ${result.valid ? "✅ Passed" : "🔴 Failed"}`);
+  console.info(`  Errors:            ${result.errors.length}`);
   
   if (result.patterns.length > 0) {
-    console.log(`\n🔍 URLPattern Analysis:`);
+    console.info(`\n🔍 URLPattern Analysis:`);
     const staticPatterns = result.patterns.filter(p => !p.dynamic);
     const dynamicPatterns = result.patterns.filter(p => p.dynamic);
     
-    console.log(`  Static Patterns:   ${staticPatterns.length}`);
-    console.log(`  Dynamic Patterns:  ${dynamicPatterns.length}`);
+    console.info(`  Static Patterns:   ${staticPatterns.length}`);
+    console.info(`  Dynamic Patterns:  ${dynamicPatterns.length}`);
     
-    console.log(`\nPattern Validation:`);
+    console.info(`\nPattern Validation:`);
     result.patterns.forEach((pattern, index) => {
       try {
         const urlPattern = new URLPattern(pattern.value);
-        console.log(`  ✅ Pattern ${index + 1}: ${pattern.path} - Valid`);
+        console.info(`  ✅ Pattern ${index + 1}: ${pattern.path} - Valid`);
       } catch (error: any) {
-        console.log(`  ❌ Pattern ${index + 1}: ${pattern.path} - ${error.message}`);
+        console.info(`  ❌ Pattern ${index + 1}: ${pattern.path} - ${error.message}`);
       }
     });
   }
   
   if (result.errors.length > 0) {
-    console.log(`\n❌ Configuration Errors:`);
-    result.errors.forEach(error => console.log(`  - ${error}`));
+    console.info(`\n❌ Configuration Errors:`);
+    result.errors.forEach(error => console.info(`  - ${error}`));
     
     if (failOnCritical) {
-      console.log(`\n🔴 Audit failed - critical errors detected`);
+      console.info(`\n🔴 Audit failed - critical errors detected`);
       process.exit(1);
     }
   }
@@ -599,11 +599,11 @@ async function runAudit(failOnCritical: boolean = false, exportPath: string | nu
       await exportToS3(auditReport, exportPath);
     } else {
       await Bun.write(exportPath, auditReport);
-      console.log(`✅ Audit report saved to ${exportPath}`);
+      console.info(`✅ Audit report saved to ${exportPath}`);
     }
   }
   
-  console.log(`\n✅ Audit completed successfully`);
+  console.info(`\n✅ Audit completed successfully`);
 }
 
 async function generateAuditReport(result: any) {
@@ -631,15 +631,15 @@ async function generateAuditReport(result: any) {
 }
 
 async function exportToS3(data: string, path: string) {
-  console.log(`🔄 Exporting audit report to S3: ${path}`);
+  console.info(`🔄 Exporting audit report to S3: ${path}`);
   const tempFile = `/tmp/nebula-audit-${Date.now()}.json`;
   await Bun.write(tempFile, data);
-  console.log(`✅ Audit report exported to S3 (simulated): ${path}`);
+  console.info(`✅ Audit report exported to S3 (simulated): ${path}`);
 }
 
 async function syncSecrets(allGroups: boolean = false, toKeychain: boolean = false) {
-  console.log("🔐 Nebula Flow Secrets Management");
-  console.log("=================================");
+  console.info("🔐 Nebula Flow Secrets Management");
+  console.info("=================================");
   
   const content = await Bun.file(CONFIG_JSON).text();
   const projects = JSON.parse(content);
@@ -647,25 +647,25 @@ async function syncSecrets(allGroups: boolean = false, toKeychain: boolean = fal
   let targetProjects = projects;
   if (!allGroups) {
     const groups = new Set(projects.map((p: any) => p.group));
-    console.log(`Available groups: ${Array.from(groups).join(', ')}`);
+    console.info(`Available groups: ${Array.from(groups).join(', ')}`);
     console.warn("⚠️  Secret sync for specific groups requires additional configuration");
     return;
   }
   
-  console.log(`\n🔄 Syncing secrets for ${projects.length} projects...`);
+  console.info(`\n🔄 Syncing secrets for ${projects.length} projects...`);
   
   if (toKeychain) {
-    console.log("🔑 Storing secrets in system keychain...");
+    console.info("🔑 Storing secrets in system keychain...");
     const secretCount = projects.length * 2;
-    console.log(`✅ Stored ${secretCount} secrets in system keychain`);
+    console.info(`✅ Stored ${secretCount} secrets in system keychain`);
   }
   
-  console.log("✅ Secrets sync completed successfully");
+  console.info("✅ Secrets sync completed successfully");
 }
 
 async function generateGuards(groups: string[], output: string = 'src/guards.ts') {
-  console.log("🛡️  Nebula Flow Runtime Guards Generator");
-  console.log("=======================================");
+  console.info("🛡️  Nebula Flow Runtime Guards Generator");
+  console.info("=======================================");
   
   const content = await Bun.file(CONFIG_JSON).text();
   const projects = JSON.parse(content);
@@ -675,7 +675,7 @@ async function generateGuards(groups: string[], output: string = 'src/guards.ts'
     targetProjects = projects.filter((p: any) => groups.includes(p.group));
   }
   
-  console.log(`\n🔍 Generating guards for ${targetProjects.length} projects in groups: ${groups.join(', ')}`);
+  console.info(`\n🔍 Generating guards for ${targetProjects.length} projects in groups: ${groups.join(', ')}`);
   
   const guardsCode = generateTypeScriptGuards(targetProjects, groups);
   
@@ -685,7 +685,7 @@ async function generateGuards(groups: string[], output: string = 'src/guards.ts'
   }
   
   await Bun.write(output, guardsCode);
-  console.log(`✅ Runtime guards generated → ${output}`);
+  console.info(`✅ Runtime guards generated → ${output}`);
 }
 
 function generateTypeScriptGuards(projects: any[], groups: string[]) {
@@ -802,19 +802,19 @@ async function calculatePackageChecksum(filename: string) {
 }
 
 async function createPackage(compile: boolean = false, feature: string | null = null, outfile: string = 'nebula-guard') {
-  console.log("📦 Nebula Flow Package Compiler");
-  console.log("==============================");
+  console.info("📦 Nebula Flow Package Compiler");
+  console.info("==============================");
   
-  console.log(`🔄 Creating package ${outfile}...`);
+  console.info(`🔄 Creating package ${outfile}...`);
   
   if (feature) {
-    console.log(`🎯 Feature flag: ${feature}`);
+    console.info(`🎯 Feature flag: ${feature}`);
   }
   
   if (compile) {
-    console.log("🏗️  Compiling with TypeScript...");
+    console.info("🏗️  Compiling with TypeScript...");
     await Bun.sleep(1000);
-    console.log("✅ Compilation completed");
+    console.info("✅ Compilation completed");
   }
   
   const packageInfo = {
@@ -832,23 +832,23 @@ async function createPackage(compile: boolean = false, feature: string | null = 
   await Bun.$`zip -j ${packageFile} ${outfile}.json`.text();
   await Bun.$`rm ${outfile}.json`.text();
   
-  console.log(`✅ Package created → ${packageFile}`);
-  console.log("📊 Package details:");
-  console.log(`  Size:          ${packageInfo.size}`);
-  console.log(`  Version:       ${packageInfo.version}`);
-  console.log(`  Features:      ${packageInfo.features.join(', ')}`);
-  console.log(`  Checksum:      ${packageInfo.checksum}`);
+  console.info(`✅ Package created → ${packageFile}`);
+  console.info("📊 Package details:");
+  console.info(`  Size:          ${packageInfo.size}`);
+  console.info(`  Version:       ${packageInfo.version}`);
+  console.info(`  Features:      ${packageInfo.features.join(', ')}`);
+  console.info(`  Checksum:      ${packageInfo.checksum}`);
 }
 
 async function syncRemoteConfig() {
-  console.log("🔄 Syncing configuration with remote storage...");
+  console.info("🔄 Syncing configuration with remote storage...");
   
   try {
     const fakeRemoteData = await Bun.file(CONFIG_JSON).text();
     const fakeRemoteHash = simpleHash(fakeRemoteData);
     
-    console.log(`✅ Remote sync completed (hash: ${fakeRemoteHash})`);
-    console.log("🟢 Configuration in sync with remote");
+    console.info(`✅ Remote sync completed (hash: ${fakeRemoteHash})`);
+    console.info("🟢 Configuration in sync with remote");
   } catch (error: any) {
     console.error(`🔴 Remote sync failed: ${error.message}`);
     console.warn("⚠️  Falling back to local configuration");
@@ -856,8 +856,8 @@ async function syncRemoteConfig() {
 }
 
 async function showSyncStatus() {
-  console.log("📊 Sync Status");
-  console.log("==============");
+  console.info("📊 Sync Status");
+  console.info("==============");
   
   try {
     const localContent = await Bun.file(CONFIG_JSON).text();
@@ -865,9 +865,9 @@ async function showSyncStatus() {
     
     const fakeRemoteHash = localHash;
     
-    console.log(`Local hash:    ${localHash}`);
-    console.log(`Remote hash:   ${fakeRemoteHash}`);
-    console.log(`Sync Status:   ${localHash === fakeRemoteHash ? "✅ In Sync" : "🔴 Out of Sync"}`);
+    console.info(`Local hash:    ${localHash}`);
+    console.info(`Remote hash:   ${fakeRemoteHash}`);
+    console.info(`Sync Status:   ${localHash === fakeRemoteHash ? "✅ In Sync" : "🔴 Out of Sync"}`);
   } catch (error: any) {
     console.error(`🔴 Status check failed: ${error.message}`);
   }
@@ -876,35 +876,35 @@ async function showSyncStatus() {
 async function analyzeURLPatterns() {
   const result = await validateAndExtractPatterns();
   
-  console.log("\n🔍 URLPattern Observatory");
-  console.log("=========================");
+  console.info("\n🔍 URLPattern Observatory");
+  console.info("=========================");
   
   if (result.patterns.length === 0) {
-    console.log("No URLPattern candidates found");
+    console.info("No URLPattern candidates found");
     return;
   }
   
   const staticPatterns = result.patterns.filter(p => !p.dynamic);
   const dynamicPatterns = result.patterns.filter(p => p.dynamic);
   
-  console.log(`Total Patterns:     ${result.patterns.length}`);
-  console.log(`Static Patterns:    ${staticPatterns.length}`);
-  console.log(`Dynamic Patterns:   ${dynamicPatterns.length}`);
+  console.info(`Total Patterns:     ${result.patterns.length}`);
+  console.info(`Static Patterns:    ${staticPatterns.length}`);
+  console.info(`Dynamic Patterns:   ${dynamicPatterns.length}`);
   
-  console.log("\nPattern Analysis:");
+  console.info("\nPattern Analysis:");
   result.patterns.forEach((pattern, index) => {
     try {
       const urlPattern = new URLPattern(pattern.value);
-      console.log(`✅ Pattern ${index + 1} (${pattern.path}): Valid URLPattern`);
+      console.info(`✅ Pattern ${index + 1} (${pattern.path}): Valid URLPattern`);
     } catch (error: any) {
-      console.log(`❌ Pattern ${index + 1} (${pattern.path}): Invalid - ${error.message}`);
+      console.info(`❌ Pattern ${index + 1} (${pattern.path}): Invalid - ${error.message}`);
     }
   });
 }
 
 async function findUnguardedCritical() {
-  console.log("🔍 Finding Unguarded Critical Patterns");
-  console.log("=====================================");
+  console.info("🔍 Finding Unguarded Critical Patterns");
+  console.info("=====================================");
   
   // Dynamically import the SecurityAuditor
   const { SecurityAuditor } = await import('../src/services/security-auditor');
@@ -913,31 +913,31 @@ async function findUnguardedCritical() {
   const unguarded = await auditor.findUnguardedCritical();
   
   if (unguarded.length === 0) {
-    console.log("\n✅ No unguarded critical patterns found");
+    console.info("\n✅ No unguarded critical patterns found");
     return;
   }
   
-  console.log(`\n🚨 Found ${unguarded.length} unguarded secrets in critical patterns`);
+  console.info(`\n🚨 Found ${unguarded.length} unguarded secrets in critical patterns`);
   
   unguarded.forEach((report, index) => {
     const { secret, patterns, riskScore } = report;
     
-    console.log(
+    console.info(
       `\n${index + 1}. ${secret.name} (Risk: ${riskScore}/10)` +
       `\n  Used in ${patterns.length} unguarded critical patterns:`
     );
     
     patterns.forEach(p => {
-      console.log(`  • ${p.group}: ${p.pattern.slice(0, 60)}...`);
+      console.info(`  • ${p.group}: ${p.pattern.slice(0, 60)}...`);
     });
   });
   
-  console.log("\n📝 Run 'nebula-flow.ts guard repair' to auto-generate guards");
+  console.info("\n📝 Run 'nebula-flow.ts guard repair' to auto-generate guards");
 }
 
 async function guardRepair(autoFix: boolean = false, backup: boolean = false, testBeforeDeploy: boolean = false) {
-  console.log("🛡️  Generating Runtime Guards");
-  console.log("============================");
+  console.info("🛡️  Generating Runtime Guards");
+  console.info("============================");
   
   // Dynamically import the SecurityAuditor
   const { SecurityAuditor } = await import('../src/services/security-auditor');
@@ -946,7 +946,7 @@ async function guardRepair(autoFix: boolean = false, backup: boolean = false, te
   const unguarded = await auditor.findUnguardedCritical();
   
   if (unguarded.length === 0) {
-    console.log("\n✅ No unguarded critical patterns found");
+    console.info("\n✅ No unguarded critical patterns found");
     return;
   }
   
@@ -961,21 +961,21 @@ async function guardRepair(autoFix: boolean = false, backup: boolean = false, te
     await Bun.write(`guards/${guard.id}.ts`, guard.implementation);
   }
   
-  console.log(`\n✅ Generated ${guards.length} guards for ${unguarded.length} secrets`);
+  console.info(`\n✅ Generated ${guards.length} guards for ${unguarded.length} secrets`);
   
   // Show auto-fix report
-  console.log("\n📊 Auto-Fix Report:");
+  console.info("\n📊 Auto-Fix Report:");
   unguarded.forEach(report => {
-    console.log(`\n${report.secret.name}:`);
+    console.info(`\n${report.secret.name}:`);
     report.patterns.forEach(pattern => {
-      console.log(`  • ${pattern.group}: ${pattern.pattern.slice(0, 60)}...`);
+      console.info(`  • ${pattern.group}: ${pattern.pattern.slice(0, 60)}...`);
     });
   });
 }
 
 async function runSecurityAudit(format: string = 'text', output: string = 'stdout') {
-  console.log("🔐 Security Audit");
-  console.log("=================");
+  console.info("🔐 Security Audit");
+  console.info("=================");
   
   // Dynamically import the SecurityAuditor
   const { SecurityAuditor } = await import('../src/services/security-auditor');
@@ -983,22 +983,22 @@ async function runSecurityAudit(format: string = 'text', output: string = 'stdou
   
   const results = await auditor.batchAuditAllGroups();
   
-  console.log(`\n📊 Audit Summary:`);
-  console.log(`  Timestamp:         ${results.timestamp}`);
-  console.log(`  Total Groups:      ${results.groups.length}`);
-  console.log(`  Total Unguarded:   ${results.summary.totalUnguarded}`);
-  console.log(`  Critical Count:    ${results.summary.criticalCount}`);
-  console.log(`  Avg Risk Score:    ${results.summary.avgRiskScore.toFixed(1)}/10`);
+  console.info(`\n📊 Audit Summary:`);
+  console.info(`  Timestamp:         ${results.timestamp}`);
+  console.info(`  Total Groups:      ${results.groups.length}`);
+  console.info(`  Total Unguarded:   ${results.summary.totalUnguarded}`);
+  console.info(`  Critical Count:    ${results.summary.criticalCount}`);
+  console.info(`  Avg Risk Score:    ${results.summary.avgRiskScore.toFixed(1)}/10`);
   
   if (format === 'json' && output !== 'stdout') {
     await Bun.write(output, JSON.stringify(results, null, 2));
-    console.log(`\n✅ Report saved to ${output}`);
+    console.info(`\n✅ Report saved to ${output}`);
   }
 }
 
 async function performanceMetrics() {
-  console.log("⚡ Performance Metrics");
-  console.log("======================");
+  console.info("⚡ Performance Metrics");
+  console.info("======================");
   
   const startTime = performance.now();
   const content = await Bun.file(CONFIG_JSON).text();
@@ -1013,14 +1013,14 @@ async function performanceMetrics() {
   await generateTagsIndex();
   const indexTime = performance.now() - indexStart;
   
-  console.log(`Configuration Load:  ${loadTime.toFixed(2)}ms`);
-  console.log(`Validation:         ${validateTime.toFixed(2)}ms`);
-  console.log(`Index Generation:    ${indexTime.toFixed(2)}ms`);
-  console.log(`Projects Count:      ${projects.length}`);
+  console.info(`Configuration Load:  ${loadTime.toFixed(2)}ms`);
+  console.info(`Validation:         ${validateTime.toFixed(2)}ms`);
+  console.info(`Index Generation:    ${indexTime.toFixed(2)}ms`);
+  console.info(`Projects Count:      ${projects.length}`);
   
   if (loadTime > 100) {
-    console.log("\n⚠️  Performance Warning: Configuration loading time exceeds 100ms");
-    console.log("Recommendation: Consider reducing configuration size or using async loading");
+    console.info("\n⚠️  Performance Warning: Configuration loading time exceeds 100ms");
+    console.info("Recommendation: Consider reducing configuration size or using async loading");
   }
 }
 
@@ -1129,7 +1129,7 @@ async function main() {
       
     case 'help':
     case '--help':
-      console.log(`Nebula Flow v3.6 Usage:
+      console.info(`Nebula Flow v3.6 Usage:
   bun nebula-flow.ts validate          - Validate configuration
   bun nebula-flow.ts index            - Generate tags index
   bun nebula-flow.ts interactive      - PTY editor

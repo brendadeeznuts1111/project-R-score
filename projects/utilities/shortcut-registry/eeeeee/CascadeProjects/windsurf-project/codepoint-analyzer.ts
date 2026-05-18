@@ -468,7 +468,7 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.length === 0 && process.stdin.isTTY || args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🔍 Enhanced Codepoint Analysis System
 
 Usage:
@@ -518,7 +518,7 @@ Examples:
     text = Buffer.concat(chunks).toString();
   } else {
     console.error('❌ No input file provided and no data on stdin');
-    console.log('Use --help for usage information');
+    console.info('Use --help for usage information');
     process.exit(1);
   }
 
@@ -535,11 +535,11 @@ Examples:
   // Output
   switch (format) {
     case 'json':
-      console.log(analyzer.exportJSON(analysis));
+      console.info(analyzer.exportJSON(analysis));
       break;
     case 'report':
     default:
-      console.log(analyzer.generateReport(analysis));
+      console.info(analyzer.generateReport(analysis));
       break;
   }
 

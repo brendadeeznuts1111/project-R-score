@@ -23,26 +23,26 @@ class BenchmarkCIIntegration {
   }
 
   async runCIIntegration() {
-    console.log('🚀 Starting Benchmark CI/CD Integration\n');
+    console.info('🚀 Starting Benchmark CI/CD Integration\n');
 
     try {
       // Step 1: Run benchmarks
-      console.log('📊 Step 1: Running Benchmarks...');
+      console.info('📊 Step 1: Running Benchmarks...');
       await this.runBenchmarks();
 
       // Step 2: Generate dashboard
-      console.log('📈 Step 2: Generating Dashboard...');
+      console.info('📈 Step 2: Generating Dashboard...');
       await this.generateDashboard();
 
       // Step 3: Analyze regressions
-      console.log('🔍 Step 3: Analyzing Performance Regressions...');
+      console.info('🔍 Step 3: Analyzing Performance Regressions...');
       const hasRegressions = await this.analyzeRegressions();
 
       // Step 4: Handle results
-      console.log('📋 Step 4: Processing Results...');
+      console.info('📋 Step 4: Processing Results...');
       await this.processResults(hasRegressions);
 
-      console.log('✅ CI/CD Integration completed successfully!');
+      console.info('✅ CI/CD Integration completed successfully!');
 
     } catch (error) {
       console.error('❌ CI/CD Integration failed:', error);
@@ -85,7 +85,7 @@ class BenchmarkCIIntegration {
         stdio: 'inherit',
         timeout: 300000 // 5 minutes timeout
       });
-      console.log('✅ Benchmarks completed successfully');
+      console.info('✅ Benchmarks completed successfully');
     } catch (error) {
       throw new Error(`Benchmark execution failed: ${error}`);
     }
@@ -98,7 +98,7 @@ class BenchmarkCIIntegration {
         stdio: 'inherit',
         timeout: 60000 // 1 minute timeout
       });
-      console.log('✅ Dashboard generated successfully');
+      console.info('✅ Dashboard generated successfully');
     } catch (error) {
       console.warn('Warning: Dashboard generation failed, continuing...');
     }
@@ -117,16 +117,16 @@ class BenchmarkCIIntegration {
                            output.includes('SEVERE REGRESSIONS DETECTED');
 
       if (hasRegressions) {
-        console.log('⚠️  Performance regressions detected');
+        console.info('⚠️  Performance regressions detected');
       } else {
-        console.log('✅ No performance regressions detected');
+        console.info('✅ No performance regressions detected');
       }
 
       return hasRegressions;
     } catch (error) {
       // If regression analysis fails with exit code, it means regressions were found
       if (error.status && error.status > 0) {
-        console.log('⚠️  Performance regressions detected (exit code > 0)');
+        console.info('⚠️  Performance regressions detected (exit code > 0)');
         return true;
       }
       throw new Error(`Regression analysis failed: ${error}`);
@@ -138,12 +138,12 @@ class BenchmarkCIIntegration {
     const shouldFail = this.shouldFailBuild(hasRegressions);
 
     if (shouldFail) {
-      console.log('❌ Build will fail due to performance regressions');
+      console.info('❌ Build will fail due to performance regressions');
 
       // Create failure summary
       await this.createFailureSummary();
     } else {
-      console.log('✅ Build will continue - regressions within acceptable threshold');
+      console.info('✅ Build will continue - regressions within acceptable threshold');
     }
 
     // Send notifications if configured
@@ -198,7 +198,7 @@ class BenchmarkCIIntegration {
 
     const filename = `results/ci-failure-summary-${Date.now()}.json`;
     Bun.write(filename, JSON.stringify(summary, null, 2));
-    console.log(`💾 Failure summary saved: ${filename}`);
+    console.info(`💾 Failure summary saved: ${filename}`);
   }
 
   private async sendNotifications(isFailure: boolean) {
@@ -260,7 +260,7 @@ class BenchmarkCIIntegration {
       });
 
       if (response.ok) {
-        console.log('✅ Slack notification sent');
+        console.info('✅ Slack notification sent');
       } else {
         console.warn('Warning: Slack notification failed');
       }
@@ -288,7 +288,7 @@ class BenchmarkCIIntegration {
       });
 
       if (response.ok) {
-        console.log('✅ Webhook notification sent');
+        console.info('✅ Webhook notification sent');
       } else {
         console.warn('Warning: Webhook notification failed');
       }
@@ -300,7 +300,7 @@ class BenchmarkCIIntegration {
   private async createGitHubCheck(status: string) {
     // This would integrate with GitHub Checks API
     // Implementation depends on specific CI/CD platform
-    console.log('📝 GitHub check integration not implemented yet');
+    console.info('📝 GitHub check integration not implemented yet');
   }
 
   private async uploadArtifacts() {
@@ -316,7 +316,7 @@ class BenchmarkCIIntegration {
       artifacts.push(regressionFile);
     }
 
-    console.log('📦 Artifacts ready for upload:', artifacts);
+    console.info('📦 Artifacts ready for upload:', artifacts);
     // Implementation depends on CI/CD platform (GitHub Actions, GitLab CI, etc.)
   }
 
@@ -347,7 +347,7 @@ class BenchmarkCIIntegration {
     try {
       const filename = `results/ci-error-${Date.now()}.json`;
       Bun.write(filename, JSON.stringify(errorSummary, null, 2));
-      console.log(`💾 Error summary saved: ${filename}`);
+      console.info(`💾 Error summary saved: ${filename}`);
     } catch {
       // Ignore if we can't save error summary
     }

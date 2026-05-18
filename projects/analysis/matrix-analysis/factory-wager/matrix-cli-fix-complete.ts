@@ -3,10 +3,10 @@
  * Proper working directory and path resolution for chromatic excellence
  */
 
-console.log('🔧 MATRIX CLI COMMAND FIX - FRONTMATTER RENDERING RESTORED')
-console.log('=' .repeat(80))
+console.info('🔧 MATRIX CLI COMMAND FIX - FRONTMATTER RENDERING RESTORED')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 ✅ ISSUE IDENTIFIED AND RESOLVED:
 
 🔍 PROBLEM ANALYSIS:
@@ -107,8 +107,8 @@ cd /Users/nolarose && bun run factory-wager/tabular/fm-table-v43-cli.ts --input 
 Both chromatic rendering systems now operational and demonstrating terminal excellence!
 `)
 
-console.log('🔧✅ MATRIX CLI COMMAND FIX COMPLETE!')
-console.log('🚀 Frontmatter rendering restored - Path resolution fixed!')
-console.log('🎨 Both Matrix CLI and Tabular v4.3 working perfectly!')
-console.log('💎 Chromatic excellence - Dual system mastery achieved!')
-console.log('🛡️ Unicode support verified - Terminal perfection confirmed!')
+console.info('🔧✅ MATRIX CLI COMMAND FIX COMPLETE!')
+console.info('🚀 Frontmatter rendering restored - Path resolution fixed!')
+console.info('🎨 Both Matrix CLI and Tabular v4.3 working perfectly!')
+console.info('💎 Chromatic excellence - Dual system mastery achieved!')
+console.info('🛡️ Unicode support verified - Terminal perfection confirmed!')

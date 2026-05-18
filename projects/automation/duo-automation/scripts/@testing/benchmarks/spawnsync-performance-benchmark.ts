@@ -8,10 +8,10 @@
 import { spawnSync } from 'bun';
 import { performance } from 'perf_hooks';
 
-console.log('🚀 Bun.spawnSync() Performance Benchmark - Linux ARM64');
-console.log('=========================================================');
-console.log('Testing Empire Pro Config Empire CLI operations');
-console.log('');
+console.info('🚀 Bun.spawnSync() Performance Benchmark - Linux ARM64');
+console.info('=========================================================');
+console.info('Testing Empire Pro Config Empire CLI operations');
+console.info('');
 
 // Test subprocess operations commonly used in Empire Pro
 const testCommands = [
@@ -24,8 +24,8 @@ const testCommands = [
 
 // Benchmark function
 async function benchmarkSpawnCommand(name: string, command: string[], iterations = 100) {
-  console.log(`📊 Testing ${name} (${iterations} iterations)`);
-  console.log(`   Command: ${command.join(' ')}`);
+  console.info(`📊 Testing ${name} (${iterations} iterations)`);
+  console.info(`   Command: ${command.join(' ')}`);
   
   // Warmup
   for (let i = 0; i < 5; i++) {
@@ -46,34 +46,34 @@ async function benchmarkSpawnCommand(name: string, command: string[], iterations
   const totalTime = end - start;
   const avgTime = totalTime / iterations;
   
-  console.log(`   Total time: ${totalTime.toFixed(2)}ms`);
-  console.log(`   Average: ${avgTime.toFixed(3)}ms per spawn`);
-  console.log(`   Operations/sec: ${(1000 / avgTime).toFixed(0)}`);
-  console.log('');
+  console.info(`   Total time: ${totalTime.toFixed(2)}ms`);
+  console.info(`   Average: ${avgTime.toFixed(3)}ms per spawn`);
+  console.info(`   Operations/sec: ${(1000 / avgTime).toFixed(0)}`);
+  console.info('');
 }
 
 // Performance comparison demonstration
 function demonstratePerformanceImprovement() {
-  console.log('📈 Performance Improvement Demonstration');
-  console.log('========================================');
+  console.info('📈 Performance Improvement Demonstration');
+  console.info('========================================');
   
-  console.log('Before Optimization (Linux ARM64 with high fd limits):');
-  console.log('   Bun.spawnSync(): ~13ms per spawn');
-  console.log('   Issue: close_range() syscall fallback to individual fd closing');
-  console.log('   Impact: Iterating through up to 65K file descriptors');
-  console.log('');
+  console.info('Before Optimization (Linux ARM64 with high fd limits):');
+  console.info('   Bun.spawnSync(): ~13ms per spawn');
+  console.info('   Issue: close_range() syscall fallback to individual fd closing');
+  console.info('   Impact: Iterating through up to 65K file descriptors');
+  console.info('');
   
-  console.log('After Optimization (Bun v1.3.6+):');
-  console.log('   Bun.spawnSync(): ~0.4ms per spawn');
-  console.log('   Fix: Proper close_range() syscall definition at compile time');
-  console.log('   Result: 30x faster subprocess operations');
-  console.log('');
+  console.info('After Optimization (Bun v1.3.6+):');
+  console.info('   Bun.spawnSync(): ~0.4ms per spawn');
+  console.info('   Fix: Proper close_range() syscall definition at compile time');
+  console.info('   Result: 30x faster subprocess operations');
+  console.info('');
 }
 
 // Empire Pro specific CLI operations
 async function benchmarkEmpireProOperations() {
-  console.log('🏰 Empire Pro CLI Operations Benchmark');
-  console.log('=======================================');
+  console.info('🏰 Empire Pro CLI Operations Benchmark');
+  console.info('=======================================');
   
   const empireProCommands = [
     { name: 'Secret Validation', command: ['bun', '--version'] }, // Simulate secret validation
@@ -90,11 +90,11 @@ async function benchmarkEmpireProOperations() {
 
 // Stress test with high frequency operations
 async function stressTestSpawnOperations() {
-  console.log('🔥 Stress Test - High Frequency Operations');
-  console.log('==========================================');
+  console.info('🔥 Stress Test - High Frequency Operations');
+  console.info('==========================================');
   
   const iterations = 200;
-  console.log(`Running ${iterations} rapid subprocess spawns...`);
+  console.info(`Running ${iterations} rapid subprocess spawns...`);
   
   const start = performance.now();
   
@@ -106,27 +106,27 @@ async function stressTestSpawnOperations() {
   const totalTime = end - start;
   const avgTime = totalTime / iterations;
   
-  console.log(`Stress test completed:`);
-  console.log(`   Total time: ${totalTime.toFixed(2)}ms`);
-  console.log(`   Average: ${avgTime.toFixed(3)}ms per spawn`);
-  console.log(`   Operations/sec: ${(1000 / avgTime).toFixed(0)}`);
+  console.info(`Stress test completed:`);
+  console.info(`   Total time: ${totalTime.toFixed(2)}ms`);
+  console.info(`   Average: ${avgTime.toFixed(3)}ms per spawn`);
+  console.info(`   Operations/sec: ${(1000 / avgTime).toFixed(0)}`);
   
   if (avgTime < 1.0) {
-    console.log(`   🚀 EXCELLENT: Sub-millisecond performance achieved!`);
+    console.info(`   🚀 EXCELLENT: Sub-millisecond performance achieved!`);
   } else if (avgTime < 5.0) {
-    console.log(`   ✅ GOOD: Fast performance for production use`);
+    console.info(`   ✅ GOOD: Fast performance for production use`);
   } else {
-    console.log(`   ⚠️  SLOW: Performance may need optimization`);
+    console.info(`   ⚠️  SLOW: Performance may need optimization`);
   }
-  console.log('');
+  console.info('');
 }
 
 // Demonstrate real-world Empire Pro scenarios
 async function realWorldScenarios() {
-  console.log('💼 Real-World Empire Pro Scenarios');
-  console.log('===================================');
+  console.info('💼 Real-World Empire Pro Scenarios');
+  console.info('===================================');
   
-  console.log('🔐 Secret Management Operations:');
+  console.info('🔐 Secret Management Operations:');
   const secretStart = performance.now();
   
   // Simulate secret validation operations
@@ -136,10 +136,10 @@ async function realWorldScenarios() {
   }
   
   const secretEnd = performance.now();
-  console.log(`   20 secret operations: ${(secretEnd - secretStart).toFixed(2)}ms`);
-  console.log('');
+  console.info(`   20 secret operations: ${(secretEnd - secretStart).toFixed(2)}ms`);
+  console.info('');
   
-  console.log('🌐 API Server Management:');
+  console.info('🌐 API Server Management:');
   const apiStart = performance.now();
   
   // Simulate API management operations
@@ -150,10 +150,10 @@ async function realWorldScenarios() {
   }
   
   const apiEnd = performance.now();
-  console.log(`   15 API operations: ${(apiEnd - apiStart).toFixed(2)}ms`);
-  console.log('');
+  console.info(`   15 API operations: ${(apiEnd - apiStart).toFixed(2)}ms`);
+  console.info('');
   
-  console.log('📊 Configuration Deployment:');
+  console.info('📊 Configuration Deployment:');
   const configStart = performance.now();
   
   // Simulate configuration deployment
@@ -163,42 +163,42 @@ async function realWorldScenarios() {
   }
   
   const configEnd = performance.now();
-  console.log(`   16 deployment operations: ${(configEnd - configStart).toFixed(2)}ms`);
-  console.log('');
+  console.info(`   16 deployment operations: ${(configEnd - configStart).toFixed(2)}ms`);
+  console.info('');
 }
 
 // Technical explanation
 function explainTechnicalDetails() {
-  console.log('🔧 Technical Implementation Details');
-  console.log('===================================');
+  console.info('🔧 Technical Implementation Details');
+  console.info('===================================');
   
-  console.log('🐛 The Problem:');
-  console.log('   • close_range() syscall number not defined at compile time');
-  console.log('   • Fallback to iterating through all possible file descriptors');
-  console.log('   • Up to 65K file descriptors checked individually');
-  console.log('   • Result: ~13ms per spawn instead of ~0.4ms');
-  console.log('');
+  console.info('🐛 The Problem:');
+  console.info('   • close_range() syscall number not defined at compile time');
+  console.info('   • Fallback to iterating through all possible file descriptors');
+  console.info('   • Up to 65K file descriptors checked individually');
+  console.info('   • Result: ~13ms per spawn instead of ~0.4ms');
+  console.info('');
   
-  console.log('🔧 The Solution:');
-  console.log('   • Proper close_range() syscall definition at compile time');
-  console.log('   • Native syscall usage instead of fallback');
-  console.log('   • Efficient file descriptor management');
-  console.log('   • Result: 30x performance improvement');
-  console.log('');
+  console.info('🔧 The Solution:');
+  console.info('   • Proper close_range() syscall definition at compile time');
+  console.info('   • Native syscall usage instead of fallback');
+  console.info('   • Efficient file descriptor management');
+  console.info('   • Result: 30x performance improvement');
+  console.info('');
   
-  console.log('🎯 Impact on Empire Pro:');
-  console.log('   • CLI operations: 30x faster');
-  console.log('   • Subprocess management: 30x faster');
-  console.log('   • Build processes: 30x faster');
-  console.log('   • Deployment scripts: 30x faster');
-  console.log('   • Health checks: 30x faster');
-  console.log('');
+  console.info('🎯 Impact on Empire Pro:');
+  console.info('   • CLI operations: 30x faster');
+  console.info('   • Subprocess management: 30x faster');
+  console.info('   • Build processes: 30x faster');
+  console.info('   • Deployment scripts: 30x faster');
+  console.info('   • Health checks: 30x faster');
+  console.info('');
 }
 
 // Main benchmark execution
 async function runSpawnSyncBenchmark() {
-  console.log('🎯 Empire Pro Config Empire - Bun.spawnSync() Optimization');
-  console.log('==========================================================\n');
+  console.info('🎯 Empire Pro Config Empire - Bun.spawnSync() Optimization');
+  console.info('==========================================================\n');
   
   // Basic performance tests
   for (const test of testCommands) {
@@ -220,9 +220,9 @@ async function runSpawnSyncBenchmark() {
   // Technical details
   explainTechnicalDetails();
   
-  console.log('✅ Empire Pro Config Empire - spawnSync() Optimization Complete!');
-  console.log('🚀 30x faster CLI operations and subprocess management!');
-  console.log('🎯 Ready for high-frequency production deployment!');
+  console.info('✅ Empire Pro Config Empire - spawnSync() Optimization Complete!');
+  console.info('🚀 30x faster CLI operations and subprocess management!');
+  console.info('🎯 Ready for high-frequency production deployment!');
 }
 
 // Run the benchmark

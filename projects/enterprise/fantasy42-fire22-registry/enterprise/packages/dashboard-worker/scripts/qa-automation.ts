@@ -69,8 +69,8 @@ class QAAutomation {
     };
 
     this.startTime = performance.now();
-    console.log('🔍 Fire22 QA Automation Suite');
-    console.log('!==!==!==!==!===\n');
+    console.info('🔍 Fire22 QA Automation Suite');
+    console.info('!==!==!==!==!===\n');
   }
 
   /**
@@ -90,7 +90,7 @@ class QAAutomation {
       { name: 'documentation', fn: this.checkDocumentation.bind(this) },
     ];
 
-    console.log(`📋 Running ${steps.length} QA steps...\n`);
+    console.info(`📋 Running ${steps.length} QA steps...\n`);
 
     if (this.config.parallel) {
       await this.runStepsParallel(steps);
@@ -122,32 +122,32 @@ class QAAutomation {
           duration: 0,
           message: 'Skipped by configuration',
         });
-        console.log(`⏭️  Skipping ${step.name}`);
+        console.info(`⏭️  Skipping ${step.name}`);
         continue;
       }
 
-      console.log(`🔄 Running ${step.name}...`);
+      console.info(`🔄 Running ${step.name}...`);
       const result = await step.fn();
       this.results.push(result);
 
       const statusIcon = this.getStatusIcon(result.status);
-      console.log(
+      console.info(
         `${statusIcon} ${step.name} - ${result.status.toUpperCase()} (${result.duration.toFixed(0)}ms)`
       );
 
       if (result.message) {
-        console.log(`   💬 ${result.message}`);
+        console.info(`   💬 ${result.message}`);
       }
 
       if (result.details) {
-        result.details.forEach(detail => console.log(`   📄 ${detail}`));
+        result.details.forEach(detail => console.info(`   📄 ${detail}`));
       }
 
-      console.log('');
+      console.info('');
 
       // Fail fast if enabled
       if (this.config.failFast && result.status === 'fail') {
-        console.log('🛑 Failing fast due to failed step');
+        console.info('🛑 Failing fast due to failed step');
         break;
       }
     }
@@ -161,11 +161,11 @@ class QAAutomation {
   ): Promise<void> {
     const filteredSteps = steps.filter(step => !this.config.skipSteps.includes(step.name));
 
-    console.log(`🚀 Running ${filteredSteps.length} steps in parallel...\n`);
+    console.info(`🚀 Running ${filteredSteps.length} steps in parallel...\n`);
 
     const promises = filteredSteps.map(async step => {
       const result = await step.fn();
-      console.log(
+      console.info(
         `${this.getStatusIcon(result.status)} ${step.name} completed (${result.duration.toFixed(0)}ms)`
       );
       return result;
@@ -560,42 +560,42 @@ class QAAutomation {
   private async saveReport(report: QAReport): Promise<void> {
     const reportPath = join(process.cwd(), `qa-report-${Date.now()}.json`);
     await Bun.write(reportPath, JSON.stringify(report, null, 2));
-    console.log(`📊 QA report saved to: ${reportPath}`);
+    console.info(`📊 QA report saved to: ${reportPath}`);
   }
 
   /**
    * Display summary
    */
   private displaySummary(report: QAReport): void {
-    console.log('\n📊 QA Automation Summary');
-    console.log('='.repeat(40));
-    console.log(`🎯 Overall Status: ${report.overallStatus.toUpperCase()}`);
-    console.log(`📈 Overall Score: ${report.overallScore}%`);
-    console.log(`⏱️  Total Duration: ${(report.duration / 1000).toFixed(1)}s`);
-    console.log('');
+    console.info('\n📊 QA Automation Summary');
+    console.info('='.repeat(40));
+    console.info(`🎯 Overall Status: ${report.overallStatus.toUpperCase()}`);
+    console.info(`📈 Overall Score: ${report.overallScore}%`);
+    console.info(`⏱️  Total Duration: ${(report.duration / 1000).toFixed(1)}s`);
+    console.info('');
 
-    console.log('📋 Results Breakdown:');
-    console.log(`   ✅ Passed: ${report.summary.passed}`);
-    console.log(`   ❌ Failed: ${report.summary.failed}`);
-    console.log(`   ⚠️  Warnings: ${report.summary.warnings}`);
-    console.log(`   ⏭️  Skipped: ${report.summary.skipped}`);
-    console.log(`   📊 Total: ${report.summary.total}`);
-    console.log('');
+    console.info('📋 Results Breakdown:');
+    console.info(`   ✅ Passed: ${report.summary.passed}`);
+    console.info(`   ❌ Failed: ${report.summary.failed}`);
+    console.info(`   ⚠️  Warnings: ${report.summary.warnings}`);
+    console.info(`   ⏭️  Skipped: ${report.summary.skipped}`);
+    console.info(`   📊 Total: ${report.summary.total}`);
+    console.info('');
 
     if (report.recommendations.length > 0) {
-      console.log('💡 Recommendations:');
-      report.recommendations.forEach(rec => console.log(`   • ${rec}`));
-      console.log('');
+      console.info('💡 Recommendations:');
+      report.recommendations.forEach(rec => console.info(`   • ${rec}`));
+      console.info('');
     }
 
     // Exit with appropriate code
     if (report.overallStatus === 'fail') {
-      console.log('🚫 QA checks failed. Please fix issues before proceeding.');
+      console.info('🚫 QA checks failed. Please fix issues before proceeding.');
       process.exit(1);
     } else if (report.overallStatus === 'warning') {
-      console.log('⚠️  QA checks passed with warnings. Consider addressing issues.');
+      console.info('⚠️  QA checks passed with warnings. Consider addressing issues.');
     } else {
-      console.log('✅ All QA checks passed! Ready for deployment.');
+      console.info('✅ All QA checks passed! Ready for deployment.');
     }
   }
 
@@ -647,7 +647,7 @@ async function main() {
         break;
       case '--help':
       case '-h':
-        console.log(`
+        console.info(`
 🔍 Fire22 QA Automation Suite
 
 USAGE:

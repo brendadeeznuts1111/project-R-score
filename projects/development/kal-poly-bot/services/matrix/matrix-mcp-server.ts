@@ -52,7 +52,7 @@ class EnvironmentManager {
     this.projectRoot = this.detectProjectRoot();
     this.configPath = path.join(this.projectRoot, 'matrix-mcp-config.json');
 
-    console.log(`🔧 Environment Manager initialized for project: ${this.projectRoot}`);
+    console.info(`🔧 Environment Manager initialized for project: ${this.projectRoot}`);
   }
 
   get projectRootPath(): string {
@@ -212,7 +212,7 @@ class EnvironmentManager {
       const updatedConfig = { ...existingConfig, ...config };
 
       await writeFile(this.configPath, JSON.stringify(updatedConfig, null, 2));
-      console.log(`💾 Configuration saved to ${this.configPath}`);
+      console.info(`💾 Configuration saved to ${this.configPath}`);
     } catch (error) {
       console.error('❌ Failed to save configuration:', error);
       throw error;
@@ -270,7 +270,7 @@ class ShutdownManager {
 
     signals.forEach(signal => {
       process.on(signal, () => {
-        console.log(`\n🛑 Received ${signal}, initiating graceful shutdown...`);
+        console.info(`\n🛑 Received ${signal}, initiating graceful shutdown...`);
         this.gracefulShutdown(signal);
       });
     });
@@ -291,7 +291,7 @@ class ShutdownManager {
     if (process.stdin.isTTY) {
       process.stdin.on('keypress', (char, key) => {
         if (key && key.ctrl && key.name === 'c') {
-          console.log('\n🛑 Ctrl+C detected, initiating graceful shutdown...');
+          console.info('\n🛑 Ctrl+C detected, initiating graceful shutdown...');
           this.gracefulShutdown('SIGINT');
         }
       });
@@ -303,18 +303,18 @@ class ShutdownManager {
    */
   private async gracefulShutdown(reason: string): Promise<void> {
     if (this.isShuttingDown) {
-      console.log('🔄 Shutdown already in progress...');
+      console.info('🔄 Shutdown already in progress...');
       return;
     }
 
     this.isShuttingDown = true;
-    console.log('🛠️ Executing shutdown sequence...');
+    console.info('🛠️ Executing shutdown sequence...');
 
     try {
       // Stop accepting new connections
       if (this.server) {
         this.server.close();
-        console.log('🛑 Server connections closed');
+        console.info('🛑 Server connections closed');
       }
 
       // Execute all registered shutdown callbacks
@@ -326,7 +326,7 @@ class ShutdownManager {
         }
       }
 
-      console.log('✅ Graceful shutdown completed');
+      console.info('✅ Graceful shutdown completed');
       process.exit(0);
     } catch (error) {
       console.error('❌ Error during shutdown:', error);
@@ -424,7 +424,7 @@ class ArgumentParser {
   }
 
   showHelp(): void {
-    console.log(`
+    console.info(`
 🤖 Matrix MCP Server - Advanced CWD & Process Management
 
 USAGE:
@@ -470,7 +470,7 @@ For more information, visit: https://bun.com/docs/guides/process
   }
 
   showVersion(): void {
-    console.log(`
+    console.info(`
 🔍 Bun Typed Array Matrix Inspector MCP Server
 Version: 1.01.01
 Built with: Bun ${Bun.version}
@@ -499,7 +499,7 @@ class MatrixMCPServer {
 
   private setupShutdownCallbacks(): void {
     this.shutdownManager.onShutdown(async () => {
-      console.log('🧹 Cleaning up Matrix MCP Server...');
+      console.info('🧹 Cleaning up Matrix MCP Server...');
 
       if (this.isRunning) {
         // Perform cleanup operations
@@ -507,7 +507,7 @@ class MatrixMCPServer {
         this.isRunning = false;
       }
 
-      console.log('✅ Matrix MCP Server shutdown complete');
+      console.info('✅ Matrix MCP Server shutdown complete');
     });
   }
 
@@ -517,8 +517,8 @@ class MatrixMCPServer {
 
     try {
       // Example cleanup operations
-      console.log('🗂️ Cleaning up cached data...');
-      console.log('🔌 Closing external connections...');
+      console.info('🗂️ Cleaning up cached data...');
+      console.info('🔌 Closing external connections...');
 
       // In a real implementation, this would:
       // - Close database connections
@@ -535,7 +535,7 @@ class MatrixMCPServer {
    * Initialize server with configuration and argument parsing
    */
   async initialize(): Promise<void> {
-    console.log('🚀 Initializing Matrix MCP Server...');
+    console.info('🚀 Initializing Matrix MCP Server...');
 
     // Parse command line arguments
     const argParser = new ArgumentParser();
@@ -561,18 +561,18 @@ class MatrixMCPServer {
     if (args.logLevel) this.config.logLevel = args.logLevel as any;
     if (args.matrixDataPath) this.config.matrixDataPath = args.matrixDataPath;
 
-    console.log('⚙️ Server configuration loaded');
-    console.log(`   Host: ${this.config.host}`);
-    console.log(`   Port: ${this.config.port}`);
-    console.log(`   Log Level: ${this.config.logLevel}`);
-    console.log(`   Data Path: ${this.config.matrixDataPath}`);
+    console.info('⚙️ Server configuration loaded');
+    console.info(`   Host: ${this.config.host}`);
+    console.info(`   Port: ${this.config.port}`);
+    console.info(`   Log Level: ${this.config.logLevel}`);
+    console.info(`   Data Path: ${this.config.matrixDataPath}`);
 
     // Set environment variables for tools
     this.envManager.set('MATRIX_SERVER_HOST', this.config.host);
     this.envManager.set('MATRIX_SERVER_PORT', this.config.port.toString());
     this.envManager.set('MATRIX_LOG_LEVEL', this.config.logLevel);
 
-    console.log('🔧 Server initialization complete');
+    console.info('🔧 Server initialization complete');
   }
 
   /**
@@ -583,12 +583,12 @@ class MatrixMCPServer {
       throw new Error('Server not initialized. Call initialize() first.');
     }
 
-    console.log('🔄 Starting Matrix MCP Server...');
+    console.info('🔄 Starting Matrix MCP Server...');
 
     // Create mock server for demonstration (in real implementation, this would be a proper HTTP server)
     const mockServer = {
       close: () => {
-        console.log('🛑 Mock server closed');
+        console.info('🛑 Mock server closed');
       }
     };
 
@@ -596,7 +596,7 @@ class MatrixMCPServer {
     this.isRunning = true;
 
     const url = `${this.config.host}:${this.config.port}`;
-    console.log(`🌐 Matrix MCP Server running at ${url}`);
+    console.info(`🌐 Matrix MCP Server running at ${url}`);
 
     if (!process.env.NO_BANNER) {
       this.displayBanner();
@@ -613,7 +613,7 @@ class MatrixMCPServer {
   private async keepAlive(): Promise<void> {
     // This would be the actual server event loop
     // For demonstration, we'll just keep the process alive
-    console.log('⏳ Server ready - Press Ctrl+C to stop');
+    console.info('⏳ Server ready - Press Ctrl+C to stop');
 
     // Keep process alive indefinitely
     setInterval(() => {
@@ -628,7 +628,7 @@ class MatrixMCPServer {
    * Display server startup banner
    */
   private displayBanner(): void {
-    console.log(`
+    console.info(`
 ╔════════════════════════════════════════════════════════════════╗
 ║                        🤖 MATRIX MCP SERVER                      ║
 ║                    Advanced CWD & Process Management            ║
@@ -654,24 +654,24 @@ class MatrixMCPServer {
   displayEnvironmentInfo(): void {
     const matrixEnv = this.envManager.getMatrixEnv();
 
-    console.log('\n📊 Environment Variables:');
+    console.info('\n📊 Environment Variables:');
     Object.entries(matrixEnv).forEach(([key, value]) => {
-      console.log(`   ${key}: ${value}`);
+      console.info(`   ${key}: ${value}`);
     });
 
-    console.log('\n🔧 Process Information:');
-    console.log(`   PID: ${process.pid}`);
-    console.log(`   Platform: ${process.platform}`);
-    console.log(`   Architecture: ${process.arch}`);
-    console.log(`   Node Version: ${process.version}`);
-    console.log(`   Bun Version: ${Bun.version}`);
-    console.log(`   CWD: ${process.cwd()}`);
+    console.info('\n🔧 Process Information:');
+    console.info(`   PID: ${process.pid}`);
+    console.info(`   Platform: ${process.platform}`);
+    console.info(`   Architecture: ${process.arch}`);
+    console.info(`   Node Version: ${process.version}`);
+    console.info(`   Bun Version: ${Bun.version}`);
+    console.info(`   CWD: ${process.cwd()}`);
 
-    console.log('\n🎯 Matrix Paths:');
-    console.log(`   Project Root: ${this.envManager.projectRootPath}`);
-    console.log(`   Config File: ${this.envManager.configurationPath}`);
-    console.log(`   Tool File: ${this.envManager.matrixToolPath}`);
-    console.log(`   HTML File: ${this.envManager.htmlMatrixPath}`);
+    console.info('\n🎯 Matrix Paths:');
+    console.info(`   Project Root: ${this.envManager.projectRootPath}`);
+    console.info(`   Config File: ${this.envManager.configurationPath}`);
+    console.info(`   Tool File: ${this.envManager.matrixToolPath}`);
+    console.info(`   HTML File: ${this.envManager.htmlMatrixPath}`);
   }
 }
 

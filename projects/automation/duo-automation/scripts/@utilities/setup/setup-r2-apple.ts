@@ -4,7 +4,7 @@ import { BunR2AppleManager, R2_DIRS } from '../src/storage/r2-apple-manager';
 import { S3Client } from 'bun';
 
 async function setup() {
-  console.log('🚀 Starting R2 Apple Manager Setup (Native Bun S3)...');
+  console.info('🚀 Starting R2 Apple Manager Setup (Native Bun S3)...');
 
   const bucketName = Bun.env.S3_BUCKET || 'factory-wager-packages';
 
@@ -12,15 +12,15 @@ async function setup() {
   const hasS3Creds = Bun.env.S3_ACCESS_KEY_ID && Bun.env.S3_SECRET_ACCESS_KEY && Bun.env.S3_ENDPOINT;
   
   if (!hasS3Creds) {
-    console.log('⚠️  S3 credentials not found in environment.');
-    console.log('📝 Required environment variables:');
-    console.log('   - S3_ACCESS_KEY_ID');
-    console.log('   - S3_SECRET_ACCESS_KEY');
-    console.log('   - S3_ENDPOINT');
-    console.log('   - S3_BUCKET (optional, defaults to factory-wager-packages)');
-    console.log('\n💡 Running in simulation mode...\n');
+    console.info('⚠️  S3 credentials not found in environment.');
+    console.info('📝 Required environment variables:');
+    console.info('   - S3_ACCESS_KEY_ID');
+    console.info('   - S3_SECRET_ACCESS_KEY');
+    console.info('   - S3_ENDPOINT');
+    console.info('   - S3_BUCKET (optional, defaults to factory-wager-packages)');
+    console.info('\n💡 Running in simulation mode...\n');
   } else {
-    console.log(`✅ S3 credentials configured for bucket: ${bucketName}`);
+    console.info(`✅ S3 credentials configured for bucket: ${bucketName}`);
   }
 
   // 2. Initialize manager (uses Bun native S3Client internally)
@@ -34,35 +34,35 @@ async function setup() {
     city: 'NY',
     id: 'test-123'
   };
-  console.log('📦 Testing local fallback...');
+  console.info('📦 Testing local fallback...');
   manager.saveLocal(testApple, 'test-apple.json');
 
   // 4. Test R2 Upload
   if (hasS3Creds) {
-    console.log('☁️ Testing R2 Upload...');
+    console.info('☁️ Testing R2 Upload...');
     try {
       const result = await manager.uploadAppleID(testApple, 'test-success.json');
-      console.log(`✅ R2 Upload success: ${result.key} (${result.size} bytes, ${result.savings}% saved)`);
+      console.info(`✅ R2 Upload success: ${result.key} (${result.size} bytes, ${result.savings}% saved)`);
     } catch (e: any) {
-      console.log(`❌ R2 Upload failed: ${e.message}`);
+      console.info(`❌ R2 Upload failed: ${e.message}`);
     }
 
     // 5. Run Lifecycle Audit
-    console.log('🧪 Running Lifecycle Audit...');
+    console.info('🧪 Running Lifecycle Audit...');
     const auditResult = await manager.performLifecycleAudit();
-    console.log(auditResult ? '✅ Lifecycle Audit passed' : '⚠️ Lifecycle Audit had issues');
+    console.info(auditResult ? '✅ Lifecycle Audit passed' : '⚠️ Lifecycle Audit had issues');
   } else {
-    console.log('☁️ Skipping R2 upload test (no credentials)');
+    console.info('☁️ Skipping R2 upload test (no credentials)');
   }
 
   // 6. Analytics/Stats Test
   await manager.getStorageStats();
 
-  console.log('\n✅ Setup process complete!');
-  console.log('Summary:');
-  console.log('- Zero dependencies (native Bun)');
-  console.log('- Zstd compression enabled');
-  console.log('- DuoPlus RPA compatible');
+  console.info('\n✅ Setup process complete!');
+  console.info('Summary:');
+  console.info('- Zero dependencies (native Bun)');
+  console.info('- Zstd compression enabled');
+  console.info('- DuoPlus RPA compatible');
 }
 
 setup().catch(console.error);

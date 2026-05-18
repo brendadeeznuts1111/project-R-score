@@ -358,9 +358,9 @@ async function main() {
     const vaultPath = args.find(arg => arg.startsWith('--vault='))?.split('=')[1] || './Odds-mono-map';
     const threshold = parseInt(args.find(arg => arg.startsWith('--threshold='))?.split('=')[1] || '300');
 
-    console.log('🎨 Canvas Spatial Validator');
-    console.log(`📁 Vault: ${vaultPath}`);
-    console.log(`📏 Proximity threshold: ${threshold}px`);
+    console.info('🎨 Canvas Spatial Validator');
+    console.info(`📁 Vault: ${vaultPath}`);
+    console.info(`📏 Proximity threshold: ${threshold}px`);
 
     const validator = new CanvasSpatialValidator(threshold);
 
@@ -389,25 +389,25 @@ async function main() {
         ]
     };
 
-    console.log('\n📊 Canvas Analysis Results:');
-    console.log(`📁 Total nodes: ${mockAnalysis.totalNodes}`);
-    console.log(`🔗 Spatially close: ${mockAnalysis.spatiallyCloseNodes}`);
-    console.log(`✅ Actually linked: ${mockAnalysis.linkedNodes}`);
-    console.log(`📈 Spatial efficiency: ${mockAnalysis.spatialEfficiency.toFixed(1)}%`);
+    console.info('\n📊 Canvas Analysis Results:');
+    console.info(`📁 Total nodes: ${mockAnalysis.totalNodes}`);
+    console.info(`🔗 Spatially close: ${mockAnalysis.spatiallyCloseNodes}`);
+    console.info(`✅ Actually linked: ${mockAnalysis.linkedNodes}`);
+    console.info(`📈 Spatial efficiency: ${mockAnalysis.spatialEfficiency.toFixed(1)}%`);
 
     if (mockAnalysis.missingLinks.length > 0) {
-        console.log('\n🚨 Missing Spatial Links:');
+        console.info('\n🚨 Missing Spatial Links:');
         mockAnalysis.missingLinks.forEach((link, index) => {
             const priority = link.priority === 'high' ? '🔴' : link.priority === 'medium' ? '🟡' : '🟢';
-            console.log(`${index + 1}. ${priority} [[${link.file1}]] ↔ [[${link.file2}]] (${Math.round(link.distance)}px)`);
-            console.log(`   ${link.reason}`);
+            console.info(`${index + 1}. ${priority} [[${link.file1}]] ↔ [[${link.file2}]] (${Math.round(link.distance)}px)`);
+            console.info(`   ${link.reason}`);
         });
     }
 
-    console.log('\n💡 Suggestions:');
-    console.log('• Link spatially close nodes to improve visual coherence');
-    console.log('• Consider grouping related nodes in canvas layout');
-    console.log('• Use canvas edges to show explicit relationships');
+    console.info('\n💡 Suggestions:');
+    console.info('• Link spatially close nodes to improve visual coherence');
+    console.info('• Consider grouping related nodes in canvas layout');
+    console.info('• Use canvas edges to show explicit relationships');
 }
 
 // Run main function if this file is executed directly

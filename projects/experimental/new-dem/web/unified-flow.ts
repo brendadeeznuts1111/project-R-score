@@ -46,7 +46,7 @@ class LatticeFlowState {
     this.flowMetrics.totalFlows++;
     this.flowMetrics.activeFlows++;
 
-    console.log(`🌊 Flow Started: ${flowType} (${instanceId})`);
+    console.info(`🌊 Flow Started: ${flowType} (${instanceId})`);
     return instanceId;
   }
 
@@ -81,7 +81,7 @@ class LatticeFlowState {
 
     this.activeFlows.delete(flowId);
 
-    console.log(`🌊 Flow Completed: ${flow.type} (${flowId}) - ${flow.duration}ms`);
+    console.info(`🌊 Flow Completed: ${flow.type} (${flowId}) - ${flow.duration}ms`);
     return {
       flowId,
       type: flow.type,
@@ -310,7 +310,7 @@ function generateUnifiedFlowDashboard(view: keyof typeof VIEWS = "overview"): st
 
     function startFlowSession() {
       // Simulate starting a flow session
-      console.log('🌊 Flow session initialized');
+      console.info('🌊 Flow session initialized');
       return 'flow_' + Date.now();
     }
 
@@ -374,7 +374,7 @@ function generateUnifiedFlowDashboard(view: keyof typeof VIEWS = "overview"): st
     });
 
     function triggerComponentFlow(componentId) {
-      console.log(\`🌊 Component \${componentId} activated in flow\`);
+      console.info(\`🌊 Component \${componentId} activated in flow\`);
 
       // In a real implementation, this would trigger the component's flow logic
       // For now, we just show visual feedback
@@ -467,7 +467,7 @@ function generateUnifiedFlowDashboard(view: keyof typeof VIEWS = "overview"): st
 // Unified Flow Server
 function startUnifiedFlowSystem(runtimeConfig: any = {}): void {
   // Load configuration
-  bunConfig.YAML.parse().catch(() => console.log('Using default configuration'));
+  bunConfig.YAML.parse().catch(() => console.info('Using default configuration'));
 
   // Initialize flow components
   const client = new LatticeRegistryClient();
@@ -482,7 +482,7 @@ function startUnifiedFlowSystem(runtimeConfig: any = {}): void {
   // Start flow monitoring
   const flowMonitor = setInterval(() => {
     const metrics = flowState.getFlowMetrics();
-    console.log(`🌊 Flow State: ${metrics.activeFlows} active, ${metrics.completedFlows} completed`);
+    console.info(`🌊 Flow State: ${metrics.activeFlows} active, ${metrics.completedFlows} completed`);
   }, 10000);
 
   const server = Bun.serve({
@@ -593,20 +593,20 @@ function startUnifiedFlowSystem(runtimeConfig: any = {}): void {
     websocket: {
       message(ws, message) {
         // Handle flow state WebSocket messages
-        console.log('Flow WebSocket message received');
+        console.info('Flow WebSocket message received');
       },
 
       open(ws) {
-        console.log('Flow WebSocket connection opened');
+        console.info('Flow WebSocket connection opened');
       },
 
       close(ws) {
-        console.log('Flow WebSocket connection closed');
+        console.info('Flow WebSocket connection closed');
       }
     }
   });
 
-  console.log(`
+  console.info(`
 ╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║  🌊 T3-LATTICE UNIFIED FLOW SYSTEM - ALL COMPONENTS FLOW TOGETHER AS ONE                                ║
 ╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
@@ -642,7 +642,7 @@ Press Ctrl+C to stop the unified flow
 
   // Graceful shutdown
   process.on('SIGINT', () => {
-    console.log('\n🌊 Flow system shutting down gracefully...');
+    console.info('\n🌊 Flow system shutting down gracefully...');
     clearInterval(flowMonitor);
     server.stop();
     process.exit(0);

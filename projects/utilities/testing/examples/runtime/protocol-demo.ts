@@ -7,23 +7,23 @@
  * - Bun.serve configuration (TLS/HTTPS setup)
  */
 
-console.log("=== Bun Protocol & Properties Demo ===");
+console.info("=== Bun Protocol & Properties Demo ===");
 
 const server = Bun.serve({
   port: 0, // Random port
   hostname: "localhost",
   fetch(request: Request) {
     const url = new URL(request.url);
-    console.log(`\n[Request] ${request.method} ${url.pathname}`);
+    console.info(`\n[Request] ${request.method} ${url.pathname}`);
 
     // 1. Inspect Protocol Properties via Headers
     // Bun exposes standard HTTP properties
     const headers = request.headers;
-    console.log(`[Headers] Content-Type: ${headers.get("content-type") || "N/A"}`);
-    console.log(`[Headers] User-Agent: ${headers.get("user-agent") || "N/A"}`);
+    console.info(`[Headers] Content-Type: ${headers.get("content-type") || "N/A"}`);
+    console.info(`[Headers] User-Agent: ${headers.get("user-agent") || "N/A"}`);
     
     // 2. Check Method
-    console.log(`[Request] Method: ${request.method}`);
+    console.info(`[Request] Method: ${request.method}`);
 
     // 3. Response with custom headers
     const responseHeaders = new Headers();
@@ -43,9 +43,9 @@ const server = Bun.serve({
   },
 });
 
-console.log(`\nServer running at http://${server.hostname}:${server.port}`);
-console.log(`Try visiting: http://${server.hostname}:${server.port}/test`);
-console.log("Press Ctrl+C to stop.");
+console.info(`\nServer running at http://${server.hostname}:${server.port}`);
+console.info(`Try visiting: http://${server.hostname}:${server.port}/test`);
+console.info("Press Ctrl+C to stop.");
 
 // Keep alive
 await new Promise(() => {});

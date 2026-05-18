@@ -29,9 +29,9 @@ async function main() {
         // Build EXE with new version
         try {
           await $`bun build:exe`;
-          console.log(`✅ v${newVer} → EXE + Tagged + Committed`);
+          console.info(`✅ v${newVer} → EXE + Tagged + Committed`);
         } catch (buildError) {
-          console.log(`✅ v${newVer} → Tagged + Committed (EXE build skipped: ${buildError.message})`);
+          console.info(`✅ v${newVer} → Tagged + Committed (EXE build skipped: ${buildError.message})`);
         }
         break;
 
@@ -39,14 +39,14 @@ async function main() {
         if (!semver.valid(version)) {
           throw new Error(`❌ Invalid semver: ${version}`);
         }
-        console.log(`✅ Valid semver: ${version}`);
+        console.info(`✅ Valid semver: ${version}`);
         break;
 
       case "compare":
         const otherVersion = process.argv[4] || pkg.version;
         const cmp = semver.compare(version, otherVersion);
         const symbol = cmp > 0 ? ">" : cmp < 0 ? "<" : "=";
-        console.log(`Compare: ${version} ${symbol} ${otherVersion} (${cmp})`);
+        console.info(`Compare: ${version} ${symbol} ${otherVersion} (${cmp})`);
         break;
 
       case "prerelease":
@@ -64,11 +64,11 @@ async function main() {
         pkg.version = preVersion;
         await Bun.write("package.json", JSON.stringify(pkg, null, 2));
 
-        console.log(`✅ Prerelease: ${current} → ${preVersion}`);
+        console.info(`✅ Prerelease: ${current} → ${preVersion}`);
         break;
 
       case "vault":
-        console.log(`🔄 Bumping ALL vault versions to next ${level}...`);
+        console.info(`🔄 Bumping ALL vault versions to next ${level}...`);
 
         // Find all files with version tags
         const files = await Bun.glob(["**/*.ts", "**/*.md", "rules/**/*.yaml"], {
@@ -106,7 +106,7 @@ async function main() {
           }
         }
 
-        console.log(`✅ Vault: ${bumpedCount} files version-bumped`);
+        console.info(`✅ Vault: ${bumpedCount} files version-bumped`);
         break;
 
       case "parse":
@@ -114,28 +114,28 @@ async function main() {
         if (!parsed) {
           throw new Error(`❌ Cannot parse: ${version}`);
         }
-        console.log(`📋 Parsed: ${version}`);
-        console.log(`   Major: ${parsed.major}`);
-        console.log(`   Minor: ${parsed.minor}`);
-        console.log(`   Patch: ${parsed.patch}`);
+        console.info(`📋 Parsed: ${version}`);
+        console.info(`   Major: ${parsed.major}`);
+        console.info(`   Minor: ${parsed.minor}`);
+        console.info(`   Patch: ${parsed.patch}`);
         if (parsed.prerelease) {
-          console.log(`   Prerelease: ${parsed.prerelease.join('.')}`);
+          console.info(`   Prerelease: ${parsed.prerelease.join('.')}`);
         }
         if (parsed.build) {
-          console.log(`   Build: ${parsed.build.join('.')}`);
+          console.info(`   Build: ${parsed.build.join('.')}`);
         }
         break;
 
       case "current":
-        console.log(`📋 Current version: ${pkg.version}`);
+        console.info(`📋 Current version: ${pkg.version}`);
         const parsedCurrent = semver.parse(pkg.version);
         if (parsedCurrent) {
-          console.log(`   Valid: ✅`);
-          console.log(`   Major: ${parsedCurrent.major}`);
-          console.log(`   Minor: ${parsedCurrent.minor}`);
-          console.log(`   Patch: ${parsedCurrent.patch}`);
+          console.info(`   Valid: ✅`);
+          console.info(`   Major: ${parsedCurrent.major}`);
+          console.info(`   Minor: ${parsedCurrent.minor}`);
+          console.info(`   Patch: ${parsedCurrent.patch}`);
         } else {
-          console.log(`   Valid: ❌`);
+          console.info(`   Valid: ❌`);
         }
         break;
 
@@ -145,14 +145,14 @@ async function main() {
         if (cleanVer !== pkg.version) {
           pkg.version = cleanVer;
           await Bun.write("package.json", JSON.stringify(pkg, null, 2));
-          console.log(`🧹 Cleaned: ${pkg.version} (removed prerelease)`);
+          console.info(`🧹 Cleaned: ${pkg.version} (removed prerelease)`);
         } else {
-          console.log(`📋 Already clean: ${pkg.version}`);
+          console.info(`📋 Already clean: ${pkg.version}`);
         }
         break;
 
       default:
-        console.log(`🚀 Bun Semver v3.0.0 - Native Implementation
+        console.info(`🚀 Bun Semver v3.0.0 - Native Implementation
 
 USAGE:
   bun semver <command> [version] [level]

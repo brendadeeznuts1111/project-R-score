@@ -19,11 +19,11 @@ describe(`🚀 Smoke Tests - Group: ${testGroup}`, () => {
   const timeout = testPriority === 'high' ? 2000 : 5000;
 
   beforeAll(() => {
-    console.log(`\n📍 Running smoke tests with:`);
-    console.log(`   Group: ${testGroup}`);
-    console.log(`   Priority: ${testPriority}`);
-    console.log(`   Tags: ${testTags.join(', ')}`);
-    console.log(`   Mode: ${testMode}`);
+    console.info(`\n📍 Running smoke tests with:`);
+    console.info(`   Group: ${testGroup}`);
+    console.info(`   Priority: ${testPriority}`);
+    console.info(`   Tags: ${testTags.join(', ')}`);
+    console.info(`   Mode: ${testMode}`);
   });
 
   it('should verify Bun runtime is available', () => {
@@ -84,6 +84,6 @@ describe(`🚀 Smoke Tests - Group: ${testGroup}`, () => {
   });
 
   afterAll(() => {
-    console.log(`\n✅ Smoke tests completed in ${testMode} mode`);
+    console.info(`\n✅ Smoke tests completed in ${testMode} mode`);
   });
 });

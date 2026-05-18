@@ -146,7 +146,7 @@ export class Fantasy42NotificationToggle {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🔔 Initializing Fantasy42 Notification Toggle System...');
+      console.info('🔔 Initializing Fantasy42 Notification Toggle System...');
 
       // Detect notification toggle elements
       await this.detectNotificationElements();
@@ -169,7 +169,7 @@ export class Fantasy42NotificationToggle {
       await this.initializeAnalyticsTracking();
 
       this.isInitialized = true;
-      console.log('✅ Fantasy42 Notification Toggle System initialized');
+      console.info('✅ Fantasy42 Notification Toggle System initialized');
 
       return true;
     } catch (error) {
@@ -261,7 +261,7 @@ export class Fantasy42NotificationToggle {
       for (const element of elements) {
         if (this.isNotificationElement(element)) {
           notificationElement = element;
-          console.log('✅ Found notification element:', selector);
+          console.info('✅ Found notification element:', selector);
           this.setupNotificationElement(element as HTMLElement);
           break;
         }
@@ -270,7 +270,7 @@ export class Fantasy42NotificationToggle {
     }
 
     if (!notificationElement) {
-      console.log('⚠️ Notification elements not found, system will initialize on demand');
+      console.info('⚠️ Notification elements not found, system will initialize on demand');
     }
   }
 
@@ -309,7 +309,7 @@ export class Fantasy42NotificationToggle {
     // Enhance the container
     this.enhanceNotificationContainer(element);
 
-    console.log('✅ Notification element setup complete');
+    console.info('✅ Notification element setup complete');
   }
 
   /**
@@ -332,7 +332,7 @@ export class Fantasy42NotificationToggle {
     // Add visual enhancements
     this.enhanceNotificationToggle(toggle);
 
-    console.log('✅ Notification toggle setup complete');
+    console.info('✅ Notification toggle setup complete');
   }
 
   /**
@@ -351,7 +351,7 @@ export class Fantasy42NotificationToggle {
     // Add visual enhancements
     this.enhanceAlertSettingsButton(button);
 
-    console.log('✅ Alert settings button setup complete');
+    console.info('✅ Alert settings button setup complete');
   }
 
   /**
@@ -598,7 +598,7 @@ export class Fantasy42NotificationToggle {
     // Add status indicator
     this.addStatusIndicator(container);
 
-    console.log('✅ Notification container enhanced');
+    console.info('✅ Notification container enhanced');
   }
 
   /**
@@ -653,7 +653,7 @@ export class Fantasy42NotificationToggle {
    */
   private async handleNotificationToggle(value: string): Promise<void> {
     const isEnabled = value === 'Y';
-    console.log('🔕 Notification toggle changed:', isEnabled ? 'ON' : 'OFF');
+    console.info('🔕 Notification toggle changed:', isEnabled ? 'ON' : 'OFF');
 
     // Update status indicator
     this.updateStatusIndicator(isEnabled);
@@ -680,7 +680,7 @@ export class Fantasy42NotificationToggle {
    * Handle alert settings click
    */
   private handleAlertSettingsClick(): void {
-    console.log('⚙️ Alert settings button clicked');
+    console.info('⚙️ Alert settings button clicked');
 
     // Track analytics
     this.trackAnalytics('alert_settings_access', {
@@ -740,7 +740,7 @@ export class Fantasy42NotificationToggle {
       await this.syncPreferencesAcrossDevices(preferences);
     }
 
-    console.log('✅ Notification preferences updated');
+    console.info('✅ Notification preferences updated');
   }
 
   /**
@@ -803,7 +803,7 @@ export class Fantasy42NotificationToggle {
         },
       });
 
-      console.log('✅ Synced with alert settings');
+      console.info('✅ Synced with alert settings');
     } catch (error) {
       console.error('Failed to sync with alert settings:', error);
     }
@@ -986,7 +986,7 @@ export class Fantasy42NotificationToggle {
     preferences.updatedAt = new Date().toISOString();
     this.notificationPreferences.set(userId, preferences);
 
-    console.log(`✅ Quick preference updated: ${preference} = ${enabled}`);
+    console.info(`✅ Quick preference updated: ${preference} = ${enabled}`);
   }
 
   /**
@@ -1029,7 +1029,7 @@ export class Fantasy42NotificationToggle {
    */
   private async syncPreferencesAcrossDevices(preferences: NotificationPreferences): Promise<void> {
     // Sync preferences to server/cloud storage
-    console.log('☁️ Preferences synced across devices');
+    console.info('☁️ Preferences synced across devices');
   }
 
   /**
@@ -1039,7 +1039,7 @@ export class Fantasy42NotificationToggle {
     // Load user preferences
     await this.loadUserPreferences();
 
-    console.log('⚙️ Preference management initialized');
+    console.info('⚙️ Preference management initialized');
   }
 
   /**
@@ -1049,7 +1049,7 @@ export class Fantasy42NotificationToggle {
     // Setup quick access features
     this.setupQuickAccessFeatures();
 
-    console.log('⚡ Quick access initialized');
+    console.info('⚡ Quick access initialized');
   }
 
   /**
@@ -1059,7 +1059,7 @@ export class Fantasy42NotificationToggle {
     // Setup master control features
     this.setupMasterControlFeatures();
 
-    console.log('🎛️ Master control initialized');
+    console.info('🎛️ Master control initialized');
   }
 
   /**
@@ -1067,7 +1067,7 @@ export class Fantasy42NotificationToggle {
    */
   private async initializeAlertSettingsIntegration(): Promise<void> {
     // Setup integration with alert settings
-    console.log('🔗 Alert settings integration initialized');
+    console.info('🔗 Alert settings integration initialized');
   }
 
   /**
@@ -1075,7 +1075,7 @@ export class Fantasy42NotificationToggle {
    */
   private async initializeAnalyticsTracking(): Promise<void> {
     // Setup analytics tracking
-    console.log('📊 Analytics tracking initialized');
+    console.info('📊 Analytics tracking initialized');
   }
 
   /**
@@ -1092,7 +1092,7 @@ export class Fantasy42NotificationToggle {
       this.notificationPreferences.set(userId, preferences);
     }
 
-    console.log('💾 User preferences loaded');
+    console.info('💾 User preferences loaded');
   }
 
   /**
@@ -1104,7 +1104,7 @@ export class Fantasy42NotificationToggle {
       this.setupKeyboardShortcuts();
     }
 
-    console.log('⚡ Quick access features setup');
+    console.info('⚡ Quick access features setup');
   }
 
   /**
@@ -1116,7 +1116,7 @@ export class Fantasy42NotificationToggle {
       this.setupStatusDisplay();
     }
 
-    console.log('🎛️ Master control features setup');
+    console.info('🎛️ Master control features setup');
   }
 
   /**
@@ -1140,7 +1140,7 @@ export class Fantasy42NotificationToggle {
     document.addEventListener('keydown', keyHandler);
     this.eventListeners.set('keyboard-shortcuts', keyHandler);
 
-    console.log('⌨️ Keyboard shortcuts setup');
+    console.info('⌨️ Keyboard shortcuts setup');
   }
 
   /**
@@ -1155,7 +1155,7 @@ export class Fantasy42NotificationToggle {
       this.updateStatusIndicator(preferences.masterToggle);
     }
 
-    console.log('📊 Status display setup');
+    console.info('📊 Status display setup');
   }
 
   /**
@@ -1189,7 +1189,7 @@ export class Fantasy42NotificationToggle {
       this.analytics.preferences.totalUpdates++;
     }
 
-    console.log('📊 Analytics tracked:', event, data);
+    console.info('📊 Analytics tracked:', event, data);
   }
 
   /**
@@ -1271,7 +1271,7 @@ export class Fantasy42NotificationToggle {
     this.eventListeners.clear();
 
     this.isInitialized = false;
-    console.log('🧹 Notification toggle system cleaned up');
+    console.info('🧹 Notification toggle system cleaned up');
   }
 
   // Private properties

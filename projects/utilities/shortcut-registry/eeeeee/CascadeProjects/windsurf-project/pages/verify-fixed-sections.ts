@@ -18,13 +18,13 @@ const fixedSections = [
     }
 ];
 
-console.log("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
-console.log("║              PERFORMANCE & SYSTEM STATUS - SEMANTIC CLASS REFACTORING                 ║");
-console.log("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
+console.info("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
+console.info("║              PERFORMANCE & SYSTEM STATUS - SEMANTIC CLASS REFACTORING                 ║");
+console.info("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
 
-console.log(Bun.inspect.table(fixedSections, undefined, { colors: true }));
+console.info(Bun.inspect.table(fixedSections, undefined, { colors: true }));
 
-console.log("\n📋 New Component Structure:\n");
+console.info("\n📋 New Component Structure:\n");
 
 const performanceStructure = [
     {
@@ -72,10 +72,10 @@ const systemStatusStructure = [
     }
 ];
 
-console.log("🏗️  Performance Metrics Component:\n");
-console.log(Bun.inspect.table(performanceStructure, undefined, { colors: true }));
+console.info("🏗️  Performance Metrics Component:\n");
+console.info(Bun.inspect.table(performanceStructure, undefined, { colors: true }));
 
-console.log("\n🏗️  System Status Component:\n");
-console.log(Bun.inspect.table(systemStatusStructure, undefined, { colors: true }));
+console.info("\n🏗️  System Status Component:\n");
+console.info(Bun.inspect.table(systemStatusStructure, undefined, { colors: true }));
 
-console.log("\n✅ All utility classes have been replaced with semantic BEM-style classes!\n");
+console.info("\n✅ All utility classes have been replaced with semantic BEM-style classes!\n");

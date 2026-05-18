@@ -17,10 +17,10 @@ class VirtualDeviceDemo {
   
   async startDashboard(): Promise<void> {
     console.clear();
-    console.log('🚀 VIRTUAL DEVICE DEMO - DuoPlus Integration');
-    console.log('='.repeat(100));
-    console.log('📱 Android/iOS Simulators | 💳 CashApp | 📧 Email | 📱 Messaging');
-    console.log('='.repeat(100));
+    console.info('🚀 VIRTUAL DEVICE DEMO - DuoPlus Integration');
+    console.info('='.repeat(100));
+    console.info('📱 Android/iOS Simulators | 💳 CashApp | 📧 Email | 📱 Messaging');
+    console.info('='.repeat(100));
     
     this.dashboard.start();
     
@@ -33,41 +33,41 @@ class VirtualDeviceDemo {
   
   async runIntegrationDemo(): Promise<void> {
     console.clear();
-    console.log('🔗 VIRTUAL DEVICE INTEGRATION DEMO');
-    console.log('='.repeat(100));
+    console.info('🔗 VIRTUAL DEVICE INTEGRATION DEMO');
+    console.info('='.repeat(100));
 
-    console.log('\n1. 📡 STARTING INTEGRATION...');
+    console.info('\n1. 📡 STARTING INTEGRATION...');
     await this.integration.startIntegratedMonitoring();
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    console.log('\n2. 📊 SIMULATING TASKS...');
+    console.info('\n2. 📊 SIMULATING TASKS...');
     const result = await this.integration.handleCreateTask({
       taskType: 'cashapp_transaction',
       agentId: 'agent-enterprise-001',
       details: { transaction: { type: 'send', amount: 100 } },
       priority: 'medium'
     });
-    console.log(`   ✅ Created task: ${result.taskId}`);
+    console.info(`   ✅ Created task: ${result.taskId}`);
 
-    console.log('\n3. 📈 CHECKING STATISTICS...');
+    console.info('\n3. 📈 CHECKING STATISTICS...');
     await new Promise(resolve => setTimeout(resolve, 3000));
     const stats = await this.integration.handleGetStats({ timeRange: '1h' });
-    console.log(`      • Total tasks: ${stats.stats.total}`);
+    console.info(`      • Total tasks: ${stats.stats.total}`);
 
-    console.log('\n4. 🤖 DEVICE CONTROL DEMO...');
+    console.info('\n4. 🤖 DEVICE CONTROL DEMO...');
     const controlResult = await this.integration.handleDeviceControl({
       deviceId: 'android-emulator-001',
       action: 'restart'
     });
-    console.log(`   ✅ Device control: ${controlResult.message}`);
+    console.info(`   ✅ Device control: ${controlResult.message}`);
 
-    console.log('\n' + '='.repeat(100));
-    console.log('🎯 DEMO COMPLETE');
+    console.info('\n' + '='.repeat(100));
+    console.info('🎯 DEMO COMPLETE');
     process.exit(0);
   }
   
   async generateReport(): Promise<void> {
-    console.log('📊 Generating virtual device performance report...');
+    console.info('📊 Generating virtual device performance report...');
     
     const reportsDir = './reports';
     
@@ -77,22 +77,22 @@ class VirtualDeviceDemo {
     // Clean up old reports (keep last 5)
     await this.dashboard.cleanupOldReports(reportsDir, 5);
     
-    console.log(`\n✅ Report saved to: ${reportPath}`);
-    console.log('🗑️  Old reports cleaned up (keeping last 5)');
+    console.info(`\n✅ Report saved to: ${reportPath}`);
+    console.info('🗑️  Old reports cleaned up (keeping last 5)');
     
     process.exit(0);
   }
   
   async runTaskSimulation(): Promise<void> {
-    console.log('🎯 Running task simulation...');
+    console.info('🎯 Running task simulation...');
     await this.dashboard.runTaskSimulation(3); // 3 minute simulation
-    console.log('🎯 Task simulation completed');
+    console.info('🎯 Task simulation completed');
     process.exit(0);
   }
   
   stop(): void {
     this.dashboard.stop();
-    console.log('\n🛑 Virtual Device Demo stopped');
+    console.info('\n🛑 Virtual Device Demo stopped');
   }
 }
 

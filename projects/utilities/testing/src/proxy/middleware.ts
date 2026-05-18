@@ -55,7 +55,7 @@ export async function handleProxyConnect(req: Request): Promise<Response> {
   }
   
   // 7. Log successful validation
-  console.log(`[proxy] CONNECT validated: ${target} -> ${targetIp}`);
+  console.info(`[proxy] CONNECT validated: ${target} -> ${targetIp}`);
   
   // 8. Return success response
   return new Response(null, {
@@ -92,7 +92,7 @@ function errorResponse(
   title: string,
   detail: string
 ): Response {
-  console.log(`[proxy] Error ${status}: ${title} - ${detail}`);
+  console.info(`[proxy] Error ${status}: ${title} - ${detail}`);
   
   return new Response(
     JSON.stringify({
@@ -155,7 +155,7 @@ export async function startProxyServer(port = PROXY_CONFIG.port) {
     },
   });
   
-  console.log(`[proxy] Server started on port ${server.port}`);
+  console.info(`[proxy] Server started on port ${server.port}`);
   
   return server;
 }

@@ -221,7 +221,7 @@ export class CRC32Dashboard {
   async start(): Promise<void> {
     this.running = true;
     console.clear();
-    console.log("🚀 Starting CRC32 Visual Dashboard...\n");
+    console.info("🚀 Starting CRC32 Visual Dashboard...\n");
     
     // Initial benchmark
     await this.runBenchmark();
@@ -251,12 +251,12 @@ export class CRC32Dashboard {
       });
       
       console.clear();
-      console.log(this.render());
+      console.info(this.render());
     }, 2000);
     
-    console.log("✅ Dashboard started!");
-    console.log("   Press Ctrl+C to stop\n");
-    console.log(this.render());
+    console.info("✅ Dashboard started!");
+    console.info("   Press Ctrl+C to stop\n");
+    console.info(this.render());
   }
   
   // Stop dashboard
@@ -265,7 +265,7 @@ export class CRC32Dashboard {
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
     }
-    console.log("\n🛑 Dashboard stopped");
+    console.info("\n🛑 Dashboard stopped");
   }
   
   // Get metrics

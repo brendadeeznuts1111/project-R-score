@@ -226,19 +226,19 @@ async function generateDeepLinks(config: DeepLinkConfig): Promise<DeepLink[]> {
   );
   
   const elapsed = nanoseconds() - start;
-  console.log(color(`Generated ${deepLinks.length} deep links in ${(elapsed / 1e6).toFixed(2)}ms`, 'gray'));
+  console.info(color(`Generated ${deepLinks.length} deep links in ${(elapsed / 1e6).toFixed(2)}ms`, 'gray'));
   
   return deepLinks;
 }
 
 function displayDeepLinks(links: DeepLink[], config: DeepLinkConfig) {
-  console.log(color(`\n🔗 Deep Links for ${config.apiName}`, 'cyan', 'bold'));
-  console.log(color('─'.repeat(80), 'gray'));
+  console.info(color(`\n🔗 Deep Links for ${config.apiName}`, 'cyan', 'bold'));
+  console.info(color('─'.repeat(80), 'gray'));
   
-  console.log(color(`\n📋 API: ${color(config.apiName, 'green')} | Version: ${color(config.version, 'green')} | Security: ${color(config.securityLevel, 'yellow')}`, 'white'));
+  console.info(color(`\n📋 API: ${color(config.apiName, 'green')} | Version: ${color(config.version, 'green')} | Security: ${color(config.securityLevel, 'yellow')}`, 'white'));
   
   if (links.length === 0) {
-    console.log(color('\n❌ No endpoints found for this API', 'red'));
+    console.info(color('\n❌ No endpoints found for this API', 'red'));
     return;
   }
   
@@ -250,43 +250,43 @@ function displayDeepLinks(links: DeepLink[], config: DeepLinkConfig) {
   }, {} as Record<string, DeepLink[]>);
   
   Object.entries(grouped).forEach(([category, categoryLinks]) => {
-    console.log(color(`\n📂 ${category.toUpperCase()}`, 'yellow', 'bold'));
-    console.log(color('─'.repeat(40), 'gray'));
+    console.info(color(`\n📂 ${category.toUpperCase()}`, 'yellow', 'bold'));
+    console.info(color('─'.repeat(40), 'gray'));
     
     categoryLinks.forEach((link, index) => {
       const methodColor = link.method === 'GET' ? 'green' : link.method === 'POST' ? 'blue' : 'yellow';
       
-      console.log(color(`\n${index + 1}. ${link.title}`, 'white', 'bold'));
-      console.log(color(`   ${link.method}`, methodColor) + color(` ${link.url}`, 'cyan'));
-      console.log(color(`   ${link.description}`, 'gray'));
+      console.info(color(`\n${index + 1}. ${link.title}`, 'white', 'bold'));
+      console.info(color(`   ${link.method}`, methodColor) + color(` ${link.url}`, 'cyan'));
+      console.info(color(`   ${link.description}`, 'gray'));
       
       if (link.examples && link.examples.length > 0) {
-        console.log(color('   📝 Examples:', 'yellow'));
+        console.info(color('   📝 Examples:', 'yellow'));
         link.examples.forEach(example => {
-          console.log(color(`     • ${example}`, 'gray'));
+          console.info(color(`     • ${example}`, 'gray'));
         });
       }
       
       if (link.security && link.security.length > 0) {
-        console.log(color('   🔒 Security:', 'red'));
+        console.info(color('   🔒 Security:', 'red'));
         link.security.forEach(sec => {
-          console.log(color(`     • ${sec}`, 'gray'));
+          console.info(color(`     • ${sec}`, 'gray'));
         });
       }
     });
   });
   
   // Generate summary
-  console.log(color(`\n📊 Summary:`, 'yellow', 'bold'));
-  console.log(`  Total Endpoints: ${color(links.length.toString(), 'cyan')}`);
-  console.log(`  GET Methods: ${color(links.filter(l => l.method === 'GET').length.toString(), 'green')}`);
-  console.log(`  POST Methods: ${color(links.filter(l => l.method === 'POST').length.toString(), 'blue')}`);
-  console.log(`  Security Level: ${color(config.securityLevel, 'yellow')}`);
+  console.info(color(`\n📊 Summary:`, 'yellow', 'bold'));
+  console.info(`  Total Endpoints: ${color(links.length.toString(), 'cyan')}`);
+  console.info(`  GET Methods: ${color(links.filter(l => l.method === 'GET').length.toString(), 'green')}`);
+  console.info(`  POST Methods: ${color(links.filter(l => l.method === 'POST').length.toString(), 'blue')}`);
+  console.info(`  Security Level: ${color(config.securityLevel, 'yellow')}`);
   
   // AI Enhancement Summary
   const enhancedLinks = links.filter(l => l.description.includes('AI Insight:'));
   if (enhancedLinks.length > 0) {
-    console.log(`  AI-Enhanced: ${color(enhancedLinks.length.toString(), 'magenta')}`);
+    console.info(`  AI-Enhanced: ${color(enhancedLinks.length.toString(), 'magenta')}`);
   }
 }
 
@@ -338,22 +338,22 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.length === 0) {
-    console.log(color('Usage: bun run deep-links "API_NAME" [options]', 'yellow'));
-    console.log(color('\nAvailable APIs:', 'cyan'));
-    console.log('  • ai-operations');
-    console.log('  • security');
-    console.log('  • cache');
-    console.log('  • monitoring');
-    console.log('  • Bun.file');
-    console.log('  • Bun.secrets.get');
-    console.log('  • Bun.nanoseconds');
-    console.log('  • stringWidth');
-    console.log(color('\nOptions:', 'cyan'));
-    console.log('  --examples    Include usage examples');
-    console.log('  --internal    Set security level to internal');
-    console.log('  --restricted  Set security level to restricted');
-    console.log('  --markdown    Output as markdown');
-    console.log('  --short       Quick one-line output');
+    console.info(color('Usage: bun run deep-links "API_NAME" [options]', 'yellow'));
+    console.info(color('\nAvailable APIs:', 'cyan'));
+    console.info('  • ai-operations');
+    console.info('  • security');
+    console.info('  • cache');
+    console.info('  • monitoring');
+    console.info('  • Bun.file');
+    console.info('  • Bun.secrets.get');
+    console.info('  • Bun.nanoseconds');
+    console.info('  • stringWidth');
+    console.info(color('\nOptions:', 'cyan'));
+    console.info('  --examples    Include usage examples');
+    console.info('  --internal    Set security level to internal');
+    console.info('  --restricted  Set security level to restricted');
+    console.info('  --markdown    Output as markdown');
+    console.info('  --short       Quick one-line output');
     process.exit(1);
   }
   
@@ -375,20 +375,20 @@ async function main() {
   try {
     if (shortMode) {
       // Ultra-fast mode for one-liners
-      console.log(color('🔗 Deep Links', 'cyan'));
-      console.log(`  API: ${color(apiName, 'green')} | Security: ${color(securityLevel, 'yellow')} | Examples: ${color(includeExamples ? 'Yes' : 'No', 'cyan')}`);
-      console.log(`  Docs: ${color(`https://bun.sh/docs/${apiName.toLowerCase().replace('bun.', '')}`, 'blue')}`);
-      console.log(`  Source: ${color(`https://github.com/oven-sh/bun/blob/main/src/${apiName.replace('Bun.', '').toLowerCase()}.ts`, 'blue')}`);
+      console.info(color('🔗 Deep Links', 'cyan'));
+      console.info(`  API: ${color(apiName, 'green')} | Security: ${color(securityLevel, 'yellow')} | Examples: ${color(includeExamples ? 'Yes' : 'No', 'cyan')}`);
+      console.info(`  Docs: ${color(`https://bun.sh/docs/${apiName.toLowerCase().replace('bun.', '')}`, 'blue')}`);
+      console.info(`  Source: ${color(`https://github.com/oven-sh/bun/blob/main/src/${apiName.replace('Bun.', '').toLowerCase()}.ts`, 'blue')}`);
       return;
     }
     
-    console.log(color(`🔗 Generating deep links for ${apiName}...`, 'cyan'));
+    console.info(color(`🔗 Generating deep links for ${apiName}...`, 'cyan'));
     
     const links = await generateDeepLinks(config);
     
     if (outputMarkdown) {
       const markdown = generateMarkdownLinks(links, config);
-      console.log(markdown);
+      console.info(markdown);
     } else {
       displayDeepLinks(links, config);
     }

@@ -23,37 +23,37 @@ export async function validatePattern(patternId: string): Promise<void> {
 	const db = initializeResearchSchema("data/research.db");
 	const miner = new SubMarketPatternMiner(db);
 
-	console.log(`🔬 Validating pattern: ${patternId}`);
+	console.info(`🔬 Validating pattern: ${patternId}`);
 
 	// Step 1: Run 7-day backtest
-	console.log("Step 1: Backtesting...");
+	console.info("Step 1: Backtesting...");
 	const backtest = await runBacktest(miner, patternId, 7);
-	console.log(`  Accuracy: ${(backtest.accuracy * 100).toFixed(1)}%`);
+	console.info(`  Accuracy: ${(backtest.accuracy * 100).toFixed(1)}%`);
 
 	// Step 2: Paper trade for 3 days
-	console.log("Step 2: Paper trading...");
+	console.info("Step 2: Paper trading...");
 	const paperResults = await runPaperTrading(patternId, 3);
-	console.log(`  PnL: ${paperResults.pnl.toFixed(2)}`);
+	console.info(`  PnL: ${paperResults.pnl.toFixed(2)}`);
 
 	// Step 3: Deploy to 5% of production traffic
-	console.log("Step 3: Canary deployment...");
+	console.info("Step 3: Canary deployment...");
 	await updateFeatureFlag(patternId, 0.05);
 
 	// Step 4: Monitor for 24 hours
-	console.log("Step 4: Monitoring...");
+	console.info("Step 4: Monitoring...");
 	const liveAccuracy = await monitorLive(patternId, 24);
-	console.log(`  Live accuracy: ${(liveAccuracy * 100).toFixed(1)}%`);
+	console.info(`  Live accuracy: ${(liveAccuracy * 100).toFixed(1)}%`);
 
 	// Step 5: Full deployment or rollback
 	if (liveAccuracy > 0.65) {
-		console.log("🚀 Promoting to production");
+		console.info("🚀 Promoting to production");
 		await updateFeatureFlag(patternId, 1.0);
 		const stmt = db.prepare(
 			`UPDATE research_pattern_log SET is_validated = TRUE WHERE patternId = ?`,
 		);
 		stmt.run(patternId);
 	} else {
-		console.log("❌ Rolling back");
+		console.info("❌ Rolling back");
 		await updateFeatureFlag(patternId, 0.0);
 	}
 }
@@ -103,7 +103,7 @@ async function updateFeatureFlag(
 	rollout: number,
 ): Promise<void> {
 	// In production, update feature flag system
-	console.log(`  Feature flag updated: ${patternId} = ${rollout * 100}% rollout`);
+	console.info(`  Feature flag updated: ${patternId} = ${rollout * 100}% rollout`);
 }
 
 /**
@@ -124,7 +124,7 @@ if (import.meta.main) {
 
 	validatePattern(patternId)
 		.then(() => {
-			console.log("✅ Validation complete");
+			console.info("✅ Validation complete");
 			process.exit(0);
 		})
 		.catch((error) => {

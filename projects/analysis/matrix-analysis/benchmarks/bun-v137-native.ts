@@ -97,13 +97,13 @@ function formatResult(r: BenchmarkResult, baseline?: BenchmarkResult): string {
 
 /** Main benchmark suite */
 async function main() {
-  console.log("\n╔══════════════════════════════════════════════════════════════════╗");
-  console.log("║  Bun.bench() Style Performance Report (Tier-1380)                 ║");
-  console.log("║  Buffer • JSC • wrapAnsi • SHA-256 • Memory                       ║");
-  console.log("╚══════════════════════════════════════════════════════════════════╝\n");
+  console.info("\n╔══════════════════════════════════════════════════════════════════╗");
+  console.info("║  Bun.bench() Style Performance Report (Tier-1380)                 ║");
+  console.info("║  Buffer • JSC • wrapAnsi • SHA-256 • Memory                       ║");
+  console.info("╚══════════════════════════════════════════════════════════════════╝\n");
 
-  console.log(`${COLORS.dim}Runtime: Bun v${Bun.version} on ${process.arch}${COLORS.reset}`);
-  console.log(`${COLORS.dim}Date: ${new Date().toISOString()}${COLORS.reset}\n`);
+  console.info(`${COLORS.dim}Runtime: Bun v${Bun.version} on ${process.arch}${COLORS.reset}`);
+  console.info(`${COLORS.dim}Date: ${new Date().toISOString()}${COLORS.reset}\n`);
 
   // Test data
   const bufferData8 = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
@@ -172,29 +172,29 @@ async function main() {
 
   // Print results with baseline (first result)
   const baseline = results[0];
-  console.log("\n" + "─".repeat(70));
+  console.info("\n" + "─".repeat(70));
   results.forEach((r, i) => {
-    console.log(formatResult(r, i === 0 ? undefined : baseline));
+    console.info(formatResult(r, i === 0 ? undefined : baseline));
   });
-  console.log("─".repeat(70));
+  console.info("─".repeat(70));
 
   // Summary
   const fastest = results.reduce((a, b) => a.mean < b.mean ? a : b);
   const slowest = results.reduce((a, b) => a.mean > b.mean ? a : b);
 
-  console.log(`\n${COLORS.bold}Summary:${COLORS.reset}`);
-  console.log(`  Fastest: ${COLORS.green}${fastest.name}${COLORS.reset} (${fastest.throughput})`);
-  console.log(`  Slowest: ${COLORS.yellow}${slowest.name}${COLORS.reset} (${slowest.throughput})`);
-  console.log(`  Total benchmarks: ${results.length}`);
+  console.info(`\n${COLORS.bold}Summary:${COLORS.reset}`);
+  console.info(`  Fastest: ${COLORS.green}${fastest.name}${COLORS.reset} (${fastest.throughput})`);
+  console.info(`  Slowest: ${COLORS.yellow}${slowest.name}${COLORS.reset} (${slowest.throughput})`);
+  console.info(`  Total benchmarks: ${results.length}`);
 
   // Peak memory
   if (globalThis.gc) {
     gc();
     const mem = process.memoryUsage();
-    console.log(`  Peak memory: ${(mem.heapUsed / 1024).toFixed(2)}KB`);
+    console.info(`  Peak memory: ${(mem.heapUsed / 1024).toFixed(2)}KB`);
   }
 
-  console.log(`\n${COLORS.dim}Tier-1380 OMEGA | Bun.bench() Style Report${COLORS.reset}\n`);
+  console.info(`\n${COLORS.dim}Tier-1380 OMEGA | Bun.bench() Style Report${COLORS.reset}\n`);
 }
 
 main().catch(console.error);

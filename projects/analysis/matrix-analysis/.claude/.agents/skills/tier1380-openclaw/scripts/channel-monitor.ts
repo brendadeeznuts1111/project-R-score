@@ -109,25 +109,25 @@ class ChannelMonitor {
 	 */
 	displayDashboard(): void {
 		console.clear();
-		console.log(`${COLORS.bold}📊 Channel Monitor Dashboard${COLORS.reset}`);
-		console.log("═══════════════════════════════════════════════════\n");
+		console.info(`${COLORS.bold}📊 Channel Monitor Dashboard${COLORS.reset}`);
+		console.info("═══════════════════════════════════════════════════\n");
 
 		const stats = this.getStats();
 
 		// Overview
-		console.log(`${COLORS.bold}Overview:${COLORS.reset}`);
-		console.log(`  Total Messages: ${COLORS.cyan}${stats.totalMessages}${COLORS.reset}`);
-		console.log(
+		console.info(`${COLORS.bold}Overview:${COLORS.reset}`);
+		console.info(`  Total Messages: ${COLORS.cyan}${stats.totalMessages}${COLORS.reset}`);
+		console.info(
 			`  Last Activity: ${
 				stats.lastActivity > 0
 					? new Date(stats.lastActivity).toLocaleTimeString()
 					: "No activity"
 			}`,
 		);
-		console.log();
+		console.info();
 
 		// Topic distribution
-		console.log(`${COLORS.bold}Messages by Topic:${COLORS.reset}`);
+		console.info(`${COLORS.bold}Messages by Topic:${COLORS.reset}`);
 		const topicNames: Record<number, string> = {
 			1: "📢 General",
 			2: "🚨 Alerts",
@@ -139,12 +139,12 @@ class ChannelMonitor {
 			const id = parseInt(topicId);
 			const name = topicNames[id] || `Topic ${id}`;
 			const bar = "█".repeat(Math.min(count, 20));
-			console.log(`  ${name.padEnd(20)} ${bar} ${count}`);
+			console.info(`  ${name.padEnd(20)} ${bar} ${count}`);
 		}
-		console.log();
+		console.info();
 
 		// Priority distribution
-		console.log(`${COLORS.bold}Messages by Priority:${COLORS.reset}`);
+		console.info(`${COLORS.bold}Messages by Priority:${COLORS.reset}`);
 		const priorityColors: Record<string, string> = {
 			urgent: COLORS.red,
 			high: COLORS.yellow,
@@ -154,21 +154,21 @@ class ChannelMonitor {
 
 		for (const [priority, count] of Object.entries(stats.messagesByPriority)) {
 			const color = priorityColors[priority] || COLORS.reset;
-			console.log(`  ${color}${priority.padEnd(10)}${COLORS.reset} ${count}`);
+			console.info(`  ${color}${priority.padEnd(10)}${COLORS.reset} ${count}`);
 		}
-		console.log();
+		console.info();
 
 		// Recent messages
-		console.log(`${COLORS.bold}Recent Messages:${COLORS.reset}`);
+		console.info(`${COLORS.bold}Recent Messages:${COLORS.reset}`);
 		const recent = this.messages.slice(-5).reverse();
 		for (const msg of recent) {
 			const topicName = topicNames[msg.topicId] || `Topic ${msg.topicId}`;
 			const time = new Date(msg.timestamp).toLocaleTimeString();
 			const priorityColor = priorityColors[msg.priority] || COLORS.reset;
-			console.log(
+			console.info(
 				`  ${COLORS.gray}[${time}]${COLORS.reset} ${topicName} ${priorityColor}[${msg.priority}]${COLORS.reset}`,
 			);
-			console.log(
+			console.info(
 				`    ${msg.content.slice(0, 60)}${msg.content.length > 60 ? "..." : ""}`,
 			);
 		}
@@ -210,7 +210,7 @@ async function main() {
 		}
 
 		case "watch": {
-			console.log("Starting channel monitor (Ctrl+C to exit)...\n");
+			console.info("Starting channel monitor (Ctrl+C to exit)...\n");
 
 			// Initial display
 			monitor.displayDashboard();
@@ -236,7 +236,7 @@ async function main() {
 
 			process.on("SIGINT", () => {
 				clearInterval(interval);
-				console.log("\n\nMonitor stopped.");
+				console.info("\n\nMonitor stopped.");
 				process.exit(0);
 			});
 
@@ -245,28 +245,28 @@ async function main() {
 
 		case "stats": {
 			const stats = monitor.getStats();
-			console.log(`${COLORS.bold}Channel Statistics:${COLORS.reset}\n`);
-			console.log(`Total Messages: ${stats.totalMessages}`);
-			console.log(
+			console.info(`${COLORS.bold}Channel Statistics:${COLORS.reset}\n`);
+			console.info(`Total Messages: ${stats.totalMessages}`);
+			console.info(
 				`Last Activity: ${
 					stats.lastActivity > 0
 						? new Date(stats.lastActivity).toLocaleString()
 						: "Never"
 				}`,
 			);
-			console.log("\nBy Topic:");
+			console.info("\nBy Topic:");
 			for (const [id, count] of Object.entries(stats.messagesByTopic)) {
-				console.log(`  Topic ${id}: ${count}`);
+				console.info(`  Topic ${id}: ${count}`);
 			}
 			break;
 		}
 
 		default: {
-			console.log(`${COLORS.bold}📊 Channel Monitor${COLORS.reset}\n`);
-			console.log("Usage:");
-			console.log("  channel-monitor.ts dashboard    Show dashboard");
-			console.log("  channel-monitor.ts watch        Watch mode (live updates)");
-			console.log("  channel-monitor.ts stats        Show statistics");
+			console.info(`${COLORS.bold}📊 Channel Monitor${COLORS.reset}\n`);
+			console.info("Usage:");
+			console.info("  channel-monitor.ts dashboard    Show dashboard");
+			console.info("  channel-monitor.ts watch        Watch mode (live updates)");
+			console.info("  channel-monitor.ts stats        Show statistics");
 		}
 	}
 }

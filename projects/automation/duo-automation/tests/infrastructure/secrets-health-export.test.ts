@@ -20,7 +20,7 @@ interface TestResult {
 const testResults: TestResult[] = [];
 
 function log(message: string) {
-  console.log(`[HEALTH-EXPORT-TEST] ${message}`);
+  console.info(`[HEALTH-EXPORT-TEST] ${message}`);
 }
 
 function addResult(testName: string, passed: boolean, message: string, details?: any) {

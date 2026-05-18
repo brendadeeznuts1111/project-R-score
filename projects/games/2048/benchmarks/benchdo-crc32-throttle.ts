@@ -179,22 +179,22 @@ export const integrateAdaptiveCRC32 = (): AdaptiveCRC32Throttle => {
     return result;
   }) as (data: ArrayBuffer) => number;
 
-  console.log("✅ Adaptive CRC32 throttle integrated");
-  console.log("📊 Dashboard updates: https://bench.quantum.cash/crc32");
-  console.log("⚡ HTMX refresh: every 500ms with adaptive metrics");
+  console.info("✅ Adaptive CRC32 throttle integrated");
+  console.info("📊 Dashboard updates: https://bench.quantum.cash/crc32");
+  console.info("⚡ HTMX refresh: every 500ms with adaptive metrics");
 
   return throttle;
 };
 
 // Deploy command
 export const deployAdaptiveCRC32 = async (): Promise<void> => {
-  console.log("🚀 Deploying Adaptive CRC32 Throttle...");
+  console.info("🚀 Deploying Adaptive CRC32 Throttle...");
 
   // 1. Integrate into runtime
   const throttle = integrateAdaptiveCRC32();
 
   // 2. Run benchmark test
-  console.log("\n🧪 Running adaptive throttle benchmark...");
+  console.info("\n🧪 Running adaptive throttle benchmark...");
   const testBuffers = Array.from({ length: 50 }, (_, i) => {
     const buffer = new ArrayBuffer(1024 * (i + 1));
     const view = new Uint8Array(buffer);
@@ -213,14 +213,14 @@ export const deployAdaptiveCRC32 = async (): Promise<void> => {
   }
   const totalTime = performance.now() - start;
 
-  console.log(
+  console.info(
     `   Processed ${testBuffers.length} buffers in ${totalTime.toFixed(2)}ms`
   );
-  console.log(`   Avg Latency: ${throttle.getAverageLatency().toFixed(2)}µs`);
-  console.log(`   Metrics Entries: ${throttle.getMetrics().length}`);
+  console.info(`   Avg Latency: ${throttle.getAverageLatency().toFixed(2)}µs`);
+  console.info(`   Metrics Entries: ${throttle.getMetrics().length}`);
 
-  console.log("✅ Adaptive CRC32 deployed to edge");
-  console.log("🔗 Live at: https://quantum.cash/crc32-adaptive");
+  console.info("✅ Adaptive CRC32 deployed to edge");
+  console.info("🔗 Live at: https://quantum.cash/crc32-adaptive");
 };
 
 // BenchDO CRC32 Throttle Class
@@ -317,8 +317,8 @@ export class BenchDOCRC32Throttle {
   // Start adaptive throttling loop
   async start(): Promise<void> {
     this.running = true;
-    console.log("🚀 BenchDO CRC32 Throttle Started");
-    console.log("═".repeat(60));
+    console.info("🚀 BenchDO CRC32 Throttle Started");
+    console.info("═".repeat(60));
 
     // Store initial config in KV
     await this.kv.put(
@@ -331,16 +331,16 @@ export class BenchDOCRC32Throttle {
       await this.adjustThrottle();
     }, this.state.currentConfig.cooldownMs);
 
-    console.log("✅ Adaptive throttling active");
-    console.log(
+    console.info("✅ Adaptive throttling active");
+    console.info(
       `   Max Throughput: ${this.state.currentConfig.maxThroughputMBps} MB/s`
     );
-    console.log(
+    console.info(
       `   Target Utilization: ${
         this.state.currentConfig.targetUtilization * 100
       }%`
     );
-    console.log(
+    console.info(
       `   Adjustment Factor: ${this.state.currentConfig.adjustmentFactor}`
     );
   }
@@ -352,13 +352,13 @@ export class BenchDOCRC32Throttle {
       clearInterval(this.throttleInterval);
     }
 
-    console.log("🛑 BenchDO CRC32 Throttle Stopped");
-    console.log(`📊 Final State:`);
-    console.log(`   Total Checksums: ${this.state.lastMetrics.checksumCount}`);
-    console.log(
+    console.info("🛑 BenchDO CRC32 Throttle Stopped");
+    console.info(`📊 Final State:`);
+    console.info(`   Total Checksums: ${this.state.lastMetrics.checksumCount}`);
+    console.info(
       `   Max Throughput: ${this.state.currentConfig.maxThroughputMBps} MB/s`
     );
-    console.log(`   Throttle Adjustments: ${this.state.history.length}`);
+    console.info(`   Throttle Adjustments: ${this.state.history.length}`);
 
     // Save final state to KV
     await this.kv.put(
@@ -410,7 +410,7 @@ export class BenchDOCRC32Throttle {
     if (adjusted) {
       this.state.lastAdjustment = Date.now();
       await this.kv.put("crc32-throttle-config", JSON.stringify(config));
-      console.log(
+      console.info(
         `[Throttle] Adjusted: factor=${config.adjustmentFactor.toFixed(
           3
         )}, util=${(utilization * 100).toFixed(
@@ -457,11 +457,11 @@ export class BenchDOCRC32Throttle {
 
 // Main execution
 if (import.meta.main) {
-  console.log("\n🚀 BenchDO Adaptive CRC32 Throttle - PremiumPlus v1.5.1");
-  console.log("═".repeat(60));
-  console.log(`📍 Location: New Orleans, CST 19:36, 18 Jan 2026`);
-  console.log(`🏷️  Tag: [65.1.0.0-c] perf-critical, adaptive throttle`);
-  console.log("");
+  console.info("\n🚀 BenchDO Adaptive CRC32 Throttle - PremiumPlus v1.5.1");
+  console.info("═".repeat(60));
+  console.info(`📍 Location: New Orleans, CST 19:36, 18 Jan 2026`);
+  console.info(`🏷️  Tag: [65.1.0.0-c] perf-critical, adaptive throttle`);
+  console.info("");
 
   const throttle = new BenchDOCRC32Throttle();
 
@@ -478,26 +478,26 @@ if (import.meta.main) {
   });
 
   // Run benchmark with adaptive throttling
-  console.log("\n🧪 Running CRC32 Batch Benchmark with Adaptive Throttle");
-  console.log("─".repeat(60));
+  console.info("\n🧪 Running CRC32 Batch Benchmark with Adaptive Throttle");
+  console.info("─".repeat(60));
 
   const start = performance.now();
   const result = await throttle.throttleCRC32Batch(testBuffers);
   const totalTime = performance.now() - start;
 
-  console.log(`   Buffers: ${testBuffers.length}`);
-  console.log(
+  console.info(`   Buffers: ${testBuffers.length}`);
+  console.info(
     `   Total Size: ${
       testBuffers.reduce((sum, b) => sum + b.byteLength, 0) / 1024 / 1024
     } MB`
   );
-  console.log(`   Total Latency: ${result.totalLatencyMs.toFixed(2)} ms`);
-  console.log(`   Avg Latency: ${result.avgLatencyMs.toFixed(3)} ms`);
-  console.log(`   Throttled: ${result.throttled}`);
+  console.info(`   Total Latency: ${result.totalLatencyMs.toFixed(2)} ms`);
+  console.info(`   Avg Latency: ${result.avgLatencyMs.toFixed(3)} ms`);
+  console.info(`   Throttled: ${result.throttled}`);
 
   // Show state
-  console.log("\n📊 Throttle State:");
-  console.log(JSON.stringify(throttle.getState(), null, 2));
+  console.info("\n📊 Throttle State:");
+  console.info(JSON.stringify(throttle.getState(), null, 2));
 
   // Show history summary
   const history = throttle.getHistory();
@@ -506,15 +506,15 @@ if (import.meta.main) {
       history.reduce((sum, m) => sum + m.throughputMBps, 0) / history.length;
     const avgLatency =
       history.reduce((sum, m) => sum + m.latencyMs, 0) / history.length;
-    console.log("\n📈 History Summary:");
-    console.log(`   Entries: ${history.length}`);
-    console.log(`   Avg Throughput: ${avgThroughput.toFixed(1)} MB/s`);
-    console.log(`   Avg Latency: ${avgLatency.toFixed(3)} ms`);
+    console.info("\n📈 History Summary:");
+    console.info(`   Entries: ${history.length}`);
+    console.info(`   Avg Throughput: ${avgThroughput.toFixed(1)} MB/s`);
+    console.info(`   Avg Latency: ${avgLatency.toFixed(3)} ms`);
   }
 
   // Stop throttle
   await throttle.stop();
 
-  console.log("\n✅ BenchDO CRC32 Throttle Complete!");
-  console.log("═".repeat(60));
+  console.info("\n✅ BenchDO CRC32 Throttle Complete!");
+  console.info("═".repeat(60));
 }

@@ -72,7 +72,7 @@ function parseCLIArgs(): CLIOptions {
 }
 
 function printHelp() {
-  console.log(`
+  console.info(`
 🎯 DuoPlus Scoping Matrix Demo Server
 
 USAGE:
@@ -136,24 +136,24 @@ const VERBOSE = cliOptions.verbose || false;
 const STRICT_MODE = cliOptions.strict || false;
 const DEBUG_MODE = cliOptions.debug || false;
 
-console.log("🚀 Starting DuoPlus Scoping Matrix Demo Server");
-console.log(`📍 Server: http://${HOST}:${PORT}`);
-console.log(`🔍 Debug endpoints:`);
-console.log(`   - Compliance report: http://${HOST}:${PORT}/compliance`);
-console.log(`   - Matrix info: http://${HOST}:${PORT}/matrix`);
-console.log(`   - Scope info: http://${HOST}:${PORT}/scope.json`);
-console.log(`   - Debug interface: http://${HOST}:${PORT}/debug`);
-console.log();
+console.info("🚀 Starting DuoPlus Scoping Matrix Demo Server");
+console.info(`📍 Server: http://${HOST}:${PORT}`);
+console.info(`🔍 Debug endpoints:`);
+console.info(`   - Compliance report: http://${HOST}:${PORT}/compliance`);
+console.info(`   - Matrix info: http://${HOST}:${PORT}/matrix`);
+console.info(`   - Scope info: http://${HOST}:${PORT}/scope.json`);
+console.info(`   - Debug interface: http://${HOST}:${PORT}/debug`);
+console.info();
 
 // Display current scope
 const context = getScopeContext();
-console.log("🎯 Current Scope Configuration:");
-console.log(`   Domain: ${context.domain}`);
-console.log(`   Platform: ${context.platform}`);
-console.log(`   Detected Scope: ${context.detectedScope}`);
-console.log(`   Features: ${Object.entries(context.features).filter(([_, v]) => v).map(([k]) => k).join(", ")}`);
-console.log(`   Integrations: ${Object.entries(context.integrations).filter(([_, v]) => v).map(([k]) => k).join(", ")}`);
-console.log();
+console.info("🎯 Current Scope Configuration:");
+console.info(`   Domain: ${context.domain}`);
+console.info(`   Platform: ${context.platform}`);
+console.info(`   Detected Scope: ${context.detectedScope}`);
+console.info(`   Features: ${Object.entries(context.features).filter(([_, v]) => v).map(([k]) => k).join(", ")}`);
+console.info(`   Integrations: ${Object.entries(context.integrations).filter(([_, v]) => v).map(([k]) => k).join(", ")}`);
+console.info();
 
 // ============================================================================
 // Demo API Routes
@@ -164,7 +164,7 @@ async function handleRequest(req: Request): Promise<Response> {
   const method = req.method;
   const path = url.pathname;
 
-  console.log(`${method} ${path}`);
+  console.info(`${method} ${path}`);
 
   try {
     // Apply compliance middleware (non-blocking)
@@ -630,19 +630,19 @@ const server = Bun.serve({
   },
 });
 
-console.log(`✅ Server started successfully`);
-console.log(`🌐 Open http://${HOST}:${PORT} in your browser`);
-console.log(`🔄 Server will continue running...`);
+console.info(`✅ Server started successfully`);
+console.info(`🌐 Open http://${HOST}:${PORT} in your browser`);
+console.info(`🔄 Server will continue running...`);
 
 // Graceful shutdown
 process.on("SIGINT", () => {
-  console.log("\n🛑 Shutting down server...");
+  console.info("\n🛑 Shutting down server...");
   server.stop();
   process.exit(0);
 });
 
 process.on("SIGTERM", () => {
-  console.log("\n🛑 Shutting down server...");
+  console.info("\n🛑 Shutting down server...");
   server.stop();
   process.exit(0);
 });

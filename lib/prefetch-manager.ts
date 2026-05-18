@@ -176,11 +176,11 @@ export class PrefetchManager {
 
     // Check conditions
     if (strategy.conditions && !strategy.conditions()) {
-      console.log(`Skipping strategy ${strategy.name}: conditions not met`);
+      console.info(`Skipping strategy ${strategy.name}: conditions not met`);
       return;
     }
 
-    console.log(`Executing strategy: ${strategy.name}`);
+    console.info(`Executing strategy: ${strategy.name}`);
     
     strategy.resources.forEach(resource => {
       this.addResource(resource);
@@ -264,7 +264,7 @@ export class PrefetchManager {
     document.head.appendChild(element);
     this.prefetchedResources.add(config.url);
 
-    console.log(`Added ${config.type} for ${config.url}`);
+    console.info(`Added ${config.type} for ${config.url}`);
   }
 
   observeElement(element: HTMLElement, url: string, type: 'prefetch' | 'preload' = 'prefetch'): void {
@@ -350,7 +350,7 @@ export class PrefetchManager {
 
     // Disable prefetching on slow connections or data saver mode
     if (saveData || effectiveType === 'slow-2g' || effectiveType === '2g') {
-      console.log('Adaptive prefetching disabled: slow connection or data saver mode');
+      console.info('Adaptive prefetching disabled: slow connection or data saver mode');
       return;
     }
 
@@ -386,7 +386,7 @@ export class PrefetchManager {
     const observer = new PerformanceObserver((list) => {
       list.getEntries().forEach((entry) => {
         if (entry.name.includes('prefetch') || entry.name.includes('preload')) {
-          console.log(`Prefetch performance for ${entry.name}:`, {
+          console.info(`Prefetch performance for ${entry.name}:`, {
             duration: entry.duration,
             transferSize: entry.transferSize,
             encodedBodySize: entry.encodedBodySize

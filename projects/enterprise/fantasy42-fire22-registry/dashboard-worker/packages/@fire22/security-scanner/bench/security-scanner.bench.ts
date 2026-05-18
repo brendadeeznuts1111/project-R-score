@@ -34,7 +34,7 @@ class SecurityScannerBenchmark {
     operation: () => Promise<any>,
     iterations: number = 1000
   ): Promise<BenchmarkResult> {
-    console.log(`🚀 Running benchmark: ${name} (${iterations} iterations)`);
+    console.info(`🚀 Running benchmark: ${name} (${iterations} iterations)`);
 
     const times: number[] = [];
     let totalTime = 0;
@@ -163,8 +163,8 @@ class SecurityScannerBenchmark {
    * Run all benchmarks
    */
   async runAllBenchmarks(): Promise<BenchmarkResult[]> {
-    console.log('🔥 Fire22 Security Scanner - Benchmark Suite');
-    console.log('='.repeat(60));
+    console.info('🔥 Fire22 Security Scanner - Benchmark Suite');
+    console.info('='.repeat(60));
 
     await this.benchmarkDependencyScanning();
     await this.benchmarkSecretScanning();
@@ -224,7 +224,7 @@ class SecurityScannerBenchmark {
 if (import.meta.main) {
   const benchmark = new SecurityScannerBenchmark();
   await benchmark.runAllBenchmarks();
-  console.log(benchmark.generateReport());
+  console.info(benchmark.generateReport());
 }
 
 export { SecurityScannerBenchmark };

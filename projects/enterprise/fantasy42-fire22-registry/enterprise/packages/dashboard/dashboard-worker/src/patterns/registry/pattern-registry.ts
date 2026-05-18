@@ -28,7 +28,7 @@ export class PatternRegistry {
    */
   registerPattern(pattern: PatternDefinition): void {
     this.patterns.set(pattern.name, pattern);
-    console.log(`📝 Registered pattern: ${pattern.emoji} ${pattern.name} - ${pattern.description}`);
+    console.info(`📝 Registered pattern: ${pattern.emoji} ${pattern.name} - ${pattern.description}`);
   }
 
   /**
@@ -293,7 +293,7 @@ export class PatternRegistry {
       this.registerPattern(pattern);
     });
 
-    console.log(`✅ Initialized ${patternTypes.length} pattern definitions`);
+    console.info(`✅ Initialized ${patternTypes.length} pattern definitions`);
   }
 
   private initializeConnections(): void {
@@ -318,7 +318,7 @@ export class PatternRegistry {
       });
     });
 
-    console.log(`✅ Initialized ${defaultConnections.length} pattern connections`);
+    console.info(`✅ Initialized ${defaultConnections.length} pattern connections`);
   }
 
   private initializeContextMappings(): void {
@@ -350,7 +350,7 @@ export class PatternRegistry {
       this.contextMappings.set(context as PatternContext, patterns);
     }
 
-    console.log(`✅ Initialized ${Object.keys(contextMappings).length} context mappings`);
+    console.info(`✅ Initialized ${Object.keys(contextMappings).length} context mappings`);
   }
 
   private getDefaultDependencies(pattern: PatternType): PatternType[] {

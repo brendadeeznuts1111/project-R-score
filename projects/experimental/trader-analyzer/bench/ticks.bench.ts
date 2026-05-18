@@ -74,10 +74,10 @@ async function runBenchmark(): Promise<void> {
 	let tickCount = 0;
 	const nodeIds = ["node-1", "node-2", "node-3", "node-4", "node-5"];
 
-	console.log(`🚀 Starting tick ingestion benchmark...`);
-	console.log(`   Duration: ${durationMs}ms`);
-	console.log(`   Target rate: ${targetRate} ticks/sec`);
-	console.log("");
+	console.info(`🚀 Starting tick ingestion benchmark...`);
+	console.info(`   Duration: ${durationMs}ms`);
+	console.info(`   Target rate: ${targetRate} ticks/sec`);
+	console.info("");
 
 	// Calculate interval between ticks to achieve target rate
 	const intervalMs = 1000 / targetRate;
@@ -105,14 +105,14 @@ async function runBenchmark(): Promise<void> {
 	const actualRate = (stats.totalTicksIngested / actualDuration) * 1000;
 	const totalIngested = stats.totalTicksIngested;
 
-	console.log("📊 Benchmark Results:");
-	console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-	console.log(`   Total ticks ingested: ${totalIngested.toLocaleString()}`);
-	console.log(`   Actual duration: ${actualDuration}ms`);
-	console.log(`   Ingestion rate: ${Math.round(actualRate).toLocaleString()} ticks/sec`);
-	console.log(`   Target rate: ${targetRate.toLocaleString()} ticks/sec`);
-	console.log(`   Performance: ${((actualRate / targetRate) * 100).toFixed(1)}%`);
-	console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+	console.info("📊 Benchmark Results:");
+	console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+	console.info(`   Total ticks ingested: ${totalIngested.toLocaleString()}`);
+	console.info(`   Actual duration: ${actualDuration}ms`);
+	console.info(`   Ingestion rate: ${Math.round(actualRate).toLocaleString()} ticks/sec`);
+	console.info(`   Target rate: ${targetRate.toLocaleString()} ticks/sec`);
+	console.info(`   Performance: ${((actualRate / targetRate) * 100).toFixed(1)}%`);
+	console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
 	// Cleanup
 	db.close();

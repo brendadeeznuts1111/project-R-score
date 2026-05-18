@@ -474,7 +474,7 @@ function getMimeType(filename: string): string {
   return mimeTypes[ext || ""] || "application/octet-stream";
 }
 
-console.log(`
+console.info(`
 ╔════════════════════════════════════════════════════════════╗
 ║           FormData File Upload Demo                        ║
 ╠════════════════════════════════════════════════════════════╣

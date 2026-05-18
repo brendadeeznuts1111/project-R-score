@@ -60,7 +60,7 @@ class AuthTestClient {
    * Test HTTP Basic Authentication
    */
   async testBasicAuth(username: string, password: string): Promise<AuthResponse> {
-    console.log(`🔐 Testing Basic Auth for user: ${username}`);
+    console.info(`🔐 Testing Basic Auth for user: ${username}`);
 
     const credentials = btoa(`${username}:${password}`);
 
@@ -76,16 +76,16 @@ class AuthTestClient {
       const data = (await response.json()) as AuthResponse;
 
       if (response.ok) {
-        console.log('✅ Basic Auth successful');
-        console.log(`👤 User: ${data.user.username} (${data.user.role})`);
-        console.log(`🎫 Token: ${data.token?.substring(0, 50)}...\n`);
+        console.info('✅ Basic Auth successful');
+        console.info(`👤 User: ${data.user.username} (${data.user.role})`);
+        console.info(`🎫 Token: ${data.token?.substring(0, 50)}...\n`);
         return data;
       } else {
-        console.log('❌ Basic Auth failed:', data.error);
+        console.info('❌ Basic Auth failed:', data.error);
         throw new Error(data.error || 'Basic authentication failed');
       }
     } catch (error) {
-      console.log('❌ Basic Auth error:', error instanceof Error ? error.message : String(error));
+      console.info('❌ Basic Auth error:', error instanceof Error ? error.message : String(error));
       throw error;
     }
   }
@@ -94,7 +94,7 @@ class AuthTestClient {
    * Test JWT Token Verification
    */
   async testTokenVerification(token: string): Promise<VerifyResponse> {
-    console.log('🔍 Testing Token Verification');
+    console.info('🔍 Testing Token Verification');
 
     try {
       const response = await fetch(`${this.baseUrl}/auth/verify`, {
@@ -108,17 +108,17 @@ class AuthTestClient {
       const data = (await response.json()) as VerifyResponse;
 
       if (response.ok) {
-        console.log('✅ Token verification successful');
-        console.log(`👤 User: ${data.user.username} (${data.user.role})`);
-        console.log(`📊 Payload:`, JSON.stringify(data.payload, null, 2));
-        console.log();
+        console.info('✅ Token verification successful');
+        console.info(`👤 User: ${data.user.username} (${data.user.role})`);
+        console.info(`📊 Payload:`, JSON.stringify(data.payload, null, 2));
+        console.info();
         return data;
       } else {
-        console.log('❌ Token verification failed:', data.error);
+        console.info('❌ Token verification failed:', data.error);
         throw new Error(data.error || 'Token verification failed');
       }
     } catch (error) {
-      console.log(
+      console.info(
         '❌ Token verification error:',
         error instanceof Error ? error.message : String(error)
       );
@@ -130,7 +130,7 @@ class AuthTestClient {
    * Test Protected Route Access
    */
   async testProtectedRoute(token: string): Promise<ProtectedResponse> {
-    console.log('🛡️ Testing Protected Route Access');
+    console.info('🛡️ Testing Protected Route Access');
 
     try {
       const response = await fetch(`${this.baseUrl}/protected`, {
@@ -144,17 +144,17 @@ class AuthTestClient {
       const data = (await response.json()) as ProtectedResponse;
 
       if (response.ok) {
-        console.log('✅ Protected route access successful');
-        console.log(`👤 User: ${data.user.username} (${data.user.role})`);
-        console.log(`🔐 Secret: ${data.data.secret}`);
-        console.log(`⏰ Timestamp: ${data.data.timestamp}\n`);
+        console.info('✅ Protected route access successful');
+        console.info(`👤 User: ${data.user.username} (${data.user.role})`);
+        console.info(`🔐 Secret: ${data.data.secret}`);
+        console.info(`⏰ Timestamp: ${data.data.timestamp}\n`);
         return data;
       } else {
-        console.log('❌ Protected route access failed:', data.error);
+        console.info('❌ Protected route access failed:', data.error);
         throw new Error(data.error || 'Protected route access failed');
       }
     } catch (error) {
-      console.log(
+      console.info(
         '❌ Protected route access error:',
         error instanceof Error ? error.message : String(error)
       );
@@ -166,7 +166,7 @@ class AuthTestClient {
    * Test Token Refresh
    */
   async testTokenRefresh(token: string): Promise<RefreshResponse> {
-    console.log('🔄 Testing Token Refresh');
+    console.info('🔄 Testing Token Refresh');
 
     try {
       const response = await fetch(`${this.baseUrl}/auth/refresh`, {
@@ -180,15 +180,15 @@ class AuthTestClient {
       const data = (await response.json()) as RefreshResponse;
 
       if (response.ok) {
-        console.log('✅ Token refresh successful');
-        console.log(`🎫 New Token: ${data.token.substring(0, 50)}...\n`);
+        console.info('✅ Token refresh successful');
+        console.info(`🎫 New Token: ${data.token.substring(0, 50)}...\n`);
         return data;
       } else {
-        console.log('❌ Token refresh failed:', data.error);
+        console.info('❌ Token refresh failed:', data.error);
         throw new Error(data.error || 'Token refresh failed');
       }
     } catch (error) {
-      console.log(
+      console.info(
         '❌ Token refresh error:',
         error instanceof Error ? error.message : String(error)
       );
@@ -200,7 +200,7 @@ class AuthTestClient {
    * Test Invalid Credentials
    */
   async testInvalidCredentials(): Promise<void> {
-    console.log('🚫 Testing Invalid Credentials');
+    console.info('🚫 Testing Invalid Credentials');
 
     try {
       const credentials = btoa('invalid:invalid');
@@ -216,18 +216,18 @@ class AuthTestClient {
       const data = (await response.json()) as { error: string };
 
       if (!response.ok) {
-        console.log('✅ Invalid credentials properly rejected:', data.error);
-        console.log();
+        console.info('✅ Invalid credentials properly rejected:', data.error);
+        console.info();
       } else {
-        console.log('❌ Invalid credentials were accepted (this should not happen)');
-        console.log();
+        console.info('❌ Invalid credentials were accepted (this should not happen)');
+        console.info();
       }
     } catch (error) {
-      console.log(
+      console.info(
         '❌ Invalid credentials test error:',
         error instanceof Error ? error.message : String(error)
       );
-      console.log();
+      console.info();
     }
   }
 
@@ -235,7 +235,7 @@ class AuthTestClient {
    * Test Invalid Token
    */
   async testInvalidToken(): Promise<void> {
-    console.log('🚫 Testing Invalid Token');
+    console.info('🚫 Testing Invalid Token');
 
     try {
       const response = await fetch(`${this.baseUrl}/auth/verify`, {
@@ -249,18 +249,18 @@ class AuthTestClient {
       const data = (await response.json()) as { error: string };
 
       if (!response.ok) {
-        console.log('✅ Invalid token properly rejected:', data.error);
-        console.log();
+        console.info('✅ Invalid token properly rejected:', data.error);
+        console.info();
       } else {
-        console.log('❌ Invalid token was accepted (this should not happen)');
-        console.log();
+        console.info('❌ Invalid token was accepted (this should not happen)');
+        console.info();
       }
     } catch (error) {
-      console.log(
+      console.info(
         '❌ Invalid token test error:',
         error instanceof Error ? error.message : String(error)
       );
-      console.log();
+      console.info();
     }
   }
 
@@ -268,7 +268,7 @@ class AuthTestClient {
    * Test No Authentication
    */
   async testNoAuthentication(): Promise<void> {
-    console.log('🚫 Testing No Authentication');
+    console.info('🚫 Testing No Authentication');
 
     try {
       const response = await fetch(`${this.baseUrl}/protected`, {
@@ -281,18 +281,18 @@ class AuthTestClient {
       const data = (await response.json()) as { error: string };
 
       if (!response.ok) {
-        console.log('✅ No authentication properly rejected:', data.error);
-        console.log();
+        console.info('✅ No authentication properly rejected:', data.error);
+        console.info();
       } else {
-        console.log('❌ No authentication was accepted (this should not happen)');
-        console.log();
+        console.info('❌ No authentication was accepted (this should not happen)');
+        console.info();
       }
     } catch (error) {
-      console.log(
+      console.info(
         '❌ No authentication test error:',
         error instanceof Error ? error.message : String(error)
       );
-      console.log();
+      console.info();
     }
   }
 
@@ -300,7 +300,7 @@ class AuthTestClient {
    * Test Service Info
    */
   async testServiceInfo(): Promise<void> {
-    console.log('ℹ️ Testing Service Info');
+    console.info('ℹ️ Testing Service Info');
 
     try {
       const response = await fetch(`${this.baseUrl}`, {
@@ -318,24 +318,24 @@ class AuthTestClient {
       };
 
       if (response.ok) {
-        console.log('✅ Service info retrieved');
-        console.log(`📝 Message: ${data.message}`);
-        console.log(`📋 Version: ${data.version}`);
-        console.log('🔗 Endpoints:');
+        console.info('✅ Service info retrieved');
+        console.info(`📝 Message: ${data.message}`);
+        console.info(`📋 Version: ${data.version}`);
+        console.info('🔗 Endpoints:');
         Object.entries(data.endpoints).forEach(([key, description]) => {
-          console.log(`   ${key}: ${description}`);
+          console.info(`   ${key}: ${description}`);
         });
-        console.log();
+        console.info();
       } else {
-        console.log('❌ Service info retrieval failed:', data.error);
-        console.log();
+        console.info('❌ Service info retrieval failed:', data.error);
+        console.info();
       }
     } catch (error) {
-      console.log(
+      console.info(
         '❌ Service info test error:',
         error instanceof Error ? error.message : String(error)
       );
-      console.log();
+      console.info();
     }
   }
 
@@ -343,8 +343,8 @@ class AuthTestClient {
    * Run Complete Test Suite
    */
   async runCompleteTestSuite(): Promise<void> {
-    console.log('🚀 Starting JWT Authentication Test Suite\n');
-    console.log('='.repeat(60));
+    console.info('🚀 Starting JWT Authentication Test Suite\n');
+    console.info('='.repeat(60));
 
     // Test service info
     await this.testServiceInfo();
@@ -353,8 +353,8 @@ class AuthTestClient {
     await this.testInvalidCredentials();
 
     // Test admin user
-    console.log('👤 Testing Admin User Flow');
-    console.log('-'.repeat(40));
+    console.info('👤 Testing Admin User Flow');
+    console.info('-'.repeat(40));
     let adminToken: string;
     try {
       const adminAuth = await this.testBasicAuth('admin', 'admin123');
@@ -364,17 +364,17 @@ class AuthTestClient {
       await this.testProtectedRoute(adminToken);
       await this.testTokenRefresh(adminToken);
     } catch (error) {
-      console.log(
+      console.info(
         '❌ Admin user test failed:',
         error instanceof Error ? error.message : String(error)
       );
     }
 
-    console.log('='.repeat(60));
+    console.info('='.repeat(60));
 
     // Test regular user
-    console.log('👤 Testing Regular User Flow');
-    console.log('-'.repeat(40));
+    console.info('👤 Testing Regular User Flow');
+    console.info('-'.repeat(40));
     let userToken: string;
     try {
       const userAuth = await this.testBasicAuth('user', 'user123');
@@ -384,37 +384,37 @@ class AuthTestClient {
       await this.testProtectedRoute(userToken);
       await this.testTokenRefresh(userToken);
     } catch (error) {
-      console.log(
+      console.info(
         '❌ Regular user test failed:',
         error instanceof Error ? error.message : String(error)
       );
     }
 
-    console.log('='.repeat(60));
+    console.info('='.repeat(60));
 
     // Test security scenarios
-    console.log('🔒 Testing Security Scenarios');
-    console.log('-'.repeat(40));
+    console.info('🔒 Testing Security Scenarios');
+    console.info('-'.repeat(40));
     await this.testInvalidToken();
     await this.testNoAuthentication();
 
-    console.log('='.repeat(60));
-    console.log('🎉 JWT Authentication Test Suite Complete!\n');
+    console.info('='.repeat(60));
+    console.info('🎉 JWT Authentication Test Suite Complete!\n');
 
-    console.log('✅ All tests completed successfully!');
-    console.log('✅ HTTP Basic Authentication working');
-    console.log('✅ JWT Token generation and verification working');
-    console.log('✅ Protected route access control working');
-    console.log('✅ Token refresh functionality working');
-    console.log('✅ Security validation working');
-    console.log('✅ CORS support working');
+    console.info('✅ All tests completed successfully!');
+    console.info('✅ HTTP Basic Authentication working');
+    console.info('✅ JWT Token generation and verification working');
+    console.info('✅ Protected route access control working');
+    console.info('✅ Token refresh functionality working');
+    console.info('✅ Security validation working');
+    console.info('✅ CORS support working');
   }
 
   /**
    * Quick Test (Basic functionality only)
    */
   async runQuickTest(): Promise<void> {
-    console.log('⚡ Running Quick JWT Authentication Test\n');
+    console.info('⚡ Running Quick JWT Authentication Test\n');
 
     try {
       // Test basic auth and get token
@@ -427,9 +427,9 @@ class AuthTestClient {
       // Test protected route
       await this.testProtectedRoute(token);
 
-      console.log('✅ Quick test completed successfully!');
+      console.info('✅ Quick test completed successfully!');
     } catch (error) {
-      console.log('❌ Quick test failed:', error instanceof Error ? error.message : String(error));
+      console.info('❌ Quick test failed:', error instanceof Error ? error.message : String(error));
     }
   }
 }
@@ -442,7 +442,7 @@ async function main() {
 
   const client = new AuthTestClient(baseUrl);
 
-  console.log(`🔧 Using base URL: ${baseUrl}\n`);
+  console.info(`🔧 Using base URL: ${baseUrl}\n`);
 
   try {
     switch (testType) {
@@ -453,11 +453,11 @@ async function main() {
         await client.runCompleteTestSuite();
         break;
       default:
-        console.log('Usage:');
-        console.log('  bun run jwt-auth-test-client.ts [quick|complete]');
-        console.log('');
-        console.log('  quick   - Run basic functionality tests');
-        console.log('  complete - Run comprehensive test suite');
+        console.info('Usage:');
+        console.info('  bun run jwt-auth-test-client.ts [quick|complete]');
+        console.info('');
+        console.info('  quick   - Run basic functionality tests');
+        console.info('  complete - Run comprehensive test suite');
         break;
     }
   } catch (error) {

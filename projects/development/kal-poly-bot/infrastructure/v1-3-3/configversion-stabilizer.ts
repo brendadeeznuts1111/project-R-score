@@ -55,7 +55,7 @@ export class ConfigVersionStabilizer {
       this.setDefaultLinker();
 
       this.lockfileInitialized = true;
-      console.log(
+      console.info(
         `[STABILITY] Config version stabilizer initialized (v${this.VERSIONS.V1})`
       );
     } catch (error) {
@@ -122,7 +122,7 @@ export class ConfigVersionStabilizer {
 
     // Write stable lockfile
     this.writeLockfile(stableLockfile);
-    console.log("[STABILITY] Upgraded to configVersion 1");
+    console.info("[STABILITY] Upgraded to configVersion 1");
   }
 
   // Read package.json
@@ -194,7 +194,7 @@ export class ConfigVersionStabilizer {
     }
 
     Bun.write(bunfigPath, bunfigContent);
-    console.log(`[STABILITY] Set linker to: ${this.currentLinker?.type}`);
+    console.info(`[STABILITY] Set linker to: ${this.currentLinker?.type}`);
   }
 
   // Validate package manager configuration

@@ -51,10 +51,10 @@ export class ServerCore {
       // In a real implementation, this would start an actual HTTP server
       // For now, we'll simulate the server startup
 
-      console.log(`🚀 Starting ${this.config.mode} server...`);
-      console.log(`📡 Server listening on ${this.config.host}:${this.config.port}`);
-      console.log(`🔧 HMR: ${this.config.hmrEnabled ? 'enabled' : 'disabled'}`);
-      console.log(`🔄 Live Reload: ${this.config.liveReloadEnabled ? 'enabled' : 'disabled'}`);
+      console.info(`🚀 Starting ${this.config.mode} server...`);
+      console.info(`📡 Server listening on ${this.config.host}:${this.config.port}`);
+      console.info(`🔧 HMR: ${this.config.hmrEnabled ? 'enabled' : 'disabled'}`);
+      console.info(`🔄 Live Reload: ${this.config.liveReloadEnabled ? 'enabled' : 'disabled'}`);
 
       this.server = {
         port: this.config.port,
@@ -81,7 +81,7 @@ export class ServerCore {
   async stop(): Promise<void> {
     try {
       if (this.server) {
-        console.log('🛑 Stopping server...');
+        console.info('🛑 Stopping server...');
 
         // In a real implementation, this would gracefully stop the server
         this.server = undefined;
@@ -352,9 +352,9 @@ export class ServerCore {
       const logMessage = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
 
       if (data) {
-        console.log(logMessage, data);
+        console.info(logMessage, data);
       } else {
-        console.log(logMessage);
+        console.info(logMessage);
       }
     }
   }

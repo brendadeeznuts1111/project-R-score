@@ -50,7 +50,7 @@ class TestDashboard {
   }
 
   async generateDashboard(): Promise<void> {
-    console.log("📊 Generating visual test dashboard...");
+    console.info("📊 Generating visual test dashboard...");
 
     // Mock data for demonstration (in real usage, this would come from test analysis)
     this.data.metrics = {
@@ -98,8 +98,8 @@ class TestDashboard {
     const outputPath = join(process.cwd(), "test", "status-dashboard.html");
 
     writeFileSync(outputPath, html);
-    console.log(`✅ Dashboard generated: ${outputPath}`);
-    console.log(`🌐 Open in browser: file://${outputPath}`);
+    console.info(`✅ Dashboard generated: ${outputPath}`);
+    console.info(`🌐 Open in browser: file://${outputPath}`);
   }
 
   private generateHTML(): string {
@@ -525,7 +525,7 @@ async function main() {
 
   try {
     await dashboard.generateDashboard();
-    console.log("🎉 Dashboard generation complete!");
+    console.info("🎉 Dashboard generation complete!");
   } catch (error) {
     console.error("❌ Dashboard generation failed:", error);
     process.exit(1);

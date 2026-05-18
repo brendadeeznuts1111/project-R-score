@@ -64,7 +64,7 @@ serve({
   },
 });
 
-console.log("Server running on http://localhost:3000");
+console.info("Server running on http://localhost:3000");
 `,
 
 		"README.md": `# ${opts.name}
@@ -139,7 +139,7 @@ serve({
   },
 });
 
-console.log(\`API running on http://localhost:\${process.env.PORT || 3000}\`);
+console.info(\`API running on http://localhost:\${process.env.PORT || 3000}\`);
 `,
 
 		"src/routes.ts": `// Define your API routes here

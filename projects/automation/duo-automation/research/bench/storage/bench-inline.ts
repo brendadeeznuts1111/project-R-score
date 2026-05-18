@@ -25,7 +25,7 @@ async function benchmark(name: string, fn: () => Promise<void> | void, iteration
 }
 
 async function runInlineBench() {
-  console.log(`🚀 **R2 Inline vs Attachment Performance Benchmark** 🚀`);
+  console.info(`🚀 **R2 Inline vs Attachment Performance Benchmark** 🚀`);
   
   const secrets = await loadScopedSecrets();
   const s3R2 = new S3R2NativeManager({
@@ -45,7 +45,7 @@ async function runInlineBench() {
     console.warn('⚠️ Upload failed, likely mock mode/missing credentials.');
   }
 
-  console.log('⏱️  Running benchmarks...');
+  console.info('⏱️  Running benchmarks...');
 
   const inlineBench = await benchmark('Inline Render', async () => {
     try {
@@ -73,7 +73,7 @@ async function runInlineBench() {
 
   const speedup = attachBench.avg / inlineBench.avg;
 
-  console.log('\n📊 Inline Performance Results:');
+  console.info('\n📊 Inline Performance Results:');
   alignedTable([{
     Type: 'Inline (Browser Sim)',
     Time: `${inlineBench.avg.toFixed(2)}ms`,
@@ -86,7 +86,7 @@ async function runInlineBench() {
     Status: '💾 Save to Disk'
   }], ['Type', 'Time', 'Speed', 'Status']);
 
-  console.log(`\n🏆 **Winner: Inline Render is ${speedup.toFixed(1)}x faster** (Avg: ${inlineBench.avg.toFixed(0)}ms)`);
+  console.info(`\n🏆 **Winner: Inline Render is ${speedup.toFixed(1)}x faster** (Avg: ${inlineBench.avg.toFixed(0)}ms)`);
 }
 
 if (import.meta.main) {

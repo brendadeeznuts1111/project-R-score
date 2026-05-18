@@ -4,7 +4,7 @@
 // Bun.file(new URL(import.meta.url)) — reference to the current file
 const self = Bun.file(new URL(import.meta.url));
 
-console.log("import.meta.url:", import.meta.url);
-console.log("size:", self.size, "bytes");
-console.log("type:", self.type);
-console.log("first 80 chars:", (await self.text()).slice(0, 80));
+console.info("import.meta.url:", import.meta.url);
+console.info("size:", self.size, "bytes");
+console.info("type:", self.type);
+console.info("first 80 chars:", (await self.text()).slice(0, 80));

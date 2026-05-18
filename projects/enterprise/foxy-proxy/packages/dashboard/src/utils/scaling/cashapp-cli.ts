@@ -100,14 +100,14 @@ class CashAppCLI {
   }
 
   private async runDemo(options: CLIOptions): Promise<void> {
-    console.log("🚀 CashApp Scaling Pipeline Demo");
-    console.log("=".repeat(50));
+    console.info("🚀 CashApp Scaling Pipeline Demo");
+    console.info("=".repeat(50));
 
     if (options.verbose) {
-      console.log("📋 Configuration:");
-      console.log(`  Verbose: ${options.verbose}`);
-      console.log(`  Output: ${options.output || "table"}`);
-      console.log("");
+      console.info("📋 Configuration:");
+      console.info(`  Verbose: ${options.verbose}`);
+      console.info(`  Output: ${options.output || "table"}`);
+      console.info("");
     }
 
     await this.provisioner.demonstratePipeline();
@@ -118,14 +118,14 @@ class CashAppCLI {
     const emailProvider = options.emailProvider || "custom";
     const areaCode = options.areaCode || "213";
 
-    console.log(`🏭 Provisioning ${count} CashApp accounts`);
-    console.log(`   Email Provider: ${emailProvider}`);
-    console.log(`   Area Code: ${areaCode}`);
-    console.log("=".repeat(50));
+    console.info(`🏭 Provisioning ${count} CashApp accounts`);
+    console.info(`   Email Provider: ${emailProvider}`);
+    console.info(`   Area Code: ${areaCode}`);
+    console.info("=".repeat(50));
 
     if (options.verbose) {
-      console.log("🔧 Starting account provisioning...");
-      console.log("");
+      console.info("🔧 Starting account provisioning...");
+      console.info("");
     }
 
     const startTime = Date.now();
@@ -135,26 +135,26 @@ class CashAppCLI {
     const successCount = results.filter((r) => r.status === "success").length;
     const failureCount = results.filter((r) => r.status === "failed").length;
 
-    console.log("\n📊 Provisioning Results:");
-    console.log(`   Total: ${count}`);
-    console.log(`   ✅ Success: ${successCount}`);
-    console.log(`   ❌ Failed: ${failureCount}`);
-    console.log(`   ⏱️ Duration: ${duration}ms`);
+    console.info("\n📊 Provisioning Results:");
+    console.info(`   Total: ${count}`);
+    console.info(`   ✅ Success: ${successCount}`);
+    console.info(`   ❌ Failed: ${failureCount}`);
+    console.info(`   ⏱️ Duration: ${duration}ms`);
 
     if (options.output === "json") {
-      console.log("\n📄 JSON Output:");
-      console.log(JSON.stringify(results, null, 2));
+      console.info("\n📄 JSON Output:");
+      console.info(JSON.stringify(results, null, 2));
     } else if (options.verbose) {
-      console.log("\n📋 Detailed Results:");
+      console.info("\n📋 Detailed Results:");
       results.forEach((result, index) => {
         const status = result.status === "success" ? "✅" : "❌";
-        console.log(`   ${index + 1}. ${status} ${result.deviceId || "N/A"}`);
+        console.info(`   ${index + 1}. ${status} ${result.deviceId || "N/A"}`);
         if (result.status === "failed") {
-          console.log(`      Error: ${result.error}`);
+          console.info(`      Error: ${result.error}`);
         } else {
-          console.log(`      Email: ${result.email}`);
-          console.log(`      Phone: ${result.phoneNumber}`);
-          console.log(`      Cashtag: ${result.cashtag}`);
+          console.info(`      Email: ${result.email}`);
+          console.info(`      Phone: ${result.phoneNumber}`);
+          console.info(`      Cashtag: ${result.cashtag}`);
         }
       });
     }
@@ -163,16 +163,16 @@ class CashAppCLI {
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const filename = `cashapp-provision-${timestamp}.json`;
     await Bun.write(filename, JSON.stringify(results, null, 2));
-    console.log(`\n💾 Results saved to: ${filename}`);
+    console.info(`\n💾 Results saved to: ${filename}`);
   }
 
   private async monitorAccounts(options: CLIOptions): Promise<void> {
-    console.log("🔍 Monitoring Account Health");
-    console.log("=".repeat(50));
+    console.info("🔍 Monitoring Account Health");
+    console.info("=".repeat(50));
 
     if (options.verbose) {
-      console.log("🔧 Starting health monitoring...");
-      console.log("");
+      console.info("🔧 Starting health monitoring...");
+      console.info("");
     }
 
     // Mock device IDs for demonstration
@@ -186,26 +186,26 @@ class CashAppCLI {
     const summary = this.riskMonitor.getRiskSummary(results);
     const duration = Date.now() - startTime;
 
-    console.log("\n📊 Health Monitoring Results:");
-    console.log(`   Total Accounts: ${summary.totalAccounts}`);
-    console.log(`   ✅ Healthy: ${summary.healthyAccounts}`);
-    console.log(`   ⚠️ At Risk: ${summary.atRiskAccounts}`);
-    console.log(`   ❌ Critical: ${summary.criticalAccounts}`);
-    console.log(`   📈 Average Risk: ${summary.averageRiskScore}/100`);
-    console.log(`   ⏱️ Duration: ${duration}ms`);
+    console.info("\n📊 Health Monitoring Results:");
+    console.info(`   Total Accounts: ${summary.totalAccounts}`);
+    console.info(`   ✅ Healthy: ${summary.healthyAccounts}`);
+    console.info(`   ⚠️ At Risk: ${summary.atRiskAccounts}`);
+    console.info(`   ❌ Critical: ${summary.criticalAccounts}`);
+    console.info(`   📈 Average Risk: ${summary.averageRiskScore}/100`);
+    console.info(`   ⏱️ Duration: ${duration}ms`);
 
     if (Object.keys(summary.commonFlags).length > 0) {
-      console.log("\n🚨 Common Risk Flags:");
+      console.info("\n🚨 Common Risk Flags:");
       Object.entries(summary.commonFlags).forEach(([flag, count]) => {
-        console.log(`   ${flag}: ${count} accounts`);
+        console.info(`   ${flag}: ${count} accounts`);
       });
     }
 
     if (options.output === "json") {
-      console.log("\n📄 JSON Output:");
-      console.log(JSON.stringify({ summary, details: results }, null, 2));
+      console.info("\n📄 JSON Output:");
+      console.info(JSON.stringify({ summary, details: results }, null, 2));
     } else if (options.verbose) {
-      console.log("\n📋 Detailed Results:");
+      console.info("\n📋 Detailed Results:");
       results.forEach((result, index) => {
         const status =
           result.recommendedAction === "continue"
@@ -213,10 +213,10 @@ class CashAppCLI {
             : result.recommendedAction === "pause"
               ? "⚠️"
               : "❌";
-        console.log(`   ${index + 1}. ${status} ${result.deviceId}`);
-        console.log(`      Risk Score: ${result.riskScore}/100`);
-        console.log(`      Flags: ${result.flags.join(", ") || "None"}`);
-        console.log(`      Action: ${result.recommendedAction.toUpperCase()}`);
+        console.info(`   ${index + 1}. ${status} ${result.deviceId}`);
+        console.info(`      Risk Score: ${result.riskScore}/100`);
+        console.info(`      Flags: ${result.flags.join(", ") || "None"}`);
+        console.info(`      Action: ${result.recommendedAction.toUpperCase()}`);
       });
     }
 
@@ -224,12 +224,12 @@ class CashAppCLI {
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const filename = `cashapp-monitor-${timestamp}.json`;
     await Bun.write(filename, JSON.stringify({ summary, details: results }, null, 2));
-    console.log(`\n💾 Results saved to: ${filename}`);
+    console.info(`\n💾 Results saved to: ${filename}`);
   }
 
   private async generateReport(options: CLIOptions): Promise<void> {
-    console.log("📊 Generating Risk Report");
-    console.log("=".repeat(50));
+    console.info("📊 Generating Risk Report");
+    console.info("=".repeat(50));
 
     // Mock device IDs
     const deviceIds = [
@@ -246,33 +246,33 @@ class CashAppCLI {
     ].slice(0, options.count || 10);
 
     if (options.verbose) {
-      console.log(`🔧 Analyzing ${deviceIds.length} accounts...`);
-      console.log("");
+      console.info(`🔧 Analyzing ${deviceIds.length} accounts...`);
+      console.info("");
     }
 
     const report = await this.accountManager.getHealthReport(deviceIds);
 
-    console.log("\n📊 Risk Assessment Report:");
-    console.log(`   Generated: ${new Date().toISOString()}`);
-    console.log(`   Total Accounts: ${report.summary.totalAccounts}`);
-    console.log(
+    console.info("\n📊 Risk Assessment Report:");
+    console.info(`   Generated: ${new Date().toISOString()}`);
+    console.info(`   Total Accounts: ${report.summary.totalAccounts}`);
+    console.info(
       `   Healthy: ${report.summary.healthyAccounts} (${Math.round((report.summary.healthyAccounts / report.summary.totalAccounts) * 100)}%)`
     );
-    console.log(
+    console.info(
       `   At Risk: ${report.summary.atRiskAccounts} (${Math.round((report.summary.atRiskAccounts / report.summary.totalAccounts) * 100)}%)`
     );
-    console.log(
+    console.info(
       `   Critical: ${report.summary.criticalAccounts} (${Math.round((report.summary.criticalAccounts / report.summary.totalAccounts) * 100)}%)`
     );
-    console.log(`   Average Risk Score: ${report.summary.averageRiskScore}/100`);
+    console.info(`   Average Risk Score: ${report.summary.averageRiskScore}/100`);
 
     if (Object.keys(report.summary.commonFlags).length > 0) {
-      console.log("\n🚨 Risk Flag Analysis:");
+      console.info("\n🚨 Risk Flag Analysis:");
       const sortedFlags = Object.entries(report.summary.commonFlags).sort(([, a], [, b]) => b - a);
 
       sortedFlags.forEach(([flag, count], index) => {
         const percentage = Math.round((count / report.summary.totalAccounts) * 100);
-        console.log(`   ${index + 1}. ${flag}: ${count} accounts (${percentage}%)`);
+        console.info(`   ${index + 1}. ${flag}: ${count} accounts (${percentage}%)`);
       });
     }
 
@@ -284,52 +284,52 @@ class CashAppCLI {
       critical: report.details.filter((d) => d.riskScore > 75).length
     };
 
-    console.log("\n📈 Risk Distribution:");
-    console.log(`   Low (0-25): ${riskDistribution.low} accounts`);
-    console.log(`   Medium (26-50): ${riskDistribution.medium} accounts`);
-    console.log(`   High (51-75): ${riskDistribution.high} accounts`);
-    console.log(`   Critical (76-100): ${riskDistribution.critical} accounts`);
+    console.info("\n📈 Risk Distribution:");
+    console.info(`   Low (0-25): ${riskDistribution.low} accounts`);
+    console.info(`   Medium (26-50): ${riskDistribution.medium} accounts`);
+    console.info(`   High (51-75): ${riskDistribution.high} accounts`);
+    console.info(`   Critical (76-100): ${riskDistribution.critical} accounts`);
 
     // Save detailed report
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const filename = `cashapp-report-${timestamp}.json`;
     await Bun.write(filename, JSON.stringify(report, null, 2));
-    console.log(`\n💾 Detailed report saved to: ${filename}`);
+    console.info(`\n💾 Detailed report saved to: ${filename}`);
 
     // Generate CSV summary
     const csvData = this.generateCSVReport(report);
     const csvFilename = `cashapp-report-${timestamp}.csv`;
     await Bun.write(csvFilename, csvData);
-    console.log(`📊 CSV summary saved to: ${csvFilename}`);
+    console.info(`📊 CSV summary saved to: ${csvFilename}`);
   }
 
   private async generateNames(options: CLIOptions): Promise<void> {
     const count = options.count || 10;
 
-    console.log(`👤 Generating ${count} CashApp Names`);
-    console.log("=".repeat(50));
+    console.info(`👤 Generating ${count} CashApp Names`);
+    console.info("=".repeat(50));
 
     if (options.verbose) {
-      console.log("🔧 Generating realistic US names...");
-      console.log("");
+      console.info("🔧 Generating realistic US names...");
+      console.info("");
     }
 
     const startTime = Date.now();
     const profiles = await this.nameGenerator.generateBatch(count);
     const duration = Date.now() - startTime;
 
-    console.log(`\n⚡ Generated ${count} names in ${duration}ms`);
+    console.info(`\n⚡ Generated ${count} names in ${duration}ms`);
 
     if (options.output === "json") {
-      console.log("\n📄 JSON Output:");
-      console.log(JSON.stringify(profiles, null, 2));
+      console.info("\n📄 JSON Output:");
+      console.info(JSON.stringify(profiles, null, 2));
     } else {
-      console.log("\n📋 Generated Names:");
+      console.info("\n📋 Generated Names:");
       profiles.forEach((profile, index) => {
-        console.log(`   ${index + 1}. ${profile.firstName} ${profile.lastName}`);
-        console.log(`      Cashtag: ${profile.cashtag}`);
-        console.log(`      Email: ${profile.email}`);
-        console.log(
+        console.info(`   ${index + 1}. ${profile.firstName} ${profile.lastName}`);
+        console.info(`      Cashtag: ${profile.cashtag}`);
+        console.info(`      Email: ${profile.email}`);
+        console.info(
           `      Age: ${profile.demographic.age} (Born: ${profile.demographic.birthYear})`
         );
       });
@@ -339,24 +339,24 @@ class CashAppCLI {
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const filename = `cashapp-names-${timestamp}.json`;
     await Bun.write(filename, JSON.stringify(profiles, null, 2));
-    console.log(`\n💾 Names saved to: ${filename}`);
+    console.info(`\n💾 Names saved to: ${filename}`);
   }
 
   private async generateAddresses(options: CLIOptions): Promise<void> {
     const count = options.count || 10;
     const areaCode = options.areaCode || "213";
 
-    console.log(`🏠 Generating ${count} CashApp Addresses`);
-    console.log(`   Area Code: ${areaCode}`);
-    console.log("=".repeat(50));
+    console.info(`🏠 Generating ${count} CashApp Addresses`);
+    console.info(`   Area Code: ${areaCode}`);
+    console.info("=".repeat(50));
 
     if (options.verbose) {
-      console.log("🔧 Generating location-aware addresses...");
-      console.log("");
+      console.info("🔧 Generating location-aware addresses...");
+      console.info("");
     }
 
     const location = this.locationMatcher.getLocation(areaCode);
-    console.log(`📍 Location: ${location.city}, ${location.state}`);
+    console.info(`📍 Location: ${location.city}, ${location.state}`);
 
     const startTime = Date.now();
     const addresses = [];
@@ -368,17 +368,17 @@ class CashAppCLI {
 
     const duration = Date.now() - startTime;
 
-    console.log(`\n⚡ Generated ${count} addresses in ${duration}ms`);
+    console.info(`\n⚡ Generated ${count} addresses in ${duration}ms`);
 
     if (options.output === "json") {
-      console.log("\n📄 JSON Output:");
-      console.log(JSON.stringify(addresses, null, 2));
+      console.info("\n📄 JSON Output:");
+      console.info(JSON.stringify(addresses, null, 2));
     } else {
-      console.log("\n📋 Generated Addresses:");
+      console.info("\n📋 Generated Addresses:");
       addresses.forEach((profile, index) => {
-        console.log(`   ${index + 1}. ${profile.name.firstName} ${profile.name.lastName}`);
-        console.log(`      Address: ${profile.address.fullAddress}`);
-        console.log(`      Age: ${profile.demo.age} (Born: ${profile.demo.birthYear})`);
+        console.info(`   ${index + 1}. ${profile.name.firstName} ${profile.name.lastName}`);
+        console.info(`      Address: ${profile.address.fullAddress}`);
+        console.info(`      Age: ${profile.demo.age} (Born: ${profile.demo.birthYear})`);
       });
     }
 
@@ -386,7 +386,7 @@ class CashAppCLI {
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const filename = `cashapp-addresses-${timestamp}.json`;
     await Bun.write(filename, JSON.stringify(addresses, null, 2));
-    console.log(`\n💾 Addresses saved to: ${filename}`);
+    console.info(`\n💾 Addresses saved to: ${filename}`);
   }
 
   private generateCSVReport(report: {
@@ -412,7 +412,7 @@ class CashAppCLI {
   }
 
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🚀 CashApp Scaling Pipeline CLI
 
 USAGE:

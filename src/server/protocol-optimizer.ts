@@ -7,7 +7,7 @@ export class ProtocolOptimizer {
   public optimizeForProtocol(): void {
     const protocol = this.server.protocol as string;
     
-    console.log(`🔧 Optimizing for protocol: ${protocol}`);
+    console.info(`🔧 Optimizing for protocol: ${protocol}`);
     
     switch (protocol) {
       case 'http2':
@@ -26,11 +26,11 @@ export class ProtocolOptimizer {
   
   private optimizeForHTTP2(): void {
     // HTTP/2 specific optimizations
-    console.log('🎯 Applying HTTP/2 optimizations:');
-    console.log('   • Enabling server push');
-    console.log('   • Using header compression (HPACK)');
-    console.log('   • Multiplexing requests over single connection');
-    console.log('   • Stream prioritization enabled');
+    console.info('🎯 Applying HTTP/2 optimizations:');
+    console.info('   • Enabling server push');
+    console.info('   • Using header compression (HPACK)');
+    console.info('   • Multiplexing requests over single connection');
+    console.info('   • Stream prioritization enabled');
     
     // Apply HTTP/2 specific headers
     this.applyHTTP2Headers();
@@ -38,11 +38,11 @@ export class ProtocolOptimizer {
   
   private optimizeForHTTP3(): void {
     // HTTP/3 specific optimizations
-    console.log('🚀 Applying HTTP/3 optimizations:');
-    console.log('   • Using QUIC transport protocol');
-    console.log('   • 0-RTT connection establishment');
-    console.log('   • Improved loss recovery');
-    console.log('   • Better mobility support');
+    console.info('🚀 Applying HTTP/3 optimizations:');
+    console.info('   • Using QUIC transport protocol');
+    console.info('   • 0-RTT connection establishment');
+    console.info('   • Improved loss recovery');
+    console.info('   • Better mobility support');
     
     // Apply HTTP/3 specific optimizations
     this.applyHTTP3Optimizations();
@@ -50,11 +50,11 @@ export class ProtocolOptimizer {
   
   private optimizeForHTTPS(): void {
     // HTTPS/TLS optimizations
-    console.log('🔐 Applying HTTPS optimizations:');
-    console.log('   • Enabling TLS 1.3');
-    console.log('   • Perfect forward secrecy');
-    console.log('   • HSTS headers enabled');
-    console.log('   • OCSP stapling enabled');
+    console.info('🔐 Applying HTTPS optimizations:');
+    console.info('   • Enabling TLS 1.3');
+    console.info('   • Perfect forward secrecy');
+    console.info('   • HSTS headers enabled');
+    console.info('   • OCSP stapling enabled');
     
     // Apply HTTPS specific headers
     this.applyHTTPSHeaders();
@@ -62,10 +62,10 @@ export class ProtocolOptimizer {
   
   private optimizeForHTTP1(): void {
     // HTTP/1.1 optimizations
-    console.log('📄 Applying HTTP/1.1 optimizations:');
-    console.log('   • Connection keep-alive enabled');
-    console.log('   • Chunked transfer encoding');
-    console.log('   • Pipelining disabled (use HTTP/2 instead)');
+    console.info('📄 Applying HTTP/1.1 optimizations:');
+    console.info('   • Connection keep-alive enabled');
+    console.info('   • Chunked transfer encoding');
+    console.info('   • Pipelining disabled (use HTTP/2 instead)');
     
     // Apply HTTP/1.1 specific optimizations
     this.applyHTTP1Headers();
@@ -79,7 +79,7 @@ export class ProtocolOptimizer {
       'x-multiplexing': 'enabled',
     };
     
-    console.log('   📋 HTTP/2 Headers Applied:', Object.keys(http2Headers).join(', '));
+    console.info('   📋 HTTP/2 Headers Applied:', Object.keys(http2Headers).join(', '));
   }
   
   private applyHTTP3Optimizations(): void {
@@ -89,7 +89,7 @@ export class ProtocolOptimizer {
       'x-protocol-version': 'HTTP/3',
     };
     
-    console.log('   📋 HTTP/3 Optimizations Applied:', Object.keys(http3Optimizations).join(', '));
+    console.info('   📋 HTTP/3 Optimizations Applied:', Object.keys(http3Optimizations).join(', '));
   }
   
   private applyHTTPSHeaders(): void {
@@ -99,7 +99,7 @@ export class ProtocolOptimizer {
       'x-forward-proto': 'https',
     };
     
-    console.log('   📋 HTTPS Headers Applied:', Object.keys(httpsHeaders).join(', '));
+    console.info('   📋 HTTPS Headers Applied:', Object.keys(httpsHeaders).join(', '));
   }
   
   private applyHTTP1Headers(): void {
@@ -109,7 +109,7 @@ export class ProtocolOptimizer {
       'x-protocol-version': 'HTTP/1.1',
     };
     
-    console.log('   📋 HTTP/1.1 Headers Applied:', Object.keys(http1Headers).join(', '));
+    console.info('   📋 HTTP/1.1 Headers Applied:', Object.keys(http1Headers).join(', '));
   }
   
   public getProtocolRecommendations(): string[] {

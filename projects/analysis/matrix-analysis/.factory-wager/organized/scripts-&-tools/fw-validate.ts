@@ -38,11 +38,11 @@ class FactoryWagerValidator {
   }
 
   async validate(): Promise<ValidationResult> {
-    console.log(`🔍 FactoryWager Configuration Validator`);
-    console.log(`=======================================`);
-    console.log(`Environment: ${this.environment}`);
-    console.log(`Strict Mode: ${this.strict ? 'ENABLED' : 'DISABLED'}`);
-    console.log('');
+    console.info(`🔍 FactoryWager Configuration Validator`);
+    console.info(`=======================================`);
+    console.info(`Environment: ${this.environment}`);
+    console.info(`Strict Mode: ${this.strict ? 'ENABLED' : 'DISABLED'}`);
+    console.info('');
 
     const gates = [
       { name: 'Environment Variable Resolution', handler: () => this.gate1EnvironmentVars() },
@@ -58,13 +58,13 @@ class FactoryWagerValidator {
 
     for (let i = 0; i < gates.length; i++) {
       const gate = gates[i];
-      console.log(`📍 Gate ${i + 1}: ${gate.name}`);
+      console.info(`📍 Gate ${i + 1}: ${gate.name}`);
 
       try {
         const violations = await gate.handler();
 
         if (violations.length > 0) {
-          console.log(`   ❌ ${violations.length} violation(s) found`);
+          console.info(`   ❌ ${violations.length} violation(s) found`);
           violations.forEach(v => this.printViolation(v));
           allViolations.push(...violations);
 
@@ -73,7 +73,7 @@ class FactoryWagerValidator {
             failedGateName = gate.name;
           }
         } else {
-          console.log(`   ✅ Passed`);
+          console.info(`   ✅ Passed`);
         }
       } catch (error) {
         const violation: Violation = {
@@ -93,17 +93,17 @@ class FactoryWagerValidator {
     const hardeningLevel = this.determineHardeningLevel();
     const riskScore = this.calculateRiskScore(allViolations);
 
-    console.log('');
+    console.info('');
     if (passed) {
-      console.log(`✅ VALIDATION PASSED`);
-      console.log(`Environment: ${this.environment}`);
-      console.log(`Hardening Level: ${hardeningLevel} (confirmed)`);
-      console.log(`Checks: 5/5 passed`);
-      console.log(`Risk Score: ${riskScore}/100 (${this.getRiskLevel(riskScore)})`);
+      console.info(`✅ VALIDATION PASSED`);
+      console.info(`Environment: ${this.environment}`);
+      console.info(`Hardening Level: ${hardeningLevel} (confirmed)`);
+      console.info(`Checks: 5/5 passed`);
+      console.info(`Risk Score: ${riskScore}/100 (${this.getRiskLevel(riskScore)})`);
     } else {
-      console.log(`❌ VALIDATION FAILED [Gate ${failedGate}: ${failedGateName}]`);
-      console.log('');
-      console.log(`Violations:`);
+      console.info(`❌ VALIDATION FAILED [Gate ${failedGate}: ${failedGateName}]`);
+      console.info('');
+      console.info(`Violations:`);
       allViolations.forEach(v => this.printViolation(v));
     }
 
@@ -358,9 +358,9 @@ class FactoryWagerValidator {
   private printViolation(violation: Violation): void {
     const location = violation.line ? `Line ${violation.line}: ` : '';
     const icon = violation.severity === 'error' ? '❌' : '⚠️';
-    console.log(`   ${icon} ${location}${violation.key} = ${violation.message}`);
+    console.info(`   ${icon} ${location}${violation.key} = ${violation.message}`);
     if (violation.suggestion) {
-      console.log(`      💡 Suggestion: ${violation.suggestion}`);
+      console.info(`      💡 Suggestion: ${violation.suggestion}`);
     }
   }
 }

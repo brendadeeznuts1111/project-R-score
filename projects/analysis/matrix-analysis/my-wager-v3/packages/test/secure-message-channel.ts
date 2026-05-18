@@ -66,7 +66,7 @@ export class ThreatIntelligence {
     // Auto-release after lockdown duration
     setTimeout(() => {
       this.lockedSources.delete(source);
-      console.log('🔓 Lockdown released');
+      console.info('🔓 Lockdown released');
     }, this.lockdownDuration);
   }
 
@@ -241,7 +241,7 @@ export class SecureMessageChannel {
         });
       }
     } else {
-      console.log('🔒 Processing secure message:', data.type);
+      console.info('🔒 Processing secure message:', data.type);
     }
   }
 

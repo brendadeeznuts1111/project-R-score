@@ -42,18 +42,18 @@ class TelemetryPool {
   };
   
   constructor() {
-    console.log(`🐬 Initializing Telemetry Pool v3.20...`);
-    console.log(`📊 Pool Size: ${POOL_SIZE} | DB Path: ${DB_PATH}`);
+    console.info(`🐬 Initializing Telemetry Pool v3.20...`);
+    console.info(`📊 Pool Size: ${POOL_SIZE} | DB Path: ${DB_PATH}`);
     
     this.db = new Database(DB_PATH);
     this.initSchema();
     this.populatePool();
     
-    console.log(`✅ Pool initialized with ${this.pool.length} connections`);
+    console.info(`✅ Pool initialized with ${this.pool.length} connections`);
   }
   
   private initSchema() {
-    console.log(`🔧 Initializing database schema...`);
+    console.info(`🔧 Initializing database schema...`);
     
     this.db.run(`
       CREATE TABLE IF NOT EXISTS profiles (
@@ -95,17 +95,17 @@ class TelemetryPool {
     this.db.run(`CREATE INDEX IF NOT EXISTS idx_analytics_event_type ON analytics (event_type)`);
     this.db.run(`CREATE INDEX IF NOT EXISTS idx_analytics_timestamp ON analytics (timestamp)`);
     
-    console.log(`✅ Schema initialized`);
+    console.info(`✅ Schema initialized`);
   }
   
   private populatePool() {
-    console.log(`🏊 Populating connection pool...`);
+    console.info(`🏊 Populating connection pool...`);
     
     for (let i = 0; i < POOL_SIZE; i++) {
       this.pool.push(new Database(DB_PATH));
     }
     
-    console.log(`✅ Pool populated with ${this.pool.length} connections`);
+    console.info(`✅ Pool populated with ${this.pool.length} connections`);
   }
   
   async insertProfile(sessionId: string, profile: LeadSpecProfile, member: string = 'anonymous', document: string = 'unknown'): Promise<string> {
@@ -194,7 +194,7 @@ class TelemetryPool {
       }
       
       const latency = performance.now() - startTime;
-      console.log(`📊 Batch insert: ${profiles.length} profiles in ${latency.toFixed(2)}ms`);
+      console.info(`📊 Batch insert: ${profiles.length} profiles in ${latency.toFixed(2)}ms`);
       
       return results;
     } finally {
@@ -205,7 +205,7 @@ class TelemetryPool {
   
   // R2 Sync (WAL → JSON)
   async syncToR2(): Promise<void> {
-    console.log(`🚀 Syncing to R2...`);
+    console.info(`🚀 Syncing to R2...`);
     const startTime = performance.now();
     
     try {
@@ -244,7 +244,7 @@ class TelemetryPool {
       }
       
       const syncTime = performance.now() - startTime;
-      console.log(`✅ R2 sync complete: ${allProfiles.length} profiles in ${syncTime.toFixed(2)}ms`);
+      console.info(`✅ R2 sync complete: ${allProfiles.length} profiles in ${syncTime.toFixed(2)}ms`);
       
     } catch (error) {
       console.error(`❌ R2 sync failed:`, error);
@@ -274,7 +274,7 @@ class TelemetryPool {
   }
   
   async close(): Promise<void> {
-    console.log(`🔒 Closing pool connections...`);
+    console.info(`🔒 Closing pool connections...`);
     
     // Close all pooled connections
     this.pool.forEach(db => db.close());
@@ -283,13 +283,13 @@ class TelemetryPool {
     // Close main connection
     this.db.close();
     
-    console.log(`✅ Pool closed`);
+    console.info(`✅ Pool closed`);
   }
 }
 
 // JuniorRunner Pool Integration
 export async function juniorProfilePooled(mdFile: string, pool: TelemetryPool, member: string = 'anonymous'): Promise<string> {
-  console.log(`👤 Running pooled junior profile for: ${mdFile}`);
+  console.info(`👤 Running pooled junior profile for: ${mdFile}`);
   
   try {
     const profile = await juniorProfile(mdFile);
@@ -312,7 +312,7 @@ export async function juniorProfilePooled(mdFile: string, pool: TelemetryPool, m
     await pool.insertProfile(sessionId, typedProfile, member, mdFile);
     await pool.syncToR2();
     
-    console.log(`✅ Pooled profile saved: ${sessionId}`);
+    console.info(`✅ Pooled profile saved: ${sessionId}`);
     return sessionId;
   } catch (error) {
     console.error(`❌ Pooled profile failed:`, error);
@@ -336,7 +336,7 @@ if (import.meta.main) {
             process.exit(1);
           }
           const sessionId = await juniorProfilePooled(args[0], pool, 'cli-user');
-          console.log(`🎯 Session ID: ${sessionId}`);
+          console.info(`🎯 Session ID: ${sessionId}`);
           break;
           
         case 'insert':
@@ -346,21 +346,21 @@ if (import.meta.main) {
           }
           const profileData = JSON.parse(args[0]);
           const insertId = await pool.insertProfile('manual-session', profileData, 'manual-user', 'manual-doc');
-          console.log(`🆔 Insert ID: ${insertId}`);
+          console.info(`🆔 Insert ID: ${insertId}`);
           break;
           
         case 'query':
           const member = args[0] || '*';
           const sessions = await pool.querySessions(member);
-          console.log(`📊 Found ${sessions.length} sessions for member: ${member}`);
+          console.info(`📊 Found ${sessions.length} sessions for member: ${member}`);
           sessions.forEach(session => {
-            console.log(`  ${session.id}: ${session.member} | ${new Date(session.timestamp).toISOString()}`);
+            console.info(`  ${session.id}: ${session.member} | ${new Date(session.timestamp).toISOString()}`);
           });
           break;
           
         case 'batch':
           const batchSize = parseInt(args[0]) || 100;
-          console.log(`🔄 Generating ${batchSize} batch profiles...`);
+          console.info(`🔄 Generating ${batchSize} batch profiles...`);
           
           const batchProfiles = [];
           for (let i = 0; i < batchSize; i++) {
@@ -383,27 +383,27 @@ if (import.meta.main) {
           }
           
           const batchIds = await pool.batchInsertProfiles(batchProfiles);
-          console.log(`✅ Batch insert complete: ${batchIds.length} profiles`);
+          console.info(`✅ Batch insert complete: ${batchIds.length} profiles`);
           break;
           
         case 'sync':
           await pool.syncToR2();
-          console.log(`🚀 R2 sync complete`);
+          console.info(`🚀 R2 sync complete`);
           break;
           
         case 'stats':
           const stats = await pool.getPoolStats();
-          console.log(`📊 Pool Statistics:`);
-          console.log(`  Pool Size: ${stats.poolSize}/${stats.maxPoolSize}`);
-          console.log(`  Hit Rate: ${stats.hitRate}`);
-          console.log(`  Total Operations: ${stats.stats.totalOperations}`);
-          console.log(`  Average Latency: ${stats.stats.avgLatency.toFixed(2)}ms`);
-          console.log(`  Pool Hits: ${stats.stats.hits}`);
-          console.log(`  Pool Misses: ${stats.stats.misses}`);
+          console.info(`📊 Pool Statistics:`);
+          console.info(`  Pool Size: ${stats.poolSize}/${stats.maxPoolSize}`);
+          console.info(`  Hit Rate: ${stats.hitRate}`);
+          console.info(`  Total Operations: ${stats.stats.totalOperations}`);
+          console.info(`  Average Latency: ${stats.stats.avgLatency.toFixed(2)}ms`);
+          console.info(`  Pool Hits: ${stats.stats.hits}`);
+          console.info(`  Pool Misses: ${stats.stats.misses}`);
           break;
           
         case 'serve':
-          console.log(`🌐 Starting pool telemetry server...`);
+          console.info(`🌐 Starting pool telemetry server...`);
           const server = (globalThis as any).Bun.serve({
             port: 8081,
             async fetch(req) {
@@ -431,24 +431,24 @@ if (import.meta.main) {
             }
           });
           
-          console.log(`🚀 Pool server running on http://localhost:${server.port}`);
-          console.log(`   GET /pool-query?member=<name> - Query sessions`);
-          console.log(`   GET /pool-stats - Pool statistics`);
-          console.log(`   GET /pool-sync - Sync to R2`);
+          console.info(`🚀 Pool server running on http://localhost:${server.port}`);
+          console.info(`   GET /pool-query?member=<name> - Query sessions`);
+          console.info(`   GET /pool-stats - Pool statistics`);
+          console.info(`   GET /pool-sync - Sync to R2`);
           
           // Keep server running
           await new Promise(() => {});
           break;
           
         default:
-          console.log(`🐬 Telemetry Pool v3.20 Commands:`);
-          console.log(`  junior <file>     - Run junior profile with pooling`);
-          console.log(`  insert <json>     - Insert profile data`);
-          console.log(`  query [member]    - Query sessions`);
-          console.log(`  batch <count>     - Batch insert profiles`);
-          console.log(`  sync              - Sync to R2`);
-          console.log(`  stats             - Show pool statistics`);
-          console.log(`  serve             - Start API server`);
+          console.info(`🐬 Telemetry Pool v3.20 Commands:`);
+          console.info(`  junior <file>     - Run junior profile with pooling`);
+          console.info(`  insert <json>     - Insert profile data`);
+          console.info(`  query [member]    - Query sessions`);
+          console.info(`  batch <count>     - Batch insert profiles`);
+          console.info(`  sync              - Sync to R2`);
+          console.info(`  stats             - Show pool statistics`);
+          console.info(`  serve             - Start API server`);
           break;
       }
     } catch (error) {

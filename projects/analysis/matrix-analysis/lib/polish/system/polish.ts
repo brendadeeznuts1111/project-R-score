@@ -453,15 +453,15 @@ export class SystemPolish {
   // ─────────────────────────────────────────────────────────────────────────
 
   status(): void {
-    console.log();
-    console.log("Polish System Status:");
-    console.log(`  Enabled: ${this.config.enabled}`);
-    console.log(`  Audio: ${this.config.audio.enabled} (vol: ${this.config.audio.volume})`);
-    console.log(`  Haptic: ${this.config.haptic.enabled}`);
-    console.log(`  Animations: ${this.config.visual.animations}`);
-    console.log(`  Onboarding: ${this.config.onboarding.enabled}`);
-    console.log(`  Easter Eggs: ${this.config.easterEggs.enabled}`);
-    console.log();
+    console.info();
+    console.info("Polish System Status:");
+    console.info(`  Enabled: ${this.config.enabled}`);
+    console.info(`  Audio: ${this.config.audio.enabled} (vol: ${this.config.audio.volume})`);
+    console.info(`  Haptic: ${this.config.haptic.enabled}`);
+    console.info(`  Animations: ${this.config.visual.animations}`);
+    console.info(`  Onboarding: ${this.config.onboarding.enabled}`);
+    console.info(`  Easter Eggs: ${this.config.easterEggs.enabled}`);
+    console.info();
   }
 }
 

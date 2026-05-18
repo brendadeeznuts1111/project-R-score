@@ -28,7 +28,7 @@ for (let i = 0; i < args.length; i++) {
 
 // Help output
 if (flags.help) {
-  console.log(`
+  console.info(`
 🎨 FACTORYWAGER TABULAR v4.3 CLI - Chromatic Power Moves
 
 USAGE:
@@ -47,16 +47,16 @@ EXAMPLES:
   # HSL color test
   bun -e '
     const c = Bun.color("hsl(145, 80%, 45%)");
-    console.log(c.ansi16m + "Active Status" + "\\x1b[0m");
-    console.log("Hex:", c.hex());
-    console.log("RGB:", c.rgba());
+    console.info(c.ansi16m + "Active Status" + "\\x1b[0m");
+    console.info("Hex:", c.hex());
+    console.info("RGB:", c.rgba());
   '
 
   # Unicode width verification
   bun -e '
     const str = "中文测试";
-    console.log("Length:", str.length);
-    console.log("Unicode width:", Bun.stringWidth(str));
+    console.info("Length:", str.length);
+    console.info("Unicode width:", Bun.stringWidth(str));
   '
 `);
   process.exit(0);
@@ -64,8 +64,8 @@ EXAMPLES:
 
 // Sample data if no input provided
 if (!flags.input) {
-  console.log('🎨 FACTORYWAGER TABULAR v4.3 - DEMO MODE (No input file provided)');
-  console.log('Use --input <file> to render actual data\n');
+  console.info('🎨 FACTORYWAGER TABULAR v4.3 - DEMO MODE (No input file provided)');
+  console.info('Use --input <file> to render actual data\n');
 
   const demoData = [
     {
@@ -157,12 +157,12 @@ try {
     }
   } else {
     console.error(`❌ Unsupported file type: ${flags.input}`);
-    console.log('Supported formats: .json, .md');
+    console.info('Supported formats: .json, .md');
     process.exit(1);
   }
 
   if (data.length === 0) {
-    console.log('⚠️  No data found in file');
+    console.info('⚠️  No data found in file');
     process.exit(0);
   }
 

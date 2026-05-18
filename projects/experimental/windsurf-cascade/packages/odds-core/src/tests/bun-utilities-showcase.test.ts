@@ -10,9 +10,9 @@ describe("Bun Utilities Complete Showcase", () => {
     expect(Bun.version).toMatch(/^\d+\.\d+\.\d+$/); // e.g., "1.3.2"
     expect(Bun.revision).toMatch(/^[a-f0-9]{40}$/); // 40-character hex
     
-    console.log('\n🚀 Bun Runtime Information:');
-    console.log(`   Version: ${Bun.version}`);
-    console.log(`   Revision: ${Bun.revision}`);
+    console.info('\n🚀 Bun Runtime Information:');
+    console.info(`   Version: ${Bun.version}`);
+    console.info(`   Revision: ${Bun.revision}`);
     
     // ✅ Bun.main - Entry point detection
     expect(Bun.main).toBeDefined();
@@ -47,11 +47,11 @@ describe("Bun Utilities Complete Showcase", () => {
     const id6 = Bun.randomUUIDv7("hex", fixedTime);
     const id7 = Bun.randomUUIDv7("hex", fixedTime);
     
-    console.log('\n🆔 UUID v7 Examples:');
-    console.log(`   Hex: ${id1}`);
-    console.log(`   Base64: ${id3}`);
-    console.log(`   Base64URL: ${id4}`);
-    console.log(`   Buffer: ${id5.toString('hex')}`);
+    console.info('\n🆔 UUID v7 Examples:');
+    console.info(`   Hex: ${id1}`);
+    console.info(`   Base64: ${id3}`);
+    console.info(`   Base64URL: ${id4}`);
+    console.info(`   Buffer: ${id5.toString('hex')}`);
   });
 
   test("should demonstrate high-precision timing", () => {
@@ -71,9 +71,9 @@ describe("Bun Utilities Complete Showcase", () => {
     expect(duration).toBeGreaterThan(0);
     expect(duration).toBeLessThan(1000000); // Should be less than 1ms for simple loop
     
-    console.log('\n⏱️ High-Precision Timing:');
-    console.log(`   Loop duration: ${duration} nanoseconds`);
-    console.log(`   Loop duration: ${(duration / 1000000).toFixed(3)} microseconds`);
+    console.info('\n⏱️ High-Precision Timing:');
+    console.info(`   Loop duration: ${duration} nanoseconds`);
+    console.info(`   Loop duration: ${(duration / 1000000).toFixed(3)} microseconds`);
   });
 
   test("should demonstrate compression utilities", () => {
@@ -94,10 +94,10 @@ describe("Bun Utilities Complete Showcase", () => {
     expect(deflated.length).toBeLessThan(originalBuffer.length);
     expect(Buffer.from(inflated).toString()).toBe(originalText);
     
-    console.log('\n🗜️ Compression Results:');
-    console.log(`   Original: ${originalBuffer.length} bytes`);
-    console.log(`   Gzip: ${compressed.length} bytes (${((compressed.length / originalBuffer.length) * 100).toFixed(1)}%)`);
-    console.log(`   Deflate: ${deflated.length} bytes (${((deflated.length / originalBuffer.length) * 100).toFixed(1)}%)`);
+    console.info('\n🗜️ Compression Results:');
+    console.info(`   Original: ${originalBuffer.length} bytes`);
+    console.info(`   Gzip: ${compressed.length} bytes (${((compressed.length / originalBuffer.length) * 100).toFixed(1)}%)`);
+    console.info(`   Deflate: ${deflated.length} bytes (${((deflated.length / originalBuffer.length) * 100).toFixed(1)}%)`);
   });
 
   test("should demonstrate string utilities", () => {
@@ -120,12 +120,12 @@ describe("Bun Utilities Complete Showcase", () => {
     const escaped = Bun.escapeHTML(html);
     expect(escaped).toBe('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;');
     
-    console.log('\n📝 String Utilities:');
-    console.log(`   Plain text width: ${Bun.stringWidth(plainText)}`);
-    console.log(`   ANSI text width: ${Bun.stringWidth(ansiText)}`);
-    console.log(`   ANSI text with codes: ${Bun.stringWidth(ansiText, { countAnsiEscapeCodes: true })}`);
-    console.log(`   Emoji text width: ${Bun.stringWidth(emojiText)}`);
-    console.log(`   Stripped ANSI: "${Bun.stripANSI(ansiText)}"`);
+    console.info('\n📝 String Utilities:');
+    console.info(`   Plain text width: ${Bun.stringWidth(plainText)}`);
+    console.info(`   ANSI text width: ${Bun.stringWidth(ansiText)}`);
+    console.info(`   ANSI text with codes: ${Bun.stringWidth(ansiText, { countAnsiEscapeCodes: true })}`);
+    console.info(`   Emoji text width: ${Bun.stringWidth(emojiText)}`);
+    console.info(`   Stripped ANSI: "${Bun.stripANSI(ansiText)}"`);
   });
 
   test("should demonstrate deep equality utilities", () => {
@@ -144,11 +144,11 @@ describe("Bun Utilities Complete Showcase", () => {
     expect(Bun.deepEquals(obj4, obj5)).toBe(true); // Non-strict
     expect(Bun.deepEquals(obj4, obj5, true)).toBe(false); // Strict mode
     
-    console.log('\n🔍 Deep Equality:');
-    console.log(`   obj1 === obj2: ${Bun.deepEquals(obj1, obj2)}`);
-    console.log(`   obj1 === obj3: ${Bun.deepEquals(obj1, obj3)}`);
-    console.log(`   obj4 === obj5 (non-strict): ${Bun.deepEquals(obj4, obj5)}`);
-    console.log(`   obj4 === obj5 (strict): ${Bun.deepEquals(obj4, obj5, true)}`);
+    console.info('\n🔍 Deep Equality:');
+    console.info(`   obj1 === obj2: ${Bun.deepEquals(obj1, obj2)}`);
+    console.info(`   obj1 === obj3: ${Bun.deepEquals(obj1, obj3)}`);
+    console.info(`   obj4 === obj5 (non-strict): ${Bun.deepEquals(obj4, obj5)}`);
+    console.info(`   obj4 === obj5 (strict): ${Bun.deepEquals(obj4, obj5, true)}`);
   });
 
   test("should demonstrate sleep utilities", async () => {
@@ -167,9 +167,9 @@ describe("Bun Utilities Complete Showcase", () => {
     
     expect(syncEnd - syncStart).toBeGreaterThanOrEqual(5);
     
-    console.log('\n😴 Sleep Utilities:');
-    console.log(`   Async sleep: ~${end - start}ms`);
-    console.log(`   Sync sleep: ~${syncEnd - syncStart}ms`);
+    console.info('\n😴 Sleep Utilities:');
+    console.info(`   Async sleep: ~${end - start}ms`);
+    console.info(`   Sync sleep: ~${syncEnd - syncStart}ms`);
   });
 
   test("should demonstrate file path utilities", () => {
@@ -181,10 +181,10 @@ describe("Bun Utilities Complete Showcase", () => {
     expect(filePath).toBe("/Users/test/example.txt");
     expect(convertedURL.toString()).toBe("file:///Users/test/example.txt");
     
-    console.log('\n📁 Path Utilities:');
-    console.log(`   File URL: ${fileURL}`);
-    console.log(`   File path: ${filePath}`);
-    console.log(`   Converted back: ${convertedURL}`);
+    console.info('\n📁 Path Utilities:');
+    console.info(`   File URL: ${fileURL}`);
+    console.info(`   File path: ${filePath}`);
+    console.info(`   Converted back: ${convertedURL}`);
   });
 
   test("should demonstrate promise utilities", () => {
@@ -209,10 +209,10 @@ describe("Bun Utilities Complete Showcase", () => {
     // Peek non-promise value
     expect(Bun.peek(42)).toBe(42);
     
-    console.log('\n👀 Promise Utilities:');
-    console.log(`   Resolved promise: ${Bun.peek(resolvedPromise)}`);
-    console.log(`   Rejected promise: ${Bun.peek(rejectedPromise).message}`);
-    console.log(`   Pending promise status: ${Bun.peek.status(pendingPromise)}`);
+    console.info('\n👀 Promise Utilities:');
+    console.info(`   Resolved promise: ${Bun.peek(resolvedPromise)}`);
+    console.info(`   Rejected promise: ${Bun.peek(rejectedPromise).message}`);
+    console.info(`   Pending promise status: ${Bun.peek.status(pendingPromise)}`);
   });
 
   test("should demonstrate inspection utilities", () => {
@@ -235,8 +235,8 @@ describe("Bun Utilities Complete Showcase", () => {
     expect(table).toContain("30");
     expect(table).not.toContain("city"); // Excluded column
     
-    console.log('\n🔍 Inspection Utilities:');
-    console.log(`   Object inspect: ${inspected.trim()}`);
-    console.log(`   Table format:\n${table}`);
+    console.info('\n🔍 Inspection Utilities:');
+    console.info(`   Object inspect: ${inspected.trim()}`);
+    console.info(`   Table format:\n${table}`);
   });
 });

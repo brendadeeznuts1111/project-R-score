@@ -535,7 +535,7 @@ export class ConsoleReader {
 			}
 
 			const errorMessage = typeof result === "string" ? result : retryMessage;
-			console.log(`❌ ${errorMessage}`);
+			console.info(`❌ ${errorMessage}`);
 		}
 
 		throw new Error("Maximum retries exceeded");
@@ -565,8 +565,8 @@ export class ConsoleReader {
 			if (matches.length === 1) {
 				return matches[0];
 			} else if (matches.length > 1) {
-				console.log(`\n📋 Possible completions:`);
-				matches.forEach((match, i) => console.log(`  ${i + 1}. ${match}`));
+				console.info(`\n📋 Possible completions:`);
+				matches.forEach((match, i) => console.info(`  ${i + 1}. ${match}`));
 			} else if (input) {
 				return input;
 			}
@@ -647,10 +647,10 @@ export class ConsoleReader {
 	}): Promise<T | T[]> {
 		const { prompt, items, allowMultiple = false } = options;
 
-		console.log(`\n${prompt}`);
+		console.info(`\n${prompt}`);
 		items.forEach((item, i) => {
 			const desc = item.description ? ` - ${item.description}` : "";
-			console.log(`  ${i + 1}. [${item.key}]${desc}`);
+			console.info(`  ${i + 1}. [${item.key}]${desc}`);
 		});
 
 		const input = await this.readLine(`Select option(s): `);
@@ -745,7 +745,7 @@ export const ProcessUtils = {
 				lastError = error as Error;
 				if (attempt < maxRetries) {
 					const delay = Math.min(baseDelay * 2 ** attempt, maxDelay);
-					console.log(`Retry ${attempt + 1}/${maxRetries} after ${delay}ms...`);
+					console.info(`Retry ${attempt + 1}/${maxRetries} after ${delay}ms...`);
 					await this.sleep(delay);
 				}
 			}
@@ -766,9 +766,9 @@ export class InteractiveProcessManager {
 	 * Run an interactive shell
 	 */
 	async startShell(): Promise<void> {
-		console.log("🚀 Interactive Process Shell");
-		console.log("============================");
-		console.log("Commands: exec, start, kill, list, status, help, exit");
+		console.info("🚀 Interactive Process Shell");
+		console.info("============================");
+		console.info("Commands: exec, start, kill, list, status, help, exit");
 
 		while (true) {
 			try {
@@ -777,7 +777,7 @@ export class InteractiveProcessManager {
 				if (!command) continue;
 
 				if (command === "exit" || command === "quit") {
-					console.log("👋 Goodbye!");
+					console.info("👋 Goodbye!");
 					break;
 				}
 
@@ -793,16 +793,16 @@ export class InteractiveProcessManager {
 
 				if (command.startsWith("exec ")) {
 					const cmd = command.substring(5);
-					console.log(`⚡ Executing: ${cmd}`);
+					console.info(`⚡ Executing: ${cmd}`);
 					const result = await this.processManager.execute({ command: cmd });
-					console.log(result.stdout);
+					console.info(result.stdout);
 					continue;
 				}
 
 				if (command.startsWith("kill ")) {
 					const pid = parseInt(command.substring(5), 10);
 					const success = this.processManager.kill(pid);
-					console.log(
+					console.info(
 						success
 							? `✅ Process ${pid} killed`
 							: `❌ Failed to kill process ${pid}`,
@@ -815,7 +815,7 @@ export class InteractiveProcessManager {
 					continue;
 				}
 
-				console.log(`Unknown command: ${command}`);
+				console.info(`Unknown command: ${command}`);
 				this.printHelp();
 			} catch (error) {
 				console.error("Shell error:", error);
@@ -824,24 +824,24 @@ export class InteractiveProcessManager {
 	}
 
 	private printHelp(): void {
-		console.log("\n📖 Available Commands:");
-		console.log("  exec <command>  - Execute a command");
-		console.log("  start <command> - Start a background process");
-		console.log("  kill <pid>      - Kill a process by PID");
-		console.log("  list            - List all processes");
-		console.log("  status          - Show process status");
-		console.log("  help            - Show this help");
-		console.log("  exit            - Exit the shell");
+		console.info("\n📖 Available Commands:");
+		console.info("  exec <command>  - Execute a command");
+		console.info("  start <command> - Start a background process");
+		console.info("  kill <pid>      - Kill a process by PID");
+		console.info("  list            - List all processes");
+		console.info("  status          - Show process status");
+		console.info("  help            - Show this help");
+		console.info("  exit            - Exit the shell");
 	}
 
 	private printProcessList(): void {
 		const processes = this.processManager.listProcesses();
-		console.log("\n📋 Running Processes:");
+		console.info("\n📋 Running Processes:");
 		if (processes.length === 0) {
-			console.log("  No running processes");
+			console.info("  No running processes");
 		} else {
 			processes.forEach((p) => {
-				console.log(
+				console.info(
 					`  PID: ${p.pid} | Command: ${p.command.substring(0, 30)}...`,
 				);
 			});

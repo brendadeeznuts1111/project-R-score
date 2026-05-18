@@ -44,7 +44,7 @@ export class RealZenDashboard {
    * Start REAL monitoring with actual searches
    */
   startRealMonitoring(): void {
-    console.log('🎯 Starting REAL Zen Dashboard - Live Search Data!');
+    console.info('🎯 Starting REAL Zen Dashboard - Live Search Data!');
     
     // Perform actual searches every 10 seconds
     this.updateInterval = setInterval(async () => {
@@ -63,7 +63,7 @@ export class RealZenDashboard {
     const queries = ['bun', 'performance', 'streaming', 'zen', 'fetch'];
     const randomQuery = queries[Math.floor(Math.random() * queries.length)];
     
-    console.log(`🔍 Performing REAL search: "${randomQuery}"`);
+    console.info(`🔍 Performing REAL search: "${randomQuery}"`);
     
     try {
       const startTime = performance.now();
@@ -91,7 +91,7 @@ export class RealZenDashboard {
       this.updateSystemHealth();
       this.metrics.lastUpdate = new Date().toISOString();
 
-      console.log(`✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`);
+      console.info(`✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`);
       
     } catch (error) {
       console.error(`❌ Real search failed: ${error.message}`);
@@ -126,14 +126,14 @@ export class RealZenDashboard {
    */
   private renderRealDashboard(): void {
     console.clear();
-    console.log('🎯 REAL Zen Dashboard - Live Search Data');
-    console.log('=' .repeat(70));
+    console.info('🎯 REAL Zen Dashboard - Live Search Data');
+    console.info('=' .repeat(70));
     
     // System Health
     const healthIcons = { optimal: '🟢', good: '🟡', warning: '🟠', critical: '🔴' };
-    console.log(`${healthIcons[this.metrics.systemHealth]} System Health: ${this.metrics.systemHealth.toUpperCase()}`);
-    console.log(`   Last Update: ${new Date(this.metrics.lastUpdate).toLocaleString()}`);
-    console.log('');
+    console.info(`${healthIcons[this.metrics.systemHealth]} System Health: ${this.metrics.systemHealth.toUpperCase()}`);
+    console.info(`   Last Update: ${new Date(this.metrics.lastUpdate).toLocaleString()}`);
+    console.info('');
     
     // REAL Metrics
     if (this.metrics.realSearchHistory.length > 0) {
@@ -142,28 +142,28 @@ export class RealZenDashboard {
       const avgMemory = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) / this.metrics.realSearchHistory.length;
       const totalMatches = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.matches, 0);
 
-      console.log('📊 REAL Search Metrics:');
-      console.log(`   🔍 Total Searches: ${this.metrics.totalSearches}`);
-      console.log(`   ⚡ Avg Search Time: ${avgTime.toFixed(2)}ms`);
-      console.log(`   🎯 Total Matches: ${totalMatches}`);
-      console.log(`   💾 Avg Memory: ${avgMemory.toFixed(2)}MB`);
-      console.log(`   🌐 Latest Query: "${latest.query}"`);
-      console.log('');
+      console.info('📊 REAL Search Metrics:');
+      console.info(`   🔍 Total Searches: ${this.metrics.totalSearches}`);
+      console.info(`   ⚡ Avg Search Time: ${avgTime.toFixed(2)}ms`);
+      console.info(`   🎯 Total Matches: ${totalMatches}`);
+      console.info(`   💾 Avg Memory: ${avgMemory.toFixed(2)}MB`);
+      console.info(`   🌐 Latest Query: "${latest.query}"`);
+      console.info('');
     }
 
     // REAL Search History
-    console.log('📜 REAL Search History:');
+    console.info('📜 REAL Search History:');
     if (this.metrics.realSearchHistory.length === 0) {
-      console.log('   No searches performed yet.');
+      console.info('   No searches performed yet.');
     } else {
       this.metrics.realSearchHistory.forEach((search, index) => {
-        console.log(`   ${index + 1}. 🔍 "${search.query}" - ${search.matches} matches in ${search.time.toFixed(2)}ms (${search.memory.toFixed(2)}MB)`);
+        console.info(`   ${index + 1}. 🔍 "${search.query}" - ${search.matches} matches in ${search.time.toFixed(2)}ms (${search.memory.toFixed(2)}MB)`);
       });
     }
-    console.log('');
+    console.info('');
 
     // Performance Graph
-    console.log('📈 REAL Performance Timeline:');
+    console.info('📈 REAL Performance Timeline:');
     if (this.metrics.realSearchHistory.length > 0) {
       const maxTime = Math.max(...this.metrics.realSearchHistory.map(s => s.time));
       const graphWidth = 40;
@@ -173,13 +173,13 @@ export class RealZenDashboard {
         const bar = '█'.repeat(barLength) + '░'.repeat(graphWidth - barLength);
         const query = search.query.substring(0, 10).padEnd(10);
         
-        console.log(`   ${query} │${bar}│ ${search.time.toFixed(0)}ms (${search.matches} matches)`);
+        console.info(`   ${query} │${bar}│ ${search.time.toFixed(0)}ms (${search.matches} matches)`);
       });
     }
-    console.log('');
+    console.info('');
 
-    console.log('🔄 Performing REAL searches every 10 seconds...');
-    console.log('🎯 This is 100% REAL data from our Zen Search Engine!');
+    console.info('🔄 Performing REAL searches every 10 seconds...');
+    console.info('🎯 This is 100% REAL data from our Zen Search Engine!');
   }
 
   /**
@@ -190,7 +190,7 @@ export class RealZenDashboard {
       clearInterval(this.updateInterval);
       this.updateInterval = null;
     }
-    console.log('👋 Real dashboard monitoring stopped.');
+    console.info('👋 Real dashboard monitoring stopped.');
   }
 
   /**

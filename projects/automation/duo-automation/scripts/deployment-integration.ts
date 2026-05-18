@@ -79,7 +79,7 @@ class DeploymentIntegration {
    * Switch to oven/bun:1.0 base image
    */
   async switchToOvenBun(): Promise<void> {
-    console.log('🔄 Switching to oven/bun:1.0 base image...');
+    console.info('🔄 Switching to oven/bun:1.0 base image...');
     
     try {
       // Create new Dockerfile
@@ -94,7 +94,7 @@ class DeploymentIntegration {
       // Setup CI/CD pipeline
       await this.setupCICDPipeline();
       
-      console.log('✅ Successfully switched to oven/bun:1.0');
+      console.info('✅ Successfully switched to oven/bun:1.0');
       
     } catch (error) {
       console.error(`❌ Failed to switch to oven/bun:1.0: ${error.message}`);
@@ -106,7 +106,7 @@ class DeploymentIntegration {
    * Create optimized Dockerfile
    */
   private async createOptimizedDockerfile(): Promise<void> {
-    console.log('📝 Creating optimized Dockerfile...');
+    console.info('📝 Creating optimized Dockerfile...');
     
     const dockerfile = `
 # Quantum Hash System - Optimized Dockerfile
@@ -198,14 +198,14 @@ dist
     
     await Bun.write('./.dockerignore', dockerignore);
     
-    console.log('✅ Optimized Dockerfile created');
+    console.info('✅ Optimized Dockerfile created');
   }
 
   /**
    * Update deployment configuration
    */
   private async updateDeploymentConfig(): Promise<void> {
-    console.log('⚙️ Updating deployment configuration...');
+    console.info('⚙️ Updating deployment configuration...');
     
     const config = {
       version: '3.8',
@@ -252,14 +252,14 @@ dist
     
     await Bun.write('./docker-compose.yml', JSON.stringify(config, null, 2));
     
-    console.log('✅ Deployment configuration updated');
+    console.info('✅ Deployment configuration updated');
   }
 
   /**
    * Create Kubernetes manifests
    */
   private async createKubernetesManifests(): Promise<void> {
-    console.log('☸️ Creating Kubernetes manifests...');
+    console.info('☸️ Creating Kubernetes manifests...');
     
     // Deployment manifest
     const deployment = {
@@ -394,14 +394,14 @@ dist
     await Bun.write('./k8s/service.yaml', JSON.stringify(service, null, 2));
     await Bun.write('./k8s/hpa.yaml', JSON.stringify(hpa, null, 2));
     
-    console.log('✅ Kubernetes manifests created');
+    console.info('✅ Kubernetes manifests created');
   }
 
   /**
    * Setup CI/CD pipeline
    */
   private async setupCICDPipeline(): Promise<void> {
-    console.log('🔄 Setting up CI/CD pipeline...');
+    console.info('🔄 Setting up CI/CD pipeline...');
     
     // GitHub Actions workflow
     const workflow = {
@@ -493,19 +493,19 @@ dist
     
     await Bun.write('./.github/workflows/quantum-hash-ci.yml', JSON.stringify(workflow, null, 2));
     
-    console.log('✅ CI/CD pipeline setup complete');
+    console.info('✅ CI/CD pipeline setup complete');
   }
 
   /**
    * Run pre-deployment benchmarks
    */
   async runPreDeployBenchmarks(): Promise<BenchmarkResult> {
-    console.log('🏃 Running pre-deployment benchmarks...');
+    console.info('🏃 Running pre-deployment benchmarks...');
     
     const startTime = performance.now();
     
     // Run quantum benchmarks
-    console.log('   🔒 Running quantum hash benchmarks...');
+    console.info('   🔒 Running quantum hash benchmarks...');
     const benchmarkStart = performance.now();
     
     // Simulate benchmark results
@@ -530,14 +530,14 @@ dist
       }
     };
     
-    console.log('📊 Pre-deployment Benchmark Results:');
-    console.log(`   🖼️  Base Image: ${result.image}`);
-    console.log(`   ⏱️  Build Time: ${result.buildTime} minutes`);
-    console.log(`   📦 Image Size: ${result.imageSize}`);
-    console.log(`   🚀 Startup Time: ${result.startupTime} seconds`);
-    console.log(`   🔒 Quantum Throughput: ${result.quantumPerformance.throughput.toFixed(0)} KB/s`);
-    console.log(`   ⚡ Average Hash Time: ${result.quantumPerformance.averageTime.toFixed(3)}ms`);
-    console.log(`   💾 Memory Usage: ${result.quantumPerformance.memoryUsage} MB`);
+    console.info('📊 Pre-deployment Benchmark Results:');
+    console.info(`   🖼️  Base Image: ${result.image}`);
+    console.info(`   ⏱️  Build Time: ${result.buildTime} minutes`);
+    console.info(`   📦 Image Size: ${result.imageSize}`);
+    console.info(`   🚀 Startup Time: ${result.startupTime} seconds`);
+    console.info(`   🔒 Quantum Throughput: ${result.quantumPerformance.throughput.toFixed(0)} KB/s`);
+    console.info(`   ⚡ Average Hash Time: ${result.quantumPerformance.averageTime.toFixed(3)}ms`);
+    console.info(`   💾 Memory Usage: ${result.quantumPerformance.memoryUsage} MB`);
     
     return result;
   }
@@ -546,7 +546,7 @@ dist
    * Deploy application
    */
   async deploy(): Promise<void> {
-    console.log('🚀 Deploying Quantum Hash System...');
+    console.info('🚀 Deploying Quantum Hash System...');
     
     try {
       // Run pre-deployment checks
@@ -561,7 +561,7 @@ dist
       // Verify deployment
       await this.verifyDeployment();
       
-      console.log('✅ Deployment completed successfully');
+      console.info('✅ Deployment completed successfully');
       
     } catch (error) {
       console.error(`❌ Deployment failed: ${error.message}`);
@@ -573,7 +573,7 @@ dist
    * Run pre-deployment checks
    */
   private async runPreDeployChecks(): Promise<void> {
-    console.log('🔍 Running pre-deployment checks...');
+    console.info('🔍 Running pre-deployment checks...');
     
     // Check quantum hash system
     const stats = this.quantumHash.getPerformanceStats();
@@ -586,49 +586,49 @@ dist
       throw new Error('Quantum hash is not enabled in deployment configuration');
     }
     
-    console.log('✅ Pre-deployment checks passed');
+    console.info('✅ Pre-deployment checks passed');
   }
 
   /**
    * Build Docker image
    */
   private async buildDockerImage(): Promise<void> {
-    console.log('🏗️ Building Docker image...');
+    console.info('🏗️ Building Docker image...');
     
     // Simulate Docker build
-    console.log('   📦 Building with oven/bun:1.0...');
-    console.log('   🔒 Quantum optimizations enabled...');
-    console.log('   ⚡ Production optimizations applied...');
+    console.info('   📦 Building with oven/bun:1.0...');
+    console.info('   🔒 Quantum optimizations enabled...');
+    console.info('   ⚡ Production optimizations applied...');
     
-    console.log('✅ Docker image built successfully');
+    console.info('✅ Docker image built successfully');
   }
 
   /**
    * Deploy to Kubernetes
    */
   private async deployToKubernetes(): Promise<void> {
-    console.log('☸️ Deploying to Kubernetes...');
+    console.info('☸️ Deploying to Kubernetes...');
     
     // Simulate Kubernetes deployment
-    console.log('   🚀 Applying deployment manifest...');
-    console.log('   🌐 Creating service...');
-    console.log('   📈 Configuring HPA...');
+    console.info('   🚀 Applying deployment manifest...');
+    console.info('   🌐 Creating service...');
+    console.info('   📈 Configuring HPA...');
     
-    console.log('✅ Deployed to Kubernetes successfully');
+    console.info('✅ Deployed to Kubernetes successfully');
   }
 
   /**
    * Verify deployment
    */
   private async verifyDeployment(): Promise<void> {
-    console.log('✅ Verifying deployment...');
+    console.info('✅ Verifying deployment...');
     
     // Simulate deployment verification
-    console.log('   🔍 Checking pod health...');
-    console.log('   🌐 Testing service endpoints...');
-    console.log('   🔒 Verifying quantum hash performance...');
+    console.info('   🔍 Checking pod health...');
+    console.info('   🌐 Testing service endpoints...');
+    console.info('   🔒 Verifying quantum hash performance...');
     
-    console.log('✅ Deployment verification complete');
+    console.info('✅ Deployment verification complete');
   }
 
   /**
@@ -672,16 +672,16 @@ ${Object.entries(this.deploymentConfig.environment).map(([key, value]) => `   ${
 if (import.meta.main) {
   const deployment = new DeploymentIntegration();
   
-  console.log('🎯 Deployment Integration - Quantum Hash System');
-  console.log('================================================\n');
+  console.info('🎯 Deployment Integration - Quantum Hash System');
+  console.info('================================================\n');
   
   deployment.switchToOvenBun()
     .then(() => deployment.runPreDeployBenchmarks())
     .then((benchmark) => {
-      console.log('\n✅ Deployment integration complete!');
-      console.log(`📊 Image: ${benchmark.image}`);
-      console.log(`🔒 Quantum performance: ${benchmark.quantumPerformance.throughput.toFixed(0)} KB/s`);
-      console.log('\n' + deployment.generateDeploymentReport());
+      console.info('\n✅ Deployment integration complete!');
+      console.info(`📊 Image: ${benchmark.image}`);
+      console.info(`🔒 Quantum performance: ${benchmark.quantumPerformance.throughput.toFixed(0)} KB/s`);
+      console.info('\n' + deployment.generateDeploymentReport());
     })
     .catch(console.error);
 }

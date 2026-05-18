@@ -39,16 +39,16 @@ async function runTestCategory(
   category: string,
   path: string
 ): Promise<TestResult> {
-  console.log(`\n${"=".repeat(60)}`);
-  console.log(`Running ${category} tests...`);
-  console.log(`${"=".repeat(60)}\n`);
+  console.info(`\n${"=".repeat(60)}`);
+  console.info(`Running ${category} tests...`);
+  console.info(`${"=".repeat(60)}\n`);
 
   const start = Date.now();
 
   // Check if directory has test files
   if (!hasTestFiles(path)) {
     const duration = Date.now() - start;
-    console.log(`\n⚠️  ${category} tests skipped - no test files found (${duration}ms)\n`);
+    console.info(`\n⚠️  ${category} tests skipped - no test files found (${duration}ms)\n`);
 
     return {
       category,
@@ -61,7 +61,7 @@ async function runTestCategory(
     await $`bun test ${path}`;
     const duration = Date.now() - start;
 
-    console.log(`\n✅ ${category} tests passed (${duration}ms)\n`);
+    console.info(`\n✅ ${category} tests passed (${duration}ms)\n`);
 
     return {
       category,
@@ -84,7 +84,7 @@ async function runTestCategory(
 }
 
 async function main() {
-  console.log("\n🚀 Running complete test suite\n");
+  console.info("\n🚀 Running complete test suite\n");
 
   const startTime = Date.now();
 
@@ -97,37 +97,37 @@ async function main() {
   const totalDuration = Date.now() - startTime;
 
   // Print summary
-  console.log(`\n${"=".repeat(60)}`);
-  console.log("Test Suite Summary");
-  console.log(`${"=".repeat(60)}\n`);
+  console.info(`\n${"=".repeat(60)}`);
+  console.info("Test Suite Summary");
+  console.info(`${"=".repeat(60)}\n`);
 
   for (const result of results) {
     const status = result.passed ? "✅ PASS" : "❌ FAIL";
-    console.log(
+    console.info(
       `${status} ${result.category.padEnd(15)} ${result.duration.toString().padStart(6)}ms`
     );
 
     if (result.error) {
-      console.log(`    Error: ${result.error}`);
+      console.info(`    Error: ${result.error}`);
     }
   }
 
   const passed = results.filter((r) => r.passed).length;
   const failed = results.filter((r) => !r.passed).length;
 
-  console.log(`\n${"=".repeat(60)}`);
-  console.log(
+  console.info(`\n${"=".repeat(60)}`);
+  console.info(
     `Total: ${results.length} categories | Passed: ${passed} | Failed: ${failed}`
   );
-  console.log(`Duration: ${totalDuration}ms`);
-  console.log(`${"=".repeat(60)}\n`);
+  console.info(`Duration: ${totalDuration}ms`);
+  console.info(`${"=".repeat(60)}\n`);
 
   // Exit with appropriate code
   if (failed > 0) {
     console.error(`\n❌ Test suite failed with ${failed} failing categories\n`);
     process.exit(1);
   } else {
-    console.log(`\n✅ All test categories passed!\n`);
+    console.info(`\n✅ All test categories passed!\n`);
     process.exit(0);
   }
 }

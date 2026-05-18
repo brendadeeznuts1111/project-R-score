@@ -29,7 +29,7 @@ export class CodeownersWatcher {
 	start(): void {
 		const teamMdPath = join(process.cwd(), '.github', 'TEAM.md');
 
-		console.log(`[CODEOWNERS.WATCHER.RG:START] Starting watcher for ${teamMdPath}`);
+		console.info(`[CODEOWNERS.WATCHER.RG:START] Starting watcher for ${teamMdPath}`);
 
 		this.watcher = watch(
 			teamMdPath,
@@ -41,7 +41,7 @@ export class CodeownersWatcher {
 			}
 		);
 
-		console.log('[CODEOWNERS.WATCHER.RG:STARTED] Watching TEAM.md for changes...');
+		console.info('[CODEOWNERS.WATCHER.RG:STARTED] Watching TEAM.md for changes...');
 	}
 
 	// [CODEOWNERS.WATCHER.DEBOUNCE.RG:IMPLEMENTATION] Debounce regeneration to avoid rapid-fire updates
@@ -57,7 +57,7 @@ export class CodeownersWatcher {
 
 	// [CODEOWNERS.WATCHER.REGENERATE.RG:IMPLEMENTATION] Regenerate CODEOWNERS file
 	private async regenerateCodeowners(): Promise<void> {
-		console.log('[CODEOWNERS.WATCHER.RG:EVENT] TEAM.md changed, regenerating CODEOWNERS...');
+		console.info('[CODEOWNERS.WATCHER.RG:EVENT] TEAM.md changed, regenerating CODEOWNERS...');
 
 		try {
 			// Regenerate CODEOWNERS
@@ -66,7 +66,7 @@ export class CodeownersWatcher {
 				cwd: process.cwd(),
 			});
 
-			console.log('[CODEOWNERS.WATCHER.RG:SUCCESS] CODEOWNERS regenerated successfully');
+			console.info('[CODEOWNERS.WATCHER.RG:SUCCESS] CODEOWNERS regenerated successfully');
 
 			// Validate sync
 			try {
@@ -74,7 +74,7 @@ export class CodeownersWatcher {
 					stdio: 'pipe',
 					cwd: process.cwd(),
 				});
-				console.log('[CODEOWNERS.WATCHER.RG:VALIDATION] CODEOWNERS validation passed');
+				console.info('[CODEOWNERS.WATCHER.RG:VALIDATION] CODEOWNERS validation passed');
 			} catch (validationError) {
 				console.warn('[CODEOWNERS.WATCHER.RG:WARNING] CODEOWNERS validation failed:', validationError);
 			}
@@ -83,7 +83,7 @@ export class CodeownersWatcher {
 			try {
 				const result = await $`bun run team:info department:api`.quiet();
 				if (result.exitCode === 0) {
-					console.log('[CODEOWNERS.WATCHER.RG:VERIFICATION] Team info query successful');
+					console.info('[CODEOWNERS.WATCHER.RG:VERIFICATION] Team info query successful');
 				}
 			} catch (verifyError) {
 				console.warn('[CODEOWNERS.WATCHER.RG:WARNING] Team info verification failed:', verifyError);
@@ -114,7 +114,7 @@ export class CodeownersWatcher {
 		if (this.watcher) {
 			this.watcher.close();
 			this.watcher = null;
-			console.log('[CODEOWNERS.WATCHER.RG:STOPPED] Watcher stopped');
+			console.info('[CODEOWNERS.WATCHER.RG:STOPPED] Watcher stopped');
 		}
 	}
 }
@@ -126,16 +126,16 @@ if (import.meta.main) {
 
 	// Handle graceful shutdown
 	process.on('SIGINT', () => {
-		console.log('\n[CODEOWNERS.WATCHER.RG:SHUTDOWN] Received SIGINT, stopping watcher...');
+		console.info('\n[CODEOWNERS.WATCHER.RG:SHUTDOWN] Received SIGINT, stopping watcher...');
 		watcher.stop();
 		process.exit(0);
 	});
 
 	process.on('SIGTERM', () => {
-		console.log('\n[CODEOWNERS.WATCHER.RG:SHUTDOWN] Received SIGTERM, stopping watcher...');
+		console.info('\n[CODEOWNERS.WATCHER.RG:SHUTDOWN] Received SIGTERM, stopping watcher...');
 		watcher.stop();
 		process.exit(0);
 	});
 
-	console.log('[CODEOWNERS.WATCHER.RG:READY] CODEOWNERS watcher daemon running. Press Ctrl+C to stop.');
+	console.info('[CODEOWNERS.WATCHER.RG:READY] CODEOWNERS watcher daemon running. Press Ctrl+C to stop.');
 }

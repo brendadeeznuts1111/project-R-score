@@ -7,24 +7,24 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.bold.magenta('🎯 Width Tracking Analysis - Real-World Solutions'));
-console.log(chalk.gray('Understanding how [vw:visual, tw:total] solves table layout problems'));
-console.log(chalk.gray('='.repeat(80)));
+console.info(chalk.bold.magenta('🎯 Width Tracking Analysis - Real-World Solutions'));
+console.info(chalk.gray('Understanding how [vw:visual, tw:total] solves table layout problems'));
+console.info(chalk.gray('='.repeat(80)));
 
 // =============================================================================
 // ANALYZING THE WIDTH TRACKING OUTPUT
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📊 Analyzing the Width Tracking Output'));
+console.info(chalk.bold.cyan('\n📊 Analyzing the Width Tracking Output'));
 
-console.log(chalk.yellow('\n🔸 Sample Output Analysis:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Sample Output Analysis:'));
+console.info(chalk.white(`
 2025-11-18 (01 - Daily Notes/2025-11-18.md) 2.4 KB ✅ [vw:53, tw:85]
 OddsTick (02 - Architecture/OddsTick.md) 5.0 KB ✅ [vw:50, tw:82]  
 very-long-filename-that-causes-width-issues (03 - Development/very-long-filename-that-causes-width-issues.md) 1.2 KB ❌ [vw:119, tw:151]
 `));
 
-console.log(chalk.green('\n📋 Width Breakdown:'));
+console.info(chalk.green('\n📋 Width Breakdown:'));
 
 const sampleFiles = [
     {
@@ -57,21 +57,21 @@ const sampleFiles = [
 ];
 
 sampleFiles.forEach((file, index) => {
-    console.log(chalk.bold(`\n${index + 1}. ${file.name}`));
-    console.log(chalk.gray(`   Visual Width (vw): ${file.visualWidth} chars - What users see`));
-    console.log(chalk.cyan(`   Total Width (tw): ${file.totalWidth} chars - Including ANSI codes`));
-    console.log(chalk.yellow(`   ANSI Overhead: ${file.ansiOverhead} chars - Color formatting cost`));
-    console.log(chalk.magenta(`   Efficiency: ${((file.visualWidth / file.totalWidth) * 100).toFixed(1)}% visual vs total`));
+    console.info(chalk.bold(`\n${index + 1}. ${file.name}`));
+    console.info(chalk.gray(`   Visual Width (vw): ${file.visualWidth} chars - What users see`));
+    console.info(chalk.cyan(`   Total Width (tw): ${file.totalWidth} chars - Including ANSI codes`));
+    console.info(chalk.yellow(`   ANSI Overhead: ${file.ansiOverhead} chars - Color formatting cost`));
+    console.info(chalk.magenta(`   Efficiency: ${((file.visualWidth / file.totalWidth) * 100).toFixed(1)}% visual vs total`));
 });
 
 // =============================================================================
 // TABLE LAYOUT PROBLEMS AND SOLUTIONS
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔧 Table Layout Problems and Solutions'));
+console.info(chalk.bold.cyan('\n🔧 Table Layout Problems and Solutions'));
 
-console.log(chalk.yellow('\n🔸 Problem 1: Without Width Awareness'));
-console.log(chalk.red(`
+console.info(chalk.yellow('\n🔸 Problem 1: Without Width Awareness'));
+console.info(chalk.red(`
 ❌ Table layout breaks with long filenames:
 ┌───┬─────────────────────────────────────────┬─────────────────────────────────┬────────┐
 │   │ name                                    │ path                           │ size   │
@@ -84,8 +84,8 @@ console.log(chalk.red(`
 └───┴─────────────────────────────────────────┴─────────────────────────────────┴────────┘
 `));
 
-console.log(chalk.yellow('\n✅ Solution 1: With Width Awareness & Smart Truncation'));
-console.log(chalk.green(`
+console.info(chalk.yellow('\n✅ Solution 1: With Width Awareness & Smart Truncation'));
+console.info(chalk.green(`
 ✅ Perfect table layout with width-aware truncation:
 ┌───┬─────────────────────┬─────────────────────────────────┬────────┐
 │   │ name                │ path                           │ size   │
@@ -102,10 +102,10 @@ console.log(chalk.green(`
 // WIDTH-AWARE TRUNCATION IMPLEMENTATION
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n✂️  Width-Aware Truncation Implementation'));
+console.info(chalk.bold.cyan('\n✂️  Width-Aware Truncation Implementation'));
 
-console.log(chalk.yellow('\n🔸 Smart Truncation Based on Visual Width:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Smart Truncation Based on Visual Width:'));
+console.info(chalk.white(`
 function smartTruncateByVisualWidth(text, maxVisualWidth) {
   // Calculate current visual width
   const currentVisualWidth = Bun.stringWidth(text);
@@ -171,7 +171,7 @@ function ansiAwareTruncate(text, maxVisualWidth) {
 }
 
 // Test width-aware truncation
-console.log(chalk.green('\n📋 Width-Aware Truncation Examples:'));
+console.info(chalk.green('\n📋 Width-Aware Truncation Examples:'));
 
 const truncationTests = [
     {
@@ -201,21 +201,21 @@ truncationTests.forEach((test, index) => {
     const truncated = smartTruncateByVisualWidth(test.original, test.maxWidth);
     const truncatedWidth = Bun.stringWidth(truncated);
 
-    console.log(chalk.bold(`\n${index + 1}. ${test.description}`));
-    console.log(chalk.gray(`   Original: "${test.original}"`));
-    console.log(chalk.gray(`   Width: ${originalWidth} → ${test.maxWidth} (max)`));
-    console.log(chalk.cyan(`   Result: "${truncated}"`));
-    console.log(chalk.gray(`   Final width: ${truncatedWidth} chars`));
+    console.info(chalk.bold(`\n${index + 1}. ${test.description}`));
+    console.info(chalk.gray(`   Original: "${test.original}"`));
+    console.info(chalk.gray(`   Width: ${originalWidth} → ${test.maxWidth} (max)`));
+    console.info(chalk.cyan(`   Result: "${truncated}"`));
+    console.info(chalk.gray(`   Final width: ${truncatedWidth} chars`));
 });
 
 // =============================================================================
 // DYNAMIC COLUMN WIDTH OPTIMIZATION
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📊 Dynamic Column Width Optimization'));
+console.info(chalk.bold.cyan('\n📊 Dynamic Column Width Optimization'));
 
-console.log(chalk.yellow('\n🔸 Calculate Optimal Column Widths:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Calculate Optimal Column Widths:'));
+console.info(chalk.white(`
 function calculateOptimalColumnWidths(data, availableWidth = 80) {
   const columns = ['name', 'path', 'size', 'status'];
   const minWidths = { name: 15, path: 25, size: 8, status: 8 };
@@ -279,7 +279,7 @@ const sampleData = [
     { name: 'very-long-filename-that-causes-width-issues', path: '03 - Development/very-long-filename-that-causes-width-issues.md', size: '1.2 KB', status: '❌' }
 ];
 
-console.log(chalk.green('\n📊 Column Width Optimization Analysis:'));
+console.info(chalk.green('\n📊 Column Width Optimization Analysis:'));
 
 const scenarios = [
     { width: 120, description: 'Wide terminal (120 chars)' },
@@ -291,11 +291,11 @@ scenarios.forEach(scenario => {
     const optimalWidths = calculateOptimalColumnWidths(sampleData, scenario.width);
     const totalAllocated = Object.values(optimalWidths).reduce((sum, w) => sum + w, 0);
 
-    console.log(chalk.bold(`\n🖥️  ${scenario.description}`));
-    console.log(chalk.cyan(`   Available: ${scenario.width} chars, Allocated: ${totalAllocated} chars`));
+    console.info(chalk.bold(`\n🖥️  ${scenario.description}`));
+    console.info(chalk.cyan(`   Available: ${scenario.width} chars, Allocated: ${totalAllocated} chars`));
 
     Object.entries(optimalWidths).forEach(([col, width]) => {
-        console.log(chalk.gray(`   ${col}: ${width} chars`));
+        console.info(chalk.gray(`   ${col}: ${width} chars`));
     });
 });
 
@@ -303,10 +303,10 @@ scenarios.forEach(scenario => {
 // REAL-WORLD APPLICATION EXAMPLES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🌍 Real-World Application Examples'));
+console.info(chalk.bold.cyan('\n🌍 Real-World Application Examples'));
 
-console.log(chalk.yellow('\n🔸 Use Case 1: Vault File Management'));
-console.log(chalk.green(`
+console.info(chalk.yellow('\n🔸 Use Case 1: Vault File Management'));
+console.info(chalk.green(`
 ✅ Before width awareness:
    - Tables break with long filenames
    - Inconsistent column widths
@@ -318,8 +318,8 @@ console.log(chalk.green(`
    - Professional appearance
 `));
 
-console.log(chalk.yellow('\n🔸 Use Case 2: CI/CD Validation Reports'));
-console.log(chalk.green(`
+console.info(chalk.yellow('\n🔸 Use Case 2: CI/CD Validation Reports'));
+console.info(chalk.green(`
 ✅ Before width awareness:
    - Reports get truncated awkwardly
    - Important information lost
@@ -331,8 +331,8 @@ console.log(chalk.green(`
    - Professional error reporting
 `));
 
-console.log(chalk.yellow('\n🔸 Use Case 3: Performance Metrics Dashboards'));
-console.log(chalk.green(`
+console.info(chalk.yellow('\n🔸 Use Case 3: Performance Metrics Dashboards'));
+console.info(chalk.green(`
 ✅ Before width awareness:
    - Metrics overflow table boundaries
    - Charts become misaligned
@@ -348,25 +348,25 @@ console.log(chalk.green(`
 // WIDTH TRACKING BEST PRACTICES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n✅ Width Tracking Best Practices'));
+console.info(chalk.bold.cyan('\n✅ Width Tracking Best Practices'));
 
-console.log(chalk.yellow('\n🎯 When to Use Visual Width (vw):'));
-console.log(chalk.gray('• Table column sizing'));
-console.log(chalk.gray('• Terminal layout planning'));
-console.log(chalk.gray('• User interface design'));
-console.log(chalk.gray('• Text truncation decisions'));
+console.info(chalk.yellow('\n🎯 When to Use Visual Width (vw):'));
+console.info(chalk.gray('• Table column sizing'));
+console.info(chalk.gray('• Terminal layout planning'));
+console.info(chalk.gray('• User interface design'));
+console.info(chalk.gray('• Text truncation decisions'));
 
-console.log(chalk.yellow('\n🎯 When to Use Total Width (tw):'));
-console.log(chalk.gray('• Memory allocation planning'));
-console.log(chalk.gray('• Performance optimization'));
-console.log(chalk.gray('• Buffer size calculation'));
-console.log(chalk.gray('• Storage requirements'));
+console.info(chalk.yellow('\n🎯 When to Use Total Width (tw):'));
+console.info(chalk.gray('• Memory allocation planning'));
+console.info(chalk.gray('• Performance optimization'));
+console.info(chalk.gray('• Buffer size calculation'));
+console.info(chalk.gray('• Storage requirements'));
 
-console.log(chalk.yellow('\n🎯 ANSI Overhead Analysis:'));
-console.log(chalk.gray('• Monitor formatting efficiency'));
-console.log(chalk.gray('• Optimize color usage'));
-console.log(chalk.gray('• Balance visual appeal vs performance'));
-console.log(chalk.gray('• Debug formatting issues'));
+console.info(chalk.yellow('\n🎯 ANSI Overhead Analysis:'));
+console.info(chalk.gray('• Monitor formatting efficiency'));
+console.info(chalk.gray('• Optimize color usage'));
+console.info(chalk.gray('• Balance visual appeal vs performance'));
+console.info(chalk.gray('• Debug formatting issues'));
 
-console.log(chalk.bold.magenta('\n🎉 Width Tracking Analysis Complete!'));
-console.log(chalk.gray('The [vw:visual, tw:total] system provides complete control over table layout!'));
+console.info(chalk.bold.magenta('\n🎉 Width Tracking Analysis Complete!'));
+console.info(chalk.gray('The [vw:visual, tw:total] system provides complete control over table layout!'));

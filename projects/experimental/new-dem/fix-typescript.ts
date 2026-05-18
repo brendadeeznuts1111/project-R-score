@@ -7,7 +7,7 @@
 
 import { writeFileSync } from "fs";
 
-console.log("🔧 Applying TypeScript fixes...");
+console.info("🔧 Applying TypeScript fixes...");
 
 // Fix 1: Update tsconfig.json with proper ES2020 target
 const tsconfig = {
@@ -35,7 +35,7 @@ const tsconfig = {
 };
 
 writeFileSync("tsconfig.json", JSON.stringify(tsconfig, null, 2));
-console.log("✅ Updated tsconfig.json");
+console.info("✅ Updated tsconfig.json");
 
 // Fix 2: Add type fixes for common issues
 const typeFixes = `
@@ -49,8 +49,8 @@ export {};
 `;
 
 writeFileSync("src/types.d.ts", typeFixes);
-console.log("✅ Created global type definitions");
+console.info("✅ Created global type definitions");
 
-console.log("🎉 TypeScript fixes applied!");
-console.log('💡 Run "bun --version" to ensure Bun is available');
-console.log("🚀 Your T3-Lattice v4.0 implementation is ready to use!");
+console.info("🎉 TypeScript fixes applied!");
+console.info('💡 Run "bun --version" to ensure Bun is available');
+console.info("🚀 Your T3-Lattice v4.0 implementation is ready to use!");

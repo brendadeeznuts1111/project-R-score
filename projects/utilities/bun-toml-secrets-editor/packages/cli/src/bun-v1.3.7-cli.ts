@@ -22,17 +22,17 @@ const version = packageJson.version || '1.0.0';
 // ============================================================================
 
 function runCommand(command: string, description: string): void {
-    console.log(`\n🚀 ${description}`);
-    console.log('='.repeat(60));
-    console.log(`$ ${command}`);
-    console.log('');
+    console.info(`\n🚀 ${description}`);
+    console.info('='.repeat(60));
+    console.info(`$ ${command}`);
+    console.info('');
     
     try {
         execSync(command, { 
             stdio: 'inherit', 
             cwd: join(import.meta.dir, '../../../') 
         });
-        console.log(`\n✅ ${description} completed successfully!`);
+        console.info(`\n✅ ${description} completed successfully!`);
     } catch (error) {
         console.error(`\n❌ ${description} failed:`, error);
         process.exit(1);
@@ -43,16 +43,16 @@ function checkBunVersion(): void {
     const bunVersion = typeof Bun !== 'undefined' ? Bun.version : 'unknown';
     const requiredVersion = '1.3.7';
     
-    console.log(`🔍 Checking Bun version...`);
-    console.log(`Current: ${bunVersion}`);
-    console.log(`Required: ${requiredVersion}+`);
+    console.info(`🔍 Checking Bun version...`);
+    console.info(`Current: ${bunVersion}`);
+    console.info(`Required: ${requiredVersion}+`);
     
     // Simple version check (would need semver for proper comparison)
     if (bunVersion !== 'unknown' && bunVersion < requiredVersion) {
         console.warn(`⚠️  Warning: Bun v${bunVersion} may not have all v1.3.7 features`);
-        console.log('   Consider upgrading: bun upgrade');
+        console.info('   Consider upgrading: bun upgrade');
     } else {
-        console.log(`✅ Bun version supports v1.3.7 features`);
+        console.info(`✅ Bun version supports v1.3.7 features`);
     }
 }
 
@@ -83,17 +83,17 @@ program
             let demoScript = 'bun examples/bun-v1.3.7-oneliners.ts';
             
             if (options.buffer) {
-                console.log('\n🔥 Running Buffer/Array demos...');
+                console.info('\n🔥 Running Buffer/Array demos...');
                 // Could create specific demo files for each category
             }
             if (options.string) {
-                console.log('\n⚡ Running String demos...');
+                console.info('\n⚡ Running String demos...');
             }
             if (options.json) {
-                console.log('\n📄 Running JSON demos...');
+                console.info('\n📄 Running JSON demos...');
             }
             if (options.profiling) {
-                console.log('\n📊 Running Profiling demos...');
+                console.info('\n📊 Running Profiling demos...');
             }
         }
     });
@@ -161,8 +161,8 @@ program
     .description('Show copy-paste performance one-liners')
     .option('--copy', 'Copy to clipboard (requires pbcopy/clip)')
     .action((options) => {
-        console.log('\n🎯 Bun v1.3.7 Performance One-Liners');
-        console.log('='.repeat(60));
+        console.info('\n🎯 Bun v1.3.7 Performance One-Liners');
+        console.info('='.repeat(60));
         
         runCommand('./examples/bun-v1.3.7-quick-oneliners.sh', 'Displaying one-liners');
         
@@ -170,12 +170,12 @@ program
             try {
                 if (process.platform === 'darwin') {
                     execSync('./examples/bun-v1.3.7-quick-oneliners.sh | pbcopy', { cwd: join(import.meta.dir, '../../../') });
-                    console.log('\n📋 One-liners copied to clipboard!');
+                    console.info('\n📋 One-liners copied to clipboard!');
                 } else if (process.platform === 'win32') {
                     execSync('./examples/bun-v1.3.7-quick-oneliners.sh | clip', { cwd: join(import.meta.dir, '../../../') });
-                    console.log('\n📋 One-liners copied to clipboard!');
+                    console.info('\n📋 One-liners copied to clipboard!');
                 } else {
-                    console.log('\n⚠️  Clipboard copy not supported on this platform');
+                    console.info('\n⚠️  Clipboard copy not supported on this platform');
                 }
             } catch (error) {
                 console.error('\n❌ Failed to copy to clipboard:', error);
@@ -221,22 +221,22 @@ program
     .description('Check system and Bun compatibility')
     .option('--verbose', 'Detailed system information')
     .action((options) => {
-        console.log('\n🔍 System Compatibility Check');
-        console.log('='.repeat(60));
+        console.info('\n🔍 System Compatibility Check');
+        console.info('='.repeat(60));
         
         checkBunVersion();
         
-        console.log(`\n📊 System Information:`);
-        console.log(`Platform: ${process.platform} ${process.arch}`);
-        console.log(`Node.js: ${process.version}`);
-        console.log(`Bun: ${typeof Bun !== 'undefined' ? Bun.version : 'unknown'}`);
+        console.info(`\n📊 System Information:`);
+        console.info(`Platform: ${process.platform} ${process.arch}`);
+        console.info(`Node.js: ${process.version}`);
+        console.info(`Bun: ${typeof Bun !== 'undefined' ? Bun.version : 'unknown'}`);
         
         if (options.verbose) {
-            console.log(`\n🔧 Detailed Info:`);
-            console.log(`CPU: ${process.arch}`);
-            console.log(`Memory: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB used`);
-            console.log(`PID: ${process.pid}`);
-            console.log(`CWD: ${process.cwd()}`);
+            console.info(`\n🔧 Detailed Info:`);
+            console.info(`CPU: ${process.arch}`);
+            console.info(`Memory: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB used`);
+            console.info(`PID: ${process.pid}`);
+            console.info(`CWD: ${process.cwd()}`);
         }
         
         // Check for required files
@@ -247,13 +247,13 @@ program
             'examples/bun-v1.3.7-quick-oneliners.sh'
         ];
         
-        console.log(`\n📁 Required Files:`);
+        console.info(`\n📁 Required Files:`);
         for (const file of requiredFiles) {
             const exists = existsSync(join(import.meta.dir, '../../../', file));
-            console.log(`${exists ? '✅' : '❌'} ${file}`);
+            console.info(`${exists ? '✅' : '❌'} ${file}`);
         }
         
-        console.log(`\n🚀 Ready to run Bun v1.3.7 performance tests!`);
+        console.info(`\n🚀 Ready to run Bun v1.3.7 performance tests!`);
     });
 
 // Prepare command (for packaging)
@@ -262,8 +262,8 @@ program
     .description('Prepare for global packaging (bun pack / bunx --global)')
     .option('--dry-run', 'Show what would be done without executing')
     .action((options) => {
-        console.log('\n📦 Preparing for Global Packaging');
-        console.log('='.repeat(60));
+        console.info('\n📦 Preparing for Global Packaging');
+        console.info('='.repeat(60));
         
         checkBunVersion();
         
@@ -276,18 +276,18 @@ program
         ];
         
         if (options.dryRun) {
-            console.log('\n🔍 Dry run - would execute:');
-            steps.forEach(step => console.log(`  $ ${step.cmd} (${step.desc})`));
+            console.info('\n🔍 Dry run - would execute:');
+            steps.forEach(step => console.info(`  $ ${step.cmd} (${step.desc})`));
         } else {
             for (const step of steps) {
                 runCommand(step.cmd, step.desc);
             }
         }
         
-        console.log('\n📦 Ready for packaging!');
-        console.log('Next steps:');
-        console.log('  bun pack                     # Create npm package');
-        console.log('  bunx --global ./bun-v1.3.7-*.tgz  # Install globally');
+        console.info('\n📦 Ready for packaging!');
+        console.info('Next steps:');
+        console.info('  bun pack                     # Create npm package');
+        console.info('  bunx --global ./bun-v1.3.7-*.tgz  # Install globally');
     });
 
 // ============================================================================
@@ -299,10 +299,10 @@ program.parse();
 // Show help if no command provided
 if (!process.argv.slice(2).length) {
     program.outputHelp();
-    console.log('\n🚀 Quick Start:');
-    console.log('  bun run cli:v1.3.7 demo          # Run demos');
-    console.log('  bun run cli:v1.3.7 interactive    # Interactive menu');
-    console.log('  bun run cli:v1.3.7 bench          # Run benchmarks');
-    console.log('  bun run cli:v1.3.7 check          # System check');
-    console.log('  bun run cli:v1.3.7 prepare        # Prepare for packaging');
+    console.info('\n🚀 Quick Start:');
+    console.info('  bun run cli:v1.3.7 demo          # Run demos');
+    console.info('  bun run cli:v1.3.7 interactive    # Interactive menu');
+    console.info('  bun run cli:v1.3.7 bench          # Run benchmarks');
+    console.info('  bun run cli:v1.3.7 check          # System check');
+    console.info('  bun run cli:v1.3.7 prepare        # Prepare for packaging');
 }

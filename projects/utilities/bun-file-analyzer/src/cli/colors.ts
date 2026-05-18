@@ -214,7 +214,7 @@ export type { CliColor };
 export { CLI_COLORS };
 
 // Example usage in CLI:
-// console.log(cli.success("Operation completed"));
-// console.log(cli.profit(1234.56));
-// console.log(cli.progress(75, 100));
-// console.log(cli.table(["Name", "Value"], [["Item 1", "100"], ["Item 2", "200"]]));
+// console.info(cli.success("Operation completed"));
+// console.info(cli.profit(1234.56));
+// console.info(cli.progress(75, 100));
+// console.info(cli.table(["Name", "Value"], [["Item 1", "100"], ["Item 2", "200"]]));

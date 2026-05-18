@@ -90,7 +90,7 @@ async function benchmark(
 // ============================================================================
 
 async function runBufferBenchmarks(): Promise<BenchmarkResult[]> {
-  console.log(`${COLORS.bold}${COLORS.cyan}▶ Buffer.from(Array) Benchmarks${COLORS.reset}\n`);
+  console.info(`${COLORS.bold}${COLORS.cyan}▶ Buffer.from(Array) Benchmarks${COLORS.reset}\n`);
 
   const results: BenchmarkResult[] = [];
 
@@ -125,7 +125,7 @@ async function runBufferBenchmarks(): Promise<BenchmarkResult[]> {
 }
 
 async function runJscBenchmarks(): Promise<BenchmarkResult[]> {
-  console.log(`\n${COLORS.bold}${COLORS.cyan}▶ JSC Engine Upgrades${COLORS.reset}\n`);
+  console.info(`\n${COLORS.bold}${COLORS.cyan}▶ JSC Engine Upgrades${COLORS.reset}\n`);
 
   const results: BenchmarkResult[] = [];
 
@@ -177,12 +177,12 @@ async function runJscBenchmarks(): Promise<BenchmarkResult[]> {
 }
 
 async function runWrapAnsiBenchmarks(): Promise<BenchmarkResult[]> {
-  console.log(`\n${COLORS.bold}${COLORS.cyan}▶ Bun.wrapAnsi Performance${COLORS.reset}\n`);
+  console.info(`\n${COLORS.bold}${COLORS.cyan}▶ Bun.wrapAnsi Performance${COLORS.reset}\n`);
 
   const results: BenchmarkResult[] = [];
 
   if (typeof Bun.wrapAnsi !== "function") {
-    console.log(`${COLORS.yellow}⚠ Bun.wrapAnsi not available in this version${COLORS.reset}\n`);
+    console.info(`${COLORS.yellow}⚠ Bun.wrapAnsi not available in this version${COLORS.reset}\n`);
     return results;
   }
 
@@ -226,7 +226,7 @@ async function runWrapAnsiBenchmarks(): Promise<BenchmarkResult[]> {
 }
 
 async function runArm64Benchmarks(): Promise<BenchmarkResult[]> {
-  console.log(`\n${COLORS.bold}${COLORS.cyan}▶ ARM64 ccmp Optimizations${COLORS.reset}\n`);
+  console.info(`\n${COLORS.bold}${COLORS.cyan}▶ ARM64 ccmp Optimizations${COLORS.reset}\n`);
 
   const results: BenchmarkResult[] = [];
 
@@ -280,7 +280,7 @@ async function runArm64Benchmarks(): Promise<BenchmarkResult[]> {
 // ============================================================================
 
 function printResults(results: BenchmarkResult[]) {
-  console.log(`\n${COLORS.bold}${COLORS.magenta}📊 Results Summary${COLORS.reset}\n`);
+  console.info(`\n${COLORS.bold}${COLORS.magenta}📊 Results Summary${COLORS.reset}\n`);
 
   // Group by category
   const byCategory = results.reduce((acc, r) => {
@@ -297,34 +297,34 @@ function printResults(results: BenchmarkResult[]) {
       arm64: COLORS.blue,
     }[category] || COLORS.reset;
 
-    console.log(`${catColor}${category.toUpperCase()}${COLORS.reset}`);
-    console.log("─".repeat(70));
+    console.info(`${catColor}${category.toUpperCase()}${COLORS.reset}`);
+    console.info("─".repeat(70));
 
     for (const r of items) {
       const opsStr = formatNumber(r.opsPerSecond).padStart(8);
       const timeStr = formatTime(r.timePerOp).padStart(10);
-      console.log(
+      console.info(
         `  ${r.name.padEnd(25)} ${COLORS.bold}${opsStr}${COLORS.reset} ops/s  ` +
         `${COLORS.dim}${timeStr}${COLORS.reset}/op`
       );
     }
-    console.log();
+    console.info();
   }
 }
 
 function printJson(results: BenchmarkResult[]) {
-  console.log(JSON.stringify(results, null, 2));
+  console.info(JSON.stringify(results, null, 2));
 }
 
 function printCsv(results: BenchmarkResult[]) {
-  console.log("name,category,opsPerSecond,timePerOpUs,iterations,totalTimeMs");
+  console.info("name,category,opsPerSecond,timePerOpUs,iterations,totalTimeMs");
   for (const r of results) {
-    console.log(`${r.name},${r.category},${r.opsPerSecond},${r.timePerOp},${r.iterations},${r.totalTime}`);
+    console.info(`${r.name},${r.category},${r.opsPerSecond},${r.timePerOp},${r.iterations},${r.totalTime}`);
   }
 }
 
 function printSpeedup(results: BenchmarkResult[]) {
-  console.log(`\n${COLORS.bold}${COLORS.magenta}🚀 Tier-1380 Omega Speedup Analysis${COLORS.reset}\n`);
+  console.info(`\n${COLORS.bold}${COLORS.magenta}🚀 Tier-1380 Omega Speedup Analysis${COLORS.reset}\n`);
 
   // Estimated Node.js baseline comparisons
   const baselines: Record<string, number> = {
@@ -341,9 +341,9 @@ function printSpeedup(results: BenchmarkResult[]) {
     "wrapAnsi(Col-89)": 500000,       // 500µs npm wrap-ansi
   };
 
-  console.log("─".repeat(80));
-  console.log(`${"Benchmark".padEnd(25)} ${"Bun v1.3.8".padEnd(12)} ${"Node/npm".padEnd(12)} ${"Speedup".padEnd(10)}`);
-  console.log("─".repeat(80));
+  console.info("─".repeat(80));
+  console.info(`${"Benchmark".padEnd(25)} ${"Bun v1.3.8".padEnd(12)} ${"Node/npm".padEnd(12)} ${"Speedup".padEnd(10)}`);
+  console.info("─".repeat(80));
 
   for (const r of results) {
     const baseline = baselines[r.name];
@@ -355,7 +355,7 @@ function printSpeedup(results: BenchmarkResult[]) {
           ? `${COLORS.yellow}${speedup.toFixed(1)}x${COLORS.reset}`
           : `${speedup.toFixed(1)}x`;
 
-      console.log(
+      console.info(
         `${r.name.padEnd(25)} ` +
         `${formatTime(r.timePerOp).padEnd(12)} ` +
         `${formatTime(baseline).padEnd(12)} ` +
@@ -363,7 +363,7 @@ function printSpeedup(results: BenchmarkResult[]) {
       );
     }
   }
-  console.log("─".repeat(80));
+  console.info("─".repeat(80));
 }
 
 // ============================================================================
@@ -371,47 +371,47 @@ function printSpeedup(results: BenchmarkResult[]) {
 // ============================================================================
 
 function printIntegrationDemo() {
-  console.log(`\n${COLORS.bold}${COLORS.magenta}🔧 Omega Pools Integration${COLORS.reset}\n`);
+  console.info(`\n${COLORS.bold}${COLORS.magenta}🔧 Omega Pools Integration${COLORS.reset}\n`);
 
   const MATRIX_POOL_SIZE = 1380;
   const ENABLE_FFI = true;
 
   // Demonstrate faster Buffer.from for session IDs
-  console.log(`${COLORS.cyan}Buffer.from() for Session IDs:${COLORS.reset}`);
+  console.info(`${COLORS.cyan}Buffer.from() for Session IDs:${COLORS.reset}`);
   const sessionIds = Array(5).fill(0).map((_, i) =>
     Buffer.from([i, i + 1, i + 2, i + 3])
   );
-  console.log(`  Generated ${sessionIds.length} session buffers: ${sessionIds.map(b => b.toString("hex")).join(", ")}`);
+  console.info(`  Generated ${sessionIds.length} session buffers: ${sessionIds.map(b => b.toString("hex")).join(", ")}`);
 
   // Demonstrate faster array.flat() for pool data
-  console.log(`\n${COLORS.green}array.flat() for Nested Pools:${COLORS.reset}`);
+  console.info(`\n${COLORS.green}array.flat() for Nested Pools:${COLORS.reset}`);
   const nestedPools = [[{ id: 1, tier: 1380 }], [{ id: 2, tier: 1380 }]];
   const flatPools = nestedPools.flat();
-  console.log(`  Flattened ${nestedPools.length} nested arrays → ${flatPools.length} items`);
+  console.info(`  Flattened ${nestedPools.length} nested arrays → ${flatPools.length} items`);
 
   // Demonstrate faster padStart for hex formatting
-  console.log(`\n${COLORS.yellow}String.padStart() for Hex IDs:${COLORS.reset}`);
+  console.info(`\n${COLORS.yellow}String.padStart() for Hex IDs:${COLORS.reset}`);
   const hexIds = sessionIds.map(b => b.toString("hex").padStart(16, "0"));
-  console.log(`  Formatted ${hexIds.length} IDs to 16-char hex`);
+  console.info(`  Formatted ${hexIds.length} IDs to 16-char hex`);
 
   // Demonstrate ARM64 ccmp branchless conditions
-  console.log(`\n${COLORS.blue}ARM64 ccmp Branchless Conditions:${COLORS.reset}`);
+  console.info(`\n${COLORS.blue}ARM64 ccmp Branchless Conditions:${COLORS.reset}`);
   if (sessionIds.length === 5 && ENABLE_FFI) {
-    console.log(`  ✓ Pool size check (5 === 5 && ENABLE_FFI) passed`);
+    console.info(`  ✓ Pool size check (5 === 5 && ENABLE_FFI) passed`);
   }
 
   // Demonstrate wrapAnsi for Col-89 tables
   if (typeof Bun.wrapAnsi === "function") {
-    console.log(`\n${COLORS.magenta}Bun.wrapAnsi() for Col-89 Tables:${COLORS.reset}`);
+    console.info(`\n${COLORS.magenta}Bun.wrapAnsi() for Col-89 Tables:${COLORS.reset}`);
     const longLine = hexIds.join("  ");
     const wrapped = Bun.wrapAnsi!(longLine, 50, { hard: true });
-    console.log(`  Wrapped ${Bun.stringWidth!(longLine)} chars to Col-50:`);
+    console.info(`  Wrapped ${Bun.stringWidth!(longLine)} chars to Col-50:`);
     for (const line of wrapped.split("\n")) {
-      console.log(`    ${line}`);
+      console.info(`    ${line}`);
     }
   }
 
-  console.log();
+  console.info();
 }
 
 // ============================================================================
@@ -430,7 +430,7 @@ async function main() {
   });
 
   if (args.help) {
-    console.log(`
+    console.info(`
 ${COLORS.bold}Bun v1.3.7+ Performance Benchmark Suite${COLORS.reset}
 
 Usage: bun run benchmarks/bun-v137-perf.ts [options]
@@ -449,14 +449,14 @@ Benchmarks:
     process.exit(0);
   }
 
-  console.log(`${COLORS.bold}${COLORS.cyan}
+  console.info(`${COLORS.bold}${COLORS.cyan}
 ╔══════════════════════════════════════════════════════════════════╗
 ║     Bun v1.3.7+ Performance Benchmark Suite (Tier-1380)          ║
 ║     Buffer • JSC • wrapAnsi • ARM64 ccmp                          ║
 ╚══════════════════════════════════════════════════════════════════╝
 ${COLORS.reset}`);
 
-  console.log(`${COLORS.dim}Runtime: Bun ${Bun.version} on ${process.arch}${COLORS.reset}\n`);
+  console.info(`${COLORS.dim}Runtime: Bun ${Bun.version} on ${process.arch}${COLORS.reset}\n`);
 
   const allResults: BenchmarkResult[] = [];
 
@@ -475,9 +475,9 @@ ${COLORS.reset}`);
     printIntegrationDemo();
 
     // System info footer
-    console.log(`${COLORS.dim}─────────────────────────────────────────────────────────────────${COLORS.reset}`);
-    console.log(`${COLORS.dim}Benchmark complete. Run with --json for machine-readable output.${COLORS.reset}`);
-    console.log(`${COLORS.dim}Tier-1380 OMEGA | Bun v${Bun.version} | ${new Date().toISOString()}${COLORS.reset}\n`);
+    console.info(`${COLORS.dim}─────────────────────────────────────────────────────────────────${COLORS.reset}`);
+    console.info(`${COLORS.dim}Benchmark complete. Run with --json for machine-readable output.${COLORS.reset}`);
+    console.info(`${COLORS.dim}Tier-1380 OMEGA | Bun v${Bun.version} | ${new Date().toISOString()}${COLORS.reset}\n`);
   }
 }
 

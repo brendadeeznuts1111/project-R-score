@@ -63,14 +63,14 @@ export class PreDeployChecklist {
   }
   
   async runAll(): Promise<DeployCheck> {
-    console.log('🚀 Starting comprehensive pre-deployment checklist...');
+    console.info('🚀 Starting comprehensive pre-deployment checklist...');
     const startTime = Date.now();
     
     const results: CheckResult[] = [];
     let passed = true;
     
     for (const check of this.checks) {
-      console.log(`🔍 Running: ${check.name}...`);
+      console.info(`🔍 Running: ${check.name}...`);
       const checkStartTime = Date.now();
       
       try {
@@ -80,9 +80,9 @@ export class PreDeployChecklist {
         
         if (!result.passed) {
           passed = false;
-          console.log(`❌ ${check.name} FAILED: ${(result as CheckResult).message}`);
+          console.info(`❌ ${check.name} FAILED: ${(result as CheckResult).message}`);
         } else {
-          console.log(`✅ ${check.name} PASSED (${duration}ms)`);
+          console.info(`✅ ${check.name} PASSED (${duration}ms)`);
         }
       } catch (error) {
         const duration = Date.now() - checkStartTime;
@@ -94,7 +94,7 @@ export class PreDeployChecklist {
           duration
         });
         passed = false;
-        console.log(`💥 ${check.name} ERROR: ${(error as Error).message}`);
+        console.info(`💥 ${check.name} ERROR: ${(error as Error).message}`);
       }
     }
     
@@ -113,16 +113,16 @@ export class PreDeployChecklist {
     await this.writeDeploymentReport(report);
     
     if (passed) {
-      console.log('\\n🎉 All checks passed! Ready for deployment.');
-      console.log('\\nNext steps:');
-      console.log('  1. Run: bun run deploy:production');
-      console.log('  2. Monitor: https://monitor.factory-wager.com/cascade-health');
-      console.log('  3. Verify: bun run cascade:post-deploy-check');
+      console.info('\\n🎉 All checks passed! Ready for deployment.');
+      console.info('\\nNext steps:');
+      console.info('  1. Run: bun run deploy:production');
+      console.info('  2. Monitor: https://monitor.factory-wager.com/cascade-health');
+      console.info('  3. Verify: bun run cascade:post-deploy-check');
     } else {
-      console.log('\\n❌ Pre-deployment checks failed. Fix issues before deploying.');
-      console.log('\\nCritical issues:');
+      console.info('\\n❌ Pre-deployment checks failed. Fix issues before deploying.');
+      console.info('\\nCritical issues:');
       results.filter(r => r.severity === 'critical').forEach(r => {
-        console.log(`  - ${r.name}: ${r.message}`);
+        console.info(`  - ${r.name}: ${r.message}`);
       });
     }
     
@@ -226,7 +226,7 @@ export class PreDeployChecklist {
   }
   
   async runCanaryTest(): Promise<CheckResult> {
-    console.log('🕊️ Starting canary deployment test...');
+    console.info('🕊️ Starting canary deployment test...');
     
     // Deploy to canary environment
     const canaryResult = await this.deployToCanary();
@@ -242,7 +242,7 @@ export class PreDeployChecklist {
     }
     
     // Wait for stabilization
-    console.log('⏳ Waiting for canary stabilization...');
+    console.info('⏳ Waiting for canary stabilization...');
     await new Promise(resolve => setTimeout(resolve, 300000)); // 5 minutes
     
     // Check canary health
@@ -258,7 +258,7 @@ export class PreDeployChecklist {
   }
   
   private async runPerformanceBenchmarks(): Promise<any[]> {
-    console.log('🏃 Running performance benchmarks...');
+    console.info('🏃 Running performance benchmarks...');
     
     const benchmarks = [
       { name: 'rule_matching', target: 1, unit: 'ms' },
@@ -283,7 +283,7 @@ export class PreDeployChecklist {
         improvement: ((benchmark.target - actual) / benchmark.target * 100).toFixed(1)
       });
       
-      console.log(`  ${benchmark.name}: ${actual.toFixed(2)}${benchmark.unit} (${status})`);
+      console.info(`  ${benchmark.name}: ${actual.toFixed(2)}${benchmark.unit} (${status})`);
     }
     
     return results;
@@ -295,7 +295,7 @@ export class PreDeployChecklist {
     const coveredHooks = 145;
     const coverage = (coveredHooks / totalHooks) * 100;
     
-    console.log(`🎣 Hook coverage: ${coveredHooks}/${totalHooks} (${coverage.toFixed(1)}%)`);
+    console.info(`🎣 Hook coverage: ${coveredHooks}/${totalHooks} (${coverage.toFixed(1)}%)`);
     return coverage;
   }
   
@@ -321,7 +321,7 @@ export class PreDeployChecklist {
   }
   
   private async deployToCanary(): Promise<CanaryResult> {
-    console.log('🚀 Deploying to canary environment...');
+    console.info('🚀 Deploying to canary environment...');
     
     try {
       // Simulate canary deployment
@@ -350,7 +350,7 @@ export class PreDeployChecklist {
   }
   
   private async checkCanaryHealth(): Promise<HealthCheck> {
-    console.log('🏥 Checking canary health...');
+    console.info('🏥 Checking canary health...');
     
     // Simulate health checks
     const healthScore = 95 + Math.random() * 4; // 95-99%
@@ -408,9 +408,9 @@ export class PreDeployChecklist {
     const reportPath = './deploy-check-report.json';
     
     try {
-      console.log(`📄 Writing deployment report: ${reportPath}`);
+      console.info(`📄 Writing deployment report: ${reportPath}`);
       // In real implementation, would use Bun.write()
-      console.log('✅ Deployment report saved');
+      console.info('✅ Deployment report saved');
     } catch (error) {
       console.error('❌ Failed to write deployment report:', error);
     }
@@ -426,7 +426,7 @@ export class PostDeployVerifier {
   }
   
   async verifyDeployment(): Promise<{ success: boolean; issues: string[] }> {
-    console.log('🔍 Running post-deployment verification...');
+    console.info('🔍 Running post-deployment verification...');
     
     const issues: string[] = [];
     
@@ -476,10 +476,10 @@ export class PostDeployVerifier {
     const success = issues.length === 0;
     
     if (success) {
-      console.log('✅ Post-deployment verification passed');
+      console.info('✅ Post-deployment verification passed');
     } else {
-      console.log('❌ Post-deployment verification failed:');
-      issues.forEach(issue => console.log(`  - ${issue}`));
+      console.info('❌ Post-deployment verification failed:');
+      issues.forEach(issue => console.info(`  - ${issue}`));
     }
     
     return { success, issues };
@@ -507,5 +507,5 @@ export async function runPostDeployVerify(): Promise<void> {
     (globalThis as any).process?.exit?.(1);
   }
   
-  console.log('✅ Deployment verification completed successfully');
+  console.info('✅ Deployment verification completed successfully');
 }

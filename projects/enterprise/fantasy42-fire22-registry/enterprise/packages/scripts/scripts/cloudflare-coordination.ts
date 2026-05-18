@@ -50,11 +50,11 @@ class CloudflareCoordination {
    * ☁️ Coordinate with Cloudflare for final deployment approval
    */
   async coordinateCloudflareApproval(): Promise<void> {
-    console.log('☁️ FIRE22 CLOUDFLARE COORDINATION');
-    console.log('!==!==!==!==!==!===');
-    console.log(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
-    console.log(`⏰ Time: ${new Date().toLocaleTimeString()}`);
-    console.log(`🎯 Operation: SECURE-COMM-22\n`);
+    console.info('☁️ FIRE22 CLOUDFLARE COORDINATION');
+    console.info('!==!==!==!==!==!===');
+    console.info(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
+    console.info(`⏰ Time: ${new Date().toLocaleTimeString()}`);
+    console.info(`🎯 Operation: SECURE-COMM-22\n`);
 
     // Check current approval status
     await this.checkApprovalStatus();
@@ -71,16 +71,16 @@ class CloudflareCoordination {
     // Generate executive status report
     await this.generateExecutiveStatusReport();
 
-    console.log('\n☁️ Cloudflare coordination completed');
-    console.log('📧 Follow-up communications generated');
-    console.log('📋 Deployment readiness package prepared');
+    console.info('\n☁️ Cloudflare coordination completed');
+    console.info('📧 Follow-up communications generated');
+    console.info('📋 Deployment readiness package prepared');
   }
 
   /**
    * 📊 Check current approval status
    */
   private async checkApprovalStatus(): Promise<void> {
-    console.log('📊 Checking Cloudflare approval status...');
+    console.info('📊 Checking Cloudflare approval status...');
 
     // Simulate approval status check
     const daysSinceSubmission = Math.floor(
@@ -113,16 +113,16 @@ class CloudflareCoordination {
       ];
     }
 
-    console.log(`  📋 Status: ${this.deploymentApproval.status}`);
-    console.log(`  👤 Reviewer: ${this.deploymentApproval.reviewer}`);
-    console.log(`  ⏰ Estimated completion: ${this.deploymentApproval.estimatedCompletion}`);
+    console.info(`  📋 Status: ${this.deploymentApproval.status}`);
+    console.info(`  👤 Reviewer: ${this.deploymentApproval.reviewer}`);
+    console.info(`  ⏰ Estimated completion: ${this.deploymentApproval.estimatedCompletion}`);
   }
 
   /**
    * 📧 Generate follow-up communications
    */
   private async generateFollowUpCommunications(): Promise<void> {
-    console.log('📧 Generating follow-up communications...');
+    console.info('📧 Generating follow-up communications...');
 
     // Status update to Cloudflare
     await this.generateCloudflareStatusUpdate();
@@ -133,7 +133,7 @@ class CloudflareCoordination {
     // Executive briefing
     await this.generateExecutiveBriefing();
 
-    console.log('  ✅ Follow-up communications generated');
+    console.info('  ✅ Follow-up communications generated');
   }
 
   /**
@@ -528,7 +528,7 @@ Cloudflare is actively reviewing our $55,200/year Durable Objects email security
   }
 
   private async createDeploymentReadinessPackage(): Promise<void> {
-    console.log('📦 Creating deployment readiness package...');
+    console.info('📦 Creating deployment readiness package...');
 
     const readinessPackage = `# 📦 Fire22 Deployment Readiness Package
 **CLOUDFLARE DURABLE OBJECTS IMPLEMENTATION**
@@ -576,11 +576,11 @@ Cloudflare is actively reviewing our $55,200/year Durable Objects email security
     const packagePath = join(this.coordinationDir, 'deployment-readiness-package.md');
     writeFileSync(packagePath, readinessPackage);
 
-    console.log('  ✅ Deployment readiness package created');
+    console.info('  ✅ Deployment readiness package created');
   }
 
   private async scheduleCoordinationMeetings(): Promise<void> {
-    console.log('📅 Scheduling coordination meetings...');
+    console.info('📅 Scheduling coordination meetings...');
 
     const meetingSchedule = `# 📅 Cloudflare Coordination Meetings
 **DEPLOYMENT COORDINATION SCHEDULE**
@@ -617,7 +617,7 @@ Cloudflare is actively reviewing our $55,200/year Durable Objects email security
     const schedulePath = join(this.coordinationDir, 'coordination-meetings.md');
     writeFileSync(schedulePath, meetingSchedule);
 
-    console.log('  ✅ Coordination meetings scheduled');
+    console.info('  ✅ Coordination meetings scheduled');
   }
 
   private async generateExecutiveStatusReport(): Promise<void> {
@@ -664,12 +664,12 @@ async function main() {
     const coordination = new CloudflareCoordination();
     await coordination.coordinateCloudflareApproval();
 
-    console.log('\n☁️ CLOUDFLARE COORDINATION COMPLETE!');
-    console.log('!==!==!==!==!==!=====');
-    console.log('✅ Approval status checked and updated');
-    console.log('✅ Follow-up communications generated');
-    console.log('✅ Deployment readiness package prepared');
-    console.log('✅ Executive briefing completed');
+    console.info('\n☁️ CLOUDFLARE COORDINATION COMPLETE!');
+    console.info('!==!==!==!==!==!=====');
+    console.info('✅ Approval status checked and updated');
+    console.info('✅ Follow-up communications generated');
+    console.info('✅ Deployment readiness package prepared');
+    console.info('✅ Executive briefing completed');
   } catch (error) {
     console.error('❌ Cloudflare coordination failed:', error);
     process.exit(1);

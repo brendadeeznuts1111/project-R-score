@@ -25,13 +25,13 @@ const colors = {
 } as const;
 
 function colorLog(color: keyof typeof colors, message: string): void {
-  console.log(`${colors[color]}${message}${colors.reset}`);
+  console.info(`${colors[color]}${message}${colors.reset}`);
 }
 
 // List objects in bucket using wrangler
 async function listObjects(): Promise<void> {
   colorLog("cyan", "📋 Listing objects in bucket: " + config.bucketName);
-  console.log("");
+  console.info("");
 
   try {
     colorLog("blue", "🔍 Fetching bucket contents...");
@@ -48,11 +48,11 @@ async function listObjects(): Promise<void> {
 
     if (exitCode === 0) {
       colorLog("green", "✅ Bucket contents retrieved!");
-      console.log("");
-      console.log(stdout);
+      console.info("");
+      console.info(stdout);
     } else {
       colorLog("red", "❌ Error listing objects:");
-      console.log(stderr);
+      console.info(stderr);
     }
   } catch (error) {
     colorLog("red", "❌ Error listing objects: " + error);
@@ -64,10 +64,10 @@ async function uploadFile(localPath: string, remoteName?: string): Promise<void>
   const key = remoteName || localPath.split("/").pop() || "uploaded-file";
 
   colorLog("cyan", "📤 Uploading file to bucket: " + config.bucketName);
-  console.log("");
-  console.log(`📁 Local file: ${localPath}`);
-  console.log(`📝 Remote name: ${key}`);
-  console.log("");
+  console.info("");
+  console.info(`📁 Local file: ${localPath}`);
+  console.info(`📝 Remote name: ${key}`);
+  console.info("");
 
   try {
     const file = Bun.file(localPath);
@@ -95,18 +95,18 @@ async function uploadFile(localPath: string, remoteName?: string): Promise<void>
 
     if (exitCode === 0) {
       colorLog("green", "✅ Upload successful!");
-      console.log("");
+      console.info("");
       colorLog("blue", "📊 Upload Details:");
-      console.log(`   • File: ${key}`);
-      console.log(`   • Size: ${fileSize} KB`);
-      console.log(`   • Bucket: ${config.bucketName}`);
-      console.log("");
+      console.info(`   • File: ${key}`);
+      console.info(`   • Size: ${fileSize} KB`);
+      console.info(`   • Bucket: ${config.bucketName}`);
+      console.info("");
       colorLog("blue", "🌐 Access URLs:");
-      console.log("   • Web Interface: http://localhost:5173");
-      console.log(`   • Direct URL: ${config.endpoint}/${config.bucketName}/${key}`);
+      console.info("   • Web Interface: http://localhost:5173");
+      console.info(`   • Direct URL: ${config.endpoint}/${config.bucketName}/${key}`);
     } else {
       colorLog("red", "❌ Upload failed:");
-      console.log(stderr);
+      console.info(stderr);
     }
   } catch (error) {
     colorLog("red", "❌ Upload error: " + error);
@@ -118,9 +118,9 @@ async function downloadFile(remoteKey: string, localPath?: string) {
   const outputPath = localPath || remoteKey.split("/").pop() || "downloaded-file";
 
   colorLog("cyan", "📥 Downloading file from R2:");
-  console.log(`   Remote: ${remoteKey}`);
-  console.log(`   Local: ${outputPath}`);
-  console.log("");
+  console.info(`   Remote: ${remoteKey}`);
+  console.info(`   Local: ${outputPath}`);
+  console.info("");
 
   try {
     const response = await client.getObject({
@@ -133,7 +133,7 @@ async function downloadFile(remoteKey: string, localPath?: string) {
       colorLog("green", "✅ Download successful: " + outputPath);
 
       const stats = await Bun.file(outputPath).stat();
-      console.log(`   Size: ${(stats.size / 1024).toFixed(2)} KB`);
+      console.info(`   Size: ${(stats.size / 1024).toFixed(2)} KB`);
     } else {
       colorLog("red", "❌ File not found: " + remoteKey);
     }
@@ -161,11 +161,11 @@ async function deleteFile(remoteKey: string) {
 // Show bucket info
 async function bucketInfo() {
   colorLog("cyan", "📊 R2 Bucket Information:");
-  console.log("");
-  console.log(`   Name: ${config.bucketName}`);
-  console.log(`   Account ID: ${config.accountId}`);
-  console.log(`   Endpoint: ${config.endpoint}`);
-  console.log("");
+  console.info("");
+  console.info(`   Name: ${config.bucketName}`);
+  console.info(`   Account ID: ${config.accountId}`);
+  console.info(`   Endpoint: ${config.endpoint}`);
+  console.info("");
 
   // Try to list objects to show bucket activity
   try {
@@ -177,9 +177,9 @@ async function bucketInfo() {
     colorLog("green", `   Objects: ${count} file(s)`);
 
     if (count > 0) {
-      console.log("   Status: Active and accessible");
+      console.info("   Status: Active and accessible");
     } else {
-      console.log("   Status: Ready for uploads");
+      console.info("   Status: Ready for uploads");
     }
   } catch (error) {
     colorLog("red", "   Status: Connection error");
@@ -190,25 +190,25 @@ async function bucketInfo() {
 function showHelp() {
   colorLog("cyan", "🚀 Bun R2 CLI Tool");
   colorLog("cyan", "==================");
-  console.log("");
+  console.info("");
   colorLog("yellow", "Usage:");
-  console.log("   bun x scripts/bun-r2-cli.ts <command> [options]");
-  console.log("");
+  console.info("   bun x scripts/bun-r2-cli.ts <command> [options]");
+  console.info("");
   colorLog("yellow", "Commands:");
-  console.log("   list                    - List all files in bucket");
-  console.log("   upload <file> [name]    - Upload a file");
-  console.log("   download <key> [output] - Download a file");
-  console.log("   delete <key>            - Delete a file");
-  console.log("   info                    - Show bucket information");
-  console.log("   help                    - Show this help");
-  console.log("");
+  console.info("   list                    - List all files in bucket");
+  console.info("   upload <file> [name]    - Upload a file");
+  console.info("   download <key> [output] - Download a file");
+  console.info("   delete <key>            - Delete a file");
+  console.info("   info                    - Show bucket information");
+  console.info("   help                    - Show this help");
+  console.info("");
   colorLog("yellow", "Examples:");
-  console.log("   bun x scripts/bun-r2-cli.ts list");
-  console.log("   bun x scripts/bun-r2-cli.ts upload ./photo.jpg");
-  console.log("   bun x scripts/bun-r2-cli.ts upload ./data.json backup/data.json");
-  console.log("   bun x scripts/bun-r2-cli.ts download test-upload.txt");
-  console.log("   bun x scripts/bun-r2-cli.ts delete old-file.txt");
-  console.log("");
+  console.info("   bun x scripts/bun-r2-cli.ts list");
+  console.info("   bun x scripts/bun-r2-cli.ts upload ./photo.jpg");
+  console.info("   bun x scripts/bun-r2-cli.ts upload ./data.json backup/data.json");
+  console.info("   bun x scripts/bun-r2-cli.ts download test-upload.txt");
+  console.info("   bun x scripts/bun-r2-cli.ts delete old-file.txt");
+  console.info("");
   colorLog("blue", "💡 Web Interface: http://localhost:5173");
 }
 

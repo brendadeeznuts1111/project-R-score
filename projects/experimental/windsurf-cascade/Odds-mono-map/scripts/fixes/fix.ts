@@ -48,7 +48,7 @@ class VaultFixer {
     }
 
     async fixAll(): Promise<FixResult> {
-        console.log(chalk.blue.bold('🔧 Fixing Common Vault Issues...'));
+        console.info(chalk.blue.bold('🔧 Fixing Common Vault Issues...'));
 
         // Get all markdown files
         const files = await glob('**/*.md', {
@@ -56,7 +56,7 @@ class VaultFixer {
             ignore: ['**/.obsidian/**', '**/07 - Archive/**', '**/node_modules/**']
         });
 
-        console.log(chalk.gray(`Found ${files.length} files to fix`));
+        console.info(chalk.gray(`Found ${files.length} files to fix`));
 
         for (const file of files) {
             await this.fixFile(file);
@@ -108,14 +108,14 @@ class VaultFixer {
             if (modified) {
                 writeFileSync(fullPath, content);
                 this.result.fixed.push(filePath);
-                console.log(chalk.green(`✓ Fixed: ${filePath}`));
+                console.info(chalk.green(`✓ Fixed: ${filePath}`));
             } else {
                 this.result.skipped.push(filePath);
             }
 
         } catch (error) {
             this.result.errors.push(`${filePath}: ${error}`);
-            console.log(chalk.red(`✗ Failed to fix ${filePath}: ${error}`));
+            console.info(chalk.red(`✗ Failed to fix ${filePath}: ${error}`));
         }
     }
 
@@ -379,24 +379,24 @@ author: system
     }
 
     private displayResults(): void {
-        console.log(chalk.blue.bold('\n📊 Fix Results:'));
-        console.log(chalk.green(`✅ Files fixed: ${this.result.fixed.length}`));
-        console.log(chalk.gray(`⏭️  Files skipped: ${this.result.skipped.length}`));
+        console.info(chalk.blue.bold('\n📊 Fix Results:'));
+        console.info(chalk.green(`✅ Files fixed: ${this.result.fixed.length}`));
+        console.info(chalk.gray(`⏭️  Files skipped: ${this.result.skipped.length}`));
 
         if (this.result.errors.length > 0) {
-            console.log(chalk.red(`❌ Errors: ${this.result.errors.length}`));
-            this.result.errors.forEach(error => console.log(chalk.red(`   - ${error}`)));
+            console.info(chalk.red(`❌ Errors: ${this.result.errors.length}`));
+            this.result.errors.forEach(error => console.info(chalk.red(`   - ${error}`)));
         }
 
         if (this.result.fixed.length > 0) {
-            console.log(chalk.blue.bold('\n🔧 Files Fixed:'));
-            this.result.fixed.forEach(file => console.log(chalk.gray(`   ${file}`)));
+            console.info(chalk.blue.bold('\n🔧 Files Fixed:'));
+            this.result.fixed.forEach(file => console.info(chalk.gray(`   ${file}`)));
         }
 
-        console.log(chalk.blue.bold('\n💡 Next Steps:'));
-        console.log('1. Run: bun run vault:validate - Verify fixes');
-        console.log('2. Run: bun run vault:organize - Organize any remaining files');
-        console.log('3. Review fixed files and adjust as needed');
+        console.info(chalk.blue.bold('\n💡 Next Steps:'));
+        console.info('1. Run: bun run vault:validate - Verify fixes');
+        console.info('2. Run: bun run vault:organize - Organize any remaining files');
+        console.info('3. Review fixed files and adjust as needed');
     }
 }
 

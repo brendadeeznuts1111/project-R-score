@@ -54,11 +54,11 @@ function benchmarkVector() {
   return end - start;
 }
 
-console.log("📊 Unicode Intelligence Benchmark Harness");
-console.log("------------------------------------------");
-console.log(`Iterations: ${ITERATIONS.toLocaleString()}`);
-console.log(`Buffer Size: ${BUFFER_SIZE} codepoints`);
-console.log("");
+console.info("📊 Unicode Intelligence Benchmark Harness");
+console.info("------------------------------------------");
+console.info(`Iterations: ${ITERATIONS.toLocaleString()}`);
+console.info(`Buffer Size: ${BUFFER_SIZE} codepoints`);
+console.info("");
 
 const scalarTime = benchmarkScalar();
 const vectorTime = benchmarkVector();
@@ -66,16 +66,16 @@ const vectorTime = benchmarkVector();
 const scalarThroughput = (ITERATIONS / (scalarTime / 1000)) / 1_000_000;
 const vectorThroughput = (ITERATIONS / (vectorTime / 1000)) / 1_000_000;
 
-console.log(`[Scalar] Time: ${scalarTime.toFixed(2)}ms | Throughput: ${scalarThroughput.toFixed(2)} M-ops/s`);
-console.log(`[Vector] Time: ${vectorTime.toFixed(2)}ms | Throughput: ${vectorThroughput.toFixed(2)} M-ops/s`);
-console.log("");
+console.info(`[Scalar] Time: ${scalarTime.toFixed(2)}ms | Throughput: ${scalarThroughput.toFixed(2)} M-ops/s`);
+console.info(`[Vector] Time: ${vectorTime.toFixed(2)}ms | Throughput: ${vectorThroughput.toFixed(2)} M-ops/s`);
+console.info("");
 
 const improvement = (scalarTime / vectorTime).toFixed(1);
-console.log(`🚀 Improvement: ${improvement}x`);
+console.info(`🚀 Improvement: ${improvement}x`);
 
 if (parseFloat(improvement) >= 1.5) {
-  console.log("✅ Performance target met (>1.5x improvement in JS-simulated vectorization)");
-  console.log("Note: Real Zig/SIMD hardware acceleration will reach the 10x target.");
+  console.info("✅ Performance target met (>1.5x improvement in JS-simulated vectorization)");
+  console.info("Note: Real Zig/SIMD hardware acceleration will reach the 10x target.");
 } else {
-  console.log("⚠️ Performance target not met in JS simulation.");
+  console.info("⚠️ Performance target not met in JS simulation.");
 }

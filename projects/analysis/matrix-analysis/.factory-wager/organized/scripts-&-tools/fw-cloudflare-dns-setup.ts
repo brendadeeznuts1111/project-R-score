@@ -22,7 +22,7 @@ class CloudflareDNSManager {
   private domain = 'factory-wager.com';
 
   async setupCredentials(): Promise<void> {
-    console.log("🔧 Setting up Cloudflare credentials...");
+    console.info("🔧 Setting up Cloudflare credentials...");
 
     // Check if credentials are already stored
     try {
@@ -30,7 +30,7 @@ class CloudflareDNSManager {
       this.email = await Bun.secrets.get({ name: "EMAIL", service: "cloudflare" });
 
       if (this.apiToken && this.email) {
-        console.log("✅ Cloudflare credentials found");
+        console.info("✅ Cloudflare credentials found");
         return;
       }
     } catch {
@@ -38,8 +38,8 @@ class CloudflareDNSManager {
     }
 
     // Prompt for credentials
-    console.log("⚠️ Cloudflare credentials not found in secrets");
-    console.log("Please provide your Cloudflare API credentials:");
+    console.info("⚠️ Cloudflare credentials not found in secrets");
+    console.info("Please provide your Cloudflare API credentials:");
 
     // In a real scenario, you'd prompt the user
     // For now, we'll use environment variables or ask for manual setup
@@ -54,9 +54,9 @@ class CloudflareDNSManager {
       this.apiToken = apiToken;
       this.email = email;
 
-      console.log("✅ Cloudflare credentials stored in secrets");
+      console.info("✅ Cloudflare credentials stored in secrets");
     } else {
-      console.log("❌ Please set CLOUDFLARE_API_TOKEN and CLOUDFLARE_EMAIL environment variables");
+      console.info("❌ Please set CLOUDFLARE_API_TOKEN and CLOUDFLARE_EMAIL environment variables");
       throw new Error("Missing Cloudflare credentials");
     }
   }
@@ -66,7 +66,7 @@ class CloudflareDNSManager {
       throw new Error("Cloudflare API token not configured");
     }
 
-    console.log(`🔍 Looking up zone ID for ${this.domain}...`);
+    console.info(`🔍 Looking up zone ID for ${this.domain}...`);
 
     try {
       const response = await fetch(`https://api.cloudflare.com/client/v4/zones?name=${this.domain}`, {
@@ -80,7 +80,7 @@ class CloudflareDNSManager {
 
       if (data.success && data.result.length > 0) {
         this.zoneId = data.result[0].id || undefined;
-        console.log(`✅ Zone ID found: ${this.zoneId}`);
+        console.info(`✅ Zone ID found: ${this.zoneId}`);
         return this.zoneId!;
       } else {
         throw new Error(`Zone not found for ${this.domain}`);
@@ -96,7 +96,7 @@ class CloudflareDNSManager {
       throw new Error("Cloudflare API token or zone ID not configured");
     }
 
-    console.log(`🔧 Creating DNS record: ${config.name} ${config.type} ${config.content}`);
+    console.info(`🔧 Creating DNS record: ${config.name} ${config.type} ${config.content}`);
 
     try {
       const response = await fetch(`https://api.cloudflare.com/client/v4/zones/${this.zoneId}/dns_records`, {
@@ -117,7 +117,7 @@ class CloudflareDNSManager {
       const data = await response.json();
 
       if (data.success) {
-        console.log(`✅ DNS record created: ${data.result.id}`);
+        console.info(`✅ DNS record created: ${data.result.id}`);
       } else {
         console.error("❌ Error creating DNS record:", data.errors);
         throw new Error(`DNS record creation failed: ${JSON.stringify(data.errors)}`);
@@ -133,7 +133,7 @@ class CloudflareDNSManager {
       throw new Error("Cloudflare API token or zone ID not configured");
     }
 
-    console.log("📋 Listing current DNS records...");
+    console.info("📋 Listing current DNS records...");
 
     try {
       const response = await fetch(`https://api.cloudflare.com/client/v4/zones/${this.zoneId}/dns_records`, {
@@ -146,7 +146,7 @@ class CloudflareDNSManager {
       const data = await response.json();
 
       if (data.success) {
-        console.log(`✅ Found ${data.result.length} DNS records`);
+        console.info(`✅ Found ${data.result.length} DNS records`);
         return data.result;
       } else {
         throw new Error(`Failed to list DNS records: ${JSON.stringify(data.errors)}`);
@@ -158,7 +158,7 @@ class CloudflareDNSManager {
   }
 
   async setupRegistryDNS(): Promise<void> {
-    console.log("🚀 Setting up DNS for registry.factory-wager.co...");
+    console.info("🚀 Setting up DNS for registry.factory-wager.co...");
 
     // Setup credentials
     await this.setupCredentials();
@@ -171,8 +171,8 @@ class CloudflareDNSManager {
     const registryRecord = existingRecords.find(r => r.name === 'registry.factory-wager.co');
 
     if (registryRecord) {
-      console.log(`⚠️ Registry DNS record already exists: ${registryRecord.content}`);
-      console.log("Updating existing record...");
+      console.info(`⚠️ Registry DNS record already exists: ${registryRecord.content}`);
+      console.info("Updating existing record...");
 
       // Delete existing record first
       await this.deleteDNSRecord(registryRecord.id);
@@ -191,8 +191,8 @@ class CloudflareDNSManager {
 
     await this.createDNSRecord(registryConfig);
 
-    console.log("✅ Registry DNS setup complete!");
-    console.log("⏳ DNS propagation may take up to 24 hours");
+    console.info("✅ Registry DNS setup complete!");
+    console.info("⏳ DNS propagation may take up to 24 hours");
   }
 
   private async deleteDNSRecord(recordId: string): Promise<void> {
@@ -212,7 +212,7 @@ class CloudflareDNSManager {
       const data = await response.json();
 
       if (data.success) {
-        console.log(`✅ Deleted DNS record: ${recordId}`);
+        console.info(`✅ Deleted DNS record: ${recordId}`);
       } else {
         throw new Error(`Failed to delete DNS record: ${JSON.stringify(data.errors)}`);
       }
@@ -225,24 +225,24 @@ class CloudflareDNSManager {
 
 // CLI interface
 async function main() {
-  console.log("🌐 FactoryWager Cloudflare DNS Setup");
-  console.log("=====================================");
+  console.info("🌐 FactoryWager Cloudflare DNS Setup");
+  console.info("=====================================");
 
   try {
     const dnsManager = new CloudflareDNSManager();
     await dnsManager.setupRegistryDNS();
 
-    console.log("\n✅ DNS setup completed successfully!");
-    console.log("🔍 Test DNS resolution with: dig registry.factory-wager.co");
-    console.log("⏳ Wait for propagation, then test registry connectivity");
+    console.info("\n✅ DNS setup completed successfully!");
+    console.info("🔍 Test DNS resolution with: dig registry.factory-wager.co");
+    console.info("⏳ Wait for propagation, then test registry connectivity");
 
   } catch (error) {
     console.error("\n❌ DNS setup failed:", (error as Error).message);
-    console.log("\n🔧 Manual setup required:");
-    console.log("1. Login to Cloudflare dashboard");
-    console.log("2. Go to DNS settings for factory-wager.com");
-    console.log("3. Create A record: registry -> 1.2.3.4 (proxy enabled)");
-    console.log("4. Wait for DNS propagation");
+    console.info("\n🔧 Manual setup required:");
+    console.info("1. Login to Cloudflare dashboard");
+    console.info("2. Go to DNS settings for factory-wager.com");
+    console.info("3. Create A record: registry -> 1.2.3.4 (proxy enabled)");
+    console.info("4. Wait for DNS propagation");
 
     process.exit(1);
   }

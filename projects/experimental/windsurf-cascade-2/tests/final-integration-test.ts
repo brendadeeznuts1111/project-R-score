@@ -29,14 +29,14 @@ const FINAL_CONFIG = {
 };
 
 async function runFinalIntegrationTest() {
-  console.log("🎯 Final Integration Test: 13-Byte Config Stack");
-  console.log("=".repeat(60));
+  console.info("🎯 Final Integration Test: 13-Byte Config Stack");
+  console.info("=".repeat(60));
   
   const testStart = nanoseconds();
   
   // Test 1: Complete end-to-end flow
-  console.log("\n🔄 Test 1: End-to-End Config Flow");
-  console.log("-".repeat(40));
+  console.info("\n🔄 Test 1: End-to-End Config Flow");
+  console.info("-".repeat(40));
   
   try {
     // 1.1 Fetch with config-aware proxy
@@ -49,7 +49,7 @@ async function runFinalIntegrationTest() {
     });
     const proxyDuration = nanoseconds() - proxyStart;
     
-    console.log(`✅ Proxy routing: ${proxyDuration}ns`);
+    console.info(`✅ Proxy routing: ${proxyDuration}ns`);
     
     // 1.2 Log the proxy operation
     logToSQLite({
@@ -64,41 +64,41 @@ async function runFinalIntegrationTest() {
     });
     
   } catch (error) {
-    console.log("⚠️  Proxy test failed (expected in demo):", error instanceof Error ? error.message : String(error));
+    console.info("⚠️  Proxy test failed (expected in demo):", error instanceof Error ? error.message : String(error));
   }
   
   // Test 2: Database consistency check
-  console.log("\n🗄️  Test 2: Database Consistency");
-  console.log("-".repeat(40));
+  console.info("\n🗄️  Test 2: Database Consistency");
+  console.info("-".repeat(40));
   
   const dbStart = nanoseconds();
   
   // 2.1 Query logs by current config
   const configLogs = queryLogsByConfig(FINAL_CONFIG.version, FINAL_CONFIG.featureFlags, 20);
-  console.log(`📊 Found ${configLogs.length} logs for current config`);
+  console.info(`📊 Found ${configLogs.length} logs for current config`);
   
   // 2.2 Get database statistics
   const stats = getDatabaseStats();
-  console.log(`📈 Database stats: ${stats.total_logs} total logs, ${stats.unique_versions} config versions`);
+  console.info(`📈 Database stats: ${stats.total_logs} total logs, ${stats.unique_versions} config versions`);
   
   // 2.3 Verify 13-byte consistency
   const consistentLogs = configLogs.filter(log => 
     log.config_version === FINAL_CONFIG.version && 
     log.feature_flags === FINAL_CONFIG.featureFlags
   );
-  console.log(`✅ Config consistency: ${consistentLogs.length}/${configLogs.length} logs match current config`);
+  console.info(`✅ Config consistency: ${consistentLogs.length}/${configLogs.length} logs match current config`);
   
   const dbDuration = nanoseconds() - dbStart;
-  console.log(`⚡ Database operations: ${dbDuration}ns`);
+  console.info(`⚡ Database operations: ${dbDuration}ns`);
   
   // Test 3: Console formatting verification
-  console.log("\n🖥️  Test 3: Terminal-Aware Console");
-  console.log("-".repeat(40));
+  console.info("\n🖥️  Test 3: Terminal-Aware Console");
+  console.info("-".repeat(40));
   
   const consoleStart = nanoseconds();
   
   // 3.1 Test JSON formatting with %j
-  console.log("%j", {
+  console.info("%j", {
     test_name: "final_integration",
     config_state: FINAL_CONFIG,
     performance: {
@@ -116,11 +116,11 @@ async function runFinalIntegrationTest() {
   console.debug("🐛 Debug message (only shown when DEBUG flag is enabled)");
   
   const consoleDuration = nanoseconds() - consoleStart;
-  console.log(`⚡ Console formatting: ${consoleDuration}ns`);
+  console.info(`⚡ Console formatting: ${consoleDuration}ns`);
   
   // Test 4: Performance benchmark
-  console.log("\n🚀 Test 4: Performance Benchmark");
-  console.log("-".repeat(40));
+  console.info("\n🚀 Test 4: Performance Benchmark");
+  console.info("-".repeat(40));
   
   const benchmarkStart = nanoseconds();
   
@@ -150,17 +150,17 @@ async function runFinalIntegrationTest() {
   const minDuration = Math.min(...operations);
   const maxDuration = Math.max(...operations);
   
-  console.log(`📊 Performance stats (10 operations):`);
-  console.log(`   • Average: ${Math.floor(avgDuration)}ns`);
-  console.log(`   • Min: ${Math.floor(minDuration)}ns`);
-  console.log(`   • Max: ${Math.floor(maxDuration)}ns`);
+  console.info(`📊 Performance stats (10 operations):`);
+  console.info(`   • Average: ${Math.floor(avgDuration)}ns`);
+  console.info(`   • Min: ${Math.floor(minDuration)}ns`);
+  console.info(`   • Max: ${Math.floor(maxDuration)}ns`);
   
   const benchmarkDuration = nanoseconds() - benchmarkStart;
-  console.log(`⚡ Total benchmark: ${benchmarkDuration}ns`);
+  console.info(`⚡ Total benchmark: ${benchmarkDuration}ns`);
   
   // Test 5: Config integrity verification
-  console.log("\n🔒 Test 5: 13-Byte Config Integrity");
-  console.log("-".repeat(40));
+  console.info("\n🔒 Test 5: 13-Byte Config Integrity");
+  console.info("-".repeat(40));
   
   // 5.1 Verify config bytes
   const configBytes = [
@@ -174,7 +174,7 @@ async function runFinalIntegrationTest() {
   ];
   
   const configHex = `0x${configBytes.join('')}`;
-  console.log(`🔢 13-byte config: ${configHex}`);
+  console.info(`🔢 13-byte config: ${configHex}`);
   
   // 5.2 Verify feature flags
   const expectedFeatures = {
@@ -188,25 +188,25 @@ async function runFinalIntegrationTest() {
     FINAL_CONFIG.features.PREMIUM_TYPES === expectedFeatures.PREMIUM_TYPES &&
     FINAL_CONFIG.features.DEBUG === expectedFeatures.DEBUG;
   
-  console.log(`✅ Feature flags integrity: ${featuresMatch ? 'PASS' : 'FAIL'}`);
+  console.info(`✅ Feature flags integrity: ${featuresMatch ? 'PASS' : 'FAIL'}`);
   
   // Final results
   const totalDuration = nanoseconds() - testStart;
   
-  console.log("\n🎉 Final Integration Test Results");
-  console.log("=".repeat(60));
-  console.log(`⚡ Total test time: ${totalDuration}ns`);
-  console.log(`📊 Config state: ${configHex}`);
-  console.log(`🗄️  Database logs: ${stats.total_logs} total`);
-  console.log(`🖥️  Console mode: ${FINAL_CONFIG.terminal.mode}`);
-  console.log(`🌐 Network routing: Config-aware proxy headers`);
-  console.log(`🔗 Connection pooling: Bun internal pooling`);
-  console.log(`📦 Binary compilation: Standalone ready`);
+  console.info("\n🎉 Final Integration Test Results");
+  console.info("=".repeat(60));
+  console.info(`⚡ Total test time: ${totalDuration}ns`);
+  console.info(`📊 Config state: ${configHex}`);
+  console.info(`🗄️  Database logs: ${stats.total_logs} total`);
+  console.info(`🖥️  Console mode: ${FINAL_CONFIG.terminal.mode}`);
+  console.info(`🌐 Network routing: Config-aware proxy headers`);
+  console.info(`🔗 Connection pooling: Bun internal pooling`);
+  console.info(`📦 Binary compilation: Standalone ready`);
   
-  console.log("\n✅ All Components Integrated Successfully!");
-  console.log("✅ 13-Byte Config Propagates Through All Layers!");
-  console.log("✅ Performance Targets Achieved!");
-  console.log("✅ Production Ready!");
+  console.info("\n✅ All Components Integrated Successfully!");
+  console.info("✅ 13-Byte Config Propagates Through All Layers!");
+  console.info("✅ Performance Targets Achieved!");
+  console.info("✅ Production Ready!");
   
   // Final log entry
   logToSQLite({
@@ -238,8 +238,8 @@ async function runFinalIntegrationTest() {
 if (import.meta.main) {
   runFinalIntegrationTest()
     .then((results) => {
-      console.log("\n🚀 Final integration test completed successfully!");
-      console.log(`📊 Results: ${JSON.stringify(results, null, 2)}`);
+      console.info("\n🚀 Final integration test completed successfully!");
+      console.info(`📊 Results: ${JSON.stringify(results, null, 2)}`);
       process.exit(0);
     })
     .catch((error) => {

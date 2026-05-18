@@ -5,7 +5,7 @@ import { getPliveSession } from "../src/lib/plive-session";
 // Try to replicate exactly what your browser did
 const { cookie, sessionId } = await getPliveSession();
 
-console.log("🎯 FINAL ATTEMPT: Exact replication of your working request...");
+console.info("🎯 FINAL ATTEMPT: Exact replication of your working request...");
 
 // From your logs, the successful request had these exact parameters:
 // minVolume=0&maxTimeUntilScore=0&from=1761627600&to=1761627600&toTime=86399&dateFilterBy=calcTime&t=1761638467350
@@ -39,15 +39,15 @@ const response = await fetch('https://plive.sportswidgets.pro/manager-tools/ajax
   timeout: 10000
 });
 
-console.log(`📊 Final response: ${response.status} ${response.statusText}`);
+console.info(`📊 Final response: ${response.status} ${response.statusText}`);
 
 if (response.ok) {
   const data = await response.text();
-  console.log(`📦 Data: ${data.length} bytes`);
-  console.log("Preview:", data.substring(0, 500));
+  console.info(`📦 Data: ${data.length} bytes`);
+  console.info("Preview:", data.substring(0, 500));
   
   if (data.includes('profit') || data.includes('agent') || data.includes('bet')) {
-    console.log("🎯 SUCCESS! Got betting data!");
+    console.info("🎯 SUCCESS! Got betting data!");
     await Bun.write('data/final-success.json', data);
     
     // Try to parse and count records
@@ -55,20 +55,20 @@ if (response.ok) {
       const jsonData = JSON.parse(data);
       if (jsonData.success && jsonData.data) {
         const records = Array.isArray(jsonData.data) ? jsonData.data : [jsonData.data];
-        console.log(`📊 Found ${records.length} betting records`);
+        console.info(`📊 Found ${records.length} betting records`);
         
         // Show first record as example
         if (records.length > 0) {
-          console.log("Sample record:", JSON.stringify(records[0], null, 2));
+          console.info("Sample record:", JSON.stringify(records[0], null, 2));
         }
       }
     } catch (e) {
-      console.log("Could not parse JSON:", e.message);
+      console.info("Could not parse JSON:", e.message);
     }
   } else {
-    console.log("❌ Got response but no betting data");
+    console.info("❌ Got response but no betting data");
     await Bun.write('data/final-response.json', data);
   }
 } else {
-  console.log("❌ Still blocked");
+  console.info("❌ Still blocked");
 }

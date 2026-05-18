@@ -105,8 +105,8 @@ export interface EnhancedScannerConfig {
  * });
  *
  * const result = await scanner.scan('/path/to/project');
- * console.log(`Scan ${result.id} completed in ${result.durationMs}ms`);
- * console.log(`R-Score: ${result.rScore.combined}`);
+ * console.info(`Scan ${result.id} completed in ${result.durationMs}ms`);
+ * console.info(`R-Score: ${result.rScore.combined}`);
  * ```
  */
 export class EnhancedScanner {

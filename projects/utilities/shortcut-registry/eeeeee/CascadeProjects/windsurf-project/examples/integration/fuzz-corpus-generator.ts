@@ -40,8 +40,8 @@ class FuzzCorpusGenerator {
   }
 
   async generateCorpus(): Promise<void> {
-    console.log('🧪 Generating Fuzz Corpus from Error Analysis');
-    console.log('=============================================');
+    console.info('🧪 Generating Fuzz Corpus from Error Analysis');
+    console.info('=============================================');
 
     const patterns = this.db.query('SELECT * FROM cached_results').all() as any[];
     
@@ -53,9 +53,9 @@ class FuzzCorpusGenerator {
     await this.writeCorpusFile();
     await this.generateRegressionTests();
     
-    console.log(`✅ Generated ${this.corpus.length} fuzz test cases`);
-    console.log('📁 Output: ./fuzz-corpus.json');
-    console.log('🧪 Output: ./urlpattern-regression.test.ts');
+    console.info(`✅ Generated ${this.corpus.length} fuzz test cases`);
+    console.info('📁 Output: ./fuzz-corpus.json');
+    console.info('🧪 Output: ./urlpattern-regression.test.ts');
   }
 
   private generateTestCases(patternData: any): FuzzTestCase[] {
@@ -377,17 +377,17 @@ async function main() {
   const args = process.argv.slice(2);
   const cacheDb = args.find(arg => arg.startsWith('--cache-db='))?.split('=')[1] || 'results.sqlite';
 
-  console.log('🧪 Fuzz Corpus & Regression Test Generator');
-  console.log('===========================================');
+  console.info('🧪 Fuzz Corpus & Regression Test Generator');
+  console.info('===========================================');
 
   const generator = new FuzzCorpusGenerator(cacheDb);
   
   try {
     await generator.generateCorpus();
-    console.log('');
-    console.log('🧪 Testing Integration:');
-    console.log('bun test urlpattern-regression.test.ts');
-    console.log('bun test --update-snapshots urlpattern-regression.test.ts');
+    console.info('');
+    console.info('🧪 Testing Integration:');
+    console.info('bun test urlpattern-regression.test.ts');
+    console.info('bun test --update-snapshots urlpattern-regression.test.ts');
   } catch (error) {
     console.error('❌ Error generating fuzz corpus:', error);
     process.exit(1);

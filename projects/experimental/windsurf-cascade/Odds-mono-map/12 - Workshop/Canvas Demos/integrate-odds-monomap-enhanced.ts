@@ -315,8 +315,8 @@ class EnhancedCanvasIntegrator {
         };
 
         try {
-            console.log(`📄 Processing: ${relativePath}`);
-            console.log('─'.repeat(40));
+            console.info(`📄 Processing: ${relativePath}`);
+            console.info('─'.repeat(40));
 
             // Step 1: Read file
             const content = await readFile(filePath, 'utf8');
@@ -346,7 +346,7 @@ class EnhancedCanvasIntegrator {
                 return result;
             }
 
-            console.log(`📊 Canvas analysis: ${canvas.nodes.length} nodes, ${canvas.edges.length} edges`);
+            console.info(`📊 Canvas analysis: ${canvas.nodes.length} nodes, ${canvas.edges.length} edges`);
 
             // Step 5: Process colors
             const migratedCanvas = this.migrateCanvasColors(canvas);
@@ -372,9 +372,9 @@ class EnhancedCanvasIntegrator {
             // Step 8: Write enhanced canvas
             await writeFile(filePath, JSON.stringify(enhancedCanvas, null, 2));
 
-            console.log(`✅ Successfully processed: ${relativePath}`);
-            console.log(`📊 Enhanced: ${enhancedCanvas.nodes.length} nodes, ${enhancedCanvas.edges.length} edges`);
-            console.log(`🎨 Colors migrated: ${result.nodesMigrated}/${result.nodesProcessed}`);
+            console.info(`✅ Successfully processed: ${relativePath}`);
+            console.info(`📊 Enhanced: ${enhancedCanvas.nodes.length} nodes, ${enhancedCanvas.edges.length} edges`);
+            console.info(`🎨 Colors migrated: ${result.nodesMigrated}/${result.nodesProcessed}`);
 
             // Show color distribution
             this.showColorDistribution(enhancedCanvas);
@@ -388,10 +388,10 @@ class EnhancedCanvasIntegrator {
 
             // Provide specific guidance for known issues
             if (error.message.includes('nodes')) {
-                console.log(`💡 Suggestion: This file appears to be empty or corrupted. Consider:`);
-                console.log(`   1. Recreating the canvas in Obsidian`);
-                console.log(`   2. Deleting the empty file`);
-                console.log(`   3. Checking if the file was saved properly`);
+                console.info(`💡 Suggestion: This file appears to be empty or corrupted. Consider:`);
+                console.info(`   1. Recreating the canvas in Obsidian`);
+                console.info(`   2. Deleting the empty file`);
+                console.info(`   3. Checking if the file was saved properly`);
             }
         }
 
@@ -569,13 +569,13 @@ class EnhancedCanvasIntegrator {
         });
 
         if (Object.keys(colorDistribution).length > 0) {
-            console.log('🎨 Color distribution:');
+            console.info('🎨 Color distribution:');
             Object.entries(colorDistribution).forEach(([color, count]) => {
                 const category = this.getColorCategory(color);
-                console.log(`  ${color}: ${count} nodes (${category})`);
+                console.info(`  ${color}: ${count} nodes (${category})`);
             });
         } else {
-            console.log('🎨 No colors assigned');
+            console.info('🎨 No colors assigned');
         }
     }
 
@@ -595,8 +595,8 @@ class EnhancedCanvasIntegrator {
  * Main integration function with enhanced error handling
  */
 async function integrateOddsMonoMapEnhanced(): Promise<void> {
-    console.log('🚀 Starting Enhanced Odds-Mono-Map HEX Color Integration');
-    console.log('='.repeat(65));
+    console.info('🚀 Starting Enhanced Odds-Mono-Map HEX Color Integration');
+    console.info('='.repeat(65));
 
     const integrator = new EnhancedCanvasIntegrator();
     const vaultPath = '/Users/nolarose/CascadeProjects/windsurf-project/Odds-mono-map';
@@ -609,7 +609,7 @@ async function integrateOddsMonoMapEnhanced(): Promise<void> {
         'Untitled.canvas'
     ];
 
-    console.log(`\n📁 Found ${canvasFiles.length} canvas files to process`);
+    console.info(`\n📁 Found ${canvasFiles.length} canvas files to process`);
 
     const report: IntegrationReport = {
         totalFiles: canvasFiles.length,
@@ -647,56 +647,56 @@ async function integrateOddsMonoMapEnhanced(): Promise<void> {
     report.processingTime = Date.now() - startTime;
 
     // Generate comprehensive report
-    console.log('\n🎊 Enhanced Integration Complete!');
-    console.log('='.repeat(65));
+    console.info('\n🎊 Enhanced Integration Complete!');
+    console.info('='.repeat(65));
 
-    console.log('\n📊 Processing Summary:');
-    console.log(`  Total files: ${report.totalFiles}`);
-    console.log(`  ✅ Successful: ${report.successfulFiles}`);
-    console.log(`  ❌ Failed: ${report.failedFiles}`);
-    console.log(`  📊 Total nodes: ${report.totalNodes}`);
-    console.log(`  🎨 Colors migrated: ${report.totalMigrated}`);
-    console.log(`  ⏱️  Processing time: ${report.processingTime}ms`);
+    console.info('\n📊 Processing Summary:');
+    console.info(`  Total files: ${report.totalFiles}`);
+    console.info(`  ✅ Successful: ${report.successfulFiles}`);
+    console.info(`  ❌ Failed: ${report.failedFiles}`);
+    console.info(`  📊 Total nodes: ${report.totalNodes}`);
+    console.info(`  🎨 Colors migrated: ${report.totalMigrated}`);
+    console.info(`  ⏱️  Processing time: ${report.processingTime}ms`);
 
     // Show error analysis
-    console.log(integrator.getErrorHandler().generateErrorReport());
+    console.info(integrator.getErrorHandler().generateErrorReport());
 
     if (report.successfulFiles > 0) {
-        console.log('\n🏆 Integration Achievements:');
-        console.log('  ✅ Legacy colors migrated to HEX');
-        console.log('  ✅ Semantic color assignment applied');
-        console.log('  ✅ Metadata enhanced with semantic analysis');
-        console.log('  ✅ Health scores calculated for all nodes');
-        console.log('  ✅ Enhanced error handling implemented');
-        console.log('  ✅ Comprehensive validation and reporting');
+        console.info('\n🏆 Integration Achievements:');
+        console.info('  ✅ Legacy colors migrated to HEX');
+        console.info('  ✅ Semantic color assignment applied');
+        console.info('  ✅ Metadata enhanced with semantic analysis');
+        console.info('  ✅ Health scores calculated for all nodes');
+        console.info('  ✅ Enhanced error handling implemented');
+        console.info('  ✅ Comprehensive validation and reporting');
 
-        console.log('\n🎨 Enhanced Color System Features:');
-        console.log('  🌟 Domain-specific colors with intelligent detection');
-        console.log('  📊 Document type classification and coloring');
-        console.log('  🎯 Priority-based color assignment');
-        console.log('  ✅ Status-aware color indicators');
-        console.log('  🏥 Health-based color adjustments');
-        console.log('  🔍 Advanced semantic analysis');
-        console.log('  🛡️ Robust error handling and recovery');
+        console.info('\n🎨 Enhanced Color System Features:');
+        console.info('  🌟 Domain-specific colors with intelligent detection');
+        console.info('  📊 Document type classification and coloring');
+        console.info('  🎯 Priority-based color assignment');
+        console.info('  ✅ Status-aware color indicators');
+        console.info('  🏥 Health-based color adjustments');
+        console.info('  🔍 Advanced semantic analysis');
+        console.info('  🛡️ Robust error handling and recovery');
     }
 
     if (report.failedFiles > 0) {
-        console.log('\n🔧 Error Recovery Suggestions:');
-        console.log('  1. Check empty or corrupted canvas files');
-        console.log('  2. Recreate problematic canvases in Obsidian');
-        console.log('  3. Verify file permissions and accessibility');
-        console.log('  4. Review error details above for specific guidance');
+        console.info('\n🔧 Error Recovery Suggestions:');
+        console.info('  1. Check empty or corrupted canvas files');
+        console.info('  2. Recreate problematic canvases in Obsidian');
+        console.info('  3. Verify file permissions and accessibility');
+        console.info('  4. Review error details above for specific guidance');
     }
 
-    console.log('\n💡 Next Steps:');
-    console.log('  1. Review successfully migrated canvases in Obsidian');
-    console.log('  2. Address any failed files mentioned in the error report');
-    console.log('  3. Customize color scheme for your preferences');
-    console.log('  4. Set up automated color validation');
-    console.log('  5. Monitor color usage analytics and health scores');
+    console.info('\n💡 Next Steps:');
+    console.info('  1. Review successfully migrated canvases in Obsidian');
+    console.info('  2. Address any failed files mentioned in the error report');
+    console.info('  3. Customize color scheme for your preferences');
+    console.info('  4. Set up automated color validation');
+    console.info('  5. Monitor color usage analytics and health scores');
 
-    console.log('\n🎯 Your Odds-Mono-Map vault now features enhanced HEX color');
-    console.log('   integration with robust error handling! 🎨🛡️✨');
+    console.info('\n🎯 Your Odds-Mono-Map vault now features enhanced HEX color');
+    console.info('   integration with robust error handling! 🎨🛡️✨');
 }
 
 // =============================================================================

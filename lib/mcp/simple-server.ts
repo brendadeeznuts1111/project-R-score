@@ -104,7 +104,7 @@ export class SimpleBunMCPServer {
         this.searchCache.delete(keys[i]);
       }
 
-      console.log(`🗑️ Evicted ${Math.min(evictCount, keys.length)} cache entries`);
+      console.info(`🗑️ Evicted ${Math.min(evictCount, keys.length)} cache entries`);
     }
   }
 
@@ -512,8 +512,8 @@ export class SimpleBunMCPServer {
     });
 
     const MCP_SERVER_HOST = process.env.MCP_SERVER_HOST || process.env.SERVER_HOST || 'localhost';
-    console.log(`🌐 Simple Bun MCP server running on http://${MCP_SERVER_HOST}:${port}`);
-    console.log(`📊 Health check: http://${MCP_SERVER_HOST}:${port}/health`);
+    console.info(`🌐 Simple Bun MCP server running on http://${MCP_SERVER_HOST}:${port}`);
+    console.info(`📊 Health check: http://${MCP_SERVER_HOST}:${port}/health`);
   }
 }
 

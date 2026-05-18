@@ -356,7 +356,7 @@ describe("Factory & Utility Types", () => {
 
     test("FileSystemWatcher interface type", () => {
         const mockCallback: EventCallback<string> = (data: string) => {
-            console.log('File changed:', data);
+            console.info('File changed:', data);
         };
 
         expectTypeOf<FileSystemWatcher>().toBeObject();

@@ -15,7 +15,7 @@ import {
 } from '@fire22-registry/betting-engine';
 
 async function basicBettingEngineSetup() {
-  console.log('🚀 Setting up Fantasy42 Betting Engine...');
+  console.info('🚀 Setting up Fantasy42 Betting Engine...');
 
   // ============================================================================
   // ENGINE INITIALIZATION
@@ -80,13 +80,13 @@ async function basicBettingEngineSetup() {
 
   // Initialize the engine
   await bettingEngine.initialize();
-  console.log('✅ Fantasy42 Betting Engine initialized successfully');
+  console.info('✅ Fantasy42 Betting Engine initialized successfully');
 
   // ============================================================================
   // GAME MANAGEMENT
   // ============================================================================
 
-  console.log('\n🏈 Setting up games...');
+  console.info('\n🏈 Setting up games...');
 
   // Add NFL game
   const nflGame = {
@@ -122,13 +122,13 @@ async function basicBettingEngineSetup() {
   };
 
   bettingEngine.addGame(nflGame);
-  console.log(`✅ Added NFL game: ${nflGame.homeTeam.name} vs ${nflGame.awayTeam.name}`);
+  console.info(`✅ Added NFL game: ${nflGame.homeTeam.name} vs ${nflGame.awayTeam.name}`);
 
   // ============================================================================
   // BET PLACEMENT
   // ============================================================================
 
-  console.log('\n💰 Placing bets...');
+  console.info('\n💰 Placing bets...');
 
   try {
     // Place a moneyline bet
@@ -156,9 +156,9 @@ async function basicBettingEngineSetup() {
       }
     );
 
-    console.log(`✅ Moneyline bet placed: ${moneylineBet.id}`);
-    console.log(`💵 Potential payout: $${moneylineBet.potentialPayout}`);
-    console.log(`📊 Odds: ${moneylineBet.odds.american}`);
+    console.info(`✅ Moneyline bet placed: ${moneylineBet.id}`);
+    console.info(`💵 Potential payout: $${moneylineBet.potentialPayout}`);
+    console.info(`📊 Odds: ${moneylineBet.odds.american}`);
 
     // Place a spread bet
     const spreadBet = await bettingEngine.placeBet(
@@ -180,14 +180,14 @@ async function basicBettingEngineSetup() {
       }
     );
 
-    console.log(`✅ Spread bet placed: ${spreadBet.id}`);
-    console.log(`📈 Spread: ${spreadBet.metadata.points} points`);
+    console.info(`✅ Spread bet placed: ${spreadBet.id}`);
+    console.info(`📈 Spread: ${spreadBet.metadata.points} points`);
 
     // ============================================================================
     // BET SETTLEMENT
     // ============================================================================
 
-    console.log('\n🎯 Settling bets...');
+    console.info('\n🎯 Settling bets...');
 
     // Simulate game completion
     const gameResult = {
@@ -207,42 +207,42 @@ async function basicBettingEngineSetup() {
     // Settle moneyline bet (win)
     const settledMoneylineBet = await bettingEngine.settleBet(moneylineBet.id, 'WIN', gameResult);
 
-    console.log(`✅ Moneyline bet settled: ${settledMoneylineBet.status}`);
-    console.log(`💰 Payout: $${settledMoneylineBet.metadata.settlement.payout}`);
+    console.info(`✅ Moneyline bet settled: ${settledMoneylineBet.status}`);
+    console.info(`💰 Payout: $${settledMoneylineBet.metadata.settlement.payout}`);
 
     // Settle spread bet (win)
     const settledSpreadBet = await bettingEngine.settleBet(spreadBet.id, 'WIN', gameResult);
 
-    console.log(`✅ Spread bet settled: ${settledSpreadBet.status}`);
-    console.log(`💰 Payout: $${settledSpreadBet.metadata.settlement.payout}`);
+    console.info(`✅ Spread bet settled: ${settledSpreadBet.status}`);
+    console.info(`💰 Payout: $${settledSpreadBet.metadata.settlement.payout}`);
 
     // ============================================================================
     // USER STATISTICS
     // ============================================================================
 
-    console.log('\n📊 User statistics...');
+    console.info('\n📊 User statistics...');
 
     const userStats = bettingEngine.getUserStats('user-12345');
-    console.log('User betting statistics:');
-    console.log(`- Total bets: ${userStats.totalBets}`);
-    console.log(`- Total amount wagered: $${userStats.totalAmount}`);
-    console.log(`- Total payout: $${userStats.totalPayout}`);
-    console.log(`- Win rate: ${(userStats.winRate * 100).toFixed(1)}%`);
-    console.log(`- Profit/Loss: $${userStats.profitLoss}`);
+    console.info('User betting statistics:');
+    console.info(`- Total bets: ${userStats.totalBets}`);
+    console.info(`- Total amount wagered: $${userStats.totalAmount}`);
+    console.info(`- Total payout: $${userStats.totalPayout}`);
+    console.info(`- Win rate: ${(userStats.winRate * 100).toFixed(1)}%`);
+    console.info(`- Profit/Loss: $${userStats.profitLoss}`);
 
     // ============================================================================
     // HEALTH MONITORING
     // ============================================================================
 
-    console.log('\n🏥 System health...');
+    console.info('\n🏥 System health...');
 
     const healthStatus = await bettingEngine.getHealthStatus();
-    console.log(`System status: ${healthStatus.status}`);
-    console.log(`Active games: ${healthStatus.metrics.activeGames}`);
-    console.log(`Active bets: ${healthStatus.metrics.activeBets}`);
-    console.log(`Supported sports: ${healthStatus.metrics.supportedSports}`);
+    console.info(`System status: ${healthStatus.status}`);
+    console.info(`Active games: ${healthStatus.metrics.activeGames}`);
+    console.info(`Active bets: ${healthStatus.metrics.activeBets}`);
+    console.info(`Supported sports: ${healthStatus.metrics.supportedSports}`);
 
-    console.log('\n🎉 Fantasy42 Betting Engine demonstration completed successfully!');
+    console.info('\n🎉 Fantasy42 Betting Engine demonstration completed successfully!');
   } catch (error) {
     console.error('❌ Error during bet placement:', error);
 
@@ -322,7 +322,7 @@ process.on('uncaughtException', error => {
 if (import.meta.main) {
   basicBettingEngineSetup()
     .then(() => {
-      console.log('\n🎊 Example completed successfully!');
+      console.info('\n🎊 Example completed successfully!');
       process.exit(0);
     })
     .catch(error => {

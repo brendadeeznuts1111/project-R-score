@@ -2,9 +2,9 @@
 // tools/inspect-projects.ts — Project matrix inspection using Bun.inspect
 
 console.clear();
-console.log("╔═══════════════════════════════════════════════════════════════╗");
-console.log("║         PROJECT MATRIX - Bun.inspect Table Visualization     ║");
-console.log("╚═══════════════════════════════════════════════════════════════╝\n");
+console.info("╔═══════════════════════════════════════════════════════════════╗");
+console.info("║         PROJECT MATRIX - Bun.inspect Table Visualization     ║");
+console.info("╚═══════════════════════════════════════════════════════════════╝\n");
 
 // ============================================================================
 // Define the complete project structure
@@ -113,99 +113,99 @@ const cliTools = [
 // Demo 1: Simple projects table (depth: 0 - flat)
 // ============================================================================
 
-console.log("1️⃣  PROJECTS TABLE (depth: 0 - flat, no nested arrays)\n");
-console.log(Bun.inspect(projects, {
+console.info("1️⃣  PROJECTS TABLE (depth: 0 - flat, no nested arrays)\n");
+console.info(Bun.inspect(projects, {
   columns: true,
   depth: 0  // Don't expand arrays like dependencies, envVars, features
 }));
 
-console.log("\n" + "─".repeat(80) + "\n");
+console.info("\n" + "─".repeat(80) + "\n");
 
 // ============================================================================
 // Demo 2: Projects with nested data (depth: 1 - show arrays)
 // ============================================================================
 
-console.log("2️⃣  PROJECTS WITH DEPENDENCIES & FEATURES (depth: 1 - single level)\n");
-console.log(Bun.inspect(projects, {
+console.info("2️⃣  PROJECTS WITH DEPENDENCIES & FEATURES (depth: 1 - single level)\n");
+console.info(Bun.inspect(projects, {
   columns: true,
   depth: 1,  // Show arrays but don't nest them further
   maxArrayLength: 3  // Limit array display to 3 items
 }));
 
-console.log("\n" + "─".repeat(80) + "\n");
+console.info("\n" + "─".repeat(80) + "\n");
 
 // ============================================================================
 // Demo 3: Full depth projects table (depth: unlimited)
 // ============================================================================
 
-console.log("3️⃣  PROJECTS - FULL DEPTH (depth: null - show everything)\n");
-console.log(Bun.inspect(projects, {
+console.info("3️⃣  PROJECTS - FULL DEPTH (depth: null - show everything)\n");
+console.info(Bun.inspect(projects, {
   columns: true,
   depth: null,  // Unlimited depth
   maxArrayLength: 10
 }));
 
-console.log("\n" + "─".repeat(80) + "\n");
+console.info("\n" + "─".repeat(80) + "\n");
 
 // ============================================================================
 // Demo 4: CLI Tools table (depth: 0)
 // ============================================================================
 
-console.log("4️⃣  CLI TOOLS (depth: 0 - flat)\n");
-console.log(Bun.inspect(cliTools, {
+console.info("4️⃣  CLI TOOLS (depth: 0 - flat)\n");
+console.info(Bun.inspect(cliTools, {
   columns: true,
   depth: 0
 }));
 
-console.log("\n" + "─".repeat(80) + "\n");
+console.info("\n" + "─".repeat(80) + "\n");
 
 // ============================================================================
 // Demo 5: CLI Tools with arrays (depth: 1)
 // ============================================================================
 
-console.log("5️⃣  CLI TOOLS WITH COMMANDS & USES (depth: 1)\n");
-console.log(Bun.inspect(cliTools, {
+console.info("5️⃣  CLI TOOLS WITH COMMANDS & USES (depth: 1)\n");
+console.info(Bun.inspect(cliTools, {
   columns: true,
   depth: 1,
   maxArrayLength: 4
 }));
 
-console.log("\n" + "─".repeat(80) + "\n");
+console.info("\n" + "─".repeat(80) + "\n");
 
 // ============================================================================
 // Demo 6: Combined matrix view (projects + CLI as separate tables shows better)
 // ============================================================================
 
-console.log("6️⃣  COMBINED OVERVIEW\n");
+console.info("6️⃣  COMBINED OVERVIEW\n");
 
 const overview = {
   summary: {
     totalProjects: projects.length,
     totalCliTools: cliTools.length,
-    platformHome: process.env.BUN_PLATFORM_HOME || "/Users/ashley/PROJECTS",
+    platformHome: process.env.BUN_PLATFORM_HOME || process.env.HOME || "",
     runtime: "Bun 1.2+"
   },
   projects,
   cliTools
 };
 
-console.log(Bun.inspect(overview, {
+console.info(Bun.inspect(overview, {
   columns: true,
   depth: 0,  // Flat tables for both
   maxArrayLength: 5
 }));
 
-console.log("\n" + "─".repeat(80) + "\n");
+console.info("\n" + "─".repeat(80) + "\n");
 
 // ============================================================================
 // Demo 7: Rich detail with full depth on nested overview
 // ============================================================================
 
-console.log("7️⃣  DETAILED NESTED VIEW (depth: 2)\n");
+console.info("7️⃣  DETAILED NESTED VIEW (depth: 2)\n");
 
 const detailedOverview = {
   platform: {
-    BUN_PLATFORM_HOME: process.env.BUN_PLATFORM_HOME || "/Users/ashley/PROJECTS",
+    BUN_PLATFORM_HOME: process.env.BUN_PLATFORM_HOME || process.env.HOME || "",
     runtime: Bun.version || "1.2.0",
     pid: process.pid,
     platform: Bun.platform,
@@ -223,33 +223,33 @@ const detailedOverview = {
   toolList: cliTools
 };
 
-console.log(Bun.inspect(detailedOverview, {
+console.info(Bun.inspect(detailedOverview, {
   depth: 2,
   maxArrayLength: 5,
   columns: true // This will format any arrays with columns
 }));
 
-console.log("\n" + "─".repeat(80) + "\n");
+console.info("\n" + "─".repeat(80) + "\n");
 
 // ============================================================================
 // Demo 8: Quick reference - how to use Bun.inspect yourself
 // ============================================================================
 
-console.log("8️⃣  QUICK REFERENCE\n");
-console.log("Usage:");
-console.log("  Bun.inspect(data, {");
-console.log("    columns: true,  // Format arrays as tables (key feature!)");
-console.log("    depth: N,       // How deep to show nested objects (0, 1, 2, null)");
-console.log("    maxArrayLength: N,  // Truncate long arrays");
-console.log("    colors: true,   // ANSI colors (default in terminal)");
-console.log("  })");
-console.log("\nExamples:");
-console.log("  Bun.inspect(projects, { columns: true, depth: 0 }) // flat table");
-console.log("  Bun.inspect(projects, { columns: true, depth: 1 }) // show arrays");
-console.log("  Bun.inspect(projects, { columns: true, depth: null }) // unlimited");
-console.log("  Bun.inspect(projects, { depth: 0 }) // plain object (no columns)");
+console.info("8️⃣  QUICK REFERENCE\n");
+console.info("Usage:");
+console.info("  Bun.inspect(data, {");
+console.info("    columns: true,  // Format arrays as tables (key feature!)");
+console.info("    depth: N,       // How deep to show nested objects (0, 1, 2, null)");
+console.info("    maxArrayLength: N,  // Truncate long arrays");
+console.info("    colors: true,   // ANSI colors (default in terminal)");
+console.info("  })");
+console.info("\nExamples:");
+console.info("  Bun.inspect(projects, { columns: true, depth: 0 }) // flat table");
+console.info("  Bun.inspect(projects, { columns: true, depth: 1 }) // show arrays");
+console.info("  Bun.inspect(projects, { columns: true, depth: null }) // unlimited");
+console.info("  Bun.inspect(projects, { depth: 0 }) // plain object (no columns)");
 
-console.log("\n╔═══════════════════════════════════════════════════════════════╗");
-console.log("║  Tip: Run with 'bun --depth 3 inspect-projects.ts' to set   ║");
-console.log("║  global depth flag (affects all Bun.inspect calls)          ║");
-console.log("╚═══════════════════════════════════════════════════════════════╝");
+console.info("\n╔═══════════════════════════════════════════════════════════════╗");
+console.info("║  Tip: Run with 'bun --depth 3 inspect-projects.ts' to set   ║");
+console.info("║  global depth flag (affects all Bun.inspect calls)          ║");
+console.info("╚═══════════════════════════════════════════════════════════════╝");

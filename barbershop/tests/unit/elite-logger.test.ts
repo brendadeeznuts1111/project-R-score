@@ -101,7 +101,7 @@ describe('EliteLogger', () => {
     originalConsoleError = console.error;
 
     // Spy on console.log to capture output
-    consoleSpy = spyOn(console, 'log').mockImplementation((msg: string) => {
+    consoleSpy = spyOn(console, 'info').mockImplementation((msg: string) => {
       capturedLogs.push(msg);
     });
 

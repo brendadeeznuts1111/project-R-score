@@ -111,7 +111,7 @@ export class RSSSecretsManager {
 	 * ```typescript
 	 * const manager = new RSSSecretsManager();
 	 * await manager.loadConfig("config/rss.toml", { strict: true });
-	 * console.log(manager.getFeeds());
+	 * console.info(manager.getFeeds());
 	 * ```
 	 */
 	async loadConfig(
@@ -119,8 +119,8 @@ export class RSSSecretsManager {
 		options: { strict?: boolean; verbose?: boolean } = {},
 	): Promise<RSSConfig> {
 		if (options.verbose) {
-			console.log(`🔧 Loading RSS config from ${filePath}...`);
-			console.log(formatConfigSummary(resolveAllConfig()));
+			console.info(`🔧 Loading RSS config from ${filePath}...`);
+			console.info(formatConfigSummary(resolveAllConfig()));
 		}
 
 		// Resolve TOML with secret placeholders
@@ -136,9 +136,9 @@ export class RSSSecretsManager {
 		const validation = validateTemplate(content);
 
 		if (options.verbose) {
-			console.log(`\n📋 Secret references: ${validation.references.length}`);
+			console.info(`\n📋 Secret references: ${validation.references.length}`);
 			if (validation.references.length > 0) {
-				console.log(generateSecretReport(content));
+				console.info(generateSecretReport(content));
 			}
 		}
 
@@ -372,13 +372,13 @@ export async function handleRSSCommand(
 	switch (command) {
 		case "validate": {
 			const configPath = args[0] ?? "config/rss.toml";
-			console.log(`🔍 Validating ${configPath}...`);
+			console.info(`🔍 Validating ${configPath}...`);
 
 			const content = await Bun.file(configPath).text();
 			const validation = validateTemplate(content);
 
 			if (validation.valid) {
-				console.log(
+				console.info(
 					`✅ Config is valid (${validation.references.length} secret refs)`,
 				);
 			} else {
@@ -394,12 +394,12 @@ export async function handleRSSCommand(
 			await manager.loadConfig(configPath, { verbose: true });
 
 			const feeds = manager.getFeeds();
-			console.log(`\n📰 Configured Feeds (${feeds.length}):`);
+			console.info(`\n📰 Configured Feeds (${feeds.length}):`);
 			feeds.forEach((feed) => {
-				console.log(`   • ${feed.name}`);
-				console.log(`     URL: ${feed.url.substring(0, 50)}...`);
+				console.info(`   • ${feed.name}`);
+				console.info(`     URL: ${feed.url.substring(0, 50)}...`);
 				if (feed.categories) {
-					console.log(`     Categories: ${feed.categories.join(", ")}`);
+					console.info(`     Categories: ${feed.categories.join(", ")}`);
 				}
 			});
 			break;
@@ -414,20 +414,20 @@ export async function handleRSSCommand(
 			const feed = manager.getFeeds().find((f) => f.name === feedName);
 			if (!feed) {
 				console.error(`❌ Feed not found: ${feedName}`);
-				console.log("Available feeds:");
-				manager.getFeeds().forEach((f) => console.log(`   - ${f.name}`));
+				console.info("Available feeds:");
+				manager.getFeeds().forEach((f) => console.info(`   - ${f.name}`));
 				process.exit(1);
 			}
 
-			console.log(`🚀 Fetching "${feed.name}"...`);
+			console.info(`🚀 Fetching "${feed.name}"...`);
 			const result = await manager.fetchFeed(feed);
 
 			if (result.error) {
 				console.error(`❌ Error: ${result.error}`);
 				process.exit(1);
 			} else {
-				console.log(`✅ Fetched in ${result.fetch_time.toFixed(2)}ms`);
-				console.log(JSON.stringify(result.data, null, 2));
+				console.info(`✅ Fetched in ${result.fetch_time.toFixed(2)}ms`);
+				console.info(JSON.stringify(result.data, null, 2));
 			}
 			break;
 		}
@@ -436,36 +436,36 @@ export async function handleRSSCommand(
 			const configPath = args[0] ?? "config/rss.toml";
 			await manager.loadConfig(configPath, { verbose: true });
 
-			console.log("\n🚀 Fetching all feeds...");
+			console.info("\n🚀 Fetching all feeds...");
 			const results = await manager.fetchAllFeeds({
 				onProgress: (current, total) => {
 					process.stdout.write(`\r   Progress: ${current}/${total}`);
 				},
 			});
-			console.log();
+			console.info();
 
 			const successful = results.filter((r) => !r.error).length;
 			const failed = results.filter((r) => r.error).length;
 
-			console.log(`\n📊 Results: ${successful} OK, ${failed} failed`);
+			console.info(`\n📊 Results: ${successful} OK, ${failed} failed`);
 
 			if (failed > 0) {
-				console.log("\n❌ Failures:");
+				console.info("\n❌ Failures:");
 				results
 					.filter((r) => r.error)
-					.forEach((r) => console.log(`   • ${r.feed.name}: ${r.error}`));
+					.forEach((r) => console.info(`   • ${r.feed.name}: ${r.error}`));
 			}
 			break;
 		}
 
 		case "config": {
-			console.log("📋 RSS Configuration Context:");
-			console.log(formatConfigSummary(resolveAllConfig()));
+			console.info("📋 RSS Configuration Context:");
+			console.info(formatConfigSummary(resolveAllConfig()));
 			break;
 		}
 
 		default:
-			console.log(`
+			console.info(`
 RSS Secrets CLI
 
 Usage:

@@ -48,7 +48,7 @@ class DashboardBridge {
         if (url.pathname === '/dashboard') {
           const success = server.upgrade(req);
           if (success) {
-            console.log('🔌 Dashboard client connected');
+            console.info('🔌 Dashboard client connected');
           }
           return success ? undefined : new Response('Upgrade failed', { status: 500 });
         }
@@ -70,7 +70,7 @@ class DashboardBridge {
       websocket: {
         open: ws => {
           this.clients.add(ws);
-          console.log('📱 Dashboard WebSocket connected');
+          console.info('📱 Dashboard WebSocket connected');
           this.sendToClient(ws, {
             type: 'connected',
             data: { message: 'Connected to Fire22 Dashboard Bridge' },
@@ -81,20 +81,20 @@ class DashboardBridge {
         },
         close: ws => {
           this.clients.delete(ws);
-          console.log('📱 Dashboard WebSocket disconnected');
+          console.info('📱 Dashboard WebSocket disconnected');
         },
       },
     });
 
-    console.log(`🚀 Dashboard Bridge running on port ${port}`);
-    console.log(`📱 WebSocket: ws://localhost:${port}/dashboard`);
-    console.log(`🌐 HTTP API: http://localhost:${port}/api/*`);
+    console.info(`🚀 Dashboard Bridge running on port ${port}`);
+    console.info(`📱 WebSocket: ws://localhost:${port}/dashboard`);
+    console.info(`🌐 HTTP API: http://localhost:${port}/api/*`);
   }
 
   private async handleWebSocketMessage(ws: WebSocket, message: string | Buffer) {
     try {
       const data: DashboardMessage = JSON.parse(message.toString());
-      console.log('📨 Received message:', data.type);
+      console.info('📨 Received message:', data.type);
 
       switch (data.type) {
         case 'get_packages':
@@ -516,22 +516,22 @@ class DashboardBridge {
 
 // Start the bridge if this script is run directly
 if (import.meta.main) {
-  console.log('🔥 Starting Fire22 Dashboard Bridge...');
+  console.info('🔥 Starting Fire22 Dashboard Bridge...');
 
   const bridge = new DashboardBridge();
 
   // Handle graceful shutdown
   process.on('SIGINT', () => {
-    console.log('\n🛑 Shutting down Dashboard Bridge...');
+    console.info('\n🛑 Shutting down Dashboard Bridge...');
     process.exit(0);
   });
 
   process.on('SIGTERM', () => {
-    console.log('\n🛑 Shutting down Dashboard Bridge...');
+    console.info('\n🛑 Shutting down Dashboard Bridge...');
     process.exit(0);
   });
 
-  console.log('✅ Dashboard Bridge is running and ready for connections');
+  console.info('✅ Dashboard Bridge is running and ready for connections');
 }
 
 export { DashboardBridge };

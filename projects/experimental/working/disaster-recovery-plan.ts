@@ -42,7 +42,7 @@ export class DisasterRecoveryPlan {
   }
 
   async handleMajorIncident(type: IncidentType): Promise<RecoveryResponse> {
-    console.log(`🚨 Major incident detected: ${type}`);
+    console.info(`🚨 Major incident detected: ${type}`);
 
     const recoveryActions = this.recoveryActions.get(type) || [];
     const affectedSystems = await this.identifyAffectedSystems(type);
@@ -305,84 +305,84 @@ export class DisasterRecoveryPlan {
   }
 
   private async activateBackupDataFeeds(): Promise<boolean> {
-    console.log('Activating backup market data feeds...');
+    console.info('Activating backup market data feeds...');
     // Implementation would switch to backup data sources
     await new Promise(resolve => setTimeout(resolve, 1000));
     return Math.random() > 0.1; // 90% success rate
   }
 
   private async validateDataIntegrity(): Promise<boolean> {
-    console.log('Validating data integrity...');
+    console.info('Validating data integrity...');
     // Implementation would check data consistency
     await new Promise(resolve => setTimeout(resolve, 2000));
     return Math.random() > 0.05; // 95% success rate
   }
 
   private async notifyRiskTeam(): Promise<boolean> {
-    console.log('Notifying risk management team...');
+    console.info('Notifying risk management team...');
     // Implementation would send notifications
     return true;
   }
 
   private async initiateSecureShutdown(): Promise<boolean> {
-    console.log('Initiating secure system shutdown...');
+    console.info('Initiating secure system shutdown...');
     // Implementation would gracefully shut down systems
     await new Promise(resolve => setTimeout(resolve, 500));
     return true;
   }
 
   private async isolateAffectedSystems(): Promise<boolean> {
-    console.log('Isolating affected systems...');
+    console.info('Isolating affected systems...');
     // Implementation would isolate compromised systems
     return true;
   }
 
   private async activateForensicMode(): Promise<boolean> {
-    console.log('Activating forensic data collection...');
+    console.info('Activating forensic data collection...');
     // Implementation would start forensic logging
     return true;
   }
 
   private async contactSecurityIncidentResponse(): Promise<boolean> {
-    console.log('Contacting security incident response team...');
+    console.info('Contacting security incident response team...');
     // Implementation would contact external security team
     return true;
   }
 
   private async activateCircuitBreakers(): Promise<boolean> {
-    console.log('Activating trading circuit breakers...');
+    console.info('Activating trading circuit breakers...');
     // Implementation would halt all trading
     return true;
   }
 
   private async reducePositionSizes(): Promise<boolean> {
-    console.log('Reducing position sizes...');
+    console.info('Reducing position sizes...');
     // Implementation would modify position sizes
     return true;
   }
 
   private async requireManualApproval(): Promise<boolean> {
-    console.log('Requiring manual approval for trades...');
+    console.info('Requiring manual approval for trades...');
     // Implementation would enable manual approval workflow
     return true;
   }
 
   private async performSystemHealthCheck(): Promise<boolean> {
-    console.log('Performing system health check...');
+    console.info('Performing system health check...');
     // Implementation would check all system components
     await new Promise(resolve => setTimeout(resolve, 5000));
     return Math.random() > 0.1; // 90% success rate
   }
 
   private async createIncidentReport(): Promise<boolean> {
-    console.log('Creating incident report...');
+    console.info('Creating incident report...');
     // Implementation would generate detailed report
     return true;
   }
 
   private async getApproval(action: RecoveryAction): Promise<boolean> {
     // In a real system, this would prompt for human approval
-    console.log(`Approval required for action: ${action.description}`);
+    console.info(`Approval required for action: ${action.description}`);
     return true; // Auto-approve for demo
   }
 
@@ -391,12 +391,12 @@ export class DisasterRecoveryPlan {
   }
 
   private async notifyStakeholders(type: IncidentType, recovery: RecoveryResponse): Promise<void> {
-    console.log(`Notifying stakeholders about ${type} incident...`);
+    console.info(`Notifying stakeholders about ${type} incident...`);
 
     const contacts = Array.from(this.emergencyContacts.entries());
     for (const [role, contact] of contacts) {
       // Implementation would send notifications (email, SMS, etc.)
-      console.log(`Notifying ${role}: ${contact}`);
+      console.info(`Notifying ${role}: ${contact}`);
     }
   }
 
@@ -413,7 +413,7 @@ export class DisasterRecoveryPlan {
       systemState: Object.fromEntries(this.systemHealth)
     };
 
-    console.log('Incident logged:', JSON.stringify(incidentLog, null, 2));
+    console.info('Incident logged:', JSON.stringify(incidentLog, null, 2));
     // Implementation would persist to database
   }
 
@@ -453,7 +453,7 @@ export class DisasterRecoveryPlan {
   }
 
   async triggerBackup(): Promise<boolean> {
-    console.log('Triggering system backup...');
+    console.info('Triggering system backup...');
     // Implementation would create system backup
     await new Promise(resolve => setTimeout(resolve, 10000)); // Simulate backup time
     this.lastBackup = new Date();
@@ -461,7 +461,7 @@ export class DisasterRecoveryPlan {
   }
 
   async runDisasterRecoveryDrill(incidentType: IncidentType): Promise<RecoveryResponse> {
-    console.log(`Running disaster recovery drill for ${incidentType}...`);
+    console.info(`Running disaster recovery drill for ${incidentType}...`);
     // This would simulate the incident without actually executing recovery actions
     return {
       status: 'RECOVERED',

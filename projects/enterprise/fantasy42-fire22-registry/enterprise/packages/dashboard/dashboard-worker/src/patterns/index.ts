@@ -68,7 +68,7 @@ export class UnifiedPatternSystem {
    * Apply a pattern with full system context
    */
   async applyPattern(patternName: string, context: any): Promise<any> {
-    console.log(`🎯 Applying pattern: ${patternName}`);
+    console.info(`🎯 Applying pattern: ${patternName}`);
 
     // This would delegate to the appropriate module
     // For now, return a mock response
@@ -113,11 +113,11 @@ export class UnifiedPatternSystem {
   }
 
   private initializeComponents(): void {
-    console.log('🔧 Initializing unified pattern system components');
+    console.info('🔧 Initializing unified pattern system components');
 
     // This would initialize all the modular components
     // For now, just log the initialization
-    console.log('✅ All pattern system components initialized');
+    console.info('✅ All pattern system components initialized');
   }
 }
 

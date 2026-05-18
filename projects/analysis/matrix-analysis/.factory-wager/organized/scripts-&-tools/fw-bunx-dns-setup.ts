@@ -11,8 +11,8 @@ class BunxDNSSetup {
   private mainDomain = 'factory-wager.com';
 
   async setupWithBunx(): Promise<void> {
-    console.log("🌐 FactoryWager DNS Setup with bunx");
-    console.log("===================================");
+    console.info("🌐 FactoryWager DNS Setup with bunx");
+    console.info("===================================");
 
     // Check available tools
     await this.checkBunxTools();
@@ -28,32 +28,32 @@ class BunxDNSSetup {
   }
 
   private async checkBunxTools(): Promise<void> {
-    console.log("\n🔧 Checking bunx tools...");
+    console.info("\n🔧 Checking bunx tools...");
     
     try {
       const jqVersion = execSync('bunx jq --version', { encoding: 'utf8' });
-      console.log(`✅ jq: ${jqVersion.trim()}`);
+      console.info(`✅ jq: ${jqVersion.trim()}`);
     } catch {
-      console.log("❌ jq not available via bunx");
+      console.info("❌ jq not available via bunx");
     }
     
     try {
       const curlVersion = execSync('bunx curl --version | head -1', { encoding: 'utf8' });
-      console.log(`✅ curl: ${curlVersion.trim()}`);
+      console.info(`✅ curl: ${curlVersion.trim()}`);
     } catch {
-      console.log("❌ curl not available via bunx");
+      console.info("❌ curl not available via bunx");
     }
     
     try {
       const digOutput = execSync('bunx dig +version | head -1', { encoding: 'utf8' });
-      console.log(`✅ dig: ${digOutput.trim()}`);
+      console.info(`✅ dig: ${digOutput.trim()}`);
     } catch {
-      console.log("❌ dig not available via bunx");
+      console.info("❌ dig not available via bunx");
     }
   }
 
   private async checkDNSStatus(): Promise<void> {
-    console.log(`\n📋 Current DNS status for ${this.registryDomain}:`);
+    console.info(`\n📋 Current DNS status for ${this.registryDomain}:`);
     
     // Check with multiple DNS servers
     const dnsServers = [
@@ -70,61 +70,61 @@ class BunxDNSSetup {
         }).trim();
         
         if (result) {
-          console.log(`✅ ${server.name} DNS: ${result}`);
+          console.info(`✅ ${server.name} DNS: ${result}`);
         } else {
-          console.log(`❌ ${server.name} DNS: Not resolved`);
+          console.info(`❌ ${server.name} DNS: Not resolved`);
         }
       } catch (error) {
-        console.log(`❌ ${server.name} DNS: Failed`);
+        console.info(`❌ ${server.name} DNS: Failed`);
       }
     }
     
     // Check HTTP connectivity
-    console.log("\n🌐 HTTP connectivity test:");
+    console.info("\n🌐 HTTP connectivity test:");
     try {
       const result = execSync(`bunx curl -I --connect-timeout 5 https://${this.registryDomain}/health 2>&1 | head -1`, { 
         encoding: 'utf8',
         timeout: 10000
       }).trim();
-      console.log(`✅ HTTP: ${result}`);
+      console.info(`✅ HTTP: ${result}`);
     } catch (error) {
-      console.log(`❌ HTTP: Connection failed`);
+      console.info(`❌ HTTP: Connection failed`);
     }
   }
 
   private async generateSetupCommands(): Promise<void> {
-    console.log("\n🔧 DNS Setup Commands using bunx:");
+    console.info("\n🔧 DNS Setup Commands using bunx:");
     
-    console.log("\n1. SET CLOUDFLARE API TOKEN:");
-    console.log("   export CLOUDFLARE_API_TOKEN='your_api_token_here'");
+    console.info("\n1. SET CLOUDFLARE API TOKEN:");
+    console.info("   export CLOUDFLARE_API_TOKEN='your_api_token_here'");
     
-    console.log("\n2. GET ZONE ID:");
-    console.log(`   bunx curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=${this.mainDomain}" \\`);
-    console.log("     -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \\");
-    console.log("     -H \"Content-Type: application/json\" \\");
-    console.log("     | bunx jq -r '.result[0].id'");
+    console.info("\n2. GET ZONE ID:");
+    console.info(`   bunx curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=${this.mainDomain}" \\`);
+    console.info("     -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \\");
+    console.info("     -H \"Content-Type: application/json\" \\");
+    console.info("     | bunx jq -r '.result[0].id'");
     
-    console.log("\n3. CREATE REGISTRY DNS RECORD:");
-    console.log("   # Replace ZONE_ID with actual ID from step 2");
-    console.log("   # Replace REGISTRY_IP with your load balancer IP");
-    console.log("   bunx curl -s -X POST \"https://api.cloudflare.com/client/v4/zones/ZONE_ID/dns_records\" \\");
-    console.log("     -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \\");
-    console.log("     -H \"Content-Type: application/json\" \\");
-    console.log("     --data '{");
-    console.log("       \"type\": \"A\",");
-    console.log("       \"name\": \"registry\",");
-    console.log("       \"content\": \"REGISTRY_IP\",");
-    console.log("       \"ttl\": 3600,");
-    console.log("       \"proxied\": true");
-    console.log("     }' | bunx jq -r '.success'");
+    console.info("\n3. CREATE REGISTRY DNS RECORD:");
+    console.info("   # Replace ZONE_ID with actual ID from step 2");
+    console.info("   # Replace REGISTRY_IP with your load balancer IP");
+    console.info("   bunx curl -s -X POST \"https://api.cloudflare.com/client/v4/zones/ZONE_ID/dns_records\" \\");
+    console.info("     -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \\");
+    console.info("     -H \"Content-Type: application/json\" \\");
+    console.info("     --data '{");
+    console.info("       \"type\": \"A\",");
+    console.info("       \"name\": \"registry\",");
+    console.info("       \"content\": \"REGISTRY_IP\",");
+    console.info("       \"ttl\": 3600,");
+    console.info("       \"proxied\": true");
+    console.info("     }' | bunx jq -r '.success'");
     
-    console.log("\n4. VALIDATE DNS PROPAGATION:");
-    console.log(`   bunx dig +short ${this.registryDomain}`);
-    console.log(`   bunx curl -I https://${this.registryDomain}/health`);
+    console.info("\n4. VALIDATE DNS PROPAGATION:");
+    console.info(`   bunx dig +short ${this.registryDomain}`);
+    console.info(`   bunx curl -I https://${this.registryDomain}/health`);
   }
 
   private async createValidationScript(): Promise<void> {
-    console.log("\n📜 Creating validation script...");
+    console.info("\n📜 Creating validation script...");
     
     const validationScript = `#!/bin/bash
 # FactoryWager DNS Validation Script using bunx
@@ -174,12 +174,12 @@ echo "✅ Validation complete!"
     await Bun.write(Bun.file('./.factory-wager/validate-dns.sh'), validationScript);
     execSync('chmod +x .factory-wager/validate-dns.sh');
     
-    console.log("💾 Validation script created: .factory-wager/validate-dns.sh");
-    console.log("   Run after DNS setup: ./validate-dns.sh");
+    console.info("💾 Validation script created: .factory-wager/validate-dns.sh");
+    console.info("   Run after DNS setup: ./validate-dns.sh");
   }
 
   async runValidation(): Promise<void> {
-    console.log("🔍 Running DNS validation...");
+    console.info("🔍 Running DNS validation...");
     
     try {
       execSync('./.factory-wager/validate-dns.sh', { 
@@ -187,7 +187,7 @@ echo "✅ Validation complete!"
         cwd: process.cwd()
       });
     } catch (error) {
-      console.log("❌ Validation failed - DNS not properly configured yet");
+      console.info("❌ Validation failed - DNS not properly configured yet");
     }
   }
 }
@@ -204,10 +204,10 @@ async function main() {
   } else {
     await dnsSetup.setupWithBunx();
     
-    console.log("\n🚀 Next Steps:");
-    console.log("1. Set your Cloudflare API token: export CLOUDFLARE_API_TOKEN='your_token'");
-    console.log("2. Run the setup commands shown above");
-    console.log("3. Validate with: bun run fw-bunx-dns-setup.ts --validate");
+    console.info("\n🚀 Next Steps:");
+    console.info("1. Set your Cloudflare API token: export CLOUDFLARE_API_TOKEN='your_token'");
+    console.info("2. Run the setup commands shown above");
+    console.info("3. Validate with: bun run fw-bunx-dns-setup.ts --validate");
   }
 }
 

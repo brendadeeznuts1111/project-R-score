@@ -77,7 +77,7 @@ export class ExcelExportService extends EventEmitter {
       }
 
       this.isInitialized = true;
-      console.log('✅ Excel Export Service initialized');
+      console.info('✅ Excel Export Service initialized');
     } catch (error) {
       console.error('❌ Failed to initialize Excel Export Service:', error);
       throw error;
@@ -571,7 +571,7 @@ export async function exportAnalyticsData(format: string = 'excel'): Promise<voi
     }
 
     if (result.success) {
-      console.log(`✅ Export completed: ${result.filename}`);
+      console.info(`✅ Export completed: ${result.filename}`);
       alert(
         `📊 Export Complete!\n\n📁 File: ${result.filename}\n📊 Sheets: ${result.sheets}\n📈 Rows: ${result.rows}\n💾 Size: ${Math.round(result.fileSize / 1024)}KB`
       );

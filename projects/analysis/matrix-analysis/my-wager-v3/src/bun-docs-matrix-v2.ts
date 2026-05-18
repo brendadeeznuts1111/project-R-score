@@ -281,33 +281,33 @@ matrixV2.addEntry({
 export { BunDocEntry, BunMatrixV2, matrixV2 };
 
 // Generate and display report
-console.log('📊 Bun Documentation Matrix v2 - Tier-1380 Traceability');
-console.log('=====================================================\n');
+console.info('📊 Bun Documentation Matrix v2 - Tier-1380 Traceability');
+console.info('=====================================================\n');
 
 const report = matrixV2.generateMatrixReport();
-console.log(`Total Entries: ${report.total}`);
-console.log(`Compatible with v${matrixV2['currentBunVersion']}: ${report.compatible}`);
-console.log(`Experimental: ${report.experimental}`);
-console.log(`Deprecated: ${report.deprecated}`);
-console.log(`High Security: ${report.highSecurity}`);
-console.log('\nPlatform Support:');
+console.info(`Total Entries: ${report.total}`);
+console.info(`Compatible with v${matrixV2['currentBunVersion']}: ${report.compatible}`);
+console.info(`Experimental: ${report.experimental}`);
+console.info(`Deprecated: ${report.deprecated}`);
+console.info(`High Security: ${report.highSecurity}`);
+console.info('\nPlatform Support:');
 Object.entries(report.platformBreakdown).forEach(([platform, count]) => {
-  console.log(`  ${platform}: ${count} APIs`);
+  console.info(`  ${platform}: ${count} APIs`);
 });
 
 // Show experimental APIs that would be hidden in production
-console.log('\n🔬 Experimental APIs (hidden in production):');
+console.info('\n🔬 Experimental APIs (hidden in production):');
 const experimental = matrixV2.getEntriesByStability('experimental');
 experimental.forEach(entry => {
-  console.log(`  ⚠️  ${entry.term} (v${entry.bunMinVersion}+)`);
+  console.info(`  ⚠️  ${entry.term} (v${entry.bunMinVersion}+)`);
 });
 
 // Show high-security APIs requiring special handling
-console.log('\n🔒 High Security APIs:');
+console.info('\n🔒 High Security APIs:');
 const highSecurity = matrixV2.getHighSecurityEntries();
 highSecurity.forEach(entry => {
   const rootReq = entry.security.requiresRoot ? ' (requires root)' : '';
-  console.log(`  🔐 ${entry.term}${rootReq}`);
+  console.info(`  🔐 ${entry.term}${rootReq}`);
 });
 
-console.log('\n✅ Matrix v2 initialized with Tier-1380 traceability!');
+console.info('\n✅ Matrix v2 initialized with Tier-1380 traceability!');

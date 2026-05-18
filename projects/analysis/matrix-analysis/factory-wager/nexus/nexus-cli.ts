@@ -66,21 +66,21 @@ class NexusCLI {
   async showSystemInfo(): Promise<void> {
     const system = await getSystemProfile();
 
-    console.log('🖥️  SYSTEM INFORMATION');
-    console.log('='.repeat(50));
-    console.log(`Platform: ${system.platform.os} ${system.platform.arch}`);
-    console.log(`CPU Cores: ${system.platform.cpus}`);
-    console.log(`Bun Version: ${system.runtime.bun}`);
-    console.log(`Memory: ${(system.memory.rss / 1024 / 1024).toFixed(1)}MB RSS`);
-    console.log(`PID: ${system.runtime.pid}`);
+    console.info('🖥️  SYSTEM INFORMATION');
+    console.info('='.repeat(50));
+    console.info(`Platform: ${system.platform.os} ${system.platform.arch}`);
+    console.info(`CPU Cores: ${system.platform.cpus}`);
+    console.info(`Bun Version: ${system.runtime.bun}`);
+    console.info(`Memory: ${(system.memory.rss / 1024 / 1024).toFixed(1)}MB RSS`);
+    console.info(`PID: ${system.runtime.pid}`);
 
-    console.log('\n🛡️  CAPABILITIES');
-    console.log('-'.repeat(30));
+    console.info('\n🛡️  CAPABILITIES');
+    console.info('-'.repeat(30));
     Object.entries(system.capabilities).forEach(([key, value]) => {
-      console.log(`${value ? '✅' : '❌'} ${key}`);
+      console.info(`${value ? '✅' : '❌'} ${key}`);
     });
 
-    console.log(`\nStatus: ${system.capabilities.color && system.capabilities.crc32 ? '🟢 OPTIMAL' : '🟡 DEGRADED'}`);
+    console.info(`\nStatus: ${system.capabilities.color && system.capabilities.crc32 ? '🟢 OPTIMAL' : '🟡 DEGRADED'}`);
   }
 
   /**
@@ -95,8 +95,8 @@ class NexusCLI {
    * Run infrastructure health check
    */
   async checkInfrastructure(): Promise<void> {
-    console.log('🔍 INFRASTRUCTURE HEALTH CHECK');
-    console.log('='.repeat(50));
+    console.info('🔍 INFRASTRUCTURE HEALTH CHECK');
+    console.info('='.repeat(50));
 
     const system = await getSystemProfile();
     const nexus = new InfrastructureNexus(
@@ -109,39 +109,39 @@ class NexusCLI {
     try {
       const report = await nexus.fullDiagnostic();
 
-      console.log(`\n📊 Report Generated: ${report.timestamp}`);
-      console.log(`Overall Status: ${report.overall ? '🟢 HEALTHY' : '🔴 UNHEALTHY'}`);
+      console.info(`\n📊 Report Generated: ${report.timestamp}`);
+      console.info(`Overall Status: ${report.overall ? '🟢 HEALTHY' : '🔴 UNHEALTHY'}`);
 
       // Domain health
-      console.log(`\n🌐 Domain: ${report.domain.name}`);
-      console.log(`Status: ${report.domain.overall ? '✅' : '❌'}`);
+      console.info(`\n🌐 Domain: ${report.domain.name}`);
+      console.info(`Status: ${report.domain.overall ? '✅' : '❌'}`);
       report.domain.endpoints.forEach(endpoint => {
         const status = endpoint.healthy ? '✅' : '❌';
-        console.log(`  ${status} ${endpoint.endpoint} (${endpoint.latency}ms)`);
+        console.info(`  ${status} ${endpoint.endpoint} (${endpoint.latency}ms)`);
       });
 
       // Registry health
-      console.log(`\n📦 Registry: ${report.registry.url}`);
-      console.log(`Status: ${report.registry.reachable ? '✅' : '❌'}`);
+      console.info(`\n📦 Registry: ${report.registry.url}`);
+      console.info(`Status: ${report.registry.reachable ? '✅' : '❌'}`);
       if (report.registry.reachable) {
-        console.log(`Latency: ${report.registry.latency}`);
-        console.log(`Packages: ${report.registry.totalPackages} total`);
-        console.log(`Integrity: ${report.registry.packages.filter(p => p.crcValid).length}/${report.registry.packages.length} valid`);
+        console.info(`Latency: ${report.registry.latency}`);
+        console.info(`Packages: ${report.registry.totalPackages} total`);
+        console.info(`Integrity: ${report.registry.packages.filter(p => p.crcValid).length}/${report.registry.packages.length} valid`);
       }
 
       // R2 health
-      console.log(`\n☁️  R2 Storage: ${report.r2.bucket}`);
-      console.log(`Status: ${report.r2.error ? '❌' : '✅'}`);
+      console.info(`\n☁️  R2 Storage: ${report.r2.bucket}`);
+      console.info(`Status: ${report.r2.error ? '❌' : '✅'}`);
       if (!report.r2.error) {
-        console.log(`Objects: ${report.r2.objects}`);
-        console.log(`Size: ${report.r2.totalSizeMB}MB`);
-        console.log(`Integrity: ${report.r2.integrity.checked ? (report.r2.integrity.valid ? '✅' : '❌') : '⏭️'}`);
-        console.log(`Latency: ${report.r2.latency}`);
+        console.info(`Objects: ${report.r2.objects}`);
+        console.info(`Size: ${report.r2.totalSizeMB}MB`);
+        console.info(`Integrity: ${report.r2.integrity.checked ? (report.r2.integrity.valid ? '✅' : '❌') : '⏭️'}`);
+        console.info(`Latency: ${report.r2.latency}`);
       }
 
       // Save report
       await Bun.write('./infrastructure-report.json', JSON.stringify(report, null, 2));
-      console.log(`\n💾 Report saved to: infrastructure-report.json`);
+      console.info(`\n💾 Report saved to: infrastructure-report.json`);
 
     } catch (error) {
       console.error('❌ Infrastructure check failed:', error);
@@ -152,8 +152,8 @@ class NexusCLI {
    * Run infrastructure health check with dashboard visualization
    */
   async checkInfrastructureWithDashboard(): Promise<void> {
-    console.log('🔍 INFRASTRUCTURE HEALTH CHECK WITH DASHBOARD');
-    console.log('='.repeat(60));
+    console.info('🔍 INFRASTRUCTURE HEALTH CHECK WITH DASHBOARD');
+    console.info('='.repeat(60));
 
     const system = await getSystemProfile();
     const nexus = new InfrastructureNexus(
@@ -171,7 +171,7 @@ class NexusCLI {
 
       // Save report
       await Bun.write('./infrastructure-report.json', JSON.stringify(report, null, 2));
-      console.log(`\n💾 Report saved to: infrastructure-report.json`);
+      console.info(`\n💾 Report saved to: infrastructure-report.json`);
 
     } catch (error) {
       console.error('❌ Infrastructure check failed:', error);
@@ -182,8 +182,8 @@ class NexusCLI {
    * Run dashboard demo with multiple scenarios
    */
   async runDashboardDemo(): Promise<void> {
-    console.log('🎨 DASHBOARD DEMO - MULTIPLE SCENARIOS');
-    console.log('='.repeat(50));
+    console.info('🎨 DASHBOARD DEMO - MULTIPLE SCENARIOS');
+    console.info('='.repeat(50));
 
     try {
       const { runDashboardDemo } = await import("./dashboard-demo");
@@ -197,8 +197,8 @@ class NexusCLI {
    * Run stress test suite
    */
   async runStressTest(): Promise<void> {
-    console.log('🚀 STRESS TEST SUITE');
-    console.log('='.repeat(50));
+    console.info('🚀 STRESS TEST SUITE');
+    console.info('='.repeat(50));
 
     try {
       await runStressTest();
@@ -211,8 +211,8 @@ class NexusCLI {
    * Run targeted 100k row test
    */
   async run100kTest(): Promise<void> {
-    console.log('🎯 100K ROW TARGETED TEST');
-    console.log('='.repeat(50));
+    console.info('🎯 100K ROW TARGETED TEST');
+    console.info('='.repeat(50));
 
     const system = await getSystemProfile();
     const harness = new StressTestHarness(system);
@@ -228,57 +228,57 @@ class NexusCLI {
 
     const result = await harness.executeStressTest(config);
 
-    console.log('\n📊 100K ROW TEST RESULTS');
-    console.log('-'.repeat(40));
-    console.log(`Total Time: ${result.metrics.totalTime.toFixed(2)}ms`);
-    console.log(`Target (≤120ms): ${result.metrics.totalTime <= 120 ? '✅ PASS' : '❌ FAIL'}`);
-    console.log(`Throughput: ${Math.round(result.metrics.throughput.rowsPerSecond).toLocaleString()} rows/sec`);
-    console.log(`Memory Peak: ${(result.metrics.memoryUsage.peak / 1024 / 1024).toFixed(1)}MB`);
+    console.info('\n📊 100K ROW TEST RESULTS');
+    console.info('-'.repeat(40));
+    console.info(`Total Time: ${result.metrics.totalTime.toFixed(2)}ms`);
+    console.info(`Target (≤120ms): ${result.metrics.totalTime <= 120 ? '✅ PASS' : '❌ FAIL'}`);
+    console.info(`Throughput: ${Math.round(result.metrics.throughput.rowsPerSecond).toLocaleString()} rows/sec`);
+    console.info(`Memory Peak: ${(result.metrics.memoryUsage.peak / 1024 / 1024).toFixed(1)}MB`);
 
     // Performance breakdown
-    console.log('\n⚡ Performance Breakdown:');
-    console.log(`  Color: ${(result.performance.colorConversion * 1000).toFixed(2)}μs/op`);
-    console.log(`  Unicode: ${(result.performance.unicodeProcessing * 1000).toFixed(2)}μs/op`);
-    console.log(`  CRC32: ${(result.performance.crc32Hashing * 1000).toFixed(2)}μs/op`);
-    console.log(`  Rendering: ${(result.performance.tableRendering * 1000).toFixed(2)}μs/row`);
+    console.info('\n⚡ Performance Breakdown:');
+    console.info(`  Color: ${(result.performance.colorConversion * 1000).toFixed(2)}μs/op`);
+    console.info(`  Unicode: ${(result.performance.unicodeProcessing * 1000).toFixed(2)}μs/op`);
+    console.info(`  CRC32: ${(result.performance.crc32Hashing * 1000).toFixed(2)}μs/op`);
+    console.info(`  Rendering: ${(result.performance.tableRendering * 1000).toFixed(2)}μs/row`);
   }
 
   /**
    * Display help information
    */
   showHelp(): void {
-    console.log('🎯 FACTORYWAGER NEXUS CLI v5.0');
-    console.log('Enterprise Infrastructure Monitoring & Stress Testing\n');
+    console.info('🎯 FACTORYWAGER NEXUS CLI v5.0');
+    console.info('Enterprise Infrastructure Monitoring & Stress Testing\n');
 
-    console.log('Usage: nexus <command> [options]\n');
+    console.info('Usage: nexus <command> [options]\n');
 
-    console.log('Commands:');
-    console.log('  system          Show detailed system information');
-    console.log('  probe           Quick system probe (table format)');
-    console.log('  infra           Run infrastructure health check');
-    console.log('  dashboard       Run infrastructure check with dashboard');
-    console.log('  demo            Show dashboard demo with scenarios');
-    console.log('  stress          Run complete stress test suite');
-    console.log('  100k            Run targeted 100k row test');
-    console.log('  help            Show this help message\n');
+    console.info('Commands:');
+    console.info('  system          Show detailed system information');
+    console.info('  probe           Quick system probe (table format)');
+    console.info('  infra           Run infrastructure health check');
+    console.info('  dashboard       Run infrastructure check with dashboard');
+    console.info('  demo            Show dashboard demo with scenarios');
+    console.info('  stress          Run complete stress test suite');
+    console.info('  100k            Run targeted 100k row test');
+    console.info('  help            Show this help message\n');
 
-    console.log('Examples:');
-    console.log('  nexus system    # Show system capabilities');
-    console.log('  nexus probe     # Quick capability check');
-    console.log('  nexus infra     # Check infrastructure health');
-    console.log('  nexus dashboard # Beautiful dashboard visualization');
-    console.log('  nexus demo      # Dashboard demo with scenarios');
-    console.log('  nexus stress    # Full stress test suite');
-    console.log('  nexus 100k      # 100k row validation test\n');
+    console.info('Examples:');
+    console.info('  nexus system    # Show system capabilities');
+    console.info('  nexus probe     # Quick capability check');
+    console.info('  nexus infra     # Check infrastructure health');
+    console.info('  nexus dashboard # Beautiful dashboard visualization');
+    console.info('  nexus demo      # Dashboard demo with scenarios');
+    console.info('  nexus stress    # Full stress test suite');
+    console.info('  nexus 100k      # 100k row validation test\n');
 
-    console.log('Environment Variables:');
-    console.log('  FACTORY_WAGER_REGISTRY    Registry URL');
-    console.log('  FACTORY_WAGER_TOKEN       Registry auth token');
-    console.log('  R2_BUCKET                 R2 bucket name');
-    console.log('  R2_REGION                 R2 region');
-    console.log('  R2_ACCESS_KEY_ID          R2 access key');
-    console.log('  R2_SECRET_ACCESS_KEY      R2 secret key');
-    console.log('  R2_ENDPOINT               R2 endpoint URL');
+    console.info('Environment Variables:');
+    console.info('  FACTORY_WAGER_REGISTRY    Registry URL');
+    console.info('  FACTORY_WAGER_TOKEN       Registry auth token');
+    console.info('  R2_BUCKET                 R2 bucket name');
+    console.info('  R2_REGION                 R2 region');
+    console.info('  R2_ACCESS_KEY_ID          R2 access key');
+    console.info('  R2_SECRET_ACCESS_KEY      R2 secret key');
+    console.info('  R2_ENDPOINT               R2 endpoint URL');
   }
 }
 

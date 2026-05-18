@@ -97,8 +97,8 @@ export function setConfigValue<K extends keyof CommitFlowConfig>(
 
 // CLI helper for config management
 export async function printConfig(config: CommitFlowConfig): Promise<void> {
-	console.log("Tier-1380 OMEGA Commit Flow Configuration");
-	console.log();
+	console.info("Tier-1380 OMEGA Commit Flow Configuration");
+	console.info();
 
 	const sections = [
 		{
@@ -128,12 +128,12 @@ export async function printConfig(config: CommitFlowConfig): Promise<void> {
 	];
 
 	for (const section of sections) {
-		console.log(`${section.title}:`);
+		console.info(`${section.title}:`);
 		for (const key of section.keys) {
 			const value = config[key as keyof CommitFlowConfig];
-			console.log(`  ${key}: ${JSON.stringify(value)}`);
+			console.info(`  ${key}: ${JSON.stringify(value)}`);
 		}
-		console.log();
+		console.info();
 	}
 }
 
@@ -154,7 +154,7 @@ if (import.meta.main) {
 			const value = args[2];
 
 			if (!key || value === undefined) {
-				console.log("Usage: config.ts set <key> <value>");
+				console.info("Usage: config.ts set <key> <value>");
 				process.exit(1);
 			}
 
@@ -168,19 +168,19 @@ if (import.meta.main) {
 
 			const newConfig = setConfigValue(config, key, parsedValue as never);
 			await saveConfig(newConfig);
-			console.log(`✅ Set ${key} = ${JSON.stringify(parsedValue)}`);
+			console.info(`✅ Set ${key} = ${JSON.stringify(parsedValue)}`);
 			break;
 		}
 
 		case "reset":
 			await saveConfig(DEFAULT_CONFIG);
-			console.log("✅ Configuration reset to defaults");
+			console.info("✅ Configuration reset to defaults");
 			break;
 
 		default:
-			console.log("Usage:");
-			console.log("  config.ts show");
-			console.log("  config.ts set <key> <value>");
-			console.log("  config.ts reset");
+			console.info("Usage:");
+			console.info("  config.ts show");
+			console.info("  config.ts set <key> <value>");
+			console.info("  config.ts reset");
 	}
 }

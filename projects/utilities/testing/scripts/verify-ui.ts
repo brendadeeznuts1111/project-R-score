@@ -7,7 +7,7 @@ import { renderPhoneDashboard } from "../utils/table-formatter";
 import { PhoneSystem } from "../systems/phone-system";
 
 async function runTests() {
-  console.log("🛠️ Testing Phone Dashboard Alignment...");
+  console.info("🛠️ Testing Phone Dashboard Alignment...");
   
   const mockPhones = [
     { name: "iPhone 15 Pro", battery: 95, status: "Connected ✅" },
@@ -18,18 +18,18 @@ async function runTests() {
 
   renderPhoneDashboard(mockPhones);
 
-  console.log("\n🛠️ Checking PhoneSystem Class Structure...");
+  console.info("\n🛠️ Checking PhoneSystem Class Structure...");
   const phoneSystem = new PhoneSystem();
   
   if (typeof phoneSystem.debugPhone === "function") {
-    console.log("✅ debugPhone (Bun.Terminal) detected.");
+    console.info("✅ debugPhone (Bun.Terminal) detected.");
   }
   
   if (typeof phoneSystem.captureScreenshot === "function") {
-    console.log("✅ captureScreenshot (S3 Integration) detected.");
+    console.info("✅ captureScreenshot (S3 Integration) detected.");
   }
 
-  console.log("\n✨ Verification Complete!");
+  console.info("\n✨ Verification Complete!");
 }
 
 runTests();

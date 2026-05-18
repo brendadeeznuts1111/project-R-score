@@ -67,7 +67,7 @@ export class RSSBroadcaster {
     channel: string;
     data: TestExecutionData;
   }): Promise<void> {
-    console.log(`📡 Broadcasting test execution to RSS: ${data.data.sealId}`);
+    console.info(`📡 Broadcasting test execution to RSS: ${data.data.sealId}`);
 
     try {
       // Quantum-resistant RSS feed update
@@ -98,7 +98,7 @@ export class RSSBroadcaster {
       // Update changelog feed
       await this.updateChangelogFeed(rssEntry);
 
-      console.log(`✅ RSS broadcast complete: ${rssEntry.guid}`);
+      console.info(`✅ RSS broadcast complete: ${rssEntry.guid}`);
 
     } catch (error) {
       console.warn('⚠️ RSS broadcast failed (continuing without interruption):', error);
@@ -166,7 +166,7 @@ export class RSSBroadcaster {
       if (!response.ok) {
         console.warn(`⚠️ RSS update failed: ${response.status} ${response.statusText}`);
       } else {
-        console.log('📡 RSS feed updated successfully');
+        console.info('📡 RSS feed updated successfully');
       }
 
     } catch (error) {
@@ -195,7 +195,7 @@ export class RSSBroadcaster {
       JSON.stringify(this.changelogFeed, null, 2)
     );
 
-    console.log('📋 Changelog feed updated');
+    console.info('📋 Changelog feed updated');
   }
 
   private generateRSSXml(entry: RSSEntry): string {
@@ -250,7 +250,7 @@ export class RSSBroadcaster {
     const feed = await this.getChangelogFeed();
 
     if (feed.length === 0) {
-      console.log('📭 No entries to export');
+      console.info('📭 No entries to export');
       return;
     }
 
@@ -282,7 +282,7 @@ ${feed.map(entry => `    <item>
 </rss>`;
 
     await write(filePath, rssXml);
-    console.log(`📄 RSS feed exported to: ${filePath}`);
+    console.info(`📄 RSS feed exported to: ${filePath}`);
   }
 }
 
@@ -308,24 +308,24 @@ if (import.meta.main) {
           region: 'us-east-1'
         }
       }).then(() => {
-        console.log('✅ Broadcast complete');
+        console.info('✅ Broadcast complete');
       }).catch(console.error);
       break;
 
     case 'export':
       broadcaster.exportRSSFeed().then(() => {
-        console.log('✅ Export complete');
+        console.info('✅ Export complete');
       }).catch(console.error);
       break;
 
     case 'changelog':
       broadcaster.generateChangelogMarkdown().then(markdown => {
-        console.log(markdown);
+        console.info(markdown);
       }).catch(console.error);
       break;
 
     default:
-      console.log(`
+      console.info(`
 Tier-1380 RSS Broadcaster Commands:
   broadcast <context> <exitCode> <coverage>  - Broadcast test execution
   export <filePath>                        - Export RSS feed to XML

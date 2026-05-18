@@ -7,11 +7,11 @@
  * using process.send() and process.on("message").
  */
 
-console.log("🚀 IPC Child Process Example\n");
+console.info("🚀 IPC Child Process Example\n");
 
 // Handle CTRL+C
 process.on("SIGINT", () => {
-  console.log("Ctrl-C was pressed");
+  console.info("Ctrl-C was pressed");
   process.exit();
 });
 
@@ -39,7 +39,7 @@ try {
 let responded = false;
 process.on("message", message => {
   try {
-    console.log(`📨 Received from parent:`, message);
+    console.info(`📨 Received from parent:`, message);
 
     // Send a final response only once
     if (!responded) {
@@ -54,12 +54,12 @@ process.on("message", message => {
 
 // Edge case: Handle parent process termination
 process.on("disconnect", () => {
-  console.log("⚠️ Parent process disconnected");
+  console.info("⚠️ Parent process disconnected");
   // Child continues running but can't communicate
 });
 
 // Exit after a short delay
 setTimeout(() => {
-  console.log("✅ Child process exiting...");
+  console.info("✅ Child process exiting...");
   process.exit(0);
 }, 1000);

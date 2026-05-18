@@ -33,8 +33,8 @@ function bench(name: string, fn: () => Promise<void>, iters = ITERATIONS): Promi
   })();
 }
 
-console.log('validate-docs Performance Benchmark');
-console.log('='.repeat(60));
+console.info('validate-docs Performance Benchmark');
+console.info('='.repeat(60));
 
 const results: BenchResult[] = [];
 
@@ -66,18 +66,18 @@ results.push(await bench('all checks sequential', async () => {
 }));
 
 // Print results
-console.log('');
-console.log(Bun.inspect.table(results));
+console.info('');
+console.info(Bun.inspect.table(results));
 
 // Summary
 const all = results.find(r => r.operation === 'all checks combined');
 const seq = results.find(r => r.operation === 'all checks sequential');
 const urls = results.find(r => r.operation === 'checkUrls()');
 
-console.log('Summary:');
-console.log(`  All checks (parallel):    ${all?.['ms/op']}ms/op (${all?.['ops/s']} ops/s)`);
-console.log(`  All checks (sequential):  ${seq?.['ms/op']}ms/op (${seq?.['ops/s']} ops/s)`);
-console.log(`  URL check alone:          ${urls?.['ms/op']}ms/op (${urls?.['ops/s']} ops/s)`);
+console.info('Summary:');
+console.info(`  All checks (parallel):    ${all?.['ms/op']}ms/op (${all?.['ops/s']} ops/s)`);
+console.info(`  All checks (sequential):  ${seq?.['ms/op']}ms/op (${seq?.['ops/s']} ops/s)`);
+console.info(`  URL check alone:          ${urls?.['ms/op']}ms/op (${urls?.['ops/s']} ops/s)`);
 
 // Save results
 const report = {
@@ -92,4 +92,4 @@ const report = {
   })),
 };
 await Bun.write('tools/validate-docs.bench-results.json', JSON.stringify(report, null, 2));
-console.log('\nResults saved to tools/validate-docs.bench-results.json');
+console.info('\nResults saved to tools/validate-docs.bench-results.json');

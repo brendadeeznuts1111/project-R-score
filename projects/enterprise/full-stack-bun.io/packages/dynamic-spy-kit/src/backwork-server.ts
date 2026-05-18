@@ -68,10 +68,10 @@ const server = Bun.serve({
 	}
 });
 
-console.log(`🚀 Backwork Server running on http://localhost:${server.port}`);
-console.log(`📊 Endpoints:`);
-console.log(`  POST /backwork - Reverse engineer winning play`);
-console.log(`  GET /models - List discovered models`);
+console.info(`🚀 Backwork Server running on http://localhost:${server.port}`);
+console.info(`📊 Endpoints:`);
+console.info(`  POST /backwork - Reverse engineer winning play`);
+console.info(`  GET /models - List discovered models`);
 
 
 

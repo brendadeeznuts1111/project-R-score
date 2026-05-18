@@ -197,7 +197,7 @@ export async function inspectScope(options: InspectOptions = {}): Promise<void> 
       performanceMonitor.incrementOperation('excludes');
       
       if (!processedObj) {
-        console.log(`🚫 All content excluded by paths: ${excludePaths.join(", ")}`);
+        console.info(`🚫 All content excluded by paths: ${excludePaths.join(", ")}`);
         await auditLogger.log({
           userId: process.env.USER || 'unknown',
           command: 'scope --inspect',
@@ -217,7 +217,7 @@ export async function inspectScope(options: InspectOptions = {}): Promise<void> 
       performanceMonitor.incrementOperation('excludes');
       
       if (!processedObj) {
-        console.log(`🚫 All content excluded by "${exclude}"`);
+        console.info(`🚫 All content excluded by "${exclude}"`);
         await auditLogger.log({
           userId: process.env.USER || 'unknown',
           command: 'scope --inspect',
@@ -241,7 +241,7 @@ export async function inspectScope(options: InspectOptions = {}): Promise<void> 
       performanceMonitor.incrementOperation('filters');
       
       if (!processedObj) {
-        console.log(`🔍 No matches found for regex "${filterRegex}"`);
+        console.info(`🔍 No matches found for regex "${filterRegex}"`);
         await auditLogger.log({
           userId: process.env.USER || 'unknown',
           command: 'scope --inspect',
@@ -288,7 +288,7 @@ export async function inspectScope(options: InspectOptions = {}): Promise<void> 
       filterSummary = createFilterSummary(filter, inspectionObj, processedObj);
       
       if (!processedObj) {
-        console.log(`🔍 No matches found for filter "${filter}"`);
+        console.info(`🔍 No matches found for filter "${filter}"`);
         await auditLogger.log({
           userId: process.env.USER || 'unknown',
           command: 'scope --inspect',
@@ -524,12 +524,12 @@ export async function runCLI(): Promise<void> {
     }
     
     // Handle other scope commands...
-    console.log("Use --inspect to enable inspection mode");
+    console.info("Use --inspect to enable inspection mode");
     process.exit(1);
   }
   
   // Handle other commands...
-  console.log("Unknown command. Use 'scope --inspect' for inspection.");
+  console.info("Unknown command. Use 'scope --inspect' for inspection.");
 }
 
 /**

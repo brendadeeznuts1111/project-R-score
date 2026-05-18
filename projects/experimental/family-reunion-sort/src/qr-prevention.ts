@@ -455,7 +455,7 @@ export class QRCodeAnalytics {
   // Track QR code usage patterns
   async trackQRUsage(qrData: QRCodeData, outcome: 'completed' | 'disputed' | 'cancelled'): Promise<void> {
     // In a real implementation, this would store analytics data
-    console.log(`QR Usage tracked: ${qrData.transactionId} - ${outcome}`);
+    console.info(`QR Usage tracked: ${qrData.transactionId} - ${outcome}`);
   }
 
   // Generate QR code performance report

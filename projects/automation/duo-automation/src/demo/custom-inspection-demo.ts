@@ -8,12 +8,12 @@
 
 import { SecurityCheckInspectable, PaymentRequestInspectable, INSPECT_CUSTOM } from '../../ecosystem/inspect-custom.ts';
 
-console.log('🔍 CUSTOM INSPECTION SYSTEM DEMO');
-console.log('='.repeat(50));
+console.info('🔍 CUSTOM INSPECTION SYSTEM DEMO');
+console.info('='.repeat(50));
 
 // Demo 1: Security Check with Zero-Width Characters
-console.log('\n🛡️  SECURITY CHECK INSPECTION');
-console.log('-'.repeat(30));
+console.info('\n🛡️  SECURITY CHECK INSPECTION');
+console.info('-'.repeat(30));
 
 const securityCheck = new SecurityCheckInspectable(
   'CORS Test',
@@ -29,11 +29,11 @@ const securityCheck = new SecurityCheckInspectable(
   }
 );
 
-console.log(securityCheck[INSPECT_CUSTOM]());
+console.info(securityCheck[INSPECT_CUSTOM]());
 
 // Demo 2: Payment Request Inspection
-console.log('\n💰 PAYMENT REQUEST INSPECTION');
-console.log('-'.repeat(30));
+console.info('\n💰 PAYMENT REQUEST INSPECTION');
+console.info('-'.repeat(30));
 
 const payment = new PaymentRequestInspectable(
   'test_123',
@@ -50,11 +50,11 @@ const payment = new PaymentRequestInspectable(
   }
 );
 
-console.log(payment[INSPECT_CUSTOM]());
+console.info(payment[INSPECT_CUSTOM]());
 
 // Demo 3: Multiple Security Checks
-console.log('\n🔍 MULTIPLE SECURITY CHECKS');
-console.log('-'.repeat(30));
+console.info('\n🔍 MULTIPLE SECURITY CHECKS');
+console.info('-'.repeat(30));
 
 const securityChecks = [
   new SecurityCheckInspectable('SQL Injection', 'PASS', 'No SQL patterns detected'),
@@ -64,12 +64,12 @@ const securityChecks = [
 ];
 
 securityChecks.forEach((check, index) => {
-  console.log(`\n${index + 1}. ${check[INSPECT_CUSTOM]()}`);
+  console.info(`\n${index + 1}. ${check[INSPECT_CUSTOM]()}`);
 });
 
 // Demo 4: Payment History
-console.log('\n💳 PAYMENT HISTORY');
-console.log('-'.repeat(30));
+console.info('\n💳 PAYMENT HISTORY');
+console.info('-'.repeat(30));
 
 const payments = [
   new PaymentRequestInspectable('pay_001', 'Alice', 'Bob', 25.00, '$', 'completed', new Date(Date.now() - 86400000), 'cashapp'),
@@ -78,16 +78,16 @@ const payments = [
 ];
 
 payments.forEach((payment, index) => {
-  console.log(`\n${index + 1}. ${payment[INSPECT_CUSTOM]()}`);
+  console.info(`\n${index + 1}. ${payment[INSPECT_CUSTOM]()}`);
 });
 
-console.log('\n✅ Custom Inspection Demo Complete!');
-console.log('\n🎯 Key Features Demonstrated:');
-console.log('  • Security checks with zero-width character detection (Ⓩ)');
-console.log('  • Payment requests with currency formatting');
-console.log('  • Status indicators and color coding');
-console.log('  • Detailed metadata display');
-console.log('  • Method-specific emojis and formatting');
+console.info('\n✅ Custom Inspection Demo Complete!');
+console.info('\n🎯 Key Features Demonstrated:');
+console.info('  • Security checks with zero-width character detection (Ⓩ)');
+console.info('  • Payment requests with currency formatting');
+console.info('  • Status indicators and color coding');
+console.info('  • Detailed metadata display');
+console.info('  • Method-specific emojis and formatting');
 
 if (import.meta.main) {
   // Demo completed

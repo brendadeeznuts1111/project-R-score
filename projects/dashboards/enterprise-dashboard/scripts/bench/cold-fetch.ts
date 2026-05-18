@@ -23,8 +23,8 @@ for (const host of hosts) {
 }
 
 const totalMs = results.reduce((sum, r) => sum + r.latencyMs, 0);
-console.log(`Cold fetch total: ${totalMs.toFixed(2)}ms`);
-console.log(Bun.inspect.table(results.map(r => ({
+console.info(`Cold fetch total: ${totalMs.toFixed(2)}ms`);
+console.info(Bun.inspect.table(results.map(r => ({
   Host: r.host.replace("https://", ""),
   "Latency (ms)": r.latencyMs.toFixed(2),
   Status: r.status || "error",

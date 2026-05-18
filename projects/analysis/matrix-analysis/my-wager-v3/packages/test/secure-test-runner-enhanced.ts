@@ -954,13 +954,13 @@ if (import.meta.main) {
       files: process.argv.slice(4)
     });
 
-    console.log('🔒 Tier-1380 Enhanced Secure Test Runner');
-    console.log(`Context: ${context}`);
-    console.log(`Config: ${configPath}`);
-    console.log(`Config Load Time: ${runner.getConfigLoadTime().toFixed(3)}ms`);
+    console.info('🔒 Tier-1380 Enhanced Secure Test Runner');
+    console.info(`Context: ${context}`);
+    console.info(`Config: ${configPath}`);
+    console.info(`Config Load Time: ${runner.getConfigLoadTime().toFixed(3)}ms`);
     // TODO: Add matrix generation when implemented
 
-    console.log(`
+    console.info(`
 🎯 TIER-1380 SECURE TEST RUN COMPLETE
 ┌─────────────────────────────────────────┐
 │ Context:       ${context.padEnd(20)} │

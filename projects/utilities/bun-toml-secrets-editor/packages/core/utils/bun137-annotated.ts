@@ -22,7 +22,7 @@ declare global {
  * EXAMPLES:
  * ```typescript
  * const wrapped = Bun.wrapAnsi(coloredText, 80);
- * console.log(wrapped.join('\n'));
+ * console.info(wrapped.join('\n'));
  * ```
  */
 export function wrapText(text: string, width: number = 80): string[] {
@@ -91,7 +91,7 @@ export function saveJSON5(data: any, pretty: boolean = true): string {
  * ```typescript
  * const client = new SimpleHTTPClient();
  * const response = await client.get('https://api.example.com');
- * console.log(response.headers.get('Content-Type'));
+ * console.info(response.headers.get('Content-Type'));
  * ```
  */
 export class SimpleHTTPClient {
@@ -167,11 +167,11 @@ export class BucketClient {
 		// Mock implementation
 		const mockETag = `"${Math.random().toString(36).substring(2)}"`;
 
-		console.log(`📤 Uploading to bucket: ${this.config.bucket}/${key}`);
-		console.log(
+		console.info(`📤 Uploading to bucket: ${this.config.bucket}/${key}`);
+		console.info(
 			`   Content-Type: ${contentType || "application/octet-stream"}`,
 		);
-		console.log(
+		console.info(
 			`   Size: ${typeof content === "string" ? content.length : content.byteLength} bytes`,
 		);
 
@@ -185,10 +185,10 @@ export class BucketClient {
 		key: string,
 		expectedETag?: string,
 	): Promise<{ content: string; etag: string }> {
-		console.log(`📥 Downloading from bucket: ${this.config.bucket}/${key}`);
+		console.info(`📥 Downloading from bucket: ${this.config.bucket}/${key}`);
 
 		if (expectedETag) {
-			console.log(`   Expected ETag: ${expectedETag}`);
+			console.info(`   Expected ETag: ${expectedETag}`);
 		}
 
 		// Mock implementation
@@ -225,9 +225,9 @@ export class BucketClient {
 	): Promise<
 		Array<{ key: string; etag: string; size: number; lastModified: string }>
 	> {
-		console.log(`📋 Listing files in bucket: ${this.config.bucket}`);
+		console.info(`📋 Listing files in bucket: ${this.config.bucket}`);
 		if (prefix) {
-			console.log(`   Prefix: ${prefix}`);
+			console.info(`   Prefix: ${prefix}`);
 		}
 
 		// Mock implementation
@@ -280,14 +280,14 @@ export function profile<T extends (...args: any[]) => Promise<any>>(
 			try {
 				const result = await originalMethod.apply(this, args);
 				const duration = performance.now() - startTime;
-				console.log(
+				console.info(
 					`⏱️  ${target.constructor.name}.${String(propertyKey)}: ${duration.toFixed(2)}ms`,
 				);
 				stopProfiling(sessionId);
 				return result;
 			} catch (error) {
 				const duration = performance.now() - startTime;
-				console.log(
+				console.info(
 					`❌ ${target.constructor.name}.${String(propertyKey)}: ${duration.toFixed(2)}ms (failed)`,
 				);
 				stopProfiling(sessionId);
@@ -305,7 +305,7 @@ export function profile<T extends (...args: any[]) => Promise<any>>(
  */
 export function startProfiling(name: string = "profile"): string {
 	const sessionId = `${name}_${Date.now()}`;
-	console.log(`🔍 Started profiling: ${sessionId}`);
+	console.info(`🔍 Started profiling: ${sessionId}`);
 	return sessionId;
 }
 
@@ -316,7 +316,7 @@ export function startProfiling(name: string = "profile"): string {
  * COMPAT: Performance API
  */
 export function stopProfiling(sessionId: string): void {
-	console.log(`⏹️  Stopped profiling: ${sessionId}`);
+	console.info(`⏹️  Stopped profiling: ${sessionId}`);
 }
 
 // [BUN][API][FEATURE][META:STABLE][withProfile][ProfilingAPI][#REF:profile][BUN-NATIVE]
@@ -342,12 +342,12 @@ export function withProfile<T extends (...args: any[]) => Promise<any>>(
 		try {
 			const result = await fn.apply(this, args);
 			const duration = performance.now() - startTime;
-			console.log(`⏱️  ${name || fn.name}: ${duration.toFixed(2)}ms`);
+			console.info(`⏱️  ${name || fn.name}: ${duration.toFixed(2)}ms`);
 			stopProfiling(sessionId);
 			return result;
 		} catch (error) {
 			const duration = performance.now() - startTime;
-			console.log(`❌ ${name || fn.name}: ${duration.toFixed(2)}ms (failed)`);
+			console.info(`❌ ${name || fn.name}: ${duration.toFixed(2)}ms (failed)`);
 			stopProfiling(sessionId);
 			throw error;
 		}
@@ -395,20 +395,20 @@ export const isAvailable = {
 // Example usage
 export const examples = {
 	ansi: () => {
-		console.log("🎨 Bun.wrapAnsi() - 88x Faster CLI Formatting\n");
+		console.info("🎨 Bun.wrapAnsi() - 88x Faster CLI Formatting\n");
 
 		const coloredText =
 			"This is a \x1b[32mgreen\x1b[0m text that needs wrapping for better CLI output";
 		const wrapped = wrapText(coloredText, 40);
 
-		console.log("Original:");
-		console.log(coloredText);
-		console.log("\nWrapped:");
-		wrapped.forEach((line, i) => console.log(`${i + 1}: ${line}`));
+		console.info("Original:");
+		console.info(coloredText);
+		console.info("\nWrapped:");
+		wrapped.forEach((line, i) => console.info(`${i + 1}: ${line}`));
 	},
 
 	json5: () => {
-		console.log("📋 Bun.JSON5 - Native JSON5 Configuration\n");
+		console.info("📋 Bun.JSON5 - Native JSON5 Configuration\n");
 
 		const json5Content = `{
   // Application configuration
@@ -422,32 +422,32 @@ export const examples = {
 }`;
 
 		const parsed = loadJSON5(json5Content);
-		console.log("Parsed:", JSON.stringify(parsed, null, 2));
+		console.info("Parsed:", JSON.stringify(parsed, null, 2));
 	},
 
 	etag: async () => {
-		console.log("🏷️  ETag Caching Support\n");
+		console.info("🏷️  ETag Caching Support\n");
 
 		const client = new SimpleHTTPClient();
 
 		// Simulate ETag workflow
-		console.log("1. First request:");
+		console.info("1. First request:");
 		const response1 = await client.get("https://httpbin.org/etag/test");
 		const etag = client.getETag(response1);
-		console.log(`   ETag: ${etag}`);
+		console.info(`   ETag: ${etag}`);
 
 		if (etag) {
-			console.log("\n2. Second request with ETag:");
+			console.info("\n2. Second request with ETag:");
 			const response2 = await client.getWithETag(
 				"https://httpbin.org/etag/test",
 				etag,
 			);
-			console.log(`   Not modified: ${client.isNotModified(response2)}`);
+			console.info(`   Not modified: ${client.isNotModified(response2)}`);
 		}
 	},
 
 	bucket: async () => {
-		console.log("🗂️  Bucket Storage Demo\n");
+		console.info("🗂️  Bucket Storage Demo\n");
 
 		const bucket = new BucketClient({ bucket: "my-app-bucket" });
 
@@ -461,22 +461,22 @@ export const examples = {
 			"application/json",
 		);
 
-		console.log(`Uploaded: ${uploadResult.key} (ETag: ${uploadResult.etag})`);
+		console.info(`Uploaded: ${uploadResult.key} (ETag: ${uploadResult.etag})`);
 
 		// Download
 		const downloadResult = await bucket.downloadFile(
 			"config.json",
 			uploadResult.etag,
 		);
-		console.log(`Downloaded: ${downloadResult.content}`);
+		console.info(`Downloaded: ${downloadResult.content}`);
 
 		// List
 		const files = await bucket.listFiles();
-		console.log(`Files in bucket: ${files.length}`);
+		console.info(`Files in bucket: ${files.length}`);
 	},
 
 	profiling: () => {
-		console.log("📊 Profiling Features\n");
+		console.info("📊 Profiling Features\n");
 
 		const id = startProfiling("my-app");
 		setTimeout(() => stopProfiling(id), 1000);

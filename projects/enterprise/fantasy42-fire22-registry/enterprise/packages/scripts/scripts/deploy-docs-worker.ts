@@ -38,7 +38,7 @@ class DocsWorkerDeployer {
    * Main deployment process
    */
   async deploy(): Promise<void> {
-    console.log('🚀 Starting Crystal Clear Docs Worker Deployment...\n');
+    console.info('🚀 Starting Crystal Clear Docs Worker Deployment...\n');
 
     try {
       await this.validateEnvironment();
@@ -56,7 +56,7 @@ class DocsWorkerDeployer {
    * Validate environment and dependencies
    */
   private async validateEnvironment(): Promise<void> {
-    console.log('🔍 Validating environment...');
+    console.info('🔍 Validating environment...');
 
     // Check Node.js version
     const nodeVersion = process.version;
@@ -75,18 +75,18 @@ class DocsWorkerDeployer {
     try {
       execSync('wrangler whoami', { stdio: 'pipe' });
     } catch (error) {
-      console.log('⚠️  Not authenticated with Cloudflare. Running login...');
+      console.info('⚠️  Not authenticated with Cloudflare. Running login...');
       execSync('wrangler auth login', { stdio: 'inherit' });
     }
 
-    console.log('✅ Environment validation passed\n');
+    console.info('✅ Environment validation passed\n');
   }
 
   /**
    * Validate required files exist
    */
   private async validateFiles(): Promise<void> {
-    console.log('📁 Validating files...');
+    console.info('📁 Validating files...');
 
     const requiredFiles = [
       'docs-worker/src/docs-worker.ts',
@@ -100,20 +100,20 @@ class DocsWorkerDeployer {
       const filePath = path.join(this.projectRoot, file);
       try {
         await fs.access(filePath);
-        console.log(`  ✅ ${file}`);
+        console.info(`  ✅ ${file}`);
       } catch (error) {
         throw new Error(`Required file missing: ${file}`);
       }
     }
 
-    console.log('✅ File validation passed\n');
+    console.info('✅ File validation passed\n');
   }
 
   /**
    * Build and deploy the worker
    */
   private async buildAndDeploy(): Promise<void> {
-    console.log('🏗️  Building and deploying worker...');
+    console.info('🏗️  Building and deploying worker...');
 
     const workerDir = path.join(this.projectRoot, 'docs-worker');
 
@@ -122,15 +122,15 @@ class DocsWorkerDeployer {
 
     try {
       // Install dependencies
-      console.log('📦 Installing dependencies...');
+      console.info('📦 Installing dependencies...');
       execSync('bun install', { stdio: 'inherit' });
 
       // Run type check
-      console.log('🔍 Running type check...');
+      console.info('🔍 Running type check...');
       execSync('bun run typecheck', { stdio: 'pipe' });
 
       // Deploy to Cloudflare
-      console.log('🚀 Deploying to Cloudflare...');
+      console.info('🚀 Deploying to Cloudflare...');
       execSync('bun run deploy', { stdio: 'inherit' });
     } catch (error) {
       throw new Error(`Build/deploy failed: ${error instanceof Error ? error.message : error}`);
@@ -139,14 +139,14 @@ class DocsWorkerDeployer {
       process.chdir(this.projectRoot);
     }
 
-    console.log('✅ Build and deployment completed\n');
+    console.info('✅ Build and deployment completed\n');
   }
 
   /**
    * Verify the deployment is working
    */
   private async verifyDeployment(): Promise<void> {
-    console.log('🩺 Verifying deployment...');
+    console.info('🩺 Verifying deployment...');
 
     const workerUrl = `https://${this.config.workerName}.nolarose1968.workers.dev`;
 
@@ -161,25 +161,25 @@ class DocsWorkerDeployer {
       }
 
       const health = await response.json();
-      console.log(`  ✅ Health check passed: ${health.status}`);
+      console.info(`  ✅ Health check passed: ${health.status}`);
     } catch (error) {
-      console.log(`  ⚠️  Health check failed, but deployment may still succeed`);
-      console.log(`     Error: ${error instanceof Error ? error.message : error}`);
+      console.info(`  ⚠️  Health check failed, but deployment may still succeed`);
+      console.info(`     Error: ${error instanceof Error ? error.message : error}`);
     }
 
     // Test main page
     try {
       const response = await fetch(`${workerUrl}/`);
       if (response.ok) {
-        console.log(`  ✅ Main page accessible`);
+        console.info(`  ✅ Main page accessible`);
       } else {
-        console.log(`  ⚠️  Main page returned ${response.status}`);
+        console.info(`  ⚠️  Main page returned ${response.status}`);
       }
     } catch (error) {
-      console.log(`  ⚠️  Main page check failed`);
+      console.info(`  ⚠️  Main page check failed`);
     }
 
-    console.log('✅ Deployment verification completed\n');
+    console.info('✅ Deployment verification completed\n');
   }
 
   /**
@@ -188,29 +188,29 @@ class DocsWorkerDeployer {
   private async printSuccess(): Promise<void> {
     const workerUrl = `https://${this.config.workerName}.nolarose1968.workers.dev`;
 
-    console.log('🎉 Crystal Clear Docs Worker Deployed Successfully!');
-    console.log('');
-    console.log('📖 Live Documentation URLs:');
-    console.log(`   🌐 Main Site: ${workerUrl}`);
-    console.log(`   🩺 Health Check: ${workerUrl}/api/health`);
-    console.log(`   📋 API Info: ${workerUrl}/api/docs`);
-    console.log(`   📞 Communication: ${workerUrl}/communication.html`);
-    console.log(`   🌐 Domains: ${workerUrl}/domains.html`);
-    console.log(`   ⚡ Performance: ${workerUrl}/performance.html`);
-    console.log('');
-    console.log('🔧 Management:');
-    console.log(`   📊 View Logs: wrangler tail`);
-    console.log(`   🔄 Redeploy: bun run deploy (from docs-worker/)`);
-    console.log(`   🧹 Clear Cache: POST ${workerUrl}/api/clear-cache`);
-    console.log('');
-    console.log('⚡ Features:');
-    console.log('   • Automatic content fetching from GitHub');
-    console.log('   • Smart caching with ETags');
-    console.log('   • Real-time updates on git push');
-    console.log('   • CDN optimization via Cloudflare');
-    console.log('   • Comprehensive health monitoring');
-    console.log('');
-    console.log('🚀 Deployment completed successfully!');
+    console.info('🎉 Crystal Clear Docs Worker Deployed Successfully!');
+    console.info('');
+    console.info('📖 Live Documentation URLs:');
+    console.info(`   🌐 Main Site: ${workerUrl}`);
+    console.info(`   🩺 Health Check: ${workerUrl}/api/health`);
+    console.info(`   📋 API Info: ${workerUrl}/api/docs`);
+    console.info(`   📞 Communication: ${workerUrl}/communication.html`);
+    console.info(`   🌐 Domains: ${workerUrl}/domains.html`);
+    console.info(`   ⚡ Performance: ${workerUrl}/performance.html`);
+    console.info('');
+    console.info('🔧 Management:');
+    console.info(`   📊 View Logs: wrangler tail`);
+    console.info(`   🔄 Redeploy: bun run deploy (from docs-worker/)`);
+    console.info(`   🧹 Clear Cache: POST ${workerUrl}/api/clear-cache`);
+    console.info('');
+    console.info('⚡ Features:');
+    console.info('   • Automatic content fetching from GitHub');
+    console.info('   • Smart caching with ETags');
+    console.info('   • Real-time updates on git push');
+    console.info('   • CDN optimization via Cloudflare');
+    console.info('   • Comprehensive health monitoring');
+    console.info('');
+    console.info('🚀 Deployment completed successfully!');
   }
 
   /**

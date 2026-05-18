@@ -242,23 +242,23 @@ export class HMRSafePatternLoader {
 	 */
 	private static suggestFix(errorMessage: string, file: string): void {
 		if (errorMessage.includes('JSON') || errorMessage.includes('parse')) {
-			console.log(`💡 Fix: Check JSON syntax in ${file}`);
-			console.log(`   Common issues: Missing commas, trailing commas, invalid values`);
+			console.info(`💡 Fix: Check JSON syntax in ${file}`);
+			console.info(`   Common issues: Missing commas, trailing commas, invalid values`);
 		}
 		
 		if (errorMessage.includes('pathname')) {
-			console.log(`💡 Fix: Add valid pathname like "/odds/:market"`);
-			console.log(`   Required URLPattern properties: pathname`);
-			console.log(`   Optional properties: protocol, username, password, hostname, port, search, hash`);
+			console.info(`💡 Fix: Add valid pathname like "/odds/:market"`);
+			console.info(`   Required URLPattern properties: pathname`);
+			console.info(`   Optional properties: protocol, username, password, hostname, port, search, hash`);
 		}
 		
 		if (errorMessage.includes('hostname')) {
-			console.log(`💡 Fix: Add valid hostname like "bookie.com"`);
+			console.info(`💡 Fix: Add valid hostname like "bookie.com"`);
 		}
 
 		if (errorMessage.includes('properties')) {
-			console.log(`💡 Fix: URLPattern properties must be strings:`);
-			console.log(`   protocol, username, password, hostname, port, pathname, search, hash`);
+			console.info(`💡 Fix: URLPattern properties must be strings:`);
+			console.info(`   protocol, username, password, hostname, port, pathname, search, hash`);
 		}
 	}
 

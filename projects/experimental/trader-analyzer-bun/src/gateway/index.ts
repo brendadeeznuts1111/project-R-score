@@ -394,7 +394,7 @@ export class GatewayRouter {
    * Graceful shutdown
    */
   async shutdown(): Promise<void> {
-    console.log('Shutting down Gateway Router...');
+    console.info('Shutting down Gateway Router...');
 
     // Wait for processing tasks to complete
     const timeout = 30000; // 30 seconds
@@ -402,7 +402,7 @@ export class GatewayRouter {
 
     while (this.processingTasks.size > 0 && Date.now() - startTime < timeout) {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log(`Waiting for ${this.processingTasks.size} tasks to complete...`);
+      console.info(`Waiting for ${this.processingTasks.size} tasks to complete...`);
     }
 
     // Force shutdown remaining tasks
@@ -410,7 +410,7 @@ export class GatewayRouter {
       pool.shutdown();
     }
 
-    console.log('Gateway Router shutdown complete');
+    console.info('Gateway Router shutdown complete');
   }
 }
 

@@ -11,6 +11,6 @@ export function initFactoryWager() {
     return;
   }
 
-  console.log('💎 FactoryWager Premium Engine Initialized.');
+  console.info('💎 FactoryWager Premium Engine Initialized.');
   // Deep integration logic here
 }

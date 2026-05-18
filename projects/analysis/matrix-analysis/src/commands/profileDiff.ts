@@ -49,14 +49,14 @@ export async function profileDiff(
 		}
 	}
 
-	console.log(fmt.bold(`Comparing profiles: ${leftName} ↔ ${rightName}`) + "\n");
+	console.info(fmt.bold(`Comparing profiles: ${leftName} ↔ ${rightName}`) + "\n");
 
 	const added = diffs.filter((d) => d.status === "added");
 	const removed = diffs.filter((d) => d.status === "removed");
 	const changed = diffs.filter((d) => d.status === "changed");
 
 	if (added.length === 0 && removed.length === 0 && changed.length === 0) {
-		console.log(fmt.ok("Profiles are identical"));
+		console.info(fmt.ok("Profiles are identical"));
 		return;
 	}
 
@@ -65,31 +65,31 @@ export async function profileDiff(
 	if (added.length > 0) parts.push(`${fmt.ok("+")}${added.length} added`);
 	if (removed.length > 0) parts.push(`${fmt.fail("-")}${removed.length} removed`);
 	if (changed.length > 0) parts.push(`${fmt.warn("~")}${changed.length} changed`);
-	console.log(parts.join("  ") + "\n");
+	console.info(parts.join("  ") + "\n");
 
 	// Details
 	if (added.length > 0) {
-		console.log(fmt.ok(`── Added in ${rightName} ──`));
+		console.info(fmt.ok(`── Added in ${rightName} ──`));
 		for (const d of added) {
-			console.log(`  ${fmt.ok("+")} ${d.key} = ${maskValue(d.key, d.right!)}`);
+			console.info(`  ${fmt.ok("+")} ${d.key} = ${maskValue(d.key, d.right!)}`);
 		}
-		console.log();
+		console.info();
 	}
 
 	if (removed.length > 0) {
-		console.log(fmt.fail(`── Removed from ${rightName} ──`));
+		console.info(fmt.fail(`── Removed from ${rightName} ──`));
 		for (const d of removed) {
-			console.log(`  ${fmt.fail("-")} ${d.key} = ${maskValue(d.key, d.left!)}`);
+			console.info(`  ${fmt.fail("-")} ${d.key} = ${maskValue(d.key, d.left!)}`);
 		}
-		console.log();
+		console.info();
 	}
 
 	if (changed.length > 0) {
-		console.log(fmt.warn(`── Changed ──`));
+		console.info(fmt.warn(`── Changed ──`));
 		for (const d of changed) {
-			console.log(`  ${fmt.warn("~")} ${d.key}`);
-			console.log(`    ${leftName}: ${maskValue(d.key, d.left!)}`);
-			console.log(`    ${rightName}: ${maskValue(d.key, d.right!)}`);
+			console.info(`  ${fmt.warn("~")} ${d.key}`);
+			console.info(`    ${leftName}: ${maskValue(d.key, d.left!)}`);
+			console.info(`    ${rightName}: ${maskValue(d.key, d.right!)}`);
 		}
 	}
 
@@ -123,23 +123,23 @@ export async function profileDiff(
 		}
 
 		if (pathAdded.length > 0 || pathRemoved.length > 0 || pathChanged.length > 0) {
-			console.log(`\n${fmt.bold("Path Variables:")}\n`);
+			console.info(`\n${fmt.bold("Path Variables:")}\n`);
 
 			if (pathAdded.length > 0) {
 				for (const v of pathAdded) {
 					const rc = rightPaths[v];
-					console.log(`  ${fmt.ok("+")} ${v}`);
-					if (rc.prepend?.length) console.log(`      prepend: ${rc.prepend.join(", ")}`);
-					if (rc.append?.length) console.log(`      append: ${rc.append.join(", ")}`);
+					console.info(`  ${fmt.ok("+")} ${v}`);
+					if (rc.prepend?.length) console.info(`      prepend: ${rc.prepend.join(", ")}`);
+					if (rc.append?.length) console.info(`      append: ${rc.append.join(", ")}`);
 				}
 			}
 
 			if (pathRemoved.length > 0) {
 				for (const v of pathRemoved) {
 					const lc = leftPaths[v];
-					console.log(`  ${fmt.fail("-")} ${v}`);
-					if (lc.prepend?.length) console.log(`      prepend: ${lc.prepend.join(", ")}`);
-					if (lc.append?.length) console.log(`      append: ${lc.append.join(", ")}`);
+					console.info(`  ${fmt.fail("-")} ${v}`);
+					if (lc.prepend?.length) console.info(`      prepend: ${lc.prepend.join(", ")}`);
+					if (lc.append?.length) console.info(`      append: ${lc.append.join(", ")}`);
 				}
 			}
 
@@ -147,11 +147,11 @@ export async function profileDiff(
 				for (const v of pathChanged) {
 					const lc = leftPaths[v];
 					const rc = rightPaths[v];
-					console.log(`  ${fmt.warn("~")} ${v}`);
-					console.log(
+					console.info(`  ${fmt.warn("~")} ${v}`);
+					console.info(
 						`    ${leftName}: prepend=[${(lc.prepend || []).join(", ")}] append=[${(lc.append || []).join(", ")}]`,
 					);
-					console.log(
+					console.info(
 						`    ${rightName}: prepend=[${(rc.prepend || []).join(", ")}] append=[${(rc.append || []).join(", ")}]`,
 					);
 				}

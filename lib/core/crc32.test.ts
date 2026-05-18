@@ -321,18 +321,18 @@ describe('CRC32', () => {
 
 // Entry guard for quick test
 if (import.meta.main) {
-  console.log('🧪 CRC32 Quick Test\n');
+  console.info('🧪 CRC32 Quick Test\n');
   
   // Test known vector
   const result = crc32('hello world');
-  console.log(`crc32('hello world') = 0x${result.hex}`);
-  console.log(`Expected: 0x0D4A1185`);
-  console.log(`Match: ${result.hex === '0D4A1185' ? '✅' : '❌'}`);
+  console.info(`crc32('hello world') = 0x${result.hex}`);
+  console.info(`Expected: 0x0D4A1185`);
+  console.info(`Match: ${result.hex === '0D4A1185' ? '✅' : '❌'}`);
   
   // Quick benchmark
-  console.log('\nQuick Benchmark:');
+  console.info('\nQuick Benchmark:');
   const bench = benchmark(1024);
-  console.log(`1MB: ${bench.throughput} (${bench.opsPerSecond} ops/sec)`);
+  console.info(`1MB: ${bench.throughput} (${bench.opsPerSecond} ops/sec)`);
   
-  console.log('\n✅ Test complete!');
+  console.info('\n✅ Test complete!');
 }

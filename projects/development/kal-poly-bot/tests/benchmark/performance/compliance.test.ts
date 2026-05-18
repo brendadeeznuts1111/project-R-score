@@ -33,10 +33,10 @@ describe("Compliance Enforcement Performance Benchmarks", () => {
     }
 
     const stats = measurer.getStats("compliance-enforcement");
-    console.log(`🛡️ Compliance Enforcement Performance:`);
-    console.log(`   Average: ${stats!.average.toFixed(2)}ms`);
-    console.log(`   P95: ${stats!.p95.toFixed(2)}ms`);
-    console.log(`   Max: ${stats!.max.toFixed(2)}ms`);
+    console.info(`🛡️ Compliance Enforcement Performance:`);
+    console.info(`   Average: ${stats!.average.toFixed(2)}ms`);
+    console.info(`   P95: ${stats!.p95.toFixed(2)}ms`);
+    console.info(`   Max: ${stats!.max.toFixed(2)}ms`);
 
     TestAssertions.assertPerformance(
       stats!.average,
@@ -61,10 +61,10 @@ describe("Compliance Enforcement Performance Benchmarks", () => {
     const compliance = await enhancedConfigManager.checkCompliance(config);
     const _latency = endMeasurement();
 
-    console.log(`📋 Multi-Framework Compliance:`);
-    console.log(`   Frameworks Validated: ${frameworkCount}`);
-    console.log(`   Overall Score: ${compliance.score}%`);
-    console.log(
+    console.info(`📋 Multi-Framework Compliance:`);
+    console.info(`   Frameworks Validated: ${frameworkCount}`);
+    console.info(`   Overall Score: ${compliance.score}%`);
+    console.info(
       `   Compliance Status: ${compliance.compliant ? "Pass" : "Fail"}`
     );
 
@@ -98,10 +98,10 @@ describe("Compliance Enforcement Performance Benchmarks", () => {
     const totalTime = endTime - startTime;
     const throughput = concurrentChecks / (totalTime / 1000);
 
-    console.log(`⚡ Concurrent Compliance Checks:`);
-    console.log(`   Total Time: ${totalTime.toFixed(2)}ms`);
-    console.log(`   Throughput: ${throughput.toFixed(0)} checks/second`);
-    console.log(`   Checks Processed: ${results.length}`);
+    console.info(`⚡ Concurrent Compliance Checks:`);
+    console.info(`   Total Time: ${totalTime.toFixed(2)}ms`);
+    console.info(`   Throughput: ${throughput.toFixed(0)} checks/second`);
+    console.info(`   Checks Processed: ${results.length}`);
 
     TestAssertions.assertThroughput(
       throughput,
@@ -139,7 +139,7 @@ describe("Compliance Enforcement Performance Benchmarks", () => {
           ].score,
       };
 
-      console.log(
+      console.info(
         `   ${framework}: ${compliance.score}% (${results[framework].passed ? "✅" : "❌"})`
       );
     }
@@ -149,8 +149,8 @@ describe("Compliance Enforcement Performance Benchmarks", () => {
     ).length;
     const overallPassRate = (passedFrameworks / frameworkNames.length) * 100;
 
-    console.log(`📊 Framework Compliance Summary:`);
-    console.log(
+    console.info(`📊 Framework Compliance Summary:`);
+    console.info(
       `   Passed: ${passedFrameworks}/${frameworkNames.length} (${overallPassRate.toFixed(1)}%)`
     );
 

@@ -40,7 +40,7 @@ class EnvironmentHealthChecker {
   private sources: Set<string> = new Set();
 
   async analyze(): Promise<ValidationResult> {
-    console.log('🔍 Analyzing environment variables...\n');
+    console.info('🔍 Analyzing environment variables...\n');
 
     // Analyze all configuration sources
     await this.analyzeConstantsFiles();
@@ -273,55 +273,55 @@ class EnvironmentHealthChecker {
 
 // CLI execution
 async function main() {
-  console.log('🏥 Environment Variables Health Check');
-  console.log('=====================================\n');
+  console.info('🏥 Environment Variables Health Check');
+  console.info('=====================================\n');
 
   const checker = new EnvironmentHealthChecker();
   const result = await checker.analyze();
 
-  console.log('📊 SUMMARY');
-  console.log('----------');
-  console.log(`Total environment variables: ${result.summary.totalVars}`);
-  console.log(`Unique variables: ${result.summary.uniqueVars}`);
-  console.log(`Sources analyzed: ${result.summary.sources.length}`);
-  console.log(`Sources: ${result.summary.sources.map(s => s.replace(/^.*\//, '')).join(', ')}\n`);
+  console.info('📊 SUMMARY');
+  console.info('----------');
+  console.info(`Total environment variables: ${result.summary.totalVars}`);
+  console.info(`Unique variables: ${result.summary.uniqueVars}`);
+  console.info(`Sources analyzed: ${result.summary.sources.length}`);
+  console.info(`Sources: ${result.summary.sources.map(s => s.replace(/^.*\//, '')).join(', ')}\n`);
 
   if (result.duplicates.length > 0) {
-    console.log('🔄 DUPLICATES');
-    console.log('-----------');
-    result.duplicates.forEach(duplicate => console.log(`⚠️  ${duplicate}`));
-    console.log();
+    console.info('🔄 DUPLICATES');
+    console.info('-----------');
+    result.duplicates.forEach(duplicate => console.info(`⚠️  ${duplicate}`));
+    console.info();
   }
 
   if (result.missing.length > 0) {
-    console.log('❌ MISSING FROM .env.example');
-    console.log('--------------------------');
-    result.missing.forEach(missing => console.log(`❌ ${missing} (used in code but not documented)`));
-    console.log();
+    console.info('❌ MISSING FROM .env.example');
+    console.info('--------------------------');
+    result.missing.forEach(missing => console.info(`❌ ${missing} (used in code but not documented)`));
+    console.info();
   }
 
   if (result.warnings.length > 0) {
-    console.log('⚠️  WARNINGS');
-    console.log('-----------');
-    result.warnings.forEach(warning => console.log(`⚠️  ${warning}`));
-    console.log();
+    console.info('⚠️  WARNINGS');
+    console.info('-----------');
+    result.warnings.forEach(warning => console.info(`⚠️  ${warning}`));
+    console.info();
   }
 
   if (result.errors.length > 0) {
-    console.log('💥 ERRORS');
-    console.log('---------');
-    result.errors.forEach(error => console.log(`❌ ${error}`));
-    console.log();
+    console.info('💥 ERRORS');
+    console.info('---------');
+    result.errors.forEach(error => console.info(`❌ ${error}`));
+    console.info();
   }
 
   // Health check status
   if (result.success && result.duplicates.length === 0 && result.missing.length === 0) {
-    console.log('✅ HEALTH CHECK PASSED');
-    console.log('All environment variables are properly single-sourced and documented.');
+    console.info('✅ HEALTH CHECK PASSED');
+    console.info('All environment variables are properly single-sourced and documented.');
     process.exit(0);
   } else {
-    console.log('🚨 HEALTH CHECK FAILED');
-    console.log('Please address the issues above before proceeding.');
+    console.info('🚨 HEALTH CHECK FAILED');
+    console.info('Please address the issues above before proceeding.');
     process.exit(1);
   }
 }

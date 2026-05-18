@@ -14,13 +14,13 @@ const CONFIG = {
 	compression: 'zstd' as const
 } as const;
 
-console.log('🚀 Standalone Arbitrage Engine');
-console.log('==============================');
-console.log(`Port: ${CONFIG.port}`);
-console.log(`Bookies: ${CONFIG.bookies.length}`);
-console.log(`Markets: ${CONFIG.markets}`);
-console.log(`Compression: ${CONFIG.compression}`);
-console.log('');
+console.info('🚀 Standalone Arbitrage Engine');
+console.info('==============================');
+console.info(`Port: ${CONFIG.port}`);
+console.info(`Bookies: ${CONFIG.bookies.length}`);
+console.info(`Markets: ${CONFIG.markets}`);
+console.info(`Compression: ${CONFIG.compression}`);
+console.info('');
 
 // Import compression utilities
 import { generateNBAMarketsStream, compressStream } from './utils/compression-stream';
@@ -57,9 +57,9 @@ Bun.serve({
 	}
 });
 
-console.log(`✅ Server running on port ${CONFIG.port}`);
-console.log(`📊 Markets: http://localhost:${CONFIG.port}/markets`);
-console.log(`💚 Health: http://localhost:${CONFIG.port}/health`);
+console.info(`✅ Server running on port ${CONFIG.port}`);
+console.info(`📊 Markets: http://localhost:${CONFIG.port}/markets`);
+console.info(`💚 Health: http://localhost:${CONFIG.port}/health`);
 
 
 

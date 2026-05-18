@@ -96,7 +96,7 @@ export class VersionControlSystem extends EventEmitter {
   }
 
   private initializeVersionControl(): void {
-    console.log('🔄 Initializing Version Control System...');
+    console.info('🔄 Initializing Version Control System...');
 
     // Setup version monitoring
     this.setupVersionMonitoring();
@@ -110,7 +110,7 @@ export class VersionControlSystem extends EventEmitter {
     // Setup update scheduling
     this.setupUpdateScheduling();
 
-    console.log('✅ Version Control System initialized');
+    console.info('✅ Version Control System initialized');
   }
 
   private setupVersionMonitoring(): void {
@@ -408,7 +408,7 @@ export class VersionControlSystem extends EventEmitter {
       plan.status = 'completed';
       this.emit('update-plan-completed', plan);
 
-      console.log(`✅ Update plan ${planId} completed successfully`);
+      console.info(`✅ Update plan ${planId} completed successfully`);
       return true;
     } catch (error) {
       console.error(`❌ Update plan ${planId} failed:`, error);
@@ -432,7 +432,7 @@ export class VersionControlSystem extends EventEmitter {
       throw new Error(`Update plan ${planId} not found`);
     }
 
-    console.log(`🔄 Rolling back update plan ${planId}`);
+    console.info(`🔄 Rolling back update plan ${planId}`);
 
     try {
       plan.status = 'rolled-back';
@@ -443,7 +443,7 @@ export class VersionControlSystem extends EventEmitter {
       }
 
       this.emit('update-plan-rolled-back', plan);
-      console.log(`✅ Update plan ${planId} rolled back successfully`);
+      console.info(`✅ Update plan ${planId} rolled back successfully`);
 
       return true;
     } catch (error) {
@@ -485,7 +485,7 @@ export class VersionControlSystem extends EventEmitter {
       (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
 
-    console.log(`📅 Update plan ${planId} scheduled for ${scheduledTime}`);
+    console.info(`📅 Update plan ${planId} scheduled for ${scheduledTime}`);
     this.emit('update-scheduled', { plan, scheduledTime });
   }
 
@@ -552,7 +552,7 @@ export class VersionControlSystem extends EventEmitter {
    */
   addMaintenanceWindow(start: string, end: string, timezone: string = 'UTC'): void {
     this.maintenanceWindows.push({ start, end, timezone });
-    console.log(`🕒 Added maintenance window: ${start} - ${end} (${timezone})`);
+    console.info(`🕒 Added maintenance window: ${start} - ${end} (${timezone})`);
   }
 
   // ============================================================================
@@ -588,7 +588,7 @@ export class VersionControlSystem extends EventEmitter {
       return validation.valid;
     }
 
-    console.log(
+    console.info(
       `⬆️ Promoting version ${currentEnvData.currentVersion} from ${currentEnv} to ${targetEnv}`
     );
 
@@ -725,45 +725,45 @@ export class VersionControlSystem extends EventEmitter {
     plan: UpdatePlan
   ): Promise<void> {
     // Implementation would update the specific component
-    console.log(`🔧 Updating ${component} to version ${version}`);
+    console.info(`🔧 Updating ${component} to version ${version}`);
     await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate update time
   }
 
   private async rollbackComponent(component: string, plan: UpdatePlan): Promise<void> {
     // Implementation would rollback the specific component
-    console.log(`🔄 Rolling back ${component}`);
+    console.info(`🔄 Rolling back ${component}`);
     await new Promise(resolve => setTimeout(resolve, 500)); // Simulate rollback time
   }
 
   private async performPreUpdateChecks(plan: UpdatePlan): Promise<void> {
     // Implementation would perform pre-update validation
-    console.log('🔍 Performing pre-update checks...');
+    console.info('🔍 Performing pre-update checks...');
   }
 
   private async performPostUpdateValidation(plan: UpdatePlan): Promise<void> {
     // Implementation would perform post-update validation
-    console.log('✅ Performing post-update validation...');
+    console.info('✅ Performing post-update validation...');
   }
 
   private validateUpdatePlan(plan: UpdatePlan): void {
     // Implementation would validate the update plan
-    console.log(`🔍 Validating update plan ${plan.id}...`);
+    console.info(`🔍 Validating update plan ${plan.id}...`);
   }
 
   private setupCrossEnvironmentSync(): void {
     // Setup synchronization between environments
-    console.log('🔄 Setting up cross-environment synchronization...');
+    console.info('🔄 Setting up cross-environment synchronization...');
   }
 
   private performVersionHealthCheck(): void {
     // Perform periodic version health checks
-    console.log('💚 Performing version health check...');
+    console.info('💚 Performing version health check...');
   }
 
   private checkMaintenanceWindows(): void {
     // Check if we're in a maintenance window
     if (this.isInMaintenanceWindow()) {
-      console.log('🕒 Currently in maintenance window');
+      console.info('🕒 Currently in maintenance window');
     }
   }
 
@@ -772,15 +772,15 @@ export class VersionControlSystem extends EventEmitter {
   // ============================================================================
 
   private handleVersionUpdate(update: VersionUpdate): void {
-    console.log(`📦 Version updated: ${update.fromVersion} → ${update.toVersion}`);
+    console.info(`📦 Version updated: ${update.fromVersion} → ${update.toVersion}`);
   }
 
   private handleVersionChange(change: any): void {
-    console.log(`🔄 Version changed: ${change.from} → ${change.to}`);
+    console.info(`🔄 Version changed: ${change.from} → ${change.to}`);
   }
 
   private handleUpdateAvailable(update: any): void {
-    console.log(`📦 Update available: ${update.latestVersion}`);
+    console.info(`📦 Update available: ${update.latestVersion}`);
 
     // Automatically create update plan if auto-updates are enabled
     if (this.autoUpdateEnabled) {
@@ -863,7 +863,7 @@ export class VersionControlSystem extends EventEmitter {
       }
     }
 
-    console.log(`🧹 Cleaned up ${cleaned} old update plans`);
+    console.info(`🧹 Cleaned up ${cleaned} old update plans`);
     return cleaned;
   }
 
@@ -886,7 +886,7 @@ export class VersionControlSystem extends EventEmitter {
    */
   importData(data: any): void {
     // Implementation would import and validate version control data
-    console.log('📥 Importing version control data...');
+    console.info('📥 Importing version control data...');
   }
 
   /**
@@ -895,7 +895,7 @@ export class VersionControlSystem extends EventEmitter {
   destroy(): void {
     // Clean up timers and listeners
     this.removeAllListeners();
-    console.log('🗑️ Version Control System destroyed');
+    console.info('🗑️ Version Control System destroyed');
   }
 }
 

@@ -128,7 +128,7 @@ export function logWithSyntaxColor(lang: string, message: string): void {
   const ansiColor = getSyntaxAnsi(lang);
   const reset = "\x1b[0m";
   const info = getSyntaxColorInfo(lang);
-  console.log(`${ansiColor}[${info.name}]${reset} ${message}`);
+  console.info(`${ansiColor}[${info.name}]${reset} ${message}`);
 }
 
 // Re-export the raw config for direct access

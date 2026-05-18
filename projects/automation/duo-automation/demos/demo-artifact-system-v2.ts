@@ -7,8 +7,8 @@
  * intelligent relationships, advanced analytics, and seamless CLI integration.
  */
 
-console.log('🚀 Enhanced Artifact System v2.0 - Complete Demonstration');
-console.log('========================================================\n');
+console.info('🚀 Enhanced Artifact System v2.0 - Complete Demonstration');
+console.info('========================================================\n');
 
 // Mock data for demonstration
 const mockArtifacts = [
@@ -129,70 +129,70 @@ const mockAIInsights = [
 ];
 
 function demonstrateArtifactDiscovery() {
-  console.log('🔍 AI-Powered Artifact Discovery');
-  console.log('==================================\n');
+  console.info('🔍 AI-Powered Artifact Discovery');
+  console.info('==================================\n');
   
-  console.log('🔎 Search Query: "#typescript #security"');
-  console.log('Options: --related --ai-insights --depth 3\n');
+  console.info('🔎 Search Query: "#typescript #security"');
+  console.info('Options: --related --ai-insights --depth 3\n');
   
   const matchingArtifacts = mockArtifacts.filter(a => 
     a.tags.some(t => t.includes('typescript') || t.includes('security'))
   );
   
-  console.log('📦 Discovered Artifacts:');
-  console.log('========================');
+  console.info('📦 Discovered Artifacts:');
+  console.info('========================');
   
   matchingArtifacts.forEach((artifact, index) => {
-    console.log(`${index + 1}. ${artifact.title}`);
-    console.log(`   📁 ${artifact.path}`);
-    console.log(`   🏷️  ${artifact.tags.join(', ')}`);
-    console.log(`   📊 Popularity: ${artifact.metrics.popularity}/100`);
-    console.log(`   🛡️  Security: ${artifact.metrics.securityScore}/100`);
-    console.log(`   📈 Status: ${artifact.status}`);
-    console.log();
+    console.info(`${index + 1}. ${artifact.title}`);
+    console.info(`   📁 ${artifact.path}`);
+    console.info(`   🏷️  ${artifact.tags.join(', ')}`);
+    console.info(`   📊 Popularity: ${artifact.metrics.popularity}/100`);
+    console.info(`   🛡️  Security: ${artifact.metrics.securityScore}/100`);
+    console.info(`   📈 Status: ${artifact.status}`);
+    console.info();
   });
   
-  console.log('🤖 AI Insights:');
-  console.log('===============');
+  console.info('🤖 AI Insights:');
+  console.info('===============');
   mockAIInsights.forEach((insight, index) => {
     const icon = insight.type === 'warning' ? '⚠️' : 
                insight.type === 'recommendation' ? '💡' : '🎯';
-    console.log(`${icon} ${insight.message}`);
-    console.log(`   Confidence: ${Math.round(insight.confidence * 100)}%`);
-    console.log(`   Actions: ${insight.actions.join(', ')}`);
-    console.log();
+    console.info(`${icon} ${insight.message}`);
+    console.info(`   Confidence: ${Math.round(insight.confidence * 100)}%`);
+    console.info(`   Actions: ${insight.actions.join(', ')}`);
+    console.info();
   });
   
-  console.log('🔗 Relationship Summary:');
-  console.log('=======================');
-  console.log('Total relationship nodes: 5');
-  console.log('Total relationships: 12');
-  console.log('Average relationship strength: 0.73');
-  console.log();
+  console.info('🔗 Relationship Summary:');
+  console.info('=======================');
+  console.info('Total relationship nodes: 5');
+  console.info('Total relationships: 12');
+  console.info('Average relationship strength: 0.73');
+  console.info();
 }
 
 function demonstrateAnalytics() {
-  console.log('📊 Artifact Analytics Dashboard');
-  console.log('===============================\n');
+  console.info('📊 Artifact Analytics Dashboard');
+  console.info('===============================\n');
   
-  console.log('📈 System Overview:');
-  console.log('==================');
-  console.log(`Total artifacts: ${mockArtifacts.length}`);
-  console.log(`Active artifacts: ${mockArtifacts.filter(a => a.status === 'active').length}`);
-  console.log(`Deprecated artifacts: ${mockArtifacts.filter(a => a.status === 'deprecated').length}`);
-  console.log(`Domains: ${[...new Set(mockArtifacts.map(a => a.domain))].join(', ')}`);
-  console.log(`Technologies: ${[...new Set(mockArtifacts.flatMap(a => a.tech))].join(', ')}\n`);
+  console.info('📈 System Overview:');
+  console.info('==================');
+  console.info(`Total artifacts: ${mockArtifacts.length}`);
+  console.info(`Active artifacts: ${mockArtifacts.filter(a => a.status === 'active').length}`);
+  console.info(`Deprecated artifacts: ${mockArtifacts.filter(a => a.status === 'deprecated').length}`);
+  console.info(`Domains: ${[...new Set(mockArtifacts.map(a => a.domain))].join(', ')}`);
+  console.info(`Technologies: ${[...new Set(mockArtifacts.flatMap(a => a.tech))].join(', ')}\n`);
   
-  console.log('🔥 Popular Artifacts:');
+  console.info('🔥 Popular Artifacts:');
   const popularArtifacts = [...mockArtifacts]
     .sort((a, b) => b.metrics.popularity - a.metrics.popularity)
     .slice(0, 3);
   
   popularArtifacts.forEach((artifact, index) => {
-    console.log(`  ${index + 1}. ${artifact.title} (${artifact.metrics.popularity}% popularity)`);
+    console.info(`  ${index + 1}. ${artifact.title} (${artifact.metrics.popularity}% popularity)`);
   });
   
-  console.log('\n💻 Technology Adoption:');
+  console.info('\n💻 Technology Adoption:');
   const techUsage = new Map<string, number>();
   mockArtifacts.forEach(a => a.tech.forEach(t => techUsage.set(t, (techUsage.get(t) || 0) + 1)));
   
@@ -201,167 +201,167 @@ function demonstrateAnalytics() {
     .slice(0, 5);
   
   sortedTech.forEach(([tech, usage], index) => {
-    console.log(`  ${index + 1}. ${tech} (${usage} artifacts)`);
+    console.info(`  ${index + 1}. ${tech} (${usage} artifacts)`);
   });
   
-  console.log('\n🛡️ Security Analysis:');
+  console.info('\n🛡️ Security Analysis:');
   const avgSecurity = mockArtifacts.reduce((sum, a) => sum + a.metrics.securityScore, 0) / mockArtifacts.length;
-  console.log(`  Average security score: ${Math.round(avgSecurity)}/100`);
+  console.info(`  Average security score: ${Math.round(avgSecurity)}/100`);
   
   const highSecurityArtifacts = mockArtifacts.filter(a => a.metrics.securityScore >= 90);
-  console.log(`  High security artifacts (≥90): ${highSecurityArtifacts.length}`);
+  console.info(`  High security artifacts (≥90): ${highSecurityArtifacts.length}`);
   
-  console.log('\n📈 Performance Metrics:');
+  console.info('\n📈 Performance Metrics:');
   const avgPerformance = mockArtifacts.reduce((sum, a) => sum + a.metrics.performance, 0) / mockArtifacts.length;
-  console.log(`  Average performance: ${Math.round(avgPerformance)}/100`);
+  console.info(`  Average performance: ${Math.round(avgPerformance)}/100`);
   
   const avgMaintainability = mockArtifacts.reduce((sum, a) => sum + a.metrics.maintainability, 0) / mockArtifacts.length;
-  console.log(`  Average maintainability: ${Math.round(avgMaintainability)}/100`);
+  console.info(`  Average maintainability: ${Math.round(avgMaintainability)}/100`);
 }
 
 function demonstrateRecommendations() {
-  console.log('🎯 Intelligent Artifact Recommendations');
-  console.log('=======================================\n');
+  console.info('🎯 Intelligent Artifact Recommendations');
+  console.info('=======================================\n');
   
-  console.log('🔍 Analyzing artifact: "enhanced_cli_v4"\n');
+  console.info('🔍 Analyzing artifact: "enhanced_cli_v4"\n');
   
-  console.log('🔄 Alternatives (replacements):');
-  console.log('  No direct alternatives found - this is a core system component\n');
+  console.info('🔄 Alternatives (replacements):');
+  console.info('  No direct alternatives found - this is a core system component\n');
   
-  console.log('🚀 Enhancements (extensions):');
-  console.log('  1. Timezone Database Integrity Validator');
-  console.log('     📁 src/@core/timezone/tzdb-integrity-validator.ts');
-  console.log('     📊 Popularity: 85/100');
-  console.log('     🔗 Enhances CLI with timezone validation capabilities\n');
+  console.info('🚀 Enhancements (extensions):');
+  console.info('  1. Timezone Database Integrity Validator');
+  console.info('     📁 src/@core/timezone/tzdb-integrity-validator.ts');
+  console.info('     📊 Popularity: 85/100');
+  console.info('     🔗 Enhances CLI with timezone validation capabilities\n');
   
-  console.log('  2. Cross-Reference Matrix System');
-  console.log('     📁 src/@cli/cross-reference-matrix.ts');
-  console.log('     📊 Popularity: 78/100');
-  console.log('     🔗 Adds intelligent search and discovery to CLI\n');
+  console.info('  2. Cross-Reference Matrix System');
+  console.info('     📁 src/@cli/cross-reference-matrix.ts');
+  console.info('     📊 Popularity: 78/100');
+  console.info('     🔗 Adds intelligent search and discovery to CLI\n');
   
-  console.log('🔗 Dependencies:');
-  console.log('  1. Advanced Custom Inspection System v2.0');
-  console.log('     📁 ecosystem/inspect-custom.ts');
-  console.log('     📊 Popularity: 88/100');
-  console.log('     🔗 Provides inspection capabilities for CLI\n');
+  console.info('🔗 Dependencies:');
+  console.info('  1. Advanced Custom Inspection System v2.0');
+  console.info('     📁 ecosystem/inspect-custom.ts');
+  console.info('     📊 Popularity: 88/100');
+  console.info('     🔗 Provides inspection capabilities for CLI\n');
   
-  console.log('\n⚠️  Conflicts:');
-  console.log('  No conflicts detected\n');
+  console.info('\n⚠️  Conflicts:');
+  console.info('  No conflicts detected\n');
   
-  console.log('💡 Smart Recommendations:');
-  console.log('  • Consider integrating timezone validation into CLI core');
-  console.log('  • Leverage cross-reference matrix for command discovery');
-  console.log('  • Use inspection system for CLI debugging and monitoring');
+  console.info('💡 Smart Recommendations:');
+  console.info('  • Consider integrating timezone validation into CLI core');
+  console.info('  • Leverage cross-reference matrix for command discovery');
+  console.info('  • Use inspection system for CLI debugging and monitoring');
 }
 
 function demonstrateGovernance() {
-  console.log('🛡️ Artifact Governance & Management');
-  console.log('===================================\n');
+  console.info('🛡️ Artifact Governance & Management');
+  console.info('===================================\n');
   
-  console.log('🏥 System Health Check:');
-  console.log('=======================');
-  console.log('Status: ⚠️  warning\n');
+  console.info('🏥 System Health Check:');
+  console.info('=======================');
+  console.info('Status: ⚠️  warning\n');
   
-  console.log('⚠️  Issues Found:');
-  console.log('  • High number of deprecated artifacts: 1 (20% of total)');
-  console.log('  • Legacy Artifact Finder should be migrated to v2.0');
-  console.log('  • Some artifacts have test coverage below 80%\n');
+  console.info('⚠️  Issues Found:');
+  console.info('  • High number of deprecated artifacts: 1 (20% of total)');
+  console.info('  • Legacy Artifact Finder should be migrated to v2.0');
+  console.info('  • Some artifacts have test coverage below 80%\n');
   
-  console.log('🧹 Cleanup Opportunities:');
-  console.log('=========================');
-  console.log('Artifacts to archive: 1');
-  console.log('Artifacts to remove: 0');
-  console.log('Estimated space savings: 2.5 MB\n');
+  console.info('🧹 Cleanup Opportunities:');
+  console.info('=========================');
+  console.info('Artifacts to archive: 1');
+  console.info('Artifacts to remove: 0');
+  console.info('Estimated space savings: 2.5 MB\n');
   
-  console.log('⚡ Optimization Opportunities:');
-  console.log('===============================');
-  console.log('1. Consolidate duplicate artifact functionality');
-  console.log('2. Archive unused dependencies');
-  console.log('3. Optimize storage for large artifacts');
-  console.log('4. Improve test coverage across all artifacts');
-  console.log('5. Standardize on popular technologies\n');
+  console.info('⚡ Optimization Opportunities:');
+  console.info('===============================');
+  console.info('1. Consolidate duplicate artifact functionality');
+  console.info('2. Archive unused dependencies');
+  console.info('3. Optimize storage for large artifacts');
+  console.info('4. Improve test coverage across all artifacts');
+  console.info('5. Standardize on popular technologies\n');
   
-  console.log('📋 Governance Recommendations:');
-  console.log('==============================');
-  console.log('• Implement automated artifact lifecycle management');
-  console.log('• Set up regular security and performance audits');
-  console.log('• Create templates for new artifact creation');
-  console.log('• Establish artifact retirement policies');
-  console.log('• Monitor technology debt and migration needs');
+  console.info('📋 Governance Recommendations:');
+  console.info('==============================');
+  console.info('• Implement automated artifact lifecycle management');
+  console.info('• Set up regular security and performance audits');
+  console.info('• Create templates for new artifact creation');
+  console.info('• Establish artifact retirement policies');
+  console.info('• Monitor technology debt and migration needs');
 }
 
 function demonstrateCLIIntegration() {
-  console.log('🚀 Enhanced CLI v4.1 Integration');
-  console.log('=================================\n');
+  console.info('🚀 Enhanced CLI v4.1 Integration');
+  console.info('=================================\n');
   
-  console.log('📋 Available Commands:');
-  console.log('======================');
+  console.info('📋 Available Commands:');
+  console.info('======================');
   
-  console.log('# AI-Powered Discovery');
-  console.log('duoplus-artifacts discover "#typescript #security" --related --ai-insights');
-  console.log();
+  console.info('# AI-Powered Discovery');
+  console.info('duoplus-artifacts discover "#typescript #security" --related --ai-insights');
+  console.info();
   
-  console.log('# Analytics Dashboard');
-  console.log('duoplus-artifacts analytics --format json');
-  console.log();
+  console.info('# Analytics Dashboard');
+  console.info('duoplus-artifacts analytics --format json');
+  console.info();
   
-  console.log('# Intelligent Recommendations');
-  console.log('duoplus-artifacts recommend "enhanced_cli_v4"');
-  console.log();
+  console.info('# Intelligent Recommendations');
+  console.info('duoplus-artifacts recommend "enhanced_cli_v4"');
+  console.info();
   
-  console.log('# Governance & Management');
-  console.log('duoplus-artifacts governance --health-check --cleanup --optimize');
-  console.log();
+  console.info('# Governance & Management');
+  console.info('duoplus-artifacts governance --health-check --cleanup --optimize');
+  console.info();
   
-  console.log('# Interactive Mode');
-  console.log('duoplus-artifacts interactive');
-  console.log();
+  console.info('# Interactive Mode');
+  console.info('duoplus-artifacts interactive');
+  console.info();
   
-  console.log('🔗 Integration with Enhanced CLI v4.0:');
-  console.log('=======================================');
-  console.log('• Seamless integration with existing CLI commands');
-  console.log('• Shared configuration and authentication');
-  console.log('• Unified output formats and styling');
-  console.log('• Cross-referenced documentation and help');
-  console.log('• Integrated with timezone and security systems');
-  console.log();
+  console.info('🔗 Integration with Enhanced CLI v4.0:');
+  console.info('=======================================');
+  console.info('• Seamless integration with existing CLI commands');
+  console.info('• Shared configuration and authentication');
+  console.info('• Unified output formats and styling');
+  console.info('• Cross-referenced documentation and help');
+  console.info('• Integrated with timezone and security systems');
+  console.info();
   
-  console.log('📚 Documentation Cross-References:');
-  console.log('===================================');
-  console.log('• [Enhanced CLI v4.0](./src/@cli/enhanced-cli-integrated.ts)');
-  console.log('• [Timezone Validation System](./src/@core/timezone/tzdb-integrity-validator.ts)');
-  console.log('• [Cross-Reference Matrix](./src/@cli/cross-reference-matrix.ts)');
-  console.log('• [Integration Matrix Complete](./docs/INTEGRATION_MATRIX_COMPLETE.md)');
-  console.log();
+  console.info('📚 Documentation Cross-References:');
+  console.info('===================================');
+  console.info('• [Enhanced CLI v4.0](./src/@cli/enhanced-cli-integrated.ts)');
+  console.info('• [Timezone Validation System](./src/@core/timezone/tzdb-integrity-validator.ts)');
+  console.info('• [Cross-Reference Matrix](./src/@cli/cross-reference-matrix.ts)');
+  console.info('• [Integration Matrix Complete](./docs/INTEGRATION_MATRIX_COMPLETE.md)');
+  console.info();
   
-  console.log('🛡️ Security & Compliance:');
-  console.log('========================');
-  console.log('• Role-based access control for artifact operations');
-  console.log('• Automated security scanning and validation');
-  console.log('• Compliance reporting and audit trails');
-  console.log('• Integration with enterprise security systems');
+  console.info('🛡️ Security & Compliance:');
+  console.info('========================');
+  console.info('• Role-based access control for artifact operations');
+  console.info('• Automated security scanning and validation');
+  console.info('• Compliance reporting and audit trails');
+  console.info('• Integration with enterprise security systems');
 }
 
 // Run all demonstrations
-console.log('🚀 Starting Enhanced Artifact System v2.0 Demonstration...\n');
+console.info('🚀 Starting Enhanced Artifact System v2.0 Demonstration...\n');
 
 demonstrateArtifactDiscovery();
-console.log('─'.repeat(80));
+console.info('─'.repeat(80));
 
 demonstrateAnalytics();
-console.log('─'.repeat(80));
+console.info('─'.repeat(80));
 
 demonstrateRecommendations();
-console.log('─'.repeat(80));
+console.info('─'.repeat(80));
 
 demonstrateGovernance();
-console.log('─'.repeat(80));
+console.info('─'.repeat(80));
 
 demonstrateCLIIntegration();
 
-console.log('✅ Enhanced Artifact System v2.0 Demonstration Complete!');
-console.log('📊 Features: AI-powered discovery, intelligent relationships, advanced analytics');
-console.log('🔗 Integration: Full Enhanced CLI v4.1 integration with cross-references');
-console.log('🛡️ Governance: Comprehensive artifact management and automation');
-console.log('🤖 AI Capabilities: Smart recommendations, insights, and optimization');
-console.log('🚀 Production Ready: Next-generation artifact management system');
+console.info('✅ Enhanced Artifact System v2.0 Demonstration Complete!');
+console.info('📊 Features: AI-powered discovery, intelligent relationships, advanced analytics');
+console.info('🔗 Integration: Full Enhanced CLI v4.1 integration with cross-references');
+console.info('🛡️ Governance: Comprehensive artifact management and automation');
+console.info('🤖 AI Capabilities: Smart recommendations, insights, and optimization');
+console.info('🚀 Production Ready: Next-generation artifact management system');

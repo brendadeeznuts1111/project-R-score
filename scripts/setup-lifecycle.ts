@@ -20,13 +20,13 @@ async function main() {
   const dryRun = args.includes('--dry-run');
   const verbose = args.includes('--verbose');
 
-  console.log(styled('⏰ FactoryWager Lifecycle Setup v5.1', 'accent'));
-  console.log(styled('=====================================', 'muted'));
-  console.log('');
+  console.info(styled('⏰ FactoryWager Lifecycle Setup v5.1', 'accent'));
+  console.info(styled('=====================================', 'muted'));
+  console.info('');
 
   if (dryRun) {
-    console.log(styled('🔍 DRY RUN MODE - No schedules will be created', 'warning'));
-    console.log('');
+    console.info(styled('🔍 DRY RUN MODE - No schedules will be created', 'warning'));
+    console.info('');
   }
 
   try {
@@ -35,11 +35,11 @@ async function main() {
     const config = YAML.parse(configContent);
 
     if (!config.version || config.version !== '5.1') {
-      console.log(styled('⚠️  Config version mismatch. Expected v5.1', 'warning'));
+      console.info(styled('⚠️  Config version mismatch. Expected v5.1', 'warning'));
     }
 
-    console.log(styled(`📋 Processing ${config.rules?.length || 0} lifecycle rules`, 'primary'));
-    console.log('');
+    console.info(styled(`📋 Processing ${config.rules?.length || 0} lifecycle rules`, 'primary'));
+    console.info('');
 
     let scheduled = 0;
     let skipped = 0;
@@ -48,7 +48,7 @@ async function main() {
     for (const rule of config.rules || []) {
       try {
         if (verbose) {
-          console.log(styled(`🔄 Setting up ${rule.key}...`, 'primary'));
+          console.info(styled(`🔄 Setting up ${rule.key}...`, 'primary'));
         }
 
         const result = await lifecycleManager.scheduleRotation(rule.key, {
@@ -59,55 +59,55 @@ async function main() {
         });
 
         if (!dryRun) {
-          console.log(styled(`   ✅ Scheduled: ${result.ruleId}`, 'success'));
-          console.log(styled(`   Next run: ${result.nextRotation}`, 'muted'));
+          console.info(styled(`   ✅ Scheduled: ${result.ruleId}`, 'success'));
+          console.info(styled(`   Next run: ${result.nextRotation}`, 'muted'));
           scheduled++;
         } else {
-          console.log(styled(`   🔍 Would schedule (dry run)`, 'warning'));
+          console.info(styled(`   🔍 Would schedule (dry run)`, 'warning'));
           scheduled++;
         }
 
       } catch (error) {
-        console.log(styled(`   ❌ Error: ${error.message}`, 'error'));
+        console.info(styled(`   ❌ Error: ${error.message}`, 'error'));
         errors++;
       }
     }
 
     // Set up audit configuration
     if (config.audit) {
-      console.log('');
-      console.log(styled('📊 Audit Configuration:', 'accent'));
+      console.info('');
+      console.info(styled('📊 Audit Configuration:', 'accent'));
 
       if (config.audit.enabled) {
-        console.log(styled('   ✅ Audit enabled', 'success'));
-        console.log(styled(`   Retention: ${config.audit.retentionDays} days`, 'muted'));
-        console.log(styled(`   Visual metadata: ${config.audit.visualMetadata}`, 'muted'));
-        console.log(styled(`   R2 Bucket: ${config.audit.r2Bucket}`, 'muted'));
+        console.info(styled('   ✅ Audit enabled', 'success'));
+        console.info(styled(`   Retention: ${config.audit.retentionDays} days`, 'muted'));
+        console.info(styled(`   Visual metadata: ${config.audit.visualMetadata}`, 'muted'));
+        console.info(styled(`   R2 Bucket: ${config.audit.r2Bucket}`, 'muted'));
       }
     }
 
     // Set up documentation generation
     if (config.documentation) {
-      console.log('');
-      console.log(styled('📚 Documentation Configuration:', 'accent'));
+      console.info('');
+      console.info(styled('📚 Documentation Configuration:', 'accent'));
 
       if (config.documentation.autoGenerate) {
-        console.log(styled('   ✅ Auto-generation enabled', 'success'));
-        console.log(styled(`   Include in audit: ${config.documentation.includeInAudit}`, 'muted'));
-        console.log(styled(`   Domains: ${config.documentation.domains.join(', ')}`, 'muted'));
+        console.info(styled('   ✅ Auto-generation enabled', 'success'));
+        console.info(styled(`   Include in audit: ${config.documentation.includeInAudit}`, 'muted'));
+        console.info(styled(`   Domains: ${config.documentation.domains.join(', ')}`, 'muted'));
       }
     }
 
-    console.log('');
-    console.log(styled('📊 Setup Summary:', 'accent'));
-    console.log(styled(`   Scheduled: ${scheduled}`, 'success'));
-    console.log(styled(`   Skipped: ${skipped}`, 'muted'));
-    console.log(styled(`   Errors: ${errors}`, 'error'));
+    console.info('');
+    console.info(styled('📊 Setup Summary:', 'accent'));
+    console.info(styled(`   Scheduled: ${scheduled}`, 'success'));
+    console.info(styled(`   Skipped: ${skipped}`, 'muted'));
+    console.info(styled(`   Errors: ${errors}`, 'error'));
 
     if (!dryRun && scheduled > 0) {
-      console.log('');
-      console.log(styled('🎉 Lifecycle setup complete!', 'success'));
-      console.log(styled('📖 Docs: https://bun.com/docs/runtime/secrets/lifecycle-management', 'accent'));
+      console.info('');
+      console.info(styled('🎉 Lifecycle setup complete!', 'success'));
+      console.info(styled('📖 Docs: https://bun.com/docs/runtime/secrets/lifecycle-management', 'accent'));
     }
 
   } catch (error) {

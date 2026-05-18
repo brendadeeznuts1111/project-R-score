@@ -270,8 +270,8 @@ function renderWaterfall(entries: HarEntry[], width = 50) {
   const maxEnd = Math.max(...entries.map((e, i) => starts[i] + e.time));
   const span = maxEnd - minStart || 1;
 
-  console.log("\n\x1b[1m  Waterfall\x1b[0m");
-  console.log("  " + "─".repeat(width) + ` [${fmtMs(span)} total]`);
+  console.info("\n\x1b[1m  Waterfall\x1b[0m");
+  console.info("  " + "─".repeat(width) + ` [${fmtMs(span)} total]`);
 
   for (let i = 0; i < entries.length; i++) {
     const e = entries[i];
@@ -303,10 +303,10 @@ function renderWaterfall(entries: HarEntry[], width = 50) {
     bar += "\x1b[0m";
 
     const label = `${e.request.method} ${shortenUrl(e.request.url, 40)}`;
-    console.log(`  ${" ".repeat(pad)}${bar} ${statusColor(e.response.status)} ${fmtMs(e.time)} ${label}`);
+    console.info(`  ${" ".repeat(pad)}${bar} ${statusColor(e.response.status)} ${fmtMs(e.time)} ${label}`);
   }
 
-  console.log(
+  console.info(
     "\n  \x1b[90m█\x1b[0m blocked  \x1b[36m█\x1b[0m dns/connect/ssl  \x1b[34m█\x1b[0m send  \x1b[33m█\x1b[0m wait  \x1b[32m█\x1b[0m receive\n",
   );
 }
@@ -327,14 +327,14 @@ function renderDomainBreakdown(entries: HarEntry[], pageUrl?: string) {
     domains.set(d, prev);
   }
 
-  console.log(`\n\x1b[1m  By Domain\x1b[0m`);
-  console.log(`  ${"Domain".padEnd(30)} ${"Provider".padEnd(9)} ${"Reqs".padStart(4)} ${"Transfer".padStart(9)} ${"Size".padStart(9)} ${"Avg TTFB".padStart(9)} ${"Slowest".padStart(9)}`);
-  console.log("  " + "─".repeat(85));
+  console.info(`\n\x1b[1m  By Domain\x1b[0m`);
+  console.info(`  ${"Domain".padEnd(30)} ${"Provider".padEnd(9)} ${"Reqs".padStart(4)} ${"Transfer".padStart(9)} ${"Size".padStart(9)} ${"Avg TTFB".padStart(9)} ${"Slowest".padStart(9)}`);
+  console.info("  " + "─".repeat(85));
 
   const sorted = [...domains.entries()].sort((a, b) => b[1].transfer - a[1].transfer);
   for (const [domain, stats] of sorted) {
     const avgTtfb = stats.ttfb / stats.count;
-    console.log(
+    console.info(
       `  ${shortenDomain(domain, 30).padEnd(30)} ${fmtProvider(stats.provider).padEnd(9 + ANSI)} ${String(stats.count).padStart(4)} ${fmtBytes(stats.transfer).padStart(9)} ${fmtBytes(stats.size).padStart(9)} ${fmtMs(avgTtfb).padStart(9)} ${fmtMs(stats.time).padStart(9)}`,
     );
   }
@@ -358,10 +358,10 @@ function renderTimingBreakdown(entries: HarEntry[]) {
   if (total <= 0) return;
 
   const pct = (v: number) => total > 0 ? `${((v / total) * 100).toFixed(0)}%` : "0%";
-  console.log(`\n\x1b[1m  Time Breakdown\x1b[0m (cumulative across all requests)`);
-  console.log(`  \x1b[90mBlocked:\x1b[0m ${fmtMs(totalBlocked).padStart(8)} ${pct(totalBlocked).padStart(4)}   \x1b[36mDNS:\x1b[0m ${fmtMs(totalDns).padStart(8)} ${pct(totalDns).padStart(4)}   \x1b[36mConnect:\x1b[0m ${fmtMs(totalConnect).padStart(8)} ${pct(totalConnect).padStart(4)}`);
-  console.log(`  \x1b[36mSSL:\x1b[0m    ${fmtMs(totalSsl).padStart(8)} ${pct(totalSsl).padStart(4)}   \x1b[34mSend:\x1b[0m ${fmtMs(totalSend).padStart(7)} ${pct(totalSend).padStart(4)}   \x1b[33mWait:\x1b[0m    ${fmtMs(totalWait).padStart(8)} ${pct(totalWait).padStart(4)}`);
-  console.log(`  \x1b[32mReceive:\x1b[0m ${fmtMs(totalReceive).padStart(8)} ${pct(totalReceive).padStart(4)}`);
+  console.info(`\n\x1b[1m  Time Breakdown\x1b[0m (cumulative across all requests)`);
+  console.info(`  \x1b[90mBlocked:\x1b[0m ${fmtMs(totalBlocked).padStart(8)} ${pct(totalBlocked).padStart(4)}   \x1b[36mDNS:\x1b[0m ${fmtMs(totalDns).padStart(8)} ${pct(totalDns).padStart(4)}   \x1b[36mConnect:\x1b[0m ${fmtMs(totalConnect).padStart(8)} ${pct(totalConnect).padStart(4)}`);
+  console.info(`  \x1b[36mSSL:\x1b[0m    ${fmtMs(totalSsl).padStart(8)} ${pct(totalSsl).padStart(4)}   \x1b[34mSend:\x1b[0m ${fmtMs(totalSend).padStart(7)} ${pct(totalSend).padStart(4)}   \x1b[33mWait:\x1b[0m    ${fmtMs(totalWait).padStart(8)} ${pct(totalWait).padStart(4)}`);
+  console.info(`  \x1b[32mReceive:\x1b[0m ${fmtMs(totalReceive).padStart(8)} ${pct(totalReceive).padStart(4)}`);
 }
 
 // --- Main ---
@@ -481,7 +481,7 @@ if (flags.json) {
       },
     };
   });
-  console.log(JSON.stringify(data, null, 2));
+  console.info(JSON.stringify(data, null, 2));
   process.exit(0);
 }
 
@@ -532,8 +532,8 @@ if (flags.table) {
     };
   });
 
-  console.log("\n  Requests\n");
-  console.log(Bun.inspect.table(rows, { colors: true }));
+  console.info("\n  Requests\n");
+  console.info(Bun.inspect.table(rows, { colors: true }));
 
   // Domain breakdown table
   const domainMap = new Map<string, { Reqs: number; Transfer: number; Size: number; "Avg TTFB": number; Slowest: number; Provider: string }>();
@@ -561,8 +561,8 @@ if (flags.table) {
     }));
 
   if (domainRows.length > 1) {
-    console.log("\n  Domains\n");
-    console.log(Bun.inspect.table(domainRows, { colors: true }));
+    console.info("\n  Domains\n");
+    console.info(Bun.inspect.table(domainRows, { colors: true }));
   }
 
   // Timing breakdown table
@@ -588,8 +588,8 @@ if (flags.table) {
     { Phase: "Receive", Time: fmtMs(tRecv), "%": pct(tRecv) },
   ];
 
-  console.log("\n  Timing Breakdown\n");
-  console.log(Bun.inspect.table(timingRows, { colors: true }));
+  console.info("\n  Timing Breakdown\n");
+  console.info(Bun.inspect.table(timingRows, { colors: true }));
 
   // Summary stats table
   const times = entries.map((e) => e.time);
@@ -615,8 +615,8 @@ if (flags.table) {
     "Max TTFB": fmtMs(Math.max(...ttfbs)),
   }];
 
-  console.log("\n  Summary\n");
-  console.log(Bun.inspect.table(summaryRows, { colors: true }));
+  console.info("\n  Summary\n");
+  console.info(Bun.inspect.table(summaryRows, { colors: true }));
 
   // Documentation analysis tables (if --with-docs)
   if (flags.withDocs) {
@@ -627,8 +627,8 @@ if (flags.table) {
       const result = analyzer.analyzeWithDocsContext(har, url);
 
       if (result.issues.length > 0) {
-        console.log("\n  Performance Issues\n");
-        console.log(Bun.inspect.table(result.issues.map(i => ({
+        console.info("\n  Performance Issues\n");
+        console.info(Bun.inspect.table(result.issues.map(i => ({
           Severity: i.severity,
           Type: i.type,
           Details: i.details,
@@ -637,8 +637,8 @@ if (flags.table) {
       }
 
       if (result.documentationGaps.length > 0) {
-        console.log("\n  Documentation Gaps\n");
-        console.log(Bun.inspect.table(result.documentationGaps.map(g => ({
+        console.info("\n  Documentation Gaps\n");
+        console.info(Bun.inspect.table(result.documentationGaps.map(g => ({
           Priority: g.priority,
           Category: g.category,
           Gap: g.gap,
@@ -646,8 +646,8 @@ if (flags.table) {
       }
 
       if (result.recommendations.length > 0) {
-        console.log("\n  Recommendations\n");
-        console.log(Bun.inspect.table(result.recommendations.map(r => ({
+        console.info("\n  Recommendations\n");
+        console.info(Bun.inspect.table(result.recommendations.map(r => ({
           Priority: r.priority,
           Category: r.category,
           Title: r.title,
@@ -655,9 +655,9 @@ if (flags.table) {
         })), { colors: true }));
       }
 
-      console.log("\n  Metrics\n");
+      console.info("\n  Metrics\n");
       const m = result.bunSpecific;
-      console.log(Bun.inspect.table([{
+      console.info(Bun.inspect.table([{
         TTFB: fmtMs(m.ttfb),
         Transfer: fmtB(m.totalTransfer),
         Size: fmtB(m.totalSize),
@@ -672,7 +672,7 @@ if (flags.table) {
     }
   }
 
-  console.log();
+  console.info();
   process.exit(0);
 }
 
@@ -704,14 +704,14 @@ const maxTime = Math.max(...times);
 const maxTtfb = Math.max(...ttfbs);
 const p95Time = [...times].sort((a, b) => a - b)[Math.floor(times.length * 0.95)] ?? maxTime;
 
-console.log(`\n\x1b[1m  HAR Summary\x1b[0m — ${har.log.creator.name} ${har.log.creator.version}`);
+console.info(`\n\x1b[1m  HAR Summary\x1b[0m — ${har.log.creator.name} ${har.log.creator.version}`);
 if (page) {
-  console.log(`  Page: ${page.title}`);
-  console.log(
+  console.info(`  Page: ${page.title}`);
+  console.info(
     `  DOMContentLoaded: \x1b[36m${fmtMs(page.pageTimings.onContentLoad)}\x1b[0m  Load: \x1b[36m${fmtMs(page.pageTimings.onLoad)}\x1b[0m`,
   );
 }
-console.log(
+console.info(
   `  Requests: \x1b[1m${entries.length}\x1b[0m  Domains: \x1b[1m${domainSet.size}\x1b[0m  Transferred: \x1b[1m${fmtBytes(totalTransfer)}\x1b[0m  Uncompressed: \x1b[1m${fmtBytes(totalSize)}\x1b[0m`,
 );
 
@@ -719,32 +719,32 @@ console.log(
 if (totalSize > 0 && totalTransfer < totalSize) {
   const overallPct = ((1 - totalTransfer / totalSize) * 100).toFixed(0);
   const encLine = [...encodingCounts.entries()].sort((a, b) => b[1] - a[1]).map(([enc, count]) => `${enc}(${count})`).join("  ");
-  console.log(`  Compression: \x1b[35m${overallPct}% savings\x1b[0m  ${encLine || "none detected"}`);
+  console.info(`  Compression: \x1b[35m${overallPct}% savings\x1b[0m  ${encLine || "none detected"}`);
 }
 
 // Timing summary
-console.log(
+console.info(
   `  Timing: avg \x1b[36m${fmtMs(avgTime)}\x1b[0m  p95 \x1b[36m${fmtMs(p95Time)}\x1b[0m  max \x1b[36m${fmtMs(maxTime)}\x1b[0m  avg TTFB \x1b[33m${fmtMs(avgTtfb)}\x1b[0m  max TTFB \x1b[33m${fmtMs(maxTtfb)}\x1b[0m`,
 );
 
 // Status breakdown
 const statusLine = [...statusCounts.entries()].sort((a, b) => a[0] - b[0]).map(([code, count]) => `${statusColor(code)}×${count}`).join("  ");
-console.log(`  Status: ${statusLine}`);
+console.info(`  Status: ${statusLine}`);
 
 // Type breakdown
 const typeLine = [...typeCounts.entries()].sort((a, b) => b[1] - a[1]).map(([type, count]) => `${type}(${count})`).join("  ");
 const protoLine = [...protocolSet].map((p) => p.replace("http/", "")).join(", ");
-console.log(`  Types: ${typeLine}  Protocol: ${protoLine}`);
+console.info(`  Types: ${typeLine}  Protocol: ${protoLine}`);
 
 // --- Request table ---
 // Columns: # | Method | Status | Proto | Type | TTFB | Time | Size | Transfer | Enc | Saved | Cache | Domain | URL
 
 const ANSI = 9; // length of one ANSI color escape pair
 
-console.log(
+console.info(
   `\n  \x1b[1m${"#".padStart(3)} ${"Mtd".padEnd(4)} ${"St".padEnd(3)} ${"Proto".padEnd(5)} ${"Type".padEnd(5)} ${"Provider".padEnd(9)} ${"Cat".padEnd(7)} ${"TTFB".padStart(7)} ${"Time".padStart(7)} ${"Size".padStart(8)} ${"Wire".padStart(8)} ${"Enc".padEnd(4)} ${"Svd".padEnd(4)} ${"Cache".padEnd(8)} URL\x1b[0m`,
 );
-console.log("  " + "─".repeat(128));
+console.info("  " + "─".repeat(128));
 
 for (let i = 0; i < entries.length; i++) {
   const e = entries[i];
@@ -766,7 +766,7 @@ for (let i = 0; i < entries.length; i++) {
   const cache = fmtCache(getCacheStatus(e)).padEnd(8 + ANSI);
   const url = shortenUrl(e.request.url, 42);
   const slow = e.time > flags.slow ? " \x1b[31m!!\x1b[0m" : "";
-  console.log(
+  console.info(
     `  ${num} ${method} ${status} ${proto} ${type} ${provider} ${cat} ${ttfb} ${time} ${size} ${transfer} ${enc} ${saved} ${cache} ${url}${slow}`,
   );
 }
@@ -774,11 +774,11 @@ for (let i = 0; i < entries.length; i++) {
 // Slow requests callout
 const slowReqs = entries.filter((e) => e.time > flags.slow);
 if (slowReqs.length > 0) {
-  console.log(`\n  \x1b[33m⚠ ${slowReqs.length} request(s) over ${flags.slow}ms\x1b[0m`);
+  console.info(`\n  \x1b[33m⚠ ${slowReqs.length} request(s) over ${flags.slow}ms\x1b[0m`);
   for (const e of slowReqs.sort((a, b) => b.time - a.time)) {
     const ttfb = getTtfb(e);
     const recv = Math.max(0, e.timings.receive);
-    console.log(
+    console.info(
       `    ${fmtMs(e.time).padStart(8)} (TTFB ${fmtMs(ttfb)}, recv ${fmtMs(recv)})  ${e.request.method} ${shortenUrl(e.request.url, 60)}`,
     );
   }
@@ -808,4 +808,4 @@ if (flags.withDocs) {
   }
 }
 
-console.log();
+console.info();

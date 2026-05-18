@@ -21,16 +21,16 @@ class ConfigValidator {
   };
 
   async validate(): Promise<ValidationResult> {
-    console.log("🔍 DuoPlus Configuration Validator");
-    console.log("=====================================");
+    console.info("🔍 DuoPlus Configuration Validator");
+    console.info("=====================================");
 
     try {
       // Load configuration
       const envConfig = config.getConfig();
       this.results.environment = envConfig.duoplus.environment;
 
-      console.log(`📊 Environment: ${this.results.environment}`);
-      console.log("");
+      console.info(`📊 Environment: ${this.results.environment}`);
+      console.info("");
 
       // Validate different aspects
       this.validateBasicConfig(envConfig);
@@ -53,7 +53,7 @@ class ConfigValidator {
   }
 
   private validateBasicConfig(config: any): void {
-    console.log("🔧 Basic Configuration:");
+    console.info("🔧 Basic Configuration:");
 
     // Port validation
     if (config.duoplus.port < 1024 || config.duoplus.port > 65535) {
@@ -70,11 +70,11 @@ class ConfigValidator {
       this.results.errors.push("Database path must be specified");
     }
 
-    console.log("  ✅ Basic configuration validated");
+    console.info("  ✅ Basic configuration validated");
   }
 
   private validateSecurityConfig(config: any): void {
-    console.log("🔒 Security Configuration:");
+    console.info("🔒 Security Configuration:");
 
     const isProduction = config.duoplus.environment === "production";
 
@@ -96,11 +96,11 @@ class ConfigValidator {
       this.results.warnings.push("Session timeout > 24 hours may be a security risk");
     }
 
-    console.log("  ✅ Security configuration validated");
+    console.info("  ✅ Security configuration validated");
   }
 
   private validateExternalServices(config: any): void {
-    console.log("🌐 External Services:");
+    console.info("🌐 External Services:");
 
     const isProduction = config.duoplus.environment === "production";
 
@@ -125,11 +125,11 @@ class ConfigValidator {
       this.results.warnings.push("Lightning endpoint not specified (using mock)");
     }
 
-    console.log("  ✅ External services validated");
+    console.info("  ✅ External services validated");
   }
 
   private validateFilePermissions(config: any): void {
-    console.log("📁 File Permissions:");
+    console.info("📁 File Permissions:");
 
     // Database directory
     const dbDir = config.duoplus.dbPath.split("/").slice(0, -1).join("/");
@@ -148,11 +148,11 @@ class ConfigValidator {
       this.results.warnings.push(`Lightning certificate not found: ${config.duoplus.lightning.certPath}`);
     }
 
-    console.log("  ✅ File permissions validated");
+    console.info("  ✅ File permissions validated");
   }
 
   private validateFeatureFlags(config: any): void {
-    console.log("🚀 Feature Flags:");
+    console.info("🚀 Feature Flags:");
 
     // Check feature dependencies
     if (config.duoplus.features.aiRiskPrediction && !config.duoplus.metricsEnabled) {
@@ -163,11 +163,11 @@ class ConfigValidator {
       this.results.warnings.push("Family Controls requires KYC API key");
     }
 
-    console.log("  ✅ Feature flags validated");
+    console.info("  ✅ Feature flags validated");
   }
 
   private validatePerformanceConfig(config: any): void {
-    console.log("⚡ Performance Configuration:");
+    console.info("⚡ Performance Configuration:");
 
     // Cache TTL validation
     if (config.duoplus.performance.cacheTTL < 30) {
@@ -184,39 +184,39 @@ class ConfigValidator {
       this.results.warnings.push("APY refresh interval < 10 seconds may cause excessive API calls");
     }
 
-    console.log("  ✅ Performance configuration validated");
+    console.info("  ✅ Performance configuration validated");
   }
 
   private printResults(): void {
-    console.log("");
-    console.log("📊 Validation Results:");
-    console.log("======================");
+    console.info("");
+    console.info("📊 Validation Results:");
+    console.info("======================");
 
     if (this.results.errors.length > 0) {
-      console.log("❌ Errors:");
+      console.info("❌ Errors:");
       this.results.errors.forEach((error, index) => {
-        console.log(`  ${index + 1}. ${error}`);
+        console.info(`  ${index + 1}. ${error}`);
       });
     }
 
     if (this.results.warnings.length > 0) {
-      console.log("⚠️  Warnings:");
+      console.info("⚠️  Warnings:");
       this.results.warnings.forEach((warning, index) => {
-        console.log(`  ${index + 1}. ${warning}`);
+        console.info(`  ${index + 1}. ${warning}`);
       });
     }
 
     if (this.results.errors.length === 0) {
-      console.log("✅ Configuration is valid!");
+      console.info("✅ Configuration is valid!");
     } else {
-      console.log(`❌ Configuration has ${this.results.errors.length} error(s)`);
+      console.info(`❌ Configuration has ${this.results.errors.length} error(s)`);
     }
 
-    console.log("");
-    console.log(`Environment: ${this.results.environment}`);
-    console.log(`Errors: ${this.results.errors.length}`);
-    console.log(`Warnings: ${this.results.warnings.length}`);
-    console.log(`Valid: ${this.results.valid}`);
+    console.info("");
+    console.info(`Environment: ${this.results.environment}`);
+    console.info(`Errors: ${this.results.errors.length}`);
+    console.info(`Warnings: ${this.results.warnings.length}`);
+    console.info(`Valid: ${this.results.valid}`);
 
     // Exit with error code if invalid
     if (!this.results.valid) {

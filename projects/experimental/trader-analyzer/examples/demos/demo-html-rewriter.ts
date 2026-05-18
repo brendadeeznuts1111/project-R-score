@@ -76,18 +76,18 @@ if (!HTMLRewriter) {
   process.exit(0); // Exit gracefully with info message
 }
 
-console.log('\n' + '═'.repeat(70));
-console.log('  Bun HTMLRewriter API Demo');
-console.log('═'.repeat(70) + '\n');
+console.info('\n' + '═'.repeat(70));
+console.info('  Bun HTMLRewriter API Demo');
+console.info('═'.repeat(70) + '\n');
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.0.0.0.0.0.4.0 DEMO 1: Input Types
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Demo 1: Input Types (Bun-Enhanced vs Cloudflare Workers)');
-console.log('-'.repeat(70));
-console.log('💡 Bun Enhancement: Strings and ArrayBuffers work directly!');
-console.log('   Cloudflare Workers only supports Response objects.\n');
+console.info('📋 Demo 1: Input Types (Bun-Enhanced vs Cloudflare Workers)');
+console.info('-'.repeat(70));
+console.info('💡 Bun Enhancement: Strings and ArrayBuffers work directly!');
+console.info('   Cloudflare Workers only supports Response objects.\n');
 
 // From Response
 const responseHTML = '<div class="content">Response content</div>';
@@ -99,7 +99,7 @@ const rewriter1 = new HTMLRewriter()
     },
   });
 const result1 = rewriter1.transform(response1);
-console.log('✅ Response input:', await result1.text());
+console.info('✅ Response input:', await result1.text());
 
 // From string (direct - no Response wrapper needed!)
 const stringHTML = '<div class="content">String content</div>';
@@ -111,7 +111,7 @@ const rewriter2 = new HTMLRewriter()
   });
 // HTMLRewriter accepts strings directly - returns string
 const result2 = rewriter2.transform(stringHTML);
-console.log('✅ String input (direct):', result2);
+console.info('✅ String input (direct):', result2);
 
 // From ArrayBuffer (direct - no Response wrapper needed!)
 const arrayBufferHTML = '<div class="content">ArrayBuffer content</div>';
@@ -125,7 +125,7 @@ const rewriter3 = new HTMLRewriter()
 // HTMLRewriter accepts ArrayBuffer directly - returns ArrayBuffer
 const result3 = rewriter3.transform(buffer);
 const result3Text = new TextDecoder().decode(result3);
-console.log('✅ ArrayBuffer input (direct):', result3Text);
+console.info('✅ ArrayBuffer input (direct):', result3Text);
 
 // From Blob (Note: In Bun 1.3.3, Blob needs Response wrapper)
 const blobHTML = '<div class="content">Blob content</div>';
@@ -138,7 +138,7 @@ const rewriter4 = new HTMLRewriter()
   });
 // Note: Blob input requires Response wrapper in current Bun version
 const result4 = rewriter4.transform(new Response(blob));
-console.log('✅ Blob input (via Response):', await result4.text());
+console.info('✅ Blob input (via Response):', await result4.text());
 
 // From File (Note: In Bun 1.3.3, Bun.file() needs Response wrapper)
 try {
@@ -153,21 +153,21 @@ try {
   // Note: Bun.file() requires Response wrapper in Bun 1.3.3
   // Future versions may support direct File input
   const result5 = rewriter5.transform(new Response(testFile));
-  console.log('✅ File input (via Response):', await result5.text());
+  console.info('✅ File input (via Response):', await result5.text());
   await Bun.write(testFile, ''); // Cleanup
 } catch (error) {
-  console.log('⚠️  File input demo skipped:', (error as Error).message);
+  console.info('⚠️  File input demo skipped:', (error as Error).message);
 }
 
-console.log();
+console.info();
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.0.0.0.0.0.4.1 DEMO 2: Element Handlers (Multiple Handler Types)
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Demo 2: Element Handlers with Multiple Handler Types');
-console.log('-'.repeat(70));
-console.log('💡 Single on() call can handle: element, text, and comments\n');
+console.info('📋 Demo 2: Element Handlers with Multiple Handler Types');
+console.info('-'.repeat(70));
+console.info('💡 Single on() call can handle: element, text, and comments\n');
 
 const elementHTML = `
   <div class="container">
@@ -201,9 +201,9 @@ const rewriter6a = new HTMLRewriter()
   });
 
 const result6a = rewriter6a.transform(new Response(elementHTML));
-console.log('✅ Multiple handlers (element, text, comments) in one on() call:');
-console.log(await result6a.text());
-console.log();
+console.info('✅ Multiple handlers (element, text, comments) in one on() call:');
+console.info(await result6a.text());
+console.info();
 
 // Example: Separate handlers for different elements
 const rewriter6b = new HTMLRewriter()
@@ -234,17 +234,17 @@ const rewriter6b = new HTMLRewriter()
   });
 
 const result6b = rewriter6b.transform(new Response(elementHTML));
-console.log('✅ Separate handlers with text manipulation:');
-console.log(await result6b.text());
-console.log();
+console.info('✅ Separate handlers with text manipulation:');
+console.info(await result6b.text());
+console.info();
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.0.0.0.0.0.4.2 DEMO 2B: Complete Element Operations API
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Demo 2B: Complete Element Operations API');
-console.log('-'.repeat(70));
-console.log('💡 Demonstrates all element properties and methods from official docs\n');
+console.info('📋 Demo 2B: Complete Element Operations API');
+console.info('-'.repeat(70));
+console.info('💡 Demonstrates all element properties and methods from official docs\n');
 
 const elementOpsHTML = `
   <div id="demo" class="original" data-test="value">
@@ -257,56 +257,56 @@ const elementOpsHTML = `
 `;
 
 // Example: Complete Element Operations (official docs pattern)
-console.log('📝 Complete Element Operations:');
+console.info('📝 Complete Element Operations:');
 const rewriter6c = new HTMLRewriter()
   .on('#demo', {
     element(el) {
-      console.log('  Element Properties:');
-      console.log(`    tagName: "${el.tagName}"`);
-      console.log(`    namespaceURI: "${el.namespaceURI}"`);
-      console.log(`    selfClosing: ${el.selfClosing}`);
-      console.log(`    canHaveContent: ${el.canHaveContent}`);
-      console.log(`    removed: ${el.removed}`);
+      console.info('  Element Properties:');
+      console.info(`    tagName: "${el.tagName}"`);
+      console.info(`    namespaceURI: "${el.namespaceURI}"`);
+      console.info(`    selfClosing: ${el.selfClosing}`);
+      console.info(`    canHaveContent: ${el.canHaveContent}`);
+      console.info(`    removed: ${el.removed}`);
       
-      console.log('\n  Attribute Operations:');
+      console.info('\n  Attribute Operations:');
       // Attributes
       el.setAttribute('class', 'new-class').setAttribute('data-id', '123');
       const classAttr = el.getAttribute('class'); // "new-class"
-      console.log(`    getAttribute("class"): "${classAttr}"`);
+      console.info(`    getAttribute("class"): "${classAttr}"`);
       const hasId = el.hasAttribute('id'); // boolean
-      console.log(`    hasAttribute("id"): ${hasId}`);
+      console.info(`    hasAttribute("id"): ${hasId}`);
       el.removeAttribute('class');
-      console.log('    removeAttribute("class") executed');
+      console.info('    removeAttribute("class") executed');
       
-      console.log('\n  Content Manipulation:');
+      console.info('\n  Content Manipulation:');
       // Content manipulation
       el.setInnerContent('New content'); // Escapes HTML by default
       el.setInnerContent('<p>HTML content</p>', { html: true }); // Parses HTML
       
-      console.log('\n  Position Manipulation:');
+      console.info('\n  Position Manipulation:');
       // Position manipulation
       el.before('Content before ').after(' Content after')
         .prepend('First child ').append(' Last child');
       
-      console.log('\n  HTML Content Insertion:');
+      console.info('\n  HTML Content Insertion:');
       // HTML content insertion
       el.before('<span style="color: blue;">before</span>', { html: true })
         .after('<span style="color: green;">after</span>', { html: true })
         .prepend('<span style="color: red;">first</span>', { html: true })
         .append('<span style="color: purple;">last</span>', { html: true });
       
-      console.log('\n  Attributes Iteration:');
+      console.info('\n  Attributes Iteration:');
       // Attributes iteration
       for (const [name, value] of el.attributes) {
-        console.log(`    ${name} = "${value}"`);
+        console.info(`    ${name} = "${value}"`);
       }
       
       // End tag handling
       el.onEndTag(endTag => {
-        console.log('\n  End Tag Operations:');
+        console.info('\n  End Tag Operations:');
         endTag.before('Before end tag ', { html: false });
         endTag.after(' After end tag', { html: false });
-        console.log(`    endTag.name: "${endTag.name}"`);
+        console.info(`    endTag.name: "${endTag.name}"`);
       });
     },
   })
@@ -324,25 +324,25 @@ const rewriter6c = new HTMLRewriter()
   })
   .on('br', {
     element(el) {
-      console.log('\n  Void Element Properties:');
-      console.log(`    tagName: "${el.tagName}"`);
-      console.log(`    canHaveContent: ${el.canHaveContent}`); // false for <br>
-      console.log(`    selfClosing: ${el.selfClosing}`);
+      console.info('\n  Void Element Properties:');
+      console.info(`    tagName: "${el.tagName}"`);
+      console.info(`    canHaveContent: ${el.canHaveContent}`); // false for <br>
+      console.info(`    selfClosing: ${el.selfClosing}`);
     },
   });
 
 const result6c = rewriter6c.transform(new Response(elementOpsHTML));
-console.log('\n✅ Result:');
-console.log(await result6c.text());
-console.log();
+console.info('\n✅ Result:');
+console.info(await result6c.text());
+console.info();
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.0.0.0.0.0.4.3 DEMO 3: CSS Selectors (Complete Coverage)
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Demo 3: CSS Selector Support (Complete)');
-console.log('-'.repeat(70));
-console.log('💡 Demonstrates all selector types from official documentation\n');
+console.info('📋 Demo 3: CSS Selector Support (Complete)');
+console.info('-'.repeat(70));
+console.info('💡 Demonstrates all selector types from official documentation\n');
 
 const selectorHTML = `
   <div>
@@ -515,29 +515,29 @@ const rewriter7 = new HTMLRewriter()
   });
 
 const result7 = rewriter7.transform(new Response(selectorHTML));
-console.log('✅ Complete selector coverage:');
-console.log(await result7.text());
-console.log();
+console.info('✅ Complete selector coverage:');
+console.info(await result7.text());
+console.info();
 
 // Summary of selectors demonstrated
-console.log('📊 Selector Types Demonstrated:');
-console.log('  ✅ Tag selectors: p');
-console.log('  ✅ Class selectors: p.red');
-console.log('  ✅ ID selectors: h1#header');
-console.log('  ✅ Attribute selectors: [attr], [attr="val"], [attr="val" i], [attr="val" s]');
-console.log('  ✅ Attribute operators: ~= (word), ^= (starts), $= (ends), *= (contains), |= (dash)');
-console.log('  ✅ Combinators: div span (descendant), div > span (direct child)');
-console.log('  ✅ Pseudo-classes: :nth-child(), :first-child, :nth-of-type(), :first-of-type, :not()');
-console.log('  ✅ Universal selector: *');
-console.log();
+console.info('📊 Selector Types Demonstrated:');
+console.info('  ✅ Tag selectors: p');
+console.info('  ✅ Class selectors: p.red');
+console.info('  ✅ ID selectors: h1#header');
+console.info('  ✅ Attribute selectors: [attr], [attr="val"], [attr="val" i], [attr="val" s]');
+console.info('  ✅ Attribute operators: ~= (word), ^= (starts), $= (ends), *= (contains), |= (dash)');
+console.info('  ✅ Combinators: div span (descendant), div > span (direct child)');
+console.info('  ✅ Pseudo-classes: :nth-child(), :first-child, :nth-of-type(), :first-of-type, :not()');
+console.info('  ✅ Universal selector: *');
+console.info();
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.0.0.0.0.0.4.4 DEMO 4: Text Operations (Complete API)
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Demo 4: Text Node Manipulation (Complete API)');
-console.log('-'.repeat(70));
-console.log('💡 Demonstrates all text node properties and methods\n');
+console.info('📋 Demo 4: Text Node Manipulation (Complete API)');
+console.info('-'.repeat(70));
+console.info('💡 Demonstrates all text node properties and methods\n');
 
 const textHTML = `
   <p>First chunk of text</p>
@@ -546,15 +546,15 @@ const textHTML = `
 `;
 
 // Example 1: Text properties and basic manipulation
-console.log('📝 Example 1: Text Properties and Basic Manipulation');
+console.info('📝 Example 1: Text Properties and Basic Manipulation');
 const rewriter8a = new HTMLRewriter()
   .on('p', {
     text(text) {
       // Content properties (demonstrated on first paragraph only)
       if (text.text.includes('First') && !text.lastInTextNode) {
-        console.log(`  text.text: "${text.text}"`);
-        console.log(`  text.lastInTextNode: ${text.lastInTextNode}`);
-        console.log(`  text.removed: ${text.removed}`);
+        console.info(`  text.text: "${text.text}"`);
+        console.info(`  text.lastInTextNode: ${text.lastInTextNode}`);
+        console.info(`  text.removed: ${text.removed}`);
       }
       
       // Manipulation (chained)
@@ -565,11 +565,11 @@ const rewriter8a = new HTMLRewriter()
   });
 
 const result8a = rewriter8a.transform(new Response(textHTML));
-console.log('✅ Result:', await result8a.text());
-console.log();
+console.info('✅ Result:', await result8a.text());
+console.info();
 
 // Example 2: HTML content insertion (official docs pattern)
-console.log('📝 Example 2: HTML Content Insertion');
+console.info('📝 Example 2: HTML Content Insertion');
 const rewriter8b = new HTMLRewriter()
   .on('p', {
     text(text) {
@@ -583,11 +583,11 @@ const rewriter8b = new HTMLRewriter()
   });
 
 const result8b = rewriter8b.transform(new Response(textHTML));
-console.log('✅ Result:', await result8b.text());
-console.log();
+console.info('✅ Result:', await result8b.text());
+console.info();
 
 // Example 3: Replace with HTML
-console.log('📝 Example 3: Replace with HTML');
+console.info('📝 Example 3: Replace with HTML');
 const rewriter8c = new HTMLRewriter()
   .on('p', {
     text(text) {
@@ -598,11 +598,11 @@ const rewriter8c = new HTMLRewriter()
   });
 
 const result8c = rewriter8c.transform(new Response(textHTML));
-console.log('✅ Result:', await result8c.text());
-console.log();
+console.info('✅ Result:', await result8c.text());
+console.info();
 
 // Example 4: Remove text
-console.log('📝 Example 4: Remove Text');
+console.info('📝 Example 4: Remove Text');
 const rewriter8d = new HTMLRewriter()
   .on('p', {
     text(text) {
@@ -613,11 +613,11 @@ const rewriter8d = new HTMLRewriter()
   });
 
 const result8d = rewriter8d.transform(new Response(textHTML));
-console.log('✅ Result:', await result8d.text());
-console.log();
+console.info('✅ Result:', await result8d.text());
+console.info();
 
 // Example 5: Complete API demonstration (official docs pattern)
-console.log('📝 Example 5: Complete Text API (Official Pattern)');
+console.info('📝 Example 5: Complete Text API (Official Pattern)');
 const completeTextHTML = '<p>Complete text API demo</p>';
 const rewriter8e = new HTMLRewriter()
   .on('p', {
@@ -625,9 +625,9 @@ const rewriter8e = new HTMLRewriter()
       // Only process first chunk to avoid duplicate transformations
       if (text.text && !text.text.includes('before') && !text.text.includes('replace')) {
         // Content properties
-        console.log(`  text.text: "${text.text}"`);
-        console.log(`  text.lastInTextNode: ${text.lastInTextNode}`);
-        console.log(`  text.removed: ${text.removed}`);
+        console.info(`  text.text: "${text.text}"`);
+        console.info(`  text.lastInTextNode: ${text.lastInTextNode}`);
+        console.info(`  text.removed: ${text.removed}`);
 
         // Manipulation (all methods - demonstrating API)
         // Note: In practice, you'd use one method, not all at once
@@ -642,20 +642,20 @@ const rewriter8e = new HTMLRewriter()
   });
 
 const result8e = rewriter8e.transform(new Response(completeTextHTML));
-console.log('✅ Result:', await result8e.text());
-console.log();
-console.log('📚 Text API Summary:');
-console.log('  Properties: text.text, text.lastInTextNode, text.removed');
-console.log('  Methods: text.before(), text.after(), text.replace(), text.remove()');
-console.log('  HTML insertion: Use { html: true } option');
-console.log();
+console.info('✅ Result:', await result8e.text());
+console.info();
+console.info('📚 Text API Summary:');
+console.info('  Properties: text.text, text.lastInTextNode, text.removed');
+console.info('  Methods: text.before(), text.after(), text.replace(), text.remove()');
+console.info('  HTML insertion: Use { html: true } option');
+console.info();
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.0.0.0.0.0.4.5 DEMO 5: Comment Operations
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Demo 5: Comment Manipulation');
-console.log('-'.repeat(70));
+console.info('📋 Demo 5: Comment Manipulation');
+console.info('-'.repeat(70));
 
 const commentHTML = `
   <div>
@@ -677,15 +677,15 @@ const rewriter9 = new HTMLRewriter()
   });
 
 const result9 = rewriter9.transform(new Response(commentHTML));
-console.log('✅ Comment manipulation:', await result9.text());
-console.log();
+console.info('✅ Comment manipulation:', await result9.text());
+console.info();
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.0.0.0.0.0.4.6 DEMO 6: Document Handlers
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Demo 6: Document-Level Handlers');
-console.log('-'.repeat(70));
+console.info('📋 Demo 6: Document-Level Handlers');
+console.info('-'.repeat(70));
 
 const docHTML = `<!DOCTYPE html>
 <html>
@@ -698,7 +698,7 @@ const docHTML = `<!DOCTYPE html>
 const rewriter10 = new HTMLRewriter()
   .onDocument({
     doctype(doctype) {
-      console.log('  📄 Doctype:', doctype.name);
+      console.info('  📄 Doctype:', doctype.name);
     },
     end(end) {
       end.append('<!-- Footer added by HTMLRewriter -->', { html: true });
@@ -706,17 +706,17 @@ const rewriter10 = new HTMLRewriter()
   });
 
 const result10 = rewriter10.transform(new Response(docHTML));
-console.log('✅ Document handlers applied');
-console.log(await result10.text());
-console.log();
+console.info('✅ Document handlers applied');
+console.info(await result10.text());
+console.info();
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.0.0.0.0.0.4.7 DEMO 7: Async Transformations
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Demo 7: Async Transformations');
-console.log('-'.repeat(70));
-console.log('💡 Handlers can be async - transformation blocks until complete\n');
+console.info('📋 Demo 7: Async Transformations');
+console.info('-'.repeat(70));
+console.info('💡 Handlers can be async - transformation blocks until complete\n');
 
 const asyncHTML = '<div class="async">Async content</div>';
 
@@ -732,9 +732,9 @@ const rewriter11a = new HTMLRewriter()
 const startTime1 = Bun.nanoseconds();
 const result11a = await rewriter11a.transform(new Response(asyncHTML));
 const duration1 = (Bun.nanoseconds() - startTime1) / 1_000_000;
-console.log(`✅ Async element handler (${duration1.toFixed(2)}ms):`);
-console.log(await result11a.text());
-console.log();
+console.info(`✅ Async element handler (${duration1.toFixed(2)}ms):`);
+console.info(await result11a.text());
+console.info();
 
 // Example: Multiple async operations
 const asyncHTML2 = '<div class="async">Async content</div><div class="async2">More async</div>';
@@ -758,16 +758,16 @@ const rewriter11b = new HTMLRewriter()
 const startTime2 = Bun.nanoseconds();
 const result11b = await rewriter11b.transform(new Response(asyncHTML2));
 const duration2 = (Bun.nanoseconds() - startTime2) / 1_000_000;
-console.log(`✅ Multiple async handlers (${duration2.toFixed(2)}ms):`);
-console.log(await result11b.text());
-console.log();
+console.info(`✅ Multiple async handlers (${duration2.toFixed(2)}ms):`);
+console.info(await result11b.text());
+console.info();
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.0.0.0.0.0.4.8 DEMO 8: Element Chaining
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Demo 8: Method Chaining');
-console.log('-'.repeat(70));
+console.info('📋 Demo 8: Method Chaining');
+console.info('-'.repeat(70));
 
 const chainHTML = '<div class="chain">Chain me</div>';
 
@@ -784,15 +784,15 @@ const rewriter12 = new HTMLRewriter()
   });
 
 const result12 = rewriter12.transform(new Response(chainHTML));
-console.log('✅ Method chaining:', await result12.text());
-console.log();
+console.info('✅ Method chaining:', await result12.text());
+console.info();
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.0.0.0.0.0.4.9 DEMO 9: Error Handling
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Demo 9: Error Handling');
-console.log('-'.repeat(70));
+console.info('📋 Demo 9: Error Handling');
+console.info('-'.repeat(70));
 
 try {
   const invalidHTML = '<div>Unclosed tag';
@@ -804,18 +804,18 @@ try {
       },
     });
   const result13 = rewriter13.transform(new Response(invalidHTML));
-  console.log('✅ Error handling (graceful):', await result13.text());
+  console.info('✅ Error handling (graceful):', await result13.text());
 } catch (error) {
-  console.log('⚠️  Error caught:', (error as Error).message);
+  console.info('⚠️  Error caught:', (error as Error).message);
 }
-console.log();
+console.info();
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.0.0.0.0.0.4.10 DEMO 10: Complex Transformation
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Demo 10: Complex Real-World Example');
-console.log('-'.repeat(70));
+console.info('📋 Demo 10: Complex Real-World Example');
+console.info('-'.repeat(70));
 
 const complexHTML = `
   <html>
@@ -868,30 +868,30 @@ const rewriter14 = new HTMLRewriter()
   })
   .onDocument({
     end(end) {
-      end.append('<script>console.log("Enhanced by HTMLRewriter");</script>', { html: true });
+      end.append('<script>console.info("Enhanced by HTMLRewriter");</script>', { html: true });
     },
   });
 
 const result14 = rewriter14.transform(new Response(complexHTML));
-console.log('✅ Complex transformation:');
-console.log(await result14.text());
-console.log();
+console.info('✅ Complex transformation:');
+console.info(await result14.text());
+console.info();
 
-console.log('═'.repeat(70));
-console.log('  Demo Complete!');
-console.log('═'.repeat(70));
-console.log('\n💡 Key Takeaways:');
-console.log('  • Bun Enhancement: Strings and ArrayBuffers work directly!');
-console.log('  • Cloudflare Workers only supports Response objects');
-console.log('  • Powerful CSS selector support');
-console.log('  • Element, text, and comment manipulation');
-console.log('  • Document-level handlers');
-console.log('  • Async transformations supported');
-console.log('  • Method chaining for fluent API');
-console.log('\n🚀 Bun-Specific Advantages:');
-console.log('  • Direct string input: rewriter.transform("<div>content</div>")');
-console.log('  • Direct ArrayBuffer input: rewriter.transform(buffer)');
-console.log('  • More flexible than Cloudflare Workers implementation');
-console.log('\n📚 Official Documentation:');
-console.log('  https://bun.com/docs/runtime/html-rewriter');
-console.log('  Note: Cloudflare Workers only supports Response objects\n');
+console.info('═'.repeat(70));
+console.info('  Demo Complete!');
+console.info('═'.repeat(70));
+console.info('\n💡 Key Takeaways:');
+console.info('  • Bun Enhancement: Strings and ArrayBuffers work directly!');
+console.info('  • Cloudflare Workers only supports Response objects');
+console.info('  • Powerful CSS selector support');
+console.info('  • Element, text, and comment manipulation');
+console.info('  • Document-level handlers');
+console.info('  • Async transformations supported');
+console.info('  • Method chaining for fluent API');
+console.info('\n🚀 Bun-Specific Advantages:');
+console.info('  • Direct string input: rewriter.transform("<div>content</div>")');
+console.info('  • Direct ArrayBuffer input: rewriter.transform(buffer)');
+console.info('  • More flexible than Cloudflare Workers implementation');
+console.info('\n📚 Official Documentation:');
+console.info('  https://bun.com/docs/runtime/html-rewriter');
+console.info('  Note: Cloudflare Workers only supports Response objects\n');

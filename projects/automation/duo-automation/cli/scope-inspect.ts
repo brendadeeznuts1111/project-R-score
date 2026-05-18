@@ -66,8 +66,8 @@ export class ScopeInspector {
     const inspectPath = targetPath ? join(this.basePath, targetPath) : this.basePath;
     const startTime = new Date();
     
-    console.log(`🔍 Inspecting scope: ${inspectPath}`);
-    console.log(`📊 Depth: ${this.options.inspectDepth}, Filter: ${this.options.inspectFilter || 'none'}, Exclude: ${this.options.inspectExcludePath || 'none'}`);
+    console.info(`🔍 Inspecting scope: ${inspectPath}`);
+    console.info(`📊 Depth: ${this.options.inspectDepth}, Filter: ${this.options.inspectFilter || 'none'}, Exclude: ${this.options.inspectExcludePath || 'none'}`);
     
     const items = await this.traverseDirectory(inspectPath, 0);
     const summary = this.generateSummary(items);
@@ -259,20 +259,20 @@ export class ScopeInspector {
    * Format and display inspection results
    */
   displayResults(result: InspectResult): void {
-    console.log('\n' + '='.repeat(80));
-    console.log(`📊 SCOPE INSPECTION RESULTS`);
-    console.log('='.repeat(80));
+    console.info('\n' + '='.repeat(80));
+    console.info(`📊 SCOPE INSPECTION RESULTS`);
+    console.info('='.repeat(80));
     
     // Summary information
-    console.log(`\n📋 Summary:`);
-    console.log(`   Scope: ${result.scope}`);
-    console.log(`   Total Items: ${result.totalItems}`);
-    console.log(`   Total Size: ${this.formatBytes(result.totalSize)}`);
-    console.log(`   Files: ${result.summary.files}`);
-    console.log(`   Directories: ${result.summary.directories}`);
-    console.log(`   Symlinks: ${result.summary.symlinks}`);
-    console.log(`   Max Depth: ${result.summary.maxDepth}`);
-    console.log(`   Inspected At: ${result.inspectedAt.toISOString()}`);
+    console.info(`\n📋 Summary:`);
+    console.info(`   Scope: ${result.scope}`);
+    console.info(`   Total Items: ${result.totalItems}`);
+    console.info(`   Total Size: ${this.formatBytes(result.totalSize)}`);
+    console.info(`   Files: ${result.summary.files}`);
+    console.info(`   Directories: ${result.summary.directories}`);
+    console.info(`   Symlinks: ${result.summary.symlinks}`);
+    console.info(`   Max Depth: ${result.summary.maxDepth}`);
+    console.info(`   Inspected At: ${result.inspectedAt.toISOString()}`);
     
     // Display items based on format
     switch (this.options.outputFormat) {
@@ -331,7 +331,7 @@ export class ScopeInspector {
         }
       }
       
-      console.log(line);
+      console.info(line);
       
       // Recursively display children
       if (item.children && item.children.length > 0) {
@@ -344,8 +344,8 @@ export class ScopeInspector {
    * Display results in JSON format
    */
   private displayJsonFormat(result: InspectResult): void {
-    console.log('\n📄 JSON Output:');
-    console.log(JSON.stringify(result, null, 2));
+    console.info('\n📄 JSON Output:');
+    console.info(JSON.stringify(result, null, 2));
   }
   
   /**
@@ -353,10 +353,10 @@ export class ScopeInspector {
    */
   private displayTableFormat(items: ScopeItem[], depth: number = 0): void {
     if (depth === 0) {
-      console.log('\n📊 Table View:');
-      console.log('┌─────────────────────────────────────────────────────────────────────────────────┐');
-      console.log('│ Name                                    Type       Size        Modified                │');
-      console.log('├─────────────────────────────────────────────────────────────────────────────────┤');
+      console.info('\n📊 Table View:');
+      console.info('┌─────────────────────────────────────────────────────────────────────────────────┐');
+      console.info('│ Name                                    Type       Size        Modified                │');
+      console.info('├─────────────────────────────────────────────────────────────────────────────────┤');
     }
     
     for (const item of items) {
@@ -365,7 +365,7 @@ export class ScopeInspector {
       const size = this.formatBytes(item.size).padStart(12);
       const modified = item.modified.toISOString().substring(0, 19);
       
-      console.log(`│ ${name} ${type} ${size} ${modified} │`);
+      console.info(`│ ${name} ${type} ${size} ${modified} │`);
       
       if (item.children && item.children.length > 0) {
         this.displayTableFormat(item.children, depth + 1);
@@ -373,7 +373,7 @@ export class ScopeInspector {
     }
     
     if (depth === 0) {
-      console.log('└─────────────────────────────────────────────────────────────────────────────────┘');
+      console.info('└─────────────────────────────────────────────────────────────────────────────────┘');
     }
   }
   
@@ -452,7 +452,7 @@ export class ScopeInspectCLI {
    * Show help information
    */
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🔍 DuoPlus Scope Inspection Tool
 
 USAGE:

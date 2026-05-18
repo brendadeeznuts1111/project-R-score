@@ -277,7 +277,7 @@ export class BookmakerSocketAdapter {
 		const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000); // Exponential backoff, max 30s
 
 		setTimeout(() => {
-			console.log(
+			console.info(
 				`BookmakerSocketAdapter: Reconnecting (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})...`,
 			);
 			this.connect();
@@ -288,11 +288,11 @@ export class BookmakerSocketAdapter {
 	 * Event handlers (override in subclasses)
 	 */
 	protected onConnect(): void {
-		console.log(`BookmakerSocketAdapter: Connected to ${this.host}:${this.port}`);
+		console.info(`BookmakerSocketAdapter: Connected to ${this.host}:${this.port}`);
 	}
 
 	protected onDisconnect(): void {
-		console.log(`BookmakerSocketAdapter: Disconnected from ${this.host}:${this.port}`);
+		console.info(`BookmakerSocketAdapter: Disconnected from ${this.host}:${this.port}`);
 	}
 
 	protected onError(error: Error): void {
@@ -301,7 +301,7 @@ export class BookmakerSocketAdapter {
 
 	protected onMarketData(data: any): void {
 		// Override in subclasses to handle market data
-		console.log("BookmakerSocketAdapter: Market data received:", data);
+		console.info("BookmakerSocketAdapter: Market data received:", data);
 	}
 
 	/**

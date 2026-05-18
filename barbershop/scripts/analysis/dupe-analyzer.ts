@@ -167,32 +167,32 @@ async function analyzeDuplicates(): Promise<AnalysisResult> {
 }
 
 function printTable(results: AnalysisResult) {
-  console.log('\n╔══════════════════════════════════════════════════════════════════════════════╗');
-  console.log('║                    DUPLICATE CODE ANALYZER RESULTS                           ║');
-  console.log('╚══════════════════════════════════════════════════════════════════════════════╝\n');
+  console.info('\n╔══════════════════════════════════════════════════════════════════════════════╗');
+  console.info('║                    DUPLICATE CODE ANALYZER RESULTS                           ║');
+  console.info('╚══════════════════════════════════════════════════════════════════════════════╝\n');
 
-  console.log(`📁 Files Analyzed: ${results.totalFiles}`);
-  console.log(`📊 Definitions Found:`);
-  console.log(`   • Types:      ${results.summary.types}`);
-  console.log(`   • Interfaces: ${results.summary.interfaces}`);
-  console.log(`   • Functions:  ${results.summary.functions}`);
-  console.log(`   • Classes:    ${results.summary.classes}`);
-  console.log(`   • Constants:  ${results.summary.consts}`);
-  console.log(`\n⚠️  Duplicates Found: ${results.duplicates.length}\n`);
+  console.info(`📁 Files Analyzed: ${results.totalFiles}`);
+  console.info(`📊 Definitions Found:`);
+  console.info(`   • Types:      ${results.summary.types}`);
+  console.info(`   • Interfaces: ${results.summary.interfaces}`);
+  console.info(`   • Functions:  ${results.summary.functions}`);
+  console.info(`   • Classes:    ${results.summary.classes}`);
+  console.info(`   • Constants:  ${results.summary.consts}`);
+  console.info(`\n⚠️  Duplicates Found: ${results.duplicates.length}\n`);
 
   if (results.duplicates.length === 0) {
-    console.log('✅ No duplicates found above threshold!\n');
+    console.info('✅ No duplicates found above threshold!\n');
     return;
   }
 
   // Print table header
-  console.log(
+  console.info(
     '┌────────────────────────────────┬────────────┬───────┬─────────────────────────────────────┐'
   );
-  console.log(
+  console.info(
     '│ Name                           │ Type       │ Count │ Files                               │'
   );
-  console.log(
+  console.info(
     '├────────────────────────────────┼────────────┼───────┼─────────────────────────────────────┤'
   );
 
@@ -201,17 +201,17 @@ function printTable(results: AnalysisResult) {
     const type = dup.type.padEnd(10);
     const count = dup.count.toString().padStart(5);
     const files = dup.files[0].slice(0, 35);
-    console.log(`│ ${name} │ ${type} │ ${count} │ ${files.padEnd(35)} │`);
+    console.info(`│ ${name} │ ${type} │ ${count} │ ${files.padEnd(35)} │`);
 
     // Show additional files
     for (let i = 1; i < dup.files.length && i < 3; i++) {
       const extraFile = dup.files[i].slice(0, 35);
-      console.log(
+      console.info(
         `│                                │            │       │ ${extraFile.padEnd(35)} │`
       );
     }
     if (dup.files.length > 3) {
-      console.log(
+      console.info(
         `│                                │            │       │ ... and ${dup.files.length - 3} more`.padEnd(
           35
         ) + ' │'
@@ -219,13 +219,13 @@ function printTable(results: AnalysisResult) {
     }
   }
 
-  console.log(
+  console.info(
     '└────────────────────────────────┴────────────┴───────┴─────────────────────────────────────┘\n'
   );
 }
 
 function printJSON(results: AnalysisResult) {
-  console.log(JSON.stringify(results, null, 2));
+  console.info(JSON.stringify(results, null, 2));
 }
 
 // Main execution

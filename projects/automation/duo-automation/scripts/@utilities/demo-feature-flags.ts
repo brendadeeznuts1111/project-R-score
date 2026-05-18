@@ -7,38 +7,38 @@ import { UnicodeSecurityDashboard } from '../security/unicode-dashboard.ts';
 import { AuditExporter } from '../utils/audit-exporter.ts';
 import { initializeScopeTimezone } from '../bootstrap-timezone.ts';
 
-console.log('🚀 Empire Pro v3.7 - Feature Flag Integration Demo\n');
+console.info('🚀 Empire Pro v3.7 - Feature Flag Integration Demo\n');
 
 // Show current feature flag configuration
-console.log('📋 Current Feature Flag Configuration:');
-console.log('='.repeat(50));
+console.info('📋 Current Feature Flag Configuration:');
+console.info('='.repeat(50));
 
-console.log(`  ${feature("ENTERPRISE_SECURITY") ? '✅' : '❌'} ENTERPRISE_SECURITY      ${getFeatureDescription("ENTERPRISE_SECURITY")}`);
-console.log(`  ${feature("DEVELOPMENT_TOOLS") ? '✅' : '❌'} DEVELOPMENT_TOOLS      ${getFeatureDescription("DEVELOPMENT_TOOLS")}`);
-console.log(`  ${feature("DEBUG_UNICODE") ? '✅' : '❌'} DEBUG_UNICODE           ${getFeatureDescription("DEBUG_UNICODE")}`);
-console.log(`  ${feature("PREMIUM_ANALYTICS") ? '✅' : '❌'} PREMIUM_ANALYTICS      ${getFeatureDescription("PREMIUM_ANALYTICS")}`);
-console.log(`  ${feature("ADVANCED_DASHBOARD") ? '✅' : '❌'} ADVANCED_DASHBOARD    ${getFeatureDescription("ADVANCED_DASHBOARD")}`);
-console.log(`  ${feature("AUDIT_EXPORT") ? '✅' : '❌'} AUDIT_EXPORT            ${getFeatureDescription("AUDIT_EXPORT")}`);
-console.log(`  ${feature("REAL_TIME_UPDATES") ? '✅' : '❌'} REAL_TIME_UPDATES      ${getFeatureDescription("REAL_TIME_UPDATES")}`);
-console.log(`  ${feature("MULTI_TENANT") ? '✅' : '❌'} MULTI_TENANT           ${getFeatureDescription("MULTI_TENANT")}`);
+console.info(`  ${feature("ENTERPRISE_SECURITY") ? '✅' : '❌'} ENTERPRISE_SECURITY      ${getFeatureDescription("ENTERPRISE_SECURITY")}`);
+console.info(`  ${feature("DEVELOPMENT_TOOLS") ? '✅' : '❌'} DEVELOPMENT_TOOLS      ${getFeatureDescription("DEVELOPMENT_TOOLS")}`);
+console.info(`  ${feature("DEBUG_UNICODE") ? '✅' : '❌'} DEBUG_UNICODE           ${getFeatureDescription("DEBUG_UNICODE")}`);
+console.info(`  ${feature("PREMIUM_ANALYTICS") ? '✅' : '❌'} PREMIUM_ANALYTICS      ${getFeatureDescription("PREMIUM_ANALYTICS")}`);
+console.info(`  ${feature("ADVANCED_DASHBOARD") ? '✅' : '❌'} ADVANCED_DASHBOARD    ${getFeatureDescription("ADVANCED_DASHBOARD")}`);
+console.info(`  ${feature("AUDIT_EXPORT") ? '✅' : '❌'} AUDIT_EXPORT            ${getFeatureDescription("AUDIT_EXPORT")}`);
+console.info(`  ${feature("REAL_TIME_UPDATES") ? '✅' : '❌'} REAL_TIME_UPDATES      ${getFeatureDescription("REAL_TIME_UPDATES")}`);
+console.info(`  ${feature("MULTI_TENANT") ? '✅' : '❌'} MULTI_TENANT           ${getFeatureDescription("MULTI_TENANT")}`);
 
-console.log('\n🔒 Security Dashboard - Feature Flag Integration:');
-console.log('='.repeat(60));
+console.info('\n🔒 Security Dashboard - Feature Flag Integration:');
+console.info('='.repeat(60));
 
 // Test enterprise features
 if (feature("ENTERPRISE_SECURITY")) {
-  console.log('🏛️ ENTERPRISE SECURITY MODE ENABLED');
+  console.info('🏛️ ENTERPRISE SECURITY MODE ENABLED');
   initializeScopeTimezone('ENTERPRISE');
   
   const enterpriseDashboard = new UnicodeSecurityDashboard();
   const enterpriseOutput = enterpriseDashboard.generateDashboard();
   
-  console.log(enterpriseOutput);
+  console.info(enterpriseOutput);
   
   // Test audit export
   if (feature("AUDIT_EXPORT")) {
-    console.log('\n📋 AUDIT EXPORT DEMO:');
-    console.log('='.repeat(30));
+    console.info('\n📋 AUDIT EXPORT DEMO:');
+    console.info('='.repeat(30));
     
     const exporter = new AuditExporter();
     
@@ -46,32 +46,32 @@ if (feature("ENTERPRISE_SECURITY")) {
     const testDomains = ['apple.factory-wager.com', 'google.com', 'microsoft.com'];
     testDomains.forEach(domain => {
       const filename = exporter.generateFilename(domain);
-      console.log(`  📄 ${domain} → ${filename}`);
+      console.info(`  📄 ${domain} → ${filename}`);
     });
     
-    console.log('\n✅ Audit export functionality available');
+    console.info('\n✅ Audit export functionality available');
   }
 }
 
 // Test development features
 if (feature("DEVELOPMENT_TOOLS")) {
-  console.log('🧪 DEVELOPMENT TOOLS MODE ENABLED');
+  console.info('🧪 DEVELOPMENT TOOLS MODE ENABLED');
   initializeScopeTimezone('DEVELOPMENT');
   
   const devDashboard = new UnicodeSecurityDashboard();
   const devOutput = devDashboard.generateDashboard();
   
-  console.log(devOutput);
+  console.info(devOutput);
 }
 
 // Test debug features
 if (feature("DEBUG_UNICODE")) {
-  console.log('\n🔍 DEBUG UNICODE MODE:');
-  console.log('='.repeat(30));
+  console.info('\n🔍 DEBUG UNICODE MODE:');
+  console.info('='.repeat(30));
   
-  console.log('⚠️ Zero-width character highlighting enabled');
-  console.log('📏 Enhanced Bun.stringWidth() measurements active');
-  console.log('🎯 Unicode debugging tools available');
+  console.info('⚠️ Zero-width character highlighting enabled');
+  console.info('📏 Enhanced Bun.stringWidth() measurements active');
+  console.info('🎯 Unicode debugging tools available');
   
   // Demo zero-width character detection
   const testStrings = [
@@ -80,23 +80,23 @@ if (feature("DEBUG_UNICODE")) {
     'normal string'
   ];
   
-  console.log('\n📏 Width Measurements:');
+  console.info('\n📏 Width Measurements:');
   testStrings.forEach(str => {
     const width = Bun.stringWidth(str);
     const visible = str.replace(/[\u200B-\u200D\uFEFF]/g, 'Ⓩ');
-    console.log(`  "${visible}" → ${width} chars wide`);
+    console.info(`  "${visible}" → ${width} chars wide`);
   });
 }
 
 // Test premium analytics
 if (feature("PREMIUM_ANALYTICS")) {
-  console.log('\n📊 PREMIUM ANALYTICS DEMO:');
-  console.log('='.repeat(30));
+  console.info('\n📊 PREMIUM ANALYTICS DEMO:');
+  console.info('='.repeat(30));
   
-  console.log('✅ Advanced sorting algorithms active');
-  console.log('✅ Multi-dimensional data analysis');
-  console.log('✅ Deep path access enabled');
-  console.log('✅ Custom comparators available');
+  console.info('✅ Advanced sorting algorithms active');
+  console.info('✅ Multi-dimensional data analysis');
+  console.info('✅ Deep path access enabled');
+  console.info('✅ Custom comparators available');
   
   // Demo enhanced table capabilities
   const sampleData = [
@@ -105,39 +105,39 @@ if (feature("PREMIUM_ANALYTICS")) {
     { user: { name: 'Carol', score: 98 }, department: 'Engineering' }
   ];
   
-  console.log('\n📈 Sample Analytics Data:');
-  console.log('Top performers by department and score');
+  console.info('\n📈 Sample Analytics Data:');
+  console.info('Top performers by department and score');
   // Would use enhanced table formatter here
 }
 
-console.log('\n🎯 Bundle Optimization Summary:');
-console.log('='.repeat(40));
+console.info('\n🎯 Bundle Optimization Summary:');
+console.info('='.repeat(40));
 
-console.log('📦 Enterprise Build:');
-console.log('  ✅ ENTERPRISE_SECURITY');
-console.log('  ✅ PREMIUM_ANALYTICS');
-console.log('  ✅ AUDIT_EXPORT');
-console.log('  ❌ DEVELOPMENT_TOOLS (excluded)');
-console.log('  ❌ DEBUG_UNICODE (excluded)');
-console.log('  📏 Smallest bundle size');
+console.info('📦 Enterprise Build:');
+console.info('  ✅ ENTERPRISE_SECURITY');
+console.info('  ✅ PREMIUM_ANALYTICS');
+console.info('  ✅ AUDIT_EXPORT');
+console.info('  ❌ DEVELOPMENT_TOOLS (excluded)');
+console.info('  ❌ DEBUG_UNICODE (excluded)');
+console.info('  📏 Smallest bundle size');
 
-console.log('\n🧪 Development Build:');
-console.log('  ✅ DEVELOPMENT_TOOLS');
-console.log('  ✅ DEBUG_UNICODE');
-console.log('  ✅ PREMIUM_ANALYTICS');
-console.log('  ❌ ENTERPRISE_SECURITY (excluded)');
-console.log('  ❌ AUDIT_EXPORT (excluded)');
-console.log('  📏 Debug features included');
+console.info('\n🧪 Development Build:');
+console.info('  ✅ DEVELOPMENT_TOOLS');
+console.info('  ✅ DEBUG_UNICODE');
+console.info('  ✅ PREMIUM_ANALYTICS');
+console.info('  ❌ ENTERPRISE_SECURITY (excluded)');
+console.info('  ❌ AUDIT_EXPORT (excluded)');
+console.info('  📏 Debug features included');
 
-console.log('\n🚀 Build Commands:');
-console.log('='.repeat(20));
-console.log('bun run build:enterprise  # Production build');
-console.log('bun run build:development # Development build');
-console.log('bun test --feature=ENTERPRISE_SECURITY tests/feature-flags.test.ts');
-console.log('bun test --feature=DEVELOPMENT_TOOLS tests/feature-flags.test.ts');
+console.info('\n🚀 Build Commands:');
+console.info('='.repeat(20));
+console.info('bun run build:enterprise  # Production build');
+console.info('bun run build:development # Development build');
+console.info('bun test --feature=ENTERPRISE_SECURITY tests/feature-flags.test.ts');
+console.info('bun test --feature=DEVELOPMENT_TOOLS tests/feature-flags.test.ts');
 
-console.log('\n✅ Feature Flag Integration Demo Completed!');
-console.log('🎯 Empire Pro v3.7 - Optimized for every deployment target!');
+console.info('\n✅ Feature Flag Integration Demo Completed!');
+console.info('🎯 Empire Pro v3.7 - Optimized for every deployment target!');
 
 function getFeatureDescription(feature: string): string {
   const descriptions: Record<string, string> = {

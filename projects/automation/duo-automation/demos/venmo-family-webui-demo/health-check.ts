@@ -8,39 +8,39 @@
 import { fetch } from 'bun';
 
 async function healthCheck(): Promise<void> {
-  console.log('🏥 Venmo Family Web UI Demo - Health Check');
-  console.log('═'.repeat(50));
+  console.info('🏥 Venmo Family Web UI Demo - Health Check');
+  console.info('═'.repeat(50));
   
   try {
     // Check API server
-    console.log('🌐 Checking API server...');
+    console.info('🌐 Checking API server...');
     const response = await fetch('http://localhost:3003/api/stats');
     
     if (response.ok) {
       const stats = await response.json();
-      console.log('✅ API server is healthy');
-      console.log(`📊 Total Families: ${stats.totalFamilies}`);
-      console.log(`👥 Active Members: ${stats.totalMembers}`);
-      console.log(`💰 Monthly Volume: $${stats.monthlyVolume}`);
+      console.info('✅ API server is healthy');
+      console.info(`📊 Total Families: ${stats.totalFamilies}`);
+      console.info(`👥 Active Members: ${stats.totalMembers}`);
+      console.info(`💰 Monthly Volume: $${stats.monthlyVolume}`);
     } else {
-      console.log('❌ API server is not responding');
+      console.info('❌ API server is not responding');
       process.exit(1);
     }
     
     // Check bundle integrity
-    console.log('\n🔐 Checking bundle integrity...');
+    console.info('\n🔐 Checking bundle integrity...');
     try {
       const bundleHash = await Bun.file('bundle-hash.json').text();
       const hashData = JSON.parse(bundleHash);
-      console.log(`✅ Bundle verified: ${hashData.bundleHash.substring(0, 16)}...`);
+      console.info(`✅ Bundle verified: ${hashData.bundleHash.substring(0, 16)}...`);
     } catch (error) {
-      console.log('❌ Bundle verification failed');
+      console.info('❌ Bundle verification failed');
       process.exit(1);
     }
     
-    console.log('\n🎉 All systems healthy!');
-    console.log('🌐 Web UI: Open index.html in your browser');
-    console.log('📊 Dashboard: http://localhost:3003/api/stats');
+    console.info('\n🎉 All systems healthy!');
+    console.info('🌐 Web UI: Open index.html in your browser');
+    console.info('📊 Dashboard: http://localhost:3003/api/stats');
     
   } catch (error) {
     console.error('❌ Health check failed:', error);

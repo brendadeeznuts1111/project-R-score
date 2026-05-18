@@ -165,7 +165,7 @@ export class UnifiedDashboardIntegration {
 
   private async initializeIntegrations(): Promise<void> {
     try {
-      console.log('🚀 Initializing Unified Dashboard Integration...');
+      console.info('🚀 Initializing Unified Dashboard Integration...');
 
       // Initialize core systems
       this.fantasyClient = new Fantasy42AgentClient(
@@ -260,7 +260,7 @@ export class UnifiedDashboardIntegration {
         this.telegramAlerts.initialize(),
       ]);
 
-      console.log('✅ Unified Dashboard Integration initialized successfully');
+      console.info('✅ Unified Dashboard Integration initialized successfully');
 
       // Start real-time updates based on config
       this.startRealTimeUpdates();
@@ -603,7 +603,7 @@ export class UnifiedDashboardIntegration {
   public async triggerIPBlock(ip: string, reason: string): Promise<boolean> {
     try {
       await this.alertIntegration.blockIP(ip, reason);
-      console.log(`🚫 IP ${ip} blocked: ${reason}`);
+      console.info(`🚫 IP ${ip} blocked: ${reason}`);
       return true;
     } catch (error) {
       console.error(`Failed to block IP ${ip}:`, error);
@@ -618,7 +618,7 @@ export class UnifiedDashboardIntegration {
   ): Promise<boolean> {
     try {
       await this.fantasyClient.settleWager(wagerNumber, settlementType, 'system', notes);
-      console.log(`✅ Settlement processed for wager ${wagerNumber}: ${settlementType}`);
+      console.info(`✅ Settlement processed for wager ${wagerNumber}: ${settlementType}`);
       return true;
     } catch (error) {
       console.error(`Failed to process settlement for ${wagerNumber}:`, error);
@@ -629,7 +629,7 @@ export class UnifiedDashboardIntegration {
   public async updateLineOdds(lineId: string, newOdds: any): Promise<boolean> {
     try {
       await this.closingLines.updateLineOdds(lineId, newOdds);
-      console.log(`📊 Line odds updated for ${lineId}`);
+      console.info(`📊 Line odds updated for ${lineId}`);
       return true;
     } catch (error) {
       console.error(`Failed to update line odds for ${lineId}:`, error);
@@ -644,7 +644,7 @@ export class UnifiedDashboardIntegration {
   ): Promise<boolean> {
     try {
       await this.telegramAlerts.sendAlert(customerId, message, severity);
-      console.log(`📢 Alert sent to customer ${customerId}`);
+      console.info(`📢 Alert sent to customer ${customerId}`);
       return true;
     } catch (error) {
       console.error(`Failed to send alert to ${customerId}:`, error);
@@ -655,7 +655,7 @@ export class UnifiedDashboardIntegration {
   // Configuration management
   public updateConfig(newConfig: Partial<DashboardDataConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    console.log('⚙️ Dashboard configuration updated');
+    console.info('⚙️ Dashboard configuration updated');
   }
 
   public getConfig(): DashboardDataConfig {
@@ -674,7 +674,7 @@ export class UnifiedDashboardIntegration {
     // Clear cache
     this.dataCache.clear();
 
-    console.log('🧹 Unified Dashboard Integration cleaned up');
+    console.info('🧹 Unified Dashboard Integration cleaned up');
   }
 }
 

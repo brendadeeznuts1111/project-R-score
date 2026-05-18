@@ -141,9 +141,9 @@ validation_rules:
 
             if (!this.dryRun) {
                 await writeFile(filePath, frontmatter + content);
-                console.log(`✅ Added frontmatter to: ${basename(filePath)}`);
+                console.info(`✅ Added frontmatter to: ${basename(filePath)}`);
             } else {
-                console.log(`📝 Would add frontmatter to: ${basename(filePath)}`);
+                console.info(`📝 Would add frontmatter to: ${basename(filePath)}`);
             }
         } catch (error) {
             console.warn(`⚠️  Could not add frontmatter to ${filePath}: ${(error as Error).message}`);
@@ -189,7 +189,7 @@ validation_rules:
      * Scan for files that need renaming
      */
     private async scanForRenames(): Promise<void> {
-        console.log('🔍 Scanning for files that need renaming...');
+        console.info('🔍 Scanning for files that need renaming...');
 
         const files = await this.findMarkdownFiles(this.vaultPath);
 
@@ -205,14 +205,14 @@ validation_rules:
             }
         }
 
-        console.log(`📋 Found ${this.renames.length} files to rename`);
+        console.info(`📋 Found ${this.renames.length} files to rename`);
     }
 
     /**
      * Update internal links in all files
      */
     private async updateInternalLinks(): Promise<void> {
-        console.log('🔗 Updating internal links...');
+        console.info('🔗 Updating internal links...');
 
         // Create mapping of old names to new names
         const nameMap = new Map<string, string>();
@@ -251,7 +251,7 @@ validation_rules:
 
                 if (hasUpdates && !this.dryRun) {
                     await writeFile(filePath, updatedContent);
-                    console.log(`🔗 Updated links in: ${basename(filePath)}`);
+                    console.info(`🔗 Updated links in: ${basename(filePath)}`);
                 }
             } catch (error) {
                 console.warn(`⚠️  Could not update links in ${filePath}: ${(error as Error).message}`);
@@ -263,35 +263,35 @@ validation_rules:
      * Execute the naming fix process
      */
     async execute(): Promise<void> {
-        console.log('🔧 Bun Vault Naming Fixer');
-        console.log('============================');
-        console.log(`📁 Vault path: ${this.vaultPath}`);
-        console.log(`🧪 Dry run: ${this.dryRun ? 'YES' : 'NO'}`);
-        console.log('');
+        console.info('🔧 Bun Vault Naming Fixer');
+        console.info('============================');
+        console.info(`📁 Vault path: ${this.vaultPath}`);
+        console.info(`🧪 Dry run: ${this.dryRun ? 'YES' : 'NO'}`);
+        console.info('');
 
         // Scan for files that need renaming
         await this.scanForRenames();
 
         if (this.renames.length === 0) {
-            console.log('✅ All files already follow Bun naming standards!');
+            console.info('✅ All files already follow Bun naming standards!');
             return;
         }
 
         // Display planned renames
-        console.log('📋 Planned renames:');
-        console.log('');
+        console.info('📋 Planned renames:');
+        console.info('');
 
         this.renames.forEach((rename, index) => {
             const oldName = basename(rename.oldPath);
             const newName = basename(rename.newPath);
-            console.log(`${index + 1}. ${oldName} → ${newName}`);
-            console.log(`   Reason: ${rename.reason}`);
-            console.log('');
+            console.info(`${index + 1}. ${oldName} → ${newName}`);
+            console.info(`   Reason: ${rename.reason}`);
+            console.info('');
         });
 
         // Execute renames if not dry run
         if (!this.dryRun) {
-            console.log('🚀 Executing renaming process...');
+            console.info('🚀 Executing renaming process...');
 
             // First, update internal links
             await this.updateInternalLinks();
@@ -301,7 +301,7 @@ validation_rules:
                 try {
                     await Bun.write(rename.newPath, await Bun.file(rename.oldPath).text());
                     await Bun.write(rename.oldPath, ''); // Clear old file
-                    console.log(`✅ Renamed: ${basename(rename.oldPath)} → ${basename(rename.newPath)}`);
+                    console.info(`✅ Renamed: ${basename(rename.oldPath)} → ${basename(rename.newPath)}`);
 
                     // Add frontmatter
                     await this.addBunFrontmatter(rename.newPath);
@@ -310,18 +310,18 @@ validation_rules:
                 }
             }
         } else {
-            console.log('🧪 Dry run complete. Use --execute to apply changes.');
-            console.log('');
-            console.log('💡 To execute the changes, run:');
-            console.log(`   bun run scripts/fix-vault-naming.ts --execute`);
+            console.info('🧪 Dry run complete. Use --execute to apply changes.');
+            console.info('');
+            console.info('💡 To execute the changes, run:');
+            console.info(`   bun run scripts/fix-vault-naming.ts --execute`);
         }
 
-        console.log('');
-        console.log('🎯 Naming Fix Summary:');
-        console.log(`   • Files to rename: ${this.renames.length}`);
-        console.log(`   • Naming convention: kebab-case (Bun standard)`);
-        console.log(`   • Link updates: Automatic`);
-        console.log(`   • Frontmatter: Added where missing`);
+        console.info('');
+        console.info('🎯 Naming Fix Summary:');
+        console.info(`   • Files to rename: ${this.renames.length}`);
+        console.info(`   • Naming convention: kebab-case (Bun standard)`);
+        console.info(`   • Link updates: Automatic`);
+        console.info(`   • Frontmatter: Added where missing`);
     }
 }
 

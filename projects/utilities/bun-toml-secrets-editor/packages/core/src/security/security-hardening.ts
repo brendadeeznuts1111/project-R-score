@@ -324,7 +324,7 @@ export const secureConsole = {
 	log: (message: string, level: string = "INFO") => {
 		const sanitized = securityManager.sanitizeLogOutput(message, level);
 		if (sanitized) {
-			console.log(`[${level}] ${sanitized}`);
+			console.info(`[${level}] ${sanitized}`);
 		}
 	},
 

@@ -6,7 +6,7 @@ import { Database } from "bun:sqlite";
 
 // 1. Bun.build() autoload options verification
 export async function verifyBunBuildTypes(verbose: boolean = false): Promise<boolean> {
-  if (verbose) console.log('  Testing autoloadTsconfig and autoloadPackageJson options...');
+  if (verbose) console.info('  Testing autoloadTsconfig and autoloadPackageJson options...');
   
   try {
     const buildOptions = {
@@ -20,23 +20,23 @@ export async function verifyBunBuildTypes(verbose: boolean = false): Promise<boo
     
     const result = await Bun.build(buildOptions);
     if (verbose) {
-      console.log('  [OK] autoloadTsconfig option accepted');
-      console.log('  [OK] autoloadPackageJson option accepted');
+      console.info('  [OK] autoloadTsconfig option accepted');
+      console.info('  [OK] autoloadPackageJson option accepted');
     }
     return true;
   } catch (error: any) {
     if (error.message.includes("ModuleNotFound")) {
-      if (verbose) console.log('  [OK] Types accepted (file does not exist but types work)');
+      if (verbose) console.info('  [OK] Types accepted (file does not exist but types work)');
       return true;
     }
-    if (verbose) console.log('  [FAIL] Error:', error.message);
+    if (verbose) console.info('  [FAIL] Error:', error.message);
     return false;
   }
 }
 
 // 2. bun:sqlite .run() return type verification
 export async function verifySqliteTypes(verbose: boolean = false): Promise<boolean> {
-  if (verbose) console.log('  Testing .run() method return type...');
+  if (verbose) console.info('  Testing .run() method return type...');
   
   try {
     const db = new Database(":memory:");
@@ -49,22 +49,22 @@ export async function verifySqliteTypes(verbose: boolean = false): Promise<boole
     const insertId = Number(result.lastInsertRowid);
     
     if (verbose) {
-      console.log(`  [OK] Changes object returned with properties:`);
-      console.log(`    - changes: ${changes} (type: number)`);
-      console.log(`    - lastInsertRowid: ${insertId} (type: number)`);
+      console.info(`  [OK] Changes object returned with properties:`);
+      console.info(`    - changes: ${changes} (type: number)`);
+      console.info(`    - lastInsertRowid: ${insertId} (type: number)`);
     }
     
     db.close();
     return true;
   } catch (error: any) {
-    if (verbose) console.log('  [FAIL] Error:', error.message);
+    if (verbose) console.info('  [FAIL] Error:', error.message);
     return false;
   }
 }
 
 // 3. FileSink.write() return type verification
 export async function verifyFileSinkTypes(verbose: boolean = false): Promise<boolean> {
-  if (verbose) console.log('  Testing write() method return type...');
+  if (verbose) console.info('  Testing write() method return type...');
   
   try {
     const file = Bun.file("./test-types.txt");
@@ -75,10 +75,10 @@ export async function verifyFileSinkTypes(verbose: boolean = false): Promise<boo
     let bytesWritten: number;
     if (result instanceof Promise) {
       bytesWritten = await result;
-      if (verbose) console.log(`  [OK] Async write returned Promise<number>: ${bytesWritten} bytes`);
+      if (verbose) console.info(`  [OK] Async write returned Promise<number>: ${bytesWritten} bytes`);
     } else {
       bytesWritten = result;
-      if (verbose) console.log(`  [OK] Sync write returned number: ${bytesWritten} bytes`);
+      if (verbose) console.info(`  [OK] Sync write returned number: ${bytesWritten} bytes`);
     }
     
     writer.end();
@@ -89,14 +89,14 @@ export async function verifyFileSinkTypes(verbose: boolean = false): Promise<boo
     
     return true;
   } catch (error: any) {
-    if (verbose) console.log('  [FAIL] Error:', error.message);
+    if (verbose) console.info('  [FAIL] Error:', error.message);
     return false;
   }
 }
 
 // 4. Integration verification
 export async function verifyIntegration(verbose: boolean = false): Promise<boolean> {
-  if (verbose) console.log('  Running integration test with all fixes...');
+  if (verbose) console.info('  Running integration test with all fixes...');
   
   try {
     // Test all fixes together
@@ -129,10 +129,10 @@ export async function verifyIntegration(verbose: boolean = false): Promise<boole
     const { unlinkSync } = await import("fs");
     try { unlinkSync("./build-info.json"); } catch {}
     
-    if (verbose) console.log('  [OK] Integration test completed successfully');
+    if (verbose) console.info('  [OK] Integration test completed successfully');
     return true;
   } catch (error: any) {
-    if (verbose) console.log('  [FAIL] Error:', error.message);
+    if (verbose) console.info('  [FAIL] Error:', error.message);
     return false;
   }
 }

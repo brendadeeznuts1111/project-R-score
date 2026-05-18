@@ -207,7 +207,7 @@ async function main() {
   });
 
   if (values.help) {
-    console.log(`
+    console.info(`
 ${c.bold}Bun News & Updates Reader${c.reset}
 
 ${c.bold}Usage:${c.reset}
@@ -230,7 +230,7 @@ ${c.bold}Examples:${c.reset}
   const limit = values.latest ? parseInt(values.latest as string) : 10;
   const format = (values.format as string) || "box";
 
-  console.log(`${c.cyan}Fetching Bun RSS feed...${c.reset}\n`);
+  console.info(`${c.cyan}Fetching Bun RSS feed...${c.reset}\n`);
 
   try {
     const response = await fetch("https://bun.com/rss.xml");
@@ -243,13 +243,13 @@ ${c.bold}Examples:${c.reset}
 
     switch (format) {
       case "json":
-        console.log(formatJSON(feed, limit));
+        console.info(formatJSON(feed, limit));
         break;
       case "markdown":
-        console.log(formatMarkdown(feed, limit));
+        console.info(formatMarkdown(feed, limit));
         break;
       default:
-        console.log(formatBox(feed, limit));
+        console.info(formatBox(feed, limit));
     }
   } catch (error) {
     console.error(`${c.red}Error fetching RSS feed:${c.reset} ${error instanceof Error ? error.message : String(error)}`);

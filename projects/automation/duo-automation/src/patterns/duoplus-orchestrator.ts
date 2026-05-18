@@ -153,7 +153,7 @@ export class FactoryWagerIntegration {
 
   private async executeFactoryWagerCommand(args: string[]): Promise<any> {
     // Simulate FactoryWager CLI execution for testing
-    console.log(`🚀 Executing FactoryWager: ${this.factory-wagerPath} ${args.join(' ')}`);
+    console.info(`🚀 Executing FactoryWager: ${this.factory-wagerPath} ${args.join(' ')}`);
     
     // Simulate command execution time
     await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 200));
@@ -200,7 +200,7 @@ export class FactoryWagerIntegration {
   private async cacheDeviceInfo(device: FactoryWagerDevice): Promise<void> {
     try {
       // Simulate R2 caching
-      console.log(`📁 Caching device info for ${device.deviceId} to R2`);
+      console.info(`📁 Caching device info for ${device.deviceId} to R2`);
     } catch (error) {
       console.error('Failed to cache device info:', error);
     }
@@ -212,7 +212,7 @@ export class FactoryWagerIntegration {
     
     try {
       // Simulate R2 storage with performance tracking
-      console.log(`📁 Storing screenshot to ${key} (${data.byteLength} bytes)`);
+      console.info(`📁 Storing screenshot to ${key} (${data.byteLength} bytes)`);
       
       // Simulate upload time based on data size
       const uploadTime = data.byteLength / 1024 / 1024 * 100; // 100ms per MB
@@ -221,8 +221,8 @@ export class FactoryWagerIntegration {
       const duration = performance.now() - startTime;
       const memoryAfter = process.memoryUsage();
       
-      console.log(`✅ Upload completed in ${duration.toFixed(2)}ms`);
-      console.log(`📊 Memory delta: ${((memoryAfter.heapUsed - memoryBefore.heapUsed) / 1024 / 1024).toFixed(2)}MB`);
+      console.info(`✅ Upload completed in ${duration.toFixed(2)}ms`);
+      console.info(`📊 Memory delta: ${((memoryAfter.heapUsed - memoryBefore.heapUsed) / 1024 / 1024).toFixed(2)}MB`);
       
     } catch (error) {
       console.error('Failed to store to R2:', error);

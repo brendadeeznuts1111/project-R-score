@@ -130,7 +130,7 @@ export class ArbitrageExecutor {
 		// Calculate position sizes with slippage buffer
 		const sizing = this.calculateSizing(opportunity);
 
-		console.log(`
+		console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  💰 Executing Arbitrage Trade ${this.config.dryRun ? "(DRY RUN)" : ""}
 ║  Event: ${opportunity.event.description.slice(0, 45)}...
@@ -335,7 +335,7 @@ export class ArbitrageExecutor {
 			timestamp: Date.now(),
 		};
 
-		console.log(
+		console.info(
 			`  [DRY RUN] ${venue}: ${side} $${amount.toFixed(2)} @ ${(price * 100).toFixed(1)}¢ on ${instrumentId}`,
 		);
 

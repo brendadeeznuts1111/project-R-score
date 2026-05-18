@@ -169,7 +169,7 @@ const baseHTML = `<!DOCTYPE html>
     
     <script>
       // Client-side interactivity
-      console.log('Dashboard loaded with HTMLRewriter enhancements');
+      console.info('Dashboard loaded with HTMLRewriter enhancements');
     </script>
   </div>
 </body>
@@ -474,16 +474,16 @@ function transformDocument(html: string, data: ScanData): Response {
 	const rewriter = new HTMLRewriter().onDocument({
 		doctype(doctype) {
 			// Log doctype info
-			console.log("Doctype:", doctype.name);
+			console.info("Doctype:", doctype.name);
 		},
 		end(end) {
 			// Add footer script
 			end.append(
 				`
           <script>
-            console.log('Tags loaded:', ${data.stats.total});
-            console.log('Valid:', ${data.stats.valid});
-            console.log('Invalid:', ${data.stats.invalid});
+            console.info('Tags loaded:', ${data.stats.total});
+            console.info('Valid:', ${data.stats.valid});
+            console.info('Invalid:', ${data.stats.invalid});
           </script>
         `,
 				{ html: true },
@@ -602,11 +602,11 @@ export function createTagDashboardRewriter(port: number = 3001) {
 		},
 	});
 
-	console.log(
+	console.info(
 		`🚀 Tag Dashboard (HTMLRewriter) running at http://localhost:${server.port}`,
 	);
-	console.log(`📊 Dashboard: http://localhost:${server.port}/`);
-	console.log(`🔌 API: http://localhost:${server.port}/api/tags`);
+	console.info(`📊 Dashboard: http://localhost:${server.port}/`);
+	console.info(`🔌 API: http://localhost:${server.port}/api/tags`);
 
 	return server;
 }
@@ -620,7 +620,7 @@ if (import.meta.main) {
 	const server = createTagDashboardRewriter(port);
 
 	process.on("SIGINT", () => {
-		console.log("\n\n👋 Shutting down...");
+		console.info("\n\n👋 Shutting down...");
 		server.stop();
 		process.exit(0);
 	});

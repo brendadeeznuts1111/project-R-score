@@ -27,16 +27,16 @@
 
 import { $ } from "bun";
 
-console.log('🚀 Comprehensive Bun APIs Demonstration');
-console.log('==========================================');
+console.info('🚀 Comprehensive Bun APIs Demonstration');
+console.info('==========================================');
 
 // =============================================================================
 // HTTP SERVER WITH ETAGS AND COOKIES
 // =============================================================================
 
 async function demonstrateHTTPServer() {
-    console.log('\n🌐 HTTP Server with ETags and Cookies:');
-    console.log('=====================================');
+    console.info('\n🌐 HTTP Server with ETags and Cookies:');
+    console.info('=====================================');
 
     const server = Bun.serve({
         port: 0, // Random port
@@ -71,29 +71,29 @@ async function demonstrateHTTPServer() {
         }
     });
 
-    console.log(`✅ HTTP Server started on port ${server.port}`);
+    console.info(`✅ HTTP Server started on port ${server.port}`);
 
     // Test the server
     try {
         const response = await fetch(`http://localhost:${server.port}`);
-        console.log(`📊 Response status: ${response.status}`);
-        console.log(`🏷️ ETag: ${response.headers.get('etag')}`);
-        console.log(`🍪 Set-Cookie: ${response.headers.get('set-cookie')}`);
-        console.log(`📄 Content: ${await response.text()}`);
+        console.info(`📊 Response status: ${response.status}`);
+        console.info(`🏷️ ETag: ${response.headers.get('etag')}`);
+        console.info(`🍪 Set-Cookie: ${response.headers.get('set-cookie')}`);
+        console.info(`📄 Content: ${await response.text()}`);
 
         // Test conditional request
         const etag = response.headers.get('etag');
         const conditionalResponse = await fetch(`http://localhost:${server.port}`, {
             headers: { 'If-None-Match': etag || '' }
         });
-        console.log(`🔄 Conditional request status: ${conditionalResponse.status} (should be 304)`);
+        console.info(`🔄 Conditional request status: ${conditionalResponse.status} (should be 304)`);
 
     } catch (error) {
         console.error(`❌ Server test failed: ${(error as Error).message}`);
     }
 
     server.stop();
-    console.log('🛑 HTTP Server stopped');
+    console.info('🛑 HTTP Server stopped');
 }
 
 // =============================================================================
@@ -101,48 +101,48 @@ async function demonstrateHTTPServer() {
 // =============================================================================
 
 async function demonstrateDNS() {
-    console.log('\n🌍 DNS Operations:');
-    console.log('==================');
+    console.info('\n🌍 DNS Operations:');
+    console.info('==================');
 
     try {
         // DNS lookup
-        console.log('🔍 Performing DNS lookup...');
+        console.info('🔍 Performing DNS lookup...');
         const lookup = await Bun.dns.lookup('httpbin.org');
         if (lookup && lookup.length > 0) {
             const firstResult = lookup[0];
-            console.log(`📡 httpbin.org resolves to: ${firstResult.address || 'N/A'}`);
-            console.log(`🏷️ DNS TTL: ${firstResult.ttl || 'N/A'} seconds`);
-            console.log(`📋 DNS family: ${firstResult.family || 'N/A'} (IPv${firstResult.family || 'N/A'})`);
+            console.info(`📡 httpbin.org resolves to: ${firstResult.address || 'N/A'}`);
+            console.info(`🏷️ DNS TTL: ${firstResult.ttl || 'N/A'} seconds`);
+            console.info(`📋 DNS family: ${firstResult.family || 'N/A'} (IPv${firstResult.family || 'N/A'})`);
         } else {
-            console.log('📡 httpbin.org: No DNS records found');
+            console.info('📡 httpbin.org: No DNS records found');
         }
 
         // DNS prefetch
-        console.log('\n⚡ Prefetching DNS records...');
+        console.info('\n⚡ Prefetching DNS records...');
         await Bun.dns.prefetch('github.com');
-        console.log('✅ DNS prefetch completed');
+        console.info('✅ DNS prefetch completed');
 
         // DNS cache statistics
-        console.log('\n📊 DNS Cache Statistics:');
+        console.info('\n📊 DNS Cache Statistics:');
         const cacheStats = Bun.dns.getCacheStats();
-        console.log(`   • Cache size: ${cacheStats.size}`);
-        console.log(`   • Cache hits: ${cacheStats.cacheHitsCompleted || 0}`);
-        console.log(`   • Cache misses: ${cacheStats.cacheMisses || 0}`);
-        console.log(`   • Hit rate: ${cacheStats.cacheHitsCompleted > 0 ? ((cacheStats.cacheHitsCompleted / (cacheStats.cacheHitsCompleted + cacheStats.cacheMisses)) * 100).toFixed(2) : 0}%`);
+        console.info(`   • Cache size: ${cacheStats.size}`);
+        console.info(`   • Cache hits: ${cacheStats.cacheHitsCompleted || 0}`);
+        console.info(`   • Cache misses: ${cacheStats.cacheMisses || 0}`);
+        console.info(`   • Hit rate: ${cacheStats.cacheHitsCompleted > 0 ? ((cacheStats.cacheHitsCompleted / (cacheStats.cacheHitsCompleted + cacheStats.cacheMisses)) * 100).toFixed(2) : 0}%`);
 
         // Multiple lookups
-        console.log('\n🔍 Multiple DNS lookups:');
+        console.info('\n🔍 Multiple DNS lookups:');
         const domains = ['google.com', 'github.com', 'bun.sh'];
         for (const domain of domains) {
             try {
                 const result = await Bun.dns.lookup(domain);
                 if (result && result.length > 0) {
-                    console.log(`   • ${domain}: ${result[0]?.address || 'Failed'}`);
+                    console.info(`   • ${domain}: ${result[0]?.address || 'Failed'}`);
                 } else {
-                    console.log(`   • ${domain}: No records found`);
+                    console.info(`   • ${domain}: No records found`);
                 }
             } catch (error) {
-                console.log(`   • ${domain}: Failed (${(error as Error).message})`);
+                console.info(`   • ${domain}: Failed (${(error as Error).message})`);
             }
         }
 
@@ -156,8 +156,8 @@ async function demonstrateDNS() {
 // =============================================================================
 
 async function demonstrateSQLite() {
-    console.log('\n🗄️ SQLite Database Operations:');
-    console.log('===============================');
+    console.info('\n🗄️ SQLite Database Operations:');
+    console.info('===============================');
 
     try {
         // Import SQLite module
@@ -167,7 +167,7 @@ async function demonstrateSQLite() {
         const db = new Database(':memory:');
 
         // Create table
-        console.log('📋 Creating database table...');
+        console.info('📋 Creating database table...');
         db.run(`
             CREATE TABLE users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -178,38 +178,38 @@ async function demonstrateSQLite() {
         `);
 
         // Insert data
-        console.log('💾 Inserting sample data...');
+        console.info('💾 Inserting sample data...');
         const insert = db.prepare('INSERT INTO users (name, email) VALUES (?, ?)');
         insert.run('Alice', 'alice@example.com');
         insert.run('Bob', 'bob@example.com');
         insert.run('Charlie', 'charlie@example.com');
 
         // Query data
-        console.log('📊 Querying users:');
+        console.info('📊 Querying users:');
         const users = db.query('SELECT * FROM users ORDER BY id').all();
         users.forEach((user: any) => {
-            console.log(`   • ID: ${user.id}, Name: ${user.name}, Email: ${user.email}, Created: ${user.created_at}`);
+            console.info(`   • ID: ${user.id}, Name: ${user.name}, Email: ${user.email}, Created: ${user.created_at}`);
         });
 
         // Prepared statements
-        console.log('\n🎯 Using prepared statements:');
+        console.info('\n🎯 Using prepared statements:');
         const getUser = db.prepare('SELECT * FROM users WHERE id = ?');
         const user = getUser.get(1) as { name?: string; email?: string };
-        console.log(`   User ID 1: ${user?.name || 'N/A'} (${user?.email || 'N/A'})`);
+        console.info(`   User ID 1: ${user?.name || 'N/A'} (${user?.email || 'N/A'})`);
 
         // Transactions
-        console.log('\n🔄 Demonstrating transactions:');
+        console.info('\n🔄 Demonstrating transactions:');
         db.transaction(() => {
             insert.run('David', 'david@example.com');
             insert.run('Eve', 'eve@example.com');
         })();
 
         const updatedCount = db.query('SELECT COUNT(*) as count FROM users').get() as { count: number };
-        console.log(`   Total users after transaction: ${updatedCount.count}`);
+        console.info(`   Total users after transaction: ${updatedCount.count}`);
 
         // Close database
         db.close();
-        console.log('✅ SQLite database operations completed');
+        console.info('✅ SQLite database operations completed');
 
     } catch (error) {
         console.error(`❌ SQLite demonstration failed: ${(error as Error).message}`);
@@ -221,19 +221,19 @@ async function demonstrateSQLite() {
 // =============================================================================
 
 async function demonstrateRedis() {
-    console.log('\n🔴 Redis Client Operations:');
-    console.log('=============================');
+    console.info('\n🔴 Redis Client Operations:');
+    console.info('=============================');
 
     try {
         // Note: This requires a Redis server to be running
-        console.log('🔗 Attempting Redis connection...');
+        console.info('🔗 Attempting Redis connection...');
 
         const redis = new Bun.RedisClient('redis://localhost:6379');
 
         // Basic operations
         await redis.set('bun-demo-key', 'Hello from Bun Redis!');
         const value = await redis.get('bun-demo-key');
-        console.log(`📝 SET/GET: ${value}`);
+        console.info(`📝 SET/GET: ${value}`);
 
         // Hash operations
         await redis.hset('bun-demo-hash', {
@@ -242,26 +242,26 @@ async function demonstrateRedis() {
             'number': '42'
         });
         const hashValue = await redis.hgetall('bun-demo-hash');
-        console.log(`🗂️ Hash operations:`, hashValue);
+        console.info(`🗂️ Hash operations:`, hashValue);
 
         // List operations
         await redis.lpush('bun-demo-list', 'item3', 'item2', 'item1');
         const listValue = await redis.lrange('bun-demo-list', 0, -1);
-        console.log(`📋 List operations:`, listValue);
+        console.info(`📋 List operations:`, listValue);
 
         // TTL operations
         await redis.setex('bun-demo-expire', 10, 'This will expire in 10 seconds');
         const ttl = await redis.ttl('bun-demo-expire');
-        console.log(`⏰ TTL operation: ${ttl} seconds remaining`);
+        console.info(`⏰ TTL operation: ${ttl} seconds remaining`);
 
         // Cleanup
         await redis.del('bun-demo-key', 'bun-demo-hash', 'bun-demo-list', 'bun-demo-expire');
 
         redis.close();
-        console.log('✅ Redis operations completed');
+        console.info('✅ Redis operations completed');
 
     } catch (error) {
-        console.log(`⚠️ Redis demonstration skipped (no Redis server): ${(error as Error).message}`);
+        console.info(`⚠️ Redis demonstration skipped (no Redis server): ${(error as Error).message}`);
     }
 }
 
@@ -270,8 +270,8 @@ async function demonstrateRedis() {
 // =============================================================================
 
 async function demonstrateTCPSockets() {
-    console.log('\n🔌 TCP Socket Operations:');
-    console.log('==========================');
+    console.info('\n🔌 TCP Socket Operations:');
+    console.info('==========================');
 
     try {
         // Create TCP server
@@ -280,12 +280,12 @@ async function demonstrateTCPSockets() {
             port: 0, // Random port
             socket: {
                 open(socket) {
-                    console.log(`🔗 Client connected: ${socket.remoteAddress}:${socket.remotePort}`);
+                    console.info(`🔗 Client connected: ${socket.remoteAddress}:${socket.remotePort}`);
                     (socket as any).data = { messages: 0 };
                 },
                 data(socket, data) {
                     const message = data.toString();
-                    console.log(`📨 Received: ${message}`);
+                    console.info(`📨 Received: ${message}`);
                     if (socket.data) {
                         (socket.data as any).messages++;
                         // Echo back with message count
@@ -293,7 +293,7 @@ async function demonstrateTCPSockets() {
                     }
                 },
                 close(socket) {
-                    console.log(`🔌 Client disconnected: ${socket.remoteAddress}:${socket.remotePort}`);
+                    console.info(`🔌 Client disconnected: ${socket.remoteAddress}:${socket.remotePort}`);
                 },
                 error(socket, error) {
                     console.error(`❌ Socket error: ${error.message}`);
@@ -301,7 +301,7 @@ async function demonstrateTCPSockets() {
             }
         });
 
-        console.log(`🚀 TCP Server started on port ${server.port}`);
+        console.info(`🚀 TCP Server started on port ${server.port}`);
 
         // Create TCP client
         const client = await Bun.connect({
@@ -309,14 +309,14 @@ async function demonstrateTCPSockets() {
             port: server.port,
             socket: {
                 open(socket) {
-                    console.log('🔗 Connected to TCP server');
+                    console.info('🔗 Connected to TCP server');
                 },
                 data(socket, data) {
                     const response = data.toString();
-                    console.log(`📬 Server response: ${response}`);
+                    console.info(`📬 Server response: ${response}`);
                 },
                 close(socket) {
-                    console.log('🔌 Disconnected from TCP server');
+                    console.info('🔌 Disconnected from TCP server');
                 },
                 error(socket, error) {
                     console.error(`❌ Client error: ${error.message}`);
@@ -338,7 +338,7 @@ async function demonstrateTCPSockets() {
         client.end();
         server.stop();
 
-        console.log('✅ TCP socket operations completed');
+        console.info('✅ TCP socket operations completed');
 
     } catch (error) {
         console.error(`❌ TCP socket demonstration failed: ${(error as Error).message}`);
@@ -350,8 +350,8 @@ async function demonstrateTCPSockets() {
 // =============================================================================
 
 async function demonstrateUDPSockets() {
-    console.log('\n📡 UDP Socket Operations:');
-    console.log('==========================');
+    console.info('\n📡 UDP Socket Operations:');
+    console.info('==========================');
 
     try {
         // Create UDP server with proper API
@@ -359,7 +359,7 @@ async function demonstrateUDPSockets() {
             socket: {
                 data(socket, buf, port, addr) {
                     const message = buf.toString();
-                    console.log(`📨 UDP received from ${addr}:${port}: ${message}`);
+                    console.info(`📨 UDP received from ${addr}:${port}: ${message}`);
 
                     // Echo back to the specific client
                     socket.send(`UDP Echo: ${message}`, port, addr);
@@ -368,12 +368,12 @@ async function demonstrateUDPSockets() {
                     console.error(`❌ UDP error: ${error.message}`);
                 },
                 drain(socket) {
-                    console.log('💧 UDP socket buffer drained, ready for more data');
+                    console.info('💧 UDP socket buffer drained, ready for more data');
                 }
             }
         });
 
-        console.log(`🚀 UDP Server bound to port ${server.port}`);
+        console.info(`🚀 UDP Server bound to port ${server.port}`);
 
         // Create UDP client
         const client = await Bun.udpSocket({
@@ -383,7 +383,7 @@ async function demonstrateUDPSockets() {
             }
         });
 
-        console.log('🔗 UDP client connected to server');
+        console.info('🔗 UDP client connected to server');
 
         // Send test messages using connected socket
         client.send('Hello from connected UDP client!');
@@ -396,33 +396,33 @@ async function demonstrateUDPSockets() {
         await Bun.sleep(50);
 
         // Demonstrate sendMany with connected socket
-        console.log('\n📦 Demonstrating sendMany with connected socket...');
+        console.info('\n📦 Demonstrating sendMany with connected socket...');
         const packetsSent = client.sendMany(['Batch 1', 'Batch 2', 'Batch 3']);
-        console.log(`📊 Sent ${packetsSent} packets in batch`);
+        console.info(`📊 Sent ${packetsSent} packets in batch`);
 
         // Create unconnected client for sendMany demo
         const unconnectedClient = await Bun.udpSocket({});
 
-        console.log('\n📦 Demonstrating sendMany with unconnected socket...');
+        console.info('\n📦 Demonstrating sendMany with unconnected socket...');
         const batchPackets = unconnectedClient.sendMany([
             'Hello', server.port, '127.0.0.1',
             'World', server.port, '127.0.0.1',
             'Bun', server.port, '127.0.0.1'
         ]);
-        console.log(`📊 Sent ${batchPackets / 3} packets in batch (3 elements per packet)`);
+        console.info(`📊 Sent ${batchPackets / 3} packets in batch (3 elements per packet)`);
 
         // Wait for all responses
         await Bun.sleep(200);
 
         // Demonstrate backpressure handling
-        console.log('\n🌊 Demonstrating backpressure handling...');
+        console.info('\n🌊 Demonstrating backpressure handling...');
         let packetsSentCount = 0;
         let backpressureDetected = false;
 
         const backpressureSocket = await Bun.udpSocket({
             socket: {
                 drain(socket) {
-                    console.log('💧 Backpressure detected - socket buffer drained');
+                    console.info('💧 Backpressure detected - socket buffer drained');
                     backpressureDetected = true;
                 }
             }
@@ -432,13 +432,13 @@ async function demonstrateUDPSockets() {
         for (let i = 0; i < 100; i++) {
             const sent = backpressureSocket.send(`Packet ${i}`, server.port, '127.0.0.1');
             if (!sent) {
-                console.log(`⚠️ Backpressure at packet ${i}`);
+                console.info(`⚠️ Backpressure at packet ${i}`);
                 break;
             }
             packetsSentCount++;
         }
 
-        console.log(`📊 Successfully sent ${packetsSentCount} packets before potential backpressure`);
+        console.info(`📊 Successfully sent ${packetsSentCount} packets before potential backpressure`);
 
         // Clean up all sockets
         server.close();
@@ -446,7 +446,7 @@ async function demonstrateUDPSockets() {
         unconnectedClient.close();
         backpressureSocket.close();
 
-        console.log('✅ UDP socket operations completed');
+        console.info('✅ UDP socket operations completed');
 
     } catch (error) {
         console.error(`❌ UDP socket demonstration failed: ${(error as Error).message}`);
@@ -458,33 +458,33 @@ async function demonstrateUDPSockets() {
 // =============================================================================
 
 async function demonstrateFileIO() {
-    console.log('\n📁 File I/O Operations:');
-    console.log('========================');
+    console.info('\n📁 File I/O Operations:');
+    console.info('========================');
 
     try {
         const testFile = './test-bun-file-io.txt';
 
         // Write file using Bun.write
-        console.log('💾 Writing file with Bun.write...');
+        console.info('💾 Writing file with Bun.write...');
         const content = `Hello from Bun File I/O!
 Timestamp: ${new Date().toISOString()}
 Random UUID: ${Bun.randomUUIDv7()}
 Bun Version: ${Bun.version}`;
 
         await Bun.write(testFile, content);
-        console.log(`✅ File written: ${testFile}`);
+        console.info(`✅ File written: ${testFile}`);
 
         // Read file using Bun.file
-        console.log('📖 Reading file with Bun.file...');
+        console.info('📖 Reading file with Bun.file...');
         const file = Bun.file(testFile);
         const fileContent = await file.text();
-        console.log(`📄 File size: ${file.size} bytes`);
-        console.log(`📄 File type: ${file.type}`);
-        console.log(`📄 Last modified: ${new Date(file.lastModified).toISOString()}`);
-        console.log(`📄 Content preview: ${fileContent.substring(0, 100)}...`);
+        console.info(`📄 File size: ${file.size} bytes`);
+        console.info(`📄 File type: ${file.type}`);
+        console.info(`📄 Last modified: ${new Date(file.lastModified).toISOString()}`);
+        console.info(`📄 Content preview: ${fileContent.substring(0, 100)}...`);
 
         // Stream operations
-        console.log('\n🌊 Demonstrating stream operations...');
+        console.info('\n🌊 Demonstrating stream operations...');
         const stream = file.stream();
         const reader = stream.getReader();
 
@@ -495,16 +495,16 @@ Bun Version: ${Bun.version}`;
             chunkCount++;
         }
 
-        console.log(`📊 Stream read in ${chunkCount} chunks`);
+        console.info(`📊 Stream read in ${chunkCount} chunks`);
 
         // File operations with utilities
-        console.log('\n🔧 File utility operations...');
+        console.info('\n🔧 File utility operations...');
         const fileExists = await file.exists();
-        console.log(`📂 File exists: ${fileExists}`);
+        console.info(`📂 File exists: ${fileExists}`);
 
         // Clean up
         await Bun.write(testFile, ''); // Empty file
-        console.log('🧹 File cleaned up');
+        console.info('🧹 File cleaned up');
 
     } catch (error) {
         console.error(`❌ File I/O demonstration failed: ${(error as Error).message}`);
@@ -516,36 +516,36 @@ Bun Version: ${Bun.version}`;
 // =============================================================================
 
 async function demonstrateShellAndProcesses() {
-    console.log('\n🐚 Shell Commands and Child Processes:');
-    console.log('=========================================');
+    console.info('\n🐚 Shell Commands and Child Processes:');
+    console.info('=========================================');
 
     try {
         // Shell command with $
-        console.log('💻 Running shell command with $...');
+        console.info('💻 Running shell command with $...');
         const result = await $`echo "Hello from Bun Shell!" && date`;
-        console.log(`📤 Shell output: ${result.stdout?.toString().trim()}`);
-        console.log(`📤 Shell exit code: ${result.exitCode}`);
+        console.info(`📤 Shell output: ${result.stdout?.toString().trim()}`);
+        console.info(`📤 Shell exit code: ${result.exitCode}`);
 
         // Bun.spawn for async processes
-        console.log('\n🚀 Using Bun.spawn for async process...');
+        console.info('\n🚀 Using Bun.spawn for async process...');
         const proc = Bun.spawn(['echo', 'Hello from Bun.spawn!'], {
             stdout: 'pipe',
             stderr: 'pipe'
         });
 
         const spawnOutput = await new Response(proc.stdout).text();
-        console.log(`📤 Spawn output: ${spawnOutput.trim()}`);
-        console.log(`📤 Spawn exit code: ${await proc.exited}`);
+        console.info(`📤 Spawn output: ${spawnOutput.trim()}`);
+        console.info(`📤 Spawn exit code: ${await proc.exited}`);
 
         // Bun.spawnSync for blocking processes
-        console.log('\n⏳ Using Bun.spawnSync for blocking process...');
+        console.info('\n⏳ Using Bun.spawnSync for blocking process...');
         const syncResult = Bun.spawnSync(['pwd'], {
             cwd: process.cwd()
         });
-        console.log(`📤 Sync output: ${syncResult.stdout?.toString().trim()}`);
+        console.info(`📤 Sync output: ${syncResult.stdout?.toString().trim()}`);
 
         // Process with environment variables
-        console.log('\n🌍 Process with environment variables...');
+        console.info('\n🌍 Process with environment variables...');
         const envProc = Bun.spawn(['printenv'], {
             env: {
                 ...process.env,
@@ -554,7 +554,7 @@ async function demonstrateShellAndProcesses() {
         });
 
         const envOutput = await new Response(envProc.stdout).text();
-        console.log(`📤 Environment variable: ${envOutput.split('\n').find(line => line.includes('BUN_DEMO_VAR'))}`);
+        console.info(`📤 Environment variable: ${envOutput.split('\n').find(line => line.includes('BUN_DEMO_VAR'))}`);
 
     } catch (error) {
         console.error(`❌ Shell/Process demonstration failed: ${(error as Error).message}`);
@@ -566,49 +566,49 @@ async function demonstrateShellAndProcesses() {
 // =============================================================================
 
 async function demonstrateHashingAndCompression() {
-    console.log('\n🔐 Hashing, Encryption, and Compression:');
-    console.log('==========================================');
+    console.info('\n🔐 Hashing, Encryption, and Compression:');
+    console.info('==========================================');
 
     try {
         const testData = 'Hello, Bun! This is test data for hashing and compression.';
 
         // Hashing operations
-        console.log('🔤 Hashing operations...');
+        console.info('🔤 Hashing operations...');
         const hash1 = Bun.hash(testData);
         const hash2 = Bun.hash(testData + ' modified');
-        console.log(`📊 Hash 1: ${hash1}`);
-        console.log(`📊 Hash 2: ${hash2}`);
-        console.log(`📊 Hashes equal: ${hash1 === hash2}`);
+        console.info(`📊 Hash 1: ${hash1}`);
+        console.info(`📊 Hash 2: ${hash2}`);
+        console.info(`📊 Hashes equal: ${hash1 === hash2}`);
 
         // Password hashing
-        console.log('\n🔑 Password hashing...');
+        console.info('\n🔑 Password hashing...');
         const password = 'my-secret-password';
         const hashedPassword = await Bun.password.hash(password);
-        console.log(`🔐 Hashed password: ${hashedPassword.substring(0, 50)}...`);
+        console.info(`🔐 Hashed password: ${hashedPassword.substring(0, 50)}...`);
 
         const isValid = await Bun.password.verify(password, hashedPassword);
-        console.log(`✅ Password verification: ${isValid}`);
+        console.info(`✅ Password verification: ${isValid}`);
 
         // Compression operations
-        console.log('\n📦 Compression operations...');
+        console.info('\n📦 Compression operations...');
         const originalData = 'x'.repeat(1000); // Repetitive data for better compression
-        console.log(`📊 Original size: ${originalData.length} bytes`);
+        console.info(`📊 Original size: ${originalData.length} bytes`);
 
         // Gzip compression
         const gzipped = Bun.gzipSync(originalData);
-        console.log(`📊 Gzipped size: ${gzipped.length} bytes`);
-        console.log(`📊 Compression ratio: ${((1 - gzipped.length / originalData.length) * 100).toFixed(2)}%`);
+        console.info(`📊 Gzipped size: ${gzipped.length} bytes`);
+        console.info(`📊 Compression ratio: ${((1 - gzipped.length / originalData.length) * 100).toFixed(2)}%`);
 
         // Decompression
         const decompressed = Bun.gunzipSync(gzipped);
-        console.log(`✅ Decompression successful: ${decompressed.length === originalData.length}`);
+        console.info(`✅ Decompression successful: ${decompressed.length === originalData.length}`);
 
         // Zstd compression
         const zstdCompressed = Bun.zstdCompressSync(originalData);
-        console.log(`📊 Zstd compressed size: ${zstdCompressed.length} bytes`);
+        console.info(`📊 Zstd compressed size: ${zstdCompressed.length} bytes`);
 
         const zstdDecompressed = Bun.zstdDecompressSync(zstdCompressed);
-        console.log(`✅ Zstd decompression successful: ${zstdDecompressed.length === originalData.length}`);
+        console.info(`✅ Zstd decompression successful: ${zstdDecompressed.length === originalData.length}`);
 
     } catch (error) {
         console.error(`❌ Hashing/Compression demonstration failed: ${(error as Error).message}`);
@@ -620,59 +620,59 @@ async function demonstrateHashingAndCompression() {
 // =============================================================================
 
 async function demonstrateBunUtilities() {
-    console.log('\n🛠️ Bun Utilities and Inspection:');
-    console.log('===================================');
+    console.info('\n🛠️ Bun Utilities and Inspection:');
+    console.info('===================================');
 
     try {
         // Version and environment
-        console.log('📋 Bun version information:');
-        console.log(`   • Version: ${Bun.version}`);
-        console.log(`   • Revision: ${Bun.revision}`);
-        console.log(`   • Main module: ${Bun.main}`);
+        console.info('📋 Bun version information:');
+        console.info(`   • Version: ${Bun.version}`);
+        console.info(`   • Revision: ${Bun.revision}`);
+        console.info(`   • Main module: ${Bun.main}`);
 
         // Environment utilities
-        console.log('\n🌍 Environment utilities:');
-        console.log(`   • Shell available: ${Bun.which('bash') || Bun.which('zsh') || Bun.which('fish')}`);
-        console.log(`   • Node available: ${!!Bun.which('node')}`);
+        console.info('\n🌍 Environment utilities:');
+        console.info(`   • Shell available: ${Bun.which('bash') || Bun.which('zsh') || Bun.which('fish')}`);
+        console.info(`   • Node available: ${!!Bun.which('node')}`);
 
         // Inspection utilities
-        console.log('\n🔍 Inspection utilities:');
+        console.info('\n🔍 Inspection utilities:');
         const testObject = {
             name: 'Test Object',
             nested: { deep: { value: 'found me!' } },
             array: [1, 2, 3, { nested: 'array item' }]
         };
 
-        console.log('📊 Bun.inspect with default options:');
-        console.log(Bun.inspect(testObject));
+        console.info('📊 Bun.inspect with default options:');
+        console.info(Bun.inspect(testObject));
 
-        console.log('\n📊 Bun.inspect with depth limit:');
-        console.log(Bun.inspect(testObject, { depth: 2, colors: false }));
+        console.info('\n📊 Bun.inspect with depth limit:');
+        console.info(Bun.inspect(testObject, { depth: 2, colors: false }));
 
         // Deep comparison
-        console.log('\n🔗 Deep comparison utilities:');
+        console.info('\n🔗 Deep comparison utilities:');
         const obj1 = { a: 1, b: { c: 2 } };
         const obj2 = { a: 1, b: { c: 2 } };
         const obj3 = { a: 1, b: { c: 3 } };
 
-        console.log(`✅ obj1 === obj2: ${Bun.deepEquals(obj1, obj2)}`);
-        console.log(`❌ obj1 === obj3: ${Bun.deepEquals(obj1, obj3)}`);
+        console.info(`✅ obj1 === obj2: ${Bun.deepEquals(obj1, obj2)}`);
+        console.info(`❌ obj1 === obj3: ${Bun.deepEquals(obj1, obj3)}`);
 
         // Timing utilities
-        console.log('\n⏱️ Timing utilities:');
+        console.info('\n⏱️ Timing utilities:');
         const start = Bun.nanoseconds();
         await Bun.sleep(100); // Sleep for 100ms
         const end = Bun.nanoseconds();
         const elapsedMs = (end - start) / 1_000_000;
-        console.log(`⏰ Slept for ${elapsedMs.toFixed(2)}ms`);
+        console.info(`⏰ Slept for ${elapsedMs.toFixed(2)}ms`);
 
         // UUID generation
-        console.log('\n🆔 UUID generation:');
+        console.info('\n🆔 UUID generation:');
         const uuid1 = Bun.randomUUIDv7();
         const uuid2 = Bun.randomUUIDv7();
-        console.log(`🆔 UUID 1: ${uuid1}`);
-        console.log(`🆔 UUID 2: ${uuid2}`);
-        console.log(`✅ UUIDs unique: ${uuid1 !== uuid2}`);
+        console.info(`🆔 UUID 1: ${uuid1}`);
+        console.info(`🆔 UUID 2: ${uuid2}`);
+        console.info(`✅ UUIDs unique: ${uuid1 !== uuid2}`);
 
     } catch (error) {
         console.error(`❌ Bun utilities demonstration failed: ${(error as Error).message}`);
@@ -684,8 +684,8 @@ async function demonstrateBunUtilities() {
 // =============================================================================
 
 async function demonstrateStreamProcessing() {
-    console.log('\n🌊 Stream Processing:');
-    console.log('======================');
+    console.info('\n🌊 Stream Processing:');
+    console.info('======================');
 
     try {
         // Create test data
@@ -701,37 +701,37 @@ async function demonstrateStreamProcessing() {
         const stream = new Response(testData).body!;
 
         // Convert stream to different formats
-        console.log('🔄 Converting stream to different formats...');
+        console.info('🔄 Converting stream to different formats...');
 
         // To JSON
         const jsonData = await Bun.readableStreamToJSON(stream);
-        console.log(`📊 Stream to JSON: ${jsonData.users.length} users parsed`);
+        console.info(`📊 Stream to JSON: ${jsonData.users.length} users parsed`);
 
         // Create new stream for next test
         const stream2 = new Response(testData).body!;
 
         // To text
         const textData = await Bun.readableStreamToText(stream2);
-        console.log(`📝 Stream to text: ${textData.length} characters`);
+        console.info(`📝 Stream to text: ${textData.length} characters`);
 
         // Create new stream for blob test
         const stream3 = new Response(testData).body!;
 
         // To blob
         const blobData = await Bun.readableStreamToBlob(stream3);
-        console.log(`📦 Stream to blob: ${blobData.size} bytes, type: ${blobData.type}`);
+        console.info(`📦 Stream to blob: ${blobData.size} bytes, type: ${blobData.type}`);
 
         // ArrayBuffer operations
-        console.log('\n🧠 ArrayBuffer operations:');
+        console.info('\n🧠 ArrayBuffer operations:');
         const stream4 = new Response(testData).body!;
         const arrayBuffer = await Bun.readableStreamToArrayBuffer(stream4);
-        console.log(`📊 Stream to ArrayBuffer: ${arrayBuffer.byteLength} bytes`);
+        console.info(`📊 Stream to ArrayBuffer: ${arrayBuffer.byteLength} bytes`);
 
         // Concatenate ArrayBuffers
         const buffer1 = new Uint8Array([1, 2, 3]);
         const buffer2 = new Uint8Array([4, 5, 6]);
         const concatenated = Bun.concatArrayBuffers([buffer1.buffer, buffer2.buffer]);
-        console.log(`🔗 Concatenated ArrayBuffer: ${concatenated.byteLength} bytes`);
+        console.info(`🔗 Concatenated ArrayBuffer: ${concatenated.byteLength} bytes`);
 
     } catch (error) {
         console.error(`❌ Stream processing demonstration failed: ${(error as Error).message}`);
@@ -743,11 +743,11 @@ async function demonstrateStreamProcessing() {
 // =============================================================================
 
 async function main() {
-    console.log('🚀 Starting Comprehensive Bun APIs Demonstration');
-    console.log('=================================================');
-    console.log(`📋 Running on Bun ${Bun.version}`);
-    console.log(`🕐 Started at: ${new Date().toISOString()}`);
-    console.log('');
+    console.info('🚀 Starting Comprehensive Bun APIs Demonstration');
+    console.info('=================================================');
+    console.info(`📋 Running on Bun ${Bun.version}`);
+    console.info(`🕐 Started at: ${new Date().toISOString()}`);
+    console.info('');
 
     try {
         // Run all demonstrations
@@ -763,22 +763,22 @@ async function main() {
         await demonstrateBunUtilities();
         await demonstrateStreamProcessing();
 
-        console.log('\n🎉 Comprehensive Bun APIs Demonstration Complete!');
-        console.log('===================================================');
-        console.log('✅ All major Bun APIs demonstrated successfully');
-        console.log('📚 Features shown:');
-        console.log('   • HTTP Server with ETags and Cookies');
-        console.log('   • DNS resolution and caching');
-        console.log('   • SQLite database operations');
-        console.log('   • Redis client functionality');
-        console.log('   • TCP/UDP socket programming');
-        console.log('   • File I/O and stream processing');
-        console.log('   • Shell commands and child processes');
-        console.log('   • Hashing, encryption, and compression');
-        console.log('   • Bun utilities and inspection tools');
-        console.log('   • Advanced stream processing');
-        console.log('');
-        console.log('🚀 Bun provides a comprehensive, high-performance runtime!');
+        console.info('\n🎉 Comprehensive Bun APIs Demonstration Complete!');
+        console.info('===================================================');
+        console.info('✅ All major Bun APIs demonstrated successfully');
+        console.info('📚 Features shown:');
+        console.info('   • HTTP Server with ETags and Cookies');
+        console.info('   • DNS resolution and caching');
+        console.info('   • SQLite database operations');
+        console.info('   • Redis client functionality');
+        console.info('   • TCP/UDP socket programming');
+        console.info('   • File I/O and stream processing');
+        console.info('   • Shell commands and child processes');
+        console.info('   • Hashing, encryption, and compression');
+        console.info('   • Bun utilities and inspection tools');
+        console.info('   • Advanced stream processing');
+        console.info('');
+        console.info('🚀 Bun provides a comprehensive, high-performance runtime!');
 
     } catch (error) {
         console.error(`❌ Demonstration failed: ${(error as Error).message}`);

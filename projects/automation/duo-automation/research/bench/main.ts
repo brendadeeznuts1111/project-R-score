@@ -15,8 +15,8 @@ const CATEGORIES = {
 };
 
 async function runBenchmark(filePath: string, args: string[] = []) {
-  console.log(`\n🚀 Executing: bun ${filePath} ${args.join(" ")}`);
-  console.log("=".repeat(60));
+  console.info(`\n🚀 Executing: bun ${filePath} ${args.join(" ")}`);
+  console.info("=".repeat(60));
   
   const captureOutput = args.includes("--capture");
   const cleanArgs = args.filter(a => a !== "--capture");
@@ -35,10 +35,10 @@ async function runBenchmark(filePath: string, args: string[] = []) {
     const output = await proc.stdout.text();
     const exitCode = await proc.exited;
     
-    console.log(`\n📝 Captured Output (${output.length} bytes):`);
-    console.log("-".repeat(30));
-    console.log(output);
-    console.log("-".repeat(30));
+    console.info(`\n📝 Captured Output (${output.length} bytes):`);
+    console.info("-".repeat(30));
+    console.info(output);
+    console.info("-".repeat(30));
 
     if (exitCode !== 0) {
       console.error(`\n❌ Failed with exit code: ${exitCode}`);
@@ -56,7 +56,7 @@ async function runBenchmark(filePath: string, args: string[] = []) {
 }
 
 const showHelp = () => {
-  console.log(`
+  console.info(`
 🌟 **DUO-Automation Benchmark Suite** 🌟
 ========================================
 Usage: bun bench/main.ts [category] [name] [options]
@@ -108,8 +108,8 @@ async function main() {
       console.error(`❌ Please specify a benchmark name for the '${category}' category.`);
       const { readdirSync } = await import("fs");
       const files = readdirSync(path.join("bench", category)).filter(f => f.endsWith(".ts"));
-      console.log(`Available benchmarks in ${category}:`);
-      files.forEach(f => console.log(`  • ${f}`));
+      console.info(`Available benchmarks in ${category}:`);
+      files.forEach(f => console.info(`  • ${f}`));
       return;
     }
 

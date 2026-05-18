@@ -119,9 +119,9 @@ async function analyzeBundle(bundlePath: string): Promise<{
 // ── Comparison Report ──────────────────────────────────────────────────────────
 
 async function generateReport() {
-	console.log("╔═══════════════════════════════════════════════════════════════════╗");
-	console.log("║ A/B Variant Build Comparison                                      ║");
-	console.log("╚═══════════════════════════════════════════════════════════════════╝\n");
+	console.info("╔═══════════════════════════════════════════════════════════════════╗");
+	console.info("║ A/B Variant Build Comparison                                      ║");
+	console.info("╚═══════════════════════════════════════════════════════════════════╝\n");
 
 	const buildDir = "dist";
 	const variants = ["a", "b"];
@@ -145,25 +145,25 @@ async function generateReport() {
 	}
 
 	// Display build info
-	console.log("Build Artifacts:\n");
+	console.info("Build Artifacts:\n");
 
 	for (const build of builds) {
-		console.log(`Variant ${build.variant.toUpperCase()}:`);
-		console.log(`  Path:        ${build.path}`);
-		console.log(`  Total Size:  ${build.totalSizeKB} KB`);
-		console.log(`  Files:       ${build.files.length}`);
-		console.log(`  Sourcemap:   ${build.features.sourcemap ? "✓" : "✗"}`);
-		console.log(
+		console.info(`Variant ${build.variant.toUpperCase()}:`);
+		console.info(`  Path:        ${build.path}`);
+		console.info(`  Total Size:  ${build.totalSizeKB} KB`);
+		console.info(`  Files:       ${build.files.length}`);
+		console.info(`  Sourcemap:   ${build.features.sourcemap ? "✓" : "✗"}`);
+		console.info(
 			`  Has Defines: ${build.features.hasDefines ? "✓ (not inlined)" : "✗ (inlined!)"}`,
 		);
-		console.log(`  Has Literals:${build.features.hasLiterals ? "✓" : "✗"}`);
-		console.log("\n  Files:");
+		console.info(`  Has Literals:${build.features.hasLiterals ? "✓" : "✗"}`);
+		console.info("\n  Files:");
 
 		for (const file of build.files.slice(0, 5)) {
-			console.log(`    - ${file.name.padEnd(35)} ${file.sizeKB.padStart(8)} KB`);
+			console.info(`    - ${file.name.padEnd(35)} ${file.sizeKB.padStart(8)} KB`);
 		}
 
-		console.log("");
+		console.info("");
 	}
 
 	// Size comparison
@@ -172,35 +172,35 @@ async function generateReport() {
 		const diff = a.totalSize - b.totalSize;
 		const diffPercent = ((Math.abs(diff) / b.totalSize) * 100).toFixed(2);
 
-		console.log("═══════════════════════════════════════════════════════════════════");
-		console.log("Size Comparison:");
-		console.log(`  Variant A: ${a.totalSizeKB} KB`);
-		console.log(`  Variant B: ${b.totalSizeKB} KB`);
-		console.log(`  Diff:      ${Math.abs(diff)} bytes (${diffPercent}%)`);
-		console.log(
+		console.info("═══════════════════════════════════════════════════════════════════");
+		console.info("Size Comparison:");
+		console.info(`  Variant A: ${a.totalSizeKB} KB`);
+		console.info(`  Variant B: ${b.totalSizeKB} KB`);
+		console.info(`  Diff:      ${Math.abs(diff)} bytes (${diffPercent}%)`);
+		console.info(
 			`  Status:    ${diff === 0 ? "Identical ✓" : `A is ${diff > 0 ? "larger" : "smaller"}`}`,
 		);
-		console.log("═══════════════════════════════════════════════════════════════════\n");
+		console.info("═══════════════════════════════════════════════════════════════════\n");
 	}
 
 	// Performance characteristics
-	console.log("Performance Analysis:\n");
-	console.log("Build-Time Inlining Benefits:");
-	console.log("  ✓ Zero-cost abstraction (define → literal)");
-	console.log("  ✓ Tree-shaking (unused variants removed)");
-	console.log("  ✓ No runtime lookup overhead");
-	console.log("  ✓ Type-safe at compile time\n");
+	console.info("Performance Analysis:\n");
+	console.info("Build-Time Inlining Benefits:");
+	console.info("  ✓ Zero-cost abstraction (define → literal)");
+	console.info("  ✓ Tree-shaking (unused variants removed)");
+	console.info("  ✓ No runtime lookup overhead");
+	console.info("  ✓ Type-safe at compile time\n");
 
-	console.log("Runtime Cookie Parsing:");
-	console.log("  ✓ 396ns/op (simple parse)");
-	console.log("  ✓ 1.4μs/op (10 variants)");
-	console.log("  ✓ Prefix filter: O(n) where n = cookie count");
-	console.log("  ✓ Extract variant: O(1) Map lookup\n");
+	console.info("Runtime Cookie Parsing:");
+	console.info("  ✓ 396ns/op (simple parse)");
+	console.info("  ✓ 1.4μs/op (10 variants)");
+	console.info("  ✓ Prefix filter: O(n) where n = cookie count");
+	console.info("  ✓ Extract variant: O(1) Map lookup\n");
 
-	console.log("Combined (Cookie + Fallback):");
-	console.log("  ✓ Cookie present:  ~400ns parse + 84ns extract = 484ns");
-	console.log("  ✓ Cookie missing:  0ns (build-time literal!)");
-	console.log("  ✓ Overhead ratio:  ~0.5μs runtime vs 0ns inline = Inf speedup\n");
+	console.info("Combined (Cookie + Fallback):");
+	console.info("  ✓ Cookie present:  ~400ns parse + 84ns extract = 484ns");
+	console.info("  ✓ Cookie missing:  0ns (build-time literal!)");
+	console.info("  ✓ Overhead ratio:  ~0.5μs runtime vs 0ns inline = Inf speedup\n");
 }
 
 // ── CLI Entry Point ────────────────────────────────────────────────────────────

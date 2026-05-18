@@ -349,7 +349,7 @@ describe("KeyboardShortcutsModal", () => {
       expect(total).toBeGreaterThan(20);
       expect(total).toBeLessThan(100);
 
-      console.log(`Total shortcuts: ${total}`);
+      console.info(`Total shortcuts: ${total}`);
     });
 
     test("each category has at least one shortcut", () => {
@@ -358,12 +358,12 @@ describe("KeyboardShortcutsModal", () => {
       for (const [category, bindings] of Object.entries(keyboard)) {
         const count = Object.keys(bindings as object).length;
         expect(count).toBeGreaterThan(0);
-        console.log(`  ${category}: ${count} shortcuts`);
+        console.info(`  ${category}: ${count} shortcuts`);
       }
 
       const chordCount = Object.keys(shortcutsConfig.chords).length;
       expect(chordCount).toBeGreaterThan(0);
-      console.log(`  chords: ${chordCount} shortcuts`);
+      console.info(`  chords: ${chordCount} shortcuts`);
     });
   });
 });

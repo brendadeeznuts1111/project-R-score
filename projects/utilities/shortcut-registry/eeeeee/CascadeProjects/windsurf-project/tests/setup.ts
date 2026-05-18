@@ -22,7 +22,7 @@ beforeAll(() => {
   // Set test environment
   process.env.NODE_ENV = 'test';
 
-  console.log('🚀 Sovereign Unit Test Infrastructure Initialized');
+  console.info('🚀 Sovereign Unit Test Infrastructure Initialized');
 });
 
 // Global test teardown
@@ -30,7 +30,7 @@ afterAll(() => {
   // Restore original console
   Object.assign(console, originalConsole);
 
-  console.log('✅ Sovereign Unit Test Infrastructure Shutdown');
+  console.info('✅ Sovereign Unit Test Infrastructure Shutdown');
 });
 
 // Mock global crypto if not available

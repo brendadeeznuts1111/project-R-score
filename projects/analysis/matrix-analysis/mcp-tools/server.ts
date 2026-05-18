@@ -5,20 +5,20 @@ import { validateToolCall, executeTool, ThreatIntelligenceService } from './vali
 // Mock transport for demonstration
 class MockTransport {
   async send(message: any) {
-    console.log('📤 Sending:', JSON.stringify(message, null, 2));
+    console.info('📤 Sending:', JSON.stringify(message, null, 2));
   }
 
   async start() {
-    console.log('🚀 Tier-1380 MCP Tool Registry Demo Server');
-    console.log('📋 Available tools:', Object.keys(require('./registry.json')).join(', '));
-    console.log('');
+    console.info('🚀 Tier-1380 MCP Tool Registry Demo Server');
+    console.info('📋 Available tools:', Object.keys(require('./registry.json')).join(', '));
+    console.info('');
 
     // Demonstrate some example calls
     await this.demonstrateCalls();
   }
 
   async demonstrateCalls() {
-    console.log('🎭 Demonstrating tool validation:\n');
+    console.info('🎭 Demonstrating tool validation:\n');
 
     const examples = [
       {
@@ -44,8 +44,8 @@ class MockTransport {
     ];
 
     for (const example of examples) {
-      console.log(`📞 ${example.description}`);
-      console.log(`   Request: ${example.name} - ${JSON.stringify(example.arguments)}`);
+      console.info(`📞 ${example.description}`);
+      console.info(`   Request: ${example.name} - ${JSON.stringify(example.arguments)}`);
 
       try {
         // Validate the tool call
@@ -56,11 +56,11 @@ class MockTransport {
 
         // Execute the tool (mock)
         const result = await executeTool(example.name, example.arguments);
-        console.log(`   ✅ Success:`, JSON.stringify(result).substring(0, 100) + '...');
+        console.info(`   ✅ Success:`, JSON.stringify(result).substring(0, 100) + '...');
       } catch (error) {
-        console.log(`   ❌ Error: ${error instanceof Error ? error.message : String(error)}`);
+        console.info(`   ❌ Error: ${error instanceof Error ? error.message : String(error)}`);
       }
-      console.log('');
+      console.info('');
     }
   }
 }
@@ -71,6 +71,6 @@ transport.start().catch(console.error);
 
 // Handle process termination
 process.on('SIGINT', () => {
-  console.log('\n👋 Tier-1380 MCP Server shutting down...');
+  console.info('\n👋 Tier-1380 MCP Server shutting down...');
   process.exit(0);
 });

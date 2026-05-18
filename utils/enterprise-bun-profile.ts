@@ -64,7 +64,7 @@ export async function enterpriseProfile(
   md: string, 
   config: EnterpriseConfig = DEFAULT_ENTERPRISE_CONFIG
 ): Promise<LeadSpecProfile> {
-  console.log('\x1b[1;36m🏢 Enterprise Profile: Lead-Approved Analysis\x1b[0m');
+  console.info('\x1b[1;36m🏢 Enterprise Profile: Lead-Approved Analysis\x1b[0m');
   
   // Enterprise: Performance tracking
   const startTime = performance.now();
@@ -255,7 +255,7 @@ async function logEnterpriseMetrics(profile: LeadSpecProfile, config: Enterprise
   
   try {
     await Bun.write(logFile, JSON.stringify(logEntry) + '\n', { createPath: true });
-    console.log(`\x1b[1;32m📊 Enterprise audit logged: ${logFile}\x1b[0m`);
+    console.info(`\x1b[1;32m📊 Enterprise audit logged: ${logFile}\x1b[0m`);
   } catch (error) {
     console.warn(`\x1b[1;33m⚠️ Failed to log audit: ${error.message}\x1b[0m`);
   }
@@ -287,18 +287,18 @@ export async function enterpriseCLI(
   }
   
   if (verbose) {
-    console.log('\x1b[1;36m🏢 Enterprise CLI: Lead-Approved Profiling\x1b[0m');
-    console.log(`File: ${mdFile}`);
-    console.log(`Config: ${configFile || 'default'}`);
-    console.log(`Secret: ${config.secret.slice(0, 3)}***`);
+    console.info('\x1b[1;36m🏢 Enterprise CLI: Lead-Approved Profiling\x1b[0m');
+    console.info(`File: ${mdFile}`);
+    console.info(`Config: ${configFile || 'default'}`);
+    console.info(`Secret: ${config.secret.slice(0, 3)}***`);
   }
   
   const md = await Bun.file(mdFile).text();
   const profile = await enterpriseProfile(md, config);
   
   // Display enterprise dashboard
-  console.log('\n\x1b[1;36m🏢 Enterprise Dashboard\x1b[0m');
-  console.log('\x1b[1;36m' + '='.repeat(70) + '\x1b[0m');
+  console.info('\n\x1b[1;36m🏢 Enterprise Dashboard\x1b[0m');
+  console.info('\x1b[1;36m' + '='.repeat(70) + '\x1b[0m');
   
   console.table({
     'Document Size': `${(profile.core.documentSize / 1024).toFixed(2)} KB`,
@@ -317,20 +317,20 @@ export async function enterpriseCLI(
   // Validation report
   if (validate) {
     const validationResults = validateEnterpriseProfile(profile, config);
-    console.log('\n\x1b[1;36m🔍 Enterprise Validation:\x1b[0m');
+    console.info('\n\x1b[1;36m🔍 Enterprise Validation:\x1b[0m');
     Object.entries(validationResults).forEach(([key, result]) => {
       const status = result.passed ? '\x1b[32m✅\x1b[0m' : '\x1b[31m❌\x1b[0m';
-      console.log(`  ${status} ${key}: ${result.message}`);
+      console.info(`  ${status} ${key}: ${result.message}`);
     });
   }
   
   // Export if requested
   if (output) {
     await Bun.write(output, JSON.stringify(profile, null, 2));
-    console.log(`\x1b[1;33m📁 Enterprise export: ${output}\x1b[0m`);
+    console.info(`\x1b[1;33m📁 Enterprise export: ${output}\x1b[0m`);
   }
   
-  console.log('\x1b[1;36m✅ Enterprise profiling complete!\x1b[0m');
+  console.info('\x1b[1;36m✅ Enterprise profiling complete!\x1b[0m');
 }
 
 /**

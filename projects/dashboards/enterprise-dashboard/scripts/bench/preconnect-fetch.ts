@@ -14,7 +14,7 @@ const hosts = [
 // If not using --fetch-preconnect CLI flag, warm DNS cache programmatically
 const cliPreconnect = process.env.BUN_FETCH_PRECONNECT;
 if (!cliPreconnect) {
-  console.log("Warming DNS cache programmatically...");
+  console.info("Warming DNS cache programmatically...");
   await Promise.all(
     hosts.map(async (url) => {
       const hostname = new URL(url).hostname;
@@ -40,8 +40,8 @@ for (const host of hosts) {
 }
 
 const totalMs = results.reduce((sum, r) => sum + r.latencyMs, 0);
-console.log(`Preconnect fetch total: ${totalMs.toFixed(2)}ms`);
-console.log(Bun.inspect.table(results.map(r => ({
+console.info(`Preconnect fetch total: ${totalMs.toFixed(2)}ms`);
+console.info(Bun.inspect.table(results.map(r => ({
   Host: r.host.replace("https://", ""),
   "Latency (ms)": r.latencyMs.toFixed(2),
   Status: r.status || "error",

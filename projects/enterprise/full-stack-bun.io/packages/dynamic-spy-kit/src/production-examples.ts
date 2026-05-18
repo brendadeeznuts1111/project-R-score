@@ -56,7 +56,7 @@ export const PRODUCTION_PATTERNS: Record<string, URLPatternInit> = {
 export function demonstrateProductionUsage() {
 	const api = {
 		fetchOdds: (url: string, groups?: Record<string, string>) => {
-			console.log(`Fetching odds for ${url}`, groups);
+			console.info(`Fetching odds for ${url}`, groups);
 		}
 	};
 
@@ -69,7 +69,7 @@ export function demonstrateProductionUsage() {
 
 	const pinnacleUrl = 'https://pinnacle.com/vds/sports/1/odds/12345?lang=en&currency=USD';
 	
-	console.log(`
+	console.info(`
 ✅ test(): ${pinnacleSpy.test(pinnacleUrl)}
 ✅ groups.marketId: ${pinnacleSpy.exec(pinnacleUrl)?.pathname.groups.marketId}
 ✅ groups.sportId: ${pinnacleSpy.exec(pinnacleUrl)?.pathname.groups.sportId}
@@ -82,7 +82,7 @@ export function demonstrateProductionUsage() {
 
 	// Call API
 	api.fetchOdds(pinnacleUrl);
-	console.log(`✅ After call - spy calls: ${pinnacleSpy.calledTimes()}`);
+	console.info(`✅ After call - spy calls: ${pinnacleSpy.calledTimes()}`);
 
 	// ✅ Bet365 - Hash routing
 	const bet365Spy = URLPatternSpyFactory.create(
@@ -92,7 +92,7 @@ export function demonstrateProductionUsage() {
 	);
 
 	const bet365Url = 'https://bet365.com/#/SB/nfl/12345/67890';
-	console.log(`
+	console.info(`
 ✅ Bet365 test(): ${bet365Spy.test(bet365Url)}
 ✅ Bet365 groups.sport: ${bet365Spy.exec(bet365Url)?.pathname.groups.sport}
 ✅ Bet365 groups.marketId: ${bet365Spy.exec(bet365Url)?.pathname.groups.marketId}
@@ -107,7 +107,7 @@ export function demonstrateProductionUsage() {
 	);
 
 	const fonbetUrl = 'https://fonbet.ru/live/футбол:12345';
-	console.log(`
+	console.info(`
 ✅ Fonbet test(): ${fonbetSpy.test(fonbetUrl)}
 ✅ Fonbet groups.sport: ${fonbetSpy.exec(fonbetUrl)?.pathname.groups.sport}
 ✅ Fonbet hasRegExpGroups: ${fonbetSpy.hasRegExpGroups}

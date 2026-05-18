@@ -15,12 +15,12 @@ import { createCookieClient } from "../src/api/authenticated-client";
 // Type guard for Bun availability
 declare const Bun: any | undefined;
 
-console.log("🔄 Isomorphic Fetch Demo - Bun's Dual-Purpose fetch");
-console.log("=" .repeat(60));
+console.info("🔄 Isomorphic Fetch Demo - Bun's Dual-Purpose fetch");
+console.info("=" .repeat(60));
 
 // ====== 1. Client-Side fetch (Outgoing Requests) ======
 
-console.log("\n📤 1. Client-Side fetch - Outgoing Requests");
+console.info("\n📤 1. Client-Side fetch - Outgoing Requests");
 
 // Create custom fetch client with cookie management
 const client = createCookieClient({
@@ -36,7 +36,7 @@ const client = createCookieClient({
   },
   interceptors: {
     request: async (url, options) => {
-      console.log(`🔍 Request interceptor: ${options.method || 'GET'} ${url}`);
+      console.info(`🔍 Request interceptor: ${options.method || 'GET'} ${url}`);
       
       // Add custom headers
       const headers = new Headers(options.headers);
@@ -49,14 +49,14 @@ const client = createCookieClient({
       };
     },
     response: async (response, url) => {
-      console.log(`📥 Response interceptor: ${response.status} ${url}`);
+      console.info(`📥 Response interceptor: ${response.status} ${url}`);
       
       // Add custom response processing
       if (response.ok) {
         const cloned = response.clone();
         const data = await cloned.json().catch(() => null);
         if (data && data.timestamp) {
-          console.log(`⏰ Server timestamp: ${data.timestamp}`);
+          console.info(`⏰ Server timestamp: ${data.timestamp}`);
         }
       }
       
@@ -68,7 +68,7 @@ const client = createCookieClient({
 // Demonstrate client.fetch() pattern
 async function demonstrateClientFetch() {
   try {
-    console.log("\n🌐 Making client-side API calls...");
+    console.info("\n🌐 Making client-side API calls...");
     
     // Example 1: GET request with automatic cookie handling
     const healthResponse = await client.fetch("https://httpbin.org/get", {
@@ -80,7 +80,7 @@ async function demonstrateClientFetch() {
     
     if (healthResponse.ok) {
       const data = await healthResponse.json();
-      console.log("✅ GET request successful:", data.headers?.Host);
+      console.info("✅ GET request successful:", data.headers?.Host);
     }
     
     // Example 2: POST request with JSON payload
@@ -97,14 +97,14 @@ async function demonstrateClientFetch() {
     
     if (postResponse.ok) {
       const result = await postResponse.json();
-      console.log("✅ POST request successful:", result.json?.message);
+      console.info("✅ POST request successful:", result.json?.message);
     }
     
     // Show client metrics
-    console.log("\n📊 Client Metrics:");
-    console.log(`- Average response time: ${client.getAverageResponseTime()}ms`);
-    console.log(`- Success rate: ${client.getSuccessRate()}%`);
-    console.log(`- Total requests: ${client.getMetrics().length}`);
+    console.info("\n📊 Client Metrics:");
+    console.info(`- Average response time: ${client.getAverageResponseTime()}ms`);
+    console.info(`- Success rate: ${client.getSuccessRate()}%`);
+    console.info(`- Total requests: ${client.getMetrics().length}`);
     
   } catch (error) {
     console.error("❌ Client fetch error:", error);
@@ -113,7 +113,7 @@ async function demonstrateClientFetch() {
 
 // ====== 2. Server-Side fetch (Incoming Request Handler) ======
 
-console.log("\n📥 2. Server-Side fetch - Incoming Request Handler");
+console.info("\n📥 2. Server-Side fetch - Incoming Request Handler");
 
 // Create isomorphic request handler that works with Bun.serve
 function createIsomorphicHandler() {
@@ -121,7 +121,7 @@ function createIsomorphicHandler() {
     const url = new URL(req.url);
     const method = req.method;
     
-    console.log(`🎯 Server handling: ${method} ${url.pathname}`);
+    console.info(`🎯 Server handling: ${method} ${url.pathname}`);
     
     // CORS headers for isomorphic demo
     const corsHeaders = {
@@ -164,7 +164,7 @@ function createIsomorphicHandler() {
       
       // Route: GET /api/proxy - Demonstrates server making outgoing fetch
       if (url.pathname === "/api/proxy" && method === "GET") {
-        console.log("🔄 Server making outgoing fetch request...");
+        console.info("🔄 Server making outgoing fetch request...");
         
         // Server uses same fetch pattern as client!
         const externalResponse = await fetch("https://httpbin.org/json", {
@@ -249,7 +249,7 @@ function createIsomorphicHandler() {
 
 // ====== 3. Server Setup ======
 
-console.log("\n🚀 3. Starting Isomorphic Server");
+console.info("\n🚀 3. Starting Isomorphic Server");
 
 let server: any;
 
@@ -264,28 +264,28 @@ if (typeof Bun !== 'undefined' && Bun.serve) {
     }
   });
   
-  console.log(`✅ Server running at http://localhost:${server.port}`);
+  console.info(`✅ Server running at http://localhost:${server.port}`);
 } else {
-  console.log("⚠️  Bun.serve not available, skipping server creation");
+  console.info("⚠️  Bun.serve not available, skipping server creation");
 }
 
 // ====== 4. Demonstrate Isomorphic Patterns ======
 
-console.log("\n🔄 4. Demonstrating Isomorphic Patterns");
+console.info("\n🔄 4. Demonstrating Isomorphic Patterns");
 
 async function demonstrateIsomorphicPatterns() {
   const baseUrl = server ? `http://localhost:${server.port}` : "http://localhost:3009";
   
   try {
     // Pattern 1: Same fetch API works on both client and server
-    console.log("\n📋 Pattern 1: Unified fetch API");
+    console.info("\n📋 Pattern 1: Unified fetch API");
     
     const healthResponse = await fetch(`${baseUrl}/api/health`);
     const health = await healthResponse.json();
-    console.log("✅ Server health:", health.status);
+    console.info("✅ Server health:", health.status);
     
     // Pattern 2: Custom client wrapper works server-side too
-    console.log("\n📋 Pattern 2: Client wrapper server usage");
+    console.info("\n📋 Pattern 2: Client wrapper server usage");
     
     const echoResponse = await client.fetch(`${baseUrl}/api/echo`, {
       method: "POST",
@@ -295,20 +295,20 @@ async function demonstrateIsomorphicPatterns() {
     
     if (echoResponse.ok) {
       const echo = await echoResponse.json();
-      console.log("✅ Echo response:", echo.echo?.message);
+      console.info("✅ Echo response:", echo.echo?.message);
     }
     
     // Pattern 3: Server-to-server communication
-    console.log("\n📋 Pattern 3: Server-to-server fetch");
+    console.info("\n📋 Pattern 3: Server-to-server fetch");
     
     const proxyResponse = await fetch(`${baseUrl}/api/proxy`);
     if (proxyResponse.ok) {
       const proxy = await proxyResponse.json();
-      console.log("✅ Proxy data received:", proxy.proxyNote);
+      console.info("✅ Proxy data received:", proxy.proxyNote);
     }
     
     // Pattern 4: Authentication flow with cookies
-    console.log("\n📋 Pattern 4: Cookie-based authentication");
+    console.info("\n📋 Pattern 4: Cookie-based authentication");
     
     const loginResponse = await client.fetch(`${baseUrl}/api/auth/login`, {
       method: "POST",
@@ -318,14 +318,14 @@ async function demonstrateIsomorphicPatterns() {
     
     if (loginResponse.ok) {
       const login = await loginResponse.json();
-      console.log("✅ Login successful:", login.message);
+      console.info("✅ Login successful:", login.message);
       
       // Show stored cookies
       const cookies = client.getCookies();
-      console.log("🍪 Stored cookies:", Object.keys(cookies));
+      console.info("🍪 Stored cookies:", Object.keys(cookies));
     }
     
-    console.log("\n🎉 Isomorphic patterns demonstration complete!");
+    console.info("\n🎉 Isomorphic patterns demonstration complete!");
     
   } catch (error) {
     console.error("❌ Demonstration error:", error);
@@ -335,7 +335,7 @@ async function demonstrateIsomorphicPatterns() {
 // ====== 5. Cleanup and Export ======
 
 async function runDemo() {
-  console.log("\n🎬 Starting Isomorphic Fetch Demo");
+  console.info("\n🎬 Starting Isomorphic Fetch Demo");
   
   // Run client-side demonstrations
   await demonstrateClientFetch();
@@ -343,17 +343,17 @@ async function runDemo() {
   // Run isomorphic patterns
   await demonstrateIsomorphicPatterns();
   
-  console.log("\n📈 Benefits of Isomorphic Fetch:");
-  console.log("✅ Single API for client and server requests");
-  console.log("✅ No need for external libraries like Axios");
-  console.log("✅ Consistent error handling and interceptors");
-  console.log("✅ Automatic cookie management across environments");
-  console.log("✅ Type safety with TypeScript interfaces");
-  console.log("✅ Reduced bundle size and dependencies");
+  console.info("\n📈 Benefits of Isomorphic Fetch:");
+  console.info("✅ Single API for client and server requests");
+  console.info("✅ No need for external libraries like Axios");
+  console.info("✅ Consistent error handling and interceptors");
+  console.info("✅ Automatic cookie management across environments");
+  console.info("✅ Type safety with TypeScript interfaces");
+  console.info("✅ Reduced bundle size and dependencies");
   
   // Cleanup
   if (server && typeof server.stop === "function") {
-    console.log("\n🛑 Shutting down server...");
+    console.info("\n🛑 Shutting down server...");
     server.stop();
   }
 }

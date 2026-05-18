@@ -104,12 +104,12 @@ export class SyndicateWebSocketServer {
       }
     });
 
-    console.log(`🔌 WebSocket server started on port ${port}`);
+    console.info(`🔌 WebSocket server started on port ${port}`);
   }
 
   private handleOpen(ws: ServerWebSocket<WebSocketData>) {
     this.clients.add(ws);
-    console.log(`✅ Client connected. Total clients: ${this.clients.size}`);
+    console.info(`✅ Client connected. Total clients: ${this.clients.size}`);
   }
 
   private handleClose(ws: ServerWebSocket<WebSocketData>) {
@@ -120,7 +120,7 @@ export class SyndicateWebSocketServer {
       subscribers.delete(ws);
     }
 
-    console.log(`❌ Client disconnected. Total clients: ${this.clients.size}`);
+    console.info(`❌ Client disconnected. Total clients: ${this.clients.size}`);
   }
 
   private handleError(ws: ServerWebSocket<WebSocketData>, error: Error) {

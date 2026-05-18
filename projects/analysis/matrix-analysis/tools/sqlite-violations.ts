@@ -9,7 +9,7 @@ try {
 	const db = new Database(dbPath);
 	const result = db.query("SELECT COUNT(*) as c FROM violations").get() as { c: number };
 
-	console.log(`📊 Col-89 violations in database: ${result.c}`);
+	console.info(`📊 Col-89 violations in database: ${result.c}`);
 
 	// Additional context
 	const recent = db
@@ -23,8 +23,8 @@ try {
 		)
 		.get() as { c: number };
 
-	console.log(`⏰ Last hour: ${recent.c} violations`);
-	console.log(`📅 Today: ${today.c} violations`);
+	console.info(`⏰ Last hour: ${recent.c} violations`);
+	console.info(`📅 Today: ${today.c} violations`);
 
 	db.close();
 } catch (error: any) {

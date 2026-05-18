@@ -70,7 +70,7 @@ export class Fantasy42EnhancedModals {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🚀 Initializing Fantasy42 Enhanced Modals...');
+      console.info('🚀 Initializing Fantasy42 Enhanced Modals...');
 
       // Initialize AI-powered features
       await this.initializeAIFeatures();
@@ -84,7 +84,7 @@ export class Fantasy42EnhancedModals {
       // Setup real-time collaboration
       await this.setupRealTimeCollaboration();
 
-      console.log('✅ Fantasy42 Enhanced Modals initialized');
+      console.info('✅ Fantasy42 Enhanced Modals initialized');
       return true;
     } catch (error) {
       console.error('❌ Failed to initialize enhanced modals:', error);
@@ -244,7 +244,7 @@ export class Fantasy42EnhancedModals {
    * Initialize AI-powered features
    */
   private async initializeAIFeatures(): Promise<void> {
-    console.log('🤖 Initializing AI Features...');
+    console.info('🤖 Initializing AI Features...');
 
     // Initialize suggestion engines
     await this.initializeSuggestionEngines();
@@ -255,7 +255,7 @@ export class Fantasy42EnhancedModals {
     // Initialize optimization engines
     await this.initializeOptimizationEngines();
 
-    console.log('✅ AI Features initialized');
+    console.info('✅ AI Features initialized');
   }
 
   /**
@@ -301,7 +301,7 @@ export class Fantasy42EnhancedModals {
       });
     }
 
-    console.log('💡 Suggestion engines initialized');
+    console.info('💡 Suggestion engines initialized');
   }
 
   /**
@@ -309,7 +309,7 @@ export class Fantasy42EnhancedModals {
    */
   private async initializeRiskPredictors(): Promise<void> {
     // Initialize risk prediction models
-    console.log('🎯 Risk predictors initialized');
+    console.info('🎯 Risk predictors initialized');
   }
 
   /**
@@ -317,7 +317,7 @@ export class Fantasy42EnhancedModals {
    */
   private async initializeOptimizationEngines(): Promise<void> {
     // Initialize optimization algorithms
-    console.log('⚡ Optimization engines initialized');
+    console.info('⚡ Optimization engines initialized');
   }
 
   /**
@@ -325,7 +325,7 @@ export class Fantasy42EnhancedModals {
    */
   private async setupPredictiveAnalytics(): Promise<void> {
     // Setup predictive models for each modal
-    console.log('📊 Predictive analytics setup');
+    console.info('📊 Predictive analytics setup');
   }
 
   /**
@@ -333,7 +333,7 @@ export class Fantasy42EnhancedModals {
    */
   private async initializePerformanceMonitoring(): Promise<void> {
     // Setup performance tracking for modal interactions
-    console.log('📈 Performance monitoring initialized');
+    console.info('📈 Performance monitoring initialized');
   }
 
   /**
@@ -341,7 +341,7 @@ export class Fantasy42EnhancedModals {
    */
   private async setupRealTimeCollaboration(): Promise<void> {
     // Setup collaborative features for modals
-    console.log('🤝 Real-time collaboration setup');
+    console.info('🤝 Real-time collaboration setup');
   }
 
   /**
@@ -351,7 +351,7 @@ export class Fantasy42EnhancedModals {
     const intelligence = this.modalIntelligence.get(modalId);
     if (!intelligence) return;
 
-    console.log(`🚀 Enhancing modal: ${modalId}`);
+    console.info(`🚀 Enhancing modal: ${modalId}`);
 
     // Apply AI suggestions
     if (intelligence.features.aiSuggestions) {
@@ -427,7 +427,7 @@ export class Fantasy42EnhancedModals {
       button.addEventListener('click', e => this.applySuggestion(modalId, e));
     });
 
-    console.log(`💡 AI suggestions applied to ${modalId}`);
+    console.info(`💡 AI suggestions applied to ${modalId}`);
   }
 
   /**
@@ -466,7 +466,7 @@ export class Fantasy42EnhancedModals {
       body.insertBefore(insightsPanel, body.firstChild);
     }
 
-    console.log(`🔮 Predictive analytics applied to ${modalId}`);
+    console.info(`🔮 Predictive analytics applied to ${modalId}`);
   }
 
   /**
@@ -505,7 +505,7 @@ export class Fantasy42EnhancedModals {
       body.insertBefore(riskPanel, body.firstChild);
     }
 
-    console.log(`🛡️ Risk assessment applied to ${modalId}`);
+    console.info(`🛡️ Risk assessment applied to ${modalId}`);
   }
 
   /**
@@ -540,7 +540,7 @@ export class Fantasy42EnhancedModals {
       body.insertBefore(metricsPanel, body.firstChild);
     }
 
-    console.log(`📊 Performance metrics applied to ${modalId}`);
+    console.info(`📊 Performance metrics applied to ${modalId}`);
   }
 
   /**
@@ -573,7 +573,7 @@ export class Fantasy42EnhancedModals {
       button.addEventListener('click', e => this.handleVisualizationChange(e, modalId));
     });
 
-    console.log(`📈 Data visualization applied to ${modalId}`);
+    console.info(`📈 Data visualization applied to ${modalId}`);
   }
 
   /**
@@ -618,7 +618,7 @@ export class Fantasy42EnhancedModals {
       button.addEventListener('click', e => this.handleBulkAction(e, modalId));
     });
 
-    console.log(`⚡ Bulk operations applied to ${modalId}`);
+    console.info(`⚡ Bulk operations applied to ${modalId}`);
   }
 
   /**
@@ -628,7 +628,7 @@ export class Fantasy42EnhancedModals {
     const button = event.target as HTMLElement;
     const suggestion = button.getAttribute('data-suggestion');
 
-    console.log(`💡 Applying suggestion: ${suggestion} to ${modalId}`);
+    console.info(`💡 Applying suggestion: ${suggestion} to ${modalId}`);
 
     // Apply the suggestion based on type
     switch (suggestion) {
@@ -667,7 +667,7 @@ export class Fantasy42EnhancedModals {
     const button = event.target as HTMLElement;
     const viewType = button.getAttribute('data-view');
 
-    console.log(`📊 Changing visualization to: ${viewType} for ${modalId}`);
+    console.info(`📊 Changing visualization to: ${viewType} for ${modalId}`);
 
     // Update button states
     const vizButtons = button.parentElement?.querySelectorAll('.viz-btn');
@@ -697,7 +697,7 @@ export class Fantasy42EnhancedModals {
     const button = event.target as HTMLElement;
     const action = button.getAttribute('data-action');
 
-    console.log(`⚡ Executing bulk action: ${action} on ${modalId}`);
+    console.info(`⚡ Executing bulk action: ${action} on ${modalId}`);
 
     switch (action) {
       case 'select-all':
@@ -717,36 +717,36 @@ export class Fantasy42EnhancedModals {
 
   // Implementation methods for suggestions
   private async applyPopularCombinations(modalId: string): Promise<void> {
-    console.log('🎯 Applying popular combinations...');
+    console.info('🎯 Applying popular combinations...');
   }
 
   private async applyMarketTrends(modalId: string): Promise<void> {
-    console.log('📈 Applying market trends...');
+    console.info('📈 Applying market trends...');
   }
 
   private async applyCorrelations(modalId: string): Promise<void> {
-    console.log('🔗 Applying correlations...');
+    console.info('🔗 Applying correlations...');
   }
 
   private async applyLineMovements(modalId: string): Promise<void> {
-    console.log('📊 Applying line movements...');
+    console.info('📊 Applying line movements...');
   }
 
   // Bulk operation implementations
   private async selectAllItems(modalId: string): Promise<void> {
-    console.log('✅ Selecting all items...');
+    console.info('✅ Selecting all items...');
   }
 
   private async copySettings(modalId: string): Promise<void> {
-    console.log('📋 Copying settings...');
+    console.info('📋 Copying settings...');
   }
 
   private async applyPreset(modalId: string): Promise<void> {
-    console.log('⚙️ Applying preset...');
+    console.info('⚙️ Applying preset...');
   }
 
   private async validateAllItems(modalId: string): Promise<void> {
-    console.log('🔍 Validating all items...');
+    console.info('🔍 Validating all items...');
   }
 
   // Visualization content generator
@@ -788,7 +788,7 @@ export class Fantasy42EnhancedModals {
     this.aiSuggestions.clear();
     this.performanceMetrics.clear();
 
-    console.log('🧹 Fantasy42 Enhanced Modals cleaned up');
+    console.info('🧹 Fantasy42 Enhanced Modals cleaned up');
   }
 }
 

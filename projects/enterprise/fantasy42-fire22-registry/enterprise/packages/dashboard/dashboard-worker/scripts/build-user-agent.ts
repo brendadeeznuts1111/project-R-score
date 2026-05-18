@@ -151,18 +151,18 @@ export class UserAgentBuildSystem {
    * Build executable with custom user agent using Bun.build() API
    */
   async buildWithUserAgent(config: BuildConfig): Promise<void> {
-    console.log('🎯 Building Fire22 Dashboard with Custom User-Agent & Cookies');
-    console.log('='.repeat(60));
+    console.info('🎯 Building Fire22 Dashboard with Custom User-Agent & Cookies');
+    console.info('='.repeat(60));
 
     const userAgent = config.userAgent || this.getDefaultUserAgent(config.environment);
-    console.log(`📱 User-Agent: ${userAgent}`);
-    console.log(`🌍 Environment: ${config.environment}`);
+    console.info(`📱 User-Agent: ${userAgent}`);
+    console.info(`🌍 Environment: ${config.environment}`);
 
     // Create and display cookie configuration
     const cookies = this.createSessionCookies(config);
-    console.log(`🍪 Cookies configured: ${cookies.size} cookies`);
+    console.info(`🍪 Cookies configured: ${cookies.size} cookies`);
     for (const [name, value] of cookies) {
-      console.log(`   - ${name}: ${value.substring(0, 50)}${value.length > 50 ? '...' : ''}`);
+      console.info(`   - ${name}: ${value.substring(0, 50)}${value.length > 50 ? '...' : ''}`);
     }
 
     // Ensure dist directory exists
@@ -210,7 +210,7 @@ export class UserAgentBuildSystem {
     }
 
     try {
-      console.log('\n🔨 Building executable...');
+      console.info('\n🔨 Building executable...');
 
       // Use programmatic Bun.build() API
       const result = await Bun.build({
@@ -237,12 +237,12 @@ export class UserAgentBuildSystem {
       });
 
       if (result.success) {
-        console.log('✅ Build successful!');
+        console.info('✅ Build successful!');
 
         // Display build artifacts
         for (const output of result.outputs) {
           const size = (output.size / 1024 / 1024).toFixed(2);
-          console.log(`   📦 ${output.path} (${size}MB)`);
+          console.info(`   📦 ${output.path} (${size}MB)`);
         }
       } else {
         console.error('❌ Build failed:', result.logs);
@@ -289,22 +289,22 @@ export class UserAgentBuildSystem {
       'bun-darwin-arm64',
     ];
 
-    console.log('🌍 Building for all platforms...\n');
+    console.info('🌍 Building for all platforms...\n');
 
     for (const target of targets) {
-      console.log(`\n📦 Building for ${target}...`);
+      console.info(`\n📦 Building for ${target}...`);
       await this.buildWithUserAgent({ ...config, target });
     }
 
-    console.log('\n✅ All platform builds completed!');
+    console.info('\n✅ All platform builds completed!');
   }
 
   /**
    * Test user agent and cookie configuration
    */
   async testUserAgent(executable?: string): Promise<void> {
-    console.log('\n🧪 Testing User-Agent & Cookie Configuration');
-    console.log('='.repeat(60));
+    console.info('\n🧪 Testing User-Agent & Cookie Configuration');
+    console.info('='.repeat(60));
 
     // Create test script
     const testScript = `
@@ -316,26 +316,26 @@ export class UserAgentBuildSystem {
           headers: { 'Accept': 'application/json' }
         });
         const data = await response.json();
-        console.log('User-Agent sent:', data.headers?.['user-agent'] || 'Unknown');
+        console.info('User-Agent sent:', data.headers?.['user-agent'] || 'Unknown');
       } catch (e) {
-        console.log('User-Agent test skipped (service unavailable)');
+        console.info('User-Agent test skipped (service unavailable)');
       }
       
       // Test ANSI stripping (new Bun feature)
       const colored = "\\u001b[31mRed\\u001b[0m \\u001b[32mGreen\\u001b[0m";
       const stripped = Bun.stripANSI(colored);
-      console.log('ANSI Stripping Test:', stripped === 'Red Green' ? '✅ Passed' : '❌ Failed');
+      console.info('ANSI Stripping Test:', stripped === 'Red Green' ? '✅ Passed' : '❌ Failed');
       
       // Test Cookie APIs
-      console.log('\\n🍪 Testing Cookie APIs:');
+      console.info('\\n🍪 Testing Cookie APIs:');
       
       // Test CookieMap
       const cookies = new CookieMap({
         session: 'test123',
         theme: 'dark'
       });
-      console.log('  CookieMap size:', cookies.size);
-      console.log('  Session cookie:', cookies.get('session'));
+      console.info('  CookieMap size:', cookies.size);
+      console.info('  Session cookie:', cookies.get('session'));
       
       // Test Cookie class
       const secureCookie = new Cookie('fire22_token', 'abc123', {
@@ -344,18 +344,18 @@ export class UserAgentBuildSystem {
         sameSite: 'strict',
         maxAge: 3600
       });
-      console.log('  Secure cookie:', secureCookie.toString().substring(0, 50) + '...');
-      console.log('  Is expired:', secureCookie.isExpired());
+      console.info('  Secure cookie:', secureCookie.toString().substring(0, 50) + '...');
+      console.info('  Is expired:', secureCookie.isExpired());
       
       // Test cookie from environment
       if (process.env.DEFAULT_COOKIES) {
         const envCookies = new CookieMap(JSON.parse(process.env.DEFAULT_COOKIES));
-        console.log('  Env cookies:', envCookies.size, 'cookies loaded');
+        console.info('  Env cookies:', envCookies.size, 'cookies loaded');
       }
       
       // Display runtime flags
       if (process.execArgv?.length > 0) {
-        console.log('\\nEmbedded runtime flags:', process.execArgv.join(' '));
+        console.info('\\nEmbedded runtime flags:', process.execArgv.join(' '));
       }
     `;
 
@@ -363,10 +363,10 @@ export class UserAgentBuildSystem {
     await Bun.write(testFile, testScript);
 
     if (executable && existsSync(executable)) {
-      console.log(`\nTesting executable: ${executable}`);
+      console.info(`\nTesting executable: ${executable}`);
       await $`${executable}`;
     } else {
-      console.log('\nTesting with current Bun runtime:');
+      console.info('\nTesting with current Bun runtime:');
       await $`bun --user-agent="Fire22-Test/1.0" ${testFile}`;
     }
   }
@@ -443,5 +443,5 @@ if (import.meta.main) {
       break;
   }
 
-  console.log('\n🎉 User-Agent Build System Complete!');
+  console.info('\n🎉 User-Agent Build System Complete!');
 }

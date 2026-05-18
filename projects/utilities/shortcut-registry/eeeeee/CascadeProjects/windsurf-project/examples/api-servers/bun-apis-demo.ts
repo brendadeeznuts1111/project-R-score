@@ -4,12 +4,12 @@
 export {}; // Make this a module for top-level await
 
 async function demonstrateBunAPIs() {
-  console.log('🚀 Bun Native APIs Demo - Enterprise Dashboard');
-  console.log('==============================================');
+  console.info('🚀 Bun Native APIs Demo - Enterprise Dashboard');
+  console.info('==============================================');
 
   // 1. HTTP Server API
-  console.log('\n🌐 HTTP Server API:');
-  console.log('====================');
+  console.info('\n🌐 HTTP Server API:');
+  console.info('====================');
   try {
     const server = Bun.serve({
       port: 0, // Random port
@@ -24,22 +24,22 @@ async function demonstrateBunAPIs() {
       },
     });
     
-    console.log(`✅ Server started on port ${server.port}`);
-    console.log('📡 Available endpoints: /health, /metrics, /fraud-detection');
+    console.info(`✅ Server started on port ${server.port}`);
+    console.info('📡 Available endpoints: /health, /metrics, /fraud-detection');
     
     // Test the server
     const response = await fetch(`http://localhost:${server.port}`);
     const data = await response.json();
-    console.log('📄 Server response:', data);
+    console.info('📄 Server response:', data);
     
     server.stop();
   } catch (error) {
-    console.log('❌ Server error:', error instanceof Error ? error.message : String(error));
+    console.info('❌ Server error:', error instanceof Error ? error.message : String(error));
   }
 
   // 2. File I/O API
-  console.log('\n📁 File I/O API:');
-  console.log('=================');
+  console.info('\n📁 File I/O API:');
+  console.info('=================');
   try {
     // Write file
     const testData = { 
@@ -49,43 +49,43 @@ async function demonstrateBunAPIs() {
     };
     
     await Bun.write('./temp-dashboard-data.json', JSON.stringify(testData, null, 2));
-    console.log('✅ File written successfully');
+    console.info('✅ File written successfully');
     
     // Read file
     const file = Bun.file('./temp-dashboard-data.json');
     const content = await file.text();
     const parsed = JSON.parse(content);
-    console.log('📖 File read:', parsed);
+    console.info('📖 File read:', parsed);
     
     // Clean up
     await Bun.write('./temp-dashboard-data.json', '');
   } catch (error) {
-    console.log('❌ File I/O error:', error instanceof Error ? error.message : String(error));
+    console.info('❌ File I/O error:', error instanceof Error ? error.message : String(error));
   }
 
   // 3. Hashing & Security API
-  console.log('\n🔐 Hashing & Security API:');
-  console.log('=========================');
+  console.info('\n🔐 Hashing & Security API:');
+  console.info('=========================');
   try {
     const sensitiveData = 'enterprise-dashboard-secret';
     const hash = Bun.hash(sensitiveData);
-    console.log('🔒 Hash of sensitive data:', hash);
+    console.info('🔒 Hash of sensitive data:', hash);
     
     // Password hashing
     const password = 'admin123';
     const hashedPassword = await Bun.password.hash(password);
-    console.log('🔑 Hashed password:', hashedPassword.substring(0, 20) + '...');
+    console.info('🔑 Hashed password:', hashedPassword.substring(0, 20) + '...');
     
     // Verify password
     const isValid = await Bun.password.verify(password, hashedPassword);
-    console.log('✅ Password verification:', isValid);
+    console.info('✅ Password verification:', isValid);
   } catch (error) {
-    console.log('❌ Hashing error:', error instanceof Error ? error.message : String(error));
+    console.info('❌ Hashing error:', error instanceof Error ? error.message : String(error));
   }
 
   // 4. SQLite API
-  console.log('\n🗄️ SQLite API:');
-  console.log('===============');
+  console.info('\n🗄️ SQLite API:');
+  console.info('===============');
   try {
     // Import SQLite for the demo
     const { Database } = await import('bun:sqlite');
@@ -101,55 +101,55 @@ async function demonstrateBunAPIs() {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
-    console.log('✅ Database table created');
+    console.info('✅ Database table created');
     
     // Insert data
     const stmt = db.prepare('INSERT INTO users (name, email) VALUES (?, ?)');
     stmt.run('Admin User', 'admin@enterprise.com');
-    console.log('✅ User inserted');
+    console.info('✅ User inserted');
     
     // Query data
     const users = db.prepare('SELECT * FROM users').all();
-    console.log('👥 Users:', users);
+    console.info('👥 Users:', users);
     
     // Clean up
     db.close();
     await Bun.write('./enterprise-dashboard.db', '');
   } catch (error) {
-    console.log('❌ SQLite error:', error instanceof Error ? error.message : String(error));
+    console.info('❌ SQLite error:', error instanceof Error ? error.message : String(error));
   }
 
   // 5. Utilities API
-  console.log('\n🛠️ Utilities API:');
-  console.log('=================');
+  console.info('\n🛠️ Utilities API:');
+  console.info('=================');
   try {
-    console.log('📊 Bun version:', Bun.version);
-    console.log('🔍 Bun revision:', Bun.revision);
-    console.log('🌍 Environment:', Bun.env.NODE_ENV || 'development');
-    console.log('🎯 Main module:', Bun.main);
+    console.info('📊 Bun version:', Bun.version);
+    console.info('🔍 Bun revision:', Bun.revision);
+    console.info('🌍 Environment:', Bun.env.NODE_ENV || 'development');
+    console.info('🎯 Main module:', Bun.main);
     
     // UUID generation
     const uuid = Bun.randomUUIDv7();
-    console.log('🆔 Generated UUID v7:', uuid);
+    console.info('🆔 Generated UUID v7:', uuid);
     
     // Sleep timing
     const start = Bun.nanoseconds();
     await Bun.sleep(10); // 10ms
     const elapsed = Bun.nanoseconds() - start;
-    console.log('⏱️ Sleep timing:', elapsed / 1_000_000, 'ms');
+    console.info('⏱️ Sleep timing:', elapsed / 1_000_000, 'ms');
     
     // Deep comparison
     const obj1 = { a: 1, b: { c: 2 } };
     const obj2 = { a: 1, b: { c: 2 } };
     const isEqual = Bun.deepEquals(obj1, obj2);
-    console.log('🔍 Deep equality check:', isEqual);
+    console.info('🔍 Deep equality check:', isEqual);
   } catch (error) {
-    console.log('❌ Utilities error:', error instanceof Error ? error.message : String(error));
+    console.info('❌ Utilities error:', error instanceof Error ? error.message : String(error));
   }
 
   // 6. Compression API
-  console.log('\n📦 Compression API:');
-  console.log('==================');
+  console.info('\n📦 Compression API:');
+  console.info('==================');
   try {
     const jsonData = JSON.stringify({
       dashboard: 'enterprise',
@@ -158,47 +158,47 @@ async function demonstrateBunAPIs() {
     
     // Compress
     const compressed = Bun.gzipSync(jsonData);
-    console.log('🗜️ Original size:', jsonData.length, 'bytes');
-    console.log('📦 Compressed size:', compressed.length, 'bytes');
-    console.log('💾 Compression ratio:', ((compressed.length / jsonData.length) * 100).toFixed(2) + '%');
+    console.info('🗜️ Original size:', jsonData.length, 'bytes');
+    console.info('📦 Compressed size:', compressed.length, 'bytes');
+    console.info('💾 Compression ratio:', ((compressed.length / jsonData.length) * 100).toFixed(2) + '%');
     
     // Decompress
     const decompressed = Bun.gunzipSync(compressed);
     const parsed = JSON.parse(decompressed.toString());
-    console.log('✅ Decompression successful, items:', parsed.metrics.length);
+    console.info('✅ Decompression successful, items:', parsed.metrics.length);
   } catch (error) {
-    console.log('❌ Compression error:', error instanceof Error ? error.message : String(error));
+    console.info('❌ Compression error:', error instanceof Error ? error.message : String(error));
   }
 
   // 7. Shell API
-  console.log('\n🐚 Shell API:');
-  console.log('=============');
+  console.info('\n🐚 Shell API:');
+  console.info('=============');
   try {
     // Import shell API
     const { $ } = await import('bun');
     
     // Run shell command
     const result = await $`echo "Bun Shell API Demo" | tr '[:lower:]' '[:upper:]'`;
-    console.log('📟 Shell command output:', result.stdout.toString().trim());
+    console.info('📟 Shell command output:', result.stdout.toString().trim());
     
     // Get system info
     const nodeVersion = await $`node --version`.quiet();
-    console.log('🔧 Node version:', nodeVersion.stdout.toString().trim());
+    console.info('🔧 Node version:', nodeVersion.stdout.toString().trim());
   } catch (error) {
-    console.log('❌ Shell error:', error instanceof Error ? error.message : String(error));
+    console.info('❌ Shell error:', error instanceof Error ? error.message : String(error));
   }
 
-  console.log('\n🎉 Bun APIs Demo Complete!');
-  console.log('================================');
-  console.log('✅ HTTP Server - High-performance web server');
-  console.log('✅ File I/O - Optimized file operations');
-  console.log('✅ Security - Built-in hashing and password handling');
-  console.log('✅ Database - Native SQLite support');
-  console.log('✅ Utilities - Performance and developer tools');
-  console.log('✅ Compression - Fast data compression');
-  console.log('✅ Shell - Integrated shell command execution');
-  console.log('');
-  console.log('🚀 Enterprise Dashboard powered by Bun APIs!');
+  console.info('\n🎉 Bun APIs Demo Complete!');
+  console.info('================================');
+  console.info('✅ HTTP Server - High-performance web server');
+  console.info('✅ File I/O - Optimized file operations');
+  console.info('✅ Security - Built-in hashing and password handling');
+  console.info('✅ Database - Native SQLite support');
+  console.info('✅ Utilities - Performance and developer tools');
+  console.info('✅ Compression - Fast data compression');
+  console.info('✅ Shell - Integrated shell command execution');
+  console.info('');
+  console.info('🚀 Enterprise Dashboard powered by Bun APIs!');
 }
 
 // Run the demonstration

@@ -64,7 +64,7 @@ class YamlEnhancedPerfInspector {
       });
 
       this.initialized = true;
-      console.log('🎨 YAML-Enhanced Performance Inspector initialized successfully');
+      console.info('🎨 YAML-Enhanced Performance Inspector initialized successfully');
     } catch (error) {
       console.error('❌ Failed to initialize YAML-enhanced inspector:', error);
     }
@@ -72,7 +72,7 @@ class YamlEnhancedPerfInspector {
 
   private setupConfigListeners(): void {
     this.configManager.on('configLoaded', () => {
-      console.log('🔄 Performance inspector configuration reloaded');
+      console.info('🔄 Performance inspector configuration reloaded');
       this.initializeFromConfig();
     });
 
@@ -274,7 +274,7 @@ class YamlEnhancedPerfInspector {
     // Initialize production URI inspector directly
     const uriInspector = new ProductionUriInspector();
     
-    console.log(`🔍 Running URI Security Inspection on ${uris.length} URIs...`);
+    console.info(`🔍 Running URI Security Inspection on ${uris.length} URIs...`);
     
     // Get enabled features asynchronously
     const enabledFeatures: string[] = [];
@@ -284,7 +284,7 @@ class YamlEnhancedPerfInspector {
       }
     }
     
-    console.log(`📋 Scope: ${scope} | Features enabled: ${enabledFeatures.join(', ')}`);
+    console.info(`📋 Scope: ${scope} | Features enabled: ${enabledFeatures.join(', ')}`);
     
     const inspectionResults: InspectionResult[] = [];
     
@@ -398,7 +398,7 @@ ${enabledFeatures.map(f => `   ✅ ${f}`).join('\n')}
 
   public switchScope(newScope: string): void {
     this.configManager.switchScope(newScope);
-    console.log(`🔄 Performance inspector switched to scope: ${newScope}`);
+    console.info(`🔄 Performance inspector switched to scope: ${newScope}`);
   }
 
   public getCurrentScope(): string {
@@ -410,7 +410,7 @@ ${enabledFeatures.map(f => `   ✅ ${f}`).join('\n')}
     const scope = this.configManager.getCurrentScope();
     const scopeConfig = config.scopes[scope];
     
-    console.log(`🔍 Debug: scope=${scope}, scopeConfig=${JSON.stringify(scopeConfig, null, 2)}`);
+    console.info(`🔍 Debug: scope=${scope}, scopeConfig=${JSON.stringify(scopeConfig, null, 2)}`);
     
     // Get enabled features asynchronously
     const enabledFeatures: string[] = [];
@@ -446,8 +446,8 @@ ${Object.entries(config.categories).filter(([_, cat]) => cat.enabled).map(([name
 
 // Test function to demonstrate the YAML-enhanced inspector
 export async function testYamlEnhancedInspector(): Promise<void> {
-  console.log('🎨 Testing YAML-Enhanced Performance Inspector');
-  console.log('═══════════════════════════════════════════════════════════');
+  console.info('🎨 Testing YAML-Enhanced Performance Inspector');
+  console.info('═══════════════════════════════════════════════════════════');
   
   const inspector = new YamlEnhancedPerfInspector();
   
@@ -455,8 +455,8 @@ export async function testYamlEnhancedInspector(): Promise<void> {
   await new Promise(resolve => setTimeout(resolve, 500));
   
   // Show current configuration
-  console.log(await inspector.getConfigStatus());
-  console.log();
+  console.info(await inspector.getConfigStatus());
+  console.info();
   
   // Test URIs including problematic ones
   const testUris = [
@@ -469,26 +469,26 @@ export async function testYamlEnhancedInspector(): Promise<void> {
   ];
   
   try {
-    console.log('🔍 Running URI Security Inspection with YAML configuration...');
+    console.info('🔍 Running URI Security Inspection with YAML configuration...');
     
     const results = await inspector.runIntegratedUriSecurityInspection(testUris, 'development');
     
-    console.log();
-    console.log(results.summary);
-    console.log();
+    console.info();
+    console.info(results.summary);
+    console.info();
     
-    console.log('📊 Performance Metrics Dashboard:');
-    console.log(inspector.generateUriSecurityDashboard(results.perfMetrics));
-    console.log();
+    console.info('📊 Performance Metrics Dashboard:');
+    console.info(inspector.generateUriSecurityDashboard(results.perfMetrics));
+    console.info();
     
     // Test scope switching
-    console.log('🔄 Testing scope switching...');
+    console.info('🔄 Testing scope switching...');
     inspector.switchScope('enterprise');
     
     // Wait for config reload
     await new Promise(resolve => setTimeout(resolve, 200));
     
-    console.log(await inspector.getConfigStatus());
+    console.info(await inspector.getConfigStatus());
     
   } catch (error) {
     console.error('❌ Test failed:', error);

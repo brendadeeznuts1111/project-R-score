@@ -29,9 +29,9 @@ class MonitorSnapshot {
     console.clear();
 
     // Display the dashboard header
-    console.log('🔥 Fire22 Real-Time Performance Dashboard');
-    console.log('='.repeat(50));
-    console.log(`📅 ${new Date().toLocaleString()}\n`);
+    console.info('🔥 Fire22 Real-Time Performance Dashboard');
+    console.info('='.repeat(50));
+    console.info(`📅 ${new Date().toLocaleString()}\n`);
 
     // System Metrics
     const memUsage = process.memoryUsage();
@@ -39,18 +39,18 @@ class MonitorSnapshot {
     const memPercent = Math.round((memUsage.heapUsed / memUsage.heapTotal) * 100);
     const cpuTime = (cpuUsage.user + cpuUsage.system) / 1000000;
 
-    console.log('💻 System Metrics:');
-    console.log(`   CPU Usage: ${Math.round(cpuTime)}% ${this.getHealthIndicator(cpuTime, 80)}`);
-    console.log(
+    console.info('💻 System Metrics:');
+    console.info(`   CPU Usage: ${Math.round(cpuTime)}% ${this.getHealthIndicator(cpuTime, 80)}`);
+    console.info(
       `   Memory: ${Math.round(memUsage.heapUsed / 1024 / 1024)}MB / ${Math.round(memUsage.heapTotal / 1024 / 1024)}MB (${memPercent}%) ${this.getHealthIndicator(memPercent, 85)}`
     );
-    console.log(
+    console.info(
       `   Uptime: ${Math.floor(process.uptime() / 60)}m ${Math.floor(process.uptime() % 60)}s`
     );
-    console.log(`   Bun Version: ${Bun.version}\n`);
+    console.info(`   Bun Version: ${Bun.version}\n`);
 
     // API Endpoints Status (simulated)
-    console.log('🌐 API Endpoints:');
+    console.info('🌐 API Endpoints:');
     const endpoints = [
       { path: '/api/health', status: 'healthy', responseTime: 45, successRate: 100 },
       { path: '/api/health/detailed', status: 'healthy', responseTime: 67, successRate: 100 },
@@ -60,13 +60,13 @@ class MonitorSnapshot {
 
     endpoints.forEach(endpoint => {
       const statusIcon = this.getStatusIcon(endpoint.status);
-      console.log(
+      console.info(
         `   ${statusIcon} ${endpoint.path} - ${endpoint.responseTime}ms (${endpoint.successRate}% success)`
       );
     });
 
     // Recent Alerts (simulated)
-    console.log('\n🚨 Recent Alerts:');
+    console.info('\n🚨 Recent Alerts:');
     const alerts = [
       {
         severity: 'medium',
@@ -79,25 +79,25 @@ class MonitorSnapshot {
     if (alerts.length > 0) {
       alerts.forEach(alert => {
         const severityIcon = this.getSeverityIcon(alert.severity);
-        console.log(`   ${severityIcon} [${alert.time}] ${alert.message}`);
+        console.info(`   ${severityIcon} [${alert.time}] ${alert.message}`);
       });
     } else {
-      console.log('   ✅ No active alerts');
+      console.info('   ✅ No active alerts');
     }
 
     // Performance Trends
-    console.log('\n📈 Performance Trends:');
-    console.log(`   Average Response Time: 370ms`);
-    console.log(`   Error Rate: 0.5%`);
-    console.log(`   Health Score: 92/100`);
-    console.log(`   Trend: 📈 Improving`);
+    console.info('\n📈 Performance Trends:');
+    console.info(`   Average Response Time: 370ms`);
+    console.info(`   Error Rate: 0.5%`);
+    console.info(`   Health Score: 92/100`);
+    console.info(`   Trend: 📈 Improving`);
 
     // Footer
-    console.log(`\n📊 Monitoring active | Interval: 5000ms | Press Ctrl+C to stop`);
-    console.log('─'.repeat(50));
+    console.info(`\n📊 Monitoring active | Interval: 5000ms | Press Ctrl+C to stop`);
+    console.info('─'.repeat(50));
 
     // Show sample data updates
-    console.log('\n📡 Live Data Stream (Sample):');
+    console.info('\n📡 Live Data Stream (Sample):');
     this.showLiveDataSample();
   }
 
@@ -128,7 +128,7 @@ class MonitorSnapshot {
               : '\x1b[37m'; // White
       const reset = '\x1b[0m';
 
-      console.log(`   [${update.time}] ${typeColor}${update.type}${reset} ${update.message}`);
+      console.info(`   [${update.time}] ${typeColor}${update.type}${reset} ${update.message}`);
     });
   }
 
@@ -136,74 +136,74 @@ class MonitorSnapshot {
    * Display tree structure of monitoring components
    */
   displayMonitorTree(): void {
-    console.log('\n🌲 Fire22 Monitor Component Tree:');
-    console.log('');
-    console.log('fire22 monitor');
-    console.log('├── 💻 System Metrics');
-    console.log('│   ├── CPU Usage Monitoring');
-    console.log('│   ├── Memory Tracking');
-    console.log('│   ├── Disk I/O Statistics');
-    console.log('│   └── Network Activity');
-    console.log('├── 🌐 API Endpoints');
-    console.log('│   ├── /api/health');
-    console.log('│   ├── /api/health/detailed');
-    console.log('│   ├── /api/manager/*');
-    console.log('│   ├── /api/admin/*');
-    console.log('│   ├── /api/customer/*');
-    console.log('│   └── /dashboard');
-    console.log('├── 📊 Performance Analysis');
-    console.log('│   ├── Response Time Tracking');
-    console.log('│   ├── Success Rate Calculation');
-    console.log('│   ├── Error Rate Monitoring');
-    console.log('│   └── Throughput Metrics');
-    console.log('├── 🚨 Alert System');
-    console.log('│   ├── CPU Threshold (80%)');
-    console.log('│   ├── Memory Threshold (85%)');
-    console.log('│   ├── Response Time Alerts (>2000ms)');
-    console.log('│   └── Error Rate Alerts (>5%)');
-    console.log('└── 📈 Reporting');
-    console.log('    ├── Real-time Dashboard');
-    console.log('    ├── Historical Trends');
-    console.log('    ├── Export to JSON');
-    console.log('    └── Performance Reports');
+    console.info('\n🌲 Fire22 Monitor Component Tree:');
+    console.info('');
+    console.info('fire22 monitor');
+    console.info('├── 💻 System Metrics');
+    console.info('│   ├── CPU Usage Monitoring');
+    console.info('│   ├── Memory Tracking');
+    console.info('│   ├── Disk I/O Statistics');
+    console.info('│   └── Network Activity');
+    console.info('├── 🌐 API Endpoints');
+    console.info('│   ├── /api/health');
+    console.info('│   ├── /api/health/detailed');
+    console.info('│   ├── /api/manager/*');
+    console.info('│   ├── /api/admin/*');
+    console.info('│   ├── /api/customer/*');
+    console.info('│   └── /dashboard');
+    console.info('├── 📊 Performance Analysis');
+    console.info('│   ├── Response Time Tracking');
+    console.info('│   ├── Success Rate Calculation');
+    console.info('│   ├── Error Rate Monitoring');
+    console.info('│   └── Throughput Metrics');
+    console.info('├── 🚨 Alert System');
+    console.info('│   ├── CPU Threshold (80%)');
+    console.info('│   ├── Memory Threshold (85%)');
+    console.info('│   ├── Response Time Alerts (>2000ms)');
+    console.info('│   └── Error Rate Alerts (>5%)');
+    console.info('└── 📈 Reporting');
+    console.info('    ├── Real-time Dashboard');
+    console.info('    ├── Historical Trends');
+    console.info('    ├── Export to JSON');
+    console.info('    └── Performance Reports');
   }
 
   /**
    * Show monitoring capabilities
    */
   displayCapabilities(): void {
-    console.log('\n🎯 Fire22 Monitor Capabilities:\n');
+    console.info('\n🎯 Fire22 Monitor Capabilities:\n');
 
-    console.log('📊 Real-Time Metrics:');
-    console.log('   • CPU usage and load tracking');
-    console.log('   • Memory usage and heap analysis');
-    console.log('   • API endpoint response times');
-    console.log('   • Success/error rate calculation');
-    console.log('   • Network throughput monitoring\n');
+    console.info('📊 Real-Time Metrics:');
+    console.info('   • CPU usage and load tracking');
+    console.info('   • Memory usage and heap analysis');
+    console.info('   • API endpoint response times');
+    console.info('   • Success/error rate calculation');
+    console.info('   • Network throughput monitoring\n');
 
-    console.log('🚨 Intelligent Alerting:');
-    console.log('   • Configurable thresholds');
-    console.log('   • Severity-based alerts (low/medium/high/critical)');
-    console.log('   • Automatic alert correlation');
-    console.log('   • Historical alert tracking\n');
+    console.info('🚨 Intelligent Alerting:');
+    console.info('   • Configurable thresholds');
+    console.info('   • Severity-based alerts (low/medium/high/critical)');
+    console.info('   • Automatic alert correlation');
+    console.info('   • Historical alert tracking\n');
 
-    console.log('📈 Trend Analysis:');
-    console.log('   • Performance trend detection');
-    console.log('   • Health score calculation');
-    console.log('   • Predictive alerts');
-    console.log('   • Resource usage forecasting\n');
+    console.info('📈 Trend Analysis:');
+    console.info('   • Performance trend detection');
+    console.info('   • Health score calculation');
+    console.info('   • Predictive alerts');
+    console.info('   • Resource usage forecasting\n');
 
-    console.log('💾 Data Management:');
-    console.log('   • Automatic data export');
-    console.log('   • JSON report generation');
-    console.log('   • Historical data retention');
-    console.log('   • Performance benchmarking\n');
+    console.info('💾 Data Management:');
+    console.info('   • Automatic data export');
+    console.info('   • JSON report generation');
+    console.info('   • Historical data retention');
+    console.info('   • Performance benchmarking\n');
 
-    console.log('🔧 Configuration Options:');
-    console.log('   • Customizable monitoring interval');
-    console.log('   • API endpoint selection');
-    console.log('   • Alert threshold configuration');
-    console.log('   • Duration-based monitoring');
+    console.info('🔧 Configuration Options:');
+    console.info('   • Customizable monitoring interval');
+    console.info('   • API endpoint selection');
+    console.info('   • Alert threshold configuration');
+    console.info('   • Duration-based monitoring');
   }
 
   private getHealthIndicator(value: number, threshold: number): string {
@@ -254,7 +254,7 @@ async function main() {
   } else if (args.includes('--capabilities')) {
     snapshot.displayCapabilities();
   } else if (args.includes('--help')) {
-    console.log(`
+    console.info(`
 📊 Fire22 Monitor Snapshot
 
 This shows what the real-time monitor displays when running.

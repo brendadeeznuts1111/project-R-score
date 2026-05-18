@@ -7,12 +7,12 @@ import { initializeScopeTimezone, getActiveTimezoneConfig } from './scripts/tool
 // Initialize timezone system with canonical validation
 const timezoneConfig = initializeScopeTimezone();
 
-console.log(`🕒 Timezone System Initialized (v3.7 Canonical):`);
-console.log(`   Scope: ${timezoneConfig.scopeTimezone}`);
-console.log(`   Timezone: ${timezoneConfig.displayName}`);
-console.log(`   Offset: ${timezoneConfig.standardOffset}`);
-console.log(`   Platform: ${process.platform}`);
-console.log(`   v37 Baseline: ${timezoneConfig.v37Baseline}`);
+console.info(`🕒 Timezone System Initialized (v3.7 Canonical):`);
+console.info(`   Scope: ${timezoneConfig.scopeTimezone}`);
+console.info(`   Timezone: ${timezoneConfig.displayName}`);
+console.info(`   Offset: ${timezoneConfig.standardOffset}`);
+console.info(`   Platform: ${process.platform}`);
+console.info(`   v37 Baseline: ${timezoneConfig.v37Baseline}`);
 
 const server = Bun.serve({
   port: 8081,
@@ -145,7 +145,7 @@ const server = Bun.serve({
   }
 });
 
-console.log(`
+console.info(`
 🕒 Canonical Timezone-Aware Dashboard Server v3.7
 ================================================
 
@@ -182,13 +182,13 @@ Press Ctrl+C to stop
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down canonical timezone-aware dashboard server...');
+  console.info('\n🛑 Shutting down canonical timezone-aware dashboard server...');
   server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n🛑 Shutting down canonical timezone-aware dashboard server...');
+  console.info('\n🛑 Shutting down canonical timezone-aware dashboard server...');
   server.stop();
   process.exit(0);
 });

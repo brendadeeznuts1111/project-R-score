@@ -17,12 +17,12 @@ secretsCommand
     const scope = platform === 'win32' ? 'ENTERPRISE' : 'USER';
     const service = `windsurf-r2-empire-${scope}-${options.team}`;
     
-    console.log(`🔐 Listing Scoped Secrets: ${service} (${platform})`);
+    console.info(`🔐 Listing Scoped Secrets: ${service} (${platform})`);
     // Note: bun.secrets doesn't list all, but we can check essential ones
     const keys = ['R2_BUCKET', 'DUOPLUS_API_KEY'];
     for (const name of keys) {
       const val = await secrets.get({ service, name });
-      console.log(`  ${name}: ${val ? '✅ Stored' : '⚠️ Missing'}`);
+      console.info(`  ${name}: ${val ? '✅ Stored' : '⚠️ Missing'}`);
     }
   });
 
@@ -44,12 +44,12 @@ secretsCommand
     }
 
     if (!secretValue) {
-      console.log('❌ No value provided.');
+      console.info('❌ No value provided.');
       return;
     }
 
     await secrets.set({ service, name, value: secretValue });
-    console.log(`✅ Set ${name} for ${options.team} (${scope} scope)`);
+    console.info(`✅ Set ${name} for ${options.team} (${scope} scope)`);
   });
 
 secretsCommand
@@ -64,5 +64,5 @@ secretsCommand
     const service = `windsurf-r2-empire-${scope}-${options.team}`;
     
     const val = await secrets.get({ service, name });
-    console.log(`${name}: ${val || '⚠️ Not found'}`);
+    console.info(`${name}: ${val || '⚠️ Not found'}`);
   });

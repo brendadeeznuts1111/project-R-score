@@ -7,7 +7,7 @@ import { Logger } from "../utils/logger";
 import { FEATURE_FLAGS } from "../constants";
 
 async function performMaintenance() {
-  console.log("Starting System Health Check...");
+  console.info("Starting System Health Check...");
   
   const tasks = [
     { name: "Verifying Environment", duration: 1000 },
@@ -23,10 +23,10 @@ async function performMaintenance() {
     process.stdout.write("DONE\n");
   }
 
-  console.log("\n--- Health Report ---");
-  console.log(`Zero-Trust: ${FEATURE_FLAGS.FEATURES.ZERO_TRUST ? "ENABLED" : "DISABLED"}`);
-  console.log(`Interactive PTY: ENABLED`);
-  console.log("System Status: OPTIMAL");
+  console.info("\n--- Health Report ---");
+  console.info(`Zero-Trust: ${FEATURE_FLAGS.FEATURES.ZERO_TRUST ? "ENABLED" : "DISABLED"}`);
+  console.info(`Interactive PTY: ENABLED`);
+  console.info("System Status: OPTIMAL");
 }
 
 performMaintenance();

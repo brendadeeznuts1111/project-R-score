@@ -31,7 +31,7 @@ class BunFeaturesDemo {
    * Generate test data of various sizes for performance testing
    */
   private generateTestData(): void {
-    console.log('🔧 Generating test data...');
+    console.info('🔧 Generating test data...');
 
     // Small data (1KB)
     this.testData.push('A'.repeat(1024));
@@ -45,39 +45,39 @@ class BunFeaturesDemo {
     // Extra large data (10MB)
     this.testData.push('D'.repeat(1024 * 1024 * 10));
 
-    console.log(`✅ Generated ${this.testData.length} test data sets`);
+    console.info(`✅ Generated ${this.testData.length} test data sets`);
   }
 
   /**
    * Demo 1: Custom User-Agent Flag
    */
   async demoCustomUserAgent(): Promise<void> {
-    console.log('\n🎯 Demo 1: Custom User-Agent Flag');
-    console.log('!==!==!==!==!==!==!==');
+    console.info('\n🎯 Demo 1: Custom User-Agent Flag');
+    console.info('!==!==!==!==!==!==!==');
 
     try {
       // Test with default User-Agent
-      console.log('📡 Testing with default User-Agent...');
+      console.info('📡 Testing with default User-Agent...');
       const defaultResponse = await fetch('https://httpbin.org/user-agent');
       const defaultData = await defaultResponse.json();
-      console.log(`   Default User-Agent: ${defaultData['user-agent']}`);
+      console.info(`   Default User-Agent: ${defaultData['user-agent']}`);
 
       // Test with custom User-Agent (if set via --user-agent flag)
-      console.log('📡 Testing with custom User-Agent...');
+      console.info('📡 Testing with custom User-Agent...');
       const customResponse = await fetch('https://httpbin.org/user-agent');
       const customData = await customResponse.json();
-      console.log(`   Current User-Agent: ${customData['user-agent']}`);
+      console.info(`   Current User-Agent: ${customData['user-agent']}`);
 
       // Check if custom User-Agent is being used
       if (customData['user-agent'].includes('Fire22')) {
-        console.log('✅ Custom User-Agent detected!');
-        console.log(
+        console.info('✅ Custom User-Agent detected!');
+        console.info(
           '   This means you ran: bun --user-agent "Fire22-*" run scripts/bun-features-demo.ts'
         );
       } else {
-        console.log('ℹ️  Using default User-Agent');
-        console.log('   To test custom User-Agent, run:');
-        console.log('   bun --user-agent "Fire22-Demo/3.0.8" run scripts/bun-features-demo.ts');
+        console.info('ℹ️  Using default User-Agent');
+        console.info('   To test custom User-Agent, run:');
+        console.info('   bun --user-agent "Fire22-Demo/3.0.8" run scripts/bun-features-demo.ts');
       }
     } catch (error) {
       console.error('❌ Error testing User-Agent:', error);
@@ -88,15 +88,15 @@ class BunFeaturesDemo {
    * Demo 2: PostMessage Performance Testing
    */
   async demoPostMessagePerformance(): Promise<void> {
-    console.log('\n⚡ Demo 2: PostMessage Performance Testing');
-    console.log('!==!==!==!==!==!==!==!===');
+    console.info('\n⚡ Demo 2: PostMessage Performance Testing');
+    console.info('!==!==!==!==!==!==!==!===');
 
     // Test different data sizes
     for (let i = 0; i < this.testData.length; i++) {
       const data = this.testData[i];
       const dataSize = this.formatBytes(data.length);
 
-      console.log(`\n📊 Testing data size: ${dataSize}`);
+      console.info(`\n📊 Testing data size: ${dataSize}`);
 
       // Test standard postMessage (simulated)
       const standardTime = await this.measureStandardPostMessage(data);
@@ -114,9 +114,9 @@ class BunFeaturesDemo {
         dataSize: dataSize,
       });
 
-      console.log(`   Standard: ${standardTime.toFixed(2)}ms`);
-      console.log(`   Optimized: ${optimizedTime.toFixed(2)}ms`);
-      console.log(`   Improvement: ${improvement.toFixed(1)}x faster`);
+      console.info(`   Standard: ${standardTime.toFixed(2)}ms`);
+      console.info(`   Optimized: ${optimizedTime.toFixed(2)}ms`);
+      console.info(`   Improvement: ${improvement.toFixed(1)}x faster`);
     }
   }
 
@@ -163,111 +163,111 @@ class BunFeaturesDemo {
    * Demo 3: Real-world Performance Comparison
    */
   async demoRealWorldPerformance(): Promise<void> {
-    console.log('\n🌍 Demo 3: Real-world Performance Comparison');
-    console.log('!==!==!==!==!==!==!==!====');
+    console.info('\n🌍 Demo 3: Real-world Performance Comparison');
+    console.info('!==!==!==!==!==!==!==!====');
 
-    console.log('📊 Bun vs npm Performance Comparison:');
-    console.log('   bun run: ~6ms overhead');
-    console.log('   npm run: ~170ms overhead');
-    console.log('   Bun is ~28x faster than npm');
+    console.info('📊 Bun vs npm Performance Comparison:');
+    console.info('   bun run: ~6ms overhead');
+    console.info('   npm run: ~170ms overhead');
+    console.info('   Bun is ~28x faster than npm');
 
-    console.log('\n📊 PostMessage Performance (Bun v1.2.21):');
-    console.log('   Small data (1KB): ~0.001ms');
-    console.log('   Medium data (100KB): ~0.01ms');
-    console.log('   Large data (1MB): ~0.1ms');
-    console.log('   Extra large data (10MB): ~1ms');
+    console.info('\n📊 PostMessage Performance (Bun v1.2.21):');
+    console.info('   Small data (1KB): ~0.001ms');
+    console.info('   Medium data (100KB): ~0.01ms');
+    console.info('   Large data (1MB): ~0.1ms');
+    console.info('   Extra large data (10MB): ~1ms');
 
-    console.log('\n📊 Traditional PostMessage (before optimization):');
-    console.log('   Small data (1KB): ~0.5ms');
-    console.log('   Medium data (100KB): ~5ms');
-    console.log('   Large data (1MB): ~50ms');
-    console.log('   Extra large data (10MB): ~500ms');
+    console.info('\n📊 Traditional PostMessage (before optimization):');
+    console.info('   Small data (1KB): ~0.5ms');
+    console.info('   Medium data (100KB): ~5ms');
+    console.info('   Large data (1MB): ~50ms');
+    console.info('   Extra large data (10MB): ~500ms');
   }
 
   /**
    * Demo 4: Bunx Package Version Control
    */
   async demoBunxPackageControl(): Promise<void> {
-    console.log('\n📦 Demo 4: Bunx Package Version Control');
-    console.log('!==!==!==!==!==!==!==!===');
+    console.info('\n📦 Demo 4: Bunx Package Version Control');
+    console.info('!==!==!==!==!==!==!==!===');
 
-    console.log('🎯 Package Version Control Examples:');
-    console.log('   # Execute specific package version');
-    console.log('   bunx --package create-react-app@5.0.1 create my-app');
-    console.log('');
-    console.log('   # Test different package versions');
-    console.log('   bunx --package typescript@4.9.5 --version');
-    console.log('   bunx --package typescript@5.0.0 --version');
-    console.log('');
-    console.log('   # Use exact package version for tools');
-    console.log('   bunx --package prettier@2.8.8 --check src/**/*.ts');
-    console.log('   bunx --package eslint@8.40.0 --ext .ts src/');
-    console.log('');
-    console.log('   # Version-specific package execution');
-    console.log('   bunx --package vite@4.3.9 create my-vite-app');
-    console.log('   bunx --package @vitejs/plugin-react@4.0.0 --help');
+    console.info('🎯 Package Version Control Examples:');
+    console.info('   # Execute specific package version');
+    console.info('   bunx --package create-react-app@5.0.1 create my-app');
+    console.info('');
+    console.info('   # Test different package versions');
+    console.info('   bunx --package typescript@4.9.5 --version');
+    console.info('   bunx --package typescript@5.0.0 --version');
+    console.info('');
+    console.info('   # Use exact package version for tools');
+    console.info('   bunx --package prettier@2.8.8 --check src/**/*.ts');
+    console.info('   bunx --package eslint@8.40.0 --ext .ts src/');
+    console.info('');
+    console.info('   # Version-specific package execution');
+    console.info('   bunx --package vite@4.3.9 create my-vite-app');
+    console.info('   bunx --package @vitejs/plugin-react@4.0.0 --help');
 
-    console.log('\n💡 Package Version Control Benefits:');
-    console.log('   • Exact version execution: Run specific package versions');
-    console.log('   • Version testing: Compare different package versions');
-    console.log('   • Dependency management: Control package versions in CI/CD');
-    console.log('   • Tool consistency: Ensure consistent tool versions across environments');
-    console.log('   • Reproducible builds: Lock package versions for stability');
+    console.info('\n💡 Package Version Control Benefits:');
+    console.info('   • Exact version execution: Run specific package versions');
+    console.info('   • Version testing: Compare different package versions');
+    console.info('   • Dependency management: Control package versions in CI/CD');
+    console.info('   • Tool consistency: Ensure consistent tool versions across environments');
+    console.info('   • Reproducible builds: Lock package versions for stability');
   }
 
   /**
    * Demo 5: Fire22 Dashboard Integration Examples
    */
   async demoFire22Integration(): Promise<void> {
-    console.log('\n🔧 Demo 5: Fire22 Dashboard Integration Examples');
-    console.log('!==!==!==!==!==!==!==!==!===');
+    console.info('\n🔧 Demo 5: Fire22 Dashboard Integration Examples');
+    console.info('!==!==!==!==!==!==!==!==!===');
 
-    console.log('🎯 Custom User-Agent Examples:');
-    console.log('   # Development');
-    console.log('   bun --user-agent "Fire22-Dev/3.0.8" run dev');
-    console.log('');
-    console.log('   # Testing');
-    console.log('   bun --user-agent "Fire22-Test/3.0.8" run test:all');
-    console.log('');
-    console.log('   # Production');
-    console.log('   bun --user-agent "Fire22-Prod/3.0.8" run build');
-    console.log('');
-    console.log('   # Live Casino Operations');
-    console.log('   bun --user-agent "Fire22-Casino/3.0.8" run casino:demo');
+    console.info('🎯 Custom User-Agent Examples:');
+    console.info('   # Development');
+    console.info('   bun --user-agent "Fire22-Dev/3.0.8" run dev');
+    console.info('');
+    console.info('   # Testing');
+    console.info('   bun --user-agent "Fire22-Test/3.0.8" run test:all');
+    console.info('');
+    console.info('   # Production');
+    console.info('   bun --user-agent "Fire22-Prod/3.0.8" run build');
+    console.info('');
+    console.info('   # Live Casino Operations');
+    console.info('   bun --user-agent "Fire22-Casino/3.0.8" run casino:demo');
 
-    console.log('\n⚡ PostMessage Optimization Benefits:');
-    console.log('   • Real-time dashboard updates: 500x faster');
-    console.log('   • Live casino data: Instant game state updates');
-    console.log('   • Permissions matrix: Faster data transmission');
-    console.log('   • Security alerts: Instant notification delivery');
-    console.log('   • SSE updates: Faster message delivery');
+    console.info('\n⚡ PostMessage Optimization Benefits:');
+    console.info('   • Real-time dashboard updates: 500x faster');
+    console.info('   • Live casino data: Instant game state updates');
+    console.info('   • Permissions matrix: Faster data transmission');
+    console.info('   • Security alerts: Instant notification delivery');
+    console.info('   • SSE updates: Faster message delivery');
   }
 
   /**
    * Generate performance report
    */
   private generateReport(): void {
-    console.log('\n📊 Performance Report');
-    console.log('!==!==!==!==');
+    console.info('\n📊 Performance Report');
+    console.info('!==!==!==!==');
 
-    console.log('\n📈 PostMessage Performance Metrics:');
+    console.info('\n📈 PostMessage Performance Metrics:');
     this.metrics.forEach(metric => {
-      console.log(`   ${metric.operation}:`);
-      console.log(`     Duration: ${metric.duration.toFixed(3)}ms`);
-      console.log(`     Improvement: ${metric.improvement.toFixed(1)}x faster`);
-      console.log(`     Data Size: ${metric.dataSize}`);
+      console.info(`   ${metric.operation}:`);
+      console.info(`     Duration: ${metric.duration.toFixed(3)}ms`);
+      console.info(`     Improvement: ${metric.improvement.toFixed(1)}x faster`);
+      console.info(`     Data Size: ${metric.dataSize}`);
     });
 
     const avgImprovement =
       this.metrics.reduce((sum, m) => sum + m.improvement, 0) / this.metrics.length;
-    console.log(`\n🎯 Average Improvement: ${avgImprovement.toFixed(1)}x faster`);
+    console.info(`\n🎯 Average Improvement: ${avgImprovement.toFixed(1)}x faster`);
 
     if (avgImprovement > 100) {
-      console.log("🚀 Excellent! You're experiencing significant performance improvements!");
+      console.info("🚀 Excellent! You're experiencing significant performance improvements!");
     } else if (avgImprovement > 10) {
-      console.log('✅ Good performance improvements detected!');
+      console.info('✅ Good performance improvements detected!');
     } else {
-      console.log('ℹ️  Standard performance levels detected.');
+      console.info('ℹ️  Standard performance levels detected.');
     }
   }
 
@@ -288,12 +288,12 @@ class BunFeaturesDemo {
    * Run all demos
    */
   async runAllDemos(): Promise<void> {
-    console.log('🚀 Bun Features & Optimizations Demo');
-    console.log('!==!==!==!==!==!==!==');
-    console.log('Bun Version:', process.versions.bun || 'Unknown');
-    console.log('Node Version:', process.versions.node || 'Unknown');
-    console.log('Platform:', process.platform);
-    console.log('Architecture:', process.arch);
+    console.info('🚀 Bun Features & Optimizations Demo');
+    console.info('!==!==!==!==!==!==!==');
+    console.info('Bun Version:', process.versions.bun || 'Unknown');
+    console.info('Node Version:', process.versions.node || 'Unknown');
+    console.info('Platform:', process.platform);
+    console.info('Architecture:', process.arch);
 
     try {
       await this.demoCustomUserAgent();
@@ -304,15 +304,15 @@ class BunFeaturesDemo {
 
       this.generateReport();
 
-      console.log('\n🎉 Demo completed successfully!');
-      console.log('\n💡 Next Steps:');
-      console.log(
+      console.info('\n🎉 Demo completed successfully!');
+      console.info('\n💡 Next Steps:');
+      console.info(
         '   1. Test with custom User-Agent: bun --user-agent "Fire22-Demo/3.0.8" run scripts/bun-features-demo.ts'
       );
-      console.log('   2. Integrate custom User-Agent in your Fire22 API calls');
-      console.log('   3. Optimize your worker communication with postMessage');
-      console.log('   4. Test package version control: bunx --package typescript@5.0.0 --version');
-      console.log('   5. Monitor performance improvements in your dashboard');
+      console.info('   2. Integrate custom User-Agent in your Fire22 API calls');
+      console.info('   3. Optimize your worker communication with postMessage');
+      console.info('   4. Test package version control: bunx --package typescript@5.0.0 --version');
+      console.info('   5. Monitor performance improvements in your dashboard');
     } catch (error) {
       console.error('❌ Demo failed:', error);
       process.exit(1);

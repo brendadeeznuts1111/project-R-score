@@ -5,23 +5,23 @@ import { writeFileSync, mkdirSync, existsSync } from "fs";
 import { join } from "path";
 
 async function demonstrateArchiveFeatures() {
-  console.log('📦 Bun Archive Feature Showcase');
-  console.log('===============================\n');
+  console.info('📦 Bun Archive Feature Showcase');
+  console.info('===============================\n');
 
-  console.log('📊 Feature Overview:');
-  console.log('====================');
-  console.log('• Archive creation from multiple data types');
-  console.log('• Built-in gzip compression with configurable levels');
-  console.log('• Full directory structure support');
-  console.log('• Path safety and normalization');
-  console.log('• Memory-safe garbage collection');
-  console.log('• File listing with glob pattern filtering');
-  console.log('• Binary data preservation');
-  console.log('• Error handling and validation\n');
+  console.info('📊 Feature Overview:');
+  console.info('====================');
+  console.info('• Archive creation from multiple data types');
+  console.info('• Built-in gzip compression with configurable levels');
+  console.info('• Full directory structure support');
+  console.info('• Path safety and normalization');
+  console.info('• Memory-safe garbage collection');
+  console.info('• File listing with glob pattern filtering');
+  console.info('• Binary data preservation');
+  console.info('• Error handling and validation\n');
 
   // Demo 1: Archive Creation from Different Data Types
-  console.log('✅ Demo 1: Archive Creation from Multiple Data Types');
-  console.log('==================================================');
+  console.info('✅ Demo 1: Archive Creation from Multiple Data Types');
+  console.info('==================================================');
 
   try {
     // String content
@@ -29,14 +29,14 @@ async function demonstrateArchiveFeatures() {
       "readme.txt": "This is a README file",
       "config.json": JSON.stringify({ name: "demo", version: "1.0.0" }),
     });
-    console.log('   ✅ Created archive from string content');
+    console.info('   ✅ Created archive from string content');
 
     // Blob content
     const blobArchive = new Bun.Archive({
       "blob1.txt": new Blob(["Hello from Blob 1"]),
       "blob2.txt": new Blob(["Hello from Blob 2"]),
     });
-    console.log('   ✅ Created archive from Blob content');
+    console.info('   ✅ Created archive from Blob content');
 
     // Binary content
     const encoder = new TextEncoder();
@@ -44,7 +44,7 @@ async function demonstrateArchiveFeatures() {
       "bytes1.txt": encoder.encode("Hello from Uint8Array"),
       "buffer1.txt": encoder.encode("Hello from ArrayBuffer").buffer,
     });
-    console.log('   ✅ Created archive from binary content');
+    console.info('   ✅ Created archive from binary content');
 
     // Mixed content
     const mixedArchive = new Bun.Archive({
@@ -52,20 +52,20 @@ async function demonstrateArchiveFeatures() {
       "blob.txt": new Blob(["Blob content"]),
       "binary.txt": encoder.encode("Binary content"),
     });
-    console.log('   ✅ Created archive from mixed content types');
+    console.info('   ✅ Created archive from mixed content types');
 
   } catch (error) {
-    console.log(`   ❌ Error creating archives: ${error.message}`);
+    console.info(`   ❌ Error creating archives: ${error.message}`);
   }
 
   // Demo 2: Nested Directory Structure
-  console.log('\n✅ Demo 2: Nested Directory Structure');
-  console.log('=====================================');
+  console.info('\n✅ Demo 2: Nested Directory Structure');
+  console.info('=====================================');
 
   try {
     const nestedArchive = new Bun.Archive({
       "root.txt": "Root level file",
-      "src/index.js": "console.log('Hello from index.js');",
+      "src/index.js": "console.info('Hello from index.js');",
       "src/utils/helper.js": "export function helper() { return 'helper'; }",
       "src/components/Button.jsx": "export default function Button() { return <button>Click</button>; }",
       "src/styles/main.css": "body { margin: 0; padding: 0; }",
@@ -76,29 +76,29 @@ async function demonstrateArchiveFeatures() {
       "tests/integration.test.js": "test('integration test', () => { expect(true).toBe(true); });",
     });
 
-    console.log('   ✅ Created archive with nested directory structure');
-    console.log('   📁 Directory structure:');
-    console.log('      root.txt');
-    console.log('      src/');
-    console.log('      ├── index.js');
-    console.log('      ├── utils/helper.js');
-    console.log('      ├── components/Button.jsx');
-    console.log('      └── styles/main.css');
-    console.log('      public/index.html');
-    console.log('      docs/');
-    console.log('      ├── README.md');
-    console.log('      └── api/reference.md');
-    console.log('      tests/');
-    console.log('      ├── unit.test.js');
-    console.log('      └── integration.test.js');
+    console.info('   ✅ Created archive with nested directory structure');
+    console.info('   📁 Directory structure:');
+    console.info('      root.txt');
+    console.info('      src/');
+    console.info('      ├── index.js');
+    console.info('      ├── utils/helper.js');
+    console.info('      ├── components/Button.jsx');
+    console.info('      └── styles/main.css');
+    console.info('      public/index.html');
+    console.info('      docs/');
+    console.info('      ├── README.md');
+    console.info('      └── api/reference.md');
+    console.info('      tests/');
+    console.info('      ├── unit.test.js');
+    console.info('      └── integration.test.js');
 
   } catch (error) {
-    console.log(`   ❌ Error creating nested archive: ${error.message}`);
+    console.info(`   ❌ Error creating nested archive: ${error.message}`);
   }
 
   // Demo 3: Compression Features
-  console.log('\n✅ Demo 3: Compression Features');
-  console.log('===============================');
+  console.info('\n✅ Demo 3: Compression Features');
+  console.info('===============================');
 
   try {
     // Create large repetitive content for compression testing
@@ -127,25 +127,25 @@ async function demonstrateArchiveFeatures() {
     const compressedBlob = await compressedArchive.blob();
     const highCompressionBlob = await highCompressionArchive.blob();
 
-    console.log(`   📊 Size comparison:`);
-    console.log(`      Uncompressed: ${(uncompressedBlob.size / 1024).toFixed(2)} KB`);
-    console.log(`      Compressed (default): ${(compressedBlob.size / 1024).toFixed(2)} KB`);
-    console.log(`      Compressed (level 12): ${(highCompressionBlob.size / 1024).toFixed(2)} KB`);
+    console.info(`   📊 Size comparison:`);
+    console.info(`      Uncompressed: ${(uncompressedBlob.size / 1024).toFixed(2)} KB`);
+    console.info(`      Compressed (default): ${(compressedBlob.size / 1024).toFixed(2)} KB`);
+    console.info(`      Compressed (level 12): ${(highCompressionBlob.size / 1024).toFixed(2)} KB`);
 
     const compressionRatio = ((1 - compressedBlob.size / uncompressedBlob.size) * 100).toFixed(1);
     const highCompressionRatio = ((1 - highCompressionBlob.size / uncompressedBlob.size) * 100).toFixed(1);
 
-    console.log(`   🗜️ Compression ratios:`);
-    console.log(`      Default compression: ${compressionRatio}% size reduction`);
-    console.log(`      High compression: ${highCompressionRatio}% size reduction`);
+    console.info(`   🗜️ Compression ratios:`);
+    console.info(`      Default compression: ${compressionRatio}% size reduction`);
+    console.info(`      High compression: ${highCompressionRatio}% size reduction`);
 
   } catch (error) {
-    console.log(`   ❌ Error testing compression: ${error.message}`);
+    console.info(`   ❌ Error testing compression: ${error.message}`);
   }
 
   // Demo 4: Archive Export Methods
-  console.log('\n✅ Demo 4: Archive Export Methods');
-  console.log('===================================');
+  console.info('\n✅ Demo 4: Archive Export Methods');
+  console.info('===================================');
 
   try {
     const exportArchive = new Bun.Archive({
@@ -155,16 +155,16 @@ async function demonstrateArchiveFeatures() {
 
     // Export as Blob
     const blob = await exportArchive.blob();
-    console.log(`   📦 Exported as Blob: ${blob.size} bytes`);
+    console.info(`   📦 Exported as Blob: ${blob.size} bytes`);
 
     // Export as Uint8Array
     const bytes = await exportArchive.bytes();
-    console.log(`   📦 Exported as Uint8Array: ${bytes.length} bytes`);
+    console.info(`   📦 Exported as Uint8Array: ${bytes.length} bytes`);
 
     // Verify blob and bytes are equivalent
     const blobBytes = new Uint8Array(await blob.arrayBuffer());
     const sizesMatch = blobBytes.length === bytes.length;
-    console.log(`   ✅ Blob and Bytes content match: ${sizesMatch ? 'Yes' : 'No'}`);
+    console.info(`   ✅ Blob and Bytes content match: ${sizesMatch ? 'Yes' : 'No'}`);
 
     // Export to file using Archive.write
     const tempDir = join(process.cwd(), "temp-archive-demo");
@@ -174,23 +174,23 @@ async function demonstrateArchiveFeatures() {
 
     const archivePath = join(tempDir, "demo-archive.tar");
     await Bun.Archive.write(archivePath, exportArchive);
-    console.log(`   📦 Exported to file: ${archivePath}`);
+    console.info(`   📦 Exported to file: ${archivePath}`);
 
     // Verify file was created
     const fileExists = existsSync(archivePath);
-    console.log(`   ✅ File export successful: ${fileExists ? 'Yes' : 'No'}`);
+    console.info(`   ✅ File export successful: ${fileExists ? 'Yes' : 'No'}`);
 
   } catch (error) {
-    console.log(`   ❌ Error testing export methods: ${error.message}`);
+    console.info(`   ❌ Error testing export methods: ${error.message}`);
   }
 
   // Demo 5: File Listing and Filtering
-  console.log('\n✅ Demo 5: File Listing and Filtering');
-  console.log('====================================');
+  console.info('\n✅ Demo 5: File Listing and Filtering');
+  console.info('====================================');
 
   try {
     const filteringArchive = new Bun.Archive({
-      "src/index.js": "console.log('index');",
+      "src/index.js": "console.info('index');",
       "src/utils/helper.js": "export function helper() {}",
       "src/components/Button.jsx": "export default Button() {}",
       "tests/unit.test.js": "test('unit', () => {});",
@@ -204,38 +204,38 @@ async function demonstrateArchiveFeatures() {
 
     // Get all files
     const allFiles = await filteringArchive.files();
-    console.log(`   📋 Total files: ${allFiles.size}`);
+    console.info(`   📋 Total files: ${allFiles.size}`);
 
     // Filter by extension
     const jsFiles = await filteringArchive.files("*.js");
-    console.log(`   📋 JavaScript files: ${jsFiles.size}`);
+    console.info(`   📋 JavaScript files: ${jsFiles.size}`);
 
     // Filter by directory
     const srcFiles = await filteringArchive.files("src/*");
-    console.log(`   📋 src/ directory files: ${srcFiles.size}`);
+    console.info(`   📋 src/ directory files: ${srcFiles.size}`);
 
     // Recursive pattern matching
     const allJsFiles = await filteringArchive.files("**/*.js");
-    console.log(`   📋 All JavaScript files (recursive): ${allJsFiles.size}`);
+    console.info(`   📋 All JavaScript files (recursive): ${allJsFiles.size}`);
 
     // Filter test files
     const testFiles = await filteringArchive.files("**/*.test.js");
-    console.log(`   📋 Test files: ${testFiles.size}`);
+    console.info(`   📋 Test files: ${testFiles.size}`);
 
     // Show file details
-    console.log(`   📁 File listing:`);
+    console.info(`   📁 File listing:`);
     for (const [path, file] of allFiles) {
       const size = (await file.text()).length;
-      console.log(`      ${path} (${size} chars)`);
+      console.info(`      ${path} (${size} chars)`);
     }
 
   } catch (error) {
-    console.log(`   ❌ Error testing file filtering: ${error.message}`);
+    console.info(`   ❌ Error testing file filtering: ${error.message}`);
   }
 
   // Demo 6: Binary Data Handling
-  console.log('\n✅ Demo 6: Binary Data Handling');
-  console.log('===============================');
+  console.info('\n✅ Demo 6: Binary Data Handling');
+  console.info('===============================');
 
   try {
     // Create various binary data types
@@ -253,7 +253,7 @@ async function demonstrateArchiveFeatures() {
       "mixed.txt": "Mixed text and binary: " + String.fromCharCode(...textData),
     });
 
-    console.log('   ✅ Created archive with various binary data types');
+    console.info('   ✅ Created archive with various binary data types');
 
     // Verify binary data preservation
     const files = await binaryArchive.files();
@@ -268,17 +268,17 @@ async function demonstrateArchiveFeatures() {
       extractedImage.every((byte, i) => byte === imageData[i]);
     const customMatches = extractedCustom.length === customData.byteLength;
 
-    console.log(`   ✅ Text data preserved: ${textMatches ? 'Yes' : 'No'}`);
-    console.log(`   ✅ Image data preserved: ${imageMatches ? 'Yes' : 'No'}`);
-    console.log(`   ✅ Custom data preserved: ${customMatches ? 'Yes' : 'No'}`);
+    console.info(`   ✅ Text data preserved: ${textMatches ? 'Yes' : 'No'}`);
+    console.info(`   ✅ Image data preserved: ${imageMatches ? 'Yes' : 'No'}`);
+    console.info(`   ✅ Custom data preserved: ${customMatches ? 'Yes' : 'No'}`);
 
   } catch (error) {
-    console.log(`   ❌ Error testing binary data: ${error.message}`);
+    console.info(`   ❌ Error testing binary data: ${error.message}`);
   }
 
   // Demo 7: Path Safety and Normalization
-  console.log('\n✅ Demo 7: Path Safety and Normalization');
-  console.log('========================================');
+  console.info('\n✅ Demo 7: Path Safety and Normalization');
+  console.info('========================================');
 
   try {
     const pathSafetyArchive = new Bun.Archive({
@@ -289,81 +289,81 @@ async function demonstrateArchiveFeatures() {
       "very/deep/nested/path/file.txt": "Deeply nested file",
     });
 
-    console.log('   ✅ Created archive with various path formats');
-    console.log('   🛡️ Path safety features:');
-    console.log('      - Normalizes redundant separators');
-    console.log('      - Resolves current directory references (.)');
-    console.log('      - Resolves parent directory references (..)');
-    console.log('      - Handles deeply nested paths');
-    console.log('      - Prevents path traversal attacks');
+    console.info('   ✅ Created archive with various path formats');
+    console.info('   🛡️ Path safety features:');
+    console.info('      - Normalizes redundant separators');
+    console.info('      - Resolves current directory references (.)');
+    console.info('      - Resolves parent directory references (..)');
+    console.info('      - Handles deeply nested paths');
+    console.info('      - Prevents path traversal attacks');
 
     // Demonstrate path normalization would occur during extraction
-    console.log('   📁 Expected normalized paths:');
-    console.log('      normal.txt → normal.txt');
-    console.log('      dir//subdir///file.txt → dir/subdir/file.txt');
-    console.log('      dir/./file.txt → dir/file.txt');
-    console.log('      dir/subdir/../file.txt → dir/file.txt');
-    console.log('      very/deep/nested/path/file.txt → very/deep/nested/path/file.txt');
+    console.info('   📁 Expected normalized paths:');
+    console.info('      normal.txt → normal.txt');
+    console.info('      dir//subdir///file.txt → dir/subdir/file.txt');
+    console.info('      dir/./file.txt → dir/file.txt');
+    console.info('      dir/subdir/../file.txt → dir/file.txt');
+    console.info('      very/deep/nested/path/file.txt → very/deep/nested/path/file.txt');
 
   } catch (error) {
-    console.log(`   ❌ Error testing path safety: ${error.message}`);
+    console.info(`   ❌ Error testing path safety: ${error.message}`);
   }
 
   // Demo 8: Error Handling and Validation
-  console.log('\n✅ Demo 8: Error Handling and Validation');
-  console.log('=======================================');
+  console.info('\n✅ Demo 8: Error Handling and Validation');
+  console.info('=======================================');
 
-  console.log('   🛡️ Input validation tests:');
+  console.info('   🛡️ Input validation tests:');
 
   // Test invalid compression levels
   try {
     new Bun.Archive({ "test.txt": "content" }, { compress: "gzip", level: 0 });
-    console.log('   ❌ Should have thrown for level 0');
+    console.info('   ❌ Should have thrown for level 0');
   } catch {
-    console.log('   ✅ Correctly rejects compression level 0');
+    console.info('   ✅ Correctly rejects compression level 0');
   }
 
   try {
     new Bun.Archive({ "test.txt": "content" }, { compress: "gzip", level: 13 });
-    console.log('   ❌ Should have thrown for level 13');
+    console.info('   ❌ Should have thrown for level 13');
   } catch {
-    console.log('   ✅ Correctly rejects compression level 13');
+    console.info('   ✅ Correctly rejects compression level 13');
   }
 
   // Test invalid input types
   try {
     // @ts-expect-error - Testing runtime behavior
     new Bun.Archive(123);
-    console.log('   ❌ Should have thrown for number input');
+    console.info('   ❌ Should have thrown for number input');
   } catch {
-    console.log('   ✅ Correctly rejects number input');
+    console.info('   ✅ Correctly rejects number input');
   }
 
   try {
     // @ts-expect-error - Testing runtime behavior
     new Bun.Archive(null);
-    console.log('   ❌ Should have thrown for null input');
+    console.info('   ❌ Should have thrown for null input');
   } catch {
-    console.log('   ✅ Correctly rejects null input');
+    console.info('   ✅ Correctly rejects null input');
   }
 
   // Test missing arguments
   try {
     // @ts-expect-error - Testing runtime behavior
     new Bun.Archive();
-    console.log('   ❌ Should have thrown for no arguments');
+    console.info('   ❌ Should have thrown for no arguments');
   } catch {
-    console.log('   ✅ Correctly requires constructor arguments');
+    console.info('   ✅ Correctly requires constructor arguments');
   }
 
-  console.log('   🛡️ Archive validation ensures data integrity and prevents runtime errors');
+  console.info('   🛡️ Archive validation ensures data integrity and prevents runtime errors');
 
   // Demo 9: Performance with Large Archives
-  console.log('\n✅ Demo 9: Performance with Large Archives');
-  console.log('==========================================');
+  console.info('\n✅ Demo 9: Performance with Large Archives');
+  console.info('==========================================');
 
   try {
-    console.log('   📊 Creating large archive for performance testing...');
+    console.info('   📊 Creating large archive for performance testing...');
 
     // Create archive with many files
     const largeArchiveEntries: Record<string, string> = {};
@@ -378,21 +378,21 @@ async function demonstrateArchiveFeatures() {
     const largeArchive = new Bun.Archive(largeArchiveEntries);
     const creationTime = Date.now() - startTime;
 
-    console.log(`   ✅ Created archive with ${fileCount} files in ${creationTime}ms`);
+    console.info(`   ✅ Created archive with ${fileCount} files in ${creationTime}ms`);
 
     // Test blob export performance
     const blobStartTime = Date.now();
     const largeBlob = await largeArchive.blob();
     const blobTime = Date.now() - blobStartTime;
 
-    console.log(`   ✅ Exported to blob (${(largeBlob.size / 1024).toFixed(2)} KB) in ${blobTime}ms`);
+    console.info(`   ✅ Exported to blob (${(largeBlob.size / 1024).toFixed(2)} KB) in ${blobTime}ms`);
 
     // Test file listing performance
     const listStartTime = Date.now();
     const files = await largeArchive.files();
     const listTime = Date.now() - listStartTime;
 
-    console.log(`   ✅ Listed ${files.size} files in ${listTime}ms`);
+    console.info(`   ✅ Listed ${files.size} files in ${listTime}ms`);
 
     // Test compression performance
     const compressStartTime = Date.now();
@@ -401,80 +401,80 @@ async function demonstrateArchiveFeatures() {
     const compressTime = Date.now() - compressStartTime;
 
     const compressionRatio = ((1 - compressedBlob.size / largeBlob.size) * 100).toFixed(1);
-    console.log(`   ✅ Compressed archive in ${compressTime}ms (${compressionRatio}% reduction)`);
+    console.info(`   ✅ Compressed archive in ${compressTime}ms (${compressionRatio}% reduction)`);
 
-    console.log('   📈 Performance metrics demonstrate efficient handling of large archives');
+    console.info('   📈 Performance metrics demonstrate efficient handling of large archives');
 
   } catch (error) {
-    console.log(`   ❌ Error in performance test: ${error.message}`);
+    console.info(`   ❌ Error in performance test: ${error.message}`);
   }
 
   // Demo 10: Real-World Use Cases
-  console.log('\n✅ Demo 10: Real-World Use Cases');
-  console.log('===============================');
+  console.info('\n✅ Demo 10: Real-World Use Cases');
+  console.info('===============================');
 
-  console.log('   🎯 Common applications for Bun.Archive:');
-  console.log('');
-  console.log('   1. 📦 Build Systems');
-  console.log('      - Package distribution files');
-  console.log('      - Create release archives');
-  console.log('      - Bundle static assets');
-  console.log('');
-  console.log('   2. 💾 Backup Systems');
-  console.log('      - Compress backup data');
-  console.log('      - Archive configuration files');
-  console.log('      - Store snapshots efficiently');
-  console.log('');
-  console.log('   3. 🔄 Data Transfer');
-  console.log('      - Package data for API transfer');
-  console.log('      - Compress network payloads');
-  console.log('      - Archive database exports');
-  console.log('');
-  console.log('   4. 🛠️ Development Tools');
-  console.log('      - Create project templates');
-  console.log('      - Package code examples');
-  console.log('      - Archive test fixtures');
-  console.log('');
-  console.log('   5. 📁 File Management');
-  console.log('      - Bundle related files');
-  console.log('      - Create project archives');
-  console.log('      - Organize assets efficiently');
+  console.info('   🎯 Common applications for Bun.Archive:');
+  console.info('');
+  console.info('   1. 📦 Build Systems');
+  console.info('      - Package distribution files');
+  console.info('      - Create release archives');
+  console.info('      - Bundle static assets');
+  console.info('');
+  console.info('   2. 💾 Backup Systems');
+  console.info('      - Compress backup data');
+  console.info('      - Archive configuration files');
+  console.info('      - Store snapshots efficiently');
+  console.info('');
+  console.info('   3. 🔄 Data Transfer');
+  console.info('      - Package data for API transfer');
+  console.info('      - Compress network payloads');
+  console.info('      - Archive database exports');
+  console.info('');
+  console.info('   4. 🛠️ Development Tools');
+  console.info('      - Create project templates');
+  console.info('      - Package code examples');
+  console.info('      - Archive test fixtures');
+  console.info('');
+  console.info('   5. 📁 File Management');
+  console.info('      - Bundle related files');
+  console.info('      - Create project archives');
+  console.info('      - Organize assets efficiently');
 
   // Summary
-  console.log('\n🎊 Archive Feature Summary');
-  console.log('=========================');
+  console.info('\n🎊 Archive Feature Summary');
+  console.info('=========================');
 
-  console.log('📊 Key Features Demonstrated:');
-  console.log('• Multiple data type support (strings, blobs, binary)');
-  console.log('• Built-in gzip compression with level control');
-  console.log('• Nested directory structure handling');
-  console.log('• Multiple export formats (blob, bytes, file)');
-  console.log('• Advanced file filtering with glob patterns');
-  console.log('• Binary data preservation and integrity');
-  console.log('• Path safety and normalization');
-  console.log('• Comprehensive error handling');
-  console.log('• Performance optimization for large archives');
+  console.info('📊 Key Features Demonstrated:');
+  console.info('• Multiple data type support (strings, blobs, binary)');
+  console.info('• Built-in gzip compression with level control');
+  console.info('• Nested directory structure handling');
+  console.info('• Multiple export formats (blob, bytes, file)');
+  console.info('• Advanced file filtering with glob patterns');
+  console.info('• Binary data preservation and integrity');
+  console.info('• Path safety and normalization');
+  console.info('• Comprehensive error handling');
+  console.info('• Performance optimization for large archives');
 
-  console.log('\n🌟 Production-Ready Capabilities:');
-  console.log('• Memory-safe garbage collection');
-  console.log('• Efficient large file handling');
-  console.log('• Cross-platform compatibility');
-  console.log('• Standards-compliant tar format');
-  console.log('• Enterprise-grade error handling');
-  console.log('• Developer-friendly API design');
+  console.info('\n🌟 Production-Ready Capabilities:');
+  console.info('• Memory-safe garbage collection');
+  console.info('• Efficient large file handling');
+  console.info('• Cross-platform compatibility');
+  console.info('• Standards-compliant tar format');
+  console.info('• Enterprise-grade error handling');
+  console.info('• Developer-friendly API design');
 
-  console.log('\n🔧 Developer Experience:');
-  console.log('• Simple, intuitive constructor API');
-  console.log('• Flexible input and output options');
-  console.log('• Rich filtering and selection capabilities');
-  console.log('• Clear error messages and validation');
-  console.log('• Comprehensive TypeScript support');
-  console.log('• Well-documented and tested features');
+  console.info('\n🔧 Developer Experience:');
+  console.info('• Simple, intuitive constructor API');
+  console.info('• Flexible input and output options');
+  console.info('• Rich filtering and selection capabilities');
+  console.info('• Clear error messages and validation');
+  console.info('• Comprehensive TypeScript support');
+  console.info('• Well-documented and tested features');
 
-  console.log('\n✨ Demo Complete!');
-  console.log('================');
-  console.log('Bun.Archive provides comprehensive archive management!');
-  console.log('Perfect for build systems, backups, and data transfer! 📦');
+  console.info('\n✨ Demo Complete!');
+  console.info('================');
+  console.info('Bun.Archive provides comprehensive archive management!');
+  console.info('Perfect for build systems, backups, and data transfer! 📦');
 }
 
 // Run the demonstration

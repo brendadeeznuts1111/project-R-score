@@ -624,10 +624,10 @@ export class PerformanceOptimizer {
 
     if (gl) {
       model.gpuAcceleration = true;
-      console.log('🎮 GPU acceleration enabled for prediction model');
+      console.info('🎮 GPU acceleration enabled for prediction model');
     } else {
       model.gpuAcceleration = false;
-      console.log('🖥️ Using CPU for prediction model');
+      console.info('🖥️ Using CPU for prediction model');
     }
   }
 
@@ -643,7 +643,7 @@ export class PerformanceOptimizer {
           layer.map((weight: number) => Math.round(weight * 1000) / 1000)
         );
       }
-      console.log('🗜️ Model quantized for better performance');
+      console.info('🗜️ Model quantized for better performance');
     };
 
     // Auto-quantize if memory usage is high
@@ -705,7 +705,7 @@ export class PerformanceOptimizer {
     // Optimize collaborative filtering with matrix factorization
     engine.optimizeCollaborativeFiltering = () => {
       // Implement matrix factorization for better performance
-      console.log('🔢 Collaborative filtering optimized with matrix factorization');
+      console.info('🔢 Collaborative filtering optimized with matrix factorization');
     };
   }
 
@@ -767,7 +767,7 @@ export class PerformanceOptimizer {
       monitor.updateInterval = Math.max(1000, monitor.config?.updateInterval / 2);
     }
 
-    console.log(`📊 Monitoring frequency optimized: ${monitor.updateInterval}ms`);
+    console.info(`📊 Monitoring frequency optimized: ${monitor.updateInterval}ms`);
   }
 
   /**
@@ -812,9 +812,9 @@ export class PerformanceOptimizer {
       // Process grouped alerts
       groupedAlerts.forEach(group => {
         if (group.count > 1) {
-          console.log(`📢 Alert batch: ${group.alert.message} (${group.count} occurrences)`);
+          console.info(`📢 Alert batch: ${group.alert.message} (${group.count} occurrences)`);
         } else {
-          console.log(`📢 Alert: ${group.alert.message}`);
+          console.info(`📢 Alert: ${group.alert.message}`);
         }
       });
     };
@@ -846,7 +846,7 @@ export class PerformanceOptimizer {
     training.distributedTraining = true;
     training.workerCount = Math.min(4, this.config.cpu.workerThreads);
 
-    console.log(`🔀 Distributed training enabled with ${training.workerCount} workers`);
+    console.info(`🔀 Distributed training enabled with ${training.workerCount} workers`);
   }
 
   /**
@@ -857,7 +857,7 @@ export class PerformanceOptimizer {
     training.incrementalLearning = true;
     training.learningRateDecay = 0.95;
 
-    console.log('📈 Incremental learning enabled');
+    console.info('📈 Incremental learning enabled');
   }
 
   /**
@@ -868,7 +868,7 @@ export class PerformanceOptimizer {
     training.pipelineOptimization = true;
     training.batchSize = Math.min(1000, this.config.storage.batchSize);
 
-    console.log('🔧 Data pipeline optimized');
+    console.info('🔧 Data pipeline optimized');
   }
 
   /**
@@ -921,7 +921,7 @@ export class PerformanceOptimizer {
 
     // Log cleanup metrics
     const memoryUsage = this.getMemoryUsage();
-    console.log(`🧹 Cleanup completed. Memory usage: ${(memoryUsage / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`🧹 Cleanup completed. Memory usage: ${(memoryUsage / 1024 / 1024).toFixed(2)}MB`);
   }
 
   /**
@@ -952,7 +952,7 @@ export class PerformanceOptimizer {
         timestamp: Date.now()
       };
 
-      console.log('📊 Performance metrics:', metrics);
+      console.info('📊 Performance metrics:', metrics);
     }, 60000); // Every minute
   }
 
@@ -1033,7 +1033,7 @@ export class PerformanceOptimizer {
     });
     this.workers = [];
 
-    console.log('🧹 Performance optimizer cleaned up');
+    console.info('🧹 Performance optimizer cleaned up');
   }
 }
 
@@ -1096,7 +1096,7 @@ export class DeploymentManager {
       this.initializeAutoScaling();
     }
 
-    console.log(`🚀 AI Behavior System deployed in ${this.config.environment} environment`);
+    console.info(`🚀 AI Behavior System deployed in ${this.config.environment} environment`);
   }
 
   /**
@@ -1107,7 +1107,7 @@ export class DeploymentManager {
       this.performHealthChecks();
     }, 30000); // Every 30 seconds
 
-    console.log('❤️ Health monitoring started');
+    console.info('❤️ Health monitoring started');
   }
 
   /**
@@ -1169,7 +1169,7 @@ export class DeploymentManager {
    * Perform failover
    */
   private performFailover(instanceId: string, instance: any): void {
-    console.log(`🔄 Performing failover for instance ${instanceId}`);
+    console.info(`🔄 Performing failover for instance ${instanceId}`);
 
     // Find healthy replica
     const healthyReplica = Array.from(this.instances.entries())
@@ -1178,7 +1178,7 @@ export class DeploymentManager {
     if (healthyReplica) {
       // Transfer load to healthy replica
       this.transferLoad(instance, healthyReplica[1]);
-      console.log(`✅ Load transferred to replica ${healthyReplica[0]}`);
+      console.info(`✅ Load transferred to replica ${healthyReplica[0]}`);
     } else {
       // No healthy replicas, attempt restart
       this.restartInstance(instanceId, instance);
@@ -1189,7 +1189,7 @@ export class DeploymentManager {
    * Restart instance
    */
   private restartInstance(instanceId: string, instance: any): void {
-    console.log(`🔄 Restarting instance ${instanceId}`);
+    console.info(`🔄 Restarting instance ${instanceId}`);
 
     try {
       // Cleanup old instance
@@ -1202,7 +1202,7 @@ export class DeploymentManager {
       const newInstance = this.createNewInstance();
       this.instances.set(instanceId, newInstance);
 
-      console.log(`✅ Instance ${instanceId} restarted successfully`);
+      console.info(`✅ Instance ${instanceId} restarted successfully`);
     } catch (error) {
       console.error(`❌ Failed to restart instance ${instanceId}:`, error);
     }
@@ -1272,7 +1272,7 @@ export class DeploymentManager {
       this.enableRateLimiting();
     }
 
-    console.log('🔒 Security measures initialized');
+    console.info('🔒 Security measures initialized');
   }
 
   /**
@@ -1283,14 +1283,14 @@ export class DeploymentManager {
       this.performBackup();
     }, this.config.backup.frequency);
 
-    console.log('💾 Backup system initialized');
+    console.info('💾 Backup system initialized');
   }
 
   /**
    * Perform backup
    */
   private performBackup(): void {
-    console.log('💾 Performing system backup');
+    console.info('💾 Performing system backup');
 
     try {
       // Collect all system data
@@ -1313,7 +1313,7 @@ export class DeploymentManager {
       // Clean old backups
       this.cleanupOldBackups();
 
-      console.log('✅ Backup completed successfully');
+      console.info('✅ Backup completed successfully');
     } catch (error) {
       console.error('❌ Backup failed:', error);
     }
@@ -1327,7 +1327,7 @@ export class DeploymentManager {
       this.checkScalingNeeds();
     }, 60000); // Check every minute
 
-    console.log('📈 Auto-scaling initialized');
+    console.info('📈 Auto-scaling initialized');
   }
 
   /**
@@ -1360,7 +1360,7 @@ export class DeploymentManager {
         this.instances.set(instanceId, newInstance);
         this.healthChecks.set(instanceId, true);
       }
-      console.log(`📈 Scaled up to ${targetInstances} instances`);
+      console.info(`📈 Scaled up to ${targetInstances} instances`);
     } else if (targetInstances < currentInstances) {
       // Scale down
       const instancesToRemove = currentInstances - targetInstances;
@@ -1380,7 +1380,7 @@ export class DeploymentManager {
         this.instances.delete(instanceId);
         this.healthChecks.delete(instanceId);
       }
-      console.log(`📉 Scaled down to ${targetInstances} instances`);
+      console.info(`📉 Scaled down to ${targetInstances} instances`);
     }
   }
 
@@ -1405,7 +1405,7 @@ export class DeploymentManager {
    */
   private enableEncryption(): void {
     // Implement encryption for data at rest and in transit
-    console.log('🔐 Encryption enabled');
+    console.info('🔐 Encryption enabled');
   }
 
   /**
@@ -1413,7 +1413,7 @@ export class DeploymentManager {
    */
   private enableAccessControl(): void {
     // Implement role-based access control
-    console.log('👥 Access control enabled');
+    console.info('👥 Access control enabled');
   }
 
   /**
@@ -1421,7 +1421,7 @@ export class DeploymentManager {
    */
   private enableAuditLogging(): void {
     // Implement comprehensive audit logging
-    console.log('📝 Audit logging enabled');
+    console.info('📝 Audit logging enabled');
   }
 
   /**
@@ -1429,7 +1429,7 @@ export class DeploymentManager {
    */
   private enableRateLimiting(): void {
     // Implement rate limiting for API calls
-    console.log('⏱️ Rate limiting enabled');
+    console.info('⏱️ Rate limiting enabled');
   }
 
   /**
@@ -1485,7 +1485,7 @@ export class DeploymentManager {
    */
   private enableCircuitBreaker(): void {
     // Implement circuit breaker pattern
-    console.log('🔌 Circuit breaker enabled - failing fast to prevent cascade failures');
+    console.info('🔌 Circuit breaker enabled - failing fast to prevent cascade failures');
   }
 
   /**
@@ -1521,6 +1521,6 @@ export class DeploymentManager {
     this.instances.clear();
     this.healthChecks.clear();
 
-    console.log('🧹 Deployment manager cleaned up');
+    console.info('🧹 Deployment manager cleaned up');
   }
 }

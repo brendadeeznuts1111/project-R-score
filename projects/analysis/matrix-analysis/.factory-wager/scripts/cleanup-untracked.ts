@@ -22,12 +22,12 @@ class UntrackedCleanup {
   }
 
   async cleanup(): Promise<void> {
-    console.log("🧹 FactoryWager Untracked Files Cleanup");
-    console.log("=" .repeat(45));
+    console.info("🧹 FactoryWager Untracked Files Cleanup");
+    console.info("=" .repeat(45));
 
     // Get untracked files
     const untrackedFiles = this.getUntrackedFiles();
-    console.log(`📊 Found ${untrackedFiles.length} untracked files\n`);
+    console.info(`📊 Found ${untrackedFiles.length} untracked files\n`);
 
     // Files that should be removed (already organized/archived)
     const filesToRemove = [
@@ -81,18 +81,18 @@ class UntrackedCleanup {
             if (stats.isDirectory()) {
               // Remove directory recursively
               execSync(`rm -rf "${file}"`, { encoding: 'utf8' });
-              console.log(`🗑️ Removed directory: ${file}`);
+              console.info(`🗑️ Removed directory: ${file}`);
             } else {
               // Remove file
               unlinkSync(file);
-              console.log(`🗑️ Removed file: ${file}`);
+              console.info(`🗑️ Removed file: ${file}`);
             }
 
             removed++;
             this.cleanupLog.push({ file, status: "removed", size: stats.size });
           }
         } catch (error) {
-          console.log(`❌ Failed to remove ${file}: ${(error as Error).message}`);
+          console.info(`❌ Failed to remove ${file}: ${(error as Error).message}`);
           errors++;
           this.cleanupLog.push({ file, status: "error", error: (error as Error).message });
         }
@@ -105,19 +105,19 @@ class UntrackedCleanup {
     // Save cleanup log
     this.saveCleanupLog(removed, errors);
 
-    console.log(`\n✅ Cleanup complete!`);
-    console.log(`   Removed: ${removed} files/directories`);
-    console.log(`   Errors: ${errors}`);
+    console.info(`\n✅ Cleanup complete!`);
+    console.info(`   Removed: ${removed} files/directories`);
+    console.info(`   Errors: ${errors}`);
 
     // Show final status
-    console.log("\n📊 Final git status:");
+    console.info("\n📊 Final git status:");
     try {
       const finalStatus = execSync('git status --porcelain', { encoding: 'utf8' });
       const lines = finalStatus.split('\n').filter(line => line.trim());
-      console.log(`   Remaining untracked: ${lines.filter(l => l.startsWith('??')).length}`);
-      console.log(`   Modified files: ${lines.filter(l => l.startsWith(' M')).length}`);
+      console.info(`   Remaining untracked: ${lines.filter(l => l.startsWith('??')).length}`);
+      console.info(`   Modified files: ${lines.filter(l => l.startsWith(' M')).length}`);
     } catch (error) {
-      console.log("   Could not determine final status");
+      console.info("   Could not determine final status");
     }
   }
 
@@ -148,7 +148,7 @@ class UntrackedCleanup {
           const files = execSync(`find "${dir}" -type f`, { encoding: 'utf8' }).trim();
           if (!files) {
             execSync(`rm -rf "${dir}"`, { encoding: 'utf8' });
-            console.log(`🗑️ Removed empty directory: ${dir}`);
+            console.info(`🗑️ Removed empty directory: ${dir}`);
           }
         }
       } catch (error) {
@@ -168,9 +168,9 @@ class UntrackedCleanup {
     try {
       const logPath = ".factory-wager/cleanup-log.json";
       require('fs').writeFileSync(logPath, JSON.stringify(log, null, 2));
-      console.log(`📄 Cleanup log saved: ${logPath}`);
+      console.info(`📄 Cleanup log saved: ${logPath}`);
     } catch (error) {
-      console.log("⚠️ Could not save cleanup log");
+      console.info("⚠️ Could not save cleanup log");
     }
   }
 }

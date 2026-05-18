@@ -72,7 +72,7 @@ const dashboardServer = {
       scope: process.env.DASHBOARD_SCOPE || 'LOCAL-SANDBOX'
     };
 
-    console.log(`\u001b[34m[HTTP]\u001b[0m ${logEntry.method} ${logEntry.path} \u001b[90m(${logEntry.duration})\u001b[0m from ${logEntry.ip}`);
+    console.info(`\u001b[34m[HTTP]\u001b[0m ${logEntry.method} ${logEntry.path} \u001b[90m(${logEntry.duration})\u001b[0m from ${logEntry.ip}`);
     
     // Append to internal log for dashboard tailing
     const logString = `${logEntry.timestamp} | ${logEntry.method} | ${logEntry.path} | ${logEntry.duration} | ${logEntry.ip}\n`;
@@ -100,12 +100,12 @@ const dashboardServer = {
 
 const server = Bun.serve(dashboardServer);
 
-console.log(`\u001b[1m\u001b[32m✅ EMPIRE PRO Dashboard Server running at http://localhost:${server.port}\u001b[0m`);
-console.log(`📡 Scope: \u001b[36m${scope}\u001b[0m`);
+console.info(`\u001b[1m\u001b[32m✅ EMPIRE PRO Dashboard Server running at http://localhost:${server.port}\u001b[0m`);
+console.info(`📡 Scope: \u001b[36m${scope}\u001b[0m`);
 
 // Hot reloading support via signal (e.g., SIGHUP or custom trigger)
 process.on('SIGHUP', () => {
-  console.log('♻️ Reloading server handlers...');
+  console.info('♻️ Reloading server handlers...');
   server.reload(dashboardServer);
 });
 

@@ -26,11 +26,11 @@ export class AutonomicController {
 
   async start() {
     if (this.isRunning) {
-      console.log('⚠️  Autonomic controller already running');
+      console.info('⚠️  Autonomic controller already running');
       return;
     }
 
-    console.log('🚀 Starting Autonomic Controller for Phone Intelligence System...');
+    console.info('🚀 Starting Autonomic Controller for Phone Intelligence System...');
     this.isRunning = true;
 
     // Start monitoring loop
@@ -41,18 +41,18 @@ export class AutonomicController {
     // Initial health check
     await this.performHealthCheck();
     
-    console.log('✅ Autonomic Controller started');
-    console.log('📊 Monitoring §Workflow:95 performance...');
-    console.log('🔄 Health checks every 30 seconds');
+    console.info('✅ Autonomic Controller started');
+    console.info('📊 Monitoring §Workflow:95 performance...');
+    console.info('🔄 Health checks every 30 seconds');
   }
 
   async stop() {
     if (!this.isRunning) {
-      console.log('⚠️  Autonomic controller not running');
+      console.info('⚠️  Autonomic controller not running');
       return;
     }
 
-    console.log('🛑 Stopping Autonomic Controller...');
+    console.info('🛑 Stopping Autonomic Controller...');
     this.isRunning = false;
     
     if (this.monitoringInterval) {
@@ -60,7 +60,7 @@ export class AutonomicController {
       this.monitoringInterval = null;
     }
 
-    console.log('✅ Autonomic Controller stopped');
+    console.info('✅ Autonomic Controller stopped');
   }
 
   private async performHealthCheck() {
@@ -75,24 +75,24 @@ export class AutonomicController {
       this.metrics.throughput = metrics.throughput;
 
       // Log status
-      console.log(`[${new Date().toISOString()}] 📊 §Workflow:95 Health: ${health.status.toUpperCase()}`);
-      console.log(`   Latency: ${health.latency.toFixed(2)}ms | Trust: ${health.trustScore} | Patterns: ${health.patterns}/8`);
+      console.info(`[${new Date().toISOString()}] 📊 §Workflow:95 Health: ${health.status.toUpperCase()}`);
+      console.info(`   Latency: ${health.latency.toFixed(2)}ms | Trust: ${health.trustScore} | Patterns: ${health.patterns}/8`);
       
       // Auto-scaling logic
       if (health.latency > 5) {
-        console.log('⚠️  High latency detected, triggering auto-scaling...');
+        console.info('⚠️  High latency detected, triggering auto-scaling...');
         await this.autoScale();
       }
 
       // Provider failover logic
       if (health.trustScore < 50) {
-        console.log('⚠️  Low trust score, checking provider health...');
+        console.info('⚠️  Low trust score, checking provider health...');
         await this.checkProviderHealth();
       }
 
       // Cache management
       if (metrics.cacheHitRate < 0.8) {
-        console.log('⚠️  Low cache hit rate, refreshing cache...');
+        console.info('⚠️  Low cache hit rate, refreshing cache...');
         await this.refreshCache();
       }
 
@@ -103,24 +103,24 @@ export class AutonomicController {
   }
 
   private async autoScale() {
-    console.log('📈 Auto-scaling phone farm...');
+    console.info('📈 Auto-scaling phone farm...');
     // Simulate scaling action
     this.metrics.throughput *= 1.5;
-    console.log(`✅ Scaled to ${this.metrics.throughput.toFixed(0)} numbers/s`);
+    console.info(`✅ Scaled to ${this.metrics.throughput.toFixed(0)} numbers/s`);
   }
 
   private async checkProviderHealth() {
-    console.log('🔍 Checking provider health...');
+    console.info('🔍 Checking provider health...');
     const providers = ['twilio', 'vonage', 'bandwidth'];
     
     for (const provider of providers) {
       try {
         // Simulate provider health check
         const isHealthy = Math.random() > 0.1; // 90% healthy
-        console.log(`   ${provider}: ${isHealthy ? '✅ HEALTHY' : '❌ DEGRADED'}`);
+        console.info(`   ${provider}: ${isHealthy ? '✅ HEALTHY' : '❌ DEGRADED'}`);
         
         if (!isHealthy && provider === 'twilio') {
-          console.log('🔄 Auto-failover to Vonage initiated...');
+          console.info('🔄 Auto-failover to Vonage initiated...');
           await this.failoverProvider('twilio', 'vonage');
         }
       } catch (error) {
@@ -130,16 +130,16 @@ export class AutonomicController {
   }
 
   private async failoverProvider(from: string, to: string) {
-    console.log(`🔄 Failing over from ${from} to ${to}...`);
+    console.info(`🔄 Failing over from ${from} to ${to}...`);
     // Simulate failover
-    console.log(`✅ Successfully failed over to ${to}`);
+    console.info(`✅ Successfully failed over to ${to}`);
   }
 
   private async refreshCache() {
-    console.log('🔄 Refreshing IPQS cache...');
+    console.info('🔄 Refreshing IPQS cache...');
     // Simulate cache refresh
     this.metrics.cacheHitRate = 0.95;
-    console.log('✅ Cache refreshed');
+    console.info('✅ Cache refreshed');
   }
 
   getMetrics() {
@@ -165,15 +165,15 @@ async function main() {
       break;
     case 'status':
       const metrics = controller.getMetrics();
-      console.log('📊 Autonomic Controller Status:');
-      console.log(`   Running: ${metrics.isRunning ? '✅ YES' : '❌ NO'}`);
-      console.log(`   Throughput: ${metrics.throughput.toFixed(0)}/s`);
-      console.log(`   Latency: ${metrics.avgLatency.toFixed(2)}ms`);
-      console.log(`   Cache Hit Rate: ${(metrics.cacheHitRate * 100).toFixed(1)}%`);
-      console.log(`   Error Rate: ${(metrics.errorRate * 100).toFixed(2)}%`);
+      console.info('📊 Autonomic Controller Status:');
+      console.info(`   Running: ${metrics.isRunning ? '✅ YES' : '❌ NO'}`);
+      console.info(`   Throughput: ${metrics.throughput.toFixed(0)}/s`);
+      console.info(`   Latency: ${metrics.avgLatency.toFixed(2)}ms`);
+      console.info(`   Cache Hit Rate: ${(metrics.cacheHitRate * 100).toFixed(1)}%`);
+      console.info(`   Error Rate: ${(metrics.errorRate * 100).toFixed(2)}%`);
       break;
     default:
-      console.log('Usage: bun run workflows/autonomic-controller.ts [start|stop|status]');
+      console.info('Usage: bun run workflows/autonomic-controller.ts [start|stop|status]');
       process.exit(1);
   }
 }

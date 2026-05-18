@@ -129,7 +129,7 @@ async function checkCol89(filePath: string): Promise<number> {
 			const raw = Bun.stripANSI(lines[i]);
 			const preview = Bun.escapeHTML(raw.slice(0, 86)) + "...";
 			stmt.run(filePath, i + 1, width, preview);
-			console.log(
+			console.info(
 				`  \x1b[31m${GLYPHS.AUDIT} Line ${i + 1}\x1b[0m:` +
 					` ${width} cols -> ${raw.slice(0, 60)}...`,
 			);
@@ -139,7 +139,7 @@ async function checkCol89(filePath: string): Promise<number> {
 	const durationMs = (Bun.nanoseconds() - start) / 1e6;
 	recordAudit(`check ${filePath}`, durationMs, `${violations} violations`);
 
-	console.log(
+	console.info(
 		`\n${GLYPHS.STRUCTURAL_DRIFT}` +
 			` Scanned ${lines.length} lines` +
 			` in ${durationMs.toFixed(2)}ms` +
@@ -185,7 +185,7 @@ async function optimizeCSS(inputPath: string): Promise<void> {
 	}
 
 	if (result.warnings.length > 0) {
-		console.log("Warnings:", result.warnings);
+		console.info("Warnings:", result.warnings);
 	}
 
 	const saved = ((1 - result.code.length / code.length) * 100).toFixed(1);
@@ -197,13 +197,13 @@ async function optimizeCSS(inputPath: string): Promise<void> {
 		`${code.length}B -> ${result.code.length}B (-${saved}%)`,
 	);
 
-	console.log(
+	console.info(
 		`${GLYPHS.PHASE_LOCKED} Minified:` +
 			` ${code.length}B -> ${result.code.length}B` +
 			` (-${saved}%) in ${durationMs.toFixed(2)}ms`,
 	);
-	console.log(`Output: ${outPath}`);
-	if (result.map) console.log(`Map:    ${outPath}.map`);
+	console.info(`Output: ${outPath}`);
+	if (result.map) console.info(`Map:    ${outPath}.map`);
 }
 
 // ── rss: Feed Monitor ───────────────────────────────────
@@ -246,20 +246,20 @@ async function checkRSS(feedUrl = "https://bun.sh/blog/rss.xml"): Promise<void> 
 
 	recordAudit(`rss ${feedUrl}`, durationMs, `${items.length} items, ${text.length}B`);
 
-	console.log(
+	console.info(
 		`${GLYPHS.DEPENDENCY_COHERENCE}` + ` RSS Audit (${durationMs.toFixed(0)}ms):`,
 	);
-	console.log(`  Feed:  ${feedUrl}`);
-	console.log(`  Size:  ${text.length.toLocaleString()} bytes`);
-	console.log(`  Items: ${items.length}`);
+	console.info(`  Feed:  ${feedUrl}`);
+	console.info(`  Size:  ${text.length.toLocaleString()} bytes`);
+	console.info(`  Items: ${items.length}`);
 
 	if (items.length > 0) {
-		console.log("\nLatest:");
+		console.info("\nLatest:");
 		const display = items.slice(0, 5).map((item) => ({
 			title: item.title.length > 55 ? item.title.slice(0, 52) + "..." : item.title,
 			pubDate: item.pubDate,
 		}));
-		console.log(Bun.inspect.table(display));
+		console.info(Bun.inspect.table(display));
 	}
 }
 
@@ -270,8 +270,8 @@ async function scanExtensions(extensions: Set<string>, dir: string): Promise<num
 	let scanned = 0;
 	let found = 0;
 
-	console.log(`${GLYPHS.AUDIT} Scanning ${dir} for bad extensions:`);
-	console.log(`  ${[...extensions].join(", ")}\n`);
+	console.info(`${GLYPHS.AUDIT} Scanning ${dir} for bad extensions:`);
+	console.info(`  ${[...extensions].join(", ")}\n`);
 
 	for await (const f of new Bun.Glob("**/*").scan(dir)) {
 		scanned++;
@@ -280,7 +280,7 @@ async function scanExtensions(extensions: Set<string>, dir: string): Promise<num
 		const ext = f.slice(dot);
 		if (extensions.has(ext)) {
 			found++;
-			console.log(`  \x1b[33m${GLYPHS.AUDIT}\x1b[0m ${f}`);
+			console.info(`  \x1b[33m${GLYPHS.AUDIT}\x1b[0m ${f}`);
 			db.prepare(
 				"INSERT INTO violations" +
 					" (file, line, width, preview)" +
@@ -292,14 +292,14 @@ async function scanExtensions(extensions: Set<string>, dir: string): Promise<num
 	const durationMs = (Bun.nanoseconds() - start) / 1e6;
 	recordAudit(`scan ${dir}`, durationMs, `${found} bad files`);
 
-	console.log(
+	console.info(
 		`\n${GLYPHS.PHASE_LOCKED}` +
 			` Scanned ${scanned} files` +
 			` in ${durationMs.toFixed(2)}ms`,
 	);
-	console.log(`  Found: ${found} suspicious files`);
+	console.info(`  Found: ${found} suspicious files`);
 	if (found > 0) {
-		console.log("  Run 'tier1380:audit db' to view details");
+		console.info("  Run 'tier1380:audit db' to view details");
 	}
 
 	return found;
@@ -339,15 +339,15 @@ function auditGlobals(): void {
 		}
 	}
 
-	console.log(`Bun ${Bun.version} — ${keys.length} APIs\n`);
+	console.info(`Bun ${Bun.version} — ${keys.length} APIs\n`);
 
 	for (const [category, entries] of Object.entries(grouped)) {
 		if (entries.length === 0) continue;
-		console.log(`  ${category} (${entries.length}):`);
+		console.info(`  ${category} (${entries.length}):`);
 		for (const e of entries) {
-			console.log(`    ${e}`);
+			console.info(`    ${e}`);
 		}
-		console.log("");
+		console.info("");
 	}
 }
 
@@ -389,13 +389,13 @@ function healthCheck(): void {
 		},
 	];
 
-	console.log(Bun.inspect.table(health, ["metric", "value", "status"]));
+	console.info(Bun.inspect.table(health, ["metric", "value", "status"]));
 
 	const vCount = (db.query("SELECT COUNT(*) as c FROM violations").get() as any).c;
 	const aCount = (db.query("SELECT COUNT(*) as c FROM audits").get() as any).c;
 
-	console.log(`  Violations recorded: ${vCount}`);
-	console.log(`  Audits recorded:     ${aCount}`);
+	console.info(`  Violations recorded: ${vCount}`);
+	console.info(`  Audits recorded:     ${aCount}`);
 
 	const topFiles = db
 		.prepare(
@@ -406,13 +406,13 @@ function healthCheck(): void {
 		.all() as any[];
 
 	if (topFiles.length > 0) {
-		console.log(`\n${GLYPHS.AUDIT} Top files by violations:`);
+		console.info(`\n${GLYPHS.AUDIT} Top files by violations:`);
 		const topDisplay = topFiles.map((r: any) => ({
 			file: r.file.length > 40 ? "..." + r.file.slice(-37) : r.file,
 			violations: r.cnt,
 			maxWidth: r.maxW,
 		}));
-		console.log(Bun.inspect.table(topDisplay, ["file", "violations", "maxWidth"]));
+		console.info(Bun.inspect.table(topDisplay, ["file", "violations", "maxWidth"]));
 	}
 }
 
@@ -430,7 +430,7 @@ function showViolations(limit = 10): void {
 		.all(limit) as any[];
 
 	if (rows.length === 0) {
-		console.log("No violations recorded.");
+		console.info("No violations recorded.");
 		return;
 	}
 
@@ -441,11 +441,11 @@ function showViolations(limit = 10): void {
 		width: r.width,
 	}));
 
-	console.log(
+	console.info(
 		`${GLYPHS.STRUCTURAL_DRIFT} Last ${rows.length}` +
 			` violation${rows.length === 1 ? "" : "s"}:`,
 	);
-	console.log(Bun.inspect.table(display));
+	console.info(Bun.inspect.table(display));
 
 	const audits = db
 		.prepare(
@@ -456,14 +456,14 @@ function showViolations(limit = 10): void {
 		.all(limit) as any[];
 
 	if (audits.length > 0) {
-		console.log(`\n${GLYPHS.PHASE_LOCKED}` + ` Last ${audits.length} audits:`);
+		console.info(`\n${GLYPHS.PHASE_LOCKED}` + ` Last ${audits.length} audits:`);
 		const auditDisplay = audits.map((r: any) => ({
 			time: r.time,
 			command: r.command,
 			ms: Number(r.duration_ms).toFixed(1),
 			result: r.result,
 		}));
-		console.log(Bun.inspect.table(auditDisplay));
+		console.info(Bun.inspect.table(auditDisplay));
 	}
 }
 
@@ -478,10 +478,10 @@ function exportViolations(limit = 100, format: "json" | "jsonl" = "json"): void 
 
 	if (format === "jsonl") {
 		for (const row of rows) {
-			console.log(JSON.stringify(row));
+			console.info(JSON.stringify(row));
 		}
 	} else {
-		console.log(JSON.stringify(rows, null, 2));
+		console.info(JSON.stringify(rows, null, 2));
 	}
 }
 
@@ -631,13 +631,13 @@ function launchDashboard(): void {
 		},
 	});
 
-	console.log(
+	console.info(
 		`${GLYPHS.STRUCTURAL_DRIFT} Dashboard:` + ` http://127.0.0.1:${server.port}`,
 	);
-	console.log("  GET /                 HTML dashboard");
-	console.log("  GET /api/stats        Audit summary");
-	console.log("  GET /api/violations   Violation list");
-	console.log("  GET /api/health       Health check");
+	console.info("  GET /                 HTML dashboard");
+	console.info("  GET /api/stats        Audit summary");
+	console.info("  GET /api/violations   Violation list");
+	console.info("  GET /api/health       Health check");
 }
 
 // ═════════════════════════════════════════════════════════
@@ -645,7 +645,7 @@ function launchDashboard(): void {
 // ═════════════════════════════════════════════════════════
 
 function printHelp(): void {
-	console.log(
+	console.info(
 		`${GLYPHS.STRUCTURAL_DRIFT}` +
 			` Tier-1380 Audit CLI (Bun ${Bun.version})
 
@@ -709,7 +709,7 @@ const COMMANDS: Record<string, (args: string[]) => Promise<void> | void> = {
 		}
 
 		if (fileCount > 1) {
-			console.log(
+			console.info(
 				`\n${GLYPHS.STRUCTURAL_DRIFT} Total:` +
 					` ${fileCount} files,` +
 					` ${totalViolations} violation` +
@@ -764,7 +764,7 @@ const COMMANDS: Record<string, (args: string[]) => Promise<void> | void> = {
 	clean() {
 		db.exec("DELETE FROM violations");
 		db.exec("DELETE FROM audits");
-		console.log(`${GLYPHS.PHASE_LOCKED} Database cleaned`);
+		console.info(`${GLYPHS.PHASE_LOCKED} Database cleaned`);
 	},
 
 	help() {

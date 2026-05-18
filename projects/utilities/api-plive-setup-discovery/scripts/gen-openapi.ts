@@ -63,7 +63,7 @@ async function generateOpenAPI() {
   await Promise.all(routes.map(async (route) => {
     if (!route.sourcemap) return;
 
-    console.log(`🔍 Tracing sourcemap: ${route.handler}`);
+    console.info(`🔍 Tracing sourcemap: ${route.handler}`);
 
     try {
       // Read handler source code
@@ -158,7 +158,7 @@ async function generateOpenAPI() {
   const yamlSpec = YAML.stringify(openapi);
   await file(config.api.openapi.output).write(yamlSpec);
 
-  console.log(`🟢 OpenAPI spec forged: ${config.api.openapi.output} (${yamlSpec.length} bytes)`);
+  console.info(`🟢 OpenAPI spec forged: ${config.api.openapi.output} (${yamlSpec.length} bytes)`);
   console.timeEnd('🟢 OpenAPI forge');
 }
 

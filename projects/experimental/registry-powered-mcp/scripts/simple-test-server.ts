@@ -9,4 +9,4 @@ const server = Bun.serve({
   },
 });
 
-console.log(`Test server on port 3003`);
+console.info(`Test server on port 3003`);

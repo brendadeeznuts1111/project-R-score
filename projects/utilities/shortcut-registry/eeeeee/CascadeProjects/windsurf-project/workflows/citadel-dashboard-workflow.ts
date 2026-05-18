@@ -18,7 +18,7 @@ class CitadelDashboardWorkflow {
   private readonly host = 'http://localhost';
 
   async execute(): Promise<void> {
-    console.log('🚀 Starting Citadel Dashboard Workflow...');
+    console.info('🚀 Starting Citadel Dashboard Workflow...');
 
     try {
       // Step 1: Git commit & push
@@ -36,7 +36,7 @@ class CitadelDashboardWorkflow {
       // Step 5: Run search verification
       await this.runSearchVerification();
 
-      console.log('✅ Citadel Dashboard Workflow completed successfully!');
+      console.info('✅ Citadel Dashboard Workflow completed successfully!');
 
     } catch (error) {
       console.error('❌ Workflow failed:', error);
@@ -45,7 +45,7 @@ class CitadelDashboardWorkflow {
   }
 
   private async gitCommitAndPush(): Promise<void> {
-    console.log('📝 Step 1: Committing and pushing changes...');
+    console.info('📝 Step 1: Committing and pushing changes...');
 
     try {
       // Add all changes
@@ -58,14 +58,14 @@ class CitadelDashboardWorkflow {
       // Push to remote
       await this.runCommand('git', ['push']);
 
-      console.log('✅ Git operations completed');
+      console.info('✅ Git operations completed');
     } catch (error) {
       console.warn('⚠️ Git operations failed, continuing workflow...');
     }
   }
 
   private async startDashboardServer(): Promise<void> {
-    console.log(`🖥️ Step 2: Starting admin dashboard server on port ${this.port}...`);
+    console.info(`🖥️ Step 2: Starting admin dashboard server on port ${this.port}...`);
 
     // Start the admin dashboard server
     this.serverProcess = Bun.spawn(['bun', 'src/admin/config-server.ts'], {
@@ -75,11 +75,11 @@ class CitadelDashboardWorkflow {
 
     // Wait for server to start
     await setTimeout(3000);
-    console.log(`✅ Admin dashboard started on port ${this.port}`);
+    console.info(`✅ Admin dashboard started on port ${this.port}`);
   }
 
   private async waitForServer(): Promise<void> {
-    console.log('⏳ Step 3: Waiting for server to be ready...');
+    console.info('⏳ Step 3: Waiting for server to be ready...');
 
     // Wait for server to fully start
     await setTimeout(3000);
@@ -88,7 +88,7 @@ class CitadelDashboardWorkflow {
     try {
       const response = await fetch(`${this.host}:${this.port}`);
       if (response.ok) {
-        console.log('✅ Server is ready and responding');
+        console.info('✅ Server is ready and responding');
       } else {
         console.warn('⚠️ Server responded but may not be fully ready');
       }
@@ -98,7 +98,7 @@ class CitadelDashboardWorkflow {
   }
 
   private async openBrowser(): Promise<void> {
-    console.log('🌐 Step 4: Opening browser automatically...');
+    console.info('🌐 Step 4: Opening browser automatically...');
 
     const url = `${this.host}:${this.port}`;
 
@@ -114,21 +114,21 @@ class CitadelDashboardWorkflow {
       for (const { cmd, args } of commands) {
         try {
           await this.runCommand(cmd, args);
-          console.log(`✅ Browser opened using ${cmd}`);
+          console.info(`✅ Browser opened using ${cmd}`);
           return;
         } catch {
           continue; // Try next command
         }
       }
 
-      console.log('⚠️ Could not auto-open browser, please manually navigate to:', url);
+      console.info('⚠️ Could not auto-open browser, please manually navigate to:', url);
     } catch (error) {
-      console.log('⚠️ Auto-open failed, please manually navigate to:', url);
+      console.info('⚠️ Auto-open failed, please manually navigate to:', url);
     }
   }
 
   private async runSearchVerification(): Promise<void> {
-    console.log('🔍 Step 5: Running search verification...');
+    console.info('🔍 Step 5: Running search verification...');
 
     try {
       // Wait a bit more for dashboard to be fully ready
@@ -138,12 +138,12 @@ class CitadelDashboardWorkflow {
       const searches = ['performance', 'apple_id', 'security'];
 
       for (const query of searches) {
-        console.log(`🔎 Searching for: ${query}`);
+        console.info(`🔎 Searching for: ${query}`);
         await this.runCommand('bun', ['src/nexus/core/dashboard.ts', '--search', query]);
         await setTimeout(1000); // Brief pause between searches
       }
 
-      console.log('✅ Search verification completed');
+      console.info('✅ Search verification completed');
     } catch (error) {
       console.warn('⚠️ Search verification failed:', error);
     }
@@ -151,7 +151,7 @@ class CitadelDashboardWorkflow {
 
   private async runCommand(command: string, args: string[]): Promise<string> {
     const fullCommand = `${command} ${args.join(' ')}`;
-    console.log(`🔧 Running: ${fullCommand}`);
+    console.info(`🔧 Running: ${fullCommand}`);
 
     const result = await Bun.$`bun ${args}`.quiet().text();
     return result;
@@ -159,7 +159,7 @@ class CitadelDashboardWorkflow {
 
   async cleanup(): Promise<void> {
     if (this.serverProcess) {
-      console.log('🧹 Cleaning up server process...');
+      console.info('🧹 Cleaning up server process...');
       this.serverProcess.kill();
       this.serverProcess = null;
     }
@@ -172,13 +172,13 @@ async function main() {
 
   // Handle cleanup on exit
   process.on('SIGINT', async () => {
-    console.log('\n🛑 Received interrupt signal, cleaning up...');
+    console.info('\n🛑 Received interrupt signal, cleaning up...');
     await workflow.cleanup();
     process.exit(0);
   });
 
   process.on('SIGTERM', async () => {
-    console.log('\n🛑 Received termination signal, cleaning up...');
+    console.info('\n🛑 Received termination signal, cleaning up...');
     await workflow.cleanup();
     process.exit(0);
   });
@@ -187,8 +187,8 @@ async function main() {
   await workflow.execute();
 
   // Keep process running
-  console.log('🎊 Dashboard is running! Press Ctrl+C to stop.');
-  console.log(`🌐 Dashboard URL: http://localhost:${workflow.port}`);
+  console.info('🎊 Dashboard is running! Press Ctrl+C to stop.');
+  console.info(`🌐 Dashboard URL: http://localhost:${workflow.port}`);
 }
 
 // Run if called directly

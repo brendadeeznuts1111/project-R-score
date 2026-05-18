@@ -352,17 +352,17 @@ export class TomlMigrator {
 		const currentVersion = this.getCurrentVersion(filePath);
 		const pendingMigrations = this.getPendingMigrations(currentVersion);
 
-		console.log(`📋 Migration Report for ${filePath}`);
-		console.log(`📍 Current Version: ${currentVersion}`);
-		console.log(
+		console.info(`📋 Migration Report for ${filePath}`);
+		console.info(`📍 Current Version: ${currentVersion}`);
+		console.info(
 			`📦 Available Versions: ${this.getAvailableVersions().join(", ")}`,
 		);
-		console.log(`⏳ Pending Migrations: ${pendingMigrations.length}`);
+		console.info(`⏳ Pending Migrations: ${pendingMigrations.length}`);
 
 		if (pendingMigrations.length > 0) {
-			console.log("\n🔄 Pending Migrations:");
+			console.info("\n🔄 Pending Migrations:");
 			pendingMigrations.forEach((m) => {
-				console.log(`   ${m.version}: ${m.description}`);
+				console.info(`   ${m.version}: ${m.description}`);
 			});
 		}
 	}

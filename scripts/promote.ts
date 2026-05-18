@@ -11,7 +11,7 @@
 const skipTests = Bun.argv.includes("--no-test");
 
 const step = (n: number, msg: string) =>
-  console.log(`\x1b[36m[${n}/6]\x1b[0m ${msg}`);
+  console.info(`\x1b[36m[${n}/6]\x1b[0m ${msg}`);
 const warn = (msg: string) =>
   console.warn(`\x1b[33m  ⚠ ${msg}\x1b[0m`);
 const fail = (msg: string, recovery?: string): never => {
@@ -81,7 +81,7 @@ async function promote() {
 
   const ahead = run("git", "rev-list", "main..staging", "--count");
   if (ahead === "0") fail("staging has no commits ahead of main.");
-  console.log(`  ${ahead} commit(s) ahead of main`);
+  console.info(`  ${ahead} commit(s) ahead of main`);
 
   // 2. Tests
   if (skipTests) {
@@ -109,7 +109,7 @@ async function promote() {
   const create = tryRun("gh", "pr", "create", "--base", "main", "--head", "staging", "--title", title, "--body", body);
 
   if (create.ok) {
-    console.log(`  ${create.stdout}`);
+    console.info(`  ${create.stdout}`);
     prNumber = create.stdout.split("/").pop()!;
   } else {
     const existing = tryRun("gh", "pr", "list", "--head", "staging", "--base", "main", "--json", "number", "--jq", ".[0].number");
@@ -117,7 +117,7 @@ async function promote() {
       fail(`PR creation failed: ${create.stderr}`, "Check gh auth and retry.");
     }
     prNumber = existing.stdout;
-    console.log(`  Reusing existing PR #${prNumber}`);
+    console.info(`  Reusing existing PR #${prNumber}`);
   }
 
   if (!/^\d+$/.test(prNumber)) fail("Could not extract PR number.");
@@ -150,7 +150,7 @@ async function promote() {
   run("git", "push", "-u", "origin", "staging");
 
   const ms = (performance.now() - t0).toFixed(0);
-  console.log(`\n\x1b[32mDone in ${ms}ms. On fresh staging, in sync with main.\x1b[0m`);
+  console.info(`\n\x1b[32mDone in ${ms}ms. On fresh staging, in sync with main.\x1b[0m`);
 }
 
 promote().catch((err) => {

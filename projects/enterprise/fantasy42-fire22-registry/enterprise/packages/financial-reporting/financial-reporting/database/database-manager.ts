@@ -31,7 +31,7 @@ export class DatabaseManager {
    */
   private initializeConfigurations(): void {
     const env = Bun.env.NODE_ENV || 'development';
-    console.log(`🔧 Initializing database config for environment: ${env}`);
+    console.info(`🔧 Initializing database config for environment: ${env}`);
 
     // Load YAML configuration if available
     let yamlConfig: any = {};
@@ -39,7 +39,7 @@ export class DatabaseManager {
       const configPath = './src/domains/financial-reporting/config/database.yaml';
       if (Bun.file(configPath).exists()) {
         yamlConfig = YAML.parse(Bun.file(configPath).text());
-        console.log(`📄 Loaded YAML config for ${env}:`, yamlConfig[env]);
+        console.info(`📄 Loaded YAML config for ${env}:`, yamlConfig[env]);
       } else {
         console.warn('❌ Database YAML config file not found at:', configPath);
       }
@@ -51,7 +51,7 @@ export class DatabaseManager {
     const forceSQLite =
       !Bun.env.DB_ADAPTER && (!yamlConfig[env] || yamlConfig[env]?.adapter !== 'sqlite');
     if (forceSQLite) {
-      console.log('🔄 Forcing SQLite adapter for demo/development environment');
+      console.info('🔄 Forcing SQLite adapter for demo/development environment');
     }
 
     // Main database configuration
@@ -73,7 +73,7 @@ export class DatabaseManager {
       filename: forceSQLite ? './odds_movement_demo.sqlite' : yamlConfig[env]?.filename,
     };
 
-    console.log(`🎯 Final database config:`, {
+    console.info(`🎯 Final database config:`, {
       adapter: mainConfig.adapter,
       database: mainConfig.database,
       filename: mainConfig.filename,
@@ -105,9 +105,9 @@ export class DatabaseManager {
       const auditConnection = await this.createConnection('audit');
       this.connections.set('audit', auditConnection);
 
-      console.log(`🎯 Database initialized with ${this.config.get('main')?.adapter} adapter`);
-      console.log(`📊 Main database: ${this.config.get('main')?.database}`);
-      console.log(`🔒 Audit database: ${this.config.get('audit')?.database}`);
+      console.info(`🎯 Database initialized with ${this.config.get('main')?.adapter} adapter`);
+      console.info(`📊 Main database: ${this.config.get('main')?.database}`);
+      console.info(`🔒 Audit database: ${this.config.get('audit')?.database}`);
     } catch (error) {
       console.error('❌ Failed to initialize database connections:', error);
       throw error;
@@ -123,7 +123,7 @@ export class DatabaseManager {
       throw new Error(`Database configuration for ${name} not found`);
     }
 
-    console.log(`🔌 Creating ${name} database connection with config:`, {
+    console.info(`🔌 Creating ${name} database connection with config:`, {
       adapter: config.adapter,
       database: config.database,
       filename: config.filename,
@@ -136,28 +136,28 @@ export class DatabaseManager {
       if (config.adapter === 'sqlite') {
         // SQLite connection - use explicit file path
         const dbPath = config.filename || './odds_movement_demo.sqlite';
-        console.log(`📁 SQLite path: ${dbPath}`);
-        console.log(`📁 Using Bun.SQL with explicit SQLite path`);
+        console.info(`📁 SQLite path: ${dbPath}`);
+        console.info(`📁 Using Bun.SQL with explicit SQLite path`);
         connection = new SQL(dbPath);
       } else if (config.adapter === 'mysql') {
         // MySQL/MariaDB connection
         const url = `mysql://${config.username}:${config.password}@${config.hostname}:${config.port}/${config.database}`;
-        console.log(`🔗 MySQL URL: ${url.replace(/:[^:]*@/, ':***@')}`); // Hide password
+        console.info(`🔗 MySQL URL: ${url.replace(/:[^:]*@/, ':***@')}`); // Hide password
         connection = new SQL(url);
       } else if (config.adapter === 'postgres') {
         // PostgreSQL connection
         const url = `postgres://${config.username}:${config.password}@${config.hostname}:${config.port}/${config.database}`;
-        console.log(`🔗 PostgreSQL URL: ${url.replace(/:[^:]*@/, ':***@')}`); // Hide password
+        console.info(`🔗 PostgreSQL URL: ${url.replace(/:[^:]*@/, ':***@')}`); // Hide password
         connection = new SQL(url);
       } else {
         throw new Error(`Unsupported database adapter: ${config.adapter}`);
       }
 
       // Test the connection
-      console.log(`🧪 Testing ${name} database connection...`);
+      console.info(`🧪 Testing ${name} database connection...`);
       await connection`SELECT 1 as test`;
 
-      console.log(`✅ ${name} database connection established (${config.adapter})`);
+      console.info(`✅ ${name} database connection established (${config.adapter})`);
       return connection;
     } catch (error) {
       console.error(`❌ Failed to create ${name} database connection:`, error);
@@ -279,7 +279,7 @@ export class DatabaseManager {
     for (const [name, connection] of this.connections) {
       try {
         await connection.end();
-        console.log(`✅ ${name} database connection closed`);
+        console.info(`✅ ${name} database connection closed`);
       } catch (error) {
         console.error(`❌ Failed to close ${name} database connection:`, error);
       }

@@ -221,113 +221,113 @@ async function mergeConfigs(
 
 // 8. Configuration comparison
 function compareConfigs(base: AppConfig, compare: AppConfig): void {
-  console.log("📊 Configuration Comparison:");
-  console.log("==========================");
+  console.info("📊 Configuration Comparison:");
+  console.info("==========================");
 
-  console.log("Server:");
-  console.log(
+  console.info("Server:");
+  console.info(
     `  Base: ${base.server.host}:${base.server.port} (SSL: ${base.server.ssl})`
   );
-  console.log(
+  console.info(
     `  Compare: ${compare.server.host}:${compare.server.port} (SSL: ${compare.server.ssl})`
   );
 
-  console.log("Database:");
-  console.log(`  Base pool: ${base.database.pool_size}`);
-  console.log(`  Compare pool: ${compare.database.pool_size}`);
+  console.info("Database:");
+  console.info(`  Base pool: ${base.database.pool_size}`);
+  console.info(`  Compare pool: ${compare.database.pool_size}`);
 
-  console.log("Features:");
+  console.info("Features:");
   Object.keys(base.features).forEach((key) => {
     const baseVal = base.features[key as keyof FeaturesConfig];
     const compareVal = compare.features[key as keyof FeaturesConfig];
     const status = baseVal === compareVal ? "✅" : "🔄";
-    console.log(`  ${key}: ${baseVal} → ${compareVal} ${status}`);
+    console.info(`  ${key}: ${baseVal} → ${compareVal} ${status}`);
   });
 }
 
 // 9. Hot reload simulation
 async function demonstrateConfigReloading() {
-  console.log("🔥 Configuration Reloading Demo:");
-  console.log("==================================");
+  console.info("🔥 Configuration Reloading Demo:");
+  console.info("==================================");
 
   const configPath = "./examples/config/example.toml";
   let config = await ConfigLoader.loadConfig(configPath);
 
   if (config) {
-    console.log("Initial config loaded:", config.server);
+    console.info("Initial config loaded:", config.server);
 
     // Clear cache and reload
     ConfigLoader.clearCache();
     config = await ConfigLoader.loadConfig(configPath);
     if (config) {
-      console.log("Config reloaded:", config.server);
+      console.info("Config reloaded:", config.server);
     }
   }
 }
 
 // Main demonstration function
 async function runTomlDemo() {
-  console.log("🚀 Bun TOML Parsing Examples");
-  console.log("==============================");
+  console.info("🚀 Bun TOML Parsing Examples");
+  console.info("==============================");
 
   // 1. Sync TOML loading
-  console.log("\n1️⃣ Synchronous TOML Loading:");
+  console.info("\n1️⃣ Synchronous TOML Loading:");
   const baseConfig = loadTomlFile("./examples/config/example.toml");
   if (baseConfig) {
-    console.log("Base config server:", baseConfig.server);
+    console.info("Base config server:", baseConfig.server);
   }
 
   // 2. Async TOML loading
-  console.log("\n2️⃣ Asynchronous TOML Loading:");
+  console.info("\n2️⃣ Asynchronous TOML Loading:");
   const asyncConfig = await loadTomlFileAsync("./examples/config/example.toml");
   if (asyncConfig) {
-    console.log("Async config server:", asyncConfig.server);
+    console.info("Async config server:", asyncConfig.server);
   }
 
   // 3. Type-safe config loading
-  console.log("\n3️⃣ Type-Safe Config Loading:");
+  console.info("\n3️⃣ Type-Safe Config Loading:");
   const typedConfig = await ConfigLoader.loadConfig(
     "./examples/config/example.toml"
   );
   if (typedConfig) {
-    console.log("Typed config server:", typedConfig.server);
-    console.log("Database URL:", typedConfig.database.url);
-    console.log("Features:", typedConfig.features);
+    console.info("Typed config server:", typedConfig.server);
+    console.info("Database URL:", typedConfig.database.url);
+    console.info("Features:", typedConfig.features);
   }
 
   // 4. Environment-specific loading
-  console.log("\n4️⃣ Environment-Specific Loading:");
+  console.info("\n4️⃣ Environment-Specific Loading:");
   const devConfig = await loadEnvironmentConfig("development");
   const prodConfig = await loadEnvironmentConfig("production");
 
-  if (devConfig) console.log("Dev config:", devConfig.server);
-  if (prodConfig) console.log("Prod config:", prodConfig.server);
+  if (devConfig) console.info("Dev config:", devConfig.server);
+  if (prodConfig) console.info("Prod config:", prodConfig.server);
 
   // 5. Config merging
-  console.log("\n5️⃣ Configuration Merging:");
+  console.info("\n5️⃣ Configuration Merging:");
   const mergedConfig = await mergeConfigs(
     "./examples/config/development.toml",
     "./examples/config/example.toml"
   );
   if (mergedConfig) {
-    console.log("Merged config server:", mergedConfig.server);
+    console.info("Merged config server:", mergedConfig.server);
   }
 
   // 6. Configuration comparison
   if (devConfig && prodConfig) {
-    console.log("\n6️⃣ Configuration Comparison:");
+    console.info("\n6️⃣ Configuration Comparison:");
     compareConfigs(devConfig, prodConfig);
   }
 
   // 7. Hot reload demo
-  console.log("\n7️⃣ Hot Reloading:");
+  console.info("\n7️⃣ Hot Reloading:");
   await demonstrateConfigReloading();
 
-  console.log("\n✅ TOML parsing examples completed!");
-  console.log(
+  console.info("\n✅ TOML parsing examples completed!");
+  console.info(
     "\n📝 Note: Direct TOML imports with `with { type: 'toml' }` are not yet supported in Bun v1.3.6"
   );
-  console.log("   Use file reading + parsing approach as shown above.");
+  console.info("   Use file reading + parsing approach as shown above.");
 }
 
 // Export utilities

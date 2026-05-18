@@ -21,23 +21,23 @@ class BusinessManagementDemo {
    * Run VIP management demo
    */
   async runVIPDemo() {
-    console.log('👑 **VIP Management Demo**\n');
+    console.info('👑 **VIP Management Demo**\n');
 
     // Show all VIP tiers
     const tiers = this.businessSystem.getAllVIPTiers();
-    console.log('📊 **Available VIP Tiers:**');
+    console.info('📊 **Available VIP Tiers:**');
     tiers.forEach(tier => {
-      console.log(`\n${tier.name} (Level ${tier.level})`);
-      console.log(`  💰 Min Balance: $${tier.minBalance.toLocaleString()}`);
-      console.log(`  📊 Min Volume: $${tier.minVolume.toLocaleString()}`);
-      console.log(`  🎯 Commission Rate: ${(tier.commissionRate * 100).toFixed(1)}%`);
-      console.log(`  🚀 Bonus Multiplier: ${tier.bonusMultiplier}x`);
-      console.log(`  ✨ Benefits: ${tier.benefits.join(', ')}`);
-      console.log(`  🔥 Exclusive: ${tier.exclusiveFeatures.join(', ') || 'None'}`);
+      console.info(`\n${tier.name} (Level ${tier.level})`);
+      console.info(`  💰 Min Balance: $${tier.minBalance.toLocaleString()}`);
+      console.info(`  📊 Min Volume: $${tier.minVolume.toLocaleString()}`);
+      console.info(`  🎯 Commission Rate: ${(tier.commissionRate * 100).toFixed(1)}%`);
+      console.info(`  🚀 Bonus Multiplier: ${tier.bonusMultiplier}x`);
+      console.info(`  ✨ Benefits: ${tier.benefits.join(', ')}`);
+      console.info(`  🔥 Exclusive: ${tier.exclusiveFeatures.join(', ') || 'None'}`);
     });
 
     // Demonstrate VIP tier calculation
-    console.log('\n🎯 **VIP Tier Calculation Examples:**');
+    console.info('\n🎯 **VIP Tier Calculation Examples:**');
     const testCases = [
       { balance: 500, volume: 2000, name: 'New User' },
       { balance: 2000, volume: 8000, name: 'Bronze Eligible' },
@@ -49,10 +49,10 @@ class BusinessManagementDemo {
     testCases.forEach(testCase => {
       const tier = this.businessSystem.getVIPTier(testCase.balance, testCase.volume);
       const tierName = tier ? tier.name : 'No Tier';
-      console.log(`\n${testCase.name}:`);
-      console.log(`  💰 Balance: $${testCase.balance.toLocaleString()}`);
-      console.log(`  📊 Volume: $${testCase.volume.toLocaleString()}`);
-      console.log(`  👑 VIP Tier: ${tierName}`);
+      console.info(`\n${testCase.name}:`);
+      console.info(`  💰 Balance: $${testCase.balance.toLocaleString()}`);
+      console.info(`  📊 Volume: $${testCase.volume.toLocaleString()}`);
+      console.info(`  👑 VIP Tier: ${tierName}`);
     });
   }
 
@@ -60,54 +60,54 @@ class BusinessManagementDemo {
    * Run group management demo
    */
   async runGroupDemo() {
-    console.log('\n👥 **Group Management Demo**\n');
+    console.info('\n👥 **Group Management Demo**\n');
 
     // Show existing groups
     const groups = Array.from(this.businessSystem['groups'].values());
-    console.log('📋 **Existing Groups:**');
+    console.info('📋 **Existing Groups:**');
     groups.forEach(group => {
-      console.log(`\n${group.name} (${group.type})`);
-      console.log(`  👤 Members: ${group.members.length}/${group.settings.maxMembers}`);
-      console.log(`  🔐 Admins: ${group.admins.join(', ')}`);
-      console.log(`  ⚙️ Settings:`);
-      console.log(`    • Allow Invites: ${group.settings.allowInvites ? 'Yes' : 'No'}`);
-      console.log(`    • Require Approval: ${group.settings.requireApproval ? 'Yes' : 'No'}`);
-      console.log(`    • Auto Archive: ${group.settings.autoArchive ? 'Yes' : 'No'}`);
-      console.log(`    • Notifications: ${group.settings.notifications ? 'Yes' : 'No'}`);
+      console.info(`\n${group.name} (${group.type})`);
+      console.info(`  👤 Members: ${group.members.length}/${group.settings.maxMembers}`);
+      console.info(`  🔐 Admins: ${group.admins.join(', ')}`);
+      console.info(`  ⚙️ Settings:`);
+      console.info(`    • Allow Invites: ${group.settings.allowInvites ? 'Yes' : 'No'}`);
+      console.info(`    • Require Approval: ${group.settings.requireApproval ? 'Yes' : 'No'}`);
+      console.info(`    • Auto Archive: ${group.settings.autoArchive ? 'Yes' : 'No'}`);
+      console.info(`    • Notifications: ${group.settings.notifications ? 'Yes' : 'No'}`);
     });
 
     // Demonstrate group operations
-    console.log('\n🔄 **Group Operations Demo:**');
+    console.info('\n🔄 **Group Operations Demo:**');
 
     // Create new group
     const newGroup = this.businessSystem.createGroup('Demo Group', 'agent', 'demo_admin');
-    console.log(`\n✅ Created new group: ${newGroup.name}`);
+    console.info(`\n✅ Created new group: ${newGroup.name}`);
 
     // Add members
     const members = ['user1', 'user2', 'user3'];
     members.forEach(member => {
       const added = this.businessSystem.addMemberToGroup(newGroup.id, member, 'demo_admin');
-      console.log(`  ${added ? '✅' : '❌'} Added ${member} to group`);
+      console.info(`  ${added ? '✅' : '❌'} Added ${member} to group`);
     });
 
     // Show updated group
     const updatedGroup = this.businessSystem['groups'].get(newGroup.id);
     if (updatedGroup) {
-      console.log(`\n📊 **Updated Group Status:**`);
-      console.log(`  👤 Total Members: ${updatedGroup.members.length}`);
-      console.log(`  📅 Last Activity: ${updatedGroup.lastActivity.toLocaleString()}`);
+      console.info(`\n📊 **Updated Group Status:**`);
+      console.info(`  👤 Total Members: ${updatedGroup.members.length}`);
+      console.info(`  📅 Last Activity: ${updatedGroup.lastActivity.toLocaleString()}`);
     }
 
     // Remove a member
     const removed = this.businessSystem.removeMemberFromGroup(newGroup.id, 'user2', 'demo_admin');
-    console.log(`\n${removed ? '✅' : '❌'} Removed user2 from group`);
+    console.info(`\n${removed ? '✅' : '❌'} Removed user2 from group`);
 
     // Show final group status
     const finalGroup = this.businessSystem['groups'].get(newGroup.id);
     if (finalGroup) {
-      console.log(`\n📊 **Final Group Status:**`);
-      console.log(`  👤 Total Members: ${finalGroup.members.length}`);
-      console.log(`  📋 Members: ${finalGroup.members.join(', ')}`);
+      console.info(`\n📊 **Final Group Status:**`);
+      console.info(`  👤 Total Members: ${finalGroup.members.length}`);
+      console.info(`  📋 Members: ${finalGroup.members.join(', ')}`);
     }
   }
 
@@ -115,76 +115,76 @@ class BusinessManagementDemo {
    * Run affiliate program demo
    */
   async runAffiliateDemo() {
-    console.log('\n🤝 **Affiliate Program Demo**\n');
+    console.info('\n🤝 **Affiliate Program Demo**\n');
 
     const program = this.businessSystem['affiliatePrograms'].get('fire22-affiliate');
     if (!program) {
-      console.log('❌ Affiliate program not found');
+      console.info('❌ Affiliate program not found');
       return;
     }
 
-    console.log(`📊 **${program.name}**\n`);
+    console.info(`📊 **${program.name}**\n`);
 
     // Show commission structure
-    console.log('💰 **Commission Structure:**');
-    console.log(`  Base Rate: ${(program.commissionStructure.baseRate * 100).toFixed(1)}%\n`);
+    console.info('💰 **Commission Structure:**');
+    console.info(`  Base Rate: ${(program.commissionStructure.baseRate * 100).toFixed(1)}%\n`);
 
-    console.log('📈 **Volume Tiers:**');
+    console.info('📈 **Volume Tiers:**');
     program.commissionStructure.volumeTiers.forEach(tier => {
       const maxVol = tier.maxVolume === Infinity ? '∞' : tier.maxVolume.toLocaleString();
-      console.log(
+      console.info(
         `  $${tier.minVolume.toLocaleString()} - $${maxVol}: ${(tier.commissionRate * 100).toFixed(1)}% (${tier.bonusMultiplier}x)`
       );
     });
 
-    console.log('\n🚀 **Performance Bonuses:**');
+    console.info('\n🚀 **Performance Bonuses:**');
     program.commissionStructure.performanceBonuses.forEach(bonus => {
-      console.log(`  ${bonus.description}: +${(bonus.bonus * 100).toFixed(1)}%`);
+      console.info(`  ${bonus.description}: +${(bonus.bonus * 100).toFixed(1)}%`);
     });
 
-    console.log('\n⚠️ **Risk Adjustments:**');
+    console.info('\n⚠️ **Risk Adjustments:**');
     program.commissionStructure.riskAdjustments.forEach(risk => {
-      console.log(
+      console.info(
         `  ${risk.riskLevel.toUpperCase()}: ${(risk.adjustment * 100).toFixed(0)}% (${risk.description})`
       );
     });
 
-    console.log('\n✅ **Compliance Multipliers:**');
+    console.info('\n✅ **Compliance Multipliers:**');
     program.commissionStructure.complianceMultipliers.forEach(compliance => {
-      console.log(
+      console.info(
         `  ${compliance.score}%: ${(compliance.multiplier * 100).toFixed(0)}% (${compliance.description})`
       );
     });
 
-    console.log('\n🎯 **Referral Rewards:**');
+    console.info('\n🎯 **Referral Rewards:**');
     program.referralRewards.forEach(reward => {
-      console.log(
+      console.info(
         `  Level ${reward.level}: ${(reward.commission * 100).toFixed(1)}% + ${(reward.bonus * 100).toFixed(1)}% bonus`
       );
-      console.log(`    Requirements: ${reward.requirements.join(', ')}`);
+      console.info(`    Requirements: ${reward.requirements.join(', ')}`);
     });
 
-    console.log('\n🏆 **Performance Tiers:**');
+    console.info('\n🏆 **Performance Tiers:**');
     program.performanceTiers.forEach(tier => {
-      console.log(
+      console.info(
         `  ${tier.tier}: ${tier.minReferrals} referrals, $${tier.minVolume.toLocaleString()} volume`
       );
-      console.log(`    Commission: ${(tier.commissionRate * 100).toFixed(1)}%`);
-      console.log(`    Benefits: ${tier.exclusiveBenefits.join(', ')}`);
+      console.info(`    Commission: ${(tier.commissionRate * 100).toFixed(1)}%`);
+      console.info(`    Benefits: ${tier.exclusiveBenefits.join(', ')}`);
     });
 
-    console.log('\n📅 **Payout Schedule:**');
-    console.log(`  Frequency: ${program.payoutSchedule.frequency}`);
-    console.log(`  Day of Month: ${program.payoutSchedule.dayOfMonth}`);
-    console.log(`  Minimum Payout: $${program.payoutSchedule.minimumPayout}`);
-    console.log(`  Processing Time: ${program.payoutSchedule.processingTime} days`);
+    console.info('\n📅 **Payout Schedule:**');
+    console.info(`  Frequency: ${program.payoutSchedule.frequency}`);
+    console.info(`  Day of Month: ${program.payoutSchedule.dayOfMonth}`);
+    console.info(`  Minimum Payout: $${program.payoutSchedule.minimumPayout}`);
+    console.info(`  Processing Time: ${program.payoutSchedule.processingTime} days`);
   }
 
   /**
    * Run commission calculation demo
    */
   async runCommissionDemo() {
-    console.log('\n💰 **Commission Calculation Demo**\n');
+    console.info('\n💰 **Commission Calculation Demo**\n');
 
     // Test cases with different scenarios
     const testCases = [
@@ -223,7 +223,7 @@ class BusinessManagementDemo {
     ];
 
     testCases.forEach((testCase, index) => {
-      console.log(`📊 **Test Case ${index + 1}: ${testCase.name}**\n`);
+      console.info(`📊 **Test Case ${index + 1}: ${testCase.name}**\n`);
 
       try {
         const commission = this.businessSystem.calculateCommission(
@@ -235,23 +235,23 @@ class BusinessManagementDemo {
           testCase.performanceMetrics
         );
 
-        console.log(`  📅 Period: ${commission.period}`);
-        console.log(`  💰 Handle: $${commission.handle.toLocaleString()}`);
-        console.log(`  📈 Volume: $${testCase.volume.toLocaleString()}`);
-        console.log(`  ⚠️ Risk Score: ${(testCase.riskScore * 100).toFixed(0)}%`);
-        console.log(`  ✅ Compliance: ${testCase.complianceScore}%`);
-        console.log(`  👥 New Customers: ${testCase.performanceMetrics.newCustomers}\n`);
+        console.info(`  📅 Period: ${commission.period}`);
+        console.info(`  💰 Handle: $${commission.handle.toLocaleString()}`);
+        console.info(`  📈 Volume: $${testCase.volume.toLocaleString()}`);
+        console.info(`  ⚠️ Risk Score: ${(testCase.riskScore * 100).toFixed(0)}%`);
+        console.info(`  ✅ Compliance: ${testCase.complianceScore}%`);
+        console.info(`  👥 New Customers: ${testCase.performanceMetrics.newCustomers}\n`);
 
-        console.log(`  **Commission Breakdown:**`);
-        console.log(`    💵 Base Commission: $${commission.commission.toFixed(2)}`);
-        console.log(`    🚀 Performance Bonuses: $${commission.bonuses.toFixed(2)}`);
-        console.log(`    ⚖️ Risk Adjustments: $${commission.adjustments.toFixed(2)}`);
-        console.log(`    💸 **Total Payout: $${commission.totalPayout.toFixed(2)}**\n`);
+        console.info(`  **Commission Breakdown:**`);
+        console.info(`    💵 Base Commission: $${commission.commission.toFixed(2)}`);
+        console.info(`    🚀 Performance Bonuses: $${commission.bonuses.toFixed(2)}`);
+        console.info(`    ⚖️ Risk Adjustments: $${commission.adjustments.toFixed(2)}`);
+        console.info(`    💸 **Total Payout: $${commission.totalPayout.toFixed(2)}**\n`);
 
-        console.log(`  **Status:** ${commission.status.toUpperCase()}`);
-        console.log(`  📅 Calculated: ${commission.calculatedAt.toLocaleDateString()}\n`);
+        console.info(`  **Status:** ${commission.status.toUpperCase()}`);
+        console.info(`  📅 Calculated: ${commission.calculatedAt.toLocaleDateString()}\n`);
       } catch (error) {
-        console.log(`  ❌ Error calculating commission: ${error}\n`);
+        console.info(`  ❌ Error calculating commission: ${error}\n`);
       }
     });
   }
@@ -260,18 +260,18 @@ class BusinessManagementDemo {
    * Run linking system demo
    */
   async runLinkingDemo() {
-    console.log('\n🔗 **Linking System Demo**\n');
+    console.info('\n🔗 **Linking System Demo**\n');
 
     const users = ['user1', 'user2', 'user3'];
     const linkTypes: Array<'referral' | 'affiliate' | 'vip'> = ['referral', 'affiliate', 'vip'];
 
     users.forEach(user => {
-      console.log(`👤 **User: ${user}**\n`);
+      console.info(`👤 **User: ${user}**\n`);
 
       linkTypes.forEach(linkType => {
         const link = this.businessSystem.createUserLink(user, linkType);
-        console.log(`  🔗 ${linkType.charAt(0).toUpperCase() + linkType.slice(1)} Link:`);
-        console.log(`    ${link}\n`);
+        console.info(`  🔗 ${linkType.charAt(0).toUpperCase() + linkType.slice(1)} Link:`);
+        console.info(`    ${link}\n`);
       });
 
       // Validate a link
@@ -280,10 +280,10 @@ class BusinessManagementDemo {
       const validation = this.businessSystem.validateUserLink(linkId);
 
       if (validation) {
-        console.log(`  ✅ Link Validation:`);
-        console.log(`    Type: ${validation.type}`);
-        console.log(`    User: ${validation.userId}`);
-        console.log(`    Valid: ${validation.valid}\n`);
+        console.info(`  ✅ Link Validation:`);
+        console.info(`    Type: ${validation.type}`);
+        console.info(`    User: ${validation.userId}`);
+        console.info(`    Valid: ${validation.valid}\n`);
       }
     });
   }
@@ -292,35 +292,35 @@ class BusinessManagementDemo {
    * Run system statistics demo
    */
   async runStatsDemo() {
-    console.log('\n📊 **System Statistics Demo**\n');
+    console.info('\n📊 **System Statistics Demo**\n');
 
     const stats = this.businessSystem.getSystemStats();
 
-    console.log('📈 **Overall System Status:**');
-    console.log(`  👑 VIP Tiers: ${stats.vipTiers}`);
-    console.log(`  👥 Groups: ${stats.groups}`);
-    console.log(`  👤 Total Group Members: ${stats.totalGroupMembers}`);
-    console.log(`  🤝 Affiliate Programs: ${stats.affiliatePrograms}`);
-    console.log(`  💰 Commission Records: ${stats.commissionRecords}`);
-    console.log(`  💵 Total Commissions: $${stats.totalCommissions.toLocaleString()}\n`);
+    console.info('📈 **Overall System Status:**');
+    console.info(`  👑 VIP Tiers: ${stats.vipTiers}`);
+    console.info(`  👥 Groups: ${stats.groups}`);
+    console.info(`  👤 Total Group Members: ${stats.totalGroupMembers}`);
+    console.info(`  🤝 Affiliate Programs: ${stats.affiliatePrograms}`);
+    console.info(`  💰 Commission Records: ${stats.commissionRecords}`);
+    console.info(`  💵 Total Commissions: $${stats.totalCommissions.toLocaleString()}\n`);
 
     // Show commission history for a sample agent
-    console.log('📋 **Sample Commission History:**');
+    console.info('📋 **Sample Commission History:**');
     const sampleAgent = 'agent_2';
     const commissionHistory = this.businessSystem.getAgentCommissionHistory(sampleAgent);
 
     if (commissionHistory.length > 0) {
       commissionHistory.forEach((record, index) => {
-        console.log(`\n  **Record ${index + 1}:**`);
-        console.log(`    📅 Period: ${record.period}`);
-        console.log(`    💰 Handle: $${record.handle.toLocaleString()}`);
-        console.log(`    💵 Commission: $${record.commission.toFixed(2)}`);
-        console.log(`    🚀 Bonuses: $${record.bonuses.toFixed(2)}`);
-        console.log(`    💸 Total: $${record.totalPayout.toFixed(2)}`);
-        console.log(`    📊 Status: ${record.status.toUpperCase()}`);
+        console.info(`\n  **Record ${index + 1}:**`);
+        console.info(`    📅 Period: ${record.period}`);
+        console.info(`    💰 Handle: $${record.handle.toLocaleString()}`);
+        console.info(`    💵 Commission: $${record.commission.toFixed(2)}`);
+        console.info(`    🚀 Bonuses: $${record.bonuses.toFixed(2)}`);
+        console.info(`    💸 Total: $${record.totalPayout.toFixed(2)}`);
+        console.info(`    📊 Status: ${record.status.toUpperCase()}`);
       });
     } else {
-      console.log(`  No commission history found for ${sampleAgent}`);
+      console.info(`  No commission history found for ${sampleAgent}`);
     }
   }
 
@@ -328,8 +328,8 @@ class BusinessManagementDemo {
    * Run complete demo
    */
   async runCompleteDemo() {
-    console.log('🚀 **Fire22 Business Management System Demo**\n');
-    console.log('This demo showcases the complete business management capabilities:\n');
+    console.info('🚀 **Fire22 Business Management System Demo**\n');
+    console.info('This demo showcases the complete business management capabilities:\n');
 
     await this.runVIPDemo();
     await this.runGroupDemo();
@@ -338,21 +338,21 @@ class BusinessManagementDemo {
     await this.runLinkingDemo();
     await this.runStatsDemo();
 
-    console.log('🎉 **Demo Complete!**\n');
-    console.log('✅ VIP Management: Tier system with benefits and requirements');
-    console.log('✅ Group Management: Member management with settings and permissions');
-    console.log('✅ Affiliate Program: Commission structure with bonuses and tiers');
-    console.log('✅ Commission Calculation: Real-time calculation with risk adjustments');
-    console.log('✅ Linking System: Referral link creation and validation');
-    console.log('✅ System Statistics: Comprehensive overview and reporting\n');
+    console.info('🎉 **Demo Complete!**\n');
+    console.info('✅ VIP Management: Tier system with benefits and requirements');
+    console.info('✅ Group Management: Member management with settings and permissions');
+    console.info('✅ Affiliate Program: Commission structure with bonuses and tiers');
+    console.info('✅ Commission Calculation: Real-time calculation with risk adjustments');
+    console.info('✅ Linking System: Referral link creation and validation');
+    console.info('✅ System Statistics: Comprehensive overview and reporting\n');
 
-    console.log('🚀 **Your Fire22 Business Management System is ready for production!**');
-    console.log('💡 **Next Steps:**');
-    console.log('  • Integrate with your database for real user data');
-    console.log('  • Connect with payment processing systems');
-    console.log('  • Implement automated commission payouts');
-    console.log('  • Add advanced analytics and reporting');
-    console.log('  • Create admin dashboard for management');
+    console.info('🚀 **Your Fire22 Business Management System is ready for production!**');
+    console.info('💡 **Next Steps:**');
+    console.info('  • Integrate with your database for real user data');
+    console.info('  • Connect with payment processing systems');
+    console.info('  • Implement automated commission payouts');
+    console.info('  • Add advanced analytics and reporting');
+    console.info('  • Create admin dashboard for management');
   }
 }
 

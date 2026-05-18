@@ -15,6 +15,6 @@ const { values, positionals } = parseArgs({
   allowPositionals: true,
 });
 
-console.log(values);
-console.log(positionals);
+console.info(values);
+console.info(positionals);
 

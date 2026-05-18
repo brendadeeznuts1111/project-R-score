@@ -99,8 +99,8 @@ export class Col93MatrixDisplay {
 
   // Test method for demonstrating stringWidth improvements
   demonstrateStringWidth(): void {
-    console.log('📏 Bun.stringWidth v2 Demonstration');
-    console.log('==================================');
+    console.info('📏 Bun.stringWidth v2 Demonstration');
+    console.info('==================================');
     
     const examples = [
       { text: 'Hello', desc: 'Simple ASCII' },
@@ -116,7 +116,7 @@ export class Col93MatrixDisplay {
     examples.forEach(({ text, desc }) => {
       const width = Bun.stringWidth(text);
       const display = this.renderCell(text, 30);
-      console.log(`${display} | ${width} | ${desc}`);
+      console.info(`${display} | ${width} | ${desc}`);
     });
   }
 }
@@ -125,12 +125,12 @@ export class Col93MatrixDisplay {
 export function runCol93Demo(): void {
   const display = new Col93MatrixDisplay();
   
-  console.log('\n🔒 Tier-1380 Col 93 Matrix Display');
-  console.log('=====================================\n');
+  console.info('\n🔒 Tier-1380 Col 93 Matrix Display');
+  console.info('=====================================\n');
   
   // Show the main matrix
-  console.log(display.renderMatrix());
-  console.log('\n');
+  console.info(display.renderMatrix());
+  console.info('\n');
   
   // Demonstrate stringWidth improvements
   display.demonstrateStringWidth();

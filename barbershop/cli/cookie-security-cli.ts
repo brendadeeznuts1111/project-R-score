@@ -85,13 +85,13 @@ function parseArgs(argv: string[]): ParsedArgs {
 }
 
 function header() {
-  console.log(color(`\n🍪 Cookie Security v${VERSION}`, 'bright'));
-  console.log(color('═══════════════════════════════════════', 'dim'));
+  console.info(color(`\n🍪 Cookie Security v${VERSION}`, 'bright'));
+  console.info(color('═══════════════════════════════════════', 'dim'));
 }
 
 function showHelp() {
   header();
-  console.log(`
+  console.info(`
 ${color('Usage:', 'bright')} cookie-security <command> [options]
 
 ${color('Commands:', 'bright')}
@@ -140,7 +140,7 @@ async function audit(args: ParsedArgs) {
 
   if (!cookieStr) {
     console.error(color('Error: Cookie string required', 'red'));
-    console.log('Usage: cookie-security audit "<cookie-header>"');
+    console.info('Usage: cookie-security audit "<cookie-header>"');
     process.exit(1);
   }
 
@@ -152,7 +152,7 @@ async function audit(args: ParsedArgs) {
   }
 
   if (format === 'json') {
-    console.log(
+    console.info(
       JSON.stringify(
         {
           name: cookie.name,
@@ -174,43 +174,43 @@ async function audit(args: ParsedArgs) {
   }
 
   // Table format
-  console.log();
-  console.log(`${color('Cookie:', 'bright')} ${color(cookie.name, 'cyan')}`);
-  console.log(`${color('Value:', 'bright')} ${cookie.value.slice(0, 30)}${cookie.value.length > 30 ? '...' : ''}`);
-  console.log();
+  console.info();
+  console.info(`${color('Cookie:', 'bright')} ${color(cookie.name, 'cyan')}`);
+  console.info(`${color('Value:', 'bright')} ${cookie.value.slice(0, 30)}${cookie.value.length > 30 ? '...' : ''}`);
+  console.info();
 
   // Properties
-  console.log(color('Properties:', 'bright'));
-  console.log(`  Secure:    ${cookie.secure ? color('✓', 'green') : color('✗', 'red')}`);
-  console.log(`  HttpOnly:  ${cookie.httpOnly ? color('✓', 'green') : color('✗', 'red')}`);
-  console.log(`  SameSite:  ${cookie.sameSite || color('not set', 'yellow')}`);
-  console.log(`  Path:      ${cookie.path || '/'}`);
-  console.log(`  MaxAge:    ${cookie.maxAge ? `${cookie.maxAge}s` : color('session', 'dim')}`);
-  console.log();
+  console.info(color('Properties:', 'bright'));
+  console.info(`  Secure:    ${cookie.secure ? color('✓', 'green') : color('✗', 'red')}`);
+  console.info(`  HttpOnly:  ${cookie.httpOnly ? color('✓', 'green') : color('✗', 'red')}`);
+  console.info(`  SameSite:  ${cookie.sameSite || color('not set', 'yellow')}`);
+  console.info(`  Path:      ${cookie.path || '/'}`);
+  console.info(`  MaxAge:    ${cookie.maxAge ? `${cookie.maxAge}s` : color('session', 'dim')}`);
+  console.info();
 
   // Security Report
-  console.log(`${color('Grade:', 'bright')} ${gradeColor(report.grade)}${c.bright}${report.grade}${c.reset} (${report.score}/100)`);
-  console.log(`${color('Valid:', 'bright')} ${report.valid ? color('✓ Yes', 'green') : color('✗ No', 'red')}`);
+  console.info(`${color('Grade:', 'bright')} ${gradeColor(report.grade)}${c.bright}${report.grade}${c.reset} (${report.score}/100)`);
+  console.info(`${color('Valid:', 'bright')} ${report.valid ? color('✓ Yes', 'green') : color('✗ No', 'red')}`);
 
   if (report.issues.length) {
-    console.log(`\n${color('Issues:', 'red')}`);
-    report.issues.forEach((issue) => console.log(`  ${color('✗', 'red')} ${issue}`));
+    console.info(`\n${color('Issues:', 'red')}`);
+    report.issues.forEach((issue) => console.info(`  ${color('✗', 'red')} ${issue}`));
   }
 
   if (report.warnings.length) {
-    console.log(`\n${color('Warnings:', 'yellow')}`);
-    report.warnings.forEach((warn) => console.log(`  ${color('⚠', 'yellow')} ${warn}`));
+    console.info(`\n${color('Warnings:', 'yellow')}`);
+    report.warnings.forEach((warn) => console.info(`  ${color('⚠', 'yellow')} ${warn}`));
   }
 
   if (Object.keys(report.headers).length) {
-    console.log(`\n${color('Recommended Headers:', 'cyan')}`);
+    console.info(`\n${color('Recommended Headers:', 'cyan')}`);
     Object.entries(report.headers).forEach(([key, value]) => {
-      if (value) console.log(`  ${key}: ${color(value, 'dim')}`);
+      if (value) console.info(`  ${key}: ${color(value, 'dim')}`);
     });
   }
 
-  console.log(`\n${color('Set-Cookie:', 'bright')}`);
-  console.log(`  ${color(cookie.serialize(), 'cyan')}`);
+  console.info(`\n${color('Set-Cookie:', 'bright')}`);
+  console.info(`  ${color(cookie.serialize(), 'cyan')}`);
 }
 
 async function create(args: ParsedArgs) {
@@ -224,7 +224,7 @@ async function create(args: ParsedArgs) {
 
   if (!name || !value) {
     console.error(color('Error: Name and value required', 'red'));
-    console.log('Usage: cookie-security create <name> <value> [--type <type>]');
+    console.info('Usage: cookie-security create <name> <value> [--type <type>]');
     process.exit(1);
   }
 
@@ -244,7 +244,7 @@ async function create(args: ParsedArgs) {
   const { cookie, report } = cookieSecurity.createSecure(name, parsed, type, overrides);
 
   if (format === 'json') {
-    console.log(
+    console.info(
       JSON.stringify(
         {
           name: cookie.name,
@@ -260,14 +260,14 @@ async function create(args: ParsedArgs) {
     return;
   }
 
-  console.log(`\n${color('Created:', 'bright')} ${color(type, 'cyan')} cookie`);
-  console.log(`${color('Grade:', 'bright')} ${gradeColor(report.grade)}${report.grade}${c.reset}`);
-  console.log(`${color('Set-Cookie:', 'bright')}`);
-  console.log(`  ${color(cookie.serialize(), 'cyan')}`);
+  console.info(`\n${color('Created:', 'bright')} ${color(type, 'cyan')} cookie`);
+  console.info(`${color('Grade:', 'bright')} ${gradeColor(report.grade)}${report.grade}${c.reset}`);
+  console.info(`${color('Set-Cookie:', 'bright')}`);
+  console.info(`  ${color(cookie.serialize(), 'cyan')}`);
 
   if (report.issues.length) {
-    console.log(`\n${color('Warnings:', 'yellow')}`);
-    report.issues.forEach((issue) => console.log(`  ${color('⚠', 'yellow')} ${issue}`));
+    console.info(`\n${color('Warnings:', 'yellow')}`);
+    report.issues.forEach((issue) => console.info(`  ${color('⚠', 'yellow')} ${issue}`));
   }
 }
 
@@ -277,14 +277,14 @@ async function csrf(args: ParsedArgs) {
 
   if (!session) {
     console.error(color('Error: Session ID required', 'red'));
-    console.log('Usage: cookie-security csrf <session-id>');
+    console.info('Usage: cookie-security csrf <session-id>');
     process.exit(1);
   }
 
   const { token, cookie } = await cookieSecurity.generateCSRF(session);
 
   if (format === 'json') {
-    console.log(
+    console.info(
       JSON.stringify(
         {
           session,
@@ -298,10 +298,10 @@ async function csrf(args: ParsedArgs) {
     return;
   }
 
-  console.log(`\n${color('Session:', 'bright')} ${session}`);
-  console.log(`${color('Token:', 'bright')} ${color(token, 'cyan')}`);
-  console.log(`${color('Cookie:', 'bright')}`);
-  console.log(`  ${color(cookie.serialize(), 'dim')}`);
+  console.info(`\n${color('Session:', 'bright')} ${session}`);
+  console.info(`${color('Token:', 'bright')} ${color(token, 'cyan')}`);
+  console.info(`${color('Cookie:', 'bright')}`);
+  console.info(`  ${color(cookie.serialize(), 'dim')}`);
 }
 
 async function validate(args: ParsedArgs) {
@@ -309,16 +309,16 @@ async function validate(args: ParsedArgs) {
 
   if (!session || !token) {
     console.error(color('Error: Session and token required', 'red'));
-    console.log('Usage: cookie-security validate <session> <token>');
+    console.info('Usage: cookie-security validate <session> <token>');
     process.exit(1);
   }
 
   const valid = cookieSecurity.validateCSRF(session, token);
 
-  console.log(valid ? color('\n✓ VALID', 'green') : color('\n✗ INVALID', 'red'));
+  console.info(valid ? color('\n✓ VALID', 'green') : color('\n✗ INVALID', 'red'));
 
   if (!valid) {
-    console.log(color('  Token mismatch or expired', 'yellow'));
+    console.info(color('  Token mismatch or expired', 'yellow'));
   }
 
   process.exit(valid ? 0 : 1);
@@ -330,7 +330,7 @@ async function variant(args: ParsedArgs) {
 
   if (!user || !variantName) {
     console.error(color('Error: User and variant required', 'red'));
-    console.log('Usage: cookie-security variant <user-id> <A|B|control>');
+    console.info('Usage: cookie-security variant <user-id> <A|B|control>');
     process.exit(1);
   }
 
@@ -342,7 +342,7 @@ async function variant(args: ParsedArgs) {
   const result = variantManager.createVariantCookie(user, variantName as 'A' | 'B' | 'control');
 
   if (format === 'json') {
-    console.log(
+    console.info(
       JSON.stringify(
         {
           user,
@@ -359,11 +359,11 @@ async function variant(args: ParsedArgs) {
 
   const variantColor = variantName === 'A' ? 'green' : variantName === 'B' ? 'blue' : 'yellow';
 
-  console.log(`\n${color('User:', 'bright')} ${user}`);
-  console.log(`${color('Variant:', 'bright')} ${color(variantName, variantColor)}`);
-  console.log(`${color('Signature:', 'bright')} ${color(result.signature, 'dim')}`);
-  console.log(`${color('Cookie:', 'bright')}`);
-  console.log(`  ${color(result.cookie.serialize(), 'cyan')}`);
+  console.info(`\n${color('User:', 'bright')} ${user}`);
+  console.info(`${color('Variant:', 'bright')} ${color(variantName, variantColor)}`);
+  console.info(`${color('Signature:', 'bright')} ${color(result.signature, 'dim')}`);
+  console.info(`${color('Cookie:', 'bright')}`);
+  console.info(`  ${color(result.cookie.serialize(), 'cyan')}`);
 }
 
 async function checkVariant(args: ParsedArgs) {
@@ -371,7 +371,7 @@ async function checkVariant(args: ParsedArgs) {
 
   if (!cookieValue || !userId) {
     console.error(color('Error: Cookie value and user ID required', 'red'));
-    console.log('Usage: cookie-security check-variant <cookie-value> <user-id>');
+    console.info('Usage: cookie-security check-variant <cookie-value> <user-id>');
     process.exit(1);
   }
 
@@ -379,11 +379,11 @@ async function checkVariant(args: ParsedArgs) {
 
   if (result.valid) {
     const variantColor = result.variant === 'A' ? 'green' : result.variant === 'B' ? 'blue' : 'yellow';
-    console.log(color('\n✓ VALID', 'green'));
-    console.log(`  Variant: ${color(result.variant!, variantColor)}`);
+    console.info(color('\n✓ VALID', 'green'));
+    console.info(`  Variant: ${color(result.variant!, variantColor)}`);
   } else {
-    console.log(color('\n✗ INVALID', 'red'));
-    console.log(color('  Signature mismatch or expired', 'yellow'));
+    console.info(color('\n✗ INVALID', 'red'));
+    console.info(color('  Signature mismatch or expired', 'yellow'));
   }
 
   process.exit(result.valid ? 0 : 1);
@@ -395,18 +395,18 @@ async function showStats() {
   const csrfStats = cookieSecurity.getCSRFStats();
   const variantStats = variantManager.getVariantStats();
 
-  console.log(`\n${color('CSRF Tokens:', 'bright')}`);
-  console.log(`  Active:  ${color(String(csrfStats.active), 'green')}`);
-  console.log(`  Expired: ${color(String(csrfStats.expired), 'yellow')}`);
+  console.info(`\n${color('CSRF Tokens:', 'bright')}`);
+  console.info(`  Active:  ${color(String(csrfStats.active), 'green')}`);
+  console.info(`  Expired: ${color(String(csrfStats.expired), 'yellow')}`);
 
-  console.log(`\n${color('Variants:', 'bright')}`);
+  console.info(`\n${color('Variants:', 'bright')}`);
   const variants = Object.entries(variantStats);
   if (variants.length === 0) {
-    console.log(`  ${color('No variants tracked', 'dim')}`);
+    console.info(`  ${color('No variants tracked', 'dim')}`);
   } else {
     variants.forEach(([variant, count]) => {
       const vColor = variant === 'A' ? 'green' : variant === 'B' ? 'blue' : 'yellow';
-      console.log(`  ${color(variant, vColor)}: ${count}`);
+      console.info(`  ${color(variant, vColor)}: ${count}`);
     });
   }
 }
@@ -414,18 +414,18 @@ async function showStats() {
 async function showConfig() {
   header();
 
-  console.log(`\n${color('Security Configuration:', 'bright')}`);
-  console.log(`  Min Score:        ${SECURITY_CONFIG.MIN_SCORE}/100`);
-  console.log(`  Session MaxAge:   ${SECURITY_CONFIG.MAX_AGE_SESSION}s (1 day)`);
-  console.log(`  Persistent Age:   ${SECURITY_CONFIG.MAX_AGE_PERSISTENT}s (1 year)`);
-  console.log(`  CSRF Secret:      ${color(SECURITY_CONFIG.CSRF_SECRET.slice(0, 8) + '...', 'dim')}`);
-  console.log(`  Debug Mode:       ${Bun.env.DEBUG_COOKIE_SECURITY === 'true' ? color('enabled', 'yellow') : color('disabled', 'dim')}`);
-  console.log(`  Bun Version:      ${Bun.version}`);
+  console.info(`\n${color('Security Configuration:', 'bright')}`);
+  console.info(`  Min Score:        ${SECURITY_CONFIG.MIN_SCORE}/100`);
+  console.info(`  Session MaxAge:   ${SECURITY_CONFIG.MAX_AGE_SESSION}s (1 day)`);
+  console.info(`  Persistent Age:   ${SECURITY_CONFIG.MAX_AGE_PERSISTENT}s (1 year)`);
+  console.info(`  CSRF Secret:      ${color(SECURITY_CONFIG.CSRF_SECRET.slice(0, 8) + '...', 'dim')}`);
+  console.info(`  Debug Mode:       ${Bun.env.DEBUG_COOKIE_SECURITY === 'true' ? color('enabled', 'yellow') : color('disabled', 'dim')}`);
+  console.info(`  Bun Version:      ${Bun.version}`);
 }
 
 async function benchmark() {
   header();
-  console.log(color('\nRunning benchmarks...\n', 'yellow'));
+  console.info(color('\nRunning benchmarks...\n', 'yellow'));
 
   const b = async (name: string, fn: () => void | Promise<void>, iter = 10000) => {
     // Warmup
@@ -440,7 +440,7 @@ async function benchmark() {
     const opsFormatted = ops.toLocaleString().padStart(10);
     const status = ops >= 285000 ? color('✓', 'green') : color('○', 'dim');
 
-    console.log(`  ${name.padEnd(25)} ${opsFormatted} ops/s ${status}`);
+    console.info(`  ${name.padEnd(25)} ${opsFormatted} ops/s ${status}`);
     return ops;
   };
 
@@ -463,14 +463,14 @@ async function benchmark() {
 
   const avg = Math.round(results.reduce((a, b) => a + b, 0) / results.length);
 
-  console.log(`\n${color('Average:', 'bright')} ${avg.toLocaleString()} ops/s`);
+  console.info(`\n${color('Average:', 'bright')} ${avg.toLocaleString()} ops/s`);
 
   const targetOps = 285000;
   if (avg >= targetOps) {
-    console.log(color(`✓ EXCEEDS TARGET (${targetOps.toLocaleString()} ops/s)`, 'green'));
+    console.info(color(`✓ EXCEEDS TARGET (${targetOps.toLocaleString()} ops/s)`, 'green'));
   } else {
     const pct = Math.round((avg / targetOps) * 100);
-    console.log(color(`○ ${pct}% of target (${targetOps.toLocaleString()} ops/s)`, 'yellow'));
+    console.info(color(`○ ${pct}% of target (${targetOps.toLocaleString()} ops/s)`, 'yellow'));
   }
 }
 
@@ -529,7 +529,7 @@ async function main() {
 
     case '-v':
     case '--version':
-      console.log(VERSION);
+      console.info(VERSION);
       break;
 
     case '':
@@ -540,7 +540,7 @@ async function main() {
 
     default:
       console.error(color(`Unknown command: ${command}`, 'red'));
-      console.log(`Run ${color('cookie-security help', 'cyan')} for usage`);
+      console.info(`Run ${color('cookie-security help', 'cyan')} for usage`);
       process.exit(1);
   }
 }

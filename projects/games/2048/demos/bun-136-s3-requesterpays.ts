@@ -1,22 +1,22 @@
 #!/usr/bin/env bun
 
 // Demonstration of Bun v1.3.6 S3 Requester Pays Support
-console.log("☁️  Bun v1.3.6 S3 Requester Pays Support");
-console.log("=".repeat(50));
+console.info("☁️  Bun v1.3.6 S3 Requester Pays Support");
+console.info("=".repeat(50));
 
 // Test 1: S3 Requester Pays Overview
-console.log("\n1️⃣ S3 Requester Pays Support Overview:");
+console.info("\n1️⃣ S3 Requester Pays Support Overview:");
 
 function demonstrateS3RequesterPays() {
-  console.log("✅ New support for S3 Requester Pays buckets");
-  console.log(
+  console.info("✅ New support for S3 Requester Pays buckets");
+  console.info(
     "🔧 Set requestPayer: true when accessing Requester Pays buckets",
   );
-  console.log(
+  console.info(
     "🚀 Requester is charged for data transfer instead of bucket owner",
   );
 
-  console.log("\n   📋 What is Requester Pays?");
+  console.info("\n   📋 What is Requester Pays?");
   const features = [
     {
       feature: "Cost Model",
@@ -36,21 +36,21 @@ function demonstrateS3RequesterPays() {
   ];
 
   features.forEach((item, index) => {
-    console.log(`   ${index + 1}. ${item.feature}:`);
-    console.log(`      Description: ${item.description}`);
-    console.log(`      Benefit: ${item.benefit}`);
+    console.info(`   ${index + 1}. ${item.feature}:`);
+    console.info(`      Description: ${item.description}`);
+    console.info(`      Benefit: ${item.benefit}`);
   });
 }
 
 // Test 2: S3 Requester Pays Implementation
-console.log("\n2️⃣ S3 Requester Pays Implementation:");
+console.info("\n2️⃣ S3 Requester Pays Implementation:");
 
 function demonstrateS3Implementation() {
-  console.log(
+  console.info(
     "✅ Simple requestPayer: true option enables Requester Pays support",
   );
-  console.log("🔧 Works with all S3 operations (reads, writes, stat, uploads)");
-  console.log("🚀 No additional configuration required");
+  console.info("🔧 Works with all S3 operations (reads, writes, stat, uploads)");
+  console.info("🚀 No additional configuration required");
 
   const implementationCode = `
 // v1.3.6: S3 Requester Pays support
@@ -87,15 +87,15 @@ await upload.write(data);
 await upload.end();
   `;
 
-  console.log("   💡 S3 Requester Pays implementation:");
-  console.log(implementationCode);
+  console.info("   💡 S3 Requester Pays implementation:");
+  console.info(implementationCode);
 }
 
 // Test 3: Use Cases and Scenarios
-console.log("\n3️⃣ S3 Requester Pays Use Cases:");
+console.info("\n3️⃣ S3 Requester Pays Use Cases:");
 
 function demonstrateUseCases() {
-  console.log("✅ Real-world scenarios for Requester Pays buckets");
+  console.info("✅ Real-world scenarios for Requester Pays buckets");
 
   const useCases = [
     {
@@ -125,18 +125,18 @@ function demonstrateUseCases() {
   ];
 
   useCases.forEach((useCase, index) => {
-    console.log(`\n   ${index + 1}. ${useCase.scenario}:`);
-    console.log(`      Description: ${useCase.description}`);
-    console.log(`      Example: ${useCase.example}`);
-    console.log(`      Benefit: ${useCase.benefit}`);
+    console.info(`\n   ${index + 1}. ${useCase.scenario}:`);
+    console.info(`      Description: ${useCase.description}`);
+    console.info(`      Example: ${useCase.example}`);
+    console.info(`      Benefit: ${useCase.benefit}`);
   });
 }
 
 // Test 4: Advanced S3 Operations
-console.log("\n4️⃣ Advanced S3 Operations with Requester Pays:");
+console.info("\n4️⃣ Advanced S3 Operations with Requester Pays:");
 
 function demonstrateAdvancedOperations() {
-  console.log("✅ Requester Pays works with all S3 operations");
+  console.info("✅ Requester Pays works with all S3 operations");
 
   const advancedCode = `
 // v1.3.6: Advanced S3 operations with Requester Pays
@@ -229,7 +229,7 @@ const client = new S3RequesterPaysClient("public-research-data");
 
 // Read research dataset
 const dataset = await client.readFile("genome-data.csv");
-console.log(\`Dataset size: \${dataset.length} bytes\`);
+console.info(\`Dataset size: \${dataset.length} bytes\`);
 
 // Upload analysis results
 const results = JSON.stringify({ analysis: "complete", results: [...] });
@@ -237,18 +237,18 @@ await client.writeFile("analysis-results.json", results);
 
 // Get file statistics
 const stats = await client.getFileStats("large-dataset.zip");
-console.log(\`File size: \${stats.size} bytes, Modified: \${stats.lastModified}\`);
+console.info(\`File size: \${stats.size} bytes, Modified: \${stats.lastModified}\`);
   `;
 
-  console.log("   💡 Advanced S3 operations:");
-  console.log(advancedCode);
+  console.info("   💡 Advanced S3 operations:");
+  console.info(advancedCode);
 }
 
 // Test 5: Cost Management and Monitoring
-console.log("\n5️⃣ Cost Management and Monitoring:");
+console.info("\n5️⃣ Cost Management and Monitoring:");
 
 function demonstrateCostManagement() {
-  console.log("✅ Best practices for managing Requester Pays costs");
+  console.info("✅ Best practices for managing Requester Pays costs");
 
   const costManagementCode = `
 // v1.3.6: Cost management for Requester Pays buckets
@@ -271,7 +271,7 @@ class S3CostManager {
       // Track successful request
       this.requestCounts.set(bucket, (this.requestCounts.get(bucket) || 0) + 1);
 
-      console.log(\`\${operation} completed for bucket: \${bucket}\`);
+      console.info(\`\${operation} completed for bucket: \${bucket}\`);
       return result;
 
     } catch (error) {
@@ -349,18 +349,18 @@ await costManager.writeFileWithTracking(
 );
 
 // Generate cost report
-console.log("Cost report:", costManager.getCostReport());
+console.info("Cost report:", costManager.getCostReport());
   `;
 
-  console.log("   💡 Cost management implementation:");
-  console.log(costManagementCode);
+  console.info("   💡 Cost management implementation:");
+  console.info(costManagementCode);
 }
 
 // Test 6: Error Handling and Best Practices
-console.log("\n6️⃣ Error Handling and Best Practices:");
+console.info("\n6️⃣ Error Handling and Best Practices:");
 
 function demonstrateErrorHandling() {
-  console.log("✅ Proper error handling for Requester Pays operations");
+  console.info("✅ Proper error handling for Requester Pays operations");
 
   const bestPractices = [
     {
@@ -391,9 +391,9 @@ function demonstrateErrorHandling() {
   ];
 
   bestPractices.forEach((practice, index) => {
-    console.log(`\n   ${index + 1}. ${practice.practice}:`);
-    console.log(`      Description: ${practice.description}`);
-    console.log(`      Code: ${practice.code}`);
+    console.info(`\n   ${index + 1}. ${practice.practice}:`);
+    console.info(`      Description: ${practice.description}`);
+    console.info(`      Code: ${practice.code}`);
   });
 }
 
@@ -407,21 +407,21 @@ async function main() {
     demonstrateCostManagement();
     demonstrateErrorHandling();
 
-    console.log("\n🎯 Summary of Bun v1.3.6 S3 Requester Pays Support:");
-    console.log(
+    console.info("\n🎯 Summary of Bun v1.3.6 S3 Requester Pays Support:");
+    console.info(
       "   ✅ Simple requestPayer: true option enables Requester Pays buckets",
     );
-    console.log(
+    console.info(
       "   🔧 Works with all S3 operations (reads, writes, stat, uploads)",
     );
-    console.log(
+    console.info(
       "   💰 Cost-effective access to public datasets and shared resources",
     );
-    console.log("   📊 Built-in cost management and monitoring capabilities");
-    console.log("   🛡️  Robust error handling and retry mechanisms");
-    console.log("   🚀 Production-ready for enterprise workloads");
+    console.info("   📊 Built-in cost management and monitoring capabilities");
+    console.info("   🛡️  Robust error handling and retry mechanisms");
+    console.info("   🚀 Production-ready for enterprise workloads");
 
-    console.log("\n💨 S3 Requester Pays buckets are now fully supported!");
+    console.info("\n💨 S3 Requester Pays buckets are now fully supported!");
   } catch (error) {
     console.error("❌ Demonstration failed:", error);
   }

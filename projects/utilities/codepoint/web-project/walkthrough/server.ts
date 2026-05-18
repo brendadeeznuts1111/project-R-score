@@ -25,19 +25,19 @@ const server = serve({
   },
 });
 
-console.log(`🚀 Bun Proxy API Walkthrough running on http://localhost:${port}`);
-console.log(`📖 Open your browser to: http://localhost:${port}/`);
-console.log(`🛑 Press Ctrl+C to stop the server`);
+console.info(`🚀 Bun Proxy API Walkthrough running on http://localhost:${port}`);
+console.info(`📖 Open your browser to: http://localhost:${port}/`);
+console.info(`🛑 Press Ctrl+C to stop the server`);
 
 // Handle graceful shutdown
 process.on("SIGINT", () => {
-  console.log("\n👋 Shutting down walkthrough server...");
+  console.info("\n👋 Shutting down walkthrough server...");
   server.stop();
   process.exit(0);
 });
 
 process.on("SIGTERM", () => {
-  console.log("\n👋 Shutting down walkthrough server...");
+  console.info("\n👋 Shutting down walkthrough server...");
   server.stop();
   process.exit(0);
 });

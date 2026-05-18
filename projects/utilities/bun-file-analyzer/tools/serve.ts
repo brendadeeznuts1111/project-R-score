@@ -1,8 +1,8 @@
 // Environment variables
 const PORT = process.env.PORT || "3879";
 
-console.log(`🚀 Starting server on http://localhost:${PORT}`);
-console.log(`🔧 Environment: ${process.env.NODE_ENV || "development"}`);
+console.info(`🚀 Starting server on http://localhost:${PORT}`);
+console.info(`🔧 Environment: ${process.env.NODE_ENV || "development"}`);
 
 // MIME type mapping
 const mimeTypes = {
@@ -76,18 +76,18 @@ const server = Bun.serve({
   },
 });
 
-console.log(`✅ Server running at http://localhost:${PORT}`);
-console.log(`📁 Serving files from ./public directory`);
+console.info(`✅ Server running at http://localhost:${PORT}`);
+console.info(`📁 Serving files from ./public directory`);
 
 // Handle graceful shutdown
 process.on("SIGINT", () => {
-  console.log("\n🛑 Shutting down server...");
+  console.info("\n🛑 Shutting down server...");
   server.stop();
   process.exit(0);
 });
 
 process.on("SIGTERM", () => {
-  console.log("\n🛑 Shutting down server...");
+  console.info("\n🛑 Shutting down server...");
   server.stop();
   process.exit(0);
 });

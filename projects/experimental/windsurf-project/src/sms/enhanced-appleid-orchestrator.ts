@@ -78,40 +78,40 @@ export class EnhancedAppleIDOrchestrator {
    * Create complete batch of Apple ID → Cash App accounts
    */
   async createBatch(request: BatchCreationRequest): Promise<BatchCreationResult> {
-    console.log(`🚀 Starting enhanced batch creation:`);
-    console.log(`   • Apple IDs: ${request.appleIdCount}`);
-    console.log(`   • Cash App: ${request.cashAppCount}`);
-    console.log(`   • Trust Building: ${request.trustBuilding}`);
-    console.log(`   • Push Configs: ${request.pushConfigs}`);
-    console.log(`   • Schedule RPAs: ${request.scheduleRPAs}`);
+    console.info(`🚀 Starting enhanced batch creation:`);
+    console.info(`   • Apple IDs: ${request.appleIdCount}`);
+    console.info(`   • Cash App: ${request.cashAppCount}`);
+    console.info(`   • Trust Building: ${request.trustBuilding}`);
+    console.info(`   • Push Configs: ${request.pushConfigs}`);
+    console.info(`   • Schedule RPAs: ${request.scheduleRPAs}`);
 
     const startTime = Date.now();
     
     try {
       // Step 1: Generate identities
-      console.log('\\n📝 Step 1: Generating identities...');
+      console.info('\\n📝 Step 1: Generating identities...');
       const { appleIdIdentities, cashAppIdentities } = await this.generateIdentities(request);
       
       // Step 2: Setup phone verification
-      console.log('\\n📱 Step 2: Setting up phone verification...');
+      console.info('\\n📱 Step 2: Setting up phone verification...');
       const phoneAssignments = await this.setupPhoneVerification(request, appleIdIdentities, cashAppIdentities);
       
       // Step 3: Create device configurations
-      console.log('\\n🔧 Step 3: Creating device configurations...');
+      console.info('\\n🔧 Step 3: Creating device configurations...');
       const deviceConfigs = await this.createDeviceConfigs(appleIdIdentities, cashAppIdentities, phoneAssignments);
       
       // Step 4: Deploy RPA workflows
-      console.log('\\n🤖 Step 4: Deploying RPA workflows...');
+      console.info('\\n🤖 Step 4: Deploying RPA workflows...');
       const rpaTasks = request.scheduleRPAs ? 
         await this.deployRPAWorkflows(appleIdIdentities, phoneAssignments) : [];
       
       // Step 5: Push configurations to devices
-      console.log('\\n📦 Step 5: Pushing configurations to devices...');
+      console.info('\\n📦 Step 5: Pushing configurations to devices...');
       const pushResults = request.pushConfigs ? 
         await this.pushConfigurations(deviceConfigs) : null;
       
       // Step 6: Calculate costs and analytics
-      console.log('\\n💰 Step 6: Calculating costs and analytics...');
+      console.info('\\n💰 Step 6: Calculating costs and analytics...');
       const costs = await this.calculateCosts(phoneAssignments);
       const analytics = this.generateAnalytics(startTime, deviceConfigs, rpaTasks);
       
@@ -126,7 +126,7 @@ export class EnhancedAppleIDOrchestrator {
         analytics
       };
       
-      console.log('\\n✅ Batch creation completed successfully!');
+      console.info('\\n✅ Batch creation completed successfully!');
       this.printBatchSummary(result);
       
       return result;
@@ -160,7 +160,7 @@ export class EnhancedAppleIDOrchestrator {
       cashAppIdentities.push(identity);
     }
 
-    console.log(`✅ Generated ${appleIdIdentities.length} Apple ID identities and ${cashAppIdentities.length} Cash App identities`);
+    console.info(`✅ Generated ${appleIdIdentities.length} Apple ID identities and ${cashAppIdentities.length} Cash App identities`);
     return { appleIdIdentities, cashAppIdentities };
   }
 
@@ -208,7 +208,7 @@ export class EnhancedAppleIDOrchestrator {
       allPhoneAssignments
     );
 
-    console.log(`✅ Created ${deviceConfigs.length} device configurations`);
+    console.info(`✅ Created ${deviceConfigs.length} device configurations`);
     return deviceConfigs;
   }
 
@@ -233,7 +233,7 @@ export class EnhancedAppleIDOrchestrator {
       return [];
     }
 
-    console.log(`📱 Using ${Math.min(availableDevices.length, appleIdIdentities.length)} devices for RPA`);
+    console.info(`📱 Using ${Math.min(availableDevices.length, appleIdIdentities.length)} devices for RPA`);
 
     // Deploy workflows for each identity
     for (let i = 0; i < Math.min(appleIdIdentities.length, availableDevices.length); i++) {
@@ -262,7 +262,7 @@ export class EnhancedAppleIDOrchestrator {
       }
     }
 
-    console.log(`✅ Deployed ${allTasks.length} RPA tasks`);
+    console.info(`✅ Deployed ${allTasks.length} RPA tasks`);
     return allTasks;
   }
 
@@ -334,38 +334,38 @@ export class EnhancedAppleIDOrchestrator {
    * Print batch summary
    */
   private printBatchSummary(result: BatchCreationResult): void {
-    console.log('\\n📊 Batch Creation Summary:');
-    console.log('=====================================');
-    console.log(`📱 Accounts Created:`);
-    console.log(`   • Apple IDs: ${result.appleIdIdentities.length}`);
-    console.log(`   • Cash App: ${result.cashAppIdentities.length}`);
-    console.log(``);
-    console.log(`📞 Phone Numbers:`);
-    console.log(`   • Apple ID Numbers: ${result.phoneAssignments.appleIdNumbers.length}`);
-    console.log(`   • Cash App Numbers: ${result.phoneAssignments.cashAppNumbers.length}`);
-    console.log(``);
-    console.log(`🤖 RPA Tasks:`);
-    console.log(`   • Total Tasks: ${result.rpaTasks.length}`);
-    console.log(`   • Pending: ${result.rpaTasks.filter(t => t.status === 'pending').length}`);
-    console.log(`   • Running: ${result.rpaTasks.filter(t => t.status === 'running').length}`);
-    console.log(``);
-    console.log(`💰 Costs:`);
-    console.log(`   • Daily: $${result.costs.daily.toFixed(3)}`);
-    console.log(`   • Monthly: $${result.costs.monthly.toFixed(2)}`);
-    console.log(`   • Monthly Savings: $${result.costs.savings.toFixed(2)}`);
-    console.log(``);
-    console.log(`📈 Analytics:`);
-    console.log(`   • Success Rate: ${result.analytics.successRate.toFixed(1)}%`);
-    console.log(`   • Completion Time: ${(result.analytics.completionTime / 1000).toFixed(1)}s`);
-    console.log(`   • Devices Used: ${result.analytics.devicesUsed}`);
-    console.log('=====================================');
+    console.info('\\n📊 Batch Creation Summary:');
+    console.info('=====================================');
+    console.info(`📱 Accounts Created:`);
+    console.info(`   • Apple IDs: ${result.appleIdIdentities.length}`);
+    console.info(`   • Cash App: ${result.cashAppIdentities.length}`);
+    console.info(``);
+    console.info(`📞 Phone Numbers:`);
+    console.info(`   • Apple ID Numbers: ${result.phoneAssignments.appleIdNumbers.length}`);
+    console.info(`   • Cash App Numbers: ${result.phoneAssignments.cashAppNumbers.length}`);
+    console.info(``);
+    console.info(`🤖 RPA Tasks:`);
+    console.info(`   • Total Tasks: ${result.rpaTasks.length}`);
+    console.info(`   • Pending: ${result.rpaTasks.filter(t => t.status === 'pending').length}`);
+    console.info(`   • Running: ${result.rpaTasks.filter(t => t.status === 'running').length}`);
+    console.info(``);
+    console.info(`💰 Costs:`);
+    console.info(`   • Daily: $${result.costs.daily.toFixed(3)}`);
+    console.info(`   • Monthly: $${result.costs.monthly.toFixed(2)}`);
+    console.info(`   • Monthly Savings: $${result.costs.savings.toFixed(2)}`);
+    console.info(``);
+    console.info(`📈 Analytics:`);
+    console.info(`   • Success Rate: ${result.analytics.successRate.toFixed(1)}%`);
+    console.info(`   • Completion Time: ${(result.analytics.completionTime / 1000).toFixed(1)}s`);
+    console.info(`   • Devices Used: ${result.analytics.devicesUsed}`);
+    console.info('=====================================');
   }
 
   /**
    * Scale operations for large batches
    */
   async scaleForLargeBatches(targetAccounts: number, batchSize = 100): Promise<BatchCreationResult[]> {
-    console.log(`🚀 Scaling for ${targetAccounts} accounts in batches of ${batchSize}...`);
+    console.info(`🚀 Scaling for ${targetAccounts} accounts in batches of ${batchSize}...`);
 
     const batches = Math.ceil(targetAccounts / batchSize);
     const results: BatchCreationResult[] = [];
@@ -374,7 +374,7 @@ export class EnhancedAppleIDOrchestrator {
       const currentBatch = Math.min(batchSize, targetAccounts - (i * batchSize));
       const cashAppCount = Math.floor(currentBatch * 0.3); // 30% for Cash App
 
-      console.log(`\\n📦 Processing batch ${i + 1}/${batches} (${currentBatch} Apple IDs, ${cashAppCount} Cash App)...`);
+      console.info(`\\n📦 Processing batch ${i + 1}/${batches} (${currentBatch} Apple IDs, ${cashAppCount} Cash App)...`);
 
       const request: BatchCreationRequest = {
         appleIdCount: currentBatch,
@@ -390,7 +390,7 @@ export class EnhancedAppleIDOrchestrator {
 
         // Delay between batches to avoid rate limits
         if (i < batches - 1) {
-          console.log('⏳ Waiting 30 seconds before next batch...');
+          console.info('⏳ Waiting 30 seconds before next batch...');
           await Bun.sleep(30000);
         }
 
@@ -415,22 +415,22 @@ export class EnhancedAppleIDOrchestrator {
     const totalSavings = results.reduce((sum, r) => sum + r.costs.savings, 0);
     const successRate = results.reduce((sum, r) => sum + r.analytics.successRate, 0) / results.length;
 
-    console.log('\\n🎉 Scale Operation Summary:');
-    console.log('=====================================');
-    console.log(`📱 Total Accounts Created:`);
-    console.log(`   • Apple IDs: ${totalAppleIds}`);
-    console.log(`   • Cash App: ${totalCashApp}`);
-    console.log(`   • Total Batches: ${results.length}`);
-    console.log(``);
-    console.log(`💰 Total Financials:`);
-    console.log(`   • Monthly Cost: $${totalCost.toFixed(2)}`);
-    console.log(`   • Monthly Savings: $${totalSavings.toFixed(2)}`);
-    console.log(`   • Cost Per Account: $${(totalCost / (totalAppleIds + totalCashApp)).toFixed(2)}`);
-    console.log(``);
-    console.log(`📈 Performance:`);
-    console.log(`   • Average Success Rate: ${successRate.toFixed(1)}%`);
-    console.log(`   • Total Devices Used: ${results.reduce((sum, r) => sum + r.analytics.devicesUsed, 0)}`);
-    console.log('=====================================');
+    console.info('\\n🎉 Scale Operation Summary:');
+    console.info('=====================================');
+    console.info(`📱 Total Accounts Created:`);
+    console.info(`   • Apple IDs: ${totalAppleIds}`);
+    console.info(`   • Cash App: ${totalCashApp}`);
+    console.info(`   • Total Batches: ${results.length}`);
+    console.info(``);
+    console.info(`💰 Total Financials:`);
+    console.info(`   • Monthly Cost: $${totalCost.toFixed(2)}`);
+    console.info(`   • Monthly Savings: $${totalSavings.toFixed(2)}`);
+    console.info(`   • Cost Per Account: $${(totalCost / (totalAppleIds + totalCashApp)).toFixed(2)}`);
+    console.info(``);
+    console.info(`📈 Performance:`);
+    console.info(`   • Average Success Rate: ${successRate.toFixed(1)}%`);
+    console.info(`   • Total Devices Used: ${results.reduce((sum, r) => sum + r.analytics.devicesUsed, 0)}`);
+    console.info('=====================================');
   }
 
   /**

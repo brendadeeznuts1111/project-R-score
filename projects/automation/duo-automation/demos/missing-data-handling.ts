@@ -13,12 +13,12 @@ import {
 } from '../src/patterns/identity-resolver.js';
 
 function demonstrateMissingDataHandling() {
-  console.log('🔍 Missing & Inconsistent Data Handling Demo');
-  console.log('==========================================\n');
+  console.info('🔍 Missing & Inconsistent Data Handling Demo');
+  console.info('==========================================\n');
 
   // Example 1: Complete Platform Failure
-  console.log('1. SCENARIO: Complete Platform Failure');
-  console.log('--------------------------------------');
+  console.info('1. SCENARIO: Complete Platform Failure');
+  console.info('--------------------------------------');
   const completeFailureResult: SyntheticIdentityResult = {
     phone: '+15551234567',
     syntheticScore: 0.9, // High risk due to no data
@@ -66,17 +66,17 @@ function demonstrateMissingDataHandling() {
     ]
   };
 
-  console.log('Result:', {
+  console.info('Result:', {
     syntheticScore: completeFailureResult.syntheticScore,
     isSynthetic: completeFailureResult.isSynthetic,
     confidence: completeFailureResult.confidence,
     riskLevel: completeFailureResult.syntheticScore > 0.8 ? 'CRITICAL' : 'HIGH'
   });
-  console.log('Pattern Detected:', completeFailureResult.crossPlatformPatterns?.[0]?.description || 'No patterns detected');
+  console.info('Pattern Detected:', completeFailureResult.crossPlatformPatterns?.[0]?.description || 'No patterns detected');
 
   // Example 2: Partial Platform Success
-  console.log('\n2. SCENARIO: Partial Platform Success');
-  console.log('------------------------------------');
+  console.info('\n2. SCENARIO: Partial Platform Success');
+  console.info('------------------------------------');
   const partialSuccessResult: SyntheticIdentityResult = {
     phone: '+15551234568',
     syntheticScore: 0.6, // Medium risk
@@ -152,7 +152,7 @@ function demonstrateMissingDataHandling() {
     ]
   };
 
-  console.log('Result:', {
+  console.info('Result:', {
     syntheticScore: partialSuccessResult.syntheticScore,
     isSynthetic: partialSuccessResult.isSynthetic,
     confidence: partialSuccessResult.confidence,
@@ -162,8 +162,8 @@ function demonstrateMissingDataHandling() {
   });
 
   // Example 3: Inconsistent Verification Statuses
-  console.log('\n3. SCENARIO: Inconsistent Verification Statuses');
-  console.log('----------------------------------------------');
+  console.info('\n3. SCENARIO: Inconsistent Verification Statuses');
+  console.info('----------------------------------------------');
   const inconsistentResult: SyntheticIdentityResult = {
     phone: '+15551234569',
     syntheticScore: 0.75, // High risk due to inconsistencies
@@ -248,7 +248,7 @@ function demonstrateMissingDataHandling() {
     ]
   };
 
-  console.log('Result:', {
+  console.info('Result:', {
     syntheticScore: inconsistentResult.syntheticScore,
     isSynthetic: inconsistentResult.isSynthetic,
     confidence: inconsistentResult.confidence,
@@ -256,15 +256,15 @@ function demonstrateMissingDataHandling() {
     riskLevel: inconsistentResult.syntheticScore > 0.7 ? 'HIGH' : 'MEDIUM'
   });
 
-  console.log('\n🎯 Data Handling Strategies Summary:');
-  console.log('===================================');
-  console.log('✅ **Complete Failure**: High risk (0.9), zero confidence, critical patterns');
-  console.log('✅ **Partial Success**: Medium risk (0.6), low confidence, coverage warnings');
-  console.log('✅ **Inconsistent Data**: High risk (0.75), medium confidence, inconsistency patterns');
-  console.log('✅ **Graceful Degradation**: System always returns structured results');
-  console.log('✅ **Risk-Based Scoring**: Missing data increases synthetic scores');
-  console.log('✅ **Pattern Detection**: Automatically identifies data quality issues');
-  console.log('✅ **Source Tracking**: Full visibility into data collection success/failure');
+  console.info('\n🎯 Data Handling Strategies Summary:');
+  console.info('===================================');
+  console.info('✅ **Complete Failure**: High risk (0.9), zero confidence, critical patterns');
+  console.info('✅ **Partial Success**: Medium risk (0.6), low confidence, coverage warnings');
+  console.info('✅ **Inconsistent Data**: High risk (0.75), medium confidence, inconsistency patterns');
+  console.info('✅ **Graceful Degradation**: System always returns structured results');
+  console.info('✅ **Risk-Based Scoring**: Missing data increases synthetic scores');
+  console.info('✅ **Pattern Detection**: Automatically identifies data quality issues');
+  console.info('✅ **Source Tracking**: Full visibility into data collection success/failure');
 }
 
 // Run the demonstration

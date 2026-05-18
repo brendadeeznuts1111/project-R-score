@@ -24,7 +24,7 @@ async function demoBasicIncrementalWrite() {
 
   // Verify the file was written
   const content = await file.text();
-  console.log(`📝 Basic write result: "${content}"`);
+  console.info(`📝 Basic write result: "${content}"`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -50,7 +50,7 @@ async function demoMixedDataTypes() {
   writer.flush();
 
   const content = await file.text();
-  console.log(`📦 Mixed types result: "${content}"`);
+  console.info(`📦 Mixed types result: "${content}"`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -71,11 +71,11 @@ async function demoCustomBufferSize() {
   const chunk = "x".repeat(1024 * 1024); // 1MB chunk
   for (let i = 0; i < 5; i++) {
     writer.write(chunk);
-    console.log(`📊 Written ${(i + 1) * 1}MB`);
+    console.info(`📊 Written ${(i + 1) * 1}MB`);
   }
 
   writer.flush();
-  console.log(`✅ Finished writing 5MB file`);
+  console.info(`✅ Finished writing 5MB file`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -101,7 +101,7 @@ async function demoStreamingLargeData() {
   writer.flush();
 
   const lineCount = (await file.text()).split('\n').length;
-  console.log(`🌊 Streamed ${lineCount} lines to file`);
+  console.info(`🌊 Streamed ${lineCount} lines to file`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -117,18 +117,18 @@ async function demoAutoFlush() {
   // Very small buffer (256 bytes) to trigger auto-flush
   const writer = file.writer({ highWaterMark: 256 });
 
-  console.log("✍️ Writing with auto-flush (256 byte buffer)...");
+  console.info("✍️ Writing with auto-flush (256 byte buffer)...");
   
   // Write data larger than buffer to trigger auto-flush
   for (let i = 0; i < 10; i++) {
     const data = "X".repeat(100) + "\n"; // 101 bytes per write
     writer.write(data);
-    console.log(`   Wrote batch ${i + 1} (auto-flush may have triggered)`);
+    console.info(`   Wrote batch ${i + 1} (auto-flush may have triggered)`);
   }
 
   writer.flush();
   const size = (await file.stat()).size;
-  console.log(`✅ Final file size: ${size} bytes`);
+  console.info(`✅ Final file size: ${size} bytes`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -149,7 +149,7 @@ async function demoProperCleanup() {
   writer.end();
 
   const content = await file.text();
-  console.log(`🔒 Cleanup complete. File content:\n${content}`);
+  console.info(`🔒 Cleanup complete. File content:\n${content}`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -177,7 +177,7 @@ async function demoBinaryWrite() {
   writer.flush();
 
   const size = (await file.stat()).size;
-  console.log(`🖼️ Binary file written: ${size} bytes`);
+  console.info(`🖼️ Binary file written: ${size} bytes`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -204,7 +204,7 @@ async function demoAppend() {
   writer.end();
 
   const content = await file.text();
-  console.log(`📎 Appended content:\n${content}`);
+  console.info(`📎 Appended content:\n${content}`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -232,7 +232,7 @@ async function demoJsonLines() {
   writer.flush();
 
   const content = await file.text();
-  console.log(`📋 JSONL content:\n${content}`);
+  console.info(`📋 JSONL content:\n${content}`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -240,38 +240,38 @@ async function demoJsonLines() {
 // ═══════════════════════════════════════════════════════════
 
 async function runAllDemos() {
-  console.log("📝 Bun Incremental File Writing Demo");
-  console.log("═".repeat(50));
+  console.info("📝 Bun Incremental File Writing Demo");
+  console.info("═".repeat(50));
 
-  console.log("\n1️⃣ Basic Incremental Write:");
+  console.info("\n1️⃣ Basic Incremental Write:");
   await demoBasicIncrementalWrite();
 
-  console.log("\n2️⃣ Mixed Data Types:");
+  console.info("\n2️⃣ Mixed Data Types:");
   await demoMixedDataTypes();
 
-  console.log("\n3️⃣ Custom Buffer Size:");
+  console.info("\n3️⃣ Custom Buffer Size:");
   await demoCustomBufferSize();
 
-  console.log("\n4️⃣ Streaming Large Data:");
+  console.info("\n4️⃣ Streaming Large Data:");
   await demoStreamingLargeData();
 
-  console.log("\n5️⃣ Auto-Flush Demonstration:");
+  console.info("\n5️⃣ Auto-Flush Demonstration:");
   await demoAutoFlush();
 
-  console.log("\n6️⃣ Proper Cleanup:");
+  console.info("\n6️⃣ Proper Cleanup:");
   await demoProperCleanup();
 
-  console.log("\n7️⃣ Binary Data Writing:");
+  console.info("\n7️⃣ Binary Data Writing:");
   await demoBinaryWrite();
 
-  console.log("\n8️⃣ Append to Existing File:");
+  console.info("\n8️⃣ Append to Existing File:");
   await demoAppend();
 
-  console.log("\n9️⃣ JSON Lines Format:");
+  console.info("\n9️⃣ JSON Lines Format:");
   await demoJsonLines();
 
-  console.log("\n═".repeat(50));
-  console.log("✅ All file writing demos completed!");
+  console.info("\n═".repeat(50));
+  console.info("✅ All file writing demos completed!");
 }
 
 // Run if executed directly

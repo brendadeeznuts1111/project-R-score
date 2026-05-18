@@ -31,8 +31,8 @@ export class CrystalClearIntegrationDemo {
    * Run complete integration demonstration
    */
   async runCompleteDemo(): Promise<void> {
-    console.log('🎭 Crystal Clear Architecture - Integration Demo\n');
-    console.log('='.repeat(60));
+    console.info('🎭 Crystal Clear Architecture - Integration Demo\n');
+    console.info('='.repeat(60));
 
     try {
       // Step 1: Architecture Overview
@@ -59,8 +59,8 @@ export class CrystalClearIntegrationDemo {
       // Step 8: Performance Validation
       await this.validatePerformance();
 
-      console.log('\n🎉 Integration Demo Complete!');
-      console.log('='.repeat(60));
+      console.info('\n🎉 Integration Demo Complete!');
+      console.info('='.repeat(60));
       this.printSuccessSummary();
     } catch (error) {
       console.error('❌ Demo failed:', error);
@@ -69,99 +69,99 @@ export class CrystalClearIntegrationDemo {
   }
 
   private async showArchitectureOverview(): Promise<void> {
-    console.log('🏗️  STEP 1: Architecture Overview\n');
+    console.info('🏗️  STEP 1: Architecture Overview\n');
 
-    console.log('Crystal Clear Architecture integrates:');
-    console.log('• Domain-Driven Design with 5 specialized domains');
-    console.log('• Cloudflare Workers for edge computing');
-    console.log('• Durable Objects for inter-domain communication');
-    console.log('• Automated deployment and monitoring');
-    console.log('• Enterprise-grade security and performance\n');
+    console.info('Crystal Clear Architecture integrates:');
+    console.info('• Domain-Driven Design with 5 specialized domains');
+    console.info('• Cloudflare Workers for edge computing');
+    console.info('• Durable Objects for inter-domain communication');
+    console.info('• Automated deployment and monitoring');
+    console.info('• Enterprise-grade security and performance\n');
 
-    console.log('Domain Structure:');
-    console.log('├── 💰 Collections: Payment processing & settlement');
-    console.log('├── 📊 Distributions: Commission calculation & payouts');
-    console.log('├── 🎮 Free Play: Bonus wagering & promotions');
-    console.log('├── ⚖️  Balance: Account management & validation');
-    console.log('└── 🔧 Adjustment: Transaction modifications & corrections\n');
+    console.info('Domain Structure:');
+    console.info('├── 💰 Collections: Payment processing & settlement');
+    console.info('├── 📊 Distributions: Commission calculation & payouts');
+    console.info('├── 🎮 Free Play: Bonus wagering & promotions');
+    console.info('├── ⚖️  Balance: Account management & validation');
+    console.info('└── 🔧 Adjustment: Transaction modifications & corrections\n');
 
     // Wait for user acknowledgment
     await this.promptContinue();
   }
 
   private async generateDomainWorkers(): Promise<void> {
-    console.log('📝 STEP 2: Generating Domain Workers\n');
+    console.info('📝 STEP 2: Generating Domain Workers\n');
 
     const deployments = this.factory.getAllDeploymentConfigs();
 
-    console.log(`Generating ${deployments.length} domain workers:`);
+    console.info(`Generating ${deployments.length} domain workers:`);
 
     for (const deployment of deployments) {
-      console.log(`  ✅ ${deployment.name}`);
-      console.log(`     Routes: ${deployment.routes.join(', ')}`);
-      console.log(`     Environment variables: ${Object.keys(deployment.environment).length}`);
+      console.info(`  ✅ ${deployment.name}`);
+      console.info(`     Routes: ${deployment.routes.join(', ')}`);
+      console.info(`     Environment variables: ${Object.keys(deployment.environment).length}`);
     }
 
-    console.log('\nGenerating wrangler configuration...');
+    console.info('\nGenerating wrangler configuration...');
     const wranglerConfig = this.factory.generateWranglerConfig();
-    console.log('  ✅ wrangler.toml generated with D1, KV, and Durable Object bindings\n');
+    console.info('  ✅ wrangler.toml generated with D1, KV, and Durable Object bindings\n');
 
     // Wait for user acknowledgment
     await this.promptContinue();
   }
 
   private async configureCloudflareResources(): Promise<void> {
-    console.log('☁️  STEP 3: Cloudflare Resources Configuration\n');
+    console.info('☁️  STEP 3: Cloudflare Resources Configuration\n');
 
-    console.log('Required Cloudflare resources:');
-    console.log(
+    console.info('Required Cloudflare resources:');
+    console.info(
       '• D1 Databases: collections-db, distributions-db, freeplay-db, balance-db, adjustment-db'
     );
-    console.log(
+    console.info(
       '• KV Namespaces: collections-cache, distributions-cache, freeplay-cache, balance-cache, adjustment-cache'
     );
-    console.log('• Durable Objects: DomainEventBus, DomainCoordinator');
-    console.log('• Custom Domain: crystal-clear.your-domain.com\n');
+    console.info('• Durable Objects: DomainEventBus, DomainCoordinator');
+    console.info('• Custom Domain: crystal-clear.your-domain.com\n');
 
-    console.log('Environment-specific configuration:');
+    console.info('Environment-specific configuration:');
     if (this.config.environment === 'production') {
-      console.log('  🚀 Production: Full security, monitoring, and CDN optimization');
+      console.info('  🚀 Production: Full security, monitoring, and CDN optimization');
     } else if (this.config.environment === 'staging') {
-      console.log('  🧪 Staging: Testing environment with monitoring');
+      console.info('  🧪 Staging: Testing environment with monitoring');
     } else {
-      console.log('  💻 Development: Local development with hot reload');
+      console.info('  💻 Development: Local development with hot reload');
     }
 
-    console.log('\n✅ Resources configured automatically\n');
+    console.info('\n✅ Resources configured automatically\n');
 
     // Wait for user acknowledgment
     await this.promptContinue();
   }
 
   private async deployDomainWorkers(): Promise<void> {
-    console.log('🚀 STEP 4: Deploying Domain Workers\n');
+    console.info('🚀 STEP 4: Deploying Domain Workers\n');
 
     const deployments = this.factory.getAllDeploymentConfigs();
 
-    console.log('Deployment sequence:');
+    console.info('Deployment sequence:');
     for (let i = 0; i < deployments.length; i++) {
       const deployment = deployments[i];
-      console.log(`  ${i + 1}. Deploying ${deployment.name}...`);
+      console.info(`  ${i + 1}. Deploying ${deployment.name}...`);
 
       // Simulate deployment
       await this.simulateDeployment(deployment.name);
-      console.log(`     ✅ ${deployment.name} deployed successfully`);
+      console.info(`     ✅ ${deployment.name} deployed successfully`);
     }
 
-    console.log('\n🔄 Deploying domain router...');
+    console.info('\n🔄 Deploying domain router...');
     await this.simulateDeployment('domain-router');
-    console.log('  ✅ Domain router deployed successfully\n');
+    console.info('  ✅ Domain router deployed successfully\n');
 
-    console.log('📋 Deployment Summary:');
-    console.log(`  • Environment: ${this.config.environment}`);
-    console.log(`  • Domain: ${this.config.domain}`);
-    console.log(`  • Workers deployed: ${deployments.length + 1}`);
-    console.log(
+    console.info('📋 Deployment Summary:');
+    console.info(`  • Environment: ${this.config.environment}`);
+    console.info(`  • Domain: ${this.config.domain}`);
+    console.info(`  • Workers deployed: ${deployments.length + 1}`);
+    console.info(
       `  • Routes configured: ${deployments.reduce((sum, d) => sum + d.routes.length, 0)}\n`
     );
 
@@ -170,25 +170,25 @@ export class CrystalClearIntegrationDemo {
   }
 
   private async demonstrateDomainOperations(): Promise<void> {
-    console.log('🎮 STEP 5: Domain Operations Demonstration\n');
+    console.info('🎮 STEP 5: Domain Operations Demonstration\n');
 
-    console.log('Testing Collections Domain:');
+    console.info('Testing Collections Domain:');
     await this.demonstrateCollectionsOperations();
 
-    console.log('\nTesting Distributions Domain:');
+    console.info('\nTesting Distributions Domain:');
     await this.demonstrateDistributionsOperations();
 
-    console.log('\nTesting Balance Domain:');
+    console.info('\nTesting Balance Domain:');
     await this.demonstrateBalanceOperations();
 
-    console.log('\n✅ All domain operations completed successfully\n');
+    console.info('\n✅ All domain operations completed successfully\n');
 
     // Wait for user acknowledgment
     await this.promptContinue();
   }
 
   private async demonstrateCollectionsOperations(): Promise<void> {
-    console.log('  💰 Creating collection...');
+    console.info('  💰 Creating collection...');
     const collectionData = {
       merchantId: 'MERCHANT_DEMO_001',
       amount: 100.0,
@@ -199,19 +199,19 @@ export class CrystalClearIntegrationDemo {
 
     // Simulate API call
     await this.simulateApiCall('POST', '/api/domains/collections', collectionData);
-    console.log('    ✅ Collection created: COLL_DEMO_001');
+    console.info('    ✅ Collection created: COLL_DEMO_001');
 
-    console.log('  📊 Getting collections dashboard...');
+    console.info('  📊 Getting collections dashboard...');
     await this.simulateApiCall('GET', '/api/domains/collections/dashboard');
-    console.log('    ✅ Dashboard data retrieved');
+    console.info('    ✅ Dashboard data retrieved');
 
-    console.log('  🔍 Getting collection by ID...');
+    console.info('  🔍 Getting collection by ID...');
     await this.simulateApiCall('GET', '/api/domains/collections/COLL_DEMO_001');
-    console.log('    ✅ Collection details retrieved');
+    console.info('    ✅ Collection details retrieved');
   }
 
   private async demonstrateDistributionsOperations(): Promise<void> {
-    console.log('  📊 Calculating commissions...');
+    console.info('  📊 Calculating commissions...');
     const commissionData = {
       agentId: 'AGENT_DEMO_001',
       amount: 1000.0,
@@ -220,9 +220,9 @@ export class CrystalClearIntegrationDemo {
     };
 
     await this.simulateApiCall('POST', '/api/domains/distributions/commissions', commissionData);
-    console.log('    ✅ Commission calculated: $150.00');
+    console.info('    ✅ Commission calculated: $150.00');
 
-    console.log('  💸 Processing payout...');
+    console.info('  💸 Processing payout...');
     const payoutData = {
       agentId: 'AGENT_DEMO_001',
       amount: 150.0,
@@ -230,11 +230,11 @@ export class CrystalClearIntegrationDemo {
     };
 
     await this.simulateApiCall('POST', '/api/domains/distributions/payouts', payoutData);
-    console.log('    ✅ Payout processed');
+    console.info('    ✅ Payout processed');
   }
 
   private async demonstrateBalanceOperations(): Promise<void> {
-    console.log('  ⚖️  Updating balance...');
+    console.info('  ⚖️  Updating balance...');
     const balanceData = {
       playerId: 'PLAYER_DEMO_001',
       amount: 50.0,
@@ -244,44 +244,44 @@ export class CrystalClearIntegrationDemo {
     };
 
     await this.simulateApiCall('POST', '/api/domains/balance', balanceData);
-    console.log('    ✅ Balance updated: +$50.00');
+    console.info('    ✅ Balance updated: +$50.00');
 
-    console.log('  📈 Getting balance...');
+    console.info('  📈 Getting balance...');
     await this.simulateApiCall('GET', '/api/domains/balance/PLAYER_DEMO_001');
-    console.log('    ✅ Current balance: $150.00');
+    console.info('    ✅ Current balance: $150.00');
   }
 
   private async demonstrateMonitoring(): Promise<void> {
-    console.log('📊 STEP 6: Monitoring & Alerting Demonstration\n');
+    console.info('📊 STEP 6: Monitoring & Alerting Demonstration\n');
 
-    console.log('🔍 Getting unified metrics...');
+    console.info('🔍 Getting unified metrics...');
     const metrics = await this.simulateMonitoringCall('/unified-metrics');
-    console.log(`  ✅ System health: ${metrics.system?.overallStatus?.toUpperCase()}`);
-    console.log(`  ✅ Health score: ${metrics.system?.healthScore}%`);
-    console.log(`  ✅ Active domains: ${Object.keys(metrics.domains || {}).length}`);
+    console.info(`  ✅ System health: ${metrics.system?.overallStatus?.toUpperCase()}`);
+    console.info(`  ✅ Health score: ${metrics.system?.healthScore}%`);
+    console.info(`  ✅ Active domains: ${Object.keys(metrics.domains || {}).length}`);
 
     if (this.config.enableAlerts) {
-      console.log('\n🚨 Checking for alerts...');
+      console.info('\n🚨 Checking for alerts...');
       const alerts = await this.simulateMonitoringCall('/check-alerts');
-      console.log(`  ✅ Alerts checked: ${alerts.newAlerts || 0} new alerts`);
+      console.info(`  ✅ Alerts checked: ${alerts.newAlerts || 0} new alerts`);
 
-      console.log('\n📋 Getting active alerts...');
+      console.info('\n📋 Getting active alerts...');
       const activeAlerts = await this.simulateMonitoringCall('/alerts');
-      console.log(`  ✅ Active alerts: ${activeAlerts.alerts?.length || 0}`);
+      console.info(`  ✅ Active alerts: ${activeAlerts.alerts?.length || 0}`);
     }
 
-    console.log('\n📈 Generating monitoring report...');
+    console.info('\n📈 Generating monitoring report...');
     await this.simulateMonitoringCall('/report');
-    console.log('  ✅ Monitoring report generated\n');
+    console.info('  ✅ Monitoring report generated\n');
 
     // Wait for user acknowledgment
     await this.promptContinue();
   }
 
   private async demonstrateCoordination(): Promise<void> {
-    console.log('🔄 STEP 7: Cross-Domain Coordination\n');
+    console.info('🔄 STEP 7: Cross-Domain Coordination\n');
 
-    console.log('🎯 Coordinating player winnings transaction...');
+    console.info('🎯 Coordinating player winnings transaction...');
     const coordinationData = {
       type: 'PLAYER_WINNINGS',
       domains: ['collections', 'distributions', 'balance'],
@@ -294,13 +294,13 @@ export class CrystalClearIntegrationDemo {
     };
 
     await this.simulateApiCall('POST', '/api/domains/coordinator/coordinate', coordinationData);
-    console.log('  ✅ Coordination started: TXN_WIN_001');
+    console.info('  ✅ Coordination started: TXN_WIN_001');
 
-    console.log('\n📊 Checking coordination status...');
+    console.info('\n📊 Checking coordination status...');
     await this.simulateApiCall('GET', '/api/domains/coordinator/transactions');
-    console.log('  ✅ Transaction processing: 3/3 domains completed');
+    console.info('  ✅ Transaction processing: 3/3 domains completed');
 
-    console.log('\n📡 Publishing domain event...');
+    console.info('\n📡 Publishing domain event...');
     const eventData = {
       type: 'WINNINGS_PROCESSED',
       domain: 'coordinator',
@@ -313,18 +313,18 @@ export class CrystalClearIntegrationDemo {
     };
 
     await this.simulateApiCall('POST', '/api/domains/events', eventData);
-    console.log('  ✅ Domain event published');
+    console.info('  ✅ Domain event published');
 
-    console.log('\n✅ Cross-domain coordination completed successfully\n');
+    console.info('\n✅ Cross-domain coordination completed successfully\n');
 
     // Wait for user acknowledgment
     await this.promptContinue();
   }
 
   private async validatePerformance(): Promise<void> {
-    console.log('⚡ STEP 8: Performance Validation\n');
+    console.info('⚡ STEP 8: Performance Validation\n');
 
-    console.log('🏃 Running performance benchmarks...');
+    console.info('🏃 Running performance benchmarks...');
 
     const benchmarks = [
       { endpoint: '/api/domains/collections/dashboard', target: '<100ms' },
@@ -342,77 +342,77 @@ export class CrystalClearIntegrationDemo {
       const status =
         responseTime < parseInt(benchmark.target.replace('<', '').replace('ms', '')) ? '✅' : '⚠️';
 
-      console.log(`  ${status} ${benchmark.endpoint}: ${responseTime}ms (${benchmark.target})`);
+      console.info(`  ${status} ${benchmark.endpoint}: ${responseTime}ms (${benchmark.target})`);
     }
 
-    console.log('\n📊 Performance Summary:');
-    console.log('  • Average response time: <50ms');
-    console.log('  • 99th percentile: <200ms');
-    console.log('  • Error rate: <0.1%');
-    console.log('  • Concurrent users supported: 10,000+');
-    console.log('  • Global CDN coverage: 200+ locations\n');
+    console.info('\n📊 Performance Summary:');
+    console.info('  • Average response time: <50ms');
+    console.info('  • 99th percentile: <200ms');
+    console.info('  • Error rate: <0.1%');
+    console.info('  • Concurrent users supported: 10,000+');
+    console.info('  • Global CDN coverage: 200+ locations\n');
 
     // Wait for user acknowledgment
     await this.promptContinue();
   }
 
   private printSuccessSummary(): void {
-    console.log('🎊 Crystal Clear Architecture Integration - SUCCESS!\n');
+    console.info('🎊 Crystal Clear Architecture Integration - SUCCESS!\n');
 
-    console.log('✅ What was accomplished:');
-    console.log('  • 5 domain workers deployed and configured');
-    console.log('  • Domain router with automatic routing');
-    console.log('  • Cross-domain event communication');
-    console.log('  • Unified monitoring and alerting');
-    console.log('  • Automated deployment pipeline');
-    console.log('  • Enterprise-grade security');
-    console.log('  • Performance validation completed');
+    console.info('✅ What was accomplished:');
+    console.info('  • 5 domain workers deployed and configured');
+    console.info('  • Domain router with automatic routing');
+    console.info('  • Cross-domain event communication');
+    console.info('  • Unified monitoring and alerting');
+    console.info('  • Automated deployment pipeline');
+    console.info('  • Enterprise-grade security');
+    console.info('  • Performance validation completed');
 
-    console.log('\n🚀 Production-ready features:');
-    console.log('  • Domain-driven architecture with clear boundaries');
-    console.log('  • 500x faster messaging with Bun optimization');
-    console.log('  • Real-time monitoring and health checks');
-    console.log('  • Automated scaling and load balancing');
-    console.log('  • Comprehensive error handling and recovery');
-    console.log('  • Audit trails and compliance logging');
+    console.info('\n🚀 Production-ready features:');
+    console.info('  • Domain-driven architecture with clear boundaries');
+    console.info('  • 500x faster messaging with Bun optimization');
+    console.info('  • Real-time monitoring and health checks');
+    console.info('  • Automated scaling and load balancing');
+    console.info('  • Comprehensive error handling and recovery');
+    console.info('  • Audit trails and compliance logging');
 
-    console.log('\n💰 Business value delivered:');
-    console.log('  • 77% faster API response times');
-    console.log('  • 10x increase in concurrent user capacity');
-    console.log('  • 95% reduction in error rates');
-    console.log('  • 83% faster deployment times');
-    console.log('  • $1.05M+ annual operational savings');
+    console.info('\n💰 Business value delivered:');
+    console.info('  • 77% faster API response times');
+    console.info('  • 10x increase in concurrent user capacity');
+    console.info('  • 95% reduction in error rates');
+    console.info('  • 83% faster deployment times');
+    console.info('  • $1.05M+ annual operational savings');
 
-    console.log('\n🔗 Next steps:');
-    console.log('  1. Configure your Cloudflare account');
-    console.log('  2. Run: bun run deploy-domains.ts production');
-    console.log('  3. Set up monitoring dashboards');
-    console.log('  4. Configure domain-specific alerting');
-    console.log('  5. Start building domain-specific features');
+    console.info('\n🔗 Next steps:');
+    console.info('  1. Configure your Cloudflare account');
+    console.info('  2. Run: bun run deploy-domains.ts production');
+    console.info('  3. Set up monitoring dashboards');
+    console.info('  4. Configure domain-specific alerting');
+    console.info('  5. Start building domain-specific features');
 
-    console.log('\n📚 Documentation:');
-    console.log('  • Complete guide: src/cloudflare-domains/README.md');
-    console.log('  • API documentation: Auto-generated OpenAPI specs');
-    console.log('  • Performance metrics: Real-time monitoring dashboards');
+    console.info('\n📚 Documentation:');
+    console.info('  • Complete guide: src/cloudflare-domains/README.md');
+    console.info('  • API documentation: Auto-generated OpenAPI specs');
+    console.info('  • Performance metrics: Real-time monitoring dashboards');
   }
 
   private printErrorGuidance(error: any): void {
-    console.log('\n❌ Integration Demo encountered an error:\n');
+    console.info('\n❌ Integration Demo encountered an error:\n');
 
-    console.log(`Error: ${error instanceof Error ? error.message : 'Unknown error'}\n`);
+    console.info(`Error: ${error instanceof Error ? error.message : 'Unknown error'}\n`);
 
-    console.log('🔧 Troubleshooting steps:');
-    console.log('  1. Check Cloudflare account permissions');
-    console.log('  2. Verify wrangler CLI installation: wrangler --version');
-    console.log('  3. Ensure all environment variables are set');
-    console.log('  4. Check network connectivity to Cloudflare API');
-    console.log('  5. Review Cloudflare account limits and billing');
+    console.info('🔧 Troubleshooting steps:');
+    console.info('  1. Check Cloudflare account permissions');
+    console.info('  2. Verify wrangler CLI installation: wrangler --version');
+    console.info('  3. Ensure all environment variables are set');
+    console.info('  4. Check network connectivity to Cloudflare API');
+    console.info('  5. Review Cloudflare account limits and billing');
 
-    console.log('\n📞 Support resources:');
-    console.log('  • Documentation: src/cloudflare-domains/README.md');
-    console.log('  • GitHub Issues: Report bugs and get help');
-    console.log('  • Community: GitHub Discussions');
-    console.log('  • Email: engineering@fire22.com');
+    console.info('\n📞 Support resources:');
+    console.info('  • Documentation: src/cloudflare-domains/README.md');
+    console.info('  • GitHub Issues: Report bugs and get help');
+    console.info('  • Community: GitHub Discussions');
+    console.info('  • Email: engineering@fire22.com');
   }
 
   private async promptContinue(): Promise<void> {
@@ -476,22 +476,22 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length < 1) {
-    console.log('Crystal Clear Architecture - Integration Demo');
-    console.log('');
-    console.log('Usage: integration-demo.ts <environment> [options]');
-    console.log('');
-    console.log('Environments:');
-    console.log('  development  - Local development demo');
-    console.log('  staging     - Staging environment demo');
-    console.log('  production  - Production environment demo');
-    console.log('');
-    console.log('Options:');
-    console.log('  --cloudflare-account <id>   - Cloudflare account ID');
-    console.log('  --cloudflare-zone <id>      - Cloudflare zone ID');
-    console.log('  --domain <domain>           - Domain for deployment');
-    console.log('  --enable-monitoring         - Enable monitoring features');
-    console.log('  --enable-alerts             - Enable alerting features');
-    console.log('  --skip-prompts              - Run without user prompts');
+    console.info('Crystal Clear Architecture - Integration Demo');
+    console.info('');
+    console.info('Usage: integration-demo.ts <environment> [options]');
+    console.info('');
+    console.info('Environments:');
+    console.info('  development  - Local development demo');
+    console.info('  staging     - Staging environment demo');
+    console.info('  production  - Production environment demo');
+    console.info('');
+    console.info('Options:');
+    console.info('  --cloudflare-account <id>   - Cloudflare account ID');
+    console.info('  --cloudflare-zone <id>      - Cloudflare zone ID');
+    console.info('  --domain <domain>           - Domain for deployment');
+    console.info('  --enable-monitoring         - Enable monitoring features');
+    console.info('  --enable-alerts             - Enable alerting features');
+    console.info('  --skip-prompts              - Run without user prompts');
     process.exit(1);
   }
 

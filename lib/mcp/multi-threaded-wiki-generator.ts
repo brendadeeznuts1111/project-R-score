@@ -298,7 +298,7 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
     task.retries++;
     
     if (task.retries <= this.config.maxRetries) {
-      console.log(`Retrying task ${task.id} (attempt ${task.retries}/${this.config.maxRetries})`);
+      console.info(`Retrying task ${task.id} (attempt ${task.retries}/${this.config.maxRetries})`);
       this.taskQueue.unshift(task);
       this.processQueue();
     } else {

@@ -54,7 +54,7 @@ export class PrivateRegistryClient {
     }
 
     this.registryConfigs.set(scope, config);
-    console.log(`✓ Registered registry for @${scope}`);
+    console.info(`✓ Registered registry for @${scope}`);
   }
 
   /**
@@ -257,7 +257,7 @@ export class PrivateRegistryClient {
    */
   clearCache(): void {
     this.cachedMeta.clear();
-    console.log('✓ Registry metadata cache cleared');
+    console.info('✓ Registry metadata cache cleared');
   }
 
   /**

@@ -540,10 +540,10 @@ export class ErrorMetricsCollector {
     this.alertHandlers.set(AlertChannel.CONSOLE, async (alert) => {
       const icon = alert.severity === AlertSeverity.CRITICAL ? '🚨' :
                    alert.severity === AlertSeverity.WARNING ? '⚠️' : 'ℹ️';
-      console.log(`${icon} [${alert.severity.toUpperCase()}] ${alert.title}`);
-      console.log(`   ${alert.message}`);
-      console.log(`   Service: ${alert.error.service || 'unknown'}`);
-      console.log(`   Code: ${alert.error.code}`);
+      console.info(`${icon} [${alert.severity.toUpperCase()}] ${alert.title}`);
+      console.info(`   ${alert.message}`);
+      console.info(`   Service: ${alert.error.service || 'unknown'}`);
+      console.info(`   Code: ${alert.error.code}`);
     });
 
     // Webhook handler
@@ -659,7 +659,7 @@ export function getErrorAggregation(
 
 // Entry guard for testing
 if (import.meta.main) {
-  console.log('📊 Error Metrics Demo\n');
+  console.info('📊 Error Metrics Demo\n');
 
   const metrics = new ErrorMetricsCollector({
     retentionMs: 60 * 60 * 1000,
@@ -676,7 +676,7 @@ if (import.meta.main) {
   });
 
   // Record some errors
-  console.log('Recording errors...\n');
+  console.info('Recording errors...\n');
 
   metrics.record(
     new Error('Database connection failed'),
@@ -694,14 +694,14 @@ if (import.meta.main) {
     end: Date.now(),
   });
 
-  console.log('\n📈 Aggregation Results:');
-  console.log(`Total errors: ${aggregation.total}`);
-  console.log(`Error rate: ${aggregation.errorRate.toFixed(2)}/min`);
-  console.log(`Trend: ${aggregation.trend}`);
-  console.log('By service:', aggregation.byService);
+  console.info('\n📈 Aggregation Results:');
+  console.info(`Total errors: ${aggregation.total}`);
+  console.info(`Error rate: ${aggregation.errorRate.toFixed(2)}/min`);
+  console.info(`Trend: ${aggregation.trend}`);
+  console.info('By service:', aggregation.byService);
 
-  console.log('\n📊 Collector Stats:', metrics.getStats());
+  console.info('\n📊 Collector Stats:', metrics.getStats());
 
   metrics.destroy();
-  console.log('\n✅ Demo complete!');
+  console.info('\n✅ Demo complete!');
 }

@@ -105,8 +105,8 @@ async function refreshManifest(manifestPath: string): Promise<void> {
 	const updatedContent = JSON.stringify(manifest, null, 2);
 	await Bun.write(manifestPath, updatedContent);
 	
-	console.log(`✅ Refreshed manifest: ${manifestPath}`);
-	console.log(`   Checksum: ${manifest.metadata.checksum}`);
+	console.info(`✅ Refreshed manifest: ${manifestPath}`);
+	console.info(`   Checksum: ${manifest.metadata.checksum}`);
 }
 
 async function main() {

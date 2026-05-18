@@ -9,11 +9,11 @@ import {
 } from './cascade-workflows';
 
 async function demonstrateWorkflowEngine() {
-  console.log('🔄 Cascade Workflow Engine Demo');
-  console.log('===============================');
+  console.info('🔄 Cascade Workflow Engine Demo');
+  console.info('===============================');
   
   // Example 1: Device Onboarding Workflow
-  console.log('\n📱 Device Onboarding Workflow');
+  console.info('\n📱 Device Onboarding Workflow');
   
   const deviceContext = {
     merchantId: 'factory-wager',
@@ -29,13 +29,13 @@ async function demonstrateWorkflowEngine() {
   };
   
   const deviceExecution = await workflowEngine.executeWorkflow('device-onboarding', deviceContext, deviceTrigger);
-  console.log(`✅ Device onboarding completed: ${deviceExecution.status}`);
-  console.log(`   - Execution time: ${deviceExecution.metrics.executionTime}ms`);
-  console.log(`   - Steps completed: ${deviceExecution.metrics.stepsCompleted}/6`);
-  console.log(`   - Success rate: ${(deviceExecution.metrics.successRate * 100).toFixed(1)}%`);
+  console.info(`✅ Device onboarding completed: ${deviceExecution.status}`);
+  console.info(`   - Execution time: ${deviceExecution.metrics.executionTime}ms`);
+  console.info(`   - Steps completed: ${deviceExecution.metrics.stepsCompleted}/6`);
+  console.info(`   - Success rate: ${(deviceExecution.metrics.successRate * 100).toFixed(1)}%`);
   
   // Example 2: Bulk Device Onboarding Workflow
-  console.log('\n📊 Bulk Device Onboarding Workflow');
+  console.info('\n📊 Bulk Device Onboarding Workflow');
   
   const bulkContext = {
     merchantId: 'enterprise-corp',
@@ -50,12 +50,12 @@ async function demonstrateWorkflowEngine() {
   };
   
   const bulkExecution = await workflowEngine.executeWorkflow('bulk-device-onboarding', bulkContext, bulkTrigger);
-  console.log(`✅ Bulk onboarding completed: ${bulkExecution.status}`);
-  console.log(`   - Devices processed: ${bulkExecution.context.deviceCount || 25}`);
-  console.log(`   - MRR impact: +$${(bulkExecution.context.mrrImpact || 0).toLocaleString()}/month`);
+  console.info(`✅ Bulk onboarding completed: ${bulkExecution.status}`);
+  console.info(`   - Devices processed: ${bulkExecution.context.deviceCount || 25}`);
+  console.info(`   - MRR impact: +$${(bulkExecution.context.mrrImpact || 0).toLocaleString()}/month`);
   
   // Example 3: Merchant Activation Workflow
-  console.log('\n🏢 Merchant Activation Workflow');
+  console.info('\n🏢 Merchant Activation Workflow');
   
   const merchantContext = {
     merchantId: 'new-merchant',
@@ -74,11 +74,11 @@ async function demonstrateWorkflowEngine() {
   };
   
   const merchantExecution = await workflowEngine.executeWorkflow('merchant-activation', merchantContext, merchantTrigger);
-  console.log(`✅ Merchant activation completed: ${merchantExecution.status}`);
-  console.log(`   - Training needed: ${merchantExecution.context.trainingNeeded ? 'Yes' : 'No'}`);
+  console.info(`✅ Merchant activation completed: ${merchantExecution.status}`);
+  console.info(`   - Training needed: ${merchantExecution.context.trainingNeeded ? 'Yes' : 'No'}`);
   
   // Example 4: ROI Optimization Workflow
-  console.log('\n💰 ROI Optimization Workflow');
+  console.info('\n💰 ROI Optimization Workflow');
   
   const roiContext = {
     merchantId: 'factory-wager',
@@ -93,31 +93,31 @@ async function demonstrateWorkflowEngine() {
   };
   
   const roiExecution = await workflowEngine.executeWorkflow('roi-optimization', roiContext, roiTrigger);
-  console.log(`✅ ROI optimization completed: ${roiExecution.status}`);
-  console.log(`   - Improvement measured: ${(roiExecution.context.roiImprovement * 100).toFixed(1)}%`);
+  console.info(`✅ ROI optimization completed: ${roiExecution.status}`);
+  console.info(`   - Improvement measured: ${(roiExecution.context.roiImprovement * 100).toFixed(1)}%`);
   
   // Example 5: Workflow Metrics
-  console.log('\n📊 Workflow Metrics Analysis');
+  console.info('\n📊 Workflow Metrics Analysis');
   
   const allMetrics = await workflowEngine.getAllWorkflowMetrics();
   
   for (const [workflowId, metrics] of Object.entries(allMetrics)) {
-    console.log(`\n${workflowId}:`);
+    console.info(`\n${workflowId}:`);
     const metricsData = metrics as any;
-    console.log(`   - Total executions: ${metricsData.totalExecutions}`);
-    console.log(`   - Success rate: ${(metricsData.successRate * 100).toFixed(1)}%`);
-    console.log(`   - Avg execution time: ${metricsData.avgExecutionTime.toFixed(0)}ms`);
+    console.info(`   - Total executions: ${metricsData.totalExecutions}`);
+    console.info(`   - Success rate: ${(metricsData.successRate * 100).toFixed(1)}%`);
+    console.info(`   - Avg execution time: ${metricsData.avgExecutionTime.toFixed(0)}ms`);
     
     if (metricsData.targetMetrics?.successRate) {
-      console.log(`   - Target success rate: ${metricsData.targetMetrics.successRate}`);
+      console.info(`   - Target success rate: ${metricsData.targetMetrics.successRate}`);
     }
     if (metricsData.targetMetrics?.mrrImpact) {
-      console.log(`   - MRR impact: ${metricsData.targetMetrics.mrrImpact}`);
+      console.info(`   - MRR impact: ${metricsData.targetMetrics.mrrImpact}`);
     }
   }
   
   // Example 6: Trigger-Based Workflow Execution
-  console.log('\n🎯 Trigger-Based Workflow Execution');
+  console.info('\n🎯 Trigger-Based Workflow Execution');
   
   const triggers: WorkflowTrigger[] = [
     {
@@ -135,41 +135,41 @@ async function demonstrateWorkflowEngine() {
   ];
   
   for (const trigger of triggers) {
-    console.log(`\n🔄 Processing trigger: ${trigger.type}`);
+    console.info(`\n🔄 Processing trigger: ${trigger.type}`);
     const executions = await workflowEngine.triggerWorkflow(trigger, {
       merchantId: 'demo-merchant',
       timestamp: new Date()
     });
     
-    console.log(`✅ Triggered ${executions.length} workflow(s):`);
+    console.info(`✅ Triggered ${executions.length} workflow(s):`);
     executions.forEach(exec => {
-      console.log(`   - ${exec.workflowId}: ${exec.status}`);
+      console.info(`   - ${exec.workflowId}: ${exec.status}`);
     });
   }
   
   // Example 7: Active Workflows Monitoring
-  console.log('\n📡 Active Workflows Monitoring');
+  console.info('\n📡 Active Workflows Monitoring');
   
   const activeWorkflows = workflowEngine.getActiveWorkflows();
-  console.log(`Currently active workflows: ${activeWorkflows.length}`);
+  console.info(`Currently active workflows: ${activeWorkflows.length}`);
   
   if (activeWorkflows.length > 0) {
     activeWorkflows.forEach(exec => {
-      console.log(`   - ${exec.workflowId}: step ${exec.currentStep || 0} (${exec.status})`);
+      console.info(`   - ${exec.workflowId}: step ${exec.currentStep || 0} (${exec.status})`);
     });
   } else {
-    console.log('   No workflows currently running');
+    console.info('   No workflows currently running');
   }
   
   // Example 8: Enterprise Integration Demo
-  console.log('\n🏢 Enterprise Integration Demo');
+  console.info('\n🏢 Enterprise Integration Demo');
   
   await demonstrateEnterpriseIntegration();
 }
 
 async function demonstrateEnterpriseIntegration() {
-  console.log('🔗 Enterprise Workflow Integration');
-  console.log('===================================');
+  console.info('🔗 Enterprise Workflow Integration');
+  console.info('===================================');
   
   // Simulate enterprise onboarding scenario
   const enterpriseScenarios = [
@@ -221,24 +221,24 @@ async function demonstrateEnterpriseIntegration() {
   
   // Execute enterprise scenarios
   for (const scenario of enterpriseScenarios) {
-    console.log(`\n📊 Executing: ${scenario.name}`);
+    console.info(`\n📊 Executing: ${scenario.name}`);
     
     const startTime = Date.now();
     const executions = await workflowEngine.triggerWorkflow(scenario.trigger, scenario.context);
     const executionTime = Date.now() - startTime;
     
-    console.log(`✅ Completed in ${executionTime}ms`);
-    console.log(`   - Workflows executed: ${executions.length}`);
+    console.info(`✅ Completed in ${executionTime}ms`);
+    console.info(`   - Workflows executed: ${executions.length}`);
     
     // Calculate aggregate metrics
     const totalSteps = executions.reduce((sum, exec) => sum + exec.metrics.stepsCompleted, 0);
     const avgSuccessRate = executions.reduce((sum, exec) => sum + exec.metrics.successRate, 0) / executions.length;
     const totalMRRImpact = executions.reduce((sum, exec) => sum + (exec.context.mrrImpact || 0), 0);
     
-    console.log(`   - Total steps completed: ${totalSteps}`);
-    console.log(`   - Average success rate: ${(avgSuccessRate * 100).toFixed(1)}%`);
+    console.info(`   - Total steps completed: ${totalSteps}`);
+    console.info(`   - Average success rate: ${(avgSuccessRate * 100).toFixed(1)}%`);
     if (totalMRRImpact > 0) {
-      console.log(`   - Total MRR impact: +$${totalMRRImpact.toLocaleString()}/month`);
+      console.info(`   - Total MRR impact: +$${totalMRRImpact.toLocaleString()}/month`);
     }
     
     // Store enterprise execution memory
@@ -251,7 +251,7 @@ async function demonstrateEnterpriseIntegration() {
 
 async function storeEnterpriseExecutionMemory(scenario: any, executions: WorkflowExecution[], executionTime: number) {
   // This would integrate with CascadeMemoryManager
-  console.log(`💾 Storing execution memory for ${scenario.name}`);
+  console.info(`💾 Storing execution memory for ${scenario.name}`);
   
   // Calculate performance metrics
   const metrics = {
@@ -263,12 +263,12 @@ async function storeEnterpriseExecutionMemory(scenario: any, executions: Workflo
     mrrImpact: executions.reduce((sum, exec) => sum + (exec.context.mrrImpact || 0), 0)
   };
   
-  console.log(`   - Performance metrics: ${JSON.stringify(metrics, null, 2)}`);
+  console.info(`   - Performance metrics: ${JSON.stringify(metrics, null, 2)}`);
 }
 
 async function generateEnterpriseInsights() {
-  console.log('\n💡 Enterprise Workflow Insights');
-  console.log('===============================');
+  console.info('\n💡 Enterprise Workflow Insights');
+  console.info('===============================');
   
   const allMetrics = await workflowEngine.getAllWorkflowMetrics();
   
@@ -321,21 +321,21 @@ async function generateEnterpriseInsights() {
   }
   
   // Display insights
-  insights.forEach(insight => console.log(`   ${insight}`));
+  insights.forEach(insight => console.info(`   ${insight}`));
   
   // Recommendations
-  console.log('\n📋 Recommendations:');
-  console.log('   - Monitor workflow performance metrics daily');
-  console.log('   - Implement automated retry mechanisms for failed steps');
-  console.log('   - Optimize parallel execution for bulk operations');
-  console.log('   - Set up alerts for success rate drops below 85%');
-  console.log('   - Consider workflow optimization based on usage patterns');
+  console.info('\n📋 Recommendations:');
+  console.info('   - Monitor workflow performance metrics daily');
+  console.info('   - Implement automated retry mechanisms for failed steps');
+  console.info('   - Optimize parallel execution for bulk operations');
+  console.info('   - Set up alerts for success rate drops below 85%');
+  console.info('   - Consider workflow optimization based on usage patterns');
 }
 
 // Performance benchmark
 async function performanceBenchmark() {
-  console.log('\n⚡ Performance Benchmark');
-  console.log('=========================');
+  console.info('\n⚡ Performance Benchmark');
+  console.info('=========================');
   
   const benchmarkScenarios = [
     {
@@ -359,7 +359,7 @@ async function performanceBenchmark() {
   ];
   
   for (const scenario of benchmarkScenarios) {
-    console.log(`\n🏃 Benchmarking: ${scenario.name}`);
+    console.info(`\n🏃 Benchmarking: ${scenario.name}`);
     
     const times: number[] = [];
     const successCount: number[] = [];
@@ -377,9 +377,9 @@ async function performanceBenchmark() {
         times.push(executionTime);
         successCount.push(execution.status === 'completed' ? 1 : 0);
         
-        console.log(`   Iteration ${i + 1}: ${executionTime}ms (${execution.status})`);
+        console.info(`   Iteration ${i + 1}: ${executionTime}ms (${execution.status})`);
       } catch (error) {
-        console.log(`   Iteration ${i + 1}: FAILED`);
+        console.info(`   Iteration ${i + 1}: FAILED`);
         successCount.push(0);
       }
     }
@@ -390,12 +390,12 @@ async function performanceBenchmark() {
     const maxTime = Math.max(...times);
     const successRate = successCount.reduce((sum, success) => sum + success, 0) / successCount.length;
     
-    console.log(`📊 Results:`);
-    console.log(`   - Average time: ${avgTime.toFixed(0)}ms`);
-    console.log(`   - Min time: ${minTime}ms`);
-    console.log(`   - Max time: ${maxTime}ms`);
-    console.log(`   - Success rate: ${(successRate * 100).toFixed(1)}%`);
-    console.log(`   - Throughput: ${(scenario.iterations / (avgTime / 1000)).toFixed(2)} executions/second`);
+    console.info(`📊 Results:`);
+    console.info(`   - Average time: ${avgTime.toFixed(0)}ms`);
+    console.info(`   - Min time: ${minTime}ms`);
+    console.info(`   - Max time: ${maxTime}ms`);
+    console.info(`   - Success rate: ${(successRate * 100).toFixed(1)}%`);
+    console.info(`   - Throughput: ${(scenario.iterations / (avgTime / 1000)).toFixed(2)} executions/second`);
   }
 }
 
@@ -410,16 +410,16 @@ if (isMainModule) {
   demonstrateWorkflowEngine()
     .then(() => performanceBenchmark())
     .then(() => {
-      console.log('\n🎉 All workflow demonstrations completed successfully!');
-      console.log('\n📋 Summary:');
-      console.log('   - ✅ Device onboarding workflow implemented');
-      console.log('   - ✅ Bulk device onboarding workflow implemented');
-      console.log('   - ✅ Merchant activation workflow implemented');
-      console.log('   - ✅ ROI optimization workflow implemented');
-      console.log('   - ✅ Enterprise integration demonstrated');
-      console.log('   - ✅ Performance benchmarks completed');
-      console.log('   - ✅ Memory integration with CascadeMemoryManager');
-      console.log('   - ✅ Skills integration with CascadeSkillsManager');
+      console.info('\n🎉 All workflow demonstrations completed successfully!');
+      console.info('\n📋 Summary:');
+      console.info('   - ✅ Device onboarding workflow implemented');
+      console.info('   - ✅ Bulk device onboarding workflow implemented');
+      console.info('   - ✅ Merchant activation workflow implemented');
+      console.info('   - ✅ ROI optimization workflow implemented');
+      console.info('   - ✅ Enterprise integration demonstrated');
+      console.info('   - ✅ Performance benchmarks completed');
+      console.info('   - ✅ Memory integration with CascadeMemoryManager');
+      console.info('   - ✅ Skills integration with CascadeSkillsManager');
       
       // Exit process for non-browser environments
       if (globalProcess && globalProcess.exit) {

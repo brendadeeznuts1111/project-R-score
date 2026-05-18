@@ -297,7 +297,7 @@ export class TypeSafeFeatureManager {
         throw new Error(`Failed to save METAFILE: ${response.statusText}`);
       }
 
-      console.log('METAFILE saved to private registry successfully');
+      console.info('METAFILE saved to private registry successfully');
     } catch (error) {
       console.error('Failed to save METAFILE:', error);
       throw error;
@@ -479,7 +479,7 @@ export class TypeSafeBuildManager {
    * Build for low latency
    */
   private async buildForLowLatency(): Promise<string[]> {
-    console.log('🚀 Building for low latency...');
+    console.info('🚀 Building for low latency...');
     
     // Simulate build process
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -495,7 +495,7 @@ export class TypeSafeBuildManager {
    * Build for high throughput
    */
   private async buildForHighThroughput(): Promise<string[]> {
-    console.log('⚡ Building for high throughput...');
+    console.info('⚡ Building for high throughput...');
     
     await new Promise(resolve => setTimeout(resolve, 1500));
     
@@ -510,7 +510,7 @@ export class TypeSafeBuildManager {
    * Build for resource optimization
    */
   private async buildForResourceOptimized(): Promise<string[]> {
-    console.log('📦 Building for resource optimization...');
+    console.info('📦 Building for resource optimization...');
     
     await new Promise(resolve => setTimeout(resolve, 2000));
     
@@ -525,7 +525,7 @@ export class TypeSafeBuildManager {
    * Build balanced configuration
    */
   private async buildBalanced(): Promise<string[]> {
-    console.log('⚖️ Building balanced configuration...');
+    console.info('⚖️ Building balanced configuration...');
     
     await new Promise(resolve => setTimeout(resolve, 1200));
     
@@ -639,48 +639,48 @@ export class FeatureGuards {
  * Demonstrate type safety and registry integration
  */
 async function demonstrateTypeSafety(): Promise<void> {
-  console.log('🔒 TYPE SAFETY AND REGISTRY INTEGRATION DEMONSTRATION');
-  console.log('=' .repeat(60));
+  console.info('🔒 TYPE SAFETY AND REGISTRY INTEGRATION DEMONSTRATION');
+  console.info('=' .repeat(60));
 
   // Initialize feature manager
   const featureManager = TypeSafeFeatureManager.getInstance();
   
-  console.log('\n📋 FEATURE MANAGER INITIALIZED:');
-  console.log(`  Features: ${featureManager.getEnabledFeatures().join(', ')}`);
-  console.log(`  Platform: ${featureManager.getRegistryValue('platform') || 'UNKNOWN'}`);
-  console.log(`  Environment: ${featureManager.getRegistryValue('environment') || 'UNKNOWN'}`);
-  console.log(`  Tier: ${featureManager.getRegistryValue('tier') || 'FREE'}`);
+  console.info('\n📋 FEATURE MANAGER INITIALIZED:');
+  console.info(`  Features: ${featureManager.getEnabledFeatures().join(', ')}`);
+  console.info(`  Platform: ${featureManager.getRegistryValue('platform') || 'UNKNOWN'}`);
+  console.info(`  Environment: ${featureManager.getRegistryValue('environment') || 'UNKNOWN'}`);
+  console.info(`  Tier: ${featureManager.getRegistryValue('tier') || 'FREE'}`);
 
   // Demonstrate type-safe feature checking
-  console.log('\n🔍 TYPE-SAFE FEATURE CHECKING:');
+  console.info('\n🔍 TYPE-SAFE FEATURE CHECKING:');
   
   // These will show compile-time errors if invalid
-  console.log(`  Debug enabled: ${FeatureGuards.isDebug()}`);
-  console.log(`  Premium enabled: ${FeatureGuards.isPremium()}`);
-  console.log(`  Enterprise enabled: ${FeatureGuards.isEnterprise()}`);
-  console.log(`  Beta features: ${FeatureGuards.isBeta()}`);
-  console.log(`  Development tools: ${FeatureGuards.hasDevTools()}`);
-  console.log(`  Multi-tenant: ${FeatureGuards.isMultiTenant()}`);
+  console.info(`  Debug enabled: ${FeatureGuards.isDebug()}`);
+  console.info(`  Premium enabled: ${FeatureGuards.isPremium()}`);
+  console.info(`  Enterprise enabled: ${FeatureGuards.isEnterprise()}`);
+  console.info(`  Beta features: ${FeatureGuards.isBeta()}`);
+  console.info(`  Development tools: ${FeatureGuards.hasDevTools()}`);
+  console.info(`  Multi-tenant: ${FeatureGuards.isMultiTenant()}`);
 
   // Platform checks
-  console.log(`  Is Desktop: ${FeatureGuards.isPlatform('DESKTOP')}`);
-  console.log(`  Is Server: ${FeatureGuards.isPlatform('SERVER')}`);
+  console.info(`  Is Desktop: ${FeatureGuards.isPlatform('DESKTOP')}`);
+  console.info(`  Is Server: ${FeatureGuards.isPlatform('SERVER')}`);
 
   // Environment checks
-  console.log(`  Is Development: ${FeatureGuards.isEnvironment('DEVELOPMENT')}`);
-  console.log(`  Is Production: ${FeatureGuards.isEnvironment('PRODUCTION')}`);
+  console.info(`  Is Development: ${FeatureGuards.isEnvironment('DEVELOPMENT')}`);
+  console.info(`  Is Production: ${FeatureGuards.isEnvironment('PRODUCTION')}`);
 
   // Tier checks
-  console.log(`  Is Free tier: ${FeatureGuards.isTier('FREE')}`);
-  console.log(`  Is Enterprise tier: ${FeatureGuards.isTier('ENTERPRISE')}`);
+  console.info(`  Is Free tier: ${FeatureGuards.isTier('FREE')}`);
+  console.info(`  Is Enterprise tier: ${FeatureGuards.isTier('ENTERPRISE')}`);
 
   // Component checks
-  console.log(`  Has Storage: ${FeatureGuards.hasComponent('STORAGE')}`);
-  console.log(`  Has Secrets: ${FeatureGuards.hasComponent('SECRETS')}`);
-  console.log(`  Has Monitoring: ${FeatureGuards.hasComponent('MONITORING')}`);
+  console.info(`  Has Storage: ${FeatureGuards.hasComponent('STORAGE')}`);
+  console.info(`  Has Secrets: ${FeatureGuards.hasComponent('SECRETS')}`);
+  console.info(`  Has Monitoring: ${FeatureGuards.hasComponent('MONITORING')}`);
 
   // Demonstrate type-safe build configuration
-  console.log('\n🏗️ TYPE-SAFE BUILD CONFIGURATION:');
+  console.info('\n🏗️ TYPE-SAFE BUILD CONFIGURATION:');
   
   const buildConfig: TypeSafeBuildConfig = {
     features: ["DEBUG", "PREMIUM", "ENTERPRISE"],
@@ -695,34 +695,34 @@ async function demonstrateTypeSafety(): Promise<void> {
 
   const buildManager = new TypeSafeBuildManager(buildConfig);
   
-  console.log(`  Platform: ${buildConfig.platform}`);
-  console.log(`  Environment: ${buildConfig.environment}`);
-  console.log(`  Tier: ${buildConfig.tier}`);
-  console.log(`  Security: ${buildConfig.security}`);
-  console.log(`  Performance: ${buildConfig.performance}`);
-  console.log(`  Variant: ${buildConfig.variant}`);
-  console.log(`  Features: ${buildConfig.features.join(', ')}`);
-  console.log(`  Components: ${buildConfig.components.join(', ')}`);
+  console.info(`  Platform: ${buildConfig.platform}`);
+  console.info(`  Environment: ${buildConfig.environment}`);
+  console.info(`  Tier: ${buildConfig.tier}`);
+  console.info(`  Security: ${buildConfig.security}`);
+  console.info(`  Performance: ${buildConfig.performance}`);
+  console.info(`  Variant: ${buildConfig.variant}`);
+  console.info(`  Features: ${buildConfig.features.join(', ')}`);
+  console.info(`  Components: ${buildConfig.components.join(', ')}`);
 
   // Generate METAFILE
-  console.log('\n📄 METAFILE GENERATION:');
+  console.info('\n📄 METAFILE GENERATION:');
   const metafile = buildManager.generateMetafile();
-  console.log(`  Version: ${metafile.version}`);
-  console.log(`  Timestamp: ${metafile.timestamp}`);
-  console.log(`  Features: ${metafile.features.length}`);
-  console.log(`  Registry keys: ${Object.keys(metafile.registry).length}`);
-  console.log(`  Optimizations: ${Object.keys(metafile.optimizations).length}`);
+  console.info(`  Version: ${metafile.version}`);
+  console.info(`  Timestamp: ${metafile.timestamp}`);
+  console.info(`  Features: ${metafile.features.length}`);
+  console.info(`  Registry keys: ${Object.keys(metafile.registry).length}`);
+  console.info(`  Optimizations: ${Object.keys(metafile.optimizations).length}`);
 
   // Execute build
-  console.log('\n🚀 EXECUTING TYPE-SAFE BUILD:');
+  console.info('\n🚀 EXECUTING TYPE-SAFE BUILD:');
   const buildResult = await buildManager.build();
   
-  console.log(`  Success: ${buildResult.success}`);
-  console.log(`  Artifacts: ${buildResult.artifacts.join(', ')}`);
-  console.log(`  Errors: ${buildResult.errors.length}`);
+  console.info(`  Success: ${buildResult.success}`);
+  console.info(`  Artifacts: ${buildResult.artifacts.join(', ')}`);
+  console.info(`  Errors: ${buildResult.errors.length}`);
 
   // Demonstrate compile-time validation
-  console.log('\n✅ COMPILE-TIME VALIDATION EXAMPLES:');
+  console.info('\n✅ COMPILE-TIME VALIDATION EXAMPLES:');
   
   try {
     // This would cause a compile-time error:
@@ -739,56 +739,56 @@ async function demonstrateTypeSafety(): Promise<void> {
     //   performance: "BALANCED"
     // };
     
-    console.log('  ✅ All type validations passed');
-    console.log('  ✅ Feature flags are type-safe');
-    console.log('  ✅ Build configuration is validated');
-    console.log('  ✅ Registry values are typed');
+    console.info('  ✅ All type validations passed');
+    console.info('  ✅ Feature flags are type-safe');
+    console.info('  ✅ Build configuration is validated');
+    console.info('  ✅ Registry values are typed');
     
   } catch (error) {
-    console.log(`  ❌ Validation error: ${error}`);
+    console.info(`  ❌ Validation error: ${error}`);
   }
 
-  console.log('\n📊 CURRENT CONFIGURATION:');
+  console.info('\n📊 CURRENT CONFIGURATION:');
   const config = featureManager.getConfiguration();
-  console.log(`  Features: ${config.features.join(', ')}`);
-  console.log(`  Platform: ${config.platform}`);
-  console.log(`  Environment: ${config.environment}`);
-  console.log(`  Tier: ${config.tier}`);
-  console.log(`  Registry entries: ${Object.keys(config.registry).length}`);
+  console.info(`  Features: ${config.features.join(', ')}`);
+  console.info(`  Platform: ${config.platform}`);
+  console.info(`  Environment: ${config.environment}`);
+  console.info(`  Tier: ${config.tier}`);
+  console.info(`  Registry entries: ${Object.keys(config.registry).length}`);
 
-  console.log('\n✅ TYPE SAFETY AND REGISTRY INTEGRATION DEMONSTRATION COMPLETE!');
-  console.log('\n📋 TYPE SAFETY FEATURES:');
-  console.log('  🔒 Compile-time validation for feature flags');
-  console.log('  🏗️ Type-safe build configuration');
-  console.log('  📋 Registry interface augmentation');
-  console.log('  🎯 Platform-specific builds');
-  console.log('  🌍 Environment-based features');
-  console.log('  🧪 A/B testing variants');
-  console.log('  💰 Paid tier features');
-  console.log('  🔐 Security level enforcement');
-  console.log('  ⚡ Performance profile selection');
-  console.log('  📦 METAFILE generation and storage');
+  console.info('\n✅ TYPE SAFETY AND REGISTRY INTEGRATION DEMONSTRATION COMPLETE!');
+  console.info('\n📋 TYPE SAFETY FEATURES:');
+  console.info('  🔒 Compile-time validation for feature flags');
+  console.info('  🏗️ Type-safe build configuration');
+  console.info('  📋 Registry interface augmentation');
+  console.info('  🎯 Platform-specific builds');
+  console.info('  🌍 Environment-based features');
+  console.info('  🧪 A/B testing variants');
+  console.info('  💰 Paid tier features');
+  console.info('  🔐 Security level enforcement');
+  console.info('  ⚡ Performance profile selection');
+  console.info('  📦 METAFILE generation and storage');
 
-  console.log('\n🔧 USAGE EXAMPLES:');
-  console.log('  // Type-safe feature checking');
-  console.log('  if (FeatureGuards.isEnterprise()) {');
-  console.log('    // Enterprise-only code');
-  console.log('  }');
-  console.log('');
-  console.log('  // Type-safe build configuration');
-  console.log('  const config: TypeSafeBuildConfig = {');
-  console.log('    features: ["PREMIUM", "ENTERPRISE"],');
-  console.log('    platform: "SERVER",');
-  console.log('    environment: "PRODUCTION",');
-  console.log('    tier: "ENTERPRISE",');
-  console.log('    components: ["STORAGE", "SECRETS"],');
-  console.log('    security: "MAXIMUM",');
-  console.log('    performance: "LOW_LATENCY"');
-  console.log('  };');
-  console.log('');
-  console.log('  // Invalid usage causes compile-time errors');
-  console.log('  // featureManager.hasFeature("TYPO"); // ❌ Type error');
-  console.log('  // config.platform = "INVALID"; // ❌ Type error');
+  console.info('\n🔧 USAGE EXAMPLES:');
+  console.info('  // Type-safe feature checking');
+  console.info('  if (FeatureGuards.isEnterprise()) {');
+  console.info('    // Enterprise-only code');
+  console.info('  }');
+  console.info('');
+  console.info('  // Type-safe build configuration');
+  console.info('  const config: TypeSafeBuildConfig = {');
+  console.info('    features: ["PREMIUM", "ENTERPRISE"],');
+  console.info('    platform: "SERVER",');
+  console.info('    environment: "PRODUCTION",');
+  console.info('    tier: "ENTERPRISE",');
+  console.info('    components: ["STORAGE", "SECRETS"],');
+  console.info('    security: "MAXIMUM",');
+  console.info('    performance: "LOW_LATENCY"');
+  console.info('  };');
+  console.info('');
+  console.info('  // Invalid usage causes compile-time errors');
+  console.info('  // featureManager.hasFeature("TYPO"); // ❌ Type error');
+  console.info('  // config.platform = "INVALID"; // ❌ Type error');
 }
 
 // Run demonstration if this file is executed directly

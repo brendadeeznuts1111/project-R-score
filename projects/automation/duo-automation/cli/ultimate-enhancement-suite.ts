@@ -287,28 +287,28 @@ export class UltimateEnhancementCLI {
    * Apply all enhancements
    */
   async applyEnhancements(): Promise<void> {
-    console.log("🚀 DuoPlus CLI v3.0+ - Ultimate Enhancement Suite");
-    console.log("=".repeat(80));
+    console.info("🚀 DuoPlus CLI v3.0+ - Ultimate Enhancement Suite");
+    console.info("=".repeat(80));
     
-    console.log("\n🔧 Applying System Enhancements...\n");
+    console.info("\n🔧 Applying System Enhancements...\n");
     
     for (const enhancement of this.enhancements) {
       await this.applyEnhancement(enhancement);
     }
     
-    console.log("\n📊 Enhancement Summary:");
+    console.info("\n📊 Enhancement Summary:");
     this.displayEnhancementSummary();
     
-    console.log("\n🎯 Performance Metrics:");
+    console.info("\n🎯 Performance Metrics:");
     this.displayPerformanceMetrics();
     
-    console.log("\n🛡️ Security Status:");
+    console.info("\n🛡️ Security Status:");
     this.displaySecurityStatus();
     
-    console.log("\n🌟 Enterprise Readiness:");
+    console.info("\n🌟 Enterprise Readiness:");
     this.displayEnterpriseReadiness();
     
-    console.log("\n🎉 Ultimate Enhancement Complete!");
+    console.info("\n🎉 Ultimate Enhancement Complete!");
     this.displayFinalSummary();
   }
   
@@ -331,11 +331,11 @@ export class UltimateEnhancementCLI {
       CRITICAL: "\x1b[91m"
     };
     
-    console.log(`${categoryIcon[enhancement.category]} ${enhancement.name}`);
-    console.log(`   ${enhancement.description}`);
-    console.log(`   📈 ${enhancement.metrics.improvement}`);
-    console.log(`   📊 ${enhancement.metrics.measurement}`);
-    console.log(`   ${impactColor[enhancement.metrics.impact]}Impact: ${enhancement.metrics.impact}\x1b[0m`);
+    console.info(`${categoryIcon[enhancement.category]} ${enhancement.name}`);
+    console.info(`   ${enhancement.description}`);
+    console.info(`   📈 ${enhancement.metrics.improvement}`);
+    console.info(`   📊 ${enhancement.metrics.measurement}`);
+    console.info(`   ${impactColor[enhancement.metrics.impact]}Impact: ${enhancement.metrics.impact}\x1b[0m`);
     
     // Log enhancement to database
     const stmt = this.database.prepare(`
@@ -354,7 +354,7 @@ export class UltimateEnhancementCLI {
     // Update metrics
     this.updateMetrics(enhancement);
     
-    console.log(`   ✅ Applied (ID: ${result.lastInsertRowid})\n`);
+    console.info(`   ✅ Applied (ID: ${result.lastInsertRowid})\n`);
   }
   
   /**
@@ -398,10 +398,10 @@ export class UltimateEnhancementCLI {
         enterprise: "🏢"
       }[category];
       
-      console.log(`   ${icon} ${category.charAt(0).toUpperCase() + category.slice(1)}: ${count} enhancements`);
+      console.info(`   ${icon} ${category.charAt(0).toUpperCase() + category.slice(1)}: ${count} enhancements`);
     });
     
-    console.log(`   📈 Total Enhancements: ${this.enhancements.length}`);
+    console.info(`   📈 Total Enhancements: ${this.enhancements.length}`);
   }
   
   /**
@@ -410,14 +410,14 @@ export class UltimateEnhancementCLI {
   private displayPerformanceMetrics(): void {
     const performanceEnhancements = this.enhancements.filter(e => e.category === "performance");
     
-    console.log(`   ⚡ Performance Gain: ${this.metrics.performanceGain}x`);
-    console.log(`   🚀 Request Processing: 100,000+ req/sec`);
-    console.log(`   💾 Memory Efficiency: 90% reduction`);
-    console.log(`   📊 Query Speed: 100x faster`);
-    console.log(`   ⏱️ Response Time: <1ms average`);
+    console.info(`   ⚡ Performance Gain: ${this.metrics.performanceGain}x`);
+    console.info(`   🚀 Request Processing: 100,000+ req/sec`);
+    console.info(`   💾 Memory Efficiency: 90% reduction`);
+    console.info(`   📊 Query Speed: 100x faster`);
+    console.info(`   ⏱️ Response Time: <1ms average`);
     
     performanceEnhancements.forEach(enhancement => {
-      console.log(`   ✅ ${enhancement.name}: ${enhancement.metrics.improvement}`);
+      console.info(`   ✅ ${enhancement.name}: ${enhancement.metrics.improvement}`);
     });
   }
   
@@ -427,14 +427,14 @@ export class UltimateEnhancementCLI {
   private displaySecurityStatus(): void {
     const securityEnhancements = this.enhancements.filter(e => e.category === "security");
     
-    console.log(`   🛡️ Security Level: ${this.metrics.securityLevel}%`);
-    console.log(`   🔒 Threat Detection: 99.9% accuracy`);
-    console.log(`   ⚡ Response Time: <100ms`);
-    console.log(`   🔐 Authentication: 99.99% accuracy`);
-    console.log(`   🛡️ Zero-Trust Architecture: Active`);
+    console.info(`   🛡️ Security Level: ${this.metrics.securityLevel}%`);
+    console.info(`   🔒 Threat Detection: 99.9% accuracy`);
+    console.info(`   ⚡ Response Time: <100ms`);
+    console.info(`   🔐 Authentication: 99.99% accuracy`);
+    console.info(`   🛡️ Zero-Trust Architecture: Active`);
     
     securityEnhancements.forEach(enhancement => {
-      console.log(`   ✅ ${enhancement.name}: ${enhancement.metrics.improvement}`);
+      console.info(`   ✅ ${enhancement.name}: ${enhancement.metrics.improvement}`);
     });
   }
   
@@ -444,14 +444,14 @@ export class UltimateEnhancementCLI {
   private displayEnterpriseReadiness(): void {
     const enterpriseEnhancements = this.enhancements.filter(e => e.category === "enterprise");
     
-    console.log(`   🏢 Enterprise Readiness: ${this.metrics.enterpriseReadiness}%`);
-    console.log(`   📊 Compliance: 100% automated`);
-    console.log(`   👥 Multi-Tenant: Fully supported`);
-    console.log(`   ☁️ Cloud-Native: Kubernetes ready`);
-    console.log(`   📈 Availability: 99.999%`);
+    console.info(`   🏢 Enterprise Readiness: ${this.metrics.enterpriseReadiness}%`);
+    console.info(`   📊 Compliance: 100% automated`);
+    console.info(`   👥 Multi-Tenant: Fully supported`);
+    console.info(`   ☁️ Cloud-Native: Kubernetes ready`);
+    console.info(`   📈 Availability: 99.999%`);
     
     enterpriseEnhancements.forEach(enhancement => {
-      console.log(`   ✅ ${enhancement.name}: ${enhancement.metrics.improvement}`);
+      console.info(`   ✅ ${enhancement.name}: ${enhancement.metrics.improvement}`);
     });
   }
   
@@ -459,34 +459,34 @@ export class UltimateEnhancementCLI {
    * Display final summary
    */
   private displayFinalSummary(): void {
-    console.log("\n💎 Ultimate Enhancement Achievements:");
-    console.log("   🚀 Performance: 50x faster processing");
-    console.log("   🛡️ Security: 99.9% threat protection");
-    console.log("   🎯 Features: AI-powered intelligence");
-    console.log("   🔧 Optimization: Autonomous self-tuning");
-    console.log("   🏢 Enterprise: Production-grade scalability");
+    console.info("\n💎 Ultimate Enhancement Achievements:");
+    console.info("   🚀 Performance: 50x faster processing");
+    console.info("   🛡️ Security: 99.9% threat protection");
+    console.info("   🎯 Features: AI-powered intelligence");
+    console.info("   🔧 Optimization: Autonomous self-tuning");
+    console.info("   🏢 Enterprise: Production-grade scalability");
     
-    console.log("\n🎯 Key Capabilities:");
-    console.log("   ⚡ Quantum-inspired performance algorithms");
-    console.log("   🔒 Zero-trust security architecture");
-    console.log("   🧠 Neural interface with predictive AI");
-    console.log("   🔄 Autonomic optimization engine");
-    console.log("   📊 Real-time monitoring and analytics");
-    console.log("   ☁️ Cloud-native deployment ready");
-    console.log("   🔐 Biometric security suite");
-    console.log("   🤖 AI assistant with deep learning");
-    console.log("   🌐 Global multi-cloud support");
-    console.log("   📈 Predictive maintenance system");
+    console.info("\n🎯 Key Capabilities:");
+    console.info("   ⚡ Quantum-inspired performance algorithms");
+    console.info("   🔒 Zero-trust security architecture");
+    console.info("   🧠 Neural interface with predictive AI");
+    console.info("   🔄 Autonomic optimization engine");
+    console.info("   📊 Real-time monitoring and analytics");
+    console.info("   ☁️ Cloud-native deployment ready");
+    console.info("   🔐 Biometric security suite");
+    console.info("   🤖 AI assistant with deep learning");
+    console.info("   🌐 Global multi-cloud support");
+    console.info("   📈 Predictive maintenance system");
     
-    console.log("\n🌟 System Status:");
-    console.log(`   📊 Total Enhancements: ${this.enhancements.length}`);
-    console.log(`   ⚡ Performance Gain: ${this.metrics.performanceGain}x`);
-    console.log(`   🛡️ Security Level: ${this.metrics.securityLevel}%`);
-    console.log(`   🎯 Features Added: ${this.metrics.featuresAdded}`);
-    console.log(`   🔧 Optimizations: ${this.metrics.optimizationsApplied}`);
-    console.log(`   🏢 Enterprise Ready: ${this.metrics.enterpriseReadiness}%`);
+    console.info("\n🌟 System Status:");
+    console.info(`   📊 Total Enhancements: ${this.enhancements.length}`);
+    console.info(`   ⚡ Performance Gain: ${this.metrics.performanceGain}x`);
+    console.info(`   🛡️ Security Level: ${this.metrics.securityLevel}%`);
+    console.info(`   🎯 Features Added: ${this.metrics.featuresAdded}`);
+    console.info(`   🔧 Optimizations: ${this.metrics.optimizationsApplied}`);
+    console.info(`   🏢 Enterprise Ready: ${this.metrics.enterpriseReadiness}%`);
     
-    console.log("\n🎉 Your DuoPlus CLI v3.0+ is now ULTIMATELY ENHANCED!");
+    console.info("\n🎉 Your DuoPlus CLI v3.0+ is now ULTIMATELY ENHANCED!");
   }
   
   /**
@@ -521,13 +521,13 @@ async function main() {
   
   // Display final statistics
   const stats = cli.getEnhancementStatistics();
-  console.log("\n📊 Final Enhancement Statistics:");
-  console.log(`   Total Enhancements: ${stats.totalEnhancements}`);
-  console.log(`   Critical Impact: ${stats.criticalImpacts}`);
-  console.log(`   High Impact: ${stats.highImpacts}`);
-  console.log(`   Performance Gain: ${stats.metrics.performanceGain}x`);
-  console.log(`   Security Level: ${stats.metrics.securityLevel}%`);
-  console.log(`   Enterprise Readiness: ${stats.metrics.enterpriseReadiness}%`);
+  console.info("\n📊 Final Enhancement Statistics:");
+  console.info(`   Total Enhancements: ${stats.totalEnhancements}`);
+  console.info(`   Critical Impact: ${stats.criticalImpacts}`);
+  console.info(`   High Impact: ${stats.highImpacts}`);
+  console.info(`   Performance Gain: ${stats.metrics.performanceGain}x`);
+  console.info(`   Security Level: ${stats.metrics.securityLevel}%`);
+  console.info(`   Enterprise Readiness: ${stats.metrics.enterpriseReadiness}%`);
 }
 
 // Execute if run directly

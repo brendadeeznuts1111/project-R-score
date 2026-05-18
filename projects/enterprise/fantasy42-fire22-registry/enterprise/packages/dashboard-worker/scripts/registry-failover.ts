@@ -102,7 +102,7 @@ class RegistryFailoverManager {
   }
 
   async checkAllRegistries(): Promise<HealthStatus[]> {
-    console.log('🔍 Checking registry health...\n');
+    console.info('🔍 Checking registry health...\n');
 
     const checks = await Promise.all(
       this.registries.map(registry => this.checkRegistryHealth(registry))
@@ -152,8 +152,8 @@ class RegistryFailoverManager {
       process.exit(1);
     }
 
-    console.log(`\n✅ Selected registry: ${bestRegistry.name}`);
-    console.log(`   URL: ${bestRegistry.url}`);
+    console.info(`\n✅ Selected registry: ${bestRegistry.name}`);
+    console.info(`   URL: ${bestRegistry.url}`);
 
     // Update bunfig.toml dynamically
     const bunfigPath = 'bunfig.toml';
@@ -161,12 +161,12 @@ class RegistryFailoverManager {
       const bunfig = await Bun.file(bunfigPath).text();
       const updatedBunfig = bunfig.replace(/registry = ".*"/, `registry = "${bestRegistry.url}"`);
       await Bun.write(bunfigPath, updatedBunfig);
-      console.log('   Updated bunfig.toml');
+      console.info('   Updated bunfig.toml');
     }
 
     // Set environment variable for current session
     process.env.BUN_CONFIG_REGISTRY = bestRegistry.url;
-    console.log('   Set BUN_CONFIG_REGISTRY environment variable');
+    console.info('   Set BUN_CONFIG_REGISTRY environment variable');
   }
 
   async createFailoverScript(): Promise<void> {
@@ -199,22 +199,22 @@ bun install --frozen-lockfile
 
     await Bun.write('scripts/install-with-failover.sh', script);
     await $`chmod +x scripts/install-with-failover.sh`;
-    console.log('✅ Created failover installation script');
+    console.info('✅ Created failover installation script');
   }
 
   async generateReport(): Promise<void> {
     const statuses = await this.checkAllRegistries();
 
-    console.log('\n📊 Registry Health Report');
-    console.log('═'.repeat(60));
-    console.log('Registry'.padEnd(25) + 'Type'.padEnd(10) + 'Status'.padEnd(10) + 'Response Time');
-    console.log('─'.repeat(60));
+    console.info('\n📊 Registry Health Report');
+    console.info('═'.repeat(60));
+    console.info('Registry'.padEnd(25) + 'Type'.padEnd(10) + 'Status'.padEnd(10) + 'Response Time');
+    console.info('─'.repeat(60));
 
     for (const status of statuses) {
       const statusEmoji = status.online ? '✅' : '❌';
       const responseTime = status.online ? `${status.responseTime.toFixed(2)}ms` : 'N/A';
 
-      console.log(
+      console.info(
         status.registry.name.padEnd(25) +
           status.registry.type.padEnd(10) +
           statusEmoji.padEnd(10) +
@@ -222,20 +222,20 @@ bun install --frozen-lockfile
       );
     }
 
-    console.log('\n💡 Failover Configuration:');
-    console.log('  • Primary registries are preferred when available');
-    console.log('  • Automatic fallback to secondary registries');
-    console.log('  • CDN mirrors used as last resort');
-    console.log('  • Health checks performed every installation');
+    console.info('\n💡 Failover Configuration:');
+    console.info('  • Primary registries are preferred when available');
+    console.info('  • Automatic fallback to secondary registries');
+    console.info('  • CDN mirrors used as last resort');
+    console.info('  • Health checks performed every installation');
 
     const bestRegistry = await this.selectBestRegistry();
     if (bestRegistry) {
-      console.log(`\n🎯 Recommended: ${bestRegistry.name} (${bestRegistry.url})`);
+      console.info(`\n🎯 Recommended: ${bestRegistry.name} (${bestRegistry.url})`);
     }
   }
 
   async monitorContinuously(intervalMs: number = 60000): Promise<void> {
-    console.log(`🔄 Starting continuous monitoring (every ${intervalMs / 1000}s)...`);
+    console.info(`🔄 Starting continuous monitoring (every ${intervalMs / 1000}s)...`);
 
     const checkAndReport = async () => {
       const statuses = await this.checkAllRegistries();

@@ -68,7 +68,7 @@ class FilterWatchLogger {
       pattern
     });
 
-    console.log(`📺 Started watch session: ${sessionId} for pattern "${pattern}"`);
+    console.info(`📺 Started watch session: ${sessionId} for pattern "${pattern}"`);
     return session;
   }
 
@@ -179,7 +179,7 @@ class FilterWatchLogger {
       newPattern: session.pattern
     });
 
-    console.log(`🔄 Restarted watch session: ${sessionId} (restart #${session.restartCount})`);
+    console.info(`🔄 Restarted watch session: ${sessionId} (restart #${session.restartCount})`);
   }
 
   /**
@@ -228,7 +228,7 @@ class FilterWatchLogger {
     // Remove from active sessions
     this.activeSessions.delete(sessionId);
 
-    console.log(`🛑 Stopped watch session: ${sessionId} (duration: ${Date.now() - session.startTime}ms)`);
+    console.info(`🛑 Stopped watch session: ${sessionId} (duration: ${Date.now() - session.startTime}ms)`);
   }
 
   /**
@@ -312,7 +312,7 @@ class FilterWatchLogger {
           uploadedAt: new Date().toISOString()
         });
 
-        console.log(`📤 Uploaded ${logs.length} watch logs for pattern "${pattern}"`);
+        console.info(`📤 Uploaded ${logs.length} watch logs for pattern "${pattern}"`);
       }
 
     } catch (error) {
@@ -377,20 +377,20 @@ export function getWatchSessionStats() {
 
 // Cleanup on process exit
 process.on('SIGINT', async () => {
-  console.log('🧹 Cleaning up watch logger...');
+  console.info('🧹 Cleaning up watch logger...');
   await watchLogger.cleanup();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-console.log('🧹 Cleaning up watch logger...');
+console.info('🧹 Cleaning up watch logger...');
 await watchLogger.cleanup();
 process.exit(0);
 });
 
 // Run demo if this file is executed directly
 if (process.argv[1] && process.argv[1].endsWith('filter-watch-logger.ts')) {
-console.log('📺 Filter Watch Session Logger Demo');
+console.info('📺 Filter Watch Session Logger Demo');
   
 // Start a demo session
 const session = startWatchSession('app-*', ['app-web', 'app-api', 'app-mobile']);

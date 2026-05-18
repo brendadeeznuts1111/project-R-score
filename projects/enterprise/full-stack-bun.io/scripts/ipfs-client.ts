@@ -251,7 +251,7 @@ async function main() {
   const [command, ...args] = process.argv.slice(2);
 
   if (!command) {
-    console.log(`
+    console.info(`
 IPFS Client v1.0.0 - Decentralized Storage
 
 Usage:
@@ -283,8 +283,8 @@ Examples:
         }
         const addResult = await client.addFile(filePath);
         if (addResult.success) {
-          console.log(`✅ Added to IPFS: ${addResult.cid}`);
-          console.log(`🌐 URL: ${addResult.url}`);
+          console.info(`✅ Added to IPFS: ${addResult.cid}`);
+          console.info(`🌐 URL: ${addResult.url}`);
         } else {
           console.error(`❌ Failed to add file: ${addResult.error}`);
         }
@@ -297,9 +297,9 @@ Examples:
         }
         const getResult = await client.getFile(cid, outputPath);
         if (getResult.success) {
-          console.log(`✅ Retrieved from IPFS: ${cid}`);
+          console.info(`✅ Retrieved from IPFS: ${cid}`);
           if (outputPath) {
-            console.log(`💾 Saved to: ${outputPath}`);
+            console.info(`💾 Saved to: ${outputPath}`);
           }
         } else {
           console.error(`❌ Failed to get file: ${getResult.error}`);
@@ -313,7 +313,7 @@ Examples:
         }
         const pinResult = await client.pinCID(pinCid);
         if (pinResult.success) {
-          console.log(`✅ Pinned content: ${pinCid}`);
+          console.info(`✅ Pinned content: ${pinCid}`);
         } else {
           console.error(`❌ Failed to pin content: ${pinResult.error}`);
         }
@@ -326,7 +326,7 @@ Examples:
         }
         const bundle = JSON.parse(bundleJson);
         const manifest = client.createManifest(bundle);
-        console.log(manifest);
+        console.info(manifest);
         break;
 
       case 'verify':
@@ -335,7 +335,7 @@ Examples:
           throw new Error('Usage: verify <manifest> <checksum>');
         }
         const isValid = client.verifyManifest(manifestContent, expectedChecksum);
-        console.log(isValid ? '✅ Manifest verified' : '❌ Manifest verification failed');
+        console.info(isValid ? '✅ Manifest verified' : '❌ Manifest verification failed');
         break;
 
       default:

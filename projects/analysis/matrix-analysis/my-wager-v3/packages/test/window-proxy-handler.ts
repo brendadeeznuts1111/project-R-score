@@ -44,7 +44,7 @@ export class WindowProxyHandler {
     };
 
     this.proxies.set(id, info);
-    console.log(`🔗 Registered WindowProxy ${id} from ${origin}`);
+    console.info(`🔗 Registered WindowProxy ${id} from ${origin}`);
 
     // Set up unload listener to detect when window closes
     try {
@@ -105,7 +105,7 @@ export class WindowProxyHandler {
     proxyInfo.lastActivity = Date.now();
     proxyInfo.status = 'active';
 
-    console.log(`📨 Message from WindowProxy ${proxyInfo.id}:`, event.data);
+    console.info(`📨 Message from WindowProxy ${proxyInfo.id}:`, event.data);
     return proxyInfo;
   }
 
@@ -122,7 +122,7 @@ export class WindowProxyHandler {
     try {
       const targetOrigin = origin || proxyInfo.origin;
       proxyInfo.windowProxy.postMessage(message, targetOrigin);
-      console.log(`📤 Sent message to WindowProxy ${id}`);
+      console.info(`📤 Sent message to WindowProxy ${id}`);
       return true;
     } catch (error) {
       console.error(`Failed to send to WindowProxy ${id}:`, error);
@@ -143,7 +143,7 @@ export class WindowProxyHandler {
         }
       }
     }
-    console.log(`📡 Broadcast to ${sent} WindowProxies`);
+    console.info(`📡 Broadcast to ${sent} WindowProxies`);
     return sent;
   }
 
@@ -180,7 +180,7 @@ export class WindowProxyHandler {
     const proxyInfo = this.proxies.get(id);
     if (proxyInfo) {
       proxyInfo.status = 'inactive';
-      console.log(`🔌 WindowProxy ${id} marked inactive`);
+      console.info(`🔌 WindowProxy ${id} marked inactive`);
     }
   }
 
@@ -195,7 +195,7 @@ export class WindowProxyHandler {
       if (proxyInfo.status === 'inactive' ||
           (now - proxyInfo.lastActivity > inactiveThreshold)) {
         this.proxies.delete(id);
-        console.log(`🧹 Cleaned up WindowProxy ${id}`);
+        console.info(`🧹 Cleaned up WindowProxy ${id}`);
       }
     }
   }

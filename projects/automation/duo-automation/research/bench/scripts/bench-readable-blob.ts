@@ -13,7 +13,7 @@ async function benchmark(name: string, fn: () => Promise<void>) {
   };
 }
 
-console.log('🚀 Starting Readable → Blob Bench (1GB)...');
+console.info('🚀 Starting Readable → Blob Bench (1GB)...');
 
 const readableBench = await benchmark('Readable → Blob Gig', async () => {
   const readable = await gigReadableStream(1024); // 1GB
@@ -22,10 +22,10 @@ const readableBench = await benchmark('Readable → Blob Gig', async () => {
 });
 
 const throughput = (1024 / (readableBench.totalMs / 1000)).toFixed(1);
-console.log(`✅ Readable → Blob: ${readableBench.avg.toFixed(0)}μs (${throughput}MB/s)`);
+console.info(`✅ Readable → Blob: ${readableBench.avg.toFixed(0)}μs (${throughput}MB/s)`);
 
 if (parseFloat(throughput) > 10000) {
-  console.log('⚡ Throughput exceeds 10GB/s - Zero-copy confirmed!');
+  console.info('⚡ Throughput exceeds 10GB/s - Zero-copy confirmed!');
 } else {
-  console.log('⚠️ Throughput lower than expected for zero-copy.');
+  console.info('⚠️ Throughput lower than expected for zero-copy.');
 }

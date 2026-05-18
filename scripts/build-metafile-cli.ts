@@ -87,7 +87,7 @@ function parseArgs(): CLIArgs {
 }
 
 function showHelp() {
-  console.log(`
+  console.info(`
 🚀 Bun Build Metafile CLI v4.0 - Metafile Apocalypse Edition
 
 USAGE:
@@ -147,9 +147,9 @@ FEATURES:
 }
 
 function showVersion() {
-  console.log('🚀 Bun Build Metafile CLI v4.0');
-  console.log('Metafile Apocalypse Edition - February 06, 2026');
-  console.log('Built with Bun 1.3+ - World\'s fastest JavaScript runtime');
+  console.info('🚀 Bun Build Metafile CLI v4.0');
+  console.info('Metafile Apocalypse Edition - February 06, 2026');
+  console.info('Built with Bun 1.3+ - World\'s fastest JavaScript runtime');
 }
 
 async function main() {
@@ -171,16 +171,16 @@ async function main() {
     process.exit(1);
   }
 
-  console.log('🚀 Starting Bun Build Metafile Apocalypse v4.0...');
-  console.log(`📁 Entrypoints: ${args.entrypoints.join(', ')}`);
-  console.log(`📂 Output Directory: ${args.outdir}`);
+  console.info('🚀 Starting Bun Build Metafile Apocalypse v4.0...');
+  console.info(`📁 Entrypoints: ${args.entrypoints.join(', ')}`);
+  console.info(`📂 Output Directory: ${args.outdir}`);
   
-  if (args.metafile) console.log(`📄 JSON Metafile: ${args.metafile}`);
-  if (args['metafile-md']) console.log(`📝 Markdown Report: ${args['metafile-md']}`);
-  if (args.analyze) console.log(`🔍 Analysis: Enabled`);
-  if (args.graph) console.log(`📊 Graph: Enabled`);
+  if (args.metafile) console.info(`📄 JSON Metafile: ${args.metafile}`);
+  if (args['metafile-md']) console.info(`📝 Markdown Report: ${args['metafile-md']}`);
+  if (args.analyze) console.info(`🔍 Analysis: Enabled`);
+  if (args.graph) console.info(`📊 Graph: Enabled`);
   
-  console.log('');
+  console.info('');
 
   try {
     const startTime = performance.now();
@@ -190,41 +190,41 @@ async function main() {
     
     const buildTime = performance.now() - startTime;
     
-    console.log('✅ Build completed successfully!');
-    console.log(`⚡ Build time: ${buildTime.toFixed(2)}ms`);
+    console.info('✅ Build completed successfully!');
+    console.info(`⚡ Build time: ${buildTime.toFixed(2)}ms`);
     
     if (result.performance) {
-      console.log(`📊 Metafile generation: ${result.performance.metafileGenerationTime.toFixed(2)}ms`);
+      console.info(`📊 Metafile generation: ${result.performance.metafileGenerationTime.toFixed(2)}ms`);
       if (result.performance.analysisTime) {
-        console.log(`🔍 Analysis time: ${result.performance.analysisTime.toFixed(2)}ms`);
+        console.info(`🔍 Analysis time: ${result.performance.analysisTime.toFixed(2)}ms`);
       }
       if (result.performance.markdownGenerationTime) {
-        console.log(`📝 Markdown generation: ${result.performance.markdownGenerationTime.toFixed(2)}ms`);
+        console.info(`📝 Markdown generation: ${result.performance.markdownGenerationTime.toFixed(2)}ms`);
       }
     }
     
     // Show analysis summary if available
     if (result.analysis) {
-      console.log('');
-      console.log('📊 Analysis Summary:');
+      console.info('');
+      console.info('📊 Analysis Summary:');
       
       const { inputAnalysis, outputAnalysis, sizeAnalysis } = result.analysis;
       
-      console.log(`   📁 Input files: ${inputAnalysis.totalFiles} (${formatBytes(inputAnalysis.totalBytes)})`);
-      console.log(`   📦 Output files: ${outputAnalysis.totalFiles} (${formatBytes(outputAnalysis.totalBytes)})`);
-      console.log(`   🗜️  Compression ratio: ${(sizeAnalysis.compressionRatio * 100).toFixed(1)}%`);
-      console.log(`   💾 Bundle savings: ${formatBytes(sizeAnalysis.sizeBreakdown.savings)}`);
+      console.info(`   📁 Input files: ${inputAnalysis.totalFiles} (${formatBytes(inputAnalysis.totalBytes)})`);
+      console.info(`   📦 Output files: ${outputAnalysis.totalFiles} (${formatBytes(outputAnalysis.totalBytes)})`);
+      console.info(`   🗜️  Compression ratio: ${(sizeAnalysis.compressionRatio * 100).toFixed(1)}%`);
+      console.info(`   💾 Bundle savings: ${formatBytes(sizeAnalysis.sizeBreakdown.savings)}`);
       
       if (result.analysis.unusedExports.length > 0) {
-        console.log(`   ⚠️  Unused exports: ${result.analysis.unusedExports.length}`);
+        console.info(`   ⚠️  Unused exports: ${result.analysis.unusedExports.length}`);
       }
       
       if (result.analysis.circularDependencies.length > 0) {
-        console.log(`   🔄 Circular dependencies: ${result.analysis.circularDependencies.length}`);
+        console.info(`   🔄 Circular dependencies: ${result.analysis.circularDependencies.length}`);
       }
       
       if (result.analysis.optimizationOpportunities.length > 0) {
-        console.log(`   💡 Optimization opportunities: ${result.analysis.optimizationOpportunities.length}`);
+        console.info(`   💡 Optimization opportunities: ${result.analysis.optimizationOpportunities.length}`);
       }
     }
     
@@ -233,8 +233,8 @@ async function main() {
       const { saveForAnalyzer } = await import('../src/build/analyzer-url');
       const analyzerPath = (args.metafile || 'metafile.json').replace('.json', '-analyzer.json');
       const info = await saveForAnalyzer(result.metafile, analyzerPath);
-      console.log('');
-      console.log(info.instructions);
+      console.info('');
+      console.info(info.instructions);
     }
 
     // Save deterministic snapshot if requested
@@ -243,40 +243,40 @@ async function main() {
       const normalized = normalizeMetafilePaths(result.metafile);
       const snap = createBundleSnapshot(normalized);
       await Bun.write(args.snapshot, JSON.stringify(snap, null, 2));
-      console.log('');
-      console.log(`Snapshot saved to: ${args.snapshot}`);
+      console.info('');
+      console.info(`Snapshot saved to: ${args.snapshot}`);
     }
 
     // Generate graph visualization if requested
     if (args.graph && result.metafile) {
-      console.log('');
-      console.log('📊 Generating dependency graph...');
+      console.info('');
+      console.info('📊 Generating dependency graph...');
       
       const analyzer = new MetafileAnalyzer(result.metafile);
       const graph = analyzer.getDependencyGraph();
       
-      console.log(`   📍 Nodes: ${graph.nodes.length}`);
-      console.log(`   🔗 Edges: ${graph.edges.length}`);
-      console.log(`   📈 Graph density: ${(graph.edges.length / (graph.nodes.length * (graph.nodes.length - 1))).toFixed(4)}`);
+      console.info(`   📍 Nodes: ${graph.nodes.length}`);
+      console.info(`   🔗 Edges: ${graph.edges.length}`);
+      console.info(`   📈 Graph density: ${(graph.edges.length / (graph.nodes.length * (graph.nodes.length - 1))).toFixed(4)}`);
       
       // Save graph as DOT format for visualization tools
       if (args['metafile-md']) {
         const dotContent = generateDotGraph(graph);
         const dotFile = args['metafile-md'].replace('.md', '.dot');
         await Bun.write(dotFile, dotContent);
-        console.log(`   💾 Graph saved: ${dotFile}`);
+        console.info(`   💾 Graph saved: ${dotFile}`);
       }
     }
     
-    console.log('');
-    console.log('🎆 Metafile Apocalypse Complete!');
-    console.log('   ✅ Structured metadata generated');
-    console.log('   ✅ Bundle analysis completed');
-    console.log('   ✅ Import graph mapped');
-    console.log('   ✅ Reports saved');
+    console.info('');
+    console.info('🎆 Metafile Apocalypse Complete!');
+    console.info('   ✅ Structured metadata generated');
+    console.info('   ✅ Bundle analysis completed');
+    console.info('   ✅ Import graph mapped');
+    console.info('   ✅ Reports saved');
     
     if (args.analyze) {
-      console.log('   ✅ Optimization suggestions provided');
+      console.info('   ✅ Optimization suggestions provided');
     }
     
   } catch (error) {

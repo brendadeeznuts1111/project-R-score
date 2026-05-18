@@ -67,8 +67,8 @@ export class RSSSecretsManager {
 		options: { strict?: boolean; verbose?: boolean } = {},
 	): Promise<RSSConfig> {
 		if (options.verbose) {
-			console.log(`🔧 Loading RSS config from ${filePath}...`);
-			console.log(formatConfigSummary(resolveAllConfig()));
+			console.info(`🔧 Loading RSS config from ${filePath}...`);
+			console.info(formatConfigSummary(resolveAllConfig()));
 		}
 
 		// Resolve TOML with secret placeholders
@@ -84,9 +84,9 @@ export class RSSSecretsManager {
 		const validation = validateTemplate(content);
 
 		if (options.verbose) {
-			console.log(`\n📋 Secret references: ${validation.references.length}`);
+			console.info(`\n📋 Secret references: ${validation.references.length}`);
 			if (validation.references.length > 0) {
-				console.log(generateSecretReport(content));
+				console.info(generateSecretReport(content));
 			}
 		}
 
@@ -161,19 +161,19 @@ export async function handleRSSCommand(
 	switch (command) {
 		case "validate": {
 			const configPath = args[0] ?? "config/rss.toml";
-			console.log(`🔍 Validating ${configPath}...`);
+			console.info(`🔍 Validating ${configPath}...`);
 
 			const content = await Bun.file(configPath).text();
 			const validation = validateTemplate(content);
 
 			if (validation.valid) {
-				console.log(
+				console.info(
 					`✅ Config is valid (${validation.references.length} secret refs)`,
 				);
 				if (validation.references.length > 0) {
-					console.log("\n📋 Secret References:");
+					console.info("\n📋 Secret References:");
 					validation.references.forEach((ref) => {
-						console.log(`   • ${ref.profile}/${ref.key}`);
+						console.info(`   • ${ref.profile}/${ref.key}`);
 					});
 				}
 			} else {
@@ -189,27 +189,27 @@ export async function handleRSSCommand(
 			await manager.loadConfig(configPath, { verbose: true });
 
 			const feeds = manager.getFeeds();
-			console.log(`\n📰 Configured Feeds (${feeds.length}):`);
+			console.info(`\n📰 Configured Feeds (${feeds.length}):`);
 			feeds.forEach((feed, i) => {
-				console.log(`   ${i + 1}. ${feed.name}`);
-				console.log(
+				console.info(`   ${i + 1}. ${feed.name}`);
+				console.info(
 					`      URL: ${feed.url.substring(0, 60)}${feed.url.length > 60 ? "..." : ""}`,
 				);
 				if (feed.categories?.length) {
-					console.log(`      Categories: ${feed.categories.join(", ")}`);
+					console.info(`      Categories: ${feed.categories.join(", ")}`);
 				}
 				if (feed.api_key_ref) {
-					console.log(`      Auth: ✅ ${feed.api_key_ref}`);
+					console.info(`      Auth: ✅ ${feed.api_key_ref}`);
 				}
 				if (feed.refresh_interval) {
-					console.log(`      Refresh: ${feed.refresh_interval}s`);
+					console.info(`      Refresh: ${feed.refresh_interval}s`);
 				}
 			});
 
 			// Show categories summary
 			const categories = new Set(feeds.flatMap((f) => f.categories ?? []));
 			if (categories.size > 0) {
-				console.log(`\n🏷️  Categories: ${Array.from(categories).join(", ")}`);
+				console.info(`\n🏷️  Categories: ${Array.from(categories).join(", ")}`);
 			}
 			break;
 		}
@@ -221,23 +221,23 @@ export async function handleRSSCommand(
 			const feeds = manager.getFeeds();
 			const categories = new Set(feeds.flatMap((f) => f.categories ?? []));
 
-			console.log("📁 Feeds by Category:\n");
+			console.info("📁 Feeds by Category:\n");
 			for (const category of categories) {
 				const catFeeds = manager.getFeedsByCategory(category);
-				console.log(`   ${category} (${catFeeds.length}):`);
-				catFeeds.forEach((f) => console.log(`      • ${f.name}`));
+				console.info(`   ${category} (${catFeeds.length}):`);
+				catFeeds.forEach((f) => console.info(`      • ${f.name}`));
 			}
 			break;
 		}
 
 		case "config": {
-			console.log("📋 RSS Configuration Context:\n");
-			console.log(formatConfigSummary(resolveAllConfig()));
+			console.info("📋 RSS Configuration Context:\n");
+			console.info(formatConfigSummary(resolveAllConfig()));
 			break;
 		}
 
 		default:
-			console.log(`
+			console.info(`
 RSS Secrets CLI (Standalone)
 
 Usage:

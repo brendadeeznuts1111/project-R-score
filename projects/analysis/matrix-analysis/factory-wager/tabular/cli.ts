@@ -9,15 +9,15 @@ import { COLUMNS_V44 } from "./types";
 
 const args = process.argv.slice(2);
 if (args.length === 0) {
-  console.log("🎯 FactoryWager YAML-Native Tabular v4.4");
-  console.log("Usage: bun run cli.ts <yaml-file> [--summary]");
-  console.log("");
-  console.log("Features:");
-  console.log("  • Multi-document YAML support");
-  console.log("  • Anchor/alias tracking & resolution");
-  console.log("  • 12-column schema visualization");
-  console.log("  • Environment interpolation detection");
-  console.log("  • HSL chromatic terminal rendering");
+  console.info("🎯 FactoryWager YAML-Native Tabular v4.4");
+  console.info("Usage: bun run cli.ts <yaml-file> [--summary]");
+  console.info("");
+  console.info("Features:");
+  console.info("  • Multi-document YAML support");
+  console.info("  • Anchor/alias tracking & resolution");
+  console.info("  • 12-column schema visualization");
+  console.info("  • Environment interpolation detection");
+  console.info("  • HSL chromatic terminal rendering");
   process.exit(1);
 }
 
@@ -27,15 +27,15 @@ const showSummary = args.includes('--summary');
 try {
   const content = await file(filepath).text();
   
-  console.log(`🔍 Parsing ${filepath} with FactoryWager YAML v4.4...`);
-  console.log(`📋 12-Column Schema: doc, key, value, yamlType, jsType, anchor, alias, version, bun, interp, author, status`);
-  console.log("");
+  console.info(`🔍 Parsing ${filepath} with FactoryWager YAML v4.4...`);
+  console.info(`📋 12-Column Schema: doc, key, value, yamlType, jsType, anchor, alias, version, bun, interp, author, status`);
+  console.info("");
 
   const parser = new YAMLTabularParser();
   const rows = parser.parseMultiDoc(content);
 
   if (rows.length === 0) {
-    console.log("❌ No YAML content found or parsing failed.");
+    console.info("❌ No YAML content found or parsing failed.");
     process.exit(1);
   }
 
@@ -45,7 +45,7 @@ try {
     renderSummary(rows);
   }
 
-  console.log(`✅ Successfully parsed ${rows.length} nodes across ${Math.max(...rows.map(r => r.docIndex)) + 1} documents.`);
+  console.info(`✅ Successfully parsed ${rows.length} nodes across ${Math.max(...rows.map(r => r.docIndex)) + 1} documents.`);
   
 } catch (error) {
   console.error(`❌ Error processing ${filepath}:`, error);

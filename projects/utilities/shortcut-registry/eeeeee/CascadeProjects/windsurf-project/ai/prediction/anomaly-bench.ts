@@ -20,17 +20,17 @@ import {
 // Mock benchmark runner for compatibility
 class AIBenchRunner {
 	static bench(name: string, fn: () => void | Promise<void>) {
-		console.log(`🤖 AI Benchmark: ${name}`);
+		console.info(`🤖 AI Benchmark: ${name}`);
 		const start = performance.now();
 		const result = fn();
 		if (result && typeof result.then === "function") {
 			return result.then(() => {
 				const end = performance.now();
-				console.log(`✅ ${name}: ${(end - start).toFixed(2)}ms`);
+				console.info(`✅ ${name}: ${(end - start).toFixed(2)}ms`);
 			});
 		} else {
 			const end = performance.now();
-			console.log(`✅ ${name}: ${(end - start).toFixed(2)}ms`);
+			console.info(`✅ ${name}: ${(end - start).toFixed(2)}ms`);
 		}
 	}
 }
@@ -153,9 +153,9 @@ AIBenchRunner.bench("Fraud Detection Accuracy Test", async () => {
 		((results.totalTests - results.falsePositives - results.falseNegatives) /
 			results.totalTests) *
 		100;
-	console.log(`📊 Accuracy: ${accuracy.toFixed(1)}%`);
-	console.log(`   False Positives: ${results.falsePositives}`);
-	console.log(`   False Negatives: ${results.falseNegatives}`);
+	console.info(`📊 Accuracy: ${accuracy.toFixed(1)}%`);
+	console.info(`   False Positives: ${results.falsePositives}`);
+	console.info(`   False Negatives: ${results.falseNegatives}`);
 });
 
 // Benchmark: Real-time Onboarding Analysis
@@ -176,7 +176,7 @@ AIBenchRunner.bench("Real-time Onboarding Analysis", async () => {
 	const sessionId = "realtime-onboarding-test";
 	const approved = await analyzeOnboardingSession(sessionId, deviceData);
 
-	console.log(`🚦 Onboarding Decision: ${approved ? "APPROVED" : "BLOCKED"}`);
+	console.info(`🚦 Onboarding Decision: ${approved ? "APPROVED" : "BLOCKED"}`);
 });
 
 // Benchmark: High-Load Stress Test
@@ -200,11 +200,11 @@ AIBenchRunner.bench("High-Load Stress Test (10K Predictions)", async () => {
 
 		// Progress indicator
 		if (batch % 10 === 0) {
-			console.log(`   Progress: ${batch}/${totalBatches} batches`);
+			console.info(`   Progress: ${batch}/${totalBatches} batches`);
 		}
 	}
 
-	console.log(`   Completed: ${totalBatches * batchSize} predictions`);
+	console.info(`   Completed: ${totalBatches * batchSize} predictions`);
 });
 
 // Mock process object for browser compatibility
@@ -246,10 +246,10 @@ AIBenchRunner.bench("Memory Usage Analysis", () => {
 	const finalMemory = safeProcess.memoryUsage().heapUsed;
 	const memoryIncrease = finalMemory - initialMemory;
 
-	console.log(
+	console.info(
 		`📈 Memory increase: ${(memoryIncrease / 1024 / 1024).toFixed(2)} MB`,
 	);
-	console.log(`   Per prediction: ${(memoryIncrease / 5000).toFixed(0)} bytes`);
+	console.info(`   Per prediction: ${(memoryIncrease / 5000).toFixed(0)} bytes`);
 });
 
 // Benchmark: Feature Impact Analysis
@@ -274,11 +274,11 @@ AIBenchRunner.bench("Feature Impact Analysis", async () => {
 		featureImpacts[feature] = impact;
 	}
 
-	console.log("🔍 Feature Impact Analysis:");
+	console.info("🔍 Feature Impact Analysis:");
 	Object.entries(featureImpacts)
 		.sort(([, a], [, b]) => b - a)
 		.forEach(([feature, impact]) => {
-			console.log(`   ${feature}: +${(impact * 100).toFixed(1)}%`);
+			console.info(`   ${feature}: +${(impact * 100).toFixed(1)}%`);
 		});
 });
 
@@ -303,21 +303,21 @@ AIBenchRunner.bench("Concurrent Session Analysis", async () => {
 	const blocked = results.filter((r) => !r).length;
 	const approved = results.filter((r) => r).length;
 
-	console.log(
+	console.info(
 		`🚦 Concurrent Results: ${approved} approved, ${blocked} blocked`,
 	);
 });
 
 // Run all benchmarks
-console.log("🚀 Starting AI Anomaly Prediction Benchmarks");
-console.log("📊 Testing fraud detection accuracy and performance");
-console.log("🔒 Security-First: 97% accuracy target");
-console.log("⚡ Performance: <10ms per prediction");
-console.log("");
+console.info("🚀 Starting AI Anomaly Prediction Benchmarks");
+console.info("📊 Testing fraud detection accuracy and performance");
+console.info("🔒 Security-First: 97% accuracy target");
+console.info("⚡ Performance: <10ms per prediction");
+console.info("");
 
 // Note: In a real environment, you would run these benchmarks with:
 // bun run ai/anomaly-bench.ts
 
-console.log("✅ AI Anomaly Prediction Benchmarks completed");
-console.log("🎯 Model ready for production QR onboarding");
-console.log("🛡️ Security-First framework validated");
+console.info("✅ AI Anomaly Prediction Benchmarks completed");
+console.info("🎯 Model ready for production QR onboarding");
+console.info("🛡️ Security-First framework validated");

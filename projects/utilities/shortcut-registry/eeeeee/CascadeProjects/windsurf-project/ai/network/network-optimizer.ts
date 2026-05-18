@@ -64,20 +64,20 @@ export class NetworkOptimizer {
 	 * Preconnects to all configured hosts for optimal performance
 	 */
 	async initialize(): Promise<void> {
-		console.log("🚀 Initializing network optimizer...");
+		console.info("🚀 Initializing network optimizer...");
 
 		// QUICK WIN: Set Bun's max HTTP requests config for 4k+ sessions/sec
 		// This prevents queuing when processing high throughput
 		process.env.BUN_CONFIG_MAX_HTTP_REQUESTS =
 			this.config.maxSimultaneousConnections.toString();
-		console.log(
+		console.info(
 			`⚙️  BUN_CONFIG_MAX_HTTP_REQUESTS=${this.config.maxSimultaneousConnections}`,
 		);
 
 		// Preconnect to all configured hosts
 		await this.preconnectToHosts();
 
-		console.log(
+		console.info(
 			`✅ Network optimizer initialized with ${this.config.preconnectHosts.length} preconnected hosts`,
 		);
 	}
@@ -100,7 +100,7 @@ export class NetworkOptimizer {
 		try {
 			fetch.preconnect(host);
 			this.metrics.recordPreconnect(host);
-			console.log(`🔗 Preconnected to: ${host}`);
+			console.info(`🔗 Preconnected to: ${host}`);
 		} catch (error) {
 			const errorMessage =
 				error instanceof Error ? error.message : String(error);
@@ -260,7 +260,7 @@ export class NetworkOptimizer {
 		for (const [host, connection] of this.connectionPool.entries()) {
 			if (now - connection.lastUsed > maxAge) {
 				this.connectionPool.delete(host);
-				console.log(`🧹 Cleaned up connection to: ${host}`);
+				console.info(`🧹 Cleaned up connection to: ${host}`);
 			}
 		}
 	}
@@ -420,7 +420,7 @@ if (typeof process !== "undefined" && process.env.NODE_ENV !== "test") {
 // Cleanup on process exit
 if (typeof process !== "undefined") {
 	process.on("SIGINT", () => {
-		console.log("🧹 Cleaning up network connections...");
+		console.info("🧹 Cleaning up network connections...");
 		networkOptimizer.cleanup();
 		process.exit(0);
 	});
@@ -457,7 +457,7 @@ export function preconnectToHosts(hosts: string[]): void {
 	hosts.forEach((host) => {
 		try {
 			fetch.preconnect(host);
-			console.log(`🔗 Preconnected to: ${host}`);
+			console.info(`🔗 Preconnected to: ${host}`);
 		} catch (error) {
 			console.warn(`⚠️ Failed to preconnect to ${host}:`, error);
 		}

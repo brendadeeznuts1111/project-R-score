@@ -149,9 +149,9 @@ export const BUN_FEATURES = [
 
 /* 12. One-liner test -------------------------------------- */
 if (import.meta.main) {
-  console.log("🔷 Quantum Cash-Flow Lattice v" + QUANTUM_VERSION);
-  console.log("📦 Features:", BUN_FEATURES.join(", "));
-  console.log("\n" + rgbaLattice());
-  console.log("\n✨ Quantum 1.5.x toolkit loaded – zero breaking changes.");
+  console.info("🔷 Quantum Cash-Flow Lattice v" + QUANTUM_VERSION);
+  console.info("📦 Features:", BUN_FEATURES.join(", "));
+  console.info("\n" + rgbaLattice());
+  console.info("\n✨ Quantum 1.5.x toolkit loaded – zero breaking changes.");
 }
 

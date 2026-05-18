@@ -8,10 +8,10 @@ const BACKEND_API = "http://localhost:8000";
 async function checkServer(url: string, name: string): Promise<boolean> {
   try {
     const res = await fetch(url, { signal: AbortSignal.timeout(1000) });
-    console.log(`✓ ${name} is running`);
+    console.info(`✓ ${name} is running`);
     return true;
   } catch {
-    console.log(`✗ ${name} not available at ${url}`);
+    console.info(`✗ ${name} not available at ${url}`);
     return false;
   }
 }

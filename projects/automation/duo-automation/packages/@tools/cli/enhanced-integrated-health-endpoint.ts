@@ -196,7 +196,7 @@ class TensionWebSocketServer {
     this.setupWebSocketHandlers();
     this.startTensionUpdates();
     
-    console.log(UnicodeTableFormatter.colorize(`🌐 WebSocket server started on ws://localhost:${port}`, DesignSystem.status.operational));
+    console.info(UnicodeTableFormatter.colorize(`🌐 WebSocket server started on ws://localhost:${port}`, DesignSystem.status.operational));
   }
 
   /**
@@ -204,7 +204,7 @@ class TensionWebSocketServer {
    */
   private setupWebSocketHandlers(): void {
     this.wss.on('connection', (ws, request) => {
-      console.log(UnicodeTableFormatter.colorize('🔗 New WebSocket connection established', DesignSystem.text.accent.blue));
+      console.info(UnicodeTableFormatter.colorize('🔗 New WebSocket connection established', DesignSystem.text.accent.blue));
       
       // Send initial context data
       this.sendInitialContext(ws);
@@ -221,7 +221,7 @@ class TensionWebSocketServer {
       
       // Handle disconnection
       ws.on('close', () => {
-        console.log(UnicodeTableFormatter.colorize('🔌 WebSocket connection closed', DesignSystem.text.secondary));
+        console.info(UnicodeTableFormatter.colorize('🔌 WebSocket connection closed', DesignSystem.text.secondary));
       });
     });
   }
@@ -258,7 +258,7 @@ class TensionWebSocketServer {
         this.sendContexts(ws);
         break;
       default:
-        console.log(UnicodeTableFormatter.colorize(`❓ Unknown message type: ${message.type}`, DesignSystem.text.secondary));
+        console.info(UnicodeTableFormatter.colorize(`❓ Unknown message type: ${message.type}`, DesignSystem.text.secondary));
     }
   }
 
@@ -942,7 +942,7 @@ function createEnhancedHealthEndpoint(): Elysia {
  * Demonstrate the enhanced integration
  */
 async function demonstrateEnhancedIntegration(): Promise<void> {
-  console.log(EmpireProDashboard.generateHeader(
+  console.info(EmpireProDashboard.generateHeader(
     'ENHANCED HEALTH ENDPOINT WITH COLORFUL CONTEXT INTEGRATION',
     'WebSocket Real-time Updates, CSS Variables, and Dynamic Theming'
   ));
@@ -952,29 +952,29 @@ async function demonstrateEnhancedIntegration(): Promise<void> {
   
   const server = app.listen(port);
   
-  console.log(UnicodeTableFormatter.colorize('🚀 Enhanced Health Endpoint with Integration Started', DesignSystem.status.operational));
-  console.log(UnicodeTableFormatter.colorize(`🌐 Main Server: http://localhost:${port}`, DesignSystem.text.accent.blue));
-  console.log(UnicodeTableFormatter.colorize(`🎨 Demo Page: http://localhost:${port}/`, DesignSystem.text.accent.green));
-  console.log(UnicodeTableFormatter.colorize(`📱 CSS Variables: http://localhost:${port}/colors.css`, DesignSystem.text.accent.purple));
-  console.log(UnicodeTableFormatter.colorize(`🔗 WebSocket: ws://localhost:8766/ws-inspect`, DesignSystem.text.accent.yellow));
-  console.log(UnicodeTableFormatter.colorize(`📊 Contexts: http://localhost:${port}/contexts`, DesignSystem.text.primary));
-  console.log(UnicodeTableFormatter.colorize(`🏥 Health: http://localhost:${port}/health`, DesignSystem.status.operational));
+  console.info(UnicodeTableFormatter.colorize('🚀 Enhanced Health Endpoint with Integration Started', DesignSystem.status.operational));
+  console.info(UnicodeTableFormatter.colorize(`🌐 Main Server: http://localhost:${port}`, DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize(`🎨 Demo Page: http://localhost:${port}/`, DesignSystem.text.accent.green));
+  console.info(UnicodeTableFormatter.colorize(`📱 CSS Variables: http://localhost:${port}/colors.css`, DesignSystem.text.accent.purple));
+  console.info(UnicodeTableFormatter.colorize(`🔗 WebSocket: ws://localhost:8766/ws-inspect`, DesignSystem.text.accent.yellow));
+  console.info(UnicodeTableFormatter.colorize(`📊 Contexts: http://localhost:${port}/contexts`, DesignSystem.text.primary));
+  console.info(UnicodeTableFormatter.colorize(`🏥 Health: http://localhost:${port}/health`, DesignSystem.status.operational));
   
   // Demonstrate ColorfulTypeContext usage
-  console.log(UnicodeTableFormatter.colorize('\n🎨 COLORFUL TYPE CONTEXT DEMONSTRATION:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('\n🎨 COLORFUL TYPE CONTEXT DEMONSTRATION:', DesignSystem.text.accent.blue));
   
   // Create a context like in the example
   const ctx = new ColorfulTypeContext('STORAGE', 'ENTERPRISE', 'duoplus');
-  console.log(UnicodeTableFormatter.colorize('📊 Color Information:', DesignSystem.text.primary));
-  console.log(`  Primary: ${ctx.colorInfo.primary}`);
-  console.log(`  Secondary: ${ctx.colorInfo.secondary}`);
-  console.log(`  Tension: ${ctx.colorInfo.tension}%`);
-  console.log(`  Gradient: ${ctx.colorInfo.tensionGradient}`);
+  console.info(UnicodeTableFormatter.colorize('📊 Color Information:', DesignSystem.text.primary));
+  console.info(`  Primary: ${ctx.colorInfo.primary}`);
+  console.info(`  Secondary: ${ctx.colorInfo.secondary}`);
+  console.info(`  Tension: ${ctx.colorInfo.tension}%`);
+  console.info(`  Gradient: ${ctx.colorInfo.tensionGradient}`);
   
   // Subscribe to updates
-  console.log(UnicodeTableFormatter.colorize('\n🔗 SUBSCRIBING TO TENSION UPDATES:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('\n🔗 SUBSCRIBING TO TENSION UPDATES:', DesignSystem.text.accent.blue));
   const unsubscribe = ctx.subscribe((update) => {
-    console.log(UnicodeTableFormatter.colorize(`📈 Tension Update: ${update.tension.toFixed(1)}%`, DesignSystem.text.accent.green));
+    console.info(UnicodeTableFormatter.colorize(`📈 Tension Update: ${update.tension.toFixed(1)}%`, DesignSystem.text.accent.green));
   });
   
   // Simulate some tension changes
@@ -983,52 +983,52 @@ async function demonstrateEnhancedIntegration(): Promise<void> {
   setTimeout(() => ctx.updateTension(90), 3000);
   
   // Demonstrate CSS integration
-  console.log(UnicodeTableFormatter.colorize('\n🎨 CSS INTEGRATION DEMONSTRATION:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('\n🎨 CSS INTEGRATION DEMONSTRATION:', DesignSystem.text.accent.blue));
   const cssGenerator = new CSSVariableGenerator();
   cssGenerator.registerContext('storage-enterprise', ctx);
   
   const cssVariables = ctx.generateCSSVariables();
-  console.log(UnicodeTableFormatter.colorize('📱 Generated CSS Variables:', DesignSystem.text.primary));
-  console.log(cssVariables);
+  console.info(UnicodeTableFormatter.colorize('📱 Generated CSS Variables:', DesignSystem.text.primary));
+  console.info(cssVariables);
   
-  console.log(EmpireProDashboard.generateFooter());
+  console.info(EmpireProDashboard.generateFooter());
   
-  console.log('\n🎉 ENHANCED INTEGRATION DEMO COMPLETE!');
-  console.log('✅ ColorfulTypeContext with dynamic color management');
-  console.log('✅ WebSocket server for real-time tension updates');
-  console.log('✅ CSS variable generation with dynamic theming');
-  console.log('✅ Interactive demo page with live updates');
-  console.log('✅ Integration with existing health endpoint system');
+  console.info('\n🎉 ENHANCED INTEGRATION DEMO COMPLETE!');
+  console.info('✅ ColorfulTypeContext with dynamic color management');
+  console.info('✅ WebSocket server for real-time tension updates');
+  console.info('✅ CSS variable generation with dynamic theming');
+  console.info('✅ Interactive demo page with live updates');
+  console.info('✅ Integration with existing health endpoint system');
   
-  console.log('\n📋 INTEGRATION FEATURES:');
-  console.log('  🎨 ColorfulTypeContext: Dynamic color management based on scope and tension');
-  console.log('  🔗 WebSocket: Real-time updates for tension and color changes');
-  console.log('  📱 CSS Variables: Dynamic stylesheet generation with utility classes');
-  console.log('  🌐 Demo Page: Interactive demonstration with live updates');
-  console.log('  🏥 Health Integration: Color-aware health monitoring');
-  console.log('  ⚡ Real-time: Live tension updates with smooth transitions');
+  console.info('\n📋 INTEGRATION FEATURES:');
+  console.info('  🎨 ColorfulTypeContext: Dynamic color management based on scope and tension');
+  console.info('  🔗 WebSocket: Real-time updates for tension and color changes');
+  console.info('  📱 CSS Variables: Dynamic stylesheet generation with utility classes');
+  console.info('  🌐 Demo Page: Interactive demonstration with live updates');
+  console.info('  🏥 Health Integration: Color-aware health monitoring');
+  console.info('  ⚡ Real-time: Live tension updates with smooth transitions');
   
-  console.log('\n🔧 USAGE EXAMPLES:');
-  console.log('  // TypeScript - ColorfulTypeContext');
-  console.log('  const ctx = new ColorfulTypeContext("STORAGE", scope, domain);');
-  console.log('  console.log(ctx.colorInfo); // Get all colors');
-  console.log('');
-  console.log('  // JavaScript - WebSocket Integration');
-  console.log('  const ws = new WebSocket("ws://localhost:8766/ws-inspect");');
-  console.log('  ws.onmessage = (event) => {');
-  console.log('    const update = JSON.parse(event.data);');
-  console.log('    updateUI(update.tension, update.colors);');
-  console.log('  };');
-  console.log('');
-  console.log('  // HTML - CSS Integration');
-  console.log('  <link rel="stylesheet" href="/colors.css">');
-  console.log('  <div class="storage-local-sandbox"');
-  console.log('       style="--tension-gradient: linear-gradient(135deg, hsl(180, 80%, 60%), hsl(210, 80%, 40%))">');
-  console.log('  </div>');
+  console.info('\n🔧 USAGE EXAMPLES:');
+  console.info('  // TypeScript - ColorfulTypeContext');
+  console.info('  const ctx = new ColorfulTypeContext("STORAGE", scope, domain);');
+  console.info('  console.info(ctx.colorInfo); // Get all colors');
+  console.info('');
+  console.info('  // JavaScript - WebSocket Integration');
+  console.info('  const ws = new WebSocket("ws://localhost:8766/ws-inspect");');
+  console.info('  ws.onmessage = (event) => {');
+  console.info('    const update = JSON.parse(event.data);');
+  console.info('    updateUI(update.tension, update.colors);');
+  console.info('  };');
+  console.info('');
+  console.info('  // HTML - CSS Integration');
+  console.info('  <link rel="stylesheet" href="/colors.css">');
+  console.info('  <div class="storage-local-sandbox"');
+  console.info('       style="--tension-gradient: linear-gradient(135deg, hsl(180, 80%, 60%), hsl(210, 80%, 40%))">');
+  console.info('  </div>');
   
   // Handle graceful shutdown
   process.on('SIGINT', () => {
-    console.log(UnicodeTableFormatter.colorize('\n🛑 Shutting down enhanced integration server...', DesignSystem.text.secondary));
+    console.info(UnicodeTableFormatter.colorize('\n🛑 Shutting down enhanced integration server...', DesignSystem.text.secondary));
     unsubscribe(); // Clean up subscription
     server.stop();
     process.exit(0);

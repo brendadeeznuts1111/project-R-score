@@ -23,13 +23,13 @@
  * @since 2025-11-18
  */
 
-console.log('🚀 Bun v1.2.18 Advanced Features - Enhanced Edition');
-console.log('=======================================================');
-console.log(`📋 Running on Bun ${Bun.version}`);
-console.log(`🕐 Started at: ${new Date().toISOString()}`);
-console.log(`🔧 Platform: ${process.platform} ${process.arch}`);
-console.log(`💾 Memory: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB used`);
-console.log('');
+console.info('🚀 Bun v1.2.18 Advanced Features - Enhanced Edition');
+console.info('=======================================================');
+console.info(`📋 Running on Bun ${Bun.version}`);
+console.info(`🕐 Started at: ${new Date().toISOString()}`);
+console.info(`🔧 Platform: ${process.platform} ${process.arch}`);
+console.info(`💾 Memory: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB used`);
+console.info('');
 
 // =============================================================================
 // ADVANCED PERFORMANCE MONITORING UTILITIES
@@ -71,18 +71,18 @@ class PerformanceMonitor {
     }
 
     printReport(): void {
-        console.log('\n📊 Advanced Performance Report:');
-        console.log('=================================');
+        console.info('\n📊 Advanced Performance Report:');
+        console.info('=================================');
 
         for (const [name, stats] of this.measurements.entries()) {
             const { avg, min, max, count } = this.getStats(name);
-            console.log(`🔍 ${name}:`);
-            console.log(`   • Average: ${avg.toFixed(3)}ms`);
-            console.log(`   • Min: ${min.toFixed(3)}ms`);
-            console.log(`   • Max: ${max.toFixed(3)}ms`);
-            console.log(`   • Count: ${count} operations`);
-            console.log(`   • Ops/sec: ${(1000 / avg).toFixed(0)}`);
-            console.log('');
+            console.info(`🔍 ${name}:`);
+            console.info(`   • Average: ${avg.toFixed(3)}ms`);
+            console.info(`   • Min: ${min.toFixed(3)}ms`);
+            console.info(`   • Max: ${max.toFixed(3)}ms`);
+            console.info(`   • Count: ${count} operations`);
+            console.info(`   • Ops/sec: ${(1000 / avg).toFixed(0)}`);
+            console.info('');
         }
     }
 
@@ -99,17 +99,17 @@ const monitor = new PerformanceMonitor();
 // =============================================================================
 
 async function demonstrateAdvancedServeOptimization() {
-    console.log('🔋 1. Advanced Bun.serve CPU Optimization Analysis:');
-    console.log('===================================================');
+    console.info('🔋 1. Advanced Bun.serve CPU Optimization Analysis:');
+    console.info('===================================================');
 
     try {
-        console.log('📋 Deep dive into v1.2.18 CPU optimization:');
-        console.log('   • Previous: Wake up every second for Date header cache');
-        console.log('   • v1.2.18: Timer only active during in-flight requests');
-        console.log('   • Result: True sleep when idle, zero CPU usage');
+        console.info('📋 Deep dive into v1.2.18 CPU optimization:');
+        console.info('   • Previous: Wake up every second for Date header cache');
+        console.info('   • v1.2.18: Timer only active during in-flight requests');
+        console.info('   • Result: True sleep when idle, zero CPU usage');
 
         // Create multiple servers to test resource usage
-        console.log('\n🧪 Creating multiple servers for resource analysis...');
+        console.info('\n🧪 Creating multiple servers for resource analysis...');
 
         const servers = [];
         const serverCount = 5;
@@ -134,10 +134,10 @@ async function demonstrateAdvancedServeOptimization() {
         }
 
         const serverCreationTime = monitor.endMeasurement('server_creation');
-        console.log(`   ✅ Created ${serverCount} servers in ${serverCreationTime.toFixed(2)}ms`);
+        console.info(`   ✅ Created ${serverCount} servers in ${serverCreationTime.toFixed(2)}ms`);
 
         // Test concurrent requests
-        console.log('\n🔄 Testing concurrent request handling...');
+        console.info('\n🔄 Testing concurrent request handling...');
 
         monitor.startMeasurement('concurrent_requests');
 
@@ -158,27 +158,27 @@ async function demonstrateAdvancedServeOptimization() {
         const results = await Promise.all(requestPromises);
         const concurrentTime = monitor.endMeasurement('concurrent_requests');
 
-        console.log(`   ✅ ${serverCount} concurrent requests completed in ${concurrentTime.toFixed(2)}ms`);
+        console.info(`   ✅ ${serverCount} concurrent requests completed in ${concurrentTime.toFixed(2)}ms`);
 
         // Analyze request performance
         const avgRequestTime = results.reduce((sum, r) => sum + r.requestTime, 0) / results.length;
-        console.log(`   📊 Average request time: ${avgRequestTime.toFixed(2)}ms`);
+        console.info(`   📊 Average request time: ${avgRequestTime.toFixed(2)}ms`);
 
         // Test idle behavior
-        console.log('\n😴 Testing idle server behavior...');
+        console.info('\n😴 Testing idle server behavior...');
 
         const initialMemory = process.memoryUsage();
-        console.log(`   📊 Initial memory: ${(initialMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+        console.info(`   📊 Initial memory: ${(initialMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
 
         // Wait for servers to be idle
         await new Promise(resolve => setTimeout(resolve, 2000));
 
         const idleMemory = process.memoryUsage();
-        console.log(`   📊 Idle memory: ${(idleMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-        console.log(`   📊 Memory change: ${((idleMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024).toFixed(2)}MB`);
+        console.info(`   📊 Idle memory: ${(idleMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+        console.info(`   📊 Memory change: ${((idleMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024).toFixed(2)}MB`);
 
         // Test server under load
-        console.log('\n⚡ Testing server under load...');
+        console.info('\n⚡ Testing server under load...');
 
         monitor.startMeasurement('load_test');
 
@@ -197,23 +197,23 @@ async function demonstrateAdvancedServeOptimization() {
         const loadTestTime = monitor.endMeasurement('load_test');
 
         const totalRequests = servers.length * requestsPerServer;
-        console.log(`   ✅ Load test: ${totalRequests} requests in ${loadTestTime.toFixed(2)}ms`);
-        console.log(`   📊 Requests per second: ${(totalRequests / (loadTestTime / 1000)).toFixed(0)}`);
+        console.info(`   ✅ Load test: ${totalRequests} requests in ${loadTestTime.toFixed(2)}ms`);
+        console.info(`   📊 Requests per second: ${(totalRequests / (loadTestTime / 1000)).toFixed(0)}`);
 
         // Cleanup servers
-        console.log('\n🧹 Cleaning up servers...');
+        console.info('\n🧹 Cleaning up servers...');
         servers.forEach(server => server.stop());
 
         const finalMemory = process.memoryUsage();
-        console.log(`   📊 Final memory: ${(finalMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-        console.log('   ✅ All servers stopped - resources freed');
+        console.info(`   📊 Final memory: ${(finalMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+        console.info('   ✅ All servers stopped - resources freed');
 
-        console.log('\n💡 Advanced optimization insights:');
-        console.log('   • Servers consume zero CPU when idle');
-        console.log('   • Memory usage stable during idle periods');
-        console.log('   • Concurrent requests handled efficiently');
-        console.log('   • Resource cleanup is immediate and complete');
-        console.log('   • Perfect for microservices and serverless deployments');
+        console.info('\n💡 Advanced optimization insights:');
+        console.info('   • Servers consume zero CPU when idle');
+        console.info('   • Memory usage stable during idle periods');
+        console.info('   • Concurrent requests handled efficiently');
+        console.info('   • Resource cleanup is immediate and complete');
+        console.info('   • Perfect for microservices and serverless deployments');
 
     } catch (error) {
         console.error(`❌ Advanced serve optimization demo failed: ${(error as Error).message}`);
@@ -225,15 +225,15 @@ async function demonstrateAdvancedServeOptimization() {
 // =============================================================================
 
 async function demonstrateAdvancedBuildCompilation() {
-    console.log('\n🔨 2. Advanced Bun.build() Enterprise Compilation:');
-    console.log('===================================================');
+    console.info('\n🔨 2. Advanced Bun.build() Enterprise Compilation:');
+    console.info('===================================================');
 
     try {
-        console.log('📋 Enterprise compilation features:');
-        console.log('   • Cross-platform executable generation');
-        console.log('   • Advanced metadata and branding');
-        console.log('   • Plugin integration and optimization');
-        console.log('   • Production deployment patterns');
+        console.info('📋 Enterprise compilation features:');
+        console.info('   • Cross-platform executable generation');
+        console.info('   • Advanced metadata and branding');
+        console.info('   • Plugin integration and optimization');
+        console.info('   • Production deployment patterns');
 
         // Create a sophisticated enterprise application
         const enterpriseApp = `
@@ -254,10 +254,10 @@ class EnterpriseServer {
     }
     
     async start() {
-        console.log('🚀 Enterprise Server Starting...');
-        console.log(\`📊 Version: \${this.config.version}\`);
-        console.log(\`🌐 Environment: \${this.config.environment}\`);
-        console.log(\`🔧 Port: \${this.config.port}\`);
+        console.info('🚀 Enterprise Server Starting...');
+        console.info(\`📊 Version: \${this.config.version}\`);
+        console.info(\`🌐 Environment: \${this.config.environment}\`);
+        console.info(\`🔧 Port: \${this.config.port}\`);
         
         const server = serve({
             port: this.config.port,
@@ -265,7 +265,7 @@ class EnterpriseServer {
             error: this.handleError.bind(this)
         });
         
-        console.log(\`✅ Server running on http://localhost:\${server.port}\`);
+        console.info(\`✅ Server running on http://localhost:\${server.port}\`);
         return server;
     }
     
@@ -304,7 +304,7 @@ class EnterpriseServer {
             throw error;
         } finally {
             const duration = performance.now() - startTime;
-            console.log(\`\📡 \${req.method} \${url.pathname} - \${duration.toFixed(2)}ms\`);
+            console.info(\`\📡 \${req.method} \${url.pathname} - \${duration.toFixed(2)}ms\`);
         }
     }
     
@@ -334,13 +334,13 @@ await server.start();
         const appPath = '/tmp/enterprise-app.ts';
         await Bun.write(appPath, enterpriseApp);
 
-        console.log('\n📝 Created enterprise application:');
-        console.log(`   • File: ${appPath}`);
-        console.log('   • Features: Metrics, health checks, error handling');
-        console.log('   • Architecture: Class-based enterprise pattern');
+        console.info('\n📝 Created enterprise application:');
+        console.info(`   • File: ${appPath}`);
+        console.info('   • Features: Metrics, health checks, error handling');
+        console.info('   • Architecture: Class-based enterprise pattern');
 
         // Demonstrate advanced build configurations
-        console.log('\n🔧 Advanced build configurations:');
+        console.info('\n🔧 Advanced build configurations:');
 
         const buildConfigs = [
             {
@@ -401,31 +401,31 @@ await server.start();
         ];
 
         buildConfigs.forEach((buildConfig, index) => {
-            console.log(`\n   ${index + 1}. ${buildConfig.name}:`);
-            console.log(`      📋 Description: ${buildConfig.description}`);
-            console.log('      📋 Configuration:');
-            console.log('      📋 {');
-            console.log(`      📋   entrypoints: ["${buildConfig.config.entrypoints[0]}"],`);
-            console.log(`      📋   compile: {`);
-            console.log(`      📋     target: "${buildConfig.config.compile.target}",`);
-            console.log(`      📋     outfile: "${buildConfig.config.compile.outfile}",`);
+            console.info(`\n   ${index + 1}. ${buildConfig.name}:`);
+            console.info(`      📋 Description: ${buildConfig.description}`);
+            console.info('      📋 Configuration:');
+            console.info('      📋 {');
+            console.info(`      📋   entrypoints: ["${buildConfig.config.entrypoints[0]}"],`);
+            console.info(`      📋   compile: {`);
+            console.info(`      📋     target: "${buildConfig.config.compile.target}",`);
+            console.info(`      📋     outfile: "${buildConfig.config.compile.outfile}",`);
 
             if (buildConfig.config.compile.windows) {
-                console.log('      📋     windows: {');
+                console.info('      📋     windows: {');
                 Object.entries(buildConfig.config.compile.windows).forEach(([key, value]) => {
-                    console.log(`      📋       ${key}: "${value}",`);
+                    console.info(`      📋       ${key}: "${value}",`);
                 });
-                console.log('      📋     },');
+                console.info('      📋     },');
             } else {
-                console.log('      📋     windows: undefined,');
+                console.info('      📋     windows: undefined,');
             }
 
-            console.log('      📋   },');
-            console.log('      📋 }');
+            console.info('      📋   },');
+            console.info('      📋 }');
         });
 
         // Test build API structure (without actual compilation)
-        console.log('\n🧪 Testing build API structure...');
+        console.info('\n🧪 Testing build API structure...');
 
         monitor.startMeasurement('build_api_validation');
 
@@ -438,17 +438,17 @@ await server.start();
                     throw new Error('Invalid build configuration');
                 }
 
-                console.log(`   ✅ ${buildConfig.name}: Configuration valid`);
+                console.info(`   ✅ ${buildConfig.name}: Configuration valid`);
             } catch (validationError) {
-                console.log(`   ❌ ${buildConfig.name}: ${(validationError as Error).message}`);
+                console.info(`   ❌ ${buildConfig.name}: ${(validationError as Error).message}`);
             }
         }
 
         const validationTime = monitor.endMeasurement('build_api_validation');
-        console.log(`   📊 Configuration validation completed in ${validationTime.toFixed(2)}ms`);
+        console.info(`   📊 Configuration validation completed in ${validationTime.toFixed(2)}ms`);
 
         // Demonstrate plugin integration concepts
-        console.log('\n🔌 Plugin integration examples:');
+        console.info('\n🔌 Plugin integration examples:');
 
         const pluginExamples = `
 // Advanced plugin configuration for enterprise builds
@@ -500,17 +500,17 @@ await Bun.build({
 });
         `;
 
-        console.log('   📋 Environment variable injection plugin');
-        console.log('   📋 Asset optimization plugin');
-        console.log('   📋 Custom build steps and transformations');
-        console.log('   📋 Production optimization pipeline');
+        console.info('   📋 Environment variable injection plugin');
+        console.info('   📋 Asset optimization plugin');
+        console.info('   📋 Custom build steps and transformations');
+        console.info('   📋 Production optimization pipeline');
 
-        console.log('\n🎯 Enterprise deployment benefits:');
-        console.log('   • Single binary deployment - no node_modules required');
-        console.log('   • Cross-platform consistency across environments');
-        console.log('   • Professional branding and metadata');
-        console.log('   • Reduced attack surface with minimal dependencies');
-        console.log('   • Faster startup times and reduced memory footprint');
+        console.info('\n🎯 Enterprise deployment benefits:');
+        console.info('   • Single binary deployment - no node_modules required');
+        console.info('   • Cross-platform consistency across environments');
+        console.info('   • Professional branding and metadata');
+        console.info('   • Reduced attack surface with minimal dependencies');
+        console.info('   • Faster startup times and reduced memory footprint');
 
         // Cleanup
         await Bun.write(appPath, '');
@@ -525,18 +525,18 @@ await Bun.build({
 // =============================================================================
 
 async function demonstrateAdvancedRuntimeFlags() {
-    console.log('\n⚙️  3. Advanced Runtime Flags and Configuration:');
-    console.log('==================================================');
+    console.info('\n⚙️  3. Advanced Runtime Flags and Configuration:');
+    console.info('==================================================');
 
     try {
-        console.log('📋 Advanced runtime flag features:');
-        console.log('   • Embedded configuration for specialized builds');
-        console.log('   • Environment-specific optimization flags');
-        console.log('   • Debug and monitoring flag combinations');
-        console.log('   • Security and performance tuning');
+        console.info('📋 Advanced runtime flag features:');
+        console.info('   • Embedded configuration for specialized builds');
+        console.info('   • Environment-specific optimization flags');
+        console.info('   • Debug and monitoring flag combinations');
+        console.info('   • Security and performance tuning');
 
         // Analyze current runtime configuration
-        console.log('\n🔍 Current runtime analysis:');
+        console.info('\n🔍 Current runtime analysis:');
 
         const runtimeInfo = {
             version: Bun.version,
@@ -553,20 +553,20 @@ async function demonstrateAdvancedRuntimeFlags() {
             uptime: process.uptime()
         };
 
-        console.log('   📊 Runtime Information:');
+        console.info('   📊 Runtime Information:');
         Object.entries(runtimeInfo).forEach(([key, value]) => {
             if (typeof value === 'object') {
-                console.log(`      • ${key}:`);
+                console.info(`      • ${key}:`);
                 Object.entries(value as any).forEach(([subKey, subValue]) => {
-                    console.log(`        - ${subKey}: ${subValue}`);
+                    console.info(`        - ${subKey}: ${subValue}`);
                 });
             } else {
-                console.log(`      • ${key}: ${value}`);
+                console.info(`      • ${key}: ${value}`);
             }
         });
 
         // Demonstrate advanced flag combinations
-        console.log('\n🔧 Advanced flag combinations:');
+        console.info('\n🔧 Advanced flag combinations:');
 
         const flagCombinations = [
             {
@@ -602,14 +602,14 @@ async function demonstrateAdvancedRuntimeFlags() {
         ];
 
         flagCombinations.forEach((combo, index) => {
-            console.log(`\n   ${index + 1}. ${combo.name}:`);
-            console.log(`      📋 Flags: ${combo.flags.join(' ')}`);
-            console.log(`      📋 Description: ${combo.description}`);
-            console.log(`      📋 Use Case: ${combo.useCase}`);
+            console.info(`\n   ${index + 1}. ${combo.name}:`);
+            console.info(`      📋 Flags: ${combo.flags.join(' ')}`);
+            console.info(`      📋 Description: ${combo.description}`);
+            console.info(`      📋 Use Case: ${combo.useCase}`);
         });
 
         // Test embedded flag simulation
-        console.log('\n🧪 Simulating embedded runtime flags...');
+        console.info('\n🧪 Simulating embedded runtime flags...');
 
         const simulatedBuilds = [
             {
@@ -642,14 +642,14 @@ async function demonstrateAdvancedRuntimeFlags() {
         ];
 
         simulatedBuilds.forEach((build, index) => {
-            console.log(`\n   ${index + 1}. ${build.name}:`);
-            console.log(`      📋 Embedded Flags: ${build.embeddedFlags.join(' ')}`);
-            console.log(`      📋 Configuration: ${JSON.stringify(build.config, null, 6)}`);
-            console.log(`      💡 Would be embedded during compilation with --compile-exec-argv`);
+            console.info(`\n   ${index + 1}. ${build.name}:`);
+            console.info(`      📋 Embedded Flags: ${build.embeddedFlags.join(' ')}`);
+            console.info(`      📋 Configuration: ${JSON.stringify(build.config, null, 6)}`);
+            console.info(`      💡 Would be embedded during compilation with --compile-exec-argv`);
         });
 
         // Test flag impact on performance
-        console.log('\n⚡ Testing flag performance impact...');
+        console.info('\n⚡ Testing flag performance impact...');
 
         monitor.startMeasurement('default_performance');
 
@@ -667,16 +667,16 @@ async function demonstrateAdvancedRuntimeFlags() {
 
         const improvement = ((defaultTime - optimizedTime) / defaultTime) * 100;
 
-        console.log(`   📊 Default execution: ${defaultTime.toFixed(3)}ms`);
-        console.log(`   📊 Optimized execution: ${optimizedTime.toFixed(3)}ms`);
-        console.log(`   📊 Performance improvement: ${improvement.toFixed(1)}%`);
+        console.info(`   📊 Default execution: ${defaultTime.toFixed(3)}ms`);
+        console.info(`   📊 Optimized execution: ${optimizedTime.toFixed(3)}ms`);
+        console.info(`   📊 Performance improvement: ${improvement.toFixed(1)}%`);
 
-        console.log('\n🎯 Advanced configuration benefits:');
-        console.log('   • Specialized builds for different deployment scenarios');
-        console.log('   • Reduced memory footprint with optimization flags');
-        console.log('   • Enhanced debugging capabilities in production');
-        console.log('   • Security hardening for sensitive applications');
-        console.log('   • Performance tuning for specific workloads');
+        console.info('\n🎯 Advanced configuration benefits:');
+        console.info('   • Specialized builds for different deployment scenarios');
+        console.info('   • Reduced memory footprint with optimization flags');
+        console.info('   • Enhanced debugging capabilities in production');
+        console.info('   • Security hardening for sensitive applications');
+        console.info('   • Performance tuning for specific workloads');
 
     } catch (error) {
         console.error(`❌ Advanced runtime flags demo failed: ${(error as Error).message}`);
@@ -688,18 +688,18 @@ async function demonstrateAdvancedRuntimeFlags() {
 // =============================================================================
 
 async function demonstrateAdvancedANSIProcessing() {
-    console.log('\n🧹 4. Advanced ANSI Processing and Text Optimization:');
-    console.log('======================================================');
+    console.info('\n🧹 4. Advanced ANSI Processing and Text Optimization:');
+    console.info('======================================================');
 
     try {
-        console.log('📋 Advanced ANSI processing capabilities:');
-        console.log('   • SIMD-accelerated text processing');
-        console.log('   • Complex ANSI sequence handling');
-        console.log('   • Performance optimization for large texts');
-        console.log('   • Real-time log processing applications');
+        console.info('📋 Advanced ANSI processing capabilities:');
+        console.info('   • SIMD-accelerated text processing');
+        console.info('   • Complex ANSI sequence handling');
+        console.info('   • Performance optimization for large texts');
+        console.info('   • Real-time log processing applications');
 
         // Comprehensive ANSI test suite
-        console.log('\n🧪 Comprehensive ANSI test suite...');
+        console.info('\n🧪 Comprehensive ANSI test suite...');
 
         const advancedTestCases = [
             {
@@ -745,21 +745,21 @@ async function demonstrateAdvancedANSIProcessing() {
 
             const testTime = monitor.endMeasurement(`ansi_test_${index}`);
 
-            console.log(`   ${index + 1}. ${testCase.name}:`);
-            console.log(`      Input:    "${testCase.input}"`);
-            console.log(`      Output:   "${result}"`);
-            console.log(`      Expected: "${testCase.expected}"`);
-            console.log(`      Result:   ${success ? '✅ Success' : '❌ Failed'}`);
-            console.log(`      Time:     ${testTime.toFixed(4)}ms`);
+            console.info(`   ${index + 1}. ${testCase.name}:`);
+            console.info(`      Input:    "${testCase.input}"`);
+            console.info(`      Output:   "${result}"`);
+            console.info(`      Expected: "${testCase.expected}"`);
+            console.info(`      Result:   ${success ? '✅ Success' : '❌ Failed'}`);
+            console.info(`      Time:     ${testTime.toFixed(4)}ms`);
 
             if (success) passedTests++;
-            console.log('');
+            console.info('');
         });
 
-        console.log(`📊 Test Results: ${passedTests}/${totalTests} tests passed`);
+        console.info(`📊 Test Results: ${passedTests}/${totalTests} tests passed`);
 
         // Large-scale performance testing
-        console.log('\n⚡ Large-scale performance testing...');
+        console.info('\n⚡ Large-scale performance testing...');
 
         const performanceTests = [
             {
@@ -805,7 +805,7 @@ async function demonstrateAdvancedANSIProcessing() {
             };
 
             const testText = generateText(test.size);
-            console.log(`\n   🔄 Testing ${test.name} (${test.size} chars, ${test.iterations} iterations)...`);
+            console.info(`\n   🔄 Testing ${test.name} (${test.size} chars, ${test.iterations} iterations)...`);
 
             monitor.startMeasurement(`perf_${test.name}`);
 
@@ -817,14 +817,14 @@ async function demonstrateAdvancedANSIProcessing() {
             const avgTime = totalTime / test.iterations;
             const charsPerSec = (test.size * test.iterations) / (totalTime / 1000);
 
-            console.log(`      ⏱️  Total time: ${totalTime.toFixed(2)}ms`);
-            console.log(`      ⏱️  Average per operation: ${avgTime.toFixed(4)}ms`);
-            console.log(`      ⚡ Characters per second: ${charsPerSec.toFixed(0)}`);
-            console.log(`      📊 Operations per second: ${(1000 / avgTime).toFixed(0)}`);
+            console.info(`      ⏱️  Total time: ${totalTime.toFixed(2)}ms`);
+            console.info(`      ⏱️  Average per operation: ${avgTime.toFixed(4)}ms`);
+            console.info(`      ⚡ Characters per second: ${charsPerSec.toFixed(0)}`);
+            console.info(`      📊 Operations per second: ${(1000 / avgTime).toFixed(0)}`);
         });
 
         // Real-world log processing simulation
-        console.log('\n🌐 Real-world log processing simulation...');
+        console.info('\n🌐 Real-world log processing simulation...');
 
         const generateLogEntry = (index: number) => {
             const levels = ['INFO', 'WARN', 'ERROR', 'DEBUG'];
@@ -845,7 +845,7 @@ async function demonstrateAdvancedANSIProcessing() {
         const logEntries = Array.from({ length: 1000 }, (_, i) => generateLogEntry(i));
         const rawLogs = logEntries.join('\n');
 
-        console.log(`   📝 Generated ${logEntries.length} log entries (${rawLogs.length} characters)`);
+        console.info(`   📝 Generated ${logEntries.length} log entries (${rawLogs.length} characters)`);
 
         monitor.startMeasurement('log_processing');
 
@@ -853,17 +853,17 @@ async function demonstrateAdvancedANSIProcessing() {
 
         const processingTime = monitor.endMeasurement('log_processing');
 
-        console.log(`   ⏱️  Processing time: ${processingTime.toFixed(2)}ms`);
-        console.log(`   📊 Processing speed: ${(rawLogs.length / (processingTime / 1000)).toFixed(0)} chars/sec`);
-        console.log(`   📏 Clean log length: ${cleanLogs.length} characters`);
-        console.log(`   💾 Size reduction: ${((rawLogs.length - cleanLogs.length) / rawLogs.length * 100).toFixed(1)}%`);
+        console.info(`   ⏱️  Processing time: ${processingTime.toFixed(2)}ms`);
+        console.info(`   📊 Processing speed: ${(rawLogs.length / (processingTime / 1000)).toFixed(0)} chars/sec`);
+        console.info(`   📏 Clean log length: ${cleanLogs.length} characters`);
+        console.info(`   💾 Size reduction: ${((rawLogs.length - cleanLogs.length) / rawLogs.length * 100).toFixed(1)}%`);
 
-        console.log('\n🎯 Advanced ANSI processing benefits:');
-        console.log('   • High-performance log processing for monitoring systems');
-        console.log('   • Real-time text cleaning for display systems');
-        console.log('   • Memory-efficient processing of large text files');
-        console.log('   • Compatible with all standard ANSI escape sequences');
-        console.log('   • Perfect for CI/CD pipeline log processing');
+        console.info('\n🎯 Advanced ANSI processing benefits:');
+        console.info('   • High-performance log processing for monitoring systems');
+        console.info('   • Real-time text cleaning for display systems');
+        console.info('   • Memory-efficient processing of large text files');
+        console.info('   • Compatible with all standard ANSI escape sequences');
+        console.info('   • Perfect for CI/CD pipeline log processing');
 
     } catch (error) {
         console.error(`❌ Advanced ANSI processing demo failed: ${(error as Error).message}`);
@@ -875,18 +875,18 @@ async function demonstrateAdvancedANSIProcessing() {
 // =============================================================================
 
 async function demonstrateAdvancedPackageManagement() {
-    console.log('\n📦 5. Advanced Package Management and Bundling:');
-    console.log('===============================================');
+    console.info('\n📦 5. Advanced Package Management and Bundling:');
+    console.info('===============================================');
 
     try {
-        console.log('📋 Advanced package management features:');
-        console.log('   • Sophisticated bunx --package usage patterns');
-        console.log('   • Advanced sideEffects glob pattern optimization');
-        console.log('   • Enterprise bundling strategies');
-        console.log('   • Dependency optimization and tree-shaking');
+        console.info('📋 Advanced package management features:');
+        console.info('   • Sophisticated bunx --package usage patterns');
+        console.info('   • Advanced sideEffects glob pattern optimization');
+        console.info('   • Enterprise bundling strategies');
+        console.info('   • Dependency optimization and tree-shaking');
 
         // Advanced bunx usage scenarios
-        console.log('\n🔧 Advanced bunx usage scenarios:');
+        console.info('\n🔧 Advanced bunx usage scenarios:');
 
         const advancedBunxScenarios = [
             {
@@ -932,16 +932,16 @@ async function demonstrateAdvancedPackageManagement() {
         ];
 
         advancedBunxScenarios.forEach((scenario, index) => {
-            console.log(`\n   ${index + 1}. ${scenario.name}:`);
-            console.log(`      📋 Description: ${scenario.description}`);
-            console.log('      📋 Commands:');
+            console.info(`\n   ${index + 1}. ${scenario.name}:`);
+            console.info(`      📋 Description: ${scenario.description}`);
+            console.info('      📋 Commands:');
             scenario.commands.forEach(cmd => {
-                console.log(`        • ${cmd}`);
+                console.info(`        • ${cmd}`);
             });
         });
 
         // Advanced sideEffects patterns
-        console.log('\n🌳 Advanced sideEffects pattern optimization:');
+        console.info('\n🌳 Advanced sideEffects pattern optimization:');
 
         const advancedSideEffectsConfigs = [
             {
@@ -1001,16 +1001,16 @@ async function demonstrateAdvancedPackageManagement() {
         ];
 
         advancedSideEffectsConfigs.forEach((config, index) => {
-            console.log(`\n   ${index + 1}. ${config.name}:`);
-            console.log(`      📋 Description: ${config.description}`);
-            console.log('      📋 Configuration:');
-            console.log('      📋 {');
-            console.log(`      📋   "sideEffects": ${JSON.stringify(config.config.sideEffects, null, 8)}`);
-            console.log('      📋 }');
+            console.info(`\n   ${index + 1}. ${config.name}:`);
+            console.info(`      📋 Description: ${config.description}`);
+            console.info('      📋 Configuration:');
+            console.info('      📋 {');
+            console.info(`      📋   "sideEffects": ${JSON.stringify(config.config.sideEffects, null, 8)}`);
+            console.info('      📋 }');
         });
 
         // Bundle optimization analysis
-        console.log('\n📊 Bundle optimization analysis...');
+        console.info('\n📊 Bundle optimization analysis...');
 
         // Simulate different bundle configurations
         const bundleScenarios = [
@@ -1040,16 +1040,16 @@ async function demonstrateAdvancedPackageManagement() {
             }
         ];
 
-        console.log('   📋 Bundle Size Optimization Scenarios:');
+        console.info('   📋 Bundle Size Optimization Scenarios:');
         bundleScenarios.forEach((scenario, index) => {
-            console.log(`\n      ${index + 1}. ${scenario.name}:`);
-            console.log(`         • Expected reduction: ${scenario.expectedReduction}`);
-            console.log(`         • Description: ${scenario.description}`);
-            console.log(`         • Strategy: ${JSON.stringify(scenario.sideEffects)}`);
+            console.info(`\n      ${index + 1}. ${scenario.name}:`);
+            console.info(`         • Expected reduction: ${scenario.expectedReduction}`);
+            console.info(`         • Description: ${scenario.description}`);
+            console.info(`         • Strategy: ${JSON.stringify(scenario.sideEffects)}`);
         });
 
         // Performance comparison simulation
-        console.log('\n⚡ Performance comparison simulation...');
+        console.info('\n⚡ Performance comparison simulation...');
 
         monitor.startMeasurement('bundle_without_optimization');
 
@@ -1067,16 +1067,16 @@ async function demonstrateAdvancedPackageManagement() {
 
         const improvement = ((withoutOptimization - withOptimization) / withoutOptimization) * 100;
 
-        console.log(`   📊 Without optimization: ${withoutOptimization.toFixed(2)}ms`);
-        console.log(`   📊 With optimization: ${withOptimization.toFixed(2)}ms`);
-        console.log(`   📊 Performance improvement: ${improvement.toFixed(1)}%`);
+        console.info(`   📊 Without optimization: ${withoutOptimization.toFixed(2)}ms`);
+        console.info(`   📊 With optimization: ${withOptimization.toFixed(2)}ms`);
+        console.info(`   📊 Performance improvement: ${improvement.toFixed(1)}%`);
 
-        console.log('\n🎯 Advanced package management benefits:');
-        console.log('   • Sophisticated CI/CD pipeline optimization');
-        console.log('   • Precise bundle size control for different deployment targets');
-        console.log('   • Enterprise-grade dependency management');
-        console.log('   • Advanced tree-shaking for complex application architectures');
-        console.log('   • Optimized development workflows with enhanced bunx capabilities');
+        console.info('\n🎯 Advanced package management benefits:');
+        console.info('   • Sophisticated CI/CD pipeline optimization');
+        console.info('   • Precise bundle size control for different deployment targets');
+        console.info('   • Enterprise-grade dependency management');
+        console.info('   • Advanced tree-shaking for complex application architectures');
+        console.info('   • Optimized development workflows with enhanced bunx capabilities');
 
     } catch (error) {
         console.error(`❌ Advanced package management demo failed: ${(error as Error).message}`);
@@ -1088,20 +1088,20 @@ async function demonstrateAdvancedPackageManagement() {
 // =============================================================================
 
 async function advancedMain() {
-    console.log('🚀 Starting Bun v1.2.18 Advanced Features - Enhanced Edition');
-    console.log('================================================================');
-    console.log(`📋 Running on Bun ${Bun.version}`);
-    console.log(`🕐 Started at: ${new Date().toISOString()}`);
-    console.log(`🔧 Platform: ${process.platform} ${process.arch}`);
-    console.log(`💾 Initial memory: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB`);
-    console.log('');
-    console.log('📚 Enhanced demo covers advanced v1.2.18 features:');
-    console.log('   • Advanced Bun.serve CPU optimization analysis ✅');
-    console.log('   • Enterprise Bun.build() compilation patterns ✅');
-    console.log('   • Advanced runtime flags and configuration ✅');
-    console.log('   • High-performance ANSI processing and optimization ✅');
-    console.log('   • Advanced package management and bundling ✅');
-    console.log('');
+    console.info('🚀 Starting Bun v1.2.18 Advanced Features - Enhanced Edition');
+    console.info('================================================================');
+    console.info(`📋 Running on Bun ${Bun.version}`);
+    console.info(`🕐 Started at: ${new Date().toISOString()}`);
+    console.info(`🔧 Platform: ${process.platform} ${process.arch}`);
+    console.info(`💾 Initial memory: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB`);
+    console.info('');
+    console.info('📚 Enhanced demo covers advanced v1.2.18 features:');
+    console.info('   • Advanced Bun.serve CPU optimization analysis ✅');
+    console.info('   • Enterprise Bun.build() compilation patterns ✅');
+    console.info('   • Advanced runtime flags and configuration ✅');
+    console.info('   • High-performance ANSI processing and optimization ✅');
+    console.info('   • Advanced package management and bundling ✅');
+    console.info('');
 
     try {
         // Monitor overall execution
@@ -1119,29 +1119,29 @@ async function advancedMain() {
         // Print comprehensive performance report
         monitor.printReport();
 
-        console.log('\n🎉 Bun v1.2.18 Advanced Features - Enhanced Edition Complete!');
-        console.log('================================================================');
-        console.log('✅ ALL advanced features demonstrated successfully');
-        console.log(`⏱️  Total execution time: ${totalTime.toFixed(2)}ms`);
+        console.info('\n🎉 Bun v1.2.18 Advanced Features - Enhanced Edition Complete!');
+        console.info('================================================================');
+        console.info('✅ ALL advanced features demonstrated successfully');
+        console.info(`⏱️  Total execution time: ${totalTime.toFixed(2)}ms`);
 
         const finalMemory = process.memoryUsage();
-        console.log(`💾 Final memory: ${(finalMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-        console.log('');
-        console.log('📚 Enhanced v1.2.18 improvements summary:');
-        console.log('   • Performance: Advanced CPU optimization analysis ✅');
-        console.log('   • Tooling: Enterprise compilation patterns ✅');
-        console.log('   • Configuration: Advanced runtime flag strategies ✅');
-        console.log('   • Utilities: High-performance text processing ✅');
-        console.log('   • Ecosystem: Advanced package management ✅');
-        console.log('');
-        console.log('🚀 Enhanced implementation demonstrates:');
-        console.log('   • Production-ready enterprise patterns');
-        console.log('   • Advanced performance optimization techniques');
-        console.log('   • Comprehensive monitoring and analysis');
-        console.log('   • Real-world deployment scenarios');
-        console.log('   • Best practices for large-scale applications');
-        console.log('');
-        console.log('📖 Reference: https://bun.sh/blog/bun-v1.2.18');
+        console.info(`💾 Final memory: ${(finalMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+        console.info('');
+        console.info('📚 Enhanced v1.2.18 improvements summary:');
+        console.info('   • Performance: Advanced CPU optimization analysis ✅');
+        console.info('   • Tooling: Enterprise compilation patterns ✅');
+        console.info('   • Configuration: Advanced runtime flag strategies ✅');
+        console.info('   • Utilities: High-performance text processing ✅');
+        console.info('   • Ecosystem: Advanced package management ✅');
+        console.info('');
+        console.info('🚀 Enhanced implementation demonstrates:');
+        console.info('   • Production-ready enterprise patterns');
+        console.info('   • Advanced performance optimization techniques');
+        console.info('   • Comprehensive monitoring and analysis');
+        console.info('   • Real-world deployment scenarios');
+        console.info('   • Best practices for large-scale applications');
+        console.info('');
+        console.info('📖 Reference: https://bun.sh/blog/bun-v1.2.18');
 
     } catch (error) {
         console.error(`❌ Advanced v1.2.18 features demo failed: ${(error as Error).message}`);

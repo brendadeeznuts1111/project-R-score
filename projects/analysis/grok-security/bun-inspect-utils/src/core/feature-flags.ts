@@ -32,7 +32,7 @@ export function isFeatureEnabled(featureName: keyof FeatureRegistry): boolean {
 export function debugLog(message: string, data?: any): void {
   if (feature("DEBUG")) {
     const timestamp = new Date().toISOString();
-    console.log(`[${timestamp}] DEBUG: ${message}`, data ?? "");
+    console.info(`[${timestamp}] DEBUG: ${message}`, data ?? "");
   }
 }
 
@@ -42,7 +42,7 @@ export function debugLog(message: string, data?: any): void {
  */
 export function initPremiumFeatures(): void {
   if (feature("PREMIUM")) {
-    console.log("✅ Premium features initialized");
+    console.info("✅ Premium features initialized");
     // Premium-only initialization code
     enableAdvancedAnalytics();
     enableCustomThemes();
@@ -56,7 +56,7 @@ export function initPremiumFeatures(): void {
  */
 export function initBetaFeatures(): void {
   if (feature("BETA_FEATURES")) {
-    console.log("⚠️ Beta features enabled");
+    console.info("⚠️ Beta features enabled");
     // Experimental features only in beta builds
     enableExperimentalUI();
     enableNewAlgorithms();
@@ -98,7 +98,7 @@ export function trackEvent(
       data: data ?? {},
     };
     // Send to analytics service
-    console.log("📊 Event tracked:", event);
+    console.info("📊 Event tracked:", event);
   }
 }
 
@@ -114,7 +114,7 @@ export function auditLog(action: string, details: Record<string, any>): void {
       details,
       severity: "info",
     };
-    console.log("🔐 Audit:", auditEntry);
+    console.info("🔐 Audit:", auditEntry);
   }
 }
 
@@ -127,7 +127,7 @@ export function measurePerformance<T>(label: string, callback: () => T): T {
     const startTime = performance.now();
     const result = callback();
     const duration = performance.now() - startTime;
-    console.log(`⏱️ ${label}: ${duration.toFixed(2)}ms`);
+    console.info(`⏱️ ${label}: ${duration.toFixed(2)}ms`);
     return result;
   }
   return callback();
@@ -136,37 +136,37 @@ export function measurePerformance<T>(label: string, callback: () => T): T {
 // [65.10.0.0] Helper functions (eliminated when not needed)
 function enableAdvancedAnalytics(): void {
   if (feature("PREMIUM")) {
-    console.log("  → Advanced analytics enabled");
+    console.info("  → Advanced analytics enabled");
   }
 }
 
 function enableCustomThemes(): void {
   if (feature("PREMIUM")) {
-    console.log("  → Custom themes enabled");
+    console.info("  → Custom themes enabled");
   }
 }
 
 function enablePrioritySupport(): void {
   if (feature("PREMIUM")) {
-    console.log("  → Priority support enabled");
+    console.info("  → Priority support enabled");
   }
 }
 
 function enableExperimentalUI(): void {
   if (feature("BETA_FEATURES")) {
-    console.log("  → Experimental UI enabled");
+    console.info("  → Experimental UI enabled");
   }
 }
 
 function enableNewAlgorithms(): void {
   if (feature("BETA_FEATURES")) {
-    console.log("  → New algorithms enabled");
+    console.info("  → New algorithms enabled");
   }
 }
 
 function enableUnstableAPIs(): void {
   if (feature("BETA_FEATURES")) {
-    console.log("  → Unstable APIs enabled");
+    console.info("  → Unstable APIs enabled");
   }
 }
 

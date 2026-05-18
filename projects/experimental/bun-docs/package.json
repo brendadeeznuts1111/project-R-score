@@ -6,7 +6,8 @@
   "scripts": {
     "generate": "bun run generate.ts",
     "serve": "bun --hot --watch dist/bun-docs.html",
-    "build": "bun run generate"
+    "build": "bun run generate",
+    "wardley": "bun run commands/docs/wardley.ts"
   },
   "devDependencies": {
     "bun-types": "latest"

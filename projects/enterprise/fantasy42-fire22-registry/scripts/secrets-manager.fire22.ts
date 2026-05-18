@@ -36,10 +36,10 @@ async function storeSecret(name: string, value: string): Promise<boolean> {
       name,
       value,
     });
-    console.log(`✅ Stored: ${name}`);
+    console.info(`✅ Stored: ${name}`);
     return true;
   } catch (error) {
-    console.log(`❌ Failed to store ${name}:`, error.message);
+    console.info(`❌ Failed to store ${name}:`, error.message);
     return false;
   }
 }
@@ -52,7 +52,7 @@ async function retrieveSecret(name: string): Promise<string | null> {
     });
     return secret || null;
   } catch (error) {
-    console.log(`❌ Failed to retrieve ${name}:`, error.message);
+    console.info(`❌ Failed to retrieve ${name}:`, error.message);
     return null;
   }
 }
@@ -63,10 +63,10 @@ async function deleteSecret(name: string): Promise<boolean> {
       service: SECRETS_SERVICE,
       name,
     });
-    console.log(`🗑️ Deleted: ${name}`);
+    console.info(`🗑️ Deleted: ${name}`);
     return true;
   } catch (error) {
-    console.log(`❌ Failed to delete ${name}:`, error.message);
+    console.info(`❌ Failed to delete ${name}:`, error.message);
     return false;
   }
 }
@@ -87,14 +87,14 @@ async function listSecrets(): Promise<string[]> {
 }
 
 async function migrateFromEnv(): Promise<void> {
-  console.log('🔄 Migrating secrets from .env to secure storage...');
+  console.info('🔄 Migrating secrets from .env to secure storage...');
 
   // Read current .env file
   let envContent = '';
   try {
     envContent = await Bun.file('.env').text();
   } catch {
-    console.log('ℹ️ No .env file found');
+    console.info('ℹ️ No .env file found');
     return;
   }
 
@@ -114,12 +114,12 @@ async function migrateFromEnv(): Promise<void> {
       if (success) {
         migrated++;
         // Optionally remove from .env
-        console.log(`🔄 Migrated: ${cleanKey}`);
+        console.info(`🔄 Migrated: ${cleanKey}`);
       }
     }
   }
 
-  console.log(`✅ Migration complete: ${migrated} secrets migrated`);
+  console.info(`✅ Migration complete: ${migrated} secrets migrated`);
 }
 
 // ╔══════════════════════════════════════════════════════════════╗
@@ -127,8 +127,8 @@ async function migrateFromEnv(): Promise<void> {
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function setupEnterpriseSecrets(): Promise<void> {
-  console.log('🔐 Setting up Enterprise Secrets...');
-  console.log('This will store your credentials securely using OS keychain.');
+  console.info('🔐 Setting up Enterprise Secrets...');
+  console.info('This will store your credentials securely using OS keychain.');
 
   const secretsToSetup = [
     'CLOUDFLARE_API_TOKEN',
@@ -142,28 +142,28 @@ async function setupEnterpriseSecrets(): Promise<void> {
     const currentValue = await retrieveSecret(secretName);
 
     if (currentValue) {
-      console.log(`✅ ${secretName}: Already configured`);
+      console.info(`✅ ${secretName}: Already configured`);
       continue;
     }
 
-    console.log(`\n🔑 ${secretName}`);
-    console.log(`📝 ${description}`);
-    console.log(`Enter value (or press Enter to skip):`);
+    console.info(`\n🔑 ${secretName}`);
+    console.info(`📝 ${description}`);
+    console.info(`Enter value (or press Enter to skip):`);
 
     const value = prompt(`> `)?.trim();
 
     if (value && value.length > 0) {
       await storeSecret(secretName, value);
     } else {
-      console.log(`⏭️ Skipped: ${secretName}`);
+      console.info(`⏭️ Skipped: ${secretName}`);
     }
   }
 
-  console.log('\n🎉 Enterprise secrets setup complete!');
+  console.info('\n🎉 Enterprise secrets setup complete!');
 }
 
 async function validateSecrets(): Promise<void> {
-  console.log('🔍 Validating stored secrets...');
+  console.info('🔍 Validating stored secrets...');
 
   const results = {
     valid: 0,
@@ -175,21 +175,21 @@ async function validateSecrets(): Promise<void> {
     const value = await retrieveSecret(secretName);
 
     if (!value) {
-      console.log(`❌ ${secretName}: Missing`);
+      console.info(`❌ ${secretName}: Missing`);
       results.missing++;
     } else if (value.length < 10) {
-      console.log(`⚠️ ${secretName}: Too short (may be invalid)`);
+      console.info(`⚠️ ${secretName}: Too short (may be invalid)`);
       results.invalid++;
     } else {
-      console.log(`✅ ${secretName}: Configured`);
+      console.info(`✅ ${secretName}: Configured`);
       results.valid++;
     }
   }
 
-  console.log(`\n📊 Validation Results:`);
-  console.log(`✅ Valid: ${results.valid}`);
-  console.log(`⚠️ Invalid: ${results.invalid}`);
-  console.log(`❌ Missing: ${results.missing}`);
+  console.info(`\n📊 Validation Results:`);
+  console.info(`✅ Valid: ${results.valid}`);
+  console.info(`⚠️ Invalid: ${results.invalid}`);
+  console.info(`❌ Missing: ${results.missing}`);
 }
 
 // ╔══════════════════════════════════════════════════════════════╗
@@ -197,7 +197,7 @@ async function validateSecrets(): Promise<void> {
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function exportSecrets(): Promise<void> {
-  console.log('📤 Exporting secrets for backup...');
+  console.info('📤 Exporting secrets for backup...');
 
   const secretsData: Record<string, string> = {};
 
@@ -211,38 +211,38 @@ async function exportSecrets(): Promise<void> {
   const exportPath = `./secrets-backup-${Date.now()}.json`;
   await Bun.write(exportPath, JSON.stringify(secretsData, null, 2));
 
-  console.log(`✅ Secrets exported to: ${exportPath}`);
-  console.log('⚠️ WARNING: This file contains sensitive data!');
-  console.log('🔒 Encrypt this file and store it securely!');
+  console.info(`✅ Secrets exported to: ${exportPath}`);
+  console.info('⚠️ WARNING: This file contains sensitive data!');
+  console.info('🔒 Encrypt this file and store it securely!');
 }
 
 async function showSecurityInfo(): Promise<void> {
-  console.log('🔐 FIRE22 SECRETS MANAGER - Security Information');
-  console.log('='.repeat(60));
+  console.info('🔐 FIRE22 SECRETS MANAGER - Security Information');
+  console.info('='.repeat(60));
 
-  console.log('\n🛡️ SECURITY FEATURES:');
-  console.log(
+  console.info('\n🛡️ SECURITY FEATURES:');
+  console.info(
     '• Uses OS-native credential storage (Keychain/macOS, GNOME/Linux, Windows Credential Manager)'
   );
-  console.log('• Credentials are encrypted at rest');
-  console.log('• No plaintext storage in files');
-  console.log('• Isolated by service name for security');
+  console.info('• Credentials are encrypted at rest');
+  console.info('• No plaintext storage in files');
+  console.info('• Isolated by service name for security');
 
-  console.log('\n🔑 SUPPORTED SECRETS:');
+  console.info('\n🔑 SUPPORTED SECRETS:');
   for (const [name, description] of Object.entries(SECRETS_CONFIG)) {
-    console.log(`• ${name}: ${description}`);
+    console.info(`• ${name}: ${description}`);
   }
 
-  console.log('\n📋 USAGE PATTERNS:');
-  console.log('• CI/CD: Retrieve secrets for deployment');
-  console.log('• Development: Secure local credential storage');
-  console.log('• CLI Tools: Authenticate without exposing credentials');
-  console.log('• Enterprise: Centralized secret management');
+  console.info('\n📋 USAGE PATTERNS:');
+  console.info('• CI/CD: Retrieve secrets for deployment');
+  console.info('• Development: Secure local credential storage');
+  console.info('• CLI Tools: Authenticate without exposing credentials');
+  console.info('• Enterprise: Centralized secret management');
 
-  console.log('\n⚡ PERFORMANCE:');
-  console.log("• Asynchronous operations in Bun's thread pool");
-  console.log('• Fast retrieval from OS credential storage');
-  console.log('• No network calls or external dependencies');
+  console.info('\n⚡ PERFORMANCE:');
+  console.info("• Asynchronous operations in Bun's thread pool");
+  console.info('• Fast retrieval from OS credential storage');
+  console.info('• No network calls or external dependencies');
 }
 
 // ╔══════════════════════════════════════════════════════════════╗
@@ -250,7 +250,7 @@ async function showSecurityInfo(): Promise<void> {
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function showHelp(): Promise<void> {
-  console.log(`
+  console.info(`
 🔥 FIRE22 SECRETS MANAGER
 Secure credential management using Bun.secrets
 
@@ -317,12 +317,12 @@ async function main(): Promise<void> {
 
     case 'list':
       const secrets = await listSecrets();
-      console.log('🔑 Stored Secrets:');
+      console.info('🔑 Stored Secrets:');
       if (secrets.length === 0) {
-        console.log('❌ No secrets stored');
+        console.info('❌ No secrets stored');
       } else {
         secrets.forEach(secret => {
-          console.log(`✅ ${secret}: ${SECRETS_CONFIG[secret]}`);
+          console.info(`✅ ${secret}: ${SECRETS_CONFIG[secret]}`);
         });
       }
       break;
@@ -330,38 +330,38 @@ async function main(): Promise<void> {
     case 'get':
       const secretName = args[1];
       if (!secretName) {
-        console.log('❌ Please specify a secret name');
-        console.log('Usage: bun run scripts/secrets-manager.fire22.ts get <name>');
+        console.info('❌ Please specify a secret name');
+        console.info('Usage: bun run scripts/secrets-manager.fire22.ts get <name>');
         return;
       }
       const value = await retrieveSecret(secretName);
       if (value) {
-        console.log(`${secretName}: ${value}`);
+        console.info(`${secretName}: ${value}`);
       } else {
-        console.log(`❌ Secret not found: ${secretName}`);
+        console.info(`❌ Secret not found: ${secretName}`);
       }
       break;
 
     case 'set':
       const setName = args[1];
       if (!setName) {
-        console.log('❌ Please specify a secret name');
-        console.log('Usage: bun run scripts/secrets-manager.fire22.ts set <name>');
+        console.info('❌ Please specify a secret name');
+        console.info('Usage: bun run scripts/secrets-manager.fire22.ts set <name>');
         return;
       }
       const setValue = prompt(`Enter value for ${setName}:`)?.trim();
       if (setValue) {
         await storeSecret(setName, setValue);
       } else {
-        console.log('❌ No value provided');
+        console.info('❌ No value provided');
       }
       break;
 
     case 'delete':
       const delName = args[1];
       if (!delName) {
-        console.log('❌ Please specify a secret name');
-        console.log('Usage: bun run scripts/secrets-manager.fire22.ts delete <name>');
+        console.info('❌ Please specify a secret name');
+        console.info('Usage: bun run scripts/secrets-manager.fire22.ts delete <name>');
         return;
       }
       await deleteSecret(delName);
@@ -380,11 +380,11 @@ async function main(): Promise<void> {
       break;
 
     case 'clear':
-      console.log('🗑️ Clearing all managed secrets...');
+      console.info('🗑️ Clearing all managed secrets...');
       for (const secretName of Object.keys(SECRETS_CONFIG)) {
         await deleteSecret(secretName);
       }
-      console.log('✅ All secrets cleared');
+      console.info('✅ All secrets cleared');
       break;
 
     case 'info':
@@ -392,7 +392,7 @@ async function main(): Promise<void> {
       break;
 
     default:
-      console.log(`❌ Unknown command: ${command}`);
+      console.info(`❌ Unknown command: ${command}`);
       await showHelp();
       break;
   }

@@ -33,70 +33,70 @@ health:
     initial_delay: 5
 `;
 
-console.log('📋 YAML Import & Parsing Demo');
-console.log('='.repeat(50));
+console.info('📋 YAML Import & Parsing Demo');
+console.info('='.repeat(50));
 
-console.log('🔧 Direct YAML Import:');
-console.log(`   Name: ${yamlConfig.name}`);
-console.log(`   Version: ${yamlConfig.version}`);
-console.log(`   Description: ${yamlConfig.description}`);
+console.info('🔧 Direct YAML Import:');
+console.info(`   Name: ${yamlConfig.name}`);
+console.info(`   Version: ${yamlConfig.version}`);
+console.info(`   Description: ${yamlConfig.description}`);
 
-console.log('\n🏗️  Metadata:');
-console.log(`   Created: ${yamlConfig.metadata.created}`);
-console.log(`   Environment: ${yamlConfig.metadata.environment}`);
-console.log(`   Author: ${yamlConfig.metadata.author}`);
+console.info('\n🏗️  Metadata:');
+console.info(`   Created: ${yamlConfig.metadata.created}`);
+console.info(`   Environment: ${yamlConfig.metadata.environment}`);
+console.info(`   Author: ${yamlConfig.metadata.author}`);
 
-console.log('\n🔌 Services:');
+console.info('\n🔌 Services:');
 yamlConfig.services.forEach((service, index) => {
   const status = service.enabled ? '\x1b[32m✅\x1b[0m' : '\x1b[31m❌\x1b[0m';
-  console.log(
+  console.info(
     `   ${index + 1}. \x1b[1m${service.name}\x1b[0m (${service.protocol}:${service.port}) ${status}`
   );
 });
 
-console.log('\n⚙️  Configuration:');
-console.log(`   Log Level: ${yamlConfig.configuration.log_level}`);
-console.log(`   Max Connections: ${yamlConfig.configuration.max_connections}`);
-console.log(`   Request Timeout: ${yamlConfig.configuration.request_timeout}s`);
-console.log(`   Rate Limit: ${yamlConfig.configuration.rate_limit.requests_per_minute} req/min`);
+console.info('\n⚙️  Configuration:');
+console.info(`   Log Level: ${yamlConfig.configuration.log_level}`);
+console.info(`   Max Connections: ${yamlConfig.configuration.max_connections}`);
+console.info(`   Request Timeout: ${yamlConfig.configuration.request_timeout}s`);
+console.info(`   Rate Limit: ${yamlConfig.configuration.rate_limit.requests_per_minute} req/min`);
 
-console.log('\n🔒 Security Features:');
+console.info('\n🔒 Security Features:');
 Object.entries(yamlConfig.security).forEach(([feature, enabled]) => {
   const status = enabled ? '\x1b[32m✅\x1b[0m' : '\x1b[31m❌\x1b[0m';
-  console.log(`   ${status} ${feature.replace(/_/g, ' ')}`);
+  console.info(`   ${status} ${feature.replace(/_/g, ' ')}`);
 });
 
-console.log('\n📊 Monitoring:');
-console.log(`   Metrics: ${yamlConfig.monitoring.metrics_enabled ? '✅' : '❌'}`);
-console.log(`   Health Checks: ${yamlConfig.monitoring.health_checks ? '✅' : '❌'}`);
-console.log(`   Alert Thresholds:`);
-console.log(`     CPU: ${yamlConfig.monitoring.alert_thresholds.cpu_usage}%`);
-console.log(`     Memory: ${yamlConfig.monitoring.alert_thresholds.memory_usage}%`);
-console.log(`     Response Time: ${yamlConfig.monitoring.alert_thresholds.response_time}ms`);
+console.info('\n📊 Monitoring:');
+console.info(`   Metrics: ${yamlConfig.monitoring.metrics_enabled ? '✅' : '❌'}`);
+console.info(`   Health Checks: ${yamlConfig.monitoring.health_checks ? '✅' : '❌'}`);
+console.info(`   Alert Thresholds:`);
+console.info(`     CPU: ${yamlConfig.monitoring.alert_thresholds.cpu_usage}%`);
+console.info(`     Memory: ${yamlConfig.monitoring.alert_thresholds.memory_usage}%`);
+console.info(`     Response Time: ${yamlConfig.monitoring.alert_thresholds.response_time}ms`);
 
 // Parse YAML string
-console.log('\n\n🔧 YAML String Parsing:');
+console.info('\n\n🔧 YAML String Parsing:');
 try {
   const parsedYaml = Bun.YAML.parse(yamlString);
-  console.log('✅ Successfully parsed YAML string:');
-  console.log(`   Environment: ${parsedYaml.deployment.environment}`);
-  console.log(`   Replicas: ${parsedYaml.deployment.replicas}`);
-  console.log(`   Image: ${parsedYaml.deployment.image}`);
+  console.info('✅ Successfully parsed YAML string:');
+  console.info(`   Environment: ${parsedYaml.deployment.environment}`);
+  console.info(`   Replicas: ${parsedYaml.deployment.replicas}`);
+  console.info(`   Image: ${parsedYaml.deployment.image}`);
 
-  console.log('\n   Resource Limits:');
-  console.log(`     CPU: ${parsedYaml.resources.limits.cpu}`);
-  console.log(`     Memory: ${parsedYaml.resources.limits.memory}`);
+  console.info('\n   Resource Limits:');
+  console.info(`     CPU: ${parsedYaml.resources.limits.cpu}`);
+  console.info(`     Memory: ${parsedYaml.resources.limits.memory}`);
 
-  console.log('\n   Health Probes:');
-  console.log(
+  console.info('\n   Health Probes:');
+  console.info(
     `     Liveness: ${parsedYaml.health.liveness_probe.path} (${parsedYaml.health.liveness_probe.initial_delay}s delay)`
   );
-  console.log(
+  console.info(
     `     Readiness: ${parsedYaml.health.readiness_probe.path} (${parsedYaml.health.readiness_probe.initial_delay}s delay)`
   );
 } catch (error) {
-  console.log(`❌ YAML parsing failed: ${error.message}`);
+  console.info(`❌ YAML parsing failed: ${error.message}`);
 }
 
-console.log('\n🎉 YAML Import Demo Complete!');
-console.log('   Bun supports native YAML imports and string parsing!');
+console.info('\n🎉 YAML Import Demo Complete!');
+console.info('   Bun supports native YAML imports and string parsing!');

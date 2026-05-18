@@ -28,7 +28,7 @@ async function main() {
     const phone = target.startsWith('+') ? target : args[0];
     const useRisk = args.includes('--risk-v2');
     
-    console.log(`🔍 Resolving CashApp profile for ${phone}...`);
+    console.info(`🔍 Resolving CashApp profile for ${phone}...`);
     const start = performance.now();
     
     try {
@@ -36,12 +36,12 @@ async function main() {
       const duration = performance.now() - start;
 
       if (!profile) {
-        console.log(`❌ No CashApp profile found for ${phone}`);
+        console.info(`❌ No CashApp profile found for ${phone}`);
         return;
       }
 
-      console.log(`✅ Resolved in ${duration.toFixed(2)}ms`);
-      console.log(JSON.stringify(profile, null, 2));
+      console.info(`✅ Resolved in ${duration.toFixed(2)}ms`);
+      console.info(JSON.stringify(profile, null, 2));
     } catch (error) {
       console.error(`❌ Error: ${error.message}`);
     }
@@ -54,14 +54,14 @@ async function main() {
     const concurrencyIdx = args.indexOf('--concurrency');
     const concurrency = concurrencyIdx !== -1 ? parseInt(args[concurrencyIdx+1]) : 10;
     
-    console.log(`📦 Batch processing phones from ${filePath} (concurrency: ${concurrency})...`);
+    console.info(`📦 Batch processing phones from ${filePath} (concurrency: ${concurrency})...`);
     
     try {
       const file = Bun.file(filePath);
       const text = await file.text();
       const phones = text.split('\n').map(p => p.trim()).filter(p => p.length > 0);
       
-      console.log(`📝 Found ${phones.length} phones to process.`);
+      console.info(`📝 Found ${phones.length} phones to process.`);
       
       const result = await integration.batchResolve(phones, {
         concurrency,
@@ -71,13 +71,13 @@ async function main() {
         }
       });
       
-      console.log('\n\n📊 Batch Result Stats:');
-      console.log(JSON.stringify(result.stats, null, 2));
+      console.info('\n\n📊 Batch Result Stats:');
+      console.info(JSON.stringify(result.stats, null, 2));
       
       if (args.includes('--export=json')) {
         const outPath = `batch-result-${Date.now()}.json`;
         await Bun.write(outPath, JSON.stringify(result, null, 2));
-        console.log(`💾 Exported detailed results to ${outPath}`);
+        console.info(`💾 Exported detailed results to ${outPath}`);
       }
     } catch (error) {
       console.error(`❌ Batch error: ${error.message}`);
@@ -90,14 +90,14 @@ async function main() {
     if (args.includes('--clear')) {
       const limiter = createRateLimiter();
       const count = await limiter.resetAll();
-      console.log(`🧹 Cleared ${count} rate limit cache entries.`);
+      console.info(`🧹 Cleared ${count} rate limit cache entries.`);
     }
     
     if (args.includes('--stats')) {
       const limiter = createRateLimiter();
       const stats = await limiter.getStats();
-      console.log('📊 Cache Stats:');
-      console.log(JSON.stringify(stats, null, 2));
+      console.info('📊 Cache Stats:');
+      console.info(JSON.stringify(stats, null, 2));
     }
     return;
   }
@@ -107,9 +107,9 @@ async function main() {
     const periodIdx = args.find(a => a.startsWith('--period='))?.split('=')[1] || '30d';
     const days = parseInt(periodIdx.replace('d', ''));
     
-    console.log(`📋 Generating compliance report for last ${days} days...`);
+    console.info(`📋 Generating compliance report for last ${days} days...`);
     const report = await auditLogger.getComplianceReport(days);
-    console.log(JSON.stringify(report, null, 2));
+    console.info(JSON.stringify(report, null, 2));
     return;
   }
 
@@ -132,7 +132,7 @@ async function main() {
     const regsArg = args.find(a => a.startsWith('--regulations='))?.slice(14) || 'gdpr,pci';
     const regulations = regsArg.split(',').map(r => r.trim().toLowerCase());
 
-    console.log(`⚖️ Generating compliance report for regulations: ${regulations.map(r => r.toUpperCase()).join(', ')}`);
+    console.info(`⚖️ Generating compliance report for regulations: ${regulations.map(r => r.toUpperCase()).join(', ')}`);
 
     try {
       const periodDays = 30;
@@ -143,12 +143,12 @@ async function main() {
         const file = Bun.file(filePath);
         if (await file.exists()) {
           logs = await file.json();
-          console.log(`📂 Loaded ${logs.length} logs from ${filePath}`);
+          console.info(`📂 Loaded ${logs.length} logs from ${filePath}`);
         }
       }
       if (logs.length === 0) {
         logs = await auditLogger.query({ limit: 1000 });
-        console.log(`📊 Fetched ${logs.length} audit logs`);
+        console.info(`📊 Fetched ${logs.length} audit logs`);
       }
 
       const report = {
@@ -207,19 +207,19 @@ async function main() {
         })
       };
 
-      console.log(JSON.stringify(report, null, 2));
+      console.info(JSON.stringify(report, null, 2));
     } catch (error: any) {
       console.error(`❌ Error generating report: ${error.message}`);
     }
     return;
   }
 
-  console.log('Available CashApp Commands:');
-  console.log('  bun cli/commands/cashapp-cli.ts <phone> cashapp-intel [--risk-v2]');
-  console.log('  bun cli/commands/cashapp-cli.ts <file.txt> cashapp-batch [--concurrency=10] [--export=json]');
-  console.log('  bun cli/commands/cashapp-cli.ts cashapp-cache [--clear] [--stats]');
-  console.log('  bun cli/commands/cashapp-cli.ts cashapp-audit [--period=30d]');
-  console.log('  bun cli/commands/cashapp-cli.ts compliance-report --regulations=gdpr,pci [--file=logs.json]');
+  console.info('Available CashApp Commands:');
+  console.info('  bun cli/commands/cashapp-cli.ts <phone> cashapp-intel [--risk-v2]');
+  console.info('  bun cli/commands/cashapp-cli.ts <file.txt> cashapp-batch [--concurrency=10] [--export=json]');
+  console.info('  bun cli/commands/cashapp-cli.ts cashapp-cache [--clear] [--stats]');
+  console.info('  bun cli/commands/cashapp-cli.ts cashapp-audit [--period=30d]');
+  console.info('  bun cli/commands/cashapp-cli.ts compliance-report --regulations=gdpr,pci [--file=logs.json]');
 }
 
 main().catch(console.error);

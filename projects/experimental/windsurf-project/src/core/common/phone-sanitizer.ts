@@ -145,7 +145,7 @@ export const phoneSanitizer = {
 
     const duration = (Bun.nanoseconds() - start) / 1e6;
     if (duration > 10) {
-      console.log(`⚡ PhoneSanitizer: ${result.e164} optimized in ${duration.toFixed(2)}ms`);
+      console.info(`⚡ PhoneSanitizer: ${result.e164} optimized in ${duration.toFixed(2)}ms`);
     }
 
     return result;

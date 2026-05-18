@@ -25,8 +25,8 @@ export function addPattern(
   // Store in master matrix
   MASTER_MATRIX.addRow(category, name, def, sectionWithId);
   
-  console.log(`🚀 Empire Pro: ${name} → ${sectionWithId}`);
-  console.log(row);
+  console.info(`🚀 Empire Pro: ${name} → ${sectionWithId}`);
+  console.info(row);
   
   return row;
 }

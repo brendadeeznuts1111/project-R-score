@@ -20,11 +20,11 @@
  *
  * // Get live statistics
  * const stats = inspector.getStats();
- * console.log(stats.activeCount, stats.totalAllocatedBytes);
+ * console.info(stats.activeCount, stats.totalAllocatedBytes);
  *
  * // Subscribe to lifecycle events
  * inspector.on('array_unregistered', (event) => {
- *   console.log(`Array ${event.id} was garbage collected`);
+ *   console.info(`Array ${event.id} was garbage collected`);
  * });
  * ```
  *

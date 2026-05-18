@@ -61,12 +61,12 @@ class Fire22DepartmentStatusMonitor {
     const startTime = Bun.nanoseconds();
 
     if (!options.json) {
-      console.log('📊 Fire22 Department Status Monitor');
-      console.log('!==!==!==!==!==!=====');
+      console.info('📊 Fire22 Department Status Monitor');
+      console.info('!==!==!==!==!==!=====');
 
       const env = options.environment || 'development';
-      console.log(`\n🎯 Environment: ${env}`);
-      console.log(`🏢 Department: ${options.department || 'ALL'}`);
+      console.info(`\n🎯 Environment: ${env}`);
+      console.info(`🏢 Department: ${options.department || 'ALL'}`);
     }
 
     try {
@@ -84,7 +84,7 @@ class Fire22DepartmentStatusMonitor {
       }
 
       if (options.json) {
-        console.log(JSON.stringify(statuses, null, 2));
+        console.info(JSON.stringify(statuses, null, 2));
       } else {
         await this.displayStatuses(statuses, options);
       }
@@ -96,11 +96,11 @@ class Fire22DepartmentStatusMonitor {
       const statusTime = (Bun.nanoseconds() - startTime) / 1_000_000;
 
       if (!options.json && options.verbose) {
-        console.log(`\n⏱️ Status check completed in ${statusTime.toFixed(2)}ms`);
+        console.info(`\n⏱️ Status check completed in ${statusTime.toFixed(2)}ms`);
       }
     } catch (error) {
       if (options.json) {
-        console.log(JSON.stringify({ error: error.message }, null, 2));
+        console.info(JSON.stringify({ error: error.message }, null, 2));
       } else {
         console.error('❌ Status check failed:', error);
       }
@@ -296,15 +296,15 @@ class Fire22DepartmentStatusMonitor {
     statuses: DepartmentStatus[],
     options: StatusOptions
   ): Promise<void> {
-    console.log('\n📋 Department Status Overview:');
-    console.log('!==!==!==!==!===');
+    console.info('\n📋 Department Status Overview:');
+    console.info('!==!==!==!==!===');
 
     // Summary header
     const deployed = statuses.filter(s => s.deployment.status === 'deployed').length;
     const healthy = statuses.filter(s => s.health.status === 'healthy').length;
     const totalMembers = statuses.reduce((sum, s) => sum + s.team.members, 0);
 
-    console.log(
+    console.info(
       `\n📊 Summary: ${deployed}/${statuses.length} deployed, ${healthy}/${statuses.length} healthy, ${totalMembers} team members\n`
     );
 
@@ -314,30 +314,30 @@ class Fire22DepartmentStatusMonitor {
       const healthIcon = this.getHealthIcon(status.health.status);
       const buildIcon = this.getStatusIcon(status.build.status);
 
-      console.log(`🏢 ${status.name} (${status.id})`);
-      console.log(
+      console.info(`🏢 ${status.name} (${status.id})`);
+      console.info(
         `   ${deploymentIcon} Deployment: ${status.deployment.status.toUpperCase()} - ${status.deployment.url}`
       );
-      console.log(
+      console.info(
         `   ${buildIcon} Build: ${status.build.status.toUpperCase()}${status.build.size ? ` (${status.build.size})` : ''}`
       );
-      console.log(
+      console.info(
         `   ${healthIcon} Health: ${status.health.status.toUpperCase()}${status.health.responseTime ? ` (${status.health.responseTime}ms)` : ''}`
       );
-      console.log(
+      console.info(
         `   👥 Team: ${status.team.online}/${status.team.members} online - ${status.team.admin}`
       );
 
       if (options.verbose) {
         if (status.deployment.lastDeployed) {
-          console.log(`      Last Deployed: ${status.deployment.lastDeployed}`);
+          console.info(`      Last Deployed: ${status.deployment.lastDeployed}`);
         }
         if (status.build.lastBuilt) {
-          console.log(`      Last Built: ${status.build.lastBuilt}`);
+          console.info(`      Last Built: ${status.build.lastBuilt}`);
         }
       }
 
-      console.log('');
+      console.info('');
     }
 
     // Show actions if issues found
@@ -349,21 +349,21 @@ class Fire22DepartmentStatusMonitor {
     );
 
     if (issues.length > 0) {
-      console.log('🔧 Suggested Actions:');
-      console.log('!==!==!==!==');
+      console.info('🔧 Suggested Actions:');
+      console.info('!==!==!==!==');
 
       issues.forEach(status => {
         if (status.build.status !== 'built') {
-          console.log(`• ${status.name}: Run 'bun run dept:build ${status.id}'`);
+          console.info(`• ${status.name}: Run 'bun run dept:build ${status.id}'`);
         }
         if (status.deployment.status !== 'deployed') {
-          console.log(`• ${status.name}: Run 'bun run dept:deploy ${status.id}'`);
+          console.info(`• ${status.name}: Run 'bun run dept:deploy ${status.id}'`);
         }
         if (status.health.status !== 'healthy' && status.deployment.status === 'deployed') {
-          console.log(`• ${status.name}: Check logs and monitoring for performance issues`);
+          console.info(`• ${status.name}: Check logs and monitoring for performance issues`);
         }
       });
-      console.log('');
+      console.info('');
     }
   }
 
@@ -371,15 +371,15 @@ class Fire22DepartmentStatusMonitor {
    * ⏱️ Watch statuses (continuous monitoring)
    */
   private async watchStatuses(options: StatusOptions): Promise<void> {
-    console.log('\n👁️ Watching department statuses (Ctrl+C to exit)...\n');
+    console.info('\n👁️ Watching department statuses (Ctrl+C to exit)...\n');
 
     let iteration = 0;
 
     const watchInterval = setInterval(async () => {
       iteration++;
 
-      console.log(`\n📊 Status Update #${iteration} - ${new Date().toLocaleTimeString()}`);
-      console.log('='.repeat(50));
+      console.info(`\n📊 Status Update #${iteration} - ${new Date().toLocaleTimeString()}`);
+      console.info('='.repeat(50));
 
       try {
         let statuses: DepartmentStatus[] = [];
@@ -398,7 +398,7 @@ class Fire22DepartmentStatusMonitor {
           const deploymentIcon = this.getStatusIcon(status.deployment.status);
           const healthIcon = this.getHealthIcon(status.health.status);
 
-          console.log(
+          console.info(
             `${deploymentIcon} ${healthIcon} ${status.name}: ${status.deployment.status} | ${status.health.status}${status.health.responseTime ? ` (${status.health.responseTime}ms)` : ''}`
           );
         });
@@ -410,7 +410,7 @@ class Fire22DepartmentStatusMonitor {
     // Handle Ctrl+C gracefully
     process.on('SIGINT', () => {
       clearInterval(watchInterval);
-      console.log('\n👋 Status monitoring stopped.');
+      console.info('\n👋 Status monitoring stopped.');
       process.exit(0);
     });
   }
@@ -576,7 +576,7 @@ async function main() {
         options.watch = true;
         break;
       case '--help':
-        console.log(`
+        console.info(`
 Fire22 Department Status Monitor
 
 Usage:

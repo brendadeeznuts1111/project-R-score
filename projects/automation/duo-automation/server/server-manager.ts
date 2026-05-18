@@ -1,7 +1,7 @@
 // server/server-manager.ts
 import { s3 } from 'bun';
 
-console.log(`
+console.info(`
 🚀 **PRODUCTION SERVER MANAGER - BUN v1.3.5**
 ═══════════════════════════════════════════════════════════════════
 
@@ -97,7 +97,7 @@ export class ProductionServerManager {
    * Find available port starting from default
    */
   async findAvailablePort(startPort: number): Promise<number> {
-    console.log(`🔍 Searching for available port starting from ${startPort}...`);
+    console.info(`🔍 Searching for available port starting from ${startPort}...`);
     
     for (let port = startPort; port < startPort + this.MAX_PORT_ATTEMPTS; port++) {
       try {
@@ -107,11 +107,11 @@ export class ProductionServerManager {
           fetch: () => new Response('test'),
         });
         testServer.stop();
-        console.log(`✅ Port ${port} is available`);
+        console.info(`✅ Port ${port} is available`);
         return port;
       } catch (error) {
         if ((error as any).code === 'EADDRINUSE') {
-          console.log(`⚠️  Port ${port} in use, trying ${port + 1}...`);
+          console.info(`⚠️  Port ${port} in use, trying ${port + 1}...`);
           continue;
         }
         throw error;
@@ -125,19 +125,19 @@ export class ProductionServerManager {
    * Start server with automatic port fallback
    */
   async start(): Promise<{ url: string; port: number }> {
-    console.log(`🚀 Starting Production Server Manager...`);
+    console.info(`🚀 Starting Production Server Manager...`);
     
     // Get port from environment or use default
     const requestedPort = parseInt(process.env.PORT || String(this.DEFAULT_PORT), 10);
     const hostname = process.env.HOSTNAME || 'localhost';
     
-    console.log(`📡 Requested port: ${requestedPort}`);
-    console.log(`🌐 Hostname: ${hostname}`);
+    console.info(`📡 Requested port: ${requestedPort}`);
+    console.info(`🌐 Hostname: ${hostname}`);
     
     // Find available port
     const actualPort = await this.findAvailablePort(requestedPort);
     
-    console.log(`🎯 Using port: ${actualPort}`);
+    console.info(`🎯 Using port: ${actualPort}`);
     
     // Start production server
     this.server = Bun.serve({
@@ -168,7 +168,7 @@ export class ProductionServerManager {
         const cookies = this.cookieManager.parse(req);
         
         // Log request with session info
-        console.log(`${new Date().toISOString()} ${req.method} ${req.url} | User: ${cookies.get('user_id') || 'anonymous'}`);
+        console.info(`${new Date().toISOString()} ${req.method} ${req.url} | User: ${cookies.get('user_id') || 'anonymous'}`);
         
         const url = new URL(req.url);
         
@@ -219,7 +219,7 @@ export class ProductionServerManager {
 
     const url = `http://${this.server.hostname}:${this.server.port}`;
     
-    console.log(`
+    console.info(`
 🚀 **DUOPLUS SERVER RUNNING**
 ═══════════════════════════════════════════════
 📡 URL: ${url}
@@ -263,7 +263,7 @@ export class ProductionServerManager {
     }
 
     // Log download with user context
-    console.log(`📥 Download request: ${filename} by ${cookies.get('user_id')}`);
+    console.info(`📥 Download request: ${filename} by ${cookies.get('user_id')}`);
 
     try {
       // Simulate S3 file with Content-Disposition
@@ -483,17 +483,17 @@ export class ProductionServerManager {
   }
 
   private async gracefulShutdown(signal: string) {
-    console.log(`\n🛑 Received ${signal}, shutting down gracefully...`);
+    console.info(`\n🛑 Received ${signal}, shutting down gracefully...`);
     
     if (this.server) {
-      console.log('🔌 Closing server connections...');
+      console.info('🔌 Closing server connections...');
       await this.server.stop();
     }
     
-    console.log('🧹 Cleaning up resources...');
+    console.info('🧹 Cleaning up resources...');
     // Cleanup S3 connections, database connections, etc.
     
-    console.log('✅ Graceful shutdown complete');
+    console.info('✅ Graceful shutdown complete');
     process.exit(0);
   }
 }
@@ -503,7 +503,7 @@ export class ProductionServerManager {
 // ============================================================================
 
 async function runIntegratedDemo() {
-  console.log(`
+  console.info(`
 🚀 **BUN v1.3.5 INTEGRATED PRODUCTION DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -517,41 +517,41 @@ async function runIntegratedDemo() {
 `);
   
   try {
-    console.log('🚀 Starting production server with automatic port detection...\n');
+    console.info('🚀 Starting production server with automatic port detection...\n');
     
     const serverManager = new ProductionServerManager();
     const { url, port } = await serverManager.start();
     
     // Show available endpoints
-    console.log(`📋 Available endpoints:`);
-    console.log(`   GET  ${url}/                 - Dashboard`);
-    console.log(`   GET  ${url}/health          - Health check`);
-    console.log(`   GET  ${url}/auth/status     - Authentication status`);
-    console.log(`   GET  ${url}/environment     - Environment info`);
-    console.log(`   GET  ${url}/download?file=name - Download file`);
-    console.log(`   GET  ${url}/qr?data=data    - Generate QR code`);
-    console.log(`   GET  ${url}/files           - File listing`);
+    console.info(`📋 Available endpoints:`);
+    console.info(`   GET  ${url}/                 - Dashboard`);
+    console.info(`   GET  ${url}/health          - Health check`);
+    console.info(`   GET  ${url}/auth/status     - Authentication status`);
+    console.info(`   GET  ${url}/environment     - Environment info`);
+    console.info(`   GET  ${url}/download?file=name - Download file`);
+    console.info(`   GET  ${url}/qr?data=data    - Generate QR code`);
+    console.info(`   GET  ${url}/files           - File listing`);
     
     // Open browser automatically if not in CI
     if (process.env.NODE_ENV !== 'ci' && process.stdin.isTTY) {
-      console.log(`\n🌐 Opening ${url} in browser...`);
+      console.info(`\n🌐 Opening ${url} in browser...`);
       try {
         await Bun.$`open ${url}`;
       } catch (error) {
-        console.log(`⚠️  Could not open browser automatically`);
-        console.log(`   Please visit ${url} manually`);
+        console.info(`⚠️  Could not open browser automatically`);
+        console.info(`   Please visit ${url} manually`);
       }
     }
     
     // Keep server running
-    console.log(`\n✅ Server running on port ${port}. Press Ctrl+C to stop.`);
+    console.info(`\n✅ Server running on port ${port}. Press Ctrl+C to stop.`);
     
     // Set up interactive controls if TTY is available
     if (process.stdin.isTTY) {
-      console.log(`\n📮 Interactive commands:`);
-      console.log(`   [R]efresh health status`);
-      console.log(`   [Q]uit server`);
-      console.log(`   [H]elp`);
+      console.info(`\n📮 Interactive commands:`);
+      console.info(`   [R]efresh health status`);
+      console.info(`   [Q]uit server`);
+      console.info(`   [H]elp`);
       
       process.stdin.setRawMode(true);
       
@@ -563,27 +563,27 @@ async function runIntegratedDemo() {
             try {
               const healthResponse = await fetch(`${url}/health`);
               const health = await healthResponse.json();
-              console.log(`\n📊 Health Status:`);
-              console.log(`   Status: ${health.status}`);
-              console.log(`   Port: ${health.port}`);
-              console.log(`   Uptime: ${health.uptime.toFixed(2)}s`);
-              console.log(`   Memory: ${Math.round(health.memory.heapUsed / 1024 / 1024)}MB`);
-              console.log(`   Environment: ${health.environment}\n`);
+              console.info(`\n📊 Health Status:`);
+              console.info(`   Status: ${health.status}`);
+              console.info(`   Port: ${health.port}`);
+              console.info(`   Uptime: ${health.uptime.toFixed(2)}s`);
+              console.info(`   Memory: ${Math.round(health.memory.heapUsed / 1024 / 1024)}MB`);
+              console.info(`   Environment: ${health.environment}\n`);
             } catch (error) {
-              console.log(`❌ Failed to get health status: ${(error as Error).message}\n`);
+              console.info(`❌ Failed to get health status: ${(error as Error).message}\n`);
             }
             break;
             
           case 'q':
-            console.log(`\n👋 Shutting down server...`);
+            console.info(`\n👋 Shutting down server...`);
             process.exit(0);
             break;
             
           case 'h':
-            console.log(`\n📮 Available commands:`);
-            console.log(`   [R]efresh health status`);
-            console.log(`   [Q]uit server`);
-            console.log(`   [H]elp\n`);
+            console.info(`\n📮 Available commands:`);
+            console.info(`   [R]efresh health status`);
+            console.info(`   [Q]uit server`);
+            console.info(`   [H]elp\n`);
             break;
         }
       });
@@ -594,42 +594,42 @@ async function runIntegratedDemo() {
     
     // Handle port conflicts gracefully
     if ((error as any).code === 'EADDRINUSE') {
-      console.log(`\n🤔 Port conflict detected. Options:`);
-      console.log(`   1. Kill process on port 3000`);
-      console.log(`   2. Use different port: PORT=3001 bun run server/server-manager.ts`);
-      console.log(`   3. Exit`);
+      console.info(`\n🤔 Port conflict detected. Options:`);
+      console.info(`   1. Kill process on port 3000`);
+      console.info(`   2. Use different port: PORT=3001 bun run server/server-manager.ts`);
+      console.info(`   3. Exit`);
       
       if (process.stdin.isTTY) {
         process.stdin.setRawMode(false);
-        console.log(`\nEnter choice [1-3]: `);
+        console.info(`\nEnter choice [1-3]: `);
         
         process.stdin.once('data', async (chunk) => {
           const choice = chunk.toString().trim();
           
           switch (choice) {
             case '1':
-              console.log(`🔪 Killing process on port 3000...`);
+              console.info(`🔪 Killing process on port 3000...`);
               try {
                 await Bun.$`lsof -ti:3000 | xargs kill -9`;
-                console.log(`✅ Process killed. Restarting...`);
+                console.info(`✅ Process killed. Restarting...`);
                 await runIntegratedDemo(); // Retry
               } catch (killError) {
-                console.log(`❌ Failed to kill process: ${(killError as Error).message}`);
+                console.info(`❌ Failed to kill process: ${(killError as Error).message}`);
               }
               break;
               
             case '2':
-              console.log(`💡 Tip: Run with PORT=3001 to use a different port`);
+              console.info(`💡 Tip: Run with PORT=3001 to use a different port`);
               process.exit(0);
               break;
               
             case '3':
-              console.log(`👋 Exiting...`);
+              console.info(`👋 Exiting...`);
               process.exit(0);
               break;
               
             default:
-              console.log(`❌ Invalid choice. Exiting...`);
+              console.info(`❌ Invalid choice. Exiting...`);
               process.exit(1);
           }
         });

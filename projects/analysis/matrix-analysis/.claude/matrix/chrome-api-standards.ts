@@ -311,31 +311,31 @@ export const CHROME_API_COLUMNS = {
 
 // CLI
 if (import.meta.main) {
-	console.log("🔥 Tier-1380 OMEGA: Chrome API Standards (80-Column Matrix)\n");
+	console.info("🔥 Tier-1380 OMEGA: Chrome API Standards (80-Column Matrix)\n");
 
-	console.log("Chrome Profile APIs (Cols 76-82):");
+	console.info("Chrome Profile APIs (Cols 76-82):");
 	for (const [_key, col] of Object.entries(CHROME_PROFILE_COLUMNS)) {
-		console.log(`  ${col.index}: ${col.name} (${col.type})`);
+		console.info(`  ${col.index}: ${col.name} (${col.type})`);
 	}
 
-	console.log("\nChrome Cookie APIs (Cols 83-89):");
+	console.info("\nChrome Cookie APIs (Cols 83-89):");
 	for (const [_key, col] of Object.entries(CHROME_COOKIE_COLUMNS)) {
-		console.log(`  ${col.index}: ${col.name} (${col.type})`);
+		console.info(`  ${col.index}: ${col.name} (${col.type})`);
 	}
 
-	console.log("\nChrome Tab APIs (Cols 70-75, 95-96):");
+	console.info("\nChrome Tab APIs (Cols 70-75, 95-96):");
 	for (const [_key, col] of Object.entries({
 		...CHROME_TAB_COLUMNS,
 		col_95: CHROME_GLOBAL_COLUMNS.col_95_tab_is_active,
 		col_96: CHROME_GLOBAL_COLUMNS.col_96_tab_url,
 	})) {
-		console.log(`  ${(col as any).index}: ${(col as any).name} (${(col as any).type})`);
+		console.info(`  ${(col as any).index}: ${(col as any).name} (${(col as any).type})`);
 	}
 
-	console.log("\nChrome Global State (Cols 90-94):");
+	console.info("\nChrome Global State (Cols 90-94):");
 	for (const [_key, col] of Object.entries(CHROME_GLOBAL_COLUMNS)) {
-		if (col.index < 95) console.log(`  ${col.index}: ${col.name} (${col.type})`);
+		if (col.index < 95) console.info(`  ${col.index}: ${col.name} (${col.type})`);
 	}
 
-	console.log("\n✅ Total Chrome API Columns:", Object.keys(CHROME_API_COLUMNS).length);
+	console.info("\n✅ Total Chrome API Columns:", Object.keys(CHROME_API_COLUMNS).length);
 }

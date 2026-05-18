@@ -338,7 +338,7 @@ class LightningNetworkRouter {
     fromStrategy: RoutingResult,
     toStrategy: RoutingResult
   ): Promise<void> {
-    console.log(`🔄 Rebalancing ${amount} sats from ${fromStrategy.destination} to ${toStrategy.destination}`);
+    console.info(`🔄 Rebalancing ${amount} sats from ${fromStrategy.destination} to ${toStrategy.destination}`);
     
     // This would implement the actual rebalancing logic
     // For now, just log the action

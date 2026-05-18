@@ -41,17 +41,17 @@ interface WizardState {
 
 function printBanner() {
 	console.clear();
-	console.log(`${COLORS.cyan}${COLORS.bold}`);
-	console.log("╔══════════════════════════════════════════════════════════════════╗");
-	console.log("║           Tier-1380 OpenClaw Setup Wizard                        ║");
-	console.log("║           Topic-Project-Channel Integration                      ║");
-	console.log("╚══════════════════════════════════════════════════════════════════╝");
-	console.log(`${COLORS.reset}\n`);
+	console.info(`${COLORS.cyan}${COLORS.bold}`);
+	console.info("╔══════════════════════════════════════════════════════════════════╗");
+	console.info("║           Tier-1380 OpenClaw Setup Wizard                        ║");
+	console.info("║           Topic-Project-Channel Integration                      ║");
+	console.info("╚══════════════════════════════════════════════════════════════════╝");
+	console.info(`${COLORS.reset}\n`);
 }
 
 function printStep(step: number, total: number, title: string) {
-	console.log(`${COLORS.bold}Step ${step}/${total}: ${title}${COLORS.reset}`);
-	console.log(`${COLORS.gray}${"─".repeat(60)}${COLORS.reset}\n`);
+	console.info(`${COLORS.bold}Step ${step}/${total}: ${title}${COLORS.reset}`);
+	console.info(`${COLORS.gray}${"─".repeat(60)}${COLORS.reset}\n`);
 }
 
 async function ask(question: string, defaultValue?: string): Promise<string> {
@@ -82,17 +82,17 @@ async function askYesNo(question: string, defaultValue = false): Promise<boolean
 async function step1Welcome(): Promise<boolean> {
 	printStep(1, 5, "Welcome");
 
-	console.log("This wizard will help you set up the Tier-1380 OpenClaw integration.");
-	console.log("\nFeatures:");
-	console.log("  • Telegram topic management");
-	console.log("  • Project-to-topic mapping");
-	console.log("  • Automatic git hook installation");
-	console.log("  • GitHub webhook integration");
-	console.log("  • File watching and notifications");
-	console.log("\nRequirements:");
-	console.log("  • Bun 1.3.8+");
-	console.log("  • Git repositories");
-	console.log("  • Telegram bot (optional)");
+	console.info("This wizard will help you set up the Tier-1380 OpenClaw integration.");
+	console.info("\nFeatures:");
+	console.info("  • Telegram topic management");
+	console.info("  • Project-to-topic mapping");
+	console.info("  • Automatic git hook installation");
+	console.info("  • GitHub webhook integration");
+	console.info("  • File watching and notifications");
+	console.info("\nRequirements:");
+	console.info("  • Bun 1.3.8+");
+	console.info("  • Git repositories");
+	console.info("  • Telegram bot (optional)");
 
 	const proceed = await askYesNo("\nContinue with setup?", true);
 	return proceed;
@@ -101,7 +101,7 @@ async function step1Welcome(): Promise<boolean> {
 async function step2BotConfig(): Promise<Partial<WizardState>> {
 	printStep(2, 5, "Telegram Bot Configuration");
 
-	console.log("Configure your Telegram bot (or press Enter to skip):\n");
+	console.info("Configure your Telegram bot (or press Enter to skip):\n");
 
 	const botUsername = await ask("Bot username (e.g., @mybot)", "@mikehuntbot_bot");
 	const defaultTopicStr = await ask("Default topic ID", "1");
@@ -115,7 +115,7 @@ async function step2BotConfig(): Promise<Partial<WizardState>> {
 async function step3Projects(): Promise<Partial<WizardState>> {
 	printStep(3, 5, "Project Configuration");
 
-	console.log("Add projects to integrate with topics:\n");
+	console.info("Add projects to integrate with topics:\n");
 
 	const projects: WizardState["projects"] = [];
 	let addMore = true;
@@ -124,9 +124,9 @@ async function step3Projects(): Promise<Partial<WizardState>> {
 	const detectedProjects = await detectProjects();
 
 	if (detectedProjects.length > 0) {
-		console.log(`${COLORS.green}Detected projects:${COLORS.reset}`);
+		console.info(`${COLORS.green}Detected projects:${COLORS.reset}`);
 		for (const proj of detectedProjects) {
-			console.log(`  • ${proj.name} (${proj.path})`);
+			console.info(`  • ${proj.name} (${proj.path})`);
 		}
 
 		const useDetected = await askYesNo("\nUse detected projects?", true);
@@ -159,7 +159,7 @@ async function step3Projects(): Promise<Partial<WizardState>> {
 			autoNotify,
 		});
 
-		console.log();
+		console.info();
 		addMore = await askYesNo("Add another project?", false);
 	}
 
@@ -194,21 +194,21 @@ async function detectProjects(): Promise<Array<{ name: string; path: string }>> 
 async function step4Hooks(): Promise<void> {
 	printStep(4, 5, "Git Hooks Installation");
 
-	console.log("Git hooks enable automatic topic routing for commits.\n");
+	console.info("Git hooks enable automatic topic routing for commits.\n");
 
 	const installHooks = await askYesNo("Install git hooks for all projects?", true);
 
 	if (installHooks) {
-		console.log("\nInstalling hooks...");
+		console.info("\nInstalling hooks...");
 		try {
 			const result = await $`bun ${import.meta.dir}/topic-git-hooks.ts install`.quiet();
 			if (result.exitCode === 0) {
-				console.log(`${COLORS.green}✅ Hooks installed successfully${COLORS.reset}`);
+				console.info(`${COLORS.green}✅ Hooks installed successfully${COLORS.reset}`);
 			} else {
-				console.log(`${COLORS.yellow}⚠️  Some hooks may have failed${COLORS.reset}`);
+				console.info(`${COLORS.yellow}⚠️  Some hooks may have failed${COLORS.reset}`);
 			}
 		} catch {
-			console.log(`${COLORS.red}❌ Failed to install hooks${COLORS.reset}`);
+			console.info(`${COLORS.red}❌ Failed to install hooks${COLORS.reset}`);
 		}
 	}
 }
@@ -216,40 +216,40 @@ async function step4Hooks(): Promise<void> {
 async function step5Summary(state: WizardState): Promise<void> {
 	printStep(5, 5, "Summary");
 
-	console.log(`${COLORS.green}Setup complete!${COLORS.reset}\n`);
+	console.info(`${COLORS.green}Setup complete!${COLORS.reset}\n`);
 
-	console.log(`${COLORS.bold}Configuration:${COLORS.reset}`);
-	console.log(`  Bot: ${state.botUsername || "Not configured"}`);
-	console.log(`  Default Topic: ${state.defaultTopic || 1}`);
-	console.log(`  Projects: ${state.projects.length}`);
+	console.info(`${COLORS.bold}Configuration:${COLORS.reset}`);
+	console.info(`  Bot: ${state.botUsername || "Not configured"}`);
+	console.info(`  Default Topic: ${state.defaultTopic || 1}`);
+	console.info(`  Projects: ${state.projects.length}`);
 
 	for (const proj of state.projects) {
-		console.log(`    • ${proj.name} → Topic ${proj.defaultTopic}`);
+		console.info(`    • ${proj.name} → Topic ${proj.defaultTopic}`);
 	}
 
-	console.log(`\n${COLORS.bold}Next steps:${COLORS.reset}`);
-	console.log("  1. Review configuration files:");
-	console.log(`     ${COLORS.gray}${TOPICS_CONFIG}${COLORS.reset}`);
-	console.log(`     ${COLORS.gray}${PROJECTS_CONFIG}${COLORS.reset}`);
-	console.log("  2. Test the integration:");
-	console.log(`     ${COLORS.gray}kimi test${COLORS.reset}`);
-	console.log("  3. View integration status:");
-	console.log(`     ${COLORS.gray}kimi integration${COLORS.reset}`);
-	console.log("  4. Make a test commit:");
-	console.log(
+	console.info(`\n${COLORS.bold}Next steps:${COLORS.reset}`);
+	console.info("  1. Review configuration files:");
+	console.info(`     ${COLORS.gray}${TOPICS_CONFIG}${COLORS.reset}`);
+	console.info(`     ${COLORS.gray}${PROJECTS_CONFIG}${COLORS.reset}`);
+	console.info("  2. Test the integration:");
+	console.info(`     ${COLORS.gray}kimi test${COLORS.reset}`);
+	console.info("  3. View integration status:");
+	console.info(`     ${COLORS.gray}kimi integration${COLORS.reset}`);
+	console.info("  4. Make a test commit:");
+	console.info(
 		`     ${COLORS.gray}git commit -m "feat: test integration"${COLORS.reset}`,
 	);
 
-	console.log(
+	console.info(
 		`\n${COLORS.gray}Documentation: ~/.kimi/skills/tier1380-openclaw/README.md${COLORS.reset}`,
 	);
 }
 
 async function saveConfiguration(state: WizardState): Promise<void> {
 	// This is a simplified version - in production would merge with existing
-	console.log(`\n${COLORS.gray}Configuration would be saved to:${COLORS.reset}`);
-	console.log(`  ${TOPICS_CONFIG}`);
-	console.log(`  ${PROJECTS_CONFIG}`);
+	console.info(`\n${COLORS.gray}Configuration would be saved to:${COLORS.reset}`);
+	console.info(`  ${TOPICS_CONFIG}`);
+	console.info(`  ${PROJECTS_CONFIG}`);
 }
 
 async function main() {
@@ -263,7 +263,7 @@ async function main() {
 	// Step 1: Welcome
 	const proceed = await step1Welcome();
 	if (!proceed) {
-		console.log("\nSetup cancelled.");
+		console.info("\nSetup cancelled.");
 		process.exit(0);
 	}
 

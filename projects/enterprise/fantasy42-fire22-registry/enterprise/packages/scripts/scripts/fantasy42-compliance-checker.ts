@@ -15,8 +15,8 @@
 import { readdirSync, statSync, existsSync, readFileSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
 
-console.log('⚖️ Fantasy42 Compliance Checker');
-console.log('==============================');
+console.info('⚖️ Fantasy42 Compliance Checker');
+console.info('==============================');
 
 // ============================================================================
 // COMPLIANCE CONFIGURATION
@@ -135,7 +135,7 @@ class Fantasy42ComplianceChecker {
       autoFix?: boolean;
     } = {}
   ): Promise<ComplianceSummary> {
-    console.log('🔍 Running Fantasy42 Compliance Check...');
+    console.info('🔍 Running Fantasy42 Compliance Check...');
 
     try {
       // Check each compliance framework
@@ -158,19 +158,19 @@ class Fantasy42ComplianceChecker {
         await this.autoFixViolations();
       }
 
-      console.log('\n📊 Compliance Summary:');
-      console.log('====================');
-      console.log(`✅ Compliant Frameworks: ${this.complianceResults.summary.compliantFrameworks}`);
-      console.log(
+      console.info('\n📊 Compliance Summary:');
+      console.info('====================');
+      console.info(`✅ Compliant Frameworks: ${this.complianceResults.summary.compliantFrameworks}`);
+      console.info(
         `❌ Non-Compliant Frameworks: ${this.complianceResults.summary.nonCompliantFrameworks}`
       );
-      console.log(
+      console.info(
         `📋 Met Requirements: ${this.complianceResults.summary.metRequirements}/${this.complianceResults.summary.totalRequirements}`
       );
-      console.log(`🚨 Critical Violations: ${this.complianceResults.summary.criticalViolations}`);
-      console.log(`🔴 High Violations: ${this.complianceResults.summary.highViolations}`);
-      console.log(`🟡 Medium Violations: ${this.complianceResults.summary.mediumViolations}`);
-      console.log(`🟢 Low Violations: ${this.complianceResults.summary.lowViolations}`);
+      console.info(`🚨 Critical Violations: ${this.complianceResults.summary.criticalViolations}`);
+      console.info(`🔴 High Violations: ${this.complianceResults.summary.highViolations}`);
+      console.info(`🟡 Medium Violations: ${this.complianceResults.summary.mediumViolations}`);
+      console.info(`🟢 Low Violations: ${this.complianceResults.summary.lowViolations}`);
 
       return this.complianceResults.summary;
     } catch (error) {
@@ -180,11 +180,11 @@ class Fantasy42ComplianceChecker {
   }
 
   private async checkFrameworkCompliance(framework: string, options: any): Promise<void> {
-    console.log(`⚖️ Checking ${framework.toUpperCase()} compliance...`);
+    console.info(`⚖️ Checking ${framework.toUpperCase()} compliance...`);
 
     const config = (COMPLIANCE_CONFIG as any)[framework];
     if (!config || !config.enabled) {
-      console.log(`⏭️ ${framework.toUpperCase()} compliance check skipped (disabled)`);
+      console.info(`⏭️ ${framework.toUpperCase()} compliance check skipped (disabled)`);
       return;
     }
 
@@ -255,8 +255,8 @@ class Fantasy42ComplianceChecker {
       }
     }
 
-    console.log(`  📊 Status: ${result.status === 'compliant' ? '✅' : '❌'} ${result.status}`);
-    console.log(
+    console.info(`  📊 Status: ${result.status === 'compliant' ? '✅' : '❌'} ${result.status}`);
+    console.info(
       `  📋 Requirements: ${result.requirements.size - failedRequirements}/${result.requirements.size} met`
     );
   }
@@ -608,16 +608,16 @@ class Fantasy42ComplianceChecker {
     };
 
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log('📊 Compliance report saved to compliance-report.json');
+    console.info('📊 Compliance report saved to compliance-report.json');
   }
 
   private async autoFixViolations(): Promise<void> {
-    console.log('🔧 Attempting to auto-fix compliance violations...');
+    console.info('🔧 Attempting to auto-fix compliance violations...');
 
     // This would implement automatic fixes for common compliance issues
     // For example: creating template files, updating configurations, etc.
 
-    console.log('✅ Auto-fix completed');
+    console.info('✅ Auto-fix completed');
   }
 }
 
@@ -666,7 +666,7 @@ interface ComplianceSummary {
 // ============================================================================
 
 async function runCommand(command: string, description: string): Promise<boolean> {
-  console.log(`🔧 ${description}...`);
+  console.info(`🔧 ${description}...`);
 
   try {
     const process = Bun.spawn(command.split(' '), {
@@ -712,11 +712,11 @@ async function main() {
 
     // Exit with error code if there are critical violations
     if (summary.criticalViolations > 0) {
-      console.log('\n❌ Compliance check failed - critical violations found');
+      console.info('\n❌ Compliance check failed - critical violations found');
       process.exit(1);
     }
 
-    console.log('\n✅ Compliance check passed');
+    console.info('\n✅ Compliance check passed');
   } catch (error) {
     console.error('❌ Compliance check failed:', error);
     process.exit(1);
@@ -740,20 +740,20 @@ if (import.meta.main) {
       const reportPath = join(process.cwd(), 'compliance-report.json');
       if (existsSync(reportPath)) {
         const report = JSON.parse(readFileSync(reportPath, 'utf-8'));
-        console.log(JSON.stringify(report, null, 2));
+        console.info(JSON.stringify(report, null, 2));
       } else {
-        console.log('❌ No compliance report found');
+        console.info('❌ No compliance report found');
       }
       break;
 
     case 'fix':
-      console.log('🔧 Running compliance auto-fix...');
+      console.info('🔧 Running compliance auto-fix...');
       const checker = new Fantasy42ComplianceChecker();
       checker.runComplianceCheck({ autoFix: true });
       break;
 
     default:
-      console.log(`
+      console.info(`
 ⚖️ Fantasy42 Compliance Checker
 
 Usage:

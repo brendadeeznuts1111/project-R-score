@@ -22,7 +22,7 @@ interface MockQueueItem {
 }
 
 export async function runBenchmarks(runner: BenchmarkRunner) {
-  console.log('\n🎯 Running Queue Matching Benchmarks...\n');
+  console.info('\n🎯 Running Queue Matching Benchmarks...\n');
 
   // Generate mock queue data
   const generateQueueItems = (count: number): MockQueueItem[] => {
@@ -262,7 +262,7 @@ export async function runBenchmarks(runner: BenchmarkRunner) {
     100000
   );
 
-  console.log('✅ Queue Matching Benchmarks Complete\n');
+  console.info('✅ Queue Matching Benchmarks Complete\n');
 }
 
 // Run standalone if executed directly

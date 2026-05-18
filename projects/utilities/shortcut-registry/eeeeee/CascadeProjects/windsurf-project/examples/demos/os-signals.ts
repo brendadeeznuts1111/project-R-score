@@ -3,7 +3,7 @@
 // os-signals.ts - Comprehensive OS Signal Handling
 // Enterprise-grade signal management for revolutionary AI system
 
-console.log("🚀 Revolutionary AI System - Comprehensive OS Signal Handling");
+console.info("🚀 Revolutionary AI System - Comprehensive OS Signal Handling");
 
 // System state tracking
 interface SystemState {
@@ -43,14 +43,14 @@ let systemState: SystemState = {
 // Signal logging utility
 function logSignal(signalName: string, description: string) {
   const timestamp = new Date().toISOString();
-  console.log(`\n📡 [${timestamp}] Signal Received: ${signalName}`);
-  console.log(`📝 Description: ${description}`);
+  console.info(`\n📡 [${timestamp}] Signal Received: ${signalName}`);
+  console.info(`📝 Description: ${description}`);
   
   systemState.signalCount[signalName as keyof typeof systemState.signalCount]++;
   systemState.signalCount.total++;
   systemState.lastSignal = signalName;
   
-  console.log(`📊 Signal Statistics: SIGINT=${systemState.signalCount.SIGINT}, SIGTERM=${systemState.signalCount.SIGTERM}, SIGUSR1=${systemState.signalCount.SIGUSR1}, SIGUSR2=${systemState.signalCount.SIGUSR2}, Total=${systemState.signalCount.total}`);
+  console.info(`📊 Signal Statistics: SIGINT=${systemState.signalCount.SIGINT}, SIGTERM=${systemState.signalCount.SIGTERM}, SIGUSR1=${systemState.signalCount.SIGUSR1}, SIGUSR2=${systemState.signalCount.SIGUSR2}, Total=${systemState.signalCount.total}`);
 }
 
 // SIGINT - Interrupt signal (CTRL+C)
@@ -58,19 +58,19 @@ process.on("SIGINT", () => {
   logSignal("SIGINT", "Interrupt signal (CTRL+C) - Graceful shutdown request");
   
   if (!systemState.shutdownInitiated) {
-    console.log("🛑 Initiating graceful shutdown...");
+    console.info("🛑 Initiating graceful shutdown...");
     systemState.shutdownInitiated = true;
     
     // Simulate graceful shutdown steps
     setTimeout(() => {
-      console.log("💾 Saving AI model state...");
-      console.log("🔒 Closing security connections...");
-      console.log("📊 Flushing monitoring data...");
-      console.log("✅ Graceful shutdown complete!");
+      console.info("💾 Saving AI model state...");
+      console.info("🔒 Closing security connections...");
+      console.info("📊 Flushing monitoring data...");
+      console.info("✅ Graceful shutdown complete!");
       process.exit(0);
     }, 2000);
   } else {
-    console.log("🚨 Force shutdown initiated!");
+    console.info("🚨 Force shutdown initiated!");
     process.exit(130); // Standard SIGINT exit code
   }
 });
@@ -79,12 +79,12 @@ process.on("SIGINT", () => {
 process.on("SIGTERM", () => {
   logSignal("SIGTERM", "Termination signal - External shutdown request");
   
-  console.log("⚠️ External termination request received");
-  console.log("🔄 Performing emergency shutdown...");
+  console.info("⚠️ External termination request received");
+  console.info("🔄 Performing emergency shutdown...");
   
   setTimeout(() => {
-    console.log("💾 Emergency data save completed");
-    console.log("👋 System terminated by SIGTERM");
+    console.info("💾 Emergency data save completed");
+    console.info("👋 System terminated by SIGTERM");
     process.exit(143); // Standard SIGTERM exit code
   }, 1000);
 });
@@ -122,8 +122,8 @@ process.on("SIGUSR1", () => {
     }
   };
   
-  console.log("🏥 System Health Report:");
-  console.log(JSON.stringify(health, null, 2));
+  console.info("🏥 System Health Report:");
+  console.info(JSON.stringify(health, null, 2));
 });
 
 // SIGUSR2 - Custom signal for system report
@@ -153,19 +153,19 @@ process.on("SIGUSR2", () => {
     signalHistory: systemState.signalCount
   };
   
-  console.log("📋 System Report:");
-  console.log(JSON.stringify(report, null, 2));
+  console.info("📋 System Report:");
+  console.info(JSON.stringify(report, null, 2));
 });
 
 // SIGHUP - Hangup signal (configuration reload)
 process.on("SIGHUP", () => {
   logSignal("SIGHUP", "Hangup signal - Configuration reload request");
   
-  console.log("🔄 Reloading configuration...");
-  console.log("📝 Loading new AI model parameters...");
-  console.log("🔒 Updating security settings...");
-  console.log("📊 Refreshing monitoring configuration...");
-  console.log("✅ Configuration reload complete!");
+  console.info("🔄 Reloading configuration...");
+  console.info("📝 Loading new AI model parameters...");
+  console.info("🔒 Updating security settings...");
+  console.info("📊 Refreshing monitoring configuration...");
+  console.info("✅ Configuration reload complete!");
   
   // Simulate configuration changes
   systemState.aiModelActive = true;
@@ -176,29 +176,29 @@ process.on("SIGHUP", () => {
 
 // beforeExit - Event loop empty (but not exiting yet)
 process.on("beforeExit", (code) => {
-  console.log(`\n🔄 beforeExit Event - Event loop empty`);
-  console.log(`📊 Exit code: ${code}`);
-  console.log(`📈 Final Statistics:`);
-  console.log(`   Total Signals Received: ${systemState.signalCount.total}`);
-  console.log(`   Last Signal: ${systemState.lastSignal}`);
-  console.log(`   System Uptime: ${Math.floor(process.uptime())} seconds`);
-  console.log(`   Memory Usage: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`);
+  console.info(`\n🔄 beforeExit Event - Event loop empty`);
+  console.info(`📊 Exit code: ${code}`);
+  console.info(`📈 Final Statistics:`);
+  console.info(`   Total Signals Received: ${systemState.signalCount.total}`);
+  console.info(`   Last Signal: ${systemState.lastSignal}`);
+  console.info(`   System Uptime: ${Math.floor(process.uptime())} seconds`);
+  console.info(`   Memory Usage: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`);
   
   // Perform final cleanup
   if (!systemState.shutdownInitiated) {
-    console.log("🧹 Performing emergency cleanup...");
-    console.log("💾 Final data save...");
-    console.log("🔒 Closing remaining connections...");
+    console.info("🧹 Performing emergency cleanup...");
+    console.info("💾 Final data save...");
+    console.info("🔒 Closing remaining connections...");
   }
 });
 
 // exit - Process is actually exiting
 process.on("exit", (code) => {
-  console.log(`\n👋 exit Event - Process terminating`);
-  console.log(`📊 Final exit code: ${code}`);
-  console.log(`💚 Revolutionary AI System shutdown complete`);
-  console.log(`📈 Total signals handled: ${systemState.signalCount.total}`);
-  console.log(`🚀 System served for ${Math.floor(process.uptime())} seconds`);
+  console.info(`\n👋 exit Event - Process terminating`);
+  console.info(`📊 Final exit code: ${code}`);
+  console.info(`💚 Revolutionary AI System shutdown complete`);
+  console.info(`📈 Total signals handled: ${systemState.signalCount.total}`);
+  console.info(`🚀 System served for ${Math.floor(process.uptime())} seconds`);
 });
 
 // uncaughtException - Unhandled exceptions
@@ -206,11 +206,11 @@ process.on("uncaughtException", (error) => {
   console.error("\n💥 uncaughtException Event:");
   console.error(`📊 Error: ${error.message}`);
   console.error(`📍 Stack: ${error.stack}`);
-  console.log("🚨 Attempting emergency shutdown...");
+  console.info("🚨 Attempting emergency shutdown...");
   
   // Emergency cleanup
   setTimeout(() => {
-    console.log("💾 Emergency data save completed");
+    console.info("💾 Emergency data save completed");
     process.exit(1);
   }, 500);
 });
@@ -220,26 +220,26 @@ process.on("unhandledRejection", (reason, promise) => {
   console.error("\n💥 unhandledRejection Event:");
   console.error(`📊 Reason: ${reason}`);
   console.error(`📍 Promise: ${promise}`);
-  console.log("🚨 Attempting emergency shutdown...");
+  console.info("🚨 Attempting emergency shutdown...");
   
   setTimeout(() => {
-    console.log("💾 Emergency data save completed");
+    console.info("💾 Emergency data save completed");
     process.exit(1);
   }, 500);
 });
 
 // Simulate system activity
 function simulateSystemActivity() {
-  console.log("\n🤖 Revolutionary AI System - Signal Handling Demo");
-  console.log("=" .repeat(60));
-  console.log("📡 Available Signals:");
-  console.log("   CTRL+C (SIGINT)     - Graceful shutdown");
-  console.log("   kill -TERM <pid>     - External termination");
-  console.log("   kill -USR1 <pid>     - Health check report");
-  console.log("   kill -USR2 <pid>     - System report");
-  console.log("   kill -HUP <pid>      - Configuration reload");
-  console.log("\n💡 Process ID:", process.pid);
-  console.log("🔗 System running - Send signals to test handling\n");
+  console.info("\n🤖 Revolutionary AI System - Signal Handling Demo");
+  console.info("=" .repeat(60));
+  console.info("📡 Available Signals:");
+  console.info("   CTRL+C (SIGINT)     - Graceful shutdown");
+  console.info("   kill -TERM <pid>     - External termination");
+  console.info("   kill -USR1 <pid>     - Health check report");
+  console.info("   kill -USR2 <pid>     - System report");
+  console.info("   kill -HUP <pid>      - Configuration reload");
+  console.info("\n💡 Process ID:", process.pid);
+  console.info("🔗 System running - Send signals to test handling\n");
 
   let activityCount = 0;
   
@@ -263,11 +263,11 @@ function simulateSystemActivity() {
     ];
     
     const activity = activities[activityCount % activities.length];
-    console.log(`   ${activity}`);
+    console.info(`   ${activity}`);
     
     // Periodic status updates
     if (activityCount % 5 === 0) {
-      console.log(`   📊 Status: AI=${systemState.aiModelActive ? 'Active' : 'Inactive'}, Security=${systemState.securityMonitoring ? 'Armed' : 'Disarmed'}, Signals=${systemState.signalCount.total}`);
+      console.info(`   📊 Status: AI=${systemState.aiModelActive ? 'Active' : 'Inactive'}, Security=${systemState.securityMonitoring ? 'Armed' : 'Disarmed'}, Signals=${systemState.signalCount.total}`);
     }
     
   }, 3000);
@@ -275,11 +275,11 @@ function simulateSystemActivity() {
   // Auto-shutdown after 60 seconds for demo
   setTimeout(() => {
     if (!systemState.shutdownInitiated) {
-      console.log("\n⏰ Demo timeout - initiating graceful shutdown...");
+      console.info("\n⏰ Demo timeout - initiating graceful shutdown...");
       systemState.shutdownInitiated = true;
-      console.log("💾 Saving final system state...");
-      console.log("🔒 Securing all connections...");
-      console.log("✅ Demo completed successfully!");
+      console.info("💾 Saving final system state...");
+      console.info("🔒 Securing all connections...");
+      console.info("✅ Demo completed successfully!");
       process.exit(0);
     }
   }, 60000);
@@ -288,5 +288,5 @@ function simulateSystemActivity() {
 // Start system simulation
 simulateSystemActivity();
 
-console.log("🔗 Revolutionary AI System - Signal Handling Active");
-console.log("🛡️ Enterprise-grade OS signal management initialized");
+console.info("🔗 Revolutionary AI System - Signal Handling Active");
+console.info("🛡️ Enterprise-grade OS signal management initialized");

@@ -2,8 +2,8 @@
 // demo-master-perf.ts - Demonstration of MASTER_PERF Matrix Integration
 import { BunR2AppleManager, MasterPerfTracker, type PerfMetric } from './src/storage/r2-apple-manager.ts';
 
-console.log('🚀 MASTER_PERF Matrix Integration Demo');
-console.log('=====================================\n');
+console.info('🚀 MASTER_PERF Matrix Integration Demo');
+console.info('=====================================\n');
 
 async function demonstrateMasterPerf() {
   // Initialize R2 Manager with performance tracking
@@ -13,11 +13,11 @@ async function demonstrateMasterPerf() {
     'demo-scope' // scope
   );
 
-  console.log('📊 Initial MASTER_PERF Matrix:');
+  console.info('📊 Initial MASTER_PERF Matrix:');
   r2Manager.printMasterPerfMatrix();
 
   // Simulate some operations to generate metrics
-  console.log('\n🔄 Performing operations to generate metrics...');
+  console.info('\n🔄 Performing operations to generate metrics...');
   
   try {
     // Simulate upload performance
@@ -70,40 +70,40 @@ async function demonstrateMasterPerf() {
       properties: { traversal: 'blocked', scope: 'enforced', validation: 'strict' }
     });
 
-    console.log('✅ Operations completed successfully!');
+    console.info('✅ Operations completed successfully!');
     
   } catch (error) {
-    console.log('⚠️ Demo operations failed (expected in demo environment):', error instanceof Error ? error.message : String(error));
+    console.info('⚠️ Demo operations failed (expected in demo environment):', error instanceof Error ? error.message : String(error));
   }
 
   // Display final MASTER_PERF matrix
-  console.log('\n📊 Final MASTER_PERF Matrix:');
+  console.info('\n📊 Final MASTER_PERF Matrix:');
   r2Manager.printMasterPerfMatrix();
 
   // Show operation metrics
-  console.log('\n📈 Operation Performance Summary:');
+  console.info('\n📈 Operation Performance Summary:');
   const operationMetrics = r2Manager.getOperationMetrics();
   Object.entries(operationMetrics).forEach(([operation, duration]) => {
-    console.log(`  • ${operation}: ${duration.toFixed(2)}ms`);
+    console.info(`  • ${operation}: ${duration.toFixed(2)}ms`);
   });
 
   // Export metrics for dashboard integration
-  console.log('\n🔗 Dashboard Integration Ready:');
+  console.info('\n🔗 Dashboard Integration Ready:');
   const metrics = r2Manager.getMasterPerfMetrics();
-  console.log(`  • Total metrics: ${metrics.length}`);
-  console.log(`  • Categories: ${[...new Set(metrics.map(m => m.category))].join(', ')}`);
-  console.log(`  • Export format: JSON/Console/String`);
+  console.info(`  • Total metrics: ${metrics.length}`);
+  console.info(`  • Categories: ${[...new Set(metrics.map(m => m.category))].join(', ')}`);
+  console.info(`  • Export format: JSON/Console/String`);
 
   // Show string format for WebSocket streaming
-  console.log('\n📡 WebSocket Stream Format:');
-  console.log(r2Manager.getMasterPerfMatrixString());
+  console.info('\n📡 WebSocket Stream Format:');
+  console.info(r2Manager.getMasterPerfMatrixString());
 
-  console.log('\n✅ MASTER_PERF Integration Demo Complete!');
-  console.log('\nNext steps:');
-  console.log('1. Integrate with infrastructure dashboard server');
-  console.log('2. Stream metrics via WebSocket (1-second intervals)');
-  console.log('3. Display in real-time dashboard UI');
-  console.log('4. Export to reports/setup-results.json for CI/CD');
+  console.info('\n✅ MASTER_PERF Integration Demo Complete!');
+  console.info('\nNext steps:');
+  console.info('1. Integrate with infrastructure dashboard server');
+  console.info('2. Stream metrics via WebSocket (1-second intervals)');
+  console.info('3. Display in real-time dashboard UI');
+  console.info('4. Export to reports/setup-results.json for CI/CD');
 }
 
 // Run demonstration

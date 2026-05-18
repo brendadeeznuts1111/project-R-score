@@ -3,8 +3,8 @@
 // Focused demo showcasing Bun.inspect.table() with HMR events
 import { CustomProxyServer, exportHMRData } from "./hmr-event-tracker";
 
-console.log("🎯 Bun.inspect.table() HMR Demo");
-console.log("===============================\n");
+console.info("🎯 Bun.inspect.table() HMR Demo");
+console.info("===============================\n");
 
 // Create servers and simulate HMR events
 const servers = [
@@ -34,7 +34,7 @@ if (devServer) {
 }
 
 // Display server overview table with enhanced formatting
-console.log("📊 Server Overview with HMR Status:");
+console.info("📊 Server Overview with HMR Status:");
 const serverTable = CustomProxyServer.formatServerTable(servers, {
   columns: [
     "name",
@@ -50,9 +50,9 @@ const serverTable = CustomProxyServer.formatServerTable(servers, {
 
 // Note: Bun's table API is simpler than shown in the example
 // We'll use the actual Bun API with colors
-console.log(Bun.inspect.table(serverTable, { colors: true }));
+console.info(Bun.inspect.table(serverTable, { colors: true }));
 
-console.log("\n📈 Detailed HMR Events for WebSocket Proxy:");
+console.info("\n📈 Detailed HMR Events for WebSocket Proxy:");
 const hmrEventsTable = devServer
   ? CustomProxyServer.formatHMREventsTable(devServer, {
       includeDetails: true,
@@ -60,11 +60,11 @@ const hmrEventsTable = devServer
   : [];
 
 // Enhanced event table with status-based coloring (simulated)
-console.log(Bun.inspect.table(hmrEventsTable, { colors: true }));
+console.info(Bun.inspect.table(hmrEventsTable, { colors: true }));
 
-console.log("\n📊 HMR Statistics (Nested Object Display):");
+console.info("\n📊 HMR Statistics (Nested Object Display):");
 if (devServer) {
-  console.log(
+  console.info(
     Bun.inspect(devServer.hmrStats, {
       colors: true,
       depth: 3,
@@ -74,7 +74,7 @@ if (devServer) {
   );
 }
 
-console.log("\n📈 HMR Event Statistics Table:");
+console.info("\n📈 HMR Event Statistics Table:");
 // Create stats array manually since Object.entries might not be available
 const statsArray: { Metric: string; Value: any }[] = [];
 if (devServer) {
@@ -85,21 +85,21 @@ if (devServer) {
     });
   }
 }
-console.log(Bun.inspect.table(statsArray, { colors: true }));
+console.info(Bun.inspect.table(statsArray, { colors: true }));
 
 // Additional Bun-specific demonstrations
-console.log("\n🎨 Enhanced Table Formatting Examples:");
+console.info("\n🎨 Enhanced Table Formatting Examples:");
 
 // 1. Server health overview
-console.log("\n🏥 Server Health Overview:");
+console.info("\n🏥 Server Health Overview:");
 const healthTable = CustomProxyServer.formatServerTable(servers, {
   columns: ["name", "Health", "Status", "HMR Errors", "Load %"],
   includeComputed: true,
 });
-console.log(Bun.inspect.table(healthTable, { colors: true }));
+console.info(Bun.inspect.table(healthTable, { colors: true }));
 
 // 2. Recent events with enhanced formatting
-console.log("\n⏰ Recent Events (Enhanced View):");
+console.info("\n⏰ Recent Events (Enhanced View):");
 const recentEventsTable = devServer
   ? CustomProxyServer.formatHMREventsTable(devServer, {
       limit: 3,
@@ -107,28 +107,28 @@ const recentEventsTable = devServer
       includeDetails: true,
     })
   : [];
-console.log(Bun.inspect.table(recentEventsTable, { colors: true }));
+console.info(Bun.inspect.table(recentEventsTable, { colors: true }));
 
 // 3. Configuration comparison
-console.log("\n⚙️ Server Configuration Comparison:");
+console.info("\n⚙️ Server Configuration Comparison:");
 const configTable = CustomProxyServer.formatServerTable(servers, {
   columns: ["name", "Protocol", "Max Conn", "HMR Enabled", "Timeout"],
   includeComputed: false,
 });
-console.log(Bun.inspect.table(configTable, { colors: true }));
+console.info(Bun.inspect.table(configTable, { colors: true }));
 
 // 4. Error analysis (if errors exist)
-console.log("\n🚨 Error Analysis:");
+console.info("\n🚨 Error Analysis:");
 const errorEventsTable = devServer
   ? CustomProxyServer.formatHMREventsTable(devServer, {
       filterBy: ["error"],
       includeDetails: true,
     })
   : [];
-console.log(Bun.inspect.table(errorEventsTable, { colors: true }));
+console.info(Bun.inspect.table(errorEventsTable, { colors: true }));
 
 // 5. Performance metrics
-console.log("\n📊 Performance Metrics:");
+console.info("\n📊 Performance Metrics:");
 const performanceTable = servers.map((server) => ({
   Server: server.name,
   "Total Events": server.hmrEvents.length,
@@ -147,25 +147,25 @@ const performanceTable = servers.map((server) => ({
       : "N/A",
   Connections: server.connections.toLocaleString(),
 }));
-console.log(Bun.inspect.table(performanceTable, { colors: true }));
+console.info(Bun.inspect.table(performanceTable, { colors: true }));
 
 // Export demonstration
-console.log("\n📤 Export Options:");
-console.log("\n📄 JSON Export:");
+console.info("\n📤 Export Options:");
+console.info("\n📄 JSON Export:");
 if (devServer) {
-  console.log(exportHMRData(devServer, "json").slice(0, 300) + "...");
+  console.info(exportHMRData(devServer, "json").slice(0, 300) + "...");
 }
 
-console.log("\n📝 Markdown Export:");
+console.info("\n📝 Markdown Export:");
 if (devServer) {
-  console.log(exportHMRData(devServer, "markdown"));
+  console.info(exportHMRData(devServer, "markdown"));
 }
 
 // Bun-specific inspection features
-console.log("\n🔍 Bun Inspection Features:");
-console.log("\n1. Deep Object Inspection:");
+console.info("\n🔍 Bun Inspection Features:");
+console.info("\n1. Deep Object Inspection:");
 if (devServer) {
-  console.log(
+  console.info(
     Bun.inspect(devServer, {
       colors: true,
       depth: 2,
@@ -174,9 +174,9 @@ if (devServer) {
   );
 }
 
-console.log("\n2. HMR Events Array Inspection:");
+console.info("\n2. HMR Events Array Inspection:");
 if (devServer) {
-  console.log(
+  console.info(
     Bun.inspect(devServer.hmrEvents.slice(0, 2), {
       colors: true,
       depth: 3,
@@ -184,9 +184,9 @@ if (devServer) {
   );
 }
 
-console.log("\n3. Configuration Object Inspection:");
+console.info("\n3. Configuration Object Inspection:");
 if (devServer) {
-  console.log(
+  console.info(
     Bun.inspect(devServer.config, {
       colors: true,
       sorted: true,
@@ -194,5 +194,5 @@ if (devServer) {
   );
 }
 
-console.log("\n✨ Bun.inspect.table() Demo Complete!");
-console.log("=====================================");
+console.info("\n✨ Bun.inspect.table() Demo Complete!");
+console.info("=====================================");

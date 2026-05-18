@@ -9,7 +9,7 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const TYPED_ARRAY_EXAMPLES = {
   base: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`,
   fetchPattern: `const response = await fetch("${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}");
-console.log(response.status); // => 200
+console.info(response.status); // => 200
 const text = await response.text();`,
   relatedUrls: {
     binaryData: `${BUN_DOCS.BASE}${BUN_DOCS.RUNTIME.BINARY_DATA}`,
@@ -19,9 +19,10 @@ const text = await response.text();`,
 };
 
 // Create server with endpoints matching Bun's fetch pattern
-const SERVER_PORT = parseInt(process.env.SERVER_PORT || '3000', 10);
-const SERVER_HOST = process.env.SERVER_HOST || 'localhost';
-const CONTENT_TYPE_SERVER_PORT = parseInt(process.env.CONTENT_TYPE_SERVER_PORT || '3001', 10);
+import { PORTS, SERVER_HOST } from '../config/ports.ts';
+
+const SERVER_PORT = PORTS.SERVER;
+const CONTENT_TYPE_SERVER_PORT = PORTS.CONTENT_TYPE_SERVER;
 const CONTENT_TYPE_SERVER_HOST = process.env.CONTENT_TYPE_SERVER_HOST || SERVER_HOST;
 const server = Bun.serve({
   port: SERVER_PORT,
@@ -589,7 +590,7 @@ function handleRoot(): Response {
         <pre><code>// Example from: ${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}
 const response = await fetch("${TYPED_ARRAY_EXAMPLES.base}");
 
-console.log(response.status); // => 200
+console.info(response.status); // => 200
 const text = await response.text(); // or .json(), .arrayBuffer(), etc.</code></pre>
         
         <button class="test-button" onclick="testFetch()">Test This Pattern</button>
@@ -886,7 +887,7 @@ function handleFetchExample(): Response {
 
 // 1. Basic fetch pattern
 const response = await fetch("${TYPED_ARRAY_EXAMPLES.base}");
-console.log(response.status); // => 200
+console.info(response.status); // => 200
 const text = await response.text();
 
 // 2. Fetch with options
@@ -905,7 +906,7 @@ const uint8Array = new Uint8Array(arrayBuffer);
 // 4. Fetch all typed array URLs from our API
 const urlsResponse = await fetch("/api/typedarray/urls");
 const urls = await urlsResponse.json();
-console.log(urls.base); // => "${TYPED_ARRAY_EXAMPLES.base}"
+console.info(urls.base); // => "${TYPED_ARRAY_EXAMPLES.base}"
 
 // 5. Error handling
 try {
@@ -1299,7 +1300,7 @@ function generateFallbackDocs(targetUrl: string, section: string): string {
     <h2>Fetch Pattern Example</h2>
     <pre><code>// Using Bun's fetch pattern
 const response = await fetch("${TYPED_ARRAY_EXAMPLES.base}");
-console.log(response.status);
+console.info(response.status);
 const text = await response.text();</code></pre>
     
     <div class="warning">
@@ -1607,6 +1608,6 @@ async function handleExecuteCommand(request: Request): Promise<Response> {
   }
 }
 
-console.log(`🚀 Bun TypedArray Documentation Server running on http://${SERVER_HOST}:${SERVER_PORT}`);
-console.log(`📚 Base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`);
-console.log(`📰 RSS Feed: http://${SERVER_HOST}:${SERVER_PORT}/feed/rss`);
+console.info(`🚀 Bun TypedArray Documentation Server running on http://${SERVER_HOST}:${SERVER_PORT}`);
+console.info(`📚 Base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`);
+console.info(`📰 RSS Feed: http://${SERVER_HOST}:${SERVER_PORT}/feed/rss`);

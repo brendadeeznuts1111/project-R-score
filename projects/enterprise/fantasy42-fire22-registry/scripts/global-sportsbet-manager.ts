@@ -78,7 +78,7 @@ class SportsBetGlobalManager {
    * Setup unified global and BunX environment
    */
   async setupUnifiedEnvironment(): Promise<void> {
-    console.log('🚀 Setting up unified SportsBet/BunX environment...\n');
+    console.info('🚀 Setting up unified SportsBet/BunX environment...\n');
 
     // Create all required directories
     const dirs = [
@@ -93,7 +93,7 @@ class SportsBetGlobalManager {
     for (const dir of dirs) {
       if (!existsSync(dir)) {
         mkdirSync(dir, { recursive: true });
-        console.log(`✅ Created: ${dir.replace(this.homeDir, '~')}`);
+        console.info(`✅ Created: ${dir.replace(this.homeDir, '~')}`);
       }
     }
 
@@ -103,14 +103,14 @@ class SportsBetGlobalManager {
     // Setup registry authentication
     await this.setupRegistryAuth();
 
-    console.log('\n✅ Unified environment ready!');
+    console.info('\n✅ Unified environment ready!');
   }
 
   /**
    * Setup shared cache between global and BunX
    */
   private async setupSharedCache(): Promise<void> {
-    console.log('\n🔗 Setting up shared cache...');
+    console.info('\n🔗 Setting up shared cache...');
 
     // Create cache metadata
     const cacheConfig = {
@@ -129,14 +129,14 @@ class SportsBetGlobalManager {
       JSON.stringify(cacheConfig, null, 2)
     );
 
-    console.log('✅ Cache configuration created');
+    console.info('✅ Cache configuration created');
   }
 
   /**
    * Setup registry authentication
    */
   private async setupRegistryAuth(): Promise<void> {
-    console.log('\n🔐 Configuring registry authentication...');
+    console.info('\n🔐 Configuring registry authentication...');
 
     // Create .npmrc for compatibility
     const npmrcContent = `
@@ -163,14 +163,14 @@ audit-level=high
 `;
 
     await Bun.write(join(this.homeDir, '.npmrc'), npmrcContent.trim());
-    console.log('✅ Registry authentication configured');
+    console.info('✅ Registry authentication configured');
   }
 
   /**
    * Install SportsBet global packages with BunX compatibility
    */
   async installSportsBetPackages(): Promise<void> {
-    console.log('\n📦 Installing SportsBet packages (global + BunX)...\n');
+    console.info('\n📦 Installing SportsBet packages (global + BunX)...\n');
 
     const packages = [
       // Core SportsBet packages
@@ -188,7 +188,7 @@ audit-level=high
     ];
 
     for (const pkg of packages) {
-      console.log(`📦 ${pkg.name}:`);
+      console.info(`📦 ${pkg.name}:`);
 
       // Install globally if specified
       if (pkg.global) {
@@ -200,7 +200,7 @@ audit-level=high
             .quiet();
 
           if (exitCode === 0) {
-            console.log(`  ✅ Global installation successful`);
+            console.info(`  ✅ Global installation successful`);
           }
         } catch (error: any) {
           console.warn(`  ⚠️ Global installation failed: ${error.message}`);
@@ -212,7 +212,7 @@ audit-level=high
         try {
           const { exitCode } = await $`bunx --package ${pkg.name} --help`.quiet();
           if (exitCode === 0 || exitCode === 1) {
-            console.log(`  ✅ BunX pre-cached`);
+            console.info(`  ✅ BunX pre-cached`);
           }
         } catch (error: any) {
           console.warn(`  ⚠️ BunX pre-cache failed: ${error.message}`);
@@ -225,7 +225,7 @@ audit-level=high
    * Test BunX integration with private registry
    */
   async testBunXIntegration(): Promise<void> {
-    console.log('\n🧪 Testing BunX integration...\n');
+    console.info('\n🧪 Testing BunX integration...\n');
 
     const tests = [
       // Test scope resolution
@@ -249,16 +249,16 @@ audit-level=high
     ];
 
     for (const test of tests) {
-      console.log(`🔍 ${test.description}:`);
+      console.info(`🔍 ${test.description}:`);
       try {
         const { stdout, exitCode } = await $`${test.command}`.quiet();
         if (exitCode === 0 || stdout.includes(test.expected)) {
-          console.log(`  ✅ Success`);
+          console.info(`  ✅ Success`);
         } else {
-          console.log(`  ⚠️ Unexpected output`);
+          console.info(`  ⚠️ Unexpected output`);
         }
       } catch (error: any) {
-        console.log(`  ❌ Failed: ${error.message}`);
+        console.info(`  ❌ Failed: ${error.message}`);
       }
     }
   }
@@ -267,23 +267,23 @@ audit-level=high
    * Sync global packages with BunX cache
    */
   async syncGlobalWithBunX(): Promise<void> {
-    console.log('\n🔄 Syncing global packages with BunX cache...\n');
+    console.info('\n🔄 Syncing global packages with BunX cache...\n');
 
     try {
       // Get list of global packages
       const { stdout } = await $`bun pm ls --global --json`.quiet();
       const globalPackages = JSON.parse(stdout || '[]');
 
-      console.log(`Found ${globalPackages.length} global packages`);
+      console.info(`Found ${globalPackages.length} global packages`);
 
       // Pre-cache each for BunX
       for (const pkg of globalPackages) {
-        console.log(`Syncing ${pkg.name}...`);
+        console.info(`Syncing ${pkg.name}...`);
         try {
           await $`bunx --package ${pkg.name}@${pkg.version} --help`.quiet();
-          console.log(`  ✅ Synced to BunX cache`);
+          console.info(`  ✅ Synced to BunX cache`);
         } catch {
-          console.log(`  ⏭️ Skipped (not executable)`);
+          console.info(`  ⏭️ Skipped (not executable)`);
         }
       }
     } catch (error: any) {
@@ -295,47 +295,47 @@ audit-level=high
    * Audit unified environment
    */
   async auditUnifiedEnvironment(): Promise<void> {
-    console.log('\n🔍 Auditing unified environment...\n');
+    console.info('\n🔍 Auditing unified environment...\n');
 
     // Audit global packages
-    console.log('📦 Global packages audit:');
+    console.info('📦 Global packages audit:');
     try {
       const { exitCode, stdout } = await $`bun audit --global --audit-level=high --json`.quiet();
       const data = JSON.parse(stdout || '{}');
       const vulns = data.vulnerabilities || [];
 
       if (vulns.length === 0) {
-        console.log('  ✅ No vulnerabilities found');
+        console.info('  ✅ No vulnerabilities found');
       } else {
         const critical = vulns.filter((v: any) => v.severity === 'critical').length;
         const high = vulns.filter((v: any) => v.severity === 'high').length;
-        console.log(`  ⚠️ Found ${vulns.length} vulnerabilities`);
-        if (critical > 0) console.log(`    🔴 Critical: ${critical}`);
-        if (high > 0) console.log(`    🟠 High: ${high}`);
+        console.info(`  ⚠️ Found ${vulns.length} vulnerabilities`);
+        if (critical > 0) console.info(`    🔴 Critical: ${critical}`);
+        if (high > 0) console.info(`    🟠 High: ${high}`);
       }
     } catch (error: any) {
       console.error(`  ❌ Audit failed: ${error.message}`);
     }
 
     // Check cache status
-    console.log('\n💾 Cache status:');
+    console.info('\n💾 Cache status:');
     try {
       const globalSize = await $`du -sh ${this.globalCacheDir}`.quiet();
       const bunxSize = await $`du -sh ${this.bunxCacheDir}`.quiet();
-      console.log(`  Global cache: ${globalSize.stdout.trim()}`);
-      console.log(`  BunX cache: ${bunxSize.stdout.trim()}`);
+      console.info(`  Global cache: ${globalSize.stdout.trim()}`);
+      console.info(`  BunX cache: ${bunxSize.stdout.trim()}`);
     } catch {
-      console.log('  Cache sizes unavailable');
+      console.info('  Cache sizes unavailable');
     }
 
     // Verify registry connectivity
-    console.log('\n🌐 Registry connectivity:');
+    console.info('\n🌐 Registry connectivity:');
     for (const [name, config] of this.registries) {
       try {
         const { exitCode } = await $`curl -s -o /dev/null -w "%{http_code}" ${config.url}`.quiet();
-        console.log(`  ${name}: ✅ Connected`);
+        console.info(`  ${name}: ✅ Connected`);
       } catch {
-        console.log(`  ${name}: ❌ Unreachable`);
+        console.info(`  ${name}: ❌ Unreachable`);
       }
     }
   }
@@ -344,37 +344,37 @@ audit-level=high
    * Display usage examples
    */
   displayUsageExamples(): void {
-    console.log('\n📚 Usage Examples:');
-    console.log('='.repeat(60));
+    console.info('\n📚 Usage Examples:');
+    console.info('='.repeat(60));
 
-    console.log('\n1️⃣ Global package installation:');
-    console.log('  bun add --global @sportsbet-registry/cli');
+    console.info('\n1️⃣ Global package installation:');
+    console.info('  bun add --global @sportsbet-registry/cli');
 
-    console.log('\n2️⃣ BunX execution (automatic scope resolution):');
-    console.log('  bunx security-scanner  # Resolves to @fire22/security-scanner');
-    console.log('  bunx odds-calculator   # Tries @fire22, then @sportsbet-registry');
+    console.info('\n2️⃣ BunX execution (automatic scope resolution):');
+    console.info('  bunx security-scanner  # Resolves to @fire22/security-scanner');
+    console.info('  bunx odds-calculator   # Tries @fire22, then @sportsbet-registry');
 
-    console.log('\n3️⃣ Explicit SportsBet package:');
-    console.log('  bunx @sportsbet-registry/betting-engine');
+    console.info('\n3️⃣ Explicit SportsBet package:');
+    console.info('  bunx @sportsbet-registry/betting-engine');
 
-    console.log('\n4️⃣ Development registry:');
-    console.log('  bunx --registry=https://dev.registry.sportsbet.com/ tool');
+    console.info('\n4️⃣ Development registry:');
+    console.info('  bunx --registry=https://dev.registry.sportsbet.com/ tool');
 
-    console.log('\n5️⃣ Shared cache benefits:');
-    console.log('  - Global install caches for BunX');
-    console.log('  - BunX execution caches for global');
-    console.log('  - Single cache invalidation');
+    console.info('\n5️⃣ Shared cache benefits:');
+    console.info('  - Global install caches for BunX');
+    console.info('  - BunX execution caches for global');
+    console.info('  - Single cache invalidation');
 
-    console.log('\n' + '='.repeat(60));
+    console.info('\n' + '='.repeat(60));
   }
 
   /**
    * Run complete setup
    */
   async run(): Promise<void> {
-    console.log('='.repeat(60));
-    console.log('   SportsBet Global/BunX Unified Manager v5.1.0');
-    console.log('='.repeat(60));
+    console.info('='.repeat(60));
+    console.info('   SportsBet Global/BunX Unified Manager v5.1.0');
+    console.info('='.repeat(60));
 
     await this.setupUnifiedEnvironment();
     await this.installSportsBetPackages();
@@ -383,9 +383,9 @@ audit-level=high
     await this.auditUnifiedEnvironment();
     this.displayUsageExamples();
 
-    console.log('\n' + '='.repeat(60));
-    console.log('✅ Unified SportsBet/BunX setup complete!');
-    console.log('='.repeat(60));
+    console.info('\n' + '='.repeat(60));
+    console.info('✅ Unified SportsBet/BunX setup complete!');
+    console.info('='.repeat(60));
   }
 }
 

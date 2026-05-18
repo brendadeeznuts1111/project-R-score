@@ -511,59 +511,59 @@ class ConsoleDepthDemo {
   }
 
   demonstrateConsoleDepth(): void {
-    console.log('🎯 Console Depth Demonstration');
-    console.log('=================================');
-    console.log('');
-    console.log('This demo shows how --console-depth affects nested object display:');
-    console.log('');
+    console.info('🎯 Console Depth Demonstration');
+    console.info('=================================');
+    console.info('');
+    console.info('This demo shows how --console-depth affects nested object display:');
+    console.info('');
 
     const nestedData = this.createNestedWikiData();
 
-    console.log('📊 Nested Wiki Template Data (full object):');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log(nestedData);
-    console.log('');
+    console.info('📊 Nested Wiki Template Data (full object):');
+    console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.info(nestedData);
+    console.info('');
 
-    console.log('💡 Try running with different console depths:');
-    console.log('   bun --console-depth 1 run examples/console-depth-demo.tsx');
-    console.log('   bun --console-depth 3 run examples/console-depth-demo.tsx');
-    console.log('   bun --console-depth 5 run examples/console-depth-demo.tsx');
-    console.log('   bun --console-depth 10 run examples/console-depth-demo.tsx');
-    console.log('');
+    console.info('💡 Try running with different console depths:');
+    console.info('   bun --console-depth 1 run examples/console-depth-demo.tsx');
+    console.info('   bun --console-depth 3 run examples/console-depth-demo.tsx');
+    console.info('   bun --console-depth 5 run examples/console-depth-demo.tsx');
+    console.info('   bun --console-depth 10 run examples/console-depth-demo.tsx');
+    console.info('');
 
     // Demonstrate specific deep objects
-    console.log('🔍 Deep dive into specific nested structures:');
-    console.log('');
+    console.info('🔍 Deep dive into specific nested structures:');
+    console.info('');
 
-    console.log('📋 Template Configuration (deeply nested):');
-    console.log(nestedData.templates.metadata[0].config);
-    console.log('');
+    console.info('📋 Template Configuration (deeply nested):');
+    console.info(nestedData.templates.metadata[0].config);
+    console.info('');
 
-    console.log('🔐 Security Configuration (very deep):');
-    console.log(nestedData.templates.metadata[0].features.security);
-    console.log('');
+    console.info('🔐 Security Configuration (very deep):');
+    console.info(nestedData.templates.metadata[0].features.security);
+    console.info('');
 
-    console.log('📈 Performance Metrics (nested objects):');
-    console.log(nestedData.templates.metadata[0].features.performance.metrics);
-    console.log('');
+    console.info('📈 Performance Metrics (nested objects):');
+    console.info(nestedData.templates.metadata[0].features.performance.metrics);
+    console.info('');
 
-    console.log('🔌 Integration APIs (complex nested structure):');
-    console.log(nestedData.templates.metadata[0].features.integration.apis);
-    console.log('');
+    console.info('🔌 Integration APIs (complex nested structure):');
+    console.info(nestedData.templates.metadata[0].features.integration.apis);
+    console.info('');
 
-    console.log('📊 Statistics by Format (nested with arrays):');
-    console.log(nestedData.templates.statistics.formats);
-    console.log('');
+    console.info('📊 Statistics by Format (nested with arrays):');
+    console.info(nestedData.templates.statistics.formats);
+    console.info('');
 
-    console.log('⚙️ Processing Pipeline (complex configuration):');
-    console.log(nestedData.templates.processing.pipeline);
+    console.info('⚙️ Processing Pipeline (complex configuration):');
+    console.info(nestedData.templates.processing.pipeline);
   }
 
   demonstrateDepthComparison(): void {
-    console.log('');
-    console.log('🔬 Depth Comparison Examples');
-    console.log('===========================');
-    console.log('');
+    console.info('');
+    console.info('🔬 Depth Comparison Examples');
+    console.info('===========================');
+    console.info('');
 
     const simpleObject = {
       level1: {
@@ -584,9 +584,9 @@ class ConsoleDepthDemo {
       }
     };
 
-    console.log('📝 Simple nested object:');
-    console.log(simpleObject);
-    console.log('');
+    console.info('📝 Simple nested object:');
+    console.info(simpleObject);
+    console.info('');
 
     const complexArray = [
       {
@@ -631,11 +631,11 @@ class ConsoleDepthDemo {
       }
     ];
 
-    console.log('📋 Complex array with nested objects:');
-    console.log(complexArray);
-    console.log('');
+    console.info('📋 Complex array with nested objects:');
+    console.info(complexArray);
+    console.info('');
 
-    console.log('🎯 Experiment with different depths to see the difference!');
+    console.info('🎯 Experiment with different depths to see the difference!');
   }
 }
 
@@ -653,25 +653,25 @@ if (import.meta.main) {
     default:
       demo.demonstrateConsoleDepth();
       if (command === 'help') {
-        console.log('');
-        console.log('📖 Usage Examples:');
-        console.log('  # Default depth (2)');
-        console.log('  bun run examples/console-depth-demo.tsx');
-        console.log('');
-        console.log('  # Depth 1 - minimal nesting');
-        console.log('  bun --console-depth 1 run examples/console-depth-demo.tsx');
-        console.log('');
-        console.log('  # Depth 3 - moderate nesting');
-        console.log('  bun --console-depth 3 run examples/console-depth-demo.tsx');
-        console.log('');
-        console.log('  # Depth 5 - deep nesting');
-        console.log('  bun --console-depth 5 run examples/console-depth-demo.tsx');
-        console.log('');
-        console.log('  # Depth 10 - very deep nesting');
-        console.log('  bun --console-depth 10 run examples/console-depth-demo.tsx');
-        console.log('');
-        console.log('  # Show comparison examples');
-        console.log('  bun run examples/console-depth-demo.tsx comparison');
+        console.info('');
+        console.info('📖 Usage Examples:');
+        console.info('  # Default depth (2)');
+        console.info('  bun run examples/console-depth-demo.tsx');
+        console.info('');
+        console.info('  # Depth 1 - minimal nesting');
+        console.info('  bun --console-depth 1 run examples/console-depth-demo.tsx');
+        console.info('');
+        console.info('  # Depth 3 - moderate nesting');
+        console.info('  bun --console-depth 3 run examples/console-depth-demo.tsx');
+        console.info('');
+        console.info('  # Depth 5 - deep nesting');
+        console.info('  bun --console-depth 5 run examples/console-depth-demo.tsx');
+        console.info('');
+        console.info('  # Depth 10 - very deep nesting');
+        console.info('  bun --console-depth 10 run examples/console-depth-demo.tsx');
+        console.info('');
+        console.info('  # Show comparison examples');
+        console.info('  bun run examples/console-depth-demo.tsx comparison');
       }
       break;
   }

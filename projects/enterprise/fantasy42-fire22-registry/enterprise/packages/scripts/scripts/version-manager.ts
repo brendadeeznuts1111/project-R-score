@@ -102,14 +102,14 @@ class Fire22VersionManager {
         throw new Error(`Version update failed: expected ${newVersion}, got ${cleanVersion}`);
       }
 
-      console.log(`✅ Updated package.json version to: ${newVersion} (using Bun native commands)`);
+      console.info(`✅ Updated package.json version to: ${newVersion} (using Bun native commands)`);
     } catch (error) {
       // Fallback to manual file update if Bun commands fail
-      console.log(`⚠️  Falling back to manual package.json update...`);
+      console.info(`⚠️  Falling back to manual package.json update...`);
       const packageJson = JSON.parse(readFileSync(this.packagePath, 'utf-8'));
       packageJson.version = newVersion;
       writeFileSync(this.packagePath, JSON.stringify(packageJson, null, 2));
-      console.log(`✅ Updated package.json version to: ${newVersion} (manual update)`);
+      console.info(`✅ Updated package.json version to: ${newVersion} (manual update)`);
     }
   }
 
@@ -129,7 +129,7 @@ class Fire22VersionManager {
           `ARCHITECTURE VERSION: FF-Domain-Architecture-${newVersion}`
         );
         writeFileSync(filePath, content);
-        console.log(`✅ Updated ${file} version to: ${newVersion}`);
+        console.info(`✅ Updated ${file} version to: ${newVersion}`);
       }
     }
   }
@@ -149,7 +149,7 @@ Status: Production Live 🟢`;
     await $`git add .`;
     await $`git commit -m "chore: Release v${version}"`;
     await $`git tag -a ${tagName} -m "${message}"`;
-    console.log(`✅ Created git tag: ${tagName}`);
+    console.info(`✅ Created git tag: ${tagName}`);
   }
 
   private async generateChangelog(version: string): Promise<void> {
@@ -186,7 +186,7 @@ Status: Production Live 🟢`;
 ${changelog}`;
 
     writeFileSync(changelogPath, newEntry);
-    console.log(`✅ Generated changelog for version: ${version}`);
+    console.info(`✅ Generated changelog for version: ${version}`);
   }
 
   // Public API methods
@@ -238,7 +238,7 @@ ${changelog}`;
       throw new Error(`Invalid version generated: ${newVersion}`);
     }
 
-    console.log(`📈 Version bump: ${this.config.current} → ${newVersion}`);
+    console.info(`📈 Version bump: ${this.config.current} → ${newVersion}`);
     return newVersion;
   }
 
@@ -249,7 +249,7 @@ ${changelog}`;
       throw new Error(`Invalid version: ${version}`);
     }
 
-    console.log(`🚀 Starting release process for version: ${version}`);
+    console.info(`🚀 Starting release process for version: ${version}`);
 
     // Update package.json
     await this.updatePackageJson(version);
@@ -263,21 +263,21 @@ ${changelog}`;
     // Create git tag
     await this.createGitTag(version);
 
-    console.log(`✅ Release ${version} completed successfully!`);
-    console.log(`🔗 Git tag created: v${version}`);
-    console.log(`📝 Changelog updated in CHANGELOG.md`);
+    console.info(`✅ Release ${version} completed successfully!`);
+    console.info(`🔗 Git tag created: v${version}`);
+    console.info(`📝 Changelog updated in CHANGELOG.md`);
   }
 
   async status(): Promise<void> {
-    console.log(`📊 Fire22 Version Status`);
-    console.log(`═══════════════════════════════`);
-    console.log(`Current Version: ${this.config.current}`);
-    console.log(`Next Major: ${semver.inc(this.config.current, 'major')}`);
-    console.log(`Next Minor: ${semver.inc(this.config.current, 'minor')}`);
-    console.log(`Next Patch: ${semver.inc(this.config.current, 'patch')}`);
-    console.log(``);
+    console.info(`📊 Fire22 Version Status`);
+    console.info(`═══════════════════════════════`);
+    console.info(`Current Version: ${this.config.current}`);
+    console.info(`Next Major: ${semver.inc(this.config.current, 'major')}`);
+    console.info(`Next Minor: ${semver.inc(this.config.current, 'minor')}`);
+    console.info(`Next Patch: ${semver.inc(this.config.current, 'patch')}`);
+    console.info(``);
 
-    console.log(`🏗️ Domain Versions:`);
+    console.info(`🏗️ Domain Versions:`);
     this.domains.forEach(domain => {
       const statusEmoji = {
         live: '🟢',
@@ -286,12 +286,12 @@ ${changelog}`;
         planned: '🔴',
       }[domain.status];
 
-      console.log(`  ${statusEmoji} ${domain.name}: ${domain.version}`);
+      console.info(`  ${statusEmoji} ${domain.name}: ${domain.version}`);
     });
   }
 
   async validate(): Promise<boolean> {
-    console.log(`🔍 Validating version configuration...`);
+    console.info(`🔍 Validating version configuration...`);
 
     const issues: string[] = [];
 
@@ -321,11 +321,11 @@ ${changelog}`;
     }
 
     if (issues.length === 0) {
-      console.log(`✅ All validations passed!`);
+      console.info(`✅ All validations passed!`);
       return true;
     } else {
-      console.log(`❌ Validation failed:`);
-      issues.forEach(issue => console.log(`   ${issue}`));
+      console.info(`❌ Validation failed:`);
+      issues.forEach(issue => console.info(`   ${issue}`));
       return false;
     }
   }
@@ -333,13 +333,13 @@ ${changelog}`;
   async changelog(): Promise<void> {
     const version = this.config.current;
     await this.generateChangelog(version);
-    console.log(`📝 Changelog generated for version: ${version}`);
+    console.info(`📝 Changelog generated for version: ${version}`);
   }
 
   async tag(): Promise<void> {
     const version = this.config.current;
     await this.createGitTag(version);
-    console.log(`🏷️ Git tag created: v${version}`);
+    console.info(`🏷️ Git tag created: v${version}`);
   }
 }
 
@@ -369,7 +369,7 @@ async function main() {
             ? (options[options.indexOf('--channel') + 1] as any)
             : undefined,
         });
-        console.log(`📈 New version: ${newVersion}`);
+        console.info(`📈 New version: ${newVersion}`);
         break;
 
       case '--release':
@@ -395,18 +395,18 @@ async function main() {
         break;
 
       default:
-        console.log(`🔧 Fire22 Version Manager - Bun Semver Conventions`);
-        console.log(``);
-        console.log(`Usage:`);
-        console.log(`  bun run scripts/version-manager.ts --bump <type> [options]`);
-        console.log(`  bun run scripts/version-manager.ts --release [version]`);
-        console.log(`  bun run scripts/version-manager.ts --status`);
-        console.log(`  bun run scripts/version-manager.ts --validate`);
-        console.log(`  bun run scripts/version-manager.ts --changelog`);
-        console.log(`  bun run scripts/version-manager.ts --tag`);
-        console.log(``);
-        console.log(`Bump Types: major, minor, patch, prerelease, premajor, preminor, prepatch`);
-        console.log(
+        console.info(`🔧 Fire22 Version Manager - Bun Semver Conventions`);
+        console.info(``);
+        console.info(`Usage:`);
+        console.info(`  bun run scripts/version-manager.ts --bump <type> [options]`);
+        console.info(`  bun run scripts/version-manager.ts --release [version]`);
+        console.info(`  bun run scripts/version-manager.ts --status`);
+        console.info(`  bun run scripts/version-manager.ts --validate`);
+        console.info(`  bun run scripts/version-manager.ts --changelog`);
+        console.info(`  bun run scripts/version-manager.ts --tag`);
+        console.info(``);
+        console.info(`Bump Types: major, minor, patch, prerelease, premajor, preminor, prepatch`);
+        console.info(
           `Options: --prerelease <id>, --build <meta>, --channel <stable|testing|development|architecture>`
         );
         break;

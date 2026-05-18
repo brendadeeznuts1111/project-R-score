@@ -37,9 +37,9 @@ class Fantasy402WorkbenchLauncher {
   }
 
   async launch(): Promise<void> {
-    console.log('🚀 Fantasy402 Testing Workbench Launcher');
-    console.log('========================================');
-    console.log('');
+    console.info('🚀 Fantasy402 Testing Workbench Launcher');
+    console.info('========================================');
+    console.info('');
 
     try {
       // Step 1: Validate environment
@@ -65,25 +65,25 @@ class Fantasy402WorkbenchLauncher {
       // Step 7: Setup monitoring
       this.setupMonitoring();
 
-      console.log('');
-      console.log('✅ Fantasy402 Testing Workbench is ready!');
-      console.log('');
-      console.log('📊 Access the workbench at:');
-      console.log(`   🌐 http://${this.config.host}:${this.config.port}/workbench`);
-      console.log('');
-      console.log('🔗 Available endpoints:');
-      console.log(`   📋 Workbench UI: http://${this.config.host}:${this.config.port}/workbench`);
-      console.log(
+      console.info('');
+      console.info('✅ Fantasy402 Testing Workbench is ready!');
+      console.info('');
+      console.info('📊 Access the workbench at:');
+      console.info(`   🌐 http://${this.config.host}:${this.config.port}/workbench`);
+      console.info('');
+      console.info('🔗 Available endpoints:');
+      console.info(`   📋 Workbench UI: http://${this.config.host}:${this.config.port}/workbench`);
+      console.info(
         `   🏥 Health Check: http://${this.config.host}:${this.config.port}/api/fantasy402/health`
       );
-      console.log(
+      console.info(
         `   🧪 Run Tests: http://${this.config.host}:${this.config.port}/api/fantasy402/test/comprehensive`
       );
-      console.log('');
-      console.log('⌨️  Commands:');
-      console.log('   Ctrl+C: Stop workbench');
-      console.log('   Ctrl+R: Restart workbench');
-      console.log('');
+      console.info('');
+      console.info('⌨️  Commands:');
+      console.info('   Ctrl+C: Stop workbench');
+      console.info('   Ctrl+R: Restart workbench');
+      console.info('');
     } catch (error) {
       console.error('❌ Failed to launch workbench:', error);
       process.exit(1);
@@ -91,7 +91,7 @@ class Fantasy402WorkbenchLauncher {
   }
 
   private async validateEnvironment(): Promise<void> {
-    console.log('🔍 Validating environment...');
+    console.info('🔍 Validating environment...');
 
     // Check required files
     const requiredFiles = [
@@ -108,9 +108,9 @@ class Fantasy402WorkbenchLauncher {
       missingFiles.forEach(file => console.error(`   • ${file}`));
 
       if (missingFiles.includes('.env.fantasy402')) {
-        console.log('');
-        console.log('💡 To setup environment file:');
-        console.log('   bun run test:fantasy402:setup');
+        console.info('');
+        console.info('💡 To setup environment file:');
+        console.info('   bun run test:fantasy402:setup');
       }
 
       throw new Error('Environment validation failed');
@@ -127,12 +127,12 @@ class Fantasy402WorkbenchLauncher {
     if (missingEnvVars.length > 0) {
       console.error('❌ Missing or invalid environment variables:');
       missingEnvVars.forEach(varName => console.error(`   • ${varName}`));
-      console.log('');
-      console.log('💡 Edit .env.fantasy402 with your Fantasy402 credentials');
+      console.info('');
+      console.info('💡 Edit .env.fantasy402 with your Fantasy402 credentials');
       throw new Error('Environment variables not configured');
     }
 
-    console.log('   ✅ Environment validation passed');
+    console.info('   ✅ Environment validation passed');
   }
 
   private extractEnvVar(envContent: string, varName: string): string | undefined {
@@ -141,18 +141,18 @@ class Fantasy402WorkbenchLauncher {
   }
 
   private async checkDependencies(): Promise<void> {
-    console.log('📦 Checking dependencies...');
+    console.info('📦 Checking dependencies...');
 
     try {
       // Check Bun version
       const bunVersion = Bun.version;
-      console.log(`   📦 Bun version: ${bunVersion}`);
+      console.info(`   📦 Bun version: ${bunVersion}`);
 
       // Check if required packages are available
       const requiredPackages = ['alpinejs', 'tailwindcss'];
 
       // Note: In a real implementation, you'd check package.json or node_modules
-      console.log('   ✅ Dependencies check passed');
+      console.info('   ✅ Dependencies check passed');
     } catch (error) {
       console.error('❌ Dependency check failed:', error);
       throw error;
@@ -160,7 +160,7 @@ class Fantasy402WorkbenchLauncher {
   }
 
   private async setupTestEnvironment(): Promise<void> {
-    console.log('🧪 Setting up test environment...');
+    console.info('🧪 Setting up test environment...');
 
     try {
       // Load environment variables from .env.fantasy402
@@ -173,7 +173,7 @@ class Fantasy402WorkbenchLauncher {
         }
       });
 
-      console.log('   ✅ Test environment setup complete');
+      console.info('   ✅ Test environment setup complete');
     } catch (error) {
       console.error('❌ Test environment setup failed:', error);
       throw error;
@@ -198,7 +198,7 @@ class Fantasy402WorkbenchLauncher {
   }
 
   private async startWorkbenchServer(): Promise<void> {
-    console.log('🌐 Starting workbench server...');
+    console.info('🌐 Starting workbench server...');
 
     try {
       // Set environment variables for the server
@@ -208,8 +208,8 @@ class Fantasy402WorkbenchLauncher {
       // Import and start the server
       const { WorkbenchServer } = await import('../testing/workbench/workbench-server.ts');
 
-      console.log(`   🌐 Server starting on http://${this.config.host}:${this.config.port}`);
-      console.log('   ✅ Workbench server started successfully');
+      console.info(`   🌐 Server starting on http://${this.config.host}:${this.config.port}`);
+      console.info('   ✅ Workbench server started successfully');
     } catch (error) {
       console.error('❌ Failed to start workbench server:', error);
       throw error;
@@ -217,7 +217,7 @@ class Fantasy402WorkbenchLauncher {
   }
 
   private async performHealthChecks(): Promise<void> {
-    console.log('🏥 Performing health checks...');
+    console.info('🏥 Performing health checks...');
 
     const maxRetries = 10;
     const retryDelay = 1000;
@@ -230,14 +230,14 @@ class Fantasy402WorkbenchLauncher {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('   ✅ Health check passed');
+          console.info('   ✅ Health check passed');
 
           if (data.data?.fantasy402) {
             const f402Status = data.data.fantasy402;
-            console.log(`   📊 Fantasy402 Status:`);
-            console.log(`      API: ${f402Status.api ? '✅' : '❌'}`);
-            console.log(`      Auth: ${f402Status.authenticated ? '✅' : '❌'}`);
-            console.log(`      WebSocket: ${f402Status.websocket ? '✅' : '❌'}`);
+            console.info(`   📊 Fantasy402 Status:`);
+            console.info(`      API: ${f402Status.api ? '✅' : '❌'}`);
+            console.info(`      Auth: ${f402Status.authenticated ? '✅' : '❌'}`);
+            console.info(`      WebSocket: ${f402Status.websocket ? '✅' : '❌'}`);
           }
 
           return;
@@ -247,7 +247,7 @@ class Fantasy402WorkbenchLauncher {
       }
 
       if (i < maxRetries - 1) {
-        console.log(
+        console.info(
           `   ⏳ Health check attempt ${i + 1}/${maxRetries}, retrying in ${retryDelay}ms...`
         );
         await new Promise(resolve => setTimeout(resolve, retryDelay));
@@ -258,7 +258,7 @@ class Fantasy402WorkbenchLauncher {
   }
 
   private async openBrowser(): Promise<void> {
-    console.log('🌐 Opening browser...');
+    console.info('🌐 Opening browser...');
 
     try {
       const url = `http://${this.config.host}:${this.config.port}/workbench`;
@@ -277,15 +277,15 @@ class Fantasy402WorkbenchLauncher {
       }
 
       spawn(command, [url], { detached: true, stdio: 'ignore' });
-      console.log(`   🌐 Browser opened: ${url}`);
+      console.info(`   🌐 Browser opened: ${url}`);
     } catch (error) {
       console.warn('⚠️ Could not open browser automatically');
-      console.log(`   🌐 Please open: http://${this.config.host}:${this.config.port}/workbench`);
+      console.info(`   🌐 Please open: http://${this.config.host}:${this.config.port}/workbench`);
     }
   }
 
   private setupMonitoring(): void {
-    console.log('📊 Setting up monitoring...');
+    console.info('📊 Setting up monitoring...');
 
     // Setup periodic health checks
     setInterval(async () => {
@@ -303,7 +303,7 @@ class Fantasy402WorkbenchLauncher {
 
     // Setup graceful shutdown
     process.on('SIGINT', () => {
-      console.log('\n🛑 Shutting down workbench...');
+      console.info('\n🛑 Shutting down workbench...');
       if (this.serverProcess) {
         this.serverProcess.kill();
       }
@@ -311,14 +311,14 @@ class Fantasy402WorkbenchLauncher {
     });
 
     process.on('SIGTERM', () => {
-      console.log('\n🛑 Shutting down workbench...');
+      console.info('\n🛑 Shutting down workbench...');
       if (this.serverProcess) {
         this.serverProcess.kill();
       }
       process.exit(0);
     });
 
-    console.log('   ✅ Monitoring setup complete');
+    console.info('   ✅ Monitoring setup complete');
   }
 }
 
@@ -330,7 +330,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🚀 Fantasy402 Testing Workbench Launcher
 
 Usage: bun run scripts/start-fantasy402-workbench.ts [options]

@@ -145,51 +145,51 @@ if (import.meta.main) {
 	const args = Bun.argv.slice(2);
 	const branch = args[0] || (await getCurrentBranch());
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Branch Validator                   ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Branch Validator                   ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	const result = validateBranchName(branch);
 
-	console.log(`Branch: ${branch}`);
+	console.info(`Branch: ${branch}`);
 	if (result.type) {
-		console.log(`Type:   ${result.type}`);
+		console.info(`Type:   ${result.type}`);
 	}
-	console.log();
+	console.info();
 
 	if (result.valid) {
-		console.log("✅ Branch name is valid");
+		console.info("✅ Branch name is valid");
 	} else {
-		console.log("❌ Branch name is invalid");
+		console.info("❌ Branch name is invalid");
 	}
 
 	if (result.errors.length > 0) {
-		console.log("\nErrors:");
+		console.info("\nErrors:");
 		for (const error of result.errors) {
-			console.log(`  ❌ ${error}`);
+			console.info(`  ❌ ${error}`);
 		}
 	}
 
 	if (result.warnings.length > 0) {
-		console.log("\nWarnings:");
+		console.info("\nWarnings:");
 		for (const warning of result.warnings) {
-			console.log(`  ⚠️  ${warning}`);
+			console.info(`  ⚠️  ${warning}`);
 		}
 	}
 
 	if (!result.valid) {
 		const suggestions = await suggestBranchName();
-		console.log("\nSuggestions:");
+		console.info("\nSuggestions:");
 		for (const suggestion of suggestions) {
-			console.log(`  ${suggestion}`);
+			console.info(`  ${suggestion}`);
 		}
 
-		console.log("\nRename with:");
-		console.log(`  git branch -m ${suggestions[0]}`);
+		console.info("\nRename with:");
+		console.info(`  git branch -m ${suggestions[0]}`);
 	}
 
-	console.log();
+	console.info();
 	process.exit(result.valid ? 0 : 1);
 }
 

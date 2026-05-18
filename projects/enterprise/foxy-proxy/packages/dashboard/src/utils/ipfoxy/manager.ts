@@ -185,7 +185,7 @@ export class IPFoxyManager {
 
     try {
       // Test SOCKS5 connectivity for proxy
-      console.log(`Validating proxy: ${proxy.host}:${proxy.port} (${proxy.type})`);
+      console.info(`Validating proxy: ${proxy.host}:${proxy.port} (${proxy.type})`);
 
       const response = await fetch("https://httpbin.org/ip", {
         method: "GET"
@@ -238,7 +238,7 @@ export class IPFoxyManager {
       }
     };
 
-    console.log("DuoPlus Configuration:", duoPlusConfig);
+    console.info("DuoPlus Configuration:", duoPlusConfig);
   }
 
   /**

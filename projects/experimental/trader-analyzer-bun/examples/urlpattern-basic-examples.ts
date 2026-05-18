@@ -34,7 +34,7 @@
  * ```typescript
  * const pattern = new URLPattern({ pathname: "/users/:id" });
  * const result = pattern.exec("https://example.com/users/123");
- * console.log(result.pathname.groups.id); // "123"
+ * console.info(result.pathname.groups.id); // "123"
  * ```
  * 
  * @example 1.3.4.1.0.0.0.2: Wildcard Matching
@@ -48,7 +48,7 @@
  * ```typescript
  * const filesPattern = new URLPattern({ pathname: "/files/*" });
  * const match = filesPattern.exec("https://example.com/files/image.png");
- * console.log(match.pathname.groups[0]); // "image.png"
+ * console.info(match.pathname.groups[0]); // "image.png"
  * ```
  * 
  * @see {@link ../docs/BUN-1.3.4-URLPATTERN-API.md Bun 1.3.4 URLPattern API Documentation}
@@ -68,33 +68,33 @@
 
 // ============ Example 1: Basic Parameter Extraction ============
 
-console.log("=== Example 1: Basic Parameter Extraction ===\n");
+console.info("=== Example 1: Basic Parameter Extraction ===\n");
 
 const pattern = new URLPattern({ pathname: "/users/:id" });
 const result = pattern.exec("https://example.com/users/123");
 
 if (result) {
-	console.log("Extracted ID:", result.pathname.groups.id); // "123"
+	console.info("Extracted ID:", result.pathname.groups.id); // "123"
 } else {
-	console.log("No match found");
+	console.info("No match found");
 }
 
 // ============ Example 2: Wildcard Matching ============
 
-console.log("\n=== Example 2: Wildcard Matching ===\n");
+console.info("\n=== Example 2: Wildcard Matching ===\n");
 
 const filesPattern = new URLPattern({ pathname: "/files/*" });
 const match = filesPattern.exec("https://example.com/files/image.png");
 
 if (match) {
-	console.log("File path:", match.pathname.groups[0]); // "image.png"
+	console.info("File path:", match.pathname.groups[0]); // "image.png"
 } else {
-	console.log("No match found");
+	console.info("No match found");
 }
 
 // ============ Example 3: Multiple Parameters ============
 
-console.log("\n=== Example 3: Multiple Parameters ===\n");
+console.info("\n=== Example 3: Multiple Parameters ===\n");
 
 const apiPattern = new URLPattern({
 	pathname: "/api/v1/:resource/:id",
@@ -103,13 +103,13 @@ const apiPattern = new URLPattern({
 const apiResult = apiPattern.exec("https://api.example.com/api/v1/users/123");
 
 if (apiResult) {
-	console.log("Resource:", apiResult.pathname.groups.resource); // "users"
-	console.log("ID:", apiResult.pathname.groups.id); // "123"
+	console.info("Resource:", apiResult.pathname.groups.resource); // "users"
+	console.info("ID:", apiResult.pathname.groups.id); // "123"
 }
 
 // ============ Example 4: With Query Parameters ============
 
-console.log("\n=== Example 4: With Query Parameters ===\n");
+console.info("\n=== Example 4: With Query Parameters ===\n");
 
 const searchPattern = new URLPattern({
 	pathname: "/api/logs",
@@ -121,22 +121,22 @@ const searchResult = searchPattern.exec(
 );
 
 if (searchResult) {
-	console.log("Level:", searchResult.search.groups.level); // "INFO"
-	console.log("Limit:", searchResult.search.groups.limit); // "100"
+	console.info("Level:", searchResult.search.groups.level); // "INFO"
+	console.info("Limit:", searchResult.search.groups.limit); // "100"
 }
 
 // ============ Example 5: Using test() for Validation ============
 
-console.log("\n=== Example 5: Using test() for Validation ===\n");
+console.info("\n=== Example 5: Using test() for Validation ===\n");
 
 const userPattern = new URLPattern({ pathname: "/users/:id" });
 
-console.log("Test '/users/123':", userPattern.test("https://example.com/users/123")); // true
-console.log("Test '/posts/456':", userPattern.test("https://example.com/posts/456")); // false
+console.info("Test '/users/123':", userPattern.test("https://example.com/users/123")); // true
+console.info("Test '/posts/456':", userPattern.test("https://example.com/posts/456")); // false
 
 // ============ Example 6: Pattern Properties ============
 
-console.log("\n=== Example 6: Pattern Properties ===\n");
+console.info("\n=== Example 6: Pattern Properties ===\n");
 
 const fullPattern = new URLPattern({
 	protocol: "https",
@@ -145,20 +145,20 @@ const fullPattern = new URLPattern({
 	search: "?filter=:filter",
 });
 
-console.log("Protocol:", fullPattern.protocol); // "https"
-console.log("Hostname:", fullPattern.hostname); // "api.example.com"
-console.log("Pathname:", fullPattern.pathname); // "/api/v1/:resource/:id"
-console.log("Search:", fullPattern.search); // "filter=:filter" (no '?')
-console.log("Has Regex:", fullPattern.hasRegExpGroups); // false
+console.info("Protocol:", fullPattern.protocol); // "https"
+console.info("Hostname:", fullPattern.hostname); // "api.example.com"
+console.info("Pathname:", fullPattern.pathname); // "/api/v1/:resource/:id"
+console.info("Search:", fullPattern.search); // "filter=:filter" (no '?')
+console.info("Has Regex:", fullPattern.hasRegExpGroups); // false
 
 // ============ Example 7: Regex Validation ============
 
-console.log("\n=== Example 7: Regex Validation ===\n");
+console.info("\n=== Example 7: Regex Validation ===\n");
 
 const numericPattern = new URLPattern({ pathname: "/users/:id(\\d+)" });
 
-console.log("Test '/users/123':", numericPattern.test("https://example.com/users/123")); // true
-console.log("Test '/users/abc':", numericPattern.test("https://example.com/users/abc")); // false
-console.log("Has Regex:", numericPattern.hasRegExpGroups); // true
+console.info("Test '/users/123':", numericPattern.test("https://example.com/users/123")); // true
+console.info("Test '/users/abc':", numericPattern.test("https://example.com/users/abc")); // false
+console.info("Has Regex:", numericPattern.hasRegExpGroups); // true
 
-console.log("\n=== All Examples Complete ===\n");
+console.info("\n=== All Examples Complete ===\n");

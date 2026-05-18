@@ -13,7 +13,7 @@ class RipgrepCLI {
    * Show help information
    */
   showHelp(): void {
-    console.log(`
+    console.info(`
 🚀 FACTORYWAGER RIPGREP v4.0 CLI
 
 USAGE:
@@ -48,10 +48,10 @@ EXAMPLES:
     const params = this.parseArgs(args);
 
     try {
-      console.log('⚡ Generating RIPGREP purge...');
+      console.info('⚡ Generating RIPGREP purge...');
       const result = await this.engine.purgeRipgrep(params);
 
-      console.log(`
+      console.info(`
 📋 Purge Generated
 ═══════════════════════════════════════════════════════════════
 
@@ -79,15 +79,15 @@ ${result.results.map(r => `  • ${r}`).join('\n')}
     const directory = args[0] || '.';
 
     try {
-      console.log(`🔍 Scanning for broken links in: ${directory}`);
+      console.info(`🔍 Scanning for broken links in: ${directory}`);
       const links = await this.engine.scanBrokenLinks(directory);
 
       if (links.length === 0) {
-        console.log('✅ No broken links found');
+        console.info('✅ No broken links found');
         return;
       }
 
-      console.log(`
+      console.info(`
 🔗 Broken Links Found (${links.length})
 ═══════════════════════════════════════════════════════════════
 
@@ -108,15 +108,15 @@ ${links.map(link => `  • ${link}`).join('\n')}
     const directory = args[0] || '.';
 
     try {
-      console.log(`🔍 Scanning for non-Bun code in: ${directory}`);
+      console.info(`🔍 Scanning for non-Bun code in: ${directory}`);
       const nonBun = await this.engine.scanNonBunCode(directory);
 
       if (nonBun.length === 0) {
-        console.log('✅ No non-Bun code patterns found');
+        console.info('✅ No non-Bun code patterns found');
         return;
       }
 
-      console.log(`
+      console.info(`
 ⚠️  Non-Bun Code Found (${nonBun.length})
 ═══════════════════════════════════════════════════════════════
 
@@ -140,7 +140,7 @@ ${nonBun.map(code => `  • ${code}`).join('\n')}
   configCommand(): void {
     const config = this.engine.getConfig();
 
-    console.log(`
+    console.info(`
 ⚙️  RIPGREP Configuration
 ═══════════════════════════════════════════════════════════════
 
@@ -220,7 +220,7 @@ Defaults:
           this.showHelp();
         } else {
           console.error(`❌ Unknown command: ${command}`);
-          console.log('Run "bun rip help" for available commands');
+          console.info('Run "bun rip help" for available commands');
           process.exit(1);
         }
     }

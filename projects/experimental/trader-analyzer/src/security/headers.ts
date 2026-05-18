@@ -123,7 +123,7 @@ export class HeadersAnalyzer {
 	 * Analyze security headers for a URL
 	 */
 	async analyze(): Promise<HeadersReport> {
-		console.log(`
+		console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  🔐 Security Headers Analyzer                             ║
 ║  URL: ${this.config.url.slice(0, 48).padEnd(48)}║
@@ -552,7 +552,7 @@ export class HeadersAnalyzer {
 				? "\x1b[33m"
 				: "\x1b[31m";
 
-		console.log(`
+		console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  📊 Analysis Results                                      ║
 ╠═══════════════════════════════════════════════════════════╣
@@ -564,20 +564,20 @@ export class HeadersAnalyzer {
 			const status = header.present
 				? `${this.gradeEmoji(header.grade)} ${header.grade}`
 				: "❌ Missing";
-			console.log(`║  ${header.header.padEnd(35)} ${status.padEnd(15)}║`);
+			console.info(`║  ${header.header.padEnd(35)} ${status.padEnd(15)}║`);
 		}
 
-		console.log(
+		console.info(
 			`╠═══════════════════════════════════════════════════════════╣`,
 		);
-		console.log(
+		console.info(
 			`║  📝 Recommendations                                       ║`,
 		);
 		for (const rec of report.recommendations) {
-			console.log(`║  • ${rec.slice(0, 53).padEnd(53)}║`);
+			console.info(`║  • ${rec.slice(0, 53).padEnd(53)}║`);
 		}
 
-		console.log(
+		console.info(
 			`╚═══════════════════════════════════════════════════════════╝`,
 		);
 	}

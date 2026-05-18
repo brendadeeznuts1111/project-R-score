@@ -141,8 +141,8 @@ export class PatternCache {
 
 // Demo of the cache performance
 async function demonstrateCachePerformance() {
-  console.log('🚀 Fast Pattern Cache Performance Demo');
-  console.log('======================================');
+  console.info('🚀 Fast Pattern Cache Performance Demo');
+  console.info('======================================');
   
   const cache = new PatternCache();
   
@@ -155,7 +155,7 @@ async function demonstrateCachePerformance() {
     'https://api.example.com/v1/:resource'
   ];
   
-  console.log('\n📊 Testing CRC32 vs SHA1 performance...');
+  console.info('\n📊 Testing CRC32 vs SHA1 performance...');
   
   // Benchmark CRC32
   const crc32Start = performance.now();
@@ -175,11 +175,11 @@ async function demonstrateCachePerformance() {
   }
   const sha1Time = performance.now() - sha1Start;
   
-  console.log(`   CRC32: ${crc32Time.toFixed(2)}ms`);
-  console.log(`   SHA1:  ${sha1Time.toFixed(2)}ms`);
-  console.log(`   🚀 Speedup: ${(sha1Time / crc32Time).toFixed(1)}x faster`);
+  console.info(`   CRC32: ${crc32Time.toFixed(2)}ms`);
+  console.info(`   SHA1:  ${sha1Time.toFixed(2)}ms`);
+  console.info(`   🚀 Speedup: ${(sha1Time / crc32Time).toFixed(1)}x faster`);
   
-  console.log('\n💾 Testing cache operations...');
+  console.info('\n💾 Testing cache operations...');
   
   // Test cache set/get
   const analysis: PatternAnalysis = {
@@ -205,22 +205,22 @@ async function demonstrateCachePerformance() {
   }
   const getTime = performance.now() - getStart;
   
-  console.log(`   Cache set: ${setTime.toFixed(2)}ms (${(setTime / 5000).toFixed(4)}ms per operation)`);
-  console.log(`   Cache get: ${getTime.toFixed(2)}ms (${(getTime / 5000).toFixed(4)}ms per operation)`);
+  console.info(`   Cache set: ${setTime.toFixed(2)}ms (${(setTime / 5000).toFixed(4)}ms per operation)`);
+  console.info(`   Cache get: ${getTime.toFixed(2)}ms (${(getTime / 5000).toFixed(4)}ms per operation)`);
   
-  console.log('\n📈 Cache statistics:');
+  console.info('\n📈 Cache statistics:');
   const stats = cache.getStats();
-  console.log(`   Hits: ${stats.hits}`);
-  console.log(`   Misses: ${stats.misses}`);
-  console.log(`   Hit rate: ${stats.hitRate}`);
-  console.log(`   Total patterns: ${stats.totalPatterns.count}`);
+  console.info(`   Hits: ${stats.hits}`);
+  console.info(`   Misses: ${stats.misses}`);
+  console.info(`   Hit rate: ${stats.hitRate}`);
+  console.info(`   Total patterns: ${stats.totalPatterns.count}`);
   
-  console.log('\n🔥 Performance achievements:');
-  console.log('   ✅ 20× faster than SHA1 for cache keys');
-  console.log('   ✅ Sub-millisecond cache operations');
-  console.log('   ✅ SQLite-backed with bulk operations');
-  console.log('   ✅ Automatic expiration cleanup');
-  console.log('   ✅ Export/import for backup/restore');
+  console.info('\n🔥 Performance achievements:');
+  console.info('   ✅ 20× faster than SHA1 for cache keys');
+  console.info('   ✅ Sub-millisecond cache operations');
+  console.info('   ✅ SQLite-backed with bulk operations');
+  console.info('   ✅ Automatic expiration cleanup');
+  console.info('   ✅ Export/import for backup/restore');
   
   cache.close();
 }
@@ -230,7 +230,7 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help')) {
-    console.log(`
+    console.info(`
 Fast Pattern Cache - CRC32-Powered Deduplication
 
 Usage:
@@ -251,10 +251,10 @@ Examples:
   if (args[0] === 'demo' || !args[0]) {
     await demonstrateCachePerformance();
   } else if (args[0] === 'benchmark') {
-    console.log('🏃 Running detailed benchmarks...');
+    console.info('🏃 Running detailed benchmarks...');
     await demonstrateCachePerformance();
   } else {
-    console.log('❌ Unknown command. Use --help for usage.');
+    console.info('❌ Unknown command. Use --help for usage.');
   }
 }
 

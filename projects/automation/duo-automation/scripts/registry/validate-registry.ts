@@ -63,7 +63,7 @@ class RegistryValidator {
    * 🚀 Run complete validation
    */
   async validate(): Promise<ValidationResult> {
-    console.log('🔍 Starting Empire Pro Registry Validation...\n');
+    console.info('🔍 Starting Empire Pro Registry Validation...\n');
 
     try {
       await this.loadConfiguration();
@@ -506,35 +506,35 @@ class RegistryValidator {
    * 📄 Print validation results
    */
   private printResults(): void {
-    console.log('\n' + '='.repeat(80));
-    console.log('🔍 EMPIRE PRO REGISTRY VALIDATION RESULTS');
-    console.log('='.repeat(80));
+    console.info('\n' + '='.repeat(80));
+    console.info('🔍 EMPIRE PRO REGISTRY VALIDATION RESULTS');
+    console.info('='.repeat(80));
 
-    console.log(`\n📊 Overall Score: ${this.result.score}/100`);
-    console.log(`📋 Status: ${this.result.valid ? '✅ VALID' : '❌ INVALID'}`);
+    console.info(`\n📊 Overall Score: ${this.result.score}/100`);
+    console.info(`📋 Status: ${this.result.valid ? '✅ VALID' : '❌ INVALID'}`);
 
     if (this.result.errors.length > 0) {
-      console.log('\n❌ ERRORS:');
+      console.info('\n❌ ERRORS:');
       this.result.errors.forEach((error, index) => {
-        console.log(`  ${index + 1}. ${error}`);
+        console.info(`  ${index + 1}. ${error}`);
       });
     }
 
     if (this.result.warnings.length > 0) {
-      console.log('\n⚠️ WARNINGS:');
+      console.info('\n⚠️ WARNINGS:');
       this.result.warnings.forEach((warning, index) => {
-        console.log(`  ${index + 1}. ${warning}`);
+        console.info(`  ${index + 1}. ${warning}`);
       });
     }
 
     if (this.result.info.length > 0) {
-      console.log('\n✅ INFO:');
+      console.info('\n✅ INFO:');
       this.result.info.forEach((info, index) => {
-        console.log(`  ${index + 1}. ${info}`);
+        console.info(`  ${index + 1}. ${info}`);
       });
     }
 
-    console.log('\n' + '='.repeat(80));
+    console.info('\n' + '='.repeat(80));
     
     // Generate report file
     this.generateReport();
@@ -556,7 +556,7 @@ class RegistryValidator {
 
     const reportPath = `registry-validation-report-${Date.now()}.json`;
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`\n📄 Validation report saved to: ${reportPath}`);
+    console.info(`\n📄 Validation report saved to: ${reportPath}`);
   }
 }
 
@@ -566,7 +566,7 @@ class RegistryValidator {
 async function main(): Promise<void> {
   const envPath = process.argv[2] || '.env.registry';
   
-  console.log(`🔍 Validating registry configuration: ${envPath}\n`);
+  console.info(`🔍 Validating registry configuration: ${envPath}\n`);
   
   const validator = new RegistryValidator(envPath);
   const result = await validator.validate();

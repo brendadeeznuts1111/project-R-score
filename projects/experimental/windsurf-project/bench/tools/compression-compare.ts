@@ -24,11 +24,11 @@ class CompressionBenchmark {
   }
 
   async runComparison(testData: any[], iterations: number = 5) {
-    console.log('🗜️ **Advanced Compression Algorithms Comparison**');
-    console.log('='.repeat(60));
-    console.log(`📊 Test data: ${testData.length} items`);
-    console.log(`🔄 Iterations: ${iterations}`);
-    console.log('');
+    console.info('🗜️ **Advanced Compression Algorithms Comparison**');
+    console.info('='.repeat(60));
+    console.info(`📊 Test data: ${testData.length} items`);
+    console.info(`🔄 Iterations: ${iterations}`);
+    console.info('');
 
     const algorithms = [
       { name: 'zstd-fast', level: 1 },
@@ -42,10 +42,10 @@ class CompressionBenchmark {
     const results: CompressionResult[] = [];
 
     for (const algo of algorithms) {
-      console.log(`🧪 Testing ${algo.name}...`);
+      console.info(`🧪 Testing ${algo.name}...`);
       const result = await this.benchmarkAlgorithm(testData, algo, iterations);
       results.push(result);
-      console.log(`   ✅ Compression: ${result.compressionRatio.toFixed(1)}% | Time: ${result.compressionTime.toFixed(2)}ms`);
+      console.info(`   ✅ Compression: ${result.compressionRatio.toFixed(1)}% | Time: ${result.compressionTime.toFixed(2)}ms`);
     }
 
     this.displayResults(results);
@@ -111,15 +111,15 @@ class CompressionBenchmark {
   }
 
   private displayResults(results: CompressionResult[]) {
-    console.log('');
-    console.log('📊 **Compression Comparison Results**');
-    console.log('='.repeat(80));
+    console.info('');
+    console.info('📊 **Compression Comparison Results**');
+    console.info('='.repeat(80));
     
     // Sort by compression ratio
     const sorted = [...results].sort((a, b) => b.compressionRatio - a.compressionRatio);
     
-    console.log('| Algorithm        | Size     | Ratio | Comp Time | Decomp Time | Throughput |');
-    console.log('|------------------|----------|-------|-----------|-------------|------------|');
+    console.info('| Algorithm        | Size     | Ratio | Comp Time | Decomp Time | Throughput |');
+    console.info('|------------------|----------|-------|-----------|-------------|------------|');
     
     sorted.forEach(result => {
       const size = (result.compressedSize / 1024).toFixed(1) + 'KB';
@@ -128,10 +128,10 @@ class CompressionBenchmark {
       const decompTime = result.decompressionTime.toFixed(1) + 'ms';
       const throughput = result.throughput.toFixed(0) + ' B/s';
       
-      console.log(`| ${result.algorithm.padEnd(16)} | ${size.padEnd(8)} | ${ratio.padEnd(5)} | ${compTime.padEnd(9)} | ${decompTime.padEnd(11)} | ${throughput.padEnd(10)} |`);
+      console.info(`| ${result.algorithm.padEnd(16)} | ${size.padEnd(8)} | ${ratio.padEnd(5)} | ${compTime.padEnd(9)} | ${decompTime.padEnd(11)} | ${throughput.padEnd(10)} |`);
     });
 
-    console.log('');
+    console.info('');
     
     // Find best performers
     const bestCompression = sorted.reduce((best, current) => 
@@ -144,10 +144,10 @@ class CompressionBenchmark {
       current.throughput > highest.throughput ? current : highest
     );
 
-    console.log('🏆 **Best Performers**');
-    console.log(`🗜️  Best Compression: ${bestCompression.algorithm} (${bestCompression.compressionRatio.toFixed(1)}%)`);
-    console.log(`⚡ Fastest Compression: ${fastestCompression.algorithm} (${fastestCompression.compressionTime.toFixed(1)}ms)`);
-    console.log(`🚀 Highest Throughput: ${highestThroughput.algorithm} (${highestThroughput.throughput.toFixed(0)} B/s)`);
+    console.info('🏆 **Best Performers**');
+    console.info(`🗜️  Best Compression: ${bestCompression.algorithm} (${bestCompression.compressionRatio.toFixed(1)}%)`);
+    console.info(`⚡ Fastest Compression: ${fastestCompression.algorithm} (${fastestCompression.compressionTime.toFixed(1)}ms)`);
+    console.info(`🚀 Highest Throughput: ${highestThroughput.algorithm} (${highestThroughput.throughput.toFixed(0)} B/s)`);
   }
 
   private async uploadResults(results: CompressionResult[]) {
@@ -168,8 +168,8 @@ class CompressionBenchmark {
       };
 
       await this.manager.uploadReport(reportData, `compression-comparison-${Date.now()}.json`);
-      console.log('');
-      console.log('📤 Results uploaded to R2 bucket');
+      console.info('');
+      console.info('📤 Results uploaded to R2 bucket');
     } catch (error: any) {
       console.error('❌ Failed to upload results:', error.message);
     }

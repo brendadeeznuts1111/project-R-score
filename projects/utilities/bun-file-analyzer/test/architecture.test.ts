@@ -200,7 +200,7 @@ describe("Bun Enhanced File Analyzer Architecture", () => {
         expect(sizeMB).toBeGreaterThan(0.5);
         expect(sizeMB).toBeLessThan(2.0);
         
-        console.log(`📦 Build size: ${sizeMB.toFixed(2)} MB`);
+        console.info(`📦 Build size: ${sizeMB.toFixed(2)} MB`);
       }
     });
   });
@@ -232,12 +232,12 @@ describe("Bun Enhanced File Analyzer Architecture", () => {
             expect(sizeMB).toBeGreaterThan(0.01); // At least 10KB
             expect(sizeMB).toBeLessThan(0.1);    // Less than 100KB
             
-            console.log(`🎯 Executable size: ${sizeMB.toFixed(2)} MB`);
+            console.info(`🎯 Executable size: ${sizeMB.toFixed(2)} MB`);
           }
         }
       } catch (error) {
         clearTimeout(timeout);
-        console.log("⚠️ Cross-compilation test timed out or failed");
+        console.info("⚠️ Cross-compilation test timed out or failed");
       }
     }, 35000); // 35 second timeout for this test
   });
@@ -297,7 +297,7 @@ describe("Bun Enhanced File Analyzer Architecture", () => {
         expect(packageJson.scripts).toHaveProperty(script);
       }
       
-      console.log("✅ Complete Bun v1.3.6+ architecture verified!");
+      console.info("✅ Complete Bun v1.3.6+ architecture verified!");
     });
   });
 });

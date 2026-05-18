@@ -106,14 +106,14 @@ Bun.serve({
   }
 })
 
-console.log('🗄️  Tier-1380 Database Server running on http://localhost:3002')
-console.log('📊 Health: http://localhost:3002/health')
-console.log('👥 Users API: http://localhost:3002/api/users')
-console.log('📈 Performance: http://localhost:3002/api/performance')
+console.info('🗄️  Tier-1380 Database Server running on http://localhost:3002')
+console.info('📊 Health: http://localhost:3002/health')
+console.info('👥 Users API: http://localhost:3002/api/users')
+console.info('📈 Performance: http://localhost:3002/api/performance')
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🔄 Shutting down database server...')
+  console.info('\n🔄 Shutting down database server...')
   db.close()
   dbPool.close()
   process.exit(0)

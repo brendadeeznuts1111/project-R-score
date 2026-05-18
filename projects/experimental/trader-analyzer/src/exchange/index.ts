@@ -128,7 +128,7 @@ export async function fetchAllTrades(
 	const allTrades: Trade[] = [];
 	let since: number | undefined;
 
-	console.log(`Fetching all trades for ${mappedSymbol}...`);
+	console.info(`Fetching all trades for ${mappedSymbol}...`);
 
 	while (true) {
 		const trades: CcxtTradeAny[] = await exchange.fetchMyTrades(
@@ -152,7 +152,7 @@ export async function fetchAllTrades(
 		}));
 
 		allTrades.push(...mapped);
-		console.log(`Fetched ${allTrades.length} trades...`);
+		console.info(`Fetched ${allTrades.length} trades...`);
 
 		// Get the last trade timestamp for pagination
 		const lastTrade: CcxtTradeAny = trades[trades.length - 1];

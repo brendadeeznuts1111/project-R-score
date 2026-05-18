@@ -52,10 +52,10 @@ export class T3LatticeOrchestrator {
     const sessionInfo = this.ingestor.getSessionInfo();
 
     if (this.verbose) {
-      console.log(`\n[PERSONA] T3-Lattice Finder ${personaInfo.id} initialized`);
-      console.log(`[PERSONA] FD threshold: ${personaInfo.config.fdThreshold}, Confidence min: ${personaInfo.config.confidenceMin}`);
-      console.log(`[INGEST] Session: ${sessionInfo.id.slice(0, 8)}, Source: ${sessionInfo.source}`);
-      console.log(`[PERSONA] Processing ${games.length} NBA games...\n`);
+      console.info(`\n[PERSONA] T3-Lattice Finder ${personaInfo.id} initialized`);
+      console.info(`[PERSONA] FD threshold: ${personaInfo.config.fdThreshold}, Confidence min: ${personaInfo.config.confidenceMin}`);
+      console.info(`[INGEST] Session: ${sessionInfo.id.slice(0, 8)}, Source: ${sessionInfo.source}`);
+      console.info(`[PERSONA] Processing ${games.length} NBA games...\n`);
     }
 
     const startTime = Bun.nanoseconds();
@@ -85,7 +85,7 @@ export class T3LatticeOrchestrator {
         // Log edge
         if (this.verbose) {
           const icon = edge.type === 'BLACK_SWAN' ? '🚨' : '🎯';
-          console.log(
+          console.info(
             `${icon} Game ${edge.market}: FD=${edge.fd.toFixed(2)}, Glyph=${edge.glyph}, ` +
             `Confidence=${(edge.confidence * 100).toFixed(1)}%, Edge=${edge.type}`
           );
@@ -104,11 +104,11 @@ export class T3LatticeOrchestrator {
           alerts.push(alert);
 
           if (this.verbose) {
-            console.log(`🚨 BLACK_SWAN: Game ${gameId} (FD=${edge.fd.toFixed(2)}), Operator notified`);
+            console.info(`🚨 BLACK_SWAN: Game ${gameId} (FD=${edge.fd.toFixed(2)}), Operator notified`);
           }
         }
       } else if (this.verbose) {
-        console.log(`⚪ Game ${gameId}: No edge detected (FD=${fdResult.fd.toFixed(2)})`);
+        console.info(`⚪ Game ${gameId}: No edge detected (FD=${fdResult.fd.toFixed(2)})`);
       }
     }
 
@@ -125,11 +125,11 @@ export class T3LatticeOrchestrator {
       : '0.0';
 
     if (this.verbose) {
-      console.log(`\n[PERSONA] Completed ${games.length} games in ${totalLatency.toFixed(0)}ms (P99: ${p99Latency.toFixed(1)}ms)`);
-      console.log(`[PERSONA] Edges detected: ${edges.length} (${hitRate}% hit rate)`);
-      console.log(`[PERSONA] Black swans: ${alerts.length} (${games.length > 0 ? ((alerts.length / games.length) * 100).toFixed(1) : 0}% of games)`);
-      console.log(`[PERSONA] Avg confidence: ${(personaStats.avgConfidence * 100).toFixed(1)}%`);
-      console.log(`[PERSONA] ✅ Analysis complete`);
+      console.info(`\n[PERSONA] Completed ${games.length} games in ${totalLatency.toFixed(0)}ms (P99: ${p99Latency.toFixed(1)}ms)`);
+      console.info(`[PERSONA] Edges detected: ${edges.length} (${hitRate}% hit rate)`);
+      console.info(`[PERSONA] Black swans: ${alerts.length} (${games.length > 0 ? ((alerts.length / games.length) * 100).toFixed(1) : 0}% of games)`);
+      console.info(`[PERSONA] Avg confidence: ${(personaStats.avgConfidence * 100).toFixed(1)}%`);
+      console.info(`[PERSONA] ✅ Analysis complete`);
     }
 
     return {
@@ -170,8 +170,8 @@ export async function runDec29Analysis(): Promise<AnalysisResult> {
 if (import.meta.main) {
   runDec29Analysis()
     .then(result => {
-      console.log('\n📊 Final Report:');
-      console.log(JSON.stringify(result.stats, null, 2));
+      console.info('\n📊 Final Report:');
+      console.info(JSON.stringify(result.stats, null, 2));
     })
     .catch(console.error);
 }

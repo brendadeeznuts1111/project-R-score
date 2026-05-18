@@ -64,17 +64,17 @@ export const ContractTestUtils = {
             },
 
             run: async () => {
-                console.log(`🔍 Running contract test suite: ${name}`);
+                console.info(`🔍 Running contract test suite: ${name}`);
                 const results = [];
 
                 for (const test of suite.tests) {
                     try {
                         await test.fn();
                         results.push({ name: test.name, status: 'passed' });
-                        console.log(`✅ ${test.name}`);
+                        console.info(`✅ ${test.name}`);
                     } catch (error) {
                         results.push({ name: test.name, status: 'failed', error });
-                        console.log(`❌ ${test.name}: ${error}`);
+                        console.info(`❌ ${test.name}: ${error}`);
                     }
                 }
 
@@ -104,7 +104,7 @@ export const ContractTestUtils = {
      * Run rotation number contract tests
      */
     runRotationNumberTests: async () => {
-        console.log('🎯 Running Rotation Number Contract Tests');
+        console.info('🎯 Running Rotation Number Contract Tests');
 
         // This would integrate with the property tests we created
         // For now, return a placeholder result

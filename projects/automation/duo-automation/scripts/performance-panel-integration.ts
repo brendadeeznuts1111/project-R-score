@@ -59,7 +59,7 @@ class HashPerformancePanel {
    * Initialize performance panel
    */
   async initialize(): Promise<void> {
-    console.log('🎯 Initializing HashPerformancePanel...');
+    console.info('🎯 Initializing HashPerformancePanel...');
     
     try {
       // Start real-time monitoring
@@ -71,7 +71,7 @@ class HashPerformancePanel {
       // Initialize dashboard components
       await this.initializeDashboard();
       
-      console.log('✅ HashPerformancePanel initialized successfully');
+      console.info('✅ HashPerformancePanel initialized successfully');
       
     } catch (error) {
       console.error(`❌ Failed to initialize performance panel: ${error.message}`);
@@ -83,7 +83,7 @@ class HashPerformancePanel {
    * Start real-time performance monitoring
    */
   private startMonitoring(): void {
-    console.log('📊 Starting real-time performance monitoring...');
+    console.info('📊 Starting real-time performance monitoring...');
     
     const monitor = () => {
       const metrics = this.collectMetrics();
@@ -104,7 +104,7 @@ class HashPerformancePanel {
     // Run every 5 seconds
     this.monitoringInterval = setInterval(monitor, 5000);
     
-    console.log('✅ Real-time monitoring started (5-second intervals)');
+    console.info('✅ Real-time monitoring started (5-second intervals)');
   }
 
   /**
@@ -130,14 +130,14 @@ class HashPerformancePanel {
    * Setup alert system
    */
   private setupAlertSystem(): void {
-    console.log('🚨 Setting up performance alert system...');
+    console.info('🚨 Setting up performance alert system...');
     
-    console.log(`   ⏱️  Max average time: ${this.thresholds.maxAverageTime}ms`);
-    console.log(`   📈 Min throughput: ${this.thresholds.minThroughput} KB/s`);
-    console.log(`   🎯 Min cache efficiency: ${(this.thresholds.minCacheEfficiency * 100).toFixed(1)}%`);
-    console.log(`   ❌ Max error rate: ${(this.thresholds.maxErrorRate * 100).toFixed(1)}%`);
+    console.info(`   ⏱️  Max average time: ${this.thresholds.maxAverageTime}ms`);
+    console.info(`   📈 Min throughput: ${this.thresholds.minThroughput} KB/s`);
+    console.info(`   🎯 Min cache efficiency: ${(this.thresholds.minCacheEfficiency * 100).toFixed(1)}%`);
+    console.info(`   ❌ Max error rate: ${(this.thresholds.maxErrorRate * 100).toFixed(1)}%`);
     
-    console.log('✅ Alert system configured');
+    console.info('✅ Alert system configured');
   }
 
   /**
@@ -188,7 +188,7 @@ class HashPerformancePanel {
     // Add new alerts
     alerts.forEach(alert => {
       this.alerts.push(alert);
-      console.log(`🚨 ${alert.severity.toUpperCase()} ALERT: ${alert.message}`);
+      console.info(`🚨 ${alert.severity.toUpperCase()} ALERT: ${alert.message}`);
     });
 
     // Keep only recent alerts
@@ -201,7 +201,7 @@ class HashPerformancePanel {
    * Initialize dashboard components
    */
   private async initializeDashboard(): Promise<void> {
-    console.log('📊 Initializing dashboard components...');
+    console.info('📊 Initializing dashboard components...');
     
     // Create performance charts
     await this.createPerformanceCharts();
@@ -212,14 +212,14 @@ class HashPerformancePanel {
     // Create alerts panel
     await this.createAlertsPanel();
     
-    console.log('✅ Dashboard components initialized');
+    console.info('✅ Dashboard components initialized');
   }
 
   /**
    * Create performance charts
    */
   private async createPerformanceCharts(): Promise<void> {
-    console.log('   📈 Creating performance charts...');
+    console.info('   📈 Creating performance charts...');
     
     // Chart configurations
     const charts = {
@@ -245,27 +245,27 @@ class HashPerformancePanel {
       }
     };
 
-    console.log('   ✅ Performance charts created');
+    console.info('   ✅ Performance charts created');
   }
 
   /**
    * Create metrics display
    */
   private async createMetricsDisplay(): Promise<void> {
-    console.log('   📊 Creating metrics display...');
+    console.info('   📊 Creating metrics display...');
     
     const metrics = this.collectMetrics();
     
-    console.log('   ✅ Metrics display created');
+    console.info('   ✅ Metrics display created');
   }
 
   /**
    * Create alerts panel
    */
   private async createAlertsPanel(): Promise<void> {
-    console.log('   🚨 Creating alerts panel...');
+    console.info('   🚨 Creating alerts panel...');
     
-    console.log('   ✅ Alerts panel created');
+    console.info('   ✅ Alerts panel created');
   }
 
   /**
@@ -273,7 +273,7 @@ class HashPerformancePanel {
    */
   private updateDashboard(metrics: PerformanceMetrics): void {
     // Update real-time displays
-    console.log(`📊 Dashboard Update: ${metrics.throughput.toFixed(0)} KB/s, ${metrics.averageTime.toFixed(3)}ms avg, ${(metrics.cacheEfficiency * 100).toFixed(1)}% cache`);
+    console.info(`📊 Dashboard Update: ${metrics.throughput.toFixed(0)} KB/s, ${metrics.averageTime.toFixed(3)}ms avg, ${(metrics.cacheEfficiency * 100).toFixed(1)}% cache`);
   }
 
   /**
@@ -296,7 +296,7 @@ class HashPerformancePanel {
     };
     recommendations: string[];
   }> {
-    console.log('📊 Generating performance report...');
+    console.info('📊 Generating performance report...');
 
     // Ensure we have metrics before generating report
     if (this.metrics.length === 0) {
@@ -331,11 +331,11 @@ class HashPerformancePanel {
     // Generate recommendations
     const recommendations = this.generateRecommendations(current, trends);
 
-    console.log('📊 Performance Report Generated:');
-    console.log(`   Current Throughput: ${current.throughput.toFixed(0)} KB/s`);
-    console.log(`   Current Average Time: ${current.averageTime.toFixed(3)}ms`);
-    console.log(`   Cache Efficiency: ${(current.cacheEfficiency * 100).toFixed(1)}%`);
-    console.log(`   Active Alerts: ${alertCounts.active}`);
+    console.info('📊 Performance Report Generated:');
+    console.info(`   Current Throughput: ${current.throughput.toFixed(0)} KB/s`);
+    console.info(`   Current Average Time: ${current.averageTime.toFixed(3)}ms`);
+    console.info(`   Cache Efficiency: ${(current.cacheEfficiency * 100).toFixed(1)}%`);
+    console.info(`   Active Alerts: ${alertCounts.active}`);
 
     return {
       summary: current,
@@ -413,11 +413,11 @@ class HashPerformancePanel {
    */
   displayDashboard(): void {
     console.clear();
-    console.log('🎯 Hash Performance Panel - Real-time Dashboard');
-    console.log('='.repeat(60));
+    console.info('🎯 Hash Performance Panel - Real-time Dashboard');
+    console.info('='.repeat(60));
 
     if (this.metrics.length === 0) {
-      console.log('⏳ Waiting for metrics...');
+      console.info('⏳ Waiting for metrics...');
       return;
     }
 
@@ -425,17 +425,17 @@ class HashPerformancePanel {
     const activeAlerts = this.alerts.filter(a => !a.resolved);
 
     // Current metrics
-    console.log('\n📊 Current Performance Metrics:');
-    console.log(`   🚀 Throughput: ${current.throughput.toFixed(0)} KB/s`);
-    console.log(`   ⏱️  Average Time: ${current.averageTime.toFixed(3)}ms`);
-    console.log(`   💾 Cache Efficiency: ${(current.cacheEfficiency * 100).toFixed(1)}%`);
-    console.log(`   📈 Total Operations: ${current.totalOperations.toLocaleString()}`);
-    console.log(`   💾 Data Processed: ${(current.totalBytes / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`   ⚡ Quantum Accelerated: ${current.quantumAccelerated ? '✅' : '❌'}`);
+    console.info('\n📊 Current Performance Metrics:');
+    console.info(`   🚀 Throughput: ${current.throughput.toFixed(0)} KB/s`);
+    console.info(`   ⏱️  Average Time: ${current.averageTime.toFixed(3)}ms`);
+    console.info(`   💾 Cache Efficiency: ${(current.cacheEfficiency * 100).toFixed(1)}%`);
+    console.info(`   📈 Total Operations: ${current.totalOperations.toLocaleString()}`);
+    console.info(`   💾 Data Processed: ${(current.totalBytes / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`   ⚡ Quantum Accelerated: ${current.quantumAccelerated ? '✅' : '❌'}`);
 
     // Recent alerts
     if (activeAlerts.length > 0) {
-      console.log('\n🚨 Recent Alerts:');
+      console.info('\n🚨 Recent Alerts:');
       activeAlerts.slice(-5).forEach(alert => {
         const severityIcon = {
           critical: '🔴',
@@ -443,20 +443,20 @@ class HashPerformancePanel {
           medium: '🟡',
           low: '🔵'
         };
-        console.log(`   ${severityIcon[alert.severity]} ${alert.message}`);
+        console.info(`   ${severityIcon[alert.severity]} ${alert.message}`);
       });
     } else {
-      console.log('\n✅ No active alerts');
+      console.info('\n✅ No active alerts');
     }
 
     // Status
-    console.log('\n🎯 System Status:');
+    console.info('\n🎯 System Status:');
     const status = activeAlerts.length === 0 ? '🟢 OPTIMAL' : 
                    activeAlerts.some(a => a.severity === 'critical') ? '🔴 CRITICAL' : '🟡 WARNING';
-    console.log(`   Status: ${status}`);
-    console.log(`   Last Update: ${current.timestamp.toLocaleTimeString()}`);
+    console.info(`   Status: ${status}`);
+    console.info(`   Last Update: ${current.timestamp.toLocaleTimeString()}`);
 
-    console.log('\nPress Ctrl+C to stop monitoring');
+    console.info('\nPress Ctrl+C to stop monitoring');
   }
 
   /**
@@ -466,7 +466,7 @@ class HashPerformancePanel {
     if (this.monitoringInterval) {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
-      console.log('⏹️  Performance monitoring stopped');
+      console.info('⏹️  Performance monitoring stopped');
     }
   }
 
@@ -482,12 +482,12 @@ class HashPerformancePanel {
 if (import.meta.main) {
   const performancePanel = new HashPerformancePanel();
   
-  console.log('🎯 Performance Panel Integration - Quantum Hash System');
-  console.log('=====================================================\n');
+  console.info('🎯 Performance Panel Integration - Quantum Hash System');
+  console.info('=====================================================\n');
   
   performancePanel.initialize()
     .then(() => {
-      console.log('\n✅ Performance panel integration complete!');
+      console.info('\n✅ Performance panel integration complete!');
       
       // Display dashboard every 10 seconds
       setInterval(() => {
@@ -500,7 +500,7 @@ if (import.meta.main) {
       // Handle Ctrl+C
       process.on('SIGINT', () => {
         performancePanel.stopMonitoring();
-        console.log('\n👋 Performance panel stopped');
+        console.info('\n👋 Performance panel stopped');
         process.exit(0);
       });
     })

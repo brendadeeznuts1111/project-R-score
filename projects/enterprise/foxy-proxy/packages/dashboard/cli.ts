@@ -23,10 +23,10 @@ async function serveDashboard(port: number) {
   const distDir = resolve(import.meta.dir, "dist");
   const indexFile = join(distDir, "index.html");
 
-  console.log("📦 Dashboard Server");
-  console.log(`🚀 Starting server on http://localhost:${port}`);
-  console.log(`📁 Serving: ${distDir}`);
-  console.log("⏹️  Press Ctrl+C to stop\n");
+  console.info("📦 Dashboard Server");
+  console.info(`🚀 Starting server on http://localhost:${port}`);
+  console.info(`📁 Serving: ${distDir}`);
+  console.info("⏹️  Press Ctrl+C to stop\n");
 
   const _server = serve({
     port,
@@ -72,17 +72,17 @@ async function serveDashboard(port: number) {
     }
   });
 
-  console.log("✅ Server started");
+  console.info("✅ Server started");
 }
 
 async function buildDashboard() {
-  console.log("📦 Building dashboard...");
+  console.info("📦 Building dashboard...");
 
   const result = await Bun.spawn(["bun", "build", "src/main.tsx", "--outdir", "dist"]);
   const exitCode = await result.exited;
 
   if (exitCode === 0) {
-    console.log("✅ Build complete!");
+    console.info("✅ Build complete!");
   } else {
     console.error("❌ Build failed");
     process.exit(1);
@@ -90,7 +90,7 @@ async function buildDashboard() {
 }
 
 async function runBenchmark() {
-  console.log("📊 Running benchmarks...\n");
+  console.info("📊 Running benchmarks...\n");
 
   const result = await Bun.spawn(["bun", "benchmarks/feature-flags.ts"], {
     stdio: ["inherit", "pipe", "pipe"]
@@ -99,14 +99,14 @@ async function runBenchmark() {
   const output = await new Response(result.stdout).text();
   const errors = await new Response(result.stderr).text();
 
-  console.log(output);
+  console.info(output);
   if (errors) {
     console.error(errors);
   }
 }
 
 function showHelp() {
-  console.log(`
+  console.info(`
 📦 Dashboard CLI
 
 Usage: bun cli.ts <command> [options]
@@ -146,7 +146,7 @@ async function main() {
       break;
     default:
       console.error(`❌ Unknown command: ${command}`);
-      console.log("Run 'bun cli.ts help' for usage information");
+      console.info("Run 'bun cli.ts help' for usage information");
       process.exit(1);
   }
 }

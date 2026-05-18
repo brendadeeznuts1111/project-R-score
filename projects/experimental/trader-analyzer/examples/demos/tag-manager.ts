@@ -325,7 +325,7 @@ function validateTag(tag: string): TagValidationResult {
  * @example
  * ```typescript
  * const results = await scanFiles('src/hyper-bun/*.ts');
- * console.log(`Found ${results.length} tags`);
+ * console.info(`Found ${results.length} tags`);
  * ```
  */
 async function scanFiles(pattern: string, showProgress = IS_INTERACTIVE): Promise<ScanResult[]> {
@@ -435,7 +435,7 @@ function filterTags(tags: MetadataTag[], options: TagManagerOptions): MetadataTa
  */
 function printTable(tags: MetadataTag[]): void {
   if (tags.length === 0) {
-    console.log('No tags found.');
+    console.info('No tags found.');
     return;
   }
 
@@ -450,17 +450,17 @@ function printTable(tags: MetadataTag[]): void {
     Ref: tag.ref || '-',
   }));
 
-  console.log('\n📋 Metadata Tags Found:\n');
+  console.info('\n📋 Metadata Tags Found:\n');
   
   // Use Bun.inspect.table for tabular data display
   // Bun.inspect.table formats arrays of objects as tables with borders and colors
-  console.log(
+  console.info(
     Bun.inspect.table(tableData, {
       colors: true,
     })
   );
 
-  console.log(`\nTotal: ${tags.length} tag(s)\n`);
+  console.info(`\nTotal: ${tags.length} tag(s)\n`);
 }
 
 /**
@@ -472,7 +472,7 @@ function printTable(tags: MetadataTag[]): void {
  */
 function printSummary(tags: MetadataTag[]): void {
   if (tags.length === 0) {
-    console.log('No tags found.');
+    console.info('No tags found.');
     return;
   }
 
@@ -485,10 +485,10 @@ function printSummary(tags: MetadataTag[]): void {
     byDomain.get(tag.domain)!.push(tag);
   }
 
-  console.log('\n📊 Metadata Tags Summary:\n');
+  console.info('\n📊 Metadata Tags Summary:\n');
 
   for (const [domain, domainTags] of byDomain) {
-    console.log(`\n${domain.toUpperCase()}:`);
+    console.info(`\n${domain.toUpperCase()}:`);
     
     // Group by scope
     const byScope = new Map<string, MetadataTag[]>();
@@ -504,15 +504,15 @@ function printSummary(tags: MetadataTag[]): void {
       const mediumPriority = scopeTags.filter(t => t.meta.priority === 'medium').length;
       const lowPriority = scopeTags.filter(t => t.meta.priority === 'low').length;
       
-      console.log(`  ${scope}:`);
-      console.log(`    Total: ${scopeTags.length}`);
-      if (highPriority > 0) console.log(`    🔴 High Priority: ${highPriority}`);
-      if (mediumPriority > 0) console.log(`    🟡 Medium Priority: ${mediumPriority}`);
-      if (lowPriority > 0) console.log(`    🟢 Low Priority: ${lowPriority}`);
+      console.info(`  ${scope}:`);
+      console.info(`    Total: ${scopeTags.length}`);
+      if (highPriority > 0) console.info(`    🔴 High Priority: ${highPriority}`);
+      if (mediumPriority > 0) console.info(`    🟡 Medium Priority: ${mediumPriority}`);
+      if (lowPriority > 0) console.info(`    🟢 Low Priority: ${lowPriority}`);
     }
   }
 
-  console.log(`\n\nTotal: ${tags.length} tag(s) across ${byDomain.size} domain(s)\n`);
+  console.info(`\n\nTotal: ${tags.length} tag(s) across ${byDomain.size} domain(s)\n`);
 }
 
 /**
@@ -522,7 +522,7 @@ async function main() {
   const args = Bun.argv.slice(2);
   
   if (args.length === 0) {
-    console.log(`
+    console.info(`
 ${colors.bold('Tag Manager')} ${colors.blue('(Bun-native)')}
 
 ${colors.bold('Commands:')}
@@ -570,8 +570,8 @@ ${colors.bold('Examples:')}
     case 'validate':
       if (!value) throw new Error('Tag required');
       const validation = validateTag(value);
-      console.log(validation);
-      validation.errors.forEach(err => console.log(colors.red(`  - ${err}`)));
+      console.info(validation);
+      validation.errors.forEach(err => console.info(colors.red(`  - ${err}`)));
       process.exit(validation.valid ? 0 : 1);
 
     case 'generate': {
@@ -579,7 +579,7 @@ ${colors.bold('Examples:')}
       const [domain, scope, type, metaStr, cls, ref] = value.split(',');
       const meta = Object.fromEntries(metaStr.split(';').map(m => m.split('=')));
       const tag = `[${domain}][${scope}][${type}][META:${Object.entries(meta).map(([k, v]) => `${k}=${v}`).join(',')}][${cls}][${ref}]`;
-      console.log(colors.bold(tag));
+      console.info(colors.bold(tag));
       break;
     }
 
@@ -593,18 +593,18 @@ ${colors.bold('Examples:')}
         // Dry-run mode: show what would be scanned without actually scanning
         const glob = new Bun.Glob(pattern);
         const files = Array.from(glob.scanSync());
-        console.log(`\n${colors.blue('🔍 Dry-run mode - Files that would be scanned:')}\n`);
-        console.log(`Pattern: ${colors.bold(pattern)}`);
-        console.log(`Files found: ${colors.bold(files.length.toString())}\n`);
+        console.info(`\n${colors.blue('🔍 Dry-run mode - Files that would be scanned:')}\n`);
+        console.info(`Pattern: ${colors.bold(pattern)}`);
+        console.info(`Files found: ${colors.bold(files.length.toString())}\n`);
         
         if (files.length > 0) {
           const fileTable = files.map((f, i) => ({
             '#': i + 1,
             File: f,
           }));
-          console.log(Bun.inspect.table(fileTable, { colors: true }));
+          console.info(Bun.inspect.table(fileTable, { colors: true }));
         }
-        console.log(`\n${colors.yellow('ℹ️  Run without --dry to actually scan for tags')}\n`);
+        console.info(`\n${colors.yellow('ℹ️  Run without --dry to actually scan for tags')}\n`);
         break;
       }
 
@@ -634,21 +634,21 @@ ${colors.bold('Examples:')}
           poor: '🐌',
         }[performanceRating];
 
-        console.log(`\n${colors.bold('📊 Tag Coverage Report')}\n`);
-        console.log(`${colors.dim('Report ID:')} ${reportMeta.reportId}`);
-        console.log(`${colors.dim('Bun Version:')} ${reportMeta.bunVersion} (${reportMeta.bunRevision})`);
-        console.log(`${colors.dim('TTY Mode:')} ${reportMeta.isTTY ? colors.green('Yes') : colors.yellow('No')}`);
-        console.log(`${colors.dim('Interactive:')} ${reportMeta.isInteractive ? colors.green('Yes') : colors.yellow('No')}\n`);
+        console.info(`\n${colors.bold('📊 Tag Coverage Report')}\n`);
+        console.info(`${colors.dim('Report ID:')} ${reportMeta.reportId}`);
+        console.info(`${colors.dim('Bun Version:')} ${reportMeta.bunVersion} (${reportMeta.bunRevision})`);
+        console.info(`${colors.dim('TTY Mode:')} ${reportMeta.isTTY ? colors.green('Yes') : colors.yellow('No')}`);
+        console.info(`${colors.dim('Interactive:')} ${reportMeta.isInteractive ? colors.green('Yes') : colors.yellow('No')}\n`);
         
-        console.log(`Pattern: ${colors.bold(pattern)}`);
-        console.log(`Total files: ${colors.bold(allFiles.length.toString())}`);
-        console.log(`Files with tags: ${colors.green(filesWithTags.size.toString())}`);
-        console.log(`Files without tags: ${colors.yellow(filesWithoutTags.length.toString())}`);
-        console.log(`Coverage: ${colors.bold(`${coveragePercent}%`)}`);
-        console.log(`Total tags found: ${colors.bold(results.length.toString())}`);
-        console.log(`Scan duration: ${colors.cyan(scanDuration.toFixed(2) + 'ms')}`);
-        console.log(`Throughput: ${colors.cyan(filesPerSecond.toFixed(1) + ' files/sec')} ${ratingEmoji} ${colors.bold(performanceRating)}`);
-        console.log(`Memory used: ${colors.cyan(formatMemory(memoryUsed))}\n`);
+        console.info(`Pattern: ${colors.bold(pattern)}`);
+        console.info(`Total files: ${colors.bold(allFiles.length.toString())}`);
+        console.info(`Files with tags: ${colors.green(filesWithTags.size.toString())}`);
+        console.info(`Files without tags: ${colors.yellow(filesWithoutTags.length.toString())}`);
+        console.info(`Coverage: ${colors.bold(`${coveragePercent}%`)}`);
+        console.info(`Total tags found: ${colors.bold(results.length.toString())}`);
+        console.info(`Scan duration: ${colors.cyan(scanDuration.toFixed(2) + 'ms')}`);
+        console.info(`Throughput: ${colors.cyan(filesPerSecond.toFixed(1) + ' files/sec')} ${ratingEmoji} ${colors.bold(performanceRating)}`);
+        console.info(`Memory used: ${colors.cyan(formatMemory(memoryUsed))}\n`);
 
         // Group by domain/scope
         const byDomain = new Map<string, number>();
@@ -665,43 +665,43 @@ ${colors.bold('Examples:')}
         }
 
         if (byDomain.size > 0) {
-          console.log(`${colors.bold('By Domain:')}`);
+          console.info(`${colors.bold('By Domain:')}`);
           const domainTable = Array.from(byDomain.entries()).map(([domain, count]) => ({
             Domain: domain,
             Count: count,
             Percentage: `${((count / results.length) * 100).toFixed(1)}%`,
           }));
-          console.log(Bun.inspect.table(domainTable, { colors: true }));
+          console.info(Bun.inspect.table(domainTable, { colors: true }));
         }
 
         if (byType.size > 0) {
-          console.log(`\n${colors.bold('By Type:')}`);
+          console.info(`\n${colors.bold('By Type:')}`);
           const typeTable = Array.from(byType.entries()).map(([type, count]) => ({
             Type: type,
             Count: count,
             Percentage: `${((count / results.length) * 100).toFixed(1)}%`,
           }));
-          console.log(Bun.inspect.table(typeTable, { colors: true }));
+          console.info(Bun.inspect.table(typeTable, { colors: true }));
         }
 
         if (byPriority.size > 0) {
-          console.log(`\n${colors.bold('By Priority:')}`);
+          console.info(`\n${colors.bold('By Priority:')}`);
           const priorityTable = Array.from(byPriority.entries()).map(([priority, count]) => ({
             Priority: priority,
             Count: count,
             Percentage: `${((count / results.length) * 100).toFixed(1)}%`,
           }));
-          console.log(Bun.inspect.table(priorityTable, { colors: true }));
+          console.info(Bun.inspect.table(priorityTable, { colors: true }));
         }
 
         if (filesWithoutTags.length > 0 && filesWithoutTags.length <= 20) {
-          console.log(`\n${colors.yellow('Files without tags:')}`);
-          filesWithoutTags.forEach(f => console.log(`  - ${f}`));
+          console.info(`\n${colors.yellow('Files without tags:')}`);
+          filesWithoutTags.forEach(f => console.info(`  - ${f}`));
         } else if (filesWithoutTags.length > 20) {
-          console.log(`\n${colors.yellow(`Files without tags: ${filesWithoutTags.length} (showing first 20)`)}`);
-          filesWithoutTags.slice(0, 20).forEach(f => console.log(`  - ${f}`));
+          console.info(`\n${colors.yellow(`Files without tags: ${filesWithoutTags.length} (showing first 20)`)}`);
+          filesWithoutTags.slice(0, 20).forEach(f => console.info(`  - ${f}`));
         }
-        console.log();
+        console.info();
       } else {
         // Normal scan mode
         const filesPerSecond = results.length > 0 
@@ -709,11 +709,11 @@ ${colors.bold('Examples:')}
           : 0;
         const performanceRating = classifyPerformance(filesPerSecond);
         
-        console.log(`\n${colors.bold('📋 Tag Scan Results')}\n`);
-        console.log(`${colors.dim('Report ID:')} ${reportMeta.reportId}`);
-        console.log(`Found ${colors.bold(results.length.toString())} tags in ${colors.cyan(scanDuration.toFixed(2) + 'ms')}`);
-        console.log(`Memory: ${colors.cyan(formatMemory(memoryUsed))}`);
-        console.log(`Performance: ${colors.cyan(performanceRating)}\n`);
+        console.info(`\n${colors.bold('📋 Tag Scan Results')}\n`);
+        console.info(`${colors.dim('Report ID:')} ${reportMeta.reportId}`);
+        console.info(`Found ${colors.bold(results.length.toString())} tags in ${colors.cyan(scanDuration.toFixed(2) + 'ms')}`);
+        console.info(`Memory: ${colors.cyan(formatMemory(memoryUsed))}`);
+        console.info(`Performance: ${colors.cyan(performanceRating)}\n`);
 
         if (results.length > 0) {
           // Use Bun.inspect.table with colors
@@ -726,20 +726,20 @@ ${colors.bold('Examples:')}
             Memory: formatMemory(r.memoryDelta),
           }));
           
-          console.log(Bun.inspect.table(tableData, { colors: true }));
+          console.info(Bun.inspect.table(tableData, { colors: true }));
           
           // Clipboard integration for generated tags
           if (IS_INTERACTIVE && results.length === 1) {
             const copied = await copyToClipboard(results[0].tag);
             if (copied) {
-              console.log(`\n${colors.green('✓')} Tag copied to clipboard`);
+              console.info(`\n${colors.green('✓')} Tag copied to clipboard`);
             }
           }
         }
 
         const invalid = results.filter(r => !r.valid).length;
         if (invalid > 0) {
-          console.log(colors.yellow(`\n⚠️  ${invalid} invalid tags`));
+          console.info(colors.yellow(`\n⚠️  ${invalid} invalid tags`));
           process.exit(1);
         }
       }
@@ -756,9 +756,9 @@ ${colors.bold('Examples:')}
       // Warm-up
       await scanFiles(pattern, false);
 
-      console.log(colors.blue(`\n🚀 Benchmarking ${iterations} iterations...\n`));
-      console.log(`${colors.dim('Report ID:')} ${reportMeta.reportId}`);
-      console.log(`${colors.dim('Bun Version:')} ${reportMeta.bunVersion} (${reportMeta.bunRevision})\n`);
+      console.info(colors.blue(`\n🚀 Benchmarking ${iterations} iterations...\n`));
+      console.info(`${colors.dim('Report ID:')} ${reportMeta.reportId}`);
+      console.info(`${colors.dim('Bun Version:')} ${reportMeta.bunVersion} (${reportMeta.bunRevision})\n`);
       
       for (let i = 0; i < iterations; i++) {
         const memBefore = process.memoryUsage();
@@ -776,7 +776,7 @@ ${colors.bold('Examples:')}
         const throughput = fileCount / (duration / 1000);
         const rating = classifyPerformance(throughput);
         
-        console.log(`Run ${i + 1}: ${duration.toFixed(2)}ms | ${formatMemory(memUsed)} | ${throughput.toFixed(1)} files/sec ${colors.bold(rating)}`);
+        console.info(`Run ${i + 1}: ${duration.toFixed(2)}ms | ${formatMemory(memUsed)} | ${throughput.toFixed(1)} files/sec ${colors.bold(rating)}`);
       }
 
       const avg = times.reduce((a, b) => a + b, 0) / times.length;
@@ -790,13 +790,13 @@ ${colors.bold('Examples:')}
       const avgThroughput = fileCount / (avg / 1000);
       const overallRating = classifyPerformance(avgThroughput);
       
-      console.log(`\n${colors.bold('📊 Benchmark Results:')}\n`);
-      console.log(`  Average: ${colors.cyan(avg.toFixed(2) + 'ms')}`);
-      console.log(`  Min:     ${colors.green(min.toFixed(2) + 'ms')}`);
-      console.log(`  Max:     ${colors.yellow(max.toFixed(2) + 'ms')}`);
-      console.log(`  Throughput: ${colors.cyan(avgThroughput.toFixed(1) + ' files/sec')} ${colors.bold(overallRating)}`);
-      console.log(`  Memory (avg): ${colors.cyan(formatMemory(avgMemory))}`);
-      console.log(`  Memory (current): ${colors.cyan(formatMemory(mem.heapUsed))}`);
+      console.info(`\n${colors.bold('📊 Benchmark Results:')}\n`);
+      console.info(`  Average: ${colors.cyan(avg.toFixed(2) + 'ms')}`);
+      console.info(`  Min:     ${colors.green(min.toFixed(2) + 'ms')}`);
+      console.info(`  Max:     ${colors.yellow(max.toFixed(2) + 'ms')}`);
+      console.info(`  Throughput: ${colors.cyan(avgThroughput.toFixed(1) + ' files/sec')} ${colors.bold(overallRating)}`);
+      console.info(`  Memory (avg): ${colors.cyan(formatMemory(avgMemory))}`);
+      console.info(`  Memory (current): ${colors.cyan(formatMemory(mem.heapUsed))}`);
       break;
     }
 

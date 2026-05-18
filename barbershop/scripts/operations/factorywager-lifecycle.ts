@@ -26,62 +26,62 @@ function styled(
 }
 
 function showHelp() {
-  console.log(styled('🏭 FactoryWager Secrets Lifecycle Manager', 'accent'));
-  console.log(styled('==========================================', 'muted'));
-  console.log();
-  console.log(styled('Manage FactoryWager secrets lifecycle configuration.', 'info'));
-  console.log();
-  console.log(styled('Commands:', 'primary'));
-  console.log('  load <config-file>              Load configuration from YAML file');
-  console.log('  apply                           Apply loaded configuration');
-  console.log('  validate                        Validate configuration syntax');
-  console.log('  status                          Show current status');
-  console.log('  export                          Export configuration with status');
-  console.log('  help                            Show this help');
-  console.log();
-  console.log(styled('Examples:', 'primary'));
-  console.log(
+  console.info(styled('🏭 FactoryWager Secrets Lifecycle Manager', 'accent'));
+  console.info(styled('==========================================', 'muted'));
+  console.info();
+  console.info(styled('Manage FactoryWager secrets lifecycle configuration.', 'info'));
+  console.info();
+  console.info(styled('Commands:', 'primary'));
+  console.info('  load <config-file>              Load configuration from YAML file');
+  console.info('  apply                           Apply loaded configuration');
+  console.info('  validate                        Validate configuration syntax');
+  console.info('  status                          Show current status');
+  console.info('  export                          Export configuration with status');
+  console.info('  help                            Show this help');
+  console.info();
+  console.info(styled('Examples:', 'primary'));
+  console.info(
     '  bun run scripts/factorywager-lifecycle.ts load factorywager-secrets-lifecycle.yaml'
   );
-  console.log('  bun run scripts/factorywager-lifecycle.ts apply');
-  console.log('  bun run scripts/factorywager-lifecycle.ts status');
-  console.log();
-  console.log(styled('Configuration Format:', 'info'));
-  console.log('  See factorywager-secrets-lifecycle.yaml for example format');
-  console.log();
-  console.log(styled(`📖 Documentation: ${BUN_DOCS.factorywager.lifecycle}`, 'accent'));
+  console.info('  bun run scripts/factorywager-lifecycle.ts apply');
+  console.info('  bun run scripts/factorywager-lifecycle.ts status');
+  console.info();
+  console.info(styled('Configuration Format:', 'info'));
+  console.info('  See factorywager-secrets-lifecycle.yaml for example format');
+  console.info();
+  console.info(styled(`📖 Documentation: ${BUN_DOCS.factorywager.lifecycle}`, 'accent'));
 }
 
 async function handleLoad() {
   const configFile = args[1];
 
   if (!configFile) {
-    console.log(styled('❌ Missing configuration file', 'error'));
-    console.log(styled('Usage: load <config-file>', 'muted'));
+    console.info(styled('❌ Missing configuration file', 'error'));
+    console.info(styled('Usage: load <config-file>', 'muted'));
     return;
   }
 
   try {
-    console.log(styled(`📁 Loading configuration: ${configFile}`, 'info'));
+    console.info(styled(`📁 Loading configuration: ${configFile}`, 'info'));
 
     const config = await factorywagerSecretsLifecycle.loadConfig(configFile);
 
-    console.log(styled('✅ Configuration loaded successfully!', 'success'));
-    console.log(styled(`   Version: ${config.version}`, 'primary'));
-    console.log(styled(`   Rules: ${config.rules.length}`, 'muted'));
-    console.log(
+    console.info(styled('✅ Configuration loaded successfully!', 'success'));
+    console.info(styled(`   Version: ${config.version}`, 'primary'));
+    console.info(styled(`   Rules: ${config.rules.length}`, 'muted'));
+    console.info(
       styled(
         `   Audit: ${config.audit.enabled ? 'enabled' : 'disabled'}`,
         config.audit.enabled ? 'success' : 'warning'
       )
     );
-    console.log(
+    console.info(
       styled(`   Documentation: ${config.documentation.autoGenerate ? 'auto' : 'manual'}`, 'info')
     );
 
     // Show rule summary
-    console.log();
-    console.log(styled('📋 Rules Summary:', 'info'));
+    console.info();
+    console.info(styled('📋 Rules Summary:', 'info'));
 
     const scheduleTypes = config.rules.reduce(
       (acc, rule) => {
@@ -95,89 +95,89 @@ async function handleLoad() {
 
     const expirationRules = config.rules.filter(rule => rule.expiration).length;
 
-    console.log(styled(`   • Cron-based: ${scheduleTypes.cron || 0}`, 'muted'));
-    console.log(styled(`   • Interval-based: ${scheduleTypes.interval || 0}`, 'muted'));
-    console.log(styled(`   • Event-based: ${scheduleTypes.event || 0}`, 'muted'));
-    console.log(styled(`   • Expiration-based: ${expirationRules}`, 'muted'));
+    console.info(styled(`   • Cron-based: ${scheduleTypes.cron || 0}`, 'muted'));
+    console.info(styled(`   • Interval-based: ${scheduleTypes.interval || 0}`, 'muted'));
+    console.info(styled(`   • Event-based: ${scheduleTypes.event || 0}`, 'muted'));
+    console.info(styled(`   • Expiration-based: ${expirationRules}`, 'muted'));
   } catch (error) {
-    console.log(styled(`❌ Failed to load configuration: ${error.message}`, 'error'));
+    console.info(styled(`❌ Failed to load configuration: ${error.message}`, 'error'));
     process.exit(1);
   }
 }
 
 async function handleApply() {
   try {
-    console.log(styled('🔄 Applying FactoryWager configuration...', 'warning'));
+    console.info(styled('🔄 Applying FactoryWager configuration...', 'warning'));
 
     await factorywagerSecretsLifecycle.applyConfig();
 
-    console.log();
-    console.log(styled('✅ Configuration applied successfully!', 'success'));
-    console.log(styled('   All rules have been processed and scheduled.', 'info'));
+    console.info();
+    console.info(styled('✅ Configuration applied successfully!', 'success'));
+    console.info(styled('   All rules have been processed and scheduled.', 'info'));
   } catch (error) {
-    console.log(styled(`❌ Failed to apply configuration: ${error.message}`, 'error'));
+    console.info(styled(`❌ Failed to apply configuration: ${error.message}`, 'error'));
     process.exit(1);
   }
 }
 
 async function handleValidate() {
   try {
-    console.log(styled('🔍 Validating configuration...', 'info'));
+    console.info(styled('🔍 Validating configuration...', 'info'));
 
     const result = await factorywagerSecretsLifecycle.validateConfig();
 
     if (result.valid) {
-      console.log(styled('✅ Configuration is valid!', 'success'));
-      console.log(styled('   All rules and settings are properly configured.', 'info'));
+      console.info(styled('✅ Configuration is valid!', 'success'));
+      console.info(styled('   All rules and settings are properly configured.', 'info'));
     } else {
-      console.log(styled('❌ Configuration validation failed:', 'error'));
-      console.log();
+      console.info(styled('❌ Configuration validation failed:', 'error'));
+      console.info();
       result.errors.forEach(error => {
-        console.log(styled(`   • ${error}`, 'warning'));
+        console.info(styled(`   • ${error}`, 'warning'));
       });
       process.exit(1);
     }
   } catch (error) {
-    console.log(styled(`❌ Validation error: ${error.message}`, 'error'));
+    console.info(styled(`❌ Validation error: ${error.message}`, 'error'));
     process.exit(1);
   }
 }
 
 async function handleStatus() {
   try {
-    console.log(styled('📊 FactoryWager Lifecycle Status', 'primary'));
-    console.log(styled('================================', 'muted'));
+    console.info(styled('📊 FactoryWager Lifecycle Status', 'primary'));
+    console.info(styled('================================', 'muted'));
 
     const status = await factorywagerSecretsLifecycle.getStatus();
 
-    console.log(styled(`📋 Version: ${status.version}`, 'info'));
-    console.log(styled(`📝 Rules Applied: ${status.rulesApplied}`, 'success'));
-    console.log(styled(`⏰ Active Rotations: ${status.activeRotations}`, 'primary'));
-    console.log(
+    console.info(styled(`📋 Version: ${status.version}`, 'info'));
+    console.info(styled(`📝 Rules Applied: ${status.rulesApplied}`, 'success'));
+    console.info(styled(`⏰ Active Rotations: ${status.activeRotations}`, 'primary'));
+    console.info(
       styled(
         `⚠️  Expiring Soon: ${status.expiringSoon}`,
         status.expiringSoon > 0 ? 'warning' : 'success'
       )
     );
-    console.log(
+    console.info(
       styled(`🕐 Last Applied: ${new Date(status.lastApplied).toLocaleString()}`, 'muted')
     );
 
     if (status.expiringSoon > 0) {
-      console.log();
-      console.log(styled('⚠️  Action Required:', 'warning'));
-      console.log(styled('   Some secrets are expiring soon. Check them with:', 'info'));
-      console.log(styled('   bun run scripts/secret-version-cli.ts expirations', 'muted'));
+      console.info();
+      console.info(styled('⚠️  Action Required:', 'warning'));
+      console.info(styled('   Some secrets are expiring soon. Check them with:', 'info'));
+      console.info(styled('   bun run scripts/secret-version-cli.ts expirations', 'muted'));
     }
   } catch (error) {
-    console.log(styled(`❌ Failed to get status: ${error.message}`, 'error'));
+    console.info(styled(`❌ Failed to get status: ${error.message}`, 'error'));
     process.exit(1);
   }
 }
 
 async function handleExport() {
   try {
-    console.log(styled('📤 Exporting configuration...', 'info'));
+    console.info(styled('📤 Exporting configuration...', 'info'));
 
     const exportData = await factorywagerSecretsLifecycle.exportConfig();
 
@@ -186,11 +186,11 @@ async function handleExport() {
 
     await Bun.write(filename, exportData);
 
-    console.log(styled('✅ Configuration exported successfully!', 'success'));
-    console.log(styled(`   File: ${filename}`, 'primary'));
-    console.log(styled(`   Size: ${exportData.length} bytes`, 'muted'));
+    console.info(styled('✅ Configuration exported successfully!', 'success'));
+    console.info(styled(`   File: ${filename}`, 'primary'));
+    console.info(styled(`   Size: ${exportData.length} bytes`, 'muted'));
   } catch (error) {
-    console.log(styled(`❌ Failed to export: ${error.message}`, 'error'));
+    console.info(styled(`❌ Failed to export: ${error.message}`, 'error'));
     process.exit(1);
   }
 }
@@ -228,8 +228,8 @@ async function main() {
         if (!command) {
           showHelp();
         } else {
-          console.log(styled(`❌ Unknown command: ${command}`, 'error'));
-          console.log(styled('Use "help" to see available commands', 'muted'));
+          console.info(styled(`❌ Unknown command: ${command}`, 'error'));
+          console.info(styled('Use "help" to see available commands', 'muted'));
         }
     }
   } catch (error) {

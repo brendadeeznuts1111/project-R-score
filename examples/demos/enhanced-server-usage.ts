@@ -54,8 +54,8 @@ const server = createEnhancedServer({
 });
 
 // Example 2: Access protocol information
-console.log(`Server is running on ${server.protocol}`);
-console.log(`Active connections: ${server.performance.activeConnections}`);
+console.info(`Server is running on ${server.protocol}`);
+console.info(`Active connections: ${server.performance.activeConnections}`);
 
 // Example 3: Get detailed metrics
 setInterval(async () => {
@@ -63,11 +63,11 @@ setInterval(async () => {
   const compressionStats = server.getCompressionStats();
   const protocolMetrics = server.getProtocolMetrics();
   
-  console.log('📊 Server Metrics:');
-  console.log(`  Protocol: ${server.protocol}`);
-  console.log(`  Requests/sec: ${server.performance.requestsPerSecond}`);
-  console.log(`  Compression Savings: ${compressionStats.savings.ratio * 100}%`);
-  console.log(`  Cache Hit Ratio: ${server.performance.cacheStats.ratio * 100}%`);
+  console.info('📊 Server Metrics:');
+  console.info(`  Protocol: ${server.protocol}`);
+  console.info(`  Requests/sec: ${server.performance.requestsPerSecond}`);
+  console.info(`  Compression Savings: ${compressionStats.savings.ratio * 100}%`);
+  console.info(`  Cache Hit Ratio: ${server.performance.cacheStats.ratio * 100}%`);
 }, 30000); // Every 30 seconds
 
 // Example 4: Protocol-specific optimization
@@ -76,18 +76,18 @@ optimizer.optimizeForProtocol();
 
 const recommendations = optimizer.getProtocolRecommendations();
 if (recommendations.length > 0) {
-  console.log('💡 Recommendations:');
-  recommendations.forEach(rec => console.log(`  • ${rec}`));
+  console.info('💡 Recommendations:');
+  recommendations.forEach(rec => console.info(`  • ${rec}`));
 }
 
 // Example 5: Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down server gracefully...');
+  console.info('\n🛑 Shutting down server gracefully...');
   server.stop();
   process.exit(0);
 });
 
-console.log(`
+console.info(`
 🎯 Enhanced Server Examples:
 ├── Performance Dashboard: http://localhost:3000/_perf
 ├── Metrics API: http://localhost:3000/_metrics

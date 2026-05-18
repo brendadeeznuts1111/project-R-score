@@ -482,13 +482,13 @@ export class BankingAPIIntegration {
   // Private helper methods
   private async exchangePlaidToken(publicToken: string): Promise<string> {
     // In real implementation, would call Plaid API
-    console.log('Exchanging Plaid public token');
+    console.info('Exchanging Plaid public token');
     return `access_${Date.now()}`;
   }
 
   private async getPlaidAccountDetails(accessToken: string, accountId: string): Promise<any> {
     // In real implementation, would call Plaid API
-    console.log(`Getting Plaid account details for ${accountId}`);
+    console.info(`Getting Plaid account details for ${accountId}`);
     return {
       accountNumber: '****1234',
       routingNumber: '123456789',
@@ -561,7 +561,7 @@ export class BankingAPIIntegration {
 
   private async submitACHTransfer(transfer: ACHTransfer): Promise<void> {
     // In real implementation, would submit to ACH processor
-    console.log(`Submitting ACH transfer ${transfer.id}`);
+    console.info(`Submitting ACH transfer ${transfer.id}`);
 
     // Simulate processing
     setTimeout(() => {
@@ -573,7 +573,7 @@ export class BankingAPIIntegration {
 
   private async submitWireTransfer(transfer: WireTransfer): Promise<void> {
     // In real implementation, would submit to wire processor
-    console.log(`Submitting wire transfer ${transfer.id}`);
+    console.info(`Submitting wire transfer ${transfer.id}`);
 
     // Simulate processing
     setTimeout(() => {
@@ -589,7 +589,7 @@ export class BankingAPIIntegration {
     amounts: [number, number]
   ): Promise<void> {
     // In real implementation, would send micro-deposits via ACH
-    console.log(`Sending micro-deposits to ${bankAccount.accountNumber}: ${amounts.join(', ')}`);
+    console.info(`Sending micro-deposits to ${bankAccount.accountNumber}: ${amounts.join(', ')}`);
   }
 
   private async verifyMicroDepositAmounts(
@@ -597,7 +597,7 @@ export class BankingAPIIntegration {
     amounts: [number, number]
   ): Promise<boolean> {
     // In real implementation, would verify against actual deposits
-    console.log(`Verifying micro-deposit amounts for ${bankAccount.accountNumber}`);
+    console.info(`Verifying micro-deposit amounts for ${bankAccount.accountNumber}`);
     return Math.random() > 0.1; // 90% success rate
   }
 

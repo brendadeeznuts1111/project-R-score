@@ -290,8 +290,8 @@ function getSignalEmoji(signal: string): string {
 // ============================================================================
 
 async function main(): Promise<void> {
-  console.log("🔮 Kimi Shell Bridge - Health Dashboard");
-  console.log("=======================================\n");
+  console.info("🔮 Kimi Shell Bridge - Health Dashboard");
+  console.info("=======================================\n");
   
   // Start metrics collection
   setInterval(collectMetrics, CONFIG.refreshIntervalMs);
@@ -317,8 +317,8 @@ async function main(): Promise<void> {
     },
   });
   
-  console.log(`🚀 Dashboard: http://${CONFIG.host}:${CONFIG.port}/dashboard`);
-  console.log(`🔌 API: http://${CONFIG.host}:${CONFIG.port}/api/health`);
+  console.info(`🚀 Dashboard: http://${CONFIG.host}:${CONFIG.port}/dashboard`);
+  console.info(`🔌 API: http://${CONFIG.host}:${CONFIG.port}/api/health`);
 }
 
 if (import.meta.main) {

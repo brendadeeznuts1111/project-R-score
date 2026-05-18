@@ -369,10 +369,10 @@ export function displayTypeResults(
 ): void {
 	const { kind, limit = 50 } = options;
 
-	console.log("\n📦 Type Extraction Results\n");
+	console.info("\n📦 Type Extraction Results\n");
 
 	// Summary
-	console.log(
+	console.info(
 		Bun.inspect.table(
 			[
 				{ Metric: "Total Types", Value: report.summary.totalTypes },
@@ -390,13 +390,13 @@ export function displayTypeResults(
 	let types = report.types;
 	if (kind) {
 		types = types.filter((t) => t.kind === kind);
-		console.log(`\nFiltered to: ${kind}s (${types.length})\n`);
+		console.info(`\nFiltered to: ${kind}s (${types.length})\n`);
 	}
 
 	// Display types
 	const displayTypes = types.slice(0, limit);
 	if (displayTypes.length > 0) {
-		console.log(
+		console.info(
 			`\n${kind ? KIND_ICONS[kind] : "📋"} Types (${Math.min(limit, types.length)} of ${types.length})\n`,
 		);
 
@@ -409,7 +409,7 @@ export function displayTypeResults(
 			Extends: t.extends?.join(", ") || "",
 		}));
 
-		console.log(Bun.inspect.table(tableData, { colors: true }));
+		console.info(Bun.inspect.table(tableData, { colors: true }));
 	}
 }
 
@@ -417,7 +417,7 @@ export function displayTypeResults(
  * Display types grouped by file
  */
 export function displayTypesByFile(report: TypeReport): void {
-	console.log("\n📁 Types by File\n");
+	console.info("\n📁 Types by File\n");
 
 	const byFile = new Map<string, ExtractedType[]>();
 	for (const t of report.types) {
@@ -428,13 +428,13 @@ export function displayTypesByFile(report: TypeReport): void {
 
 	for (const [filePath, types] of byFile) {
 		const shortPath = filePath.split("/").slice(-3).join("/");
-		console.log(`\n${style.bold(shortPath)} (${types.length} types)`);
+		console.info(`\n${style.bold(shortPath)} (${types.length} types)`);
 
 		for (const t of types) {
 			const icon = KIND_ICONS[t.kind];
 			const exportMarker = t.exported ? `${style.green("export")} ` : "";
 			const generics = t.genericParams ? `<${t.genericParams.join(", ")}>` : "";
-			console.log(
+			console.info(
 				`  ${icon} ${exportMarker}${t.kind} ${style.cyan(t.name)}${generics} :${t.line}`,
 			);
 		}
@@ -452,7 +452,7 @@ if (import.meta.main) {
 
 	const extractor = new TypeExtractor();
 
-	console.log(`Extracting types from ${path}...`);
+	console.info(`Extracting types from ${path}...`);
 
 	extractor
 		.extractFromDirectory(path)

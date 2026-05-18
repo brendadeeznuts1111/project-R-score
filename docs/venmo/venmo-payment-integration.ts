@@ -188,7 +188,7 @@ export class VenmoPaymentGateway {
       case 'payment.cancelled':
         return this.handlePaymentCancelled(event.data);
       default:
-        console.log(`Unhandled webhook event type: ${event.type}`);
+        console.info(`Unhandled webhook event type: ${event.type}`);
         return { status: 'ignored' };
     }
   }
@@ -331,7 +331,7 @@ export class VenmoPaymentGateway {
    */
   private async handlePaymentCompleted(data: any): Promise<any> {
     // Update your database, send notifications, etc.
-    console.log(`Payment completed: ${data.payment_id}`);
+    console.info(`Payment completed: ${data.payment_id}`);
     
     // Example: Update order status
     // await updateOrderStatus(data.payment_id, 'paid');
@@ -346,7 +346,7 @@ export class VenmoPaymentGateway {
    * Handle payment failed webhook
    */
   private async handlePaymentFailed(data: any): Promise<any> {
-    console.log(`Payment failed: ${data.payment_id}, reason: ${data.failure_reason}`);
+    console.info(`Payment failed: ${data.payment_id}, reason: ${data.failure_reason}`);
     
     // Example: Update order status
     // await updateOrderStatus(data.payment_id, 'payment_failed');
@@ -361,7 +361,7 @@ export class VenmoPaymentGateway {
    * Handle payment cancelled webhook
    */
   private async handlePaymentCancelled(data: any): Promise<any> {
-    console.log(`Payment cancelled: ${data.payment_id}`);
+    console.info(`Payment cancelled: ${data.payment_id}`);
     
     // Example: Update order status
     // await updateOrderStatus(data.payment_id, 'cancelled');

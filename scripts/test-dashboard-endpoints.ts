@@ -657,10 +657,10 @@ async function run(): Promise<number> {
 
   const failed = checks.filter((c) => !c.ok);
   for (const c of checks) {
-    console.log(`[${c.ok ? "PASS" : "FAIL"}] ${c.name} :: ${c.details}`);
+    console.info(`[${c.ok ? "PASS" : "FAIL"}] ${c.name} :: ${c.details}`);
   }
   const { base } = getDashboardTestConfig();
-  console.log(`Checked ${checks.length} dashboard endpoint assertions against ${base}`);
+  console.info(`Checked ${checks.length} dashboard endpoint assertions against ${base}`);
   return failed.length === 0 ? 0 : 1;
 }
 

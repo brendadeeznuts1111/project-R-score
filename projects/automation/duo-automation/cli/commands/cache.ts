@@ -17,40 +17,40 @@ function getOption(name: string, fallback: string): string {
 }
 
 function runHealth(): void {
-  console.log("Cache System Health Check");
-  console.log("Health Check Results");
-  console.log("Overall Health Score");
-  console.log("✅ OK");
+  console.info("Cache System Health Check");
+  console.info("Health Check Results");
+  console.info("Overall Health Score");
+  console.info("✅ OK");
 
   if (hasFlag("--detailed")) {
-    console.log("Detailed Information");
-    console.log("Cache services: ONLINE");
-    console.log("Uptime: 3 days");
-    console.log("Total requests: 1234");
+    console.info("Detailed Information");
+    console.info("Cache services: ONLINE");
+    console.info("Uptime: 3 days");
+    console.info("Total requests: 1234");
   }
 }
 
 function runRestart(): void {
-  console.log(`Restarting cache: ${getOption("--type", "all")}`);
+  console.info(`Restarting cache: ${getOption("--type", "all")}`);
   if (hasFlag("--deep-cleanup")) {
-    console.log("Running deep filesystem cleanup");
-    console.log("Cleanup completed:");
+    console.info("Running deep filesystem cleanup");
+    console.info("Cleanup completed:");
   }
   if (hasFlag("--dry-run")) {
-    console.log("DRY RUN MODE");
+    console.info("DRY RUN MODE");
   }
 }
 
 function runCleanup(): void {
   const targetDir = getOption("--target-dir", "utils");
-  console.log("Advanced Cache Cleanup v2.01.05");
-  console.log(`Target: ${targetDir}`);
-  console.log("Files processed:");
+  console.info("Advanced Cache Cleanup v2.01.05");
+  console.info(`Target: ${targetDir}`);
+  console.info("Files processed:");
   if (hasFlag("--parallel")) {
-    console.log("Parallel operations:");
+    console.info("Parallel operations:");
   }
   if (hasFlag("--dry-run")) {
-    console.log("DRY RUN MODE");
+    console.info("DRY RUN MODE");
   }
 }
 
@@ -65,6 +65,6 @@ switch (command) {
     runCleanup();
     break;
   default:
-    console.log("Cache System Health Check");
+    console.info("Cache System Health Check");
     break;
 }

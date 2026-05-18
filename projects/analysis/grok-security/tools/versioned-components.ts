@@ -698,12 +698,12 @@ const debug = {
       },
     });
 
-    console.log(`🚀 Debug session started on port ${port}`);
-    console.log(`🔗 Opening Chrome DevTools...`);
+    console.info(`🚀 Debug session started on port ${port}`);
+    console.info(`🔗 Opening Chrome DevTools...`);
 
     if (options.autoBreak) {
       setTimeout(() => {
-        console.log(`🔵 Auto-break enabled - pausing at first statement`);
+        console.info(`🔵 Auto-break enabled - pausing at first statement`);
       }, 2000);
     }
 
@@ -716,14 +716,14 @@ const debug = {
   openDevTools: (wsUrl: string) => {
     const devtoolsUrl = `devtools://devtools/bundled/inspector.html?experiments=true&v8only=true&ws=${wsUrl.replace("ws://", "")}`;
 
-    console.log(`📟 DevTools: ${devtoolsUrl}`);
+    console.info(`📟 DevTools: ${devtoolsUrl}`);
 
     if (process.platform === "darwin") {
       Bun.spawn(["open", devtoolsUrl], { stdout: "inherit" });
     } else if (process.platform === "linux") {
       Bun.spawn(["xdg-open", devtoolsUrl], { stdout: "inherit" });
     } else {
-      console.log(`Open in Chrome: ${devtoolsUrl}`);
+      console.info(`Open in Chrome: ${devtoolsUrl}`);
     }
   },
 
@@ -781,7 +781,7 @@ const debug = {
       },
     });
 
-    console.log(`🔧 Bun inspector running on ws://localhost:${port}`);
+    console.info(`🔧 Bun inspector running on ws://localhost:${port}`);
     await proc.exited;
     proc.terminal?.close();
   },
@@ -873,7 +873,7 @@ const security = {
       },
       destroy: () => {
         clearInterval(monitorInterval);
-        console.log(`🔒 Session destroyed: ${sessionId}`);
+        console.info(`🔒 Session destroyed: ${sessionId}`);
       },
     };
   },
@@ -1225,11 +1225,11 @@ export function printMatrix(): void {
   const line = "═".repeat(W - 2);
   const sep = "─".repeat(W - 2);
 
-  console.log(`\n╔${line}╗`);
-  console.log(
+  console.info(`\n╔${line}╗`);
+  console.info(
     `║${stringWidth.pad("VERSIONED COMPONENT MATRIX", W - 2, "center")}║`
   );
-  console.log(`╠${line}╣`);
+  console.info(`╠${line}╣`);
 
   // Header row (8 columns) - using stringWidth.pad for emoji alignment
   const headers = [
@@ -1245,8 +1245,8 @@ export function printMatrix(): void {
   const headerRow = headers
     .map((h, i) => stringWidth.pad(h, cols[i]))
     .join("│");
-  console.log(`║ ${headerRow} ║`);
-  console.log(`╠${sep}╣`);
+  console.info(`║ ${headerRow} ║`);
+  console.info(`╠${sep}╣`);
 
   // Data rows - using stringWidth.pad for accurate column alignment
   for (const c of VERSIONED_COMPONENTS) {
@@ -1261,10 +1261,10 @@ export function printMatrix(): void {
       c.releaseTag,
     ];
     const row = values.map((v, i) => stringWidth.pad(v, cols[i])).join("│");
-    console.log(`║ ${row} ║`);
+    console.info(`║ ${row} ║`);
   }
 
-  console.log(`╚${line}╝\n`);
+  console.info(`╚${line}╝\n`);
 }
 
 // ===== JSON Export =====
@@ -1315,22 +1315,22 @@ if (import.meta.main) {
 
   switch (cmd) {
     case "--json":
-      console.log(toJSON());
+      console.info(toJSON());
       break;
     case "--markdown":
     case "--md":
-      console.log(toMarkdown());
+      console.info(toMarkdown());
       break;
     case "--list":
       VERSIONED_COMPONENTS.forEach((c) =>
-        console.log(`${c.versionedId} → ${c.path}`)
+        console.info(`${c.versionedId} → ${c.path}`)
       );
       break;
     case "--get":
       const id = args[1];
       const comp = getComponentById(id);
       if (comp) {
-        console.log(JSON.stringify(comp, null, 2));
+        console.info(JSON.stringify(comp, null, 2));
       } else {
         console.error(`Component not found: ${id}`);
       }
@@ -1338,7 +1338,7 @@ if (import.meta.main) {
     case "--type":
       const type = args[1] as ComponentType;
       getComponentsByType(type).forEach((c) =>
-        console.log(`${c.versionedId} (${c.componentType})`)
+        console.info(`${c.versionedId} (${c.componentType})`)
       );
       break;
     default:

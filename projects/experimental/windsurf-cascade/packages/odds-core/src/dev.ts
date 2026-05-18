@@ -4,11 +4,11 @@
 import { apiTracker } from './monitoring/api-tracker.js';
 
 // Use Bun's hot reload for development
-console.log('🔥 Starting Odds Core dev server with hot reload...');
+console.info('🔥 Starting Odds Core dev server with hot reload...');
 
 const watcher = Bun.watch('./src', {
   async onChange(event) {
-    console.log(`🔄 File changed: ${event.path}`);
+    console.info(`🔄 File changed: ${event.path}`);
     
     // Clear require cache for hot reload
     Object.keys(require.cache).forEach(key => {
@@ -21,7 +21,7 @@ const watcher = Bun.watch('./src', {
       stderr: 'inherit',
     }));
     
-    console.log('🔄 Server restarted with changes');
+    console.info('🔄 Server restarted with changes');
   },
 });
 
@@ -45,7 +45,7 @@ const devServer = await apiTracker.track('Bun.serve', () => Bun.serve({
     
     if (url.pathname === '/reload') {
       // Manual reload endpoint
-      console.log('🔄 Manual reload triggered');
+      console.info('🔄 Manual reload triggered');
       return new Response('Reload triggered', { status: 200 });
     }
     
@@ -100,12 +100,12 @@ const eventServer = await apiTracker.track('Bun.serve', () => Bun.serve({
   }
 }));
 
-console.log(`👀 Watching for changes... (http://localhost:${devServer.port})`);
-console.log(`📡 Event stream on http://localhost:4001/events`);
+console.info(`👀 Watching for changes... (http://localhost:${devServer.port})`);
+console.info(`📡 Event stream on http://localhost:4001/events`);
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down dev server...');
+  console.info('\n🛑 Shutting down dev server...');
   watcher.stop();
   devServer.stop();
   process.exit(0);

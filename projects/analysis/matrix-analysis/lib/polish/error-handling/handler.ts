@@ -184,25 +184,25 @@ export class EnhancedErrorHandler {
     const colorFn =
       severity === "critical" || severity === "error" ? colors.error : colors.warning;
 
-    console.log();
-    console.log(colorFn(`${icon} ${severity.toUpperCase()}: ${error.message}`));
-    console.log(colors.dim(`  in ${context.operation}`));
+    console.info();
+    console.info(colorFn(`${icon} ${severity.toUpperCase()}: ${error.message}`));
+    console.info(colors.dim(`  in ${context.operation}`));
 
     if (context.stack && severity === "critical") {
       const stackLines = context.stack.split("\n").slice(1, 4);
       for (const line of stackLines) {
-        console.log(colors.dim(`  ${line.trim()}`));
+        console.info(colors.dim(`  ${line.trim()}`));
       }
     }
   }
 
   private displaySolutions(solutions: string[]): void {
-    console.log();
-    console.log(colors.info("💡 Suggestions:"));
+    console.info();
+    console.info(colors.info("💡 Suggestions:"));
     for (const solution of solutions.slice(0, 3)) {
-      console.log(colors.dim(`   → ${solution}`));
+      console.info(colors.dim(`   → ${solution}`));
     }
-    console.log();
+    console.info();
   }
 
   // ─────────────────────────────────────────────────────────────────────────

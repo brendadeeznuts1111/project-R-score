@@ -188,7 +188,7 @@ export class SessionManager {
     expired.forEach(sessionId => this.terminateSession(sessionId));
     
     if (expired.length > 0) {
-      console.log(`🧹 Cleaned up ${expired.length} expired sessions`);
+      console.info(`🧹 Cleaned up ${expired.length} expired sessions`);
     }
   }
 

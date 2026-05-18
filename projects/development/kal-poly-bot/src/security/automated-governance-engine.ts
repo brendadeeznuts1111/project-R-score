@@ -138,7 +138,7 @@ export class AutomatedGovernanceEngine {
   private setupViolationHandlers(): void {
     // GDPR violation handler
     this.violationHandlers.set("GDPR", async (violation) => {
-      console.log(`GDPR Violation: ${violation.violation}`);
+      console.info(`GDPR Violation: ${violation.violation}`);
       // In a real implementation, this would:
       // - Send notifications to compliance officers
       // - Create tickets in compliance systems
@@ -147,7 +147,7 @@ export class AutomatedGovernanceEngine {
 
     // CCPA violation handler
     this.violationHandlers.set("CCPA", async (violation) => {
-      console.log(`CCPA Violation: ${violation.violation}`);
+      console.info(`CCPA Violation: ${violation.violation}`);
       // In a real implementation, this would:
       // - Update privacy compliance records
       // - Notify privacy teams
@@ -156,7 +156,7 @@ export class AutomatedGovernanceEngine {
 
     // Security violation handler
     this.violationHandlers.set("SECURITY", async (violation) => {
-      console.log(`Security Violation: ${violation.violation}`);
+      console.info(`Security Violation: ${violation.violation}`);
       // In a real implementation, this would:
       // - Alert security teams
       // - Trigger incident response
@@ -333,8 +333,8 @@ export class AutomatedGovernanceEngine {
     // - Create tickets in approval systems
     // - Send notifications
 
-    console.log(`Approval request ${approvalId} created for user ${userId}`);
-    console.log(
+    console.info(`Approval request ${approvalId} created for user ${userId}`);
+    console.info(
       `Violations requiring approval:`,
       violations.map((v) => v.violation)
     );

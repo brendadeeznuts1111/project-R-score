@@ -27,7 +27,7 @@ declare global {
  * Example 1: Basic PTY Shell with Command Sequence
  */
 async function basicShellExample() {
-  console.log("🔧 Example 1: Basic PTY Shell with Command Sequence");
+  console.info("🔧 Example 1: Basic PTY Shell with Command Sequence");
 
   const commands = [
     "echo 'Welcome to Bun PTY!'",
@@ -44,13 +44,13 @@ async function basicShellExample() {
       rows: 24,
       data(terminal: TerminalInstance, data: Uint8Array) {
         const output = new TextDecoder().decode(data);
-        console.log("[OUTPUT]", output.trim());
+        console.info("[OUTPUT]", output.trim());
 
         // Detect prompt and send next command
         if (output.includes("$ ") || output.includes("# ")) {
           const cmd = commands.shift();
           if (cmd) {
-            console.log("[INPUT]", cmd);
+            console.info("[INPUT]", cmd);
             terminal.write(cmd + "\n");
           }
         }
@@ -60,14 +60,14 @@ async function basicShellExample() {
 
   await proc.exited;
   proc.terminal?.close();
-  console.log("✅ Basic shell example completed\n");
+  console.info("✅ Basic shell example completed\n");
 }
 
 /**
  * Example 2: Interactive Program (vim)
  */
 async function interactiveVimExample() {
-  console.log("🔧 Example 2: Interactive Program (vim)");
+  console.info("🔧 Example 2: Interactive Program (vim)");
 
   // Create a temporary file for vim to edit
   const tempFile = "/tmp/bun-pty-demo.txt";
@@ -85,7 +85,7 @@ async function interactiveVimExample() {
 
         // Only print non-control characters to avoid noise
         if (output.length > 0 && output.charCodeAt(0) >= 32) {
-          console.log("[VIM]", output.trim());
+          console.info("[VIM]", output.trim());
         }
       },
     },
@@ -93,17 +93,17 @@ async function interactiveVimExample() {
 
   // Simulate user interaction
   setTimeout(() => {
-    console.log("[INPUT] Moving cursor down");
+    console.info("[INPUT] Moving cursor down");
     proc.terminal?.write("\x1b[B"); // Down arrow
   }, 1000);
 
   setTimeout(() => {
-    console.log("[INPUT] Inserting text");
+    console.info("[INPUT] Inserting text");
     proc.terminal?.write("iThis was added programmatically!\x1b"); // Insert mode, add text, escape
   }, 1500);
 
   setTimeout(() => {
-    console.log("[INPUT] Saving and quitting");
+    console.info("[INPUT] Saving and quitting");
     proc.terminal?.write(":wq\n"); // Save and quit
   }, 2000);
 
@@ -112,16 +112,16 @@ async function interactiveVimExample() {
 
   // Show the edited file
   const editedContent = await Bun.file(tempFile).text();
-  console.log("Edited file content:");
-  console.log(editedContent);
-  console.log("✅ Interactive vim example completed\n");
+  console.info("Edited file content:");
+  console.info(editedContent);
+  console.info("✅ Interactive vim example completed\n");
 }
 
 /**
  * Example 3: System Monitor (htop)
  */
 async function htopExample() {
-  console.log("🔧 Example 3: System Monitor (htop)");
+  console.info("🔧 Example 3: System Monitor (htop)");
 
   const proc = spawn(["htop"], {
     terminal: {
@@ -134,7 +134,7 @@ async function htopExample() {
         // eslint-disable-next-line no-control-regex
         const cleanOutput = output.replace(/[\x1b\x00-\x1F]/g, "");
         if (cleanOutput.trim()) {
-          console.log("[HTOP]", cleanOutput.trim());
+          console.info("[HTOP]", cleanOutput.trim());
         }
       },
     },
@@ -142,20 +142,20 @@ async function htopExample() {
 
   // Let htop run for 5 seconds, then quit
   setTimeout(() => {
-    console.log("[INPUT] Quitting htop");
+    console.info("[INPUT] Quitting htop");
     proc.terminal?.write("q"); // Quit htop
   }, 5000);
 
   await proc.exited;
   proc.terminal?.close();
-  console.log("✅ htop example completed\n");
+  console.info("✅ htop example completed\n");
 }
 
 /**
  * Example 4: Reusable Terminal Instance
  */
 async function reusableTerminalExample() {
-  console.log("🔧 Example 4: Reusable Terminal Instance");
+  console.info("🔧 Example 4: Reusable Terminal Instance");
 
   // Create a reusable terminal
   await using terminal = new Bun.Terminal({
@@ -163,34 +163,34 @@ async function reusableTerminalExample() {
     rows: 24,
     data(_term: TerminalInstance, _data: Uint8Array) {
       const output = new TextDecoder().decode(_data);
-      console.log("[REUSABLE]", output.trim());
+      console.info("[REUSABLE]", output.trim());
     },
   });
 
   // Spawn multiple commands on the same terminal
-  console.log("[CMD] Running echo command");
+  console.info("[CMD] Running echo command");
   const proc1 = spawn(["echo", "First command on reusable terminal"], {
     terminal,
   });
   await proc1.exited;
 
-  console.log("[CMD] Running pwd command");
+  console.info("[CMD] Running pwd command");
   const proc2 = spawn(["pwd"], { terminal });
   await proc2.exited;
 
-  console.log("[CMD] Running date command");
+  console.info("[CMD] Running date command");
   const proc3 = spawn(["date"], { terminal });
   await proc3.exited;
 
   // Terminal auto-closes here due to await using
-  console.log("✅ Reusable terminal example completed\n");
+  console.info("✅ Reusable terminal example completed\n");
 }
 
 /**
  * Example 5: Terminal Resize Demo
  */
 async function terminalResizeExample() {
-  console.log("🔧 Example 5: Terminal Resize Demo");
+  console.info("🔧 Example 5: Terminal Resize Demo");
 
   const proc = spawn(["bash"], {
     terminal: {
@@ -198,7 +198,7 @@ async function terminalResizeExample() {
       rows: 10,
       data(terminal: TerminalInstance, data: Uint8Array) {
         const output = new TextDecoder().decode(data);
-        console.log("[RESIZE]", output.trim());
+        console.info("[RESIZE]", output.trim());
 
         if (output.includes("$ ")) {
           terminal.write("echo 'Current terminal size:'\\n");
@@ -209,7 +209,7 @@ async function terminalResizeExample() {
 
   // Resize after 2 seconds
   setTimeout(() => {
-    console.log("[ACTION] Resizing terminal to 80x24");
+    console.info("[ACTION] Resizing terminal to 80x24");
     proc.terminal?.resize(80, 24);
     proc.terminal?.write("echo 'Terminal resized!'\\n");
   }, 2000);
@@ -220,14 +220,14 @@ async function terminalResizeExample() {
 
   await proc.exited;
   proc.terminal?.close();
-  console.log("✅ Terminal resize example completed\n");
+  console.info("✅ Terminal resize example completed\n");
 }
 
 /**
  * Example 6: Interactive Text Editor (nano)
  */
 async function nanoExample() {
-  console.log("🔧 Example 6: Interactive Text Editor (nano)");
+  console.info("🔧 Example 6: Interactive Text Editor (nano)");
 
   const tempFile = "/tmp/bun-nano-demo.txt";
   await Bun.write(tempFile, "Original content\n");
@@ -241,7 +241,7 @@ async function nanoExample() {
 
         // Filter nano's interface noise
         if (output.length > 0 && output.charCodeAt(0) >= 32) {
-          console.log("[NANO]", output.trim());
+          console.info("[NANO]", output.trim());
         }
       },
     },
@@ -249,12 +249,12 @@ async function nanoExample() {
 
   // Simulate nano interaction
   setTimeout(() => {
-    console.log("[INPUT] Adding text");
+    console.info("[INPUT] Adding text");
     proc.terminal?.write("This text was added programmatically via Bun PTY!");
   }, 1000);
 
   setTimeout(() => {
-    console.log("[INPUT] Saving and exiting");
+    console.info("[INPUT] Saving and exiting");
     proc.terminal?.write("\x17"); // Ctrl+X (exit)
     setTimeout(() => {
       proc.terminal?.write("y"); // Confirm save
@@ -269,16 +269,16 @@ async function nanoExample() {
 
   // Show the edited file
   const editedContent = await Bun.file(tempFile).text();
-  console.log("Final file content:");
-  console.log(editedContent);
-  console.log("✅ Nano example completed\n");
+  console.info("Final file content:");
+  console.info(editedContent);
+  console.info("✅ Nano example completed\n");
 }
 
 /**
  * Example 7: Process Monitoring
  */
 async function processMonitoringExample() {
-  console.log("🔧 Example 7: Process Monitoring");
+  console.info("🔧 Example 7: Process Monitoring");
 
   const proc = spawn(["bash"], {
     terminal: {
@@ -286,7 +286,7 @@ async function processMonitoringExample() {
       rows: 24,
       data(terminal: TerminalInstance, data: Uint8Array) {
         const output = new TextDecoder().decode(data);
-        console.log("[MONITOR]", output.trim());
+        console.info("[MONITOR]", output.trim());
 
         if (output.includes("$ ")) {
           // Run various monitoring commands
@@ -304,7 +304,7 @@ async function processMonitoringExample() {
 
           commands.forEach((cmd, index) => {
             setTimeout(() => {
-              console.log("[CMD]", cmd);
+              console.info("[CMD]", cmd);
               terminal.write(cmd + "\n");
             }, index * 1000);
           });
@@ -315,14 +315,14 @@ async function processMonitoringExample() {
 
   await proc.exited;
   proc.terminal?.close();
-  console.log("✅ Process monitoring example completed\n");
+  console.info("✅ Process monitoring example completed\n");
 }
 
 /**
  * Run all examples
  */
 async function runAllExamples() {
-  console.log("🚀 Starting Bun Terminal API (PTY) Examples\n");
+  console.info("🚀 Starting Bun Terminal API (PTY) Examples\n");
 
   try {
     await basicShellExample();
@@ -333,7 +333,7 @@ async function runAllExamples() {
     await nanoExample();
     await processMonitoringExample();
 
-    console.log("🎉 All examples completed successfully!");
+    console.info("🎉 All examples completed successfully!");
   } catch (error) {
     console.error("❌ Error running examples:", error);
   }

@@ -172,31 +172,31 @@ class MetricsCollector {
 		const stats = await this.collectSystemStats();
 		const summary = this.getSummary();
 
-		console.log("\n📊 Kimi Shell Metrics Dashboard");
-		console.log("=".repeat(50));
+		console.info("\n📊 Kimi Shell Metrics Dashboard");
+		console.info("=".repeat(50));
 
-		console.log("\n🖥️  System Stats:");
-		console.log(`  Memory Usage: ${stats.memoryUsage} MB`);
-		console.log(`  Disk Usage: ${stats.diskUsage}%`);
-		console.log(
+		console.info("\n🖥️  System Stats:");
+		console.info(`  Memory Usage: ${stats.memoryUsage} MB`);
+		console.info(`  Disk Usage: ${stats.diskUsage}%`);
+		console.info(
 			`  Uptime: ${Math.floor(stats.uptime / 60)}m ${Math.floor(stats.uptime % 60)}s`,
 		);
 
-		console.log("\n📈 Metrics Summary:");
-		console.log(`  Total Metrics: ${summary.total}`);
+		console.info("\n📈 Metrics Summary:");
+		console.info(`  Total Metrics: ${summary.total}`);
 		for (const [cat, count] of Object.entries(summary.byCategory)) {
-			console.log(`  ${cat}: ${count}`);
+			console.info(`  ${cat}: ${count}`);
 		}
 
 		if (summary.recent.length > 0) {
-			console.log("\n🕐 Recent Metrics:");
+			console.info("\n🕐 Recent Metrics:");
 			for (const m of summary.recent.slice(-5)) {
 				const time = new Date(m.timestamp).toLocaleTimeString();
-				console.log(`  ${time} [${m.category}] ${m.name}: ${m.value}${m.unit}`);
+				console.info(`  ${time} [${m.category}] ${m.name}: ${m.value}${m.unit}`);
 			}
 		}
 
-		console.log("\n" + "=".repeat(50));
+		console.info("\n" + "=".repeat(50));
 	}
 }
 
@@ -212,7 +212,7 @@ async function main() {
 		case "collect":
 			await collector.collectSystemStats();
 			await collector.save();
-			console.log("✅ Metrics collected");
+			console.info("✅ Metrics collected");
 			break;
 
 		case "dashboard":
@@ -226,7 +226,7 @@ async function main() {
 			const unit = args[4] || "count";
 
 			if (!category || !name || Number.isNaN(value)) {
-				console.log(
+				console.info(
 					"Usage: metrics-collector.ts record <category> <name> <value> [unit]",
 				);
 				process.exit(1);
@@ -234,24 +234,24 @@ async function main() {
 
 			collector.record({ category, name, value, unit });
 			await collector.save();
-			console.log(`✅ Recorded: ${name} = ${value}${unit}`);
+			console.info(`✅ Recorded: ${name} = ${value}${unit}`);
 			break;
 		}
 
 		case "export": {
 			const metrics = await collector.load();
-			console.log(JSON.stringify(metrics, null, 2));
+			console.info(JSON.stringify(metrics, null, 2));
 			break;
 		}
 
 		default:
-			console.log("Kimi Shell Metrics Collector");
-			console.log("");
-			console.log("Commands:");
-			console.log("  collect              Collect system metrics");
-			console.log("  dashboard            Show metrics dashboard");
-			console.log("  record <cat> <name> <val> [unit]  Record a metric");
-			console.log("  export               Export all metrics as JSON");
+			console.info("Kimi Shell Metrics Collector");
+			console.info("");
+			console.info("Commands:");
+			console.info("  collect              Collect system metrics");
+			console.info("  dashboard            Show metrics dashboard");
+			console.info("  record <cat> <name> <val> [unit]  Record a metric");
+			console.info("  export               Export all metrics as JSON");
 			break;
 	}
 }

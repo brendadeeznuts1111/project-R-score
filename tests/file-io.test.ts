@@ -388,7 +388,7 @@ describe("Large file round-trip", () => {
 
     const result = await Bun.file(outputPath).bytes();
     expect(result).toEqual(largeData);
-    console.log(`Copied 1MB in ${(elapsed / 1e6).toFixed(2)} ms`);
+    console.info(`Copied 1MB in ${(elapsed / 1e6).toFixed(2)} ms`);
   });
 
   test("Round-trips 1 MB binary content", async () => {
@@ -532,7 +532,7 @@ describe("Bun.write - All Permutations (syscall paths)", () => {
 
     expect(bytes).toBe(9);
     expect(await Bun.file(path).text()).toBe("Tier-1380");
-    console.log(`String→File  ${bytes}B  ${elapsed.toFixed(2)}µs`);
+    console.info(`String→File  ${bytes}B  ${elapsed.toFixed(2)}µs`);
   });
 
   test("2. BunFile → BunFile (sendfile)", async () => {
@@ -547,7 +547,7 @@ describe("Bun.write - All Permutations (syscall paths)", () => {
 
     expect(bytes).toBe(9);
     expect(await dst.text()).toBe("Tier-1380");
-    console.log(`File→File    ${bytes}B  ${elapsed.toFixed(2)}µs  (sendfile)`);
+    console.info(`File→File    ${bytes}B  ${elapsed.toFixed(2)}µs  (sendfile)`);
   });
 
   test("3. Uint8Array → File (writev)", async () => {
@@ -560,7 +560,7 @@ describe("Bun.write - All Permutations (syscall paths)", () => {
 
     expect(bytes).toBe(16);
     expect(await Bun.file(path).text()).toBe("Tier-1380 binary");
-    console.log(`Bytes→File   ${bytes}B  ${elapsed.toFixed(2)}µs  (writev)`);
+    console.info(`Bytes→File   ${bytes}B  ${elapsed.toFixed(2)}µs  (writev)`);
   });
 
   test("4. Response → File (splice)", async () => {
@@ -574,7 +574,7 @@ describe("Bun.write - All Permutations (syscall paths)", () => {
 
     expect(bytes).toBe(body.length);
     expect(await Bun.file(path).text()).toBe(body);
-    console.log(`Response→File ${bytes}B  ${elapsed.toFixed(2)}µs  (splice)`);
+    console.info(`Response→File ${bytes}B  ${elapsed.toFixed(2)}µs  (splice)`);
   });
 
   test("5. Zstd compressed → File", async () => {
@@ -592,6 +592,6 @@ describe("Bun.write - All Permutations (syscall paths)", () => {
     expect(readBack[0]).toBe(0x01);
     const decompressed = Bun.zstdDecompressSync(readBack.slice(1));
     expect(JSON.parse(new TextDecoder().decode(decompressed))).toHaveProperty("tier", "1380");
-    console.log(`Zstd→File    ${bytes}B (${(payload.length / bytes).toFixed(1)}x)  ${elapsed.toFixed(2)}µs`);
+    console.info(`Zstd→File    ${bytes}B (${(payload.length / bytes).toFixed(1)}x)  ${elapsed.toFixed(2)}µs`);
   });
 });

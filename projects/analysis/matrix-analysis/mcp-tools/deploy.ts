@@ -96,8 +96,8 @@ class DeploymentManager {
   }
 
   async deploy(): Promise<void> {
-    console.log(`🚀 Deploying Enhanced Dashboard to ${this.config.environment}`);
-    console.log("=" .repeat(60));
+    console.info(`🚀 Deploying Enhanced Dashboard to ${this.config.environment}`);
+    console.info("=" .repeat(60));
 
     try {
       await this.preDeploymentChecks();
@@ -107,7 +107,7 @@ class DeploymentManager {
       await this.postDeploymentSetup();
       await this.verifyDeployment();
 
-      console.log("✅ Deployment completed successfully!");
+      console.info("✅ Deployment completed successfully!");
       this.showDeploymentInfo();
 
     } catch (error) {
@@ -117,21 +117,21 @@ class DeploymentManager {
   }
 
   private async preDeploymentChecks(): Promise<void> {
-    console.log("🔍 Running pre-deployment checks...");
+    console.info("🔍 Running pre-deployment checks...");
 
     // Check if required directories exist
     const requiredDirs = ["./data", "./logs", "./backups", "./config"];
     for (const dir of requiredDirs) {
       if (!existsSync(dir)) {
         mkdirSync(dir, { recursive: true });
-        console.log(`  Created directory: ${dir}`);
+        console.info(`  Created directory: ${dir}`);
       }
     }
 
     // Check dependencies
     try {
       execSync("bun --version", { stdio: "pipe" });
-      console.log("  ✅ Bun is available");
+      console.info("  ✅ Bun is available");
     } catch (error) {
       throw new Error("Bun is not installed or not in PATH");
     }
@@ -139,7 +139,7 @@ class DeploymentManager {
     // Check TypeScript compilation
     try {
       execSync("bun --check enhanced-dashboard.ts", { stdio: "pipe" });
-      console.log("  ✅ TypeScript compilation successful");
+      console.info("  ✅ TypeScript compilation successful");
     } catch (error) {
       throw new Error("TypeScript compilation failed");
     }
@@ -152,50 +152,50 @@ class DeploymentManager {
           throw new Error(`Required environment variable ${envVar} is not set`);
         }
       }
-      console.log("  ✅ Production environment variables verified");
+      console.info("  ✅ Production environment variables verified");
     }
 
-    console.log("✅ Pre-deployment checks passed");
+    console.info("✅ Pre-deployment checks passed");
   }
 
   private async setupInfrastructure(): Promise<void> {
-    console.log("🏗️  Setting up infrastructure...");
+    console.info("🏗️  Setting up infrastructure...");
 
     // Create environment-specific configuration
     const envConfig = this.generateEnvironmentConfig();
     writeFileSync(`./config/.env.${this.config.environment}`, envConfig);
-    console.log(`  Created environment config: .env.${this.config.environment}`);
+    console.info(`  Created environment config: .env.${this.config.environment}`);
 
     // Setup database
     if (!existsSync(this.config.database.path)) {
       // Initialize database schema would go here
-      console.log(`  Initialized database: ${this.config.database.path}`);
+      console.info(`  Initialized database: ${this.config.database.path}`);
     }
 
     // Setup SSL certificates for production
     if (this.config.ssl && this.config.environment === "production") {
-      console.log("  ⚠️  SSL certificates required - please configure manually");
+      console.info("  ⚠️  SSL certificates required - please configure manually");
     }
 
     // Setup monitoring
     if (this.config.monitoring.enabled) {
-      console.log("  ✅ Monitoring endpoint configured");
+      console.info("  ✅ Monitoring endpoint configured");
     }
 
-    console.log("✅ Infrastructure setup completed");
+    console.info("✅ Infrastructure setup completed");
   }
 
   private async buildApplication(): Promise<void> {
-    console.log("🔨 Building application...");
+    console.info("🔨 Building application...");
 
     // TypeScript compilation check
     execSync("bun --check enhanced-dashboard.ts", { stdio: "pipe" });
-    console.log("  ✅ TypeScript compilation verified");
+    console.info("  ✅ TypeScript compilation verified");
 
     // Build frontend assets if needed
     if (existsSync("./enhanced-dashboard.html")) {
       // Minify/optimize frontend would go here
-      console.log("  ✅ Frontend assets ready");
+      console.info("  ✅ Frontend assets ready");
     }
 
     // Create deployment package
@@ -210,16 +210,16 @@ class DeploymentManager {
       "safe-extract-demo.ts"
     ];
 
-    console.log(`  ✅ Package ready with ${deploymentFiles.length} files`);
+    console.info(`  ✅ Package ready with ${deploymentFiles.length} files`);
   }
 
   private async deployApplication(): Promise<void> {
-    console.log("🚀 Deploying application...");
+    console.info("🚀 Deploying application...");
 
     if (this.config.environment === "development") {
-      console.log("  🔄 Starting development server...");
+      console.info("  🔄 Starting development server...");
       // In development, just start the server
-      console.log("  ✅ Development server ready");
+      console.info("  ✅ Development server ready");
     } else {
       // Production/staging deployment
       await this.deployToProduction();
@@ -227,102 +227,102 @@ class DeploymentManager {
   }
 
   private async deployToProduction(): Promise<void> {
-    console.log(`  🌐 Deploying to ${this.config.environment}...`);
+    console.info(`  🌐 Deploying to ${this.config.environment}...`);
 
     // Create systemd service file
     const serviceFile = this.generateSystemdService();
     writeFileSync("./config/dashboard.service", serviceFile);
-    console.log("  ✅ Systemd service file created");
+    console.info("  ✅ Systemd service file created");
 
     // Create Docker configuration
     const dockerFile = this.generateDockerFile();
     writeFileSync("./Dockerfile", dockerFile);
-    console.log("  ✅ Docker configuration created");
+    console.info("  ✅ Docker configuration created");
 
     // Create Kubernetes manifests
     const k8sManifests = this.generateKubernetesManifests();
     writeFileSync("./config/k8s-deployment.yaml", k8sManifests);
-    console.log("  ✅ Kubernetes manifests created");
+    console.info("  ✅ Kubernetes manifests created");
 
     // Create nginx configuration
     const nginxConfig = this.generateNginxConfig();
     writeFileSync("./config/nginx.conf", nginxConfig);
-    console.log("  ✅ Nginx configuration created");
+    console.info("  ✅ Nginx configuration created");
 
-    console.log(`  ✅ ${this.config.environment} deployment files ready`);
+    console.info(`  ✅ ${this.config.environment} deployment files ready`);
   }
 
   private async postDeploymentSetup(): Promise<void> {
-    console.log("⚙️  Post-deployment setup...");
+    console.info("⚙️  Post-deployment setup...");
 
     // Setup log rotation
     const logrotateConfig = this.generateLogrotateConfig();
     writeFileSync("./config/logrotate-dashboard", logrotateConfig);
-    console.log("  ✅ Log rotation configured");
+    console.info("  ✅ Log rotation configured");
 
     // Setup backup cron job
     if (this.config.database.backup) {
       const cronJob = this.generateBackupCronJob();
       writeFileSync("./config/backup-cron", cronJob);
-      console.log("  ✅ Backup cron job configured");
+      console.info("  ✅ Backup cron job configured");
     }
 
     // Setup monitoring alerts
     if (this.config.monitoring.enabled) {
-      console.log("  ✅ Monitoring alerts configured");
+      console.info("  ✅ Monitoring alerts configured");
     }
 
-    console.log("✅ Post-deployment setup completed");
+    console.info("✅ Post-deployment setup completed");
   }
 
   private async verifyDeployment(): Promise<void> {
-    console.log("🔍 Verifying deployment...");
+    console.info("🔍 Verifying deployment...");
 
     // Check if server is accessible
     const serverUrl = `http${this.config.ssl ? "ss" : ""}://${this.config.host}:${this.config.port}`;
 
     try {
       // In a real deployment, this would make HTTP requests
-      console.log(`  ✅ Server should be accessible at: ${serverUrl}`);
-      console.log(`  ✅ Health check endpoint: ${serverUrl}/health`);
-      console.log(`  ✅ Metrics endpoint: ${serverUrl}/metrics`);
-      console.log(`  ✅ Dashboard UI: ${serverUrl}/enhanced-dashboard.html`);
+      console.info(`  ✅ Server should be accessible at: ${serverUrl}`);
+      console.info(`  ✅ Health check endpoint: ${serverUrl}/health`);
+      console.info(`  ✅ Metrics endpoint: ${serverUrl}/metrics`);
+      console.info(`  ✅ Dashboard UI: ${serverUrl}/enhanced-dashboard.html`);
     } catch (error) {
       throw new Error(`Server verification failed: ${error}`);
     }
 
-    console.log("✅ Deployment verification completed");
+    console.info("✅ Deployment verification completed");
   }
 
   private showDeploymentInfo(): Promise<void> {
-    console.log("\n🎉 Deployment Information:");
-    console.log("=" .repeat(40));
-    console.log(`Environment: ${this.config.environment}`);
-    console.log(`Server: ${this.config.host}:${this.config.port}`);
-    console.log(`SSL: ${this.config.ssl ? "Enabled" : "Disabled"}`);
-    console.log(`Database: ${this.config.database.path}`);
-    console.log(`Monitoring: ${this.config.monitoring.enabled ? "Enabled" : "Disabled"}`);
-    console.log();
+    console.info("\n🎉 Deployment Information:");
+    console.info("=" .repeat(40));
+    console.info(`Environment: ${this.config.environment}`);
+    console.info(`Server: ${this.config.host}:${this.config.port}`);
+    console.info(`SSL: ${this.config.ssl ? "Enabled" : "Disabled"}`);
+    console.info(`Database: ${this.config.database.path}`);
+    console.info(`Monitoring: ${this.config.monitoring.enabled ? "Enabled" : "Disabled"}`);
+    console.info();
 
-    console.log("📊 Access Points:");
-    console.log(`  Dashboard: http${this.config.ssl ? "s" : ""}://${this.config.host}:${this.config.port}/enhanced-dashboard.html`);
-    console.log(`  API: http${this.config.ssl ? "s" : ""}://${this.config.host}:${this.config.port}/api/`);
-    console.log(`  Health: http${this.config.ssl ? "s" : ""}://${this.config.host}:${this.config.port}/health`);
-    console.log(`  Metrics: http${this.config.ssl ? "s" : ""}://${this.config.host}:${this.config.port}/metrics`);
-    console.log();
+    console.info("📊 Access Points:");
+    console.info(`  Dashboard: http${this.config.ssl ? "s" : ""}://${this.config.host}:${this.config.port}/enhanced-dashboard.html`);
+    console.info(`  API: http${this.config.ssl ? "s" : ""}://${this.config.host}:${this.config.port}/api/`);
+    console.info(`  Health: http${this.config.ssl ? "s" : ""}://${this.config.host}:${this.config.port}/health`);
+    console.info(`  Metrics: http${this.config.ssl ? "s" : ""}://${this.config.host}:${this.config.port}/metrics`);
+    console.info();
 
-    console.log("🛠️  Management Commands:");
-    console.log(`  CLI: bun dashboard-cli.ts --help`);
-    console.log(`  Start: bun dashboard-cli.ts start`);
-    console.log(`  Status: bun dashboard-cli.ts status`);
-    console.log(`  Logs: bun dashboard-cli.ts logs --tail`);
-    console.log();
+    console.info("🛠️  Management Commands:");
+    console.info(`  CLI: bun dashboard-cli.ts --help`);
+    console.info(`  Start: bun dashboard-cli.ts start`);
+    console.info(`  Status: bun dashboard-cli.ts status`);
+    console.info(`  Logs: bun dashboard-cli.ts logs --tail`);
+    console.info();
 
     if (this.config.environment !== "development") {
-      console.log("🐳 Production Deployment:");
-      console.log(`  Docker: docker build -t enhanced-dashboard .`);
-      console.log(`  K8s: kubectl apply -f ./config/k8s-deployment.yaml`);
-      console.log(`  Service: sudo systemctl start dashboard`);
+      console.info("🐳 Production Deployment:");
+      console.info(`  Docker: docker build -t enhanced-dashboard .`);
+      console.info(`  K8s: kubectl apply -f ./config/k8s-deployment.yaml`);
+      console.info(`  Service: sudo systemctl start dashboard`);
     }
 
     return Promise.resolve();

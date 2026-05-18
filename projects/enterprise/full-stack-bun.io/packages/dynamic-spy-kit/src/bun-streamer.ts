@@ -22,7 +22,7 @@ export class BunStreamer {
 	 * Stream all markets from private registry CLI
 	 */
 	async streamAllMarkets(): Promise<void> {
-		console.log('🌊 Starting market stream from private registry...');
+		console.info('🌊 Starting market stream from private registry...');
 
 		// Bun spawn → private registry CLI → streaming JSON
 		const proc = spawn([
@@ -65,7 +65,7 @@ export class BunStreamer {
 		}
 
 		const duration = (Date.now() - this.stats.startTime) / 1000;
-		console.log(`✅ Streamed ${this.stats.marketsStreamed} markets in ${duration.toFixed(1)}s`);
+		console.info(`✅ Streamed ${this.stats.marketsStreamed} markets in ${duration.toFixed(1)}s`);
 	}
 
 	/**

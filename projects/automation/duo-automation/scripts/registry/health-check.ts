@@ -52,7 +52,7 @@ class RegistryHealthCheck {
    * 🚀 Run complete health check
    */
   async runHealthCheck(): Promise<HealthCheckResult> {
-    console.log('🏥 Starting Empire Pro Registry Health Check...\n');
+    console.info('🏥 Starting Empire Pro Registry Health Check...\n');
     
     this.startTime = Date.now();
     this.checks = [];
@@ -917,20 +917,20 @@ class RegistryHealthCheck {
    * 📄 Print results
    */
   private printResults(result: HealthCheckResult): void {
-    console.log('\n' + '='.repeat(80));
-    console.log('🏥 EMPIRE PRO REGISTRY HEALTH CHECK RESULTS');
-    console.log('='.repeat(80));
+    console.info('\n' + '='.repeat(80));
+    console.info('🏥 EMPIRE PRO REGISTRY HEALTH CHECK RESULTS');
+    console.info('='.repeat(80));
 
-    console.log(`\n📊 Overall Status: ${result.status.toUpperCase()}`);
-    console.log(`📈 Health Score: ${result.score}/100`);
-    console.log(`⏱️  Duration: ${result.duration}ms`);
-    console.log(`📅 Timestamp: ${result.timestamp}`);
+    console.info(`\n📊 Overall Status: ${result.status.toUpperCase()}`);
+    console.info(`📈 Health Score: ${result.score}/100`);
+    console.info(`⏱️  Duration: ${result.duration}ms`);
+    console.info(`📅 Timestamp: ${result.timestamp}`);
 
-    console.log(`\n📋 Summary:`);
-    console.log(`  Total Checks: ${result.summary.total}`);
-    console.log(`  ✅ Passed: ${result.summary.passed}`);
-    console.log(`  ⚠️  Warnings: ${result.summary.warnings}`);
-    console.log(`  ❌ Failed: ${result.summary.failed}`);
+    console.info(`\n📋 Summary:`);
+    console.info(`  Total Checks: ${result.summary.total}`);
+    console.info(`  ✅ Passed: ${result.summary.passed}`);
+    console.info(`  ⚠️  Warnings: ${result.summary.warnings}`);
+    console.info(`  ❌ Failed: ${result.summary.failed}`);
 
     // Group checks by category
     const categories = ['core', 'database', 'storage', 'security', 'performance', 'integration'];
@@ -938,15 +938,15 @@ class RegistryHealthCheck {
     categories.forEach(category => {
       const categoryChecks = result.checks.filter(c => c.category === category);
       if (categoryChecks.length > 0) {
-        console.log(`\n${category.toUpperCase()} CHECKS:`);
+        console.info(`\n${category.toUpperCase()} CHECKS:`);
         categoryChecks.forEach(check => {
           const icon = check.status === 'pass' ? '✅' : check.status === 'warn' ? '⚠️' : '❌';
-          console.log(`  ${icon} ${check.name}: ${check.message} (${check.duration}ms)`);
+          console.info(`  ${icon} ${check.name}: ${check.message} (${check.duration}ms)`);
         });
       }
     });
 
-    console.log('\n' + '='.repeat(80));
+    console.info('\n' + '='.repeat(80));
   }
 
   /**
@@ -975,7 +975,7 @@ class RegistryHealthCheck {
     // Save metrics to file
     const metricsFile = `registry-health-metrics-${Date.now()}.json`;
     writeFileSync(metricsFile, JSON.stringify(metrics, null, 2));
-    console.log(`\n📈 Health metrics saved to: ${metricsFile}`);
+    console.info(`\n📈 Health metrics saved to: ${metricsFile}`);
   }
 }
 
@@ -985,7 +985,7 @@ class RegistryHealthCheck {
 async function main(): Promise<void> {
   const envPath = process.argv[2] || '.env.registry';
   
-  console.log(`🏥 Checking registry health: ${envPath}\n`);
+  console.info(`🏥 Checking registry health: ${envPath}\n`);
   
   const healthCheck = new RegistryHealthCheck(envPath);
   const result = await healthCheck.runHealthCheck();

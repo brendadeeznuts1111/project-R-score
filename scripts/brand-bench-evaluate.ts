@@ -239,7 +239,7 @@ async function main(): Promise<void> {
       ],
       thresholds: THRESHOLDS,
     };
-    console.log(JSON.stringify(result, null, 2));
+    console.info(JSON.stringify(result, null, 2));
     process.exit(0);
     return;
   }
@@ -271,7 +271,7 @@ async function main(): Promise<void> {
       ],
       thresholds: THRESHOLDS,
     };
-    console.log(JSON.stringify(result, null, 2));
+    console.info(JSON.stringify(result, null, 2));
     process.exit(0);
     return;
   }
@@ -286,15 +286,15 @@ async function main(): Promise<void> {
   });
 
   if (options.json) {
-    console.log(JSON.stringify(result, null, 2));
+    console.info(JSON.stringify(result, null, 2));
   } else {
     // Use Bun.inspect.table() for formatted summary
     const useColors = process.stdout.isTTY;
     
-    console.log(`\n📊 Brand Bench Evaluation Summary`);
-    console.log(`Status: ${result.status.toUpperCase()}`);
-    console.log(`Mode: ${result.gateMode} (${result.warnCycle}/${result.warnCyclesTotal})`);
-    console.log(`Anomaly: ${result.anomalyType}`);
+    console.info(`\n📊 Brand Bench Evaluation Summary`);
+    console.info(`Status: ${result.status.toUpperCase()}`);
+    console.info(`Mode: ${result.gateMode} (${result.warnCycle}/${result.warnCyclesTotal})`);
+    console.info(`Anomaly: ${result.anomalyType}`);
     
     if (result.violations.length > 0) {
       const tableData = result.violations.map(v => ({
@@ -304,14 +304,14 @@ async function main(): Promise<void> {
         delta: `${v.deltaPct > 0 ? '+' : ''}${v.deltaPct.toFixed(1)}%`,
       }));
       
-      console.log('\nViolations:');
-      console.log(Bun.inspect.table(
+      console.info('\nViolations:');
+      console.info(Bun.inspect.table(
         tableData,
         ['metric', 'kind', 'severity', 'delta'],
         { colors: useColors }
       ));
     } else {
-      console.log('\n✅ No violations detected');
+      console.info('\n✅ No violations detected');
     }
   }
 

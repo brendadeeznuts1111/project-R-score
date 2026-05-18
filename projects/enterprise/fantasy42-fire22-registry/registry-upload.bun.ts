@@ -141,22 +141,22 @@ const DASHBOARDS_TO_UPLOAD = [
 ];
 
 async function uploadDashboards() {
-  console.log('🚀 Starting Fire22 Registry Upload...');
-  console.log('📊 Dashboard Compliance Summary:');
-  console.log('=====================================');
+  console.info('🚀 Starting Fire22 Registry Upload...');
+  console.info('📊 Dashboard Compliance Summary:');
+  console.info('=====================================');
 
-  console.log('📄 dashboard-integration.html: 40% (1 critical, 2 major, 0 minor)');
-  console.log('📄 src/index.html: 60% (0 critical, 2 major, 0 minor)');
-  console.log('📄 analytics/index.html: 60% (1 critical, 1 major, 0 minor)');
-  console.log('📄 analytics/test-initialization.html: 40% (0 critical, 3 major, 0 minor)');
-  console.log('📄 analytics/performance-test-dashboard.html: 40% (1 critical, 2 major, 0 minor)');
-  console.log('📄 analytics/test-security.html: 60% (0 critical, 2 major, 0 minor)');
-  console.log('📄 analytics/performance-dashboard.html: 80% (0 critical, 1 major, 0 minor)');
-  console.log('📄 testing/workbench/fantasy402-workbench.html: 60% (0 critical, 2 major, 0 minor)');
-  console.log('📄 docs/index.html: 40% (1 critical, 2 major, 0 minor)');
-  console.log('📄 docs/brand-style-guide.html: 40% (0 critical, 2 major, 1 minor)');
+  console.info('📄 dashboard-integration.html: 40% (1 critical, 2 major, 0 minor)');
+  console.info('📄 src/index.html: 60% (0 critical, 2 major, 0 minor)');
+  console.info('📄 analytics/index.html: 60% (1 critical, 1 major, 0 minor)');
+  console.info('📄 analytics/test-initialization.html: 40% (0 critical, 3 major, 0 minor)');
+  console.info('📄 analytics/performance-test-dashboard.html: 40% (1 critical, 2 major, 0 minor)');
+  console.info('📄 analytics/test-security.html: 60% (0 critical, 2 major, 0 minor)');
+  console.info('📄 analytics/performance-dashboard.html: 80% (0 critical, 1 major, 0 minor)');
+  console.info('📄 testing/workbench/fantasy402-workbench.html: 60% (0 critical, 2 major, 0 minor)');
+  console.info('📄 docs/index.html: 40% (1 critical, 2 major, 0 minor)');
+  console.info('📄 docs/brand-style-guide.html: 40% (0 critical, 2 major, 1 minor)');
 
-  console.log('\n📤 Uploading dashboards to R2...');
+  console.info('\n📤 Uploading dashboards to R2...');
 
   for (const dashboard of DASHBOARDS_TO_UPLOAD) {
     try {
@@ -168,17 +168,17 @@ async function uploadDashboards() {
       });
 
       if (uploadResult.ok) {
-        console.log('✅ Uploaded:', dashboard.key);
+        console.info('✅ Uploaded:', dashboard.key);
       } else {
-        console.log('❌ Failed to upload:', dashboard.key);
+        console.info('❌ Failed to upload:', dashboard.key);
       }
     } catch (error) {
       console.error('❌ Upload error for', dashboard.key, ':', error.message);
     }
   }
 
-  console.log('\n🎉 Registry upload complete!');
-  console.log('🔗 Access your dashboards at: https://registry.fire22.dev/dashboards/');
+  console.info('\n🎉 Registry upload complete!');
+  console.info('🔗 Access your dashboards at: https://registry.fire22.dev/dashboards/');
 }
 
 uploadDashboards().catch(console.error);

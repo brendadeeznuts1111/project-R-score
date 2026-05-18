@@ -84,7 +84,7 @@ export class Logger {
       this.info(title);
     }
     const formatted = UnicodeTableFormatter.generateTable(rows, { maxWidth: 100 });
-    console.log(formatted);
+    console.info(formatted);
   }
 
   /**
@@ -166,7 +166,7 @@ export class Logger {
       });
     }
 
-    console.log(lines.join('\n'));
+    console.info(lines.join('\n'));
     this.info('System matrix displayed');
   }
 
@@ -199,7 +199,7 @@ export class Logger {
       lines.push(`\n📅 Timestamp: ${health.timestamp}`);
     }
 
-    console.log(lines.join('\n'));
+    console.info(lines.join('\n'));
     this.info('Health check displayed');
   }
 
@@ -285,7 +285,7 @@ export class Logger {
 
     // Format and output
     const formatted = this.formatLogEntry(entry);
-    console.log(formatted);
+    console.info(formatted);
 
     // Optionally persist to file
     if (this.config.outputPath) {

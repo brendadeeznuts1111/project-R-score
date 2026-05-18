@@ -229,15 +229,15 @@ class R2SignedUrlGenerator {
  * Display signed URL result
  */
 function displayResult(result: SignedUrlResult): void {
-  console.log('\n' + '═'.repeat(60));
-  console.log(`📦 R2 Signed URL Generated`);
-  console.log('═'.repeat(60));
-  console.log(`Method:     ${result.method}`);
-  console.log(`Key:        ${result.key}`);
-  console.log(`Expires:    ${result.expiresAt.toISOString()}`);
-  console.log(`\nURL:`);
-  console.log(result.url);
-  console.log('═'.repeat(60));
+  console.info('\n' + '═'.repeat(60));
+  console.info(`📦 R2 Signed URL Generated`);
+  console.info('═'.repeat(60));
+  console.info(`Method:     ${result.method}`);
+  console.info(`Key:        ${result.key}`);
+  console.info(`Expires:    ${result.expiresAt.toISOString()}`);
+  console.info(`\nURL:`);
+  console.info(result.url);
+  console.info('═'.repeat(60));
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -251,11 +251,11 @@ async function main() {
   // Check for credentials
   const hasCredentials = process.env.R2_ACCESS_KEY_ID || process.env.S3_ACCESS_KEY_ID;
   if (!hasCredentials && command !== '--help' && command !== '-h') {
-    console.log('⚠️  R2 credentials not configured');
-    console.log('   Set R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY environment variables');
-    console.log(`\n   Create R2 API token: ${urlLink('https://dash.cloudflare.com/?to=/:account/r2/api-tokens', 'R2 API Tokens')}`);
-    console.log('\n   Example:');
-    console.log('   R2_ACCESS_KEY_ID=xxx R2_SECRET_ACCESS_KEY=yyy bun run r2:sign --get myfile.pdf');
+    console.info('⚠️  R2 credentials not configured');
+    console.info('   Set R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY environment variables');
+    console.info(`\n   Create R2 API token: ${urlLink('https://dash.cloudflare.com/?to=/:account/r2/api-tokens', 'R2 API Tokens')}`);
+    console.info('\n   Example:');
+    console.info('   R2_ACCESS_KEY_ID=xxx R2_SECRET_ACCESS_KEY=yyy bun run r2:sign --get myfile.pdf');
     process.exit(1);
   }
 
@@ -267,7 +267,7 @@ async function main() {
       const key = args[1];
       const expiresIn = parseInt(args[2]) || DEFAULT_EXPIRY;
       if (!key) {
-        console.log('Usage: bun run r2:sign --get <key> [expiresIn]');
+        console.info('Usage: bun run r2:sign --get <key> [expiresIn]');
         process.exit(1);
       }
       const result = generator!.generateDownloadUrl(key, expiresIn);
@@ -280,13 +280,13 @@ async function main() {
       const key = args[1];
       const expiresIn = parseInt(args[2]) || DEFAULT_EXPIRY;
       if (!key) {
-        console.log('Usage: bun run r2:sign --put <key> [expiresIn]');
+        console.info('Usage: bun run r2:sign --put <key> [expiresIn]');
         process.exit(1);
       }
       const result = generator!.generateUploadUrl(key, expiresIn);
       displayResult(result);
-      console.log('\n📤 Upload with curl:');
-      console.log(`curl -X PUT -T <file> "${result.url}"`);
+      console.info('\n📤 Upload with curl:');
+      console.info(`curl -X PUT -T <file> "${result.url}"`);
       break;
     }
 
@@ -295,36 +295,36 @@ async function main() {
       const method = (args[1]?.toUpperCase() as 'GET' | 'PUT') || 'GET';
       const keys = args.slice(2);
       if (keys.length === 0) {
-        console.log('Usage: bun run r2:sign --batch GET|PUT key1 key2 key3');
+        console.info('Usage: bun run r2:sign --batch GET|PUT key1 key2 key3');
         process.exit(1);
       }
       const results = generator!.generateBatch(keys, method);
-      console.log(`\n📦 Generated ${results.length} signed URLs (${method})`);
-      console.log('═'.repeat(60));
+      console.info(`\n📦 Generated ${results.length} signed URLs (${method})`);
+      console.info('═'.repeat(60));
       for (const result of results) {
-        console.log(`\n🔑 ${result.key}`);
-        console.log(`   Expires: ${result.expiresAt.toISOString()}`);
-        console.log(`   URL: ${result.url.slice(0, 80)}...`);
+        console.info(`\n🔑 ${result.key}`);
+        console.info(`   Expires: ${result.expiresAt.toISOString()}`);
+        console.info(`   URL: ${result.url.slice(0, 80)}...`);
       }
       break;
     }
 
     case '--info':
     case '-i': {
-      console.log('\n📦 R2 Configuration');
-      console.log('═'.repeat(50));
-      console.log(`Account ID:  ${process.env.R2_ACCOUNT_ID || process.env.CF_ACCOUNT_ID || DEFAULT_ACCOUNT_ID}`);
-      console.log(`Bucket:      ${process.env.R2_BUCKET_NAME || DEFAULT_BUCKET}`);
-      console.log(`Endpoint:    ${generator!.getEndpoint()}`);
-      console.log(`Credentials: ${hasCredentials ? '✅ Configured' : '❌ Not set'}`);
-      console.log('═'.repeat(50));
+      console.info('\n📦 R2 Configuration');
+      console.info('═'.repeat(50));
+      console.info(`Account ID:  ${process.env.R2_ACCOUNT_ID || process.env.CF_ACCOUNT_ID || DEFAULT_ACCOUNT_ID}`);
+      console.info(`Bucket:      ${process.env.R2_BUCKET_NAME || DEFAULT_BUCKET}`);
+      console.info(`Endpoint:    ${generator!.getEndpoint()}`);
+      console.info(`Credentials: ${hasCredentials ? '✅ Configured' : '❌ Not set'}`);
+      console.info('═'.repeat(50));
       break;
     }
 
     case '--help':
     case '-h':
     default:
-      console.log(`
+      console.info(`
 📦 R2 Signed URL Generator v4.6
 
 Generate pre-signed URLs for secure Cloudflare R2 access.

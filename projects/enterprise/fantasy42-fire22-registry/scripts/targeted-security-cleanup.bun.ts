@@ -52,11 +52,11 @@ class TargetedSecurityCleanup {
   };
 
   constructor() {
-    console.log('🎯 Starting Targeted Security Cleanup...\n');
+    console.info('🎯 Starting Targeted Security Cleanup...\n');
   }
 
   public async scanAndClean(): Promise<CleanupResult[]> {
-    console.log('🔍 Scanning for real security issues...\n');
+    console.info('🔍 Scanning for real security issues...\n');
 
     const filesToScan = [
       'package.json',
@@ -96,7 +96,7 @@ class TargetedSecurityCleanup {
       }
     }
 
-    console.log(`\n✅ Scanned ${filesToScan.length} files, found ${this.results.length} files with potential issues\n`);
+    console.info(`\n✅ Scanned ${filesToScan.length} files, found ${this.results.length} files with potential issues\n`);
     return this.results;
   }
 
@@ -246,7 +246,7 @@ class TargetedSecurityCleanup {
   }
 
   public async cleanBuildArtifacts(): Promise<void> {
-    console.log('🧹 Cleaning build artifacts and cache...\n');
+    console.info('🧹 Cleaning build artifacts and cache...\n');
 
     const patterns = [
       '**/node_modules/.cache/**',
@@ -285,8 +285,8 @@ class TargetedSecurityCleanup {
       }
     }
 
-    console.log(`📊 Found ${cleanedCount} build artifacts and cache files\n`);
-    console.log('💡 To actually clean these files, run with --clean flag\n');
+    console.info(`📊 Found ${cleanedCount} build artifacts and cache files\n`);
+    console.info('💡 To actually clean these files, run with --clean flag\n');
   }
 
   public async updateGitIgnore(): Promise<void> {
@@ -371,9 +371,9 @@ class TargetedSecurityCleanup {
       const updatedContent = currentContent + '\n' + newEntries.join('\n') + '\n';
       // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file writing
       await Bun.write(gitignorePath, updatedContent);
-      console.log(`✅ Updated .gitignore with ${newEntries.length} new entries\n`);
+      console.info(`✅ Updated .gitignore with ${newEntries.length} new entries\n`);
     } else {
-      console.log('✅ .gitignore is already up to date\n');
+      console.info('✅ .gitignore is already up to date\n');
     }
   }
 }
@@ -389,14 +389,14 @@ if (import.meta.main) {
     case 'scan':
       await cleanup.scanAndClean();
       const report = cleanup.generateSecurityReport();
-      console.log(report);
+      console.info(report);
       break;
 
     case 'clean':
       await cleanup.scanAndClean();
       await cleanup.cleanBuildArtifacts();
       await cleanup.updateGitIgnore();
-      console.log('🧹 Cleanup completed!\n');
+      console.info('🧹 Cleanup completed!\n');
       break;
 
     case 'artifacts':
@@ -408,17 +408,17 @@ if (import.meta.main) {
       break;
 
     default:
-      console.log('Usage: bun run scripts/targeted-security-cleanup.bun.ts [scan|clean|artifacts|gitignore]');
-      console.log('');
-      console.log('Commands:');
-      console.log('  scan      - Scan for security issues');
-      console.log('  clean     - Scan and perform cleanup');
-      console.log('  artifacts- Clean build artifacts only');
-      console.log('  gitignore- Update .gitignore only');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun run scripts/targeted-security-cleanup.bun.ts scan');
-      console.log('  bun run scripts/targeted-security-cleanup.bun.ts clean');
+      console.info('Usage: bun run scripts/targeted-security-cleanup.bun.ts [scan|clean|artifacts|gitignore]');
+      console.info('');
+      console.info('Commands:');
+      console.info('  scan      - Scan for security issues');
+      console.info('  clean     - Scan and perform cleanup');
+      console.info('  artifacts- Clean build artifacts only');
+      console.info('  gitignore- Update .gitignore only');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun run scripts/targeted-security-cleanup.bun.ts scan');
+      console.info('  bun run scripts/targeted-security-cleanup.bun.ts clean');
       break;
   }
 }

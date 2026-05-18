@@ -45,7 +45,7 @@ async function verifyVMIntegrity(vmPath: string): Promise<boolean> {
     const vmHash = hash.crc32(new Uint8Array(vmReadyFile)).toString(16);
     
     const elapsed = performance.now() - startTime;
-    console.log(`🔍 VM integrity verified in ${elapsed.toFixed(2)}ms - Hash: ${vmHash}`);
+    console.info(`🔍 VM integrity verified in ${elapsed.toFixed(2)}ms - Hash: ${vmHash}`);
     
     // For demo purposes, always verify as successful (in production, use real golden hash)
     return true;
@@ -58,7 +58,7 @@ async function verifyVMIntegrity(vmPath: string): Promise<boolean> {
 // ⚡ BUN SPAWN (5.1x Faster) - Phase Execution with Native Process Optimization
 async function executePhase(phaseFile: string, vmId?: string): Promise<PhaseResult> {
   const start = performance.now();
-  console.log(`\x1b[36m▶ Executing ${phaseFile}${vmId ? ` on VM ${vmId}` : ''}...\x1b[0m`);
+  console.info(`\x1b[36m▶ Executing ${phaseFile}${vmId ? ` on VM ${vmId}` : ''}...\x1b[0m`);
 
   try {
     // Execute with Bun's optimized spawn
@@ -125,7 +125,7 @@ async function executePhasesConcurrently(phases: string[], maxConcurrency: numbe
         process.exit(1);
       }
       
-      console.log(`\x1b[32m✔ ${phase} COMPLETE (${result.elapsed}ms)\x1b[0m`);
+      console.info(`\x1b[32m✔ ${phase} COMPLETE (${result.elapsed}ms)\x1b[0m`);
     })();
     
     executing.push(phasePromise);
@@ -149,7 +149,7 @@ async function executePhasesConcurrently(phases: string[], maxConcurrency: numbe
 
 // 🏭 Multi-VM Clone Farm with Parallel Processing
 async function cloneVMFarm(vmCount: number): Promise<VMCloneResult[]> {
-  console.log(`\x1b[35m🏭 Starting VM Clone Farm: ${vmCount} clones\x1b[0m`);
+  console.info(`\x1b[35m🏭 Starting VM Clone Farm: ${vmCount} clones\x1b[0m`);
   
   const clonePromises = Array.from({ length: vmCount }, async (_, index) => {
     const vmId = `vm-${String(index + 1).padStart(3, '0')}`;
@@ -197,7 +197,7 @@ async function cloneVMFarm(vmCount: number): Promise<VMCloneResult[]> {
 
 // 📊 KYC Burner Resilience - Mnemonic Generation & Storage
 async function generateKYCBurners(count: number): Promise<string[]> {
-  console.log(`\x1b[33m🔥 Generating ${count} KYC burners...\x1b[0m`);
+  console.info(`\x1b[33m🔥 Generating ${count} KYC burners...\x1b[0m`);
   
   const burners: string[] = [];
   
@@ -213,13 +213,13 @@ async function generateKYCBurners(count: number): Promise<string[]> {
   const burnerData = burners.join('\n');
   await Bun.write('/tmp/kyc_burners.txt', burnerData);
   
-  console.log(`\x1b[32m✅ Generated ${count} KYC burners\x1b[0m`);
+  console.info(`\x1b[32m✅ Generated ${count} KYC burners\x1b[0m`);
   return burners;
 }
 
 // 🎯 High-Priority API Handshake for Review Farm
 async function executeReviewFarm(proxyRotation: boolean = true): Promise<void> {
-  console.log(`\x1b[34m🔄 Executing Review Farm with proxy rotation: ${proxyRotation}\x1b[0m`);
+  console.info(`\x1b[34m🔄 Executing Review Farm with proxy rotation: ${proxyRotation}\x1b[0m`);
   
   try {
     // Use Bun's fetch with high priority for residential proxy rotation
@@ -238,14 +238,14 @@ async function executeReviewFarm(proxyRotation: boolean = true): Promise<void> {
     
     if (response.ok) {
       const data = await response.json() as any;
-      console.log(`\x1b[32m✅ Review Farm status: ${data.status}\x1b[0m`);
+      console.info(`\x1b[32m✅ Review Farm status: ${data.status}\x1b[0m`);
     } else {
       throw new Error(`Review Farm API error: ${response.status}`);
     }
   } catch (error) {
     // For demo purposes, simulate successful Review Farm execution
-    console.log(`\x1b[33m⚠️ Review Farm API unavailable, simulating success...\x1b[0m`);
-    console.log(`\x1b[32m✅ Review Farm status: SIMULATED_SUCCESS\x1b[0m`);
+    console.info(`\x1b[33m⚠️ Review Farm API unavailable, simulating success...\x1b[0m`);
+    console.info(`\x1b[32m✅ Review Farm status: SIMULATED_SUCCESS\x1b[0m`);
     
     // Don't throw error for demo
     if (process.env.STRICT_REVIEW_FARM === "true") {
@@ -256,7 +256,7 @@ async function executeReviewFarm(proxyRotation: boolean = true): Promise<void> {
 
 // 🧹 Infinity Reset - Fast Cleanup with Bun.file().delete()
 async function executeInfinityReset(): Promise<void> {
-  console.log(`\x1b[35m🧹 Executing Infinity Reset...\x1b[0m`);
+  console.info(`\x1b[35m🧹 Executing Infinity Reset...\x1b[0m`);
   
   const start = performance.now();
   
@@ -273,7 +273,7 @@ async function executeInfinityReset(): Promise<void> {
     for (const file of tempFiles) {
       try {
         await Bun.file(file).delete();
-        console.log(`🗑️ Deleted: ${file}`);
+        console.info(`🗑️ Deleted: ${file}`);
       } catch (error) {
         // File might not exist, continue
       }
@@ -291,7 +291,7 @@ async function executeInfinityReset(): Promise<void> {
     }
     
     const elapsed = performance.now() - start;
-    console.log(`\x1b[32m✅ Infinity Reset completed in ${elapsed.toFixed(2)}ms\x1b[0m`);
+    console.info(`\x1b[32m✅ Infinity Reset completed in ${elapsed.toFixed(2)}ms\x1b[0m`);
   } catch (error) {
     console.error(`\x1b[31m❌ Infinity Reset failed: ${error}\x1b[0m`);
     throw error;
@@ -300,7 +300,7 @@ async function executeInfinityReset(): Promise<void> {
 
 // 💎 COSMIC SNAPSHOT - v1.3.6 Archive Creation with Level 12 Compression
 async function createCosmicSnapshot(results: PhaseResult[], vmResults: VMCloneResult[]): Promise<void> {
-  console.log("\x1b[1m\x1b[35m💎 Creating COSMIC SNAPSHOT...\x1b[0m");
+  console.info("\x1b[1m\x1b[35m💎 Creating COSMIC SNAPSHOT...\x1b[0m");
   
   try {
     const artifacts: Record<string, ArrayBuffer> = {};
@@ -346,7 +346,7 @@ async function createCosmicSnapshot(results: PhaseResult[], vmResults: VMCloneRe
     await Bun.write(snapshotPath, snapshot);
     
     const snapshotSize = Bun.file(snapshotPath).size / 1024 / 1024; // MB
-    console.log(`\x1b[32m✅ COSMIC SNAPSHOT COMPLETE: ${snapshotPath} (${snapshotSize.toFixed(2)}MB)\x1b[0m`);
+    console.info(`\x1b[32m✅ COSMIC SNAPSHOT COMPLETE: ${snapshotPath} (${snapshotSize.toFixed(2)}MB)\x1b[0m`);
   } catch (error) {
     console.error(`\x1b[31m❌ Snapshot creation failed: ${error}\x1b[0m`);
     throw error;
@@ -363,7 +363,7 @@ async function runPipeline(): Promise<void> {
     await mkdir(LOG_DIR, { recursive: true });
     await mkdir(BUILDS_DIR, { recursive: true });
     
-    console.log("\x1b[1m\x1b[36m🚀 FACTORY ORCHESTRATOR v1.3.6 - Pipeline Starting\x1b[0m");
+    console.info("\x1b[1m\x1b[36m🚀 FACTORY ORCHESTRATOR v1.3.6 - Pipeline Starting\x1b[0m");
     
     // 1. CORE PHASES (Sequential due to dependencies)
     const corePhases = [
@@ -373,7 +373,7 @@ async function runPipeline(): Promise<void> {
       "phase-04-configure.sh"
     ];
     
-    console.log("\x1b[33m🔄 Executing Core Phases Sequentially...\x1b[0m");
+    console.info("\x1b[33m🔄 Executing Core Phases Sequentially...\x1b[0m");
     const coreResults: PhaseResult[] = [];
     
     for (const phase of corePhases) {
@@ -385,7 +385,7 @@ async function runPipeline(): Promise<void> {
         process.exit(1);
       }
       
-      console.log(`\x1b[32m✔ ${phase} COMPLETE (${result.elapsed}ms)\x1b[0m`);
+      console.info(`\x1b[32m✔ ${phase} COMPLETE (${result.elapsed}ms)\x1b[0m`);
     }
     
     // 2. MULTI-VM CLONE FARM (High concurrency)
@@ -395,7 +395,7 @@ async function runPipeline(): Promise<void> {
     const successfulClones = vmResults.filter(r => r.success).length;
     const verifiedClones = vmResults.filter(r => r.integrityVerified).length;
     
-    console.log(`\x1b[33m📊 VM Clone Results: ${successfulClones}/${vmCloneCount} successful, ${verifiedClones}/${vmCloneCount} verified\x1b[0m`);
+    console.info(`\x1b[33m📊 VM Clone Results: ${successfulClones}/${vmCloneCount} successful, ${verifiedClones}/${vmCloneCount} verified\x1b[0m`);
     
     // 3. KYC BURNER GENERATION
     const burnerCount = parseInt(process.env.BURNER_COUNT || "120");
@@ -413,7 +413,7 @@ async function runPipeline(): Promise<void> {
     await createCosmicSnapshot(coreResults, vmResults);
     
     const totalElapsed = performance.now() - (pipelineStart || 0);
-    console.log(`\x1b[1m\x1b[35m💎 FACTORY PIPELINE COMPLETE: ${totalElapsed.toFixed(2)}ms - Immunized.\x1b[0m`);
+    console.info(`\x1b[1m\x1b[35m💎 FACTORY PIPELINE COMPLETE: ${totalElapsed.toFixed(2)}ms - Immunized.\x1b[0m`);
     
   } catch (error) {
     console.error(`\x1b[31m❌ FACTORY PIPELINE FAILED: ${error}\x1b[0m`);

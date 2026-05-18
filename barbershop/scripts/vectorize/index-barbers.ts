@@ -10,7 +10,7 @@ import { vectorizeClient } from '../../src/core/vectorize-client';
 const DB_PATH = process.env.DB_PATH || './barbershop.db';
 
 async function indexBarbers() {
-  console.log('🔍 Indexing barbers in Vectorize...\n');
+  console.info('🔍 Indexing barbers in Vectorize...\n');
 
   // Check if Vectorize is available
   const available = await vectorizeClient.isAvailable();
@@ -34,10 +34,10 @@ async function indexBarbers() {
       status: string;
     }>;
 
-    console.log(`Found ${barbers.length} barbers to index\n`);
+    console.info(`Found ${barbers.length} barbers to index\n`);
 
     if (barbers.length === 0) {
-      console.log('No barbers to index.');
+      console.info('No barbers to index.');
       return;
     }
 
@@ -50,11 +50,11 @@ async function indexBarbers() {
         const skills = barber.skills ? barber.skills.split(',').map(s => s.trim()).filter(Boolean) : [];
         
         if (skills.length === 0) {
-          console.log(`⚠️  Skipping ${barber.name} (no skills)`);
+          console.info(`⚠️  Skipping ${barber.name} (no skills)`);
           continue;
         }
 
-        console.log(`Indexing ${barber.name} (${skills.length} skills)...`);
+        console.info(`Indexing ${barber.name} (${skills.length} skills)...`);
 
         const result = await vectorizeClient.indexBarber({
           id: barber.id,
@@ -63,7 +63,7 @@ async function indexBarbers() {
           status: barber.status,
         });
 
-        console.log(`  ✅ Indexed (mutationId: ${result.mutationId})`);
+        console.info(`  ✅ Indexed (mutationId: ${result.mutationId})`);
         successCount++;
 
         // Small delay to avoid rate limiting
@@ -74,14 +74,14 @@ async function indexBarbers() {
       }
     }
 
-    console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log(`✅ Successfully indexed: ${successCount}`);
-    console.log(`❌ Failed: ${errorCount}`);
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+    console.info('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.info(`✅ Successfully indexed: ${successCount}`);
+    console.info(`❌ Failed: ${errorCount}`);
+    console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
     if (successCount > 0) {
-      console.log('Note: V2 mutations are async. Vectors may take a few seconds to be queryable.');
-      console.log('Check mutation status with: npx wrangler vectorize describe barbershop-barbers-index\n');
+      console.info('Note: V2 mutations are async. Vectors may take a few seconds to be queryable.');
+      console.info('Check mutation status with: npx wrangler vectorize describe barbershop-barbers-index\n');
     }
   } finally {
     db.close();

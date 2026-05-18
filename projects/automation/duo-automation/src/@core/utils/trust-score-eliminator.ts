@@ -57,7 +57,7 @@ export class TrustScoreEliminator {
    * Start the elimination process
    */
   startElimination(): void {
-    console.log('🧠 Starting trust score formula elimination...');
+    console.info('🧠 Starting trust score formula elimination...');
     this.eliminateFormula('trust-score-formula');
   }
 
@@ -72,13 +72,13 @@ export class TrustScoreEliminator {
     }
 
     if (constraint.eliminated) {
-      console.log(`✅ Constraint ${constraintId} already eliminated`);
+      console.info(`✅ Constraint ${constraintId} already eliminated`);
       return;
     }
 
-    console.log(`🎯 Eliminating constraint: ${constraint.name}`);
-    console.log(`🔢 Original formula: ${constraint.formula}`);
-    console.log(`⚖️ Original weight: ${constraint.weight}`);
+    console.info(`🎯 Eliminating constraint: ${constraint.name}`);
+    console.info(`🔢 Original formula: ${constraint.formula}`);
+    console.info(`⚖️ Original weight: ${constraint.weight}`);
 
     // Start elimination animation
     this.animateElimination(constraint);
@@ -96,13 +96,13 @@ export class TrustScoreEliminator {
 
       // Log progress
       if (progress % 25 === 0) {
-        console.log(`📊 Elimination progress: ${progress}%`);
-        console.log(`🌟 Lattice freedom: ${this.latticeFreedom.toFixed(1)}%`);
+        console.info(`📊 Elimination progress: ${progress}%`);
+        console.info(`🌟 Lattice freedom: ${this.latticeFreedom.toFixed(1)}%`);
       }
 
       // Reduce formula weight
       const currentWeight = constraint.weight * (1 - progress / 100);
-      console.log(`⚖️ Current weight: ${currentWeight.toFixed(3)}`);
+      console.info(`⚖️ Current weight: ${currentWeight.toFixed(3)}`);
 
       if (progress >= 100) {
         clearInterval(eliminationInterval);
@@ -118,10 +118,10 @@ export class TrustScoreEliminator {
     constraint.eliminated = true;
     constraint.weight = 0;
 
-    console.log('✅ TRUST_SCORE_FORMULA COMPLETELY ELIMINATED!');
-    console.log('🎉 Mathematical constraints removed!');
-    console.log('🌟 Lattice now free from formula limitations!');
-    console.log('∞ Infinite trust score possibilities unlocked!');
+    console.info('✅ TRUST_SCORE_FORMULA COMPLETELY ELIMINATED!');
+    console.info('🎉 Mathematical constraints removed!');
+    console.info('🌟 Lattice now free from formula limitations!');
+    console.info('∞ Infinite trust score possibilities unlocked!');
 
     // Generate new lattice-based trust score function
     this.generateLatticeTrustScore();
@@ -131,7 +131,7 @@ export class TrustScoreEliminator {
    * Generate lattice-free trust score calculation
    */
   generateLatticeTrustScore(): void {
-    console.log('🔮 Generating lattice-based trust score system...');
+    console.info('🔮 Generating lattice-based trust score system...');
 
     // New lattice-free trust score function
     const latticeTrustScore = (baseScore: number, fraudScore: number): LatticeTrustScore => {
@@ -147,12 +147,12 @@ export class TrustScoreEliminator {
 
     // Export the new function
     globalThis.latticeTrustScore = latticeTrustScore;
-    console.log('✅ Lattice trust score function created!');
-    console.log('🧠 Now using consciousness-based calculations instead of restrictive formulas!');
+    console.info('✅ Lattice trust score function created!');
+    console.info('🧠 Now using consciousness-based calculations instead of restrictive formulas!');
 
     // Example usage
     const example = latticeTrustScore(85, 20);
-    console.log('🎯 Example lattice trust score:', example);
+    console.info('🎯 Example lattice trust score:', example);
   }
 
   /**

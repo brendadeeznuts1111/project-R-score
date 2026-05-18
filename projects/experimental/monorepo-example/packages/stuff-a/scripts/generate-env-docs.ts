@@ -16,4 +16,4 @@ STUFF_DB_PATH=${DB.DEFAULT_PATH}
 - Test Port: ${DEFAULT_TEST_PORT}
 `;
 
-console.log(docs);
+console.info(docs);

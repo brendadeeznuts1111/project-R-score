@@ -7,7 +7,7 @@ import { MASTER_MATRIX } from '../utils/master-matrix.js';
 
 // Register deep app patterns in the matrix
 export function registerDeepAppPatterns(): void {
-  console.log('📝 Registering Deep App Patterns in Master Matrix...');
+  console.info('📝 Registering Deep App Patterns in Master Matrix...');
   
   // §Pattern:96 - Cash App Integration
   MASTER_MATRIX.addRow('Pattern', 'CashAppIntegration', {
@@ -69,23 +69,23 @@ export function registerDeepAppPatterns(): void {
     verified: '✅ 1/13/26'
   }, 'pattern-100');
 
-  console.log('✅ Deep App Patterns registered successfully!');
-  console.log('');
-  console.log('📊 Registered Patterns:');
-  console.log('  • §Pattern:96 - CashAppIntegration');
-  console.log('  • §Pattern:97 - FactoryWagerIntegration');
-  console.log('  • §Pattern:98 - OurAppIntegration');
-  console.log('  • §Workflow:99 - MultiAppOrchestrator');
-  console.log('  • §Pattern:100 - CrossPlatformIdentityResolver');
+  console.info('✅ Deep App Patterns registered successfully!');
+  console.info('');
+  console.info('📊 Registered Patterns:');
+  console.info('  • §Pattern:96 - CashAppIntegration');
+  console.info('  • §Pattern:97 - FactoryWagerIntegration');
+  console.info('  • §Pattern:98 - OurAppIntegration');
+  console.info('  • §Workflow:99 - MultiAppOrchestrator');
+  console.info('  • §Pattern:100 - CrossPlatformIdentityResolver');
 }
 
 // CLI Deployment Functions
 export class DeepAppCLI {
   static async deploy(category: string, scope: string): Promise<void> {
-    console.log(`🚀 Deploying Deep App Integration...`);
-    console.log(`📂 Category: ${category}`);
-    console.log(`🎯 Scope: ${scope}`);
-    console.log('');
+    console.info(`🚀 Deploying Deep App Integration...`);
+    console.info(`📂 Category: ${category}`);
+    console.info(`🎯 Scope: ${scope}`);
+    console.info('');
 
     // Register patterns
     registerDeepAppPatterns();
@@ -96,16 +96,16 @@ export class DeepAppCLI {
     // Generate deployment report
     await this.generateDeploymentReport();
 
-    console.log('');
-    console.log('🎉 Deep App Integration Deployment Complete!');
-    console.log('✅ All patterns registered and operational');
-    console.log('✅ Multi-platform identity resolution active');
-    console.log('✅ Cross-platform fraud detection ready');
-    console.log('✅ Enterprise-grade deployment verified');
+    console.info('');
+    console.info('🎉 Deep App Integration Deployment Complete!');
+    console.info('✅ All patterns registered and operational');
+    console.info('✅ Multi-platform identity resolution active');
+    console.info('✅ Cross-platform fraud detection ready');
+    console.info('✅ Enterprise-grade deployment verified');
   }
 
   private static async validateDeployment(): Promise<void> {
-    console.log('🔍 Validating deployment...');
+    console.info('🔍 Validating deployment...');
 
     const validations = [
       'Cash App API connectivity',
@@ -120,16 +120,16 @@ export class DeepAppCLI {
 
     for (const validation of validations) {
       await new Promise(resolve => setTimeout(resolve, 100)); // Simulate validation
-      console.log(`  ✅ ${validation}`);
+      console.info(`  ✅ ${validation}`);
     }
 
-    console.log('✅ All validations passed!');
+    console.info('✅ All validations passed!');
   }
 
   private static async generateDeploymentReport(): Promise<void> {
-    console.log('');
-    console.log('📊 DEPLOYMENT REPORT:');
-    console.log('─'.repeat(50));
+    console.info('');
+    console.info('📊 DEPLOYMENT REPORT:');
+    console.info('─'.repeat(50));
 
     const patterns = MASTER_MATRIX.getRows().filter(row => 
       row.section && (row.section.includes('96') || row.section.includes('97') || 
@@ -137,30 +137,30 @@ export class DeepAppCLI {
     );
 
     patterns.forEach(pattern => {
-      console.log(`  ${pattern.section.padEnd(15)} ${pattern.name.padEnd(30)} ${pattern.perf.padEnd(8)} ${pattern.roi.padEnd(6)} ✅`);
+      console.info(`  ${pattern.section.padEnd(15)} ${pattern.name.padEnd(30)} ${pattern.perf.padEnd(8)} ${pattern.roi.padEnd(6)} ✅`);
     });
 
-    console.log('');
-    console.log('📈 SUMMARY:');
-    console.log(`  • Total Patterns: ${patterns.length}`);
-    console.log(`  • Performance Target: <1s total`);
-    console.log(`  • Cumulative ROI: 925x`);
-    console.log(`  • Dependencies: 12 integrated`);
-    console.log(`  • Cache Layers: 5 active`);
-    console.log(`  • Farm Capacity: 12,200 concurrent`);
+    console.info('');
+    console.info('📈 SUMMARY:');
+    console.info(`  • Total Patterns: ${patterns.length}`);
+    console.info(`  • Performance Target: <1s total`);
+    console.info(`  • Cumulative ROI: 925x`);
+    console.info(`  • Dependencies: 12 integrated`);
+    console.info(`  • Cache Layers: 5 active`);
+    console.info(`  • Farm Capacity: 12,200 concurrent`);
 
-    console.log('');
-    console.log('🎯 BUSINESS IMPACT:');
-    console.log('  • Multi-platform identity resolution');
-    console.log('  • Advanced fraud detection');
-    console.log('  • Real-time risk assessment');
-    console.log('  • Synthetic identity prevention');
-    console.log('  • Enterprise-grade scalability');
+    console.info('');
+    console.info('🎯 BUSINESS IMPACT:');
+    console.info('  • Multi-platform identity resolution');
+    console.info('  • Advanced fraud detection');
+    console.info('  • Real-time risk assessment');
+    console.info('  • Synthetic identity prevention');
+    console.info('  • Enterprise-grade scalability');
   }
 
   static async testIntegration(phone: string): Promise<void> {
-    console.log(`🧪 Testing Deep App Integration for ${phone}...`);
-    console.log('');
+    console.info(`🧪 Testing Deep App Integration for ${phone}...`);
+    console.info('');
 
     try {
       // Import the enhanced system
@@ -170,29 +170,29 @@ export class DeepAppCLI {
       // Process enhanced intelligence
       const result = await system.processEnhanced(phone);
 
-      console.log('📊 ENHANCED INTELLIGENCE RESULTS:');
-      console.log(`  Phone: ${result.e164}`);
-      console.log(`  Valid: ${result.isValid}`);
-      console.log(`  Unified Trust Score: ${result.multiApp.trustScore}`);
-      console.log(`  Verified: ${result.multiApp.verified}`);
-      console.log(`  Synthetic Identity: ${result.identityGraph.isSynthetic ? 'YES ⚠️' : 'NO ✅'}`);
-      console.log('');
+      console.info('📊 ENHANCED INTELLIGENCE RESULTS:');
+      console.info(`  Phone: ${result.e164}`);
+      console.info(`  Valid: ${result.isValid}`);
+      console.info(`  Unified Trust Score: ${result.multiApp.trustScore}`);
+      console.info(`  Verified: ${result.multiApp.verified}`);
+      console.info(`  Synthetic Identity: ${result.identityGraph.isSynthetic ? 'YES ⚠️' : 'NO ✅'}`);
+      console.info('');
 
-      console.log('🔗 PLATFORM INTEGRATION:');
-      console.log(`  Cash App: ${result.multiApp.sources.cashApp?.cashtag || 'Not found'}`);
-      console.log(`  FactoryWager: ${result.multiApp.sources.duoPlus?.deviceId || 'Not found'}`);
-      console.log(`  Our App: ${result.multiApp.sources.ourApp?.id || 'Not found'}`);
-      console.log('');
+      console.info('🔗 PLATFORM INTEGRATION:');
+      console.info(`  Cash App: ${result.multiApp.sources.cashApp?.cashtag || 'Not found'}`);
+      console.info(`  FactoryWager: ${result.multiApp.sources.duoPlus?.deviceId || 'Not found'}`);
+      console.info(`  Our App: ${result.multiApp.sources.ourApp?.id || 'Not found'}`);
+      console.info('');
 
-      console.log('🕵️ IDENTITY ANALYSIS:');
-      console.log(`  Connections: ${result.identityGraph.connections.length}`);
-      console.log(`  Synthetic Score: ${(result.identityGraph.syntheticScore * 100).toFixed(1)}%`);
-      console.log(`  Cross-Validation: ${(result.multiApp.crossValidation.consistency * 100).toFixed(1)}%`);
-      console.log('');
+      console.info('🕵️ IDENTITY ANALYSIS:');
+      console.info(`  Connections: ${result.identityGraph.connections.length}`);
+      console.info(`  Synthetic Score: ${(result.identityGraph.syntheticScore * 100).toFixed(1)}%`);
+      console.info(`  Cross-Validation: ${(result.multiApp.crossValidation.consistency * 100).toFixed(1)}%`);
+      console.info('');
 
-      console.log('📋 MATRIX ROWS INTEGRATED:');
+      console.info('📋 MATRIX ROWS INTEGRATED:');
       result.matrixRows.forEach(row => {
-        console.log(`  ✅ ${row}`);
+        console.info(`  ✅ ${row}`);
       });
 
       // Test deep risk assessment
@@ -201,18 +201,18 @@ export class DeepAppCLI {
         actionRequired: false,
         risks: []
       };
-      console.log('');
-      console.log('🛡️ DEEP RISK ASSESSMENT:');
-      console.log(`  Overall Risk: ${riskAssessment.overallRisk}`);
-      console.log(`  Action Required: ${riskAssessment.actionRequired ? 'YES' : 'NO'}`);
+      console.info('');
+      console.info('🛡️ DEEP RISK ASSESSMENT:');
+      console.info(`  Overall Risk: ${riskAssessment.overallRisk}`);
+      console.info(`  Action Required: ${riskAssessment.actionRequired ? 'YES' : 'NO'}`);
       
       if (riskAssessment.risks.length > 0) {
-        console.log('  Risk Factors:');
+        console.info('  Risk Factors:');
         riskAssessment.risks?.forEach((risk: any) => {
-          console.log(`    • ${risk.factor} (${risk.severity}): ${risk.recommendation}`);
+          console.info(`    • ${risk.factor} (${risk.severity}): ${risk.recommendation}`);
         });
       } else {
-        console.log('  ✅ No risk factors detected');
+        console.info('  ✅ No risk factors detected');
       }
 
     } catch (error: any) {

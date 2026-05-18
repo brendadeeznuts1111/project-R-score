@@ -905,8 +905,8 @@ export class CookieComparator {
 
 // 🚀 ENHANCED DEMONSTRATION
 export function demonstrateCookieInspector() {
-  console.log('🍪 BUN COOKIE INSPECTOR v3.0 - ENHANCED');
-  console.log('='.repeat(60));
+  console.info('🍪 BUN COOKIE INSPECTOR v3.0 - ENHANCED');
+  console.info('='.repeat(60));
   
   // Example cookie with comprehensive analysis
   const cookie = new Cookie('session_id', 'abc123def456789', {
@@ -920,31 +920,31 @@ export function demonstrateCookieInspector() {
     httpOnly: true
   });
   
-  console.log('🔍 Comprehensive Analysis:');
-  console.log('-'.repeat(40));
+  console.info('🔍 Comprehensive Analysis:');
+  console.info('-'.repeat(40));
   const analysis = CookieInspector.validateCookie(cookie);
-  console.log(`Valid: ${analysis.isValid ? '✅' : '❌'}`);
-  console.log(`Issues: ${analysis.issues.length}`);
-  console.log(`Warnings: ${analysis.warnings.length}`);
-  console.log(`Recommendations: ${analysis.recommendations.length}`);
+  console.info(`Valid: ${analysis.isValid ? '✅' : '❌'}`);
+  console.info(`Issues: ${analysis.issues.length}`);
+  console.info(`Warnings: ${analysis.warnings.length}`);
+  console.info(`Recommendations: ${analysis.recommendations.length}`);
   
   if (analysis.issues.length > 0) {
-    console.log('\n🚨 Issues:');
-    analysis.issues.forEach(issue => console.log(`  ❌ ${issue}`));
+    console.info('\n🚨 Issues:');
+    analysis.issues.forEach(issue => console.info(`  ❌ ${issue}`));
   }
   
   if (analysis.warnings.length > 0) {
-    console.log('\n⚠️ Warnings:');
-    analysis.warnings.forEach(warning => console.log(`  ⚠️ ${warning}`));
+    console.info('\n⚠️ Warnings:');
+    analysis.warnings.forEach(warning => console.info(`  ⚠️ ${warning}`));
   }
   
-  console.log('\n📊 JSON Representation:');
-  console.log('-'.repeat(40));
+  console.info('\n📊 JSON Representation:');
+  console.info('-'.repeat(40));
   const jsonRep = CookieSerializer.toJSON(cookie);
-  console.log(JSON.stringify(jsonRep, null, 2));
+  console.info(JSON.stringify(jsonRep, null, 2));
   
-  console.log('\n🔧 Fluent Builder with Validation:');
-  console.log('-'.repeat(40));
+  console.info('\n🔧 Fluent Builder with Validation:');
+  console.info('-'.repeat(40));
   try {
     const builtCookie = CookieInspector.createCookieBuilder()
       .withName('user_prefs')
@@ -952,14 +952,14 @@ export function demonstrateCookieInspector() {
       .asPreferenceCookie()
       .build();
     
-    console.log(`✅ Built cookie: ${builtCookie.cookie.name}`);
-    console.log(`Validation: ${builtCookie.validation.valid ? 'Valid' : 'Invalid'}`);
+    console.info(`✅ Built cookie: ${builtCookie.cookie.name}`);
+    console.info(`Validation: ${builtCookie.validation.valid ? 'Valid' : 'Invalid'}`);
   } catch (error) {
-    console.log(`❌ Build failed: ${error}`);
+    console.info(`❌ Build failed: ${error}`);
   }
   
-  console.log('\n📈 Multi-Cookie Analysis:');
-  console.log('-'.repeat(40));
+  console.info('\n📈 Multi-Cookie Analysis:');
+  console.info('-'.repeat(40));
   const cookies = [
     cookie,
     new Cookie('analytics_id', 'GA12345', { secure: true, sameSite: 'lax' }),
@@ -967,12 +967,12 @@ export function demonstrateCookieInspector() {
   ];
   
   const metrics = CookieInspector.analyzeCookies(cookies);
-  console.log(`Total cookies: ${metrics.totalCookies}`);
-  console.log(`Total size: ${metrics.totalSize} bytes`);
-  console.log(`Security score: ${metrics.securityScore}%`);
-  console.log(`Performance score: ${metrics.performanceScore}%`);
-  console.log(`Privacy score: ${metrics.privacyScore}%`);
-  console.log(`Valid cookies: ${metrics.validationSummary.valid}/${metrics.totalCookies}`);
+  console.info(`Total cookies: ${metrics.totalCookies}`);
+  console.info(`Total size: ${metrics.totalSize} bytes`);
+  console.info(`Security score: ${metrics.securityScore}%`);
+  console.info(`Performance score: ${metrics.performanceScore}%`);
+  console.info(`Privacy score: ${metrics.privacyScore}%`);
+  console.info(`Valid cookies: ${metrics.validationSummary.valid}/${metrics.totalCookies}`);
 }
 
 // 🔐 MUST-DO Security Practices

@@ -242,7 +242,7 @@ export async function bindProfile(profileId: string): Promise<boolean> {
     saveProfiles(profiles),
   ]);
   
-  console.log(`✓ Bound '${cwd}' to profile '${profile.name}' (${profileId})`);
+  console.info(`✓ Bound '${cwd}' to profile '${profile.name}' (${profileId})`);
   return true;
 }
 
@@ -259,9 +259,9 @@ export async function switchProfile(profileId: string): Promise<boolean> {
   profile.lastUsed = new Date().toISOString();
   await saveProfiles(profiles);
   
-  console.log(`✓ Switched to profile '${profile.name}' (${profileId})`);
-  console.log(`  Path: ${profile.path}`);
-  console.log(`  Context:`, profile.context);
+  console.info(`✓ Switched to profile '${profile.name}' (${profileId})`);
+  console.info(`  Path: ${profile.path}`);
+  console.info(`  Context:`, profile.context);
   
   return true;
 }
@@ -485,7 +485,7 @@ async function main() {
     case "status":
     case "openclaw_status": {
       const status = await getOpenClawStatus();
-      console.log(JSON.stringify(status, null, 2));
+      console.info(JSON.stringify(status, null, 2));
       break;
     }
     
@@ -525,14 +525,14 @@ async function main() {
     
     case "profile_status": {
       const status = await getProfileStatus();
-      console.log("Current Directory:", status.currentDirectory);
-      console.log("Binding:", status.binding ? 
+      console.info("Current Directory:", status.currentDirectory);
+      console.info("Binding:", status.binding ? 
         `${status.binding.profileId} (bound at ${status.binding.boundAt})` : 
         "None");
-      console.log("Active Profile:", status.profile?.name || "None");
-      console.log("Context Hash:", status.contextHash);
-      console.log("Bunfig:", status.globalConfig.configPath);
-      console.log("\nAll Profiles:");
+      console.info("Active Profile:", status.profile?.name || "None");
+      console.info("Context Hash:", status.contextHash);
+      console.info("Bunfig:", status.globalConfig.configPath);
+      console.info("\nAll Profiles:");
       console.table(status.allProfiles.map(p => ({
         ID: p.id,
         Name: p.name,
@@ -549,21 +549,21 @@ async function main() {
         process.exit(1);
       }
       const result = await shellExecute(shellCmd, shellArgs);
-      console.log(result.stdout);
+      console.info(result.stdout);
       if (result.stderr) console.error(result.stderr);
-      console.log(c.gray(`Duration: ${result.durationMs}ms`));
+      console.info(c.gray(`Duration: ${result.durationMs}ms`));
       process.exit(result.exitCode);
     }
     
     case "context": {
       // Use bun-context to execute
       const result = await shellExecuteWithContext(args, { useCache: true });
-      console.log(c.gray(`Duration: ${result.durationMs}ms`));
+      console.info(c.gray(`Duration: ${result.durationMs}ms`));
       process.exit(result.exitCode);
     }
     
     default: {
-      console.log(`
+      console.info(`
 OpenClaw Gateway v${GATEWAY_VERSION} (Bun Context v3.16)
 
 Commands:

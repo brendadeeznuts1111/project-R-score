@@ -341,17 +341,17 @@ export async function renderSecretMatrix(
 	const profileHsl = getProfileHsl(profile);
 
 	// Header with dynamic HSL coloring
-	console.log(`${c.bold(colorize('🔐 Secret Status Matrix', profile, 'header'))}`);
-	console.log(`${c.dim('Profile:')}   ${colorize(profile, profile, 'header')}`);
-	console.log(`${c.dim('Namespace:')} ${namespace}`);
-	console.log(`${c.dim('Service:')}   ${service}`);
+	console.info(`${c.bold(colorize('🔐 Secret Status Matrix', profile, 'header'))}`);
+	console.info(`${c.dim('Profile:')}   ${colorize(profile, profile, 'header')}`);
+	console.info(`${c.dim('Namespace:')} ${namespace}`);
+	console.info(`${c.dim('Service:')}   ${service}`);
 
 	// Show HSL info using Bun.color
 	const hslPreview = Bun.color(`hsl(${profileHsl.hue}, ${profileHsl.sat}%, ${profileHsl.light}%)`, 'ansi');
-	console.log(
+	console.info(
 		`${c.dim('Theme:')}     ${hslPreview || ''}HSL(${profileHsl.hue}, ${profileHsl.sat}%, ${profileHsl.light}%)${c.reset}`,
 	);
-	console.log();
+	console.info();
 
 	// Build table rows with colored status glyphs
 	const rows = statuses.map(s => {
@@ -380,7 +380,7 @@ export async function renderSecretMatrix(
 		? [...BUN_SECRET_STATUS_COLUMNS, 'Keychain', 'HSL', 'Value']
 		: [...BUN_SECRET_STATUS_COLUMNS];
 
-	console.log(Bun.inspect.table(rows, columns, {colors: true}));
+	console.info(Bun.inspect.table(rows, columns, {colors: true}));
 
 	// Summary with timing
 	const found = statuses.filter(s => s.source === 'keychain').length;
@@ -390,21 +390,21 @@ export async function renderSecretMatrix(
 
 	const durationMs = (Bun.nanoseconds() - startNs) / 1e6;
 
-	console.log();
-	console.log(
+	console.info();
+	console.info(
 		`${colorize(`${found}/${total}`, profile, found === total ? 'success' : 'warning')} secrets available ${c.dim(`(${durationMs.toFixed(2)}ms)`)}`,
 	);
 
 	if (warning > 0) {
-		console.log(`${c.yellow}⚠ ${warning} secrets in env only — migrate to keychain for security${c.reset}`);
+		console.info(`${c.yellow}⚠ ${warning} secrets in env only — migrate to keychain for security${c.reset}`);
 	}
 
 	if (error > 0) {
-		console.log(`${c.red}✗ ${error} secrets missing — critical issue${c.reset}`);
+		console.info(`${c.red}✗ ${error} secrets missing — critical issue${c.reset}`);
 
 		// Enhanced: Open in editor on error
 		if (options.openOnError) {
-			console.log(`${c.dim('Opening profiles.ts for editing...')}`);
+			console.info(`${c.dim('Opening profiles.ts for editing...')}`);
 			Bun.openInEditor('./src/profiles.ts', {line: 1});
 		}
 	}
@@ -415,7 +415,7 @@ export async function renderSecretMatrix(
 		const baselineStripped = options.baseline.map(s => ({name: s.name, source: s.source}));
 
 		if (!Bun.deepEquals(currentStripped, baselineStripped)) {
-			console.log(`${c.yellow}⚠ Status differs from baseline${c.reset}`);
+			console.info(`${c.yellow}⚠ Status differs from baseline${c.reset}`);
 		}
 	}
 
@@ -424,7 +424,7 @@ export async function renderSecretMatrix(
 		const html = exportHtml(statuses, profile);
 		const filename = `.audit/secrets-${profile}-${Date.now()}.html`;
 		await Bun.write(filename, html);
-		console.log(`${c.dim(`HTML report: ${filename}`)}`);
+		console.info(`${c.dim(`HTML report: ${filename}`)}`);
 	}
 
 	// Enhanced: Plain text export
@@ -432,7 +432,7 @@ export async function renderSecretMatrix(
 		const plain = exportPlain(statuses);
 		const filename = `.audit/secrets-${profile}-${Date.now()}.txt`;
 		await Bun.write(filename, plain);
-		console.log(`${c.dim(`Plain text: ${filename}`)}`);
+		console.info(`${c.dim(`Plain text: ${filename}`)}`);
 	}
 
 	return {
@@ -485,31 +485,31 @@ if (import.meta.main) {
 
 		// Enhanced: Project config scanning
 		if (scanProjects) {
-			console.log();
-			console.log(`${c.cyan}Scanning project configs...${c.reset}`);
+			console.info();
+			console.info(`${c.cyan}Scanning project configs...${c.reset}`);
 			const configs = await scanProjectConfigs('.');
-			console.log(`${c.dim(`Found ${configs.length} bunfig.toml files`)}`);
+			console.info(`${c.dim(`Found ${configs.length} bunfig.toml files`)}`);
 
 			if (configs.length > 0) {
 				// Try to resolve a common module in first project
 				const firstProjectDir = configs[0]?.path.replace('/bunfig.toml', '') ?? '.';
 				const resolved = resolveProjectModule(firstProjectDir, 'bun');
 				if (resolved) {
-					console.log(`${c.dim(`Resolved bun module: ${resolved}`)}`);
+					console.info(`${c.dim(`Resolved bun module: ${resolved}`)}`);
 				}
 			}
 		}
 	} else {
-		console.log(`${c.bold('service-color-secrets.ts')} — secret status matrix (enhanced)\n`);
-		console.log('commands:');
-		console.log(`  ${c.cyan('matrix')}              show secret availability matrix`);
-		console.log('\noptions:');
-		console.log(`  ${c.dim('--profile')}        profile name (default: local)`);
-		console.log(`  ${c.dim('--namespace')}      namespace (default: ${BUN_PROFILES_DEFAULT_NAMESPACE})`);
-		console.log(`  ${c.dim('--verbose')}        show keychain codes, HSL values, masked values`);
-		console.log(`  ${c.dim('--html')}           export HTML report to .audit/`);
-		console.log(`  ${c.dim('--plain')}          export plain text to .audit/`);
-		console.log(`  ${c.dim('--open-on-error')}  open profiles.ts in editor if secrets missing`);
-		console.log(`  ${c.dim('--scan-projects')}  scan project configs with Glob + TOML`);
+		console.info(`${c.bold('service-color-secrets.ts')} — secret status matrix (enhanced)\n`);
+		console.info('commands:');
+		console.info(`  ${c.cyan('matrix')}              show secret availability matrix`);
+		console.info('\noptions:');
+		console.info(`  ${c.dim('--profile')}        profile name (default: local)`);
+		console.info(`  ${c.dim('--namespace')}      namespace (default: ${BUN_PROFILES_DEFAULT_NAMESPACE})`);
+		console.info(`  ${c.dim('--verbose')}        show keychain codes, HSL values, masked values`);
+		console.info(`  ${c.dim('--html')}           export HTML report to .audit/`);
+		console.info(`  ${c.dim('--plain')}          export plain text to .audit/`);
+		console.info(`  ${c.dim('--open-on-error')}  open profiles.ts in editor if secrets missing`);
+		console.info(`  ${c.dim('--scan-projects')}  scan project configs with Glob + TOML`);
 	}
 }

@@ -356,7 +356,7 @@ describe("Usage Examples", () => {
     });
 
     // Log for visibility (optional)
-    // console.log(`Memory delta: ${memory.heapDeltaKB.toFixed(2)}KB`);
+    // console.info(`Memory delta: ${memory.heapDeltaKB.toFixed(2)}KB`);
     expect(memory.heapDeltaBytes).toBeDefined();
   });
 

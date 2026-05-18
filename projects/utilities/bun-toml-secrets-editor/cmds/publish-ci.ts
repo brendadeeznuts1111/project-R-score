@@ -22,7 +22,7 @@ if (!process.env.NPM_CONFIG_TOKEN && !process.env.NPM_TOKEN) {
 }
 
 // Build all platforms
-console.log("🔨 Building all platform binaries...");
+console.info("🔨 Building all platform binaries...");
 const buildProc = Bun.spawn(["bun", "run", "build:all"], {
 	stdout: "inherit",
 	stderr: "inherit",
@@ -35,7 +35,7 @@ if (buildProc.exitCode !== 0) {
 	process.exit(1);
 }
 
-console.log("✅ All binaries built successfully\n");
+console.info("✅ All binaries built successfully\n");
 
 // Prepare publish command with CI/CD optimizations
 const publishArgs = [
@@ -50,12 +50,12 @@ if (!args.includes("--tag")) {
 
 const publishCmd = ["bun", "publish", ...publishArgs];
 
-console.log(`📦 Publishing package (CI/CD mode)...`);
-console.log(`   Command: ${publishCmd.join(" ")}`);
+console.info(`📦 Publishing package (CI/CD mode)...`);
+console.info(`   Command: ${publishCmd.join(" ")}`);
 if (process.env.NPM_CONFIG_TOKEN || process.env.NPM_TOKEN) {
-	console.log(`   ✅ Using NPM_CONFIG_TOKEN for authentication`);
+	console.info(`   ✅ Using NPM_CONFIG_TOKEN for authentication`);
 }
-console.log();
+console.info();
 
 // Execute bun publish
 const publishProc = Bun.spawn(publishCmd, {
@@ -71,7 +71,7 @@ const publishProc = Bun.spawn(publishCmd, {
 await publishProc.exited;
 
 if (publishProc.exitCode === 0) {
-	console.log("\n✅ Package published successfully!");
+	console.info("\n✅ Package published successfully!");
 } else {
 	// Even on error, check if it was just a republish
 	console.error("\n❌ Publish failed");

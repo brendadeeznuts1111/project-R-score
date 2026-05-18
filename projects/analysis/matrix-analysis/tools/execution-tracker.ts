@@ -35,35 +35,35 @@ function trackExecution(db, command, exitCode, duration, file, violations, metad
 }
 
 // ─── One-Liner Examples ─────────────────────────────────
-console.log("🔍 Bun One-Liner Execution Tracking Examples\n");
+console.info("🔍 Bun One-Liner Execution Tracking Examples\n");
 
 // Initialize database
 const db = initExecutionDB();
 
 // Example 1: View recent executions
-console.log("📊 Recent Executions:");
+console.info("📊 Recent Executions:");
 const recent = db.query("SELECT * FROM executions ORDER BY ts DESC LIMIT 5").all();
 console.table(recent);
 
 // Example 2: Check exit codes (failures)
-console.log("\n❌ Failure Analysis:");
+console.info("\n❌ Failure Analysis:");
 const failures = db
 	.query("SELECT COUNT(*) as c FROM executions WHERE exit_code != 0")
 	.get();
-console.log(`Total Failures: ${failures.c}`);
+console.info(`Total Failures: ${failures.c}`);
 
 const recentFailures = db
 	.query("SELECT * FROM executions WHERE exit_code != 0 ORDER BY ts DESC LIMIT 3")
 	.all();
 if (recentFailures.length > 0) {
-	console.log("\nRecent Failures:");
+	console.info("\nRecent Failures:");
 	console.table(recentFailures);
 }
 
 // Example 3: Performance metrics
-console.log("\n⚡ Performance Metrics:");
+console.info("\n⚡ Performance Metrics:");
 const avgDuration = db.query("SELECT AVG(duration_ms) as avg FROM executions").get();
-console.log(`Average Duration: ${avgDuration.avg?.toFixed(2)}ms`);
+console.info(`Average Duration: ${avgDuration.avg?.toFixed(2)}ms`);
 
 const slowExecutions = db
 	.query(
@@ -71,12 +71,12 @@ const slowExecutions = db
 	)
 	.all();
 if (slowExecutions.length > 0) {
-	console.log("\nSlow Executions (>100ms):");
+	console.info("\nSlow Executions (>100ms):");
 	console.table(slowExecutions);
 }
 
 // Example 4: File-specific analysis
-console.log("\n📁 File Analysis:");
+console.info("\n📁 File Analysis:");
 const fileStats = db
 	.query(`
   SELECT file, COUNT(*) as executions,
@@ -92,7 +92,7 @@ if (fileStats.length > 0) {
 }
 
 // Example 5: Success rate over time
-console.log("\n📈 Success Rate:");
+console.info("\n📈 Success Rate:");
 const totalExecutions = db.query("SELECT COUNT(*) as c FROM executions").get();
 const successfulExecutions = db
 	.query("SELECT COUNT(*) as c FROM executions WHERE exit_code = 0")
@@ -101,12 +101,12 @@ const successRate =
 	totalExecutions.c > 0
 		? ((successfulExecutions.c / totalExecutions.c) * 100).toFixed(1)
 		: "0";
-console.log(
+console.info(
 	`Overall Success Rate: ${successRate}% (${successfulExecutions.c}/${totalExecutions.c})`,
 );
 
 // Example 6: Demonstrate tracking some sample executions
-console.log("\n🎯 Tracking Sample Executions:");
+console.info("\n🎯 Tracking Sample Executions:");
 const sampleCommands = [
 	{
 		cmd: "bun tools/tier1380-bunx.ts check",
@@ -129,10 +129,10 @@ for (const sample of sampleCommands) {
 	trackExecution(db, sample.cmd, exitCode, duration, sample.file, violations, "demo");
 }
 
-console.log("✅ Sample executions tracked");
+console.info("✅ Sample executions tracked");
 
 // Example 7: Show updated recent executions
-console.log("\n🔄 Updated Recent Executions:");
+console.info("\n🔄 Updated Recent Executions:");
 const updatedRecent = db
 	.query("SELECT * FROM executions ORDER BY ts DESC LIMIT 8")
 	.all();
@@ -140,13 +140,13 @@ console.table(updatedRecent);
 
 db.close();
 
-console.log("\n💡 One-Liner Usage Examples:");
-console.log(
+console.info("\n💡 One-Liner Usage Examples:");
+console.info(
 	'   • View recent: bun -e \'import{Database}from"bun:sqlite";const d=new Database("./data/executions.db");console.table(d.query("SELECT * FROM executions ORDER BY ts DESC LIMIT 5").all())\'',
 );
-console.log(
-	'   • Check failures: bun -e \'import{Database}from"bun:sqlite";const d=new Database("./data/executions.db");const f=d.query("SELECT COUNT(*) as c FROM executions WHERE exit_code != 0").get();console.log(`Failures: ${f.c}`)\'',
+console.info(
+	'   • Check failures: bun -e \'import{Database}from"bun:sqlite";const d=new Database("./data/executions.db");const f=d.query("SELECT COUNT(*) as c FROM executions WHERE exit_code != 0").get();console.info(`Failures: ${f.c}`)\'',
 );
-console.log(
-	'   • Success rate: bun -e \'import{Database}from"bun:sqlite";const d=new Database("./data/executions.db");const s=d.query("SELECT COUNT(*) as c FROM executions WHERE exit_code = 0").get();const t=d.query("SELECT COUNT(*) as c FROM executions").get();console.log(`Success: ${(s.c/t.c*100).toFixed(1)}%`)\'',
+console.info(
+	'   • Success rate: bun -e \'import{Database}from"bun:sqlite";const d=new Database("./data/executions.db");const s=d.query("SELECT COUNT(*) as c FROM executions WHERE exit_code = 0").get();const t=d.query("SELECT COUNT(*) as c FROM executions").get();console.info(`Success: ${(s.c/t.c*100).toFixed(1)}%`)\'',
 );

@@ -61,7 +61,7 @@ async function handleRequest(request: Request): Promise<Response> {
   const path = url.pathname;
   const method = request.method;
 
-  console.log(`${method} ${path}`);
+  console.info(`${method} ${path}`);
 
   // Handle CORS preflight
   if (method === 'OPTIONS') {
@@ -320,7 +320,7 @@ async function handleRequest(request: Request): Promise<Response> {
 }
 
 // Start server
-console.log(`🚀 CashApp Dashboard Server (Bun Native) starting on port ${PORT}`);
+console.info(`🚀 CashApp Dashboard Server (Bun Native) starting on port ${PORT}`);
 
 const server = Bun.serve({
   port: PORT,
@@ -331,13 +331,13 @@ const server = Bun.serve({
   }
 });
 
-console.log(`✅ Server running at http://localhost:${PORT}`);
-console.log(`📊 Dashboard: http://localhost:${PORT}/`);
-console.log(`🔧 Health check: http://localhost:${PORT}/api/dashboard/health`);
+console.info(`✅ Server running at http://localhost:${PORT}`);
+console.info(`📊 Dashboard: http://localhost:${PORT}/`);
+console.info(`🔧 Health check: http://localhost:${PORT}/api/dashboard/health`);
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down server...');
+  console.info('\n🛑 Shutting down server...');
   server.stop();
   process.exit(0);
 });

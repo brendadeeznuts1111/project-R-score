@@ -202,26 +202,26 @@ export {
 
 // Display matrix when run directly
 if (import.meta.path === Bun.main) {
-	console.log(`\n🔍 Bun MCP Matrix View (${lastUpdated})\n`);
+	console.info(`\n🔍 Bun MCP Matrix View (${lastUpdated})\n`);
 	
-	console.log("📋 Constants:");
+	console.info("📋 Constants:");
 	console.table(_consts);
 	
-	console.log("\n📚 Documentation Map:");
+	console.info("\n📚 Documentation Map:");
 	console.table(_docMapRows.slice(0, 10)); // Show first 10
 	
-	console.log("\n🏷️  Types:");
+	console.info("\n🏷️  Types:");
 	console.table(_types);
 	
-	console.log("\n⚖️  Search Weights:");
+	console.info("\n⚖️  Search Weights:");
 	console.table(_weightRows);
 	
-	console.log("\n🔧 Search Parameters:");
+	console.info("\n🔧 Search Parameters:");
 	console.table(_searchParams);
 	
-	console.log(`\n📊 Matrix Summary:`);
-	console.log(`- Total doc entries: ${BUN_DOC_ENTRIES.length}`);
-	console.log(`- Production-safe entries: ${_prodSafe.length}`);
-	console.log(`- Experimental entries: ${_experimentalOnly.length}`);
-	console.log(`- Search patterns: ${_patterns.length}`);
+	console.info(`\n📊 Matrix Summary:`);
+	console.info(`- Total doc entries: ${BUN_DOC_ENTRIES.length}`);
+	console.info(`- Production-safe entries: ${_prodSafe.length}`);
+	console.info(`- Experimental entries: ${_experimentalOnly.length}`);
+	console.info(`- Search patterns: ${_patterns.length}`);
 }

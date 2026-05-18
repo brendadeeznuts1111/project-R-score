@@ -24,8 +24,8 @@ class URLPatternMigrator {
   }
 
   async executeMigration(): Promise<void> {
-    console.log('🚀 STARTING URL PATTERN MIGRATION');
-    console.log('='.repeat(50));
+    console.info('🚀 STARTING URL PATTERN MIGRATION');
+    console.info('='.repeat(50));
 
     try {
       // Step 1: Backup current configuration
@@ -57,18 +57,18 @@ class URLPatternMigrator {
       // Step 7: Generate migration report
       await this.generateMigrationReport();
 
-      console.log('\n✅ URL PATTERN MIGRATION COMPLETED SUCCESSFULLY!');
+      console.info('\n✅ URL PATTERN MIGRATION COMPLETED SUCCESSFULLY!');
       
     } catch (error) {
       console.error('\n❌ MIGRATION FAILED:', error);
-      console.log('\n🔄 Rolling back changes...');
+      console.info('\n🔄 Rolling back changes...');
       await this.rollback();
       throw error;
     }
   }
 
   private async backupLegacyConfiguration(): Promise<void> {
-    console.log('\n📦 Backing up legacy configuration...');
+    console.info('\n📦 Backing up legacy configuration...');
     
     const backup = {
       timestamp: new Date().toISOString(),
@@ -90,7 +90,7 @@ class URLPatternMigrator {
   }
 
   private async validateNewPatterns(): Promise<void> {
-    console.log('\n🔍 Validating new URL patterns...');
+    console.info('\n🔍 Validating new URL patterns...');
     
     const patterns = EnhancedURLPatterns.getAllAPIPatterns();
     let validationErrors = 0;
@@ -113,7 +113,7 @@ class URLPatternMigrator {
   }
 
   private async updateRouteDefinitions(): Promise<void> {
-    console.log('\n🔧 Updating route definitions...');
+    console.info('\n🔧 Updating route definitions...');
     
     const routeConfig = {
       version: 'v1',
@@ -134,7 +134,7 @@ class URLPatternMigrator {
   }
 
   private async createRedirects(): Promise<void> {
-    console.log('\n🔄 Creating 301 redirects...');
+    console.info('\n🔄 Creating 301 redirects...');
     
     const mappings = EnhancedURLPatterns.getMigrationMappings();
     const redirectConfig = mappings.map(mapping => ({
@@ -152,7 +152,7 @@ class URLPatternMigrator {
   }
 
   private async updateDocumentation(): Promise<void> {
-    console.log('\n📚 Updating API documentation...');
+    console.info('\n📚 Updating API documentation...');
     
     const docContent = this.generateAPIDocumentation();
     
@@ -164,7 +164,7 @@ class URLPatternMigrator {
   }
 
   private async enableFeatureFlags(): Promise<void> {
-    console.log('\n🚩 Enabling feature flags...');
+    console.info('\n🚩 Enabling feature flags...');
     
     const featureFlags = {
       ENABLE_V1_URL_PATTERNS: true,
@@ -186,7 +186,7 @@ class URLPatternMigrator {
   }
 
   private async generateMigrationReport(): Promise<void> {
-    console.log('\n📊 Generating migration report...');
+    console.info('\n📊 Generating migration report...');
     
     const report = {
       timestamp: new Date().toISOString(),
@@ -218,15 +218,15 @@ class URLPatternMigrator {
       await Bun.write('./reports/url-migration-report.json', JSON.stringify(report, null, 2));
     }
 
-    console.log('\n📋 MIGRATION SUMMARY:');
-    console.log(`   Routes Updated: ${report.changes.routesUpdated}`);
-    console.log(`   Redirects Created: ${report.changes.redirectsCreated}`);
-    console.log(`   Security Improvements: ${report.changes.securityImprovements.length}`);
-    console.log(`   Performance Improvements: ${report.changes.performanceImprovements.length}`);
+    console.info('\n📋 MIGRATION SUMMARY:');
+    console.info(`   Routes Updated: ${report.changes.routesUpdated}`);
+    console.info(`   Redirects Created: ${report.changes.redirectsCreated}`);
+    console.info(`   Security Improvements: ${report.changes.securityImprovements.length}`);
+    console.info(`   Performance Improvements: ${report.changes.performanceImprovements.length}`);
   }
 
   private async rollback(): Promise<void> {
-    console.log('🔄 Rolling back migration...');
+    console.info('🔄 Rolling back migration...');
     
     if (!this.config.dryRun) {
       // Restore from backup if it exists
@@ -366,7 +366,7 @@ This document describes the secure, RESTful URL patterns implemented for DuoPlus
 
   private log(message: string): void {
     this.migrationLog.push(`${new Date().toISOString()}: ${message}`);
-    console.log(message);
+    console.info(message);
   }
 
   getMigrationLog(): string[] {
@@ -386,12 +386,12 @@ async function main() {
     backupLegacy: !args.includes('--no-backup')
   };
 
-  console.log('⚙️  Migration Configuration:');
-  console.log(`   Dry Run: ${config.dryRun}`);
-  console.log(`   Enable Feature Flag: ${config.enableFeatureFlag}`);
-  console.log(`   Create Redirects: ${config.createRedirects}`);
-  console.log(`   Update Documentation: ${config.updateDocumentation}`);
-  console.log(`   Backup Legacy: ${config.backupLegacy}`);
+  console.info('⚙️  Migration Configuration:');
+  console.info(`   Dry Run: ${config.dryRun}`);
+  console.info(`   Enable Feature Flag: ${config.enableFeatureFlag}`);
+  console.info(`   Create Redirects: ${config.createRedirects}`);
+  console.info(`   Update Documentation: ${config.updateDocumentation}`);
+  console.info(`   Backup Legacy: ${config.backupLegacy}`);
 
   const migrator = new URLPatternMigrator(config);
   

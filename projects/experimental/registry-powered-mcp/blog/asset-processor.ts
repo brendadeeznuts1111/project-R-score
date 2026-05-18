@@ -131,7 +131,7 @@ export class AssetPipelineProcessor {
     this.processedAssets.set(filePath, processedAsset);
 
     const processingTime = performance.now() - startTime;
-    console.log(`  [Asset] ${baseName}${ext} → ${outputFileName} (${processingTime.toFixed(2)}ms)`);
+    console.info(`  [Asset] ${baseName}${ext} → ${outputFileName} (${processingTime.toFixed(2)}ms)`);
 
     return processedAsset;
   }
@@ -145,8 +145,8 @@ export class AssetPipelineProcessor {
     const assets: ProcessedAsset[] = [];
     const errors: string[] = [];
 
-    console.log('🖼️  Asset Pipeline Processor');
-    console.log('═══════════════════════════════════════════════════════');
+    console.info('🖼️  Asset Pipeline Processor');
+    console.info('═══════════════════════════════════════════════════════');
 
     // Ensure output directory exists
     const { mkdir } = await import('node:fs/promises');
@@ -160,7 +160,7 @@ export class AssetPipelineProcessor {
       files.push(`${this.config.inputDir}/${file}`);
     }
 
-    console.log(`📁 Found ${files.length} assets to process`);
+    console.info(`📁 Found ${files.length} assets to process`);
 
     // Process in parallel batches (8-way concurrency)
     const batchSize = 8;
@@ -182,11 +182,11 @@ export class AssetPipelineProcessor {
     const processingTimeMs = performance.now() - startTime;
     const totalSizeBytes = assets.reduce((sum, a) => sum + a.sizeBytes, 0);
 
-    console.log('═══════════════════════════════════════════════════════');
-    console.log(`✅ Processed: ${assets.length} assets`);
-    console.log(`❌ Errors: ${errors.length}`);
-    console.log(`📊 Total Size: ${(totalSizeBytes / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`⏱️  Time: ${processingTimeMs.toFixed(2)}ms`);
+    console.info('═══════════════════════════════════════════════════════');
+    console.info(`✅ Processed: ${assets.length} assets`);
+    console.info(`❌ Errors: ${errors.length}`);
+    console.info(`📊 Total Size: ${(totalSizeBytes / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`⏱️  Time: ${processingTimeMs.toFixed(2)}ms`);
 
     return {
       success: errors.length === 0,

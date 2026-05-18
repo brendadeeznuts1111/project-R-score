@@ -150,7 +150,7 @@ class ErrorTracker {
     this.saveTrackingData();
 
     // Log for monitoring
-    console.log(
+    console.info(
       `📊 Error tracked: ${errorCode} (${this.statistics.get(errorCode)?.occurrences || 1} total)`
     );
   }

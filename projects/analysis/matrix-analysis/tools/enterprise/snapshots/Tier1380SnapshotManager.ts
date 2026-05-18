@@ -95,7 +95,7 @@ export async function createTenantSnapshot(
 ): Promise<SnapshotResult> {
   const startTime = performance.now();
   
-  console.log(`📸 Creating Tier-1380 snapshot for tenant: ${tenant}`);
+  console.info(`📸 Creating Tier-1380 snapshot for tenant: ${tenant}`);
   
   // Validate tenant ID
   if (!tenant || !/^[a-zA-Z0-9_-]+$/.test(tenant)) {
@@ -211,7 +211,7 @@ export async function createTenantSnapshot(
   // 10. Col-89 safe console log
   const logLine = `📸 Snapshot created: ${filename} | Size: ${Math.round(bytes.byteLength / 1024)} KiB | SHA-256: ${sha256Hex.slice(0,16)}… | Entries: ${Object.keys(files).length}`;
   const width = Bun.stringWidth(logLine, { countAnsiEscapeCodes: false });
-  console.log(width <= 89 ? logLine : Bun.escapeHTML(logLine.slice(0, 86)) + "…");
+  console.info(width <= 89 ? logLine : Bun.escapeHTML(logLine.slice(0, 86)) + "…");
 
   return {
     path: fullPath,
@@ -292,7 +292,7 @@ export async function extractSnapshot(
   integrity: { valid: boolean; expected_hash?: string; actual_hash?: string };
   files: string[];
 }> {
-  console.log(`📦 Extracting snapshot: ${path}`);
+  console.info(`📦 Extracting snapshot: ${path}`);
 
   // 1. Path validation - prevent directory traversal
   const resolvedPath = Bun.resolveSync(path, process.cwd());
@@ -383,7 +383,7 @@ export async function extractSnapshot(
     );
   }
 
-  console.log(`✅ Extracted ${entryCount} entries to ${targetDir}`);
+  console.info(`✅ Extracted ${entryCount} entries to ${targetDir}`);
 
   return {
     entries: entryCount,
@@ -501,9 +501,9 @@ export function cleanupOldSnapshots(
   }
 
   if (dryRun) {
-    console.log(`🔍 DRY RUN: Would delete ${deleted.length} snapshots (${Math.round(totalSize / 1024 / 1024)} MiB) older than ${retentionDays} days`);
+    console.info(`🔍 DRY RUN: Would delete ${deleted.length} snapshots (${Math.round(totalSize / 1024 / 1024)} MiB) older than ${retentionDays} days`);
   } else {
-    console.log(`🗑️ Deleted ${deleted.length} snapshots (${Math.round(totalSize / 1024 / 1024)} MiB) older than ${retentionDays} days`);
+    console.info(`🗑️ Deleted ${deleted.length} snapshots (${Math.round(totalSize / 1024 / 1024)} MiB) older than ${retentionDays} days`);
   }
 
   return {

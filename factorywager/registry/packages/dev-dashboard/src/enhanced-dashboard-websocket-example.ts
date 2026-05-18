@@ -197,7 +197,7 @@ const clientWebSocketExample = `
     ws = new WebSocket(wsUrl);
     
     ws.onopen = () => {
-      console.log('🔌 Connected to dashboard WebSocket');
+      console.info('🔌 Connected to dashboard WebSocket');
       reconnectAttempts = 0;
       
       // Subscribe to all updates
@@ -212,7 +212,7 @@ const clientWebSocketExample = `
       
       switch (message.type) {
         case 'connected':
-          console.log('✅ WebSocket connected:', message.message);
+          console.info('✅ WebSocket connected:', message.message);
           break;
         case 'data:updated':
           // Refresh dashboard when data updates
@@ -230,7 +230,7 @@ const clientWebSocketExample = `
           // Heartbeat response
           break;
         default:
-          console.log('📨 WebSocket message:', message);
+          console.info('📨 WebSocket message:', message);
       }
     };
     
@@ -239,13 +239,13 @@ const clientWebSocketExample = `
     };
     
     ws.onclose = () => {
-      console.log('🔌 WebSocket disconnected');
+      console.info('🔌 WebSocket disconnected');
       
       // Auto-reconnect with exponential backoff
       if (reconnectAttempts < maxReconnectAttempts) {
         const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
         reconnectAttempts++;
-        console.log(\`🔄 Reconnecting in \${delay}ms... (attempt \${reconnectAttempts})\`);
+        console.info(\`🔄 Reconnecting in \${delay}ms... (attempt \${reconnectAttempts})\`);
         setTimeout(connectWebSocket, delay);
       }
     };

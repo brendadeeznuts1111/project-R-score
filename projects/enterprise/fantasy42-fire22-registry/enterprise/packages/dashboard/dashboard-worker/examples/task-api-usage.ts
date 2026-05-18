@@ -12,7 +12,7 @@ export async function basicTaskManagement() {
   const db = await getDatabase(process.env);
   const taskService = new TaskEnhancedService(db);
 
-  console.log('🚀 Creating a new task...');
+  console.info('🚀 Creating a new task...');
 
   // Create a new task
   const createResult = await taskService.createTask({
@@ -31,7 +31,7 @@ export async function basicTaskManagement() {
   });
 
   if (createResult.success) {
-    console.log('✅ Task created:', createResult.data!.uuid);
+    console.info('✅ Task created:', createResult.data!.uuid);
 
     // Update task progress
     const updateResult = await taskService.updateTask({
@@ -41,7 +41,7 @@ export async function basicTaskManagement() {
     });
 
     if (updateResult.success) {
-      console.log('✅ Task updated:', updateResult.changes);
+      console.info('✅ Task updated:', updateResult.changes);
     }
 
     // Add a comment
@@ -52,7 +52,7 @@ export async function basicTaskManagement() {
     });
 
     if (commentResult.success) {
-      console.log('✅ Comment added');
+      console.info('✅ Comment added');
     }
   }
 }
@@ -62,7 +62,7 @@ export async function advancedTaskFiltering() {
   const db = await getDatabase(process.env);
   const taskService = new TaskEnhancedService(db);
 
-  console.log('🔍 Searching for high-priority tasks...');
+  console.info('🔍 Searching for high-priority tasks...');
 
   // Get high-priority tasks in technology department
   const highPriorityTasks = await taskService.getTasks({
@@ -76,10 +76,10 @@ export async function advancedTaskFiltering() {
   });
 
   if (highPriorityTasks.success) {
-    console.log(`Found ${highPriorityTasks.data!.tasks.length} high-priority tasks`);
+    console.info(`Found ${highPriorityTasks.data!.tasks.length} high-priority tasks`);
 
     highPriorityTasks.data!.tasks.forEach(task => {
-      console.log(`- ${task.title} (Due: ${task.dueDate})`);
+      console.info(`- ${task.title} (Due: ${task.dueDate})`);
     });
   }
 
@@ -91,7 +91,7 @@ export async function advancedTaskFiltering() {
   });
 
   if (searchResults.success) {
-    console.log(`Found ${searchResults.data!.tasks.length} tasks matching search`);
+    console.info(`Found ${searchResults.data!.tasks.length} tasks matching search`);
   }
 }
 
@@ -100,7 +100,7 @@ export async function realTimeTaskUpdates() {
   const db = await getDatabase(process.env);
   const eventService = new TaskEventService(db);
 
-  console.log('📡 Setting up real-time task updates...');
+  console.info('📡 Setting up real-time task updates...');
 
   // Create event stream for technology department
   const stream = eventService.createEventStream({
@@ -115,7 +115,7 @@ export async function realTimeTaskUpdates() {
       const { done, value } = await reader.read();
 
       if (done) {
-        console.log('📡 Event stream ended');
+        console.info('📡 Event stream ended');
         break;
       }
 
@@ -126,16 +126,16 @@ export async function realTimeTaskUpdates() {
 
         switch (event.type) {
           case 'task_created':
-            console.log(`🆕 New task created: ${event.task.title}`);
+            console.info(`🆕 New task created: ${event.task.title}`);
             break;
           case 'task_updated':
-            console.log(`📝 Task updated: ${event.task.title}`);
+            console.info(`📝 Task updated: ${event.task.title}`);
             if (event.changes.status) {
-              console.log(`   Status: ${event.changes.status.from} → ${event.changes.status.to}`);
+              console.info(`   Status: ${event.changes.status.from} → ${event.changes.status.to}`);
             }
             break;
           case 'task_assigned':
-            console.log(`👤 Task assigned: ${event.task.title} → ${event.task.assignee?.name}`);
+            console.info(`👤 Task assigned: ${event.task.title} → ${event.task.assignee?.name}`);
             break;
         }
       }
@@ -152,7 +152,7 @@ export async function designTeamIntegration() {
   const db = await getDatabase(process.env);
   const taskService = new TaskEnhancedService(db);
 
-  console.log('🎨 Creating design-related tasks...');
+  console.info('🎨 Creating design-related tasks...');
 
   // Create a UI design task
   const designTask = await taskService.createTask({
@@ -171,7 +171,7 @@ export async function designTeamIntegration() {
   });
 
   if (designTask.success) {
-    console.log('✅ Design task created:', designTask.data!.uuid);
+    console.info('✅ Design task created:', designTask.data!.uuid);
 
     // Request design review from technology team
     const reviewTask = await taskService.createTask({
@@ -187,7 +187,7 @@ export async function designTeamIntegration() {
     });
 
     if (reviewTask.success) {
-      console.log('✅ Design review task created:', reviewTask.data!.uuid);
+      console.info('✅ Design review task created:', reviewTask.data!.uuid);
 
       // Add cross-reference comment
       await taskService.addComment(designTask.data!.uuid, {
@@ -204,7 +204,7 @@ export async function departmentWorkflowAutomation() {
   const db = await getDatabase(process.env);
   const taskService = new TaskEnhancedService(db);
 
-  console.log('⚙️ Setting up department workflow automation...');
+  console.info('⚙️ Setting up department workflow automation...');
 
   // Create a multi-department project
   const projectTasks = [
@@ -257,7 +257,7 @@ export async function departmentWorkflowAutomation() {
 
     if (result.success) {
       createdTasks.push(result.data!);
-      console.log(`✅ Created task for ${taskData.departmentId}: ${taskData.title}`);
+      console.info(`✅ Created task for ${taskData.departmentId}: ${taskData.title}`);
     }
   }
 
@@ -278,7 +278,7 @@ export async function performanceMonitoring() {
   const db = await getDatabase(process.env);
   const taskService = new TaskEnhancedService(db);
 
-  console.log('📊 Monitoring task performance...');
+  console.info('📊 Monitoring task performance...');
 
   // Get department performance metrics
   const departments = ['technology', 'design', 'marketing', 'security'];
@@ -295,39 +295,39 @@ export async function performanceMonitoring() {
     });
 
     if (activeTasks.success && completedTasks.success) {
-      console.log(`📈 ${dept.toUpperCase()} Department:`);
-      console.log(`   Active tasks: ${activeTasks.data!.pagination.total}`);
-      console.log(`   Completed tasks: ${completedTasks.data!.pagination.total}`);
+      console.info(`📈 ${dept.toUpperCase()} Department:`);
+      console.info(`   Active tasks: ${activeTasks.data!.pagination.total}`);
+      console.info(`   Completed tasks: ${completedTasks.data!.pagination.total}`);
 
       // Calculate average progress for active tasks
       const avgProgress =
         activeTasks.data!.tasks.reduce((sum, task) => sum + task.progress, 0) /
         activeTasks.data!.tasks.length;
-      console.log(`   Average progress: ${avgProgress.toFixed(1)}%`);
+      console.info(`   Average progress: ${avgProgress.toFixed(1)}%`);
     }
   }
 }
 
 // Run examples
 if (import.meta.main) {
-  console.log('🚀 Fire22 Task Management API Examples\n');
+  console.info('🚀 Fire22 Task Management API Examples\n');
 
   try {
     await basicTaskManagement();
-    console.log('\n' + '='.repeat(50) + '\n');
+    console.info('\n' + '='.repeat(50) + '\n');
 
     await advancedTaskFiltering();
-    console.log('\n' + '='.repeat(50) + '\n');
+    console.info('\n' + '='.repeat(50) + '\n');
 
     await designTeamIntegration();
-    console.log('\n' + '='.repeat(50) + '\n');
+    console.info('\n' + '='.repeat(50) + '\n');
 
     await departmentWorkflowAutomation();
-    console.log('\n' + '='.repeat(50) + '\n');
+    console.info('\n' + '='.repeat(50) + '\n');
 
     await performanceMonitoring();
 
-    console.log('\n✅ All examples completed successfully!');
+    console.info('\n✅ All examples completed successfully!');
   } catch (error) {
     console.error('❌ Error running examples:', error);
   }

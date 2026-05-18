@@ -17,6 +17,6 @@ const mermaid = `graph TD
   classDef frontend fill:#3b82f6,stroke:#2563eb,stroke-width:2px,color:#fff
   classDef api fill:#22c55e,stroke:#16a34a,stroke-width:2px,color:#fff`;
 
-console.log("Architecture Diagram:");
-console.log(mermaid);
-console.log("\n# Save to docs/diagrams/architecture.mermaid");
+console.info("Architecture Diagram:");
+console.info(mermaid);
+console.info("\n# Save to docs/diagrams/architecture.mermaid");

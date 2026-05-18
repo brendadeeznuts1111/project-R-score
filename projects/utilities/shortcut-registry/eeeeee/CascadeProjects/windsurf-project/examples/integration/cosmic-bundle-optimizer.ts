@@ -111,7 +111,7 @@ class CosmicBundleOptimizer {
       throw new Error(`Unknown variant: ${variantName}`);
     }
 
-    console.log(`🚀 Building ${variant.name}...`);
+    console.info(`🚀 Building ${variant.name}...`);
     const startTime = Date.now();
 
     try {
@@ -138,9 +138,9 @@ class CosmicBundleOptimizer {
             setup(build) {
               build.onEnd((result) => {
                 if (result && result.outputs) {
-                  console.log(`📦 Bundle analysis for ${variantName}:`);
+                  console.info(`📦 Bundle analysis for ${variantName}:`);
                   for (const [file, output] of result.outputs) {
-                    console.log(`  ${file}: ${output.size} bytes`);
+                    console.info(`  ${file}: ${output.size} bytes`);
                   }
                 }
               });
@@ -154,11 +154,11 @@ class CosmicBundleOptimizer {
       
       this.metrics.set(variantName, metrics);
       
-      console.log(`✅ ${variant.name} built successfully!`);
-      console.log(`   Size: ${(metrics.size / 1024 / 1024).toFixed(2)} MB`);
-      console.log(`   Gzipped: ${(metrics.gzipped / 1024 / 1024).toFixed(2)} MB`);
-      console.log(`   Build time: ${buildTime}ms`);
-      console.log(`   Features: ${metrics.features.join(', ')}`);
+      console.info(`✅ ${variant.name} built successfully!`);
+      console.info(`   Size: ${(metrics.size / 1024 / 1024).toFixed(2)} MB`);
+      console.info(`   Gzipped: ${(metrics.gzipped / 1024 / 1024).toFixed(2)} MB`);
+      console.info(`   Build time: ${buildTime}ms`);
+      console.info(`   Features: ${metrics.features.join(', ')}`);
 
       return metrics;
 
@@ -197,8 +197,8 @@ class CosmicBundleOptimizer {
   }
 
   async buildAllVariants(): Promise<Map<string, BundleMetrics>> {
-    console.log('🌟 Cosmic Bundle Optimization Empire - Building All Variants');
-    console.log('================================================================');
+    console.info('🌟 Cosmic Bundle Optimization Empire - Building All Variants');
+    console.info('================================================================');
     
     const allMetrics = new Map<string, BundleMetrics>();
     
@@ -216,19 +216,19 @@ class CosmicBundleOptimizer {
   }
 
   private generateReport(metrics: Map<string, BundleMetrics>): void {
-    console.log('\n📊 Cosmic Bundle Optimization Report');
-    console.log('=====================================');
+    console.info('\n📊 Cosmic Bundle Optimization Report');
+    console.info('=====================================');
     
-    console.log('| Variant | Size (MB) | Gzipped (MB) | Build Time (ms) | Features |');
-    console.log('|---------|-----------|---------------|-----------------|----------|');
+    console.info('| Variant | Size (MB) | Gzipped (MB) | Build Time (ms) | Features |');
+    console.info('|---------|-----------|---------------|-----------------|----------|');
     
     for (const [variant, metric] of metrics) {
       const sizeMB = (metric.size / 1024 / 1024).toFixed(2);
       const gzippedMB = (metric.gzipped / 1024 / 1024).toFixed(2);
-      console.log(`| ${variant.padEnd(7)} | ${sizeMB.padEnd(9)} | ${gzippedMB.padEnd(13)} | ${metric.buildTime.toString().padEnd(15)} | ${metric.features.join(', ').padEnd(8)} |`);
+      console.info(`| ${variant.padEnd(7)} | ${sizeMB.padEnd(9)} | ${gzippedMB.padEnd(13)} | ${metric.buildTime.toString().padEnd(15)} | ${metric.features.join(', ').padEnd(8)} |`);
     }
     
-    console.log('\n🎯 Optimization Achievements:');
+    console.info('\n🎯 Optimization Achievements:');
     
     const baseline = metrics.get('free');
     if (baseline) {
@@ -240,12 +240,12 @@ class CosmicBundleOptimizer {
           `+${((baseline.buildTime - metric.buildTime) / baseline.buildTime * 100).toFixed(1)}%` : 
           `${((metric.buildTime - baseline.buildTime) / baseline.buildTime * 100).toFixed(1)}%`;
         
-        console.log(`  ${variant}: ${sizeReduction}% size reduction, ${speedImprovement} build speed`);
+        console.info(`  ${variant}: ${sizeReduction}% size reduction, ${speedImprovement} build speed`);
       }
     }
     
-    console.log('\n🚀 Production Deployment Ready!');
-    console.log('All variants optimized with feature flags and performance polish.');
+    console.info('\n🚀 Production Deployment Ready!');
+    console.info('All variants optimized with feature flags and performance polish.');
   }
 
   async generateDeploymentManifest(): Promise<void> {
@@ -276,7 +276,7 @@ class CosmicBundleOptimizer {
     }
     
     writeFileSync('./dist/deployment-manifest.json', JSON.stringify(manifest, null, 2));
-    console.log('📋 Deployment manifest generated: ./dist/deployment-manifest.json');
+    console.info('📋 Deployment manifest generated: ./dist/deployment-manifest.json');
   }
 }
 
@@ -299,19 +299,19 @@ async function main() {
       break;
       
     case 'variants':
-      console.log('🎛️ Available Build Variants:');
+      console.info('🎛️ Available Build Variants:');
       for (const [name, config] of optimizer['variants']) {
-        console.log(`  ${name}: ${config.name}`);
-        console.log(`    Features: ${config.features.join(', ')}`);
-        console.log(`    Minify: ${config.minify}, Sourcemap: ${config.sourcemap}`);
+        console.info(`  ${name}: ${config.name}`);
+        console.info(`    Features: ${config.features.join(', ')}`);
+        console.info(`    Minify: ${config.minify}, Sourcemap: ${config.sourcemap}`);
       }
       break;
       
     default:
-      console.log('Usage:');
-      console.log('  bun cosmic-bundle-optimizer.ts build-all    # Build all variants');
-      console.log('  bun cosmic-bundle-optimizer.ts build <variant>  # Build specific variant');
-      console.log('  bun cosmic-bundle-optimizer.ts variants    # List available variants');
+      console.info('Usage:');
+      console.info('  bun cosmic-bundle-optimizer.ts build-all    # Build all variants');
+      console.info('  bun cosmic-bundle-optimizer.ts build <variant>  # Build specific variant');
+      console.info('  bun cosmic-bundle-optimizer.ts variants    # List available variants');
       break;
   }
 }

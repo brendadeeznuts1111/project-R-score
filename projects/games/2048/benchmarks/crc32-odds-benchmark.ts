@@ -109,12 +109,12 @@ export const benchmarkOddsCRC32 = (
   const results: OddsBenchmarkResult[] = [];
   const baselineUsPerMB = 2644; // zlib baseline
 
-  console.log("\n🧪 CRC32 Large-Odds Dataset Benchmark");
-  console.log("═".repeat(70));
-  console.log(
+  console.info("\n🧪 CRC32 Large-Odds Dataset Benchmark");
+  console.info("═".repeat(70));
+  console.info(
     "| Dataset Size | Events | Raw Size | Before | After | Speedup |"
   );
-  console.log("|".repeat(71));
+  console.info("|".repeat(71));
 
   for (const eventCount of datasetSizes) {
     // Generate odds dataset
@@ -152,7 +152,7 @@ export const benchmarkOddsCRC32 = (
     results.push(result);
 
     const sizeMB = (rawSizeBytes / 1024 / 1024).toFixed(2);
-    console.log(
+    console.info(
       `| ${eventCount.toString().padEnd(11)} | ${eventCount
         .toString()
         .padEnd(6)} | ${sizeMB.padEnd(8)}MB | ${baselineUs
@@ -163,7 +163,7 @@ export const benchmarkOddsCRC32 = (
     );
   }
 
-  console.log("═".repeat(70));
+  console.info("═".repeat(70));
 
   return results;
 };
@@ -300,32 +300,32 @@ export const getPerformanceSummary = (
 
 // Main execution
 if (import.meta.main) {
-  console.log("\n🚀 CRC32 Large-Odds Dataset Benchmark - PremiumPlus v1.5.1");
-  console.log("═".repeat(70));
-  console.log(`📍 Location: New Orleans, CST 19:34, 18 Jan 2026`);
-  console.log(`🏷️  Tag: [65.1.0.0-b] perf-critical, AI-suggest enriched`);
-  console.log("");
+  console.info("\n🚀 CRC32 Large-Odds Dataset Benchmark - PremiumPlus v1.5.1");
+  console.info("═".repeat(70));
+  console.info(`📍 Location: New Orleans, CST 19:34, 18 Jan 2026`);
+  console.info(`🏷️  Tag: [65.1.0.0-b] perf-critical, AI-suggest enriched`);
+  console.info("");
 
   // Run benchmark
   const results = benchmarkOddsCRC32([100, 1000, 10000, 100000]);
 
   // Generate AI-enriched table
-  console.log("\n📋 AI-Suggest Enriched Benchmark Table:");
+  console.info("\n📋 AI-Suggest Enriched Benchmark Table:");
   const table = generateOddsBenchmarkTable(results);
-  console.log(table);
+  console.info(table);
 
   // Performance summary
   const summary = getPerformanceSummary(results);
-  console.log("\n📊 Performance Summary:");
-  console.log(`   Total Events: ${summary.totalEvents.toLocaleString()}`);
-  console.log(`   Total Data: ${summary.totalMB.toFixed(2)} MB`);
-  console.log(`   Avg Speedup: ${summary.avgSpeedup}x`);
-  console.log(`   Max Speedup: ${summary.maxSpeedup}x`);
-  console.log(`   Total Checksums: ${summary.totalChecksums.toLocaleString()}`);
-  console.log(`   Platform: ${summary.platform}`);
+  console.info("\n📊 Performance Summary:");
+  console.info(`   Total Events: ${summary.totalEvents.toLocaleString()}`);
+  console.info(`   Total Data: ${summary.totalMB.toFixed(2)} MB`);
+  console.info(`   Avg Speedup: ${summary.avgSpeedup}x`);
+  console.info(`   Max Speedup: ${summary.maxSpeedup}x`);
+  console.info(`   Total Checksums: ${summary.totalChecksums.toLocaleString()}`);
+  console.info(`   Platform: ${summary.platform}`);
 
   // DeepEquals validation
-  console.log("\n✅ Strict deepEquals Validation:");
+  console.info("\n✅ Strict deepEquals Validation:");
   const baseline = { crc32Speedup: 20, totalChecksums: 0 };
   const current = {
     crc32Speedup: summary.avgSpeedup,
@@ -334,18 +334,18 @@ if (import.meta.main) {
   const isValid =
     deepEquals(baseline, current) ||
     summary.avgSpeedup >= baseline.crc32Speedup;
-  console.log(`   Baseline: ${JSON.stringify(baseline)}`);
-  console.log(`   Current: ${JSON.stringify(current)}`);
-  console.log(`   Validation: ${isValid ? "PASS" : "FAIL"}`);
+  console.info(`   Baseline: ${JSON.stringify(baseline)}`);
+  console.info(`   Current: ${JSON.stringify(current)}`);
+  console.info(`   Validation: ${isValid ? "PASS" : "FAIL"}`);
 
   // KV-traceable metrics
-  console.log("\n📡 KV-Traceable Metrics:");
-  console.log(
+  console.info("\n📡 KV-Traceable Metrics:");
+  console.info(
     `   crc32-odds-${Date.now()}: speedup=${summary.avgSpeedup}x, events=${
       summary.totalEvents
     }`
   );
 
-  console.log("\n✅ CRC32 Large-Odds Benchmark Complete!");
-  console.log("═".repeat(70));
+  console.info("\n✅ CRC32 Large-Odds Benchmark Complete!");
+  console.info("═".repeat(70));
 }

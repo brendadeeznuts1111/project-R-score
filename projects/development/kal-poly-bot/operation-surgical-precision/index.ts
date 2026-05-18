@@ -61,7 +61,7 @@ export const PLATFORM_CONSTANTS = {
 
 // Export convenience function for quick platform deployment
 export async function deployPlatform() {
-  console.log('🎯 Deploying Surgical Precision Platform via npm package...');
+  console.info('🎯 Deploying Surgical Precision Platform via npm package...');
   return await deployCompleteSurgicalPrecisionPlatform();
 }
 

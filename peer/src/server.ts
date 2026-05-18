@@ -1063,5 +1063,5 @@ export async function startServer() {
 
 if (import.meta.main) {
   const server = await startServer();
-  console.log(`Peer ops running at http://localhost:${server.port}`);
+  console.info(`Peer ops running at http://localhost:${server.port}`);
 }

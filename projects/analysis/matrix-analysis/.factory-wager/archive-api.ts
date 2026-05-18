@@ -61,9 +61,9 @@ class ArchiveAPI {
       }
     });
 
-    console.log(`🌐 FactoryWager Archive API started on port ${this.config.port}`);
-    console.log(`📊 Health check: http://localhost:${this.config.port}/health`);
-    console.log(`📚 Documentation: http://localhost:${this.config.port}/docs`);
+    console.info(`🌐 FactoryWager Archive API started on port ${this.config.port}`);
+    console.info(`📊 Health check: http://localhost:${this.config.port}/health`);
+    console.info(`📚 Documentation: http://localhost:${this.config.port}/docs`);
   }
 
   /**
@@ -341,8 +341,8 @@ class ArchiveAPI {
 
 // CLI interface
 if (import.meta.main) {
-  console.log('🌐 Starting FactoryWager Archive API...');
-  console.log('=======================================');
+  console.info('🌐 Starting FactoryWager Archive API...');
+  console.info('=======================================');
 
   // Load configuration
   const config: ArchiveAPIConfig = {

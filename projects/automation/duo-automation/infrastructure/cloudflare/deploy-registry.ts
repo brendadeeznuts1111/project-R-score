@@ -19,9 +19,9 @@ class CloudflareRegistryDeployer {
   }
   
   async deploy() {
-    console.log('🚀 Deploying DuoPlus Registry to Cloudflare...');
-    console.log(`📦 Environment: ${this.config.environment}`);
-    console.log(`🌐 Account: ${this.config.accountId}\n`);
+    console.info('🚀 Deploying DuoPlus Registry to Cloudflare...');
+    console.info(`📦 Environment: ${this.config.environment}`);
+    console.info(`🌐 Account: ${this.config.accountId}\n`);
     
     try {
       // 1. Validate configuration
@@ -47,9 +47,9 @@ class CloudflareRegistryDeployer {
       // 7. Output configuration
       await this.outputConfig();
       
-      console.log('\n✅ Registry deployed successfully!');
-      console.log('🌐 Registry URL: https://registry.duoplus.com');
-      console.log('📊 Health Check: https://registry.duoplus.com/health');
+      console.info('\n✅ Registry deployed successfully!');
+      console.info('🌐 Registry URL: https://registry.duoplus.com');
+      console.info('📊 Health Check: https://registry.duoplus.com/health');
       
     } catch (error) {
       console.error('\n❌ Deployment failed:', error.message);
@@ -58,7 +58,7 @@ class CloudflareRegistryDeployer {
   }
   
   private async validateConfig() {
-    console.log('🔍 Validating configuration...');
+    console.info('🔍 Validating configuration...');
     
     if (!this.config.accountId) {
       throw new Error('Cloudflare Account ID is required');
@@ -77,24 +77,24 @@ class CloudflareRegistryDeployer {
         throw new Error('Invalid API token');
       }
       
-      console.log('  ✅ API token valid');
+      console.info('  ✅ API token valid');
     } catch (error) {
       throw new Error(`API token validation failed: ${error.message}`);
     }
   }
   
   private async setupAuth() {
-    console.log('🔐 Setting up authentication...');
+    console.info('🔐 Setting up authentication...');
     
     // Set environment variables for wrangler
     process.env.CLOUDFLARE_ACCOUNT_ID = this.config.accountId;
     process.env.CLOUDFLARE_API_TOKEN = this.config.apiToken;
     
-    console.log('  ✅ Authentication configured');
+    console.info('  ✅ Authentication configured');
   }
   
   private async createBuckets() {
-    console.log('📦 Creating R2 buckets...');
+    console.info('📦 Creating R2 buckets...');
     
     const buckets = [
       'duoplus-registry',
@@ -105,10 +105,10 @@ class CloudflareRegistryDeployer {
     for (const bucket of buckets) {
       try {
         await $`wrangler r2 bucket create ${bucket}`.quiet();
-        console.log(`  ✅ Created bucket: ${bucket}`);
+        console.info(`  ✅ Created bucket: ${bucket}`);
       } catch (error) {
         if (error.message.includes('already exists')) {
-          console.log(`  ⚠️  Bucket already exists: ${bucket}`);
+          console.info(`  ⚠️  Bucket already exists: ${bucket}`);
         } else {
           throw new Error(`Failed to create bucket ${bucket}: ${error.message}`);
         }
@@ -117,19 +117,19 @@ class CloudflareRegistryDeployer {
   }
   
   private async deployWorker() {
-    console.log('🚀 Deploying Cloudflare Worker...');
+    console.info('🚀 Deploying Cloudflare Worker...');
     
     try {
       // Deploy to production
       await $`wrangler deploy --env production`.quiet();
-      console.log('  ✅ Worker deployed to production');
+      console.info('  ✅ Worker deployed to production');
       
       // Deploy to preview (optional)
       try {
         await $`wrangler deploy --env preview`.quiet();
-        console.log('  ✅ Worker deployed to preview');
+        console.info('  ✅ Worker deployed to preview');
       } catch (error) {
-        console.log(`  ⚠️  Preview deployment failed: ${error.message}`);
+        console.info(`  ⚠️  Preview deployment failed: ${error.message}`);
       }
       
     } catch (error) {
@@ -138,24 +138,24 @@ class CloudflareRegistryDeployer {
   }
   
   private async configureDomain() {
-    console.log('🌐 Configuring custom domain...');
+    console.info('🌐 Configuring custom domain...');
     
     if (!this.config.domain) {
-      console.log('  ⚠️  No custom domain specified, skipping');
+      console.info('  ⚠️  No custom domain specified, skipping');
       return;
     }
     
     try {
       await $`wrangler custom-domains add ${this.config.domain}`.quiet();
-      console.log(`  ✅ Custom domain configured: ${this.config.domain}`);
+      console.info(`  ✅ Custom domain configured: ${this.config.domain}`);
     } catch (error) {
-      console.log(`  ⚠️  Domain configuration failed: ${error.message}`);
-      console.log('  💡 You may need to configure DNS manually');
+      console.info(`  ⚠️  Domain configuration failed: ${error.message}`);
+      console.info('  💡 You may need to configure DNS manually');
     }
   }
   
   private async testDeployment() {
-    console.log('🧪 Testing deployment...');
+    console.info('🧪 Testing deployment...');
     
     const testUrl = this.config.domain 
       ? `https://${this.config.domain}/health`
@@ -169,28 +169,28 @@ class CloudflareRegistryDeployer {
       const health = await response.json();
       
       if (health.status === 'ok') {
-        console.log('  ✅ Registry health check passed');
-        console.log(`  📊 Service: ${health.service}`);
-        console.log(`  🏢 Organization: ${health.organization}`);
-        console.log(`  🌐 Website: ${health.website}`);
-        console.log(`  🕐 Version: ${health.version}`);
+        console.info('  ✅ Registry health check passed');
+        console.info(`  📊 Service: ${health.service}`);
+        console.info(`  🏢 Organization: ${health.organization}`);
+        console.info(`  🌐 Website: ${health.website}`);
+        console.info(`  🕐 Version: ${health.version}`);
       } else {
         throw new Error('Registry health check failed');
       }
     } catch (error) {
-      console.log(`  ⚠️  Health check failed: ${error.message}`);
-      console.log('  💡 The worker may still be propagating. Try again in a few minutes.');
+      console.info(`  ⚠️  Health check failed: ${error.message}`);
+      console.info('  💡 The worker may still be propagating. Try again in a few minutes.');
     }
   }
   
   private async outputConfig() {
-    console.log('\n📋 Factory Wager Registry Configuration:');
-    console.log(`Main Registry: https://registry.factory-wager.com`);
-    console.log(`NPM Endpoint: https://registry.factory-wager.com`);
-    console.log(`Package Downloads: https://packages.factory-wager.com`);
-    console.log(`API Endpoint: https://registry.factory-wager.com/@duoplus`);
-    console.log(`Health Check: https://registry.factory-wager.com/health`);
-    console.log(`Search API: https://registry.factory-wager.com/-/v1/search`);
+    console.info('\n📋 Factory Wager Registry Configuration:');
+    console.info(`Main Registry: https://registry.factory-wager.com`);
+    console.info(`NPM Endpoint: https://registry.factory-wager.com`);
+    console.info(`Package Downloads: https://packages.factory-wager.com`);
+    console.info(`API Endpoint: https://registry.factory-wager.com/@duoplus`);
+    console.info(`Health Check: https://registry.factory-wager.com/health`);
+    console.info(`Search API: https://registry.factory-wager.com/-/v1/search`);
     
     // Create npmrc configuration
     const npmrc = `
@@ -200,7 +200,7 @@ always-auth=true
     `.trim();
     
     await Bun.write('.npmrc', npmrc);
-    console.log('\n📝 Created .npmrc file for Factory Wager registry');
+    console.info('\n📝 Created .npmrc file for Factory Wager registry');
     
     // Create environment file template
     const envTemplate = `
@@ -223,7 +223,7 @@ SUPPORT_EMAIL=registry@factory-wager.com
     `.trim();
     
     await Bun.write('.env.factory-wager', envTemplate);
-    console.log('📝 Created .env.factory-wager file with configuration');
+    console.info('📝 Created .env.factory-wager file with configuration');
   }
 }
 
@@ -244,19 +244,19 @@ async function main() {
     await deployer.deploy();
     
   } else if (command === 'test') {
-    console.log('🧪 Testing Cloudflare connection...');
+    console.info('🧪 Testing Cloudflare connection...');
     
     try {
       const result = await $`wrangler whoami`.quiet();
-      console.log('✅ Cloudflare authentication successful');
-      console.log(result.toString());
+      console.info('✅ Cloudflare authentication successful');
+      console.info(result.toString());
     } catch (error) {
       console.error('❌ Cloudflare authentication failed:', error.message);
       process.exit(1);
     }
     
   } else {
-    console.log(`
+    console.info(`
 Usage: bun run infrastructure/cloudflare/deploy-registry.ts [command]
 
 Commands:

@@ -23,7 +23,7 @@ describe("👁️ Bun.watch API - File System Monitoring", () => {
     watcher.on("change", (event, filename) => {
       changeCount++;
       changes.push({ event, filename: filename || "unknown" });
-      console.log(`👁️ File change: ${event} - ${filename}`);
+      console.info(`👁️ File change: ${event} - ${filename}`);
     });
 
     // Wait a moment for watcher to initialize
@@ -47,7 +47,7 @@ describe("👁️ Bun.watch API - File System Monitoring", () => {
     // Cleanup
     // @ts-ignore - Bun.watch is available at runtime
     watcher.close();
-    console.log(`✅ Detected ${changeCount} file changes`);
+    console.info(`✅ Detected ${changeCount} file changes`);
   });
 
   test("✅ Watch specific directory", async () => {
@@ -63,7 +63,7 @@ describe("👁️ Bun.watch API - File System Monitoring", () => {
 
     watcher.on("change", (event, filename) => {
       specificChanges++;
-      console.log(`📁 Specific dir change: ${event} - ${filename}`);
+      console.info(`📁 Specific dir change: ${event} - ${filename}`);
     });
 
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -111,13 +111,13 @@ describe("👁️ Bun.watch API - File System Monitoring", () => {
 
     // @ts-ignore - Bun.watch is available at runtime
     watcher.close();
-    console.log(`✅ Captured ${events.length} file system events`);
+    console.info(`✅ Captured ${events.length} file system events`);
   });
 
   test("✅ Watch with file patterns", async () => {
     // Create different file types
     // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/test.js`, "console.log('test');");
+    await Bun.write(`${tempDir}/test.js`, "console.info('test');");
     // @ts-ignore - Bun.write is available at runtime
     await Bun.write(`${tempDir}/style.css`, "body { color: red; }");
     // @ts-ignore - Bun.write is available at runtime
@@ -130,7 +130,7 @@ describe("👁️ Bun.watch API - File System Monitoring", () => {
     watcher.on("change", (event, filename) => {
       if (filename?.endsWith(".js")) {
         jsChanges.push(filename);
-        console.log(`📜 JS file changed: ${filename}`);
+        console.info(`📜 JS file changed: ${filename}`);
       }
     });
 
@@ -138,7 +138,7 @@ describe("👁️ Bun.watch API - File System Monitoring", () => {
 
     // Update JavaScript file
     // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/test.js`, "console.log('updated');");
+    await Bun.write(`${tempDir}/test.js`, "console.info('updated');");
 
     // Update CSS file (should be ignored)
     // @ts-ignore - Bun.write is available at runtime
@@ -160,7 +160,7 @@ describe("👁️ Bun.watch API - File System Monitoring", () => {
     let errorCount = 0;
     watcher.on("error", (error) => {
       errorCount++;
-      console.log(`❌ Watcher error: ${error}`);
+      console.info(`❌ Watcher error: ${error}`);
     });
 
     // Test normal operation
@@ -176,7 +176,7 @@ describe("👁️ Bun.watch API - File System Monitoring", () => {
     expect(() => // @ts-ignore - Bun.watch is available at runtime
     watcher.close()).not.toThrow();
 
-    console.log(`✅ Error handling test completed with ${errorCount} errors`);
+    console.info(`✅ Error handling test completed with ${errorCount} errors`);
   });
 
   test("✅ Performance with many files", async () => {
@@ -216,7 +216,7 @@ describe("👁️ Bun.watch API - File System Monitoring", () => {
 
     watcher.close();
 
-    console.log(
+    console.info(
       `✅ Performance test: ${fileCount} files, ${changeCount} changes in ${duration}ms`
     );
   });
@@ -241,11 +241,11 @@ describe("👁️ Bun.watch API - File System Monitoring", () => {
     watcher.on("change", (event, filename) => {
       if (filename?.includes("package.json")) {
         configChanges++;
-        console.log(`📦 Config changed: ${event} - ${filename}`);
+        console.info(`📦 Config changed: ${event} - ${filename}`);
       }
       if (filename?.includes(".test.")) {
         testChanges++;
-        console.log(`🧪 Test file changed: ${event} - ${filename}`);
+        console.info(`🧪 Test file changed: ${event} - ${filename}`);
       }
     });
 
@@ -271,7 +271,7 @@ test('integration', () => expect(true).toBe(true));
 
     watcher.close();
 
-    console.log(
+    console.info(
       `✅ Dev HQ integration: ${configChanges} config changes, ${testChanges} test changes`
     );
   });

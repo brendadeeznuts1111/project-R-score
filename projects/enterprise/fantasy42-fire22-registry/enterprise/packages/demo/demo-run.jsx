@@ -35,8 +35,8 @@ const config = {
   ],
 };
 
-console.log('🚀 Bun Run Demo - JSX');
-console.log('='.repeat(40));
+console.info('🚀 Bun Run Demo - JSX');
+console.info('='.repeat(40));
 
 const startTime = performance.now();
 
@@ -44,19 +44,19 @@ const startTime = performance.now();
 const renderJSX = component => {
   // In a real React app, this would be ReactDOM.render()
   // Here we just simulate the structure
-  console.log('🎨 JSX Component Rendered:');
-  console.log(`📋 ${component.props.config.name}`);
-  console.log(`🏷️  Version: ${component.props.config.version}`);
-  console.log(`🌍 Environment: ${component.props.config.environment}`);
+  console.info('🎨 JSX Component Rendered:');
+  console.info(`📋 ${component.props.config.name}`);
+  console.info(`🏷️  Version: ${component.props.config.version}`);
+  console.info(`🌍 Environment: ${component.props.config.environment}`);
 
-  console.log('\n✨ Features:');
+  console.info('\n✨ Features:');
   component.props.config.features.forEach(feature => {
-    console.log(`   🔥 ${feature}`);
+    console.info(`   🔥 ${feature}`);
   });
 
-  console.log('\n📦 Packages:');
+  console.info('\n📦 Packages:');
   component.props.config.packages.forEach(pkg => {
-    console.log(`   📋 ${pkg.name} (${pkg.status}) - ${pkg.dependencies} deps`);
+    console.info(`   📋 ${pkg.name} (${pkg.status}) - ${pkg.dependencies} deps`);
   });
 };
 
@@ -68,13 +68,13 @@ renderJSX(dashboard);
 const packageCount = config.packages.length;
 const activePackages = config.packages.filter(p => p.status === 'active').length;
 
-console.log(`\n📊 Statistics:`);
-console.log(`   Total Packages: ${packageCount}`);
-console.log(`   Active Packages: ${activePackages}`);
-console.log(
+console.info(`\n📊 Statistics:`);
+console.info(`   Total Packages: ${packageCount}`);
+console.info(`   Active Packages: ${activePackages}`);
+console.info(
   `   Total Dependencies: ${config.packages.reduce((sum, pkg) => sum + pkg.dependencies, 0)}`
 );
 
 const endTime = performance.now();
-console.log(`\n⚡ JSX execution time: ${(endTime - startTime).toFixed(2)}ms`);
-console.log('🎉 JSX execution complete!');
+console.info(`\n⚡ JSX execution time: ${(endTime - startTime).toFixed(2)}ms`);
+console.info('🎉 JSX execution complete!');

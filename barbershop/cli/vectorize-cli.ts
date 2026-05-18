@@ -81,13 +81,13 @@ function parseArgs(argv: string[]): ParsedArgs {
 }
 
 function header() {
-  console.log(color(`\n🔍 Vectorize CLI v${VERSION}`, 'brightCyan'));
-  console.log(color('═══════════════════════════════════════════', 'dim'));
+  console.info(color(`\n🔍 Vectorize CLI v${VERSION}`, 'brightCyan'));
+  console.info(color('═══════════════════════════════════════════', 'dim'));
 }
 
 function showHelp() {
   header();
-  console.log(`
+  console.info(`
 ${color('Usage:', 'bright')} vectorize <command> [subcommand] [options]
 
 ${color('Secrets Management:', 'bright')}
@@ -164,7 +164,7 @@ async function getSecret(service: string, name: string): Promise<string | undefi
 async function setSecret(service: string, name: string, value: string): Promise<void> {
   try {
     await setManagedSecret({ service, name, value });
-    console.log(color(`✅ Stored ${name} in Bun.secrets (${service})`, 'green'));
+    console.info(color(`✅ Stored ${name} in Bun.secrets (${service})`, 'green'));
   } catch (error: any) {
     const envVarMap: Record<string, string> = {
       'com.barbershop.vectorize:api_token': 'CLOUDFLARE_API_TOKEN',
@@ -175,7 +175,7 @@ async function setSecret(service: string, name: string, value: string): Promise<
     const envVar = envVarMap[`${service}:${name}`];
     if (!envVar) throw error;
     Bun.env[envVar] = value;
-    console.log(color(`⚠️  Bun.secrets unavailable (${error.message}); set ${envVar} for this process`, 'yellow'));
+    console.info(color(`⚠️  Bun.secrets unavailable (${error.message}); set ${envVar} for this process`, 'yellow'));
   }
 }
 
@@ -190,7 +190,7 @@ async function handleSecrets(args: ParsedArgs) {
       const token = positional[0];
       if (!token) {
         console.error(color('❌ Token required', 'red'));
-        console.log(color('Usage: vectorize secrets set-token <token>', 'dim'));
+        console.info(color('Usage: vectorize secrets set-token <token>', 'dim'));
         process.exit(1);
       }
       await setSecret(CF_SERVICE, TOKEN_NAME, token);
@@ -201,7 +201,7 @@ async function handleSecrets(args: ParsedArgs) {
       const accountId = positional[0];
       if (!accountId) {
         console.error(color('❌ Account ID required', 'red'));
-        console.log(color('Usage: vectorize secrets set-account-id <id>', 'dim'));
+        console.info(color('Usage: vectorize secrets set-account-id <id>', 'dim'));
         process.exit(1);
       }
       await setSecret(CF_SERVICE, ACCOUNT_ID_NAME, accountId);
@@ -211,11 +211,11 @@ async function handleSecrets(args: ParsedArgs) {
     case 'get-token': {
       const token = await getSecret(CF_SERVICE, TOKEN_NAME);
       if (token) {
-        console.log(color('✅ Token found:', 'green'));
-        console.log(`   ${token.substring(0, 10)}...${token.substring(token.length - 4)}`);
+        console.info(color('✅ Token found:', 'green'));
+        console.info(`   ${token.substring(0, 10)}...${token.substring(token.length - 4)}`);
       } else {
-        console.log(color('❌ Token not found', 'red'));
-        console.log(color('   Set it with: vectorize secrets set-token <token>', 'dim'));
+        console.info(color('❌ Token not found', 'red'));
+        console.info(color('   Set it with: vectorize secrets set-token <token>', 'dim'));
       }
       break;
     }
@@ -223,11 +223,11 @@ async function handleSecrets(args: ParsedArgs) {
     case 'get-account-id': {
       const accountId = await getSecret(CF_SERVICE, ACCOUNT_ID_NAME);
       if (accountId) {
-        console.log(color('✅ Account ID found:', 'green'));
-        console.log(`   ${accountId}`);
+        console.info(color('✅ Account ID found:', 'green'));
+        console.info(`   ${accountId}`);
       } else {
-        console.log(color('❌ Account ID not found', 'red'));
-        console.log(color('   Set it with: vectorize secrets set-account-id <id>', 'dim'));
+        console.info(color('❌ Account ID not found', 'red'));
+        console.info(color('   Set it with: vectorize secrets set-account-id <id>', 'dim'));
       }
       break;
     }
@@ -236,9 +236,9 @@ async function handleSecrets(args: ParsedArgs) {
       try {
         const deleted = await deleteManagedSecret({ service: CF_SERVICE, name: TOKEN_NAME });
         if (deleted) {
-          console.log(color('✅ Token deleted from Bun.secrets', 'green'));
+          console.info(color('✅ Token deleted from Bun.secrets', 'green'));
         } else {
-          console.log(color('⚠️  Token not found in Bun.secrets', 'yellow'));
+          console.info(color('⚠️  Token not found in Bun.secrets', 'yellow'));
         }
       } catch (error: any) {
         console.error(color(`❌ Failed to delete token: ${error.message}`, 'red'));
@@ -251,9 +251,9 @@ async function handleSecrets(args: ParsedArgs) {
       try {
         const deleted = await deleteManagedSecret({ service: CF_SERVICE, name: ACCOUNT_ID_NAME });
         if (deleted) {
-          console.log(color('✅ Account ID deleted from Bun.secrets', 'green'));
+          console.info(color('✅ Account ID deleted from Bun.secrets', 'green'));
         } else {
-          console.log(color('⚠️  Account ID not found in Bun.secrets', 'yellow'));
+          console.info(color('⚠️  Account ID not found in Bun.secrets', 'yellow'));
         }
       } catch (error: any) {
         console.error(color(`❌ Failed to delete account ID: ${error.message}`, 'red'));
@@ -263,10 +263,10 @@ async function handleSecrets(args: ParsedArgs) {
     }
 
     case 'migrate': {
-      console.log(color('🔄 Migrating secrets to new service name...', 'cyan'));
-      console.log(color('   Old: cloudflare', 'dim'));
-      console.log(color('   New: com.barbershop.vectorize', 'dim'));
-      console.log('');
+      console.info(color('🔄 Migrating secrets to new service name...', 'cyan'));
+      console.info(color('   Old: cloudflare', 'dim'));
+      console.info(color('   New: com.barbershop.vectorize', 'dim'));
+      console.info('');
 
       let migrated = 0;
       let skipped = 0;
@@ -278,18 +278,18 @@ async function handleSecrets(args: ParsedArgs) {
           const newToken = await getManagedSecret({ service: CF_SERVICE, name: TOKEN_NAME, legacyServices: [] });
           if (!newToken) {
             await setManagedSecret({ service: CF_SERVICE, name: TOKEN_NAME, value: oldToken });
-            console.log(color('  ✅ Migrated API token', 'green'));
+            console.info(color('  ✅ Migrated API token', 'green'));
             migrated++;
           } else {
-            console.log(color('  ⏭️  API token already exists in new location', 'yellow'));
+            console.info(color('  ⏭️  API token already exists in new location', 'yellow'));
             skipped++;
           }
         } else {
-          console.log(color('  ⏭️  No API token found in old location', 'dim'));
+          console.info(color('  ⏭️  No API token found in old location', 'dim'));
           skipped++;
         }
       } catch (error: any) {
-        console.log(color(`  ⚠️  Could not migrate API token: ${error.message}`, 'yellow'));
+        console.info(color(`  ⚠️  Could not migrate API token: ${error.message}`, 'yellow'));
       }
 
       // Migrate Account ID
@@ -299,70 +299,70 @@ async function handleSecrets(args: ParsedArgs) {
           const newAccountId = await getManagedSecret({ service: CF_SERVICE, name: ACCOUNT_ID_NAME, legacyServices: [] });
           if (!newAccountId) {
             await setManagedSecret({ service: CF_SERVICE, name: ACCOUNT_ID_NAME, value: oldAccountId });
-            console.log(color('  ✅ Migrated Account ID', 'green'));
+            console.info(color('  ✅ Migrated Account ID', 'green'));
             migrated++;
           } else {
-            console.log(color('  ⏭️  Account ID already exists in new location', 'yellow'));
+            console.info(color('  ⏭️  Account ID already exists in new location', 'yellow'));
             skipped++;
           }
         } else {
-          console.log(color('  ⏭️  No Account ID found in old location', 'dim'));
+          console.info(color('  ⏭️  No Account ID found in old location', 'dim'));
           skipped++;
         }
       } catch (error: any) {
-        console.log(color(`  ⚠️  Could not migrate Account ID: ${error.message}`, 'yellow'));
+        console.info(color(`  ⚠️  Could not migrate Account ID: ${error.message}`, 'yellow'));
       }
 
-      console.log('');
+      console.info('');
       if (migrated > 0) {
-        console.log(color(`✅ Migration complete! Migrated ${migrated} secret(s)`, 'green'));
-        console.log(color('   Old secrets remain for backward compatibility', 'dim'));
-        console.log(color('   You can delete them with: vectorize secrets delete-token (old)', 'dim'));
+        console.info(color(`✅ Migration complete! Migrated ${migrated} secret(s)`, 'green'));
+        console.info(color('   Old secrets remain for backward compatibility', 'dim'));
+        console.info(color('   You can delete them with: vectorize secrets delete-token (old)', 'dim'));
       } else if (skipped > 0) {
-        console.log(color('ℹ️  No migration needed - secrets already in new location or not found', 'cyan'));
+        console.info(color('ℹ️  No migration needed - secrets already in new location or not found', 'cyan'));
       }
       break;
     }
 
     case 'status': {
-      console.log(color('\n📋 Secrets Status:', 'bright'));
+      console.info(color('\n📋 Secrets Status:', 'bright'));
       const token = await getSecret(CF_SERVICE, TOKEN_NAME);
       const accountId = await getSecret(CF_SERVICE, ACCOUNT_ID_NAME);
 
-      console.log(`\n${color('API Token:', 'cyan')}`);
+      console.info(`\n${color('API Token:', 'cyan')}`);
       if (token) {
-        console.log(color('  ✅ Found', 'green'));
-        console.log(`  Length: ${token.length} characters`);
-        console.log(`  Preview: ${token.substring(0, 10)}...${token.substring(token.length - 4)}`);
+        console.info(color('  ✅ Found', 'green'));
+        console.info(`  Length: ${token.length} characters`);
+        console.info(`  Preview: ${token.substring(0, 10)}...${token.substring(token.length - 4)}`);
       } else {
-        console.log(color('  ❌ Not found', 'red'));
-        console.log(color('  Set with: vectorize secrets set-token <token>', 'dim'));
+        console.info(color('  ❌ Not found', 'red'));
+        console.info(color('  Set with: vectorize secrets set-token <token>', 'dim'));
       }
 
-      console.log(`\n${color('Account ID:', 'cyan')}`);
+      console.info(`\n${color('Account ID:', 'cyan')}`);
       if (accountId) {
-        console.log(color('  ✅ Found', 'green'));
-        console.log(`  Value: ${accountId}`);
+        console.info(color('  ✅ Found', 'green'));
+        console.info(`  Value: ${accountId}`);
       } else {
-        console.log(color('  ❌ Not found', 'red'));
-        console.log(color('  Set with: vectorize secrets set-account-id <id>', 'dim'));
+        console.info(color('  ❌ Not found', 'red'));
+        console.info(color('  Set with: vectorize secrets set-account-id <id>', 'dim'));
       }
 
       // Check Vectorize availability
-      console.log(`\n${color('Vectorize Status:', 'cyan')}`);
+      console.info(`\n${color('Vectorize Status:', 'cyan')}`);
       const available = await vectorizeClient.isAvailable();
       if (available) {
-        console.log(color('  ✅ Vectorize is available', 'green'));
+        console.info(color('  ✅ Vectorize is available', 'green'));
       } else {
-        console.log(color('  ❌ Vectorize is not available', 'red'));
-        console.log(color('  Check VECTORIZE_WORKER_URL and VECTORIZE_ENABLED', 'dim'));
+        console.info(color('  ❌ Vectorize is not available', 'red'));
+        console.info(color('  Check VECTORIZE_WORKER_URL and VECTORIZE_ENABLED', 'dim'));
       }
       break;
     }
 
     default:
       console.error(color(`❌ Unknown secrets command: ${subcommand}`, 'red'));
-      console.log(color('Available: set-token, set-account-id, get-token, get-account-id, status', 'dim'));
+      console.info(color('Available: set-token, set-account-id, get-token, get-account-id, status', 'dim'));
       process.exit(1);
   }
 }
@@ -405,7 +405,7 @@ async function handleIndexes(args: ParsedArgs) {
           encoding: 'utf-8',
           stdio: 'inherit',
         });
-        console.log(color(`✅ Created index: ${indexName}`, 'green'));
+        console.info(color(`✅ Created index: ${indexName}`, 'green'));
       } catch (error) {
         process.exit(1);
       }
@@ -418,11 +418,11 @@ async function handleIndexes(args: ParsedArgs) {
         console.error(color('❌ Index name required', 'red'));
         process.exit(1);
       }
-      console.log(color(`⚠️  Deleting index: ${indexName}`, 'yellow'));
+      console.info(color(`⚠️  Deleting index: ${indexName}`, 'yellow'));
       const { execSync } = await import('child_process');
       try {
         execSync(`bunx wrangler vectorize delete ${indexName}`, { encoding: 'utf-8', stdio: 'inherit' });
-        console.log(color(`✅ Deleted index: ${indexName}`, 'green'));
+        console.info(color(`✅ Deleted index: ${indexName}`, 'green'));
       } catch (error) {
         process.exit(1);
       }
@@ -446,7 +446,7 @@ async function handleIndexes(args: ParsedArgs) {
 
     default:
       console.error(color(`❌ Unknown indexes command: ${subcommand}`, 'red'));
-      console.log(color('Available: list, create, delete, info', 'dim'));
+      console.info(color('Available: list, create, delete, info', 'dim'));
       process.exit(1);
   }
 }
@@ -478,7 +478,7 @@ async function handleMetadata(args: ParsedArgs) {
           `bunx wrangler vectorize create-metadata-index ${indexName} --property-name=${propertyName} --type=${propertyType}`,
           { encoding: 'utf-8', stdio: 'inherit' }
         );
-        console.log(color(`✅ Created metadata index: ${indexName}.${propertyName}`, 'green'));
+        console.info(color(`✅ Created metadata index: ${indexName}.${propertyName}`, 'green'));
       } catch (error) {
         process.exit(1);
       }
@@ -491,7 +491,7 @@ async function handleMetadata(args: ParsedArgs) {
         console.error(color('❌ Index name required', 'red'));
         process.exit(1);
       }
-      console.log(color(`📋 Metadata indexes for ${indexName}:`, 'cyan'));
+      console.info(color(`📋 Metadata indexes for ${indexName}:`, 'cyan'));
       // Note: wrangler doesn't have a direct list-metadata-indexes command
       // We can describe the index to see metadata indexes
       try {
@@ -504,7 +504,7 @@ async function handleMetadata(args: ParsedArgs) {
 
     default:
       console.error(color(`❌ Unknown metadata command: ${subcommand}`, 'red'));
-      console.log(color('Available: create, list', 'dim'));
+      console.info(color('Available: create, list', 'dim'));
       process.exit(1);
   }
 }
@@ -518,7 +518,7 @@ async function handleIndex(args: ParsedArgs) {
 
   switch (subcommand) {
     case 'barbers': {
-      console.log(color('🔍 Indexing barbers...', 'cyan'));
+      console.info(color('🔍 Indexing barbers...', 'cyan'));
       const available = await vectorizeClient.isAvailable();
       if (!available) {
         console.error(color('❌ Vectorize is not available', 'red'));
@@ -534,7 +534,7 @@ async function handleIndex(args: ParsedArgs) {
           status: string;
         }>;
 
-        console.log(color(`Found ${barbers.length} barbers`, 'dim'));
+        console.info(color(`Found ${barbers.length} barbers`, 'dim'));
 
         let successCount = 0;
         for (const barber of barbers) {
@@ -548,14 +548,14 @@ async function handleIndex(args: ParsedArgs) {
                 status: barber.status,
               });
               successCount++;
-              console.log(color(`  ✅ ${barber.name}`, 'green'));
+              console.info(color(`  ✅ ${barber.name}`, 'green'));
             }
           } catch (error: any) {
             console.error(color(`  ❌ ${barber.name}: ${error.message}`, 'red'));
           }
         }
 
-        console.log(color(`\n✅ Indexed ${successCount}/${barbers.length} barbers`, 'green'));
+        console.info(color(`\n✅ Indexed ${successCount}/${barbers.length} barbers`, 'green'));
       } finally {
         db.close();
       }
@@ -563,7 +563,7 @@ async function handleIndex(args: ParsedArgs) {
     }
 
     case 'customers': {
-      console.log(color('🔍 Indexing customers...', 'cyan'));
+      console.info(color('🔍 Indexing customers...', 'cyan'));
       const available = await vectorizeClient.isAvailable();
       if (!available) {
         console.error(color('❌ Vectorize is not available', 'red'));
@@ -582,7 +582,7 @@ async function handleIndex(args: ParsedArgs) {
           zipcode: string | null;
         }>;
 
-        console.log(color(`Found ${customers.length} customers`, 'dim'));
+        console.info(color(`Found ${customers.length} customers`, 'dim'));
 
         let successCount = 0;
         for (const customer of customers) {
@@ -597,13 +597,13 @@ async function handleIndex(args: ParsedArgs) {
               zipcode: customer.zipcode || undefined,
             });
             successCount++;
-            console.log(color(`  ✅ ${customer.name}`, 'green'));
+            console.info(color(`  ✅ ${customer.name}`, 'green'));
           } catch (error: any) {
             console.error(color(`  ❌ ${customer.name}: ${error.message}`, 'red'));
           }
         }
 
-        console.log(color(`\n✅ Indexed ${successCount}/${customers.length} customers`, 'green'));
+        console.info(color(`\n✅ Indexed ${successCount}/${customers.length} customers`, 'green'));
       } finally {
         db.close();
       }
@@ -611,7 +611,7 @@ async function handleIndex(args: ParsedArgs) {
     }
 
     case 'documents': {
-      console.log(color('🔍 Indexing documents...', 'cyan'));
+      console.info(color('🔍 Indexing documents...', 'cyan'));
       // Import and run the index-documents script
       const scriptPath = './scripts/vectorize/index-documents.ts';
       try {
@@ -624,17 +624,17 @@ async function handleIndex(args: ParsedArgs) {
     }
 
     case 'all': {
-      console.log(color('🔍 Indexing all data...', 'brightCyan'));
+      console.info(color('🔍 Indexing all data...', 'brightCyan'));
       await handleIndex({ ...args, subcommand: 'barbers' });
       await handleIndex({ ...args, subcommand: 'customers' });
       await handleIndex({ ...args, subcommand: 'documents' });
-      console.log(color('\n✅ All indexing complete!', 'green'));
+      console.info(color('\n✅ All indexing complete!', 'green'));
       break;
     }
 
     default:
       console.error(color(`❌ Unknown index command: ${subcommand}`, 'red'));
-      console.log(color('Available: barbers, customers, documents, all', 'dim'));
+      console.info(color('Available: barbers, customers, documents, all', 'dim'));
       process.exit(1);
   }
 }
@@ -660,16 +660,16 @@ async function handleSearch(args: ParsedArgs) {
 
   switch (subcommand) {
     case 'barbers': {
-      console.log(color(`🔍 Searching barbers: "${query}"`, 'cyan'));
+      console.info(color(`🔍 Searching barbers: "${query}"`, 'cyan'));
       try {
         const matches = await vectorizeClient.queryBarbers(query, {}, limit);
-        console.log(color(`\nFound ${matches.length} matches:\n`, 'bright'));
+        console.info(color(`\nFound ${matches.length} matches:\n`, 'bright'));
         matches.forEach((match, i) => {
-          console.log(`${i + 1}. ${color(match.metadata?.name || 'Unknown', 'bright')}`);
-          console.log(`   ID: ${match.metadata?.barber_id}`);
-          console.log(`   Skills: ${match.metadata?.skills || 'N/A'}`);
-          console.log(`   Score: ${(match.score * 100).toFixed(1)}%`);
-          console.log('');
+          console.info(`${i + 1}. ${color(match.metadata?.name || 'Unknown', 'bright')}`);
+          console.info(`   ID: ${match.metadata?.barber_id}`);
+          console.info(`   Skills: ${match.metadata?.skills || 'N/A'}`);
+          console.info(`   Score: ${(match.score * 100).toFixed(1)}%`);
+          console.info('');
         });
       } catch (error: any) {
         console.error(color(`❌ Error: ${error.message}`, 'red'));
@@ -679,17 +679,17 @@ async function handleSearch(args: ParsedArgs) {
     }
 
     case 'customers': {
-      console.log(color(`🔍 Searching customers: "${query}"`, 'cyan'));
+      console.info(color(`🔍 Searching customers: "${query}"`, 'cyan'));
       try {
         const matches = await vectorizeClient.queryCustomers(query, {}, limit);
-        console.log(color(`\nFound ${matches.length} matches:\n`, 'bright'));
+        console.info(color(`\nFound ${matches.length} matches:\n`, 'bright'));
         matches.forEach((match, i) => {
-          console.log(`${i + 1}. ${color(match.metadata?.name || 'Unknown', 'bright')}`);
-          console.log(`   ID: ${match.metadata?.customer_id}`);
-          console.log(`   Tier: ${match.metadata?.tier || 'N/A'}`);
-          console.log(`   Home Shop: ${match.metadata?.homeShop || 'N/A'}`);
-          console.log(`   Score: ${(match.score * 100).toFixed(1)}%`);
-          console.log('');
+          console.info(`${i + 1}. ${color(match.metadata?.name || 'Unknown', 'bright')}`);
+          console.info(`   ID: ${match.metadata?.customer_id}`);
+          console.info(`   Tier: ${match.metadata?.tier || 'N/A'}`);
+          console.info(`   Home Shop: ${match.metadata?.homeShop || 'N/A'}`);
+          console.info(`   Score: ${(match.score * 100).toFixed(1)}%`);
+          console.info('');
         });
       } catch (error: any) {
         console.error(color(`❌ Error: ${error.message}`, 'red'));
@@ -699,20 +699,20 @@ async function handleSearch(args: ParsedArgs) {
     }
 
     case 'docs': {
-      console.log(color(`🔍 Searching documents: "${query}"`, 'cyan'));
+      console.info(color(`🔍 Searching documents: "${query}"`, 'cyan'));
       try {
         const matches = await vectorizeClient.queryDocuments(query, limit);
-        console.log(color(`\nFound ${matches.length} matches:\n`, 'bright'));
+        console.info(color(`\nFound ${matches.length} matches:\n`, 'bright'));
         matches.forEach((match, i) => {
-          console.log(`${i + 1}. ${color(match.metadata?.doc_id || 'Unknown', 'bright')}`);
-          console.log(`   Topic: ${match.metadata?.topic || 'N/A'}`);
-          console.log(`   Section: ${match.metadata?.section || 'N/A'}`);
-          console.log(`   Score: ${(match.score * 100).toFixed(1)}%`);
+          console.info(`${i + 1}. ${color(match.metadata?.doc_id || 'Unknown', 'bright')}`);
+          console.info(`   Topic: ${match.metadata?.topic || 'N/A'}`);
+          console.info(`   Section: ${match.metadata?.section || 'N/A'}`);
+          console.info(`   Score: ${(match.score * 100).toFixed(1)}%`);
           if (match.metadata?.content) {
             const preview = match.metadata.content.substring(0, 100);
-            console.log(`   Preview: ${preview}...`);
+            console.info(`   Preview: ${preview}...`);
           }
-          console.log('');
+          console.info('');
         });
       } catch (error: any) {
         console.error(color(`❌ Error: ${error.message}`, 'red'));
@@ -723,7 +723,7 @@ async function handleSearch(args: ParsedArgs) {
 
     default:
       console.error(color(`❌ Unknown search command: ${subcommand}`, 'red'));
-      console.log(color('Available: barbers, customers, docs', 'dim'));
+      console.info(color('Available: barbers, customers, docs', 'dim'));
       process.exit(1);
   }
 }
@@ -752,7 +752,7 @@ async function handleMatch(args: ParsedArgs) {
         }
 
         const customer = customers[0];
-        console.log(color(`🔍 Matching barbers for customer: ${customer.name}`, 'cyan'));
+        console.info(color(`🔍 Matching barbers for customer: ${customer.name}`, 'cyan'));
 
         // Build query from customer preferences
         const queryParts: string[] = [];
@@ -770,7 +770,7 @@ async function handleMatch(args: ParsedArgs) {
         const matches = await vectorizeClient.queryBarbers(query, { status: 'active' }, 10);
         const allBarbers = db.query('SELECT * FROM barbers').all() as Array<any>;
 
-        console.log(color(`\nFound ${matches.length} matching barbers:\n`, 'bright'));
+        console.info(color(`\nFound ${matches.length} matching barbers:\n`, 'bright'));
         matches.forEach((match, i) => {
           const barberId = match.metadata?.barber_id;
           const barber = allBarbers.find((b: any) => b.id === barberId);
@@ -780,12 +780,12 @@ async function handleMatch(args: ParsedArgs) {
           if (customer.preferredBarber === barberId) matchReason = 'preferred_barber';
           else if (customer.homeShop && barber.shop === customer.homeShop) matchReason = 'home_shop';
 
-          console.log(`${i + 1}. ${color(barber.name, 'bright')} (${barber.code})`);
-          console.log(`   Skills: ${barber.skills || 'N/A'}`);
-          console.log(`   Shop: ${barber.shop || 'N/A'}`);
-          console.log(`   Match Reason: ${color(matchReason, 'cyan')}`);
-          console.log(`   Similarity: ${(match.score * 100).toFixed(1)}%`);
-          console.log('');
+          console.info(`${i + 1}. ${color(barber.name, 'bright')} (${barber.code})`);
+          console.info(`   Skills: ${barber.skills || 'N/A'}`);
+          console.info(`   Shop: ${barber.shop || 'N/A'}`);
+          console.info(`   Match Reason: ${color(matchReason, 'cyan')}`);
+          console.info(`   Similarity: ${(match.score * 100).toFixed(1)}%`);
+          console.info('');
         });
       } finally {
         db.close();
@@ -795,7 +795,7 @@ async function handleMatch(args: ParsedArgs) {
 
     default:
       console.error(color(`❌ Unknown match command: ${subcommand}`, 'red'));
-      console.log(color('Available: customer', 'dim'));
+      console.info(color('Available: customer', 'dim'));
       process.exit(1);
   }
 }
@@ -816,7 +816,7 @@ async function handleSetup(args: ParsedArgs) {
 
   switch (subcommand) {
     case 'setup-indexes': {
-      console.log(color('🔧 Creating Vectorize indexes...', 'cyan'));
+      console.info(color('🔧 Creating Vectorize indexes...', 'cyan'));
       const { execSync } = await import('child_process');
 
       const indexes = [
@@ -827,15 +827,15 @@ async function handleSetup(args: ParsedArgs) {
 
       for (const index of indexes) {
         try {
-          console.log(color(`Creating ${index.name}...`, 'dim'));
+          console.info(color(`Creating ${index.name}...`, 'dim'));
           execSync(`bunx wrangler vectorize create ${index.name} --dimensions=768 --metric=cosine`, {
             encoding: 'utf-8',
             stdio: 'pipe',
           });
-          console.log(color(`  ✅ Created ${index.name}`, 'green'));
+          console.info(color(`  ✅ Created ${index.name}`, 'green'));
 
           for (const prop of index.metadata) {
-            console.log(color(`  Creating metadata index: ${prop}...`, 'dim'));
+            console.info(color(`  Creating metadata index: ${prop}...`, 'dim'));
             execSync(
               `bunx wrangler vectorize create-metadata-index ${index.name} --property-name=${prop} --type=string`,
               { encoding: 'utf-8', stdio: 'pipe' }
@@ -843,33 +843,33 @@ async function handleSetup(args: ParsedArgs) {
           }
         } catch (error: any) {
           if (error.message.includes('already exists')) {
-            console.log(color(`  ⚠️  ${index.name} already exists`, 'yellow'));
+            console.info(color(`  ⚠️  ${index.name} already exists`, 'yellow'));
           } else {
             console.error(color(`  ❌ Error creating ${index.name}: ${error.message}`, 'red'));
           }
         }
       }
 
-      console.log(color('\n✅ Setup complete!', 'green'));
+      console.info(color('\n✅ Setup complete!', 'green'));
       break;
     }
 
     case 'setup-metadata': {
-      console.log(color('🔧 Creating metadata indexes...', 'cyan'));
+      console.info(color('🔧 Creating metadata indexes...', 'cyan'));
       // This is handled in setup-indexes, but we can add a separate command if needed
-      console.log(color('Run "vectorize setup-indexes" to create indexes with metadata', 'dim'));
+      console.info(color('Run "vectorize setup-indexes" to create indexes with metadata', 'dim'));
       break;
     }
 
     default: {
       // Full setup
-      console.log(color('🚀 Running full Vectorize setup...', 'brightCyan'));
+      console.info(color('🚀 Running full Vectorize setup...', 'brightCyan'));
       await handleSetup({ ...args, subcommand: 'setup-indexes' });
-      console.log(color('\n📋 Next steps:', 'bright'));
-      console.log('  1. Deploy worker: bunx wrangler deploy');
-      console.log('  2. Set VECTORIZE_WORKER_URL in .env');
-      console.log('  3. Set VECTORIZE_ENABLED=true');
-      console.log('  4. Index data: vectorize index all');
+      console.info(color('\n📋 Next steps:', 'bright'));
+      console.info('  1. Deploy worker: bunx wrangler deploy');
+      console.info('  2. Set VECTORIZE_WORKER_URL in .env');
+      console.info('  3. Set VECTORIZE_ENABLED=true');
+      console.info('  4. Index data: vectorize index all');
       break;
     }
   }

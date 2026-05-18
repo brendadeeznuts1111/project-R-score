@@ -63,7 +63,7 @@ export class EnhancedHeaderValidator extends BaseValidator {
    * Comprehensive header validation for any endpoint
    */
   async validateEndpoint(url: string): Promise<HeaderValidationResult> {
-    console.log(`🔍 Validating headers for: ${url}`);
+    console.info(`🔍 Validating headers for: ${url}`);
 
     try {
       const response = await fetch(url, {
@@ -127,11 +127,11 @@ export class EnhancedHeaderValidator extends BaseValidator {
       // Store result
       this.testResults.push(result);
 
-      console.log(`✅ Validation completed for ${url}`);
-      console.log(`📊 Overall Score: ${overallScore}/100`);
-      console.log(`🔐 Security: ${securityResult.score}/100`);
-      console.log(`🌐 CORS: ${corsResult.score}/100`);
-      console.log(`🏷️ System: ${systemResult.score}/100`);
+      console.info(`✅ Validation completed for ${url}`);
+      console.info(`📊 Overall Score: ${overallScore}/100`);
+      console.info(`🔐 Security: ${securityResult.score}/100`);
+      console.info(`🌐 CORS: ${corsResult.score}/100`);
+      console.info(`🏷️ System: ${systemResult.score}/100`);
 
       return result;
     } catch (error) {
@@ -562,7 +562,7 @@ export class EnhancedHeaderValidator extends BaseValidator {
    */
   clearResults(): void {
     this.testResults = [];
-    console.log('🧹 Test results cleared');
+    console.info('🧹 Test results cleared');
   }
 
   /**

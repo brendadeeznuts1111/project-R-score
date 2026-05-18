@@ -277,7 +277,7 @@ export class CashAppWebhookHandler {
    */
   private async processPayment(paymentData: any): Promise<any> {
     // This would integrate with your existing payment processing system
-    console.log('Processing Cash App payment:', paymentData);
+    console.info('Processing Cash App payment:', paymentData);
     
     // Simulate processing
     await new Promise(resolve => setTimeout(resolve, 1000));

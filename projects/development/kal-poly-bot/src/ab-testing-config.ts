@@ -117,10 +117,10 @@ export const trackUserBehavior = (event: string, data: any) => {
 
   if (testVariant === 1) {
     // Variant A: Basic analytics
-    console.log('[Analytics A]', analytics);
+    console.info('[Analytics A]', analytics);
   } else {
     // Variant B: Advanced analytics with performance metrics
-    console.log('[Analytics B]', {
+    console.info('[Analytics B]', {
       ...analytics,
       performance: performance.now(),
       memory: process.memoryUsage?.()

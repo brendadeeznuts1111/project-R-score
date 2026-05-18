@@ -531,8 +531,8 @@ function getEventStatus(eventName: string): string {
 }
 
 // Demo setup and execution
-console.log("📤 Enhanced HMR Export Demo");
-console.log("============================\n");
+console.info("📤 Enhanced HMR Export Demo");
+console.info("============================\n");
 
 // Create server with sample data
 const server = new CustomProxyServer("Demo Server", 1500, {
@@ -555,8 +555,8 @@ server.logHMREvent("beforeUpdate", { module: "router.js", duration: 78 });
 server.logHMREvent("afterUpdate", { module: "router.js", duration: 156 });
 
 // Demo different export formats
-console.log("📄 JSON Export (Enhanced):");
-console.log(
+console.info("📄 JSON Export (Enhanced):");
+console.info(
   enhancedExportHMRData(server, "json", {
     includeStats: true,
     includeConfig: true,
@@ -564,8 +564,8 @@ console.log(
   })
 );
 
-console.log("\n📝 Markdown Export (Enhanced):");
-console.log(
+console.info("\n📝 Markdown Export (Enhanced):");
+console.info(
   enhancedExportHMRData(server, "markdown", {
     includeStats: true,
     includeConfig: true,
@@ -573,8 +573,8 @@ console.log(
   })
 );
 
-console.log("\n📊 CSV Export (Enhanced):");
-console.log(
+console.info("\n📊 CSV Export (Enhanced):");
+console.info(
   enhancedExportHMRData(server, "csv", {
     includeStats: true,
     includeConfig: false,
@@ -582,44 +582,44 @@ console.log(
   })
 );
 
-console.log("\n🌐 XML Export:");
-console.log(
+console.info("\n🌐 XML Export:");
+console.info(
   enhancedExportHMRData(server, "xml", {
     includeStats: true,
     includeConfig: true,
   })
 );
 
-console.log("\n⚪ YAML Export:");
-console.log(
+console.info("\n⚪ YAML Export:");
+console.info(
   enhancedExportHMRData(server, "yaml", {
     includeStats: false,
     includeConfig: true,
   })
 );
 
-console.log("\n🌐 HTML Export (Preview):");
+console.info("\n🌐 HTML Export (Preview):");
 const htmlExport = enhancedExportHMRData(server, "html", {
   includeStats: true,
   includeConfig: true,
 });
-console.log(htmlExport.slice(0, 500) + "...");
+console.info(htmlExport.slice(0, 500) + "...");
 
 // Demo filtering and sorting
-console.log("\n🔍 Filtered Export (Errors Only):");
-console.log(
+console.info("\n🔍 Filtered Export (Errors Only):");
+console.info(
   enhancedExportHMRData(server, "json", {
     filterBy: ["error"],
     includeStats: true,
   })
 );
 
-console.log("\n⏱️ Sorted Export (By Duration):");
-console.log(
+console.info("\n⏱️ Sorted Export (By Duration):");
+console.info(
   enhancedExportHMRData(server, "json", {
     sortBy: "duration",
     includeStats: true,
   })
 );
 
-console.log("\n✨ Enhanced Export Demo Complete!");
+console.info("\n✨ Enhanced Export Demo Complete!");

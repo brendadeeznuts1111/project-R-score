@@ -46,8 +46,8 @@ class DependencyOptimizer {
   }
 
   async runFullOptimization(): Promise<OptimizationResult> {
-    console.log('🔧 Fantasy42-Fire22 Registry - Dependency Optimization');
-    console.log('='.repeat(60));
+    console.info('🔧 Fantasy42-Fire22 Registry - Dependency Optimization');
+    console.info('='.repeat(60));
 
     const outdated = await this.checkOutdatedDependencies();
     const securityIssues = await this.checkSecurityVulnerabilities();
@@ -71,7 +71,7 @@ class DependencyOptimizer {
   }
 
   private async checkOutdatedDependencies(): Promise<DependencyStatus[]> {
-    console.log('\n📦 Checking for outdated dependencies...');
+    console.info('\n📦 Checking for outdated dependencies...');
 
     try {
       const result = execSync('bun outdated --json', { encoding: 'utf-8' });
@@ -87,13 +87,13 @@ class DependencyOptimizer {
         category: SHARED_DEPENDENCIES[name]?.category || 'unknown',
       }));
     } catch (error) {
-      console.log('⚠️ Could not check outdated dependencies');
+      console.info('⚠️ Could not check outdated dependencies');
       return [];
     }
   }
 
   private async checkSecurityVulnerabilities(): Promise<string[]> {
-    console.log('\n🔒 Checking for security vulnerabilities...');
+    console.info('\n🔒 Checking for security vulnerabilities...');
 
     const issues: string[] = [];
 
@@ -115,7 +115,7 @@ class DependencyOptimizer {
   }
 
   private async analyzeBundleSize(): Promise<OptimizationResult['bundleAnalysis']> {
-    console.log('\n📊 Analyzing bundle size...');
+    console.info('\n📊 Analyzing bundle size...');
 
     try {
       // Simulate bundle analysis (would integrate with actual bundler)
@@ -208,18 +208,18 @@ class DependencyOptimizer {
   }
 
   async updateDependencies(): Promise<void> {
-    console.log('\n⬆️ Updating dependencies...');
+    console.info('\n⬆️ Updating dependencies...');
 
     try {
       execSync('bun update', { stdio: 'inherit' });
-      console.log('✅ Dependencies updated successfully');
+      console.info('✅ Dependencies updated successfully');
     } catch (error) {
-      console.log('❌ Failed to update dependencies');
+      console.info('❌ Failed to update dependencies');
     }
   }
 
   async generateOptimizedPackageJson(): Promise<void> {
-    console.log('\n📝 Generating optimized package.json...');
+    console.info('\n📝 Generating optimized package.json...');
 
     const currentPackageJson = JSON.parse(readFileSync('package.json', 'utf-8'));
 
@@ -248,9 +248,9 @@ class DependencyOptimizer {
     writeFileSync(backupPath, JSON.stringify(currentPackageJson, null, 2));
     writeFileSync(optimizedPath, JSON.stringify(optimized, null, 2));
 
-    console.log('✅ Optimized package.json generated');
-    console.log(`📁 Backup: ${backupPath}`);
-    console.log(`📁 Optimized: ${optimizedPath}`);
+    console.info('✅ Optimized package.json generated');
+    console.info(`📁 Backup: ${backupPath}`);
+    console.info(`📁 Optimized: ${optimizedPath}`);
   }
 
   private optimizeDependencies(deps: Record<string, string>): Record<string, string> {
@@ -296,7 +296,7 @@ class DependencyOptimizer {
   }
 
   async createDependencyReport(): Promise<void> {
-    console.log('\n📋 Generating dependency report...');
+    console.info('\n📋 Generating dependency report...');
 
     const result = await this.runFullOptimization();
 
@@ -307,7 +307,7 @@ class DependencyOptimizer {
     };
 
     writeFileSync('dependency-report.json', JSON.stringify(report, null, 2));
-    console.log('✅ Dependency report generated: dependency-report.json');
+    console.info('✅ Dependency report generated: dependency-report.json');
   }
 }
 
@@ -323,23 +323,23 @@ async function main() {
       case 'optimize':
         const result = await optimizer.runFullOptimization();
 
-        console.log('\n📊 Optimization Results:');
-        console.log(`Total Dependencies: ${result.summary.totalDeps}`);
-        console.log(`Outdated: ${result.summary.outdatedCount}`);
-        console.log(`Security Issues: ${result.summary.securityIssuesCount}`);
-        console.log(`Potential Savings: ${result.summary.potentialSavings}`);
+        console.info('\n📊 Optimization Results:');
+        console.info(`Total Dependencies: ${result.summary.totalDeps}`);
+        console.info(`Outdated: ${result.summary.outdatedCount}`);
+        console.info(`Security Issues: ${result.summary.securityIssuesCount}`);
+        console.info(`Potential Savings: ${result.summary.potentialSavings}`);
 
         if (result.outdated.length > 0) {
-          console.log('\n📦 Outdated Dependencies:');
+          console.info('\n📦 Outdated Dependencies:');
           result.outdated.forEach(dep => {
-            console.log(`  ${dep.name}: ${dep.current} → ${dep.latest}`);
+            console.info(`  ${dep.name}: ${dep.current} → ${dep.latest}`);
           });
         }
 
         if (result.recommendations.length > 0) {
-          console.log('\n💡 Recommendations:');
+          console.info('\n💡 Recommendations:');
           result.recommendations.forEach(rec => {
-            console.log(`  • ${rec}`);
+            console.info(`  • ${rec}`);
           });
         }
         break;
@@ -358,22 +358,22 @@ async function main() {
 
       case 'health':
         const healthResult = await DependencyHealthChecker.checkDependencies();
-        console.log('\n🏥 Dependency Health Check:');
-        console.log(`Status: ${healthResult.healthy ? '✅ Healthy' : '❌ Issues Found'}`);
+        console.info('\n🏥 Dependency Health Check:');
+        console.info(`Status: ${healthResult.healthy ? '✅ Healthy' : '❌ Issues Found'}`);
 
         if (healthResult.issues.length > 0) {
-          console.log('\n🚨 Issues:');
-          healthResult.issues.forEach(issue => console.log(`  • ${issue}`));
+          console.info('\n🚨 Issues:');
+          healthResult.issues.forEach(issue => console.info(`  • ${issue}`));
         }
 
         if (healthResult.recommendations.length > 0) {
-          console.log('\n💡 Recommendations:');
-          healthResult.recommendations.forEach(rec => console.log(`  • ${rec}`));
+          console.info('\n💡 Recommendations:');
+          healthResult.recommendations.forEach(rec => console.info(`  • ${rec}`));
         }
         break;
 
       default:
-        console.log(`
+        console.info(`
 🔧 Fantasy42-Fire22 Registry - Dependency Optimizer
 
 Usage:

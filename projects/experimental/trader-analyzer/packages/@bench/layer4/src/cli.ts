@@ -105,7 +105,7 @@ async function benchmarkProperty(
 
 // Run all property iterations
 async function runPropertyBenchmark() {
-	console.log("🚀 Starting Layer4 Property Iteration Benchmark\n");
+	console.info("🚀 Starting Layer4 Property Iteration Benchmark\n");
 
 	const packageJson = await Bun.file("../../package.json").json();
 	const config: BenchmarkConfig = {
@@ -122,7 +122,7 @@ async function runPropertyBenchmark() {
 	const allResults = [];
 
 	for (const prop of PROPERTIES) {
-		console.log(`📊 Iterating ${prop.name} (${prop.values.length} values)`);
+		console.info(`📊 Iterating ${prop.name} (${prop.values.length} values)`);
 
 		const results = [];
 		for (const value of prop.values) {
@@ -167,7 +167,7 @@ async function runPropertyBenchmark() {
 			recommendation: `Recommended value: ${bestResult.value}`,
 		});
 
-		console.log(`✅ ${prop.name}: best value = ${bestResult.value}\n`);
+		console.info(`✅ ${prop.name}: best value = ${bestResult.value}\n`);
 	}
 
 	// Save to private registry metadata
@@ -194,7 +194,7 @@ async function runPropertyBenchmark() {
 
 	try {
 		await saveBenchmarkResults(benchmarkResult);
-		console.log("✅ Benchmark results saved to registry");
+		console.info("✅ Benchmark results saved to registry");
 	} catch (error) {
 		console.error("❌ Failed to save benchmark results:", error);
 	}
@@ -214,7 +214,7 @@ async function runPropertyBenchmark() {
 					console.warn(`  - ${regression.property}: ${regression.recommendation}`);
 				}
 			} else {
-				console.log("✅ No regressions detected");
+				console.info("✅ No regressions detected");
 			}
 		}
 	} catch (error) {
@@ -266,7 +266,7 @@ if (process.argv[2] === "--property") {
 			avgConfidence,
 		};
 	}).then((result) => {
-		console.log("Property iteration complete:", result);
+		console.info("Property iteration complete:", result);
 	});
 } else {
 	// Default: Run all properties

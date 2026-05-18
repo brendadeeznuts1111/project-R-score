@@ -594,7 +594,7 @@ const getEnhancedDashboardHTML = () => `<!DOCTYPE html>
             const filterType = document.getElementById('lockFilter').value;
             
             // Implementation would filter the locks list
-            console.log('Filtering locks:', searchTerm, filterType);
+            console.info('Filtering locks:', searchTerm, filterType);
         }
 
         function showBatchOperationModal() {
@@ -1268,15 +1268,15 @@ setInterval(() => {
   }
 }, 10000); // Check every 10 seconds
 
-console.log(c.cyan(`🎯 Enhanced Gateway Dashboard Server`));
-console.log(c.gray(`   Dashboard: http://${HOST}:${PORT}`));
-console.log(c.gray(`   API Base:  http://${HOST}:${PORT}/api`));
-console.log(c.gray(`   Features:  Real-time metrics, alerts, history, batch operations`));
-console.log('');
+console.info(c.cyan(`🎯 Enhanced Gateway Dashboard Server`));
+console.info(c.gray(`   Dashboard: http://${HOST}:${PORT}`));
+console.info(c.gray(`   API Base:  http://${HOST}:${PORT}/api`));
+console.info(c.gray(`   Features:  Real-time metrics, alerts, history, batch operations`));
+console.info('');
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log(c.yellow('\n🛑 Shutting down Enhanced Gateway Dashboard...'));
+  console.info(c.yellow('\n🛑 Shutting down Enhanced Gateway Dashboard...'));
   lockManager.close();
   server.stop();
   process.exit(0);

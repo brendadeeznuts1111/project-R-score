@@ -302,8 +302,8 @@ export function renderBenchmarkResults(results: Array<{
  * Quick performance comparison: Bun.wrapAnsi vs npm wrap-ansi
  */
 export function benchmarkWrapAnsi(): void {
-  console.log("\n" + COLORS.bold + COLORS.magenta + "📊 Bun.wrapAnsi vs npm wrap-ansi" + COLORS.reset);
-  console.log("─".repeat(60));
+  console.info("\n" + COLORS.bold + COLORS.magenta + "📊 Bun.wrapAnsi vs npm wrap-ansi" + COLORS.reset);
+  console.info("─".repeat(60));
 
   const short = COLORS.red + "Short red text" + COLORS.reset;
   const long = COLORS.blue + "text ".repeat(400) + COLORS.reset;
@@ -325,20 +325,20 @@ export function benchmarkWrapAnsi(): void {
   const npmShortTime = bunShortTime * 25792; // 25,792x slower
   const npmLongTime = bunLongTime * 129801; // 129,801x slower
 
-  console.log(`Short text (20 cols):`);
-  console.log(`  Bun.wrapAnsi: ${bunShortTime.toFixed(3)}ms (10k ops)`);
-  console.log(`  npm wrap-ansi: ~${(npmShortTime / 1000).toFixed(1)}s (estimated)`);
-  console.log(`  ${COLORS.green}Speedup: ~25,792x${COLORS.reset}\n`);
+  console.info(`Short text (20 cols):`);
+  console.info(`  Bun.wrapAnsi: ${bunShortTime.toFixed(3)}ms (10k ops)`);
+  console.info(`  npm wrap-ansi: ~${(npmShortTime / 1000).toFixed(1)}s (estimated)`);
+  console.info(`  ${COLORS.green}Speedup: ~25,792x${COLORS.reset}\n`);
 
-  console.log(`Long text (80 cols, hard wrap):`);
-  console.log(`  Bun.wrapAnsi: ${bunLongTime.toFixed(3)}ms (10k ops)`);
-  console.log(`  npm wrap-ansi: ~${(npmLongTime / 60000).toFixed(1)}min (estimated)`);
-  console.log(`  ${COLORS.green}Speedup: ~129,801x${COLORS.reset}\n`);
+  console.info(`Long text (80 cols, hard wrap):`);
+  console.info(`  Bun.wrapAnsi: ${bunLongTime.toFixed(3)}ms (10k ops)`);
+  console.info(`  npm wrap-ansi: ~${(npmLongTime / 60000).toFixed(1)}min (estimated)`);
+  console.info(`  ${COLORS.green}Speedup: ~129,801x${COLORS.reset}\n`);
 }
 
 // Demo
 if (import.meta.main) {
-  console.log(COLORS.bold + COLORS.cyan + `
+  console.info(COLORS.bold + COLORS.cyan + `
 ╔══════════════════════════════════════════════════════════════════╗
 ║     Omega Pools Table Formatter (Tier-1380 OMEGA)                ║
 ║     Bun.wrapAnsi • Col-89 Compliant • 68x-129kx Faster           ║
@@ -346,7 +346,7 @@ if (import.meta.main) {
 ` + COLORS.reset);
 
   // Demo 1: Pool Sessions
-  console.log(COLORS.bold + "📦 Pool Sessions (Col-89 compliant)" + COLORS.reset);
+  console.info(COLORS.bold + "📦 Pool Sessions (Col-89 compliant)" + COLORS.reset);
   const sessions: PoolSession[] = [
     {
       id: "sess_000102030405",
@@ -376,19 +376,19 @@ if (import.meta.main) {
       lastActivity: "1h ago",
     },
   ];
-  console.log(renderPoolSessions(sessions));
+  console.info(renderPoolSessions(sessions));
 
   // Demo 2: Buffer Metrics
-  console.log("\n" + COLORS.bold + "📊 Buffer Performance Metrics" + COLORS.reset);
-  console.log(renderBufferMetrics([
+  console.info("\n" + COLORS.bold + "📊 Buffer Performance Metrics" + COLORS.reset);
+  console.info(renderBufferMetrics([
     { type: "Session ID (8 bytes)", size: 8, count: 10000, throughput: "6.61M ops/s" },
     { type: "Pool Conn (64 bytes)", size: 64, count: 5000, throughput: "3.23M ops/s" },
     { type: "DB Blob (1024 bytes)", size: 1024, count: 1000, throughput: "1.61M ops/s" },
   ]));
 
   // Demo 3: Benchmark Results
-  console.log("\n" + COLORS.bold + "🚀 Bun v1.3.7+ Performance Wins" + COLORS.reset);
-  console.log(renderBenchmarkResults([
+  console.info("\n" + COLORS.bold + "🚀 Bun v1.3.7+ Performance Wins" + COLORS.reset);
+  console.info(renderBenchmarkResults([
     { name: "Buffer.from(8)", opsPerSec: "6.61M", timePerOp: "151ns", speedup: "158x" },
     { name: "Buffer.from(64)", opsPerSec: "3.23M", timePerOp: "309ns", speedup: "248x" },
     { name: "async/await", opsPerSec: "1.61M", timePerOp: "622ns", speedup: "3,854x" },
@@ -400,6 +400,6 @@ if (import.meta.main) {
   benchmarkWrapAnsi();
 
   // Footer
-  console.log(COLORS.dim + "─".repeat(60) + COLORS.reset);
-  console.log(COLORS.dim + "Tier-1380 OMEGA | Powered by Bun v" + Bun.version + " | Col-89 Compliant" + COLORS.reset + "\n");
+  console.info(COLORS.dim + "─".repeat(60) + COLORS.reset);
+  console.info(COLORS.dim + "Tier-1380 OMEGA | Powered by Bun v" + Bun.version + " | Col-89 Compliant" + COLORS.reset + "\n");
 }

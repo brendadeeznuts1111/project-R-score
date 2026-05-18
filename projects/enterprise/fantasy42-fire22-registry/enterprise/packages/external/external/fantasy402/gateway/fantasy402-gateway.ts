@@ -93,7 +93,7 @@ export class Fantasy402Gateway {
   async initialize(): Promise<void> {
     try {
       await this.adapter.authenticate();
-      console.log('🎯 Fantasy402 Gateway: Successfully initialized');
+      console.info('🎯 Fantasy402 Gateway: Successfully initialized');
     } catch (error) {
       console.error('❌ Fantasy402 Gateway: Failed to initialize:', error);
       throw new Error(
@@ -218,7 +218,7 @@ export class Fantasy402Gateway {
       // Handle 404/not found cases gracefully
       const errorMessage = error instanceof Error ? error.message : String(error);
       if (errorMessage?.includes('404') || errorMessage?.includes('not found')) {
-        console.log(`ℹ️ Fantasy402 Gateway: Bet ${betId} not found`);
+        console.info(`ℹ️ Fantasy402 Gateway: Bet ${betId} not found`);
         return null;
       }
       console.error(`❌ Fantasy402 Gateway: Failed to get bet ${betId}:`, error);
@@ -398,7 +398,7 @@ export class Fantasy402Gateway {
   async disconnect(): Promise<boolean> {
     try {
       await this.adapter.disconnect();
-      console.log('🎯 Fantasy402 Gateway: Successfully disconnected');
+      console.info('🎯 Fantasy402 Gateway: Successfully disconnected');
       return true;
     } catch (error) {
       console.error('❌ Fantasy402 Gateway: Error during disconnect:', error);

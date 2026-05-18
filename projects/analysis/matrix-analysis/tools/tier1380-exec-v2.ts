@@ -94,7 +94,7 @@ function parseArgs(argv) {
 // ─── Enhanced Threat Intelligence Check ─────────────────────────────────────
 // @ts-expect-error - Implicit any types for runtime compatibility
 async function checkThreatIntelligence(pkg) {
-	console.log(`${GLYPH.scan} Scanning ${pkg} for threats...`);
+	console.info(`${GLYPH.scan} Scanning ${pkg} for threats...`);
 
 	// Simulated threat intelligence with multiple checks
 	const checks = {
@@ -176,7 +176,7 @@ async function generateSBOM(pkg, version) {
 
 // ─── Audit Analytics ───────────────────────────────────────────────────────
 function showAuditAnalytics(tenant = "default") {
-	console.log(`\n${GLYPH.info} Audit Analytics for tenant: ${tenant}`);
+	console.info(`\n${GLYPH.info} Audit Analytics for tenant: ${tenant}`);
 
 	/** @type {any} */
 	const total = AUDIT_DB.query(
@@ -200,12 +200,12 @@ function showAuditAnalytics(tenant = "default") {
 	const failCount = failed?.count || 0;
 	const avgScore = avgThreatScore?.score;
 
-	console.log(`   Total executions: ${totalCount}`);
-	console.log(
+	console.info(`   Total executions: ${totalCount}`);
+	console.info(
 		`   Success rate: ${totalCount ? ((successCount / totalCount) * 100).toFixed(1) : "0"}%`,
 	);
-	console.log(`   Failures: ${failCount}`);
-	console.log(
+	console.info(`   Failures: ${failCount}`);
+	console.info(
 		`   Avg threat score: ${avgScore ? (avgScore * 100).toFixed(1) + "%" : "N/A"}`,
 	);
 
@@ -215,13 +215,13 @@ function showAuditAnalytics(tenant = "default") {
 		"SELECT command, pkg, exit, threat_score, ts FROM executions WHERE tenant = ? ORDER BY ts DESC LIMIT 5",
 	).all(tenant);
 	if (recent.length > 0) {
-		console.log(`\n   Recent executions:`);
+		console.info(`\n   Recent executions:`);
 		recent.forEach((exec) => {
 			const status = exec.exit === 0 ? GLYPH.ok : GLYPH.fail;
 			const threat = exec.threat_score
 				? ` (${(exec.threat_score * 100).toFixed(0)}%)`
 				: "";
-			console.log(
+			console.info(
 				`   ${status} ${exec.pkg || exec.command}${threat} - ${new Date(exec.ts).toLocaleTimeString()}`,
 			);
 		});
@@ -233,20 +233,20 @@ async function main() {
 	const args = parseArgs(process.argv);
 
 	if (!args.command) {
-		console.log(`${GLYPH.info} Tier-1380 Secure Executor v2.0.0`);
-		console.log(
+		console.info(`${GLYPH.info} Tier-1380 Secure Executor v2.0.0`);
+		console.info(
 			`\nUsage: tier1380-exec-v2.ts [--bun] [-p pkg[@ver]] [--sbom] [--dry] [--tenant NAME] command [args...]`,
 		);
-		console.log(`\nExamples:`);
-		console.log(`  bun tools/tier1380-exec-v2.ts prisma migrate dev`);
-		console.log(
+		console.info(`\nExamples:`);
+		console.info(`  bun tools/tier1380-exec-v2.ts prisma migrate dev`);
+		console.info(
 			`  bun tools/tier1380-exec-v2.ts --bun -p prettier@2.8.8 prettier --write src`,
 		);
-		console.log(`  bun tools/tier1380-exec-v2.ts --sbom --tenant production vite build`);
-		console.log(`  bun tools/tier1380-exec-v2.ts --dry npm install`);
-		console.log(`\nAnalytics:`);
-		console.log(`  bun tools/tier1380-exec-v2.ts --analytics`);
-		console.log(`  bun tools/tier1380-exec-v2.ts --analytics --tenant production`);
+		console.info(`  bun tools/tier1380-exec-v2.ts --sbom --tenant production vite build`);
+		console.info(`  bun tools/tier1380-exec-v2.ts --dry npm install`);
+		console.info(`\nAnalytics:`);
+		console.info(`  bun tools/tier1380-exec-v2.ts --analytics`);
+		console.info(`  bun tools/tier1380-exec-v2.ts --analytics --tenant production`);
 
 		// Show analytics if requested
 		if (args.command === "--analytics") {
@@ -262,20 +262,20 @@ async function main() {
 		process.exit(0);
 	}
 
-	console.log(`${GLYPH.run} Tier-1380 Secure Executor v2.0.0`);
-	console.log(`${GLYPH.lock} Tenant: ${args.tenant || "default"}\n`);
+	console.info(`${GLYPH.run} Tier-1380 Secure Executor v2.0.0`);
+	console.info(`${GLYPH.lock} Tenant: ${args.tenant || "default"}\n`);
 
 	const startTime = Date.now();
 
 	// Threat intelligence check
 	const threatCheck = await checkThreatIntelligence(args.package || args.command);
-	console.log(
+	console.info(
 		`${GLYPH.scan} Threat scan: ${threatCheck.safe ? GLYPH.ok : GLYPH.fail} ${threatCheck.score * 100}%`,
 	);
 
 	if (threatCheck.reasons) {
 		threatCheck.reasons.forEach((reason) => {
-			console.log(`   ${GLYPH.warn} ${reason}`);
+			console.info(`   ${GLYPH.warn} ${reason}`);
 		});
 	}
 
@@ -289,18 +289,18 @@ async function main() {
 	// SBOM generation if requested
 	let sbomHash;
 	if (args.sbom && args.package) {
-		console.log(`${GLYPH.sbom} Generating SBOM...`);
+		console.info(`${GLYPH.sbom} Generating SBOM...`);
 		const { json, hash } = await generateSBOM(args.package, args.version);
 		sbomHash = hash;
 		const filename = `sbom-${args.package}-${args.version || "latest"}-${Date.now()}.cdx.json`;
 		await Bun.write(filename, json);
-		console.log(`${GLYPH.ok} SBOM generated: ${filename}`);
-		console.log(`${GLYPH.lock} SBOM SHA-256: ${hash.slice(0, 16)}…`);
+		console.info(`${GLYPH.ok} SBOM generated: ${filename}`);
+		console.info(`${GLYPH.lock} SBOM SHA-256: ${hash.slice(0, 16)}…`);
 	}
 
 	// Dry run mode
 	if (args.dry) {
-		console.log(`${GLYPH.info} Dry run complete. No execution performed.`);
+		console.info(`${GLYPH.info} Dry run complete. No execution performed.`);
 		process.exit(0);
 	}
 
@@ -325,8 +325,8 @@ async function main() {
 			: cmdLine,
 	);
 
-	console.log(`${GLYPH.pkg} Executing: ${safeCmd}`);
-	console.log(`${GLYPH.lock} Command hash: ${cmdHash.slice(0, 16)}…`);
+	console.info(`${GLYPH.pkg} Executing: ${safeCmd}`);
+	console.info(`${GLYPH.lock} Command hash: ${cmdHash.slice(0, 16)}…`);
 
 	// Execute command
 	const proc = Bun.spawn(cmdParts, {
@@ -357,12 +357,12 @@ async function main() {
 		],
 	);
 
-	console.log(`\n${GLYPH.info} Execution completed in ${duration}ms`);
+	console.info(`\n${GLYPH.info} Execution completed in ${duration}ms`);
 
 	if (proc.exitCode !== 0) {
 		console.error(`${GLYPH.fail} Command failed with exit code: ${proc.exitCode}`);
 	} else {
-		console.log(`${GLYPH.ok} Command completed successfully`);
+		console.info(`${GLYPH.ok} Command completed successfully`);
 	}
 
 	process.exit(proc.exitCode || 0);

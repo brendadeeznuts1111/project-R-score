@@ -19,12 +19,12 @@ export const benchCommand = new Command('bench')
     
     // Check if file exists
     if (!existsSync(scriptPath)) {
-      console.log(`❌ Benchmark file not found: ${scriptPath}`);
-      console.log(`Available benchmarks: string-width, r2, r2-super, urlpattern, etc.`);
+      console.info(`❌ Benchmark file not found: ${scriptPath}`);
+      console.info(`Available benchmarks: string-width, r2, r2-super, urlpattern, etc.`);
       process.exit(1);
     }
 
-    console.log(`🚀 Running benchmark: ${test} (${scriptPath})...`);
+    console.info(`🚀 Running benchmark: ${test} (${scriptPath})...`);
 
     const proc = spawn('bun', [scriptPath], { stdio: 'inherit' });
     proc.on('exit', (code) => process.exit(code || 0));

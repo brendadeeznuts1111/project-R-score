@@ -34,7 +34,7 @@ serve({
     }
 });
 
-console.log(`🧬 Nebula-Flow™ Dashboard Export Viewer`);
-console.log(`🌐 Open your browser to: http://localhost:${PORT}`);
-console.log(`📊 Viewing: nebula-dashboard-2026-01-21.json`);
-console.log(`\nPress Ctrl+C to stop the viewer`);
+console.info(`🧬 Nebula-Flow™ Dashboard Export Viewer`);
+console.info(`🌐 Open your browser to: http://localhost:${PORT}`);
+console.info(`📊 Viewing: nebula-dashboard-2026-01-21.json`);
+console.info(`\nPress Ctrl+C to stop the viewer`);

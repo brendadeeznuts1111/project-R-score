@@ -15,8 +15,8 @@ import { $ } from 'bun';
 import * as fs from 'fs';
 import * as path from 'path';
 
-console.log('📧 Fire22 Department Heads Notification System');
-console.log('==============================================');
+console.info('📧 Fire22 Department Heads Notification System');
+console.info('==============================================');
 
 // Department heads and specialists configuration
 const departmentConfig = {
@@ -783,7 +783,7 @@ Fire22 Enterprise Registry Team
 
 // Main notification functions
 async function sendWalkthroughToDepartmentHeads() {
-  console.log('\n📧 Sending Registry Release Walkthrough to Department Heads...');
+  console.info('\n📧 Sending Registry Release Walkthrough to Department Heads...');
 
   const walkthroughContent = await Bun.file('REGISTRY-RELEASE-WALKTHROUGH.md').text();
   const confirmations: ConfirmationRecord[] = [];
@@ -849,14 +849,14 @@ interface ConfirmationRecord {
 
 // Main notification functions
 async function sendWalkthroughToDepartmentTeams() {
-  console.log('\n📧 Sending Registry Release Walkthrough to Department Teams...');
+  console.info('\n📧 Sending Registry Release Walkthrough to Department Teams...');
 
   const walkthroughContent = await Bun.file('REGISTRY-RELEASE-WALKTHROUGH.md').text();
   const specialistWalkthroughContent = await Bun.file('REGISTRY-RELEASE-SPECIALIST-WALKTHROUGH.md').text();
   const confirmations: ConfirmationRecord[] = [];
 
   for (const [deptKey, dept] of Object.entries(departmentConfig)) {
-    console.log(`\n🏛️ Processing ${dept.department} Department...`);
+    console.info(`\n🏛️ Processing ${dept.department} Department...`);
 
     // Send to Primary Head
     await sendToTeamMember(dept.primary, 'primary', dept, walkthroughContent, confirmations);
@@ -872,13 +872,13 @@ async function sendWalkthroughToDepartmentTeams() {
 
   // Save confirmation tracking
   await Bun.write('department-confirmations.json', JSON.stringify(confirmations, null, 2));
-  console.log('📋 Confirmation tracking saved: department-confirmations.json');
+  console.info('📋 Confirmation tracking saved: department-confirmations.json');
 
   return confirmations;
 }
 
 async function sendToTeamMember(member: any, role: string, dept: any, content: string, confirmations: ConfirmationRecord[]) {
-  console.log(`📤 Sending to ${member.name} (${role}) - ${dept.department}...`);
+  console.info(`📤 Sending to ${member.name} (${role}) - ${dept.department}...`);
 
   try {
     // Generate personalized email based on role
@@ -906,7 +906,7 @@ async function sendToTeamMember(member: any, role: string, dept: any, content: s
       status: 'sent'
     });
 
-    console.log(`✅ Email prepared for ${member.name}: ${emailFile}`);
+    console.info(`✅ Email prepared for ${member.name}: ${emailFile}`);
 
   } catch (error) {
     console.error(`❌ Failed to send to ${member.name}: ${error.message}`);
@@ -914,7 +914,7 @@ async function sendToTeamMember(member: any, role: string, dept: any, content: s
 }
 
 async function sendReminders(confirmations: ConfirmationRecord[]) {
-  console.log('\n⏰ Sending reminders to unconfirmed department heads...');
+  console.info('\n⏰ Sending reminders to unconfirmed department heads...');
 
   const now = new Date();
   const remindersSent = [];
@@ -927,7 +927,7 @@ async function sendReminders(confirmations: ConfirmationRecord[]) {
 
     // Send reminder after 2 days, then every 3 days
     if (daysSinceSent >= 2 && record.remindersSent < 3) {
-      console.log(`📤 Sending reminder ${record.remindersSent + 1} to ${record.departmentHead}...`);
+      console.info(`📤 Sending reminder ${record.remindersSent + 1} to ${record.departmentHead}...`);
 
       const reminderContent = emailTemplates.reminder(record, daysSinceSent);
       const reminderFile = `department-head-emails/${record.departmentHead.toLowerCase().replace(' ', '-')}-reminder-${record.remindersSent + 1}.txt`;
@@ -939,7 +939,7 @@ async function sendReminders(confirmations: ConfirmationRecord[]) {
 
     // Escalate if no response after 7 days
     if (daysSinceSent >= 7 && record.status !== 'escalated') {
-      console.log(`🚨 Escalating ${record.departmentHead} to executive team...`);
+      console.info(`🚨 Escalating ${record.departmentHead} to executive team...`);
       record.status = 'escalated';
 
       // Send escalation email to executive team
@@ -972,7 +972,7 @@ Fire22 Registry Automation System
 }
 
 async function processConfirmations(confirmations: ConfirmationRecord[]) {
-  console.log('\n📨 Processing confirmation replies...');
+  console.info('\n📨 Processing confirmation replies...');
 
   // In a real system, this would check email inbox for replies
   // For demonstration, we'll simulate some confirmations
@@ -980,7 +980,7 @@ async function processConfirmations(confirmations: ConfirmationRecord[]) {
 
   for (const record of confirmations) {
     if (confirmedHeads.includes(record.departmentHead) && record.status !== 'confirmed') {
-      console.log(`✅ Processing confirmation from ${record.departmentHead}...`);
+      console.info(`✅ Processing confirmation from ${record.departmentHead}...`);
 
       record.confirmedDate = new Date().toISOString();
       record.confirmationMethod = 'email';
@@ -998,7 +998,7 @@ async function processConfirmations(confirmations: ConfirmationRecord[]) {
 }
 
 async function generateRSSAnnouncement() {
-  console.log('\n📰 Generating RSS announcement...');
+  console.info('\n📰 Generating RSS announcement...');
 
   const rssContent = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -1057,11 +1057,11 @@ async function generateRSSAnnouncement() {
 </rss>`;
 
   await Bun.write('feeds/announcements.rss', rssContent);
-  console.log('✅ RSS announcement generated: feeds/announcements.rss');
+  console.info('✅ RSS announcement generated: feeds/announcements.rss');
 }
 
 async function generateBlogPost() {
-  console.log('\n📝 Generating blog post...');
+  console.info('\n📝 Generating blog post...');
 
   const blogContent = `# 🚀 Fire22 Registry Release Flow: Department Heads Guide
 
@@ -1200,11 +1200,11 @@ You are now empowered to ensure the highest quality standards for packages in yo
 
 
   await Bun.write('blog/registry-release-walkthrough.md', blogContent);
-  console.log('✅ Blog post generated: blog/registry-release-walkthrough.md');
+  console.info('✅ Blog post generated: blog/registry-release-walkthrough.md');
 }
 
 async function generateStatusReport(confirmations: ConfirmationRecord[]) {
-  console.log('\n📊 Generating status report...');
+  console.info('\n📊 Generating status report...');
 
   const totalHeads = confirmations.length;
   const confirmed = confirmations.filter(c => c.status === 'confirmed').length;
@@ -1275,7 +1275,7 @@ ${escalated > 0 ? `- Escalate ${escalated} cases to executive team` : '- No esca
 *System: Fire22 Registry Release v5.1.0*`;
 
   await Bun.write('department-heads-status-report.md', statusReport);
-  console.log('✅ Status report generated: department-heads-status-report.md');
+  console.info('✅ Status report generated: department-heads-status-report.md');
 }
 
 // Main execution
@@ -1288,43 +1288,43 @@ async function main() {
 
   switch (command) {
     case 'send':
-      console.log('📧 Sending walkthrough emails to department heads...');
+      console.info('📧 Sending walkthrough emails to department heads...');
       await sendWalkthroughToDepartmentHeads();
       break;
 
     case 'reminders':
-      console.log('⏰ Sending reminders to unconfirmed department heads...');
+      console.info('⏰ Sending reminders to unconfirmed department heads...');
       const confirmations = JSON.parse(await Bun.file('department-confirmations.json').text());
       await sendReminders(confirmations);
       await Bun.write('department-confirmations.json', JSON.stringify(confirmations, null, 2));
       break;
 
     case 'process':
-      console.log('📨 Processing confirmation replies...');
+      console.info('📨 Processing confirmation replies...');
       const confirmationsToProcess = JSON.parse(await Bun.file('department-confirmations.json').text());
       const updatedConfirmations = await processConfirmations(confirmationsToProcess);
       await Bun.write('department-confirmations.json', JSON.stringify(updatedConfirmations, null, 2));
       break;
 
     case 'rss':
-      console.log('📰 Generating RSS announcement...');
+      console.info('📰 Generating RSS announcement...');
       await generateRSSAnnouncement();
       break;
 
     case 'blog':
-      console.log('📝 Generating blog post...');
+      console.info('📝 Generating blog post...');
       await generateBlogPost();
       break;
 
     case 'status':
-      console.log('📊 Generating status report...');
+      console.info('📊 Generating status report...');
       const statusConfirmations = JSON.parse(await Bun.file('department-confirmations.json').text());
       await generateStatusReport(statusConfirmations);
       break;
 
     case 'all':
     default:
-      console.log('🚀 Running complete department heads notification workflow...');
+      console.info('🚀 Running complete department heads notification workflow...');
 
       // Send initial notifications
       const initialConfirmations = await sendWalkthroughToDepartmentHeads();
@@ -1339,19 +1339,19 @@ async function main() {
       // Generate status report
       await generateStatusReport(processedConfirmations);
 
-      console.log('\n🎉 Department Heads Notification Complete!');
-      console.log('\n📋 Generated Files:');
-      console.log('   📧 department-head-emails/ - Individual notification emails');
-      console.log('   📰 feeds/announcements.rss - RSS announcement feed');
-      console.log('   📝 blog/registry-release-walkthrough.md - Blog post');
-      console.log('   📊 department-heads-status-report.md - Status tracking');
-      console.log('   📋 department-confirmations.json - Confirmation tracking');
+      console.info('\n🎉 Department Heads Notification Complete!');
+      console.info('\n📋 Generated Files:');
+      console.info('   📧 department-head-emails/ - Individual notification emails');
+      console.info('   📰 feeds/announcements.rss - RSS announcement feed');
+      console.info('   📝 blog/registry-release-walkthrough.md - Blog post');
+      console.info('   📊 department-heads-status-report.md - Status tracking');
+      console.info('   📋 department-confirmations.json - Confirmation tracking');
 
-      console.log('\n📞 Next Steps:');
-      console.log('   1. Review generated emails and send via your email system');
-      console.log('   2. Publish RSS feed and blog post');
-      console.log('   3. Monitor confirmations and send reminders as needed');
-      console.log('   4. Schedule training sessions for confirmed department heads');
+      console.info('\n📞 Next Steps:');
+      console.info('   1. Review generated emails and send via your email system');
+      console.info('   2. Publish RSS feed and blog post');
+      console.info('   3. Monitor confirmations and send reminders as needed');
+      console.info('   4. Schedule training sessions for confirmed department heads');
       break;
   }
 }

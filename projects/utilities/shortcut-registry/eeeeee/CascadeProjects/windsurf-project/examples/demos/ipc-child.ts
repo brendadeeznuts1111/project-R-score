@@ -3,7 +3,7 @@
 // ipc-child.ts - Advanced IPC Child Process
 // Enterprise-grade AI operations for revolutionary AI system
 
-console.log("🚀 Revolutionary AI System - IPC Child Process");
+console.info("🚀 Revolutionary AI System - IPC Child Process");
 
 interface ParentMessage {
   type: string;
@@ -58,7 +58,7 @@ function sendToParent(type: string, data: any) {
 
 // Handle messages from parent
 process.on("message", (message: ParentMessage) => {
-  console.log(`📨 Child received message: ${message.type}`);
+  console.info(`📨 Child received message: ${message.type}`);
   
   switch (message.type) {
     case 'system_command':
@@ -89,7 +89,7 @@ process.on("message", (message: ParentMessage) => {
       handleTrainingCommand(message);
       break;
     default:
-      console.log(`❌ Unknown message type: ${message.type}`);
+      console.info(`❌ Unknown message type: ${message.type}`);
   }
 });
 
@@ -99,7 +99,7 @@ function handleSystemCommand(message: ParentMessage) {
   
   switch (command) {
     case 'initialize':
-      console.log("🔧 Initializing AI System...");
+      console.info("🔧 Initializing AI System...");
       aiSystemState = {
         initialized: true,
         modelType: config?.model || 'enhanced',
@@ -110,11 +110,11 @@ function handleSystemCommand(message: ParentMessage) {
         currentEpoch: 0
       };
       
-      console.log(`✅ AI System Initialized:`);
-      console.log(`   Model: ${aiSystemState.modelType}`);
-      console.log(`   Accuracy: ${aiSystemState.accuracy}%`);
-      console.log(`   Security: ${aiSystemState.securityLevel}`);
-      console.log(`   Monitoring: ${aiSystemState.monitoringActive ? 'Active' : 'Inactive'}`);
+      console.info(`✅ AI System Initialized:`);
+      console.info(`   Model: ${aiSystemState.modelType}`);
+      console.info(`   Accuracy: ${aiSystemState.accuracy}%`);
+      console.info(`   Security: ${aiSystemState.securityLevel}`);
+      console.info(`   Monitoring: ${aiSystemState.monitoringActive ? 'Active' : 'Inactive'}`);
       
       sendToParent('system_status', {
         status: 'initialized',
@@ -124,7 +124,7 @@ function handleSystemCommand(message: ParentMessage) {
       
     case 'shutdown':
     case 'emergency_shutdown':
-      console.log(`🛑 Shutting down AI System... (${reason || 'requested'})`);
+      console.info(`🛑 Shutting down AI System... (${reason || 'requested'})`);
       sendToParent('system_status', {
         status: 'shutting_down',
         reason: reason || 'requested'
@@ -135,14 +135,14 @@ function handleSystemCommand(message: ParentMessage) {
       break;
       
     default:
-      console.log(`❌ Unknown system command: ${command}`);
+      console.info(`❌ Unknown system command: ${command}`);
   }
 }
 
 function handleFraudCheck(message: ParentMessage) {
   const { transaction } = message;
   
-  console.log(`🔍 Processing fraud check for transaction: ${transaction.id}`);
+  console.info(`🔍 Processing fraud check for transaction: ${transaction.id}`);
   
   // Simulate AI fraud detection
   setTimeout(() => {
@@ -171,7 +171,7 @@ function handleFraudCheck(message: ParentMessage) {
 function handleStatusRequest(message: ParentMessage) {
   const { metrics } = message;
   
-  console.log(`📊 Gathering system metrics...`);
+  console.info(`📊 Gathering system metrics...`);
   
   // Update metrics with some randomness
   systemMetrics.cpu = Math.random() * 30 + 20;
@@ -195,7 +195,7 @@ function handleStatusRequest(message: ParentMessage) {
 function handleSecuritySimulation(message: ParentMessage) {
   const { event } = message;
   
-  console.log(`🚨 Processing security simulation: ${event.type}`);
+  console.info(`🚨 Processing security simulation: ${event.type}`);
   
   setTimeout(() => {
     const severity = Math.random() > 0.7 ? 'high' : Math.random() > 0.4 ? 'medium' : 'low';
@@ -215,7 +215,7 @@ function handleSecuritySimulation(message: ParentMessage) {
 function handleTrainingStatus(message: ParentMessage) {
   const { modelId } = message;
   
-  console.log(`🧠 Checking training status for model: ${modelId}`);
+  console.info(`🧠 Checking training status for model: ${modelId}`);
   
   if (!aiSystemState.trainingInProgress) {
     aiSystemState.trainingInProgress = true;
@@ -240,7 +240,7 @@ function handleTrainingStatus(message: ParentMessage) {
       aiSystemState.trainingInProgress = false;
       aiSystemState.accuracy = accuracy * 100;
       
-      console.log(`🎉 Training completed! Final accuracy: ${(accuracy * 100).toFixed(2)}%`);
+      console.info(`🎉 Training completed! Final accuracy: ${(accuracy * 100).toFixed(2)}%`);
     }
   }, 500);
 }
@@ -248,7 +248,7 @@ function handleTrainingStatus(message: ParentMessage) {
 function handleSecurityAction(message: ParentMessage) {
   const { action, transactionId, priority } = message;
   
-  console.log(`🛡️ Executing security action: ${action} for transaction ${transactionId}`);
+  console.info(`🛡️ Executing security action: ${action} for transaction ${transactionId}`);
   
   setTimeout(() => {
     sendToParent('security_action_complete', {
@@ -262,13 +262,13 @@ function handleSecurityAction(message: ParentMessage) {
 }
 
 function handleSecurityResponse(message: ParentMessage) {
-  console.log(`🔒 Received security response: ${message.action}`);
+  console.info(`🔒 Received security response: ${message.action}`);
 }
 
 function handleOptimizationCommand(message: ParentMessage) {
   const { command, targetLoad } = message;
   
-  console.log(`⚡ Executing optimization: ${command} (target: ${targetLoad}%)`);
+  console.info(`⚡ Executing optimization: ${command} (target: ${targetLoad}%)`);
   
   // Simulate optimization
   systemMetrics.cpu = targetLoad || 70;
@@ -284,7 +284,7 @@ function handleOptimizationCommand(message: ParentMessage) {
 function handleTrainingCommand(message: ParentMessage) {
   const { command, targetAccuracy } = message;
   
-  console.log(`🧠 Training command: ${command} (target: ${targetAccuracy}%)`);
+  console.info(`🧠 Training command: ${command} (target: ${targetAccuracy}%)`);
   
   if (command === 'deploy_model') {
     sendToParent('model_deployed', {
@@ -299,7 +299,7 @@ function handleTrainingCommand(message: ParentMessage) {
 
 // Send initial ready message
 setTimeout(() => {
-  console.log("📤 Child process ready, sending initial status...");
+  console.info("📤 Child process ready, sending initial status...");
   sendToParent('system_status', {
     status: 'ready',
     capabilities: ['fraud_detection', 'security_monitoring', 'ai_training', 'system_optimization']
@@ -308,8 +308,8 @@ setTimeout(() => {
 
 // Handle child process signals
 process.on('SIGINT', () => {
-  console.log('\n🛑 Child received SIGINT - shutting down...');
+  console.info('\n🛑 Child received SIGINT - shutting down...');
   process.exit(0);
 });
 
-console.log("🔗 IPC Child Process Started - Ready to receive commands from parent...");
+console.info("🔗 IPC Child Process Started - Ready to receive commands from parent...");

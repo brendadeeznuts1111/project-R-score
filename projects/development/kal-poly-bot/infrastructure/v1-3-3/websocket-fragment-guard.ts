@@ -276,7 +276,7 @@ export class WebSocketFragmentGuard {
       }
     }
     this.guardedConnections.clear();
-    console.log("[WS_FRAGMENT_GUARD] Cleaned up all connections");
+    console.info("[WS_FRAGMENT_GUARD] Cleaned up all connections");
   }
 
   // Validate WebSocket frame against RFC 6455

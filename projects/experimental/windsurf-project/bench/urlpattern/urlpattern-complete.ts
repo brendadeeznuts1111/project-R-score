@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 // urlpattern-complete.ts - Complete URLPattern API Showcase
 
-console.log('🎯 **Complete URLPattern API Showcase** 🎯');
-console.log('='.repeat(60));
+console.info('🎯 **Complete URLPattern API Showcase** 🎯');
+console.info('='.repeat(60));
 
 // Use dynamic approach to avoid TypeScript conflicts
 async function demonstrateURLPattern() {
@@ -10,12 +10,12 @@ async function demonstrateURLPattern() {
   const { URLPattern } = globalThis as any;
 
   // 1. Constructor: Create patterns from strings or URLPatternInit dictionaries
-  console.log('\n🏗️ **1. Constructor Examples**');
+  console.info('\n🏗️ **1. Constructor Examples**');
 
   // Object constructor (simple patterns)
   const simplePattern = new URLPattern({ pathname: '/users/:id/profile' });
-  console.log('  Object: new URLPattern({ pathname: "/users/:id/profile" })');
-  console.log(`    Pattern: ${simplePattern.pathname}`);
+  console.info('  Object: new URLPattern({ pathname: "/users/:id/profile" })');
+  console.info(`    Pattern: ${simplePattern.pathname}`);
 
   // Dictionary constructor (detailed patterns)
   const detailedPattern = new URLPattern({
@@ -25,13 +25,13 @@ async function demonstrateURLPattern() {
     search: '*',
     hash: '*'
   });
-  console.log('  Dictionary: new URLPattern({ protocol: "https", hostname: "example.com", pathname: "/api/:version/users/:id.json" })');
-  console.log(`    Protocol: ${detailedPattern.protocol}`);
-  console.log(`    Hostname: ${detailedPattern.hostname}`);
-  console.log(`    Pathname: ${detailedPattern.pathname}`);
+  console.info('  Dictionary: new URLPattern({ protocol: "https", hostname: "example.com", pathname: "/api/:version/users/:id.json" })');
+  console.info(`    Protocol: ${detailedPattern.protocol}`);
+  console.info(`    Hostname: ${detailedPattern.hostname}`);
+  console.info(`    Pathname: ${detailedPattern.pathname}`);
 
   // 2. test(): Check if a URL matches the pattern (returns boolean)
-  console.log('\n🧪 **2. test() Method Examples**');
+  console.info('\n🧪 **2. test() Method Examples**');
 
   const testUrls = [
     'https://example.com/api/v1/users/123.json',
@@ -42,25 +42,25 @@ async function demonstrateURLPattern() {
 
   testUrls.forEach(url => {
     const matches = detailedPattern.test(url);
-    console.log(`  ${matches ? '✅' : '❌'} ${url}`);
+    console.info(`  ${matches ? '✅' : '❌'} ${url}`);
   });
 
   // 3. exec(): Extract matched groups from a URL
-  console.log('\n📤 **3. exec() Method Examples**');
+  console.info('\n📤 **3. exec() Method Examples**');
 
   const execUrl = 'https://example.com/api/v1/users/123.json?active=true#section';
   const result = detailedPattern.exec(execUrl);
 
   if (result) {
-    console.log(`  Input: ${execUrl}`);
-    console.log(`  Groups: ${JSON.stringify(result.pathname.groups)}`);
-    console.log(`  Pathname input: ${result.pathname.input}`);
+    console.info(`  Input: ${execUrl}`);
+    console.info(`  Groups: ${JSON.stringify(result.pathname.groups)}`);
+    console.info(`  Pathname input: ${result.pathname.input}`);
   } else {
-    console.log('  No match found');
+    console.info('  No match found');
   }
 
   // 4. Pattern properties: protocol, username, password, hostname, port, pathname, search, hash
-  console.log('\n🏛️ **4. Pattern Properties**');
+  console.info('\n🏛️ **4. Pattern Properties**');
 
   const propertyPattern = new URLPattern({
     protocol: 'https',
@@ -73,28 +73,28 @@ async function demonstrateURLPattern() {
     hash: ':fragment'
   });
 
-  console.log(`  Protocol: ${propertyPattern.protocol}`);
-  console.log(`  Username: ${propertyPattern.username}`);
-  console.log(`  Password: ${propertyPattern.password}`);
-  console.log(`  Hostname: ${propertyPattern.hostname}`);
-  console.log(`  Port: ${propertyPattern.port}`);
-  console.log(`  Pathname: ${propertyPattern.pathname}`);
-  console.log(`  Search: ${propertyPattern.search}`);
-  console.log(`  Hash: ${propertyPattern.hash}`);
+  console.info(`  Protocol: ${propertyPattern.protocol}`);
+  console.info(`  Username: ${propertyPattern.username}`);
+  console.info(`  Password: ${propertyPattern.password}`);
+  console.info(`  Hostname: ${propertyPattern.hostname}`);
+  console.info(`  Port: ${propertyPattern.port}`);
+  console.info(`  Pathname: ${propertyPattern.pathname}`);
+  console.info(`  Search: ${propertyPattern.search}`);
+  console.info(`  Hash: ${propertyPattern.hash}`);
 
   // 5. hasRegExpGroups: Detect if the pattern uses custom regular expressions
-  console.log('\n🔍 **5. hasRegExpGroups Property**');
+  console.info('\n🔍 **5. hasRegExpGroups Property**');
 
   const simplePattern2 = new URLPattern({ pathname: '/simple/path' });
   const regexPattern = new URLPattern({ pathname: '/files/:name*' });
   const wildcardPattern = new URLPattern({ pathname: '/data/*' });
 
-  console.log(`  Simple pattern: ${simplePattern2.hasRegExpGroups ? '✅ Has regex' : '❌ No regex'}`);
-  console.log(`  Regex pattern: ${regexPattern.hasRegExpGroups ? '✅ Has regex' : '❌ No regex'}`);
-  console.log(`  Wildcard pattern: ${wildcardPattern.hasRegExpGroups ? '✅ Has regex' : '❌ No regex'}`);
+  console.info(`  Simple pattern: ${simplePattern2.hasRegExpGroups ? '✅ Has regex' : '❌ No regex'}`);
+  console.info(`  Regex pattern: ${regexPattern.hasRegExpGroups ? '✅ Has regex' : '❌ No regex'}`);
+  console.info(`  Wildcard pattern: ${wildcardPattern.hasRegExpGroups ? '✅ Has regex' : '❌ No regex'}`);
 
   // 6. Advanced pattern matching with various URL components
-  console.log('\n🚀 **6. Advanced Pattern Matching**');
+  console.info('\n🚀 **6. Advanced Pattern Matching**');
 
   const advancedPatterns = {
     fullUrl: new URLPattern({ 
@@ -121,18 +121,18 @@ async function demonstrateURLPattern() {
   ];
 
   sampleUrls.forEach(url => {
-    console.log(`\n  Testing: ${url}`);
+    console.info(`\n  Testing: ${url}`);
     
     Object.entries(advancedPatterns).forEach(([name, pattern]) => {
       if (pattern.test(url)) {
         const result = pattern.exec(url);
-        console.log(`    ✅ ${name}: ${JSON.stringify(result?.pathname.groups)}`);
+        console.info(`    ✅ ${name}: ${JSON.stringify(result?.pathname.groups)}`);
       }
     });
   });
 
   // 7. R2 Integration Example
-  console.log('\n📦 **7. R2 Integration Example**');
+  console.info('\n📦 **7. R2 Integration Example**');
 
   const r2Patterns = {
     appleIds: new URLPattern({ pathname: '/apple-ids/:userId.json' }),
@@ -148,27 +148,27 @@ async function demonstrateURLPattern() {
     '/multi-region/us-east/file456.json'
   ];
 
-  console.log('  R2 File Classification:');
+  console.info('  R2 File Classification:');
   r2Files.forEach(file => {
     const input = { pathname: file };
     
     for (const [type, pattern] of Object.entries(r2Patterns)) {
       if (pattern.test(input)) {
         const result = pattern.exec(input);
-        console.log(`    📄 ${type}: ${file} → ${JSON.stringify(result?.pathname.groups)}`);
+        console.info(`    📄 ${type}: ${file} → ${JSON.stringify(result?.pathname.groups)}`);
         break;
       }
     }
   });
 
-  console.log('\n🎉 **URLPattern API Showcase Complete!**');
-  console.log('✅ Constructor patterns working');
-  console.log('✅ test() method functional');
-  console.log('✅ exec() extraction working');
-  console.log('✅ All properties accessible');
-  console.log('✅ Regex detection operational');
-  console.log('✅ R2 integration ready');
-  console.log('\n🚀 URLPattern API is fully functional!');
+  console.info('\n🎉 **URLPattern API Showcase Complete!**');
+  console.info('✅ Constructor patterns working');
+  console.info('✅ test() method functional');
+  console.info('✅ exec() extraction working');
+  console.info('✅ All properties accessible');
+  console.info('✅ Regex detection operational');
+  console.info('✅ R2 integration ready');
+  console.info('\n🚀 URLPattern API is fully functional!');
 }
 
 // Run the demonstration

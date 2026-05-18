@@ -42,10 +42,10 @@ echo "Test completed successfully"
       JSON.stringify(updatedPackageJson, null, 2)
     );
 
-    console.log(
+    console.info(
       "🚀 Executing: bun --watch --no-clear-screen run test --verbose --debug"
     );
-    console.log("");
+    console.info("");
 
     // Execute the exact command structure
     const process = Bun.spawn(
@@ -74,27 +74,27 @@ echo "Test completed successfully"
     const result = await process.exited;
     expect(result).toBeDefined();
 
-    console.log("✅ Command structure verified successfully!");
+    console.info("✅ Command structure verified successfully!");
   });
 
   test("✅ Flag breakdown analysis", async () => {
-    console.log("");
-    console.log("📋 Flag Breakdown:");
-    console.log("");
+    console.info("");
+    console.info("📋 Flag Breakdown:");
+    console.info("");
 
     // Create a simple test file for analysis
     const analysisScript = `
-console.log('=== Flag Analysis ===');
-console.log('Bun flags processed:');
-console.log('  --watch: Enables file watching');
-console.log('  --no-clear-screen: Prevents screen clearing');
-console.log('');
-console.log('Script flags received:');
-console.log('  --verbose: Script verbosity flag');
-console.log('  --debug: Script debugging flag');
-console.log('');
-console.log('Process arguments:', process.argv.slice(2));
-console.log('Environment NODE_ENV:', process.env.NODE_ENV || 'undefined');
+console.info('=== Flag Analysis ===');
+console.info('Bun flags processed:');
+console.info('  --watch: Enables file watching');
+console.info('  --no-clear-screen: Prevents screen clearing');
+console.info('');
+console.info('Script flags received:');
+console.info('  --verbose: Script verbosity flag');
+console.info('  --debug: Script debugging flag');
+console.info('');
+console.info('Process arguments:', process.argv.slice(2));
+console.info('Environment NODE_ENV:', process.env.NODE_ENV || 'undefined');
 `;
 
     await Bun.write("/tmp/flag-analysis.js", analysisScript);
@@ -117,10 +117,10 @@ console.log('Environment NODE_ENV:', process.env.NODE_ENV || 'undefined');
       }
     ).exited;
 
-    console.log("");
-    console.log("🎯 Structure: bun [bun flags] run <script> [script flags]");
-    console.log("✅ Bun flags: --watch, --no-clear-screen, --define");
-    console.log("✅ Script flags: --verbose, --debug, --script-flag");
+    console.info("");
+    console.info("🎯 Structure: bun [bun flags] run <script> [script flags]");
+    console.info("✅ Bun flags: --watch, --no-clear-screen, --define");
+    console.info("✅ Script flags: --verbose, --debug, --script-flag");
   });
 
   test("✅ Real-world usage example", async () => {
@@ -139,13 +139,13 @@ console.log('Environment NODE_ENV:', process.env.NODE_ENV || 'undefined');
       JSON.stringify(devPackageJson, null, 2)
     );
 
-    console.log("");
-    console.log("🌍 Real-world Examples:");
-    console.log("");
+    console.info("");
+    console.info("🌍 Real-world Examples:");
+    console.info("");
 
     // Example 1: Development mode
-    console.log("1️⃣ Development:");
-    console.log("bun --watch --no-clear-screen run dev");
+    console.info("1️⃣ Development:");
+    console.info("bun --watch --no-clear-screen run dev");
 
     const devProcess = Bun.spawn(
       ["bun", "--watch", "--no-clear-screen", "run", "dev"],
@@ -160,8 +160,8 @@ console.log('Environment NODE_ENV:', process.env.NODE_ENV || 'undefined');
     devProcess.kill();
 
     // Example 2: Testing with flags
-    console.log("2️⃣ Testing:");
-    console.log(
+    console.info("2️⃣ Testing:");
+    console.info(
       'bun --define process.env.NODE_ENV=\\"test\\" run test --verbose --debug'
     );
 
@@ -182,6 +182,6 @@ console.log('Environment NODE_ENV:', process.env.NODE_ENV || 'undefined');
       }
     ).exited;
 
-    console.log("✅ Real-world scenarios verified!");
+    console.info("✅ Real-world scenarios verified!");
   });
 });

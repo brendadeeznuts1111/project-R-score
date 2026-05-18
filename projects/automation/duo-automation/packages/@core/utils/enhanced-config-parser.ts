@@ -302,23 +302,23 @@ if (import.meta.main) {
   switch (command) {
     case 'parse':
       const result = await parser.parseConfig(file);
-      console.log('Parse result:', result);
+      console.info('Parse result:', result);
       break;
     case 'sample':
       const sample = parser.createSampleConfig();
-      console.log(sample);
+      console.info(sample);
       break;
     case 'validate':
       const validation = await parser.parseConfig(file);
-      console.log(`Validation: ${validation.valid ? '✅ PASSED' : '❌ FAILED'}`);
+      console.info(`Validation: ${validation.valid ? '✅ PASSED' : '❌ FAILED'}`);
       if (validation.errors.length > 0) {
-        console.log('Errors:', validation.errors);
+        console.info('Errors:', validation.errors);
       }
       if (validation.warnings.length > 0) {
-        console.log('Warnings:', validation.warnings);
+        console.info('Warnings:', validation.warnings);
       }
       break;
     default:
-      console.log('Usage: bun config-parser.ts [parse|sample|validate] [file]');
+      console.info('Usage: bun config-parser.ts [parse|sample|validate] [file]');
   }
 }

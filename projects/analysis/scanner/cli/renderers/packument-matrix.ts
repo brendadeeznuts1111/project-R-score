@@ -65,7 +65,7 @@ export class PackumentMatrixRenderer {
 		}
 
 		// @ts-expect-error Bun.inspect.table accepts options as third arg
-		console.log(Bun.inspect.table(rows, ['Field', 'Value', 'Field ', 'Value '], {colors: true}));
+		console.info(Bun.inspect.table(rows, ['Field', 'Value', 'Field ', 'Value '], {colors: true}));
 	}
 
 	private extractFields(p: NpmPackument): FieldPair[] {

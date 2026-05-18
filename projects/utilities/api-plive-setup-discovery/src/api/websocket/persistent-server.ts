@@ -29,13 +29,13 @@ async function verifyCSRF(token: string): Promise<boolean> {
 // Mock telemetry storage
 async function saveTelemetry(data: { userId: string; data: any; type: string }): Promise<void> {
   // TODO: Implement actual telemetry storage
-  console.log(`💾 Saving telemetry: ${data.userId} - ${data.type}`);
+  console.info(`💾 Saving telemetry: ${data.userId} - ${data.type}`);
 }
 
 // Mock telemetry queue flush
 async function flushTelemetryQueue(userId: string): Promise<void> {
   // TODO: Implement queue flushing
-  console.log(`🔄 Flushing queue for: ${userId}`);
+  console.info(`🔄 Flushing queue for: ${userId}`);
 }
 
 export function createPersistentWSServer(config: any) {
@@ -78,7 +78,7 @@ export function createPersistentWSServer(config: any) {
     },
     websocket: {
       async open(ws) {
-        console.log(`🟢 Connected: ${ws.data.userId} on topics ${ws.data.topics.join(', ')}`);
+        console.info(`🟢 Connected: ${ws.data.userId} on topics ${ws.data.topics.join(', ')}`);
 
         // Subscribe to topics
         ws.subscribe('telemetry.live');
@@ -166,7 +166,7 @@ export function createPersistentWSServer(config: any) {
       },
 
       async close(ws, code, reason) {
-        console.log(`🔴 Disconnected: ${ws.data.userId} (${code}: ${reason})`);
+        console.info(`🔴 Disconnected: ${ws.data.userId} (${code}: ${reason})`);
         ws.unsubscribe('telemetry.live');
       },
 
@@ -193,7 +193,7 @@ export function createPersistentWSServer(config: any) {
     server.publish('telemetry.live', YAML.stringify(ping));
   }, heartbeatIntervalMs);
 
-  console.log(`🚀 Persistent WebSocket server started on port ${connectivity.ws.port}`);
+  console.info(`🚀 Persistent WebSocket server started on port ${connectivity.ws.port}`);
 
   return {
     server,

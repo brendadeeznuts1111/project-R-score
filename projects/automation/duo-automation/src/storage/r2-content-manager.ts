@@ -501,7 +501,7 @@ export class R2ContentManager {
     failed: number;
     results: Array<{ path: string; success: boolean; error?: string }>;
   }> {
-    console.log(`🔄 Bulk updating content-disposition for pattern: ${pattern}`);
+    console.info(`🔄 Bulk updating content-disposition for pattern: ${pattern}`);
     
     // List files
     const filesRes = await (s3 as any).list(this.bucket, { prefix: pattern.split('*')[0] });
@@ -573,7 +573,7 @@ export class R2ContentManager {
         }
       ));
       
-      console.log(`📦 Processed ${Math.min(i + batchSize, filteredFiles.length)}/${filteredFiles.length} files`);
+      console.info(`📦 Processed ${Math.min(i + batchSize, filteredFiles.length)}/${filteredFiles.length} files`);
     }
     
     const updated = results.filter(r => r.success).length;
@@ -897,7 +897,7 @@ export class R2ContentManager {
       try {
         const result = await this.deployAsset(asset.localPath, asset.r2Key);
         results.push(result);
-        console.log(`✅ ${asset.localPath} → ${result.disposition}`);
+        console.info(`✅ ${asset.localPath} → ${result.disposition}`);
       } catch (error: any) {
         console.error(`❌ Failed to deploy ${asset.localPath}: ${error.message}`);
         // Continue with other assets
@@ -1055,7 +1055,7 @@ if (import.meta.main) {
   const manager = new EnhancedR2AppleManager({}, process.env.R2_BUCKET!);
   
   // Example 1: Upload with forced download
-  console.log('📤 Example 1: Uploading Apple ID with forced download');
+  console.info('📤 Example 1: Uploading Apple ID with forced download');
   await (manager as any).uploadAppleID(
     { email: 'user@example.com', id: '123' },
     'apple-ids/user123.json',
@@ -1066,15 +1066,15 @@ if (import.meta.main) {
   );
   
   // Example 2: Generate download link
-  console.log('🔗 Example 2: Generating download link');
+  console.info('🔗 Example 2: Generating download link');
   const link = await manager.getAppleIDDownloadLink('user123', {
     expiresIn: 7200, // 2 hours
     forceDownload: true
   });
-  console.log('Download link:', link);
+  console.info('Download link:', link);
   
   // Example 3: Smart upload with auto-detection
-  console.log('🤖 Example 3: Smart upload');
+  console.info('🤖 Example 3: Smart upload');
   const contentManager = new R2ContentManager(process.env.R2_BUCKET!);
   await contentManager.smartUpload(
     JSON.stringify({ test: 'data' }),
@@ -1086,7 +1086,7 @@ if (import.meta.main) {
   );
   
   // Example 4: Bulk update content-disposition
-  console.log('🔄 Example 4: Bulk updating content-disposition');
+  console.info('🔄 Example 4: Bulk updating content-disposition');
   const result = await contentManager.bulkUpdateContentDisposition(
     'apple-ids/*.json',
     { type: 'attachment', filename: 'apple-id.json' },
@@ -1094,6 +1094,6 @@ if (import.meta.main) {
   );
   
   if (result) {
-    console.log(`✅ Would update ${result.updated} files, ${result.failed} failed`);
+    console.info(`✅ Would update ${result.updated} files, ${result.failed} failed`);
   }
 }

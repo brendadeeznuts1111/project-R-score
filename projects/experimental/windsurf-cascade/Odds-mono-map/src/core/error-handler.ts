@@ -153,7 +153,7 @@ export class VaultLogger {
                     break;
                 default:
                     if (console.log) {
-                        console.log(consoleMessage);
+                        console.info(consoleMessage);
                     }
             }
         } catch (consoleError) {
@@ -258,7 +258,7 @@ export class VaultLogger {
                 return;
             }
 
-            console.log(`[INFO] ${message}`);
+            console.info(`[INFO] ${message}`);
         } catch (consoleError) {
             // Prevent infinite loops - silent fallback
         }

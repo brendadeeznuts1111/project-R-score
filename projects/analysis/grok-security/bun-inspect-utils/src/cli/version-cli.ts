@@ -17,19 +17,19 @@ function showVersion(): void {
   const version = VersionManager.getFullVersion();
   const versionObj = VersionParser.parse(version);
 
-  console.log("📦 Version Information");
-  console.log("======================\n");
-  console.log(`Full Version:    ${version}`);
-  console.log(`Major:           ${versionObj.major}`);
-  console.log(`Minor:           ${versionObj.minor}`);
-  console.log(`Patch:           ${versionObj.patch}`);
+  console.info("📦 Version Information");
+  console.info("======================\n");
+  console.info(`Full Version:    ${version}`);
+  console.info(`Major:           ${versionObj.major}`);
+  console.info(`Minor:           ${versionObj.minor}`);
+  console.info(`Patch:           ${versionObj.patch}`);
   if (versionObj.prerelease) {
-    console.log(`Prerelease:      ${versionObj.prerelease}`);
+    console.info(`Prerelease:      ${versionObj.prerelease}`);
   }
   if (versionObj.buildMetadata) {
-    console.log(`Build Metadata:  ${versionObj.buildMetadata}`);
+    console.info(`Build Metadata:  ${versionObj.buildMetadata}`);
   }
-  console.log(`Timestamp:       ${new Date().toISOString()}`);
+  console.info(`Timestamp:       ${new Date().toISOString()}`);
 }
 
 /**
@@ -41,18 +41,18 @@ function compareVersions(v1: string, v2: string): void {
     const version2 = VersionParser.parse(v2);
     const comparison = VersionComparator.compare(version1, version2);
 
-    console.log("📊 Version Comparison");
-    console.log("====================\n");
-    console.log(`Version 1: ${v1}`);
-    console.log(`Version 2: ${v2}`);
-    console.log("");
+    console.info("📊 Version Comparison");
+    console.info("====================\n");
+    console.info(`Version 1: ${v1}`);
+    console.info(`Version 2: ${v2}`);
+    console.info("");
 
     if (comparison > 0) {
-      console.log(`✅ ${v1} > ${v2}`);
+      console.info(`✅ ${v1} > ${v2}`);
     } else if (comparison < 0) {
-      console.log(`✅ ${v1} < ${v2}`);
+      console.info(`✅ ${v1} < ${v2}`);
     } else {
-      console.log(`✅ ${v1} == ${v2}`);
+      console.info(`✅ ${v1} == ${v2}`);
     }
   } catch (error) {
     console.error("❌ Invalid version format:", error);
@@ -65,7 +65,7 @@ function compareVersions(v1: string, v2: string): void {
  */
 function generateConstant(): void {
   const constant = BuildVersionGenerator.generateConstant();
-  console.log(constant);
+  console.info(constant);
 }
 
 /**
@@ -73,14 +73,14 @@ function generateConstant(): void {
  */
 function generateJSON(): void {
   const json = BuildVersionGenerator.generateJSON();
-  console.log(json);
+  console.info(json);
 }
 
 /**
  * [1.5.0.0] Show help
  */
 function showHelp(): void {
-  console.log(`
+  console.info(`
 📦 Version CLI - Bun Native
 
 Usage: bun run src/cli/version-cli.ts [command] [options]

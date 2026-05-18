@@ -50,7 +50,7 @@ function createMarketUpdate(
 // ============================================================================
 
 async function testPattern51() {
-  console.log('\n=== PATTERN 51 TEST: Half-Time Line Inference Lag ===');
+  console.info('\n=== PATTERN 51 TEST: Half-Time Line Inference Lag ===');
   
   const engine = new DeepStructureArbitrageEngine();
   
@@ -83,18 +83,18 @@ async function testPattern51() {
   const pattern51Result = results.find(r => r.signal?.patternId === 51);
   
   if (pattern51Result?.detected && pattern51Result.signal) {
-    console.log(`✅ Pattern 51 DETECTED!`);
-    console.log(`   Confidence: ${(pattern51Result.signal.confidence * 100).toFixed(1)}%`);
-    console.log(`   Risk Level: ${pattern51Result.signal.riskLevel}`);
-    console.log(`   Expected Edge: ${pattern51Result.signal.expectedEdge}%`);
-    console.log(`   Window: ${pattern51Result.signal.windowMs}ms`);
-    console.log(`   Legal Status: ${pattern51Result.signal.legalStatus.us}`);
+    console.info(`✅ Pattern 51 DETECTED!`);
+    console.info(`   Confidence: ${(pattern51Result.signal.confidence * 100).toFixed(1)}%`);
+    console.info(`   Risk Level: ${pattern51Result.signal.riskLevel}`);
+    console.info(`   Expected Edge: ${pattern51Result.signal.expectedEdge}%`);
+    console.info(`   Window: ${pattern51Result.signal.windowMs}ms`);
+    console.info(`   Legal Status: ${pattern51Result.signal.legalStatus.us}`);
     
     // Show legal warning
-    console.log(`\n⚠️  LEGAL WARNING:`);
-    console.log(LegalRiskAssessor.generateWarning(51));
+    console.info(`\n⚠️  LEGAL WARNING:`);
+    console.info(LegalRiskAssessor.generateWarning(51));
   } else {
-    console.log('❌ Pattern 51 not detected (expected in this scenario)');
+    console.info('❌ Pattern 51 not detected (expected in this scenario)');
   }
 }
 
@@ -103,7 +103,7 @@ async function testPattern51() {
 // ============================================================================
 
 async function testPattern56() {
-  console.log('\n=== PATTERN 56 TEST: Micro-Suspension Window ===');
+  console.info('\n=== PATTERN 56 TEST: Micro-Suspension Window ===');
   
   const engine = new DeepStructureArbitrageEngine();
   
@@ -134,18 +134,18 @@ async function testPattern56() {
   const pattern56Result = results.find(r => r.signal?.patternId === 56);
   
   if (pattern56Result?.detected && pattern56Result.signal) {
-    console.log(`✅ Pattern 56 DETECTED!`);
-    console.log(`   Confidence: ${(pattern56Result.signal.confidence * 100).toFixed(1)}%`);
-    console.log(`   Risk Level: ${pattern56Result.signal.riskLevel}`);
-    console.log(`   Expected Edge: ${pattern56Result.signal.expectedEdge}%`);
-    console.log(`   Window: ${pattern56Result.signal.windowMs}ms`);
-    console.log(`   Legal Status: ${pattern56Result.signal.legalStatus.us}`);
+    console.info(`✅ Pattern 56 DETECTED!`);
+    console.info(`   Confidence: ${(pattern56Result.signal.confidence * 100).toFixed(1)}%`);
+    console.info(`   Risk Level: ${pattern56Result.signal.riskLevel}`);
+    console.info(`   Expected Edge: ${pattern56Result.signal.expectedEdge}%`);
+    console.info(`   Window: ${pattern56Result.signal.windowMs}ms`);
+    console.info(`   Legal Status: ${pattern56Result.signal.legalStatus.us}`);
     
     // Show legal warning
-    console.log(`\n⚠️  CRITICAL LEGAL WARNING:`);
-    console.log(LegalRiskAssessor.generateWarning(56));
+    console.info(`\n⚠️  CRITICAL LEGAL WARNING:`);
+    console.info(LegalRiskAssessor.generateWarning(56));
   } else {
-    console.log('❌ Pattern 56 not detected');
+    console.info('❌ Pattern 56 not detected');
   }
 }
 
@@ -154,7 +154,7 @@ async function testPattern56() {
 // ============================================================================
 
 async function testPattern68() {
-  console.log('\n=== PATTERN 68 TEST: Steam Propagation Path Tracking ===');
+  console.info('\n=== PATTERN 68 TEST: Steam Propagation Path Tracking ===');
   
   const engine = new DeepStructureArbitrageEngine();
   
@@ -176,18 +176,18 @@ async function testPattern68() {
   const pattern68Result = results.find(r => r.signal?.patternId === 68);
   
   if (pattern68Result?.detected && pattern68Result.signal) {
-    console.log(`✅ Pattern 68 DETECTED!`);
-    console.log(`   Confidence: ${(pattern68Result.signal.confidence * 100).toFixed(1)}%`);
-    console.log(`   Risk Level: ${pattern68Result.signal.riskLevel}`);
-    console.log(`   Expected Edge: ${pattern68Result.signal.expectedEdge}%`);
-    console.log(`   Window: ${pattern68Result.signal.windowMs}ms`);
-    console.log(`   Legal Status: ${pattern68Result.signal.legalStatus.us}`);
+    console.info(`✅ Pattern 68 DETECTED!`);
+    console.info(`   Confidence: ${(pattern68Result.signal.confidence * 100).toFixed(1)}%`);
+    console.info(`   Risk Level: ${pattern68Result.signal.riskLevel}`);
+    console.info(`   Expected Edge: ${pattern68Result.signal.expectedEdge}%`);
+    console.info(`   Window: ${pattern68Result.signal.windowMs}ms`);
+    console.info(`   Legal Status: ${pattern68Result.signal.legalStatus.us}`);
     
     // Show legal warning
-    console.log(`\n⚠️  EXTREME LEGAL WARNING:`);
-    console.log(LegalRiskAssessor.generateWarning(68));
+    console.info(`\n⚠️  EXTREME LEGAL WARNING:`);
+    console.info(LegalRiskAssessor.generateWarning(68));
   } else {
-    console.log('❌ Pattern 68 not detected');
+    console.info('❌ Pattern 68 not detected');
   }
 }
 
@@ -196,7 +196,7 @@ async function testPattern68() {
 // ============================================================================
 
 async function testPattern69() {
-  console.log('\n=== PATTERN 69 TEST: Settlement Confirmation Arb ===');
+  console.info('\n=== PATTERN 69 TEST: Settlement Confirmation Arb ===');
   
   const engine = new DeepStructureArbitrageEngine();
   
@@ -229,18 +229,18 @@ async function testPattern69() {
   const pattern69Result = results.find(r => r.signal?.patternId === 69);
   
   if (pattern69Result?.detected && pattern69Result.signal) {
-    console.log(`✅ Pattern 69 DETECTED!`);
-    console.log(`   Confidence: ${(pattern69Result.signal.confidence * 100).toFixed(1)}%`);
-    console.log(`   Risk Level: ${pattern69Result.signal.riskLevel}`);
-    console.log(`   Expected Edge: ${pattern69Result.signal.expectedEdge}%`);
-    console.log(`   Window: ${pattern69Result.signal.windowMs}ms`);
-    console.log(`   Legal Status: ${pattern69Result.signal.legalStatus.us}`);
+    console.info(`✅ Pattern 69 DETECTED!`);
+    console.info(`   Confidence: ${(pattern69Result.signal.confidence * 100).toFixed(1)}%`);
+    console.info(`   Risk Level: ${pattern69Result.signal.riskLevel}`);
+    console.info(`   Expected Edge: ${pattern69Result.signal.expectedEdge}%`);
+    console.info(`   Window: ${pattern69Result.signal.windowMs}ms`);
+    console.info(`   Legal Status: ${pattern69Result.signal.legalStatus.us}`);
     
     // Show legal warning
-    console.log(`\n⚠️  CRIMINAL LIABILITY WARNING:`);
-    console.log(LegalRiskAssessor.generateWarning(69));
+    console.info(`\n⚠️  CRIMINAL LIABILITY WARNING:`);
+    console.info(LegalRiskAssessor.generateWarning(69));
   } else {
-    console.log('❌ Pattern 69 not detected');
+    console.info('❌ Pattern 69 not detected');
   }
 }
 
@@ -249,7 +249,7 @@ async function testPattern69() {
 // ============================================================================
 
 async function testBunOptimized() {
-  console.log('\n=== BUN-OPTIMIZED ENGINE TEST ===');
+  console.info('\n=== BUN-OPTIMIZED ENGINE TEST ===');
   
   const bunEngine = new BunOptimizedDeepStructureEngine();
   
@@ -294,21 +294,21 @@ async function testBunOptimized() {
   
   try {
     const update = await bunEngine.parseMarketUpdateBinary(binaryData);
-    console.log('✅ Binary parsing successful!');
-    console.log(`   Market ID: ${update.marketId}`);
-    console.log(`   Selection: ${update.selectionId}`);
-    console.log(`   Odds: ${update.odds}`);
-    console.log(`   Volume: ${update.volume}`);
-    console.log(`   Latency: ${update.latency}ms`);
-    console.log(`   Flags: live=${update.flags.live}`);
+    console.info('✅ Binary parsing successful!');
+    console.info(`   Market ID: ${update.marketId}`);
+    console.info(`   Selection: ${update.selectionId}`);
+    console.info(`   Odds: ${update.odds}`);
+    console.info(`   Volume: ${update.volume}`);
+    console.info(`   Latency: ${update.latency}ms`);
+    console.info(`   Flags: live=${update.flags.live}`);
     
     // Test batch processing
     const batchData = Array(10).fill(binaryData);
     const batchResults = await bunEngine.processBatch(batchData, 5);
-    console.log(`✅ Batch processing: ${batchResults.length} results`);
+    console.info(`✅ Batch processing: ${batchResults.length} results`);
     
   } catch (error: unknown) {
-    console.log('❌ Bun optimized test failed:', (error as Error).message);
+    console.info('❌ Bun optimized test failed:', (error as Error).message);
   }
 }
 
@@ -317,7 +317,7 @@ async function testBunOptimized() {
 // ============================================================================
 
 function testAlphaDecay() {
-  console.log('\n=== ALPHA DECAY MONITORING TEST ===');
+  console.info('\n=== ALPHA DECAY MONITORING TEST ===');
   
   const monitor = new AlphaDecayMonitor();
   
@@ -340,15 +340,15 @@ function testAlphaDecay() {
   const effectiveness51 = monitor.getEffectiveness(51);
   const effectiveness56 = monitor.getEffectiveness(56);
   
-  console.log('✅ Alpha decay tracking active');
-  console.log(`   Pattern 51 effectiveness: ${effectiveness51.toFixed(1)}%`);
-  console.log(`   Pattern 56 effectiveness: ${effectiveness56.toFixed(1)}%`);
-  console.log(`   Pattern 51 viable: ${monitor.isViable(51)}`);
-  console.log(`   Pattern 56 viable: ${monitor.isViable(56)}`);
+  console.info('✅ Alpha decay tracking active');
+  console.info(`   Pattern 51 effectiveness: ${effectiveness51.toFixed(1)}%`);
+  console.info(`   Pattern 56 effectiveness: ${effectiveness56.toFixed(1)}%`);
+  console.info(`   Pattern 51 viable: ${monitor.isViable(51)}`);
+  console.info(`   Pattern 56 viable: ${monitor.isViable(56)}`);
   
   // Get decay report
   const report = monitor.getDecayReport();
-  console.log(`   Active patterns: ${report.length}`);
+  console.info(`   Active patterns: ${report.length}`);
 }
 
 // ============================================================================
@@ -356,7 +356,7 @@ function testAlphaDecay() {
 // ============================================================================
 
 function testLegalRiskAssessor() {
-  console.log('\n=== LEGAL RISK ASSESSOR TEST ===');
+  console.info('\n=== LEGAL RISK ASSESSOR TEST ===');
   
   // Test all pattern risk levels
   const patterns = [51, 56, 68, 69];
@@ -366,12 +366,12 @@ function testLegalRiskAssessor() {
     const risk = LegalRiskAssessor.getRiskLevel(patternId);
     const isLegalUS = LegalRiskAssessor.isLegal(patternId, 'us');
     
-    console.log(`Pattern ${patternId}:`);
-    console.log(`  Risk: ${risk}`);
-    console.log(`  US Status: ${status.us}`);
-    console.log(`  Legal in US: ${isLegalUS ? 'YES' : 'NO'}`);
-    console.log(`  Notes: ${status.notes}`);
-    console.log('');
+    console.info(`Pattern ${patternId}:`);
+    console.info(`  Risk: ${risk}`);
+    console.info(`  US Status: ${status.us}`);
+    console.info(`  Legal in US: ${isLegalUS ? 'YES' : 'NO'}`);
+    console.info(`  Notes: ${status.notes}`);
+    console.info('');
   });
 }
 
@@ -380,17 +380,17 @@ function testLegalRiskAssessor() {
 // ============================================================================
 
 async function runAllTests() {
-  console.log('╔════════════════════════════════════════════════════════════════╗');
-  console.log('║  DEEP STRUCTURE ARBITRAGE - EDUCATIONAL TEST SUITE            ║');
-  console.log('║  ⚠️  FOR EDUCATIONAL PURPOSES ONLY - NOT FOR COMMERCIAL USE    ║');
-  console.log('╚════════════════════════════════════════════════════════════════╝');
+  console.info('╔════════════════════════════════════════════════════════════════╗');
+  console.info('║  DEEP STRUCTURE ARBITRAGE - EDUCATIONAL TEST SUITE            ║');
+  console.info('║  ⚠️  FOR EDUCATIONAL PURPOSES ONLY - NOT FOR COMMERCIAL USE    ║');
+  console.info('╚════════════════════════════════════════════════════════════════╝');
   
   try {
     // Legal compliance check
-    console.log('\n📋 LEGAL COMPLIANCE CHECK:');
-    console.log('   ✓ All patterns include legal disclaimers');
-    console.log('   ✓ Risk assessment system implemented');
-    console.log('   ✓ Critical warnings for high-risk patterns');
+    console.info('\n📋 LEGAL COMPLIANCE CHECK:');
+    console.info('   ✓ All patterns include legal disclaimers');
+    console.info('   ✓ Risk assessment system implemented');
+    console.info('   ✓ Critical warnings for high-risk patterns');
     
     // Run tests
     await testLegalRiskAssessor();
@@ -401,21 +401,21 @@ async function runAllTests() {
     await testBunOptimized();
     testAlphaDecay();
     
-    console.log('\n╔════════════════════════════════════════════════════════════════╗');
-    console.log('║  ✅ ALL TESTS COMPLETED SUCCESSFULLY                           ║');
-    console.log('╚════════════════════════════════════════════════════════════════╝');
+    console.info('\n╔════════════════════════════════════════════════════════════════╗');
+    console.info('║  ✅ ALL TESTS COMPLETED SUCCESSFULLY                           ║');
+    console.info('╚════════════════════════════════════════════════════════════════╝');
     
-    console.log('\n📊 SUMMARY:');
-    console.log('   • 4 temporal arbitrage patterns implemented');
-    console.log('   • Legal risk assessment system active');
-    console.log('   • Alpha decay monitoring operational');
-    console.log('   • Bun-optimized engine ready');
-    console.log('   • All patterns include legal disclaimers');
+    console.info('\n📊 SUMMARY:');
+    console.info('   • 4 temporal arbitrage patterns implemented');
+    console.info('   • Legal risk assessment system active');
+    console.info('   • Alpha decay monitoring operational');
+    console.info('   • Bun-optimized engine ready');
+    console.info('   • All patterns include legal disclaimers');
     
-    console.log('\n⚠️  FINAL REMINDER:');
-    console.log('   These patterns exploit systemic vulnerabilities.');
-    console.log('   Implementation may violate federal/state laws.');
-    console.log('   Consult legal counsel before any real-world use.');
+    console.info('\n⚠️  FINAL REMINDER:');
+    console.info('   These patterns exploit systemic vulnerabilities.');
+    console.info('   Implementation may violate federal/state laws.');
+    console.info('   Consult legal counsel before any real-world use.');
     
   } catch (error: unknown) {
     console.error('\n❌ TEST SUITE FAILED:', (error as Error).message);

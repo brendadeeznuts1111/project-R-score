@@ -445,7 +445,7 @@ export class BunSecurityEngine {
           rotated.push(key);
           
           // Log rotation (don't log actual secrets!)
-          console.log(`🔑 Rotated secret: ${key}`);
+          console.info(`🔑 Rotated secret: ${key}`);
         }
       }
       
@@ -694,75 +694,75 @@ export function createSecurityMiddleware(config?: Partial<SecurityConfig>) {
 
 // 🎯 EXAMPLE USAGE
 export async function demonstrateSecurityIntegration() {
-  console.log('🔐 BUN SECURITY INTEGRATION v4.0');
-  console.log('='.repeat(50));
+  console.info('🔐 BUN SECURITY INTEGRATION v4.0');
+  console.info('='.repeat(50));
   
   // 1. PASSWORD SECURITY
-  console.log('\n1. 🔐 Password Security:');
-  console.log('-'.repeat(30));
+  console.info('\n1. 🔐 Password Security:');
+  console.info('-'.repeat(30));
   
   const password = 'SuperSecure123!';
   const strength = BunSecurityEngine.PasswordManager.validatePasswordStrength(password);
-  console.log(`Password strength: ${strength.score}/100`);
-  console.log(`Valid: ${strength.valid ? '✅' : '❌'}`);
+  console.info(`Password strength: ${strength.score}/100`);
+  console.info(`Valid: ${strength.valid ? '✅' : '❌'}`);
   
   const hashResult = await BunSecurityEngine.PasswordManager.hashPassword(password);
-  console.log(`Hashed password (${hashResult.metadata.algorithm}): ${hashResult.hash.substring(0, 20)}...`);
+  console.info(`Hashed password (${hashResult.metadata.algorithm}): ${hashResult.hash.substring(0, 20)}...`);
   
   const verification = await BunSecurityEngine.PasswordManager.verifyPassword(
     password, 
     hashResult.hash,
     { breachCheck: true }
   );
-  console.log(`Verification: ${verification.valid ? '✅' : '❌'}`);
+  console.info(`Verification: ${verification.valid ? '✅' : '❌'}`);
   
   // 2. CSRF PROTECTION
-  console.log('\n2. 🛡️ CSRF Protection:');
-  console.log('-'.repeat(30));
+  console.info('\n2. 🛡️ CSRF Protection:');
+  console.info('-'.repeat(30));
   
   const sessionId = 'user123_session';
   const csrfToken = BunSecurityEngine.CSRFProtection.generateCSRFToken(sessionId);
-  console.log(`CSRF Token generated: ${csrfToken.token.substring(0, 20)}...`);
-  console.log(`Compressed: ${csrfToken.compressed ? '✅' : '❌'}`);
+  console.info(`CSRF Token generated: ${csrfToken.token.substring(0, 20)}...`);
+  console.info(`Compressed: ${csrfToken.compressed ? '✅' : '❌'}`);
   
   const csrfValidation = BunSecurityEngine.CSRFProtection.validateCSRFToken(
     csrfToken.token, 
     sessionId
   );
-  console.log(`CSRF Validation: ${csrfValidation.valid ? '✅' : '❌'}`);
+  console.info(`CSRF Validation: ${csrfValidation.valid ? '✅' : '❌'}`);
   
   // 3. SECRETS MANAGEMENT
-  console.log('\n3. 🔑 Secrets Management:');
-  console.log('-'.repeat(30));
+  console.info('\n3. 🔑 Secrets Management:');
+  console.info('-'.repeat(30));
   
   const secretName = 'API_SECRET';
   const data = 'Sensitive API Data';
   
   const encrypted = BunSecurityEngine.SecretManager.encryptWithRotation(data, secretName);
-  console.log(`Encrypted data: ${encrypted.encrypted.substring(0, 30)}...`);
-  console.log(`Key version: ${encrypted.keyVersion}`);
+  console.info(`Encrypted data: ${encrypted.encrypted.substring(0, 30)}...`);
+  console.info(`Key version: ${encrypted.keyVersion}`);
   
   const decrypted = BunSecurityEngine.SecretManager.decryptWithRotation(
     encrypted.encrypted, 
     secretName
   );
-  console.log(`Decrypted matches: ${decrypted.decrypted === data ? '✅' : '❌'}`);
+  console.info(`Decrypted matches: ${decrypted.decrypted === data ? '✅' : '❌'}`);
   
   // 4. SECURITY MIDDLEWARE
-  console.log('\n4. 🚀 Security Middleware:');
-  console.log('-'.repeat(30));
+  console.info('\n4. 🚀 Security Middleware:');
+  console.info('-'.repeat(30));
   
   const middleware = createSecurityMiddleware();
-  console.log('Middleware ready for Bun.serve integration');
+  console.info('Middleware ready for Bun.serve integration');
   
   // 5. SECURITY REPORT
-  console.log('\n5. 📊 Security Report:');
-  console.log('-'.repeat(30));
+  console.info('\n5. 📊 Security Report:');
+  console.info('-'.repeat(30));
   
   const securityEngine = new BunSecurityEngine();
   const report = securityEngine.getSecurityReport();
-  console.log(`Risk Score: ${report.riskScore}/100`);
-  console.log(`Recommendations: ${report.recommendations.length}`);
+  console.info(`Risk Score: ${report.riskScore}/100`);
+  console.info(`Recommendations: ${report.recommendations.length}`);
 }
 
 // 🚨 SECURITY ERROR CLASS

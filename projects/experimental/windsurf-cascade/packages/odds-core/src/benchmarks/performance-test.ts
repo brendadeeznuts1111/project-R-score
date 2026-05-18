@@ -16,13 +16,13 @@ export class PerformanceBenchmark {
      * Benchmark 1: Synthetic arbitrage detection performance
      */
     static async benchmarkSyntheticArbitrageDetection(): Promise<void> {
-        console.log('🎯 Synthetic Arbitrage Detection Benchmark\n');
+        console.info('🎯 Synthetic Arbitrage Detection Benchmark\n');
 
         const testSizes = [100, 500, 1000, 2000, 5000];
         const detector = SyntheticArbitrageDetectorFactory.createHFTDetector();
 
-        console.log('Markets\tTime(ms)\tThroughput/sec\tOpportunities\tDetection Rate/sec\tMemory(MB)');
-        console.log('-------\t-------\t-----------\t------------\t----------------\t----------');
+        console.info('Markets\tTime(ms)\tThroughput/sec\tOpportunities\tDetection Rate/sec\tMemory(MB)');
+        console.info('-------\t-------\t-----------\t------------\t----------------\t----------');
 
         for (const size of testSizes) {
             // Generate test data
@@ -51,7 +51,7 @@ export class PerformanceBenchmark {
             const throughput = size / (detectionTime / 1000);
             const detectionRate = opportunities.length / (detectionTime / 1000);
 
-            console.log(`${size}\t${detectionTime.toFixed(1)}\t${throughput.toFixed(0)}\t\t${opportunities.length}\t\t${detectionRate.toFixed(1)}\t\t${memoryUsed.toFixed(1)}`);
+            console.info(`${size}\t${detectionTime.toFixed(1)}\t${throughput.toFixed(0)}\t\t${opportunities.length}\t\t${detectionRate.toFixed(1)}\t\t${memoryUsed.toFixed(1)}`);
         }
     }
 
@@ -59,13 +59,13 @@ export class PerformanceBenchmark {
      * Benchmark 2: Multi-period stream processing performance
      */
     static async benchmarkMultiPeriodProcessing(): Promise<void> {
-        console.log('\n📊 Multi-Period Stream Processing Benchmark\n');
+        console.info('\n📊 Multi-Period Stream Processing Benchmark\n');
 
         const testSizes = [50, 100, 200, 500, 1000];
         const processor = MultiPeriodStreamProcessorFactory.createLiveProcessor();
 
-        console.log('Stream Size\tTime(ms)\tThroughput/sec\tOpportunities\tAvg Latency(ms)\tMemory(MB)');
-        console.log('-----------\t-------\t-----------\t------------\t---------------\t----------');
+        console.info('Stream Size\tTime(ms)\tThroughput/sec\tOpportunities\tAvg Latency(ms)\tMemory(MB)');
+        console.info('-----------\t-------\t-----------\t------------\t---------------\t----------');
 
         for (const size of testSizes) {
             // Generate market stream
@@ -98,7 +98,7 @@ export class PerformanceBenchmark {
 
             const throughput = size / (processingTime / 1000);
 
-            console.log(`${size}\t\t${processingTime.toFixed(1)}\t${throughput.toFixed(0)}\t\t${results.opportunitiesDetected}\t\t${results.averageLatency.toFixed(1)}\t\t${memoryUsed.toFixed(1)}`);
+            console.info(`${size}\t\t${processingTime.toFixed(1)}\t${throughput.toFixed(0)}\t\t${results.opportunitiesDetected}\t\t${results.averageLatency.toFixed(1)}\t\t${memoryUsed.toFixed(1)}`);
         }
     }
 
@@ -106,13 +106,13 @@ export class PerformanceBenchmark {
      * Benchmark 3: Position tracking performance
      */
     static async benchmarkPositionTracking(): Promise<void> {
-        console.log('\n🛡️ Position Tracking Performance Benchmark\n');
+        console.info('\n🛡️ Position Tracking Performance Benchmark\n');
 
         const testSizes = [100, 500, 1000, 2000, 5000];
         const tracker = SyntheticPositionTrackerFactory.createHFTTracker();
 
-        console.log('Positions\tTime(ms)\tThroughput/sec\tPortfolio Value\tRisk Score\tMemory(MB)');
-        console.log('---------\t-------\t-----------\t--------------\t-----------\t----------');
+        console.info('Positions\tTime(ms)\tThroughput/sec\tPortfolio Value\tRisk Score\tMemory(MB)');
+        console.info('---------\t-------\t-----------\t--------------\t-----------\t----------');
 
         for (const size of testSizes) {
             // Generate test positions
@@ -142,7 +142,7 @@ export class PerformanceBenchmark {
 
             const throughput = size / (trackingTime / 1000);
 
-            console.log(`${size}\t\t${trackingTime.toFixed(1)}\t${throughput.toFixed(0)}\t\t$${metrics.totalExposure.toFixed(0)}\t\t${metrics.riskScore.toFixed(2)}\t\t${memoryUsed.toFixed(1)}`);
+            console.info(`${size}\t\t${trackingTime.toFixed(1)}\t${throughput.toFixed(0)}\t\t$${metrics.totalExposure.toFixed(0)}\t\t${metrics.riskScore.toFixed(2)}\t\t${memoryUsed.toFixed(1)}`);
         }
     }
 
@@ -150,13 +150,13 @@ export class PerformanceBenchmark {
      * Benchmark 4: Rotation arbitrage detection performance
      */
     static async benchmarkRotationArbitrage(): Promise<void> {
-        console.log('\n🏪 Rotation Arbitrage Detection Benchmark\n');
+        console.info('\n🏪 Rotation Arbitrage Detection Benchmark\n');
 
         const testSizes = [50, 100, 200, 500, 1000];
         const detector = RotationArbitrageDetectorFactory.createHFTDetector();
 
-        console.log('Rotations\tTime(ms)\tThroughput/sec\tOpportunities\tDetection Rate/sec\tMemory(MB)');
-        console.log('---------\t-------\t-----------\t------------\t----------------\t----------');
+        console.info('Rotations\tTime(ms)\tThroughput/sec\tOpportunities\tDetection Rate/sec\tMemory(MB)');
+        console.info('---------\t-------\t-----------\t------------\t----------------\t----------');
 
         for (const size of testSizes) {
             // Generate rotation numbers
@@ -177,7 +177,7 @@ export class PerformanceBenchmark {
             const throughput = size / (detectionTime / 1000);
             const detectionRate = opportunities.length / (detectionTime / 1000);
 
-            console.log(`${size}\t\t${detectionTime.toFixed(1)}\t${throughput.toFixed(0)}\t\t${opportunities.length}\t\t${detectionRate.toFixed(1)}\t\t${memoryUsed.toFixed(1)}`);
+            console.info(`${size}\t\t${detectionTime.toFixed(1)}\t${throughput.toFixed(0)}\t\t${opportunities.length}\t\t${detectionRate.toFixed(1)}\t\t${memoryUsed.toFixed(1)}`);
         }
     }
 
@@ -185,13 +185,13 @@ export class PerformanceBenchmark {
      * Benchmark 5: Rotation analytics performance
      */
     static async benchmarkRotationAnalytics(): Promise<void> {
-        console.log('\n📈 Rotation Analytics Performance Benchmark\n');
+        console.info('\n📈 Rotation Analytics Performance Benchmark\n');
 
         const testSizes = [100, 500, 1000, 2000, 5000];
         const analyticsEngine = RotationAnalyticsEngineFactory.createHighFrequencyEngine();
 
-        console.log('Updates\tTime(ms)\tThroughput/sec\tAnalytics Cached\tEfficiency Calc\tMemory(MB)');
-        console.log('-------\t-------\t-----------\t---------------\t---------------\t----------');
+        console.info('Updates\tTime(ms)\tThroughput/sec\tAnalytics Cached\tEfficiency Calc\tMemory(MB)');
+        console.info('-------\t-------\t-----------\t---------------\t---------------\t----------');
 
         for (const size of testSizes) {
             // Generate rotation number
@@ -223,7 +223,7 @@ export class PerformanceBenchmark {
 
             const throughput = size / (processingTime / 1000);
 
-            console.log(`${size}\t${processingTime.toFixed(1)}\t${throughput.toFixed(0)}\t${analyticsEngine.getAnalytics ? 1 : 0}\t\t${efficiency ? (efficiency.priceEfficiency * 100).toFixed(1) : 0}%\t\t${memoryUsed.toFixed(1)}`);
+            console.info(`${size}\t${processingTime.toFixed(1)}\t${throughput.toFixed(0)}\t${analyticsEngine.getAnalytics ? 1 : 0}\t\t${efficiency ? (efficiency.priceEfficiency * 100).toFixed(1) : 0}%\t\t${memoryUsed.toFixed(1)}`);
         }
     }
 
@@ -231,7 +231,7 @@ export class PerformanceBenchmark {
      * Benchmark 6: Memory usage and garbage collection
      */
     static async benchmarkMemoryUsage(): Promise<void> {
-        console.log('\n💾 Memory Usage and Garbage Collection Benchmark\n');
+        console.info('\n💾 Memory Usage and Garbage Collection Benchmark\n');
 
         // Force garbage collection if available
         if (global.gc) {
@@ -239,13 +239,13 @@ export class PerformanceBenchmark {
         }
 
         const initialMemory = process.memoryUsage();
-        console.log('Initial Memory Usage:');
-        console.log(`   RSS: ${(initialMemory.rss / 1024 / 1024).toFixed(2)} MB`);
-        console.log(`   Heap Used: ${(initialMemory.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-        console.log(`   Heap Total: ${(initialMemory.heapTotal / 1024 / 1024).toFixed(2)} MB`);
+        console.info('Initial Memory Usage:');
+        console.info(`   RSS: ${(initialMemory.rss / 1024 / 1024).toFixed(2)} MB`);
+        console.info(`   Heap Used: ${(initialMemory.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+        console.info(`   Heap Total: ${(initialMemory.heapTotal / 1024 / 1024).toFixed(2)} MB`);
 
         // Create multiple instances and measure memory growth
-        console.log('\nCreating instances...');
+        console.info('\nCreating instances...');
         const detectors = [];
         const processors = [];
         const trackers = [];
@@ -257,9 +257,9 @@ export class PerformanceBenchmark {
         }
 
         const afterCreationMemory = process.memoryUsage();
-        console.log('\nAfter Creating 100 Instances:');
-        console.log(`   RSS: ${(afterCreationMemory.rss / 1024 / 1024).toFixed(2)} MB (+${((afterCreationMemory.rss - initialMemory.rss) / 1024 / 1024).toFixed(2)})`);
-        console.log(`   Heap Used: ${(afterCreationMemory.heapUsed / 1024 / 1024).toFixed(2)} MB (+${((afterCreationMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024).toFixed(2)})`);
+        console.info('\nAfter Creating 100 Instances:');
+        console.info(`   RSS: ${(afterCreationMemory.rss / 1024 / 1024).toFixed(2)} MB (+${((afterCreationMemory.rss - initialMemory.rss) / 1024 / 1024).toFixed(2)})`);
+        console.info(`   Heap Used: ${(afterCreationMemory.heapUsed / 1024 / 1024).toFixed(2)} MB (+${((afterCreationMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024).toFixed(2)})`);
 
         // Clear references and force GC
         detectors.length = 0;
@@ -271,23 +271,23 @@ export class PerformanceBenchmark {
         }
 
         const afterGCMemory = process.memoryUsage();
-        console.log('\n After Garbage Collection:');
-        console.log(`   RSS: ${(afterGCMemory.rss / 1024 / 1024).toFixed(2)} MB`);
-        console.log(`   Heap Used: ${(afterGCMemory.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-        console.log(`   Memory Recovered: ${((afterCreationMemory.heapUsed - afterGCMemory.heapUsed) / 1024 / 1024).toFixed(2)} MB`);
+        console.info('\n After Garbage Collection:');
+        console.info(`   RSS: ${(afterGCMemory.rss / 1024 / 1024).toFixed(2)} MB`);
+        console.info(`   Heap Used: ${(afterGCMemory.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+        console.info(`   Memory Recovered: ${((afterCreationMemory.heapUsed - afterGCMemory.heapUsed) / 1024 / 1024).toFixed(2)} MB`);
     }
 
     /**
      * Benchmark 7: Concurrent processing performance
      */
     static async benchmarkConcurrentProcessing(): Promise<void> {
-        console.log('\n⚡ Concurrent Processing Performance Benchmark\n');
+        console.info('\n⚡ Concurrent Processing Performance Benchmark\n');
 
         const concurrentTasks = [1, 2, 4, 8, 16];
         const detector = SyntheticArbitrageDetectorFactory.createHFTDetector();
 
-        console.log('Concurrent Tasks\tTime(ms)\tThroughput/sec\tEfficiency\tMemory(MB)');
-        console.log('---------------\t-------\t-----------\t----------\t----------');
+        console.info('Concurrent Tasks\tTime(ms)\tThroughput/sec\tEfficiency\tMemory(MB)');
+        console.info('---------------\t-------\t-----------\t----------\t----------');
 
         for (const taskCount of concurrentTasks) {
             // Create concurrent tasks
@@ -323,7 +323,7 @@ export class PerformanceBenchmark {
             const throughput = totalMarkets / (totalTime / 1000);
             const efficiency = (throughput / (taskCount * (totalMarkets / taskCount / (totalTime / taskCount / 1000)))) * 100;
 
-            console.log(`${taskCount}\t\t\t${totalTime.toFixed(1)}\t${throughput.toFixed(0)}\t\t${efficiency.toFixed(1)}%\t\t${memoryUsed.toFixed(1)}`);
+            console.info(`${taskCount}\t\t\t${totalTime.toFixed(1)}\t${throughput.toFixed(0)}\t\t${efficiency.toFixed(1)}%\t\t${memoryUsed.toFixed(1)}`);
         }
     }
 
@@ -369,51 +369,51 @@ export class PerformanceBenchmark {
      * Run all performance benchmarks
      */
     static async runAllBenchmarks(): Promise<void> {
-        console.log('🚀 Synthetic Arbitrage Platform Performance Benchmarks\n');
-        console.log('='.repeat(80));
+        console.info('🚀 Synthetic Arbitrage Platform Performance Benchmarks\n');
+        console.info('='.repeat(80));
 
         // Synthetic arbitrage detection
         await this.benchmarkSyntheticArbitrageDetection();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Multi-period processing
         await this.benchmarkMultiPeriodProcessing();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Position tracking
         await this.benchmarkPositionTracking();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Rotation arbitrage
         await this.benchmarkRotationArbitrage();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Rotation analytics
         await this.benchmarkRotationAnalytics();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Memory usage
         await this.benchmarkMemoryUsage();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Concurrent processing
         await this.benchmarkConcurrentProcessing();
 
-        console.log('\n✅ All performance benchmarks completed!');
-        console.log('\n🎯 Performance Summary:');
-        console.log('   • Synthetic arbitrage detection: Optimized for 1000+ markets/second');
-        console.log('   • Multi-period processing: Real-time stream analysis');
-        console.log('   • Position tracking: Handles 5000+ concurrent positions');
-        console.log('   • Rotation arbitrage: Cross-sportsbook opportunity detection');
-        console.log('   • Analytics engine: High-frequency price/volume analysis');
-        console.log('   • Memory management: Efficient garbage collection');
-        console.log('   • Concurrent processing: Scalable multi-threaded architecture');
+        console.info('\n✅ All performance benchmarks completed!');
+        console.info('\n🎯 Performance Summary:');
+        console.info('   • Synthetic arbitrage detection: Optimized for 1000+ markets/second');
+        console.info('   • Multi-period processing: Real-time stream analysis');
+        console.info('   • Position tracking: Handles 5000+ concurrent positions');
+        console.info('   • Rotation arbitrage: Cross-sportsbook opportunity detection');
+        console.info('   • Analytics engine: High-frequency price/volume analysis');
+        console.info('   • Memory management: Efficient garbage collection');
+        console.info('   • Concurrent processing: Scalable multi-threaded architecture');
     }
 }
 

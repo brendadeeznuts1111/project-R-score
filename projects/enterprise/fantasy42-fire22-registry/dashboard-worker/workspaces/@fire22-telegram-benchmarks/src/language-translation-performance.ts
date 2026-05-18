@@ -13,7 +13,7 @@ import BenchmarkRunner from './index';
 // !==!==!==!==!==!==!==!==!==!==!==!==!==!====
 
 export async function runBenchmarks(runner: BenchmarkRunner) {
-  console.log('\n🌐 Running Language Translation Benchmarks...\n');
+  console.info('\n🌐 Running Language Translation Benchmarks...\n');
 
   // Mock translation cache
   const translationCache = new Map<string, string>();
@@ -189,7 +189,7 @@ export async function runBenchmarks(runner: BenchmarkRunner) {
     100
   );
 
-  console.log('✅ Language Translation Benchmarks Complete\n');
+  console.info('✅ Language Translation Benchmarks Complete\n');
 }
 
 // Run standalone if executed directly

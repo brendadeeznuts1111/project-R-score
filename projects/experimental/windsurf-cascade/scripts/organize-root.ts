@@ -39,22 +39,22 @@ async function moveMatchingFiles() {
         )) {
             const dest = join(ARTIFACTS, file);
             await rename(fullPath, dest);
-            console.log(`✅ Moved MD artifact: ${file} -> ${ARTIFACTS}/`);
+            console.info(`✅ Moved MD artifact: ${file} -> ${ARTIFACTS}/`);
         } else if (lower.startsWith('bun') && (lower.includes('fig') || lower.includes('test')) && lower.endsWith('.toml')) {
             const dest = join(TESTS_CONFIG, file);
             await rename(fullPath, dest);
-            console.log(`✅ Moved config: ${file} -> ${TESTS_CONFIG}/`);
+            console.info(`✅ Moved config: ${file} -> ${TESTS_CONFIG}/`);
         } else if (['test-setup.ts', 'global-mocks.ts', 'global-setup.ts'].includes(file)) {
             const dest = join(TESTS_UTILS, file);
             await rename(fullPath, dest);
-            console.log(`✅ Moved util: ${file} -> ${TESTS_UTILS}/`);
+            console.info(`✅ Moved util: ${file} -> ${TESTS_UTILS}/`);
         }
     }
 
-    console.log('\n🎉 Organization complete!');
-    console.log('Running bun install to sync workspaces...');
+    console.info('\n🎉 Organization complete!');
+    console.info('Running bun install to sync workspaces...');
     await $`bun install`;
-    console.log('✅ Root organization finished!');
+    console.info('✅ Root organization finished!');
 }
 
 moveMatchingFiles().catch(console.error);

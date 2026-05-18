@@ -148,10 +148,10 @@ async function verifyPublish(): Promise<void> {
 		process.exit(1);
 	}
 
-	console.log(`🔍 Verifying @graph/* v${VERSION} on registry\n`);
-	console.log(`   Registry: ${REGISTRY}`);
-	console.log(`   Scope: ${RSS_REGISTRY_CONFIG.SCOPE}`);
-	console.log("=".repeat(60));
+	console.info(`🔍 Verifying @graph/* v${VERSION} on registry\n`);
+	console.info(`   Registry: ${REGISTRY}`);
+	console.info(`   Scope: ${RSS_REGISTRY_CONFIG.SCOPE}`);
+	console.info("=".repeat(60));
 
 	const packages = await findGraphPackages();
 
@@ -160,12 +160,12 @@ async function verifyPublish(): Promise<void> {
 		return;
 	}
 
-	console.log(`\n📦 Found ${packages.length} package(s) to verify:\n`);
+	console.info(`\n📦 Found ${packages.length} package(s) to verify:\n`);
 
 	let allVerified = true;
 
 	for (const packageName of packages) {
-		console.log(`  Checking ${packageName}...`);
+		console.info(`  Checking ${packageName}...`);
 
 		// Check version exists
 		const versionExists = await verifyPackageVersion(packageName, VERSION, REGISTRY);
@@ -174,7 +174,7 @@ async function verifyPublish(): Promise<void> {
 			allVerified = false;
 			continue;
 		}
-		console.log(`    ✅ Version ${VERSION} exists on registry`);
+		console.info(`    ✅ Version ${VERSION} exists on registry`);
 
 		// Verify can install
 		const canInstall = await verifyPackageInstall(packageName, VERSION, REGISTRY);
@@ -183,15 +183,15 @@ async function verifyPublish(): Promise<void> {
 			allVerified = false;
 			continue;
 		}
-		console.log(`    ✅ Package can be installed`);
+		console.info(`    ✅ Package can be installed`);
 	}
 
-	console.log("\n" + "=".repeat(60));
+	console.info("\n" + "=".repeat(60));
 
 	if (allVerified) {
-		console.log("🎉 All packages verified successfully!");
-		console.log(`\n📦 Published packages are available at:`);
-		console.log(`   ${REGISTRY}/-/web/detail/${RSS_REGISTRY_CONFIG.SCOPE}`);
+		console.info("🎉 All packages verified successfully!");
+		console.info(`\n📦 Published packages are available at:`);
+		console.info(`   ${REGISTRY}/-/web/detail/${RSS_REGISTRY_CONFIG.SCOPE}`);
 	} else {
 		console.error("❌ Some packages failed verification");
 		process.exit(1);

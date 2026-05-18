@@ -34,18 +34,18 @@ class ColorAuditor {
   private auditThreshold = 98.0; // Minimum coverage percentage
 
   async audit() {
-    console.log('🔍 Running Comprehensive Color System Audit...');
+    console.info('🔍 Running Comprehensive Color System Audit...');
     
     const result = await this.performAudit();
     this.displayResults(result);
     this.saveReport(result);
     
     if (result.summary.coverage < this.auditThreshold) {
-      console.log(`❌ Audit failed: Coverage ${result.summary.coverage}% below threshold ${this.auditThreshold}%`);
+      console.info(`❌ Audit failed: Coverage ${result.summary.coverage}% below threshold ${this.auditThreshold}%`);
       process.exit(1);
     }
     
-    console.log('✅ Color audit passed successfully!');
+    console.info('✅ Color audit passed successfully!');
   }
 
   private async performAudit(): Promise<ColorAuditResult> {
@@ -122,29 +122,29 @@ class ColorAuditor {
   }
 
   private displayResults(result: ColorAuditResult) {
-    console.log('\n📊 Color Audit Results:');
-    console.log('================================');
-    console.log(`📁 Total Files: ${result.summary.totalFiles}`);
-    console.log(`✅ Compliant Files: ${result.summary.compliantFiles}`);
-    console.log(`📈 Coverage: ${result.summary.coverage}%`);
-    console.log(`🚨 Violations: ${result.summary.violations}`);
-    console.log(`🏆 Status: ${result.summary.status}`);
+    console.info('\n📊 Color Audit Results:');
+    console.info('================================');
+    console.info(`📁 Total Files: ${result.summary.totalFiles}`);
+    console.info(`✅ Compliant Files: ${result.summary.compliantFiles}`);
+    console.info(`📈 Coverage: ${result.summary.coverage}%`);
+    console.info(`🚨 Violations: ${result.summary.violations}`);
+    console.info(`🏆 Status: ${result.summary.status}`);
     
-    console.log('\n🎨 Category Usage:');
+    console.info('\n🎨 Category Usage:');
     Object.entries(result.categories).forEach(([category, data]) => {
-      console.log(`   • ${category}: ${data.usage} files (${data.compliance}% compliant)`);
+      console.info(`   • ${category}: ${data.usage} files (${data.compliance}% compliant)`);
     });
     
     if (result.violations.length > 0) {
-      console.log('\n⚠️ Violations Found:');
+      console.info('\n⚠️ Violations Found:');
       result.violations.forEach(v => {
-        console.log(`   • ${v.file}: ${v.issue} (${v.severity})`);
+        console.info(`   • ${v.file}: ${v.issue} (${v.severity})`);
       });
     }
     
-    console.log('\n💡 Recommendations:');
+    console.info('\n💡 Recommendations:');
     result.recommendations.forEach(rec => {
-      console.log(`   • ${rec}`);
+      console.info(`   • ${rec}`);
     });
   }
 

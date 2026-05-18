@@ -549,7 +549,7 @@ ${analysis.recommendations.length > 0
 
 // 🚀 DEMO FUNCTIONS
 export async function demonstrateFileHandleReadLines() {
-  console.log('🚀 Demonstrating Bun v1.3.1 FileHandle.readLines() for Cookie Security');
+  console.info('🚀 Demonstrating Bun v1.3.1 FileHandle.readLines() for Cookie Security');
   
   const logger = new CookieFileLogger('./demo-cookie.log');
   
@@ -577,25 +577,25 @@ export async function demonstrateFileHandleReadLines() {
   });
 
   // Analyze the log using FileHandle.readLines()
-  console.log('\n📊 Analyzing log file with FileHandle.readLines():');
+  console.info('\n📊 Analyzing log file with FileHandle.readLines():');
   const analysis = await logger.analyzeLogFile();
   
-  console.log(`Total entries: ${analysis.totalEntries}`);
-  console.log(`Average security score: ${analysis.securityMetrics.averageScore.toFixed(1)}/100`);
-  console.log(`Failed validations: ${analysis.securityMetrics.failedValidations}`);
+  console.info(`Total entries: ${analysis.totalEntries}`);
+  console.info(`Average security score: ${analysis.securityMetrics.averageScore.toFixed(1)}/100`);
+  console.info(`Failed validations: ${analysis.securityMetrics.failedValidations}`);
   
   // Export to different formats
-  console.log('\n📄 Exporting logs:');
+  console.info('\n📄 Exporting logs:');
   const jsonExport = await logger.exportLogs('json');
-  console.log('JSON export length:', jsonExport.length);
+  console.info('JSON export length:', jsonExport.length);
   
   const csvExport = await logger.exportLogs('csv');
-  console.log('CSV export length:', csvExport.length);
+  console.info('CSV export length:', csvExport.length);
   
   const mdExport = await logger.exportLogs('markdown');
-  console.log('Markdown export length:', mdExport.length);
+  console.info('Markdown export length:', mdExport.length);
   
-  console.log('\n✅ FileHandle.readLines() demo completed successfully!');
+  console.info('\n✅ FileHandle.readLines() demo completed successfully!');
 }
 
 // 🚀 RUN DEMO IF EXECUTED DIRECTLY

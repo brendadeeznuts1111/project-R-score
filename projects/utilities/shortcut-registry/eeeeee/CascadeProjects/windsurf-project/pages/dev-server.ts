@@ -123,7 +123,7 @@ const server = serve({
 	},
 });
 
-console.log(`🚀 Dashboard Dev Server running on http://${HOST}:${PORT}`);
-console.log(`📊 Open dashboard: http://${HOST}:${PORT}/dashboard.html?demo=ai-risk-analysis`);
-console.log(`📊 Or root: http://${HOST}:${PORT}/?demo=ai-risk-analysis`);
-console.log(`\n💡 Press Ctrl+C to stop the server`);
+console.info(`🚀 Dashboard Dev Server running on http://${HOST}:${PORT}`);
+console.info(`📊 Open dashboard: http://${HOST}:${PORT}/dashboard.html?demo=ai-risk-analysis`);
+console.info(`📊 Or root: http://${HOST}:${PORT}/?demo=ai-risk-analysis`);
+console.info(`\n💡 Press Ctrl+C to stop the server`);

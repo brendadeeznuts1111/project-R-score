@@ -104,7 +104,7 @@ function scanForSecrets(content: string, filename: string): SecretFinding[] {
 
 async function main() {
   try {
-    console.log('🔍 Scanning for secrets...');
+    console.info('🔍 Scanning for secrets...');
     
     const stagedFiles = await getStagedFiles();
     let secretsFound = false;
@@ -129,7 +129,7 @@ async function main() {
       process.exit(1);
     }
     
-    console.log('✅ No secrets detected');
+    console.info('✅ No secrets detected');
     
   } catch (error) {
     console.error('Error scanning secrets:', error);

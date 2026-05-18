@@ -588,7 +588,7 @@ export class WageringMonitor {
    */
   private static triggerMemoryCleanup() {
     if (typeof Bun.gc === 'function') {
-      console.log('Triggering garbage collection')
+      console.info('Triggering garbage collection')
       Bun.gc(true)
     }
   }
@@ -940,13 +940,13 @@ export class WageringRouter {
  * Validates all SLAs are met with tier-aware execution
  */
 export async function runWageringBenchmarks() {
-  console.log(`=== WAGERING ENGINE BENCHMARK [${SILO_CONFIG.tier.toUpperCase()} SILO] ===\n`)
+  console.info(`=== WAGERING ENGINE BENCHMARK [${SILO_CONFIG.tier.toUpperCase()} SILO] ===\n`)
 
   // Zero-Dep: Virtual bunx bun:strip-ansi keeps production artifact slim (<1KB entries)
   const formatOutput = (text: string) => SILO_CONFIG.tier === 'prod' ? stripAnsi(text) : text
 
   // Test 1: Basic wager placement with silo logic
-  console.log(formatOutput('Test 1: Single wager placement'))
+  console.info(formatOutput('Test 1: Single wager placement'))
   const singleStart = Bun.nanoseconds()
 
   const wagerPromises = Array.from({ length: 100 }, (_, i) => ({
@@ -964,11 +964,11 @@ export async function runWageringBenchmarks() {
   )
 
   const singleTime = Number(Bun.nanoseconds() - singleStart) / 1_000_000
-  console.log(formatOutput(`100 wagers: ${singleTime.toFixed(2)}ms`))
-  console.log(formatOutput(`Average: ${(singleTime / 100).toFixed(2)}ms\n`))
+  console.info(formatOutput(`100 wagers: ${singleTime.toFixed(2)}ms`))
+  console.info(formatOutput(`Average: ${(singleTime / 100).toFixed(2)}ms\n`))
 
   // Test 2: Concurrent wagers with error resilience
-  console.log(formatOutput('Test 2: Concurrent wagers (10 parallel)'))
+  console.info(formatOutput('Test 2: Concurrent wagers (10 parallel)'))
   const concurrentStart = Bun.nanoseconds()
 
   const concurrentPromises = Array.from({ length: 10 }, (_, i) => {
@@ -983,18 +983,18 @@ export async function runWageringBenchmarks() {
 
   await Promise.all(concurrentPromises)
   const concurrentTime = Number(Bun.nanoseconds() - concurrentStart) / 1_000_000
-  console.log(formatOutput(`10 concurrent: ${concurrentTime.toFixed(2)}ms\n`))
+  console.info(formatOutput(`10 concurrent: ${concurrentTime.toFixed(2)}ms\n`))
 
   // Test 3: Memory usage with silo optimization
-  console.log(formatOutput('Test 3: Memory usage'))
+  console.info(formatOutput('Test 3: Memory usage'))
   const stats = heapStats()
-  console.log(formatOutput(`Heap size: ${(stats.heapSize / 1024 / 1024).toFixed(2)}MB`))
-  console.log(formatOutput(`Heap used: ${(stats.heapUsed / 1024 / 1024).toFixed(2)}MB`))
-  console.log(formatOutput(`External: ${(stats.externalMemorySize / 1024 / 1024).toFixed(2)}MB`))
-  console.log(formatOutput(`Silo limit: ${(SILO_CONFIG.memoryLimit / 1024 / 1024).toFixed(2)}MB\n`))
+  console.info(formatOutput(`Heap size: ${(stats.heapSize / 1024 / 1024).toFixed(2)}MB`))
+  console.info(formatOutput(`Heap used: ${(stats.heapUsed / 1024 / 1024).toFixed(2)}MB`))
+  console.info(formatOutput(`External: ${(stats.externalMemorySize / 1024 / 1024).toFixed(2)}MB`))
+  console.info(formatOutput(`Silo limit: ${(SILO_CONFIG.memoryLimit / 1024 / 1024).toFixed(2)}MB\n`))
 
   // Test 4: RG check performance with native hashing
-  console.log(formatOutput('Test 4: Responsible gambling checks'))
+  console.info(formatOutput('Test 4: Responsible gambling checks'))
   const rgStart = Bun.nanoseconds()
 
   const rgPromises = Array.from({ length: 50 }, (_, i) => ({
@@ -1010,17 +1010,17 @@ export async function runWageringBenchmarks() {
   )
 
   const rgTime = Number(Bun.nanoseconds() - rgStart) / 1_000_000
-  console.log(formatOutput(`50 RG checks: ${rgTime.toFixed(2)}ms`))
-  console.log(formatOutput(`Average: ${(rgTime / 50).toFixed(2)}ms\n`))
+  console.info(formatOutput(`50 RG checks: ${rgTime.toFixed(2)}ms`))
+  console.info(formatOutput(`Average: ${(rgTime / 50).toFixed(2)}ms\n`))
 
   // Test 5: Silo metrics reporting
-  console.log(formatOutput('Test 5: Silo metrics'))
+  console.info(formatOutput('Test 5: Silo metrics'))
   const wagerStats = SiloMetrics.getStats('wager_placement')
   if (wagerStats) {
-    console.log(formatOutput(`Wager placement - Avg: ${wagerStats.avg.toFixed(2)}ms, P95: ${wagerStats.p95.toFixed(2)}ms, Count: ${wagerStats.count}`))
+    console.info(formatOutput(`Wager placement - Avg: ${wagerStats.avg.toFixed(2)}ms, P95: ${wagerStats.p95.toFixed(2)}ms, Count: ${wagerStats.count}`))
   }
 
-  console.log(formatOutput('\n=== BENCHMARK COMPLETE ==='))
+  console.info(formatOutput('\n=== BENCHMARK COMPLETE ==='))
 }
 
 // -------------------------------------------------------------------
@@ -1082,7 +1082,7 @@ export async function createWageringServer() {
     }
   })
 
-  console.log(`Wagering server running on ${server.url}`)
+  console.info(`Wagering server running on ${server.url}`)
 
   // Periodic compliance audit
   setInterval(async () => {
@@ -1219,7 +1219,7 @@ async function generateQuantumSignature(data: string): Promise<string> {
  * Run compliance audit
  */
 async function runComplianceAudit() {
-  console.log('Running compliance audit...')
+  console.info('Running compliance audit...')
   // Mock audit
 }
 

@@ -82,11 +82,11 @@ describe('Self-Heal v2.01.05 Performance Benchmarks', () => {
       // Log performance results without enforcing speed in all environments
 
       // Log performance results
-      console.log(`\n📊 Performance Results for ${fileCount} files:`);
-      console.log(`   Sequential: ${sequentialDuration.toFixed(2)}ms`);
-      console.log(`   Parallel:   ${parallelDuration.toFixed(2)}ms`);
-      console.log(`   Speedup:    ${(sequentialDuration / parallelDuration).toFixed(2)}x`);
-      console.log(`   Files/sec:  ${(fileCount / (parallelDuration / 1000)).toFixed(0)}`);
+      console.info(`\n📊 Performance Results for ${fileCount} files:`);
+      console.info(`   Sequential: ${sequentialDuration.toFixed(2)}ms`);
+      console.info(`   Parallel:   ${parallelDuration.toFixed(2)}ms`);
+      console.info(`   Speedup:    ${(sequentialDuration / parallelDuration).toFixed(2)}x`);
+      console.info(`   Files/sec:  ${(fileCount / (parallelDuration / 1000)).toFixed(0)}`);
     });
   });
 
@@ -115,7 +115,7 @@ describe('Self-Heal v2.01.05 Performance Benchmarks', () => {
         expect(metrics.hashesGenerated).toBe(1);
         
         const throughputMB = (size / 1024 / 1024) / (hashDuration / 1000);
-        console.log(`🔐 Hashing Performance (${(size / 1024).toFixed(0)}KB): ${hashDuration.toFixed(2)}ms (${throughputMB.toFixed(2)}MB/s)`);
+        console.info(`🔐 Hashing Performance (${(size / 1024).toFixed(0)}KB): ${hashDuration.toFixed(2)}ms (${throughputMB.toFixed(2)}MB/s)`);
 
         // Cleanup for next iteration
         const { $ } = await import('bun');
@@ -162,10 +162,10 @@ describe('Self-Heal v2.01.05 Performance Benchmarks', () => {
       const memoryIncrease = finalMemory.heapUsed - initialMemory.heapUsed;
       const memoryIncreaseMB = memoryIncrease / 1024 / 1024;
 
-      console.log(`💾 Memory Usage Test:`);
-      console.log(`   Initial: ${(initialMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-      console.log(`   Final:   ${(finalMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-      console.log(`   Increase: ${memoryIncreaseMB.toFixed(2)}MB`);
+      console.info(`💾 Memory Usage Test:`);
+      console.info(`   Initial: ${(initialMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+      console.info(`   Final:   ${(finalMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+      console.info(`   Increase: ${memoryIncreaseMB.toFixed(2)}MB`);
 
       // Memory increase should be reasonable in CI/local environments
       expect(memoryIncreaseMB).toBeLessThan(200);
@@ -217,12 +217,12 @@ describe('Self-Heal v2.01.05 Performance Benchmarks', () => {
         expect(metrics.errors.length).toBe(0);
       });
 
-      console.log(`🚀 Concurrent Operations:`);
-      console.log(`   Operations: ${concurrentCount}`);
-      console.log(`   Files per operation: ${filesPerOperation}`);
-      console.log(`   Total files: ${concurrentCount * filesPerOperation}`);
-      console.log(`   Duration: ${concurrentDuration.toFixed(2)}ms`);
-      console.log(`   Throughput: ${((concurrentCount * filesPerOperation) / (concurrentDuration / 1000)).toFixed(0)} files/sec`);
+      console.info(`🚀 Concurrent Operations:`);
+      console.info(`   Operations: ${concurrentCount}`);
+      console.info(`   Files per operation: ${filesPerOperation}`);
+      console.info(`   Total files: ${concurrentCount * filesPerOperation}`);
+      console.info(`   Duration: ${concurrentDuration.toFixed(2)}ms`);
+      console.info(`   Throughput: ${((concurrentCount * filesPerOperation) / (concurrentDuration / 1000)).toFixed(0)} files/sec`);
     });
   });
 
@@ -289,7 +289,7 @@ describe('Self-Heal v2.01.05 Performance Benchmarks', () => {
 
         results.push({ name, duration, metrics });
         
-        console.log(`⚙️  ${name} Configuration: ${duration.toFixed(2)}ms`);
+        console.info(`⚙️  ${name} Configuration: ${duration.toFixed(2)}ms`);
       }
 
       // Minimal should be fastest
@@ -331,10 +331,10 @@ describe('Self-Heal v2.01.05 Performance Benchmarks', () => {
 
         const throughput = fileCount / (duration / 1000);
         
-        console.log(`📈 Scalability Test (${fileCount} files):`);
-        console.log(`   Duration: ${duration.toFixed(2)}ms`);
-        console.log(`   Throughput: ${throughput.toFixed(0)} files/sec`);
-        console.log(`   Memory: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB`);
+        console.info(`📈 Scalability Test (${fileCount} files):`);
+        console.info(`   Duration: ${duration.toFixed(2)}ms`);
+        console.info(`   Throughput: ${throughput.toFixed(0)} files/sec`);
+        console.info(`   Memory: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB`);
 
         expect(metrics.filesFound).toBe(fileCount);
         expect(metrics.filesDeleted).toBe(fileCount);

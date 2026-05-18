@@ -300,17 +300,17 @@ function toTreeNode(node: InheritanceNode): TreeNode {
  * Display class report as ASCII tree
  */
 export function displayClassTree(report: ClassReport): void {
-	console.log("\n🏛️ Class Inheritance Tree\n");
+	console.info("\n🏛️ Class Inheritance Tree\n");
 
 	if (report.inheritance.length === 0) {
-		console.log("  No classes found.\n");
+		console.info("  No classes found.\n");
 		return;
 	}
 
 	for (const root of report.inheritance) {
 		const tree = toTreeNode(root);
-		console.log(renderTree(tree, "", true));
-		console.log();
+		console.info(renderTree(tree, "", true));
+		console.info();
 	}
 }
 
@@ -318,10 +318,10 @@ export function displayClassTree(report: ClassReport): void {
  * Display class report as table
  */
 export function displayClassTable(report: ClassReport): void {
-	console.log("\n🏛️ Class Analysis\n");
+	console.info("\n🏛️ Class Analysis\n");
 
 	// Summary
-	console.log(
+	console.info(
 		Bun.inspect.table(
 			[
 				{ Metric: "Total Classes", Value: report.summary.totalClasses },
@@ -340,7 +340,7 @@ export function displayClassTable(report: ClassReport): void {
 
 	// Class list
 	if (report.classes.length > 0) {
-		console.log("\n📋 Classes\n");
+		console.info("\n📋 Classes\n");
 
 		const tableData = report.classes.slice(0, 30).map((c) => ({
 			Name: `${c.abstract ? "abstract " : ""}${c.name}`,
@@ -353,7 +353,7 @@ export function displayClassTable(report: ClassReport): void {
 			Exported: c.exported ? "✓" : "",
 		}));
 
-		console.log(Bun.inspect.table(tableData, { colors: true }));
+		console.info(Bun.inspect.table(tableData, { colors: true }));
 	}
 }
 
@@ -411,13 +411,13 @@ if (import.meta.main) {
 
 	const analyzer = new ClassAnalyzer();
 
-	console.log(`Analyzing classes in ${path}...`);
+	console.info(`Analyzing classes in ${path}...`);
 
 	analyzer
 		.analyzeDirectory(path)
 		.then((report) => {
 			if (format === "dot") {
-				console.log(exportToDot(report));
+				console.info(exportToDot(report));
 			} else if (format === "table") {
 				displayClassTable(report);
 			} else {

@@ -209,7 +209,7 @@ class MCPRegistryTester {
    * Run all tests
    */
   async runAllTests(): Promise<TestResult[]> {
-    console.log('🧪 Running MCP Registry Component Tests...\n');
+    console.info('🧪 Running MCP Registry Component Tests...\n');
 
     const tests = [
       this.testPackageCompression(),
@@ -228,22 +228,22 @@ class MCPRegistryTester {
    * Display results
    */
   displayResults(): void {
-    console.log('📊 Test Results:\n');
+    console.info('📊 Test Results:\n');
 
     let allPassed = true;
 
     for (const result of this.results) {
       const icon = result.status === 'success' ? '✅' : '❌';
-      console.log(`${icon} Component #${result.component} (${result.endpoint})`);
-      console.log(`   Duration: ${result.duration.toFixed(2)}ms`);
+      console.info(`${icon} Component #${result.component} (${result.endpoint})`);
+      console.info(`   Duration: ${result.duration.toFixed(2)}ms`);
 
       if (result.status === 'success') {
-        console.log(`   Response:`, JSON.stringify(result.response, null, 2));
+        console.info(`   Response:`, JSON.stringify(result.response, null, 2));
       } else {
-        console.log(`   Error: ${result.error}`);
+        console.info(`   Error: ${result.error}`);
         allPassed = false;
       }
-      console.log('');
+      console.info('');
     }
 
     // Verify expected results for Component #55
@@ -252,19 +252,19 @@ class MCPRegistryTester {
       const expected = { binarySize: '4.4MB', reduction: '0.8MB', time: '1.2s' };
       const actual = component55.response as ZigMetricsResponse;
 
-      console.log('🔍 Component #55 Verification:');
-      console.log(`   Expected: ${JSON.stringify(expected)}`);
-      console.log(`   Actual:   ${JSON.stringify(actual)}`);
+      console.info('🔍 Component #55 Verification:');
+      console.info(`   Expected: ${JSON.stringify(expected)}`);
+      console.info(`   Actual:   ${JSON.stringify(actual)}`);
 
       const matches =
         actual.binarySize === expected.binarySize &&
         actual.reduction === expected.reduction &&
         actual.time === expected.time;
 
-      console.log(`   Status: ${matches ? '✅ MATCHES EXPECTED' : '❌ DOES NOT MATCH'}\n`);
+      console.info(`   Status: ${matches ? '✅ MATCHES EXPECTED' : '❌ DOES NOT MATCH'}\n`);
     }
 
-    console.log(allPassed ? '🎉 All tests passed!' : '⚠️  Some tests failed');
+    console.info(allPassed ? '🎉 All tests passed!' : '⚠️  Some tests failed');
   }
 }
 
@@ -274,8 +274,8 @@ async function main() {
 
   // Check if MCP_TOKEN is set
   if (!tester['token']) {
-    console.log('⚠️  MCP_TOKEN environment variable not set');
-    console.log('Using mock data for demonstration...\n');
+    console.info('⚠️  MCP_TOKEN environment variable not set');
+    console.info('Using mock data for demonstration...\n');
 
     // Mock results for demonstration
     const mockResults: TestResult[] = [

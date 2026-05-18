@@ -82,13 +82,13 @@ export function createSpinner(text: string): SpinnerWidget {
   // Fallback for non-macOS or non-TTY
   return {
     start() {
-      console.log(`⏳ ${text}`);
+      console.info(`⏳ ${text}`);
     },
     update(newText: string) {
-      console.log(`⏳ ${newText}`);
+      console.info(`⏳ ${newText}`);
     },
     success(msg: string) {
-      console.log(`✅ ${msg}`);
+      console.info(`✅ ${msg}`);
     },
     error(msg: string) {
       console.error(`❌ ${msg}`);
@@ -138,7 +138,7 @@ export function createProgress(options: ProgressOptions): ProgressWidget {
       process.stdout.write(`\r${title}: [${bar}] ${percent.toFixed(1)}%`);
     },
     stop() {
-      console.log(); // New line after progress
+      console.info(); // New line after progress
     },
   };
 }
@@ -176,19 +176,19 @@ export function displayTable(rows: string[][]): void {
   });
 
   // Print table
-  console.log();
+  console.info();
   rows.forEach((row, rowIndex) => {
     const line = row.map((cell, i) => swPad(cell, colWidths[i] + 2)).join('│');
 
-    console.log(`│ ${line} │`);
+    console.info(`│ ${line} │`);
 
     // Header separator
     if (rowIndex === 0) {
       const sep = colWidths.map(w => '─'.repeat(w + 2)).join('┼');
-      console.log(`├${sep}┤`);
+      console.info(`├${sep}┤`);
     }
   });
-  console.log();
+  console.info();
 }
 
 /**
@@ -285,12 +285,12 @@ export async function smartDeploy<T>(
   const ui = new DeploymentUI(snapshotId);
 
   if (isTerminalUISupported()) {
-    console.log(`🚀 Tier-1380 Deployment with TUI (macOS)`);
+    console.info(`🚀 Tier-1380 Deployment with TUI (macOS)`);
   } else {
-    console.log(`📋 Tier-1380 Deployment (console fallback)`);
-    console.log(`   Platform: ${process.platform} | TTY: ${process.stdout.isTTY}`);
+    console.info(`📋 Tier-1380 Deployment (console fallback)`);
+    console.info(`   Platform: ${process.platform} | TTY: ${process.stdout.isTTY}`);
   }
-  console.log(`   Snapshot: ${snapshotId}\n`);
+  console.info(`   Snapshot: ${snapshotId}\n`);
 
   try {
     const result = await deployFn(ui);
@@ -304,7 +304,7 @@ export async function smartDeploy<T>(
 
 // Entry guard for CLI demo
 if (import.meta.main) {
-  console.log(`
+  console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  Bun.Terminal TUI Demo v4.5                               ║
 ║  Platform: ${process.platform.padEnd(22)} TTY: ${process.stdout.isTTY ? '✅' : '❌'}                  ║

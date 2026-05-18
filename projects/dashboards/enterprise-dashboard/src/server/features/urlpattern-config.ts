@@ -241,7 +241,7 @@ class URLPatternMetricsCollector {
     const errorCount = this.metrics.errors.size;
 
     if (requestCount > 0) {
-      console.log(
+      console.info(
         `[METRICS] requests=${requestCount} avg_latency=${(latencySum / requestCount).toFixed(2)}ms errors=${errorCount}`
       );
     }

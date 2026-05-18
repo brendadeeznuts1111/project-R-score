@@ -10,7 +10,7 @@ describe("NixOS FFI Integration", () => {
 
 		// On NixOS, this should contain /nix/store paths
 		if (includePath.includes("/nix/store")) {
-			console.log("✅ Running on NixOS (or Nix shell)");
+			console.info("✅ Running on NixOS (or Nix shell)");
 
 			// Verify paths are absolute (security check)
 			const paths = includePath.split(":");
@@ -21,7 +21,7 @@ describe("NixOS FFI Integration", () => {
 				}
 			}
 		} else {
-			console.log("⚠️  Not in Nix environment (skipping Nix-specific test)");
+			console.info("⚠️  Not in Nix environment (skipping Nix-specific test)");
 		}
 	});
 
@@ -29,7 +29,7 @@ describe("NixOS FFI Integration", () => {
 		const includePath = process.env.C_INCLUDE_PATH || "";
 
 		if (!includePath.includes("libxml2")) {
-			console.log("⚠️  libxml2 not in C_INCLUDE_PATH, skipping");
+			console.info("⚠️  libxml2 not in C_INCLUDE_PATH, skipping");
 			return;
 		}
 
@@ -56,7 +56,7 @@ describe("NixOS FFI Integration", () => {
 		const libPath = process.env.LIBRARY_PATH || "";
 
 		if (!libPath.includes("/nix/store")) {
-			console.log("⚠️  Not a Nix LIBRARY_PATH, skipping");
+			console.info("⚠️  Not a Nix LIBRARY_PATH, skipping");
 			return;
 		}
 
@@ -82,7 +82,7 @@ describe("NixOS FFI Integration", () => {
 			!includePath.includes("/nix/store") ||
 			!libPath.includes("/nix/store")
 		) {
-			console.log("⚠️  Not in Nix environment, skipping multi-path test");
+			console.info("⚠️  Not in Nix environment, skipping multi-path test");
 			return;
 		}
 
@@ -108,7 +108,7 @@ describe("NixOS FFI Integration", () => {
 		const includePath = process.env.C_INCLUDE_PATH || "";
 
 		if (!includePath.includes("/nix/store")) {
-			console.log("⚠️  Not in Nix environment, skipping validation test");
+			console.info("⚠️  Not in Nix environment, skipping validation test");
 			return;
 		}
 

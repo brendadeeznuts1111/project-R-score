@@ -144,7 +144,7 @@ export class Fantasy42PromoManagement {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🎁 Initializing Fantasy42 Promo Management System...');
+      console.info('🎁 Initializing Fantasy42 Promo Management System...');
 
       // Detect promo type selector
       await this.detectPromoSelector();
@@ -170,7 +170,7 @@ export class Fantasy42PromoManagement {
       await this.initializeSecurityFeatures();
 
       this.isInitialized = true;
-      console.log('✅ Fantasy42 Promo Management System initialized');
+      console.info('✅ Fantasy42 Promo Management System initialized');
 
       return true;
     } catch (error) {
@@ -282,14 +282,14 @@ export class Fantasy42PromoManagement {
     for (const selector of promoSelectors) {
       promoElement = document.querySelector(selector);
       if (promoElement) {
-        console.log(`✅ Found promo selector: ${selector}`);
+        console.info(`✅ Found promo selector: ${selector}`);
         this.setupPromoSelector(promoElement as HTMLSelectElement);
         break;
       }
     }
 
     if (!promoElement) {
-      console.log('⚠️ Promo selector not found, system will initialize on demand');
+      console.info('⚠️ Promo selector not found, system will initialize on demand');
     }
   }
 
@@ -316,7 +316,7 @@ export class Fantasy42PromoManagement {
     // Add visual enhancements
     this.enhancePromoSelector(selector);
 
-    console.log('✅ Promo selector setup complete');
+    console.info('✅ Promo selector setup complete');
   }
 
   /**
@@ -403,7 +403,7 @@ export class Fantasy42PromoManagement {
    * Handle promo type change
    */
   private async handlePromoTypeChange(promoType: string): Promise<void> {
-    console.log(`🎁 Promo type changed to: ${promoType}`);
+    console.info(`🎁 Promo type changed to: ${promoType}`);
 
     if (promoType === 'null' || !promoType) {
       this.clearPromoConfiguration();
@@ -443,7 +443,7 @@ export class Fantasy42PromoManagement {
     // Update validation rules
     this.updateValidationRules(promoType, config);
 
-    console.log(`✅ UI updated for promo type: ${config.name}`);
+    console.info(`✅ UI updated for promo type: ${config.name}`);
   }
 
   /**
@@ -565,7 +565,7 @@ export class Fantasy42PromoManagement {
     // Setup submission validation
     this.setupSubmissionValidation(promoType);
 
-    console.log(`✅ Validation setup for promo type: ${promoType}`);
+    console.info(`✅ Validation setup for promo type: ${promoType}`);
   }
 
   /**
@@ -853,7 +853,7 @@ export class Fantasy42PromoManagement {
     // Clear validation errors
     this.clearAllValidationErrors();
 
-    console.log('🧹 Promo configuration cleared');
+    console.info('🧹 Promo configuration cleared');
   }
 
   /**
@@ -861,7 +861,7 @@ export class Fantasy42PromoManagement {
    */
   private updateValidationRules(promoType: string, config: any): void {
     // Update form validation rules based on promo configuration
-    console.log(`📋 Validation rules updated for: ${config.name}`);
+    console.info(`📋 Validation rules updated for: ${config.name}`);
   }
 
   /**
@@ -871,7 +871,7 @@ export class Fantasy42PromoManagement {
     // Load existing promo credits
     await this.loadPromoCredits();
 
-    console.log('✅ Promo credits initialized');
+    console.info('✅ Promo credits initialized');
   }
 
   /**
@@ -881,7 +881,7 @@ export class Fantasy42PromoManagement {
     // Load existing free play bonuses
     await this.loadFreePlayBonuses();
 
-    console.log('✅ Free play bonuses initialized');
+    console.info('✅ Free play bonuses initialized');
   }
 
   /**
@@ -891,7 +891,7 @@ export class Fantasy42PromoManagement {
     // Setup validation engine
     await this.setupValidationEngine();
 
-    console.log('✅ Validation system initialized');
+    console.info('✅ Validation system initialized');
   }
 
   /**
@@ -901,7 +901,7 @@ export class Fantasy42PromoManagement {
     // Setup allocation engine
     await this.setupAllocationEngine();
 
-    console.log('✅ Allocation system initialized');
+    console.info('✅ Allocation system initialized');
   }
 
   /**
@@ -911,7 +911,7 @@ export class Fantasy42PromoManagement {
     // Setup real-time reporting
     await this.setupRealTimeReporting();
 
-    console.log('✅ Reporting system initialized');
+    console.info('✅ Reporting system initialized');
   }
 
   /**
@@ -921,7 +921,7 @@ export class Fantasy42PromoManagement {
     // Setup security measures
     await this.setupSecurityFeatures();
 
-    console.log('✅ Security features initialized');
+    console.info('✅ Security features initialized');
   }
 
   /**
@@ -929,7 +929,7 @@ export class Fantasy42PromoManagement {
    */
   private async loadPromoCredits(): Promise<void> {
     // Simulate loading promo credits
-    console.log('💰 Promo credits loaded');
+    console.info('💰 Promo credits loaded');
   }
 
   /**
@@ -937,7 +937,7 @@ export class Fantasy42PromoManagement {
    */
   private async loadFreePlayBonuses(): Promise<void> {
     // Simulate loading free play bonuses
-    console.log('🎮 Free play bonuses loaded');
+    console.info('🎮 Free play bonuses loaded');
   }
 
   /**
@@ -945,7 +945,7 @@ export class Fantasy42PromoManagement {
    */
   private async setupValidationEngine(): Promise<void> {
     // Setup validation rules engine
-    console.log('🔍 Validation engine setup');
+    console.info('🔍 Validation engine setup');
   }
 
   /**
@@ -953,7 +953,7 @@ export class Fantasy42PromoManagement {
    */
   private async setupAllocationEngine(): Promise<void> {
     // Setup allocation processing engine
-    console.log('⚙️ Allocation engine setup');
+    console.info('⚙️ Allocation engine setup');
   }
 
   /**
@@ -961,7 +961,7 @@ export class Fantasy42PromoManagement {
    */
   private async setupRealTimeReporting(): Promise<void> {
     // Setup real-time analytics reporting
-    console.log('📊 Real-time reporting setup');
+    console.info('📊 Real-time reporting setup');
   }
 
   /**
@@ -969,7 +969,7 @@ export class Fantasy42PromoManagement {
    */
   private async setupSecurityFeatures(): Promise<void> {
     // Setup security and fraud prevention
-    console.log('🔒 Security features setup');
+    console.info('🔒 Security features setup');
   }
 
   /**
@@ -1120,7 +1120,7 @@ export class Fantasy42PromoManagement {
     await this.loadPromoCredits();
     await this.loadFreePlayBonuses();
 
-    console.log('🔄 Promo data refreshed');
+    console.info('🔄 Promo data refreshed');
   }
 
   /**
@@ -1128,7 +1128,7 @@ export class Fantasy42PromoManagement {
    */
   private trackAnalytics(event: string, data: any): void {
     // Track analytics event
-    console.log('📊 Analytics tracked:', event, data);
+    console.info('📊 Analytics tracked:', event, data);
 
     // Update analytics metrics
     this.updateAnalyticsMetrics(event, data);
@@ -1237,7 +1237,7 @@ export class Fantasy42PromoManagement {
    */
   updateConfiguration(newConfig: Partial<PromoConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    console.log('⚙️ Promo configuration updated');
+    console.info('⚙️ Promo configuration updated');
   }
 
   /**
@@ -1277,7 +1277,7 @@ export class Fantasy42PromoManagement {
     this.eventListeners.clear();
 
     this.isInitialized = false;
-    console.log('🧹 Promo management system cleaned up');
+    console.info('🧹 Promo management system cleaned up');
   }
 }
 

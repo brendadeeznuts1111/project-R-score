@@ -315,7 +315,7 @@ async function main(): Promise<void> {
     }));
   }
 
-  console.log(JSON.stringify(summary, null, 2));
+  console.info(JSON.stringify(summary, null, 2));
 }
 
 if (import.meta.main) {

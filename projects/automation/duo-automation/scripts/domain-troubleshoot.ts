@@ -15,68 +15,68 @@ class DomainTroubleshooter {
   ];
 
   async diagnoseDomains(): Promise<void> {
-    console.log('🔍 Domain Diagnosis Report');
-    console.log('========================');
-    console.log('');
+    console.info('🔍 Domain Diagnosis Report');
+    console.info('========================');
+    console.info('');
 
     for (const domain of this.domains) {
-      console.log(`📊 ${domain}`);
-      console.log(`   Status: Checking...`);
+      console.info(`📊 ${domain}`);
+      console.info(`   Status: Checking...`);
       
       try {
         const response = await fetch(`https://${domain}`, { 
           method: 'HEAD',
           timeout: 5000 
         });
-        console.log(`   ✅ Status: ${response.status}`);
-        console.log(`   ✅ Server: ${response.headers.get('server') || 'Unknown'}`);
-        console.log(`   ✅ SSL: Valid`);
+        console.info(`   ✅ Status: ${response.status}`);
+        console.info(`   ✅ Server: ${response.headers.get('server') || 'Unknown'}`);
+        console.info(`   ✅ SSL: Valid`);
       } catch (error: any) {
-        console.log(`   ❌ Error: ${error.message || 'Connection failed'}`);
-        console.log(`   🔧 Action: Required`);
+        console.info(`   ❌ Error: ${error.message || 'Connection failed'}`);
+        console.info(`   🔧 Action: Required`);
       }
-      console.log('');
+      console.info('');
     }
   }
 
   generateFixCommands(): void {
-    console.log('🔧 Domain Fix Commands');
-    console.log('======================');
-    console.log('');
+    console.info('🔧 Domain Fix Commands');
+    console.info('======================');
+    console.info('');
 
-    console.log('1️⃣ DNS Resolution Check:');
-    console.log('   # Check DNS records');
-    console.log('   dig security.factory-wager.com');
-    console.log('   nslookup security.factory-wager.com');
-    console.log('');
+    console.info('1️⃣ DNS Resolution Check:');
+    console.info('   # Check DNS records');
+    console.info('   dig security.factory-wager.com');
+    console.info('   nslookup security.factory-wager.com');
+    console.info('');
 
-    console.log('2️⃣ SSL Certificate Check:');
-    console.log('   # Check SSL certificate');
-    console.log('   openssl s_client -connect security.factory-wager.com:443');
-    console.log('   curl -I https://security.factory-wager.com');
-    console.log('');
+    console.info('2️⃣ SSL Certificate Check:');
+    console.info('   # Check SSL certificate');
+    console.info('   openssl s_client -connect security.factory-wager.com:443');
+    console.info('   curl -I https://security.factory-wager.com');
+    console.info('');
 
-    console.log('3️⃣ Server Connectivity:');
-    console.log('   # Test server response');
-    console.log('   curl -v https://security.factory-wager.com');
-    console.log('   ping security.factory-wager.com');
-    console.log('');
+    console.info('3️⃣ Server Connectivity:');
+    console.info('   # Test server response');
+    console.info('   curl -v https://security.factory-wager.com');
+    console.info('   ping security.factory-wager.com');
+    console.info('');
 
-    console.log('4️⃣ Alternative Endpoints:');
-    console.log('   # Use working worker endpoint');
-    console.log('   curl https://duoplus-registry.utahj4754.workers.dev/health');
-    console.log('');
+    console.info('4️⃣ Alternative Endpoints:');
+    console.info('   # Use working worker endpoint');
+    console.info('   curl https://duoplus-registry.utahj4754.workers.dev/health');
+    console.info('');
 
-    console.log('5️⃣ Configuration Updates:');
-    console.log('   # Update URLs config to use working endpoints');
-    console.log('   # Replace security.factory-wager.com with worker endpoint');
-    console.log('   # Test all endpoints after changes');
+    console.info('5️⃣ Configuration Updates:');
+    console.info('   # Update URLs config to use working endpoints');
+    console.info('   # Replace security.factory-wager.com with worker endpoint');
+    console.info('   # Test all endpoints after changes');
   }
 
   generateUpdatedConfig(): void {
-    console.log('📝 Updated URL Configuration');
-    console.log('=============================');
-    console.log('');
+    console.info('📝 Updated URL Configuration');
+    console.info('=============================');
+    console.info('');
 
     const updatedUrls = `
 // Updated URLs configuration with working endpoints
@@ -98,27 +98,27 @@ export const URLS = {
 };
     `.trim();
 
-    console.log(updatedUrls);
-    console.log('');
-    console.log('💡 Save this to: ./config/urls-updated.ts');
+    console.info(updatedUrls);
+    console.info('');
+    console.info('💡 Save this to: ./config/urls-updated.ts');
   }
 
   async runDiagnosis(): Promise<void> {
-    console.log('🚀 Domain Troubleshooting Tool');
-    console.log('==============================');
-    console.log('');
+    console.info('🚀 Domain Troubleshooting Tool');
+    console.info('==============================');
+    console.info('');
 
     await this.diagnoseDomains();
     this.generateFixCommands();
     this.generateUpdatedConfig();
 
-    console.log('🎯 Next Steps:');
-    console.log('   1. Run DNS checks to identify the issue');
-    console.log('   2. Update configuration to use working endpoints');
-    console.log('   3. Test all endpoints after updates');
-    console.log('   4. Monitor domain status regularly');
-    console.log('');
-    console.log('✅ Diagnosis complete - Use the commands above to fix issues');
+    console.info('🎯 Next Steps:');
+    console.info('   1. Run DNS checks to identify the issue');
+    console.info('   2. Update configuration to use working endpoints');
+    console.info('   3. Test all endpoints after updates');
+    console.info('   4. Monitor domain status regularly');
+    console.info('');
+    console.info('✅ Diagnosis complete - Use the commands above to fix issues');
   }
 }
 

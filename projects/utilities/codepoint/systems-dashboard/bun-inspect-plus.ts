@@ -140,8 +140,8 @@ function colorize(str: string, theme: string) {
 }
 
 // Demo
-console.log("🎯 Enhanced Bun.inspect with Table Support");
-console.log("==========================================");
+console.info("🎯 Enhanced Bun.inspect with Table Support");
+console.info("==========================================");
 
 const sample = [
   { name: "Bun", speed: 1.8, memory: 45, rating: "🚀" },
@@ -149,8 +149,8 @@ const sample = [
   { name: "Deno", speed: 1.2, memory: 65, rating: "🔥" },
 ];
 
-console.log("\n📊 Enhanced Bun.inspect.table with Custom Borders:");
-console.log(
+console.info("\n📊 Enhanced Bun.inspect.table with Custom Borders:");
+console.info(
   Bun.inspect.table(sample, {
     table: true,
     borderStyle: "double",
@@ -159,7 +159,7 @@ console.log(
   })
 );
 
-console.log("\n🎨 Enhanced Colors in Regular Inspect:");
+console.info("\n🎨 Enhanced Colors in Regular Inspect:");
 const testObj = {
   name: "Test",
   active: true,
@@ -168,7 +168,7 @@ const testObj = {
   items: [1, 2, 3],
 };
 
-console.log(
+console.info(
   Bun.inspect(testObj, {
     colors: true,
     colorTheme: "vscode",

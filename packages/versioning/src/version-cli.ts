@@ -131,7 +131,7 @@ class VersionCLI {
       return;
     }
 
-    console.log(`📝 Registering version ${version} for component ${component}...`);
+    console.info(`📝 Registering version ${version} for component ${component}...`);
 
     const versionId = await this.tracker.registerVersion(component, version, {
       author,
@@ -141,11 +141,11 @@ class VersionCLI {
       tags: tags || [],
     });
 
-    console.log(`✅ Version registered successfully!`);
-    console.log(`   Version ID: ${versionId}`);
-    console.log(`   Component: ${component}`);
-    console.log(`   Version: ${version}`);
-    console.log(`   Author: ${author}`);
+    console.info(`✅ Version registered successfully!`);
+    console.info(`   Version ID: ${versionId}`);
+    console.info(`   Component: ${component}`);
+    console.info(`   Version: ${version}`);
+    console.info(`   Author: ${author}`);
   }
 
   private async handleRollback(options: CLIOptions): Promise<void> {
@@ -169,7 +169,7 @@ class VersionCLI {
         return;
       }
 
-      console.log(`🔄 Rolling back component ${component} to version ${version}...`);
+      console.info(`🔄 Rolling back component ${component} to version ${version}...`);
 
       const result = await this.tracker.rollbackToVersion(
         component,
@@ -180,11 +180,11 @@ class VersionCLI {
       );
 
       if (result.success) {
-        console.log(`✅ Rollback successful!`);
-        console.log(`   Component: ${component}`);
-        console.log(`   From: ${result.message.split(' from ')[1]?.split(' to ')[0]}`);
-        console.log(`   To: ${version}`);
-        console.log(`   Reason: ${rollbackReason}`);
+        console.info(`✅ Rollback successful!`);
+        console.info(`   Component: ${component}`);
+        console.info(`   From: ${result.message.split(' from ')[1]?.split(' to ')[0]}`);
+        console.info(`   To: ${version}`);
+        console.info(`   Reason: ${rollbackReason}`);
       } else {
         console.error(`❌ Rollback failed: ${result.message}`);
       }
@@ -194,19 +194,19 @@ class VersionCLI {
         return;
       }
 
-      console.log(`🔄 Rolling back endpoint ${endpoint} to version ${version}...`);
+      console.info(`🔄 Rolling back endpoint ${endpoint} to version ${version}...`);
 
       const result = await this.tracker.rollbackEndpoint(endpoint, version, rollbackReason, author);
 
-      console.log(`✅ Endpoint rollback completed!`);
-      console.log(`   Endpoint: ${endpoint}`);
-      console.log(`   Success: ${result.success}`);
-      console.log(`   Message: ${result.message}`);
+      console.info(`✅ Endpoint rollback completed!`);
+      console.info(`   Endpoint: ${endpoint}`);
+      console.info(`   Success: ${result.success}`);
+      console.info(`   Message: ${result.message}`);
 
       if (result.components.length > 0) {
-        console.log(`   Affected Components:`);
+        console.info(`   Affected Components:`);
         for (const comp of result.components) {
-          console.log(`     - ${comp.uri}: ${comp.success ? '✅' : '❌'} ${comp.message}`);
+          console.info(`     - ${comp.uri}: ${comp.success ? '✅' : '❌'} ${comp.message}`);
         }
       }
     }
@@ -220,33 +220,33 @@ class VersionCLI {
       const current = this.tracker.getCurrentVersion(component);
 
       if (format === 'json') {
-        console.log(JSON.stringify({ current, history }, null, 2));
+        console.info(JSON.stringify({ current, history }, null, 2));
       } else if (format === 'csv') {
-        console.log('Version,Timestamp,Author,Description,Environment,Tags');
+        console.info('Version,Timestamp,Author,Description,Environment,Tags');
         for (const version of history) {
-          console.log(
+          console.info(
             `"${version.version}","${version.timestamp}","${version.author}","${version.description}","${version.environment}","${version.tags.join(';')}"`
           );
         }
       } else {
-        console.log(`📋 Version History for ${component}\n`);
+        console.info(`📋 Version History for ${component}\n`);
 
         if (current) {
-          console.log(`📍 Current Version: ${current.version} (${current.timestamp})`);
-          console.log(`   Author: ${current.author}`);
-          console.log(`   Description: ${current.description}\n`);
+          console.info(`📍 Current Version: ${current.version} (${current.timestamp})`);
+          console.info(`   Author: ${current.author}`);
+          console.info(`   Description: ${current.description}\n`);
         }
 
-        console.log(`📚 All Versions:`);
+        console.info(`📚 All Versions:`);
         for (const version of history) {
           const isCurrent = version.version === current?.version;
           const marker = isCurrent ? '📍' : '  ';
-          console.log(`${marker} ${version.version}`);
-          console.log(`    📅 ${version.timestamp}`);
-          console.log(`    👤 ${version.author}`);
-          console.log(`    📝 ${version.description}`);
-          console.log(`    🏷️  ${version.tags.join(', ')}`);
-          console.log(`    🌍 ${version.environment}\n`);
+          console.info(`${marker} ${version.version}`);
+          console.info(`    📅 ${version.timestamp}`);
+          console.info(`    👤 ${version.author}`);
+          console.info(`    📝 ${version.description}`);
+          console.info(`    🏷️  ${version.tags.join(', ')}`);
+          console.info(`    🌍 ${version.environment}\n`);
         }
       }
     } else {
@@ -255,21 +255,21 @@ class VersionCLI {
       const components = Object.keys(healthStatus);
 
       if (format === 'json') {
-        console.log(JSON.stringify(components, null, 2));
+        console.info(JSON.stringify(components, null, 2));
       } else if (format === 'csv') {
-        console.log('Component,Current Version,Health Status,Error Rate,Uptime');
+        console.info('Component,Current Version,Health Status,Error Rate,Uptime');
         for (const component of components) {
           const current = this.tracker.getCurrentVersion(component);
           const status = healthStatus[component];
           if (!status) {
             continue;
           }
-          console.log(
+          console.info(
             `"${component}","${current?.version || 'N/A'}","${status.healthStatus}","${status.errorRate}%","${status.uptimePercentage}%"`
           );
         }
       } else {
-        console.log(`📋 All Components (${components.length})\n`);
+        console.info(`📋 All Components (${components.length})\n`);
 
         for (const component of components) {
           const current = this.tracker.getCurrentVersion(component);
@@ -284,11 +284,11 @@ class VersionCLI {
                 ? '⚠️'
                 : '❌';
 
-          console.log(`${healthIcon} ${component}`);
-          console.log(`    📍 Version: ${current?.version || 'N/A'}`);
-          console.log(`    🏥 Health: ${status.healthStatus} (${status.errorRate}% error rate)`);
-          console.log(`    ⏱️  Uptime: ${status.uptimePercentage}%`);
-          console.log(`    👤 Deployed by: ${status.deployedBy}\n`);
+          console.info(`${healthIcon} ${component}`);
+          console.info(`    📍 Version: ${current?.version || 'N/A'}`);
+          console.info(`    🏥 Health: ${status.healthStatus} (${status.errorRate}% error rate)`);
+          console.info(`    ⏱️  Uptime: ${status.uptimePercentage}%`);
+          console.info(`    👤 Deployed by: ${status.deployedBy}\n`);
         }
       }
     }
@@ -303,33 +303,33 @@ class VersionCLI {
       const rollbacks = this.tracker.generateRollbackReport(component);
 
       if (format === 'json') {
-        console.log(JSON.stringify({ current, health, rollbacks }, null, 2));
+        console.info(JSON.stringify({ current, health, rollbacks }, null, 2));
       } else {
-        console.log(`📊 Status for ${component}\n`);
+        console.info(`📊 Status for ${component}\n`);
 
         if (current) {
-          console.log(`📍 Current Version:`);
-          console.log(`    Version: ${current.version}`);
-          console.log(`    Timestamp: ${current.timestamp}`);
-          console.log(`    Author: ${current.author}`);
-          console.log(`    Description: ${current.description}`);
-          console.log(`    Environment: ${current.environment}`);
-          console.log(`    Tags: ${current.tags.join(', ')}\n`);
+          console.info(`📍 Current Version:`);
+          console.info(`    Version: ${current.version}`);
+          console.info(`    Timestamp: ${current.timestamp}`);
+          console.info(`    Author: ${current.author}`);
+          console.info(`    Description: ${current.description}`);
+          console.info(`    Environment: ${current.environment}`);
+          console.info(`    Tags: ${current.tags.join(', ')}\n`);
         }
 
         if (health) {
-          console.log(`🏥 Health Status:`);
-          console.log(`    Status: ${health.healthStatus}`);
-          console.log(`    Error Rate: ${health.errorRate}%`);
-          console.log(`    Uptime: ${health.uptimePercentage}%`);
-          console.log(`    Last Deployed: ${health.lastDeployed}`);
-          console.log(`    Deployed By: ${health.deployedBy}\n`);
+          console.info(`🏥 Health Status:`);
+          console.info(`    Status: ${health.healthStatus}`);
+          console.info(`    Error Rate: ${health.errorRate}%`);
+          console.info(`    Uptime: ${health.uptimePercentage}%`);
+          console.info(`    Last Deployed: ${health.lastDeployed}`);
+          console.info(`    Deployed By: ${health.deployedBy}\n`);
         }
 
-        console.log(`🔄 Rollback Statistics:`);
-        console.log(`    Total Rollbacks: ${rollbacks.totalRollbacks}`);
-        console.log(`    Success Rate: ${rollbacks.successRate.toFixed(2)}%`);
-        console.log(`    Avg Rollback Time: ${rollbacks.averageRollbackTime.toFixed(2)}ms`);
+        console.info(`🔄 Rollback Statistics:`);
+        console.info(`    Total Rollbacks: ${rollbacks.totalRollbacks}`);
+        console.info(`    Success Rate: ${rollbacks.successRate.toFixed(2)}%`);
+        console.info(`    Avg Rollback Time: ${rollbacks.averageRollbackTime.toFixed(2)}ms`);
       }
     } else {
       // Overall system status
@@ -344,7 +344,7 @@ class VersionCLI {
       const failed = Object.values(healthStatus).filter(s => s.healthStatus === 'failed').length;
 
       if (format === 'json') {
-        console.log(
+        console.info(
           JSON.stringify(
             {
               summary: { totalComponents, healthy, degraded, failed },
@@ -356,19 +356,19 @@ class VersionCLI {
           )
         );
       } else {
-        console.log(`📊 System Status Overview\n`);
-        console.log(`📈 Summary:`);
-        console.log(`    Total Components: ${totalComponents}`);
-        console.log(`    ✅ Healthy: ${healthy}`);
-        console.log(`    ⚠️  Degraded: ${degraded}`);
-        console.log(`    ❌ Failed: ${failed}\n`);
+        console.info(`📊 System Status Overview\n`);
+        console.info(`📈 Summary:`);
+        console.info(`    Total Components: ${totalComponents}`);
+        console.info(`    ✅ Healthy: ${healthy}`);
+        console.info(`    ⚠️  Degraded: ${degraded}`);
+        console.info(`    ❌ Failed: ${failed}\n`);
 
-        console.log(`🔄 Rollback Metrics:`);
-        console.log(`    Total Rollbacks: ${rollbackReport.totalRollbacks}`);
-        console.log(`    Success Rate: ${rollbackReport.successRate.toFixed(2)}%`);
-        console.log(`    Average Time: ${rollbackReport.averageRollbackTime.toFixed(2)}ms\n`);
+        console.info(`🔄 Rollback Metrics:`);
+        console.info(`    Total Rollbacks: ${rollbackReport.totalRollbacks}`);
+        console.info(`    Success Rate: ${rollbackReport.successRate.toFixed(2)}%`);
+        console.info(`    Average Time: ${rollbackReport.averageRollbackTime.toFixed(2)}ms\n`);
 
-        console.log(`🏥 Component Health:`);
+        console.info(`🏥 Component Health:`);
         for (const [component, status] of Object.entries(healthStatus)) {
           const icon =
             status.healthStatus === 'healthy'
@@ -376,7 +376,7 @@ class VersionCLI {
               : status.healthStatus === 'degraded'
                 ? '⚠️'
                 : '❌';
-          console.log(`    ${icon} ${component}: ${status.errorRate}% error rate`);
+          console.info(`    ${icon} ${component}: ${status.errorRate}% error rate`);
         }
       }
     }
@@ -391,14 +391,14 @@ class VersionCLI {
         errorRate: Math.random() * 2,
         uptimePercentage: 95 + Math.random() * 5,
       });
-      console.log(`✅ Health metrics updated for ${component}`);
+      console.info(`✅ Health metrics updated for ${component}`);
     } else {
       const healthStatus = this.tracker.getHealthStatus();
 
       if (format === 'json') {
-        console.log(JSON.stringify(healthStatus, null, 2));
+        console.info(JSON.stringify(healthStatus, null, 2));
       } else {
-        console.log(`🏥 Health Status Dashboard\n`);
+        console.info(`🏥 Health Status Dashboard\n`);
 
         for (const [component, status] of Object.entries(healthStatus)) {
           const icon =
@@ -408,11 +408,11 @@ class VersionCLI {
                 ? '⚠️'
                 : '❌';
 
-          console.log(`${icon} ${component}`);
-          console.log(`    Status: ${status.healthStatus}`);
-          console.log(`    Error Rate: ${status.errorRate.toFixed(2)}%`);
-          console.log(`    Uptime: ${status.uptimePercentage.toFixed(2)}%`);
-          console.log(`    Last Deployed: ${status.lastDeployed}\n`);
+          console.info(`${icon} ${component}`);
+          console.info(`    Status: ${status.healthStatus}`);
+          console.info(`    Error Rate: ${status.errorRate.toFixed(2)}%`);
+          console.info(`    Uptime: ${status.uptimePercentage.toFixed(2)}%`);
+          console.info(`    Last Deployed: ${status.lastDeployed}\n`);
         }
       }
     }
@@ -428,16 +428,16 @@ class VersionCLI {
     const auditLog = this.tracker.getAuditLog(filter);
 
     if (format === 'json') {
-      console.log(JSON.stringify(auditLog, null, 2));
+      console.info(JSON.stringify(auditLog, null, 2));
     } else if (format === 'csv') {
-      console.log('Timestamp,Action,Component,Version,Author,Details');
+      console.info('Timestamp,Action,Component,Version,Author,Details');
       for (const entry of auditLog) {
-        console.log(
+        console.info(
           `"${entry.timestamp}","${entry.action}","${entry.componentUri}","${entry.version}","${entry.author}","${entry.details}"`
         );
       }
     } else {
-      console.log(`📋 Audit Log (${auditLog.length} entries)\n`);
+      console.info(`📋 Audit Log (${auditLog.length} entries)\n`);
 
       for (const entry of auditLog) {
         const actionIcon =
@@ -449,12 +449,12 @@ class VersionCLI {
                 ? '❌'
                 : '📋';
 
-        console.log(`${actionIcon} ${entry.timestamp}`);
-        console.log(`    Action: ${entry.action}`);
-        console.log(`    Component: ${entry.componentUri}`);
-        console.log(`    Version: ${entry.version}`);
-        console.log(`    Author: ${entry.author}`);
-        console.log(`    Details: ${entry.details}\n`);
+        console.info(`${actionIcon} ${entry.timestamp}`);
+        console.info(`    Action: ${entry.action}`);
+        console.info(`    Component: ${entry.componentUri}`);
+        console.info(`    Version: ${entry.version}`);
+        console.info(`    Author: ${entry.author}`);
+        console.info(`    Details: ${entry.details}\n`);
       }
     }
   }
@@ -474,31 +474,31 @@ class VersionCLI {
 
     if (output) {
       await Bun.write(output, JSON.stringify(report, null, 2));
-      console.log(`📄 Report saved to ${output}`);
+      console.info(`📄 Report saved to ${output}`);
     } else if (format === 'json') {
-      console.log(JSON.stringify(report, null, 2));
+      console.info(JSON.stringify(report, null, 2));
     } else {
-      console.log(`📊 Version Tracking Report\n`);
-      console.log(`Generated: ${report.timestamp}`);
-      console.log(`Component: ${report.component}\n`);
+      console.info(`📊 Version Tracking Report\n`);
+      console.info(`Generated: ${report.timestamp}`);
+      console.info(`Component: ${report.component}\n`);
 
-      console.log(`🔄 Rollback Metrics:`);
-      console.log(`    Total Rollbacks: ${rollbackReport.totalRollbacks}`);
-      console.log(`    Success Rate: ${rollbackReport.successRate.toFixed(2)}%`);
-      console.log(`    Average Time: ${rollbackReport.averageRollbackTime.toFixed(2)}ms`);
-      console.log(`    Rollbacks by Type:`);
+      console.info(`🔄 Rollback Metrics:`);
+      console.info(`    Total Rollbacks: ${rollbackReport.totalRollbacks}`);
+      console.info(`    Success Rate: ${rollbackReport.successRate.toFixed(2)}%`);
+      console.info(`    Average Time: ${rollbackReport.averageRollbackTime.toFixed(2)}ms`);
+      console.info(`    Rollbacks by Type:`);
       for (const [type, count] of Object.entries(rollbackReport.rollbackByType)) {
-        console.log(`      ${type}: ${count}`);
+        console.info(`      ${type}: ${count}`);
       }
 
       if (rollbackReport.recentRollbacks.length > 0) {
-        console.log(`\n📈 Recent Rollbacks:`);
+        console.info(`\n📈 Recent Rollbacks:`);
         for (const rollback of rollbackReport.recentRollbacks.slice(0, 5)) {
           const statusIcon = rollback.success ? '✅' : '❌';
-          console.log(`    ${statusIcon} ${rollback.timestamp}`);
-          console.log(`      ${rollback.fromVersion} → ${rollback.toVersion}`);
-          console.log(`      Reason: ${rollback.reason}`);
-          console.log(`      Duration: ${rollback.rollbackDuration}ms\n`);
+          console.info(`    ${statusIcon} ${rollback.timestamp}`);
+          console.info(`      ${rollback.fromVersion} → ${rollback.toVersion}`);
+          console.info(`      Reason: ${rollback.reason}`);
+          console.info(`      Duration: ${rollback.rollbackDuration}ms\n`);
         }
       }
     }
@@ -509,24 +509,24 @@ class VersionCLI {
 
     if (endpoint && component) {
       await this.tracker.registerEndpoint(endpoint, component);
-      console.log(`✅ Endpoint ${endpoint} registered for component ${component}`);
+      console.info(`✅ Endpoint ${endpoint} registered for component ${component}`);
     } else {
       // List all endpoints
-      console.log('📋 Endpoint management requires --endpoint and --component for registration');
-      console.log('Use --help for more information');
+      console.info('📋 Endpoint management requires --endpoint and --component for registration');
+      console.info('Use --help for more information');
     }
   }
 
   private async handleMonitor(options: CLIOptions): Promise<void> {
-    console.log('🔍 Starting real-time monitoring...');
-    console.log('Press Ctrl+C to stop\n');
+    console.info('🔍 Starting real-time monitoring...');
+    console.info('Press Ctrl+C to stop\n');
 
     const interval = setInterval(async () => {
       const healthStatus = this.tracker.getHealthStatus();
       const timestamp = new Date().toLocaleTimeString();
 
       console.clear();
-      console.log(`🔍 Real-time Monitoring - ${timestamp}\n`);
+      console.info(`🔍 Real-time Monitoring - ${timestamp}\n`);
 
       for (const [component, status] of Object.entries(healthStatus)) {
         const icon =
@@ -536,19 +536,19 @@ class VersionCLI {
               ? '⚠️'
               : '❌';
 
-        console.log(`${icon} ${component}`);
-        console.log(
+        console.info(`${icon} ${component}`);
+        console.info(
           `   Error Rate: ${status.errorRate.toFixed(2)}% | Uptime: ${status.uptimePercentage.toFixed(2)}%`
         );
       }
 
-      console.log('\nPress Ctrl+C to stop');
+      console.info('\nPress Ctrl+C to stop');
     }, 2000);
 
     // Handle Ctrl+C
     process.on('SIGINT', () => {
       clearInterval(interval);
-      console.log('\n👋 Monitoring stopped');
+      console.info('\n👋 Monitoring stopped');
       process.exit(0);
     });
   }
@@ -568,7 +568,7 @@ class VersionCLI {
   }
 
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🔄 Version Tracking CLI Tool
 
 USAGE:

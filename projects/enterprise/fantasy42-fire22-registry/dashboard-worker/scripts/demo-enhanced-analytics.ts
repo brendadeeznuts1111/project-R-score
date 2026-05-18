@@ -13,7 +13,7 @@ import { RealTimeAlertingSystem } from '../packages/enhanced-logging/src/real-ti
  * Main demo runner
  */
 async function runEnhancedAnalyticsDemo(): Promise<void> {
-  console.log('\n🔥🔥🔥 ENHANCED ANALYTICS & OPTIMIZATION DEMO 🔥🔥🔥\n');
+  console.info('\n🔥🔥🔥 ENHANCED ANALYTICS & OPTIMIZATION DEMO 🔥🔥🔥\n');
 
   // Initialize the enhanced analytics stack
   const analyticsLogger = new AdvancedAnalyticsLogger();
@@ -25,7 +25,7 @@ async function runEnhancedAnalyticsDemo(): Promise<void> {
     cacheMonitor
   );
 
-  console.log('✅ Enhanced Analytics Stack Initialized\n');
+  console.info('✅ Enhanced Analytics Stack Initialized\n');
 
   // Demo 1: Advanced Logging with Sorting and Filtering
   await demonstrateAdvancedLogging(analyticsLogger);
@@ -50,14 +50,14 @@ async function runEnhancedAnalyticsDemo(): Promise<void> {
     alertingSystem
   );
 
-  console.log('\n🎉 Enhanced Analytics Demo Complete!\n');
+  console.info('\n🎉 Enhanced Analytics Demo Complete!\n');
 }
 
 /**
  * Demo 1: Advanced Logging with Sorting and Filtering
  */
 async function demonstrateAdvancedLogging(logger: AdvancedAnalyticsLogger): Promise<void> {
-  console.log('📊 === DEMO 1: ADVANCED LOGGING & ANALYTICS ===\n');
+  console.info('📊 === DEMO 1: ADVANCED LOGGING & ANALYTICS ===\n');
 
   // Generate sample log entries with various scenarios
   const scenarios = [
@@ -111,7 +111,7 @@ async function demonstrateAdvancedLogging(logger: AdvancedAnalyticsLogger): Prom
     },
   ];
 
-  console.log('🎯 Generating Advanced Log Entries:');
+  console.info('🎯 Generating Advanced Log Entries:');
   scenarios.forEach((scenario, index) => {
     logger.logWithAnalytics(
       scenario.severity,
@@ -121,13 +121,13 @@ async function demonstrateAdvancedLogging(logger: AdvancedAnalyticsLogger): Prom
       { demoScenario: index + 1 }
     );
 
-    console.log(
+    console.info(
       `   ${index + 1}. ${scenario.title} (${scenario.analytics.impact} impact, ${scenario.analytics.affectedUsers} users)`
     );
   });
 
   // Demonstrate advanced sorting
-  console.log('\n🔍 Advanced Sorting Results:');
+  console.info('\n🔍 Advanced Sorting Results:');
   const sortedByImpact = logger.getSortedEntries(
     { field: 'affectedUsers', direction: 'desc' },
     {
@@ -137,34 +137,34 @@ async function demonstrateAdvancedLogging(logger: AdvancedAnalyticsLogger): Prom
   );
 
   sortedByImpact.slice(0, 3).forEach((entry, index) => {
-    console.log(`   ${index + 1}. ${entry.message}`);
-    console.log(
+    console.info(`   ${index + 1}. ${entry.message}`);
+    console.info(
       `      Impact: ${entry.impact}, Users: ${entry.affectedUsers}, Recovery: ${entry.recoveryTime}ms`
     );
   });
 
   // Demonstrate actionable insights
-  console.log('\n💡 Actionable Insights Generated:');
+  console.info('\n💡 Actionable Insights Generated:');
   const insights = logger.getActionableInsights();
 
-  console.log(`   Critical Issues Found: ${insights.criticalIssues.length}`);
+  console.info(`   Critical Issues Found: ${insights.criticalIssues.length}`);
   insights.criticalIssues.slice(0, 2).forEach(issue => {
-    console.log(`   • ${issue.issue} (${issue.severity})`);
-    console.log(`     Recommendation: ${issue.recommendation}`);
-    console.log(`     Impact: ${issue.estimatedImpact}`);
+    console.info(`   • ${issue.issue} (${issue.severity})`);
+    console.info(`     Recommendation: ${issue.recommendation}`);
+    console.info(`     Impact: ${issue.estimatedImpact}`);
   });
 
-  console.log(`   Performance Optimizations: ${insights.performanceOptimizations.length}`);
-  console.log(`   Cache Optimizations: ${insights.cacheOptimizations.length}`);
+  console.info(`   Performance Optimizations: ${insights.performanceOptimizations.length}`);
+  console.info(`   Cache Optimizations: ${insights.cacheOptimizations.length}`);
 
-  console.log('\n');
+  console.info('\n');
 }
 
 /**
  * Demo 2: Cache Performance Monitoring
  */
 async function demonstrateCacheMonitoring(cacheMonitor: CacheMonitor): Promise<void> {
-  console.log('🗄️ === DEMO 2: CACHE PERFORMANCE MONITORING ===\n');
+  console.info('🗄️ === DEMO 2: CACHE PERFORMANCE MONITORING ===\n');
 
   // Simulate cache operations
   const cacheOperations = [
@@ -203,7 +203,7 @@ async function demonstrateCacheMonitoring(cacheMonitor: CacheMonitor): Promise<v
     },
   ];
 
-  console.log('📈 Recording Cache Operations:');
+  console.info('📈 Recording Cache Operations:');
   cacheOperations.forEach((op, index) => {
     cacheMonitor.recordCacheOperation(
       op.type,
@@ -216,52 +216,52 @@ async function demonstrateCacheMonitoring(cacheMonitor: CacheMonitor): Promise<v
       op.missReason
     );
 
-    console.log(
+    console.info(
       `   ${index + 1}. ${op.type} ${op.op} ${op.key}: ${op.hit ? 'HIT' : 'MISS'} (${op.latency}ms)`
     );
   });
 
   // Get cache insights
-  console.log('\n🔍 Cache Performance Insights:');
+  console.info('\n🔍 Cache Performance Insights:');
   const insights = cacheMonitor.getCacheInsights();
 
-  console.log(`   Overall Hit Rate: ${(insights.summary.overallHitRate * 100).toFixed(1)}%`);
-  console.log(`   Average Latency: ${insights.summary.averageLatency.toFixed(1)}ms`);
-  console.log(`   Total Operations: ${insights.summary.totalOperations}`);
-  console.log(
+  console.info(`   Overall Hit Rate: ${(insights.summary.overallHitRate * 100).toFixed(1)}%`);
+  console.info(`   Average Latency: ${insights.summary.averageLatency.toFixed(1)}ms`);
+  console.info(`   Total Operations: ${insights.summary.totalOperations}`);
+  console.info(
     `   Cost Savings Opportunity: $${insights.summary.costSavingsOpportunity.toFixed(2)}`
   );
 
   // Show top issues
   if (insights.topIssues.length > 0) {
-    console.log('\n⚠️  Top Cache Issues:');
+    console.info('\n⚠️  Top Cache Issues:');
     insights.topIssues.forEach((issue, index) => {
-      console.log(`   ${index + 1}. ${issue.cacheType}: ${issue.issue} (${issue.severity})`);
-      console.log(`      Impact: ${issue.impact}`);
-      console.log(`      Quick Fix: ${issue.quickFix}`);
+      console.info(`   ${index + 1}. ${issue.cacheType}: ${issue.issue} (${issue.severity})`);
+      console.info(`      Impact: ${issue.impact}`);
+      console.info(`      Quick Fix: ${issue.quickFix}`);
     });
   }
 
   // Show optimization recommendations
   const optimizations = cacheMonitor.getOptimizationRecommendations();
   if (optimizations.length > 0) {
-    console.log('\n🚀 Cache Optimization Recommendations:');
+    console.info('\n🚀 Cache Optimization Recommendations:');
     optimizations.slice(0, 2).forEach((rec, index) => {
-      console.log(`   ${index + 1}. ${rec.title} (${rec.priority} priority)`);
-      console.log(`      Current: ${rec.currentState.value}${rec.currentState.unit}`);
-      console.log(`      Target: ${rec.targetState.value}${rec.targetState.unit}`);
-      console.log(`      Expected: ${rec.targetState.expectedImprovement}`);
+      console.info(`   ${index + 1}. ${rec.title} (${rec.priority} priority)`);
+      console.info(`      Current: ${rec.currentState.value}${rec.currentState.unit}`);
+      console.info(`      Target: ${rec.targetState.value}${rec.targetState.unit}`);
+      console.info(`      Expected: ${rec.targetState.expectedImprovement}`);
     });
   }
 
-  console.log('\n');
+  console.info('\n');
 }
 
 /**
  * Demo 3: Failure Analysis and Tracking
  */
 async function demonstrateFailureAnalysis(logger: AdvancedAnalyticsLogger): Promise<void> {
-  console.log('🔧 === DEMO 3: FAILURE ANALYSIS & TRACKING ===\n');
+  console.info('🔧 === DEMO 3: FAILURE ANALYSIS & TRACKING ===\n');
 
   // Log some failures with comprehensive tracking
   const failures = [
@@ -285,7 +285,7 @@ async function demonstrateFailureAnalysis(logger: AdvancedAnalyticsLogger): Prom
     },
   ];
 
-  console.log('📋 Recording System Failures:');
+  console.info('📋 Recording System Failures:');
   const failureIds: string[] = [];
 
   failures.forEach((failure, index) => {
@@ -299,16 +299,16 @@ async function demonstrateFailureAnalysis(logger: AdvancedAnalyticsLogger): Prom
     );
 
     failureIds.push(failureId);
-    console.log(`   ${index + 1}. ${failure.errorType}`);
-    console.log(
+    console.info(`   ${index + 1}. ${failure.errorType}`);
+    console.info(
       `      Affected: ${failure.affectedUsers} users, ${failure.affectedSystems.length} systems`
     );
-    console.log(`      Root Cause: ${failure.rootCause}`);
-    console.log(`      Failure ID: ${failureId}`);
+    console.info(`      Root Cause: ${failure.rootCause}`);
+    console.info(`      Failure ID: ${failureId}`);
   });
 
   // Simulate resolutions
-  console.log('\n✅ Recording Failure Resolutions:');
+  console.info('\n✅ Recording Failure Resolutions:');
   failureIds.forEach((failureId, index) => {
     const resolutions = [
       {
@@ -349,34 +349,34 @@ async function demonstrateFailureAnalysis(logger: AdvancedAnalyticsLogger): Prom
       resolution.preventionSteps
     );
 
-    console.log(`   ${index + 1}. ${failureId.substring(0, 20)}...`);
-    console.log(`      Resolution: ${resolution.resolution}`);
-    console.log(`      Recovery Time: ${(resolution.recoveryTime / 60000).toFixed(1)} minutes`);
-    console.log(`      Prevention Steps: ${resolution.preventionSteps.length} implemented`);
+    console.info(`   ${index + 1}. ${failureId.substring(0, 20)}...`);
+    console.info(`      Resolution: ${resolution.resolution}`);
+    console.info(`      Recovery Time: ${(resolution.recoveryTime / 60000).toFixed(1)} minutes`);
+    console.info(`      Prevention Steps: ${resolution.preventionSteps.length} implemented`);
   });
 
   // Show failure analysis
-  console.log('\n📊 Failure Analysis Summary:');
+  console.info('\n📊 Failure Analysis Summary:');
   const failureAnalysis = logger.getFailureAnalysis();
   if (Array.isArray(failureAnalysis) && failureAnalysis.length > 0) {
-    console.log(`   Total Failures Tracked: ${failureAnalysis.length}`);
-    console.log(
+    console.info(`   Total Failures Tracked: ${failureAnalysis.length}`);
+    console.info(
       `   Average Recovery Time: ${failureAnalysis.reduce((sum, f) => sum + f.averageRecoveryTime, 0) / failureAnalysis.length / 60000} minutes`
     );
-    console.log(`   Most Common Issue: ${failureAnalysis[0]?.errorType || 'N/A'}`);
+    console.info(`   Most Common Issue: ${failureAnalysis[0]?.errorType || 'N/A'}`);
   }
 
-  console.log('\n');
+  console.info('\n');
 }
 
 /**
  * Demo 4: Real-time Alerting
  */
 async function demonstrateRealTimeAlerting(alertingSystem: RealTimeAlertingSystem): Promise<void> {
-  console.log('🚨 === DEMO 4: REAL-TIME ALERTING SYSTEM ===\n');
+  console.info('🚨 === DEMO 4: REAL-TIME ALERTING SYSTEM ===\n');
 
   // Create some test alerts
-  console.log('🎯 Creating Sample Alerts:');
+  console.info('🎯 Creating Sample Alerts:');
 
   const alert1 = alertingSystem.createAlert(
     'CRITICAL',
@@ -412,119 +412,119 @@ async function demonstrateRealTimeAlerting(alertingSystem: RealTimeAlertingSyste
     { lKey: 'L4001', entityId: 'CACHE_KV', component: 'cache-system' }
   );
 
-  console.log(`   1. ${alert1.title} (${alert1.severity})`);
-  console.log(
+  console.info(`   1. ${alert1.title} (${alert1.severity})`);
+  console.info(
     `      Metric: ${alert1.metric.currentValue}${alert1.metric.unit} > ${alert1.metric.threshold}${alert1.metric.unit}`
   );
-  console.log(`      Impact: ${alert1.impact.affected.users} users affected`);
-  console.log(`      Automatic Actions: ${alert1.automaticActions.length} triggered`);
+  console.info(`      Impact: ${alert1.impact.affected.users} users affected`);
+  console.info(`      Automatic Actions: ${alert1.automaticActions.length} triggered`);
 
-  console.log(`   2. ${alert2.title} (${alert2.severity})`);
-  console.log(
+  console.info(`   2. ${alert2.title} (${alert2.severity})`);
+  console.info(
     `      Metric: ${alert2.metric.currentValue}${alert2.metric.unit} < ${alert2.metric.threshold}${alert2.metric.unit}`
   );
-  console.log(
+  console.info(
     `      Impact: ${alert2.impact.technical.performanceDegradation * 100}% performance degradation`
   );
 
   // Simulate alert acknowledgment and resolution
-  console.log('\n👤 Simulating Alert Management:');
+  console.info('\n👤 Simulating Alert Management:');
 
   alertingSystem.acknowledgeAlert(alert1.id, 'john.doe@example.com');
-  console.log(`   Alert ${alert1.id.substring(0, 12)}... acknowledged by john.doe@example.com`);
+  console.info(`   Alert ${alert1.id.substring(0, 12)}... acknowledged by john.doe@example.com`);
 
   setTimeout(() => {
     alertingSystem.resolveAlert(
       alert1.id,
       'Response time normalized after scaling up instances and optimizing database queries'
     );
-    console.log(`   Alert ${alert1.id.substring(0, 12)}... resolved: Response time normalized`);
+    console.info(`   Alert ${alert1.id.substring(0, 12)}... resolved: Response time normalized`);
   }, 1000);
 
   // Show alert summary
-  console.log('\n📊 Alert System Summary:');
+  console.info('\n📊 Alert System Summary:');
   const summary = alertingSystem.getAlertSummary();
 
-  console.log(`   Active Alerts: ${summary.totals.active}`);
-  console.log(`   By Severity:`);
+  console.info(`   Active Alerts: ${summary.totals.active}`);
+  console.info(`   By Severity:`);
   Object.entries(summary.totals.bySeverity).forEach(([severity, count]) => {
     if (count > 0) {
-      console.log(`     ${severity}: ${count}`);
+      console.info(`     ${severity}: ${count}`);
     }
   });
 
   if (summary.predictions.length > 0) {
-    console.log(`   Predictions:`);
+    console.info(`   Predictions:`);
     summary.predictions.slice(0, 2).forEach((pred, index) => {
-      console.log(
+      console.info(
         `     ${index + 1}. ${pred.predictedIssue} (${(pred.probability * 100).toFixed(0)}% probability in ${Math.floor(pred.timeToImpact / 60)}min)`
       );
     });
   }
 
-  console.log('\n');
+  console.info('\n');
 }
 
 /**
  * Demo 5: Performance Optimization
  */
 async function demonstratePerformanceOptimization(optimizer: PerformanceOptimizer): Promise<void> {
-  console.log('⚡ === DEMO 5: PERFORMANCE OPTIMIZATION ===\n');
+  console.info('⚡ === DEMO 5: PERFORMANCE OPTIMIZATION ===\n');
 
   // Analyze current performance
-  console.log('🔍 Analyzing System Performance:');
+  console.info('🔍 Analyzing System Performance:');
   const analysis = optimizer.analyzePerformance();
 
-  console.log(`   Current Metrics:`);
-  console.log(`     Response Time P95: ${analysis.currentMetrics.responseTime.p95.toFixed(1)}ms`);
-  console.log(
+  console.info(`   Current Metrics:`);
+  console.info(`     Response Time P95: ${analysis.currentMetrics.responseTime.p95.toFixed(1)}ms`);
+  console.info(
     `     Request Rate: ${analysis.currentMetrics.throughput.requestsPerSecond.toFixed(1)} RPS`
   );
-  console.log(`     Error Rate: ${(analysis.currentMetrics.errorRates.total * 100).toFixed(2)}%`);
-  console.log(
+  console.info(`     Error Rate: ${(analysis.currentMetrics.errorRates.total * 100).toFixed(2)}%`);
+  console.info(
     `     Cache Hit Rate: ${(analysis.currentMetrics.cachePerformance.overallHitRate * 100).toFixed(1)}%`
   );
 
   // Show optimization recommendations
-  console.log('\n🚀 Performance Optimization Recommendations:');
+  console.info('\n🚀 Performance Optimization Recommendations:');
   analysis.recommendations.slice(0, 2).forEach((rec, index) => {
-    console.log(`   ${index + 1}. ${rec.title} (${rec.priority} Priority)`);
-    console.log(`      Category: ${rec.category}`);
-    console.log(`      Current: ${rec.currentState.value}${rec.currentState.unit}`);
-    console.log(
+    console.info(`   ${index + 1}. ${rec.title} (${rec.priority} Priority)`);
+    console.info(`      Category: ${rec.category}`);
+    console.info(`      Current: ${rec.currentState.value}${rec.currentState.unit}`);
+    console.info(
       `      Target: ${rec.targetState.value}${rec.targetState.unit} (${rec.targetState.expectedImprovement})`
     );
-    console.log(`      Expected Benefits:`);
-    console.log(`        • Performance: ${rec.expectedBenefits.performanceGain}`);
-    console.log(`        • Cost: ${rec.expectedBenefits.costSavings}`);
-    console.log(`        • Risk: ${rec.expectedBenefits.riskReduction}`);
-    console.log(
+    console.info(`      Expected Benefits:`);
+    console.info(`        • Performance: ${rec.expectedBenefits.performanceGain}`);
+    console.info(`        • Cost: ${rec.expectedBenefits.costSavings}`);
+    console.info(`        • Risk: ${rec.expectedBenefits.riskReduction}`);
+    console.info(
       `      Implementation: ${rec.estimatedEffort} effort, ${rec.implementationSteps.length} steps`
     );
   });
 
   // Show cache optimizations
-  console.log('\n🗄️ Cache-Specific Optimizations:');
+  console.info('\n🗄️ Cache-Specific Optimizations:');
   const cacheOptimizations = optimizer.getCacheOptimizations();
   cacheOptimizations.slice(0, 2).forEach((opt, index) => {
-    console.log(`   ${index + 1}. ${opt.cacheType}: ${opt.issue}`);
-    console.log(`      Recommendation: ${opt.recommendation}`);
-    console.log(`      Expected: ${opt.expectedImprovement}`);
-    console.log(`      Priority: ${opt.priority}`);
+    console.info(`   ${index + 1}. ${opt.cacheType}: ${opt.issue}`);
+    console.info(`      Recommendation: ${opt.recommendation}`);
+    console.info(`      Expected: ${opt.expectedImprovement}`);
+    console.info(`      Priority: ${opt.priority}`);
   });
 
   // Show performance trends
   if (analysis.trends.length > 0) {
-    console.log('\n📈 Performance Trends:');
+    console.info('\n📈 Performance Trends:');
     analysis.trends.forEach((trend, index) => {
       const arrow = trend.direction === 'up' ? '↗️' : trend.direction === 'down' ? '↘️' : '➡️';
-      console.log(
+      console.info(
         `   ${index + 1}. ${trend.metric}: ${arrow} ${trend.changePercent.toFixed(1)}% (${trend.significance} significance)`
       );
     });
   }
 
-  console.log('\n');
+  console.info('\n');
 }
 
 /**
@@ -536,42 +536,42 @@ async function demonstrateDashboardIntegration(
   cacheMonitor: CacheMonitor,
   alertingSystem: RealTimeAlertingSystem
 ): Promise<void> {
-  console.log('📊 === DEMO 6: COMPREHENSIVE DASHBOARD DATA ===\n');
+  console.info('📊 === DEMO 6: COMPREHENSIVE DASHBOARD DATA ===\n');
 
   // Get dashboard data from performance optimizer
   const dashboardData = performanceOptimizer.getDashboardData();
 
-  console.log('🎛️ Real-time Dashboard Metrics:');
-  console.log(`   Active Users: ${dashboardData.realTimeMetrics.activeUsers.toLocaleString()}`);
-  console.log(`   Requests/Sec: ${dashboardData.realTimeMetrics.requestsPerSecond.toFixed(1)}`);
-  console.log(
+  console.info('🎛️ Real-time Dashboard Metrics:');
+  console.info(`   Active Users: ${dashboardData.realTimeMetrics.activeUsers.toLocaleString()}`);
+  console.info(`   Requests/Sec: ${dashboardData.realTimeMetrics.requestsPerSecond.toFixed(1)}`);
+  console.info(
     `   Avg Response Time: ${dashboardData.realTimeMetrics.averageResponseTime.toFixed(1)}ms`
   );
-  console.log(`   Error Rate: ${(dashboardData.realTimeMetrics.errorRate * 100).toFixed(3)}%`);
-  console.log(
+  console.info(`   Error Rate: ${(dashboardData.realTimeMetrics.errorRate * 100).toFixed(3)}%`);
+  console.info(
     `   Cache Hit Rate: ${(dashboardData.realTimeMetrics.cacheHitRate * 100).toFixed(1)}%`
   );
 
-  console.log('\n🚨 Alert Status:');
-  console.log(`   Critical: ${dashboardData.alerts.critical}`);
-  console.log(`   Warning: ${dashboardData.alerts.warning}`);
-  console.log(`   Info: ${dashboardData.alerts.info}`);
+  console.info('\n🚨 Alert Status:');
+  console.info(`   Critical: ${dashboardData.alerts.critical}`);
+  console.info(`   Warning: ${dashboardData.alerts.warning}`);
+  console.info(`   Info: ${dashboardData.alerts.info}`);
 
-  console.log('\n⚠️ Top Issues:');
+  console.info('\n⚠️ Top Issues:');
   dashboardData.topIssues.forEach((issue, index) => {
-    console.log(`   ${index + 1}. ${issue.title} (${issue.severity})`);
-    console.log(`      Occurrences: ${issue.count}, Trend: ${issue.trend}`);
+    console.info(`   ${index + 1}. ${issue.title} (${issue.severity})`);
+    console.info(`      Occurrences: ${issue.count}, Trend: ${issue.trend}`);
   });
 
-  console.log('\n💡 Optimization Opportunities:');
+  console.info('\n💡 Optimization Opportunities:');
   dashboardData.optimizationOpportunities.slice(0, 3).forEach((opp, index) => {
-    console.log(`   ${index + 1}. ${opp.title}`);
-    console.log(`      Impact: ${opp.impact}, Effort: ${opp.effort}, ROI: ${opp.roi.toFixed(1)}x`);
+    console.info(`   ${index + 1}. ${opp.title}`);
+    console.info(`      Impact: ${opp.impact}, Effort: ${opp.effort}, ROI: ${opp.roi.toFixed(1)}x`);
   });
 
-  console.log('\n🏥 System Health:');
-  console.log(`   Overall Health Score: ${dashboardData.systemHealth.overall.toFixed(1)}/100`);
-  console.log(`   Component Health:`);
+  console.info('\n🏥 System Health:');
+  console.info(`   Overall Health Score: ${dashboardData.systemHealth.overall.toFixed(1)}/100`);
+  console.info(`   Component Health:`);
   dashboardData.systemHealth.components.forEach((health, component) => {
     const status =
       health >= 90
@@ -581,31 +581,31 @@ async function demonstrateDashboardIntegration(
           : health >= 60
             ? '🟠 Warning'
             : '🔴 Critical';
-    console.log(`     ${component}: ${health.toFixed(1)}/100 ${status}`);
+    console.info(`     ${component}: ${health.toFixed(1)}/100 ${status}`);
   });
 
   // Generate comprehensive performance summary
-  console.log('\n📋 Performance Summary Report:');
-  console.log('   ════════════════════════════════════════════════════');
-  console.log('   🔥 Fire22 Enhanced Analytics System Status');
-  console.log('   ════════════════════════════════════════════════════');
-  console.log('   ✅ Advanced Logging: Operational with L-Key integration');
-  console.log('   ✅ Cache Monitoring: Active with optimization recommendations');
-  console.log('   ✅ Failure Tracking: Complete with root cause analysis');
-  console.log('   ✅ Real-time Alerting: Active with predictive capabilities');
-  console.log('   ✅ Performance Optimization: Generating actionable insights');
-  console.log('   ✅ Dashboard Integration: Real-time metrics and trends');
-  console.log('   ════════════════════════════════════════════════════');
-  console.log('   📊 Key Improvements Delivered:');
-  console.log('   • Advanced sorting & filtering of 1.2M+ log entries');
-  console.log('   • Actionable insights with failure root cause analysis');
-  console.log('   • Comprehensive cache monitoring (KV, R2, Memory, CDN)');
-  console.log('   • Real-time alerting with predictive failure detection');
-  console.log('   • Performance optimization recommendations with ROI analysis');
-  console.log('   • Enhanced dashboard with system health scoring');
-  console.log('   ════════════════════════════════════════════════════\n');
+  console.info('\n📋 Performance Summary Report:');
+  console.info('   ════════════════════════════════════════════════════');
+  console.info('   🔥 Fire22 Enhanced Analytics System Status');
+  console.info('   ════════════════════════════════════════════════════');
+  console.info('   ✅ Advanced Logging: Operational with L-Key integration');
+  console.info('   ✅ Cache Monitoring: Active with optimization recommendations');
+  console.info('   ✅ Failure Tracking: Complete with root cause analysis');
+  console.info('   ✅ Real-time Alerting: Active with predictive capabilities');
+  console.info('   ✅ Performance Optimization: Generating actionable insights');
+  console.info('   ✅ Dashboard Integration: Real-time metrics and trends');
+  console.info('   ════════════════════════════════════════════════════');
+  console.info('   📊 Key Improvements Delivered:');
+  console.info('   • Advanced sorting & filtering of 1.2M+ log entries');
+  console.info('   • Actionable insights with failure root cause analysis');
+  console.info('   • Comprehensive cache monitoring (KV, R2, Memory, CDN)');
+  console.info('   • Real-time alerting with predictive failure detection');
+  console.info('   • Performance optimization recommendations with ROI analysis');
+  console.info('   • Enhanced dashboard with system health scoring');
+  console.info('   ════════════════════════════════════════════════════\n');
 
-  console.log('\n');
+  console.info('\n');
 }
 
 /**

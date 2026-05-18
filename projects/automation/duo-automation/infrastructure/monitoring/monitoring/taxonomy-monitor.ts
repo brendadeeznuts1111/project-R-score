@@ -30,7 +30,7 @@ class TaxonomyMonitor {
    * Start monitoring
    */
   public start(): void {
-    console.log(`🔍 Starting taxonomy monitoring with ${this.config.intervalMs}ms interval`);
+    console.info(`🔍 Starting taxonomy monitoring with ${this.config.intervalMs}ms interval`);
     
     // Run initial check
     this.performHealthCheck();
@@ -52,7 +52,7 @@ class TaxonomyMonitor {
     if (this.interval) {
       clearInterval(this.interval);
       this.interval = null;
-      console.log('🛑 Taxonomy monitoring stopped');
+      console.info('🛑 Taxonomy monitoring stopped');
       process.exit(0);
     }
   }
@@ -88,7 +88,7 @@ class TaxonomyMonitor {
               .forEach(r => console.warn(`   ⚠️  ${r.nodeId}: ${r.message}`));
           }
         } else if (this.config.logLevel === 'info') {
-          console.log(`✅ ${summary}`);
+          console.info(`✅ ${summary}`);
         }
       }
 
@@ -183,7 +183,7 @@ if (import.meta.main) {
     } else if (arg === '--no-file-log') {
       config.reportToFile = false;
     } else if (arg === '--help') {
-      console.log(`
+      console.info(`
 Taxonomy Monitor - Continuous health monitoring for versioned taxonomy
 
 Usage: bun run monitoring/taxonomy-monitor.ts [options]

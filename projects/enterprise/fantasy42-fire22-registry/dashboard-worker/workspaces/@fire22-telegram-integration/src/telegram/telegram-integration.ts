@@ -57,7 +57,7 @@ export class Fire22TelegramIntegration {
   };
 
   constructor(env: any) {
-    console.log('🔥📱 Initializing Fire22 Telegram Integration...');
+    console.info('🔥📱 Initializing Fire22 Telegram Integration...');
 
     // Initialize core components
     this.environment = TelegramEnvironment.getInstance(env);
@@ -87,7 +87,7 @@ export class Fire22TelegramIntegration {
   // !==!==!==!==!==!==!==!==!==!==!==!==!==!====
 
   private validateConfiguration(): void {
-    console.log('🔍 Validating Telegram integration configuration...');
+    console.info('🔍 Validating Telegram integration configuration...');
 
     const validation = this.environment.validateRequiredSecrets();
     if (!validation.valid) {
@@ -97,39 +97,39 @@ export class Fire22TelegramIntegration {
     }
 
     const configSummary = this.environment.getConfigSummary();
-    console.log('✅ Configuration validation successful:', configSummary);
+    console.info('✅ Configuration validation successful:', configSummary);
   }
 
   public async initialize(): Promise<void> {
     if (this.isInitialized) {
-      console.log('⚠️ Integration already initialized');
+      console.info('⚠️ Integration already initialized');
       return;
     }
 
-    console.log('🚀 Starting Fire22 Telegram Integration initialization...');
+    console.info('🚀 Starting Fire22 Telegram Integration initialization...');
 
     try {
       // Initialize language system
       await this.languageSystem.initialize();
-      console.log('✅ Language system initialized');
+      console.info('✅ Language system initialized');
 
       // Load language codes and translations
       await this.languageSystem.loadTranslations();
-      console.log('✅ Translations loaded');
+      console.info('✅ Translations loaded');
 
       // Initialize queue system (if needed)
-      console.log('✅ Queue system ready');
+      console.info('✅ Queue system ready');
 
       // Set up integrations
       if (this.environment.database) {
         // Set API handler for legacy bot
         // this.telegramBot.setAPIHandler(apiHandler, this.environment);
-        console.log('✅ API integration configured');
+        console.info('✅ API integration configured');
       }
 
       this.isInitialized = true;
       this.startTime = new Date();
-      console.log('🎉 Fire22 Telegram Integration initialized successfully!');
+      console.info('🎉 Fire22 Telegram Integration initialized successfully!');
     } catch (error) {
       console.error('❌ Failed to initialize Telegram integration:', error);
       throw error;
@@ -146,20 +146,20 @@ export class Fire22TelegramIntegration {
     }
 
     if (this.isRunning) {
-      console.log('⚠️ Integration already running');
+      console.info('⚠️ Integration already running');
       return;
     }
 
-    console.log('🔥📱 Starting Fire22 Telegram Bot Integration...');
+    console.info('🔥📱 Starting Fire22 Telegram Bot Integration...');
 
     try {
       // Start workflow orchestrator (main bot)
       await this.workflowOrchestrator.start();
-      console.log('✅ Workflow orchestrator started');
+      console.info('✅ Workflow orchestrator started');
 
       // Start background processes
       this.startPeriodicTasks();
-      console.log('✅ Background tasks started');
+      console.info('✅ Background tasks started');
 
       this.isRunning = true;
       this.logStartupSummary();
@@ -171,16 +171,16 @@ export class Fire22TelegramIntegration {
 
   public async stop(): Promise<void> {
     if (!this.isRunning) {
-      console.log('⚠️ Integration not running');
+      console.info('⚠️ Integration not running');
       return;
     }
 
-    console.log('🛑 Stopping Fire22 Telegram Integration...');
+    console.info('🛑 Stopping Fire22 Telegram Integration...');
 
     try {
       // Stop workflow orchestrator
       await this.workflowOrchestrator.stop();
-      console.log('✅ Workflow orchestrator stopped');
+      console.info('✅ Workflow orchestrator stopped');
 
       this.isRunning = false;
       this.logShutdownSummary();
@@ -230,7 +230,7 @@ export class Fire22TelegramIntegration {
 
     // Log metrics if in development
     if (this.environment.isDevelopment) {
-      console.log('📊 System Metrics:', this.systemMetrics);
+      console.info('📊 System Metrics:', this.systemMetrics);
     }
   }
 
@@ -316,7 +316,7 @@ export class Fire22TelegramIntegration {
 
       // Pass to workflow orchestrator for processing
       // Note: This would need proper integration with Grammy bot instance
-      console.log('📨 Processing webhook update:', update);
+      console.info('📨 Processing webhook update:', update);
     } catch (error) {
       console.error('❌ Error processing webhook update:', error);
       this.systemMetrics.errors++;
@@ -326,7 +326,7 @@ export class Fire22TelegramIntegration {
   public async sendNotification(userId: string, message: string, options?: any): Promise<void> {
     try {
       // Use workflow orchestrator to send notifications
-      console.log(`📢 Sending notification to ${userId}: ${message}`);
+      console.info(`📢 Sending notification to ${userId}: ${message}`);
     } catch (error) {
       console.error('❌ Error sending notification:', error);
       this.systemMetrics.errors++;
@@ -352,7 +352,7 @@ export class Fire22TelegramIntegration {
   private logStartupSummary(): void {
     const configSummary = this.environment.getConfigSummary();
 
-    console.log(`
+    console.info(`
 🔥📱 Fire22 Telegram Integration Started Successfully!
 ════════════════════════════════════════════════════
 
@@ -389,7 +389,7 @@ Department Workflows: ${this.workflowOrchestrator.getDepartmentWorkflows().join(
   private logShutdownSummary(): void {
     const uptime = this.startTime ? Date.now() - this.startTime.getTime() : 0;
 
-    console.log(`
+    console.info(`
 🛑 Fire22 Telegram Integration Shutdown Summary
 ══════════════════════════════════════════════
 

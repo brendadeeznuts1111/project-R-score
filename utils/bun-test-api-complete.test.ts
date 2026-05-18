@@ -13,8 +13,8 @@ import {
   vi 
 } from "bun:test";
 
-console.log('🚀 Complete Bun Test API Demonstration');
-console.log('==========================================');
+console.info('🚀 Complete Bun Test API Demonstration');
+console.info('==========================================');
 
 // Global test data
 let testData: string[] = [];
@@ -25,43 +25,43 @@ describe('Bun Test API - Complete Reference', () => {
   
   // 🔄 beforeAll() - Runs once before all tests in this describe
   beforeAll(async () => {
-    console.log('🔧 beforeAll: Setting up test suite...');
+    console.info('🔧 beforeAll: Setting up test suite...');
     testData = ['item1', 'item2', 'item3'];
     
     // Simulate async setup
     await new Promise(resolve => setTimeout(resolve, 10));
-    console.log('✅ beforeAll: Test suite setup complete');
+    console.info('✅ beforeAll: Test suite setup complete');
   });
 
   // 🔄 beforeEach() - Runs before each test
   beforeEach(() => {
-    console.log('🔧 beforeEach: Preparing for test...');
+    console.info('🔧 beforeEach: Preparing for test...');
     mockData = { counter: 0, name: 'test' };
   });
 
   // 🧹 afterEach() - Runs after each test
   afterEach(() => {
-    console.log('🧹 afterEach: Cleaning up after test...');
+    console.info('🧹 afterEach: Cleaning up after test...');
     mockData = {};
   });
 
   // 🧹 afterAll() - Runs once after all tests in this describe
   afterAll(() => {
-    console.log('🧹 afterAll: Cleaning up test suite...');
+    console.info('🧹 afterAll: Cleaning up test suite...');
     testData = [];
-    console.log('✅ afterAll: Test suite cleanup complete');
+    console.info('✅ afterAll: Test suite cleanup complete');
   });
 
   // 📝 test() - Basic test function (alias for it())
   test('test() function works like it()', () => {
-    console.log('📝 Testing test() function...');
+    console.info('📝 Testing test() function...');
     expect(true).toBe(true);
     expect(testData).toHaveLength(3);
   });
 
   // 📝 it() - Individual test case
   it('it() function for individual tests', () => {
-    console.log('📝 Testing it() function...');
+    console.info('📝 Testing it() function...');
     expect(mockData.counter).toBe(0);
     expect(mockData.name).toBe('test');
   });
@@ -282,19 +282,19 @@ describe('Bun Test API - Complete Reference', () => {
     describe('Level 2 - Inner Suite', () => {
       
       beforeEach(() => {
-        console.log('🔧 beforeEach: Inner suite setup');
+        console.info('🔧 beforeEach: Inner suite setup');
       });
       
       it('nested test works', () => {
         expect(true).toBe(true);
-        console.log('📝 Nested test executed');
+        console.info('📝 Nested test executed');
       });
       
       describe('Level 3 - Deep Nested', () => {
         
         it('deeply nested test', () => {
           expect('deep').toBe('deep');
-          console.log('📝 Deeply nested test executed');
+          console.info('📝 Deeply nested test executed');
         });
       });
     });
@@ -315,7 +315,7 @@ describe('Bun Test API - Complete Reference', () => {
     it('skip test conditionally', () => {
       // Test skipping (conceptual - Bun uses test.skip())
       if (process.env.SKIP_SLOW_TESTS) {
-        console.log('⏭️ Test skipped due to environment');
+        console.info('⏭️ Test skipped due to environment');
         return;
       }
       
@@ -352,6 +352,6 @@ describe('Test Metadata and Reporting', () => {
   });
 });
 
-console.log('✅ Complete Bun Test API demonstration configured');
-console.log('📋 All imports and patterns demonstrated');
-console.log('🚀 Ready to run comprehensive test suite');
+console.info('✅ Complete Bun Test API demonstration configured');
+console.info('📋 All imports and patterns demonstrated');
+console.info('🚀 Ready to run comprehensive test suite');

@@ -43,7 +43,7 @@ class SimpleAdminCLI {
       return await response.json();
     } catch (error) {
       console.error(`❌ API Error: ${(error as Error).message}`);
-      console.log('📡 Note: This would work when deployed to Cloudflare Workers');
+      console.info('📡 Note: This would work when deployed to Cloudflare Workers');
       return this.getMockData(endpoint);
     }
   }
@@ -92,33 +92,33 @@ class SimpleAdminCLI {
   }
 
   async showStatus(): Promise<void> {
-    console.log('🏭 Factory-Wager System Status');
-    console.log('='.repeat(40));
+    console.info('🏭 Factory-Wager System Status');
+    console.info('='.repeat(40));
 
     const data = await this.makeAPIRequest('/api/system/status');
 
-    console.log(`📊 Overall Status: ${data.domains.status.toUpperCase()}`);
-    console.log(`🌐 Total Domains: ${data.domains.totalDomains}`);
-    console.log(`✅ Healthy: ${data.domains.healthyDomains}`);
-    console.log(`⚠️ Warning: ${data.domains.warningDomains}`);
-    console.log(`❌ Critical: ${data.domains.criticalDomains}`);
-    console.log(`📋 DNS Records: ${data.dns.totalRecords}`);
-    console.log(`⏰ Last Update: ${new Date(data.timestamp).toLocaleString()}`);
-    console.log('');
+    console.info(`📊 Overall Status: ${data.domains.status.toUpperCase()}`);
+    console.info(`🌐 Total Domains: ${data.domains.totalDomains}`);
+    console.info(`✅ Healthy: ${data.domains.healthyDomains}`);
+    console.info(`⚠️ Warning: ${data.domains.warningDomains}`);
+    console.info(`❌ Critical: ${data.domains.criticalDomains}`);
+    console.info(`📋 DNS Records: ${data.dns.totalRecords}`);
+    console.info(`⏰ Last Update: ${new Date(data.timestamp).toLocaleString()}`);
+    console.info('');
 
     const statusColor = data.domains.status === 'healthy' ? '🟢' : 
                       data.domains.status === 'warning' ? '🟡' : '🔴';
-    console.log(`${statusColor} System is ${data.domains.status.toUpperCase()}`);
+    console.info(`${statusColor} System is ${data.domains.status.toUpperCase()}`);
   }
 
   async listDomains(): Promise<void> {
-    console.log('🌐 Domain Status');
-    console.log('='.repeat(20));
+    console.info('🌐 Domain Status');
+    console.info('='.repeat(20));
 
     const domains = await this.makeAPIRequest('/api/domains');
 
-    console.log('Domain                    Status     Uptime   Response  SSL Days  Last Check');
-    console.log('-'.repeat(80));
+    console.info('Domain                    Status     Uptime   Response  SSL Days  Last Check');
+    console.info('-'.repeat(80));
 
     domains.forEach((domain: DomainStatus) => {
       const statusIcon = domain.status === 'healthy' ? '🟢' : 
@@ -131,18 +131,18 @@ class SimpleAdminCLI {
       const sslDays = domain.sslDaysUntilExpiry.toString().padEnd(8);
       const lastCheck = new Date(domain.lastCheck).toLocaleTimeString();
 
-      console.log(`${domainName} ${status} ${uptime} ${response} ${sslDays} ${lastCheck}`);
+      console.info(`${domainName} ${status} ${uptime} ${response} ${sslDays} ${lastCheck}`);
     });
   }
 
   async listDNSRecords(): Promise<void> {
-    console.log('📊 DNS Records');
-    console.log('='.repeat(20));
+    console.info('📊 DNS Records');
+    console.info('='.repeat(20));
 
     const data = await this.makeAPIRequest('/api/dns/records');
 
-    console.log('Type  Name        Value                                    TTL    Priority');
-    console.log('-'.repeat(70));
+    console.info('Type  Name        Value                                    TTL    Priority');
+    console.info('-'.repeat(70));
 
     data.records.forEach((record: DNSRecord) => {
       const type = record.type.padEnd(5);
@@ -151,64 +151,64 @@ class SimpleAdminCLI {
       const ttl = record.ttl.toString().padEnd(6);
       const priority = (record.priority || '-').toString().padEnd(8);
 
-      console.log(`${type} ${name} ${value} ${ttl} ${priority}`);
+      console.info(`${type} ${name} ${value} ${ttl} ${priority}`);
     });
 
-    console.log('');
-    console.log('📋 Zone Information:');
-    console.log(`  Primary NS: ${data.soa.mname}`);
-    console.log(`  Serial: ${data.soa.serial}`);
-    console.log(`  Refresh: ${data.soa.refresh}s`);
-    console.log(`  Retry: ${data.soa.retry}s`);
+    console.info('');
+    console.info('📋 Zone Information:');
+    console.info(`  Primary NS: ${data.soa.mname}`);
+    console.info(`  Serial: ${data.soa.serial}`);
+    console.info(`  Refresh: ${data.soa.refresh}s`);
+    console.info(`  Retry: ${data.soa.retry}s`);
   }
 
   async checkHealth(): Promise<void> {
-    console.log('🔍 System Health Check');
-    console.log('='.repeat(30));
+    console.info('🔍 System Health Check');
+    console.info('='.repeat(30));
 
     const health = await this.makeAPIRequest('/health');
-    console.log(`✅ Health status: ${health}`);
+    console.info(`✅ Health status: ${health}`);
 
     const systemData = await this.makeAPIRequest('/api/system/status');
-    console.log('');
-    console.log('📊 Detailed Health Information:');
-    console.log(`  System Status: ${systemData.system.status}`);
-    console.log(`  Uptime: ${Math.floor(systemData.system.uptime)} seconds`);
-    console.log(`  Memory Used: ${Math.round(systemData.system.memory.used / 1024 / 1024)}MB`);
-    console.log(`  Platform: ${systemData.system.platform || 'Cloudflare Workers'}`);
+    console.info('');
+    console.info('📊 Detailed Health Information:');
+    console.info(`  System Status: ${systemData.system.status}`);
+    console.info(`  Uptime: ${Math.floor(systemData.system.uptime)} seconds`);
+    console.info(`  Memory Used: ${Math.round(systemData.system.memory.used / 1024 / 1024)}MB`);
+    console.info(`  Platform: ${systemData.system.platform || 'Cloudflare Workers'}`);
   }
 
   async showMetrics(): Promise<void> {
-    console.log('📈 System Performance Metrics');
-    console.log('='.repeat(35));
+    console.info('📈 System Performance Metrics');
+    console.info('='.repeat(35));
 
     const domains = await this.makeAPIRequest('/api/domains');
     const systemData = await this.makeAPIRequest('/api/system/status');
 
-    console.log('🖥️ System Metrics:');
-    console.log(`  Uptime: ${Math.floor(systemData.system.uptime)} seconds`);
-    console.log(`  Memory Used: ${Math.round(systemData.system.memory.used / 1024 / 1024)}MB`);
-    console.log(`  Memory Total: ${Math.round(systemData.system.memory.total / 1024 / 1024)}MB`);
+    console.info('🖥️ System Metrics:');
+    console.info(`  Uptime: ${Math.floor(systemData.system.uptime)} seconds`);
+    console.info(`  Memory Used: ${Math.round(systemData.system.memory.used / 1024 / 1024)}MB`);
+    console.info(`  Memory Total: ${Math.round(systemData.system.memory.total / 1024 / 1024)}MB`);
 
-    console.log('\n🌐 Domain Metrics:');
-    console.log(`  Total Domains: ${domains.length}`);
-    console.log(`  Healthy: ${domains.filter((d: any) => d.status === 'healthy').length}`);
-    console.log(`  Warning: ${domains.filter((d: any) => d.status === 'warning').length}`);
-    console.log(`  Critical: ${domains.filter((d: any) => d.status === 'critical').length}`);
+    console.info('\n🌐 Domain Metrics:');
+    console.info(`  Total Domains: ${domains.length}`);
+    console.info(`  Healthy: ${domains.filter((d: any) => d.status === 'healthy').length}`);
+    console.info(`  Warning: ${domains.filter((d: any) => d.status === 'warning').length}`);
+    console.info(`  Critical: ${domains.filter((d: any) => d.status === 'critical').length}`);
 
     const avgResponseTime = domains.reduce((sum: number, d: any) => sum + d.responseTime, 0) / domains.length;
     const avgUptime = domains.reduce((sum: number, d: any) => sum + d.uptime, 0) / domains.length;
 
-    console.log('\n⚡ Performance Metrics:');
-    console.log(`  Avg Response Time: ${avgResponseTime.toFixed(2)}ms`);
-    console.log(`  Avg Uptime: ${avgUptime.toFixed(2)}%`);
+    console.info('\n⚡ Performance Metrics:');
+    console.info(`  Avg Response Time: ${avgResponseTime.toFixed(2)}ms`);
+    console.info(`  Avg Uptime: ${avgUptime.toFixed(2)}%`);
 
-    console.log(`\n🕐 Last Updated: ${new Date().toLocaleString()}`);
+    console.info(`\n🕐 Last Updated: ${new Date().toLocaleString()}`);
   }
 
   async showLogs(): Promise<void> {
-    console.log('📋 System Logs');
-    console.log('='.repeat(20));
+    console.info('📋 System Logs');
+    console.info('='.repeat(20));
 
     const mockLogs = [
       { timestamp: new Date().toISOString(), level: 'info', message: 'Admin dashboard accessed via CLI', source: 'admin-cli' },
@@ -221,15 +221,15 @@ class SimpleAdminCLI {
       const levelIcon = log.level === 'info' ? 'ℹ️' : 
                        log.level === 'warning' ? '⚠️' : '❌';
       
-      console.log(`${levelIcon} ${new Date(log.timestamp).toLocaleString()}`);
-      console.log(`   ${log.level.toUpperCase()} [${log.source}] ${log.message}`);
-      console.log('');
+      console.info(`${levelIcon} ${new Date(log.timestamp).toLocaleString()}`);
+      console.info(`   ${log.level.toUpperCase()} [${log.source}] ${log.message}`);
+      console.info('');
     });
   }
 
   async checkPropagation(): Promise<void> {
-    console.log('🌍 Checking DNS Propagation');
-    console.log('='.repeat(30));
+    console.info('🌍 Checking DNS Propagation');
+    console.info('='.repeat(30));
 
     const regions = [
       { name: 'US East', status: 'propagated', dnsServer: '8.8.8.8' },
@@ -239,47 +239,47 @@ class SimpleAdminCLI {
       { name: 'Australia', status: 'propagated', dnsServer: '9.9.9.9' }
     ];
 
-    console.log('✅ DNS propagation check completed');
-    console.log('');
+    console.info('✅ DNS propagation check completed');
+    console.info('');
 
     regions.forEach(region => {
       const statusIcon = region.status === 'propagated' ? '🟢' : 
                         region.status === 'pending' ? '🟡' : '🔴';
-      console.log(`${statusIcon} ${region.name}: ${region.status.toUpperCase()}`);
-      console.log(`  🌐 DNS Server: ${region.dnsServer}`);
-      console.log(`  🕐 Last Check: ${new Date().toLocaleString()}`);
-      console.log('');
+      console.info(`${statusIcon} ${region.name}: ${region.status.toUpperCase()}`);
+      console.info(`  🌐 DNS Server: ${region.dnsServer}`);
+      console.info(`  🕐 Last Check: ${new Date().toLocaleString()}`);
+      console.info('');
     });
   }
 
   showHelp(): void {
-    console.log('🏭 Factory-Wager Admin CLI v1.0.0');
-    console.log('🌐 Domain Management System');
-    console.log('⚡ Powered by Cloudflare Workers');
-    console.log('');
-    console.log('USAGE:');
-    console.log('  bun run admin-cli.ts <command> [options]');
-    console.log('');
-    console.log('COMMANDS:');
-    console.log('  status              Show overall system status');
-    console.log('  health              Check system health');
-    console.log('  domains             List all domains and their status');
-    console.log('  dns                 List DNS records');
-    console.log('  metrics             Show system performance metrics');
-    console.log('  logs                Show system logs');
-    console.log('  propagation         Check DNS propagation status');
-    console.log('  help                Show this help message');
-    console.log('');
-    console.log('EXAMPLES:');
-    console.log('  bun run admin-cli.ts status');
-    console.log('  bun run admin-cli.ts domains');
-    console.log('  bun run admin-cli.ts dns');
-    console.log('  bun run admin-cli.ts health');
-    console.log('');
-    console.log('🌐 Web Dashboard: https://admin.factory-wager.com');
-    console.log('📊 API Endpoint: https://admin.factory-wager.com/api');
-    console.log('');
-    console.log('For more information, see: docs/ADMIN_CLI_GUIDE.md');
+    console.info('🏭 Factory-Wager Admin CLI v1.0.0');
+    console.info('🌐 Domain Management System');
+    console.info('⚡ Powered by Cloudflare Workers');
+    console.info('');
+    console.info('USAGE:');
+    console.info('  bun run admin-cli.ts <command> [options]');
+    console.info('');
+    console.info('COMMANDS:');
+    console.info('  status              Show overall system status');
+    console.info('  health              Check system health');
+    console.info('  domains             List all domains and their status');
+    console.info('  dns                 List DNS records');
+    console.info('  metrics             Show system performance metrics');
+    console.info('  logs                Show system logs');
+    console.info('  propagation         Check DNS propagation status');
+    console.info('  help                Show this help message');
+    console.info('');
+    console.info('EXAMPLES:');
+    console.info('  bun run admin-cli.ts status');
+    console.info('  bun run admin-cli.ts domains');
+    console.info('  bun run admin-cli.ts dns');
+    console.info('  bun run admin-cli.ts health');
+    console.info('');
+    console.info('🌐 Web Dashboard: https://admin.factory-wager.com');
+    console.info('📊 API Endpoint: https://admin.factory-wager.com/api');
+    console.info('');
+    console.info('For more information, see: docs/ADMIN_CLI_GUIDE.md');
   }
 
   async run(): Promise<void> {
@@ -316,7 +316,7 @@ class SimpleAdminCLI {
           break;
         default:
           console.error(`❌ Unknown command: ${command}`);
-          console.log('💡 Run "bun run admin-cli.ts help" for available commands');
+          console.info('💡 Run "bun run admin-cli.ts help" for available commands');
           process.exit(1);
       }
     } catch (error) {

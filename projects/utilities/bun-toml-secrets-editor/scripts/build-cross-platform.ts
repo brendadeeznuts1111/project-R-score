@@ -65,12 +65,12 @@ if (platform === "win32" || platform === "windows") {
 
 const outfile = join(process.cwd(), "dist", outputName);
 
-console.log(`🔨 Building for ${platform}-${arch} (${edition} edition)`);
-console.log(`   Target: ${bunTarget}`);
-console.log(
+console.info(`🔨 Building for ${platform}-${arch} (${edition} edition)`);
+console.info(`   Target: ${bunTarget}`);
+console.info(
 	`   Features: ${features.length > 0 ? features.join(", ") : "none"}`,
 );
-console.log(`   Output: ${outfile}`);
+console.info(`   Output: ${outfile}`);
 
 try {
 	// Build using JavaScript API for cross-compilation support
@@ -99,19 +99,19 @@ try {
 			try {
 				await fs.mkdir(join(process.cwd(), "dist"), { recursive: true });
 				await fs.rename(actualOutput, outfile);
-				console.log(`✅ Build successful: ${outfile}`);
+				console.info(`✅ Build successful: ${outfile}`);
 			} catch (_err) {
-				console.log(`✅ Build successful: ${actualOutput}`);
-				console.log(`   (Expected: ${outfile})`);
+				console.info(`✅ Build successful: ${actualOutput}`);
+				console.info(`   (Expected: ${outfile})`);
 			}
 		} else {
-			console.log(`✅ Build successful: ${outfile}`);
+			console.info(`✅ Build successful: ${outfile}`);
 		}
 		if (features.length > 0) {
-			console.log(
+			console.info(
 				`   ⚠️  Note: Feature flags (${features.join(", ")}) are handled via compile-time DCE in code`,
 			);
-			console.log(
+			console.info(
 				`   To explicitly control features, use CLI: bun build --compile --feature ${features.join(" --feature ")}`,
 			);
 		}

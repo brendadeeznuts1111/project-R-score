@@ -11,7 +11,7 @@ const projectRoot = process.cwd();
 const binDir = join(projectRoot, "bin");
 const envFile = join(projectRoot, ".env.local");
 
-console.log("Setting up dedicated PATH for bun-type-fixes...\n");
+console.info("Setting up dedicated PATH for bun-type-fixes...\n");
 
 // Create .env.local with dedicated PATH
 const envContent = `# Dedicated PATH for bun-type-fixes
@@ -25,8 +25,8 @@ BUN_TYPE_FIXES_DEBUG=false
 `;
 
 writeFileSync(envFile, envContent);
-console.log(`✓ Created .env.local with dedicated PATH`);
-console.log(`  BUN_TYPE_FIXES_BIN=${binDir}`);
+console.info(`✓ Created .env.local with dedicated PATH`);
+console.info(`  BUN_TYPE_FIXES_BIN=${binDir}`);
 
 // Create shell integration script
 const shellScript = `#!/bin/bash
@@ -43,8 +43,8 @@ echo "  BUN_TYPE_FIXES_BIN=$BUN_TYPE_FIXES_BIN"
 `;
 
 writeFileSync(join(projectRoot, "activate.sh"), shellScript);
-console.log(`\n✓ Created activate.sh script`);
-console.log(`  Run: source activate.sh`);
+console.info(`\n✓ Created activate.sh script`);
+console.info(`  Run: source activate.sh`);
 
 // Create fish shell integration
 const fishScript = `# bun-type-fixes fish shell integration
@@ -60,7 +60,7 @@ echo "  BUN_TYPE_FIXES_BIN=$BUN_TYPE_FIXES_BIN"
 `;
 
 writeFileSync(join(projectRoot, "activate.fish"), fishScript);
-console.log(`✓ Created activate.fish script`);
+console.info(`✓ Created activate.fish script`);
 
 // Update .bashrc if it exists
 const bashrc = join(process.env.HOME || "", ".bashrc");
@@ -69,9 +69,9 @@ if (existsSync(bashrc)) {
 
   try {
     appendFileSync(bashrc, bashrcAddition);
-    console.log(`✓ Updated ~/.bashrc with dedicated PATH`);
+    console.info(`✓ Updated ~/.bashrc with dedicated PATH`);
   } catch (error) {
-    console.log(`⚠ Could not update ~/.bashrc (permission denied)`);
+    console.info(`⚠ Could not update ~/.bashrc (permission denied)`);
   }
 }
 
@@ -95,24 +95,24 @@ await import("${projectRoot}/cli.ts");
 `;
 
 writeFileSync(join(binDir, "bun-type-fixes-wrapper"), globalWrapper);
-console.log(`✓ Created global wrapper script`);
+console.info(`✓ Created global wrapper script`);
 
 // Make scripts executable
 await Bun.$`chmod +x ${join(projectRoot, "activate.sh")}`;
 await Bun.$`chmod +x ${join(projectRoot, "activate.fish")}`;
 await Bun.$`chmod +x ${join(binDir, "bun-type-fixes-wrapper")}`;
 
-console.log("\n" + "=".repeat(50));
-console.log("SETUP COMPLETE!");
-console.log("=".repeat(50));
-console.log("\nTo activate the dedicated PATH:");
-console.log(`  1. Run: source ${projectRoot}/activate.sh`);
-console.log(`  2. Or add to your ~/.bashrc manually`);
-console.log("\nAfter activation, you can run:");
-console.log("  - bun-type-fixes verify --all");
-console.log("  - bun-type-fixes verify --sqlite");
-console.log("  - bun-type-fixes verify --filesink");
-console.log("\nEnvironment variables:");
-console.log(`  BUN_TYPE_FIXES_ROOT=${projectRoot}`);
-console.log(`  BUN_TYPE_FIXES_BIN=${binDir}`);
-console.log("=".repeat(50));
+console.info("\n" + "=".repeat(50));
+console.info("SETUP COMPLETE!");
+console.info("=".repeat(50));
+console.info("\nTo activate the dedicated PATH:");
+console.info(`  1. Run: source ${projectRoot}/activate.sh`);
+console.info(`  2. Or add to your ~/.bashrc manually`);
+console.info("\nAfter activation, you can run:");
+console.info("  - bun-type-fixes verify --all");
+console.info("  - bun-type-fixes verify --sqlite");
+console.info("  - bun-type-fixes verify --filesink");
+console.info("\nEnvironment variables:");
+console.info(`  BUN_TYPE_FIXES_ROOT=${projectRoot}`);
+console.info(`  BUN_TYPE_FIXES_BIN=${binDir}`);
+console.info("=".repeat(50));

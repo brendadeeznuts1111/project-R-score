@@ -804,9 +804,9 @@ class EnhancedDashboardServer {
 		// Initialize Kimi
 		try {
 			this.kimiClient = await createKimiClient();
-			console.log("✅ Kimi client initialized");
+			console.info("✅ Kimi client initialized");
 		} catch (e) {
-			console.log("⚠️ Kimi not available:", (e as Error).message);
+			console.info("⚠️ Kimi not available:", (e as Error).message);
 		}
 
 		// Add sample RSS feeds
@@ -837,11 +837,11 @@ class EnhancedDashboardServer {
 			fetch: (req, server) => this.onRequest(req, server),
 		});
 
-		console.log(`\n🚀 Enhanced Dev Dashboard: http://localhost:${this.port}`);
-		console.log(
+		console.info(`\n🚀 Enhanced Dev Dashboard: http://localhost:${this.port}`);
+		console.info(
 			`📊 Features: Bun fetch pooling · RSS monitoring · Memory metrics`,
 		);
-		console.log(`Press Ctrl+C to stop\n`);
+		console.info(`Press Ctrl+C to stop\n`);
 
 		process.on("SIGINT", () => this.shutdown());
 		process.on("SIGTERM", () => this.shutdown());
@@ -870,7 +870,7 @@ class EnhancedDashboardServer {
 	private onOpen(ws: ServerWebSocket<WebSocketData>): void {
 		const { connectionId } = ws.data;
 		this.clients.set(connectionId, { ws, connectedAt: new Date() });
-		console.log(`[${new Date().toLocaleTimeString()}] Client connected`);
+		console.info(`[${new Date().toLocaleTimeString()}] Client connected`);
 	}
 
 	private async onMessage(
@@ -967,12 +967,12 @@ class EnhancedDashboardServer {
 	}
 
 	private shutdown(): void {
-		console.log("\n🛑 Shutting down...");
+		console.info("\n🛑 Shutting down...");
 		if (this.metricsInterval) clearInterval(this.metricsInterval);
 		this.driftMonitor.stopAll();
 		this.metricsCollector.stop();
 		for (const client of this.clients.values()) client.ws.close();
-		console.log("✅ Dashboard stopped");
+		console.info("✅ Dashboard stopped");
 		process.exit(0);
 	}
 }

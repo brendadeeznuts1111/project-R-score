@@ -50,7 +50,7 @@ const args = parseArgs({
 });
 
 async function showHelp(): Promise<void> {
-  console.log(`
+  console.info(`
 📦 DuoPlus Scoping Matrix JSON Exporter
 
 Usage:
@@ -100,11 +100,11 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
-  console.log('🔄 Exporting DuoPlus Scoping Matrix v3.7...\n');
+  console.info('🔄 Exporting DuoPlus Scoping Matrix v3.7...\n');
 
   // Validate if requested
   if (args.values.validate) {
-    console.log('🔍 Validating matrix consistency...');
+    console.info('🔍 Validating matrix consistency...');
     
     // Check for duplicates
     const combinations = new Set<string>();
@@ -123,9 +123,9 @@ async function main(): Promise<void> {
       process.exit(1);
     }
 
-    console.log('  ✅ No duplicates detected');
-    console.log('  ✅ All required fields present');
-    console.log('  ✅ Matrix is valid\n');
+    console.info('  ✅ No duplicates detected');
+    console.info('  ✅ All required fields present');
+    console.info('  ✅ Matrix is valid\n');
   }
 
   // Generate JSON
@@ -136,7 +136,7 @@ async function main(): Promise<void> {
   const outputPath = args.values.output as string;
   try {
     await Bun.write(outputPath, formatted);
-    console.log(`✅ Matrix exported to: ${outputPath}`);
+    console.info(`✅ Matrix exported to: ${outputPath}`);
   } catch (error) {
     console.error(`❌ Failed to write file: ${error}`);
     process.exit(1);
@@ -144,29 +144,29 @@ async function main(): Promise<void> {
 
   // Show statistics if requested
   if (args.values.stats) {
-    console.log('\n📊 Matrix Statistics:\n');
+    console.info('\n📊 Matrix Statistics:\n');
     const stats = getMatrixStats();
     
-    console.log(`  Total Rules: ${stats.totalRules}`);
-    console.log(`\n  By Scope:`);
-    console.log(`    ENTERPRISE: ${stats.scopeBreakdown['ENTERPRISE']}`);
-    console.log(`    DEVELOPMENT: ${stats.scopeBreakdown['DEVELOPMENT']}`);
-    console.log(`    LOCAL-SANDBOX: ${stats.scopeBreakdown['LOCAL-SANDBOX']}`);
-    console.log(`    Global: ${stats.scopeBreakdown['global']}`);
+    console.info(`  Total Rules: ${stats.totalRules}`);
+    console.info(`\n  By Scope:`);
+    console.info(`    ENTERPRISE: ${stats.scopeBreakdown['ENTERPRISE']}`);
+    console.info(`    DEVELOPMENT: ${stats.scopeBreakdown['DEVELOPMENT']}`);
+    console.info(`    LOCAL-SANDBOX: ${stats.scopeBreakdown['LOCAL-SANDBOX']}`);
+    console.info(`    Global: ${stats.scopeBreakdown['global']}`);
     
-    console.log(`\n  By Platform:`);
-    console.log(`    Windows: ${stats.platformBreakdown['Windows']}`);
-    console.log(`    macOS: ${stats.platformBreakdown['macOS']}`);
-    console.log(`    Linux: ${stats.platformBreakdown['Linux']}`);
-    console.log(`    Any: ${stats.platformBreakdown['Any']}`);
-    console.log(`    Other: ${stats.platformBreakdown['Other']}`);
+    console.info(`\n  By Platform:`);
+    console.info(`    Windows: ${stats.platformBreakdown['Windows']}`);
+    console.info(`    macOS: ${stats.platformBreakdown['macOS']}`);
+    console.info(`    Linux: ${stats.platformBreakdown['Linux']}`);
+    console.info(`    Any: ${stats.platformBreakdown['Any']}`);
+    console.info(`    Other: ${stats.platformBreakdown['Other']}`);
   }
 
-  console.log('\n✨ Export complete!\n');
+  console.info('\n✨ Export complete!\n');
   
   if (args.values.format === 'compact') {
     const parsed = JSON.parse(formatted);
-    console.log(`💾 File size: ${formatted.length} bytes (compact format)`);
+    console.info(`💾 File size: ${formatted.length} bytes (compact format)`);
   }
 }
 

@@ -129,12 +129,12 @@ export function resetMetrics(): void {
 
 /* ---------- Enhanced TensionTCPServer start ------------ */
 export async function startEnhancedServer(port: number = 9999): Promise<any> {
-  console.log('[TCP] Enhanced TensionTCPServer CRC32 integrity layer initialized');
-  console.log('[TCP] Zero-copy: enabled');
-  console.log('[TCP] Adaptive throttle: enabled (10-50ms)');
-  console.log('[TCP] Signed bundle: enabled');
-  console.log('[TCP] HTMX live widget: enabled');
-  console.log(`[TCP] Ready to listen on :${port}`);
+  console.info('[TCP] Enhanced TensionTCPServer CRC32 integrity layer initialized');
+  console.info('[TCP] Zero-copy: enabled');
+  console.info('[TCP] Adaptive throttle: enabled (10-50ms)');
+  console.info('[TCP] Signed bundle: enabled');
+  console.info('[TCP] HTMX live widget: enabled');
+  console.info(`[TCP] Ready to listen on :${port}`);
   
   return {
     port,
@@ -147,19 +147,19 @@ export async function startEnhancedServer(port: number = 9999): Promise<any> {
 // Main execution for testing
 if (import.meta.main) {
   async function test() {
-    console.log('🧪 Testing Enhanced TensionTCPServer CRC32 Integrity Layer');
-    console.log('='.repeat(60));
+    console.info('🧪 Testing Enhanced TensionTCPServer CRC32 Integrity Layer');
+    console.info('='.repeat(60));
     
     // Initialize server
     const server = await startEnhancedServer(9999);
-    console.log('');
+    console.info('');
     
     // Test adaptive delay
-    console.log('📊 Adaptive Back-pressure Tests:');
-    console.log(`   backlog < 1KB: ${adaptiveDelay(512)}ms delay`);
-    console.log(`   backlog 1-16KB: ${adaptiveDelay(8192)}ms delay`);
-    console.log(`   backlog > 16KB: ${adaptiveDelay(32768)}ms delay`);
-    console.log('');
+    console.info('📊 Adaptive Back-pressure Tests:');
+    console.info(`   backlog < 1KB: ${adaptiveDelay(512)}ms delay`);
+    console.info(`   backlog 1-16KB: ${adaptiveDelay(8192)}ms delay`);
+    console.info(`   backlog > 16KB: ${adaptiveDelay(32768)}ms delay`);
+    console.info('');
     
     // Test CRC32 checksums
     const testBuffers = [
@@ -168,35 +168,35 @@ if (import.meta.main) {
       new Uint8Array([100, 200, 255, 128, 64]),
     ];
     
-    console.log('📊 CRC32 Checksum Tests:');
+    console.info('📊 CRC32 Checksum Tests:');
     for (let i = 0; i < testBuffers.length; i++) {
       const checksum = crc(testBuffers[i].buffer);
-      console.log(`   Buffer ${i + 1}: checksum=0x${checksum.toString(16).toUpperCase().padStart(8, '0')}`);
+      console.info(`   Buffer ${i + 1}: checksum=0x${checksum.toString(16).toUpperCase().padStart(8, '0')}`);
     }
-    console.log('');
+    console.info('');
     
     // Test signed meta
     const meta = signedMeta(45000, 12);
-    console.log('📊 Signed Bundle Test:');
-    console.log(`   Meta size: ${meta.byteLength} bytes`);
-    console.log('');
+    console.info('📊 Signed Bundle Test:');
+    console.info(`   Meta size: ${meta.byteLength} bytes`);
+    console.info('');
     
     // Test HTMX widget
     const widget = htmlWidget(0.9997);
-    console.log('📊 HTMX Widget Test:');
-    console.log(`   Widget length: ${widget.length} chars`);
-    console.log('');
+    console.info('📊 HTMX Widget Test:');
+    console.info(`   Widget length: ${widget.length} chars`);
+    console.info('');
     
     // Get metrics
     const integrityMetrics = getIntegrityMetrics();
-    console.log('📈 Integrity Metrics:');
-    console.log(`   Total: ${integrityMetrics.total}`);
-    console.log(`   Dropped: ${integrityMetrics.dropped}`);
-    console.log(`   Integrity: ${(integrityMetrics.integrity * 100).toFixed(2)}%`);
-    console.log(`   Adaptive Delay: ${integrityMetrics.adaptiveDelay}ms`);
-    console.log('');
+    console.info('📈 Integrity Metrics:');
+    console.info(`   Total: ${integrityMetrics.total}`);
+    console.info(`   Dropped: ${integrityMetrics.dropped}`);
+    console.info(`   Integrity: ${(integrityMetrics.integrity * 100).toFixed(2)}%`);
+    console.info(`   Adaptive Delay: ${integrityMetrics.adaptiveDelay}ms`);
+    console.info('');
     
-    console.log('✅ Enhanced TensionTCPServer CRC32 Integrity Layer Test Complete');
+    console.info('✅ Enhanced TensionTCPServer CRC32 Integrity Layer Test Complete');
   }
   
   test();

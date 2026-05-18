@@ -112,7 +112,7 @@ curl "http://localhost:3000/metafile?cwd=utils"
 ## JSONC Processing
 \`\`\`bash
 # Parse JSONC tsconfig
-bun -e 'console.log(JSON.parse(await Bun.file("tsconfig.json").text()))'
+bun -e 'console.info(JSON.parse(await Bun.file("tsconfig.json").text()))'
 
 # Parse JSONC bunfig
 bun -e 'Bun.JSONC.parse(await Bun.file("bunfig.toml").text())'
@@ -276,7 +276,7 @@ export async function generateAIWiki(sections: string[]): Promise<string> {
 `;
   
   for (const section of sections) {
-    console.log(`🤖 Generating AI section: ${section}`);
+    console.info(`🤖 Generating AI section: ${section}`);
     const generatedSection = await aiWikiSection(section);
     wiki += generatedSection + '\n\n---\n\n';
   }
@@ -303,19 +303,19 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
   
   if (args.length === 0) {
-    console.log('🤖 AI Wiki Generator v3.19');
-    console.log('Usage: bun run ai-wiki-gen.ts "section1" "section2" ...');
-    console.log('');
-    console.log('Available templates:');
+    console.info('🤖 AI Wiki Generator v3.19');
+    console.info('Usage: bun run ai-wiki-gen.ts "section1" "section2" ...');
+    console.info('');
+    console.info('Available templates:');
     Object.keys(AI_TEMPLATES).forEach(key => {
-      console.log(`  - ${key}`);
+      console.info(`  - ${key}`);
     });
     process.exit(0);
   }
   
-  console.log('🚀 Starting AI Wiki Generation v3.19...');
-  console.log(`📝 Sections to generate: ${args.join(', ')}`);
-  console.log('');
+  console.info('🚀 Starting AI Wiki Generation v3.19...');
+  console.info(`📝 Sections to generate: ${args.join(', ')}`);
+  console.info('');
   
   generateAIWiki(args)
     .then(wiki => {
@@ -323,12 +323,12 @@ if (import.meta.main) {
       const filename = `ai-wiki-${Date.now()}.md`;
       writeFileSync(filename, wiki);
       
-      console.log('✅ AI Wiki Generation Complete!');
-      console.log(`📁 Saved to: ${filename}`);
-      console.log(`📊 Wiki size: ${(wiki.length / 1024).toFixed(1)}KB`);
-      console.log('');
-      console.log('🔥 AI Revolution Complete! Start with:');
-      console.log(`   cat ${filename}`);
+      console.info('✅ AI Wiki Generation Complete!');
+      console.info(`📁 Saved to: ${filename}`);
+      console.info(`📊 Wiki size: ${(wiki.length / 1024).toFixed(1)}KB`);
+      console.info('');
+      console.info('🔥 AI Revolution Complete! Start with:');
+      console.info(`   cat ${filename}`);
     })
     .catch(error => {
       console.error('❌ AI Wiki Generation failed:', error);

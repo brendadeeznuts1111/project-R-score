@@ -6,7 +6,7 @@ import { BunAntiDetection, antiDetection } from '../automation/enhanced-bun-anti
  * Basic usage example with singleton instance
  */
 async function basicUsage() {
-  console.log('🚀 Basic BunAntiDetection Usage');
+  console.info('🚀 Basic BunAntiDetection Usage');
   
   const agentId = 'web-scraper-001';
   
@@ -15,26 +15,26 @@ async function basicUsage() {
   
   // Get randomized user agent
   const userAgent = antiDetection.userAgent(agentId);
-  console.log(`📱 User Agent: ${userAgent}`);
+  console.info(`📱 User Agent: ${userAgent}`);
   
   // Get healthy proxy
   const proxy = antiDetection.proxy(agentId);
   if (proxy) {
-    console.log(`🌐 Proxy: ${proxy}`);
+    console.info(`🌐 Proxy: ${proxy}`);
   } else {
-    console.log('⚠️ No healthy proxies available');
+    console.info('⚠️ No healthy proxies available');
   }
   
   // View system stats
   const stats = antiDetection.stats();
-  console.log('📊 System Stats:', stats);
+  console.info('📊 System Stats:', stats);
 }
 
 /**
  * Advanced usage with custom configuration
  */
 async function advancedUsage() {
-  console.log('\n🔧 Advanced Usage with Custom Config');
+  console.info('\n🔧 Advanced Usage with Custom Config');
   
   // Create custom instance with specific configuration
   const customDetector = new BunAntiDetection({
@@ -55,26 +55,26 @@ async function advancedUsage() {
     const userAgent = customDetector.userAgent(agentId);
     const proxy = customDetector.proxy(agentId);
     
-    console.log(`✅ Agent ${agentId} configured successfully`);
-    console.log(`🔍 UA: ${userAgent.substring(0, 50)}...`);
-    console.log(`🔗 Proxy: ${proxy || 'direct'}`);
+    console.info(`✅ Agent ${agentId} configured successfully`);
+    console.info(`🔍 UA: ${userAgent.substring(0, 50)}...`);
+    console.info(`🔗 Proxy: ${proxy || 'direct'}`);
     
     // Simulate proxy failure to test circuit breaker
     if (proxy) {
       customDetector.failProxy(proxy);
-      console.log(`🚫 Reported proxy failure: ${proxy}`);
+      console.info(`🚫 Reported proxy failure: ${proxy}`);
     }
     
     // Check stats after failure
     const stats = customDetector.stats();
-    console.log('📈 Updated Stats:', stats);
+    console.info('📈 Updated Stats:', stats);
     
   } catch (error) {
     console.error('❌ Error in advanced usage:', error);
   } finally {
     // Clean up resources
     customDetector.destroy();
-    console.log('🧹 Custom detector cleaned up');
+    console.info('🧹 Custom detector cleaned up');
   }
 }
 
@@ -82,7 +82,7 @@ async function advancedUsage() {
  * Multi-agent coordination example
  */
 async function multiAgentExample() {
-  console.log('\n👥 Multi-Agent Coordination');
+  console.info('\n👥 Multi-Agent Coordination');
   
   const agents = ['scraper-001', 'scraper-002', 'scraper-003'];
   const detector = new BunAntiDetection({
@@ -95,7 +95,7 @@ async function multiAgentExample() {
   try {
     // Run multiple agents concurrently
     const promises = agents.map(async (agentId) => {
-      console.log(`🤖 Starting agent: ${agentId}`);
+      console.info(`🤖 Starting agent: ${agentId}`);
       
       await detector.delay(agentId);
       const userAgent = detector.userAgent(agentId);
@@ -111,14 +111,14 @@ async function multiAgentExample() {
     
     const results = await Promise.all(promises);
     
-    console.log('📋 Agent Results:');
+    console.info('📋 Agent Results:');
     results.forEach(result => {
-      console.log(`  ${result.agentId}: ${result.proxy} | ${result.userAgent}`);
+      console.info(`  ${result.agentId}: ${result.proxy} | ${result.userAgent}`);
     });
     
     // Final system stats
     const finalStats = detector.stats();
-    console.log('\n📊 Final System Stats:', finalStats);
+    console.info('\n📊 Final System Stats:', finalStats);
     
   } finally {
     detector.destroy();
@@ -129,7 +129,7 @@ async function multiAgentExample() {
  * Error handling and validation examples
  */
 async function errorHandlingExample() {
-  console.log('\n⚠️ Error Handling & Validation');
+  console.info('\n⚠️ Error Handling & Validation');
   
   const detector = new BunAntiDetection();
   
@@ -140,15 +140,15 @@ async function errorHandlingExample() {
     for (const invalidId of invalidIds) {
       try {
         await detector.delay(invalidId);
-        console.log(`❌ Should have failed for: ${invalidId}`);
+        console.info(`❌ Should have failed for: ${invalidId}`);
       } catch (error) {
-        console.log(`✅ Correctly rejected: ${invalidId} -> ${(error as Error).message}`);
+        console.info(`✅ Correctly rejected: ${invalidId} -> ${(error as Error).message}`);
       }
     }
     
     // Test valid agent ID
     await detector.delay('valid-agent-123');
-    console.log('✅ Valid agent ID accepted');
+    console.info('✅ Valid agent ID accepted');
     
   } finally {
     detector.destroy();
@@ -159,7 +159,7 @@ async function errorHandlingExample() {
  * Performance monitoring example
  */
 async function performanceMonitoring() {
-  console.log('\n📈 Performance Monitoring');
+  console.info('\n📈 Performance Monitoring');
   
   const detector = new BunAntiDetection({
     maxRequestsPerMinute: 20,
@@ -173,24 +173,24 @@ async function performanceMonitoring() {
   
   try {
     // Simulate burst of requests
-    console.log('🔄 Simulating request burst...');
+    console.info('🔄 Simulating request burst...');
     
     for (let i = 0; i < 25; i++) {
       const requestStart = Date.now();
       await detector.delay(agentId);
       const requestTime = Date.now() - requestStart;
       
-      console.log(`Request ${i + 1}: ${requestTime}ms`);
+      console.info(`Request ${i + 1}: ${requestTime}ms`);
     }
     
     const totalTime = Date.now() - startTime;
     const stats = detector.stats();
     
-    console.log('\n📊 Performance Summary:');
-    console.log(`Total time: ${totalTime}ms`);
-    console.log(`Average per request: ${Math.round(totalTime / 25)}ms`);
-    console.log(`Rate limit hits: ${stats.rateLimitHits}`);
-    console.log(`Total requests: ${stats.totalRequests}`);
+    console.info('\n📊 Performance Summary:');
+    console.info(`Total time: ${totalTime}ms`);
+    console.info(`Average per request: ${Math.round(totalTime / 25)}ms`);
+    console.info(`Rate limit hits: ${stats.rateLimitHits}`);
+    console.info(`Total requests: ${stats.totalRequests}`);
     
   } finally {
     detector.destroy();
@@ -201,7 +201,7 @@ async function performanceMonitoring() {
  * Circuit breaker demonstration
  */
 async function circuitBreakerDemo() {
-  console.log('\n🔌 Circuit Breaker Demo');
+  console.info('\n🔌 Circuit Breaker Demo');
   
   const detector = new BunAntiDetection({
     proxyFailureThreshold: 2,
@@ -213,21 +213,21 @@ async function circuitBreakerDemo() {
   try {
     // Get initial proxy
     const initialProxy = detector.proxy(agentId);
-    console.log(`🌐 Initial proxy: ${initialProxy}`);
+    console.info(`🌐 Initial proxy: ${initialProxy}`);
     
     if (initialProxy) {
       // Simulate multiple failures to trigger circuit breaker
-      console.log('💥 Simulating proxy failures...');
+      console.info('💥 Simulating proxy failures...');
       detector.failProxy(initialProxy);
       detector.failProxy(initialProxy);
       
       // Try to get proxy again (should fail or return different one)
       const fallbackProxy = detector.proxy(agentId);
-      console.log(`🔄 Fallback proxy: ${fallbackProxy}`);
+      console.info(`🔄 Fallback proxy: ${fallbackProxy}`);
       
       // Check system health
       const stats = detector.stats();
-      console.log('📊 System health:', stats);
+      console.info('📊 System health:', stats);
     }
     
   } finally {
@@ -237,7 +237,7 @@ async function circuitBreakerDemo() {
 
 // Run all examples
 async function runAllExamples() {
-  console.log('🎯 BunAntiDetection Complete Usage Examples\n');
+  console.info('🎯 BunAntiDetection Complete Usage Examples\n');
   
   try {
     await basicUsage();
@@ -247,7 +247,7 @@ async function runAllExamples() {
     await performanceMonitoring();
     await circuitBreakerDemo();
     
-    console.log('\n✅ All examples completed successfully!');
+    console.info('\n✅ All examples completed successfully!');
     
   } catch (error) {
     console.error('❌ Example failed:', error);

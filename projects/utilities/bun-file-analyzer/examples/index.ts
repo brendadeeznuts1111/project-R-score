@@ -97,15 +97,15 @@ class ExamplesRunner {
     
     if (!example) {
       console.error(`❌ Example not found: ${filename}`);
-      console.log("Available examples:");
+      console.info("Available examples:");
       this.listExamples();
       return;
     }
 
-    console.log(`🚀 Running ${example.name}...`);
-    console.log(`📝 ${example.description}`);
-    console.log(`📂 Category: ${example.category} | Difficulty: ${example.difficulty}`);
-    console.log("─".repeat(50));
+    console.info(`🚀 Running ${example.name}...`);
+    console.info(`📝 ${example.description}`);
+    console.info(`📂 Category: ${example.category} | Difficulty: ${example.difficulty}`);
+    console.info("─".repeat(50));
 
     try {
       const process = spawn(["bun", filename], {
@@ -117,9 +117,9 @@ class ExamplesRunner {
       const exitCode = await process.exited;
       
       if (exitCode === 0) {
-        console.log("✅ Example completed successfully");
+        console.info("✅ Example completed successfully");
       } else {
-        console.log(`❌ Example failed with exit code: ${exitCode}`);
+        console.info(`❌ Example failed with exit code: ${exitCode}`);
       }
     } catch (error) {
       console.error("❌ Failed to run example:", error);
@@ -127,8 +127,8 @@ class ExamplesRunner {
   }
 
   listExamples(): void {
-    console.log("\n📚 Available Examples:");
-    console.log("=".repeat(60));
+    console.info("\n📚 Available Examples:");
+    console.info("=".repeat(60));
 
     const categories = {
       monitoring: "🔍 Monitoring",
@@ -140,29 +140,29 @@ class ExamplesRunner {
     Object.entries(categories).forEach(([category, title]) => {
       const categoryExamples = examples.filter(ex => ex.category === category);
       if (categoryExamples.length > 0) {
-        console.log(`\n${title}:`);
+        console.info(`\n${title}:`);
         categoryExamples.forEach((example, index) => {
           const difficulty = example.difficulty === 'beginner' ? '🟢' : 
                            example.difficulty === 'intermediate' ? '🟡' : '🔴';
-          console.log(`  ${index + 1}. ${example.file} ${difficulty}`);
-          console.log(`     ${example.description}`);
+          console.info(`  ${index + 1}. ${example.file} ${difficulty}`);
+          console.info(`     ${example.description}`);
         });
       }
     });
 
-    console.log("\n" + "=".repeat(60));
-    console.log("Difficulty: 🟢 Beginner | 🟡 Intermediate | 🔴 Advanced");
+    console.info("\n" + "=".repeat(60));
+    console.info("Difficulty: 🟢 Beginner | 🟡 Intermediate | 🔴 Advanced");
   }
 
   async runAllExamples(): Promise<void> {
-    console.log("🚀 Running all examples...\n");
+    console.info("🚀 Running all examples...\n");
     
     let successCount = 0;
     let failureCount = 0;
 
     for (const example of examples) {
-      console.log(`\n📋 Running: ${example.name}`);
-      console.log("─".repeat(40));
+      console.info(`\n📋 Running: ${example.name}`);
+      console.info("─".repeat(40));
       
       try {
         const process = spawn(["bun", example.file], {
@@ -179,21 +179,21 @@ class ExamplesRunner {
         const exitCode = await process.exited;
         
         if (exitCode === 0) {
-          console.log("✅ Success");
+          console.info("✅ Success");
           successCount++;
         } else {
-          console.log("❌ Failed");
-          if (stderr) console.log("Error:", stderr.trim());
+          console.info("❌ Failed");
+          if (stderr) console.info("Error:", stderr.trim());
           failureCount++;
         }
       } catch (error) {
-        console.log("❌ Error:", (error as Error).message);
+        console.info("❌ Error:", (error as Error).message);
         failureCount++;
       }
     }
 
-    console.log("\n" + "=".repeat(50));
-    console.log(`📊 Results: ${successCount} successful, ${failureCount} failed`);
+    console.info("\n" + "=".repeat(50));
+    console.info(`📊 Results: ${successCount} successful, ${failureCount} failed`);
     
     if (failureCount > 0) {
       process.exit(1);
@@ -208,55 +208,55 @@ class ExamplesRunner {
       return;
     }
 
-    console.log(`📋 ${example.name}`);
-    console.log("=".repeat(50));
-    console.log(`📝 Description: ${example.description}`);
-    console.log(`📂 Category: ${example.category}`);
-    console.log(`🎯 Difficulty: ${example.difficulty}`);
-    console.log(`📁 File: ${example.file}`);
+    console.info(`📋 ${example.name}`);
+    console.info("=".repeat(50));
+    console.info(`📝 Description: ${example.description}`);
+    console.info(`📂 Category: ${example.category}`);
+    console.info(`🎯 Difficulty: ${example.difficulty}`);
+    console.info(`📁 File: ${example.file}`);
     
     if (example.dependencies.length > 0) {
-      console.log(`📦 Dependencies: ${example.dependencies.join(", ")}`);
+      console.info(`📦 Dependencies: ${example.dependencies.join(", ")}`);
     }
 
-    console.log(`\n🚀 Run with: bun index.ts run ${example.file}`);
+    console.info(`\n🚀 Run with: bun index.ts run ${example.file}`);
   }
 
   async checkDependencies(): Promise<void> {
-    console.log("🔍 Checking example dependencies...\n");
+    console.info("🔍 Checking example dependencies...\n");
     
     let allGood = true;
     
     for (const example of examples) {
-      console.log(`📁 ${example.file}:`);
+      console.info(`📁 ${example.file}:`);
       
       const missingDeps: string[] = [];
       
       for (const dep of example.dependencies) {
         try {
           require.resolve(dep);
-          console.log(`  ✅ ${dep}`);
+          console.info(`  ✅ ${dep}`);
         } catch (error) {
-          console.log(`  ❌ ${dep} (missing)`);
+          console.info(`  ❌ ${dep} (missing)`);
           missingDeps.push(dep);
           allGood = false;
         }
       }
       
       if (missingDeps.length === 0) {
-        console.log("  ✅ All dependencies satisfied");
+        console.info("  ✅ All dependencies satisfied");
       } else {
-        console.log(`  ⚠️ Missing: ${missingDeps.join(", ")}`);
+        console.info(`  ⚠️ Missing: ${missingDeps.join(", ")}`);
       }
       
-      console.log("");
+      console.info("");
     }
 
     if (allGood) {
-      console.log("✅ All examples have their dependencies satisfied");
+      console.info("✅ All examples have their dependencies satisfied");
     } else {
-      console.log("⚠️ Some examples are missing dependencies");
-      console.log("Install missing dependencies with: bun install");
+      console.info("⚠️ Some examples are missing dependencies");
+      console.info("Install missing dependencies with: bun install");
     }
   }
 
@@ -383,12 +383,12 @@ async function main() {
 
     case 'generate-docs':
       const markdown = runner.generateMarkdown();
-      console.log(markdown);
+      console.info(markdown);
       break;
 
     case 'help':
     default:
-      console.log(`
+      console.info(`
 📚 Bun Examples Runner
 
 Usage:

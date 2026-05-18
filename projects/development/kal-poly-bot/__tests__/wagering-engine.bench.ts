@@ -129,7 +129,7 @@ describe('Load Testing Benchmarks', () => {
     const duration = Number(Bun.nanoseconds() - start) / 1_000_000
 
     expect(duration).toBeLessThan(200) // 50 wagers should complete quickly
-    console.log(`50 concurrent wagers: ${duration.toFixed(2)}ms (${(duration/50).toFixed(2)}ms avg)`)
+    console.info(`50 concurrent wagers: ${duration.toFixed(2)}ms (${(duration/50).toFixed(2)}ms avg)`)
   }, {
     iterations: 5,
     warmup: true
@@ -239,23 +239,23 @@ describe('Statistical Engine Benchmarks', () => {
 // Performance Validation Suite
 describe('SLA Validation', () => {
   test('Validate all performance targets', async () => {
-    console.log('\n=== PERFORMANCE VALIDATION ===')
+    console.info('\n=== PERFORMANCE VALIDATION ===')
 
     // Collect metrics from benchmarks
     const rgStats = WageringMonitor.getStats('rg_check')
     const wagerStats = WageringMonitor.getStats('wager_placement')
 
     if (rgStats) {
-      console.log(`RG Check - Count: ${rgStats.count}, P50: ${rgStats.p50.toFixed(2)}ms, P99: ${rgStats.p99.toFixed(2)}ms`)
+      console.info(`RG Check - Count: ${rgStats.count}, P50: ${rgStats.p50.toFixed(2)}ms, P99: ${rgStats.p99.toFixed(2)}ms`)
       expect(rgStats.p99).toBeLessThan(25) // Target: <25ms P99
     }
 
     if (wagerStats) {
-      console.log(`Wager Placement - Count: ${wagerStats.count}, P50: ${wagerStats.p50.toFixed(2)}ms, P99: ${wagerStats.p99.toFixed(2)}ms`)
+      console.info(`Wager Placement - Count: ${wagerStats.count}, P50: ${wagerStats.p50.toFixed(2)}ms, P99: ${wagerStats.p99.toFixed(2)}ms`)
       expect(wagerStats.p99).toBeLessThan(25) // Target: <25ms P99
     }
 
-    console.log('=== VALIDATION COMPLETE ===\n')
+    console.info('=== VALIDATION COMPLETE ===\n')
   })
 })
 
@@ -285,7 +285,7 @@ export async function generateBenchmarkReport() {
   }
 
   await Bun.write('./benchmark-results-wagering.json', JSON.stringify(report, null, 2))
-  console.log('Benchmark report generated: benchmark-results-wagering.json')
+  console.info('Benchmark report generated: benchmark-results-wagering.json')
 
   return report
 }

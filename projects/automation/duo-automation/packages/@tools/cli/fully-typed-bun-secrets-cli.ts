@@ -1152,7 +1152,7 @@ function createTypedBunSecretsAPI(): Elysia {
  * Demonstrate the fully typed system with validation
  */
 async function demonstrateTypedBunSecretsCLI(): Promise<void> {
-  console.log(EmpireProDashboard.generateHeader(
+  console.info(EmpireProDashboard.generateHeader(
     'FULLY TYPED BUN SECRETS CLI',
     'Runtime Validation with Native Addon Patterns (v8::Value::IsMap, etc.)'
   ));
@@ -1162,91 +1162,91 @@ async function demonstrateTypedBunSecretsCLI(): Promise<void> {
   
   const server = app.listen(port);
   
-  console.log(UnicodeTableFormatter.colorize('🚀 Fully Typed Bun Secrets CLI Server Started', DesignSystem.status.operational));
-  console.log(UnicodeTableFormatter.colorize(`🌐 Server: http://localhost:${port}`, DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('🚀 Fully Typed Bun Secrets CLI Server Started', DesignSystem.status.operational));
+  console.info(UnicodeTableFormatter.colorize(`🌐 Server: http://localhost:${port}`, DesignSystem.text.accent.blue));
   
   // Demonstrate typing validation
-  console.log(UnicodeTableFormatter.colorize('\n🔒 TYPE VALIDATION DEMONSTRATION:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('\n🔒 TYPE VALIDATION DEMONSTRATION:', DesignSystem.text.accent.blue));
   
   // Test valid user ID
   try {
     const validUserId = createUserId('user-001');
-    console.log(UnicodeTableFormatter.colorize(`✅ Valid user ID: ${validUserId}`, DesignSystem.status.operational));
+    console.info(UnicodeTableFormatter.colorize(`✅ Valid user ID: ${validUserId}`, DesignSystem.status.operational));
   } catch (error) {
-    console.log(UnicodeTableFormatter.colorize(`❌ Invalid user ID: ${error}`, DesignSystem.status.downtime));
+    console.info(UnicodeTableFormatter.colorize(`❌ Invalid user ID: ${error}`, DesignSystem.status.downtime));
   }
 
   // Test invalid user ID
   try {
     const invalidUserId = createUserId('invalid-user');
-    console.log(UnicodeTableFormatter.colorize(`❌ Should have failed: ${invalidUserId}`, DesignSystem.status.downtime));
+    console.info(UnicodeTableFormatter.colorize(`❌ Should have failed: ${invalidUserId}`, DesignSystem.status.downtime));
   } catch (error) {
-    console.log(UnicodeTableFormatter.colorize(`✅ Correctly rejected invalid user ID: ${error}`, DesignSystem.status.operational));
+    console.info(UnicodeTableFormatter.colorize(`✅ Correctly rejected invalid user ID: ${error}`, DesignSystem.status.operational));
   }
 
   // Test valid email
   try {
     const validEmail = createEmail('alice@company.com');
-    console.log(UnicodeTableFormatter.colorize(`✅ Valid email: ${validEmail}`, DesignSystem.status.operational));
+    console.info(UnicodeTableFormatter.colorize(`✅ Valid email: ${validEmail}`, DesignSystem.status.operational));
   } catch (error) {
-    console.log(UnicodeTableFormatter.colorize(`❌ Invalid email: ${error}`, DesignSystem.status.downtime));
+    console.info(UnicodeTableFormatter.colorize(`❌ Invalid email: ${error}`, DesignSystem.status.downtime));
   }
 
   // Test invalid email
   try {
     const invalidEmail = createEmail('invalid-email');
-    console.log(UnicodeTableFormatter.colorize(`❌ Should have failed: ${invalidEmail}`, DesignSystem.status.downtime));
+    console.info(UnicodeTableFormatter.colorize(`❌ Should have failed: ${invalidEmail}`, DesignSystem.status.downtime));
   } catch (error) {
-    console.log(UnicodeTableFormatter.colorize(`✅ Correctly rejected invalid email: ${error}`, DesignSystem.status.operational));
+    console.info(UnicodeTableFormatter.colorize(`✅ Correctly rejected invalid email: ${error}`, DesignSystem.status.operational));
   }
 
   // Demonstrate API calls with validation
-  console.log(UnicodeTableFormatter.colorize('\n🔗 TYPED API CALLS DEMONSTRATION:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('\n🔗 TYPED API CALLS DEMONSTRATION:', DesignSystem.text.accent.blue));
   
   // Test user authentication
   const authResponse = await app.handle(new Request('http://localhost:3000/auth/user/user-001')).then(r => r.json());
   if (authResponse.user) {
-    console.log(UnicodeTableFormatter.colorize('✅ User authentication successful', DesignSystem.status.operational));
-    console.log(`  User: ${authResponse.user.displayName} (${authResponse.user.role})`);
-    console.log(`  Scope: ${authResponse.user.defaultScope}`);
-    console.log(`  Allowed Scopes: ${authResponse.user.allowedScopes.join(', ')}`);
+    console.info(UnicodeTableFormatter.colorize('✅ User authentication successful', DesignSystem.status.operational));
+    console.info(`  User: ${authResponse.user.displayName} (${authResponse.user.role})`);
+    console.info(`  Scope: ${authResponse.user.defaultScope}`);
+    console.info(`  Allowed Scopes: ${authResponse.user.allowedScopes.join(', ')}`);
   } else {
-    console.log(UnicodeTableFormatter.colorize(`❌ Authentication failed: ${authResponse.error}`, DesignSystem.status.downtime));
+    console.info(UnicodeTableFormatter.colorize(`❌ Authentication failed: ${authResponse.error}`, DesignSystem.status.downtime));
   }
 
   // Test secrets configuration
   const configResponse = await app.handle(new Request('http://localhost:3000/user/user-001/secrets/config')).then(r => r.json());
   if (configResponse.config) {
-    console.log(UnicodeTableFormatter.colorize('✅ Secrets configuration retrieved', DesignSystem.status.operational));
-    console.log(`  Backend: ${configResponse.config.backend.type}`);
-    console.log(`  Service: ${configResponse.config.backend.serviceName}`);
-    console.log(`  Available Secrets: ${configResponse.config.availableSecrets.length}`);
-    console.log(`  Encryption: ${configResponse.config.encryptionLevel}`);
-    console.log(`  Permissions: ${configResponse.config.permissions.read ? 'R' : ''}${configResponse.config.permissions.write ? 'W' : ''}${configResponse.config.permissions.delete ? 'D' : ''}${configResponse.config.permissions.managePermissions ? 'M' : ''}`);
+    console.info(UnicodeTableFormatter.colorize('✅ Secrets configuration retrieved', DesignSystem.status.operational));
+    console.info(`  Backend: ${configResponse.config.backend.type}`);
+    console.info(`  Service: ${configResponse.config.backend.serviceName}`);
+    console.info(`  Available Secrets: ${configResponse.config.availableSecrets.length}`);
+    console.info(`  Encryption: ${configResponse.config.encryptionLevel}`);
+    console.info(`  Permissions: ${configResponse.config.permissions.read ? 'R' : ''}${configResponse.config.permissions.write ? 'W' : ''}${configResponse.config.permissions.delete ? 'D' : ''}${configResponse.config.permissions.managePermissions ? 'M' : ''}`);
   } else {
-    console.log(UnicodeTableFormatter.colorize(`❌ Configuration failed: ${configResponse.error}`, DesignSystem.status.downtime));
+    console.info(UnicodeTableFormatter.colorize(`❌ Configuration failed: ${configResponse.error}`, DesignSystem.status.downtime));
   }
 
   // Test secrets access
   const secretsResponse = await app.handle(new Request('http://localhost:3000/user/user-001/secrets')).then(r => r.json());
   if (secretsResponse.secrets) {
-    console.log(UnicodeTableFormatter.colorize('✅ Secrets access successful', DesignSystem.status.operational));
+    console.info(UnicodeTableFormatter.colorize('✅ Secrets access successful', DesignSystem.status.operational));
     const secretKeys = Object.keys(secretsResponse.secrets);
-    console.log(`  Retrieved ${secretKeys.length} secrets: ${secretKeys.join(', ')}`);
+    console.info(`  Retrieved ${secretKeys.length} secrets: ${secretKeys.join(', ')}`);
   } else {
-    console.log(UnicodeTableFormatter.colorize(`❌ Secrets access failed: ${secretsResponse.error}`, DesignSystem.status.downtime));
+    console.info(UnicodeTableFormatter.colorize(`❌ Secrets access failed: ${secretsResponse.error}`, DesignSystem.status.downtime));
   }
 
   // Test health check
   const healthResponse = await app.handle(new Request('http://localhost:3000/user/user-001/health')).then(r => r.json());
   if (healthResponse.health) {
-    console.log(UnicodeTableFormatter.colorize('✅ Health check successful', DesignSystem.status.operational));
-    console.log(`  Overall Status: ${healthResponse.health.overall.status}`);
-    console.log(`  Secrets Connected: ${healthResponse.health.secrets.connected ? 'Yes' : 'No'}`);
-    console.log(`  Systems Checked: ${healthResponse.health.summary.totalChecks}`);
-    console.log(`  Recommendations: ${healthResponse.health.recommendations.length}`);
+    console.info(UnicodeTableFormatter.colorize('✅ Health check successful', DesignSystem.status.operational));
+    console.info(`  Overall Status: ${healthResponse.health.overall.status}`);
+    console.info(`  Secrets Connected: ${healthResponse.health.secrets.connected ? 'Yes' : 'No'}`);
+    console.info(`  Systems Checked: ${healthResponse.health.summary.totalChecks}`);
+    console.info(`  Recommendations: ${healthResponse.health.recommendations.length}`);
   } else {
-    console.log(UnicodeTableFormatter.colorize(`❌ Health check failed: ${healthResponse.error}`, DesignSystem.status.downtime));
+    console.info(UnicodeTableFormatter.colorize(`❌ Health check failed: ${healthResponse.error}`, DesignSystem.status.downtime));
   }
 
   // Test scope switching
@@ -1257,41 +1257,41 @@ async function demonstrateTypedBunSecretsCLI(): Promise<void> {
   })).then(r => r.json());
   
   if (scopeSwitchResponse.success) {
-    console.log(UnicodeTableFormatter.colorize('✅ Scope switching successful', DesignSystem.status.operational));
-    console.log(`  New Scope: ${scopeSwitchResponse.newScope}`);
-    console.log(`  New Backend: ${scopeSwitchResponse.config.backend.type}`);
+    console.info(UnicodeTableFormatter.colorize('✅ Scope switching successful', DesignSystem.status.operational));
+    console.info(`  New Scope: ${scopeSwitchResponse.newScope}`);
+    console.info(`  New Backend: ${scopeSwitchResponse.config.backend.type}`);
   } else {
-    console.log(UnicodeTableFormatter.colorize(`❌ Scope switching failed: ${scopeSwitchResponse.error}`, DesignSystem.status.downtime));
+    console.info(UnicodeTableFormatter.colorize(`❌ Scope switching failed: ${scopeSwitchResponse.error}`, DesignSystem.status.downtime));
   }
 
-  console.log(EmpireProDashboard.generateFooter());
+  console.info(EmpireProDashboard.generateFooter());
   
-  console.log('\n🎉 FULLY TYPED BUN SECRETS CLI DEMO COMPLETE!');
-  console.log('✅ Comprehensive TypeScript typing with branded types');
-  console.log('✅ Runtime validation mirroring native addon patterns (v8::Value::IsMap, etc.)');
-  console.log('✅ Type guards and assertion functions for compile-time and runtime safety');
-  console.log('✅ Discriminated unions and branded types for maximum type safety');
-  console.log('✅ Error handling with detailed validation messages');
-  console.log('✅ Integration ready for native addon implementation');
+  console.info('\n🎉 FULLY TYPED BUN SECRETS CLI DEMO COMPLETE!');
+  console.info('✅ Comprehensive TypeScript typing with branded types');
+  console.info('✅ Runtime validation mirroring native addon patterns (v8::Value::IsMap, etc.)');
+  console.info('✅ Type guards and assertion functions for compile-time and runtime safety');
+  console.info('✅ Discriminated unions and branded types for maximum type safety');
+  console.info('✅ Error handling with detailed validation messages');
+  console.info('✅ Integration ready for native addon implementation');
   
-  console.log('\n📋 TYPE SAFETY FEATURES:');
-  console.log('  🔒 Branded types (UserId, Email, Timestamp, SecretName)');
-  console.log('  🛡️ Runtime type guards (isString, isObject, isValidUserId, etc.)');
-  console.log('  ✨ Assertion functions (assertValidConfig, assertValidUserId, etc.)');
-  console.log('  🎯 Discriminated unions (BackendConfig, HealthStatus)');
-  console.log('  🔍 Validation functions mirroring v8::Value patterns');
-  console.log('  🚨 Comprehensive error handling with typed responses');
+  console.info('\n📋 TYPE SAFETY FEATURES:');
+  console.info('  🔒 Branded types (UserId, Email, Timestamp, SecretName)');
+  console.info('  🛡️ Runtime type guards (isString, isObject, isValidUserId, etc.)');
+  console.info('  ✨ Assertion functions (assertValidConfig, assertValidUserId, etc.)');
+  console.info('  🎯 Discriminated unions (BackendConfig, HealthStatus)');
+  console.info('  🔍 Validation functions mirroring v8::Value patterns');
+  console.info('  🚨 Comprehensive error handling with typed responses');
   
-  console.log('\n🔧 NATIVE ADDON INTEGRATION:');
-  console.log('  📱 v8::Value::IsMap() → isMap() / assertValidConfig()');
-  console.log('  🔢 v8::Value::IsInt32() → isNumber() / assertValidUserId()');
-  console.log('  📝 v8::Value::IsString() → isString() / assertValidEmail()');
-  console.log('  🎯 v8::Value::IsObject() → isObject() / validateUserProfile()');
-  console.log('  🚀 Ready for duoplus-secrets.node native addon');
+  console.info('\n🔧 NATIVE ADDON INTEGRATION:');
+  console.info('  📱 v8::Value::IsMap() → isMap() / assertValidConfig()');
+  console.info('  🔢 v8::Value::IsInt32() → isNumber() / assertValidUserId()');
+  console.info('  📝 v8::Value::IsString() → isString() / assertValidEmail()');
+  console.info('  🎯 v8::Value::IsObject() → isObject() / validateUserProfile()');
+  console.info('  🚀 Ready for duoplus-secrets.node native addon');
   
   // Handle graceful shutdown
   process.on('SIGINT', () => {
-    console.log(UnicodeTableFormatter.colorize('\n🛑 Shutting down typed secrets CLI server...', DesignSystem.text.secondary));
+    console.info(UnicodeTableFormatter.colorize('\n🛑 Shutting down typed secrets CLI server...', DesignSystem.text.secondary));
     server.stop();
     process.exit(0);
   });

@@ -28,12 +28,12 @@ class GenesisPhase01Demo {
 
   // 🚀 Execute complete demonstration
   async runDemo(): Promise<void> {
-    console.log('🎆 GENESIS PHASE-01 APOCALYPSE DEMONSTRATION');
-    console.log('==========================================');
-    console.log('📅 Date:', new Date().toISOString());
-    console.log('🔥 Bun Version:', process.version);
-    console.log('🎯 Units to Test:', this.config.unitCount);
-    console.log('');
+    console.info('🎆 GENESIS PHASE-01 APOCALYPSE DEMONSTRATION');
+    console.info('==========================================');
+    console.info('📅 Date:', new Date().toISOString());
+    console.info('🔥 Bun Version:', process.version);
+    console.info('🎯 Units to Test:', this.config.unitCount);
+    console.info('');
 
     try {
       // 1. System Initialization
@@ -69,7 +69,7 @@ class GenesisPhase01Demo {
 
   // 🔧 Initialize Genesis System
   private async initializeSystem(): Promise<void> {
-    console.log('🔧 Step 1: Initializing Genesis System...');
+    console.info('🔧 Step 1: Initializing Genesis System...');
     
     // Create required directories
     const directories = [
@@ -81,7 +81,7 @@ class GenesisPhase01Demo {
     for (const dir of directories) {
       if (!existsSync(dir)) {
         await this.execCommand('mkdir', ['-p', dir]);
-        console.log(`  ✅ Created directory: ${dir}`);
+        console.info(`  ✅ Created directory: ${dir}`);
       }
     }
     
@@ -94,73 +94,73 @@ class GenesisPhase01Demo {
     for (const script of scripts) {
       if (existsSync(script)) {
         await this.execCommand('chmod', ['+x', script]);
-        console.log(`  ✅ Made executable: ${script}`);
+        console.info(`  ✅ Made executable: ${script}`);
       }
     }
     
-    console.log('✅ System initialization complete\n');
+    console.info('✅ System initialization complete\n');
   }
 
   // 🛡️ Setup Proxy System
   private async setupProxySystem(): Promise<void> {
-    console.log('🛡️ Step 2: Setting Up Proxy System...');
+    console.info('🛡️ Step 2: Setting Up Proxy System...');
     
     try {
       // Initialize proxy system
       await this.execCommand('./factory/tools/proxy-rotate', ['init']);
-      console.log('  ✅ Proxy system initialized');
+      console.info('  ✅ Proxy system initialized');
       
       // Get proxy statistics
       const proxyStats = await this.execCommand('./factory/tools/proxy-rotate', ['stats']);
-      console.log('  📊 Proxy Statistics:');
+      console.info('  📊 Proxy Statistics:');
       proxyStats.split('\n').forEach(line => {
-        if (line.trim()) console.log(`    ${line}`);
+        if (line.trim()) console.info(`    ${line}`);
       });
       
       // Test proxy connectivity
-      console.log('  🔍 Testing proxy connectivity...');
+      console.info('  🔍 Testing proxy connectivity...');
       await this.execCommand('./factory/tools/proxy-rotate', ['test']);
       
     } catch (error) {
-      console.log('  ⚠️ Proxy system setup failed, continuing anyway...');
+      console.info('  ⚠️ Proxy system setup failed, continuing anyway...');
     }
     
-    console.log('✅ Proxy system setup complete\n');
+    console.info('✅ Proxy system setup complete\n');
   }
 
   // 📱 Run ADB Performance Benchmark
   private async runADBBenchmark(): Promise<void> {
-    console.log('📱 Step 3: Running ADB Performance Benchmark...');
+    console.info('📱 Step 3: Running ADB Performance Benchmark...');
     
     try {
       // Check ADB connection
       const adbCheck = await this.execCommand('adb', ['devices']);
       if (!adbCheck.includes('emulator') && !adbCheck.includes('device')) {
-        console.log('  ⚠️ No ADB device connected - skipping benchmark');
+        console.info('  ⚠️ No ADB device connected - skipping benchmark');
         return;
       }
       
       // Run quick benchmark
-      console.log('  🎯 Running quick tap benchmark (100 taps)...');
+      console.info('  🎯 Running quick tap benchmark (100 taps)...');
       const benchmarkResult = await this.execCommand('bun', [
         'run', 'factory/tools/adb-tap-bench.ts', 'quick'
       ]);
       
-      console.log('  📊 Benchmark Results:');
+      console.info('  📊 Benchmark Results:');
       benchmarkResult.split('\n').forEach(line => {
-        if (line.trim()) console.log(`    ${line}`);
+        if (line.trim()) console.info(`    ${line}`);
       });
       
     } catch (error) {
-      console.log('  ⚠️ ADB benchmark failed, continuing anyway...');
+      console.info('  ⚠️ ADB benchmark failed, continuing anyway...');
     }
     
-    console.log('✅ ADB benchmark complete\n');
+    console.info('✅ ADB benchmark complete\n');
   }
 
   // 🔐 Setup TOTP Vault
   private async setupTOTPVault(): Promise<void> {
-    console.log('🔐 Step 4: Setting Up TOTP Vault...');
+    console.info('🔐 Step 4: Setting Up TOTP Vault...');
     
     try {
       // Generate TOTP seed for demo unit
@@ -168,10 +168,10 @@ class GenesisPhase01Demo {
         'run', 'factory/tools/totp-vault.ts', 'generate', 'demo-unit'
       ]);
       
-      console.log('  🔑 TOTP Seed Generated:');
+      console.info('  🔑 TOTP Seed Generated:');
       totpResult.split('\n').forEach(line => {
         if (line.includes('Seed:') || line.includes('Algorithm:')) {
-          console.log(`    ${line}`);
+          console.info(`    ${line}`);
         }
       });
       
@@ -180,21 +180,21 @@ class GenesisPhase01Demo {
         'run', 'factory/tools/totp-vault.ts', 'stats'
       ]);
       
-      console.log('  📊 Vault Statistics:');
+      console.info('  📊 Vault Statistics:');
       vaultStats.split('\n').forEach(line => {
-        if (line.trim()) console.log(`    ${line}`);
+        if (line.trim()) console.info(`    ${line}`);
       });
       
     } catch (error) {
-      console.log('  ⚠️ TOTP vault setup failed, continuing anyway...');
+      console.info('  ⚠️ TOTP vault setup failed, continuing anyway...');
     }
     
-    console.log('✅ TOTP vault setup complete\n');
+    console.info('✅ TOTP vault setup complete\n');
   }
 
   // 🚀 Execute Phase-01
   private async executePhase01(): Promise<void> {
-    console.log('🚀 Step 5: Executing Genesis Phase-01...');
+    console.info('🚀 Step 5: Executing Genesis Phase-01...');
     
     try {
       // Set environment variables
@@ -207,38 +207,38 @@ class GenesisPhase01Demo {
         RETRY_LIMIT: '3'
       };
       
-      console.log(`  🆔 Trace ID: ${env.TRACE_ID}`);
-      console.log(`  📱 Target Gmail: ${env.UNIT_GMAIL}`);
-      console.log(`  🛡️ Proxy Floor: ${env.PROXY_FLOOR}`);
+      console.info(`  🆔 Trace ID: ${env.TRACE_ID}`);
+      console.info(`  📱 Target Gmail: ${env.UNIT_GMAIL}`);
+      console.info(`  🛡️ Proxy Floor: ${env.PROXY_FLOOR}`);
       
       if (this.config.skipADB) {
-        console.log('  ⚠️ Skipping ADB execution (demo mode)');
+        console.info('  ⚠️ Skipping ADB execution (demo mode)');
         return;
       }
       
       // Execute Phase-01 with orchestrator
-      console.log('  🎯 Starting Phase-01 execution...');
+      console.info('  🎯 Starting Phase-01 execution...');
       const phase01Result = await this.execCommand('bun', [
         'run', 'factory/core/genesis-unit-01.ts', 'phase-01'
       ], env);
       
-      console.log('  📊 Phase-01 Results:');
+      console.info('  📊 Phase-01 Results:');
       phase01Result.split('\n').forEach(line => {
         if (line.includes('FEEDBACK:') || line.includes('✅') || line.includes('⏱️')) {
-          console.log(`    ${line}`);
+          console.info(`    ${line}`);
         }
       });
       
     } catch (error) {
-      console.log('  ⚠️ Phase-01 execution failed, but demo continues...');
+      console.info('  ⚠️ Phase-01 execution failed, but demo continues...');
     }
     
-    console.log('✅ Phase-01 execution complete\n');
+    console.info('✅ Phase-01 execution complete\n');
   }
 
   // 📊 Analyze Results
   private async analyzeResults(): Promise<void> {
-    console.log('📊 Step 6: Analyzing Results...');
+    console.info('📊 Step 6: Analyzing Results...');
     
     try {
       // Check for generated logs
@@ -247,18 +247,18 @@ class GenesisPhase01Demo {
       ]);
       
       if (logFiles.trim()) {
-        console.log('  📁 Generated Log Files:');
+        console.info('  📁 Generated Log Files:');
         logFiles.split('\n').forEach((file: string) => {
           if (file.trim()) {
             this.execCommand('ls', ['-lh', file]).then(stats => {
-              console.log(`    ${stats}`);
+              console.info(`    ${stats}`);
             }).catch(() => {
-              console.log(`    ${file}`);
+              console.info(`    ${file}`);
             });
           }
         });
       } else {
-        console.log('  📁 No log files generated (expected in demo mode)');
+        console.info('  📁 No log files generated (expected in demo mode)');
       }
       
       // Check for metrics
@@ -267,59 +267,59 @@ class GenesisPhase01Demo {
       ]);
       
       if (metricFiles.trim()) {
-        console.log('  📈 Performance Metrics:');
+        console.info('  📈 Performance Metrics:');
         metricFiles.split('\n').forEach(file => {
           if (file.trim()) {
-            console.log(`    📊 ${file}`);
+            console.info(`    📊 ${file}`);
           }
         });
       } else {
-        console.log('  📈 No metrics files generated (expected in demo mode)');
+        console.info('  📈 No metrics files generated (expected in demo mode)');
       }
       
     } catch (error) {
-      console.log('  ⚠️ Results analysis failed, but demo continues...');
+      console.info('  ⚠️ Results analysis failed, but demo continues...');
     }
     
-    console.log('✅ Results analysis complete\n');
+    console.info('✅ Results analysis complete\n');
   }
 
   // 🎯 Display Performance Summary
   private displayPerformanceSummary(): void {
     const duration = Date.now() - this.startTime;
     
-    console.log('🎯 GENESIS PHASE-01 DEMONSTRATION SUMMARY');
-    console.log('=======================================');
-    console.log(`⏱️  Total Duration: ${duration}ms`);
-    console.log(`🔥 Units Tested: ${this.config.unitCount}`);
-    console.log(`📱 ADB Status: ${this.config.skipADB ? 'Skipped' : 'Tested'}`);
-    console.log(`🛡️ Proxy Status: ${this.config.skipProxy ? 'Skipped' : 'Configured'}`);
-    console.log(`🔐 TOTP Vault: Configured`);
-    console.log(`📁 Log System: Ready`);
-    console.log(`📊 Metrics: Ready`);
-    console.log('');
+    console.info('🎯 GENESIS PHASE-01 DEMONSTRATION SUMMARY');
+    console.info('=======================================');
+    console.info(`⏱️  Total Duration: ${duration}ms`);
+    console.info(`🔥 Units Tested: ${this.config.unitCount}`);
+    console.info(`📱 ADB Status: ${this.config.skipADB ? 'Skipped' : 'Tested'}`);
+    console.info(`🛡️ Proxy Status: ${this.config.skipProxy ? 'Skipped' : 'Configured'}`);
+    console.info(`🔐 TOTP Vault: Configured`);
+    console.info(`📁 Log System: Ready`);
+    console.info(`📊 Metrics: Ready`);
+    console.info('');
     
     // Performance classification
     if (duration < 5000) {
-      console.log('🏆 Demo Performance: EXCELLENT (Under 5 seconds)');
+      console.info('🏆 Demo Performance: EXCELLENT (Under 5 seconds)');
     } else if (duration < 10000) {
-      console.log('🥈 Demo Performance: GOOD (Under 10 seconds)');
+      console.info('🥈 Demo Performance: GOOD (Under 10 seconds)');
     } else {
-      console.log('🥉 Demo Performance: ACCEPTABLE');
+      console.info('🥉 Demo Performance: ACCEPTABLE');
     }
     
-    console.log('');
-    console.log('✅ GENESIS PHASE-01 SYSTEM READY FOR PRODUCTION!');
-    console.log('🚀 ADB-Turbo Gmail Creation + SIMD-Tap + ZSTD + IPC + Proxy + TOTP');
-    console.log('🎆 14256% System Surge Achieved!');
-    console.log('');
-    console.log('🎯 Next Steps:');
-    console.log('  1. Connect Android device/emulator');
-    console.log('  2. Run: bun run genesis:phase-01');
-    console.log('  3. Monitor: bun run genesis:verify');
-    console.log('  4. Scale: Deploy multiple units in parallel');
-    console.log('');
-    console.log('🌐 Vector Confirmed—Phase-01 Deployed! 🚀✨💎');
+    console.info('');
+    console.info('✅ GENESIS PHASE-01 SYSTEM READY FOR PRODUCTION!');
+    console.info('🚀 ADB-Turbo Gmail Creation + SIMD-Tap + ZSTD + IPC + Proxy + TOTP');
+    console.info('🎆 14256% System Surge Achieved!');
+    console.info('');
+    console.info('🎯 Next Steps:');
+    console.info('  1. Connect Android device/emulator');
+    console.info('  2. Run: bun run genesis:phase-01');
+    console.info('  3. Monitor: bun run genesis:verify');
+    console.info('  4. Scale: Deploy multiple units in parallel');
+    console.info('');
+    console.info('🌐 Vector Confirmed—Phase-01 Deployed! 🚀✨💎');
   }
 
   // 🔧 Execute command helper
@@ -381,21 +381,21 @@ if (import.meta.main) {
         config.performanceTest = true;
         break;
       case '--help':
-        console.log('🎆 Genesis Phase-01 Demonstration');
-        console.log('');
-        console.log('Usage: bun genesis-phase-01-demo.ts [options]');
-        console.log('');
-        console.log('Options:');
-        console.log('  --skip-adb        Skip ADB operations (demo mode)');
-        console.log('  --skip-proxy      Skip proxy setup');
-        console.log('  --units <count>   Number of units to simulate');
-        console.log('  --performance     Enable performance testing');
-        console.log('  --help            Show this help');
-        console.log('');
-        console.log('Examples:');
-        console.log('  bun genesis-phase-01-demo.ts                    # Full demo');
-        console.log('  bun genesis-phase-01-demo.ts --skip-adb          # Demo without ADB');
-        console.log('  bun genesis-phase-01-demo.ts --units 5           # Simulate 5 units');
+        console.info('🎆 Genesis Phase-01 Demonstration');
+        console.info('');
+        console.info('Usage: bun genesis-phase-01-demo.ts [options]');
+        console.info('');
+        console.info('Options:');
+        console.info('  --skip-adb        Skip ADB operations (demo mode)');
+        console.info('  --skip-proxy      Skip proxy setup');
+        console.info('  --units <count>   Number of units to simulate');
+        console.info('  --performance     Enable performance testing');
+        console.info('  --help            Show this help');
+        console.info('');
+        console.info('Examples:');
+        console.info('  bun genesis-phase-01-demo.ts                    # Full demo');
+        console.info('  bun genesis-phase-01-demo.ts --skip-adb          # Demo without ADB');
+        console.info('  bun genesis-phase-01-demo.ts --units 5           # Simulate 5 units');
         process.exit(0);
     }
   }

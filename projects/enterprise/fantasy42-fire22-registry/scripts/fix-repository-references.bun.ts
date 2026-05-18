@@ -84,7 +84,7 @@ function processFile(filePath: string): void {
     if (fileReplacements > 0) {
       writeFileSync(filePath, updatedContent);
       filesUpdated++;
-      console.log(`✅ ${filePath} - ${fileReplacements} replacements`);
+      console.info(`✅ ${filePath} - ${fileReplacements} replacements`);
     }
 
     filesProcessed++;
@@ -116,48 +116,48 @@ function walkDirectory(dirPath: string): void {
 }
 
 async function main() {
-  console.log(`🔧 Fantasy42-Fire22 Repository Reference Fixer`);
-  console.log(`══════════════════════════════════════════════`);
-  console.log(`Replacing repository references:`);
-  console.log(`  ${OLD_REPO_FULL} → ${NEW_REPO_FULL}`);
-  console.log(`  ${OLD_CRYSTAL_REPO} → ${NEW_CRYSTAL_REPO}`);
-  console.log(`  GitHub URLs updated accordingly`);
-  console.log('');
+  console.info(`🔧 Fantasy42-Fire22 Repository Reference Fixer`);
+  console.info(`══════════════════════════════════════════════`);
+  console.info(`Replacing repository references:`);
+  console.info(`  ${OLD_REPO_FULL} → ${NEW_REPO_FULL}`);
+  console.info(`  ${OLD_CRYSTAL_REPO} → ${NEW_CRYSTAL_REPO}`);
+  console.info(`  GitHub URLs updated accordingly`);
+  console.info('');
 
   const startTime = Date.now();
   walkDirectory('.');
 
   const duration = Date.now() - startTime;
 
-  console.log('');
-  console.log(`📊 Summary:`);
-  console.log(`   Files processed: ${filesProcessed}`);
-  console.log(`   Files updated: ${filesUpdated}`);
-  console.log(`   Total replacements: ${totalReplacements}`);
-  console.log(`   Duration: ${duration}ms`);
-  console.log('');
+  console.info('');
+  console.info(`📊 Summary:`);
+  console.info(`   Files processed: ${filesProcessed}`);
+  console.info(`   Files updated: ${filesUpdated}`);
+  console.info(`   Total replacements: ${totalReplacements}`);
+  console.info(`   Duration: ${duration}ms`);
+  console.info('');
 
   if (filesUpdated > 0) {
-    console.log(
+    console.info(
       `✅ Successfully updated ${filesUpdated} files with ${totalReplacements} repository references`
     );
-    console.log(`💡 Next steps:`);
-    console.log(`   1. Review changes: git diff`);
-    console.log(`   2. Test dependencies: bun install`);
-    console.log(
+    console.info(`💡 Next steps:`);
+    console.info(`   1. Review changes: git diff`);
+    console.info(`   2. Test dependencies: bun install`);
+    console.info(
       `   3. Commit changes: git add . && git commit -S -m "fix: Update repository references"`
     );
 
     // Show example of what was changed
-    console.log('');
-    console.log(`🔍 Example changes made:`);
-    console.log(`   OLD: https://github.com/${OLD_REPO_FULL}`);
-    console.log(`   NEW: https://github.com/${NEW_REPO_FULL}`);
-    console.log('');
-    console.log(`   OLD: ${OLD_CRYSTAL_REPO}`);
-    console.log(`   NEW: ${NEW_CRYSTAL_REPO}`);
+    console.info('');
+    console.info(`🔍 Example changes made:`);
+    console.info(`   OLD: https://github.com/${OLD_REPO_FULL}`);
+    console.info(`   NEW: https://github.com/${NEW_REPO_FULL}`);
+    console.info('');
+    console.info(`   OLD: ${OLD_CRYSTAL_REPO}`);
+    console.info(`   NEW: ${NEW_CRYSTAL_REPO}`);
   } else {
-    console.log(`ℹ️  No repository references found to update`);
+    console.info(`ℹ️  No repository references found to update`);
   }
 }
 

@@ -200,14 +200,14 @@ export class SixelGraphicsEngine {
    * Test sixel support with simple pattern
    */
   testSixelSupport(): void {
-    console.log('🎨 Sixel Graphics Test v4.4');
-    console.log('==========================');
+    console.info('🎨 Sixel Graphics Test v4.4');
+    console.info('==========================');
     
     const capabilities = this.getCapabilities();
-    console.log(`Terminal: ${capabilities.terminal}`);
-    console.log(`Sixel Support: ${capabilities.supportsSixel ? '✅ YES' : '❌ NO'}`);
-    console.log(`Fallback Mode: ${capabilities.fallback}`);
-    console.log();
+    console.info(`Terminal: ${capabilities.terminal}`);
+    console.info(`Sixel Support: ${capabilities.supportsSixel ? '✅ YES' : '❌ NO'}`);
+    console.info(`Fallback Mode: ${capabilities.fallback}`);
+    console.info();
     
     // Test different chart types
     const testData: ChartData[] = [
@@ -217,21 +217,21 @@ export class SixelGraphicsEngine {
       { value: 90, label: 'Item D' }
     ];
     
-    console.log('📊 Sparkline:');
-    console.log(this.generateChart('sparkline', testData, { width: 15 }));
-    console.log();
+    console.info('📊 Sparkline:');
+    console.info(this.generateChart('sparkline', testData, { width: 15 }));
+    console.info();
     
-    console.log('📊 Progress Bar:');
-    console.log(this.generateChart('progress-bar', [{ value: 75 }], { width: 20 }));
-    console.log();
+    console.info('📊 Progress Bar:');
+    console.info(this.generateChart('progress-bar', [{ value: 75 }], { width: 20 }));
+    console.info();
     
-    console.log('📊 Mini Bar Chart:');
-    console.log(this.generateChart('mini-bar', testData, { width: 25 }));
-    console.log();
+    console.info('📊 Mini Bar Chart:');
+    console.info(this.generateChart('mini-bar', testData, { width: 25 }));
+    console.info();
     
-    console.log('📊 Trend Indicator:');
-    console.log(this.generateChart('trend-indicator', [{ value: 85 }], { previous: 70 }));
-    console.log();
+    console.info('📊 Trend Indicator:');
+    console.info(this.generateChart('trend-indicator', [{ value: 85 }], { previous: 70 }));
+    console.info();
   }
 }
 
@@ -250,9 +250,9 @@ if (import.meta.main) {
     engine.testSixelSupport();
   } else {
     const capabilities = engine.getCapabilities();
-    console.log(`Sixel Support: ${capabilities.supportsSixel ? '✅' : '❌'}`);
-    console.log(`Terminal: ${capabilities.terminal}`);
-    console.log(`Fallback: ${capabilities.fallback}`);
+    console.info(`Sixel Support: ${capabilities.supportsSixel ? '✅' : '❌'}`);
+    console.info(`Terminal: ${capabilities.terminal}`);
+    console.info(`Fallback: ${capabilities.fallback}`);
   }
 }
 

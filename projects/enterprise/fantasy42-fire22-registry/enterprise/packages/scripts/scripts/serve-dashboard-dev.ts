@@ -79,8 +79,8 @@ function parseTOML(content: string): any {
 
 // Main development server
 async function startDashboardServer() {
-  console.log('🔥 Fire22 Dashboard Development Server');
-  console.log('=====================================');
+  console.info('🔥 Fire22 Dashboard Development Server');
+  console.info('=====================================');
 
   const config = loadBunfig();
   const dashboardConfig = config.dashboard || {};
@@ -91,11 +91,11 @@ async function startDashboardServer() {
   const port = dashboardConfig.dev_port || 3001;
   const websocketPort = devConfig.websocket_port || 3002;
 
-  console.log(`📊 Dashboard Version: ${envConfig.DASHBOARD_VERSION || '5.0.0'}`);
-  console.log(`🌐 Server Port: ${port}`);
-  console.log(`🔄 WebSocket Port: ${websocketPort}`);
-  console.log(`🎨 Theme: ${envConfig.THEME_MODE || 'dark'}`);
-  console.log('');
+  console.info(`📊 Dashboard Version: ${envConfig.DASHBOARD_VERSION || '5.0.0'}`);
+  console.info(`🌐 Server Port: ${port}`);
+  console.info(`🔄 WebSocket Port: ${websocketPort}`);
+  console.info(`🎨 Theme: ${envConfig.THEME_MODE || 'dark'}`);
+  console.info('');
 
   // Create development server
   const server = Bun.serve({
@@ -106,7 +106,7 @@ async function startDashboardServer() {
       const url = new URL(request.url);
       const pathname = url.pathname;
 
-      console.log(`📨 ${request.method} ${pathname}`);
+      console.info(`📨 ${request.method} ${pathname}`);
 
       // Handle dashboard routes
       if (pathname === '/dashboard' || pathname === '/') {
@@ -118,7 +118,7 @@ async function startDashboardServer() {
           const exists = await file.exists();
 
           if (exists) {
-            console.log(`✅ Serving dashboard: ${dashboardPath}`);
+            console.info(`✅ Serving dashboard: ${dashboardPath}`);
             return new Response(await file.text(), {
               headers: {
                 'Content-Type': 'text/html',
@@ -138,7 +138,7 @@ async function startDashboardServer() {
 
       // Handle API routes
       if (pathname.startsWith('/api/dashboard/')) {
-        console.log(`🔌 API Request: ${pathname}`);
+        console.info(`🔌 API Request: ${pathname}`);
 
         // Mock API response for development
         const mockData = {
@@ -168,7 +168,7 @@ async function startDashboardServer() {
           const exists = await file.exists();
 
           if (exists) {
-            console.log(`📦 Serving asset: ${assetPath}`);
+            console.info(`📦 Serving asset: ${assetPath}`);
             return new Response(await file.arrayBuffer(), {
               headers: {
                 'Cache-Control': 'public, max-age=31536000',
@@ -176,7 +176,7 @@ async function startDashboardServer() {
             });
           }
         } catch (error) {
-          console.log(`⚠️ Asset not found: ${assetPath}`);
+          console.info(`⚠️ Asset not found: ${assetPath}`);
         }
       }
 
@@ -206,22 +206,22 @@ async function startDashboardServer() {
     },
   });
 
-  console.log(`✅ Dashboard server running at: http://localhost:${port}`);
-  console.log(`🎯 Dashboard URL: http://localhost:${port}/dashboard`);
-  console.log(`🔌 API Endpoint: http://localhost:${port}/api/dashboard/data`);
-  console.log('');
-  console.log('📋 Available routes:');
-  console.log('  • /dashboard - Main dashboard');
-  console.log('  • /api/dashboard/* - Dashboard API');
-  console.log('  • /assets/* - Static assets');
-  console.log('');
-  console.log('🔄 Hot reload enabled - changes will be reflected automatically');
-  console.log('⚡ Press Ctrl+C to stop the server');
-  console.log('');
+  console.info(`✅ Dashboard server running at: http://localhost:${port}`);
+  console.info(`🎯 Dashboard URL: http://localhost:${port}/dashboard`);
+  console.info(`🔌 API Endpoint: http://localhost:${port}/api/dashboard/data`);
+  console.info('');
+  console.info('📋 Available routes:');
+  console.info('  • /dashboard - Main dashboard');
+  console.info('  • /api/dashboard/* - Dashboard API');
+  console.info('  • /assets/* - Static assets');
+  console.info('');
+  console.info('🔄 Hot reload enabled - changes will be reflected automatically');
+  console.info('⚡ Press Ctrl+C to stop the server');
+  console.info('');
 
   // Graceful shutdown
   process.on('SIGINT', () => {
-    console.log('\n🛑 Shutting down dashboard server...');
+    console.info('\n🛑 Shutting down dashboard server...');
     server.stop();
     process.exit(0);
   });

@@ -579,7 +579,7 @@ export class KYCProviderIntegration {
     customerId: string,
     type: KYCSession['verificationType']
   ): Promise<string> {
-    console.log(`Creating Jumio session for ${customerId}`);
+    console.info(`Creating Jumio session for ${customerId}`);
     return `jumio_${Date.now()}`;
   }
 
@@ -587,7 +587,7 @@ export class KYCProviderIntegration {
     customerId: string,
     type: KYCSession['verificationType']
   ): Promise<string> {
-    console.log(`Creating Onfido session for ${customerId}`);
+    console.info(`Creating Onfido session for ${customerId}`);
     return `onfido_${Date.now()}`;
   }
 
@@ -595,7 +595,7 @@ export class KYCProviderIntegration {
     customerId: string,
     type: KYCSession['verificationType']
   ): Promise<string> {
-    console.log(`Creating Veriff session for ${customerId}`);
+    console.info(`Creating Veriff session for ${customerId}`);
     return `veriff_${Date.now()}`;
   }
 
@@ -603,7 +603,7 @@ export class KYCProviderIntegration {
     customerId: string,
     type: KYCSession['verificationType']
   ): Promise<string> {
-    console.log(`Creating Idology session for ${customerId}`);
+    console.info(`Creating Idology session for ${customerId}`);
     return `idology_${Date.now()}`;
   }
 
@@ -611,7 +611,7 @@ export class KYCProviderIntegration {
     customerId: string,
     type: KYCSession['verificationType']
   ): Promise<string> {
-    console.log(`Creating Trulioo session for ${customerId}`);
+    console.info(`Creating Trulioo session for ${customerId}`);
     return `trulioo_${Date.now()}`;
   }
 
@@ -620,7 +620,7 @@ export class KYCProviderIntegration {
     fileName: string,
     documentType: KYCDocument['type']
   ): Promise<{ fileUrl: string }> {
-    console.log(`Uploading to Jumio: ${fileName}`);
+    console.info(`Uploading to Jumio: ${fileName}`);
     return { fileUrl: `jumio://docs/${Date.now()}` };
   }
 
@@ -629,7 +629,7 @@ export class KYCProviderIntegration {
     fileName: string,
     documentType: KYCDocument['type']
   ): Promise<{ fileUrl: string }> {
-    console.log(`Uploading to Onfido: ${fileName}`);
+    console.info(`Uploading to Onfido: ${fileName}`);
     return { fileUrl: `onfido://docs/${Date.now()}` };
   }
 
@@ -638,7 +638,7 @@ export class KYCProviderIntegration {
     fileName: string,
     documentType: KYCDocument['type']
   ): Promise<{ fileUrl: string }> {
-    console.log(`Uploading to Veriff: ${fileName}`);
+    console.info(`Uploading to Veriff: ${fileName}`);
     return { fileUrl: `veriff://docs/${Date.now()}` };
   }
 
@@ -647,7 +647,7 @@ export class KYCProviderIntegration {
     fileName: string,
     documentType: KYCDocument['type']
   ): Promise<{ fileUrl: string }> {
-    console.log(`Uploading to Trulioo: ${fileName}`);
+    console.info(`Uploading to Trulioo: ${fileName}`);
     return { fileUrl: `trulioo://docs/${Date.now()}` };
   }
 

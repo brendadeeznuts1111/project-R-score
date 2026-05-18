@@ -128,7 +128,7 @@ export async function syncRosterWithPagerDuty(roster: OncallRoster): Promise<{
 
 	// Update PagerDuty schedule
 	// Note: This is a placeholder - actual implementation would use PagerDuty API
-	console.log('[TEAM.ONCALL.ROSTER.RG:SYNC] Syncing roster with PagerDuty:', {
+	console.info('[TEAM.ONCALL.ROSTER.RG:SYNC] Syncing roster with PagerDuty:', {
 		week: roster.currentWeek.week,
 		primary: primaryUserId,
 		secondary: secondaryUserId,

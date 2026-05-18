@@ -66,7 +66,7 @@ export class HotReloadManager {
    */
   private handleSelfAccept(newModule: any) {
     if (newModule) {
-      console.log('🔥 Module hot reloaded');
+      console.info('🔥 Module hot reloaded');
       this.callbacks.forEach((callback, key) => {
         try {
           callback(newModule);
@@ -84,7 +84,7 @@ export class HotReloadManager {
    */
   private handleDependencyAccept(dependency: string, newModule: any) {
     if (newModule) {
-      console.log(`🔥 Dependency hot reloaded: ${dependency}`);
+      console.info(`🔥 Dependency hot reloaded: ${dependency}`);
       const callback = this.callbacks.get(dependency);
       if (callback) {
         try {

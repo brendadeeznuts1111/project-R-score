@@ -47,11 +47,11 @@ async function promoteBaseline(options: PromoteOptions): Promise<void> {
     const ts = new Date().toISOString().replace(/[:.]/g, "-");
     const archivePath = join(archiveDir, `protocol-parallel.baseline.${ts}.json`);
     await Bun.write(archivePath, baselineFile);
-    console.log(`Archived previous baseline -> ${archivePath}`);
+    console.info(`Archived previous baseline -> ${archivePath}`);
   }
 
   await Bun.write(options.baselinePath, compareFile);
-  console.log(`Promoted baseline -> ${options.baselinePath}`);
+  console.info(`Promoted baseline -> ${options.baselinePath}`);
 }
 
 async function main() {

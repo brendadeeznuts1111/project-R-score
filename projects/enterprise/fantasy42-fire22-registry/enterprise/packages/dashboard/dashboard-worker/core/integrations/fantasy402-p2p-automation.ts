@@ -290,7 +290,7 @@ export class Fantasy42P2PAutomation {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🚀 Initializing Fantasy42 P2P Automation...');
+      console.info('🚀 Initializing Fantasy42 P2P Automation...');
 
       // Find and monitor form elements
       const elementsFound = await this.locateFormElements();
@@ -309,7 +309,7 @@ export class Fantasy42P2PAutomation {
       await this.setupAutomationTriggers();
 
       this.automationActive = true;
-      console.log('✅ Fantasy42 P2P Automation initialized successfully');
+      console.info('✅ Fantasy42 P2P Automation initialized successfully');
 
       return true;
     } catch (error) {
@@ -333,7 +333,7 @@ export class Fantasy42P2PAutomation {
     for (const element of elements) {
       const found = this.xpathHandler.findElementByXPath(element.xpath);
       if (found) {
-        console.log(`✅ Found ${element.name} element:`, found.tagName);
+        console.info(`✅ Found ${element.name} element:`, found.tagName);
       } else {
         console.warn(`⚠️ ${element.name} element not found at: ${element.xpath}`);
         allFound = false;
@@ -367,7 +367,7 @@ export class Fantasy42P2PAutomation {
       thirdPartyElement.addEventListener('blur', this.handleThirdPartyIdBlur.bind(this));
     }
 
-    console.log('✅ Event listeners setup for Fantasy42 form elements');
+    console.info('✅ Event listeners setup for Fantasy42 form elements');
   }
 
   /**
@@ -379,7 +379,7 @@ export class Fantasy42P2PAutomation {
     this.p2pMatching.on('transfer-completed', this.handleTransferCompleted.bind(this));
     this.p2pMatching.on('transfer-failed', this.handleTransferFailed.bind(this));
 
-    console.log('✅ P2P matching system initialized');
+    console.info('✅ P2P matching system initialized');
   }
 
   /**
@@ -396,7 +396,7 @@ export class Fantasy42P2PAutomation {
     // Setup real-time monitoring
     await this.setupRealTimeMonitoring();
 
-    console.log('✅ Automation triggers setup');
+    console.info('✅ Automation triggers setup');
   }
 
   /**
@@ -429,7 +429,7 @@ export class Fantasy42P2PAutomation {
     if (password && password.length >= 6) {
       const authenticated = await this.finalizeAuthentication(password);
       if (authenticated) {
-        console.log('✅ Authentication successful');
+        console.info('✅ Authentication successful');
         this.enableAutomationFeatures();
       }
     }
@@ -442,7 +442,7 @@ export class Fantasy42P2PAutomation {
     const target = event.target as HTMLSelectElement;
     const selectedAgent = target.value;
 
-    console.log(`👤 Agent changed to: ${selectedAgent}`);
+    console.info(`👤 Agent changed to: ${selectedAgent}`);
 
     // Update P2P matching with selected agent
     await this.updateAgentContext(selectedAgent);
@@ -493,7 +493,7 @@ export class Fantasy42P2PAutomation {
    * Handle P2P match found
    */
   private async handleMatchFound(matchData: any): Promise<void> {
-    console.log('🎯 P2P Match Found:', matchData);
+    console.info('🎯 P2P Match Found:', matchData);
 
     try {
       // Create transfer request
@@ -532,7 +532,7 @@ export class Fantasy42P2PAutomation {
    */
   private async processAutomatedTransfer(request: P2PTransferRequest): Promise<void> {
     try {
-      console.log(`🔄 Processing automated transfer: ${request.transactionId}`);
+      console.info(`🔄 Processing automated transfer: ${request.transactionId}`);
 
       // Validate transfer request
       const validation = await this.validateTransferRequest(request);
@@ -544,7 +544,7 @@ export class Fantasy42P2PAutomation {
       const transferResult = await this.cashierSystem.processP2PTransfer(request);
 
       if (transferResult.success) {
-        console.log(`✅ Automated transfer completed: ${request.transactionId}`);
+        console.info(`✅ Automated transfer completed: ${request.transactionId}`);
 
         // Update Fantasy42 interface
         await this.updateFantasy42Interface(request, 'completed');
@@ -566,7 +566,7 @@ export class Fantasy42P2PAutomation {
    * Request manual approval for transfer
    */
   private async requestManualApproval(request: P2PTransferRequest): Promise<void> {
-    console.log(`⏳ Manual approval required for transfer: ${request.transactionId}`);
+    console.info(`⏳ Manual approval required for transfer: ${request.transactionId}`);
 
     // Create approval notification
     const approvalRequest = {
@@ -590,7 +590,7 @@ export class Fantasy42P2PAutomation {
   private async handleTransferCompleted(transferData: any): Promise<void> {
     const request = this.activeTransfers.get(transferData.transactionId);
     if (request) {
-      console.log(`✅ Transfer completed: ${transferData.transactionId}`);
+      console.info(`✅ Transfer completed: ${transferData.transactionId}`);
 
       // Update Fantasy42 interface
       await this.updateFantasy42Interface(request, 'completed');
@@ -727,7 +727,7 @@ export class Fantasy42P2PAutomation {
       const authResult = await this.fantasyClient.authenticate(password);
 
       if (authResult.success) {
-        console.log('✅ Authentication successful');
+        console.info('✅ Authentication successful');
         return true;
       } else {
         console.warn('⚠️ Authentication failed');
@@ -768,7 +768,7 @@ export class Fantasy42P2PAutomation {
   private async checkExistingMatches(address: string): Promise<void> {
     const matches = await this.p2pMatching.findMatchesByAddress(address);
     if (matches.length > 0) {
-      console.log(`🎯 Found ${matches.length} existing matches for address: ${address}`);
+      console.info(`🎯 Found ${matches.length} existing matches for address: ${address}`);
     }
   }
 
@@ -811,7 +811,7 @@ export class Fantasy42P2PAutomation {
    * Enable automation features
    */
   private enableAutomationFeatures(): void {
-    console.log('🚀 Automation features enabled');
+    console.info('🚀 Automation features enabled');
     this.automationActive = true;
   }
 
@@ -835,7 +835,7 @@ export class Fantasy42P2PAutomation {
    * Handle new P2P request
    */
   private async handleNewRequest(request: any): Promise<void> {
-    console.log('📨 New P2P request:', request);
+    console.info('📨 New P2P request:', request);
     await this.handleMatchFound(request);
   }
 
@@ -844,7 +844,7 @@ export class Fantasy42P2PAutomation {
    */
   private async setupRealTimeMonitoring(): Promise<void> {
     // Setup WebSocket or polling for real-time updates
-    console.log('📊 Real-time monitoring setup');
+    console.info('📊 Real-time monitoring setup');
   }
 
   /**
@@ -906,7 +906,7 @@ export class Fantasy42P2PAutomation {
         data: confirmationMessage,
       });
 
-      console.log(`✅ Fantasy42 interface updated: ${status}`);
+      console.info(`✅ Fantasy42 interface updated: ${status}`);
     } catch (error) {
       console.error('❌ Failed to update Fantasy42 interface:', error);
     }
@@ -933,7 +933,7 @@ export class Fantasy42P2PAutomation {
    */
   private async storeApprovalRequest(request: any): Promise<void> {
     // Store in database for manual processing
-    console.log('📋 Approval request stored:', request.id);
+    console.info('📋 Approval request stored:', request.id);
   }
 
   /**
@@ -941,7 +941,7 @@ export class Fantasy42P2PAutomation {
    */
   private async notifyTransferCompletion(request: P2PTransferRequest): Promise<void> {
     // Send notifications to stakeholders
-    console.log('📢 Transfer completion notified:', request.transactionId);
+    console.info('📢 Transfer completion notified:', request.transactionId);
   }
 
   /**
@@ -952,7 +952,7 @@ export class Fantasy42P2PAutomation {
     transferData: any
   ): Promise<void> {
     // Log successful transfer
-    console.log('📊 Transfer completion logged:', request.transactionId);
+    console.info('📊 Transfer completion logged:', request.transactionId);
   }
 
   /**
@@ -968,7 +968,7 @@ export class Fantasy42P2PAutomation {
    */
   private async attemptTransferRecovery(request: P2PTransferRequest): Promise<void> {
     // Implement recovery logic
-    console.log('🔄 Transfer recovery attempted:', request.transactionId);
+    console.info('🔄 Transfer recovery attempted:', request.transactionId);
   }
 
   /**
@@ -1374,15 +1374,15 @@ export class Fantasy42P2PAutomation {
     data: any,
     priority: 'low' | 'medium' | 'high'
   ): Promise<void> {
-    console.log(`📧 Email notification: ${type} (${priority})`, data);
+    console.info(`📧 Email notification: ${type} (${priority})`, data);
   }
 
   private async sendSMSNotification(type: string, data: any): Promise<void> {
-    console.log(`📱 SMS notification: ${type}`, data);
+    console.info(`📱 SMS notification: ${type}`, data);
   }
 
   private async sendWebhookNotification(type: string, data: any): Promise<void> {
-    console.log(`🔗 Webhook notification: ${type}`, data);
+    console.info(`🔗 Webhook notification: ${type}`, data);
   }
 
   private async evaluateRuleCondition(
@@ -1394,7 +1394,7 @@ export class Fantasy42P2PAutomation {
   }
 
   private async flagForManualReview(request: P2PTransferRequest, ruleName: string): Promise<void> {
-    console.log(`🏷️ Flagged for review: ${request.transactionId} (${ruleName})`);
+    console.info(`🏷️ Flagged for review: ${request.transactionId} (${ruleName})`);
   }
 
   /**
@@ -1405,7 +1405,7 @@ export class Fantasy42P2PAutomation {
     this.activeTransfers.clear();
     this.notificationQueue = [];
     this.rateLimitCounters.clear();
-    console.log('🛑 Fantasy42 P2P Automation stopped');
+    console.info('🛑 Fantasy42 P2P Automation stopped');
   }
 }
 

@@ -57,16 +57,16 @@ class WikiMatrixPipe {
       const stdin = await Bun.stdin.text();
       
       if (!stdin.trim()) {
-        console.log(styled('📋 Available pipe commands:', 'info'));
-        console.log(styled('  {"action": "matrix"}', 'muted'));
-        console.log(styled('  {"action": "details", "params": {"index": 1}}', 'muted'));
-        console.log(styled('  {"action": "compare"}', 'muted'));
-        console.log(styled('  {"action": "stats"}', 'muted'));
-        console.log(styled('  {"action": "templates"}', 'muted'));
-        console.log('');
-        console.log(styled('Example usage:', 'primary'));
-        console.log(styled('  echo \'{"action": "matrix"}\' | bun run scripts/wiki-matrix-pipe.ts', 'muted'));
-        console.log(styled('  echo \'{"action": "details", "params": {"index": 2}}\' | bun run scripts/wiki-matrix-pipe.ts', 'muted'));
+        console.info(styled('📋 Available pipe commands:', 'info'));
+        console.info(styled('  {"action": "matrix"}', 'muted'));
+        console.info(styled('  {"action": "details", "params": {"index": 1}}', 'muted'));
+        console.info(styled('  {"action": "compare"}', 'muted'));
+        console.info(styled('  {"action": "stats"}', 'muted'));
+        console.info(styled('  {"action": "templates"}', 'muted'));
+        console.info('');
+        console.info(styled('Example usage:', 'primary'));
+        console.info(styled('  echo \'{"action": "matrix"}\' | bun run scripts/wiki-matrix-pipe.ts', 'muted'));
+        console.info(styled('  echo \'{"action": "details", "params": {"index": 2}}\' | bun run scripts/wiki-matrix-pipe.ts', 'muted'));
         return;
       }
 
@@ -128,7 +128,7 @@ class WikiMatrixPipe {
     }));
 
     if (format === 'json') {
-      console.log(JSON.stringify(matrixData, null, 2));
+      console.info(JSON.stringify(matrixData, null, 2));
     } else if (format === 'csv') {
       this.outputCSV(matrixData);
     } else {
@@ -157,7 +157,7 @@ class WikiMatrixPipe {
     };
 
     if (format === 'json') {
-      console.log(JSON.stringify(details, null, 2));
+      console.info(JSON.stringify(details, null, 2));
     } else if (format === 'csv') {
       this.outputCSV([details]);
     } else {
@@ -198,7 +198,7 @@ class WikiMatrixPipe {
     });
 
     if (format === 'json') {
-      console.log(JSON.stringify(comparisonData, null, 2));
+      console.info(JSON.stringify(comparisonData, null, 2));
     } else if (format === 'csv') {
       this.outputCSV(comparisonData);
     } else {
@@ -221,7 +221,7 @@ class WikiMatrixPipe {
     });
 
     if (format === 'json') {
-      console.log(JSON.stringify(stats, null, 2));
+      console.info(JSON.stringify(stats, null, 2));
     } else if (format === 'csv') {
       const flatStats = [
         { metric: 'Total Templates', value: stats.total },
@@ -242,7 +242,7 @@ class WikiMatrixPipe {
 
   private async displayTemplates(format: string = 'table'): Promise<void> {
     if (format === 'json') {
-      console.log(JSON.stringify(this.templates, null, 2));
+      console.info(JSON.stringify(this.templates, null, 2));
     } else if (format === 'csv') {
       this.outputCSV(this.templates);
     } else {
@@ -280,7 +280,7 @@ class WikiMatrixPipe {
     const headerSeparator = createSeparator('├', '┼', '┤', '┼');
     const bottomBorder = createSeparator('└', '┴', '┘', '┴');
 
-    console.log(styled(topBorder, 'muted'));
+    console.info(styled(topBorder, 'muted'));
     
     // Header row
     let headerRow = '│';
@@ -288,9 +288,9 @@ class WikiMatrixPipe {
       const paddedHeader = header.padEnd(colWidths[i]);
       headerRow += ` ${styled(paddedHeader, 'accent')} │`;
     });
-    console.log(headerRow);
+    console.info(headerRow);
     
-    console.log(styled(headerSeparator, 'muted'));
+    console.info(styled(headerSeparator, 'muted'));
 
     // Data rows
     data.forEach((row, rowIndex) => {
@@ -312,14 +312,14 @@ class WikiMatrixPipe {
         const paddedValue = value.padEnd(colWidths[colIndex]);
         dataRow += ` ${styled(paddedValue, color)} │`;
       });
-      console.log(dataRow);
+      console.info(dataRow);
       
       if (rowIndex < data.length - 1) {
-        console.log(styled(createSeparator('├', '┼', '┤', '┼'), 'muted'));
+        console.info(styled(createSeparator('├', '┼', '┤', '┼'), 'muted'));
       }
     });
 
-    console.log(styled(bottomBorder, 'muted'));
+    console.info(styled(bottomBorder, 'muted'));
   }
 
   private outputCSV(data: any[]): void {
@@ -328,7 +328,7 @@ class WikiMatrixPipe {
     const headers = Object.keys(data[0]);
     
     // Output CSV header
-    console.log(headers.join(','));
+    console.info(headers.join(','));
     
     // Output CSV rows
     data.forEach(row => {
@@ -339,13 +339,13 @@ class WikiMatrixPipe {
         }
         return value;
       });
-      console.log(values.join(','));
+      console.info(values.join(','));
     });
   }
 
   private displayDetailsTable(details: any): void {
-    console.log(styled(`\n🔍 ${details.name}`, 'accent'));
-    console.log(colorBar('accent', 50));
+    console.info(styled(`\n🔍 ${details.name}`, 'accent'));
+    console.info(colorBar('accent', 50));
 
     const entries = Object.entries(details);
     const colWidths = [15, 50];
@@ -354,19 +354,19 @@ class WikiMatrixPipe {
       return left + '─'.repeat(colWidths[0]) + middle + '─'.repeat(colWidths[1]) + right;
     };
 
-    console.log(styled(createSeparator('┌', '┐', '┬'), 'muted'));
+    console.info(styled(createSeparator('┌', '┐', '┬'), 'muted'));
     
     entries.forEach(([key, value], index) => {
       const keyStr = key.padEnd(colWidths[0]);
       const valueStr = String(value).padEnd(colWidths[1]);
-      console.log(`│ ${styled(keyStr, 'primary')} │ ${styled(valueStr, 'info')} │`);
+      console.info(`│ ${styled(keyStr, 'primary')} │ ${styled(valueStr, 'info')} │`);
       
       if (index < entries.length - 1) {
-        console.log(styled(createSeparator('├', '┤', '┼'), 'muted'));
+        console.info(styled(createSeparator('├', '┤', '┼'), 'muted'));
       }
     });
 
-    console.log(styled(createSeparator('└', '┘', '┴'), 'muted'));
+    console.info(styled(createSeparator('└', '┘', '┴'), 'muted'));
   }
 
   private displayComparisonTable(data: any[]): void {
@@ -396,7 +396,7 @@ class WikiMatrixPipe {
     const headerSeparator = createSeparator('├', '┼', '┤', '┼');
     const bottomBorder = createSeparator('└', '┴', '┘', '┴');
 
-    console.log(styled(topBorder, 'muted'));
+    console.info(styled(topBorder, 'muted'));
     
     // Header
     let headerRow = '│';
@@ -405,9 +405,9 @@ class WikiMatrixPipe {
       const paddedHeader = header.padEnd(colWidths[i]);
       headerRow += ` ${styled(paddedHeader, color)} │`;
     });
-    console.log(headerRow);
+    console.info(headerRow);
     
-    console.log(styled(headerSeparator, 'muted'));
+    console.info(styled(headerSeparator, 'muted'));
 
     // Data rows
     data.forEach((row, rowIndex) => {
@@ -424,19 +424,19 @@ class WikiMatrixPipe {
         const paddedValue = value.padEnd(colWidths[colIndex]);
         dataRow += ` ${styled(paddedValue, color)} │`;
       });
-      console.log(dataRow);
+      console.info(dataRow);
       
       if (rowIndex < data.length - 1) {
-        console.log(styled(createSeparator('├', '┼', '┤', '┼'), 'muted'));
+        console.info(styled(createSeparator('├', '┼', '┤', '┼'), 'muted'));
       }
     });
 
-    console.log(styled(bottomBorder, 'muted'));
+    console.info(styled(bottomBorder, 'muted'));
   }
 
   private displayStatsTable(stats: any): void {
-    console.log(styled('\n📊 Wiki Template Statistics', 'primary'));
-    console.log(colorBar('primary', 40));
+    console.info(styled('\n📊 Wiki Template Statistics', 'primary'));
+    console.info(colorBar('primary', 40));
 
     const entries = [
       ['Total Templates', stats.total.toString()],
@@ -455,29 +455,29 @@ class WikiMatrixPipe {
       return left + '─'.repeat(colWidths[0]) + middle + '─'.repeat(colWidths[1]) + right;
     };
 
-    console.log(styled(createSeparator('┌', '┐', '┬'), 'muted'));
+    console.info(styled(createSeparator('┌', '┐', '┬'), 'muted'));
     
     entries.forEach(([key, value], index) => {
       const keyStr = key.padEnd(colWidths[0]);
       const valueStr = value.padEnd(colWidths[1]);
-      console.log(`│ ${styled(keyStr, 'accent')} │ ${styled(valueStr, 'primary')} │`);
+      console.info(`│ ${styled(keyStr, 'accent')} │ ${styled(valueStr, 'primary')} │`);
       
       if (index < entries.length - 1) {
-        console.log(styled(createSeparator('├', '┤', '┼'), 'muted'));
+        console.info(styled(createSeparator('├', '┤', '┼'), 'muted'));
       }
     });
 
-    console.log(styled(createSeparator('└', '┘', '┴'), 'muted'));
+    console.info(styled(createSeparator('└', '┘', '┴'), 'muted'));
   }
 
   private displayTemplatesTable(): void {
-    console.log(styled('\n📋 Available Wiki Templates', 'info'));
-    console.log(colorBar('info', 50));
+    console.info(styled('\n📋 Available Wiki Templates', 'info'));
+    console.info(colorBar('info', 50));
 
     this.templates.forEach((template, index) => {
-      console.log(styled(`\n${index + 1}. ${template.name}`, 'accent'));
-      console.log(styled(`   ${template.description}`, 'muted'));
-      console.log(styled(`   Format: ${template.format} | Workspace: ${template.workspace}`, 'info'));
+      console.info(styled(`\n${index + 1}. ${template.name}`, 'accent'));
+      console.info(styled(`   ${template.description}`, 'muted'));
+      console.info(styled(`   Format: ${template.format} | Workspace: ${template.workspace}`, 'info'));
     });
   }
 

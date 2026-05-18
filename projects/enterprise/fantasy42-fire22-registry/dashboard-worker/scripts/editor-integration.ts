@@ -18,7 +18,7 @@ const colors = {
 } as const;
 
 function colorLog(color: keyof typeof colors, message: string) {
-  console.log(`${colors[color]}${message}${colors.reset}`);
+  console.info(`${colors[color]}${message}${colors.reset}`);
 }
 
 interface EditorOptions {
@@ -45,35 +45,35 @@ const { values: args, positionals } = parseArgs({
 
 function showHelp() {
   colorLog('blue', '📝 Fire22 Editor Integration Tool');
-  console.log('!==!==!==!==!==!=====');
-  console.log('');
-  console.log('Usage: bun run editor [command] [options]');
-  console.log('');
-  console.log('Commands:');
-  console.log('  open <file>           Open file in editor');
-  console.log('  errors                Open files with TypeScript errors');
-  console.log('  workspace <name>      Open workspace files');
-  console.log('  config                Open configuration files');
-  console.log('  scripts               Open script files');
-  console.log('  list                  List common project files');
-  console.log('');
-  console.log('Options:');
-  console.log('  -f, --file <path>     File to open');
-  console.log('  -l, --line <number>   Line number to jump to');
-  console.log('  -c, --column <number> Column number to jump to');
-  console.log('  -e, --editor <editor> Editor to use (code, vscode, subl, vim)');
-  console.log('  -w, --workspace <name> Workspace name');
-  console.log('  --errors              Open files with TypeScript errors');
-  console.log('  --list                List files');
-  console.log('  -h, --help            Show this help');
-  console.log('');
-  console.log('Examples:');
-  console.log('  bun run editor open package.json');
-  console.log('  bun run editor open src/index.ts --line 10 --column 5');
-  console.log('  bun run editor errors                    # Open files with TS errors');
-  console.log('  bun run editor workspace api-client      # Open workspace files');
-  console.log('  bun run editor config                    # Open config files');
-  console.log('  bun run editor scripts                   # Open script directory');
+  console.info('!==!==!==!==!==!=====');
+  console.info('');
+  console.info('Usage: bun run editor [command] [options]');
+  console.info('');
+  console.info('Commands:');
+  console.info('  open <file>           Open file in editor');
+  console.info('  errors                Open files with TypeScript errors');
+  console.info('  workspace <name>      Open workspace files');
+  console.info('  config                Open configuration files');
+  console.info('  scripts               Open script files');
+  console.info('  list                  List common project files');
+  console.info('');
+  console.info('Options:');
+  console.info('  -f, --file <path>     File to open');
+  console.info('  -l, --line <number>   Line number to jump to');
+  console.info('  -c, --column <number> Column number to jump to');
+  console.info('  -e, --editor <editor> Editor to use (code, vscode, subl, vim)');
+  console.info('  -w, --workspace <name> Workspace name');
+  console.info('  --errors              Open files with TypeScript errors');
+  console.info('  --list                List files');
+  console.info('  -h, --help            Show this help');
+  console.info('');
+  console.info('Examples:');
+  console.info('  bun run editor open package.json');
+  console.info('  bun run editor open src/index.ts --line 10 --column 5');
+  console.info('  bun run editor errors                    # Open files with TS errors');
+  console.info('  bun run editor workspace api-client      # Open workspace files');
+  console.info('  bun run editor config                    # Open config files');
+  console.info('  bun run editor scripts                   # Open script directory');
 }
 
 async function openInEditor(filePath: string, options: EditorOptions = {}) {
@@ -112,8 +112,8 @@ async function openInEditor(filePath: string, options: EditorOptions = {}) {
 
 async function listProjectFiles() {
   colorLog('blue', '📋 Common Project Files');
-  console.log('!==!==!==!====');
-  console.log('');
+  console.info('!==!==!==!====');
+  console.info('');
 
   const commonFiles = [
     // Configuration files
@@ -141,14 +141,14 @@ async function listProjectFiles() {
 
   for (const file of commonFiles) {
     const exists = await Bun.file(file.path).exists();
-    console.log(`  ${exists ? '✅' : '❓'} ${file.path.padEnd(40)} - ${file.description}`);
+    console.info(`  ${exists ? '✅' : '❓'} ${file.path.padEnd(40)} - ${file.description}`);
   }
 }
 
 async function openConfigFiles() {
   colorLog('blue', '⚙️ Opening Configuration Files');
-  console.log('!==!==!==!==!==!==');
-  console.log('');
+  console.info('!==!==!==!==!==!==');
+  console.info('');
 
   const configFiles = [
     'package.json',
@@ -168,8 +168,8 @@ async function openConfigFiles() {
 
 async function openScriptDirectory() {
   colorLog('blue', '📜 Opening Script Files');
-  console.log('!==!==!==!====');
-  console.log('');
+  console.info('!==!==!==!====');
+  console.info('');
 
   const scriptFiles = [
     'scripts/analyze-deps.sh',
@@ -187,8 +187,8 @@ async function openScriptDirectory() {
 
 async function openWorkspaceFiles(workspaceName: string) {
   colorLog('blue', `🏢 Opening Workspace: ${workspaceName}`);
-  console.log('!==!==!==!==!==!==');
-  console.log('');
+  console.info('!==!==!==!==!==!==');
+  console.info('');
 
   const workspacePath = `workspaces/@fire22-${workspaceName}`;
   const packageJsonPath = `${workspacePath}/package.json`;
@@ -226,7 +226,7 @@ async function openWorkspaceFiles(workspaceName: string) {
       const workspaces = Array.from(glob.scanSync({ cwd: workspaceDir }));
 
       workspaces.sort().forEach(ws => {
-        console.log(`     → ${ws.replace('@fire22-', '')}`);
+        console.info(`     → ${ws.replace('@fire22-', '')}`);
       });
     } catch (error) {
       colorLog('yellow', '   No workspaces found');
@@ -236,8 +236,8 @@ async function openWorkspaceFiles(workspaceName: string) {
 
 async function openFilesWithTypeScriptErrors() {
   colorLog('blue', '🔍 Finding TypeScript Errors...');
-  console.log('!==!==!==!==!==!===');
-  console.log('');
+  console.info('!==!==!==!==!==!===');
+  console.info('');
 
   try {
     // Run TypeScript compiler to get errors
@@ -273,12 +273,12 @@ async function openFilesWithTypeScriptErrors() {
 
     if (fileErrors.size === 0) {
       colorLog('yellow', '⚠️ Found errors but could not parse file locations');
-      console.log(output);
+      console.info(output);
       return;
     }
 
     colorLog('red', `❌ Found TypeScript errors in ${fileErrors.size} files:`);
-    console.log('');
+    console.info('');
 
     // Open each file with errors at the first error location
     for (const [filePath, errors] of fileErrors) {
@@ -311,7 +311,7 @@ async function main() {
       const filePath = args.file || positionals[1];
       if (!filePath) {
         colorLog('red', '❌ File path required');
-        console.log(
+        console.info(
           'Usage: bun run editor open <file> [--line <n>] [--column <n>] [--editor <editor>]'
         );
         process.exit(1);
@@ -342,7 +342,7 @@ async function main() {
       const workspaceName = args.workspace || positionals[1];
       if (!workspaceName) {
         colorLog('red', '❌ Workspace name required');
-        console.log('Usage: bun run editor workspace <workspace-name>');
+        console.info('Usage: bun run editor workspace <workspace-name>');
         process.exit(1);
       }
       await openWorkspaceFiles(workspaceName);

@@ -114,7 +114,7 @@ class Fire22SecurityScanner {
    * Main scanning function called by Bun
    */
   async scan(packages: PackageInfo[]): Promise<void> {
-    console.log(`🔍 Fire22 Security Scanner: Scanning ${packages.length} packages...`);
+    console.info(`🔍 Fire22 Security Scanner: Scanning ${packages.length} packages...`);
 
     const result = await this.performScan(packages);
 
@@ -244,26 +244,26 @@ class Fire22SecurityScanner {
   }
 
   private displayResults(result: ScanResult): void {
-    console.log(`\n📊 Security Scan Results:`);
-    console.log(`   📦 Total packages: ${result.summary.totalPackages}`);
-    console.log(`   🔍 Issues found: ${result.summary.issuesFound}`);
-    console.log(`   🚨 Fatal issues: ${result.summary.fatalIssues}`);
-    console.log(`   ⚠️  Warnings: ${result.summary.warningIssues}`);
+    console.info(`\n📊 Security Scan Results:`);
+    console.info(`   📦 Total packages: ${result.summary.totalPackages}`);
+    console.info(`   🔍 Issues found: ${result.summary.issuesFound}`);
+    console.info(`   🚨 Fatal issues: ${result.summary.fatalIssues}`);
+    console.info(`   ⚠️  Warnings: ${result.summary.warningIssues}`);
 
     if (result.issues.length > 0) {
-      console.log(`\n🔍 Detailed Issues:`);
+      console.info(`\n🔍 Detailed Issues:`);
 
       result.issues.forEach((issue, index) => {
         const icon = issue.severity === 'fatal' ? '🚨' : '⚠️';
-        console.log(`\n   ${index + 1}. ${icon} ${issue.package}@${issue.version}`);
-        console.log(`      Severity: ${issue.severity.toUpperCase()}`);
-        console.log(`      ${issue.description}`);
-        if (issue.cve) console.log(`      CVE: ${issue.cve}`);
-        if (issue.recommendation) console.log(`      💡 ${issue.recommendation}`);
-        if (issue.url) console.log(`      🔗 ${issue.url}`);
+        console.info(`\n   ${index + 1}. ${icon} ${issue.package}@${issue.version}`);
+        console.info(`      Severity: ${issue.severity.toUpperCase()}`);
+        console.info(`      ${issue.description}`);
+        if (issue.cve) console.info(`      CVE: ${issue.cve}`);
+        if (issue.recommendation) console.info(`      💡 ${issue.recommendation}`);
+        if (issue.url) console.info(`      🔗 ${issue.url}`);
       });
     } else {
-      console.log(`\n✅ No security issues found!`);
+      console.info(`\n✅ No security issues found!`);
     }
   }
 
@@ -302,8 +302,8 @@ export async function scan(packages: PackageInfo[]): Promise<void> {
  * Demo function to test the security scanner
  */
 export async function runDemo(): Promise<void> {
-  console.log('🚀 Fire22 Security Scanner Demo');
-  console.log('='.repeat(50));
+  console.info('🚀 Fire22 Security Scanner Demo');
+  console.info('='.repeat(50));
 
   const demoPackages: PackageInfo[] = [
     { name: 'lodash', version: '4.17.10' }, // Vulnerable
@@ -317,14 +317,14 @@ export async function runDemo(): Promise<void> {
     }, // Untrusted registry
   ];
 
-  console.log('🔍 Scanning demo packages...');
-  console.log(`   Packages: ${demoPackages.map(p => p.name).join(', ')}`);
+  console.info('🔍 Scanning demo packages...');
+  console.info(`   Packages: ${demoPackages.map(p => p.name).join(', ')}`);
 
   try {
     await scan(demoPackages);
-    console.log('\n✅ Demo completed successfully!');
+    console.info('\n✅ Demo completed successfully!');
   } catch (error) {
-    console.log(`\n❌ Demo failed: ${error.message}`);
+    console.info(`\n❌ Demo failed: ${error.message}`);
     process.exit(1);
   }
 }

@@ -40,7 +40,7 @@ export class CommissionManager {
     };
 
     this.commissionStructures.set(commissionStructure.id, commissionStructure);
-    console.log(
+    console.info(
       `💰 Created commission structure: ${commissionStructure.name} (${commissionStructure.id})`
     );
     return commissionStructure;
@@ -66,7 +66,7 @@ export class CommissionManager {
     };
 
     this.commissionStructures.set(structureId, updatedStructure);
-    console.log(`📝 Updated commission structure: ${updatedStructure.name} (${structureId})`);
+    console.info(`📝 Updated commission structure: ${updatedStructure.name} (${structureId})`);
     return updatedStructure;
   }
 
@@ -147,7 +147,7 @@ export class CommissionManager {
     }
     this.agentCalculations.get(agentId)!.push(calculation.id);
 
-    console.log(`💰 Calculated commission for agent ${agentId}: $${commissionAmount.toFixed(2)}`);
+    console.info(`💰 Calculated commission for agent ${agentId}: $${commissionAmount.toFixed(2)}`);
     return calculation;
   }
 
@@ -168,7 +168,7 @@ export class CommissionManager {
     this.payouts.set(payout.id, payout);
     this.pendingPayouts.set(payout.id, payout);
 
-    console.log(
+    console.info(
       `💸 Created commission payout: $${payout.netAmount.toFixed(2)} for ${payout.agentId}`
     );
     return payout;
@@ -201,7 +201,7 @@ export class CommissionManager {
     this.payouts.set(payoutId, updatedPayout);
     this.pendingPayouts.delete(payoutId);
 
-    console.log(`⚙️ Processing payout ${payoutId} by ${processedBy}`);
+    console.info(`⚙️ Processing payout ${payoutId} by ${processedBy}`);
     return updatedPayout;
   }
 
@@ -230,7 +230,7 @@ export class CommissionManager {
 
     this.payouts.set(payoutId, updatedPayout);
 
-    console.log(`✅ Completed payout ${payoutId}: ${paymentReference}`);
+    console.info(`✅ Completed payout ${payoutId}: ${paymentReference}`);
     return updatedPayout;
   }
 
@@ -395,7 +395,7 @@ export class CommissionManager {
       this.createCommissionStructure(structure);
     });
 
-    console.log(`✅ Initialized ${structures.length} default commission structures`);
+    console.info(`✅ Initialized ${structures.length} default commission structures`);
   }
 
   private generateStructureId(): string {

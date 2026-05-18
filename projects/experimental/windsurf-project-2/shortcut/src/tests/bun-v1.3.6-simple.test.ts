@@ -80,7 +80,7 @@ describe("Bun v1.3.6 Core Features", () => {
     const totalTime = performance.now() - startTime;
     const avgTime = totalTime / iterations;
     
-    console.log(`CRC32 calculation: ${avgTime.toFixed(3)}ms average (${iterations} iterations)`);
+    console.info(`CRC32 calculation: ${avgTime.toFixed(3)}ms average (${iterations} iterations)`);
     
     // Should be very fast with hardware acceleration
     expect(avgTime).toBeLessThan(0.01); // Less than 0.01ms per hash
@@ -100,7 +100,7 @@ describe("Bun v1.3.6 Core Features", () => {
       expect(hash).toBeGreaterThan(0);
       expect(duration).toBeLessThan(1); // Should be fast even for larger data
       
-      console.log(`${size} bytes: ${duration.toFixed(3)}ms (hash: ${hash.toString(16)})`);
+      console.info(`${size} bytes: ${duration.toFixed(3)}ms (hash: ${hash.toString(16)})`);
     });
   });
 
@@ -156,8 +156,8 @@ describe("Bun v1.3.6 Core Features", () => {
     expect(insertTime).toBeLessThan(100);
     expect(retrieveTime).toBeLessThan(50);
     
-    console.log(`Inserted 10 configs in ${insertTime.toFixed(2)}ms`);
-    console.log(`Retrieved 10 configs in ${retrieveTime.toFixed(2)}ms`);
+    console.info(`Inserted 10 configs in ${insertTime.toFixed(2)}ms`);
+    console.info(`Retrieved 10 configs in ${retrieveTime.toFixed(2)}ms`);
     
     // Verify data integrity
     allConfigs.forEach((record: any, index: number) => {
@@ -197,7 +197,7 @@ describe("Bun v1.3.6 Core Features", () => {
       
       results[name] = avgTime;
       
-      console.log(`${name}: ${avgTime.toFixed(3)}ms average (${iterations} iterations)`);
+      console.info(`${name}: ${avgTime.toFixed(3)}ms average (${iterations} iterations)`);
       
       // Performance assertions
       expect(avgTime).toBeLessThan(1); // All operations should be fast
@@ -289,6 +289,6 @@ describe("Bun v1.3.6 Integration Tests", () => {
     
     db.close();
     
-    console.log("Integration test completed successfully");
+    console.info("Integration test completed successfully");
   });
 });

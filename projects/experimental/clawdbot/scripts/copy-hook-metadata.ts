@@ -44,10 +44,10 @@ function copyHookMetadata() {
     }
 
     fs.copyFileSync(srcHookMd, distHookMd);
-    console.log(`[copy-hook-metadata] Copied ${hookName}/HOOK.md`);
+    console.info(`[copy-hook-metadata] Copied ${hookName}/HOOK.md`);
   }
 
-  console.log('[copy-hook-metadata] Done');
+  console.info('[copy-hook-metadata] Done');
 }
 
 copyHookMetadata();

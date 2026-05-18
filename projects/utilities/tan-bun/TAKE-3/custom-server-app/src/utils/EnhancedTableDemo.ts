@@ -4,11 +4,11 @@ import { EnhancedTable } from './EnhancedTable';
  * Demonstration of EnhancedTable capabilities
  */
 export function runEnhancedTableDemo() {
-  console.log('🚀 EnhancedTable Demo - Advanced Table Operations\n');
+  console.info('🚀 EnhancedTable Demo - Advanced Table Operations\n');
 
   // Demo 1: Table Comparison
-  console.log('📊 TABLE COMPARISON DEMO');
-  console.log('='.repeat(50));
+  console.info('📊 TABLE COMPARISON DEMO');
+  console.info('='.repeat(50));
 
   const oldData = [
     { id: 1, name: 'Alice', age: 25, city: 'New York', status: 'active' },
@@ -23,13 +23,13 @@ export function runEnhancedTableDemo() {
     // Charlie (id: 3) was removed
   ];
 
-  console.log('Old Data:');
+  console.info('Old Data:');
   console.table(oldData);
-  console.log('\nNew Data:');
+  console.info('\nNew Data:');
   console.table(newData);
 
-  console.log('\n🔍 Comparison Results (showing differences only):');
-  console.log(
+  console.info('\n🔍 Comparison Results (showing differences only):');
+  console.info(
     EnhancedTable.compareTables(oldData, newData, 'id', {
       showOnlyDiffs: true,
       diffColor: { h: 210, s: 70, l: 45 },
@@ -37,8 +37,8 @@ export function runEnhancedTableDemo() {
   );
 
   // Demo 2: HTML Table Generation
-  console.log('\n🌐 HTML TABLE DEMO');
-  console.log('='.repeat(50));
+  console.info('\n🌐 HTML TABLE DEMO');
+  console.info('='.repeat(50));
 
   const webData = [
     {
@@ -74,18 +74,18 @@ export function runEnhancedTableDemo() {
     }
   );
 
-  console.log('Terminal Output:');
-  console.log(htmlResult.terminal);
+  console.info('Terminal Output:');
+  console.info(htmlResult.terminal);
 
-  console.log('\nHTML Output:');
-  console.log(htmlResult.html);
+  console.info('\nHTML Output:');
+  console.info(htmlResult.html);
 
-  console.log('\nSafe Data (HTML escaped):');
+  console.info('\nSafe Data (HTML escaped):');
   console.table(htmlResult.safeData);
 
   // Demo 3: Data Validation
-  console.log('\n✅ DATA VALIDATION DEMO');
-  console.log('='.repeat(50));
+  console.info('\n✅ DATA VALIDATION DEMO');
+  console.info('='.repeat(50));
 
   const testData = [
     { id: 1, name: 'Valid User', age: 25, email: 'user@example.com' },
@@ -103,16 +103,16 @@ export function runEnhancedTableDemo() {
       typeof value === 'string' && value.includes('@') && value.includes('.'),
   };
 
-  console.log('Test Data:');
+  console.info('Test Data:');
   console.table(testData);
 
-  console.log('\nValidation Results:');
+  console.info('\nValidation Results:');
   const validation = EnhancedTable.validateTable(testData, validationSchema);
-  console.log(validation.summary);
+  console.info(validation.summary);
 
   // Demo 4: Phone Profile Table
-  console.log('\n📱 PHONE PROFILE DEMO');
-  console.log('='.repeat(50));
+  console.info('\n📱 PHONE PROFILE DEMO');
+  console.info('='.repeat(50));
 
   const phoneProfiles = [
     {
@@ -144,12 +144,12 @@ export function runEnhancedTableDemo() {
     },
   ];
 
-  console.log('Phone Profile Summary:');
-  console.log(EnhancedTable.phoneProfileTable(phoneProfiles));
+  console.info('Phone Profile Summary:');
+  console.info(EnhancedTable.phoneProfileTable(phoneProfiles));
 
   // Demo 5: Object to Rows Conversion
-  console.log('\n🔄 OBJECT TO ROWS DEMO');
-  console.log('='.repeat(50));
+  console.info('\n🔄 OBJECT TO ROWS DEMO');
+  console.info('='.repeat(50));
 
   const objectData = {
     names: ['Alice', 'Bob', 'Charlie'],
@@ -158,22 +158,22 @@ export function runEnhancedTableDemo() {
     active: [true, false, true],
   };
 
-  console.log('Original Object:');
-  console.log(objectData);
+  console.info('Original Object:');
+  console.info(objectData);
 
   // Convert to rows using internal method (access via type assertion for demo)
   const rows = (EnhancedTable as any).objectToRows(objectData);
-  console.log('\nConverted to Rows:');
+  console.info('\nConverted to Rows:');
   console.table(rows);
 
-  console.log('\n🎉 EnhancedTable Demo Complete!');
-  console.log('\nKey Features Demonstrated:');
-  console.log('✅ Deep table comparison with diff visualization');
-  console.log('✅ HTML-safe table generation for web reports');
-  console.log('✅ Data validation with detailed error reporting');
-  console.log('✅ Phone profile data visualization');
-  console.log('✅ Object-to-rows conversion');
-  console.log('✅ Color-coded output and formatting');
+  console.info('\n🎉 EnhancedTable Demo Complete!');
+  console.info('\nKey Features Demonstrated:');
+  console.info('✅ Deep table comparison with diff visualization');
+  console.info('✅ HTML-safe table generation for web reports');
+  console.info('✅ Data validation with detailed error reporting');
+  console.info('✅ Phone profile data visualization');
+  console.info('✅ Object-to-rows conversion');
+  console.info('✅ Color-coded output and formatting');
 }
 
 // Export for use in other modules

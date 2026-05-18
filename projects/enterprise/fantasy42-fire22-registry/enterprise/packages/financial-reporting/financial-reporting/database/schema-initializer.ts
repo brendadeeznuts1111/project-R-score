@@ -366,27 +366,27 @@ export class SchemaInitializer {
       this.db = databaseManager.getDefaultConnection();
       this.adapter = databaseManager.getConfig().main.adapter;
 
-      console.log(`🏗️ Initializing schema for ${this.adapter} database...`);
+      console.info(`🏗️ Initializing schema for ${this.adapter} database...`);
 
       // Create tables
       for (const [tableName, tableDef] of Object.entries(this.config.tables)) {
         await this.createTable(tableName, tableDef);
-        console.log(`✅ Created table: ${tableName}`);
+        console.info(`✅ Created table: ${tableName}`);
       }
 
       // Create indexes
       for (const indexDef of this.config.indexes) {
         await this.createIndex(indexDef);
-        console.log(`✅ Created index: ${indexDef.name}`);
+        console.info(`✅ Created index: ${indexDef.name}`);
       }
 
       // Create views
       for (const [viewName, viewDef] of Object.entries(this.config.views)) {
         await this.createView(viewName, viewDef);
-        console.log(`✅ Created view: ${viewName}`);
+        console.info(`✅ Created view: ${viewName}`);
       }
 
-      console.log('🎉 Schema initialization completed successfully');
+      console.info('🎉 Schema initialization completed successfully');
     } catch (error) {
       console.error('❌ Schema initialization failed:', error);
       throw error;
@@ -649,27 +649,27 @@ export class SchemaInitializer {
    */
   async dropSchema(): Promise<void> {
     try {
-      console.log('🗑️ Dropping existing schema...');
+      console.info('🗑️ Dropping existing schema...');
 
       // Drop views first
       for (const viewName of Object.keys(this.config.views)) {
         await this.db`DROP VIEW IF EXISTS ${viewName}`;
-        console.log(`✅ Dropped view: ${viewName}`);
+        console.info(`✅ Dropped view: ${viewName}`);
       }
 
       // Drop indexes
       for (const indexDef of this.config.indexes) {
         await this.db`DROP INDEX IF EXISTS ${indexDef.name}`;
-        console.log(`✅ Dropped index: ${indexDef.name}`);
+        console.info(`✅ Dropped index: ${indexDef.name}`);
       }
 
       // Drop tables
       for (const tableName of Object.keys(this.config.tables)) {
         await this.db`DROP TABLE IF EXISTS ${tableName}`;
-        console.log(`✅ Dropped table: ${tableName}`);
+        console.info(`✅ Dropped table: ${tableName}`);
       }
 
-      console.log('🎉 Schema dropped successfully');
+      console.info('🎉 Schema dropped successfully');
     } catch (error) {
       console.error('❌ Failed to drop schema:', error);
       throw error;

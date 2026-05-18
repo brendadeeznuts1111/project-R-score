@@ -44,14 +44,14 @@ class FetchOptimizedWidget {
 			averageLatency: 0,
 		};
 
-		console.log("🌐 Fetch-Optimized Widget Initialized");
-		console.log(
+		console.info("🌐 Fetch-Optimized Widget Initialized");
+		console.info(
 			`📡 Header Casing Preservation: ${this.config.preserveHeaderCasing ? "Enabled" : "Disabled"}`,
 		);
-		console.log(
+		console.info(
 			`🔗 Preconnect: ${this.config.enablePreconnect ? "Enabled" : "Disabled"}`,
 		);
-		console.log("");
+		console.info("");
 	}
 
 	// ARM64-optimized header casing preservation
@@ -87,7 +87,7 @@ class FetchOptimizedWidget {
 		const processingTime = performance.now() - startTime;
 
 		if (processingTime > 1) {
-			console.log(
+			console.info(
 				`⚠️  Header preservation took ${processingTime.toFixed(2)}ms for ${headerEntries.length} headers`,
 			);
 		}
@@ -142,11 +142,11 @@ class FetchOptimizedWidget {
 
 				this.metrics.preconnectHits++;
 				const connectTime = performance.now() - startTime;
-				console.log(`🔗 Preconnect established in ${connectTime.toFixed(2)}ms`);
+				console.info(`🔗 Preconnect established in ${connectTime.toFixed(2)}ms`);
 				return true;
 			}
 		} catch (error) {
-			console.log(`⚠️  Preconnect failed for ${url}: ${error}`);
+			console.info(`⚠️  Preconnect failed for ${url}: ${error}`);
 		}
 
 		return false;
@@ -190,11 +190,11 @@ class FetchOptimizedWidget {
 			this.updateLatencyMetrics(totalTime);
 
 			if (options.metrics) {
-				console.log(`📊 Fetch completed in ${totalTime.toFixed(2)}ms`);
-				console.log(
+				console.info(`📊 Fetch completed in ${totalTime.toFixed(2)}ms`);
+				console.info(
 					`🔗 Preconnect hits: ${this.metrics.preconnectHits}/${this.metrics.totalRequests}`,
 				);
-				console.log(
+				console.info(
 					`📝 Header preservation usage: ${this.metrics.headerPreservationUsage}`,
 				);
 			}
@@ -243,7 +243,7 @@ class FetchOptimizedWidget {
 		}
 
 		if (cleaned > 0) {
-			console.log(`🧹 Cleaned up ${cleaned} expired connections`);
+			console.info(`🧹 Cleaned up ${cleaned} expired connections`);
 		}
 	}
 
@@ -276,7 +276,7 @@ class FetchOptimizedWidget {
 		}
 
 		const totalTime = performance.now() - startTime;
-		console.log(
+		console.info(
 			`📦 Batch of ${requests.length} requests completed in ${totalTime.toFixed(2)}ms`,
 		);
 
@@ -285,11 +285,11 @@ class FetchOptimizedWidget {
 
 	// Demonstration of fetch enhancements
 	async demonstrateFeatures(): Promise<void> {
-		console.log("🎯 Demonstrating Fetch Enhancements");
-		console.log("=====================================");
+		console.info("🎯 Demonstrating Fetch Enhancements");
+		console.info("=====================================");
 
 		// Test 1: Header casing preservation
-		console.log("\n📝 Testing Header Casing Preservation:");
+		console.info("\n📝 Testing Header Casing Preservation:");
 		const testHeaders = {
 			"Content-Type": "application/json",
 			"X-API-Key": "secret-key",
@@ -298,11 +298,11 @@ class FetchOptimizedWidget {
 		};
 
 		const preserved = this.preserveHeaderCasing(testHeaders);
-		console.log("Original headers:", testHeaders);
-		console.log("Preserved headers:", preserved);
+		console.info("Original headers:", testHeaders);
+		console.info("Preserved headers:", preserved);
 
 		// Test 2: Preconnect performance
-		console.log("\n🔗 Testing Preconnect Performance:");
+		console.info("\n🔗 Testing Preconnect Performance:");
 		const testUrl = "https://httpbin.org/get";
 
 		// First request (with preconnect)
@@ -315,14 +315,14 @@ class FetchOptimizedWidget {
 		await this.enhancedFetch(testUrl, { preconnect: true, metrics: true });
 		const time2 = performance.now() - start2;
 
-		console.log(`⚡ First request: ${time1.toFixed(2)}ms`);
-		console.log(`⚡ Second request: ${time2.toFixed(2)}ms`);
-		console.log(
+		console.info(`⚡ First request: ${time1.toFixed(2)}ms`);
+		console.info(`⚡ Second request: ${time2.toFixed(2)}ms`);
+		console.info(
 			`🚀 Performance improvement: ${(((time1 - time2) / time1) * 100).toFixed(1)}%`,
 		);
 
 		// Test 3: Batch processing
-		console.log("\n📦 Testing Batch Processing:");
+		console.info("\n📦 Testing Batch Processing:");
 		const batchUrls = [
 			"https://httpbin.org/get",
 			"https://httpbin.org/user-agent",
@@ -333,11 +333,11 @@ class FetchOptimizedWidget {
 		await this.batchFetch(batchUrls.map((url) => ({ url })));
 		const batchTime = performance.now() - batchStart;
 
-		console.log(`📊 Batch completed in ${batchTime.toFixed(2)}ms`);
+		console.info(`📊 Batch completed in ${batchTime.toFixed(2)}ms`);
 
 		// Show final metrics
-		console.log("\n📈 Final Performance Metrics:");
-		console.log(JSON.stringify(this.getPerformanceMetrics(), null, 2));
+		console.info("\n📈 Final Performance Metrics:");
+		console.info(JSON.stringify(this.getPerformanceMetrics(), null, 2));
 	}
 }
 
@@ -357,7 +357,7 @@ if (import.meta.main) {
 
 	// Cleanup on exit
 	process.on("SIGINT", () => {
-		console.log("\n🧹 Cleaning up connections...");
+		console.info("\n🧹 Cleaning up connections...");
 		widget.cleanupConnectionPool();
 		process.exit(0);
 	});

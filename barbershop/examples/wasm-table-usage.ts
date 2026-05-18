@@ -15,7 +15,7 @@ const ANSI = {
 
 // Example 1: Secrets Field Risk Analysis
 export function example1_secretsRiskAnalysis() {
-  console.log(`\n${ANSI.bold}${ANSI.blue}Example 1: Secrets Field Risk Analysis${ANSI.reset}\n`);
+  console.info(`\n${ANSI.bold}${ANSI.blue}Example 1: Secrets Field Risk Analysis${ANSI.reset}\n`);
 
   const machine = new WASMMachine({ initial: 8, element: 'funcref' });
 
@@ -36,26 +36,26 @@ export function example1_secretsRiskAnalysis() {
     { name: 'JWT Secret', data: [6.0, 7.0, 100000, 365] },
   ];
 
-  console.log('Secret Risk Analysis:');
+  console.info('Secret Risk Analysis:');
   for (const secret of secrets) {
     const risk = machine.execute(riskIndex, secret.data);
     const level = risk > 1000 ? 'CRITICAL' : risk > 500 ? 'HIGH' : risk > 100 ? 'MEDIUM' : 'LOW';
-    console.log(`  ${secret.name.padEnd(15)} Risk: ${risk.toFixed(2).padStart(8)} ${level}`);
+    console.info(`  ${secret.name.padEnd(15)} Risk: ${risk.toFixed(2).padStart(8)} ${level}`);
   }
 }
 
 // Example 2: A/B Testing Algorithm Versions
 export function example2_abTesting() {
-  console.log(`\n${ANSI.bold}${ANSI.blue}Example 2: A/B Testing Algorithm Versions${ANSI.reset}\n`);
+  console.info(`\n${ANSI.bold}${ANSI.blue}Example 2: A/B Testing Algorithm Versions${ANSI.reset}\n`);
 
   const machine = createDefaultMachine();
   const testData = [0.1, 0.25, 0.4, 0.55, 0.7, 0.85, 0.95];
 
-  console.log('Testing Entropy Variants:\n');
+  console.info('Testing Entropy Variants:\n');
 
   // v1: Standard
   const v1Result = machine.execute(1, testData);
-  console.log(`v1 - Standard: ${v1Result.toFixed(4)} bits`);
+  console.info(`v1 - Standard: ${v1Result.toFixed(4)} bits`);
 
   // v2: Weighted
   machine.hotSwap(
@@ -74,15 +74,15 @@ export function example2_abTesting() {
   );
 
   const v2Result = machine.execute(1, testData);
-  console.log(`v2 - Weighted: ${v2Result.toFixed(4)} bits`);
+  console.info(`v2 - Weighted: ${v2Result.toFixed(4)} bits`);
 
-  console.log(`\n${ANSI.green}✓${ANSI.reset} Hot-swap successful`);
+  console.info(`\n${ANSI.green}✓${ANSI.reset} Hot-swap successful`);
 }
 
 // Run examples
 if (import.meta.main) {
-  console.log(`\n${ANSI.bold}🏰 WebAssembly.Table Examples${ANSI.reset}\n`);
+  console.info(`\n${ANSI.bold}🏰 WebAssembly.Table Examples${ANSI.reset}\n`);
   example1_secretsRiskAnalysis();
   example2_abTesting();
-  console.log(`\n${ANSI.green}✓${ANSI.reset} Examples complete!\n`);
+  console.info(`\n${ANSI.green}✓${ANSI.reset} Examples complete!\n`);
 }

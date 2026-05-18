@@ -41,7 +41,7 @@ async function runBench() {
   };
   const objB = JSON.parse(JSON.stringify(objA));
 
-  console.log(`🚀 Benchmarking Deep Equality (Strict vs Normal) - ${iterations.toLocaleString()} iterations...`);
+  console.info(`🚀 Benchmarking Deep Equality (Strict vs Normal) - ${iterations.toLocaleString()} iterations...`);
 
   // 1. Manual JS Implementation
   const startManual = performance.now();
@@ -62,12 +62,12 @@ async function runBench() {
 
   const speedup = ((timeManual / timeNative)).toFixed(1);
 
-  console.log(`\n--- Results ---`);
-  console.log(`Manual JS: ${((timeManual * 1000) / iterations).toFixed(2)}μs per call`);
-  console.log(`Bun.deepEquals: ${((timeNative * 1000) / iterations).toFixed(2)}μs per call`);
-  console.log(`Native Speedup: ${speedup}x faster 🚀`);
+  console.info(`\n--- Results ---`);
+  console.info(`Manual JS: ${((timeManual * 1000) / iterations).toFixed(2)}μs per call`);
+  console.info(`Bun.deepEquals: ${((timeNative * 1000) / iterations).toFixed(2)}μs per call`);
+  console.info(`Native Speedup: ${speedup}x faster 🚀`);
 
-  console.log(`\n✅ Verified Exact Scenarios:`);
+  console.info(`\n✅ Verified Exact Scenarios:`);
   const a = { entries: [1, 2] };
   const b = { entries: [1, 2], extra: undefined };
 
@@ -76,11 +76,11 @@ async function runBench() {
   // @ts-ignore
   const strictRes = Bun.deepEquals(a, b, true);
 
-  console.log(`  Bun.deepEquals(a, b)       => ${normalRes} (Expected: true)`);
-  console.log(`  Bun.deepEquals(a, b, true) => ${strictRes} (Expected: false)`);
+  console.info(`  Bun.deepEquals(a, b)       => ${normalRes} (Expected: true)`);
+  console.info(`  Bun.deepEquals(a, b, true) => ${strictRes} (Expected: false)`);
 
   if (normalRes === true && strictRes === false) {
-    console.log(`\n🎯 STRICT_MODE logic verified successfully.`);
+    console.info(`\n🎯 STRICT_MODE logic verified successfully.`);
   }
 }
 

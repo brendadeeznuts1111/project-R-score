@@ -9,8 +9,8 @@ interface BenchmarkMetric {
 }
 
 function showPerformanceBenchmark() {
-  console.log('🚀 v3.7 Performance Benchmark');
-  console.log('==============================');
+  console.info('🚀 v3.7 Performance Benchmark');
+  console.info('==============================');
   
   // Path Hardening Performance Comparison
   const beforePathHardening = { latency: 45, memory: '2.1MB', throughput: '5.2 KB/s' };
@@ -37,8 +37,8 @@ function showPerformanceBenchmark() {
     }
   ];
   
-  console.log('\n📊 Path Hardening Performance:');
-  console.log(Bun.inspect.table(pathHardeningMetrics, { colors: true }));
+  console.info('\n📊 Path Hardening Performance:');
+  console.info(Bun.inspect.table(pathHardeningMetrics, { colors: true }));
   
   // Agent Scaling Performance
   const scalingMetrics: BenchmarkMetric[] = [
@@ -62,8 +62,8 @@ function showPerformanceBenchmark() {
     }
   ];
   
-  console.log('\n🤖 Agent Scaling Performance:');
-  console.log(Bun.inspect.table(scalingMetrics, { colors: true }));
+  console.info('\n🤖 Agent Scaling Performance:');
+  console.info(Bun.inspect.table(scalingMetrics, { colors: true }));
   
   // R2 Storage Performance
   const r2Metrics: BenchmarkMetric[] = [
@@ -87,8 +87,8 @@ function showPerformanceBenchmark() {
     }
   ];
   
-  console.log('\n💾 R2 Storage Performance:');
-  console.log(Bun.inspect.table(r2Metrics, { colors: true }));
+  console.info('\n💾 R2 Storage Performance:');
+  console.info(Bun.inspect.table(r2Metrics, { colors: true }));
   
   // Overall System Impact
   const overallMetrics: BenchmarkMetric[] = [
@@ -112,16 +112,16 @@ function showPerformanceBenchmark() {
     }
   ];
   
-  console.log('\n🎯 Overall System Impact:');
-  console.log(Bun.inspect.table(overallMetrics, { colors: true }));
+  console.info('\n🎯 Overall System Impact:');
+  console.info(Bun.inspect.table(overallMetrics, { colors: true }));
   
-  console.log('\n✅ v3.7 Performance Summary:');
-  console.log('• Average Performance Improvement: 58.7%');
-  console.log('• Security Overhead Reduced: 79.7%');
-  console.log('• Memory Efficiency Increased: 8.8%');
-  console.log('• Zero String Manipulation Achieved: ✅');
-  console.log('• Custom Inspector Implementation: ✅');
-  console.log('• Real-time Telemetry: ✅');
+  console.info('\n✅ v3.7 Performance Summary:');
+  console.info('• Average Performance Improvement: 58.7%');
+  console.info('• Security Overhead Reduced: 79.7%');
+  console.info('• Memory Efficiency Increased: 8.8%');
+  console.info('• Zero String Manipulation Achieved: ✅');
+  console.info('• Custom Inspector Implementation: ✅');
+  console.info('• Real-time Telemetry: ✅');
 }
 
 showPerformanceBenchmark();

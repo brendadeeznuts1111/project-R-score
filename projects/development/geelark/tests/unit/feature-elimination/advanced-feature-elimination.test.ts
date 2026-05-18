@@ -50,7 +50,7 @@ if (feature("FEAT_PREMIUM")) {
   }
 }
 
-console.log("Available features:", features.join(","));
+console.info("Available features:", features.join(","));
 `;
 
     await Bun.write(testFile, testCode);
@@ -91,7 +91,7 @@ console.log("Available features:", features.join(","));
     // Small bundle (minimal features)
     const smallCode = `
 import { feature } from "bun:bundle";
-console.log("Minimal app");
+console.info("Minimal app");
 `;
 
     // Large bundle (many features)
@@ -125,7 +125,7 @@ if (feature("FEAT_BATCH_PROCESSING")) {
   };
 }
 
-console.log("Full app");
+console.info("Full app");
 `;
 
     await Bun.write(testFile, smallCode);
@@ -145,9 +145,9 @@ console.log("Full app");
       // Large bundle should be significantly bigger
       expect(largeSize).toBeGreaterThan(smallSize * 2); // At least 2x bigger
 
-      console.log(`Small bundle: ${smallSize} bytes`);
-      console.log(`Large bundle: ${largeSize} bytes`);
-      console.log(`Size ratio: ${(largeSize / smallSize).toFixed(2)}x`);
+      console.info(`Small bundle: ${smallSize} bytes`);
+      console.info(`Large bundle: ${largeSize} bytes`);
+      console.info(`Size ratio: ${(largeSize / smallSize).toFixed(2)}x`);
     } finally {
       try {
         unlinkSync(testFile);
@@ -189,7 +189,7 @@ if (feature("FEAT_BATCH_PROCESSING")) {
   result += "-batch-standalone";
 }
 
-console.log(result);
+console.info(result);
 `;
 
     await Bun.write(testFile, testCode);

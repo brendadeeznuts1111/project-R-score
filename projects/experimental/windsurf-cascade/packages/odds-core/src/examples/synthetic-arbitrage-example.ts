@@ -358,15 +358,15 @@ export class SyntheticArbitrageExamples {
         const examples = this.createRealisticNBAScenarios();
 
         examples.forEach((arb, index) => {
-            console.log(`Example ${index + 1}:`);
-            console.log(`  Game: ${arb.gameId}`);
-            console.log(`  Sport: ${arb.sport}`);
-            console.log(`  Markets: ${arb.primaryMarket.marketType} vs ${arb.secondaryMarket.marketType}`);
-            console.log(`  Expected Value: ${(arb.syntheticPosition.expectedValue * 100).toFixed(2)}%`);
-            console.log(`  Confidence: ${(arb.syntheticPosition.confidence * 100).toFixed(1)}%`);
-            console.log(`  Kelly Fraction: ${(arb.syntheticPosition.kellyFraction * 100).toFixed(1)}%`);
-            console.log(`  Sharpe Ratio: ${arb.riskMetrics.sharpeRatio.toFixed(2)}`);
-            console.log(`  ---`);
+            console.info(`Example ${index + 1}:`);
+            console.info(`  Game: ${arb.gameId}`);
+            console.info(`  Sport: ${arb.sport}`);
+            console.info(`  Markets: ${arb.primaryMarket.marketType} vs ${arb.secondaryMarket.marketType}`);
+            console.info(`  Expected Value: ${(arb.syntheticPosition.expectedValue * 100).toFixed(2)}%`);
+            console.info(`  Confidence: ${(arb.syntheticPosition.confidence * 100).toFixed(1)}%`);
+            console.info(`  Kelly Fraction: ${(arb.syntheticPosition.kellyFraction * 100).toFixed(1)}%`);
+            console.info(`  Sharpe Ratio: ${arb.riskMetrics.sharpeRatio.toFixed(2)}`);
+            console.info(`  ---`);
         });
     }
 }

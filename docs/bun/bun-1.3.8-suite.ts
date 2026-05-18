@@ -67,7 +67,7 @@ class Bun138IntegrationSuite {
     await this.benchmark('metafile Build', async () => {
       // Create a temporary test file
       const testContent = `
-console.log('Hello from Bun 1.3.8 metafile!');
+console.info('Hello from Bun 1.3.8 metafile!');
 export const version = '1.3.8';
 export const features = ['JSONC', 'metafile', 'virtual-files'];
 `;
@@ -112,7 +112,7 @@ export const features = ['JSONC', 'metafile', 'virtual-files'];
           files: {
             '/virtual/wiki.md': '# Virtual Wiki\n| Feature | Status |\n|---------|--------|\n| JSONC | ✅ |\n| metafile | ✅ |\n| Virtual Files | ✅ |',
             '/virtual/config.json': '{"virtual": true, "performance": "optimized", "bun_version": "1.3.8"}',
-            '/virtual/cli.ts': 'console.log("Virtual CLI execution"); export const cli = { version: "3.11" };'
+            '/virtual/cli.ts': 'console.info("Virtual CLI execution"); export const cli = { version: "3.11" };'
           },
           entrypoints: ['/virtual/wiki.md', '/virtual/cli.ts'],
           outdir: './virtual-dist'
@@ -139,9 +139,9 @@ export const features = ['JSONC', 'metafile', 'virtual-files'];
     await this.benchmark('compile-executable', async () => {
       const exeContent = `
 #!/usr/bin/env bun
-console.log('Air-gapped executable from Bun 1.3.8!');
-console.log('Platform:', process.platform);
-console.log('Version:', process.version);
+console.info('Air-gapped executable from Bun 1.3.8!');
+console.info('Platform:', process.platform);
+console.info('Version:', process.version);
       `;
       
       await Bun.write('./temp-exe.ts', exeContent);
@@ -344,10 +344,10 @@ export default App;
   }
 
   static async runCompleteSuite(): Promise<void> {
-    console.log('🚀 Bun v1.3.8 JuniorRunner v3.11 Integration Suite');
-    console.log('====================================================');
-    console.log('Testing all changelog features with performance benchmarking');
-    console.log('');
+    console.info('🚀 Bun v1.3.8 JuniorRunner v3.11 Integration Suite');
+    console.info('====================================================');
+    console.info('Testing all changelog features with performance benchmarking');
+    console.info('');
 
     // Run all benchmarks
     await this.runJSONCParse();
@@ -368,8 +368,8 @@ export default App;
   }
 
   private static displayResults(): void {
-    console.log('📊 Benchmark Results:');
-    console.log('====================');
+    console.info('📊 Benchmark Results:');
+    console.info('====================');
 
     this.results.forEach((result, index) => {
       const status = result.status === 'success' ? '✅' : '❌';
@@ -377,14 +377,14 @@ export default App;
       const improvement = result.improvement ? ` (${result.improvement})` : '';
       const throughput = result.throughput ? ` | ${result.throughput.toLocaleString()} chars/s` : '';
       
-      console.log(`${status} ${result.feature.padEnd(25)}: ${time}ms${improvement}${throughput}`);
+      console.info(`${status} ${result.feature.padEnd(25)}: ${time}ms${improvement}${throughput}`);
       
       if (result.details && result.details.length > 0) {
-        console.log(`   📝 ${result.details}`);
+        console.info(`   📝 ${result.details}`);
       }
     });
 
-    console.log('');
+    console.info('');
   }
 
   private static generateSummary(): void {
@@ -396,11 +396,11 @@ export default App;
       .reduce((sum, r) => sum + (r.throughput || 0), 0) / 
       this.results.filter(r => r.throughput).length;
 
-    console.log('📈 Integration Summary:');
-    console.log('=======================');
-    console.log(`📊 Features Tested: ${successful}/${total} (${((successful/total)*100).toFixed(1)}% success rate)`);
-    console.log(`⏱️ Total Time: ${totalTime.toFixed(2)}ms`);
-    console.log(`🚀 Average Throughput: ${avgThroughput.toFixed(0)} chars/s`);
+    console.info('📈 Integration Summary:');
+    console.info('=======================');
+    console.info(`📊 Features Tested: ${successful}/${total} (${((successful/total)*100).toFixed(1)}% success rate)`);
+    console.info(`⏱️ Total Time: ${totalTime.toFixed(2)}ms`);
+    console.info(`🚀 Average Throughput: ${avgThroughput.toFixed(0)} chars/s`);
     
     // Performance improvements
     const improvements = this.results
@@ -408,29 +408,29 @@ export default App;
       .map(r => `${r.feature}: ${r.improvement}`);
     
     if (improvements.length > 0) {
-      console.log('⚡ Performance Improvements:');
+      console.info('⚡ Performance Improvements:');
       improvements.forEach(improvement => {
-        console.log(`   • ${improvement}`);
+        console.info(`   • ${improvement}`);
       });
     }
 
     // Key achievements
-    console.log('');
-    console.log('🏆 Key Achievements:');
-    console.log('   • JSONC parsing with native comment support');
-    console.log('   • Build profiling with metafile integration');
-    console.log('   • Virtual file system for rapid prototyping');
-    console.log('   • Air-gapped executable compilation');
-    console.log('   • Live development with reactFastRefresh');
-    console.log('   • 3.5x faster JSON serialization');
-    console.log('   • 12x accelerated string search with SIMD');
-    console.log('   • Public bucket access with requester pays');
-    console.log('   • Complete testing suite with fake timers');
+    console.info('');
+    console.info('🏆 Key Achievements:');
+    console.info('   • JSONC parsing with native comment support');
+    console.info('   • Build profiling with metafile integration');
+    console.info('   • Virtual file system for rapid prototyping');
+    console.info('   • Air-gapped executable compilation');
+    console.info('   • Live development with reactFastRefresh');
+    console.info('   • 3.5x faster JSON serialization');
+    console.info('   • 12x accelerated string search with SIMD');
+    console.info('   • Public bucket access with requester pays');
+    console.info('   • Complete testing suite with fake timers');
 
-    console.log('');
-    console.log('✨ Bun v1.3.8 JuniorRunner v3.11 Integration: COMPLETE!');
-    console.log('==================================================');
-    console.log('All changelog features successfully integrated and benchmarked!');
+    console.info('');
+    console.info('✨ Bun v1.3.8 JuniorRunner v3.11 Integration: COMPLETE!');
+    console.info('==================================================');
+    console.info('All changelog features successfully integrated and benchmarked!');
   }
 }
 

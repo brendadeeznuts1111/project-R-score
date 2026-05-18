@@ -26,7 +26,7 @@ export class DuoPlusScalingManager {
    * Focus on validating platform effectiveness and ban rates
    */
   async executePhase1(): Promise<ScalingResult> {
-    console.log("🚀 Starting Phase 1: 20 → 50 accounts");
+    console.info("🚀 Starting Phase 1: 20 → 50 accounts");
 
     const phase1Config = {
       // High-risk platforms (test with conservative settings)
@@ -73,9 +73,9 @@ export class DuoPlusScalingManager {
       });
     }
 
-    console.log(`✅ Phase 1 Complete: ${results.totalDevices} devices provisioned`);
-    console.log(`💰 Estimated Monthly Cost: $${results.estimatedCost}`);
-    console.log(`⏱️ Estimated Provisioning Time: ${results.estimatedTime} minutes`);
+    console.info(`✅ Phase 1 Complete: ${results.totalDevices} devices provisioned`);
+    console.info(`💰 Estimated Monthly Cost: $${results.estimatedCost}`);
+    console.info(`⏱️ Estimated Provisioning Time: ${results.estimatedTime} minutes`);
 
     return results;
   }
@@ -85,7 +85,7 @@ export class DuoPlusScalingManager {
    * Scale successful platforms, adjust failing ones
    */
   async executePhase2(): Promise<ScalingResult> {
-    console.log("🚀 Starting Phase 2: 50 → 100 accounts");
+    console.info("🚀 Starting Phase 2: 50 → 100 accounts");
 
     // Analyze Phase 1 effectiveness
     const successfulPlatforms = this.getSuccessfulPlatforms();
@@ -122,7 +122,7 @@ export class DuoPlusScalingManager {
    * Full scale with optimized configurations
    */
   async executePhase3(): Promise<ScalingResult> {
-    console.log("🚀 Starting Phase 3: 100 → 200 accounts");
+    console.info("🚀 Starting Phase 3: 100 → 200 accounts");
 
     const phase3Config: Record<string, ScalingConfig> = {};
 
@@ -146,7 +146,7 @@ export class DuoPlusScalingManager {
    * Reduces ban rate by ~50% through gradual device usage
    */
   async implementDeviceWarming(deviceIds: string[]): Promise<void> {
-    console.log("🔥 Implementing device warming protocol");
+    console.info("🔥 Implementing device warming protocol");
 
     for (const deviceId of deviceIds) {
       // Day 1: Light browsing and app installs
@@ -171,14 +171,14 @@ export class DuoPlusScalingManager {
     }
 
     if (currentBanRate > 20) {
-      console.log(`⚠️ High ban rate (${currentBanRate}%) on ${platform}, adjusting settings`);
+      console.info(`⚠️ High ban rate (${currentBanRate}%) on ${platform}, adjusting settings`);
 
       // Switch to more conservative fingerprint
       const currentProfile = this.getCurrentFingerprint();
       const conservativeProfile = this.getMoreConservativeProfile(currentProfile);
 
       if (conservativeProfile) {
-        console.log(`🔄 Switching ${platform} from ${currentProfile} to ${conservativeProfile}`);
+        console.info(`🔄 Switching ${platform} from ${currentProfile} to ${conservativeProfile}`);
         await this.updatePlatformFingerprint(platform, conservativeProfile);
       }
     }
@@ -231,7 +231,7 @@ export class DuoPlusScalingManager {
     const estimatedCost = this.calculatePlatformCost(platform, count, template);
 
     // In real implementation, send batchRequest to DuoPlus API
-    console.log(`📱 Provisioning ${count} devices for ${String(platform)} using ${template}`);
+    console.info(`📱 Provisioning ${count} devices for ${String(platform)} using ${template}`);
 
     // Note: In production, this would send the batch request to DuoPlus API
     // const response = await duoplusAPI.createBatchDevices(batchRequest);
@@ -334,17 +334,17 @@ export class DuoPlusScalingManager {
   }
 
   private async warmDeviceDay1(deviceId: string): Promise<void> {
-    console.log(`📱 Day 1 warming for ${deviceId}: Light browsing`);
+    console.info(`📱 Day 1 warming for ${deviceId}: Light browsing`);
     // Implementation: Basic web browsing, app store browsing
   }
 
   private async warmDeviceDay2(deviceId: string): Promise<void> {
-    console.log(`📱 Day 2 warming for ${deviceId}: Social interactions`);
+    console.info(`📱 Day 2 warming for ${deviceId}: Social interactions`);
     // Implementation: Social media activity, profile setup
   }
 
   private async warmDeviceDay3(deviceId: string): Promise<void> {
-    console.log(`📱 Day 3 warming for ${deviceId}: Main operations`);
+    console.info(`📱 Day 3 warming for ${deviceId}: Main operations`);
     // Implementation: Start primary account operations
   }
 
@@ -403,7 +403,7 @@ export class DuoPlusScalingManager {
 
   private async updatePlatformFingerprint(platform: string, fingerprint: string): Promise<void> {
     // Update all devices for platform with new fingerprint
-    console.log(`Updating ${platform} devices to ${fingerprint} fingerprint`);
+    console.info(`Updating ${platform} devices to ${fingerprint} fingerprint`);
   }
 
   private calculateBaseCost(platform: string, accountCount: number): number {
@@ -510,32 +510,32 @@ interface CostOptimizationResult {
 export async function demonstrateScalingStrategy(): Promise<void> {
   const scalingManager = new DuoPlusScalingManager();
 
-  console.log("🎯 DuoPlus Scaling Strategy Demonstration");
-  console.log("==========================================\n");
+  console.info("🎯 DuoPlus Scaling Strategy Demonstration");
+  console.info("==========================================\n");
 
   // Execute Phase 1
   const phase1Result = await scalingManager.executePhase1();
-  console.log(
+  console.info(
     `Phase 1 Result: ${phase1Result.totalDevices} devices, $${phase1Result.estimatedCost}/month\n`
   );
 
   // Simulate monitoring and effectiveness analysis
-  console.log("📊 Monitoring Phase 1 effectiveness...");
+  console.info("📊 Monitoring Phase 1 effectiveness...");
   // In real implementation, this would monitor actual performance metrics
 
   // Cost optimization analysis
-  console.log("\n💰 Cost Optimization Analysis:");
+  console.info("\n💰 Cost Optimization Analysis:");
   Object.entries(phase1Result.platformResults).forEach(([platform, result]) => {
     const optimization = scalingManager.optimizeCosts(platform, result.deviceCount);
-    console.log(
+    console.info(
       `${platform}: $${optimization.baseCost} → $${optimization.optimizedCost} (Save $${optimization.savings})`
     );
-    console.log(`  Strategies: ${optimization.optimizationStrategies.join(", ")}`);
+    console.info(`  Strategies: ${optimization.optimizationStrategies.join(", ")}`);
   });
 
-  console.log("\n✅ Scaling strategy ready for execution");
-  console.log("📈 Expected effectiveness: 85% success rate with <10% ban rate");
-  console.log("💰 Total estimated cost at 200 accounts: $10,000-13,600/month");
+  console.info("\n✅ Scaling strategy ready for execution");
+  console.info("📈 Expected effectiveness: 85% success rate with <10% ban rate");
+  console.info("💰 Total estimated cost at 200 accounts: $10,000-13,600/month");
 }
 
 // Export for use in main application

@@ -119,38 +119,38 @@ function generateStats(days = 30): StatsResult {
 }
 
 function renderStats(stats: StatsResult): void {
-	console.log("\n📊 Commit Statistics");
-	console.log("═══════════════════════════════════════════════════\n");
+	console.info("\n📊 Commit Statistics");
+	console.info("═══════════════════════════════════════════════════\n");
 
-	console.log(`Total Commits:      ${stats.totalCommits}`);
-	console.log(`Compliance Rate:    ${stats.complianceRate}%`);
-	console.log(`Avg Message Length: ${stats.averageMessageLength} chars`);
-	console.log(`Most Active Day:    ${stats.mostActiveDay}`);
-	console.log();
+	console.info(`Total Commits:      ${stats.totalCommits}`);
+	console.info(`Compliance Rate:    ${stats.complianceRate}%`);
+	console.info(`Avg Message Length: ${stats.averageMessageLength} chars`);
+	console.info(`Most Active Day:    ${stats.mostActiveDay}`);
+	console.info();
 
-	console.log("By Domain:");
+	console.info("By Domain:");
 	for (const [domain, count] of Object.entries(stats.byDomain).sort(
 		(a, b) => b[1] - a[1],
 	)) {
-		console.log(
+		console.info(
 			`  ${domain.padEnd(12)} ${count.toString().padStart(4)} ${"█".repeat(Math.min(count, 20))}`,
 		);
 	}
-	console.log();
+	console.info();
 
-	console.log("By Component:");
+	console.info("By Component:");
 	for (const [comp, count] of Object.entries(stats.byComponent)
 		.sort((a, b) => b[1] - a[1])
 		.slice(0, 5)) {
-		console.log(`  ${comp.padEnd(12)} ${count.toString().padStart(4)}`);
+		console.info(`  ${comp.padEnd(12)} ${count.toString().padStart(4)}`);
 	}
-	console.log();
+	console.info();
 
-	console.log("Top Authors:");
+	console.info("Top Authors:");
 	for (const [author, count] of Object.entries(stats.byAuthor)
 		.sort((a, b) => b[1] - a[1])
 		.slice(0, 5)) {
-		console.log(`  ${author.padEnd(20)} ${count.toString().padStart(4)}`);
+		console.info(`  ${author.padEnd(20)} ${count.toString().padStart(4)}`);
 	}
 }
 
@@ -159,10 +159,10 @@ if (import.meta.main) {
 	const args = Bun.argv.slice(2);
 	const days = Number(args.find((a) => a.startsWith("--days="))?.split("=")[1]) || 30;
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Commit Statistics                  ║");
-	console.log(`║     Last ${days.toString().padEnd(42)} ║`);
-	console.log("╚════════════════════════════════════════════════════════╝");
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Commit Statistics                  ║");
+	console.info(`║     Last ${days.toString().padEnd(42)} ║`);
+	console.info("╚════════════════════════════════════════════════════════╝");
 
 	const stats = generateStats(days);
 	renderStats(stats);

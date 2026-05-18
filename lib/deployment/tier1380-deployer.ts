@@ -28,7 +28,7 @@ export class Tier1380Deployer {
       await $`mkdir -p ${backupPath}`;
 
       // 3. Backup with progress and checksum
-      console.log(`📦 Creating backup to ${backupPath}...`);
+      console.info(`📦 Creating backup to ${backupPath}...`);
       const backupResult = await $`
         # Create backup with rsync (more reliable than cp -r)
         rsync -ah --progress --checksum \
@@ -69,7 +69,7 @@ export class Tier1380Deployer {
       await Bun.write(`${backupPath}/${this.METRICS_FILE}`, JSON.stringify(metrics, null, 2));
 
       // 5. Run deployment with enhanced monitoring
-      console.log(`🚀 Deploying snapshot ${snapshotId}...`);
+      console.info(`🚀 Deploying snapshot ${snapshotId}...`);
 
       const deployment = await $`
         # Set deployment environment variables
@@ -167,7 +167,7 @@ export class Tier1380Deployer {
    * Enhanced rollback with diagnostics and cleanup
    */
   private static async emergencyRollback(snapshotId: string, error: Error): Promise<void> {
-    console.log(`🔄 Initiating rollback for ${snapshotId}...`);
+    console.info(`🔄 Initiating rollback for ${snapshotId}...`);
 
     const rollbackLog = `/tmp/tier1380-rollback-${Date.now()}.log`;
 
@@ -342,10 +342,10 @@ if (import.meta.main) {
     signedUrl: true,
   })
     .then(result => {
-      console.log('✅ Deployment successful!');
-      console.log(`📊 Backup: ${result.backupPath}`);
+      console.info('✅ Deployment successful!');
+      console.info(`📊 Backup: ${result.backupPath}`);
       if (result.signedUrl) {
-        console.log(`🔗 Signed URL: ${result.signedUrl}`);
+        console.info(`🔗 Signed URL: ${result.signedUrl}`);
       }
     })
     .catch(error => {

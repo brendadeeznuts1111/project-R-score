@@ -15,38 +15,38 @@ async function showAllData() {
     async () => {
       const runner = ScriptRunner.getInstance();
 
-      console.log('📊 Fire22 Data Viewer - All Collected Metrics & Analytics');
-      console.log('!==!==!==!==!==!==!==!==!==!====\n');
+      console.info('📊 Fire22 Data Viewer - All Collected Metrics & Analytics');
+      console.info('!==!==!==!==!==!==!==!==!==!====\n');
 
       // 1. Show current metrics for all scripts
-      console.log('🔧 Current Script Metrics:');
-      console.log('!==!==!==!==!==');
+      console.info('🔧 Current Script Metrics:');
+      console.info('!==!==!==!==!==');
       const metrics = (runner as any).metrics;
       if (metrics && metrics.size > 0) {
         for (const [scriptName, scriptMetrics] of metrics) {
-          console.log(`\n📈 ${scriptName}:`);
-          console.log(`   Total Executions: ${scriptMetrics.totalExecutions}`);
-          console.log(
+          console.info(`\n📈 ${scriptName}:`);
+          console.info(`   Total Executions: ${scriptMetrics.totalExecutions}`);
+          console.info(
             `   Success Rate: ${((scriptMetrics.successfulExecutions / scriptMetrics.totalExecutions) * 100).toFixed(1)}%`
           );
-          console.log(`   Average Duration: ${scriptMetrics.averageDuration.toFixed(2)}ms`);
-          console.log(
+          console.info(`   Average Duration: ${scriptMetrics.averageDuration.toFixed(2)}ms`);
+          console.info(
             `   Average Memory: ${(scriptMetrics.averageMemoryUsage / 1024 / 1024).toFixed(2)}MB`
           );
-          console.log(`   Error Rate: ${scriptMetrics.errorRate.toFixed(1)}%`);
-          console.log(`   Last Executed: ${scriptMetrics.lastExecuted}`);
+          console.info(`   Error Rate: ${scriptMetrics.errorRate.toFixed(1)}%`);
+          console.info(`   Last Executed: ${scriptMetrics.lastExecuted}`);
         }
       } else {
-        console.log('   No metrics collected yet. Run some scripts first!');
+        console.info('   No metrics collected yet. Run some scripts first!');
       }
 
       // 2. Show execution history
-      console.log('\n📚 Execution History:');
-      console.log('!==!==!==!==');
+      console.info('\n📚 Execution History:');
+      console.info('!==!==!==!==');
       const history = (runner as any).executionHistory;
       if (history && history.length > 0) {
-        console.log(`   Total executions recorded: ${history.length}`);
-        console.log(`   Recent executions:`);
+        console.info(`   Total executions recorded: ${history.length}`);
+        console.info(`   Recent executions:`);
 
         // Show last 5 executions
         const recent = history.slice(-5);
@@ -55,49 +55,49 @@ async function showAllData() {
           const duration = execution.performance.duration.toFixed(2);
           const memory = (execution.performance.memoryDelta.heapUsed / 1024 / 1024).toFixed(2);
 
-          console.log(
+          console.info(
             `   ${index + 1}. ${status} ${execution.metadata.scriptName} (${duration}ms, ${memory}MB)`
           );
-          console.log(`      ID: ${execution.metadata.executionId}`);
-          console.log(`      Time: ${execution.metadata.timestamp}`);
+          console.info(`      ID: ${execution.metadata.executionId}`);
+          console.info(`      Time: ${execution.metadata.timestamp}`);
           if (execution.metadata.tags.length > 0) {
-            console.log(`      Tags: ${execution.metadata.tags.join(', ')}`);
+            console.info(`      Tags: ${execution.metadata.tags.join(', ')}`);
           }
         });
       } else {
-        console.log('   No execution history yet. Run some scripts first!');
+        console.info('   No execution history yet. Run some scripts first!');
       }
 
       // 3. Show performance report
-      console.log('\n📊 Performance Report:');
-      console.log('!==!==!==!===');
+      console.info('\n📊 Performance Report:');
+      console.info('!==!==!==!===');
       const report = runner.generatePerformanceReport();
-      console.log(report);
+      console.info(report);
 
       // 4. Show data storage locations
-      console.log('\n💾 Data Storage Locations:');
-      console.log('!==!==!==!==!==');
-      console.log('   📈 Metrics: Stored in memory (ScriptRunner.metrics Map)');
-      console.log('   📚 History: Stored in memory (ScriptRunner.executionHistory Array)');
-      console.log('   🕒 Timestamps: ISO format stored with each execution');
-      console.log('   🏷️  Tags: Stored with each execution for categorization');
-      console.log('   📊 Performance: Duration, memory, CPU usage for each execution');
+      console.info('\n💾 Data Storage Locations:');
+      console.info('!==!==!==!==!==');
+      console.info('   📈 Metrics: Stored in memory (ScriptRunner.metrics Map)');
+      console.info('   📚 History: Stored in memory (ScriptRunner.executionHistory Array)');
+      console.info('   🕒 Timestamps: ISO format stored with each execution');
+      console.info('   🏷️  Tags: Stored with each execution for categorization');
+      console.info('   📊 Performance: Duration, memory, CPU usage for each execution');
 
       // 5. Show how to access data programmatically
-      console.log('\n🔧 How to Access Data Programmatically:');
-      console.log('!==!==!==!==!==!==!====');
-      console.log('   // Get all metrics');
-      console.log('   const runner = ScriptRunner.getInstance();');
-      console.log('   const metrics = runner.metrics;');
-      console.log('');
-      console.log('   // Get execution history');
-      console.log('   const history = runner.executionHistory;');
-      console.log('');
-      console.log('   // Generate performance report');
-      console.log('   const report = runner.generatePerformanceReport();');
-      console.log('');
-      console.log('   // Clear data if needed');
-      console.log('   runner.clearHistory();');
+      console.info('\n🔧 How to Access Data Programmatically:');
+      console.info('!==!==!==!==!==!==!====');
+      console.info('   // Get all metrics');
+      console.info('   const runner = ScriptRunner.getInstance();');
+      console.info('   const metrics = runner.metrics;');
+      console.info('');
+      console.info('   // Get execution history');
+      console.info('   const history = runner.executionHistory;');
+      console.info('');
+      console.info('   // Generate performance report');
+      console.info('   const report = runner.generatePerformanceReport();');
+      console.info('');
+      console.info('   // Clear data if needed');
+      console.info('   runner.clearHistory();');
 
       return {
         metricsCount: metrics ? metrics.size : 0,
@@ -120,26 +120,26 @@ async function showSpecificScriptData(scriptName: string) {
     async () => {
       const runner = ScriptRunner.getInstance();
 
-      console.log(`📊 Data for Script: ${scriptName}`);
-      console.log('!==!==!==!==!==!==\n');
+      console.info(`📊 Data for Script: ${scriptName}`);
+      console.info('!==!==!==!==!==!==\n');
 
       const metrics = (runner as any).metrics;
       const scriptMetrics = metrics.get(scriptName);
 
       if (scriptMetrics) {
-        console.log(`📈 ${scriptName} Metrics:`);
-        console.log(`   Total Executions: ${scriptMetrics.totalExecutions}`);
-        console.log(`   Successful: ${scriptMetrics.successfulExecutions}`);
-        console.log(`   Failed: ${scriptMetrics.failedExecutions}`);
-        console.log(
+        console.info(`📈 ${scriptName} Metrics:`);
+        console.info(`   Total Executions: ${scriptMetrics.totalExecutions}`);
+        console.info(`   Successful: ${scriptMetrics.successfulExecutions}`);
+        console.info(`   Failed: ${scriptMetrics.failedExecutions}`);
+        console.info(
           `   Success Rate: ${((scriptMetrics.successfulExecutions / scriptMetrics.totalExecutions) * 100).toFixed(1)}%`
         );
-        console.log(`   Average Duration: ${scriptMetrics.averageDuration.toFixed(2)}ms`);
-        console.log(
+        console.info(`   Average Duration: ${scriptMetrics.averageDuration.toFixed(2)}ms`);
+        console.info(
           `   Average Memory: ${(scriptMetrics.averageMemoryUsage / 1024 / 1024).toFixed(2)}MB`
         );
-        console.log(`   Error Rate: ${scriptMetrics.errorRate.toFixed(1)}%`);
-        console.log(`   Last Executed: ${scriptMetrics.lastExecuted}`);
+        console.info(`   Error Rate: ${scriptMetrics.errorRate.toFixed(1)}%`);
+        console.info(`   Last Executed: ${scriptMetrics.lastExecuted}`);
 
         // Show recent executions for this script
         const history = (runner as any).executionHistory;
@@ -148,20 +148,20 @@ async function showSpecificScriptData(scriptName: string) {
         );
 
         if (scriptHistory.length > 0) {
-          console.log(`\n📚 Recent Executions for ${scriptName}:`);
+          console.info(`\n📚 Recent Executions for ${scriptName}:`);
           const recent = scriptHistory.slice(-3);
           recent.forEach((execution: any, index: number) => {
             const status = execution.success ? '✅' : '❌';
             const duration = execution.performance.duration.toFixed(2);
             const memory = (execution.performance.memoryDelta.heapUsed / 1024 / 1024).toFixed(2);
 
-            console.log(`   ${index + 1}. ${status} ${duration}ms, ${memory}MB`);
-            console.log(`      ID: ${execution.metadata.executionId}`);
-            console.log(`      Time: ${execution.metadata.timestamp}`);
+            console.info(`   ${index + 1}. ${status} ${duration}ms, ${memory}MB`);
+            console.info(`      ID: ${execution.metadata.executionId}`);
+            console.info(`      Time: ${execution.metadata.timestamp}`);
           });
         }
       } else {
-        console.log(`   No data found for script: ${scriptName}`);
+        console.info(`   No data found for script: ${scriptName}`);
       }
 
       return { scriptName, hasData: !!scriptMetrics };
@@ -179,8 +179,8 @@ async function exportDataToFile() {
     async () => {
       const runner = ScriptRunner.getInstance();
 
-      console.log('💾 Exporting Data to File...');
-      console.log('!==!==!==!==!====\n');
+      console.info('💾 Exporting Data to File...');
+      console.info('!==!==!==!==!====\n');
 
       const metrics = (runner as any).metrics;
       const history = (runner as any).executionHistory;
@@ -203,10 +203,10 @@ async function exportDataToFile() {
       const filename = `fire22-data-export-${Date.now()}.json`;
       await Bun.write(filename, JSON.stringify(exportData, null, 2));
 
-      console.log(`✅ Data exported to: ${filename}`);
-      console.log(`   📊 Metrics: ${metrics.size} scripts`);
-      console.log(`   📚 History: ${history.length} executions`);
-      console.log(`   💾 File size: ${((await Bun.file(filename).size()) / 1024).toFixed(2)}KB`);
+      console.info(`✅ Data exported to: ${filename}`);
+      console.info(`   📊 Metrics: ${metrics.size} scripts`);
+      console.info(`   📚 History: ${history.length} executions`);
+      console.info(`   💾 File size: ${((await Bun.file(filename).size()) / 1024).toFixed(2)}KB`);
 
       return { filename, dataSize: exportData.summary };
     },
@@ -222,20 +222,20 @@ async function main() {
     const args = process.argv.slice(2);
 
     if (args.includes('--help') || args.includes('-h')) {
-      console.log('📊 Fire22 Data Viewer');
-      console.log('!==!==!==!===\n');
-      console.log('Usage: bun run data-viewer.ts [options]');
-      console.log('');
-      console.log('Options:');
-      console.log('  --help, -h           Show this help message');
-      console.log('  --script <name>      Show data for specific script');
-      console.log('  --export             Export all data to JSON file');
-      console.log('  --all                Show all data (default)');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun run data-viewer.ts                    # Show all data');
-      console.log('  bun run data-viewer.ts --script enhanced-demo  # Show specific script');
-      console.log('  bun run data-viewer.ts --export           # Export to JSON');
+      console.info('📊 Fire22 Data Viewer');
+      console.info('!==!==!==!===\n');
+      console.info('Usage: bun run data-viewer.ts [options]');
+      console.info('');
+      console.info('Options:');
+      console.info('  --help, -h           Show this help message');
+      console.info('  --script <name>      Show data for specific script');
+      console.info('  --export             Export all data to JSON file');
+      console.info('  --all                Show all data (default)');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun run data-viewer.ts                    # Show all data');
+      console.info('  bun run data-viewer.ts --script enhanced-demo  # Show specific script');
+      console.info('  bun run data-viewer.ts --export           # Export to JSON');
       return;
     }
 

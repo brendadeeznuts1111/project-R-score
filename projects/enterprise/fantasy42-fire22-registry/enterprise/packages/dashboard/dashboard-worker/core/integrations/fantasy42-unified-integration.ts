@@ -63,7 +63,7 @@ export class Fantasy42UnifiedIntegration {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🚀 Initializing Fantasy42 Unified Integration...');
+      console.info('🚀 Initializing Fantasy42 Unified Integration...');
 
       // Initialize core Fantasy42 client
       const fantasyClient = new Fantasy42AgentClient('username', 'password');
@@ -80,7 +80,7 @@ export class Fantasy42UnifiedIntegration {
 
       // Customer Information Integration
       if (this.config.features.customerInfoEnabled) {
-        console.log('👤 Initializing Customer Information...');
+        console.info('👤 Initializing Customer Information...');
         this.customerInfo = new Fantasy42CustomerInfo(
           fantasyClient,
           customerDB,
@@ -92,7 +92,7 @@ export class Fantasy42UnifiedIntegration {
 
       // P2P Automation (initialize early for customer info dependency)
       if (this.config.features.p2pEnabled) {
-        console.log('🤝 Initializing P2P Automation...');
+        console.info('🤝 Initializing P2P Automation...');
         this.p2pAutomation = new Fantasy42P2PAutomation(
           null!, // Will be properly initialized with matching system
           fantasyClient,
@@ -104,7 +104,7 @@ export class Fantasy42UnifiedIntegration {
 
       // Alert Integration
       if (this.config.features.alertsEnabled) {
-        console.log('🚨 Initializing Alert System...');
+        console.info('🚨 Initializing Alert System...');
         this.alertIntegration = new Fantasy42AlertIntegration();
         initPromises.push(this.initializeAlerts());
       }
@@ -136,7 +136,7 @@ export class Fantasy42UnifiedIntegration {
       }
 
       this.isInitialized = successCount > 0;
-      console.log(
+      console.info(
         `✅ Fantasy42 Unified Integration initialized (${successCount}/${initPromises.length} features)`
       );
 
@@ -231,7 +231,7 @@ export class Fantasy42UnifiedIntegration {
       this.setupAlertToCustomerInfoCommunication();
     }
 
-    console.log('✅ Inter-system communication setup');
+    console.info('✅ Inter-system communication setup');
   }
 
   /**
@@ -239,7 +239,7 @@ export class Fantasy42UnifiedIntegration {
    */
   private setupCustomerInfoToP2PCommunication(): void {
     // This would be implemented with proper event system
-    console.log('🔄 Customer Info ↔ P2P Automation communication enabled');
+    console.info('🔄 Customer Info ↔ P2P Automation communication enabled');
   }
 
   /**
@@ -247,7 +247,7 @@ export class Fantasy42UnifiedIntegration {
    */
   private setupAlertToCustomerInfoCommunication(): void {
     // This would be implemented with proper event system
-    console.log('🚨 Alert System ↔ Customer Info communication enabled');
+    console.info('🚨 Alert System ↔ Customer Info communication enabled');
   }
 
   /**
@@ -264,7 +264,7 @@ export class Fantasy42UnifiedIntegration {
       await this.createUnifiedQuickActions();
     }
 
-    console.log('✅ Unified UI enhancements setup');
+    console.info('✅ Unified UI enhancements setup');
   }
 
   /**
@@ -346,7 +346,7 @@ export class Fantasy42UnifiedIntegration {
       this.showUnifiedStatusModal();
     });
 
-    console.log('✅ Unified status indicator created');
+    console.info('✅ Unified status indicator created');
   }
 
   /**
@@ -440,7 +440,7 @@ export class Fantasy42UnifiedIntegration {
     // Add event listeners
     this.setupQuickActionListeners();
 
-    console.log('✅ Unified quick actions panel created');
+    console.info('✅ Unified quick actions panel created');
   }
 
   /**
@@ -502,7 +502,7 @@ export class Fantasy42UnifiedIntegration {
       }
     });
 
-    console.log(
+    console.info(
       '✅ Unified keyboard shortcuts setup: Ctrl+Shift+U (Status), Ctrl+Shift+S (Save), Ctrl+Shift+M (Match), Ctrl+Shift+I (Toggle UI)'
     );
   }
@@ -782,7 +782,7 @@ export class Fantasy42UnifiedIntegration {
       }
     });
 
-    console.log('📊 Unified status modal displayed');
+    console.info('📊 Unified status modal displayed');
   }
 
   /**
@@ -823,7 +823,7 @@ export class Fantasy42UnifiedIntegration {
     }
 
     try {
-      console.log('💾 Manual customer save triggered');
+      console.info('💾 Manual customer save triggered');
       // This would trigger manual save
       alert('Customer information saved successfully!');
     } catch (error) {
@@ -842,7 +842,7 @@ export class Fantasy42UnifiedIntegration {
     }
 
     try {
-      console.log('🔍 Manual P2P match search triggered');
+      console.info('🔍 Manual P2P match search triggered');
       // This would trigger manual P2P matching
       alert('Searching for P2P matches...');
     } catch (error) {
@@ -861,7 +861,7 @@ export class Fantasy42UnifiedIntegration {
     }
 
     try {
-      console.log('🚨 Manual alert test triggered');
+      console.info('🚨 Manual alert test triggered');
       await this.alertIntegration.createTestAlert();
       alert('Test alert created and sent!');
     } catch (error) {
@@ -940,7 +940,7 @@ export class Fantasy42UnifiedIntegration {
       }
     });
 
-    console.log('🧹 Fantasy42 Unified Integration cleaned up');
+    console.info('🧹 Fantasy42 Unified Integration cleaned up');
   }
 }
 
@@ -1022,24 +1022,24 @@ export const initializeFantasy42Unified = async (
 
 // Auto-initialize if running in Fantasy42 environment
 if (typeof window !== 'undefined' && window.location.hostname.includes('fantasy42')) {
-  console.log('🎯 Fantasy42 environment detected, auto-initializing unified integration...');
+  console.info('🎯 Fantasy42 environment detected, auto-initializing unified integration...');
   initializeFantasy42Unified().then(success => {
     if (success) {
-      console.log('✅ Fantasy42 Unified Integration auto-initialized successfully!');
+      console.info('✅ Fantasy42 Unified Integration auto-initialized successfully!');
 
       // Add global keyboard shortcut info
       setTimeout(() => {
-        console.log('🎹 Available keyboard shortcuts:');
-        console.log('• Ctrl+Shift+U: Show unified status');
-        console.log('• Ctrl+Shift+S: Save customer data');
-        console.log('• Ctrl+Shift+M: Find P2P matches');
-        console.log('• Ctrl+Shift+I: Toggle quick actions');
-        console.log('• Ctrl+Shift+T: Toggle alerts');
-        console.log('• Ctrl+Shift+H: Show alert history');
-        console.log('• Ctrl+Shift+R: Refresh alerts');
+        console.info('🎹 Available keyboard shortcuts:');
+        console.info('• Ctrl+Shift+U: Show unified status');
+        console.info('• Ctrl+Shift+S: Save customer data');
+        console.info('• Ctrl+Shift+M: Find P2P matches');
+        console.info('• Ctrl+Shift+I: Toggle quick actions');
+        console.info('• Ctrl+Shift+T: Toggle alerts');
+        console.info('• Ctrl+Shift+H: Show alert history');
+        console.info('• Ctrl+Shift+R: Refresh alerts');
       }, 2000);
     } else {
-      console.log('⚠️ Fantasy42 Unified Integration auto-initialization failed');
+      console.info('⚠️ Fantasy42 Unified Integration auto-initialization failed');
     }
   });
 }

@@ -82,7 +82,7 @@ class OpenApiGenerator {
   private endpoints: ApiEndpoint[] = [];
 
   async discoverEndpoints(): Promise<void> {
-    console.log("🔍 Discovering API endpoints...");
+    console.info("🔍 Discovering API endpoints...");
 
     // Discover from src/api/ directory
     await this.discoverFromApiDirectory();
@@ -90,7 +90,7 @@ class OpenApiGenerator {
     // Discover from main server file
     await this.discoverFromServerFile();
 
-    console.log(`📊 Found ${this.endpoints.length} API endpoints`);
+    console.info(`📊 Found ${this.endpoints.length} API endpoints`);
   }
 
   private async discoverFromApiDirectory(): Promise<void> {
@@ -369,7 +369,7 @@ class OpenApiGenerator {
     const outputPath = join(process.cwd(), "docs", "openapi.json");
 
     await Bun.write(outputPath, spec);
-    console.log(`📄 OpenAPI spec written to ${outputPath}`);
+    console.info(`📄 OpenAPI spec written to ${outputPath}`);
   }
 
   getTags(): TagDefinition[] {
@@ -383,8 +383,8 @@ class OpenApiGenerator {
 
 // CLI execution
 async function main() {
-  console.log("🚀 Full-Stack Bun.io OpenAPI Generator");
-  console.log("=====================================");
+  console.info("🚀 Full-Stack Bun.io OpenAPI Generator");
+  console.info("=====================================");
 
   const generator = new OpenApiGenerator();
 
@@ -392,18 +392,18 @@ async function main() {
     await generator.discoverEndpoints();
 
     const endpointCount = generator.getEndpointCount();
-    console.log(`✅ Discovered ${endpointCount} API endpoints`);
+    console.info(`✅ Discovered ${endpointCount} API endpoints`);
 
     await generator.writeSpec();
 
     const tags = generator.getTags();
-    console.log(`🏷️  Generated OpenAPI spec with ${tags.length} unified tags:`);
+    console.info(`🏷️  Generated OpenAPI spec with ${tags.length} unified tags:`);
     tags.forEach(tag => {
-      console.log(`  • ${tag.name}: ${tag.description}`);
+      console.info(`  • ${tag.name}: ${tag.description}`);
     });
 
-    console.log("\n🎉 OpenAPI generation complete!");
-    console.log("Run 'bun run docs:serve' to view the API documentation");
+    console.info("\n🎉 OpenAPI generation complete!");
+    console.info("Run 'bun run docs:serve' to view the API documentation");
 
   } catch (error) {
     console.error("❌ OpenAPI generation failed:", inspect(error, { colors: true }));

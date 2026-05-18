@@ -19,15 +19,15 @@ async function openDashboard() {
     // Convert to file:// URL
     const fileUrl = `file://${dashboardPath}`;
     
-    console.log('🚀 Opening DuoPlus Dashboard...');
-    console.log(`📍 Location: ${fileUrl}`);
-    console.log('');
-    console.log('🛡️ RBAC Features Available:');
-    console.log('• Toggle RBAC on/off in header');
-    console.log('• Select roles (Admin, Operator, Viewer)');
-    console.log('• View real-time permissions');
-    console.log('• Monitor Windows Enterprise status');
-    console.log('');
+    console.info('🚀 Opening DuoPlus Dashboard...');
+    console.info(`📍 Location: ${fileUrl}`);
+    console.info('');
+    console.info('🛡️ RBAC Features Available:');
+    console.info('• Toggle RBAC on/off in header');
+    console.info('• Select roles (Admin, Operator, Viewer)');
+    console.info('• View real-time permissions');
+    console.info('• Monitor Windows Enterprise status');
+    console.info('');
     
     // Open in default browser based on platform
     const platform = process.platform;
@@ -47,14 +47,14 @@ async function openDashboard() {
     
     await execAsync(command);
     
-    console.log('✅ Dashboard opened successfully!');
-    console.log('');
-    console.log('🎯 Quick Start Guide:');
-    console.log('1. Look for the RBAC toggle (🛡️) in the header');
-    console.log('2. Toggle RBAC on to enable access control');
-    console.log('3. Try different roles from the dropdown');
-    console.log('4. Watch the status cards update in real-time');
-    console.log('5. Check the activity log for all events');
+    console.info('✅ Dashboard opened successfully!');
+    console.info('');
+    console.info('🎯 Quick Start Guide:');
+    console.info('1. Look for the RBAC toggle (🛡️) in the header');
+    console.info('2. Toggle RBAC on to enable access control');
+    console.info('3. Try different roles from the dropdown');
+    console.info('4. Watch the status cards update in real-time');
+    console.info('5. Check the activity log for all events');
     
   } catch (error: any) {
     console.error('❌ Failed to open dashboard:', error.message);
@@ -63,10 +63,10 @@ async function openDashboard() {
     const dashboardPath = join(__dirname, '..', 'demos', 'duoplus-unified-dashboard.html');
     const fileUrl = `file://${dashboardPath}`;
     
-    console.log('');
-    console.log('📍 Manual Open Instructions:');
-    console.log(`Copy and paste this URL into your browser:`);
-    console.log(fileUrl);
+    console.info('');
+    console.info('📍 Manual Open Instructions:');
+    console.info(`Copy and paste this URL into your browser:`);
+    console.info(fileUrl);
   }
 }
 

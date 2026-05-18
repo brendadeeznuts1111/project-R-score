@@ -105,7 +105,7 @@ export class DefaultSharpDetectionHandler implements SharpDetectionHandler {
       storedAt: Date.now()
     };
     
-    console.log('Storing sharp detection:', storageData.id);
+    console.info('Storing sharp detection:', storageData.id);
     
     // In a real implementation, you would:
     // await this.database.store('sharp_detections', storageData);
@@ -121,7 +121,7 @@ export class DefaultSharpDetectionHandler implements SharpDetectionHandler {
       message: `Sharp movement detected in ${result.symbol} with ${(result.confidence * 100).toFixed(1)}% confidence`
     };
     
-    console.log('Sending alert:', alert.message);
+    console.info('Sending alert:', alert.message);
     
     // In a real implementation, you would:
     // await this.alertService.send(alert);
@@ -130,7 +130,7 @@ export class DefaultSharpDetectionHandler implements SharpDetectionHandler {
 
   private async updateTradingStrategies(result: SharpDetectionResult): Promise<void> {
     // Simulate updating trading strategies
-    console.log(`Updating trading strategies for ${result.symbol} due to sharp detection`);
+    console.info(`Updating trading strategies for ${result.symbol} due to sharp detection`);
     
     // In a real implementation, you would:
     // await this.strategyService.updateForSharpSignal(result);
@@ -145,7 +145,7 @@ export class DefaultSharpDetectionHandler implements SharpDetectionHandler {
       confidence: result.confidence
     };
     
-    console.log('Recording analytics for sharp detection:', analytics.symbol);
+    console.info('Recording analytics for sharp detection:', analytics.symbol);
     
     // In a real implementation, you would:
     // this.analyticsService.record('sharp_detection', analytics);
@@ -215,7 +215,7 @@ export class DefaultSharpDetectionHandler implements SharpDetectionHandler {
 
   public setConfidenceThreshold(threshold: number): void {
     // Update detector threshold (simplified)
-    console.log(`Setting confidence threshold to ${threshold}`);
+    console.info(`Setting confidence threshold to ${threshold}`);
   }
 
   public async analyzeTick(tick: OddsTick, historicalTicks: OddsTick[]): Promise<SharpDetectionResult> {

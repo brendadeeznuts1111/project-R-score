@@ -91,7 +91,7 @@ try {
 	};
 	
 	// Test %j format specifier
-	console.log("%j", { test: "value", number: 42 });
+	console.info("%j", { test: "value", number: 42 });
 	// The format specifier should produce JSON output
 	const hasJsonOutput = capturedOutput.includes('"test"') || capturedOutput.includes("value");
 	
@@ -99,7 +99,7 @@ try {
 	
 	// Actually test it works by running it directly
 	const testResult = Bun.spawnSync({
-		cmd: ["bun", "-e", "console.log('%j', { test: 'value' });"],
+		cmd: ["bun", "-e", "console.info('%j', { test: 'value' });"],
 		stdout: "pipe",
 	});
 	const directOutput = new TextDecoder().decode(testResult.stdout);
@@ -192,19 +192,19 @@ try {
 }
 
 // Print results
-console.log("\n🔍 Bun v1.3.4 Feature Verification\n");
-console.log("=" .repeat(60));
+console.info("\n🔍 Bun v1.3.4 Feature Verification\n");
+console.info("=" .repeat(60));
 
 let allPassed = true;
 for (const check of checks) {
-	console.log(`${check.status} ${check.name.padEnd(35)} ${check.message}`);
+	console.info(`${check.status} ${check.name.padEnd(35)} ${check.message}`);
 	if (check.status === "❌") {
 		allPassed = false;
 	}
 }
 
-console.log("=" .repeat(60));
-console.log(`\n${allPassed ? "✅" : "❌"} Overall Status: ${allPassed ? "All checks passed" : "Some checks failed"}\n`);
+console.info("=" .repeat(60));
+console.info(`\n${allPassed ? "✅" : "❌"} Overall Status: ${allPassed ? "All checks passed" : "Some checks failed"}\n`);
 
 // Exit with appropriate code
 process.exit(allPassed ? 0 : 1);

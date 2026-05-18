@@ -62,7 +62,7 @@ class CloudflareDepartmentAutomation {
         departments: this.extractDepartments(),
       };
 
-      console.log('✅ Configuration loaded successfully');
+      console.info('✅ Configuration loaded successfully');
     } catch (error) {
       console.error('❌ Failed to load configuration:', error);
       process.exit(1);
@@ -92,7 +92,7 @@ class CloudflareDepartmentAutomation {
    * 🏗️ Setup Cloudflare Pages with department environments
    */
   async setupCloudflarePages() {
-    console.log('🚀 Setting up Cloudflare Pages with department environments...');
+    console.info('🚀 Setting up Cloudflare Pages with department environments...');
 
     try {
       // Create main Cloudflare Pages project
@@ -107,7 +107,7 @@ class CloudflareDepartmentAutomation {
       // Setup automated deployments
       await this.setupAutomatedDeployment();
 
-      console.log('✅ Cloudflare Pages setup completed!');
+      console.info('✅ Cloudflare Pages setup completed!');
     } catch (error) {
       console.error('❌ Cloudflare Pages setup failed:', error);
       throw error;
@@ -118,7 +118,7 @@ class CloudflareDepartmentAutomation {
    * 📄 Create main Cloudflare Pages project
    */
   private async createPagesProject() {
-    console.log('📄 Creating Cloudflare Pages project...');
+    console.info('📄 Creating Cloudflare Pages project...');
 
     const pagesConfig = {
       name: this.config.projectName,
@@ -152,9 +152,9 @@ class CloudflareDepartmentAutomation {
     // Create pages project via Wrangler
     try {
       await $`wrangler pages create ${this.config.projectName} --compatibility-date=2024-01-01`;
-      console.log('✅ Cloudflare Pages project created');
+      console.info('✅ Cloudflare Pages project created');
     } catch (error) {
-      console.log('ℹ️ Pages project may already exist, continuing...');
+      console.info('ℹ️ Pages project may already exist, continuing...');
     }
   }
 
@@ -162,10 +162,10 @@ class CloudflareDepartmentAutomation {
    * 🏢 Create department-specific environments
    */
   private async createDepartmentEnvironments() {
-    console.log('🏢 Creating department-specific environments...');
+    console.info('🏢 Creating department-specific environments...');
 
     for (const dept of this.config.departments) {
-      console.log(`  📁 Setting up ${dept.name} environment...`);
+      console.info(`  📁 Setting up ${dept.name} environment...`);
 
       // Create department-specific build configuration
       await this.createDepartmentBuildConfig(dept);
@@ -182,7 +182,7 @@ class CloudflareDepartmentAutomation {
    * 🔒 Setup Cloudflare Access controls
    */
   private async setupAccessControls() {
-    console.log('🔒 Setting up Cloudflare Access controls...');
+    console.info('🔒 Setting up Cloudflare Access controls...');
 
     // Main dashboard - Technology Department access
     await this.createAccessPolicy('main', [
@@ -203,7 +203,7 @@ class CloudflareDepartmentAutomation {
    * 🔄 Setup automated deployment via GitHub Actions
    */
   private async setupAutomatedDeployment() {
-    console.log('🔄 Setting up automated deployment...');
+    console.info('🔄 Setting up automated deployment...');
 
     const workflowConfig = this.generateGitHubActionsWorkflow();
 
@@ -215,7 +215,7 @@ class CloudflareDepartmentAutomation {
 
     writeFileSync(join(workflowDir, 'cloudflare-pages-deploy.yml'), workflowConfig);
 
-    console.log('✅ GitHub Actions workflow created');
+    console.info('✅ GitHub Actions workflow created');
   }
 
   /**
@@ -265,7 +265,7 @@ preview_bucket_name = "fire22-dashboard-assets-preview"
 `;
 
     writeFileSync('wrangler.toml', wranglerConfig);
-    console.log('✅ Wrangler configuration generated');
+    console.info('✅ Wrangler configuration generated');
   }
 
   /**
@@ -285,7 +285,7 @@ import { copyFileSync, mkdirSync, existsSync } from "fs";
 import { join } from "path";
 
 async function buildDepartment() {
-  console.log("🏢 Building ${dept.name} department pages...");
+  console.info("🏢 Building ${dept.name} department pages...");
   
   const outputDir = "dist/pages/${dept.id}";
   if (!existsSync(outputDir)) {
@@ -304,14 +304,14 @@ async function buildDepartment() {
     if (existsSync(file)) {
       const filename = file.split("/").pop();
       copyFileSync(file, join(outputDir, filename || ""));
-      console.log(\`  ✅ Copied \${file}\`);
+      console.info(\`  ✅ Copied \${file}\`);
     }
   }
   
   // Generate department index
   await generateDepartmentIndex();
   
-  console.log("✅ ${dept.name} build completed");
+  console.info("✅ ${dept.name} build completed");
 }
 
 async function generateDepartmentIndex() {
@@ -376,7 +376,7 @@ buildDepartment().catch(console.error);
 
     const scriptPath = `scripts/build-${dept.id}.ts`;
     writeFileSync(scriptPath, buildScript);
-    console.log(`  ✅ Build script created for ${dept.name}`);
+    console.info(`  ✅ Build script created for ${dept.name}`);
   }
 
   /**
@@ -388,9 +388,9 @@ buildDepartment().catch(console.error);
     try {
       // This would typically use Cloudflare API to create DNS records
       // For now, we'll generate the configuration
-      console.log(`  🌐 Subdomain configured: ${subdomain}`);
+      console.info(`  🌐 Subdomain configured: ${subdomain}`);
     } catch (error) {
-      console.log(`  ⚠️ Subdomain setup skipped for ${dept.name}: ${error}`);
+      console.info(`  ⚠️ Subdomain setup skipped for ${dept.name}: ${error}`);
     }
   }
 
@@ -406,7 +406,7 @@ buildDepartment().catch(console.error);
     };
 
     // This configuration would be used by Cloudflare Pages
-    console.log(`  🛣️ Routing configured for /${dept.id}/*`);
+    console.info(`  🛣️ Routing configured for /${dept.id}/*`);
   }
 
   /**
@@ -425,7 +425,7 @@ buildDepartment().catch(console.error);
       exclude: [],
     };
 
-    console.log(`  🔐 Access policy created for ${name}: ${emails.length} users`);
+    console.info(`  🔐 Access policy created for ${name}: ${emails.length} users`);
   }
 
   /**
@@ -576,8 +576,8 @@ Generated: ${new Date().toISOString()}
 
 // 🚀 Main execution
 async function main() {
-  console.log('🏢 Fire22 Cloudflare Department Automation');
-  console.log('!==!==!==!==!==!==!==!==');
+  console.info('🏢 Fire22 Cloudflare Department Automation');
+  console.info('!==!==!==!==!==!==!==!==');
 
   const automation = new CloudflareDepartmentAutomation();
 
@@ -589,15 +589,15 @@ async function main() {
       break;
 
     case 'report':
-      console.log(automation.generateAccessReport());
+      console.info(automation.generateAccessReport());
       break;
 
     case 'scripts':
-      console.log(JSON.stringify(automation.generateDepartmentScripts(), null, 2));
+      console.info(JSON.stringify(automation.generateDepartmentScripts(), null, 2));
       break;
 
     default:
-      console.log(`
+      console.info(`
 Usage:
   bun run scripts/cloudflare-department-automation.ts <command>
 

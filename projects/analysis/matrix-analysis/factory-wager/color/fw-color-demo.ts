@@ -5,61 +5,61 @@
 
 import { FW_COLORS, FWColorUtils, TerminalStyles, generateCSSVariables, FWColor } from './fw-color-utils'
 
-console.log(TerminalStyles.header('🎨 FactoryWager Registry v4.0 - Color Utility Library Demo'))
-console.log('='.repeat(70))
+console.info(TerminalStyles.header('🎨 FactoryWager Registry v4.0 - Color Utility Library Demo'))
+console.info('='.repeat(70))
 
 // 1. Basic color access
-console.log('\n🔧 1. Basic Color Access')
-console.log('-' .repeat(40))
+console.info('\n🔧 1. Basic Color Access')
+console.info('-' .repeat(40))
 
-console.log('Available colors:')
+console.info('Available colors:')
 Object.entries(FW_COLORS).forEach(([name, hex]) => {
   const coloredText = TerminalStyles.fw(name.toUpperCase(), name as FWColor)
-  console.log(`  ${coloredText.padEnd(15)}: ${hex}`)
+  console.info(`  ${coloredText.padEnd(15)}: ${hex}`)
 })
 
 // 2. Color format conversions
-console.log('\n🔄 2. Color Format Conversions')
-console.log('-' .repeat(40))
+console.info('\n🔄 2. Color Format Conversions')
+console.info('-' .repeat(40))
 
 const primaryColor = FW_COLORS.primary
-console.log(`Original: ${primaryColor}`)
-console.log(`RGB: ${FWColorUtils.toCssRGB(primaryColor)}`)
-console.log(`RGBA (0.8): ${FWColorUtils.toCssRGBA(primaryColor, 0.8)}`)
-console.log(`HSL: ${FWColorUtils.toCssHSL(primaryColor)}`)
-console.log(`ANSI 256: ${FWColorUtils.toAnsi256(primaryColor).replace(/\x1b/g, '\\x1b')}m`)
-console.log(`ANSI 24-bit: ${FWColorUtils.toAnsi24bit(primaryColor).replace(/\x1b/g, '\\x1b')}m`)
+console.info(`Original: ${primaryColor}`)
+console.info(`RGB: ${FWColorUtils.toCssRGB(primaryColor)}`)
+console.info(`RGBA (0.8): ${FWColorUtils.toCssRGBA(primaryColor, 0.8)}`)
+console.info(`HSL: ${FWColorUtils.toCssHSL(primaryColor)}`)
+console.info(`ANSI 256: ${FWColorUtils.toAnsi256(primaryColor).replace(/\x1b/g, '\\x1b')}m`)
+console.info(`ANSI 24-bit: ${FWColorUtils.toAnsi24bit(primaryColor).replace(/\x1b/g, '\\x1b')}m`)
 
 // 3. Color manipulation
-console.log('\n🎨 3. Color Manipulation')
-console.log('-' .repeat(40))
+console.info('\n🎨 3. Color Manipulation')
+console.info('-' .repeat(40))
 
-console.log(`Original: ${primaryColor}`)
-console.log(`Lighter (+20%): ${FWColorUtils.lighten(primaryColor, 20)}`)
-console.log(`Darker (-20%): ${FWColorUtils.darken(primaryColor, 20)}`)
+console.info(`Original: ${primaryColor}`)
+console.info(`Lighter (+20%): ${FWColorUtils.lighten(primaryColor, 20)}`)
+console.info(`Darker (-20%): ${FWColorUtils.darken(primaryColor, 20)}`)
 
 // 4. Color palette generation
-console.log('\n📊 4. Color Palette Generation')
-console.log('-' .repeat(40))
+console.info('\n📊 4. Color Palette Generation')
+console.info('-' .repeat(40))
 
 const bluePalette = FWColorUtils.generatePalette(primaryColor)
 Object.entries(bluePalette).forEach(([shade, color]) => {
   const coloredBlock = TerminalStyles.fw('■', 'primary')
-  console.log(`  ${coloredBlock} ${shade.padEnd(3)}: ${color}`)
+  console.info(`  ${coloredBlock} ${shade.padEnd(3)}: ${color}`)
 })
 
 // 5. Terminal styling examples
-console.log('\n🖥️  5. Terminal Styling Examples')
-console.log('-' .repeat(40))
+console.info('\n🖥️  5. Terminal Styling Examples')
+console.info('-' .repeat(40))
 
-console.log(TerminalStyles.success('Operation completed successfully'))
-console.log(TerminalStyles.warning('This feature is deprecated'))
-console.log(TerminalStyles.error('Validation failed'))
-console.log(TerminalStyles.info('For more information, see the documentation'))
+console.info(TerminalStyles.success('Operation completed successfully'))
+console.info(TerminalStyles.warning('This feature is deprecated'))
+console.info(TerminalStyles.error('Validation failed'))
+console.info(TerminalStyles.info('For more information, see the documentation'))
 
 // 6. FactoryWager registry status with colors
-console.log('\n🏭 6. FactoryWager Registry Status')
-console.log('-' .repeat(40))
+console.info('\n🏭 6. FactoryWager Registry Status')
+console.info('-' .repeat(40))
 
 const services = [
   { name: 'CRC32 Validator', status: 'active' as const },
@@ -75,12 +75,12 @@ services.forEach(service => {
   const statusText = service.status.toUpperCase()
   const coloredStatus = TerminalStyles.fw(statusText, statusColor)
   
-  console.log(`  ${service.name.padEnd(20)} ${coloredStatus}`)
+  console.info(`  ${service.name.padEnd(20)} ${coloredStatus}`)
 })
 
 // 7. Color utility for different formats
-console.log('\n📋 7. Color Format Utility')
-console.log('-' .repeat(40))
+console.info('\n📋 7. Color Format Utility')
+console.info('-' .repeat(40))
 
 const formats: Array<'hex' | 'rgb' | 'rgba' | 'hsl' | 'ansi256' | 'ansi24bit'> = 
   ['hex', 'rgb', 'rgba', 'hsl', 'ansi256', 'ansi24bit']
@@ -90,27 +90,27 @@ formats.forEach(format => {
   const displayFormat = format === 'ansi256' || format === 'ansi24bit' 
     ? result.replace(/\x1b/g, '\\x1b') + 'm'
     : result
-  console.log(`  ${format.padEnd(10)}: ${displayFormat}`)
+  console.info(`  ${format.padEnd(10)}: ${displayFormat}`)
 })
 
 // 8. CSS generation
-console.log('\n📦 8. CSS Variables Generation')
-console.log('-' .repeat(40))
+console.info('\n📦 8. CSS Variables Generation')
+console.info('-' .repeat(40))
 
 const cssVariables = generateCSSVariables()
-console.log('Generated CSS variables (first 10 lines):')
+console.info('Generated CSS variables (first 10 lines):')
 cssVariables.split('\n').slice(0, 10).forEach(line => {
-  console.log(`  ${line}`)
+  console.info(`  ${line}`)
 })
-console.log(`  ... (${cssVariables.split('\n').length} total lines)`)
+console.info(`  ... (${cssVariables.split('\n').length} total lines)`)
 
 // Save CSS to file
 await Bun.write('./factory-wager-colors-complete.css', cssVariables)
-console.log('\n💾 Complete CSS variables saved to: factory-wager-colors-complete.css')
+console.info('\n💾 Complete CSS variables saved to: factory-wager-colors-complete.css')
 
 // 9. Advanced color calculations
-console.log('\n🔬 9. Advanced Color Calculations')
-console.log('-' .repeat(40))
+console.info('\n🔬 9. Advanced Color Calculations')
+console.info('-' .repeat(40))
 
 // Calculate contrast ratio (simplified)
 const getLuminance = (hex: string): number => {
@@ -133,13 +133,13 @@ const getContrastRatio = (color1: string, color2: string): number => {
   return (brightest + 0.05) / (darkest + 0.05)
 }
 
-console.log(`Contrast ratio (primary on background): ${getContrastRatio(FW_COLORS.primary, FW_COLORS.background).toFixed(2)}`)
-console.log(`Contrast ratio (text on background): ${getContrastRatio(FW_COLORS.text, FW_COLORS.background).toFixed(2)}`)
-console.log(`Contrast ratio (success on background): ${getContrastRatio(FW_COLORS.success, FW_COLORS.background).toFixed(2)}`)
+console.info(`Contrast ratio (primary on background): ${getContrastRatio(FW_COLORS.primary, FW_COLORS.background).toFixed(2)}`)
+console.info(`Contrast ratio (text on background): ${getContrastRatio(FW_COLORS.text, FW_COLORS.background).toFixed(2)}`)
+console.info(`Contrast ratio (success on background): ${getContrastRatio(FW_COLORS.success, FW_COLORS.background).toFixed(2)}`)
 
 // 10. Color theme generator
-console.log('\n🎭 10. Color Theme Generator')
-console.log('-' .repeat(40))
+console.info('\n🎭 10. Color Theme Generator')
+console.info('-' .repeat(40))
 
 const generateTheme = (baseColor: string) => {
   return {
@@ -153,11 +153,11 @@ const generateTheme = (baseColor: string) => {
 }
 
 const darkTheme = generateTheme(FW_COLORS.primary)
-console.log('Dark theme based on primary color:')
+console.info('Dark theme based on primary color:')
 Object.entries(darkTheme).forEach(([name, color]) => {
   const coloredName = TerminalStyles.fw(name, 'primary')
-  console.log(`  ${coloredName.padEnd(12)}: ${color}`)
+  console.info(`  ${coloredName.padEnd(12)}: ${color}`)
 })
 
-console.log('\n🎯 Color Utility Library Demo Complete!')
-console.log('🚀 FactoryWager Registry v4.0 - Enterprise Color Management')
+console.info('\n🎯 Color Utility Library Demo Complete!')
+console.info('🚀 FactoryWager Registry v4.0 - Enterprise Color Management')

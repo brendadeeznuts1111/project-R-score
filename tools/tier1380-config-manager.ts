@@ -320,10 +320,10 @@ export class Tier1380ConfigManager {
     this.config.lastUpdated = new Date().toISOString();
     this.saveConfig();
 
-    console.log("📸 Updated snapshot metadata:");
-    console.log(`   Key: ${snapshotResponse.key}`);
-    console.log(`   Cache Hit: ${this.config.snapshot.cacheHit}`);
-    console.log(`   Compression: ${this.config.snapshot.compressionRatio}%`);
+    console.info("📸 Updated snapshot metadata:");
+    console.info(`   Key: ${snapshotResponse.key}`);
+    console.info(`   Cache Hit: ${this.config.snapshot.cacheHit}`);
+    console.info(`   Compression: ${this.config.snapshot.compressionRatio}%`);
   }
 
   /**
@@ -439,7 +439,7 @@ export class Tier1380ConfigManager {
       }
 
       writeFileSync(this.configPath, JSON.stringify(this.config, null, 2));
-      console.log(`💾 Configuration saved to ${this.configPath}`);
+      console.info(`💾 Configuration saved to ${this.configPath}`);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       console.error(`❌ Failed to save configuration: ${errorMessage}`);
@@ -460,7 +460,7 @@ export class Tier1380ConfigManager {
     this.config.abTests[testName] = { variants, weights, enabled };
     this.config.lastUpdated = new Date().toISOString();
     this.saveConfig();
-    console.log(`✅ Updated A/B test: ${testName}`);
+    console.info(`✅ Updated A/B test: ${testName}`);
   }
 
   /**
@@ -470,43 +470,43 @@ export class Tier1380ConfigManager {
     this.config.tier1380 = { ...this.config.tier1380, ...config };
     this.config.lastUpdated = new Date().toISOString();
     this.saveConfig();
-    console.log(`✅ Updated Tier-1380 configuration`);
+    console.info(`✅ Updated Tier-1380 configuration`);
   }
 
   /**
    * Display configuration summary
    */
   displaySummary(): void {
-    console.log("\n🏭 FactoryWager Tier-1380 Configuration Summary");
-    console.log("=".repeat(50));
+    console.info("\n🏭 FactoryWager Tier-1380 Configuration Summary");
+    console.info("=".repeat(50));
 
     // A/B Tests
-    console.log("\n🧪 A/B Tests:");
+    console.info("\n🧪 A/B Tests:");
     for (const [testName, testConfig] of Object.entries(this.config.abTests)) {
       const status = testConfig.enabled ? "✅" : "❌";
       const weightSum = testConfig.weights.reduce((a, b) => a + b, 0);
-      console.log(`   ${status} ${testName}: ${testConfig.variants.join(", ")} (${testConfig.weights.join("/")}) - Sum: ${weightSum}%`);
+      console.info(`   ${status} ${testName}: ${testConfig.variants.join(", ")} (${testConfig.weights.join("/")}) - Sum: ${weightSum}%`);
     }
 
     // Tier-1380 Configuration
-    console.log("\n⚙️ Tier-1380 Configuration:");
-    console.log(`   R2 Bucket: ${this.config.tier1380.r2Bucket}`);
-    console.log(`   API URL: ${this.config.tier1380.publicApiUrl}`);
-    console.log(`   Variant: ${this.config.tier1380.variant}`);
-    console.log(`   Cache: ${this.config.tier1380.cacheEnabled ? "enabled" : "disabled"} (${this.config.tier1380.cacheTTL}ms)`);
-    console.log(`   Compression: Level ${this.config.tier1380.compressionLevel}`);
-    console.log(`   Environment: ${this.config.tier1380.environment}`);
+    console.info("\n⚙️ Tier-1380 Configuration:");
+    console.info(`   R2 Bucket: ${this.config.tier1380.r2Bucket}`);
+    console.info(`   API URL: ${this.config.tier1380.publicApiUrl}`);
+    console.info(`   Variant: ${this.config.tier1380.variant}`);
+    console.info(`   Cache: ${this.config.tier1380.cacheEnabled ? "enabled" : "disabled"} (${this.config.tier1380.cacheTTL}ms)`);
+    console.info(`   Compression: Level ${this.config.tier1380.compressionLevel}`);
+    console.info(`   Environment: ${this.config.tier1380.environment}`);
 
     // Snapshot Metadata
     if (this.config.snapshot) {
-      console.log("\n📸 Last Snapshot:");
-      console.log(`   Tier: ${this.config.snapshot.tier}`);
-      console.log(`   Cache Hit: ${this.config.snapshot.cacheHit}`);
-      console.log(`   Compression: ${this.config.snapshot.compressionRatio}%`);
-      console.log(`   Checksum: ${this.config.snapshot.checksum}`);
+      console.info("\n📸 Last Snapshot:");
+      console.info(`   Tier: ${this.config.snapshot.tier}`);
+      console.info(`   Cache Hit: ${this.config.snapshot.cacheHit}`);
+      console.info(`   Compression: ${this.config.snapshot.compressionRatio}%`);
+      console.info(`   Checksum: ${this.config.snapshot.checksum}`);
     }
 
-    console.log(`\n📅 Last Updated: ${this.config.lastUpdated}`);
+    console.info(`\n📅 Last Updated: ${this.config.lastUpdated}`);
   }
 
   /**
@@ -533,14 +533,14 @@ if (import.meta.path === Bun.main) {
 
     case "validate":
       const validation = manager.validateConfig();
-      console.log(`Validation: ${validation.valid ? "✅ PASSED" : "❌ FAILED"}`);
+      console.info(`Validation: ${validation.valid ? "✅ PASSED" : "❌ FAILED"}`);
       if (validation.errors.length > 0) {
-        console.log("\nErrors:");
-        validation.errors.forEach(error => console.log(`   ❌ ${error}`));
+        console.info("\nErrors:");
+        validation.errors.forEach(error => console.info(`   ❌ ${error}`));
       }
       if (validation.warnings.length > 0) {
-        console.log("\nWarnings:");
-        validation.warnings.forEach(warning => console.log(`   ⚠️ ${warning}`));
+        console.info("\nWarnings:");
+        validation.warnings.forEach(warning => console.info(`   ⚠️ ${warning}`));
       }
       break;
 
@@ -550,8 +550,8 @@ if (import.meta.path === Bun.main) {
 
     case "export":
       const exported = manager.exportForDeployment();
-      console.log("📦 Environment Export:");
-      console.log(exported.environment.join("\n"));
+      console.info("📦 Environment Export:");
+      console.info(exported.environment.join("\n"));
       break;
 
     case "update-snapshot":
@@ -578,12 +578,12 @@ if (import.meta.path === Bun.main) {
       break;
 
     default:
-      console.log("Usage:");
-      console.log("  bun tier1380-config-manager.ts load        - Load from environment");
-      console.log("  bun tier1380-config-manager.ts validate    - Validate configuration");
-      console.log("  bun tier1380-config-manager.ts summary     - Display summary");
-      console.log("  bun tier1380-config-manager.ts export      - Export environment");
-      console.log("  bun tier1380-config-manager.ts update-snapshot - Update with sample");
+      console.info("Usage:");
+      console.info("  bun tier1380-config-manager.ts load        - Load from environment");
+      console.info("  bun tier1380-config-manager.ts validate    - Validate configuration");
+      console.info("  bun tier1380-config-manager.ts summary     - Display summary");
+      console.info("  bun tier1380-config-manager.ts export      - Export environment");
+      console.info("  bun tier1380-config-manager.ts update-snapshot - Update with sample");
       break;
   }
 }

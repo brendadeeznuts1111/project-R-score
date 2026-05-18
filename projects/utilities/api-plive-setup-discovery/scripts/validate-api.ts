@@ -18,7 +18,7 @@ interface RouteDecl {
 }
 
 async function validateAPI() {
-  console.log('🔍 Validating API consistency...');
+  console.info('🔍 Validating API consistency...');
 
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -29,15 +29,15 @@ async function validateAPI() {
     const routes: RouteDecl[] = config.api.routes;
 
     // Build route index using ripgrep
-    console.log('📄 Building route index...');
+    console.info('📄 Building route index...');
     const rgResult = await runRipgrep('export const handle', 'routes/', ['--files-with-matches']);
     const foundHandlers = rgResult.trim().split('\n').filter(Boolean);
 
-    console.log(`📄 Found ${foundHandlers.length} handler files`);
+    console.info(`📄 Found ${foundHandlers.length} handler files`);
 
     // Cross-check each route
     for (const route of routes) {
-      console.log(`🔍 Checking route: ${route.id}`);
+      console.info(`🔍 Checking route: ${route.id}`);
 
       // Check if handler file exists (normalize path)
       const normalizedHandler = route.handler.startsWith('./') ? route.handler.substring(2) : route.handler;
@@ -119,7 +119,7 @@ async function validateAPI() {
   }
 
   if (errors.length === 0 && warnings.length === 0) {
-    console.log('✅ API validation passed - all routes consistent!');
+    console.info('✅ API validation passed - all routes consistent!');
   }
 }
 

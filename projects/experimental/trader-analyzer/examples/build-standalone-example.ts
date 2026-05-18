@@ -85,7 +85,7 @@
  * - bunfig.toml
  */
 async function buildWithAllConfigs() {
-	console.log("📦 Example 1: Building with all config autoload options...\n");
+	console.info("📦 Example 1: Building with all config autoload options...\n");
 
 	const result = await Bun.build({
 		entrypoints: ["./app.ts"],
@@ -98,9 +98,9 @@ async function buildWithAllConfigs() {
 	});
 
 	if (result.success) {
-		console.log("✅ Build successful!");
-		console.log(`   Output: ${result.outputs[0]?.path}`);
-		console.log(`   Size: ${(result.outputs[0]?.size / 1024).toFixed(2)} KB`);
+		console.info("✅ Build successful!");
+		console.info(`   Output: ${result.outputs[0]?.path}`);
+		console.info(`   Size: ${(result.outputs[0]?.size / 1024).toFixed(2)} KB`);
 	} else {
 		console.error("❌ Build failed:", result.logs);
 	}
@@ -115,7 +115,7 @@ async function buildWithAllConfigs() {
  * Use this for production deployments where config values are embedded at build time.
  */
 async function buildOptimized() {
-	console.log("\n📦 Example 2: Building optimized executable (no config loading)...\n");
+	console.info("\n📦 Example 2: Building optimized executable (no config loading)...\n");
 
 	const result = await Bun.build({
 		entrypoints: ["./app.ts"],
@@ -124,9 +124,9 @@ async function buildOptimized() {
 	});
 
 	if (result.success) {
-		console.log("✅ Build successful!");
-		console.log(`   Output: ${result.outputs[0]?.path}`);
-		console.log(`   Size: ${(result.outputs[0]?.size / 1024).toFixed(2)} KB`);
+		console.info("✅ Build successful!");
+		console.info(`   Output: ${result.outputs[0]?.path}`);
+		console.info(`   Size: ${(result.outputs[0]?.size / 1024).toFixed(2)} KB`);
 	} else {
 		console.error("❌ Build failed:", result.logs);
 	}
@@ -140,7 +140,7 @@ async function buildOptimized() {
  * Only load the configs you actually need at runtime.
  */
 async function buildSelective() {
-	console.log("\n📦 Example 3: Building with selective config loading...\n");
+	console.info("\n📦 Example 3: Building with selective config loading...\n");
 
 	const result = await Bun.build({
 		entrypoints: ["./app.ts"],
@@ -152,9 +152,9 @@ async function buildSelective() {
 	});
 
 	if (result.success) {
-		console.log("✅ Build successful!");
-		console.log(`   Output: ${result.outputs[0]?.path}`);
-		console.log(`   Size: ${(result.outputs[0]?.size / 1024).toFixed(2)} KB`);
+		console.info("✅ Build successful!");
+		console.info(`   Output: ${result.outputs[0]?.path}`);
+		console.info(`   Size: ${(result.outputs[0]?.size / 1024).toFixed(2)} KB`);
 	} else {
 		console.error("❌ Build failed:", result.logs);
 	}
@@ -168,12 +168,12 @@ async function buildSelective() {
  * Build executables for different platforms.
  */
 async function buildForTargets() {
-	console.log("\n📦 Example 4: Building for different targets...\n");
+	console.info("\n📦 Example 4: Building for different targets...\n");
 
 	const targets: Array<"bun" | "node" | "browser"> = ["bun", "node"];
 
 	for (const target of targets) {
-		console.log(`\n   Building for ${target}...`);
+		console.info(`\n   Building for ${target}...`);
 
 		const result = await Bun.build({
 			entrypoints: ["./app.ts"],
@@ -184,8 +184,8 @@ async function buildForTargets() {
 		});
 
 		if (result.success) {
-			console.log(`   ✅ ${target} build successful`);
-			console.log(`      Output: ${result.outputs[0]?.path}`);
+			console.info(`   ✅ ${target} build successful`);
+			console.info(`      Output: ${result.outputs[0]?.path}`);
 		} else {
 			console.error(`   ❌ ${target} build failed:`, result.logs);
 		}
@@ -198,7 +198,7 @@ async function buildForTargets() {
  * Enable config loading only in development, optimize for production.
  */
 async function buildConditional() {
-	console.log("\n📦 Example 5: Conditional config loading...\n");
+	console.info("\n📦 Example 5: Conditional config loading...\n");
 
 	const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -215,9 +215,9 @@ async function buildConditional() {
 	});
 
 	if (result.success) {
-		console.log(`✅ Build successful (${isDevelopment ? "development" : "production"} mode)`);
-		console.log(`   Output: ${result.outputs[0]?.path}`);
-		console.log(`   Config loading: ${isDevelopment ? "enabled" : "disabled"}`);
+		console.info(`✅ Build successful (${isDevelopment ? "development" : "production"} mode)`);
+		console.info(`   Output: ${result.outputs[0]?.path}`);
+		console.info(`   Config loading: ${isDevelopment ? "enabled" : "disabled"}`);
 	} else {
 		console.error("❌ Build failed:", result.logs);
 	}
@@ -229,8 +229,8 @@ async function buildConditional() {
  * Main function - run examples
  */
 async function main() {
-	console.log("🚀 Standalone Executable Build Examples\n");
-	console.log("=" .repeat(60));
+	console.info("🚀 Standalone Executable Build Examples\n");
+	console.info("=" .repeat(60));
 
 	// Note: These examples assume ./app.ts exists
 	// In a real scenario, replace with your actual entry point
@@ -243,9 +243,9 @@ async function main() {
 		// await buildForTargets();
 		// await buildConditional();
 
-		console.log("\n" + "=".repeat(60));
-		console.log("💡 Tip: Uncomment the example functions above to run them");
-		console.log("💡 Or use the build script: bun run scripts/build-standalone.ts");
+		console.info("\n" + "=".repeat(60));
+		console.info("💡 Tip: Uncomment the example functions above to run them");
+		console.info("💡 Or use the build script: bun run scripts/build-standalone.ts");
 	} catch (error) {
 		console.error("❌ Error running examples:", error);
 		process.exit(1);

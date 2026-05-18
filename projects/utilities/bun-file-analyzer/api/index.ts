@@ -45,9 +45,9 @@ app.get("/health", async (c) => {
 });
 
 const port = parseInt(API_PORT);
-console.log(`🔥 API server starting on http://localhost:${port}`);
-console.log(`🌐 Frontend URL for CORS: ${FRONTEND_URL}`);
-console.log(`🔧 Environment: ${process.env.NODE_ENV || "development"}`);
+console.info(`🔥 API server starting on http://localhost:${port}`);
+console.info(`🌐 Frontend URL for CORS: ${FRONTEND_URL}`);
+console.info(`🔧 Environment: ${process.env.NODE_ENV || "development"}`);
 
 // Direct server export for Bun
 const server = Bun.serve({
@@ -55,11 +55,11 @@ const server = Bun.serve({
   fetch: app.fetch,
 });
 
-console.log(`✅ API server running at http://localhost:${port}`);
+console.info(`✅ API server running at http://localhost:${port}`);
 
 // Handle graceful shutdown
 process.on("SIGINT", () => {
-  console.log("\n🛑 Shutting down API server...");
+  console.info("\n🛑 Shutting down API server...");
   server.stop();
   process.exit(0);
 });

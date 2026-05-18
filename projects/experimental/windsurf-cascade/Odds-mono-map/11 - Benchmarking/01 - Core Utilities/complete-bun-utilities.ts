@@ -7,74 +7,74 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.bold.magenta('🎯 Complete Bun Utilities Ecosystem'));
-console.log(chalk.gray('All Functions from https://bun.com/docs/runtime/utils'));
-console.log(chalk.gray('='.repeat(80)));
+console.info(chalk.bold.magenta('🎯 Complete Bun Utilities Ecosystem'));
+console.info(chalk.gray('All Functions from https://bun.com/docs/runtime/utils'));
+console.info(chalk.gray('='.repeat(80)));
 
 // =============================================================================
 // SYSTEM & ENVIRONMENT UTILITIES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🖥️  System & Environment Utilities'));
+console.info(chalk.bold.cyan('\n🖥️  System & Environment Utilities'));
 
-console.log(chalk.green('\n📋 System Information:'));
-console.log(chalk.cyan(`Bun Version: ${Bun.version}`));
-console.log(chalk.cyan(`Bun Revision: ${Bun.revision}`));
-console.log(chalk.cyan(`Environment: ${Bun.env.NODE_ENV || 'development'}`));
-console.log(chalk.cyan(`Main Script: ${Bun.main}`));
+console.info(chalk.green('\n📋 System Information:'));
+console.info(chalk.cyan(`Bun Version: ${Bun.version}`));
+console.info(chalk.cyan(`Bun Revision: ${Bun.revision}`));
+console.info(chalk.cyan(`Environment: ${Bun.env.NODE_ENV || 'development'}`));
+console.info(chalk.cyan(`Main Script: ${Bun.main}`));
 
 // =============================================================================
 // TIME & PERFORMANCE UTILITIES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n⏱️  Time & Performance Utilities'));
+console.info(chalk.bold.cyan('\n⏱️  Time & Performance Utilities'));
 
-console.log(chalk.green('\n📊 Performance Timing Demo:'));
+console.info(chalk.green('\n📊 Performance Timing Demo:'));
 const start = Bun.nanoseconds();
 await Bun.sleep(10); // Small delay for demo
 const duration = Bun.nanoseconds() - start;
-console.log(chalk.cyan(`Operation took: ${(duration / 1_000_000).toFixed(2)}ms`));
+console.info(chalk.cyan(`Operation took: ${(duration / 1_000_000).toFixed(2)}ms`));
 
 // =============================================================================
 // FILE SYSTEM & PATH UTILITIES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📁 File System & Path Utilities'));
+console.info(chalk.bold.cyan('\n📁 File System & Path Utilities'));
 
-console.log(chalk.green('\n📋 Path Utilities Demo:'));
+console.info(chalk.green('\n📋 Path Utilities Demo:'));
 const testPath = '/Users/nolarose/CascadeProjects/windsurf-project/package.json';
 const fileUrl = Bun.pathToFileURL(testPath);
 const backToPath = Bun.fileURLToPath(fileUrl);
 
-console.log(chalk.cyan(`Original Path: ${testPath}`));
-console.log(chalk.cyan(`File URL: ${fileUrl}`));
-console.log(chalk.cyan(`Back to Path: ${backToPath}`));
+console.info(chalk.cyan(`Original Path: ${testPath}`));
+console.info(chalk.cyan(`File URL: ${fileUrl}`));
+console.info(chalk.cyan(`Back to Path: ${backToPath}`));
 
 const nodePath = Bun.which('node');
 const bunPath = Bun.which('bun');
-console.log(chalk.cyan(`Node Path: ${nodePath || 'not found'}`));
-console.log(chalk.cyan(`Bun Path: ${bunPath || 'not found'}`));
+console.info(chalk.cyan(`Node Path: ${nodePath || 'not found'}`));
+console.info(chalk.cyan(`Bun Path: ${bunPath || 'not found'}`));
 
 // =============================================================================
 // ID GENERATION & CRYPTOGRAPHY
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔐 ID Generation & Cryptography'));
+console.info(chalk.bold.cyan('\n🔐 ID Generation & Cryptography'));
 
-console.log(chalk.green('\n📋 UUID Generation Demo:'));
+console.info(chalk.green('\n📋 UUID Generation Demo:'));
 const uuid1 = Bun.randomUUIDv7();
 const uuid2 = Bun.randomUUIDv7();
-console.log(chalk.cyan(`UUID 1: ${uuid1}`));
-console.log(chalk.cyan(`UUID 2: ${uuid2}`));
-console.log(chalk.gray(`Note: UUIDs are time-ordered and unique`));
+console.info(chalk.cyan(`UUID 1: ${uuid1}`));
+console.info(chalk.cyan(`UUID 2: ${uuid2}`));
+console.info(chalk.gray(`Note: UUIDs are time-ordered and unique`));
 
 // =============================================================================
 // STREAM & BUFFER UTILITIES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🌊 Stream & Buffer Utilities'));
+console.info(chalk.bold.cyan('\n🌊 Stream & Buffer Utilities'));
 
-console.log(chalk.green('\n📋 Stream Utilities Demo:'));
+console.info(chalk.green('\n📋 Stream Utilities Demo:'));
 const testData = 'Hello, Bun utilities!';
 const stream = new ReadableStream({
     start(controller) {
@@ -84,55 +84,55 @@ const stream = new ReadableStream({
 });
 
 const text = await Bun.readableStreamToText(stream);
-console.log(chalk.cyan(`Stream to Text: ${text}`));
+console.info(chalk.cyan(`Stream to Text: ${text}`));
 
 // =============================================================================
 // COMPARISON & VALIDATION UTILITIES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔍 Comparison & Validation Utilities'));
+console.info(chalk.bold.cyan('\n🔍 Comparison & Validation Utilities'));
 
-console.log(chalk.green('\n📋 Comparison & Validation Demo:'));
+console.info(chalk.green('\n📋 Comparison & Validation Demo:'));
 const obj1 = { a: 1, b: { c: 2, d: [3, 4] } };
 const obj2 = { a: 1, b: { c: 2, d: [3, 4] } };
 const obj3 = { a: 1, b: { c: 2, d: [3, 5] } };
 
-console.log(chalk.cyan(`Deep Equals (same): ${Bun.deepEquals(obj1, obj2)}`));
-console.log(chalk.cyan(`Deep Equals (different): ${Bun.deepEquals(obj1, obj3)}`));
+console.info(chalk.cyan(`Deep Equals (same): ${Bun.deepEquals(obj1, obj2)}`));
+console.info(chalk.cyan(`Deep Equals (different): ${Bun.deepEquals(obj1, obj3)}`));
 
 const htmlInput = '<script>alert("xss")</script>';
 const escaped = Bun.escapeHTML(htmlInput);
-console.log(chalk.cyan(`Original: ${htmlInput}`));
-console.log(chalk.cyan(`Escaped: ${escaped}`));
+console.info(chalk.cyan(`Original: ${htmlInput}`));
+console.info(chalk.cyan(`Escaped: ${escaped}`));
 
 // =============================================================================
 // STRING UTILITIES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📝 String Utilities'));
+console.info(chalk.bold.cyan('\n📝 String Utilities'));
 
-console.log(chalk.green('\n📋 String Utilities Demo:'));
+console.info(chalk.green('\n📋 String Utilities Demo:'));
 const testString = 'Hello 🚀 世界';
 const ansiString = '\u001b[31mRed Text\u001b[0m';
 const complexString = '\u001b[1;31m\u001b[47mBold Red on White\u001b[0m';
 
-console.log(chalk.cyan(`String: "${testString}"`));
-console.log(chalk.cyan(`Width: ${Bun.stringWidth(testString)} characters`));
+console.info(chalk.cyan(`String: "${testString}"`));
+console.info(chalk.cyan(`Width: ${Bun.stringWidth(testString)} characters`));
 
-console.log(chalk.cyan(`ANSI String: "${ansiString}"`));
-console.log(chalk.cyan(`Visual Width: ${Bun.stringWidth(ansiString)} characters`));
-console.log(chalk.cyan(`Total Width: ${Bun.stringWidth(ansiString, { countAnsiEscapeCodes: true })} characters`));
+console.info(chalk.cyan(`ANSI String: "${ansiString}"`));
+console.info(chalk.cyan(`Visual Width: ${Bun.stringWidth(ansiString)} characters`));
+console.info(chalk.cyan(`Total Width: ${Bun.stringWidth(ansiString, { countAnsiEscapeCodes: true })} characters`));
 
-console.log(chalk.cyan(`Complex ANSI: "${complexString}"`));
-console.log(chalk.cyan(`Stripped: "${Bun.stripANSI(complexString)}"`));
+console.info(chalk.cyan(`Complex ANSI: "${complexString}"`));
+console.info(chalk.cyan(`Stripped: "${Bun.stripANSI(complexString)}"`));
 
 // =============================================================================
 // COMPRESSION UTILITIES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🗜️  Compression Utilities'));
+console.info(chalk.bold.cyan('\n🗜️  Compression Utilities'));
 
-console.log(chalk.green('\n📋 Compression Demo:'));
+console.info(chalk.green('\n📋 Compression Demo:'));
 const testDataCompress = 'Hello, compression world! This is a longer string to demonstrate compression effectiveness.';
 
 const gzipped = Bun.gzipSync(testDataCompress);
@@ -141,18 +141,18 @@ const gunzipped = Bun.gunzipSync(gzipped);
 const deflated = Bun.deflateSync(testDataCompress);
 const inflated = Bun.inflateSync(deflated);
 
-console.log(chalk.cyan(`Original: ${testDataCompress.length} bytes`));
-console.log(chalk.cyan(`Gzipped: ${gzipped.length} bytes (${((gzipped.length / testDataCompress.length) * 100).toFixed(1)}%)`));
-console.log(chalk.cyan(`Deflated: ${deflated.length} bytes (${((deflated.length / testDataCompress.length) * 100).toFixed(1)}%)`));
-console.log(chalk.cyan(`Decompressed matches: ${gunzipped.toString() === testDataCompress}`));
+console.info(chalk.cyan(`Original: ${testDataCompress.length} bytes`));
+console.info(chalk.cyan(`Gzipped: ${gzipped.length} bytes (${((gzipped.length / testDataCompress.length) * 100).toFixed(1)}%)`));
+console.info(chalk.cyan(`Deflated: ${deflated.length} bytes (${((deflated.length / testDataCompress.length) * 100).toFixed(1)}%)`));
+console.info(chalk.cyan(`Decompressed matches: ${gunzipped.toString() === testDataCompress}`));
 
 // =============================================================================
 // INSPECTION UTILITIES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔍 Inspection Utilities'));
+console.info(chalk.bold.cyan('\n🔍 Inspection Utilities'));
 
-console.log(chalk.green('\n📋 Inspection Demo:'));
+console.info(chalk.green('\n📋 Inspection Demo:'));
 
 // Custom inspection class
 class VaultFile {
@@ -164,8 +164,8 @@ class VaultFile {
 }
 
 const vaultFile = new VaultFile('document.md', 1024, new Date());
-console.log(chalk.cyan('Custom Inspection:'));
-console.log(vaultFile);
+console.info(chalk.cyan('Custom Inspection:'));
+console.info(vaultFile);
 
 // Table inspection with our enhanced data
 const tableData = [
@@ -174,28 +174,28 @@ const tableData = [
     { name: 'Charlie', age: 35, role: 'Manager' }
 ];
 
-console.log(chalk.cyan('\nTable Inspection:'));
-console.log(Bun.inspect.table(tableData, ['name', 'age', 'role'], { colors: true }));
+console.info(chalk.cyan('\nTable Inspection:'));
+console.info(Bun.inspect.table(tableData, ['name', 'age', 'role'], { colors: true }));
 
 // =============================================================================
 // MODULE RESOLUTION
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📦 Module Resolution'));
+console.info(chalk.bold.cyan('\n📦 Module Resolution'));
 
-console.log(chalk.green('\n📋 Module Resolution Demo:'));
+console.info(chalk.green('\n📋 Module Resolution Demo:'));
 try {
     const chalkPath = Bun.resolveSync('chalk', import.meta.url);
-    console.log(chalk.cyan(`Chalk resolved to: ${chalkPath}`));
+    console.info(chalk.cyan(`Chalk resolved to: ${chalkPath}`));
 } catch (error) {
-    console.log(chalk.red(`Could not resolve chalk: ${error}`));
+    console.info(chalk.red(`Could not resolve chalk: ${error}`));
 }
 
 // =============================================================================
 // COMPREHENSIVE INTEGRATION DEMO
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🎯 Comprehensive Integration Demo'));
+console.info(chalk.bold.cyan('\n🎯 Comprehensive Integration Demo'));
 
 // Implement the integrated demo
 class UltimateVaultManager {
@@ -235,7 +235,7 @@ class UltimateVaultManager {
 }
 
 // Demo with actual files
-console.log(chalk.green('\n📋 Integrated Vault Manager Demo:'));
+console.info(chalk.green('\n📋 Integrated Vault Manager Demo:'));
 const demoFiles = [
     'package.json',
     'README.md',
@@ -246,26 +246,26 @@ const fileReports = await Promise.all(
     demoFiles.map(file => UltimateVaultManager.createFileReport(file))
 );
 
-console.log(chalk.cyan('\nFile Reports:'));
+console.info(chalk.cyan('\nFile Reports:'));
 fileReports.forEach((report, index) => {
     if (report.error) {
-        console.log(chalk.red(`${index + 1}. Error: ${report.error}`));
+        console.info(chalk.red(`${index + 1}. Error: ${report.error}`));
     } else {
-        console.log(chalk.green(`${index + 1}. ${report.display}`));
-        console.log(chalk.gray(`   UUID: ${report.uuid}`));
-        console.log(chalk.gray(`   Width: ${report.width} chars`));
-        console.log(chalk.gray(`   Compressed: ${report.compressed} bytes`));
+        console.info(chalk.green(`${index + 1}. ${report.display}`));
+        console.info(chalk.gray(`   UUID: ${report.uuid}`));
+        console.info(chalk.gray(`   Width: ${report.width} chars`));
+        console.info(chalk.gray(`   Compressed: ${report.compressed} bytes`));
     }
 });
 
-console.log(chalk.cyan('\nSummary Table:'));
-console.log(UltimateVaultManager.generateReportTable(fileReports));
+console.info(chalk.cyan('\nSummary Table:'));
+console.info(UltimateVaultManager.generateReportTable(fileReports));
 
 // =============================================================================
 // QUICK REFERENCE CHEAT SHEET
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📋 Quick Reference Cheat Sheet'));
+console.info(chalk.bold.cyan('\n📋 Quick Reference Cheat Sheet'));
 
 const utilities = [
     { category: 'System', functions: ['Bun.version', 'Bun.revision', 'Bun.env', 'Bun.main'] },
@@ -283,12 +283,12 @@ const utilities = [
 ];
 
 utilities.forEach(category => {
-    console.log(chalk.yellow(`\n🔸 ${category.category}:`));
+    console.info(chalk.yellow(`\n🔸 ${category.category}:`));
     category.functions.forEach(func => {
-        console.log(chalk.gray(`   • ${func}`));
+        console.info(chalk.gray(`   • ${func}`));
     });
 });
 
-console.log(chalk.bold.magenta('\n🎉 Complete Bun Utilities Ecosystem Demonstrated!'));
-console.log(chalk.gray('All 25+ utilities from https://bun.com/docs/runtime/utils covered!'));
-console.log(chalk.gray('🌐 Reference: https://bun.com/docs/runtime/utils'));
+console.info(chalk.bold.magenta('\n🎉 Complete Bun Utilities Ecosystem Demonstrated!'));
+console.info(chalk.gray('All 25+ utilities from https://bun.com/docs/runtime/utils covered!'));
+console.info(chalk.gray('🌐 Reference: https://bun.com/docs/runtime/utils'));

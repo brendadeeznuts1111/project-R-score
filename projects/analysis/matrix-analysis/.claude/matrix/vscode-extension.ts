@@ -56,7 +56,7 @@ function generateTasks(): void {
 		})),
 	};
 
-	console.log(JSON.stringify(tasks, null, 2));
+	console.info(JSON.stringify(tasks, null, 2));
 }
 
 // Generate VS Code snippets
@@ -67,7 +67,7 @@ function generateSnippets(): void {
 			body: [
 				"// Get column ${1:45} details",
 				"const col = await getColumn(${1:45});",
-				"console.log(col.name, col.type, col.zone);",
+				"console.info(col.name, col.type, col.zone);",
 			],
 			description: "Get matrix column details",
 		},
@@ -76,7 +76,7 @@ function generateSnippets(): void {
 			body: [
 				"// Search columns for '${1:tension}'",
 				"const hits = await searchColumns('${1:tension}');",
-				"hits.forEach(h => console.log(h.index, h.name));",
+				"hits.forEach(h => console.info(h.index, h.name));",
 			],
 			description: "Search matrix columns",
 		},
@@ -98,7 +98,7 @@ function generateSnippets(): void {
 		},
 	};
 
-	console.log(JSON.stringify(snippets, null, 2));
+	console.info(JSON.stringify(snippets, null, 2));
 }
 
 // Generate VS Code settings
@@ -117,7 +117,7 @@ function generateSettings(): void {
 		},
 	};
 
-	console.log(JSON.stringify(settings, null, 2));
+	console.info(JSON.stringify(settings, null, 2));
 }
 
 // Generate launch.json configuration
@@ -143,7 +143,7 @@ function generateLaunchConfig(): void {
 		],
 	};
 
-	console.log(JSON.stringify(config, null, 2));
+	console.info(JSON.stringify(config, null, 2));
 }
 
 // Main
@@ -163,22 +163,22 @@ switch (cmd) {
 		generateLaunchConfig();
 		break;
 	case "all":
-		console.log("=== tasks.json ===");
+		console.info("=== tasks.json ===");
 		generateTasks();
-		console.log("\n=== snippets.json ===");
+		console.info("\n=== snippets.json ===");
 		generateSnippets();
-		console.log("\n=== settings.json ===");
+		console.info("\n=== settings.json ===");
 		generateSettings();
-		console.log("\n=== launch.json ===");
+		console.info("\n=== launch.json ===");
 		generateLaunchConfig();
 		break;
 	default:
-		console.log("Usage: bun vscode-extension.ts <tasks|snippets|settings|launch|all>");
-		console.log("");
-		console.log("Generates VS Code configuration for matrix:cols integration:");
-		console.log("  tasks    - tasks.json configuration");
-		console.log("  snippets - Code snippets for TypeScript/JavaScript");
-		console.log("  settings - VS Code settings.json additions");
-		console.log("  launch   - Debug launch configuration");
-		console.log("  all      - Generate all configurations");
+		console.info("Usage: bun vscode-extension.ts <tasks|snippets|settings|launch|all>");
+		console.info("");
+		console.info("Generates VS Code configuration for matrix:cols integration:");
+		console.info("  tasks    - tasks.json configuration");
+		console.info("  snippets - Code snippets for TypeScript/JavaScript");
+		console.info("  settings - VS Code settings.json additions");
+		console.info("  launch   - Debug launch configuration");
+		console.info("  all      - Generate all configurations");
 }

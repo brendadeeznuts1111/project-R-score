@@ -203,7 +203,7 @@ const server = Bun.serve({
   websocket: {
     open(ws: any) {
       clients.add(ws);
-      console.log(`📡 Dashboard client connected (${clients.size} total)`);
+      console.info(`📡 Dashboard client connected (${clients.size} total)`);
 
       // Send initial stats
       updateStats();
@@ -223,7 +223,7 @@ const server = Bun.serve({
         const data = JSON.parse(message.toString());
 
         if (data.type === 'startStream') {
-          console.log('🚀 Starting log stream...');
+          console.info('🚀 Starting log stream...');
           ws.send(JSON.stringify({
             type: 'log',
             data: {
@@ -233,7 +233,7 @@ const server = Bun.serve({
             }
           }));
         } else if (data.type === 'stopStream') {
-          console.log('⏸️ Stopping log stream...');
+          console.info('⏸️ Stopping log stream...');
           ws.send(JSON.stringify({
             type: 'log',
             data: {
@@ -243,7 +243,7 @@ const server = Bun.serve({
             }
           }));
         } else if (data.type === 'test') {
-          console.log('🧪 Running parser test...');
+          console.info('🧪 Running parser test...');
           ws.send(JSON.stringify({
             type: 'log',
             data: {
@@ -274,7 +274,7 @@ const server = Bun.serve({
     },
     close(ws: any) {
       clients.delete(ws);
-      console.log(`📡 Dashboard client disconnected (${clients.size} remaining)`);
+      console.info(`📡 Dashboard client disconnected (${clients.size} remaining)`);
     }
   }
 });
@@ -282,8 +282,8 @@ const server = Bun.serve({
 // Start log simulation
 setInterval(simulateLogs, 3000);
 
-console.log(`🚀 Tier-1380 Dashboard Server running on http://localhost:${PORT}`);
-console.log(`📊 WebSocket endpoint: ws://localhost:${PORT}/ws`);
-console.log(`📡 API endpoint: http://localhost:${PORT}/api/logs`);
-console.log(`\n💡 To submit logs: curl -X POST -d 'your-log-line' http://localhost:${PORT}/api/logs`);
-console.log(`🌐 Open dashboard: http://localhost:${PORT}`);
+console.info(`🚀 Tier-1380 Dashboard Server running on http://localhost:${PORT}`);
+console.info(`📊 WebSocket endpoint: ws://localhost:${PORT}/ws`);
+console.info(`📡 API endpoint: http://localhost:${PORT}/api/logs`);
+console.info(`\n💡 To submit logs: curl -X POST -d 'your-log-line' http://localhost:${PORT}/api/logs`);
+console.info(`🌐 Open dashboard: http://localhost:${PORT}`);

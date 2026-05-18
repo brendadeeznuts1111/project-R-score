@@ -8,7 +8,7 @@ export async function initializeSystem(): Promise<SystemStatus> {
   const processor = new CRC32Processor();
 
   // 🟢 Strings (green) - Text content
-  console.log("Initializing CRC32 system with hardware acceleration");
+  console.info("Initializing CRC32 system with hardware acceleration");
 
   // 🟠 Functions (orange) - Function calls and definitions
   const result = await processor.process(largeDataset);

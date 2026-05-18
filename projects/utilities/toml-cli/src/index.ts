@@ -15,7 +15,7 @@ const app = new QuantumNavigatorApp();
 document.addEventListener('DOMContentLoaded', () => {
   try {
     app.init();
-    console.log('Quantum Navigator initialized successfully');
+    console.info('Quantum Navigator initialized successfully');
   } catch (error) {
     console.error('Failed to initialize Quantum Navigator:', error);
     errorHandler.handleInitializationError(error);

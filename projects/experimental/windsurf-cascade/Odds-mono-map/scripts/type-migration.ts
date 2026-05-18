@@ -97,7 +97,7 @@ class TypeMigrationTool {
     }
 
     async migrate(): Promise<void> {
-        console.log('🚀 Starting Type Migration Process...\n');
+        console.info('🚀 Starting Type Migration Process...\n');
 
         if (this.config.backup) {
             await this.createBackup();
@@ -111,17 +111,17 @@ class TypeMigrationTool {
     }
 
     private async createBackup(): Promise<void> {
-        console.log('📦 Creating backup...');
+        console.info('📦 Creating backup...');
         try {
             execSync('cp -r src src.backup.' + Date.now(), { stdio: 'inherit' });
-            console.log('✅ Backup created successfully\n');
+            console.info('✅ Backup created successfully\n');
         } catch (error) {
             console.error('❌ Failed to create backup:', error);
         }
     }
 
     private async processDirectory(directory: string): Promise<void> {
-        console.log(`📁 Processing directory: ${directory}`);
+        console.info(`📁 Processing directory: ${directory}`);
 
         try {
             const files = this.getTsFiles(directory);
@@ -188,7 +188,7 @@ class TypeMigrationTool {
                 this.stats.importsUpdated++;
 
                 if (this.config.verbose) {
-                    console.log(`  ✅ Updated: ${relative(process.cwd(), filePath)}`);
+                    console.info(`  ✅ Updated: ${relative(process.cwd(), filePath)}`);
                 }
             }
 
@@ -228,26 +228,26 @@ class TypeMigrationTool {
     }
 
     private printSummary(): void {
-        console.log('\n📊 Migration Summary:');
-        console.log(`  Files processed: ${this.stats.filesProcessed}`);
-        console.log(`  Imports updated: ${this.stats.importsUpdated}`);
-        console.log(`  Errors: ${this.stats.errors.length}`);
-        console.log(`  Skipped: ${this.stats.skipped.length}`);
+        console.info('\n📊 Migration Summary:');
+        console.info(`  Files processed: ${this.stats.filesProcessed}`);
+        console.info(`  Imports updated: ${this.stats.importsUpdated}`);
+        console.info(`  Errors: ${this.stats.errors.length}`);
+        console.info(`  Skipped: ${this.stats.skipped.length}`);
 
         if (this.stats.errors.length > 0) {
-            console.log('\n❌ Errors:');
-            this.stats.errors.forEach(error => console.log(`  - ${error}`));
+            console.info('\n❌ Errors:');
+            this.stats.errors.forEach(error => console.info(`  - ${error}`));
         }
 
         if (this.stats.skipped.length > 0) {
-            console.log('\n⏭️  Skipped:');
-            this.stats.skipped.forEach(file => console.log(`  - ${file}`));
+            console.info('\n⏭️  Skipped:');
+            this.stats.skipped.forEach(file => console.info(`  - ${file}`));
         }
 
-        console.log('\n🎉 Migration completed!');
+        console.info('\n🎉 Migration completed!');
 
         if (this.config.dryRun) {
-            console.log('ℹ️  This was a dry run. No files were actually modified.');
+            console.info('ℹ️  This was a dry run. No files were actually modified.');
         }
     }
 }
@@ -264,7 +264,7 @@ async function main() {
     };
 
     if (args.includes('--help')) {
-        console.log(`
+        console.info(`
 Type Migration Tool - Odds Protocol
 
 USAGE:

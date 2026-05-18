@@ -54,7 +54,7 @@ function parseArgs(argv: string[]) {
 }
 
 function usage() {
-  console.log(`
+  console.info(`
 keychain-naming.ts — Bun.secrets naming convention CLI
 
 Usage:
@@ -109,7 +109,7 @@ async function main() {
     if (idx >= 0) items[idx] = entry;
     else items.push(entry);
     await writeIndex(items);
-    console.log(`✓ Stored ${name} in ${service}`);
+    console.info(`✓ Stored ${name} in ${service}`);
     return;
   }
 
@@ -121,7 +121,7 @@ async function main() {
       console.error("not found");
       process.exit(2);
     }
-    console.log(val);
+    console.info(val);
     return;
   }
 
@@ -132,7 +132,7 @@ async function main() {
     const items = await ensureIndex();
     const filtered = items.filter((i) => !(i.service === service && i.name === name));
     await writeIndex(filtered);
-    console.log(ok ? "✓ deleted" : "not found");
+    console.info(ok ? "✓ deleted" : "not found");
     return;
   }
 
@@ -142,18 +142,18 @@ async function main() {
     const filtered = items.filter(
       (i) => i.profile === profile && i.team === team && i.number === number,
     );
-    console.log("🔑 Tier-1380 Keychain Entries:\n");
+    console.info("🔑 Tier-1380 Keychain Entries:\n");
     if (filtered.length === 0) {
-      console.log("(none)");
+      console.info("(none)");
       return;
     }
     const grouped = groupForList(filtered);
     const tierGroup = grouped[number] || {};
-    console.log(`Tier ${number}:`);
+    console.info(`Tier ${number}:`);
     for (const [t, profiles] of Object.entries(tierGroup)) {
-      console.log(`  Team: ${t}`);
+      console.info(`  Team: ${t}`);
       for (const [p, entries] of Object.entries(profiles)) {
-        console.log(`    Profile: ${p}`);
+        console.info(`    Profile: ${p}`);
         const groupedByService: Record<string, string[]> = {};
         for (const item of entries) {
           const [svc, token] = item.split(": ").map((s) => s.trim());
@@ -161,7 +161,7 @@ async function main() {
           groupedByService[svc].push(token);
         }
         for (const [svc, tokens] of Object.entries(groupedByService)) {
-          console.log(`      ${svc}: ${tokens.join(", ")}`);
+          console.info(`      ${svc}: ${tokens.join(", ")}`);
         }
       }
     }

@@ -9,7 +9,7 @@ export async function batchFetch(urls: string[]) {
 	const domains = [...new Set(urls.map((u) => new URL(u).hostname))];
 
 	// Prefetch BEFORE fetching (critical timing!)
-	console.log(`⏳ Prefetching ${domains.length} domains...`);
+	console.info(`⏳ Prefetching ${domains.length} domains...`);
 	for (const domain of domains) {
 		dns.prefetch(domain, 443);
 	}
@@ -18,7 +18,7 @@ export async function batchFetch(urls: string[]) {
 	await Bun.sleep(50); // 50ms head start
 
 	// Now fetch - DNS should be cached
-	console.log(`🚀 Fetching ${urls.length} URLs...`);
+	console.info(`🚀 Fetching ${urls.length} URLs...`);
 	const results = await Promise.all(
 		urls.map(async (url) => {
 			try {

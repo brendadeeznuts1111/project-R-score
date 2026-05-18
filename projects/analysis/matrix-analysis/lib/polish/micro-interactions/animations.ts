@@ -31,7 +31,7 @@ const CELEBRATION_FRAMES = [
 
 export async function celebrateCLI(message = "Celebration!", duration = 2000): Promise<void> {
   if (!Runtime.supportsTTY) {
-    console.log(`🎉 ${message} 🎉`);
+    console.info(`🎉 ${message} 🎉`);
     return;
   }
 
@@ -48,7 +48,7 @@ export async function celebrateCLI(message = "Celebration!", duration = 2000): P
   }
 
   process.stdout.write(`${ANSI.clearLine}\r${ANSI.showCursor}`);
-  console.log(`🎉 ${colors.success(message)} 🎉`);
+  console.info(`🎉 ${colors.success(message)} 🎉`);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -110,7 +110,7 @@ export async function sparkleText(
   duration = 2000
 ): Promise<void> {
   if (!Runtime.supportsTTY) {
-    console.log(`✨ ${text} ✨`);
+    console.info(`✨ ${text} ✨`);
     return;
   }
 
@@ -142,7 +142,7 @@ export async function waveText(
   cycles = 2
 ): Promise<void> {
   if (!Runtime.supportsTTY) {
-    console.log(text);
+    console.info(text);
     return;
   }
 
@@ -173,7 +173,7 @@ export async function bounceText(
   bounces = 3
 ): Promise<void> {
   if (!Runtime.supportsTTY) {
-    console.log(text);
+    console.info(text);
     return;
   }
 
@@ -209,7 +209,7 @@ const FIREWORK_FRAMES = [
 
 export async function showFireworks(count = 1): Promise<void> {
   if (!Runtime.supportsTTY || !Runtime.supportsColors) {
-    console.log("🎆 Fireworks! 🎆");
+    console.info("🎆 Fireworks! 🎆");
     return;
   }
 
@@ -222,7 +222,7 @@ export async function showFireworks(count = 1): Promise<void> {
 
     for (const frame of FIREWORK_FRAMES) {
       for (const line of frame) {
-        console.log(`${color}${line}${ANSI.reset}`);
+        console.info(`${color}${line}${ANSI.reset}`);
       }
       await Runtime.sleep(100);
 

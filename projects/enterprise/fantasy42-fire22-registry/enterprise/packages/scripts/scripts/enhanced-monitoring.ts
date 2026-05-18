@@ -30,7 +30,7 @@ class EnhancedMonitoring {
     );
     writeFileSync(reportPath, JSON.stringify(status, null, 2));
 
-    console.log('📊 Enhanced monitoring active - all systems operational');
+    console.info('📊 Enhanced monitoring active - all systems operational');
   }
 }
 

@@ -112,7 +112,7 @@ export class APITestRunner {
    * Run a specific test suite
    */
   async runSuite(suite: TestSuite): Promise<TestResult[]> {
-    console.log(`🧪 Running test suite: ${suite.name}`);
+    console.info(`🧪 Running test suite: ${suite.name}`);
 
     const results: TestResult[] = [];
 

@@ -34,7 +34,7 @@ class Tier1380Advanced {
 
   // 🔥 Tier 2: Streaming & Binary Ops
   async testStreamingOps(): Promise<void> {
-    console.log('🔥 Testing Streaming & Binary Operations...');
+    console.info('🔥 Testing Streaming & Binary Operations...');
     
     // Test 21: Stream Transform
     await this.runProtocol('Stream Transform', 'streaming', 3, async () => {
@@ -102,7 +102,7 @@ class Tier1380Advanced {
 
   // 🌐 Network Diagnostics Suite
   async testNetworkDiagnostics(): Promise<void> {
-    console.log('🌐 Testing Network Diagnostics...');
+    console.info('🌐 Testing Network Diagnostics...');
     
     // Test 26: Multi-target Latency
     await this.runProtocol('Multi-target Latency', 'network', 3, async () => {
@@ -144,7 +144,7 @@ class Tier1380Advanced {
 
   // 🔐 Cryptographic Workflows
   async testCryptoWorkflows(): Promise<void> {
-    console.log('🔐 Testing Cryptographic Workflows...');
+    console.info('🔐 Testing Cryptographic Workflows...');
     
     // Test 28: HMAC-SHA256
     await this.runProtocol('HMAC-SHA256', 'crypto', 2, async () => {
@@ -189,7 +189,7 @@ class Tier1380Advanced {
 
   // 📦 Data Transformation Pipelines
   async testDataTransformations(): Promise<void> {
-    console.log('📦 Testing Data Transformations...');
+    console.info('📦 Testing Data Transformations...');
     
     // Test 35: CSV→JSON
     await this.runProtocol('CSV→JSON', 'data', 2, async () => {
@@ -241,7 +241,7 @@ class Tier1380Advanced {
 
   // ⚙️ System Introspection
   async testSystemIntrospection(): Promise<void> {
-    console.log('⚙️ Testing System Introspection...');
+    console.info('⚙️ Testing System Introspection...');
     
     // Test 39: Process Tree
     await this.runProtocol('Process Tree', 'system', 2, async () => {
@@ -289,7 +289,7 @@ class Tier1380Advanced {
 
   // 🎨 Visual Output Generators
   async testVisualGenerators(): Promise<void> {
-    console.log('🎨 Testing Visual Generators...');
+    console.info('🎨 Testing Visual Generators...');
     
     // Test 42: Progress Bar
     await this.runProtocol('Progress Bar', 'visual', 2, async () => {
@@ -342,7 +342,7 @@ class Tier1380Advanced {
 
   // 🔧 Debugging & Profiling
   async testDebuggingTools(): Promise<void> {
-    console.log('🔧 Testing Debugging Tools...');
+    console.info('🔧 Testing Debugging Tools...');
     
     // Test 46: Stack Trace Beautifier
     await this.runProtocol('Stack Beautifier', 'debug', 3, async () => {
@@ -416,7 +416,7 @@ class Tier1380Advanced {
       };
       
       this.results[category].push(result);
-      console.log(`  ✅ ${name} (${executionTime.toFixed(2)}ms)`);
+      console.info(`  ✅ ${name} (${executionTime.toFixed(2)}ms)`);
       
     } catch (error: any) {
       const executionTime = performance.now() - startTime;
@@ -431,7 +431,7 @@ class Tier1380Advanced {
       };
       
       this.results[category].push(result);
-      console.log(`  ❌ ${name} (${executionTime.toFixed(2)}ms): ${error.message}`);
+      console.info(`  ❌ ${name} (${executionTime.toFixed(2)}ms): ${error.message}`);
     }
   }
 
@@ -513,8 +513,8 @@ class Tier1380Advanced {
 
   // Main execution
   async runFullSuite(): Promise<void> {
-    console.log('🚀 TIER-1380 Advanced Protocol Suite v2.8');
-    console.log('=' .repeat(60));
+    console.info('🚀 TIER-1380 Advanced Protocol Suite v2.8');
+    console.info('=' .repeat(60));
     
     const startTime = performance.now();
     
@@ -528,12 +528,12 @@ class Tier1380Advanced {
     
     const totalTime = performance.now() - startTime;
     
-    console.log('\n' + '=' .repeat(60));
-    console.log(`✅ Suite completed in ${totalTime.toFixed(2)}ms`);
+    console.info('\n' + '=' .repeat(60));
+    console.info(`✅ Suite completed in ${totalTime.toFixed(2)}ms`);
     
     const report = this.generateReport();
     await Bun.write('tier1380-report.md', report);
-    console.log('📄 Report saved to: tier1380-report.md');
+    console.info('📄 Report saved to: tier1380-report.md');
   }
 }
 
@@ -543,7 +543,7 @@ async function main() {
   
   try {
     await suite.runFullSuite();
-    console.log('\n🎉 TIER-1380 protocol testing complete!');
+    console.info('\n🎉 TIER-1380 protocol testing complete!');
   } catch (error: any) {
     console.error('❌ Suite failed:', error.message);
     process.exit(1);

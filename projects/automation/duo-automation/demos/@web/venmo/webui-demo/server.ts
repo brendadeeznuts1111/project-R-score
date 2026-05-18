@@ -24,7 +24,7 @@ class VenmoDemoServer {
    * 🚀 Start the demo server
    */
   async start(): Promise<void> {
-    console.log('🚀 Starting Venmo Family Web UI Demo Server...');
+    console.info('🚀 Starting Venmo Family Web UI Demo Server...');
     
     const server = serve({
       port: this.port,
@@ -35,9 +35,9 @@ class VenmoDemoServer {
       }
     });
 
-    console.log(`✅ Demo server started successfully!`);
-    console.log(`🌐 Web UI available at: http://localhost:${this.port}`);
-    console.log(`📱 Interactive demo ready!`);
+    console.info(`✅ Demo server started successfully!`);
+    console.info(`🌐 Web UI available at: http://localhost:${this.port}`);
+    console.info(`📱 Interactive demo ready!`);
     
     return server;
   }

@@ -74,57 +74,57 @@ const BUN_RSS_ENTRIES: RSSFeedEntry[] = [
  * [1.1.0.0] Display ASCII table
  */
 function displayASCIITable(): void {
-  console.log("\n📊 [1.1.0.0] Bun RSS Feed - ASCII Table");
-  console.log("─".repeat(80));
+  console.info("\n📊 [1.1.0.0] Bun RSS Feed - ASCII Table");
+  console.info("─".repeat(80));
 
   const output = RSSTableUtils.render(BUN_RSS_ENTRIES, "ascii");
-  console.log(output);
+  console.info(output);
 }
 
 /**
  * [1.2.0.0] Display JSON output
  */
 function displayJSON(): void {
-  console.log("\n📋 [1.2.0.0] Bun RSS Feed - JSON Output");
-  console.log("─".repeat(80));
+  console.info("\n📋 [1.2.0.0] Bun RSS Feed - JSON Output");
+  console.info("─".repeat(80));
 
   const output = RSSTableUtils.render(BUN_RSS_ENTRIES, "json");
-  console.log(output);
+  console.info(output);
 }
 
 /**
  * [1.3.0.0] Display CSV output
  */
 function displayCSV(): void {
-  console.log("\n📄 [1.3.0.0] Bun RSS Feed - CSV Output");
-  console.log("─".repeat(80));
+  console.info("\n📄 [1.3.0.0] Bun RSS Feed - CSV Output");
+  console.info("─".repeat(80));
 
   const output = RSSTableUtils.render(BUN_RSS_ENTRIES, "csv");
-  console.log(output);
+  console.info(output);
 }
 
 /**
  * [1.4.0.0] Validate entries
  */
 function validateEntries(): void {
-  console.log("\n✅ [1.4.0.0] Entry Validation");
-  console.log("─".repeat(80));
+  console.info("\n✅ [1.4.0.0] Entry Validation");
+  console.info("─".repeat(80));
 
   const validator = new RSSFeedTableValidator();
   const result = validator.validateEntries(BUN_RSS_ENTRIES);
 
-  console.log(`Total Entries: ${result.totalEntries}`);
-  console.log(`Valid Entries: ${result.validEntries}`);
-  console.log(`Invalid Entries: ${result.invalidEntries.length}`);
+  console.info(`Total Entries: ${result.totalEntries}`);
+  console.info(`Valid Entries: ${result.validEntries}`);
+  console.info(`Invalid Entries: ${result.invalidEntries.length}`);
 
   if (result.valid) {
-    console.log("✅ All entries are valid!");
+    console.info("✅ All entries are valid!");
   } else {
-    console.log("❌ Some entries have errors:");
+    console.info("❌ Some entries have errors:");
     for (const invalid of result.invalidEntries) {
-      console.log(`  Entry ${invalid.index}:`);
+      console.info(`  Entry ${invalid.index}:`);
       for (const error of invalid.errors) {
-        console.log(`    - ${error}`);
+        console.info(`    - ${error}`);
       }
     }
   }
@@ -134,19 +134,19 @@ function validateEntries(): void {
  * [1.5.0.0] Enrich entries
  */
 function enrichEntries(): void {
-  console.log("\n🎯 [1.5.0.0] Entry Enrichment");
-  console.log("─".repeat(80));
+  console.info("\n🎯 [1.5.0.0] Entry Enrichment");
+  console.info("─".repeat(80));
 
   const enricher = new RSSFeedTableEnricher();
   const enriched = enricher.enrichEntries(BUN_RSS_ENTRIES);
 
   for (let i = 0; i < Math.min(3, enriched.length); i++) {
     const entry = enriched[i];
-    console.log(`\n${i + 1}. ${entry.title}`);
-    console.log(`   Type: ${entry.feedType}`);
-    console.log(`   Author: ${entry.authorRef}`);
-    console.log(`   Summary: ${entry.summaryLength}`);
-    console.log(`   Metrics: ${entry.metrics}`);
+    console.info(`\n${i + 1}. ${entry.title}`);
+    console.info(`   Type: ${entry.feedType}`);
+    console.info(`   Author: ${entry.authorRef}`);
+    console.info(`   Summary: ${entry.summaryLength}`);
+    console.info(`   Metrics: ${entry.metrics}`);
   }
 }
 
@@ -154,20 +154,20 @@ function enrichEntries(): void {
  * [1.6.0.0] Filter by feed type
  */
 function filterByFeedType(): void {
-  console.log("\n🔍 [1.6.0.0] Filter by Feed Type");
-  console.log("─".repeat(80));
+  console.info("\n🔍 [1.6.0.0] Filter by Feed Type");
+  console.info("─".repeat(80));
 
   const releases = BUN_RSS_ENTRIES.filter((e) => e.feedType === "Blog Release");
   const tutorials = BUN_RSS_ENTRIES.filter((e) => e.feedType === "Blog Tutorial");
 
-  console.log(`\nReleases (${releases.length}):`);
+  console.info(`\nReleases (${releases.length}):`);
   for (const entry of releases) {
-    console.log(`  • ${entry.title}`);
+    console.info(`  • ${entry.title}`);
   }
 
-  console.log(`\nTutorials (${tutorials.length}):`);
+  console.info(`\nTutorials (${tutorials.length}):`);
   for (const entry of tutorials) {
-    console.log(`  • ${entry.title}`);
+    console.info(`  • ${entry.title}`);
   }
 }
 
@@ -175,8 +175,8 @@ function filterByFeedType(): void {
  * [1.7.0.0] Analyze tags
  */
 function analyzeTags(): void {
-  console.log("\n🏷️  [1.7.0.0] Tag Analysis");
-  console.log("─".repeat(80));
+  console.info("\n🏷️  [1.7.0.0] Tag Analysis");
+  console.info("─".repeat(80));
 
   const tagFrequency = new Map<string, number>();
 
@@ -191,10 +191,10 @@ function analyzeTags(): void {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 10);
 
-  console.log("\nTop Tags:");
+  console.info("\nTop Tags:");
   for (const [tag, count] of sorted) {
     const bar = "█".repeat(count);
-    console.log(`  ${tag.padEnd(15)} ${bar} ${count}`);
+    console.info(`  ${tag.padEnd(15)} ${bar} ${count}`);
   }
 }
 
@@ -202,8 +202,8 @@ function analyzeTags(): void {
  * [1.8.0.0] Performance metrics
  */
 function performanceMetrics(): void {
-  console.log("\n⚡ [1.8.0.0] Performance Metrics");
-  console.log("─".repeat(80));
+  console.info("\n⚡ [1.8.0.0] Performance Metrics");
+  console.info("─".repeat(80));
 
   const renderer = new RSSTableRenderer();
 
@@ -227,18 +227,18 @@ function performanceMetrics(): void {
   renderer.renderHTML(BUN_RSS_ENTRIES);
   const htmlTime = performance.now() - htmlStart;
 
-  console.log(`\nRendering Times (${BUN_RSS_ENTRIES.length} entries):`);
-  console.log(`  ASCII: ${asciiTime.toFixed(2)}ms`);
-  console.log(`  JSON:  ${jsonTime.toFixed(2)}ms`);
-  console.log(`  CSV:   ${csvTime.toFixed(2)}ms`);
-  console.log(`  HTML:  ${htmlTime.toFixed(2)}ms`);
+  console.info(`\nRendering Times (${BUN_RSS_ENTRIES.length} entries):`);
+  console.info(`  ASCII: ${asciiTime.toFixed(2)}ms`);
+  console.info(`  JSON:  ${jsonTime.toFixed(2)}ms`);
+  console.info(`  CSV:   ${csvTime.toFixed(2)}ms`);
+  console.info(`  HTML:  ${htmlTime.toFixed(2)}ms`);
 }
 
 /**
  * [1.9.0.0] Main execution
  */
 async function main(): Promise<void> {
-  console.log("\n🌐 [1.0.0.0] Bun RSS Feed Table Examples\n");
+  console.info("\n🌐 [1.0.0.0] Bun RSS Feed Table Examples\n");
 
   displayASCIITable();
   validateEntries();
@@ -247,7 +247,7 @@ async function main(): Promise<void> {
   analyzeTags();
   performanceMetrics();
 
-  console.log("\n✅ Examples completed\n");
+  console.info("\n✅ Examples completed\n");
 }
 
 main().catch(console.error);

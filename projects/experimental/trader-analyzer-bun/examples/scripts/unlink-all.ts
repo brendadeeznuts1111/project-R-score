@@ -40,25 +40,25 @@ const APPS = [
 	{ name: "telegram-miniapp", path: "apps/miniapp" },
 ] as const;
 
-console.log("🔓 Unlinking all packages...\n");
+console.info("🔓 Unlinking all packages...\n");
 
 // First, unlink from apps
-console.log("📱 Step 1: Unlinking from apps...\n");
+console.info("📱 Step 1: Unlinking from apps...\n");
 for (const app of APPS) {
 	const appPath = MONOREPO_ROOT + app.path;
-	console.log(`  → Unlinking from ${app.name}...`);
+	console.info(`  → Unlinking from ${app.name}...`);
 
 	for (const pkg of PACKAGES) {
 		try {
 			await $`cd ${appPath} && bun unlink ${pkg}`.quiet();
-			console.log(`    ✅ Unlinked ${pkg}`);
+			console.info(`    ✅ Unlinked ${pkg}`);
 		} catch (error: any) {
 			// Ignore errors (package may not be linked)
 		}
 	}
 }
 
-console.log("\n📦 Step 2: Unregistering packages...\n");
+console.info("\n📦 Step 2: Unregistering packages...\n");
 
 // Then unregister packages
 for (const pkg of PACKAGES) {
@@ -67,12 +67,12 @@ for (const pkg of PACKAGES) {
 
 	try {
 		await $`cd ${pkgPath} && bun unlink`.quiet();
-		console.log(`  ✅ Unregistered ${pkg}`);
+		console.info(`  ✅ Unregistered ${pkg}`);
 	} catch (error: any) {
 		// Ignore errors (package may not be registered)
 	}
 }
 
-console.log("\n✅ All packages unlinked!\n");
-console.log("💡 To relink for development:\n");
-console.log("   bun run examples/scripts/link-all.ts\n");
+console.info("\n✅ All packages unlinked!\n");
+console.info("💡 To relink for development:\n");
+console.info("   bun run examples/scripts/link-all.ts\n");

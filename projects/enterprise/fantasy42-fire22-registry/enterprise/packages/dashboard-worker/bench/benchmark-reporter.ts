@@ -704,10 +704,10 @@ if (import.meta.main) {
   // Save to history
   await reporter.saveToHistory(data);
 
-  console.log('✅ Reports generated:');
-  console.log('   - benchmark-report.md');
-  console.log('   - benchmark-report.html');
-  console.log('   - benchmark-report.csv');
+  console.info('✅ Reports generated:');
+  console.info('   - benchmark-report.md');
+  console.info('   - benchmark-report.html');
+  console.info('   - benchmark-report.csv');
 }
 
 export default BenchmarkReporter;

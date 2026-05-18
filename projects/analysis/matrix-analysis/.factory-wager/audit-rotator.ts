@@ -156,7 +156,7 @@ class AuditRotator {
       // Clean up old files
       this.cleanup();
 
-      console.log(`Audit log rotated to: ${rotatedFile}`);
+      console.info(`Audit log rotated to: ${rotatedFile}`);
       return true;
     } catch (error) {
       console.error('Log rotation failed:', error);
@@ -170,7 +170,7 @@ class AuditRotator {
   private compressFile(filePath: string): void {
     const compressedPath = filePath + '.gz';
     // In production, implement actual compression
-    console.log(`Compressing ${filePath} to ${compressedPath}`);
+    console.info(`Compressing ${filePath} to ${compressedPath}`);
   }
 
   /**
@@ -178,7 +178,7 @@ class AuditRotator {
    */
   private cleanup(): void {
     // Implementation would delete files older than maxAgeDays or exceeding maxFiles
-    console.log('Cleaning up old audit logs...');
+    console.info('Cleaning up old audit logs...');
   }
 
   /**
@@ -242,10 +242,10 @@ if (import.meta.main) {
       rotator.rotate();
       break;
     case 'stats':
-      console.log(JSON.stringify(rotator.getStats(), null, 2));
+      console.info(JSON.stringify(rotator.getStats(), null, 2));
       break;
     default:
-      console.log('Usage: audit-rotator.ts [rotate|stats]');
+      console.info('Usage: audit-rotator.ts [rotate|stats]');
   }
 }
 

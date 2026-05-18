@@ -10,13 +10,13 @@
  */
 
 import Redis from 'ioredis';
+import { PORTS, REDIS_URL } from '../config/ports.ts';
 
 // ============================================================================
 // Configuration
 // ============================================================================
 
-const PORT = Number(Bun.env.P2P_PROXY_PORT ?? 3002);
-const REDIS_URL = Bun.env.REDIS_URL ?? 'redis://localhost:6379';
+const PORT = PORTS.P2P_PROXY;
 
 const BRAND_CONFIG = {
   brandName: Bun.env.PROXY_BRAND_NAME ?? 'HaircutPro',
@@ -35,7 +35,7 @@ const redis = new Redis(REDIS_URL, {
   maxRetriesPerRequest: 3,
 });
 
-redis.on('connect', () => console.log('✅ Redis connected'));
+redis.on('connect', () => console.info('✅ Redis connected'));
 
 // ============================================================================
 // Secret Management with Bun.secrets
@@ -73,10 +73,10 @@ async function storeWebhookSecret(
       name: `${provider.toUpperCase()}_WEBHOOK_SECRET`,
       value: secret
     });
-    console.log(`✅ Stored ${provider} secret in OS keychain`);
+    console.info(`✅ Stored ${provider} secret in OS keychain`);
   } catch (err: any) {
     console.warn(`⚠️  Could not store ${provider} secret in keychain:`, err.message);
-    console.log(`   Set ${provider.toUpperCase()}_WEBHOOK_SECRET in .env instead`);
+    console.info(`   Set ${provider.toUpperCase()}_WEBHOOK_SECRET in .env instead`);
   }
 }
 
@@ -96,7 +96,7 @@ class P2PProxy {
     const secret = await getWebhookSecret(provider);
     
     if (!secret) {
-      console.log(`⚠️  ${provider} secret not configured - accepting (dev mode)`);
+      console.info(`⚠️  ${provider} secret not configured - accepting (dev mode)`);
       return true;
     }
     
@@ -467,10 +467,16 @@ const server = Bun.serve({
     const body = await req.text();
     const headers = req.headers;
     
+    const origin = req.headers.get('Origin') || '';
+    const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
+    const corsOrigin = allowedOrigins.length > 0 && allowedOrigins.includes(origin)
+      ? origin
+      : (allowedOrigins.length > 0 ? 'null' : '*');
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      'Vary': 'Origin',
     };
     
     if (req.method === 'OPTIONS') {
@@ -548,7 +554,7 @@ const server = Bun.serve({
         const payload = JSON.parse(body);
         const result = await P2PProxy.processPayment(provider, payload);
         
-        console.log(result.message);
+        console.info(result.message);
         
         return new Response(JSON.stringify(result), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -616,19 +622,19 @@ const server = Bun.serve({
   },
 });
 
-console.log('');
-console.log('╔════════════════════════════════════════════════════════════╗');
-console.log(`║  💈 ${BRAND_CONFIG.brandName} P2P Proxy (Bun-Native)            ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log(`║  URL:     http://localhost:${PORT}                        ║`);
-console.log(`║  Pay:     http://localhost:${PORT}/pay?amount=25          ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log('║  Bun-Native APIs:                                          ║');
-console.log('║    • Bun.CryptoHasher - HMAC signatures                    ║');
-console.log('║    • Bun.secrets      - OS keychain storage                ║');
-console.log('║    • Bun.hash         - Fast stealth IDs                   ║');
-console.log('║    • Bun.serve        - Native HTTP server                 ║');
-console.log('╚════════════════════════════════════════════════════════════╝');
-console.log('');
+console.info('');
+console.info('╔════════════════════════════════════════════════════════════╗');
+console.info(`║  💈 ${BRAND_CONFIG.brandName} P2P Proxy (Bun-Native)            ║`);
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info(`║  URL:     http://localhost:${PORT}                        ║`);
+console.info(`║  Pay:     http://localhost:${PORT}/pay?amount=25          ║`);
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info('║  Bun-Native APIs:                                          ║');
+console.info('║    • Bun.CryptoHasher - HMAC signatures                    ║');
+console.info('║    • Bun.secrets      - OS keychain storage                ║');
+console.info('║    • Bun.hash         - Fast stealth IDs                   ║');
+console.info('║    • Bun.serve        - Native HTTP server                 ║');
+console.info('╚════════════════════════════════════════════════════════════╝');
+console.info('');
 
 export default server;

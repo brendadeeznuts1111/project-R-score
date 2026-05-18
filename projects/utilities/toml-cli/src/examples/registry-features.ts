@@ -32,16 +32,16 @@ import type { ScopeContext } from '../types/scope.types';
  */
 export async function initializeRegistry() {
   if (feature('PRIVATE_REGISTRY')) {
-    console.log('✓ Initializing PRIVATE_REGISTRY');
+    console.info('✓ Initializing PRIVATE_REGISTRY');
     return { type: 'private', status: 'ready' };
   }
 
   if (feature('MOCK_API')) {
-    console.log('✓ Initializing MOCK_API');
+    console.info('✓ Initializing MOCK_API');
     return { type: 'mock', status: 'ready' };
   }
 
-  console.log('⚠ Using default public npm registry');
+  console.info('⚠ Using default public npm registry');
   return { type: 'public', status: 'ready' };
 }
 
@@ -106,13 +106,13 @@ export async function initializeApp() {
       apiKey: Bun.env.API_KEY,
       vault: Bun.env.VAULT_URL,
     };
-    console.log('[app] Premium secrets initialized');
+    console.info('[app] Premium secrets initialized');
   }
 
   // Audit logging - only included if AUDIT_LOGGING enabled
   if (feature('AUDIT_LOGGING')) {
     config.audit = true;
-    console.log('[app] Audit logging initialized');
+    console.info('[app] Audit logging initialized');
   }
 
   // R2 Storage - only included if R2_STORAGE enabled
@@ -121,19 +121,19 @@ export async function initializeApp() {
       bucket: Bun.env.R2_BUCKET,
       apiUrl: Bun.env.R2_API_URL,
     };
-    console.log('[app] R2 storage initialized');
+    console.info('[app] R2 storage initialized');
   }
 
   // Debug mode - only included if DEBUG enabled
   if (feature('DEBUG')) {
     config.debug = true;
-    console.log('[app] Debug mode enabled');
+    console.info('[app] Debug mode enabled');
   }
 
   // Mock API - only included if MOCK_API enabled
   if (feature('MOCK_API')) {
     config.mockMode = true;
-    console.log('[app] Mock API mode enabled');
+    console.info('[app] Mock API mode enabled');
   }
 
   return config;
@@ -146,24 +146,24 @@ export async function initializeApp() {
 export async function runApp() {
   // Enterprise build - everything included
   if (feature('ENTERPRISE')) {
-    console.log('\n🏢 Enterprise Build');
+    console.info('\n🏢 Enterprise Build');
     const config = await initializeApp();
-    console.log('Config:', Object.keys(config));
+    console.info('Config:', Object.keys(config));
     return;
   }
 
   // Development build
   if (feature('DEVELOPMENT')) {
-    console.log('\n🔧 Development Build');
+    console.info('\n🔧 Development Build');
     const config = await initializeApp();
-    console.log('Config:', Object.keys(config));
+    console.info('Config:', Object.keys(config));
     return;
   }
 
   // Production build
-  console.log('\n📦 Production Build');
+  console.info('\n📦 Production Build');
   const config = await initializeApp();
-  console.log('Config:', Object.keys(config));
+  console.info('Config:', Object.keys(config));
 }
 
 // ============================================================================
@@ -203,32 +203,32 @@ export const isMainModule =
   typeof import.meta !== 'undefined' && (import.meta as any).main;
 
 if (isMainModule) {
-  console.log('\n╔════════════════════════════════════════════╗');
-  console.log('║   Bun Feature Flags - Build Demo          ║');
-  console.log('╚════════════════════════════════════════════╝\n');
+  console.info('\n╔════════════════════════════════════════════╗');
+  console.info('║   Bun Feature Flags - Build Demo          ║');
+  console.info('╚════════════════════════════════════════════╝\n');
 
   // Show build info
   const buildInfo = reportBuildInfo();
-  console.log('Build Info:');
-  console.log(JSON.stringify(buildInfo, null, 2));
+  console.info('Build Info:');
+  console.info(JSON.stringify(buildInfo, null, 2));
 
   // Initialize registry
-  console.log('\nInitializing registry...');
+  console.info('\nInitializing registry...');
   const registry = await initializeRegistry();
-  console.log('Registry:', registry);
+  console.info('Registry:', registry);
 
   // Initialize app
-  console.log('\nInitializing app...');
+  console.info('\nInitializing app...');
   const appConfig = await initializeApp();
-  console.log('App config keys:', Object.keys(appConfig));
+  console.info('App config keys:', Object.keys(appConfig));
 
   // Show mode
-  console.log('\nMode:', selectMode());
+  console.info('\nMode:', selectMode());
 
   // Run full app
   await runApp();
 
-  console.log('\n✅ Demo complete\n');
+  console.info('\n✅ Demo complete\n');
 }
 
 export {};

@@ -12,7 +12,7 @@ export {};
 
 // Example 1: Basic MIME type detection
 async function basicMimeTypeDetection() {
-  console.log('🔍 Basic MIME Type Detection:');
+  console.info('🔍 Basic MIME Type Detection:');
   
   // Common file types
   const files = [
@@ -28,19 +28,19 @@ async function basicMimeTypeDetection() {
     try {
       const file = Bun.file(filePath);
       if (await file.exists()) {
-        console.log(`${filePath}: ${file.type}`);
+        console.info(`${filePath}: ${file.type}`);
       } else {
-        console.log(`${filePath}: File not found`);
+        console.info(`${filePath}: File not found`);
       }
     } catch (error: any) {
-      console.log(`${filePath}: Error - ${error.message}`);
+      console.info(`${filePath}: Error - ${error.message}`);
     }
   }
 }
 
 // Example 2: Creating files with different extensions and checking types
 async function createAndCheckTypes() {
-  console.log('\n📄 Creating Files and Checking MIME Types:');
+  console.info('\n📄 Creating Files and Checking MIME Types:');
   
   // Create sample files with different extensions
   const sampleFiles = [
@@ -48,7 +48,7 @@ async function createAndCheckTypes() {
     { name: 'sample.json', content: '{"key": "value"}', expected: 'application/json' },
     { name: 'sample.html', content: '<html><body>Hello</body></html>', expected: 'text/html' },
     { name: 'sample.css', content: 'body { color: red; }', expected: 'text/css' },
-    { name: 'sample.js', content: 'console.log("Hello");', expected: 'text/javascript' },
+    { name: 'sample.js', content: 'console.info("Hello");', expected: 'text/javascript' },
     { name: 'sample.xml', content: '<?xml version="1.0"?><root>data</root>', expected: 'application/xml' }
   ];
   
@@ -59,22 +59,22 @@ async function createAndCheckTypes() {
       
       // Check the MIME type
       const file = Bun.file(name);
-      console.log(`${name}: ${file.type} (expected: ${expected})`);
+      console.info(`${name}: ${file.type} (expected: ${expected})`);
       
       // Verify it matches expectation (note: may not always match exactly)
       const matches = file.type === expected;
       if (!matches) {
-        console.log(`  Note: Actual type differs from expected`);
+        console.info(`  Note: Actual type differs from expected`);
       }
     } catch (error: any) {
-      console.log(`${name}: Error - ${error.message}`);
+      console.info(`${name}: Error - ${error.message}`);
     }
   }
 }
 
 // Example 3: MIME type detection for binary files
 async function binaryFileTypeDetection() {
-  console.log('\n🖼️ Binary File MIME Type Detection:');
+  console.info('\n🖼️ Binary File MIME Type Detection:');
   
   // Create some binary data with known signatures
   const binaryFiles = [
@@ -102,19 +102,19 @@ async function binaryFileTypeDetection() {
       
       // Check the MIME type
       const file = Bun.file(name);
-      console.log(`${name}: ${file.type} (expected: ${expected})`);
+      console.info(`${name}: ${file.type} (expected: ${expected})`);
       
       // Show first few bytes for verification
-      console.log(`  First bytes: ${Array.from(data.slice(0, 8)).map(b => '0x' + b.toString(16).padStart(2, '0')).join(' ')}`);
+      console.info(`  First bytes: ${Array.from(data.slice(0, 8)).map(b => '0x' + b.toString(16).padStart(2, '0')).join(' ')}`);
     } catch (error: any) {
-      console.log(`${name}: Error - ${error.message}`);
+      console.info(`${name}: Error - ${error.message}`);
     }
   }
 }
 
 // Example 4: MIME type detection with custom extensions
 async function customExtensionDetection() {
-  console.log('\n🔧 Custom Extension MIME Type Detection:');
+  console.info('\n🔧 Custom Extension MIME Type Detection:');
   
   // Create files with custom or uncommon extensions
   const customFiles = [
@@ -132,22 +132,22 @@ async function customExtensionDetection() {
       
       // Check the MIME type
       const file = Bun.file(name);
-      console.log(`${name}: ${file.type}`);
+      console.info(`${name}: ${file.type}`);
     } catch (error: any) {
-      console.log(`${name}: Error - ${error.message}`);
+      console.info(`${name}: Error - ${error.message}`);
     }
   }
 }
 
 // Example 5: MIME type utility functions
 function analyzeMimeType(mimeType: string) {
-  console.log('\n📊 MIME Type Analysis:');
-  console.log(`MIME Type: ${mimeType}`);
+  console.info('\n📊 MIME Type Analysis:');
+  console.info(`MIME Type: ${mimeType}`);
   
   // Parse MIME type
   const [type, subtype] = mimeType.split('/');
-  console.log(`Type: ${type}`);
-  console.log(`Subtype: ${subtype}`);
+  console.info(`Type: ${type}`);
+  console.info(`Subtype: ${subtype}`);
   
   // Determine category
   let category = 'unknown';
@@ -162,46 +162,46 @@ function analyzeMimeType(mimeType: string) {
     else category = 'application';
   }
   
-  console.log(`Category: ${category}`);
+  console.info(`Category: ${category}`);
   
   // Check if it's a common web type
   const webTypes = ['text/html', 'text/css', 'text/javascript', 'application/javascript', 'image/png', 'image/jpeg', 'image/gif'];
   const isWebType = webTypes.includes(mimeType);
-  console.log(`Is common web type: ${isWebType}`);
+  console.info(`Is common web type: ${isWebType}`);
 }
 
 // Example 6: File type validation
 async function validateFileType(filePath: string, allowedTypes: string[]) {
-  console.log(`\n✅ File Type Validation for ${filePath}:`);
+  console.info(`\n✅ File Type Validation for ${filePath}:`);
   
   try {
     const file = Bun.file(filePath);
     if (!(await file.exists())) {
-      console.log('File does not exist');
+      console.info('File does not exist');
       return false;
     }
     
     const mimeType = file.type;
-    console.log(`File MIME type: ${mimeType}`);
+    console.info(`File MIME type: ${mimeType}`);
     
     const isValid = allowedTypes.includes(mimeType);
-    console.log(`Is allowed type: ${isValid}`);
+    console.info(`Is allowed type: ${isValid}`);
     
     if (!isValid) {
-      console.log(`Allowed types: ${allowedTypes.join(', ')}`);
+      console.info(`Allowed types: ${allowedTypes.join(', ')}`);
     }
     
     return isValid;
   } catch (error: any) {
-    console.log(`Error: ${error.message}`);
+    console.info(`Error: ${error.message}`);
     return false;
   }
 }
 
 // Main execution
 async function main() {
-  console.log('🚀 MIME Type Detection Examples');
-  console.log('==============================');
+  console.info('🚀 MIME Type Detection Examples');
+  console.info('==============================');
   
   try {
     await basicMimeTypeDetection();
@@ -216,7 +216,7 @@ async function main() {
     await validateFileType('../package.json', ['application/json', 'text/plain']);
     await validateFileType('../dashboard.html', ['text/html', 'application/json']);
     
-    console.log('\n✅ All MIME type examples completed successfully!');
+    console.info('\n✅ All MIME type examples completed successfully!');
   } catch (error) {
     console.error('❌ Error running examples:', error);
   }

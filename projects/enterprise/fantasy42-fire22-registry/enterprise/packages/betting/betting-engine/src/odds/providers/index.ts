@@ -218,7 +218,7 @@ export class ESPNOddsProvider implements OddsDataProvider {
     if (remaining <= 0) {
       const waitTime = this.rateLimitReset - Date.now();
       if (waitTime > 0) {
-        console.log(`Rate limit reached, waiting ${waitTime}ms`);
+        console.info(`Rate limit reached, waiting ${waitTime}ms`);
         await new Promise(resolve => setTimeout(resolve, waitTime));
       }
     }
@@ -530,21 +530,21 @@ export class OddsProviderManager {
     // Try cache first for speed
     let odds = await this.cacheProvider.getLiveOdds(gameId);
     if (odds) {
-      console.log(`📦 Cache hit for game ${gameId}`);
+      console.info(`📦 Cache hit for game ${gameId}`);
       return odds;
     }
 
     // Try providers in priority order
     for (const provider of this.providers) {
       try {
-        console.log(`🔍 Trying ${provider.name} for game ${gameId}`);
+        console.info(`🔍 Trying ${provider.name} for game ${gameId}`);
         odds = await provider.getLiveOdds(gameId);
 
         if (odds) {
           // Cache successful result
           this.cacheProvider.updateCache(gameId, odds);
           this.updateProviderHealth(provider.name, true, Date.now() - Date.now());
-          console.log(`✅ Got odds from ${provider.name} for game ${gameId}`);
+          console.info(`✅ Got odds from ${provider.name} for game ${gameId}`);
           return odds;
         } else {
           this.updateProviderHealth(provider.name, false, 0);
@@ -555,7 +555,7 @@ export class OddsProviderManager {
       }
     }
 
-    console.log(`❌ No odds found for game ${gameId}`);
+    console.info(`❌ No odds found for game ${gameId}`);
     return null;
   }
 
@@ -583,7 +583,7 @@ export class OddsProviderManager {
     // Get uncached games from providers
     for (const provider of this.providers) {
       try {
-        console.log(`🔍 Batch request to ${provider.name} for ${uncachedGames.length} games`);
+        console.info(`🔍 Batch request to ${provider.name} for ${uncachedGames.length} games`);
         const batchResults = await provider.getBatchOdds(uncachedGames);
 
         for (const [gameId, odds] of batchResults.entries()) {

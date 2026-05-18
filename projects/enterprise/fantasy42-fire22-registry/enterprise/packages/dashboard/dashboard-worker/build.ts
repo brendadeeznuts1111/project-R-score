@@ -61,7 +61,7 @@ async function main() {
         const profileName = command.slice(2);
         await runBuild(profileName);
       } else {
-        console.log(`❌ Unknown command: ${command}`);
+        console.info(`❌ Unknown command: ${command}`);
         showHelp();
         process.exit(1);
       }
@@ -69,7 +69,7 @@ async function main() {
 }
 
 function showHelp() {
-  console.log(`
+  console.info(`
 🔥 Fire22 Build System
 
 Usage: bun run build [command]
@@ -102,18 +102,18 @@ For more information, see docs/BUILD-SYSTEM.md
 }
 
 function listProfiles() {
-  console.log('\n📋 Available Build Profiles:\n');
+  console.info('\n📋 Available Build Profiles:\n');
 
   const profiles = listBuildProfiles();
   for (const profileName of profiles) {
     const profile = getBuildProfile(profileName);
-    console.log(`🔧 ${profileName.toUpperCase()}`);
-    console.log(`   ${profile.description}`);
-    console.log(`   Version: ${profile.version.autoIncrement ? 'Auto-increment' : 'Manual'}`);
-    console.log(`   Docs: ${profile.documentation.generate ? 'Generate' : 'Skip'}`);
-    console.log(`   Quality: ${profile.quality.test ? 'Full' : 'Minimal'}`);
-    console.log(`   Optimization: ${profile.optimization.minify ? 'Full' : 'Basic'}`);
-    console.log('');
+    console.info(`🔧 ${profileName.toUpperCase()}`);
+    console.info(`   ${profile.description}`);
+    console.info(`   Version: ${profile.version.autoIncrement ? 'Auto-increment' : 'Manual'}`);
+    console.info(`   Docs: ${profile.documentation.generate ? 'Generate' : 'Skip'}`);
+    console.info(`   Quality: ${profile.quality.test ? 'Full' : 'Minimal'}`);
+    console.info(`   Optimization: ${profile.optimization.minify ? 'Full' : 'Basic'}`);
+    console.info('');
   }
 }
 
@@ -121,8 +121,8 @@ async function runBuild(profileName: string) {
   try {
     const profile = getBuildProfile(profileName);
 
-    console.log(`🚀 Starting ${profile.name} build...`);
-    console.log(`📝 ${profile.description}\n`);
+    console.info(`🚀 Starting ${profile.name} build...`);
+    console.info(`📝 ${profile.description}\n`);
 
     // Convert profile to build config
     const buildConfig = {
@@ -138,9 +138,9 @@ async function runBuild(profileName: string) {
     const result = await automation.run();
 
     if (result.success) {
-      console.log(`\n🎉 ${profile.name} build completed successfully!`);
-      console.log(`📊 Version: ${result.version}`);
-      console.log(`⏱️  Duration: ${result.duration}ms`);
+      console.info(`\n🎉 ${profile.name} build completed successfully!`);
+      console.info(`📊 Version: ${result.version}`);
+      console.info(`⏱️  Duration: ${result.duration}ms`);
     } else {
       console.error(`\n❌ ${profile.name} build failed!`);
       process.exit(1);
@@ -155,8 +155,8 @@ async function runCloudflare(args: string[]) {
   const cloudflare = new CloudflareBuildSystem();
   const subcommand = args[0] || 'pipeline';
 
-  console.log('☁️  Cloudflare Build & Deploy');
-  console.log('='.repeat(50));
+  console.info('☁️  Cloudflare Build & Deploy');
+  console.info('='.repeat(50));
 
   try {
     switch (subcommand) {
@@ -200,7 +200,7 @@ async function runCloudflare(args: string[]) {
         break;
     }
 
-    console.log('\n✅ Cloudflare operation completed!');
+    console.info('\n✅ Cloudflare operation completed!');
   } catch (error) {
     console.error('\n❌ Cloudflare operation failed:', error);
     process.exit(1);

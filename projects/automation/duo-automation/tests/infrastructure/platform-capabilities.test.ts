@@ -22,7 +22,7 @@ interface TestResult {
 const testResults: TestResult[] = [];
 
 function log(message: string) {
-  console.log(`[PLATFORM-TEST] ${message}`);
+  console.info(`[PLATFORM-TEST] ${message}`);
 }
 
 function addResult(testName: string, passed: boolean, message: string, details?: any) {

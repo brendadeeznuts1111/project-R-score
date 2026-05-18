@@ -915,7 +915,7 @@ async function cli() {
 
   // ─── Default: List projects ───────────────────────────────────────────
   if (!cmd || cmd === "ls" || cmd === "list") {
-    console.log(header("WORKSPACE PROJECTS", "◈"));
+    console.info(header("WORKSPACE PROJECTS", "◈"));
 
     const stats = await getWorkspaceStats();
     const rows = stats.ranking.map((r, i) => ({
@@ -926,8 +926,8 @@ async function cli() {
       Path: fmt.muted(projects[r.slug].replace(WORKSPACE_ROOT, "~")),
     }));
 
-    console.log(Bun.inspect.table(rows, { colors: true }));
-    console.log(
+    console.info(Bun.inspect.table(rows, { colors: true }));
+    console.info(
       `\n  ${fmt.muted("Total:")} ${fmt.highlight(String(stats.scriptCount))} scripts across ${fmt.highlight(String(stats.projectCount))} projects\n`
     );
     return;
@@ -944,8 +944,8 @@ async function cli() {
     const descriptors = await getScriptDescriptors(slug);
     const stats = await getProjectStats(slug);
 
-    console.log(header(`${slug.toUpperCase()} SCRIPTS`, "◇"));
-    console.log(`  ${fmt.muted("Total:")} ${fmt.highlight(String(descriptors.length))}  ${fmt.muted("Health:")} ${healthBar(stats.health, 100, 15)}\n`);
+    console.info(header(`${slug.toUpperCase()} SCRIPTS`, "◇"));
+    console.info(`  ${fmt.muted("Total:")} ${fmt.highlight(String(descriptors.length))}  ${fmt.muted("Health:")} ${healthBar(stats.health, 100, 15)}\n`);
 
     const rows = descriptors.map((d, i) => {
       const cat = CATEGORIES[d.category];
@@ -957,7 +957,7 @@ async function cli() {
       };
     });
 
-    console.log(Bun.inspect.table(rows, { colors: true }));
+    console.info(Bun.inspect.table(rows, { colors: true }));
     return;
   }
 
@@ -967,10 +967,10 @@ async function cli() {
       const slug = args[0] as ProjectSlug;
       const stats = await getProjectStats(slug);
 
-      console.log(header(`${slug.toUpperCase()} METRICS`, "◆"));
-      console.log(`  ${fmt.muted("Scripts:")} ${fmt.highlight(String(stats.scriptCount))}  ${fmt.muted("Health:")} ${healthBar(stats.health, 100, 15)}\n`);
+      console.info(header(`${slug.toUpperCase()} METRICS`, "◆"));
+      console.info(`  ${fmt.muted("Scripts:")} ${fmt.highlight(String(stats.scriptCount))}  ${fmt.muted("Health:")} ${healthBar(stats.health, 100, 15)}\n`);
 
-      console.log(fmt.subtitle("  Category Distribution:\n"));
+      console.info(fmt.subtitle("  Category Distribution:\n"));
       const catRows = Object.entries(stats.byCategory)
         .filter(([, count]) => count > 0)
         .sort((a, b) => b[1] - a[1])
@@ -983,27 +983,27 @@ async function cli() {
           };
         });
 
-      console.log(Bun.inspect.table(catRows, { colors: true }));
+      console.info(Bun.inspect.table(catRows, { colors: true }));
 
-      console.log(fmt.subtitle("\n  Top Patterns:\n"));
+      console.info(fmt.subtitle("\n  Top Patterns:\n"));
       const patRows = stats.topPatterns.map((p, i) => ({
         "#": i + 1,
         Pattern: fmt.code(p.pattern),
         Count: p.count,
       }));
-      console.log(Bun.inspect.table(patRows, { colors: true }));
+      console.info(Bun.inspect.table(patRows, { colors: true }));
       return;
     }
 
     // Global metrics
     const stats = await getWorkspaceStats();
 
-    console.log(header("WORKSPACE METRICS", "◈"));
-    console.log(`  ${fmt.muted("Projects:")} ${fmt.highlight(String(stats.projectCount))}`);
-    console.log(`  ${fmt.muted("Scripts:")}  ${fmt.highlight(String(stats.scriptCount))}`);
-    console.log(`  ${fmt.muted("Average:")}  ${fmt.highlight(String(stats.avgScriptsPerProject))} per project\n`);
+    console.info(header("WORKSPACE METRICS", "◈"));
+    console.info(`  ${fmt.muted("Projects:")} ${fmt.highlight(String(stats.projectCount))}`);
+    console.info(`  ${fmt.muted("Scripts:")}  ${fmt.highlight(String(stats.scriptCount))}`);
+    console.info(`  ${fmt.muted("Average:")}  ${fmt.highlight(String(stats.avgScriptsPerProject))} per project\n`);
 
-    console.log(fmt.subtitle("  Category Distribution:\n"));
+    console.info(fmt.subtitle("  Category Distribution:\n"));
     const catRows = Object.entries(stats.byCategory)
       .filter(([, data]) => data.count > 0)
       .sort((a, b) => b[1].count - a[1].count)
@@ -1016,9 +1016,9 @@ async function cli() {
           Distribution: healthBar(data.count, stats.scriptCount, 30),
         };
       });
-    console.log(Bun.inspect.table(catRows, { colors: true }));
+    console.info(Bun.inspect.table(catRows, { colors: true }));
 
-    console.log(fmt.subtitle("\n  Project Ranking:\n"));
+    console.info(fmt.subtitle("\n  Project Ranking:\n"));
     const projRows = stats.ranking.slice(0, 10).map((r, i) => ({
       "#": i + 1,
       Project: r.slug,
@@ -1026,9 +1026,9 @@ async function cli() {
       Health: healthBar(r.health, 100, 10),
       Volume: healthBar(r.scripts, stats.ranking[0].scripts, 20),
     }));
-    console.log(Bun.inspect.table(projRows, { colors: true }));
+    console.info(Bun.inspect.table(projRows, { colors: true }));
 
-    console.log(fmt.subtitle("\n  Top Patterns:\n"));
+    console.info(fmt.subtitle("\n  Top Patterns:\n"));
     const patRows = stats.topPatterns.slice(0, 15).map((p, i) => ({
       "#": i + 1,
       Pattern: fmt.code(p.pattern.padEnd(15)),
@@ -1036,13 +1036,13 @@ async function cli() {
       Projects: p.projects.length,
       Spread: sparkline(p.projects.map(() => 1).slice(0, 10)),
     }));
-    console.log(Bun.inspect.table(patRows, { colors: true }));
+    console.info(Bun.inspect.table(patRows, { colors: true }));
     return;
   }
 
   // ─── Categories ───────────────────────────────────────────────────────
   if (cmd === "categories" || cmd === "cats") {
-    console.log(header("SCRIPT CATEGORIES", "◇"));
+    console.info(header("SCRIPT CATEGORIES", "◇"));
 
     const rows = Object.entries(CATEGORIES).map(([key, def]) => ({
       Key: fmt.code(key),
@@ -1050,7 +1050,7 @@ async function cli() {
       Patterns: fmt.muted(def.match.join(", ") || "(fallback)"),
     }));
 
-    console.log(Bun.inspect.table(rows, { colors: true }));
+    console.info(Bun.inspect.table(rows, { colors: true }));
     return;
   }
 
@@ -1059,15 +1059,15 @@ async function cli() {
     const catKey = args[0] as CategoryKey;
     if (!CATEGORIES[catKey]) {
       console.error(fmt.error(`  Unknown category: ${catKey}`));
-      console.log(fmt.muted(`  Valid: ${Object.keys(CATEGORIES).join(", ")}`));
+      console.info(fmt.muted(`  Valid: ${Object.keys(CATEGORIES).join(", ")}`));
       process.exit(1);
     }
 
     const cat = CATEGORIES[catKey];
     const scripts = await getScriptsByCategory(catKey);
 
-    console.log(header(`${cat.icon} ${cat.label.toUpperCase()} SCRIPTS`, "◇"));
-    console.log(`  ${fmt.muted("Total:")} ${fmt.highlight(String(scripts.length))}\n`);
+    console.info(header(`${cat.icon} ${cat.label.toUpperCase()} SCRIPTS`, "◇"));
+    console.info(`  ${fmt.muted("Total:")} ${fmt.highlight(String(scripts.length))}\n`);
 
     const rows = scripts.map((s, i) => ({
       "#": i + 1,
@@ -1075,7 +1075,7 @@ async function cli() {
       Script: fmt.code(s.script),
     }));
 
-    console.log(Bun.inspect.table(rows, { colors: true }));
+    console.info(Bun.inspect.table(rows, { colors: true }));
     return;
   }
 
@@ -1084,8 +1084,8 @@ async function cli() {
     const query = args[0];
     const results = await searchScripts(query);
 
-    console.log(header(`SEARCH: "${query}"`, "◇"));
-    console.log(`  ${fmt.muted("Found:")} ${fmt.highlight(String(results.length))} matches\n`);
+    console.info(header(`SEARCH: "${query}"`, "◇"));
+    console.info(`  ${fmt.muted("Found:")} ${fmt.highlight(String(results.length))} matches\n`);
 
     const rows = results.map((r, i) => ({
       "#": i + 1,
@@ -1093,7 +1093,7 @@ async function cli() {
       Script: fmt.code(r.script),
     }));
 
-    console.log(Bun.inspect.table(rows, { colors: true }));
+    console.info(Bun.inspect.table(rows, { colors: true }));
     return;
   }
 
@@ -1101,8 +1101,8 @@ async function cli() {
   if (cmd === "patterns") {
     const stats = await getWorkspaceStats();
 
-    console.log(header("SCRIPT PATTERNS", "◇"));
-    console.log(`  ${fmt.muted("Unique patterns:")} ${fmt.highlight(String(stats.topPatterns.length))}\n`);
+    console.info(header("SCRIPT PATTERNS", "◇"));
+    console.info(`  ${fmt.muted("Unique patterns:")} ${fmt.highlight(String(stats.topPatterns.length))}\n`);
 
     const rows = stats.topPatterns.map((p, i) => ({
       "#": i + 1,
@@ -1112,7 +1112,7 @@ async function cli() {
       Examples: fmt.muted(p.projects.slice(0, 3).join(", ") + (p.projects.length > 3 ? "..." : "")),
     }));
 
-    console.log(Bun.inspect.table(rows, { colors: true }));
+    console.info(Bun.inspect.table(rows, { colors: true }));
     return;
   }
 
@@ -1124,16 +1124,16 @@ async function cli() {
       process.exit(1);
     }
 
-    console.log(header(`${slug.toUpperCase()} FILE ANALYSIS`, "◇"));
-    console.log(fmt.muted("  Scanning files...\n"));
+    console.info(header(`${slug.toUpperCase()} FILE ANALYSIS`, "◇"));
+    console.info(fmt.muted("  Scanning files...\n"));
 
     const stats = await getProjectFileStats(slug);
 
-    console.log(`  ${fmt.muted("Total Files:")} ${fmt.highlight(String(stats.totalFiles))}`);
-    console.log(`  ${fmt.muted("Total Size:")}  ${fmt.highlight(stats.totalSizeHuman)}\n`);
+    console.info(`  ${fmt.muted("Total Files:")} ${fmt.highlight(String(stats.totalFiles))}`);
+    console.info(`  ${fmt.muted("Total Size:")}  ${fmt.highlight(stats.totalSizeHuman)}\n`);
 
     // By MIME type
-    console.log(fmt.subtitle("  File Types by MIME:\n"));
+    console.info(fmt.subtitle("  File Types by MIME:\n"));
     const mimeRows = stats.byType.slice(0, 15).map((t, i) => ({
       "#": i + 1,
       Icon: getFileIcon(t.mime),
@@ -1142,10 +1142,10 @@ async function cli() {
       Size: humanSize(t.totalSize).padStart(8),
       Bar: healthBar(t.count, stats.totalFiles, 15),
     }));
-    console.log(Bun.inspect.table(mimeRows, { colors: true }));
+    console.info(Bun.inspect.table(mimeRows, { colors: true }));
 
     // By extension
-    console.log(fmt.subtitle("\n  File Types by Extension:\n"));
+    console.info(fmt.subtitle("\n  File Types by Extension:\n"));
     const extEntries = Object.entries(stats.byExt)
       .sort((a, b) => b[1].count - a[1].count)
       .slice(0, 15);
@@ -1156,10 +1156,10 @@ async function cli() {
       Size: humanSize(data.size).padStart(8),
       Bar: healthBar(data.count, stats.totalFiles, 15),
     }));
-    console.log(Bun.inspect.table(extRows, { colors: true }));
+    console.info(Bun.inspect.table(extRows, { colors: true }));
 
     // Largest files
-    console.log(fmt.subtitle("\n  Largest Files:\n"));
+    console.info(fmt.subtitle("\n  Largest Files:\n"));
     const largeRows = stats.largestFiles.map((f, i) => ({
       "#": i + 1,
       Icon: getFileIcon(f.mime),
@@ -1167,7 +1167,7 @@ async function cli() {
       Size: fmt.highlight(f.sizeHuman.padStart(10)),
       Type: fmt.muted(f.mime.slice(0, 25)),
     }));
-    console.log(Bun.inspect.table(largeRows, { colors: true }));
+    console.info(Bun.inspect.table(largeRows, { colors: true }));
     return;
   }
 
@@ -1182,21 +1182,21 @@ async function cli() {
       process.exit(1);
     }
 
-    console.log(`\n  ${fmt.info("▶")} ${fmt.subtitle(script)} ${fmt.muted("in")} ${fmt.code(slug)}\n`);
-    console.log(divider());
+    console.info(`\n  ${fmt.info("▶")} ${fmt.subtitle(script)} ${fmt.muted("in")} ${fmt.code(slug)}\n`);
+    console.info(divider());
 
     const result = await execute(slug, script, { args: extraArgs });
 
-    console.log(divider());
+    console.info(divider());
     const status = result.ok ? fmt.success("✓ OK") : fmt.error("✗ FAILED");
-    console.log(`\n  ${status} ${fmt.muted(`(${result.ms.toFixed(0)}ms)`)}\n`);
+    console.info(`\n  ${status} ${fmt.muted(`(${result.ms.toFixed(0)}ms)`)}\n`);
 
     process.exit(result.code);
   }
 
   // ─── Help ─────────────────────────────────────────────────────────────
   if (cmd === "help" || cmd === "-h" || cmd === "--help") {
-    console.log(`
+    console.info(`
 ${header("PROJECT CONTROL CENTER", "◈")}
   ${fmt.subtitle("Usage:")}
 
@@ -1236,20 +1236,20 @@ ${header("PROJECT CONTROL CENTER", "◈")}
     const script = args[0];
     const extraArgs = args.slice(1);
 
-    console.log(`\n  ${fmt.info("▶")} ${fmt.subtitle(script)} ${fmt.muted("in")} ${fmt.code(slug)}\n`);
-    console.log(divider());
+    console.info(`\n  ${fmt.info("▶")} ${fmt.subtitle(script)} ${fmt.muted("in")} ${fmt.code(slug)}\n`);
+    console.info(divider());
 
     const result = await execute(slug, script, { args: extraArgs });
 
-    console.log(divider());
+    console.info(divider());
     const status = result.ok ? fmt.success("✓ OK") : fmt.error("✗ FAILED");
-    console.log(`\n  ${status} ${fmt.muted(`(${result.ms.toFixed(0)}ms)`)}\n`);
+    console.info(`\n  ${status} ${fmt.muted(`(${result.ms.toFixed(0)}ms)`)}\n`);
 
     process.exit(result.code);
   }
 
   console.error(fmt.error(`\n  Unknown command: ${cmd}`));
-  console.log(fmt.muted("  Run with --help for usage.\n"));
+  console.info(fmt.muted("  Run with --help for usage.\n"));
   process.exit(1);
 }
 

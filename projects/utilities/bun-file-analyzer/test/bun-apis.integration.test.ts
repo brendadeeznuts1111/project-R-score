@@ -15,7 +15,7 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
       // Wait a moment for server to start
       await new Promise(resolve => setTimeout(resolve, 100));
     } catch (error) {
-      console.log("Server not available, testing client-side features");
+      console.info("Server not available, testing client-side features");
       baseUrl = "http://localhost:3007";
     }
   });
@@ -30,7 +30,7 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
     it("should generate WCAG AA compliant colors", () => {
       // Skip if Bun.color is not available
       if (typeof Bun === 'undefined' || !Bun.color) {
-        console.log("Bun.color not available, skipping color test");
+        console.info("Bun.color not available, skipping color test");
         return;
       }
       
@@ -64,7 +64,7 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
     
     it("should handle edge cases gracefully", () => {
       if (typeof Bun === 'undefined' || !Bun.color) {
-        console.log("Bun.color not available, skipping edge case test");
+        console.info("Bun.color not available, skipping edge case test");
         return;
       }
       
@@ -77,7 +77,7 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
   describe("📦 Bun.Archive API", () => {
     it("should create and extract archives", async () => {
       if (typeof Bun === 'undefined' || !Bun.Archive) {
-        console.log("Bun.Archive not available, skipping archive test");
+        console.info("Bun.Archive not available, skipping archive test");
         return;
       }
       
@@ -102,7 +102,7 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
     
     it("should handle large files efficiently", async () => {
       if (typeof Bun === 'undefined' || !Bun.Archive) {
-        console.log("Bun.Archive not available, skipping large file test");
+        console.info("Bun.Archive not available, skipping large file test");
         return;
       }
       
@@ -123,7 +123,7 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
   describe("📄 Bun.JSONC API", () => {
     it("should parse JSONC with comments", () => {
       if (typeof Bun === 'undefined' || !Bun.JSONC) {
-        console.log("Bun.JSONC not available, skipping JSONC test");
+        console.info("Bun.JSONC not available, skipping JSONC test");
         return;
       }
       
@@ -145,7 +145,7 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
     
     it("should handle trailing commas", () => {
       if (typeof Bun === 'undefined' || !Bun.JSONC) {
-        console.log("Bun.JSONC not available, skipping trailing commas test");
+        console.info("Bun.JSONC not available, skipping trailing commas test");
         return;
       }
       
@@ -169,7 +169,7 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
   describe("🍪 Bun.CookieMap API", () => {
     it("should implement Map-like interface", () => {
       if (typeof Bun === 'undefined' || !Bun.CookieMap) {
-        console.log("Bun.CookieMap not available, skipping CookieMap test");
+        console.info("Bun.CookieMap not available, skipping CookieMap test");
         return;
       }
       
@@ -202,7 +202,7 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
     
     it("should serialize and deserialize correctly", () => {
       if (typeof Bun === 'undefined' || !Bun.CookieMap) {
-        console.log("Bun.CookieMap not available, skipping serialization test");
+        console.info("Bun.CookieMap not available, skipping serialization test");
         return;
       }
       
@@ -235,7 +235,7 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
     it("should be faster than JSON.stringify()", async () => {
       // Skip if Response.json is not available
       if (typeof Response === 'undefined' || !Response.json) {
-        console.log("Response.json not available, skipping performance test");
+        console.info("Response.json not available, skipping performance test");
         return;
       }
       
@@ -278,16 +278,16 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
       // New method should be competitive (may not always be faster due to JIT)
       expect(newTime).toBeLessThan(oldTime * 2); // At most 2x slower
       
-      console.log(`JSON.stringify: ${oldTime.toFixed(2)}ms`);
-      console.log(`Response.json: ${newTime.toFixed(2)}ms`);
-      console.log(`Speedup: ${(oldTime / newTime).toFixed(2)}x`);
+      console.info(`JSON.stringify: ${oldTime.toFixed(2)}ms`);
+      console.info(`Response.json: ${newTime.toFixed(2)}ms`);
+      console.info(`Speedup: ${(oldTime / newTime).toFixed(2)}x`);
     });
   });
   
   describe("🔗 URLPattern API", () => {
     it("should match URL patterns correctly", () => {
       if (typeof URLPattern === 'undefined') {
-        console.log("URLPattern not available, skipping pattern test");
+        console.info("URLPattern not available, skipping pattern test");
         return;
       }
       
@@ -336,7 +336,7 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
                                 typeof Bun.serve === 'function';
 
       if (!isServeAvailable) {
-        console.log("Bun.serve not available, skipping cookie test");
+        console.info("Bun.serve not available, skipping cookie test");
         return;
       }
 
@@ -397,14 +397,14 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
     it("should analyze bundle structure", async () => {
       // Create a test build to analyze if Bun.build is available
       if (typeof Bun === 'undefined' || !Bun.build) {
-        console.log("Bun.build not available, skipping metafile test");
+        console.info("Bun.build not available, skipping metafile test");
         return;
       }
 
       // Check if entrypoint exists
       const entrypoint = Bun.file("./src/index.tsx");
       if (!entrypoint.exists()) {
-        console.log("./src/index.tsx not found, skipping metafile test");
+        console.info("./src/index.tsx not found, skipping metafile test");
         return;
       }
 
@@ -432,10 +432,10 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
         const totalSize = Object.values(outputs).reduce((sum, output) => sum + output.bytes, 0);
         expect(totalSize).toBeGreaterThan(0);
 
-        console.log(`Bundle analysis:`);
-        console.log(`- Outputs: ${Object.keys(outputs).length}`);
-        console.log(`- Inputs: ${Object.keys(inputs).length}`);
-        console.log(`- Total size: ${(totalSize / 1024).toFixed(2)} KB`);
+        console.info(`Bundle analysis:`);
+        console.info(`- Outputs: ${Object.keys(outputs).length}`);
+        console.info(`- Inputs: ${Object.keys(inputs).length}`);
+        console.info(`- Total size: ${(totalSize / 1024).toFixed(2)} KB`);
       }
 
       // Cleanup
@@ -479,7 +479,7 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
             ]
           }`);
         } catch (error) {
-          console.log("JSONC parse failed, using fallback config");
+          console.info("JSONC parse failed, using fallback config");
         }
       }
       
@@ -547,11 +547,11 @@ describe("Bun v1.3.6+ API Integration Tests", () => {
         expect(match?.pathname.groups.id).toBe("theme");
       }
       
-      console.log("✅ Complete Bun v1.3.6+ workflow successful!");
-      console.log(`📦 Archive size: ${(archiveBytes.length / 1024).toFixed(2)} KB`);
-      console.log(`🎨 Colors generated: ${primaryColor}, ${successColor}`);
-      console.log(`🍪 Session created with ${sessionSize} cookies`);
-      console.log(`⚡ Performance: ${(oldTime / newTime).toFixed(2)}x improvement`);
+      console.info("✅ Complete Bun v1.3.6+ workflow successful!");
+      console.info(`📦 Archive size: ${(archiveBytes.length / 1024).toFixed(2)} KB`);
+      console.info(`🎨 Colors generated: ${primaryColor}, ${successColor}`);
+      console.info(`🍪 Session created with ${sessionSize} cookies`);
+      console.info(`⚡ Performance: ${(oldTime / newTime).toFixed(2)}x improvement`);
     });
   });
 });

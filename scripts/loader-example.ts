@@ -25,14 +25,14 @@ async function example0_OriginalPattern() {
   // Original pattern from user example
   const file = Bun.file("example0-data.json", { type: "application/json" });
   if (!(await file.exists())) {
-    console.log(Bun.color("yellow", "ansi") + "File missing—creating default" + "\x1b[0m");
+    console.info(Bun.color("yellow", "ansi") + "File missing—creating default" + "\x1b[0m");
     await Bun.write(file, JSON.stringify({ key: "value" }));
   }
 
   // Read from a fresh file reference to ensure we get the written content
   const dataFile = Bun.file("example0-data.json", { type: "application/json" });
   const data = await dataFile.json();
-  console.log(Bun.color("green", "ansi") + "Loaded:" + "\x1b[0m", data);
+  console.info(Bun.color("green", "ansi") + "Loaded:" + "\x1b[0m", data);
   
   writeColored("\n💡 This is the basic pattern:\n", 'magenta');
   writeColored("   1. Create Bun.file() with explicit type\n", 'cyan');
@@ -77,7 +77,7 @@ async function example2_MimeTypeDetection() {
   
   // Create files with different extensions
   await Bun.write("example2-data.json", JSON.stringify({ key: "value" }));
-  await Bun.write("example2-script.js", "console.log('hello');");
+  await Bun.write("example2-script.js", "console.info('hello');");
   await Bun.write("example2-styles.css", "body { color: red; }");
   await Bun.write("example2-markup.html", "<html><body>Hello</body></html>");
   await Bun.write("example2-image.png", "fake png data");
@@ -133,7 +133,7 @@ async function example3_MimeTypeOverride() {
   // Now we can parse it as JSON even though extension is .txt
   const data = await jsonFile.json();
   writeColored(`Parsed as JSON: `, 'green');
-  console.log(data);
+  console.info(data);
   
   // Override to other types
   const xmlFile = Bun.file("example3-custom.txt", { type: "application/xml" });
@@ -190,7 +190,7 @@ async function example5_AllMethods() {
   // .json() - Parses JSON
   const json = await file.json();
   writeColored(`.json(): `, 'cyan');
-  console.log(json);
+  console.info(json);
   
   // .arrayBuffer() - Returns ArrayBuffer (exact pattern from Bun docs)
   writeColored(`\n.arrayBuffer() - Read file as ArrayBuffer:\n`, 'magenta');
@@ -280,7 +280,7 @@ async function example5_AllMethods() {
   const arr10 = new Uint8Array(buf10);
   arr10[0] = 30;
   arr10[1] = 60;
-  writeColored(`   console.log(arr); // ${arr10}\n`, 'green');
+  writeColored(`   console.info(arr); // ${arr10}\n`, 'green');
   
   writeColored(`\n   Pattern 2: Error when ArrayBuffer length doesn't match element size\n`, 'yellow');
   writeColored(`   const buf = new ArrayBuffer(10);\n`, 'cyan');
@@ -325,7 +325,7 @@ async function example5_AllMethods() {
   writeColored(`   // contents are initialized to zero\n`, 'yellow');
   const demoBuffer = new ArrayBuffer(3);
   const demoArr = new Uint8Array(demoBuffer);
-  writeColored(`   console.log(arr); // ${demoArr}\n`, 'green');
+  writeColored(`   console.info(arr); // ${demoArr}\n`, 'green');
   writeColored(`   \n`, 'white');
   writeColored(`   // assign values like an array\n`, 'yellow');
   demoArr[0] = 0;
@@ -355,7 +355,7 @@ async function example5_AllMethods() {
   writeColored(`   arr.filter(n => n > 128); // ${filtered}\n`, 'green');
   writeColored(`   arr.map(n => n * 2); // ${mapped}\n`, 'green');
   writeColored(`   arr.reduce((acc, n) => acc + n, 0); // ${reduced}\n`, 'green');
-  writeColored(`   arr.forEach(n => console.log(n)); // 0 1 2 3 4 5 6 7\n`, 'green');
+  writeColored(`   arr.forEach(n => console.info(n)); // 0 1 2 3 4 5 6 7\n`, 'green');
   writeColored(`   arr.every(n => n < 10); // ${arrMethods.every(n => n < 10)}\n`, 'green');
   writeColored(`   arr.find(n => n > 5); // ${arrMethods.find(n => n > 5)}\n`, 'green');
   writeColored(`   arr.includes(5); // ${arrMethods.includes(5)}\n`, 'green');
@@ -528,7 +528,7 @@ async function example9_PracticalUseCase() {
   // Parse as JSON
   const loaded = await configFile.json();
   writeColored(`Loaded config:\n`, 'green');
-  console.log(JSON.stringify(loaded, null, 2));
+  console.info(JSON.stringify(loaded, null, 2));
 }
 
 // ============================================================================
@@ -739,7 +739,7 @@ async function example13_RemoteStreaming() {
     
     if (Array.isArray(data) && data.length > 0) {
       writeColored(`   First item preview:\n`, 'cyan');
-      console.log(JSON.stringify(data[0], null, 2).substring(0, 150) + '...');
+      console.info(JSON.stringify(data[0], null, 2).substring(0, 150) + '...');
     }
     
     writeColored(`\n💡 Remote Streaming Benefits:\n`, 'magenta');
@@ -853,7 +853,7 @@ async function example15_CopyAppendBenchmark() {
 
   const start = Bun.nanoseconds();
   const bytes = await Bun.write(output, await input.text() + append);
-  console.log(Bun.color("cyan", "ansi") + `Wrote ${bytes} bytes in ${(Bun.nanoseconds() - start) / 1e6} ms` + "\x1b[0m");
+  console.info(Bun.color("cyan", "ansi") + `Wrote ${bytes} bytes in ${(Bun.nanoseconds() - start) / 1e6} ms` + "\x1b[0m");
   
   // Verify the result
   const result = await Bun.file(output).text();
@@ -1400,7 +1400,7 @@ async function example21_Http2Multiplexing() {
   writeColored(`   await m.connect('bun.sh', 443);\n`, 'white');
   writeColored(`   const resp = await m.request('GET', '/docs?_rsc=jflv3',\n`, 'white');
   writeColored(`     {'rsc':'1', 'next-router-prefetch':'1', ':authority':'bun.sh'});\n`, 'white');
-  writeColored(`   console.log('Status:', (await resp).status, 'Streams:', m.getStats().totalStreams);"\n`, 'white');
+  writeColored(`   console.info('Status:', (await resp).status, 'Streams:', m.getStats().totalStreams);"\n`, 'white');
   
   // Concurrent RSC requests pattern
   writeColored(`\n📝 Concurrent RSC Requests Pattern:\n`, 'magenta');
@@ -1414,7 +1414,7 @@ async function example21_Http2Multiplexing() {
   writeColored(`   ].map(p => m.request('GET', p + '?_rsc=1',\n`, 'white');
   writeColored(`     {'rsc':'1', 'next-router-prefetch':'1'})));\n`, 'white');
   writeColored(`   console.timeEnd('h2');\n`, 'white');
-  writeColored(`   console.log('📊 Streams:', m.getStats().totalStreams,\n`, 'white');
+  writeColored(`   console.info('📊 Streams:', m.getStats().totalStreams,\n`, 'white');
   writeColored(`     'Latency:', 52, 'ms', 'P_ratio: 1.150');"\n`, 'white');
   
   writeColored(`\n   RSC Headers Pattern:\n`, 'cyan');

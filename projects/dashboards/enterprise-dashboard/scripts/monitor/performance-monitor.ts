@@ -102,7 +102,7 @@ class PerformanceMonitor {
     );
 
     this.metrics.push(metrics);
-    console.log(`📊 Performance metrics recorded - Score: ${optimizationScore}/100`);
+    console.info(`📊 Performance metrics recorded - Score: ${optimizationScore}/100`);
   }
 
   getLatestMetrics(): PerformanceMetrics | null {
@@ -171,18 +171,18 @@ async function main() {
       break;
 
     case "report":
-      console.log(monitor.generateReport());
+      console.info(monitor.generateReport());
       break;
 
     case "watch":
-      console.log("📊 Starting performance monitoring...");
+      console.info("📊 Starting performance monitoring...");
       setInterval(() => monitor.recordMetrics(), 30000); // Every 30 seconds
       // Keep process alive
       process.stdin.resume();
       break;
 
     default:
-      console.log(`
+      console.info(`
 Performance Monitor Usage:
   record    - Record current metrics
   report    - Show latest performance report

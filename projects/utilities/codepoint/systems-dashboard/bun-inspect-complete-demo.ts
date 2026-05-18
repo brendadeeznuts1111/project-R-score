@@ -1,24 +1,24 @@
 // bun-inspect-complete-demo.ts - Complete Bun.inspect() and Bun.inspect.table() demonstration
 
-console.log("🎯 Bun.inspect() and Bun.inspect.table() Complete Demo");
-console.log("================================================");
+console.info("🎯 Bun.inspect() and Bun.inspect.table() Complete Demo");
+console.info("================================================");
 
 // 1. Basic Bun.inspect() usage
-console.log("\n📋 1. Basic Bun.inspect():");
+console.info("\n📋 1. Basic Bun.inspect():");
 const basicObj = { foo: "bar", number: 42, boolean: true, null: null };
-console.log("Object:", basicObj);
-console.log("String representation:");
-console.log(Bun.inspect(basicObj));
+console.info("Object:", basicObj);
+console.info("String representation:");
+console.info(Bun.inspect(basicObj));
 
 // 2. Array inspection
-console.log("\n📦 2. Array Inspection:");
+console.info("\n📦 2. Array Inspection:");
 const basicArray = new Uint8Array([1, 2, 3]);
-console.log("Uint8Array:", basicArray);
-console.log("String representation:");
-console.log(Bun.inspect(basicArray));
+console.info("Uint8Array:", basicArray);
+console.info("String representation:");
+console.info(Bun.inspect(basicArray));
 
 // 3. Complex object inspection
-console.log("\n🏗️ 3. Complex Object Inspection:");
+console.info("\n🏗️ 3. Complex Object Inspection:");
 const complexObj = {
   string: "Hello World",
   number: 3.14159,
@@ -35,12 +35,12 @@ const complexObj = {
   symbol: Symbol("test"),
 };
 
-console.log("Complex object:", complexObj);
-console.log("String representation:");
-console.log(Bun.inspect(complexObj));
+console.info("Complex object:", complexObj);
+console.info("String representation:");
+console.info(Bun.inspect(complexObj));
 
 // 4. Custom Bun.inspect.custom implementation
-console.log("\n🎨 4. Custom Bun.inspect.custom:");
+console.info("\n🎨 4. Custom Bun.inspect.custom:");
 
 class CustomClass {
   public name: string;
@@ -57,13 +57,13 @@ class CustomClass {
 }
 
 const customInstance = new CustomClass("test", 42);
-console.log("Custom class instance:");
-console.log(customInstance);
-console.log("Direct console.log output:");
-// console.log(customInstance);
+console.info("Custom class instance:");
+console.info(customInstance);
+console.info("Direct console.log output:");
+// console.info(customInstance);
 
 // 5. Nested custom inspection
-console.log("\n🔧 5. Nested Custom Inspection:");
+console.info("\n🔧 5. Nested Custom Inspection:");
 class NestedClass {
   public data: any;
 
@@ -83,35 +83,35 @@ const nestedInstance = new NestedClass({
   config: { enabled: true, timeout: 5000 },
 });
 
-console.log("Nested class instance:");
-console.log(nestedInstance);
+console.info("Nested class instance:");
+console.info(nestedInstance);
 
 // 6. Bun.inspect.table() - Basic usage
-console.log("\n📊 6. Bun.inspect.table() - Basic Usage:");
+console.info("\n📊 6. Bun.inspect.table() - Basic Usage:");
 const tableData = [
   { a: 1, b: 2, c: 3 },
   { a: 4, b: 5, c: 6 },
   { a: 7, b: 8, c: 9 },
 ];
 
-console.log("Full table (all properties):");
-console.log(Bun.inspect.table(tableData));
+console.info("Full table (all properties):");
+console.info(Bun.inspect.table(tableData));
 
 // 7. Bun.inspect.table() - Custom properties
-console.log("\n🎯 7. Bun.inspect.table() - Custom Properties:");
-console.log("Only 'a' and 'c' columns:");
-console.log(Bun.inspect.table(tableData, ["a", "c"]));
+console.info("\n🎯 7. Bun.inspect.table() - Custom Properties:");
+console.info("Only 'a' and 'c' columns:");
+console.info(Bun.inspect.table(tableData, ["a", "c"]));
 
 // 8. Bun.inspect.table() - Colors option
-console.log("\n🎨 8. Bun.inspect.table() - Colors Option:");
-console.log("With colors enabled (default):");
-console.log(Bun.inspect.table(tableData, null, { colors: true }));
+console.info("\n🎨 8. Bun.inspect.table() - Colors Option:");
+console.info("With colors enabled (default):");
+console.info(Bun.inspect.table(tableData, null, { colors: true }));
 
-console.log("\nWith colors disabled:");
-console.log(Bun.inspect.table(tableData, null, { colors: false }));
+console.info("\nWith colors disabled:");
+console.info(Bun.inspect.table(tableData, null, { colors: false }));
 
 // 9. Bun.inspect.table() - Complex data
-console.log("\n🔧 9. Bun.inspect.table() - Complex Data:");
+console.info("\n🔧 9. Bun.inspect.table() - Complex Data:");
 const complexTableData = [
   {
     id: 1,
@@ -145,8 +145,8 @@ const complexTableData = [
   },
 ];
 
-console.log("Complex data table:");
-console.log(
+console.info("Complex data table:");
+console.info(
   Bun.inspect.table(complexTableData, [
     "id",
     "name",
@@ -156,7 +156,7 @@ console.log(
 );
 
 // 10. Bun.inspect.table() - Arrays as values
-console.log("\n📋 10. Bun.inspect.table() - Arrays as Values:");
+console.info("\n📋 10. Bun.inspect.table() - Arrays as Values:");
 const arrayTableData = [
   {
     project: "Website Redesign",
@@ -174,13 +174,13 @@ const arrayTableData = [
   },
 ];
 
-console.log("Arrays as values:");
-console.log(
+console.info("Arrays as values:");
+console.info(
   Bun.inspect.table(arrayTableData, ["project", "tasks", "technologies"])
 );
 
 // 11. Bun.inspect.table() - Mixed data types
-console.log("\n🎨 11. Bun.inspect.table() - Mixed Data Types:");
+console.info("\n🎨 11. Bun.inspect.table() - Mixed Data Types:");
 const mixedTableData = [
   {
     string: "Hello World",
@@ -199,11 +199,11 @@ const mixedTableData = [
   },
 ];
 
-console.log("Mixed data types:");
-console.log(Bun.inspect.table(mixedTableData));
+console.info("Mixed data types:");
+console.info(Bun.inspect.table(mixedTableData));
 
 // 12. Bun.inspect.table() - Performance metrics
-console.log("\n⚡ 12. Bun.inspect.table() - Performance Metrics:");
+console.info("\n⚡ 12. Bun.inspect.table() - Performance Metrics:");
 const performanceTableData = [
   {
     operation: "Database Query",
@@ -234,13 +234,13 @@ const performanceTableData = [
   },
 ];
 
-console.log("Performance metrics:");
-console.log(
+console.info("Performance metrics:");
+console.info(
   Bun.inspect.table(performanceTableData, ["operation", "time", "status"])
 );
 
 // 13. Bun.inspect.table() - Unicode and special characters
-console.log("\n🌍 13. Bun.inspect.table() - Unicode and Special Characters:");
+console.info("\n🌍 13. Bun.inspect.table() - Unicode and Special Characters:");
 const unicodeTableData = [
   {
     emoji: "🚀 🎯 🏆 ⚡ 🎨 📊",
@@ -253,11 +253,11 @@ const unicodeTableData = [
   },
 ];
 
-console.log("Unicode and special characters:");
-console.log(Bun.inspect.table(unicodeTableData));
+console.info("Unicode and special characters:");
+console.info(Bun.inspect.table(unicodeTableData));
 
 // 14. Bun.inspect.table() - Error objects
-console.log("\n❌ 14. Bun.inspect.table() - Error Objects:");
+console.info("\n❌ 14. Bun.inspect.table() - Error Objects:");
 const errorTableData = [
   {
     type: "ReferenceError",
@@ -277,11 +277,11 @@ const errorTableData = [
   },
 ];
 
-console.log("Error objects:");
-console.log(Bun.inspect.table(errorTableData));
+console.info("Error objects:");
+console.info(Bun.inspect.table(errorTableData));
 
 // 15. Bun.inspect.table() - Configuration display
-console.log("\n⚙️ 15. Bun.inspect.table() - Configuration Display:");
+console.info("\n⚙️ 15. Bun.inspect.table() - Configuration Display:");
 const configTableData = [
   {
     setting: "database.url",
@@ -301,11 +301,11 @@ const configTableData = [
   { setting: "log.level", value: "info", type: "string", env: "LOG_LEVEL" },
 ];
 
-console.log("Configuration display:");
-console.log(Bun.inspect.table(configTableData));
+console.info("Configuration display:");
+console.info(Bun.inspect.table(configTableData));
 
 // 16. Bun.inspect.table() - Function results
-console.log("\n🔧 16. Bun.inspect.table() - Function Results:");
+console.info("\n🔧 16. Bun.inspect.table() - Function Results:");
 const functionTableData = [
   {
     name: "Math.sqrt",
@@ -330,39 +330,39 @@ const functionTableData = [
   },
 ];
 
-console.log("Function results:");
-console.log(Bun.inspect.table(functionTableData));
+console.info("Function results:");
+console.info(Bun.inspect.table(functionTableData));
 
 // 17. Bun.inspect.table() - Edge cases
-console.log("\n🔍 17. Bun.inspect.table() - Edge Cases:");
+console.info("\n🔍 17. Bun.inspect.table() - Edge Cases:");
 
 // Empty array
-console.log("Empty array:");
-console.log(Bun.inspect.table([]));
+console.info("Empty array:");
+console.info(Bun.inspect.table([]));
 
 // Single object
-console.log("\nSingle object:");
-console.log(Bun.inspect.table([{ only: "field", value: 42 }]));
+console.info("\nSingle object:");
+console.info(Bun.inspect.table([{ only: "field", value: 42 }]));
 
 // Object with no properties
-console.log("\nObjects with no properties:");
-console.log(Bun.inspect.table([{}, {}]));
+console.info("\nObjects with no properties:");
+console.info(Bun.inspect.table([{}, {}]));
 
 // Mixed object shapes
-console.log("\nMixed object shapes:");
+console.info("\nMixed object shapes:");
 const mixedShapesData = [
   { name: "Alice", age: 30 },
   { name: "Bob", email: "bob@example.com" }, // missing age
   { city: "Chicago", country: "USA" }, // different properties
 ];
-console.log(Bun.inspect.table(mixedShapesData));
+console.info(Bun.inspect.table(mixedShapesData));
 
 // Non-existent properties
-console.log("\nNon-existent properties:");
-console.log(Bun.inspect.table(basicData, ["name", "nonexistent", "missing"]));
+console.info("\nNon-existent properties:");
+console.info(Bun.inspect.table(basicData, ["name", "nonexistent", "missing"]));
 
 // 18. Bun.inspect.table() - Large dataset
-console.log("\n📈 18. Bun.inspect.table() - Large Dataset:");
+console.info("\n📈 18. Bun.inspect.table() - Large Dataset:");
 const largeTableData = Array.from({ length: 15 }, (_, i) => ({
   id: i + 1,
   name: `User ${i + 1}`,
@@ -374,8 +374,8 @@ const largeTableData = Array.from({ length: 15 }, (_, i) => ({
   joinDate: new Date(Date.now() - i * 86400000).toISOString().split("T")[0],
 }));
 
-console.log("Large dataset (first 10 rows):");
-console.log(
+console.info("Large dataset (first 10 rows):");
+console.info(
   Bun.inspect.table(largeTableData.slice(0, 10), [
     "id",
     "name",
@@ -384,8 +384,8 @@ console.log(
   ])
 );
 
-// 19. Bun.inspect() vs console.log() comparison
-console.log("\n🔄 19. Bun.inspect() vs console.log() Comparison:");
+// 19. Bun.inspect() vs console.info() comparison
+console.info("\n🔄 19. Bun.inspect() vs console.info() Comparison:");
 const comparisonObj = {
   name: "Test Object",
   value: 42,
@@ -393,57 +393,57 @@ const comparisonObj = {
   array: [1, 2, 3],
 };
 
-console.log("console.log() output:");
-console.log(comparisonObj);
+console.info("console.info() output:");
+console.info(comparisonObj);
 
-console.log("\nBun.inspect() string representation:");
+console.info("\nBun.inspect() string representation:");
 const inspectString = Bun.inspect(comparisonObj);
-console.log(inspectString);
+console.info(inspectString);
 
 // 20. Bun.inspect() - Circular references
-console.log("\n🔄 20. Bun.inspect() - Circular References:");
+console.info("\n🔄 20. Bun.inspect() - Circular References:");
 const circularObj: any = { name: "circular" };
 circularObj.self = circularObj;
 
-console.log("Object with circular reference:");
-console.log(Bun.inspect(circularObj));
+console.info("Object with circular reference:");
+console.info(Bun.inspect(circularObj));
 
 // 21. Bun.inspect() - Date objects
-console.log("\n📅 21. Bun.inspect() - Date Objects:");
+console.info("\n📅 21. Bun.inspect() - Date Objects:");
 const dateObj = new Date("2024-01-09T02:19:00.000Z");
-console.log("Date object:");
-console.log(dateObj);
-console.log("String representation:");
-console.log(Bun.inspect(dateObj));
+console.info("Date object:");
+console.info(dateObj);
+console.info("String representation:");
+console.info(Bun.inspect(dateObj));
 
 // 22. Bun.inspect() - Regular expressions
-console.log("\n🔍 22. Bun.inspect() - Regular Expressions:");
+console.info("\n🔍 22. Bun.inspect() - Regular Expressions:");
 const regexObj = /test/gi;
-console.log("Regular expression:");
-console.log(regexObj);
-console.log("String representation:");
-console.log(Bun.inspect(regexObj));
+console.info("Regular expression:");
+console.info(regexObj);
+console.info("String representation:");
+console.info(Bun.inspect(regexObj));
 
-console.log(
+console.info(
   "\n✅ Complete Bun.inspect() and Bun.inspect.table() demo completed!"
 );
-console.log("\n📋 Features Demonstrated:");
-console.log("   • Basic object and array inspection");
-console.log("   • Custom Bun.inspect.custom implementation");
-console.log("   • Nested custom inspection");
-console.log("   • Bun.inspect.table() with all options");
-console.log("   • Custom property selection");
-console.log("   • Color control (enabled/disabled)");
-console.log("   • Complex data handling");
-console.log("   • Arrays as values");
-console.log("   • Mixed data types");
-console.log("   • Performance metrics display");
-console.log("   • Unicode and special characters");
-console.log("   • Error object handling");
-console.log("   • Configuration display");
-console.log("   • Function results");
-console.log("   • Edge cases and error handling");
-console.log("   • Large dataset performance");
-console.log("   • Comparison with console.log()");
-console.log("   • Circular reference handling");
-console.log("   • Date and regex inspection");
+console.info("\n📋 Features Demonstrated:");
+console.info("   • Basic object and array inspection");
+console.info("   • Custom Bun.inspect.custom implementation");
+console.info("   • Nested custom inspection");
+console.info("   • Bun.inspect.table() with all options");
+console.info("   • Custom property selection");
+console.info("   • Color control (enabled/disabled)");
+console.info("   • Complex data handling");
+console.info("   • Arrays as values");
+console.info("   • Mixed data types");
+console.info("   • Performance metrics display");
+console.info("   • Unicode and special characters");
+console.info("   • Error object handling");
+console.info("   • Configuration display");
+console.info("   • Function results");
+console.info("   • Edge cases and error handling");
+console.info("   • Large dataset performance");
+console.info("   • Comparison with console.info()");
+console.info("   • Circular reference handling");
+console.info("   • Date and regex inspection");

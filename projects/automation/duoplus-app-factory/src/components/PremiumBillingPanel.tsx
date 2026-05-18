@@ -110,8 +110,8 @@ if (feature("PREMIUM")) {
           <button>💳 Manage Payment Method</button>
           <button>📊 View Invoices</button>
           <button>👥 Add Team Member</button>
-          <button onClick={() => console.log('🚀 Launch DuoPlus RPA Panel')}>🤖 DuoPlus RPA</button>
-          <button onClick={() => console.log('🧬 Launch Identity Silo')}>🧬 Identity Silo</button>
+          <button onClick={() => console.info('🚀 Launch DuoPlus RPA Panel')}>🤖 DuoPlus RPA</button>
+          <button onClick={() => console.info('🧬 Launch Identity Silo')}>🧬 Identity Silo</button>
         </div>
       </div>
     );
@@ -313,5 +313,5 @@ if (feature("PREMIUM")) {
 } else {
   // Compile-time elimination for free tier
   // This file will be completely stripped from free builds
-  console.log("PREMIUM features not available in free tier");
+  console.info("PREMIUM features not available in free tier");
 }

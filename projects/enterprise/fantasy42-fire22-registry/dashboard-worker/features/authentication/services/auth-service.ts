@@ -47,7 +47,7 @@ export class AuthService extends BaseService {
 
   async initialize(): Promise<void> {
     await super.initialize();
-    console.log('Authentication service initialized successfully');
+    console.info('Authentication service initialized successfully');
   }
 
   /**
@@ -241,7 +241,7 @@ export class AuthService extends BaseService {
   private async updatePasswordHash(userId: string, newPassword: string): Promise<void> {
     // In a real implementation, hash and store password
     // For now, just log
-    console.log(`Password updated for user ${userId}`);
+    console.info(`Password updated for user ${userId}`);
   }
 
   /**

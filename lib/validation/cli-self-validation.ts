@@ -207,33 +207,33 @@ export async function validateAndReport(
   args: string[] = [],
   autoHeal: boolean = true
 ): Promise<void> {
-  console.log(`🔍 Validating ${toolName}...`);
+  console.info(`🔍 Validating ${toolName}...`);
 
   const result = await CLISelfValidator.validateBeforeExecution({
     toolName,
     args,
     autoHeal,
     onValidationError: (errors, fixes) => {
-      console.log('❌ Validation failed:');
-      errors.forEach(error => console.log(`   Error: ${error}`));
+      console.info('❌ Validation failed:');
+      errors.forEach(error => console.info(`   Error: ${error}`));
       if (autoHeal) {
-        console.log('🔧 Auto-fixes applied:');
-        fixes.forEach(fix => console.log(`   Fix: ${fix}`));
+        console.info('🔧 Auto-fixes applied:');
+        fixes.forEach(fix => console.info(`   Fix: ${fix}`));
       }
     },
     onValidationSuccess: () => {
-      console.log('✅ Validation passed!');
+      console.info('✅ Validation passed!');
     },
   });
 
   if (result.healedIssues.length > 0) {
-    console.log('🔧 Issues healed:');
-    result.healedIssues.forEach(issue => console.log(`   ${issue}`));
+    console.info('🔧 Issues healed:');
+    result.healedIssues.forEach(issue => console.info(`   ${issue}`));
   }
 
   if (!result.canProceed) {
-    console.log('\n💡 To fix manually:');
-    result.fixes.forEach(fix => console.log(`   ${fix}`));
+    console.info('\n💡 To fix manually:');
+    result.fixes.forEach(fix => console.info(`   ${fix}`));
     process.exit(1);
   }
 }
@@ -266,8 +266,8 @@ export function validateCLI(config: Partial<SelfValidationConfig> = {}) {
       }
 
       if (validation.healedIssues.length > 0) {
-        console.log(`🔧 Auto-fixed issues for ${toolName}:`);
-        validation.healedIssues.forEach(issue => console.log(`  ${issue}`));
+        console.info(`🔧 Auto-fixed issues for ${toolName}:`);
+        validation.healedIssues.forEach(issue => console.info(`  ${issue}`));
       }
 
       return method.apply(this, args);

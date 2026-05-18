@@ -74,12 +74,12 @@ class ShortcutApp {
   // Initialize application with configuration
   async initialize(): Promise<void> {
     if (this.isInitialized) {
-      console.log('⚠️ Application already initialized');
+      console.info('⚠️ Application already initialized');
       return;
     }
 
     try {
-      console.log(`🚀 Initializing ${this.config.app.name} v${this.config.app.version}`);
+      console.info(`🚀 Initializing ${this.config.app.name} v${this.config.app.version}`);
       
       // Load environment-specific configuration
       this.envConfig = await loadEnvironmentConfig();
@@ -91,7 +91,7 @@ class ShortcutApp {
       this.setupPerformance();
       
       this.isInitialized = true;
-      console.log('✅ Application initialized successfully');
+      console.info('✅ Application initialized successfully');
       
     } catch (error) {
       console.error('❌ Failed to initialize application:', error);
@@ -104,11 +104,11 @@ class ShortcutApp {
     const dbConfig = this.config.database;
     const envDbConfig = this.envConfig.database;
     
-    console.log(`🗄️ Setting up database:`);
-    console.log(`   Type: ${dbConfig.connection.type}`);
-    console.log(`   Path: ${envDbConfig.path}`);
-    console.log(`   Max connections: ${envDbConfig.max_connections}`);
-    console.log(`   Journal mode: ${dbConfig.connection.journal_mode}`);
+    console.info(`🗄️ Setting up database:`);
+    console.info(`   Type: ${dbConfig.connection.type}`);
+    console.info(`   Path: ${envDbConfig.path}`);
+    console.info(`   Max connections: ${envDbConfig.max_connections}`);
+    console.info(`   Journal mode: ${dbConfig.connection.journal_mode}`);
     
     // Database initialization logic would go here
     // This is where you'd use the configuration values
@@ -119,11 +119,11 @@ class ShortcutApp {
     const logConfig = this.config.logging;
     const envLogConfig = this.envConfig.logging;
     
-    console.log(`📝 Setting up logging:`);
-    console.log(`   Level: ${envLogConfig.level}`);
-    console.log(`   Console: ${envLogConfig.console}`);
-    console.log(`   File: ${logConfig.outputs.file.enabled}`);
-    console.log(`   File path: ${logConfig.outputs.file.path}`);
+    console.info(`📝 Setting up logging:`);
+    console.info(`   Level: ${envLogConfig.level}`);
+    console.info(`   Console: ${envLogConfig.console}`);
+    console.info(`   File: ${logConfig.outputs.file.enabled}`);
+    console.info(`   File path: ${logConfig.outputs.file.path}`);
     
     // Logging initialization logic would go here
   }
@@ -132,12 +132,12 @@ class ShortcutApp {
   private setupUnicode(): void {
     const unicodeConfig = this.config.unicode;
     
-    console.log(`🌐 Setting up Unicode processing:`);
-    console.log(`   Intl.Segmenter: ${unicodeConfig.grapheme_clustering.use_intl_segmenter ? 'Enabled' : 'Disabled'}`);
-    console.log(`   Fallback: ${unicodeConfig.grapheme_clustering.enable_fallback ? 'Enabled' : 'Disabled'}`);
-    console.log(`   Cache size: ${unicodeConfig.grapheme_clustering.cache_size}`);
-    console.log(`   Supported locales: ${unicodeConfig.grapheme_clustering.supported_locales.join(', ')}`);
-    console.log(`   Max text length: ${unicodeConfig.limits.max_text_length}`);
+    console.info(`🌐 Setting up Unicode processing:`);
+    console.info(`   Intl.Segmenter: ${unicodeConfig.grapheme_clustering.use_intl_segmenter ? 'Enabled' : 'Disabled'}`);
+    console.info(`   Fallback: ${unicodeConfig.grapheme_clustering.enable_fallback ? 'Enabled' : 'Disabled'}`);
+    console.info(`   Cache size: ${unicodeConfig.grapheme_clustering.cache_size}`);
+    console.info(`   Supported locales: ${unicodeConfig.grapheme_clustering.supported_locales.join(', ')}`);
+    console.info(`   Max text length: ${unicodeConfig.limits.max_text_length}`);
     
     // Unicode processing initialization would go here
   }
@@ -146,11 +146,11 @@ class ShortcutApp {
   private setupPerformance(): void {
     const perfConfig = this.config.performance;
     
-    console.log(`⚡ Setting up performance monitoring:`);
-    console.log(`   Metrics enabled: ${perfConfig.metrics.enabled}`);
-    console.log(`   Collection interval: ${perfConfig.metrics.collection_interval}s`);
-    console.log(`   Memory cache: ${perfConfig.cache.memory.enabled ? 'Enabled' : 'Disabled'}`);
-    console.log(`   Disk cache: ${perfConfig.cache.disk.enabled ? 'Enabled' : 'Disabled'}`);
+    console.info(`⚡ Setting up performance monitoring:`);
+    console.info(`   Metrics enabled: ${perfConfig.metrics.enabled}`);
+    console.info(`   Collection interval: ${perfConfig.metrics.collection_interval}s`);
+    console.info(`   Memory cache: ${perfConfig.cache.memory.enabled ? 'Enabled' : 'Disabled'}`);
+    console.info(`   Disk cache: ${perfConfig.cache.disk.enabled ? 'Enabled' : 'Disabled'}`);
     
     // Performance monitoring setup would go here
   }
@@ -174,7 +174,7 @@ class ShortcutApp {
 
   // Reload configuration
   async reloadConfig(): Promise<void> {
-    console.log('🔄 Reloading configuration...');
+    console.info('🔄 Reloading configuration...');
     
     try {
       // Dynamic import of updated configuration
@@ -189,7 +189,7 @@ class ShortcutApp {
       this.isInitialized = false;
       await this.initialize();
       
-      console.log('✅ Configuration reloaded successfully');
+      console.info('✅ Configuration reloaded successfully');
     } catch (error) {
       console.error('❌ Failed to reload configuration:', error);
       throw error;
@@ -249,7 +249,7 @@ export function validateConfig(config: typeof appConfig): boolean {
       throw new Error('Unicode configuration is required');
     }
     
-    console.log('✅ Configuration validation passed');
+    console.info('✅ Configuration validation passed');
     return true;
   } catch (error) {
     console.error('❌ Configuration validation failed:', error);
@@ -282,31 +282,31 @@ export async function createApp(): Promise<ShortcutApp> {
 
 // Example 1: Basic usage with static imports
 export async function basicUsage() {
-  console.log('📦 Using static TOML imports:');
-  console.log(`App: ${appConfig.app.name}`);
-  console.log(`Version: ${appConfig.app.version}`);
-  console.log(`Database: ${appConfig.database.connection.type}`);
+  console.info('📦 Using static TOML imports:');
+  console.info(`App: ${appConfig.app.name}`);
+  console.info(`Version: ${appConfig.app.version}`);
+  console.info(`Database: ${appConfig.database.connection.type}`);
 }
 
 // Example 2: Dynamic configuration loading
 export async function dynamicUsage() {
-  console.log('🔄 Using dynamic TOML imports:');
+  console.info('🔄 Using dynamic TOML imports:');
   
   const devConfig = await loadConfigForEnvironment('development');
-  console.log(`Dev config loaded: ${devConfig.app.name}`);
+  console.info(`Dev config loaded: ${devConfig.app.name}`);
   
   const prodConfig = await loadConfigForEnvironment('production');
-  console.log(`Prod config loaded: ${prodConfig.app.name}`);
+  console.info(`Prod config loaded: ${prodConfig.app.name}`);
 }
 
 // Example 3: Application with configuration
 export async function appWithConfig() {
   const app = await createApp();
   
-  console.log('🎮 Application running with configuration:');
-  console.log(`Environment: ${app.getEnvironmentConfig().env}`);
-  console.log(`Database: ${app.getConfigValue('database.connection.path')}`);
-  console.log(`Unicode enabled: ${app.getConfigValue('unicode.grapheme_clustering.use_intl_segmenter')}`);
+  console.info('🎮 Application running with configuration:');
+  console.info(`Environment: ${app.getEnvironmentConfig().env}`);
+  console.info(`Database: ${app.getConfigValue('database.connection.path')}`);
+  console.info(`Unicode enabled: ${app.getConfigValue('unicode.grapheme_clustering.use_intl_segmenter')}`);
   
   return app;
 }

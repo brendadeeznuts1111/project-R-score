@@ -408,17 +408,17 @@ export async function initAgent(): Promise<{
 	semver: VersionCheckResult;
 	unicode: UnicodeCheckResult;
 }> {
-	console.log("🚀 Initializing Tier-1380 OMEGA Agent...\n");
+	console.info("🚀 Initializing Tier-1380 OMEGA Agent...\n");
 
 	// Check semver
 	const semverResult = checkSemver();
-	console.log(formatVersionReport(semverResult));
-	console.log("\n");
+	console.info(formatVersionReport(semverResult));
+	console.info("\n");
 
 	// Check Unicode
 	const unicodeResult = checkUnicode();
-	console.log(formatUnicodeReport(unicodeResult));
-	console.log("\n");
+	console.info(formatUnicodeReport(unicodeResult));
+	console.info("\n");
 
 	// Exit if critical checks fail
 	if (!semverResult.valid) {
@@ -430,7 +430,7 @@ export async function initAgent(): Promise<{
 		console.warn("⚠️  Warning: Full Unicode support not available");
 	}
 
-	console.log("✅ Agent initialization complete");
+	console.info("✅ Agent initialization complete");
 
 	return { semver: semverResult, unicode: unicodeResult };
 }
@@ -443,12 +443,12 @@ if (import.meta.main) {
 	switch (command) {
 		case "check-version":
 		case "version":
-			console.log(formatVersionReport(checkSemver()));
+			console.info(formatVersionReport(checkSemver()));
 			break;
 
 		case "check-unicode":
 		case "unicode":
-			console.log(formatUnicodeReport(checkUnicode()));
+			console.info(formatUnicodeReport(checkUnicode()));
 			break;
 
 		case "check-all":
@@ -461,7 +461,7 @@ if (import.meta.main) {
 				console.error("Usage: agent-workflow.ts col89 <text>");
 				process.exit(1);
 			}
-			console.log(formatCol89Result(checkCol89(arg)));
+			console.info(formatCol89Result(checkCol89(arg)));
 			break;
 
 		case "width":
@@ -469,8 +469,8 @@ if (import.meta.main) {
 				console.error("Usage: agent-workflow.ts width <text>");
 				process.exit(1);
 			}
-			console.log(`Width: ${getStringWidth(arg)} columns`);
-			console.log(`GB9c Aware: Yes (Bun ${Bun.version})`);
+			console.info(`Width: ${getStringWidth(arg)} columns`);
+			console.info(`GB9c Aware: Yes (Bun ${Bun.version})`);
 			break;
 
 		case "wrap": {
@@ -482,14 +482,14 @@ if (import.meta.main) {
 				wordWrap: true,
 				trim: true,
 			});
-			console.log(wrapped);
+			console.info(wrapped);
 			break;
 		}
 
 		case "indic": {
 			// Run Indic GB9c test suite
 			const results = runIndicTests();
-			console.log(formatIndicTestResults(results));
+			console.info(formatIndicTestResults(results));
 			break;
 		}
 
@@ -505,17 +505,17 @@ if (import.meta.main) {
 			const audits: Col89AuditEntry[] = [];
 			const passes = enforceCol89WithUnicodeSafety(testLines, audits);
 
-			console.log("Test Results:");
+			console.info("Test Results:");
 			testLines.forEach((line, i) => {
 				const width = getStringWidth(line);
-				console.log(
+				console.info(
 					`  ${passes[i] ? "✅" : "❌"} [${width.toString().padStart(3)}] ${line.slice(0, 40)}`,
 				);
 			});
 
 			if (audits.length > 0) {
-				console.log("\n📊 Audit Report:");
-				console.log(
+				console.info("\n📊 Audit Report:");
+				console.info(
 					Bun.inspect.table(audits, [
 						"event",
 						"computed_width",
@@ -526,14 +526,14 @@ if (import.meta.main) {
 
 				// Upload to R2 if --upload flag is set
 				if (Bun.argv.includes("--upload")) {
-					console.log("\n📤 Uploading to R2...");
+					console.info("\n📤 Uploading to R2...");
 					try {
 						const { uploadCol89Report } = await import("./agent-r2-integration");
 						const result = await uploadCol89Report(audits, {
 							tier: "1380",
 						});
-						console.log(`   Uploaded: ${result.key}`);
-						console.log(`   URL: ${result.url.slice(0, 60)}...`);
+						console.info(`   Uploaded: ${result.key}`);
+						console.info(`   URL: ${result.url.slice(0, 60)}...`);
 					} catch (e) {
 						console.error(
 							"   ❌ Upload failed:",
@@ -547,7 +547,7 @@ if (import.meta.main) {
 
 		case "upload-version": {
 			// Upload version check to R2
-			console.log("📤 Uploading version check to R2...");
+			console.info("📤 Uploading version check to R2...");
 			try {
 				const { uploadVersionReport } = await import("./agent-r2-integration");
 				const result = await uploadVersionReport(
@@ -560,8 +560,8 @@ if (import.meta.main) {
 					},
 					{ tier: "1380" },
 				);
-				console.log(`   Uploaded: ${result.key}`);
-				console.log(`   URL: ${result.url.slice(0, 60)}...`);
+				console.info(`   Uploaded: ${result.key}`);
+				console.info(`   URL: ${result.url.slice(0, 60)}...`);
 			} catch (e) {
 				console.error(
 					"   ❌ Upload failed:",
@@ -572,26 +572,26 @@ if (import.meta.main) {
 		}
 
 		default:
-			console.log("Tier-1380 OMEGA Agent Workflow");
-			console.log("");
-			console.log("Commands:");
-			console.log("  check-version, version  Check Bun semver compatibility");
-			console.log("  check-unicode, unicode  Verify Unicode/Col-89 support");
-			console.log("  check-all, init         Run all initialization checks");
-			console.log("  col89 <text>            Check if text is Col-89 compliant");
-			console.log("  width <text>            Get Unicode-aware string width");
-			console.log("  wrap <text>             Wrap text to 89 columns");
-			console.log("  indic                   Run Indic GB9c test suite");
-			console.log("  enforce [--upload]      Run Col-89 enforcement demo");
-			console.log("  upload-version          Upload version check to R2");
-			console.log("  help                    Show this help");
-			console.log("");
-			console.log("Examples:");
-			console.log('  bun agent-workflow.ts col89 "क्षित्रिय"');
-			console.log('  bun agent-workflow.ts width "Hello 🦊 World"');
-			console.log("  bun agent-workflow.ts indic");
-			console.log("  bun agent-workflow.ts enforce --upload");
-			console.log("  bun agent-workflow.ts upload-version");
+			console.info("Tier-1380 OMEGA Agent Workflow");
+			console.info("");
+			console.info("Commands:");
+			console.info("  check-version, version  Check Bun semver compatibility");
+			console.info("  check-unicode, unicode  Verify Unicode/Col-89 support");
+			console.info("  check-all, init         Run all initialization checks");
+			console.info("  col89 <text>            Check if text is Col-89 compliant");
+			console.info("  width <text>            Get Unicode-aware string width");
+			console.info("  wrap <text>             Wrap text to 89 columns");
+			console.info("  indic                   Run Indic GB9c test suite");
+			console.info("  enforce [--upload]      Run Col-89 enforcement demo");
+			console.info("  upload-version          Upload version check to R2");
+			console.info("  help                    Show this help");
+			console.info("");
+			console.info("Examples:");
+			console.info('  bun agent-workflow.ts col89 "क्षित्रिय"');
+			console.info('  bun agent-workflow.ts width "Hello 🦊 World"');
+			console.info("  bun agent-workflow.ts indic");
+			console.info("  bun agent-workflow.ts enforce --upload");
+			console.info("  bun agent-workflow.ts upload-version");
 			break;
 	}
 }

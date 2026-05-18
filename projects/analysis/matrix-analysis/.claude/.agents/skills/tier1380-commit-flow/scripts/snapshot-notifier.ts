@@ -28,8 +28,8 @@ class SnapshotNotifier {
 			fetch: (req) => this.handleRequest(req),
 		});
 
-		console.log(`📡 Snapshot notifier running on http://localhost:${this.port}`);
-		console.log(`   SSE endpoint: http://localhost:${this.port}/events`);
+		console.info(`📡 Snapshot notifier running on http://localhost:${this.port}`);
+		console.info(`   SSE endpoint: http://localhost:${this.port}/events`);
 	}
 
 	private handleRequest(req: Request): Response {
@@ -86,7 +86,7 @@ class SnapshotNotifier {
 
 		// Also log to console (Col-89 safe)
 		const logLine = `Snapshot ${event.type}: ${event.tenant}/${event.filename.slice(0, 30)}`;
-		console.log(logLine.length > 89 ? `${logLine.slice(0, 86)}…` : logLine);
+		console.info(logLine.length > 89 ? `${logLine.slice(0, 86)}…` : logLine);
 	}
 
 	notifyCreated(tenant: string, filename: string, sha256: string, size: number): void {
@@ -133,10 +133,10 @@ if (import.meta.main) {
 		10,
 	);
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Snapshot Notifier                  ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Snapshot Notifier                  ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	const notifier = new SnapshotNotifier(port);
 	notifier.start();

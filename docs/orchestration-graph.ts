@@ -52,5 +52,5 @@ if (import.meta.main) {
     console.error(`Unknown graph type: ${key}`);
     process.exit(1);
   }
-  console.log(renderGraph(key));
+  console.info(renderGraph(key));
 }

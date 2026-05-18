@@ -72,7 +72,7 @@ class TelegramBridge {
   private stickerCache: StickerCache = { version: 1, stickers: {} };
 
   async init(): Promise<void> {
-    console.log(`${COLORS.cyan}📱 Initializing Telegram Bridge${COLORS.reset}`);
+    console.info(`${COLORS.cyan}📱 Initializing Telegram Bridge${COLORS.reset}`);
     await this.loadAccounts();
     await this.loadStickerCache();
   }
@@ -86,7 +86,7 @@ class TelegramBridge {
       if (existsSync(cachePath)) {
         const content = readFileSync(cachePath, "utf-8");
         this.stickerCache = JSON.parse(content);
-        console.log(`   ${COLORS.green}✓${COLORS.reset} Loaded ${Object.keys(this.stickerCache.stickers).length} cached stickers`);
+        console.info(`   ${COLORS.green}✓${COLORS.reset} Loaded ${Object.keys(this.stickerCache.stickers).length} cached stickers`);
       }
     } catch {
       // No cache yet
@@ -145,13 +145,13 @@ class TelegramBridge {
         this.accounts = config.accounts || [];
         this.defaultAccount = config.defaultAccount;
         
-        console.log(`   ${COLORS.green}✓${COLORS.reset} Loaded ${this.accounts.length} Telegram account(s)`);
+        console.info(`   ${COLORS.green}✓${COLORS.reset} Loaded ${this.accounts.length} Telegram account(s)`);
       } else {
-        console.log(`   ${COLORS.yellow}⚠${COLORS.reset} No Telegram accounts configured`);
-        console.log(`      Run: cd ~/openclaw && bun run cli channels add telegram`);
+        console.info(`   ${COLORS.yellow}⚠${COLORS.reset} No Telegram accounts configured`);
+        console.info(`      Run: cd ~/openclaw && bun run cli channels add telegram`);
       }
     } catch (error) {
-      console.log(`   ${COLORS.red}✗${COLORS.reset} Failed to load accounts: ${error}`);
+      console.info(`   ${COLORS.red}✗${COLORS.reset} Failed to load accounts: ${error}`);
     }
   }
 
@@ -427,10 +427,10 @@ async function main() {
   switch (command) {
     case "status": {
       const status = bridge.getStatus();
-      console.log(`\n${COLORS.bold}Telegram Bridge Status:${COLORS.reset}`);
-      console.log(`   Accounts: ${status.accounts}`);
-      console.log(`   Default: ${status.defaultAccount || "none"}`);
-      console.log(`   Names: ${status.accountNames.join(", ") || "none"}`);
+      console.info(`\n${COLORS.bold}Telegram Bridge Status:${COLORS.reset}`);
+      console.info(`   Accounts: ${status.accounts}`);
+      console.info(`   Default: ${status.defaultAccount || "none"}`);
+      console.info(`   Names: ${status.accountNames.join(", ") || "none"}`);
       break;
     }
 
@@ -444,7 +444,7 @@ async function main() {
       }
 
       const result = await bridge.sendMessage(chatId, text);
-      console.log(result.success 
+      console.info(result.success 
         ? `${COLORS.green}✓${COLORS.reset} Message sent (ID: ${result.messageId})`
         : `${COLORS.red}✗${COLORS.reset} Error: ${result.error}`
       );
@@ -463,7 +463,7 @@ async function main() {
       }
 
       const result = await bridge.react(chatId, messageId, emoji);
-      console.log(result.success
+      console.info(result.success
         ? `${COLORS.green}✓${COLORS.reset} Reacted with ${emoji}`
         : `${COLORS.red}✗${COLORS.reset} Error: ${result.error}`
       );
@@ -480,7 +480,7 @@ async function main() {
       }
 
       const result = await bridge.sendSticker(chatId, sticker);
-      console.log(result.success
+      console.info(result.success
         ? `${COLORS.green}✓${COLORS.reset} Sticker sent`
         : `${COLORS.red}✗${COLORS.reset} Error: ${result.error}`
       );
@@ -498,7 +498,7 @@ async function main() {
       }
 
       const result = await bridge.editMessage(chatId, messageId, newText);
-      console.log(result.success
+      console.info(result.success
         ? `${COLORS.green}✓${COLORS.reset} Message edited`
         : `${COLORS.red}✗${COLORS.reset} Error: ${result.error}`
       );
@@ -515,7 +515,7 @@ async function main() {
       }
 
       const result = await bridge.deleteMessage(chatId, messageId);
-      console.log(result.success
+      console.info(result.success
         ? `${COLORS.green}✓${COLORS.reset} Message deleted`
         : `${COLORS.red}✗${COLORS.reset} Error: ${result.error}`
       );
@@ -532,13 +532,13 @@ async function main() {
 
       const result = await bridge.getChatInfo(chatId);
       if (result.success && result.info) {
-        console.log(`\n${COLORS.bold}Chat Info:${COLORS.reset}`);
-        console.log(`   ID: ${result.info.id}`);
-        console.log(`   Title: ${result.info.title || "N/A"}`);
-        console.log(`   Type: ${result.info.type}`);
-        console.log(`   Members: ${result.info.memberCount || "N/A"}`);
+        console.info(`\n${COLORS.bold}Chat Info:${COLORS.reset}`);
+        console.info(`   ID: ${result.info.id}`);
+        console.info(`   Title: ${result.info.title || "N/A"}`);
+        console.info(`   Type: ${result.info.type}`);
+        console.info(`   Members: ${result.info.memberCount || "N/A"}`);
       } else {
-        console.log(`${COLORS.red}✗${COLORS.reset} Error: ${result.error}`);
+        console.info(`${COLORS.red}✗${COLORS.reset} Error: ${result.error}`);
       }
       break;
     }
@@ -546,8 +546,8 @@ async function main() {
     case "stickers": {
       const result = await bridge.listStickerSets();
       if (result.success) {
-        console.log(`\n${COLORS.bold}Available Sticker Sets:${COLORS.reset}`);
-        result.sets?.forEach(set => console.log(`   • ${set}`));
+        console.info(`\n${COLORS.bold}Available Sticker Sets:${COLORS.reset}`);
+        result.sets?.forEach(set => console.info(`   • ${set}`));
       }
       break;
     }
@@ -559,9 +559,9 @@ async function main() {
         process.exit(1);
       }
       const stickers = bridge.searchStickers(query);
-      console.log(`\n${COLORS.bold}Search Results:${COLORS.reset}`);
+      console.info(`\n${COLORS.bold}Search Results:${COLORS.reset}`);
       stickers.forEach(s => {
-        console.log(`   ${s.emoji || "🎭"} ${s.description.slice(0, 40)} (${s.setName || "unknown set"})`);
+        console.info(`   ${s.emoji || "🎭"} ${s.description.slice(0, 40)} (${s.setName || "unknown set"})`);
       });
       break;
     }
@@ -570,32 +570,32 @@ async function main() {
       const accountId = args[1];
       const level = bridge.getReactionLevel(accountId);
       const canReact = bridge.canReact(accountId);
-      console.log(`\n${COLORS.bold}Reaction Settings:${COLORS.reset}`);
-      console.log(`   Level: ${COLORS.cyan}${level}${COLORS.reset}`);
-      console.log(`   Can React: ${canReact ? `${COLORS.green}✓` : `${COLORS.red}✗`}${COLORS.reset}`);
+      console.info(`\n${COLORS.bold}Reaction Settings:${COLORS.reset}`);
+      console.info(`   Level: ${COLORS.cyan}${level}${COLORS.reset}`);
+      console.info(`   Can React: ${canReact ? `${COLORS.green}✓` : `${COLORS.red}✗`}${COLORS.reset}`);
       break;
     }
 
     default: {
-      console.log(`${COLORS.bold}📱 Matrix Agent Telegram Bridge${COLORS.reset}\n`);
-      console.log("Usage:");
-      console.log("  telegram-bridge.ts status                Show bridge status");
-      console.log("  telegram-bridge.ts send <chatId> <text>  Send message");
-      console.log("  telegram-bridge.ts react <chatId> <msgId> <emoji>  React to message");
-      console.log("  telegram-bridge.ts sticker <chatId> <sticker>      Send sticker");
-      console.log("  telegram-bridge.ts edit <chatId> <msgId> <text>    Edit message");
-      console.log("  telegram-bridge.ts delete <chatId> <msgId>         Delete message");
-      console.log("  telegram-bridge.ts info <chatId>         Get chat info");
-      console.log("  telegram-bridge.ts stickers              List sticker sets");
-      console.log("  telegram-bridge.ts search-stickers <q>   Search cached stickers");
-      console.log("  telegram-bridge.ts reaction-level [id]   Show reaction level");
-      console.log("\nFeatures:");
-      console.log("  • Send messages with inline buttons");
-      console.log("  • React with 100+ emojis (👍 ❤️ 🔥 🎉 🤩 😱 👏)");
-      console.log("  • Send stickers with cache search");
-      console.log("  • Edit and delete messages");
-      console.log("  • Multi-account with reaction levels");
-      console.log("  • Draft streaming support");
+      console.info(`${COLORS.bold}📱 Matrix Agent Telegram Bridge${COLORS.reset}\n`);
+      console.info("Usage:");
+      console.info("  telegram-bridge.ts status                Show bridge status");
+      console.info("  telegram-bridge.ts send <chatId> <text>  Send message");
+      console.info("  telegram-bridge.ts react <chatId> <msgId> <emoji>  React to message");
+      console.info("  telegram-bridge.ts sticker <chatId> <sticker>      Send sticker");
+      console.info("  telegram-bridge.ts edit <chatId> <msgId> <text>    Edit message");
+      console.info("  telegram-bridge.ts delete <chatId> <msgId>         Delete message");
+      console.info("  telegram-bridge.ts info <chatId>         Get chat info");
+      console.info("  telegram-bridge.ts stickers              List sticker sets");
+      console.info("  telegram-bridge.ts search-stickers <q>   Search cached stickers");
+      console.info("  telegram-bridge.ts reaction-level [id]   Show reaction level");
+      console.info("\nFeatures:");
+      console.info("  • Send messages with inline buttons");
+      console.info("  • React with 100+ emojis (👍 ❤️ 🔥 🎉 🤩 😱 👏)");
+      console.info("  • Send stickers with cache search");
+      console.info("  • Edit and delete messages");
+      console.info("  • Multi-account with reaction levels");
+      console.info("  • Draft streaming support");
     }
   }
 }

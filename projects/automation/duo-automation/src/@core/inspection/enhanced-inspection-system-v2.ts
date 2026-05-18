@@ -80,7 +80,7 @@ export class InspectionStats {
     const total = this.inspections.length;
     const avgDuration = this.inspections.reduce((sum, i) => sum + i.duration, 0) / total || 0;
     const errors = this.inspections.filter(i => i.error).length;
-    console.log(`Inspection Stats:
+    console.info(`Inspection Stats:
   Total: ${total}
   Avg Duration: ${avgDuration.toFixed(4)}ms
   Errors: ${errors}`);

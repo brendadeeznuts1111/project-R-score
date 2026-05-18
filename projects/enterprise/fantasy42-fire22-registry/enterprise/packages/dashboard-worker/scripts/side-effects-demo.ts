@@ -28,7 +28,7 @@ class SideEffectsOptimizationDemo {
   private packages = ['env-manager', 'middleware', 'testing-framework', 'wager-system'];
 
   async run(): Promise<void> {
-    console.log('🚀 SideEffects Optimization Demo\n');
+    console.info('🚀 SideEffects Optimization Demo\n');
 
     // Check current Bun version
     await this.checkBunVersion();
@@ -49,20 +49,20 @@ class SideEffectsOptimizationDemo {
   private async checkBunVersion(): Promise<void> {
     try {
       const version = await $`bun --version`.text();
-      console.log(`📦 Bun Version: ${version.trim()}`);
+      console.info(`📦 Bun Version: ${version.trim()}`);
 
       if (version.includes('1.0.0') || parseInt(version.split('.')[1]) >= 0) {
-        console.log('✅ Glob patterns in sideEffects are supported!\n');
+        console.info('✅ Glob patterns in sideEffects are supported!\n');
       } else {
-        console.log('⚠️  Consider upgrading Bun for full sideEffects support\n');
+        console.info('⚠️  Consider upgrading Bun for full sideEffects support\n');
       }
     } catch (error) {
-      console.log('❌ Could not determine Bun version\n');
+      console.info('❌ Could not determine Bun version\n');
     }
   }
 
   private async analyzeBundleSizes(): Promise<BundleAnalysis[]> {
-    console.log('📊 Analyzing Bundle Sizes...\n');
+    console.info('📊 Analyzing Bundle Sizes...\n');
 
     const analysis: BundleAnalysis[] = [];
 
@@ -82,14 +82,14 @@ class SideEffectsOptimizationDemo {
           reductionPercent,
         });
 
-        console.log(`📦 ${pkg}:`);
-        console.log(`   Before: ${this.formatBytes(beforeSize)}`);
-        console.log(`   After:  ${this.formatBytes(afterSize)}`);
-        console.log(
+        console.info(`📦 ${pkg}:`);
+        console.info(`   Before: ${this.formatBytes(beforeSize)}`);
+        console.info(`   After:  ${this.formatBytes(afterSize)}`);
+        console.info(
           `   Saved:  ${this.formatBytes(reduction)} (${reductionPercent.toFixed(1)}%)\n`
         );
       } catch (error) {
-        console.log(`❌ Error analyzing ${pkg}: ${error}\n`);
+        console.info(`❌ Error analyzing ${pkg}: ${error}\n`);
       }
     }
 
@@ -97,7 +97,7 @@ class SideEffectsOptimizationDemo {
   }
 
   private async analyzeTreeShaking(): Promise<TreeShakingMetrics> {
-    console.log('🌳 Analyzing Tree-Shaking Effectiveness...\n');
+    console.info('🌳 Analyzing Tree-Shaking Effectiveness...\n');
 
     // Simulate tree-shaking analysis
     const totalModules = 150;
@@ -105,11 +105,11 @@ class SideEffectsOptimizationDemo {
     const unusedModules = totalModules - usedModules;
     const treeShakingEfficiency = (unusedModules / totalModules) * 100;
 
-    console.log(`📈 Tree-Shaking Metrics:`);
-    console.log(`   Total Modules: ${totalModules}`);
-    console.log(`   Used Modules: ${usedModules}`);
-    console.log(`   Unused Modules: ${unusedModules}`);
-    console.log(`   Efficiency: ${treeShakingEfficiency.toFixed(1)}%\n`);
+    console.info(`📈 Tree-Shaking Metrics:`);
+    console.info(`   Total Modules: ${totalModules}`);
+    console.info(`   Used Modules: ${usedModules}`);
+    console.info(`   Unused Modules: ${unusedModules}`);
+    console.info(`   Efficiency: ${treeShakingEfficiency.toFixed(1)}%\n`);
 
     return {
       totalModules,
@@ -120,7 +120,7 @@ class SideEffectsOptimizationDemo {
   }
 
   private async showOptimizationRecommendations(): Promise<void> {
-    console.log('💡 Optimization Recommendations:\n');
+    console.info('💡 Optimization Recommendations:\n');
 
     const recommendations = [
       {
@@ -150,10 +150,10 @@ class SideEffectsOptimizationDemo {
     ];
 
     for (const rec of recommendations) {
-      console.log(`📦 ${rec.package}:`);
-      console.log(`   Current: ${rec.current}`);
-      console.log(`   Recommended: ${rec.recommended}`);
-      console.log(`   Expected Benefit: ${rec.benefit}\n`);
+      console.info(`📦 ${rec.package}:`);
+      console.info(`   Current: ${rec.current}`);
+      console.info(`   Recommended: ${rec.recommended}`);
+      console.info(`   Expected Benefit: ${rec.benefit}\n`);
     }
   }
 
@@ -161,7 +161,7 @@ class SideEffectsOptimizationDemo {
     bundleAnalysis: BundleAnalysis[],
     treeShakingMetrics: TreeShakingMetrics
   ): void {
-    console.log('🎯 Optimization Results Summary\n');
+    console.info('🎯 Optimization Results Summary\n');
 
     // Calculate totals
     const totalBefore = bundleAnalysis.reduce((sum, pkg) => sum + pkg.beforeSize, 0);
@@ -169,22 +169,22 @@ class SideEffectsOptimizationDemo {
     const totalReduction = totalBefore - totalAfter;
     const totalReductionPercent = (totalReduction / totalBefore) * 100;
 
-    console.log('📊 Bundle Size Summary:');
-    console.log(`   Total Before: ${this.formatBytes(totalBefore)}`);
-    console.log(`   Total After:  ${this.formatBytes(totalAfter)}`);
-    console.log(
+    console.info('📊 Bundle Size Summary:');
+    console.info(`   Total Before: ${this.formatBytes(totalBefore)}`);
+    console.info(`   Total After:  ${this.formatBytes(totalAfter)}`);
+    console.info(
       `   Total Saved:  ${this.formatBytes(totalReduction)} (${totalReductionPercent.toFixed(1)}%)\n`
     );
 
-    console.log('🌳 Tree-Shaking Summary:');
-    console.log(`   Efficiency: ${treeShakingMetrics.treeShakingEfficiency.toFixed(1)}%`);
-    console.log(`   Unused Code Removed: ${treeShakingMetrics.unusedModules} modules\n`);
+    console.info('🌳 Tree-Shaking Summary:');
+    console.info(`   Efficiency: ${treeShakingMetrics.treeShakingEfficiency.toFixed(1)}%`);
+    console.info(`   Unused Code Removed: ${treeShakingMetrics.unusedModules} modules\n`);
 
-    console.log('🚀 Next Steps:');
-    console.log('   1. Run "bun run build:analyze" to see current bundle analysis');
-    console.log('   2. Test different import patterns for tree-shaking');
-    console.log('   3. Monitor bundle sizes in CI/CD pipeline');
-    console.log('   4. Use "bun run build:production" for optimized builds\n');
+    console.info('🚀 Next Steps:');
+    console.info('   1. Run "bun run build:analyze" to see current bundle analysis');
+    console.info('   2. Test different import patterns for tree-shaking');
+    console.info('   3. Monitor bundle sizes in CI/CD pipeline');
+    console.info('   4. Use "bun run build:production" for optimized builds\n');
   }
 
   private simulateBeforeSize(packageName: string): number {

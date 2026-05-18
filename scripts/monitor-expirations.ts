@@ -21,28 +21,28 @@ async function main() {
   const r2Reports = args.includes('--r2-reports');
   const interval = parseInt(args.find(arg => arg.startsWith('--interval='))?.split('=')[1] || '3600000'); // 1 hour default
 
-  console.log(styled('⏰ FactoryWager Expiration Monitor v5.1', 'accent'));
-  console.log(styled('=========================================', 'muted'));
-  console.log('');
+  console.info(styled('⏰ FactoryWager Expiration Monitor v5.1', 'accent'));
+  console.info(styled('=========================================', 'muted'));
+  console.info('');
 
   if (daemon) {
-    console.log(styled('🔄 Running in daemon mode', 'primary'));
-    console.log(styled(`   Check interval: ${interval / 1000 / 60} minutes`, 'muted'));
-    console.log(styled(`   Slack alerts: ${slackAlerts ? 'enabled' : 'disabled'}`, 'muted'));
-    console.log(styled(`   R2 reports: ${r2Reports ? 'enabled' : 'disabled'}`, 'muted'));
-    console.log('');
+    console.info(styled('🔄 Running in daemon mode', 'primary'));
+    console.info(styled(`   Check interval: ${interval / 1000 / 60} minutes`, 'muted'));
+    console.info(styled(`   Slack alerts: ${slackAlerts ? 'enabled' : 'disabled'}`, 'muted'));
+    console.info(styled(`   R2 reports: ${r2Reports ? 'enabled' : 'disabled'}`, 'muted'));
+    console.info('');
   }
 
   const runCheck = async () => {
     try {
-      console.log(styled(`🔍 Checking expirations at ${new Date().toLocaleString()}`, 'primary'));
+      console.info(styled(`🔍 Checking expirations at ${new Date().toLocaleString()}`, 'primary'));
 
       const expiring = await lifecycleManager.checkExpirations();
 
       if (expiring.length === 0) {
-        console.log(styled('✅ No expiring secrets found', 'success'));
+        console.info(styled('✅ No expiring secrets found', 'success'));
       } else {
-        console.log(styled(`⚠️  Found ${expiring.length} expiring secrets`, 'warning'));
+        console.info(styled(`⚠️  Found ${expiring.length} expiring secrets`, 'warning'));
 
         // Group by urgency
         const critical = expiring.filter(e => e.daysLeft <= 3);
@@ -50,23 +50,23 @@ async function main() {
         const info = expiring.filter(e => e.daysLeft > 7);
 
         if (critical.length > 0) {
-          console.log(styled(`🚨 CRITICAL (${critical.length}):`, 'error'));
+          console.info(styled(`🚨 CRITICAL (${critical.length}):`, 'error'));
           critical.forEach(secret => {
-            console.log(styled(`   • ${secret.key}: ${secret.daysLeft} days`, 'error'));
+            console.info(styled(`   • ${secret.key}: ${secret.daysLeft} days`, 'error'));
           });
         }
 
         if (warning.length > 0) {
-          console.log(styled(`⚠️  WARNING (${warning.length}):`, 'warning'));
+          console.info(styled(`⚠️  WARNING (${warning.length}):`, 'warning'));
           warning.forEach(secret => {
-            console.log(styled(`   • ${secret.key}: ${secret.daysLeft} days`, 'warning'));
+            console.info(styled(`   • ${secret.key}: ${secret.daysLeft} days`, 'warning'));
           });
         }
 
         if (info.length > 0) {
-          console.log(styled(`ℹ️  INFO (${info.length}):`, 'muted'));
+          console.info(styled(`ℹ️  INFO (${info.length}):`, 'muted'));
           info.forEach(secret => {
-            console.log(styled(`   • ${secret.key}: ${secret.daysLeft} days`, 'muted'));
+            console.info(styled(`   • ${secret.key}: ${secret.daysLeft} days`, 'muted'));
           });
         }
 
@@ -81,7 +81,7 @@ async function main() {
         }
       }
 
-      console.log('');
+      console.info('');
 
     } catch (error) {
       console.error(styled(`❌ Check failed: ${error.message}`, 'error'));
@@ -92,19 +92,19 @@ async function main() {
   await runCheck();
 
   if (daemon) {
-    console.log(styled('🔄 Entering daemon mode...', 'primary'));
-    console.log(styled('   Press Ctrl+C to stop', 'muted'));
-    console.log('');
+    console.info(styled('🔄 Entering daemon mode...', 'primary'));
+    console.info(styled('   Press Ctrl+C to stop', 'muted'));
+    console.info('');
 
     // Set up interval
     const intervalId = setInterval(runCheck, interval);
 
     // Graceful shutdown
     process.on('SIGINT', () => {
-      console.log('');
-      console.log(styled('🛑 Shutting down monitor...', 'warning'));
+      console.info('');
+      console.info(styled('🛑 Shutting down monitor...', 'warning'));
       clearInterval(intervalId);
-      console.log(styled('✅ Monitor stopped', 'success'));
+      console.info(styled('✅ Monitor stopped', 'success'));
       process.exit(0);
     });
 
@@ -143,8 +143,8 @@ async function sendSlackAlert(expiring: Array<{ key: string; daysLeft: number }>
     ]
   };
 
-  console.log(styled('📤 Slack alert sent (mock)', 'success'));
-  console.log(JSON.stringify(message, null, 2));
+  console.info(styled('📤 Slack alert sent (mock)', 'success'));
+  console.info(JSON.stringify(message, null, 2));
 }
 
 main().catch(error => {

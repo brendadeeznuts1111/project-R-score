@@ -54,7 +54,7 @@ const server = (globalThis as any).Bun.serve({
     // /metafile → Live build + context
     if (url.pathname === '/metafile') {
       try {
-        console.log(`🔍 Metafile request: ${url.search}`);
+        console.info(`🔍 Metafile request: ${url.search}`);
         const startTime = performance.now();
         
         const metafile = await contextBuildWithMetafile(['junior-runner.ts'], parseFlags(url.search));
@@ -88,7 +88,7 @@ const server = (globalThis as any).Bun.serve({
     // /metafile/analyze → Advanced analysis
     if (url.pathname === '/metafile/analyze') {
       try {
-        console.log(`📊 Analysis request: ${url.search}`);
+        console.info(`📊 Analysis request: ${url.search}`);
         const startTime = performance.now();
         
         const metafile = await contextBuildWithMetafile(['junior-runner.ts'], parseFlags(url.search));
@@ -233,9 +233,9 @@ const server = (globalThis as any).Bun.serve({
   }
 });
 
-console.log(`🚀 Context Engine v3.17 Metafile Server running on http://localhost:${server.port}`);
-console.log(`📊 Available endpoints:`);
-console.log(`   GET /metafile - Generate metafile`);
-console.log(`   GET /metafile/analyze - Advanced analysis`);
-console.log(`   GET /health - Server status`);
-console.log(`   GET / - Documentation`);
+console.info(`🚀 Context Engine v3.17 Metafile Server running on http://localhost:${server.port}`);
+console.info(`📊 Available endpoints:`);
+console.info(`   GET /metafile - Generate metafile`);
+console.info(`   GET /metafile/analyze - Advanced analysis`);
+console.info(`   GET /health - Server status`);
+console.info(`   GET / - Documentation`);

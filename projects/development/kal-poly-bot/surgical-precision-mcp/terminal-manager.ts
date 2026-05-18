@@ -443,28 +443,28 @@ export default TerminalManager;
 
 // Demo if run directly
 if (import.meta.main) {
-  console.log('🖥️  Bun v1.3.5 Terminal Manager Demo');
-  console.log('━'.repeat(50));
-  console.log('');
+  console.info('🖥️  Bun v1.3.5 Terminal Manager Demo');
+  console.info('━'.repeat(50));
+  console.info('');
   
   // Demo: Run ls with colors
-  console.log('📁 Running `ls --color=always`:');
+  console.info('📁 Running `ls --color=always`:');
   const { output, code } = await runWithPty(['ls', '--color=always', '-la']);
-  console.log(`\nExit code: ${code}`);
+  console.info(`\nExit code: ${code}`);
   
   // Demo: Show terminal capabilities
-  console.log('\n⚡ Terminal Features:');
-  console.log('  • Bun.Terminal:     ✅ Available');
-  console.log('  • Bun.spawn + PTY:  ✅ Supported');
-  console.log('  • Auto-resize:      ✅ Enabled');
-  console.log('  • Raw mode input:   ✅ Ready');
+  console.info('\n⚡ Terminal Features:');
+  console.info('  • Bun.Terminal:     ✅ Available');
+  console.info('  • Bun.spawn + PTY:  ✅ Supported');
+  console.info('  • Auto-resize:      ✅ Enabled');
+  console.info('  • Raw mode input:   ✅ Ready');
   
-  console.log('\n🎯 Use Cases:');
-  console.log('  • Interactive shells (bash, zsh)');
-  console.log('  • Text editors (vim, emacs, nano)');
-  console.log('  • System monitors (htop, top, glances)');
-  console.log('  • SSH sessions');
-  console.log('  • Custom dashboards');
+  console.info('\n🎯 Use Cases:');
+  console.info('  • Interactive shells (bash, zsh)');
+  console.info('  • Text editors (vim, emacs, nano)');
+  console.info('  • System monitors (htop, top, glances)');
+  console.info('  • SSH sessions');
+  console.info('  • Custom dashboards');
   
-  console.log('\n📋 Reference: https://bun.com/blog/bun-v1.3.5');
+  console.info('\n📋 Reference: https://bun.com/blog/bun-v1.3.5');
 }

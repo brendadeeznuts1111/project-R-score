@@ -4,7 +4,7 @@ import { getPliveSession } from "../src/lib/plive-session";
 
 const { cookie, sessionId } = await getPliveSession();
 
-console.log("📡 Connecting to live plive data stream...");
+console.info("📡 Connecting to live plive data stream...");
 
 const response = await fetch('https://plive.sportswidgets.pro/live/data?countries=true&leagues=true&sports=true', {
   headers: {
@@ -22,10 +22,10 @@ if (!response.ok) {
   process.exit(1);
 }
 
-console.log("✅ Connected to live data stream");
+console.info("✅ Connected to live data stream");
 
 const rawData = await response.text();
-console.log(`📦 Received ${rawData.length} bytes of data`);
+console.info(`📦 Received ${rawData.length} bytes of data`);
 
 let data;
 try {
@@ -45,7 +45,7 @@ function exploreStructure(obj, path = '', depth = 0) {
     // Look for arrays that might contain bets
     for (const [key, value] of Object.entries(obj)) {
       if (Array.isArray(value) && value.length > 0) {
-        console.log(`${path}${key}: Array[${value.length}]`);
+        console.info(`${path}${key}: Array[${value.length}]`);
         // Check first few items for betting data
         const sampleItems = value.slice(0, 3);
         for (let i = 0; i < sampleItems.length; i++) {
@@ -53,7 +53,7 @@ function exploreStructure(obj, path = '', depth = 0) {
           if (typeof item === 'object' && item !== null) {
             const keys = Object.keys(item);
             if (keys.some(k => ['profit', 'agent', 'bet', 'wager', 'amount'].includes(k))) {
-              console.log(`  🎯 Found betting data in ${path}${key}[${i}]:`, keys);
+              console.info(`  🎯 Found betting data in ${path}${key}[${i}]:`, keys);
               results.push(...value); // Add the whole array
               break;
             }
@@ -69,7 +69,7 @@ function exploreStructure(obj, path = '', depth = 0) {
 }
 
 const bettingData = exploreStructure(data);
-console.log(`💰 Found ${bettingData.length} betting records`);
+console.info(`💰 Found ${bettingData.length} betting records`);
 
 // Convert to YAML format
 if (bettingData.length > 0) {
@@ -85,10 +85,10 @@ if (bettingData.length > 0) {
   }).join('\n');
   
   await Bun.write("data/live.yaml", yamlContent);
-  console.log("✅ Live betting data stored");
+  console.info("✅ Live betting data stored");
 } else {
-  console.log("⚠️ No betting data found - storing raw structure for analysis");
+  console.info("⚠️ No betting data found - storing raw structure for analysis");
   await Bun.write("data/live-raw.json", JSON.stringify(data, null, 2));
 }
 
-console.log("📊 Run: tail -f data/live.yaml");
+console.info("📊 Run: tail -f data/live.yaml");

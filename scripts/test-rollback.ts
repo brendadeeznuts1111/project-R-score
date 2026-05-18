@@ -70,23 +70,23 @@ async function main() {
   const service = getArgValue('--service') || process.env.BUN_SECRETS_SERVICE || 'default';
 
   if (!key || !targetVersion) {
-    console.log(styled('❌ Usage: test-rollback.ts <key> <version> [--dry-run] [--force]', 'error'));
+    console.info(styled('❌ Usage: test-rollback.ts <key> <version> [--dry-run] [--force]', 'error'));
     process.exit(1);
   }
 
-  console.log(styled('🔄 FactoryWager Rollback Testing v5.1', 'accent'));
-  console.log(styled('======================================', 'muted'));
-  console.log('');
+  console.info(styled('🔄 FactoryWager Rollback Testing v5.1', 'accent'));
+  console.info(styled('======================================', 'muted'));
+  console.info('');
 
   if (dryRun) {
-    console.log(styled('🔍 DRY RUN MODE - No changes will be made', 'warning'));
-    console.log('');
+    console.info(styled('🔍 DRY RUN MODE - No changes will be made', 'warning'));
+    console.info('');
   }
 
   try {
-    console.log(styled(`🎯 Testing rollback: ${key} → ${targetVersion}`, 'primary'));
-    console.log(styled(`🧰 Secrets service: ${service}`, 'muted'));
-    console.log('');
+    console.info(styled(`🎯 Testing rollback: ${key} → ${targetVersion}`, 'primary'));
+    console.info(styled(`🧰 Secrets service: ${service}`, 'muted'));
+    console.info('');
 
     const mode = await detectSecretApiMode(service);
     const versionedManager = new VersionedSecretManager(service);
@@ -99,16 +99,16 @@ async function main() {
     );
 
     // Get current state
-    console.log(styled('📊 Current State:', 'accent'));
-    console.log(styled(`   Version: ${current.version}`, 'primary'));
-    console.log(styled(`   Value: ${String(current.value).substring(0, 30)}...`, 'muted'));
-    console.log('');
+    console.info(styled('📊 Current State:', 'accent'));
+    console.info(styled(`   Version: ${current.version}`, 'primary'));
+    console.info(styled(`   Value: ${String(current.value).substring(0, 30)}...`, 'muted'));
+    console.info('');
 
     // Get target state
-    console.log(styled('🎯 Target State:', 'accent'));
-    console.log(styled(`   Version: ${target.version}`, 'primary'));
-    console.log(styled(`   Value: ${String(target.value).substring(0, 30)}...`, 'muted'));
-    console.log('');
+    console.info(styled('🎯 Target State:', 'accent'));
+    console.info(styled(`   Version: ${target.version}`, 'primary'));
+    console.info(styled(`   Value: ${String(target.value).substring(0, 30)}...`, 'muted'));
+    console.info('');
 
     // Show diff
     const diff = {
@@ -116,16 +116,16 @@ async function main() {
       lengthChange: target.value.length - current.value.length,
       similarity: current.value === target.value ? 1 : 0,
     };
-    console.log(styled('🔍 Change Analysis:', 'accent'));
-    console.log(styled(`   Changed: ${diff.changed ? 'Yes' : 'No'}`, diff.changed ? 'warning' : 'success'));
+    console.info(styled('🔍 Change Analysis:', 'accent'));
+    console.info(styled(`   Changed: ${diff.changed ? 'Yes' : 'No'}`, diff.changed ? 'warning' : 'success'));
     if (diff.changed) {
-      console.log(styled(`   Length change: ${diff.lengthChange} characters`, 'muted'));
-      console.log(styled(`   Similarity: ${(diff.similarity * 100).toFixed(1)}%`, 'muted'));
+      console.info(styled(`   Length change: ${diff.lengthChange} characters`, 'muted'));
+      console.info(styled(`   Similarity: ${(diff.similarity * 100).toFixed(1)}%`, 'muted'));
     }
-    console.log('');
+    console.info('');
 
     // Test rollback
-    console.log(styled('🧪 Testing Rollback:', 'accent'));
+    console.info(styled('🧪 Testing Rollback:', 'accent'));
     const rollbackResult =
       mode === 'legacy-manager'
         ? await versionedManager.rollback(
@@ -159,40 +159,40 @@ async function main() {
             })();
 
     if (rollbackResult.cancelled) {
-      console.log(styled('❌ Rollback cancelled by user', 'muted'));
+      console.info(styled('❌ Rollback cancelled by user', 'muted'));
     } else {
-      console.log(styled('✅ Rollback test completed', 'success'));
-      console.log(styled(`   Success: ${rollbackResult.success}`, rollbackResult.success ? 'success' : 'error'));
-      console.log(styled(`   Dry run: ${rollbackResult.dryRun}`, 'muted'));
-      console.log(styled(`   From: ${rollbackResult.from}`, 'muted'));
-      console.log(styled(`   To: ${rollbackResult.to}`, 'primary'));
-      console.log(styled(`   Reason: ${rollbackResult.reason}`, 'muted'));
+      console.info(styled('✅ Rollback test completed', 'success'));
+      console.info(styled(`   Success: ${rollbackResult.success}`, rollbackResult.success ? 'success' : 'error'));
+      console.info(styled(`   Dry run: ${rollbackResult.dryRun}`, 'muted'));
+      console.info(styled(`   From: ${rollbackResult.from}`, 'muted'));
+      console.info(styled(`   To: ${rollbackResult.to}`, 'primary'));
+      console.info(styled(`   Reason: ${rollbackResult.reason}`, 'muted'));
     }
 
     // Show rollback impact analysis
-    console.log('');
-    console.log(styled('📊 Impact Analysis:', 'accent'));
-    console.log(styled('   • Services using this secret: Check dependent systems', 'muted'));
-    console.log(styled('   • API endpoints affected: Verify after rollback', 'muted'));
-    console.log(styled('   • Database connections: Test connectivity', 'muted'));
-    console.log(styled('   • Cache invalidation: Clear relevant caches', 'muted'));
+    console.info('');
+    console.info(styled('📊 Impact Analysis:', 'accent'));
+    console.info(styled('   • Services using this secret: Check dependent systems', 'muted'));
+    console.info(styled('   • API endpoints affected: Verify after rollback', 'muted'));
+    console.info(styled('   • Database connections: Test connectivity', 'muted'));
+    console.info(styled('   • Cache invalidation: Clear relevant caches', 'muted'));
 
     // Recommendations
-    console.log('');
-    console.log(styled('💡 Recommendations:', 'primary'));
+    console.info('');
+    console.info(styled('💡 Recommendations:', 'primary'));
     if (diff.changed) {
-      console.log(styled('   • Test rollback in staging environment first', 'warning'));
-      console.log(styled('   • Monitor application logs during rollback', 'warning'));
-      console.log(styled('   • Have rollback plan ready', 'warning'));
+      console.info(styled('   • Test rollback in staging environment first', 'warning'));
+      console.info(styled('   • Monitor application logs during rollback', 'warning'));
+      console.info(styled('   • Have rollback plan ready', 'warning'));
     } else {
-      console.log(styled('   • Low-risk rollback (no value changes)', 'success'));
-      console.log(styled('   • Can proceed with confidence', 'success'));
+      console.info(styled('   • Low-risk rollback (no value changes)', 'success'));
+      console.info(styled('   • Can proceed with confidence', 'success'));
     }
 
-    console.log('');
-    console.log(styled('📖 Documentation:', 'accent'));
-    console.log(styled('   https://bun.com/docs/runtime/secrets/rollback', 'primary'));
-    console.log(styled('   https://factorywager.com/docs/secrets/testing', 'primary'));
+    console.info('');
+    console.info(styled('📖 Documentation:', 'accent'));
+    console.info(styled('   https://bun.com/docs/runtime/secrets/rollback', 'primary'));
+    console.info(styled('   https://factorywager.com/docs/secrets/testing', 'primary'));
 
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

@@ -83,7 +83,7 @@ class R2LogManager {
       // Simulate successful storage
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      console.log(`[R2 LogManager] Stored ${logs.length} logs to ${storageKey}`);
+      console.info(`[R2 LogManager] Stored ${logs.length} logs to ${storageKey}`);
       
       return {
         success: true,
@@ -291,7 +291,7 @@ class R2LogManager {
       // Simulate cleanup process
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      console.log(`[R2 LogManager] Cleaned up logs older than ${retentionDays} days`);
+      console.info(`[R2 LogManager] Cleaned up logs older than ${retentionDays} days`);
       
       return {
         deletedCount: 45,

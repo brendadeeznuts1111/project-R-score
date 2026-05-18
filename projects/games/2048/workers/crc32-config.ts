@@ -74,15 +74,15 @@ export class CRC32ConfigManager {
         this.configPath,
         (event: string, filename: string) => {
           if (event === "change") {
-            console.log(`Config file changed: ${filename}`);
+            console.info(`Config file changed: ${filename}`);
             this.loadConfig().then(() => {
-              console.log("CRC32 config reloaded successfully");
+              console.info("CRC32 config reloaded successfully");
             });
           }
         }
       ) as Bun.FSWatcher;
     } else {
-      console.log("⚠️ Bun.watch not available - config hot-reload disabled");
+      console.info("⚠️ Bun.watch not available - config hot-reload disabled");
     }
   }
 

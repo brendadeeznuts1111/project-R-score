@@ -2,7 +2,7 @@
 const DEBUG = false;
 
 if (DEBUG) {
-  console.log("✅ Debug mode is ENABLED");
+  console.info("✅ Debug mode is ENABLED");
 } else {
-  console.log("❌ Debug mode is DISABLED");
+  console.info("❌ Debug mode is DISABLED");
 }

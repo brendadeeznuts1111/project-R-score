@@ -59,20 +59,20 @@ class DashboardCacheIntegration {
    * Replace Redis with quantum-accelerated ContentCache
    */
   async replaceRedisCache(): Promise<void> {
-    console.log('🔄 Replacing Redis with quantum ContentCache...');
+    console.info('🔄 Replacing Redis with quantum ContentCache...');
     
     try {
       // Simulate Redis migration
-      console.log('   📤 Exporting data from Redis...');
+      console.info('   📤 Exporting data from Redis...');
       // const redisData = await this.exportFromRedis();
       
-      console.log('   📥 Importing data to quantum cache...');
+      console.info('   📥 Importing data to quantum cache...');
       // await this.importToQuantumCache(redisData);
       
-      console.log('   🔧 Updating application configuration...');
+      console.info('   🔧 Updating application configuration...');
       // await this.updateCacheConfiguration();
       
-      console.log('   ✅ Redis successfully replaced with quantum ContentCache');
+      console.info('   ✅ Redis successfully replaced with quantum ContentCache');
       
       // Load existing data into quantum cache
       await this.loadInitialData();
@@ -87,7 +87,7 @@ class DashboardCacheIntegration {
    * Cache merchant dashboard with quantum acceleration
    */
   async cacheDashboard(merchantId: string, dashboard: MerchantDashboard): Promise<void> {
-    console.log(`💾 Caching dashboard for merchant: ${merchantId}`);
+    console.info(`💾 Caching dashboard for merchant: ${merchantId}`);
     
     try {
       // Generate quantum hash for integrity
@@ -105,8 +105,8 @@ class DashboardCacheIntegration {
       
       this.cacheStats.totalDashboards++;
       
-      console.log(`   ✅ Dashboard cached with quantum hash: ${crc32Hex}`);
-      console.log(`   📊 Total cached dashboards: ${this.cacheStats.totalDashboards}`);
+      console.info(`   ✅ Dashboard cached with quantum hash: ${crc32Hex}`);
+      console.info(`   📊 Total cached dashboards: ${this.cacheStats.totalDashboards}`);
       
     } catch (error) {
       console.error(`❌ Failed to cache dashboard: ${error.message}`);
@@ -118,7 +118,7 @@ class DashboardCacheIntegration {
    * Retrieve cached dashboard with integrity verification
    */
   async getDashboard(merchantId: string): Promise<MerchantDashboard | null> {
-    console.log(`📊 Retrieving dashboard for merchant: ${merchantId}`);
+    console.info(`📊 Retrieving dashboard for merchant: ${merchantId}`);
     
     try {
       const cacheKey = `dashboard_${merchantId}`;
@@ -131,17 +131,17 @@ class DashboardCacheIntegration {
         const isValid = await this.verifyDashboardIntegrity(dashboard);
         
         if (isValid) {
-          console.log(`   ✅ Dashboard retrieved from cache (integrity verified)`);
-          console.log(`   🔑 CRC32: ${dashboard.crc32Hash}`);
+          console.info(`   ✅ Dashboard retrieved from cache (integrity verified)`);
+          console.info(`   🔑 CRC32: ${dashboard.crc32Hash}`);
           return dashboard;
         } else {
-          console.log(`   ⚠️  Dashboard integrity check failed, removing from cache`);
+          console.info(`   ⚠️  Dashboard integrity check failed, removing from cache`);
           await this.dashboardCache.set(cacheKey, null as any);
           return null;
         }
       } else {
         this.cacheStats.cacheMisses++;
-        console.log(`   ❌ Dashboard not found in cache`);
+        console.info(`   ❌ Dashboard not found in cache`);
         return null;
       }
     } catch (error) {
@@ -158,7 +158,7 @@ class DashboardCacheIntegration {
     failed: number;
     duration: number;
   }> {
-    console.log(`📦 Batch caching ${dashboards.length} dashboards with quantum speed...`);
+    console.info(`📦 Batch caching ${dashboards.length} dashboards with quantum speed...`);
     
     const startTime = performance.now();
     let cached = 0;
@@ -180,11 +180,11 @@ class DashboardCacheIntegration {
       
       const duration = performance.now() - startTime;
       
-      console.log(`✅ Batch caching complete:`);
-      console.log(`   📊 Cached: ${cached}`);
-      console.log(`   ❌ Failed: ${failed}`);
-      console.log(`   ⏱️  Duration: ${duration.toFixed(2)}ms`);
-      console.log(`   🚀 Speed: ${(dashboards.length / (duration / 1000)).toFixed(0)} dashboards/sec`);
+      console.info(`✅ Batch caching complete:`);
+      console.info(`   📊 Cached: ${cached}`);
+      console.info(`   ❌ Failed: ${failed}`);
+      console.info(`   ⏱️  Duration: ${duration.toFixed(2)}ms`);
+      console.info(`   🚀 Speed: ${(dashboards.length / (duration / 1000)).toFixed(0)} dashboards/sec`);
       
       return { cached, failed, duration };
     } catch (error) {
@@ -198,7 +198,7 @@ class DashboardCacheIntegration {
    */
   private async verifyDashboardIntegrity(dashboard: MerchantDashboard): Promise<boolean> {
     if (!dashboard.crc32Hash) {
-      console.log('   ⚠️  No CRC32 hash found');
+      console.info('   ⚠️  No CRC32 hash found');
       return false;
     }
     
@@ -226,7 +226,7 @@ class DashboardCacheIntegration {
     quantumPerformance: any;
     recommendations: string[];
   }> {
-    console.log('📊 Generating cache performance report...');
+    console.info('📊 Generating cache performance report...');
     
     try {
       // Update hit ratio
@@ -242,13 +242,13 @@ class DashboardCacheIntegration {
       // Generate recommendations
       const recommendations = this.generateRecommendations();
       
-      console.log('📊 Dashboard Cache Report:');
-      console.log(`   Total Dashboards: ${this.cacheStats.totalDashboards}`);
-      console.log(`   Cache Hits: ${this.cacheStats.cacheHits}`);
-      console.log(`   Cache Misses: ${this.cacheStats.cacheMisses}`);
-      console.log(`   Hit Ratio: ${(this.cacheStats.hitRatio * 100).toFixed(1)}%`);
-      console.log(`   Memory Usage: ${(this.cacheStats.memoryUsage / 1024).toFixed(2)} MB`);
-      console.log(`   Quantum Accelerated: ${this.cacheStats.quantumAccelerated ? '✅' : '❌'}`);
+      console.info('📊 Dashboard Cache Report:');
+      console.info(`   Total Dashboards: ${this.cacheStats.totalDashboards}`);
+      console.info(`   Cache Hits: ${this.cacheStats.cacheHits}`);
+      console.info(`   Cache Misses: ${this.cacheStats.cacheMisses}`);
+      console.info(`   Hit Ratio: ${(this.cacheStats.hitRatio * 100).toFixed(1)}%`);
+      console.info(`   Memory Usage: ${(this.cacheStats.memoryUsage / 1024).toFixed(2)} MB`);
+      console.info(`   Quantum Accelerated: ${this.cacheStats.quantumAccelerated ? '✅' : '❌'}`);
       
       return {
         stats: this.cacheStats,
@@ -294,7 +294,7 @@ class DashboardCacheIntegration {
    * Load initial data into cache
    */
   private async loadInitialData(): Promise<void> {
-    console.log('📥 Loading initial data into quantum cache...');
+    console.info('📥 Loading initial data into quantum cache...');
     
     try {
       // Simulate loading merchant dashboards
@@ -318,7 +318,7 @@ class DashboardCacheIntegration {
         await this.cacheDashboard(merchantId, dashboard);
       }
       
-      console.log('✅ Initial data loaded into quantum cache');
+      console.info('✅ Initial data loaded into quantum cache');
     } catch (error) {
       console.error(`❌ Failed to load initial data: ${error.message}`);
     }
@@ -328,7 +328,7 @@ class DashboardCacheIntegration {
    * Clear cache and reset statistics
    */
   async clearCache(): Promise<void> {
-    console.log('🗑️  Clearing quantum cache...');
+    console.info('🗑️  Clearing quantum cache...');
     
     try {
       this.dashboardCache.clear();
@@ -341,7 +341,7 @@ class DashboardCacheIntegration {
         quantumAccelerated: true,
       };
       
-      console.log('✅ Quantum cache cleared');
+      console.info('✅ Quantum cache cleared');
     } catch (error) {
       console.error(`❌ Failed to clear cache: ${error.message}`);
     }
@@ -352,15 +352,15 @@ class DashboardCacheIntegration {
 if (import.meta.main) {
   const dashboardCache = new DashboardCacheIntegration();
   
-  console.log('🎯 Dashboard Cache Integration - Quantum Hash System');
-  console.log('=====================================================\n');
+  console.info('🎯 Dashboard Cache Integration - Quantum Hash System');
+  console.info('=====================================================\n');
   
   dashboardCache.replaceRedisCache()
     .then(() => dashboardCache.generateCacheReport())
     .then((report) => {
-      console.log('\n✅ Dashboard cache integration complete!');
-      console.log(`📊 Cache hit ratio: ${(report.stats.hitRatio * 100).toFixed(1)}%`);
-      console.log(`🚀 Quantum acceleration: ${report.stats.quantumAccelerated ? 'enabled' : 'disabled'}`);
+      console.info('\n✅ Dashboard cache integration complete!');
+      console.info(`📊 Cache hit ratio: ${(report.stats.hitRatio * 100).toFixed(1)}%`);
+      console.info(`🚀 Quantum acceleration: ${report.stats.quantumAccelerated ? 'enabled' : 'disabled'}`);
     })
     .catch(console.error);
 }

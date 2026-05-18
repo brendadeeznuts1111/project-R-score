@@ -329,15 +329,15 @@ class BunRegistryV8 {
 			throw new Error("Invalid platforms array structure");
 		}
 
-		console.log(
+		console.info(
 			bold(color.blue(`\n📦 Publishing ${packageName} v${this.version}`)),
 		);
-		console.log(
+		console.info(
 			color.gray(
 				`Commit: ${this.gitCommit.slice(0, 8)} | Build: ${this.buildTime}`,
 			),
 		);
-		console.log(
+		console.info(
 			color.gray(`Storage: ${this.bucketName} | Debug: ${this.debugMode}\n`),
 		);
 
@@ -369,7 +369,7 @@ class BunRegistryV8 {
 					];
 
 					if (this.debugMode) {
-						console.log(color.gray(`   Building ${plat}...`));
+						console.info(color.gray(`   Building ${plat}...`));
 					}
 
 					const buildProc = Bun.spawn(buildCmd, {
@@ -416,7 +416,7 @@ class BunRegistryV8 {
 					this.buildStats.set(plat, { time: buildTime, size: sizeMB });
 
 					const elapsed = buildTime.toFixed(0);
-					console.log(
+					console.info(
 						`${color.green("✅")} ${plat.padEnd(15)} ${color.gray(`(${elapsed}ms, ${sizeMB.toFixed(1)}MB)`)}`,
 					);
 
@@ -453,7 +453,7 @@ class BunRegistryV8 {
 		const ext = tag.startsWith("windows") ? ".exe" : "";
 		const key: `v${string}/${string}-${PlatformTag}${string}` = `v${this.version}/${packageName}-${tag}${ext}`;
 
-		console.log(
+		console.info(
 			color.yellow(`📦 Fetching ${color.bold(packageName)} for ${tag}...`),
 		);
 
@@ -483,10 +483,10 @@ class BunRegistryV8 {
 			await $`chmod +x ${tempPath}`.quiet();
 		}
 
-		console.log(
+		console.info(
 			color.green(`✅ Downloaded (${Math.round(binary.byteLength / 1e6)}MB)`),
 		);
-		console.log(color.cyan(`🚀 Executing...\n`));
+		console.info(color.cyan(`🚀 Executing...\n`));
 
 		const proc = Bun.spawn([tempPath, ...args], {
 			stdout: "inherit",
@@ -526,18 +526,18 @@ class BunRegistryV8 {
 			throw new Error("Invalid build metadata structure");
 		}
 
-		console.log(color.blue(bold(`${packageName} v${this.version}`)));
-		console.log(color.gray(`Commit: ${this.gitCommit.slice(0, 8)}`));
-		console.log(color.gray(`Build: ${this.buildTime}`));
-		console.log(
+		console.info(color.blue(bold(`${packageName} v${this.version}`)));
+		console.info(color.gray(`Commit: ${this.gitCommit.slice(0, 8)}`));
+		console.info(color.gray(`Build: ${this.buildTime}`));
+		console.info(
 			color.gray(`Debug: ${this.debugMode ? "enabled" : "disabled"}`),
 		);
 
 		// Show build stats if available (using V8 IsMap())
 		if (V8TypeChecker.isMap(this.buildStats) && this.buildStats.size > 0) {
-			console.log(color.gray(`\nBuild Statistics:`));
+			console.info(color.gray(`\nBuild Statistics:`));
 			this.buildStats.forEach((stats, plat) => {
-				console.log(
+				console.info(
 					color.gray(
 						`  ${plat}: ${stats.time.toFixed(0)}ms, ${stats.size.toFixed(1)}MB`,
 					),
@@ -579,16 +579,16 @@ class BunRegistryV8 {
 		const status =
 			successCount === total ? color.green("PERFECT") : color.red("INCOMPLETE");
 
-		console.log(
+		console.info(
 			color.yellow(bold(`\n┌──────────────────────────────────────────┐`)),
 		);
-		console.log(color.yellow(`│  Registry Status: ${status}        │`));
-		console.log(
+		console.info(color.yellow(`│  Registry Status: ${status}        │`));
+		console.info(
 			color.yellow(
 				`│  Total Platforms: ${successCount}/${total}                  │`,
 			),
 		);
-		console.log(color.yellow(`│  Version: v${this.version.padEnd(28)}│`));
+		console.info(color.yellow(`│  Version: v${this.version.padEnd(28)}│`));
 
 		// Show average build time if stats available
 		if (V8TypeChecker.isMap(this.buildStats) && this.buildStats.size > 0) {
@@ -597,14 +597,14 @@ class BunRegistryV8 {
 					(sum, s) => sum + s.time,
 					0,
 				) / this.buildStats.size;
-			console.log(
+			console.info(
 				color.yellow(
 					`│  Avg Build Time: ${avgTime.toFixed(0)}ms              │`,
 				),
 			);
 		}
 
-		console.log(color.yellow(`└──────────────────────────────────────────┘\n`));
+		console.info(color.yellow(`└──────────────────────────────────────────┘\n`));
 	}
 }
 
@@ -692,29 +692,29 @@ async function main() {
 	} else if (cmd === "run") {
 		await manager.runRegistryBinary(packageName, args);
 	} else {
-		console.log(
+		console.info(
 			color.magenta("\n🚀 Bun Registry Manager v8.1 (V8 Type Checking)\n"),
 		);
-		console.log(color.cyan("Available commands:"));
-		console.log(
+		console.info(color.cyan("Available commands:"));
+		console.info(
 			color.gray("  publish <name>  - Build and upload all platforms"),
 		);
-		console.log(
+		console.info(
 			color.gray("  run <name>      - Pull from registry and execute natively"),
 		);
-		console.log(
+		console.info(
 			color.gray("  version <name>  - Show version with build metadata\n"),
 		);
-		console.log(color.yellow("V8 Type Checking APIs:"));
-		console.log(color.gray("  ✅ IsMap() - Validates Map structures"));
-		console.log(color.gray("  ✅ IsArray() - Validates array structures"));
-		console.log(color.gray("  ✅ IsInt32() - Validates 32-bit integers"));
-		console.log(color.gray("  ✅ IsBigInt() - Validates BigInt values\n"));
-		console.log(color.yellow("Environment Variables:"));
-		console.log(
+		console.info(color.yellow("V8 Type Checking APIs:"));
+		console.info(color.gray("  ✅ IsMap() - Validates Map structures"));
+		console.info(color.gray("  ✅ IsArray() - Validates array structures"));
+		console.info(color.gray("  ✅ IsInt32() - Validates 32-bit integers"));
+		console.info(color.gray("  ✅ IsBigInt() - Validates BigInt values\n"));
+		console.info(color.yellow("Environment Variables:"));
+		console.info(
 			color.gray("  AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, BUCKET_NAME"),
 		);
-		console.log(color.gray("  Optional: BUCKET_ENDPOINT, AWS_REGION\n"));
+		console.info(color.gray("  Optional: BUCKET_ENDPOINT, AWS_REGION\n"));
 	}
 }
 

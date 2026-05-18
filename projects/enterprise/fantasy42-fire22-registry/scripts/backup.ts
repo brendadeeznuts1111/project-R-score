@@ -11,7 +11,7 @@ async function createDatabaseBackup(): Promise<void> {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const backupFileName = `fantasy42-registry-backup-${timestamp}.db`;
 
-  console.log(`💾 Creating database backup: ${backupFileName}`);
+  console.info(`💾 Creating database backup: ${backupFileName}`);
 
   try {
     const { db, initialize } = createDatabaseConnection();
@@ -24,17 +24,17 @@ async function createDatabaseBackup(): Promise<void> {
     await Bun.write(`${backupDir}/.gitkeep`, '');
 
     // Create backup using SQLite backup API
-    console.log('🔧 Starting database backup process...');
+    console.info('🔧 Starting database backup process...');
     await dbUtils.backup(backupFileName);
 
     // Get backup file info
     const backupStat = await Bun.file(backupFileName).stat();
     const backupSizeMB = (backupStat.size / (1024 * 1024)).toFixed(2);
 
-    console.log(`✅ Database backup completed successfully`);
-    console.log(`📁 Backup file: ${backupFileName}`);
-    console.log(`📊 Backup size: ${backupSizeMB} MB`);
-    console.log(`🕒 Backup timestamp: ${timestamp}`);
+    console.info(`✅ Database backup completed successfully`);
+    console.info(`📁 Backup file: ${backupFileName}`);
+    console.info(`📊 Backup size: ${backupSizeMB} MB`);
+    console.info(`🕒 Backup timestamp: ${timestamp}`);
 
     // Clean up old backups (keep last 10)
     await cleanupOldBackups(backupDir);
@@ -67,7 +67,7 @@ async function cleanupOldBackups(backupDir: string): Promise<void> {
       const filesToRemove = sortedFiles.slice(10);
       for (const file of filesToRemove) {
         await Bun.write(`${backupDir}/${file.name}`, ''); // Truncate file
-        console.log(`🗑️ Cleaned up old backup: ${file.name}`);
+        console.info(`🗑️ Cleaned up old backup: ${file.name}`);
       }
     }
   } catch (error) {
@@ -76,7 +76,7 @@ async function cleanupOldBackups(backupDir: string): Promise<void> {
 }
 
 async function restoreDatabaseBackup(backupFile: string): Promise<void> {
-  console.log(`🔄 Restoring database from backup: ${backupFile}`);
+  console.info(`🔄 Restoring database from backup: ${backupFile}`);
 
   try {
     // Check if backup file exists
@@ -97,7 +97,7 @@ async function restoreDatabaseBackup(backupFile: string): Promise<void> {
 
     await Bun.write(dbPath, Bun.file(backupFile));
 
-    console.log(`✅ Database restored from backup: ${backupFile}`);
+    console.info(`✅ Database restored from backup: ${backupFile}`);
   } catch (error) {
     console.error('❌ Database restore failed:', error);
     process.exit(1);
@@ -114,7 +114,7 @@ if (import.meta.main) {
       const backupFile = args[1];
       if (!backupFile) {
         console.error('❌ Please specify backup file to restore');
-        console.log('Usage: bun run scripts/backup.ts restore <backup-file>');
+        console.info('Usage: bun run scripts/backup.ts restore <backup-file>');
         process.exit(1);
       }
       restoreDatabaseBackup(backupFile).catch(console.error);
@@ -127,16 +127,16 @@ if (import.meta.main) {
           new Bun.Glob('fantasy42-registry-backup-*.db').scan(backupDir)
         );
 
-        console.log('📁 Available Backups:');
-        console.log('===================');
+        console.info('📁 Available Backups:');
+        console.info('===================');
 
         for (const file of backupFiles) {
           const stat = await Bun.file(`${backupDir}/${file}`).stat();
           const sizeMB = (stat.size / (1024 * 1024)).toFixed(2);
-          console.log(`${file} - ${sizeMB} MB - ${stat.mtime.toISOString()}`);
+          console.info(`${file} - ${sizeMB} MB - ${stat.mtime.toISOString()}`);
         }
       } catch (error) {
-        console.log("No backups found or backup directory doesn't exist");
+        console.info("No backups found or backup directory doesn't exist");
       }
       break;
     default:

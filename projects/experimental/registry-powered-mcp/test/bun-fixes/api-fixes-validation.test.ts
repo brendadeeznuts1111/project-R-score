@@ -10,8 +10,8 @@ const isBunRuntime = typeof Bun !== 'undefined';
 const describeIfBun = isBunRuntime ? describe : describe.skip;
 
 describeIfBun('Bun Runtime Stability Validation', () => {
-  console.log(`🧪 Testing Bun v${Bun.version} Stability Improvements`);
-  console.log('='.repeat(60));
+  console.info(`🧪 Testing Bun v${Bun.version} Stability Improvements`);
+  console.info('='.repeat(60));
 
   describe('Environment Access Stability', () => {
     test('Bun.env access should be stable in various contexts', () => {
@@ -220,18 +220,18 @@ describeIfBun('Bun Runtime Stability Validation', () => {
 
   describe('Bun API Fixes Summary', () => {
     test('Core stability improvements should be active', () => {
-      console.log('\\n🎯 Bun Runtime Stability Fixes Summary');
-      console.log('='.repeat(50));
-      console.log('✅ Environment access stability: Active');
-      console.log('✅ File system operation safety: Active');
-      console.log('✅ WebSocket constructor safety: Active');
-      console.log('✅ ReadableStream error handling: Active');
-      console.log('✅ Glob pattern safety: Active');
-      console.log('✅ String operation stability: Active');
-      console.log('✅ FormData buffer handling: Active');
-      console.log('✅ Error handling consistency: Active');
-      console.log('\\n🔒 All stability improvements validated successfully!');
-      console.log('🚀 Runtime reliability enhanced.');
+      console.info('\\n🎯 Bun Runtime Stability Fixes Summary');
+      console.info('='.repeat(50));
+      console.info('✅ Environment access stability: Active');
+      console.info('✅ File system operation safety: Active');
+      console.info('✅ WebSocket constructor safety: Active');
+      console.info('✅ ReadableStream error handling: Active');
+      console.info('✅ Glob pattern safety: Active');
+      console.info('✅ String operation stability: Active');
+      console.info('✅ FormData buffer handling: Active');
+      console.info('✅ Error handling consistency: Active');
+      console.info('\\n🔒 All stability improvements validated successfully!');
+      console.info('🚀 Runtime reliability enhanced.');
     });
   });
 });

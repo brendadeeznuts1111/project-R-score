@@ -63,10 +63,10 @@ const server = Bun.serve({
 
 /* ---------- 3.  hot-reload (dev only) ---------- */
 // Hot-reload simplified - file watching not available in this context
-console.log("♻️  Hot-reload simulated - restart manually for changes");
+console.info("♻️  Hot-reload simulated - restart manually for changes");
 
 /* ---------- 4.  build & run helpers ---------- */
-console.log(`
+console.info(`
 🚀 SPA Lab CLI – Bun 1.3
 🌐 Dev server running at ${server.url}
 📦 All arena sections stay interactive
@@ -76,13 +76,13 @@ console.log(`
 
 /* ---------- 5.  auto-build on demand ---------- */
 if (values.build) {
-  console.log("🔨 Building to arena-fullstack…");
+  console.info("🔨 Building to arena-fullstack…");
   const proc = spawn({
     cmd: ["bun", "build", "--compile", import.meta.path, "--outfile", "arena-fullstack", "--minify"],
     stdout: "inherit",
     stderr: "inherit"
   });
   await proc.exited;
-  console.log("✅ arena-fullstack created – run: ./arena-fullstack");
+  console.info("✅ arena-fullstack created – run: ./arena-fullstack");
   process.exit(0);
 }

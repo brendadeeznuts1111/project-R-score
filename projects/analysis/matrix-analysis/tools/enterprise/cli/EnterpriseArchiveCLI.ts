@@ -173,12 +173,12 @@ export class EnterpriseArchiveCLI {
 		const archiveManager = new EnterpriseArchiveManager(tenantId);
 
 		try {
-			console.log(`🔒 Creating secure enterprise archive...`);
-			console.log(`📁 Source: ${sourcePath}`);
-			console.log(`🏢 Tenant: ${tenantId}`);
+			console.info(`🔒 Creating secure enterprise archive...`);
+			console.info(`📁 Source: ${sourcePath}`);
+			console.info(`🏢 Tenant: ${tenantId}`);
 
 			if (options.dryRun) {
-				console.log(`🔍 DRY RUN: Would create archive from ${sourcePath}`);
+				console.info(`🔍 DRY RUN: Would create archive from ${sourcePath}`);
 				return;
 			}
 
@@ -191,11 +191,11 @@ export class EnterpriseArchiveCLI {
 
 			const result = await archiveManager.createSecureArchive(sourcePath, config);
 
-			console.log(`✅ Archive created successfully!`);
-			console.log(`🆔 Archive ID: ${result.archiveId}`);
-			console.log(`📊 Performance: ${result.metrics.creationTimeMs.toFixed(2)}ms`);
-			console.log(`📦 Files: ${result.metadata.fileCount}`);
-			console.log(`💾 Size: ${(result.metadata.totalSize / 1024 / 1024).toFixed(2)}MB`);
+			console.info(`✅ Archive created successfully!`);
+			console.info(`🆔 Archive ID: ${result.archiveId}`);
+			console.info(`📊 Performance: ${result.metrics.creationTimeMs.toFixed(2)}ms`);
+			console.info(`📦 Files: ${result.metadata.fileCount}`);
+			console.info(`💾 Size: ${(result.metadata.totalSize / 1024 / 1024).toFixed(2)}MB`);
 		} catch (error) {
 			this.showError(
 				`Archive creation failed: ${error instanceof Error ? error.message : String(error)}`,
@@ -219,13 +219,13 @@ export class EnterpriseArchiveCLI {
 		const archiveManager = new EnterpriseArchiveManager(tenantId);
 
 		try {
-			console.log(`📦 Extracting secure archive...`);
-			console.log(`📁 Archive: ${archivePath}`);
-			console.log(`📂 Target: ${outputPath}`);
-			console.log(`🏢 Tenant: ${tenantId}`);
+			console.info(`📦 Extracting secure archive...`);
+			console.info(`📁 Archive: ${archivePath}`);
+			console.info(`📂 Target: ${outputPath}`);
+			console.info(`🏢 Tenant: ${tenantId}`);
 
 			if (options.dryRun) {
-				console.log(`🔍 DRY RUN: Would extract ${archivePath} to ${outputPath}`);
+				console.info(`🔍 DRY RUN: Would extract ${archivePath} to ${outputPath}`);
 				return;
 			}
 
@@ -233,15 +233,15 @@ export class EnterpriseArchiveCLI {
 				auditEnabled: true,
 			});
 
-			console.log(`✅ Archive extracted successfully!`);
-			console.log(`📁 Extracted files: ${result.extractedFiles}`);
-			console.log(`🔒 Security risk: ${result.securityResult.overallRisk}`);
+			console.info(`✅ Archive extracted successfully!`);
+			console.info(`📁 Extracted files: ${result.extractedFiles}`);
+			console.info(`🔒 Security risk: ${result.securityResult.overallRisk}`);
 
 			if (result.securityResult.violations.length > 0) {
-				console.log(`⚠️ Security violations: ${result.securityResult.violations.length}`);
+				console.info(`⚠️ Security violations: ${result.securityResult.violations.length}`);
 				if (options.verbose) {
 					result.securityResult.violations.forEach((violation) => {
-						console.log(`  - ${violation.path}: ${violation.message}`);
+						console.info(`  - ${violation.path}: ${violation.message}`);
 					});
 				}
 			}
@@ -266,25 +266,25 @@ export class EnterpriseArchiveCLI {
 		const archiveManager = new EnterpriseArchiveManager(tenantId);
 
 		try {
-			console.log(`🔍 Analyzing archive...`);
-			console.log(`📁 Archive: ${archivePath}`);
-			console.log(`🏢 Tenant: ${tenantId}`);
+			console.info(`🔍 Analyzing archive...`);
+			console.info(`📁 Archive: ${archivePath}`);
+			console.info(`🏢 Tenant: ${tenantId}`);
 
 			const result = await archiveManager.analyzeArchive(archivePath);
 
-			console.log(`📊 Analysis Results:`);
-			console.log(`🆔 Archive ID: ${result.metadata.archiveId}`);
-			console.log(`📦 Files: ${result.metadata.fileCount}`);
-			console.log(`💾 Size: ${(result.metadata.totalSize / 1024 / 1024).toFixed(2)}MB`);
-			console.log(`🔒 Security risk: ${result.securityResult.overallRisk}`);
-			console.log(`📋 Compression: ${result.metadata.compressionType}`);
+			console.info(`📊 Analysis Results:`);
+			console.info(`🆔 Archive ID: ${result.metadata.archiveId}`);
+			console.info(`📦 Files: ${result.metadata.fileCount}`);
+			console.info(`💾 Size: ${(result.metadata.totalSize / 1024 / 1024).toFixed(2)}MB`);
+			console.info(`🔒 Security risk: ${result.securityResult.overallRisk}`);
+			console.info(`📋 Compression: ${result.metadata.compressionType}`);
 
 			if (options.verbose) {
-				console.log(`\n📁 File Analysis:`);
+				console.info(`\n📁 File Analysis:`);
 				for (const [path, analysis] of Object.entries(result.fileAnalysis)) {
 					const riskIcon =
 						analysis.risk === "high" ? "🚨" : analysis.risk === "medium" ? "⚠️" : "✅";
-					console.log(
+					console.info(
 						`  ${riskIcon} ${path}: ${analysis.size} bytes, ${analysis.type}, ${analysis.risk} risk`,
 					);
 				}
@@ -294,7 +294,7 @@ export class EnterpriseArchiveCLI {
 			if (options.output) {
 				const report = this.generateAnalysisReport(result);
 				await Bun.write(options.output, report);
-				console.log(`📄 Report saved to: ${options.output}`);
+				console.info(`📄 Report saved to: ${options.output}`);
 			}
 		} catch (error) {
 			this.showError(
@@ -314,8 +314,8 @@ export class EnterpriseArchiveCLI {
 		}
 
 		try {
-			console.log(`🔒 Validating archive security...`);
-			console.log(`📁 Archive: ${archivePath}`);
+			console.info(`🔒 Validating archive security...`);
+			console.info(`📁 Archive: ${archivePath}`);
 
 			// Load archive files
 			const archiveData = await Bun.file(archivePath).arrayBuffer();
@@ -327,17 +327,17 @@ export class EnterpriseArchiveCLI {
 
 			const securityReport = await securityValidator.validateArchive(fileMap);
 
-			console.log(`🔍 Security Validation Results:`);
-			console.log(`📊 Overall risk: ${securityReport.overallRisk.toUpperCase()}`);
-			console.log(
+			console.info(`🔍 Security Validation Results:`);
+			console.info(`📊 Overall risk: ${securityReport.overallRisk.toUpperCase()}`);
+			console.info(
 				`📁 Total files: ${securityReport.blockedFiles.length + securityReport.allowedFiles.length}`,
 			);
-			console.log(`🚫 Blocked files: ${securityReport.blockedFiles.length}`);
-			console.log(`✅ Allowed files: ${securityReport.allowedFiles.length}`);
-			console.log(`⏱️ Scan duration: ${securityReport.scanDurationMs.toFixed(2)}ms`);
+			console.info(`🚫 Blocked files: ${securityReport.blockedFiles.length}`);
+			console.info(`✅ Allowed files: ${securityReport.allowedFiles.length}`);
+			console.info(`⏱️ Scan duration: ${securityReport.scanDurationMs.toFixed(2)}ms`);
 
 			if (securityReport.violations.length > 0) {
-				console.log(`\n⚠️ Security Violations:`);
+				console.info(`\n⚠️ Security Violations:`);
 				for (const violation of securityReport.violations) {
 					const severityIcon =
 						violation.severity === "critical"
@@ -347,14 +347,14 @@ export class EnterpriseArchiveCLI {
 								: violation.severity === "medium"
 									? "⚡"
 									: "ℹ️";
-					console.log(`  ${severityIcon} ${violation.path}: ${violation.message}`);
+					console.info(`  ${severityIcon} ${violation.path}: ${violation.message}`);
 				}
 			}
 
 			if (securityReport.recommendations.length > 0) {
-				console.log(`\n💡 Recommendations:`);
+				console.info(`\n💡 Recommendations:`);
 				for (const recommendation of securityReport.recommendations) {
-					console.log(`  • ${recommendation}`);
+					console.info(`  • ${recommendation}`);
 				}
 			}
 
@@ -362,7 +362,7 @@ export class EnterpriseArchiveCLI {
 			if (options.output) {
 				const report = securityValidator.generateSummaryReport(securityReport);
 				await Bun.write(options.output, report);
-				console.log(`📄 Security report saved to: ${options.output}`);
+				console.info(`📄 Security report saved to: ${options.output}`);
 			}
 		} catch (error) {
 			this.showError(
@@ -380,8 +380,8 @@ export class EnterpriseArchiveCLI {
 		}
 
 		try {
-			console.log(`⚡ Quick security scan...`);
-			console.log(`📁 Archive: ${archivePath}`);
+			console.info(`⚡ Quick security scan...`);
+			console.info(`📁 Archive: ${archivePath}`);
 
 			const startTime = performance.now();
 
@@ -395,18 +395,18 @@ export class EnterpriseArchiveCLI {
 
 			const scanTime = performance.now() - startTime;
 
-			console.log(`⚡ Quick Scan Results:`);
-			console.log(`📊 Risk level: ${securityReport.overallRisk.toUpperCase()}`);
-			console.log(`📁 Files scanned: ${files.size}`);
-			console.log(`🚫 Blocked: ${securityReport.blockedFiles.length}`);
-			console.log(`⏱️ Scan time: ${scanTime.toFixed(2)}ms`);
+			console.info(`⚡ Quick Scan Results:`);
+			console.info(`📊 Risk level: ${securityReport.overallRisk.toUpperCase()}`);
+			console.info(`📁 Files scanned: ${files.size}`);
+			console.info(`🚫 Blocked: ${securityReport.blockedFiles.length}`);
+			console.info(`⏱️ Scan time: ${scanTime.toFixed(2)}ms`);
 
 			if (securityReport.overallRisk !== "low") {
-				console.log(
+				console.info(
 					`\n⚠️ Action required: ${securityReport.overallRisk.toUpperCase()} risk detected`,
 				);
 			} else {
-				console.log(`✅ No significant security concerns detected`);
+				console.info(`✅ No significant security concerns detected`);
 			}
 		} catch (error) {
 			this.showError(
@@ -420,16 +420,16 @@ export class EnterpriseArchiveCLI {
 		const archiveManager = new EnterpriseArchiveManager(tenantId);
 
 		try {
-			console.log(`📊 Generating audit report...`);
-			console.log(`🏢 Tenant: ${tenantId}`);
+			console.info(`📊 Generating audit report...`);
+			console.info(`🏢 Tenant: ${tenantId}`);
 
 			const report = await archiveManager.generateAuditReport();
 
 			if (options.output) {
 				await Bun.write(options.output, report);
-				console.log(`📄 Audit report saved to: ${options.output}`);
+				console.info(`📄 Audit report saved to: ${options.output}`);
 			} else {
-				console.log(report);
+				console.info(report);
 			}
 		} catch (error) {
 			this.showError(
@@ -445,12 +445,12 @@ export class EnterpriseArchiveCLI {
 		const archiveManager = new EnterpriseArchiveManager(tenantId);
 
 		try {
-			console.log(`📈 Performance metrics...`);
-			console.log(`🏢 Tenant: ${tenantId}`);
+			console.info(`📈 Performance metrics...`);
+			console.info(`🏢 Tenant: ${tenantId}`);
 
 			// This would integrate with the performance analytics module
-			console.log(`📊 Metrics feature coming soon...`);
-			console.log(`📄 Would generate performance metrics for tenant: ${tenantId}`);
+			console.info(`📊 Metrics feature coming soon...`);
+			console.info(`📄 Would generate performance metrics for tenant: ${tenantId}`);
 		} catch (error) {
 			this.showError(
 				`Metrics generation failed: ${error instanceof Error ? error.message : String(error)}`,
@@ -469,12 +469,12 @@ export class EnterpriseArchiveCLI {
 		}
 
 		try {
-			console.log(`🏁 Running performance benchmark...`);
-			console.log(`📁 Source: ${sourcePath}`);
+			console.info(`🏁 Running performance benchmark...`);
+			console.info(`📁 Source: ${sourcePath}`);
 
 			// This would integrate with the benchmark engine
-			console.log(`📊 Benchmark feature coming soon...`);
-			console.log(`📄 Would benchmark archive operations on: ${sourcePath}`);
+			console.info(`📊 Benchmark feature coming soon...`);
+			console.info(`📄 Would benchmark archive operations on: ${sourcePath}`);
 		} catch (error) {
 			this.showError(
 				`Benchmark failed: ${error instanceof Error ? error.message : String(error)}`,
@@ -491,17 +491,17 @@ export class EnterpriseArchiveCLI {
 		}
 
 		try {
-			console.log(`📄 Generating ${reportType} report...`);
+			console.info(`📄 Generating ${reportType} report...`);
 
 			switch (reportType) {
 				case "security":
-					console.log(`🔒 Security report feature coming soon...`);
+					console.info(`🔒 Security report feature coming soon...`);
 					break;
 				case "performance":
-					console.log(`📈 Performance report feature coming soon...`);
+					console.info(`📈 Performance report feature coming soon...`);
 					break;
 				case "compliance":
-					console.log(`📋 Compliance report feature coming soon...`);
+					console.info(`📋 Compliance report feature coming soon...`);
 					break;
 				default:
 					this.showError(`Unknown report type: ${reportType}`);
@@ -544,37 +544,37 @@ export class EnterpriseArchiveCLI {
 		if (commandName) {
 			const command = this.commands.get(commandName);
 			if (command) {
-				console.log(`\n📖 ${command.name} - ${command.description}`);
-				console.log(`Usage: enterprise-archive ${command.usage}`);
-				console.log(`\nExamples:`);
+				console.info(`\n📖 ${command.name} - ${command.description}`);
+				console.info(`Usage: enterprise-archive ${command.usage}`);
+				console.info(`\nExamples:`);
 				command.examples.forEach((example) => {
-					console.log(`  ${example}`);
+					console.info(`  ${example}`);
 				});
 			}
 		} else {
 			this.showHeader();
-			console.log(`\n📖 Usage: enterprise-archive <command> [options]\n`);
-			console.log(`Available commands:`);
+			console.info(`\n📖 Usage: enterprise-archive <command> [options]\n`);
+			console.info(`Available commands:`);
 
 			for (const [name, command] of this.commands) {
-				console.log(`  ${name.padEnd(12)} ${command.description}`);
+				console.info(`  ${name.padEnd(12)} ${command.description}`);
 			}
 
-			console.log(`\nGlobal options:`);
-			console.log(`  --tenant <id>     Specify tenant ID`);
-			console.log(`  --verbose         Enable verbose output`);
-			console.log(`  --dry-run         Show what would be done without executing`);
-			console.log(`  --output <file>   Save output to file`);
-			console.log(`  --format <type>   Output format (json, table, markdown)`);
-			console.log(`  --help            Show this help message`);
-			console.log(`  --version         Show version information`);
+			console.info(`\nGlobal options:`);
+			console.info(`  --tenant <id>     Specify tenant ID`);
+			console.info(`  --verbose         Enable verbose output`);
+			console.info(`  --dry-run         Show what would be done without executing`);
+			console.info(`  --output <file>   Save output to file`);
+			console.info(`  --format <type>   Output format (json, table, markdown)`);
+			console.info(`  --help            Show this help message`);
+			console.info(`  --version         Show version information`);
 		}
 	}
 
 	private showHeader(): void {
-		console.log(`🏢 Enterprise Archive CLI v${this.version}`);
-		console.log(`🔒 Tier-1380 Secure Archive Management System`);
-		console.log(`📊 Enterprise-grade security, audit, and analytics`);
+		console.info(`🏢 Enterprise Archive CLI v${this.version}`);
+		console.info(`🔒 Tier-1380 Secure Archive Management System`);
+		console.info(`📊 Enterprise-grade security, audit, and analytics`);
 	}
 
 	// ─── Main CLI Entry Point ─────────────────────────────────────────────────
@@ -588,7 +588,7 @@ export class EnterpriseArchiveCLI {
 
 		if (args[0] === "--version" || args[0] === "-v") {
 			this.showHeader();
-			console.log(`Version: ${this.version}`);
+			console.info(`Version: ${this.version}`);
 			return;
 		}
 

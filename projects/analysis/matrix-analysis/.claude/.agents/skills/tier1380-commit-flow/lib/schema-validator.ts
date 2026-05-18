@@ -370,18 +370,18 @@ if (import.meta.main) {
 		description: "Add new validation feature",
 	};
 
-	console.log("Testing Tier-1380 Schema Validator\n");
-	console.log("Input:", JSON.stringify(testInput, null, 2));
-	console.log();
+	console.info("Testing Tier-1380 Schema Validator\n");
+	console.info("Input:", JSON.stringify(testInput, null, 2));
+	console.info();
 
 	const result = validateSchema(COMMIT_MESSAGE_SCHEMA, testInput);
 
 	if (result.valid) {
-		console.log("✅ Validation passed");
+		console.info("✅ Validation passed");
 	} else {
-		console.log("❌ Validation failed:");
+		console.info("❌ Validation failed:");
 		for (const error of result.errors) {
-			console.log(`  ${error.path}: ${error.message}`);
+			console.info(`  ${error.path}: ${error.message}`);
 		}
 	}
 }

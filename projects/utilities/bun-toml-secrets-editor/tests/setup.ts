@@ -19,4 +19,4 @@ global.testContext = {
 	mocks: new Map(),
 };
 
-console.log("🧪 Test environment initialized");
+console.info("🧪 Test environment initialized");

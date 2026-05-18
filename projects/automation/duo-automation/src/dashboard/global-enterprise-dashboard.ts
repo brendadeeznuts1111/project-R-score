@@ -254,7 +254,7 @@ export class GlobalEnterpriseDashboard extends EventEmitter implements IGlobalDa
   }
 
   async renderGlobalDashboard(merchantIdentifier: string): Promise<IGlobalDashboardData> {
-    console.log(`🌍 Rendering global enterprise dashboard for: ${merchantIdentifier}`);
+    console.info(`🌍 Rendering global enterprise dashboard for: ${merchantIdentifier}`);
 
     const currentMetrics = await this.collectGlobalMetrics(merchantIdentifier);
     const pairedDevices = await this.retrieveGlobalPairedDevices(merchantIdentifier);
@@ -280,7 +280,7 @@ export class GlobalEnterpriseDashboard extends EventEmitter implements IGlobalDa
   }
 
   async updateLiveGlobalMetrics(merchantIdentifier: string): Promise<IGlobalEnterpriseMetrics> {
-    console.log(`📊 Updating live global metrics for: ${merchantIdentifier}`);
+    console.info(`📊 Updating live global metrics for: ${merchantIdentifier}`);
 
     // Simulate real-time metric updates with global data
     const updatedMetrics = {
@@ -310,7 +310,7 @@ export class GlobalEnterpriseDashboard extends EventEmitter implements IGlobalDa
   }
 
   async retrieveGlobalPairedDevices(merchantIdentifier: string): Promise<IGlobalPairedDevice[]> {
-    console.log(`📱 Retrieving global paired devices for: ${merchantIdentifier}`);
+    console.info(`📱 Retrieving global paired devices for: ${merchantIdentifier}`);
 
     // Mock global device data with geographic distribution
     return [
@@ -423,7 +423,7 @@ export class GlobalEnterpriseDashboard extends EventEmitter implements IGlobalDa
   }
 
   async calculateGlobalROIAnalytics(merchantIdentifier: string): Promise<IGlobalROIAnalytics> {
-    console.log(`💰 Calculating global ROI analytics for: ${merchantIdentifier}`);
+    console.info(`💰 Calculating global ROI analytics for: ${merchantIdentifier}`);
 
     const baselineMetrics = {
       monthlyRevenue: 7300,
@@ -475,7 +475,7 @@ export class GlobalEnterpriseDashboard extends EventEmitter implements IGlobalDa
   }
 
   async getRealTimeDeviceUpdates(merchantIdentifier: string): Promise<IRealTimeDeviceUpdate[]> {
-    console.log(`🔄 Getting real-time device updates for: ${merchantIdentifier}`);
+    console.info(`🔄 Getting real-time device updates for: ${merchantIdentifier}`);
 
     return [
       {
@@ -599,7 +599,7 @@ export class GlobalEnterpriseDashboard extends EventEmitter implements IGlobalDa
       }
     };
 
-    console.log('🌐 Global WebSocket server initialized for real-time dashboard updates');
+    console.info('🌐 Global WebSocket server initialized for real-time dashboard updates');
   }
 
   private startRealTimeDataCollection(): void {
@@ -644,7 +644,7 @@ export class GlobalEnterpriseDashboard extends EventEmitter implements IGlobalDa
   // Public methods for external integration
 
   async addDeviceToGlobalDashboard(device: IGlobalPairedDevice): Promise<void> {
-    console.log(`➕ Adding device to global dashboard: ${device.deviceId}`);
+    console.info(`➕ Adding device to global dashboard: ${device.deviceId}`);
     
     this.emit('deviceAdded', {
       device,
@@ -660,7 +660,7 @@ export class GlobalEnterpriseDashboard extends EventEmitter implements IGlobalDa
   }
 
   async updateDeviceComplianceStatus(deviceId: string, status: 'COMPLIANT' | 'PARTIAL' | 'NON_COMPLIANT'): Promise<void> {
-    console.log(`🛡️ Updating device compliance status: ${deviceId} -> ${status}`);
+    console.info(`🛡️ Updating device compliance status: ${deviceId} -> ${status}`);
     
     this.emit('complianceUpdate', {
       deviceId,
@@ -671,7 +671,7 @@ export class GlobalEnterpriseDashboard extends EventEmitter implements IGlobalDa
   }
 
   async generateGlobalPerformanceReport(merchantIdentifier: string, timeframe: '24h' | '7d' | '30d' | '90d'): Promise<any> {
-    console.log(`📊 Generating global performance report for: ${merchantIdentifier} (${timeframe})`);
+    console.info(`📊 Generating global performance report for: ${merchantIdentifier} (${timeframe})`);
 
     const multiplier = timeframe === '24h' ? 1 : timeframe === '7d' ? 7 : timeframe === '30d' ? 30 : 90;
 

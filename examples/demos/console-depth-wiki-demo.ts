@@ -10,19 +10,19 @@ import { MCPWikiGenerator } from '../lib/mcp/wiki-generator-mcp.ts';
 
 const templates = MCPWikiGenerator.getWikiTemplates();
 
-console.log('🎯 Wiki Templates with Console Depth Control');
-console.log('==========================================');
-console.log('');
+console.info('🎯 Wiki Templates with Console Depth Control');
+console.info('==========================================');
+console.info('');
 
-console.log('📊 All Templates (current console depth):');
-console.log(templates);
-console.log('');
+console.info('📊 All Templates (current console depth):');
+console.info(templates);
+console.info('');
 
-console.log('💡 Try different depths:');
-console.log('   bun --console-depth 1 examples/console-depth-wiki-demo.ts');
-console.log('   bun --console-depth 3 examples/console-depth-wiki-demo.ts');
-console.log('   bun --console-depth 5 examples/console-depth-wiki-demo.ts');
-console.log('');
+console.info('💡 Try different depths:');
+console.info('   bun --console-depth 1 examples/console-depth-wiki-demo.ts');
+console.info('   bun --console-depth 3 examples/console-depth-wiki-demo.ts');
+console.info('   bun --console-depth 5 examples/console-depth-wiki-demo.ts');
+console.info('');
 
 // Show a deeply nested object
 const nestedExample = {
@@ -78,5 +78,5 @@ const nestedExample = {
   }
 };
 
-console.log('🔍 Deep Nested Wiki System Structure:');
-console.log(nestedExample);
+console.info('🔍 Deep Nested Wiki System Structure:');
+console.info(nestedExample);

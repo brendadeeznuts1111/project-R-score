@@ -119,7 +119,7 @@ function createDashboard(type: string, name: string, customConfig: DashboardConf
     const template = DASHBOARD_TEMPLATES[type];
     if (!template) {
         console.error(`❌ Unknown dashboard type: ${type}`);
-        console.log('Available types:', Object.keys(DASHBOARD_TEMPLATES).join(', '));
+        console.info('Available types:', Object.keys(DASHBOARD_TEMPLATES).join(', '));
         return;
     }
 
@@ -149,10 +149,10 @@ function createDashboard(type: string, name: string, customConfig: DashboardConf
     const dashboardPath = join(DASHBOARDS_DIR, `${name}.html`);
     writeFileSync(dashboardPath, dashboardHtml);
 
-    console.log(`✅ Dashboard created: ${dashboardPath}`);
-    console.log(`📊 Type: ${type}`);
-    console.log(`👤 Role: ${template.userRole}`);
-    console.log(`🔧 Components: ${template.components.length + (customConfig.components?.length || 0)}`);
+    console.info(`✅ Dashboard created: ${dashboardPath}`);
+    console.info(`📊 Type: ${type}`);
+    console.info(`👤 Role: ${template.userRole}`);
+    console.info(`🔧 Components: ${template.components.length + (customConfig.components?.length || 0)}`);
     
     return dashboardPath;
 }
@@ -200,16 +200,16 @@ function getComponentPermission(componentId: string): string {
  * List available dashboard templates
  */
 function listTemplates(): void {
-    console.log('\n📋 Available Dashboard Templates:');
-    console.log('=====================================');
+    console.info('\n📋 Available Dashboard Templates:');
+    console.info('=====================================');
     
     Object.entries(DASHBOARD_TEMPLATES).forEach(([type, config]: [string, DashboardTemplate]) => {
-        console.log(`\n🏷️  ${type.toUpperCase()}`);
-        console.log(`   Title: ${config.title}`);
-        console.log(`   Description: ${config.description}`);
-        console.log(`   Role: ${config.userRole}`);
-        console.log(`   Components: ${config.components.length}`);
-        console.log(`   Permissions: ${config.permissions.length}`);
+        console.info(`\n🏷️  ${type.toUpperCase()}`);
+        console.info(`   Title: ${config.title}`);
+        console.info(`   Description: ${config.description}`);
+        console.info(`   Role: ${config.userRole}`);
+        console.info(`   Components: ${config.components.length}`);
+        console.info(`   Permissions: ${config.permissions.length}`);
     });
 }
 
@@ -228,9 +228,9 @@ function createComponent(name: string, type: string = 'widget', permissions: str
     
     writeFileSync(componentPath, componentTemplate);
     
-    console.log(`✅ Component created: ${componentPath}`);
-    console.log(`🏷️  Type: ${type}`);
-    console.log(`🔐 Permissions: ${permissions.join(', ')}`);
+    console.info(`✅ Component created: ${componentPath}`);
+    console.info(`🏷️  Type: ${type}`);
+    console.info(`🔐 Permissions: ${permissions.join(', ')}`);
     
     return componentPath;
 }
@@ -274,12 +274,12 @@ function generateComponentTemplate(name: string, permissions: string[]): string 
 // ${name} Component Initialization
 document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('[data-component="${name}"]')) {
-        console.log('🔧 Initializing ${name} component...');
+        console.info('🔧 Initializing ${name} component...');
         
         // Initialize component functionality here
         // Example: load data, setup event listeners, etc.
         
-        console.log('✅ ${name} component initialized');
+        console.info('✅ ${name} component initialized');
     }
 });
 </script>`;
@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * Setup component system
  */
 function setupComponentSystem(): void {
-    console.log('🔧 Setting up component system...');
+    console.info('🔧 Setting up component system...');
     
     // Create directories if they don't exist
     const directories: string[] = [
@@ -305,11 +305,11 @@ function setupComponentSystem(): void {
     directories.forEach((dir: string) => {
         if (!existsSync(dir)) {
             mkdirSync(dir, { recursive: true });
-            console.log(`📁 Created directory: ${dir}`);
+            console.info(`📁 Created directory: ${dir}`);
         }
     });
     
-    console.log('✅ Component system setup complete');
+    console.info('✅ Component system setup complete');
 }
 
 /**
@@ -322,8 +322,8 @@ function main(): void {
     switch (command) {
         case 'create':
             if (args.length < 3) {
-                console.log('Usage: bun run dashboard-setup.ts create <type> <name> [options]');
-                console.log('Example: bun run dashboard-setup.ts create admin my-admin-dashboard');
+                console.info('Usage: bun run dashboard-setup.ts create <type> <name> [options]');
+                console.info('Example: bun run dashboard-setup.ts create admin my-admin-dashboard');
                 return;
             }
             
@@ -348,8 +348,8 @@ function main(): void {
             
         case 'component':
             if (args.length < 2) {
-                console.log('Usage: bun run dashboard-setup.ts component <name> [type] [permissions...]');
-                console.log('Example: bun run dashboard-setup.ts component my-widget widget metrics.view logs.view');
+                console.info('Usage: bun run dashboard-setup.ts component <name> [type] [permissions...]');
+                console.info('Example: bun run dashboard-setup.ts component my-widget widget metrics.view logs.view');
                 return;
             }
             
@@ -369,30 +369,30 @@ function main(): void {
             break;
             
         default:
-            console.log('DuoPlus Dashboard Setup Script');
-            console.log('================================');
-            console.log('');
-            console.log('Commands:');
-            console.log('  create <type> <name>     Create a new dashboard');
-            console.log('  component <name> [type] Create a new component');
-            console.log('  list                      List available templates');
-            console.log('  setup                     Setup component system');
-            console.log('');
-            console.log('Dashboard Types:');
-            console.log('  admin     - Full system administration');
-            console.log('  operator  - System operations and monitoring');
-            console.log('  user      - Basic user dashboard');
-            console.log('  analytics - Advanced analytics and reporting');
-            console.log('');
-            console.log('Component Types:');
-            console.log('  shared    - Shared components (header, footer, sidebar)');
-            console.log('  widget    - UI widgets and components');
-            console.log('  feature   - Feature-specific components');
-            console.log('');
-            console.log('Examples:');
-            console.log('  bun run dashboard-setup.ts create admin my-dashboard');
-            console.log('  bun run dashboard-setup.ts component my-chart widget metrics.view');
-            console.log('  bun run dashboard-setup.ts list');
+            console.info('DuoPlus Dashboard Setup Script');
+            console.info('================================');
+            console.info('');
+            console.info('Commands:');
+            console.info('  create <type> <name>     Create a new dashboard');
+            console.info('  component <name> [type] Create a new component');
+            console.info('  list                      List available templates');
+            console.info('  setup                     Setup component system');
+            console.info('');
+            console.info('Dashboard Types:');
+            console.info('  admin     - Full system administration');
+            console.info('  operator  - System operations and monitoring');
+            console.info('  user      - Basic user dashboard');
+            console.info('  analytics - Advanced analytics and reporting');
+            console.info('');
+            console.info('Component Types:');
+            console.info('  shared    - Shared components (header, footer, sidebar)');
+            console.info('  widget    - UI widgets and components');
+            console.info('  feature   - Feature-specific components');
+            console.info('');
+            console.info('Examples:');
+            console.info('  bun run dashboard-setup.ts create admin my-dashboard');
+            console.info('  bun run dashboard-setup.ts component my-chart widget metrics.view');
+            console.info('  bun run dashboard-setup.ts list');
             break;
     }
 }

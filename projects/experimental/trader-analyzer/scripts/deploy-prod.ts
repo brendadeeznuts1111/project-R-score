@@ -14,14 +14,14 @@ import { $ } from "bun";
  * Production deployment using Bun Shell
  */
 async function deployProduction() {
-  console.log("🚀 Starting production deployment...\n");
+  console.info("🚀 Starting production deployment...\n");
 
   // 1. Pre-flight checks
-  console.log("📋 Running pre-flight checks...");
+  console.info("📋 Running pre-flight checks...");
   
   try {
     const bunVersion = await $`bun --version`.text();
-    console.log(`✅ Bun version: ${bunVersion.trim()}`);
+    console.info(`✅ Bun version: ${bunVersion.trim()}`);
   } catch (err: any) {
     console.error(`❌ Bun not found: exitCode=${err.exitCode}`);
     console.error(err.stderr?.toString() || err.message);
@@ -30,7 +30,7 @@ async function deployProduction() {
 
   try {
     await $`bun run typecheck`.quiet();
-    console.log("✅ TypeScript compilation passed");
+    console.info("✅ TypeScript compilation passed");
   } catch (err: any) {
     console.error(`❌ TypeScript errors: exitCode=${err.exitCode}`);
     console.error(err.stderr?.toString() || err.stdout?.toString() || err.message);
@@ -39,7 +39,7 @@ async function deployProduction() {
 
   try {
     await $`bun test`.quiet();
-    console.log("✅ Tests passed");
+    console.info("✅ Tests passed");
   } catch (err: any) {
     console.error(`❌ Tests failed: exitCode=${err.exitCode}`);
     console.error(err.stderr?.toString() || err.stdout?.toString() || err.message);
@@ -47,17 +47,17 @@ async function deployProduction() {
   }
 
   // 2. Build with production optimizations
-  console.log("\n🔨 Building production bundle...");
+  console.info("\n🔨 Building production bundle...");
   try {
     await $`bun run build`.quiet();
-    console.log("✅ Build completed");
+    console.info("✅ Build completed");
   } catch (error) {
     console.error("❌ Build failed");
     process.exit(1);
   }
 
   // 3. Pre-warm caches and pools
-  console.log("\n🔥 Pre-warming caches...");
+  console.info("\n🔥 Pre-warming caches...");
   $.env({
     ...process.env,
     BUN_DNS_CACHE_SIZE: "10000",
@@ -70,18 +70,18 @@ async function deployProduction() {
       // Use .nothrow() to check exitCode manually
       const result = await $`curl -sf ${url}`.nothrow().quiet();
       if (result.exitCode === 0) {
-        console.log(`✅ Service healthy at ${url}`);
+        console.info(`✅ Service healthy at ${url}`);
         return true;
       }
       // Non-zero exitCode means curl failed (service not ready)
-      console.log(`⏳ Health check attempt ${attempt + 1}/${maxAttempts}... (exitCode=${result.exitCode})`);
+      console.info(`⏳ Health check attempt ${attempt + 1}/${maxAttempts}... (exitCode=${result.exitCode})`);
       await Bun.sleep(1000);
     }
     return false;
   }
 
   // 5. Start server in background
-  console.log("\n🎯 Starting production server...");
+  console.info("\n🎯 Starting production server...");
   const serverProcess = Bun.spawn(["bun", "run", "start"], {
     stdout: "inherit",
     stderr: "inherit",
@@ -93,10 +93,10 @@ async function deployProduction() {
   // 6. Health check loop
   const healthUrl = process.env.HEALTH_URL || "http://localhost:3000/health";
   if (await checkHealth(healthUrl)) {
-    console.log("\n✅ Deployment successful!");
-    console.log(`📊 Server PID: ${serverProcess.pid}`);
-    console.log(`🌐 Health endpoint: ${healthUrl}`);
-    console.log(`📈 Metrics endpoint: http://localhost:3000/metrics`);
+    console.info("\n✅ Deployment successful!");
+    console.info(`📊 Server PID: ${serverProcess.pid}`);
+    console.info(`🌐 Health endpoint: ${healthUrl}`);
+    console.info(`📈 Metrics endpoint: http://localhost:3000/metrics`);
   } else {
     console.error("\n❌ Deployment failed - service not healthy");
     serverProcess.kill();
@@ -104,8 +104,8 @@ async function deployProduction() {
   }
 
   // 7. Log completion
-  console.log(`\n🚀 Deployed at ${new Date().toISOString()}`);
-  console.log("📝 Logs: Check console output or log files");
+  console.info(`\n🚀 Deployed at ${new Date().toISOString()}`);
+  console.info("📝 Logs: Check console output or log files");
 }
 
 // Run deployment

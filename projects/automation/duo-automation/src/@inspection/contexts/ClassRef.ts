@@ -209,7 +209,7 @@ export class ClassRef {
    */
   async executeMethod(methodName: string, ...args: any[]): Promise<any> {
     // In real implementation, execute actual method
-    console.log(`Executing ${this.className}.${methodName} with args:`, args);
+    console.info(`Executing ${this.className}.${methodName} with args:`, args);
     return `Result of ${methodName}`;
   }
 
@@ -218,7 +218,7 @@ export class ClassRef {
    */
   async getPropertyValue(propertyName: string): Promise<any> {
     // In real implementation, get actual property value
-    console.log(`Getting ${this.className}.${propertyName}`);
+    console.info(`Getting ${this.className}.${propertyName}`);
     return `Value of ${propertyName}`;
   }
 }

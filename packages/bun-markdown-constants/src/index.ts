@@ -841,7 +841,7 @@ export function measureMemory(largeMarkdown: string) {
   const result = Bun.markdown.html(largeMarkdown);
   const after = process.memoryUsage().heapUsed;
   
-  console.log(`Memory used: ${(after - before) / 1024 / 1024} MB`);
+  console.info(`Memory used: ${(after - before) / 1024 / 1024} MB`);
   return {
     memoryUsed: (after - before) / 1024 / 1024,
     result,
@@ -861,7 +861,7 @@ export function advancedBenchmark() {
   ];
 
   testCases.forEach(testCase => {
-    console.log(`\n=== ${testCase.name} Document ===`);
+    console.info(`\n=== ${testCase.name} Document ===`);
     
     // Warmup
     for (let i = 0; i < 10; i++) {
@@ -888,8 +888,8 @@ export function advancedBenchmark() {
     }
     console.timeEnd(`${testCase.name} - Render`);
     
-    console.log(`Document size: ${testCase.markdown.length} characters`);
-    console.log(`Iterations: ${iterations}`);
+    console.info(`Document size: ${testCase.markdown.length} characters`);
+    console.info(`Iterations: ${iterations}`);
   });
 }
 
@@ -902,7 +902,7 @@ export function memoryStressTest() {
     '| Col1 | Col2 | Col3 |\n|------|------|------|\n' + 
     '| A    | B    | C    |\n'.repeat(100);
   
-  console.log('Starting memory stress test...');
+  console.info('Starting memory stress test...');
   
   const results = [];
   for (let round = 0; round < 10; round++) {
@@ -912,18 +912,18 @@ export function memoryStressTest() {
     const measurement = measureMemory(largeMarkdown);
     results.push(measurement.memoryUsed);
     
-    console.log(`Round ${round + 1}: ${measurement.memoryUsed.toFixed(2)} MB`);
+    console.info(`Round ${round + 1}: ${measurement.memoryUsed.toFixed(2)} MB`);
   }
   
   const avgMemory = results.reduce((a, b) => a + b, 0) / results.length;
   const maxMemory = Math.max(...results);
   const minMemory = Math.min(...results);
   
-  console.log(`\nMemory Stress Test Results:`);
-  console.log(`Average: ${avgMemory.toFixed(2)} MB`);
-  console.log(`Max: ${maxMemory.toFixed(2)} MB`);
-  console.log(`Min: ${minMemory.toFixed(2)} MB`);
-  console.log(`Variance: ${(maxMemory - minMemory).toFixed(2)} MB`);
+  console.info(`\nMemory Stress Test Results:`);
+  console.info(`Average: ${avgMemory.toFixed(2)} MB`);
+  console.info(`Max: ${maxMemory.toFixed(2)} MB`);
+  console.info(`Min: ${minMemory.toFixed(2)} MB`);
+  console.info(`Variance: ${(maxMemory - minMemory).toFixed(2)} MB`);
   
   return { avgMemory, maxMemory, minMemory, results };
 }

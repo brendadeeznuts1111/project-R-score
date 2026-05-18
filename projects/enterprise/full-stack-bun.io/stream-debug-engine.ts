@@ -52,12 +52,12 @@ async function debugOddsStream(stream: ReadableStream<Uint8Array>): Promise<Odds
 	]);
 
 	// 2. Uint8Array inspect perfection
-	console.log('📊 STREAM DEBUG');
-	console.log(Bun.inspect(bytes));
+	console.info('📊 STREAM DEBUG');
+	console.info(Bun.inspect(bytes));
 	// "Uint8Array(1024000) [ 123, 34, 110, 102, 108, ... ]"
 
-	console.log('📏 BUFFER SIZES');
-	console.log('%j', {
+	console.info('📏 BUFFER SIZES');
+	console.info('%j', {
 		arrayBuffer: arrayBuffer.byteLength,
 		blob: blob.size,
 		json: typeof json === 'object' ? JSON.stringify(json).length : 0,
@@ -66,17 +66,17 @@ async function debugOddsStream(stream: ReadableStream<Uint8Array>): Promise<Odds
 	});
 
 	// 3. Hex preview (perfect odds debugging)
-	console.log('🔍 HEX PREVIEW');
+	console.info('🔍 HEX PREVIEW');
 	const hexPreview = bytes.length > 0 
 		? Array.from(bytes.slice(0, Math.min(128, bytes.length)))
 			.map(b => b.toString(16).padStart(2, '0'))
 			.join('')
 		: '';
-	console.log(hexPreview);
+	console.info(hexPreview);
 
 	// 4. Clean ANSI logs
 	const rawLog = Bun.stripANSI('\u001b[32mStream complete\u001b[0m');
-	console.log('🧹 CLEAN LOG:', rawLog); // SIEM clean
+	console.info('🧹 CLEAN LOG:', rawLog); // SIEM clean
 
 	console.timeEnd('stream-debug');
 
@@ -234,7 +234,7 @@ setInterval(async () => {
 			const mockStream = createMockOddsStream(bookie);
 			const odds = await debugOddsStream(mockStream);
 
-			console.log('%j', {
+			console.info('%j', {
 				stream_processed: true,
 				bookie: odds.bookie || bookie,
 				markets: odds.markets?.length || 0,
@@ -252,16 +252,16 @@ setInterval(async () => {
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-	console.log('%j', { shutting_down: true, reason: 'SIGINT' });
+	console.info('%j', { shutting_down: true, reason: 'SIGINT' });
 	process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-	console.log('%j', { shutting_down: true, reason: 'SIGTERM' });
+	console.info('%j', { shutting_down: true, reason: 'SIGTERM' });
 	process.exit(0);
 });
 
-console.log('%j', {
+console.info('%j', {
 	streamDebugEngine: 'INSPECT-LIVE',
 	port: server.port,
 	readableStreamTo: ['arrayBuffer', 'blob', 'json', 'text', 'bytes'],

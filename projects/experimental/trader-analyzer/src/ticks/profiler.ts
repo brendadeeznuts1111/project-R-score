@@ -70,7 +70,7 @@ export class TickProfiler {
 			this.takeSample();
 		}, this.config.sampleIntervalMs);
 
-		console.log(
+		console.info(
 			`TickProfiler: Started (sampling every ${this.config.sampleIntervalMs}ms)`,
 		);
 	}
@@ -89,7 +89,7 @@ export class TickProfiler {
 		}
 
 		this.isRunning = false;
-		console.log("TickProfiler: Stopped");
+		console.info("TickProfiler: Stopped");
 
 		return this.generateReport();
 	}
@@ -250,7 +250,7 @@ export class TickProfiler {
 		const snapshot = Bun.generateHeapSnapshot();
 		await Bun.write(snapshotPath, JSON.stringify(snapshot));
 
-		console.log(`TickProfiler: Heap snapshot saved to ${snapshotPath}`);
+		console.info(`TickProfiler: Heap snapshot saved to ${snapshotPath}`);
 		return snapshotPath;
 	}
 
@@ -260,7 +260,7 @@ export class TickProfiler {
 	forceGc(): void {
 		if (typeof Bun.gc === "function") {
 			Bun.gc(true);
-			console.log("TickProfiler: Forced garbage collection");
+			console.info("TickProfiler: Forced garbage collection");
 		}
 	}
 

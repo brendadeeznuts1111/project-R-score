@@ -29,8 +29,8 @@ function spark(nums: number[]): string {
 const history: number[] = [];
 
 console.clear();
-console.log("🌐 DNS Cache Live View  (Ctrl-C to quit)");
-console.log("TTL =", TTL, "s  |  poll every 1 s\n");
+console.info("🌐 DNS Cache Live View  (Ctrl-C to quit)");
+console.info("TTL =", TTL, "s  |  poll every 1 s\n");
 
 setInterval(() => {
   const s = dns.getCacheStats();
@@ -38,7 +38,7 @@ setInterval(() => {
   const hitRatio = ((s.cacheHitsCompleted + s.cacheHitsInflight) / total) * 100;
 
   console.clear();
-  console.log("🌐 DNS Cache Live View  (TTL:", TTL + "s)\n");
+  console.info("🌐 DNS Cache Live View  (TTL:", TTL + "s)\n");
 
   // Color-coded hit ratio based on performance
   let hitRatioColor = "";
@@ -50,7 +50,7 @@ setInterval(() => {
     hitRatioColor = "❌"; // Red - needs improvement
   }
 
-  console.log(
+  console.info(
     "Hit ratio :", hitRatioColor, hitRatio.toFixed(1) + "%", bar(hitRatio),
     "\nHits      :", fmt(s.cacheHitsCompleted), "completed +", fmt(s.cacheHitsInflight), "in-flight",
     "\nMisses    :", fmt(s.cacheMisses),
@@ -60,34 +60,34 @@ setInterval(() => {
 
   // Cache size warning
   if (s.size > 200) {
-    console.log("⚠️  Cache size approaching limit (200+/255)");
+    console.info("⚠️  Cache size approaching limit (200+/255)");
   }
 
   // Error warning
   if (s.errors > 10) {
-    console.log("⚠️  High error count - investigate failed hosts");
+    console.info("⚠️  High error count - investigate failed hosts");
   }
 
   // mini spark-line of last 60 ratios (kept in memory)
   history.push(hitRatio);
   if (history.length > 60) history.shift();
-  console.log("\nRecent hit-ratio trend (► = now)");
-  console.log(spark(history.map(r => Math.round(r))) + " ►");
+  console.info("\nRecent hit-ratio trend (► = now)");
+  console.info(spark(history.map(r => Math.round(r))) + " ►");
 
   // Interpretation guide
-  console.log("\n📊 Interpretation:");
+  console.info("\n📊 Interpretation:");
   if (hitRatio >= 90) {
-    console.log("   ✅ Excellent! Prefetch/pre-connect strategy is working.");
+    console.info("   ✅ Excellent! Prefetch/pre-connect strategy is working.");
   } else if (hitRatio >= 70) {
-    console.log("   ⚠️  Good, but could improve. Consider more prefetching.");
+    console.info("   ⚠️  Good, but could improve. Consider more prefetching.");
   } else {
-    console.log("   ❌ Low hit ratio. Add more DNS prefetch/pre-connect hints.");
+    console.info("   ❌ Low hit ratio. Add more DNS prefetch/pre-connect hints.");
   }
 
   if (s.size < 50) {
-    console.log("   ℹ️  Cache is small - plenty of room for more entries.");
+    console.info("   ℹ️  Cache is small - plenty of room for more entries.");
   } else if (s.size > 200) {
-    console.log("   ⚠️  Cache is large - consider lowering TTL or raising limit.");
+    console.info("   ⚠️  Cache is large - consider lowering TTL or raising limit.");
   }
 }, 1_000);
 

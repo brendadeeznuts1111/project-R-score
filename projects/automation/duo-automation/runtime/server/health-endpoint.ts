@@ -5,7 +5,7 @@ import { BunSemverTaxonomyValidator } from '../utils/taxonomy-validator-semver';
 const validator = BunSemverTaxonomyValidator.getInstance();
 const port = 3001;
 
-console.log(`🚀 Starting Taxonomy Health Endpoint on port ${port}`);
+console.info(`🚀 Starting Taxonomy Health Endpoint on port ${port}`);
 
 const server = Bun.serve({
   port,
@@ -85,19 +85,19 @@ const server = Bun.serve({
   }
 });
 
-console.log(`✅ Health endpoint ready at http://localhost:${port}/health`);
-console.log(`📊 Detailed report at http://localhost:${port}/report`);
-console.log(`📈 Metrics at http://localhost:${port}/metrics`);
+console.info(`✅ Health endpoint ready at http://localhost:${port}/health`);
+console.info(`📊 Detailed report at http://localhost:${port}/report`);
+console.info(`📈 Metrics at http://localhost:${port}/metrics`);
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down health endpoint...');
+  console.info('\n🛑 Shutting down health endpoint...');
   server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n🛑 Shutting down health endpoint...');
+  console.info('\n🛑 Shutting down health endpoint...');
   server.stop();
   process.exit(0);
 });

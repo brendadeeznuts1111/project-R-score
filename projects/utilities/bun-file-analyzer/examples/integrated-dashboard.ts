@@ -38,14 +38,14 @@ class IntegratedDashboard {
   }
 
   async initialize(): Promise<void> {
-    console.log("🚀 Initializing Integrated Dashboard...");
+    console.info("🚀 Initializing Integrated Dashboard...");
     
     // Load initial data
     await this.loadMetrics();
     await this.loadBucketData();
     await this.loadBuildHistory();
     
-    console.log("✅ Dashboard initialized successfully");
+    console.info("✅ Dashboard initialized successfully");
   }
 
   private async loadMetrics(): Promise<void> {
@@ -801,19 +801,19 @@ class IntegratedDashboard {
       }.bind(this)
     });
 
-    console.log("🚀 Integrated Dashboard started successfully!");
-    console.log(`📊 Dashboard: http://localhost:${this.config.port}`);
-    console.log(`📊 API: http://localhost:${this.config.port}/data`);
-    console.log(`💚 Health: http://localhost:${this.config.port}/health`);
-    console.log("");
-    console.log("🎯 Features:");
-    console.log("  • Real-time monitoring with bucket visualization");
-    console.log("  • Interactive charts and metrics");
-    console.log("  • Build history tracking");
-    console.log("  • Tabbed interface for different views");
-    console.log("  • Auto-refresh every 5 seconds");
-    console.log("");
-    console.log("Press Ctrl+C to stop the server");
+    console.info("🚀 Integrated Dashboard started successfully!");
+    console.info(`📊 Dashboard: http://localhost:${this.config.port}`);
+    console.info(`📊 API: http://localhost:${this.config.port}/data`);
+    console.info(`💚 Health: http://localhost:${this.config.port}/health`);
+    console.info("");
+    console.info("🎯 Features:");
+    console.info("  • Real-time monitoring with bucket visualization");
+    console.info("  • Interactive charts and metrics");
+    console.info("  • Build history tracking");
+    console.info("  • Tabbed interface for different views");
+    console.info("  • Auto-refresh every 5 seconds");
+    console.info("");
+    console.info("Press Ctrl+C to stop the server");
   }
 }
 
@@ -823,7 +823,7 @@ async function main() {
   const port = parseInt(args.find(arg => arg.startsWith('--port='))?.split('=')[1] || '3005');
   
   if (args.includes('--help')) {
-    console.log(`
+    console.info(`
 🚀 Integrated Monitoring Dashboard
 
 Usage:

@@ -7,15 +7,15 @@
 // Test importing a TOML file from root
 import config from '@ff/fire22-config.toml';
 
-console.log('🔧 Simple @ff/ Alias Test');
-console.log('='.repeat(40));
+console.info('🔧 Simple @ff/ Alias Test');
+console.info('='.repeat(40));
 
-console.log('📁 Testing @ff/ alias:');
-console.log(`   Project: ${config.name}`);
-console.log(`   Version: ${config.version}`);
-console.log(`   Description: ${config.description}`);
+console.info('📁 Testing @ff/ alias:');
+console.info(`   Project: ${config.name}`);
+console.info(`   Version: ${config.version}`);
+console.info(`   Description: ${config.description}`);
 
-console.log('\n✅ @ff/ alias is working!');
-console.log('   Successfully imported fire22-config.toml from project root');
+console.info('\n✅ @ff/ alias is working!');
+console.info('   Successfully imported fire22-config.toml from project root');
 
 export { config };

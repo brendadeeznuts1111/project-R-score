@@ -80,8 +80,8 @@ class WorkspaceConsistencyValidator {
    * 🚀 Run full validation
    */
   async validate(): Promise<void> {
-    console.log('🔍 Fire22 Workspace Consistency Validator');
-    console.log('='.repeat(60));
+    console.info('🔍 Fire22 Workspace Consistency Validator');
+    console.info('='.repeat(60));
 
     // Validate each workspace
     for (const workspace of this.workspaces) {
@@ -103,7 +103,7 @@ class WorkspaceConsistencyValidator {
    * 📊 Validate individual workspace
    */
   private async validateWorkspace(workspace: string): Promise<ValidationResult> {
-    console.log(`\n🔍 Validating ${workspace}...`);
+    console.info(`\n🔍 Validating ${workspace}...`);
 
     const result: ValidationResult = {
       workspace,
@@ -327,7 +327,7 @@ class WorkspaceConsistencyValidator {
    * 🔗 Validate cross-workspace consistency
    */
   private async validateCrossWorkspaceConsistency(): Promise<void> {
-    console.log('\n🔗 Validating cross-workspace consistency...');
+    console.info('\n🔗 Validating cross-workspace consistency...');
 
     const versions = new Set<string>();
     const types = new Set<string>();
@@ -419,9 +419,9 @@ class WorkspaceConsistencyValidator {
    * 📊 Generate consistency report
    */
   private generateReport(): void {
-    console.log('\n' + '='.repeat(60));
-    console.log('📊 CONSISTENCY REPORT');
-    console.log('='.repeat(60));
+    console.info('\n' + '='.repeat(60));
+    console.info('📊 CONSISTENCY REPORT');
+    console.info('='.repeat(60));
 
     // Summary
     const totalIssues = this.issues.length;
@@ -429,18 +429,18 @@ class WorkspaceConsistencyValidator {
     const warnings = this.issues.filter(i => i.type === 'warning').length;
     const info = this.issues.filter(i => i.type === 'info').length;
 
-    console.log('\n📈 Summary:');
-    console.log(`  Total Issues: ${totalIssues}`);
-    console.log(`  ❌ Errors: ${errors}`);
-    console.log(`  ⚠️  Warnings: ${warnings}`);
-    console.log(`  ℹ️  Info: ${info}`);
+    console.info('\n📈 Summary:');
+    console.info(`  Total Issues: ${totalIssues}`);
+    console.info(`  ❌ Errors: ${errors}`);
+    console.info(`  ⚠️  Warnings: ${warnings}`);
+    console.info(`  ℹ️  Info: ${info}`);
 
     // Workspace scores
-    console.log('\n🎯 Workspace Scores:');
+    console.info('\n🎯 Workspace Scores:');
     for (const result of this.results) {
       const status = result.valid ? '✅' : '❌';
       const grade = this.getGrade(result.score);
-      console.log(`  ${status} ${result.workspace}: ${result.score}/100 (${grade})`);
+      console.info(`  ${status} ${result.workspace}: ${result.score}/100 (${grade})`);
     }
 
     // Issues by category
@@ -452,35 +452,35 @@ class WorkspaceConsistencyValidator {
       categories.get(issue.category)!.push(issue);
     }
 
-    console.log('\n📋 Issues by Category:');
+    console.info('\n📋 Issues by Category:');
     for (const [category, issues] of categories) {
-      console.log(`\n  ${category} (${issues.length}):`);
+      console.info(`\n  ${category} (${issues.length}):`);
       for (const issue of issues.slice(0, 5)) {
         const icon = issue.type === 'error' ? '❌' : issue.type === 'warning' ? '⚠️' : 'ℹ️';
-        console.log(`    ${icon} [${issue.workspace}] ${issue.message}`);
+        console.info(`    ${icon} [${issue.workspace}] ${issue.message}`);
         if (issue.expected && issue.actual) {
-          console.log(`       Expected: ${JSON.stringify(issue.expected)}`);
-          console.log(`       Actual: ${JSON.stringify(issue.actual)}`);
+          console.info(`       Expected: ${JSON.stringify(issue.expected)}`);
+          console.info(`       Actual: ${JSON.stringify(issue.actual)}`);
         }
       }
       if (issues.length > 5) {
-        console.log(`    ... and ${issues.length - 5} more`);
+        console.info(`    ... and ${issues.length - 5} more`);
       }
     }
 
     // Recommendations
-    console.log('\n💡 Recommendations:');
+    console.info('\n💡 Recommendations:');
     const recommendations = this.generateRecommendations();
-    recommendations.forEach(r => console.log(`  • ${r}`));
+    recommendations.forEach(r => console.info(`  • ${r}`));
 
     // Overall status
     const overallValid = this.results.every(r => r.valid);
     const avgScore = this.results.reduce((sum, r) => sum + r.score, 0) / this.results.length;
 
-    console.log('\n' + '='.repeat(60));
-    console.log(`🏁 Overall Status: ${overallValid ? '✅ VALID' : '❌ INVALID'}`);
-    console.log(`📊 Average Score: ${avgScore.toFixed(1)}/100 (${this.getGrade(avgScore)})`);
-    console.log('='.repeat(60));
+    console.info('\n' + '='.repeat(60));
+    console.info(`🏁 Overall Status: ${overallValid ? '✅ VALID' : '❌ INVALID'}`);
+    console.info(`📊 Average Score: ${avgScore.toFixed(1)}/100 (${this.getGrade(avgScore)})`);
+    console.info('='.repeat(60));
   }
 
   /**
@@ -561,7 +561,7 @@ class WorkspaceConsistencyValidator {
 
     const reportPath = join(process.cwd(), 'workspace-consistency-report.json');
     await Bun.write(reportPath, JSON.stringify(report, null, 2));
-    console.log(`\n📄 Consistency report saved to: ${reportPath}`);
+    console.info(`\n📄 Consistency report saved to: ${reportPath}`);
   }
 }
 

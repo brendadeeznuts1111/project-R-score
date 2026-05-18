@@ -475,7 +475,7 @@ export class MerchantDashboardManager {
       return this.dashboards.get(cacheKey)!;
     }
 
-    console.log(`📊 Loading dashboard for merchant ${merchantId} (${timeframe})`);
+    console.info(`📊 Loading dashboard for merchant ${merchantId} (${timeframe})`);
 
     // Fetch all data in parallel
     const [
@@ -511,7 +511,7 @@ export class MerchantDashboardManager {
     this.dashboards.set(cacheKey, dashboard);
     setTimeout(() => this.dashboards.delete(cacheKey), 300000);
 
-    console.log(`✅ Dashboard loaded for ${merchantId}`);
+    console.info(`✅ Dashboard loaded for ${merchantId}`);
     return dashboard;
   }
 
@@ -951,7 +951,7 @@ export class MerchantDashboardManager {
   // ============================================================================
 
   async subscribeToRealTimeUpdates(merchantId: string, callback: (update: any) => void): Promise<void> {
-    console.log(`📡 Subscribing to real-time updates for merchant ${merchantId}`);
+    console.info(`📡 Subscribing to real-time updates for merchant ${merchantId}`);
 
     // In a real implementation, this would connect to WebSocket
     // For now, we'll simulate with periodic updates
@@ -971,7 +971,7 @@ export class MerchantDashboardManager {
     if (subscription) {
       subscription.close();
       this.realTimeSubscriptions.delete(merchantId);
-      console.log(`📡 Unsubscribed from real-time updates for merchant ${merchantId}`);
+      console.info(`📡 Unsubscribed from real-time updates for merchant ${merchantId}`);
     }
   }
 
@@ -989,7 +989,7 @@ export class MerchantDashboardManager {
       // Clear cache for this merchant
       this.clearMerchantCache(merchantId);
 
-      console.log(`✅ Updated dispute ${disputeId} status to ${status}`);
+      console.info(`✅ Updated dispute ${disputeId} status to ${status}`);
       return true;
     } catch (error) {
       console.error(`❌ Failed to update dispute status:`, error);
@@ -1012,7 +1012,7 @@ export class MerchantDashboardManager {
         evidence.authenticityScore || 1.0, evidence.consistencyScore || 1.0
       ]);
 
-      console.log(`✅ Uploaded evidence ${evidenceId} for dispute ${disputeId}`);
+      console.info(`✅ Uploaded evidence ${evidenceId} for dispute ${disputeId}`);
       return evidenceId;
     } catch (error) {
       console.error(`❌ Failed to upload evidence:`, error);

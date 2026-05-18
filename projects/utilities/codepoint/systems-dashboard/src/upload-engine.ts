@@ -93,7 +93,7 @@ class UploadEngine {
     const start = performance.now();
 
     if (hasFeature("DEBUG")) {
-      console.log(
+      console.info(
         this.formatLogEntry(
           `Uploading ${basename(filePath)} to ${this.provider.toUpperCase()}`,
           "info"
@@ -139,7 +139,7 @@ class UploadEngine {
 
     if (response.ok) {
       if (hasFeature("DEBUG")) {
-        console.log(
+        console.info(
           this.formatLogEntry(
             `Successfully uploaded ${fileName} (${(stats.size / 1024).toFixed(1)}KB)`,
             "info"
@@ -169,7 +169,7 @@ class UploadEngine {
   }
 
   async uploadDashboard(): Promise<boolean> {
-    console.log(
+    console.info(
       `🚀 Starting dashboard upload to ${this.provider.toUpperCase()}...`
     );
 
@@ -195,7 +195,7 @@ class UploadEngine {
       "package.json",
     ];
 
-    console.log("📁 Uploading dashboard files...");
+    console.info("📁 Uploading dashboard files...");
     for (const file of dashboardFiles) {
       try {
         const localPath = join(process.cwd(), file);
@@ -211,7 +211,7 @@ class UploadEngine {
     }
 
     // Upload documentation files
-    console.log("📚 Uploading documentation...");
+    console.info("📚 Uploading documentation...");
     const docFiles = [
       "../README.md",
       "../BUN_INSPECT_*.md",
@@ -239,7 +239,7 @@ class UploadEngine {
     await this.createManifest(prefix, timestamp);
 
     if (allSuccessful) {
-      console.log(
+      console.info(
         `🎉 All files uploaded successfully to ${this.provider.toUpperCase()}!`
       );
 
@@ -248,16 +248,16 @@ class UploadEngine {
           ? `${this.config.endpoint}/${this.config.bucket}`
           : `https://${this.config.bucket}.s3.amazonaws.com`;
 
-      console.log(
+      console.info(
         `📂 ${this.provider.toUpperCase()} Location: ${baseUrl}/${prefix}/`
       );
 
       if (this.provider === "r2") {
-        console.log(
+        console.info(
           `🔗 Public URL: https://pub-${this.config.accountId}.r2.dev/${prefix}/index.html`
         );
       } else {
-        console.log(
+        console.info(
           `🔗 S3 URL: https://${this.config.bucket}.s3.amazonaws.com/${prefix}/index.html`
         );
       }
@@ -267,7 +267,7 @@ class UploadEngine {
         this.showUploadMetrics();
       }
     } else {
-      console.log("⚠️ Some files failed to upload. Check the logs above.");
+      console.info("⚠️ Some files failed to upload. Check the logs above.");
     }
 
     return allSuccessful;
@@ -347,7 +347,7 @@ class UploadEngine {
     this.auditLogs.push(log);
 
     if (hasFeature("DEBUG")) {
-      console.log(
+      console.info(
         this.formatLogEntry(
           `Audit: ${log.file} (${(log.size / 1024).toFixed(1)}KB) in ${log.duration.toFixed(0)}ms`,
           "info"
@@ -419,7 +419,7 @@ class UploadEngine {
     });
 
     if (response.ok) {
-      console.log("📋 Manifest created successfully");
+      console.info("📋 Manifest created successfully");
     }
   }
 
@@ -442,11 +442,11 @@ class UploadEngine {
 
   private printConfigurationHelp() {
     if (this.provider === "r2") {
-      console.log(
+      console.info(
         "Required: CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_R2_ACCESS_KEY_ID, CLOUDFLARE_R2_SECRET_ACCESS_KEY, R2_BUCKET"
       );
     } else {
-      console.log(
+      console.info(
         "Required: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, S3_BUCKET"
       );
     }
@@ -489,12 +489,12 @@ class UploadEngine {
       0
     );
 
-    console.log("\n📊 Upload Metrics:");
-    console.log(`  Files uploaded: ${this.auditLogs.length}`);
-    console.log(`  Total size: ${(totalSize / 1024).toFixed(1)}KB`);
-    console.log(`  Average upload time: ${avgDuration.toFixed(0)}ms`);
-    console.log(`  Total upload time: ${totalDuration.toFixed(0)}ms`);
-    console.log(
+    console.info("\n📊 Upload Metrics:");
+    console.info(`  Files uploaded: ${this.auditLogs.length}`);
+    console.info(`  Total size: ${(totalSize / 1024).toFixed(1)}KB`);
+    console.info(`  Average upload time: ${avgDuration.toFixed(0)}ms`);
+    console.info(`  Total upload time: ${totalDuration.toFixed(0)}ms`);
+    console.info(
       `  Average speed: ${(totalSize / (totalDuration / 1000) / 1024).toFixed(1)}KB/s`
     );
   }

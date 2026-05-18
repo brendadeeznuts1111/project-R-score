@@ -68,7 +68,7 @@ class PlaybookAuditor {
 
   async auditRepository(repoPath: string): Promise<ComplianceResult> {
     const repoName = relative(process.cwd(), repoPath);
-    console.log(`🔍 Auditing repository: ${repoName}`);
+    console.info(`🔍 Auditing repository: ${repoName}`);
 
     const result: ComplianceResult = {
       repository: repoName,
@@ -96,7 +96,7 @@ class PlaybookAuditor {
     // Generate recommendations
     result.recommendations = this.generateRecommendations(result);
 
-    console.log(`✅ Repository audit complete: ${repoName} (Score: ${result.overallScore}%)`);
+    console.info(`✅ Repository audit complete: ${repoName} (Score: ${result.overallScore}%)`);
 
     return result;
   }
@@ -830,7 +830,7 @@ class PlaybookAuditor {
         break;
     }
 
-    console.log(`📄 Compliance report generated: ${filename}.${format}`);
+    console.info(`📄 Compliance report generated: ${filename}.${format}`);
   }
 
   private generateMarkdownReport(results: ComplianceResult[]): string {
@@ -1008,11 +1008,11 @@ async function main() {
 
     // Update dashboard if requested
     if (options.dashboard) {
-      console.log('📊 Updating compliance dashboard...');
+      console.info('📊 Updating compliance dashboard...');
       // TODO: Implement dashboard update logic
     }
 
-    console.log('✅ Playbook compliance audit complete!');
+    console.info('✅ Playbook compliance audit complete!');
   } catch (error) {
     console.error('❌ Playbook auditor failed:', error);
     process.exit(1);

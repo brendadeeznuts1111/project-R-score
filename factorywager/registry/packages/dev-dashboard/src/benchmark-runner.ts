@@ -124,7 +124,7 @@ if (import.meta.path === Bun.main) {
     const result = await runBenchmark(config);
     // Only output JSON to stdout (stderr is for logs/debugging)
     // This ensures clean JSON parsing in the parent process
-    console.log(JSON.stringify(result));
+    console.info(JSON.stringify(result));
     // Explicitly flush stdout to ensure output is sent
     process.stdout.write('');
   } catch (error) {
@@ -137,7 +137,7 @@ if (import.meta.path === Bun.main) {
       note: `❌ Error: ${error instanceof Error ? error.message : String(error)}`,
       category: 'performance',
     };
-    console.log(JSON.stringify(errorResult));
+    console.info(JSON.stringify(errorResult));
     // Log to stderr for debugging (won't interfere with JSON parsing)
     console.error(`[BENCHMARK ERROR] ${error instanceof Error ? error.message : String(error)}`);
     process.exit(1);

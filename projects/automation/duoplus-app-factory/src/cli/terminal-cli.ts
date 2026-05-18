@@ -85,11 +85,11 @@ class TerminalCLI {
         cwd: options.cwd,
         onData: (data) => process.stdout.write(data),
         onExit: (code) => {
-          console.log(`\nSession exited with code ${code}`);
+          console.info(`\nSession exited with code ${code}`);
         },
       });
 
-      console.log(`Created terminal session: ${session.id}`);
+      console.info(`Created terminal session: ${session.id}`);
 
       if (options.command) {
         ptyService.writeToSession(session.id, options.command + "\n");
@@ -107,18 +107,18 @@ class TerminalCLI {
   private listSessions() {
     const sessions = ptyService.listSessions();
     if (sessions.length === 0) {
-      console.log("No active terminal sessions.");
+      console.info("No active terminal sessions.");
       return;
     }
 
-    console.log("Active terminal sessions:");
-    console.log("ID\t\tShell\t\tStarted\t\t\tActive");
-    console.log("-".repeat(80));
+    console.info("Active terminal sessions:");
+    console.info("ID\t\tShell\t\tStarted\t\t\tActive");
+    console.info("-".repeat(80));
     
     sessions.forEach(session => {
       const startTime = session.startTime.toLocaleTimeString();
       const shell = session.process.spawnargs[0] || "unknown";
-      console.log(`${session.id}\t${shell}\t${startTime}\t${session.isActive}`);
+      console.info(`${session.id}\t${shell}\t${startTime}\t${session.isActive}`);
     });
   }
 
@@ -129,8 +129,8 @@ class TerminalCLI {
       process.exit(1);
     }
 
-    console.log(`Attaching to session ${sessionId}...`);
-    console.log("Press Ctrl+D to detach\n");
+    console.info(`Attaching to session ${sessionId}...`);
+    console.info("Press Ctrl+D to detach\n");
 
     // Set up input forwarding
     process.stdin.setRawMode(true);
@@ -160,13 +160,13 @@ class TerminalCLI {
     process.stdin.removeListener("data", onData);
     process.stdout.removeListener("resize", onResize);
 
-    console.log("\nSession ended.");
+    console.info("\nSession ended.");
   }
 
   private async closeSession(sessionId: string) {
     const success = ptyService.closeSession(sessionId);
     if (success) {
-      console.log(`Closed session ${sessionId}`);
+      console.info(`Closed session ${sessionId}`);
     } else {
       console.error(`Failed to close session ${sessionId}`);
       process.exit(1);
@@ -175,11 +175,11 @@ class TerminalCLI {
 
   private showStats() {
     const stats = ptyService.getStats();
-    console.log("Terminal Service Statistics:");
-    console.log(`Total sessions: ${stats.totalSessions}`);
-    console.log(`Active sessions: ${stats.activeSessions}`);
-    console.log(`Max sessions: ${stats.maxSessions}`);
-    console.log(`Uptime: ${Math.floor(stats.uptime / 1000)}s`);
+    console.info("Terminal Service Statistics:");
+    console.info(`Total sessions: ${stats.totalSessions}`);
+    console.info(`Active sessions: ${stats.activeSessions}`);
+    console.info(`Max sessions: ${stats.maxSessions}`);
+    console.info(`Uptime: ${Math.floor(stats.uptime / 1000)}s`);
   }
 
   private async startInteractiveShell(options: { shell?: string }) {
@@ -189,7 +189,7 @@ class TerminalCLI {
       rows: process.stdout.rows,
       onData: (data) => process.stdout.write(data),
       onExit: (code) => {
-        console.log(`\nShell exited with code ${code}`);
+        console.info(`\nShell exited with code ${code}`);
       },
     });
 

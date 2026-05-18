@@ -71,7 +71,7 @@ async function setSecureSecret(name: string, value: string): Promise<boolean> {
 	try {
 		// Check if Bun.secrets is available
 		if (typeof Bun === "undefined" || !Bun.secrets) {
-			console.log(`${GLYPHS.FAIL} Bun.secrets not available`);
+			console.info(`${GLYPHS.FAIL} Bun.secrets not available`);
 			return false;
 		}
 
@@ -154,14 +154,14 @@ async function deleteSecureSecret(name: string): Promise<boolean> {
 async function listProfiles(): Promise<void> {
 	ensureDirectories();
 
-	console.log(`\n${GLYPHS.PROFILE} Terminal Profiles\n`);
-	console.log("-".repeat(70));
+	console.info(`\n${GLYPHS.PROFILE} Terminal Profiles\n`);
+	console.info("-".repeat(70));
 
 	// Load secrets index
 	const secretsIndex = await loadSecretsIndex();
-	console.log(`  Secure Secrets: ${secretsIndex.length} stored in macOS Keychain`);
-	console.log(`  Service: ${SERVICE_NAME}`);
-	console.log();
+	console.info(`  Secure Secrets: ${secretsIndex.length} stored in macOS Keychain`);
+	console.info(`  Service: ${SERVICE_NAME}`);
+	console.info();
 
 	// List profiles
 	const profiles: string[] = [];
@@ -173,50 +173,50 @@ async function listProfiles(): Promise<void> {
 		}
 	}
 
-	console.log(`  Environment Profiles: ${profiles.length}`);
+	console.info(`  Environment Profiles: ${profiles.length}`);
 	for (const p of profiles) {
 		const profilePath = join(PROFILES_DIR, `${p}.json`);
 		try {
 			const data = await Bun.file(profilePath).json();
 			const env = data.environment || "unknown";
 			const secretCount = data.secrets?.length || 0;
-			console.log(`    ${GLYPHS.OK} ${p.padEnd(20)} [${env}] ${secretCount} secrets`);
+			console.info(`    ${GLYPHS.OK} ${p.padEnd(20)} [${env}] ${secretCount} secrets`);
 		} catch {
-			console.log(`    ${GLYPHS.PROFILE} ${p}`);
+			console.info(`    ${GLYPHS.PROFILE} ${p}`);
 		}
 	}
 
 	// Show secrets
 	if (secretsIndex.length > 0) {
-		console.log(`\n  ${GLYPHS.LOCK} Stored Secrets:`);
+		console.info(`\n  ${GLYPHS.LOCK} Stored Secrets:`);
 		for (const s of secretsIndex.slice(0, 5)) {
 			const lastUsed = s.lastUsed
 				? ` (used: ${new Date(s.lastUsed).toLocaleDateString()})`
 				: "";
-			console.log(`    ${GLYPHS.KEY} ${s.name}${lastUsed}`);
+			console.info(`    ${GLYPHS.KEY} ${s.name}${lastUsed}`);
 		}
 		if (secretsIndex.length > 5) {
-			console.log(`    ... and ${secretsIndex.length - 5} more`);
+			console.info(`    ... and ${secretsIndex.length - 5} more`);
 		}
 	}
 
-	console.log("-".repeat(70) + "\n");
+	console.info("-".repeat(70) + "\n");
 }
 
 async function setSecret(name: string, value?: string): Promise<void> {
 	if (!value) {
 		// Read from stdin or prompt
-		console.log(`${GLYPHS.KEY} Enter value for secret '${name}':`);
+		console.info(`${GLYPHS.KEY} Enter value for secret '${name}':`);
 		// For now, require command line arg
-		console.log(`${GLYPHS.FAIL} Value required: --value <secret>`);
+		console.info(`${GLYPHS.FAIL} Value required: --value <secret>`);
 		process.exit(1);
 	}
 
 	const success = await setSecureSecret(name, value);
 	if (success) {
-		console.log(`${GLYPHS.OK} Secret '${name}' stored securely in macOS Keychain`);
+		console.info(`${GLYPHS.OK} Secret '${name}' stored securely in macOS Keychain`);
 	} else {
-		console.log(`${GLYPHS.FAIL} Failed to store secret`);
+		console.info(`${GLYPHS.FAIL} Failed to store secret`);
 		process.exit(1);
 	}
 }
@@ -224,9 +224,9 @@ async function setSecret(name: string, value?: string): Promise<void> {
 async function getSecret(name: string): Promise<void> {
 	const value = await getSecureSecret(name);
 	if (value) {
-		console.log(`${GLYPHS.KEY} ${name}=${value}`);
+		console.info(`${GLYPHS.KEY} ${name}=${value}`);
 	} else {
-		console.log(`${GLYPHS.FAIL} Secret '${name}' not found`);
+		console.info(`${GLYPHS.FAIL} Secret '${name}' not found`);
 		process.exit(1);
 	}
 }
@@ -235,39 +235,39 @@ async function switchProfile(name: string): Promise<void> {
 	const profilePath = join(PROFILES_DIR, `${name}.json`);
 
 	if (!existsSync(profilePath)) {
-		console.log(`${GLYPHS.FAIL} Profile '${name}' not found`);
+		console.info(`${GLYPHS.FAIL} Profile '${name}' not found`);
 		process.exit(1);
 	}
 
-	console.log(`\n${GLYPHS.TERMINAL} Switching to profile: ${name}\n`);
-	console.log("-".repeat(70));
+	console.info(`\n${GLYPHS.TERMINAL} Switching to profile: ${name}\n`);
+	console.info("-".repeat(70));
 
 	// Load profile
 	const profile = await Bun.file(profilePath).json();
 
 	// Load env vars
 	if (profile.env) {
-		console.log("  Environment Variables:");
+		console.info("  Environment Variables:");
 		for (const [key, value] of Object.entries(profile.env)) {
 			if (typeof value === "string" && !value.includes("secret")) {
-				console.log(`    ${key}=${value}`);
+				console.info(`    ${key}=${value}`);
 			} else {
-				console.log(`    ${key}=***`);
+				console.info(`    ${key}=***`);
 			}
 		}
 	}
 
 	// Load secrets
 	if (profile.secrets && profile.secrets.length > 0) {
-		console.log("\n  Loading Secure Secrets:");
+		console.info("\n  Loading Secure Secrets:");
 		for (const secretName of profile.secrets) {
 			const value = await getSecureSecret(secretName);
 			if (value) {
-				console.log(`    ${GLYPHS.LOCK} ${secretName} loaded`);
+				console.info(`    ${GLYPHS.LOCK} ${secretName} loaded`);
 				// Export for shell
-				console.log(`    export ${secretName.toUpperCase()}="${value}"`);
+				console.info(`    export ${secretName.toUpperCase()}="${value}"`);
 			} else {
-				console.log(`    ${GLYPHS.FAIL} ${secretName} not found in keychain`);
+				console.info(`    ${GLYPHS.FAIL} ${secretName} not found in keychain`);
 			}
 		}
 	}
@@ -275,27 +275,27 @@ async function switchProfile(name: string): Promise<void> {
 	// Set active profile
 	process.env.MATRIX_ACTIVE_PROFILE = name;
 
-	console.log("-".repeat(70));
-	console.log(`\n${GLYPHS.OK} Profile '${name}' activated`);
-	console.log(`Run: export MATRIX_ACTIVE_PROFILE=${name}`);
-	console.log();
+	console.info("-".repeat(70));
+	console.info(`\n${GLYPHS.OK} Profile '${name}' activated`);
+	console.info(`Run: export MATRIX_ACTIVE_PROFILE=${name}`);
+	console.info();
 }
 
 async function encryptProfile(name: string): Promise<void> {
-	console.log(`${GLYPHS.LOCK} Encrypting profile: ${name}`);
-	console.log(`${GLYPHS.DRIFT} Using Bun.password for Argon2id hashing...`);
+	console.info(`${GLYPHS.LOCK} Encrypting profile: ${name}`);
+	console.info(`${GLYPHS.DRIFT} Using Bun.password for Argon2id hashing...`);
 	// Implementation would use Bun.password.hash()
-	console.log(`${GLYPHS.OK} Profile encrypted (simulated)`);
+	console.info(`${GLYPHS.OK} Profile encrypted (simulated)`);
 }
 
 async function decryptProfile(name: string): Promise<void> {
-	console.log(`${GLYPHS.UNLOCK} Decrypting profile: ${name}`);
-	console.log(`${GLYPHS.OK} Profile decrypted (simulated)`);
+	console.info(`${GLYPHS.UNLOCK} Decrypting profile: ${name}`);
+	console.info(`${GLYPHS.OK} Profile decrypted (simulated)`);
 }
 
 // ─── Help ─────────────────────────────────────────
 function printHelp(): void {
-	console.log(`
+	console.info(`
 ${GLYPHS.DRIFT} Tier-1380 Terminal Profile Manager
 
 Secure profile management with Bun.secrets (macOS Keychain)
@@ -348,7 +348,7 @@ async function main(): Promise<void> {
 			const valueIdx = args.indexOf("--value");
 			const value = valueIdx !== -1 ? args[valueIdx + 1] : undefined;
 			if (!name) {
-				console.log(`${GLYPHS.FAIL} Secret name required`);
+				console.info(`${GLYPHS.FAIL} Secret name required`);
 				process.exit(1);
 			}
 			await setSecret(name, value);
@@ -358,7 +358,7 @@ async function main(): Promise<void> {
 		case "get": {
 			const name = args[0];
 			if (!name) {
-				console.log(`${GLYPHS.FAIL} Secret name required`);
+				console.info(`${GLYPHS.FAIL} Secret name required`);
 				process.exit(1);
 			}
 			await getSecret(name);
@@ -369,7 +369,7 @@ async function main(): Promise<void> {
 		case "use": {
 			const name = args[0];
 			if (!name) {
-				console.log(`${GLYPHS.FAIL} Profile name required`);
+				console.info(`${GLYPHS.FAIL} Profile name required`);
 				process.exit(1);
 			}
 			await switchProfile(name);
@@ -379,7 +379,7 @@ async function main(): Promise<void> {
 		case "encrypt": {
 			const name = args[0];
 			if (!name) {
-				console.log(`${GLYPHS.FAIL} Profile name required`);
+				console.info(`${GLYPHS.FAIL} Profile name required`);
 				process.exit(1);
 			}
 			await encryptProfile(name);
@@ -389,7 +389,7 @@ async function main(): Promise<void> {
 		case "decrypt": {
 			const name = args[0];
 			if (!name) {
-				console.log(`${GLYPHS.FAIL} Profile name required`);
+				console.info(`${GLYPHS.FAIL} Profile name required`);
 				process.exit(1);
 			}
 			await decryptProfile(name);
@@ -403,8 +403,8 @@ async function main(): Promise<void> {
 			break;
 
 		default:
-			console.log(`${GLYPHS.FAIL} Unknown command: ${cmd}`);
-			console.log("Run 'bun run tier1380:terminal:profiles help' for usage.");
+			console.info(`${GLYPHS.FAIL} Unknown command: ${cmd}`);
+			console.info("Run 'bun run tier1380:terminal:profiles help' for usage.");
 			process.exit(1);
 	}
 }

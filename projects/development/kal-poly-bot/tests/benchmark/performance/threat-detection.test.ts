@@ -36,10 +36,10 @@ describe("Threat Detection Performance Benchmarks", () => {
     }
 
     const stats = measurer.getStats("threat-detection");
-    console.log(`🔍 Threat Detection Performance:`);
-    console.log(`   Average: ${stats!.average.toFixed(2)}ms`);
-    console.log(`   P95: ${stats!.p95.toFixed(2)}ms`);
-    console.log(`   Max: ${stats!.max.toFixed(2)}ms`);
+    console.info(`🔍 Threat Detection Performance:`);
+    console.info(`   Average: ${stats!.average.toFixed(2)}ms`);
+    console.info(`   P95: ${stats!.p95.toFixed(2)}ms`);
+    console.info(`   Max: ${stats!.max.toFixed(2)}ms`);
 
     TestAssertions.assertPerformance(
       stats!.average,
@@ -76,10 +76,10 @@ describe("Threat Detection Performance Benchmarks", () => {
     const totalTime = endTime - startTime;
     const throughput = concurrentRequests / (totalTime / 1000);
 
-    console.log(`⚡ Concurrent Threat Detection:`);
-    console.log(`   Total Time: ${totalTime.toFixed(2)}ms`);
-    console.log(`   Throughput: ${throughput.toFixed(0)} requests/second`);
-    console.log(`   Requests Processed: ${results.length}`);
+    console.info(`⚡ Concurrent Threat Detection:`);
+    console.info(`   Total Time: ${totalTime.toFixed(2)}ms`);
+    console.info(`   Throughput: ${throughput.toFixed(0)} requests/second`);
+    console.info(`   Requests Processed: ${results.length}`);
 
     TestAssertions.assertThroughput(
       throughput,
@@ -124,9 +124,9 @@ describe("Threat Detection Performance Benchmarks", () => {
       performanceResults.push({ size, avgLatency, throughput });
     }
 
-    console.log(`📈 Load Performance Scaling:`);
+    console.info(`📈 Load Performance Scaling:`);
     performanceResults.forEach((result) => {
-      console.log(
+      console.info(
         `   ${result.size} requests: ${result.avgLatency.toFixed(2)}ms avg, ${result.throughput.toFixed(0)} req/s`
       );
     });

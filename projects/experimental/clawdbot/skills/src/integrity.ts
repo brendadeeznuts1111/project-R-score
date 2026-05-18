@@ -144,16 +144,16 @@ export function displayChecksums(skills: Skill[], limit = 10) {
     "Size": `${c.size}B`,
   }));
 
-  console.log("\n🔐 Skill Checksums");
-  console.log("─".repeat(50));
-  console.log(Bun.inspect.table(data, { colors: true }));
+  console.info("\n🔐 Skill Checksums");
+  console.info("─".repeat(50));
+  console.info(Bun.inspect.table(data, { colors: true }));
 
   if (skills.length > limit) {
-    console.log(`  ... and ${skills.length - limit} more`);
+    console.info(`  ... and ${skills.length - limit} more`);
   }
 
   const master = computeMasterChecksum(skills);
-  console.log(`\n  Master checksum: ${master}`);
+  console.info(`\n  Master checksum: ${master}`);
 }
 
 export function displayBinaryStatus(skills: Skill[]) {
@@ -168,25 +168,25 @@ export function displayBinaryStatus(skills: Skill[]) {
 
   const found = binaries.filter(b => b.found).length;
 
-  console.log("\n🔍 Binary Status");
-  console.log("─".repeat(50));
-  console.log(Bun.inspect.table(data, { colors: true }));
-  console.log(`\n  Found: ${found}/${binaries.length} binaries`);
+  console.info("\n🔍 Binary Status");
+  console.info("─".repeat(50));
+  console.info(Bun.inspect.table(data, { colors: true }));
+  console.info(`\n  Found: ${found}/${binaries.length} binaries`);
 }
 
 export function displayIntegrityReport(skills: Skill[]) {
   const report = generateIntegrityReport(skills);
 
-  console.log("\n" + "═".repeat(60));
-  console.log("🛡️  INTEGRITY REPORT");
-  console.log("═".repeat(60));
-  console.log(`  Generated: ${report.timestamp}`);
-  console.log(`  Skills: ${report.totalSkills}`);
-  console.log(`  Master CRC32: ${report.masterChecksum}`);
-  console.log(`  Compute time: ${report.computeTimeMs.toFixed(2)}ms`);
+  console.info("\n" + "═".repeat(60));
+  console.info("🛡️  INTEGRITY REPORT");
+  console.info("═".repeat(60));
+  console.info(`  Generated: ${report.timestamp}`);
+  console.info(`  Skills: ${report.totalSkills}`);
+  console.info(`  Master CRC32: ${report.masterChecksum}`);
+  console.info(`  Compute time: ${report.computeTimeMs.toFixed(2)}ms`);
 
   const binFound = report.binaries.filter(b => b.found).length;
-  console.log(`  Binaries: ${binFound}/${report.binaries.length} found`);
+  console.info(`  Binaries: ${binFound}/${report.binaries.length} found`);
 
   // Summary table
   const summary = [
@@ -196,7 +196,7 @@ export function displayIntegrityReport(skills: Skill[]) {
     { Metric: "Compute Time", Value: `${report.computeTimeMs.toFixed(2)}ms` },
   ];
 
-  console.log("\n" + Bun.inspect.table(summary, { colors: true }));
+  console.info("\n" + Bun.inspect.table(summary, { colors: true }));
 
   return report;
 }

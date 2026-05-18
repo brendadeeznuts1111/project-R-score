@@ -106,10 +106,10 @@ class TzdbIntegrityVerifier {
    * 🚨 Run comprehensive integrity verification
    */
   async runVerification(): Promise<SystemVerificationReport> {
-    console.log('🔍 Starting TZDB Integrity Verification...');
-    console.log(`   • Total canonical zones: ${this.CANONICAL_ZONES.size}`);
-    console.log(`   • Critical zones: ${this.CRITICAL_ZONES.length}`);
-    console.log('');
+    console.info('🔍 Starting TZDB Integrity Verification...');
+    console.info(`   • Total canonical zones: ${this.CANONICAL_ZONES.size}`);
+    console.info(`   • Critical zones: ${this.CRITICAL_ZONES.length}`);
+    console.info('');
     
     const details: TzdbVerificationResult[] = [];
     let passedVerifications = 0;
@@ -117,25 +117,25 @@ class TzdbIntegrityVerifier {
     let warnings = 0;
     
     // Verify critical zones first
-    console.log('🚨 Verifying critical zones...');
+    console.info('🚨 Verifying critical zones...');
     for (const zone of this.CRITICAL_ZONES) {
       const result = await this.verifyZoneIntegrity(zone);
       details.push(result);
       
       if (result.integrityStatus === 'PASS') {
         passedVerifications++;
-        console.log(`   ✅ ${zone}: ${result.details}`);
+        console.info(`   ✅ ${zone}: ${result.details}`);
       } else if (result.integrityStatus === 'WARNING') {
         warnings++;
-        console.log(`   ⚠️  ${zone}: ${result.details}`);
+        console.info(`   ⚠️  ${zone}: ${result.details}`);
       } else {
         failedVerifications++;
-        console.log(`   ❌ ${zone}: ${result.details}`);
+        console.info(`   ❌ ${zone}: ${result.details}`);
       }
     }
     
     // Sample verification of additional zones (first 10 for performance)
-    console.log('\n📊 Sampling additional zones...');
+    console.info('\n📊 Sampling additional zones...');
     const sampleZones = Array.from(this.CANONICAL_ZONES)
       .filter(zone => !this.CRITICAL_ZONES.includes(zone))
       .slice(0, 10);
@@ -146,13 +146,13 @@ class TzdbIntegrityVerifier {
       
       if (result.integrityStatus === 'PASS') {
         passedVerifications++;
-        console.log(`   ✅ ${zone}: Verified`);
+        console.info(`   ✅ ${zone}: Verified`);
       } else if (result.integrityStatus === 'WARNING') {
         warnings++;
-        console.log(`   ⚠️  ${zone}: Warning`);
+        console.info(`   ⚠️  ${zone}: Warning`);
       } else {
         failedVerifications++;
-        console.log(`   ❌ ${zone}: Failed`);
+        console.info(`   ❌ ${zone}: Failed`);
       }
     }
     
@@ -184,39 +184,39 @@ class TzdbIntegrityVerifier {
    * 📋 Generate monthly verification report
    */
   async generateMonthlyReport(): Promise<void> {
-    console.log('📅 Generating Monthly TZDB Integrity Report...');
-    console.log('================================================');
+    console.info('📅 Generating Monthly TZDB Integrity Report...');
+    console.info('================================================');
     
     const report = await this.runVerification();
     
     // Display summary
-    console.log('\n📊 Verification Summary:');
-    console.log(`   • Overall Status: ${report.overallStatus}`);
-    console.log(`   • Total Verified: ${report.totalZones}`);
-    console.log(`   • Passed: ${report.passedVerifications}`);
-    console.log(`   • Warnings: ${report.warnings}`);
-    console.log(`   • Failed: ${report.failedVerifications}`);
-    console.log(`   • Timestamp: ${report.timestamp}`);
+    console.info('\n📊 Verification Summary:');
+    console.info(`   • Overall Status: ${report.overallStatus}`);
+    console.info(`   • Total Verified: ${report.totalZones}`);
+    console.info(`   • Passed: ${report.passedVerifications}`);
+    console.info(`   • Warnings: ${report.warnings}`);
+    console.info(`   • Failed: ${report.failedVerifications}`);
+    console.info(`   • Timestamp: ${report.timestamp}`);
     
     // Save report to file
     const reportPath = `./reports/tzdb-integrity-${new Date().toISOString().split('T')[0]}.json`;
     await Bun.write(reportPath, JSON.stringify(report, null, 2));
-    console.log(`\n💾 Report saved to: ${reportPath}`);
+    console.info(`\n💾 Report saved to: ${reportPath}`);
     
     // Alert on issues
     if (report.overallStatus === 'COMPROMISED') {
-      console.log('\n🚨 CRITICAL: TZDB integrity compromised!');
-      console.log('   • Immediate action required');
-      console.log('   • Review failed verifications');
-      console.log('   • Consider system rollback');
+      console.info('\n🚨 CRITICAL: TZDB integrity compromised!');
+      console.info('   • Immediate action required');
+      console.info('   • Review failed verifications');
+      console.info('   • Consider system rollback');
     } else if (report.overallStatus === 'WARNING') {
-      console.log('\n⚠️  WARNING: TZDB integrity issues detected');
-      console.log('   • Review warnings in report');
-      console.log('   • Schedule maintenance window');
+      console.info('\n⚠️  WARNING: TZDB integrity issues detected');
+      console.info('   • Review warnings in report');
+      console.info('   • Schedule maintenance window');
     } else {
-      console.log('\n✅ SECURE: TZDB integrity verified');
-      console.log('   • All canonical zones verified');
-      console.log('   • No integrity issues detected');
+      console.info('\n✅ SECURE: TZDB integrity verified');
+      console.info('   • All canonical zones verified');
+      console.info('   • No integrity issues detected');
     }
   }
 
@@ -224,8 +224,8 @@ class TzdbIntegrityVerifier {
    * 🧪 Quick verification for critical zones only
    */
   async quickVerification(): Promise<void> {
-    console.log('⚡ Quick TZDB Integrity Check...');
-    console.log('=================================');
+    console.info('⚡ Quick TZDB Integrity Check...');
+    console.info('=================================');
     
     let allPassed = true;
     
@@ -240,24 +240,24 @@ class TzdbIntegrityVerifier {
         const isCanonical = this.CANONICAL_ZONES.has(zone);
         
         if (!isCanonical) {
-          console.log(`❌ ${zone}: Non-canonical zone`);
+          console.info(`❌ ${zone}: Non-canonical zone`);
           allPassed = false;
         } else if (appearsInLinkColumn) {
-          console.log(`⚠️  ${zone}: Appears in LINK column`);
+          console.info(`⚠️  ${zone}: Appears in LINK column`);
         } else {
-          console.log(`✅ ${zone}: Integrity verified`);
+          console.info(`✅ ${zone}: Integrity verified`);
         }
         
       } catch (error) {
-        console.log(`❌ ${zone}: Verification failed - ${error.message}`);
+        console.info(`❌ ${zone}: Verification failed - ${error.message}`);
         allPassed = false;
       }
     }
     
     if (allPassed) {
-      console.log('\n✅ All critical zones verified successfully');
+      console.info('\n✅ All critical zones verified successfully');
     } else {
-      console.log('\n🚨 Critical zone verification failed - immediate attention required');
+      console.info('\n🚨 Critical zone verification failed - immediate attention required');
     }
   }
 
@@ -302,20 +302,20 @@ async function main() {
       await verifier.quickVerification();
       break;
     case 'cron':
-      console.log('📝 Generating cron script...');
-      console.log(verifier.generateCronScript());
+      console.info('📝 Generating cron script...');
+      console.info(verifier.generateCronScript());
       break;
     default:
-      console.log('🔍 TZDB Integrity Verifier');
-      console.log('============================');
-      console.log('');
-      console.log('Usage:');
-      console.log('  bun run lib/tzdb-integrity-verifier.ts monthly  # Full monthly verification');
-      console.log('  bun run lib/tzdb-integrity-verifier.ts quick     # Quick critical zones check');
-      console.log('  bun run lib/tzdb-integrity-verifier.ts cron      # Generate cron script');
-      console.log('');
-      console.log('💡 Pro Tip: Run monthly to verify tzdb integrity');
-      console.log('   Canonical zones never appear in the LINK column');
+      console.info('🔍 TZDB Integrity Verifier');
+      console.info('============================');
+      console.info('');
+      console.info('Usage:');
+      console.info('  bun run lib/tzdb-integrity-verifier.ts monthly  # Full monthly verification');
+      console.info('  bun run lib/tzdb-integrity-verifier.ts quick     # Quick critical zones check');
+      console.info('  bun run lib/tzdb-integrity-verifier.ts cron      # Generate cron script');
+      console.info('');
+      console.info('💡 Pro Tip: Run monthly to verify tzdb integrity');
+      console.info('   Canonical zones never appear in the LINK column');
   }
 }
 

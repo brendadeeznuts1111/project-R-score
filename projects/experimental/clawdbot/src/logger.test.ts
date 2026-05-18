@@ -32,7 +32,7 @@ describe("logger helpers", () => {
   });
 
   it("only logs debug when verbose is enabled", () => {
-    const logVerbose = vi.spyOn(console, "log");
+    const logVerbose = vi.spyOn(console, 'info');
     setVerbose(false);
     logDebug("quiet");
     expect(logVerbose).not.toHaveBeenCalled();

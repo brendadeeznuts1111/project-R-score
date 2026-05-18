@@ -17,8 +17,8 @@ class SecurityEnforcer {
   private vault = process.cwd();
 
   async runFullScan(): Promise<SecurityScanResult[]> {
-    console.log('🔒 RUNNING SYNDICATE SECURITY SCAN v2.10');
-    console.log('========================================');
+    console.info('🔒 RUNNING SYNDICATE SECURITY SCAN v2.10');
+    console.info('========================================');
 
     const results: SecurityScanResult[] = [];
 
@@ -297,26 +297,26 @@ class SecurityEnforcer {
     const warnings = results.filter(r => r.status === 'WARN').length;
     const total = results.length;
 
-    console.log(`\n📊 SECURITY SCAN RESULTS:`);
-    console.log(`   ✅ Passed: ${passed}/${total}`);
-    console.log(`   ❌ Failed: ${failed}/${total}`);
-    console.log(`   ⚠️  Warnings: ${warnings}/${total}`);
-    console.log(`   📈 Compliance: ${Math.round((passed / total) * 100)}%`);
+    console.info(`\n📊 SECURITY SCAN RESULTS:`);
+    console.info(`   ✅ Passed: ${passed}/${total}`);
+    console.info(`   ❌ Failed: ${failed}/${total}`);
+    console.info(`   ⚠️  Warnings: ${warnings}/${total}`);
+    console.info(`   📈 Compliance: ${Math.round((passed / total) * 100)}%`);
 
     if (failed > 0) {
-      console.log(`\n🚨 CRITICAL FAILURES:`);
+      console.info(`\n🚨 CRITICAL FAILURES:`);
       results.filter(r => r.status === 'FAIL').forEach(result => {
-        console.log(`   ❌ ${result.ruleId}: ${result.message}`);
+        console.info(`   ❌ ${result.ruleId}: ${result.message}`);
         if (result.details?.action) {
-          console.log(`      💡 FIX: ${result.details.action}`);
+          console.info(`      💡 FIX: ${result.details.action}`);
         }
       });
     }
 
     if (warnings > 0) {
-      console.log(`\n⚠️  WARNINGS:`);
+      console.info(`\n⚠️  WARNINGS:`);
       results.filter(r => r.status === 'WARN').forEach(result => {
-        console.log(`   ⚠️  ${result.ruleId}: ${result.message}`);
+        console.info(`   ⚠️  ${result.ruleId}: ${result.message}`);
       });
     }
   }
@@ -327,7 +327,7 @@ const args = process.argv.slice(2);
 const command = args[0];
 
 if (!command || command === '--help') {
-  console.log(`
+  console.info(`
 🛡️  SYNDICATE SECURITY ENFORCER v2.10
 
 USAGE:
@@ -367,21 +367,21 @@ try {
       break;
 
     case 'rotate':
-      console.log('🔄 Rotating all secrets...');
+      console.info('🔄 Rotating all secrets...');
       // Implement secret rotation
-      console.log('✅ Secrets rotated');
+      console.info('✅ Secrets rotated');
       break;
 
     case 'audit':
-      console.log('🔍 Running vulnerability audit...');
+      console.info('🔍 Running vulnerability audit...');
       const auditResult = await enforcer.runCommand('bun audit');
-      console.log(auditResult);
+      console.info(auditResult);
       break;
 
     case 'report':
-      console.log('📊 Generating security report...');
+      console.info('📊 Generating security report...');
       // Generate detailed report
-      console.log('✅ Report generated');
+      console.info('✅ Report generated');
       break;
 
     default:

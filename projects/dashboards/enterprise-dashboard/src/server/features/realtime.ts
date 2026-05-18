@@ -70,7 +70,7 @@ class RealtimeManager {
       seq: 0,
     };
     this.clients.set(ws, client);
-    console.log(`[Realtime] Client registered (${this.clients.size} total)`);
+    console.info(`[Realtime] Client registered (${this.clients.size} total)`);
     return client;
   }
 
@@ -79,7 +79,7 @@ class RealtimeManager {
    */
   unregister(ws: ServerWebSocket<unknown>): void {
     this.clients.delete(ws);
-    console.log(`[Realtime] Client unregistered (${this.clients.size} total)`);
+    console.info(`[Realtime] Client unregistered (${this.clients.size} total)`);
   }
 
   /**
@@ -99,7 +99,7 @@ class RealtimeManager {
     for (const topic of topics) {
       client.topics.add(topic);
     }
-    console.log(`[Realtime] Client subscribed to: ${topics.join(", ")}`);
+    console.info(`[Realtime] Client subscribed to: ${topics.join(", ")}`);
   }
 
   /**

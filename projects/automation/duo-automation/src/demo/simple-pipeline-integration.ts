@@ -13,8 +13,8 @@ import {
   INSPECT_CUSTOM 
 } from '../../ecosystem/inspect-custom.ts';
 
-console.log('🔗 SIMPLE EVIDENCE PIPELINE INTEGRATION');
-console.log('='.repeat(50));
+console.info('🔗 SIMPLE EVIDENCE PIPELINE INTEGRATION');
+console.info('='.repeat(50));
 
 // ============================================================================
 // CORE PIPELINE INSPECTION
@@ -29,7 +29,7 @@ class SimplePipelineInspector {
   };
 
   async inspectCorePipeline() {
-    console.log('🚀 Starting core Evidence Integrity Pipeline inspection...\n');
+    console.info('🚀 Starting core Evidence Integrity Pipeline inspection...\n');
 
     // 1. Evidence Security Inspection
     await this.inspectEvidenceSecurity();
@@ -45,8 +45,8 @@ class SimplePipelineInspector {
   }
 
   private async inspectEvidenceSecurity() {
-    console.log('🛡️  EVIDENCE SECURITY INSPECTION');
-    console.log('-'.repeat(40));
+    console.info('🛡️  EVIDENCE SECURITY INSPECTION');
+    console.info('-'.repeat(40));
 
     const securityChecks = [
       new SecurityCheckInspectable(
@@ -99,7 +99,7 @@ class SimplePipelineInspector {
     ];
 
     securityChecks.forEach((check, index) => {
-      console.log(`${index + 1}. ${check[INSPECT_CUSTOM]()}`);
+      console.info(`${index + 1}. ${check[INSPECT_CUSTOM]()}`);
     });
 
     this.metrics.securityChecks += 4;
@@ -107,8 +107,8 @@ class SimplePipelineInspector {
   }
 
   private async inspectDatabaseLayer() {
-    console.log('\n🗄️  DATABASE LAYER INSPECTION');
-    console.log('-'.repeat(40));
+    console.info('\n🗄️  DATABASE LAYER INSPECTION');
+    console.info('-'.repeat(40));
 
     const connections = [
       new DatabaseConnectionInspectable(
@@ -149,15 +149,15 @@ class SimplePipelineInspector {
     ];
 
     connections.forEach((conn, index) => {
-      console.log(`${index + 1}. ${conn[INSPECT_CUSTOM]()}`);
+      console.info(`${index + 1}. ${conn[INSPECT_CUSTOM]()}`);
     });
 
     this.metrics.inspections += 4;
   }
 
   private async inspectPaymentProcessing() {
-    console.log('\n💳 PAYMENT PROCESSING INSPECTION');
-    console.log('-'.repeat(40));
+    console.info('\n💳 PAYMENT PROCESSING INSPECTION');
+    console.info('-'.repeat(40));
 
     const payments = [
       new PaymentRequestInspectable(
@@ -210,15 +210,15 @@ class SimplePipelineInspector {
     ];
 
     payments.forEach((payment, index) => {
-      console.log(`${index + 1}. ${payment[INSPECT_CUSTOM]()}`);
+      console.info(`${index + 1}. ${payment[INSPECT_CUSTOM]()}`);
     });
 
     this.metrics.paymentsProcessed += 3;
   }
 
   private showHealthSummary() {
-    console.log('\n📊 PIPELINE HEALTH SUMMARY');
-    console.log('-'.repeat(40));
+    console.info('\n📊 PIPELINE HEALTH SUMMARY');
+    console.info('-'.repeat(40));
 
     // Create health check
     const healthCheck = new SecurityCheckInspectable(
@@ -234,14 +234,14 @@ class SimplePipelineInspector {
       }
     );
 
-    console.log(healthCheck[INSPECT_CUSTOM]());
+    console.info(healthCheck[INSPECT_CUSTOM]());
 
     // Show metrics
-    console.log('\n📈 PROCESSING METRICS');
-    console.log(`  🔍 Total Inspections: ${this.metrics.inspections}`);
-    console.log(`  📄 Evidence Processed: ${this.metrics.evidenceProcessed}`);
-    console.log(`  🛡️  Security Checks: ${this.metrics.securityChecks}`);
-    console.log(`  💳 Payments Processed: ${this.metrics.paymentsProcessed}`);
+    console.info('\n📈 PROCESSING METRICS');
+    console.info(`  🔍 Total Inspections: ${this.metrics.inspections}`);
+    console.info(`  📄 Evidence Processed: ${this.metrics.evidenceProcessed}`);
+    console.info(`  🛡️  Security Checks: ${this.metrics.securityChecks}`);
+    console.info(`  💳 Payments Processed: ${this.metrics.paymentsProcessed}`);
 
     // Integration status
     const integrationStatus = new SecurityCheckInspectable(
@@ -256,16 +256,16 @@ class SimplePipelineInspector {
       }
     );
 
-    console.log(`\n🔗 ${integrationStatus[INSPECT_CUSTOM]()}`);
+    console.info(`\n🔗 ${integrationStatus[INSPECT_CUSTOM]()}`);
 
-    console.log('\n✅ Simple Pipeline Integration Complete!');
-    console.log('\n🎯 Integration Features Demonstrated:');
-    console.log('  • Evidence security inspection with zero-width detection');
-    console.log('  • Database connection monitoring');
-    console.log('  • Payment processing verification');
-    console.log('  • Health status aggregation');
-    console.log('  • Metrics collection and reporting');
-    console.log('  • Custom inspection system integration');
+    console.info('\n✅ Simple Pipeline Integration Complete!');
+    console.info('\n🎯 Integration Features Demonstrated:');
+    console.info('  • Evidence security inspection with zero-width detection');
+    console.info('  • Database connection monitoring');
+    console.info('  • Payment processing verification');
+    console.info('  • Health status aggregation');
+    console.info('  • Metrics collection and reporting');
+    console.info('  • Custom inspection system integration');
   }
 }
 
@@ -274,7 +274,7 @@ class SimplePipelineInspector {
 // ============================================================================
 
 async function runSimpleIntegrationDemo() {
-  console.log('🔗 Starting Simple Evidence Pipeline Integration Demo...\n');
+  console.info('🔗 Starting Simple Evidence Pipeline Integration Demo...\n');
 
   const inspector = new SimplePipelineInspector();
   await inspector.inspectCorePipeline();

@@ -104,9 +104,9 @@ const allComponents = [
     }
 ];
 
-console.log("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
-console.log("║              COMPLETE SEMANTIC CSS REFACTORING SUMMARY                                 ║");
-console.log("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
+console.info("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
+console.info("║              COMPLETE SEMANTIC CSS REFACTORING SUMMARY                                 ║");
+console.info("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
 
 // Summary table
 const summary = allComponents.map(c => ({
@@ -118,8 +118,8 @@ const summary = allComponents.map(c => ({
     "Status": c.Status
 }));
 
-console.log("📊 Component Summary:\n");
-console.log(Bun.inspect.table(summary, undefined, { colors: true }));
+console.info("📊 Component Summary:\n");
+console.info(Bun.inspect.table(summary, undefined, { colors: true }));
 
 // Statistics
 const totalBlocks = allComponents.length;
@@ -127,7 +127,7 @@ const totalElements = allComponents.reduce((sum, c) => sum + c.Elements.length, 
 const totalModifiers = allComponents.reduce((sum, c) => sum + c.Modifiers.length, 0);
 const totalClasses = totalBlocks + totalElements + totalModifiers;
 
-console.log("\n📈 Statistics:\n");
+console.info("\n📈 Statistics:\n");
 const stats = [
     {
         "Metric": "Total Components (Blocks)",
@@ -151,9 +151,9 @@ const stats = [
     }
 ];
 
-console.log(Bun.inspect.table(stats, undefined, { colors: true }));
+console.info(Bun.inspect.table(stats, undefined, { colors: true }));
 
-console.log("\n🎯 Naming Convention:\n");
+console.info("\n🎯 Naming Convention:\n");
 const conventions = [
     {
         "Pattern": "Block",
@@ -181,12 +181,12 @@ const conventions = [
     }
 ];
 
-console.log(Bun.inspect.table(conventions, undefined, { colors: true }));
+console.info(Bun.inspect.table(conventions, undefined, { colors: true }));
 
-console.log("\n✅ All CSS classes have been successfully refactored to semantic BEM-style naming!\n");
-console.log("📝 Benefits:\n");
-console.log("  • Better maintainability - classes describe what they are, not how they look");
-console.log("  • Easier to understand - semantic names are self-documenting");
-console.log("  • Consistent structure - BEM convention throughout");
-console.log("  • Easier refactoring - component-based organization");
-console.log("  • Better scalability - clear component boundaries\n");
+console.info("\n✅ All CSS classes have been successfully refactored to semantic BEM-style naming!\n");
+console.info("📝 Benefits:\n");
+console.info("  • Better maintainability - classes describe what they are, not how they look");
+console.info("  • Easier to understand - semantic names are self-documenting");
+console.info("  • Consistent structure - BEM convention throughout");
+console.info("  • Easier refactoring - component-based organization");
+console.info("  • Better scalability - clear component boundaries\n");

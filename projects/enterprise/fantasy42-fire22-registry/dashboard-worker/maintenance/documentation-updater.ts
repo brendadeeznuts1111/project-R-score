@@ -43,10 +43,10 @@ class DocumentationUpdater {
    * 📚 Run comprehensive documentation maintenance
    */
   async runDocumentationMaintenance(): Promise<DocumentationReport> {
-    console.log('📚 Fire22 Documentation Maintenance');
-    console.log('!==!==!==!==!==!=====');
-    console.log(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
-    console.log(`⏰ Time: ${new Date().toLocaleTimeString()}\n`);
+    console.info('📚 Fire22 Documentation Maintenance');
+    console.info('!==!==!==!==!==!=====');
+    console.info(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
+    console.info(`⏰ Time: ${new Date().toLocaleTimeString()}\n`);
 
     const files = await this.scanDocumentationFiles();
     const report = await this.generateDocumentationReport(files);
@@ -59,7 +59,7 @@ class DocumentationUpdater {
 
     await this.saveDocumentationReport(report);
 
-    console.log('\n✅ Documentation maintenance completed!');
+    console.info('\n✅ Documentation maintenance completed!');
     return report;
   }
 
@@ -67,7 +67,7 @@ class DocumentationUpdater {
    * 🔍 Scan all documentation files
    */
   private async scanDocumentationFiles(): Promise<DocumentationFile[]> {
-    console.log('🔍 Scanning documentation files...');
+    console.info('🔍 Scanning documentation files...');
 
     const files: DocumentationFile[] = [];
 
@@ -83,7 +83,7 @@ class DocumentationUpdater {
       }
     }
 
-    console.log(`  📄 Found ${files.length} documentation files`);
+    console.info(`  📄 Found ${files.length} documentation files`);
     return files;
   }
 
@@ -174,7 +174,7 @@ class DocumentationUpdater {
    * ✅ Validate documentation content
    */
   private async validateDocumentation(files: DocumentationFile[]): Promise<void> {
-    console.log('✅ Validating documentation content...');
+    console.info('✅ Validating documentation content...');
 
     let validationIssues = 0;
 
@@ -186,7 +186,7 @@ class DocumentationUpdater {
       for (const link of internalLinks) {
         const linkPath = link.match(/\((.*?)\)/)?.[1];
         if (linkPath && !existsSync(join(this.basePath, linkPath))) {
-          console.log(`  ⚠️ Broken link in ${file.path}: ${linkPath}`);
+          console.info(`  ⚠️ Broken link in ${file.path}: ${linkPath}`);
           validationIssues++;
         }
       }
@@ -196,33 +196,33 @@ class DocumentationUpdater {
         const requiredSections = ['Overview', 'Authentication', 'Endpoints', 'Examples'];
         for (const section of requiredSections) {
           if (!content.includes(section)) {
-            console.log(`  ⚠️ Missing section in ${file.path}: ${section}`);
+            console.info(`  ⚠️ Missing section in ${file.path}: ${section}`);
             validationIssues++;
           }
         }
       }
     }
 
-    console.log(`  📊 Found ${validationIssues} validation issues`);
+    console.info(`  📊 Found ${validationIssues} validation issues`);
   }
 
   /**
    * 📋 Update table of contents
    */
   private async updateTableOfContents(): Promise<void> {
-    console.log('📋 Updating table of contents...');
+    console.info('📋 Updating table of contents...');
 
     const tocPath = join(this.basePath, 'docs', 'README.md');
 
     if (!existsSync(join(this.basePath, 'docs'))) {
-      console.log('  ℹ️ No docs directory found, skipping TOC update');
+      console.info('  ℹ️ No docs directory found, skipping TOC update');
       return;
     }
 
     const tocContent = this.generateTableOfContents();
     writeFileSync(tocPath, tocContent);
 
-    console.log('  ✅ Table of contents updated');
+    console.info('  ✅ Table of contents updated');
   }
 
   /**
@@ -283,12 +283,12 @@ class DocumentationUpdater {
    * 🔄 Sync version numbers across documentation
    */
   private async syncVersionNumbers(): Promise<void> {
-    console.log('🔄 Syncing version numbers...');
+    console.info('🔄 Syncing version numbers...');
 
     // Get current version from package.json
     const packagePath = join(this.basePath, 'package.json');
     if (!existsSync(packagePath)) {
-      console.log('  ⚠️ package.json not found, skipping version sync');
+      console.info('  ⚠️ package.json not found, skipping version sync');
       return;
     }
 
@@ -327,14 +327,14 @@ class DocumentationUpdater {
       }
     }
 
-    console.log(`  ✅ Updated version in ${updatedFiles} files to ${currentVersion}`);
+    console.info(`  ✅ Updated version in ${updatedFiles} files to ${currentVersion}`);
   }
 
   /**
    * 🔗 Check link validity
    */
   private async checkLinkValidity(files: DocumentationFile[]): Promise<void> {
-    console.log('🔗 Checking link validity...');
+    console.info('🔗 Checking link validity...');
 
     let brokenLinks = 0;
 
@@ -350,21 +350,21 @@ class DocumentationUpdater {
           // Check internal file links
           const linkPath = join(this.basePath, url);
           if (!existsSync(linkPath)) {
-            console.log(`  ❌ Broken link in ${file.path}: ${url}`);
+            console.info(`  ❌ Broken link in ${file.path}: ${url}`);
             brokenLinks++;
           }
         }
       }
     }
 
-    console.log(`  📊 Found ${brokenLinks} broken internal links`);
+    console.info(`  📊 Found ${brokenLinks} broken internal links`);
   }
 
   /**
    * 📇 Generate documentation index
    */
   private async generateDocumentationIndex(): Promise<void> {
-    console.log('📇 Generating documentation index...');
+    console.info('📇 Generating documentation index...');
 
     const indexPath = join(this.basePath, 'docs', 'index.json');
     const files = await this.scanDocumentationFiles();
@@ -390,7 +390,7 @@ class DocumentationUpdater {
     };
 
     writeFileSync(indexPath, JSON.stringify(index, null, 2));
-    console.log(`  ✅ Documentation index generated: ${indexPath}`);
+    console.info(`  ✅ Documentation index generated: ${indexPath}`);
   }
 
   /**
@@ -439,7 +439,7 @@ class DocumentationUpdater {
 
     try {
       writeFileSync(reportPath, JSON.stringify(report, null, 2));
-      console.log(`📊 Documentation report saved: ${reportPath}`);
+      console.info(`📊 Documentation report saved: ${reportPath}`);
     } catch (error) {
       console.error(`❌ Failed to save documentation report: ${error}`);
     }
@@ -452,23 +452,23 @@ async function main() {
     const updater = new DocumentationUpdater();
     const report = await updater.runDocumentationMaintenance();
 
-    console.log('\n📋 Documentation Maintenance Summary:');
-    console.log(`  📄 Total Files: ${report.totalFiles}`);
-    console.log(`  📝 Total Words: ${report.totalWords.toLocaleString()}`);
-    console.log(`  ⚠️ Issues Found: ${report.issues.length}`);
-    console.log(`  💡 Recommendations: ${report.recommendations.length}`);
+    console.info('\n📋 Documentation Maintenance Summary:');
+    console.info(`  📄 Total Files: ${report.totalFiles}`);
+    console.info(`  📝 Total Words: ${report.totalWords.toLocaleString()}`);
+    console.info(`  ⚠️ Issues Found: ${report.issues.length}`);
+    console.info(`  💡 Recommendations: ${report.recommendations.length}`);
 
     if (report.issues.length > 0) {
-      console.log('\n🔍 Issues Found:');
-      report.issues.slice(0, 5).forEach(issue => console.log(`  - ${issue}`));
+      console.info('\n🔍 Issues Found:');
+      report.issues.slice(0, 5).forEach(issue => console.info(`  - ${issue}`));
       if (report.issues.length > 5) {
-        console.log(`  ... and ${report.issues.length - 5} more`);
+        console.info(`  ... and ${report.issues.length - 5} more`);
       }
     }
 
     if (report.recommendations.length > 0) {
-      console.log('\n💡 Recommendations:');
-      report.recommendations.forEach(rec => console.log(`  - ${rec}`));
+      console.info('\n💡 Recommendations:');
+      report.recommendations.forEach(rec => console.info(`  - ${rec}`));
     }
   } catch (error) {
     console.error('❌ Documentation maintenance failed:', error);

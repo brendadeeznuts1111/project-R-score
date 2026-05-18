@@ -8,23 +8,23 @@
 import { writeFileSync, existsSync } from 'fs';
 import { execSync } from 'child_process';
 
-console.log('🚀 Fire22 Dashboard Production Setup\n');
+console.info('🚀 Fire22 Dashboard Production Setup\n');
 
 // Step 1: Generate strong secrets
-console.log('1️⃣ Generating Strong Production Secrets...\n');
+console.info('1️⃣ Generating Strong Production Secrets...\n');
 
 try {
   const jwtSecret = execSync('openssl rand -base64 64', { encoding: 'utf8' }).trim();
   const adminPassword = execSync('openssl rand -base64 32', { encoding: 'utf8' }).trim();
   const cronSecret = execSync('openssl rand -base64 32', { encoding: 'utf8' }).trim();
 
-  console.log('✅ Generated strong secrets:');
-  console.log(`   JWT_SECRET: ${jwtSecret.substring(0, 20)}...`);
-  console.log(`   ADMIN_PASSWORD: ${adminPassword.substring(0, 20)}...`);
-  console.log(`   CRON_SECRET: ${cronSecret.substring(0, 20)}...`);
+  console.info('✅ Generated strong secrets:');
+  console.info(`   JWT_SECRET: ${jwtSecret.substring(0, 20)}...`);
+  console.info(`   ADMIN_PASSWORD: ${adminPassword.substring(0, 20)}...`);
+  console.info(`   CRON_SECRET: ${cronSecret.substring(0, 20)}...`);
 
   // Step 2: Create production environment file
-  console.log('\n2️⃣ Creating Production Environment File...\n');
+  console.info('\n2️⃣ Creating Production Environment File...\n');
 
   const productionEnv = `# Fire22 Dashboard Production Environment - SECURE
 NODE_ENV=production
@@ -77,40 +77,40 @@ REQUEST_TIMEOUT_MS=30000
 
   const filename = '.env.production.secure';
   writeFileSync(filename, productionEnv);
-  console.log(`✅ Created ${filename}`);
+  console.info(`✅ Created ${filename}`);
 
   // Step 3: Validate production environment
-  console.log('\n3️⃣ Validating Production Environment...\n');
+  console.info('\n3️⃣ Validating Production Environment...\n');
 
   try {
     execSync('bun run env:validate', { stdio: 'inherit' });
-    console.log('✅ Production environment validation passed!');
+    console.info('✅ Production environment validation passed!');
   } catch (error) {
-    console.log('⚠️  Production environment validation needs attention');
+    console.info('⚠️  Production environment validation needs attention');
   }
 
   // Step 4: Security audit
-  console.log('\n4️⃣ Running Security Audit...\n');
+  console.info('\n4️⃣ Running Security Audit...\n');
 
   try {
     execSync('bun run env:audit', { stdio: 'inherit' });
-    console.log('✅ Security audit completed!');
+    console.info('✅ Security audit completed!');
   } catch (error) {
-    console.log('⚠️  Security audit found issues to address');
+    console.info('⚠️  Security audit found issues to address');
   }
 
-  console.log('\n🎉 Production Setup Complete!');
-  console.log('\n📋 Next Steps:');
-  console.log('   1. Review and customize .env.production.secure');
-  console.log('   2. Replace placeholder values with real production keys');
-  console.log('   3. Test with: bun run env:deploy');
-  console.log('   4. Set up CI/CD pipeline');
+  console.info('\n🎉 Production Setup Complete!');
+  console.info('\n📋 Next Steps:');
+  console.info('   1. Review and customize .env.production.secure');
+  console.info('   2. Replace placeholder values with real production keys');
+  console.info('   3. Test with: bun run env:deploy');
+  console.info('   4. Set up CI/CD pipeline');
 
-  console.log('\n🔒 Security Notes:');
-  console.log('   • JWT_SECRET is now 64+ characters (excellent)');
-  console.log('   • ADMIN_PASSWORD is now 32+ characters (strong)');
-  console.log('   • CRON_SECRET is now 32+ characters (secure)');
-  console.log('   • All secrets are cryptographically random');
+  console.info('\n🔒 Security Notes:');
+  console.info('   • JWT_SECRET is now 64+ characters (excellent)');
+  console.info('   • ADMIN_PASSWORD is now 32+ characters (strong)');
+  console.info('   • CRON_SECRET is now 32+ characters (secure)');
+  console.info('   • All secrets are cryptographically random');
 } catch (error) {
   console.error('❌ Error during production setup:', error.message);
   process.exit(1);

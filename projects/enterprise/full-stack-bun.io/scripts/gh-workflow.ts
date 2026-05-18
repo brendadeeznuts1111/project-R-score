@@ -44,7 +44,7 @@ class GitHubWorkflow {
     const fullTitle = `${type}: ${title}`;
     const issueBody = body || this.generateIssueTemplate(type);
 
-    console.log(`GH.WORKFLOW - Creating ${type} issue: ${fullTitle}`);
+    console.info(`GH.WORKFLOW - Creating ${type} issue: ${fullTitle}`);
 
     const result = spawn({
       cmd: [
@@ -60,7 +60,7 @@ class GitHubWorkflow {
 
     const exitCode = await result.exited;
     if (exitCode === 0) {
-      console.log("✅ Issue created successfully");
+      console.info("✅ Issue created successfully");
     } else {
       console.error("❌ Failed to create issue");
     }
@@ -75,7 +75,7 @@ class GitHubWorkflow {
     const taggedTitle = `[SCOPE:${scope}][TPE:${type}][DDD:${ddd}] ${title}`;
     const prBody = body || this.generatePRTemplate(scope, type, ddd);
 
-    console.log(`GH.WORKFLOW - Creating PR: ${taggedTitle}`);
+    console.info(`GH.WORKFLOW - Creating PR: ${taggedTitle}`);
 
     const result = spawn({
       cmd: [
@@ -91,7 +91,7 @@ class GitHubWorkflow {
 
     const exitCode = await result.exited;
     if (exitCode === 0) {
-      console.log("✅ PR created successfully");
+      console.info("✅ PR created successfully");
     } else {
       console.error("❌ Failed to create PR");
     }
@@ -99,7 +99,7 @@ class GitHubWorkflow {
 
   // Check CI status and wait for completion
   async waitForChecks() {
-    console.log("GH.WORKFLOW - Waiting for CI checks to complete...");
+    console.info("GH.WORKFLOW - Waiting for CI checks to complete...");
 
     let attempts = 0;
     const maxAttempts = 30; // 5 minutes with 10s intervals
@@ -115,27 +115,27 @@ class GitHubWorkflow {
       const exitCode = await result.exited;
 
       if (output.includes("✓") && !output.includes("×") && !output.includes("!")) {
-        console.log("✅ All checks passed");
+        console.info("✅ All checks passed");
         return true;
       }
 
       if (output.includes("×")) {
-        console.log("❌ Some checks failed");
+        console.info("❌ Some checks failed");
         return false;
       }
 
-      console.log(`⏳ Checks still running... (${attempts + 1}/${maxAttempts})`);
+      console.info(`⏳ Checks still running... (${attempts + 1}/${maxAttempts})`);
       await new Promise(resolve => setTimeout(resolve, 10000));
       attempts++;
     }
 
-    console.log("⏰ Timeout waiting for checks");
+    console.info("⏰ Timeout waiting for checks");
     return false;
   }
 
   // Deploy to production with safety checks
   async deploy(environment: 'staging' | 'production' = 'staging') {
-    console.log(`GH.WORKFLOW - Deploying to ${environment}`);
+    console.info(`GH.WORKFLOW - Deploying to ${environment}`);
 
     // Pre-deployment checks
     const checks = await this.runPreDeployChecks();
@@ -157,7 +157,7 @@ class GitHubWorkflow {
 
     const exitCode = await result.exited;
     if (exitCode === 0) {
-      console.log(`✅ Deployment to ${environment} triggered`);
+      console.info(`✅ Deployment to ${environment} triggered`);
       return true;
     } else {
       console.error(`❌ Failed to trigger ${environment} deployment`);
@@ -167,7 +167,7 @@ class GitHubWorkflow {
 
   // Get repository metrics
   async getMetrics() {
-    console.log("GH.WORKFLOW - Fetching repository metrics");
+    console.info("GH.WORKFLOW - Fetching repository metrics");
 
     const commands = [
       ["gh", "repo", "view", "--json", "name,description,stargazersCount,forksCount"],
@@ -183,7 +183,7 @@ class GitHubWorkflow {
       });
 
       const output = new Response(result.stdout).textSync();
-      console.log(`📊 ${cmd.slice(-1)}:`, JSON.parse(output));
+      console.info(`📊 ${cmd.slice(-1)}:`, JSON.parse(output));
     }
   }
 
@@ -257,7 +257,7 @@ class GitHubWorkflow {
   }
 
   private async runPreDeployChecks(): Promise<{ allPassed: boolean; results: any[] }> {
-    console.log("🔍 Running pre-deployment checks...");
+    console.info("🔍 Running pre-deployment checks...");
 
     const checks = [
       { name: "Security Audit", cmd: ["bun", "audit"] },
@@ -269,7 +269,7 @@ class GitHubWorkflow {
     const results = [];
 
     for (const check of checks) {
-      console.log(`Checking: ${check.name}`);
+      console.info(`Checking: ${check.name}`);
       const result = spawn({
         cmd: check.cmd,
         stdout: "pipe",
@@ -285,7 +285,7 @@ class GitHubWorkflow {
         exitCode
       });
 
-      console.log(`${passed ? '✅' : '❌'} ${check.name}: ${passed ? 'PASSED' : 'FAILED'}`);
+      console.info(`${passed ? '✅' : '❌'} ${check.name}: ${passed ? 'PASSED' : 'FAILED'}`);
     }
 
     const allPassed = results.every(r => r.passed);
@@ -299,7 +299,7 @@ async function main() {
   const command = args[0];
 
   if (!command) {
-    console.log(`
+    console.info(`
 GH.WORKFLOW - GitHub CLI Integration v1.3.5
 
 Usage:

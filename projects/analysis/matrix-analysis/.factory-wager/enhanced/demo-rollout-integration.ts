@@ -27,7 +27,7 @@ const scheduler = new EnhancedRolloutScheduler({
 function simulateTraffic() {
   setInterval(() => {
     if (!scheduler.shouldServeRequest()) {
-      console.log('🚫 Request blocked (not in rollout phase)');
+      console.info('🚫 Request blocked (not in rollout phase)');
       return;
     }
 
@@ -38,9 +38,9 @@ function simulateTraffic() {
     scheduler.recordRequest(success, responseTime);
     
     if (success) {
-      console.log(`✅ Request served in ${Math.round(responseTime)}ms`);
+      console.info(`✅ Request served in ${Math.round(responseTime)}ms`);
     } else {
-      console.log(`❌ Request failed in ${Math.round(responseTime)}ms`);
+      console.info(`❌ Request failed in ${Math.round(responseTime)}ms`);
     }
   }, 2000); // New request every 2 seconds
 }
@@ -52,43 +52,43 @@ function displayDashboard() {
     const currentPhase = status.currentPhase;
     
     console.clear();
-    console.log('🚀 FactoryWager Enhanced Rollout Dashboard');
-    console.log('==========================================');
-    console.log(`📊 Current Phase: ${currentPhase.description} (${currentPhase.percentage}% traffic)`);
-    console.log(`🎯 Risk Score: ${currentPhase.riskScore}/100`);
-    console.log(`💚 Overall Health: ${status.health}%`);
-    console.log(`📈 Progress: ${status.progress}%`);
-    console.log(`⏱️ ETA: ${status.estimatedCompletion}`);
-    console.log('');
+    console.info('🚀 FactoryWager Enhanced Rollout Dashboard');
+    console.info('==========================================');
+    console.info(`📊 Current Phase: ${currentPhase.description} (${currentPhase.percentage}% traffic)`);
+    console.info(`🎯 Risk Score: ${currentPhase.riskScore}/100`);
+    console.info(`💚 Overall Health: ${status.health}%`);
+    console.info(`📈 Progress: ${status.progress}%`);
+    console.info(`⏱️ ETA: ${status.estimatedCompletion}`);
+    console.info('');
     
-    console.log('📊 Phase Metrics:');
-    console.log(`   Requests Served: ${currentPhase.metrics.requestsServed}`);
-    console.log(`   Error Rate: ${currentPhase.metrics.errorRate.toFixed(2)}%`);
-    console.log(`   Response Time: ${Math.round(currentPhase.metrics.responseTime)}ms`);
-    console.log(`   User Satisfaction: ${currentPhase.metrics.userSatisfaction.toFixed(1)}%`);
-    console.log(`   Conversion Rate: ${currentPhase.metrics.conversionRate.toFixed(2)}%`);
-    console.log(`   Revenue Impact: $${currentPhase.metrics.revenueImpact.toLocaleString()}`);
-    console.log('');
+    console.info('📊 Phase Metrics:');
+    console.info(`   Requests Served: ${currentPhase.metrics.requestsServed}`);
+    console.info(`   Error Rate: ${currentPhase.metrics.errorRate.toFixed(2)}%`);
+    console.info(`   Response Time: ${Math.round(currentPhase.metrics.responseTime)}ms`);
+    console.info(`   User Satisfaction: ${currentPhase.metrics.userSatisfaction.toFixed(1)}%`);
+    console.info(`   Conversion Rate: ${currentPhase.metrics.conversionRate.toFixed(2)}%`);
+    console.info(`   Revenue Impact: $${currentPhase.metrics.revenueImpact.toLocaleString()}`);
+    console.info('');
     
-    console.log('🔄 Rollout Status:');
-    console.log(`   Running: ${status.state.isRunning ? '✅' : '❌'}`);
-    console.log(`   Paused: ${status.state.isPaused ? '⏸️' : '▶️'}`);
-    console.log(`   Total Requests: ${status.state.totalRequests}`);
-    console.log(`   Total Errors: ${status.state.totalErrors}`);
-    console.log('');
+    console.info('🔄 Rollout Status:');
+    console.info(`   Running: ${status.state.isRunning ? '✅' : '❌'}`);
+    console.info(`   Paused: ${status.state.isPaused ? '⏸️' : '▶️'}`);
+    console.info(`   Total Requests: ${status.state.totalRequests}`);
+    console.info(`   Total Errors: ${status.state.totalErrors}`);
+    console.info('');
     
-    console.log('📡 SSE Server: http://localhost:3002/events');
-    console.log('📊 REST API: http://localhost:3002/status');
-    console.log('');
-    console.log('Commands: start | pause | resume | advance | rollback | status');
+    console.info('📡 SSE Server: http://localhost:3002/events');
+    console.info('📊 REST API: http://localhost:3002/status');
+    console.info('');
+    console.info('Commands: start | pause | resume | advance | rollback | status');
     
   }, 3000); // Update every 3 seconds
 }
 
 // Main demo function
 async function runDemo() {
-  console.log('🎬 Starting FactoryWager Enhanced Rollout Demo');
-  console.log('===============================================');
+  console.info('🎬 Starting FactoryWager Enhanced Rollout Demo');
+  console.info('===============================================');
   
   // Start the rollout
   await scheduler.start();
@@ -101,7 +101,7 @@ async function runDemo() {
   
   // Handle graceful shutdown
   process.on('SIGINT', () => {
-    console.log('\n🛑 Shutting down demo...');
+    console.info('\n🛑 Shutting down demo...');
     scheduler.stop();
     process.exit(0);
   });

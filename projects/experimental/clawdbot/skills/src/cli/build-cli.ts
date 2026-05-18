@@ -60,8 +60,8 @@ class BuildCLI {
 
     const parsedOptions = this.parseOptions(options);
 
-    console.log(`\n🔨 Building executable for skill: ${skillId}`);
-    console.log("─".repeat(60));
+    console.info(`\n🔨 Building executable for skill: ${skillId}`);
+    console.info("─".repeat(60));
 
     try {
       const result = await this.builder.buildSkillExecutable(
@@ -72,18 +72,18 @@ class BuildCLI {
       this.displayResult(result);
 
       if (result.success) {
-        console.log("─".repeat(60));
-        console.log(`✅ Built: ${result.executablePath}`);
-        console.log(`📊 Size: ${(result.size / 1024 / 1024).toFixed(2)} MB`);
+        console.info("─".repeat(60));
+        console.info(`✅ Built: ${result.executablePath}`);
+        console.info(`📊 Size: ${(result.size / 1024 / 1024).toFixed(2)} MB`);
 
         if (result.compressedSize) {
-          console.log(
+          console.info(
             `🗜️  Compressed: ${(result.compressedSize / 1024 / 1024).toFixed(2)} MB`
           );
         }
       } else {
-        console.log("─".repeat(60));
-        console.log("❌ Build failed");
+        console.info("─".repeat(60));
+        console.info("❌ Build failed");
         process.exit(1);
       }
     } catch (error: any) {
@@ -111,13 +111,13 @@ class BuildCLI {
           "bun-windows-x64",
         ] as BuildTarget[]);
 
-    console.log(`\n🎯 Building for ${targets.length} targets...`);
-    console.log("═".repeat(60));
+    console.info(`\n🎯 Building for ${targets.length} targets...`);
+    console.info("═".repeat(60));
 
     const results = await this.builder.buildMultiTarget(skillId, targets);
 
-    console.log("\n📊 Build Results:");
-    console.log("═".repeat(60));
+    console.info("\n📊 Build Results:");
+    console.info("═".repeat(60));
 
     let success = 0;
     let failed = 0;
@@ -128,20 +128,20 @@ class BuildCLI {
         ? `${(result.size / 1024 / 1024).toFixed(2)} MB`
         : "FAILED";
 
-      console.log(`${status} ${target.padEnd(22)} ${size}`);
+      console.info(`${status} ${target.padEnd(22)} ${size}`);
 
       if (result.success) {
         success++;
       } else {
         failed++;
         if (result.logs.length > 0) {
-          console.log(`   └─ ${result.logs[result.logs.length - 1]}`);
+          console.info(`   └─ ${result.logs[result.logs.length - 1]}`);
         }
       }
     }
 
-    console.log("═".repeat(60));
-    console.log(`✅ Success: ${success}, ❌ Failed: ${failed}`);
+    console.info("═".repeat(60));
+    console.info(`✅ Success: ${success}, ❌ Failed: ${failed}`);
   }
 
   async buildApp([skillId, appName, ...options]: string[]): Promise<void> {
@@ -152,8 +152,8 @@ class BuildCLI {
 
     const parsedOptions = this.parseOptions(options);
 
-    console.log(`\n📦 Creating app bundle: ${appName}`);
-    console.log("─".repeat(60));
+    console.info(`\n📦 Creating app bundle: ${appName}`);
+    console.info("─".repeat(60));
 
     try {
       const bundlePath = await this.builder.createAppBundle(
@@ -161,21 +161,21 @@ class BuildCLI {
         appName,
         parsedOptions
       );
-      console.log(`✅ App bundle created: ${bundlePath}`);
+      console.info(`✅ App bundle created: ${bundlePath}`);
 
       // Show next steps
       const platform = process.platform;
       if (platform === "darwin") {
-        console.log("\n📦 To create a DMG installer:");
-        console.log(
+        console.info("\n📦 To create a DMG installer:");
+        console.info(
           `   hdiutil create -volname "${appName}" -srcfolder "${bundlePath}" -ov -format UDZO "${appName}.dmg"`
         );
       } else if (platform === "win32") {
-        console.log("\n📦 To create an MSI installer:");
-        console.log("   Use WiX Toolset or Inno Setup");
+        console.info("\n📦 To create an MSI installer:");
+        console.info("   Use WiX Toolset or Inno Setup");
       } else {
-        console.log("\n📦 To create an AppImage:");
-        console.log(`   appimagetool ${bundlePath}`);
+        console.info("\n📦 To create an AppImage:");
+        console.info(`   appimagetool ${bundlePath}`);
       }
     } catch (error: any) {
       console.error(`❌ Failed to create app bundle: ${error.message}`);
@@ -191,20 +191,20 @@ class BuildCLI {
 
     const parsedOptions = this.parseOptions(options);
 
-    console.log(`\n🐳 Building Docker image for: ${skillId}`);
-    console.log("─".repeat(60));
+    console.info(`\n🐳 Building Docker image for: ${skillId}`);
+    console.info("─".repeat(60));
 
     try {
       const image = await this.builder.buildDockerImage(skillId, {
         imageName: imageName || skillId,
         ...parsedOptions,
       });
-      console.log(`✅ Docker image built: ${image}`);
+      console.info(`✅ Docker image built: ${image}`);
 
-      console.log("\n🐳 To run:");
-      console.log(`   docker run -it --rm ${image}`);
-      console.log("\n🐳 To push to registry:");
-      console.log(`   docker push ${image}`);
+      console.info("\n🐳 To run:");
+      console.info(`   docker run -it --rm ${image}`);
+      console.info("\n🐳 To push to registry:");
+      console.info(`   docker push ${image}`);
     } catch (error: any) {
       console.error(`❌ Docker build failed: ${error.message}`);
       process.exit(1);
@@ -235,19 +235,19 @@ class BuildCLI {
       options.formats = formatList;
     }
 
-    console.log(`\n📦 Creating installers for: ${skillId}`);
-    console.log("─".repeat(60));
+    console.info(`\n📦 Creating installers for: ${skillId}`);
+    console.info("─".repeat(60));
 
     try {
       const installers = await this.builder.createInstaller(skillId, options);
 
       if (installers.length > 0) {
-        console.log(`\n✅ Created ${installers.length} installers:`);
+        console.info(`\n✅ Created ${installers.length} installers:`);
         installers.forEach((installer) => {
-          console.log(`   📦 ${installer}`);
+          console.info(`   📦 ${installer}`);
         });
       } else {
-        console.log("⚠️  No installers were created");
+        console.info("⚠️  No installers were created");
       }
     } catch (error: any) {
       console.error(`❌ Installer build failed: ${error.message}`);
@@ -263,13 +263,13 @@ class BuildCLI {
       .all() as any[];
 
     if (builds.length === 0) {
-      console.log("No builds in cache");
+      console.info("No builds in cache");
       return;
     }
 
-    console.log("\n📊 Cached Builds:");
-    console.log("═".repeat(90));
-    console.log(
+    console.info("\n📊 Cached Builds:");
+    console.info("═".repeat(90));
+    console.info(
       "Skill".padEnd(18) +
         "Version".padEnd(10) +
         "Target".padEnd(18) +
@@ -277,7 +277,7 @@ class BuildCLI {
         "Built".padEnd(22) +
         "Checksum"
     );
-    console.log("─".repeat(90));
+    console.info("─".repeat(90));
 
     let totalSize = 0;
 
@@ -289,7 +289,7 @@ class BuildCLI {
       const built = new Date(build.build_time).toLocaleString();
       const checksum = build.checksum.slice(0, 8) + "...";
 
-      console.log(
+      console.info(
         skillName.slice(0, 17).padEnd(18) +
           version.slice(0, 9).padEnd(10) +
           (build.target || "unknown").slice(0, 17).padEnd(18) +
@@ -301,8 +301,8 @@ class BuildCLI {
       totalSize += build.size;
     }
 
-    console.log("═".repeat(90));
-    console.log(
+    console.info("═".repeat(90));
+    console.info(
       `📊 Total: ${builds.length} builds, ${(totalSize / 1024 / 1024).toFixed(2)} MB`
     );
   }
@@ -313,12 +313,12 @@ class BuildCLI {
     const result = Bun.spawnSync(["du", "-sh", cacheDir]);
     if (result.exitCode === 0) {
       const size = result.stdout.toString().split("\t")[0];
-      console.log(`🧹 Cleaning cache: ${size}`);
+      console.info(`🧹 Cleaning cache: ${size}`);
 
       Bun.spawnSync(["rm", "-rf", cacheDir]);
-      console.log("✅ Cache cleaned");
+      console.info("✅ Cache cleaned");
     } else {
-      console.log("Cache directory not found or already clean");
+      console.info("Cache directory not found or already clean");
     }
   }
 
@@ -401,7 +401,7 @@ class BuildCLI {
 
   private displayResult(result: BuildResult): void {
     if (result.logs && result.logs.length > 0) {
-      console.log("\n📝 Build Logs:");
+      console.info("\n📝 Build Logs:");
       result.logs.forEach((log: string) => {
         const prefix = log.startsWith("Build") ? "🔨" :
                       log.startsWith("Bundle") ? "📦" :
@@ -416,27 +416,27 @@ class BuildCLI {
                       log.startsWith("Final") ? "📊" :
                       log.startsWith("Build failed") ? "❌" :
                       "  ";
-        console.log(`${prefix} ${log}`);
+        console.info(`${prefix} ${log}`);
       });
     }
 
     if (result.stats && result.stats.buildTime > 0) {
-      console.log("\n📊 Build Statistics:");
-      console.log(
+      console.info("\n📊 Build Statistics:");
+      console.info(
         `   Build time:    ${(result.stats.buildTime / 1000).toFixed(2)}s`
       );
-      console.log(
+      console.info(
         `   Memory used:   ${(result.stats.memoryUsage / 1024 / 1024).toFixed(2)} MB`
       );
-      console.log(`   Bundle files:  ${result.stats.bundleFiles}`);
-      console.log(
+      console.info(`   Bundle files:  ${result.stats.bundleFiles}`);
+      console.info(
         `   Total size:    ${(result.stats.totalSize / 1024 / 1024).toFixed(2)} MB`
       );
     }
   }
 
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🔨 Skill System Build Tool
 Version: ${Bun.version}
 

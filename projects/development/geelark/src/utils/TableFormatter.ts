@@ -230,7 +230,7 @@ export function createTable(options: TableOptions): string {
  * Example usage demonstrating Unicode alignment
  */
 export function exampleTable(): void {
-  console.log('\n📊 Unicode-Aware Table Example\n');
+  console.info('\n📊 Unicode-Aware Table Example\n');
 
   const table = TableFormatter.format({
     columns: [
@@ -251,8 +251,8 @@ export function exampleTable(): void {
     alternateRowColors: true,
   });
 
-  console.log(table);
-  console.log('\n✅ Perfect alignment with emojis, flags, and Unicode!');
+  console.info(table);
+  console.info('\n✅ Perfect alignment with emojis, flags, and Unicode!');
 }
 
 

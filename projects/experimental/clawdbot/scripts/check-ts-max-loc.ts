@@ -65,7 +65,7 @@ async function main() {
   // Minimal, grep-friendly output.
   for (const offender of offenders) {
     // eslint-disable-next-line no-console
-    console.log(`${offender.lines}\t${offender.filePath}`);
+    console.info(`${offender.lines}\t${offender.filePath}`);
   }
 
   process.exitCode = 1;

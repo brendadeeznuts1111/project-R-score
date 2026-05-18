@@ -158,7 +158,7 @@ export class CustomerNotifier {
     data: { oldAlias: string; newAlias: string; amount: number }
   ): Promise<void> {
     // In production, integrate with email/SMS service
-    console.log(`📧 Would send notification to ${contact}:`, data);
+    console.info(`📧 Would send notification to ${contact}:`, data);
 
     // Store for async processing
     await redis.lpush(

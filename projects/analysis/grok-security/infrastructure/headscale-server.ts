@@ -54,7 +54,7 @@ let apiServer: ReturnType<typeof Bun.serve> | null = null;
  * [1.0.0.0] Start Headscale server
  */
 async function startHeadscale(): Promise<void> {
-  console.log("🚀 Starting Headscale server...");
+  console.info("🚀 Starting Headscale server...");
 
   // Ensure data directory exists
   await $`mkdir -p ${CONFIG.headscale.dataDir}`;
@@ -69,7 +69,7 @@ async function startHeadscale(): Promise<void> {
   });
 
   processes.set("headscale", proc);
-  console.log(`✅ Headscale started (PID: ${proc.pid})`);
+  console.info(`✅ Headscale started (PID: ${proc.pid})`);
 }
 
 /**
@@ -77,7 +77,7 @@ async function startHeadscale(): Promise<void> {
  * Uses server.port and server.url to display actual bound address
  */
 function startAPIProxy(): void {
-  console.log("🌐 Starting API Proxy server...");
+  console.info("🌐 Starting API Proxy server...");
 
   const server = Bun.serve({
     port: CONFIG.api.port,
@@ -154,8 +154,8 @@ function startAPIProxy(): void {
   apiServer = server;
 
   // Use server.url and server.port to show actual bound address
-  console.log(`✅ API Proxy listening on ${server.url}`);
-  console.log(`   Port: ${server.port} | Hostname: ${server.hostname}`);
+  console.info(`✅ API Proxy listening on ${server.url}`);
+  console.info(`   Port: ${server.port} | Hostname: ${server.hostname}`);
 }
 
 /**
@@ -163,15 +163,15 @@ function startAPIProxy(): void {
  */
 function setupShutdown(): void {
   const shutdown = async () => {
-    console.log("\n🛑 Shutting down...");
+    console.info("\n🛑 Shutting down...");
 
     for (const [name, proc] of processes) {
-      console.log(`  Stopping ${name}...`);
+      console.info(`  Stopping ${name}...`);
       proc.kill();
       await proc.exited;
     }
 
-    console.log("✅ All services stopped");
+    console.info("✅ All services stopped");
     process.exit(0);
   };
 
@@ -183,21 +183,21 @@ function setupShutdown(): void {
  * [4.0.0.0] Main entry point
  */
 async function main(): Promise<void> {
-  console.log("═══════════════════════════════════════════");
-  console.log("  🎛️  Headscale Bun-Native Server");
-  console.log("═══════════════════════════════════════════\n");
+  console.info("═══════════════════════════════════════════");
+  console.info("  🎛️  Headscale Bun-Native Server");
+  console.info("═══════════════════════════════════════════\n");
 
   setupShutdown();
 
   // Preconnect to infrastructure hosts
-  console.log("🔗 Preconnecting to infrastructure hosts...");
+  console.info("🔗 Preconnecting to infrastructure hosts...");
   try {
     await preconnectAll({
       targets: DEFAULT_PRECONNECT_TARGETS,
       parallel: true,
       verbose: false,
     });
-    console.log("✅ Network preconnection complete\n");
+    console.info("✅ Network preconnection complete\n");
   } catch (error) {
     console.warn("⚠️  Preconnection warning:", error);
   }
@@ -218,16 +218,16 @@ async function main(): Promise<void> {
   startAPIProxy();
 
   // Display services using actual server.port and server.url
-  console.log("\n📊 Services:");
-  console.log(`   Headscale:  http://localhost:${DEFAULT_PORTS.HEADSCALE_API}`);
+  console.info("\n📊 Services:");
+  console.info(`   Headscale:  http://localhost:${DEFAULT_PORTS.HEADSCALE_API}`);
   if (apiServer) {
-    console.log(`   API Proxy:  ${apiServer.url}`);
-    console.log(`   API Port:   ${apiServer.port} (actual bound port)`);
+    console.info(`   API Proxy:  ${apiServer.url}`);
+    console.info(`   API Port:   ${apiServer.port} (actual bound port)`);
   }
-  console.log(
+  console.info(
     `   Metrics:    http://localhost:${DEFAULT_PORTS.HEADSCALE_METRICS}/metrics`
   );
-  console.log("\nPress Ctrl+C to stop\n");
+  console.info("\nPress Ctrl+C to stop\n");
 }
 
 main().catch(console.error);

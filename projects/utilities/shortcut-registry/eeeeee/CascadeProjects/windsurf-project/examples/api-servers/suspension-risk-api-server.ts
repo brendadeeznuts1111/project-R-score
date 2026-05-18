@@ -80,18 +80,18 @@ if (feature("PREMIUM")) {
     }
   });
 
-  console.log(`🧠 Suspension Risk API Server running on port ${PORT}`);
-  console.log('📊 Available endpoints:');
-  console.log('  GET  /api/family/risk/:id - Get guardian risk profile');
-  console.log('  POST /api/family/risk/predict - Predict guardian risk');
-  console.log('  POST /api/family/risk/batch - Batch risk prediction');
-  console.log('  POST /api/family/preventive - Trigger preventive action');
-  console.log('  GET  /api/family/preventive/:id - Get preventive actions');
-  console.log('  POST /api/family/monitoring/start - Start monitoring');
-  console.log('  POST /api/family/monitoring/stop - Stop monitoring');
-  console.log('  GET  /api/family/alerts/:id - Get risk alerts');
-  console.log('  GET  /api/family/analytics/risk-trends - Get risk trends');
-  console.log('  GET  /api/family/analytics/model-performance - Get model performance');
+  console.info(`🧠 Suspension Risk API Server running on port ${PORT}`);
+  console.info('📊 Available endpoints:');
+  console.info('  GET  /api/family/risk/:id - Get guardian risk profile');
+  console.info('  POST /api/family/risk/predict - Predict guardian risk');
+  console.info('  POST /api/family/risk/batch - Batch risk prediction');
+  console.info('  POST /api/family/preventive - Trigger preventive action');
+  console.info('  GET  /api/family/preventive/:id - Get preventive actions');
+  console.info('  POST /api/family/monitoring/start - Start monitoring');
+  console.info('  POST /api/family/monitoring/stop - Stop monitoring');
+  console.info('  GET  /api/family/alerts/:id - Get risk alerts');
+  console.info('  GET  /api/family/analytics/risk-trends - Get risk trends');
+  console.info('  GET  /api/family/analytics/model-performance - Get model performance');
 }
 
 // Get Guardian Risk Profile
@@ -231,7 +231,7 @@ async function handleTriggerPreventiveAction(req: Request): Promise<Response> {
     preventiveActions.get(guardianId)!.push(actionResult);
     
     // Log action
-    console.log(`🛡️ Preventive action triggered: ${action} for guardian ${guardianId} (risk: ${(riskProfile.riskScore * 100).toFixed(1)}%)`);
+    console.info(`🛡️ Preventive action triggered: ${action} for guardian ${guardianId} (risk: ${(riskProfile.riskScore * 100).toFixed(1)}%)`);
     
     return Response.json({
       success: true,

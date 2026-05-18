@@ -274,7 +274,7 @@ export class SelfHealingCircuit {
     const remoteR2Hash = JSON.stringify(remoteR2);
     
     if (localHash !== remoteR2Hash) {
-      console.log('🔄 Healing data drift between Local and R2...');
+      console.info('🔄 Healing data drift between Local and R2...');
       this.cycles++;
       // In a real implementation, this would trigger a sync tool
       // For now, we simulate the healing cycle increment
@@ -322,7 +322,7 @@ export class MultiAppOrchestrator {
 
   async getUnifiedProfile(phone: string, options: { dryRun?: boolean, mockLevel?: string, webhookUrl?: string } = {}): Promise<UnifiedProfile> {
     if (options.dryRun) {
-      console.log(`🧪 DRY RUN: Simulating multi-app orchestration (level: ${options.mockLevel || 'standard'})...`);
+      console.info(`🧪 DRY RUN: Simulating multi-app orchestration (level: ${options.mockLevel || 'standard'})...`);
       return this.simulateUnifiedProfile(phone, options.mockLevel || 'standard');
     }
 

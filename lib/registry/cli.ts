@@ -94,7 +94,7 @@ class RegistryCLI {
    * Start the registry server
    */
   private async handleStart(options: any): Promise<void> {
-    console.log(styled('\n🚀 Starting NPM Registry...', 'accent'));
+    console.info(styled('\n🚀 Starting NPM Registry...', 'accent'));
     const infraR2 = await resolveR2InfraConfig({
       bucketFallback: options.bucket || process.env.R2_REGISTRY_BUCKET || 'npm-registry',
     });
@@ -127,7 +127,7 @@ class RegistryCLI {
     const packagePath = options._[0] || '.';
     const registry = options.registry || DEFAULT_REGISTRY_URL;
 
-    console.log(styled(`\n📦 Publishing from ${packagePath}...`, 'accent'));
+    console.info(styled(`\n📦 Publishing from ${packagePath}...`, 'accent'));
 
     try {
       // Read package.json
@@ -135,8 +135,8 @@ class RegistryCLI {
 
       const pkg = await Bun.file(pkgPath).json();
 
-      console.log(styled(`Package: ${pkg.name}@${pkg.version}`, 'info'));
-      console.log(styled(`Registry: ${registry}`, 'info'));
+      console.info(styled(`Package: ${pkg.name}@${pkg.version}`, 'info'));
+      console.info(styled(`Registry: ${registry}`, 'info'));
 
       // Create tarball
       const tarballData = await this.createTarball(packagePath, pkg);
@@ -192,7 +192,7 @@ class RegistryCLI {
 
       if (response.ok) {
         const result = await response.json();
-        console.log(styled(`\n✅ Published: ${result.id}@${result.version}`, 'success'));
+        console.info(styled(`\n✅ Published: ${result.id}@${result.version}`, 'success'));
       } else {
         const error = await response.json();
         console.error(styled(`\n❌ Failed: ${error.reason || error.error}`, 'error'));
@@ -214,11 +214,11 @@ class RegistryCLI {
 
     if (!packageName) {
       console.error(styled('❌ Package name required', 'error'));
-      console.log(styled('Usage: registry unpublish <package> [--version <version>]', 'muted'));
+      console.info(styled('Usage: registry unpublish <package> [--version <version>]', 'muted'));
       return;
     }
 
-    console.log(
+    console.info(
       styled(`\n🗑️ Unpublishing ${packageName}${version ? `@${version}` : ''}...`, 'warning')
     );
 
@@ -233,7 +233,7 @@ class RegistryCLI {
         });
 
         if (response.ok) {
-          console.log(styled(`✅ Unpublished: ${packageName}@${version}`, 'success'));
+          console.info(styled(`✅ Unpublished: ${packageName}@${version}`, 'success'));
         } else {
           const error = await response.json();
           console.error(styled(`❌ Failed: ${error.reason || error.error}`, 'error'));
@@ -248,7 +248,7 @@ class RegistryCLI {
         });
 
         if (response.ok) {
-          console.log(styled(`✅ Unpublished: ${packageName}`, 'success'));
+          console.info(styled(`✅ Unpublished: ${packageName}`, 'success'));
         } else {
           const error = await response.json();
           console.error(styled(`❌ Failed: ${error.reason || error.error}`, 'error'));
@@ -281,45 +281,45 @@ class RegistryCLI {
 
       const manifest = await response.json();
 
-      console.log(styled(`\n📦 ${manifest.name}`, 'accent'));
-      console.log(styled('='.repeat(50), 'accent'));
+      console.info(styled(`\n📦 ${manifest.name}`, 'accent'));
+      console.info(styled('='.repeat(50), 'accent'));
 
-      console.log(styled(`\n📋 Description:`, 'info'));
-      console.log(styled(`  ${manifest.description || 'N/A'}`, 'muted'));
+      console.info(styled(`\n📋 Description:`, 'info'));
+      console.info(styled(`  ${manifest.description || 'N/A'}`, 'muted'));
 
-      console.log(styled(`\n🏷️  Dist Tags:`, 'info'));
+      console.info(styled(`\n🏷️  Dist Tags:`, 'info'));
       for (const [tag, version] of Object.entries(manifest['dist-tags'])) {
-        console.log(styled(`  ${tag}: ${version}`, 'muted'));
+        console.info(styled(`  ${tag}: ${version}`, 'muted'));
       }
 
-      console.log(styled(`\n📦 Versions (${Object.keys(manifest.versions).length}):`, 'info'));
+      console.info(styled(`\n📦 Versions (${Object.keys(manifest.versions).length}):`, 'info'));
       const versions = Object.keys(manifest.versions).slice(-10);
-      versions.forEach(v => console.log(styled(`  - ${v}`, 'muted')));
+      versions.forEach(v => console.info(styled(`  - ${v}`, 'muted')));
 
       if (manifest.keywords) {
-        console.log(styled(`\n🔑 Keywords:`, 'info'));
-        console.log(styled(`  ${manifest.keywords.join(', ')}`, 'muted'));
+        console.info(styled(`\n🔑 Keywords:`, 'info'));
+        console.info(styled(`  ${manifest.keywords.join(', ')}`, 'muted'));
       }
 
       if (manifest.author) {
         const author = typeof manifest.author === 'string' ? manifest.author : manifest.author.name;
-        console.log(styled(`\n👤 Author:`, 'info'));
-        console.log(styled(`  ${author}`, 'muted'));
+        console.info(styled(`\n👤 Author:`, 'info'));
+        console.info(styled(`  ${author}`, 'muted'));
       }
 
       if (manifest.license) {
-        console.log(styled(`\n📄 License:`, 'info'));
-        console.log(styled(`  ${manifest.license}`, 'muted'));
+        console.info(styled(`\n📄 License:`, 'info'));
+        console.info(styled(`  ${manifest.license}`, 'muted'));
       }
 
       if (manifest.repository) {
-        console.log(styled(`\n🔗 Repository:`, 'info'));
+        console.info(styled(`\n🔗 Repository:`, 'info'));
         const repo =
           typeof manifest.repository === 'string' ? manifest.repository : manifest.repository.url;
-        console.log(styled(`  ${repo}`, 'muted'));
+        console.info(styled(`  ${repo}`, 'muted'));
       }
 
-      console.log();
+      console.info();
     } catch (error) {
       console.error(styled(`❌ Error: ${error.message}`, 'error'));
     }
@@ -341,23 +341,23 @@ class RegistryCLI {
       const response = await fetch(`${registry}/-/search?text=${encodeURIComponent(query)}`);
       const results = await response.json();
 
-      console.log(styled(`\n🔍 Search results for "${query}"`, 'accent'));
-      console.log(styled('='.repeat(50), 'accent'));
+      console.info(styled(`\n🔍 Search results for "${query}"`, 'accent'));
+      console.info(styled('='.repeat(50), 'accent'));
 
       if (results.objects.length === 0) {
-        console.log(styled('\nNo packages found.', 'muted'));
+        console.info(styled('\nNo packages found.', 'muted'));
         return;
       }
 
       for (const result of results.objects) {
         const pkg = result.package;
-        console.log(styled(`\n📦 ${pkg.name}@${pkg.version}`, 'info'));
+        console.info(styled(`\n📦 ${pkg.name}@${pkg.version}`, 'info'));
         if (pkg.description) {
-          console.log(styled(`  ${pkg.description}`, 'muted'));
+          console.info(styled(`  ${pkg.description}`, 'muted'));
         }
       }
 
-      console.log(styled(`\n📊 Total: ${results.total} packages`, 'muted'));
+      console.info(styled(`\n📊 Total: ${results.total} packages`, 'muted'));
     } catch (error) {
       console.error(styled(`❌ Error: ${error.message}`, 'error'));
     }
@@ -373,19 +373,19 @@ class RegistryCLI {
       const response = await fetch(`${registry}/-/all`);
       const data = await response.json();
 
-      console.log(styled('\n📦 Registry Packages', 'accent'));
-      console.log(styled('='.repeat(50), 'accent'));
+      console.info(styled('\n📦 Registry Packages', 'accent'));
+      console.info(styled('='.repeat(50), 'accent'));
 
       if (data.packages.length === 0) {
-        console.log(styled('\nNo packages in registry.', 'muted'));
+        console.info(styled('\nNo packages in registry.', 'muted'));
         return;
       }
 
       for (const pkg of data.packages) {
-        console.log(styled(`  📦 ${pkg}`, 'muted'));
+        console.info(styled(`  📦 ${pkg}`, 'muted'));
       }
 
-      console.log(styled(`\n📊 Total: ${data.packages.length} packages`, 'info'));
+      console.info(styled(`\n📊 Total: ${data.packages.length} packages`, 'info'));
     } catch (error) {
       console.error(styled(`❌ Error: ${error.message}`, 'error'));
     }
@@ -397,27 +397,27 @@ class RegistryCLI {
   private async handleUsers(subcommand: string, options: any): Promise<void> {
     switch (subcommand) {
       case 'add':
-        console.log(styled(`\n👤 Adding user: ${options._[1]}`, 'info'));
-        console.log(styled('Feature: Implement user management with R2 storage', 'muted'));
+        console.info(styled(`\n👤 Adding user: ${options._[1]}`, 'info'));
+        console.info(styled('Feature: Implement user management with R2 storage', 'muted'));
         break;
 
       case 'list':
-        console.log(styled('\n👤 Registry Users', 'accent'));
-        console.log(styled('Feature: List users from R2', 'muted'));
+        console.info(styled('\n👤 Registry Users', 'accent'));
+        console.info(styled('Feature: List users from R2', 'muted'));
         break;
 
       case 'remove':
-        console.log(styled(`\n👤 Removing user: ${options._[1]}`, 'warning'));
-        console.log(styled('Feature: Remove user from R2', 'muted'));
+        console.info(styled(`\n👤 Removing user: ${options._[1]}`, 'warning'));
+        console.info(styled('Feature: Remove user from R2', 'muted'));
         break;
 
       default:
-        console.log(styled('\n👤 User Commands:', 'accent'));
-        console.log(
+        console.info(styled('\n👤 User Commands:', 'accent'));
+        console.info(
           styled('  registry users add <username> [--email <email>] [--password <pass>]', 'muted')
         );
-        console.log(styled('  registry users list', 'muted'));
-        console.log(styled('  registry users remove <username>', 'muted'));
+        console.info(styled('  registry users list', 'muted'));
+        console.info(styled('  registry users remove <username>', 'muted'));
     }
   }
 
@@ -429,26 +429,26 @@ class RegistryCLI {
       case 'create':
         const auth = new RegistryAuth(AuthConfigs.jwt(options.secret || 'test'));
         const token = auth.createJwt(options._[1] || 'admin', options.readonly === 'true');
-        console.log(styled('\n🔑 Token created:', 'success'));
-        console.log(styled(`  ${token}`, 'muted'));
-        console.log(styled('\nAdd to .npmrc:', 'info'));
-        console.log(styled(`  //registry.factory-wager.com/:_authToken=${token}`, 'muted'));
+        console.info(styled('\n🔑 Token created:', 'success'));
+        console.info(styled(`  ${token}`, 'muted'));
+        console.info(styled('\nAdd to .npmrc:', 'info'));
+        console.info(styled(`  //registry.factory-wager.com/:_authToken=${token}`, 'muted'));
         break;
 
       case 'list':
-        console.log(styled('\n🔑 Active Tokens', 'accent'));
-        console.log(styled('Feature: List active tokens', 'muted'));
+        console.info(styled('\n🔑 Active Tokens', 'accent'));
+        console.info(styled('Feature: List active tokens', 'muted'));
         break;
 
       case 'revoke':
-        console.log(styled(`\n🔑 Revoking token: ${options._[1]}`, 'warning'));
+        console.info(styled(`\n🔑 Revoking token: ${options._[1]}`, 'warning'));
         break;
 
       default:
-        console.log(styled('\n🔑 Token Commands:', 'accent'));
-        console.log(styled('  registry tokens create <username> [--readonly]', 'muted'));
-        console.log(styled('  registry tokens list', 'muted'));
-        console.log(styled('  registry tokens revoke <token>', 'muted'));
+        console.info(styled('\n🔑 Token Commands:', 'accent'));
+        console.info(styled('  registry tokens create <username> [--readonly]', 'muted'));
+        console.info(styled('  registry tokens list', 'muted'));
+        console.info(styled('  registry tokens revoke <token>', 'muted'));
     }
   }
 
@@ -458,12 +458,12 @@ class RegistryCLI {
   private async handleStats(): Promise<void> {
     const status = this.storage.getConfigStatus();
 
-    console.log(styled('\n📊 Registry Statistics', 'accent'));
-    console.log(styled('=====================', 'accent'));
+    console.info(styled('\n📊 Registry Statistics', 'accent'));
+    console.info(styled('=====================', 'accent'));
 
-    console.log(styled('\n🪣 Storage:', 'info'));
-    console.log(styled(`  Bucket: ${status.bucket}`, 'muted'));
-    console.log(
+    console.info(styled('\n🪣 Storage:', 'info'));
+    console.info(styled(`  Bucket: ${status.bucket}`, 'muted'));
+    console.info(
       styled(
         `  Configured: ${status.configured ? '✅' : '❌'}`,
         status.configured ? 'success' : 'error'
@@ -472,7 +472,7 @@ class RegistryCLI {
 
     if (status.configured) {
       const connected = await this.storage.testConnection();
-      console.log(
+      console.info(
         styled(`  Connected: ${connected ? '✅' : '❌'}`, connected ? 'success' : 'error')
       );
 
@@ -480,10 +480,10 @@ class RegistryCLI {
         const packages = await this.storage.listPackages();
         const stats = await this.storage.getStats();
 
-        console.log(styled('\n📦 Packages:', 'info'));
-        console.log(styled(`  Total: ${stats.packages}`, 'muted'));
-        console.log(styled(`  Versions: ${stats.versions}`, 'muted'));
-        console.log(styled(`  Size: ${(stats.totalSize / 1024 / 1024).toFixed(2)} MB`, 'muted'));
+        console.info(styled('\n📦 Packages:', 'info'));
+        console.info(styled(`  Total: ${stats.packages}`, 'muted'));
+        console.info(styled(`  Versions: ${stats.versions}`, 'muted'));
+        console.info(styled(`  Size: ${(stats.totalSize / 1024 / 1024).toFixed(2)} MB`, 'muted'));
       }
     }
   }
@@ -495,51 +495,51 @@ class RegistryCLI {
     const infraR2 = await resolveR2InfraConfig({
       bucketFallback: process.env.R2_REGISTRY_BUCKET || 'npm-registry',
     });
-    console.log(styled('\n⚙️  Registry Configuration', 'accent'));
-    console.log(styled('==========================', 'accent'));
+    console.info(styled('\n⚙️  Registry Configuration', 'accent'));
+    console.info(styled('==========================', 'accent'));
 
-    console.log(styled('\n🌐 Server:', 'info'));
-    console.log(styled(`  Port: ${process.env.REGISTRY_PORT || '4873'}`, 'muted'));
-    console.log(styled(`  Auth: ${process.env.REGISTRY_AUTH || 'none'}`, 'muted'));
+    console.info(styled('\n🌐 Server:', 'info'));
+    console.info(styled(`  Port: ${process.env.REGISTRY_PORT || '4873'}`, 'muted'));
+    console.info(styled(`  Auth: ${process.env.REGISTRY_AUTH || 'none'}`, 'muted'));
 
-    console.log(styled('\n🪣 R2 Storage:', 'info'));
-    console.log(styled(`  Bucket: ${infraR2.bucketName}`, 'muted'));
-    console.log(styled(`  Account: ${infraR2.accountId || 'not set'}`, 'muted'));
+    console.info(styled('\n🪣 R2 Storage:', 'info'));
+    console.info(styled(`  Bucket: ${infraR2.bucketName}`, 'muted'));
+    console.info(styled(`  Account: ${infraR2.accountId || 'not set'}`, 'muted'));
 
-    console.log(styled('\n📡 CDN:', 'info'));
-    console.log(styled(`  URL: ${process.env.REGISTRY_CDN_URL || 'not set'}`, 'muted'));
+    console.info(styled('\n📡 CDN:', 'info'));
+    console.info(styled(`  URL: ${process.env.REGISTRY_CDN_URL || 'not set'}`, 'muted'));
 
-    console.log(styled('\n📝 Environment Variables:', 'info'));
-    console.log(styled('  REGISTRY_PORT - Server port (default: 4873)', 'muted'));
-    console.log(styled('  REGISTRY_AUTH - Auth type: none, basic, token, jwt', 'muted'));
-    console.log(styled('  REGISTRY_SECRET - Auth secret/password', 'muted'));
-    console.log(styled('  R2_ACCOUNT_ID - Cloudflare account ID', 'muted'));
-    console.log(styled('  R2_ACCESS_KEY_ID - R2 access key', 'muted'));
-    console.log(styled('  R2_SECRET_ACCESS_KEY - R2 secret key', 'muted'));
-    console.log(styled('  R2_REGISTRY_BUCKET - R2 bucket name', 'muted'));
-    console.log(styled('  REGISTRY_CDN_URL - CDN base URL', 'muted'));
+    console.info(styled('\n📝 Environment Variables:', 'info'));
+    console.info(styled('  REGISTRY_PORT - Server port (default: 4873)', 'muted'));
+    console.info(styled('  REGISTRY_AUTH - Auth type: none, basic, token, jwt', 'muted'));
+    console.info(styled('  REGISTRY_SECRET - Auth secret/password', 'muted'));
+    console.info(styled('  R2_ACCOUNT_ID - Cloudflare account ID', 'muted'));
+    console.info(styled('  R2_ACCESS_KEY_ID - R2 access key', 'muted'));
+    console.info(styled('  R2_SECRET_ACCESS_KEY - R2 secret key', 'muted'));
+    console.info(styled('  R2_REGISTRY_BUCKET - R2 bucket name', 'muted'));
+    console.info(styled('  REGISTRY_CDN_URL - CDN base URL', 'muted'));
   }
 
   /**
    * Show help
    */
   private showHelp(): void {
-    console.log(styled('\n📦 NPM Registry CLI', 'accent'));
-    console.log(styled('===================', 'accent'));
-    console.log(styled('\nCommands:', 'info'));
+    console.info(styled('\n📦 NPM Registry CLI', 'accent'));
+    console.info(styled('===================', 'accent'));
+    console.info(styled('\nCommands:', 'info'));
 
     for (const [cmd, desc] of Object.entries(COMMANDS)) {
-      console.log(styled(`  registry ${cmd.padEnd(12)} ${desc}`, 'muted'));
+      console.info(styled(`  registry ${cmd.padEnd(12)} ${desc}`, 'muted'));
     }
 
-    console.log(styled('\nExamples:', 'info'));
-    console.log(styled('  registry start --port 4873 --auth basic', 'muted'));
-    console.log(
+    console.info(styled('\nExamples:', 'info'));
+    console.info(styled('  registry start --port 4873 --auth basic', 'muted'));
+    console.info(
       styled(`  registry publish ./my-package --registry ${DEFAULT_REGISTRY_URL}`, 'muted')
     );
-    console.log(styled('  registry info my-package', 'muted'));
-    console.log(styled('  registry search utils', 'muted'));
-    console.log(styled('  registry tokens create admin', 'muted'));
+    console.info(styled('  registry info my-package', 'muted'));
+    console.info(styled('  registry search utils', 'muted'));
+    console.info(styled('  registry tokens create admin', 'muted'));
   }
 
   /**

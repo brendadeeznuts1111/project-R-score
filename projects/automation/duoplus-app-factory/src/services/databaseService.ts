@@ -15,7 +15,7 @@ export class DatabaseService {
     this.dbPath = dbPath;
     this.db = new Database(dbPath);
     this.initializeTables();
-    console.log(`✅ Database initialized: ${dbPath}`);
+    console.info(`✅ Database initialized: ${dbPath}`);
   }
 
   private initializeTables(): void {
@@ -124,7 +124,7 @@ export class DatabaseService {
       CREATE INDEX IF NOT EXISTS idx_scheduled_date ON scheduled_publishing(scheduledFor);
     `);
 
-    console.log(`📊 Database tables initialized`);
+    console.info(`📊 Database tables initialized`);
   }
 
   // Metadata operations
@@ -244,14 +244,14 @@ export class DatabaseService {
   // Utility methods
   close(): void {
     this.db.close();
-    console.log(`🔌 Database connection closed`);
+    console.info(`🔌 Database connection closed`);
   }
 
   backup(backupPath: string): void {
     const fs = require('fs');
     const data = this.db.serialize();
     fs.writeFileSync(backupPath, data);
-    console.log(`💾 Database backed up to ${backupPath}`);
+    console.info(`💾 Database backed up to ${backupPath}`);
   }
 
   private rowToMetadata(row: any): ContentMetadata {

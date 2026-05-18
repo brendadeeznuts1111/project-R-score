@@ -70,10 +70,10 @@ export function validateBinaryExists(command: string): string | null {
   try {
     const path = Bun.which(command);
     if (path) {
-      console.log(`✅ ${command}: ${path}`);
+      console.info(`✅ ${command}: ${path}`);
       return path;
     } else {
-      console.log(`❌ Missing: ${command}`);
+      console.info(`❌ Missing: ${command}`);
       return null;
     }
   } catch (error) {
@@ -116,7 +116,7 @@ export function validateBinaryOrThrow(command: string): string {
  * );
  * 
  * if (result.success) {
- *   console.log('Output:', result.stdout);
+ *   console.info('Output:', result.stdout);
  * }
  * ```
  */
@@ -370,8 +370,8 @@ export async function streamSpawn(
  * @example
  * ```typescript
  * const result = ansiStringWidth('\x1b[31mred\x1b[0m');
- * console.log(result.width); // 3 (not 9)
- * console.log(result.length); // 9
+ * console.info(result.width); // 3 (not 9)
+ * console.info(result.length); // 9
  * ```
  */
 export function ansiStringWidth(str: string): AnsiWidthResult {
@@ -487,37 +487,37 @@ export function getTerminalSize(): { columns: number; rows: number } {
 
 // Entry guard for testing
 if (import.meta.main) {
-  console.log('🔧 Bun Spawn Utils Demo\n');
+  console.info('🔧 Bun Spawn Utils Demo\n');
 
   // Test binary validation
-  console.log('1. Binary Validation:');
+  console.info('1. Binary Validation:');
   validateBinaryExists('bun');
   validateBinaryExists('nonexistent-binary-12345');
 
   // Test ANSI width
-  console.log('\n2. ANSI Width:');
+  console.info('\n2. ANSI Width:');
   const colored = '\x1b[31mred\x1b[0m';
   const widthResult = ansiStringWidth(colored);
-  console.log(`  String: "${colored}"`);
-  console.log(`  Visual width: ${widthResult.width}`);
-  console.log(`  Raw length: ${widthResult.length}`);
-  console.log(`  Has ANSI: ${widthResult.hasAnsi}`);
+  console.info(`  String: "${colored}"`);
+  console.info(`  Visual width: ${widthResult.width}`);
+  console.info(`  Raw length: ${widthResult.length}`);
+  console.info(`  Has ANSI: ${widthResult.hasAnsi}`);
 
   // Test truncation
-  console.log('\n3. ANSI Truncation:');
+  console.info('\n3. ANSI Truncation:');
   const truncated = truncateAnsi('\x1b[31mhello world\x1b[0m', 5);
-  console.log(`  Truncated: "${truncated}"`);
+  console.info(`  Truncated: "${truncated}"`);
 
   // Test safe spawn
-  console.log('\n4. Safe Spawn:');
+  console.info('\n4. Safe Spawn:');
   const result = await safeSpawn(['bun', '--version'], {
     timeoutMs: 5000,
     validateBinary: true,
   });
-  console.log(`  Success: ${result.success}`);
-  console.log(`  Exit code: ${result.exitCode}`);
-  console.log(`  Duration: ${result.durationMs.toFixed(2)}ms`);
-  console.log(`  Output: ${result.stdout.trim()}`);
+  console.info(`  Success: ${result.success}`);
+  console.info(`  Exit code: ${result.exitCode}`);
+  console.info(`  Duration: ${result.durationMs.toFixed(2)}ms`);
+  console.info(`  Output: ${result.stdout.trim()}`);
 
-  console.log('\n✅ Demo complete!');
+  console.info('\n✅ Demo complete!');
 }

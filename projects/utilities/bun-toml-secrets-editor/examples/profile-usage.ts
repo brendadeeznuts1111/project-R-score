@@ -54,15 +54,15 @@ async function complexOperation() {
 	try {
 		// Step 1
 		await new Promise((resolve) => setTimeout(resolve, 100));
-		console.log("   Step 1 complete");
+		console.info("   Step 1 complete");
 
 		// Step 2
 		await new Promise((resolve) => setTimeout(resolve, 150));
-		console.log("   Step 2 complete");
+		console.info("   Step 2 complete");
 
 		// Step 3
 		await new Promise((resolve) => setTimeout(resolve, 80));
-		console.log("   Step 3 complete");
+		console.info("   Step 3 complete");
 
 		return "Operation completed successfully";
 	} finally {
@@ -72,30 +72,30 @@ async function complexOperation() {
 
 // Usage examples
 async function demonstrateProfiling() {
-	console.log("🎯 @profile Integration Examples\n");
+	console.info("🎯 @profile Integration Examples\n");
 
 	const api = new APIService();
 
 	// Using decorator methods
-	console.log("1. @profile decorator methods:");
+	console.info("1. @profile decorator methods:");
 	const user = await api.fetchUser(1);
 	const saved = await api.saveUser(user);
 	const processed = await api.processUsers([user, saved]);
 
 	// Using wrapper functions
-	console.log("\n2. Profile wrapper functions:");
+	console.info("\n2. Profile wrapper functions:");
 	const sum = await expensiveComputation([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-	console.log(`   Sum result: ${sum}`);
+	console.info(`   Sum result: ${sum}`);
 
 	const transformed = await dataTransformation("Hello World");
-	console.log(`   Transformed: ${transformed}`);
+	console.info(`   Transformed: ${transformed}`);
 
 	// Using manual profiling
-	console.log("\n3. Manual profiling:");
+	console.info("\n3. Manual profiling:");
 	const result = await complexOperation();
-	console.log(`   Result: ${result}`);
+	console.info(`   Result: ${result}`);
 
-	console.log("\n✅ All profiling examples completed!");
+	console.info("\n✅ All profiling examples completed!");
 }
 
 // Export for use in other files

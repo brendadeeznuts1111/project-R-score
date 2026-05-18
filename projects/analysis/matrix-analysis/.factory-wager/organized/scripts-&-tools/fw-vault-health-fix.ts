@@ -39,8 +39,8 @@ class FactoryWagerVaultHealthFix {
   async execute(): Promise<FixResult> {
     const startTime = Date.now();
     
-    console.log(`🔧 FactoryWager Vault Health Fix ${this.dryRun ? '(DRY RUN)' : ''}`);
-    console.log(`================================${'='.repeat(this.dryRun ? 9 : 0)}`);
+    console.info(`🔧 FactoryWager Vault Health Fix ${this.dryRun ? '(DRY RUN)' : ''}`);
+    console.info(`================================${'='.repeat(this.dryRun ? 9 : 0)}`);
     
     try {
       // Load current vault metadata
@@ -76,7 +76,7 @@ class FactoryWagerVaultHealthFix {
   }
 
   private async analyzeVaultHealth(metadata: any): Promise<void> {
-    console.log(`🔍 Analyzing vault health...`);
+    console.info(`🔍 Analyzing vault health...`);
     
     const now = new Date();
     const criticalCredentials = ['registry.token', 'r2.secret_key', 'domain.ssl_cert'];
@@ -171,16 +171,16 @@ class FactoryWagerVaultHealthFix {
       }
     });
 
-    console.log(`📋 Found ${this.operations.length} operations to perform`);
+    console.info(`📋 Found ${this.operations.length} operations to perform`);
   }
 
   private async executeFixes(): Promise<void> {
-    console.log(`\n🔧 Executing vault repairs...`);
+    console.info(`\n🔧 Executing vault repairs...`);
     
     for (const operation of this.operations) {
       try {
         if (this.verbose) {
-          console.log(`   🔄 ${operation.description}`);
+          console.info(`   🔄 ${operation.description}`);
         }
         
         switch (operation.type) {
@@ -204,7 +204,7 @@ class FactoryWagerVaultHealthFix {
         operation.executed = true;
         
         if (this.verbose) {
-          console.log(`   ✅ ${operation.result || 'Completed'}`);
+          console.info(`   ✅ ${operation.result || 'Completed'}`);
         }
       } catch (error) {
         operation.result = `Failed: ${(error as Error).message}`;
@@ -305,22 +305,22 @@ class FactoryWagerVaultHealthFix {
   }
 
   private printSummary(result: FixResult): void {
-    console.log(`\n📊 Operation Summary:`);
-    console.log(`   Fixed: ${result.fixed} | Manual review: ${result.manualReview} | Backups: ${result.backups}`);
-    console.log(`   Duration: ${result.duration}ms`);
+    console.info(`\n📊 Operation Summary:`);
+    console.info(`   Fixed: ${result.fixed} | Manual review: ${result.manualReview} | Backups: ${result.backups}`);
+    console.info(`   Duration: ${result.duration}ms`);
     
     if (result.manualReview > 0) {
-      console.log(`\n⚠️ Manual review required for:`);
+      console.info(`\n⚠️ Manual review required for:`);
       this.operations
         .filter(op => !op.executed && op.severity === 'critical')
-        .forEach(op => console.log(`   • ${op.description}`));
+        .forEach(op => console.info(`   • ${op.description}`));
     }
     
     if (this.verbose && result.fixed > 0) {
-      console.log(`\n✅ Operations completed:`);
+      console.info(`\n✅ Operations completed:`);
       this.operations
         .filter(op => op.executed)
-        .forEach(op => console.log(`   • ${op.description}: ${op.result}`));
+        .forEach(op => console.info(`   • ${op.description}: ${op.result}`));
     }
   }
 }

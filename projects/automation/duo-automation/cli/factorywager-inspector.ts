@@ -139,7 +139,7 @@ class InteractiveTUI {
   }
   
   private showHeader() {
-    console.log(chalk.hex(ENTERPRISE_COLORS.enterprise)(`
+    console.info(chalk.hex(ENTERPRISE_COLORS.enterprise)(`
 ┌─ FACTORYWAGER INSPECTOR TUI ───────────────────────────────┐
 │ ${this.currentUrl}                                                   │
 ├─ 📊 Analytics 🛡️ Security 💰 Revenue 🔍 Patterns ├─[F1]─┤
@@ -156,11 +156,11 @@ class InteractiveTUI {
       uptime: 99.9
     };
     
-    console.log(chalk.hex(ENTERPRISE_COLORS.success)(
+    console.info(chalk.hex(ENTERPRISE_COLORS.success)(
       `│ Metrics: ${metrics.visitors} visitors | ${metrics.requests} req | ${metrics.cacheHit}% cache | $${(metrics.mrr/1000).toFixed(1)}K MRR    │`
     ));
     
-    console.log(chalk.hex(ENTERPRISE_COLORS.warning)(
+    console.info(chalk.hex(ENTERPRISE_COLORS.warning)(
       `│ Patterns Found:                                            │
 │   🟢 $[REDACTED_USER] (CashApp)                           │
 │   🟢 +1-***-***-4567 (Phone)                              │
@@ -168,7 +168,7 @@ class InteractiveTUI {
 │                                                            │`
     ));
     
-    console.log(chalk.hex(ENTERPRISE_COLORS.background)(
+    console.info(chalk.hex(ENTERPRISE_COLORS.background)(
       `│ [Enter]=Inspect [Tab]=Autocomplete [F2]=Redact [q]=Quit   │
 └────────────────────────────────────────────────────────────┘`
     ));
@@ -191,7 +191,7 @@ class InteractiveTUI {
       } else if (input === 'F2') {
         this.toggleRedaction();
       } else {
-        console.log(chalk.red('Invalid command. Type "help" for assistance.'));
+        console.info(chalk.red('Invalid command. Type "help" for assistance.'));
       }
       
       setTimeout(() => this.showMainInterface(), 1000);
@@ -199,15 +199,15 @@ class InteractiveTUI {
   }
   
   private inspectUrl(url: string) {
-    console.log(chalk.blue(`\n🔍 Inspecting: ${url}`));
+    console.info(chalk.blue(`\n🔍 Inspecting: ${url}`));
     // Simulate inspection
     setTimeout(() => {
-      console.log(chalk.green('✅ Inspection complete'));
+      console.info(chalk.green('✅ Inspection complete'));
     }, 500);
   }
   
   private showHelp() {
-    console.log(chalk.yellow(`
+    console.info(chalk.yellow(`
 🔍 Inspector Commands:
   /path                 - Inspect URL path
   help / F1            - Show this help
@@ -217,7 +217,7 @@ class InteractiveTUI {
   }
   
   private toggleRedaction() {
-    console.log(chalk.yellow('🛡️ Redaction mode toggled'));
+    console.info(chalk.yellow('🛡️ Redaction mode toggled'));
   }
 }
 
@@ -272,8 +272,8 @@ class FactoryWagerInspector {
   }
   
   private async handleInspect(url: string, options: any) {
-    console.log(chalk.hex(ENTERPRISE_COLORS.enterprise)(`🔍 FactoryWager Inspector v2.0`));
-    console.log(chalk.hex(ENTERPRISE_COLORS.success)(`📯 Target: ${url}`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.enterprise)(`🔍 FactoryWager Inspector v2.0`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.success)(`📯 Target: ${url}`));
     
     if (options.tui) {
       const tui = new InteractiveTUI();
@@ -318,30 +318,30 @@ class FactoryWagerInspector {
     };
     
     if (options.json) {
-      console.log(JSON.stringify(result, null, 2));
+      console.info(JSON.stringify(result, null, 2));
     } else {
       this.displayResults(result, options.redact);
     }
   }
   
   private displayResults(result: InspectionResult, redact: boolean) {
-    console.log(chalk.hex(ENTERPRISE_COLORS.success)(`\n📊 Inspection Results for ${result.url}`));
-    console.log(chalk.hex(ENTERPRISE_COLORS.warning)(`├─ Metrics: ${result.metrics.requests} req | ${result.metrics.visitors} visitors | ${result.metrics.cacheHit}% cache`));
-    console.log(chalk.hex(ENTERPRISE_COLORS.success)(`├─ MRR: $${(result.metrics.mrr/1000).toFixed(1)}K | Uptime: ${result.metrics.uptime}%`));
-    console.log(chalk.hex(ENTERPRISE_COLORS.enterprise)(`├─ Compliance Score: ${result.compliance.score}%`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.success)(`\n📊 Inspection Results for ${result.url}`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.warning)(`├─ Metrics: ${result.metrics.requests} req | ${result.metrics.visitors} visitors | ${result.metrics.cacheHit}% cache`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.success)(`├─ MRR: $${(result.metrics.mrr/1000).toFixed(1)}K | Uptime: ${result.metrics.uptime}%`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.enterprise)(`├─ Compliance Score: ${result.compliance.score}%`));
     
-    console.log(chalk.hex(ENTERPRISE_COLORS.warning)(`├─ Patterns Found:`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.warning)(`├─ Patterns Found:`));
     result.patterns.forEach(pattern => {
       const display = redact ? pattern.redacted : pattern.matches;
-      console.log(chalk.hex(ENTERPRISE_COLORS.warning)(`│   🟢 ${pattern.type}: ${display.join(', ')}`));
+      console.info(chalk.hex(ENTERPRISE_COLORS.warning)(`│   🟢 ${pattern.type}: ${display.join(', ')}`));
     });
     
-    console.log(chalk.hex(ENTERPRISE_COLORS.success)(`└─ Generated: ${result.timestamp.toLocaleString()} | © DuoPlus`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.success)(`└─ Generated: ${result.timestamp.toLocaleString()} | © DuoPlus`));
   }
   
   private async handleCompliance(options: any) {
-    console.log(chalk.hex(ENTERPRISE_COLORS.enterprise)(`🛡️ Compliance Check`));
-    console.log(chalk.hex(ENTERPRISE_COLORS.warning)(`Standards: ${options.standards}`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.enterprise)(`🛡️ Compliance Check`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.warning)(`Standards: ${options.standards}`));
     
     const standards = options.standards.split(',');
     const results = {
@@ -352,33 +352,33 @@ class FactoryWagerInspector {
       score: 99.8
     };
     
-    console.log(chalk.hex(ENTERPRISE_COLORS.success)(`✅ Compliance Score: ${results.score}%`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.success)(`✅ Compliance Score: ${results.score}%`));
     
     if (options.audit) {
-      console.log(chalk.hex(ENTERPRISE_COLORS.enterprise)(`📋 Audit report generated`));
+      console.info(chalk.hex(ENTERPRISE_COLORS.enterprise)(`📋 Audit report generated`));
     }
   }
   
   private async handlePatterns(options: any) {
-    console.log(chalk.hex(ENTERPRISE_COLORS.warning)(`🔍 Pattern Extraction`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.warning)(`🔍 Pattern Extraction`));
     
     if (options.extract) {
-      console.log(chalk.hex(ENTERPRISE_COLORS.success)(`✅ Patterns extracted: 1,892 (Redacted: 1,784)`));
+      console.info(chalk.hex(ENTERPRISE_COLORS.success)(`✅ Patterns extracted: 1,892 (Redacted: 1,784)`));
     }
     
-    console.log(chalk.hex(ENTERPRISE_COLORS.enterprise)(`📊 Pattern types: ${options.type}`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.enterprise)(`📊 Pattern types: ${options.type}`));
   }
   
   private async handleDashboard(options: any) {
-    console.log(chalk.hex(ENTERPRISE_COLORS.enterprise)(`🌐 Dashboard Integration`));
-    console.log(chalk.hex(ENTERPRISE_COLORS.success)(`🚀 Dashboard: localhost:${options.port}/inspector`));
-    console.log(chalk.hex(ENTERPRISE_COLORS.warning)(`📡 Live mode: ${options.live ? 'ON' : 'OFF'}`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.enterprise)(`🌐 Dashboard Integration`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.success)(`🚀 Dashboard: localhost:${options.port}/inspector`));
+    console.info(chalk.hex(ENTERPRISE_COLORS.warning)(`📡 Live mode: ${options.live ? 'ON' : 'OFF'}`));
     
     if (options.live) {
-      console.log(chalk.hex(ENTERPRISE_COLORS.success)(`✅ Dashboard routes integrated:`));
-      console.log(chalk.hex(ENTERPRISE_COLORS.background)(`   /inspector - Primary interface`));
-      console.log(chalk.hex(ENTERPRISE_COLORS.background)(`   /inspector/query - Query engine`));
-      console.log(chalk.hex(ENTERPRISE_COLORS.background)(`   /inspector/redact - PCI/GDPR masking`));
+      console.info(chalk.hex(ENTERPRISE_COLORS.success)(`✅ Dashboard routes integrated:`));
+      console.info(chalk.hex(ENTERPRISE_COLORS.background)(`   /inspector - Primary interface`));
+      console.info(chalk.hex(ENTERPRISE_COLORS.background)(`   /inspector/query - Query engine`));
+      console.info(chalk.hex(ENTERPRISE_COLORS.background)(`   /inspector/redact - PCI/GDPR masking`));
     }
   }
   

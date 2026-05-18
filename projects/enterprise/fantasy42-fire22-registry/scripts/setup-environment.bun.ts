@@ -55,7 +55,7 @@ class EnvironmentSetup {
     }
 
     writeFileSync(this.envFile, content);
-    console.log(`✅ Updated ${ENV_FILE}`);
+    console.info(`✅ Updated ${ENV_FILE}`);
   }
 
   private async checkCloudflareSetup(): Promise<boolean> {
@@ -63,14 +63,14 @@ class EnvironmentSetup {
     const accountId = this.envData['CLOUDFLARE_ACCOUNT_ID'];
 
     if (!token || token.includes('your_') || !accountId || accountId.includes('your_')) {
-      console.log('❌ CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID need to be configured');
-      console.log('   Get from: https://dash.cloudflare.com/profile/api-tokens');
-      console.log('   Required permissions: Workers:Edit, D1:Edit, KV:Edit, R2:Edit, Queues:Edit');
+      console.info('❌ CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID need to be configured');
+      console.info('   Get from: https://dash.cloudflare.com/profile/api-tokens');
+      console.info('   Required permissions: Workers:Edit, D1:Edit, KV:Edit, R2:Edit, Queues:Edit');
       return false;
     }
 
     // TODO: Add API validation
-    console.log('✅ Cloudflare credentials configured');
+    console.info('✅ Cloudflare credentials configured');
     return true;
   }
 
@@ -78,13 +78,13 @@ class EnvironmentSetup {
     const token = this.envData['GITHUB_TOKEN'];
 
     if (!token || token.includes('your_')) {
-      console.log('❌ GITHUB_TOKEN needs to be configured');
-      console.log('   Get from: https://github.com/settings/tokens');
-      console.log('   Required scopes: repo, workflow, packages');
+      console.info('❌ GITHUB_TOKEN needs to be configured');
+      console.info('   Get from: https://github.com/settings/tokens');
+      console.info('   Required scopes: repo, workflow, packages');
       return false;
     }
 
-    console.log('✅ GitHub token configured');
+    console.info('✅ GitHub token configured');
     return true;
   }
 
@@ -92,12 +92,12 @@ class EnvironmentSetup {
     const registryToken = this.envData['FIRE22_REGISTRY_TOKEN'];
 
     if (!registryToken || registryToken.includes('your_')) {
-      console.log('❌ FIRE22_REGISTRY_TOKEN needs to be configured');
-      console.log('   Contact enterprise admin for registry access');
+      console.info('❌ FIRE22_REGISTRY_TOKEN needs to be configured');
+      console.info('   Contact enterprise admin for registry access');
       return false;
     }
 
-    console.log('✅ Registry token configured');
+    console.info('✅ Registry token configured');
     return true;
   }
 
@@ -108,7 +108,7 @@ class EnvironmentSetup {
       const dirPath = join(process.cwd(), dir);
       if (!existsSync(dirPath)) {
         await Bun.write(join(dirPath, '.gitkeep'), '');
-        console.log(`✅ Created directory: ${dir}`);
+        console.info(`✅ Created directory: ${dir}`);
       }
     }
 
@@ -120,16 +120,16 @@ class EnvironmentSetup {
 
     if (!existsSync(dbPath)) {
       // Create empty SQLite database
-      console.log('✅ Database setup ready (will be created on first run)');
+      console.info('✅ Database setup ready (will be created on first run)');
     } else {
-      console.log('✅ Database exists');
+      console.info('✅ Database exists');
     }
 
     return true;
   }
 
   async runSetup(): Promise<void> {
-    console.log('🔥 Fantasy42-Fire22 Enterprise Environment Setup\n');
+    console.info('🔥 Fantasy42-Fire22 Enterprise Environment Setup\n');
 
     const steps: SetupStep[] = [
       {
@@ -172,8 +172,8 @@ class EnvironmentSetup {
     let allPassed = true;
 
     for (const step of steps) {
-      console.log(`\n🔧 ${step.name}`);
-      console.log(`   ${step.description}`);
+      console.info(`\n🔧 ${step.name}`);
+      console.info(`   ${step.description}`);
 
       const passed = await step.action();
 
@@ -182,19 +182,19 @@ class EnvironmentSetup {
       }
     }
 
-    console.log('\n' + '='.repeat(50));
+    console.info('\n' + '='.repeat(50));
 
     if (allPassed) {
-      console.log('🎉 Environment setup complete!');
-      console.log('🚀 Ready to run enterprise commands');
-      console.log('\nNext steps:');
-      console.log('1. bun run enterprise:setup');
-      console.log('2. bun run wrangler:auth');
-      console.log('3. bun run enterprise:verify');
+      console.info('🎉 Environment setup complete!');
+      console.info('🚀 Ready to run enterprise commands');
+      console.info('\nNext steps:');
+      console.info('1. bun run enterprise:setup');
+      console.info('2. bun run wrangler:auth');
+      console.info('3. bun run enterprise:verify');
     } else {
-      console.log('⚠️  Some setup steps need manual configuration');
-      console.log('📖 Check the output above for specific requirements');
-      console.log('🔄 Run this script again after configuring missing items');
+      console.info('⚠️  Some setup steps need manual configuration');
+      console.info('📖 Check the output above for specific requirements');
+      console.info('🔄 Run this script again after configuring missing items');
     }
 
     this.saveEnvFile();

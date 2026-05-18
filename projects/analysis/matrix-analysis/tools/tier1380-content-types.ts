@@ -17,11 +17,11 @@ const GLYPH = { pass: "✅", fail: "❌", warn: "⚠️", info: "ℹ️" };
 
 // ─── Content Types Demo ───────────────────────────
 function showContentTypes() {
-	console.log("📦 Content Types Demo:");
-	console.log(`   • Package name: ${config.name}`);
-	console.log(`   • Package version: ${config.version}`);
-	console.log(`   • README preview: ${readme.slice(0, 50)}...`);
-	console.log(`   • Build target: ${process.env.BUN_TARGET || "default"}`);
+	console.info("📦 Content Types Demo:");
+	console.info(`   • Package name: ${config.name}`);
+	console.info(`   • Package version: ${config.version}`);
+	console.info(`   • README preview: ${readme.slice(0, 50)}...`);
+	console.info(`   • Build target: ${process.env.BUN_TARGET || "default"}`);
 }
 
 // ─── Col-89 Scanner (Self-Compliant) ──────────────
@@ -47,7 +47,7 @@ async function scanCol89(file) {
 		if (w > COL_LIMIT) {
 			violations++;
 			const preview = Bun.escapeHTML(Bun.stripANSI(lines[i]).slice(0, 60)) + "…";
-			console.log(`${GLYPH.fail} Line ${i + 1}: ${w} cols → ${preview}`);
+			console.info(`${GLYPH.fail} Line ${i + 1}: ${w} cols → ${preview}`);
 		}
 	}
 
@@ -98,11 +98,11 @@ function initDB() {
 
 // ─── Main Execution ───────────────────────────────
 async function main() {
-	console.log("🎯 Tier-1380 Performance Suite v2.2 (Content Types)\n");
+	console.info("🎯 Tier-1380 Performance Suite v2.2 (Content Types)\n");
 
 	// Show content types information
 	showContentTypes();
-	console.log("\n" + "=".repeat(60));
+	console.info("\n" + "=".repeat(60));
 
 	const db = initDB();
 	const target = process.argv[3] || "src/index.ts";
@@ -120,34 +120,34 @@ async function main() {
 	).run(target, col89.violations, col89.maxWidth, contentInfo);
 
 	// ─── Report (All lines < 89 cols) ───────────────
-	console.log(`\n📊 Results for: ${target}`);
-	console.log(`${"=".repeat(60)}`);
+	console.info(`\n📊 Results for: ${target}`);
+	console.info(`${"=".repeat(60)}`);
 
 	// Col-89 status
 	const colStatus = col89.violations === 0 ? GLYPH.pass : GLYPH.fail;
-	console.log(
+	console.info(
 		`${colStatus} Col-89: ${col89.violations} violations ` +
 			`(max ${col89.maxWidth}, avg ${col89.avgWidth})`,
 	);
 
 	// Hardware
-	console.log(
+	console.info(
 		`${GLYPH.info} Hardware: ${Math.round(hardware.throughput).toLocaleString()} ` +
 			`${hardware.unit} (${hardware.duration.toFixed(2)}ms)`,
 	);
 
 	// Content types info
-	console.log(`${GLYPH.info} Content: JSON + TXT imports successful`);
+	console.info(`${GLYPH.info} Content: JSON + TXT imports successful`);
 
 	// Health score
 	const score = Math.max(0, 100 - col89.violations * 2);
 	const color = score >= 80 ? "32" : score >= 60 ? "33" : "31";
-	console.log(`\n\x1b[${color}m🏥 Health Score: ${score}%\x1b[0m`);
+	console.info(`\n\x1b[${color}m🏥 Health Score: ${score}%\x1b[0m`);
 
 	// Build artifact info
 	if (process.env.BUN_COMPILE) {
-		console.log(`\n📦 Compiled binary: ${process.argv[0]}`);
-		console.log(`   Content types: Bundled successfully`);
+		console.info(`\n📦 Compiled binary: ${process.argv[0]}`);
+		console.info(`   Content types: Bundled successfully`);
 	}
 
 	db.close();

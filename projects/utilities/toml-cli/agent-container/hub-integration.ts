@@ -19,7 +19,7 @@ export class VirtualDeviceHubIntegration {
   
   constructor() {
     this.tracker = new VirtualDeviceTracker();
-    console.log('🔗 Virtual Device ⇄ Management Hub integration initialized');
+    console.info('🔗 Virtual Device ⇄ Management Hub integration initialized');
     this.startStatusUpdates();
   }
   
@@ -49,7 +49,7 @@ export class VirtualDeviceHubIntegration {
         }
       };
       
-      console.log('📤 Virtual device status update sent');
+      console.info('📤 Virtual device status update sent');
     } catch (error: any) {
       console.error('❌ Failed to send status update:', error.message);
     }
@@ -99,15 +99,15 @@ export class VirtualDeviceHubIntegration {
   
   private async handleDeviceControl(data: any): Promise<any> {
     const { deviceId, action } = data;
-    console.log(`🔄 Device control: ${deviceId} -> ${action}`);
+    console.info(`🔄 Device control: ${deviceId} -> ${action}`);
     return { success: true, message: `Action ${action} initiated for ${deviceId}` };
   }
   
   async startIntegratedMonitoring(): Promise<void> {
-    console.log('🚀 Starting integrated virtual device monitoring...');
+    console.info('🚀 Starting integrated virtual device monitoring...');
     setInterval(async () => {
       const stats = await this.tracker.getTaskStatistics('1h');
-      console.log('📈 Analytics:', stats.successRate.toFixed(1) + '% success');
+      console.info('📈 Analytics:', stats.successRate.toFixed(1) + '% success');
     }, 60000);
   }
 }

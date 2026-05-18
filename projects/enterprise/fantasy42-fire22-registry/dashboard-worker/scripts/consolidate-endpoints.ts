@@ -25,35 +25,35 @@ class EndpointConsolidator {
   private apiPath = join(this.srcPath, 'api');
 
   async consolidate() {
-    console.log('🚀 Fire22 Endpoint Consolidation Tool');
-    console.log('!==!==!==!==!==!==!==\n');
+    console.info('🚀 Fire22 Endpoint Consolidation Tool');
+    console.info('!==!==!==!==!==!==!==\n');
 
     // Step 1: Scan for endpoints
-    console.log('📍 Step 1: Scanning for endpoints...');
+    console.info('📍 Step 1: Scanning for endpoints...');
     await this.scanEndpoints();
 
     // Step 2: Categorize endpoints
-    console.log('📊 Step 2: Categorizing endpoints...');
+    console.info('📊 Step 2: Categorizing endpoints...');
     this.categorizeEndpoints();
 
     // Step 3: Create directory structure
-    console.log('📁 Step 3: Creating directory structure...');
+    console.info('📁 Step 3: Creating directory structure...');
     this.createDirectoryStructure();
 
     // Step 4: Generate route files
-    console.log('✍️ Step 4: Generating route files...');
+    console.info('✍️ Step 4: Generating route files...');
     await this.generateRouteFiles();
 
     // Step 5: Generate main router
-    console.log('🔧 Step 5: Creating main router...');
+    console.info('🔧 Step 5: Creating main router...');
     await this.generateMainRouter();
 
     // Step 6: Generate migration guide
-    console.log('📚 Step 6: Creating migration guide...');
+    console.info('📚 Step 6: Creating migration guide...');
     await this.generateMigrationGuide();
 
-    console.log('\n✅ Consolidation complete!');
-    console.log(`📊 Total endpoints found: ${this.endpoints.length}`);
+    console.info('\n✅ Consolidation complete!');
+    console.info(`📊 Total endpoints found: ${this.endpoints.length}`);
     this.printSummary();
   }
 
@@ -77,7 +77,7 @@ class EndpointConsolidator {
       return true;
     });
 
-    console.log(`   Found ${this.endpoints.length} unique endpoints`);
+    console.info(`   Found ${this.endpoints.length} unique endpoints`);
   }
 
   private extractEndpointsFromCloudflare(content: string, fileName: string): EndpointInfo[] {
@@ -207,7 +207,7 @@ class EndpointConsolidator {
     dirs.forEach(dir => {
       if (!existsSync(dir)) {
         mkdirSync(dir, { recursive: true });
-        console.log(`   Created: ${dir}`);
+        console.info(`   Created: ${dir}`);
       }
     });
   }
@@ -221,7 +221,7 @@ class EndpointConsolidator {
       const fileName = join(this.apiPath, 'routes', `${category}.routes.ts`);
 
       writeFileSync(fileName, routeFile);
-      console.log(`   Generated: ${fileName} (${categoryEndpoints.length} endpoints)`);
+      console.info(`   Generated: ${fileName} (${categoryEndpoints.length} endpoints)`);
     }
   }
 
@@ -310,7 +310,7 @@ export default api;
 
     const fileName = join(this.apiPath, 'index.ts');
     writeFileSync(fileName, mainRouter);
-    console.log(`   Generated: ${fileName}`);
+    console.info(`   Generated: ${fileName}`);
   }
 
   private async generateMigrationGuide() {
@@ -369,7 +369,7 @@ Generated: ${new Date().toISOString()}
 
     const fileName = join(this.apiPath, 'MIGRATION_GUIDE.md');
     writeFileSync(fileName, guide);
-    console.log(`   Generated: ${fileName}`);
+    console.info(`   Generated: ${fileName}`);
   }
 
   private printSummary() {
@@ -381,28 +381,28 @@ Generated: ${new Date().toISOString()}
       byMethod.set(ep.method, (byMethod.get(ep.method) || 0) + 1);
     });
 
-    console.log('\n📊 Summary:');
-    console.log('\nBy Category:');
+    console.info('\n📊 Summary:');
+    console.info('\nBy Category:');
     byCategory.forEach((count, cat) => {
-      console.log(`   ${cat}: ${count} endpoints`);
+      console.info(`   ${cat}: ${count} endpoints`);
     });
 
-    console.log('\nBy Method:');
+    console.info('\nBy Method:');
     byMethod.forEach((count, method) => {
-      console.log(`   ${method}: ${count} endpoints`);
+      console.info(`   ${method}: ${count} endpoints`);
     });
 
-    console.log('\n📁 Generated Files:');
-    console.log(`   - ${byCategory.size} route files`);
-    console.log(`   - 1 main router`);
-    console.log(`   - 1 migration guide`);
+    console.info('\n📁 Generated Files:');
+    console.info(`   - ${byCategory.size} route files`);
+    console.info(`   - 1 main router`);
+    console.info(`   - 1 migration guide`);
 
-    console.log('\n🎯 Next Steps:');
-    console.log('   1. Review generated files in /src/api/');
-    console.log('   2. Implement controller logic');
-    console.log('   3. Add validation schemas');
-    console.log('   4. Test migrated endpoints');
-    console.log('   5. Remove old endpoint code');
+    console.info('\n🎯 Next Steps:');
+    console.info('   1. Review generated files in /src/api/');
+    console.info('   2. Implement controller logic');
+    console.info('   3. Add validation schemas');
+    console.info('   4. Test migrated endpoints');
+    console.info('   5. Remove old endpoint code');
   }
 }
 

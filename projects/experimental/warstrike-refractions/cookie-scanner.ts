@@ -15,10 +15,10 @@ const prefixed = Buffer.concat([Buffer.from([0x01]), compressed])
 // Display with wrapping
 const wrap = Bun.wrapAnsi
 const msg = `🆔 ${projectId} 📊 ${sessionId} 📦 ${prefixed.length}B R2: ${process.env.R2_BUCKET}` 
-console.log(wrap(msg, 80))
+console.info(wrap(msg, 80))
 
 // Summary
-console.log({
+console.info({
   projectId,
   sessionId,
   bundle: `${prefixed.length}B`,

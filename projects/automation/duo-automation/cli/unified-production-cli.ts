@@ -41,8 +41,8 @@ function parseArgs(args: string[]): CLIArgs {
 const commands = {
   // Domain integration commands
   'domain:integrate': async (args: CLIArgs) => {
-    console.log('🌐 DOMAIN INTEGRATION - factory-wager.com + DuoPlus');
-    console.log('==================================================');
+    console.info('🌐 DOMAIN INTEGRATION - factory-wager.com + DuoPlus');
+    console.info('==================================================');
     
     const domain = args.get('--domain') || 'factory-wager.com';
     const zoneId = args.get('--zone') || 'a3b7ba4bb62cb1b177b04b8675250674';
@@ -51,97 +51,97 @@ const commands = {
   },
   
   'storage:sync': async (args: CLIArgs) => {
-    console.log('💾 R2 STORAGE SYNCHRONIZATION');
-    console.log('===============================');
+    console.info('💾 R2 STORAGE SYNCHRONIZATION');
+    console.info('===============================');
     
     const r2Account = args.get('--r2-account') || '7a470541a704caaf91e71efccc78fd36';
     const domain = args.get('--domain') || 'factory-wager.com';
     const integrator = new DomainIntegrator();
     await integrator.syncR2Storage();
-    console.log('✅ R2 storage synchronized');
+    console.info('✅ R2 storage synchronized');
   },
   
   'dashboard:deploy': async (args: CLIArgs) => {
-    console.log('📊 UNIFIED DASHBOARD DEPLOYMENT');
-    console.log('===============================');
+    console.info('📊 UNIFIED DASHBOARD DEPLOYMENT');
+    console.info('===============================');
     
     const subdomain = args.get('--subdomain') || 'monitor.factory-wager.com';
     const integrator = new DomainIntegrator();
     const dashboardUrl = await integrator.deployDashboard();
-    console.log(`✅ Dashboard deployed: ${dashboardUrl}`);
+    console.info(`✅ Dashboard deployed: ${dashboardUrl}`);
     return { url: dashboardUrl, status: 'deployed' };
   },
   
   'merchant:dashboard': async (args: CLIArgs) => {
-    console.log('🏪 MERCHANT DASHBOARD DEPLOYMENT');
-    console.log('===============================');
+    console.info('🏪 MERCHANT DASHBOARD DEPLOYMENT');
+    console.info('===============================');
     
     const domain = args.get('--domain') || 'factory-wager.com';
     const integrator = new DomainIntegrator();
     await integrator.deployMerchantDashboard();
-    console.log('✅ Merchant dashboard deployed');
+    console.info('✅ Merchant dashboard deployed');
     return { domain, dashboard: `https://dashboard.${domain}`, status: 'active' };
   },
   
   'workers:deploy': async (args: CLIArgs) => {
-    console.log('⚡ MERCHANT WORKERS DEPLOYMENT');
-    console.log('===============================');
+    console.info('⚡ MERCHANT WORKERS DEPLOYMENT');
+    console.info('===============================');
     
     const domain = args.get('--domain') || 'factory-wager.com';
     const features = args.get('--features') || 'identity,fintech';
     const integrator = new DomainIntegrator();
     const workers = await integrator.deployWorkers();
-    console.log(`✅ ${workers.length} workers deployed`);
+    console.info(`✅ ${workers.length} workers deployed`);
     return { domain, workers, features, status: 'deployed' };
   },
   
   'revenue:track': async (args: CLIArgs) => {
-    console.log('💰 UNIFIED REVENUE TRACKING');
-    console.log('=============================');
+    console.info('💰 UNIFIED REVENUE TRACKING');
+    console.info('=============================');
     
     const domains = args.get('--domains') || 'factory-wager.com,duoplus.com';
     const integrator = new DomainIntegrator();
     const revenue = await integrator.configureRevenueTracking();
-    console.log(`✅ Revenue tracking: $${revenue.mrr.toLocaleString()} MRR`);
+    console.info(`✅ Revenue tracking: $${revenue.mrr.toLocaleString()} MRR`);
     return revenue;
   },
   
   'production:lock': async (args: CLIArgs) => {
-    console.log('🔒 PRODUCTION LOCKDOWN - UNIFIED PLATFORM');
-    console.log('=========================================');
+    console.info('🔒 PRODUCTION LOCKDOWN - UNIFIED PLATFORM');
+    console.info('=========================================');
     
     const domains = args.get('--domains') || 'factory-wager.com,duoplus.com';
     const integrator = new DomainIntegrator();
     await integrator.lockProduction();
-    console.log('✅ Production lockdown complete');
+    console.info('✅ Production lockdown complete');
     return { domains, status: 'locked', security: 'enterprise' };
   },
   
   'monitoring:unified': async (args: CLIArgs) => {
-    console.log('📊 UNIFIED MONITORING DEPLOYMENT');
-    console.log('===============================');
+    console.info('📊 UNIFIED MONITORING DEPLOYMENT');
+    console.info('===============================');
     
     const deploySubdomain = args.get('--deploy') || 'monitor.factory-wager.com';
     const integrator = new DomainIntegrator();
     await integrator.deployDashboard();
-    console.log(`✅ Unified monitoring deployed: ${deploySubdomain}`);
+    console.info(`✅ Unified monitoring deployed: ${deploySubdomain}`);
     return { subdomain: deploySubdomain, status: 'active' };
   },
   
   'platform:report': async (args: CLIArgs) => {
-    console.log('📋 UNIFIED PLATFORM REPORT');
-    console.log('===========================');
+    console.info('📋 UNIFIED PLATFORM REPORT');
+    console.info('===========================');
     
     const integrator = new DomainIntegrator();
     const report = await integrator.generateUnifiedReport();
-    console.log('✅ Unified platform report generated');
+    console.info('✅ Unified platform report generated');
     return report;
   },
 
   // Original Cloudflare commands
   'cloudflare:import': async (args: CLIArgs) => {
-    console.log('🌐 CLOUDFLARE METRICS IMPORT');
-    console.log('===============================');
+    console.info('🌐 CLOUDFLARE METRICS IMPORT');
+    console.info('===============================');
     
     const zoneId = args.get('--zone') || 'a3b7ba4bb62cb1b177b04b8675250674';
     const integration = new CloudflareIntegration();
@@ -149,8 +149,8 @@ const commands = {
   },
   
   'optimize:all': async (args: CLIArgs) => {
-    console.log('⚡ CLOUDFLARE PRODUCTION OPTIMIZATION');
-    console.log('=======================================');
+    console.info('⚡ CLOUDFLARE PRODUCTION OPTIMIZATION');
+    console.info('=======================================');
     
     const optimizer = new CloudflareOptimizer();
     return await optimizer.optimizeAll();
@@ -158,10 +158,10 @@ const commands = {
 
   // Complete unified pipeline
   'unified:complete': async (args: CLIArgs) => {
-    console.log('🎊 COMPLETE UNIFIED PLATFORM PIPELINE');
-    console.log('=====================================');
-    console.log('factory-wager.com + DuoPlus Integration');
-    console.log('');
+    console.info('🎊 COMPLETE UNIFIED PLATFORM PIPELINE');
+    console.info('=====================================');
+    console.info('factory-wager.com + DuoPlus Integration');
+    console.info('');
     
     const results = {
       domain: null,
@@ -173,58 +173,58 @@ const commands = {
     
     try {
       // 1. Domain Integration
-      console.log('🌐 STEP 1: Domain Integration (factory-wager.com + DuoPlus)');
+      console.info('🌐 STEP 1: Domain Integration (factory-wager.com + DuoPlus)');
       const integrator = new DomainIntegrator();
       results.domain = await integrator.integrateDomain();
-      console.log('✅ Domain integration complete\n');
+      console.info('✅ Domain integration complete\n');
       
       // 2. Cloudflare Optimization
-      console.log('⚡ STEP 2: Cloudflare Production Optimization');
+      console.info('⚡ STEP 2: Cloudflare Production Optimization');
       const optimizer = new CloudflareOptimizer();
       results.cloudflare = await optimizer.optimizeAll();
-      console.log('✅ Cloudflare optimization complete\n');
+      console.info('✅ Cloudflare optimization complete\n');
       
       // 3. Revenue Tracking
-      console.log('💰 STEP 3: Unified Revenue Tracking');
+      console.info('💰 STEP 3: Unified Revenue Tracking');
       results.revenue = await integrator.configureRevenueTracking();
-      console.log(`✅ Revenue tracking: $${results.revenue.mrr.toLocaleString()} MRR\n`);
+      console.info(`✅ Revenue tracking: $${results.revenue.mrr.toLocaleString()} MRR\n`);
       
       // 4. Unified Monitoring
-      console.log('📊 STEP 4: Unified Monitoring Deployment');
+      console.info('📊 STEP 4: Unified Monitoring Deployment');
       results.monitoring = await integrator.deployDashboard();
-      console.log('✅ Unified monitoring active\n');
+      console.info('✅ Unified monitoring active\n');
       
       // 5. Production Lockdown
-      console.log('🔒 STEP 5: Production Security Lockdown');
+      console.info('🔒 STEP 5: Production Security Lockdown');
       await integrator.lockProduction();
       results.security = { status: 'locked', level: 'enterprise' };
-      console.log('✅ Production security locked\n');
+      console.info('✅ Production security locked\n');
       
-      console.log('🎊 UNIFIED PLATFORM PIPELINE COMPLETE');
-      console.log('===================================');
-      console.log('✅ factory-wager.com integrated with DuoPlus core');
-      console.log('✅ Unified dashboard live: monitor.factory-wager.com');
-      console.log('✅ Cross-domain SSO enabled');
-      console.log('✅ Revenue tracking unified');
-      console.log('✅ Cloudflare optimized (85% cache hit rate)');
-      console.log('✅ Enterprise security locked');
-      console.log('✅ Real-time monitoring active');
-      console.log('');
-      console.log('💰 UNIFIED REVENUE SUMMARY:');
-      console.log(`Factory Wager MRR: $7,000`);
-      console.log(`DuoPlus MRR: $15,500`);
-      console.log(`Total Unified MRR: $22,500`);
-      console.log(`Annual Projection: $28.5M ARR`);
-      console.log(`Growth: +26.7% from base platform`);
-      console.log('');
-      console.log('🌐 LIVE UNIFIED PLATFORM:');
-      console.log('Primary Domain: factory-wager.com');
-      console.log('Unified Dashboard: monitor.factory-wager.com');
-      console.log('Merchant Dashboard: docs.factory-wager.com');
-      console.log('API Gateway: api.factory-wager.com');
-      console.log('SDK Portal: sdk.factory-wager.com');
-      console.log('');
-      console.log('🚀 Factory Wager + DuoPlus - UNIFIED PRODUCTION PLATFORM!');
+      console.info('🎊 UNIFIED PLATFORM PIPELINE COMPLETE');
+      console.info('===================================');
+      console.info('✅ factory-wager.com integrated with DuoPlus core');
+      console.info('✅ Unified dashboard live: monitor.factory-wager.com');
+      console.info('✅ Cross-domain SSO enabled');
+      console.info('✅ Revenue tracking unified');
+      console.info('✅ Cloudflare optimized (85% cache hit rate)');
+      console.info('✅ Enterprise security locked');
+      console.info('✅ Real-time monitoring active');
+      console.info('');
+      console.info('💰 UNIFIED REVENUE SUMMARY:');
+      console.info(`Factory Wager MRR: $7,000`);
+      console.info(`DuoPlus MRR: $15,500`);
+      console.info(`Total Unified MRR: $22,500`);
+      console.info(`Annual Projection: $28.5M ARR`);
+      console.info(`Growth: +26.7% from base platform`);
+      console.info('');
+      console.info('🌐 LIVE UNIFIED PLATFORM:');
+      console.info('Primary Domain: factory-wager.com');
+      console.info('Unified Dashboard: monitor.factory-wager.com');
+      console.info('Merchant Dashboard: docs.factory-wager.com');
+      console.info('API Gateway: api.factory-wager.com');
+      console.info('SDK Portal: sdk.factory-wager.com');
+      console.info('');
+      console.info('🚀 Factory Wager + DuoPlus - UNIFIED PRODUCTION PLATFORM!');
       
       return results;
     } catch (error) {
@@ -240,31 +240,31 @@ async function main() {
   const command = args.positionals[0];
 
   if (!command) {
-    console.log('🎊 Unified Production CLI - factory-wager.com + DuoPlus');
-    console.log('====================================================');
-    console.log('');
-    console.log('🌐 Domain Integration Commands:');
-    console.log('  domain:integrate --domain=<domain> --zone=<zoneId>     Integrate domain');
-    console.log('  storage:sync --r2-account=<account> --domain=<domain>  Sync R2 storage');
-    console.log('  dashboard:deploy --subdomain=<subdomain>               Deploy unified dashboard');
-    console.log('  merchant:dashboard --domain=<domain>                   Deploy merchant dashboard');
-    console.log('  workers:deploy --domain=<domain> --features=<features> Deploy workers');
-    console.log('  revenue:track --domains=<domains>                      Track unified revenue');
-    console.log('  production:lock --domains=<domains>                     Lock production');
-    console.log('  monitoring:unified --deploy=<subdomain>                Deploy unified monitoring');
-    console.log('  platform:report                                        Generate unified report');
-    console.log('');
-    console.log('🌐 Cloudflare Commands:');
-    console.log('  cloudflare:import --zone=<zoneId>                      Import metrics');
-    console.log('  optimize:all                                           Optimize settings');
-    console.log('');
-    console.log('🚀 Unified Pipeline Commands:');
-    console.log('  unified:complete                                        Execute complete unified pipeline');
-    console.log('');
-    console.log('Examples:');
-    console.log('  bun run unified-production-cli.ts domain:integrate --domain="factory-wager.com"');
-    console.log('  bun run unified-production-cli.ts unified:complete');
-    console.log('  bun run unified-production-cli.ts revenue:track --domains="factory-wager.com,duoplus.com"');
+    console.info('🎊 Unified Production CLI - factory-wager.com + DuoPlus');
+    console.info('====================================================');
+    console.info('');
+    console.info('🌐 Domain Integration Commands:');
+    console.info('  domain:integrate --domain=<domain> --zone=<zoneId>     Integrate domain');
+    console.info('  storage:sync --r2-account=<account> --domain=<domain>  Sync R2 storage');
+    console.info('  dashboard:deploy --subdomain=<subdomain>               Deploy unified dashboard');
+    console.info('  merchant:dashboard --domain=<domain>                   Deploy merchant dashboard');
+    console.info('  workers:deploy --domain=<domain> --features=<features> Deploy workers');
+    console.info('  revenue:track --domains=<domains>                      Track unified revenue');
+    console.info('  production:lock --domains=<domains>                     Lock production');
+    console.info('  monitoring:unified --deploy=<subdomain>                Deploy unified monitoring');
+    console.info('  platform:report                                        Generate unified report');
+    console.info('');
+    console.info('🌐 Cloudflare Commands:');
+    console.info('  cloudflare:import --zone=<zoneId>                      Import metrics');
+    console.info('  optimize:all                                           Optimize settings');
+    console.info('');
+    console.info('🚀 Unified Pipeline Commands:');
+    console.info('  unified:complete                                        Execute complete unified pipeline');
+    console.info('');
+    console.info('Examples:');
+    console.info('  bun run unified-production-cli.ts domain:integrate --domain="factory-wager.com"');
+    console.info('  bun run unified-production-cli.ts unified:complete');
+    console.info('  bun run unified-production-cli.ts revenue:track --domains="factory-wager.com,duoplus.com"');
     return;
   }
 
@@ -274,11 +274,11 @@ async function main() {
       const result = await commands[command](args);
       const duration = Date.now() - startTime;
       
-      console.log(`\n⏱️ Command completed in ${duration}ms`);
+      console.info(`\n⏱️ Command completed in ${duration}ms`);
       
       if (result && typeof result === 'object') {
-        console.log('\n📊 Result:');
-        console.log(JSON.stringify(result, null, 2));
+        console.info('\n📊 Result:');
+        console.info(JSON.stringify(result, null, 2));
       }
       
     } catch (error) {
@@ -287,7 +287,7 @@ async function main() {
     }
   } else {
     console.error(`❌ Unknown command: ${command}`);
-    console.log('Run "bun run unified-production-cli.ts" to see available commands');
+    console.info('Run "bun run unified-production-cli.ts" to see available commands');
     process.exit(1);
   }
 }

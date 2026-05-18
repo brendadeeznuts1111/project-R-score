@@ -212,7 +212,7 @@ export class RiskHeatmap {
 			);
 		}
 
-		console.log(
+		console.info(
 			`🗺️ Heatmap: Added point for ${session.merchantId} | Score: ${session.score.toFixed(3)} | Risk: ${session.riskLevel}`,
 		);
 	}

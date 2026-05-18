@@ -40,7 +40,7 @@ async function main() {
       case 'version':
       case '--version':
       case '-v':
-        console.log('3.1.0');
+        console.info('3.1.0');
         break;
       default:
         console.error(`Unknown command: ${command}`);
@@ -58,21 +58,21 @@ async function statusCommand() {
   const current = manager.getCurrentVersion();
   const parsed = VersionUtils.parse(current);
 
-  console.log('🏷️ Version Status');
-  console.log(`Current: ${current}`);
-  console.log(`Major: ${parsed.major}`);
-  console.log(`Minor: ${parsed.minor}`);
-  console.log(`Patch: ${parsed.patch}`);
+  console.info('🏷️ Version Status');
+  console.info(`Current: ${current}`);
+  console.info(`Major: ${parsed.major}`);
+  console.info(`Minor: ${parsed.minor}`);
+  console.info(`Patch: ${parsed.patch}`);
 
   if (parsed.prerelease.length > 0) {
-    console.log(`Prerelease: ${parsed.prerelease.join('.')}`);
+    console.info(`Prerelease: ${parsed.prerelease.join('.')}`);
   }
 
   const suggestions = manager.getNextVersionSuggestions();
-  console.log('\n📈 Next Versions:');
-  console.log(`Patch: ${suggestions.patch}`);
-  console.log(`Minor: ${suggestions.minor}`);
-  console.log(`Major: ${suggestions.major}`);
+  console.info('\n📈 Next Versions:');
+  console.info(`Patch: ${suggestions.patch}`);
+  console.info(`Minor: ${suggestions.minor}`);
+  console.info(`Major: ${suggestions.major}`);
 }
 
 async function bumpCommand() {
@@ -81,7 +81,7 @@ async function bumpCommand() {
 
   const manager = new BunVersionManager({ current: '4.0.0-staging' });
 
-  console.log(`🚀 Bumping version (${strategy})...`);
+  console.info(`🚀 Bumping version (${strategy})...`);
 
   const newVersion = await manager.bumpVersion(strategy as any, {
     author: 'bunx-cli',
@@ -90,7 +90,7 @@ async function bumpCommand() {
     dryRun: args.includes('--dry-run'),
   });
 
-  console.log(`✅ Version bumped to: ${newVersion}`);
+  console.info(`✅ Version bumped to: ${newVersion}`);
 }
 
 async function compareCommand() {
@@ -105,7 +105,7 @@ async function compareCommand() {
   const result = VersionUtils.compare(v1, v2);
   const symbol = result > 0 ? '>' : result < 0 ? '<' : '=';
 
-  console.log(`${v1} ${symbol} ${v2}`);
+  console.info(`${v1} ${symbol} ${v2}`);
 }
 
 async function validateCommand() {
@@ -117,11 +117,11 @@ async function validateCommand() {
   }
 
   const isValid = VersionUtils.isValid(version);
-  console.log(isValid ? '✅ Valid' : '❌ Invalid');
+  console.info(isValid ? '✅ Valid' : '❌ Invalid');
 
   if (isValid) {
     const parsed = VersionUtils.parse(version);
-    console.log(`Formatted: ${parsed.format()}`);
+    console.info(`Formatted: ${parsed.format()}`);
   }
 }
 
@@ -135,7 +135,7 @@ async function satisfiesCommand() {
   }
 
   const satisfies = VersionUtils.satisfies(version, range);
-  console.log(satisfies ? '✅ Satisfies' : '❌ Does not satisfy');
+  console.info(satisfies ? '✅ Satisfies' : '❌ Does not satisfy');
 }
 
 async function workspaceCommand() {
@@ -148,25 +148,25 @@ async function workspaceCommand() {
 
   const consistency = workspace.checkConsistency();
 
-  console.log('🔄 Workspace Status:');
-  console.log(`Consistent: ${consistency.consistent ? '✅' : '❌'}`);
+  console.info('🔄 Workspace Status:');
+  console.info(`Consistent: ${consistency.consistent ? '✅' : '❌'}`);
 
   if (!consistency.consistent) {
-    console.log('\n⚠️ Inconsistencies:');
+    console.info('\n⚠️ Inconsistencies:');
     for (const issue of consistency.inconsistencies) {
-      console.log(`- ${issue.package}: ${issue.version} (expected: ${issue.expected})`);
+      console.info(`- ${issue.package}: ${issue.version} (expected: ${issue.expected})`);
     }
   }
 
   const versions = workspace.getWorkspaceVersions();
-  console.log('\n📦 Package Versions:');
+  console.info('\n📦 Package Versions:');
   for (const [pkg, version] of Object.entries(versions)) {
-    console.log(`- ${pkg}: ${version}`);
+    console.info(`- ${pkg}: ${version}`);
   }
 }
 
 function showHelp() {
-  console.log(`
+  console.info(`
 🏷️ @fire22/version-manager CLI v3.1.0
 
 USAGE:

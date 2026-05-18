@@ -15,7 +15,7 @@
  * // Test Formula:
  * // 1. Create class with Bun.inspect.custom symbol method
  * // 2. Return custom string representation
- * // 3. Use Bun.inspect() or console.log() to display
+ * // 3. Use Bun.inspect() or console.info() to display
  * // Expected Result: Custom inspection output displayed
  * //
  * // Snippet:
@@ -25,7 +25,7 @@
  *     return "custom representation";
  *   }
  * }
- * console.log(new Foo()); // "custom representation"
+ * console.info(new Foo()); // "custom representation"
  * ```
  * 
  * @see {@link https://bun.com/docs/api/utilities Bun.inspect() Documentation}
@@ -43,9 +43,9 @@ class Foo {
 }
 
 const foo = new Foo();
-console.log("Basic example:");
-console.log(foo); // => "foo"
-console.log();
+console.info("Basic example:");
+console.info(foo); // => "foo"
+console.info();
 
 // Advanced: Custom inspection with options
 class Bar {
@@ -65,9 +65,9 @@ class Bar {
 }
 
 const bar = new Bar(42);
-console.log("Advanced example:");
-console.log(bar);
-console.log();
+console.info("Advanced example:");
+console.info(bar);
+console.info();
 
 // With colors
 class Baz {
@@ -79,9 +79,9 @@ class Baz {
 }
 
 const baz = new Baz();
-console.log("With colors:");
-console.log(baz);
-console.log();
+console.info("With colors:");
+console.info(baz);
+console.info();
 
 // Nested inspection
 class Qux {
@@ -99,8 +99,8 @@ class Qux {
 }
 
 const qux = new Qux(new Bar(100));
-console.log("Nested inspection:");
-console.log(qux);
-console.log();
+console.info("Nested inspection:");
+console.info(qux);
+console.info();
 
-console.log("✅ All examples demonstrate Bun.inspect.custom behavior");
+console.info("✅ All examples demonstrate Bun.inspect.custom behavior");

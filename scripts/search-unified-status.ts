@@ -210,14 +210,14 @@ async function buildUnifiedStatus(options: Options): Promise<UnifiedStatusSnapsh
 }
 
 function printText(status: UnifiedStatusSnapshot): void {
-  console.log(`Unified Search Status (${status.generatedAt})`);
-  console.log(`Overall: ${status.overall.status}`);
-  console.log(`Loop closed: ${status.overall.loopClosed}`);
-  console.log(`Latest snapshot: ${status.latestSnapshotId || 'n/a'}`);
-  console.log(`Freshness: ${status.freshness.status} aligned=${status.freshness.isAligned} staleMinutes=${status.freshness.staleMinutes ?? 'n/a'}`);
-  console.log(`Domain readiness: tokens ${status.domainReadiness.tokenConfigured}/${status.domainReadiness.totalDomains}, online ${status.domainReadiness.onlineRows}/${status.domainReadiness.checkedRows}`);
+  console.info(`Unified Search Status (${status.generatedAt})`);
+  console.info(`Overall: ${status.overall.status}`);
+  console.info(`Loop closed: ${status.overall.loopClosed}`);
+  console.info(`Latest snapshot: ${status.latestSnapshotId || 'n/a'}`);
+  console.info(`Freshness: ${status.freshness.status} aligned=${status.freshness.isAligned} staleMinutes=${status.freshness.staleMinutes ?? 'n/a'}`);
+  console.info(`Domain readiness: tokens ${status.domainReadiness.tokenConfigured}/${status.domainReadiness.totalDomains}, online ${status.domainReadiness.onlineRows}/${status.domainReadiness.checkedRows}`);
   if (status.domainReadiness.reasons.length > 0) {
-    console.log(`Reasons: ${status.domainReadiness.reasons.join(', ')}`);
+    console.info(`Reasons: ${status.domainReadiness.reasons.join(', ')}`);
   }
 }
 
@@ -225,7 +225,7 @@ if (import.meta.main) {
   const options = parseArgs(process.argv.slice(2));
   const unified = await buildUnifiedStatus(options);
   if (options.json) {
-    console.log(JSON.stringify(unified, null, 2));
+    console.info(JSON.stringify(unified, null, 2));
   } else {
     printText(unified);
   }

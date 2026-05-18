@@ -145,12 +145,12 @@ export async function openclawStatus(
 		const results = await checkAll();
 
 		if (json) {
-			console.log(JSON.stringify(results, null, 2));
+			console.info(JSON.stringify(results, null, 2));
 			return;
 		}
 
-		console.log(fmt.bold("\n🐾 OpenClaw Infrastructure Status\n"));
-		console.log("─".repeat(70));
+		console.info(fmt.bold("\n🐾 OpenClaw Infrastructure Status\n"));
+		console.info("─".repeat(70));
 
 		for (const r of results) {
 			const icon = getStatusIcon(r.status);
@@ -161,33 +161,33 @@ export async function openclawStatus(
 						? (m: string) => fmt.warn(m)
 						: (m: string) => fmt.fail(m);
 
-			console.log(`${icon} ${fmt.bold(r.name)} ${statusColor(r.status.toUpperCase())}`);
+			console.info(`${icon} ${fmt.bold(r.name)} ${statusColor(r.status.toUpperCase())}`);
 
-			if (r.version) console.log(`   Version: ${r.version}`);
-			if (r.latency) console.log(`   Latency: ${r.latency}ms`);
-			if (r.url) console.log(`   URL: ${fmt.dim(r.url)}`);
+			if (r.version) console.info(`   Version: ${r.version}`);
+			if (r.latency) console.info(`   Latency: ${r.latency}ms`);
+			if (r.url) console.info(`   URL: ${fmt.dim(r.url)}`);
 			if (r.message && r.status !== "healthy")
-				console.log(`   ${statusColor(r.message)}`);
-			console.log();
+				console.info(`   ${statusColor(r.message)}`);
+			console.info();
 		}
 
-		console.log("─".repeat(70));
+		console.info("─".repeat(70));
 
 		const healthy = results.filter((r) => r.status === "healthy").length;
 		const total = results.length;
 
 		if (healthy === total) {
-			console.log(fmt.ok(`\n✓ All ${total} components operational`));
+			console.info(fmt.ok(`\n✓ All ${total} components operational`));
 		} else if (healthy >= total / 2) {
-			console.log(fmt.warn(`\n⚠ ${healthy}/${total} components healthy`));
+			console.info(fmt.warn(`\n⚠ ${healthy}/${total} components healthy`));
 		} else {
-			console.log(fmt.fail(`\n✗ ${healthy}/${total} components healthy`));
+			console.info(fmt.fail(`\n✗ ${healthy}/${total} components healthy`));
 		}
 
 		if (watch) {
-			console.log(fmt.dim(`\n[Refreshing every ${interval}ms... Press Ctrl+C to exit]`));
+			console.info(fmt.dim(`\n[Refreshing every ${interval}ms... Press Ctrl+C to exit]`));
 		} else {
-			console.log();
+			console.info();
 		}
 	};
 
@@ -206,7 +206,7 @@ export async function openclawStatus(
 }
 
 export async function openclawHealth(): Promise<void> {
-	console.log(fmt.bold("\n🏥 OpenClaw Health Report\n"));
+	console.info(fmt.bold("\n🏥 OpenClaw Health Report\n"));
 
 	const checks = [
 		{ name: "Gateway Config", path: `${process.env.HOME}/.openclaw/openclaw.json` },
@@ -233,20 +233,20 @@ export async function openclawHealth(): Promise<void> {
 		});
 
 		const icon = exists ? fmt.ok("✓") : fmt.fail("✗");
-		console.log(`${icon} ${check.name}`);
-		console.log(`   ${fmt.dim(check.path)}`);
+		console.info(`${icon} ${check.name}`);
+		console.info(`   ${fmt.dim(check.path)}`);
 		if (stat) {
-			console.log(`   Size: ${stat.size} bytes, Modified: ${stat.mtime?.toISOString()}`);
+			console.info(`   Size: ${stat.size} bytes, Modified: ${stat.mtime?.toISOString()}`);
 		}
-		console.log();
+		console.info();
 	}
 
 	const allExist = results.every((r) => r.exists);
 
 	if (allExist) {
-		console.log(fmt.ok("✓ All health checks passed"));
+		console.info(fmt.ok("✓ All health checks passed"));
 	} else {
-		console.log(fmt.warn("⚠ Some components missing"));
+		console.info(fmt.warn("⚠ Some components missing"));
 		process.exit(EXIT_CODES.ERROR);
 	}
 }
@@ -266,7 +266,7 @@ export async function openclawInfo(): Promise<void> {
 		"Logs Path": `${process.env.HOME}/.matrix/logs`,
 	};
 
-	console.log(fmt.bold("\n🐾 OpenClaw System Information\n"));
-	console.log(Bun.inspect.table(info));
-	console.log();
+	console.info(fmt.bold("\n🐾 OpenClaw System Information\n"));
+	console.info(Bun.inspect.table(info));
+	console.info();
 }

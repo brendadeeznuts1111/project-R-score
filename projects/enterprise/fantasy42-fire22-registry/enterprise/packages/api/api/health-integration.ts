@@ -60,12 +60,12 @@ export class HealthIntegratedApp {
 
     // Graceful shutdown handling
     process.on('SIGTERM', async () => {
-      console.log('Received SIGTERM, performing graceful shutdown...');
+      console.info('Received SIGTERM, performing graceful shutdown...');
       await this.gracefulShutdown();
     });
 
     process.on('SIGINT', async () => {
-      console.log('Received SIGINT, performing graceful shutdown...');
+      console.info('Received SIGINT, performing graceful shutdown...');
       await this.gracefulShutdown();
     });
   }
@@ -169,7 +169,7 @@ export class HealthIntegratedApp {
   }
 
   private async gracefulShutdown(): Promise<void> {
-    console.log('Performing health checks before shutdown...');
+    console.info('Performing health checks before shutdown...');
 
     try {
       const health = await healthService.getComprehensiveHealth();
@@ -178,25 +178,25 @@ export class HealthIntegratedApp {
         console.error('Critical health issues detected during shutdown!');
         console.error('Alerts:', health.alerts);
       } else {
-        console.log('Health checks passed, proceeding with shutdown');
+        console.info('Health checks passed, proceeding with shutdown');
       }
     } catch (error) {
       console.error('Health check failed during shutdown:', error);
     }
 
     // Close database connections, etc.
-    console.log('Shutdown complete');
+    console.info('Shutdown complete');
     process.exit(0);
   }
 
   public start(port: number = 3000): void {
     this.app.listen(port, () => {
-      console.log(`🚀 Crystal Clear API server running on port ${port}`);
-      console.log(`📊 Health checks available at http://localhost:${port}/api/health`);
-      console.log(
+      console.info(`🚀 Crystal Clear API server running on port ${port}`);
+      console.info(`📊 Health checks available at http://localhost:${port}/api/health`);
+      console.info(
         `📋 Comprehensive health report at http://localhost:${port}/api/health/comprehensive`
       );
-      console.log(`📈 Prometheus metrics at http://localhost:${port}/api/health/metrics`);
+      console.info(`📈 Prometheus metrics at http://localhost:${port}/api/health/metrics`);
     });
   }
 

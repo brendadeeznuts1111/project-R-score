@@ -292,10 +292,10 @@ import { feature } from "bun:bundle";
 export class ServiceFactory {
   static createApiService() {
     if (feature("FEAT_MOCK_API")) {
-      console.log("🧪 Creating mock API service");
+      console.info("🧪 Creating mock API service");
       return { request: () => ({ success: true, mocked: true }) };
     }
-    console.log("🚀 Creating production API service");
+    console.info("🚀 Creating production API service");
     return {
       request: async (url) => {
         const res = await fetch(url);
@@ -308,7 +308,7 @@ export class ServiceFactory {
     if (feature("FEAT_ADVANCED_MONITORING")) {
       return { 
         trackMetric: (name, value) => {
-          console.log(\`📈 Metric: \${name} = \${value}\`);
+          console.info(\`📈 Metric: \${name} = \${value}\`);
           if (feature("FEAT_PREMIUM")) {
             this.calculateTrends(name, value);
           }

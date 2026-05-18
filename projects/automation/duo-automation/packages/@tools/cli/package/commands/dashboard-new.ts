@@ -25,7 +25,7 @@ program
         // setupCheck omitted because it's not exported from the benchmark script
 
         const scope = options.scope || await detectDashboardScope();
-        console.log(`🚀 Starting Empire Pro Dashboard [${scope}]...`);
+        console.info(`🚀 Starting Empire Pro Dashboard [${scope}]...`);
         
         // Serve dashboards
         const server = Bun.serve({
@@ -55,8 +55,8 @@ program
           }
         });
 
-        console.log(`✅ Dashboard running at http://localhost:${server.port} (${scope})`);
-        console.log(`✅ System view at http://localhost:${server.port}/system`);
+        console.info(`✅ Dashboard running at http://localhost:${server.port} (${scope})`);
+        console.info(`✅ System view at http://localhost:${server.port}/system`);
       })
   )
   .addCommand(
@@ -65,7 +65,7 @@ program
       .description('Deploy dashboards to R2')
       .option('--bucket <bucket>', 'R2 bucket', process.env.R2_DASHBOARD_BUCKET)
       .action(async (options) => {
-        console.log('📤 Deploying dashboards to R2...');
+        console.info('📤 Deploying dashboards to R2...');
         
         const bucket = options.bucket || await resolveR2Bucket();
         const files = [
@@ -84,7 +84,7 @@ program
               version: '1.0.0'
             }
           });
-          console.log(`  ✅ ${file} → r2://${bucket}/${key}`);
+          console.info(`  ✅ ${file} → r2://${bucket}/${key}`);
         }
         
         // Update matrix (§Pattern:113)
@@ -99,10 +99,10 @@ program
       .action(async (scope) => {
         if (scope) {
           Bun.env.DASHBOARD_SCOPE = scope;
-          console.log(`✅ Scope set to: ${scope}`);
+          console.info(`✅ Scope set to: ${scope}`);
         } else {
           const currentScope = await detectDashboardScope();
-          console.log(`📊 Current scope: ${currentScope}`);
+          console.info(`📊 Current scope: ${currentScope}`);
         }
       })
   )
@@ -112,7 +112,7 @@ program
       .description('Benchmark dashboard performance')
       .option('--duration <ms>', 'Duration', '10000')
       .action(async (options) => {
-        console.log('📊 Benchmarking dashboard performance...');
+        console.info('📊 Benchmarking dashboard performance...');
         
         const duration = parseInt(options.duration);
         const start = Bun.nanoseconds();
@@ -126,10 +126,10 @@ program
         const elapsed = (Bun.nanoseconds() - start) / 1e6;
         const opsPerSec = 1000 / (elapsed / 1000);
         
-        console.log(`✅ Benchmark complete:`);
-        console.log(`  Duration: ${elapsed.toFixed(2)}ms`);
-        console.log(`  Throughput: ${opsPerSec.toFixed(0)} ops/sec`);
-        console.log(`  Latency: ${(elapsed / 1000).toFixed(3)}ms/op`);
+        console.info(`✅ Benchmark complete:`);
+        console.info(`  Duration: ${elapsed.toFixed(2)}ms`);
+        console.info(`  Throughput: ${opsPerSec.toFixed(0)} ops/sec`);
+        console.info(`  Latency: ${(elapsed / 1000).toFixed(3)}ms/op`);
         
         // Auto-update matrix (§Pattern:112)
         // Implementation for updatePerf omitted as it's not in PatternMatrix

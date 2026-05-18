@@ -7,7 +7,7 @@
 import { createDatabaseConnection, DatabaseUtils } from '../lib/database';
 
 async function runMigrations(): Promise<void> {
-  console.log('🔄 Running database migrations...');
+  console.info('🔄 Running database migrations...');
 
   try {
     const { db, initialize } = createDatabaseConnection();
@@ -18,7 +18,7 @@ async function runMigrations(): Promise<void> {
     // Get current schema version
     const schemaVersion = await getCurrentSchemaVersion(db);
 
-    console.log(`📊 Current schema version: ${schemaVersion}`);
+    console.info(`📊 Current schema version: ${schemaVersion}`);
 
     // Run pending migrations
     await runPendingMigrations(db, dbUtils, schemaVersion);
@@ -29,7 +29,7 @@ async function runMigrations(): Promise<void> {
     // Verify migrations
     await verifyMigrations(db);
 
-    console.log('✅ Database migrations completed successfully');
+    console.info('✅ Database migrations completed successfully');
 
     db.close();
   } catch (error) {
@@ -103,7 +103,7 @@ async function runPendingMigrations(
 
   for (const migration of migrations) {
     if (migration.version > currentVersion) {
-      console.log(`🔧 Running migration: ${migration.name}`);
+      console.info(`🔧 Running migration: ${migration.name}`);
 
       try {
         await dbUtils.executeTransaction(async () => {
@@ -118,7 +118,7 @@ async function runPendingMigrations(
           ).run(migration.name);
         });
 
-        console.log(`✅ Migration ${migration.name} completed`);
+        console.info(`✅ Migration ${migration.name} completed`);
       } catch (error) {
         console.error(`❌ Migration ${migration.name} failed:`, error);
         throw error;
@@ -129,7 +129,7 @@ async function runPendingMigrations(
 
 async function updateSchemaVersion(db: any): Promise<void> {
   // This is handled automatically in runPendingMigrations
-  console.log('📝 Schema version updated');
+  console.info('📝 Schema version updated');
 }
 
 async function verifyMigrations(db: any): Promise<void> {
@@ -157,12 +157,12 @@ async function verifyMigrations(db: any): Promise<void> {
     }
   }
 
-  console.log('✅ Migration verification completed');
+  console.info('✅ Migration verification completed');
 }
 
 // Rollback functionality for development
 async function rollbackMigration(migrationName?: string): Promise<void> {
-  console.log('⏪ Rolling back migrations...');
+  console.info('⏪ Rolling back migrations...');
 
   const { db } = createDatabaseConnection();
 
@@ -178,9 +178,9 @@ async function rollbackMigration(migrationName?: string): Promise<void> {
         .run(migrationName);
 
       if (result.changes > 0) {
-        console.log(`✅ Rolled back migration: ${migrationName}`);
+        console.info(`✅ Rolled back migration: ${migrationName}`);
       } else {
-        console.log(`⚠️ Migration not found: ${migrationName}`);
+        console.info(`⚠️ Migration not found: ${migrationName}`);
       }
     } else {
       // Rollback last migration
@@ -200,9 +200,9 @@ async function rollbackMigration(migrationName?: string): Promise<void> {
         `
         ).run(lastMigration.migration_name);
 
-        console.log(`✅ Rolled back migration: ${lastMigration.migration_name}`);
+        console.info(`✅ Rolled back migration: ${lastMigration.migration_name}`);
       } else {
-        console.log('⚠️ No migrations to rollback');
+        console.info('⚠️ No migrations to rollback');
       }
     }
   } catch (error) {
@@ -235,13 +235,13 @@ if (import.meta.main) {
         )
         .all();
 
-      console.log('📊 Migration Status:');
-      console.log('==================');
+      console.info('📊 Migration Status:');
+      console.info('==================');
       if (migrations.length === 0) {
-        console.log('No migrations executed');
+        console.info('No migrations executed');
       } else {
         migrations.forEach((migration: any) => {
-          console.log(`${migration.executed_at} - ${migration.migration_name}`);
+          console.info(`${migration.executed_at} - ${migration.migration_name}`);
         });
       }
       db.close();

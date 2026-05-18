@@ -65,11 +65,11 @@ async function exportMetrics() {
   await Bun.write('./perf-metrics.json', JSON.stringify(metrics, null, 2));
   
   // Display with enhanced metrics
-  console.log('📊 Exported MASTER_PERF Metrics:');
+  console.info('📊 Exported MASTER_PERF Metrics:');
   const enhancedMetrics = metrics.map(m => withInspector(m));
-  console.log(Bun.inspect.table(enhancedMetrics, { colors: true }));
+  console.info(Bun.inspect.table(enhancedMetrics, { colors: true }));
   
-  console.log(`\n✅ Exported ${metrics.length} metrics to perf-metrics.json`);
+  console.info(`\n✅ Exported ${metrics.length} metrics to perf-metrics.json`);
 }
 
 exportMetrics().catch(console.error);

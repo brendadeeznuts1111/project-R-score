@@ -12,8 +12,8 @@ import { TimeSeriesAggregator } from '../time-series/aggregator';
 import { MLPatternRecognizer } from '../time-series/ml-integration';
 import { AutomatedRemediationEngine } from '../time-series/remediation-engine';
 
-console.log('🚀 ENHANCED TIME-SERIES ML SYSTEM - QUICK START DEMO');
-console.log('='.repeat(60));
+console.info('🚀 ENHANCED TIME-SERIES ML SYSTEM - QUICK START DEMO');
+console.info('='.repeat(60));
 
 async function runDemo() {
   // Initialize components
@@ -21,24 +21,24 @@ async function runDemo() {
   const mlRecognizer = new MLPatternRecognizer();
   const remediationEngine = new AutomatedRemediationEngine();
   
-  console.log('✅ Components initialized');
+  console.info('✅ Components initialized');
   
   // 1. Generate sample data
-  console.log('\n📊 Generating sample time-series data...');
+  console.info('\n📊 Generating sample time-series data...');
   await generateSampleData(aggregator);
   
   // 2. Run ML analysis
-  console.log('\n🧠 Running ML pattern analysis...');
+  console.info('\n🧠 Running ML pattern analysis...');
   await runMLAnalysis(mlRecognizer, aggregator);
   
   // 3. Test automated remediation
-  console.log('\n🤖 Testing automated remediation...');
+  console.info('\n🤖 Testing automated remediation...');
   await testRemediation(remediationEngine);
   
   // 4. Start enhanced dashboard
-  console.log('\n📈 Starting enhanced dashboard...');
-  console.log('💡 The dashboard will show real-time ML insights and remediation status');
-  console.log('🔴 Press Ctrl+C to stop the dashboard\n');
+  console.info('\n📈 Starting enhanced dashboard...');
+  console.info('💡 The dashboard will show real-time ML insights and remediation status');
+  console.info('🔴 Press Ctrl+C to stop the dashboard\n');
   
   const dashboard = new EnhancedTimeSeriesDashboard();
   dashboard.start(3000); // Update every 3 seconds for demo
@@ -98,7 +98,7 @@ async function generateSampleData(aggregator: TimeSeriesAggregator) {
     }
   }
   
-  console.log(`✅ Generated ${aggregator.getMetricsCount()} sample metrics`);
+  console.info(`✅ Generated ${aggregator.getMetricsCount()} sample metrics`);
 }
 
 async function runMLAnalysis(mlRecognizer: MLPatternRecognizer, aggregator: TimeSeriesAggregator) {
@@ -109,7 +109,7 @@ async function runMLAnalysis(mlRecognizer: MLPatternRecognizer, aggregator: Time
     });
     
     if (recentMetrics.length < 20) {
-      console.log('⚠️  Insufficient data for ML analysis');
+      console.info('⚠️  Insufficient data for ML analysis');
       return;
     }
     
@@ -122,18 +122,18 @@ async function runMLAnalysis(mlRecognizer: MLPatternRecognizer, aggregator: Time
       agentId: recentMetrics[0]?.agentId
     });
     
-    console.log('\n📈 ML ANALYSIS RESULTS:');
-    console.log(`   Pattern: ${mlResult.pattern.toUpperCase()}`);
-    console.log(`   Confidence: ${(mlResult.confidence * 100).toFixed(1)}%`);
-    console.log(`   Key Features:`);
+    console.info('\n📈 ML ANALYSIS RESULTS:');
+    console.info(`   Pattern: ${mlResult.pattern.toUpperCase()}`);
+    console.info(`   Confidence: ${(mlResult.confidence * 100).toFixed(1)}%`);
+    console.info(`   Key Features:`);
     
     Object.entries(mlResult.features).slice(0, 5).forEach(([key, value]) => {
-      console.log(`     ${key}: ${typeof value === 'number' ? value.toFixed(3) : value}`);
+      console.info(`     ${key}: ${typeof value === 'number' ? value.toFixed(3) : value}`);
     });
     
-    console.log(`\n   Top Remediation Suggestions:`);
+    console.info(`\n   Top Remediation Suggestions:`);
     mlResult.remediation.slice(0, 3).forEach((rec, i) => {
-      console.log(`     ${i + 1}. ${rec}`);
+      console.info(`     ${i + 1}. ${rec}`);
     });
     
   } catch (error) {
@@ -155,9 +155,9 @@ async function testRemediation(remediationEngine: AutomatedRemediationEngine) {
       recommendations: ['High memory usage detected', 'Consider container restart']
     }, ['send-alert', 'optimize-config']);
     
-    console.log(`✅ Remediation workflow started: ${workflow.workflowId}`);
-    console.log(`   Status: ${workflow.status}`);
-    console.log(`   Actions: ${workflow.actions.map(a => a.name).join(', ')}`);
+    console.info(`✅ Remediation workflow started: ${workflow.workflowId}`);
+    console.info(`   Status: ${workflow.status}`);
+    console.info(`   Actions: ${workflow.actions.map(a => a.name).join(', ')}`);
     
     // Wait a moment for execution
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -166,8 +166,8 @@ async function testRemediation(remediationEngine: AutomatedRemediationEngine) {
     const activeWorkflows = remediationEngine.getActiveWorkflows();
     if (activeWorkflows.length > 0) {
       const latestWorkflow = activeWorkflows[activeWorkflows.length - 1];
-      console.log(`   Latest Status: ${latestWorkflow.status}`);
-      console.log(`   Results: ${latestWorkflow.results.map(r => `${r.action.name}: ${r.status}`).join(' | ')}`);
+      console.info(`   Latest Status: ${latestWorkflow.status}`);
+      console.info(`   Results: ${latestWorkflow.results.map(r => `${r.action.name}: ${r.status}`).join(' | ')}`);
     }
     
   } catch (error) {
@@ -179,7 +179,7 @@ async function testRemediation(remediationEngine: AutomatedRemediationEngine) {
 const args = process.argv.slice(2);
 
 if (args.includes('--help') || args.includes('-h')) {
-  console.log(`
+  console.info(`
 🚀 Enhanced Time-Series ML System - Quick Start Demo
 
 Usage: bun run scripts/time-series-quick-start.ts [options]
@@ -222,7 +222,7 @@ Examples:
 if (args.includes('--data-only')) {
   const aggregator = new TimeSeriesAggregator();
   await generateSampleData(aggregator);
-  console.log('\n✅ Sample data generation complete');
+  console.info('\n✅ Sample data generation complete');
   process.exit(0);
 }
 
@@ -232,14 +232,14 @@ if (args.includes('--ml-only')) {
   
   await generateSampleData(aggregator);
   await runMLAnalysis(mlRecognizer, aggregator);
-  console.log('\n✅ ML analysis complete');
+  console.info('\n✅ ML analysis complete');
   process.exit(0);
 }
 
 if (args.includes('--remediate-only')) {
   const remediationEngine = new AutomatedRemediationEngine();
   await testRemediation(remediationEngine);
-  console.log('\n✅ Remediation test complete');
+  console.info('\n✅ Remediation test complete');
   process.exit(0);
 }
 
@@ -249,7 +249,7 @@ if (!args.includes('--no-dashboard')) {
 } else {
   // Run demo without dashboard
   runDemo().then(() => {
-    console.log('\n✅ Demo completed without dashboard');
+    console.info('\n✅ Demo completed without dashboard');
     process.exit(0);
   }).catch(console.error);
 }

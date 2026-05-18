@@ -600,14 +600,14 @@ export class BehavioralFingerprintingEngine {
 
   private emitAnomalyDetected(anomaly: AnomalyEvent): void {
     // Emit event for monitoring systems
-    console.log('Anomaly detected:', anomaly);
+    console.info('Anomaly detected:', anomaly);
   }
 
   private async triggerImmediateAction(phone: string, event: BehavioralEvent, score: number): Promise<void> {
     // Trigger immediate security actions for high-severity anomalies
     if (score > 0.95) {
       // Block account, notify security, etc.
-      console.log(`CRITICAL ANOMALY: ${phone} - Score: ${score}`);
+      console.info(`CRITICAL ANOMALY: ${phone} - Score: ${score}`);
     }
   }
 

@@ -68,8 +68,8 @@ class Phase1PerformanceOptimization {
   }
 
   async execute() {
-    console.log(chalk.blue.bold('🚀 Phase 1: Performance Optimization'));
-    console.log(chalk.gray(`Target: ${this.domain} → 98% Cache Hit Rate\n`));
+    console.info(chalk.blue.bold('🚀 Phase 1: Performance Optimization'));
+    console.info(chalk.gray(`Target: ${this.domain} → 98% Cache Hit Rate\n`));
 
     const beforeMetrics = await this.getCurrentMetrics();
     
@@ -108,7 +108,7 @@ class Phase1PerformanceOptimization {
   }
 
   private async optimizeCloudflare() {
-    console.log(chalk.blue.bold('\n📡 Cloudflare Performance Optimizations'));
+    console.info(chalk.blue.bold('\n📡 Cloudflare Performance Optimizations'));
     
     // Brotli Compression
     await this.enableBrotliCompression();
@@ -134,8 +134,8 @@ class Phase1PerformanceOptimization {
     // execSync(`wrangler kv:namespace create "BROTLI_CACHE" --env=development --preview`);
     
     this.spinner.succeed(chalk.green('✅ Brotli Compression enabled'));
-    console.log(chalk.gray('   • Compression ratio improved: 65% → 85%'));
-    console.log(chalk.gray('   • Bandwidth savings: ~40%'));
+    console.info(chalk.gray('   • Compression ratio improved: 65% → 85%'));
+    console.info(chalk.gray('   • Bandwidth savings: ~40%'));
   }
 
   private async enableArgoSmartRouting() {
@@ -144,9 +144,9 @@ class Phase1PerformanceOptimization {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     this.spinner.succeed(chalk.green('✅ Argo Smart Routing enabled'));
-    console.log(chalk.gray('   • Global latency target: <50ms'));
-    console.log(chalk.gray('   • TCP optimization: Active'));
-    console.log(chalk.gray('   • Route optimization: Real-time'));
+    console.info(chalk.gray('   • Global latency target: <50ms'));
+    console.info(chalk.gray('   • TCP optimization: Active'));
+    console.info(chalk.gray('   • Route optimization: Real-time'));
   }
 
   private async configureTieredCache() {
@@ -155,9 +155,9 @@ class Phase1PerformanceOptimization {
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     this.spinner.succeed(chalk.green('✅ Tiered Cache configured'));
-    console.log(chalk.gray('   • Edge cache: 1 hour TTL'));
-    console.log(chalk.gray('   • R2 cache: 24 hours TTL'));
-    console.log(chalk.gray('   • Origin fallback: Enabled'));
+    console.info(chalk.gray('   • Edge cache: 1 hour TTL'));
+    console.info(chalk.gray('   • R2 cache: 24 hours TTL'));
+    console.info(chalk.gray('   • Origin fallback: Enabled'));
   }
 
   private async enableImageResizing() {
@@ -166,13 +166,13 @@ class Phase1PerformanceOptimization {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     this.spinner.succeed(chalk.green('✅ Image Resizing enabled'));
-    console.log(chalk.gray('   • Auto WebP conversion: Active'));
-    console.log(chalk.gray('   • Responsive images: Enabled'));
-    console.log(chalk.gray('   • Quality optimization: 85%'));
+    console.info(chalk.gray('   • Auto WebP conversion: Active'));
+    console.info(chalk.gray('   • Responsive images: Enabled'));
+    console.info(chalk.gray('   • Quality optimization: 85%'));
   }
 
   private async hardenSecurity() {
-    console.log(chalk.blue.bold('\n🔒 Security Hardening'));
+    console.info(chalk.blue.bold('\n🔒 Security Hardening'));
     
     // WAF Managed Ruleset
     await this.configureWAF();
@@ -193,9 +193,9 @@ class Phase1PerformanceOptimization {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     this.spinner.succeed(chalk.green('✅ WAF configured'));
-    console.log(chalk.gray('   • OWASP Top 10 rules: Active'));
-    console.log(chalk.gray('   • SQL injection protection: Enabled'));
-    console.log(chalk.gray('   • XSS protection: Enabled'));
+    console.info(chalk.gray('   • OWASP Top 10 rules: Active'));
+    console.info(chalk.gray('   • SQL injection protection: Enabled'));
+    console.info(chalk.gray('   • XSS protection: Enabled'));
   }
 
   private async enableBotManagement() {
@@ -204,9 +204,9 @@ class Phase1PerformanceOptimization {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     this.spinner.succeed(chalk.green('✅ Bot Management enabled'));
-    console.log(chalk.gray('   • AI training bot blocking: Active'));
-    console.log(chalk.gray('   • Rate limiting: Dynamic'));
-    console.log(chalk.gray('   • Behavioral analysis: Enabled'));
+    console.info(chalk.gray('   • AI training bot blocking: Active'));
+    console.info(chalk.gray('   • Rate limiting: Dynamic'));
+    console.info(chalk.gray('   • Behavioral analysis: Enabled'));
   }
 
   private async configureMTLS() {
@@ -215,9 +215,9 @@ class Phase1PerformanceOptimization {
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     this.spinner.succeed(chalk.green('✅ mTLS configured'));
-    console.log(chalk.gray('   • Partner API authentication: mTLS'));
-    console.log(chalk.gray('   • Certificate rotation: Automated'));
-    console.log(chalk.gray('   • Mutual authentication: Enforced'));
+    console.info(chalk.gray('   • Partner API authentication: mTLS'));
+    console.info(chalk.gray('   • Certificate rotation: Automated'));
+    console.info(chalk.gray('   • Mutual authentication: Enforced'));
   }
 
   private async configureZTNA() {
@@ -226,22 +226,22 @@ class Phase1PerformanceOptimization {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     this.spinner.succeed(chalk.green('✅ ZTNA configured'));
-    console.log(chalk.gray('   • Zero Trust architecture: Active'));
-    console.log(chalk.gray('   • Identity-based access: Enabled'));
-    console.log(chalk.gray('   • Continuous authentication: Enabled'));
+    console.info(chalk.gray('   • Zero Trust architecture: Active'));
+    console.info(chalk.gray('   • Identity-based access: Enabled'));
+    console.info(chalk.gray('   • Continuous authentication: Enabled'));
   }
 
   private async tunePerformance() {
-    console.log(chalk.blue.bold('\n⚡ Performance Tuning'));
+    console.info(chalk.blue.bold('\n⚡ Performance Tuning'));
     
     this.spinner.start(chalk.cyan('Optimizing cache headers and CDN settings...'));
     
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     this.spinner.succeed(chalk.green('✅ Performance tuned'));
-    console.log(chalk.gray('   • Cache headers: Optimized'));
-    console.log(chalk.gray('   • CDN edge locations: 200+'));
-    console.log(chalk.gray('   • HTTP/3 prioritization: Enabled'));
+    console.info(chalk.gray('   • Cache headers: Optimized'));
+    console.info(chalk.gray('   • CDN edge locations: 200+'));
+    console.info(chalk.gray('   • HTTP/3 prioritization: Enabled'));
   }
 
   private async validateOptimizations(): Promise<PerformanceMetrics['after']> {
@@ -264,15 +264,15 @@ class Phase1PerformanceOptimization {
   }
 
   private displayMetrics(metrics: PerformanceMetrics['before' | 'after'], title: string) {
-    console.log(chalk.blue(`\n📊 ${title}:`));
-    console.log(chalk.white(`   Cache Hit Rate: ${metrics.cacheHitRate}% ${metrics.cacheHitRate >= 95 ? chalk.green('✅') : chalk.yellow('⚠️')}`));
-    console.log(chalk.white(`   Global Latency: ${metrics.globalLatency}ms ${metrics.globalLatency <= 50 ? chalk.green('✅') : chalk.yellow('⚠️')}`));
-    console.log(chalk.white(`   Compression: ${metrics.compressionRatio}% ${metrics.compressionRatio >= 80 ? chalk.green('✅') : chalk.yellow('⚠️')}`));
-    console.log(chalk.white(`   Security Score: ${metrics.securityScore}/100 ${metrics.securityScore >= 95 ? chalk.green('✅') : chalk.yellow('⚠️')}`));
+    console.info(chalk.blue(`\n📊 ${title}:`));
+    console.info(chalk.white(`   Cache Hit Rate: ${metrics.cacheHitRate}% ${metrics.cacheHitRate >= 95 ? chalk.green('✅') : chalk.yellow('⚠️')}`));
+    console.info(chalk.white(`   Global Latency: ${metrics.globalLatency}ms ${metrics.globalLatency <= 50 ? chalk.green('✅') : chalk.yellow('⚠️')}`));
+    console.info(chalk.white(`   Compression: ${metrics.compressionRatio}% ${metrics.compressionRatio >= 80 ? chalk.green('✅') : chalk.yellow('⚠️')}`));
+    console.info(chalk.white(`   Security Score: ${metrics.securityScore}/100 ${metrics.securityScore >= 95 ? chalk.green('✅') : chalk.yellow('⚠️')}`));
   }
 
   private displayResults(before: PerformanceMetrics['before'], after: PerformanceMetrics['after']) {
-    console.log(chalk.green.bold('\n🎯 Phase 1 Results Summary:'));
+    console.info(chalk.green.bold('\n🎯 Phase 1 Results Summary:'));
     
     const improvements = {
       cacheHitRate: after.cacheHitRate - before.cacheHitRate,
@@ -281,19 +281,19 @@ class Phase1PerformanceOptimization {
       securityScore: after.securityScore - before.securityScore
     };
     
-    console.log(chalk.white('📈 Performance Improvements:'));
-    console.log(chalk.green(`   • Cache Hit Rate: +${improvements.cacheHitRate}% (${before.cacheHitRate}% → ${after.cacheHitRate}%)`));
-    console.log(chalk.green(`   • Global Latency: -${improvements.globalLatency}ms (${before.globalLatency}ms → ${after.globalLatency}ms)`));
-    console.log(chalk.green(`   • Compression: +${improvements.compressionRatio}% (${before.compressionRatio}% → ${after.compressionRatio}%)`));
-    console.log(chalk.green(`   • Security Score: +${improvements.securityScore} (${before.securityScore}/100 → ${after.securityScore}/100)`));
+    console.info(chalk.white('📈 Performance Improvements:'));
+    console.info(chalk.green(`   • Cache Hit Rate: +${improvements.cacheHitRate}% (${before.cacheHitRate}% → ${after.cacheHitRate}%)`));
+    console.info(chalk.green(`   • Global Latency: -${improvements.globalLatency}ms (${before.globalLatency}ms → ${after.globalLatency}ms)`));
+    console.info(chalk.green(`   • Compression: +${improvements.compressionRatio}% (${before.compressionRatio}% → ${after.compressionRatio}%)`));
+    console.info(chalk.green(`   • Security Score: +${improvements.securityScore} (${before.securityScore}/100 → ${after.securityScore}/100)`));
     
-    console.log(chalk.blue.bold('\n🏢 Business Impact:'));
-    console.log(chalk.white('   • User Experience: Significantly improved'));
-    console.log(chalk.white('   • Bandwidth Costs: ~40% reduction'));
-    console.log(chalk.white('   • Security Posture: Enterprise-grade'));
-    console.log(chalk.white('   • Global Performance: Sub-50ms latency'));
+    console.info(chalk.blue.bold('\n🏢 Business Impact:'));
+    console.info(chalk.white('   • User Experience: Significantly improved'));
+    console.info(chalk.white('   • Bandwidth Costs: ~40% reduction'));
+    console.info(chalk.white('   • Security Posture: Enterprise-grade'));
+    console.info(chalk.white('   • Global Performance: Sub-50ms latency'));
     
-    console.log(chalk.green.bold('\n✅ Phase 1: Ready for $50M ARR scaling!'));
+    console.info(chalk.green.bold('\n✅ Phase 1: Ready for $50M ARR scaling!'));
   }
 }
 

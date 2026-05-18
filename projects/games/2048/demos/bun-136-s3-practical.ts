@@ -1,16 +1,16 @@
 #!/usr/bin/env bun
 
 // Practical demonstration of Bun v1.3.6 S3 Requester Pays Support
-console.log("☁️  Bun v1.3.6 S3 Requester Pays Support - Practical Demo");
-console.log("=".repeat(58));
+console.info("☁️  Bun v1.3.6 S3 Requester Pays Support - Practical Demo");
+console.info("=".repeat(58));
 
 // Test 1: Basic S3 Requester Pays Operations
 async function demonstrateBasicOperations() {
-  console.log("\n1️⃣ Basic S3 Requester Pays Operations:");
+  console.info("\n1️⃣ Basic S3 Requester Pays Operations:");
 
-  console.log("   ✅ Simple requestPayer: true option");
-  console.log("   🔧 Works with reading, writing, and metadata operations");
-  console.log("   🚀 No additional configuration required");
+  console.info("   ✅ Simple requestPayer: true option");
+  console.info("   🔧 Works with reading, writing, and metadata operations");
+  console.info("   🚀 No additional configuration required");
 
   const basicCode = `
 // v1.3.6: Basic S3 Requester Pays operations
@@ -25,7 +25,7 @@ async function readFromRequesterPaysBucket(key: string, bucket: string) {
     });
 
     const content = await file.text();
-    console.log(\`Read \${content.length} bytes from \${bucket}/\${key}\`);
+    console.info(\`Read \${content.length} bytes from \${bucket}/\${key}\`);
 
     return content;
   } catch (error) {
@@ -46,7 +46,7 @@ async function writeToRequesterPaysBucket(
       requestPayer: true  // Enable Requester Pays
     });
 
-    console.log(\`Wrote \${data.length} bytes to \${bucket}/\${key}\`);
+    console.info(\`Wrote \${data.length} bytes to \${bucket}/\${key}\`);
   } catch (error) {
     console.error('Failed to write to Requester Pays bucket:', error);
     throw error;
@@ -61,10 +61,10 @@ async function getStatsFromRequesterPaysBucket(key: string, bucket: string) {
       requestPayer: true  // Enable Requester Pays
     });
 
-    console.log(\`File stats for \${bucket}/\${key}:\`);
-    console.log(\`  Size: \${stats.size} bytes\`);
-    console.log(\`  Last modified: \${stats.lastModified}\`);
-    console.log(\`  Content type: \${stats.contentType}\`);
+    console.info(\`File stats for \${bucket}/\${key}:\`);
+    console.info(\`  Size: \${stats.size} bytes\`);
+    console.info(\`  Last modified: \${stats.lastModified}\`);
+    console.info(\`  Content type: \${stats.contentType}\`);
 
     return stats;
   } catch (error) {
@@ -94,17 +94,17 @@ await writeToRequesterPaysBucket(RESULTS_KEY, analysisResults, BUCKET);
 const stats = await getStatsFromRequesterPaysBucket(DATA_KEY, BUCKET);
   `;
 
-  console.log("   💡 Basic operations implementation:");
-  console.log(basicCode);
+  console.info("   💡 Basic operations implementation:");
+  console.info(basicCode);
 }
 
 // Test 2: Multipart Uploads with Requester Pays
 async function demonstrateMultipartUploads() {
-  console.log("\n2️⃣ Multipart Uploads with Requester Pays:");
+  console.info("\n2️⃣ Multipart Uploads with Requester Pays:");
 
-  console.log("   ✅ Large file uploads with Requester Pays support");
-  console.log("   🔧 Efficient chunked uploads for cost optimization");
-  console.log("   🚀 Automatic error recovery and retry logic");
+  console.info("   ✅ Large file uploads with Requester Pays support");
+  console.info("   🔧 Efficient chunked uploads for cost optimization");
+  console.info("   🚀 Automatic error recovery and retry logic");
 
   const multipartCode = `
 // v1.3.6: Multipart uploads with Requester Pays
@@ -118,7 +118,7 @@ class S3RequesterPaysUploader {
   }
 
   async uploadLargeFile(key: string, data: Buffer): Promise<void> {
-    console.log(\`Starting upload of \${data.length} bytes to \${this.bucket}/\${key}\`);
+    console.info(\`Starting upload of \${data.length} bytes to \${this.bucket}/\${key}\`);
 
     try {
       const upload = s3.upload({
@@ -137,11 +137,11 @@ class S3RequesterPaysUploader {
         await upload.write(chunk);
         uploadedBytes += chunk.length;
 
-        console.log(\`Uploaded \${uploadedBytes}/\${data.length} bytes (\${Math.round(uploadedBytes / data.length * 100)}%)\`);
+        console.info(\`Uploaded \${uploadedBytes}/\${data.length} bytes (\${Math.round(uploadedBytes / data.length * 100)}%)\`);
       }
 
       await upload.end();
-      console.log(\`Upload completed: \${this.bucket}/\${key}\`);
+      console.info(\`Upload completed: \${this.bucket}/\${key}\`);
 
     } catch (error) {
       console.error('Multipart upload failed:', error);
@@ -155,7 +155,7 @@ class S3RequesterPaysUploader {
         await this.uploadLargeFile(key, data);
         return; // Success
       } catch (error) {
-        console.log(\`Upload attempt \${attempt} failed:\`, error.message);
+        console.info(\`Upload attempt \${attempt} failed:\`, error.message);
 
         if (attempt === maxRetries) {
           throw error; // All retries exhausted
@@ -163,7 +163,7 @@ class S3RequesterPaysUploader {
 
         // Exponential backoff
         const delay = Math.pow(2, attempt) * 1000;
-        console.log(\`Retrying in \${delay}ms...\`);
+        console.info(\`Retrying in \${delay}ms...\`);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
@@ -188,17 +188,17 @@ const dataBuffer = Buffer.from(largeDataset);
 await uploader.uploadWithRetry("large-dataset.json", dataBuffer);
   `;
 
-  console.log("   💡 Multipart upload implementation:");
-  console.log(multipartCode);
+  console.info("   💡 Multipart upload implementation:");
+  console.info(multipartCode);
 }
 
 // Test 3: Cost Tracking and Management
 async function demonstrateCostTracking() {
-  console.log("\n3️⃣ Cost Tracking and Management:");
+  console.info("\n3️⃣ Cost Tracking and Management:");
 
-  console.log("   ✅ Monitor Requester Pays costs in real-time");
-  console.log("   🔧 Track requests and data transfer volumes");
-  console.log("   🚀 Generate cost reports and alerts");
+  console.info("   ✅ Monitor Requester Pays costs in real-time");
+  console.info("   🔧 Track requests and data transfer volumes");
+  console.info("   🚀 Generate cost reports and alerts");
 
   const costTrackingCode = `
 // v1.3.6: Cost tracking for Requester Pays buckets
@@ -234,7 +234,7 @@ class S3RequesterPaysCostTracker {
 
       this.metrics.set(bucket, current);
 
-      console.log(\`\${operation} completed for \${bucket} in \${Date.now() - startTime}ms\`);
+      console.info(\`\${operation} completed for \${bucket} in \${Date.now() - startTime}ms\`);
       return result;
 
     } catch (error) {
@@ -302,7 +302,7 @@ class S3RequesterPaysCostTracker {
     if (total > budget) {
       console.warn(\`🚨 BUDGET ALERT: Current cost $\${total.toFixed(4)} exceeds budget $\${budget.toFixed(4)}\`);
     } else {
-      console.log(\`✅ Cost within budget: $\${total.toFixed(4)} / $\${budget.toFixed(4)}\`);
+      console.info(\`✅ Cost within budget: $\${total.toFixed(4)} / $\${budget.toFixed(4)}\`);
     }
   }
 }
@@ -317,20 +317,20 @@ await costTracker.writeFileWithTracking("results.json", analysisData, "public-re
 await costTracker.readFileWithTracking("config.json", "shared-config-bucket");
 
 // Generate cost report
-console.log("Cost Report:", costTracker.getCostReport());
-console.log(\`Total Cost: $\${costTracker.getTotalCost().toFixed(4)}\`);
+console.info("Cost Report:", costTracker.getCostReport());
+console.info(\`Total Cost: $\${costTracker.getTotalCost().toFixed(4)}\`);
 
 // Check budget
 costTracker.checkBudgetAlert(BUDGET);
   `;
 
-  console.log("   💡 Cost tracking implementation:");
-  console.log(costTrackingCode);
+  console.info("   💡 Cost tracking implementation:");
+  console.info(costTrackingCode);
 }
 
 // Test 4: Real-world Use Cases
 async function demonstrateRealWorldUseCases() {
-  console.log("\n4️⃣ Real-world Use Cases:");
+  console.info("\n4️⃣ Real-world Use Cases:");
 
   const useCases = [
     {
@@ -378,16 +378,16 @@ await govClient.writeFile("processed/summary-stats.json", processedData);
   ];
 
   useCases.forEach((useCase, index) => {
-    console.log(`\n   ${index + 1}. ${useCase.title}:`);
-    console.log(`      Description: ${useCase.description}`);
-    console.log(`      Code example:`);
-    console.log(useCase.code);
+    console.info(`\n   ${index + 1}. ${useCase.title}:`);
+    console.info(`      Description: ${useCase.description}`);
+    console.info(`      Code example:`);
+    console.info(useCase.code);
   });
 }
 
 // Test 5: Error Handling and Best Practices
 async function demonstrateErrorHandling() {
-  console.log("\n5️⃣ Error Handling and Best Practices:");
+  console.info("\n5️⃣ Error Handling and Best Practices:");
 
   const bestPractices = [
     {
@@ -454,8 +454,8 @@ await s3.write("data.json.gz", compressedData, {
   ];
 
   bestPractices.forEach((practice, index) => {
-    console.log(`\n   ${index + 1}. ${practice.practice}:`);
-    console.log(practice.code);
+    console.info(`\n   ${index + 1}. ${practice.practice}:`);
+    console.info(practice.code);
   });
 }
 
@@ -468,23 +468,23 @@ async function main() {
     await demonstrateRealWorldUseCases();
     await demonstrateErrorHandling();
 
-    console.log("\n🎯 Summary of Bun v1.3.6 S3 Requester Pays Support:");
-    console.log(
+    console.info("\n🎯 Summary of Bun v1.3.6 S3 Requester Pays Support:");
+    console.info(
       "   ✅ Simple requestPayer: true option enables Requester Pays buckets",
     );
-    console.log(
+    console.info(
       "   🔧 Works with all S3 operations (reads, writes, stat, uploads)",
     );
-    console.log(
+    console.info(
       "   💰 Cost-effective access to public datasets and shared resources",
     );
-    console.log("   📊 Built-in cost tracking and budget management");
-    console.log("   🚀 Production-ready with retry logic and error handling");
-    console.log(
+    console.info("   📊 Built-in cost tracking and budget management");
+    console.info("   🚀 Production-ready with retry logic and error handling");
+    console.info(
       "   🌐 Real-world applications in research, education, and media",
     );
 
-    console.log("\n💨 S3 Requester Pays buckets are now enterprise-ready!");
+    console.info("\n💨 S3 Requester Pays buckets are now enterprise-ready!");
   } catch (error) {
     console.error("❌ Demonstration failed:", error);
   }

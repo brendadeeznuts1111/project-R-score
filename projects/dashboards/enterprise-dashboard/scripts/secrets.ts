@@ -44,13 +44,13 @@ async function main() {
 
   if (!command) {
     console.error(`${c.err}Invalid command or key${c.reset}`);
-    console.log(getSecretHelp());
+    console.info(getSecretHelp());
     process.exit(1);
   }
 
   switch (command.action) {
     case "help":
-      console.log(getSecretHelp());
+      console.info(getSecretHelp());
       break;
 
     case "list":
@@ -80,7 +80,7 @@ async function main() {
 }
 
 async function handleList() {
-  console.log(`\n${c.bold}Stored Secrets${c.reset}\n`);
+  console.info(`\n${c.bold}Stored Secrets${c.reset}\n`);
 
   const secrets = await listSecrets();
 
@@ -95,21 +95,21 @@ async function handleList() {
     Value: s.masked || `${c.dim}(not set)${c.reset}`,
   }));
 
-  console.log(Bun.inspect.table(formatted, { colors: true }));
+  console.info(Bun.inspect.table(formatted, { colors: true }));
 
   const keychainCount = secrets.filter(s => s.source === "keychain").length;
   const envCount = secrets.filter(s => s.source === "env").length;
   const total = keychainCount + envCount;
 
-  console.log(`\n${c.dim}Summary: ${c.ok}${keychainCount}${c.dim} keychain, ${c.warn}${envCount}${c.dim} env, ${total}/${secrets.length} configured${c.reset}\n`);
+  console.info(`\n${c.dim}Summary: ${c.ok}${keychainCount}${c.dim} keychain, ${c.warn}${envCount}${c.dim} env, ${total}/${secrets.length} configured${c.reset}\n`);
 }
 
 async function handleGet(key: CredentialKey) {
   const value = await getSecret(key);
 
   if (!value) {
-    console.log(`${c.warn}No value found for '${key}'${c.reset}`);
-    console.log(`${c.dim}Tip: Set it with: bun run secrets set ${key}${c.reset}`);
+    console.info(`${c.warn}No value found for '${key}'${c.reset}`);
+    console.info(`${c.dim}Tip: Set it with: bun run secrets set ${key}${c.reset}`);
     process.exit(1);
   }
 
@@ -118,16 +118,16 @@ async function handleGet(key: CredentialKey) {
     ? "••••••••"
     : `${value.slice(0, 4)}${"•".repeat(value.length - 8)}${value.slice(-4)}`;
 
-  console.log(`${c.bold}${key}${c.reset}: ${masked}`);
-  console.log(`${c.dim}Env: ${getEnvVarName(key)}${c.reset}`);
+  console.info(`${c.bold}${key}${c.reset}: ${masked}`);
+  console.info(`${c.dim}Env: ${getEnvVarName(key)}${c.reset}`);
 }
 
 async function handleSet(key: CredentialKey, value?: string) {
   if (value) {
     // Value provided directly (less secure, visible in shell history)
-    console.log(`${c.warn}Warning: Providing secrets via command line is visible in shell history${c.reset}`);
+    console.info(`${c.warn}Warning: Providing secrets via command line is visible in shell history${c.reset}`);
     await setSecret(key, value);
-    console.log(`${c.ok}◆ Secret '${key}' stored in system keychain${c.reset}`);
+    console.info(`${c.ok}◆ Secret '${key}' stored in system keychain${c.reset}`);
   } else {
     // Prompt for value (more secure)
     await promptAndSetSecret(key, `Enter value for ${c.bold}${key}${c.reset}: `);
@@ -138,9 +138,9 @@ async function handleDelete(key: CredentialKey) {
   const deleted = await deleteSecret(key);
 
   if (deleted) {
-    console.log(`${c.ok}◆ Secret '${key}' deleted from keychain${c.reset}`);
+    console.info(`${c.ok}◆ Secret '${key}' deleted from keychain${c.reset}`);
   } else {
-    console.log(`${c.warn}No secret found for '${key}' in keychain${c.reset}`);
+    console.info(`${c.warn}No secret found for '${key}' in keychain${c.reset}`);
   }
 }
 
@@ -152,26 +152,26 @@ async function handleImport(file: string) {
     process.exit(1);
   }
 
-  console.log(`\n${c.bold}Importing Secrets${c.reset}\n`);
-  console.log(`${c.dim}├─${c.reset} Reading ${file}`);
+  console.info(`\n${c.bold}Importing Secrets${c.reset}\n`);
+  console.info(`${c.dim}├─${c.reset} Reading ${file}`);
 
   const { imported, skipped } = await importFromEnv(file);
 
   if (imported.length > 0) {
-    console.log(`${c.dim}├─${c.reset} ${c.ok}◆ Imported ${imported.length} secret(s):${c.reset}`);
+    console.info(`${c.dim}├─${c.reset} ${c.ok}◆ Imported ${imported.length} secret(s):${c.reset}`);
     for (const key of imported) {
-      console.log(`${c.dim}│  ${c.reset}  ${key}`);
+      console.info(`${c.dim}│  ${c.reset}  ${key}`);
     }
   }
 
   if (skipped.length > 0) {
-    console.log(`${c.dim}├─${c.reset} ${c.warn}▲ Skipped ${skipped.length} unknown key(s):${c.reset}`);
+    console.info(`${c.dim}├─${c.reset} ${c.warn}▲ Skipped ${skipped.length} unknown key(s):${c.reset}`);
     for (const key of skipped) {
-      console.log(`${c.dim}│  ${c.reset}  ${key}`);
+      console.info(`${c.dim}│  ${c.reset}  ${key}`);
     }
   }
 
-  console.log(`${c.dim}└─${c.reset} Done\n`);
+  console.info(`${c.dim}└─${c.reset} Done\n`);
 }
 
 async function handleExport(reveal: boolean) {
@@ -180,7 +180,7 @@ async function handleExport(reveal: boolean) {
   }
 
   const envContent = await exportToEnv(reveal);
-  console.log(envContent);
+  console.info(envContent);
 }
 
 main().catch(err => {

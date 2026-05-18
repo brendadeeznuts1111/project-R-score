@@ -12,49 +12,49 @@ import type {
 const validator = new VersionedTaxonomyValidator();
 
 async function demonstrateVersionedTaxonomyWorkflow() {
-  console.log('🚀 Advanced Versioned Taxonomy Demo\n');
+  console.info('🚀 Advanced Versioned Taxonomy Demo\n');
   
   // 1. Add new component with version
-  console.log('1️⃣ Adding API Gateway v2 with semver support...');
+  console.info('1️⃣ Adding API Gateway v2 with semver support...');
   await addAPIGatewayV2();
   
   // 2. Validate version compatibility
-  console.log('\n2️⃣ Checking version compatibility...');
+  console.info('\n2️⃣ Checking version compatibility...');
   await checkCompatibility();
   
   // 3. Validate upgrade safety
-  console.log('\n3️⃣ Validating version upgrade safety...');
+  console.info('\n3️⃣ Validating version upgrade safety...');
   await validateUpgrade();
   
   // 4. Generate migration guide
-  console.log('\n4️⃣ Generating migration guide...');
+  console.info('\n4️⃣ Generating migration guide...');
   await generateMigrationGuide();
   
   // 5. Get version history
-  console.log('\n5️⃣ Retrieving version history...');
+  console.info('\n5️⃣ Retrieving version history...');
   await getVersionHistory();
   
   // 6. Suggest version bump
-  console.log('\n6️⃣ Suggesting version bump...');
+  console.info('\n6️⃣ Suggesting version bump...');
   await suggestVersionBump();
   
   // 7. Analyze dependency graph
-  console.log('\n7️⃣ Analyzing dependency graph...');
+  console.info('\n7️⃣ Analyzing dependency graph...');
   await analyzeDependencies();
   
   // 8. Sort components by version
-  console.log('\n8️⃣ Sorting components by version...');
+  console.info('\n8️⃣ Sorting components by version...');
   await sortByVersion();
   
   // 9. Validate all constraints
-  console.log('\n9️⃣ Validating all version constraints...');
+  console.info('\n9️⃣ Validating all version constraints...');
   await validateConstraints();
   
   // 10. Performance comparison
-  console.log('\n🔟 Performance comparison...');
+  console.info('\n🔟 Performance comparison...');
   await performanceComparison();
   
-  console.log('\n✅ Semver integration demo completed!');
+  console.info('\n✅ Semver integration demo completed!');
 }
 
 async function addAPIGatewayV2() {
@@ -108,23 +108,23 @@ async function addAPIGatewayV2() {
   validator.addVersionedNode('api-gateway-v2', apiGatewayV2);
   
   const node = validator.getVersionedNode('api-gateway-v2');
-  console.log(`   ✅ Added api-gateway-v2@${node?.version} with ${node?.dependencies?.length} dependencies`);
+  console.info(`   ✅ Added api-gateway-v2@${node?.version} with ${node?.dependencies?.length} dependencies`);
 }
 
 async function checkCompatibility() {
   const report = await validator.validateVersionCompatibility('api-gateway-v2');
   
-  console.log(`   📊 Compatibility Report for ${report.nodeId}@${report.version}`);
-  console.log(`   Status: ${report.satisfiesRange ? '✅ Compatible' : '❌ Incompatible'}`);
+  console.info(`   📊 Compatibility Report for ${report.nodeId}@${report.version}`);
+  console.info(`   Status: ${report.satisfiesRange ? '✅ Compatible' : '❌ Incompatible'}`);
   
   for (const dep of report.dependencies) {
     const status = dep.compatible ? '✅' : '❌';
-    console.log(`      ${status} ${dep.dependencyId}: ${dep.actualVersion} (requires ${dep.requiredRange})`);
+    console.info(`      ${status} ${dep.dependencyId}: ${dep.actualVersion} (requires ${dep.requiredRange})`);
   }
   
   if (report.recommendations.length > 0) {
-    console.log('   💡 Recommendations:');
-    report.recommendations.forEach(r => console.log(`      - ${r}`));
+    console.info('   💡 Recommendations:');
+    report.recommendations.forEach(r => console.info(`      - ${r}`));
   }
 }
 
@@ -139,10 +139,10 @@ async function validateUpgrade() {
     const result = validator.validateVersionUpgrade('api-gateway-v2', scenario.to);
     const status = result.safe ? '✅' : '⚠️';
     
-    console.log(`   ${status} Upgrade to ${scenario.to}: ${result.safe ? 'Safe' : 'Breaking changes'}`);
+    console.info(`   ${status} Upgrade to ${scenario.to}: ${result.safe ? 'Safe' : 'Breaking changes'}`);
     
     if (result.breakingChanges.length > 0) {
-      result.breakingChanges.forEach(c => console.log(`      - ${c}`));
+      result.breakingChanges.forEach(c => console.info(`      - ${c}`));
     }
   }
 }
@@ -150,13 +150,13 @@ async function validateUpgrade() {
 async function generateMigrationGuide() {
   const guide = validator.generateMigrationGuide('2.1.0', '3.0.0');
   
-  console.log('   📋 Migration Guide: 2.1.0 → 3.0.0');
-  console.log('   Steps:');
-  guide.steps.forEach(s => console.log(`      ${s}`));
+  console.info('   📋 Migration Guide: 2.1.0 → 3.0.0');
+  console.info('   Steps:');
+  guide.steps.forEach(s => console.info(`      ${s}`));
   
   if (guide.breakingChanges.length > 0) {
-    console.log('   ⚠️  Breaking Changes:');
-    guide.breakingChanges.forEach(c => console.log(`      - ${c}`));
+    console.info('   ⚠️  Breaking Changes:');
+    guide.breakingChanges.forEach(c => console.info(`      - ${c}`));
   }
 }
 
@@ -164,18 +164,18 @@ async function getVersionHistory() {
   try {
     const history = await validator.getVersionHistory('api-gateway-v2');
     
-    console.log(`   📜 Version History for ${history.nodeId}`);
-    console.log(`      Latest: ${history.latest}`);
-    console.log(`      Outdated: ${history.outdated ? '⚠️' : '✅'}`);
+    console.info(`   📜 Version History for ${history.nodeId}`);
+    console.info(`      Latest: ${history.latest}`);
+    console.info(`      Outdated: ${history.outdated ? '⚠️' : '✅'}`);
     
     if (history.versions.length > 0) {
       history.versions.slice(0, 3).forEach(v => {
         const breaking = v.breaking ? '💥' : '📦';
-        console.log(`      ${breaking} ${v.version} (${v.commitHash})`);
+        console.info(`      ${breaking} ${v.version} (${v.commitHash})`);
       });
     }
   } catch (error) {
-    console.log(`   📝 Version history: Git not available, using current version`);
+    console.info(`   📝 Version history: Git not available, using current version`);
   }
 }
 
@@ -183,55 +183,55 @@ async function suggestVersionBump() {
   try {
     const suggestion = await validator.suggestVersionBump('api-gateway-v2');
     
-    console.log(`   💡 Version Bump Suggestion for api-gateway-v2`);
-    console.log(`      Current: ${suggestion.current}`);
-    console.log(`      Suggested: ${suggestion.suggested} (${suggestion.type})`);
-    console.log(`      Reason: ${suggestion.reason}`);
+    console.info(`   💡 Version Bump Suggestion for api-gateway-v2`);
+    console.info(`      Current: ${suggestion.current}`);
+    console.info(`      Suggested: ${suggestion.suggested} (${suggestion.type})`);
+    console.info(`      Reason: ${suggestion.reason}`);
   } catch (error) {
-    console.log(`   📝 Version bump: Git not available, suggesting patch`);
-    console.log(`      Suggested: 2.1.1 (patch)`);
+    console.info(`   📝 Version bump: Git not available, suggesting patch`);
+    console.info(`      Suggested: 2.1.1 (patch)`);
   }
 }
 
 async function analyzeDependencies() {
   const graph = validator.getDependencyGraph('api-gateway-v2');
   
-  console.log(`   🔗 Dependency Graph for api-gateway-v2`);
-  console.log(`      Direct dependencies: ${graph.direct.length}`);
+  console.info(`   🔗 Dependency Graph for api-gateway-v2`);
+  console.info(`      Direct dependencies: ${graph.direct.length}`);
   graph.direct.forEach(dep => {
     const node = validator.getVersionedNode(dep);
-    console.log(`         - ${dep}@${node?.version || 'unknown'}`);
+    console.info(`         - ${dep}@${node?.version || 'unknown'}`);
   });
   
-  console.log(`      Indirect dependencies: ${graph.indirect.length}`);
-  console.log(`      Circular dependencies: ${graph.circular.length}`);
+  console.info(`      Indirect dependencies: ${graph.indirect.length}`);
+  console.info(`      Circular dependencies: ${graph.circular.length}`);
   
   // Show reverse dependencies
   const reverseDeps = validator.getReverseDependencyGraph('bun-native-cache');
-  console.log(`      Nodes depending on bun-native-cache: ${reverseDeps.length}`);
-  reverseDeps.slice(0, 3).forEach(dep => console.log(`         - ${dep}`));
+  console.info(`      Nodes depending on bun-native-cache: ${reverseDeps.length}`);
+  reverseDeps.slice(0, 3).forEach(dep => console.info(`         - ${dep}`));
 }
 
 async function sortByVersion() {
   const nodeIds = ['api-gateway-v2', 'bun-native-cache', 'unified-api-backbone', 'cross-platform-layer'];
   const sorted = validator.sortNodesByVersion(nodeIds);
   
-  console.log('   📊 Components sorted by version:');
+  console.info('   📊 Components sorted by version:');
   sorted.forEach(id => {
     const node = validator.getVersionedNode(id);
-    console.log(`      ${id}@${node?.version}`);
+    console.info(`      ${id}@${node?.version}`);
   });
 }
 
 async function validateConstraints() {
   const result = await validator.validateVersionConstraints();
   
-  console.log(`   🔒 Version Constraints: ${result.valid ? '✅ Valid' : '❌ Invalid'}`);
+  console.info(`   🔒 Version Constraints: ${result.valid ? '✅ Valid' : '❌ Invalid'}`);
   
   if (!result.valid) {
-    console.log('   Violations:');
+    console.info('   Violations:');
     result.violations.forEach(v => {
-      console.log(`      ${v.nodeId}: ${v.reason}`);
+      console.info(`      ${v.nodeId}: ${v.reason}`);
     });
   }
 }
@@ -241,7 +241,7 @@ async function performanceComparison() {
   const testVersion = '2.1.0';
   const testRange = '^2.0.0';
   
-  console.log(`   ⚡ Performance Test (${iterations} iterations)`);
+  console.info(`   ⚡ Performance Test (${iterations} iterations)`);
   
   // Test Bun.semver.satisfies
   const bunStart = performance.now();
@@ -258,16 +258,16 @@ async function performanceComparison() {
   }
   const orderTime = performance.now() - orderStart;
   
-  console.log(`      Bun.semver.satisfies: ${bunTime.toFixed(2)}ms (${(bunTime/iterations).toFixed(4)}ms per call)`);
-  console.log(`      Bun.semver.order: ${orderTime.toFixed(2)}ms (${(orderTime/iterations).toFixed(4)}ms per call)`);
-  console.log(`      Performance: Excellent! 🚀`);
+  console.info(`      Bun.semver.satisfies: ${bunTime.toFixed(2)}ms (${(bunTime/iterations).toFixed(4)}ms per call)`);
+  console.info(`      Bun.semver.order: ${orderTime.toFixed(2)}ms (${(orderTime/iterations).toFixed(4)}ms per call)`);
+  console.info(`      Performance: Excellent! 🚀`);
 }
 
 async function demonstrateAdvancedFeatures() {
-  console.log('\n🎯 Advanced Semver Features');
+  console.info('\n🎯 Advanced Semver Features');
   
   // 1. Complex version ranges
-  console.log('\n1️⃣ Complex Version Ranges:');
+  console.info('\n1️⃣ Complex Version Ranges:');
   const complexRanges = [
     { range: '^2.0.0', version: '2.1.0', compatible: true },
     { range: '~1.5.0', version: '1.5.2', compatible: true },
@@ -278,36 +278,36 @@ async function demonstrateAdvancedFeatures() {
   complexRanges.forEach(({ range, version, compatible }) => {
     const result = semver.satisfies(version, range);
     const status = result === compatible ? '✅' : '❌';
-    console.log(`   ${status} ${version} satisfies ${range}: ${result}`);
+    console.info(`   ${status} ${version} satisfies ${range}: ${result}`);
   });
   
   // 2. Version difference calculation
-  console.log('\n2️⃣ Version Difference:');
+  console.info('\n2️⃣ Version Difference:');
   const versions = ['1.0.0', '1.2.0', '2.0.0', '2.1.0'];
   for (let i = 0; i < versions.length - 1; i++) {
     const diff = semver.order(versions[i], versions[i + 1]);
     const relation = diff === -1 ? 'older than' : diff === 1 ? 'newer than' : 'equal to';
-    console.log(`   ${versions[i]} is ${relation} ${versions[i + 1]}`);
+    console.info(`   ${versions[i]} is ${relation} ${versions[i + 1]}`);
   }
   
   // 3. Prerelease handling
-  console.log('\n3️⃣ Prerelease Handling:');
+  console.info('\n3️⃣ Prerelease Handling:');
   const prereleaseVersions = ['1.0.0-alpha.1', '1.0.0-beta.2', '1.0.0', '1.0.1'];
   prereleaseVersions.forEach(v => {
-    console.log(`   ${v} - ${semver.satisfies(v, '^1.0.0') ? 'satisfies' : 'does not satisfy'} ^1.0.0`);
+    console.info(`   ${v} - ${semver.satisfies(v, '^1.0.0') ? 'satisfies' : 'does not satisfy'} ^1.0.0`);
   });
 }
 
 async function exportTaxonomyData() {
-  console.log('\n📤 Exporting Taxonomy Data');
+  console.info('\n📤 Exporting Taxonomy Data');
   
   // Export as JSON
   const jsonExport = validator.exportVersionedTaxonomyJSON();
-  console.log('   ✅ JSON export generated');
+  console.info('   ✅ JSON export generated');
   
   // Export as Markdown
   const markdownExport = validator.exportMarkdown();
-  console.log('   ✅ Markdown export generated');
+  console.info('   ✅ Markdown export generated');
   
   // Show statistics
   const nodes = validator.getAllVersionedNodes();
@@ -318,11 +318,11 @@ async function exportTaxonomyData() {
     withMigrations: Array.from(nodes.values()).filter(n => n.migrations?.length).length
   };
   
-  console.log(`   📊 Statistics:`);
-  console.log(`      Total nodes: ${stats.total}`);
-  console.log(`      Versioned: ${stats.versioned}`);
-  console.log(`      With dependencies: ${stats.withDeps}`);
-  console.log(`      With migrations: ${stats.withMigrations}`);
+  console.info(`   📊 Statistics:`);
+  console.info(`      Total nodes: ${stats.total}`);
+  console.info(`      Versioned: ${stats.versioned}`);
+  console.info(`      With dependencies: ${stats.withDeps}`);
+  console.info(`      With migrations: ${stats.withMigrations}`);
 }
 
 // Main execution
@@ -332,12 +332,12 @@ async function main() {
     await demonstrateAdvancedFeatures();
     await exportTaxonomyData();
     
-    console.log('\n🎉 All versioned taxonomy features demonstrated successfully!');
-    console.log('\n📚 Next Steps:');
-    console.log('   1. Run: bun run cli/version-control-cli.ts check-all');
-    console.log('   2. Try: bun run cli/version-control-cli.ts suggest api-gateway-v2');
-    console.log('   3. Test: bun run cli/version-control-cli.ts migrate 2.1.0 3.0.0');
-    console.log('   4. Export: bun run cli/version-control-cli.ts export json');
+    console.info('\n🎉 All versioned taxonomy features demonstrated successfully!');
+    console.info('\n📚 Next Steps:');
+    console.info('   1. Run: bun run cli/version-control-cli.ts check-all');
+    console.info('   2. Try: bun run cli/version-control-cli.ts suggest api-gateway-v2');
+    console.info('   3. Test: bun run cli/version-control-cli.ts migrate 2.1.0 3.0.0');
+    console.info('   4. Export: bun run cli/version-control-cli.ts export json');
     
   } catch (error) {
     console.error('❌ Error in versioned taxonomy demo:', error);

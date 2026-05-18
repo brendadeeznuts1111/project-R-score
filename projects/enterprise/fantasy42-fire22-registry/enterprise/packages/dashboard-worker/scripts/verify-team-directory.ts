@@ -90,8 +90,8 @@ class TeamDirectoryVerifier {
   }
 
   public verifyDirectory(): void {
-    console.log('🔍 Fire22 Team Directory Verification');
-    console.log('═'.repeat(50));
+    console.info('🔍 Fire22 Team Directory Verification');
+    console.info('═'.repeat(50));
 
     let totalMembers = 0;
     let validMembers = 0;
@@ -99,12 +99,12 @@ class TeamDirectoryVerifier {
 
     // Verify each department
     Object.entries(this.directory.departments).forEach(([deptKey, department]) => {
-      console.log(`\n📂 ${department.name} (${deptKey})`);
-      console.log(`   Domain: ${department.domain}`);
-      console.log(`   Members: ${department.members.length}`);
+      console.info(`\n📂 ${department.name} (${deptKey})`);
+      console.info(`   Domain: ${department.domain}`);
+      console.info(`   Members: ${department.members.length}`);
 
       if (department.members.length === 0) {
-        console.log('   ⚠️  No members in this department');
+        console.info('   ⚠️  No members in this department');
         return;
       }
 
@@ -159,15 +159,15 @@ class TeamDirectoryVerifier {
 
         // Display member status
         const statusIcon = memberValid ? '✅' : '❌';
-        console.log(`   ${statusIcon} ${member.name} (${member.role})`);
-        console.log(`      📧 ${member.email}`);
+        console.info(`   ${statusIcon} ${member.name} (${member.role})`);
+        console.info(`      📧 ${member.email}`);
 
         if (member.phone) {
-          console.log(`      📞 ${member.phone}`);
+          console.info(`      📞 ${member.phone}`);
         }
 
         if (!memberValid) {
-          console.log(`      ⚠️  Issues: ${memberIssues.join(', ')}`);
+          console.info(`      ⚠️  Issues: ${memberIssues.join(', ')}`);
           issues.push(`${department.name} - ${member.name}: ${memberIssues.join(', ')}`);
         } else {
           validMembers++;
@@ -176,30 +176,30 @@ class TeamDirectoryVerifier {
     });
 
     // Summary
-    console.log('\n📊 Verification Summary');
-    console.log('═'.repeat(50));
-    console.log(`Total Departments: ${Object.keys(this.directory.departments).length}`);
-    console.log(`Total Team Members: ${totalMembers}`);
-    console.log(`Valid Members: ${validMembers}`);
-    console.log(`Invalid Members: ${totalMembers - validMembers}`);
+    console.info('\n📊 Verification Summary');
+    console.info('═'.repeat(50));
+    console.info(`Total Departments: ${Object.keys(this.directory.departments).length}`);
+    console.info(`Total Team Members: ${totalMembers}`);
+    console.info(`Valid Members: ${validMembers}`);
+    console.info(`Invalid Members: ${totalMembers - validMembers}`);
 
     const validPercentage =
       totalMembers > 0 ? ((validMembers / totalMembers) * 100).toFixed(1) : '0';
-    console.log(`Validation Rate: ${validPercentage}%`);
+    console.info(`Validation Rate: ${validPercentage}%`);
 
     if (issues.length > 0) {
-      console.log('\n❌ Issues Found:');
-      console.log('─'.repeat(30));
+      console.info('\n❌ Issues Found:');
+      console.info('─'.repeat(30));
       issues.forEach((issue, index) => {
-        console.log(`${index + 1}. ${issue}`);
+        console.info(`${index + 1}. ${issue}`);
       });
     } else {
-      console.log('\n✅ All team members have complete information!');
+      console.info('\n✅ All team members have complete information!');
     }
 
     // Department breakdown
-    console.log('\n🏢 Department Breakdown:');
-    console.log('─'.repeat(30));
+    console.info('\n🏢 Department Breakdown:');
+    console.info('─'.repeat(30));
     Object.entries(this.directory.departments).forEach(([key, dept]) => {
       const validDeptMembers = dept.members.filter(
         member => member.name && member.email && member.role && member.slack && member.status
@@ -208,12 +208,12 @@ class TeamDirectoryVerifier {
       const deptRate =
         totalDeptMembers > 0 ? ((validDeptMembers / totalDeptMembers) * 100).toFixed(0) : '0';
 
-      console.log(`${dept.name}: ${validDeptMembers}/${totalDeptMembers} (${deptRate}%)`);
+      console.info(`${dept.name}: ${validDeptMembers}/${totalDeptMembers} (${deptRate}%)`);
     });
 
     // Email domains verification
-    console.log('\n📧 Email Domain Verification:');
-    console.log('─'.repeat(30));
+    console.info('\n📧 Email Domain Verification:');
+    console.info('─'.repeat(30));
     Object.entries(this.directory.departments).forEach(([key, dept]) => {
       const expectedDomain = dept.domain.replace('@', '');
       const correctEmails = dept.members.filter(
@@ -222,7 +222,7 @@ class TeamDirectoryVerifier {
 
       if (dept.members.length > 0) {
         const domainRate = ((correctEmails / dept.members.length) * 100).toFixed(0);
-        console.log(
+        console.info(
           `${dept.name}: ${correctEmails}/${dept.members.length} use ${expectedDomain} (${domainRate}%)`
         );
       }
@@ -230,27 +230,27 @@ class TeamDirectoryVerifier {
 
     // Exit code based on validation
     if (issues.length > 0) {
-      console.log('\n⚠️  Directory verification completed with issues.');
+      console.info('\n⚠️  Directory verification completed with issues.');
       process.exit(1);
     } else {
-      console.log('\n✅ Directory verification passed!');
+      console.info('\n✅ Directory verification passed!');
       process.exit(0);
     }
   }
 
   public generateTeamList(): void {
-    console.log('\n👥 Complete Team Directory:');
-    console.log('═'.repeat(50));
+    console.info('\n👥 Complete Team Directory:');
+    console.info('═'.repeat(50));
 
     Object.entries(this.directory.departments).forEach(([key, dept]) => {
       if (dept.members.length > 0) {
-        console.log(`\n📂 ${dept.name}`);
+        console.info(`\n📂 ${dept.name}`);
         dept.members.forEach(member => {
-          console.log(`   • ${member.name} - ${member.role}`);
-          console.log(`     📧 ${member.email}`);
-          console.log(`     💬 ${member.slack}`);
-          if (member.phone) console.log(`     📞 ${member.phone}`);
-          console.log(`     📊 Status: ${member.status}`);
+          console.info(`   • ${member.name} - ${member.role}`);
+          console.info(`     📧 ${member.email}`);
+          console.info(`     💬 ${member.slack}`);
+          if (member.phone) console.info(`     📞 ${member.phone}`);
+          console.info(`     📊 Status: ${member.status}`);
         });
       }
     });
@@ -276,7 +276,7 @@ if (import.meta.main) {
       verifier.generateTeamList();
       break;
     default:
-      console.log('Usage: bun run scripts/verify-team-directory.ts [verify|list|both]');
+      console.info('Usage: bun run scripts/verify-team-directory.ts [verify|list|both]');
       process.exit(1);
   }
 }

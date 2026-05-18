@@ -3,7 +3,7 @@
 // ipc-parent.ts - Advanced IPC Parent Process
 // Enterprise-grade inter-process communication for revolutionary AI system
 
-console.log("🚀 Revolutionary AI System - IPC Parent Process");
+console.info("🚀 Revolutionary AI System - IPC Parent Process");
 
 interface AIMessage {
   type: 'fraud_detection' | 'security_alert' | 'system_status' | 'training_update';
@@ -23,7 +23,7 @@ interface SystemMetrics {
 // Spawn child process with IPC
 const childProc = Bun.spawn(["bun", "ipc-child.ts"], {
   ipc(message: AIMessage, child) {
-    console.log(`📨 Received message from child: ${message.type}`);
+    console.info(`📨 Received message from child: ${message.type}`);
     
     switch (message.type) {
       case 'fraud_detection':
@@ -39,12 +39,12 @@ const childProc = Bun.spawn(["bun", "ipc-child.ts"], {
         handleTrainingUpdate(message, child);
         break;
       default:
-        console.log(`❌ Unknown message type: ${message.type}`);
+        console.info(`❌ Unknown message type: ${message.type}`);
     }
   },
   onExit(proc, exitCode, signalCode, error) {
-    console.log(`👋 Child process exited with code: ${exitCode}`);
-    if (error) console.log(`Error: ${error.message}`);
+    console.info(`👋 Child process exited with code: ${exitCode}`);
+    if (error) console.info(`Error: ${error.message}`);
   }
 });
 
@@ -52,13 +52,13 @@ const childProc = Bun.spawn(["bun", "ipc-child.ts"], {
 function handleFraudDetection(message: AIMessage, child: any) {
   const { transactionId, riskScore, amount } = message.data;
   
-  console.log(`🔍 Fraud Detection Result:`);
-  console.log(`   Transaction ID: ${transactionId}`);
-  console.log(`   Risk Score: ${riskScore.toFixed(3)}`);
-  console.log(`   Amount: $${amount.toFixed(2)}`);
+  console.info(`🔍 Fraud Detection Result:`);
+  console.info(`   Transaction ID: ${transactionId}`);
+  console.info(`   Risk Score: ${riskScore.toFixed(3)}`);
+  console.info(`   Amount: $${amount.toFixed(2)}`);
   
   if (riskScore > 0.7) {
-    console.log(`   🚨 HIGH RISK - Flagging for review`);
+    console.info(`   🚨 HIGH RISK - Flagging for review`);
     
     // Send security alert to child
     child.send({
@@ -68,17 +68,17 @@ function handleFraudDetection(message: AIMessage, child: any) {
       priority: 'high'
     });
   } else {
-    console.log(`   ✅ LOW RISK - Transaction approved`);
+    console.info(`   ✅ LOW RISK - Transaction approved`);
   }
 }
 
 function handleSecurityAlert(message: AIMessage, child: any) {
   const { threat, severity, source } = message.data;
   
-  console.log(`🚨 Security Alert:`);
-  console.log(`   Threat: ${threat}`);
-  console.log(`   Severity: ${severity}`);
-  console.log(`   Source: ${source}`);
+  console.info(`🚨 Security Alert:`);
+  console.info(`   Threat: ${threat}`);
+  console.info(`   Severity: ${severity}`);
+  console.info(`   Source: ${source}`);
   
   // Send response to child
   child.send({
@@ -92,12 +92,12 @@ function handleSecurityAlert(message: AIMessage, child: any) {
 function handleSystemStatus(message: AIMessage, child: any) {
   const metrics: SystemMetrics = message.data;
   
-  console.log(`📊 System Status Update:`);
-  console.log(`   CPU Usage: ${metrics.cpu}%`);
-  console.log(`   Memory Usage: ${metrics.memory}%`);
-  console.log(`   Network Latency: ${metrics.network}ms`);
-  console.log(`   AI Accuracy: ${metrics.accuracy}%`);
-  console.log(`   Active Threats: ${metrics.threats}`);
+  console.info(`📊 System Status Update:`);
+  console.info(`   CPU Usage: ${metrics.cpu}%`);
+  console.info(`   Memory Usage: ${metrics.memory}%`);
+  console.info(`   Network Latency: ${metrics.network}ms`);
+  console.info(`   AI Accuracy: ${metrics.accuracy}%`);
+  console.info(`   Active Threats: ${metrics.threats}`);
   
   // Send optimization commands if needed
   if (metrics.cpu > 80) {
@@ -120,10 +120,10 @@ function handleSystemStatus(message: AIMessage, child: any) {
 function handleTrainingUpdate(message: AIMessage, child: any) {
   const { epoch, loss, accuracy } = message.data;
   
-  console.log(`🧠 AI Training Update:`);
-  console.log(`   Epoch: ${epoch}`);
-  console.log(`   Loss: ${loss.toFixed(6)}`);
-  console.log(`   Accuracy: ${(accuracy * 100).toFixed(2)}%`);
+  console.info(`🧠 AI Training Update:`);
+  console.info(`   Epoch: ${epoch}`);
+  console.info(`   Loss: ${loss.toFixed(6)}`);
+  console.info(`   Accuracy: ${(accuracy * 100).toFixed(2)}%`);
   
   if (accuracy >= 0.9451) {
     child.send({
@@ -136,7 +136,7 @@ function handleTrainingUpdate(message: AIMessage, child: any) {
 
 // Send initial startup message
 setTimeout(() => {
-  console.log("📤 Sending startup message to child...");
+  console.info("📤 Sending startup message to child...");
   childProc.send({
     type: 'system_command',
     command: 'initialize',
@@ -151,7 +151,7 @@ setTimeout(() => {
 
 // Simulate transaction processing
 setTimeout(() => {
-  console.log("📤 Sending transaction for fraud detection...");
+  console.info("📤 Sending transaction for fraud detection...");
   childProc.send({
     type: 'fraud_check_request',
     transaction: {
@@ -167,7 +167,7 @@ setTimeout(() => {
 
 // Send system monitoring request
 setTimeout(() => {
-  console.log("📤 Requesting system status...");
+  console.info("📤 Requesting system status...");
   childProc.send({
     type: 'status_request',
     metrics: ['cpu', 'memory', 'network', 'accuracy', 'threats']
@@ -176,7 +176,7 @@ setTimeout(() => {
 
 // Simulate security event
 setTimeout(() => {
-  console.log("📤 Simulating security event...");
+  console.info("📤 Simulating security event...");
   childProc.send({
     type: 'security_simulation',
     event: {
@@ -191,7 +191,7 @@ setTimeout(() => {
 
 // Request AI training update
 setTimeout(() => {
-  console.log("📤 Requesting training update...");
+  console.info("📤 Requesting training update...");
   childProc.send({
     type: 'training_status_request',
     modelId: 'enhanced_ai_v2'
@@ -200,7 +200,7 @@ setTimeout(() => {
 
 // Send shutdown command
 setTimeout(() => {
-  console.log("📤 Sending shutdown command...");
+  console.info("📤 Sending shutdown command...");
   childProc.send({
     type: 'system_command',
     command: 'shutdown',
@@ -210,7 +210,7 @@ setTimeout(() => {
 
 // Handle parent process signals
 process.on('SIGINT', () => {
-  console.log('\n🛑 Parent received SIGINT - shutting down child...');
+  console.info('\n🛑 Parent received SIGINT - shutting down child...');
   childProc.send({
     type: 'system_command',
     command: 'emergency_shutdown'
@@ -220,5 +220,5 @@ process.on('SIGINT', () => {
   }, 1000);
 });
 
-console.log("🔗 IPC Parent Process Started - Waiting for child responses...");
-console.log("💡 Child process will handle AI operations and send results back");
+console.info("🔗 IPC Parent Process Started - Waiting for child responses...");
+console.info("💡 Child process will handle AI operations and send results back");

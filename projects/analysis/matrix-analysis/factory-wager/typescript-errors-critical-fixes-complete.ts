@@ -3,10 +3,10 @@
  * All TypeScript compilation errors resolved for YAML-Native Tabular v4.4
  */
 
-console.log('🔧 TYPESCRIPT ERRORS - CRITICAL FIXES COMPLETE!')
-console.log('=' .repeat(80))
+console.info('🔧 TYPESCRIPT ERRORS - CRITICAL FIXES COMPLETE!')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 ✅ ALL CRITICAL TYPESCRIPT ERRORS RESOLVED!
 
 📋 ERROR FIXES IMPLEMENTED:
@@ -130,8 +130,8 @@ The FactoryWager YAML-Native Tabular v4.4 now demonstrates:
 All critical TypeScript errors have been resolved while maintaining the revolutionary 12-column schema, multi-document YAML support, and beautiful HSL chromatic rendering capabilities.
 `)
 
-console.log('🔧✅ TYPESCRIPT ERRORS - CRITICAL FIXES COMPLETE!')
-console.log('🛡️ Null safety implemented - Type compliance achieved!')
-console.log('🎯 Interface contracts honored - Production quality!')
-console.log('🚀 Zero compilation errors - Enterprise readiness!')
-console.log('💎 FactoryWager v4.4 - TypeScript excellence complete!')
+console.info('🔧✅ TYPESCRIPT ERRORS - CRITICAL FIXES COMPLETE!')
+console.info('🛡️ Null safety implemented - Type compliance achieved!')
+console.info('🎯 Interface contracts honored - Production quality!')
+console.info('🚀 Zero compilation errors - Enterprise readiness!')
+console.info('💎 FactoryWager v4.4 - TypeScript excellence complete!')

@@ -74,19 +74,19 @@ const CLIENT_DIRECTORY = '.output/public'
 // Logging utilities for professional output
 const log = {
   info: (message: string) => {
-    console.log(`[INFO] ${message}`)
+    console.info(`[INFO] ${message}`)
   },
   success: (message: string) => {
-    console.log(`[SUCCESS] ${message}`)
+    console.info(`[SUCCESS] ${message}`)
   },
   warning: (message: string) => {
-    console.log(`[WARNING] ${message}`)
+    console.info(`[WARNING] ${message}`)
   },
   error: (message: string) => {
-    console.log(`[ERROR] ${message}`)
+    console.info(`[ERROR] ${message}`)
   },
   header: (message: string) => {
-    console.log(`\n${message}\n`)
+    console.info(`\n${message}\n`)
   },
 }
 
@@ -292,16 +292,16 @@ async function initializeStaticRoutes(
 
   log.info(`📦 Loading static assets from ${clientDirectory}...`)
   if (VERBOSE) {
-    console.log(
+    console.info(
       `   Max preload size: ${(MAX_PRELOAD_BYTES / 1024 / 1024).toFixed(2)} MB`,
     )
     if (INCLUDE_PATTERNS.length > 0) {
-      console.log(
+      console.info(
         `   Include patterns: ${process.env.ASSET_PRELOAD_INCLUDE_PATTERNS ?? ''}`,
       )
     }
     if (EXCLUDE_PATTERNS.length > 0) {
-      console.log(
+      console.info(
         `   Exclude patterns: ${process.env.ASSET_PRELOAD_EXCLUDE_PATTERNS ?? ''}`,
       )
     }
@@ -407,8 +407,8 @@ async function initializeStaticRoutes(
       }
 
       if (loaded.length > 0) {
-        console.log('\n📁 Preloaded into memory:')
-        console.log(
+        console.info('\n📁 Preloaded into memory:')
+        console.info(
           'Path                                          │    Size │ Gzip Size',
         )
         loaded
@@ -418,13 +418,13 @@ async function initializeStaticRoutes(
             const paddedPath = file.route.padEnd(maxPathLength)
             const sizeStr = `${size.padStart(7)} kB`
             const gzipStr = `${gzip.padStart(7)} kB`
-            console.log(`${paddedPath} │ ${sizeStr} │  ${gzipStr}`)
+            console.info(`${paddedPath} │ ${sizeStr} │  ${gzipStr}`)
           })
       }
 
       if (skipped.length > 0) {
-        console.log('\n💾 Served on-demand:')
-        console.log(
+        console.info('\n💾 Served on-demand:')
+        console.info(
           'Path                                          │    Size │ Gzip Size',
         )
         skipped
@@ -434,7 +434,7 @@ async function initializeStaticRoutes(
             const paddedPath = file.route.padEnd(maxPathLength)
             const sizeStr = `${size.padStart(7)} kB`
             const gzipStr = `${gzip.padStart(7)} kB`
-            console.log(`${paddedPath} │ ${sizeStr} │  ${gzipStr}`)
+            console.info(`${paddedPath} │ ${sizeStr} │  ${gzipStr}`)
           })
       }
     }
@@ -445,8 +445,8 @@ async function initializeStaticRoutes(
         const allFiles = [...loaded, ...skipped].sort((a, b) =>
           a.route.localeCompare(b.route),
         )
-        console.log('\n📊 Detailed file information:')
-        console.log(
+        console.info('\n📊 Detailed file information:')
+        console.info(
           'Status       │ Path                            │ MIME Type                    │ Reason',
         )
         allFiles.forEach((file) => {
@@ -462,17 +462,17 @@ async function initializeStaticRoutes(
             file.route.length > 30
               ? file.route.substring(0, 27) + '...'
               : file.route
-          console.log(
+          console.info(
             `${status.padEnd(12)} │ ${route.padEnd(30)} │ ${file.type.padEnd(28)} │ ${reason.padEnd(10)}`,
           )
         })
       } else {
-        console.log('\n📊 No files found to display')
+        console.info('\n📊 No files found to display')
       }
     }
 
     // Log summary after the file list
-    console.log() // Empty line for separation
+    console.info() // Empty line for separation
     if (loaded.length > 0) {
       log.success(
         `✅ Preloaded ${String(loaded.length)} files (${(totalPreloadedBytes / 1024).toFixed(2)} KB) into memory`,
@@ -545,7 +545,7 @@ async function initializeServer() {
     },
   })
 
-  console.log(`\n🚀 Server running at http://localhost:${server.port}`)
+  console.info(`\n🚀 Server running at http://localhost:${server.port}`)
 }
 
 // Initialize the server

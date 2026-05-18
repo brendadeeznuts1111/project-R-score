@@ -45,11 +45,11 @@ const server = Bun.serve({
 	}
 });
 
-console.log(`🚀 Arbitrage Server running on http://localhost:${server.port}`);
-console.log(`📊 Endpoints:`);
-console.log(`  GET /sports/:sport/:league/:market`);
-console.log(`  GET /cache/stats`);
-console.log(`  GET /health`);
+console.info(`🚀 Arbitrage Server running on http://localhost:${server.port}`);
+console.info(`📊 Endpoints:`);
+console.info(`  GET /sports/:sport/:league/:market`);
+console.info(`  GET /cache/stats`);
+console.info(`  GET /health`);
 
 
 

@@ -194,13 +194,13 @@ if (import.meta.main) {
   try {
     migrate();
     const status = getMigrationStatus();
-    console.log('\nMigration Status:');
-    console.log(`  Current Version: ${status.currentVersion}`);
-    console.log(`  Latest Version: ${status.latestVersion}`);
-    console.log(`  Pending Migrations: ${status.pendingMigrations}`);
-    console.log('\nApplied Migrations:');
+    console.info('\nMigration Status:');
+    console.info(`  Current Version: ${status.currentVersion}`);
+    console.info(`  Latest Version: ${status.latestVersion}`);
+    console.info(`  Pending Migrations: ${status.pendingMigrations}`);
+    console.info('\nApplied Migrations:');
     status.migrations.forEach(m => {
-      console.log(`  ${m.applied ? '✓' : '✗'} ${m.version}: ${m.name}`);
+      console.info(`  ${m.applied ? '✓' : '✗'} ${m.version}: ${m.name}`);
     });
   } catch (error) {
     console.error('Migration failed:', error);

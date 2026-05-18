@@ -19,8 +19,8 @@ const COLUMNS = [
  * Simple demonstration of default value enforcement
  */
 function demoDefaultEnforcement() {
-  console.log('📊 FactoryWager Tabular v4.2.1 - Default Value Enforcement Demo');
-  console.log('=' .repeat(70));
+  console.info('📊 FactoryWager Tabular v4.2.1 - Default Value Enforcement Demo');
+  console.info('=' .repeat(70));
 
   const sampleData = [
     {
@@ -69,34 +69,34 @@ function demoDefaultEnforcement() {
     }
   ];
 
-  console.log('\n🔍 Default Value Processing:');
-  console.log('-' .repeat(50));
+  console.info('\n🔍 Default Value Processing:');
+  console.info('-' .repeat(50));
 
   sampleData.forEach((entry, idx) => {
     const processed = processWithDefaults(entry, idx);
 
-    console.log(`\n${idx + 1}. ${processed.key}`);
-    console.log(`   value: "${processed.value}" ${processed.value === "" ? '(default empty)' : ''}`);
-    console.log(`   type: ${processed.type} ${processed.type === "unknown" ? '(default)' : ''}`);
-    console.log(`   version: ${processed.version} ${processed.version === "none" ? '(default)' : ''}`);
-    console.log(`   bunVer: ${processed.bun} ${processed.bun === "any" ? '(default)' : ''}`);
-    console.log(`   author: ${processed.author} ${processed.author === "anonymous" ? '(default)' : ''}`);
-    console.log(`   status: ${processed.status} ${processed.status === "active" ? '(default)' : ''}`);
-    console.log(`   modified: ${processed.date_iso} ${processed.date_iso === "never" ? '(default)' : ''}`);
+    console.info(`\n${idx + 1}. ${processed.key}`);
+    console.info(`   value: "${processed.value}" ${processed.value === "" ? '(default empty)' : ''}`);
+    console.info(`   type: ${processed.type} ${processed.type === "unknown" ? '(default)' : ''}`);
+    console.info(`   version: ${processed.version} ${processed.version === "none" ? '(default)' : ''}`);
+    console.info(`   bunVer: ${processed.bun} ${processed.bun === "any" ? '(default)' : ''}`);
+    console.info(`   author: ${processed.author} ${processed.author === "anonymous" ? '(default)' : ''}`);
+    console.info(`   status: ${processed.status} ${processed.status === "active" ? '(default)' : ''}`);
+    console.info(`   modified: ${processed.date_iso} ${processed.date_iso === "never" ? '(default)' : ''}`);
   });
 
-  console.log('\n📋 Default Value Contract:');
-  console.log('-' .repeat(30));
-  console.log('• value: "" (empty string)');
-  console.log('• type: "unknown"');
-  console.log('• version: "none"');
-  console.log('• bunVer: "any"');
-  console.log('• author: "anonymous"');
-  console.log('• status: "active"');
-  console.log('• modified: "never"');
+  console.info('\n📋 Default Value Contract:');
+  console.info('-' .repeat(30));
+  console.info('• value: "" (empty string)');
+  console.info('• type: "unknown"');
+  console.info('• version: "none"');
+  console.info('• bunVer: "any"');
+  console.info('• author: "anonymous"');
+  console.info('• status: "active"');
+  console.info('• modified: "never"');
 
-  console.log('\n✅ Every cell guaranteed to have a value!');
-  console.log('🚀 No nulls, no undefined, no "—" dashes!');
+  console.info('\n✅ Every cell guaranteed to have a value!');
+  console.info('🚀 No nulls, no undefined, no "—" dashes!');
 }
 
 /**

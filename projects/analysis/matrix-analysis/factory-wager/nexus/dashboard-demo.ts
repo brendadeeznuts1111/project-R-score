@@ -162,36 +162,36 @@ const demoScenarios = {
  * Render dashboard demo with multiple scenarios
  */
 async function runDashboardDemo() {
-  console.log('🎨 FACTORYWAGER DASHBOARD DEMO v5.0');
-  console.log('HSL Chromatic Infrastructure Visualization\n');
+  console.info('🎨 FACTORYWAGER DASHBOARD DEMO v5.0');
+  console.info('HSL Chromatic Infrastructure Visualization\n');
   
   // Scenario 1: Operational
-  console.log('🟢 SCENARIO 1: FULLY OPERATIONAL');
-  console.log('='.repeat(50));
+  console.info('🟢 SCENARIO 1: FULLY OPERATIONAL');
+  console.info('='.repeat(50));
   renderInfrastructureDashboard(demoScenarios.operational);
   
   await new Promise(resolve => setTimeout(resolve, 2000));
   
   // Scenario 2: Degraded
-  console.log('\n\n🔴 SCENARIO 2: DEGRADED STATE');
-  console.log('='.repeat(50));
+  console.info('\n\n🔴 SCENARIO 2: DEGRADED STATE');
+  console.info('='.repeat(50));
   renderInfrastructureDashboard(demoScenarios.degraded);
   
   await new Promise(resolve => setTimeout(resolve, 2000));
   
   // Scenario 3: Maintenance
-  console.log('\n\n🟡 SCENARIO 3: MAINTENANCE MODE');
-  console.log('='.repeat(50));
+  console.info('\n\n🟡 SCENARIO 3: MAINTENANCE MODE');
+  console.info('='.repeat(50));
   renderInfrastructureDashboard(demoScenarios.maintenance);
   
-  console.log('\n\n🎯 DASHBOARD DEMO COMPLETE');
-  console.log('Features demonstrated:');
-  console.log('  • HSL chromatic theming');
-  console.log('  • Real-time status indicators');
-  console.log('  • CRC32 integrity validation');
-  console.log('  • Tabular v4.3 package listing');
-  console.log('  • Multi-scenario state rendering');
-  console.log('  • ARM64 hardware acceleration status');
+  console.info('\n\n🎯 DASHBOARD DEMO COMPLETE');
+  console.info('Features demonstrated:');
+  console.info('  • HSL chromatic theming');
+  console.info('  • Real-time status indicators');
+  console.info('  • CRC32 integrity validation');
+  console.info('  • Tabular v4.3 package listing');
+  console.info('  • Multi-scenario state rendering');
+  console.info('  • ARM64 hardware acceleration status');
 }
 
 // CLI execution

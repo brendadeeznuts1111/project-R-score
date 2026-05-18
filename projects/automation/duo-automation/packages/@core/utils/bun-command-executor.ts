@@ -94,7 +94,7 @@ export class BunCommandExecutor {
       };
       
       if (!options.quiet) {
-        console.log(`⚡ Executed: ${command} (${executionTime.toFixed(3)}ms)`);
+        console.info(`⚡ Executed: ${command} (${executionTime.toFixed(3)}ms)`);
         if (commandResult.stderr && !commandResult.success) {
           console.warn(`⚠️ stderr: ${commandResult.stderr}`);
         }
@@ -211,7 +211,7 @@ export class BunCommandExecutor {
   ): Promise<CommandResult[]> {
     const { concurrency = 5, ...cmdOptions } = options;
     const startTime = performance.now();
-    console.log(`🚀 Executing ${commands.length} commands in parallel (concurrency: ${concurrency})...`);
+    console.info(`🚀 Executing ${commands.length} commands in parallel (concurrency: ${concurrency})...`);
     
     const results: CommandResult[] = new Array(commands.length);
     const queue = commands.map((cmd, index) => ({ cmd, index }));
@@ -247,8 +247,8 @@ export class BunCommandExecutor {
     const totalTime = performance.now() - startTime;
     const successCount = results.filter(r => r.success).length;
     
-    console.log(`✅ Parallel execution completed in ${totalTime.toFixed(0)}ms`);
-    console.log(`📊 Results: ${successCount}/${commands.length} successful`);
+    console.info(`✅ Parallel execution completed in ${totalTime.toFixed(0)}ms`);
+    console.info(`📊 Results: ${successCount}/${commands.length} successful`);
     
     return results;
   }
@@ -261,12 +261,12 @@ export class BunCommandExecutor {
     let lastResult: CommandResult | null = null;
     
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      console.log(`🔄 Attempt ${attempt}/${maxRetries}: ${command}`);
+      console.info(`🔄 Attempt ${attempt}/${maxRetries}: ${command}`);
       
       const result = await this.executeAsync(command, cmdOptions);
       
       if (result.success) {
-        console.log(`✅ Command succeeded on attempt ${attempt}`);
+        console.info(`✅ Command succeeded on attempt ${attempt}`);
         return result;
       }
       
@@ -274,12 +274,12 @@ export class BunCommandExecutor {
       
       if (attempt < maxRetries) {
         const delay = attempt * 1000; // Exponential backoff
-        console.log(`⏳ Waiting ${delay}ms before retry...`);
+        console.info(`⏳ Waiting ${delay}ms before retry...`);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
     
-    console.log(`❌ Command failed after ${maxRetries} attempts`);
+    console.info(`❌ Command failed after ${maxRetries} attempts`);
     return lastResult!;
   }
 
@@ -326,7 +326,7 @@ export class BunCommandExecutor {
    * Execute shell script from file
    */
   static async executeScriptFromFile(scriptPath: string, options: CommandOptions = {}): Promise<CommandResult> {
-    console.log(`📜 Executing script: ${scriptPath}`);
+    console.info(`📜 Executing script: ${scriptPath}`);
     
     try {
       const scriptContent = await Bun.file(scriptPath).text();
@@ -357,7 +357,7 @@ export class BunCommandExecutor {
     totalTime: number;
     throughput: number; // commands per second
   }> {
-    console.log(`🏃 Benchmarking: ${command} (${iterations} iterations)`);
+    console.info(`🏃 Benchmarking: ${command} (${iterations} iterations)`);
     
     const times: number[] = [];
     const startTime = performance.now();
@@ -377,12 +377,12 @@ export class BunCommandExecutor {
     const maxTime = Math.max(...times);
     const throughput = iterations / (totalTime / 1000);
     
-    console.log(`📊 Benchmark Results:`);
-    console.log(`   Average: ${averageTime.toFixed(3)}ms`);
-    console.log(`   Min: ${minTime.toFixed(3)}ms`);
-    console.log(`   Max: ${maxTime.toFixed(3)}ms`);
-    console.log(`   Total: ${totalTime.toFixed(0)}ms`);
-    console.log(`   Throughput: ${throughput.toFixed(0)} commands/sec`);
+    console.info(`📊 Benchmark Results:`);
+    console.info(`   Average: ${averageTime.toFixed(3)}ms`);
+    console.info(`   Min: ${minTime.toFixed(3)}ms`);
+    console.info(`   Max: ${maxTime.toFixed(3)}ms`);
+    console.info(`   Total: ${totalTime.toFixed(0)}ms`);
+    console.info(`   Throughput: ${throughput.toFixed(0)} commands/sec`);
     
     return {
       averageTime,
@@ -405,20 +405,20 @@ if (import.meta.main) {
       const cmdToExecute = args.join(' ');
       if (cmdToExecute) {
         const result = BunCommandExecutor.executeSync(cmdToExecute);
-        console.log('\n📊 Execution Result:');
-        console.log(`✅ Success: ${result.success}`);
-        console.log(`⏱️ Time: ${result.executionTime.toFixed(3)}ms`);
-        console.log(`🔢 Exit Code: ${result.exitCode}`);
+        console.info('\n📊 Execution Result:');
+        console.info(`✅ Success: ${result.success}`);
+        console.info(`⏱️ Time: ${result.executionTime.toFixed(3)}ms`);
+        console.info(`🔢 Exit Code: ${result.exitCode}`);
         
         if (result.stdout) {
-          console.log(`📤 stdout:\n${result.stdout}`);
+          console.info(`📤 stdout:\n${result.stdout}`);
         }
         
         if (result.stderr) {
-          console.log(`📥 stderr:\n${result.stderr}`);
+          console.info(`📥 stderr:\n${result.stderr}`);
         }
       } else {
-        console.log('Usage: bun bun-command-executor.ts exec <command>');
+        console.info('Usage: bun bun-command-executor.ts exec <command>');
       }
       break;
       
@@ -427,7 +427,7 @@ if (import.meta.main) {
       if (benchmarkCmd) {
         await BunCommandExecutor.benchmark(benchmarkCmd);
       } else {
-        console.log('Usage: bun bun-command-executor.ts benchmark <command>');
+        console.info('Usage: bun bun-command-executor.ts benchmark <command>');
       }
       break;
       
@@ -435,25 +435,25 @@ if (import.meta.main) {
       const commands = args.filter(arg => arg !== '--').join(' ').split('--').map(cmd => cmd.trim()).filter(Boolean);
       if (commands.length > 0) {
         const results = await BunCommandExecutor.executeParallel(commands);
-        console.log('\n📊 Parallel Execution Results:');
+        console.info('\n📊 Parallel Execution Results:');
         results.forEach((result, index) => {
-          console.log(`${index + 1}. ${result.command}: ${result.success ? '✅' : '❌'} (${result.executionTime.toFixed(3)}ms)`);
+          console.info(`${index + 1}. ${result.command}: ${result.success ? '✅' : '❌'} (${result.executionTime.toFixed(3)}ms)`);
         });
       } else {
-        console.log('Usage: bun bun-command-executor.ts parallel <cmd1> -- <cmd2> -- <cmd3>');
+        console.info('Usage: bun bun-command-executor.ts parallel <cmd1> -- <cmd2> -- <cmd3>');
       }
       break;
       
     default:
-      console.log('Available commands:');
-      console.log('  exec <command>     - Execute command synchronously');
-      console.log('  benchmark <cmd>    - Benchmark command performance');
-      console.log('  parallel <cmds>    - Execute multiple commands in parallel');
-      console.log('');
-      console.log('Example:');
-      console.log('  bun bun-command-executor.ts exec "ls -la"');
-      console.log('  bun bun-command-executor.ts benchmark "echo test"');
-      console.log('  bun bun-command-executor.ts parallel "echo hello" -- "echo world"');
+      console.info('Available commands:');
+      console.info('  exec <command>     - Execute command synchronously');
+      console.info('  benchmark <cmd>    - Benchmark command performance');
+      console.info('  parallel <cmds>    - Execute multiple commands in parallel');
+      console.info('');
+      console.info('Example:');
+      console.info('  bun bun-command-executor.ts exec "ls -la"');
+      console.info('  bun bun-command-executor.ts benchmark "echo test"');
+      console.info('  bun bun-command-executor.ts parallel "echo hello" -- "echo world"');
   }
 }
 

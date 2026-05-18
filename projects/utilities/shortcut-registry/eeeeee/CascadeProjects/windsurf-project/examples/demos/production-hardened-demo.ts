@@ -35,14 +35,14 @@ class ProductionHardenedDemo {
   }
 
   async runCompleteDemo(): Promise<void> {
-    console.log('🚀 Production-Hardened Enterprise Dashboard Demo');
-    console.log('================================================');
-    console.log('');
-    console.log('This demo showcases three production-hardened capabilities:');
-    console.log('1. Million-Pattern Analysis with Zero Memory Bloat');
-    console.log('2. Runtime Security Guard Generation');
-    console.log('3. Fuzzing + Snapshot Regression Testing');
-    console.log('');
+    console.info('🚀 Production-Hardened Enterprise Dashboard Demo');
+    console.info('================================================');
+    console.info('');
+    console.info('This demo showcases three production-hardened capabilities:');
+    console.info('1. Million-Pattern Analysis with Zero Memory Bloat');
+    console.info('2. Runtime Security Guard Generation');
+    console.info('3. Fuzzing + Snapshot Regression Testing');
+    console.info('');
 
     if (this.config.generateTestData) {
       await this.generateTestData();
@@ -64,26 +64,26 @@ class ProductionHardenedDemo {
       await this.runRegressionTests();
     }
 
-    console.log('🎉 Production-Hardened Demo Complete!');
-    console.log('====================================');
-    console.log('');
-    console.log('📁 Generated Files:');
-    console.log('- patterns.ndjson (test data)');
-    console.log('- results.sqlite (analysis cache)');
-    console.log('- runtime-guards.ts (security controls)');
-    console.log('- fuzz-corpus.json (attack vectors)');
-    console.log('- urlpattern-regression.test.ts (regression tests)');
-    console.log('');
-    console.log('🛠️ Next Steps:');
-    console.log('1. Integrate runtime-guards.ts into your application');
-    console.log('2. Run regression tests in CI/CD pipeline');
-    console.log('3. Monitor security guard performance in production');
-    console.log('4. Update guards when patterns change');
+    console.info('🎉 Production-Hardened Demo Complete!');
+    console.info('====================================');
+    console.info('');
+    console.info('📁 Generated Files:');
+    console.info('- patterns.ndjson (test data)');
+    console.info('- results.sqlite (analysis cache)');
+    console.info('- runtime-guards.ts (security controls)');
+    console.info('- fuzz-corpus.json (attack vectors)');
+    console.info('- urlpattern-regression.test.ts (regression tests)');
+    console.info('');
+    console.info('🛠️ Next Steps:');
+    console.info('1. Integrate runtime-guards.ts into your application');
+    console.info('2. Run regression tests in CI/CD pipeline');
+    console.info('3. Monitor security guard performance in production');
+    console.info('4. Update guards when patterns change');
   }
 
   private async generateTestData(): Promise<void> {
-    console.log('📝 Generating Test Pattern Data');
-    console.log('===============================');
+    console.info('📝 Generating Test Pattern Data');
+    console.info('===============================');
 
     const patterns = [
       // High-risk patterns
@@ -126,14 +126,14 @@ class ProductionHardenedDemo {
     const ndjsonContent = testPatterns.map(p => JSON.stringify(p)).join('\n');
     await Bun.write('./patterns.ndjson', ndjsonContent);
     
-    console.log(`✅ Generated ${testPatterns.length} test patterns`);
-    console.log('📁 Output: ./patterns.ndjson');
-    console.log('');
+    console.info(`✅ Generated ${testPatterns.length} test patterns`);
+    console.info('📁 Output: ./patterns.ndjson');
+    console.info('');
   }
 
   private async runStreamingAnalysis(): Promise<void> {
-    console.log('🔄 Running Streaming Pattern Analysis');
-    console.log('=====================================');
+    console.info('🔄 Running Streaming Pattern Analysis');
+    console.info('=====================================');
 
     const StreamingURLPatternAnalyzer = await loadStreamingAnalyzer();
     const analyzer = new StreamingURLPatternAnalyzer({
@@ -153,99 +153,99 @@ class ProductionHardenedDemo {
       });
       const duration = (Bun.nanoseconds() - startTime) / 1e9;
 
-      console.log(`✅ Analysis completed in ${duration.toFixed(2)}s`);
-      console.log(`📊 Processed: ${results.totalProcessed} patterns`);
-      console.log(`🎯 Cache hits: ${results.cacheHits}`);
-      console.log(`🚨 Security issues: ${results.securityIssues}`);
-      console.log(`⚡ ReDoS risks: ${results.redosRisks}`);
-      console.log('');
+      console.info(`✅ Analysis completed in ${duration.toFixed(2)}s`);
+      console.info(`📊 Processed: ${results.totalProcessed} patterns`);
+      console.info(`🎯 Cache hits: ${results.cacheHits}`);
+      console.info(`🚨 Security issues: ${results.securityIssues}`);
+      console.info(`⚡ ReDoS risks: ${results.redosRisks}`);
+      console.info('');
 
       analyzer.generateReport();
-      console.log('');
+      console.info('');
     } finally {
       analyzer.cleanup();
     }
   }
 
   private async generateRuntimeGuards(): Promise<void> {
-    console.log('🛡️ Generating Runtime Security Guards');
-    console.log('===================================');
+    console.info('🛡️ Generating Runtime Security Guards');
+    console.info('===================================');
 
     const RuntimeSecurityGuardGenerator = await loadGuardGenerator();
     const generator = new RuntimeSecurityGuardGenerator('./results.sqlite');
     
     try {
       await generator.generateGuards();
-      console.log('✅ Runtime guards generated successfully');
-      console.log('📁 Output: ./runtime-guards.ts');
-      console.log('');
+      console.info('✅ Runtime guards generated successfully');
+      console.info('📁 Output: ./runtime-guards.ts');
+      console.info('');
       
       // Show a sample of generated guards
       const guardContent = await Bun.file('./runtime-guards.ts').text();
       const sampleLines = guardContent.split('\n').slice(0, 20).join('\n');
-      console.log('📄 Sample guard code:');
-      console.log(sampleLines);
-      console.log('...');
-      console.log('');
+      console.info('📄 Sample guard code:');
+      console.info(sampleLines);
+      console.info('...');
+      console.info('');
     } catch (error) {
       console.error('❌ Error generating guards:', error);
     }
   }
 
   private async generateFuzzCorpus(): Promise<void> {
-    console.log('🧪 Generating Fuzz Corpus & Regression Tests');
-    console.log('=============================================');
+    console.info('🧪 Generating Fuzz Corpus & Regression Tests');
+    console.info('=============================================');
 
     const FuzzCorpusGenerator = await loadFuzzGenerator();
     const generator = new FuzzCorpusGenerator('./results.sqlite');
     
     try {
       await generator.generateCorpus();
-      console.log('✅ Fuzz corpus generated successfully');
-      console.log('📁 Output: ./fuzz-corpus.json');
-      console.log('🧪 Output: ./urlpattern-regression.test.ts');
-      console.log('');
+      console.info('✅ Fuzz corpus generated successfully');
+      console.info('📁 Output: ./fuzz-corpus.json');
+      console.info('🧪 Output: ./urlpattern-regression.test.ts');
+      console.info('');
       
       // Show sample test cases
       const corpusContent = await Bun.file('./fuzz-corpus.json').text();
       const corpus = JSON.parse(corpusContent);
-      console.log(`📊 Generated ${corpus.totalTests} test cases`);
-      console.log('');
+      console.info(`📊 Generated ${corpus.totalTests} test cases`);
+      console.info('');
       
-      console.log('🧪 Sample attack vectors:');
+      console.info('🧪 Sample attack vectors:');
       corpus.testCases.slice(0, 3).forEach((testCase: any, index: number) => {
-        console.log(`${index + 1}. ${testCase.attack.type}: ${testCase.attack.description}`);
-        console.log(`   Risk Level: ${testCase.riskLevel}`);
-        console.log(`   Expected Error: ${testCase.expectedError || 'none'}`);
+        console.info(`${index + 1}. ${testCase.attack.type}: ${testCase.attack.description}`);
+        console.info(`   Risk Level: ${testCase.riskLevel}`);
+        console.info(`   Expected Error: ${testCase.expectedError || 'none'}`);
       });
-      console.log('');
+      console.info('');
     } catch (error) {
       console.error('❌ Error generating fuzz corpus:', error);
     }
   }
 
   private async runRegressionTests(): Promise<void> {
-    console.log('🧪 Running Regression Tests');
-    console.log('===========================');
+    console.info('🧪 Running Regression Tests');
+    console.info('===========================');
 
     try {
       // Check if test file exists
       const testFile = Bun.file('./urlpattern-regression.test.ts');
       if (!testFile.exists()) {
-        console.log('⚠️  Regression test file not found. Run fuzz corpus generation first.');
+        console.info('⚠️  Regression test file not found. Run fuzz corpus generation first.');
         return;
       }
 
-      console.log('🏃 Running tests...');
+      console.info('🏃 Running tests...');
       const result = await Bun.$`bun test urlpattern-regression.test.ts`.quiet();
       
       if (result.exitCode === 0) {
-        console.log('✅ All regression tests passed!');
+        console.info('✅ All regression tests passed!');
       } else {
-        console.log('❌ Some regression tests failed');
-        console.log('Run: bun test urlpattern-regression.test.ts for details');
+        console.info('❌ Some regression tests failed');
+        console.info('Run: bun test urlpattern-regression.test.ts for details');
       }
-      console.log('');
+      console.info('');
     } catch (error) {
       console.error('❌ Error running regression tests:', error);
     }

@@ -515,10 +515,10 @@ app.listen(port, () => {
       logging: config.logging,
     },
   });
-  console.log(`🚀 Enhanced Bun MCP Server running on http://localhost:${port}`);
-  console.log(`📡 MCP endpoint: http://localhost:${port}/mcp`);
-  console.log(`💚 Health check: http://localhost:${port}/health`);
-  console.log(`📊 Server info: http://localhost:${port}/`);
+  console.info(`🚀 Enhanced Bun MCP Server running on http://localhost:${port}`);
+  console.info(`📡 MCP endpoint: http://localhost:${port}/mcp`);
+  console.info(`💚 Health check: http://localhost:${port}/health`);
+  console.info(`📊 Server info: http://localhost:${port}/`);
 });
 
 // Graceful shutdown

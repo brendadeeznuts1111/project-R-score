@@ -17,13 +17,13 @@ const COLORS = {
 };
 
 function section(title: string) {
-	console.log();
-	console.log(`${COLORS.bold}${COLORS.orange}▶ ${title}${COLORS.reset}`);
-	console.log(`${COLORS.dim}${"─".repeat(60)}${COLORS.reset}`);
+	console.info();
+	console.info(`${COLORS.bold}${COLORS.orange}▶ ${title}${COLORS.reset}`);
+	console.info(`${COLORS.dim}${"─".repeat(60)}${COLORS.reset}`);
 }
 
 function cmd(command: string) {
-	console.log(`${COLORS.cyan}$ ${command}${COLORS.reset}`);
+	console.info(`${COLORS.cyan}$ ${command}${COLORS.reset}`);
 }
 
 async function run(command: string, args: string[] = []) {
@@ -37,16 +37,16 @@ async function run(command: string, args: string[] = []) {
 	);
 	const output = await new Response(proc.stdout).text();
 	const lines = output.split("\n").slice(0, 15);
-	console.log(lines.join("\n"));
+	console.info(lines.join("\n"));
 	if (output.split("\n").length > 15) {
-		console.log(
+		console.info(
 			`${COLORS.dim}... (${output.split("\n").length - 15} more lines)${COLORS.reset}`,
 		);
 	}
 	await proc.exited;
 }
 
-console.log(`${COLORS.bold}${COLORS.orange}
+console.info(`${COLORS.bold}${COLORS.orange}
 ╔══════════════════════════════════════════════════════════════╗
 ║  🔥 Tier-1380 OMEGA: Column Standards CLI Demo 🔥           ║
 ║                                                              ║
@@ -79,17 +79,17 @@ await run("fav");
 section("8. Validate");
 await run("validate");
 
-console.log();
-console.log(`${COLORS.bold}${COLORS.green}✅ Demo Complete!${COLORS.reset}`);
-console.log();
-console.log("Try these commands:");
-console.log(
+console.info();
+console.info(`${COLORS.bold}${COLORS.green}✅ Demo Complete!${COLORS.reset}`);
+console.info();
+console.info("Try these commands:");
+console.info(
 	`  ${COLORS.cyan}bun matrix:cols interactive${COLORS.reset}  - Interactive REPL mode`,
 );
-console.log(
+console.info(
 	`  ${COLORS.cyan}bun matrix:cols preview 45${COLORS.reset}    - Clickable hyperlinks`,
 );
-console.log(
+console.info(
 	`  ${COLORS.cyan}bun matrix:cols export${COLORS.reset}        - Generate markdown docs`,
 );
-console.log();
+console.info();

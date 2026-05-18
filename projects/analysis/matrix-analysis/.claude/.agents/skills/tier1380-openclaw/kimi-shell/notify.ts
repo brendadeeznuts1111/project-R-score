@@ -140,8 +140,8 @@ class NotificationManager {
 		const color = colors[options.level || "info"];
 		const icon = icons[options.level || "info"];
 
-		console.log(`\n${color}${icon} ${COLORS.bold}${options.title}${COLORS.reset}`);
-		console.log(`   ${options.message}\n`);
+		console.info(`\n${color}${icon} ${COLORS.bold}${options.title}${COLORS.reset}`);
+		console.info(`   ${options.message}\n`);
 	}
 
 	/**
@@ -295,7 +295,7 @@ async function main() {
 				level: "info",
 			});
 
-			console.log(`${COLORS.green}✓${COLORS.reset} Desktop notification sent`);
+			console.info(`${COLORS.green}✓${COLORS.reset} Desktop notification sent`);
 			break;
 		}
 
@@ -314,23 +314,23 @@ async function main() {
 
 		case "rules": {
 			const rules = notify.listRules();
-			console.log(`${COLORS.bold}Notification Rules:${COLORS.reset}\n`);
+			console.info(`${COLORS.bold}Notification Rules:${COLORS.reset}\n`);
 
 			for (const rule of rules) {
 				const status = rule.enabled
 					? `${COLORS.green}●${COLORS.reset}`
 					: `${COLORS.gray}○${COLORS.reset}`;
-				console.log(`${status} ${rule.id}`);
-				console.log(`  Pattern: ${rule.pattern}`);
-				console.log(`  Level: ${rule.level}`);
-				console.log(`  Channels: ${rule.channels.join(", ")}`);
-				console.log();
+				console.info(`${status} ${rule.id}`);
+				console.info(`  Pattern: ${rule.pattern}`);
+				console.info(`  Level: ${rule.level}`);
+				console.info(`  Channels: ${rule.channels.join(", ")}`);
+				console.info();
 			}
 			break;
 		}
 
 		case "test": {
-			console.log("Sending test notifications...\n");
+			console.info("Sending test notifications...\n");
 
 			await notify.send(
 				{
@@ -375,20 +375,20 @@ async function main() {
 				level: "success",
 			});
 
-			console.log(`${COLORS.green}✓${COLORS.reset} Test complete`);
+			console.info(`${COLORS.green}✓${COLORS.reset} Test complete`);
 			break;
 		}
 
 		default: {
-			console.log("🐚 Kimi Notification System\n");
-			console.log("Usage:");
-			console.log("  notify.ts send <level> <title> <msg>    Send notification");
-			console.log("  notify.ts desktop <title> <message>     Desktop notification only");
-			console.log("  notify.ts trigger <event> <message>     Trigger by event pattern");
-			console.log("  notify.ts rules                         List notification rules");
-			console.log("  notify.ts test                          Run test notifications");
-			console.log("\nLevels: info, success, warning, error");
-			console.log("Channels: desktop (macOS), console, webhook");
+			console.info("🐚 Kimi Notification System\n");
+			console.info("Usage:");
+			console.info("  notify.ts send <level> <title> <msg>    Send notification");
+			console.info("  notify.ts desktop <title> <message>     Desktop notification only");
+			console.info("  notify.ts trigger <event> <message>     Trigger by event pattern");
+			console.info("  notify.ts rules                         List notification rules");
+			console.info("  notify.ts test                          Run test notifications");
+			console.info("\nLevels: info, success, warning, error");
+			console.info("Channels: desktop (macOS), console, webhook");
 		}
 	}
 }

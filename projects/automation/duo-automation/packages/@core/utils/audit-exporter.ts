@@ -43,7 +43,7 @@ export class AuditExporter {
         }
       });
 
-      console.log(`✅ Security report exported: ${s3Key}`);
+      console.info(`✅ Security report exported: ${s3Key}`);
       return s3Key;
     } catch (error) {
       console.error(`❌ Failed to export security report for ${domain}:`, error);
@@ -80,7 +80,7 @@ export class AuditExporter {
         }
       });
 
-      console.log(`✅ Dashboard report exported: ${s3Key}`);
+      console.info(`✅ Dashboard report exported: ${s3Key}`);
       return s3Key;
     } catch (error) {
       console.error(`❌ Failed to export dashboard report:`, error);
@@ -199,7 +199,7 @@ export class AuditExporter {
         }
       });
 
-      console.log(`✅ Compliance summary exported: ${s3Key}`);
+      console.info(`✅ Compliance summary exported: ${s3Key}`);
       return s3Key;
     } catch (error) {
       console.error(`❌ Failed to export compliance summary:`, error);

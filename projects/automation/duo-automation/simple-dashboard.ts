@@ -45,8 +45,8 @@ const server = Bun.serve({
   }
 });
 
-console.log('🚀 Dashboard running on http://localhost:8090');
-console.log('📊 Open http://localhost:8090 to view the dashboard');
+console.info('🚀 Dashboard running on http://localhost:8090');
+console.info('📊 Open http://localhost:8090 to view the dashboard');
 
 function getMetrics() {
   return {
@@ -335,7 +335,7 @@ function getDashboardHTML() {
                 updateDeviceBreakdown(metrics.deviceBreakdown);
                 updateRevenueImpact(metrics.revenueImpact);
                 
-                console.log('📊 Dashboard updated:', new Date().toISOString());
+                console.info('📊 Dashboard updated:', new Date().toISOString());
             } catch (error) {
                 console.error('❌ Error updating dashboard:', error);
             }
@@ -745,7 +745,7 @@ function getPhoneInfoHTML() {
                 ];
                 
                 updatePhoneGrid(phoneData);
-                console.log('📱 Phone info loaded:', new Date().toISOString());
+                console.info('📱 Phone info loaded:', new Date().toISOString());
             } catch (error) {
                 console.error('❌ Error loading phone info:', error);
             }

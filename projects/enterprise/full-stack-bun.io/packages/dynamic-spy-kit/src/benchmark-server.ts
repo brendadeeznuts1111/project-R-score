@@ -118,9 +118,9 @@ const server = Bun.serve({
 	}
 });
 
-console.log(`🚀 Benchmark Server running on http://localhost:${server.port}`);
-console.log(`📊 Endpoints:`);
-console.log(`  GET /bench/:bookie/:url`);
-console.log(`  GET /dashboard/bench`);
-console.log(`  GET /bench`);
+console.info(`🚀 Benchmark Server running on http://localhost:${server.port}`);
+console.info(`📊 Endpoints:`);
+console.info(`  GET /bench/:bookie/:url`);
+console.info(`  GET /dashboard/bench`);
+console.info(`  GET /bench`);
 

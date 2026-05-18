@@ -2,8 +2,8 @@
 // scripts/v37-native-demo.ts - v3.7-native distilled essence demonstration
 import { PerfMetric, withInspector } from '../types/perf-metric';
 
-console.log('🎯 v3.7-NATIVE DISTILLED ESSENSE DEMO');
-console.log('=====================================\n');
+console.info('🎯 v3.7-NATIVE DISTILLED ESSENSE DEMO');
+console.info('=====================================\n');
 
 // Test metrics
 const perfMetrics: PerfMetric[] = [
@@ -60,37 +60,37 @@ const perfMetrics: PerfMetric[] = [
   }
 ];
 
-console.log('📊 BEFORE: Manual string formatting (50+ lines of code)');
-console.log('---------------------------------------------------------');
-console.log('| Category | Type | Topic | SubCat | ID | Value | Pattern | Locations | Impact | Properties |');
-console.log('|----------|------|-------|--------|----|-------|---------|-----------|--------|------------|');
+console.info('📊 BEFORE: Manual string formatting (50+ lines of code)');
+console.info('---------------------------------------------------------');
+console.info('| Category | Type | Topic | SubCat | ID | Value | Pattern | Locations | Impact | Properties |');
+console.info('|----------|------|-------|--------|----|-------|---------|-----------|--------|------------|');
 perfMetrics.forEach(m => {
   const props = m.properties ? JSON.stringify(m.properties).replace(/"/g, "'").slice(0, 30) + '...' : '-';
-  console.log(`| ${m.category} | ${m.type} | ${m.topic.slice(0, 20)} | ${m.subCat.slice(0, 15)} | ${m.id.slice(0, 12)} | ${m.value.slice(0, 8)} | ${m.pattern || '-'} | ${m.locations} | ${m.impact} | ${props} |`);
+  console.info(`| ${m.category} | ${m.type} | ${m.topic.slice(0, 20)} | ${m.subCat.slice(0, 15)} | ${m.id.slice(0, 12)} | ${m.value.slice(0, 8)} | ${m.pattern || '-'} | ${m.locations} | ${m.impact} | ${props} |`);
 });
 
-console.log('\n🚀 AFTER: v3.7-native ONE-LINER (eliminates ALL manual formatting)');
-console.log('=====================================================================');
+console.info('\n🚀 AFTER: v3.7-native ONE-LINER (eliminates ALL manual formatting)');
+console.info('=====================================================================');
 // This ONE-LINER replaces the entire manual formatting loop above:
-console.log(Bun.inspect.table(perfMetrics.map(withInspector), { colors: true }));
+console.info(Bun.inspect.table(perfMetrics.map(withInspector), { colors: true }));
 
-console.log('\n✅ v3.7-NATIVE BENEFITS:');
-console.log('========================');
-console.log('• Zero manual string formatting in business logic');
-console.log('• 50x faster execution (native Bun.inspect)');
-console.log('• Automatic property truncation and formatting');
-console.log('• Built-in color support and table alignment');
-console.log('• Type safety maintained throughout');
-console.log('• Impact indicators (🔴🟡🟢) automatically added');
+console.info('\n✅ v3.7-NATIVE BENEFITS:');
+console.info('========================');
+console.info('• Zero manual string formatting in business logic');
+console.info('• 50x faster execution (native Bun.inspect)');
+console.info('• Automatic property truncation and formatting');
+console.info('• Built-in color support and table alignment');
+console.info('• Type safety maintained throughout');
+console.info('• Impact indicators (🔴🟡🟢) automatically added');
 
-console.log('\n🎯 ONE-LINER USAGE EXAMPLES:');
-console.log('============================');
-console.log('// Replace your entire manual formatting loop with:');
-console.log('console.log(Bun.inspect.table(perfMetrics.map(withInspector), { colors: true }));');
+console.info('\n🎯 ONE-LINER USAGE EXAMPLES:');
+console.info('============================');
+console.info('// Replace your entire manual formatting loop with:');
+console.info('console.info(Bun.inspect.table(perfMetrics.map(withInspector), { colors: true }));');
 
-console.log('\n// Generate security report (real one-liner):');
-console.log('const securityMetrics = perfMetrics.filter(m => m.category === "Security");');
-console.log('console.log(Bun.inspect.table(securityMetrics.map(withInspector), { colors: true }));');
+console.info('\n// Generate security report (real one-liner):');
+console.info('const securityMetrics = perfMetrics.filter(m => m.category === "Security");');
+console.info('console.info(Bun.inspect.table(securityMetrics.map(withInspector), { colors: true }));');
 
-console.log('\n🔥 v3.7-NATIVE: Delete your manual formatting code!');
-console.log('This is the future of performance metrics display.');
+console.info('\n🔥 v3.7-NATIVE: Delete your manual formatting code!');
+console.info('This is the future of performance metrics display.');

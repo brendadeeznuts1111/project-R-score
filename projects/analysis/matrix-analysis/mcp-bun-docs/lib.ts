@@ -2025,19 +2025,19 @@ export const LEAK_HUNTING_ONE_LINERS: {
 	{
 		scenario: "Pool Growth",
 		oneLiner:
-			'let p=[];console.time("leak");for(let i=0;i<1e3;++i)p.push({data:Buffer.alloc(1e3)});console.log("Peak mem:",Bun.jsc.estimateShallowMemoryUsageOf(p));console.timeEnd("leak")',
+			'let p=[];console.time("leak");for(let i=0;i<1e3;++i)p.push({data:Buffer.alloc(1e3)});console.info("Peak mem:",Bun.jsc.estimateShallowMemoryUsageOf(p));console.timeEnd("leak")',
 		detects: "Array bloat",
 	},
 	{
 		scenario: "Obj Retain",
 		oneLiner:
-			'let o={};for(let k=0;k<1e3;++k)o[`k${k}`]=Buffer.alloc(1e3);console.log("Obj mem:",Bun.jsc.estimateShallowMemoryUsageOf(o))',
+			'let o={};for(let k=0;k<1e3;++k)o[`k${k}`]=Buffer.alloc(1e3);console.info("Obj mem:",Bun.jsc.estimateShallowMemoryUsageOf(o))',
 		detects: "Prop leaks",
 	},
 	{
 		scenario: "Snapshot Size",
 		oneLiner:
-			'let pool={matrix:{size:5,conns:Array(5)}};let snap=Bun.jsc.serialize(pool);console.log("Serialized:",snap.byteLength,"Zstd:",Bun.zstdCompressSync(snap).byteLength)',
+			'let pool={matrix:{size:5,conns:Array(5)}};let snap=Bun.jsc.serialize(pool);console.info("Serialized:",snap.byteLength,"Zstd:",Bun.zstdCompressSync(snap).byteLength)',
 		detects: "Compress ratio",
 	},
 ];
@@ -2052,7 +2052,7 @@ let o={a:Buffer.alloc(1024)};
     else if(n==="ser"){let b=Bun.jsc.serialize(o);Bun.jsc.deserialize(b);}
     else Bun.deepEquals(o,o);
   }
-  console.log(\`\${n}: \${(performance.now()-t)/1e3}ms/1k\`);
+  console.info(\`\${n}: \${(performance.now()-t)/1e3}ms/1k\`);
 });
 '`;
 
@@ -2072,7 +2072,7 @@ export const AB_COOKIE_PERF_MATRIX: AbCookiePerfRow[] = [
 	{
 		variant: "ab-a/ab-b Prefix",
 		bunOneLiner:
-			'let h="ab-variant-a=enabled;ab-variant-b=disabled;session=abc";let m=new Map(decodeURIComponent(h).split(";").map(p=>p.trim().split("=")));let ab=m.get("ab-variant-a")||m.get("ab-variant-b");console.log(ab)',
+			'let h="ab-variant-a=enabled;ab-variant-b=disabled;session=abc";let m=new Map(decodeURIComponent(h).split(";").map(p=>p.trim().split("=")));let ab=m.get("ab-variant-a")||m.get("ab-variant-b");console.info(ab)',
 		output: '"enabled"',
 		time: "23ns",
 		nodeEquiv: "tough-cookie 1.7ms",
@@ -2083,7 +2083,7 @@ export const AB_COOKIE_PERF_MATRIX: AbCookiePerfRow[] = [
 	{
 		variant: "Public Prefix Filter",
 		bunOneLiner:
-			'let h="public-ab-a=1;ab-variant-b=off;private=secret";let ab=[];h.split(";").forEach(p=>{let[k]=p.split("=");if(k.startsWith("ab-variant-"))ab.push(k)});console.log(ab)',
+			'let h="public-ab-a=1;ab-variant-b=off;private=secret";let ab=[];h.split(";").forEach(p=>{let[k]=p.split("=");if(k.startsWith("ab-variant-"))ab.push(k)});console.info(ab)',
 		output: '["ab-variant-a","ab-variant-b"]',
 		time: "18ns",
 		nodeEquiv: "N/A",
@@ -2104,7 +2104,7 @@ export const AB_COOKIE_PERF_MATRIX: AbCookiePerfRow[] = [
 	},
 	{
 		variant: "Fallback Define",
-		bunOneLiner: 'console.log(AB_VARIANT_A||"default")',
+		bunOneLiner: 'console.info(AB_VARIANT_A||"default")',
 		output: '"enabled" (no runtime)',
 		time: "0ns",
 		nodeEquiv: "N/A",
@@ -2121,9 +2121,9 @@ let h="ab-variant-a=enabled;ab-variant-b=off;session=abc".repeat(10);
   let t=performance.now();
   for(let i=0;i<1e3;++i){
     if(n==="prefix")new Map(decodeURIComponent(h).split(";").map(p=>p.trim().split("=")));
-    else console.log(AB_VARIANT_A||"def");
+    else console.info(AB_VARIANT_A||"def");
   }
-  console.log(\`\${n}: \${(performance.now()-t)/1e3}ms/1k\`);
+  console.info(\`\${n}: \${(performance.now()-t)/1e3}ms/1k\`);
 });
 '`;
 
@@ -2771,7 +2771,7 @@ export class Tier1380Profiler {
 
 	private async threatIntelligenceFeed(metrics: unknown): Promise<void> {
 		// Implementation for feeding metrics to threat intelligence
-		console.log("Feeding metrics:", metrics);
+		console.info("Feeding metrics:", metrics);
 	}
 }
 
@@ -2820,9 +2820,9 @@ export class SecureAssetDelivery {
 		// const s3 = new S3Client({ /* ZTNA credentials */ });
 
 		// contentEncoding for pre-compressed static assets
-		console.log(`Uploading ${path} (${data.length} bytes) with contentEncoding: br`);
+		console.info(`Uploading ${path} (${data.length} bytes) with contentEncoding: br`);
 
 		// Presigned with forced download (security audit trails)
-		console.log(`Presigned URL for ${path}.br with contentDisposition: attachment`);
+		console.info(`Presigned URL for ${path}.br with contentDisposition: attachment`);
 	}
 }

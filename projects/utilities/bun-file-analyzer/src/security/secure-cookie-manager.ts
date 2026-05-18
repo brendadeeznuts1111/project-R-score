@@ -514,22 +514,22 @@ export class BundleAnalyzer {
       return typeof Bun !== 'undefined' ? Bun.color(text, color) : text;
     };
     
-    console.log(
+    console.info(
       colorize("📦 Bundle Analysis", "ansi") +
       colorize(" | Size: " + totalSizeMB + " MB", "ansi") +
       colorize(" | Chunks: " + chunkCount, "ansi") +
       colorize(" | Compression: " + compressionRatio + "%", "ansi")
     );
     
-    console.log(colorize("\n📊 Top Dependencies:", "ansi"));
+    console.info(colorize("\n📊 Top Dependencies:", "ansi"));
     this.metrics.dependencies.forEach((dep, i) => {
       const size = colorize(dep.sizeKB + " KB", "ansi");
-      console.log("  " + (i + 1) + ". " + colorize(dep.name, "ansi") + " - " + size);
+      console.info("  " + (i + 1) + ". " + colorize(dep.name, "ansi") + " - " + size);
     });
     
-    console.log(colorize("\n💡 Recommendations:", "ansi"));
+    console.info(colorize("\n💡 Recommendations:", "ansi"));
     recommendations.forEach(rec => {
-      console.log("  " + rec);
+      console.info("  " + rec);
     });
   }
   
@@ -788,7 +788,7 @@ export class AppMonitor {
       return typeof Bun !== 'undefined' ? Bun.color(text, color) : text;
     };
     
-    console.log(colorize("🔍 Analyzing build performance...", "ansi"));
+    console.info(colorize("🔍 Analyzing build performance...", "ansi"));
     
     // Analyze bundle
     this.bundleAnalyzer.printAnalysis();
@@ -805,7 +805,7 @@ export class AppMonitor {
     this.performanceDashboard.recordMetric("chunk_count", metrics.chunkCount);
     this.performanceDashboard.recordMetric("compression_ratio", parseFloat(metrics.compressionRatio));
     
-    console.log(colorize("✅ Build analysis complete", "ansi"));
+    console.info(colorize("✅ Build analysis complete", "ansi"));
   }
   
   /**
@@ -817,7 +817,7 @@ export class AppMonitor {
     };
     
     if (typeof Bun === 'undefined' || !Bun.serve) {
-      console.log(colorize("⚠️ Monitoring server not available in test environment", "ansi"));
+      console.info(colorize("⚠️ Monitoring server not available in test environment", "ansi"));
       return null;
     }
     
@@ -856,7 +856,7 @@ export class AppMonitor {
       }
     });
     
-    console.log(colorize("🚀 Performance monitoring started on :" + port, "ansi"));
+    console.info(colorize("🚀 Performance monitoring started on :" + port, "ansi"));
     return server;
   }
   

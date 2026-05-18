@@ -88,9 +88,9 @@ const prod = `${c.yellow}⚡${c.reset}`;
 const header = (title: string, color: string) => {
   const width = 63;
   const pad = Math.floor((width - title.length) / 2);
-  console.log(`\n${c.bold}${color}╔${"═".repeat(width)}╗${c.reset}`);
-  console.log(`${c.bold}${color}║${" ".repeat(pad)}${title}${" ".repeat(width - pad - title.length)}║${c.reset}`);
-  console.log(`${c.bold}${color}╚${"═".repeat(width)}╝${c.reset}\n`);
+  console.info(`\n${c.bold}${color}╔${"═".repeat(width)}╗${c.reset}`);
+  console.info(`${c.bold}${color}║${" ".repeat(pad)}${title}${" ".repeat(width - pad - title.length)}║${c.reset}`);
+  console.info(`${c.bold}${color}╚${"═".repeat(width)}╝${c.reset}\n`);
 };
 
 // Table 1: Cookie Configurations - All Properties with Types and Defaults
@@ -155,8 +155,8 @@ const table1 = properties.map((p) => ({
   [COOKIE_UI_STATE.name]: formatValue(COOKIE_UI_STATE, p.prop),
 }));
 
-console.log(Bun.inspect.table(table1, { colors: true }));
-console.log(`\n${c.dim}Legend: ${yes} required  ${no} optional  ${c.yellow}!dev${c.reset}${c.dim} = true in production${c.reset}\n`);
+console.info(Bun.inspect.table(table1, { colors: true }));
+console.info(`\n${c.dim}Legend: ${yes} required  ${no} optional  ${c.yellow}!dev${c.reset}${c.dim} = true in production${c.reset}\n`);
 
 // Table 2: Security & Access Matrix
 header("SECURITY & ACCESS MATRIX", c.magenta);
@@ -185,7 +185,7 @@ const table2 = configs.map((cfg) => ({
         : "State persist",
 }));
 
-console.log(Bun.inspect.table(table2, { colors: true }));
+console.info(Bun.inspect.table(table2, { colors: true }));
 
 // Table 3: CookieInit Type Reference
 header("CookieInit TYPE REFERENCE", c.blue);
@@ -203,7 +203,7 @@ const typeRef = [
   { Property: "partitioned", Type: "boolean", Required: no, Default: `false`, Description: "CHIPS partition key" },
 ];
 
-console.log(Bun.inspect.table(typeRef, { colors: true }));
+console.info(Bun.inspect.table(typeRef, { colors: true }));
 
 // Table 4: sameSite Values Explained
 header("sameSite VALUES EXPLAINED", c.yellow);
@@ -229,7 +229,7 @@ const sameSiteRef = [
   },
 ];
 
-console.log(Bun.inspect.table(sameSiteRef, { colors: true }));
+console.info(Bun.inspect.table(sameSiteRef, { colors: true }));
 
 // Table 5: Our Cookie Configs Summary
 header("NAMED CONFIG CONSTANTS", c.cyan);
@@ -244,9 +244,9 @@ const configSummary = configs.map((cfg) => ({
   "Prod Secure": yes,
 }));
 
-console.log(Bun.inspect.table(configSummary, { colors: true }));
+console.info(Bun.inspect.table(configSummary, { colors: true }));
 
-console.log(`\n${c.dim}Usage: cookieOpts(COOKIE_THEME) extracts options without 'name' field${c.reset}\n`);
+console.info(`\n${c.dim}Usage: cookieOpts(COOKIE_THEME) extracts options without 'name' field${c.reset}\n`);
 
 // Table 6: Cookie Deletion
 header("COOKIE DELETION (CookieMap.delete)", c.red);
@@ -260,7 +260,7 @@ const deleteRef = [
   },
 ];
 
-console.log(Bun.inspect.table(deleteRef, { colors: true }));
+console.info(Bun.inspect.table(deleteRef, { colors: true }));
 
 // Delete options
 const deleteOpts = [
@@ -269,8 +269,8 @@ const deleteOpts = [
   { Option: `${c.bold}secure${c.reset}`, Type: `${c.blue}boolean${c.reset}`, Default: `${c.dim}false${c.reset}`, Required: `${c.dim}ignored${c.reset}`, Description: "Most browsers ignore for deletion" },
 ];
 
-console.log(`\n${c.bold}Delete Options:${c.reset}\n`);
-console.log(Bun.inspect.table(deleteOpts, { colors: true }));
+console.info(`\n${c.bold}Delete Options:${c.reset}\n`);
+console.info(Bun.inspect.table(deleteOpts, { colors: true }));
 
 // Example deletions for our cookies
 const deleteExamples = [
@@ -291,10 +291,10 @@ const deleteExamples = [
   },
 ];
 
-console.log(`\n${c.bold}Our Cookie Deletions:${c.reset}\n`);
-console.log(Bun.inspect.table(deleteExamples, { colors: true }));
+console.info(`\n${c.bold}Our Cookie Deletions:${c.reset}\n`);
+console.info(Bun.inspect.table(deleteExamples, { colors: true }));
 
-console.log(`
+console.info(`
 ${c.bold}Notes:${c.reset}
 ${c.dim}• Max-Age=0 is the modern approach (Bun uses this)${c.reset}
 ${c.dim}• Legacy: Expires=Thu, 01 Jan 1970 00:00:00 GMT${c.reset}

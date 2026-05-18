@@ -10,7 +10,7 @@ import { join } from 'path';
  * Pre-commit hook to validate golden rules on staged files
  */
 async function validateStagedFiles() {
-  console.log('🔍 Validating golden rules on staged files...\n');
+  console.info('🔍 Validating golden rules on staged files...\n');
   
   // Get staged TypeScript files
   const { $ } = await import('bun');
@@ -21,11 +21,11 @@ async function validateStagedFiles() {
     .filter(Boolean);
 
   if (tsFiles.length === 0) {
-    console.log('✅ No TypeScript files to validate');
+    console.info('✅ No TypeScript files to validate');
     return true;
   }
 
-  console.log(`📁 Validating ${tsFiles.length} staged files:\n${tsFiles.map(f => `  - ${f}`).join('\n')}\n`);
+  console.info(`📁 Validating ${tsFiles.length} staged files:\n${tsFiles.map(f => `  - ${f}`).join('\n')}\n`);
 
   const enforcer = new GoldenRuleEnforcer();
   let hasErrors = false;
@@ -45,8 +45,8 @@ async function validateStagedFiles() {
         
         for (const violation of violations) {
           if (violation.severity === 'error') {
-            console.log(`❌ ${violation.file}:${violation.line} - ${violation.message}`);
-            console.log(`   💡 ${violation.suggestion}\n`);
+            console.info(`❌ ${violation.file}:${violation.line} - ${violation.message}`);
+            console.info(`   💡 ${violation.suggestion}\n`);
             hasErrors = true;
           }
         }
@@ -57,12 +57,12 @@ async function validateStagedFiles() {
   }
 
   if (hasErrors) {
-    console.log('🚫 Commit blocked due to golden rule violations');
-    console.log('💡 Fix the errors above or use --no-verify to skip');
+    console.info('🚫 Commit blocked due to golden rule violations');
+    console.info('💡 Fix the errors above or use --no-verify to skip');
     return false;
   }
 
-  console.log('✅ All staged files follow golden rules!');
+  console.info('✅ All staged files follow golden rules!');
   return true;
 }
 

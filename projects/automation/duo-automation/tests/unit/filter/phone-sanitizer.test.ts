@@ -10,7 +10,7 @@ describe("PhoneSanitizer §Filter:89", () => {
     const result = sanitizer.test("+1 (415) 555-1234");
     const duration = (Bun.nanoseconds() - start) / 1e6;
     
-    console.log(`✅ PhoneSanitizer.test() passed: ${duration.toFixed(2)}ms (<100μs)`);
+    console.info(`✅ PhoneSanitizer.test() passed: ${duration.toFixed(2)}ms (<100μs)`);
     expect(result).toBe(true);
     expect(duration).toBeLessThan(0.1); // <100μs
   });
@@ -23,7 +23,7 @@ describe("PhoneSanitizer §Filter:89", () => {
     const result = await sanitizer.exec("+14155551234", { ipqsApiKey: "MOCK_KEY" });
     const duration = (Bun.nanoseconds() - start) / 1e6;
     
-    console.log(`✅ PhoneSanitizer.exec() passed: ${duration.toFixed(2)}ms (<3ms)`);
+    console.info(`✅ PhoneSanitizer.exec() passed: ${duration.toFixed(2)}ms (<3ms)`);
     expect(result.isValid).toBe(true);
     expect(result.e164).toBe("+14155551234");
     expect(duration).toBeLessThan(3.0); // <3ms
@@ -33,7 +33,7 @@ describe("PhoneSanitizer §Filter:89", () => {
     const passed = 55;
     const total = 57;
     const score = (passed / total) * 100;
-    console.log(`✅ Setup Score: ${passed}/${total} (${score.toFixed(1)}%)`);
+    console.info(`✅ Setup Score: ${passed}/${total} (${score.toFixed(1)}%)`);
     expect(score).toBeGreaterThanOrEqual(96.4); // Floating point precision adjustment
   });
 
@@ -44,21 +44,21 @@ describe("PhoneSanitizer §Filter:89", () => {
       const input = "+14155551234<script>alert(1)</script>";
       const result = await sanitizer.exec(input);
       expect(result.e164).toBe("+14155551234");
-      console.log("✅ XSS Stripped");
+      console.info("✅ XSS Stripped");
     });
 
     test("SQL Insertion Prevention", async () => {
       const input = "+14155551234'; DROP TABLE users; --";
       const result = await sanitizer.exec(input);
       expect(result.e164).toBe("+14155551234");
-      console.log("✅ SQLi Prevented");
+      console.info("✅ SQLi Prevented");
     });
 
     test("Null Byte Removal", async () => {
       const input = "+14155551234\0";
       const result = await sanitizer.exec(input);
       expect(result.e164).toBe("+14155551234");
-      console.log("✅ Null Byte Removed");
+      console.info("✅ Null Byte Removed");
     });
   });
 
@@ -66,19 +66,19 @@ describe("PhoneSanitizer §Filter:89", () => {
     test("Mobile Detection", async () => {
       const result = await sanitizer.exec("+14155551234"); // USA Mobile/Fixed ambiguous
       expect(result.type).toBe("MOBILE");
-      console.log("✅ Ambiguous USA resolved to MOBILE");
+      console.info("✅ Ambiguous USA resolved to MOBILE");
     });
 
     test("Fixed Line Detection", async () => {
       const result = await sanitizer.exec("+441212345678"); // UK Birmingham Fixed
       expect(result.type).toBe("FIXED_LINE");
-      console.log("✅ UK Fixed Line detected");
+      console.info("✅ UK Fixed Line detected");
     });
 
     test("Toll Free Detection", async () => {
       const result = await sanitizer.exec("+18005551212");
       expect(result.type).toBe("TOLL_FREE");
-      console.log("✅ Toll Free detected");
+      console.info("✅ Toll Free detected");
     });
   });
 
@@ -89,14 +89,14 @@ describe("PhoneSanitizer §Filter:89", () => {
       expect(result.isValid).toBe(true);
       expect(result.country).toBe("GB");
       expect(result.type).toBe("FIXED_LINE");
-      console.log("✅ UK Fixed Line validated");
+      console.info("✅ UK Fixed Line validated");
     });
 
     test("German Number Validation", async () => {
       const result = await sanitizer.exec("+4915123456789");
       expect(result.isValid).toBe(true);
       expect(result.country).toBe("DE");
-      console.log("✅ DE Mobile validated");
+      console.info("✅ DE Mobile validated");
     });
 
     test("UK Mobile Validation (Alternative)", async () => {
@@ -105,7 +105,7 @@ describe("PhoneSanitizer §Filter:89", () => {
       expect(result.isValid).toBe(true);
       // We accept GG/IM/GB variant depending on libphonenumber data version
       expect(["GB", "GG", "IM"]).toContain(result.country!);
-      console.log("✅ UK/Isle Mobile verified");
+      console.info("✅ UK/Isle Mobile verified");
     });
   });
 
@@ -115,7 +115,7 @@ describe("PhoneSanitizer §Filter:89", () => {
       const result = await sanitizer.exec("4155551234", { defaultCountry: "US" });
       expect(result.e164).toBe("+14155551234");
       expect(result.countryCodeAdded).toBe(true);
-      console.log("✅ Country Code Prepending Note verified");
+      console.info("✅ Country Code Prepending Note verified");
     });
 
     test("Invalid Number Handling", async () => {
@@ -123,7 +123,7 @@ describe("PhoneSanitizer §Filter:89", () => {
       expect(result.isValid).toBe(false);
       // libphonenumber fails to parse "123", so it falls back to "basic"
       expect(result.validationMethod).toBe("basic");
-      console.log("✅ Basic fallback for invalid input");
+      console.info("✅ Basic fallback for invalid input");
     });
 
     test("IPQS Error Handling (Cache Miss + API Failure)", async () => {
@@ -131,7 +131,7 @@ describe("PhoneSanitizer §Filter:89", () => {
       const result = await sanitizer.exec("+442079460000", { ipqsApiKey: "INVALID_KEY" });
       expect(result.isValid).toBe(true);
       expect(result.validationMethod).toBe("libphonenumber"); // Should stay at libphonenumber on API fail
-      console.log("✅ Graceful failure for IPQS API failure");
+      console.info("✅ Graceful failure for IPQS API failure");
     });
 
     test("Simulated IPQS Network Error", async () => {
@@ -148,7 +148,7 @@ describe("PhoneSanitizer §Filter:89", () => {
       } finally {
         global.fetch = originalFetch;
       }
-      console.log("✅ Graceful failure for IPQS network error");
+      console.info("✅ Graceful failure for IPQS network error");
     });
 
     test("IPQS Cache Hit (§Query:44)", async () => {
@@ -156,7 +156,7 @@ describe("PhoneSanitizer §Filter:89", () => {
       const result = await sanitizer.exec("+14155551234", { ipqsApiKey: "MOCK_KEY" });
       expect(result.validationMethod).toBe("ipqs");
       expect(result.carrier).toBe("Verizon");
-      console.log("✅ IPQS Cache Hit verified via §Query:44");
+      console.info("✅ IPQS Cache Hit verified via §Query:44");
     });
   });
 });

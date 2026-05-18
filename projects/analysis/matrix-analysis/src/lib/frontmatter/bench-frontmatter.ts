@@ -439,7 +439,7 @@ await batchExtractFrontmatter("${BATCH_DIR}", { schema });
 	}
 
 	if (!QUIET) {
-		console.log("\nhyperfine: benchmarking frontmatter operations\n");
+		console.info("\nhyperfine: benchmarking frontmatter operations\n");
 	}
 
 	const proc = Bun.spawn(hfArgs, {
@@ -461,7 +461,7 @@ await batchExtractFrontmatter("${BATCH_DIR}", { schema });
 	}[];
 
 	if (!QUIET) {
-		console.log("\n\n--- Hyperfine Summary ---\n");
+		console.info("\n\n--- Hyperfine Summary ---\n");
 	}
 
 	const summaryRows = hfResults.map((r) => ({
@@ -473,7 +473,7 @@ await batchExtractFrontmatter("${BATCH_DIR}", { schema });
 		max: fmtTime(r.max * 1000),
 		runs: r.times.length,
 	}));
-	console.log(
+	console.info(
 		Bun.inspect.table(summaryRows, [
 			"benchmark",
 			"mean",
@@ -548,16 +548,16 @@ async function main(): Promise<void> {
 				timestamp: new Date().toISOString(),
 			},
 		};
-		console.log(JSON.stringify(jsonResults, null, 2));
+		console.info(JSON.stringify(jsonResults, null, 2));
 		return;
 	}
 
 	if (!QUIET) {
-		console.log("\n--- Frontmatter Benchmark ---\n");
+		console.info("\n--- Frontmatter Benchmark ---\n");
 	}
 
 	// Micro-benchmarks table
-	console.log(
+	console.info(
 		Bun.inspect.table(tableRows, [
 			"benchmark",
 			"ops/sec",
@@ -602,9 +602,9 @@ async function main(): Promise<void> {
 	];
 
 	if (!QUIET) {
-		console.log("\n--- Batch I/O ---\n");
+		console.info("\n--- Batch I/O ---\n");
 	}
-	console.log(
+	console.info(
 		Bun.inspect.table(batchRows, [
 			"metric",
 			"median",
@@ -657,12 +657,12 @@ async function main(): Promise<void> {
 			{ stat: "index generation", value: fmtTime(batchResult.indexGenMs) },
 		];
 
-		console.log("\n--- Summary ---\n");
-		console.log(Bun.inspect.table(summaryRows, ["stat", "value"]));
-		console.log(
+		console.info("\n--- Summary ---\n");
+		console.info(Bun.inspect.table(summaryRows, ["stat", "value"]));
+		console.info(
 			`Bun ${Bun.version} | ${process.platform}/${process.arch} | ${new Date().toISOString()}`,
 		);
-		console.log(
+		console.info(
 			"hint: run with --hyperfine for process-level benchmarks via hyperfine\n",
 		);
 	}

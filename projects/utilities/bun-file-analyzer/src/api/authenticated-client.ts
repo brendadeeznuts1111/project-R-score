@@ -108,13 +108,13 @@ export function createCookieClient(clientConfig?: CookieClientConfig) {
           warn: 'hsl(38, 92%, 50%)',
           error: 'hsl(0, 84%, 60%)'
         };
-        console.log(
+        console.info(
           `%c[${level.toUpperCase()}] CookieClient: ${message}`,
           `color: ${Bun.color(colors[level as keyof typeof colors], 'ansi')}`,
           data || ''
         );
       } else {
-        console.log(`[${level.toUpperCase()}] CookieClient: ${message}`, data || '');
+        console.info(`[${level.toUpperCase()}] CookieClient: ${message}`, data || '');
       }
     }
   };
@@ -605,7 +605,7 @@ export function createCookieClient(clientConfig?: CookieClientConfig) {
     
     debug(label: string = "Cookie Client"): void {
       if (typeof Bun !== 'undefined' && Bun.color) {
-        console.log(
+        console.info(
           `%c${label} (${jar.size} cookies, ${metrics.length} metrics):`,
           `color: ${Bun.color("hsl(28, 80%, 52%)", "ansi")}; font-weight: bold` 
         );
@@ -613,7 +613,7 @@ export function createCookieClient(clientConfig?: CookieClientConfig) {
         for (const [name, value] of jar.entries()) {
           const truncated = value.length > 20 ? value.slice(0, 20) + "..." : value;
           const isSecure = name.startsWith('_secure') ? '🔒' : '';
-          console.log(
+          console.info(
             `  %c${isSecure}${name}%c = %c${truncated}`,
             `color: ${Bun.color("hsl(210, 90%, 55%)", "ansi")}`,
             "color: reset",
@@ -622,15 +622,15 @@ export function createCookieClient(clientConfig?: CookieClientConfig) {
         }
         
         if (metrics.length > 0) {
-          console.log(
+          console.info(
             `  %c📊 Avg: ${this.getAverageResponseTime()}ms, Success: ${this.getSuccessRate()}%`,
             `color: ${Bun.color("hsl(25, 85%, 55%)", "ansi")}`
           );
         }
       } else {
-        console.log(`${label} (${jar.size} cookies, ${metrics.length} metrics):`);
+        console.info(`${label} (${jar.size} cookies, ${metrics.length} metrics):`);
         for (const [name, value] of jar.entries()) {
-          console.log(`  ${name} = ${value}`);
+          console.info(`  ${name} = ${value}`);
         }
       }
     },

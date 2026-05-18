@@ -63,7 +63,7 @@ const sampleViolations = [
 ];
 
 async function insertSampleData() {
-  console.log("🔧 Inserting sample multi-tenant data...");
+  console.info("🔧 Inserting sample multi-tenant data...");
 
   try {
     // Insert compliance data
@@ -78,9 +78,9 @@ async function insertSampleData() {
       });
 
       if (response.ok) {
-        console.log(`   ✅ Inserted compliance data for ${data.tenant}`);
+        console.info(`   ✅ Inserted compliance data for ${data.tenant}`);
       } else {
-        console.log(`   ❌ Failed to insert compliance data for ${data.tenant}`);
+        console.info(`   ❌ Failed to insert compliance data for ${data.tenant}`);
       }
     }
 
@@ -102,15 +102,15 @@ async function insertSampleData() {
       });
 
       if (response.ok) {
-        console.log(`   ✅ Inserted violation data for ${violation.tenant}`);
+        console.info(`   ✅ Inserted violation data for ${violation.tenant}`);
       } else {
-        console.log(`   ❌ Failed to insert violation data for ${violation.tenant}`);
+        console.info(`   ❌ Failed to insert violation data for ${violation.tenant}`);
       }
     }
 
-    console.log("\n🎯 Sample data insertion complete!");
-    console.log("🌐 View the dashboard: http://localhost:3001/multi-tenant-dashboard.html");
-    console.log("🔍 Test different tenant filters to see the data isolation!");
+    console.info("\n🎯 Sample data insertion complete!");
+    console.info("🌐 View the dashboard: http://localhost:3001/multi-tenant-dashboard.html");
+    console.info("🔍 Test different tenant filters to see the data isolation!");
 
   } catch (error) {
     console.error("❌ Error inserting sample data:", error);

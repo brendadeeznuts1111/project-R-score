@@ -73,9 +73,9 @@ export class Dashboard {
     const line = `${envBadge} ${statusBadge} (${enabledFeatures}/${totalFeatures} features enabled)`;
     const paddedLine = this.padLine(line, 80);
 
-    console.log(chalk.bold.cyan(paddedLine));
-    console.log(chalk.gray("─".repeat(80)));
-    console.log();
+    console.info(chalk.bold.cyan(paddedLine));
+    console.info(chalk.gray("─".repeat(80)));
+    console.info();
   }
 
   // Environment Panel
@@ -99,8 +99,8 @@ export class Dashboard {
       badges.length > 0 ? badges.join(" | ") : "⚠️ No active features";
     const paddedLine = this.padLine(line, 80);
 
-    console.log(chalk.green(paddedLine));
-    console.log();
+    console.info(chalk.green(paddedLine));
+    console.info();
   }
 
   // Feature Tier Display
@@ -112,8 +112,8 @@ export class Dashboard {
     const line = `Feature Tier: ${badge}`;
     const paddedLine = this.padLine(line, 80);
 
-    console.log(color(paddedLine));
-    console.log();
+    console.info(color(paddedLine));
+    console.info();
   }
 
   // Security Status
@@ -137,8 +137,8 @@ export class Dashboard {
         : "⚠️ Security features disabled";
     const paddedLine = this.padLine(line, 80);
 
-    console.log(chalk.bold.red(paddedLine));
-    console.log();
+    console.info(chalk.bold.red(paddedLine));
+    console.info();
   }
 
   // Resilience Monitor
@@ -150,8 +150,8 @@ export class Dashboard {
     const line = `Resilience Monitor: ${status}`;
     const paddedLine = this.padLine(line, 80);
 
-    console.log(color(paddedLine));
-    console.log();
+    console.info(color(paddedLine));
+    console.info();
   }
 
   // Notification Panel
@@ -165,8 +165,8 @@ export class Dashboard {
     const line = `Notification Panel: ${status}`;
     const paddedLine = this.padLine(line, 80);
 
-    console.log(color(paddedLine));
-    console.log();
+    console.info(color(paddedLine));
+    console.info();
   }
 
   // Performance Graph
@@ -187,14 +187,14 @@ export class Dashboard {
     )}% | RES: ${resBar} ${response.toFixed(0)}ms`;
     const paddedLine = this.padLine(line, 80);
 
-    console.log(chalk.blue(paddedLine));
-    console.log();
+    console.info(chalk.blue(paddedLine));
+    console.info();
   }
 
   // Integration Grid
   private displayIntegrationGrid(): void {
-    console.log(chalk.bold.underline("Integration Status:"));
-    console.log();
+    console.info(chalk.bold.underline("Integration Status:"));
+    console.info();
 
     const integrations = [
       {
@@ -222,23 +222,23 @@ export class Dashboard {
       const widthInfo = this.options.ascii ? "(1 col)" : "(2 cols)";
 
       const line = `${integration.icon} ${integration.name}: ${status} ${widthInfo}`;
-      console.log(color(line));
+      console.info(color(line));
     });
 
-    console.log();
+    console.info();
   }
 
   // Display disabled features
   private displayDisabledFeatures(): void {
     const disabledFlags = this.featureRegistry.getDisabledFlags();
     if (disabledFlags.length > 0) {
-      console.log(chalk.bold.underline("\nDisabled Features:"));
+      console.info(chalk.bold.underline("\nDisabled Features:"));
       disabledFlags.forEach((flag) => {
         const config = this.featureRegistry.getConfig(flag);
         const badge = config?.badgeDisabled || "❌ DISABLED";
-        console.log(chalk.yellow(`  ${badge} ${flag}`));
+        console.info(chalk.yellow(`  ${badge} ${flag}`));
       });
-      console.log();
+      console.info();
     }
   }
 
@@ -247,8 +247,8 @@ export class Dashboard {
     const healthStatus = this.calculateHealthStatus();
     const colorName = this.getHealthColorName(healthStatus.status);
 
-    console.log((chalk.bold as any)[colorName](`Health Status: ${healthStatus.badge}`));
-    console.log(
+    console.info((chalk.bold as any)[colorName](`Health Status: ${healthStatus.badge}`));
+    console.info(
       chalk.gray(
         `Score: ${
           healthStatus.score
@@ -257,7 +257,7 @@ export class Dashboard {
     );
 
     if (detailed) {
-      console.log(
+      console.info(
         chalk.gray(
           `Critical Features: ${
             healthStatus.criticalFeaturesEnabled
@@ -268,16 +268,16 @@ export class Dashboard {
       );
 
       const criticalFlags = this.featureRegistry.getCriticalFlags();
-      console.log(chalk.underline("\nCritical Feature Status:"));
+      console.info(chalk.underline("\nCritical Feature Status:"));
       criticalFlags.forEach((flag) => {
         const enabled = this.featureRegistry.isEnabled(flag);
         const status = enabled ? "✅" : "❌";
         const color = enabled ? chalk.green : chalk.red;
-        console.log(color(`  ${status} ${flag}`));
+        console.info(color(`  ${status} ${flag}`));
       });
     }
 
-    console.log();
+    console.info();
   }
 
   // Alert Status
@@ -285,47 +285,47 @@ export class Dashboard {
     const activeAlerts = this.getActiveAlerts();
 
     if (activeAlerts.length === 0) {
-      console.log(chalk.green("✅ No active alerts"));
+      console.info(chalk.green("✅ No active alerts"));
     } else {
-      console.log(
+      console.info(
         chalk.bold.yellow(`⚠️ ${activeAlerts.length} Active Alerts:`)
       );
       activeAlerts.forEach((alert) => {
         const color = this.getAlertColor(alert.severity);
-        console.log(color(`  • ${alert.type}: ${alert.triggerCondition}`));
+        console.info(color(`  • ${alert.type}: ${alert.triggerCondition}`));
       });
     }
 
-    console.log();
+    console.info();
   }
 
   // Performance Metrics
   private displayPerformanceMetrics(): void {
     this.updatePerformanceMetrics();
 
-    console.log(chalk.bold.underline("Performance Metrics:"));
-    console.log(
+    console.info(chalk.bold.underline("Performance Metrics:"));
+    console.info(
       chalk.blue(
         `Memory Usage: ${this.performanceMetrics.memoryUsage.toFixed(1)}%`
       )
     );
-    console.log(
+    console.info(
       chalk.blue(`CPU Usage: ${this.performanceMetrics.cpuUsage.toFixed(1)}%`)
     );
-    console.log(
+    console.info(
       chalk.blue(
         `Response Time: ${this.performanceMetrics.responseTime.toFixed(0)}ms`
       )
     );
-    console.log(
+    console.info(
       chalk.blue(
         `Throughput: ${this.performanceMetrics.throughput.toFixed(0)} req/s`
       )
     );
-    console.log(
+    console.info(
       chalk.blue(`Error Rate: ${this.performanceMetrics.errorRate.toFixed(2)}%`)
     );
-    console.log();
+    console.info();
   }
 
   // BunFile Stream Management Panel
@@ -334,62 +334,62 @@ export class Dashboard {
       const streams = this.streamManager.inspectStandardStreams();
       const allStats = this.streamManager.getAllStats();
 
-      console.log(chalk.bold.underline("📁 BunFile Stream Management:"));
+      console.info(chalk.bold.underline("📁 BunFile Stream Management:"));
 
       // Display stdin info
       const stdinInfo = streams.stdin;
       const stdinStats = allStats.get('stdin');
-      console.log(chalk.cyan("\n  📥 stdin:"));
-      console.log(chalk.gray(`    Type: ${stdinInfo.type}`));
+      console.info(chalk.cyan("\n  📥 stdin:"));
+      console.info(chalk.gray(`    Type: ${stdinInfo.type}`));
       if (stdinInfo.size !== undefined) {
-        console.log(chalk.gray(`    Size: ${stdinInfo.size} bytes`));
+        console.info(chalk.gray(`    Size: ${stdinInfo.size} bytes`));
       }
-      console.log(chalk.gray(`    Readable: ${stdinInfo.readable ? '✅' : '❌'}`));
-      console.log(chalk.gray(`    Writable: ${stdinInfo.writable ? '✅' : '❌'}`));
+      console.info(chalk.gray(`    Readable: ${stdinInfo.readable ? '✅' : '❌'}`));
+      console.info(chalk.gray(`    Writable: ${stdinInfo.writable ? '✅' : '❌'}`));
       if (stdinStats) {
-        console.log(chalk.gray(`    Bytes Read: ${stdinStats.bytesRead.toLocaleString()}`));
-        console.log(chalk.gray(`    Read Ops: ${stdinStats.readOps}`));
+        console.info(chalk.gray(`    Bytes Read: ${stdinStats.bytesRead.toLocaleString()}`));
+        console.info(chalk.gray(`    Read Ops: ${stdinStats.readOps}`));
       }
 
       // Display stdout info
       const stdoutInfo = streams.stdout;
       const stdoutStats = allStats.get('stdout');
-      console.log(chalk.cyan("\n  📤 stdout:"));
-      console.log(chalk.gray(`    Type: ${stdoutInfo.type}`));
+      console.info(chalk.cyan("\n  📤 stdout:"));
+      console.info(chalk.gray(`    Type: ${stdoutInfo.type}`));
       if (stdoutInfo.size !== undefined) {
-        console.log(chalk.gray(`    Size: ${stdoutInfo.size} bytes`));
+        console.info(chalk.gray(`    Size: ${stdoutInfo.size} bytes`));
       }
-      console.log(chalk.gray(`    Readable: ${stdoutInfo.readable ? '✅' : '❌'}`));
-      console.log(chalk.gray(`    Writable: ${stdoutInfo.writable ? '✅' : '❌'}`));
+      console.info(chalk.gray(`    Readable: ${stdoutInfo.readable ? '✅' : '❌'}`));
+      console.info(chalk.gray(`    Writable: ${stdoutInfo.writable ? '✅' : '❌'}`));
       if (stdoutStats) {
-        console.log(chalk.gray(`    Bytes Written: ${stdoutStats.bytesWritten.toLocaleString()}`));
-        console.log(chalk.gray(`    Write Ops: ${stdoutStats.writeOps}`));
+        console.info(chalk.gray(`    Bytes Written: ${stdoutStats.bytesWritten.toLocaleString()}`));
+        console.info(chalk.gray(`    Write Ops: ${stdoutStats.writeOps}`));
       }
 
       // Display stderr info
       const stderrInfo = streams.stderr;
       const stderrStats = allStats.get('stderr');
-      console.log(chalk.cyan("\n  ⚠️  stderr:"));
-      console.log(chalk.gray(`    Type: ${stderrInfo.type}`));
+      console.info(chalk.cyan("\n  ⚠️  stderr:"));
+      console.info(chalk.gray(`    Type: ${stderrInfo.type}`));
       if (stderrInfo.size !== undefined) {
-        console.log(chalk.gray(`    Size: ${stderrInfo.size} bytes`));
+        console.info(chalk.gray(`    Size: ${stderrInfo.size} bytes`));
       }
-      console.log(chalk.gray(`    Readable: ${stderrInfo.readable ? '✅' : '❌'}`));
-      console.log(chalk.gray(`    Writable: ${stderrInfo.writable ? '✅' : '❌'}`));
+      console.info(chalk.gray(`    Readable: ${stderrInfo.readable ? '✅' : '❌'}`));
+      console.info(chalk.gray(`    Writable: ${stderrInfo.writable ? '✅' : '❌'}`));
       if (stderrStats) {
-        console.log(chalk.gray(`    Bytes Written: ${stderrStats.bytesWritten.toLocaleString()}`));
-        console.log(chalk.gray(`    Write Ops: ${stderrStats.writeOps}`));
+        console.info(chalk.gray(`    Bytes Written: ${stderrStats.bytesWritten.toLocaleString()}`));
+        console.info(chalk.gray(`    Write Ops: ${stderrStats.writeOps}`));
       }
 
       // Header size validation hint
       if (stdinInfo.size !== undefined && stdinInfo.size > 16384) {
-        console.log(chalk.yellow("\n  ⚠️  Warning: stdin size exceeds default HTTP header limit (16KiB)"));
-        console.log(chalk.yellow("     Consider using --max-http-header-size flag"));
+        console.info(chalk.yellow("\n  ⚠️  Warning: stdin size exceeds default HTTP header limit (16KiB)"));
+        console.info(chalk.yellow("     Consider using --max-http-header-size flag"));
       }
 
-      console.log();
+      console.info();
     } catch (error) {
-      console.log(chalk.red(`  ❌ Error inspecting streams: ${error instanceof Error ? error.message : String(error)}`));
+      console.info(chalk.red(`  ❌ Error inspecting streams: ${error instanceof Error ? error.message : String(error)}`));
     }
   }
 
@@ -403,7 +403,7 @@ export class Dashboard {
       this.displayStatus();
     }, intervalMs);
 
-    console.log(
+    console.info(
       chalk.green(`🔄 Live updates started (${intervalMs / 1000}s interval)`)
     );
   }
@@ -412,7 +412,7 @@ export class Dashboard {
     if (this.liveUpdateInterval) {
       clearInterval(this.liveUpdateInterval);
       this.liveUpdateInterval = null;
-      console.log(chalk.yellow("⏸️ Live updates stopped"));
+      console.info(chalk.yellow("⏸️ Live updates stopped"));
     }
   }
 
@@ -427,13 +427,13 @@ export class Dashboard {
       return;
     }
 
-    console.log(chalk.bold.white(`Component: ${component.name}`));
-    console.log(chalk.gray(`Type: ${component.displayType}`));
-    console.log(chalk.gray(`Update: ${component.updateFrequency}`));
-    console.log(chalk.gray(`Source: ${component.dataSource}`));
-    console.log(chalk.gray(`Width: ${component.widthCalculation}`));
-    console.log(chalk.gray(`ANSI: ${component.ansiSupport ? "✅" : "❌"}`));
-    console.log(chalk.gray(`Export: ${component.exportFormats.join(", ")}`));
+    console.info(chalk.bold.white(`Component: ${component.name}`));
+    console.info(chalk.gray(`Type: ${component.displayType}`));
+    console.info(chalk.gray(`Update: ${component.updateFrequency}`));
+    console.info(chalk.gray(`Source: ${component.dataSource}`));
+    console.info(chalk.gray(`Width: ${component.widthCalculation}`));
+    console.info(chalk.gray(`ANSI: ${component.ansiSupport ? "✅" : "❌"}`));
+    console.info(chalk.gray(`Export: ${component.exportFormats.join(", ")}`));
   }
 
   // Export functionality
@@ -448,13 +448,13 @@ export class Dashboard {
 
     switch (format.toLowerCase()) {
       case "json":
-        console.log(JSON.stringify(data, null, 2));
+        console.info(JSON.stringify(data, null, 2));
         break;
       case "csv":
-        console.log(this.convertToCSV(data));
+        console.info(this.convertToCSV(data));
         break;
       case "html":
-        console.log(this.convertToHTML(data));
+        console.info(this.convertToHTML(data));
         break;
       default:
         console.error(chalk.red(`❌ Unsupported export format: ${format}`));
@@ -463,7 +463,7 @@ export class Dashboard {
 
   // Integration health check
   async checkIntegrationHealth(): Promise<void> {
-    console.log(chalk.bold.white("🔍 Checking Integration Health..."));
+    console.info(chalk.bold.white("🔍 Checking Integration Health..."));
 
     const integrations = [
       {
@@ -490,21 +490,21 @@ export class Dashboard {
 
     for (const integration of integrations) {
       if (this.featureRegistry.isEnabled(integration.flag)) {
-        console.log(chalk.blue(`🔍 Checking ${integration.name}...`));
+        console.info(chalk.blue(`🔍 Checking ${integration.name}...`));
         // Simulate health check
         const isHealthy = Math.random() > 0.2; // 80% success rate
         const status = isHealthy ? "✅ HEALTHY" : "❌ FAILED";
         const color = isHealthy ? chalk.green : chalk.red;
-        console.log(color(`  ${integration.name}: ${status}`));
+        console.info(color(`  ${integration.name}: ${status}`));
       } else {
-        console.log(chalk.gray(`  ${integration.name}: ⚠️ DISABLED`));
+        console.info(chalk.gray(`  ${integration.name}: ⚠️ DISABLED`));
       }
     }
   }
 
   // Security audit
   async runSecurityAudit(): Promise<void> {
-    console.log(chalk.bold.white("🔒 Running Security Audit..."));
+    console.info(chalk.bold.white("🔒 Running Security Audit..."));
 
     const securityChecks = [
       { flag: FeatureFlag.FEAT_ENCRYPTION, name: "Encryption", critical: true },
@@ -527,7 +527,7 @@ export class Dashboard {
       const status = enabled ? "✅ PASS" : "❌ FAIL";
       const color = enabled ? chalk.green : chalk.red;
 
-      console.log(
+      console.info(
         color(
           `  ${check.name}: ${status}${check.critical ? " (CRITICAL)" : ""}`
         )
@@ -538,11 +538,11 @@ export class Dashboard {
       }
     });
 
-    console.log();
+    console.info();
     if (allCriticalPassed) {
-      console.log(chalk.bold.green("✅ Security Audit PASSED"));
+      console.info(chalk.bold.green("✅ Security Audit PASSED"));
     } else {
-      console.log(
+      console.info(
         chalk.bold.red("❌ Security Audit FAILED - Critical issues detected")
       );
     }
@@ -550,7 +550,7 @@ export class Dashboard {
 
   // Full audit
   async runFullAudit(debugSymbols: boolean = false): Promise<void> {
-    console.log(chalk.bold.white("🔍 Running Full System Audit..."));
+    console.info(chalk.bold.white("🔍 Running Full System Audit..."));
 
     // Run security and integration audits concurrently
     await Promise.all([
@@ -558,7 +558,7 @@ export class Dashboard {
       this.checkIntegrationHealth()
     ]);
 
-    console.log(chalk.bold.white("\n📊 Feature Flag Audit:"));
+    console.info(chalk.bold.white("\n📊 Feature Flag Audit:"));
     const allFlags = this.featureRegistry.getAllFlags();
 
     // Process flags concurrently in batches
@@ -570,23 +570,23 @@ export class Dashboard {
         const config = this.featureRegistry.getConfig(flag);
         const status = enabled ? "✅" : "❌";
         const color = enabled ? chalk.green : chalk.red;
-        console.log(
+        console.info(
           color(`  ${status} ${flag} (${config?.criticalLevel || "UNKNOWN"})`)
         );
       }));
     }
 
     if (debugSymbols) {
-      console.log(chalk.bold.white("\n🐛 Debug Information:"));
-      console.log(
+      console.info(chalk.bold.white("\n🐛 Debug Information:"));
+      console.info(
         chalk.gray(`  Total Features: ${this.featureRegistry.getTotalCount()}`)
       );
-      console.log(
+      console.info(
         chalk.gray(
           `  Enabled Features: ${this.featureRegistry.getEnabledCount()}`
         )
       );
-      console.log(
+      console.info(
         chalk.gray(`  Health Score: ${this.calculateHealthStatus().score}%`)
       );
     }
@@ -594,16 +594,16 @@ export class Dashboard {
 
   // Performance review
   async reviewPerformance(optimize: boolean = false): Promise<void> {
-    console.log(chalk.bold.white("📈 Performance Review..."));
+    console.info(chalk.bold.white("📈 Performance Review..."));
 
     this.updatePerformanceMetrics();
     this.displayPerformanceMetrics();
 
     if (optimize) {
-      console.log(chalk.bold.white("\n💡 Optimization Suggestions:"));
+      console.info(chalk.bold.white("\n💡 Optimization Suggestions:"));
 
       if (this.performanceMetrics.memoryUsage > 80) {
-        console.log(
+        console.info(
           chalk.yellow(
             "  • Consider disabling FEAT_EXTENDED_LOGGING to reduce memory usage"
           )
@@ -611,7 +611,7 @@ export class Dashboard {
       }
 
       if (this.performanceMetrics.cpuUsage > 80) {
-        console.log(
+        console.info(
           chalk.yellow(
             "  • Consider enabling FEAT_BATCH_PROCESSING to reduce CPU load"
           )
@@ -619,7 +619,7 @@ export class Dashboard {
       }
 
       if (this.performanceMetrics.responseTime > 100) {
-        console.log(
+        console.info(
           chalk.yellow(
             "  • Consider enabling FEAT_AUTO_HEAL for better response times"
           )
@@ -629,7 +629,7 @@ export class Dashboard {
       if (
         !this.featureRegistry.isEnabled(FeatureFlag.FEAT_ADVANCED_MONITORING)
       ) {
-        console.log(
+        console.info(
           chalk.blue(
             "  • Enable FEAT_ADVANCED_MONITORING for better performance insights"
           )
@@ -640,7 +640,7 @@ export class Dashboard {
 
   // System review
   async runSystemReview(): Promise<void> {
-    console.log(chalk.bold.white("🔍 System Review..."));
+    console.info(chalk.bold.white("🔍 System Review..."));
 
     // Run all review components concurrently
     await Promise.all([
@@ -650,14 +650,14 @@ export class Dashboard {
     ]);
 
     const healthStatus = this.calculateHealthStatus();
-    console.log(
+    console.info(
       chalk.bold.white(`\n📊 Overall System Health: ${healthStatus.badge}`)
     );
   }
 
   // Build optimization
   async optimizeBuild(): Promise<void> {
-    console.log(chalk.bold.white("🔨 Optimizing Build..."));
+    console.info(chalk.bold.white("🔨 Optimizing Build..."));
 
     const currentFlags = this.featureRegistry.getEnabledFlags();
     const optimizations: string[] = [];
@@ -688,29 +688,29 @@ export class Dashboard {
     }
 
     if (optimizations.length > 0) {
-      console.log(chalk.yellow("💡 Optimization Suggestions:"));
-      optimizations.forEach((opt) => console.log(chalk.yellow(`  • ${opt}`)));
+      console.info(chalk.yellow("💡 Optimization Suggestions:"));
+      optimizations.forEach((opt) => console.info(chalk.yellow(`  • ${opt}`)));
     } else {
-      console.log(chalk.green("✅ Build is already optimized"));
+      console.info(chalk.green("✅ Build is already optimized"));
     }
   }
 
   // Build analysis
   async analyzeBuild(): Promise<void> {
-    console.log(chalk.bold.white("📊 Analyzing Build Composition..."));
+    console.info(chalk.bold.white("📊 Analyzing Build Composition..."));
 
     const enabledFlags = this.featureRegistry.getEnabledFlags();
     const totalSize = this.calculateBundleSize(enabledFlags);
     const deadCodePercentage = this.calculateDeadCodePercentage(enabledFlags);
 
-    console.log(chalk.blue(`Estimated Bundle Size: ${totalSize}`));
-    console.log(chalk.blue(`Dead Code Elimination: ${deadCodePercentage}%`));
+    console.info(chalk.blue(`Estimated Bundle Size: ${totalSize}`));
+    console.info(chalk.blue(`Dead Code Elimination: ${deadCodePercentage}%`));
 
-    console.log(chalk.bold.white("\n📦 Feature Breakdown:"));
+    console.info(chalk.bold.white("\n📦 Feature Breakdown:"));
     enabledFlags.forEach((flag) => {
       const config = this.featureRegistry.getConfig(flag);
       const impact = config?.buildTimeImpact || "Unknown";
-      console.log(chalk.gray(`  • ${flag}: ${impact}`));
+      console.info(chalk.gray(`  • ${flag}: ${impact}`));
     });
   }
 
@@ -737,10 +737,10 @@ export class Dashboard {
 
     switch (format.toLowerCase()) {
       case "json":
-        console.log(JSON.stringify(reportData, null, 2));
+        console.info(JSON.stringify(reportData, null, 2));
         break;
       case "pdf":
-        console.log(chalk.yellow("PDF export not yet implemented"));
+        console.info(chalk.yellow("PDF export not yet implemented"));
         break;
       default:
         console.error(chalk.red(`❌ Unsupported report format: ${format}`));
@@ -749,7 +749,7 @@ export class Dashboard {
 
   // Start monitoring
   startMonitoring(): void {
-    console.log(chalk.green("📊 Advanced monitoring started"));
+    console.info(chalk.green("📊 Advanced monitoring started"));
     // Implementation would start actual monitoring here
   }
 

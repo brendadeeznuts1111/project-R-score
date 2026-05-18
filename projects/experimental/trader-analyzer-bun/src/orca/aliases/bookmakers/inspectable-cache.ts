@@ -94,13 +94,13 @@ export class InspectableBookmakerCacheManager extends BookmakerCacheManager {
 		this.recordTiming("get", timing);
 
 		if (value) {
-			console.log(`Cache hit: ${key}`);
-			console.log(`   Timing: ${(timing / 1_000_000).toFixed(2)}ms`);
+			console.info(`Cache hit: ${key}`);
+			console.info(`   Timing: ${(timing / 1_000_000).toFixed(2)}ms`);
 			const size = new TextEncoder().encode(JSON.stringify(value)).length;
-			console.log(`   Size: ${formatBytes(size)}`);
+			console.info(`   Size: ${formatBytes(size)}`);
 		} else {
-			console.log(`Cache miss: ${key}`);
-			console.log(`   Timing: ${(timing / 1_000_000).toFixed(2)}ms`);
+			console.info(`Cache miss: ${key}`);
+			console.info(`   Timing: ${(timing / 1_000_000).toFixed(2)}ms`);
 		}
 
 		return { value, timing };
@@ -126,11 +126,11 @@ export class InspectableBookmakerCacheManager extends BookmakerCacheManager {
 
 		const metrics = await this.getMetrics();
 
-		console.log(`Cache set: ${key}`);
-		console.log(`   Timing: ${(timing / 1_000_000).toFixed(2)}ms`);
-		console.log(`   Size: ${formatBytes(originalSize)}`);
-		console.log(`   TTL: ${ttlSeconds}s`);
-		console.log(`   Total entries: ${metrics.cacheSize}`);
+		console.info(`Cache set: ${key}`);
+		console.info(`   Timing: ${(timing / 1_000_000).toFixed(2)}ms`);
+		console.info(`   Size: ${formatBytes(originalSize)}`);
+		console.info(`   TTL: ${ttlSeconds}s`);
+		console.info(`   Total entries: ${metrics.cacheSize}`);
 	}
 
 	/**

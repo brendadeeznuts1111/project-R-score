@@ -11,7 +11,7 @@ describe('Feature Flags - Enterprise Security', () => {
   test('ENTERPRISE_SECURITY enables compliance metrics', () => {
     // This test only runs when ENTERPRISE_SECURITY is enabled
     if (!feature("ENTERPRISE_SECURITY")) {
-      console.log('⏭️  Skipping - ENTERPRISE_SECURITY not enabled');
+      console.info('⏭️  Skipping - ENTERPRISE_SECURITY not enabled');
       return;
     }
 
@@ -36,7 +36,7 @@ describe('Feature Flags - Enterprise Security', () => {
 describe('Feature Flags - Development Tools', () => {
   test('DEVELOPMENT_TOOLS enables mock data', () => {
     if (!feature("DEVELOPMENT_TOOLS")) {
-      console.log('⏭️  Skipping - DEVELOPMENT_TOOLS not enabled');
+      console.info('⏭️  Skipping - DEVELOPMENT_TOOLS not enabled');
       return;
     }
 
@@ -60,7 +60,7 @@ describe('Feature Flags - Development Tools', () => {
 describe('Feature Flags - Debug Unicode', () => {
   test('DEBUG_UNICODE shows zero-width character indicators', () => {
     if (!feature("DEBUG_UNICODE")) {
-      console.log('⏭️  Skipping - DEBUG_UNICODE not enabled');
+      console.info('⏭️  Skipping - DEBUG_UNICODE not enabled');
       return;
     }
 
@@ -75,7 +75,7 @@ describe('Feature Flags - Debug Unicode', () => {
 describe('Feature Flags - Premium Analytics', () => {
   test('PREMIUM_ANALYTICS enables advanced analytics section', () => {
     if (!feature("PREMIUM_ANALYTICS")) {
-      console.log('⏭️  Skipping - PREMIUM_ANALYTICS not enabled');
+      console.info('⏭️  Skipping - PREMIUM_ANALYTICS not enabled');
       return;
     }
 
@@ -99,7 +99,7 @@ describe('Feature Flags - Premium Analytics', () => {
 describe('Feature Flags - Audit Export', () => {
   test('AUDIT_EXPORT enables audit exporter', () => {
     if (!feature("AUDIT_EXPORT")) {
-      console.log('⏭️  Skipping - AUDIT_EXPORT not enabled');
+      console.info('⏭️  Skipping - AUDIT_EXPORT not enabled');
       return;
     }
 
@@ -114,7 +114,7 @@ describe('Feature Flags - Audit Export', () => {
 
   test('AUDIT_EXPORT throws when not enabled', () => {
     if (feature("AUDIT_EXPORT")) {
-      console.log('⏭️  Skipping - AUDIT_EXPORT is enabled, cannot test failure case');
+      console.info('⏭️  Skipping - AUDIT_EXPORT is enabled, cannot test failure case');
       return;
     }
 
@@ -125,7 +125,7 @@ describe('Feature Flags - Audit Export', () => {
 describe('Feature Flags - Advanced Dashboard', () => {
   test('ADVANCED_DASHBOARD enables real-time and multi-tenant options', () => {
     if (!feature("ADVANCED_DASHBOARD")) {
-      console.log('⏭️  Skipping - ADVANCED_DASHBOARD not enabled');
+      console.info('⏭️  Skipping - ADVANCED_DASHBOARD not enabled');
       return;
     }
 
@@ -144,9 +144,9 @@ describe('Feature Flags - Real-time Updates', () => {
     const isEnabled = feature("REAL_TIME_UPDATES");
     
     if (isEnabled) {
-      console.log('✅ Real-time updates are enabled');
+      console.info('✅ Real-time updates are enabled');
     } else {
-      console.log('ℹ️  Real-time updates are disabled');
+      console.info('ℹ️  Real-time updates are disabled');
     }
     
     expect(typeof isEnabled).toBe('boolean');
@@ -160,9 +160,9 @@ describe('Feature Flags - Multi-tenant', () => {
     expect(typeof isEnabled).toBe('boolean');
     
     if (isEnabled) {
-      console.log('✅ Multi-tenant support is enabled');
+      console.info('✅ Multi-tenant support is enabled');
     } else {
-      console.log('ℹ️  Multi-tenant support is disabled');
+      console.info('ℹ️  Multi-tenant support is disabled');
     }
   });
 });
@@ -176,8 +176,8 @@ describe('Feature Flags - Bundle Optimization', () => {
     
     // In a real enterprise build, we'd expect:
     // hasEnterprise = true, hasDevelopment = false
-    console.log(`Enterprise features: ${hasEnterprise}`);
-    console.log(`Development features: ${hasDevelopment}`);
+    console.info(`Enterprise features: ${hasEnterprise}`);
+    console.info(`Development features: ${hasDevelopment}`);
     
     expect(typeof hasEnterprise).toBe('boolean');
     expect(typeof hasDevelopment).toBe('boolean');
@@ -190,8 +190,8 @@ describe('Feature Flags - Bundle Optimization', () => {
     
     // In a real development build, we'd expect:
     // hasEnterprise = false, hasDevelopment = true
-    console.log(`Enterprise features: ${hasEnterprise}`);
-    console.log(`Development features: ${hasDevelopment}`);
+    console.info(`Enterprise features: ${hasEnterprise}`);
+    console.info(`Development features: ${hasDevelopment}`);
     
     expect(typeof hasEnterprise).toBe('boolean');
     expect(typeof hasDevelopment).toBe('boolean');

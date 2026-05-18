@@ -27,7 +27,7 @@ export class PredictiveFailureDetector {
     const anomalies = this.detectAnomalies();
 
     if (riskFactors.probability > 0.7) {
-      console.log(`🚨 High risk detected (${(riskFactors.probability * 100).toFixed(1)}%): ${riskFactors.reason}`);
+      console.info(`🚨 High risk detected (${(riskFactors.probability * 100).toFixed(1)}%): ${riskFactors.reason}`);
       await this.rotateProxiesAtRisk(riskFactors.proxyIds);
       await this.warmUpNewAccountsPreemptively();
       await this.increaseMonitoringFrequency();
@@ -65,19 +65,19 @@ export class PredictiveFailureDetector {
   }
 
   private async rotateProxiesAtRisk(proxyIds: string[]) {
-    console.log(`🔄 Rotating ${proxyIds.length} high-risk proxies...`);
+    console.info(`🔄 Rotating ${proxyIds.length} high-risk proxies...`);
   }
 
   private async warmUpNewAccountsPreemptively() {
-    console.log('🔥 Warming up reserve accounts...');
+    console.info('🔥 Warming up reserve accounts...');
   }
 
   private async increaseMonitoringFrequency() {
-    console.log('📈 Monitoring frequency increased to 30s intervals');
+    console.info('📈 Monitoring frequency increased to 30s intervals');
   }
 
   private triggerInvestigation(anomaly: Anomaly) {
-    console.log(`🕵️ Investigation triggered for: ${anomaly.type} (${anomaly.metric}: ${anomaly.actual} < ${anomaly.threshold})`);
+    console.info(`🕵️ Investigation triggered for: ${anomaly.type} (${anomaly.metric}: ${anomaly.actual} < ${anomaly.threshold})`);
   }
 }
 

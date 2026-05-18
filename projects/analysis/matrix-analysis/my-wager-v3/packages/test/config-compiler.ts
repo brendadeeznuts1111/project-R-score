@@ -17,7 +17,7 @@ class ConfigCompiler {
     await Bun.write(jsonPath, jsonString);
 
     const end = performance.now();
-    console.log(`✅ Compiled ${tomlPath} → ${jsonPath} in ${(end - start).toFixed(3)}ms`);
+    console.info(`✅ Compiled ${tomlPath} → ${jsonPath} in ${(end - start).toFixed(3)}ms`);
   }
 
   async loadCompiledConfig(jsonPath: string): Promise<any> {
@@ -28,19 +28,19 @@ class ConfigCompiler {
     const config = JSON.parse(content);
 
     const end = performance.now();
-    console.log(`⚡ Loaded compiled config in ${(end - start).toFixed(3)}ms`);
+    console.info(`⚡ Loaded compiled config in ${(end - start).toFixed(3)}ms`);
 
     return config;
   }
 
   // Pre-compile all configs for maximum performance
   async compileAllConfigs(): Promise<void> {
-    console.log('🔧 Pre-compiling configurations for maximum performance...');
+    console.info('🔧 Pre-compiling configurations for maximum performance...');
 
     await this.compileTomlToJson('./bunfig.fast.toml', './.cache/bunfig.fast.json');
     await this.compileTomlToJson('./bunfig.minimal.toml', './.cache/bunfig.minimal.json');
 
-    console.log('✅ All configurations compiled successfully');
+    console.info('✅ All configurations compiled successfully');
   }
 }
 

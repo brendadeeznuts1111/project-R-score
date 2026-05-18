@@ -63,7 +63,7 @@ describe('R2MCPIntegration', () => {
 
   beforeEach(() => {
     // Suppress console output from R2 operational + error logging
-    logSpy = spyOn(console, 'log').mockImplementation(() => {});
+    logSpy = spyOn(console, 'info').mockImplementation(() => {});
     errorSpy = spyOn(console, 'error').mockImplementation(() => {});
 
     // Reset cache and error tracking before each test

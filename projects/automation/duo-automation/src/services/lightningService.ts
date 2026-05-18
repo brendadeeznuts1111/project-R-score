@@ -100,15 +100,15 @@ class EnhancedLogger {
       output += ` | Iteration: ${entry.iteration}`;
     }
     
-    console.log(output);
+    console.info(output);
   }
   
   setupInteractiveControls() {
     if (!process.stdin.isTTY) return;
     
     process.stdin.setRawMode(true);
-    console.log('\n📮 Interactive Console Controls:');
-    console.log('   [n] Next iteration | [p] Previous | [c] Clear | [s] Show stats | [q] Quit');
+    console.info('\n📮 Interactive Console Controls:');
+    console.info('   [n] Next iteration | [p] Previous | [c] Clear | [s] Show stats | [q] Quit');
     
     process.stdin.on('data', (chunk) => {
       const key = chunk.toString().toLowerCase();
@@ -127,7 +127,7 @@ class EnhancedLogger {
           this.showStats();
           break;
         case 'q':
-          console.log('\n👋 Exiting interactive console...');
+          console.info('\n👋 Exiting interactive console...');
           process.exit(0);
           break;
       }
@@ -165,14 +165,14 @@ class EnhancedLogger {
       currentIteration: this.currentIteration
     };
     
-    console.log('\n📊 Log Statistics:');
-    console.log(`   Total: ${stats.total}`);
-    console.log(`   Debug: ${stats.debug}`);
-    console.log(`   Info: ${stats.info}`);
-    console.log(`   Warn: ${stats.warn}`);
-    console.log(`   Error: ${stats.error}`);
-    console.log(`   Success: ${stats.success}`);
-    console.log(`   Current Iteration: ${stats.currentIteration}`);
+    console.info('\n📊 Log Statistics:');
+    console.info(`   Total: ${stats.total}`);
+    console.info(`   Debug: ${stats.debug}`);
+    console.info(`   Info: ${stats.info}`);
+    console.info(`   Warn: ${stats.warn}`);
+    console.info(`   Error: ${stats.error}`);
+    console.info(`   Success: ${stats.success}`);
+    console.info(`   Current Iteration: ${stats.currentIteration}`);
   }
   
   getLogs(): LogEntry[] {
@@ -184,7 +184,7 @@ class EnhancedLogger {
   }
 }
 
-console.log(`
+console.info(`
 ⚡ **FACTORY_WAGER LIGHTNING NETWORK SERVICE v3.5**
 ═══════════════════════════════════════════════════════════════════
 
@@ -496,7 +496,7 @@ export class LightningService {
 
   private async findQuestByPaymentHash(hash: string): Promise<any> {
     // Mock implementation - in production, query your database
-    console.log(`🔍 Looking up quest by payment hash: ${hash}`);
+    console.info(`🔍 Looking up quest by payment hash: ${hash}`);
     
     // Simulate database lookup
     await new Promise(resolve => setTimeout(resolve, 100));
@@ -509,12 +509,12 @@ export class LightningService {
   }
 
   private async completeQuest(questId: string, amountSats: string): Promise<void> {
-    console.log(`🎯 Completing quest ${questId} with ${amountSats} sats`);
+    console.info(`🎯 Completing quest ${questId} with ${amountSats} sats`);
     
     // Mock database update
     await new Promise(resolve => setTimeout(resolve, 50));
     
-    console.log(`✅ Quest ${questId} marked as completed`);
+    console.info(`✅ Quest ${questId} marked as completed`);
   }
 }
 
@@ -531,13 +531,13 @@ export class KYCValidator {
     message?: string;
     requiresReview?: boolean;
   }> {
-    console.log(`🔍 Validating Lightning payment: $${amountUsd.toFixed(2)} for user ${userId}`);
+    console.info(`🔍 Validating Lightning payment: $${amountUsd.toFixed(2)} for user ${userId}`);
     
     const userRisk = await this.getUserRiskProfile(userId);
     
     // FinCEN CTR threshold: $10,000 daily
     if (amountUsd > 10000) {
-      console.log(`❌ Amount exceeds $10,000 FinCEN threshold`);
+      console.info(`❌ Amount exceeds $10,000 FinCEN threshold`);
       return {
         allowed: false,
         message: "Amount exceeds $10,000 FinCEN threshold",
@@ -549,7 +549,7 @@ export class KYCValidator {
     if (amountUsd > 3000) {
       if (userRisk.level === "high") {
         await this.triggerManualReview(userId, amountUsd, "HIGH_RISK_AMOUNT");
-        console.log(`❌ Manual review required for high-risk user`);
+        console.info(`❌ Manual review required for high-risk user`);
         return {
           allowed: false,
           message: "Manual review required for high-risk user",
@@ -569,7 +569,7 @@ export class KYCValidator {
     const newVolume = todayVolume + amountUsd;
 
     if (newVolume > limits[userRisk.level]) {
-      console.log(`❌ Daily Lightning limit exceeded: $${limits[userRisk.level]} (current: $${todayVolume.toFixed(2)}, new: $${newVolume.toFixed(2)})`);
+      console.info(`❌ Daily Lightning limit exceeded: $${limits[userRisk.level]} (current: $${todayVolume.toFixed(2)}, new: $${newVolume.toFixed(2)})`);
       return {
         allowed: false,
         message: `Daily Lightning limit exceeded: $${limits[userRisk.level]}`,
@@ -578,14 +578,14 @@ export class KYCValidator {
 
     // Geo-restrictions (OFAC compliance)
     if (await this.isSanctionedJurisdiction(userId)) {
-      console.log(`❌ Jurisdiction not supported for Lightning payments`);
+      console.info(`❌ Jurisdiction not supported for Lightning payments`);
       return {
         allowed: false,
         message: "Jurisdiction not supported for Lightning payments",
       };
     }
 
-    console.log(`✅ Payment validation passed for user ${userId} (${userRisk.level} risk)`);
+    console.info(`✅ Payment validation passed for user ${userId} (${userRisk.level} risk)`);
     return { allowed: true };
   }
 
@@ -594,7 +594,7 @@ export class KYCValidator {
    */
   private async getDailyLightningVolume(userId: string): Promise<number> {
     // Mock implementation - in production, query your database
-    console.log(`📊 Getting daily Lightning volume for user ${userId}`);
+    console.info(`📊 Getting daily Lightning volume for user ${userId}`);
     
     // Simulate database lookup
     await new Promise(resolve => setTimeout(resolve, 50));
@@ -604,7 +604,7 @@ export class KYCValidator {
 
   private async getUserRiskProfile(userId: string): Promise<{ level: 'low' | 'medium' | 'high' }> {
     // Mock implementation based on your risk engine
-    console.log(`👤 Getting risk profile for user ${userId}`);
+    console.info(`👤 Getting risk profile for user ${userId}`);
     
     // Simulate risk assessment
     await new Promise(resolve => setTimeout(resolve, 30));
@@ -615,7 +615,7 @@ export class KYCValidator {
   }
 
   private async triggerManualReview(userId: string, amount: number, reason: string): Promise<void> {
-    console.log(`⚠️ Triggering manual review for user ${userId}: ${reason}`);
+    console.info(`⚠️ Triggering manual review for user ${userId}: ${reason}`);
     
     try {
       await Bun.write(
@@ -636,7 +636,7 @@ export class KYCValidator {
 
   private async isSanctionedJurisdiction(userId: string): Promise<boolean> {
     // Check user IP, registered address, etc.
-    console.log(`🌍 Checking jurisdiction for user ${userId}`);
+    console.info(`🌍 Checking jurisdiction for user ${userId}`);
     
     // Mock implementation
     await new Promise(resolve => setTimeout(resolve, 20));
@@ -664,13 +664,13 @@ export class SavingsOptimizer {
   }> {
     const amountUsd = this.satsToUsd(params.amountSats);
     
-    console.log(`💰 Processing Lightning payment: ${params.amountSats} sats ($${amountUsd.toFixed(2)})`);
+    console.info(`💰 Processing Lightning payment: ${params.amountSats} sats ($${amountUsd.toFixed(2)})`);
     
     // Smart routing logic
     if (amountUsd < 50) {
       // Keep in Lightning for microtransactions
       await this.creditLightningWallet(params.userId, params.amountSats);
-      console.log(`💸 Routed to microtransaction wallet: $${amountUsd.toFixed(2)}`);
+      console.info(`💸 Routed to microtransaction wallet: $${amountUsd.toFixed(2)}`);
       return {
         destination: 'microtransaction_wallet',
         amount: amountUsd,
@@ -680,7 +680,7 @@ export class SavingsOptimizer {
       // Route to Cash App Green (3.25% APY)
       await this.depositToCashAppGreen(params.userId, amountUsd, params.questId);
       const annualYield = amountUsd * 0.0325;
-      console.log(`💸 Routed to Cash App Green: $${amountUsd.toFixed(2)} (Projected annual yield: $${annualYield.toFixed(2)})`);
+      console.info(`💸 Routed to Cash App Green: $${amountUsd.toFixed(2)} (Projected annual yield: $${annualYield.toFixed(2)})`);
       return {
         destination: 'cashapp_green',
         amount: amountUsd,
@@ -690,7 +690,7 @@ export class SavingsOptimizer {
       // Large amount -> standard high-yield account
       await this.depositToStandardAccount(params.userId, amountUsd, params.questId);
       const annualYield = amountUsd * 0.025; // 2.5% APY
-      console.log(`💸 Routed to standard account: $${amountUsd.toFixed(2)} (Projected annual yield: $${annualYield.toFixed(2)})`);
+      console.info(`💸 Routed to standard account: $${amountUsd.toFixed(2)} (Projected annual yield: $${annualYield.toFixed(2)})`);
       return {
         destination: 'standard_account',
         amount: amountUsd,
@@ -700,21 +700,21 @@ export class SavingsOptimizer {
   }
 
   async routeToSavings(userId: string, amountUsd: number): Promise<void> {
-    console.log(`💰 Routing $${amountUsd.toFixed(2)} to savings for user ${userId}`);
+    console.info(`💰 Routing $${amountUsd.toFixed(2)} to savings for user ${userId}`);
     
     // Mock savings routing
     await new Promise(resolve => setTimeout(resolve, 100));
     
-    console.log(`✅ Funds routed to savings successfully`);
+    console.info(`✅ Funds routed to savings successfully`);
   }
 
   private async creditLightningWallet(userId: string, amountSats: number): Promise<void> {
-    console.log(`⚡ Crediting Lightning wallet for user ${userId}: ${amountSats} sats`);
+    console.info(`⚡ Crediting Lightning wallet for user ${userId}: ${amountSats} sats`);
     
     // Mock Lightning wallet credit
     await new Promise(resolve => setTimeout(resolve, 50));
     
-    console.log(`✅ Lightning wallet credited successfully`);
+    console.info(`✅ Lightning wallet credited successfully`);
   }
 
   private async depositToCashAppGreen(
@@ -722,7 +722,7 @@ export class SavingsOptimizer {
     amountUsd: number,
     questId: string
   ): Promise<void> {
-    console.log(`💳 Depositing to Cash App Green: $${amountUsd.toFixed(2)} for user ${userId}`);
+    console.info(`💳 Depositing to Cash App Green: $${amountUsd.toFixed(2)} for user ${userId}`);
     
     // Use Cash App API to deposit to Green account
     try {
@@ -743,7 +743,7 @@ export class SavingsOptimizer {
         throw new Error(`Cash App deposit failed: ${response.status}`);
       }
 
-      console.log(`✅ Cash App Green deposit successful`);
+      console.info(`✅ Cash App Green deposit successful`);
       
       // Log for yield tracking
       await this.logYieldGeneration(userId, amountUsd, 0.0325, questId);
@@ -759,12 +759,12 @@ export class SavingsOptimizer {
     amountUsd: number,
     questId: string
   ): Promise<void> {
-    console.log(`🏦 Depositing to standard account: $${amountUsd.toFixed(2)} for user ${userId}`);
+    console.info(`🏦 Depositing to standard account: $${amountUsd.toFixed(2)} for user ${userId}`);
     
     // Mock standard account deposit
     await new Promise(resolve => setTimeout(resolve, 100));
     
-    console.log(`✅ Standard account deposit successful`);
+    console.info(`✅ Standard account deposit successful`);
     
     // Log for yield tracking
     await this.logYieldGeneration(userId, amountUsd, 0.025, questId);
@@ -815,7 +815,7 @@ class ControlledConnectionPool {
   }
   
   async request(url: string, options: RequestInit): Promise<Response> {
-    console.log(`🌐 Making request to: ${url}`);
+    console.info(`🌐 Making request to: ${url}`);
     
     // Mock LND API responses for demo
     if (url.includes('/invoices')) {
@@ -853,7 +853,7 @@ class ControlledConnectionPool {
 // ============================================================================
 
 async function demonstrateLightningService() {
-  console.log(`
+  console.info(`
 🚀 **LIGHTNING NETWORK SERVICE DEMONSTRATION**
 ═══════════════════════════════════════════════════════════════════
 
@@ -869,8 +869,8 @@ async function demonstrateLightningService() {
     // Initialize service
     const lightning = LightningService.getInstance();
     
-    console.log("\n📋 Step 1: Generate Quest Invoice");
-    console.log("────────────────────────────────────");
+    console.info("\n📋 Step 1: Generate Quest Invoice");
+    console.info("────────────────────────────────────");
     
     const invoice = await lightning.generateQuestInvoice({
       questId: "demo-quest-123",
@@ -880,10 +880,10 @@ async function demonstrateLightningService() {
       expirySeconds: 1800
     });
     
-    console.log(`✅ Generated invoice: ${invoice.substring(0, 50)}...`);
+    console.info(`✅ Generated invoice: ${invoice.substring(0, 50)}...`);
     
-    console.log("\n💰 Step 2: Process Payment Settlement");
-    console.log("────────────────────────────────────");
+    console.info("\n💰 Step 2: Process Payment Settlement");
+    console.info("────────────────────────────────────");
     
     // Simulate webhook settlement
     const webhookData = {
@@ -895,27 +895,27 @@ async function demonstrateLightningService() {
     
     await lightning.handleInvoiceSettlement(webhookData);
     
-    console.log("\n💳 Step 3: Check Node Balance");
-    console.log("────────────────────────────────────");
+    console.info("\n💳 Step 3: Check Node Balance");
+    console.info("────────────────────────────────────");
     
     const balance = await lightning.getNodeBalance();
-    console.log(`📊 Node balance: Local=${balance.local}, Remote=${balance.remote}, Pending=${balance.pending}`);
+    console.info(`📊 Node balance: Local=${balance.local}, Remote=${balance.remote}, Pending=${balance.pending}`);
     
-    console.log("\n🔍 Step 4: Test KYC Validation");
-    console.log("────────────────────────────────────");
+    console.info("\n🔍 Step 4: Test KYC Validation");
+    console.info("────────────────────────────────────");
     
     const kycValidator = new KYCValidator();
     
     // Test compliant payment
     const compliantResult = await kycValidator.validateLightningPayment("low-risk-user", 100);
-    console.log(`✅ Compliant payment: $100 - ${compliantResult.allowed ? 'ALLOWED' : 'REJECTED'}`);
+    console.info(`✅ Compliant payment: $100 - ${compliantResult.allowed ? 'ALLOWED' : 'REJECTED'}`);
     
     // Test non-compliant payment
     const nonCompliantResult = await kycValidator.validateLightningPayment("high-risk-user", 15000);
-    console.log(`❌ Non-compliant payment: $15,000 - ${nonCompliantResult.allowed ? 'ALLOWED' : 'REJECTED'}`);
+    console.info(`❌ Non-compliant payment: $15,000 - ${nonCompliantResult.allowed ? 'ALLOWED' : 'REJECTED'}`);
     
-    console.log("\n💸 Step 5: Test Savings Optimization");
-    console.log("────────────────────────────────────");
+    console.info("\n💸 Step 5: Test Savings Optimization");
+    console.info("────────────────────────────────────");
     
     const savingsOptimizer = new SavingsOptimizer();
     
@@ -925,7 +925,7 @@ async function demonstrateLightningService() {
       amountSats: 10000, // ~$0.45
       questId: "micro-quest"
     });
-    console.log(`💸 Microtransaction ($${microResult.amount.toFixed(2)}): ${microResult.destination} (Yield: $${microResult.projectedYield.toFixed(2)})`);
+    console.info(`💸 Microtransaction ($${microResult.amount.toFixed(2)}): ${microResult.destination} (Yield: $${microResult.projectedYield.toFixed(2)})`);
     
     // Test Cash App Green routing
     const greenResult = await savingsOptimizer.processLightningPayment({
@@ -933,7 +933,7 @@ async function demonstrateLightningService() {
       amountSats: 100000, // ~$4.50
       questId: "green-quest"
     });
-    console.log(`💳 Cash App Green ($${greenResult.amount.toFixed(2)}): ${greenResult.destination} (Yield: $${greenResult.projectedYield.toFixed(2)})`);
+    console.info(`💳 Cash App Green ($${greenResult.amount.toFixed(2)}): ${greenResult.destination} (Yield: $${greenResult.projectedYield.toFixed(2)})`);
     
     // Test standard account routing
     const standardResult = await savingsOptimizer.processLightningPayment({
@@ -941,9 +941,9 @@ async function demonstrateLightningService() {
       amountSats: 10000000, // ~$450
       questId: "standard-quest"
     });
-    console.log(`🏦 Standard Account ($${standardResult.amount.toFixed(2)}): ${standardResult.destination} (Yield: $${standardResult.projectedYield.toFixed(2)})`);
+    console.info(`🏦 Standard Account ($${standardResult.amount.toFixed(2)}): ${standardResult.destination} (Yield: $${standardResult.projectedYield.toFixed(2)})`);
     
-    console.log(`
+    console.info(`
 🎉 **LIGHTNING NETWORK DEMO COMPLETED!**
 ═══════════════════════════════════════════════════════════════════
 

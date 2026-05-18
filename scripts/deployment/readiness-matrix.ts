@@ -201,6 +201,6 @@ export function summarizeDeploymentReadiness() {
 
 if (import.meta.main) {
   const report = summarizeDeploymentReadiness();
-  console.log(JSON.stringify(report, null, 2));
+  console.info(JSON.stringify(report, null, 2));
 }
 

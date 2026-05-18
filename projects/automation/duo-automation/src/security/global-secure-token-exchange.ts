@@ -202,7 +202,7 @@ export class GlobalSecureTokenExchange extends EventEmitter implements IGlobalTo
     deviceCategory: string,
     merchantIdentifier: string
   ): Promise<IGlobalTokenGenerationResult> {
-    console.log(`🔐 Generating global secure token for: ${subjectIdentifier}`);
+    console.info(`🔐 Generating global secure token for: ${subjectIdentifier}`);
 
     const tokenIdentifier = crypto.randomUUID();
     const issuedAtEpoch = Math.floor(Date.now() / 1000);
@@ -286,7 +286,7 @@ export class GlobalSecureTokenExchange extends EventEmitter implements IGlobalTo
   }
 
   async validateGlobalSecureToken(token: string, expectedAudience: string): Promise<IGlobalTokenValidationResult> {
-    console.log(`🔍 Validating global secure token`);
+    console.info(`🔍 Validating global secure token`);
 
     const validationTimestamp = new Date();
 
@@ -362,7 +362,7 @@ export class GlobalSecureTokenExchange extends EventEmitter implements IGlobalTo
     serverCertificate: IGlobalCertificatePair,
     geographicScope: string
   ): Promise<IGlobalMutualTLSResult> {
-    console.log(`🤝 Performing global mutual TLS handshake`);
+    console.info(`🤝 Performing global mutual TLS handshake`);
 
     const sessionIdentifier = crypto.randomUUID();
     const handshakeTimestamp = new Date();
@@ -445,7 +445,7 @@ export class GlobalSecureTokenExchange extends EventEmitter implements IGlobalTo
     currentTokenIdentifier: string,
     rotationReason: 'SCHEDULED' | 'SECURITY_EVENT' | 'COMPLIANCE_REQUIREMENT' | 'ADMINISTRATIVE' = 'SCHEDULED'
   ): Promise<IGlobalTokenRotationResult> {
-    console.log(`🔄 Rotating global secure token: ${currentTokenIdentifier}`);
+    console.info(`🔄 Rotating global secure token: ${currentTokenIdentifier}`);
 
     const rotationTimestamp = new Date();
     const currentToken = this.activeTokens.get(currentTokenIdentifier);
@@ -534,7 +534,7 @@ export class GlobalSecureTokenExchange extends EventEmitter implements IGlobalTo
   }
 
   async getGlobalSecurityMetrics(): Promise<IGlobalSecurityMetrics> {
-    console.log(`📊 Collecting global security metrics`);
+    console.info(`📊 Collecting global security metrics`);
 
     const now = new Date();
     const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -747,11 +747,11 @@ export class GlobalSecureTokenExchange extends EventEmitter implements IGlobalTo
   }
 
   private initializeCertificateStore(): void {
-    console.log('🔐 Initializing global certificate store');
+    console.info('🔐 Initializing global certificate store');
   }
 
   private startTokenRotationScheduler(): void {
-    console.log('⏰ Starting global token rotation scheduler');
+    console.info('⏰ Starting global token rotation scheduler');
 
     // Schedule token rotation checks
     setInterval(() => {
@@ -760,7 +760,7 @@ export class GlobalSecureTokenExchange extends EventEmitter implements IGlobalTo
   }
 
   private startAuditTrailProcessor(): void {
-    console.log('📋 Starting global audit trail processor');
+    console.info('📋 Starting global audit trail processor');
 
     // Process audit trail periodically
     setInterval(() => {
@@ -785,7 +785,7 @@ export class GlobalSecureTokenExchange extends EventEmitter implements IGlobalTo
 
   private async processAuditTrail(): Promise<void> {
     // Process audit trail for compliance reporting
-    console.log(`📊 Processing audit trail: ${this.auditTrail.length} entries`);
+    console.info(`📊 Processing audit trail: ${this.auditTrail.length} entries`);
   }
 
   // Public utility methods

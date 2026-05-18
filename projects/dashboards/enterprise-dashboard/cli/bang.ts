@@ -243,8 +243,8 @@ function findAction(name: string): QuickAction | null {
 // =============================================================================
 
 async function executeAction(action: QuickAction, args: string[] = []) {
-  console.log(`${c.cyan}→${c.reset} ${c.bold}${action.name}${c.reset}: ${action.description}`);
-  console.log(`${c.dim}Running: ${action.command.join(" ")} ${args.join(" ")}${c.reset}\n`);
+  console.info(`${c.cyan}→${c.reset} ${c.bold}${action.name}${c.reset}: ${action.description}`);
+  console.info(`${c.dim}Running: ${action.command.join(" ")} ${args.join(" ")}${c.reset}\n`);
 
   const proc = spawn([...action.command, ...args], {
     stdout: "inherit",
@@ -269,23 +269,23 @@ function listActions(category?: string) {
     byCategory.get(action.category)!.push(action);
   }
 
-  console.log(`${c.bold}Available Quick Actions${category ? ` (${category})` : ""}${c.reset}\n`);
+  console.info(`${c.bold}Available Quick Actions${category ? ` (${category})` : ""}${c.reset}\n`);
 
   for (const [cat, catActions] of Array.from(byCategory.entries()).sort()) {
-    console.log(`${c.bold}${cat.toUpperCase()}${c.reset}`);
+    console.info(`${c.bold}${cat.toUpperCase()}${c.reset}`);
     for (const action of catActions.sort((a, b) => a.name.localeCompare(b.name))) {
       const aliases = action.aliases ? ` (${action.aliases.join(", ")})` : "";
-      console.log(`  ${c.green}${action.name.padEnd(20)}${c.reset}${aliases.padEnd(15)} ${action.description}`);
+      console.info(`  ${c.green}${action.name.padEnd(20)}${c.reset}${aliases.padEnd(15)} ${action.description}`);
     }
-    console.log();
+    console.info();
   }
 
-  console.log(`${c.dim}Usage: bun run cli/bang.ts <action> [args...]${c.reset}`);
-  console.log(`${c.dim}Example: bun run cli/bang.ts health${c.reset}`);
+  console.info(`${c.dim}Usage: bun run cli/bang.ts <action> [args...]${c.reset}`);
+  console.info(`${c.dim}Example: bun run cli/bang.ts health${c.reset}`);
 }
 
 function showHelp() {
-  console.log(`
+  console.info(`
 ${c.bold}Quick Actions & Shortcuts System${c.reset}
 
 ${c.bold}Usage:${c.reset}
@@ -344,17 +344,17 @@ async function main() {
   const action = findAction(command);
   if (!action) {
     console.error(`${c.red}Unknown action: ${command}${c.reset}\n`);
-    console.log(`${c.yellow}Did you mean one of these?${c.reset}`);
+    console.info(`${c.yellow}Did you mean one of these?${c.reset}`);
     const suggestions = QUICK_ACTIONS
       .filter((a) => a.name.includes(command) || a.aliases?.some((alias) => alias.includes(command)))
       .slice(0, 5);
     if (suggestions.length > 0) {
       suggestions.forEach((a) => {
         const aliases = a.aliases ? ` (${a.aliases.join(", ")})` : "";
-        console.log(`  ${c.green}${a.name}${c.reset}${aliases} - ${a.description}`);
+        console.info(`  ${c.green}${a.name}${c.reset}${aliases} - ${a.description}`);
       });
     } else {
-      console.log(`  Run ${c.cyan}bun run cli/bang.ts list${c.reset} to see all available actions`);
+      console.info(`  Run ${c.cyan}bun run cli/bang.ts list${c.reset} to see all available actions`);
     }
     process.exit(1);
   }

@@ -139,7 +139,7 @@ export class CrossRepoBenchmarker {
     performance: { regression: boolean; improvement: boolean; trend: 'up' | 'down' | 'stable' };
     status: 'success' | 'warning' | 'failed';
   }> {
-    console.log('📊 Starting comprehensive benchmark suite...');
+    console.info('📊 Starting comprehensive benchmark suite...');
 
     const targetSuites = options.suites || Array.from(this.suites.keys());
     const results = new Map<string, BenchmarkResult>();
@@ -155,7 +155,7 @@ export class CrossRepoBenchmarker {
         continue;
       }
 
-      console.log(`🏃 Running ${suite.type} benchmarks: ${suite.name}`);
+      console.info(`🏃 Running ${suite.type} benchmarks: ${suite.name}`);
 
       try {
         const suiteResults = await this.runBenchmarkSuite(suite, options);
@@ -210,11 +210,11 @@ export class CrossRepoBenchmarker {
           ? 'warning'
           : 'failed';
 
-    console.log('\n📊 Benchmark Summary:');
-    console.log(`✅ Budgets passed: ${budgetsPassed}`);
-    console.log(`❌ Budgets failed: ${budgetsFailed}`);
-    console.log(`📈 Performance trend: ${performance.trend}`);
-    console.log(`🎯 Status: ${status}`);
+    console.info('\n📊 Benchmark Summary:');
+    console.info(`✅ Budgets passed: ${budgetsPassed}`);
+    console.info(`❌ Budgets failed: ${budgetsFailed}`);
+    console.info(`📈 Performance trend: ${performance.trend}`);
+    console.info(`🎯 Status: ${status}`);
 
     return { results, budgets, performance, status };
   }
@@ -230,7 +230,7 @@ export class CrossRepoBenchmarker {
       verbose?: boolean;
     } = {}
   ): Promise<Map<string, BenchmarkResult[]>> {
-    console.log(`📦 Benchmarking packages: ${packages.join(', ')}`);
+    console.info(`📦 Benchmarking packages: ${packages.join(', ')}`);
 
     const results = new Map<string, BenchmarkResult[]>();
     const suiteTypes = options.suiteTypes || ['package', 'integration'];
@@ -248,7 +248,7 @@ export class CrossRepoBenchmarker {
       for (const [suiteName, suite] of this.suites) {
         if (!suiteTypes.includes(suite.type)) continue;
 
-        console.log(`🏃 Running ${suite.type} benchmarks for ${packageName}...`);
+        console.info(`🏃 Running ${suite.type} benchmarks for ${packageName}...`);
 
         try {
           const suiteResults = await this.runPackageBenchmarks(packagePath, suite, options);
@@ -282,7 +282,7 @@ export class CrossRepoBenchmarker {
     latency: number;
     errorRate: number;
   }> {
-    console.log('🚀 Benchmarking Cloudflare Worker deployment...');
+    console.info('🚀 Benchmarking Cloudflare Worker deployment...');
 
     const environment = options.environment || 'staging';
     const duration = options.duration || 60; // seconds
@@ -467,7 +467,7 @@ export class CrossRepoBenchmarker {
 
     for (const benchmark of suite.benchmarks) {
       if (options.verbose) {
-        console.log(`  🔍 Running ${benchmark.name}...`);
+        console.info(`  🔍 Running ${benchmark.name}...`);
       }
 
       const result = await this.runSingleBenchmark(benchmark, suite, options);
@@ -593,7 +593,7 @@ export class CrossRepoBenchmarker {
     const results = new Map<string, BenchmarkResult>();
 
     for (const benchmark of suite.benchmarks) {
-      console.log(`  🏃 Running package benchmark: ${benchmark.name}`);
+      console.info(`  🏃 Running package benchmark: ${benchmark.name}`);
 
       try {
         // Run the benchmark in the package directory
@@ -612,7 +612,7 @@ export class CrossRepoBenchmarker {
   }
 
   private async analyzePerformanceTrends(results: Map<string, BenchmarkResult>): Promise<any> {
-    console.log('📈 Analyzing performance trends...');
+    console.info('📈 Analyzing performance trends...');
 
     const currentMetrics = this.extractMetrics(results);
     const historicalMetrics = await this.loadHistoricalMetrics();
@@ -645,14 +645,14 @@ export class CrossRepoBenchmarker {
       else if (regression && !improvement) trend = 'down';
       else trend = 'stable';
 
-      console.log(`📊 Performance comparison:`);
-      console.log(
+      console.info(`📊 Performance comparison:`);
+      console.info(
         `  Latency: ${latencyDiff > 0 ? '+' : ''}${latencyDiff.toFixed(2)}ms (${latencyRegression ? '⬆️ regression' : latencyImprovement ? '⬇️ improvement' : '➡️ stable'})`
       );
-      console.log(
+      console.info(
         `  Throughput: ${throughputDiff > 0 ? '+' : ''}${throughputDiff.toFixed(2)}/s (${throughputRegression ? '⬇️ regression' : throughputImprovement ? '⬆️ improvement' : '➡️ stable'})`
       );
-      console.log(
+      console.info(
         `  Memory: ${memoryDiff > 0 ? '+' : ''}${(memoryDiff / 1024 / 1024).toFixed(2)}MB (${memoryRegression ? '⬆️ regression' : memoryImprovement ? '⬇️ improvement' : '➡️ stable'})`
       );
     }
@@ -729,14 +729,14 @@ export class CrossRepoBenchmarker {
     }));
 
     writeFileSync(resultsFile, JSON.stringify(resultsArray, null, 2));
-    console.log(`💾 Benchmark results saved to: ${resultsFile}`);
+    console.info(`💾 Benchmark results saved to: ${resultsFile}`);
   }
 
   private async generateDashboard(
     results: Map<string, BenchmarkResult>,
     performance: any
   ): Promise<void> {
-    console.log('📊 Generating benchmark dashboard...');
+    console.info('📊 Generating benchmark dashboard...');
 
     const dashboardDir = join(this.rootPath, 'benchmark-results', 'dashboard');
     if (!existsSync(dashboardDir)) {
@@ -762,7 +762,7 @@ export class CrossRepoBenchmarker {
     };
     writeFileSync(join(dashboardDir, 'data.json'), JSON.stringify(dashboardData, null, 2));
 
-    console.log(`📊 Dashboard generated: ${join(dashboardDir, 'index.html')}`);
+    console.info(`📊 Dashboard generated: ${join(dashboardDir, 'index.html')}`);
   }
 
   private async generateDashboardHtml(
@@ -893,7 +893,7 @@ export class CrossRepoBenchmarker {
   }
 
   private async exportResults(results: Map<string, BenchmarkResult>): Promise<void> {
-    console.log('📤 Exporting benchmark results...');
+    console.info('📤 Exporting benchmark results...');
 
     const exportDir = join(this.rootPath, 'benchmark-results', 'exports');
     if (!existsSync(exportDir)) {
@@ -924,7 +924,7 @@ export class CrossRepoBenchmarker {
       .join('\\n');
     writeFileSync(join(exportDir, `benchmark-results-${timestamp}.csv`), csvHeader + csvRows);
 
-    console.log(`📁 Results exported to: ${exportDir}`);
+    console.info(`📁 Results exported to: ${exportDir}`);
   }
 
   private async sendAlerts(
@@ -932,16 +932,16 @@ export class CrossRepoBenchmarker {
     performance: any,
     violations: string[]
   ): Promise<void> {
-    console.log('🚨 Sending performance alerts...');
+    console.info('🚨 Sending performance alerts...');
 
     const alertMessage = this.generateAlertMessage(results, performance, violations);
 
     // Console alert (always shown)
-    console.log('\\n' + '='.repeat(80));
-    console.log('🚨 PERFORMANCE ALERT');
-    console.log('='.repeat(80));
-    console.log(alertMessage);
-    console.log('='.repeat(80));
+    console.info('\\n' + '='.repeat(80));
+    console.info('🚨 PERFORMANCE ALERT');
+    console.info('='.repeat(80));
+    console.info(alertMessage);
+    console.info('='.repeat(80));
 
     // Save alert to file
     const alertsDir = join(this.rootPath, 'benchmark-results', 'alerts');
@@ -962,7 +962,7 @@ export class CrossRepoBenchmarker {
     writeFileSync(join(alertsDir, `alert-${timestamp}.json`), JSON.stringify(alertData, null, 2));
 
     // Future: Could integrate with Slack, email, webhook, etc.
-    console.log(`📧 Alert logged to: ${join(alertsDir, `alert-${timestamp}.json`)}`);
+    console.info(`📧 Alert logged to: ${join(alertsDir, `alert-${timestamp}.json`)}`);
   }
 
   private generateAlertMessage(

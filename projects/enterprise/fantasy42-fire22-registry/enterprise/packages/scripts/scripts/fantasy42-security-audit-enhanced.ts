@@ -341,13 +341,13 @@ class EnhancedFantasy42SecurityAuditor {
       compliance?: string[];
     } = {}
   ): Promise<AuditSummary> {
-    console.log('🔍 Starting Enhanced Fantasy42 Security Audit...');
-    console.log('================================================\n');
+    console.info('🔍 Starting Enhanced Fantasy42 Security Audit...');
+    console.info('================================================\n');
 
     try {
       const packagesToAudit = options.packages || (await this.discoverPackages());
 
-      console.log(`📦 Auditing ${packagesToAudit.length} packages...\n`);
+      console.info(`📦 Auditing ${packagesToAudit.length} packages...\n`);
 
       for (const packagePath of packagesToAudit) {
         await this.auditPackage(packagePath, options);
@@ -381,7 +381,7 @@ class EnhancedFantasy42SecurityAuditor {
     const packageJsonPath = join(packagePath, 'package.json');
 
     if (!existsSync(packageJsonPath)) {
-      console.log(`⚠️  Skipping ${packagePath} - no package.json`);
+      console.info(`⚠️  Skipping ${packagePath} - no package.json`);
       return;
     }
 
@@ -389,7 +389,7 @@ class EnhancedFantasy42SecurityAuditor {
     const packageName = packageJson.name || 'unknown';
     const packageVersion = packageJson.version || '0.0.0';
 
-    console.log(`🔍 Auditing: ${packageName}@${packageVersion}`);
+    console.info(`🔍 Auditing: ${packageName}@${packageVersion}`);
 
     const issues: SecurityIssue[] = [];
 
@@ -436,7 +436,7 @@ class EnhancedFantasy42SecurityAuditor {
       this.auditResults.summary[`${issue.severity.toLowerCase()}Issues` as keyof AuditSummary]++;
     });
 
-    console.log(`   📊 Score: ${score}/100 (${issues.length} issues found)`);
+    console.info(`   📊 Score: ${score}/100 (${issues.length} issues found)`);
   }
 
   private async checkPackageDependencies(
@@ -682,7 +682,7 @@ class EnhancedFantasy42SecurityAuditor {
   }
 
   private async runAdvancedSecurityChecks(options: any): Promise<void> {
-    console.log('🔬 Running Advanced Security Checks...\n');
+    console.info('🔬 Running Advanced Security Checks...\n');
 
     // Check for infrastructure vulnerabilities
     const infraIssues = await this.checkInfrastructureSecurity();
@@ -851,55 +851,55 @@ class EnhancedFantasy42SecurityAuditor {
   }
 
   private displayEnhancedResults(): void {
-    console.log('\n📊 Enhanced Security Audit Results');
-    console.log('===================================');
+    console.info('\n📊 Enhanced Security Audit Results');
+    console.info('===================================');
 
-    console.log(`\n🎯 Overall Security Score: ${this.auditResults.summary.overallScore}/100`);
-    console.log(`🚨 Risk Level: ${this.auditResults.summary.riskLevel}`);
+    console.info(`\n🎯 Overall Security Score: ${this.auditResults.summary.overallScore}/100`);
+    console.info(`🚨 Risk Level: ${this.auditResults.summary.riskLevel}`);
 
-    console.log('\n📦 Package Summary:');
-    console.log(`   Total Packages: ${this.auditResults.summary.totalPackages}`);
-    console.log(`   ✅ Secure: ${this.auditResults.summary.securePackages}`);
-    console.log(`   ⚠️  Vulnerable: ${this.auditResults.summary.vulnerablePackages}`);
+    console.info('\n📦 Package Summary:');
+    console.info(`   Total Packages: ${this.auditResults.summary.totalPackages}`);
+    console.info(`   ✅ Secure: ${this.auditResults.summary.securePackages}`);
+    console.info(`   ⚠️  Vulnerable: ${this.auditResults.summary.vulnerablePackages}`);
 
-    console.log('\n🔍 Issues by Severity:');
-    console.log(`   🚨 Critical: ${this.auditResults.summary.criticalIssues}`);
-    console.log(`   🔴 High: ${this.auditResults.summary.highIssues}`);
-    console.log(`   🟡 Medium: ${this.auditResults.summary.mediumIssues}`);
-    console.log(`   🟢 Low: ${this.auditResults.summary.lowIssues}`);
+    console.info('\n🔍 Issues by Severity:');
+    console.info(`   🚨 Critical: ${this.auditResults.summary.criticalIssues}`);
+    console.info(`   🔴 High: ${this.auditResults.summary.highIssues}`);
+    console.info(`   🟡 Medium: ${this.auditResults.summary.mediumIssues}`);
+    console.info(`   🟢 Low: ${this.auditResults.summary.lowIssues}`);
 
     if (this.auditResults.recommendations.length > 0) {
-      console.log('\n💡 Key Recommendations:');
-      this.auditResults.recommendations.forEach(rec => console.log(`   • ${rec}`));
+      console.info('\n💡 Key Recommendations:');
+      this.auditResults.recommendations.forEach(rec => console.info(`   • ${rec}`));
     }
 
-    console.log('\n📋 Detailed Issues:');
+    console.info('\n📋 Detailed Issues:');
     const issuesByCode = this.groupIssuesByCode();
     Object.entries(issuesByCode).forEach(([code, issues]) => {
       const errorInfo = SECURITY_ERROR_CODES[code as keyof typeof SECURITY_ERROR_CODES];
-      console.log(
+      console.info(
         `\n${errorInfo.severity === 'CRITICAL' ? '🚨' : errorInfo.severity === 'HIGH' ? '🔴' : errorInfo.severity === 'MEDIUM' ? '🟡' : '🟢'} ${code}: ${errorInfo.title}`
       );
-      console.log(`   📊 Found in ${issues.length} location(s)`);
-      console.log(`   📝 ${errorInfo.description}`);
-      console.log(`   💥 Impact: ${errorInfo.impact}`);
+      console.info(`   📊 Found in ${issues.length} location(s)`);
+      console.info(`   📝 ${errorInfo.description}`);
+      console.info(`   💥 Impact: ${errorInfo.impact}`);
 
       if (issues.length <= 3) {
         issues.forEach(issue => {
           const location = issue.file
             ? `${issue.file}${issue.line ? `:${issue.line}` : ''}`
             : 'Unknown';
-          console.log(`      📍 ${location}`);
+          console.info(`      📍 ${location}`);
         });
       } else {
-        console.log(
+        console.info(
           `      📍 ${issues[0].file || 'Multiple files'} and ${issues.length - 1} more...`
         );
       }
 
-      console.log(`   🛠️  Suggestions:`);
+      console.info(`   🛠️  Suggestions:`);
       errorInfo.suggestions.forEach(suggestion => {
-        console.log(`      • ${suggestion}`);
+        console.info(`      • ${suggestion}`);
       });
     });
   }
@@ -934,7 +934,7 @@ class EnhancedFantasy42SecurityAuditor {
 
     const filename = `enhanced-security-audit-${new Date().toISOString().slice(0, 10)}.json`;
     await Bun.write(filename, JSON.stringify(report, null, 2));
-    console.log(`💾 Enhanced audit report saved to: ${filename}`);
+    console.info(`💾 Enhanced audit report saved to: ${filename}`);
   }
 
   // Helper methods for vulnerability detection
@@ -1019,8 +1019,8 @@ class EnhancedFantasy42SecurityAuditor {
 // MAIN EXECUTION
 // ============================================================================
 
-console.log('🔒 Fantasy42 Enhanced Security Audit System');
-console.log('==========================================\n');
+console.info('🔒 Fantasy42 Enhanced Security Audit System');
+console.info('==========================================\n');
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -1036,7 +1036,7 @@ const options = {
 const auditor = new EnhancedFantasy42SecurityAuditor();
 await auditor.runEnhancedSecurityAudit(options);
 
-console.log('\n✅ Enhanced Fantasy42 Security Audit Complete!');
-console.log('================================================');
-console.log('🔍 Detailed error codes and actionable suggestions provided above.');
-console.log('📊 Full report saved with comprehensive issue analysis.');
+console.info('\n✅ Enhanced Fantasy42 Security Audit Complete!');
+console.info('================================================');
+console.info('🔍 Detailed error codes and actionable suggestions provided above.');
+console.info('📊 Full report saved with comprehensive issue analysis.');

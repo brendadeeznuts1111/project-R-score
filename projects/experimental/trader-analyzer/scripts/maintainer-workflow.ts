@@ -57,11 +57,11 @@ const TEAM_REVIEWERS: Record<string, string> = {
 };
 
 async function runCommand(command: string, description: string): Promise<void> {
-	console.log(`\n📌 ${description}`);
-	console.log(`   Running: ${command}`);
+	console.info(`\n📌 ${description}`);
+	console.info(`   Running: ${command}`);
 	try {
 		await $`${command}`.quiet();
-		console.log(`   ✅ Complete`);
+		console.info(`   ✅ Complete`);
 	} catch (error) {
 		console.error(`   ❌ Failed: ${error}`);
 		throw error;
@@ -77,19 +77,19 @@ async function step2StartDevelopment(pkg: string): Promise<void> {
 	if (!existsSync(pkgPath)) {
 		throw new Error(`Package directory not found: ${pkgPath}`);
 	}
-	console.log(`\n📌 Step 2: Start development`);
-	console.log(`   Package: ${pkg}`);
-	console.log(`   Directory: ${pkgPath}`);
-	console.log(`   💡 Run 'cd ${pkgPath} && bun run dev' to start development server`);
+	console.info(`\n📌 Step 2: Start development`);
+	console.info(`   Package: ${pkg}`);
+	console.info(`   Directory: ${pkgPath}`);
+	console.info(`   💡 Run 'cd ${pkgPath} && bun run dev' to start development server`);
 }
 
 async function step3ModifyProperty(pkg: string, property: string, values: string[]): Promise<void> {
-	console.log(`\n📌 Step 3: Modify property in src/config.ts`);
-	console.log(`   Package: ${pkg}`);
-	console.log(`   Property: ${property}`);
-	console.log(`   Values to test: ${values.join(", ")}`);
-	console.log(`   💡 Edit packages/${pkg}/src/config.ts`);
-	console.log(`   💡 Example: ${property}: ${values[values.length - 1]}`);
+	console.info(`\n📌 Step 3: Modify property in src/config.ts`);
+	console.info(`   Package: ${pkg}`);
+	console.info(`   Property: ${property}`);
+	console.info(`   Values to test: ${values.join(", ")}`);
+	console.info(`   💡 Edit packages/${pkg}/src/config.ts`);
+	console.info(`   💡 Example: ${property}: ${values[values.length - 1]}`);
 }
 
 async function step4RunPropertyBenchmark(pkg: string, property: string, values: string[]): Promise<void> {
@@ -99,10 +99,10 @@ async function step4RunPropertyBenchmark(pkg: string, property: string, values: 
 	}
 
 	const valuesStr = values.join(",");
-	console.log(`\n📌 Step 4: Run benchmark for property`);
-	console.log(`   Benchmark: ${benchPkg}`);
-	console.log(`   Property: ${property}`);
-	console.log(`   Values: ${valuesStr}`);
+	console.info(`\n📌 Step 4: Run benchmark for property`);
+	console.info(`   Benchmark: ${benchPkg}`);
+	console.info(`   Property: ${property}`);
+	console.info(`   Values: ${valuesStr}`);
 
 	await runCommand(
 		`bun run ${benchPkg} --property=${property} --values=${valuesStr}`,
@@ -116,16 +116,16 @@ async function step5ViewResults(pkg: string): Promise<void> {
 		throw new Error(`No benchmark package found for ${pkg}`);
 	}
 
-	console.log(`\n📌 Step 5: View results (auto-saved to registry)`);
-	console.log(`   💡 Results are automatically saved to registry`);
-	console.log(`   💡 Run 'bun run meta:${pkg.replace("@graph/", "")}' to view metadata`);
+	console.info(`\n📌 Step 5: View results (auto-saved to registry)`);
+	console.info(`   💡 Results are automatically saved to registry`);
+	console.info(`   💡 Run 'bun run meta:${pkg.replace("@graph/", "")}' to view metadata`);
 	
 	// Try to run meta command if it exists
 	try {
 		const metaCmd = `meta:${pkg.replace("@graph/", "").replace("@bench/", "")}`;
 		await $`bun run ${metaCmd}`.quiet();
 	} catch {
-		console.log(`   ⚠️  Meta command not found, skipping`);
+		console.info(`   ⚠️  Meta command not found, skipping`);
 	}
 }
 
@@ -135,12 +135,12 @@ async function step6RunFullBenchmark(pkg: string): Promise<void> {
 		throw new Error(`No benchmark package found for ${pkg}`);
 	}
 
-	console.log(`\n📌 Step 6: Run full benchmark suite`);
+	console.info(`\n📌 Step 6: Run full benchmark suite`);
 	await runCommand(`bun run bench:${pkg.replace("@graph/", "")}`, `Running full benchmark suite`);
 }
 
 async function step7TestIntegration(pkg: string, repeats: number = 5): Promise<void> {
-	console.log(`\n📌 Step 7: Test integration`);
+	console.info(`\n📌 Step 7: Test integration`);
 	await runCommand(`bun test --repeats=${repeats}`, `Running tests with ${repeats} repeats`);
 }
 
@@ -150,7 +150,7 @@ async function step8CommitWithResults(
 	newValue: string,
 	results?: { detectionTime?: string; anomalyCount?: string; confidence?: string }
 ): Promise<void> {
-	console.log(`\n📌 Step 8: Commit with benchmark results`);
+	console.info(`\n📌 Step 8: Commit with benchmark results`);
 
 	let commitMessage = `perf(${pkg.replace("@graph/", "")}): update ${property} to ${newValue}\n\n`;
 	
@@ -169,7 +169,7 @@ async function step8CommitWithResults(
 		commitMessage += "Benchmark results: See benchmark output above\n";
 	}
 
-	console.log(`   Commit message:\n${commitMessage}`);
+	console.info(`   Commit message:\n${commitMessage}`);
 
 	await runCommand("git add .", "Staging changes");
 	await runCommand(`git commit -m "${commitMessage.replace(/\n/g, "\\n")}"`, "Committing changes");
@@ -180,9 +180,9 @@ async function step9CreatePR(pkg: string, reviewer?: string, title?: string, bod
 	const defaultTitle = title || `perf(${pkg.replace("@graph/", "")}): optimize properties`;
 	const defaultBody = body || `Benchmark results show performance improvements. See commit message for details.`;
 
-	console.log(`\n📌 Step 9: Create PR`);
-	console.log(`   Reviewer: ${defaultReviewer}`);
-	console.log(`   Title: ${defaultTitle}`);
+	console.info(`\n📌 Step 9: Create PR`);
+	console.info(`   Reviewer: ${defaultReviewer}`);
+	console.info(`   Title: ${defaultTitle}`);
 
 	await runCommand(
 		`gh pr create --title "${defaultTitle}" --body "${defaultBody}" --reviewer ${defaultReviewer}`,
@@ -193,9 +193,9 @@ async function step9CreatePR(pkg: string, reviewer?: string, title?: string, bod
 async function step10Publish(pkg: string, registry?: string): Promise<void> {
 	const registryUrl = registry || "https://npm.internal.yourcompany.com";
 	
-	console.log(`\n📌 Step 10: Publish to registry`);
-	console.log(`   Package: ${pkg}`);
-	console.log(`   Registry: ${registryUrl}`);
+	console.info(`\n📌 Step 10: Publish to registry`);
+	console.info(`   Package: ${pkg}`);
+	console.info(`   Registry: ${registryUrl}`);
 
 	const pkgPath = join("packages", pkg);
 	if (!existsSync(pkgPath)) {
@@ -216,11 +216,11 @@ async function runPropertyWorkflow(options: WorkflowOptions): Promise<void> {
 	const values = valuesStr.split(",").map(v => v.trim());
 	const newValue = values[values.length - 1];
 
-	console.log(`\n🚀 Starting Property Iteration Workflow`);
-	console.log(`   Package: ${pkg}`);
-	console.log(`   Property: ${property}`);
-	console.log(`   Values: ${values.join(" → ")}`);
-	console.log(`   Target: ${newValue}\n`);
+	console.info(`\n🚀 Starting Property Iteration Workflow`);
+	console.info(`   Package: ${pkg}`);
+	console.info(`   Property: ${property}`);
+	console.info(`   Values: ${values.join(" → ")}`);
+	console.info(`   Target: ${newValue}\n`);
 
 	await step1PullLatest();
 	await step2StartDevelopment(pkg);
@@ -228,15 +228,15 @@ async function runPropertyWorkflow(options: WorkflowOptions): Promise<void> {
 	await step4RunPropertyBenchmark(pkg, property, values);
 	await step5ViewResults(pkg);
 
-	console.log(`\n✅ Property benchmark complete!`);
-	console.log(`   💡 Review results above. If improvement, continue with full workflow.`);
+	console.info(`\n✅ Property benchmark complete!`);
+	console.info(`   💡 Review results above. If improvement, continue with full workflow.`);
 }
 
 async function runFullWorkflow(options: WorkflowOptions): Promise<void> {
 	const { package: pkg, skipTests, skipBenchmark, autoCommit, reviewer } = options;
 
-	console.log(`\n🚀 Starting Full Workflow`);
-	console.log(`   Package: ${pkg}\n`);
+	console.info(`\n🚀 Starting Full Workflow`);
+	console.info(`   Package: ${pkg}\n`);
 
 	await step1PullLatest();
 	await step2StartDevelopment(pkg);
@@ -255,18 +255,18 @@ async function runFullWorkflow(options: WorkflowOptions): Promise<void> {
 		await step9CreatePR(pkg, reviewer);
 	}
 
-	console.log(`\n✅ Full workflow complete!`);
+	console.info(`\n✅ Full workflow complete!`);
 }
 
 async function runPublishWorkflow(options: WorkflowOptions): Promise<void> {
 	const { package: pkg, registry } = options;
 
-	console.log(`\n🚀 Starting Publish Workflow`);
-	console.log(`   Package: ${pkg}\n`);
+	console.info(`\n🚀 Starting Publish Workflow`);
+	console.info(`   Package: ${pkg}\n`);
 
 	await step10Publish(pkg, registry);
 
-	console.log(`\n✅ Package published!`);
+	console.info(`\n✅ Package published!`);
 }
 
 async function main() {
@@ -320,10 +320,10 @@ async function main() {
 
 	if (!options.package) {
 		console.error("❌ Error: --package is required");
-		console.log("\nUsage:");
-		console.log("  bun run scripts/maintainer-workflow.ts --package=@graph/layer4 --property=threshold --values=0.7,0.75,0.8,0.85");
-		console.log("  bun run scripts/maintainer-workflow.ts --package=@graph/layer4 --workflow=full");
-		console.log("  bun run scripts/maintainer-workflow.ts --package=@graph/layer4 --workflow=publish --registry=https://npm.internal.yourcompany.com");
+		console.info("\nUsage:");
+		console.info("  bun run scripts/maintainer-workflow.ts --package=@graph/layer4 --property=threshold --values=0.7,0.75,0.8,0.85");
+		console.info("  bun run scripts/maintainer-workflow.ts --package=@graph/layer4 --workflow=full");
+		console.info("  bun run scripts/maintainer-workflow.ts --package=@graph/layer4 --workflow=publish --registry=https://npm.internal.yourcompany.com");
 		process.exit(1);
 	}
 

@@ -177,7 +177,7 @@ class DocsEnhancer {
       }
 
       await Bun.write(apiDocsPath, content);
-      console.log('✅ GitHub labels reference injected into API docs');
+      console.info('✅ GitHub labels reference injected into API docs');
 
     } catch (error) {
       console.error('❌ Failed to enhance API docs:', error.message);
@@ -196,8 +196,8 @@ class DocsEnhancer {
 
 // CLI execution
 async function main() {
-  console.log("🎨 Enhancing API Documentation");
-  console.log("==============================");
+  console.info("🎨 Enhancing API Documentation");
+  console.info("==============================");
 
   const enhancer = new DocsEnhancer();
 
@@ -205,15 +205,15 @@ async function main() {
     await enhancer.enhanceApiDocs();
 
     const labels = enhancer.getLabels();
-    console.log(`✅ Generated GitHub labels reference with ${labels.length} labels`);
-    console.log("🏷️  Labels categorized by:");
-    console.log("  • 6 component labels");
-    console.log("  • 3 priority labels");
-    console.log("  • 6 change type labels");
-    console.log("  • 8 OpenAPI-specific labels");
+    console.info(`✅ Generated GitHub labels reference with ${labels.length} labels`);
+    console.info("🏷️  Labels categorized by:");
+    console.info("  • 6 component labels");
+    console.info("  • 3 priority labels");
+    console.info("  • 6 change type labels");
+    console.info("  • 8 OpenAPI-specific labels");
 
-    console.log("\n🎉 Documentation enhancement complete!");
-    console.log("Visit /docs/api to see the enhanced documentation");
+    console.info("\n🎉 Documentation enhancement complete!");
+    console.info("Visit /docs/api to see the enhanced documentation");
 
   } catch (error) {
     console.error("❌ Documentation enhancement failed:", error.message);

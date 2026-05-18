@@ -16,7 +16,7 @@ export class FeatureFlags {
   static initPremiumFeatures(): void {
     // This entire block is removed when FEAT_PREMIUM is false
     if (feature("FEAT_PREMIUM")) {
-      console.log("🎯 Initializing premium features...");
+      console.info("🎯 Initializing premium features...");
       // Premium-only initialization code
       this.loadAdvancedAnalytics();
       this.enablePrioritySupport();
@@ -152,63 +152,63 @@ export class FeatureFlags {
   // Private methods that get eliminated when flags are disabled
   private static loadAdvancedAnalytics(): void {
     // Only included in premium builds
-    console.log("📊 Loading advanced analytics...");
+    console.info("📊 Loading advanced analytics...");
   }
 
   private static enablePrioritySupport(): void {
     // Only included in premium builds
-    console.log("⭐ Enabling priority support...");
+    console.info("⭐ Enabling priority support...");
   }
 
   private static setupAdvancedMonitoring(): void {
     // Only included in premium builds
-    console.log("📈 Setting up advanced monitoring...");
+    console.info("📈 Setting up advanced monitoring...");
   }
 
   private static initAndroidNotifications(): void {
     // Only included in Android builds
-    console.log("📱 Initializing Android notifications...");
+    console.info("📱 Initializing Android notifications...");
   }
 
   private static setupAndroidFileSystem(): void {
     // Only included in Android builds
-    console.log("🗂️ Setting up Android file system...");
+    console.info("🗂️ Setting up Android file system...");
   }
 
   private static initIOSKeychain(): void {
     // Only included in iOS builds
-    console.log("🔐 Initializing iOS Keychain...");
+    console.info("🔐 Initializing iOS Keychain...");
   }
 
   private static setupIOSAppGroups(): void {
     // Only included in iOS builds
-    console.log("👥 Setting up iOS app groups...");
+    console.info("👥 Setting up iOS app groups...");
   }
 
   private static initWebStorage(): void {
     // Only included in web/desktop builds
-    console.log("💾 Initializing web storage...");
+    console.info("💾 Initializing web storage...");
   }
 
   private static setupWebNotifications(): void {
     // Only included in web/desktop builds
-    console.log("🔔 Setting up web notifications...");
+    console.info("🔔 Setting up web notifications...");
   }
 }
 
 // Usage example with compile-time elimination
 export function initializeApp(): string {
   const mode = feature("FEAT_PREMIUM") ? "premium" : "free";
-  console.log(`🚀 Starting in ${mode} mode`);
+  console.info(`🚀 Starting in ${mode} mode`);
 
   // This conditional is completely removed at compile time
   if (feature("FEAT_PREMIUM")) {
-    console.log("🎯 Premium features enabled");
+    console.info("🎯 Premium features enabled");
   }
 
   // Debug code removed in production
   if (feature("ENV_DEVELOPMENT")) {
-    console.log("🧪 Development mode active");
+    console.info("🧪 Development mode active");
   }
 
   return mode;
@@ -295,7 +295,7 @@ export function validateFeatureCombination(): boolean {
     return false;
   }
 
-  console.log("✅ Feature combination is valid");
+  console.info("✅ Feature combination is valid");
   return true;
 }
 

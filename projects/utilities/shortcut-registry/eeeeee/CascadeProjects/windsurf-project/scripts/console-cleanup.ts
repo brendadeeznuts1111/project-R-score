@@ -122,7 +122,7 @@ class ConsoleCleanup {
 
       if (removedCount > 0) {
         writeFileSync(filePath, cleanedContent, 'utf-8');
-        console.log(`✅ ${filePath}: Removed ${removedCount} console statements`);
+        console.info(`✅ ${filePath}: Removed ${removedCount} console statements`);
         return { removed: removedCount, modified: true };
       }
 
@@ -169,26 +169,26 @@ class ConsoleCleanup {
    * Run the cleanup process
    */
   async run(): Promise<CleanupResult> {
-    console.log('🧹 Starting Console Statement Cleanup');
-    console.log('📁 Target directories:', this.includeDirs.join(', '));
-    console.log('🚫 Excluded directories:', this.excludeDirs.join(', '));
-    console.log('');
+    console.info('🧹 Starting Console Statement Cleanup');
+    console.info('📁 Target directories:', this.includeDirs.join(', '));
+    console.info('🚫 Excluded directories:', this.excludeDirs.join(', '));
+    console.info('');
 
     this.processDirectory('./src');
 
-    console.log('');
-    console.log('📊 Cleanup Results:');
-    console.log(`   📁 Files processed: ${this.result.filesProcessed}`);
-    console.log(`   🗑️ Console statements removed: ${this.result.consoleStatementsRemoved}`);
-    console.log(`   ✏️ Files modified: ${this.result.filesModified}`);
+    console.info('');
+    console.info('📊 Cleanup Results:');
+    console.info(`   📁 Files processed: ${this.result.filesProcessed}`);
+    console.info(`   🗑️ Console statements removed: ${this.result.consoleStatementsRemoved}`);
+    console.info(`   ✏️ Files modified: ${this.result.filesModified}`);
 
     if (this.result.errors.length > 0) {
-      console.log(`   ❌ Errors: ${this.result.errors.length}`);
-      this.result.errors.forEach(error => console.log(`      - ${error}`));
+      console.info(`   ❌ Errors: ${this.result.errors.length}`);
+      this.result.errors.forEach(error => console.info(`      - ${error}`));
     }
 
-    console.log('');
-    console.log('✅ Console cleanup completed!');
+    console.info('');
+    console.info('✅ Console cleanup completed!');
 
     return this.result;
   }

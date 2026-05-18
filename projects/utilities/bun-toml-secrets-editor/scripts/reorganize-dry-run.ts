@@ -22,7 +22,7 @@ function _log(
 	message: string,
 	color: keyof typeof COLORS = "reset",
 ) {
-	console.log(
+	console.info(
 		`${COLORS[color]}${category.padEnd(12)}${COLORS.reset} ${message}`,
 	);
 }
@@ -140,19 +140,19 @@ async function scanDirectory(dir: string, pattern?: RegExp): Promise<string[]> {
 }
 
 async function main() {
-	console.log(`\n${"=".repeat(60)}`);
-	console.log(
+	console.info(`\n${"=".repeat(60)}`);
+	console.info(
 		`${COLORS.bright}  CODEBASE REORGANIZATION - DRY RUN${COLORS.reset}`,
 	);
-	console.log(`${"=".repeat(60)}\n`);
+	console.info(`${"=".repeat(60)}\n`);
 
 	// Check documentation moves
-	console.log(`${COLORS.cyan}📄 Documentation Files:${COLORS.reset}`);
+	console.info(`${COLORS.cyan}📄 Documentation Files:${COLORS.reset}`);
 	for (const [category, files] of Object.entries(REORG_PLAN.docs)) {
 		for (const file of files) {
 			const exists = await fileExists(file);
 			const status = exists ? `${COLORS.green}✓` : `${COLORS.red}✗`;
-			console.log(
+			console.info(
 				`  ${status} ${file} → docs/${category}/${basename(file)}${COLORS.reset}`,
 			);
 			if (exists) {
@@ -166,10 +166,10 @@ async function main() {
 	}
 
 	// Check CPU profiles
-	console.log(`\n${COLORS.cyan}📊 CPU Profiles:${COLORS.reset}`);
+	console.info(`\n${COLORS.cyan}📊 CPU Profiles:${COLORS.reset}`);
 	const cpuProfiles = await scanDirectory(".", /^CPU\..*\.md$/);
 	for (const file of cpuProfiles) {
-		console.log(
+		console.info(
 			`  ${COLORS.green}✓${COLORS.reset} ${file} → profiles/${basename(file)}`,
 		);
 		operations.push({
@@ -180,11 +180,11 @@ async function main() {
 	}
 
 	// Check test file moves
-	console.log(`\n${COLORS.cyan}🧪 Test Files:${COLORS.reset}`);
+	console.info(`\n${COLORS.cyan}🧪 Test Files:${COLORS.reset}`);
 	for (const file of REORG_PLAN.tests) {
 		const exists = await fileExists(file);
 		const status = exists ? `${COLORS.green}✓` : `${COLORS.yellow}○`;
-		console.log(
+		console.info(
 			`  ${status} ${file} → tests/ffi/${basename(file)}${COLORS.reset}`,
 		);
 		if (exists) {
@@ -199,11 +199,11 @@ async function main() {
 	// Check test/ directory
 	const testDirFiles = await scanDirectory("test", /\.ts$/);
 	if (testDirFiles.length > 0) {
-		console.log(
+		console.info(
 			`\n  ${COLORS.yellow}test/ directory contents (will merge into tests/):${COLORS.reset}`,
 		);
 		for (const file of testDirFiles) {
-			console.log(
+			console.info(
 				`    ${COLORS.green}✓${COLORS.reset} ${file} → tests/${basename(file)}`,
 			);
 			operations.push({
@@ -215,13 +215,13 @@ async function main() {
 	}
 
 	// Check script moves
-	console.log(`\n${COLORS.cyan}🔧 Scripts:${COLORS.reset}`);
+	console.info(`\n${COLORS.cyan}🔧 Scripts:${COLORS.reset}`);
 	for (const [category, files] of Object.entries(REORG_PLAN.tools)) {
-		console.log(`\n  ${COLORS.bright}${category}:${COLORS.reset}`);
+		console.info(`\n  ${COLORS.bright}${category}:${COLORS.reset}`);
 		for (const file of files) {
 			const exists = await fileExists(file);
 			const status = exists ? `${COLORS.green}✓` : `${COLORS.yellow}○`;
-			console.log(
+			console.info(
 				`    ${status} ${file} → tools/${category}/${basename(file)}${COLORS.reset}`,
 			);
 			if (exists) {
@@ -235,11 +235,11 @@ async function main() {
 	}
 
 	// Check server files
-	console.log(`\n${COLORS.cyan}🖥️  Server Files:${COLORS.reset}`);
+	console.info(`\n${COLORS.cyan}🖥️  Server Files:${COLORS.reset}`);
 	for (const file of REORG_PLAN.server) {
 		const exists = await fileExists(file);
 		const status = exists ? `${COLORS.green}✓` : `${COLORS.yellow}○`;
-		console.log(
+		console.info(
 			`  ${status} ${file} → src/server/${basename(file)}${COLORS.reset}`,
 		);
 		if (exists) {
@@ -252,12 +252,12 @@ async function main() {
 	}
 
 	// Check RSS files
-	console.log(`\n${COLORS.cyan}📡 RSS Files:${COLORS.reset}`);
+	console.info(`\n${COLORS.cyan}📡 RSS Files:${COLORS.reset}`);
 	for (const file of REORG_PLAN.rss) {
 		const exists = await fileExists(file);
 		const status = exists ? `${COLORS.green}✓` : `${COLORS.yellow}○`;
 		const destDir = file.startsWith("cli/") ? "src/cli/" : "src/rss/";
-		console.log(
+		console.info(
 			`  ${status} ${file} → ${destDir}${basename(file)}${COLORS.reset}`,
 		);
 		if (exists) {
@@ -270,16 +270,16 @@ async function main() {
 	}
 
 	// Check examples
-	console.log(`\n${COLORS.cyan}📚 Examples:${COLORS.reset}`);
+	console.info(`\n${COLORS.cyan}📚 Examples:${COLORS.reset}`);
 	const _rootExamples = await scanDirectory("examples", /\.ts$/);
 	const srcExamples = await scanDirectory("src/examples", /\.ts$/);
 
 	if (srcExamples.length > 0) {
-		console.log(
+		console.info(
 			`  ${COLORS.yellow}src/examples/ contents (will merge into examples/):${COLORS.reset}`,
 		);
 		for (const file of srcExamples) {
-			console.log(
+			console.info(
 				`    ${COLORS.green}✓${COLORS.reset} ${file} → examples/${basename(file)}`,
 			);
 			operations.push({
@@ -291,36 +291,36 @@ async function main() {
 	}
 
 	// Summary
-	console.log(`\n${"=".repeat(60)}`);
-	console.log(`${COLORS.bright}  SUMMARY${COLORS.reset}`);
-	console.log("=".repeat(60));
+	console.info(`\n${"=".repeat(60)}`);
+	console.info(`${COLORS.bright}  SUMMARY${COLORS.reset}`);
+	console.info("=".repeat(60));
 
 	const existingOps = operations.filter((op) => op.from);
-	console.log(`\nTotal operations: ${existingOps.length}`);
-	console.log(
+	console.info(`\nTotal operations: ${existingOps.length}`);
+	console.info(
 		`  - Documentation: ${existingOps.filter((o) => o.reason === "documentation").length}`,
 	);
-	console.log(
+	console.info(
 		`  - Tests: ${existingOps.filter((o) => o.reason === "test consolidation").length}`,
 	);
-	console.log(
+	console.info(
 		`  - Scripts: ${existingOps.filter((o) => o.reason === "script organization").length}`,
 	);
-	console.log(
+	console.info(
 		`  - Server: ${existingOps.filter((o) => o.reason === "server organization").length}`,
 	);
-	console.log(
+	console.info(
 		`  - RSS: ${existingOps.filter((o) => o.reason === "RSS organization").length}`,
 	);
-	console.log(
+	console.info(
 		`  - Examples: ${existingOps.filter((o) => o.reason === "example consolidation").length}`,
 	);
 
-	console.log(
+	console.info(
 		`\n${COLORS.yellow}⚠️  This was a dry run. No files were moved.${COLORS.reset}`,
 	);
-	console.log(`${COLORS.cyan}   Run the following to execute:${COLORS.reset}`);
-	console.log("   ./reorganize-codebase.sh\n");
+	console.info(`${COLORS.cyan}   Run the following to execute:${COLORS.reset}`);
+	console.info("   ./reorganize-codebase.sh\n");
 }
 
 main().catch(console.error);

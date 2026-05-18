@@ -121,7 +121,7 @@ async function verifyPackage(
 	const cacheDir = `${process.env.HOME}/.bun/install/cache/${fullName}`;
 	const cached = existsSync(cacheDir);
 
-	console.log(`${GLYPHS.SCAN} Scanning ${fullName}...`);
+	console.info(`${GLYPHS.SCAN} Scanning ${fullName}...`);
 
 	// Simulated reputation check
 	// In production, query ThreatIntelligenceService
@@ -159,7 +159,7 @@ async function executeSecure(
 	if (flags.package) cmdParts.push("-p", flags.package);
 	cmdParts.push(command, ...args);
 
-	console.log(`${GLYPHS.PKG} Executing: ${cmdParts.join(" ")}`);
+	console.info(`${GLYPHS.PKG} Executing: ${cmdParts.join(" ")}`);
 
 	const start = Bun.nanoseconds();
 	const proc = Bun.spawn(cmdParts, {
@@ -195,8 +195,8 @@ function showAuditLog(limit: number = 10): void {
 		)
 		.all(limit);
 
-	console.log(`${GLYPHS.DRIFT} Recent Executions:\n`);
-	console.log(Bun.inspect.table(executions));
+	console.info(`${GLYPHS.DRIFT} Recent Executions:\n`);
+	console.info(Bun.inspect.table(executions));
 }
 
 function showPackageHistory(limit: number = 10): void {
@@ -206,8 +206,8 @@ function showPackageHistory(limit: number = 10): void {
 		)
 		.all(limit);
 
-	console.log(`${GLYPHS.DRIFT} Package History:\n`);
-	console.log(Bun.inspect.table(packages));
+	console.info(`${GLYPHS.DRIFT} Package History:\n`);
+	console.info(Bun.inspect.table(packages));
 }
 
 function showStats(): void {
@@ -222,18 +222,18 @@ function showStats(): void {
 			.get() as any
 	).c;
 
-	console.log(`${GLYPHS.PHASE_LOCKED} Tier-1380 Execution Stats\n`);
-	console.log(`  Total executions: ${execCount}`);
-	console.log(`  Unique packages:  ${pkgCount}`);
-	console.log(
+	console.info(`${GLYPHS.PHASE_LOCKED} Tier-1380 Execution Stats\n`);
+	console.info(`  Total executions: ${execCount}`);
+	console.info(`  Unique packages:  ${pkgCount}`);
+	console.info(
 		`  Failures:         ${failures}${execCount > 0 ? ` (${((failures / execCount) * 100).toFixed(1)}%)` : ""}`,
 	);
-	console.log(`  Suspicious pkgs:  ${suspicious}`);
+	console.info(`  Suspicious pkgs:  ${suspicious}`);
 }
 
 // ─── Help ─────────────────────────────────────────
 function printHelp(): void {
-	console.log(`
+	console.info(`
 ${GLYPHS.DRIFT} Tier-1380 Secure Executor (Bun ${Bun.version})
 
 Usage:
@@ -258,7 +258,7 @@ Examples:
 
 One-Liners:
   # Quick integrity check
-  bun -e 'const pkg=process.argv[3];const h=Bun.hash.wyhash(Buffer.from(pkg)).toString(16);console.log(\`Package: \${pkg}\\nAudit: \${h}\`)' -- prisma
+  bun -e 'const pkg=process.argv[3];const h=Bun.hash.wyhash(Buffer.from(pkg)).toString(16);console.info(\`Package: \${pkg}\\nAudit: \${h}\`)' -- prisma
 
   # View recent executions
   bun -e 'import{Database}from"bun:sqlite";const d=new Database("./data/tier1380.db");console.table(d.query("SELECT * FROM executions ORDER BY ts DESC LIMIT 5").all())'
@@ -291,7 +291,7 @@ async function main(): Promise<void> {
 	}
 
 	// Secure execution
-	console.log(`${GLYPHS.RUN} Tier-1380 Secure Executor\n`);
+	console.info(`${GLYPHS.RUN} Tier-1380 Secure Executor\n`);
 
 	const { safe, hash, cached, reputation } = await verifyPackage(command, flags.version);
 
@@ -300,15 +300,15 @@ async function main(): Promise<void> {
 		process.exit(1);
 	}
 
-	console.log(`${GLYPHS.LOCK} Verified: ${hash}${cached ? " (cached)" : ""}`);
-	if (reputation) console.log(`  Reputation: ${reputation}`);
-	console.log();
+	console.info(`${GLYPHS.LOCK} Verified: ${hash}${cached ? " (cached)" : ""}`);
+	if (reputation) console.info(`  Reputation: ${reputation}`);
+	console.info();
 
 	const { exitCode, durationMs } = await executeSecure(command, commandArgs, flags);
 
 	logExecution(command, commandArgs, hash, exitCode, durationMs);
 
-	console.log(
+	console.info(
 		`\n${exitCode === 0 ? GLYPHS.PHASE_LOCKED : GLYPHS.SCAN}` +
 			` Exit: ${exitCode} (${durationMs.toFixed(2)}ms)`,
 	);

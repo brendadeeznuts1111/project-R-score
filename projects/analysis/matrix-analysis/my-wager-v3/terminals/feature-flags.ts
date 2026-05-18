@@ -30,7 +30,7 @@ export class FeatureFlagManager {
     // Security features compiled out in production builds
     if (feature("TIER_1380_DEBUG")) {
       this.enabledFeatures.add("TIER_1380_DEBUG");
-      console.log("Debug mode enabled"); // Eliminated in production
+      console.info("Debug mode enabled"); // Eliminated in production
     }
 
     if (feature("QUANTUM_ENCRYPTION")) {
@@ -45,7 +45,7 @@ export class FeatureFlagManager {
 
     if (feature("PTY_SUPPORT")) {
       this.enabledFeatures.add("PTY_SUPPORT");
-      console.log("PTY support enabled");
+      console.info("PTY support enabled");
     }
 
     if (feature("COL_93_COMPLIANCE")) {
@@ -60,17 +60,17 @@ export class FeatureFlagManager {
 
   private initializeQuantumResistantCrypto(): void {
     // Only included in Tier-1380 quantum builds
-    console.log("🔐 Initializing quantum-resistant cryptography...");
+    console.info("🔐 Initializing quantum-resistant cryptography...");
     // Quantum crypto implementation would go here
   }
 
   private initializeMatrixVisualization(): void {
-    console.log("📊 Initializing matrix visualization...");
+    console.info("📊 Initializing matrix visualization...");
     // Matrix visualization setup
   }
 
   private enforceCol93Compliance(): void {
-    console.log("📏 Enforcing Col 93 compliance...");
+    console.info("📏 Enforcing Col 93 compliance...");
     // Enforce 93-character width limits
   }
 
@@ -78,21 +78,21 @@ export class FeatureFlagManager {
   async checkRuntimeFeatures(): Promise<void> {
     // Check if PTY is available (POSIX only)
     if (process.platform !== 'win32') {
-      console.log("✅ POSIX platform detected - PTY available");
+      console.info("✅ POSIX platform detected - PTY available");
     } else {
-      console.log("⚠️ Windows platform - PTY not available");
+      console.info("⚠️ Windows platform - PTY not available");
     }
 
     // Check Bun version
     const bunVersion = process.version;
-    console.log(`Bun version: ${bunVersion}`);
+    console.info(`Bun version: ${bunVersion}`);
     
     // Check stringWidth improvements
     try {
       const testWidth = Bun.stringWidth('👨‍👩‍👧');
-      console.log(`✅ stringWidth v2 available (family emoji width: ${testWidth})`);
+      console.info(`✅ stringWidth v2 available (family emoji width: ${testWidth})`);
     } catch (e) {
-      console.log('⚠️ stringWidth v2 not available');
+      console.info('⚠️ stringWidth v2 not available');
     }
   }
 }
@@ -102,28 +102,28 @@ export class Tier1380Application {
   private featureFlags = FeatureFlagManager.getInstance();
 
   async initialize(): Promise<void> {
-    console.log('🚀 Initializing Tier-1380 Application...');
+    console.info('🚀 Initializing Tier-1380 Application...');
     
     // Debug logging (compiled out in production)
     if (this.featureFlags.isEnabled("TIER_1380_DEBUG")) {
-      console.log("🐛 Debug: Loading development modules");
+      console.info("🐛 Debug: Loading development modules");
     }
 
     // Quantum encryption (only in quantum builds)
     if (this.featureFlags.isEnabled("QUANTUM_ENCRYPTION")) {
-      console.log("🔒 Quantum encryption active");
+      console.info("🔒 Quantum encryption active");
       // Load quantum crypto modules
     }
 
     // Matrix visualization
     if (this.featureFlags.isEnabled("MATRIX_VISUALIZATION")) {
-      console.log("📊 Matrix visualization enabled");
+      console.info("📊 Matrix visualization enabled");
       // Initialize matrix display
     }
 
     // PTY support
     if (this.featureFlags.isEnabled("PTY_SUPPORT")) {
-      console.log("🖥️ PTY support enabled");
+      console.info("🖥️ PTY support enabled");
       // Initialize terminal manager
       const { DedicatedTerminalManager } = await import('./terminal-manager');
       const terminalManager = new DedicatedTerminalManager();
@@ -132,14 +132,14 @@ export class Tier1380Application {
 
     // Col 93 compliance
     if (this.featureFlags.isEnabled("COL_93_COMPLIANCE")) {
-      console.log("📏 Col 93 compliance enforced");
+      console.info("📏 Col 93 compliance enforced");
       // Enforce width limits
     }
 
     // Runtime checks
     await this.featureFlags.checkRuntimeFeatures();
     
-    console.log('✅ Tier-1380 Application initialized');
+    console.info('✅ Tier-1380 Application initialized');
   }
 }
 

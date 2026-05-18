@@ -30,14 +30,14 @@ const CONFIG = {
 };
 
 async function demonstrateIntegratedStack() {
-  console.log("🚀 Bun v1.3.5 Features + 13-Byte Config: Integrated Stack Demo");
-  console.log("═══════════════════════════════════════════════════════════════");
+  console.info("🚀 Bun v1.3.5 Features + 13-Byte Config: Integrated Stack Demo");
+  console.info("═══════════════════════════════════════════════════════════════");
   
   const demoStart = nanoseconds();
   
   // 1️⃣ Custom Proxy Headers: 13-Byte Aware Routing
-  console.log("\n1️⃣ Custom Proxy Headers: 13-Byte Aware Routing");
-  console.log("─".repeat(55));
+  console.info("\n1️⃣ Custom Proxy Headers: 13-Byte Aware Routing");
+  console.info("─".repeat(55));
   
   try {
     const proxyStart = nanoseconds();
@@ -55,12 +55,12 @@ async function demonstrateIntegratedStack() {
     
     if (response.ok) {
       const data = await response.json();
-      console.log("✅ Proxy fetch successful");
-      console.log(`📦 Package: ${data.name}`);
-      console.log(`📋 Latest version: ${data['dist-tags']?.latest}`);
-      console.log(`⚡ Proxy routing time: ${proxyDuration}ns`);
+      console.info("✅ Proxy fetch successful");
+      console.info(`📦 Package: ${data.name}`);
+      console.info(`📋 Latest version: ${data['dist-tags']?.latest}`);
+      console.info(`⚡ Proxy routing time: ${proxyDuration}ns`);
     } else {
-      console.log("⚠️  Proxy fetch failed (expected in demo environment)");
+      console.info("⚠️  Proxy fetch failed (expected in demo environment)");
     }
     
     // Log proxy usage
@@ -76,12 +76,12 @@ async function demonstrateIntegratedStack() {
     });
     
   } catch (error) {
-    console.log("❌ Proxy fetch error:", error instanceof Error ? error.message : String(error));
+    console.info("❌ Proxy fetch error:", error instanceof Error ? error.message : String(error));
   }
   
   // 2️⃣ http.Agent Connection Pooling: ConfigVersion Lock
-  console.log("\n2️⃣ http.Agent Connection Pooling: ConfigVersion Lock");
-  console.log("─".repeat(55));
+  console.info("\n2️⃣ http.Agent Connection Pooling: ConfigVersion Lock");
+  console.info("─".repeat(55));
   
   try {
     const agentStart = nanoseconds();
@@ -99,12 +99,12 @@ async function demonstrateIntegratedStack() {
     
     if (agentResponse.ok) {
       const agentData = await agentResponse.json();
-      console.log("✅ Agent-pooled request successful");
-      console.log(`🔗 Pool size: ${agentData.poolSize}`);
-      console.log(`📊 Config version: ${agentData.configVersion}`);
-      console.log(`⚡ Agent request time: ${agentDuration}ns`);
+      console.info("✅ Agent-pooled request successful");
+      console.info(`🔗 Pool size: ${agentData.poolSize}`);
+      console.info(`📊 Config version: ${agentData.configVersion}`);
+      console.info(`⚡ Agent request time: ${agentDuration}ns`);
     } else {
-      console.log("⚠️  Agent test endpoint not available");
+      console.info("⚠️  Agent test endpoint not available");
     }
     
     // Log agent usage
@@ -119,29 +119,29 @@ async function demonstrateIntegratedStack() {
     });
     
   } catch (error) {
-    console.log("❌ Agent request error:", error instanceof Error ? error.message : String(error));
+    console.info("❌ Agent request error:", error instanceof Error ? error.message : String(error));
   }
   
   // 3️⃣ Standalone Executable: 13 Bytes Baked In
-  console.log("\n3️⃣ Standalone Executable: 13 Bytes Baked In");
-  console.log("─".repeat(55));
+  console.info("\n3️⃣ Standalone Executable: 13 Bytes Baked In");
+  console.info("─".repeat(55));
   
-  console.log("🔧 Compilation process:");
-  console.log("   • 13-byte config: 0x02" + 
+  console.info("🔧 Compilation process:");
+  console.info("   • 13-byte config: 0x02" + 
               CONFIG.registryHash.toString(16) + 
               CONFIG.featureFlags.toString(16) + 
               "01" + 
               CONFIG.terminal.rows.toString(16) + 
               CONFIG.terminal.cols.toString(16) + "00");
-  console.log("   • Config frozen at compile time");
-  console.log("   • Binary size: ~12MB (includes Bun runtime)");
-  console.log("   • No external bun.lockb needed");
+  console.info("   • Config frozen at compile time");
+  console.info("   • Binary size: ~12MB (includes Bun runtime)");
+  console.info("   • No external bun.lockb needed");
   
   // Simulate frozen config behavior
-  console.log("\n🔒 Frozen config simulation:");
-  console.log(`   • Version: ${CONFIG.version} (immutable)`);
-  console.log(`   • Registry Hash: 0x${CONFIG.registryHash.toString(16)} (immutable)`);
-  console.log(`   • Feature Flags: 0x${CONFIG.featureFlags.toString(16)} (immutable)`);
+  console.info("\n🔒 Frozen config simulation:");
+  console.info(`   • Version: ${CONFIG.version} (immutable)`);
+  console.info(`   • Registry Hash: 0x${CONFIG.registryHash.toString(16)} (immutable)`);
+  console.info(`   • Feature Flags: 0x${CONFIG.featureFlags.toString(16)} (immutable)`);
   
   // Log compilation
   logToSQLite({
@@ -155,13 +155,13 @@ async function demonstrateIntegratedStack() {
   });
   
   // 4️⃣ console.log %j: Terminal-Aware JSON
-  console.log("\n4️⃣ console.log %j: Terminal-Aware JSON");
-  console.log("─".repeat(55));
+  console.info("\n4️⃣ console.log %j: Terminal-Aware JSON");
+  console.info("─".repeat(55));
   
   const consoleStart = nanoseconds();
   
   // Demonstrate terminal-aware console features
-  console.log("%j", {
+  console.info("%j", {
     action: "registry_operation",
     operation: "publish",
     package: "@mycompany/integrated-stack",
@@ -186,7 +186,7 @@ async function demonstrateIntegratedStack() {
   console.debug("🐛 Debug mode is active");
   
   const consoleDuration = nanoseconds() - consoleStart;
-  console.log(`⚡ Console formatting time: ${consoleDuration}ns`);
+  console.info(`⚡ Console formatting time: ${consoleDuration}ns`);
   
   // Log console usage
   logToSQLite({
@@ -201,8 +201,8 @@ async function demonstrateIntegratedStack() {
   });
   
   // 5️⃣ SQLite Logging: Registry as Database
-  console.log("\n5️⃣ SQLite Logging: Registry as Database");
-  console.log("─".repeat(55));
+  console.info("\n5️⃣ SQLite Logging: Registry as Database");
+  console.info("─".repeat(55));
   
   const sqliteStart = nanoseconds();
   
@@ -211,37 +211,37 @@ async function demonstrateIntegratedStack() {
   
   // Query logs by current config
   const configLogs = queryLogsByConfig(CONFIG.version, CONFIG.featureFlags, 5);
-  console.log(`📋 Found ${configLogs.length} logs for current config state`);
+  console.info(`📋 Found ${configLogs.length} logs for current config state`);
   
   // Show database statistics
   const stats = getDatabaseStats();
-  console.log("📊 Database statistics:");
-  console.log(`   • Total logs: ${stats.total_logs}`);
-  console.log(`   • Config versions: ${stats.unique_versions}`);
-  console.log(`   • Flag combinations: ${stats.unique_flag_combinations}`);
-  console.log(`   • Database path: ${stats.database_path}`);
+  console.info("📊 Database statistics:");
+  console.info(`   • Total logs: ${stats.total_logs}`);
+  console.info(`   • Config versions: ${stats.unique_versions}`);
+  console.info(`   • Flag combinations: ${stats.unique_flag_combinations}`);
+  console.info(`   • Database path: ${stats.database_path}`);
   
   const sqliteDuration = nanoseconds() - sqliteStart;
-  console.log(`⚡ SQLite operations time: ${sqliteDuration}ns`);
+  console.info(`⚡ SQLite operations time: ${sqliteDuration}ns`);
   
   // Performance Summary
   const totalDuration = nanoseconds() - demoStart;
-  console.log("\n🎯 Integration Performance Summary");
-  console.log("─".repeat(55));
-  console.log(`⚡ Total demo time: ${totalDuration}ns`);
-  console.log(`📊 13-byte config state: 0x${CONFIG.version.toString(16)}${CONFIG.registryHash.toString(16)}${CONFIG.featureFlags.toString(16)}${CONFIG.terminal.mode === "raw" ? "02" : "01"}${CONFIG.terminal.rows.toString(16)}${CONFIG.terminal.cols.toString(16)}00`);
-  console.log(`🔗 Proxy routing: ~12ns header injection`);
-  console.log(`🌐 Agent pooling: ~0ns overhead`);
-  console.log(`🖥️  Console formatting: ~450ns`);
-  console.log(`🗄️  SQLite logging: ~500ns per INSERT`);
-  console.log(`📦 Binary compilation: One-time, immutable`);
+  console.info("\n🎯 Integration Performance Summary");
+  console.info("─".repeat(55));
+  console.info(`⚡ Total demo time: ${totalDuration}ns`);
+  console.info(`📊 13-byte config state: 0x${CONFIG.version.toString(16)}${CONFIG.registryHash.toString(16)}${CONFIG.featureFlags.toString(16)}${CONFIG.terminal.mode === "raw" ? "02" : "01"}${CONFIG.terminal.rows.toString(16)}${CONFIG.terminal.cols.toString(16)}00`);
+  console.info(`🔗 Proxy routing: ~12ns header injection`);
+  console.info(`🌐 Agent pooling: ~0ns overhead`);
+  console.info(`🖥️  Console formatting: ~450ns`);
+  console.info(`🗄️  SQLite logging: ~500ns per INSERT`);
+  console.info(`📦 Binary compilation: One-time, immutable`);
   
-  console.log("\n🎉 Integrated Stack Demonstration Complete!");
-  console.log("═══════════════════════════════════════════════════════════════");
-  console.log("✅ All Bun v1.3.5 features integrated with 13-byte config");
-  console.log("✅ Network, disk, and binary layers propagate config");
-  console.log("✅ Performance targets achieved across all components");
-  console.log("✅ The 13-byte contract is truly system-wide");
+  console.info("\n🎉 Integrated Stack Demonstration Complete!");
+  console.info("═══════════════════════════════════════════════════════════════");
+  console.info("✅ All Bun v1.3.5 features integrated with 13-byte config");
+  console.info("✅ Network, disk, and binary layers propagate config");
+  console.info("✅ Performance targets achieved across all components");
+  console.info("✅ The 13-byte contract is truly system-wide");
   
   // Final log entry
   logToSQLite({
@@ -265,11 +265,11 @@ async function demonstrateIntegratedStack() {
 
 // Cleanup function
 async function cleanup() {
-  console.log("\n🧹 Cleaning up demo resources...");
+  console.info("\n🧹 Cleaning up demo resources...");
   
   // Clean up old logs
   const cleanedCount = cleanupOldLogs(0); // Clean all demo logs
-  console.log(`🗄️  Cleaned ${cleanedCount} log entries`);
+  console.info(`🗄️  Cleaned ${cleanedCount} log entries`);
   
   // Close database connection
   // Note: Using direct access instead of globalThis
@@ -277,20 +277,20 @@ async function cleanup() {
     const { db } = await import("./src/logging/sqlite-logger");
     if (db && typeof db.close === 'function') {
       db.close();
-      console.log("📊 Database connection closed");
+      console.info("📊 Database connection closed");
     }
   } catch (error) {
-    console.log("⚠️  Could not close database connection:", error);
+    console.info("⚠️  Could not close database connection:", error);
   }
   
-  console.log("✅ Cleanup completed");
+  console.info("✅ Cleanup completed");
 }
 
 // Run demonstration
 if (import.meta.main) {
   demonstrateIntegratedStack()
     .then(() => {
-      console.log("\n🚀 Demo completed successfully!");
+      console.info("\n🚀 Demo completed successfully!");
       process.exit(0);
     })
     .catch((error) => {
@@ -301,12 +301,12 @@ if (import.meta.main) {
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log("\n\n⚠️  Demo interrupted by user");
+  console.info("\n\n⚠️  Demo interrupted by user");
   cleanup().then(() => process.exit(0));
 });
 
 process.on('SIGTERM', () => {
-  console.log("\n\n⚠️  Demo terminated");
+  console.info("\n\n⚠️  Demo terminated");
   cleanup().then(() => process.exit(0));
 });
 

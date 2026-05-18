@@ -144,15 +144,15 @@ class EnhancedDeploymentOrchestrator {
   async execute(): Promise<EnhancedDeploymentResult> {
     const startTime = Date.now();
 
-    console.log(`🚀 FactoryWager Enhanced Deployment Orchestrator v2.0`);
-    console.log(`========================================================`);
-    console.log(`Deployment ID: ${this.deploymentId}`);
-    console.log(`Environment: ${this.config.environment.toUpperCase()}`);
-    console.log(`Strategy: ${this.config.strategy}`);
-    console.log(`Rollback: ${this.config.rollbackStrategy}`);
-    console.log(`AI Optimization: ${this.config.enableAIOptimization ? 'ENABLED' : 'DISABLED'}`);
-    console.log(`Predictive Monitoring: ${this.config.enablePredictiveMonitoring ? 'ENABLED' : 'DISABLED'}`);
-    console.log('');
+    console.info(`🚀 FactoryWager Enhanced Deployment Orchestrator v2.0`);
+    console.info(`========================================================`);
+    console.info(`Deployment ID: ${this.deploymentId}`);
+    console.info(`Environment: ${this.config.environment.toUpperCase()}`);
+    console.info(`Strategy: ${this.config.strategy}`);
+    console.info(`Rollback: ${this.config.rollbackStrategy}`);
+    console.info(`AI Optimization: ${this.config.enableAIOptimization ? 'ENABLED' : 'DISABLED'}`);
+    console.info(`Predictive Monitoring: ${this.config.enablePredictiveMonitoring ? 'ENABLED' : 'DISABLED'}`);
+    console.info('');
 
     await this.addAuditEntry('deployment', 'start', 'Deployment initiated', {
       deploymentId: this.deploymentId,
@@ -201,8 +201,8 @@ class EnhancedDeploymentOrchestrator {
     const phase = this.createPhase('Pre-Deployment Validation');
 
     try {
-      console.log(`📍 Phase 1: Pre-Deployment Validation`);
-      console.log(`====================================`);
+      console.info(`📍 Phase 1: Pre-Deployment Validation`);
+      console.info(`====================================`);
 
       // Enhanced validation checks
       await this.validateConfiguration();
@@ -216,7 +216,7 @@ class EnhancedDeploymentOrchestrator {
       phase.duration = phase.endTime - phase.startTime;
       phase.metrics.healthScore = 100;
 
-      console.log(`✅ Pre-deployment validation completed in ${phase.duration}ms`);
+      console.info(`✅ Pre-deployment validation completed in ${phase.duration}ms`);
 
     } catch (error) {
       phase.status = 'failed';
@@ -228,7 +228,7 @@ class EnhancedDeploymentOrchestrator {
   }
 
   private async validateConfiguration(): Promise<void> {
-    console.log(`   🔍 Validating configuration...`);
+    console.info(`   🔍 Validating configuration...`);
 
     // Run enhanced validation
     const validationResult = await this.runEnhancedValidation();
@@ -237,11 +237,11 @@ class EnhancedDeploymentOrchestrator {
       throw new Error(`Configuration validation failed: ${validationResult.violations.length} violations found`);
     }
 
-    console.log(`   ✅ Configuration validation passed`);
+    console.info(`   ✅ Configuration validation passed`);
   }
 
   private async validateInfrastructure(): Promise<void> {
-    console.log(`   🏗️ Validating infrastructure...`);
+    console.info(`   🏗️ Validating infrastructure...`);
 
     const healthStatus = await this.checkInfrastructureHealth();
 
@@ -249,11 +249,11 @@ class EnhancedDeploymentOrchestrator {
       throw new Error(`Infrastructure health too low: ${healthStatus.overall}% (required: 95%)`);
     }
 
-    console.log(`   ✅ Infrastructure health: ${healthStatus.overall}%`);
+    console.info(`   ✅ Infrastructure health: ${healthStatus.overall}%`);
   }
 
   private async validateSecurity(): Promise<void> {
-    console.log(`   🔒 Validating security posture...`);
+    console.info(`   🔒 Validating security posture...`);
 
     const securityStatus = await this.checkSecurityPosture();
 
@@ -261,23 +261,23 @@ class EnhancedDeploymentOrchestrator {
       throw new Error(`Critical security issues detected: ${securityStatus.criticalIssues}`);
     }
 
-    console.log(`   ✅ Security validation passed`);
+    console.info(`   ✅ Security validation passed`);
   }
 
   private async validateCompliance(): Promise<void> {
-    console.log(`   📋 Validating compliance...`);
+    console.info(`   📋 Validating compliance...`);
 
     const complianceStatus = await this.checkComplianceStatus();
 
     if (complianceStatus.overallScore < 90) {
-      console.log(`   ⚠️ Compliance score: ${complianceStatus.overall}% (recommended: 90%+)`);
+      console.info(`   ⚠️ Compliance score: ${complianceStatus.overall}% (recommended: 90%+)`);
     }
 
-    console.log(`   ✅ Compliance validation completed`);
+    console.info(`   ✅ Compliance validation completed`);
   }
 
   private async validateRollbackCapability(): Promise<void> {
-    console.log(`   🔄 Validating rollback capability...`);
+    console.info(`   🔄 Validating rollback capability...`);
 
     const rollbackStatus = await this.checkRollbackCapability();
 
@@ -285,15 +285,15 @@ class EnhancedDeploymentOrchestrator {
       throw new Error(`Rollback capability not available: ${rollbackStatus.reason}`);
     }
 
-    console.log(`   ✅ Rollback capability validated`);
+    console.info(`   ✅ Rollback capability validated`);
   }
 
   private async phase2_InfrastructurePreparation(): Promise<void> {
     const phase = this.createPhase('Infrastructure Preparation');
 
     try {
-      console.log(`📍 Phase 2: Infrastructure Preparation`);
-      console.log(`=====================================`);
+      console.info(`📍 Phase 2: Infrastructure Preparation`);
+      console.info(`=====================================`);
 
       // Prepare infrastructure for deployment
       await this.prepareTargetEnvironment();
@@ -306,7 +306,7 @@ class EnhancedDeploymentOrchestrator {
       phase.duration = phase.endTime - phase.startTime;
       phase.metrics.healthScore = 98;
 
-      console.log(`✅ Infrastructure preparation completed in ${phase.duration}ms`);
+      console.info(`✅ Infrastructure preparation completed in ${phase.duration}ms`);
 
     } catch (error) {
       phase.status = 'failed';
@@ -321,8 +321,8 @@ class EnhancedDeploymentOrchestrator {
     const phase = this.createPhase('AI-Enhanced Deployment');
 
     try {
-      console.log(`📍 Phase 3: AI-Enhanced Deployment`);
-      console.log(`================================`);
+      console.info(`📍 Phase 3: AI-Enhanced Deployment`);
+      console.info(`================================`);
 
       // Apply AI optimizations before deployment
       if (this.config.enableAIOptimization) {
@@ -350,7 +350,7 @@ class EnhancedDeploymentOrchestrator {
       phase.duration = phase.endTime - phase.startTime;
       phase.metrics.healthScore = 95;
 
-      console.log(`✅ AI-enhanced deployment completed in ${phase.duration}ms`);
+      console.info(`✅ AI-enhanced deployment completed in ${phase.duration}ms`);
 
     } catch (error) {
       phase.status = 'failed';
@@ -362,29 +362,29 @@ class EnhancedDeploymentOrchestrator {
   }
 
   private async executeCanaryDeployment(): Promise<void> {
-    console.log(`   🕊️ Executing canary deployment...`);
+    console.info(`   🕊️ Executing canary deployment...`);
 
     const stages = [5, 25, 50, 100]; // Percentage rollout
 
     for (const percentage of stages) {
-      console.log(`   📈 Rolling out to ${percentage}% of traffic...`);
+      console.info(`   📈 Rolling out to ${percentage}% of traffic...`);
 
       await this.rolloutPercentage(percentage);
       await this.monitorRollout(percentage);
 
       const health = await this.getCurrentHealthScore();
       if (health < 90) {
-        console.log(`   ⚠️ Health score dropped to ${health}%, pausing rollout...`);
+        console.info(`   ⚠️ Health score dropped to ${health}%, pausing rollout...`);
         await this.pauseRollout();
         break;
       }
     }
 
-    console.log(`   ✅ Canary deployment completed`);
+    console.info(`   ✅ Canary deployment completed`);
   }
 
   private async executeBlueGreenDeployment(): Promise<void> {
-    console.log(`   🟢 Executing blue-green deployment...`);
+    console.info(`   🟢 Executing blue-green deployment...`);
 
     // Deploy to green environment
     await this.deployToGreenEnvironment();
@@ -398,41 +398,41 @@ class EnhancedDeploymentOrchestrator {
     // Switch traffic to green
     await this.switchTrafficToGreen();
 
-    console.log(`   ✅ Blue-green deployment completed`);
+    console.info(`   ✅ Blue-green deployment completed`);
   }
 
   private async executeRollingDeployment(): Promise<void> {
-    console.log(`   🔄 Executing rolling deployment...`);
+    console.info(`   🔄 Executing rolling deployment...`);
 
     const instances = await this.getTargetInstances();
     const batchSize = Math.ceil(instances.length / 4); // 25% at a time
 
     for (let i = 0; i < instances.length; i += batchSize) {
       const batch = instances.slice(i, i + batchSize);
-      console.log(`   📦 Deploying to batch ${Math.floor(i / batchSize) + 1} (${batch.length} instances)...`);
+      console.info(`   📦 Deploying to batch ${Math.floor(i / batchSize) + 1} (${batch.length} instances)...`);
 
       await this.deployToBatch(batch);
       await this.validateBatch(batch);
     }
 
-    console.log(`   ✅ Rolling deployment completed`);
+    console.info(`   ✅ Rolling deployment completed`);
   }
 
   private async executeAllAtOnceDeployment(): Promise<void> {
-    console.log(`   ⚡ Executing all-at-once deployment...`);
+    console.info(`   ⚡ Executing all-at-once deployment...`);
 
     await this.deployToAllInstances();
     await this.validateAllInstances();
 
-    console.log(`   ✅ All-at-once deployment completed`);
+    console.info(`   ✅ All-at-once deployment completed`);
   }
 
   private async phase4_PredictiveMonitoring(): Promise<void> {
     const phase = this.createPhase('Predictive Monitoring');
 
     try {
-      console.log(`📍 Phase 4: Predictive Monitoring`);
-      console.log(`===============================`);
+      console.info(`📍 Phase 4: Predictive Monitoring`);
+      console.info(`===============================`);
 
       if (this.config.enablePredictiveMonitoring) {
         await this.startPredictiveMonitoring();
@@ -452,13 +452,13 @@ class EnhancedDeploymentOrchestrator {
 
         // Check for automatic rollback conditions
         if (predictiveMetrics.rollbackProbability > 80) {
-          console.log(`   🚨 High rollback probability detected: ${predictiveMetrics.rollbackProbability}%`);
+          console.info(`   🚨 High rollback probability detected: ${predictiveMetrics.rollbackProbability}%`);
           await this.triggerPredictiveRollback('High rollback probability');
           break;
         }
 
         if (metrics.errorRate > this.config.autoRollbackThreshold) {
-          console.log(`   🚨 Error rate threshold exceeded: ${metrics.errorRate}%`);
+          console.info(`   🚨 Error rate threshold exceeded: ${metrics.errorRate}%`);
           await this.triggerAutomaticRollback(`Error rate: ${metrics.errorRate}%`);
           break;
         }
@@ -471,7 +471,7 @@ class EnhancedDeploymentOrchestrator {
       phase.duration = phase.endTime - phase.startTime;
       phase.metrics.healthScore = phase.metrics.errorRate < this.config.autoRollbackThreshold ? 92 : 78;
 
-      console.log(`✅ Predictive monitoring completed in ${phase.duration}ms`);
+      console.info(`✅ Predictive monitoring completed in ${phase.duration}ms`);
 
     } catch (error) {
       phase.status = 'failed';
@@ -486,8 +486,8 @@ class EnhancedDeploymentOrchestrator {
     const phase = this.createPhase('Comprehensive Verification');
 
     try {
-      console.log(`📍 Phase 5: Comprehensive Verification`);
-      console.log(`===================================`);
+      console.info(`📍 Phase 5: Comprehensive Verification`);
+      console.info(`===================================`);
 
       // Run comprehensive verification based on level
       switch (this.config.verificationLevel) {
@@ -510,7 +510,7 @@ class EnhancedDeploymentOrchestrator {
       phase.duration = phase.endTime - phase.startTime;
       phase.metrics.healthScore = 96;
 
-      console.log(`✅ Comprehensive verification completed in ${phase.duration}ms`);
+      console.info(`✅ Comprehensive verification completed in ${phase.duration}ms`);
 
     } catch (error) {
       phase.status = 'failed';
@@ -525,8 +525,8 @@ class EnhancedDeploymentOrchestrator {
     const phase = this.createPhase('Post-Deployment Optimization');
 
     try {
-      console.log(`📍 Phase 6: Post-Deployment Optimization`);
-      console.log(`======================================`);
+      console.info(`📍 Phase 6: Post-Deployment Optimization`);
+      console.info(`======================================`);
 
       // Apply post-deployment optimizations
       await this.optimizePerformance();
@@ -539,7 +539,7 @@ class EnhancedDeploymentOrchestrator {
       phase.duration = phase.endTime - phase.startTime;
       phase.metrics.healthScore = 98;
 
-      console.log(`✅ Post-deployment optimization completed in ${phase.duration}ms`);
+      console.info(`✅ Post-deployment optimization completed in ${phase.duration}ms`);
 
     } catch (error) {
       phase.status = 'failed';
@@ -767,53 +767,53 @@ class EnhancedDeploymentOrchestrator {
     const reportPath = `.factory-wager/deployments/enhanced-deployment-${this.deploymentId}.json`;
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
-    console.log(`📄 Enhanced deployment report saved to: ${reportPath}`);
+    console.info(`📄 Enhanced deployment report saved to: ${reportPath}`);
   }
 
   private printDeploymentResults(result: EnhancedDeploymentResult): void {
-    console.log(`\n🎉 Enhanced Deployment Results:`);
-    console.log(`==============================`);
+    console.info(`\n🎉 Enhanced Deployment Results:`);
+    console.info(`==============================`);
 
-    console.log(`Deployment ID: ${result.deploymentId}`);
-    console.log(`Overall Status: ${result.overallStatus.toUpperCase()}`);
-    console.log(`Total Duration: ${(result.totalDuration / 1000 / 60).toFixed(2)} minutes`);
-    console.log(`Final Health Score: ${result.finalHealthScore}/100`);
+    console.info(`Deployment ID: ${result.deploymentId}`);
+    console.info(`Overall Status: ${result.overallStatus.toUpperCase()}`);
+    console.info(`Total Duration: ${(result.totalDuration / 1000 / 60).toFixed(2)} minutes`);
+    console.info(`Final Health Score: ${result.finalHealthScore}/100`);
 
-    console.log(`\n📊 Phase Summary:`);
+    console.info(`\n📊 Phase Summary:`);
     result.phases.forEach(phase => {
       const status = phase.status === 'completed' ? '✅' : phase.status === 'failed' ? '❌' : '⏳';
-      console.log(`   ${status} ${phase.name}: ${phase.duration ? `${phase.duration}ms` : 'In progress'} (Health: ${phase.metrics.healthScore}%)`);
+      console.info(`   ${status} ${phase.name}: ${phase.duration ? `${phase.duration}ms` : 'In progress'} (Health: ${phase.metrics.healthScore}%)`);
     });
 
-    console.log(`\n🤖 AI Optimizations:`);
-    console.log(`   Total: ${result.aiOptimizations.length}`);
-    console.log(`   Applied: ${result.aiOptimizations.filter(o => o.applied).length}`);
-    console.log(`   Success Rate: ${result.aiOptimizations.length > 0 ? Math.round((result.aiOptimizations.filter(o => o.applied).length / result.aiOptimizations.length) * 100) : 0}%`);
+    console.info(`\n🤖 AI Optimizations:`);
+    console.info(`   Total: ${result.aiOptimizations.length}`);
+    console.info(`   Applied: ${result.aiOptimizations.filter(o => o.applied).length}`);
+    console.info(`   Success Rate: ${result.aiOptimizations.length > 0 ? Math.round((result.aiOptimizations.filter(o => o.applied).length / result.aiOptimizations.length) * 100) : 0}%`);
 
-    console.log(`\n🔮 Predictive Metrics:`);
-    console.log(`   Error Trend: ${result.predictiveMetrics.errorTrend}`);
-    console.log(`   Performance Trend: ${result.predictiveMetrics.performanceTrend}`);
-    console.log(`   Resource Pressure: ${result.predictiveMetrics.resourcePressure}`);
-    console.log(`   Rollback Probability: ${result.predictiveMetrics.rollbackProbability}%`);
-    console.log(`   Deployment Risk: ${result.predictiveMetrics.deploymentRisk}/100`);
-    console.log(`   Estimated Recovery Time: ${result.predictiveMetrics.timeToRecovery} minutes`);
+    console.info(`\n🔮 Predictive Metrics:`);
+    console.info(`   Error Trend: ${result.predictiveMetrics.errorTrend}`);
+    console.info(`   Performance Trend: ${result.predictiveMetrics.performanceTrend}`);
+    console.info(`   Resource Pressure: ${result.predictiveMetrics.resourcePressure}`);
+    console.info(`   Rollback Probability: ${result.predictiveMetrics.rollbackProbability}%`);
+    console.info(`   Deployment Risk: ${result.predictiveMetrics.deploymentRisk}/100`);
+    console.info(`   Estimated Recovery Time: ${result.predictiveMetrics.timeToRecovery} minutes`);
 
     if (result.rollbackHistory.length > 0) {
-      console.log(`\n🔄 Rollback Events:`);
+      console.info(`\n🔄 Rollback Events:`);
       result.rollbackHistory.forEach(event => {
-        console.log(`   ${event.trigger.toUpperCase()}: ${event.reason} (${event.success ? 'Success' : 'Failed'})`);
+        console.info(`   ${event.trigger.toUpperCase()}: ${event.reason} (${event.success ? 'Success' : 'Failed'})`);
       });
     }
 
     if (result.recommendations.length > 0) {
-      console.log(`\n💡 Recommendations:`);
+      console.info(`\n💡 Recommendations:`);
       result.recommendations.slice(0, 3).forEach((rec, index) => {
-        console.log(`   ${index + 1}. [${rec.priority.toUpperCase()}] ${rec.title}`);
-        console.log(`      ${rec.description}`);
+        console.info(`   ${index + 1}. [${rec.priority.toUpperCase()}] ${rec.title}`);
+        console.info(`      ${rec.description}`);
       });
     }
 
-    console.log(`\n📋 Audit Trail: ${result.auditTrail.length} entries logged`);
+    console.info(`\n📋 Audit Trail: ${result.auditTrail.length} entries logged`);
   }
 
   // Placeholder methods for implementation
@@ -969,7 +969,7 @@ class EnhancedDeploymentOrchestrator {
   }
 
   private async triggerPredictiveRollback(reason: string): Promise<void> {
-    console.log(`   🔄 Triggering predictive rollback: ${reason}`);
+    console.info(`   🔄 Triggering predictive rollback: ${reason}`);
     const rollbackEvent: RollbackEvent = {
       timestamp: new Date().toISOString(),
       trigger: 'predictive',
@@ -982,7 +982,7 @@ class EnhancedDeploymentOrchestrator {
   }
 
   private async triggerAutomaticRollback(reason: string): Promise<void> {
-    console.log(`   🔄 Triggering automatic rollback: ${reason}`);
+    console.info(`   🔄 Triggering automatic rollback: ${reason}`);
     const rollbackEvent: RollbackEvent = {
       timestamp: new Date().toISOString(),
       trigger: 'automatic',
@@ -995,35 +995,35 @@ class EnhancedDeploymentOrchestrator {
   }
 
   private async runHealthChecks(): Promise<void> {
-    console.log(`   ❤️ Running health checks...`);
+    console.info(`   ❤️ Running health checks...`);
   }
 
   private async runSmokeTests(): Promise<void> {
-    console.log(`   💨 Running smoke tests...`);
+    console.info(`   💨 Running smoke tests...`);
   }
 
   private async runIntegrationTests(): Promise<void> {
-    console.log(`   🔗 Running integration tests...`);
+    console.info(`   🔗 Running integration tests...`);
   }
 
   private async runFullTestSuite(): Promise<void> {
-    console.log(`   🧪 Running full test suite...`);
+    console.info(`   🧪 Running full test suite...`);
   }
 
   private async optimizePerformance(): Promise<void> {
-    console.log(`   ⚡ Optimizing performance...`);
+    console.info(`   ⚡ Optimizing performance...`);
   }
 
   private async updateMonitoring(): Promise<void> {
-    console.log(`   📊 Updating monitoring...`);
+    console.info(`   📊 Updating monitoring...`);
   }
 
   private async generateDocumentation(): Promise<void> {
-    console.log(`   📚 Generating documentation...`);
+    console.info(`   📚 Generating documentation...`);
   }
 
   private async cleanupResources(): Promise<void> {
-    console.log(`   🧹 Cleaning up resources...`);
+    console.info(`   🧹 Cleaning up resources...`);
   }
 
   private async handleDeploymentError(error: Error, startTime: number): Promise<void> {

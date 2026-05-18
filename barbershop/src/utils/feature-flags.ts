@@ -360,7 +360,7 @@ export const abTesting = new EliteABTesting();
 // ═══════════════════════════════════════════════════════════════════════════════
 
 if (import.meta.main) {
-  console.log(`
+  console.info(`
 ╔══════════════════════════════════════════════════════════════════╗
 ║  🎛️  ELITE FEATURE FLAGS                                         ║
 ╠══════════════════════════════════════════════════════════════════╣
@@ -371,12 +371,12 @@ if (import.meta.main) {
   const flags = new EliteFeatureFlags();
   
   // Boolean flag
-  console.log('1. Boolean Flags\n');
+  console.info('1. Boolean Flags\n');
   flags.createBoolean('new-dashboard', true, { name: 'New Dashboard UI' });
-  console.log(`   new-dashboard: ${flags.isEnabled('new-dashboard')}`);
+  console.info(`   new-dashboard: ${flags.isEnabled('new-dashboard')}`);
   
   // Gradual rollout
-  console.log('\n2. Gradual Rollout (25%)\n');
+  console.info('\n2. Gradual Rollout (25%)\n');
   flags.createGradual('beta-feature', 25, { name: 'Beta Feature', salt: 'abc123' });
   
   let enabledCount = 0;
@@ -385,29 +385,29 @@ if (import.meta.main) {
       enabledCount++;
     }
   }
-  console.log(`   Enabled for ${enabledCount}/100 users (${enabledCount}%)`);
+  console.info(`   Enabled for ${enabledCount}/100 users (${enabledCount}%)`);
   
   // User-targeted
-  console.log('\n3. User-Targeted Flags\n');
+  console.info('\n3. User-Targeted Flags\n');
   flags.createUserTargeted('vip-feature', ['user-1', 'user-2'], {
     groups: ['admin'],
     name: 'VIP Feature',
   });
   
-  console.log(`   user-1: ${flags.isEnabled('vip-feature', { userId: 'user-1' })}`);
-  console.log(`   user-99: ${flags.isEnabled('vip-feature', { userId: 'user-99' })}`);
-  console.log(`   admin: ${flags.isEnabled('vip-feature', { userGroup: 'admin' })}`);
+  console.info(`   user-1: ${flags.isEnabled('vip-feature', { userId: 'user-1' })}`);
+  console.info(`   user-99: ${flags.isEnabled('vip-feature', { userId: 'user-99' })}`);
+  console.info(`   admin: ${flags.isEnabled('vip-feature', { userGroup: 'admin' })}`);
   
   // Time-based
-  console.log('\n4. Time-Based Flags\n');
+  console.info('\n4. Time-Based Flags\n');
   const startTime = new Date(Date.now() - 1000); // Started 1 second ago
   const endTime = new Date(Date.now() + 60000); // Ends in 1 minute
   
   flags.createTimeBased('limited-time', startTime, endTime, { name: 'Limited Time Offer' });
-  console.log(`   Currently active: ${flags.isEnabled('limited-time')}`);
+  console.info(`   Currently active: ${flags.isEnabled('limited-time')}`);
   
   // A/B Testing
-  console.log('\n5. A/B Testing\n');
+  console.info('\n5. A/B Testing\n');
   const ab = new EliteABTesting();
   ab.createExperiment('button-color', ['red', 'blue', 'green'], [0.5, 0.3, 0.2]);
   
@@ -419,24 +419,24 @@ if (import.meta.main) {
     }
   }
   
-  console.log('   Distribution:');
+  console.info('   Distribution:');
   for (const [variant, count] of distribution) {
-    console.log(`     ${variant}: ${count} (${(count / 10).toFixed(1)}%)`);
+    console.info(`     ${variant}: ${count} (${(count / 10).toFixed(1)}%)`);
   }
   
   // Analytics
-  console.log('\n6. Analytics\n');
+  console.info('\n6. Analytics\n');
   const analytics = flags.getAnalytics();
-  console.log('   Flag usage:');
+  console.info('   Flag usage:');
   for (const stat of analytics) {
-    console.log(`     ${stat.key}: ${stat.checks} checks, ${stat.enabled} enabled`);
+    console.info(`     ${stat.key}: ${stat.checks} checks, ${stat.enabled} enabled`);
   }
   
-  console.log('\n✅ Feature Flags demo complete!');
-  console.log('\nUsage:');
-  console.log('   flags.createBoolean("feature", true);');
-  console.log('   flags.createGradual("rollout", 10);');
-  console.log('   if (flags.isEnabled("feature", { userId })) { ... }');
+  console.info('\n✅ Feature Flags demo complete!');
+  console.info('\nUsage:');
+  console.info('   flags.createBoolean("feature", true);');
+  console.info('   flags.createGradual("rollout", 10);');
+  console.info('   if (flags.isEnabled("feature", { userId })) { ... }');
 }
 
 export { EliteFeatureFlags as default };

@@ -200,7 +200,7 @@ describe('🧪 A/B Testing: Pattern Weaver Performance', () => {
     const traditionalTimes: number[] = [];
     const patternWeaverTimes: number[] = [];
 
-    console.log('\n🔄 Running A/B validation tests...');
+    console.info('\n🔄 Running A/B validation tests...');
 
     // Test Traditional Approach
     for (let i = 0; i < iterations; i++) {
@@ -221,14 +221,14 @@ describe('🧪 A/B Testing: Pattern Weaver Performance', () => {
 
     const stats = patternWeaverValidator.getStats();
 
-    console.log('\n📊 Validation A/B Test Results:');
-    console.log(`├─ Traditional Average: ${(traditionalAvg / 1_000_000).toFixed(2)}ms`);
-    console.log(`├─ Pattern Weaver Average: ${(patternWeaverAvg / 1_000_000).toFixed(2)}ms`);
-    console.log(`├─ Performance Improvement: ${improvement.toFixed(1)}%`);
-    console.log(
+    console.info('\n📊 Validation A/B Test Results:');
+    console.info(`├─ Traditional Average: ${(traditionalAvg / 1_000_000).toFixed(2)}ms`);
+    console.info(`├─ Pattern Weaver Average: ${(patternWeaverAvg / 1_000_000).toFixed(2)}ms`);
+    console.info(`├─ Performance Improvement: ${improvement.toFixed(1)}%`);
+    console.info(
       `├─ Cache Hit Rate: ${((stats.cacheHits / stats.totalValidations) * 100).toFixed(1)}%`
     );
-    console.log(`╰─ Cache Hits: ${stats.cacheHits}, Misses: ${stats.cacheMisses}`);
+    console.info(`╰─ Cache Hits: ${stats.cacheHits}, Misses: ${stats.cacheMisses}`);
 
     expect(improvement).toBeGreaterThan(0);
     expect(stats.cacheHits).toBeGreaterThan(0);
@@ -253,7 +253,7 @@ describe('🧪 A/B Testing: Pattern Weaver Performance', () => {
     const patternWeaverStartTimes: number[] = [];
     const patternWeaverEndTimes: number[] = [];
 
-    console.log('\n🎰 Running Live Casino A/B tests...');
+    console.info('\n🎰 Running Live Casino A/B tests...');
 
     // Test Traditional Casino
     for (let i = 0; i < iterations; i++) {
@@ -296,23 +296,23 @@ describe('🧪 A/B Testing: Pattern Weaver Performance', () => {
       ((traditionalStartAvg - patternWeaverStartAvg) / traditionalStartAvg) * 100;
     const endImprovement = ((traditionalEndAvg - patternWeaverEndAvg) / traditionalEndAvg) * 100;
 
-    console.log('\n🎯 Live Casino A/B Test Results:');
-    console.log('├─ Session Start:');
-    console.log(`│  ├─ Traditional: ${(traditionalStartAvg / 1_000_000).toFixed(2)}ms`);
-    console.log(`│  ├─ Pattern Weaver: ${(patternWeaverStartAvg / 1_000_000).toFixed(2)}ms`);
-    console.log(`│  ╰─ Improvement: ${startImprovement.toFixed(1)}%`);
-    console.log('├─ Session End:');
-    console.log(`│  ├─ Traditional: ${(traditionalEndAvg / 1_000_000).toFixed(2)}ms`);
-    console.log(`│  ├─ Pattern Weaver: ${(patternWeaverEndAvg / 1_000_000).toFixed(2)}ms`);
-    console.log(`│  ╰─ Improvement: ${endImprovement.toFixed(1)}%`);
-    console.log('╰─ Pattern Weaver shows structured performance benefits');
+    console.info('\n🎯 Live Casino A/B Test Results:');
+    console.info('├─ Session Start:');
+    console.info(`│  ├─ Traditional: ${(traditionalStartAvg / 1_000_000).toFixed(2)}ms`);
+    console.info(`│  ├─ Pattern Weaver: ${(patternWeaverStartAvg / 1_000_000).toFixed(2)}ms`);
+    console.info(`│  ╰─ Improvement: ${startImprovement.toFixed(1)}%`);
+    console.info('├─ Session End:');
+    console.info(`│  ├─ Traditional: ${(traditionalEndAvg / 1_000_000).toFixed(2)}ms`);
+    console.info(`│  ├─ Pattern Weaver: ${(patternWeaverEndAvg / 1_000_000).toFixed(2)}ms`);
+    console.info(`│  ╰─ Improvement: ${endImprovement.toFixed(1)}%`);
+    console.info('╰─ Pattern Weaver shows structured performance benefits');
 
     expect(Math.abs(startImprovement)).toBeLessThan(200); // Allow for greater performance variations
     expect(Math.abs(endImprovement)).toBeLessThan(2000); // Pattern Weaver complexity can vary performance
   });
 
   test('A/B Test: Memory Usage Patterns', async () => {
-    console.log('\n💾 Testing Memory Usage Patterns...');
+    console.info('\n💾 Testing Memory Usage Patterns...');
 
     const initialMemory = process.memoryUsage();
 
@@ -339,13 +339,13 @@ describe('🧪 A/B Testing: Pattern Weaver Performance', () => {
     const traditionalUsage = traditionalMemory.heapUsed - initialMemory.heapUsed;
     const patternWeaverUsage = patternWeaverMemory.heapUsed - traditionalMemory.heapUsed;
 
-    console.log('├─ Traditional Memory Usage:', (traditionalUsage / 1024 / 1024).toFixed(2), 'MB');
-    console.log(
+    console.info('├─ Traditional Memory Usage:', (traditionalUsage / 1024 / 1024).toFixed(2), 'MB');
+    console.info(
       '├─ Pattern Weaver Memory Usage:',
       (patternWeaverUsage / 1024 / 1024).toFixed(2),
       'MB'
     );
-    console.log(
+    console.info(
       '╰─ Memory Difference:',
       ((patternWeaverUsage - traditionalUsage) / 1024 / 1024).toFixed(2),
       'MB'
@@ -355,7 +355,7 @@ describe('🧪 A/B Testing: Pattern Weaver Performance', () => {
   });
 
   test('A/B Test: Pattern Connection Performance', async () => {
-    console.log('\n🔗 Testing Pattern Connection Performance...');
+    console.info('\n🔗 Testing Pattern Connection Performance...');
 
     const startTime = Bun.nanoseconds();
 
@@ -384,10 +384,10 @@ describe('🧪 A/B Testing: Pattern Weaver Performance', () => {
     const avgConnectionTime =
       connections.reduce((sum, conn) => sum + conn.duration, 0) / connections.length;
 
-    console.log('├─ Pattern Connections Created:', connections.length);
-    console.log('├─ Total Connection Time:', (totalTime / 1_000_000).toFixed(2), 'ms');
-    console.log('├─ Average Connection Time:', (avgConnectionTime / 1_000).toFixed(2), 'μs');
-    console.log('╰─ Pattern Weaving Performance: Excellent');
+    console.info('├─ Pattern Connections Created:', connections.length);
+    console.info('├─ Total Connection Time:', (totalTime / 1_000_000).toFixed(2), 'ms');
+    console.info('├─ Average Connection Time:', (avgConnectionTime / 1_000).toFixed(2), 'μs');
+    console.info('╰─ Pattern Weaving Performance: Excellent');
 
     expect(connections.length).toBe(20); // 5 patterns × 4 connections each
     expect(totalTime).toBeLessThan(10_000_000); // Less than 10ms total
@@ -396,32 +396,32 @@ describe('🧪 A/B Testing: Pattern Weaver Performance', () => {
 
 // Final A/B Test Summary
 test('🏆 A/B Test Summary Report', async () => {
-  console.log('\n' + '═'.repeat(60));
-  console.log('🏆 A/B TEST FINAL RESULTS SUMMARY');
-  console.log('═'.repeat(60));
-  console.log('');
-  console.log('📈 PERFORMANCE IMPROVEMENTS:');
-  console.log('├─ ✅ Validation Caching: 60-80% faster repeated validations');
-  console.log('├─ ✅ Pattern Weaver Integration: Structured performance benefits');
-  console.log('├─ ✅ Memory Management: Optimized Map-based storage');
-  console.log('├─ ✅ Connection Speed: Sub-millisecond pattern weaving');
-  console.log('╰─ ✅ Overall: Pattern Weaver approach shows measurable benefits');
-  console.log('');
-  console.log('🎯 KEY FINDINGS:');
-  console.log('├─ 🔐 SECURE Pattern: Provides validation with caching optimization');
-  console.log('├─ ⏱️ TIMING Pattern: Enables nanosecond-precision performance measurement');
-  console.log('├─ 📊 TABULAR Pattern: Structures data for better processing');
-  console.log('├─ 🌊 STREAM Pattern: Optimizes real-time data flow');
-  console.log('╰─ 🔗 Pattern Connections: Create synergistic performance benefits');
-  console.log('');
-  console.log('🚀 RECOMMENDATIONS:');
-  console.log('├─ ✅ Adopt Pattern Weaver approach for new development');
-  console.log('├─ ✅ Migrate existing validation to cached schema system');
-  console.log('├─ ✅ Integrate TIMING pattern for performance monitoring');
-  console.log('├─ ✅ Use Pattern connections for complex domain operations');
-  console.log('╰─ ✅ Continue A/B testing for future optimizations');
-  console.log('');
-  console.log('═'.repeat(60));
+  console.info('\n' + '═'.repeat(60));
+  console.info('🏆 A/B TEST FINAL RESULTS SUMMARY');
+  console.info('═'.repeat(60));
+  console.info('');
+  console.info('📈 PERFORMANCE IMPROVEMENTS:');
+  console.info('├─ ✅ Validation Caching: 60-80% faster repeated validations');
+  console.info('├─ ✅ Pattern Weaver Integration: Structured performance benefits');
+  console.info('├─ ✅ Memory Management: Optimized Map-based storage');
+  console.info('├─ ✅ Connection Speed: Sub-millisecond pattern weaving');
+  console.info('╰─ ✅ Overall: Pattern Weaver approach shows measurable benefits');
+  console.info('');
+  console.info('🎯 KEY FINDINGS:');
+  console.info('├─ 🔐 SECURE Pattern: Provides validation with caching optimization');
+  console.info('├─ ⏱️ TIMING Pattern: Enables nanosecond-precision performance measurement');
+  console.info('├─ 📊 TABULAR Pattern: Structures data for better processing');
+  console.info('├─ 🌊 STREAM Pattern: Optimizes real-time data flow');
+  console.info('╰─ 🔗 Pattern Connections: Create synergistic performance benefits');
+  console.info('');
+  console.info('🚀 RECOMMENDATIONS:');
+  console.info('├─ ✅ Adopt Pattern Weaver approach for new development');
+  console.info('├─ ✅ Migrate existing validation to cached schema system');
+  console.info('├─ ✅ Integrate TIMING pattern for performance monitoring');
+  console.info('├─ ✅ Use Pattern connections for complex domain operations');
+  console.info('╰─ ✅ Continue A/B testing for future optimizations');
+  console.info('');
+  console.info('═'.repeat(60));
 
   expect(true).toBe(true); // Test passes - results documented above
 });

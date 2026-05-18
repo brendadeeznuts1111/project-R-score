@@ -88,7 +88,7 @@ export class CRC32AuditDashboard {
       this.websocket = new WebSocket(websocketUrl);
       this.setupRealTimeUpdates();
     } catch (error) {
-      console.log("WebSocket not available, using polling mode");
+      console.info("WebSocket not available, using polling mode");
     }
   }
 
@@ -135,7 +135,7 @@ export class CRC32AuditDashboard {
     };
 
     this.websocket.onopen = () => {
-      console.log("Real-time audit dashboard connected");
+      console.info("Real-time audit dashboard connected");
       this.emit("connected");
     };
   }
@@ -509,34 +509,34 @@ export async function startDashboard(
 ): Promise<void> {
   const dashboard = new CRC32AuditDashboard(sql);
 
-  console.log(`🚀 CRC32 Audit Dashboard starting on port ${port}`);
-  console.log("===========================================");
+  console.info(`🚀 CRC32 Audit Dashboard starting on port ${port}`);
+  console.info("===========================================");
 
   // Start real-time monitoring
   await dashboard.startRealTimeMonitoring((data) => {
     console.clear();
-    console.log("📊 CRC32 Audit Dashboard - Real-time");
-    console.log("=====================================");
-    console.log(`Total Audits: ${data.summary.totalAudits}`);
-    console.log(
+    console.info("📊 CRC32 Audit Dashboard - Real-time");
+    console.info("=====================================");
+    console.info(`Total Audits: ${data.summary.totalAudits}`);
+    console.info(
       `Integrity Rate: ${(data.summary.integrityRate * 100).toFixed(1)}%`
     );
-    console.log(
+    console.info(
       `Avg Throughput: ${data.summary.avgThroughput.toFixed(1)} MB/s`
     );
-    console.log(
+    console.info(
       `Hardware Utilization: ${(data.summary.hardwareUtilization * 100).toFixed(
         1
       )}%`
     );
-    console.log(
+    console.info(
       `Avg Confidence: ${(data.summary.avgConfidence * 100).toFixed(1)}%`
     );
 
     if (data.recentFailures.length > 0) {
-      console.log("\n⚠️  Recent Failures:");
+      console.info("\n⚠️  Recent Failures:");
       data.recentFailures.slice(0, 5).forEach((failure) => {
-        console.log(
+        console.info(
           `  ${failure.entityType}:${failure.entityId} - ${
             failure.status
           } (${failure.confidenceScore.toFixed(2)})`
@@ -544,14 +544,14 @@ export async function startDashboard(
       });
     }
 
-    console.log(`\nLast updated: ${new Date().toLocaleTimeString()}`);
+    console.info(`\nLast updated: ${new Date().toLocaleTimeString()}`);
   });
 
-  console.log("Dashboard monitoring started. Press Ctrl+C to stop.");
+  console.info("Dashboard monitoring started. Press Ctrl+C to stop.");
 
   // Graceful shutdown
   process.on("SIGINT", () => {
-    console.log("\n🛑 Shutting down dashboard...");
+    console.info("\n🛑 Shutting down dashboard...");
     dashboard.disconnect();
     process.exit(0);
   });

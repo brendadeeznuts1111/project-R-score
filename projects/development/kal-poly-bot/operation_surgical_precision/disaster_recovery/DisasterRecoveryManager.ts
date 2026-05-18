@@ -126,7 +126,7 @@ export class DisasterRecoveryOrchestrator {
   }
 
   public async configureDisasterRecovery(config: DisasterRecoveryConfiguration): Promise<DRConfigurationResult> {
-    console.log('🛡️ Configuring Disaster Recovery for Surgical Precision Platform');
+    console.info('🛡️ Configuring Disaster Recovery for Surgical Precision Platform');
 
     if (this._coordinator) {
       this._coordinator.registerComponent('disaster-recovery', {
@@ -140,23 +140,23 @@ export class DisasterRecoveryOrchestrator {
 
     try {
       // Step 1: Setup multi-region infrastructure
-      console.log('  🌍 Configuring multi-region infrastructure...');
+      console.info('  🌍 Configuring multi-region infrastructure...');
       await this._regionManager.configureRegions(config.regions);
 
       // Step 2: Configure data replication
-      console.log('  🔄 Setting up data replication...');
+      console.info('  🔄 Setting up data replication...');
       await this._replicationManager.configureReplication(config.regions);
 
       // Step 3: Setup backup strategy
-      console.log('  💾 Configuring backup strategy...');
+      console.info('  💾 Configuring backup strategy...');
       await this._backupManager.configureBackups(config.backupStrategy);
 
       // Step 4: Configure failover mechanisms
-      console.log('  🔀 Setting up failover mechanisms...');
+      console.info('  🔀 Setting up failover mechanisms...');
       await this._failoverManager.configureFailover(config.failoverConfiguration);
 
       // Step 5: Initialize health monitoring
-      console.log('  📊 Starting health monitoring...');
+      console.info('  📊 Starting health monitoring...');
       const healthMonitor = await this._healthMonitor.initialize();
 
       if (this._coordinator) {
@@ -189,7 +189,7 @@ export class DisasterRecoveryOrchestrator {
   }
 
   public async initiateFailover(targetRegion: string): Promise<FailoverResult> {
-    console.log(`🔄 Initiating failover to region: ${targetRegion}`);
+    console.info(`🔄 Initiating failover to region: ${targetRegion}`);
 
     try {
       // Validate failover prerequisites
@@ -255,7 +255,7 @@ export class DisasterRecoveryOrchestrator {
   }
 
   private async _updateTrafficRouting(targetRegion: string): Promise<void> {
-    console.log(`  🛣️ Updating traffic routing to ${targetRegion}...`);
+    console.info(`  🛣️ Updating traffic routing to ${targetRegion}...`);
 
     // Update DNS/load balancer configuration
     // This would integrate with cloud provider DNS and load balancing services
@@ -314,7 +314,7 @@ export class BackupManager {
   }
 
   public async configureBackups(strategy: BackupStrategy): Promise<void> {
-    console.log(`💾 Configuring backup strategy: ${strategy.frequency}`);
+    console.info(`💾 Configuring backup strategy: ${strategy.frequency}`);
 
     // Configure backup schedules
     await this._scheduler.configure(strategy.frequency);
@@ -327,7 +327,7 @@ export class BackupManager {
     // Configure retention policies
     await this._configureRetentionPolicies(strategy.retention);
 
-    console.log('  ✅ Backup strategy configured');
+    console.info('  ✅ Backup strategy configured');
   }
 
   public async getLatestBackup(): Promise<{ timestamp: string; available: boolean }> {
@@ -368,7 +368,7 @@ EOF`);
  */
 export class ReplicationManager {
   public async configureReplication(regions: RecoveryRegion[]): Promise<void> {
-    console.log(`🔄 Configuring cross-region replication for ${regions.length} regions`);
+    console.info(`🔄 Configuring cross-region replication for ${regions.length} regions`);
 
     for (const region of regions) {
       if (!region.primary) {
@@ -376,7 +376,7 @@ export class ReplicationManager {
       }
     }
 
-    console.log('  ✅ Cross-region replication configured');
+    console.info('  ✅ Cross-region replication configured');
   }
 
   private async _setupRegionReplication(region: RecoveryRegion): Promise<void> {
@@ -420,7 +420,7 @@ export class FailoverManager {
   }
 
   public async configureFailover(config: FailoverConfiguration): Promise<void> {
-    console.log('🔀 Configuring failover mechanisms');
+    console.info('🔀 Configuring failover mechanisms');
 
     // Configure failure detection
     await this._detector.configureDetection(config.triggerConditions);
@@ -428,7 +428,7 @@ export class FailoverManager {
     // Configure region promotion
     await this._promoter.configurePromotion(config.promotionStrategy);
 
-    console.log('  ✅ Failover mechanisms configured');
+    console.info('  ✅ Failover mechanisms configured');
   }
 
   public async validateFailoverPrerequisites(targetRegion: string): Promise<{ valid: boolean; reason?: string }> {
@@ -448,7 +448,7 @@ export class FailoverManager {
   }
 
   public async executeFailover(targetRegion: string): Promise<{ duration: number }> {
-    console.log(`  🔄 Executing failover to ${targetRegion}...`);
+    console.info(`  🔄 Executing failover to ${targetRegion}...`);
 
     const startTime = Date.now();
 
@@ -463,7 +463,7 @@ export class FailoverManager {
 
     const duration = Date.now() - startTime;
 
-    console.log(`  ✅ Failover completed in ${duration}ms`);
+    console.info(`  ✅ Failover completed in ${duration}ms`);
 
     return { duration };
   }
@@ -510,7 +510,7 @@ export class FailoverManager {
  */
 export class RegionManager {
   public async configureRegions(regions: RecoveryRegion[]): Promise<void> {
-    console.log(`🌍 Configuring ${regions.length} recovery regions`);
+    console.info(`🌍 Configuring ${regions.length} recovery regions`);
 
     for (const region of regions) {
       const regionConfig = `
@@ -553,7 +553,7 @@ EOF`);
  */
 export class RecoveryHealthMonitor {
   public async initialize(): Promise<void> {
-    console.log('📊 Initializing recovery health monitoring');
+    console.info('📊 Initializing recovery health monitoring');
   }
 
   public async checkHealth(): Promise<{

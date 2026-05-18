@@ -9,17 +9,17 @@
 
 import { peek } from "bun";
 
-console.log("🔍 Bun.peek() Utility Demonstration");
-console.log("=" .repeat(50));
+console.info("🔍 Bun.peek() Utility Demonstration");
+console.info("=" .repeat(50));
 
 // Basic usage example
-console.log("\n1. Basic peek() usage:");
+console.info("\n1. Basic peek() usage:");
 const promise = Promise.resolve("hi");
 const result = peek(promise);
-console.log("Result:", result); // "hi"
+console.info("Result:", result); // "hi"
 
 // peek() with different data types
-console.log("\n2. peek() with different data types:");
+console.info("\n2. peek() with different data types:");
 
 const stringPromise = Promise.resolve("Hello, World!");
 const numberPromise = Promise.resolve(42);
@@ -27,41 +27,41 @@ const objectPromise = Promise.resolve({ name: "Bun", version: "1.3.8" });
 const arrayPromise = Promise.resolve([1, 2, 3, 4, 5]);
 const booleanPromise = Promise.resolve(true);
 
-console.log("String:", peek(stringPromise));
-console.log("Number:", peek(numberPromise));
-console.log("Object:", peek(objectPromise));
-console.log("Array:", peek(arrayPromise));
-console.log("Boolean:", peek(booleanPromise));
+console.info("String:", peek(stringPromise));
+console.info("Number:", peek(numberPromise));
+console.info("Object:", peek(objectPromise));
+console.info("Array:", peek(arrayPromise));
+console.info("Boolean:", peek(booleanPromise));
 
 // peek() with rejected promises
-console.log("\n3. peek() with rejected promises:");
+console.info("\n3. peek() with rejected promises:");
 
 const rejectedPromise = Promise.reject(new Error("Something went wrong"));
 try {
   const rejectedResult = peek(rejectedPromise);
-  console.log("Rejected result:", rejectedResult);
+  console.info("Rejected result:", rejectedResult);
 } catch (error) {
-  console.log("Caught error:", error.message);
+  console.info("Caught error:", error.message);
 }
 
 // peek() with pending promises
-console.log("\n4. peek() with pending promises:");
+console.info("\n4. peek() with pending promises:");
 
 const pendingPromise = new Promise<string>((resolve) => {
   setTimeout(() => resolve("Delayed result"), 100);
 });
 
 const pendingResult = peek(pendingPromise);
-console.log("Pending result:", pendingResult); // undefined
+console.info("Pending result:", pendingResult); // undefined
 
 // Wait for promise to resolve, then peek again
 setTimeout(() => {
   const resolvedResult = peek(pendingPromise);
-  console.log("Resolved result after delay:", resolvedResult);
+  console.info("Resolved result after delay:", resolvedResult);
 }, 150);
 
 // Performance comparison: peek() vs await
-console.log("\n5. Performance comparison:");
+console.info("\n5. Performance comparison:");
 
 async function performanceComparison() {
   const iterations = 100000;
@@ -85,7 +85,7 @@ async function performanceComparison() {
 }
 
 // peek() in practical scenarios
-console.log("\n6. Practical usage scenarios:");
+console.info("\n6. Practical usage scenarios:");
 
 // Scenario 1: Caching resolved values
 class PromiseCache {
@@ -108,7 +108,7 @@ class PromiseCache {
 
 const cache = new PromiseCache();
 const cachedPromise = Promise.resolve({ data: "cached data" });
-console.log("Cached value:", cache.get(cachedPromise));
+console.info("Cached value:", cache.get(cachedPromise));
 
 // Scenario 2: Synchronous promise inspection
 function inspectPromise<T>(promise: Promise<T>): { status: string; value?: T; error?: Error } {
@@ -128,9 +128,9 @@ const resolved = Promise.resolve("success");
 const rejected = Promise.reject(new Error("failure"));
 const pending = new Promise(() => {}); // Never resolves
 
-console.log("Resolved promise:", inspectPromise(resolved));
-console.log("Rejected promise:", inspectPromise(rejected));
-console.log("Pending promise:", inspectPromise(pending));
+console.info("Resolved promise:", inspectPromise(resolved));
+console.info("Rejected promise:", inspectPromise(rejected));
+console.info("Pending promise:", inspectPromise(pending));
 
 // Scenario 3: Conditional async processing
 async function processData(data: string) {
@@ -139,12 +139,12 @@ async function processData(data: string) {
   // Try to get result synchronously first
   const syncResult = peek(processedPromise);
   if (syncResult !== undefined) {
-    console.log("Processed synchronously:", syncResult);
+    console.info("Processed synchronously:", syncResult);
     return syncResult as string;
   }
   
   // Fall back to async if not ready
-  console.log("Processing asynchronously...");
+  console.info("Processing asynchronously...");
   return await processedPromise;
 }
 
@@ -171,24 +171,24 @@ const promises = [
   Promise.resolve("fourth")
 ];
 
-console.log("Aggregated resolved results:", aggregateResults(promises));
+console.info("Aggregated resolved results:", aggregateResults(promises));
 
 // Demonstrate async scenarios
 async function demonstrateAsyncScenarios() {
-  console.log("\n7. Async scenario demonstrations:");
+  console.info("\n7. Async scenario demonstrations:");
   
   await processData("hello world");
   
   // Wait for pending promise and check again
   await new Promise(resolve => setTimeout(resolve, 100));
-  console.log("Final aggregated results:", aggregateResults(promises));
+  console.info("Final aggregated results:", aggregateResults(promises));
   
   // Performance comparison
   await performanceComparison();
 }
 
 // Error handling patterns
-console.log("\n8. Error handling patterns:");
+console.info("\n8. Error handling patterns:");
 
 function safePeek<T>(promise: Promise<T>): T | undefined {
   try {
@@ -201,27 +201,27 @@ function safePeek<T>(promise: Promise<T>): T | undefined {
 }
 
 const safeRejected = Promise.reject(new Error("Safe error test"));
-console.log("Safe peek result:", safePeek(safeRejected));
+console.info("Safe peek result:", safePeek(safeRejected));
 
 // Run async demonstrations
 demonstrateAsyncScenarios().then(() => {
-  console.log("\n✅ Demo completed!");
+  console.info("\n✅ Demo completed!");
 }).catch(console.error);
 
 // Additional demonstration: peek() with Bun-specific features
-console.log("\n9. peek() with Bun-specific features:");
+console.info("\n9. peek() with Bun-specific features:");
 
 // peek() with Bun.file() results
 const filePromise = Bun.file("./demo-bun-peek-utility.ts").arrayBuffer().then(buffer => 
   new TextDecoder().decode(buffer)
 );
 const fileContent = peek(filePromise);
-console.log("File content length:", fileContent ? (fileContent as string).length : "undefined");
+console.info("File content length:", fileContent ? (fileContent as string).length : "undefined");
 
 // peek() with fetch API as Bun.serve() alternative
 const fetchPromise = fetch("http://localhost:3000")
   .then(res => res.text());
 const fetchResult = peek(fetchPromise);
-console.log("Fetch result ready:", fetchResult !== undefined ? "Yes" : "No");
+console.info("Fetch result ready:", fetchResult !== undefined ? "Yes" : "No");
 
 export { peek };

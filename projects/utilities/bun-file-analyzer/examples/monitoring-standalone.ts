@@ -29,7 +29,7 @@ async function getRealBundleAnalysis() {
       buildSystem: await detectBuildSystem(buildDir)
     };
     
-    console.log(`📊 Bundle analysis: ${formatBytes(analysis.totalSize)}`);
+    console.info(`📊 Bundle analysis: ${formatBytes(analysis.totalSize)}`);
     return analysis;
   } catch (error) {
     console.error('❌ Bundle analysis failed:', error);
@@ -263,14 +263,14 @@ class BuildMonitor {
           this.onBuildChange(filename);
         }
       });
-      console.log('👀 Watching build directory for changes');
+      console.info('👀 Watching build directory for changes');
     } catch (error) {
       console.error('Error starting watcher:', error);
     }
   }
   
   private async onBuildChange(filename: string) {
-    console.log(`🔄 Build change: ${filename}`);
+    console.info(`🔄 Build change: ${filename}`);
     this.lastBuild = Date.now();
     
     const analysis = await getRealBundleAnalysis();
@@ -558,7 +558,7 @@ function createDashboard(): string {
       
       <script>
         function refreshData() {
-          console.log('🔄 Refreshing monitoring data...');
+          console.info('🔄 Refreshing monitoring data...');
           location.reload();
         }
         
@@ -586,17 +586,17 @@ function createDashboard(): string {
         }
         
         function viewLogs() {
-          console.log('📋 Monitoring Logs:');
-          console.log('✅ System initialized successfully');
-          console.log('📊 Bundle analysis completed');
-          console.log('🔒 Security middleware active');
-          console.log('⚡ Performance monitoring running');
+          console.info('📋 Monitoring Logs:');
+          console.info('✅ System initialized successfully');
+          console.info('📊 Bundle analysis completed');
+          console.info('🔒 Security middleware active');
+          console.info('⚡ Performance monitoring running');
           alert('Check browser console for detailed logs');
         }
         
         // Auto-refresh every 30 seconds
         setInterval(() => {
-          console.log('📊 Auto-refreshing metrics...');
+          console.info('📊 Auto-refreshing metrics...');
         }, 30000);
       </script>
     </body>
@@ -608,7 +608,7 @@ function createDashboard(): string {
  * Start standalone monitoring server
  */
 async function startStandaloneMonitoring() {
-  console.log("🚀 Starting Standalone Monitoring System...");
+  console.info("🚀 Starting Standalone Monitoring System...");
   
   const server = Bun.serve({
     port: 3003,
@@ -664,25 +664,25 @@ async function startStandaloneMonitoring() {
     }
   });
   
-  console.log("✅ Real-time Monitoring server started successfully!");
-  console.log("📊 Dashboard: http://localhost:3003");
-  console.log("📈 Metrics API: http://localhost:3003/metrics");
-  console.log("🔍 Bundle Analysis: http://localhost:3003/bundle-analysis");
-  console.log("🏗️ Build Status: http://localhost:3003/build-status");
-  console.log("📚 Build History: http://localhost:3003/build-history");
-  console.log("💚 Health Check: http://localhost:3003/health");
-  console.log("");
-  console.log("🎯 Real-time Features:");
-  console.log("  • Live bundle analysis from actual builds");
-  console.log("  • Build directory monitoring");
-  console.log("  • Dependency tracking");
-  console.log("  • Build history and comparisons");
-  console.log("  • Security monitoring");
-  console.log("  • Performance metrics");
-  console.log("  • Interactive dashboard");
-  console.log("");
-  console.log("📁 Watching: ./dist for build changes");
-  console.log("Press Ctrl+C to stop the server");
+  console.info("✅ Real-time Monitoring server started successfully!");
+  console.info("📊 Dashboard: http://localhost:3003");
+  console.info("📈 Metrics API: http://localhost:3003/metrics");
+  console.info("🔍 Bundle Analysis: http://localhost:3003/bundle-analysis");
+  console.info("🏗️ Build Status: http://localhost:3003/build-status");
+  console.info("📚 Build History: http://localhost:3003/build-history");
+  console.info("💚 Health Check: http://localhost:3003/health");
+  console.info("");
+  console.info("🎯 Real-time Features:");
+  console.info("  • Live bundle analysis from actual builds");
+  console.info("  • Build directory monitoring");
+  console.info("  • Dependency tracking");
+  console.info("  • Build history and comparisons");
+  console.info("  • Security monitoring");
+  console.info("  • Performance metrics");
+  console.info("  • Interactive dashboard");
+  console.info("");
+  console.info("📁 Watching: ./dist for build changes");
+  console.info("Press Ctrl+C to stop the server");
   
   return server;
 }

@@ -109,19 +109,19 @@ export class ThemedConsole {
   }
 
   log(message = ''): void {
-    console.log(message);
+    console.info(message);
   }
 
   info(message: string): void {
-    console.log(this.paint(this.theme.colors.primary, `${this.theme.icons.info} ${message}`));
+    console.info(this.paint(this.theme.colors.primary, `${this.theme.icons.info} ${message}`));
   }
 
   success(message: string): void {
-    console.log(this.paint(this.theme.colors.success, `${this.theme.icons.success} ${message}`));
+    console.info(this.paint(this.theme.colors.success, `${this.theme.icons.success} ${message}`));
   }
 
   warning(message: string): void {
-    console.log(this.paint(this.theme.colors.warning, `${this.theme.icons.warning} ${message}`));
+    console.info(this.paint(this.theme.colors.warning, `${this.theme.icons.warning} ${message}`));
   }
 
   error(message: string): void {
@@ -129,7 +129,7 @@ export class ThemedConsole {
   }
 
   header(message: string): void {
-    console.log(this.paint(this.theme.colors.secondary, `${this.theme.icon} ${message}`));
+    console.info(this.paint(this.theme.colors.secondary, `${this.theme.icon} ${message}`));
   }
 
   zoneStatus(status: string): string {

@@ -86,22 +86,22 @@ export class ProductionManager {
    */
   async initialize(): Promise<void> {
     if (this.initialized) {
-      console.log('Production systems already initialized');
+      console.info('Production systems already initialized');
       return;
     }
 
     try {
-      console.log('🚀 Initializing production systems...');
+      console.info('🚀 Initializing production systems...');
 
       // Initialize monitoring
       if (this.config.monitoring.enabled) {
-        console.log('📊 Initializing monitoring and alerts...');
+        console.info('📊 Initializing monitoring and alerts...');
         // Monitoring systems are initialized in their constructors
       }
 
       // Initialize analytics
       if (this.config.analytics.enabled) {
-        console.log('📈 Initializing analytics...');
+        console.info('📈 Initializing analytics...');
         if (this.config.analytics.realtimeUpdates) {
           realtimeDashboard.startUpdates();
         }
@@ -111,7 +111,7 @@ export class ProductionManager {
       await this.testConnections();
 
       this.initialized = true;
-      console.log('✅ Production systems initialized successfully');
+      console.info('✅ Production systems initialized successfully');
 
       // Send startup alert
       await alertManager.sendAlert({
@@ -149,14 +149,14 @@ export class ProductionManager {
    * 🔧 Test connections
    */
   private async testConnections(): Promise<void> {
-    console.log('🔧 Testing connections...');
+    console.info('🔧 Testing connections...');
     
     // Test Redis connection
     try {
       const testKey = 'test:connection';
       await analyticsManager['redis'].set(testKey, 'test');
       await analyticsManager['redis'].del(testKey);
-      console.log('✅ Redis connection successful');
+      console.info('✅ Redis connection successful');
     } catch (error) {
       throw new Error(`Redis connection failed: ${error}`);
     }
@@ -167,12 +167,12 @@ export class ProductionManager {
         level: 'info',
         tags: { test: 'connection' }
       });
-      console.log('✅ Sentry connection successful');
+      console.info('✅ Sentry connection successful');
     } catch (error) {
       console.warn('⚠️ Sentry connection test failed:', error);
     }
 
-    console.log('✅ All connections tested successfully');
+    console.info('✅ All connections tested successfully');
   }
 
   /**
@@ -210,7 +210,7 @@ export class ProductionManager {
         );
 
         if (idempotencyResult.isDuplicate) {
-          console.log(`Duplicate payment detected: ${paymentData.transactionId}`);
+          console.info(`Duplicate payment detected: ${paymentData.transactionId}`);
           return idempotencyResult.data;
         }
 
@@ -225,7 +225,7 @@ export class ProductionManager {
         'payment_processing',
         async () => {
           // Actual payment processing logic
-          console.log(`Processing payment ${paymentData.transactionId} for ${paymentData.provider}`);
+          console.info(`Processing payment ${paymentData.transactionId} for ${paymentData.provider}`);
           
           // Simulate payment processing
           await new Promise(resolve => setTimeout(resolve, 1000));
@@ -468,7 +468,7 @@ export class ProductionManager {
    */
   async shutdown(): Promise<void> {
     try {
-      console.log('🛑 Shutting down production systems...');
+      console.info('🛑 Shutting down production systems...');
       
       // Stop real-time updates
       if (this.config.analytics.enabled && this.config.analytics.realtimeUpdates) {
@@ -487,7 +487,7 @@ export class ProductionManager {
       });
       
       this.initialized = false;
-      console.log('✅ Production systems shut down successfully');
+      console.info('✅ Production systems shut down successfully');
     } catch (error) {
       console.error('❌ Error during shutdown:', error);
     }
@@ -640,7 +640,7 @@ const response = await webhookHandler.handleVenmoWebhook(request);
 // Get system health:
 /*
 const health = await productionManager.getSystemHealth();
-console.log('System health:', health);
+console.info('System health:', health);
 */
 
 // Shutdown gracefully:

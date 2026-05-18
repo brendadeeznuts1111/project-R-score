@@ -45,39 +45,39 @@ function asyncWorkload(delay: number): Promise<void> {
 }
 
 async function main() {
-  console.log("=".repeat(60));
-  console.log("Bun v1.3.9 CPU Profiling Demo");
-  console.log("=".repeat(60));
-  console.log(`Bun version: ${Bun.version}`);
-  console.log("");
+  console.info("=".repeat(60));
+  console.info("Bun v1.3.9 CPU Profiling Demo");
+  console.info("=".repeat(60));
+  console.info(`Bun version: ${Bun.version}`);
+  console.info("");
   
   // Check if profiling is active
   const isProfiling = process.env.BUN_CPU_PROF === "1";
   if (isProfiling) {
-    console.log("✓ CPU profiling is ACTIVE");
-    console.log("  Profile will be saved to: *.cpuprofile");
-    console.log("");
+    console.info("✓ CPU profiling is ACTIVE");
+    console.info("  Profile will be saved to: *.cpuprofile");
+    console.info("");
   } else {
-    console.log("ℹ CPU profiling not active");
-    console.log("  Run with: bun --cpu-prof cpu-profile-demo.ts");
-    console.log("  Or: bun --cpu-prof --cpu-prof-interval 250 cpu-profile-demo.ts");
-    console.log("");
+    console.info("ℹ CPU profiling not active");
+    console.info("  Run with: bun --cpu-prof cpu-profile-demo.ts");
+    console.info("  Or: bun --cpu-prof --cpu-prof-interval 250 cpu-profile-demo.ts");
+    console.info("");
   }
   
   // Run various workloads to generate profiling data
-  console.log("Running workloads for profiling...");
-  console.log("-".repeat(60));
+  console.info("Running workloads for profiling...");
+  console.info("-".repeat(60));
   
   const start = performance.now();
   
   // 1. CPU intensive
-  console.log("1. CPU intensive task...");
+  console.info("1. CPU intensive task...");
   const cpuStart = performance.now();
   const cpuResult = cpuIntensiveTask(10_000_000);
-  console.log(`   Result: ${cpuResult.toFixed(2)}, Time: ${(performance.now() - cpuStart).toFixed(2)}ms`);
+  console.info(`   Result: ${cpuResult.toFixed(2)}, Time: ${(performance.now() - cpuStart).toFixed(2)}ms`);
   
   // 2. Regex patterns (JIT-optimized vs interpreter)
-  console.log("2. Regex workload...");
+  console.info("2. Regex workload...");
   const regexStart = performance.now();
   const patterns = [
     /(?:abc){3}/,        // JIT-optimized (fixed-count)
@@ -95,16 +95,16 @@ async function main() {
   for (let i = 0; i < 100_000; i++) {
     regexMatches += regexWorkload(patterns, testStrings[i % testStrings.length]);
   }
-  console.log(`   Matches: ${regexMatches}, Time: ${(performance.now() - regexStart).toFixed(2)}ms`);
+  console.info(`   Matches: ${regexMatches}, Time: ${(performance.now() - regexStart).toFixed(2)}ms`);
   
   // 3. String manipulation
-  console.log("3. String manipulation...");
+  console.info("3. String manipulation...");
   const strStart = performance.now();
   const strResult = stringManipulation(50_000);
-  console.log(`   Length: ${strResult.length}, Time: ${(performance.now() - strStart).toFixed(2)}ms`);
+  console.info(`   Length: ${strResult.length}, Time: ${(performance.now() - strStart).toFixed(2)}ms`);
   
   // 4. Mixed async/sync workload
-  console.log("4. Mixed async workload...");
+  console.info("4. Mixed async workload...");
   const asyncStart = performance.now();
   await Promise.all([
     asyncWorkload(50),
@@ -112,10 +112,10 @@ async function main() {
     asyncWorkload(30),
     cpuIntensiveTask(500_000),
   ]);
-  console.log(`   Time: ${(performance.now() - asyncStart).toFixed(2)}ms`);
+  console.info(`   Time: ${(performance.now() - asyncStart).toFixed(2)}ms`);
   
   // 5. Memory allocation stress
-  console.log("5. Memory allocation...");
+  console.info("5. Memory allocation...");
   const memStart = performance.now();
   const arrays: number[][] = [];
   for (let i = 0; i < 1000; i++) {
@@ -123,21 +123,21 @@ async function main() {
   }
   // Force some GC pressure
   arrays.length = 0;
-  console.log(`   Time: ${(performance.now() - memStart).toFixed(2)}ms`);
+  console.info(`   Time: ${(performance.now() - memStart).toFixed(2)}ms`);
   
   const totalTime = performance.now() - start;
-  console.log("-".repeat(60));
-  console.log(`Total time: ${totalTime.toFixed(2)}ms`);
-  console.log("");
+  console.info("-".repeat(60));
+  console.info(`Total time: ${totalTime.toFixed(2)}ms`);
+  console.info("");
   
   if (isProfiling) {
-    console.log("Profiling complete! Check current directory for:");
-    console.log("  - CPU.*.cpuprofile");
-    console.log("");
-    console.log("To analyze:");
-    console.log("  1. Open Chrome DevTools");
-    console.log("  2. Performance tab → Load Profile");
-    console.log("  3. Or use: bun x speedscope CPU.*.cpuprofile");
+    console.info("Profiling complete! Check current directory for:");
+    console.info("  - CPU.*.cpuprofile");
+    console.info("");
+    console.info("To analyze:");
+    console.info("  1. Open Chrome DevTools");
+    console.info("  2. Performance tab → Load Profile");
+    console.info("  3. Or use: bun x speedscope CPU.*.cpuprofile");
   }
 }
 

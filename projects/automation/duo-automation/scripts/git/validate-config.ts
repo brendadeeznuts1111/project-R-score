@@ -120,7 +120,7 @@ async function fixConfigIssues(issues: string[]): Promise<void> {
   for (const issue of issues) {
     const rule = CONFIG_RULES.find(r => issue.includes(r.key));
     if (rule?.fix) {
-      console.log(`Fixing: ${rule.key}`);
+      console.info(`Fixing: ${rule.key}`);
       await $`git config ${rule.key} ${rule.expected}`.quiet();
     }
   }
@@ -128,7 +128,7 @@ async function fixConfigIssues(issues: string[]): Promise<void> {
 
 async function main() {
   try {
-    console.log('🔧 Validating git configuration...');
+    console.info('🔧 Validating git configuration...');
     
     const config = await getGitConfig();
     const issues = validateConfig(config);
@@ -138,14 +138,14 @@ async function main() {
       issues.forEach(issue => console.error(`  ${issue}`));
       
       if (process.argv.includes('--fix')) {
-        console.log('\n🛠️  Attempting to fix issues...');
+        console.info('\n🛠️  Attempting to fix issues...');
         await fixConfigIssues(issues);
       } else {
-        console.log('\n💡 Run with --fix to auto-correct issues');
+        console.info('\n💡 Run with --fix to auto-correct issues');
         process.exit(1);
       }
     } else {
-      console.log('✅ Git configuration is valid');
+      console.info('✅ Git configuration is valid');
     }
     
   } catch (error) {

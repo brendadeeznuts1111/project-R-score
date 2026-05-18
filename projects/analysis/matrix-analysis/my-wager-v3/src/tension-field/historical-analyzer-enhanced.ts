@@ -375,7 +375,7 @@ class EnhancedHistoricalAnalyzer {
     }
 
     await write(filename, JSON.stringify(report, null, 2));
-    console.log(`📊 Enhanced report exported to ${filename}`);
+    console.info(`📊 Enhanced report exported to ${filename}`);
   }
 }
 
@@ -388,19 +388,19 @@ if (import.meta.main) {
     case 'predict':
       const nodeId = process.argv[3] || 'node-0';
       const prediction = await analyzer.predictNextTension(nodeId);
-      console.log(`🔮 Prediction for ${nodeId}:`);
-      console.log(`  Next value: ${prediction.nextPrediction.toFixed(4)}`);
-      console.log(`  Confidence: ${(prediction.accuracy * 100).toFixed(1)}%`);
-      console.log(`  Uncertainty: ${prediction.uncertainty.toFixed(4)}`);
+      console.info(`🔮 Prediction for ${nodeId}:`);
+      console.info(`  Next value: ${prediction.nextPrediction.toFixed(4)}`);
+      console.info(`  Confidence: ${(prediction.accuracy * 100).toFixed(1)}%`);
+      console.info(`  Uncertainty: ${prediction.uncertainty.toFixed(4)}`);
       break;
 
     case 'risk':
       const riskNode = process.argv[3] || 'node-0';
       const risk = await analyzer.assessRisk(riskNode);
-      console.log(`⚠️ Risk assessment for ${riskNode}:`);
-      console.log(`  Risk score: ${(risk.currentRisk * 100).toFixed(1)}%`);
-      console.log(`  Factors: ${risk.riskFactors.join(', ')}`);
-      console.log(`  Mitigation: ${risk.mitigation.join(', ')}`);
+      console.info(`⚠️ Risk assessment for ${riskNode}:`);
+      console.info(`  Risk score: ${(risk.currentRisk * 100).toFixed(1)}%`);
+      console.info(`  Factors: ${risk.riskFactors.join(', ')}`);
+      console.info(`  Mitigation: ${risk.mitigation.join(', ')}`);
       break;
 
     case 'export':
@@ -409,7 +409,7 @@ if (import.meta.main) {
       break;
 
     default:
-      console.log(`
+      console.info(`
 Enhanced Historical Analyzer Commands:
   predict <node>    - Predict next tension value
   risk <node>       - Assess risk for node

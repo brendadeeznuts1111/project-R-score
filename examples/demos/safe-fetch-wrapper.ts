@@ -53,7 +53,7 @@ export async function safeFetch(url: string, options: SafeFetchOptions = {}): Pr
       const error = new Error(`Header validation failed:\n${validation.errors.join('\n')}`);
       if (logWarnings) {
         console.error('🚨 SafeFetch Error:', error.message);
-        console.log('💡 Correct headers:', validation.correctedHeaders);
+        console.info('💡 Correct headers:', validation.correctedHeaders);
       }
       throw error;
     }
@@ -339,32 +339,32 @@ export const safeFetchAPI = {
 
 // Demo usage
 if (import.meta.main) {
-  console.log('🛡️ Safe Fetch Wrapper Demo\n');
+  console.info('🛡️ Safe Fetch Wrapper Demo\n');
   
   // Test the convenience methods
   async function demo() {
     try {
-      console.log('1. Testing GET JSON...');
+      console.info('1. Testing GET JSON...');
       const githubData = await safeFetchAPI.getJSON('https://api.github.com/repos/oven-sh/bun/releases/latest');
-      console.log(`   ✅ GitHub API: ${githubData.name} (${githubData.tag_name})`);
+      console.info(`   ✅ GitHub API: ${githubData.name} (${githubData.tag_name})`);
       
-      console.log('\n2. Testing GET RSS...');
+      console.info('\n2. Testing GET RSS...');
       const rssData = await safeFetchAPI.getRSS('https://bun.com/rss.xml');
-      console.log(`   ✅ RSS Feed: ${rssData.length} characters`);
+      console.info(`   ✅ RSS Feed: ${rssData.length} characters`);
       
-      console.log('\n3. Testing POST JSON...');
+      console.info('\n3. Testing POST JSON...');
       const postData = await safeFetchAPI.postJSON('https://httpbin.org/post', { 
         message: 'Hello from SafeFetch!',
         timestamp: new Date().toISOString()
       });
-      console.log(`   ✅ POST Success: ${postData.json.message}`);
+      console.info(`   ✅ POST Success: ${postData.json.message}`);
       
-      console.log('\n4. Testing POST Form...');
+      console.info('\n4. Testing POST Form...');
       const formData = await safeFetchAPI.postForm('https://httpbin.org/post', {
         name: 'SafeFetch Demo',
         message: 'Testing form data'
       });
-      console.log(`   ✅ Form Success: ${formData.form.name}`);
+      console.info(`   ✅ Form Success: ${formData.form.name}`);
       
     } catch (error) {
       console.error('❌ Demo failed:', error.message);

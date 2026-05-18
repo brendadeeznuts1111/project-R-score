@@ -12,7 +12,7 @@ import type { OddsTick, ArbitrageOpportunity } from "odds-core";
 
 // Example usage of the optimized WebSocket server
 async function runWebSocketExample() {
-    console.log("🚀 Starting Bun WebSocket Example for Sports Betting Protocol");
+    console.info("🚀 Starting Bun WebSocket Example for Sports Betting Protocol");
 
     // Initialize the optimized server
     const wsServer = new BunWebSocketOptimized({
@@ -78,7 +78,7 @@ async function runWebSocketExample() {
     }
 
     // Start broadcasting odds data
-    console.log("📡 Starting real-time odds broadcast...");
+    console.info("📡 Starting real-time odds broadcast...");
 
     const oddsInterval = setInterval(() => {
         const odds = generateMockOdds();
@@ -86,7 +86,7 @@ async function runWebSocketExample() {
     }, 50); // New odds every 50ms (20 per second)
 
     // Start broadcasting arbitrage opportunities
-    console.log("💰 Starting arbitrage opportunity broadcast...");
+    console.info("💰 Starting arbitrage opportunity broadcast...");
 
     const arbitrageInterval = setInterval(() => {
         const arbitrage = generateMockArbitrage();
@@ -101,7 +101,7 @@ async function runWebSocketExample() {
     // Performance monitoring
     const monitoringInterval = setInterval(() => {
         const metrics = wsServer.getPerformanceMetrics();
-        console.log(`📊 Performance Metrics:`, {
+        console.info(`📊 Performance Metrics:`, {
             clients: metrics.clients,
             messagesPerSecond: metrics.messagesPerSecond,
             totalMessages: metrics.messageCount,
@@ -112,7 +112,7 @@ async function runWebSocketExample() {
 
     // Graceful shutdown
     process.on("SIGINT", () => {
-        console.log("\n🛑 Shutting down WebSocket server...");
+        console.info("\n🛑 Shutting down WebSocket server...");
 
         clearInterval(oddsInterval);
         clearInterval(arbitrageInterval);
@@ -123,11 +123,11 @@ async function runWebSocketExample() {
         process.exit(0);
     });
 
-    console.log("✅ WebSocket server is running!");
-    console.log("🔗 Connect to: ws://localhost:3001/ws");
-    console.log("📊 Health check: http://localhost:3001/health");
-    console.log("\n📝 Client Usage Example:");
-    console.log(`
+    console.info("✅ WebSocket server is running!");
+    console.info("🔗 Connect to: ws://localhost:3001/ws");
+    console.info("📊 Health check: http://localhost:3001/health");
+    console.info("\n📝 Client Usage Example:");
+    console.info(`
 // JavaScript/TypeScript Client
 const ws = new WebSocket('ws://localhost:3001/ws');
 
@@ -145,7 +145,7 @@ ws.onopen = () => {
 
 ws.onmessage = (event) => {
   const message = JSON.parse(event.data);
-  console.log('Received:', message.type, message.data);
+  console.info('Received:', message.type, message.data);
 };
 
 // Python Client Example
@@ -191,7 +191,7 @@ class WebSocketCLI {
         if (!this.ws) return;
 
         this.ws.onopen = () => {
-            console.log("🔗 Connected to WebSocket server");
+            console.info("🔗 Connected to WebSocket server");
             this.reconnectAttempts = 0;
 
             // Subscribe to all markets
@@ -211,7 +211,7 @@ class WebSocketCLI {
         };
 
         this.ws.onclose = () => {
-            console.log("🔌 Disconnected from WebSocket server");
+            console.info("🔌 Disconnected from WebSocket server");
             this.handleReconnect();
         };
 
@@ -223,7 +223,7 @@ class WebSocketCLI {
     private handleMessage(message: any) {
         switch (message.type) {
             case "odds":
-                console.log(`📈 [${message.data.market}] ${message.data.exchange}:`, {
+                console.info(`📈 [${message.data.market}] ${message.data.exchange}:`, {
                     home: message.data.odds.home,
                     away: message.data.odds.away,
                     draw: message.data.odds.draw || "N/A"
@@ -231,7 +231,7 @@ class WebSocketCLI {
                 break;
 
             case "arbitrage":
-                console.log(`💰 Arbitrage Opportunity:`, {
+                console.info(`💰 Arbitrage Opportunity:`, {
                     profit: `${message.data.profit}%`,
                     confidence: `${message.data.confidence}%`,
                     markets: message.data.markets.join(", ")
@@ -239,7 +239,7 @@ class WebSocketCLI {
                 break;
 
             case "heartbeat":
-                console.log(`💓 Heartbeat:`, {
+                console.info(`💓 Heartbeat:`, {
                     clients: message.data.clientCount,
                     messages: message.data.messageCount,
                     uptime: `${Math.floor(message.data.uptime / 1000)}s`
@@ -247,14 +247,14 @@ class WebSocketCLI {
                 break;
 
             default:
-                console.log(`📨 Unknown message type: ${message.type}`);
+                console.info(`📨 Unknown message type: ${message.type}`);
         }
     }
 
     private handleReconnect() {
         if (this.reconnectAttempts < this.maxReconnects) {
             this.reconnectAttempts++;
-            console.log(`🔄 Reconnecting... (${this.reconnectAttempts}/${this.maxReconnects})`);
+            console.info(`🔄 Reconnecting... (${this.reconnectAttempts}/${this.maxReconnects})`);
 
             setTimeout(() => {
                 this.connect();

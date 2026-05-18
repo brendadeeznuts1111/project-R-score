@@ -447,9 +447,9 @@ async function main() {
 
   // Check for API token
   if (!process.env.CF_API_TOKEN && command !== '--help') {
-    console.log('⚠️  CF_API_TOKEN environment variable is required');
-    console.log(`   Get your token: ${urlLink('https://dash.cloudflare.com/profile/api-tokens', 'Cloudflare API Tokens')}`);
-    console.log('\n   Example: CF_API_TOKEN=your_token bun run cf:zones');
+    console.info('⚠️  CF_API_TOKEN environment variable is required');
+    console.info(`   Get your token: ${urlLink('https://dash.cloudflare.com/profile/api-tokens', 'Cloudflare API Tokens')}`);
+    console.info('\n   Example: CF_API_TOKEN=your_token bun run cf:zones');
     process.exit(1);
   }
 
@@ -459,24 +459,24 @@ async function main() {
     switch (command) {
       case '--zones':
       case 'zones':
-        console.log('☁️  Cloudflare Zones');
-        console.log('═'.repeat(60));
+        console.info('☁️  Cloudflare Zones');
+        console.info('═'.repeat(60));
         const zones = await client!.listZones();
         for (const zone of zones) {
           const status = zone.status === 'active' ? '🟢' : '🟡';
-          console.log(`${status} ${zone.name} (${zone.id.slice(0, 8)}...)`);
-          console.log(`   Status: ${zone.status} | Type: ${zone.type}`);
-          console.log(`   Nameservers: ${zone.name_servers.join(', ')}`);
+          console.info(`${status} ${zone.name} (${zone.id.slice(0, 8)}...)`);
+          console.info(`   Status: ${zone.status} | Type: ${zone.type}`);
+          console.info(`   Nameservers: ${zone.name_servers.join(', ')}`);
         }
         break;
 
       case '--dns':
       case 'dns':
-        console.log('🌐 DNS Records');
-        console.log('═'.repeat(70));
+        console.info('🌐 DNS Records');
+        console.info('═'.repeat(70));
         const records = await client!.listDNSRecords();
-        console.log(`| ${'Type'.padEnd(6)} | ${'Name'.padEnd(30)} | ${'Content'.padEnd(25)} |`);
-        console.log(`|${'-'.repeat(8)}|${'-'.repeat(32)}|${'-'.repeat(27)}|`);
+        console.info(`| ${'Type'.padEnd(6)} | ${'Name'.padEnd(30)} | ${'Content'.padEnd(25)} |`);
+        console.info(`|${'-'.repeat(8)}|${'-'.repeat(32)}|${'-'.repeat(27)}|`);
         for (const record of records) {
           const name = record.name.length > 30
             ? record.name.slice(0, 27) + '...'
@@ -485,50 +485,50 @@ async function main() {
             ? record.content.slice(0, 22) + '...'
             : record.content;
           const proxied = record.proxied ? '🟠' : '⚪';
-          console.log(`| ${proxied} ${record.type.padEnd(4)} | ${name.padEnd(30)} | ${content.padEnd(25)} |`);
+          console.info(`| ${proxied} ${record.type.padEnd(4)} | ${name.padEnd(30)} | ${content.padEnd(25)} |`);
         }
-        console.log('═'.repeat(70));
-        console.log(`Total: ${records.length} records | 🟠 = Proxied | ⚪ = DNS Only`);
+        console.info('═'.repeat(70));
+        console.info(`Total: ${records.length} records | 🟠 = Proxied | ⚪ = DNS Only`);
         break;
 
       case '--ssl':
       case 'ssl':
-        console.log('🔐 SSL/TLS Status');
-        console.log('═'.repeat(50));
+        console.info('🔐 SSL/TLS Status');
+        console.info('═'.repeat(50));
         // Use SSL-specific token if available
         const sslToken = process.env.CF_SSL_TOKEN;
         const sslClient = sslToken ? new CloudflareClient({ apiToken: sslToken }) : client!;
         try {
           // Try certificate_packs first (SSL:Edit permission)
           const certPacks = await sslClient.getSSLCertificatePacks();
-          console.log(`Certificate Packs: ${certPacks.length}`);
+          console.info(`Certificate Packs: ${certPacks.length}`);
           for (const pack of certPacks) {
-            console.log(`\n  ${pack.status === 'active' ? '✅' : '⏳'} ${pack.type.toUpperCase()}`);
-            console.log(`     Hosts: ${pack.hosts?.join(', ') || 'N/A'}`);
+            console.info(`\n  ${pack.status === 'active' ? '✅' : '⏳'} ${pack.type.toUpperCase()}`);
+            console.info(`     Hosts: ${pack.hosts?.join(', ') || 'N/A'}`);
             if (pack.certificates) {
               for (const c of pack.certificates) {
-                console.log(`     Issuer: ${c.issuer} | Expires: ${c.expires_on?.slice(0, 10)}`);
-                console.log(`     Status: ${c.status} | Signature: ${c.signature}`);
+                console.info(`     Issuer: ${c.issuer} | Expires: ${c.expires_on?.slice(0, 10)}`);
+                console.info(`     Status: ${c.status} | Signature: ${c.signature}`);
               }
             }
           }
           // Also try SSL settings (may fail without Zone Settings:Read)
           try {
             const sslSettings = await sslClient.getSSLSettings();
-            console.log(`\nSSL Mode: ${sslSettings.value.toUpperCase()}`);
+            console.info(`\nSSL Mode: ${sslSettings.value.toUpperCase()}`);
           } catch {
             // Settings require Zone Settings permission
           }
         } catch (err) {
-          console.log(`❌ SSL Error: ${(err as Error).message}`);
-          console.log(`   Hint: Set CF_SSL_TOKEN with SSL:Edit permission`);
+          console.info(`❌ SSL Error: ${(err as Error).message}`);
+          console.info(`   Hint: Set CF_SSL_TOKEN with SSL:Edit permission`);
         }
         break;
 
       case '--r2':
       case 'r2':
-        console.log('📦 R2 Storage Status');
-        console.log('═'.repeat(50));
+        console.info('📦 R2 Storage Status');
+        console.info('═'.repeat(50));
         // Test R2 via S3-compatible API (Bun.s3)
         const s3 = Bun.s3;
         const bucket = process.env.R2_BUCKET || process.env.S3_BUCKET || 'factory-wager-packages';
@@ -537,21 +537,21 @@ async function main() {
           const file = s3.file(testKey);
           await file.write('R2 connection test');
           await file.delete();
-          console.log(`✅ R2 S3-Compatible API: Connected`);
-          console.log(`   Bucket: ${bucket}`);
-          console.log(`   Endpoint: ${process.env.R2_ENDPOINT || process.env.S3_ENDPOINT}`);
-          console.log(`   Status: Healthy`);
+          console.info(`✅ R2 S3-Compatible API: Connected`);
+          console.info(`   Bucket: ${bucket}`);
+          console.info(`   Endpoint: ${process.env.R2_ENDPOINT || process.env.S3_ENDPOINT}`);
+          console.info(`   Status: Healthy`);
         } catch (err) {
-          console.log(`❌ R2 Error: ${(err as Error).message}`);
+          console.info(`❌ R2 Error: ${(err as Error).message}`);
         }
         // Also try Cloudflare R2 API if token available
         try {
           const buckets = await client!.listR2Buckets();
           const bucketList = Array.isArray(buckets) ? buckets : (buckets as any)?.buckets || [];
           if (bucketList.length > 0) {
-            console.log(`\n📦 Cloudflare R2 API Buckets:`);
+            console.info(`\n📦 Cloudflare R2 API Buckets:`);
             for (const b of bucketList) {
-              console.log(`   📦 ${b.name}`);
+              console.info(`   📦 ${b.name}`);
             }
           }
         } catch {
@@ -563,22 +563,22 @@ async function main() {
       case 'validate':
         const subdomain = process.argv[3];
         if (!subdomain) {
-          console.log('Usage: bun run cf:dns:validate <subdomain>');
+          console.info('Usage: bun run cf:dns:validate <subdomain>');
           process.exit(1);
         }
-        console.log(`🔍 Validating DNS for: ${subdomain}`);
+        console.info(`🔍 Validating DNS for: ${subdomain}`);
         const validation = await client!.validateDNS(subdomain);
-        console.log(validation.valid ? '✅' : '❌', validation.message);
+        console.info(validation.valid ? '✅' : '❌', validation.message);
         if (validation.record) {
-          console.log(`   Type: ${validation.record.type}`);
-          console.log(`   Content: ${validation.record.content}`);
-          console.log(`   Proxied: ${validation.record.proxied}`);
+          console.info(`   Type: ${validation.record.type}`);
+          console.info(`   Content: ${validation.record.content}`);
+          console.info(`   Proxied: ${validation.record.proxied}`);
         }
         break;
 
       case '--help':
       default:
-        console.log(`
+        console.info(`
 ☁️  Cloudflare API Client v4.6
 
 Bun-native client for Cloudflare DNS, R2, and CDN management.

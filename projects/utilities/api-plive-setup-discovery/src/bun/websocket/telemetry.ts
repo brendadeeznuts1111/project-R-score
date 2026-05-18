@@ -84,13 +84,13 @@ async function handleTelemetryMessage(ws: WebSocket, message: any) {
           timestamp: new Date().toISOString()
         }));
 
-        console.log(`📡 Client ${client.userId} subscribed to: ${client.subscribedTopics.join(', ')}`);
+        console.info(`📡 Client ${client.userId} subscribed to: ${client.subscribedTopics.join(', ')}`);
         break;
 
       case 'TELEMETRY':
         // Process telemetry data through ETL pipeline
         if (client.subscribedTopics.includes('telemetry.live')) {
-          console.log(`📊 Processing telemetry from ${client.userId}`);
+          console.info(`📊 Processing telemetry from ${client.userId}`);
 
           const etlStream = await startETL(message.payload, message.dataType || 'TELEMETRY');
 
@@ -178,7 +178,7 @@ async function authenticateConnection(ws: WebSocket, cookies: string, csrfToken?
  */
 export const telemetryWebSocket: WebSocketHandler = {
   async open(ws) {
-    console.log('📡 New WebSocket connection established');
+    console.info('📡 New WebSocket connection established');
 
     // Extract cookies and CSRF from headers/query params
     const cookies = ws.data?.cookies || '';
@@ -188,7 +188,7 @@ export const telemetryWebSocket: WebSocketHandler = {
 
     if (authenticated) {
       const client = clients.get(ws)!;
-      console.log(`✅ WebSocket authenticated for user: ${client.userId}`);
+      console.info(`✅ WebSocket authenticated for user: ${client.userId}`);
 
       // Send welcome message
       ws.send(YAML.stringify({
@@ -203,13 +203,13 @@ export const telemetryWebSocket: WebSocketHandler = {
       client.heartbeatInterval = setInterval(() => {
         const now = Date.now();
         if (now - client.lastPing > connectivity.ws.heartbeat.interval * 2) {
-          console.log(`💔 Client ${client.userId} heartbeat timeout, disconnecting`);
+          console.info(`💔 Client ${client.userId} heartbeat timeout, disconnecting`);
           ws.close(1008, 'Heartbeat timeout');
         }
       }, connectivity.ws.heartbeat.interval);
 
     } else {
-      console.log('❌ WebSocket authentication failed');
+      console.info('❌ WebSocket authentication failed');
       ws.send(YAML.stringify({
         type: 'ERROR',
         error: 'Authentication failed',
@@ -239,7 +239,7 @@ export const telemetryWebSocket: WebSocketHandler = {
   async close(ws, code, reason) {
     const client = clients.get(ws);
     if (client) {
-      console.log(`📡 WebSocket disconnected for user: ${client.userId} (code: ${code})`);
+      console.info(`📡 WebSocket disconnected for user: ${client.userId} (code: ${code})`);
 
       // Clear heartbeat interval
       if (client.heartbeatInterval) {
@@ -256,11 +256,11 @@ export const telemetryWebSocket: WebSocketHandler = {
 
 // For direct testing
 if (import.meta.main) {
-  console.log('📡 Testing WebSocket telemetry handler...');
+  console.info('📡 Testing WebSocket telemetry handler...');
 
   // Mock WebSocket for testing
-  console.log('WebSocket handler configured for:');
-  console.log(`   Topics: ${connectivity.ws.topics.join(', ')}`);
-  console.log(`   Heartbeat: ${connectivity.ws.heartbeat.interval}ms`);
-  console.log(`   Compression: perMessageDeflate enabled`);
+  console.info('WebSocket handler configured for:');
+  console.info(`   Topics: ${connectivity.ws.topics.join(', ')}`);
+  console.info(`   Heartbeat: ${connectivity.ws.heartbeat.interval}ms`);
+  console.info(`   Compression: perMessageDeflate enabled`);
 }

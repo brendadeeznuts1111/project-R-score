@@ -41,10 +41,10 @@ class BettingPlatformSQLServer {
     // Initialize metrics collector (temporary synchronous approach)
     this.metricsCollector = {
       recordWorkflowRequest: (method: string, path: string, status: number, duration: number) => {
-        console.log(`📊 Request: ${method} ${path} -> ${status} (${duration.toFixed(2)}ms)`);
+        console.info(`📊 Request: ${method} ${path} -> ${status} (${duration.toFixed(2)}ms)`);
       },
       recordError: (type: string, message: string) => {
-        console.log(`❌ Error: ${type} - ${message}`);
+        console.info(`❌ Error: ${type} - ${message}`);
       }
     };
     this.wsServer = new EnhancedWebSocketServer();
@@ -62,17 +62,17 @@ class BettingPlatformSQLServer {
   private setupConfigWatcher(): void {
     // Watch for server configuration changes
     this.config.watch('server', (newConfig) => {
-      console.log('🔄 Server configuration updated:', newConfig);
+      console.info('🔄 Server configuration updated:', newConfig);
     });
 
     // Watch for security configuration changes
     this.config.watch('security', (newConfig) => {
-      console.log('🔒 Security configuration updated');
+      console.info('🔒 Security configuration updated');
     });
 
     // Watch for websocket configuration changes
     this.config.watch('websocket', (newConfig) => {
-      console.log('🔌 WebSocket configuration updated');
+      console.info('🔌 WebSocket configuration updated');
       // Restart WebSocket server with new config if needed
     });
   }
@@ -80,7 +80,7 @@ class BettingPlatformSQLServer {
   private setupMiddleware(): void {
     // Enhanced logging with Bun 1.3
     this.app.use("*", honoLogger((str, ...rest) => {
-      console.log(`[${new Date().toISOString()}] ${str}`, ...rest);
+      console.info(`[${new Date().toISOString()}] ${str}`, ...rest);
     }));
 
     // CORS with dynamic configuration
@@ -127,7 +127,7 @@ class BettingPlatformSQLServer {
     const rateLimitConfig = this.config.get('bettingPlatform.rate_limit', {});
     if (rateLimitConfig.requests_per_minute) {
       // In production, use a proper rate limiter like Redis
-      console.log(`📊 Rate limiting enabled: ${rateLimitConfig.requests_per_minute} req/min`);
+      console.info(`📊 Rate limiting enabled: ${rateLimitConfig.requests_per_minute} req/min`);
     }
   }
 
@@ -549,7 +549,7 @@ class BettingPlatformSQLServer {
   }
 
   private setupPreconnects(): void {
-    console.log("🔗 Setting up preconnections to external services...");
+    console.info("🔗 Setting up preconnections to external services...");
 
     try {
       // Preconnect to betting platform for faster API calls
@@ -558,9 +558,9 @@ class BettingPlatformSQLServer {
       const bunFetch = fetch as any; // Cast to any to access Bun-specific methods
       if (typeof fetch !== 'undefined' && bunFetch.preconnect) {
         bunFetch.preconnect(bettingApiUrl);
-        console.log(`✅ Preconnected to betting platform: ${bettingApiUrl}`);
+        console.info(`✅ Preconnected to betting platform: ${bettingApiUrl}`);
       } else {
-        console.log(`ℹ️ fetch.preconnect not available, betting platform will connect on first request`);
+        console.info(`ℹ️ fetch.preconnect not available, betting platform will connect on first request`);
       }
 
       // Preconnect to other HTTP-based external services if configured
@@ -573,21 +573,21 @@ class BettingPlatformSQLServer {
         try {
           if (typeof fetch !== 'undefined' && bunFetch.preconnect) {
             bunFetch.preconnect(serviceUrl);
-            console.log(`✅ Preconnected to external service: ${serviceUrl}`);
+            console.info(`✅ Preconnected to external service: ${serviceUrl}`);
           }
         } catch (error) {
           // Ignore preconnect failures - they don't break functionality
-          console.log(`ℹ️ Could not preconnect to ${serviceUrl} (continuing normally):`, error instanceof Error ? error.message : String(error));
+          console.info(`ℹ️ Could not preconnect to ${serviceUrl} (continuing normally):`, error instanceof Error ? error.message : String(error));
         }
       }
 
       // Note: Database connections (PostgreSQL, Redis) cannot be preconected with fetch.preconnect
       // They use their own connection pooling mechanisms
-      console.log("📝 Note: Database preconnections handled by connection pools");
+      console.info("📝 Note: Database preconnections handled by connection pools");
 
     } catch (error) {
-      console.log("ℹ️ Preconnection setup skipped (continuing normally):", error instanceof Error ? error.message : String(error));
-      console.log("ℹ️ API calls will work normally with standard connection pooling");
+      console.info("ℹ️ Preconnection setup skipped (continuing normally):", error instanceof Error ? error.message : String(error));
+      console.info("ℹ️ API calls will work normally with standard connection pooling");
     }
   }
 
@@ -625,26 +625,26 @@ class BettingPlatformSQLServer {
       }
     });
 
-    console.log(`🚀 Betting Platform SQL Server running on ${server.hostname}:${server.port}`);
-    console.log(`📊 Environment: ${serverConfig.environment}`);
-    console.log(`🔧 Version: ${serverConfig.version}`);
-    console.log(`💾 Database: ${this.config.get('database.primary.type')}`);
-    console.log(`📈 Metrics: http://localhost:${server.port}/metrics`);
-    console.log(`❤️ Health: http://localhost:${server.port}/health`);
-    console.log(`🔌 WebSocket: ws://localhost:${wsConfig.port || 8080}`);
-    console.log(`📊 Dashboard: http://localhost:${server.port}/dashboard`);
-    console.log(`🎨 Dashboard Config: http://localhost:${server.port}/dashboard/config`);
-    console.log(`⚡ Real-time Data: http://localhost:${server.port}/dashboard/data/overview?realtime=true`);
+    console.info(`🚀 Betting Platform SQL Server running on ${server.hostname}:${server.port}`);
+    console.info(`📊 Environment: ${serverConfig.environment}`);
+    console.info(`🔧 Version: ${serverConfig.version}`);
+    console.info(`💾 Database: ${this.config.get('database.primary.type')}`);
+    console.info(`📈 Metrics: http://localhost:${server.port}/metrics`);
+    console.info(`❤️ Health: http://localhost:${server.port}/health`);
+    console.info(`🔌 WebSocket: ws://localhost:${wsConfig.port || 8080}`);
+    console.info(`📊 Dashboard: http://localhost:${server.port}/dashboard`);
+    console.info(`🎨 Dashboard Config: http://localhost:${server.port}/dashboard/config`);
+    console.info(`⚡ Real-time Data: http://localhost:${server.port}/dashboard/data/overview?realtime=true`);
 
     // Start WebSocket server if enabled
     if (wsConfig.enabled) {
       this.wsServer.createServer(wsConfig);
-      console.log(`🔌 WebSocket server running on port ${wsConfig.port || 8080}`);
+      console.info(`🔌 WebSocket server running on port ${wsConfig.port || 8080}`);
     }
 
     // Graceful shutdown
     process.on('SIGTERM', async () => {
-      console.log('🛑 Received SIGTERM, shutting down gracefully...');
+      console.info('🛑 Received SIGTERM, shutting down gracefully...');
       await this.database.close();
       this.config.destroy();
       server.stop();
@@ -652,7 +652,7 @@ class BettingPlatformSQLServer {
     });
 
     process.on('SIGINT', async () => {
-      console.log('🛑 Received SIGINT, shutting down gracefully...');
+      console.info('🛑 Received SIGINT, shutting down gracefully...');
       await this.database.close();
       this.config.destroy();
       server.stop();

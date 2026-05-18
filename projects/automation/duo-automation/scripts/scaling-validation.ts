@@ -10,7 +10,7 @@ const TARGET_AGENTS = 10000;
 const BATCH_SIZE = 500;
 
 export async function validateScaling() {
-  console.log(`🚀 Starting Scale Validation: ${TARGET_AGENTS} Agents`);
+  console.info(`🚀 Starting Scale Validation: ${TARGET_AGENTS} Agents`);
   
   // Start the Prometheus bridge for metrics tracking during the test
   BunNativePrometheusBridge.start();
@@ -21,7 +21,7 @@ export async function validateScaling() {
 
   for (let i = 0; i < TARGET_AGENTS; i += BATCH_SIZE) {
     const batch = Math.min(BATCH_SIZE, TARGET_AGENTS - i);
-    console.log(`📦 Provisioning batch: ${i} to ${i + batch}...`);
+    console.info(`📦 Provisioning batch: ${i} to ${i + batch}...`);
     
     const promises = [];
     for (let j = 0; j < batch; j++) {
@@ -33,23 +33,23 @@ export async function validateScaling() {
     created += batch;
 
     const mem = process.memoryUsage().rss / 1024 / 1024;
-    console.log(`📉 Batch complete. Memory RSS: ${mem.toFixed(2)} MB`);
+    console.info(`📉 Batch complete. Memory RSS: ${mem.toFixed(2)} MB`);
   }
 
   const end = performance.now();
   const duration = (end - start) / 1000;
   const throughput = created / duration;
 
-  console.log("\n--- Scaling Results ---");
-  console.log(`✅ Provisioned: ${created} agent sandboxes`);
-  console.log(`⏱️ Total Duration: ${duration.toFixed(2)}s`);
-  console.log(`⚡ Throughput: ${throughput.toFixed(2)} agents/s`);
-  console.log(`💎 Resource Efficiency: ${(process.memoryUsage().rss / created / 1024).toFixed(2)} KB per agent`);
+  console.info("\n--- Scaling Results ---");
+  console.info(`✅ Provisioned: ${created} agent sandboxes`);
+  console.info(`⏱️ Total Duration: ${duration.toFixed(2)}s`);
+  console.info(`⚡ Throughput: ${throughput.toFixed(2)} agents/s`);
+  console.info(`💎 Resource Efficiency: ${(process.memoryUsage().rss / created / 1024).toFixed(2)} KB per agent`);
   
   // Cleanup
-  console.log("🧹 Critical Purge: Zero-latency session wiping...");
+  console.info("🧹 Critical Purge: Zero-latency session wiping...");
   await BunNamespaceIsolator.purgeAll();
-  console.log("✅ Cleanup complete.");
+  console.info("✅ Cleanup complete.");
 }
 
 if (import.meta.main) {

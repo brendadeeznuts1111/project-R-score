@@ -183,38 +183,38 @@ class ItemCollection {
 }
 
 // Run examples
-console.log('=== Example 1: Basic Custom Inspect ===');
+console.info('=== Example 1: Basic Custom Inspect ===');
 const basic = new BasicCustom('test', 42);
-console.log(basic);
-console.log(inspect(basic));
+console.info(basic);
+console.info(inspect(basic));
 
-console.log('\n=== Example 2: Colored Custom Inspect ===');
+console.info('\n=== Example 2: Colored Custom Inspect ===');
 const colored1 = new ColoredCustom('active', 10);
 const colored2 = new ColoredCustom('inactive', 5);
 const colored3 = new ColoredCustom('pending', 3);
-console.log(colored1);
-console.log(colored2);
-console.log(colored3);
+console.info(colored1);
+console.info(colored2);
+console.info(colored3);
 
-console.log('\n=== Example 3: Codebase Insights ===');
+console.info('\n=== Example 3: Codebase Insights ===');
 const insights = new CodebaseInsights(293, 157748, 70);
-console.log(insights);
+console.info(insights);
 
-console.log('\n=== Example 4: Metrics Table ===');
+console.info('\n=== Example 4: Metrics Table ===');
 const metrics = new Metrics();
 metrics.set('requests', 1234);
 metrics.set('errors', 5);
 metrics.set('avg_response', 45);
-console.log(metrics);
+console.info(metrics);
 
-console.log('\n=== Example 5: Process Manager ===');
+console.info('\n=== Example 5: Process Manager ===');
 const processManager = new ProcessManager();
 processManager.addProcess(12345, 'server', 'running');
 processManager.addProcess(12346, 'worker', 'stopped');
 processManager.addProcess(12347, 'monitor', 'paused');
-console.log(processManager);
+console.info(processManager);
 
-console.log('\n=== Example 6: Nested Data ===');
+console.info('\n=== Example 6: Nested Data ===');
 const nested = new NestedData({
   level1: {
     level2: {
@@ -224,22 +224,22 @@ const nested = new NestedData({
     }
   }
 }, 2);
-console.log(nested);
+console.info(nested);
 
-console.log('\n=== Example 7: JSON Wrapper ===');
+console.info('\n=== Example 7: JSON Wrapper ===');
 const jsonWrapper = new JSONWrapper({
   name: 'test',
   value: 42,
   nested: { a: 1, b: 2 }
 });
-console.log(jsonWrapper);
+console.info(jsonWrapper);
 
-console.log('\n=== Example 8: Item Collection ===');
+console.info('\n=== Example 8: Item Collection ===');
 const collection = new ItemCollection();
 for (let i = 1; i <= 15; i++) {
   collection.add(i, `Item ${i}`);
 }
-console.log(collection);
+console.info(collection);
 
-console.log('\n✅ All Bun.inspect.custom examples completed!');
+console.info('\n✅ All Bun.inspect.custom examples completed!');
 

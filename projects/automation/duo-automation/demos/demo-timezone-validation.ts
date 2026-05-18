@@ -5,8 +5,8 @@
  * Shows the tzdb integrity validation system in action
  */
 
-console.log('🕐 Timezone Database Integrity Validation Demo');
-console.log('============================================\n');
+console.info('🕐 Timezone Database Integrity Validation Demo');
+console.info('============================================\n');
 
 // Mock the timezone validation results for demonstration
 const mockTzdbValidationResults = {
@@ -63,129 +63,129 @@ const mockTzdbValidationResults = {
 };
 
 function demonstrateTimezoneValidation() {
-  console.log('📅 Monthly Validation Check');
-  console.log('========================');
-  console.log(`💡 Pro Tip: ${mockTzdbValidationResults.monthlyValidation.proTip}`);
-  console.log(`🔧 Command: ${mockTzdbValidationResults.monthlyValidation.command}`);
-  console.log(`📋 Rule: ${mockTzdbValidationResults.monthlyValidation.canonicalZonesRule}\n`);
+  console.info('📅 Monthly Validation Check');
+  console.info('========================');
+  console.info(`💡 Pro Tip: ${mockTzdbValidationResults.monthlyValidation.proTip}`);
+  console.info(`🔧 Command: ${mockTzdbValidationResults.monthlyValidation.command}`);
+  console.info(`📋 Rule: ${mockTzdbValidationResults.monthlyValidation.canonicalZonesRule}\n`);
   
-  console.log('🔍 Critical Zone Validation');
-  console.log('============================');
+  console.info('🔍 Critical Zone Validation');
+  console.info('============================');
   
   mockTzdbValidationResults.criticalZones.forEach(zone => {
-    console.log(`${zone.status} ${zone.zone}`);
-    console.log(`   Integrity: ${zone.integrity}`);
-    console.log(`   Details: ${zone.details}`);
-    console.log(`   Link Column: ${zone.linkColumn}\n`);
+    console.info(`${zone.status} ${zone.zone}`);
+    console.info(`   Integrity: ${zone.integrity}`);
+    console.info(`   Details: ${zone.details}`);
+    console.info(`   Link Column: ${zone.linkColumn}\n`);
   });
   
-  console.log('📊 Validation Report Summary');
-  console.log('=============================');
+  console.info('📊 Validation Report Summary');
+  console.info('=============================');
   const report = mockTzdbValidationResults.validationReport;
-  console.log(`Total Zones Checked: ${report.totalZones}`);
-  console.log(`Valid Zones: ${report.validZones}`);
-  console.log(`Invalid Zones: ${report.invalidZones}`);
-  console.log(`Canonical Zones: ${report.canonicalZoneCount}`);
-  console.log(`Link Zones: ${report.linkZoneCount}`);
-  console.log(`Integrity Status: ${report.integrityStatus}\n`);
+  console.info(`Total Zones Checked: ${report.totalZones}`);
+  console.info(`Valid Zones: ${report.validZones}`);
+  console.info(`Invalid Zones: ${report.invalidZones}`);
+  console.info(`Canonical Zones: ${report.canonicalZoneCount}`);
+  console.info(`Link Zones: ${report.linkZoneCount}`);
+  console.info(`Integrity Status: ${report.integrityStatus}\n`);
   
-  console.log('💡 Recommendations');
-  console.log('==================');
+  console.info('💡 Recommendations');
+  console.info('==================');
   report.recommendations.forEach(rec => {
-    console.log(`• ${rec}`);
+    console.info(`• ${rec}`);
   });
-  console.log();
+  console.info();
   
-  console.log('🚀 Enhanced CLI Commands');
-  console.log('========================');
-  console.log('# Basic timezone validation');
-  console.log('duoplus-enhanced timezone');
-  console.log();
-  console.log('# Monthly validation check');
-  console.log('duoplus-enhanced timezone --monthly');
-  console.log();
-  console.log('# Validate on specific server');
-  console.log('duoplus-enhanced timezone --server production-server-01');
-  console.log();
-  console.log('# Verbose output with details');
-  console.log('duoplus-enhanced timezone --verbose');
-  console.log();
+  console.info('🚀 Enhanced CLI Commands');
+  console.info('========================');
+  console.info('# Basic timezone validation');
+  console.info('duoplus-enhanced timezone');
+  console.info();
+  console.info('# Monthly validation check');
+  console.info('duoplus-enhanced timezone --monthly');
+  console.info();
+  console.info('# Validate on specific server');
+  console.info('duoplus-enhanced timezone --server production-server-01');
+  console.info();
+  console.info('# Verbose output with details');
+  console.info('duoplus-enhanced timezone --verbose');
+  console.info();
   
-  console.log('🎮 Interactive Mode');
-  console.log('==================');
-  console.log('duoplus-enhanced interactive');
-  console.log('> timezone');
-  console.log();
+  console.info('🎮 Interactive Mode');
+  console.info('==================');
+  console.info('duoplus-enhanced interactive');
+  console.info('> timezone');
+  console.info();
   
-  console.log('📚 Related Documentation');
-  console.log('========================');
-  console.log('- [Timezone Matrix v3.7](./tests/timezones/timezone-matrix.test.ts)');
-  console.log('- [Enterprise Overview](./docs/ENTERPRISE_OVERVIEW.md)');
-  console.log('- [Integration Matrix](./docs/INTEGRATION_MATRIX_COMPLETE.md)');
-  console.log('- [Enhanced CLI Integration](./src/@cli/enhanced-cli-integrated.ts)');
-  console.log();
+  console.info('📚 Related Documentation');
+  console.info('========================');
+  console.info('- [Timezone Matrix v3.7](./tests/timezones/timezone-matrix.test.ts)');
+  console.info('- [Enterprise Overview](./docs/ENTERPRISE_OVERVIEW.md)');
+  console.info('- [Integration Matrix](./docs/INTEGRATION_MATRIX_COMPLETE.md)');
+  console.info('- [Enhanced CLI Integration](./src/@cli/enhanced-cli-integrated.ts)');
+  console.info();
   
-  console.log('🔧 Production Monitoring Script');
-  console.log('===============================');
-  console.log('#!/bin/bash');
-  console.log('# Add to cron: 0 0 1 * * /path/to/tzdb-validation.sh');
-  console.log('');
-  console.log('echo "🕐 TZDB Integrity Validation - $(date)"');
-  console.log('for zone in Etc/UTC Etc/GMT UTC GMT; do');
-  console.log('    result=$(tzdata-zdump -v $zone | head -5)');
-  console.log('    if echo "$result" | grep -q "LINK.*$zone"; then');
-  console.log('        echo "❌ CRITICAL: Canonical zone $zone found in LINK column"');
-  console.log('        exit 1');
-  console.log('    else');
-  console.log('        echo "✅ OK: $zone properly configured"');
-  console.log('    fi');
-  console.log('done');
-  console.log('');
-  console.log('echo "✅ All critical zones validated"');
+  console.info('🔧 Production Monitoring Script');
+  console.info('===============================');
+  console.info('#!/bin/bash');
+  console.info('# Add to cron: 0 0 1 * * /path/to/tzdb-validation.sh');
+  console.info('');
+  console.info('echo "🕐 TZDB Integrity Validation - $(date)"');
+  console.info('for zone in Etc/UTC Etc/GMT UTC GMT; do');
+  console.info('    result=$(tzdata-zdump -v $zone | head -5)');
+  console.info('    if echo "$result" | grep -q "LINK.*$zone"; then');
+  console.info('        echo "❌ CRITICAL: Canonical zone $zone found in LINK column"');
+  console.info('        exit 1');
+  console.info('    else');
+  console.info('        echo "✅ OK: $zone properly configured"');
+  console.info('    fi');
+  console.info('done');
+  console.info('');
+  console.info('echo "✅ All critical zones validated"');
 }
 
 function demonstrateIntegration() {
-  console.log('🔗 Integration with Enhanced CLI v4.0');
-  console.log('====================================\n');
+  console.info('🔗 Integration with Enhanced CLI v4.0');
+  console.info('====================================\n');
   
-  console.log('The timezone validation system integrates seamlessly with:');
-  console.log('');
-  console.log('📊 Matrix System');
-  console.log('- Scope-based timezone configuration');
-  console.log('- ENTERPRISE → America/New_York');
-  console.log('- DEVELOPMENT → Europe/London');
-  console.log('- LOCAL-SANDBOX → UTC');
-  console.log('');
+  console.info('The timezone validation system integrates seamlessly with:');
+  console.info('');
+  console.info('📊 Matrix System');
+  console.info('- Scope-based timezone configuration');
+  console.info('- ENTERPRISE → America/New_York');
+  console.info('- DEVELOPMENT → Europe/London');
+  console.info('- LOCAL-SANDBOX → UTC');
+  console.info('');
   
-  console.log('🔍 Inspection System');
-  console.log('- Real-time timezone validation');
-  console.log('- Compliance checking');
-  console.log('- Performance monitoring');
-  console.log('');
+  console.info('🔍 Inspection System');
+  console.info('- Real-time timezone validation');
+  console.info('- Compliance checking');
+  console.info('- Performance monitoring');
+  console.info('');
   
-  console.log('📚 Documentation System');
-  console.log('- Cross-referenced timezone guides');
-  console.log('- Integration with Timezone Matrix v3.7');
-  console.log('- Production deployment procedures');
-  console.log('');
+  console.info('📚 Documentation System');
+  console.info('- Cross-referenced timezone guides');
+  console.info('- Integration with Timezone Matrix v3.7');
+  console.info('- Production deployment procedures');
+  console.info('');
   
-  console.log('🛡️ Security System');
-  console.log('- Timezone-based security policies');
-  console.log('- Compliance validation');
-  console.log('- Audit trail integration');
+  console.info('🛡️ Security System');
+  console.info('- Timezone-based security policies');
+  console.info('- Compliance validation');
+  console.info('- Audit trail integration');
 }
 
 // Run demonstrations
-console.log('🚀 DuoPlus Enhanced CLI v4.0 - Timezone Validation\n');
+console.info('🚀 DuoPlus Enhanced CLI v4.0 - Timezone Validation\n');
 
 demonstrateTimezoneValidation();
 
-console.log('─'.repeat(80));
+console.info('─'.repeat(80));
 
 demonstrateIntegration();
 
-console.log('✅ Timezone Validation System Demonstration Complete!');
-console.log('📊 Features: Monthly validation, critical zone checking, server monitoring');
-console.log('🔗 Integration: Full CLI integration with matrix and documentation systems');
-console.log('🛡️ Production Ready: Comprehensive tzdb integrity validation');
-console.log('💡 Best Practices: Monthly validation, canonical zone monitoring, automated alerts');
+console.info('✅ Timezone Validation System Demonstration Complete!');
+console.info('📊 Features: Monthly validation, critical zone checking, server monitoring');
+console.info('🔗 Integration: Full CLI integration with matrix and documentation systems');
+console.info('🛡️ Production Ready: Comprehensive tzdb integrity validation');
+console.info('💡 Best Practices: Monthly validation, canonical zone monitoring, automated alerts');

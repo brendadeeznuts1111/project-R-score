@@ -126,8 +126,8 @@ export class EnhancedPackSystem {
     writeFileSync(tempPath, JSON.stringify(packageData, null, 2));
     this.tempFiles.push(tempPath);
 
-    console.log(`📝 Created temp package.json with version: ${version}`);
-    console.log(`   Original version: ${originalVersion}`);
+    console.info(`📝 Created temp package.json with version: ${version}`);
+    console.info(`   Original version: ${originalVersion}`);
 
     return tempPath;
   }
@@ -162,24 +162,24 @@ export class EnhancedPackSystem {
 
       // Handle dry run
       if (options.dryRun) {
-        console.log('🔍 DRY RUN - Simulating pack operation');
-        console.log('   Would execute: bun pm pack');
+        console.info('🔍 DRY RUN - Simulating pack operation');
+        console.info('   Would execute: bun pm pack');
 
         if (options.destination) {
-          console.log(`   Destination: ${options.destination}`);
+          console.info(`   Destination: ${options.destination}`);
 
           // Check if destination exists
           if (!existsSync(options.destination)) {
-            console.log(`   ⚠️  Destination does not exist, would create: ${options.destination}`);
+            console.info(`   ⚠️  Destination does not exist, would create: ${options.destination}`);
           }
         }
 
         if (options.version) {
-          console.log(`   Version override: ${options.version}`);
+          console.info(`   Version override: ${options.version}`);
         }
 
         if (options.gzipLevel !== undefined) {
-          console.log(`   Compression level: ${options.gzipLevel}`);
+          console.info(`   Compression level: ${options.gzipLevel}`);
         }
 
         // Show what would be packed
@@ -236,12 +236,12 @@ export class EnhancedPackSystem {
    * Pack with version suffix handling
    */
   async packWithVersion(version: string, options: PackOptions = {}): Promise<string | null> {
-    console.log(`📦 Packing with version: ${version}`);
+    console.info(`📦 Packing with version: ${version}`);
 
     try {
       // Parse and validate version
       const versionInfo = this.parseVersion(version);
-      console.log(`   Version details:`, versionInfo);
+      console.info(`   Version details:`, versionInfo);
 
       // Prepare filename
       const sanitizedVersion = this.sanitizeVersionForFilename(version);
@@ -268,45 +268,45 @@ export class EnhancedPackSystem {
    * Batch pack with different versions
    */
   async batchPack(versions: string[], options: PackOptions = {}): Promise<void> {
-    console.log('📦 Batch Pack Multiple Versions');
-    console.log('='.repeat(50));
+    console.info('📦 Batch Pack Multiple Versions');
+    console.info('='.repeat(50));
 
     const results: { version: string; result: string | null; status: 'success' | 'failed' }[] = [];
 
     for (const version of versions) {
       try {
-        console.log(`\n📦 Packing version ${version}...`);
+        console.info(`\n📦 Packing version ${version}...`);
 
         if (options.dryRun) {
-          console.log('   🔍 DRY RUN - Would pack this version');
+          console.info('   🔍 DRY RUN - Would pack this version');
           results.push({ version, result: null, status: 'success' });
         } else {
           const result = await this.packWithVersion(version, options);
           results.push({ version, result, status: 'success' });
-          console.log(`   ✅ Success: ${result}`);
+          console.info(`   ✅ Success: ${result}`);
         }
       } catch (error) {
         results.push({ version, result: null, status: 'failed' });
-        console.log(`   ❌ Failed: ${error}`);
+        console.info(`   ❌ Failed: ${error}`);
       }
     }
 
     // Summary
-    console.log('\n📊 Batch Pack Summary');
-    console.log('='.repeat(50));
+    console.info('\n📊 Batch Pack Summary');
+    console.info('='.repeat(50));
 
     const successful = results.filter(r => r.status === 'success').length;
     const failed = results.filter(r => r.status === 'failed').length;
 
-    console.log(`✅ Successful: ${successful}`);
-    console.log(`❌ Failed: ${failed}`);
+    console.info(`✅ Successful: ${successful}`);
+    console.info(`❌ Failed: ${failed}`);
 
     if (failed > 0) {
-      console.log('\nFailed versions:');
+      console.info('\nFailed versions:');
       results
         .filter(r => r.status === 'failed')
         .forEach(r => {
-          console.log(`   - ${r.version}`);
+          console.info(`   - ${r.version}`);
         });
     }
   }
@@ -427,7 +427,7 @@ export class EnhancedPackSystem {
 
       // Calculate checksum
       const hash = createHash('sha256').update(buffer).digest('hex');
-      console.log(`   🔐 SHA256: ${hash}`);
+      console.info(`   🔐 SHA256: ${hash}`);
 
       return { valid: true };
     } catch (error) {
@@ -442,7 +442,7 @@ export class EnhancedPackSystem {
    * Show usage examples
    */
   showExamples(): void {
-    console.log(`
+    console.info(`
 📦 Enhanced Pack System - Examples
 !==!==!==!==!==!=====
 
@@ -534,7 +534,7 @@ if (import.meta.main) {
         });
 
         if (result.success) {
-          console.log('✅ Pack successful:', result.result);
+          console.info('✅ Pack successful:', result.result);
         } else {
           console.error('❌ Pack failed:', result.error);
           process.exit(1);
@@ -547,7 +547,7 @@ if (import.meta.main) {
         break;
 
       default:
-        console.log(`
+        console.info(`
 🚀 Enhanced Pack System
 !==!==!==!====
 

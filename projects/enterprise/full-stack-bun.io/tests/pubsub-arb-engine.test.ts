@@ -286,7 +286,7 @@ test("health endpoint returns pub/sub metrics", async () => {
 		expect(data.arbitrage).toBeDefined();
 	} catch (error) {
 		// Server may not be running - skip test
-		console.log('Health endpoint test skipped (server not running)');
+		console.info('Health endpoint test skipped (server not running)');
 	}
 }, 5000);
 
@@ -303,7 +303,7 @@ test("scrape endpoint triggers spawnSync", async () => {
 		}
 	} catch (error) {
 		// Server may not be running - skip test
-		console.log('Scrape endpoint test skipped (server not running)');
+		console.info('Scrape endpoint test skipped (server not running)');
 	}
 }, 5000);
 

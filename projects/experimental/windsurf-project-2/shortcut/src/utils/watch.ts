@@ -6,7 +6,7 @@ import { BunFile } from 'bun';
 export function watchForChanges(dataDir: string, callback: () => void): void {
   const watcher = watch(dataDir, { recursive: true }, (eventType, filename) => {
     if (filename && (filename.endsWith('.json') || filename.endsWith('.db'))) {
-      console.log(`File changed: ${filename}`);
+      console.info(`File changed: ${filename}`);
       callback();
     }
   });
@@ -47,7 +47,7 @@ export function setupAutoBackup(
       };
       
       await Bun.write(backupFile, JSON.stringify(exportData, null, 2));
-      console.log(`Backup created: ${backupFile}`);
+      console.info(`Backup created: ${backupFile}`);
       
       // Clean up old backups (keep last 10)
       await cleanupOldBackups(backupDir, 10);
@@ -78,7 +78,7 @@ async function cleanupOldBackups(backupDir: string, keepCount: number): Promise<
       
       for (const file of toRemove) {
         await Bun.$`rm ${file}`.quiet();
-        console.log(`Removed old backup: ${file}`);
+        console.info(`Removed old backup: ${file}`);
       }
     }
   } catch (error) {
@@ -112,7 +112,7 @@ export async function restoreFromBackup(backupFile: string, registry: ShortcutRe
     // Save to database
     await registry.saveToDatabase();
     
-    console.log(`Successfully restored from backup: ${backupFile}`);
+    console.info(`Successfully restored from backup: ${backupFile}`);
     
   } catch (error) {
     console.error('Failed to restore from backup:', error);

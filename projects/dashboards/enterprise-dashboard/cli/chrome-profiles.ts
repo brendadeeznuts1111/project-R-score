@@ -94,31 +94,31 @@ async function cmdList() {
   const config = await loadConfig();
   const chromeProfiles = await listChromeProfiles();
   
-  console.log("📋 Configured User Profiles:\n");
+  console.info("📋 Configured User Profiles:\n");
   
   if (Object.keys(config).length === 0) {
-    console.log("  No profiles configured yet.");
-    console.log("  Use: bun run cli/chrome-profiles.ts set <user> <profile-name>\n");
+    console.info("  No profiles configured yet.");
+    console.info("  Use: bun run cli/chrome-profiles.ts set <user> <profile-name>\n");
   } else {
     for (const [user, profile] of Object.entries(config)) {
-      console.log(`  ${user}:`);
-      console.log(`    Profile: ${profile.profileName}`);
+      console.info(`  ${user}:`);
+      console.info(`    Profile: ${profile.profileName}`);
       if (profile.profileDirectory) {
-        console.log(`    Directory: ${profile.profileDirectory}`);
+        console.info(`    Directory: ${profile.profileDirectory}`);
       }
       if (profile.lastUsed) {
-        console.log(`    Last Used: ${profile.lastUsed}`);
+        console.info(`    Last Used: ${profile.lastUsed}`);
       }
-      console.log();
+      console.info();
     }
   }
   
-  console.log("🌐 Available Chrome Profiles:\n");
+  console.info("🌐 Available Chrome Profiles:\n");
   if (chromeProfiles.length === 0) {
-    console.log("  No Chrome profiles found.");
+    console.info("  No Chrome profiles found.");
   } else {
     chromeProfiles.forEach((p) => {
-      console.log(`  • ${p.name} (${p.directory})`);
+      console.info(`  • ${p.name} (${p.directory})`);
     });
   }
 }
@@ -140,12 +140,12 @@ async function cmdSet(user: string, profileName: string) {
   
   await saveConfig(config);
   
-  console.log(`✅ Profile configured for user: ${user}`);
-  console.log(`   Chrome Profile: ${profileName}`);
+  console.info(`✅ Profile configured for user: ${user}`);
+  console.info(`   Chrome Profile: ${profileName}`);
   if (profileDir) {
-    console.log(`   Directory: ${profileDir}`);
+    console.info(`   Directory: ${profileDir}`);
   } else {
-    console.log(`   ⚠️  Profile directory not found - will use default Chrome profile`);
+    console.info(`   ⚠️  Profile directory not found - will use default Chrome profile`);
   }
 }
 
@@ -160,11 +160,11 @@ async function cmdGet(user: string) {
   
   if (!profile) {
     console.error(`❌ No profile configured for user: ${user}`);
-    console.log(`   Use: bun run cli/chrome-profiles.ts set ${user} <profile-name>`);
+    console.info(`   Use: bun run cli/chrome-profiles.ts set ${user} <profile-name>`);
     process.exit(1);
   }
   
-  console.log(JSON.stringify(profile, null, 2));
+  console.info(JSON.stringify(profile, null, 2));
 }
 
 async function cmdRemove(user: string) {
@@ -183,7 +183,7 @@ async function cmdRemove(user: string) {
   delete config[user];
   await saveConfig(config);
   
-  console.log(`✅ Profile removed for user: ${user}`);
+  console.info(`✅ Profile removed for user: ${user}`);
 }
 
 async function cmdDefault(user: string) {
@@ -196,14 +196,14 @@ async function cmdDefault(user: string) {
   
   if (!config[user]) {
     console.error(`❌ No profile configured for user: ${user}`);
-    console.log(`   Use: bun run cli/chrome-profiles.ts set ${user} <profile-name>`);
+    console.info(`   Use: bun run cli/chrome-profiles.ts set ${user} <profile-name>`);
     process.exit(1);
   }
   
   config._default = user;
   await saveConfig(config);
   
-  console.log(`✅ Default user set to: ${user}`);
+  console.info(`✅ Default user set to: ${user}`);
 }
 
 async function main() {
@@ -227,7 +227,7 @@ async function main() {
       await cmdDefault(args[0]);
       break;
     default:
-      console.log(`
+      console.info(`
 Chrome Profile Management
 
 Usage:

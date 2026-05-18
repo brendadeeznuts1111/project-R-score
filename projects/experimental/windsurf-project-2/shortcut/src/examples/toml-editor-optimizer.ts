@@ -896,31 +896,31 @@ logging = true"></textarea>
 </html>`;
 }
 
-console.log(`🚀 TOML Editor & Optimizer Service`);
-console.log(`===================================`);
-console.log(`📝 Editor: http://localhost:3001`);
-console.log(`🔧 API: http://localhost:3001/api`);
-console.log(`🔐 Secrets: Aligned with Bun API Secrets`);
-console.log(`⏰ Started at ${new Date().toLocaleString()}`);
-console.log(``);
-console.log(`🎯 Features:`);
-console.log(`   • Real-time TOML editing and optimization`);
-console.log(`   • Security validation with Bun.secrets pattern`);
-console.log(`   • Performance metrics and caching`);
-console.log(`   • Interactive web interface`);
-console.log(`   • CORS-enabled API endpoints`);
-console.log(``);
-console.log(`🔥 Open your browser and navigate to: http://localhost:3001`);
+console.info(`🚀 TOML Editor & Optimizer Service`);
+console.info(`===================================`);
+console.info(`📝 Editor: http://localhost:3001`);
+console.info(`🔧 API: http://localhost:3001/api`);
+console.info(`🔐 Secrets: Aligned with Bun API Secrets`);
+console.info(`⏰ Started at ${new Date().toLocaleString()}`);
+console.info(``);
+console.info(`🎯 Features:`);
+console.info(`   • Real-time TOML editing and optimization`);
+console.info(`   • Security validation with Bun.secrets pattern`);
+console.info(`   • Performance metrics and caching`);
+console.info(`   • Interactive web interface`);
+console.info(`   • CORS-enabled API endpoints`);
+console.info(``);
+console.info(`🔥 Open your browser and navigate to: http://localhost:3001`);
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\\n🛑 Shutting down TOML Editor service...');
+  console.info('\\n🛑 Shutting down TOML Editor service...');
   server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\\n🛑 Shutting down TOML Editor service...');
+  console.info('\\n🛑 Shutting down TOML Editor service...');
   server.stop();
   process.exit(0);
 });

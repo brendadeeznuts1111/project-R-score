@@ -70,7 +70,7 @@ export class AnomalyDetector {
       this.model = await file.json();
       this.lastLoaded = Date.now();
 
-      console.log(
+      console.info(
         `[ANOMALY] Model loaded: v${this.model?.version} ` +
           `(trained ${this.model?.trainedAt}, ${this.model?.sampleCount} samples)`
       );

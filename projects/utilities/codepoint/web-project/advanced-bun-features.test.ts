@@ -43,11 +43,11 @@ describe("Advanced Bun Test Features", () => {
   let proxyServerConfiguration: ProxyServerConfig;
 
   beforeAll(async () => {
-    console.log("🚀 Setting up advanced test environment...");
+    console.info("🚀 Setting up advanced test environment...");
   });
 
   afterAll(async () => {
-    console.log("🧹 Cleaning up advanced test environment...");
+    console.info("🧹 Cleaning up advanced test environment...");
     if (webSocketProxyServer?.isRunning()) {
       await webSocketProxyServer.stop();
     }
@@ -365,4 +365,4 @@ describeOnly("Focused Suite", () => {
 });
 */
 
-console.log("✅ Advanced Bun test features demonstration completed!");
+console.info("✅ Advanced Bun test features demonstration completed!");

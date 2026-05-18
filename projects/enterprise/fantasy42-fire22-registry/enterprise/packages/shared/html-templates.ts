@@ -197,7 +197,7 @@ export class HTMLTemplateManager {
    * Preload frequently used templates
    */
   async preloadTemplates(): Promise<void> {
-    console.log('🔄 Preloading templates into cache...');
+    console.info('🔄 Preloading templates into cache...');
 
     const templatesToPreload = [
       {
@@ -227,7 +227,7 @@ export class HTMLTemplateManager {
     }
 
     await this.cacheManager.preload();
-    console.log('✅ Templates preloaded successfully');
+    console.info('✅ Templates preloaded successfully');
   }
 
   /**
@@ -235,13 +235,13 @@ export class HTMLTemplateManager {
    */
   clearCache(): void {
     this.cacheManager.clear();
-    console.log('🧹 Template cache cleared');
+    console.info('🧹 Template cache cleared');
   }
 
   // Hot reload support for development
   reloadTemplate(name: string): void {
     // This would trigger template re-import in development
-    console.log(`🔄 Template reloaded: ${name}`);
+    console.info(`🔄 Template reloaded: ${name}`);
   }
 }
 
@@ -373,7 +373,7 @@ export class HTMLExportService {
     const filepath = filename || `./exports/financial-report-${Date.now()}.html`;
 
     await Bun.write(Bun.file(filepath), html);
-    console.log(`📄 Financial report exported to: ${filepath}`);
+    console.info(`📄 Financial report exported to: ${filepath}`);
     return filepath;
   }
 
@@ -385,7 +385,7 @@ export class HTMLExportService {
     const filepath = filename || `./exports/collections-summary-${Date.now()}.html`;
 
     await Bun.write(Bun.file(filepath), html);
-    console.log(`📄 Collections summary exported to: ${filepath}`);
+    console.info(`📄 Collections summary exported to: ${filepath}`);
     return filepath;
   }
 
@@ -397,7 +397,7 @@ export class HTMLExportService {
     const filepath = filename || `./exports/dashboard-${Date.now()}.html`;
 
     await Bun.write(Bun.file(filepath), html);
-    console.log(`📄 Dashboard exported to: ${filepath}`);
+    console.info(`📄 Dashboard exported to: ${filepath}`);
     return filepath;
   }
 
@@ -409,7 +409,7 @@ export class HTMLExportService {
     const filepath = filename || `./exports/regulatory-report-${Date.now()}.html`;
 
     await Bun.write(Bun.file(filepath), html);
-    console.log(`📄 Regulatory report exported to: ${filepath}`);
+    console.info(`📄 Regulatory report exported to: ${filepath}`);
     return filepath;
   }
 
@@ -426,7 +426,7 @@ export class HTMLExportService {
       },
     });
 
-    console.log(`🌐 HTML server running on http://localhost:${port}`);
+    console.info(`🌐 HTML server running on http://localhost:${port}`);
   }
 }
 

@@ -7,10 +7,10 @@
 
 import { performance } from 'perf_hooks';
 
-console.log('🚀 Buffer.indexOf() SIMD Optimization Benchmark');
-console.log('===============================================');
-console.log('Testing Empire Pro Config Empire buffer operations');
-console.log('');
+console.info('🚀 Buffer.indexOf() SIMD Optimization Benchmark');
+console.info('===============================================');
+console.info('Testing Empire Pro Config Empire buffer operations');
+console.info('');
 
 // Create test data similar to our configuration scenarios
 const createTestBuffer = (size: number, needle: string) => {
@@ -24,7 +24,7 @@ const createFalseTestBuffer = (size: number) => {
 
 // Benchmark function
 async function benchmarkBufferOperation(name: string, operation: () => boolean, iterations = 100000) {
-  console.log(`📊 Testing ${name} (${iterations} iterations)`);
+  console.info(`📊 Testing ${name} (${iterations} iterations)`);
   
   const start = performance.now();
   
@@ -36,10 +36,10 @@ async function benchmarkBufferOperation(name: string, operation: () => boolean, 
   const totalTime = end - start;
   const avgTime = totalTime / iterations;
   
-  console.log(`   Total time: ${totalTime.toFixed(2)}ms`);
-  console.log(`   Average: ${avgTime.toFixed(6)}ms per operation`);
-  console.log(`   Operations/sec: ${(1000 / avgTime).toFixed(0)}`);
-  console.log('');
+  console.info(`   Total time: ${totalTime.toFixed(2)}ms`);
+  console.info(`   Average: ${avgTime.toFixed(6)}ms per operation`);
+  console.info(`   Operations/sec: ${(1000 / avgTime).toFixed(0)}`);
+  console.info('');
 }
 
 // Empire Pro specific test cases
@@ -66,7 +66,7 @@ const testCases = [
   }
 ];
 
-console.log('🎯 Empire Pro Configuration Buffer Operations\n');
+console.info('🎯 Empire Pro Configuration Buffer Operations\n');
 
 // Test indexOf() with true results
 for (const testCase of testCases) {
@@ -109,43 +109,43 @@ for (const testCase of testCases) {
 }
 
 // Performance comparison
-console.log('📈 Performance Comparison');
-console.log('========================');
+console.info('📈 Performance Comparison');
+console.info('========================');
 
-console.log('Before SIMD Optimization (Bun v1.3.5):');
-console.log('   Buffer.includes() true:  25.52ms (44,500 bytes)');
-console.log('   Buffer.includes() false: 3.25s (44,500 bytes)');
-console.log('');
+console.info('Before SIMD Optimization (Bun v1.3.5):');
+console.info('   Buffer.includes() true:  25.52ms (44,500 bytes)');
+console.info('   Buffer.includes() false: 3.25s (44,500 bytes)');
+console.info('');
 
-console.log('After SIMD Optimization (Bun v1.3.6+):');
-console.log('   Buffer.includes() true:  21.90ms (44,500 bytes)');
-console.log('   Buffer.includes() false: 1.42s (44,500 bytes)');
-console.log('   Performance improvement: Up to 2x faster');
-console.log('');
+console.info('After SIMD Optimization (Bun v1.3.6+):');
+console.info('   Buffer.includes() true:  21.90ms (44,500 bytes)');
+console.info('   Buffer.includes() false: 1.42s (44,500 bytes)');
+console.info('   Performance improvement: Up to 2x faster');
+console.info('');
 
 // Empire Pro specific benefits
-console.log('🏰 Empire Pro Config Empire Benefits:');
-console.log('   🔐 Secret parsing: 2x faster buffer operations');
-console.log('   🌐 Config validation: 2x faster pattern matching');
-console.log('   📊 Log analysis: 2x faster text searching');
-console.log('   🚀 Real-time monitoring: 2x faster data processing');
-console.log('   📈 Large file processing: 2x faster content scanning');
-console.log('');
+console.info('🏰 Empire Pro Config Empire Benefits:');
+console.info('   🔐 Secret parsing: 2x faster buffer operations');
+console.info('   🌐 Config validation: 2x faster pattern matching');
+console.info('   📊 Log analysis: 2x faster text searching');
+console.info('   🚀 Real-time monitoring: 2x faster data processing');
+console.info('   📈 Large file processing: 2x faster content scanning');
+console.info('');
 
 // Technical details
-console.log('🔧 Technical Implementation:');
-console.log('   📯 SIMD-optimized search functions');
-console.log('   ⚡ Accelerated pattern matching');
-console.log('   🎯 Single and multi-byte pattern support');
-console.log('   🚀 Zero-copy buffer operations');
-console.log('   📊 Memory-efficient scanning');
-console.log('');
+console.info('🔧 Technical Implementation:');
+console.info('   📯 SIMD-optimized search functions');
+console.info('   ⚡ Accelerated pattern matching');
+console.info('   🎯 Single and multi-byte pattern support');
+console.info('   🚀 Zero-copy buffer operations');
+console.info('   📊 Memory-efficient scanning');
+console.info('');
 
 // Real-world Empire Pro examples
-console.log('💼 Real-World Empire Pro Use Cases:');
-console.log('');
+console.info('💼 Real-World Empire Pro Use Cases:');
+console.info('');
 
-console.log('🔐 Secret Key Validation:');
+console.info('🔐 Secret Key Validation:');
 const secretBuffer = Buffer.from(`
   OPENAI_API_KEY=sk-your-openai-key-here
   STRIPE_SECRET_KEY=sk_live_your-stripe-key-here
@@ -154,11 +154,11 @@ const secretBuffer = Buffer.from(`
   R2_ACCESS_KEY_ID=your-access-key
   R2_SECRET_ACCESS_KEY=your-secret-key
 `);
-console.log(`   Buffer contains OPENAI_API_KEY: ${secretBuffer.includes('OPENAI_API_KEY')}`);
-console.log(`   OPENAI_API_KEY position: ${secretBuffer.indexOf('OPENAI_API_KEY')}`);
-console.log('');
+console.info(`   Buffer contains OPENAI_API_KEY: ${secretBuffer.includes('OPENAI_API_KEY')}`);
+console.info(`   OPENAI_API_KEY position: ${secretBuffer.indexOf('OPENAI_API_KEY')}`);
+console.info('');
 
-console.log('🌐 Configuration Parsing:');
+console.info('🌐 Configuration Parsing:');
 const configBuffer = Buffer.from(JSON.stringify({
   service: 'empire-pro-config-empire',
   config: {
@@ -167,12 +167,12 @@ const configBuffer = Buffer.from(JSON.stringify({
     storage: { type: 'r2', bucket: 'factory-wager-packages' }
   }
 }, null, 2));
-console.log(`   Config contains database: ${configBuffer.includes('database')}`);
-console.log(`   Database position: ${configBuffer.indexOf('database')}`);
-console.log(`   Config contains api: ${configBuffer.includes('api')}`);
-console.log('');
+console.info(`   Config contains database: ${configBuffer.includes('database')}`);
+console.info(`   Database position: ${configBuffer.indexOf('database')}`);
+console.info(`   Config contains api: ${configBuffer.includes('api')}`);
+console.info('');
 
-console.log('📊 Log Analysis:');
+console.info('📊 Log Analysis:');
 const logBuffer = Buffer.from(`
   [2024-01-13T15:56:00.000Z] INFO: Configuration loaded successfully
   [2024-01-13T15:56:01.000Z] INFO: API server started on port 3001
@@ -181,12 +181,12 @@ const logBuffer = Buffer.from(`
   [2024-01-13T15:56:04.000Z] INFO: Retrying database connection
   [2024-01-13T15:56:05.000Z] INFO: Database connection established
 `);
-console.log(`   Log contains ERROR: ${logBuffer.includes('ERROR')}`);
-console.log(`   First ERROR position: ${logBuffer.indexOf('ERROR')}`);
-console.log(`   Log contains WARN: ${logBuffer.includes('WARN')}`);
-console.log(`   First WARN position: ${logBuffer.indexOf('WARN')}`);
-console.log('');
+console.info(`   Log contains ERROR: ${logBuffer.includes('ERROR')}`);
+console.info(`   First ERROR position: ${logBuffer.indexOf('ERROR')}`);
+console.info(`   Log contains WARN: ${logBuffer.includes('WARN')}`);
+console.info(`   First WARN position: ${logBuffer.indexOf('WARN')}`);
+console.info('');
 
-console.log('✅ Empire Pro Config Empire is now 2x faster!');
-console.log('🎉 All buffer operations benefiting from SIMD optimization!');
-console.log('🚀 Secret parsing, config validation, and log analysis - all optimized!');
+console.info('✅ Empire Pro Config Empire is now 2x faster!');
+console.info('🎉 All buffer operations benefiting from SIMD optimization!');
+console.info('🚀 Secret parsing, config validation, and log analysis - all optimized!');

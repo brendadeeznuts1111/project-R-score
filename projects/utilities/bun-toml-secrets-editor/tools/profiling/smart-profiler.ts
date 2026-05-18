@@ -129,11 +129,11 @@ class SmartProfiler {
 
 		if (!existsSync(this.config.outputDir)) {
 			mkdirSync(this.config.outputDir, { recursive: true });
-			console.log(
+			console.info(
 				`📁 Created profile directory: ${shell.cwd(this.config.outputDir)}`,
 			);
 		} else {
-			console.log(
+			console.info(
 				`📁 Using existing profile directory: ${shell.cwd(this.config.outputDir)}`,
 			);
 		}
@@ -156,10 +156,10 @@ class SmartProfiler {
 		const profileName = this.generateProfileName("cpu-profile");
 		const config = this.config;
 
-		console.log(`🔥 Starting CPU profiling...`);
-		console.log(`   Sampling: ${config.samplingInterval}μs`);
-		console.log(`   Max samples: ${config.maxSamples}`);
-		console.log(`   Output: ${config.outputDir}/${profileName}.md`);
+		console.info(`🔥 Starting CPU profiling...`);
+		console.info(`   Sampling: ${config.samplingInterval}μs`);
+		console.info(`   Max samples: ${config.maxSamples}`);
+		console.info(`   Output: ${config.outputDir}/${profileName}.md`);
 
 		try {
 			const args = [
@@ -185,7 +185,7 @@ class SmartProfiler {
 			this.isProfiling = false;
 			this.profileCount++;
 
-			console.log(
+			console.info(
 				`✅ CPU profiling completed: ${config.outputDir}/${profileName}.md`,
 			);
 			return `${config.outputDir}/${profileName}.md`;
@@ -206,10 +206,10 @@ class SmartProfiler {
 		const profileName = this.generateProfileName("heap");
 		const profilePath = join(this.config.outputDir, `${profileName}.md`);
 
-		console.log(`🧠 Starting heap profiling...`);
-		console.log(`   Environment: ${this.environment.nodeEnv}`);
-		console.log(`   Heap interval: ${this.config.heapInterval} bytes`);
-		console.log(`   Output: ${profilePath}`);
+		console.info(`🧠 Starting heap profiling...`);
+		console.info(`   Environment: ${this.environment.nodeEnv}`);
+		console.info(`   Heap interval: ${this.config.heapInterval} bytes`);
+		console.info(`   Output: ${profilePath}`);
 
 		const args = [
 			"--heap-prof-md",
@@ -231,16 +231,16 @@ class SmartProfiler {
 		this.isProfiling = false;
 		this.profileCount++;
 
-		console.log(`✅ Heap profiling completed: ${profilePath}`);
+		console.info(`✅ Heap profiling completed: ${profilePath}`);
 		return profilePath;
 	}
 
 	async startAdaptiveProfiling(targetScript = "src/main.ts") {
-		console.log(`🎯 Starting adaptive profiling based on environment...`);
-		console.log(
+		console.info(`🎯 Starting adaptive profiling based on environment...`);
+		console.info(
 			`   Detected: ${this.environment.nodeEnv} on ${this.environment.platform}`,
 		);
-		console.log(
+		console.info(
 			`   Memory: ${this.environment.availableMemory}MB, Cores: ${this.environment.cpuCores}`,
 		);
 
@@ -264,25 +264,25 @@ class SmartProfiler {
 		};
 
 		writeFileSync(configPath, JSON.stringify(configData, null, 2));
-		console.log(`📝 Profiling config saved to: ${configPath}`);
+		console.info(`📝 Profiling config saved to: ${configPath}`);
 	}
 
 	printEnvironmentInfo() {
-		console.log("\n🌍 Environment Detection Results:");
-		console.log(`   Node Env: ${this.environment.nodeEnv}`);
-		console.log(`   Production: ${this.environment.isProduction}`);
-		console.log(`   Development: ${this.environment.isDevelopment}`);
-		console.log(`   CI/CD: ${this.environment.isCI}`);
-		console.log(`   Platform: ${this.environment.platform}`);
-		console.log(`   Available Memory: ${this.environment.availableMemory}MB`);
-		console.log(`   CPU Cores: ${this.environment.cpuCores}`);
-		console.log("\n⚙️  Adaptive Profiling Configuration:");
-		console.log(`   Sampling Interval: ${this.config.samplingInterval}μs`);
-		console.log(`   Max Samples: ${this.config.maxSamples}`);
-		console.log(`   Heap Interval: ${this.config.heapInterval} bytes`);
-		console.log(`   Source Maps: ${this.config.enableSourceMaps}`);
-		console.log(`   Include Node Modules: ${this.config.includeNodeModules}`);
-		console.log(`   Output Directory: ${this.config.outputDir}`);
+		console.info("\n🌍 Environment Detection Results:");
+		console.info(`   Node Env: ${this.environment.nodeEnv}`);
+		console.info(`   Production: ${this.environment.isProduction}`);
+		console.info(`   Development: ${this.environment.isDevelopment}`);
+		console.info(`   CI/CD: ${this.environment.isCI}`);
+		console.info(`   Platform: ${this.environment.platform}`);
+		console.info(`   Available Memory: ${this.environment.availableMemory}MB`);
+		console.info(`   CPU Cores: ${this.environment.cpuCores}`);
+		console.info("\n⚙️  Adaptive Profiling Configuration:");
+		console.info(`   Sampling Interval: ${this.config.samplingInterval}μs`);
+		console.info(`   Max Samples: ${this.config.maxSamples}`);
+		console.info(`   Heap Interval: ${this.config.heapInterval} bytes`);
+		console.info(`   Source Maps: ${this.config.enableSourceMaps}`);
+		console.info(`   Include Node Modules: ${this.config.includeNodeModules}`);
+		console.info(`   Output Directory: ${this.config.outputDir}`);
 	}
 
 	getStats() {
@@ -318,7 +318,7 @@ async function main() {
 		} else if (arg === "--config") {
 			showConfig = true;
 		} else if (arg === "--help") {
-			console.log(`
+			console.info(`
 🎯 Smart Profiler - Environment-adaptive profiling system
 
 USAGE:
@@ -379,7 +379,7 @@ The profiler automatically adapts settings based on:
 		}
 
 		const stats = profiler.getStats();
-		console.log(
+		console.info(
 			`📊 Profiling session complete. Total profiles: ${stats.profileCount}`,
 		);
 	} catch (error) {

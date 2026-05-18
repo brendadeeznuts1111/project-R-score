@@ -79,7 +79,7 @@ export class OddsManagement {
     }
     this.oddsHistory.get(request.eventId)!.push(movement);
 
-    console.log(`📊 Updated odds for event: ${request.eventId} (${request.reason})`);
+    console.info(`📊 Updated odds for event: ${request.eventId} (${request.reason})`);
     return { success: true, odds: updatedOdds };
   }
 
@@ -127,7 +127,7 @@ export class OddsManagement {
       this.oddsCache.set(eventId, odds);
     }
 
-    console.log(`⭐ Added special bet: ${bet.name} (${bet.id})`);
+    console.info(`⭐ Added special bet: ${bet.name} (${bet.id})`);
     return bet;
   }
 
@@ -158,7 +158,7 @@ export class OddsManagement {
       }
     }
 
-    console.log(`📝 Updated special bet: ${specialBetId}`);
+    console.info(`📝 Updated special bet: ${specialBetId}`);
     return updatedBet;
   }
 
@@ -323,7 +323,7 @@ export class OddsManagement {
   // Private helper methods
 
   private initializeOddsSystem(): void {
-    console.log('📊 Initialized odds management system');
+    console.info('📊 Initialized odds management system');
   }
 
   private getBaseOdds(sport: SportType, league: string): any {

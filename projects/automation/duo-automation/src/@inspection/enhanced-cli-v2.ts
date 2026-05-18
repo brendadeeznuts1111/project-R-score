@@ -85,17 +85,17 @@ export class EnhancedInspectCLI {
       
       // Format and display output
       const output = this.formatOutput(result.data, result.stats, options);
-      console.log(output);
+      console.info(output);
       
       // Save to file if requested
       if (options.outputFile) {
         await this.saveOutput(options.outputFile, output, options.format);
-        console.log(chalk.green(`📁 Output saved to ${options.outputFile}`));
+        console.info(chalk.green(`📁 Output saved to ${options.outputFile}`));
       }
       
       // Show statistics if requested
       if (options.stats) {
-        console.log(this.formatStats(result.stats));
+        console.info(this.formatStats(result.stats));
       }
       
     } catch (error) {
@@ -196,9 +196,9 @@ export class EnhancedInspectCLI {
    * 🎯 Interactive mode
    */
   private async interactiveMode(baseOptions: EnhancedInspectionOptions): Promise<void> {
-    console.log(chalk.blue.bold('\n🎯 Interactive Inspection Mode'));
-    console.log(chalk.gray('Type your filters interactively'));
-    console.log(chalk.gray('Press Ctrl+C to exit\n'));
+    console.info(chalk.blue.bold('\n🎯 Interactive Inspection Mode'));
+    console.info(chalk.gray('Type your filters interactively'));
+    console.info(chalk.gray('Press Ctrl+C to exit\n'));
     
     this.rl = readline.createInterface({
       input: process.stdin,
@@ -216,17 +216,17 @@ export class EnhancedInspectCLI {
     await this.promptForPlugins(options);
     await this.promptForFormat(options);
     
-    console.log('\n' + chalk.green('Running inspection...\n'));
+    console.info('\n' + chalk.green('Running inspection...\n'));
     
     // Run inspection
     const result = await this.inspectSystem.inspect(options);
     
     // Display results
     const output = this.formatOutput(result.data, result.stats, options);
-    console.log(output);
+    console.info(output);
     
     if (options.stats) {
-      console.log(this.formatStats(result.stats));
+      console.info(this.formatStats(result.stats));
     }
     
     this.rl.close();
@@ -538,55 +538,55 @@ export class EnhancedInspectCLI {
    * 📖 Show help
    */
   static showHelp(): void {
-    console.log(chalk.blue.bold('\n🔍 Enhanced Inspection System Help\n'));
+    console.info(chalk.blue.bold('\n🔍 Enhanced Inspection System Help\n'));
     
-    console.log(chalk.yellow('Basic Usage:'));
-    console.log('  factory-wager inspect                    # Basic inspection');
-    console.log('  factory-wager inspect --filter=keyword   # Filter by keyword');
-    console.log('  factory-wager inspect --filter=/regex/   # Filter by regex');
+    console.info(chalk.yellow('Basic Usage:'));
+    console.info('  factory-wager inspect                    # Basic inspection');
+    console.info('  factory-wager inspect --filter=keyword   # Filter by keyword');
+    console.info('  factory-wager inspect --filter=/regex/   # Filter by regex');
     
-    console.log(chalk.yellow('\nFiltering Options:'));
-    console.log('  --filter=<pattern>              Filter by keyword, regex, or field:type');
-    console.log('  --exclude=<patterns>             Exclude patterns (comma-separated)');
-    console.log('  --field=<name>                   Filter by field name');
-    console.log('  --type=<string|number|boolean>   Filter by data type');
-    console.log('  --max-depth=<number>             Maximum recursion depth (default: 10)');
+    console.info(chalk.yellow('\nFiltering Options:'));
+    console.info('  --filter=<pattern>              Filter by keyword, regex, or field:type');
+    console.info('  --exclude=<patterns>             Exclude patterns (comma-separated)');
+    console.info('  --field=<name>                   Filter by field name');
+    console.info('  --type=<string|number|boolean>   Filter by data type');
+    console.info('  --max-depth=<number>             Maximum recursion depth (default: 10)');
     
-    console.log(chalk.yellow('\nOutput Options:'));
-    console.log('  --format=<human|json|shell|compact|diff>  Output format');
-    console.log('  --output=<filename>              Save to file');
-    console.log('  --highlight                      Highlight matches');
-    console.log('  --stats                          Show statistics');
+    console.info(chalk.yellow('\nOutput Options:'));
+    console.info('  --format=<human|json|shell|compact|diff>  Output format');
+    console.info('  --output=<filename>              Save to file');
+    console.info('  --highlight                      Highlight matches');
+    console.info('  --stats                          Show statistics');
     
-    console.log(chalk.yellow('\nSecurity Options:'));
-    console.log('  --no-redact                      Disable sensitive data redaction');
-    console.log('  --no-audit                       Disable audit logging');
-    console.log('  --no-telemetry                   Disable usage tracking');
+    console.info(chalk.yellow('\nSecurity Options:'));
+    console.info('  --no-redact                      Disable sensitive data redaction');
+    console.info('  --no-audit                       Disable audit logging');
+    console.info('  --no-telemetry                   Disable usage tracking');
     
-    console.log(chalk.yellow('\nAdvanced Options:'));
-    console.log('  --interactive                    Interactive mode');
-    console.log('  --diff                           Compare with previous inspection');
-    console.log('  --async                          Use async processing');
-    console.log('  --plugin=<names>                 Apply plugins (payment,security,performance)');
+    console.info(chalk.yellow('\nAdvanced Options:'));
+    console.info('  --interactive                    Interactive mode');
+    console.info('  --diff                           Compare with previous inspection');
+    console.info('  --async                          Use async processing');
+    console.info('  --plugin=<names>                 Apply plugins (payment,security,performance)');
     
-    console.log(chalk.yellow('\nExamples:'));
-    console.log('  factory-wager inspect --filter=payment --stats');
-    console.log('  factory-wager inspect --filter=/venmo|cashapp/i --exclude=token');
-    console.log('  factory-wager inspect --field=metadata --max-depth=3');
-    console.log('  factory-wager inspect --plugin=payment,security --format=json');
-    console.log('  factory-wager inspect --interactive');
+    console.info(chalk.yellow('\nExamples:'));
+    console.info('  factory-wager inspect --filter=payment --stats');
+    console.info('  factory-wager inspect --filter=/venmo|cashapp/i --exclude=token');
+    console.info('  factory-wager inspect --field=metadata --max-depth=3');
+    console.info('  factory-wager inspect --plugin=payment,security --format=json');
+    console.info('  factory-wager inspect --interactive');
     
-    console.log(chalk.yellow('\nRegex Examples:'));
-    console.log('  --filter=/error|warning/i        # Case-insensitive regex');
-    console.log('  --filter=/\\d{4}-\\d{4}-\\d{4}-\\d{4}/  # Credit card pattern');
-    console.log('  --filter=/^[A-Z]/                # Starts with uppercase');
+    console.info(chalk.yellow('\nRegex Examples:'));
+    console.info('  --filter=/error|warning/i        # Case-insensitive regex');
+    console.info('  --filter=/\\d{4}-\\d{4}-\\d{4}-\\d{4}/  # Credit card pattern');
+    console.info('  --filter=/^[A-Z]/                # Starts with uppercase');
     
-    console.log(chalk.yellow('\nField/Type Examples:'));
-    console.log('  --filter=field:metadata         # Filter by field name');
-    console.log('  --filter=type:string            # Filter by string type');
-    console.log('  --field=user --type=object      # Combined filters');
+    console.info(chalk.yellow('\nField/Type Examples:'));
+    console.info('  --filter=field:metadata         # Filter by field name');
+    console.info('  --filter=type:string            # Filter by string type');
+    console.info('  --field=user --type=object      # Combined filters');
     
-    console.log(chalk.gray('\nFor more information, see the documentation.'));
+    console.info(chalk.gray('\nFor more information, see the documentation.'));
   }
 }
 

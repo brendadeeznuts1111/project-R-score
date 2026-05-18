@@ -22,8 +22,8 @@ import { CleanConsole } from './clean-console-integration';
 
 class ConsoleInspectionDemo {
     static demonstrateObjectInspection() {
-        console.log('\n🔍 Console Object Inspection Depth Demonstration');
-        console.log('='.repeat(60));
+        console.info('\n🔍 Console Object Inspection Depth Demonstration');
+        console.info('='.repeat(60));
 
         // Create deeply nested objects for demonstration
         const deeplyNested = {
@@ -50,16 +50,16 @@ class ConsoleInspectionDemo {
             symbol: Symbol('test-symbol')
         };
 
-        console.log('\n📋 Default Inspection (Depth 2):');
-        console.log('Current console depth configuration affects how deep objects are displayed');
-        console.log(deeplyNested);
+        console.info('\n📋 Default Inspection (Depth 2):');
+        console.info('Current console depth configuration affects how deep objects are displayed');
+        console.info(deeplyNested);
 
-        console.log('\n🔧 Manual Deep Inspection:');
-        console.log('Using Bun.inspect() for deeper inspection:');
-        console.log(Bun.inspect(deeplyNested, { depth: 5 }));
+        console.info('\n🔧 Manual Deep Inspection:');
+        console.info('Using Bun.inspect() for deeper inspection:');
+        console.info(Bun.inspect(deeplyNested, { depth: 5 }));
 
-        console.log('\n🎨 Custom Inspection with Colors:');
-        console.log(Bun.inspect(deeplyNested, {
+        console.info('\n🎨 Custom Inspection with Colors:');
+        console.info(Bun.inspect(deeplyNested, {
             depth: 4,
             colors: true,
             compact: false,
@@ -68,17 +68,17 @@ class ConsoleInspectionDemo {
         }));
 
         // Demonstrate different inspection options
-        console.log('\n📊 Compact vs Detailed Inspection:');
+        console.info('\n📊 Compact vs Detailed Inspection:');
 
-        console.log('\nCompact Mode:');
-        console.log(Bun.inspect(deeplyNested, {
+        console.info('\nCompact Mode:');
+        console.info(Bun.inspect(deeplyNested, {
             depth: 3,
             compact: true,
             colors: true
         }));
 
-        console.log('\nDetailed Mode:');
-        console.log(Bun.inspect(deeplyNested, {
+        console.info('\nDetailed Mode:');
+        console.info(Bun.inspect(deeplyNested, {
             depth: 3,
             compact: false,
             colors: true,
@@ -88,8 +88,8 @@ class ConsoleInspectionDemo {
     }
 
     static demonstrateInspectionUtilities() {
-        console.log('\n🛠️ Console Inspection Utilities');
-        console.log('='.repeat(50));
+        console.info('\n🛠️ Console Inspection Utilities');
+        console.info('='.repeat(50));
 
         // Demonstrate Bun.inspect with various options
         const complexObject = {
@@ -117,18 +117,18 @@ class ConsoleInspectionDemo {
             }
         };
 
-        console.log('\n📋 Standard Console.log:');
-        console.log(complexObject);
+        console.info('\n📋 Standard Console.log:');
+        console.info(complexObject);
 
-        console.log('\n🎨 Enhanced Bun.inspect with Colors:');
-        console.log(Bun.inspect(complexObject, {
+        console.info('\n🎨 Enhanced Bun.inspect with Colors:');
+        console.info(Bun.inspect(complexObject, {
             depth: 4,
             colors: true,
             compact: false
         }));
 
-        console.log('\n📏 Truncated Arrays and Strings:');
-        console.log(Bun.inspect(complexObject, {
+        console.info('\n📏 Truncated Arrays and Strings:');
+        console.info(Bun.inspect(complexObject, {
             depth: 3,
             colors: true,
             maxArrayLength: 2,
@@ -136,7 +136,7 @@ class ConsoleInspectionDemo {
         }));
 
         // Demonstrate custom inspection
-        console.log('\n🔧 Custom Inspection Function:');
+        console.info('\n🔧 Custom Inspection Function:');
         const customInspection = Bun.inspect(complexObject, {
             depth: 2,
             colors: true,
@@ -150,7 +150,7 @@ class ConsoleInspectionDemo {
                 }
             }
         });
-        console.log(customInspection);
+        console.info(customInspection);
     }
 }
 
@@ -160,106 +160,106 @@ class ConsoleInspectionDemo {
 
 class ConsoleStdinDemo {
     static async demonstrateStdinReading() {
-        console.log('\n📖 Console Stdin Reading Demonstration');
-        console.log('='.repeat(55));
+        console.info('\n📖 Console Stdin Reading Demonstration');
+        console.info('='.repeat(55));
 
         // Note: This would normally wait for user input
         // For demonstration, we'll show the structure and capabilities
-        console.log('\n🔄 Console as AsyncIterable (Structure):');
-        console.log(`
+        console.info('\n🔄 Console as AsyncIterable (Structure):');
+        console.info(`
 for await (const line of console) {
-  console.log(\`Received: \${line}\`);
+  console.info(\`Received: \${line}\`);
 }
     `);
 
-        console.log('\n📝 Example: Interactive Counter');
-        console.log('(This would normally wait for user input)');
+        console.info('\n📝 Example: Interactive Counter');
+        console.info('(This would normally wait for user input)');
 
         // Simulate the interactive counter without actually waiting for input
-        console.log('\n📊 Counter Example (Simulated):');
+        console.info('\n📊 Counter Example (Simulated):');
         this.simulateInteractiveCounter();
 
-        console.log('\n🧮 Example: Addition Calculator');
-        console.log('(This would normally wait for user input)');
+        console.info('\n🧮 Example: Addition Calculator');
+        console.info('(This would normally wait for user input)');
         this.simulateAdditionCalculator();
 
-        console.log('\n🎯 Example: Command Processor');
-        console.log('(This would normally wait for user input)');
+        console.info('\n🎯 Example: Command Processor');
+        console.info('(This would normally wait for user input)');
         this.simulateCommandProcessor();
     }
 
     static simulateInteractiveCounter() {
-        console.log('Let\'s count with user input!');
+        console.info('Let\'s count with user input!');
         console.write('Count: 0\n> ');
 
         // Simulate some inputs
         const simulatedInputs = ['5', '3', '2'];
         let count = 0;
 
-        console.log('(Simulating user inputs: 5, 3, 2)');
+        console.info('(Simulating user inputs: 5, 3, 2)');
         for (const input of simulatedInputs) {
             count += Number(input);
-            console.log(`Count: ${count} (after adding ${input})`);
+            console.info(`Count: ${count} (after adding ${input})`);
         }
     }
 
     static simulateAdditionCalculator() {
-        console.log('Addition Calculator - Enter numbers to add:');
+        console.info('Addition Calculator - Enter numbers to add:');
         console.write('Total: 0\n> ');
 
         const simulatedInputs = ['10', '15', '5'];
         let total = 0;
 
-        console.log('(Simulating user inputs: 10, 15, 5)');
+        console.info('(Simulating user inputs: 10, 15, 5)');
         for (const input of simulatedInputs) {
             const num = Number(input);
             if (!isNaN(num)) {
                 total += num;
-                console.log(`Total: ${total} (after adding ${num})`);
+                console.info(`Total: ${total} (after adding ${num})`);
             } else {
-                console.log(`Invalid number: ${input}`);
+                console.info(`Invalid number: ${input}`);
             }
         }
 
-        console.log(`Final total: ${total}`);
+        console.info(`Final total: ${total}`);
     }
 
     static simulateCommandProcessor() {
-        console.log('Command Processor - Available commands: help, status, time, quit');
+        console.info('Command Processor - Available commands: help, status, time, quit');
 
         const simulatedCommands = ['help', 'status', 'time', 'quit'];
 
-        console.log('(Simulating commands: help, status, time, quit)');
+        console.info('(Simulating commands: help, status, time, quit)');
         for (const cmd of simulatedCommands) {
-            console.log(`> ${cmd}`);
+            console.info(`> ${cmd}`);
 
             switch (cmd.toLowerCase()) {
                 case 'help':
-                    console.log('Available commands: help, status, time, quit');
+                    console.info('Available commands: help, status, time, quit');
                     break;
                 case 'status':
-                    console.log('Status: Running normally');
-                    console.log(`Memory: ${Math.round(Math.random() * 100)}MB`);
-                    console.log(`Uptime: ${Math.round(Math.random() * 3600)}s`);
+                    console.info('Status: Running normally');
+                    console.info(`Memory: ${Math.round(Math.random() * 100)}MB`);
+                    console.info(`Uptime: ${Math.round(Math.random() * 3600)}s`);
                     break;
                 case 'time':
-                    console.log(`Current time: ${new Date().toLocaleString()}`);
+                    console.info(`Current time: ${new Date().toLocaleString()}`);
                     break;
                 case 'quit':
-                    console.log('Goodbye!');
+                    console.info('Goodbye!');
                     break;
                 default:
-                    console.log(`Unknown command: ${cmd}`);
+                    console.info(`Unknown command: ${cmd}`);
             }
         }
     }
 
     static demonstrateAdvancedStdinFeatures() {
-        console.log('\n🚀 Advanced Stdin Features');
-        console.log('='.repeat(40));
+        console.info('\n🚀 Advanced Stdin Features');
+        console.info('='.repeat(40));
 
-        console.log('\n📡 Real-time Data Processing:');
-        console.log(`
+        console.info('\n📡 Real-time Data Processing:');
+        console.info(`
 // Process streaming data
 for await (const line of console) {
   const data = JSON.parse(line);
@@ -267,8 +267,8 @@ for await (const line of console) {
 }
     `);
 
-        console.log('\n🔍 Input Validation and Filtering:');
-        console.log(`
+        console.info('\n🔍 Input Validation and Filtering:');
+        console.info(`
 // Validate input as it comes in
 for await (const line of console) {
   if (line.trim() === '') continue;
@@ -277,8 +277,8 @@ for await (const line of console) {
 }
     `);
 
-        console.log('\n⚡ Batch Processing:');
-        console.log(`
+        console.info('\n⚡ Batch Processing:');
+        console.info(`
 // Collect and process in batches
 const batch = [];
 for await (const line of console) {
@@ -298,8 +298,8 @@ for await (const line of console) {
 
 class InteractiveConsoleApps {
     static async createTodoApp() {
-        console.log('\n📝 Interactive Todo App (Structure)');
-        console.log('='.repeat(45));
+        console.info('\n📝 Interactive Todo App (Structure)');
+        console.info('='.repeat(45));
 
         const todoAppCode = `
 // Interactive Todo Application
@@ -310,8 +310,8 @@ class TodoApp {
   }
 
   async start() {
-    console.log('📝 Welcome to Todo App!');
-    console.log('Commands: add <task>, list, done <id>, quit');
+    console.info('📝 Welcome to Todo App!');
+    console.info('Commands: add <task>, list, done <id>, quit');
     console.write('> ');
 
     for await (const line of console) {
@@ -328,10 +328,10 @@ class TodoApp {
           this.completeTodo(parseInt(args[0]));
           break;
         case 'quit':
-          console.log('Goodbye!');
+          console.info('Goodbye!');
           return;
         default:
-          console.log('Unknown command');
+          console.info('Unknown command');
       }
       
       console.write('> ');
@@ -345,19 +345,19 @@ class TodoApp {
       completed: false,
       createdAt: new Date()
     });
-    console.log(\`✅ Added: \${task}\`);
+    console.info(\`✅ Added: \${task}\`);
   }
 
   listTodos() {
     if (this.todos.length === 0) {
-      console.log('No todos yet!');
+      console.info('No todos yet!');
       return;
     }
     
-    console.log('📋 Your Todos:');
+    console.info('📋 Your Todos:');
     this.todos.forEach(todo => {
       const status = todo.completed ? '✅' : '⏳';
-      console.log(\`  \${todo.id}. \${status} \${todo.task}\`);
+      console.info(\`  \${todo.id}. \${status} \${todo.task}\`);
     });
   }
 
@@ -365,9 +365,9 @@ class TodoApp {
     const todo = this.todos.find(t => t.id === id);
     if (todo) {
       todo.completed = true;
-      console.log(\`🎉 Completed: \${todo.task}\`);
+      console.info(\`🎉 Completed: \${todo.task}\`);
     } else {
-      console.log(\`❌ Todo not found: \${id}\`);
+      console.info(\`❌ Todo not found: \${id}\`);
     }
   }
 }
@@ -377,12 +377,12 @@ const app = new TodoApp();
 app.start();
     `;
 
-        console.log(todoAppCode);
+        console.info(todoAppCode);
     }
 
     static async createChatInterface() {
-        console.log('\n💬 Interactive Chat Interface (Structure)');
-        console.log('='.repeat(50));
+        console.info('\n💬 Interactive Chat Interface (Structure)');
+        console.info('='.repeat(50));
 
         const chatInterfaceCode = `
 // Interactive Chat Interface
@@ -393,9 +393,9 @@ class ChatInterface {
   }
 
   async start() {
-    console.log('💬 Welcome to Chat Interface!');
-    console.log('Type your messages and press Enter to send.');
-    console.log('Commands: /help, /clear, /quit');
+    console.info('💬 Welcome to Chat Interface!');
+    console.info('Type your messages and press Enter to send.');
+    console.info('Commands: /help, /clear, /quit');
     console.write('> ');
 
     for await (const line of console) {
@@ -413,25 +413,25 @@ class ChatInterface {
   handleCommand(command) {
     switch (command.toLowerCase()) {
       case '/help':
-        console.log('Available commands: /help, /clear, /quit');
+        console.info('Available commands: /help, /clear, /quit');
         break;
       case '/clear':
         console.clear();
-        console.log('Screen cleared!');
+        console.info('Screen cleared!');
         break;
       case '/quit':
-        console.log('Goodbye!');
+        console.info('Goodbye!');
         process.exit(0);
         break;
       default:
-        console.log(\`Unknown command: \${command}\`);
+        console.info(\`Unknown command: \${command}\`);
     }
   }
 
   addMessage(sender, message) {
     const timestamp = new Date().toLocaleTimeString();
     this.messages.push({ sender, message, timestamp });
-    console.log(\`[\${timestamp}] \${sender}: \${message}\`);
+    console.info(\`[\${timestamp}] \${sender}: \${message}\`);
   }
 
   simulateResponse(userMessage) {
@@ -455,7 +455,7 @@ const chat = new ChatInterface();
 chat.start();
     `;
 
-        console.log(chatInterfaceCode);
+        console.info(chatInterfaceCode);
     }
 }
 
@@ -465,11 +465,11 @@ chat.start();
 
 class ConsoleUtilities {
     static demonstrateConsoleUtilities() {
-        console.log('\n🛠️ Console Utilities and Enhancements');
-        console.log('='.repeat(55));
+        console.info('\n🛠️ Console Utilities and Enhancements');
+        console.info('='.repeat(55));
 
         // Performance timing
-        console.log('\n⏱️ Performance Timing:');
+        console.info('\n⏱️ Performance Timing:');
         const start = performance.now();
 
         // Simulate some work
@@ -479,30 +479,30 @@ class ConsoleUtilities {
         }
 
         const end = performance.now();
-        console.log(`Calculation completed in ${(end - start).toFixed(2)}ms`);
-        console.log(`Result: ${sum}`);
+        console.info(`Calculation completed in ${(end - start).toFixed(2)}ms`);
+        console.info(`Result: ${sum}`);
 
         // Memory usage
-        console.log('\n💾 Memory Usage Information:');
+        console.info('\n💾 Memory Usage Information:');
         if (typeof process !== 'undefined' && process.memoryUsage) {
             const memUsage = process.memoryUsage();
-            console.log('Memory Usage:');
-            console.log(`  RSS: ${(memUsage.rss / 1024 / 1024).toFixed(2)} MB`);
-            console.log(`  Heap Used: ${(memUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-            console.log(`  Heap Total: ${(memUsage.heapTotal / 1024 / 1024).toFixed(2)} MB`);
-            console.log(`  External: ${(memUsage.external / 1024 / 1024).toFixed(2)} MB`);
+            console.info('Memory Usage:');
+            console.info(`  RSS: ${(memUsage.rss / 1024 / 1024).toFixed(2)} MB`);
+            console.info(`  Heap Used: ${(memUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+            console.info(`  Heap Total: ${(memUsage.heapTotal / 1024 / 1024).toFixed(2)} MB`);
+            console.info(`  External: ${(memUsage.external / 1024 / 1024).toFixed(2)} MB`);
         }
 
         // Environment information
-        console.log('\n🌍 Environment Information:');
-        console.log(`Platform: ${process.platform}`);
-        console.log(`Node Version: ${process.version}`);
-        console.log(`Bun Version: ${typeof Bun !== 'undefined' ? Bun.version : 'N/A'}`);
-        console.log(`Architecture: ${process.arch}`);
-        console.log(`PID: ${process.pid}`);
+        console.info('\n🌍 Environment Information:');
+        console.info(`Platform: ${process.platform}`);
+        console.info(`Node Version: ${process.version}`);
+        console.info(`Bun Version: ${typeof Bun !== 'undefined' ? Bun.version : 'N/A'}`);
+        console.info(`Architecture: ${process.arch}`);
+        console.info(`PID: ${process.pid}`);
 
         // Console methods demonstration
-        console.log('\n📊 Console Methods Demonstration:');
+        console.info('\n📊 Console Methods Demonstration:');
 
         const testData = {
             strings: ['hello', 'world', 'test'],
@@ -510,37 +510,37 @@ class ConsoleUtilities {
             mixed: [1, 'two', { three: 3 }, [4, 5]]
         };
 
-        console.log('\n📋 console.table():');
+        console.info('\n📋 console.table():');
         console.table(testData);
 
-        console.log('\n⚠️ console.warn():');
+        console.info('\n⚠️ console.warn():');
         console.warn('This is a warning message');
 
-        console.log('\n❌ console.error():');
+        console.info('\n❌ console.error():');
         console.error('This is an error message');
 
-        console.log('\nℹ️ console.info():');
+        console.info('\nℹ️ console.info():');
         console.info('This is an informational message');
 
-        console.log('\n🔍 console.dir():');
+        console.info('\n🔍 console.dir():');
         console.dir(testData, { depth: 3, colors: true });
 
         // Grouping
-        console.log('\n📁 Console Grouping:');
+        console.info('\n📁 Console Grouping:');
         console.group('First Level');
-        console.log('Inside first group');
+        console.info('Inside first group');
 
         console.group('Second Level');
-        console.log('Inside second group');
-        console.log('Nested information here');
+        console.info('Inside second group');
+        console.info('Nested information here');
         console.groupEnd();
 
-        console.log('Back to first level');
+        console.info('Back to first level');
         console.groupEnd();
-        console.log('Back to root level');
+        console.info('Back to root level');
 
         // Counting
-        console.log('\n🔢 Console Counting:');
+        console.info('\n🔢 Console Counting:');
         console.count('Counter A');
         console.count('Counter A');
         console.count('Counter B');
@@ -548,46 +548,46 @@ class ConsoleUtilities {
         console.count('Counter B');
         console.count('Counter B');
 
-        console.log('\n📊 Reset counters:');
+        console.info('\n📊 Reset counters:');
         console.countReset('Counter A');
         console.count('Counter A');
     }
 
     static demonstrateAdvancedFormatting() {
-        console.log('\n🎨 Advanced Console Formatting');
-        console.log('='.repeat(45));
+        console.info('\n🎨 Advanced Console Formatting');
+        console.info('='.repeat(45));
 
         // ANSI color codes
-        console.log('\n🌈 ANSI Color Codes:');
-        console.log('\x1b[31mRed text\x1b[0m');
-        console.log('\x1b[32mGreen text\x1b[0m');
-        console.log('\x1b[33mYellow text\x1b[0m');
-        console.log('\x1b[34mBlue text\x1b[0m');
-        console.log('\x1b[35mMagenta text\x1b[0m');
-        console.log('\x1b[36mCyan text\x1b[0m');
-        console.log('\x1b[37mWhite text\x1b[0m');
+        console.info('\n🌈 ANSI Color Codes:');
+        console.info('\x1b[31mRed text\x1b[0m');
+        console.info('\x1b[32mGreen text\x1b[0m');
+        console.info('\x1b[33mYellow text\x1b[0m');
+        console.info('\x1b[34mBlue text\x1b[0m');
+        console.info('\x1b[35mMagenta text\x1b[0m');
+        console.info('\x1b[36mCyan text\x1b[0m');
+        console.info('\x1b[37mWhite text\x1b[0m');
 
         // Background colors
-        console.log('\n🎨 Background Colors:');
-        console.log('\x1b[41mRed background\x1b[0m');
-        console.log('\x1b[42mGreen background\x1b[0m');
-        console.log('\x1b[43mYellow background\x1b[0m');
-        console.log('\x1b[44mBlue background\x1b[0m');
-        console.log('\x1b[45mMagenta background\x1b[0m');
+        console.info('\n🎨 Background Colors:');
+        console.info('\x1b[41mRed background\x1b[0m');
+        console.info('\x1b[42mGreen background\x1b[0m');
+        console.info('\x1b[43mYellow background\x1b[0m');
+        console.info('\x1b[44mBlue background\x1b[0m');
+        console.info('\x1b[45mMagenta background\x1b[0m');
 
         // Text styles
-        console.log('\n✨ Text Styles:');
-        console.log('\x1b[1mBold text\x1b[0m');
-        console.log('\x1b[2mDim text\x1b[0m');
-        console.log('\x1b[3mItalic text\x1b[0m');
-        console.log('\x1b[4mUnderlined text\x1b[0m');
+        console.info('\n✨ Text Styles:');
+        console.info('\x1b[1mBold text\x1b[0m');
+        console.info('\x1b[2mDim text\x1b[0m');
+        console.info('\x1b[3mItalic text\x1b[0m');
+        console.info('\x1b[4mUnderlined text\x1b[0m');
 
         // Progress bar simulation
-        console.log('\n📊 Progress Bar Simulation:');
+        console.info('\n📊 Progress Bar Simulation:');
         this.simulateProgressBar();
 
         // Spinner animation
-        console.log('\n🔄 Spinner Animation:');
+        console.info('\n🔄 Spinner Animation:');
         this.simulateSpinner();
     }
 
@@ -605,7 +605,7 @@ class ConsoleUtilities {
             if (i < total) {
                 process.stdout.write(`\r[${bar}] ${percentage}%`);
             } else {
-                console.log(`\r[${bar}] ${percentage}% Complete!`);
+                console.info(`\r[${bar}] ${percentage}% Complete!`);
             }
 
             // Simulate work
@@ -622,7 +622,7 @@ class ConsoleUtilities {
             Bun.sleepSync(100);
         }
 
-        console.log('\r✅ Processing complete!');
+        console.info('\r✅ Processing complete!');
     }
 }
 

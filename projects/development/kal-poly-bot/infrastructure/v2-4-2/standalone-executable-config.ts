@@ -325,7 +325,7 @@ export class StandaloneExecutableOptimizer {
       if (feature("ENABLE_COMPRESSION")) {
         // This would integrate with binary compression tools
         // For now, just log the optimization
-        console.log(`Binary optimization: ${originalSize} bytes`);
+        console.info(`Binary optimization: ${originalSize} bytes`);
       }
     } catch (error: unknown) {
       console.warn("Binary optimization failed:", error);

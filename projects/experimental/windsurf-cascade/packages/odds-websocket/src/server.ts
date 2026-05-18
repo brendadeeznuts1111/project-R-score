@@ -20,7 +20,7 @@ export class OddsWebSocketServer {
       open: (ws: uWS.WebSocket<unknown>) => {
         const id = this.generateConnectionId();
         this.connections.set(id, ws);
-        console.log(`Connection opened: ${id}`);
+        console.info(`Connection opened: ${id}`);
         
         this.send(ws, {
           type: 'connection',
@@ -42,7 +42,7 @@ export class OddsWebSocketServer {
         const id = this.findConnectionId(ws);
         if (id) {
           this.connections.delete(id);
-          console.log(`Connection closed: ${id}`);
+          console.info(`Connection closed: ${id}`);
         }
       }
     });
@@ -60,7 +60,7 @@ export class OddsWebSocketServer {
         this.handlePing(ws, message);
         break;
       default:
-        console.log(`Unknown message type: ${message.type}`);
+        console.info(`Unknown message type: ${message.type}`);
     }
   }
 
@@ -117,7 +117,7 @@ export class OddsWebSocketServer {
   public start(): void {
     this.server.listen(this.port, (token: boolean) => {
       if (token) {
-        console.log(`Odds WebSocket server started on port ${this.port}`);
+        console.info(`Odds WebSocket server started on port ${this.port}`);
       } else {
         console.error(`Failed to start server on port ${this.port}`);
       }

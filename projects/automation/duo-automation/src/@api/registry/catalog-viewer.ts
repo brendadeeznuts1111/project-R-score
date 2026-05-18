@@ -731,7 +731,7 @@ export class CatalogViewer {
       }
     });
 
-    console.log(`🗂️ Extended Catalog initialized with ${this.items.size} items`);
+    console.info(`🗂️ Extended Catalog initialized with ${this.items.size} items`);
   }
 
   /**
@@ -1498,17 +1498,17 @@ export class CatalogViewer {
 
   // 🆕 Private action execution methods
   private async executeScanAction(config: any): Promise<void> {
-    console.log(`🔍 Executing security scan with config:`, config);
+    console.info(`🔍 Executing security scan with config:`, config);
     // Implementation would integrate with actual security scanning tools
   }
 
   private async executeNotifyAction(config: any): Promise<void> {
-    console.log(`📧 Sending notification with config:`, config);
+    console.info(`📧 Sending notification with config:`, config);
     // Implementation would integrate with email, Slack, etc.
   }
 
   private async executeUpdateAction(config: any): Promise<void> {
-    console.log(`🔄 Updating items with config:`, config);
+    console.info(`🔄 Updating items with config:`, config);
     // Implementation would perform automated updates
   }
 
@@ -1751,44 +1751,44 @@ export function formatRegistryItem(item: RegistryItem, options: {
 export async function viewExtendedCatalog(): Promise<void> {
   const catalog = new CatalogViewer();
   
-  console.log('\n🗂️ EXTENDED Empire Pro Private Registry Catalog\n');
+  console.info('\n🗂️ EXTENDED Empire Pro Private Registry Catalog\n');
   
   // Show comprehensive statistics
-  console.log(catalog.generateComprehensiveReport());
+  console.info(catalog.generateComprehensiveReport());
   
   // Show top performing items
-  console.log('\n🏆 Top Performing Items:\n');
+  console.info('\n🏆 Top Performing Items:\n');
   const topPerformers = catalog.getItemsByPerformanceRating('A+').slice(0, 3);
   topPerformers.forEach(item => {
-    console.log(formatRegistryItem(item, { 
+    console.info(formatRegistryItem(item, { 
       includeDetails: false, 
       includePerformance: true,
       colorize: true 
     }));
-    console.log('');
+    console.info('');
   });
   
   // Show security issues
-  console.log('\n🚨 Security Issues Requiring Attention:\n');
+  console.info('\n🚨 Security Issues Requiring Attention:\n');
   const securityIssues = catalog.getSecurityIssues();
   if (securityIssues.length > 0) {
     securityIssues.forEach(item => {
-      console.log(`⚠️  ${item.name} (${item.security.score} score, ${item.security.vulnerabilities} vulnerabilities)`);
+      console.info(`⚠️  ${item.name} (${item.security.score} score, ${item.security.vulnerabilities} vulnerabilities)`);
     });
   } else {
-    console.log('✅ No security issues found');
+    console.info('✅ No security issues found');
   }
   
   // Show extended search examples
-  console.log('\n🔍 Extended Search Examples:\n');
-  console.log('  • Performance filtering: catalog.extendedSearch({ performanceRating: "A+" })');
-  console.log('  • Security filtering: catalog.extendedSearch({ securityScore: "A", hasVulnerabilities: false })');
-  console.log('  • Date range: catalog.extendedSearch({ dateRange: { from: "2026-01-01", to: "2026-01-31" } })');
-  console.log('  • Maintainer search: catalog.extendedSearch({ maintainer: "Empire Pro Team" })');
-  console.log('  • Sorted results: catalog.extendedSearch({ sortBy: "performance", sortOrder: "desc" })');
-  console.log('  • Compare items: catalog.compareItems(["item1", "item2"])');
-  console.log('  • Dependency graph: catalog.generateDependencyGraph()');
-  console.log('  • Export data: await catalog.exportData({ format: "json", includeMetadata: true })');
+  console.info('\n🔍 Extended Search Examples:\n');
+  console.info('  • Performance filtering: catalog.extendedSearch({ performanceRating: "A+" })');
+  console.info('  • Security filtering: catalog.extendedSearch({ securityScore: "A", hasVulnerabilities: false })');
+  console.info('  • Date range: catalog.extendedSearch({ dateRange: { from: "2026-01-01", to: "2026-01-31" } })');
+  console.info('  • Maintainer search: catalog.extendedSearch({ maintainer: "Empire Pro Team" })');
+  console.info('  • Sorted results: catalog.extendedSearch({ sortBy: "performance", sortOrder: "desc" })');
+  console.info('  • Compare items: catalog.compareItems(["item1", "item2"])');
+  console.info('  • Dependency graph: catalog.generateDependencyGraph()');
+  console.info('  • Export data: await catalog.exportData({ format: "json", includeMetadata: true })');
 }
 
 /**

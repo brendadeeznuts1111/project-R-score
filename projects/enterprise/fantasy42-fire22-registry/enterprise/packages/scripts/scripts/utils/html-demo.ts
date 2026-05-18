@@ -14,18 +14,18 @@ import { TimezoneUtils } from './src/shared/timezone-configuration';
 import { envConfig } from './src/shared/environment-configuration';
 
 async function demonstrateHTMLTemplates() {
-  console.log('🌐 HTML Templates Demo with Bun Import\n');
+  console.info('🌐 HTML Templates Demo with Bun Import\n');
 
   // 1. Show available templates
-  console.log('📋 Available Templates:');
+  console.info('📋 Available Templates:');
   const templates = htmlTemplateManager.getAllTemplateNames();
   templates.forEach(template => {
-    console.log(`   • ${template}`);
+    console.info(`   • ${template}`);
   });
-  console.log('');
+  console.info('');
 
   // 2. Demonstrate template rendering
-  console.log('🎨 Template Rendering:');
+  console.info('🎨 Template Rendering:');
 
   // Dashboard template
   const dashboardData = {
@@ -60,9 +60,9 @@ async function demonstrateHTMLTemplates() {
     },
   };
 
-  console.log('   📊 Rendering dashboard template...');
+  console.info('   📊 Rendering dashboard template...');
   const dashboardHTML = htmlTemplateManager.renderTemplate('dashboard', dashboardData);
-  console.log(`   ✅ Dashboard HTML generated (${dashboardHTML.length} characters)\n`);
+  console.info(`   ✅ Dashboard HTML generated (${dashboardHTML.length} characters)\n`);
 
   // Financial report template
   const reportData = {
@@ -75,26 +75,26 @@ async function demonstrateHTMLTemplates() {
     complianceRate: '98.5%',
   };
 
-  console.log('   📈 Rendering financial report template...');
+  console.info('   📈 Rendering financial report template...');
   const reportHTML = htmlTemplateManager.renderTemplate('financial-report', reportData);
-  console.log(`   ✅ Financial report HTML generated (${reportHTML.length} characters)\n`);
+  console.info(`   ✅ Financial report HTML generated (${reportHTML.length} characters)\n`);
 
   // 3. Demonstrate HTML export functionality
-  console.log('💾 HTML Export Functionality:');
+  console.info('💾 HTML Export Functionality:');
 
   // Export dashboard to file
   const dashboardPath = await htmlExportService.exportDashboard(
     dashboardData,
     './demo-dashboard.html'
   );
-  console.log(`   📄 Dashboard exported to: ${dashboardPath}`);
+  console.info(`   📄 Dashboard exported to: ${dashboardPath}`);
 
   // Export financial report
   const reportPath = await htmlExportService.exportFinancialReport(
     reportData,
     './demo-financial-report.html'
   );
-  console.log(`   📄 Financial report exported to: ${reportPath}`);
+  console.info(`   📄 Financial report exported to: ${reportPath}`);
 
   // Export collections summary
   const collectionsData = {
@@ -136,15 +136,15 @@ async function demonstrateHTMLTemplates() {
     collectionsData,
     './demo-collections.html'
   );
-  console.log(`   📄 Collections summary exported to: ${collectionsPath}\n`);
+  console.info(`   📄 Collections summary exported to: ${collectionsPath}\n`);
 
   // 4. Demonstrate HTTP server with HTML templates
-  console.log('🌐 HTTP Server with HTML Templates:');
-  console.log('   🚀 Starting demo server on http://localhost:3001');
-  console.log('   📊 Dashboard: http://localhost:3001/dashboard');
-  console.log('   📈 Report: http://localhost:3001/report');
-  console.log('   💳 Collections: http://localhost:3001/collections');
-  console.log('   (Press Ctrl+C to stop)\n');
+  console.info('🌐 HTTP Server with HTML Templates:');
+  console.info('   🚀 Starting demo server on http://localhost:3001');
+  console.info('   📊 Dashboard: http://localhost:3001/dashboard');
+  console.info('   📈 Report: http://localhost:3001/report');
+  console.info('   💳 Collections: http://localhost:3001/collections');
+  console.info('   (Press Ctrl+C to stop)\n');
 
   // Start HTTP server
   Bun.serve({
@@ -193,13 +193,13 @@ async function demonstrateHTMLTemplates() {
   });
 
   // Keep the server running for demo
-  console.log('🎉 HTML Templates Demo Complete!');
-  console.log("Bun's HTML import feature allows you to:");
-  console.log('  • Import HTML files as strings with type: "text"');
-  console.log('  • Use templates for dynamic content generation');
-  console.log('  • Export HTML reports for regulatory compliance');
-  console.log('  • Serve HTML content via HTTP servers');
-  console.log('  • Hot reload templates during development');
+  console.info('🎉 HTML Templates Demo Complete!');
+  console.info("Bun's HTML import feature allows you to:");
+  console.info('  • Import HTML files as strings with type: "text"');
+  console.info('  • Use templates for dynamic content generation');
+  console.info('  • Export HTML reports for regulatory compliance');
+  console.info('  • Serve HTML content via HTTP servers');
+  console.info('  • Hot reload templates during development');
 }
 
 if (import.meta.main) {

@@ -319,4 +319,4 @@ describe("Edge Cases and Stress Tests", () => {
   });
 });
 
-console.log('\n🔬 Edge Cases and Stress Tests\n');
+console.info('\n🔬 Edge Cases and Stress Tests\n');

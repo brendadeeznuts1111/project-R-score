@@ -6,15 +6,15 @@
  */
 
 async function main() {
-  console.log('🔨 Executable Compilation Demo');
-  console.log('==============================');
+  console.info('🔨 Executable Compilation Demo');
+  console.info('==============================');
 
   const outputDir = './dist/executables';
 
   // Ensure output directory exists
   await Bun.write(`${outputDir}/.gitkeep`, '');
 
-  console.log('📁 Building executables...');
+  console.info('📁 Building executables...');
 
   try {
     // Build for multiple platforms with different configurations
@@ -52,7 +52,7 @@ async function main() {
     ];
 
     for (const build of builds) {
-      console.log(`\n🏗️  Building for ${build.name}...`);
+      console.info(`\n🏗️  Building for ${build.name}...`);
 
       try {
         await Bun.build({
@@ -77,18 +77,18 @@ async function main() {
           sourcemap: 'linked',
         });
 
-        console.log(`✅ Built: ${build.outfile}`);
+        console.info(`✅ Built: ${build.outfile}`);
 
         // Show file size
         const stats = await Bun.file(build.outfile).stat();
-        console.log(`📏 Size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
+        console.info(`📏 Size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
       } catch (error) {
         console.error(`❌ Failed to build ${build.name}:`, error);
       }
     }
 
     // Build with Windows metadata
-    console.log('\n🏗️  Building Windows executable with metadata...');
+    console.info('\n🏗️  Building Windows executable with metadata...');
 
     await Bun.build({
       entrypoints: ['./scripts/user-agent-demo.ts'],
@@ -106,10 +106,10 @@ async function main() {
       },
     });
 
-    console.log('✅ Windows executable with metadata built');
+    console.info('✅ Windows executable with metadata built');
 
     // Build with macOS settings
-    console.log('\n🏗️  Building macOS executable with bundle settings...');
+    console.info('\n🏗️  Building macOS executable with bundle settings...');
 
     await Bun.build({
       entrypoints: ['./scripts/user-agent-demo.ts'],
@@ -125,29 +125,29 @@ async function main() {
       },
     });
 
-    console.log('✅ macOS executable with bundle settings built');
+    console.info('✅ macOS executable with bundle settings built');
 
-    console.log('\n📋 Build Summary:');
-    console.log('================');
-    console.log('✅ All executables built successfully!');
-    console.log(`📁 Output directory: ${outputDir}`);
-    console.log('');
-    console.log('🚀 Usage Examples:');
-    console.log('==================');
-    console.log('# Run Linux executable');
-    console.log('./dist/executables/crystal-clear-linux-x64');
-    console.log('');
-    console.log('# Run Windows executable');
-    console.log('./dist/executables/crystal-clear-windows-x64.exe');
-    console.log('');
-    console.log('# Run macOS executable');
-    console.log('./dist/executables/crystal-clear-macos-arm64');
-    console.log('');
-    console.log('🔍 All executables include embedded User-Agent:');
-    console.log('   CrystalClearArchitecture/2.0.0');
-    console.log('');
-    console.log('📊 Check embedded arguments:');
-    console.log('   process.execArgv will show the embedded flags');
+    console.info('\n📋 Build Summary:');
+    console.info('================');
+    console.info('✅ All executables built successfully!');
+    console.info(`📁 Output directory: ${outputDir}`);
+    console.info('');
+    console.info('🚀 Usage Examples:');
+    console.info('==================');
+    console.info('# Run Linux executable');
+    console.info('./dist/executables/crystal-clear-linux-x64');
+    console.info('');
+    console.info('# Run Windows executable');
+    console.info('./dist/executables/crystal-clear-windows-x64.exe');
+    console.info('');
+    console.info('# Run macOS executable');
+    console.info('./dist/executables/crystal-clear-macos-arm64');
+    console.info('');
+    console.info('🔍 All executables include embedded User-Agent:');
+    console.info('   CrystalClearArchitecture/2.0.0');
+    console.info('');
+    console.info('📊 Check embedded arguments:');
+    console.info('   process.execArgv will show the embedded flags');
   } catch (error) {
     console.error('❌ Build failed:', error);
     process.exit(1);

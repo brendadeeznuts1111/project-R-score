@@ -30,7 +30,7 @@ export class FeatureFlagsService extends BaseService {
 
   async initialize(): Promise<void> {
     await super.initialize();
-    console.log('Feature flags service initialized');
+    console.info('Feature flags service initialized');
   }
 
   /**
@@ -112,7 +112,7 @@ export class FeatureFlagsService extends BaseService {
     }
 
     flag.enabled = enabled;
-    console.log(`Feature '${featureName}' ${enabled ? 'enabled' : 'disabled'}`);
+    console.info(`Feature '${featureName}' ${enabled ? 'enabled' : 'disabled'}`);
     return true;
   }
 
@@ -127,7 +127,7 @@ export class FeatureFlagsService extends BaseService {
     }
 
     Object.assign(flag, updates);
-    console.log(`Feature '${featureName}' updated:`, updates);
+    console.info(`Feature '${featureName}' updated:`, updates);
     return true;
   }
 
@@ -141,7 +141,7 @@ export class FeatureFlagsService extends BaseService {
     }
 
     this.flags.set(flag.name, flag);
-    console.log(`Feature flag '${flag.name}' added`);
+    console.info(`Feature flag '${flag.name}' added`);
     return true;
   }
 
@@ -151,7 +151,7 @@ export class FeatureFlagsService extends BaseService {
   removeFlag(featureName: string): boolean {
     const removed = this.flags.delete(featureName);
     if (removed) {
-      console.log(`Feature flag '${featureName}' removed`);
+      console.info(`Feature flag '${featureName}' removed`);
     } else {
       console.warn(`Feature flag '${featureName}' not found`);
     }
@@ -256,6 +256,6 @@ export class FeatureFlagsService extends BaseService {
     for (const [name, flag] of Object.entries(config)) {
       this.flags.set(name, flag);
     }
-    console.log(`Imported ${Object.keys(config).length} feature flags`);
+    console.info(`Imported ${Object.keys(config).length} feature flags`);
   }
 }

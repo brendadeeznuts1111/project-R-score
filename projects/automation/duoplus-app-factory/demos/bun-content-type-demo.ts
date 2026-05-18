@@ -67,7 +67,7 @@ serve({
       try {
         return new Response(Bun.file("web-app/app.js")); // ← content-type: application/javascript
       } catch {
-        return new Response("console.log('JS file not found');", {
+        return new Response("console.info('JS file not found');", {
           headers: { "content-type": "application/javascript" }
         });
       }
@@ -108,10 +108,10 @@ Test with:
   },
 });
 
-console.log("\n✅ Content-Type Demo listening on http://localhost:3002");
-console.log("\n📝 Try these commands:");
-console.log("   curl -i http://localhost:3002/api");
-console.log("   curl -i http://localhost:3002/style.css");
-console.log("   curl -i http://localhost:3002/text");
-console.log("   curl -i http://localhost:3002/search");
-console.log("\n🌐 Or visit: http://localhost:3002\n");
+console.info("\n✅ Content-Type Demo listening on http://localhost:3002");
+console.info("\n📝 Try these commands:");
+console.info("   curl -i http://localhost:3002/api");
+console.info("   curl -i http://localhost:3002/style.css");
+console.info("   curl -i http://localhost:3002/text");
+console.info("   curl -i http://localhost:3002/search");
+console.info("\n🌐 Or visit: http://localhost:3002\n");

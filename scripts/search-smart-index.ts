@@ -3,7 +3,7 @@
 import { buildSymbolIndex } from '../lib/docs/smart-symbol-index';
 
 function usage(): void {
-  console.log(`
+  console.info(`
 Smart Search Index Builder
 
 USAGE:
@@ -55,21 +55,21 @@ async function main(): Promise<void> {
     return;
   }
 
-  console.log('Building smart symbol index...');
+  console.info('Building smart symbol index...');
   const result = await buildSymbolIndex({
     rootDir: parsed.path || '.',
     dbPath: parsed.db,
     rebuild: Boolean(parsed.rebuild),
   });
 
-  console.log(`Root: ${result.rootDir}`);
-  console.log(`DB: ${result.dbPath}`);
-  console.log(`Files discovered: ${result.totalFiles}`);
-  console.log(`Files indexed: ${result.indexedFiles}`);
-  console.log(`Files skipped (unchanged): ${result.skippedFiles}`);
-  console.log(`Total symbols: ${result.totalSymbols}`);
-  console.log(`Total edges: ${result.totalEdges}`);
-  console.log(`Completed in ${result.elapsedMs.toFixed(2)}ms`);
+  console.info(`Root: ${result.rootDir}`);
+  console.info(`DB: ${result.dbPath}`);
+  console.info(`Files discovered: ${result.totalFiles}`);
+  console.info(`Files indexed: ${result.indexedFiles}`);
+  console.info(`Files skipped (unchanged): ${result.skippedFiles}`);
+  console.info(`Total symbols: ${result.totalSymbols}`);
+  console.info(`Total edges: ${result.totalEdges}`);
+  console.info(`Completed in ${result.elapsedMs.toFixed(2)}ms`);
 }
 
 await main();

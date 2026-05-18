@@ -93,9 +93,9 @@ function getScopeSecretsConfig(scope: string): ScopeSecretsConfig {
 
 // Mock Bun secrets API integration
 function mockBunSecretsAPI(descriptor: SecretDescriptor): Record<string, string> {
-  console.log(UnicodeTableFormatter.colorize(`🔐 Accessing secrets for ${descriptor.serviceName}`, DesignSystem.text.accent.blue));
-  console.log(UnicodeTableFormatter.colorize(`🗄️  Backend: ${descriptor.backend}`, DesignSystem.text.accent.green));
-  console.log(UnicodeTableFormatter.colorize(`🚩 Flag: ${descriptor.persistenceFlag}`, DesignSystem.text.accent.purple));
+  console.info(UnicodeTableFormatter.colorize(`🔐 Accessing secrets for ${descriptor.serviceName}`, DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize(`🗄️  Backend: ${descriptor.backend}`, DesignSystem.text.accent.green));
+  console.info(UnicodeTableFormatter.colorize(`🚩 Flag: ${descriptor.persistenceFlag}`, DesignSystem.text.accent.purple));
   
   // Mock secrets based on scope
   const mockSecrets: Record<string, Record<string, string>> = {
@@ -124,7 +124,7 @@ function mockBunSecretsAPI(descriptor: SecretDescriptor): Record<string, string>
   return mockSecrets[descriptor.serviceName] || {};
 }
 
-console.log(EmpireProDashboard.generateHeader(
+console.info(EmpireProDashboard.generateHeader(
   'SECRETS INTEGRATION DEMO',
   'Scope Lookup + Bun Secrets API Integration with Empire Pro Colors'
 ));
@@ -132,7 +132,7 @@ console.log(EmpireProDashboard.generateHeader(
 // Demo scenarios with different scopes
 const scopes = ['ENTERPRISE', 'DEVELOPMENT', 'LOCAL-SANDBOX'];
 
-console.log(UnicodeTableFormatter.colorize('🔐 SCOPE-BASED SECRETS CONFIGURATION', DesignSystem.text.accent.blue));
+console.info(UnicodeTableFormatter.colorize('🔐 SCOPE-BASED SECRETS CONFIGURATION', DesignSystem.text.accent.blue));
 
 const secretsConfigResults = scopes.map(scope => {
   const config = getScopeSecretsConfig(scope);
@@ -176,17 +176,17 @@ const secretsConfigResults = scopes.map(scope => {
   };
 });
 
-console.log(UnicodeTableFormatter.generateTable(secretsConfigResults, { maxWidth: 140 }));
+console.info(UnicodeTableFormatter.generateTable(secretsConfigResults, { maxWidth: 140 }));
 
 // Secrets access demo
-console.log(EmpireProDashboard.generateSection('SECRETS ACCESS DEMO', '🔑'));
+console.info(EmpireProDashboard.generateSection('SECRETS ACCESS DEMO', '🔑'));
 
 scopes.forEach(scope => {
   const config = getScopeSecretsConfig(scope);
   const descriptor = getSecretDescriptor(scope);
   const secrets = mockBunSecretsAPI(descriptor);
   
-  console.log(UnicodeTableFormatter.colorize(`\n🔐 ${scope} Scope Secrets Access`, DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize(`\n🔐 ${scope} Scope Secrets Access`, DesignSystem.text.accent.blue));
   
   const secretsResults = Object.entries(secrets).map(([key, value]) => ({
     Key: UnicodeTableFormatter.colorize(key, DesignSystem.text.accent.purple),
@@ -205,11 +205,11 @@ scopes.forEach(scope => {
     Status: UnicodeTableFormatter.formatStatus('operational')
   }));
   
-  console.log(UnicodeTableFormatter.generateTable(secretsResults, { maxWidth: 120 }));
+  console.info(UnicodeTableFormatter.generateTable(secretsResults, { maxWidth: 120 }));
 });
 
 // Security validation demo
-console.log(EmpireProDashboard.generateSection('SECURITY VALIDATION', '🛡️'));
+console.info(EmpireProDashboard.generateSection('SECURITY VALIDATION', '🛡️'));
 
 const securityValidation = [
   {
@@ -250,13 +250,13 @@ const validationResults = securityValidation.map(validation => ({
   Status: UnicodeTableFormatter.formatStatus('operational')
 }));
 
-console.log(UnicodeTableFormatter.colorize('🛡️ Security Compliance Validation', DesignSystem.text.accent.blue));
-console.log(UnicodeTableFormatter.generateTable(validationResults, { maxWidth: 120 }));
+console.info(UnicodeTableFormatter.colorize('🛡️ Security Compliance Validation', DesignSystem.text.accent.blue));
+console.info(UnicodeTableFormatter.generateTable(validationResults, { maxWidth: 120 }));
 
 // Bun secrets API integration example
-console.log(EmpireProDashboard.generateSection('BUN SECRETS API INTEGRATION', '🔧'));
+console.info(EmpireProDashboard.generateSection('BUN SECRETS API INTEGRATION', '🔧'));
 
-console.log(UnicodeTableFormatter.colorize('📋 Example Usage in Production:', DesignSystem.text.primary));
+console.info(UnicodeTableFormatter.colorize('📋 Example Usage in Production:', DesignSystem.text.primary));
 
 const usageExample = [
   {
@@ -287,22 +287,22 @@ const usageResults = usageExample.map(step => ({
   Result: UnicodeTableFormatter.colorize(step.Result, DesignSystem.text.accent.purple)
 }));
 
-console.log(UnicodeTableFormatter.generateTable(usageResults, { maxWidth: 100 }));
+console.info(UnicodeTableFormatter.generateTable(usageResults, { maxWidth: 100 }));
 
-console.log(EmpireProDashboard.generateFooter());
+console.info(EmpireProDashboard.generateFooter());
 
-console.log('\n🎉 SECRETS INTEGRATION DEMO COMPLETE!');
-console.log('✅ Scope lookup integrated with Bun secrets API');
-console.log('✅ Scope-based secrets configuration');
-console.log('✅ Enterprise-grade security validation');
-console.log('✅ Multi-level encryption (standard/enhanced/maximum)');
-console.log('✅ Access level control (read/write/admin)');
-console.log('✅ Compliance framework integration (SOC 2, HIPAA, GDPR)');
-console.log('\n📋 PRODUCTION INTEGRATION:');
-console.log('  import { lookupScopeAndConfig } from "./utils/scopeLookup";');
-console.log('  import { getSecretDescriptor } from "./utils/secrets";');
-console.log('  ');
-console.log('  const config = lookupScopeAndConfig(Bun.env.HOST, process.platform);');
-console.log('  const descriptor = getSecretDescriptor(config.scope);');
-console.log('  const secrets = await Bun.secret.get(descriptor);');
-console.log('  // Use secrets with confidence! 🚀');
+console.info('\n🎉 SECRETS INTEGRATION DEMO COMPLETE!');
+console.info('✅ Scope lookup integrated with Bun secrets API');
+console.info('✅ Scope-based secrets configuration');
+console.info('✅ Enterprise-grade security validation');
+console.info('✅ Multi-level encryption (standard/enhanced/maximum)');
+console.info('✅ Access level control (read/write/admin)');
+console.info('✅ Compliance framework integration (SOC 2, HIPAA, GDPR)');
+console.info('\n📋 PRODUCTION INTEGRATION:');
+console.info('  import { lookupScopeAndConfig } from "./utils/scopeLookup";');
+console.info('  import { getSecretDescriptor } from "./utils/secrets";');
+console.info('  ');
+console.info('  const config = lookupScopeAndConfig(Bun.env.HOST, process.platform);');
+console.info('  const descriptor = getSecretDescriptor(config.scope);');
+console.info('  const secrets = await Bun.secret.get(descriptor);');
+console.info('  // Use secrets with confidence! 🚀');

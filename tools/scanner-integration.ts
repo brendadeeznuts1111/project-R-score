@@ -13,20 +13,20 @@ export class ScannerWithDocs {
   }
 
   async scanWithDocumentation(projectId: string, r2Bucket?: string) {
-    console.log('🚀 Tier-1380 Scanner with Documentation Integration')
+    console.info('🚀 Tier-1380 Scanner with Documentation Integration')
 
     // Get version info
     const version = Bun.version
     const semverDoc = await this.docsFetcher.getApiDoc('Bun.semver.satisfies')
 
-    console.log(`📦 Bun ${version}`)
-    console.log(`📚 SemVer Docs: ${semverDoc}`)
+    console.info(`📦 Bun ${version}`)
+    console.info(`📚 SemVer Docs: ${semverDoc}`)
 
     // Check version compatibility
     const compatible = Bun.semver.satisfies(version, '>=1.3.6')
     if (!compatible) {
       console.warn(`⚠️  Version ${version} may not support all features`)
-      console.log(`   See: ${semverDoc}`)
+      console.info(`   See: ${semverDoc}`)
     }
 
     // Create scanner cookies
@@ -37,8 +37,8 @@ export class ScannerWithDocs {
 
     // Get Buffer docs (50% faster in v1.3.6+)
     const bufferDoc = await this.docsFetcher.getApiDoc('Buffer.from')
-    console.log(`⚡ Buffer Performance: 50% faster Buffer.from()`)
-    console.log(`   Docs: ${bufferDoc}`)
+    console.info(`⚡ Buffer Performance: 50% faster Buffer.from()`)
+    console.info(`   Docs: ${bufferDoc}`)
 
     // Serialize with faster Buffer.from
     const data = Array.from(this.cookies.entries())
@@ -51,8 +51,8 @@ export class ScannerWithDocs {
     const compressed = Bun.zstdCompressSync(buffer)
     const prefixed = Buffer.concat([Buffer.from([0x01]), compressed])
 
-    console.log(`🗜️  Compression: ${buffer.length}B → ${prefixed.length}B`)
-    console.log(`   Docs: ${compressionDoc}`)
+    console.info(`🗜️  Compression: ${buffer.length}B → ${prefixed.length}B`)
+    console.info(`   Docs: ${compressionDoc}`)
 
     // Save to R2 if bucket provided
     if (r2Bucket) {
@@ -60,12 +60,12 @@ export class ScannerWithDocs {
       const r2Path = `s3://${r2Bucket}/${key}`
       await Bun.write(r2Path, prefixed)
 
-      console.log(`💾 Saved to R2: ${r2Path}`)
+      console.info(`💾 Saved to R2: ${r2Path}`)
 
       // Get R2/S3 documentation
       const fileIODoc = await this.docsFetcher.search('file i/o')
       if (fileIODoc.length > 0) {
-        console.log(`📖 File I/O Docs: ${fileIODoc[0].domains.com}`)
+        console.info(`📖 File I/O Docs: ${fileIODoc[0].domains.com}`)
       }
     }
 
@@ -87,8 +87,8 @@ export class ScannerWithDocs {
       }
     }
 
-    console.log('\n📊 Summary:')
-    console.log(JSON.stringify(summary, null, 2))
+    console.info('\n📊 Summary:')
+    console.info(JSON.stringify(summary, null, 2))
 
     return summary
   }

@@ -102,46 +102,46 @@ if (import.meta.main) {
 	const args = Bun.argv.slice(2);
 	const count = Number(args[0]) || 0;
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║       Tier-1380 OMEGA Commit Squash Helper             ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║       Tier-1380 OMEGA Commit Squash Helper             ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	// Get recent commits
 	const commits = await getCommits(10);
 
-	console.log("Recent commits:");
+	console.info("Recent commits:");
 	commits.slice(0, 5).forEach((commit, i) => {
-		console.log(`  ${i + 1}. ${commit.hash} ${commit.message.slice(0, 50)}`);
+		console.info(`  ${i + 1}. ${commit.hash} ${commit.message.slice(0, 50)}`);
 	});
-	console.log();
+	console.info();
 
 	if (count === 0) {
-		console.log("Usage:");
-		console.log("  bun commit-squash.ts <count> [message]");
-		console.log();
-		console.log("Examples:");
-		console.log(
+		console.info("Usage:");
+		console.info("  bun commit-squash.ts <count> [message]");
+		console.info();
+		console.info("Examples:");
+		console.info(
 			'  bun commit-squash.ts 3 "[RUNTIME][CHROME][TIER:1380] Add entropy feature"',
 		);
-		console.log();
-		console.log("This will squash the last 3 commits into 1.");
+		console.info();
+		console.info("This will squash the last 3 commits into 1.");
 		process.exit(0);
 	}
 
 	if (count > commits.length) {
-		console.log(`❌ Only ${commits.length} commits available`);
+		console.info(`❌ Only ${commits.length} commits available`);
 		process.exit(1);
 	}
 
 	// Get commits to squash
 	const toSquash = commits.slice(0, count);
 
-	console.log(`Squashing ${count} commits:`);
+	console.info(`Squashing ${count} commits:`);
 	for (const commit of toSquash) {
-		console.log(`  • ${commit.hash} ${commit.message}`);
+		console.info(`  • ${commit.hash} ${commit.message}`);
 	}
-	console.log();
+	console.info();
 
 	// Get message (filter out flags like --confirm)
 	const message = args
@@ -150,37 +150,37 @@ if (import.meta.main) {
 		.join(" ");
 	if (!message) {
 		const suggestion = await suggestSquashMessage(toSquash);
-		console.log(`Suggested message: ${suggestion}`);
-		console.log();
-		console.log("Run with message:");
-		console.log(`  bun commit-squash.ts ${count} "${suggestion}"`);
+		console.info(`Suggested message: ${suggestion}`);
+		console.info();
+		console.info("Run with message:");
+		console.info(`  bun commit-squash.ts ${count} "${suggestion}"`);
 		process.exit(0);
 	}
 
 	// Validate message
 	const validation = validateSquashMessage(message);
 	if (!validation.valid) {
-		console.log("⚠️  Message validation warnings:");
+		console.info("⚠️  Message validation warnings:");
 		for (const error of validation.errors) {
-			console.log(`  ${error}`);
+			console.info(`  ${error}`);
 		}
-		console.log();
+		console.info();
 	}
 
-	console.log(`New commit message: ${message}`);
-	console.log();
-	console.log("Run with --confirm to execute:");
-	console.log(`  bun commit-squash.ts ${count} "${message}" --confirm`);
-	console.log();
+	console.info(`New commit message: ${message}`);
+	console.info();
+	console.info("Run with --confirm to execute:");
+	console.info(`  bun commit-squash.ts ${count} "${message}" --confirm`);
+	console.info();
 
 	if (args.includes("--confirm")) {
 		const success = await squashCommits(count, message);
 		if (success) {
-			console.log("✅ Commits squashed successfully!");
-			console.log();
-			console.log("New commit:");
+			console.info("✅ Commits squashed successfully!");
+			console.info();
+			console.info("New commit:");
 			const newCommit = await $`git log -1 --oneline`.text();
-			console.log(`  ${newCommit}`);
+			console.info(`  ${newCommit}`);
 		} else {
 			process.exit(1);
 		}

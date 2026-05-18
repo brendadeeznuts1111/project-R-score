@@ -91,17 +91,17 @@ export class AIPatternLoader {
 
 			// Use streaming for large files (> 1MB)
 			if (fileSize > 1024 * 1024) {
-				console.log(`📊 Streaming large pattern file: ${filePath} (${(fileSize / 1024).toFixed(1)}KB)`);
+				console.info(`📊 Streaming large pattern file: ${filePath} (${(fileSize / 1024).toFixed(1)}KB)`);
 				const stream = file.stream();
 				const text = await Bun.readableStreamToText(stream);
 				const patterns = JSON.parse(text) as AIPattern[];
-				console.log(`✅ Streamed ${patterns.length} patterns from ${filePath} (Bun.readableStreamToText)`);
+				console.info(`✅ Streamed ${patterns.length} patterns from ${filePath} (Bun.readableStreamToText)`);
 				return patterns;
 			}
 
 			// Standard loading for smaller files
 			const patterns = await file.json() as AIPattern[];
-			console.log(`✅ Loaded ${patterns.length} AI-generated patterns from ${filePath} (Bun.file)`);
+			console.info(`✅ Loaded ${patterns.length} AI-generated patterns from ${filePath} (Bun.file)`);
 
 			// Cache patterns in SQLite for persistence
 			this.cachePatterns(patterns);
@@ -156,7 +156,7 @@ export class AIPatternLoader {
 			const text = new TextDecoder().decode(decompressed);
 			const patterns = JSON.parse(text) as AIPattern[];
 
-			console.log(`✅ Loaded ${patterns.length} compressed patterns from ${filePath} (Bun.gunzipSync)`);
+			console.info(`✅ Loaded ${patterns.length} compressed patterns from ${filePath} (Bun.gunzipSync)`);
 			return patterns;
 		} catch (e) {
 			console.error(`Failed to load compressed patterns from ${filePath}:`, e);
@@ -171,7 +171,7 @@ export class AIPatternLoader {
 		const json = JSON.stringify(patterns, null, 2);
 		const compressed = gzipSync(new TextEncoder().encode(json));
 		await Bun.write(filePath, compressed);
-		console.log(`✅ Saved ${patterns.length} compressed patterns to ${filePath} (Bun.gzipSync)`);
+		console.info(`✅ Saved ${patterns.length} compressed patterns to ${filePath} (Bun.gzipSync)`);
 	}
 
 	/**
@@ -291,7 +291,7 @@ export class AIPatternLoader {
 	static invalidateCache(filePath: string): void {
 		loadedPatterns.delete(filePath);
 		patternPromiseCache.delete(filePath);
-		console.log(`🔄 Invalidated pattern cache for ${filePath}`);
+		console.info(`🔄 Invalidated pattern cache for ${filePath}`);
 	}
 
 	/**
@@ -300,7 +300,7 @@ export class AIPatternLoader {
 	static clearCache(): void {
 		loadedPatterns.clear();
 		patternPromiseCache.clear();
-		console.log('🔄 Cleared all pattern caches');
+		console.info('🔄 Cleared all pattern caches');
 	}
 
 	/**

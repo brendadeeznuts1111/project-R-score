@@ -48,7 +48,7 @@ export const MetricsDisplay: React.FC = () => {
     const ws = new WebSocket(`${protocol}//${window.location.hostname}:3001`);
 
     ws.onopen = () => {
-      console.log('Connected to metrics stream');
+      console.info('Connected to metrics stream');
     };
 
     ws.onmessage = (event) => {
@@ -58,7 +58,7 @@ export const MetricsDisplay: React.FC = () => {
       }
     };
 
-    ws.onclose = () => console.log('Metrics stream disconnected');
+    ws.onclose = () => console.info('Metrics stream disconnected');
     setSocket(ws);
 
     return () => ws.close();

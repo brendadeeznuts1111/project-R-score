@@ -142,49 +142,49 @@ class ComprehensiveConfigDemonstrator {
     ];
 
     async demonstrateComprehensiveConfig() {
-        console.log('🔧 Comprehensive Bun Test Configuration Demo\n');
+        console.info('🔧 Comprehensive Bun Test Configuration Demo\n');
 
-        console.log('📋 Configuration File Structure:');
-        console.log('   bunfig-comprehensive.toml - Complete configuration example');
-        console.log('   test-setup.ts - Global test setup and cleanup');
-        console.log('   global-mocks.ts - External service mocks');
-        console.log('   src/comprehensive-test.example.test.ts - Test demonstration\n');
+        console.info('📋 Configuration File Structure:');
+        console.info('   bunfig-comprehensive.toml - Complete configuration example');
+        console.info('   test-setup.ts - Global test setup and cleanup');
+        console.info('   global-mocks.ts - External service mocks');
+        console.info('   src/comprehensive-test.example.test.ts - Test demonstration\n');
 
-        console.log('✅ Configuration Options Demonstrated:');
+        console.info('✅ Configuration Options Demonstrated:');
 
         this.demos.forEach((demo, index) => {
-            console.log(`\n${index + 1}. ${demo.section}`);
-            console.log(`   Option: ${demo.option}`);
-            console.log(`   Description: ${demo.description}`);
-            console.log(`   Status: ${demo.demonstrated ? '✅' : '❌'} ${demo.result}`);
+            console.info(`\n${index + 1}. ${demo.section}`);
+            console.info(`   Option: ${demo.option}`);
+            console.info(`   Description: ${demo.description}`);
+            console.info(`   Status: ${demo.demonstrated ? '✅' : '❌'} ${demo.result}`);
         });
 
-        console.log('\n🎯 Key Results Achieved:');
-        console.log('   ✅ Environment variables properly set');
-        console.log('   ✅ Preload scripts executed successfully');
-        console.log('   ✅ Global mocks loaded and working');
-        console.log('   ✅ Timeout configuration applied');
-        console.log('   ✅ Memory optimization (smol mode) active');
-        console.log('   ✅ Coverage reporting generated');
-        console.log('   ✅ JUnit XML report created');
-        console.log('   ✅ Test discovery limited to src directory');
+        console.info('\n🎯 Key Results Achieved:');
+        console.info('   ✅ Environment variables properly set');
+        console.info('   ✅ Preload scripts executed successfully');
+        console.info('   ✅ Global mocks loaded and working');
+        console.info('   ✅ Timeout configuration applied');
+        console.info('   ✅ Memory optimization (smol mode) active');
+        console.info('   ✅ Coverage reporting generated');
+        console.info('   ✅ JUnit XML report created');
+        console.info('   ✅ Test discovery limited to src directory');
     }
 
     showConfigurationHierarchy() {
-        console.log('\n🏗️ Configuration Loading Order:');
-        console.log('1. Environment variables (highest priority)');
-        console.log('2. Command-line flags');
-        console.log('3. bunfig.toml sections');
-        console.log('4. Default Bun settings (lowest priority)');
+        console.info('\n🏗️ Configuration Loading Order:');
+        console.info('1. Environment variables (highest priority)');
+        console.info('2. Command-line flags');
+        console.info('3. bunfig.toml sections');
+        console.info('4. Default Bun settings (lowest priority)');
 
-        console.log('\n📝 Example Override Demonstration:');
-        console.log('   Config: timeout = 10000');
-        console.log('   CLI: --timeout 5000');
-        console.log('   Result: 5000ms timeout (CLI wins)');
+        console.info('\n📝 Example Override Demonstration:');
+        console.info('   Config: timeout = 10000');
+        console.info('   CLI: --timeout 5000');
+        console.info('   Result: 5000ms timeout (CLI wins)');
     }
 
     showPracticalBenefits() {
-        console.log('\n💡 Practical Benefits of Each Section:');
+        console.info('\n💡 Practical Benefits of Each Section:');
 
         const benefits = [
             {
@@ -223,15 +223,15 @@ class ComprehensiveConfigDemonstrator {
         ];
 
         benefits.forEach(({ section, benefits: list }) => {
-            console.log(`\n${section}:`);
+            console.info(`\n${section}:`);
             list.forEach((benefit, index) => {
-                console.log(`   ${index + 1}. ${benefit}`);
+                console.info(`   ${index + 1}. ${benefit}`);
             });
         });
     }
 
     showIntegrationExamples() {
-        console.log('\n🚀 Integration Examples:');
+        console.info('\n🚀 Integration Examples:');
 
         const examples = [
             {
@@ -257,14 +257,14 @@ class ComprehensiveConfigDemonstrator {
         ];
 
         examples.forEach(({ scenario, command, config }) => {
-            console.log(`\n${scenario}:`);
-            console.log(`   Command: ${command}`);
-            console.log(`   Configuration: ${config}`);
+            console.info(`\n${scenario}:`);
+            console.info(`   Command: ${command}`);
+            console.info(`   Configuration: ${config}`);
         });
     }
 
     showGeneratedArtifacts() {
-        console.log('\n📁 Generated Artifacts:');
+        console.info('\n📁 Generated Artifacts:');
 
         const artifacts = [
             {
@@ -290,9 +290,9 @@ class ComprehensiveConfigDemonstrator {
         ];
 
         artifacts.forEach(({ file, description, content }) => {
-            console.log(`\n${file}:`);
-            console.log(`   Description: ${description}`);
-            console.log(`   Content: ${content}`);
+            console.info(`\n${file}:`);
+            console.info(`   Description: ${description}`);
+            console.info(`   Content: ${content}`);
         });
     }
 }
@@ -392,7 +392,7 @@ preload = ["./integration-setup.ts"]`
 async function runComprehensiveConfigDemo() {
     const demonstrator = new ComprehensiveConfigDemonstrator();
 
-    console.log('🎯 Comprehensive Bun Test Configuration Complete Demo\n');
+    console.info('🎯 Comprehensive Bun Test Configuration Complete Demo\n');
 
     await demonstrator.demonstrateComprehensiveConfig();
     demonstrator.showConfigurationHierarchy();
@@ -400,21 +400,21 @@ async function runComprehensiveConfigDemo() {
     demonstrator.showIntegrationExamples();
     demonstrator.showGeneratedArtifacts();
 
-    console.log('\n📋 Configuration Templates:');
+    console.info('\n📋 Configuration Templates:');
     Object.entries(ComprehensiveConfigTemplates).forEach(([name, template]) => {
-        console.log(`\n${name.toUpperCase()}:`);
-        console.log(`   Description: ${template.description}`);
-        console.log(`   Configuration:`);
-        console.log(`   ${template.config.split('\n').join('\n   ')}`);
+        console.info(`\n${name.toUpperCase()}:`);
+        console.info(`   Description: ${template.description}`);
+        console.info(`   Configuration:`);
+        console.info(`   ${template.config.split('\n').join('\n   ')}`);
     });
 
-    console.log('\n✅ Comprehensive Configuration Summary:');
-    console.log('   All 17 configuration options demonstrated');
-    console.log('   Environment variables and preload scripts working');
-    console.log('   Coverage and reporting fully functional');
-    console.log('   Memory optimization and timeout control active');
-    console.log('   JUnit XML generation for CI/CD integration');
-    console.log('   Production-ready configuration patterns');
+    console.info('\n✅ Comprehensive Configuration Summary:');
+    console.info('   All 17 configuration options demonstrated');
+    console.info('   Environment variables and preload scripts working');
+    console.info('   Coverage and reporting fully functional');
+    console.info('   Memory optimization and timeout control active');
+    console.info('   JUnit XML generation for CI/CD integration');
+    console.info('   Production-ready configuration patterns');
 }
 
 // Export for use

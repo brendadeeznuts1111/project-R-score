@@ -166,8 +166,8 @@ export class MasterPerfTracker {
       timestamp: m.timestamp.split('T')[1].split('.')[0]
     }));
     
-    console.log('\n📊 MASTER_PERF Matrix (v3.7 Enhanced)');
-    console.log('='.repeat(80));
+    console.info('\n📊 MASTER_PERF Matrix (v3.7 Enhanced)');
+    console.info('='.repeat(80));
     
     if (this.config.enableUnicodeFormatting) {
       const formattedTable = UnicodeTableFormatter.generateTable(tableData, {
@@ -178,12 +178,12 @@ export class MasterPerfTracker {
         maxRows: 50,
         compact: true
       });
-      console.log(formattedTable);
+      console.info(formattedTable);
     } else {
       console.table(tableData);
     }
     
-    console.log(`🔒 Scope: ${this.currentScope} | Total Metrics: ${metrics.length} | Timezone: ${this.getTimezoneInfo()}`);
+    console.info(`🔒 Scope: ${this.currentScope} | Total Metrics: ${metrics.length} | Timezone: ${this.getTimezoneInfo()}`);
   }
   
   async exportMetricsToS3(scope?: string): Promise<string> {

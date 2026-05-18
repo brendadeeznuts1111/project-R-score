@@ -86,14 +86,14 @@ export class NPMRegistryServer {
       fetch: (request) => this.handleRequest(request),
     });
 
-    console.log(styled(`\n📦 NPM Registry Server`, 'accent'));
-    console.log(styled(`=====================`, 'accent'));
+    console.info(styled(`\n📦 NPM Registry Server`, 'accent'));
+    console.info(styled(`=====================`, 'accent'));
     const REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
-    console.log(styled(`🌐 URL: http://${REGISTRY_HOST}:${port}`, 'info'));
-    console.log(styled(`🪣 Storage: ${this.options.storage?.bucketName || 'npm-registry'}`, 'info'));
-    console.log(styled(`🔐 Auth: ${this.options.auth}`, 'info'));
-    console.log(styled(`📡 Proxy: ${this.options.allowProxy ? 'Enabled' : 'Disabled'}`, 'info'));
-    console.log(styled(`\n✅ Registry ready!\n`, 'success'));
+    console.info(styled(`🌐 URL: http://${REGISTRY_HOST}:${port}`, 'info'));
+    console.info(styled(`🪣 Storage: ${this.options.storage?.bucketName || 'npm-registry'}`, 'info'));
+    console.info(styled(`🔐 Auth: ${this.options.auth}`, 'info'));
+    console.info(styled(`📡 Proxy: ${this.options.allowProxy ? 'Enabled' : 'Disabled'}`, 'info'));
+    console.info(styled(`\n✅ Registry ready!\n`, 'success'));
   }
 
   /**
@@ -101,7 +101,7 @@ export class NPMRegistryServer {
    */
   async stop(): Promise<void> {
     this.server?.stop();
-    console.log(styled('📦 Registry stopped', 'info'));
+    console.info(styled('📦 Registry stopped', 'info'));
   }
 
   /**
@@ -415,7 +415,7 @@ export class NPMRegistryServer {
       // Store manifest
       await this.storage.storeManifest(manifest);
 
-      console.log(styled(`📦 Published: ${packageName}@${version}`, 'success'));
+      console.info(styled(`📦 Published: ${packageName}@${version}`, 'success'));
 
       return this.jsonResponse({
         ok: true,
@@ -573,7 +573,7 @@ if (import.meta.main) {
 
   // Handle shutdown
   process.on('SIGINT', async () => {
-    console.log(styled('\n\n🛑 Shutting down...', 'warning'));
+    console.info(styled('\n\n🛑 Shutting down...', 'warning'));
     await server.stop();
     process.exit(0);
   });

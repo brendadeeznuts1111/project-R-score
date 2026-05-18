@@ -396,8 +396,8 @@ export class OptimizedAPIHandler {
  * Demonstration of Response.json() optimization
  */
 async function demonstrateResponseOptimization() {
-  console.log('🚀 Response.json() Optimization Enhancement Demo');
-  console.log('='.repeat(60));
+  console.info('🚀 Response.json() Optimization Enhancement Demo');
+  console.info('='.repeat(60));
   
   const responseHandler = new OptimizedResponseHandler();
   const apiHandler = new OptimizedAPIHandler();
@@ -422,24 +422,24 @@ async function demonstrateResponseOptimization() {
   };
   
   // Demonstrate optimized response
-  console.log('\n📝 Optimized Response Creation:');
+  console.info('\n📝 Optimized Response Creation:');
   const optimizedResult = await responseHandler.createOptimizedResponse(testData);
-  console.log(`   Serialization time: ${optimizedResult.metrics.serializationTime.toFixed(2)}ms`);
-  console.log(`   Object size: ${(optimizedResult.metrics.objectSize / 1024).toFixed(2)} KB`);
-  console.log(`   Throughput: ${optimizedResult.metrics.throughput.toFixed(2)} MB/s`);
-  console.log(`   Optimization used: ${optimizedResult.metrics.optimizationUsed ? '✅' : '❌'}`);
+  console.info(`   Serialization time: ${optimizedResult.metrics.serializationTime.toFixed(2)}ms`);
+  console.info(`   Object size: ${(optimizedResult.metrics.objectSize / 1024).toFixed(2)} KB`);
+  console.info(`   Throughput: ${optimizedResult.metrics.throughput.toFixed(2)} MB/s`);
+  console.info(`   Optimization used: ${optimizedResult.metrics.optimizationUsed ? '✅' : '❌'}`);
   
   // Demonstrate batch responses
-  console.log('\n📊 Batch Response Creation:');
+  console.info('\n📊 Batch Response Creation:');
   const batchData = [testData, { summary: 'batch-1' }, { summary: 'batch-2' }];
   const batchResult = await responseHandler.createBatchResponses(batchData);
-  console.log(`   Responses created: ${batchResult.responses.length}`);
-  console.log(`   Total time: ${batchResult.metrics.serializationTime.toFixed(2)}ms`);
-  console.log(`   Total size: ${(batchResult.metrics.objectSize / 1024).toFixed(2)} KB`);
-  console.log(`   Throughput: ${batchResult.metrics.throughput.toFixed(2)} MB/s`);
+  console.info(`   Responses created: ${batchResult.responses.length}`);
+  console.info(`   Total time: ${batchResult.metrics.serializationTime.toFixed(2)}ms`);
+  console.info(`   Total size: ${(batchResult.metrics.objectSize / 1024).toFixed(2)} KB`);
+  console.info(`   Throughput: ${batchResult.metrics.throughput.toFixed(2)} MB/s`);
   
   // Demonstrate large object handling
-  console.log('\n📦 Large Object Handling:');
+  console.info('\n📦 Large Object Handling:');
   const largeData = {
     items: Array.from({ length: 1000 }, (_, i) => ({
       id: i,
@@ -449,22 +449,22 @@ async function demonstrateResponseOptimization() {
   };
   
   const largeResult = await responseHandler.createLargeObjectResponse(largeData);
-  console.log(`   Object size: ${(largeResult.metrics.objectSize / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`   Serialization time: ${largeResult.metrics.serializationTime.toFixed(2)}ms`);
-  console.log(`   Throughput: ${largeResult.metrics.throughput.toFixed(2)} MB/s`);
-  console.log(`   Streaming used: ${largeResult.metrics.optimizationUsed ? '✅' : '❌'}`);
+  console.info(`   Object size: ${(largeResult.metrics.objectSize / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`   Serialization time: ${largeResult.metrics.serializationTime.toFixed(2)}ms`);
+  console.info(`   Throughput: ${largeResult.metrics.throughput.toFixed(2)} MB/s`);
+  console.info(`   Streaming used: ${largeResult.metrics.optimizationUsed ? '✅' : '❌'}`);
   
   // Benchmark comparison
-  console.log('\n⚡ Performance Benchmark:');
+  console.info('\n⚡ Performance Benchmark:');
   const benchmark = await responseHandler.benchmarkResponseJSON(testData, 100);
-  console.log(`   Response.json(): ${benchmark.optimized.serializationTime.toFixed(2)}ms`);
-  console.log(`   Manual approach: ${benchmark.manual.serializationTime.toFixed(2)}ms`);
-  console.log(`   Performance improvement: ${benchmark.improvement.toFixed(2)}x faster`);
-  console.log(`   Throughput (optimized): ${benchmark.optimized.throughput.toFixed(2)} MB/s`);
-  console.log(`   Throughput (manual): ${benchmark.manual.throughput.toFixed(2)} MB/s`);
+  console.info(`   Response.json(): ${benchmark.optimized.serializationTime.toFixed(2)}ms`);
+  console.info(`   Manual approach: ${benchmark.manual.serializationTime.toFixed(2)}ms`);
+  console.info(`   Performance improvement: ${benchmark.improvement.toFixed(2)}x faster`);
+  console.info(`   Throughput (optimized): ${benchmark.optimized.throughput.toFixed(2)} MB/s`);
+  console.info(`   Throughput (manual): ${benchmark.manual.throughput.toFixed(2)} MB/s`);
   
   // API handler demonstration
-  console.log('\n🔗 API Handler Demonstration:');
+  console.info('\n🔗 API Handler Demonstration:');
   
   // Artifact search
   const artifacts = [
@@ -474,28 +474,28 @@ async function demonstrateResponseOptimization() {
   ];
   
   const searchResponse = await apiHandler.handleArtifactSearch('api', artifacts);
-  console.log(`   Search API: Response created with optimization`);
+  console.info(`   Search API: Response created with optimization`);
   
   // Large dataset
   const dataset = Array.from({ length: 500 }, (_, i) => ({ id: i, data: `item-${i}` }));
   const datasetResponse = await apiHandler.handleLargeDataset(dataset);
-  console.log(`   Large dataset API: Streaming response created`);
+  console.info(`   Large dataset API: Streaming response created`);
   
   // Performance statistics
-  console.log('\n📈 Performance Statistics:');
+  console.info('\n📈 Performance Statistics:');
   const stats = responseHandler.getPerformanceStats();
-  console.log(`   Average serialization time: ${stats.averageSerializationTime.toFixed(2)}ms`);
-  console.log(`   Average throughput: ${stats.averageThroughput.toFixed(2)} MB/s`);
-  console.log(`   Total objects processed: ${stats.totalObjectsProcessed}`);
-  console.log(`   Optimization rate: ${stats.optimizationRate.toFixed(1)}%`);
+  console.info(`   Average serialization time: ${stats.averageSerializationTime.toFixed(2)}ms`);
+  console.info(`   Average throughput: ${stats.averageThroughput.toFixed(2)} MB/s`);
+  console.info(`   Total objects processed: ${stats.totalObjectsProcessed}`);
+  console.info(`   Optimization rate: ${stats.optimizationRate.toFixed(1)}%`);
   
-  console.log('\n🎉 Response.json() Optimization Demo Complete!');
-  console.log('\n💡 Benefits Achieved:');
-  console.log('   🚀 3.5x faster Response.json() with SIMD FastStringifier');
-  console.log('   📦 Optimized handling of large objects with streaming');
-  console.log('   📊 High-throughput JSON serialization');
-  console.log('   🔗 Enhanced API response performance');
-  console.log('   ⚡ Real-time performance monitoring');
+  console.info('\n🎉 Response.json() Optimization Demo Complete!');
+  console.info('\n💡 Benefits Achieved:');
+  console.info('   🚀 3.5x faster Response.json() with SIMD FastStringifier');
+  console.info('   📦 Optimized handling of large objects with streaming');
+  console.info('   📊 High-throughput JSON serialization');
+  console.info('   🔗 Enhanced API response performance');
+  console.info('   ⚡ Real-time performance monitoring');
 }
 
 // Run demonstration

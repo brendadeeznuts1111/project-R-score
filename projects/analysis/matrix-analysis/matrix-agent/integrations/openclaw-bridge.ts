@@ -110,16 +110,16 @@ class OpenClawBridge {
    * Initialize the bridge
    */
   async init(): Promise<void> {
-    console.log("🌉 Initializing Matrix ↔ OpenClaw Bridge");
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.info("🌉 Initializing Matrix ↔ OpenClaw Bridge");
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
     // Check OpenClaw installation
     const openclawExists = await this.checkOpenClaw();
     if (!openclawExists) {
-      console.log("⚠️  OpenClaw not found at ~/openclaw");
-      console.log("   Bridge will operate in Matrix-only mode");
+      console.info("⚠️  OpenClaw not found at ~/openclaw");
+      console.info("   Bridge will operate in Matrix-only mode");
     } else {
-      console.log("✅ OpenClaw detected");
+      console.info("✅ OpenClaw detected");
     }
 
     // Check Matrix Agent
@@ -127,17 +127,17 @@ class OpenClawBridge {
     if (!matrixExists) {
       throw new Error("Matrix Agent not initialized. Run 'matrix-agent init' first");
     }
-    console.log("✅ Matrix Agent detected");
+    console.info("✅ Matrix Agent detected");
 
     // Check Telegram features
     if (this.config.telegram.enabled) {
-      console.log("✅ Telegram features enabled");
-      console.log(`   Reaction level: ${this.config.telegram.reactionLevel}`);
-      console.log(`   Stickers: ${this.config.telegram.allowStickers ? "✓" : "✗"}`);
-      console.log(`   Buttons: ${this.config.telegram.allowButtons ? "✓" : "✗"}`);
+      console.info("✅ Telegram features enabled");
+      console.info(`   Reaction level: ${this.config.telegram.reactionLevel}`);
+      console.info(`   Stickers: ${this.config.telegram.allowStickers ? "✓" : "✗"}`);
+      console.info(`   Buttons: ${this.config.telegram.allowButtons ? "✓" : "✗"}`);
     }
 
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     this.connected = openclawExists && matrixExists;
   }
 
@@ -401,11 +401,11 @@ class OpenClawBridge {
    */
   async syncSessions(): Promise<void> {
     if (!this.config.sync.sessions) {
-      console.log("ℹ️  Session sync disabled");
+      console.info("ℹ️  Session sync disabled");
       return;
     }
 
-    console.log("🔄 Syncing sessions...");
+    console.info("🔄 Syncing sessions...");
     
     // Get Matrix sessions
     const matrixSessions = await $`ls ${MATRIX_DIR}/sessions 2>/dev/null || echo ""`.quiet();
@@ -413,8 +413,8 @@ class OpenClawBridge {
     // Get OpenClaw sessions  
     const openclawResult = await this.executeCommand("sessions", ["list"]);
     
-    console.log(`   Matrix sessions: ${matrixSessions.stdout.toString().trim().split("\n").filter(Boolean).length}`);
-    console.log(`   OpenClaw sessions: ${openclawResult.success ? "synced" : "unavailable"}`);
+    console.info(`   Matrix sessions: ${matrixSessions.stdout.toString().trim().split("\n").filter(Boolean).length}`);
+    console.info(`   OpenClaw sessions: ${openclawResult.success ? "synced" : "unavailable"}`);
   }
 }
 
@@ -432,11 +432,11 @@ async function main() {
     case "status": {
       await bridge.init();
       const status = await bridge.getStatus();
-      console.log("\n📊 Bridge Status:");
-      console.log(`   Connected: ${status.connected ? "✅" : "❌"}`);
-      console.log(`   OpenClaw: ${status.openclaw.installed ? "✅" : "❌"} ${status.openclaw.gatewayRunning ? "(running)" : "(stopped)"}`);
-      console.log(`   Matrix: ${status.matrix.initialized ? "✅" : "❌"}`);
-      console.log(`   Telegram: ${status.telegram.enabled ? "✅" : "❌"} (${status.telegram.accounts} accounts)`);
+      console.info("\n📊 Bridge Status:");
+      console.info(`   Connected: ${status.connected ? "✅" : "❌"}`);
+      console.info(`   OpenClaw: ${status.openclaw.installed ? "✅" : "❌"} ${status.openclaw.gatewayRunning ? "(running)" : "(stopped)"}`);
+      console.info(`   Matrix: ${status.matrix.initialized ? "✅" : "❌"}`);
+      console.info(`   Telegram: ${status.telegram.enabled ? "✅" : "❌"} (${status.telegram.accounts} accounts)`);
       break;
     }
 
@@ -453,7 +453,7 @@ async function main() {
             process.exit(1);
           }
           const result = await bridge.sendTelegramMessage(chatId, text);
-          console.log(result.success ? "✅ Message sent" : `❌ Error: ${result.error}`);
+          console.info(result.success ? "✅ Message sent" : `❌ Error: ${result.error}`);
           break;
         }
 
@@ -466,7 +466,7 @@ async function main() {
             process.exit(1);
           }
           const result = await bridge.reactToTelegramMessage(chatId, messageId, reaction);
-          console.log(result.success ? `✅ Reacted with ${reaction}` : `❌ Error: ${result.error}`);
+          console.info(result.success ? `✅ Reacted with ${reaction}` : `❌ Error: ${result.error}`);
           break;
         }
 
@@ -478,15 +478,15 @@ async function main() {
             process.exit(1);
           }
           const result = await bridge.sendTelegramSticker(chatId, sticker);
-          console.log(result.success ? "✅ Sticker sent" : `❌ Error: ${result.error}`);
+          console.info(result.success ? "✅ Sticker sent" : `❌ Error: ${result.error}`);
           break;
         }
 
         default: {
-          console.log("Telegram commands:");
-          console.log("  telegram send <chatId> <text>       Send message");
-          console.log("  telegram react <chatId> <msgId> <emoji>  React to message");
-          console.log("  telegram sticker <chatId> <sticker>  Send sticker");
+          console.info("Telegram commands:");
+          console.info("  telegram send <chatId> <text>       Send message");
+          console.info("  telegram react <chatId> <msgId> <emoji>  React to message");
+          console.info("  telegram sticker <chatId> <sticker>  Send sticker");
         }
       }
       break;
@@ -508,23 +508,23 @@ async function main() {
       }
 
       const result = await bridge.executeCommand(proxyCommand, proxyArgs);
-      console.log(result.output);
+      console.info(result.output);
       process.exit(result.exitCode);
     }
 
     default:
-      console.log("🌉 Matrix-Agent ↔ OpenClaw Bridge");
-      console.log("\nUsage:");
-      console.log("  bridge.ts init                      Initialize bridge");
-      console.log("  bridge.ts status                    Show bridge status");
-      console.log("  bridge.ts telegram <cmd>            Telegram actions");
-      console.log("  bridge.ts sync                      Sync sessions");
-      console.log("  bridge.ts proxy <cmd> [args]        Proxy to OpenClaw CLI");
-      console.log("\nTelegram Features:");
-      console.log("  • Send messages with inline buttons");
-      console.log("  • React with emojis (configurable level)");
-      console.log("  • Send stickers");
-      console.log("  • Edit and delete messages");
+      console.info("🌉 Matrix-Agent ↔ OpenClaw Bridge");
+      console.info("\nUsage:");
+      console.info("  bridge.ts init                      Initialize bridge");
+      console.info("  bridge.ts status                    Show bridge status");
+      console.info("  bridge.ts telegram <cmd>            Telegram actions");
+      console.info("  bridge.ts sync                      Sync sessions");
+      console.info("  bridge.ts proxy <cmd> [args]        Proxy to OpenClaw CLI");
+      console.info("\nTelegram Features:");
+      console.info("  • Send messages with inline buttons");
+      console.info("  • React with emojis (configurable level)");
+      console.info("  • Send stickers");
+      console.info("  • Edit and delete messages");
   }
 }
 

@@ -286,7 +286,7 @@ process.stdout.on('resize', async () => {
 
 // Handle signals
 process.on('SIGINT', () => {
-  console.log('\n👋 Goodbye!');
+  console.info('\n👋 Goodbye!');
   process.exit(0);
 });
 

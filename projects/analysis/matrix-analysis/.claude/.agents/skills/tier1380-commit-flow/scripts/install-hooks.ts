@@ -84,15 +84,15 @@ async function installHooks(config: HookConfig): Promise<void> {
 	const gitDir = (await $`git rev-parse --git-dir`.text()).trim();
 	const hooksDir = `${gitDir}/hooks`;
 
-	console.log("📁 Installing hooks to:", hooksDir);
-	console.log();
+	console.info("📁 Installing hooks to:", hooksDir);
+	console.info();
 
 	// Install pre-commit hook
 	if (config.enablePreCommit) {
 		const hookPath = `${hooksDir}/pre-commit`;
 		await Bun.write(hookPath, HOOK_SCRIPTS.preCommit);
 		await $`chmod +x ${hookPath}`;
-		console.log("✅ Installed: pre-commit");
+		console.info("✅ Installed: pre-commit");
 	}
 
 	// Install prepare-commit-msg hook
@@ -100,7 +100,7 @@ async function installHooks(config: HookConfig): Promise<void> {
 		const hookPath = `${hooksDir}/prepare-commit-msg`;
 		await Bun.write(hookPath, HOOK_SCRIPTS.prepareCommitMsg);
 		await $`chmod +x ${hookPath}`;
-		console.log("✅ Installed: prepare-commit-msg");
+		console.info("✅ Installed: prepare-commit-msg");
 	}
 
 	// Install commit-msg hook
@@ -108,7 +108,7 @@ async function installHooks(config: HookConfig): Promise<void> {
 		const hookPath = `${hooksDir}/commit-msg`;
 		await Bun.write(hookPath, HOOK_SCRIPTS.commitMsg);
 		await $`chmod +x ${hookPath}`;
-		console.log("✅ Installed: commit-msg");
+		console.info("✅ Installed: commit-msg");
 	}
 
 	// Install post-commit hook
@@ -116,7 +116,7 @@ async function installHooks(config: HookConfig): Promise<void> {
 		const hookPath = `${hooksDir}/post-commit`;
 		await Bun.write(hookPath, HOOK_SCRIPTS.postCommit);
 		await $`chmod +x ${hookPath}`;
-		console.log("✅ Installed: post-commit");
+		console.info("✅ Installed: post-commit");
 	}
 
 	// Install pre-push hook
@@ -124,10 +124,10 @@ async function installHooks(config: HookConfig): Promise<void> {
 		const hookPath = `${hooksDir}/pre-push`;
 		await Bun.write(hookPath, HOOK_SCRIPTS.prePush);
 		await $`chmod +x ${hookPath}`;
-		console.log("✅ Installed: pre-push");
+		console.info("✅ Installed: pre-push");
 	}
 
-	console.log();
+	console.info();
 }
 
 async function uninstallHooks(): Promise<void> {
@@ -142,28 +142,28 @@ async function uninstallHooks(): Promise<void> {
 		"pre-push",
 	];
 
-	console.log("🗑️  Uninstalling hooks...");
-	console.log();
+	console.info("🗑️  Uninstalling hooks...");
+	console.info();
 
 	for (const hook of hooks) {
 		const hookPath = `${hooksDir}/${hook}`;
 		try {
 			await $`rm -f ${hookPath}`;
-			console.log(`✅ Removed: ${hook}`);
+			console.info(`✅ Removed: ${hook}`);
 		} catch {
-			console.log(`⚠️  Not found: ${hook}`);
+			console.info(`⚠️  Not found: ${hook}`);
 		}
 	}
 
-	console.log();
+	console.info();
 }
 
 async function checkStatus(): Promise<void> {
 	const gitDir = (await $`git rev-parse --git-dir`.text()).trim();
 	const hooksDir = `${gitDir}/hooks`;
 
-	console.log("📋 Hook Status");
-	console.log();
+	console.info("📋 Hook Status");
+	console.info();
 
 	const hooks = [
 		"pre-commit",
@@ -179,15 +179,15 @@ async function checkStatus(): Promise<void> {
 			await $`test -f ${hookPath}`.quiet();
 			const content = await Bun.file(hookPath).text();
 			const isTier1380 = content.includes("Tier-1380 OMEGA");
-			console.log(
+			console.info(
 				`${isTier1380 ? "✅" : "⚠️"} ${hook}: ${isTier1380 ? "Tier-1380" : "Custom/other"}`,
 			);
 		} catch {
-			console.log(`❌ ${hook}: Not installed`);
+			console.info(`❌ ${hook}: Not installed`);
 		}
 	}
 
-	console.log();
+	console.info();
 }
 
 // Main
@@ -195,10 +195,10 @@ if (import.meta.main) {
 	const args = Bun.argv.slice(2);
 	const command = args[0] || "install";
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Git Hooks Manager                  ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Git Hooks Manager                  ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	switch (command) {
 		case "install": {
@@ -213,23 +213,23 @@ if (import.meta.main) {
 
 			await installHooks(config);
 
-			console.log("Configuration:");
-			console.log(`  Pre-commit:         ${config.enablePreCommit ? "✅" : "❌"}`);
-			console.log(
+			console.info("Configuration:");
+			console.info(`  Pre-commit:         ${config.enablePreCommit ? "✅" : "❌"}`);
+			console.info(
 				`  Prepare-commit-msg: ${config.enablePrepareCommitMsg ? "✅" : "❌"}`,
 			);
-			console.log(`  Commit-msg:         ${config.enableCommitMsg ? "✅" : "❌"}`);
-			console.log(`  Post-commit:        ${config.enablePostCommit ? "✅" : "❌"}`);
-			console.log(`  Pre-push:           ${config.enablePrePush ? "✅" : "❌"}`);
-			console.log(`  Auto-fix:           ${config.autoFix ? "✅" : "❌"}`);
-			console.log();
-			console.log("Hooks installed successfully!");
+			console.info(`  Commit-msg:         ${config.enableCommitMsg ? "✅" : "❌"}`);
+			console.info(`  Post-commit:        ${config.enablePostCommit ? "✅" : "❌"}`);
+			console.info(`  Pre-push:           ${config.enablePrePush ? "✅" : "❌"}`);
+			console.info(`  Auto-fix:           ${config.autoFix ? "✅" : "❌"}`);
+			console.info();
+			console.info("Hooks installed successfully!");
 			break;
 		}
 
 		case "uninstall":
 			await uninstallHooks();
-			console.log("Hooks uninstalled.");
+			console.info("Hooks uninstalled.");
 			break;
 
 		case "status":
@@ -237,12 +237,12 @@ if (import.meta.main) {
 			break;
 
 		default:
-			console.log("Usage:");
-			console.log(
+			console.info("Usage:");
+			console.info(
 				"  install [--no-pre-commit] [--no-prepare-commit-msg] [--no-commit-msg] [--no-post-commit] [--no-pre-push] [--auto-fix]",
 			);
-			console.log("  uninstall");
-			console.log("  status");
+			console.info("  uninstall");
+			console.info("  status");
 			break;
 	}
 }

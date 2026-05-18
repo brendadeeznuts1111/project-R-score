@@ -329,7 +329,7 @@ export function printTable(
 
 	// Print to console if requested
 	if (print) {
-		lines.forEach((line) => console.log(line));
+		lines.forEach((line) => console.info(line));
 	}
 
 	return lines;
@@ -402,7 +402,7 @@ export function printTableBox(
 
 	// Print to console if requested
 	if (print) {
-		lines.forEach((line) => console.log(line));
+		lines.forEach((line) => console.info(line));
 	}
 
 	return lines;

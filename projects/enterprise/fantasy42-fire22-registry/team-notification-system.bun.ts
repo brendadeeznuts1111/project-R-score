@@ -219,7 +219,7 @@ class TeamNotificationManager {
     failed: number;
     errors: string[];
   }> {
-    console.log(`📢 Sending ${release.type} release notification: ${release.title} v${release.version}`);
+    console.info(`📢 Sending ${release.type} release notification: ${release.title} v${release.version}`);
 
     const results = {
       success: true,
@@ -238,7 +238,7 @@ class TeamNotificationManager {
       try {
         await this.sendNotificationToLead(lead, release);
         results.sent++;
-        console.log(`✅ Notified ${lead.name} (${lead.role})`);
+        console.info(`✅ Notified ${lead.name} (${lead.role})`);
       } catch (error) {
         results.failed++;
         results.errors.push(`Failed to notify ${lead.name}: ${error.message}`);
@@ -250,10 +250,10 @@ class TeamNotificationManager {
     }
 
     results.success = results.failed === 0;
-    console.log(`\n📊 Notification Summary:`);
-    console.log(`   ✅ Sent: ${results.sent}`);
-    console.log(`   ❌ Failed: ${results.failed}`);
-    console.log(`   📈 Success Rate: ${Math.round((results.sent / (results.sent + results.failed)) * 100)}%`);
+    console.info(`\n📊 Notification Summary:`);
+    console.info(`   ✅ Sent: ${results.sent}`);
+    console.info(`   ❌ Failed: ${results.failed}`);
+    console.info(`   📈 Success Rate: ${Math.round((results.sent / (results.sent + results.failed)) * 100)}%`);
 
     return results;
   }
@@ -298,9 +298,9 @@ class TeamNotificationManager {
     const emailContent = this.generateEmailContent(lead, release);
 
     // In a real implementation, this would use nodemailer or similar
-    console.log(`📧 Sending email to ${lead.email}...`);
-    console.log(`   Subject: ${emailContent.subject}`);
-    console.log(`   Content: ${emailContent.body.substring(0, 100)}...`);
+    console.info(`📧 Sending email to ${lead.email}...`);
+    console.info(`   Subject: ${emailContent.subject}`);
+    console.info(`   Content: ${emailContent.body.substring(0, 100)}...`);
 
     // Simulate email sending
     await this.delay(200);
@@ -372,8 +372,8 @@ class TeamNotificationManager {
     };
 
     // In a real implementation, this would send to Slack webhook
-    console.log(`💬 Sending Slack message to ${lead.slackId}...`);
-    console.log(`   Message: ${slackMessage.text}`);
+    console.info(`💬 Sending Slack message to ${lead.slackId}...`);
+    console.info(`   Message: ${slackMessage.text}`);
 
     await this.delay(150);
   }
@@ -415,8 +415,8 @@ class TeamNotificationManager {
     };
 
     // In a real implementation, this would send to Teams webhook
-    console.log(`👥 Sending Teams message to ${lead.teamsId}...`);
-    console.log(`   Title: ${teamsMessage.title}`);
+    console.info(`👥 Sending Teams message to ${lead.teamsId}...`);
+    console.info(`   Title: ${teamsMessage.title}`);
 
     await this.delay(150);
   }
@@ -431,8 +431,8 @@ Deploy: ${release.deploymentDate.toLocaleString()}
 View: https://fire22.dev/releases/v${release.version}`;
 
     // In a real implementation, this would use Twilio or similar
-    console.log(`📱 Sending SMS to ${lead.phone}...`);
-    console.log(`   Message: ${smsContent.substring(0, 50)}...`);
+    console.info(`📱 Sending SMS to ${lead.phone}...`);
+    console.info(`   Message: ${smsContent.substring(0, 50)}...`);
 
     await this.delay(300);
   }
@@ -460,8 +460,8 @@ View: https://fire22.dev/releases/v${release.version}`;
     };
 
     // In a real implementation, this would send to webhook URL
-    console.log(`🔗 Sending webhook notification...`);
-    console.log(`   Payload: ${JSON.stringify(webhookPayload, null, 2).substring(0, 100)}...`);
+    console.info(`🔗 Sending webhook notification...`);
+    console.info(`   Payload: ${JSON.stringify(webhookPayload, null, 2).substring(0, 100)}...`);
 
     await this.delay(100);
   }
@@ -702,41 +702,41 @@ const V5_1_1_RELEASE: ReleaseNotification = {
 
 // Main notification execution
 async function sendReleaseNotifications() {
-  console.log('🚀 Fire22 v5.1.1 Release Notification System');
-  console.log('=========================================\n');
+  console.info('🚀 Fire22 v5.1.1 Release Notification System');
+  console.info('=========================================\n');
 
-  console.log('📋 Release Details:');
-  console.log(`   Title: ${V5_1_1_RELEASE.title}`);
-  console.log(`   Version: ${V5_1_1_RELEASE.version}`);
-  console.log(`   Type: ${V5_1_1_RELEASE.type.toUpperCase()}`);
-  console.log(`   Impact: ${V5_1_1_RELEASE.impact.toUpperCase()}`);
-  console.log(`   Deployment: ${V5_1_1_RELEASE.deploymentDate.toLocaleString()}\n`);
+  console.info('📋 Release Details:');
+  console.info(`   Title: ${V5_1_1_RELEASE.title}`);
+  console.info(`   Version: ${V5_1_1_RELEASE.version}`);
+  console.info(`   Type: ${V5_1_1_RELEASE.type.toUpperCase()}`);
+  console.info(`   Impact: ${V5_1_1_RELEASE.impact.toUpperCase()}`);
+  console.info(`   Deployment: ${V5_1_1_RELEASE.deploymentDate.toLocaleString()}\n`);
 
   const notificationManager = new TeamNotificationManager();
 
   // Get notification statistics
   const stats = notificationManager.getNotificationStats();
-  console.log('👥 Team Notification Statistics:');
-  console.log(`   Total Team Leads: ${stats.totalLeads}`);
-  console.log(`   Critical Priority: ${stats.byPriority.critical || 0}`);
-  console.log(`   High Priority: ${stats.byPriority.high || 0}`);
-  console.log(`   Medium Priority: ${stats.byPriority.medium || 0}`);
-  console.log(`   Low Priority: ${stats.byPriority.low || 0}\n`);
+  console.info('👥 Team Notification Statistics:');
+  console.info(`   Total Team Leads: ${stats.totalLeads}`);
+  console.info(`   Critical Priority: ${stats.byPriority.critical || 0}`);
+  console.info(`   High Priority: ${stats.byPriority.high || 0}`);
+  console.info(`   Medium Priority: ${stats.byPriority.medium || 0}`);
+  console.info(`   Low Priority: ${stats.byPriority.low || 0}\n`);
 
-  console.log('📡 Starting notification delivery...\n');
+  console.info('📡 Starting notification delivery...\n');
 
   // Send notifications
   const result = await notificationManager.sendReleaseNotification(V5_1_1_RELEASE);
 
-  console.log('\n🎉 Notification delivery complete!\n');
+  console.info('\n🎉 Notification delivery complete!\n');
 
   if (result.success) {
-    console.log('✅ All notifications sent successfully!');
+    console.info('✅ All notifications sent successfully!');
   } else {
-    console.log('⚠️  Some notifications failed to send');
-    console.log('Failed notifications:');
+    console.info('⚠️  Some notifications failed to send');
+    console.info('Failed notifications:');
     result.errors.forEach((error, index) => {
-      console.log(`   ${index + 1}. ${error}`);
+      console.info(`   ${index + 1}. ${error}`);
     });
   }
 
@@ -744,21 +744,21 @@ async function sendReleaseNotifications() {
   const report = await notificationManager.generateNotificationReport(result);
   await Bun.write('./team-notification-report.md', report);
 
-  console.log('\n📄 Generated notification report: ./team-notification-report.md');
-  console.log('\n🎯 Key Achievements:');
-  console.log('  ✅ Multi-channel notification delivery');
-  console.log('  ✅ Priority-based communication strategy');
-  console.log('  ✅ Comprehensive stakeholder coverage');
-  console.log('  ✅ Automated delivery tracking');
-  console.log('  ✅ Detailed reporting and analytics');
+  console.info('\n📄 Generated notification report: ./team-notification-report.md');
+  console.info('\n🎯 Key Achievements:');
+  console.info('  ✅ Multi-channel notification delivery');
+  console.info('  ✅ Priority-based communication strategy');
+  console.info('  ✅ Comprehensive stakeholder coverage');
+  console.info('  ✅ Automated delivery tracking');
+  console.info('  ✅ Detailed reporting and analytics');
 
-  console.log('\n📞 Communication Summary:');
-  console.log(`  📧 Email notifications: ${stats.byChannel.email || 0}`);
-  console.log(`  💬 Slack notifications: ${stats.byChannel.slack || 0}`);
-  console.log(`  👥 Teams notifications: ${stats.byChannel.teams || 0}`);
-  console.log(`  📱 SMS notifications: ${stats.byChannel.sms || 0} (critical only)`);
+  console.info('\n📞 Communication Summary:');
+  console.info(`  📧 Email notifications: ${stats.byChannel.email || 0}`);
+  console.info(`  💬 Slack notifications: ${stats.byChannel.slack || 0}`);
+  console.info(`  👥 Teams notifications: ${stats.byChannel.teams || 0}`);
+  console.info(`  📱 SMS notifications: ${stats.byChannel.sms || 0} (critical only)`);
 
-  console.log('\n🏆 Release notification campaign completed successfully!');
+  console.info('\n🏆 Release notification campaign completed successfully!');
 }
 
 // Run notification system

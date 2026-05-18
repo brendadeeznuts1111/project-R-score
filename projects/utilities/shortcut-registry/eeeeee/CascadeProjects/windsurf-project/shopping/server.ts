@@ -6,7 +6,7 @@
 import { ShoppingAPI } from './api.js';
 import { serve } from 'bun';
 
-console.log("🛒 Shopping API Server with RBAC - Starting...");
+console.info("🛒 Shopping API Server with RBAC - Starting...");
 
 const shoppingAPI = new ShoppingAPI();
 const PORT = 3005;
@@ -143,14 +143,14 @@ function jsonResponse(data: any, headers: Record<string, string> = {}, status: n
 }
 
 // Start server
-console.log(`🚀 Shopping API Server starting on ${HOST}:${PORT}`);
-console.log(`📊 Local Dashboard: http://${HOST}:${PORT}/dashboard`);
-console.log(`🔗 Local API: http://${HOST}:${PORT}/api/shopping`);
-console.log(`🌐 Enterprise URLs (configure hosts):`);
-console.log(`   Dashboard: http://${ENTERPRISE_HOST}:${PORT}/dashboard`);
-console.log(`   API: http://${ENTERPRISE_HOST}:${PORT}/api/shopping`);
-console.log(`👤 Default login: username: admin, password: any (demo mode)`);
-console.log(`🏷️  Enterprise branding: ${ENTERPRISE_HOST}`);
+console.info(`🚀 Shopping API Server starting on ${HOST}:${PORT}`);
+console.info(`📊 Local Dashboard: http://${HOST}:${PORT}/dashboard`);
+console.info(`🔗 Local API: http://${HOST}:${PORT}/api/shopping`);
+console.info(`🌐 Enterprise URLs (configure hosts):`);
+console.info(`   Dashboard: http://${ENTERPRISE_HOST}:${PORT}/dashboard`);
+console.info(`   API: http://${ENTERPRISE_HOST}:${PORT}/api/shopping`);
+console.info(`👤 Default login: username: admin, password: any (demo mode)`);
+console.info(`🏷️  Enterprise branding: ${ENTERPRISE_HOST}`);
 
 const server = serve({
     port: PORT,
@@ -158,29 +158,29 @@ const server = serve({
     hostname: HOST
 });
 
-console.log("✅ Shopping API Server with RBAC is running!");
-console.log("\n🎯 Available Endpoints:");
-console.log("  POST /auth/login - User authentication");
-console.log("  GET  /users - List users (admin/manager only)");
-console.log("  POST /users - Create user (admin only)");
-console.log("  GET  /products - List products");
-console.log("  POST /products - Create product (admin/manager only)");
-console.log("  GET  /orders - List orders");
-console.log("  POST /orders - Create order");
-console.log("  GET  /dashboard - Dashboard analytics (authenticated users)");
-console.log("  GET  /health - System health check");
-console.log("\n🔐 Role-Based Access Control:");
-console.log("  Admin: Full access to all resources");
-console.log("  Manager: Products, orders, analytics, read users");
-console.log("  Cashier: Read products, create/read/update orders");
-console.log("  Customer: Read products, create/read own orders");
-console.log("  Viewer: Read products and analytics only");
+console.info("✅ Shopping API Server with RBAC is running!");
+console.info("\n🎯 Available Endpoints:");
+console.info("  POST /auth/login - User authentication");
+console.info("  GET  /users - List users (admin/manager only)");
+console.info("  POST /users - Create user (admin only)");
+console.info("  GET  /products - List products");
+console.info("  POST /products - Create product (admin/manager only)");
+console.info("  GET  /orders - List orders");
+console.info("  POST /orders - Create order");
+console.info("  GET  /dashboard - Dashboard analytics (authenticated users)");
+console.info("  GET  /health - System health check");
+console.info("\n🔐 Role-Based Access Control:");
+console.info("  Admin: Full access to all resources");
+console.info("  Manager: Products, orders, analytics, read users");
+console.info("  Cashier: Read products, create/read/update orders");
+console.info("  Customer: Read products, create/read own orders");
+console.info("  Viewer: Read products and analytics only");
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-    console.log('\n🛑 Shutting down Shopping API Server...');
+    console.info('\n🛑 Shutting down Shopping API Server...');
     server.stop();
-    console.log('✅ Server stopped gracefully');
+    console.info('✅ Server stopped gracefully');
     process.exit(0);
 });
 

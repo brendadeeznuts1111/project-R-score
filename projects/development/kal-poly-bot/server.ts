@@ -125,7 +125,7 @@ async function handleRequest(req: Request): Promise<Response> {
   const url = new URL(req.url);
   
   // Log requests
-  console.log(`${req.method} ${url.pathname}`);
+  console.info(`${req.method} ${url.pathname}`);
 
   // API routes
   if (url.pathname === "/api/proxy-test" && req.method === "POST") {
@@ -201,12 +201,12 @@ Bun Features Demonstrated:
 }
 
 // Start server
-console.log("🚀 Starting Enhanced Sports Wagering Dashboard Server...");
-console.log(`📊 Dashboard: http://localhost:${PORT}`);
-console.log(`ℹ️  Info: http://localhost:${PORT}/info`);
-console.log(`❤️  Health: http://localhost:${PORT}/health`);
-console.log(`🔧 API: http://localhost:${PORT}/api/metrics`);
-console.log("");
+console.info("🚀 Starting Enhanced Sports Wagering Dashboard Server...");
+console.info(`📊 Dashboard: http://localhost:${PORT}`);
+console.info(`ℹ️  Info: http://localhost:${PORT}/info`);
+console.info(`❤️  Health: http://localhost:${PORT}/health`);
+console.info(`🔧 API: http://localhost:${PORT}/api/metrics`);
+console.info("");
 
 const server = serve({
   fetch: handleRequest,
@@ -214,12 +214,12 @@ const server = serve({
   hostname: HOST,
 });
 
-console.log(`✅ Server running on http://${HOST}:${PORT}`);
-console.log("Press Ctrl+C to stop");
+console.info(`✅ Server running on http://${HOST}:${PORT}`);
+console.info("Press Ctrl+C to stop");
 
 // Graceful shutdown
 process.on("SIGINT", () => {
-  console.log("\n🛑 Shutting down server...");
+  console.info("\n🛑 Shutting down server...");
   server.stop();
   process.exit(0);
 });

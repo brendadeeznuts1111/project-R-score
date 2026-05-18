@@ -3,7 +3,7 @@
 // shopping/api.ts - Shopping API with RBAC and Dashboard
 // Enterprise-grade shopping platform with role-based access control
 
-console.log("🛒 Shopping API with RBAC - Starting");
+console.info("🛒 Shopping API with RBAC - Starting");
 
 // Role and Permission Types
 export type Role = 'admin' | 'manager' | 'cashier' | 'customer' | 'viewer';

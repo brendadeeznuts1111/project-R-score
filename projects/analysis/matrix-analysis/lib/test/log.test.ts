@@ -23,7 +23,7 @@ describe("log", () => {
     });
 
     it("should filter messages below level", () => {
-      const spy = spyOn(console, "log").mockImplementation(() => {});
+      const spy = spyOn(console, 'info').mockImplementation(() => {});
       const log = createLogger({ level: "warn" });
       log.info("should not appear");
       expect(spy).not.toHaveBeenCalled();
@@ -47,7 +47,7 @@ describe("log", () => {
     });
 
     it("should change level dynamically", () => {
-      const logSpy = spyOn(console, "log").mockImplementation(() => {});
+      const logSpy = spyOn(console, 'info').mockImplementation(() => {});
       const log = createLogger({ level: "error" });
       log.info("hidden");
       expect(logSpy).not.toHaveBeenCalled();
@@ -58,7 +58,7 @@ describe("log", () => {
     });
 
     it("should create child logger with prefix", () => {
-      const logSpy = spyOn(console, "log").mockImplementation(() => {});
+      const logSpy = spyOn(console, 'info').mockImplementation(() => {});
       const log = createLogger({ level: "info", prefix: "app" });
       const child = log.child("db");
       child.info("connected");
@@ -67,7 +67,7 @@ describe("log", () => {
     });
 
     it("should support timestamps option", () => {
-      const logSpy = spyOn(console, "log").mockImplementation(() => {});
+      const logSpy = spyOn(console, 'info').mockImplementation(() => {});
       const log = createLogger({ level: "info", timestamps: false });
       log.info("no time");
       expect(logSpy).toHaveBeenCalled();
@@ -75,7 +75,7 @@ describe("log", () => {
     });
 
     it("should create child of child with compound prefix", () => {
-      const logSpy = spyOn(console, "log").mockImplementation(() => {});
+      const logSpy = spyOn(console, 'info').mockImplementation(() => {});
       const log = createLogger({ level: "debug", prefix: "app" });
       const child = log.child("db");
       const grandchild = child.child("pool");
@@ -85,7 +85,7 @@ describe("log", () => {
     });
 
     it("should emit debug when level is debug", () => {
-      const logSpy = spyOn(console, "log").mockImplementation(() => {});
+      const logSpy = spyOn(console, 'info').mockImplementation(() => {});
       const log = createLogger({ level: "debug" });
       log.debug("trace message");
       expect(logSpy).toHaveBeenCalled();
@@ -105,7 +105,7 @@ describe("log", () => {
 
   describe("BN-089: measure", () => {
     it("should return result and log timing", async () => {
-      const logSpy = spyOn(console, "log").mockImplementation(() => {});
+      const logSpy = spyOn(console, 'info').mockImplementation(() => {});
       const log = createLogger({ level: "info" });
       const result = await measure("test-op", async () => {
         await Bun.sleep(5);

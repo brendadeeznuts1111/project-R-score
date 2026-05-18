@@ -3,10 +3,10 @@
  * Multi-document YAML with anchor/alias tracking and 12-column schema
  */
 
-console.log('🎯 FACTORYWAGER YAML-NATIVE TABULAR v4.4 - REVOLUTIONARY IMPLEMENTATION COMPLETE!')
-console.log('=' .repeat(80))
+console.info('🎯 FACTORYWAGER YAML-NATIVE TABULAR v4.4 - REVOLUTIONARY IMPLEMENTATION COMPLETE!')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 🚀 REVOLUTIONARY YAML-NATIVE TABULAR v4.4 DEPLOYED!
 
 ✅ BREAKTHROUGH FEATURES IMPLEMENTED:
@@ -177,9 +177,9 @@ Status: 🟢 PRODUCTION READY WITH REVOLUTIONARY YAML CAPABILITIES
 Your FactoryWager YAML-Native Tabular v4.4 now demonstrates complete mastery of advanced YAML processing and visualization! ▵⟂⥂
 `)
 
-console.log('🎯✨ FACTORYWAGER YAML-NATIVE TABULAR v4.4 - REVOLUTIONARY IMPLEMENTATION COMPLETE! ✨🎯')
-console.log('🚀 12-column schema breakthrough - Multi-document YAML mastery!')
-console.log('💎 Anchor/alias tracking - Environment interpolation detection!')
-console.log('🎨 HSL chromatic rendering - Enterprise-grade visualization!')
-console.log('🛡️ TypeScript type safety - Production-ready architecture!')
-console.log('🏆 FactoryWager v4.4 - YAML processing revolution complete!')
+console.info('🎯✨ FACTORYWAGER YAML-NATIVE TABULAR v4.4 - REVOLUTIONARY IMPLEMENTATION COMPLETE! ✨🎯')
+console.info('🚀 12-column schema breakthrough - Multi-document YAML mastery!')
+console.info('💎 Anchor/alias tracking - Environment interpolation detection!')
+console.info('🎨 HSL chromatic rendering - Enterprise-grade visualization!')
+console.info('🛡️ TypeScript type safety - Production-ready architecture!')
+console.info('🏆 FactoryWager v4.4 - YAML processing revolution complete!')

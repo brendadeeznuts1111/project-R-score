@@ -13,7 +13,7 @@ import { sessionManager } from '../src/compliance/sessionManager';
  * Example 1: Direct anomaly prediction
  */
 async function exampleDirectPrediction() {
-  console.log('\n📊 Example 1: Direct Anomaly Prediction\n');
+  console.info('\n📊 Example 1: Direct Anomaly Prediction\n');
 
   const features: AnomalyFeatures = {
     root_detected: 1,           // Device is rooted
@@ -30,14 +30,14 @@ async function exampleDirectPrediction() {
 
   const score = await anomalyDetector.predict(features);
 
-  console.log(`Risk Score: ${(score.score * 100).toFixed(1)}%`);
-  console.log(`Risk Level: ${score.level.toUpperCase()}`);
-  console.log(`Block Session: ${score.blockSession ? '🚫 YES' : '✅ NO'}`);
-  console.log(`\nRecommendation: ${score.recommendation}`);
+  console.info(`Risk Score: ${(score.score * 100).toFixed(1)}%`);
+  console.info(`Risk Level: ${score.level.toUpperCase()}`);
+  console.info(`Block Session: ${score.blockSession ? '🚫 YES' : '✅ NO'}`);
+  console.info(`\nRecommendation: ${score.recommendation}`);
 
-  console.log('\nTop Risk Factors:');
+  console.info('\nTop Risk Factors:');
   score.factors.slice(0, 5).forEach((factor, i) => {
-    console.log(`  ${i + 1}. ${factor.name}: ${(factor.contribution * 100).toFixed(1)}%`);
+    console.info(`  ${i + 1}. ${factor.name}: ${(factor.contribution * 100).toFixed(1)}%`);
   });
 }
 
@@ -45,7 +45,7 @@ async function exampleDirectPrediction() {
  * Example 2: Session creation with anomaly check
  */
 async function exampleSessionCreation() {
-  console.log('\n\n🔐 Example 2: Session Creation with Anomaly Check\n');
+  console.info('\n\n🔐 Example 2: Session Creation with Anomaly Check\n');
 
   const features: AnomalyFeatures = {
     root_detected: 0,
@@ -68,18 +68,18 @@ async function exampleSessionCreation() {
     features
   );
 
-  console.log(`Session ID: ${result.sessionId}`);
-  console.log(`Allowed: ${result.allowed ? '✅ YES' : '🚫 NO'}`);
-  console.log(`Risk Score: ${(result.anomalyScore.score * 100).toFixed(1)}%`);
-  console.log(`Requires Challenge: ${result.requiresChallenge ? '⚠️  YES' : '✅ NO'}`);
-  console.log(`Message: ${result.message}`);
+  console.info(`Session ID: ${result.sessionId}`);
+  console.info(`Allowed: ${result.allowed ? '✅ YES' : '🚫 NO'}`);
+  console.info(`Risk Score: ${(result.anomalyScore.score * 100).toFixed(1)}%`);
+  console.info(`Requires Challenge: ${result.requiresChallenge ? '⚠️  YES' : '✅ NO'}`);
+  console.info(`Message: ${result.message}`);
 }
 
 /**
  * Example 3: Session validation with periodic checks
  */
 async function exampleSessionValidation() {
-  console.log('\n\n✔️  Example 3: Session Validation\n');
+  console.info('\n\n✔️  Example 3: Session Validation\n');
 
   // Create session first
   const createResult = await sessionManager.createSession(
@@ -97,11 +97,11 @@ async function exampleSessionValidation() {
   );
 
   const sessionId = createResult.sessionId;
-  console.log(`Created session: ${sessionId}`);
-  console.log(`Initial risk: ${(createResult.anomalyScore.score * 100).toFixed(1)}%\n`);
+  console.info(`Created session: ${sessionId}`);
+  console.info(`Initial risk: ${(createResult.anomalyScore.score * 100).toFixed(1)}%\n`);
 
   // Validate session with normal features
-  console.log('Validating with normal features...');
+  console.info('Validating with normal features...');
   const normalValidation = await sessionManager.validateSession(sessionId, {
     root_detected: 0,
     vpn_active: 0,
@@ -110,11 +110,11 @@ async function exampleSessionValidation() {
     proxy_hop_count: 0,
   });
 
-  console.log(`Allowed: ${normalValidation.allowed ? '✅ YES' : '🚫 NO'}`);
-  console.log(`Risk: ${(normalValidation.anomalyScore.score * 100).toFixed(1)}%\n`);
+  console.info(`Allowed: ${normalValidation.allowed ? '✅ YES' : '🚫 NO'}`);
+  console.info(`Risk: ${(normalValidation.anomalyScore.score * 100).toFixed(1)}%\n`);
 
   // Validate with suspicious features
-  console.log('Validating with suspicious features...');
+  console.info('Validating with suspicious features...');
   const suspiciousValidation = await sessionManager.validateSession(sessionId, {
     root_detected: 1,
     vpn_active: 1,
@@ -125,16 +125,16 @@ async function exampleSessionValidation() {
     rapid_api_calls: 200,
   });
 
-  console.log(`Allowed: ${suspiciousValidation.allowed ? '✅ YES' : '🚫 NO'}`);
-  console.log(`Risk: ${(suspiciousValidation.anomalyScore.score * 100).toFixed(1)}%`);
-  console.log(`Message: ${suspiciousValidation.message}`);
+  console.info(`Allowed: ${suspiciousValidation.allowed ? '✅ YES' : '🚫 NO'}`);
+  console.info(`Risk: ${(suspiciousValidation.anomalyScore.score * 100).toFixed(1)}%`);
+  console.info(`Message: ${suspiciousValidation.message}`);
 }
 
 /**
  * Example 4: Batch prediction
  */
 async function exampleBatchPrediction() {
-  console.log('\n\n📈 Example 4: Batch Prediction\n');
+  console.info('\n\n📈 Example 4: Batch Prediction\n');
 
   const sessions = [
     {
@@ -171,11 +171,11 @@ async function exampleBatchPrediction() {
 
   const results = await anomalyDetector.predictBatch(sessions);
 
-  console.log('Batch Results:');
+  console.info('Batch Results:');
   results.forEach((score, sessionId) => {
-    console.log(`\n  ${sessionId}:`);
-    console.log(`    Risk: ${(score.score * 100).toFixed(1)}% (${score.level})`);
-    console.log(`    Block: ${score.blockSession ? '🚫' : '✅'}`);
+    console.info(`\n  ${sessionId}:`);
+    console.info(`    Risk: ${(score.score * 100).toFixed(1)}% (${score.level})`);
+    console.info(`    Block: ${score.blockSession ? '🚫' : '✅'}`);
   });
 }
 
@@ -183,9 +183,9 @@ async function exampleBatchPrediction() {
  * Run all examples
  */
 async function main() {
-  console.log('═'.repeat(60));
-  console.log('🤖 Anomaly Detection System - Examples');
-  console.log('═'.repeat(60));
+  console.info('═'.repeat(60));
+  console.info('🤖 Anomaly Detection System - Examples');
+  console.info('═'.repeat(60));
 
   try {
     await exampleDirectPrediction();
@@ -193,9 +193,9 @@ async function main() {
     await exampleSessionValidation();
     await exampleBatchPrediction();
 
-    console.log('\n' + '═'.repeat(60));
-    console.log('✅ All examples completed successfully!');
-    console.log('═'.repeat(60) + '\n');
+    console.info('\n' + '═'.repeat(60));
+    console.info('✅ All examples completed successfully!');
+    console.info('═'.repeat(60) + '\n');
   } catch (error) {
     console.error('❌ Error:', error);
     process.exit(1);

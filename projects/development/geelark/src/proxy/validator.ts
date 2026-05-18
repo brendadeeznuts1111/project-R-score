@@ -191,7 +191,7 @@ function validateRegistryHash(value: string): ValidationResult {
 
   const known = KNOWN_HASHES[num as keyof typeof KNOWN_HASHES];
   if (known) {
-    console.log(`[Validator] Known registry hash: ${value} (${known})`);
+    console.info(`[Validator] Known registry hash: ${value} (${known})`);
   } else {
     console.warn(`[Validator] Unknown registry hash: ${value}`);
   }

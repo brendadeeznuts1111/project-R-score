@@ -167,8 +167,8 @@ class EnterpriseRoadmapCLI {
       return;
     }
 
-    console.log(chalk.blue.bold(`\n🚀 Executing ${phase.name}`));
-    console.log(chalk.gray(`Duration: ${phase.duration} | Target: $${(phase.targetARR / 1000000).toFixed(0)}M ARR\n`));
+    console.info(chalk.blue.bold(`\n🚀 Executing ${phase.name}`));
+    console.info(chalk.gray(`Duration: ${phase.duration} | Target: $${(phase.targetARR / 1000000).toFixed(0)}M ARR\n`));
 
     // Execute phase commands
     for (const command of phase.commands) {
@@ -207,7 +207,7 @@ class EnterpriseRoadmapCLI {
     
     for (const feature of phase.features) {
       await new Promise(resolve => setTimeout(resolve, 500));
-      console.log(chalk.gray(`   • ${feature}`));
+      console.info(chalk.gray(`   • ${feature}`));
     }
     
     this.spinner.succeed(chalk.green(`✅ All features deployed`));
@@ -231,29 +231,29 @@ class EnterpriseRoadmapCLI {
   }
 
   private displayMetrics(metrics: PerformanceMetrics) {
-    console.log(chalk.blue('\n📊 Performance Metrics:'));
-    console.log(chalk.white(`   Cache Hit Rate: ${metrics.cacheHitRate.toFixed(1)}%`));
-    console.log(chalk.white(`   Global Latency: ${metrics.globalLatency.toFixed(0)}ms`));
-    console.log(chalk.white(`   Compression: ${metrics.compressionRatio.toFixed(1)}%`));
-    console.log(chalk.white(`   Security Score: ${metrics.securityScore.toFixed(1)}/100`));
+    console.info(chalk.blue('\n📊 Performance Metrics:'));
+    console.info(chalk.white(`   Cache Hit Rate: ${metrics.cacheHitRate.toFixed(1)}%`));
+    console.info(chalk.white(`   Global Latency: ${metrics.globalLatency.toFixed(0)}ms`));
+    console.info(chalk.white(`   Compression: ${metrics.compressionRatio.toFixed(1)}%`));
+    console.info(chalk.white(`   Security Score: ${metrics.securityScore.toFixed(1)}/100`));
   }
 
   private displayPhaseResults(phase: RoadmapPhase) {
-    console.log(chalk.green.bold(`\n🎯 ${phase.name} Results:`));
-    console.log(chalk.white(`   Target MRR: $${phase.targetMRR.toLocaleString()}`));
-    console.log(chalk.white(`   Target ARR: $${(phase.targetARR / 1000000).toFixed(0)}M`));
-    console.log(chalk.white(`   Key Drivers: ${phase.keyDrivers.join(', ')}`));
-    console.log(chalk.white(`   Features Deployed: ${phase.features.length}`));
+    console.info(chalk.green.bold(`\n🎯 ${phase.name} Results:`));
+    console.info(chalk.white(`   Target MRR: $${phase.targetMRR.toLocaleString()}`));
+    console.info(chalk.white(`   Target ARR: $${(phase.targetARR / 1000000).toFixed(0)}M`));
+    console.info(chalk.white(`   Key Drivers: ${phase.keyDrivers.join(', ')}`));
+    console.info(chalk.white(`   Features Deployed: ${phase.features.length}`));
   }
 
   displayRoadmap() {
-    console.log(chalk.blue.bold('\n🏢 ENTERPRISE SUITE ENHANCEMENT ROADMAP'));
-    console.log(chalk.blue.bold('factory-wager.com → $100M ARR Trajectory\n'));
+    console.info(chalk.blue.bold('\n🏢 ENTERPRISE SUITE ENHANCEMENT ROADMAP'));
+    console.info(chalk.blue.bold('factory-wager.com → $100M ARR Trajectory\n'));
     
-    console.log(chalk.yellow('📈 Revenue Projection by Phase:'));
-    console.log(chalk.white('┌───────────┬──────────────┬───────────────┬─────────────────┐'));
-    console.log(chalk.white('│ Phase     │ MRR Growth    │ ARR Target     │ Key Driver      │'));
-    console.log(chalk.white('├───────────┼──────────────┼───────────────┼─────────────────┤'));
+    console.info(chalk.yellow('📈 Revenue Projection by Phase:'));
+    console.info(chalk.white('┌───────────┬──────────────┬───────────────┬─────────────────┐'));
+    console.info(chalk.white('│ Phase     │ MRR Growth    │ ARR Target     │ Key Driver      │'));
+    console.info(chalk.white('├───────────┼──────────────┼───────────────┼─────────────────┤'));
     
     const phases = ['phase1', 'phase2', 'phase3', 'phase4', 'phase5'];
     const currentMRR = 7300;
@@ -264,16 +264,16 @@ class EnterpriseRoadmapCLI {
       const mrrGrowth = phase.targetMRR - cumulativeMRR;
       const phaseName = phase.name.replace('Enhancement', '').replace('Expansion', '').replace('Features', '').trim();
       
-      console.log(chalk.white(`│ ${index + 1}         │ +$${(mrrGrowth / 1000).toFixed(0)}K         │ $${(phase.targetARR / 1000000).toFixed(0)}M          │ ${phase.keyDrivers[0].substring(0, 15).padEnd(15)} │`));
+      console.info(chalk.white(`│ ${index + 1}         │ +$${(mrrGrowth / 1000).toFixed(0)}K         │ $${(phase.targetARR / 1000000).toFixed(0)}M          │ ${phase.keyDrivers[0].substring(0, 15).padEnd(15)} │`));
       cumulativeMRR = phase.targetMRR;
     });
     
-    console.log(chalk.white('└───────────┴──────────────┴───────────────┴─────────────────┘'));
-    console.log(chalk.gray(`\nCurrent: $${currentMRR.toLocaleString()} MRR → Target: $1B ARR by EOY 2026`));
+    console.info(chalk.white('└───────────┴──────────────┴───────────────┴─────────────────┘'));
+    console.info(chalk.gray(`\nCurrent: $${currentMRR.toLocaleString()} MRR → Target: $1B ARR by EOY 2026`));
   }
 
   displayTimeline() {
-    console.log(chalk.blue.bold('\n⚡ Prioritized Enhancement Schedule:'));
+    console.info(chalk.blue.bold('\n⚡ Prioritized Enhancement Schedule:'));
     
     const timeline = [
       { period: 'Week 1', task: '✅ Performance (85% → 98% Cache)', status: 'ready' },
@@ -288,10 +288,10 @@ class EnterpriseRoadmapCLI {
     
     timeline.forEach(item => {
       const status = item.status === 'ready' ? chalk.green('▶') : chalk.yellow('○');
-      console.log(chalk.white(`   ${item.period.padEnd(10)} ${status} ${item.task}`));
+      console.info(chalk.white(`   ${item.period.padEnd(10)} ${status} ${item.task}`));
     });
     
-    console.log(chalk.green.bold('\n🎯 Target: $1B ARR by EOY 2026'));
+    console.info(chalk.green.bold('\n🎯 Target: $1B ARR by EOY 2026'));
   }
 }
 
@@ -343,15 +343,15 @@ program
   .action(async (options) => {
     const phases = options.phases.split('-').map((p: string) => `phase${p}`);
     
-    console.log(chalk.blue.bold('🚀 Starting Full Roadmap Deployment'));
+    console.info(chalk.blue.bold('🚀 Starting Full Roadmap Deployment'));
     
     for (const phaseId of phases) {
       await roadmap.executePhase(phaseId, options);
-      console.log(chalk.gray('\n' + '='.repeat(60) + '\n'));
+      console.info(chalk.gray('\n' + '='.repeat(60) + '\n'));
     }
     
-    console.log(chalk.green.bold('🎉 Full Roadmap Deployment Complete!'));
-    console.log(chalk.green('🏢 factory-wager.com → $1B ARR Trajectory Achieved!'));
+    console.info(chalk.green.bold('🎉 Full Roadmap Deployment Complete!'));
+    console.info(chalk.green('🏢 factory-wager.com → $1B ARR Trajectory Achieved!'));
   });
 
 // Display Roadmap
@@ -369,7 +369,7 @@ program
   .description('Quick Phase 1 enhancement (15 minutes)')
   .option('--domain <domain>', 'Target domain', 'factory-wager.com')
   .action(async (options) => {
-    console.log(chalk.blue.bold('⚡ Phase 1 Quick Enhancement (15 minutes)'));
+    console.info(chalk.blue.bold('⚡ Phase 1 Quick Enhancement (15 minutes)'));
     await roadmap.executePhase('phase1', options);
   });
 
@@ -378,7 +378,7 @@ program
   .description('Deploy Merchant Dashboard v2.0 (1 day)')
   .option('--features <features>', 'Features to deploy', 'disputes,revenue,multi-location')
   .action(async (options) => {
-    console.log(chalk.blue.bold('🏪 Merchant Dashboard v2.0 Deployment (1 day)'));
+    console.info(chalk.blue.bold('🏪 Merchant Dashboard v2.0 Deployment (1 day)'));
     await roadmap.executePhase('phase2', options);
   });
 
@@ -387,7 +387,7 @@ program
   .description('Launch Developer Portal (3 days)')
   .option('--partners <partners>', 'Partner integrations', 'paypal,shopify,quickbooks')
   .action(async (options) => {
-    console.log(chalk.blue.bold('🛠️ Developer Portal Launch (3 days)'));
+    console.info(chalk.blue.bold('🛠️ Developer Portal Launch (3 days)'));
     await roadmap.executePhase('phase3', options);
   });
 

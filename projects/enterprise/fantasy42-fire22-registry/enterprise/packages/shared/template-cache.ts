@@ -220,13 +220,13 @@ export class TemplateCache {
   async warmup(
     templates: Array<{ key: string; template: HTMLTemplate; data?: any }>
   ): Promise<void> {
-    console.log(`🔄 Warming up cache with ${templates.length} templates...`);
+    console.info(`🔄 Warming up cache with ${templates.length} templates...`);
 
     for (const { key, template, data } of templates) {
       this.put(key, template, data);
     }
 
-    console.log(`✅ Cache warmed up. Stats:`, this.getStats());
+    console.info(`✅ Cache warmed up. Stats:`, this.getStats());
   }
 
   /**

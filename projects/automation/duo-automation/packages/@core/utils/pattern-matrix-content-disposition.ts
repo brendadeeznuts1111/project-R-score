@@ -3,20 +3,20 @@
 
 export {}; // Make this a module
 
-console.log('🔄 Adding ContentDisposition pattern to MASTER_MATRIX.md...');
+console.info('🔄 Adding ContentDisposition pattern to MASTER_MATRIX.md...');
 
 // Mock pattern matrix update
 const contentDispositionMatrix = {
   addRow: (id: number, type: string, name: string, data: any) => {
-    console.log(`  ✅ Added ${id}: ${type} - ${name}`);
+    console.info(`  ✅ Added ${id}: ${type} - ${name}`);
     if (data.examples) {
       data.examples.forEach((example: any) => {
-        console.log(`     • ${example.file} → ${example.disposition} (${example.reason})`);
+        console.info(`     • ${example.file} → ${example.disposition} (${example.reason})`);
       });
     }
   },
   regenerate: () => {
-    console.log('  ✅ Matrix regenerated');
+    console.info('  ✅ Matrix regenerated');
   }
 };
 
@@ -45,5 +45,5 @@ contentDispositionMatrix.addRow(123.1, 'Pattern', 'ContentDisposition', {
 });
 
 contentDispositionMatrix.regenerate();
-console.log('✅ MASTER_MATRIX.md updated with ContentDisposition pattern');
-console.log('✅ Pattern §123.1: ContentDisposition successfully integrated');
+console.info('✅ MASTER_MATRIX.md updated with ContentDisposition pattern');
+console.info('✅ Pattern §123.1: ContentDisposition successfully integrated');

@@ -39,8 +39,8 @@ export class BunFileAPIDemo {
    * Demonstrate all official Bun.file methods
    */
   async demonstrateAllFileMethods(): Promise<void> {
-    console.log('🚀 Official Bun.file API Complete Showcase');
-    console.log('=' .repeat(60));
+    console.info('🚀 Official Bun.file API Complete Showcase');
+    console.info('=' .repeat(60));
 
     // Create test files for demonstration
     await this.createTestFiles();
@@ -63,11 +63,11 @@ export class BunFileAPIDemo {
     // 6. Advanced type-safe operations
     await this.demoAdvancedOperations();
 
-    console.log('\n✅ All Bun.file API demonstrations completed!');
+    console.info('\n✅ All Bun.file API demonstrations completed!');
   }
 
   private async createTestFiles(): Promise<void> {
-    console.log('\n📝 Creating test files...');
+    console.info('\n📝 Creating test files...');
 
     // Create a text file
     await writeFile('demo-text.txt', 'Hello, Bun.file() API!\nThis is a test file for text operations.');
@@ -88,30 +88,30 @@ export class BunFileAPIDemo {
     const binaryData = new Uint8Array([0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x57, 0x6F, 0x72, 0x6C, 0x64]);
     await writeFile('demo-binary.bin', binaryData);
 
-    console.log('   ✅ Test files created: demo-text.txt, demo-data.json, demo-binary.bin');
+    console.info('   ✅ Test files created: demo-text.txt, demo-data.json, demo-binary.bin');
   }
 
   private async demoTextOperations(): Promise<void> {
-    console.log('\n📄 1. Text Operations');
-    console.log('-'.repeat(30));
+    console.info('\n📄 1. Text Operations');
+    console.info('-'.repeat(30));
 
     try {
       // Official Bun.file API - text reading
       const textFile: BunFile = this.bun.file('demo-text.txt');
       
-      console.log(`📁 File: ${textFile.name}`);
-      console.log(`📏 Size: ${textFile.size} bytes`);
-      console.log(`🗂️  Type: ${textFile.type}`);
-      console.log(`🕒 Last Modified: ${new Date(textFile.lastModified).toISOString()}`);
+      console.info(`📁 File: ${textFile.name}`);
+      console.info(`📏 Size: ${textFile.size} bytes`);
+      console.info(`🗂️  Type: ${textFile.type}`);
+      console.info(`🕒 Last Modified: ${new Date(textFile.lastModified).toISOString()}`);
 
       // Check if file exists
       const exists = await textFile.exists();
-      console.log(`✅ Exists: ${exists}`);
+      console.info(`✅ Exists: ${exists}`);
 
       if (exists) {
         // Read as string
         const content = await textFile.text();
-        console.log(`📖 Content: "${content.trim()}"`);
+        console.info(`📖 Content: "${content.trim()}"`);
       }
 
     } catch (error) {
@@ -120,8 +120,8 @@ export class BunFileAPIDemo {
   }
 
   private async demoJSONOperations(): Promise<void> {
-    console.log('\n📋 2. JSON Operations (Type-Safe)');
-    console.log('-'.repeat(30));
+    console.info('\n📋 2. JSON Operations (Type-Safe)');
+    console.info('-'.repeat(30));
 
     try {
       // Official Bun.file API - JSON reading with type safety
@@ -140,11 +140,11 @@ export class BunFileAPIDemo {
       // Type-safe JSON parsing
       const data: DemoData = await jsonFile.json<DemoData>();
       
-      console.log(`📊 Name: ${data.name}`);
-      console.log(`🔢 Version: ${data.version}`);
-      console.log(`⚡ Features: ${data.features.join(', ')}`);
-      console.log(`👤 Author: ${data.metadata.author}`);
-      console.log(`📅 Created: ${data.metadata.created}`);
+      console.info(`📊 Name: ${data.name}`);
+      console.info(`🔢 Version: ${data.version}`);
+      console.info(`⚡ Features: ${data.features.join(', ')}`);
+      console.info(`👤 Author: ${data.metadata.author}`);
+      console.info(`📅 Created: ${data.metadata.created}`);
 
     } catch (error) {
       console.error('❌ JSON operations failed:', error);
@@ -152,15 +152,15 @@ export class BunFileAPIDemo {
   }
 
   private async demoStreamOperations(): Promise<void> {
-    console.log('\n🌊 3. Stream Operations');
-    console.log('-'.repeat(30));
+    console.info('\n🌊 3. Stream Operations');
+    console.info('-'.repeat(30));
 
     try {
       // Official Bun.file API - stream reading
       const textFile: BunFile = this.bun.file('demo-text.txt');
       const stream: ReadableStream<Uint8Array> = textFile.stream();
 
-      console.log('🔄 Reading file as stream...');
+      console.info('🔄 Reading file as stream...');
       
       // Process stream chunks
       const reader = stream.getReader();
@@ -174,10 +174,10 @@ export class BunFileAPIDemo {
         
         const chunk = decoder.decode(value, { stream: true });
         result += chunk;
-        console.log(`   📦 Chunk received: ${value.length} bytes`);
+        console.info(`   📦 Chunk received: ${value.length} bytes`);
       }
 
-      console.log(`✅ Stream complete: "${result.trim()}"`);
+      console.info(`✅ Stream complete: "${result.trim()}"`);
 
     } catch (error) {
       console.error('❌ Stream operations failed:', error);
@@ -185,8 +185,8 @@ export class BunFileAPIDemo {
   }
 
   private async demoBinaryOperations(): Promise<void> {
-    console.log('\n🔢 4. Binary Operations');
-    console.log('-'.repeat(30));
+    console.info('\n🔢 4. Binary Operations');
+    console.info('-'.repeat(30));
 
     try {
       // Official Bun.file API - binary operations
@@ -194,16 +194,16 @@ export class BunFileAPIDemo {
 
       // Read as ArrayBuffer
       const arrayBuffer: ArrayBuffer = await binaryFile.arrayBuffer();
-      console.log(`📊 ArrayBuffer: ${arrayBuffer.byteLength} bytes`);
+      console.info(`📊 ArrayBuffer: ${arrayBuffer.byteLength} bytes`);
       
       // Read as Uint8Array
       const uint8Array: Uint8Array = await binaryFile.bytes();
-      console.log(`🔢 Uint8Array: ${uint8Array.length} bytes`);
-      console.log(`📝 Hex: ${Array.from(uint8Array).map(b => b.toString(16).padStart(2, '0')).join(' ')}`);
+      console.info(`🔢 Uint8Array: ${uint8Array.length} bytes`);
+      console.info(`📝 Hex: ${Array.from(uint8Array).map(b => b.toString(16).padStart(2, '0')).join(' ')}`);
 
       // Convert to string for demonstration
       const text = new TextDecoder().decode(uint8Array);
-      console.log(`📖 As text: "${text}"`);
+      console.info(`📖 As text: "${text}"`);
 
     } catch (error) {
       console.error('❌ Binary operations failed:', error);
@@ -211,8 +211,8 @@ export class BunFileAPIDemo {
   }
 
   private async demoMetadataOperations(): Promise<void> {
-    console.log('\n📊 5. Metadata Operations');
-    console.log('-'.repeat(30));
+    console.info('\n📊 5. Metadata Operations');
+    console.info('-'.repeat(30));
 
     const files = ['demo-text.txt', 'demo-data.json', 'demo-binary.bin', 'nonexistent.txt'];
 
@@ -221,14 +221,14 @@ export class BunFileAPIDemo {
         const file: BunFile = this.bun.file(filename);
         const exists = await file.exists();
         
-        console.log(`\n📁 ${filename}:`);
-        console.log(`   ✅ Exists: ${exists}`);
-        console.log(`   📏 Size: ${file.size} bytes`);
-        console.log(`   🗂️  Type: ${file.type || 'unknown'}`);
-        console.log(`   🕒 Modified: ${file.lastModified ? new Date(file.lastModified).toISOString() : 'N/A'}`);
+        console.info(`\n📁 ${filename}:`);
+        console.info(`   ✅ Exists: ${exists}`);
+        console.info(`   📏 Size: ${file.size} bytes`);
+        console.info(`   🗂️  Type: ${file.type || 'unknown'}`);
+        console.info(`   🕒 Modified: ${file.lastModified ? new Date(file.lastModified).toISOString() : 'N/A'}`);
 
         if (!exists) {
-          console.log(`   ⚠️  File does not exist - showing default values`);
+          console.info(`   ⚠️  File does not exist - showing default values`);
         }
 
       } catch (error) {
@@ -238,8 +238,8 @@ export class BunFileAPIDemo {
   }
 
   private async demoAdvancedOperations(): Promise<void> {
-    console.log('\n🚀 6. Advanced Type-Safe Operations');
-    console.log('-'.repeat(30));
+    console.info('\n🚀 6. Advanced Type-Safe Operations');
+    console.info('-'.repeat(30));
 
     try {
       // Demonstrate type-safe file writing with Bun.write
@@ -255,20 +255,20 @@ export class BunFileAPIDemo {
 
       // Write using Bun.write
       const written = await this.bun.write('demo-advanced.json', JSON.stringify(advancedData, null, 2));
-      console.log(`✅ Written ${written} bytes to demo-advanced.json`);
+      console.info(`✅ Written ${written} bytes to demo-advanced.json`);
 
       // Read back and verify with type safety
       const advancedFile: BunFile = this.bun.file('demo-advanced.json');
       const readData: typeof advancedData = await advancedFile.json<typeof advancedData>();
       
-      console.log(`🔍 Verification:`);
-      console.log(`   📅 Timestamp: ${readData.timestamp}`);
-      console.log(`   ⚡ Operations: ${readData.operations.join(', ')}`);
-      console.log(`   🛡️  Type-safe: ${readData.typeSafe}`);
-      console.log(`   📊 Read speed: ${readData.performance.readSpeed}`);
+      console.info(`🔍 Verification:`);
+      console.info(`   📅 Timestamp: ${readData.timestamp}`);
+      console.info(`   ⚡ Operations: ${readData.operations.join(', ')}`);
+      console.info(`   🛡️  Type-safe: ${readData.typeSafe}`);
+      console.info(`   📊 Read speed: ${readData.performance.readSpeed}`);
 
       // Demonstrate streaming large data
-      console.log(`\n🌊 Streaming large data demonstration:`);
+      console.info(`\n🌊 Streaming large data demonstration:`);
       const largeContent = 'A'.repeat(10000); // 10KB of data
       await this.bun.write('demo-large.txt', largeContent);
       
@@ -284,7 +284,7 @@ export class BunFileAPIDemo {
         totalBytes += value.length;
       }
       
-      console.log(`   📊 Streamed ${totalBytes} bytes efficiently`);
+      console.info(`   📊 Streamed ${totalBytes} bytes efficiently`);
 
     } catch (error) {
       console.error('❌ Advanced operations failed:', error);
@@ -295,8 +295,8 @@ export class BunFileAPIDemo {
    * Performance comparison of different read methods
    */
   async performanceComparison(): Promise<void> {
-    console.log('\n⚡ Performance Comparison');
-    console.log('-'.repeat(30));
+    console.info('\n⚡ Performance Comparison');
+    console.info('-'.repeat(30));
 
     const testFile = 'demo-data.json';
     const iterations = 100;
@@ -318,7 +318,7 @@ export class BunFileAPIDemo {
       const endTime = performance.now();
       const avgTime = (endTime - startTime) / iterations;
       
-      console.log(`📊 ${name.padEnd(15)}: ${avgTime.toFixed(3)}ms avg (${iterations} iterations)`);
+      console.info(`📊 ${name.padEnd(15)}: ${avgTime.toFixed(3)}ms avg (${iterations} iterations)`);
     }
   }
 
@@ -326,7 +326,7 @@ export class BunFileAPIDemo {
    * Cleanup demo files
    */
   async cleanup(): Promise<void> {
-    console.log('\n🧹 Cleaning up demo files...');
+    console.info('\n🧹 Cleaning up demo files...');
     
     const files = [
       'demo-text.txt',
@@ -339,9 +339,9 @@ export class BunFileAPIDemo {
     for (const file of files) {
       try {
         await this.bun.write(file, ''); // Truncate file
-        console.log(`   ✅ Cleaned: ${file}`);
+        console.info(`   ✅ Cleaned: ${file}`);
       } catch (error) {
-        console.log(`   ⚠️  Could not clean ${file}: ${error.message}`);
+        console.info(`   ⚠️  Could not clean ${file}: ${error.message}`);
       }
     }
   }

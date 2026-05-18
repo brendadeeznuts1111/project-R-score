@@ -559,24 +559,24 @@ if (import.meta.main) {
           maxTokens: 5000
         };
         const result = await engine.queryContext(query);
-        console.log('Context Result:');
-        console.log(JSON.stringify(result.metadata, null, 2));
-        console.log('\nContext Preview:');
-        console.log(result.context.substring(0, 1000) + '...');
+        console.info('Context Result:');
+        console.info(JSON.stringify(result.metadata, null, 2));
+        console.info('\nContext Preview:');
+        console.info(result.context.substring(0, 1000) + '...');
       }
       break;
     case 'suggest':
       if (target) {
         const suggestions = await engine.getContextSuggestions(target);
-        console.log('Context Suggestions:');
-        suggestions.forEach(s => console.log(`  - ${s}`));
+        console.info('Context Suggestions:');
+        suggestions.forEach(s => console.info(`  - ${s}`));
       }
       break;
     case 'export':
-      console.log(engine.exportGraph());
+      console.info(engine.exportGraph());
       break;
     default:
-      console.log(`
+      console.info(`
 Advanced Context Engine CLI
 
 Usage:

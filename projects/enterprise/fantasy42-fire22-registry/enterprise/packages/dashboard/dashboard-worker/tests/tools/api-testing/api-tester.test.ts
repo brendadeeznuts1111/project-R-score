@@ -218,7 +218,7 @@ class Fire22APITester {
       if (response.ok) {
         const data = await response.json();
         this.authToken = data.token || data.access_token;
-        console.log('🔐 Authentication successful');
+        console.info('🔐 Authentication successful');
         return true;
       } else {
         console.warn('⚠️ Authentication failed, testing public endpoints only');
@@ -271,7 +271,7 @@ class Fire22APITester {
     let attempt = 0;
     while (attempt < this.config.retries) {
       try {
-        console.log(
+        console.info(
           `🧪 Testing ${test.method} ${test.path}${attempt > 0 ? ` (retry ${attempt})` : ''}`
         );
 
@@ -380,14 +380,14 @@ class Fire22APITester {
    * Run all API tests
    */
   async runTests(): Promise<TestResult[]> {
-    console.log('🚀 Starting Fire22 API Test Suite');
-    console.log(`📍 Base URL: ${this.config.baseUrl}`);
-    console.log(`⏱️  Timeout: ${this.config.timeout}ms`);
-    console.log(`🔄 Retries: ${this.config.retries}\n`);
+    console.info('🚀 Starting Fire22 API Test Suite');
+    console.info(`📍 Base URL: ${this.config.baseUrl}`);
+    console.info(`⏱️  Timeout: ${this.config.timeout}ms`);
+    console.info(`🔄 Retries: ${this.config.retries}\n`);
 
     // Discover endpoints
     const endpoints = await this.discoverEndpoints();
-    console.log(`🔍 Discovered ${endpoints.length} endpoints to test\n`);
+    console.info(`🔍 Discovered ${endpoints.length} endpoints to test\n`);
 
     // Try to authenticate
     await this.authenticate();
@@ -401,19 +401,19 @@ class Fire22APITester {
       // Log result
       const emoji = result.status === 'pass' ? '✅' : result.status === 'fail' ? '❌' : '⏭️';
       const responseTime = result.responseTime ? ` (${result.responseTime.toFixed(2)}ms)` : '';
-      console.log(`${emoji} ${result.method} ${result.endpoint}${responseTime}`);
+      console.info(`${emoji} ${result.method} ${result.endpoint}${responseTime}`);
 
       if (result.error) {
-        console.log(`   💥 Error: ${result.error}`);
+        console.info(`   💥 Error: ${result.error}`);
       }
 
       if (result.warnings) {
         result.warnings.forEach(warning => {
-          console.log(`   ⚠️ Warning: ${warning}`);
+          console.info(`   ⚠️ Warning: ${warning}`);
         });
       }
 
-      console.log(''); // Empty line for readability
+      console.info(''); // Empty line for readability
     }
 
     // Print summary
@@ -435,23 +435,23 @@ class Fire22APITester {
       this.results.filter(r => r.responseTime).reduce((sum, r) => sum + r.responseTime!, 0) /
       this.results.filter(r => r.responseTime).length;
 
-    console.log('📊 Test Results Summary');
-    console.log('='.repeat(50));
-    console.log(`✅ Passed: ${passed}/${total} (${((passed / total) * 100).toFixed(1)}%)`);
-    console.log(`❌ Failed: ${failed}/${total} (${((failed / total) * 100).toFixed(1)}%)`);
-    console.log(`⏭️ Skipped: ${skipped}/${total} (${((skipped / total) * 100).toFixed(1)}%)`);
-    console.log(`⏱️ Average Response Time: ${avgResponseTime.toFixed(2)}ms`);
+    console.info('📊 Test Results Summary');
+    console.info('='.repeat(50));
+    console.info(`✅ Passed: ${passed}/${total} (${((passed / total) * 100).toFixed(1)}%)`);
+    console.info(`❌ Failed: ${failed}/${total} (${((failed / total) * 100).toFixed(1)}%)`);
+    console.info(`⏭️ Skipped: ${skipped}/${total} (${((skipped / total) * 100).toFixed(1)}%)`);
+    console.info(`⏱️ Average Response Time: ${avgResponseTime.toFixed(2)}ms`);
 
     if (failed > 0) {
-      console.log('\n❌ Failed Tests:');
+      console.info('\n❌ Failed Tests:');
       this.results
         .filter(r => r.status === 'fail')
         .forEach(result => {
-          console.log(`   • ${result.method} ${result.endpoint}: ${result.error}`);
+          console.info(`   • ${result.method} ${result.endpoint}: ${result.error}`);
         });
     }
 
-    console.log(
+    console.info(
       `\n🎯 Overall Status: ${failed === 0 ? '✅ All tests passed!' : '❌ Some tests failed'}`
     );
   }
@@ -512,7 +512,7 @@ async function main() {
         break;
       case '--help':
       case '-h':
-        console.log(`
+        console.info(`
 🔌 Fire22 API Testing Suite
 
 USAGE:
@@ -547,7 +547,7 @@ EXAMPLES:
   if (outputFile) {
     const report = tester.generateReport();
     await Bun.write(outputFile, JSON.stringify(report, null, 2));
-    console.log(`\n📄 Test report saved to: ${outputFile}`);
+    console.info(`\n📄 Test report saved to: ${outputFile}`);
   }
 }
 

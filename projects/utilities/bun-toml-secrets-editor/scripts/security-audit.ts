@@ -17,7 +17,7 @@ class SecurityAuditor {
 	private issues: SecurityIssue[] = [];
 
 	async audit(): Promise<void> {
-		console.log("🔒 Security Audit for bun-toml-secrets-editor\n");
+		console.info("🔒 Security Audit for bun-toml-secrets-editor\n");
 
 		await this.auditSecretsHandling();
 		await this.auditSSRFProtection();
@@ -29,7 +29,7 @@ class SecurityAuditor {
 	}
 
 	private async auditSecretsHandling(): Promise<void> {
-		console.log("🔐 Auditing secrets handling...");
+		console.info("🔐 Auditing secrets handling...");
 
 		// Check for potential secret leakage in logs
 		const logFiles = [
@@ -70,7 +70,7 @@ class SecurityAuditor {
 	}
 
 	private async auditSSRFProtection(): Promise<void> {
-		console.log("🌐 Auditing SSRF protection...");
+		console.info("🌐 Auditing SSRF protection...");
 
 		// Check RSS fetcher for SSRF protection
 		try {
@@ -124,7 +124,7 @@ class SecurityAuditor {
 	}
 
 	private async auditDependencies(): Promise<void> {
-		console.log("📦 Auditing dependencies...");
+		console.info("📦 Auditing dependencies...");
 
 		try {
 			const packageJson = await Bun.file("./package.json").json();
@@ -135,7 +135,7 @@ class SecurityAuditor {
 
 			// Check for minimal dependencies (good)
 			if (Object.keys(deps).length <= 3) {
-				console.log("✅ Minimal dependency footprint - excellent for security");
+				console.info("✅ Minimal dependency footprint - excellent for security");
 			}
 
 			// Check for known vulnerable packages
@@ -173,7 +173,7 @@ class SecurityAuditor {
 	}
 
 	private async auditBinaryNames(): Promise<void> {
-		console.log("🎯 Auditing binary names...");
+		console.info("🎯 Auditing binary names...");
 
 		try {
 			const packageJson = await Bun.file("./package.json").json();
@@ -198,7 +198,7 @@ class SecurityAuditor {
 	}
 
 	private async auditLoggingSecurity(): Promise<void> {
-		console.log("📝 Auditing logging security...");
+		console.info("📝 Auditing logging security...");
 
 		// Check for sensitive data in profiling outputs
 		const profilingScripts = [
@@ -264,7 +264,7 @@ class SecurityAuditor {
 	}
 
 	private generateReport(): void {
-		console.log("\n📊 Security Audit Report\n");
+		console.info("\n📊 Security Audit Report\n");
 
 		const critical = this.issues.filter(
 			(i) => i.severity === "critical",
@@ -273,18 +273,18 @@ class SecurityAuditor {
 		const medium = this.issues.filter((i) => i.severity === "medium").length;
 		const low = this.issues.filter((i) => i.severity === "low").length;
 
-		console.log(`🔴 Critical: ${critical}`);
-		console.log(`🟠 High: ${high}`);
-		console.log(`🟡 Medium: ${medium}`);
-		console.log(`🟢 Low: ${low}`);
-		console.log(`📈 Total Issues: ${this.issues.length}`);
+		console.info(`🔴 Critical: ${critical}`);
+		console.info(`🟠 High: ${high}`);
+		console.info(`🟡 Medium: ${medium}`);
+		console.info(`🟢 Low: ${low}`);
+		console.info(`📈 Total Issues: ${this.issues.length}`);
 
 		if (this.issues.length === 0) {
-			console.log("\n🎉 No security issues found! Excellent security posture.");
+			console.info("\n🎉 No security issues found! Excellent security posture.");
 			return;
 		}
 
-		console.log("\n📋 Detailed Issues:\n");
+		console.info("\n📋 Detailed Issues:\n");
 
 		// Group by severity
 		const grouped = this.issues.reduce(
@@ -311,26 +311,26 @@ class SecurityAuditor {
 							? "🟡"
 							: "🟢";
 
-			console.log(`${icon} ${severity.toUpperCase()} ISSUES:`);
+			console.info(`${icon} ${severity.toUpperCase()} ISSUES:`);
 
 			for (const issue of issues) {
-				console.log(`  • ${issue.description}`);
-				if (issue.file) console.log(`    File: ${issue.file}`);
-				console.log(`    Recommendation: ${issue.recommendation}`);
-				console.log("");
+				console.info(`  • ${issue.description}`);
+				if (issue.file) console.info(`    File: ${issue.file}`);
+				console.info(`    Recommendation: ${issue.recommendation}`);
+				console.info("");
 			}
 		}
 
 		// Generate fix commands
-		console.log("🔧 Suggested Fix Commands:");
-		console.log("  # Update dependencies");
-		console.log("  bun update");
-		console.log("");
-		console.log("  # Run security audit regularly");
-		console.log("  bun scripts/security-audit.ts");
-		console.log("");
-		console.log("  # Check for secret leaks");
-		console.log(
+		console.info("🔧 Suggested Fix Commands:");
+		console.info("  # Update dependencies");
+		console.info("  bun update");
+		console.info("");
+		console.info("  # Run security audit regularly");
+		console.info("  bun scripts/security-audit.ts");
+		console.info("");
+		console.info("  # Check for secret leaks");
+		console.info(
 			'  grep -r "secret" src/ --exclude-dir=node_modules | grep -v ".ts" | grep console',
 		);
 	}
@@ -338,7 +338,7 @@ class SecurityAuditor {
 
 // CLI interface
 function showHelp(): void {
-	console.log(`
+	console.info(`
 🔒 Security Audit Script
 
 USAGE:

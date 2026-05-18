@@ -91,12 +91,12 @@ class AssetBuilder {
     const entry = await this.processFile(filePath);
     if (entry) {
       this.manifest.push(entry);
-      console.log(`✅ Added: ${filePath} (${entry.hash.slice(0, 8)}...)`);
+      console.info(`✅ Added: ${filePath} (${entry.hash.slice(0, 8)}...)`);
     }
   }
 
   public async addFiles(filePaths: string[]): Promise<void> {
-    console.log(`📦 Processing ${filePaths.length} files...`);
+    console.info(`📦 Processing ${filePaths.length} files...`);
     
     for (const filePath of filePaths) {
       await this.addFile(filePath);
@@ -104,7 +104,7 @@ class AssetBuilder {
   }
 
   public async addDirectory(dirPath: string, recursive: boolean = true): Promise<void> {
-    console.log(`📁 Scanning directory: ${dirPath}`);
+    console.info(`📁 Scanning directory: ${dirPath}`);
     
     try {
       const fullPath = join(this.distDir, dirPath);
@@ -257,13 +257,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Log performance metrics
 window.addEventListener('load', () => {
   const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-  console.log('🚀 Page Load Performance:');
-  console.log(\`  DNS: \${perfData.domainLookupEnd - perfData.domainLookupStart}ms\`);
-  console.log(\`  TCP: \${perfData.connectEnd - perfData.connectStart}ms\`);
-  console.log(\`  Request: \${perfData.responseStart - perfData.requestStart}ms\`);
-  console.log(\`  Response: \${perfData.responseEnd - perfData.responseStart}ms\`);
-  console.log(\`  DOM: \${perfData.domContentLoadedEventEnd - perfData.responseEnd}ms\`);
-  console.log(\`  Load: \${perfData.loadEventEnd - perfData.domContentLoadedEventEnd}ms\`);
+  console.info('🚀 Page Load Performance:');
+  console.info(\`  DNS: \${perfData.domainLookupEnd - perfData.domainLookupStart}ms\`);
+  console.info(\`  TCP: \${perfData.connectEnd - perfData.connectStart}ms\`);
+  console.info(\`  Request: \${perfData.responseStart - perfData.requestStart}ms\`);
+  console.info(\`  Response: \${perfData.responseEnd - perfData.responseStart}ms\`);
+  console.info(\`  DOM: \${perfData.domContentLoadedEventEnd - perfData.responseEnd}ms\`);
+  console.info(\`  Load: \${perfData.loadEventEnd - perfData.domContentLoadedEventEnd}ms\`);
 });`;
 
     writeFileSync(join(fullPath, 'app.js'), js);
@@ -278,7 +278,7 @@ window.addEventListener('load', () => {
 
     writeFileSync(join(fullPath, 'logo.svg'), svg);
 
-    console.log(`✅ Created sample assets in ${dirPath}`);
+    console.info(`✅ Created sample assets in ${dirPath}`);
   }
 
   public generateManifest(): AssetEntry[] {
@@ -294,11 +294,11 @@ window.addEventListener('load', () => {
       };
 
       writeFileSync(filePath, JSON.stringify(manifestData, null, 2));
-      console.log(`✅ Manifest saved to ${filePath}`);
-      console.log(`📊 Total assets: ${this.manifest.length}`);
+      console.info(`✅ Manifest saved to ${filePath}`);
+      console.info(`📊 Total assets: ${this.manifest.length}`);
       
       const totalSize = this.manifest.reduce((sum, asset) => sum + asset.size, 0);
-      console.log(`📏 Total size: ${(totalSize / 1024).toFixed(2)} KB`);
+      console.info(`📏 Total size: ${(totalSize / 1024).toFixed(2)} KB`);
       
     } catch (error) {
       console.error(`❌ Failed to save manifest:`, error);
@@ -328,8 +328,8 @@ window.addEventListener('load', () => {
 
 // CLI usage
 if (import.meta.main) {
-  console.log('🔧 Tier-1380 Asset Builder');
-  console.log('=' .repeat(40));
+  console.info('🔧 Tier-1380 Asset Builder');
+  console.info('=' .repeat(40));
 
   const builder = new AssetBuilder();
 
@@ -341,13 +341,13 @@ if (import.meta.main) {
 
   // Show statistics
   const stats = builder.getStats();
-  console.log('\n📊 Build Statistics:');
-  console.log(`  Total assets: ${stats.totalAssets}`);
-  console.log(`  Total size: ${(stats.totalSize / 1024).toFixed(2)} KB`);
-  console.log(`  Asset types:`, Object.entries(stats.assetTypes).map(([type, count]) => `${type} (${count})`).join(', '));
+  console.info('\n📊 Build Statistics:');
+  console.info(`  Total assets: ${stats.totalAssets}`);
+  console.info(`  Total size: ${(stats.totalSize / 1024).toFixed(2)} KB`);
+  console.info(`  Asset types:`, Object.entries(stats.assetTypes).map(([type, count]) => `${type} (${count})`).join(', '));
 
-  console.log('\n🚀 Build complete! Run the asset server:');
-  console.log('  bun run asset-server');
+  console.info('\n🚀 Build complete! Run the asset server:');
+  console.info('  bun run asset-server');
 }
 
 export default AssetBuilder;

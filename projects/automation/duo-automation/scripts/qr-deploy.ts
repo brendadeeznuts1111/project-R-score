@@ -11,8 +11,8 @@ async function deployQRSystem() {
   const spinner = ora();
   const domains = ['factory-wager.com', 'duoplus.com'];
 
-  console.log(chalk.blue.bold('\n🚀 Deploying QR Device Onboarding System to Production'));
-  console.log(chalk.gray(`Target Domains: ${domains.join(', ')}\n`));
+  console.info(chalk.blue.bold('\n🚀 Deploying QR Device Onboarding System to Production'));
+  console.info(chalk.gray(`Target Domains: ${domains.join(', ')}\n`));
 
   const steps = [
     { name: 'Provisioning QR Generator Endpoint (monitor.factory-wager.com/qr)', duration: 2000 },
@@ -29,15 +29,15 @@ async function deployQRSystem() {
     spinner.succeed(chalk.green(`✅ ${step.name}`));
   }
 
-  console.log(chalk.green.bold('\n🎉 QR ONBOARDING SYSTEM DEPLOYMENT COMPLETE!'));
-  console.log(chalk.blue.bold('\n🏢 Production Status:'));
-  console.log(chalk.white('   ✅ QR Generator: Live'));
-  console.log(chalk.white('   ✅ Health Checks: 15 active'));
-  console.log(chalk.white('   ✅ Security: JWT/mTLS enforced'));
-  console.log(chalk.white('   ✅ Dashboard: QR Panel live (v2.1)'));
+  console.info(chalk.green.bold('\n🎉 QR ONBOARDING SYSTEM DEPLOYMENT COMPLETE!'));
+  console.info(chalk.blue.bold('\n🏢 Production Status:'));
+  console.info(chalk.white('   ✅ QR Generator: Live'));
+  console.info(chalk.white('   ✅ Health Checks: 15 active'));
+  console.info(chalk.white('   ✅ Security: JWT/mTLS enforced'));
+  console.info(chalk.white('   ✅ Dashboard: QR Panel live (v2.1)'));
   
-  console.log(chalk.magenta.bold('\n📱 SCAN QR NOW: monitor.factory-wager.com/qr-onboard'));
-  console.log(chalk.magenta('65% MRR uplift trajectory confirmed! 🚀💰'));
+  console.info(chalk.magenta.bold('\n📱 SCAN QR NOW: monitor.factory-wager.com/qr-onboard'));
+  console.info(chalk.magenta('65% MRR uplift trajectory confirmed! 🚀💰'));
 }
 
 deployQRSystem().catch(err => {

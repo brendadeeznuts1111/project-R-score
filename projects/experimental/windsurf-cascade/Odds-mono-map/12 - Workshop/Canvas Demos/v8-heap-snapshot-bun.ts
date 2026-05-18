@@ -20,19 +20,19 @@
 import v8 from "node:v8";
 import fs from "node:fs";
 
-console.log('🧠 V8 Heap Snapshot Demo - Bun Compatible Version');
-console.log('===================================================');
+console.info('🧠 V8 Heap Snapshot Demo - Bun Compatible Version');
+console.info('===================================================');
 
 // =============================================================================
 // BASIC HEAP SNAPSHOT CREATION
 // =============================================================================
 
-console.log('\n📸 Basic Heap Snapshot Creation:');
-console.log('===================================');
+console.info('\n📸 Basic Heap Snapshot Creation:');
+console.info('===================================');
 
 // Create a heap snapshot with auto-generated name
 const snapshotPath = v8.writeHeapSnapshot();
-console.log(`✅ Auto-generated snapshot: ${snapshotPath}`);
+console.info(`✅ Auto-generated snapshot: ${snapshotPath}`);
 
 // Create snapshots directory
 if (!fs.existsSync('./memory-snapshots')) {
@@ -41,14 +41,14 @@ if (!fs.existsSync('./memory-snapshots')) {
 
 // Create a heap snapshot with custom name
 const customSnapshotPath = v8.writeHeapSnapshot('./memory-snapshots/demo-initial.heapsnapshot');
-console.log(`✅ Custom snapshot: ${customSnapshotPath}`);
+console.info(`✅ Custom snapshot: ${customSnapshotPath}`);
 
 // =============================================================================
 // MEMORY PATTERN CREATION FOR ANALYSIS
 // =============================================================================
 
-console.log('\n🔍 Creating Memory Patterns for Analysis:');
-console.log('==========================================');
+console.info('\n🔍 Creating Memory Patterns for Analysis:');
+console.info('==========================================');
 
 // Create various memory patterns
 const memoryPatterns = {
@@ -112,122 +112,122 @@ const memoryPatterns = {
     circular: createCircularReferences(200)
 };
 
-console.log(`✅ Created memory patterns:`);
-console.log(`   • Arrays: ${memoryPatterns.arrays.length} objects`);
-console.log(`   • Objects: ${memoryPatterns.objects.length} objects`);
-console.log(`   • Strings: ${memoryPatterns.strings.length} strings`);
-console.log(`   • Functions: ${memoryPatterns.functions.length} functions`);
-console.log(`   • TypedArrays: 4 arrays with ${(10000 + 5000 + 7500 + 100) / 1000}k total elements`);
-console.log(`   • Circular references: ${memoryPatterns.circular.length} objects`);
+console.info(`✅ Created memory patterns:`);
+console.info(`   • Arrays: ${memoryPatterns.arrays.length} objects`);
+console.info(`   • Objects: ${memoryPatterns.objects.length} objects`);
+console.info(`   • Strings: ${memoryPatterns.strings.length} strings`);
+console.info(`   • Functions: ${memoryPatterns.functions.length} functions`);
+console.info(`   • TypedArrays: 4 arrays with ${(10000 + 5000 + 7500 + 100) / 1000}k total elements`);
+console.info(`   • Circular references: ${memoryPatterns.circular.length} objects`);
 
 // =============================================================================
 // MEMORY STATE SNAPSHOTS
 // =============================================================================
 
-console.log('\n📊 Creating Memory State Snapshots:');
-console.log('====================================');
+console.info('\n📊 Creating Memory State Snapshots:');
+console.info('====================================');
 
 // Snapshot 1: After pattern creation
 const afterPatternsPath = v8.writeHeapSnapshot('./memory-snapshots/after-patterns.heapsnapshot');
-console.log(`📸 After patterns: ${afterPatternsPath}`);
+console.info(`📸 After patterns: ${afterPatternsPath}`);
 
 // Create memory pressure
-console.log('🔥 Creating additional memory pressure...');
+console.info('🔥 Creating additional memory pressure...');
 const memoryPressure = createMemoryPressure();
 
 // Snapshot 2: After memory pressure
 const afterPressurePath = v8.writeHeapSnapshot('./memory-snapshots/after-pressure.heapsnapshot');
-console.log(`📸 After pressure: ${afterPressurePath}`);
+console.info(`📸 After pressure: ${afterPressurePath}`);
 
 // Force garbage collection if available
 if (global.gc) {
-    console.log('🗑️ Forcing garbage collection...');
+    console.info('🗑️ Forcing garbage collection...');
     global.gc();
 
     // Snapshot 3: After garbage collection
     const afterGCPath = v8.writeHeapSnapshot('./memory-snapshots/after-gc.heapsnapshot');
-    console.log(`📸 After GC: ${afterGCPath}`);
+    console.info(`📸 After GC: ${afterGCPath}`);
 } else {
-    console.log('⚠️ Garbage collection not available (run with --expose-gc)');
+    console.info('⚠️ Garbage collection not available (run with --expose-gc)');
 }
 
 // =============================================================================
 // MEMORY LEAK SIMULATION
 // =============================================================================
 
-console.log('\n💧 Simulating Memory Leaks:');
-console.log('============================');
+console.info('\n💧 Simulating Memory Leaks:');
+console.info('============================');
 
 // Create intentional memory leak
 createMemoryLeak();
 
 // Snapshot 4: Memory leak simulation
 const leakPath = v8.writeHeapSnapshot('./memory-snapshots/memory-leak-simulation.heapsnapshot');
-console.log(`📸 Memory leak simulation: ${leakPath}`);
+console.info(`📸 Memory leak simulation: ${leakPath}`);
 
 // =============================================================================
 // MEMORY MONITORING (Bun Compatible)
 // =============================================================================
 
-console.log('\n📈 Memory Monitoring (Bun Compatible):');
-console.log('=========================================');
+console.info('\n📈 Memory Monitoring (Bun Compatible):');
+console.info('=========================================');
 
 try {
     // Get current heap statistics (available in Bun)
     const heapStats = v8.getHeapStatistics();
-    console.log('📊 Current Heap Statistics:');
-    console.log(`   • Total Heap Size: ${(heapStats.total_heap_size / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`   • Used Heap Size: ${(heapStats.used_heap_size / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`   • Heap Size Limit: ${(heapStats.heap_size_limit / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`   • Total Physical Size: ${(heapStats.total_physical_size / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`   • Total Available Size: ${(heapStats.total_available_size / 1024 / 1024).toFixed(2)} MB`);
+    console.info('📊 Current Heap Statistics:');
+    console.info(`   • Total Heap Size: ${(heapStats.total_heap_size / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`   • Used Heap Size: ${(heapStats.used_heap_size / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`   • Heap Size Limit: ${(heapStats.heap_size_limit / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`   • Total Physical Size: ${(heapStats.total_physical_size / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`   • Total Available Size: ${(heapStats.total_available_size / 1024 / 1024).toFixed(2)} MB`);
 } catch (error) {
-    console.log('⚠️ Heap statistics not available in this Bun version');
+    console.info('⚠️ Heap statistics not available in this Bun version');
 }
 
 // Monitor memory usage over time (simplified version)
-console.log('\n⏱️ Monitoring memory usage for 10 seconds...');
+console.info('\n⏱️ Monitoring memory usage for 10 seconds...');
 monitorMemoryUsageSimple(v8, 10000);
 
 // =============================================================================
 // CHROME DEVTOOLS INSTRUCTIONS
 // =============================================================================
 
-console.log('\n💀 Chrome DevTools Analysis Instructions:');
-console.log('==========================================');
+console.info('\n💀 Chrome DevTools Analysis Instructions:');
+console.info('==========================================');
 
-console.log('🔧 How to analyze heap snapshots in Chrome DevTools:');
-console.log('1. Open Chrome browser');
-console.log('2. Open Chrome DevTools (F12 or right-click → Inspect)');
-console.log('3. Go to the "Memory" tab');
-console.log('4. Click the "Load" button (folder icon)');
-console.log('5. Select any .heapsnapshot file from the memory-snapshots directory');
-console.log('');
-console.log('📊 Available Analysis Views:');
-console.log('• Summary: Overview of memory usage by object type');
-console.log('• Comparison: Compare two snapshots to find leaks');
-console.log('• Containment: View object retention relationships');
-console.log('• Statistics: Detailed memory statistics');
-console.log('');
-console.log('🎯 Snapshot Files Created:');
-console.log(`   • ${snapshotPath}`);
-console.log(`   • ${customSnapshotPath}`);
-console.log(`   • ${afterPatternsPath}`);
-console.log(`   • ${afterPressurePath}`);
-console.log(`   • ./memory-snapshots/after-gc.heapsnapshot`);
-console.log(`   • ${leakPath}`);
-console.log('');
-console.log('🔍 Memory Leak Detection Tips:');
-console.log('• Compare "after-patterns" with "memory-leak-simulation"');
-console.log('• Look for objects that should be freed but remain');
-console.log('• Check for detached DOM nodes or event listeners');
-console.log('• Analyze closure references and circular dependencies');
-console.log('');
-console.log('🚀 Bun-Specific Features:');
-console.log('• Fast heap snapshot generation');
-console.log('• Compatible with Node.js V8 API');
-console.log('• Works with Chrome DevTools');
-console.log('• Memory leak detection capabilities');
+console.info('🔧 How to analyze heap snapshots in Chrome DevTools:');
+console.info('1. Open Chrome browser');
+console.info('2. Open Chrome DevTools (F12 or right-click → Inspect)');
+console.info('3. Go to the "Memory" tab');
+console.info('4. Click the "Load" button (folder icon)');
+console.info('5. Select any .heapsnapshot file from the memory-snapshots directory');
+console.info('');
+console.info('📊 Available Analysis Views:');
+console.info('• Summary: Overview of memory usage by object type');
+console.info('• Comparison: Compare two snapshots to find leaks');
+console.info('• Containment: View object retention relationships');
+console.info('• Statistics: Detailed memory statistics');
+console.info('');
+console.info('🎯 Snapshot Files Created:');
+console.info(`   • ${snapshotPath}`);
+console.info(`   • ${customSnapshotPath}`);
+console.info(`   • ${afterPatternsPath}`);
+console.info(`   • ${afterPressurePath}`);
+console.info(`   • ./memory-snapshots/after-gc.heapsnapshot`);
+console.info(`   • ${leakPath}`);
+console.info('');
+console.info('🔍 Memory Leak Detection Tips:');
+console.info('• Compare "after-patterns" with "memory-leak-simulation"');
+console.info('• Look for objects that should be freed but remain');
+console.info('• Check for detached DOM nodes or event listeners');
+console.info('• Analyze closure references and circular dependencies');
+console.info('');
+console.info('🚀 Bun-Specific Features:');
+console.info('• Fast heap snapshot generation');
+console.info('• Compatible with Node.js V8 API');
+console.info('• Works with Chrome DevTools');
+console.info('• Memory leak detection capabilities');
 
 // =============================================================================
 // UTILITY FUNCTIONS
@@ -288,7 +288,7 @@ function createMemoryPressure(): any {
         ]
     };
 
-    console.log(`✅ Created memory pressure: ~${(450 * 1024) / 1024}KB of data`);
+    console.info(`✅ Created memory pressure: ~${(450 * 1024) / 1024}KB of data`);
     return data;
 }
 
@@ -323,7 +323,7 @@ function createMemoryLeak(): void {
         leakedMemory.push(leakObj);
     }
 
-    console.log(`💧 Added ${leakedMemory.length} objects to memory leak simulation`);
+    console.info(`💧 Added ${leakedMemory.length} objects to memory leak simulation`);
 }
 
 /**
@@ -339,8 +339,8 @@ function monitorMemoryUsageSimple(v8: any, duration: number): void {
 
         if (elapsed >= duration) {
             clearInterval(monitor);
-            console.log('\n📈 Memory Usage Summary:');
-            console.log('==========================');
+            console.info('\n📈 Memory Usage Summary:');
+            console.info('==========================');
 
             if (measurements.length > 0) {
                 const initial = measurements[0];
@@ -348,16 +348,16 @@ function monitorMemoryUsageSimple(v8: any, duration: number): void {
                 const peak = measurements.reduce((max, curr) =>
                     curr.used > max.used ? curr : max, measurements[0]);
 
-                console.log(`   • Initial Memory: ${(initial.used / 1024 / 1024).toFixed(2)} MB`);
-                console.log(`   • Final Memory: ${(final.used / 1024 / 1024).toFixed(2)} MB`);
-                console.log(`   • Peak Memory: ${(peak.used / 1024 / 1024).toFixed(2)} MB`);
-                console.log(`   • Memory Change: ${((final.used - initial.used) / 1024 / 1024).toFixed(2)} MB`);
-                console.log(`   • Measurements Taken: ${measurements.length}`);
+                console.info(`   • Initial Memory: ${(initial.used / 1024 / 1024).toFixed(2)} MB`);
+                console.info(`   • Final Memory: ${(final.used / 1024 / 1024).toFixed(2)} MB`);
+                console.info(`   • Peak Memory: ${(peak.used / 1024 / 1024).toFixed(2)} MB`);
+                console.info(`   • Memory Change: ${((final.used - initial.used) / 1024 / 1024).toFixed(2)} MB`);
+                console.info(`   • Measurements Taken: ${measurements.length}`);
 
                 // Memory trend analysis
                 const trend = final.used > initial.used ? '📈 Increasing' :
                     final.used < initial.used ? '📉 Decreasing' : '➡️ Stable';
-                console.log(`   • Memory Trend: ${trend}`);
+                console.info(`   • Memory Trend: ${trend}`);
             }
 
             return;
@@ -374,18 +374,18 @@ function monitorMemoryUsageSimple(v8: any, duration: number): void {
 
             measurements.push(measurement);
 
-            console.log(`   ${(elapsed / 1000).toFixed(0)}s: Used ${(stats.used_heap_size / 1024 / 1024).toFixed(2)} MB / Total ${(stats.total_heap_size / 1024 / 1024).toFixed(2)} MB`);
+            console.info(`   ${(elapsed / 1000).toFixed(0)}s: Used ${(stats.used_heap_size / 1024 / 1024).toFixed(2)} MB / Total ${(stats.total_heap_size / 1024 / 1024).toFixed(2)} MB`);
         } catch (error) {
-            console.log(`   ${(elapsed / 1000).toFixed(0)}s: Memory monitoring not available`);
+            console.info(`   ${(elapsed / 1000).toFixed(0)}s: Memory monitoring not available`);
         }
 
     }, interval);
 }
 
-console.log('\n🎉 V8 Heap Snapshot Demo Complete!');
-console.log('🧠 Memory analysis files created in memory-snapshots/');
-console.log('💀 Use Chrome DevTools to analyze the heap snapshots');
-console.log('🔍 Compare snapshots to detect memory leaks and optimization opportunities');
+console.info('\n🎉 V8 Heap Snapshot Demo Complete!');
+console.info('🧠 Memory analysis files created in memory-snapshots/');
+console.info('💀 Use Chrome DevTools to analyze the heap snapshots');
+console.info('🔍 Compare snapshots to detect memory leaks and optimization opportunities');
 
 // Export functions for programmatic use
 export {

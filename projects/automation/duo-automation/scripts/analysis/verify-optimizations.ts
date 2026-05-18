@@ -232,61 +232,61 @@ const checks: OptimizationCheck[] = [
  * Run all optimization checks
  */
 async function runChecks(): Promise<void> {
-  console.log('🔍 Running Empire Pro Optimization Verification...\n');
+  console.info('🔍 Running Empire Pro Optimization Verification...\n');
   
   let passed = 0;
   let failed = 0;
   
   for (const check of checks) {
-    console.log(`📋 ${check.name}`);
-    console.log(`   ${check.description}`);
+    console.info(`📋 ${check.name}`);
+    console.info(`   ${check.description}`);
     
     try {
       const result = await check.check();
       check.status = result ? 'pass' : 'fail';
       
       if (result) {
-        console.log(`   ✅ PASS`);
+        console.info(`   ✅ PASS`);
         passed++;
       } else {
-        console.log(`   ❌ FAIL`);
+        console.info(`   ❌ FAIL`);
         failed++;
       }
     } catch (error) {
       check.status = 'fail';
       check.details = error instanceof Error ? error.message : 'Unknown error';
-      console.log(`   ❌ FAIL: ${check.details}`);
+      console.info(`   ❌ FAIL: ${check.details}`);
       failed++;
     }
     
-    console.log('');
+    console.info('');
   }
   
   // Summary
-  console.log('📊 Verification Summary');
-  console.log('='.repeat(50));
-  console.log(`✅ Passed: ${passed}/${checks.length}`);
-  console.log(`❌ Failed: ${failed}/${checks.length}`);
+  console.info('📊 Verification Summary');
+  console.info('='.repeat(50));
+  console.info(`✅ Passed: ${passed}/${checks.length}`);
+  console.info(`❌ Failed: ${failed}/${checks.length}`);
   
   if (failed === 0) {
-    console.log('\n🎉 All optimizations verified successfully!');
-    console.log('Empire Pro is fully optimized for Bun v1.3.6! 🚀');
+    console.info('\n🎉 All optimizations verified successfully!');
+    console.info('Empire Pro is fully optimized for Bun v1.3.6! 🚀');
   } else {
-    console.log('\n⚠️ Some optimizations need attention:');
+    console.info('\n⚠️ Some optimizations need attention:');
     checks.filter(c => c.status === 'fail').forEach(check => {
-      console.log(`  - ${check.name}: ${check.details || 'Check failed'}`);
+      console.info(`  - ${check.name}: ${check.details || 'Check failed'}`);
     });
   }
   
   // Performance Summary
-  console.log('\n🚀 Expected Performance Gains:');
-  console.log('  • 25-35% faster system-wide performance');
-  console.log('  • 30x faster CLI commands (Bun.spawnSync)');
-  console.log('  • 20x faster file integrity checks (Bun.hash.crc32)');
-  console.log('  • 3.5x faster JSON parsing (Response.json())');
-  console.log('  • 2-3x faster AWS operations (Bun HTTP client)');
-  console.log('  • 15MB smaller bundle size');
-  console.log('  • Zero external dependencies for core features');
+  console.info('\n🚀 Expected Performance Gains:');
+  console.info('  • 25-35% faster system-wide performance');
+  console.info('  • 30x faster CLI commands (Bun.spawnSync)');
+  console.info('  • 20x faster file integrity checks (Bun.hash.crc32)');
+  console.info('  • 3.5x faster JSON parsing (Response.json())');
+  console.info('  • 2-3x faster AWS operations (Bun HTTP client)');
+  console.info('  • 15MB smaller bundle size');
+  console.info('  • Zero external dependencies for core features');
 }
 
 // Run verification

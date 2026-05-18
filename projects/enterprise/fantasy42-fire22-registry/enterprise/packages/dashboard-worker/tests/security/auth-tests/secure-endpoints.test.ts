@@ -6,7 +6,7 @@
 
 import { SecureFire22Client } from './src/integration/secure-fire22-client.ts';
 
-console.log(`
+console.info(`
 ╔════════════════════════════════════════════════════════╗
 ║        Fire22 Secure Endpoints Test Suite             ║
 ╚════════════════════════════════════════════════════════╝
@@ -50,8 +50,8 @@ const ENDPOINTS = [
 ];
 
 async function testEndpoint(endpoint: any) {
-  console.log(`\n📍 Testing: ${endpoint.description}`);
-  console.log(`   ${endpoint.method} ${endpoint.url}`);
+  console.info(`\n📍 Testing: ${endpoint.description}`);
+  console.info(`   ${endpoint.method} ${endpoint.url}`);
 
   try {
     const options: RequestInit = {
@@ -71,58 +71,58 @@ async function testEndpoint(endpoint: any) {
     const responseData = await response.text();
 
     if (response.ok) {
-      console.log(`   ✅ Status: ${response.status}`);
+      console.info(`   ✅ Status: ${response.status}`);
       try {
         const json = JSON.parse(responseData);
-        console.log(`   📊 Response:`, JSON.stringify(json).substring(0, 100) + '...');
+        console.info(`   📊 Response:`, JSON.stringify(json).substring(0, 100) + '...');
       } catch {
-        console.log(`   📊 Response: ${responseData.substring(0, 100)}...`);
+        console.info(`   📊 Response: ${responseData.substring(0, 100)}...`);
       }
     } else {
-      console.log(`   ⚠️ Status: ${response.status} ${response.statusText}`);
+      console.info(`   ⚠️ Status: ${response.status} ${response.statusText}`);
       if (response.status === 500 && endpoint.description.includes('requires auth')) {
-        console.log(`   💡 This endpoint requires valid Fire22 credentials`);
+        console.info(`   💡 This endpoint requires valid Fire22 credentials`);
       }
     }
   } catch (error: any) {
-    console.log(`   ❌ Error: ${error.message}`);
+    console.info(`   ❌ Error: ${error.message}`);
   }
 }
 
 async function testSecureClient() {
-  console.log(`\n\n🔐 Testing Secure Fire22 Client Integration\n`);
+  console.info(`\n\n🔐 Testing Secure Fire22 Client Integration\n`);
 
   const client = new SecureFire22Client();
 
   // Test initialization
-  console.log('1. Initializing secure client...');
+  console.info('1. Initializing secure client...');
   const initialized = await client.initialize();
 
   if (initialized) {
-    console.log('   ✅ Client initialized with credentials');
+    console.info('   ✅ Client initialized with credentials');
 
     // Test connection
-    console.log('2. Testing API connection...');
+    console.info('2. Testing API connection...');
     const connected = await client.testConnection();
 
     if (connected) {
-      console.log('   ✅ API connection successful');
+      console.info('   ✅ API connection successful');
 
       // Test weekly figures
-      console.log('3. Testing weekly figures endpoint...');
+      console.info('3. Testing weekly figures endpoint...');
       try {
         const data = await client.getWeeklyFigureByAgentLite({ week: 0 });
-        console.log('   ✅ Weekly figures retrieved');
-        console.log('   📊 Data:', JSON.stringify(data).substring(0, 100) + '...');
+        console.info('   ✅ Weekly figures retrieved');
+        console.info('   📊 Data:', JSON.stringify(data).substring(0, 100) + '...');
       } catch (error: any) {
-        console.log('   ⚠️ Failed:', error.message);
+        console.info('   ⚠️ Failed:', error.message);
       }
     } else {
-      console.log('   ⚠️ API connection failed - check credentials');
+      console.info('   ⚠️ API connection failed - check credentials');
     }
   } else {
-    console.log('   ℹ️ No credentials found - run setup script:');
-    console.log('   bun run scripts/setup-secure-credentials.ts');
+    console.info('   ℹ️ No credentials found - run setup script:');
+    console.info('   bun run scripts/setup-secure-credentials.ts');
   }
 }
 
@@ -141,14 +141,14 @@ async function main() {
   const serverRunning = await checkServerRunning();
 
   if (!serverRunning) {
-    console.log('⚠️ Server not running. Start it with: bun run dev-server');
-    console.log('\nTesting secure client only...');
+    console.info('⚠️ Server not running. Start it with: bun run dev-server');
+    console.info('\nTesting secure client only...');
     await testSecureClient();
     return;
   }
 
   // Test all endpoints
-  console.log('\n🚀 Testing API Endpoints\n');
+  console.info('\n🚀 Testing API Endpoints\n');
   for (const endpoint of ENDPOINTS) {
     await testEndpoint(endpoint);
   }
@@ -156,9 +156,9 @@ async function main() {
   // Test secure client
   await testSecureClient();
 
-  console.log(`\n\n✨ Test suite complete!\n`);
+  console.info(`\n\n✨ Test suite complete!\n`);
 
-  console.log(`
+  console.info(`
 📋 Summary:
 - Weekly Figures Lite: Working (no auth required) 
 - Agent Performance: Working (no auth required)

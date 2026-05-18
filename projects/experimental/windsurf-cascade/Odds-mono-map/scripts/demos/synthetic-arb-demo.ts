@@ -22,7 +22,7 @@ class SyntheticArbDemo {
     private detector = new SyntheticArbDetector();
 
     async runCompleteDemo(): Promise<void> {
-        console.log('🎯 Synthetic Arbitrage System Demonstration\n');
+        console.info('🎯 Synthetic Arbitrage System Demonstration\n');
 
         // Demo 1: Covariance Engine
         await this.demonstrateCovarianceEngine();
@@ -36,12 +36,12 @@ class SyntheticArbDemo {
         // Demo 4: Risk Management
         await this.demonstrateRiskManagement();
 
-        console.log('\n✅ Synthetic Arbitrage Demo Complete!');
+        console.info('\n✅ Synthetic Arbitrage Demo Complete!');
     }
 
     private async demonstrateCovarianceEngine(): Promise<void> {
-        console.log('📊 1. Covariance Engine Demo');
-        console.log('─'.repeat(40));
+        console.info('📊 1. Covariance Engine Demo');
+        console.info('─'.repeat(40));
 
         // Simulate price data for correlated markets
         const primaryPrices = this.generateCorrelatedPriceSeries(100, 100, 0.82, 0.28);
@@ -50,11 +50,11 @@ class SyntheticArbDemo {
         try {
             const params = this.covarianceEngine.calculateHedgeRatio(primaryPrices, hedgePrices);
 
-            console.log(`✅ Hedge Ratio Analysis:`);
-            console.log(`   Ratio: ${params.ratio.toFixed(4)}`);
-            console.log(`   Correlation: ${params.correlation.toFixed(3)}`);
-            console.log(`   Confidence: ${(params.confidence * 100).toFixed(1)}%`);
-            console.log(`   Residual Std Dev: ${params.residualStdDev.toFixed(4)}`);
+            console.info(`✅ Hedge Ratio Analysis:`);
+            console.info(`   Ratio: ${params.ratio.toFixed(4)}`);
+            console.info(`   Correlation: ${params.correlation.toFixed(3)}`);
+            console.info(`   Confidence: ${(params.confidence * 100).toFixed(1)}%`);
+            console.info(`   Residual Std Dev: ${params.residualStdDev.toFixed(4)}`);
 
             // Update engine with simulated data
             for (let i = 0; i < primaryPrices.length; i++) {
@@ -63,16 +63,16 @@ class SyntheticArbDemo {
             }
 
             const stats = this.covarianceEngine.getStatistics();
-            console.log(`📈 Engine Stats: ${stats.totalRelationships} relationships, ${stats.averageCorrelation.toFixed(3)} avg correlation`);
+            console.info(`📈 Engine Stats: ${stats.totalRelationships} relationships, ${stats.averageCorrelation.toFixed(3)} avg correlation`);
 
         } catch (error) {
-            console.log(`❌ Covariance calculation failed: ${error.message}`);
+            console.info(`❌ Covariance calculation failed: ${error.message}`);
         }
     }
 
     private async demonstrateOpportunityDetection(): Promise<void> {
-        console.log('\n🎯 2. Opportunity Detection Demo');
-        console.log('─'.repeat(40));
+        console.info('\n🎯 2. Opportunity Detection Demo');
+        console.info('─'.repeat(40));
 
         // Create synthetic relationship
         const relationship: SyntheticRelationship = {
@@ -122,22 +122,22 @@ class SyntheticArbDemo {
         const opportunity = this.detector.detect(primaryTick, hedgeTick, gameContext);
 
         if (opportunity) {
-            console.log(`🎉 Opportunity Found!`);
-            console.log(`   ID: ${opportunity.id}`);
-            console.log(`   Mispricing: ${opportunity.mispricing.toFixed(2)}σ`);
-            console.log(`   Expected Value: $${opportunity.expectedValue.toFixed(2)}`);
-            console.log(`   Hedge Ratio: ${opportunity.hedgeRatio.toFixed(3)}`);
-            console.log(`   Required Hedge: $${opportunity.requiredHedgeSize.toFixed(2)}`);
-            console.log(`   Tail Risk: ${opportunity.tailRisk.toFixed(1)}%`);
-            console.log(`   Confidence: ${(opportunity.confidence * 100).toFixed(1)}%`);
+            console.info(`🎉 Opportunity Found!`);
+            console.info(`   ID: ${opportunity.id}`);
+            console.info(`   Mispricing: ${opportunity.mispricing.toFixed(2)}σ`);
+            console.info(`   Expected Value: $${opportunity.expectedValue.toFixed(2)}`);
+            console.info(`   Hedge Ratio: ${opportunity.hedgeRatio.toFixed(3)}`);
+            console.info(`   Required Hedge: $${opportunity.requiredHedgeSize.toFixed(2)}`);
+            console.info(`   Tail Risk: ${opportunity.tailRisk.toFixed(1)}%`);
+            console.info(`   Confidence: ${(opportunity.confidence * 100).toFixed(1)}%`);
         } else {
-            console.log(`⚠️ No opportunity detected in current market conditions`);
+            console.info(`⚠️ No opportunity detected in current market conditions`);
         }
     }
 
     private async demonstrateStreamProcessing(): Promise<void> {
-        console.log('\n🔄 3. Stream Processing Demo');
-        console.log('─'.repeat(40));
+        console.info('\n🔄 3. Stream Processing Demo');
+        console.info('─'.repeat(40));
 
         const config: ProcessingConfig = {
             maxLatencyDelta: 50,
@@ -153,7 +153,7 @@ class SyntheticArbDemo {
         const primaryStream = this.createMockMarketStream('NBA-1Q-LAL', -2.5);
         const hedgeStream = this.createMockMarketStream('NBA-FULL-LAL', -8.5);
 
-        console.log('🚀 Starting stream processing (10 ticks)...');
+        console.info('🚀 Starting stream processing (10 ticks)...');
 
         // Process a few ticks for demo
         let tickCount = 0;
@@ -162,17 +162,17 @@ class SyntheticArbDemo {
         for await (const [primary, hedge] of mergedStream) {
             if (tickCount >= 10) break;
 
-            console.log(`📈 Tick ${tickCount + 1}: Primary ${primary.odds.home}, Hedge ${hedge.odds.home}`);
+            console.info(`📈 Tick ${tickCount + 1}: Primary ${primary.odds.home}, Hedge ${hedge.odds.home}`);
             tickCount++;
         }
 
         const stats = processor.getStatistics();
-        console.log(`📊 Processing Stats: ${stats.covarianceUpdates} covariance updates`);
+        console.info(`📊 Processing Stats: ${stats.covarianceUpdates} covariance updates`);
     }
 
     private async demonstrateRiskManagement(): Promise<void> {
-        console.log('\n🛡️ 4. Risk Management Demo');
-        console.log('─'.repeat(40));
+        console.info('\n🛡️ 4. Risk Management Demo');
+        console.info('─'.repeat(40));
 
         // Test different correlation tiers
         const correlationTests = [
@@ -183,17 +183,17 @@ class SyntheticArbDemo {
             { correlation: 0.55, expected: 'Reject' }
         ];
 
-        console.log('🔍 Testing correlation tier validation:');
+        console.info('🔍 Testing correlation tier validation:');
 
         correlationTests.forEach(test => {
             const opportunity = this.createMockOpportunity(test.correlation);
             const isValid = this.detector.validateOpportunity(opportunity);
             const status = isValid === (test.expected === 'Pass') ? '✅' : '❌';
-            console.log(`   ${status} ρ=${test.correlation}: ${test.expected} (${isValid ? 'Valid' : 'Invalid'})`);
+            console.info(`   ${status} ρ=${test.correlation}: ${test.expected} (${isValid ? 'Valid' : 'Invalid'})`);
         });
 
         // Position sizing demo
-        console.log('\n💰 Position sizing with Kelly criterion:');
+        console.info('\n💰 Position sizing with Kelly criterion:');
         const edgeTests = [
             { edge: 0.01, correlation: 0.9, expectedSize: 'Conservative' },
             { edge: 0.03, correlation: 0.9, expectedSize: 'Moderate' },
@@ -204,7 +204,7 @@ class SyntheticArbDemo {
             // Simplified Kelly calculation for demo
             const kellyFraction = Math.min((test.edge / 0.25) * Math.pow(test.correlation, 2) * 0.5, 0.25);
             const positionSize = kellyFraction * 100000;
-            console.log(`   Edge ${(test.edge * 100).toFixed(1)}%, ρ=${test.correlation}: $${positionSize.toFixed(0)} (${test.expectedSize})`);
+            console.info(`   Edge ${(test.edge * 100).toFixed(1)}%, ρ=${test.correlation}: $${positionSize.toFixed(0)} (${test.expectedSize})`);
         });
     }
 

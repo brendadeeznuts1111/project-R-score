@@ -30,7 +30,7 @@ const mockEnv = {
 // Mock system controller
 const mockSystemController = {
   broadcastSystemEvent: async (event: string, data: any) => {
-    console.log(`📡 Event: ${event}`, data);
+    console.info(`📡 Event: ${event}`, data);
   },
   getSystemStatus: () => ({
     dashboard: 'online',
@@ -42,15 +42,15 @@ const mockSystemController = {
 };
 
 async function runSimpleIntegrationTest(): Promise<void> {
-  console.log('🚀 Fire22 Simple Integration Test');
-  console.log('='.repeat(50));
+  console.info('🚀 Fire22 Simple Integration Test');
+  console.info('='.repeat(50));
 
   try {
     // Test 1: Unified API Handler
-    console.log('\n📋 Test 1: Unified API Handler');
+    console.info('\n📋 Test 1: Unified API Handler');
 
     const apiHandler = createUnifiedAPIHandler(mockEnv);
-    console.log('   ✅ API handler created');
+    console.info('   ✅ API handler created');
 
     // Test login
     const loginResponse = await apiHandler.handleRequest({
@@ -60,8 +60,8 @@ async function runSimpleIntegrationTest(): Promise<void> {
       systemController: mockSystemController as any,
     });
 
-    console.log('   ✅ Login API test passed');
-    console.log('   📊 Response:', JSON.stringify(loginResponse, null, 2));
+    console.info('   ✅ Login API test passed');
+    console.info('   📊 Response:', JSON.stringify(loginResponse, null, 2));
 
     if (!loginResponse.success) {
       throw new Error('Login API test failed');
@@ -75,8 +75,8 @@ async function runSimpleIntegrationTest(): Promise<void> {
       systemController: mockSystemController as any,
     });
 
-    console.log('   ✅ Balance API test passed');
-    console.log('   📊 Response:', JSON.stringify(balanceResponse, null, 2));
+    console.info('   ✅ Balance API test passed');
+    console.info('   📊 Response:', JSON.stringify(balanceResponse, null, 2));
 
     // Test system status
     const statusResponse = await apiHandler.handleRequest({
@@ -85,8 +85,8 @@ async function runSimpleIntegrationTest(): Promise<void> {
       systemController: mockSystemController as any,
     });
 
-    console.log('   ✅ System status API test passed');
-    console.log('   📊 Response:', JSON.stringify(statusResponse, null, 2));
+    console.info('   ✅ System status API test passed');
+    console.info('   📊 Response:', JSON.stringify(statusResponse, null, 2));
 
     // Test wager placement
     const wagerResponse = await apiHandler.handleRequest({
@@ -101,8 +101,8 @@ async function runSimpleIntegrationTest(): Promise<void> {
       systemController: mockSystemController as any,
     });
 
-    console.log('   ✅ Wager placement test passed');
-    console.log('   📊 Response:', JSON.stringify(wagerResponse, null, 2));
+    console.info('   ✅ Wager placement test passed');
+    console.info('   📊 Response:', JSON.stringify(wagerResponse, null, 2));
 
     // Test notification sending
     const notificationResponse = await apiHandler.handleRequest({
@@ -113,11 +113,11 @@ async function runSimpleIntegrationTest(): Promise<void> {
       systemController: mockSystemController as any,
     });
 
-    console.log('   ✅ Notification API test passed');
-    console.log('   📊 Response:', JSON.stringify(notificationResponse, null, 2));
+    console.info('   ✅ Notification API test passed');
+    console.info('   📊 Response:', JSON.stringify(notificationResponse, null, 2));
 
-    console.log('\n✅ All integration tests passed!');
-    console.log('🎉 Fire22 core integration is functional');
+    console.info('\n✅ All integration tests passed!');
+    console.info('🎉 Fire22 core integration is functional');
 
     displayIntegrationSummary();
   } catch (error) {
@@ -127,25 +127,25 @@ async function runSimpleIntegrationTest(): Promise<void> {
 }
 
 function displayIntegrationSummary(): void {
-  console.log('\n🎯 Integration Summary');
-  console.log('='.repeat(50));
-  console.log('✅ Unified API Handler: All endpoints working');
-  console.log('✅ Authentication: Login system functional');
-  console.log('✅ User Management: Profile and balance APIs working');
-  console.log('✅ Wager System: Wager placement functional');
-  console.log('✅ Notification System: Alert broadcasting working');
-  console.log('✅ System Status: Health monitoring active');
-  console.log('\n🚀 Fire22 core system is integrated!');
-  console.log('\n📋 Next Steps:');
-  console.log('   1. Test with real Cloudflare Workers environment');
-  console.log('   2. Set BOT_TOKEN in .env for Telegram integration');
-  console.log('   3. Deploy to production');
-  console.log('   4. Test with real users');
-  console.log('\n🔗 Access Points:');
-  console.log('   • Dashboard: http://localhost:8787/dashboard');
-  console.log('   • Login: http://localhost:8787/login');
-  console.log('   • API: http://localhost:8787/api/*');
-  console.log('   • Health: http://localhost:8787/health');
+  console.info('\n🎯 Integration Summary');
+  console.info('='.repeat(50));
+  console.info('✅ Unified API Handler: All endpoints working');
+  console.info('✅ Authentication: Login system functional');
+  console.info('✅ User Management: Profile and balance APIs working');
+  console.info('✅ Wager System: Wager placement functional');
+  console.info('✅ Notification System: Alert broadcasting working');
+  console.info('✅ System Status: Health monitoring active');
+  console.info('\n🚀 Fire22 core system is integrated!');
+  console.info('\n📋 Next Steps:');
+  console.info('   1. Test with real Cloudflare Workers environment');
+  console.info('   2. Set BOT_TOKEN in .env for Telegram integration');
+  console.info('   3. Deploy to production');
+  console.info('   4. Test with real users');
+  console.info('\n🔗 Access Points:');
+  console.info('   • Dashboard: http://localhost:8787/dashboard');
+  console.info('   • Login: http://localhost:8787/login');
+  console.info('   • API: http://localhost:8787/api/*');
+  console.info('   • Health: http://localhost:8787/health');
 }
 
 // Run if called directly

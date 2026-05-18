@@ -80,19 +80,19 @@ async function microGradeProxy() {
     results.every((r, i) => r <= t[i]))?.[0] || 'F';
 
   // Output
-  console.log(`\n🏆 ${grade}\n${'─'.repeat(30)}`);
+  console.info(`\n🏆 ${grade}\n${'─'.repeat(30)}`);
   const labels = ['Config Version', 'Registry Hash', 'Bulk (7 headers)', 'Checksum'];
   const emojis = ['🔢', '🔣', '📦', '🔐'];
 
   results.forEach((r, i) => {
     const perHeader = i === 2 ? ` (${(r/7).toFixed(0)}ns/header)` : '';
-    console.log(`${emojis[i]} ${labels[i].padEnd(20)} ${r.toFixed(0).padStart(7)}ns${perHeader}`);
+    console.info(`${emojis[i]} ${labels[i].padEnd(20)} ${r.toFixed(0).padStart(7)}ns${perHeader}`);
   });
 
-  console.log(`${'─'.repeat(30)}`);
-  console.log(`📊 Throughput: ${(1e9 / results[2]).toFixed(0)} req/sec`);
+  console.info(`${'─'.repeat(30)}`);
+  console.info(`📊 Throughput: ${(1e9 / results[2]).toFixed(0)} req/sec`);
 
   return grade;
 }
 
-if (import.meta.main) console.log(await microGradeProxy());
+if (import.meta.main) console.info(await microGradeProxy());

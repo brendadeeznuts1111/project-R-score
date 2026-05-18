@@ -136,45 +136,45 @@ class NativeAddonWrapper {
 async function demonstrateNativeAddonUsage() {
 	const addon = new NativeAddonWrapper();
 
-	console.log("🧪 V8 Type Checking API Examples\n");
+	console.info("🧪 V8 Type Checking API Examples\n");
 
 	// Example 1: Process Map (IsMap)
 	const buildStats = new Map<string, { time: number; size: number }>();
 	buildStats.set("linux-x64", { time: 100, size: 10.5 });
 	buildStats.set("darwin-arm64", { time: 150, size: 12.3 });
 
-	console.log("1. Processing Map (IsMap):");
-	console.log(`   ${addon.processMap(buildStats)}\n`);
+	console.info("1. Processing Map (IsMap):");
+	console.info(`   ${addon.processMap(buildStats)}\n`);
 
 	// Example 2: Process Array (IsArray)
 	const platforms = ["linux-x64", "darwin-arm64", "windows-x64"];
-	console.log("2. Processing Array (IsArray):");
-	console.log(`   ${addon.processArray(platforms)} elements\n`);
+	console.info("2. Processing Array (IsArray):");
+	console.info(`   ${addon.processArray(platforms)} elements\n`);
 
 	// Example 3: Process Int32 (IsInt32)
 	const buildTime = 1234;
-	console.log("3. Processing Int32 (IsInt32):");
-	console.log(`   Valid Int32: ${addon.processInt32(buildTime)}`);
-	console.log(`   Value: ${buildTime}\n`);
+	console.info("3. Processing Int32 (IsInt32):");
+	console.info(`   Valid Int32: ${addon.processInt32(buildTime)}`);
+	console.info(`   Value: ${buildTime}\n`);
 
 	// Example 4: Process BigInt (IsBigInt)
 	const largeSize = 9007199254740992n; // Beyond Number.MAX_SAFE_INTEGER
-	console.log("4. Processing BigInt (IsBigInt):");
-	console.log(`   ${addon.processBigInt(largeSize)}\n`);
+	console.info("4. Processing BigInt (IsBigInt):");
+	console.info(`   ${addon.processBigInt(largeSize)}\n`);
 
 	// Example 5: Combined processing
-	console.log("5. Combined Processing:");
-	console.log(`   Map: ${addon.process(buildStats)}`);
-	console.log(`   Array: ${addon.process(platforms)}`);
-	console.log(`   Int32: ${addon.process(buildTime)}`);
-	console.log(`   BigInt: ${addon.process(largeSize)}\n`);
+	console.info("5. Combined Processing:");
+	console.info(`   Map: ${addon.process(buildStats)}`);
+	console.info(`   Array: ${addon.process(platforms)}`);
+	console.info(`   Int32: ${addon.process(buildTime)}`);
+	console.info(`   BigInt: ${addon.process(largeSize)}\n`);
 
 	// Example 6: Error handling (wrong types)
-	console.log("6. Error Handling:");
+	console.info("6. Error Handling:");
 	try {
 		addon.processMap({}); // Not a Map
 	} catch (error) {
-		console.log(
+		console.info(
 			`   Error (expected): ${error instanceof Error ? error.message : error}`,
 		);
 	}
@@ -247,22 +247,22 @@ if (import.meta.main) {
 
 	// Database driver example
 	const db = new DatabaseDriver();
-	console.log("\n📊 Database Driver Example:");
-	console.log(`   ${db.bindParameters(["value1", "value2"])}`);
+	console.info("\n📊 Database Driver Example:");
+	console.info(`   ${db.bindParameters(["value1", "value2"])}`);
 	const namedParams = new Map([
 		["name", "John"],
 		["age", 30],
 	]);
-	console.log(`   ${db.bindParameters(namedParams)}\n`);
+	console.info(`   ${db.bindParameters(namedParams)}\n`);
 
 	// High-performance processor example
 	const processor = new HighPerformanceProcessor();
 	const numbers = [42, 100, 9007199254740992n, 200, 9007199254740993n];
 	const result = processor.processNumbers(numbers);
-	console.log("⚡ High-Performance Processor Example:");
-	console.log(`   Int32 count: ${result.int32Count}`);
-	console.log(`   BigInt count: ${result.bigIntCount}`);
-	console.log(`   Total: ${result.total}\n`);
+	console.info("⚡ High-Performance Processor Example:");
+	console.info(`   Int32 count: ${result.int32Count}`);
+	console.info(`   BigInt count: ${result.bigIntCount}`);
+	console.info(`   Total: ${result.total}\n`);
 }
 
 export { NativeAddonWrapper, DatabaseDriver, HighPerformanceProcessor };

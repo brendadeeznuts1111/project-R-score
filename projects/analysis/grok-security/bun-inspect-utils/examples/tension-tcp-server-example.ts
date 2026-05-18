@@ -10,14 +10,14 @@ import { mkdirSync, writeFileSync } from "fs";
 import { join } from "path";
 
 async function main() {
-  console.log("[64.0.0.0] TensionTCPServer Log Archiving Example\n");
+  console.info("[64.0.0.0] TensionTCPServer Log Archiving Example\n");
 
   // [64.1.0.0] Create test log directory
   const logDir = join(import.meta.dir, ".example-logs");
   mkdirSync(logDir, { recursive: true });
 
   // [64.1.1.0] Create sample log files
-  console.log("[64.1.1.0] Creating sample log files...");
+  console.info("[64.1.1.0] Creating sample log files...");
   writeFileSync(
     join(logDir, "app.log"),
     "Application startup\n".repeat(100) + "Application running\n".repeat(50)
@@ -32,11 +32,11 @@ async function main() {
   );
 
   // [64.2.0.0] Initialize archiver
-  console.log("[64.2.0.0] Initializing archiver...\n");
+  console.info("[64.2.0.0] Initializing archiver...\n");
   const archiver = new TensionTCPServerArchiver();
 
   // [64.3.0.0] Archive logs with gzip compression
-  console.log("[64.3.0.0] Archiving logs with gzip compression...");
+  console.info("[64.3.0.0] Archiving logs with gzip compression...");
   const blob = await archiver.archiveLogs(logDir, {
     format: "gzip",
     level: 9,
@@ -44,21 +44,21 @@ async function main() {
 
   // [64.4.0.0] Display metadata
   const metadata = archiver.getMetadata();
-  console.log("\n[64.4.0.0] Archive Metadata:");
-  console.log("─".repeat(60));
-  console.log(`Archive ID:        ${metadata?.archiveId}`);
-  console.log(`Timestamp:         ${new Date(metadata?.timestamp!).toISOString()}`);
-  console.log(`Files Archived:    ${metadata?.fileCount}`);
-  console.log(`Original Size:     ${(metadata?.originalSize! / 1024).toFixed(2)} KB`);
-  console.log(`Compressed Size:   ${(metadata?.compressedSize! / 1024).toFixed(2)} KB`);
-  console.log(`Compression Ratio: ${metadata?.compressionRatio?.toFixed(2)}%`);
-  console.log(`Format:            ${metadata?.format}`);
-  console.log(`Level:             ${metadata?.level}`);
-  console.log(`Status:            ${metadata?.status}`);
-  console.log("─".repeat(60));
+  console.info("\n[64.4.0.0] Archive Metadata:");
+  console.info("─".repeat(60));
+  console.info(`Archive ID:        ${metadata?.archiveId}`);
+  console.info(`Timestamp:         ${new Date(metadata?.timestamp!).toISOString()}`);
+  console.info(`Files Archived:    ${metadata?.fileCount}`);
+  console.info(`Original Size:     ${(metadata?.originalSize! / 1024).toFixed(2)} KB`);
+  console.info(`Compressed Size:   ${(metadata?.compressedSize! / 1024).toFixed(2)} KB`);
+  console.info(`Compression Ratio: ${metadata?.compressionRatio?.toFixed(2)}%`);
+  console.info(`Format:            ${metadata?.format}`);
+  console.info(`Level:             ${metadata?.level}`);
+  console.info(`Status:            ${metadata?.status}`);
+  console.info("─".repeat(60));
 
   // [64.5.0.0] Demonstrate compression formats
-  console.log("\n[64.5.0.0] Testing different compression formats...\n");
+  console.info("\n[64.5.0.0] Testing different compression formats...\n");
 
   const formats: Array<"gzip" | "deflate" | "brotli"> = [
     "gzip",
@@ -74,39 +74,39 @@ async function main() {
     });
     const testMetadata = archiver.getMetadata();
 
-    console.log(`${format.toUpperCase()}:`);
-    console.log(
+    console.info(`${format.toUpperCase()}:`);
+    console.info(
       `  Size: ${(testMetadata?.compressedSize! / 1024).toFixed(2)} KB (${testMetadata?.compressionRatio?.toFixed(2)}%)`
     );
   }
 
   // [64.6.0.0] Demonstrate KV integration (mock)
-  console.log("\n[64.6.0.0] KV Integration Example:");
-  console.log("─".repeat(60));
-  console.log("// Mock KV upload");
-  console.log("const kvKey = await archiver.uploadToKV(blob, env.LOGS_KV, {");
-  console.log("  expirationTtl: 2592000, // 30 days");
-  console.log("});");
-  console.log(`// Would upload to: logs:${metadata?.archiveId}`);
-  console.log("─".repeat(60));
+  console.info("\n[64.6.0.0] KV Integration Example:");
+  console.info("─".repeat(60));
+  console.info("// Mock KV upload");
+  console.info("const kvKey = await archiver.uploadToKV(blob, env.LOGS_KV, {");
+  console.info("  expirationTtl: 2592000, // 30 days");
+  console.info("});");
+  console.info(`// Would upload to: logs:${metadata?.archiveId}`);
+  console.info("─".repeat(60));
 
   // [64.7.0.0] Demonstrate S3 integration (mock)
-  console.log("\n[64.7.0.0] S3 Integration Example:");
-  console.log("─".repeat(60));
-  console.log("// Mock S3 upload");
-  console.log('const s3Key = await archiver.uploadToS3(blob, "logs/archive");');
-  console.log(`// Would upload to: logs/archive/${metadata?.archiveId}.tar.gz`);
-  console.log("─".repeat(60));
+  console.info("\n[64.7.0.0] S3 Integration Example:");
+  console.info("─".repeat(60));
+  console.info("// Mock S3 upload");
+  console.info('const s3Key = await archiver.uploadToS3(blob, "logs/archive");');
+  console.info(`// Would upload to: logs/archive/${metadata?.archiveId}.tar.gz`);
+  console.info("─".repeat(60));
 
   // [64.8.0.0] Cleanup
-  console.log("\n[64.8.0.0] Cleaning up...");
+  console.info("\n[64.8.0.0] Cleaning up...");
   archiver.clear();
 
   // Remove test directory
   const { rmSync } = await import("fs");
   rmSync(logDir, { recursive: true, force: true });
 
-  console.log("\n✅ Example completed successfully!");
+  console.info("\n✅ Example completed successfully!");
 }
 
 main().catch(console.error);

@@ -68,27 +68,27 @@ export class DeviceInit {
     deviceAudit: any;
     dashboardUrl: string;
   }> {
-    console.log(`\n🚀 BOOTING DEVICE: ${deviceId}`);
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.info(`\n🚀 BOOTING DEVICE: ${deviceId}`);
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
     // Step 1: Generate Hash ID (Bun.hash.crc32)
     const seed = `${deviceId}-${Date.now()}`;
     const appHash = hash.crc32(seed).toString(16);
-    console.log(`✅ Step 1: Hash Generated: ${appHash}`);
+    console.info(`✅ Step 1: Hash Generated: ${appHash}`);
 
     // Step 2: Generate Identity Silo ("Sarah" profile)
     const silo = identityFactory.generateSilo(appHash);
-    console.log(`✅ Step 2: Identity Silo Created: ${silo.fullName}`);
-    console.log(`   - Age: ${silo.age} | Gender: ${silo.gender}`);
-    console.log(`   - Location: ${silo.city}, ${silo.state}`);
-    console.log(`   - Recovery: ${silo.recoveryEmail}`);
+    console.info(`✅ Step 2: Identity Silo Created: ${silo.fullName}`);
+    console.info(`   - Age: ${silo.age} | Gender: ${silo.gender}`);
+    console.info(`   - Location: ${silo.city}, ${silo.state}`);
+    console.info(`   - Recovery: ${silo.recoveryEmail}`);
 
     // Step 3: Encrypt Silo (AES-256-GCM)
     const encrypted = secureVault.encryptSilo(silo);
-    console.log(`✅ Step 3: Silo Encrypted`);
-    console.log(`   - Algorithm: ${encrypted.algorithm}`);
-    console.log(`   - IV: ${encrypted.iv.slice(0, 16)}...`);
-    console.log(`   - Tag: ${encrypted.tag.slice(0, 16)}...`);
+    console.info(`✅ Step 3: Silo Encrypted`);
+    console.info(`   - Algorithm: ${encrypted.algorithm}`);
+    console.info(`   - IV: ${encrypted.iv.slice(0, 16)}...`);
+    console.info(`   - Tag: ${encrypted.tag.slice(0, 16)}...`);
 
     // Step 4: Save to SQLite
     const dbRecord = secureVault.exportForSQLite(encrypted);
@@ -110,26 +110,26 @@ export class DeviceInit {
       deviceId,
       'active'
     );
-    console.log(`✅ Step 4: Saved to SQLite: ${this.dbName}`);
+    console.info(`✅ Step 4: Saved to SQLite: ${this.dbName}`);
 
     // Step 5: Device Audit Log
     const audit = this.logDeviceAction(deviceId, 'BOOT', appHash);
-    console.log(`✅ Step 5: Audit Logged: ${audit.hash}`);
+    console.info(`✅ Step 5: Audit Logged: ${audit.hash}`);
 
     // Step 6: Output 2FA for Dashboard
     const twoFA = identityFactory.exportFor2FA(silo);
-    console.log(`✅ Step 6: 2FA Ready for Dashboard`);
-    console.log(`   - Secret: ${twoFA.secret}`);
-    console.log(`   - Label: ${twoFA.label}`);
+    console.info(`✅ Step 6: 2FA Ready for Dashboard`);
+    console.info(`   - Secret: ${twoFA.secret}`);
+    console.info(`   - Label: ${twoFA.label}`);
 
     // Step 7: Passkey Export (for Android 13 injection)
     const passkey = identityFactory.exportForPasskey(silo);
-    console.log(`✅ Step 7: Passkey Export Ready`);
-    console.log(`   - Passkey ID: ${passkey.passkeyId}`);
-    console.log(`   - Seed: ${passkey.seed.slice(0, 20)}...`);
+    console.info(`✅ Step 7: Passkey Export Ready`);
+    console.info(`   - Passkey ID: ${passkey.passkeyId}`);
+    console.info(`   - Seed: ${passkey.seed.slice(0, 20)}...`);
 
-    console.log(`\n🎉 BOOT COMPLETE: ${deviceId}`);
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+    console.info(`\n🎉 BOOT COMPLETE: ${deviceId}`);
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
 
     return {
       success: true,
@@ -290,7 +290,7 @@ export class DeviceInit {
    */
   close(): void {
     this.db.close();
-    console.log(`🔒 Database closed: ${this.dbName}`);
+    console.info(`🔒 Database closed: ${this.dbName}`);
   }
 }
 

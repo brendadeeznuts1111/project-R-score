@@ -21,13 +21,13 @@ export async function auditCommand(args: string[]) {
 }
 
 async function generateAuditReport(options: any) {
-  console.log('📊 Generating comprehensive audit report...');
+  console.info('📊 Generating comprehensive audit report...');
   
   const auditLog = new QuantumResistantSecureDataRepository();
   const matrixReport = await BUN_DOC_MAP.generateReport();
   const auditReport = await auditLog.generateAuditReport(options.timeRange);
   
-  console.log(`
+  console.info(`
 🔍 COMPREHENSIVE AUDIT REPORT
 ┌─────────────────────────────────────────┐
 │ Matrix Entries: ${matrixReport.totalEntries.toString().padEnd(25)} │
@@ -39,21 +39,21 @@ async function generateAuditReport(options: any) {
 `);
   
   if (matrixReport.violations.length > 0) {
-    console.log('\n🚨 SECURITY VIOLATIONS:');
+    console.info('\n🚨 SECURITY VIOLATIONS:');
     matrixReport.violations.forEach(violation => {
       const icon = violation.severity === 'critical' ? '🔴' : 
                    violation.severity === 'high' ? '🟠' : 
                    violation.severity === 'medium' ? '🟡' : '🟢';
-      console.log(`   ${icon} ${violation.package}@${violation.version}: ${violation.violation}`);
+      console.info(`   ${icon} ${violation.package}@${violation.version}: ${violation.violation}`);
     });
   }
   
   // Performance metrics
-  console.log('\n📈 PERFORMANCE METRICS:');
-  console.log(`   • Average Processing Time: ${matrixReport.performanceMetrics.avgProcessingTime.toFixed(2)}ms`);
-  console.log(`   • Average Tarball Size: ${formatBytes(matrixReport.performanceMetrics.avgTarballSize)}`);
-  console.log(`   • Average Compression: ${matrixReport.performanceMetrics.avgCompressionRatio.toFixed(1)}%`);
-  console.log(`   • Total Processed: ${matrixReport.performanceMetrics.totalProcessed}`);
+  console.info('\n📈 PERFORMANCE METRICS:');
+  console.info(`   • Average Processing Time: ${matrixReport.performanceMetrics.avgProcessingTime.toFixed(2)}ms`);
+  console.info(`   • Average Tarball Size: ${formatBytes(matrixReport.performanceMetrics.avgTarballSize)}`);
+  console.info(`   • Average Compression: ${matrixReport.performanceMetrics.avgCompressionRatio.toFixed(1)}%`);
+  console.info(`   • Total Processed: ${matrixReport.performanceMetrics.totalProcessed}`);
   
   // Integrity score distribution
   if (matrixReport.integrityScores.length > 0) {
@@ -61,10 +61,10 @@ async function generateAuditReport(options: any) {
     const minScore = Math.min(...matrixReport.integrityScores);
     const maxScore = Math.max(...matrixReport.integrityScores);
     
-    console.log('\n🛡️  INTEGRITY SCORE DISTRIBUTION:');
-    console.log(`   • Average: ${(avgScore * 100).toFixed(1)}%`);
-    console.log(`   • Minimum: ${(minScore * 100).toFixed(1)}%`);
-    console.log(`   • Maximum: ${(maxScore * 100).toFixed(1)}%`);
+    console.info('\n🛡️  INTEGRITY SCORE DISTRIBUTION:');
+    console.info(`   • Average: ${(avgScore * 100).toFixed(1)}%`);
+    console.info(`   • Minimum: ${(minScore * 100).toFixed(1)}%`);
+    console.info(`   • Maximum: ${(maxScore * 100).toFixed(1)}%`);
     
     // Score ranges
     const excellent = matrixReport.integrityScores.filter(s => s >= 0.99).length;
@@ -72,11 +72,11 @@ async function generateAuditReport(options: any) {
     const fair = matrixReport.integrityScores.filter(s => s >= 0.9 && s < 0.95).length;
     const poor = matrixReport.integrityScores.filter(s => s < 0.9).length;
     
-    console.log('\n   SCORE RANGES:');
-    console.log(`   • Excellent (≥99%): ${excellent} packages`);
-    console.log(`   • Good (95-99%): ${good} packages`);
-    console.log(`   • Fair (90-95%): ${fair} packages`);
-    console.log(`   • Poor (<90%): ${poor} packages`);
+    console.info('\n   SCORE RANGES:');
+    console.info(`   • Excellent (≥99%): ${excellent} packages`);
+    console.info(`   • Good (95-99%): ${good} packages`);
+    console.info(`   • Fair (90-95%): ${fair} packages`);
+    console.info(`   • Poor (<90%): ${poor} packages`);
   }
   
   return {
@@ -87,17 +87,17 @@ async function generateAuditReport(options: any) {
 }
 
 async function queryAuditEntry(entryId: string) {
-  console.log(`🔍 Querying audit entry: ${entryId}`);
+  console.info(`🔍 Querying audit entry: ${entryId}`);
   
   const auditLog = new QuantumResistantSecureDataRepository();
   const entry = await auditLog.retrieveAuditEntry(entryId);
   
   if (!entry) {
-    console.log('❌ Audit entry not found');
+    console.info('❌ Audit entry not found');
     return null;
   }
   
-  console.log(`
+  console.info(`
 📋 AUDIT ENTRY DETAILS
 ┌─────────────────────────────────────────┐
 │ Event: ${entry.event.padEnd(33)} │
@@ -111,26 +111,26 @@ async function queryAuditEntry(entryId: string) {
 `);
   
   if (entry.lifecycleScripts.length > 0) {
-    console.log('\n🔧 LIFECYCLE SCRIPTS:');
+    console.info('\n🔧 LIFECYCLE SCRIPTS:');
     entry.lifecycleScripts.forEach(script => {
-      console.log(`   • ${script}`);
+      console.info(`   • ${script}`);
     });
   }
   
-  console.log(`\n🔐 HASHES:`);
-  console.log(`   • Original: ${entry.originalHash}`);
-  console.log(`   • Final: ${entry.finalHash}`);
-  console.log(`   • Seal: ${entry.seal.length} bytes`);
+  console.info(`\n🔐 HASHES:`);
+  console.info(`   • Original: ${entry.originalHash}`);
+  console.info(`   • Final: ${entry.finalHash}`);
+  console.info(`   • Seal: ${entry.seal.length} bytes`);
   
   return entry;
 }
 
 async function auditMatrix() {
-  console.log('🔍 Auditing Col 93 Matrix...');
+  console.info('🔍 Auditing Col 93 Matrix...');
   
   const stats = await BUN_DOC_MAP.getMatrixStats();
   
-  console.log(`
+  console.info(`
 📊 COL 93 MATRIX AUDIT
 ┌─────────────────────────────────────────┐
 │ Total Entries: ${stats.totalEntries.toString().padEnd(27)} │
@@ -142,21 +142,21 @@ async function auditMatrix() {
 `);
   
   if (stats.highThreatEntries > 0) {
-    console.log(`\n⚠️  ${stats.highThreatEntries} high threat entries detected`);
-    console.log('   Run with --report for detailed violation information');
+    console.info(`\n⚠️  ${stats.highThreatEntries} high threat entries detected`);
+    console.info('   Run with --report for detailed violation information');
   }
   
   return stats;
 }
 
 async function showAuditStatus() {
-  console.log('🔍 Audit System Status');
+  console.info('🔍 Audit System Status');
   
   const auditLog = new QuantumResistantSecureDataRepository();
   const workerStats = auditLog.getWorkerStats();
   const matrixStats = await BUN_DOC_MAP.getMatrixStats();
   
-  console.log(`
+  console.info(`
 🔧 SYSTEM STATUS
 ┌─────────────────────────────────────────┐
 │ Worker Pool: ${workerStats.workers.toString().padEnd(29)} │
@@ -167,16 +167,16 @@ async function showAuditStatus() {
 └─────────────────────────────────────────┘
 `);
   
-  console.log('\n🔍 QUICK STATS:');
-  console.log(`   • Total packages processed: ${matrixStats.totalEntries}`);
-  console.log(`   • Average integrity score: ${(matrixStats.averageIntegrityScore * 100).toFixed(1)}%`);
-  console.log(`   • High threat packages: ${matrixStats.highThreatEntries}`);
+  console.info('\n🔍 QUICK STATS:');
+  console.info(`   • Total packages processed: ${matrixStats.totalEntries}`);
+  console.info(`   • Average integrity score: ${(matrixStats.averageIntegrityScore * 100).toFixed(1)}%`);
+  console.info(`   • High threat packages: ${matrixStats.highThreatEntries}`);
   
-  console.log('\n💡 AVAILABLE COMMANDS:');
-  console.log('   • bun-pm-audit --report           Generate full report');
-  console.log('   • bun-pm-audit --matrix           Audit matrix only');
-  console.log('   • bun-pm-audit --query <id>       Query specific entry');
-  console.log('   • bun-pm-audit --time-range <start>,<end>  Time-based report');
+  console.info('\n💡 AVAILABLE COMMANDS:');
+  console.info('   • bun-pm-audit --report           Generate full report');
+  console.info('   • bun-pm-audit --matrix           Audit matrix only');
+  console.info('   • bun-pm-audit --query <id>       Query specific entry');
+  console.info('   • bun-pm-audit --time-range <start>,<end>  Time-based report');
 }
 
 function parseAuditArgs(args: string[]) {
@@ -224,7 +224,7 @@ function parseAuditArgs(args: string[]) {
 }
 
 function displayAuditHelp() {
-  console.log(`
+  console.info(`
 🔍 BUN PM AUDIT CLI - TIER-1380
 
 USAGE:

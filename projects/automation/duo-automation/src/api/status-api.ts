@@ -87,7 +87,7 @@ export class FactoryWagerStatusAPI {
   }
 
   private async initializeMonitoring(): Promise<void> {
-    console.log('🏭 Initializing Factory-Wager Status API...');
+    console.info('🏭 Initializing Factory-Wager Status API...');
     
     // Initialize monitoring for default domains
     for (const domain of this.DEFAULT_DOMAINS) {
@@ -99,7 +99,7 @@ export class FactoryWagerStatusAPI {
   }
 
   async addDomain(domain: string): Promise<void> {
-    console.log(`📡 Adding domain to monitoring: ${domain}`);
+    console.info(`📡 Adding domain to monitoring: ${domain}`);
     
     const status = await this.checkDomainHealth(domain);
     this.monitoredDomains.set(domain, status);
@@ -388,14 +388,14 @@ export class FactoryWagerStatusAPI {
     }
 
     this.checkInterval = setInterval(async () => {
-      console.log('🔄 Running domain health checks...');
+      console.info('🔄 Running domain health checks...');
       for (const domain of this.monitoredDomains.keys()) {
         const status = await this.checkDomainHealth(domain);
         this.monitoredDomains.set(domain, status);
       }
     }, intervalMs);
 
-    console.log(`📡 Started monitoring with ${intervalMs}ms interval`);
+    console.info(`📡 Started monitoring with ${intervalMs}ms interval`);
   }
 
   stopMonitoring(): void {
@@ -471,14 +471,14 @@ export const statusAPI = new FactoryWagerStatusAPI();
 
 // Run demo if this is the main module
 if (import.meta.main) {
-  console.log('🏭 FACTORY-WAGER STATUS API DEMO');
-  console.log('='.repeat(50));
+  console.info('🏭 FACTORY-WAGER STATUS API DEMO');
+  console.info('='.repeat(50));
   
   // Wait a moment for initial checks
   setTimeout(() => {
-    console.log(statusAPI.generateStatusReport());
+    console.info(statusAPI.generateStatusReport());
     
-    console.log('\n📊 Overall Health:');
-    console.log(JSON.stringify(statusAPI.getOverallHealth(), null, 2));
+    console.info('\n📊 Overall Health:');
+    console.info(JSON.stringify(statusAPI.getOverallHealth(), null, 2));
   }, 2000);
 }

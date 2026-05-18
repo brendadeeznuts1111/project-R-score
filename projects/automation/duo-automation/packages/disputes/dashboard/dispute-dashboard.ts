@@ -251,15 +251,15 @@ export class DisputeDashboard {
   // Private helper methods
   private handleDisputeDeepLink(parsed: any): boolean {
     // In a real app, this would navigate to the appropriate screen
-    console.log('Navigating to dispute:', parsed.disputeId);
-    console.log('Action:', parsed.action);
-    console.log('Status:', parsed.status);
+    console.info('Navigating to dispute:', parsed.disputeId);
+    console.info('Action:', parsed.action);
+    console.info('Status:', parsed.status);
     return true;
   }
   
   private handleQRDisputeDeepLink(parsed: any): boolean {
     // In a real app, this would open the QR dispute creation flow
-    console.log('Opening QR dispute flow with data:', parsed.data);
+    console.info('Opening QR dispute flow with data:', parsed.data);
     return true;
   }
   

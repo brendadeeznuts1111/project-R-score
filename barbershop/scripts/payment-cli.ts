@@ -152,9 +152,9 @@ class PaymentCLI {
   // Utility
   private print(data: unknown, options: CommandOptions): void {
     if (options.json) {
-      console.log(JSON.stringify(data, null, 2));
+      console.info(JSON.stringify(data, null, 2));
     } else {
-      console.log(data);
+      console.info(data);
     }
   }
 }
@@ -171,7 +171,7 @@ const { values, positionals } = parseArgs({
 });
 
 if (values.help || positionals.length === 0) {
-  console.log(`
+  console.info(`
 Payment Routing CLI
 
 Usage: bun run scripts/payment-cli.ts [options] <command> [args...]
@@ -290,7 +290,7 @@ function parseKeyValues(args: string[]): Record<string, unknown> {
         break;
       default:
         console.error(`Unknown command: ${command}`);
-        console.log('Use --help for usage information');
+        console.info('Use --help for usage information');
         process.exit(1);
     }
   } catch (err) {

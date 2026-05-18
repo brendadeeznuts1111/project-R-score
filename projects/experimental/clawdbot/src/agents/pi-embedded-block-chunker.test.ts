@@ -13,7 +13,7 @@ describe("EmbeddedBlockChunker", () => {
     const text = [
       "Intro",
       "```js",
-      "console.log('x')",
+      "console.info('x')",
       "```",
       "",
       "After first line",

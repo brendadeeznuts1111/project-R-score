@@ -13,7 +13,7 @@ import { NebulaFlowOrchestrator } from '../src/nebula/orchestrator';
 import { SecurityAuditor } from '../src/services/security-auditor';
 
 async function hardenAllGroups() {
-  console.log('🔒 Starting Nebula-Flow™ Security Hardening');
+  console.info('🔒 Starting Nebula-Flow™ Security Hardening');
   
   const orchestrator = new NebulaFlowOrchestrator();
   const auditor = new SecurityAuditor();
@@ -22,11 +22,11 @@ async function hardenAllGroups() {
   const unguarded = await auditor.findUnguardedCritical();
   
   if (unguarded.length === 0) {
-    console.log('✅ No unguarded critical patterns found');
+    console.info('✅ No unguarded critical patterns found');
     return;
   }
   
-  console.log(`🚨 Found ${unguarded.length} unguarded secrets in critical patterns`);
+  console.info(`🚨 Found ${unguarded.length} unguarded secrets in critical patterns`);
   
   // 2. Generate guards
   const guards = auditor.generateGuardsForUnguarded(unguarded);
@@ -50,9 +50,9 @@ async function hardenAllGroups() {
   await Bun.write('./deployed-guards.json', deployedGuards);
   await Bun.write('./timestamp.txt', timestamp);
   
-  console.log(`✅ Hardening complete. Deployed ${guards.length} guards`);
-  console.log(`📦 Security report saved: security-report.json`);
-  console.log(`📦 Deployed guards saved: deployed-guards.json`);
+  console.info(`✅ Hardening complete. Deployed ${guards.length} guards`);
+  console.info(`📦 Security report saved: security-report.json`);
+  console.info(`📦 Deployed guards saved: deployed-guards.json`);
 }
 
 // Run hardening

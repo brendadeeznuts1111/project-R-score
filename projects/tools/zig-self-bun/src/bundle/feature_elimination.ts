@@ -75,7 +75,7 @@ export async function bundleWithFeatures(
   }
 
   const duration = nanoseconds() - start;
-  console.log(
+  console.info(
     `Feature elimination: ${duration}ns for ${featureCalls.length} flags`
   );
 

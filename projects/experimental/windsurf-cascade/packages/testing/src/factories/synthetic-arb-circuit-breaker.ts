@@ -260,10 +260,10 @@ class SystemHealthMonitor {
 
 class CircuitBreakerMetrics {
     recordTrip(cb: SyntheticArbCircuitBreaker, reasons: string[]): void {
-        console.log(`Circuit breaker tripped for ${cb.getRelationshipKey()}:`, reasons);
+        console.info(`Circuit breaker tripped for ${cb.getRelationshipKey()}:`, reasons);
     }
 
     sendAlert(type: string, relationshipKey: string): void {
-        console.log(`ALERT: ${type} for ${relationshipKey}`);
+        console.info(`ALERT: ${type} for ${relationshipKey}`);
     }
 }

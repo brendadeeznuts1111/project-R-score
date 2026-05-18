@@ -135,8 +135,8 @@ class PackageBenchmarkOrchestrator {
       failFast?: boolean;
     } = {}
   ): Promise<PackageBenchmark[]> {
-    console.log('🚀 Fantasy42 Package Benchmark Orchestrator');
-    console.log('===========================================\n');
+    console.info('🚀 Fantasy42 Package Benchmark Orchestrator');
+    console.info('===========================================\n');
 
     // Enable all checks by default - NEVER COMPROMISE
     const checks = {
@@ -146,16 +146,16 @@ class PackageBenchmarkOrchestrator {
       quality: options.quality !== false,
     };
 
-    console.log(`📋 Benchmark Configuration:`);
-    console.log(`   🔒 Security: ${checks.security ? '✅ ENABLED' : '❌ DISABLED'}`);
-    console.log(`   ⚡ Performance: ${checks.performance ? '✅ ENABLED' : '❌ DISABLED'}`);
-    console.log(`   🧪 Testing: ${checks.testing ? '✅ ENABLED' : '❌ DISABLED'}`);
-    console.log(`   📊 Quality: ${checks.quality ? '✅ ENABLED' : '❌ DISABLED'}`);
-    console.log(`   🚫 Strict Mode: ${options.strict ? '✅ ENABLED' : '❌ DISABLED'}`);
-    console.log(`   🛑 Fail Fast: ${options.failFast ? '✅ ENABLED' : '❌ DISABLED'}\n`);
+    console.info(`📋 Benchmark Configuration:`);
+    console.info(`   🔒 Security: ${checks.security ? '✅ ENABLED' : '❌ DISABLED'}`);
+    console.info(`   ⚡ Performance: ${checks.performance ? '✅ ENABLED' : '❌ DISABLED'}`);
+    console.info(`   🧪 Testing: ${checks.testing ? '✅ ENABLED' : '❌ DISABLED'}`);
+    console.info(`   📊 Quality: ${checks.quality ? '✅ ENABLED' : '❌ DISABLED'}`);
+    console.info(`   🚫 Strict Mode: ${options.strict ? '✅ ENABLED' : '❌ DISABLED'}`);
+    console.info(`   🛑 Fail Fast: ${options.failFast ? '✅ ENABLED' : '❌ DISABLED'}\n`);
 
     const packages = options.packages || (await this.discoverPackages());
-    console.log(`📦 Benchmarking ${packages.length} packages...\n`);
+    console.info(`📦 Benchmarking ${packages.length} packages...\n`);
 
     for (const packagePath of packages) {
       const benchmark = await this.benchmarkPackage(packagePath, checks);
@@ -167,8 +167,8 @@ class PackageBenchmarkOrchestrator {
 
       // Fail fast if package doesn't meet standards
       if (options.failFast && !benchmark.passed) {
-        console.log(`\n🛑 FAIL FAST: Package ${benchmark.name} failed benchmark standards!`);
-        console.log('💡 Fix issues and re-run benchmark before proceeding.');
+        console.info(`\n🛑 FAIL FAST: Package ${benchmark.name} failed benchmark standards!`);
+        console.info('💡 Fix issues and re-run benchmark before proceeding.');
         process.exit(1);
       }
     }
@@ -183,17 +183,17 @@ class PackageBenchmarkOrchestrator {
     // Final validation
     const failedPackages = this.results.filter(r => !r.passed);
     if (failedPackages.length > 0) {
-      console.log(`\n🚨 CRITICAL: ${failedPackages.length} packages failed benchmark standards!`);
-      console.log('🔧 Required Actions:');
+      console.info(`\n🚨 CRITICAL: ${failedPackages.length} packages failed benchmark standards!`);
+      console.info('🔧 Required Actions:');
       failedPackages.forEach(pkg => {
-        console.log(`   • ${pkg.name}: ${pkg.blockingIssues.join(', ')}`);
+        console.info(`   • ${pkg.name}: ${pkg.blockingIssues.join(', ')}`);
       });
-      console.log('\n💡 NEVER COMPROMISE: Fix all issues before deployment!');
+      console.info('\n💡 NEVER COMPROMISE: Fix all issues before deployment!');
       process.exit(1);
     }
 
-    console.log('\n🎉 ALL PACKAGES PASSED ENTERPRISE BENCHMARK STANDARDS!');
-    console.log('🏆 Security + Performance = Enterprise Excellence!');
+    console.info('\n🎉 ALL PACKAGES PASSED ENTERPRISE BENCHMARK STANDARDS!');
+    console.info('🏆 Security + Performance = Enterprise Excellence!');
 
     return this.results;
   }
@@ -254,7 +254,7 @@ class PackageBenchmarkOrchestrator {
     const packageJsonPath = join(packagePath, 'package.json');
 
     if (!existsSync(packageJsonPath)) {
-      console.log(`⚠️  Skipping ${packagePath} - no package.json`);
+      console.info(`⚠️  Skipping ${packagePath} - no package.json`);
       return this.createEmptyBenchmark(packagePath);
     }
 
@@ -262,7 +262,7 @@ class PackageBenchmarkOrchestrator {
     const packageName = packageJson.name || 'unknown';
     const packageVersion = packageJson.version || '0.0.0';
 
-    console.log(`🔬 Benchmarking: ${packageName}@${packageVersion}`);
+    console.info(`🔬 Benchmarking: ${packageName}@${packageVersion}`);
 
     // Run all benchmark checks
     const security = checks.security
@@ -311,7 +311,7 @@ class PackageBenchmarkOrchestrator {
     packagePath: string,
     packageJson: any
   ): Promise<SecurityBenchmark> {
-    console.log(`   🔒 Running security benchmark...`);
+    console.info(`   🔒 Running security benchmark...`);
 
     // Simulate comprehensive security analysis
     const vulnerabilities = await this.scanForVulnerabilities(packagePath, packageJson);
@@ -351,7 +351,7 @@ class PackageBenchmarkOrchestrator {
     packagePath: string,
     packageJson: any
   ): Promise<PerformanceBenchmark> {
-    console.log(`   ⚡ Running performance benchmark...`);
+    console.info(`   ⚡ Running performance benchmark...`);
 
     // Simulate performance analysis
     const bundleSize = await this.measureBundleSize(packagePath, packageJson);
@@ -380,7 +380,7 @@ class PackageBenchmarkOrchestrator {
     packagePath: string,
     packageJson: any
   ): Promise<TestingBenchmark> {
-    console.log(`   🧪 Running testing benchmark...`);
+    console.info(`   🧪 Running testing benchmark...`);
 
     // Simulate testing analysis
     const coverage = await this.measureTestCoverage(packagePath);
@@ -409,7 +409,7 @@ class PackageBenchmarkOrchestrator {
     packagePath: string,
     packageJson: any
   ): Promise<QualityBenchmark> {
-    console.log(`   📊 Running quality benchmark...`);
+    console.info(`   📊 Running quality benchmark...`);
 
     // Simulate quality analysis
     const complexity = await this.measureComplexity(packagePath);
@@ -629,42 +629,42 @@ class PackageBenchmarkOrchestrator {
     const status = benchmark.passed ? '✅ PASSED' : '❌ FAILED';
     const grade = benchmark.overall.grade;
 
-    console.log(`\n📦 ${benchmark.name}@${benchmark.version}`);
-    console.log(`   Status: ${status}`);
-    console.log(`   Grade: ${grade}`);
-    console.log(`   Overall Score: ${benchmark.overall.total.toFixed(1)}%`);
-    console.log(`   🔒 Security: ${benchmark.security.score}%`);
-    console.log(`   ⚡ Performance: ${benchmark.performance.passed ? '✅' : '❌'}`);
-    console.log(`   🧪 Testing: ${benchmark.testing.passed ? '✅' : '❌'}`);
-    console.log(`   📊 Quality: ${benchmark.quality.passed ? '✅' : '❌'}`);
+    console.info(`\n📦 ${benchmark.name}@${benchmark.version}`);
+    console.info(`   Status: ${status}`);
+    console.info(`   Grade: ${grade}`);
+    console.info(`   Overall Score: ${benchmark.overall.total.toFixed(1)}%`);
+    console.info(`   🔒 Security: ${benchmark.security.score}%`);
+    console.info(`   ⚡ Performance: ${benchmark.performance.passed ? '✅' : '❌'}`);
+    console.info(`   🧪 Testing: ${benchmark.testing.passed ? '✅' : '❌'}`);
+    console.info(`   📊 Quality: ${benchmark.quality.passed ? '✅' : '❌'}`);
 
     if (!benchmark.passed && benchmark.blockingIssues.length > 0) {
-      console.log(`   🚨 Blocking Issues:`);
+      console.info(`   🚨 Blocking Issues:`);
       benchmark.blockingIssues.forEach(issue => {
-        console.log(`      • ${issue}`);
+        console.info(`      • ${issue}`);
       });
     }
   }
 
   private displayOverallResults(): void {
-    console.log('\n🏆 ENTERPRISE BENCHMARK RESULTS');
-    console.log('===============================');
+    console.info('\n🏆 ENTERPRISE BENCHMARK RESULTS');
+    console.info('===============================');
 
     const passedPackages = this.results.filter(r => r.passed).length;
     const failedPackages = this.results.filter(r => !r.passed).length;
     const totalPackages = this.results.length;
 
-    console.log(`📦 Total Packages: ${totalPackages}`);
-    console.log(`✅ Passed: ${passedPackages}`);
-    console.log(`❌ Failed: ${failedPackages}`);
-    console.log(`📊 Pass Rate: ${((passedPackages / totalPackages) * 100).toFixed(1)}%`);
+    console.info(`📦 Total Packages: ${totalPackages}`);
+    console.info(`✅ Passed: ${passedPackages}`);
+    console.info(`❌ Failed: ${failedPackages}`);
+    console.info(`📊 Pass Rate: ${((passedPackages / totalPackages) * 100).toFixed(1)}%`);
 
     if (failedPackages > 0) {
-      console.log('\n🚨 FAILED PACKAGES:');
+      console.info('\n🚨 FAILED PACKAGES:');
       this.results
         .filter(r => !r.passed)
         .forEach(pkg => {
-          console.log(`   ❌ ${pkg.name}: ${pkg.blockingIssues.join(', ')}`);
+          console.info(`   ❌ ${pkg.name}: ${pkg.blockingIssues.join(', ')}`);
         });
     }
 
@@ -673,9 +673,9 @@ class PackageBenchmarkOrchestrator {
     const avgOverallScore =
       this.results.reduce((sum, r) => sum + r.overall.total, 0) / totalPackages;
 
-    console.log('\n📊 AVERAGE SCORES:');
-    console.log(`   🔒 Security: ${avgSecurityScore.toFixed(1)}%`);
-    console.log(`   🎯 Overall: ${avgOverallScore.toFixed(1)}%`);
+    console.info('\n📊 AVERAGE SCORES:');
+    console.info(`   🔒 Security: ${avgSecurityScore.toFixed(1)}%`);
+    console.info(`   🎯 Overall: ${avgOverallScore.toFixed(1)}%`);
 
     const gradeDistribution = this.results.reduce(
       (dist, r) => {
@@ -685,15 +685,15 @@ class PackageBenchmarkOrchestrator {
       {} as Record<string, number>
     );
 
-    console.log('\n🏅 GRADE DISTRIBUTION:');
+    console.info('\n🏅 GRADE DISTRIBUTION:');
     Object.entries(gradeDistribution)
       .sort((a, b) => b[1] - a[1])
       .forEach(([grade, count]) => {
-        console.log(`   ${grade}: ${count} packages`);
+        console.info(`   ${grade}: ${count} packages`);
       });
 
     const duration = Date.now() - this.startTime;
-    console.log(`\n⏱️  Benchmark Duration: ${(duration / 1000).toFixed(1)}s`);
+    console.info(`\n⏱️  Benchmark Duration: ${(duration / 1000).toFixed(1)}s`);
   }
 
   private async saveBenchmarkReport(): Promise<void> {
@@ -716,7 +716,7 @@ class PackageBenchmarkOrchestrator {
 
     const filename = `enterprise-benchmark-report-${new Date().toISOString().slice(0, 10)}.json`;
     await Bun.write(filename, JSON.stringify(report, null, 2));
-    console.log(`💾 Benchmark report saved to: ${filename}`);
+    console.info(`💾 Benchmark report saved to: ${filename}`);
   }
 
   private generateBenchmarkRecommendations(): string[] {
@@ -889,8 +889,8 @@ class PackageBenchmarkOrchestrator {
 // MAIN EXECUTION
 // ============================================================================
 
-console.log('🚀 Fantasy42 Package Benchmark Orchestrator');
-console.log('===========================================\n');
+console.info('🚀 Fantasy42 Package Benchmark Orchestrator');
+console.info('===========================================\n');
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -909,6 +909,6 @@ const options = {
 const orchestrator = new PackageBenchmarkOrchestrator();
 await orchestrator.runFullPackageBenchmark(options);
 
-console.log('\n✅ ENTERPRISE PACKAGE BENCHMARKING COMPLETE!');
-console.log('🏆 NEVER COMPROMISE: Security + Performance = Enterprise Excellence!');
-console.log('🚀 Every package benchmarked and validated for production readiness!');
+console.info('\n✅ ENTERPRISE PACKAGE BENCHMARKING COMPLETE!');
+console.info('🏆 NEVER COMPROMISE: Security + Performance = Enterprise Excellence!');
+console.info('🚀 Every package benchmarked and validated for production readiness!');

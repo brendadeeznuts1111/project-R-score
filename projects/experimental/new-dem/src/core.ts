@@ -763,7 +763,7 @@ function startDashboard(config: DashboardConfig = { port: 8080 }): void {
     }
   });
 
-  console.log(`
+  console.info(`
 ╔════════════════════════════════════════════════════════════╗
 ║  🚀 T3-Lattice Dashboard v3.3                              ║
 ║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║

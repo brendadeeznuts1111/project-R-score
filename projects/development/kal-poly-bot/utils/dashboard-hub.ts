@@ -127,7 +127,7 @@ export async function openPrimaryHub(): Promise<void> {
   if (typeof Bun !== 'undefined') {
     await Bun.spawn(['open', url]).exited;
   } else {
-    console.log(`🌐 Primary Hub URL: ${url}`);
+    console.info(`🌐 Primary Hub URL: ${url}`);
   }
 }
 

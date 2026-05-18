@@ -2,19 +2,19 @@
 export const VERSION = "1.0.0";
 export class LoggerStub {
 	info(m: string, meta?: any) {
-		console.log(`[INFO] ${m}`, meta || "");
+		console.info(`[INFO] ${m}`, meta || "");
 	}
 	error(m: string, meta?: any) {
 		console.error(`[ERROR] ${m}`, meta || "");
 	}
 	debug(m: string, meta?: any) {
-		console.log(`[DEBUG] ${m}`, meta || "");
+		console.info(`[DEBUG] ${m}`, meta || "");
 	}
 	warn(m: string, meta?: any) {
 		console.warn(`[WARN] ${m}`, meta || "");
 	}
 	success(m: string, meta?: any) {
-		console.log(`[SUCCESS] ${m}`, meta || "");
+		console.info(`[SUCCESS] ${m}`, meta || "");
 	}
 }
 export const getLogger = () => new LoggerStub();

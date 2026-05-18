@@ -29,14 +29,14 @@ export async function executeCommand(
   const { cwd, env, timeout, verbose } = options;
 
   if (verbose) {
-    console.log(`🔧 Executing: ${command}`);
+    console.info(`🔧 Executing: ${command}`);
   }
 
   try {
     const result = await $`${command}`.cwd(cwd || process.cwd());
 
     if (verbose) {
-      console.log(`✅ Command succeeded`);
+      console.info(`✅ Command succeeded`);
     }
 
     return {

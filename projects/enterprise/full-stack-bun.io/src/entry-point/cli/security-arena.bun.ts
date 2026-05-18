@@ -25,7 +25,7 @@ const { values } = parseArgs({
 });
 
 if (values.version) {
-  console.log(`Security Arena v${version}`);
+  console.info(`Security Arena v${version}`);
   process.exit(0);
 }
 
@@ -73,7 +73,7 @@ async function startSecurityArena() {
     }
 
     if (values.shellLab) {
-      console.log(`🐚 Opening Shell Lab at http://localhost:3000/security-arena#shell-lab`);
+      console.info(`🐚 Opening Shell Lab at http://localhost:3000/security-arena#shell-lab`);
       return;
     }
 
@@ -95,7 +95,7 @@ async function startSecurityArena() {
           throw new Error(`Fatal security vulnerabilities found: ${inspect(fatalIssues, { colors: true })}`);
         }
         if (!CI) {
-          const prompt = await spawn(["bun", "-e", "console.log('Continue with warnings? (y/n)')"]).stdout.text();
+          const prompt = await spawn(["bun", "-e", "console.info('Continue with warnings? (y/n)')"]).stdout.text();
           const response = await Bun.stdin.text();
           if (response.trim().toLowerCase() !== "y") {
             throw new Error("Installation cancelled due to security warnings");
@@ -124,7 +124,7 @@ async function startSecurityArena() {
         // Get client IP for rate limiting
         const requestIP = server.requestIP(req);
         const clientIp = requestIP?.address || 'unknown';
-        console.log(`Request IP object:`, requestIP, `clientIp: ${clientIp}`);
+        console.info(`Request IP object:`, requestIP, `clientIp: ${clientIp}`);
 
         try {
           if (url.pathname === "/") {
@@ -324,7 +324,7 @@ async function startSecurityArena() {
     });
 
     // Rich CLI feedback
-    console.log(
+    console.info(
       ` 🔐 Security Arena v${version}\n` +
       ` ${!CI ? `🌐 Opening browser at ${server.url}` : `📡 Running headless at ${server.url}`}\n` +
       ` 📦 Executable builds available at ${server.url}/api/executables\n` +
@@ -367,10 +367,10 @@ async function startSecurityArena() {
 
 async function runTest(req: Request, clientIp: string) {
   // Rate limiting check
-      console.log(`Rate limiting check for IP: ${clientIp}`);
+      console.info(`Rate limiting check for IP: ${clientIp}`);
       if (!rateLimiter.checkLimit(clientIp)) {
         const remaining = rateLimiter.getRemainingRequests(clientIp);
-        console.log(`Rate limit exceeded for IP: ${clientIp}, remaining: ${remaining}`);
+        console.info(`Rate limit exceeded for IP: ${clientIp}, remaining: ${remaining}`);
         return new Response(
           JSON.stringify({
             error: `Rate limit exceeded. Try again in 60 seconds. ${remaining} requests remaining.`
@@ -415,14 +415,14 @@ async function runTest(req: Request, clientIp: string) {
     let out: string, err: string, exitCode: number;
 
     try {
-      console.log(`Starting test with ${timeoutMs}ms timeout`);
+      console.info(`Starting test with ${timeoutMs}ms timeout`);
       const result = await Promise.race([
         Promise.all([
           new Response(testPromise.stdout).text(),
           new Response(testPromise.stderr).text(),
           testPromise.exited,
         ]).then(([stdout, stderr, code]) => {
-          console.log(`Test completed normally in ${Date.now() - startTime}ms`);
+          console.info(`Test completed normally in ${Date.now() - startTime}ms`);
           return { out: stdout, err: stderr, exitCode: code };
         }),
         timeoutPromise
@@ -432,7 +432,7 @@ async function runTest(req: Request, clientIp: string) {
       err = result.err;
       exitCode = result.exitCode;
     } catch (timeoutError) {
-      console.log(`Test timed out: ${timeoutError.message}`);
+      console.info(`Test timed out: ${timeoutError.message}`);
       // Kill the process on timeout
       testPromise.kill();
       out = "";
@@ -1024,7 +1024,7 @@ async function publishCmd(req: Request) {
       return new Response(JSON.stringify(result));
 
     } catch (spawnError) {
-      console.log('Spawn error:', spawnError);
+      console.info('Spawn error:', spawnError);
       const error = {
         ok: false,
         err: `Command execution failed: ${spawnError.message}`,
@@ -1058,24 +1058,24 @@ async function signalDemoCmd(req: Request) {
     // Create a simple demonstration of signal handling
     const demoCode = `
 process.on("SIGINT", () => {
-  console.log("📡 Received SIGINT signal");
+  console.info("📡 Received SIGINT signal");
 });
 
 process.on("SIGTERM", () => {
-  console.log("📡 Received SIGTERM signal");
+  console.info("📡 Received SIGTERM signal");
 });
 
 process.on("beforeExit", (code) => {
-  console.log(\`📡 Event loop is empty, exiting with code: \${code}\`);
+  console.info(\`📡 Event loop is empty, exiting with code: \${code}\`);
 });
 
 process.on("exit", (code) => {
-  console.log(\`📡 Process exited with code: \${code}\`);
+  console.info(\`📡 Process exited with code: \${code}\`);
 });
 
 // Simulate some work
 setTimeout(() => {
-  console.log("📡 Signal handling demo complete");
+  console.info("📡 Signal handling demo complete");
   process.exit(0);
 }, 100);
 `;
@@ -1621,7 +1621,7 @@ async function handleVoiceMessage(ws: any, data: any) {
 
 async function runHtmlRewriterCLI() {
   const html = `<html><head><title>Demo</title></head><body><img src="/cat.jpg"><p class="content">Hello</p><div data-test="123">Bun</div><!-- secret --></body></html>`;
-  const code = `(async () => { const input = await new Response(Bun.stdin).text(); const rewriter = new HTMLRewriter().on("img", {element(el) {el.setAttribute("src", "https://bun.sh/logo.svg"); el.setAttribute("alt", "Bun logo");}}).on("p.content", {element(el) {el.setInnerContent("🚀 Bun 1.3", { html: true });}}).on('div[data-test="123"]', {element(el) {el.setAttribute("data-test", "456");}}).on("*", {comments(c) {c.remove();}}); const out = rewriter.transform(input); console.log(out); })();`;
+  const code = `(async () => { const input = await new Response(Bun.stdin).text(); const rewriter = new HTMLRewriter().on("img", {element(el) {el.setAttribute("src", "https://bun.sh/logo.svg"); el.setAttribute("alt", "Bun logo");}}).on("p.content", {element(el) {el.setInnerContent("🚀 Bun 1.3", { html: true });}}).on('div[data-test="123"]', {element(el) {el.setAttribute("data-test", "456");}}).on("*", {comments(c) {c.remove();}}); const out = rewriter.transform(input); console.info(out); })();`;
   try {
     const htmlScan = await securityScan(html, "input.html");
     const codeScan = await securityScan(code, "rewriter.js");
@@ -1643,9 +1643,9 @@ async function runHtmlRewriterCLI() {
     const outBytes = new TextEncoder().encode(output).length;
     const throughput = (inBytes / 1024 / 1024) / (duration / 1000);
     const result = { ok: proc.exitCode === 0, output, err, inBytes, outBytes, throughput };
-    console.log(`HTMLRewriter: ${result.ok ? `Throughput ${throughput.toFixed(2)} MB/s` : `Failed: ${err || 'Unknown error'}`}`);
+    console.info(`HTMLRewriter: ${result.ok ? `Throughput ${throughput.toFixed(2)} MB/s` : `Failed: ${err || 'Unknown error'}`}`);
     if (result.output) {
-      console.log('Output:', result.output);
+      console.info('Output:', result.output);
     }
     await Bun.write("temp-rewriter.js", "");
   } catch (e) {

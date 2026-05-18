@@ -5,8 +5,8 @@
 
 import { Terminal } from "bun";
 
-console.log("🚀 Comprehensive Bun API Feature Demonstration");
-console.log("=" .repeat(60));
+console.info("🚀 Comprehensive Bun API Feature Demonstration");
+console.info("=" .repeat(60));
 
 // Initialize Bun Terminal
 const terminal = new Terminal({});
@@ -25,8 +25,8 @@ const FEATURE_FLAGS = {
 
 // Demonstrate Bun.stringWidth functionality
 function demonstrateStringWidth() {
-  console.log("🔤 Bun String Width Demonstration");
-  console.log("-".repeat(40));
+  console.info("🔤 Bun String Width Demonstration");
+  console.info("-".repeat(40));
   
   const testStrings = [
     "Hello World",
@@ -45,69 +45,69 @@ function demonstrateStringWidth() {
     const hasEmoji = /[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u26FF]|[\u2700-\u27BF]/.test(str);
     const hasANSI = /\x1b\[[0-9;]*m/.test(str);
     
-    console.log(`   "${str}"`);
-    console.log(`     Length: ${regularLength}, Width: ${bunWidth}`);
-    console.log(`     Emoji: ${hasEmoji ? '✓' : '✗'}, ANSI: ${hasANSI ? '✓' : '✗'}`);
-    console.log("");
+    console.info(`   "${str}"`);
+    console.info(`     Length: ${regularLength}, Width: ${bunWidth}`);
+    console.info(`     Emoji: ${hasEmoji ? '✓' : '✗'}, ANSI: ${hasANSI ? '✓' : '✗'}`);
+    console.info("");
   });
 }
 
 // Demonstrate Terminal API capabilities
 function demonstrateTerminalAPI() {
-  console.log("🖥️  Bun Terminal API Demonstration");
-  console.log("-".repeat(40));
+  console.info("🖥️  Bun Terminal API Demonstration");
+  console.info("-".repeat(40));
   
-  console.log(`   Terminal detected: ${process.stdout.isTTY ? '✓' : '✗'}`);
-  console.log(`   Columns: ${process.stdout.columns || 'N/A'}`);
-  console.log(`   Rows: ${process.stdout.rows || 'N/A'}`);
-  console.log(`   Raw mode: ${process.stdin.isRaw ? '✓' : '✗'}`);
-  console.log(`   PTY attached: ${process.stdout.isTTY ? '✓' : '✗'}`);
+  console.info(`   Terminal detected: ${process.stdout.isTTY ? '✓' : '✗'}`);
+  console.info(`   Columns: ${process.stdout.columns || 'N/A'}`);
+  console.info(`   Rows: ${process.stdout.rows || 'N/A'}`);
+  console.info(`   Raw mode: ${process.stdin.isRaw ? '✓' : '✗'}`);
+  console.info(`   PTY attached: ${process.stdout.isTTY ? '✓' : '✗'}`);
   
   // Demonstrate terminal resizing awareness
   if (process.stdout.isTTY) {
-    console.log(`   Terminal size: ${process.stdout.columns}×${process.stdout.rows}`);
+    console.info(`   Terminal size: ${process.stdout.columns}×${process.stdout.rows}`);
     
     // Test string width with terminal constraints
     const testString = "This is a test string for terminal width calculation";
     const width = Bun.stringWidth ? Bun.stringWidth(testString) : testString.length;
     const fitsInTerminal = width <= (process.stdout.columns || 80);
     
-    console.log(`   Test string width: ${width}`);
-    console.log(`   Fits in terminal: ${fitsInTerminal ? '✓' : '✗'}`);
+    console.info(`   Test string width: ${width}`);
+    console.info(`   Fits in terminal: ${fitsInTerminal ? '✓' : '✗'}`);
   }
   
-  console.log("");
+  console.info("");
 }
 
 // Demonstrate feature flag system
 function demonstrateFeatureFlags() {
-  console.log("🚩 Feature Flag System Demonstration");
-  console.log("-".repeat(40));
+  console.info("🚩 Feature Flag System Demonstration");
+  console.info("-".repeat(40));
   
   Object.entries(FEATURE_FLAGS).forEach(([flag, enabled]) => {
     const status = enabled ? "✓ ENABLED" : "✗ DISABLED";
     const description = getFeatureDescription(flag);
-    console.log(`   ${flag.padEnd(15)}: ${status.padEnd(10)} - ${description}`);
+    console.info(`   ${flag.padEnd(15)}: ${status.padEnd(10)} - ${description}`);
   });
   
-  console.log("");
+  console.info("");
   
   // Demonstrate compile-time vs runtime flags
-  console.log("   Compile-time flags (build-time evaluation):");
-  console.log(`     - PREMIUM: ${FEATURE_FLAGS.PREMIUM ? 'Premium features available' : 'Basic mode'}`);
-  console.log(`     - BUNDLE: ${FEATURE_FLAGS.BUNDLE ? 'Bundle optimization enabled' : 'Standard build'}`);
+  console.info("   Compile-time flags (build-time evaluation):");
+  console.info(`     - PREMIUM: ${FEATURE_FLAGS.PREMIUM ? 'Premium features available' : 'Basic mode'}`);
+  console.info(`     - BUNDLE: ${FEATURE_FLAGS.BUNDLE ? 'Bundle optimization enabled' : 'Standard build'}`);
   
-  console.log("   Runtime flags (dynamic evaluation):");
-  console.log(`     - DEBUG: ${FEATURE_FLAGS.DEBUG ? 'Debug mode active' : 'Production mode'}`);
-  console.log(`     - TERMINAL: ${FEATURE_FLAGS.TERMINAL ? 'Terminal features enabled' : 'Limited terminal support'}`);
+  console.info("   Runtime flags (dynamic evaluation):");
+  console.info(`     - DEBUG: ${FEATURE_FLAGS.DEBUG ? 'Debug mode active' : 'Production mode'}`);
+  console.info(`     - TERMINAL: ${FEATURE_FLAGS.TERMINAL ? 'Terminal features enabled' : 'Limited terminal support'}`);
   
-  console.log("");
+  console.info("");
 }
 
 // Demonstrate bundle analysis features
 function demonstrateBundleAnalysis() {
-  console.log("📦 Bundle Analysis Demonstration");
-  console.log("-".repeat(40));
+  console.info("📦 Bundle Analysis Demonstration");
+  console.info("-".repeat(40));
   
   const testPatterns = [
     "bun://feature/PREMIUM/enable",
@@ -124,19 +124,19 @@ function demonstrateBundleAnalysis() {
     const hasImport = pattern.includes("import:");
     const hasTreeShake = pattern.includes("tree-shake");
     
-    console.log(`   Pattern: ${pattern}`);
-    console.log(`     Feature flags: [${Array.isArray(featureFlags) ? featureFlags.join(", ") : featureFlags}]`);
-    console.log(`     Bundle analysis: ${isBundlePattern ? '✓' : '✗'}`);
-    console.log(`     Import registry: ${hasImport ? '✓' : '✗'}`);
-    console.log(`     Tree shaking: ${hasTreeShake ? '✓' : '✗'}`);
-    console.log("");
+    console.info(`   Pattern: ${pattern}`);
+    console.info(`     Feature flags: [${Array.isArray(featureFlags) ? featureFlags.join(", ") : featureFlags}]`);
+    console.info(`     Bundle analysis: ${isBundlePattern ? '✓' : '✗'}`);
+    console.info(`     Import registry: ${hasImport ? '✓' : '✗'}`);
+    console.info(`     Tree shaking: ${hasTreeShake ? '✓' : '✗'}`);
+    console.info("");
   });
 }
 
 // Demonstrate Unicode and internationalization
 function demonstrateUnicodeSupport() {
-  console.log("🌐 Unicode & Internationalization Demonstration");
-  console.log("-".repeat(45));
+  console.info("🌐 Unicode & Internationalization Demonstration");
+  console.info("-".repeat(45));
   
   const unicodeTests = [
     {
@@ -188,19 +188,19 @@ function demonstrateUnicodeSupport() {
     const hasANSI = /\x1b\[[0-9;]*m/.test(test.text);
     const hasCombining = /[\u0300-\u036F]/.test(test.text);
     
-    console.log(`   ${test.name}:`);
-    console.log(`     Text: "${test.text}"`);
-    console.log(`     Length: ${length}, Width: ${width}`);
-    console.log(`     Features: Emoji ${hasEmoji ? '✓' : '✗'}, ANSI ${hasANSI ? '✓' : '✗'}, Combining ${hasCombining ? '✓' : '✗'}`);
-    console.log(`     Expected: ${test.expected}`);
-    console.log("");
+    console.info(`   ${test.name}:`);
+    console.info(`     Text: "${test.text}"`);
+    console.info(`     Length: ${length}, Width: ${width}`);
+    console.info(`     Features: Emoji ${hasEmoji ? '✓' : '✗'}, ANSI ${hasANSI ? '✓' : '✗'}, Combining ${hasCombining ? '✓' : '✗'}`);
+    console.info(`     Expected: ${test.expected}`);
+    console.info("");
   });
 }
 
 // Demonstrate S3 client integration concepts
 function demonstrateS3Integration() {
-  console.log("☁️  S3 Client Integration Demonstration");
-  console.log("-".repeat(40));
+  console.info("☁️  S3 Client Integration Demonstration");
+  console.info("-".repeat(40));
   
   const s3Patterns = [
     "https://s3.amazonaws.com/bucket/file.txt",
@@ -215,19 +215,19 @@ function demonstrateS3Integration() {
     const isBunStorage = pattern.includes("bun://storage");
     const hasContentDisposition = pattern.includes("upload") || pattern.includes("download");
     
-    console.log(`   Pattern: ${pattern}`);
-    console.log(`     S3 compatible: ${isS3 ? '✓' : '✗'}`);
-    console.log(`     R2 compatible: ${isR2 ? '✓' : '✗'}`);
-    console.log(`     Bun storage: ${isBunStorage ? '✓' : '✗'}`);
-    console.log(`     Content-Disposition: ${hasContentDisposition ? 'inline/attachment' : 'default'}`);
-    console.log("");
+    console.info(`   Pattern: ${pattern}`);
+    console.info(`     S3 compatible: ${isS3 ? '✓' : '✗'}`);
+    console.info(`     R2 compatible: ${isR2 ? '✓' : '✗'}`);
+    console.info(`     Bun storage: ${isBunStorage ? '✓' : '✗'}`);
+    console.info(`     Content-Disposition: ${hasContentDisposition ? 'inline/attachment' : 'default'}`);
+    console.info("");
   });
 }
 
 // Demonstrate .npmrc environment expansion
 function demonstrateNpmrcExpansion() {
-  console.log("📋 .npmrc Environment Expansion Demonstration");
-  console.log("-".repeat(45));
+  console.info("📋 .npmrc Environment Expansion Demonstration");
+  console.info("-".repeat(45));
   
   const envVars = [
     "NODE_ENV",
@@ -245,13 +245,13 @@ function demonstrateNpmrcExpansion() {
     "https://cache.${PROCESSOR_COUNT:-1}.node.com/"
   ];
   
-  console.log("   Environment variables:");
+  console.info("   Environment variables:");
   envVars.forEach(varName => {
     const value = process.env[varName];
-    console.log(`     ${varName}: ${value || 'undefined'}`);
+    console.info(`     ${varName}: ${value || 'undefined'}`);
   });
   
-  console.log("\n   Expansion examples:");
+  console.info("\n   Expansion examples:");
   testStrings.forEach(str => {
     const hasExpansion = str.includes("${") && str.includes("}");
     const expanded = hasExpansion ? str.replace(/\$\{([^}]+)\}/g, (match, varName) => {
@@ -260,9 +260,9 @@ function demonstrateNpmrcExpansion() {
       return process.env[varOnly] || defaultValue || match;
     }) : str;
     
-    console.log(`     Original: ${str}`);
-    console.log(`     Expanded: ${expanded}`);
-    console.log("");
+    console.info(`     Original: ${str}`);
+    console.info(`     Expanded: ${expanded}`);
+    console.info("");
   });
 }
 
@@ -283,28 +283,28 @@ function getFeatureDescription(flag: string): string {
 
 // Performance benchmark for new features
 async function demonstratePerformance() {
-  console.log("⚡ Performance Benchmark Demonstration");
-  console.log("-".repeat(40));
+  console.info("⚡ Performance Benchmark Demonstration");
+  console.info("-".repeat(40));
   
   const testString = "Hello 🌍 World! 🚀🎉💎";
   const iterations = 100000;
   
   // Benchmark Bun.stringWidth
   if (Bun.stringWidth) {
-    console.log(`   Testing Bun.stringWidth() performance...`);
+    console.info(`   Testing Bun.stringWidth() performance...`);
     const start = performance.now();
     for (let i = 0; i < iterations; i++) {
       Bun.stringWidth(testString);
     }
     const time = performance.now() - start;
-    console.log(`     ${iterations} iterations in ${time.toFixed(2)}ms`);
-    console.log(`     ${(iterations / time * 1000).toFixed(0)} ops/sec`);
+    console.info(`     ${iterations} iterations in ${time.toFixed(2)}ms`);
+    console.info(`     ${(iterations / time * 1000).toFixed(0)} ops/sec`);
   } else {
-    console.log("   Bun.stringWidth() not available");
+    console.info("   Bun.stringWidth() not available");
   }
   
   // Benchmark URLPattern with Bun features
-  console.log(`   Testing URLPattern with Bun features...`);
+  console.info(`   Testing URLPattern with Bun features...`);
   const patterns = [
     "bun://terminal/:action",
     "bun://feature/:flag/enable", 
@@ -317,22 +317,22 @@ async function demonstratePerformance() {
     new URLPattern(pattern);
   }
   const time = performance.now() - start;
-  console.log(`     ${iterations} URLPattern creations in ${time.toFixed(2)}ms`);
-  console.log(`     ${(iterations / time * 1000).toFixed(0)} patterns/sec`);
+  console.info(`     ${iterations} URLPattern creations in ${time.toFixed(2)}ms`);
+  console.info(`     ${(iterations / time * 1000).toFixed(0)} patterns/sec`);
   
-  console.log("");
+  console.info("");
 }
 
 // Main demonstration
 async function main() {
   try {
-    console.log(`🔧 Environment Information:`);
-    console.log(`   Bun version: ${process.version}`);
-    console.log(`   Platform: ${process.platform}`);
-    console.log(`   Architecture: ${process.arch}`);
-    console.log(`   Terminal: ${process.stdout.isTTY ? '✓' : '✗'} (${process.stdout.columns}×${process.stdout.rows})`);
-    console.log(`   StringWidth: ${typeof Bun.stringWidth === 'function' ? '✓' : '✗'}`);
-    console.log("");
+    console.info(`🔧 Environment Information:`);
+    console.info(`   Bun version: ${process.version}`);
+    console.info(`   Platform: ${process.platform}`);
+    console.info(`   Architecture: ${process.arch}`);
+    console.info(`   Terminal: ${process.stdout.isTTY ? '✓' : '✗'} (${process.stdout.columns}×${process.stdout.rows})`);
+    console.info(`   StringWidth: ${typeof Bun.stringWidth === 'function' ? '✓' : '✗'}`);
+    console.info("");
     
     // Run all demonstrations
     demonstrateStringWidth();
@@ -344,18 +344,18 @@ async function main() {
     demonstrateNpmrcExpansion();
     await demonstratePerformance();
     
-    console.log("🎯 Bun API Feature Demonstration Complete!");
-    console.log("");
-    console.log("💡 Key Takeaways:");
-    console.log("   • Bun.stringWidth() provides accurate display width calculation");
-    console.log("   • Terminal API enables rich TTY applications");
-    console.log("   • Feature flags support compile-time and runtime evaluation");
-    console.log("   • Bundle analysis integrates with build optimization");
-    console.log("   • Unicode support covers emoji, ANSI, and international text");
-    console.log("   • S3 client integration enables cloud storage workflows");
-    console.log("   • .npmrc expansion supports environment-based configuration");
-    console.log("");
-    console.log("🚀 These features are now integrated into the ultra-enhanced 50-column matrix!");
+    console.info("🎯 Bun API Feature Demonstration Complete!");
+    console.info("");
+    console.info("💡 Key Takeaways:");
+    console.info("   • Bun.stringWidth() provides accurate display width calculation");
+    console.info("   • Terminal API enables rich TTY applications");
+    console.info("   • Feature flags support compile-time and runtime evaluation");
+    console.info("   • Bundle analysis integrates with build optimization");
+    console.info("   • Unicode support covers emoji, ANSI, and international text");
+    console.info("   • S3 client integration enables cloud storage workflows");
+    console.info("   • .npmrc expansion supports environment-based configuration");
+    console.info("");
+    console.info("🚀 These features are now integrated into the ultra-enhanced 50-column matrix!");
     
   } catch (error) {
     console.error("❌ Demonstration failed:", error);

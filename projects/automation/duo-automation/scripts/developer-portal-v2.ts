@@ -121,8 +121,8 @@ class DeveloperPortalV2 {
   }
 
   async launch(partners?: string) {
-    console.log(chalk.blue.bold('🛠️ Developer Portal v2.0 Launch'));
-    console.log(chalk.gray('Target: $275M ARR with developer ecosystem\n'));
+    console.info(chalk.blue.bold('🛠️ Developer Portal v2.0 Launch'));
+    console.info(chalk.gray('Target: $275M ARR with developer ecosystem\n'));
 
     const selectedPartners = partners ? partners.split(',') : ['paypal', 'shopify', 'quickbooks'];
     
@@ -145,7 +145,7 @@ class DeveloperPortalV2 {
   }
 
   private async deployDeveloperFeatures() {
-    console.log(chalk.blue.bold('\n🚀 Deploying Developer Portal Features'));
+    console.info(chalk.blue.bold('\n🚀 Deploying Developer Portal Features'));
     
     for (const feature of this.features) {
       await this.deployFeature(feature);
@@ -158,13 +158,13 @@ class DeveloperPortalV2 {
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     this.spinner.succeed(chalk.green(`✅ ${feature.name} deployed`));
-    console.log(chalk.gray(`   • ${feature.description}`));
-    console.log(chalk.gray(`   • Adoption: ${feature.adoption}`));
-    console.log(chalk.gray(`   • Status: ${feature.status}`));
+    console.info(chalk.gray(`   • ${feature.description}`));
+    console.info(chalk.gray(`   • Adoption: ${feature.adoption}`));
+    console.info(chalk.gray(`   • Status: ${feature.status}`));
   }
 
   private async launchPartnerIntegrations(selectedPartners: string[]) {
-    console.log(chalk.blue.bold('\n🤝 Launching Partner Integrations'));
+    console.info(chalk.blue.bold('\n🤝 Launching Partner Integrations'));
     
     for (const partner of this.partners) {
       if (selectedPartners.some(p => partner.id.includes(p))) {
@@ -187,35 +187,35 @@ class DeveloperPortalV2 {
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     this.spinner.succeed(chalk.green(`✅ ${partner.name} launched`));
-    console.log(chalk.gray(`   • Category: ${partner.category}`));
-    console.log(chalk.gray(`   • Status: ${partner.status}`));
-    console.log(chalk.gray(`   • Partner Bonus: $${partner.bonus}`));
+    console.info(chalk.gray(`   • Category: ${partner.category}`));
+    console.info(chalk.gray(`   • Status: ${partner.status}`));
+    console.info(chalk.gray(`   • Partner Bonus: $${partner.bonus}`));
   }
 
   private async configureSDKGeneration() {
-    console.log(chalk.blue.bold('\n📦 Configuring SDK Auto-Generation'));
+    console.info(chalk.blue.bold('\n📦 Configuring SDK Auto-Generation'));
     
     this.spinner.start(chalk.cyan('Setting up OpenAPI to SDK pipeline...'));
     
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     this.spinner.succeed(chalk.green('✅ SDK Generation configured'));
-    console.log(chalk.gray('   • Languages: JavaScript, Python, PHP, Go'));
-    console.log(chalk.gray('   • Frameworks: React, Vue, Angular, Express'));
-    console.log(chalk.gray('   • Auto-deployment: NPM, PyPI, Packagist'));
+    console.info(chalk.gray('   • Languages: JavaScript, Python, PHP, Go'));
+    console.info(chalk.gray('   • Frameworks: React, Vue, Angular, Express'));
+    console.info(chalk.gray('   • Auto-deployment: NPM, PyPI, Packagist'));
   }
 
   private async setupPartnerProgram() {
-    console.log(chalk.blue.bold('\n🎯 Setting Up Partner Program'));
+    console.info(chalk.blue.bold('\n🎯 Setting Up Partner Program'));
     
     this.spinner.start(chalk.cyan('Configuring $500 signup bonus program...'));
     
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     this.spinner.succeed(chalk.green('✅ Partner Program setup complete'));
-    console.log(chalk.gray('   • Signup bonus: $500 for qualified partners'));
-    console.log(chalk.gray('   • Revenue sharing: 10% for first 12 months'));
-    console.log(chalk.gray('   • Support priority: Dedicated partner success'));
+    console.info(chalk.gray('   • Signup bonus: $500 for qualified partners'));
+    console.info(chalk.gray('   • Revenue sharing: 10% for first 12 months'));
+    console.info(chalk.gray('   • Support priority: Dedicated partner success'));
   }
 
   private async validateLaunch(): Promise<DeveloperMetrics> {
@@ -237,37 +237,37 @@ class DeveloperPortalV2 {
   }
 
   private displayMetrics(metrics: DeveloperMetrics) {
-    console.log(chalk.blue('\n📊 Developer Portal v2.0 Metrics:'));
-    console.log(chalk.white(`   API Calls: ${(metrics.apiCalls / 1000000).toFixed(1)}M`));
-    console.log(chalk.white(`   Developer Count: ${metrics.developerCount.toLocaleString()}`));
-    console.log(chalk.white(`   Partner Revenue: $${(metrics.partnerRevenue / 1000).toFixed(0)}K/month`));
-    console.log(chalk.white(`   SDK Downloads: ${(metrics.sdkDownloads / 1000).toFixed(0)}K`));
+    console.info(chalk.blue('\n📊 Developer Portal v2.0 Metrics:'));
+    console.info(chalk.white(`   API Calls: ${(metrics.apiCalls / 1000000).toFixed(1)}M`));
+    console.info(chalk.white(`   Developer Count: ${metrics.developerCount.toLocaleString()}`));
+    console.info(chalk.white(`   Partner Revenue: $${(metrics.partnerRevenue / 1000).toFixed(0)}K/month`));
+    console.info(chalk.white(`   SDK Downloads: ${(metrics.sdkDownloads / 1000).toFixed(0)}K`));
   }
 
   private displayResults(metrics: DeveloperMetrics) {
-    console.log(chalk.green.bold('\n🎯 Developer Portal v2.0 Results:'));
+    console.info(chalk.green.bold('\n🎯 Developer Portal v2.0 Results:'));
     
-    console.log(chalk.white('🛠️ New Features Launched:'));
-    console.log(chalk.green('   • API Playground (Interactive)'));
-    console.log(chalk.green('   • Webhook Simulator'));
-    console.log(chalk.green('   • Usage Analytics (Personalized)'));
-    console.log(chalk.green('   • SDK Auto-Generation (OpenAPI)'));
-    console.log(chalk.green('   • Partner Program ($500 signup bonus)'));
+    console.info(chalk.white('🛠️ New Features Launched:'));
+    console.info(chalk.green('   • API Playground (Interactive)'));
+    console.info(chalk.green('   • Webhook Simulator'));
+    console.info(chalk.green('   • Usage Analytics (Personalized)'));
+    console.info(chalk.green('   • SDK Auto-Generation (OpenAPI)'));
+    console.info(chalk.green('   • Partner Program ($500 signup bonus)'));
     
-    console.log(chalk.white('🤝 Partner Integrations:'));
-    console.log(chalk.green('   • PayPal → CashApp Bridge'));
-    console.log(chalk.green('   • Shopify → Merchant Onboarding'));
-    console.log(chalk.green('   • QuickBooks → Revenue Sync'));
-    console.log(chalk.green('   • Zendesk → Dispute Ticketing'));
-    console.log(chalk.green('   • Salesforce → CRM Integration'));
+    console.info(chalk.white('🤝 Partner Integrations:'));
+    console.info(chalk.green('   • PayPal → CashApp Bridge'));
+    console.info(chalk.green('   • Shopify → Merchant Onboarding'));
+    console.info(chalk.green('   • QuickBooks → Revenue Sync'));
+    console.info(chalk.green('   • Zendesk → Dispute Ticketing'));
+    console.info(chalk.green('   • Salesforce → CRM Integration'));
     
-    console.log(chalk.blue.bold('\n📈 Business Impact:'));
-    console.log(chalk.white(`   • API Calls: ${(metrics.apiCalls / 1000000).toFixed(1)}M monthly`));
-    console.log(chalk.white(`   • Developer Adoption: ${metrics.developerCount.toLocaleString()} developers`));
-    console.log(chalk.white(`   • Partner Revenue: $${(metrics.partnerRevenue / 1000).toFixed(0)}K/month`));
-    console.log(chalk.white(`   • SDK Downloads: ${(metrics.sdkDownloads / 1000).toFixed(0)}K total`));
+    console.info(chalk.blue.bold('\n📈 Business Impact:'));
+    console.info(chalk.white(`   • API Calls: ${(metrics.apiCalls / 1000000).toFixed(1)}M monthly`));
+    console.info(chalk.white(`   • Developer Adoption: ${metrics.developerCount.toLocaleString()} developers`));
+    console.info(chalk.white(`   • Partner Revenue: $${(metrics.partnerRevenue / 1000).toFixed(0)}K/month`));
+    console.info(chalk.white(`   • SDK Downloads: ${(metrics.sdkDownloads / 1000).toFixed(0)}K total`));
     
-    console.log(chalk.green.bold('\n✅ Phase 3: Ready for $275M ARR scaling!'));
+    console.info(chalk.green.bold('\n✅ Phase 3: Ready for $275M ARR scaling!'));
   }
 }
 

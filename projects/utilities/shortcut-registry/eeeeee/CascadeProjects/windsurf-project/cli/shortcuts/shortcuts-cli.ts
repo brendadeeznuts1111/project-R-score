@@ -206,25 +206,25 @@ const commands: CLICommand[] = [
     name: 'list',
     description: 'List all available shortcuts',
     handler: () => {
-      console.log(`\n⌨️  WindSurf Project Shortcuts (${allShortcuts.length} total)\n`);
+      console.info(`\n⌨️  WindSurf Project Shortcuts (${allShortcuts.length} total)\n`);
       allShortcuts.forEach((shortcut, index) => {
         const key = shortcut.default.macOS || shortcut.default.primary;
         const category = shortcut.category.padEnd(15);
-        console.log(`  ${(index + 1).toString().padStart(2)}. ${shortcut.id.padEnd(25)} ${key.padEnd(15)} [${category}] ${shortcut.description}`);
+        console.info(`  ${(index + 1).toString().padStart(2)}. ${shortcut.id.padEnd(25)} ${key.padEnd(15)} [${category}] ${shortcut.description}`);
       });
-      console.log('');
+      console.info('');
     },
   },
   {
     name: 'windsurf',
     description: 'List WindSurf-specific shortcuts',
     handler: () => {
-      console.log(`\n🚀 WindSurf-Specific Shortcuts (${windsurfShortcuts.length} total)\n`);
+      console.info(`\n🚀 WindSurf-Specific Shortcuts (${windsurfShortcuts.length} total)\n`);
       windsurfShortcuts.forEach((shortcut, index) => {
         const key = shortcut.default.macOS || shortcut.default.primary;
-        console.log(`  ${(index + 1).toString().padStart(2)}. ${shortcut.id.padEnd(25)} ${key.padEnd(15)} ${shortcut.description}`);
+        console.info(`  ${(index + 1).toString().padStart(2)}. ${shortcut.id.padEnd(25)} ${key.padEnd(15)} ${shortcut.description}`);
       });
-      console.log('');
+      console.info('');
     },
   },
   {
@@ -234,26 +234,26 @@ const commands: CLICommand[] = [
       const category = process.argv[3];
       if (!category) {
         console.error('\n❌ Error: Please provide a category\n');
-        console.log('Available categories:');
+        console.info('Available categories:');
         const categories = [...new Set(allShortcuts.map(s => s.category))];
-        categories.forEach(cat => console.log(`  - ${cat}`));
-        console.log('');
+        categories.forEach(cat => console.info(`  - ${cat}`));
+        console.info('');
         return;
       }
       
       const filtered = allShortcuts.filter(s => s.category === category);
-      console.log(`\n📁 Shortcuts in "${category}" category (${filtered.length} total)\n`);
+      console.info(`\n📁 Shortcuts in "${category}" category (${filtered.length} total)\n`);
       
       if (filtered.length === 0) {
-        console.log(`  No shortcuts found in category "${category}".\n`);
+        console.info(`  No shortcuts found in category "${category}".\n`);
         return;
       }
       
       filtered.forEach((shortcut) => {
         const key = shortcut.default.macOS || shortcut.default.primary;
-        console.log(`  ${shortcut.id.padEnd(25)} ${key.padEnd(15)} ${shortcut.description}`);
+        console.info(`  ${shortcut.id.padEnd(25)} ${key.padEnd(15)} ${shortcut.description}`);
       });
-      console.log('');
+      console.info('');
     },
   },
   {
@@ -263,7 +263,7 @@ const commands: CLICommand[] = [
       const keyword = process.argv[3];
       if (!keyword) {
         console.error('\n❌ Error: Please provide a search keyword\n');
-        console.log('Usage: bun run cli/shortcuts/shortcuts-cli.ts search <keyword>\n');
+        console.info('Usage: bun run cli/shortcuts/shortcuts-cli.ts search <keyword>\n');
         return;
       }
       
@@ -274,17 +274,17 @@ const commands: CLICommand[] = [
           s.action.toLowerCase().includes(keyword.toLowerCase())
       );
       
-      console.log(`\n🔍 Search Results for "${keyword}" (${results.length} found)\n`);
+      console.info(`\n🔍 Search Results for "${keyword}" (${results.length} found)\n`);
       if (results.length === 0) {
-        console.log('  No shortcuts found matching your search.\n');
+        console.info('  No shortcuts found matching your search.\n');
         return;
       }
       
       results.forEach((shortcut) => {
         const key = shortcut.default.macOS || shortcut.default.primary;
-        console.log(`  ${shortcut.id.padEnd(25)} ${key.padEnd(15)} ${shortcut.description}`);
+        console.info(`  ${shortcut.id.padEnd(25)} ${key.padEnd(15)} ${shortcut.description}`);
       });
-      console.log('');
+      console.info('');
     },
   },
   {
@@ -303,38 +303,38 @@ const commands: CLICommand[] = [
           default: getDefaultShortcuts().length,
         },
       };
-      console.log(JSON.stringify(output, null, 2));
+      console.info(JSON.stringify(output, null, 2));
     },
   },
   {
     name: 'info',
     description: 'Display integration information',
     handler: () => {
-      console.log('\n🔗 ShortcutRegistry Integration\n');
-      console.log(`  Registry Version: ${buildInfo.version}`);
-      console.log(`  Build Time:       ${buildInfo.buildTime}`);
-      console.log(`  Total Shortcuts:   ${allShortcuts.length}`);
-      console.log(`  WindSurf Shortcuts: ${windsurfShortcuts.length}`);
-      console.log(`  Default Shortcuts:  ${getDefaultShortcuts().length}`);
-      console.log('');
+      console.info('\n🔗 ShortcutRegistry Integration\n');
+      console.info(`  Registry Version: ${buildInfo.version}`);
+      console.info(`  Build Time:       ${buildInfo.buildTime}`);
+      console.info(`  Total Shortcuts:   ${allShortcuts.length}`);
+      console.info(`  WindSurf Shortcuts: ${windsurfShortcuts.length}`);
+      console.info(`  Default Shortcuts:  ${getDefaultShortcuts().length}`);
+      console.info('');
     },
   },
 ];
 
 function printHelp() {
-  console.log('\n🚀 WindSurf Project - Shortcuts CLI\n');
-  console.log('Usage: bun run cli/shortcuts/shortcuts-cli.ts [command]\n');
-  console.log('Commands:');
+  console.info('\n🚀 WindSurf Project - Shortcuts CLI\n');
+  console.info('Usage: bun run cli/shortcuts/shortcuts-cli.ts [command]\n');
+  console.info('Commands:');
   commands.forEach((cmd) => {
-    console.log(`  ${cmd.name.padEnd(15)} ${cmd.description}`);
+    console.info(`  ${cmd.name.padEnd(15)} ${cmd.description}`);
   });
-  console.log('\nExamples:');
-  console.log('  bun run cli/shortcuts/shortcuts-cli.ts list');
-  console.log('  bun run cli/shortcuts/shortcuts-cli.ts windsurf');
-  console.log('  bun run cli/shortcuts/shortcuts-cli.ts search dashboard');
-  console.log('  bun run cli/shortcuts/shortcuts-cli.ts category compliance');
-  console.log('  bun run cli/shortcuts/shortcuts-cli.ts export');
-  console.log('');
+  console.info('\nExamples:');
+  console.info('  bun run cli/shortcuts/shortcuts-cli.ts list');
+  console.info('  bun run cli/shortcuts/shortcuts-cli.ts windsurf');
+  console.info('  bun run cli/shortcuts/shortcuts-cli.ts search dashboard');
+  console.info('  bun run cli/shortcuts/shortcuts-cli.ts category compliance');
+  console.info('  bun run cli/shortcuts/shortcuts-cli.ts export');
+  console.info('');
 }
 
 function main() {

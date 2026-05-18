@@ -175,7 +175,7 @@ export class EmailService {
   private async sendSMTPEmail(email: any): Promise<string> {
     // In a real implementation, you'd use a library like nodemailer
     // For now, simulate SMTP sending
-    console.log('📧 Sending via SMTP:', {
+    console.info('📧 Sending via SMTP:', {
       host: this.config.credentials.host,
       to: email.to,
       subject: email.subject

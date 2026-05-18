@@ -67,16 +67,16 @@ class Fire22CloudflareAccessManager {
   async setupAccess(options: AccessOptions = {}): Promise<void> {
     const startTime = Bun.nanoseconds();
 
-    console.log('🔐 Fire22 Cloudflare Access Control Management');
-    console.log('!==!==!==!==!==!==!==!====');
+    console.info('🔐 Fire22 Cloudflare Access Control Management');
+    console.info('!==!==!==!==!==!==!==!====');
 
     const env = options.environment || 'development';
-    console.log(`\n🎯 Environment: ${env}`);
-    console.log(`🏢 Department: ${options.department || 'ALL'}`);
-    console.log(`⚙️ Operation: ${options.operation || 'create'}`);
+    console.info(`\n🎯 Environment: ${env}`);
+    console.info(`🏢 Department: ${options.department || 'ALL'}`);
+    console.info(`⚙️ Operation: ${options.operation || 'create'}`);
 
     if (options.dryRun) {
-      console.log('🔍 DRY RUN MODE - No actual changes to Cloudflare');
+      console.info('🔍 DRY RUN MODE - No actual changes to Cloudflare');
     }
 
     try {
@@ -100,7 +100,7 @@ class Fire22CloudflareAccessManager {
       }
 
       const setupTime = (Bun.nanoseconds() - startTime) / 1_000_000;
-      console.log(`\n✅ Access control setup completed in ${setupTime.toFixed(2)}ms`);
+      console.info(`\n✅ Access control setup completed in ${setupTime.toFixed(2)}ms`);
     } catch (error) {
       console.error('❌ Access control setup failed:', error);
       process.exit(1);
@@ -111,7 +111,7 @@ class Fire22CloudflareAccessManager {
    * ✅ Verify access control prerequisites
    */
   private async verifyAccessPrerequisites(options: AccessOptions): Promise<void> {
-    console.log('\n✅ Verifying access control prerequisites...');
+    console.info('\n✅ Verifying access control prerequisites...');
 
     // Check Cloudflare credentials
     if (!process.env.CLOUDFLARE_API_TOKEN && !process.env.CLOUDFLARE_API_KEY) {
@@ -119,25 +119,25 @@ class Fire22CloudflareAccessManager {
         'Cloudflare API credentials not found. Set CLOUDFLARE_API_TOKEN or CLOUDFLARE_API_KEY'
       );
     }
-    console.log('  ✅ Cloudflare API credentials found');
+    console.info('  ✅ Cloudflare API credentials found');
 
     // Check Zone ID
     if (!this.zoneId) {
-      console.log('  ⚠️ CLOUDFLARE_ZONE_ID not set - using default domain');
+      console.info('  ⚠️ CLOUDFLARE_ZONE_ID not set - using default domain');
     } else {
-      console.log('  ✅ Cloudflare Zone ID configured');
+      console.info('  ✅ Cloudflare Zone ID configured');
     }
 
     // Check Account ID
     if (!this.accountId) {
       throw new Error('CLOUDFLARE_ACCOUNT_ID not found. Set in environment variables');
     }
-    console.log('  ✅ Cloudflare Account ID configured');
+    console.info('  ✅ Cloudflare Account ID configured');
 
     // Check Wrangler
     try {
       await $`wrangler --version`.quiet();
-      console.log('  ✅ Wrangler CLI available');
+      console.info('  ✅ Wrangler CLI available');
     } catch (error) {
       throw new Error('Wrangler CLI not found. Install: npm install -g wrangler');
     }
@@ -145,7 +145,7 @@ class Fire22CloudflareAccessManager {
     // Verify Cloudflare authentication
     try {
       await $`wrangler whoami`.quiet();
-      console.log('  ✅ Cloudflare authentication verified');
+      console.info('  ✅ Cloudflare authentication verified');
     } catch (error) {
       throw new Error('Not authenticated with Cloudflare. Run: wrangler login');
     }
@@ -155,14 +155,14 @@ class Fire22CloudflareAccessManager {
     if (!existsSync(configDir) && !options.dryRun) {
       await $`mkdir -p ${configDir}`;
     }
-    console.log('  ✅ Configuration directory ready');
+    console.info('  ✅ Configuration directory ready');
   }
 
   /**
    * 🆕 Create access policies
    */
   private async createAccessPolicies(options: AccessOptions): Promise<void> {
-    console.log('\n🆕 Creating access policies...');
+    console.info('\n🆕 Creating access policies...');
 
     const departments = options.department
       ? [this.getDepartment(options.department)].filter(Boolean)
@@ -175,7 +175,7 @@ class Fire22CloudflareAccessManager {
     const policies: AccessPolicy[] = [];
 
     for (const dept of departments) {
-      console.log(`  🏢 Creating policy for ${dept.name}...`);
+      console.info(`  🏢 Creating policy for ${dept.name}...`);
 
       const policy = this.generateDepartmentPolicy(dept, options);
       policies.push(policy);
@@ -183,14 +183,14 @@ class Fire22CloudflareAccessManager {
       if (!options.dryRun) {
         try {
           await this.createCloudflareAccessPolicy(policy, options);
-          console.log(`    ✅ Policy created: ${policy.name}`);
+          console.info(`    ✅ Policy created: ${policy.name}`);
         } catch (error) {
-          console.log(
+          console.info(
             `    ❌ Failed to create policy: ${error instanceof Error ? error.message : 'Unknown error'}`
           );
         }
       } else {
-        console.log(`    🔍 Would create policy: ${policy.name}`);
+        console.info(`    🔍 Would create policy: ${policy.name}`);
       }
     }
 
@@ -199,19 +199,19 @@ class Fire22CloudflareAccessManager {
       await this.savePoliciesConfig(policies);
     }
 
-    console.log(`\n📊 Created ${policies.length} access policies`);
+    console.info(`\n📊 Created ${policies.length} access policies`);
   }
 
   /**
    * 🔄 Update access policies
    */
   private async updateAccessPolicies(options: AccessOptions): Promise<void> {
-    console.log('\n🔄 Updating access policies...');
+    console.info('\n🔄 Updating access policies...');
 
     const existingPolicies = await this.loadPoliciesConfig();
 
     if (existingPolicies.length === 0) {
-      console.log('  📭 No existing policies found');
+      console.info('  📭 No existing policies found');
       return;
     }
 
@@ -220,7 +220,7 @@ class Fire22CloudflareAccessManager {
         continue;
       }
 
-      console.log(`  🔄 Updating policy: ${policy.name}`);
+      console.info(`  🔄 Updating policy: ${policy.name}`);
 
       // Refresh policy with latest department data
       const dept = this.getDepartment(policy.department);
@@ -231,14 +231,14 @@ class Fire22CloudflareAccessManager {
         if (!options.dryRun) {
           try {
             await this.updateCloudflareAccessPolicy(updatedPolicy, options);
-            console.log(`    ✅ Policy updated: ${policy.name}`);
+            console.info(`    ✅ Policy updated: ${policy.name}`);
           } catch (error) {
-            console.log(
+            console.info(
               `    ❌ Failed to update policy: ${error instanceof Error ? error.message : 'Unknown error'}`
             );
           }
         } else {
-          console.log(`    🔍 Would update policy: ${policy.name}`);
+          console.info(`    🔍 Would update policy: ${policy.name}`);
         }
       }
     }
@@ -248,7 +248,7 @@ class Fire22CloudflareAccessManager {
    * 🗑️ Delete access policies
    */
   private async deleteAccessPolicies(options: AccessOptions): Promise<void> {
-    console.log('\n🗑️ Deleting access policies...');
+    console.info('\n🗑️ Deleting access policies...');
 
     const existingPolicies = await this.loadPoliciesConfig();
     const policiesToDelete = options.department
@@ -256,26 +256,26 @@ class Fire22CloudflareAccessManager {
       : existingPolicies;
 
     if (policiesToDelete.length === 0) {
-      console.log('  📭 No policies found to delete');
+      console.info('  📭 No policies found to delete');
       return;
     }
 
-    console.log(`  ⚠️ WARNING: This will delete ${policiesToDelete.length} access policies`);
+    console.info(`  ⚠️ WARNING: This will delete ${policiesToDelete.length} access policies`);
 
     for (const policy of policiesToDelete) {
-      console.log(`  🗑️ Deleting policy: ${policy.name}`);
+      console.info(`  🗑️ Deleting policy: ${policy.name}`);
 
       if (!options.dryRun) {
         try {
           await this.deleteCloudflareAccessPolicy(policy.id, options);
-          console.log(`    ✅ Policy deleted: ${policy.name}`);
+          console.info(`    ✅ Policy deleted: ${policy.name}`);
         } catch (error) {
-          console.log(
+          console.info(
             `    ❌ Failed to delete policy: ${error instanceof Error ? error.message : 'Unknown error'}`
           );
         }
       } else {
-        console.log(`    🔍 Would delete policy: ${policy.name}`);
+        console.info(`    🔍 Would delete policy: ${policy.name}`);
       }
     }
 
@@ -290,39 +290,39 @@ class Fire22CloudflareAccessManager {
    * 📋 List access policies
    */
   private async listAccessPolicies(options: AccessOptions): Promise<void> {
-    console.log('\n📋 Listing access policies...');
+    console.info('\n📋 Listing access policies...');
 
     try {
       const existingPolicies = await this.loadPoliciesConfig();
 
       if (existingPolicies.length === 0) {
-        console.log('  📭 No access policies configured');
+        console.info('  📭 No access policies configured');
         return;
       }
 
-      console.log(`\n📊 Found ${existingPolicies.length} access policies:\n`);
+      console.info(`\n📊 Found ${existingPolicies.length} access policies:\n`);
 
       existingPolicies.forEach((policy, index) => {
-        console.log(`${index + 1}. 🏢 ${policy.name}`);
-        console.log(`   Department: ${policy.department}`);
-        console.log(`   Domain: ${policy.domain}`);
-        console.log(`   Applications: ${policy.applications.length}`);
-        console.log(`   Rules: ${policy.rules.length}`);
-        console.log(`   Created: ${new Date(policy.createdAt).toLocaleString()}`);
-        console.log(`   Updated: ${new Date(policy.updatedAt).toLocaleString()}`);
+        console.info(`${index + 1}. 🏢 ${policy.name}`);
+        console.info(`   Department: ${policy.department}`);
+        console.info(`   Domain: ${policy.domain}`);
+        console.info(`   Applications: ${policy.applications.length}`);
+        console.info(`   Rules: ${policy.rules.length}`);
+        console.info(`   Created: ${new Date(policy.createdAt).toLocaleString()}`);
+        console.info(`   Updated: ${new Date(policy.updatedAt).toLocaleString()}`);
 
         if (options.verbose) {
-          console.log(`   Rules Details:`);
+          console.info(`   Rules Details:`);
           policy.rules.forEach((rule, ruleIndex) => {
-            console.log(`     ${ruleIndex + 1}. ${rule.action.toUpperCase()}`);
-            console.log(`        Users: ${rule.users.length}`);
-            console.log(`        Groups: ${rule.groups.length}`);
-            if (rule.ipRanges) console.log(`        IP Ranges: ${rule.ipRanges.length}`);
-            if (rule.countries) console.log(`        Countries: ${rule.countries.length}`);
+            console.info(`     ${ruleIndex + 1}. ${rule.action.toUpperCase()}`);
+            console.info(`        Users: ${rule.users.length}`);
+            console.info(`        Groups: ${rule.groups.length}`);
+            if (rule.ipRanges) console.info(`        IP Ranges: ${rule.ipRanges.length}`);
+            if (rule.countries) console.info(`        Countries: ${rule.countries.length}`);
           });
         }
 
-        console.log('');
+        console.info('');
       });
 
       // Summary by department
@@ -334,14 +334,14 @@ class Fire22CloudflareAccessManager {
         {} as Record<string, number>
       );
 
-      console.log('📈 Summary by Department:');
-      console.log('!==!==!==!====');
+      console.info('📈 Summary by Department:');
+      console.info('!==!==!==!====');
       Object.entries(departmentSummary).forEach(([dept, count]) => {
         const department = this.getDepartment(dept);
-        console.log(`🏢 ${department?.name || dept}: ${count} policies`);
+        console.info(`🏢 ${department?.name || dept}: ${count} policies`);
       });
     } catch (error) {
-      console.log('  ❌ Failed to load existing policies');
+      console.info('  ❌ Failed to load existing policies');
     }
   }
 
@@ -412,7 +412,7 @@ class Fire22CloudflareAccessManager {
     };
 
     if (options.verbose) {
-      console.log(`    📋 API Payload: ${JSON.stringify(apiPayload, null, 2)}`);
+      console.info(`    📋 API Payload: ${JSON.stringify(apiPayload, null, 2)}`);
     }
 
     // Simulate API delay
@@ -463,7 +463,7 @@ class Fire22CloudflareAccessManager {
     };
 
     writeFileSync(this.accessConfigPath, JSON.stringify(config, null, 2));
-    console.log(`  💾 Saved policies configuration: ${this.accessConfigPath}`);
+    console.info(`  💾 Saved policies configuration: ${this.accessConfigPath}`);
   }
 
   /**
@@ -546,7 +546,7 @@ async function main() {
         options.verbose = true;
         break;
       case '--help':
-        console.log(`
+        console.info(`
 🔐 Fire22 Cloudflare Access Control Management
 
 Usage:

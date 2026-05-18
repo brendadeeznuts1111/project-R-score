@@ -64,7 +64,7 @@ class ConfigLoader {
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    console.log('🔧 Loading Fire22 Dashboard Configurations...\n');
+    console.info('🔧 Loading Fire22 Dashboard Configurations...\n');
 
     try {
       // Load package.json
@@ -131,12 +131,12 @@ class ConfigLoader {
    */
   private async loadPackageConfig(): Promise<any> {
     try {
-      console.log('📦 Loading package.json...');
+      console.info('📦 Loading package.json...');
       const packageJson = await Bun.file('package.json').json();
-      console.log(`   ✅ Loaded: ${packageJson.name}@${packageJson.version}`);
+      console.info(`   ✅ Loaded: ${packageJson.name}@${packageJson.version}`);
       return packageJson;
     } catch (error) {
-      console.log(`   ❌ Failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.info(`   ❌ Failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return null;
     }
   }
@@ -146,13 +146,13 @@ class ConfigLoader {
    */
   private async loadBuildConfig(): Promise<any> {
     try {
-      console.log('🏗️  Loading build configuration...');
+      console.info('🏗️  Loading build configuration...');
 
       // Try bun.config.ts first
       const bunConfig = Bun.file('bun.config.ts');
       if (await bunConfig.exists()) {
         const content = await bunConfig.text();
-        console.log('   ✅ Loaded: bun.config.ts');
+        console.info('   ✅ Loaded: bun.config.ts');
         return this.parseBuildConfig(content);
       }
 
@@ -160,14 +160,14 @@ class ConfigLoader {
       const tsConfig = Bun.file('tsconfig.json');
       if (await tsConfig.exists()) {
         const content = await tsConfig.json();
-        console.log('   ✅ Loaded: tsconfig.json');
+        console.info('   ✅ Loaded: tsconfig.json');
         return this.parseTsConfig(content);
       }
 
-      console.log('   ⚠️  No build configuration found');
+      console.info('   ⚠️  No build configuration found');
       return null;
     } catch (error) {
-      console.log(`   ❌ Failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.info(`   ❌ Failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return null;
     }
   }
@@ -177,7 +177,7 @@ class ConfigLoader {
    */
   private async loadEnvironmentConfig(): Promise<any> {
     try {
-      console.log('🌍 Loading environment configuration...');
+      console.info('🌍 Loading environment configuration...');
 
       const envFiles = ['.env', '.env.example', '.env.local'];
       const envVars: Record<string, string> = {};
@@ -197,18 +197,18 @@ class ConfigLoader {
           });
 
           configs.push(envFile);
-          console.log(`   ✅ Loaded: ${envFile} (${lines.length} variables)`);
+          console.info(`   ✅ Loaded: ${envFile} (${lines.length} variables)`);
         }
       }
 
       if (configs.length === 0) {
-        console.log('   ⚠️  No environment files found');
+        console.info('   ⚠️  No environment files found');
         return null;
       }
 
       return { variables: envVars, configs };
     } catch (error) {
-      console.log(`   ❌ Failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.info(`   ❌ Failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return null;
     }
   }
@@ -218,13 +218,13 @@ class ConfigLoader {
    */
   private async loadMatrixConfig(): Promise<any> {
     try {
-      console.log('🔍 Loading matrix health configuration...');
+      console.info('🔍 Loading matrix health configuration...');
 
       // Try to load matrix config file
       const matrixConfig = Bun.file('matrix-config.json');
       if (await matrixConfig.exists()) {
         const config = await matrixConfig.json();
-        console.log('   ✅ Loaded: matrix-config.json');
+        console.info('   ✅ Loaded: matrix-config.json');
         return config;
       }
 
@@ -235,7 +235,7 @@ class ConfigLoader {
       );
 
       if (matrixScripts.length > 0) {
-        console.log(`   ✅ Found matrix scripts: ${matrixScripts.join(', ')}`);
+        console.info(`   ✅ Found matrix scripts: ${matrixScripts.join(', ')}`);
         return {
           health: {
             enabled: true,
@@ -249,10 +249,10 @@ class ConfigLoader {
         };
       }
 
-      console.log('   ⚠️  No matrix configuration found');
+      console.info('   ⚠️  No matrix configuration found');
       return null;
     } catch (error) {
-      console.log(`   ❌ Failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.info(`   ❌ Failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return null;
     }
   }
@@ -399,7 +399,7 @@ class ConfigLoader {
     const exportPath = 'dashboard-config-export.json';
     await Bun.write(exportPath, JSON.stringify(exportData, null, 2));
 
-    console.log(`📤 Configuration exported to: ${exportPath}`);
+    console.info(`📤 Configuration exported to: ${exportPath}`);
   }
 
   /**
@@ -437,45 +437,45 @@ if (import.meta.main) {
   const loader = new ConfigLoader();
 
   try {
-    console.log('🚀 Fire22 Dashboard Configuration Loader');
-    console.log('!==!==!==!==!==!==!====\n');
+    console.info('🚀 Fire22 Dashboard Configuration Loader');
+    console.info('!==!==!==!==!==!==!====\n');
 
     const result = await loader.loadAllConfigurations();
 
     if (result.success) {
-      console.log('\n✅ Configuration loaded successfully!');
+      console.info('\n✅ Configuration loaded successfully!');
 
       // Display summary
       const summary = loader.getConfigurationSummary();
       if (summary) {
-        console.log('\n📊 Configuration Summary:');
-        console.log(`   Package: ${summary.package.name}@${summary.package.version}`);
-        console.log(`   Build Target: ${summary.build.target}`);
-        console.log(`   Environment Variables: ${summary.environment.variablesCount}`);
-        console.log(`   Matrix Health: ${summary.matrix.healthEnabled ? 'Enabled' : 'Disabled'}`);
+        console.info('\n📊 Configuration Summary:');
+        console.info(`   Package: ${summary.package.name}@${summary.package.version}`);
+        console.info(`   Build Target: ${summary.build.target}`);
+        console.info(`   Environment Variables: ${summary.environment.variablesCount}`);
+        console.info(`   Matrix Health: ${summary.matrix.healthEnabled ? 'Enabled' : 'Disabled'}`);
       }
 
       // Validate configuration
       const validation = loader.validateConfiguration();
       if (validation.valid) {
-        console.log('\n✅ Configuration validation passed');
+        console.info('\n✅ Configuration validation passed');
       } else {
-        console.log('\n⚠️  Configuration validation issues:');
-        validation.issues.forEach(issue => console.log(`   • ${issue}`));
+        console.info('\n⚠️  Configuration validation issues:');
+        validation.issues.forEach(issue => console.info(`   • ${issue}`));
       }
 
       // Export configuration
       await loader.exportConfiguration();
     } else {
-      console.log('\n❌ Configuration loading failed:');
-      result.errors.forEach(error => console.log(`   • ${error}`));
+      console.info('\n❌ Configuration loading failed:');
+      result.errors.forEach(error => console.info(`   • ${error}`));
       if (result.warnings.length > 0) {
-        console.log('\n⚠️  Warnings:');
-        result.warnings.forEach(warning => console.log(`   • ${warning}`));
+        console.info('\n⚠️  Warnings:');
+        result.warnings.forEach(warning => console.info(`   • ${warning}`));
       }
     }
 
-    console.log(`\n⏱️  Total load time: ${result.loadTime.toFixed(2)}ms`);
+    console.info(`\n⏱️  Total load time: ${result.loadTime.toFixed(2)}ms`);
   } catch (error) {
     console.error('❌ Configuration loader failed:', error);
     process.exit(1);

@@ -601,7 +601,7 @@ class EnhancedQRPaymentServer {
         console.error('Cash App payment failed:', data);
         break;
       default:
-        console.log('Unknown Cash App webhook event:', data.type);
+        console.info('Unknown Cash App webhook event:', data.type);
     }
     
     return { processed: true };
@@ -619,18 +619,18 @@ class EnhancedQRPaymentServer {
       process.exit(1);
     }
 
-    console.log(`🚀 Enhanced QR Payment Server starting...`);
-    console.log(`📡 Domain: ${this.config.domain}`);
-    console.log(`🌍 Environment: ${this.config.environment}`);
-    console.log(`🔒 Security: Enabled`);
-    console.log(`🚦 Rate Limiting: ${this.config.rateLimits.max} requests per ${this.config.rateLimits.windowMs / 1000}s`);
-    console.log(`🪝 Webhooks: Enabled`);
-    console.log(`📊 Monitoring: Enabled`);
+    console.info(`🚀 Enhanced QR Payment Server starting...`);
+    console.info(`📡 Domain: ${this.config.domain}`);
+    console.info(`🌍 Environment: ${this.config.environment}`);
+    console.info(`🔒 Security: Enabled`);
+    console.info(`🚦 Rate Limiting: ${this.config.rateLimits.max} requests per ${this.config.rateLimits.windowMs / 1000}s`);
+    console.info(`🪝 Webhooks: Enabled`);
+    console.info(`📊 Monitoring: Enabled`);
     
     await this.app.listen(this.config.port);
     
-    console.log(`✅ Server started successfully on port ${this.config.port}`);
-    console.log(`🌐 Server URL: https://${this.config.domain}`);
+    console.info(`✅ Server started successfully on port ${this.config.port}`);
+    console.info(`🌐 Server URL: https://${this.config.domain}`);
   }
 }
 

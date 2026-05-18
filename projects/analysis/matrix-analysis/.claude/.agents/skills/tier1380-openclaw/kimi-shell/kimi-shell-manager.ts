@@ -198,30 +198,30 @@ class KimiShellManager {
 		const status = await this.getStatus();
 		const uptimeMin = Math.floor(status.uptime / 60000);
 
-		console.log("\n🐚 Kimi Shell Manager");
-		console.log("=".repeat(50));
+		console.info("\n🐚 Kimi Shell Manager");
+		console.info("=".repeat(50));
 
-		console.log("\n📊 Session:");
-		console.log(`  Started: ${new Date(this.state.sessionStart).toLocaleString()}`);
-		console.log(`  Uptime: ${uptimeMin}m`);
-		console.log(`  Commands: ${this.state.commandCount}`);
+		console.info("\n📊 Session:");
+		console.info(`  Started: ${new Date(this.state.sessionStart).toLocaleString()}`);
+		console.info(`  Uptime: ${uptimeMin}m`);
+		console.info(`  Commands: ${this.state.commandCount}`);
 
 		if (this.state.activeProfile) {
-			console.log(`  Active Profile: ${this.state.activeProfile}`);
+			console.info(`  Active Profile: ${this.state.activeProfile}`);
 		}
 
-		console.log("\n🔗 Integrations:");
+		console.info("\n🔗 Integrations:");
 		for (const [name, active] of Object.entries(this.state.integrations)) {
 			const icon = active ? "✅" : "❌";
-			console.log(`  ${icon} ${name}`);
+			console.info(`  ${icon} ${name}`);
 		}
 
-		console.log("\n🛠️  Quick Actions:");
-		console.log("  kimi-shell-manager.ts exec <cmd> [--profile=<p>]");
-		console.log("  kimi-shell-manager.ts switch <profile>");
-		console.log("  kimi-shell-manager.ts status");
+		console.info("\n🛠️  Quick Actions:");
+		console.info("  kimi-shell-manager.ts exec <cmd> [--profile=<p>]");
+		console.info("  kimi-shell-manager.ts switch <profile>");
+		console.info("  kimi-shell-manager.ts status");
 
-		console.log("\n" + "=".repeat(50));
+		console.info("\n" + "=".repeat(50));
 	}
 }
 
@@ -253,7 +253,7 @@ async function main() {
 			}
 
 			const result = await manager.execute(cmd, options);
-			console.log(result.output);
+			console.info(result.output);
 			process.exit(result.success ? 0 : 1);
 		}
 
@@ -266,7 +266,7 @@ async function main() {
 
 			const success = await manager.switchProfile(profile);
 			if (success) {
-				console.log(`✅ Switched to profile: ${profile}`);
+				console.info(`✅ Switched to profile: ${profile}`);
 			} else {
 				console.error(`❌ Profile not found: ${profile}`);
 				process.exit(1);
@@ -280,7 +280,7 @@ async function main() {
 
 		case "integrations": {
 			const status = await manager.getStatus();
-			console.log("Active integrations:", status.integrations.join(", "));
+			console.info("Active integrations:", status.integrations.join(", "));
 			break;
 		}
 

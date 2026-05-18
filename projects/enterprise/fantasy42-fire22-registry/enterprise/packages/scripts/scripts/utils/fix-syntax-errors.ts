@@ -30,7 +30,7 @@ const syntaxFixes: SyntaxFix[] = [
   // Fix missing semicolons after console.log
   {
     pattern: /console\.log\(([^)]+)\)\s*\n\s*}/g,
-    replacement: 'console.log($1);\n}',
+    replacement: 'console.info($1);\n}',
     description: 'Add missing semicolons after console.log',
   },
   // Fix template literal syntax
@@ -48,8 +48,8 @@ const syntaxFixes: SyntaxFix[] = [
 ];
 
 async function fixSyntaxErrors() {
-  console.log('🔧 Syntax Error Fixer Starting...');
-  console.log('=================================\n');
+  console.info('🔧 Syntax Error Fixer Starting...');
+  console.info('=================================\n');
 
   const files = [
     'src/**/*.ts',
@@ -64,7 +64,7 @@ async function fixSyntaxErrors() {
   let totalFixes = 0;
 
   for (const pattern of files) {
-    console.log(`📁 Processing pattern: ${pattern}`);
+    console.info(`📁 Processing pattern: ${pattern}`);
 
     // 🚀 BUN 1.1.X OPTIMIZATION: Enhanced fs.glob with exclusion patterns
     const globFiles = await Array.fromAsync(fs.glob(pattern, {
@@ -88,7 +88,7 @@ async function fixSyntaxErrors() {
             fileFixed = true;
             fileFixes += matches.length;
             totalFixes += matches.length;
-            console.log(`   ✅ ${fix.description}: ${matches.length} fixes`);
+            console.info(`   ✅ ${fix.description}: ${matches.length} fixes`);
           }
         }
       }
@@ -97,53 +97,53 @@ async function fixSyntaxErrors() {
         // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file writing
         await Bun.write(filePath, content);
         fixedFiles++;
-        console.log(`   📄 Fixed: ${file} (${fileFixes} fixes)`);
+        console.info(`   📄 Fixed: ${file} (${fileFixes} fixes)`);
       }
     }
   }
 
-  console.log('\n📊 Fix Summary:');
-  console.log(`   📁 Total files processed: ${totalFiles}`);
-  console.log(`   🔧 Files fixed: ${fixedFiles}`);
-  console.log(`   ✅ Total fixes applied: ${totalFixes}`);
-  console.log('');
+  console.info('\n📊 Fix Summary:');
+  console.info(`   📁 Total files processed: ${totalFiles}`);
+  console.info(`   🔧 Files fixed: ${fixedFiles}`);
+  console.info(`   ✅ Total fixes applied: ${totalFixes}`);
+  console.info('');
 
   if (fixedFiles > 0) {
-    console.log('🎉 Syntax errors fixed! Now run prettier again:');
-    console.log('   bunx prettier@3.2.5 --write .');
+    console.info('🎉 Syntax errors fixed! Now run prettier again:');
+    console.info('   bunx prettier@3.2.5 --write .');
   } else {
-    console.log('✨ No syntax errors found that can be auto-fixed.');
-    console.log('   Check the prettier output for remaining issues.');
+    console.info('✨ No syntax errors found that can be auto-fixed.');
+    console.info('   Check the prettier output for remaining issues.');
   }
 }
 
 async function manualFixSuggestions() {
-  console.log('\n💡 Manual Fix Suggestions:');
-  console.log('==========================');
+  console.info('\n💡 Manual Fix Suggestions:');
+  console.info('==========================');
 
-  console.log('1. HTML Syntax Errors:');
-  console.log('   - Check for unclosed tags');
-  console.log('   - Verify proper nesting');
-  console.log('   - Remove duplicate closing tags');
+  console.info('1. HTML Syntax Errors:');
+  console.info('   - Check for unclosed tags');
+  console.info('   - Verify proper nesting');
+  console.info('   - Remove duplicate closing tags');
 
-  console.log('\n2. TypeScript Errors:');
-  console.log('   - Check for missing imports');
-  console.log('   - Verify type definitions');
-  console.log('   - Fix function declarations');
+  console.info('\n2. TypeScript Errors:');
+  console.info('   - Check for missing imports');
+  console.info('   - Verify type definitions');
+  console.info('   - Fix function declarations');
 
-  console.log('\n3. Invalid Characters:');
-  console.log('   - Remove non-ASCII characters');
-  console.log('   - Check for corrupted files');
-  console.log('   - Verify file encoding');
+  console.info('\n3. Invalid Characters:');
+  console.info('   - Remove non-ASCII characters');
+  console.info('   - Check for corrupted files');
+  console.info('   - Verify file encoding');
 
-  console.log('\n4. Template Literals:');
-  console.log('   - Use backticks for template literals');
-  console.log('   - Properly escape ${} expressions');
-  console.log('   - Check for nested quotes');
+  console.info('\n4. Template Literals:');
+  console.info('   - Use backticks for template literals');
+  console.info('   - Properly escape ${} expressions');
+  console.info('   - Check for nested quotes');
 
-  console.log('\n🚀 After manual fixes, run:');
-  console.log('   bunx prettier@3.2.5 --write .');
-  console.log('   bunx prettier@3.2.5 --check .');
+  console.info('\n🚀 After manual fixes, run:');
+  console.info('   bunx prettier@3.2.5 --write .');
+  console.info('   bunx prettier@3.2.5 --check .');
 }
 
 if (import.meta.main) {

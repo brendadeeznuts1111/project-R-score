@@ -98,7 +98,7 @@ const NFL_TEAMS: Record<string, NFLTeam> = {
 // ============================================================================
 
 async function nflBettingEngineExample() {
-  console.log('🏈 Setting up Fantasy42 NFL Betting Engine...');
+  console.info('🏈 Setting up Fantasy42 NFL Betting Engine...');
 
   // Initialize engines
   const securityEngine = new Fantasy42SecurityEngine({
@@ -132,13 +132,13 @@ async function nflBettingEngineExample() {
   );
 
   await bettingEngine.initialize();
-  console.log('✅ NFL Betting Engine ready');
+  console.info('✅ NFL Betting Engine ready');
 
   // ============================================================================
   // NFL GAME SETUP
   // ============================================================================
 
-  console.log('\n🏟️ Setting up NFL games...');
+  console.info('\n🏟️ Setting up NFL games...');
 
   // Create Week 18 matchup
   const week18Game: NFLGame = {
@@ -208,13 +208,13 @@ async function nflBettingEngineExample() {
     });
   }
 
-  console.log(`✅ Added ${games.length} NFL games`);
+  console.info(`✅ Added ${games.length} NFL games`);
 
   // ============================================================================
   // NFL-SPECIFIC BETTING
   // ============================================================================
 
-  console.log('\n💰 Placing NFL bets...');
+  console.info('\n💰 Placing NFL bets...');
 
   const bets = [];
 
@@ -240,7 +240,7 @@ async function nflBettingEngineExample() {
       }
     );
 
-    console.log(`✅ Moneyline bet: Chiefs -180`);
+    console.info(`✅ Moneyline bet: Chiefs -180`);
     bets.push(moneylineBet);
 
     // 2. Spread Bet on 49ers -3.5
@@ -263,7 +263,7 @@ async function nflBettingEngineExample() {
       }
     );
 
-    console.log(`✅ Spread bet: 49ers -3.5`);
+    console.info(`✅ Spread bet: 49ers -3.5`);
     bets.push(spreadBet);
 
     // 3. Total (Over/Under) Bet
@@ -285,7 +285,7 @@ async function nflBettingEngineExample() {
       }
     );
 
-    console.log(`✅ Total bet: Over 47.5`);
+    console.info(`✅ Total bet: Over 47.5`);
     bets.push(totalBet);
 
     // 4. Playoff Moneyline Bet
@@ -308,14 +308,14 @@ async function nflBettingEngineExample() {
       }
     );
 
-    console.log(`✅ Playoff bet: Bills -140`);
+    console.info(`✅ Playoff bet: Bills -140`);
     bets.push(playoffBet);
 
     // ============================================================================
     // LIVE BETTING SIMULATION
     // ============================================================================
 
-    console.log('\n📺 Simulating live betting...');
+    console.info('\n📺 Simulating live betting...');
 
     // Simulate live game updates
     const liveUpdates = [
@@ -354,14 +354,14 @@ async function nflBettingEngineExample() {
         }
       );
 
-      console.log(`✅ Live bet: Q${update.quarter} ${update.timeRemaining} - ${liveOdds.american}`);
+      console.info(`✅ Live bet: Q${update.quarter} ${update.timeRemaining} - ${liveOdds.american}`);
     }
 
     // ============================================================================
     // PARLAY BETTING
     // ============================================================================
 
-    console.log('\n🎯 Creating NFL parlay...');
+    console.info('\n🎯 Creating NFL parlay...');
 
     const parlayBet = await bettingEngine.placeParlayBet(
       'fan-303',
@@ -384,15 +384,15 @@ async function nflBettingEngineExample() {
       }
     );
 
-    console.log(`✅ NFL Parlay created: ${parlayBet.id}`);
-    console.log(`📊 Combined odds: ${parlayBet.odds.american}`);
-    console.log(`💰 Potential payout: $${parlayBet.potentialPayout}`);
+    console.info(`✅ NFL Parlay created: ${parlayBet.id}`);
+    console.info(`📊 Combined odds: ${parlayBet.odds.american}`);
+    console.info(`💰 Potential payout: $${parlayBet.potentialPayout}`);
 
     // ============================================================================
     // BET SETTLEMENT
     // ============================================================================
 
-    console.log('\n🎯 Settling NFL bets...');
+    console.info('\n🎯 Settling NFL bets...');
 
     // Settle week 18 game (49ers win)
     const week18Result = {
@@ -419,7 +419,7 @@ async function nflBettingEngineExample() {
 
       const settledBet = await bettingEngine.settleBet(bet.id, outcome, week18Result);
       settlements.push(settledBet);
-      console.log(
+      console.info(
         `✅ Settled ${bet.type} bet: ${outcome} - $${settledBet.metadata.settlement.payout}`
       );
     }
@@ -428,7 +428,7 @@ async function nflBettingEngineExample() {
     // ANALYTICS & REPORTING
     // ============================================================================
 
-    console.log('\n📊 NFL Analytics...');
+    console.info('\n📊 NFL Analytics...');
 
     const analytics = {
       totalBets: bets.length,
@@ -441,28 +441,28 @@ async function nflBettingEngineExample() {
       winRate: settlements.filter(bet => bet.status === 'WIN').length / settlements.length,
     };
 
-    console.log('NFL Betting Session Summary:');
-    console.log(`- Total Bets: ${analytics.totalBets}`);
-    console.log(`- Total Wagered: $${analytics.totalAmount}`);
-    console.log(`- Total Payout: $${analytics.totalPayout}`);
-    console.log(`- Win Rate: ${(analytics.winRate * 100).toFixed(1)}%`);
-    console.log(`- House Profit: $${analytics.totalAmount - analytics.totalPayout}`);
+    console.info('NFL Betting Session Summary:');
+    console.info(`- Total Bets: ${analytics.totalBets}`);
+    console.info(`- Total Wagered: $${analytics.totalAmount}`);
+    console.info(`- Total Payout: $${analytics.totalPayout}`);
+    console.info(`- Win Rate: ${(analytics.winRate * 100).toFixed(1)}%`);
+    console.info(`- House Profit: $${analytics.totalAmount - analytics.totalPayout}`);
 
     // ============================================================================
     // USER STATISTICS
     // ============================================================================
 
-    console.log('\n👤 User Statistics...');
+    console.info('\n👤 User Statistics...');
 
     const users = ['fan-123', 'fan-456', 'fan-789', 'fan-101', 'fan-202', 'fan-303'];
     for (const userId of users) {
       const userStats = bettingEngine.getUserStats(userId);
       if (userStats.totalBets > 0) {
-        console.log(`User ${userId}:`);
-        console.log(`  - Bets: ${userStats.totalBets}`);
-        console.log(`  - Amount: $${userStats.totalAmount}`);
-        console.log(`  - Payout: $${userStats.totalPayout}`);
-        console.log(`  - Win Rate: ${(userStats.winRate * 100).toFixed(1)}%`);
+        console.info(`User ${userId}:`);
+        console.info(`  - Bets: ${userStats.totalBets}`);
+        console.info(`  - Amount: $${userStats.totalAmount}`);
+        console.info(`  - Payout: $${userStats.totalPayout}`);
+        console.info(`  - Win Rate: ${(userStats.winRate * 100).toFixed(1)}%`);
       }
     }
 
@@ -470,16 +470,16 @@ async function nflBettingEngineExample() {
     // SYSTEM HEALTH
     // ============================================================================
 
-    console.log('\n🏥 System Health Check...');
+    console.info('\n🏥 System Health Check...');
 
     const health = await bettingEngine.getHealthStatus();
-    console.log(`Status: ${health.status}`);
-    console.log(`Active Games: ${health.metrics.activeGames}`);
-    console.log(`Active Bets: ${health.metrics.activeBets}`);
-    console.log(`NFL Games: ${health.metrics.supportedSports}`);
+    console.info(`Status: ${health.status}`);
+    console.info(`Active Games: ${health.metrics.activeGames}`);
+    console.info(`Active Bets: ${health.metrics.activeBets}`);
+    console.info(`NFL Games: ${health.metrics.supportedSports}`);
 
-    console.log('\n🎉 NFL Betting Engine example completed successfully!');
-    console.log('🏆 All NFL betting operations demonstrated');
+    console.info('\n🎉 NFL Betting Engine example completed successfully!');
+    console.info('🏆 All NFL betting operations demonstrated');
   } catch (error) {
     console.error('❌ Error in NFL betting operations:', error);
 
@@ -569,7 +569,7 @@ function getTeamStrength(team: NFLTeam): number {
 if (import.meta.main) {
   nflBettingEngineExample()
     .then(() => {
-      console.log('\n🏆 NFL Betting Engine example completed!');
+      console.info('\n🏆 NFL Betting Engine example completed!');
       process.exit(0);
     })
     .catch(error => {

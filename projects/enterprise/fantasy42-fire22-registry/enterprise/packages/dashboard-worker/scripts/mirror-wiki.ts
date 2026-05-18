@@ -33,8 +33,8 @@ class WikiMirrorSystem {
   }
 
   public async mirror(): Promise<void> {
-    console.log('📝 Wiki Mirror System');
-    console.log('!==!==!=====');
+    console.info('📝 Wiki Mirror System');
+    console.info('!==!==!=====');
 
     try {
       // Scan for wiki pages
@@ -49,7 +49,7 @@ class WikiMirrorSystem {
       // Generate search index
       await this.generateSearchIndex();
 
-      console.log(`✅ Mirrored ${this.pages.length} wiki pages successfully`);
+      console.info(`✅ Mirrored ${this.pages.length} wiki pages successfully`);
     } catch (error) {
       console.error('❌ Wiki mirror failed:', error);
       process.exit(1);
@@ -57,18 +57,18 @@ class WikiMirrorSystem {
   }
 
   private async scanWikiPages(): Promise<void> {
-    console.log('🔍 Scanning for wiki pages...');
+    console.info('🔍 Scanning for wiki pages...');
 
     // Check if wiki directory exists
     if (!existsSync(this.wikiDir)) {
-      console.log('⚠️ Wiki directory not found, creating default structure...');
+      console.info('⚠️ Wiki directory not found, creating default structure...');
       this.createDefaultWikiStructure();
     }
 
     // Scan all markdown files
     this.scanDirectory(this.wikiDir);
 
-    console.log(`📚 Found ${this.pages.length} wiki pages`);
+    console.info(`📚 Found ${this.pages.length} wiki pages`);
   }
 
   private scanDirectory(dir: string, category: string = 'general'): void {
@@ -113,7 +113,7 @@ class WikiMirrorSystem {
   }
 
   private async generateHtmlPages(): Promise<void> {
-    console.log('🎨 Generating HTML pages...');
+    console.info('🎨 Generating HTML pages...');
 
     for (const page of this.pages) {
       await this.generateHtmlPage(page);
@@ -206,11 +206,11 @@ class WikiMirrorSystem {
 
     // Write HTML file
     writeFileSync(join(categoryDir, `${page.slug}.html`), html);
-    console.log(`✅ Generated: ${page.category}/${page.slug}.html`);
+    console.info(`✅ Generated: ${page.category}/${page.slug}.html`);
   }
 
   private async generateWikiIndex(): Promise<void> {
-    console.log('📚 Generating wiki index...');
+    console.info('📚 Generating wiki index...');
 
     // Group pages by category
     const categories = new Map<string, WikiPage[]>();
@@ -319,11 +319,11 @@ class WikiMirrorSystem {
 </html>`;
 
     writeFileSync(join(this.distDir, 'index.html'), html);
-    console.log('✅ Generated wiki index');
+    console.info('✅ Generated wiki index');
   }
 
   private async generateSearchIndex(): Promise<void> {
-    console.log('🔍 Generating search index...');
+    console.info('🔍 Generating search index...');
 
     const searchData = this.pages.map(page => ({
       title: page.title,
@@ -465,11 +465,11 @@ class WikiMirrorSystem {
 </html>`;
 
     writeFileSync(join(this.distDir, 'search.html'), searchHtml);
-    console.log('✅ Generated search page and index');
+    console.info('✅ Generated search page and index');
   }
 
   private createDefaultWikiStructure(): void {
-    console.log('📁 Creating default wiki structure...');
+    console.info('📁 Creating default wiki structure...');
 
     // Create wiki directory
     mkdirSync(this.wikiDir, { recursive: true });
@@ -533,7 +533,7 @@ bun run deploy
     const deptWikiDir = join(this.wikiDir, 'departments');
     mkdirSync(deptWikiDir, { recursive: true });
 
-    console.log('✅ Created default wiki structure');
+    console.info('✅ Created default wiki structure');
   }
 }
 

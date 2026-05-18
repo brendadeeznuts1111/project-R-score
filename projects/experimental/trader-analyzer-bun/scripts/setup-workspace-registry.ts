@@ -48,8 +48,8 @@ async function getToken(nonInteractive: boolean): Promise<string | null> {
 	// For now, check environment variable
 	const token = process.env.GRAPH_NPM_TOKEN;
 	if (!token || token === "your-token-here") {
-		console.log("⚠️  GRAPH_NPM_TOKEN not set. Please set it:");
-		console.log("   export GRAPH_NPM_TOKEN='your-token-here'");
+		console.info("⚠️  GRAPH_NPM_TOKEN not set. Please set it:");
+		console.info("   export GRAPH_NPM_TOKEN='your-token-here'");
 		return null;
 	}
 	return token;
@@ -59,7 +59,7 @@ async function getToken(nonInteractive: boolean): Promise<string | null> {
  * Step 1: Set registry token
  */
 async function step1SetToken(options: SetupOptions): Promise<boolean> {
-	console.log("\n📝 Step 1: Setting registry token\n");
+	console.info("\n📝 Step 1: Setting registry token\n");
 	
 	const token = await getToken(options.nonInteractive || false);
 	if (!token) {
@@ -67,8 +67,8 @@ async function step1SetToken(options: SetupOptions): Promise<boolean> {
 		return false;
 	}
 	
-	console.log("✅ GRAPH_NPM_TOKEN is set");
-	console.log(`   Token: ${token.substring(0, 8)}...${token.substring(token.length - 4)}`);
+	console.info("✅ GRAPH_NPM_TOKEN is set");
+	console.info(`   Token: ${token.substring(0, 8)}...${token.substring(token.length - 4)}`);
 	return true;
 }
 
@@ -77,21 +77,21 @@ async function step1SetToken(options: SetupOptions): Promise<boolean> {
  */
 async function step2ValidateWorkspace(options: SetupOptions): Promise<boolean> {
 	if (options.skipValidation) {
-		console.log("\n⏭️  Step 2: Skipping validation\n");
+		console.info("\n⏭️  Step 2: Skipping validation\n");
 		return true;
 	}
 	
-	console.log("\n🔍 Step 2: Validating workspace dependencies\n");
+	console.info("\n🔍 Step 2: Validating workspace dependencies\n");
 	
 	try {
 		const result = await $`bun run scripts/validate-workspace-deps.ts`.quiet();
 		if (result.exitCode === 0) {
-			console.log("✅ Workspace dependencies validated");
+			console.info("✅ Workspace dependencies validated");
 			return true;
 		} else {
 			// Show validation output even on failure
 			if (result.stdout) {
-				console.log(result.stdout.toString());
+				console.info(result.stdout.toString());
 			}
 			if (result.stderr) {
 				console.error(result.stderr.toString());
@@ -102,7 +102,7 @@ async function step2ValidateWorkspace(options: SetupOptions): Promise<boolean> {
 	} catch (error: any) {
 		// Show error details
 		if (error.stdout) {
-			console.log(error.stdout.toString());
+			console.info(error.stdout.toString());
 		}
 		if (error.stderr) {
 			console.error(error.stderr.toString());
@@ -117,17 +117,17 @@ async function step2ValidateWorkspace(options: SetupOptions): Promise<boolean> {
  */
 async function step3InstallDependencies(options: SetupOptions): Promise<boolean> {
 	if (options.skipInstall) {
-		console.log("\n⏭️  Step 3: Skipping install\n");
+		console.info("\n⏭️  Step 3: Skipping install\n");
 		return true;
 	}
 	
-	console.log("\n📦 Step 3: Installing dependencies\n");
-	console.log("   (workspace:* resolves automatically)\n");
+	console.info("\n📦 Step 3: Installing dependencies\n");
+	console.info("   (workspace:* resolves automatically)\n");
 	
 	try {
 		const result = await $`bun install`.quiet();
 		if (result.exitCode === 0) {
-			console.log("✅ Dependencies installed");
+			console.info("✅ Dependencies installed");
 			return true;
 		} else {
 			console.error("❌ Installation failed");
@@ -143,23 +143,23 @@ async function step3InstallDependencies(options: SetupOptions): Promise<boolean>
  * Step 4: Show publish command (don't actually publish)
  */
 function step4PublishInfo(): void {
-	console.log("\n📤 Step 4: Publish packages with version pinning\n");
-	console.log("   To publish packages, run:");
-	console.log("   VERSION=1.4.0 bun run publish:registry\n");
-	console.log("   Options:");
-	console.log("     --dry-run          Test without publishing");
-	console.log("     --package <name>    Publish specific package");
-	console.log("     --registry <url>   Custom registry URL\n");
+	console.info("\n📤 Step 4: Publish packages with version pinning\n");
+	console.info("   To publish packages, run:");
+	console.info("   VERSION=1.4.0 bun run publish:registry\n");
+	console.info("   Options:");
+	console.info("     --dry-run          Test without publishing");
+	console.info("     --package <name>    Publish specific package");
+	console.info("     --registry <url>   Custom registry URL\n");
 }
 
 /**
  * Step 5: Show CI configuration
  */
 function step5CIConfig(): void {
-	console.log("\n🔄 Step 5: CI Configuration\n");
-	console.log("   To test with workspaces disabled in CI:");
-	console.log("   BUN_WORKSPACES_DISABLED=1 bun install && bun test\n");
-	console.log("   This ensures packages work outside workspace context.\n");
+	console.info("\n🔄 Step 5: CI Configuration\n");
+	console.info("   To test with workspaces disabled in CI:");
+	console.info("   BUN_WORKSPACES_DISABLED=1 bun install && bun test\n");
+	console.info("   This ensures packages work outside workspace context.\n");
 }
 
 /**
@@ -178,7 +178,7 @@ async function verifyBunfigConfig(): Promise<boolean> {
 		return false;
 	}
 	
-	console.log("✅ bunfig.toml configured");
+	console.info("✅ bunfig.toml configured");
 	return true;
 }
 
@@ -186,11 +186,11 @@ async function verifyBunfigConfig(): Promise<boolean> {
  * Main setup function
  */
 async function setupWorkspaceRegistry(options: SetupOptions = {}): Promise<void> {
-	console.log("🚀 Bun Workspace Registry Setup\n");
-	console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+	console.info("🚀 Bun Workspace Registry Setup\n");
+	console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
 	
 	// Verify configuration
-	console.log("📋 Verifying configuration...\n");
+	console.info("📋 Verifying configuration...\n");
 	if (!(await verifyBunfigConfig())) {
 		console.error("\n❌ Configuration incomplete. Please check bunfig.toml");
 		process.exit(1);
@@ -204,26 +204,26 @@ async function setupWorkspaceRegistry(options: SetupOptions = {}): Promise<void>
 	step5CIConfig();
 	
 	// Summary
-	console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-	console.log("📊 Setup Summary:\n");
-	console.log(`   Step 1 (Token):     ${step1 ? "✅" : "⚠️  (Set GRAPH_NPM_TOKEN for publishing)"}`);
-	console.log(`   Step 2 (Validate):  ${step2 ? "✅" : "❌"}`);
-	console.log(`   Step 3 (Install):   ${step3 ? "✅" : "❌"}`);
-	console.log(`   Step 4 (Publish):    ℹ️  Manual`);
-	console.log(`   Step 5 (CI):        ℹ️  Manual\n`);
+	console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+	console.info("📊 Setup Summary:\n");
+	console.info(`   Step 1 (Token):     ${step1 ? "✅" : "⚠️  (Set GRAPH_NPM_TOKEN for publishing)"}`);
+	console.info(`   Step 2 (Validate):  ${step2 ? "✅" : "❌"}`);
+	console.info(`   Step 3 (Install):   ${step3 ? "✅" : "❌"}`);
+	console.info(`   Step 4 (Publish):    ℹ️  Manual`);
+	console.info(`   Step 5 (CI):        ℹ️  Manual\n`);
 	
 	// Token is optional for validation/install, required only for publishing
 	if (step2 && step3) {
 		if (step1) {
-			console.log("✅ Setup complete! You're ready to use workspace registry.\n");
+			console.info("✅ Setup complete! You're ready to use workspace registry.\n");
 		} else {
-			console.log("✅ Setup complete! (Token needed for publishing)\n");
-			console.log("   To enable publishing, set:");
-			console.log("   export GRAPH_NPM_TOKEN='your-token-here'\n");
+			console.info("✅ Setup complete! (Token needed for publishing)\n");
+			console.info("   To enable publishing, set:");
+			console.info("   export GRAPH_NPM_TOKEN='your-token-here'\n");
 		}
 		process.exit(0);
 	} else {
-		console.log("⚠️  Setup incomplete. Please fix issues above.\n");
+		console.info("⚠️  Setup incomplete. Please fix issues above.\n");
 		process.exit(1);
 	}
 }

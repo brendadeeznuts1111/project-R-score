@@ -86,7 +86,7 @@ export class TMUXTerminalWindowManager {
     monitoringCommand: string,
     healthCommand?: string
   ): Promise<void> {
-    console.log(`🖥️ Creating TMUX monitoring window for ${componentName}...`);
+    console.info(`🖥️ Creating TMUX monitoring window for ${componentName}...`);
 
     // Create new window with component monitoring
     const createWindowCmd = `tmux new-window -n ${componentName} -t ${this.sessionName}`;
@@ -96,7 +96,7 @@ export class TMUXTerminalWindowManager {
     const sendCommand = `tmux send-keys -t ${this.sessionName}:${componentName} "${monitoringCommand}" C-m`;
     await BunShellExecutor.execute(sendCommand);
 
-    console.log(`✅ Monitoring window created: ${componentName}`);
+    console.info(`✅ Monitoring window created: ${componentName}`);
   }
 
   /**
@@ -120,7 +120,7 @@ export class TMUXTerminalWindowManager {
    * Setup memorandum-aligned window layout
    */
   public async setupMemorandumLayout(): Promise<void> {
-    console.log('📐 Setting up memorandum-aligned TMUX layout...');
+    console.info('📐 Setting up memorandum-aligned TMUX layout...');
 
     // Split main window 70/30 horizontal (memorandum specification)
     const splitCmd = `tmux split-window -h -p 30 -t ${this.sessionName}:0`;
@@ -130,7 +130,7 @@ export class TMUXTerminalWindowManager {
     const vsplitCmd = `tmux split-window -v -p 50 -t ${this.sessionName}:0.0`;
     await BunShellExecutor.execute(vsplitCmd);
 
-    console.log('✅ Memorandum layout configured (70/30 horizontal split)');
+    console.info('✅ Memorandum layout configured (70/30 horizontal split)');
   }
 }
 
@@ -164,14 +164,14 @@ export class TMUXSessionManagementEngine {
       .replace('{team}', teamIdentifier)
       .replace('{timestamp}', timestamp.toString());
 
-    console.log(`🎯 Creating Surgical Precision TMUX session: ${sessionName}`);
+    console.info(`🎯 Creating Surgical Precision TMUX session: ${sessionName}`);
 
     // Create main session (memorandum timing: <500ms startup)
     const startTime = Date.now();
     await BunShellExecutor.execute(`tmux new-session -s ${sessionName} -d`);
     const startupTime = Date.now() - startTime;
 
-    console.log(`⏱️ Session created in ${startupTime}ms (target: <${TMUX_CONSTANTS.PERFORMANCE_TARGETS.STARTUP_TIME_MS}ms)`);
+    console.info(`⏱️ Session created in ${startupTime}ms (target: <${TMUX_CONSTANTS.PERFORMANCE_TARGETS.STARTUP_TIME_MS}ms)`);
 
     // Configure memorandum-compliant layout
     const windowManager = new TMUXTerminalWindowManager(sessionName);
@@ -203,8 +203,8 @@ export class TMUXSessionManagementEngine {
 
     this.environments.set(sessionName, sessionConfig);
 
-    console.log(`✅ Surgical Precision session ready: ${sessionName}`);
-    console.log('💡 Access with: tmux attach -t ' + sessionName);
+    console.info(`✅ Surgical Precision session ready: ${sessionName}`);
+    console.info('💡 Access with: tmux attach -t ' + sessionName);
 
     return sessionConfig;
   }
@@ -308,12 +308,12 @@ export class TMUXSessionManagementEngine {
    * Attach to surgical precision development session
    */
   public async attachToSession(sessionName: string): Promise<void> {
-    console.log(`🔗 Attaching to session: ${sessionName}`);
-    console.log('💡 Use Ctrl-b d to detach from session');
+    console.info(`🔗 Attaching to session: ${sessionName}`);
+    console.info('💡 Use Ctrl-b d to detach from session');
 
     // Note: In production, this would actually attach to the TMUX session
     // For this implementation, we just provide the attach command
-    console.log(`📋 Run manually: tmux attach -t ${sessionName}`);
+    console.info(`📋 Run manually: tmux attach -t ${sessionName}`);
   }
 
   /**
@@ -405,7 +405,7 @@ export class TMUXSessionManagementEngine {
     //   await BunShellExecutor.execute(`tmux kill-session -t ${sessionName} 2>/dev/null || true`);
     // }
 
-    console.log('🧹 TMUX session coordinator cleaned up');
+    console.info('🧹 TMUX session coordinator cleaned up');
   }
 }
 
@@ -417,64 +417,64 @@ export class TMUXSessionManagementEngine {
  * Demonstrate memorandum-compliant TMUX integration
  */
 export async function demonstrateTMUXIntegration(): Promise<void> {
-  console.log('🖥️ SURGICAL PRECISION - TMUX INTEGRATION DEMO');
-  console.log('═'.repeat(60));
-  console.log('📋 Memorandum: "TMUX session management with real-time coordination"');
-  console.log('🎯 Target: "<500ms startup, <25MB memory, precision workflow"');
-  console.log('═'.repeat(60));
+  console.info('🖥️ SURGICAL PRECISION - TMUX INTEGRATION DEMO');
+  console.info('═'.repeat(60));
+  console.info('📋 Memorandum: "TMUX session management with real-time coordination"');
+  console.info('🎯 Target: "<500ms startup, <25MB memory, precision workflow"');
+  console.info('═'.repeat(60));
 
   const sessionManager = new TMUXSessionManagementEngine();
 
   try {
     // Create memorandum-compliant development session
-    console.log('\n🏗️ Creating memorandum-aligned TMUX session...');
+    console.info('\n🏗️ Creating memorandum-aligned TMUX session...');
     const sessionConfig = await sessionManager.createSurgicalPrecisionSession('dev', 'bun-native');
 
-    console.log('\n📊 Session Configuration:');
-    console.log(`  🏷️ Session Name: ${sessionConfig.sessionName}`);
-    console.log(`  🌍 Environment: ${sessionConfig.environment}`);
-    console.log(`  👥 Team: ${sessionConfig.teamIdentifier}`);
-    console.log(`  🖼️ Layout: ${sessionConfig.layout} (70/30 horizontal split)`);
-    console.log(`  🔄 Auto-restart: ${sessionConfig.autoRestart}`);
-    console.log(`  💾 Persistence: ${sessionConfig.persistence}`);
+    console.info('\n📊 Session Configuration:');
+    console.info(`  🏷️ Session Name: ${sessionConfig.sessionName}`);
+    console.info(`  🌍 Environment: ${sessionConfig.environment}`);
+    console.info(`  👥 Team: ${sessionConfig.teamIdentifier}`);
+    console.info(`  🖼️ Layout: ${sessionConfig.layout} (70/30 horizontal split)`);
+    console.info(`  🔄 Auto-restart: ${sessionConfig.autoRestart}`);
+    console.info(`  💾 Persistence: ${sessionConfig.persistence}`);
 
-    console.log('\n🖥️ Configured Windows:');
+    console.info('\n🖥️ Configured Windows:');
     sessionConfig.components.forEach(comp => {
       const monitorStatus = comp.monitoringEnabled ? '✅' : '❌';
-      console.log(`  ${monitorStatus} ${comp.windowName} (${comp.componentType}) - ${comp.refreshInterval}ms intervals`);
+      console.info(`  ${monitorStatus} ${comp.windowName} (${comp.componentType}) - ${comp.refreshInterval}ms intervals`);
     });
 
     // Simulate real-time health monitoring
-    console.log('\n📈 Real-Time Health Monitoring (simulated):');
+    console.info('\n📈 Real-Time Health Monitoring (simulated):');
     setTimeout(async () => {
       const health = await sessionManager.getSessionHealth(sessionConfig.sessionName);
-      console.log(`  🔴 Session Active: ${health.isActive ? '✅' : '❌'}`);
-      console.log(`  🖥️ Window Count: ${health.windowCount}`);
-      console.log(`  💾 Memory Usage: ${health.memoryUsage}MB (Target: <${TMUX_CONSTANTS.PERFORMANCE_TARGETS.MEMORY_OVERHEAD_MB}MB)`);
+      console.info(`  🔴 Session Active: ${health.isActive ? '✅' : '❌'}`);
+      console.info(`  🖥️ Window Count: ${health.windowCount}`);
+      console.info(`  💾 Memory Usage: ${health.memoryUsage}MB (Target: <${TMUX_CONSTANTS.PERFORMANCE_TARGETS.MEMORY_OVERHEAD_MB}MB)`);
 
-      console.log('\n🏥 Component Health Status:');
+      console.info('\n🏥 Component Health Status:');
       Object.entries(health.componentHealth).forEach(([component, healthy]) => {
         const status = healthy ? '✅ Healthy' : '❌ Degraded';
-        console.log(`  ${status}: ${component}`);
+        console.info(`  ${status}: ${component}`);
       });
     }, 3000);
 
     // List available sessions
     setTimeout(async () => {
-      console.log('\n📋 Active Surgical Precision Sessions:');
+      console.info('\n📋 Active Surgical Precision Sessions:');
       const sessions = await sessionManager.listActiveSessions();
       sessions.forEach(session => {
-        console.log(`  🎯 ${session.sessionName} (${session.environment})`);
+        console.info(`  🎯 ${session.sessionName} (${session.environment})`);
       });
 
-      console.log('\n💡 Access Instructions:');
-      console.log(`  🔗 Attach: tmux attach -t ${sessionConfig.sessionName}`);
-      console.log('  ⌨️ Detach: Ctrl-b + d');
-      console.log('  🔄 Switch Windows: Ctrl-b + [number]');
-      console.log('  📊 Monitor Health: Check real-time updates in component windows');
+      console.info('\n💡 Access Instructions:');
+      console.info(`  🔗 Attach: tmux attach -t ${sessionConfig.sessionName}`);
+      console.info('  ⌨️ Detach: Ctrl-b + d');
+      console.info('  🔄 Switch Windows: Ctrl-b + [number]');
+      console.info('  📊 Monitor Health: Check real-time updates in component windows');
 
-      console.log('\n✅ TMUX Integration Demo Complete');
-      console.log('🎯 Memorandum-compliant development workflow ready!');
+      console.info('\n✅ TMUX Integration Demo Complete');
+      console.info('🎯 Memorandum-compliant development workflow ready!');
     }, 5000);
 
   } catch (error) {

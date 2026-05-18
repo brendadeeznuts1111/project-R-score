@@ -47,5 +47,5 @@ bench('R2: Bucket Statistics', async () => {
   await r2.getStats();
 });
 
-console.log('🚀 Starting R2 Storage Performance Benchmark...');
+console.info('🚀 Starting R2 Storage Performance Benchmark...');
 await run();

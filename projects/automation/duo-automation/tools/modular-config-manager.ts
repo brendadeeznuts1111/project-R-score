@@ -38,9 +38,9 @@ class ModularConfigManager {
    * Start interactive configuration manager
    */
   async start(): Promise<void> {
-    console.log('🔧 Modular Configuration Manager');
-    console.log('==================================');
-    console.log('');
+    console.info('🔧 Modular Configuration Manager');
+    console.info('==================================');
+    console.info('');
 
     while (true) {
       await this.showMainMenu();
@@ -66,13 +66,13 @@ class ModularConfigManager {
           await this.importConfiguration();
           break;
         case '7':
-          console.log('👋 Goodbye!');
+          console.info('👋 Goodbye!');
           process.exit(0);
         default:
-          console.log('❌ Invalid choice. Please try again.');
+          console.info('❌ Invalid choice. Please try again.');
       }
       
-      console.log('');
+      console.info('');
     }
   }
 
@@ -80,37 +80,37 @@ class ModularConfigManager {
    * Show main menu
    */
   private async showMainMenu(): Promise<void> {
-    console.log('📋 Main Menu:');
-    console.log('1. 🎨 Manage Themes');
-    console.log('2. 🔗 Manage Endpoints');
-    console.log('3. 📱 Manage Dashboards');
-    console.log('4. 🏥 Health Check All');
-    console.log('5. 📤 Export Configuration');
-    console.log('6. 📥 Import Configuration');
-    console.log('7. 👋 Exit');
-    console.log('');
+    console.info('📋 Main Menu:');
+    console.info('1. 🎨 Manage Themes');
+    console.info('2. 🔗 Manage Endpoints');
+    console.info('3. 📱 Manage Dashboards');
+    console.info('4. 🏥 Health Check All');
+    console.info('5. 📤 Export Configuration');
+    console.info('6. 📥 Import Configuration');
+    console.info('7. 👋 Exit');
+    console.info('');
   }
 
   /**
    * Theme management
    */
   private async manageThemes(): Promise<void> {
-    console.log('🎨 Theme Management');
-    console.log('==================');
-    console.log('');
+    console.info('🎨 Theme Management');
+    console.info('==================');
+    console.info('');
 
     const themes = Object.keys(ColorSchemes);
     const currentTheme = modularSystem.getColorScheme().name;
 
-    console.log(`Current theme: ${currentTheme}`);
-    console.log('');
-    console.log('Available themes:');
+    console.info(`Current theme: ${currentTheme}`);
+    console.info('');
+    console.info('Available themes:');
     themes.forEach((theme, index) => {
       const scheme = ColorSchemes[theme];
       const indicator = scheme.name === currentTheme ? '✅' : '  ';
-      console.log(`${indicator} ${index + 1}. ${scheme.name} (${theme})`);
+      console.info(`${indicator} ${index + 1}. ${scheme.name} (${theme})`);
     });
-    console.log('');
+    console.info('');
 
     const choice = await this.askQuestion('Select theme (number) or press Enter to go back: ');
     
@@ -123,15 +123,15 @@ class ModularConfigManager {
       
       // Generate CSS preview
       const css = modularSystem.generateThemeCSS(selectedTheme as keyof typeof ColorSchemes);
-      console.log('');
-      console.log('🎨 Theme switched successfully!');
-      console.log('📄 CSS Preview:');
-      console.log(css.substring(0, 500) + '...');
+      console.info('');
+      console.info('🎨 Theme switched successfully!');
+      console.info('📄 CSS Preview:');
+      console.info(css.substring(0, 500) + '...');
       
       // Save theme preference
       await this.saveThemePreference(selectedTheme);
     } else {
-      console.log('❌ Invalid theme selection.');
+      console.info('❌ Invalid theme selection.');
     }
   }
 
@@ -139,25 +139,25 @@ class ModularConfigManager {
    * Endpoint management
    */
   private async manageEndpoints(): Promise<void> {
-    console.log('🔗 Endpoint Management');
-    console.log('=====================');
-    console.log('');
+    console.info('🔗 Endpoint Management');
+    console.info('=====================');
+    console.info('');
 
     const categories = ['storage', 'registry', 'status', 'api', 'analytics', 'phone'];
     
     for (const category of categories) {
       const endpoints = modularSystem.getEndpointsByCategory(category as any);
-      console.log(`\n📁 ${category.toUpperCase()} Endpoints:`);
+      console.info(`\n📁 ${category.toUpperCase()} Endpoints:`);
       
       endpoints.forEach((endpoint, index) => {
-        console.log(`  ${index + 1}. ${endpoint.name}`);
-        console.log(`     URL: ${endpoint.url}`);
-        console.log(`     Auth: ${endpoint.auth ? 'Required' : 'None'}`);
-        console.log(`     Description: ${endpoint.description}`);
+        console.info(`  ${index + 1}. ${endpoint.name}`);
+        console.info(`     URL: ${endpoint.url}`);
+        console.info(`     Auth: ${endpoint.auth ? 'Required' : 'None'}`);
+        console.info(`     Description: ${endpoint.description}`);
       });
     }
 
-    console.log('');
+    console.info('');
     const choice = await this.askQuestion('Enter endpoint ID to test or press Enter to go back: ');
     
     if (choice === '') return;
@@ -169,26 +169,26 @@ class ModularConfigManager {
    * Dashboard management
    */
   private async manageDashboards(): Promise<void> {
-    console.log('📱 Dashboard Management');
-    console.log('======================');
-    console.log('');
+    console.info('📱 Dashboard Management');
+    console.info('======================');
+    console.info('');
 
     const categories = ['main', 'storage', 'registry', 'status', 'analytics', 'phone'];
     
     for (const category of categories) {
       const dashboards = modularSystem.getDashboardsByCategory(category as any);
-      console.log(`\n📁 ${category.toUpperCase()} Dashboards:`);
+      console.info(`\n📁 ${category.toUpperCase()} Dashboards:`);
       
       dashboards.forEach((dashboard, index) => {
         const colors = ColorSchemes[dashboard.colorScheme];
-        console.log(`  ${index + 1}. ${dashboard.name}`);
-        console.log(`     Theme: ${colors.name} (${dashboard.colorScheme})`);
-        console.log(`     URL: ${dashboard.url}`);
-        console.log(`     Features: ${dashboard.features.length} features`);
+        console.info(`  ${index + 1}. ${dashboard.name}`);
+        console.info(`     Theme: ${colors.name} (${dashboard.colorScheme})`);
+        console.info(`     URL: ${dashboard.url}`);
+        console.info(`     Features: ${dashboard.features.length} features`);
       });
     }
 
-    console.log('');
+    console.info('');
     const choice = await this.askQuestion('Enter dashboard ID to configure or press Enter to go back: ');
     
     if (choice === '') return;
@@ -200,33 +200,33 @@ class ModularConfigManager {
    * Health check all endpoints
    */
   private async healthCheckAll(): Promise<void> {
-    console.log('🏥 Health Check All Endpoints');
-    console.log('===========================');
-    console.log('');
+    console.info('🏥 Health Check All Endpoints');
+    console.info('===========================');
+    console.info('');
 
     const results = await modularSystem.healthCheckAll();
     
-    console.log('Results:');
+    console.info('Results:');
     for (const [id, healthy] of Object.entries(results)) {
       const endpoint = Endpoints[id];
       const status = healthy ? '✅ Healthy' : '❌ Unhealthy';
-      console.log(`  ${status} ${endpoint.name} (${endpoint.url})`);
+      console.info(`  ${status} ${endpoint.name} (${endpoint.url})`);
     }
 
     const healthyCount = Object.values(results).filter(Boolean).length;
     const totalCount = Object.keys(results).length;
     
-    console.log('');
-    console.log(`📊 Summary: ${healthyCount}/${totalCount} endpoints healthy`);
+    console.info('');
+    console.info(`📊 Summary: ${healthyCount}/${totalCount} endpoints healthy`);
   }
 
   /**
    * Export configuration
    */
   private async exportConfiguration(): Promise<void> {
-    console.log('📤 Export Configuration');
-    console.log('======================');
-    console.log('');
+    console.info('📤 Export Configuration');
+    console.info('======================');
+    console.info('');
 
     const config: ConfigExport = {
       timestamp: new Date().toISOString(),
@@ -247,17 +247,17 @@ class ModularConfigManager {
     const filename = `modular-config-${Date.now()}.json`;
     await writeFile(filename, JSON.stringify(fullConfig, null, 2));
     
-    console.log(`✅ Configuration exported to: ${filename}`);
-    console.log(`📊 Exported ${config.themes.length} themes, ${config.endpoints.length} endpoints, ${config.dashboards.length} dashboards`);
+    console.info(`✅ Configuration exported to: ${filename}`);
+    console.info(`📊 Exported ${config.themes.length} themes, ${config.endpoints.length} endpoints, ${config.dashboards.length} dashboards`);
   }
 
   /**
    * Import configuration
    */
   private async importConfiguration(): Promise<void> {
-    console.log('📥 Import Configuration');
-    console.log('======================');
-    console.log('');
+    console.info('📥 Import Configuration');
+    console.info('======================');
+    console.info('');
 
     const filename = await this.askQuestion('Enter configuration file path: ');
     
@@ -265,10 +265,10 @@ class ModularConfigManager {
       const content = await readFile(filename, 'utf-8');
       const config = JSON.parse(content);
       
-      console.log('✅ Configuration imported successfully!');
-      console.log(`📊 Imported ${Object.keys(config.colorSchemes || {}).length} themes`);
-      console.log(`🔗 Imported ${Object.keys(config.endpoints || {}).length} endpoints`);
-      console.log(`📱 Imported ${Object.keys(config.dashboards || {}).length} dashboards`);
+      console.info('✅ Configuration imported successfully!');
+      console.info(`📊 Imported ${Object.keys(config.colorSchemes || {}).length} themes`);
+      console.info(`🔗 Imported ${Object.keys(config.endpoints || {}).length} endpoints`);
+      console.info(`📱 Imported ${Object.keys(config.dashboards || {}).length} dashboards`);
       
       // Apply current theme if specified
       if (config.export?.currentTheme) {
@@ -277,12 +277,12 @@ class ModularConfigManager {
         );
         if (themeKey) {
           modularSystem.setColorScheme(themeKey as keyof typeof ColorSchemes);
-          console.log(`🎨 Applied theme: ${config.export.currentTheme}`);
+          console.info(`🎨 Applied theme: ${config.export.currentTheme}`);
         }
       }
       
     } catch (error) {
-      console.log('❌ Failed to import configuration:', error.message);
+      console.info('❌ Failed to import configuration:', error.message);
     }
   }
 
@@ -292,11 +292,11 @@ class ModularConfigManager {
   private async testEndpoint(id: string): Promise<void> {
     const endpoint = modularSystem.getEndpoint(id);
     if (!endpoint) {
-      console.log('❌ Endpoint not found');
+      console.info('❌ Endpoint not found');
       return;
     }
 
-    console.log(`🧪 Testing ${endpoint.name}...`);
+    console.info(`🧪 Testing ${endpoint.name}...`);
     
     try {
       const startTime = Date.now();
@@ -306,12 +306,12 @@ class ModularConfigManager {
       });
       const responseTime = Date.now() - startTime;
       
-      console.log(`✅ Endpoint responded in ${responseTime}ms`);
-      console.log(`📊 Status: ${response.status} ${response.statusText}`);
-      console.log(`🔗 URL: ${endpoint.url}`);
+      console.info(`✅ Endpoint responded in ${responseTime}ms`);
+      console.info(`📊 Status: ${response.status} ${response.statusText}`);
+      console.info(`🔗 URL: ${endpoint.url}`);
       
     } catch (error) {
-      console.log(`❌ Endpoint test failed: ${error.message}`);
+      console.info(`❌ Endpoint test failed: ${error.message}`);
     }
   }
 
@@ -321,20 +321,20 @@ class ModularConfigManager {
   private async configureDashboard(id: string): Promise<void> {
     const dashboard = modularSystem.getDashboard(id);
     if (!dashboard) {
-      console.log('❌ Dashboard not found');
+      console.info('❌ Dashboard not found');
       return;
     }
 
-    console.log(`⚙️  Configuring ${dashboard.name}...`);
-    console.log(`📱 Current theme: ${ColorSchemes[dashboard.colorScheme].name}`);
-    console.log(`🔗 URL: ${dashboard.url}`);
-    console.log(`📋 Features: ${dashboard.features.join(', ')}`);
+    console.info(`⚙️  Configuring ${dashboard.name}...`);
+    console.info(`📱 Current theme: ${ColorSchemes[dashboard.colorScheme].name}`);
+    console.info(`🔗 URL: ${dashboard.url}`);
+    console.info(`📋 Features: ${dashboard.features.join(', ')}`);
     
     const newTheme = await this.askQuestion('Enter new theme (leave empty to keep current): ');
     
     if (newTheme && ColorSchemes[newTheme]) {
       // In a real implementation, you would update the dashboard configuration
-      console.log(`🎨 Theme would be changed to: ${ColorSchemes[newTheme].name}`);
+      console.info(`🎨 Theme would be changed to: ${ColorSchemes[newTheme].name}`);
     }
   }
 
@@ -348,7 +348,7 @@ class ModularConfigManager {
     };
     
     await writeFile('./config/theme-preferences.json', JSON.stringify(preferences, null, 2));
-    console.log('💾 Theme preference saved');
+    console.info('💾 Theme preference saved');
   }
 
   /**
@@ -376,7 +376,7 @@ async function main() {
   
   // Handle graceful shutdown
   process.on('SIGINT', () => {
-    console.log('\n👋 Goodbye!');
+    console.info('\n👋 Goodbye!');
     manager.close();
     process.exit(0);
   });

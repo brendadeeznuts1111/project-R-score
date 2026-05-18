@@ -33,7 +33,7 @@ class URLFixerOptimizer {
     urlsReplaced: number;
     errors: string[];
   }> {
-    console.log('🔧 FIXING BROKEN URLs...');
+    console.info('🔧 FIXING BROKEN URLs...');
 
     const filesToCheck = [
       'package.json',
@@ -65,7 +65,7 @@ class URLFixerOptimizer {
             content = content.replace(new RegExp(escaped, 'g'), fixed);
             urlsReplaced++;
             fileModified = true;
-            console.log(`   ✅ Fixed ${broken} → ${fixed} in ${filePath}`);
+            console.info(`   ✅ Fixed ${broken} → ${fixed} in ${filePath}`);
           }
         }
 
@@ -77,7 +77,7 @@ class URLFixerOptimizer {
             content = content.replace(new RegExp(escaped, 'g'), fast);
             urlsReplaced++;
             fileModified = true;
-            console.log(`   ⚡ Optimized ${slow} → ${fast} in ${filePath}`);
+            console.info(`   ⚡ Optimized ${slow} → ${fast} in ${filePath}`);
           }
         }
 
@@ -100,7 +100,7 @@ class URLFixerOptimizer {
     updated: boolean;
     changes: string[];
   }> {
-    console.log('📚 UPDATING DOCUMENTATION CONSTANTS...');
+    console.info('📚 UPDATING DOCUMENTATION CONSTANTS...');
 
     const constantsFile = './config/BUN_CONSTANTS_VERSION.json';
     const changes: string[] = [];
@@ -126,7 +126,7 @@ class URLFixerOptimizer {
 
       if (updated) {
         writeFileSync(constantsFile, modifiedContent);
-        console.log('   ✅ Documentation constants updated');
+        console.info('   ✅ Documentation constants updated');
       }
 
       return { updated, changes };
@@ -139,7 +139,7 @@ class URLFixerOptimizer {
    * Create URL performance monitoring configuration
    */
   static createPerformanceMonitoring(): void {
-    console.log('📊 CREATING PERFORMANCE MONITORING...');
+    console.info('📊 CREATING PERFORMANCE MONITORING...');
 
     const monitoringConfig = {
       urls: [
@@ -166,9 +166,9 @@ class URLFixerOptimizer {
     const configPath = 'config/url-performance-monitoring.json';
     try {
       writeFileSync(configPath, JSON.stringify(monitoringConfig, null, 2));
-      console.log(`   ✅ Performance monitoring config created: ${configPath}`);
+      console.info(`   ✅ Performance monitoring config created: ${configPath}`);
     } catch (error) {
-      console.log(`   ❌ Failed to create monitoring config: ${error}`);
+      console.info(`   ❌ Failed to create monitoring config: ${error}`);
     }
   }
 
@@ -176,7 +176,7 @@ class URLFixerOptimizer {
    * Generate URL optimization report
    */
   static generateOptimizationReport(): void {
-    console.log('📋 GENERATING OPTIMIZATION REPORT...');
+    console.info('📋 GENERATING OPTIMIZATION REPORT...');
 
     const report = {
       timestamp: new Date().toISOString(),
@@ -244,9 +244,9 @@ ${report.recommendations.map(rec => `- ${rec}`).join('\n')}
 
     try {
       writeFileSync(reportPath, reportContent);
-      console.log(`   ✅ Optimization report created: ${reportPath}`);
+      console.info(`   ✅ Optimization report created: ${reportPath}`);
     } catch (error) {
-      console.log(`   ❌ Failed to create report: ${error}`);
+      console.info(`   ❌ Failed to create report: ${error}`);
     }
   }
 
@@ -254,26 +254,26 @@ ${report.recommendations.map(rec => `- ${rec}`).join('\n')}
    * Run complete optimization process
    */
   static async runOptimization(): Promise<void> {
-    console.log('🚀 URL FIXER AND PERFORMANCE OPTIMIZER');
-    console.log('='.repeat(50));
+    console.info('🚀 URL FIXER AND PERFORMANCE OPTIMIZER');
+    console.info('='.repeat(50));
 
     // Fix broken URLs
     const urlFixes = await this.fixBrokenURLs();
-    console.log(
+    console.info(
       `\n📊 URL Fixes: ${urlFixes.filesFixed} files, ${urlFixes.urlsReplaced} URLs replaced`
     );
 
     if (urlFixes.errors.length > 0) {
-      console.log('Errors:');
-      urlFixes.errors.forEach(error => console.log(`   • ${error}`));
+      console.info('Errors:');
+      urlFixes.errors.forEach(error => console.info(`   • ${error}`));
     }
 
     // Update documentation constants
     const constantUpdates = await this.updateDocumentationConstants();
-    console.log(`\n📚 Constants Updated: ${constantUpdates.updated ? 'Yes' : 'No'}`);
+    console.info(`\n📚 Constants Updated: ${constantUpdates.updated ? 'Yes' : 'No'}`);
 
     if (constantUpdates.changes.length > 0) {
-      constantUpdates.changes.forEach(change => console.log(`   • ${change}`));
+      constantUpdates.changes.forEach(change => console.info(`   • ${change}`));
     }
 
     // Create performance monitoring
@@ -282,12 +282,12 @@ ${report.recommendations.map(rec => `- ${rec}`).join('\n')}
     // Generate optimization report
     this.generateOptimizationReport();
 
-    console.log('\n✅ URL optimization completed!');
-    console.log('\n🎯 Next Steps:');
-    console.log('   1. Test the fixed URLs in your applications');
-    console.log('   2. Monitor performance using the new configuration');
-    console.log('   3. Set up automated validation in CI/CD');
-    console.log('   4. Review the optimization report for details');
+    console.info('\n✅ URL optimization completed!');
+    console.info('\n🎯 Next Steps:');
+    console.info('   1. Test the fixed URLs in your applications');
+    console.info('   2. Monitor performance using the new configuration');
+    console.info('   3. Set up automated validation in CI/CD');
+    console.info('   4. Review the optimization report for details');
   }
 }
 

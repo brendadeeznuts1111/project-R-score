@@ -5,7 +5,7 @@ if (import.meta.main) {
   // Only run when executed directly
   main().catch(console.error);
 } else {
-  console.log('ℹ️  Script was imported, not executed directly');
+  console.info('ℹ️  Script was imported, not executed directly');
 }
 
 import { performance } from 'perf_hooks';
@@ -189,8 +189,8 @@ class SpawnPerformanceTest {
    * Test basic echo command
    */
   static async testEchoCommand(): Promise<void> {
-    console.log('📢 ECHO COMMAND PERFORMANCE');
-    console.log('='.repeat(40));
+    console.info('📢 ECHO COMMAND PERFORMANCE');
+    console.info('='.repeat(40));
 
     const tests = [
       {
@@ -223,7 +223,7 @@ class SpawnPerformanceTest {
           const result = await test.fn();
           times.push(result.executionTime);
         } catch (error) {
-          console.log(`❌ ${test.name} failed: ${error.error || error.message}`);
+          console.info(`❌ ${test.name} failed: ${error.error || error.message}`);
         }
       }
 
@@ -232,17 +232,17 @@ class SpawnPerformanceTest {
         const min = Math.min(...times);
         const max = Math.max(...times);
 
-        console.log(`${test.name}:`);
-        console.log(`   Average: ${avg.toFixed(2)}ms`);
-        console.log(`   Min: ${min.toFixed(2)}ms`);
-        console.log(`   Max: ${max.toFixed(2)}ms`);
+        console.info(`${test.name}:`);
+        console.info(`   Average: ${avg.toFixed(2)}ms`);
+        console.info(`   Min: ${min.toFixed(2)}ms`);
+        console.info(`   Max: ${max.toFixed(2)}ms`);
 
         if (avg <= this.TARGET_TIME) {
-          console.log(`   ✅ MEETS TARGET (≤${this.TARGET_TIME}ms)`);
+          console.info(`   ✅ MEETS TARGET (≤${this.TARGET_TIME}ms)`);
         } else {
-          console.log(`   ⚠️  EXCEEDS TARGET (${avg.toFixed(2)}ms > ${this.TARGET_TIME}ms)`);
+          console.info(`   ⚠️  EXCEEDS TARGET (${avg.toFixed(2)}ms > ${this.TARGET_TIME}ms)`);
         }
-        console.log('');
+        console.info('');
       }
     }
   }
@@ -251,8 +251,8 @@ class SpawnPerformanceTest {
    * Test spawn with arguments
    */
   static async testSpawnWithArguments(): Promise<void> {
-    console.log('📝 SPAWN WITH ARGUMENTS PERFORMANCE');
-    console.log('='.repeat(40));
+    console.info('📝 SPAWN WITH ARGUMENTS PERFORMANCE');
+    console.info('='.repeat(40));
 
     const args = ['test', 'with', 'multiple', 'arguments'];
     const times: number[] = [];
@@ -262,7 +262,7 @@ class SpawnPerformanceTest {
         const result = await OptimizedSpawn.bunSpawn('echo', args);
         times.push(result.executionTime);
       } catch (error) {
-        console.log(`❌ Test failed: ${error.error || error.message}`);
+        console.info(`❌ Test failed: ${error.error || error.message}`);
       }
     }
 
@@ -271,27 +271,27 @@ class SpawnPerformanceTest {
       const min = Math.min(...times);
       const max = Math.max(...times);
 
-      console.log(`Bun.spawn with arguments:`);
-      console.log(`   Average: ${avg.toFixed(2)}ms`);
-      console.log(`   Min: ${min.toFixed(2)}ms`);
-      console.log(`   Max: ${max.toFixed(2)}ms`);
+      console.info(`Bun.spawn with arguments:`);
+      console.info(`   Average: ${avg.toFixed(2)}ms`);
+      console.info(`   Min: ${min.toFixed(2)}ms`);
+      console.info(`   Max: ${max.toFixed(2)}ms`);
 
       if (avg <= 200) {
         // Target for args is 200ms
-        console.log(`   ✅ MEETS TARGET (≤200ms)`);
+        console.info(`   ✅ MEETS TARGET (≤200ms)`);
       } else {
-        console.log(`   ⚠️  EXCEEDS TARGET (${avg.toFixed(2)}ms > 200ms)`);
+        console.info(`   ⚠️  EXCEEDS TARGET (${avg.toFixed(2)}ms > 200ms)`);
       }
     }
-    console.log('');
+    console.info('');
   }
 
   /**
    * Test spawn with environment variables
    */
   static async testSpawnWithEnvironment(): Promise<void> {
-    console.log('🌍 SPAWN WITH ENVIRONMENT VARIABLES PERFORMANCE');
-    console.log('='.repeat(40));
+    console.info('🌍 SPAWN WITH ENVIRONMENT VARIABLES PERFORMANCE');
+    console.info('='.repeat(40));
 
     const env = { ...process.env, TEST_VAR: 'test_value' };
     const times: number[] = [];
@@ -301,7 +301,7 @@ class SpawnPerformanceTest {
         const result = await OptimizedSpawn.fastSpawn('echo', ['$TEST_VAR'], 5000);
         times.push(result.executionTime);
       } catch (error) {
-        console.log(`❌ Test failed: ${error.error || error.message}`);
+        console.info(`❌ Test failed: ${error.error || error.message}`);
       }
     }
 
@@ -310,27 +310,27 @@ class SpawnPerformanceTest {
       const min = Math.min(...times);
       const max = Math.max(...times);
 
-      console.log(`Spawn with environment variables:`);
-      console.log(`   Average: ${avg.toFixed(2)}ms`);
-      console.log(`   Min: ${min.toFixed(2)}ms`);
-      console.log(`   Max: ${max.toFixed(2)}ms`);
+      console.info(`Spawn with environment variables:`);
+      console.info(`   Average: ${avg.toFixed(2)}ms`);
+      console.info(`   Min: ${min.toFixed(2)}ms`);
+      console.info(`   Max: ${max.toFixed(2)}ms`);
 
       if (avg <= 4) {
         // Target for env vars is 4ms
-        console.log(`   ✅ MEETS TARGET (≤4ms)`);
+        console.info(`   ✅ MEETS TARGET (≤4ms)`);
       } else {
-        console.log(`   ⚠️  EXCEEDS TARGET (${avg.toFixed(2)}ms > 4ms)`);
+        console.info(`   ⚠️  EXCEEDS TARGET (${avg.toFixed(2)}ms > 4ms)`);
       }
     }
-    console.log('');
+    console.info('');
   }
 
   /**
    * Test concurrent spawn operations
    */
   static async testConcurrentSpawn(): Promise<void> {
-    console.log('⚡ CONCURRENT SPAWN PERFORMANCE');
-    console.log('='.repeat(40));
+    console.info('⚡ CONCURRENT SPAWN PERFORMANCE');
+    console.info('='.repeat(40));
 
     const concurrency = 10;
     const startTime = performance.now();
@@ -344,29 +344,29 @@ class SpawnPerformanceTest {
       const totalTime = performance.now() - startTime;
       const avgTime = results.reduce((sum, r) => sum + r.executionTime, 0) / results.length;
 
-      console.log(`Concurrent spawn (${concurrency} operations):`);
-      console.log(`   Total time: ${totalTime.toFixed(2)}ms`);
-      console.log(`   Average per operation: ${avgTime.toFixed(2)}ms`);
-      console.log(`   Throughput: ${(concurrency / (totalTime / 1000)).toFixed(0)} ops/sec`);
+      console.info(`Concurrent spawn (${concurrency} operations):`);
+      console.info(`   Total time: ${totalTime.toFixed(2)}ms`);
+      console.info(`   Average per operation: ${avgTime.toFixed(2)}ms`);
+      console.info(`   Throughput: ${(concurrency / (totalTime / 1000)).toFixed(0)} ops/sec`);
 
       if (avgTime <= this.TARGET_TIME) {
-        console.log(`   ✅ MEETS TARGET (≤${this.TARGET_TIME}ms per op)`);
+        console.info(`   ✅ MEETS TARGET (≤${this.TARGET_TIME}ms per op)`);
       } else {
-        console.log(`   ⚠️  EXCEEDS TARGET (${avgTime.toFixed(2)}ms > ${this.TARGET_TIME}ms)`);
+        console.info(`   ⚠️  EXCEEDS TARGET (${avgTime.toFixed(2)}ms > ${this.TARGET_TIME}ms)`);
       }
     } catch (error) {
-      console.log(`❌ Concurrent test failed: ${error.error || error.message}`);
+      console.info(`❌ Concurrent test failed: ${error.error || error.message}`);
     }
-    console.log('');
+    console.info('');
   }
 
   /**
    * Run all performance tests
    */
   static async runAllTests(): Promise<void> {
-    console.log('🚀 OPTIMIZED SPAWN PERFORMANCE TEST SUITE');
-    console.log('='.repeat(60));
-    console.log(`Target performance: ≤${this.TARGET_TIME}ms for basic operations\n`);
+    console.info('🚀 OPTIMIZED SPAWN PERFORMANCE TEST SUITE');
+    console.info('='.repeat(60));
+    console.info(`Target performance: ≤${this.TARGET_TIME}ms for basic operations\n`);
 
     try {
       await this.testEchoCommand();
@@ -374,12 +374,12 @@ class SpawnPerformanceTest {
       await this.testSpawnWithEnvironment();
       await this.testConcurrentSpawn();
 
-      console.log('✅ All spawn performance tests completed!');
-      console.log('\n🎯 Expected Improvements:');
-      console.log('   • Basic spawn: 108ms → ≤5ms (21x improvement)');
-      console.log('   • With arguments: 59ms → ≤200ms (maintained)');
-      console.log('   • With env vars: 27ms → ≤4ms (7x improvement)');
-      console.log('   • Concurrent: High throughput with low latency');
+      console.info('✅ All spawn performance tests completed!');
+      console.info('\n🎯 Expected Improvements:');
+      console.info('   • Basic spawn: 108ms → ≤5ms (21x improvement)');
+      console.info('   • With arguments: 59ms → ≤200ms (maintained)');
+      console.info('   • With env vars: 27ms → ≤4ms (7x improvement)');
+      console.info('   • Concurrent: High throughput with low latency');
     } catch (error) {
       console.error('❌ Test suite failed:', error);
       process.exit(1);

@@ -120,7 +120,7 @@ export class OptimizedCircuitBreaker extends CircuitBreaker {
     this.logFlushScheduled = true;
     setImmediate(() => {
       if (this.logBuffer.length > 0) {
-        console.log(this.logBuffer.join('\n'));
+        console.info(this.logBuffer.join('\n'));
         this.logBuffer = [];
       }
       this.logFlushScheduled = false;
@@ -352,14 +352,14 @@ export class OptimizedCircuitBreakerRegistry {
     }
     
     if (cleaned > 0) {
-      console.log(`🧹 Cleaned up ${cleaned} unused circuit breakers`);
+      console.info(`🧹 Cleaned up ${cleaned} unused circuit breakers`);
     }
   }
 }
 
 // Benchmark comparison
 export async function benchmarkCircuitBreaker(): Promise<void> {
-  console.log('🔬 Circuit Breaker Performance Test\n');
+  console.info('🔬 Circuit Breaker Performance Test\n');
   
   const iterations = 100000;
   
@@ -367,7 +367,7 @@ export async function benchmarkCircuitBreaker(): Promise<void> {
   const { CircuitBreaker: OriginalBreaker } = await import('./circuit-breaker');
   const original = new OriginalBreaker('original-test');
   
-  console.log(`Running ${iterations.toLocaleString()} iterations...\n`);
+  console.info(`Running ${iterations.toLocaleString()} iterations...\n`);
   
   const start1 = performance.now();
   for (let i = 0; i < iterations; i++) {
@@ -384,9 +384,9 @@ export async function benchmarkCircuitBreaker(): Promise<void> {
   }
   const time2 = performance.now() - start2;
   
-  console.log(`Original:  ${time1.toFixed(2)}ms (${(iterations / (time1 / 1000)).toFixed(0)} ops/sec)`);
-  console.log(`Optimized: ${time2.toFixed(2)}ms (${(iterations / (time2 / 1000)).toFixed(0)} ops/sec)`);
-  console.log(`Overhead:  ${((time2 / time1 - 1) * 100).toFixed(1)}%`);
+  console.info(`Original:  ${time1.toFixed(2)}ms (${(iterations / (time1 / 1000)).toFixed(0)} ops/sec)`);
+  console.info(`Optimized: ${time2.toFixed(2)}ms (${(iterations / (time2 / 1000)).toFixed(0)} ops/sec)`);
+  console.info(`Overhead:  ${((time2 / time1 - 1) * 100).toFixed(1)}%`);
   
   original.destroy();
   optimized.destroy();

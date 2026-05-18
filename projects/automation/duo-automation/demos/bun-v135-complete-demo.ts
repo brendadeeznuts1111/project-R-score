@@ -1,7 +1,7 @@
 // demo/bun-v135-complete-demo.ts
 import { feature } from "bun:bundle";
 
-console.log(`
+console.info(`
 🚀 **BUN v1.3.5 COMPLETE FEATURE DEMONSTRATION**
 ═══════════════════════════════════════════════════════════════════
 
@@ -19,7 +19,7 @@ Showcasing ALL the powerful new features in Bun v1.3.5:
 // 🖥️ BUN.TERMINAL API FOR PTY SUPPORT
 // ============================================================================
 
-console.log(`
+console.info(`
 🖥️ **1. BUN.TERMINAL API FOR PTY SUPPORT**
 ═══════════════════════════════════════════════════════════════════
 
@@ -66,19 +66,19 @@ for await (const chunk of process.stdin) {
 
 // Demonstrate terminal creation
 const demonstrateTerminalAPI = () => {
-  console.log("Creating reusable terminal...");
+  console.info("Creating reusable terminal...");
   
   const terminal = new Bun.Terminal({
     cols: 80,
     rows: 24,
     data: (term: any, data: string) => {
-      console.log(`Terminal data: ${data.replace(/\n/g, '\\n')}`);
+      console.info(`Terminal data: ${data.replace(/\n/g, '\\n')}`);
     }
   });
   
-  console.log("✅ Terminal created successfully");
-  console.log(`Dimensions: ${terminal.cols}x${terminal.rows}`);
-  console.log("Available methods: write(), resize(), setRawMode(), ref(), unref(), close()");
+  console.info("✅ Terminal created successfully");
+  console.info(`Dimensions: ${terminal.cols}x${terminal.rows}`);
+  console.info("Available methods: write(), resize(), setRawMode(), ref(), unref(), close()");
   
   return terminal;
 };
@@ -87,7 +87,7 @@ const demonstrateTerminalAPI = () => {
 // 🚩 COMPILE-TIME FEATURE FLAGS
 // ============================================================================
 
-console.log(`
+console.info(`
 🚩 **2. COMPILE-TIME FEATURE FLAGS FOR DEAD-CODE ELIMINATION**
 ═══════════════════════════════════════════════════════════════════
 
@@ -101,7 +101,7 @@ if (feature("PREMIUM")) {
 
 if (feature("DEBUG")) {
   // Eliminated entirely when DEBUG flag is disabled
-  console.log("Debug mode");
+  console.info("Debug mode");
 }
 
 // CLI usage:
@@ -118,38 +118,38 @@ await Bun.build({
 `);
 
 // Demonstrate feature flags
-console.log("Feature Flags Status:");
-console.log(`  PREMIUM: ${feature("PREMIUM") ? "✅" : "❌"}`);
-console.log(`  DEBUG: ${feature("DEBUG") ? "✅" : "❌"}`);
-console.log(`  BETA_FEATURES: ${feature("BETA_FEATURES") ? "✅" : "❌"}`);
+console.info("Feature Flags Status:");
+console.info(`  PREMIUM: ${feature("PREMIUM") ? "✅" : "❌"}`);
+console.info(`  DEBUG: ${feature("DEBUG") ? "✅" : "❌"}`);
+console.info(`  BETA_FEATURES: ${feature("BETA_FEATURES") ? "✅" : "❌"}`);
 
 // Feature-gated code demonstration
 if (feature("PREMIUM")) {
-  console.log("🌟 Premium features enabled!");
-  console.log("  • Advanced analytics");
-  console.log("  • Priority support");
-  console.log("  • Extended API limits");
+  console.info("🌟 Premium features enabled!");
+  console.info("  • Advanced analytics");
+  console.info("  • Priority support");
+  console.info("  • Extended API limits");
 }
 
 if (feature("DEBUG")) {
-  console.log("🐛 Debug mode active!");
-  console.log("  • Verbose logging enabled");
-  console.log("  • Debug endpoints available");
-  console.log("  • Source maps included");
+  console.info("🐛 Debug mode active!");
+  console.info("  • Verbose logging enabled");
+  console.info("  • Debug endpoints available");
+  console.info("  • Source maps included");
 }
 
 if (feature("BETA_FEATURES")) {
-  console.log("🧪 Beta features enabled!");
-  console.log("  • Experimental APIs");
-  console.log("  • Cutting-edge optimizations");
-  console.log("  • Early access features");
+  console.info("🧪 Beta features enabled!");
+  console.info("  • Experimental APIs");
+  console.info("  • Cutting-edge optimizations");
+  console.info("  • Early access features");
 }
 
 // ============================================================================
 // 📏 ENHANCED UNICODE STRING WIDTH ACCURACY
 // ============================================================================
 
-console.log(`
+console.info(`
 📏 **3. ENHANCED UNICODE STRING WIDTH ACCURACY**
 ═══════════════════════════════════════════════════════════════════
 
@@ -171,7 +171,7 @@ const testStrings = [
 
 testStrings.forEach(str => {
   const width = Bun.stringWidth(str);
-  console.log(\`"\${str}" → width: \${width}\`);
+  console.info(\`"\${str}" → width: \${width}\`);
 });
 `);
 
@@ -184,14 +184,14 @@ const testStrings = [
   'Normal text'
 ];
 
-console.log('Unicode Width Tests:');
+console.info('Unicode Width Tests:');
 testStrings.forEach(str => {
   const width = Bun.stringWidth(str);
-  console.log(`  "${str}" → width: ${width}`);
+  console.info(`  "${str}" → width: ${width}`);
 });
 
 // ANSI escape sequence testing
-console.log('\nANSI Escape Sequence Tests:');
+console.info('\nANSI Escape Sequence Tests:');
 const ansiTests = [
   '\x1b[31mRed text\x1b[0m',
   '\x1b[8mhttps://example.com\x1b[8m\x1b]8;;\x1b\\Hyperlink\x1b]8;;\x1b\\',
@@ -202,14 +202,14 @@ const ansiTests = [
 
 ansiTests.forEach(str => {
   const width = Bun.stringWidth(str);
-  console.log(`  ANSI: "${str.replace(/\x1b/g, '\\x1b')}" → width: ${width}`);
+  console.info(`  ANSI: "${str.replace(/\x1b/g, '\\x1b')}" → width: ${width}`);
 });
 
 // ============================================================================
 // 🔍 V8 VALUE TYPE CHECKING APIS
 // ============================================================================
 
-console.log(`
+console.info(`
 🔍 **4. V8 VALUE TYPE CHECKING APIS**
 ═══════════════════════════════════════════════════════════════════
 
@@ -230,7 +230,7 @@ const testValues = [
 ];
 
 testValues.forEach(value => {
-  console.log(\`\${value} → Map: \${value instanceof Map}, Array: \${Array.isArray(value)}, Int32: \${Number.isInteger(value)}, BigInt: \${typeof value === 'bigint'}\`);
+  console.info(\`\${value} → Map: \${value instanceof Map}, Array: \${Array.isArray(value)}, Int32: \${Number.isInteger(value)}, BigInt: \${typeof value === 'bigint'}\`);
 });
 `);
 
@@ -250,21 +250,21 @@ const testValues = [
   undefined
 ];
 
-console.log('V8 Type Checking Tests:');
+console.info('V8 Type Checking Tests:');
 testValues.forEach(value => {
   const isMap = value instanceof Map;
   const isArray = Array.isArray(value);
   const isInt32 = Number.isInteger(value) && typeof value === 'number' && value >= -2147483648 && value <= 2147483647;
   const isBigInt = typeof value === 'bigint';
   
-  console.log(`  ${value} → Map: ${isMap}, Array: ${isArray}, Int32: ${isInt32}, BigInt: ${isBigInt}`);
+  console.info(`  ${value} → Map: ${isMap}, Array: ${isArray}, Int32: ${isInt32}, BigInt: ${isBigInt}`);
 });
 
 // ============================================================================
 // 📎 CONTENT-DISPOSITION SUPPORT FOR S3 UPLOADS
 // ============================================================================
 
-console.log(`
+console.info(`
 📎 **5. CONTENT-DISPOSITION SUPPORT FOR S3 UPLOADS**
 ═══════════════════════════════════════════════════════════════════
 
@@ -287,17 +287,17 @@ await s3.write("image.png", imageData, {
 // • Streaming uploads
 `);
 
-console.log('Content-Disposition Examples:');
-console.log('  attachment; filename="report.pdf"');
-console.log('  inline');
-console.log('  form-data; name="file"; filename="data.csv"');
-console.log('  attachment; filename*=UTF-8\'\'%E2%9C%85%20report.pdf');
+console.info('Content-Disposition Examples:');
+console.info('  attachment; filename="report.pdf"');
+console.info('  inline');
+console.info('  form-data; name="file"; filename="data.csv"');
+console.info('  attachment; filename*=UTF-8\'\'%E2%9C%85%20report.pdf');
 
 // ============================================================================
 // 🌍 ENVIRONMENT VARIABLE EXPANSION FIXES
 // ============================================================================
 
-console.log(`
+console.info(`
 🌍 **6. ENVIRONMENT VARIABLE EXPANSION FIXES**
 ═══════════════════════════════════════════════════════════════════
 
@@ -327,16 +327,16 @@ const auth = "Bearer \${TOKEN?}";  // "Bearer "
 process.env.NPM_TOKEN = 'abc123';
 process.env.TOKEN = undefined;
 
-console.log('Environment Variable Expansion:');
-console.log(`  NPM_TOKEN: ${process.env.NPM_TOKEN}`);
-console.log(`  TOKEN: ${process.env.TOKEN || '(undefined)'}`);
-console.log(`  With ? modifier: ${process.env.TOKEN || '(empty)'}`);
+console.info('Environment Variable Expansion:');
+console.info(`  NPM_TOKEN: ${process.env.NPM_TOKEN}`);
+console.info(`  TOKEN: ${process.env.TOKEN || '(undefined)'}`);
+console.info(`  With ? modifier: ${process.env.TOKEN || '(empty)'}`);
 
 // ============================================================================
 // 🐛 BUG FIXES AND PERFORMANCE IMPROVEMENTS
 // ============================================================================
 
-console.log(`
+console.info(`
 🐛 **7. BUG FIXES AND PERFORMANCE IMPROVEMENTS**
 ═══════════════════════════════════════════════════════════════════
 
@@ -365,18 +365,18 @@ console.log(`
 • Fixed: process.noDeprecation property type compatibility
 `);
 
-console.log('Performance Improvements:');
-console.log('  ✅ Reduced CPU usage on macOS');
-console.log('  ✅ Better memory management');
-console.log('  ✅ Improved socket handling');
-console.log('  ✅ Enhanced error recovery');
-console.log('  ✅ Faster startup times');
+console.info('Performance Improvements:');
+console.info('  ✅ Reduced CPU usage on macOS');
+console.info('  ✅ Better memory management');
+console.info('  ✅ Improved socket handling');
+console.info('  ✅ Enhanced error recovery');
+console.info('  ✅ Faster startup times');
 
 // ============================================================================
 // 🎯 PRACTICAL USAGE EXAMPLES
 // ============================================================================
 
-console.log(`
+console.info(`
 🎯 **8. PRACTICAL USAGE EXAMPLES**
 ═══════════════════════════════════════════════════════════════════
 
@@ -441,16 +441,16 @@ const createProgressBar = (current: number, total: number) => {
   return `[${bar}] ${percentage}%`;
 };
 
-console.log('Progress Bar Demo:');
+console.info('Progress Bar Demo:');
 for (let i = 0; i <= 100; i += 20) {
-  console.log(`  ${createProgressBar(i, 100)}`);
+  console.info(`  ${createProgressBar(i, 100)}`);
 }
 
 // ============================================================================
 // 🚀 GETTING STARTED GUIDE
 // ============================================================================
 
-console.log(`
+console.info(`
 🚀 **9. GETTING STARTED GUIDE**
 ═══════════════════════════════════════════════════════════════════
 
@@ -476,13 +476,13 @@ import { Terminal } from "bun";
 const terminal = new Terminal({
   cols: 80,
   rows: 24,
-  data: (term, data) => console.log(data)
+  data: (term, data) => console.info(data)
 });
 
 # Unicode string width
 import { stringWidth } from "bun";
 
-console.log(stringWidth("🇺🇸👋🏽👨‍👩‍👧")); // 6
+console.info(stringWidth("🇺🇸👋🏽👨‍👩‍👧")); // 6
 
 # S3 with content disposition
 import { s3 } from "bun";
@@ -492,17 +492,17 @@ await s3.write("file.pdf", data, {
 });
 `);
 
-console.log('Quick Start Commands:');
-console.log('  bun upgrade                    # Upgrade to v1.3.5');
-console.log('  bun build --feature=PREMIUM  # Build with features');
-console.log('  bun run --feature=DEBUG       # Run with debug mode');
-console.log('  bun test --feature=MOCK       # Test with mocks');
+console.info('Quick Start Commands:');
+console.info('  bun upgrade                    # Upgrade to v1.3.5');
+console.info('  bun build --feature=PREMIUM  # Build with features');
+console.info('  bun run --feature=DEBUG       # Run with debug mode');
+console.info('  bun test --feature=MOCK       # Test with mocks');
 
 // ============================================================================
 // 🏆 CONCLUSION
 // ============================================================================
 
-console.log(`
+console.info(`
 🏆 **BUN v1.3.5 - THE BIGGEST RELEASE YET!**
 ═══════════════════════════════════════════════════════════════════
 
@@ -523,22 +523,22 @@ bun --version
 `);
 
 // Feature availability check
-console.log('\n📋 Feature Availability Check:');
-console.log(`  Terminal API: ${process.platform !== 'win32' ? '✅' : '❌ (Windows coming soon)'}`);
-console.log(`  Feature Flags: ✅`);
-console.log(`  Unicode Width: ✅`);
-console.log(`  V8 APIs: ✅`);
-console.log(`  S3 Content-Disposition: ✅`);
-console.log(`  Environment Variables: ✅`);
-console.log(`  Performance Fixes: ✅`);
+console.info('\n📋 Feature Availability Check:');
+console.info(`  Terminal API: ${process.platform !== 'win32' ? '✅' : '❌ (Windows coming soon)'}`);
+console.info(`  Feature Flags: ✅`);
+console.info(`  Unicode Width: ✅`);
+console.info(`  V8 APIs: ✅`);
+console.info(`  S3 Content-Disposition: ✅`);
+console.info(`  Environment Variables: ✅`);
+console.info(`  Performance Fixes: ✅`);
 
 // System information
-console.log('\n🖥️ System Information:');
-console.log(`  Platform: ${process.platform}`);
-console.log(`  Arch: ${process.arch}`);
-console.log(`  Node Version: ${process.version}`);
-console.log(`  Bun Version: ${Bun.version}`);
-console.log(`  Terminal: ${process.stdout.columns}x${process.stdout.rows}`);
+console.info('\n🖥️ System Information:');
+console.info(`  Platform: ${process.platform}`);
+console.info(`  Arch: ${process.arch}`);
+console.info(`  Node Version: ${process.version}`);
+console.info(`  Bun Version: ${Bun.version}`);
+console.info(`  Terminal: ${process.stdout.columns}x${process.stdout.rows}`);
 
 export {
   demonstrateTerminalAPI,

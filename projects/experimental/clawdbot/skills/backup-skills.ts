@@ -16,7 +16,7 @@ const { values } = parseArgs({
   },
 });
 
-const log = (msg: string) => values.verbose && console.log(msg);
+const log = (msg: string) => values.verbose && console.info(msg);
 
 // Gather all skill SKILL.md files
 const skillFiles: Record<string, string> = {};
@@ -77,7 +77,7 @@ echo "Done!"
 `;
 
 // Create archive
-console.log(`Creating backup: ${values.output}`);
+console.info(`Creating backup: ${values.output}`);
 log("Contents:");
 
 const archive = new Bun.Archive({
@@ -108,8 +108,8 @@ const checksumFile = values.output.replace(/\.(tar\.gz|tgz)$/, ".crc32");
 await Bun.write(checksumFile, `${checksumHex}  ${values.output}\n`);
 
 const stat = await Bun.file(values.output).stat();
-console.log(`Backup created: ${values.output} (${(stat.size / 1024).toFixed(2)} KB)`);
-console.log(`  Skills: ${skills.meta.total}`);
-console.log(`  Ready: ${skills.meta.ready}`);
-console.log(`  Missing: ${skills.meta.missing}`);
-console.log(`  CRC32: ${checksumHex}`);
+console.info(`Backup created: ${values.output} (${(stat.size / 1024).toFixed(2)} KB)`);
+console.info(`  Skills: ${skills.meta.total}`);
+console.info(`  Ready: ${skills.meta.ready}`);
+console.info(`  Missing: ${skills.meta.missing}`);
+console.info(`  CRC32: ${checksumHex}`);

@@ -27,7 +27,7 @@ import { setupGracefulShutdown } from './resource-manager';
 // ============================================================================
 
 async function initializeApplication(): Promise<void> {
-  console.log('🚀 Starting Fantasy42-Fire22 Enterprise Registry...');
+  console.info('🚀 Starting Fantasy42-Fire22 Enterprise Registry...');
 
   // Validate configuration
   const validation = validateConfig();
@@ -35,12 +35,12 @@ async function initializeApplication(): Promise<void> {
     throw new ConfigurationError('Configuration validation failed', validation.errors);
   }
 
-  console.log('✅ Configuration validated');
+  console.info('✅ Configuration validated');
 
   // Initialize database
   const { db, initialize, healthCheck, optimize } = createDatabaseConnection();
 
-  console.log('🔧 Initializing database...');
+  console.info('🔧 Initializing database...');
   try {
     await initialize();
   } catch (error) {
@@ -52,7 +52,7 @@ async function initializeApplication(): Promise<void> {
   if (!isHealthy) {
     throw new DatabaseError('Database health check failed');
   }
-  console.log('✅ Database initialized and healthy');
+  console.info('✅ Database initialized and healthy');
 
   // Create database utilities instance
   const dbUtils = new DatabaseUtils(db);
@@ -64,18 +64,18 @@ async function initializeApplication(): Promise<void> {
 
   // Log application status
   const configSummary = getConfigSummary();
-  console.log('📊 Application Configuration:');
-  console.log(`  Environment: ${configSummary.environment}`);
-  console.log(`  Database: ${configSummary.database}`);
-  console.log(`  Port: ${configSummary.port}`);
-  console.log(`  Security Level: ${configSummary.security}`);
-  console.log(`  Performance Mode: ${configSummary.performance}`);
-  console.log(`  Monitoring: ${configSummary.monitoring ? 'Enabled' : 'Disabled'}`);
+  console.info('📊 Application Configuration:');
+  console.info(`  Environment: ${configSummary.environment}`);
+  console.info(`  Database: ${configSummary.database}`);
+  console.info(`  Port: ${configSummary.port}`);
+  console.info(`  Security Level: ${configSummary.security}`);
+  console.info(`  Performance Mode: ${configSummary.performance}`);
+  console.info(`  Monitoring: ${configSummary.monitoring ? 'Enabled' : 'Disabled'}`);
 
   // Start enterprise services
   await startEnterpriseServices(db, dbUtils);
 
-  console.log(
+  console.info(
     `🎉 Fantasy42-Fire22 Registry running in ${config.NODE_ENV} mode on port ${config.PORT}`
   );
 
@@ -90,7 +90,7 @@ async function initializeApplication(): Promise<void> {
 // ============================================================================
 
 async function startEnterpriseServices(db: any, dbUtils: DatabaseUtils): Promise<void> {
-  console.log('🏢 Starting enterprise services...');
+  console.info('🏢 Starting enterprise services...');
 
   // Registry service
   await startRegistryService(db, dbUtils);
@@ -104,11 +104,11 @@ async function startEnterpriseServices(db: any, dbUtils: DatabaseUtils): Promise
   // Compliance service
   await startComplianceService(db, dbUtils);
 
-  console.log('✅ All enterprise services started');
+  console.info('✅ All enterprise services started');
 }
 
 async function startRegistryService(db: any, dbUtils: DatabaseUtils): Promise<void> {
-  console.log('📦 Initializing package registry service...');
+  console.info('📦 Initializing package registry service...');
 
   // Create registry tables asynchronously
   db.exec(`
@@ -149,11 +149,11 @@ async function startRegistryService(db: any, dbUtils: DatabaseUtils): Promise<vo
     );
   `);
 
-  console.log('✅ Package registry service initialized');
+  console.info('✅ Package registry service initialized');
 }
 
 async function startSecurityService(db: any, dbUtils: DatabaseUtils): Promise<void> {
-  console.log('🔐 Initializing security service...');
+  console.info('🔐 Initializing security service...');
 
   // Create security tables asynchronously
   db.exec(`
@@ -185,11 +185,11 @@ async function startSecurityService(db: any, dbUtils: DatabaseUtils): Promise<vo
     );
   `);
 
-  console.log('✅ Security service initialized');
+  console.info('✅ Security service initialized');
 }
 
 async function startMonitoringService(db: any, dbUtils: DatabaseUtils): Promise<void> {
-  console.log('📊 Initializing monitoring service...');
+  console.info('📊 Initializing monitoring service...');
 
   // Create monitoring tables asynchronously
   db.exec(`
@@ -222,11 +222,11 @@ async function startMonitoringService(db: any, dbUtils: DatabaseUtils): Promise<
     );
   `);
 
-  console.log('✅ Monitoring service initialized');
+  console.info('✅ Monitoring service initialized');
 }
 
 async function startComplianceService(db: any, dbUtils: DatabaseUtils): Promise<void> {
-  console.log('⚖️ Initializing compliance service...');
+  console.info('⚖️ Initializing compliance service...');
 
   // Create compliance tables asynchronously
   db.exec(`
@@ -267,7 +267,7 @@ async function startComplianceService(db: any, dbUtils: DatabaseUtils): Promise<
     );
   `);
 
-  console.log('✅ Compliance service initialized');
+  console.info('✅ Compliance service initialized');
 }
 
 // ============================================================================
@@ -299,7 +299,7 @@ function startHealthMonitoring(db: any, healthCheck: () => Promise<boolean>): vo
     }
   }, DATABASE_CONSTANTS.HEALTH_CHECK_INTERVAL); // Check every minute
 
-  console.log('🏥 Health monitoring started (60s interval)');
+  console.info('🏥 Health monitoring started (60s interval)');
 }
 
 // ============================================================================

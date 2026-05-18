@@ -23,9 +23,9 @@ export class PerformanceTracker {
       // @ts-ignore - Bun.nanoseconds is available at runtime
       const endNs = Bun.nanoseconds();
 
-      console.log(`⏱️ ${label}:`);
-      console.log(`  Time: ${(end - start).toFixed(2)}ms`);
-      console.log(`  Precision: ${((endNs - startNs) / 1_000_000).toFixed(3)}ms`);
+      console.info(`⏱️ ${label}:`);
+      console.info(`  Time: ${(end - start).toFixed(2)}ms`);
+      console.info(`  Precision: ${((endNs - startNs) / 1_000_000).toFixed(3)}ms`);
     }
   }
 
@@ -36,7 +36,7 @@ export class PerformanceTracker {
       return await fn();
     } finally {
       const end = performance.now();
-      console.log(`⏱️ ${label}: ${(end - start).toFixed(2)}ms`);
+      console.info(`⏱️ ${label}: ${(end - start).toFixed(2)}ms`);
     }
   }
 
@@ -49,7 +49,7 @@ export class PerformanceTracker {
     } finally {
       // @ts-ignore - Bun.nanoseconds is available at runtime
       const end = Bun.nanoseconds();
-      console.log(`🔬 ${label}: ${((end - start) / 1_000_000).toFixed(3)}ms (${end - start}ns)`);
+      console.info(`🔬 ${label}: ${((end - start) / 1_000_000).toFixed(3)}ms (${end - start}ns)`);
     }
   }
 }
@@ -58,17 +58,17 @@ export class MemoryAnalyzer {
   static snapshot(label: string) {
     const stats = heapStats();
 
-    console.log(`🧠 ${label} - Heap Stats`);
-    console.log(`  Size: ${(stats.heapSize / 1024).toFixed(2)}KB`);
-    console.log(`  Capacity: ${(stats.heapCapacity / 1024).toFixed(2)}KB`);
-    console.log(`  Objects: ${stats.objectCount}`);
+    console.info(`🧠 ${label} - Heap Stats`);
+    console.info(`  Size: ${(stats.heapSize / 1024).toFixed(2)}KB`);
+    console.info(`  Capacity: ${(stats.heapCapacity / 1024).toFixed(2)}KB`);
+    console.info(`  Objects: ${stats.objectCount}`);
 
     // Track specific object types
     const interestingTypes = ['Array', 'Object', 'Function', 'String'];
     for (const type of interestingTypes) {
       const count = stats.objectTypeCounts[type] || 0;
       if (count > 0) {
-        console.log(`  ${type}: ${count}`);
+        console.info(`  ${type}: ${count}`);
       }
     }
 
@@ -77,7 +77,7 @@ export class MemoryAnalyzer {
 
   static compare(before: any, after: any) {
     const diff = after.heapSize - before.heapSize;
-    console.log(`📈 Memory change: ${diff > 0 ? '+' : ''}${(diff / 1024).toFixed(2)}KB`);
+    console.info(`📈 Memory change: ${diff > 0 ? '+' : ''}${(diff / 1024).toFixed(2)}KB`);
   }
 
   static analyzeGrowth(label: string, fn: () => void) {
@@ -193,21 +193,21 @@ export function runConditionalBenchmarks() {
 
   if (isCI) {
     // Run lightweight benchmarks in CI
-    console.log("🚀 Running CI benchmarks...");
+    console.info("🚀 Running CI benchmarks...");
     runSmokeTests();
   } else if (isDevelopment) {
     // Run comprehensive benchmarks
-    console.log("🔬 Running development benchmarks...");
+    console.info("🔬 Running development benchmarks...");
     runFullBenchmarkSuite();
   } else {
     // Production: minimal benchmarks
-    console.log("⚡ Running production benchmarks...");
+    console.info("⚡ Running production benchmarks...");
     runCriticalPathBenchmarks();
   }
 }
 
 function runSmokeTests() {
-  console.log("💨 Smoke Tests");
+  console.info("💨 Smoke Tests");
   PerformanceTracker.measure(() => {
     // Quick performance check
     return Array.from({ length: 1000 }, (_, i) => i * i).reduce((a, b) => a + b, 0);
@@ -215,12 +215,12 @@ function runSmokeTests() {
 }
 
 function runFullBenchmarkSuite() {
-  console.log("🔬 Full Benchmark Suite");
+  console.info("🔬 Full Benchmark Suite");
   // Comprehensive testing would go here
 }
 
 function runCriticalPathBenchmarks() {
-  console.log("⚡ Critical Path Benchmarks");
+  console.info("⚡ Critical Path Benchmarks");
   // Essential performance checks only
 }
 

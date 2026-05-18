@@ -87,37 +87,37 @@ export function percentage(value: number, total: number): string {
 }
 
 export function displayRecommendations(stats: DisplayStats, entries: BunDocEntry[]): void {
-  console.log("\n💡 Recommendations:");
+  console.info("\n💡 Recommendations:");
 
   if (stats.experimental > stats.stable) {
-    console.log("  • Consider stabilizing experimental APIs");
+    console.info("  • Consider stabilizing experimental APIs");
   }
 
   if (stats.withErrors > 0) {
-    console.log("  • Fix detected configuration errors");
+    console.info("  • Fix detected configuration errors");
   }
 
   if (stats.highSecurity > 0) {
-    console.log("  • Review high-security APIs for compliance");
+    console.info("  • Review high-security APIs for compliance");
   }
 
   if (stats.deprecated > 0) {
-    console.log("  • Plan migration from deprecated APIs");
+    console.info("  • Plan migration from deprecated APIs");
   }
 
   const lowUsageEntries = entries.filter(e =>
     e.perfProfile?.opsSec && e.perfProfile.opsSec < LOW_PERF_THRESHOLD
   );
   if (lowUsageEntries.length > 0) {
-    console.log("  • Consider optimizing low-performance APIs");
+    console.info("  • Consider optimizing low-performance APIs");
   }
 
   if (stats.thuisEnabled > 0 && stats.localServers < stats.thuisEnabled) {
-    console.log("  • Enable local servers for all Thuis APIs");
+    console.info("  • Enable local servers for all Thuis APIs");
   }
 
   const missingDocs = entries.filter(e => !e.lastUpdated);
   if (missingDocs.length > 0) {
-    console.log("  • Update documentation for outdated APIs");
+    console.info("  • Update documentation for outdated APIs");
   }
 }

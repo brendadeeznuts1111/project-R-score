@@ -201,13 +201,13 @@ async function createMCPSnapshot(): Promise<MCPSnapshot> {
 }
 
 async function runMCPMonitor(): Promise<void> {
-  console.log(colorize('🔍 MCP System Monitor', 'bright'));
-  console.log(colorize('=====================', 'cyan'));
-  console.log();
+  console.info(colorize('🔍 MCP System Monitor', 'bright'));
+  console.info(colorize('=====================', 'cyan'));
+  console.info();
 
   // Run all checks
-  console.log(colorize('🔬 Running comprehensive system checks...', 'yellow'));
-  console.log();
+  console.info(colorize('🔬 Running comprehensive system checks...', 'yellow'));
+  console.info();
 
   const [runtimeStatus, docsStatuses, gitStatus] = await Promise.all([
     checkBunRuntime(),
@@ -223,55 +223,55 @@ async function runMCPMonitor(): Promise<void> {
     const statusColor = status.status === 'healthy' ? 'green' :
                        status.status === 'warning' ? 'yellow' : 'red';
 
-    console.log(`${icon} ${colorize(status.component, 'bright')}: ${colorize(status.message, statusColor)}`);
+    console.info(`${icon} ${colorize(status.component, 'bright')}: ${colorize(status.message, statusColor)}`);
   }
 
-  console.log();
+  console.info();
 
   // Summary
   const healthy = allStatuses.filter(s => s.status === 'healthy').length;
   const warnings = allStatuses.filter(s => s.status === 'warning').length;
   const errors = allStatuses.filter(s => s.status === 'error').length;
 
-  console.log(colorize('📊 Health Summary:', 'bright'));
-  console.log(`  ${colorize('Healthy', 'green')}: ${healthy}`);
-  console.log(`  ${colorize('Warnings', 'yellow')}: ${warnings}`);
-  console.log(`  ${colorize('Errors', 'red')}: ${errors}`);
-  console.log();
+  console.info(colorize('📊 Health Summary:', 'bright'));
+  console.info(`  ${colorize('Healthy', 'green')}: ${healthy}`);
+  console.info(`  ${colorize('Warnings', 'yellow')}: ${warnings}`);
+  console.info(`  ${colorize('Errors', 'red')}: ${errors}`);
+  console.info();
 
   // Generate MCP snapshot
-  console.log(colorize('💾 Generating MCP snapshot...', 'blue'));
+  console.info(colorize('💾 Generating MCP snapshot...', 'blue'));
   const snapshot = await createMCPSnapshot();
   const filename = await generateReportFilename();
 
   // Save snapshot
   await Bun.write(filename, JSON.stringify(snapshot, null, 2));
-  console.log(`Snapshot saved: ${colorize(filename, 'cyan')}`);
-  console.log();
+  console.info(`Snapshot saved: ${colorize(filename, 'cyan')}`);
+  console.info();
 
   // Quick actions
-  console.log(colorize('🚀 Quick Actions:', 'bright'));
-  console.log(`  ${colorize('bun run validate:bun-urls', 'yellow')} - Full URL validation`);
-  console.log(`  ${colorize('bun run validate:github', 'yellow')} - GitHub ecosystem checks`);
-  console.log(`  ${colorize('bun run ai-demo', 'yellow')} - AI operations demo`);
-  console.log();
+  console.info(colorize('🚀 Quick Actions:', 'bright'));
+  console.info(`  ${colorize('bun run validate:bun-urls', 'yellow')} - Full URL validation`);
+  console.info(`  ${colorize('bun run validate:github', 'yellow')} - GitHub ecosystem checks`);
+  console.info(`  ${colorize('bun run ai-demo', 'yellow')} - AI operations demo`);
+  console.info();
 
   // Overall status
   const overallStatus = errors > 0 ? 'error' : warnings > 0 ? 'warning' : 'healthy';
   const overallColor = overallStatus === 'healthy' ? 'green' :
                       overallStatus === 'warning' ? 'yellow' : 'red';
 
-  console.log(colorize(`🎯 Overall Status: ${overallStatus.toUpperCase()}`, overallColor));
+  console.info(colorize(`🎯 Overall Status: ${overallStatus.toUpperCase()}`, overallColor));
 
   if (errors > 0) {
-    console.log();
-    console.log(colorize('🔧 Issues detected - check components above', 'red'));
+    console.info();
+    console.info(colorize('🔧 Issues detected - check components above', 'red'));
   } else if (warnings > 0) {
-    console.log();
-    console.log(colorize('⚠️  Minor issues detected - monitor closely', 'yellow'));
+    console.info();
+    console.info(colorize('⚠️  Minor issues detected - monitor closely', 'yellow'));
   } else {
-    console.log();
-    console.log(colorize('✨ All systems operational!', 'green'));
+    console.info();
+    console.info(colorize('✨ All systems operational!', 'green'));
   }
 }
 

@@ -3,11 +3,11 @@ const proc = Bun.spawn(['sh', '-c', 'echo "ERROR: AI Model accuracy at 94.51% be
 });
 
 const errors = await proc.stderr.text();
-console.log('🚨 AI System Error Classification:');
+console.info('🚨 AI System Error Classification:');
 errors.trim().split('\n').forEach(line => {
-  if (line.includes('CRITICAL')) console.log('   🚨', line);
-  else if (line.includes('ERROR')) console.log('   ❌', line);
-  else if (line.includes('WARN')) console.log('   ⚠️', line);
+  if (line.includes('CRITICAL')) console.info('   🚨', line);
+  else if (line.includes('ERROR')) console.info('   ❌', line);
+  else if (line.includes('WARN')) console.info('   ⚠️', line);
 });
 
 await proc.exited;

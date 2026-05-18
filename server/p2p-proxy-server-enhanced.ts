@@ -11,6 +11,7 @@
  */
 
 import Redis from 'ioredis';
+import { REDIS_URL } from '../config/ports.ts';
 
 // ============================================================================
 // Brand Configuration
@@ -28,12 +29,12 @@ const BRAND_CONFIG = {
 // Redis Setup
 // ============================================================================
 
-const redis = new Redis(Bun.env.REDIS_URL ?? 'redis://localhost:6379', {
+const redis = new Redis(REDIS_URL, {
   retryStrategy: (times) => Math.min(times * 50, 2000),
   maxRetriesPerRequest: 3,
 });
 
-redis.on('connect', () => console.log('✅ Redis connected'));
+redis.on('connect', () => console.info('✅ Redis connected'));
 
 // ============================================================================
 // P2P Proxy Class
@@ -52,7 +53,7 @@ class P2PProxy {
     const secret = Bun.env[`${provider.toUpperCase()}_WEBHOOK_SECRET`];
     
     if (!secret) {
-      console.log(`⚠️  ${provider} secret not set - accepting (dev mode)`);
+      console.info(`⚠️  ${provider} secret not set - accepting (dev mode)`);
       return true;
     }
     
@@ -432,17 +433,22 @@ const PORT = Number(Bun.env.P2P_PROXY_PORT ?? 3002);
 
 const server = Bun.serve({
   port: PORT,
-  hostname: '0.0.0.0',
+  hostname: process.env.SERVER_HOST || 'localhost',
   
   async fetch(req) {
     const url = new URL(req.url);
     const body = await req.text();
-    const headers = req.headers;
     
+    const origin = req.headers.get('Origin') || '';
+    const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
+    const corsOrigin = allowedOrigins.length > 0 && allowedOrigins.includes(origin)
+      ? origin
+      : (allowedOrigins.length > 0 ? 'null' : '*');
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      'Vary': 'Origin',
     };
     
     if (req.method === 'OPTIONS') {
@@ -497,7 +503,7 @@ const server = Bun.serve({
         const payload = JSON.parse(body);
         const result = await P2PProxy.handleWebhook(provider, payload);
         
-        console.log(`✅ ${provider.toUpperCase()}: $${result.amount} → $${result.credited} (${result.tier})`);
+        console.info(`✅ ${provider.toUpperCase()}: $${result.amount} → $${result.credited} (${result.tier})`);
         
         return new Response(JSON.stringify({ success: true, ...result }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -574,20 +580,20 @@ const server = Bun.serve({
   },
 });
 
-console.log('');
-console.log('╔════════════════════════════════════════════════════════════╗');
-console.log(`║  💈 ${BRAND_CONFIG.brandName} P2P Proxy v2 (Enhanced)           ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log(`║  URL:     http://localhost:${PORT}                        ║`);
-console.log(`║  Pay:     http://localhost:${PORT}/pay?amount=25          ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log('║  Features:                                                 ║');
-console.log('║    • Bun-native CryptoHasher (no node:crypto)              ║');
-console.log('║    • Auto-detect provider from headers                     ║');
-console.log('║    • Dynamic bonuses (first-time + tier)                   ║');
-console.log('║    • Stealth hashed user IDs                               ║');
-console.log('║    • Receipt generation                                    ║');
-console.log('╚════════════════════════════════════════════════════════════╝');
-console.log('');
+console.info('');
+console.info('╔════════════════════════════════════════════════════════════╗');
+console.info(`║  💈 ${BRAND_CONFIG.brandName} P2P Proxy v2 (Enhanced)           ║`);
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info(`║  URL:     http://localhost:${PORT}                        ║`);
+console.info(`║  Pay:     http://localhost:${PORT}/pay?amount=25          ║`);
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info('║  Features:                                                 ║');
+console.info('║    • Bun-native CryptoHasher (no node:crypto)              ║');
+console.info('║    • Auto-detect provider from headers                     ║');
+console.info('║    • Dynamic bonuses (first-time + tier)                   ║');
+console.info('║    • Stealth hashed user IDs                               ║');
+console.info('║    • Receipt generation                                    ║');
+console.info('╚════════════════════════════════════════════════════════════╝');
+console.info('');
 
 export default server;

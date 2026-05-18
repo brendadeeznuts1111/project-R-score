@@ -55,11 +55,11 @@ export async function validateWithFallback(
 
   // Try fallback if provided
   if (fallbackTool) {
-    console.log(`🔄 Trying fallback tool: ${fallbackTool}`);
+    console.info(`🔄 Trying fallback tool: ${fallbackTool}`);
     const fallbackValid = await quickValidate(fallbackTool, args, autoHeal);
 
     if (fallbackValid) {
-      console.log(`✅ Using fallback tool: ${fallbackTool}`);
+      console.info(`✅ Using fallback tool: ${fallbackTool}`);
       return { tool: fallbackTool, valid: true };
     }
   }
@@ -94,13 +94,13 @@ export function setDefaults(defaults: Record<string, string>): void {
   for (const [key, value] of Object.entries(defaults)) {
     if (!process.env[key]) {
       process.env[key] = value;
-      console.log(`🔧 Set default environment variable: ${key}=${value}`);
+      console.info(`🔧 Set default environment variable: ${key}=${value}`);
       setCount++;
     }
   }
 
   if (setCount > 0) {
-    console.log(`✅ Applied ${setCount} default environment variables`);
+    console.info(`✅ Applied ${setCount} default environment variables`);
   }
 }
 
@@ -112,7 +112,7 @@ export function setDefaults(defaults: Record<string, string>): void {
  * Show integration instructions
  */
 export function showIntegrationHelp(): void {
-  console.log(`
+  console.info(`
 🚀 CLI Validation Integration - Quick Start
 
 Add validation to your CLI tools in seconds:
@@ -143,7 +143,7 @@ Add validation to your CLI tools in seconds:
    await validateOrExit('bun', ['--version']);
 
    // Your CLI logic here
-   console.log('✅ CLI tool ready to execute!');
+   console.info('✅ CLI tool ready to execute!');
 
 🔧 AUTO-HEALING:
    Most validation issues can be auto-fixed by:

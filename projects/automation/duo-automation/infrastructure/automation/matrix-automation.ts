@@ -87,7 +87,7 @@ export class MatrixAutomation {
    * Note: Requires manual CAPTCHA completion
    */
   async signupDuoPlus(email: string, password: string, company?: string): Promise<string> {
-    console.log(`🚀 Automating DuoPlus signup for ${email}...`);
+    console.info(`🚀 Automating DuoPlus signup for ${email}...`);
     
     // Check if playwright is available
     let playwright: any;
@@ -113,7 +113,7 @@ export class MatrixAutomation {
       }
       
       // Handle CAPTCHA (pause for manual input)
-      console.log("⏳ Please complete CAPTCHA if present...");
+      console.info("⏳ Please complete CAPTCHA if present...");
       await page.waitForTimeout(TIMEOUTS.CAPTCHA_WAIT_MS);
       
       // Submit form
@@ -135,7 +135,7 @@ export class MatrixAutomation {
         value: apiKey
       });
       
-      console.log(`✓ DuoPlus account created and API key stored`);
+      console.info(`✓ DuoPlus account created and API key stored`);
       
       // Send notification
       await this.notificationService?.send({
@@ -175,7 +175,7 @@ export class MatrixAutomation {
     const count = options.count || DEFAULTS.DEVICE_COUNT;
     const androidVersion = options.androidVersion || DEFAULTS.ANDROID_VERSION;
     
-    console.log(`📱 Provisioning ${count} ${options.os || "android"} device(s) in ${region}...`);
+    console.info(`📱 Provisioning ${count} ${options.os || "android"} device(s) in ${region}...`);
     
     const devices: DuoPlusCloudPhone[] = [];
     const startTime = Date.now();
@@ -225,7 +225,7 @@ export class MatrixAutomation {
           timestamp: new Date()
         });
         
-        console.log(`  ✓ Device ${device.deviceId} created (${adbConnection})`);
+        console.info(`  ✓ Device ${device.deviceId} created (${adbConnection})`);
         
         // Auto-configure if profile specified
         if (options.profile) {
@@ -269,7 +269,7 @@ export class MatrixAutomation {
    * Automated Device Configuration
    */
   async configureDevice(deviceId: string, profileName: string): Promise<void> {
-    console.log(`⚙️  Configuring ${deviceId} with profile ${profileName}...`);
+    console.info(`⚙️  Configuring ${deviceId} with profile ${profileName}...`);
     
     // Get device connection details
     const adbHost = await secrets.get({
@@ -302,7 +302,7 @@ export class MatrixAutomation {
     // Install required apps if specified in profile
     if (profile.mobile?.apps) {
       for (const app of profile.mobile.apps) {
-        console.log(`  📥 Installing ${app.name}...`);
+        console.info(`  📥 Installing ${app.name}...`);
         
         // Download APK if URL provided
         if (app.url) {
@@ -333,7 +333,7 @@ export class MatrixAutomation {
     // Update device metadata
     await this.updateDeviceMetadata(deviceId, { profile: profileName, configured: true });
     
-    console.log(`  ✓ Device ${deviceId} configured`);
+    console.info(`  ✓ Device ${deviceId} configured`);
   }
 
   /**
@@ -354,7 +354,7 @@ export class MatrixAutomation {
    * Automated Verification Code Retrieval
    */
   async getVerificationCode(deviceId: string, service: string, timeout = TIMEOUTS.SMS_DEFAULT_TIMEOUT_MS): Promise<string> {
-    console.log(`⏳ Waiting for ${service} verification code on ${deviceId}...`);
+    console.info(`⏳ Waiting for ${service} verification code on ${deviceId}...`);
     
     const adbHost = await secrets.get({
       service: this.SERVICE_NAME,
@@ -386,7 +386,7 @@ export class MatrixAutomation {
       for (const pattern of patterns) {
         const match = smsList.match(pattern);
         if (match) {
-          console.log(`  ✓ Found code: ${match[1]}`);
+          console.info(`  ✓ Found code: ${match[1]}`);
           return match[1];
         }
       }
@@ -396,7 +396,7 @@ export class MatrixAutomation {
       for (const pattern of patterns) {
         const match = notifications.match(pattern);
         if (match) {
-          console.log(`  ✓ Found code in notification: ${match[1]}`);
+          console.info(`  ✓ Found code in notification: ${match[1]}`);
           return match[1];
         }
       }
@@ -412,7 +412,7 @@ export class MatrixAutomation {
    */
   async bulkProvision(configs: BulkProvisionConfig[]): Promise<Array<{ profile: string; devices: DuoPlusCloudPhone[] }>> {
     const totalCount = configs.reduce((a, c) => a + c.count, 0);
-    console.log(`🚀 Bulk provisioning ${totalCount} devices...`);
+    console.info(`🚀 Bulk provisioning ${totalCount} devices...`);
     
     const results: Array<{ profile: string; devices: DuoPlusCloudPhone[] }> = [];
     let totalCost = 0;
@@ -432,13 +432,13 @@ export class MatrixAutomation {
     }
     
     // Generate report
-    console.log("\n📊 Provisioning Report:");
+    console.info("\n📊 Provisioning Report:");
     const reportData = results.map(r => ({
       profile: r.profile,
       count: r.devices.length,
       ids: r.devices.map((d) => d.deviceId).join(", ")
     }));
-    console.log(Bun.inspect.table(reportData, undefined, { colors: true }));
+    console.info(Bun.inspect.table(reportData, undefined, { colors: true }));
     
     // Send notification with cost summary
     await this.notificationService?.send({
@@ -472,7 +472,7 @@ export class MatrixAutomation {
     failures: number;
     screenshot?: string;
   }> {
-    console.log(`🧪 Running test suite on ${deviceId}...`);
+    console.info(`🧪 Running test suite on ${deviceId}...`);
     
     // Configure with test profile
     await this.configureDevice(deviceId, testProfile);
@@ -499,7 +499,7 @@ export class MatrixAutomation {
     const failed = result.match(/Failures: (\d+)/)?.[1] || "0";
     const failures = parseInt(failed);
     
-    console.log(`  ${passed ? "✓" : "✗"} Tests completed (${failures} failures)`);
+    console.info(`  ${passed ? "✓" : "✗"} Tests completed (${failures} failures)`);
     
     // Capture screenshot of results
     const screenshotPath = `/tmp/test-result-${deviceId}.png`;
@@ -519,7 +519,7 @@ export class MatrixAutomation {
    * Cleanup & Decommission
    */
   async decommissionDevice(deviceId: string): Promise<void> {
-    console.log(`🗑️  Decommissioning ${deviceId}...`);
+    console.info(`🗑️  Decommissioning ${deviceId}...`);
     
     try {
       // Remove from DuoPlus
@@ -538,7 +538,7 @@ export class MatrixAutomation {
       // Record decommissioning cost (negative)
       await this.costTracker?.recordDecommissioning(deviceId);
       
-      console.log(`  ✓ Device ${deviceId} decommissioned`);
+      console.info(`  ✓ Device ${deviceId} decommissioned`);
       
       await this.notificationService?.send({
         title: "Device Decommissioned",
@@ -561,7 +561,7 @@ export class MatrixAutomation {
     testResults: Array<{ device: string; passed: boolean; failures: number }>;
     totalCost: number;
   }> {
-    console.log(`🚀 Starting pipeline: ${pipeline.name}`);
+    console.info(`🚀 Starting pipeline: ${pipeline.name}`);
     
     // 1. Provision devices
     const devices = await this.bulkProvision(pipeline.devices);
@@ -581,17 +581,17 @@ export class MatrixAutomation {
     const totalCost = await this.costTracker?.getTotalCost() || 0;
     
     // 4. Report
-    console.log("\n📊 Pipeline Results:");
+    console.info("\n📊 Pipeline Results:");
     const resultsData = testResults.map(r => ({
       device: r.device,
       passed: r.passed ? "✓" : "✗",
       failures: r.failures
     }));
-    console.log(Bun.inspect.table(resultsData, undefined, { colors: true }));
+    console.info(Bun.inspect.table(resultsData, undefined, { colors: true }));
     
     // 5. Cleanup if configured
     if (pipeline.cleanup) {
-      console.log("\n🧹 Cleaning up devices...");
+      console.info("\n🧹 Cleaning up devices...");
       for (const group of devices) {
         for (const device of group.devices) {
           await this.decommissionDevice(device.deviceId);
@@ -677,7 +677,7 @@ export class MatrixAutomation {
     const line = JSON.stringify(logEntry) + "\n";
     await Bun.write(logPath, existing + line);
     
-    console.log(`  📝 Metadata for ${deviceId}:`, JSON.stringify(metadata));
+    console.info(`  📝 Metadata for ${deviceId}:`, JSON.stringify(metadata));
   }
 
   private createNotificationService(config: NonNullable<AutomationConfig["notifications"]>): NotificationService {

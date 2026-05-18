@@ -19,7 +19,7 @@ const server = serve({
       connections.set(clientId, ws as any);
       (ws as any).clientId = clientId;
 
-      console.log(`🔌 WebSocket client connected: ${clientId} (${connections.size} total)`);
+      console.info(`🔌 WebSocket client connected: ${clientId} (${connections.size} total)`);
 
       // Send welcome message
       ws.send(JSON.stringify({
@@ -31,7 +31,7 @@ const server = serve({
 
       // Start telemetry if this is the first connection
       if (connections.size === 1) {
-        console.log('📡 Starting telemetry broadcast (every 5 seconds)');
+        console.info('📡 Starting telemetry broadcast (every 5 seconds)');
         telemetryInterval = setInterval(() => {
           const telemetry = {
             type: 'telemetry',
@@ -58,7 +58,7 @@ const server = serve({
 
       try {
         const data = JSON.parse(message.toString());
-        console.log(`📨 Message from ${clientId}: ${data.type}`);
+        console.info(`📨 Message from ${clientId}: ${data.type}`);
 
         switch (data.type) {
           case 'ping':
@@ -121,11 +121,11 @@ const server = serve({
       const clientId = (ws as any).clientId;
       if (clientId) {
         connections.delete(clientId);
-        console.log(`🔌 WebSocket client disconnected: ${clientId} (${connections.size} remaining)`);
+        console.info(`🔌 WebSocket client disconnected: ${clientId} (${connections.size} remaining)`);
 
         // Stop telemetry if no more connections
         if (connections.size === 0 && telemetryInterval) {
-          console.log('📡 Stopping telemetry broadcast (no active connections)');
+          console.info('📡 Stopping telemetry broadcast (no active connections)');
           clearInterval(telemetryInterval);
           telemetryInterval = undefined;
         }
@@ -354,7 +354,7 @@ const server = serve({
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Received SIGINT, shutting down gracefully...');
+  console.info('\n🛑 Received SIGINT, shutting down gracefully...');
 
   // Close all WebSocket connections
   for (const [id, ws] of connections) {
@@ -370,11 +370,11 @@ process.on('SIGINT', () => {
   }
 
   server.stop();
-  console.log('✅ WebSocket Hub shut down cleanly');
+  console.info('✅ WebSocket Hub shut down cleanly');
   process.exit(0);
 });
 
-console.log(`
+console.info(`
 🚀 MCP Registry WebSocket Hub Server
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🔌 WebSocket Endpoint: ws://localhost:3002

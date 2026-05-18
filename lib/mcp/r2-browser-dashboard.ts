@@ -78,8 +78,8 @@ export class R2BrowserDashboard {
    * Initialize the R2 browser and dashboard
    */
   async initialize(): Promise<void> {
-    console.log(styled('🌐 Initializing R2 Browser & Dashboard', 'accent'));
-    console.log(styled('=====================================', 'accent'));
+    console.info(styled('🌐 Initializing R2 Browser & Dashboard', 'accent'));
+    console.info(styled('=====================================', 'accent'));
 
     // Test R2 connection
     await this.testR2Connection();
@@ -93,26 +93,26 @@ export class R2BrowserDashboard {
     // Store dashboard data
     await this.storeDashboardData();
 
-    console.log(styled('✅ R2 Browser & Dashboard initialized', 'success'));
+    console.info(styled('✅ R2 Browser & Dashboard initialized', 'success'));
   }
 
   /**
    * Test R2 connection
    */
   private async testR2Connection(): Promise<void> {
-    console.log(styled('🔌 Testing R2 connection...', 'info'));
+    console.info(styled('🔌 Testing R2 connection...', 'info'));
 
     try {
       const configStatus = await this.r2.getConfigStatus();
       this.metrics.systemHealth.r2Connection = configStatus.connected;
 
       if (configStatus.connected) {
-        console.log(styled('✅ R2 connection established', 'success'));
+        console.info(styled('✅ R2 connection established', 'success'));
       } else {
-        console.log(styled('❌ R2 connection failed', 'error'));
+        console.info(styled('❌ R2 connection failed', 'error'));
       }
     } catch (error) {
-      console.log(styled(`❌ R2 connection error: ${error.message}`, 'error'));
+      console.info(styled(`❌ R2 connection error: ${error.message}`, 'error'));
       this.metrics.systemHealth.r2Connection = false;
       this.metrics.systemHealth.errorCount++;
     }
@@ -122,7 +122,7 @@ export class R2BrowserDashboard {
    * Load all R2 data and categorize
    */
   private async loadAllR2Data(): Promise<void> {
-    console.log(styled('📊 Loading all R2 data...', 'info'));
+    console.info(styled('📊 Loading all R2 data...', 'info'));
 
     const categories = {
       mcp: { count: 0, size: 0, lastUpdated: '' },
@@ -152,7 +152,7 @@ export class R2BrowserDashboard {
     }
 
     this.metrics.categories = categories;
-    console.log(
+    console.info(
       styled(
         `✅ Loaded ${this.metrics.totalObjects} objects across ${Object.keys(categories).length} categories`,
         'success'
@@ -325,7 +325,7 @@ export class R2BrowserDashboard {
    * Generate dashboard metrics
    */
   private async generateMetrics(): Promise<void> {
-    console.log(styled('📈 Generating dashboard metrics...', 'info'));
+    console.info(styled('📈 Generating dashboard metrics...', 'info'));
 
     // Calculate performance metrics
     this.metrics.systemHealth.performance.avgResponseTime = 85 + Math.random() * 20; // 85-105ms
@@ -359,14 +359,14 @@ export class R2BrowserDashboard {
       },
     ];
 
-    console.log(styled('✅ Dashboard metrics generated', 'success'));
+    console.info(styled('✅ Dashboard metrics generated', 'success'));
   }
 
   /**
    * Store dashboard data in R2
    */
   private async storeDashboardData(): Promise<void> {
-    console.log(styled('💾 Storing dashboard data...', 'info'));
+    console.info(styled('💾 Storing dashboard data...', 'info'));
 
     try {
       // Store main dashboard data
@@ -394,9 +394,9 @@ export class R2BrowserDashboard {
       // Store system health
       await this.r2.putJSON('dashboard/health.json', this.metrics.systemHealth);
 
-      console.log(styled('✅ Dashboard data stored in R2', 'success'));
+      console.info(styled('✅ Dashboard data stored in R2', 'success'));
     } catch (error) {
-      console.log(styled(`❌ Failed to store dashboard data: ${error.message}`, 'error'));
+      console.info(styled(`❌ Failed to store dashboard data: ${error.message}`, 'error'));
       this.metrics.systemHealth.errorCount++;
     }
   }
@@ -405,7 +405,7 @@ export class R2BrowserDashboard {
    * Generate HTML dashboard
    */
   async generateHTMLDashboard(): Promise<string> {
-    console.log(styled('🎨 Generating HTML dashboard...', 'info'));
+    console.info(styled('🎨 Generating HTML dashboard...', 'info'));
 
     const html = `
 <!DOCTYPE html>
@@ -651,7 +651,7 @@ export class R2BrowserDashboard {
 
         // Auto-refresh every 30 seconds
         setTimeout(() => {
-            console.log('Auto-refreshing dashboard...');
+            console.info('Auto-refreshing dashboard...');
             // refreshDashboard(); // Uncomment for auto-refresh
         }, 30000);
     </script>
@@ -660,7 +660,7 @@ export class R2BrowserDashboard {
 
     // Store HTML dashboard
     await this.r2.putJSON('dashboard/index.html', { html, timestamp: new Date().toISOString() });
-    console.log(styled('✅ HTML dashboard generated and stored', 'success'));
+    console.info(styled('✅ HTML dashboard generated and stored', 'success'));
 
     return html;
   }
@@ -669,7 +669,7 @@ export class R2BrowserDashboard {
    * Browse R2 data by category
    */
   async browseCategory(category: string): Promise<R2DataItem[]> {
-    console.log(styled(`🔍 Browsing category: ${category}`, 'info'));
+    console.info(styled(`🔍 Browsing category: ${category}`, 'info'));
 
     // In production, would fetch actual R2 data for the category
     const categoryData = this.getSimulatedR2Data().filter(
@@ -683,7 +683,7 @@ export class R2BrowserDashboard {
    * Get specific R2 object
    */
   async getObject(key: string): Promise<R2DataItem | null> {
-    console.log(styled(`📄 Getting object: ${key}`, 'info'));
+    console.info(styled(`📄 Getting object: ${key}`, 'info'));
 
     try {
       // In production, would fetch actual object from R2
@@ -698,7 +698,7 @@ export class R2BrowserDashboard {
 
       return null;
     } catch (error) {
-      console.log(styled(`❌ Failed to get object: ${error.message}`, 'error'));
+      console.info(styled(`❌ Failed to get object: ${error.message}`, 'error'));
       return null;
     }
   }
@@ -836,34 +836,34 @@ export class R2BrowserDashboard {
    * Display dashboard status
    */
   async displayStatus(): Promise<void> {
-    console.log(styled('\n🌐 R2 Browser & Dashboard Status', 'accent'));
-    console.log(styled('=================================', 'accent'));
+    console.info(styled('\n🌐 R2 Browser & Dashboard Status', 'accent'));
+    console.info(styled('=================================', 'accent'));
 
-    console.log(styled('\n🔧 System Components:', 'info'));
-    console.log(
+    console.info(styled('\n🔧 System Components:', 'info'));
+    console.info(
       styled(
         `  🌐 R2 Connection: ${this.metrics.systemHealth.r2Connection ? '✅ Active' : '❌ Inactive'}`,
         this.metrics.systemHealth.r2Connection ? 'success' : 'error'
       )
     );
-    console.log(styled(`  📊 Dashboard: ✅ Generated`, 'success'));
-    console.log(styled(`  🔍 Browser: ✅ Ready`, 'success'));
-    console.log(styled(`  📈 Metrics: ✅ Collected`, 'success'));
+    console.info(styled(`  📊 Dashboard: ✅ Generated`, 'success'));
+    console.info(styled(`  🔍 Browser: ✅ Ready`, 'success'));
+    console.info(styled(`  📈 Metrics: ✅ Collected`, 'success'));
 
-    console.log(styled('\n📊 Storage Overview:', 'info'));
-    console.log(styled(`  Total Objects: ${this.metrics.totalObjects.toLocaleString()}`, 'muted'));
-    console.log(
+    console.info(styled('\n📊 Storage Overview:', 'info'));
+    console.info(styled(`  Total Objects: ${this.metrics.totalObjects.toLocaleString()}`, 'muted'));
+    console.info(
       styled(`  Total Size: ${(this.metrics.totalSize / 1024 / 1024).toFixed(2)} MB`, 'muted')
     );
-    console.log(styled(`  Categories: ${Object.keys(this.metrics.categories).length}`, 'muted'));
+    console.info(styled(`  Categories: ${Object.keys(this.metrics.categories).length}`, 'muted'));
 
-    console.log(styled('\n📂 Category Breakdown:', 'info'));
+    console.info(styled('\n📂 Category Breakdown:', 'info'));
     for (const [category, data] of Object.entries(this.metrics.categories)) {
       if (data.count > 0) {
-        console.log(styled(`  ${category}:`, 'muted'));
-        console.log(styled(`    Objects: ${data.count}`, 'muted'));
-        console.log(styled(`    Size: ${(data.size / 1024).toFixed(2)} KB`, 'muted'));
-        console.log(
+        console.info(styled(`  ${category}:`, 'muted'));
+        console.info(styled(`    Objects: ${data.count}`, 'muted'));
+        console.info(styled(`    Size: ${(data.size / 1024).toFixed(2)} KB`, 'muted'));
+        console.info(
           styled(
             `    Last Updated: ${data.lastUpdated ? new Date(data.lastUpdated).toLocaleString() : 'Never'}`,
             'muted'
@@ -872,25 +872,25 @@ export class R2BrowserDashboard {
       }
     }
 
-    console.log(styled('\n⚡ Performance:', 'info'));
-    console.log(
+    console.info(styled('\n⚡ Performance:', 'info'));
+    console.info(
       styled(
         `  Response Time: ${this.metrics.systemHealth.performance.avgResponseTime.toFixed(0)}ms`,
         'muted'
       )
     );
-    console.log(
+    console.info(
       styled(
         `  Throughput: ${this.metrics.systemHealth.performance.throughput.toFixed(0)} ops/sec`,
         'muted'
       )
     );
-    console.log(styled(`  Error Count: ${this.metrics.systemHealth.errorCount}`, 'muted'));
+    console.info(styled(`  Error Count: ${this.metrics.systemHealth.errorCount}`, 'muted'));
 
-    console.log(styled('\n🔗 Access URLs:', 'info'));
-    console.log(styled(`  Dashboard: https://docs.factory-wager.com`, 'muted'));
-    console.log(styled(`  R2 Browser: https://r2.factory-wager.com`, 'muted'));
-    console.log(styled(`  Registry: https://registry.factory-wager.com`, 'muted'));
+    console.info(styled('\n🔗 Access URLs:', 'info'));
+    console.info(styled(`  Dashboard: https://docs.factory-wager.com`, 'muted'));
+    console.info(styled(`  R2 Browser: https://r2.factory-wager.com`, 'muted'));
+    console.info(styled(`  Registry: https://registry.factory-wager.com`, 'muted'));
   }
 }
 
@@ -905,6 +905,6 @@ if (import.meta.main) {
   await dashboard.generateHTMLDashboard();
   await dashboard.displayStatus();
 
-  console.log(styled('\n🎉 R2 Browser & Dashboard complete!', 'success'));
-  console.log(styled('Access your dashboard at: https://docs.factory-wager.com 🌐', 'info'));
+  console.info(styled('\n🎉 R2 Browser & Dashboard complete!', 'success'));
+  console.info(styled('Access your dashboard at: https://docs.factory-wager.com 🌐', 'info'));
 }

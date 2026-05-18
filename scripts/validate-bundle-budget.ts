@@ -16,7 +16,7 @@ async function main() {
   const outputKb = analysis.summary.outputBytes / 1024;
   const ok = outputKb <= maxKb;
 
-  console.log(
+  console.info(
     JSON.stringify(
       {
         ok,

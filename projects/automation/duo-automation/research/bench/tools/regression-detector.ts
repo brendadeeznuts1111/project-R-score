@@ -34,20 +34,20 @@ class PerformanceRegressionDetector {
   };
 
   async detectRegressions(currentMetrics: PerformanceBaseline): Promise<RegressionAlert[]> {
-    console.log('🔍 **Performance Regression Detection**');
-    console.log('='.repeat(50));
+    console.info('🔍 **Performance Regression Detection**');
+    console.info('='.repeat(50));
 
     const baseline = await this.loadBaseline();
     const alerts: RegressionAlert[] = [];
 
     if (!baseline) {
-      console.log('📝 No baseline found - establishing current metrics as baseline');
+      console.info('📝 No baseline found - establishing current metrics as baseline');
       await this.saveBaseline(currentMetrics);
       return [];
     }
 
-    console.log(`📊 Comparing with baseline from ${new Date(baseline.timestamp).toLocaleDateString()}`);
-    console.log('');
+    console.info(`📊 Comparing with baseline from ${new Date(baseline.timestamp).toLocaleDateString()}`);
+    console.info('');
 
     // Check each metric for regression
     const metrics = [
@@ -96,7 +96,7 @@ class PerformanceRegressionDetector {
         const alert = this.createAlert(severity, metric, deviation);
         alerts.push(alert);
       } else {
-        console.log(`✅ ${metric.name}: ${this.formatChange(metric.current, metric.baseline, metric.higherIsBetter)}`);
+        console.info(`✅ ${metric.name}: ${this.formatChange(metric.current, metric.baseline, metric.higherIsBetter)}`);
       }
     }
 
@@ -105,12 +105,12 @@ class PerformanceRegressionDetector {
       this.displayAlerts(alerts);
       await this.saveRegressionReport(alerts, currentMetrics, baseline);
     } else {
-      console.log('🎉 No performance regressions detected!');
+      console.info('🎉 No performance regressions detected!');
     }
 
     // Update baseline if performance improved
     if (this.shouldUpdateBaseline(currentMetrics, baseline)) {
-      console.log('📈 Performance improved - updating baseline');
+      console.info('📈 Performance improved - updating baseline');
       await this.saveBaseline(currentMetrics);
     }
 
@@ -160,17 +160,17 @@ class PerformanceRegressionDetector {
   }
 
   private displayAlerts(alerts: RegressionAlert[]) {
-    console.log('');
-    console.log('🚨 **PERFORMANCE REGRESSION ALERTS**');
-    console.log('='.repeat(60));
+    console.info('');
+    console.info('🚨 **PERFORMANCE REGRESSION ALERTS**');
+    console.info('='.repeat(60));
 
     alerts.forEach(alert => {
       const icon = alert.severity === 'critical' ? '🔴' : alert.severity === 'warning' ? '🟡' : '🟠';
-      console.log(`${icon} **${alert.severity.toUpperCase()}**: ${alert.metric}`);
-      console.log(`   Current: ${alert.current.toFixed(2)} | Baseline: ${alert.baseline.toFixed(2)}`);
-      console.log(`   Deviation: ${(alert.deviation * 100).toFixed(1)}% | Threshold: ${(alert.threshold * 100).toFixed(1)}%`);
-      console.log(`   💡 ${alert.recommendation}`);
-      console.log('');
+      console.info(`${icon} **${alert.severity.toUpperCase()}**: ${alert.metric}`);
+      console.info(`   Current: ${alert.current.toFixed(2)} | Baseline: ${alert.baseline.toFixed(2)}`);
+      console.info(`   Deviation: ${(alert.deviation * 100).toFixed(1)}% | Threshold: ${(alert.threshold * 100).toFixed(1)}%`);
+      console.info(`   💡 ${alert.recommendation}`);
+      console.info('');
     });
   }
 
@@ -213,7 +213,7 @@ class PerformanceRegressionDetector {
       const fs = await import('fs');
       fs.writeFileSync(this.baselineFile, JSON.stringify(baseline, null, 2));
       
-      console.log('💾 Performance baseline saved');
+      console.info('💾 Performance baseline saved');
     } catch (error: any) {
       console.error('❌ Failed to save baseline:', error.message);
     }
@@ -246,7 +246,7 @@ class PerformanceRegressionDetector {
       const manager = new BunR2AppleManager({}, Bun.env.R2_BUCKET!);
       await manager.uploadReport(reportData, `regression-alert-${Date.now()}.json`);
       
-      console.log('📤 Regression report uploaded to R2');
+      console.info('📤 Regression report uploaded to R2');
       
     } catch (error: any) {
       console.error('❌ Failed to upload regression report:', error.message);
@@ -271,7 +271,7 @@ if (Bun.main === import.meta.path) {
   const alerts = await detector.detectRegressions(currentMetrics);
   
   if (alerts.length > 0) {
-    console.log(`\n🚨 ${alerts.length} regression(s) detected!`);
+    console.info(`\n🚨 ${alerts.length} regression(s) detected!`);
   }
 }
 

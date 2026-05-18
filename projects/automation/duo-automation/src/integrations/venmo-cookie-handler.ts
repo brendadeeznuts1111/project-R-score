@@ -48,7 +48,7 @@ export class VenmoCookieHandler {
       // Persist to storage (database, file, etc.)
       await this.persistCookies(userId, venmoCookie);
       
-      console.log(`🍪 Stored ${Object.keys(cookies).length} cookies for user ${userId}`);
+      console.info(`🍪 Stored ${Object.keys(cookies).length} cookies for user ${userId}`);
       
     } catch (error) {
       console.error('Failed to store Venmo cookies:', error);
@@ -107,7 +107,7 @@ export class VenmoCookieHandler {
         this.cookieStore.delete(userId);
       }
       
-      console.log(`🗑️ Invalidated cookies for user ${userId}`);
+      console.info(`🗑️ Invalidated cookies for user ${userId}`);
       
     } catch (error) {
       console.error('Failed to invalidate cookies:', error);
@@ -201,7 +201,7 @@ export class VenmoCookieHandler {
       isActive: venmoCookie.isActive
     };
     
-    console.log(`💾 Persisting cookies for user ${userId}:`, {
+    console.info(`💾 Persisting cookies for user ${userId}:`, {
       domain: cookieData.domain,
       cookieCount: Object.keys(cookieData.cookies).length,
       expires: cookieData.expires
@@ -222,7 +222,7 @@ export class VenmoCookieHandler {
     try {
       // This would load from your database
       // For demo purposes, return null
-      console.log(`📥 Loading cookies for user ${userId} from storage`);
+      console.info(`📥 Loading cookies for user ${userId} from storage`);
       return null;
       
       // In production:
@@ -258,7 +258,7 @@ export class VenmoCookieHandler {
     }
     
     if (cleanedCount > 0) {
-      console.log(`🧹 Cleaned up ${cleanedCount} expired cookie sessions`);
+      console.info(`🧹 Cleaned up ${cleanedCount} expired cookie sessions`);
     }
   }
 
@@ -444,5 +444,5 @@ const paymentResult = await apiClient.processPayment('user-123', {
   note: 'Dinner'
 });
 
-console.log('Payment result:', paymentResult);
+console.info('Payment result:', paymentResult);
 */

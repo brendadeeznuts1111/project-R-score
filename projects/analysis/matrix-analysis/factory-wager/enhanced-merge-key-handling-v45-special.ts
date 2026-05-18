@@ -3,10 +3,10 @@
  * Sophisticated merge key detection with comprehensive tracking
  */
 
-console.log('🔧 ENHANCED MERGE KEY HANDLING v4.5 - SPECIAL IMPLEMENTATION!')
-console.log('='.repeat(80))
+console.info('🔧 ENHANCED MERGE KEY HANDLING v4.5 - SPECIAL IMPLEMENTATION!')
+console.info('='.repeat(80))
 
-console.log(`
+console.info(`
 🎯 SOPHISTICATED MERGE KEY DETECTION SYSTEM DEPLOYED!
 
 ✅ SPECIAL HANDLING FOR MERGE KEYS (<<: *anchor) - COMPLETE:
@@ -171,9 +171,9 @@ The enhanced merge key handling provides unprecedented visibility into YAML inhe
 🔧✅ ENHANCED MERGE KEY HANDLING v4.5 - SPECIAL IMPLEMENTATION COMPLETE! ✅🔧
 `)
 
-console.log('🔧✅ ENHANCED MERGE KEY HANDLING v4.5 - SPECIAL IMPLEMENTATION!')
-console.log('🎯 Special detection - Advanced "<<" key handling!')
-console.log('📊 Enhanced tracking - Comprehensive inheritance chains!')
-console.log('🎨 Visual integration - Color-coded merge indicators!')
-console.log('🔗 System cohesion - Seamless integration!')
-console.log('💎 FactoryWager v4.5 - Sophisticated merge processing complete!')
+console.info('🔧✅ ENHANCED MERGE KEY HANDLING v4.5 - SPECIAL IMPLEMENTATION!')
+console.info('🎯 Special detection - Advanced "<<" key handling!')
+console.info('📊 Enhanced tracking - Comprehensive inheritance chains!')
+console.info('🎨 Visual integration - Color-coded merge indicators!')
+console.info('🔗 System cohesion - Seamless integration!')
+console.info('💎 FactoryWager v4.5 - Sophisticated merge processing complete!')

@@ -94,17 +94,17 @@ class EnhancedRolloutScheduler {
 
   async start(): Promise<void> {
     if (this.state.isRunning) {
-      console.log('⚠️ Rollout already in progress');
+      console.info('⚠️ Rollout already in progress');
       return;
     }
 
-    console.log('🚀 FactoryWager Enhanced Rollout Scheduler v2.0');
-    console.log('================================================');
-    console.log(`📊 Total Duration: ${this.config.totalDuration} minutes`);
-    console.log(`🎯 Risk Threshold: ${this.config.riskThreshold}/100`);
-    console.log(`🔄 Auto-Advance: ${this.config.autoAdvance ? 'ENABLED' : 'DISABLED'}`);
-    console.log(`📡 SSE Notifications: ${this.config.sseEnabled ? 'ENABLED' : 'DISABLED'}`);
-    console.log('');
+    console.info('🚀 FactoryWager Enhanced Rollout Scheduler v2.0');
+    console.info('================================================');
+    console.info(`📊 Total Duration: ${this.config.totalDuration} minutes`);
+    console.info(`🎯 Risk Threshold: ${this.config.riskThreshold}/100`);
+    console.info(`🔄 Auto-Advance: ${this.config.autoAdvance ? 'ENABLED' : 'DISABLED'}`);
+    console.info(`📡 SSE Notifications: ${this.config.sseEnabled ? 'ENABLED' : 'DISABLED'}`);
+    console.info('');
 
     this.state.isRunning = true;
     this.state.startTime = Date.now();
@@ -119,7 +119,7 @@ class EnhancedRolloutScheduler {
     // Start monitoring loop
     this.startMonitoringLoop();
 
-    console.log(`✅ Rollout started - Phase ${this.state.currentPhase}: ${this.config.phases[this.state.currentPhase].description}`);
+    console.info(`✅ Rollout started - Phase ${this.state.currentPhase}: ${this.config.phases[this.state.currentPhase].description}`);
     this.broadcastUpdate({
       type: 'rollout_started',
       phase: this.state.currentPhase,
@@ -129,7 +129,7 @@ class EnhancedRolloutScheduler {
 
   async pause(): Promise<void> {
     if (!this.state.isRunning) {
-      console.log('⚠️ No rollout in progress');
+      console.info('⚠️ No rollout in progress');
       return;
     }
 
@@ -137,7 +137,7 @@ class EnhancedRolloutScheduler {
     const currentPhase = this.config.phases[this.state.currentPhase];
     currentPhase.status = 'paused';
 
-    console.log(`⏸️ Rollout paused at Phase ${this.state.currentPhase}: ${currentPhase.description}`);
+    console.info(`⏸️ Rollout paused at Phase ${this.state.currentPhase}: ${currentPhase.description}`);
     this.broadcastUpdate({
       type: 'rollout_paused',
       phase: this.state.currentPhase,
@@ -147,7 +147,7 @@ class EnhancedRolloutScheduler {
 
   async resume(): Promise<void> {
     if (!this.state.isRunning || !this.state.isPaused) {
-      console.log('⚠️ No paused rollout to resume');
+      console.info('⚠️ No paused rollout to resume');
       return;
     }
 
@@ -155,7 +155,7 @@ class EnhancedRolloutScheduler {
     const currentPhase = this.config.phases[this.state.currentPhase];
     currentPhase.status = 'active';
 
-    console.log(`▶️ Rollout resumed at Phase ${this.state.currentPhase}: ${currentPhase.description}`);
+    console.info(`▶️ Rollout resumed at Phase ${this.state.currentPhase}: ${currentPhase.description}`);
     this.broadcastUpdate({
       type: 'rollout_resumed',
       phase: this.state.currentPhase,
@@ -165,11 +165,11 @@ class EnhancedRolloutScheduler {
 
   async rollback(): Promise<void> {
     if (!this.state.isRunning) {
-      console.log('⚠️ No rollout in progress');
+      console.info('⚠️ No rollout in progress');
       return;
     }
 
-    console.log('🔄 Initiating rollback...');
+    console.info('🔄 Initiating rollback...');
     
     // Stop current rollout
     this.stop();
@@ -177,7 +177,7 @@ class EnhancedRolloutScheduler {
     // Reset to previous stable phase or 0
     const targetPhase = Math.max(0, this.state.currentPhase - 1);
     
-    console.log(`🔙 Rolled back to Phase ${targetPhase}: ${this.config.phases[targetPhase].description}`);
+    console.info(`🔙 Rolled back to Phase ${targetPhase}: ${this.config.phases[targetPhase].description}`);
     this.broadcastUpdate({
       type: 'rollback_completed',
       fromPhase: this.state.currentPhase,
@@ -191,13 +191,13 @@ class EnhancedRolloutScheduler {
 
   async advancePhase(): Promise<void> {
     if (!this.state.isRunning || this.state.isPaused) {
-      console.log('⚠️ Cannot advance phase - rollout not active');
+      console.info('⚠️ Cannot advance phase - rollout not active');
       return;
     }
 
     const nextPhase = this.state.currentPhase + 1;
     if (nextPhase >= this.config.phases.length) {
-      console.log('🎉 All phases completed!');
+      console.info('🎉 All phases completed!');
       this.complete();
       return;
     }
@@ -205,7 +205,7 @@ class EnhancedRolloutScheduler {
     // Check risk threshold before advancing
     const currentHealth = this.calculateOverallHealth();
     if (currentHealth < (100 - this.config.riskThreshold)) {
-      console.log(`⚠️ Health score ${currentHealth}% below threshold - pausing advancement`);
+      console.info(`⚠️ Health score ${currentHealth}% below threshold - pausing advancement`);
       this.state.isPaused = true;
       this.broadcastUpdate({
         type: 'advancement_paused',
@@ -227,8 +227,8 @@ class EnhancedRolloutScheduler {
     nextPhaseConfig.status = 'active';
     nextPhaseConfig.startTime = Date.now();
 
-    console.log(`📈 Advanced to Phase ${nextPhase}: ${nextPhaseConfig.description} (${nextPhaseConfig.percentage}% traffic)`);
-    console.log(`   Risk Score: ${nextPhaseConfig.riskScore}/100`);
+    console.info(`📈 Advanced to Phase ${nextPhase}: ${nextPhaseConfig.description} (${nextPhaseConfig.percentage}% traffic)`);
+    console.info(`   Risk Score: ${nextPhaseConfig.riskScore}/100`);
     
     this.broadcastUpdate({
       type: 'phase_advanced',
@@ -254,7 +254,7 @@ class EnhancedRolloutScheduler {
     this.state.isRunning = false;
     this.state.endTime = Date.now();
 
-    console.log('🛑 Rollout stopped');
+    console.info('🛑 Rollout stopped');
     this.broadcastUpdate({
       type: 'rollout_stopped',
       timestamp: new Date().toISOString()
@@ -268,9 +268,9 @@ class EnhancedRolloutScheduler {
     finalPhase.status = 'completed';
     finalPhase.endTime = Date.now();
 
-    console.log('🎉 Rollout completed successfully!');
-    console.log(`📊 Final Health Score: ${this.state.overallHealth}%`);
-    console.log(`⏱️ Total Duration: ${Math.round((Date.now() - this.state.startTime) / 60000)} minutes`);
+    console.info('🎉 Rollout completed successfully!');
+    console.info(`📊 Final Health Score: ${this.state.overallHealth}%`);
+    console.info(`⏱️ Total Duration: ${Math.round((Date.now() - this.state.startTime) / 60000)} minutes`);
     
     this.broadcastUpdate({
       type: 'rollout_completed',
@@ -395,7 +395,7 @@ class EnhancedRolloutScheduler {
 
     // Auto-rollback if health is critically low
     if (health < 70) {
-      console.log(`🚨 Critical health detected (${health}%) - initiating auto-rollback`);
+      console.info(`🚨 Critical health detected (${health}%) - initiating auto-rollback`);
       this.rollback();
     }
   }
@@ -482,9 +482,9 @@ class EnhancedRolloutScheduler {
     });
 
     this.server.listen(this.config.port, () => {
-      console.log(`📡 SSE server running on http://localhost:${this.config.port}`);
-      console.log(`   Events: http://localhost:${this.config.port}/events`);
-      console.log(`   Status: http://localhost:${this.config.port}/status`);
+      console.info(`📡 SSE server running on http://localhost:${this.config.port}`);
+      console.info(`   Events: http://localhost:${this.config.port}/events`);
+      console.info(`   Status: http://localhost:${this.config.port}/status`);
     });
   }
 
@@ -519,7 +519,7 @@ class EnhancedRolloutScheduler {
 
     const filename = `.factory-wager/reports/rollout-completion-${Date.now()}.json`;
     writeFileSync(filename, JSON.stringify(report, null, 2));
-    console.log(`📄 Completion report saved: ${filename}`);
+    console.info(`📄 Completion report saved: ${filename}`);
   }
 
   private saveRollbackReport(targetPhase: number): void {
@@ -535,7 +535,7 @@ class EnhancedRolloutScheduler {
 
     const filename = `.factory-wager/reports/rollback-${Date.now()}.json`;
     writeFileSync(filename, JSON.stringify(report, null, 2));
-    console.log(`📄 Rollback report saved: ${filename}`);
+    console.info(`📄 Rollback report saved: ${filename}`);
   }
 }
 
@@ -563,7 +563,7 @@ if (import.meta.main) {
   switch (command) {
     case 'start':
       await scheduler.start();
-      console.log('Press Ctrl+C to stop the rollout');
+      console.info('Press Ctrl+C to stop the rollout');
       break;
     
     case 'pause':
@@ -583,11 +583,11 @@ if (import.meta.main) {
       break;
     
     case 'status':
-      console.log(JSON.stringify(scheduler.getRolloutStatus(), null, 2));
+      console.info(JSON.stringify(scheduler.getRolloutStatus(), null, 2));
       break;
     
     default:
-      console.log('Usage: bun rollout-scheduler.ts [start|pause|resume|advance|rollback|status]');
+      console.info('Usage: bun rollout-scheduler.ts [start|pause|resume|advance|rollback|status]');
   }
 }
 

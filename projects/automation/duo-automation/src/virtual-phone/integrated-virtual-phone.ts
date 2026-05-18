@@ -91,7 +91,7 @@ export class IntegratedVirtualPhone {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🚀 Initializing Integrated Virtual Phone System...');
+      console.info('🚀 Initializing Integrated Virtual Phone System...');
       
       // Connect to all components
       const dbConnected = await this.databaseIntegration.connect();
@@ -101,7 +101,7 @@ export class IntegratedVirtualPhone {
         throw new Error('Failed to connect to database or bucket storage');
       }
       
-      console.log('✅ Database and bucket connections established');
+      console.info('✅ Database and bucket connections established');
       
       // Start automatic processes
       if (this.config.autoSync) {
@@ -113,7 +113,7 @@ export class IntegratedVirtualPhone {
       }
       
       this.isInitialized = true;
-      console.log('✅ Integrated Virtual Phone System initialized successfully');
+      console.info('✅ Integrated Virtual Phone System initialized successfully');
       
       return true;
     } catch (error) {
@@ -127,7 +127,7 @@ export class IntegratedVirtualPhone {
    */
   async createPhoneRecord(phoneNumber: string, carrier: string, region: string): Promise<PhoneRecord | null> {
     try {
-      console.log(`📱 Creating phone record: ${phoneNumber}`);
+      console.info(`📱 Creating phone record: ${phoneNumber}`);
       
       // Create record in virtual phone system
       const record = await this.virtualPhoneSystem.createPhoneRecord(phoneNumber, carrier, region);
@@ -154,7 +154,7 @@ export class IntegratedVirtualPhone {
         await this.bucketIntegration.storeFintechData(phoneNumber, record.fintechData);
       }
       
-      console.log(`✅ Phone record created and stored: ${phoneNumber}`);
+      console.info(`✅ Phone record created and stored: ${phoneNumber}`);
       return record;
     } catch (error) {
       console.error('❌ Failed to create phone record:', error);
@@ -192,7 +192,7 @@ export class IntegratedVirtualPhone {
    */
   async updatePhoneRecord(phoneNumber: string): Promise<PhoneRecord | null> {
     try {
-      console.log(`🔄 Updating phone record: ${phoneNumber}`);
+      console.info(`🔄 Updating phone record: ${phoneNumber}`);
       
       // Update in virtual phone system
       const record = await this.virtualPhoneSystem.updatePhoneRecord(phoneNumber);
@@ -212,7 +212,7 @@ export class IntegratedVirtualPhone {
         console.warn('⚠️ Failed to update in bucket storage');
       }
       
-      console.log(`✅ Phone record updated: ${phoneNumber}`);
+      console.info(`✅ Phone record updated: ${phoneNumber}`);
       return record;
     } catch (error) {
       console.error('❌ Failed to update phone record:', error);
@@ -236,7 +236,7 @@ export class IntegratedVirtualPhone {
     };
 
     try {
-      console.log('🔄 Starting data synchronization...');
+      console.info('🔄 Starting data synchronization...');
       
       // Get all records from virtual phone system
       const allRecords = this.virtualPhoneSystem.getAllPhoneRecords();
@@ -266,7 +266,7 @@ export class IntegratedVirtualPhone {
       }
       
       result.duration = Date.now() - startTime;
-      console.log(`✅ Sync completed: ${result.recordsProcessed} records, ${result.duration}ms`);
+      console.info(`✅ Sync completed: ${result.recordsProcessed} records, ${result.duration}ms`);
       
       return result;
     } catch (error) {
@@ -284,7 +284,7 @@ export class IntegratedVirtualPhone {
    */
   async createBackup(backupName?: string): Promise<BackupResult> {
     try {
-      console.log('💾 Creating system backup...');
+      console.info('💾 Creating system backup...');
       
       // Sync data before backup
       await this.syncData();
@@ -304,7 +304,7 @@ export class IntegratedVirtualPhone {
       };
       
       if (result.success) {
-        console.log(`✅ Backup created: ${result.backupId}`);
+        console.info(`✅ Backup created: ${result.backupId}`);
       } else {
         console.error('❌ Backup failed:', result.error);
       }
@@ -465,12 +465,12 @@ export class IntegratedVirtualPhone {
    */
   async exportData(format: 'json' | 'csv' | 'xml' = 'json'): Promise<string> {
     try {
-      console.log(`📤 Exporting data in ${format} format...`);
+      console.info(`📤 Exporting data in ${format} format...`);
       
       // Get all data from bucket
       const exportData = await this.bucketIntegration.exportData(format);
       
-      console.log(`✅ Data exported successfully in ${format} format`);
+      console.info(`✅ Data exported successfully in ${format} format`);
       return exportData;
     } catch (error) {
       console.error('❌ Failed to export data:', error);
@@ -482,7 +482,7 @@ export class IntegratedVirtualPhone {
    * Start automatic sync
    */
   private startAutoSync(): void {
-    console.log('🔄 Starting automatic sync...');
+    console.info('🔄 Starting automatic sync...');
     this.syncTimer = setInterval(async () => {
       try {
         await this.syncData();
@@ -496,7 +496,7 @@ export class IntegratedVirtualPhone {
    * Start automatic backup
    */
   private startAutoBackup(): void {
-    console.log(`💾 Starting automatic backup every ${this.config.backupInterval} minutes...`);
+    console.info(`💾 Starting automatic backup every ${this.config.backupInterval} minutes...`);
     this.backupTimer = setInterval(async () => {
       try {
         await this.createBackup();
@@ -511,7 +511,7 @@ export class IntegratedVirtualPhone {
    */
   async shutdown(): Promise<void> {
     try {
-      console.log('🛑 Shutting down Integrated Virtual Phone System...');
+      console.info('🛑 Shutting down Integrated Virtual Phone System...');
       
       // Stop timers
       if (this.syncTimer) {
@@ -532,7 +532,7 @@ export class IntegratedVirtualPhone {
       await this.bucketIntegration.disconnect();
       
       this.isInitialized = false;
-      console.log('✅ System shutdown complete');
+      console.info('✅ System shutdown complete');
     } catch (error) {
       console.error('❌ Failed to shutdown system:', error);
     }

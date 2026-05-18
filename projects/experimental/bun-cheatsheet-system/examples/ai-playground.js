@@ -1,16 +1,16 @@
 #!/usr/bin/env bun
 
 export async function demoAIPlayground() {
-  console.log('🤖 AI Playground Demo');
-  console.log('='.repeat(40));
+  console.info('🤖 AI Playground Demo');
+  console.info('='.repeat(40));
   
   // Note: This is a demonstration of AI integration patterns
   // In a real implementation, you would need actual API keys
   
   // 1. AI Assistant for code generation
-  console.log('\n1. 🧠 AI Code Assistant:');
+  console.info('\n1. 🧠 AI Code Assistant:');
   const generateCode = async (prompt) => {
-    console.log(`   📝 Prompt: ${prompt}`);
+    console.info(`   📝 Prompt: ${prompt}`);
     
     // Simulate AI code generation
     const codeExamples = {
@@ -65,8 +65,8 @@ async function fetchData(url) {
       }
     }
     
-    console.log('   💻 Generated Code:');
-    console.log('   ' + generatedCode.trim().split('\n').join('\n   '));
+    console.info('   💻 Generated Code:');
+    console.info('   ' + generatedCode.trim().split('\n').join('\n   '));
     
     return generatedCode;
   };
@@ -74,9 +74,9 @@ async function fetchData(url) {
   await generateCode('create a REST API');
   
   // 2. Code review assistant
-  console.log('\n2. 🔍 AI Code Review:');
+  console.info('\n2. 🔍 AI Code Review:');
   const reviewCode = async (code) => {
-    console.log('   📄 Analyzing code...');
+    console.info('   📄 Analyzing code...');
     
     // Simulate AI code review
     const reviewResults = {
@@ -108,18 +108,18 @@ async function fetchData(url) {
       score: 7.5
     };
     
-    console.log('   📊 Review Results:');
-    console.log(`      📈 Overall Score: ${reviewResults.score}/10`);
+    console.info('   📊 Review Results:');
+    console.info(`      📈 Overall Score: ${reviewResults.score}/10`);
     
-    console.log('   ⚠️  Issues Found:');
+    console.info('   ⚠️  Issues Found:');
     reviewResults.issues.forEach(issue => {
       const icon = issue.severity === 'high' ? '🚨' : issue.severity === 'medium' ? '⚠️' : '💡';
-      console.log(`      ${icon} Line ${issue.line}: ${issue.message} (${issue.type})`);
+      console.info(`      ${icon} Line ${issue.line}: ${issue.message} (${issue.type})`);
     });
     
-    console.log('   💡 Suggestions:');
+    console.info('   💡 Suggestions:');
     reviewResults.suggestions.forEach(suggestion => {
-      console.log(`      • ${suggestion}`);
+      console.info(`      • ${suggestion}`);
     });
     
     return reviewResults;
@@ -128,9 +128,9 @@ async function fetchData(url) {
   await reviewCode('const server = Bun.serve({ port: 3000 });');
   
   // 3. Documentation generator
-  console.log('\n3. 📚 AI Documentation Generator:');
+  console.info('\n3. 📚 AI Documentation Generator:');
   const generateDocs = async (code) => {
-    console.log('   📖 Generating documentation...');
+    console.info('   📖 Generating documentation...');
     
     // Simulate AI documentation generation
     const documentation = {
@@ -159,20 +159,20 @@ async function fetchData(url) {
       seeAlso: ['Bun.serve()', 'Response', 'Request']
     };
     
-    console.log('   📋 Generated Documentation:');
-    console.log(`      📝 Summary: ${documentation.summary}`);
-    console.log(`      📄 Description: ${documentation.description}`);
+    console.info('   📋 Generated Documentation:');
+    console.info(`      📝 Summary: ${documentation.summary}`);
+    console.info(`      📄 Description: ${documentation.description}`);
     
-    console.log('   📋 Parameters:');
+    console.info('   📋 Parameters:');
     documentation.parameters.forEach(param => {
-      console.log(`      • ${param.name} (${param.type}): ${param.description}`);
-      if (param.default) console.log(`        Default: ${param.default}`);
+      console.info(`      • ${param.name} (${param.type}): ${param.description}`);
+      if (param.default) console.info(`        Default: ${param.default}`);
     });
     
-    console.log('   💻 Examples:');
+    console.info('   💻 Examples:');
     documentation.examples.forEach((example, index) => {
-      console.log(`      ${index + 1}. ${example.title}:`);
-      console.log(`         ${example.code}`);
+      console.info(`      ${index + 1}. ${example.title}:`);
+      console.info(`         ${example.code}`);
     });
     
     return documentation;
@@ -181,9 +181,9 @@ async function fetchData(url) {
   await generateDocs('Bun.serve({ port: 3000, fetch: handler });');
   
   // 4. Test case generator
-  console.log('\n4. 🧪 AI Test Generator:');
+  console.info('\n4. 🧪 AI Test Generator:');
   const generateTests = async (functionCode) => {
-    console.log('   🔬 Generating test cases...');
+    console.info('   🔬 Generating test cases...');
     
     // Simulate AI test generation
     const testSuite = {
@@ -238,17 +238,17 @@ async function fetchData(url) {
       }
     };
     
-    console.log(`   📋 Test Suite: ${testSuite.describe}`);
-    console.log(`   🧪 Generated ${testSuite.tests.length} tests`);
+    console.info(`   📋 Test Suite: ${testSuite.describe}`);
+    console.info(`   🧪 Generated ${testSuite.tests.length} tests`);
     
     testSuite.tests.forEach((test, index) => {
-      console.log(`   ${index + 1}. ${test.name} (${test.type})`);
-      console.log(`      ${test.code.trim().split('\n').join('\n      ')}`);
+      console.info(`   ${index + 1}. ${test.name} (${test.type})`);
+      console.info(`      ${test.code.trim().split('\n').join('\n      ')}`);
     });
     
-    console.log('   📊 Expected Coverage:');
+    console.info('   📊 Expected Coverage:');
     Object.entries(testSuite.coverage).forEach(([metric, value]) => {
-      console.log(`      ${metric}: ${value}%`);
+      console.info(`      ${metric}: ${value}%`);
     });
     
     return testSuite;
@@ -257,9 +257,9 @@ async function fetchData(url) {
   await generateTests('function createServer() { return Bun.serve({ port: 3000 }); }');
   
   // 5. Performance optimizer
-  console.log('\n5. ⚡ AI Performance Optimizer:');
+  console.info('\n5. ⚡ AI Performance Optimizer:');
   const optimizeCode = async (code) => {
-    console.log('   🔍 Analyzing performance...');
+    console.info('   🔍 Analyzing performance...');
     
     // Simulate AI performance analysis
     const optimizations = [
@@ -312,18 +312,18 @@ const cachedFetch = (req) => {
       memoryUsage: { before: 128, after: 95, reduction: 25.8 }
     };
     
-    console.log('   🚀 Performance Optimizations:');
+    console.info('   🚀 Performance Optimizations:');
     optimizations.forEach((opt, index) => {
       const impactIcon = opt.impact === 'high' ? '🔥' : opt.impact === 'medium' ? '⚡' : '💡';
-      console.log(`   ${index + 1}. ${impactIcon} ${opt.description} (${opt.impact} impact)`);
-      console.log(`      ${opt.code.trim().split('\n').join('\n      ')}`);
+      console.info(`   ${index + 1}. ${impactIcon} ${opt.description} (${opt.impact} impact)`);
+      console.info(`      ${opt.code.trim().split('\n').join('\n      ')}`);
     });
     
-    console.log('   📊 Performance Metrics:');
-    console.log(`      ⏱️  Response Time: ${performanceMetrics.currentResponseTime}ms → ${performanceMetrics.optimizedResponseTime}ms`);
-    console.log(`      📈 Improvement: ${performanceMetrics.improvement}% faster`);
-    console.log(`      💾 Memory: ${performanceMetrics.memoryUsage.before}MB → ${performanceMetrics.memoryUsage.after}MB`);
-    console.log(`      📉 Memory Reduction: ${performanceMetrics.memoryUsage.reduction}%`);
+    console.info('   📊 Performance Metrics:');
+    console.info(`      ⏱️  Response Time: ${performanceMetrics.currentResponseTime}ms → ${performanceMetrics.optimizedResponseTime}ms`);
+    console.info(`      📈 Improvement: ${performanceMetrics.improvement}% faster`);
+    console.info(`      💾 Memory: ${performanceMetrics.memoryUsage.before}MB → ${performanceMetrics.memoryUsage.after}MB`);
+    console.info(`      📉 Memory Reduction: ${performanceMetrics.memoryUsage.reduction}%`);
     
     return { optimizations, metrics: performanceMetrics };
   };
@@ -331,9 +331,9 @@ const cachedFetch = (req) => {
   await optimizeCode('const server = Bun.serve({ port: 3000 });');
   
   // 6. Error detection and fixing
-  console.log('\n6. 🐛 AI Error Detection & Fixing:');
+  console.info('\n6. 🐛 AI Error Detection & Fixing:');
   const detectAndFixErrors = async (code) => {
-    console.log('   🔍 Scanning for errors...');
+    console.info('   🔍 Scanning for errors...');
     
     // Simulate AI error detection
     const detectedErrors = [
@@ -348,8 +348,8 @@ const cachedFetch = (req) => {
         type: 'ReferenceError',
         line: 8,
         message: 'undefinedVariable is not defined',
-        code: 'console.log(undefinedVariable)',
-        fix: 'const undefinedVariable = "defined"; console.log(undefinedVariable);'
+        code: 'console.info(undefinedVariable)',
+        fix: 'const undefinedVariable = "defined"; console.info(undefinedVariable);'
       },
       {
         type: 'TypeError',
@@ -360,19 +360,19 @@ const cachedFetch = (req) => {
       }
     ];
     
-    console.log(`   🐛 Detected ${detectedErrors.length} errors:`);
+    console.info(`   🐛 Detected ${detectedErrors.length} errors:`);
     
     detectedErrors.forEach((error, index) => {
-      console.log(`   ${index + 1}. ${error.type} at line ${error.line}:`);
-      console.log(`      📝 Message: ${error.message}`);
-      console.log(`      ❌ Problem: ${error.code}`);
-      console.log(`      ✅ Solution: ${error.fix}`);
+      console.info(`   ${index + 1}. ${error.type} at line ${error.line}:`);
+      console.info(`      📝 Message: ${error.message}`);
+      console.info(`      ❌ Problem: ${error.code}`);
+      console.info(`      ✅ Solution: ${error.fix}`);
     });
     
     // Auto-fix simulation
-    console.log('\n   🔧 Auto-fixing errors...');
+    console.info('\n   🔧 Auto-fixing errors...');
     await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('   ✅ All errors fixed automatically!');
+    console.info('   ✅ All errors fixed automatically!');
     
     return detectedErrors;
   };
@@ -380,9 +380,9 @@ const cachedFetch = (req) => {
   await detectAndFixErrors('const server = Bun.serve({ port 3000 })');
   
   // 7. Code explanation
-  console.log('\n7. 📖 AI Code Explanation:');
+  console.info('\n7. 📖 AI Code Explanation:');
   const explainCode = async (code) => {
-    console.log('   🧠 Analyzing code structure...');
+    console.info('   🧠 Analyzing code structure...');
     
     // Simulate AI code explanation
     const explanation = {
@@ -420,24 +420,24 @@ const cachedFetch = (req) => {
       ]
     };
     
-    console.log(`   📋 Overview: ${explanation.overview}`);
-    console.log(`   🎯 Purpose: ${explanation.purpose}`);
-    console.log(`   📊 Complexity: ${explanation.complexity}`);
+    console.info(`   📋 Overview: ${explanation.overview}`);
+    console.info(`   🎯 Purpose: ${explanation.purpose}`);
+    console.info(`   📊 Complexity: ${explanation.complexity}`);
     
-    console.log('   🔧 Key Components:');
+    console.info('   🔧 Key Components:');
     explanation.keyComponents.forEach(comp => {
-      console.log(`      • ${comp.name}: ${comp.purpose}`);
-      console.log(`        Usage: ${comp.usage}`);
+      console.info(`      • ${comp.name}: ${comp.purpose}`);
+      console.info(`        Usage: ${comp.usage}`);
     });
     
-    console.log('   🌊 Execution Flow:');
+    console.info('   🌊 Execution Flow:');
     explanation.flow.forEach(step => {
-      console.log(`      ${step}`);
+      console.info(`      ${step}`);
     });
     
-    console.log('   💡 Best Practices:');
+    console.info('   💡 Best Practices:');
     explanation.bestPractices.forEach(practice => {
-      console.log(`      • ${practice}`);
+      console.info(`      • ${practice}`);
     });
     
     return explanation;
@@ -445,22 +445,22 @@ const cachedFetch = (req) => {
   
   await explainCode('const server = Bun.serve({ port: 3000, fetch: () => new Response("Hello") });');
   
-  console.log('\n✅ AI Playground demo completed!');
-  console.log('\n💡 AI capabilities demonstrated:');
-  console.log('   • Code generation and completion');
-  console.log('   • Automated code review and suggestions');
-  console.log('   • Documentation generation');
-  console.log('   • Test case generation');
-  console.log('   • Performance optimization');
-  console.log('   • Error detection and auto-fixing');
-  console.log('   • Code explanation and learning');
+  console.info('\n✅ AI Playground demo completed!');
+  console.info('\n💡 AI capabilities demonstrated:');
+  console.info('   • Code generation and completion');
+  console.info('   • Automated code review and suggestions');
+  console.info('   • Documentation generation');
+  console.info('   • Test case generation');
+  console.info('   • Performance optimization');
+  console.info('   • Error detection and auto-fixing');
+  console.info('   • Code explanation and learning');
   
-  console.log('\n🔧 To implement real AI features:');
-  console.log('   • Get API keys from OpenAI, Anthropic, or other providers');
-  console.log('   • Install AI SDKs: bun add openai @anthropic-ai/sdk');
-  console.log('   • Handle rate limits and error responses');
-  console.log('   • Implement caching for cost optimization');
-  console.log('   • Add user preferences and customization');
+  console.info('\n🔧 To implement real AI features:');
+  console.info('   • Get API keys from OpenAI, Anthropic, or other providers');
+  console.info('   • Install AI SDKs: bun add openai @anthropic-ai/sdk');
+  console.info('   • Handle rate limits and error responses');
+  console.info('   • Implement caching for cost optimization');
+  console.info('   • Add user preferences and customization');
 }
 
 if (import.meta.main) {

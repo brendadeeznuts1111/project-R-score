@@ -113,7 +113,7 @@ export class R2Storage {
   }
 
   async syncPackageCache(packageName: string, localCache: Map<string, any>): Promise<void> {
-    console.log(`🔄 Syncing ${packageName} cache to R2...`);
+    console.info(`🔄 Syncing ${packageName} cache to R2...`);
 
     const bucket = await this.getOrCreateBucket(packageName);
 
@@ -125,7 +125,7 @@ export class R2Storage {
     );
     await Promise.all(uploads);
 
-    console.log(`Uploaded ${localCache.size} items`);
+    console.info(`Uploaded ${localCache.size} items`);
   }
 
   async getPackageDocs(packageName: string, version?: string): Promise<any> {
@@ -140,7 +140,7 @@ export class R2Storage {
     const checksum = crc32(new Uint8Array(data));
     // Note: actual header verification would require storing/fetching the expected CRC
     // For now we compute it for logging/debugging
-    console.log(`CRC32 for ${key}: ${checksum.hex}`);
+    console.info(`CRC32 for ${key}: ${checksum.hex}`);
 
     const decompressed = Bun.gunzipSync(new Uint8Array(data));
     return JSON.parse(Buffer.from(decompressed).toString());

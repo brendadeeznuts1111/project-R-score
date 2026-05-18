@@ -113,7 +113,7 @@ export async function automationCLI(args: string[]): Promise<void> {
         }
         const timeout = args[3] ? parseInt(args[3]) : 60000;
         const code = await auto.getVerificationCode(args[1], args[2], timeout as unknown as number  );
-        console.log(`Code: ${code}`);
+        console.info(`Code: ${code}`);
         break;
       }
 
@@ -133,11 +133,11 @@ export async function automationCLI(args: string[]): Promise<void> {
           process.exit(1);
         }
         const result = await auto.runTestSuite(args[1], args[2]);
-        console.log(`\nTest Results:`);
-        console.log(`  Passed: ${result.passed ? "✓" : "✗"}`);
-        console.log(`  Failures: ${result.failures}`);
+        console.info(`\nTest Results:`);
+        console.info(`  Passed: ${result.passed ? "✓" : "✗"}`);
+        console.info(`  Failures: ${result.failures}`);
         if (result.screenshot) {
-          console.log(`  Screenshot: ${result.screenshot}`);
+          console.info(`  Screenshot: ${result.screenshot}`);
         }
         break;
       }
@@ -166,17 +166,17 @@ export async function automationCLI(args: string[]): Promise<void> {
         const period = (args[1] as "day" | "week" | "month") || "month";
         const report = await auto.getCostReport(period);
         
-        console.log(`\n💰 Cost Report (${period}):`);
-        console.log(`  Total: $${report.total.toFixed(2)}`);
-        console.log(`\n  By Region:`);
+        console.info(`\n💰 Cost Report (${period}):`);
+        console.info(`  Total: $${report.total.toFixed(2)}`);
+        console.info(`\n  By Region:`);
         for (const [region, cost] of Object.entries(report.byRegion)) {
-          console.log(`    ${region}: $${cost.toFixed(2)}`);
+          console.info(`    ${region}: $${cost.toFixed(2)}`);
         }
-        console.log(`\n  Top 10 Devices:`);
+        console.info(`\n  Top 10 Devices:`);
         const topDevices = report.breakdown
           .sort((a, b) => b.cost - a.cost)
           .slice(0, 10);
-        console.log(Bun.inspect.table(
+        console.info(Bun.inspect.table(
           topDevices.map(d => ({
             device: d.deviceId,
             cost: `$${d.cost.toFixed(2)}`,
@@ -190,7 +190,7 @@ export async function automationCLI(args: string[]): Promise<void> {
       }
 
       default: {
-        console.log(`
+        console.info(`
 Matrix Automation CLI
 
 Usage: matrix auto <command> [options]

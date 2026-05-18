@@ -114,15 +114,15 @@ class UnifiedProfileCLI {
     const template = (options.template || "HIGH_PERFORMANCE") as keyof typeof PROFILE_TEMPLATES;
     const name = options.name || `Profile-${Date.now()}`;
 
-    console.log("🔧 Creating Unified Profile");
-    console.log("=".repeat(50));
-    console.log(`   Name: ${name}`);
-    console.log(`   Proxy ID: ${proxyId}`);
-    console.log(`   Phone ID: ${phoneId}`);
-    console.log(`   Template: ${template}`);
+    console.info("🔧 Creating Unified Profile");
+    console.info("=".repeat(50));
+    console.info(`   Name: ${name}`);
+    console.info(`   Proxy ID: ${proxyId}`);
+    console.info(`   Phone ID: ${phoneId}`);
+    console.info(`   Template: ${template}`);
 
     if (options.verbose) {
-      console.log("\n🔧 Initializing profile manager...");
+      console.info("\n🔧 Initializing profile manager...");
     }
 
     const profile = this.profileManager.createProfile({
@@ -151,69 +151,69 @@ class UnifiedProfileCLI {
       }
     });
 
-    console.log("\n✅ Profile created successfully!");
-    console.log(`   Profile ID: ${profile.id}`);
+    console.info("\n✅ Profile created successfully!");
+    console.info(`   Profile ID: ${profile.id}`);
 
     if (options.output === "json") {
-      console.log("\n📄 Profile JSON:");
-      console.log(JSON.stringify(profile, null, 2));
+      console.info("\n📄 Profile JSON:");
+      console.info(JSON.stringify(profile, null, 2));
     } else {
-      console.log("\n📋 Profile Details:");
-      console.log(`   ID: ${profile.id}`);
-      console.log(`   Name: ${profile.name}`);
-      console.log(`   Proxy: ${profile.proxyId}`);
-      console.log(`   Phone: ${profile.phoneId}`);
-      console.log(`   Status: ${profile.status}`);
-      console.log(`   Category: ${profile.metadata.category}`);
-      console.log(`   Priority: ${profile.metadata.priority}`);
-      console.log(`   Tags: ${profile.metadata.tags.join(", ")}`);
-      console.log(`   Created: ${profile.createdAt}`);
+      console.info("\n📋 Profile Details:");
+      console.info(`   ID: ${profile.id}`);
+      console.info(`   Name: ${profile.name}`);
+      console.info(`   Proxy: ${profile.proxyId}`);
+      console.info(`   Phone: ${profile.phoneId}`);
+      console.info(`   Status: ${profile.status}`);
+      console.info(`   Category: ${profile.metadata.category}`);
+      console.info(`   Priority: ${profile.metadata.priority}`);
+      console.info(`   Tags: ${profile.metadata.tags.join(", ")}`);
+      console.info(`   Created: ${profile.createdAt}`);
     }
 
     // Save to file if export path provided
     if (options.export) {
       await Bun.write(options.export, JSON.stringify(profile, null, 2));
-      console.log(`\n💾 Profile exported to: ${options.export}`);
+      console.info(`\n💾 Profile exported to: ${options.export}`);
     }
   }
 
   private async listProfiles(options: UnifiedProfileCLIOptions): Promise<void> {
-    console.log("📋 Listing Unified Profiles");
-    console.log("=".repeat(50));
+    console.info("📋 Listing Unified Profiles");
+    console.info("=".repeat(50));
 
     if (options.verbose) {
-      console.log("🔧 Retrieving profiles...");
+      console.info("🔧 Retrieving profiles...");
     }
 
     const profiles = this.profileManager.getAllProfiles();
     const profileCount = profiles.length;
 
-    console.log(`\n📊 Total Profiles: ${profileCount}`);
+    console.info(`\n📊 Total Profiles: ${profileCount}`);
 
     if (profileCount === 0) {
-      console.log("\n📭 No profiles found. Create one with:");
-      console.log('   bun run profile:create --name "My Profile"');
+      console.info("\n📭 No profiles found. Create one with:");
+      console.info('   bun run profile:create --name "My Profile"');
       return;
     }
 
     if (options.output === "json") {
-      console.log("\n📄 Profiles JSON:");
-      console.log(JSON.stringify(profiles, null, 2));
+      console.info("\n📄 Profiles JSON:");
+      console.info(JSON.stringify(profiles, null, 2));
     } else {
-      console.log("\n📋 Profile List:");
+      console.info("\n📋 Profile List:");
       let index = 1;
       for (const profile of profiles) {
         const status = profile.status === "active" ? "✅" : "❌";
-        console.log(`   ${index}. ${status} ${profile.name} (${profile.id})`);
-        console.log(`      Proxy: ${profile.proxyId} | Phone: ${profile.phoneId}`);
-        console.log(
+        console.info(`   ${index}. ${status} ${profile.name} (${profile.id})`);
+        console.info(`      Proxy: ${profile.proxyId} | Phone: ${profile.phoneId}`);
+        console.info(
           `      Category: ${profile.metadata.category} | Priority: ${profile.metadata.priority}`
         );
         if (profile.metadata.tags.length > 0) {
-          console.log(`      Tags: ${profile.metadata.tags.join(", ")}`);
+          console.info(`      Tags: ${profile.metadata.tags.join(", ")}`);
         }
-        console.log(`      Created: ${new Date(profile.createdAt).toLocaleDateString()}`);
-        console.log("");
+        console.info(`      Created: ${new Date(profile.createdAt).toLocaleDateString()}`);
+        console.info("");
         index++;
       }
     }
@@ -221,19 +221,19 @@ class UnifiedProfileCLI {
     // Save to file if export path provided
     if (options.export) {
       await Bun.write(options.export, JSON.stringify(profiles, null, 2));
-      console.log(`💾 Profiles exported to: ${options.export}`);
+      console.info(`💾 Profiles exported to: ${options.export}`);
     }
   }
 
   private async exportProfiles(options: UnifiedProfileCLIOptions): Promise<void> {
     const exportPath = options.export || `unified-profiles-${Date.now()}.json`;
 
-    console.log("📤 Exporting Unified Profiles");
-    console.log("=".repeat(50));
-    console.log(`   Export Path: ${exportPath}`);
+    console.info("📤 Exporting Unified Profiles");
+    console.info("=".repeat(50));
+    console.info(`   Export Path: ${exportPath}`);
 
     if (options.verbose) {
-      console.log("🔧 Collecting profile data...");
+      console.info("🔧 Collecting profile data...");
     }
 
     const exportData = this.profileManager.exportProfiles();
@@ -241,10 +241,10 @@ class UnifiedProfileCLI {
     await Bun.write(exportPath, exportData);
 
     const profiles = JSON.parse(exportData);
-    console.log(`\n✅ Exported ${profiles.length} profiles successfully!`);
-    console.log(`   File: ${exportPath}`);
-    console.log(`   Size: ${Bun.file(exportPath).size.toLocaleString()} bytes`);
-    console.log(`   Exported: ${new Date().toISOString()}`);
+    console.info(`\n✅ Exported ${profiles.length} profiles successfully!`);
+    console.info(`   File: ${exportPath}`);
+    console.info(`   Size: ${Bun.file(exportPath).size.toLocaleString()} bytes`);
+    console.info(`   Exported: ${new Date().toISOString()}`);
   }
 
   private async importProfiles(options: UnifiedProfileCLIOptions): Promise<void> {
@@ -255,12 +255,12 @@ class UnifiedProfileCLI {
       process.exit(1);
     }
 
-    console.log("📥 Importing Unified Profiles");
-    console.log("=".repeat(50));
-    console.log(`   Import Path: ${importPath}`);
+    console.info("📥 Importing Unified Profiles");
+    console.info("=".repeat(50));
+    console.info(`   Import Path: ${importPath}`);
 
     if (options.verbose) {
-      console.log("🔧 Reading profile data...");
+      console.info("🔧 Reading profile data...");
     }
 
     const fileExists = await Bun.file(importPath).exists();
@@ -271,22 +271,22 @@ class UnifiedProfileCLI {
 
     const importData = await Bun.file(importPath).text();
 
-    console.log("\n🔧 Importing profiles from file...");
+    console.info("\n🔧 Importing profiles from file...");
 
     const result = this.profileManager.importProfiles(importData);
 
-    console.log("\n✅ Import completed!");
-    console.log(`   Success: ${result.imported} profiles`);
-    console.log(`   Failed: ${result.errors.length} profiles`);
+    console.info("\n✅ Import completed!");
+    console.info(`   Success: ${result.imported} profiles`);
+    console.info(`   Failed: ${result.errors.length} profiles`);
 
     if (result.errors.length > 0) {
-      console.log("\n❌ Import errors:");
+      console.info("\n❌ Import errors:");
       result.errors.forEach((error) => {
-        console.log(`   - ${error}`);
+        console.info(`   - ${error}`);
       });
     }
 
-    console.log(`   Imported: ${new Date().toISOString()}`);
+    console.info(`   Imported: ${new Date().toISOString()}`);
   }
 
   private async quickCreate(options: UnifiedProfileCLIOptions): Promise<void> {
@@ -294,14 +294,14 @@ class UnifiedProfileCLI {
     const proxyId = options.proxyId || "proxy-default";
     const phoneId = options.phoneId || "phone-default";
 
-    console.log("⚡ Quick Profile Creation");
-    console.log("=".repeat(50));
-    console.log(`   Template: ${template}`);
-    console.log(`   Proxy ID: ${proxyId}`);
-    console.log(`   Phone ID: ${phoneId}`);
+    console.info("⚡ Quick Profile Creation");
+    console.info("=".repeat(50));
+    console.info(`   Template: ${template}`);
+    console.info(`   Proxy ID: ${proxyId}`);
+    console.info(`   Phone ID: ${phoneId}`);
 
     if (options.verbose) {
-      console.log("\n🔧 Creating enhanced profile...");
+      console.info("\n🔧 Creating enhanced profile...");
     }
 
     let profile;
@@ -333,41 +333,41 @@ class UnifiedProfileCLI {
         break;
       default:
         console.error(`❌ Unknown template: ${template}`);
-        console.log(
+        console.info(
           "Available templates: GAMING, SOCIAL_MEDIA, ECOMMERCE, STREAMING, SCRAPING, DEVELOPMENT"
         );
         process.exit(1);
     }
 
-    console.log("\n✅ Enhanced profile created successfully!");
-    console.log(`   Profile ID: ${profile.id}`);
-    console.log(`   Name: ${profile.name}`);
+    console.info("\n✅ Enhanced profile created successfully!");
+    console.info(`   Profile ID: ${profile.id}`);
+    console.info(`   Name: ${profile.name}`);
 
     if (options.output === "json") {
-      console.log("\n📄 Profile JSON:");
-      console.log(JSON.stringify(profile, null, 2));
+      console.info("\n📄 Profile JSON:");
+      console.info(JSON.stringify(profile, null, 2));
     } else {
-      console.log("\n📋 Profile Details:");
-      console.log(`   ID: ${profile.id}`);
-      console.log(`   Name: ${profile.name}`);
-      console.log(`   Proxy: ${profile.proxyId}`);
-      console.log(`   Phone: ${profile.phoneId}`);
-      console.log(`   Status: ${profile.status}`);
-      console.log(`   Category: ${profile.metadata.category}`);
-      console.log(`   Priority: ${profile.metadata.priority}`);
+      console.info("\n📋 Profile Details:");
+      console.info(`   ID: ${profile.id}`);
+      console.info(`   Name: ${profile.name}`);
+      console.info(`   Proxy: ${profile.proxyId}`);
+      console.info(`   Phone: ${profile.phoneId}`);
+      console.info(`   Status: ${profile.status}`);
+      console.info(`   Category: ${profile.metadata.category}`);
+      console.info(`   Priority: ${profile.metadata.priority}`);
 
       // Show enhanced features if available
       if (profile.emailAccount) {
-        console.log(`   Email: ${profile.emailAccount.address}`);
+        console.info(`   Email: ${profile.emailAccount.address}`);
       }
       if (profile.socialMedia) {
-        console.log(`   Social Media: ${profile.socialMedia.platform}`);
+        console.info(`   Social Media: ${profile.socialMedia.platform}`);
       }
       if (profile.ecommerce) {
-        console.log(`   E-commerce: ${profile.ecommerce.platform}`);
+        console.info(`   E-commerce: ${profile.ecommerce.platform}`);
       }
 
-      console.log(
+      console.info(
         `   Created: ${profile.createdAt ? new Date(profile.createdAt).toISOString() : "N/A"}`
       );
     }
@@ -375,12 +375,12 @@ class UnifiedProfileCLI {
     // Save to file if export path provided
     if (options.export) {
       await Bun.write(options.export, JSON.stringify(profile, null, 2));
-      console.log(`\n💾 Profile exported to: ${options.export}`);
+      console.info(`\n💾 Profile exported to: ${options.export}`);
     }
   }
 
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🔧 Unified Profile Management CLI
 
 USAGE:

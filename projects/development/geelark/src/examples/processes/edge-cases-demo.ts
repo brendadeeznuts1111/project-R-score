@@ -10,40 +10,40 @@
  * - Error recovery
  */
 
-console.log("🧪 Edge Cases Demo - Testing IPC and Process Edge Cases\n");
+console.info("🧪 Edge Cases Demo - Testing IPC and Process Edge Cases\n");
 
-console.log("1️⃣ Testing IPC with circular references:");
+console.info("1️⃣ Testing IPC with circular references:");
 const circular: any = {};
 circular.self = circular;
 
 try {
   // This will throw a serialization error
-  Bun.spawn([process.execPath, "-e", "console.log('test')"], {
+  Bun.spawn([process.execPath, "-e", "console.info('test')"], {
     ipc(message, proc) {
       proc.send(circular);
     },
   });
 } catch (error) {
-  console.log(`✅ Expected error caught: ${error.message}`);
+  console.info(`✅ Expected error caught: ${error.message}`);
 }
 
-console.log("\n2️⃣ Testing IPC with unsupported types:");
+console.info("\n2️⃣ Testing IPC with unsupported types:");
 const child1 = Bun.spawn([process.execPath, "-e", "process.on('message', () => process.exit(0))"]);
 
 setTimeout(() => {
   try {
     // Functions can't be serialized in IPC
-    child1.send(() => console.log("function"));
+    child1.send(() => console.info("function"));
   } catch (error) {
-    console.log(`✅ Expected error caught: ${error.message}`);
+    console.info(`✅ Expected error caught: ${error.message}`);
   }
 }, 100);
 
-console.log("\n3️⃣ Testing child process exit timing:");
+console.info("\n3️⃣ Testing child process exit timing:");
 const child2 = Bun.spawn([process.execPath, "-e",
   `
   process.on("message", (msg) => {
-    console.log("Child received:", msg);
+    console.info("Child received:", msg);
     // Child exits before sending response
     process.exit(0);
   });
@@ -55,34 +55,34 @@ setTimeout(() => {
   // IPC message might be lost if sent after child exits
 }, 200);
 
-console.log("\n4️⃣ Testing signal handling during cleanup:");
+console.info("\n4️⃣ Testing signal handling during cleanup:");
 let cleanupStarted = false;
 
 process.on("SIGINT", () => {
-  console.log("\n🛑 SIGINT during cleanup test");
+  console.info("\n🛑 SIGINT during cleanup test");
 
   if (!cleanupStarted) {
     cleanupStarted = true;
-    console.log("Starting cleanup...");
+    console.info("Starting cleanup...");
 
     // Simulate cleanup operation
     setTimeout(() => {
-      console.log("Cleanup completed, exiting now");
+      console.info("Cleanup completed, exiting now");
       process.exit(0);
     }, 2000);
   } else {
-    console.log("Cleanup already in progress, forcing exit");
+    console.info("Cleanup already in progress, forcing exit");
     process.exit(1);
   }
 });
 
-console.log("Press Ctrl+C during different phases to test signal handling");
-console.log("Press Ctrl+C now (normal), wait, then press again (force exit)\n");
+console.info("Press Ctrl+C during different phases to test signal handling");
+console.info("Press Ctrl+C now (normal), wait, then press again (force exit)\n");
 
 // Simulate different phases
-setTimeout(() => console.log("Phase 1: Normal operation"), 500);
-setTimeout(() => console.log("Phase 2: Performing work..."), 1500);
-setTimeout(() => console.log("Phase 3: Ready for interrupt"), 2500);
+setTimeout(() => console.info("Phase 1: Normal operation"), 500);
+setTimeout(() => console.info("Phase 2: Performing work..."), 1500);
+setTimeout(() => console.info("Phase 3: Ready for interrupt"), 2500);
 
 // Keep running to test interrupts
 const timer = setInterval(() => {
@@ -92,5 +92,5 @@ const timer = setInterval(() => {
 // Cleanup on exit
 process.on("exit", () => {
   clearInterval(timer);
-  console.log("\n🏁 Demo completed");
+  console.info("\n🏁 Demo completed");
 });

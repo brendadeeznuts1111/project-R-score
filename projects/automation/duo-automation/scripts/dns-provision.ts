@@ -36,7 +36,7 @@ export class DNSProvisioner {
   ];
 
   async provisionDNS(): Promise<DNSProvisionResult> {
-    console.log('🌐 Provisioning DNS records for apple. subdomain architecture...\n');
+    console.info('🌐 Provisioning DNS records for apple. subdomain architecture...\n');
     
     const results: RecordResult[] = [];
     
@@ -46,7 +46,7 @@ export class DNSProvisioner {
     }
     
     // Verify propagation
-    console.log('\n⏳ Verifying DNS propagation...');
+    console.info('\n⏳ Verifying DNS propagation...');
     await this.verifyPropagation();
     
     // Update SSL/TLS settings
@@ -115,10 +115,10 @@ export class DNSProvisioner {
       
       const propagated = checks.every(ip => ip === this.BASE_DOMAIN || ip.includes('cloudflare'));
       
-      console.log(`  ${propagated ? '✅' : '⏳'} ${fqdn} - ${propagated ? 'Propagated' : 'Pending'}`);
+      console.info(`  ${propagated ? '✅' : '⏳'} ${fqdn} - ${propagated ? 'Propagated' : 'Pending'}`);
       
       if (!propagated) {
-        console.log(`     Tip: Run "dig ${fqdn} @1.1.1.1" to check manually`);
+        console.info(`     Tip: Run "dig ${fqdn} @1.1.1.1" to check manually`);
       }
     }
   }
@@ -133,7 +133,7 @@ export class DNSProvisioner {
   }
 
   private async optimizeSSL(): Promise<void> {
-    console.log('\n🔒 Optimizing SSL/TLS settings...');
+    console.info('\n🔒 Optimizing SSL/TLS settings...');
     
     // Enable HTTP/3
     await $`curl -X PATCH "https://api.cloudflare.com/client/v4/zones/${this.ZONE_ID}/settings/http3" \
@@ -150,9 +150,9 @@ export class DNSProvisioner {
       -H "Authorization: Bearer ${this.API_TOKEN}" \
       -d '{"value":"on"}'`.quiet();
     
-    console.log('  ✅ HTTP/3 enabled');
-    console.log('  ✅ TLS 1.2 minimum enforced');
-    console.log('  ✅ Automatic HTTPS rewrites enabled');
+    console.info('  ✅ HTTP/3 enabled');
+    console.info('  ✅ TLS 1.2 minimum enforced');
+    console.info('  ✅ Automatic HTTPS rewrites enabled');
   }
 }
 

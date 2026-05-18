@@ -17,11 +17,11 @@ import {
   SecureClientFactory,
 } from '../packages/core-security/src/secure-client';
 
-console.log('🎯 Fantasy42 User-Agent Security Demo');
-console.log('=====================================');
+console.info('🎯 Fantasy42 User-Agent Security Demo');
+console.info('=====================================');
 
 async function demoUserAgentRegistry() {
-  console.log('\n1️⃣ User-Agent Registry Demonstration');
+  console.info('\n1️⃣ User-Agent Registry Demonstration');
 
   // Generate User-Agents for different scenarios
   const scenarios = [
@@ -40,13 +40,13 @@ async function demoUserAgentRegistry() {
       compliance: compliance !== false,
     });
 
-    console.log(`📦 ${pkg} (${environment}):`);
-    console.log(`   ${agent.substring(0, 80)}...`);
+    console.info(`📦 ${pkg} (${environment}):`);
+    console.info(`   ${agent.substring(0, 80)}...`);
   });
 }
 
 async function demoSecureClient() {
-  console.log('\n2️⃣ Secure HTTP Client Demonstration');
+  console.info('\n2️⃣ Secure HTTP Client Demonstration');
 
   // Create different types of clients
   const fraudClient = SecureClientFactory.createFraudDetectionClient('staging');
@@ -59,12 +59,12 @@ async function demoSecureClient() {
 
   clients.forEach(({ name, client }) => {
     const info = client.getClientInfo();
-    console.log(`🔐 ${name} Client:`);
-    console.log(`   User-Agent: ${info.userAgent.substring(0, 60)}...`);
+    console.info(`🔐 ${name} Client:`);
+    console.info(`   User-Agent: ${info.userAgent.substring(0, 60)}...`);
   });
 
   // Demonstrate client configuration update
-  console.log('\n🔄 Updating client configuration...');
+  console.info('\n🔄 Updating client configuration...');
   const originalAgent = fraudClient.getClientInfo().userAgent;
 
   fraudClient.updateConfig({
@@ -73,11 +73,11 @@ async function demoSecureClient() {
   });
 
   const updatedAgent = fraudClient.getClientInfo().userAgent;
-  console.log('✅ Configuration updated successfully');
+  console.info('✅ Configuration updated successfully');
 }
 
 async function demoMonitoringSystem() {
-  console.log('\n3️⃣ User-Agent Monitoring Demonstration');
+  console.info('\n3️⃣ User-Agent Monitoring Demonstration');
 
   // Clear previous data
   UserAgentMonitor.clearTracking();
@@ -93,17 +93,17 @@ async function demoMonitoringSystem() {
   testAgents.forEach(agent => {
     UserAgentMonitor.trackAgent(agent);
     const isSuspicious = UserAgentMonitor.isSuspicious(agent);
-    console.log(`   ${isSuspicious ? '🚨' : '✅'} ${agent.substring(0, 50)}...`);
+    console.info(`   ${isSuspicious ? '🚨' : '✅'} ${agent.substring(0, 50)}...`);
   });
 
   // Show statistics
   const stats = UserAgentMonitor.getAgentUsageStats();
-  console.log(`\n📊 Total tracked: ${Object.keys(stats.usage).length}`);
-  console.log(`🚨 Suspicious: ${stats.suspicious.length}`);
+  console.info(`\n📊 Total tracked: ${Object.keys(stats.usage).length}`);
+  console.info(`🚨 Suspicious: ${stats.suspicious.length}`);
 }
 
 async function demoBuildIntegration() {
-  console.log('\n4️⃣ Build Integration Demonstration');
+  console.info('\n4️⃣ Build Integration Demonstration');
 
   const buildScenarios = [
     {
@@ -120,14 +120,14 @@ async function demoBuildIntegration() {
   ];
 
   buildScenarios.forEach(({ package: pkg, environment, userAgent }) => {
-    console.log(`📦 Building ${pkg} for ${environment}:`);
-    console.log(`   User-Agent: ${userAgent.substring(0, 80)}...`);
-    console.log(`   Build command would include: --user-agent="${userAgent}"`);
+    console.info(`📦 Building ${pkg} for ${environment}:`);
+    console.info(`   User-Agent: ${userAgent.substring(0, 80)}...`);
+    console.info(`   Build command would include: --user-agent="${userAgent}"`);
   });
 }
 
 async function main() {
-  console.log('🚀 Starting Fantasy42 User-Agent Security Demo...\n');
+  console.info('🚀 Starting Fantasy42 User-Agent Security Demo...\n');
 
   try {
     await demoUserAgentRegistry();
@@ -135,13 +135,13 @@ async function main() {
     await demoMonitoringSystem();
     await demoBuildIntegration();
 
-    console.log('\n🎉 Fantasy42 User-Agent Security Demo Complete!');
-    console.log('\n✨ Key Features Demonstrated:');
-    console.log('   ✅ Enterprise User-Agent generation');
-    console.log('   ✅ Secure HTTP client with compliance');
-    console.log('   ✅ Real-time monitoring and anomaly detection');
-    console.log('   ✅ Build integration with security flags');
-    console.log('   ✅ Multi-environment and geo-region support');
+    console.info('\n🎉 Fantasy42 User-Agent Security Demo Complete!');
+    console.info('\n✨ Key Features Demonstrated:');
+    console.info('   ✅ Enterprise User-Agent generation');
+    console.info('   ✅ Secure HTTP client with compliance');
+    console.info('   ✅ Real-time monitoring and anomaly detection');
+    console.info('   ✅ Build integration with security flags');
+    console.info('   ✅ Multi-environment and geo-region support');
   } catch (error) {
     console.error('❌ Demo failed:', error);
   }

@@ -149,8 +149,8 @@ class UnifiedProductionDashboard {
    */
   async startDashboard(): Promise<void> {
     console.clear();
-    console.log('🎯 Unified Production Dashboard');
-    console.log('=================================\n');
+    console.info('🎯 Unified Production Dashboard');
+    console.info('=================================\n');
 
     this.isRunning = true;
     
@@ -336,8 +336,8 @@ class UnifiedProductionDashboard {
    */
   private displayDashboard(): void {
     console.clear();
-    console.log('🎯 Unified Production Dashboard');
-    console.log('=================================\n');
+    console.info('🎯 Unified Production Dashboard');
+    console.info('=================================\n');
     
     // System Overview
     this.displaySystemOverview();
@@ -371,93 +371,93 @@ class UnifiedProductionDashboard {
       down: '❌'
     };
 
-    console.log('📊 System Overview');
-    console.log('==================');
-    console.log(`🌍 Environment: ${this.data.system.environment.toUpperCase()}`);
-    console.log(`📊 Status: ${statusEmoji[this.data.system.status]} ${this.data.system.status.toUpperCase()}`);
-    console.log(`🚀 Hardware Acceleration: ${this.data.system.hardwareAcceleration ? '✅ Enabled' : '❌ Disabled'}`);
-    console.log(`⏱️  Uptime: ${Math.floor(this.data.system.uptime / 60)}m ${Math.floor(this.data.system.uptime % 60)}s`);
-    console.log(`🕐 Last Update: ${this.data.lastUpdate.toLocaleTimeString()}`);
-    console.log('');
+    console.info('📊 System Overview');
+    console.info('==================');
+    console.info(`🌍 Environment: ${this.data.system.environment.toUpperCase()}`);
+    console.info(`📊 Status: ${statusEmoji[this.data.system.status]} ${this.data.system.status.toUpperCase()}`);
+    console.info(`🚀 Hardware Acceleration: ${this.data.system.hardwareAcceleration ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info(`⏱️  Uptime: ${Math.floor(this.data.system.uptime / 60)}m ${Math.floor(this.data.system.uptime % 60)}s`);
+    console.info(`🕐 Last Update: ${this.data.lastUpdate.toLocaleTimeString()}`);
+    console.info('');
   }
 
   /**
    * Display performance metrics
    */
   private displayPerformanceMetrics(): void {
-    console.log('⚡ Performance Metrics');
-    console.log('=====================');
-    console.log(`🚀 Hash Improvement: ${this.data.performance.hashImprovement}`);
-    console.log(`📈 Throughput: ${this.data.performance.throughput.toFixed(0)} MB/s`);
-    console.log(`⏱️  Average Hash Time: ${this.data.performance.averageHashTime.toFixed(2)}ms`);
-    console.log(`💾 Memory Usage: ${this.data.performance.memoryUsage.toFixed(1)} MB`);
-    console.log(`🕐 Last Benchmark: ${this.data.performance.lastBenchmark.toLocaleTimeString()}`);
-    console.log('');
+    console.info('⚡ Performance Metrics');
+    console.info('=====================');
+    console.info(`🚀 Hash Improvement: ${this.data.performance.hashImprovement}`);
+    console.info(`📈 Throughput: ${this.data.performance.throughput.toFixed(0)} MB/s`);
+    console.info(`⏱️  Average Hash Time: ${this.data.performance.averageHashTime.toFixed(2)}ms`);
+    console.info(`💾 Memory Usage: ${this.data.performance.memoryUsage.toFixed(1)} MB`);
+    console.info(`🕐 Last Benchmark: ${this.data.performance.lastBenchmark.toLocaleTimeString()}`);
+    console.info('');
   }
 
   /**
    * Display R2 status
    */
   private displayR2Status(): void {
-    console.log('☁️  R2 Storage Status');
-    console.log('====================');
-    console.log(`🔗 Connection: ${this.data.r2.connected ? '✅ Connected' : '❌ Disconnected'}`);
-    console.log(`📦 Bucket: ${this.data.r2.bucketName}`);
-    console.log(`🌐 Domain: ${this.data.r2.customDomain}`);
-    console.log(`📊 Total Artifacts: ${this.data.r2.totalArtifacts}`);
-    console.log(`💾 Storage Used: ${(this.data.r2.totalSize / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`⬆️  Upload Speed: ${this.data.r2.uploadSpeed.toFixed(1)} MB/s`);
-    console.log(`⬇️  Download Speed: ${this.data.r2.downloadSpeed.toFixed(1)} MB/s`);
-    console.log(`🕐 Last Sync: ${this.data.r2.lastSync.toLocaleTimeString()}`);
-    console.log('');
+    console.info('☁️  R2 Storage Status');
+    console.info('====================');
+    console.info(`🔗 Connection: ${this.data.r2.connected ? '✅ Connected' : '❌ Disconnected'}`);
+    console.info(`📦 Bucket: ${this.data.r2.bucketName}`);
+    console.info(`🌐 Domain: ${this.data.r2.customDomain}`);
+    console.info(`📊 Total Artifacts: ${this.data.r2.totalArtifacts}`);
+    console.info(`💾 Storage Used: ${(this.data.r2.totalSize / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`⬆️  Upload Speed: ${this.data.r2.uploadSpeed.toFixed(1)} MB/s`);
+    console.info(`⬇️  Download Speed: ${this.data.r2.downloadSpeed.toFixed(1)} MB/s`);
+    console.info(`🕐 Last Sync: ${this.data.r2.lastSync.toLocaleTimeString()}`);
+    console.info('');
   }
 
   /**
    * Display deployment status
    */
   private displayDeploymentStatus(): void {
-    console.log('🚀 Deployment Status');
-    console.log('====================');
-    console.log(`🕐 Last Deployment: ${this.data.deployments.lastDeployment.toLocaleTimeString()}`);
-    console.log(`🌐 Environment: ${this.data.deployments.environment}`);
-    console.log(`📊 Status: ${this.data.deployments.status}`);
-    console.log(`📦 Artifacts Deployed: ${this.data.deployments.artifactsDeployed}`);
-    console.log(`📈 Success Rate: ${this.data.deployments.successRate}%`);
-    console.log(`🔄 Rollback Available: ${this.data.deployments.rollbackAvailable ? '✅ Yes' : '❌ No'}`);
-    console.log('');
+    console.info('🚀 Deployment Status');
+    console.info('====================');
+    console.info(`🕐 Last Deployment: ${this.data.deployments.lastDeployment.toLocaleTimeString()}`);
+    console.info(`🌐 Environment: ${this.data.deployments.environment}`);
+    console.info(`📊 Status: ${this.data.deployments.status}`);
+    console.info(`📦 Artifacts Deployed: ${this.data.deployments.artifactsDeployed}`);
+    console.info(`📈 Success Rate: ${this.data.deployments.successRate}%`);
+    console.info(`🔄 Rollback Available: ${this.data.deployments.rollbackAvailable ? '✅ Yes' : '❌ No'}`);
+    console.info('');
   }
 
   /**
    * Display recent artifacts
    */
   private displayRecentArtifacts(): void {
-    console.log('📦 Recent Artifacts');
-    console.log('==================');
+    console.info('📦 Recent Artifacts');
+    console.info('==================');
     
     if (this.data.artifacts.length === 0) {
-      console.log('   No artifacts found');
+      console.info('   No artifacts found');
     } else {
       this.data.artifacts.slice(0, 5).forEach(artifact => {
         const verified = artifact.verified ? '✅' : '❌';
-        console.log(`   ${verified} ${artifact.name} (${artifact.hash.slice(0, 8)}...)`);
+        console.info(`   ${verified} ${artifact.name} (${artifact.hash.slice(0, 8)}...)`);
       });
       
       if (this.data.artifacts.length > 5) {
-        console.log(`   ... and ${this.data.artifacts.length - 5} more`);
+        console.info(`   ... and ${this.data.artifacts.length - 5} more`);
       }
     }
-    console.log('');
+    console.info('');
   }
 
   /**
    * Display alerts
    */
   private displayAlerts(): void {
-    console.log('🚨 System Alerts');
-    console.log('================');
+    console.info('🚨 System Alerts');
+    console.info('================');
     
     if (this.data.alerts.length === 0) {
-      console.log('   ✅ No alerts');
+      console.info('   ✅ No alerts');
     } else {
       this.data.alerts.slice(-5).forEach(alert => {
         const emoji = {
@@ -466,26 +466,26 @@ class UnifiedProductionDashboard {
           error: '❌',
           success: '✅'
         };
-        console.log(`   ${emoji[alert.type]} ${alert.message} (${alert.component})`);
+        console.info(`   ${emoji[alert.type]} ${alert.message} (${alert.component})`);
       });
     }
-    console.log('');
+    console.info('');
   }
 
   /**
    * Display controls
    */
   private displayControls(): void {
-    console.log('🎛️  Interactive Controls');
-    console.log('=======================');
-    console.log('Press key to perform action:');
-    console.log('  [r] Refresh dashboard');
-    console.log('  [d] Deploy artifacts');
-    console.log('  [h] Run hash benchmark');
-    console.log('  [s] Sync with R2');
-    console.log('  [v] Verify artifacts');
-    console.log('  [q] Quit dashboard');
-    console.log('');
+    console.info('🎛️  Interactive Controls');
+    console.info('=======================');
+    console.info('Press key to perform action:');
+    console.info('  [r] Refresh dashboard');
+    console.info('  [d] Deploy artifacts');
+    console.info('  [h] Run hash benchmark');
+    console.info('  [s] Sync with R2');
+    console.info('  [v] Verify artifacts');
+    console.info('  [q] Quit dashboard');
+    console.info('');
   }
 
   /**
@@ -500,27 +500,27 @@ class UnifiedProductionDashboard {
     stdin.on('data', async (key) => {
       switch (key) {
         case 'r':
-          console.log('🔄 Refreshing dashboard...');
+          console.info('🔄 Refreshing dashboard...');
           await this.refreshData();
           break;
         case 'd':
-          console.log('🚀 Deploying artifacts...');
+          console.info('🚀 Deploying artifacts...');
           await this.deployArtifacts();
           break;
         case 'h':
-          console.log('🔒 Running hash benchmark...');
+          console.info('🔒 Running hash benchmark...');
           await this.runHashBenchmark();
           break;
         case 's':
-          console.log('🔄 Syncing with R2...');
+          console.info('🔄 Syncing with R2...');
           await this.syncWithR2();
           break;
         case 'v':
-          console.log('🔍 Verifying artifacts...');
+          console.info('🔍 Verifying artifacts...');
           await this.verifyArtifacts();
           break;
         case 'q':
-          console.log('👋 Shutting down dashboard...');
+          console.info('👋 Shutting down dashboard...');
           this.shutdown();
           break;
       }
@@ -533,7 +533,7 @@ class UnifiedProductionDashboard {
   private async deployArtifacts(): Promise<void> {
     try {
       // Simulate deployment
-      console.log('🚀 Deployment in progress...');
+      console.info('🚀 Deployment in progress...');
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       this.data.deployments.lastDeployment = new Date();
@@ -541,10 +541,10 @@ class UnifiedProductionDashboard {
       this.data.deployments.artifactsDeployed++;
       
       this.addAlert('success', 'Deployment completed successfully', 'Deployment');
-      console.log('✅ Deployment completed');
+      console.info('✅ Deployment completed');
     } catch (error) {
       this.addAlert('error', `Deployment failed: ${error.message}`, 'Deployment');
-      console.log('❌ Deployment failed');
+      console.info('❌ Deployment failed');
     }
   }
 
@@ -571,15 +571,15 @@ class UnifiedProductionDashboard {
       this.data.performance.throughput = throughput;
       this.data.performance.lastBenchmark = new Date();
       
-      console.log('🚀 Benchmark Results:');
-      console.log(`  Average time: ${averageTime.toFixed(2)}ms`);
-      console.log(`  Throughput: ${throughput.toFixed(0)} MB/s`);
-      console.log(`  Improvement: ${Math.round(2644 / averageTime)}x faster`);
+      console.info('🚀 Benchmark Results:');
+      console.info(`  Average time: ${averageTime.toFixed(2)}ms`);
+      console.info(`  Throughput: ${throughput.toFixed(0)} MB/s`);
+      console.info(`  Improvement: ${Math.round(2644 / averageTime)}x faster`);
       
       this.addAlert('success', 'Benchmark completed successfully', 'Performance');
     } catch (error) {
       this.addAlert('error', `Benchmark failed: ${error.message}`, 'Performance');
-      console.log('❌ Benchmark failed');
+      console.info('❌ Benchmark failed');
     }
   }
 
@@ -589,11 +589,11 @@ class UnifiedProductionDashboard {
   private async syncWithR2(): Promise<void> {
     try {
       await this.updateR2Info();
-      console.log('✅ Sync completed');
+      console.info('✅ Sync completed');
       this.addAlert('success', 'R2 sync completed', 'R2 Storage');
     } catch (error) {
       this.addAlert('error', `Sync failed: ${error.message}`, 'R2 Storage');
-      console.log('❌ Sync failed');
+      console.info('❌ Sync failed');
     }
   }
 
@@ -615,9 +615,9 @@ class UnifiedProductionDashboard {
         }
       }
       
-      console.log(`🔍 Verification Results:`);
-      console.log(`  ✅ Verified: ${verified}`);
-      console.log(`  ❌ Failed: ${failed}`);
+      console.info(`🔍 Verification Results:`);
+      console.info(`  ✅ Verified: ${verified}`);
+      console.info(`  ❌ Failed: ${failed}`);
       
       if (failed === 0) {
         this.addAlert('success', 'All artifacts verified', 'Artifacts');
@@ -626,7 +626,7 @@ class UnifiedProductionDashboard {
       }
     } catch (error) {
       this.addAlert('error', `Verification failed: ${error.message}`, 'Artifacts');
-      console.log('❌ Verification failed');
+      console.info('❌ Verification failed');
     }
   }
 
@@ -637,7 +637,7 @@ class UnifiedProductionDashboard {
     this.isRunning = false;
     process.stdin.setRawMode(false);
     process.stdin.pause();
-    console.log('\n👋 Dashboard shutdown complete');
+    console.info('\n👋 Dashboard shutdown complete');
     process.exit(0);
   }
 
@@ -646,7 +646,7 @@ class UnifiedProductionDashboard {
    */
   saveData(filename: string = './unified-dashboard-data.json'): void {
     writeFileSync(filename, JSON.stringify(this.data, null, 2));
-    console.log(`📄 Dashboard data saved to: ${filename}`);
+    console.info(`📄 Dashboard data saved to: ${filename}`);
   }
 }
 

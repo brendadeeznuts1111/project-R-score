@@ -4,10 +4,10 @@
 // @ts-ignore - SVG import
 import logo from "./logo.svg";
 
-console.log("🎨 Asset Import Demo");
-console.log(`Logo path: ${logo}`);
-console.log(`Type: ${typeof logo}`);
-console.log(`Length: ${logo.length}`);
+console.info("🎨 Asset Import Demo");
+console.info(`Logo path: ${logo}`);
+console.info(`Type: ${typeof logo}`);
+console.info(`Length: ${logo.length}`);
 
 // This demonstrates how Bun handles assets:
 // - Runtime: Returns absolute path to file

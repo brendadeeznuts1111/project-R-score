@@ -609,8 +609,8 @@ class EnhancedTensionWebSocketServer {
     this.setupWebSocketHandlers();
     this.startTensionUpdates();
     
-    console.log(UnicodeTableFormatter.colorize(`🌐 Enhanced WebSocket server started on ws://localhost:${port}`, DesignSystem.status.operational));
-    console.log(UnicodeTableFormatter.colorize(`🎨 AdvancedColorManagementSystem integration active`, DesignSystem.text.accent.blue));
+    console.info(UnicodeTableFormatter.colorize(`🌐 Enhanced WebSocket server started on ws://localhost:${port}`, DesignSystem.status.operational));
+    console.info(UnicodeTableFormatter.colorize(`🎨 AdvancedColorManagementSystem integration active`, DesignSystem.text.accent.blue));
   }
 
   /**
@@ -618,7 +618,7 @@ class EnhancedTensionWebSocketServer {
    */
   private setupWebSocketHandlers(): void {
     this.wss.on('connection', (ws, request) => {
-      console.log(UnicodeTableFormatter.colorize('🔗 Enhanced WebSocket connection established', DesignSystem.text.accent.blue));
+      console.info(UnicodeTableFormatter.colorize('🔗 Enhanced WebSocket connection established', DesignSystem.text.accent.blue));
       
       // Send enhanced initial context data
       this.sendEnhancedInitialContext(ws);
@@ -635,7 +635,7 @@ class EnhancedTensionWebSocketServer {
       
       // Handle disconnection
       ws.on('close', () => {
-        console.log(UnicodeTableFormatter.colorize('🔌 Enhanced WebSocket connection closed', DesignSystem.text.secondary));
+        console.info(UnicodeTableFormatter.colorize('🔌 Enhanced WebSocket connection closed', DesignSystem.text.secondary));
       });
     });
   }
@@ -686,7 +686,7 @@ class EnhancedTensionWebSocketServer {
         this.sendEnhancedContexts(ws);
         break;
       default:
-        console.log(UnicodeTableFormatter.colorize(`❓ Unknown message type: ${message.type}`, DesignSystem.text.secondary));
+        console.info(UnicodeTableFormatter.colorize(`❓ Unknown message type: ${message.type}`, DesignSystem.text.secondary));
     }
   }
 
@@ -1479,7 +1479,7 @@ function createEnhancedColorSystemAPI(): Elysia {
  * Demonstrate the enhanced ColorSystem integration
  */
 async function demonstrateEnhancedColorSystem(): Promise<void> {
-  console.log(EmpireProDashboard.generateHeader(
+  console.info(EmpireProDashboard.generateHeader(
     'ENHANCED COLOR SYSTEM INTEGRATION DEMONSTRATION',
     'Advanced Color Mathematics with HSL/HEX Generation and Tension Mapping'
   ));
@@ -1489,22 +1489,22 @@ async function demonstrateEnhancedColorSystem(): Promise<void> {
   
   const server = app.listen(port);
   
-  console.log(UnicodeTableFormatter.colorize('🚀 Enhanced ColorSystem API Started', DesignSystem.status.operational));
-  console.log(UnicodeTableFormatter.colorize(`🌐 Main Server: http://localhost:${port}`, DesignSystem.text.accent.blue));
-  console.log(UnicodeTableFormatter.colorize(`🎨 ColorSystem Demo: http://localhost:${port}/color-system/demo`, DesignSystem.text.accent.green));
-  console.log(UnicodeTableFormatter.colorize(`🛠️ ColorSystem Utils: http://localhost:${port}/color-system/utilities`, DesignSystem.text.accent.purple));
-  console.log(UnicodeTableFormatter.colorize(`📱 Contexts: http://localhost:${port}/contexts`, DesignSystem.text.accent.yellow));
-  console.log(UnicodeTableFormatter.colorize(`🎨 CSS Variables: http://localhost:${port}/colors.css`, DesignSystem.text.secondary));
-  console.log(UnicodeTableFormatter.colorize(`🌐 WebSocket: ws://localhost:8766/ws-inspect`, DesignSystem.text.accent.cyan));
+  console.info(UnicodeTableFormatter.colorize('🚀 Enhanced ColorSystem API Started', DesignSystem.status.operational));
+  console.info(UnicodeTableFormatter.colorize(`🌐 Main Server: http://localhost:${port}`, DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize(`🎨 ColorSystem Demo: http://localhost:${port}/color-system/demo`, DesignSystem.text.accent.green));
+  console.info(UnicodeTableFormatter.colorize(`🛠️ ColorSystem Utils: http://localhost:${port}/color-system/utilities`, DesignSystem.text.accent.purple));
+  console.info(UnicodeTableFormatter.colorize(`📱 Contexts: http://localhost:${port}/contexts`, DesignSystem.text.accent.yellow));
+  console.info(UnicodeTableFormatter.colorize(`🎨 CSS Variables: http://localhost:${port}/colors.css`, DesignSystem.text.secondary));
+  console.info(UnicodeTableFormatter.colorize(`🌐 WebSocket: ws://localhost:8766/ws-inspect`, DesignSystem.text.accent.cyan));
   
   // Demonstrate AdvancedColorManagementSystem usage
-  console.log(UnicodeTableFormatter.colorize('\n🎨 ADVANCED COLOR SYSTEM DEMONSTRATION:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('\n🎨 ADVANCED COLOR SYSTEM DEMONSTRATION:', DesignSystem.text.accent.blue));
   
   // Test different tension levels
   const testTensions = [10, 25, 50, 75, 90];
   
   testTensions.forEach(tension => {
-    console.log(UnicodeTableFormatter.colorize(`\n🎯 Testing Tension: ${tension}%`, DesignSystem.text.primary));
+    console.info(UnicodeTableFormatter.colorize(`\n🎯 Testing Tension: ${tension}%`, DesignSystem.text.primary));
     
     const colorValue = AdvancedColorManagementSystem.generateCompleteColorValue(tension);
     const colorScheme = AdvancedColorManagementSystem.generateColorSchemeFromTension(tension);
@@ -1514,43 +1514,43 @@ async function demonstrateEnhancedColorSystem(): Promise<void> {
     const hslGradient = AdvancedColorManagementSystem.generateHSLGradientFromTension(tension);
     const hexGradient = AdvancedColorManagementSystem.generateHEXGradientFromTension(tension);
     
-    console.log(`  Classification: ${classification}`);
-    console.log(`  Description: ${description}`);
-    console.log(`  HSL: ${colorValue.hsl}`);
-    console.log(`  HEX: ${colorValue.hex}`);
-    console.log(`  RGB: rgb(${colorValue.rgb.r}, ${colorValue.rgb.g}, ${colorValue.rgb.b})`);
-    console.log(`  HSL Gradient: ${hslGradient.substring(0, 50)}...`);
-    console.log(`  HEX Gradient: ${hexGradient.substring(0, 50)}...`);
-    console.log(`  Color Scheme: Primary=${colorScheme.primary}, Secondary=${colorScheme.secondary}, Accent=${colorScheme.accent}`);
-    console.log(`  Palette: ${Object.keys(palette).length} shades from ${palette[50]} to ${palette[900]}`);
+    console.info(`  Classification: ${classification}`);
+    console.info(`  Description: ${description}`);
+    console.info(`  HSL: ${colorValue.hsl}`);
+    console.info(`  HEX: ${colorValue.hex}`);
+    console.info(`  RGB: rgb(${colorValue.rgb.r}, ${colorValue.rgb.g}, ${colorValue.rgb.b})`);
+    console.info(`  HSL Gradient: ${hslGradient.substring(0, 50)}...`);
+    console.info(`  HEX Gradient: ${hexGradient.substring(0, 50)}...`);
+    console.info(`  Color Scheme: Primary=${colorScheme.primary}, Secondary=${colorScheme.secondary}, Accent=${colorScheme.accent}`);
+    console.info(`  Palette: ${Object.keys(palette).length} shades from ${palette[50]} to ${palette[900]}`);
   });
   
   // Test parameter validation
-  console.log(UnicodeTableFormatter.colorize('\n🔍 TESTING PARAMETER VALIDATION:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('\n🔍 TESTING PARAMETER VALIDATION:', DesignSystem.text.accent.blue));
   
   try {
     AdvancedColorManagementSystem.generateHSLColorFromTension({ tension: 50, saturation: 80, lightness: 60 });
-    console.log('✅ Valid parameters accepted');
+    console.info('✅ Valid parameters accepted');
   } catch (error) {
-    console.log('❌ Valid parameters rejected:', error);
+    console.info('❌ Valid parameters rejected:', error);
   }
   
   try {
     AdvancedColorManagementSystem.generateHSLColorFromTension({ tension: 150 });
-    console.log('❌ Invalid tension accepted');
+    console.info('❌ Invalid tension accepted');
   } catch (error) {
-    console.log('✅ Invalid tension rejected:', error.message);
+    console.info('✅ Invalid tension rejected:', error.message);
   }
   
   try {
     AdvancedColorManagementSystem.generateHSLColorFromTension({ tension: 50, saturation: 150 });
-    console.log('❌ Invalid saturation accepted');
+    console.info('❌ Invalid saturation accepted');
   } catch (error) {
-    console.log('✅ Invalid saturation rejected:', error.message);
+    console.info('✅ Invalid saturation rejected:', error.message);
   }
   
   // Test gradient configuration
-  console.log(UnicodeTableFormatter.colorize('\n🌊 TESTING GRADIENT CONFIGURATION:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('\n🌊 TESTING GRADIENT CONFIGURATION:', DesignSystem.text.accent.blue));
   
   const customGradient = AdvancedColorManagementSystem.generateHSLGradientFromTension(50, {
     angle: 90,
@@ -1560,62 +1560,62 @@ async function demonstrateEnhancedColorSystem(): Promise<void> {
     endLightness: 35
   });
   
-  console.log(`Custom gradient: ${customGradient}`);
+  console.info(`Custom gradient: ${customGradient}`);
   
   // Test RGB extraction
-  console.log(UnicodeTableFormatter.colorize('\n🔴 TESTING RGB EXTRACTION:', DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize('\n🔴 TESTING RGB EXTRACTION:', DesignSystem.text.accent.blue));
   
   const testHex = '#26D926';
   const rgb = AdvancedColorManagementSystem.extractRGBFromHEX(testHex);
-  console.log(`HEX: ${testHex} -> RGB: rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`);
+  console.info(`HEX: ${testHex} -> RGB: rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`);
   
-  console.log(EmpireProDashboard.generateFooter());
+  console.info(EmpireProDashboard.generateFooter());
   
-  console.log('\n🎉 ENHANCED COLOR SYSTEM INTEGRATION DEMO COMPLETE!');
-  console.log('✅ AdvancedColorManagementSystem with mathematical precision');
-  console.log('✅ HSL/HEX generation with tension mapping');
-  console.log('✅ Dynamic gradient generation with configuration');
-  console.log('✅ Complete color palette generation (50-900)');
-  console.log('✅ Enhanced ColorfulTypeContext with ColorSystem');
-  console.log('✅ Real-time WebSocket updates with enhanced color data');
-  console.log('✅ Enhanced CSS variable generation');
-  console.log('✅ Interactive demo with visual feedback');
+  console.info('\n🎉 ENHANCED COLOR SYSTEM INTEGRATION DEMO COMPLETE!');
+  console.info('✅ AdvancedColorManagementSystem with mathematical precision');
+  console.info('✅ HSL/HEX generation with tension mapping');
+  console.info('✅ Dynamic gradient generation with configuration');
+  console.info('✅ Complete color palette generation (50-900)');
+  console.info('✅ Enhanced ColorfulTypeContext with ColorSystem');
+  console.info('✅ Real-time WebSocket updates with enhanced color data');
+  console.info('✅ Enhanced CSS variable generation');
+  console.info('✅ Interactive demo with visual feedback');
   
-  console.log('\n📋 ADVANCED COLOR SYSTEM FEATURES:');
-  console.log('  🎨 HSL Generation: Maps tension (0-100) to HSL colors with customizable parameters');
-  console.log('  🔢 HEX Conversion: Mathematical HSL to HEX conversion with validation');
-  console.log('  🌈 Dynamic Gradients: CSS gradients with configurable angles and stops');
-  console.log('  📱 Color Palettes: Systematic 50-900 shade generation');
-  console.log('  🎯 Color Schemes: Semantic color roles (primary, secondary, accent, background, text)');
-  console.log('  📊 RGB Extraction: Precise RGB values for programmatic use');
-  console.log('  📝 Descriptions: Human-readable color descriptions with classification');
-  console.log('  ⚡ Parameter Validation: Comprehensive input validation with error messages');
-  console.log('  🔧 TypeScript Types: Full type safety with interfaces and readonly properties');
+  console.info('\n📋 ADVANCED COLOR SYSTEM FEATURES:');
+  console.info('  🎨 HSL Generation: Maps tension (0-100) to HSL colors with customizable parameters');
+  console.info('  🔢 HEX Conversion: Mathematical HSL to HEX conversion with validation');
+  console.info('  🌈 Dynamic Gradients: CSS gradients with configurable angles and stops');
+  console.info('  📱 Color Palettes: Systematic 50-900 shade generation');
+  console.info('  🎯 Color Schemes: Semantic color roles (primary, secondary, accent, background, text)');
+  console.info('  📊 RGB Extraction: Precise RGB values for programmatic use');
+  console.info('  📝 Descriptions: Human-readable color descriptions with classification');
+  console.info('  ⚡ Parameter Validation: Comprehensive input validation with error messages');
+  console.info('  🔧 TypeScript Types: Full type safety with interfaces and readonly properties');
   
-  console.log('\n🔧 ADVANCED USAGE EXAMPLES:');
-  console.log('  // AdvancedColorManagementSystem usage');
-  console.log('  const hsl = AdvancedColorManagementSystem.generateHSLColorFromTension({');
-  console.log('    tension: 50,');
-  console.log('    saturation: 80,');
-  console.log('    lightness: 60');
-  console.log('  });');
-  console.log('');
-  console.log('  const hex = AdvancedColorManagementSystem.generateHEXColorFromTension(50);');
-  console.log('  const gradient = AdvancedColorManagementSystem.generateHSLGradientFromTension(50, {');
-  console.log('    angle: 90,');
-  console.log('    startSaturation: 90,');
-  console.log('    endSaturation: 70');
-  console.log('  });');
-  console.log('  const scheme = AdvancedColorManagementSystem.generateColorSchemeFromTension(50);');
-  console.log('  const palette = AdvancedColorManagementSystem.generateColorPaletteFromTension(50);');
-  console.log('  const complete = AdvancedColorManagementSystem.generateCompleteColorValue(50);');
-  console.log('  const classification = AdvancedColorManagementSystem.getTensionClassification(50);');
-  console.log('  const description = AdvancedColorManagementSystem.getColorDescriptionFromTension(50);');
-  console.log('  const rgb = AdvancedColorManagementSystem.extractRGBFromHEX("#26D926");');
+  console.info('\n🔧 ADVANCED USAGE EXAMPLES:');
+  console.info('  // AdvancedColorManagementSystem usage');
+  console.info('  const hsl = AdvancedColorManagementSystem.generateHSLColorFromTension({');
+  console.info('    tension: 50,');
+  console.info('    saturation: 80,');
+  console.info('    lightness: 60');
+  console.info('  });');
+  console.info('');
+  console.info('  const hex = AdvancedColorManagementSystem.generateHEXColorFromTension(50);');
+  console.info('  const gradient = AdvancedColorManagementSystem.generateHSLGradientFromTension(50, {');
+  console.info('    angle: 90,');
+  console.info('    startSaturation: 90,');
+  console.info('    endSaturation: 70');
+  console.info('  });');
+  console.info('  const scheme = AdvancedColorManagementSystem.generateColorSchemeFromTension(50);');
+  console.info('  const palette = AdvancedColorManagementSystem.generateColorPaletteFromTension(50);');
+  console.info('  const complete = AdvancedColorManagementSystem.generateCompleteColorValue(50);');
+  console.info('  const classification = AdvancedColorManagementSystem.getTensionClassification(50);');
+  console.info('  const description = AdvancedColorManagementSystem.getColorDescriptionFromTension(50);');
+  console.info('  const rgb = AdvancedColorManagementSystem.extractRGBFromHEX("#26D926");');
   
   // Handle graceful shutdown
   process.on('SIGINT', () => {
-    console.log(UnicodeTableFormatter.colorize('\n🛑 Shutting down Enhanced ColorSystem server...', DesignSystem.text.secondary));
+    console.info(UnicodeTableFormatter.colorize('\n🛑 Shutting down Enhanced ColorSystem server...', DesignSystem.text.secondary));
     server.stop();
     process.exit(0);
   });

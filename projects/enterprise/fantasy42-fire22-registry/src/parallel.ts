@@ -457,7 +457,7 @@ export class ParallelMonitor {
     const operation = this.operations.get(name);
     if (operation) {
       const duration = Date.now() - operation.startTime;
-      console.log(
+      console.info(
         `⚡ ${name}: ${operation.count} operations in ${duration}ms (${((operation.count / duration) * 1000).toFixed(1)} ops/sec)`
       );
       this.operations.delete(name);
@@ -465,10 +465,10 @@ export class ParallelMonitor {
   }
 
   logStats(): void {
-    console.log('📊 Parallel Processing Stats:');
+    console.info('📊 Parallel Processing Stats:');
     for (const [name, stats] of this.operations) {
       const duration = Date.now() - stats.startTime;
-      console.log(
+      console.info(
         `  ${name}: ${stats.count} ops, ${((stats.count / duration) * 1000).toFixed(1)} ops/sec`
       );
     }

@@ -9,7 +9,7 @@ export async function verifyTimezoneMatrix() {
   const now = new Date();
   let failures = 0;
   
-  console.log('🌍 Verifying TIMEZONE_MATRIX v3.7 baseline...\n');
+  console.info('🌍 Verifying TIMEZONE_MATRIX v3.7 baseline...\n');
   
   for (const [zone, expectedOffset] of Object.entries(TIMEZONE_MATRIX.BASELINE_OFFSETS)) {
     // Get timezone abbreviation/offset
@@ -52,17 +52,17 @@ export async function verifyTimezoneMatrix() {
       console.error(`❌ ${zone}: expected ${expectedOffset}, got ${normalized}`);
       failures++;
     } else {
-      console.log(`✅ ${zone}: ${normalized}`);
+      console.info(`✅ ${zone}: ${normalized}`);
     }
   }
   
-  console.log('\n' + '='.repeat(50));
+  console.info('\n' + '='.repeat(50));
   
   if (failures > 0) {
     throw new Error(`Timezone verification failed: ${failures} zones`);
   }
   
-  console.log('🌍 TIMEZONE_MATRIX v3.7 baseline verified in UTC mode');
+  console.info('🌍 TIMEZONE_MATRIX v3.7 baseline verified in UTC mode');
 }
 
 // Run with: TZ=UTC bun run scripts/verify-timezone-matrix.ts

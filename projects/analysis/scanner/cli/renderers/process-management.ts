@@ -260,7 +260,7 @@ const SIGNAL_CODES: Record<string, number> = {SIGINT: 2, SIGTERM: 15};
 
 function setupGracefulShutdown(handlers: (() => Promise<void> | void)[]): void {
 	const shutdown = async (signal: string) => {
-		console.log(`\nReceived ${signal}. Shutting down...`);
+		console.info(`\nReceived ${signal}. Shutting down...`);
 		for (const handler of handlers) {
 			await handler();
 		}

@@ -21,7 +21,7 @@ export class HyperCoreURLPatternSpyFactory {
 		
 		// FFI engine is ready (patterns are matched dynamically)
 		// No need to pre-register patterns
-		console.log(`✅ FFI Engine initialized with ${patterns.length} patterns`);
+		console.info(`✅ FFI Engine initialized with ${patterns.length} patterns`);
 	}
 
 	/**

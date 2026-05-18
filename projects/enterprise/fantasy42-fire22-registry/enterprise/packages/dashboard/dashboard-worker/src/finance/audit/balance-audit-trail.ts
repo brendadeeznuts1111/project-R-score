@@ -66,7 +66,7 @@ export class BalanceAuditTrail {
     // Cleanup old events
     this.cleanupOldEvents(customerId);
 
-    console.log(
+    console.info(
       `💰 Balance change recorded: ${customerId} | ${changeType} | $${changeAmount} | ${reason}`
     );
 
@@ -381,7 +381,7 @@ export class BalanceAuditTrail {
       this.events.delete(eventId);
     });
 
-    console.log(`🧹 Cleared ${clearedCount} old audit events`);
+    console.info(`🧹 Cleared ${clearedCount} old audit events`);
     return clearedCount;
   }
 

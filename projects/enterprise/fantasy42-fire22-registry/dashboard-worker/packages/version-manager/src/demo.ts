@@ -19,14 +19,14 @@ const colors = {
 };
 
 function header(text: string) {
-  console.log('\n' + colors.bold(colors.cyan('=' + '='.repeat(60))));
-  console.log(colors.bold(colors.cyan(`🏷️  ${text}`)));
-  console.log(colors.bold(colors.cyan('=' + '='.repeat(60))));
+  console.info('\n' + colors.bold(colors.cyan('=' + '='.repeat(60))));
+  console.info(colors.bold(colors.cyan(`🏷️  ${text}`)));
+  console.info(colors.bold(colors.cyan('=' + '='.repeat(60))));
 }
 
 function section(text: string) {
-  console.log('\n' + colors.blue(`📋 ${text}`));
-  console.log(colors.blue('-'.repeat(40)));
+  console.info('\n' + colors.blue(`📋 ${text}`));
+  console.info(colors.blue('-'.repeat(40)));
 }
 
 async function main() {
@@ -46,19 +46,19 @@ async function main() {
   for (const version of versions) {
     try {
       const parsed = VersionUtils.parse(version);
-      console.log(`${colors.green('✅')} ${version}`);
-      console.log(`   Major: ${parsed.major}, Minor: ${parsed.minor}, Patch: ${parsed.patch}`);
+      console.info(`${colors.green('✅')} ${version}`);
+      console.info(`   Major: ${parsed.major}, Minor: ${parsed.minor}, Patch: ${parsed.patch}`);
       if (parsed.prerelease && parsed.prerelease.length > 0) {
-        console.log(`   Prerelease: ${parsed.prerelease.join('.')}`);
+        console.info(`   Prerelease: ${parsed.prerelease.join('.')}`);
       }
       if (parsed.build && parsed.build.length > 0) {
-        console.log(`   Build: ${parsed.build.join('.')}`);
+        console.info(`   Build: ${parsed.build.join('.')}`);
       }
-      console.log(`   Formatted: ${parsed.format()}`);
+      console.info(`   Formatted: ${parsed.format()}`);
     } catch (error) {
-      console.log(`${colors.red('❌')} ${version}: ${error.message}`);
+      console.info(`${colors.red('❌')} ${version}: ${error.message}`);
     }
-    console.log();
+    console.info();
   }
 
   // 2. Version Comparison
@@ -82,7 +82,7 @@ async function main() {
     } else {
       comparison = colors.blue(`${v1} = ${v2}`);
     }
-    console.log(`${comparison}`);
+    console.info(`${comparison}`);
   }
 
   // 3. Range Satisfaction
@@ -100,7 +100,7 @@ async function main() {
   for (const [version, range] of ranges) {
     const satisfies = VersionUtils.satisfies(version, range);
     const icon = satisfies ? colors.green('✅') : colors.red('❌');
-    console.log(`${icon} ${version} satisfies "${range}": ${satisfies}`);
+    console.info(`${icon} ${version} satisfies "${range}": ${satisfies}`);
   }
 
   // 4. Version Manager Demo
@@ -111,20 +111,20 @@ async function main() {
     minimum: '1.0.0',
   });
 
-  console.log(`Current Version: ${colors.green(manager.getCurrentVersion())}`);
+  console.info(`Current Version: ${colors.green(manager.getCurrentVersion())}`);
 
   // Show next version suggestions
   const suggestions = VersionUtils.getNextVersions('3.1.0');
-  console.log(`\nNext Version Suggestions:`);
-  console.log(`  Patch:  ${colors.green(suggestions.patch)}`);
-  console.log(`  Minor:  ${colors.yellow(suggestions.minor)}`);
-  console.log(`  Major:  ${colors.red(suggestions.major)}`);
-  console.log(`  Alpha:  ${colors.blue(suggestions.prerelease.alpha)}`);
-  console.log(`  Beta:   ${colors.blue(suggestions.prerelease.beta)}`);
-  console.log(`  RC:     ${colors.blue(suggestions.prerelease.rc)}`);
+  console.info(`\nNext Version Suggestions:`);
+  console.info(`  Patch:  ${colors.green(suggestions.patch)}`);
+  console.info(`  Minor:  ${colors.yellow(suggestions.minor)}`);
+  console.info(`  Major:  ${colors.red(suggestions.major)}`);
+  console.info(`  Alpha:  ${colors.blue(suggestions.prerelease.alpha)}`);
+  console.info(`  Beta:   ${colors.blue(suggestions.prerelease.beta)}`);
+  console.info(`  RC:     ${colors.blue(suggestions.prerelease.rc)}`);
 
   // Simulate version bumps
-  console.log(`\n${colors.bold('Simulating Version Bumps:')}`);
+  console.info(`\n${colors.bold('Simulating Version Bumps:')}`);
 
   try {
     const newPatch = await manager.bumpVersion('patch', {
@@ -133,15 +133,15 @@ async function main() {
       breaking: false,
       dryRun: false,
     });
-    console.log(`${colors.green('✅')} Bumped to patch version: ${newPatch}`);
+    console.info(`${colors.green('✅')} Bumped to patch version: ${newPatch}`);
 
     const newMinor = manager.increment('minor');
-    console.log(`${colors.green('✅')} Next minor would be: ${newMinor}`);
+    console.info(`${colors.green('✅')} Next minor would be: ${newMinor}`);
 
     const newMajor = manager.increment('major');
-    console.log(`${colors.green('✅')} Next major would be: ${newMajor}`);
+    console.info(`${colors.green('✅')} Next major would be: ${newMajor}`);
   } catch (error) {
-    console.log(`${colors.red('❌')} Error in version bump: ${error.message}`);
+    console.info(`${colors.red('❌')} Error in version bump: ${error.message}`);
   }
 
   // 5. Workspace Management
@@ -155,20 +155,20 @@ async function main() {
   workspace.addWorkspace('@fire22/env-manager', '3.1.0');
 
   const versions_workspace = workspace.getWorkspaceVersions();
-  console.log(`${colors.bold('Workspace Versions:')}`);
+  console.info(`${colors.bold('Workspace Versions:')}`);
   for (const [name, version] of Object.entries(versions_workspace)) {
     const badge = name === 'root' ? colors.yellow(' [ROOT]') : '';
-    console.log(`  ${name}${badge}: ${colors.green(version)}`);
+    console.info(`  ${name}${badge}: ${colors.green(version)}`);
   }
 
   // Check consistency
   const consistency = workspace.checkConsistency();
   if (consistency.consistent) {
-    console.log(`${colors.green('✅')} All workspace versions are consistent`);
+    console.info(`${colors.green('✅')} All workspace versions are consistent`);
   } else {
-    console.log(`${colors.red('❌')} Version inconsistencies found:`);
+    console.info(`${colors.red('❌')} Version inconsistencies found:`);
     for (const issue of consistency.inconsistencies) {
-      console.log(
+      console.info(
         `  ${issue.package}: ${colors.red(issue.version)} (expected: ${colors.green(issue.expected)})`
       );
     }
@@ -188,16 +188,16 @@ async function main() {
     '2.0.0-rc.1',
   ];
 
-  console.log(`Original: ${mixedVersions.join(', ')}`);
+  console.info(`Original: ${mixedVersions.join(', ')}`);
 
   const sortedAsc = VersionUtils.sort(mixedVersions, false);
-  console.log(`Sorted (ascending): ${colors.green(sortedAsc.join(', '))}`);
+  console.info(`Sorted (ascending): ${colors.green(sortedAsc.join(', '))}`);
 
   const sortedDesc = VersionUtils.sort(mixedVersions, true);
-  console.log(`Sorted (descending): ${colors.yellow(sortedDesc.join(', '))}`);
+  console.info(`Sorted (descending): ${colors.yellow(sortedDesc.join(', '))}`);
 
   const filtered = VersionUtils.filterByRange(mixedVersions, '^2.0.0');
-  console.log(`Matching ^2.0.0: ${colors.blue(filtered.join(', '))}`);
+  console.info(`Matching ^2.0.0: ${colors.blue(filtered.join(', '))}`);
 
   // 7. Performance Benchmark
   section('7. Performance Benchmark');
@@ -225,14 +225,14 @@ async function main() {
   }
   const satisfiesTime = Number(Bun.nanoseconds() - satisfiesStart) / 1000000;
 
-  console.log(`${colors.bold('Performance Results')} (${iterations.toLocaleString()} operations):`);
-  console.log(
+  console.info(`${colors.bold('Performance Results')} (${iterations.toLocaleString()} operations):`);
+  console.info(
     `  Parsing:     ${colors.green(parseTime.toFixed(2))}ms total, ${colors.cyan(((parseTime / iterations) * 1000).toFixed(3))}μs per op`
   );
-  console.log(
+  console.info(
     `  Comparison:  ${colors.green(compareTime.toFixed(2))}ms total, ${colors.cyan(((compareTime / iterations) * 1000).toFixed(3))}μs per op`
   );
-  console.log(
+  console.info(
     `  Satisfaction: ${colors.green(satisfiesTime.toFixed(2))}ms total, ${colors.cyan(((satisfiesTime / iterations) * 1000).toFixed(3))}μs per op`
   );
 
@@ -244,9 +244,9 @@ async function main() {
   for (const invalid of invalidVersions) {
     try {
       VersionUtils.parse(invalid);
-      console.log(`${colors.red('⚠️')} Should have failed: ${invalid}`);
+      console.info(`${colors.red('⚠️')} Should have failed: ${invalid}`);
     } catch (error) {
-      console.log(`${colors.green('✅')} Correctly rejected: "${invalid}"`);
+      console.info(`${colors.green('✅')} Correctly rejected: "${invalid}"`);
     }
   }
 
@@ -254,21 +254,21 @@ async function main() {
   section('9. Package Information');
 
   const { PACKAGE_INFO } = await import('./index');
-  console.log(`Package: ${colors.bold(PACKAGE_INFO.name)}`);
-  console.log(`Version: ${colors.green(PACKAGE_INFO.version)}`);
-  console.log(`Description: ${PACKAGE_INFO.description}`);
-  console.log('\nFeatures:');
+  console.info(`Package: ${colors.bold(PACKAGE_INFO.name)}`);
+  console.info(`Version: ${colors.green(PACKAGE_INFO.version)}`);
+  console.info(`Description: ${PACKAGE_INFO.description}`);
+  console.info('\nFeatures:');
   for (const feature of PACKAGE_INFO.features) {
-    console.log(`  • ${feature}`);
+    console.info(`  • ${feature}`);
   }
-  console.log('\nPerformance Characteristics:');
+  console.info('\nPerformance Characteristics:');
   for (const [key, value] of Object.entries(PACKAGE_INFO.performance)) {
-    console.log(`  ${key}: ${colors.cyan(value)}`);
+    console.info(`  ${key}: ${colors.cyan(value)}`);
   }
 
   header('Demo Complete - Fire22 Version Manager with Bun.semver');
 
-  console.log(`
+  console.info(`
 ${colors.green('🎉 Demo completed successfully!')}
 
 ${colors.bold('Key Takeaways:')}

@@ -64,5 +64,5 @@ const rules = JSON.parse(rulesJson);
 const issues = await scanFile(filePath, rules);
 
 // Output results
-console.log(JSON.stringify(issues));
+console.info(JSON.stringify(issues));
 `;

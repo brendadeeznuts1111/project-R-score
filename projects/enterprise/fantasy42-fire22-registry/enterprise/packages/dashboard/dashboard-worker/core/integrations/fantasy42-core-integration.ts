@@ -131,7 +131,7 @@ export class Fantasy42CoreIntegration {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🚀 Initializing Fantasy42 Core Integration...');
+      console.info('🚀 Initializing Fantasy42 Core Integration...');
 
       // Initialize version and domain detection
       await this.initializeVersionAndDomain();
@@ -171,7 +171,7 @@ export class Fantasy42CoreIntegration {
       await this.initializeResourceOptimization();
 
       this.isInitialized = true;
-      console.log('✅ Fantasy42 Core Integration initialized');
+      console.info('✅ Fantasy42 Core Integration initialized');
 
       return true;
     } catch (error) {
@@ -302,14 +302,14 @@ export class Fantasy42CoreIntegration {
     const versionElement = document.querySelector('[data-field="version"]') as HTMLElement;
     if (versionElement) {
       this.config.version = versionElement.textContent || this.config.version;
-      console.log(`📋 Detected version: ${this.config.version}`);
+      console.info(`📋 Detected version: ${this.config.version}`);
     }
 
     // Detect domain from data-field
     const domainElement = document.querySelector('[data-field="domain-me"]') as HTMLElement;
     if (domainElement) {
       this.config.domain = domainElement.textContent || this.config.domain;
-      console.log(`🌐 Detected domain: ${this.config.domain}`);
+      console.info(`🌐 Detected domain: ${this.config.domain}`);
     }
 
     // Set environment based on domain
@@ -321,7 +321,7 @@ export class Fantasy42CoreIntegration {
       this.config.environment = 'production';
     }
 
-    console.log(`🏭 Environment: ${this.config.environment}`);
+    console.info(`🏭 Environment: ${this.config.environment}`);
   }
 
   /**
@@ -361,7 +361,7 @@ export class Fantasy42CoreIntegration {
     // Setup responsive design
     await this.setupResponsiveDesign();
 
-    console.log(`📱 Current view: ${this.currentViewState.currentView}`);
+    console.info(`📱 Current view: ${this.currentViewState.currentView}`);
   }
 
   /**
@@ -384,7 +384,7 @@ export class Fantasy42CoreIntegration {
     // Setup activity tracking
     await this.setupActivityTracking();
 
-    console.log('💾 Session management initialized');
+    console.info('💾 Session management initialized');
   }
 
   /**
@@ -424,7 +424,7 @@ export class Fantasy42CoreIntegration {
     // Setup mobile-specific features
     await this.setupMobileFeatures();
 
-    console.log('📱 Mobile view applied');
+    console.info('📱 Mobile view applied');
   }
 
   /**
@@ -441,7 +441,7 @@ export class Fantasy42CoreIntegration {
     // Setup desktop-specific features
     await this.setupDesktopFeatures();
 
-    console.log('🖥️ Desktop view applied');
+    console.info('🖥️ Desktop view applied');
   }
 
   /**
@@ -458,7 +458,7 @@ export class Fantasy42CoreIntegration {
     // Setup bet ticker specific features
     await this.setupBetTickerFeatures();
 
-    console.log('🎯 Bet ticker view applied');
+    console.info('🎯 Bet ticker view applied');
   }
 
   /**
@@ -511,7 +511,7 @@ export class Fantasy42CoreIntegration {
     window.addEventListener('resize', resizeListener);
     this.eventListeners.set('window-resize', resizeListener);
 
-    console.log('👂 View change listeners setup');
+    console.info('👂 View change listeners setup');
   }
 
   /**
@@ -546,7 +546,7 @@ export class Fantasy42CoreIntegration {
 
     this.addStyleSheet(responsiveVars);
 
-    console.log('📐 Responsive design setup');
+    console.info('📐 Responsive design setup');
   }
 
   /**
@@ -588,7 +588,7 @@ export class Fantasy42CoreIntegration {
       reason,
     });
 
-    console.log(`🔄 View changed: ${previousView} → ${view} (${reason})`);
+    console.info(`🔄 View changed: ${previousView} → ${view} (${reason})`);
   }
 
   /**
@@ -673,7 +673,7 @@ export class Fantasy42CoreIntegration {
 
     this.addStyleSheet(mobileCSS, 'mobile-styles');
 
-    console.log('📱 Mobile features setup');
+    console.info('📱 Mobile features setup');
   }
 
   /**
@@ -705,7 +705,7 @@ export class Fantasy42CoreIntegration {
 
     this.addStyleSheet(desktopCSS, 'desktop-styles');
 
-    console.log('🖥️ Desktop features setup');
+    console.info('🖥️ Desktop features setup');
   }
 
   /**
@@ -738,7 +738,7 @@ export class Fantasy42CoreIntegration {
 
     this.addStyleSheet(betTickerCSS, 'bet-ticker-styles');
 
-    console.log('🎯 Bet ticker features setup');
+    console.info('🎯 Bet ticker features setup');
   }
 
   /**
@@ -763,7 +763,7 @@ export class Fantasy42CoreIntegration {
       menuToggle.addEventListener('click', toggleListener);
       this.eventListeners.set('menu-toggle', toggleListener);
 
-      console.log('🔄 Menu toggle initialized');
+      console.info('🔄 Menu toggle initialized');
     }
   }
 
@@ -783,7 +783,7 @@ export class Fantasy42CoreIntegration {
         },
       });
 
-      console.log('📦 RequireJS integration initialized');
+      console.info('📦 RequireJS integration initialized');
     } else {
       console.warn('⚠️ RequireJS not found, integration skipped');
     }
@@ -797,9 +797,9 @@ export class Fantasy42CoreIntegration {
     const cloudflareScript = document.querySelector('script[src*="jsd/main.js"]');
 
     if (cloudflareScript) {
-      console.log('☁️ Cloudflare integration detected');
+      console.info('☁️ Cloudflare integration detected');
     } else {
-      console.log('☁️ Cloudflare integration ready');
+      console.info('☁️ Cloudflare integration ready');
     }
   }
 
@@ -820,7 +820,7 @@ export class Fantasy42CoreIntegration {
       this.observers.set('performance', observer);
     }
 
-    console.log('📊 Performance monitoring initialized');
+    console.info('📊 Performance monitoring initialized');
   }
 
   /**
@@ -848,7 +848,7 @@ export class Fantasy42CoreIntegration {
     window.addEventListener('error', errorHandler);
     this.eventListeners.set('error-handler', errorHandler);
 
-    console.log('🚨 Error tracking initialized');
+    console.info('🚨 Error tracking initialized');
   }
 
   /**
@@ -867,7 +867,7 @@ export class Fantasy42CoreIntegration {
       await this.setupBundleOptimization();
     }
 
-    console.log('⚡ Resource optimization initialized');
+    console.info('⚡ Resource optimization initialized');
   }
 
   /**
@@ -893,7 +893,7 @@ export class Fantasy42CoreIntegration {
         }
       }
 
-      console.log('💾 Session data loaded');
+      console.info('💾 Session data loaded');
     } catch (error) {
       console.warn('⚠️ Failed to load session data:', error);
     }
@@ -911,7 +911,7 @@ export class Fantasy42CoreIntegration {
 
       this.setStorage(storageKey, dataToStore);
 
-      console.log('💾 Session data saved');
+      console.info('💾 Session data saved');
     } catch (error) {
       console.warn('⚠️ Failed to save session data:', error);
     }
@@ -931,7 +931,7 @@ export class Fantasy42CoreIntegration {
 
     this.timers.set('session-cleanup', cleanupTimer);
 
-    console.log('🧹 Session cleanup setup');
+    console.info('🧹 Session cleanup setup');
   }
 
   /**
@@ -952,7 +952,7 @@ export class Fantasy42CoreIntegration {
       data: this.sessionData,
     });
 
-    console.log('🔄 Cross-tab sync setup');
+    console.info('🔄 Cross-tab sync setup');
   }
 
   /**
@@ -971,7 +971,7 @@ export class Fantasy42CoreIntegration {
       this.eventListeners.set(`activity-${event}`, activityHandler);
     });
 
-    console.log('📈 Activity tracking setup');
+    console.info('📈 Activity tracking setup');
   }
 
   /**
@@ -1000,7 +1000,7 @@ export class Fantasy42CoreIntegration {
       this.observers.set('lazy-loading', imageObserver);
     }
 
-    console.log('🦥 Lazy loading setup');
+    console.info('🦥 Lazy loading setup');
   }
 
   /**
@@ -1020,7 +1020,7 @@ export class Fantasy42CoreIntegration {
       });
     }
 
-    console.log('🔗 Resource hints setup');
+    console.info('🔗 Resource hints setup');
   }
 
   /**
@@ -1028,7 +1028,7 @@ export class Fantasy42CoreIntegration {
    */
   private async setupBundleOptimization(): Promise<void> {
     // Implement bundle optimization strategies
-    console.log('📦 Bundle optimization setup');
+    console.info('📦 Bundle optimization setup');
   }
 
   /**
@@ -1203,7 +1203,7 @@ export class Fantasy42CoreIntegration {
    */
   async updateConfiguration(newConfig: Partial<PlatformConfig>): Promise<void> {
     this.config = { ...this.config, ...newConfig };
-    console.log('⚙️ Configuration updated');
+    console.info('⚙️ Configuration updated');
   }
 
   /**
@@ -1231,7 +1231,7 @@ export class Fantasy42CoreIntegration {
       }
     });
 
-    console.log('🗑️ Session data cleared');
+    console.info('🗑️ Session data cleared');
   }
 
   /**
@@ -1249,7 +1249,7 @@ export class Fantasy42CoreIntegration {
       const importedData = JSON.parse(jsonData);
       this.sessionData = { ...this.sessionData, ...importedData };
       await this.saveSessionData();
-      console.log('📥 Session data imported');
+      console.info('📥 Session data imported');
     } catch (error) {
       console.error('❌ Failed to import session data:', error);
     }
@@ -1281,7 +1281,7 @@ export class Fantasy42CoreIntegration {
     this.eventListeners.clear();
 
     this.isInitialized = false;
-    console.log('🧹 Core integration cleaned up');
+    console.info('🧹 Core integration cleaned up');
   }
 }
 

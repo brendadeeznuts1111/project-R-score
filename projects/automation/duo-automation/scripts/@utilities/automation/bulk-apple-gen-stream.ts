@@ -46,5 +46,5 @@ export async function streamAppleIDsToR2(count: number, shardID: string = 'main'
 if (import.meta.main) {
   const count = parseInt(process.argv[2]) || 1000;
   const result = await streamAppleIDsToR2(count);
-  console.log(`✅ ${result.throughput} IDs/s | ${result.successes}/${result.total} stored in ${result.duration.toFixed(1)}s`);
+  console.info(`✅ ${result.throughput} IDs/s | ${result.successes}/${result.total} stored in ${result.duration.toFixed(1)}s`);
 }

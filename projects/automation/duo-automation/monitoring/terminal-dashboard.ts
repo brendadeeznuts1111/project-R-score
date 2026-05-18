@@ -58,7 +58,7 @@ export class DuplexMonitor {
   }
   
   async startMonitoring() {
-    console.log('🚀 Starting DuoPlus Terminal Monitoring Dashboard...');
+    console.info('🚀 Starting DuoPlus Terminal Monitoring Dashboard...');
     
     // Create main monitoring terminal
     const monitor = await this.createMonitoringTerminal();
@@ -81,10 +81,10 @@ export class DuplexMonitor {
     // Initial dashboard render
     await this.updateDashboard(monitor);
     
-    console.log('✅ Terminal monitoring dashboard started successfully!');
-    console.log(`📊 Dashboard: ${monitor.cols}x${monitor.rows}`);
-    console.log(`🔄 Update interval: ${this.options.updateInterval}ms`);
-    console.log(`👀 Feature watching: ${this.options.enableFeatureWatch ? 'enabled' : 'disabled'}`);
+    console.info('✅ Terminal monitoring dashboard started successfully!');
+    console.info(`📊 Dashboard: ${monitor.cols}x${monitor.rows}`);
+    console.info(`🔄 Update interval: ${this.options.updateInterval}ms`);
+    console.info(`👀 Feature watching: ${this.options.enableFeatureWatch ? 'enabled' : 'disabled'}`);
   }
   
   private async createMonitoringTerminal(): Promise<any> {
@@ -176,17 +176,17 @@ export class DuplexMonitor {
         }
       });
       
-      console.log(`👀 Watching feature flags: ${featuresPath}`);
+      console.info(`👀 Watching feature flags: ${featuresPath}`);
       
     } catch (error) {
-      console.log(`⚠️ Could not setup feature flag watching: ${error}`);
+      console.info(`⚠️ Could not setup feature flag watching: ${error}`);
     }
   }
   
   private async rebuildWithFeatures(features: Record<string, boolean>) {
     try {
       // In real implementation, this would use Bun.build
-      console.log('🔨 Rebuilding with new features...');
+      console.info('🔨 Rebuilding with new features...');
       
       // Simulate build process
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -194,7 +194,7 @@ export class DuplexMonitor {
       // Update process environment
       process.env.BUN_FEATURES = Object.keys(features).join(',');
       
-      console.log('✅ Build completed with features:', Object.keys(features).join(', '));
+      console.info('✅ Build completed with features:', Object.keys(features).join(', '));
       
     } catch (error) {
       throw new Error(`Build failed: ${error}`);
@@ -445,15 +445,15 @@ export class DuplexMonitor {
   }
   
   private async restartServices() {
-    console.log('🔄 Restarting services...');
+    console.info('🔄 Restarting services...');
     // Implement service restart logic
     await new Promise(resolve => setTimeout(resolve, 2000));
-    console.log('✅ Services restarted successfully');
+    console.info('✅ Services restarted successfully');
   }
   
   private setupSignalHandlers() {
     const gracefulShutdown = () => {
-      console.log('\n🛑 Shutting down gracefully...');
+      console.info('\n🛑 Shutting down gracefully...');
       this.stopMonitoring();
       process.exit(0);
     };
@@ -475,7 +475,7 @@ export class DuplexMonitor {
       this.watchHandle = null;
     }
     
-    console.log('✅ Terminal monitoring stopped');
+    console.info('✅ Terminal monitoring stopped');
   }
 }
 

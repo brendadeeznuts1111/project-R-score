@@ -266,11 +266,11 @@ async function createDemoServer() {
 
 // Start the demo server
 async function main() {
-  console.log("🚀 Starting Enhanced URLPattern API Demo Server");
-  console.log("📖 Documentation: http://localhost:3000");
-  console.log("🔧 API Info: http://localhost:3000/api");
-  console.log("🧪 Pattern Tests: http://localhost:3000/test/patterns");
-  console.log("⚡ Performance: http://localhost:3000/demo/performance");
+  console.info("🚀 Starting Enhanced URLPattern API Demo Server");
+  console.info("📖 Documentation: http://localhost:3000");
+  console.info("🔧 API Info: http://localhost:3000/api");
+  console.info("🧪 Pattern Tests: http://localhost:3000/test/patterns");
+  console.info("⚡ Performance: http://localhost:3000/demo/performance");
 
   const server = await createDemoServer();
 

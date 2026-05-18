@@ -14,16 +14,16 @@
  * - Process health monitoring
  */
 
-console.log("⏱️  Bun.nanoseconds() Timing Demo");
-console.log("Measuring precise process uptime and operation timing\n");
+console.info("⏱️  Bun.nanoseconds() Timing Demo");
+console.info("Measuring precise process uptime and operation timing\n");
 
 // Get initial process uptime
 const processStart = Bun.nanoseconds();
-console.log(`🔰 Process started at: ${processStart} nanoseconds`);
-console.log(`🔰 Process started at: ${(processStart / 1_000_000_000).toFixed(2)} seconds\n`);
+console.info(`🔰 Process started at: ${processStart} nanoseconds`);
+console.info(`🔰 Process started at: ${(processStart / 1_000_000_000).toFixed(2)} seconds\n`);
 
 // Demonstrate timing IPC operations
-console.log("📡 Timing IPC message round-trip:");
+console.info("📡 Timing IPC message round-trip:");
 
 const ipcChild = Bun.spawn([process.execPath, "-e", `
   process.on("message", (msg) => {
@@ -58,17 +58,17 @@ ipcChild.on("message", (response) => {
   const totalRoundTrip = receiveTime - messageSendTime;
   const networkTime = totalRoundTrip - (response.responseTime - response.receiveTime);
 
-  console.log(`📤 Message sent:     ${messageSendTime} ns`);
-  console.log(`📥 Message received: ${response.receiveTime} ns`);
-  console.log(`📤 Response sent:    ${response.responseTime} ns`);
-  console.log(`📥 Response received: ${receiveTime} ns`);
-  console.log(`⚡ IPC round-trip:    ${totalRoundTrip} ns (${(totalRoundTrip / 1_000_000).toFixed(2)} ms)`);
-  console.log(`🔧 Child processing:  ${(response.processingDelay / 1_000_000).toFixed(2)} ms`);
-  console.log(`🌐 Network overhead:  ${(networkTime / 1_000_000).toFixed(2)} ms`);
+  console.info(`📤 Message sent:     ${messageSendTime} ns`);
+  console.info(`📥 Message received: ${response.receiveTime} ns`);
+  console.info(`📤 Response sent:    ${response.responseTime} ns`);
+  console.info(`📥 Response received: ${receiveTime} ns`);
+  console.info(`⚡ IPC round-trip:    ${totalRoundTrip} ns (${(totalRoundTrip / 1_000_000).toFixed(2)} ms)`);
+  console.info(`🔧 Child processing:  ${(response.processingDelay / 1_000_000).toFixed(2)} ms`);
+  console.info(`🌐 Network overhead:  ${(networkTime / 1_000_000).toFixed(2)} ms`);
 });
 
 // Demonstrate measuring function execution time
-console.log("\n⚡ Timing synchronous operations:");
+console.info("\n⚡ Timing synchronous operations:");
 
 function benchmarkOperation(name: string, operation: () => void, iterations: number = 1000) {
   const startTime = Bun.nanoseconds();
@@ -81,11 +81,11 @@ function benchmarkOperation(name: string, operation: () => void, iterations: num
   const totalTime = endTime - startTime;
   const avgTime = totalTime / iterations;
 
-  console.log(`${name}:`);
-  console.log(`  Total: ${totalTime} ns (${(totalTime / 1_000_000).toFixed(2)} ms)`);
-  console.log(`  Average: ${avgTime.toFixed(2)} ns (${(avgTime / 1_000_000).toFixed(4)} ms)`);
-  console.log(`  Per second: ${(1_000_000_000 / avgTime).toLocaleString()} ops/sec`);
-  console.log("");
+  console.info(`${name}:`);
+  console.info(`  Total: ${totalTime} ns (${(totalTime / 1_000_000).toFixed(2)} ms)`);
+  console.info(`  Average: ${avgTime.toFixed(2)} ns (${(avgTime / 1_000_000).toFixed(4)} ms)`);
+  console.info(`  Per second: ${(1_000_000_000 / avgTime).toLocaleString()} ops/sec`);
+  console.info("");
 }
 
 benchmarkOperation("🚀 Empty function call", () => {});
@@ -94,13 +94,13 @@ benchmarkOperation("📅 Date.now()", () => Date.now());
 benchmarkOperation("⏱️  Bun.nanoseconds()", () => Bun.nanoseconds());
 
 // Demonstrate uptime monitoring
-console.log("🏥 Process health monitoring:");
+console.info("🏥 Process health monitoring:");
 setInterval(() => {
   const uptime = Bun.nanoseconds();
   const uptimeSeconds = uptime / 1_000_000_000;
   const uptimeMinutes = uptimeSeconds / 60;
 
-  console.log(`💓 Process uptime: ${uptime.toLocaleString()} ns (${uptimeSeconds.toFixed(1)}s, ${uptimeMinutes.toFixed(2)}min)`);
+  console.info(`💓 Process uptime: ${uptime.toLocaleString()} ns (${uptimeSeconds.toFixed(1)}s, ${uptimeMinutes.toFixed(2)}min)`);
 }, 2000);
 
 // Wait for IPC child to finish
@@ -111,10 +111,10 @@ setTimeout(async () => {
   const totalUptime = finalUptime - processStart;
   const totalSeconds = totalUptime / 1_000_000_000;
 
-  console.log(`\n🏁 Demo complete!`);
-  console.log(`📊 Total demonstration time: ${(totalSeconds).toFixed(2)} seconds`);
-  console.log(`⏱️  Precise nanoseconds: ${totalUptime.toLocaleString()}`);
-  console.log(`📈 Process has been running for ${totalSeconds.toFixed(2)} seconds total`);
+  console.info(`\n🏁 Demo complete!`);
+  console.info(`📊 Total demonstration time: ${(totalSeconds).toFixed(2)} seconds`);
+  console.info(`⏱️  Precise nanoseconds: ${totalUptime.toLocaleString()}`);
+  console.info(`📈 Process has been running for ${totalSeconds.toFixed(2)} seconds total`);
 
   process.exit(0);
 }, 3000);

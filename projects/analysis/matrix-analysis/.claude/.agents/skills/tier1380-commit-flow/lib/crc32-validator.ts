@@ -197,20 +197,20 @@ if (import.meta.main) {
 	const command = args[0];
 	const filepath = args[1];
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA CRC32 Hardware Acceleration        ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA CRC32 Hardware Acceleration        ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	if (!command) {
-		console.log("Usage: crc32-validator.ts <command> [args]");
-		console.log();
-		console.log("Commands:");
-		console.log("  checksum <file>              Generate CRC32 checksum");
-		console.log("  validate <file> <expected>   Validate against expected CRC32");
-		console.log("  benchmark <file>             Benchmark CRC32 vs other hashes");
-		console.log("  fingerprint <text>           Generate content fingerprint");
-		console.log();
+		console.info("Usage: crc32-validator.ts <command> [args]");
+		console.info();
+		console.info("Commands:");
+		console.info("  checksum <file>              Generate CRC32 checksum");
+		console.info("  validate <file> <expected>   Validate against expected CRC32");
+		console.info("  benchmark <file>             Benchmark CRC32 vs other hashes");
+		console.info("  fingerprint <text>           Generate content fingerprint");
+		console.info();
 		process.exit(0);
 	}
 
@@ -221,14 +221,14 @@ if (import.meta.main) {
 				process.exit(1);
 			}
 
-			console.log(`Generating CRC32 for ${filepath}...`);
+			console.info(`Generating CRC32 for ${filepath}...`);
 			const result = await generateCRC32(Bun.file(filepath));
 
-			console.log();
-			console.log(`CRC32 (hex):    ${result.hex}`);
-			console.log(`CRC32 (signed): ${result.crc32}`);
-			console.log(`CRC32 (unsigned): ${result.unsigned}`);
-			console.log(`Latency:        ${result.latencyMs.toFixed(3)}ms`);
+			console.info();
+			console.info(`CRC32 (hex):    ${result.hex}`);
+			console.info(`CRC32 (signed): ${result.crc32}`);
+			console.info(`CRC32 (unsigned): ${result.unsigned}`);
+			console.info(`Latency:        ${result.latencyMs.toFixed(3)}ms`);
 			break;
 		}
 
@@ -242,10 +242,10 @@ if (import.meta.main) {
 			const expected = parseInt(expectedHex, 16);
 			const result = await generateCRC32(Bun.file(filepath));
 
-			console.log(`Expected: ${expectedHex}`);
-			console.log(`Actual:   ${result.hex}`);
-			console.log();
-			console.log(result.unsigned === expected ? "✅ Valid" : "❌ Invalid");
+			console.info(`Expected: ${expectedHex}`);
+			console.info(`Actual:   ${result.hex}`);
+			console.info();
+			console.info(result.unsigned === expected ? "✅ Valid" : "❌ Invalid");
 			break;
 		}
 
@@ -258,8 +258,8 @@ if (import.meta.main) {
 			const file = Bun.file(filepath);
 			const size = file.size;
 
-			console.log(`Benchmarking ${filepath} (${size} bytes)...`);
-			console.log();
+			console.info(`Benchmarking ${filepath} (${size} bytes)...`);
+			console.info();
 
 			// CRC32
 			const crcStart = Bun.nanoseconds();
@@ -271,10 +271,10 @@ if (import.meta.main) {
 			const _wy = Bun.hash.wyhash(Buffer.from(await file.arrayBuffer()));
 			const wyMs = (Bun.nanoseconds() - wyStart) / 1e6;
 
-			console.log(
+			console.info(
 				`CRC32:  ${crcMs.toFixed(3)}ms (${(size / 1024 / 1024 / (crcMs / 1000)).toFixed(0)} MB/s)`,
 			);
-			console.log(
+			console.info(
 				`Wyhash: ${wyMs.toFixed(3)}ms (${(size / 1024 / 1024 / (wyMs / 1000)).toFixed(0)} MB/s)`,
 			);
 			break;
@@ -288,8 +288,8 @@ if (import.meta.main) {
 			}
 
 			const fp = contentFingerprint(text);
-			console.log(`Content fingerprint: ${fp}`);
-			console.log(`Input length: ${text.length} chars`);
+			console.info(`Content fingerprint: ${fp}`);
+			console.info(`Input length: ${text.length} chars`);
 			break;
 		}
 

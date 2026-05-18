@@ -8,7 +8,7 @@ import { initializeScopeTimezone } from '../bootstrap-timezone.ts';
 // Initialize timezone for the demo
 initializeScopeTimezone('DEVELOPMENT');
 
-console.log('🔍 Empire Pro v3.7 - Deep Path Access Demo\n');
+console.info('🔍 Empire Pro v3.7 - Deep Path Access Demo\n');
 
 // Complex nested data structure demonstrating deep path capabilities
 const enterpriseData = [
@@ -152,30 +152,30 @@ const enterpriseData = [
   }
 ];
 
-console.log('📊 Example 1: Basic Deep Path Access');
-console.log('='.repeat(60));
+console.info('📊 Example 1: Basic Deep Path Access');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(enterpriseData, {
+console.info(UnicodeTableFormatter.generateTable(enterpriseData, {
   sortBy: [
     { column: 'user.profile.department', direction: 'asc' },
     { column: 'performance.metrics.codeQuality', direction: 'desc', type: 'number' }
   ]
 }));
 
-console.log('\n📧 Example 2: Email and Security Focus');
-console.log('='.repeat(60));
+console.info('\n📧 Example 2: Email and Security Focus');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(enterpriseData, {
+console.info(UnicodeTableFormatter.generateTable(enterpriseData, {
   sortBy: [
     { column: 'user.security.riskScore', direction: 'asc', type: 'number' },
     { column: 'user.profile.email', direction: 'asc' }
   ]
 }));
 
-console.log('\n🔐 Example 3: Security and Permissions Analysis');
-console.log('='.repeat(60));
+console.info('\n🔐 Example 3: Security and Permissions Analysis');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(enterpriseData, {
+console.info(UnicodeTableFormatter.generateTable(enterpriseData, {
   sortBy: [
     { column: 'user.permissions.admin', direction: 'desc' },
     { column: 'user.security.mfaEnabled', direction: 'desc' },
@@ -183,30 +183,30 @@ console.log(UnicodeTableFormatter.generateTable(enterpriseData, {
   ]
 }));
 
-console.log('\n⭐ Example 4: Performance Metrics Deep Dive');
-console.log('='.repeat(60));
+console.info('\n⭐ Example 4: Performance Metrics Deep Dive');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(enterpriseData, {
+console.info(UnicodeTableFormatter.generateTable(enterpriseData, {
   sortBy: [
     { column: 'performance.reviews.rating', direction: 'desc', type: 'number' },
     { column: 'performance.metrics.productivity', direction: 'desc', type: 'number' }
   ]
 }));
 
-console.log('\n📅 Example 5: Date-based Sorting with Deep Paths');
-console.log('='.repeat(60));
+console.info('\n📅 Example 5: Date-based Sorting with Deep Paths');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(enterpriseData, {
+console.info(UnicodeTableFormatter.generateTable(enterpriseData, {
   sortBy: [
     { column: 'user.security.lastLogin', direction: 'desc', type: 'date' },
     { column: 'performance.reviews.nextReview', direction: 'asc', type: 'date' }
   ]
 }));
 
-console.log('\n🏷️ Example 6: Metadata and Cost Center Analysis');
-console.log('='.repeat(60));
+console.info('\n🏷️ Example 6: Metadata and Cost Center Analysis');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(enterpriseData, {
+console.info(UnicodeTableFormatter.generateTable(enterpriseData, {
   sortBy: [
     { column: 'metadata.region', direction: 'asc' },
     { column: 'metadata.costCenter', direction: 'asc' },
@@ -214,8 +214,8 @@ console.log(UnicodeTableFormatter.generateTable(enterpriseData, {
   ]
 }));
 
-console.log('\n🎯 Example 7: Complex Multi-level Custom Sorting');
-console.log('='.repeat(60));
+console.info('\n🎯 Example 7: Complex Multi-level Custom Sorting');
+console.info('='.repeat(60));
 
 // Custom comparator for department priority
 const departmentPriority: Record<string, number> = {
@@ -224,7 +224,7 @@ const departmentPriority: Record<string, number> = {
   'Support': 1
 };
 
-console.log(UnicodeTableFormatter.generateTable(enterpriseData, {
+console.info(UnicodeTableFormatter.generateTable(enterpriseData, {
   sortBy: [
     { 
       column: 'user.profile.department', 
@@ -240,10 +240,10 @@ console.log(UnicodeTableFormatter.generateTable(enterpriseData, {
   ]
 }));
 
-console.log('\n🔍 Example 8: Deep Path Filtering');
-console.log('='.repeat(60));
+console.info('\n🔍 Example 8: Deep Path Filtering');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(enterpriseData, {
+console.info(UnicodeTableFormatter.generateTable(enterpriseData, {
   filter: { 'user.permissions.admin': true },
   sortBy: [
     { column: 'user.security.riskScore', direction: 'asc', type: 'number' },
@@ -251,18 +251,18 @@ console.log(UnicodeTableFormatter.generateTable(enterpriseData, {
   ]
 }));
 
-console.log('\n📈 Summary: Deep Path Access Capabilities');
-console.log('='.repeat(60));
-console.log('✅ user.profile.email - Direct nested field access');
-console.log('✅ user.security.riskScore - Deep numeric field access');
-console.log('✅ user.permissions.admin - Deep boolean field access');
-console.log('✅ performance.metrics.codeQuality - Multi-level numeric access');
-console.log('✅ user.security.lastLogin - Deep date field access');
-console.log('✅ metadata.region - Simple nested field access');
-console.log('✅ user.permissions.admin - Filtering on deep paths');
-console.log('✅ Custom comparators work with deep paths');
-console.log('✅ Type inference works across all nested levels');
-console.log('✅ Unicode/emoji preserved throughout deep access');
+console.info('\n📈 Summary: Deep Path Access Capabilities');
+console.info('='.repeat(60));
+console.info('✅ user.profile.email - Direct nested field access');
+console.info('✅ user.security.riskScore - Deep numeric field access');
+console.info('✅ user.permissions.admin - Deep boolean field access');
+console.info('✅ performance.metrics.codeQuality - Multi-level numeric access');
+console.info('✅ user.security.lastLogin - Deep date field access');
+console.info('✅ metadata.region - Simple nested field access');
+console.info('✅ user.permissions.admin - Filtering on deep paths');
+console.info('✅ Custom comparators work with deep paths');
+console.info('✅ Type inference works across all nested levels');
+console.info('✅ Unicode/emoji preserved throughout deep access');
 
-console.log('\n🎉 Deep Path Access Demo Completed!');
-console.log('🚀 Empire Pro v3.7 - Enterprise-grade nested data analysis!');
+console.info('\n🎉 Deep Path Access Demo Completed!');
+console.info('🚀 Empire Pro v3.7 - Enterprise-grade nested data analysis!');

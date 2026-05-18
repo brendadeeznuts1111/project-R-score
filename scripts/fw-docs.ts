@@ -36,8 +36,8 @@ class FWDocsCLI {
     const authToken = token || process.env.MASTER_TOKEN;
     
     if (!authToken) {
-      console.log(styled('🔒 Authentication required. Use --token or set MASTER_TOKEN environment variable.', 'warning'));
-      console.log(styled('💡 Get a token: bun run lib/security/master-token.ts create cli:user', 'info'));
+      console.info(styled('🔒 Authentication required. Use --token or set MASTER_TOKEN environment variable.', 'warning'));
+      console.info(styled('💡 Get a token: bun run lib/security/master-token.ts create cli:user', 'info'));
       return false;
     }
 
@@ -47,11 +47,11 @@ class FWDocsCLI {
     });
 
     if (!auth.success) {
-      console.log(styled(`🔒 Authentication failed: ${auth.error}`, 'error'));
+      console.info(styled(`🔒 Authentication failed: ${auth.error}`, 'error'));
       return false;
     }
 
-    console.log(styled(`✅ Authenticated (${auth.authContext.tokenId})`, 'success'));
+    console.info(styled(`✅ Authenticated (${auth.authContext.tokenId})`, 'success'));
     return true;
   }
 
@@ -100,8 +100,8 @@ class FWDocsCLI {
           if (!command) {
             this.showHelp();
           } else {
-            console.log(styled(`❌ Unknown command: ${command}`, 'error'));
-            console.log(styled('Use "fw-docs help" for available commands', 'muted'));
+            console.info(styled(`❌ Unknown command: ${command}`, 'error'));
+            console.info(styled('Use "fw-docs help" for available commands', 'muted'));
           }
       }
     } catch (error) {
@@ -117,16 +117,16 @@ class FWDocsCLI {
     const query = args.find(arg => !arg.startsWith('--')) || '';
 
     if (!query) {
-      console.log(styled('❌ Search query is required', 'error'));
-      console.log(styled('Usage: fw-docs search "your query" [--version=v1.4] [--code-only]', 'muted'));
+      console.info(styled('❌ Search query is required', 'error'));
+      console.info(styled('Usage: fw-docs search "your query" [--version=v1.4] [--code-only]', 'muted'));
       return;
     }
 
     log.section('🔍 Searching Bun Documentation', 'primary');
-    console.log(styled(`Query: ${query}`, 'accent'));
+    console.info(styled(`Query: ${query}`, 'accent'));
     
     if (options.verbose) {
-      console.log(styled(`Options: ${JSON.stringify(options)}`, 'muted'));
+      console.info(styled(`Options: ${JSON.stringify(options)}`, 'muted'));
     }
 
     const spinner = this.createSpinner();
@@ -144,36 +144,36 @@ class FWDocsCLI {
       spinner.stop();
 
       if (results.length === 0) {
-        console.log(styled('📭 No results found', 'warning'));
-        console.log(styled('Try a different query or check your spelling', 'muted'));
+        console.info(styled('📭 No results found', 'warning'));
+        console.info(styled('Try a different query or check your spelling', 'muted'));
         return;
       }
 
-      console.log(styled(`\n📚 Found ${results.length} results:\n`, 'success'));
+      console.info(styled(`\n📚 Found ${results.length} results:\n`, 'success'));
       
       results.forEach((result, index) => {
         const color = index === 0 ? 'accent' : 'primary';
-        console.log(colorBar(color, 20));
-        console.log(styled(`📖 ${result.title}`, color));
+        console.info(colorBar(color, 20));
+        console.info(styled(`📖 ${result.title}`, color));
         
         if (result.relevance > 0.8) {
-          console.log(styled(`   ⭐ High relevance (${Math.round(result.relevance * 100)}%)`, 'success'));
+          console.info(styled(`   ⭐ High relevance (${Math.round(result.relevance * 100)}%)`, 'success'));
         }
 
         // Show content preview
         const preview = result.content.slice(0, 200).replace(/\n/g, ' ');
-        console.log(styled(`   ${preview}...`, 'muted'));
+        console.info(styled(`   ${preview}...`, 'muted'));
         
         // Show links if available
         if (result.links.length > 0) {
-          console.log(styled(`   🔗 ${result.links[0]}`, 'info'));
+          console.info(styled(`   🔗 ${result.links[0]}`, 'info'));
         }
 
         if (result.confidence) {
-          console.log(styled(`   🎯 Confidence: ${Math.round(result.confidence * 100)}%`, 'muted'));
+          console.info(styled(`   🎯 Confidence: ${Math.round(result.confidence * 100)}%`, 'muted'));
         }
         
-        console.log('');
+        console.info('');
       });
 
     } catch (error) {
@@ -187,15 +187,15 @@ class FWDocsCLI {
     const options = this.parseOptions(args);
 
     if (!codeSnippet) {
-      console.log(styled('❌ Code snippet is required', 'error'));
-      console.log(styled('Usage: fw-docs explain "your code" [--context=scanner]', 'muted'));
+      console.info(styled('❌ Code snippet is required', 'error'));
+      console.info(styled('Usage: fw-docs explain "your code" [--context=scanner]', 'muted'));
       return;
     }
 
     log.section('📚 Explaining Code', 'accent');
-    console.log(styled('Code:', 'muted'));
-    console.log(styled(codeSnippet, 'background', 'primary'));
-    console.log('');
+    console.info(styled('Code:', 'muted'));
+    console.info(styled(codeSnippet, 'background', 'primary'));
+    console.info('');
 
     const spinner = this.createSpinner();
     spinner.start();
@@ -205,18 +205,18 @@ class FWDocsCLI {
       spinner.stop();
 
       if (explanations.length === 0) {
-        console.log(styled('📭 No explanations found', 'warning'));
+        console.info(styled('📭 No explanations found', 'warning'));
         return;
       }
 
       explanations.forEach((explanation, index) => {
-        console.log(styled(`\n🔍 Explanation ${index + 1}:`, 'primary'));
-        console.log(styled(explanation.content, 'muted'));
+        console.info(styled(`\n🔍 Explanation ${index + 1}:`, 'primary'));
+        console.info(styled(explanation.content, 'muted'));
         
         if (explanation.links.length > 0) {
-          console.log(styled('\n📚 Related Documentation:', 'info'));
+          console.info(styled('\n📚 Related Documentation:', 'info'));
           explanation.links.forEach(link => {
-            console.log(styled(`   • ${link}`, 'info'));
+            console.info(styled(`   • ${link}`, 'info'));
           });
         }
       });
@@ -231,8 +231,8 @@ class FWDocsCLI {
     const filePath = args.find(arg => !arg.startsWith('--')) || '';
 
     if (!filePath) {
-      console.log(styled('❌ File path is required', 'error'));
-      console.log(styled('Usage: fw-docs validate ./script.ts', 'muted'));
+      console.info(styled('❌ File path is required', 'error'));
+      console.info(styled('Usage: fw-docs validate ./script.ts', 'muted'));
       return;
     }
 
@@ -240,7 +240,7 @@ class FWDocsCLI {
       const code = await Bun.file(filePath).text();
       
       log.section('🔍 Validating Code', 'warning');
-      console.log(styled(`File: ${filePath}`, 'muted'));
+      console.info(styled(`File: ${filePath}`, 'muted'));
 
       const spinner = this.createSpinner();
       spinner.start();
@@ -249,26 +249,26 @@ class FWDocsCLI {
       spinner.stop();
 
       if (validation.valid) {
-        console.log(styled('✅ Code validation passed', 'success'));
+        console.info(styled('✅ Code validation passed', 'success'));
         if (validation.suggestions) {
-          console.log(styled('\n💡 Suggestions:', 'info'));
+          console.info(styled('\n💡 Suggestions:', 'info'));
           validation.suggestions.forEach((suggestion: string) => {
-            console.log(styled(`   • ${suggestion}`, 'info'));
+            console.info(styled(`   • ${suggestion}`, 'info'));
           });
         }
       } else {
-        console.log(styled('❌ Code validation failed', 'error'));
+        console.info(styled('❌ Code validation failed', 'error'));
         if (validation.errors) {
-          console.log(styled('\n🚨 Errors:', 'error'));
+          console.info(styled('\n🚨 Errors:', 'error'));
           validation.errors.forEach((error: string) => {
-            console.log(styled(`   • ${error}`, 'error'));
+            console.info(styled(`   • ${error}`, 'error'));
           });
         }
       }
 
     } catch (error) {
       if (error.message.includes('No such file')) {
-        console.log(styled(`❌ File not found: ${filePath}`, 'error'));
+        console.info(styled(`❌ File not found: ${filePath}`, 'error'));
       } else {
         throw error;
       }
@@ -280,13 +280,13 @@ class FWDocsCLI {
     const topic = options.topic || args.find(arg => !arg.startsWith('--'));
 
     if (!topic) {
-      console.log(styled('❌ Topic is required', 'error'));
-      console.log(styled('Usage: fw-docs learn --topic "Bun SQLite" [--generate-examples]', 'muted'));
+      console.info(styled('❌ Topic is required', 'error'));
+      console.info(styled('Usage: fw-docs learn --topic "Bun SQLite" [--generate-examples]', 'muted'));
       return;
     }
 
     log.section('🎓 Interactive Learning', 'success');
-    console.log(styled(`Topic: ${topic}`, 'accent'));
+    console.info(styled(`Topic: ${topic}`, 'accent'));
 
     // Search for comprehensive documentation
     const spinner = this.createSpinner();
@@ -303,21 +303,21 @@ class FWDocsCLI {
       spinner.stop();
 
       // Display documentation
-      console.log(styled('\n📚 Official Documentation:', 'primary'));
+      console.info(styled('\n📚 Official Documentation:', 'primary'));
       docsResults.slice(0, 3).forEach((doc, index) => {
-        console.log(styled(`\n${index + 1}. ${doc.title}`, 'accent'));
-        console.log(styled(doc.content.slice(0, 300) + '...', 'muted'));
+        console.info(styled(`\n${index + 1}. ${doc.title}`, 'accent'));
+        console.info(styled(doc.content.slice(0, 300) + '...', 'muted'));
       });
 
       // Display FactoryWager example
-      console.log(styled('\n🔧 FactoryWager Example:', 'success'));
-      console.log(styled(examples, 'background', 'primary'));
+      console.info(styled('\n🔧 FactoryWager Example:', 'success'));
+      console.info(styled(examples, 'background', 'primary'));
 
       // Learning tips
-      console.log(styled('\n💡 Learning Tips:', 'info'));
-      console.log(styled('   • Try the examples in your own code', 'muted'));
-      console.log(styled('   • Experiment with different options', 'muted'));
-      console.log(styled('   • Check the official docs for complete reference', 'muted'));
+      console.info(styled('\n💡 Learning Tips:', 'info'));
+      console.info(styled('   • Try the examples in your own code', 'muted'));
+      console.info(styled('   • Experiment with different options', 'muted'));
+      console.info(styled('   • Check the official docs for complete reference', 'muted'));
 
     } catch (error) {
       spinner.stop();
@@ -330,15 +330,15 @@ class FWDocsCLI {
     const api = options.api || args.find(arg => !arg.startsWith('--'));
 
     if (!api) {
-      console.log(styled('❌ API name is required', 'error'));
-      console.log(styled('Usage: fw-docs generate --api "Bun.file" [--context=R2]', 'muted'));
+      console.info(styled('❌ API name is required', 'error'));
+      console.info(styled('Usage: fw-docs generate --api "Bun.file" [--context=R2]', 'muted'));
       return;
     }
 
     log.section('🔧 Generating FactoryWager Example', 'success');
-    console.log(styled(`API: ${api}`, 'accent'));
+    console.info(styled(`API: ${api}`, 'accent'));
     if (options.context) {
-      console.log(styled(`Context: ${options.context}`, 'muted'));
+      console.info(styled(`Context: ${options.context}`, 'muted'));
     }
 
     const spinner = this.createSpinner();
@@ -348,13 +348,13 @@ class FWDocsCLI {
       const example = await mcp.generateFactoryWagerExample(api, options.context);
       spinner.stop();
 
-      console.log(styled('\n🎯 Generated Code:', 'success'));
-      console.log(styled(example, 'background', 'primary'));
+      console.info(styled('\n🎯 Generated Code:', 'success'));
+      console.info(styled(example, 'background', 'primary'));
 
-      console.log(styled('\n📚 Usage Notes:', 'info'));
-      console.log(styled('   • This code follows FactoryWager patterns', 'muted'));
-      console.log(styled('   • Includes security best practices', 'muted'));
-      console.log(styled('   • Optimized for performance', 'muted'));
+      console.info(styled('\n📚 Usage Notes:', 'info'));
+      console.info(styled('   • This code follows FactoryWager patterns', 'muted'));
+      console.info(styled('   • Includes security best practices', 'muted'));
+      console.info(styled('   • Optimized for performance', 'muted'));
 
     } catch (error) {
       spinner.stop();
@@ -366,24 +366,24 @@ class FWDocsCLI {
     const filePath = args.find(arg => !arg.startsWith('--'));
 
     if (!filePath) {
-      console.log(styled('❌ File path is required', 'error'));
-      console.log(styled('Usage: fw-docs diagnose ./problematic-script.ts', 'muted'));
+      console.info(styled('❌ File path is required', 'error'));
+      console.info(styled('Usage: fw-docs diagnose ./problematic-script.ts', 'muted'));
       return;
     }
 
     log.section('🔍 Error Diagnosis', 'warning');
-    console.log(styled(`Analyzing: ${filePath}`, 'muted'));
+    console.info(styled(`Analyzing: ${filePath}`, 'muted'));
 
     try {
       const code = await Bun.file(filePath).text();
       
       // This would integrate with the interactive docs workflow
-      console.log(styled('🔧 Diagnosis feature coming soon!', 'accent'));
-      console.log(styled('This will analyze errors and suggest fixes based on Bun docs', 'muted'));
+      console.info(styled('🔧 Diagnosis feature coming soon!', 'accent'));
+      console.info(styled('This will analyze errors and suggest fixes based on Bun docs', 'muted'));
 
     } catch (error) {
       if (error.message.includes('No such file')) {
-        console.log(styled(`❌ File not found: ${filePath}`, 'error'));
+        console.info(styled(`❌ File not found: ${filePath}`, 'error'));
       } else {
         throw error;
       }
@@ -438,31 +438,31 @@ class FWDocsCLI {
   }
 
   private showHelp(): void {
-    console.log(styled('\n🚀 FactoryWager Docs CLI v5.0', 'accent'));
-    console.log(colorBar('primary', 40));
+    console.info(styled('\n🚀 FactoryWager Docs CLI v5.0', 'accent'));
+    console.info(colorBar('primary', 40));
     
-    console.log(styled('\n📚 Commands:', 'primary'));
-    console.log(styled('  search <query>      ', 'muted') + styled('Search Bun documentation', 'text'));
-    console.log(styled('  explain <code>      ', 'muted') + styled('Explain code snippets', 'text'));
-    console.log(styled('  validate <file>      ', 'muted') + styled('Validate code against best practices', 'text'));
-    console.log(styled('  learn --topic=<topic>', 'muted') + styled('Interactive learning mode', 'text'));
-    console.log(styled('  generate --api=<api> ', 'muted') + styled('Generate FactoryWager examples', 'text'));
-    console.log(styled('  diagnose <file>      ', 'muted') + styled('Diagnose errors in files', 'text'));
+    console.info(styled('\n📚 Commands:', 'primary'));
+    console.info(styled('  search <query>      ', 'muted') + styled('Search Bun documentation', 'text'));
+    console.info(styled('  explain <code>      ', 'muted') + styled('Explain code snippets', 'text'));
+    console.info(styled('  validate <file>      ', 'muted') + styled('Validate code against best practices', 'text'));
+    console.info(styled('  learn --topic=<topic>', 'muted') + styled('Interactive learning mode', 'text'));
+    console.info(styled('  generate --api=<api> ', 'muted') + styled('Generate FactoryWager examples', 'text'));
+    console.info(styled('  diagnose <file>      ', 'muted') + styled('Diagnose errors in files', 'text'));
     
-    console.log(styled('\n⚙️  Options:', 'accent'));
-    console.log(styled('  --version=<ver>      ', 'muted') + styled('Specify Bun version', 'text'));
-    console.log(styled('  --context=<ctx>      ', 'muted') + styled('Set context (scanner, r2, etc.)', 'text'));
-    console.log(styled('  --generate-example   ', 'muted') + styled('Include code examples', 'text'));
-    console.log(styled('  --code-only          ', 'muted') + styled('Search code examples only', 'text'));
-    console.log(styled('  --verbose, -v        ', 'muted') + styled('Verbose output', 'text'));
+    console.info(styled('\n⚙️  Options:', 'accent'));
+    console.info(styled('  --version=<ver>      ', 'muted') + styled('Specify Bun version', 'text'));
+    console.info(styled('  --context=<ctx>      ', 'muted') + styled('Set context (scanner, r2, etc.)', 'text'));
+    console.info(styled('  --generate-example   ', 'muted') + styled('Include code examples', 'text'));
+    console.info(styled('  --code-only          ', 'muted') + styled('Search code examples only', 'text'));
+    console.info(styled('  --verbose, -v        ', 'muted') + styled('Verbose output', 'text'));
     
-    console.log(styled('\n💡 Examples:', 'success'));
-    console.log(styled('  fw-docs search "Bun.secrets.get"', 'info'));
-    console.log(styled('  fw-docs explain "await Bun.file(\'test.txt\')"', 'info'));
-    console.log(styled('  fw-docs learn --topic "Bun SQLite"', 'info'));
-    console.log(styled('  fw-docs generate --api "Bun.serve" --context=scanner', 'info'));
+    console.info(styled('\n💡 Examples:', 'success'));
+    console.info(styled('  fw-docs search "Bun.secrets.get"', 'info'));
+    console.info(styled('  fw-docs explain "await Bun.file(\'test.txt\')"', 'info'));
+    console.info(styled('  fw-docs learn --topic "Bun SQLite"', 'info'));
+    console.info(styled('  fw-docs generate --api "Bun.serve" --context=scanner', 'info'));
     
-    console.log(styled('\n🔗 Powered by Bun MCP integration', 'muted'));
+    console.info(styled('\n🔗 Powered by Bun MCP integration', 'muted'));
   }
 }
 

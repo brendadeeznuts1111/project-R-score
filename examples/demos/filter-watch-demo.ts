@@ -37,8 +37,8 @@ const SIMULATED_CHANGES = [
  * Run a single watch session demo
  */
 async function runWatchSessionDemo(pattern: string, initialPackages: string[]): Promise<void> {
-  console.log(`\n🎬 Starting watch session demo for pattern: ${pattern}`);
-  console.log(`📦 Initial packages: ${initialPackages.join(', ')}`);
+  console.info(`\n🎬 Starting watch session demo for pattern: ${pattern}`);
+  console.info(`📦 Initial packages: ${initialPackages.join(', ')}`);
   
   // Start session
   const session = startWatchSession(pattern, initialPackages);
@@ -47,33 +47,33 @@ async function runWatchSessionDemo(pattern: string, initialPackages: string[]): 
   for (const change of SIMULATED_CHANGES) {
     await new Promise(resolve => setTimeout(resolve, change.delay));
     
-    console.log(`🔄 Recording change: ${change.type} - ${change.package}`);
+    console.info(`🔄 Recording change: ${change.type} - ${change.package}`);
     recordWatchChange(session.id, change.type, change.package, change.details);
   }
   
   // Update packages (simulate workspace scan)
   await new Promise(resolve => setTimeout(resolve, 6000));
   const updatedPackages = [...initialPackages, 'app-desktop', 'app-tablet'].filter(p => p !== 'app-mobile');
-  console.log(`📦 Updating packages: ${updatedPackages.join(', ')}`);
+  console.info(`📦 Updating packages: ${updatedPackages.join(', ')}`);
   updateWatchPackages(session.id, updatedPackages);
   
   // Restart session with new pattern
   await new Promise(resolve => setTimeout(resolve, 1000));
-  console.log(`🔄 Restarting session with new pattern: ${pattern}-v2`);
+  console.info(`🔄 Restarting session with new pattern: ${pattern}-v2`);
   restartWatchSession(session.id, `${pattern}-v2`);
   
   // Stop session
   await new Promise(resolve => setTimeout(resolve, 2000));
   await stopWatchSession(session.id);
   
-  console.log(`✅ Watch session demo completed for: ${pattern}`);
+  console.info(`✅ Watch session demo completed for: ${pattern}`);
 }
 
 /**
  * Run multiple concurrent watch sessions
  */
 async function runConcurrentSessionsDemo(): Promise<void> {
-  console.log('\n🚀 Starting concurrent watch sessions demo...');
+  console.info('\n🚀 Starting concurrent watch sessions demo...');
   
   const sessions = [];
   
@@ -82,7 +82,7 @@ async function runConcurrentSessionsDemo(): Promise<void> {
     const session = startWatchSession(pattern, DEMO_PACKAGES[pattern as keyof typeof DEMO_PACKAGES]);
     sessions.push(session);
     
-    console.log(`📺 Started session: ${session.id}`);
+    console.info(`📺 Started session: ${session.id}`);
   }
   
   // Simulate some activity in each session
@@ -95,19 +95,19 @@ async function runConcurrentSessionsDemo(): Promise<void> {
       const randomPackage = `demo-package-${index}-${i}`;
       
       recordWatchChange(session.id, randomType, randomPackage, { demo: true, iteration: i });
-      console.log(`🔄 Change recorded in ${session.id}: ${randomType} - ${randomPackage}`);
+      console.info(`🔄 Change recorded in ${session.id}: ${randomType} - ${randomPackage}`);
     });
   }
   
   // Stop all sessions
   await new Promise(resolve => setTimeout(resolve, 2000));
-  console.log('\n🛑 Stopping all sessions...');
+  console.info('\n🛑 Stopping all sessions...');
   
   for (const session of sessions) {
     await stopWatchSession(session.id);
   }
   
-  console.log('✅ Concurrent sessions demo completed');
+  console.info('✅ Concurrent sessions demo completed');
 }
 
 /**
@@ -116,15 +116,15 @@ async function runConcurrentSessionsDemo(): Promise<void> {
 function displayStats(): void {
   const stats = getWatchSessionStats();
   
-  console.log('\n📊 Current Session Statistics:');
-  console.log(`   Active Sessions: ${stats.activeSessions}`);
-  console.log(`   Total Changes: ${stats.totalChanges}`);
-  console.log(`   Average Duration: ${stats.averageSessionDuration}ms`);
+  console.info('\n📊 Current Session Statistics:');
+  console.info(`   Active Sessions: ${stats.activeSessions}`);
+  console.info(`   Total Changes: ${stats.totalChanges}`);
+  console.info(`   Average Duration: ${stats.averageSessionDuration}ms`);
   
   if (Object.keys(stats.patterns).length > 0) {
-    console.log('   Patterns:');
+    console.info('   Patterns:');
     Object.entries(stats.patterns).forEach(([pattern, count]) => {
-      console.log(`     ${pattern}: ${count} sessions`);
+      console.info(`     ${pattern}: ${count} sessions`);
     });
   }
 }
@@ -133,8 +133,8 @@ function displayStats(): void {
  * Main demo runner
  */
 async function main(): Promise<void> {
-  console.log('🎯 Filter Watch Session Logger Demo');
-  console.log('=====================================');
+  console.info('🎯 Filter Watch Session Logger Demo');
+  console.info('=====================================');
   
   try {
     // Single session demo
@@ -149,8 +149,8 @@ async function main(): Promise<void> {
     // Final stats
     displayStats();
     
-    console.log('\n🎉 All demos completed successfully!');
-    console.log('📁 Check the data/r2-logs directory for uploaded session logs.');
+    console.info('\n🎉 All demos completed successfully!');
+    console.info('📁 Check the data/r2-logs directory for uploaded session logs.');
     
   } catch (error) {
     console.error('❌ Demo failed:', error);

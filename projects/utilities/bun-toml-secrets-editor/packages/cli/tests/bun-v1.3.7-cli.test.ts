@@ -40,11 +40,11 @@ async function runCLI(args: string[], cwd?: string): Promise<{ stdout: string; s
 
 describe('Bun v1.3.7 CLI', () => {
     beforeAll(() => {
-        console.log('🧪 Starting Bun v1.3.7 CLI Tests...');
+        console.info('🧪 Starting Bun v1.3.7 CLI Tests...');
     });
 
     afterAll(() => {
-        console.log('✅ CLI tests completed');
+        console.info('✅ CLI tests completed');
     });
 
     describe('Basic CLI Functionality', () => {
@@ -180,7 +180,7 @@ describe('Bun v1.3.7 CLI', () => {
         it('should handle profile command with script', async () => {
             // Create a simple test script
             const testScript = join(import.meta.dir, '../../../test-script.ts');
-            Bun.write(testScript, 'console.log("Test script");');
+            Bun.write(testScript, 'console.info("Test script");');
             
             try {
                 const result = await runCLI(['profile', testScript, '--cpu']);
@@ -364,7 +364,7 @@ describe('Performance Features Tests', () => {
                 expect(result.version).toBe('1.0.0');
                 expect(result.enabled).toBe(true);
             } else {
-                console.log('⚠️  JSON5 not available in this Bun version');
+                console.info('⚠️  JSON5 not available in this Bun version');
             }
         });
 
@@ -378,7 +378,7 @@ describe('Performance Features Tests', () => {
                 expect(result[1].b).toBe(2);
                 expect(result[2].c).toBe(3);
             } else {
-                console.log('⚠️  JSONL not available in this Bun version');
+                console.info('⚠️  JSONL not available in this Bun version');
             }
         });
 
@@ -391,7 +391,7 @@ describe('Performance Features Tests', () => {
                 expect(typeof wrapped === 'string' || Array.isArray(wrapped)).toBe(true);
                 expect(wrapped.length).toBeGreaterThan(0);
             } else {
-                console.log('⚠️  wrapAnsi not available in this Bun version');
+                console.info('⚠️  wrapAnsi not available in this Bun version');
             }
         });
 

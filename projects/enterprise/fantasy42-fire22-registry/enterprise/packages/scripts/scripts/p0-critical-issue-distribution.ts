@@ -51,18 +51,18 @@ class P0CriticalIssueDistribution {
   async executeDistribution(options: DistributionOptions = {}): Promise<void> {
     const startTime = new Date();
 
-    console.log('🚨 P0 CRITICAL ISSUE #2 DISTRIBUTION SYSTEM');
-    console.log('!==!==!==!==!==!==!==!==!==!==!==!==!==!==');
-    console.log('📅 Date: ' + startTime.toISOString().split('T')[0]);
-    console.log('⏰ Time: ' + startTime.toLocaleTimeString());
-    console.log('🎯 Operation: P0-CRITICAL-ISSUE-2');
-    console.log('📧 Distribution Channels: ' + this.getDistributionChannels(options) + '\\n');
+    console.info('🚨 P0 CRITICAL ISSUE #2 DISTRIBUTION SYSTEM');
+    console.info('!==!==!==!==!==!==!==!==!==!==!==!==!==!==');
+    console.info('📅 Date: ' + startTime.toISOString().split('T')[0]);
+    console.info('⏰ Time: ' + startTime.toLocaleTimeString());
+    console.info('🎯 Operation: P0-CRITICAL-ISSUE-2');
+    console.info('📧 Distribution Channels: ' + this.getDistributionChannels(options) + '\\n');
 
     if (options.dryRun) {
-      console.log('🔍 DRY RUN MODE - No actual distribution will occur');
+      console.info('🔍 DRY RUN MODE - No actual distribution will occur');
     }
 
-    console.log('🚀 Executing P0 critical issue distribution...\n');
+    console.info('🚀 Executing P0 critical issue distribution...\n');
 
     // 1. Send individual email notifications
     if (options.useEmail !== false) {
@@ -85,22 +85,22 @@ class P0CriticalIssueDistribution {
     const endTime = new Date();
     const duration = endTime.getTime() - startTime.getTime();
 
-    console.log('\n✅ P0 CRITICAL ISSUE DISTRIBUTION COMPLETED');
-    console.log('📧 Email notifications sent');
-    console.log('📡 RSS feeds updated');
-    console.log('🔗 API tasks triggered');
-    console.log('⏱️ Total duration: ' + duration + 'ms');
+    console.info('\n✅ P0 CRITICAL ISSUE DISTRIBUTION COMPLETED');
+    console.info('📧 Email notifications sent');
+    console.info('📡 RSS feeds updated');
+    console.info('🔗 API tasks triggered');
+    console.info('⏱️ Total duration: ' + duration + 'ms');
   }
 
   /**
    * 📧 Send email notifications to team leads
    */
   private async sendEmailNotifications(options: DistributionOptions): Promise<void> {
-    console.log('\n📧 SENDING EMAIL NOTIFICATIONS');
-    console.log('=================================');
+    console.info('\n📧 SENDING EMAIL NOTIFICATIONS');
+    console.info('=================================');
 
     for (const teamLead of this.teamLeads) {
-      console.log(
+      console.info(
         '📧 Sending P0 critical notification to ' +
           teamLead.name +
           ' (' +
@@ -118,11 +118,11 @@ class P0CriticalIssueDistribution {
 
       // Simulate email sending with @apexodds domain
       const apexoddsEmail = teamLead.email.replace('@fire22', '@apexodds');
-      console.log('  ✅ Email queued to: ' + apexoddsEmail);
-      console.log('  📦 P0 Action Plan: /communications/p0-critical-notifications/' + filename);
-      console.log('  🎯 Department: ' + teamLead.department);
-      console.log(`  ⏰ Deadline: 60 minutes from notification`);
-      console.log('');
+      console.info('  ✅ Email queued to: ' + apexoddsEmail);
+      console.info('  📦 P0 Action Plan: /communications/p0-critical-notifications/' + filename);
+      console.info('  🎯 Department: ' + teamLead.department);
+      console.info(`  ⏰ Deadline: 60 minutes from notification`);
+      console.info('');
     }
   }
 
@@ -130,15 +130,15 @@ class P0CriticalIssueDistribution {
    * 📡 Update RSS feeds with P0 critical issue
    */
   private async updateRSSFeeds(options: DistributionOptions): Promise<void> {
-    console.log('\n📡 UPDATING RSS FEEDS');
-    console.log('======================');
+    console.info('\n📡 UPDATING RSS FEEDS');
+    console.info('======================');
 
     const p0Entry = this.generateRSSEntry();
 
     // Update each department's RSS feed
     for (const teamLead of this.teamLeads) {
       const feedFile = join(this.rssFeedDir, teamLead.departmentId + '.rss');
-      console.log('📡 Updating ' + teamLead.department + ' RSS feed...');
+      console.info('📡 Updating ' + teamLead.department + ' RSS feed...');
 
       if (!options.dryRun && existsSync(feedFile)) {
         try {
@@ -150,12 +150,12 @@ class P0CriticalIssueDistribution {
           // Insert P0 entry at the top
           const updatedFeed = this.insertRSSEntry(feedContent, p0Entry);
           writeFileSync(feedFile, updatedFeed);
-          console.log('  ✅ Updated: ' + feedFile);
+          console.info('  ✅ Updated: ' + feedFile);
         } catch (error) {
-          console.log('  ⚠️ Could not update: ' + feedFile);
+          console.info('  ⚠️ Could not update: ' + feedFile);
         }
       } else {
-        console.log('  🔍 Dry run: Would update ' + feedFile);
+        console.info('  🔍 Dry run: Would update ' + feedFile);
       }
     }
   }
@@ -164,11 +164,11 @@ class P0CriticalIssueDistribution {
    * 🔗 Trigger API tasks for distribution
    */
   private async triggerAPITasks(options: DistributionOptions): Promise<void> {
-    console.log('\n🔗 TRIGGERING API TASKS');
-    console.log('=========================');
+    console.info('\n🔗 TRIGGERING API TASKS');
+    console.info('=========================');
 
     for (const teamLead of this.teamLeads) {
-      console.log('🔗 Triggering API task for ' + teamLead.department + '...');
+      console.info('🔗 Triggering API task for ' + teamLead.department + '...');
 
       if (!options.dryRun) {
         // Simulate API task triggering
@@ -180,9 +180,9 @@ class P0CriticalIssueDistribution {
           contact: teamLead.email.replace('@fire22', '@apexodds'),
         };
 
-        console.log('  ✅ API task triggered: ' + JSON.stringify(taskPayload, null, 2));
+        console.info('  ✅ API task triggered: ' + JSON.stringify(taskPayload, null, 2));
       } else {
-        console.log('  🔍 Dry run: Would trigger API task for ' + teamLead.department);
+        console.info('  🔍 Dry run: Would trigger API task for ' + teamLead.department);
       }
     }
   }
@@ -369,8 +369,8 @@ class P0CriticalIssueDistribution {
    * 📋 Generate distribution summary
    */
   private async generateDistributionSummary(options: DistributionOptions): Promise<void> {
-    console.log('\n📊 GENERATING DISTRIBUTION SUMMARY');
-    console.log('====================================');
+    console.info('\n📊 GENERATING DISTRIBUTION SUMMARY');
+    console.info('====================================');
 
     const summary =
       '# 📧 P0 CRITICAL ISSUE #2 DISTRIBUTION SUMMARY\n' +
@@ -473,8 +473,8 @@ class P0CriticalIssueDistribution {
       writeFileSync(summaryPath, summary);
     }
 
-    console.log('  ✅ Distribution summary generated');
-    console.log(
+    console.info('  ✅ Distribution summary generated');
+    console.info(
       '  📄 Summary: ' + (options.dryRun ? 'Would save to' : 'Saved to') + ' ' + summaryPath
     );
   }
@@ -593,16 +593,16 @@ async function main() {
     const distribution = new P0CriticalIssueDistribution();
     await distribution.executeDistribution(options);
 
-    console.log('\n🎉 P0 CRITICAL ISSUE #2 DISTRIBUTION COMPLETED!');
-    console.log('!==!==!==!==!==!==!==!==!==!==!==!==!==!==');
-    console.log('✅ Email notifications sent to @apexodds domain');
-    console.log('✅ RSS feeds updated with P0 critical entries');
-    console.log('✅ API tasks triggered for all departments');
-    console.log('✅ Distribution summary generated');
-    console.log('✅ Response tracking initiated');
+    console.info('\n🎉 P0 CRITICAL ISSUE #2 DISTRIBUTION COMPLETED!');
+    console.info('!==!==!==!==!==!==!==!==!==!==!==!==!==!==');
+    console.info('✅ Email notifications sent to @apexodds domain');
+    console.info('✅ RSS feeds updated with P0 critical entries');
+    console.info('✅ API tasks triggered for all departments');
+    console.info('✅ Distribution summary generated');
+    console.info('✅ Response tracking initiated');
 
     if (options.dryRun) {
-      console.log('\n🔍 DRY RUN COMPLETED - No actual distribution occurred');
+      console.info('\n🔍 DRY RUN COMPLETED - No actual distribution occurred');
     }
   } catch (error) {
     console.error('❌ P0 Critical issue distribution failed:', error);

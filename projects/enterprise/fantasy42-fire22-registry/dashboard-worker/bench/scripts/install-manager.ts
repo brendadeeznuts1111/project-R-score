@@ -159,7 +159,7 @@ export class InstallManager {
    */
   async install(options: InstallOptions = {}): Promise<void> {
     const args = this.buildInstallCommand(options);
-    console.log(`🚀 Running: bun ${args.join(' ')}`);
+    console.info(`🚀 Running: bun ${args.join(' ')}`);
 
     await $`bun ${args}`;
   }
@@ -187,7 +187,7 @@ export class InstallManager {
       options.trust.forEach(pkg => args.push('--trust', pkg));
     }
 
-    console.log(`📦 Running: bun ${args.join(' ')}`);
+    console.info(`📦 Running: bun ${args.join(' ')}`);
     await $`bun ${args}`;
   }
 
@@ -207,7 +207,7 @@ export class InstallManager {
     if (options.latest) args.push('--latest');
     if (options.packages) args.push(...options.packages);
 
-    console.log(`🔄 Running: bun ${args.join(' ')}`);
+    console.info(`🔄 Running: bun ${args.join(' ')}`);
     await $`bun ${args}`;
   }
 
@@ -226,7 +226,7 @@ export class InstallManager {
     if (options.authType) args.push('--auth-type', options.authType);
     if (options.otp) args.push('--otp', options.otp);
 
-    console.log(`📤 Running: bun ${args.join(' ')}`);
+    console.info(`📤 Running: bun ${args.join(' ')}`);
     await $`bun ${args}`;
   }
 
@@ -235,7 +235,7 @@ export class InstallManager {
    */
   async remove(packages: string[]): Promise<void> {
     const args = ['remove', ...packages];
-    console.log(`🗑️  Running: bun ${args.join(' ')}`);
+    console.info(`🗑️  Running: bun ${args.join(' ')}`);
     await $`bun ${args}`;
   }
 
@@ -243,8 +243,8 @@ export class InstallManager {
    * Run predefined installation scenarios
    */
   async runScenario(scenario: string): Promise<void> {
-    console.log(`\n🎯 Running scenario: ${scenario}`);
-    console.log('='.repeat(50));
+    console.info(`\n🎯 Running scenario: ${scenario}`);
+    console.info('='.repeat(50));
 
     switch (scenario) {
       case 'production':
@@ -307,7 +307,7 @@ export class InstallManager {
         break;
 
       default:
-        console.log(`Unknown scenario: ${scenario}`);
+        console.info(`Unknown scenario: ${scenario}`);
     }
   }
 
@@ -315,7 +315,7 @@ export class InstallManager {
    * List all available installation options
    */
   listOptions(): void {
-    console.log(`
+    console.info(`
 📦 Bun Installation Options
 !==!==!==!==!===
 
@@ -381,7 +381,7 @@ LIFECYCLE SCRIPTS
    * Show workspace-specific commands
    */
   showWorkspaceCommands(): void {
-    console.log(`
+    console.info(`
 🏗️  Workspace Commands
 !==!==!==!===
 
@@ -408,7 +408,7 @@ Update workspace packages:
    * Show Git and tarball dependency examples
    */
   showSpecialDependencies(): void {
-    console.log(`
+    console.info(`
 🔗 Special Dependencies
 !==!==!==!====
 
@@ -482,7 +482,7 @@ if (import.meta.main) {
       break;
 
     default:
-      console.log(`
+      console.info(`
 🚀 Fire22 Installation Manager
 !==!==!==!==!=====
 

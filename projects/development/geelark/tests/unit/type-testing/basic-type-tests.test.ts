@@ -89,4 +89,4 @@ const connections: ConnectionInfo[] = [
 expectTypeOf(connections).items.toMatchObjectType<ConnectionInfo>();
 expectTypeOf(connections[0].protocol).toEqualTypeOf<'http' | 'https'>();
 
-console.log('✅ All type tests passed! Run with: bunx tsc --noEmit bench/type-tests.ts');
+console.info('✅ All type tests passed! Run with: bunx tsc --noEmit bench/type-tests.ts');

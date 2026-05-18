@@ -68,7 +68,7 @@ export class OddsApiServer {
         open: (ws) => {
           try {
             const session = sessionManager.createForWebSocket(ws);
-            console.log(`🔗 WebSocket connected: ${session.id}`);
+            console.info(`🔗 WebSocket connected: ${session.id}`);
           } catch (error) {
             if (error instanceof Error) {
               ErrorMiddleware.handleWebSocketError(error, ws);
@@ -95,14 +95,14 @@ export class OddsApiServer {
         close: (ws) => {
           const sessionId = (ws as any).sessionId;
           if (sessionId) {
-            console.log(`🔗 WebSocket disconnected: ${sessionId}`);
+            console.info(`🔗 WebSocket disconnected: ${sessionId}`);
             // Note: We don't destroy the session immediately for reconnect scenarios
           }
         }
       }
     });
 
-    console.log(`🚀 Odds API Server running on port ${this.server.port}`);
+    console.info(`🚀 Odds API Server running on port ${this.server.port}`);
   }
 
   private async handleRoute(request: Request, url: URL, session: any): Promise<Response> {
@@ -285,9 +285,9 @@ export class OddsApiServer {
    * Graceful shutdown
    */
   async shutdown(): Promise<void> {
-    console.log('🔄 Shutting down API server...');
+    console.info('🔄 Shutting down API server...');
     this.server.stop();
-    console.log('✅ API server stopped');
+    console.info('✅ API server stopped');
   }
 }
 

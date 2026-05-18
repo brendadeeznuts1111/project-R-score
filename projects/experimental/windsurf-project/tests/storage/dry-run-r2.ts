@@ -3,8 +3,8 @@
 import { BunR2AppleManager } from '../src/storage/r2-apple-manager';
 
 async function dryRun() {
-  console.log('\n🛡️  COMPREHENSIVE R2 STORAGE DRY RUN (Enhanced)');
-  console.log('============================================');
+  console.info('\n🛡️  COMPREHENSIVE R2 STORAGE DRY RUN (Enhanced)');
+  console.info('============================================');
 
   // Load Presigns (if any)
   let presigns = {};
@@ -15,7 +15,7 @@ async function dryRun() {
   const manager = new BunR2AppleManager(presigns, Bun.env._BUCKET!);
 
   // 1. Initialize & Preconnect
-  console.log('Step 1: Initialization & Connectivity');
+  console.info('Step 1: Initialization & Connectivity');
   try {
     await manager.initialize();
   } catch (e: any) {
@@ -24,41 +24,41 @@ async function dryRun() {
   }
 
   // 2. Worker Path Probe
-  console.log('\nStep 2: Worker Fast-Path Probe');
+  console.info('\nStep 2: Worker Fast-Path Probe');
   const workerOk = await manager.validateBucketConnection();
   if (workerOk) {
-    console.log('✅ Worker -> R2 Routing: Verified');
+    console.info('✅ Worker -> R2 Routing: Verified');
   } else {
     console.warn('⚠️ Worker Routing: Degraded');
   }
 
   // 3. Native Lifecycle Audit (Write/Read/Delete)
-  console.log('\nStep 3: Direct S3 Lifecycle Audit');
+  console.info('\nStep 3: Direct S3 Lifecycle Audit');
   const lifecycleOk = await manager.performLifecycleAudit();
   if (lifecycleOk) {
-    console.log('✅ Native S3 Protocol: Fully functional');
+    console.info('✅ Native S3 Protocol: Fully functional');
   } else {
     console.error('❌ Native S3 Protocol: FAILED (Check credentials/endpoint)');
   }
 
   // 4. Presigning Proof
-  console.log('\nStep 4: Authenticated Link Engine');
+  console.info('\nStep 4: Authenticated Link Engine');
   try {
     const sampleLink = await manager.getPresignedUrl('dry-run-sample.json', 'GET');
-    console.log(`✅ Dynamic Link Generated: ${sampleLink.split('?')[0]}...`);
+    console.info(`✅ Dynamic Link Generated: ${sampleLink.split('?')[0]}...`);
   } catch (e: any) {
     console.error(`❌ Link Engine FAILED: ${e.message}`);
   }
 
-  console.log('\n============================================');
+  console.info('\n============================================');
   if (workerOk && lifecycleOk) {
-    console.log('✨ SYSTEM HEALTH: 100% - READY FOR SCALING');
+    console.info('✨ SYSTEM HEALTH: 100% - READY FOR SCALING');
   } else if (workerOk) {
-    console.log('✨ SYSTEM HEALTH: PROXY-ONLY - Proceed with caution (Direct S3 degraded)');
+    console.info('✨ SYSTEM HEALTH: PROXY-ONLY - Proceed with caution (Direct S3 degraded)');
   } else {
-    console.log('🛑 SYSTEM HEALTH: CRITICAL - DO NOT SCALE');
+    console.info('🛑 SYSTEM HEALTH: CRITICAL - DO NOT SCALE');
   }
-  console.log('============================================\n');
+  console.info('============================================\n');
 }
 
 dryRun().catch(console.error);

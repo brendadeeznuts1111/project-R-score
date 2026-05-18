@@ -228,7 +228,7 @@ export class CascadeSkillExecutor {
   }
   
   private async runSkillLogic(context: SkillContext): Promise<SkillResult> {
-    console.log(`🎯 Executing skill ${context.skillType} for merchant ${context.merchantId}`);
+    console.info(`🎯 Executing skill ${context.skillType} for merchant ${context.merchantId}`);
     
     // Simulate skill execution
     await new Promise(resolve => setTimeout(resolve, 10));
@@ -245,7 +245,7 @@ export class CascadeSkillExecutor {
  */
 export class ContextValidationTests {
   static async runTests(): Promise<void> {
-    console.log('🧪 Running context validation tests...');
+    console.info('🧪 Running context validation tests...');
     
     const executor = new CascadeSkillExecutor();
     
@@ -257,7 +257,7 @@ export class ContextValidationTests {
       });
       
       const result = await executor.executeSkill(validContext);
-      console.log('✅ Valid context test passed:', result.success);
+      console.info('✅ Valid context test passed:', result.success);
     } catch (error) {
       console.error('❌ Valid context test failed:', error);
     }
@@ -275,7 +275,7 @@ export class ContextValidationTests {
       await executor.executeSkill(invalidContext);
       console.error('❌ Invalid context test failed - should have thrown');
     } catch (error) {
-      console.log('✅ Invalid context test passed - correctly rejected:', (error as Error).message);
+      console.info('✅ Invalid context test passed - correctly rejected:', (error as Error).message);
     }
     
     // Test 3: Decorator function usage
@@ -287,11 +287,11 @@ export class ContextValidationTests {
       });
       
       const result = await validatedFunction(context);
-      console.log('✅ Decorator test passed:', result.validated);
+      console.info('✅ Decorator test passed:', result.validated);
     } catch (error) {
       console.error('❌ Decorator test failed:', error);
     }
     
-    console.log('🏁 Context validation tests complete');
+    console.info('🏁 Context validation tests complete');
   }
 }

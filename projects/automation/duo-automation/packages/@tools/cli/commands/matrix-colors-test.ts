@@ -63,12 +63,12 @@ class MatrixColorTest {
   }
 
   private showColorHelp(): void {
-    console.log(EmpireProDashboard.generateHeader(
+    console.info(EmpireProDashboard.generateHeader(
       'EMPIRE PRO v3.7 MATRIX CLI - COLOR SYSTEM',
       'Advanced color-coded matrix display with Empire Pro integration'
     ));
 
-    console.log(EmpireProDashboard.generateSection('COLOR FLAGS', '🎨'));
+    console.info(EmpireProDashboard.generateSection('COLOR FLAGS', '🎨'));
     
     const colorFlags = [
       { flag: '--color', description: 'Enable colors (default: enabled)', theme: 'All' },
@@ -89,9 +89,9 @@ class MatrixColorTest {
       Theme: flag.theme
     }));
 
-    console.log(UnicodeTableFormatter.generateTable(flagTable, { maxWidth: 100 }));
+    console.info(UnicodeTableFormatter.generateTable(flagTable, { maxWidth: 100 }));
 
-    console.log(EmpireProDashboard.generateSection('EMPIRE PRO COLORS', '🚀'));
+    console.info(EmpireProDashboard.generateSection('EMPIRE PRO COLORS', '🚀'));
     
     const empireColors = [
       { Element: 'Status Colors', Operational: '🟢 #3b82f6', Degraded: '🟡 #3b82f6', Critical: '🔴 #3b82f6', Maintenance: '🔵 #3b82f6' },
@@ -100,9 +100,9 @@ class MatrixColorTest {
       { Element: 'Accent Colors', Blue: '#3b82f6', Green: '#3b82f6', Yellow: '#3b82f6', Red: '#3b82f6', Purple: '#3b82f6' }
     ];
 
-    console.log(UnicodeTableFormatter.generateTable(empireColors, { maxWidth: 120 }));
+    console.info(UnicodeTableFormatter.generateTable(empireColors, { maxWidth: 120 }));
 
-    console.log(EmpireProDashboard.generateSection('USAGE EXAMPLES', '💡'));
+    console.info(EmpireProDashboard.generateSection('USAGE EXAMPLES', '💡'));
     
     const examples = [
       { Command: 'bun run matrix-colors-test.ts --theme=empire', Description: 'Empire Pro v3.7 theme' },
@@ -113,8 +113,8 @@ class MatrixColorTest {
       { Command: 'bun run matrix-colors-test.ts --theme=duoplus --scheme=health', Description: 'DuoPlus health theme' }
     ];
 
-    console.log(UnicodeTableFormatter.generateTable(examples, { maxWidth: 100 }));
-    console.log(EmpireProDashboard.generateFooter());
+    console.info(UnicodeTableFormatter.generateTable(examples, { maxWidth: 100 }));
+    console.info(EmpireProDashboard.generateFooter());
   }
 
   private createTestData(): any[] {
@@ -333,7 +333,7 @@ class MatrixColorTest {
       return;
     }
 
-    console.log(EmpireProDashboard.generateHeader(
+    console.info(EmpireProDashboard.generateHeader(
       'EMPIRE PRO v3.7 ENHANCED MATRIX',
       `Theme: ${this.options.theme} | Colors: ${this.options.colors ? 'Enabled' : 'Disabled'} | Scheme: ${this.options.scheme}`
     ));
@@ -342,28 +342,28 @@ class MatrixColorTest {
       // Create test data
       const data = this.createTestData();
 
-      console.log(UnicodeTableFormatter.colorize(`📂 Generated ${data.length} test entries`, DesignSystem.text.accent.blue));
+      console.info(UnicodeTableFormatter.colorize(`📂 Generated ${data.length} test entries`, DesignSystem.text.accent.blue));
 
       // Apply color scheme
       const coloredData = this.applyColorScheme(data);
 
       // Display matrix with colors
       if (this.options.format === 'terminal') {
-        console.log(UnicodeTableFormatter.generateTable(coloredData, { maxWidth: 120 }));
+        console.info(UnicodeTableFormatter.generateTable(coloredData, { maxWidth: 120 }));
       }
 
       // Generate badges if requested
       if (this.flags['--badges']) {
-        console.log(EmpireProDashboard.generateSection('STATUS BADGES', '🏷️'));
+        console.info(EmpireProDashboard.generateSection('STATUS BADGES', '🏷️'));
         const badges = this.generateBadges(data);
         badges.forEach((badge, index) => {
-          console.log(`Badge ${index + 1}: ${badge.substring(0, 50)}...`);
+          console.info(`Badge ${index + 1}: ${badge.substring(0, 50)}...`);
         });
       }
 
       // Show Empire Pro status if enabled
       if (this.flags['--empire'] || this.flags['--status']) {
-        console.log(EmpireProDashboard.generateSection('EMPIRE PRO STATUS', '🚀'));
+        console.info(EmpireProDashboard.generateSection('EMPIRE PRO STATUS', '🚀'));
         
         const empireStatus = [
           { Component: 'Color System', Status: '🟢 OPERATIONAL', Version: 'v3.7', Integration: 'Complete' },
@@ -372,10 +372,10 @@ class MatrixColorTest {
           { Component: 'Theme System', Status: '🟢 OPERATIONAL', Version: 'Multi-theme', Integration: 'Ready' }
         ];
 
-        console.log(UnicodeTableFormatter.generateTable(empireStatus, { maxWidth: 100 }));
+        console.info(UnicodeTableFormatter.generateTable(empireStatus, { maxWidth: 100 }));
       }
 
-      console.log(EmpireProDashboard.generateFooter());
+      console.info(EmpireProDashboard.generateFooter());
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);

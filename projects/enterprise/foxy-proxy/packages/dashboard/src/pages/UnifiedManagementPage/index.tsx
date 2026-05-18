@@ -73,7 +73,7 @@ export const UnifiedManagementPage: React.FC = () => {
   }, [duoplusAPI]);
 
   const handleProxyAction = (proxyId: string, action: string) => {
-    console.log(`Proxy ${action}: ${proxyId}`);
+    console.info(`Proxy ${action}: ${proxyId}`);
     // Implement proxy actions
   };
 
@@ -113,7 +113,7 @@ export const UnifiedManagementPage: React.FC = () => {
         });
 
         setProfiles(profileManager.getAllProfiles());
-        console.log("Created unified profile:", newProfile);
+        console.info("Created unified profile:", newProfile);
       } catch (error) {
         console.error("Failed to create profile:", error);
       }

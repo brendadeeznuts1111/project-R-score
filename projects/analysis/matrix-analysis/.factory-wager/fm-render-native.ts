@@ -276,13 +276,13 @@ class FactoryWagerNativeRenderer {
     if (options.output) {
       try {
         writeFileSync(options.output, result, 'utf-8');
-        console.log(`✅ Rendered to: ${options.output}`);
+        console.info(`✅ Rendered to: ${options.output}`);
       } catch (error) {
         console.error(`❌ Failed to write output: ${options.output}`);
         process.exit(1);
       }
     } else {
-      console.log(result);
+      console.info(result);
     }
   }
 }
@@ -292,7 +292,7 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
 
   if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🏭 FACTORYWAGER NATIVE MARKDOWN RENDERER (fm:render)
 🚀 Bun v1.3.8 supremacy • Zero dependencies • Microsecond rendering
 

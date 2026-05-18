@@ -182,7 +182,7 @@ export class HTTPServerEngine {
   shutdown(): void {
     if (this.server) {
       this.server.stop();
-      console.log("✅ HTTP Server Engine stopped gracefully");
+      console.info("✅ HTTP Server Engine stopped gracefully");
     }
   }
 }

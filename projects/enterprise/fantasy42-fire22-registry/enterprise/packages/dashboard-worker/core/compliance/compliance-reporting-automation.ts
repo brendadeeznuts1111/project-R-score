@@ -142,7 +142,7 @@ export class ComplianceReportingAutomation {
     period: { startDate: string; endDate: string },
     createdBy: string
   ): Promise<ComplianceReport> {
-    console.log(`Generating ${reportType} report for ${jurisdiction}`);
+    console.info(`Generating ${reportType} report for ${jurisdiction}`);
 
     // Gather report data based on type
     const reportData = await this.gatherReportData(reportType, jurisdiction, period);
@@ -177,7 +177,7 @@ export class ComplianceReportingAutomation {
     data: Record<string, any>,
     submittedBy: string
   ): Promise<RegulatoryFiling> {
-    console.log(`Submitting ${filingType} filing`);
+    console.info(`Submitting ${filingType} filing`);
 
     const filing: RegulatoryFiling = {
       id: this.generateFilingId(),
@@ -563,12 +563,12 @@ export class ComplianceReportingAutomation {
 
   private async prepareFilingData(filing: RegulatoryFiling): Promise<void> {
     // Prepare filing data based on type
-    console.log(`Preparing ${filing.filingType} filing data`);
+    console.info(`Preparing ${filing.filingType} filing data`);
   }
 
   private async submitToRegulator(filing: RegulatoryFiling): Promise<void> {
     // Submit to appropriate regulatory authority
-    console.log(`Submitting ${filing.filingType} to regulator`);
+    console.info(`Submitting ${filing.filingType} to regulator`);
 
     filing.status = 'submitted';
     filing.submissionDate = new Date().toISOString();
@@ -601,13 +601,13 @@ export class ComplianceReportingAutomation {
 
   private async checkPEPStatus(customerId: string): Promise<any> {
     // Check against PEP databases
-    console.log(`Checking PEP status for ${customerId}`);
+    console.info(`Checking PEP status for ${customerId}`);
     return null; // Mock - no match
   }
 
   private async checkSanctionsStatus(customerId: string): Promise<any> {
     // Check against sanctions lists
-    console.log(`Checking sanctions status for ${customerId}`);
+    console.info(`Checking sanctions status for ${customerId}`);
     return null; // Mock - no match
   }
 
@@ -637,7 +637,7 @@ export class ComplianceReportingAutomation {
 
   private async sendAlertNotifications(alert: ComplianceAlert): Promise<void> {
     // Send notifications to compliance team
-    console.log(`Sending ${alert.severity} alert notifications: ${alert.description}`);
+    console.info(`Sending ${alert.severity} alert notifications: ${alert.description}`);
   }
 
   private async assignAlert(alertId: string, assignedTo: string): Promise<void> {
@@ -723,7 +723,7 @@ export class ComplianceReportingAutomation {
   private async processSchedule(schedule: ComplianceSchedule): Promise<void> {
     if (!schedule.autoGenerate) return;
 
-    console.log(`Processing scheduled report: ${schedule.reportType} for ${schedule.jurisdiction}`);
+    console.info(`Processing scheduled report: ${schedule.reportType} for ${schedule.jurisdiction}`);
 
     // Calculate reporting period
     const period = this.calculateReportingPeriod(schedule.frequency, schedule.dueDay);
@@ -824,7 +824,7 @@ export class ComplianceReportingAutomation {
     schedule: ComplianceSchedule,
     daysBefore: number
   ): Promise<void> {
-    console.log(`Sending ${daysBefore}-day notification for ${schedule.reportType} report`);
+    console.info(`Sending ${daysBefore}-day notification for ${schedule.reportType} report`);
   }
 
   private generateReportId(): string {

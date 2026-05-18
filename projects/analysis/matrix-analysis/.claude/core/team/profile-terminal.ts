@@ -156,7 +156,7 @@ async function runTerminalSession(
 			// Exit callback - also has context access
 			exit: (_term, code: number) => {
 				const ctx = requireTerminalContext();
-				console.log(
+				console.info(
 					`\n${theme.dim}[${ctx.profileName}]${theme.reset} ` +
 						`Session ${ctx.sessionId.slice(0, 8)} exited with code ${code}`,
 				);
@@ -166,7 +166,7 @@ async function runTerminalSession(
 			drain: () => {
 				const ctx = getTerminalContext();
 				if (ctx && ctx.tier >= 1380) {
-					console.log(`${theme.dim}[drain]${theme.reset} Buffer flushed`);
+					console.info(`${theme.dim}[drain]${theme.reset} Buffer flushed`);
 				}
 			},
 		});
@@ -356,8 +356,8 @@ if (import.meta.main) {
 			const teamId = args[2] ?? "test";
 			const role = (args[3] ?? "member") as TeamRole;
 
-			console.log(`🚀 Launching terminal for ${profileName}...`);
-			console.log(`   Team: ${teamId}, Role: ${role}`);
+			console.info(`🚀 Launching terminal for ${profileName}...`);
+			console.info(`   Team: ${teamId}, Role: ${role}`);
 
 			const result = await launchProfileTerminal({
 				profileName,
@@ -366,20 +366,20 @@ if (import.meta.main) {
 				enableR2Streaming: false, // CLI mode - no R2
 			});
 
-			console.log(`\n✅ Session complete: ${result.sessionId.slice(0, 8)}`);
-			console.log(`   Duration: ${result.duration}ms`);
-			console.log(`   Bytes: ${result.bytesStreamed}`);
+			console.info(`\n✅ Session complete: ${result.sessionId.slice(0, 8)}`);
+			console.info(`   Duration: ${result.duration}ms`);
+			console.info(`   Bytes: ${result.bytesStreamed}`);
 			process.exit(result.exitCode);
 		}
 
 		default: {
-			console.log("Usage: bun core/team/profile-terminal.ts <command>");
-			console.log("");
-			console.log("Commands:");
-			console.log("  launch <profile> <team> <role>  Launch profile terminal");
-			console.log("");
-			console.log("Examples:");
-			console.log(
+			console.info("Usage: bun core/team/profile-terminal.ts <command>");
+			console.info("");
+			console.info("Commands:");
+			console.info("  launch <profile> <team> <role>  Launch profile terminal");
+			console.info("");
+			console.info("Examples:");
+			console.info(
 				"  bun core/team/profile-terminal.ts launch omega-prod platform admin",
 			);
 		}

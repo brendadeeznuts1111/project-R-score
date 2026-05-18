@@ -39,8 +39,8 @@ class VersionCLI {
     const options = this.parseArgs(args);
 
     if (options.verbose) {
-      console.log('🏷️ Fire22 Metadata-Driven Version Manager');
-      console.log('='.repeat(50));
+      console.info('🏷️ Fire22 Metadata-Driven Version Manager');
+      console.info('='.repeat(50));
     }
 
     // Load workspace metadata
@@ -85,14 +85,14 @@ class VersionCLI {
   }
 
   private async showStatus(options: CLIOptions): Promise<void> {
-    console.log('📊 Workspace Status\n');
+    console.info('📊 Workspace Status\n');
 
     const report = this.versionManager.generateVersionReport();
-    console.log(report);
+    console.info(report);
 
     if (options.output) {
       await Bun.write(options.output, report);
-      console.log(`\n💾 Report saved to: ${options.output}`);
+      console.info(`\n💾 Report saved to: ${options.output}`);
     }
   }
 
@@ -103,15 +103,15 @@ class VersionCLI {
       reason: options.reason,
     };
 
-    console.log(`🏷️ Bumping versions: ${strategy.type}`);
+    console.info(`🏷️ Bumping versions: ${strategy.type}`);
     if (strategy.packages) {
-      console.log(`📦 Target packages: ${strategy.packages.join(', ')}`);
+      console.info(`📦 Target packages: ${strategy.packages.join(', ')}`);
     }
     if (strategy.reason) {
-      console.log(`📝 Reason: ${strategy.reason}`);
+      console.info(`📝 Reason: ${strategy.reason}`);
     }
     if (options.commit || options.tag || options.push) {
-      console.log(
+      console.info(
         `🔀 Git operations: ${[
           options.commit && 'commit',
           options.tag && 'tag',
@@ -129,27 +129,27 @@ class VersionCLI {
       verbose: options.verbose,
     });
 
-    console.log('\n✅ Version Changes:');
+    console.info('\n✅ Version Changes:');
     for (const [pkg, change] of changes) {
-      console.log(`  📦 ${pkg}: ${change}`);
+      console.info(`  📦 ${pkg}: ${change}`);
     }
 
     // Generate changelog if requested
     if (options.changelog) {
-      console.log('\n📋 Generating changelog...');
+      console.info('\n📋 Generating changelog...');
       const changelog = await this.versionManager.generateChangelog();
 
       if (options.output) {
         await Bun.write(options.output, changelog);
-        console.log(`💾 Changelog saved to: ${options.output}`);
+        console.info(`💾 Changelog saved to: ${options.output}`);
       } else {
         await Bun.write('CHANGELOG.md', changelog);
-        console.log(`💾 Changelog saved to: CHANGELOG.md`);
+        console.info(`💾 Changelog saved to: CHANGELOG.md`);
       }
     }
 
     if (options.build) {
-      console.log('\n🏗️ Building with new versions...');
+      console.info('\n🏗️ Building with new versions...');
       const buildResults = await this.versionManager.buildWorkspaceWithVersions({
         updateConstants: true,
         mode: 'production',
@@ -161,11 +161,11 @@ class VersionCLI {
       }
     }
 
-    console.log('\n🎉 Version bump completed!');
+    console.info('\n🎉 Version bump completed!');
   }
 
   private async buildWithVersions(options: CLIOptions): Promise<void> {
-    console.log('🏗️ Building workspace with version integration...');
+    console.info('🏗️ Building workspace with version integration...');
 
     const buildResults = await this.versionManager.buildWorkspaceWithVersions({
       packages: options.packages,
@@ -174,7 +174,7 @@ class VersionCLI {
       verbose: options.verbose,
     });
 
-    console.log(
+    console.info(
       `\n✅ Build completed: ${buildResults.built} built, ${buildResults.skipped} skipped, ${buildResults.failed} failed`
     );
 
@@ -184,22 +184,22 @@ class VersionCLI {
   }
 
   private async generateChangelog(options: CLIOptions): Promise<void> {
-    console.log('📋 Generating changelog from metadata...');
+    console.info('📋 Generating changelog from metadata...');
 
     const changelog = await this.versionManager.generateChangelog();
 
     if (options.output) {
       await Bun.write(options.output, changelog);
-      console.log(`💾 Changelog saved to: ${options.output}`);
+      console.info(`💾 Changelog saved to: ${options.output}`);
     } else {
-      console.log('\n' + changelog);
+      console.info('\n' + changelog);
     }
   }
 
   private async listPackages(options: CLIOptions): Promise<void> {
     const workspace = await this.versionManager.loadWorkspaceMetadata();
 
-    console.log('📦 Workspace Packages\n');
+    console.info('📦 Workspace Packages\n');
 
     const packages = Array.from(workspace.packages.entries()).sort(([a], [b]) =>
       a.localeCompare(b)
@@ -207,92 +207,92 @@ class VersionCLI {
 
     for (const [name, pkg] of packages) {
       const component = pkg.metadata?.component || pkg.name;
-      console.log(`🔥 **${component}** (${name})`);
-      console.log(`   Version: v${pkg.version}`);
-      console.log(`   Description: ${pkg.description}`);
+      console.info(`🔥 **${component}** (${name})`);
+      console.info(`   Version: v${pkg.version}`);
+      console.info(`   Description: ${pkg.description}`);
 
       if (pkg.metadata?.responsibilities) {
-        console.log(`   Responsibilities:`);
+        console.info(`   Responsibilities:`);
         for (const responsibility of pkg.metadata.responsibilities.slice(0, 3)) {
-          console.log(`     • ${responsibility}`);
+          console.info(`     • ${responsibility}`);
         }
         if (pkg.metadata.responsibilities.length > 3) {
-          console.log(`     ... and ${pkg.metadata.responsibilities.length - 3} more`);
+          console.info(`     ... and ${pkg.metadata.responsibilities.length - 3} more`);
         }
       }
 
-      console.log('');
+      console.info('');
     }
   }
 
   private async showDependencyGraph(options: CLIOptions): Promise<void> {
     const workspace = await this.versionManager.loadWorkspaceMetadata();
 
-    console.log('🔗 Package Dependency Graph\n');
+    console.info('🔗 Package Dependency Graph\n');
 
     for (const [packageName, deps] of workspace.dependencyGraph) {
       const pkg = workspace.packages.get(packageName);
       const component = pkg?.metadata?.component || packageName;
 
-      console.log(`📦 ${component} (${packageName})`);
+      console.info(`📦 ${component} (${packageName})`);
 
       if (deps.length === 0) {
-        console.log(`   └── No internal dependencies`);
+        console.info(`   └── No internal dependencies`);
       } else {
         deps.forEach((dep, index) => {
           const depPkg = workspace.packages.get(dep);
           const depComponent = depPkg?.metadata?.component || dep;
           const isLast = index === deps.length - 1;
           const prefix = isLast ? '└──' : '├──';
-          console.log(`   ${prefix} ${depComponent} (${dep})`);
+          console.info(`   ${prefix} ${depComponent} (${dep})`);
         });
       }
 
-      console.log('');
+      console.info('');
     }
   }
 
   private async showBuildConstants(options: CLIOptions): Promise<void> {
-    console.log('🏗️ Build Constants with Version Metadata\n');
+    console.info('🏗️ Build Constants with Version Metadata\n');
 
     const constants = await generateBuildConstants();
     const workspace = await this.versionManager.loadWorkspaceMetadata();
 
     // Show workspace version constants
-    console.log('📊 **Workspace Versions**');
-    console.log(`   Root Version: ${workspace.rootVersion}`);
-    console.log(`   Packages: ${workspace.packages.size}`);
-    console.log(`   Build Time: ${constants.BUILD_TIME}`);
-    console.log('');
+    console.info('📊 **Workspace Versions**');
+    console.info(`   Root Version: ${workspace.rootVersion}`);
+    console.info(`   Packages: ${workspace.packages.size}`);
+    console.info(`   Build Time: ${constants.BUILD_TIME}`);
+    console.info('');
 
     // Show package versions
     if (workspace.buildConstants.PACKAGE_VERSIONS) {
-      console.log('📦 **Package Versions**');
+      console.info('📦 **Package Versions**');
       for (const [key, version] of Object.entries(workspace.buildConstants.PACKAGE_VERSIONS)) {
-        console.log(`   ${key}: ${version}`);
+        console.info(`   ${key}: ${version}`);
       }
-      console.log('');
+      console.info('');
     }
 
     // Show component information
     if (workspace.buildConstants.WORKSPACE_COMPONENTS) {
-      console.log('🔥 **Components**');
+      console.info('🔥 **Components**');
       for (const component of workspace.buildConstants.WORKSPACE_COMPONENTS as any[]) {
-        console.log(`   ${component.name} v${component.version}`);
-        console.log(
+        console.info(`   ${component.name} v${component.version}`);
+        console.info(
           `     Responsibilities: ${component.responsibilities.slice(0, 2).join(', ')}${component.responsibilities.length > 2 ? '...' : ''}`
         );
       }
-      console.log('');
+      console.info('');
     }
 
     // Show Fire22 integration constants
-    console.log('🔥 **Fire22 Integration**');
-    console.log(`   Environment: ${constants.ENVIRONMENT}`);
-    console.log(`   API URL: ${constants.API_URL}`);
-    console.log(`   Debug Mode: ${constants.DEBUG_MODE}`);
-    console.log(`   Analytics: ${constants.ENABLE_ANALYTICS}`);
-    console.log('');
+    console.info('🔥 **Fire22 Integration**');
+    console.info(`   Environment: ${constants.ENVIRONMENT}`);
+    console.info(`   API URL: ${constants.API_URL}`);
+    console.info(`   Debug Mode: ${constants.DEBUG_MODE}`);
+    console.info(`   Analytics: ${constants.ENABLE_ANALYTICS}`);
+    console.info('');
 
     if (options.output) {
       await Bun.write(
@@ -306,7 +306,7 @@ class VersionCLI {
           2
         )
       );
-      console.log(`💾 Build constants saved to: ${options.output}`);
+      console.info(`💾 Build constants saved to: ${options.output}`);
     }
   }
 
@@ -385,7 +385,7 @@ class VersionCLI {
   }
 
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🏷️ **Fire22 Metadata-Driven Version Manager**
 
 USAGE:

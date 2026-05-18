@@ -295,7 +295,7 @@ export class UltimatePerformanceCLI {
       optimizationsUsed: number;
     };
   }> {
-    console.log('🚀 Running Ultimate Performance Benchmark...');
+    console.info('🚀 Running Ultimate Performance Benchmark...');
     
     // Benchmark spawn operations
     const spawnResult = await this.optimizedSpawn(['echo', 'benchmark']);
@@ -390,53 +390,53 @@ export class UltimateCLI {
    * Run complete ultimate demonstration
    */
   async runUltimateDemo(): Promise<void> {
-    console.log('🚀 Ultimate Performance Enhancement Demo');
-    console.log('='.repeat(70));
+    console.info('🚀 Ultimate Performance Enhancement Demo');
+    console.info('='.repeat(70));
     
     // Initialize optimizations
-    console.log('\n🔧 Initializing Ultimate Optimizations:');
-    console.log('   ⚡ 30x faster spawnSync() on Linux ARM64');
-    console.log('   🧪 Enhanced testing with --grep support');
-    console.log('   🔐 20x faster CRC32 hashing');
-    console.log('   🗄️ 3x faster JSON serialization');
-    console.log('   🌐 WebSocket proxy support');
-    console.log('   📊 Updated SQLite 3.51.2');
+    console.info('\n🔧 Initializing Ultimate Optimizations:');
+    console.info('   ⚡ 30x faster spawnSync() on Linux ARM64');
+    console.info('   🧪 Enhanced testing with --grep support');
+    console.info('   🔐 20x faster CRC32 hashing');
+    console.info('   🗄️ 3x faster JSON serialization');
+    console.info('   🌐 WebSocket proxy support');
+    console.info('   📊 Updated SQLite 3.51.2');
     
     // Run comprehensive benchmark
-    console.log('\n📊 Running Comprehensive Benchmark:');
+    console.info('\n📊 Running Comprehensive Benchmark:');
     const benchmark = await this.performance.runUltimateBenchmark();
     
-    console.log('\n📈 Benchmark Results:');
-    console.log(`   Spawn Operations: ${benchmark.spawn.operationTime.toFixed(2)}ms (${benchmark.spawn.performanceGain}x faster)`);
-    console.log(`   Hashing (1MB): ${benchmark.hashing.operationTime.toFixed(2)}ms (${benchmark.hashing.performanceGain}x faster)`);
-    console.log(`   Database Operations: ${benchmark.database.operationTime.toFixed(2)}ms (${benchmark.database.performanceGain}x faster)`);
-    console.log(`   Testing Suite: ${benchmark.testing.operationTime.toFixed(2)}ms (${benchmark.testing.performanceGain}x faster)`);
-    console.log(`   WebSocket Connection: ${benchmark.webSocket.operationTime.toFixed(2)}ms (${benchmark.webSocket.performanceGain}x faster)`);
+    console.info('\n📈 Benchmark Results:');
+    console.info(`   Spawn Operations: ${benchmark.spawn.operationTime.toFixed(2)}ms (${benchmark.spawn.performanceGain}x faster)`);
+    console.info(`   Hashing (1MB): ${benchmark.hashing.operationTime.toFixed(2)}ms (${benchmark.hashing.performanceGain}x faster)`);
+    console.info(`   Database Operations: ${benchmark.database.operationTime.toFixed(2)}ms (${benchmark.database.performanceGain}x faster)`);
+    console.info(`   Testing Suite: ${benchmark.testing.operationTime.toFixed(2)}ms (${benchmark.testing.performanceGain}x faster)`);
+    console.info(`   WebSocket Connection: ${benchmark.webSocket.operationTime.toFixed(2)}ms (${benchmark.webSocket.performanceGain}x faster)`);
     
-    console.log('\n🎯 Overall Performance:');
-    console.log(`   Total Time: ${benchmark.overall.totalTime.toFixed(2)}ms`);
-    console.log(`   Average Performance Gain: ${benchmark.overall.averagePerformanceGain.toFixed(1)}x`);
-    console.log(`   Optimizations Used: ${benchmark.overall.optimizationsUsed}/5 (${(benchmark.overall.optimizationsUsed / 5 * 100).toFixed(1)}%)`);
+    console.info('\n🎯 Overall Performance:');
+    console.info(`   Total Time: ${benchmark.overall.totalTime.toFixed(2)}ms`);
+    console.info(`   Average Performance Gain: ${benchmark.overall.averagePerformanceGain.toFixed(1)}x`);
+    console.info(`   Optimizations Used: ${benchmark.overall.optimizationsUsed}/5 (${(benchmark.overall.optimizationsUsed / 5 * 100).toFixed(1)}%)`);
     
     // Show performance statistics
-    console.log('\n📊 Performance Statistics:');
+    console.info('\n📊 Performance Statistics:');
     const stats = this.performance.getPerformanceStats();
-    console.log(`   Total Operations: ${stats.totalOperations}`);
-    console.log(`   Average Operation Time: ${stats.averageOperationTime.toFixed(2)}ms`);
-    console.log(`   Average Performance Gain: ${stats.averagePerformanceGain.toFixed(1)}x`);
-    console.log(`   Optimization Rate: ${stats.optimizationRate.toFixed(1)}%`);
-    console.log(`   Total Throughput: ${stats.totalThroughput.toFixed(2)} ops/s`);
+    console.info(`   Total Operations: ${stats.totalOperations}`);
+    console.info(`   Average Operation Time: ${stats.averageOperationTime.toFixed(2)}ms`);
+    console.info(`   Average Performance Gain: ${stats.averagePerformanceGain.toFixed(1)}x`);
+    console.info(`   Optimization Rate: ${stats.optimizationRate.toFixed(1)}%`);
+    console.info(`   Total Throughput: ${stats.totalThroughput.toFixed(2)} ops/s`);
     
-    console.log('\n🎉 Ultimate Performance Demo Complete!');
-    console.log('\n💡 Ultimate Benefits Achieved:');
-    console.log('   ⚡ 30x faster spawnSync() for IPC operations');
-    console.log('   🧪 Enhanced testing with --grep and fake timers');
-    console.log('   🔐 20x faster hardware-accelerated hashing');
-    console.log('   🗄️ 3x faster JSON serialization across APIs');
-    console.log('   🌐 WebSocket proxy support for enterprise environments');
-    console.log('   📊 SQLite 3.51.2 with latest optimizations');
-    console.log('   🔧 S3 Requester Pays support');
-    console.log('   🛡️ Enhanced security with null byte prevention');
+    console.info('\n🎉 Ultimate Performance Demo Complete!');
+    console.info('\n💡 Ultimate Benefits Achieved:');
+    console.info('   ⚡ 30x faster spawnSync() for IPC operations');
+    console.info('   🧪 Enhanced testing with --grep and fake timers');
+    console.info('   🔐 20x faster hardware-accelerated hashing');
+    console.info('   🗄️ 3x faster JSON serialization across APIs');
+    console.info('   🌐 WebSocket proxy support for enterprise environments');
+    console.info('   📊 SQLite 3.51.2 with latest optimizations');
+    console.info('   🔧 S3 Requester Pays support');
+    console.info('   🛡️ Enhanced security with null byte prevention');
   }
 }
 

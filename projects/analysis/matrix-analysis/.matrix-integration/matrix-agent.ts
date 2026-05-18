@@ -81,9 +81,9 @@ class MatrixAgent {
     // Load config
     await this.loadConfig();
 
-    console.log("✅ Matrix Agent initialized");
-    console.log(`   Config: ${CONFIG_FILE}`);
-    console.log(`   Logs: ${LOGS_DIR}`);
+    console.info("✅ Matrix Agent initialized");
+    console.info(`   Config: ${CONFIG_FILE}`);
+    console.info(`   Logs: ${LOGS_DIR}`);
   }
 
   async loadConfig(): Promise<AgentConfig> {
@@ -148,44 +148,44 @@ class MatrixAgent {
   }
 
   async status(): Promise<void> {
-    console.log("📊 Matrix Agent Status");
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.info("📊 Matrix Agent Status");
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
     const config = await this.loadConfig();
-    console.log(`Name: ${config.name}`);
-    console.log(`Version: ${config.version}`);
-    console.log(`Primary Model: ${config.agents.defaults.model.primary}`);
-    console.log(`Workspace: ${config.agents.defaults.workspace}`);
+    console.info(`Name: ${config.name}`);
+    console.info(`Version: ${config.version}`);
+    console.info(`Primary Model: ${config.agents.defaults.model.primary}`);
+    console.info(`Workspace: ${config.agents.defaults.workspace}`);
 
-    console.log("\n🔌 Integrations:");
-    console.log(`  Profiles: ${config.integration.profiles.enabled ? "✅" : "❌"}`);
-    console.log(`  Terminal: ${config.integration.terminal.enabled ? "✅" : "❌"}`);
-    console.log(`  Tier-1380: ${config.integration.tier1380.enabled ? "✅" : "❌"}`);
-    console.log(`  MCP: ${config.integration.mcp.enabled ? "✅" : "❌"}`);
+    console.info("\n🔌 Integrations:");
+    console.info(`  Profiles: ${config.integration.profiles.enabled ? "✅" : "❌"}`);
+    console.info(`  Terminal: ${config.integration.terminal.enabled ? "✅" : "❌"}`);
+    console.info(`  Tier-1380: ${config.integration.tier1380.enabled ? "✅" : "❌"}`);
+    console.info(`  MCP: ${config.integration.mcp.enabled ? "✅" : "❌"}`);
 
-    console.log("\n📡 Channels:");
-    console.log(`  Telegram: ${config.channels.telegram.enabled ? "✅" : "❌"}`);
+    console.info("\n📡 Channels:");
+    console.info(`  Telegram: ${config.channels.telegram.enabled ? "✅" : "❌"}`);
 
-    console.log("\n🌐 Gateway:");
-    console.log(`  Port: ${config.gateway.port}`);
-    console.log(`  Mode: ${config.gateway.mode}`);
-    console.log(`  Bind: ${config.gateway.bind}`);
+    console.info("\n🌐 Gateway:");
+    console.info(`  Port: ${config.gateway.port}`);
+    console.info(`  Mode: ${config.gateway.mode}`);
+    console.info(`  Bind: ${config.gateway.bind}`);
 
     // Check legacy clawdbot
     const clawdbotDir = join(homedir(), ".clawdbot");
     if (existsSync(clawdbotDir)) {
-      console.log("\n⚠️  Legacy clawdbot detected:");
-      console.log(`   Path: ${clawdbotDir}`);
-      console.log("   Run 'matrix-agent migrate' to fully migrate data");
+      console.info("\n⚠️  Legacy clawdbot detected:");
+      console.info(`   Path: ${clawdbotDir}`);
+      console.info("   Run 'matrix-agent migrate' to fully migrate data");
     }
   }
 
   async migrate(): Promise<void> {
-    console.log("🔄 Migrating from clawdbot...");
+    console.info("🔄 Migrating from clawdbot...");
 
     const clawdbotDir = join(homedir(), ".clawdbot");
     if (!existsSync(clawdbotDir)) {
-      console.log("No legacy clawdbot directory found. Nothing to migrate.");
+      console.info("No legacy clawdbot directory found. Nothing to migrate.");
       return;
     }
 
@@ -201,7 +201,7 @@ class MatrixAgent {
         config.channels.telegram = { ...config.channels.telegram, ...legacy.channels?.telegram };
 
         await Bun.write(CONFIG_FILE, JSON.stringify(config, null, 2));
-        console.log("✅ Configuration migrated");
+        console.info("✅ Configuration migrated");
       } catch (error) {
         console.error("Failed to migrate config:", error);
       }
@@ -215,8 +215,8 @@ class MatrixAgent {
       toVersion: "1.0.0",
     }, null, 2));
 
-    console.log("✅ Migration complete");
-    console.log("   You can now safely remove ~/.clawdbot if desired");
+    console.info("✅ Migration complete");
+    console.info("   You can now safely remove ~/.clawdbot if desired");
   }
 
   async runProfileCommand(command: string, ...args: string[]): Promise<CommandResult> {
@@ -256,8 +256,8 @@ class MatrixAgent {
   }
 
   async healthCheck(): Promise<void> {
-    console.log("🏥 Matrix Agent Health Check");
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.info("🏥 Matrix Agent Health Check");
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
     const checks = [
       { name: "Config file", check: () => existsSync(CONFIG_FILE) },
@@ -271,11 +271,11 @@ class MatrixAgent {
 
     for (const { name, check } of checks) {
       const ok = check();
-      console.log(`  ${ok ? "✅" : "❌"} ${name}`);
+      console.info(`  ${ok ? "✅" : "❌"} ${name}`);
       if (ok) passed++; else failed++;
     }
 
-    console.log(`\n${passed}/${checks.length} checks passed`);
+    console.info(`\n${passed}/${checks.length} checks passed`);
 
     if (failed > 0) {
       process.exit(1);
@@ -283,7 +283,7 @@ class MatrixAgent {
   }
 
   async showHelp(): Promise<void> {
-    console.log(`
+    console.info(`
 Matrix Agent - AI Agent Management for Matrix Analysis Platform
 
 USAGE:
@@ -338,23 +338,23 @@ async function main() {
       break;
     case "profile":
       if (args.length === 0) {
-        console.log("Usage: matrix-agent profile <command> [args]");
-        console.log("Commands: list, use, show, diff, create");
+        console.info("Usage: matrix-agent profile <command> [args]");
+        console.info("Commands: list, use, show, diff, create");
         process.exit(1);
       }
       const result = await agent.runProfileCommand(args[0], ...args.slice(1));
-      console.log(result.output);
+      console.info(result.output);
       if (result.error) console.error(result.error);
       process.exit(result.success ? 0 : 1);
       break;
     case "tier1380":
     case "t1380":
       if (args.length === 0) {
-        console.log("Usage: matrix-agent tier1380 <args>");
+        console.info("Usage: matrix-agent tier1380 <args>");
         process.exit(1);
       }
       const tresult = await agent.runTier1380(...args);
-      console.log(tresult.output);
+      console.info(tresult.output);
       if (tresult.error) console.error(tresult.error);
       process.exit(tresult.success ? 0 : 1);
       break;

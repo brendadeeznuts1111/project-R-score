@@ -233,7 +233,7 @@ export class ThreatIntelligenceService {
       severity: 'high'
     }
     
-    console.log('📝 Audit entry:', auditEntry)
+    console.info('📝 Audit entry:', auditEntry)
   }
 }
 

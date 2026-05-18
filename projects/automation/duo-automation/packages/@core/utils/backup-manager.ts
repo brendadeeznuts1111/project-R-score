@@ -33,8 +33,8 @@ export class BackupManager {
       const backupPath = `${this.backupDir}/${backupName}.tar.gz`;
       await Bun.write(backupPath, archive);
       
-      console.log(`✅ Backup created: ${backupPath}`);
-      console.log(`📦 Archive size: ${(await Bun.file(backupPath).size() / 1024 / 1024).toFixed(2)}MB`);
+      console.info(`✅ Backup created: ${backupPath}`);
+      console.info(`📦 Archive size: ${(await Bun.file(backupPath).size() / 1024 / 1024).toFixed(2)}MB`);
       
       return backupPath;
     } catch (error) {
@@ -57,7 +57,7 @@ export class BackupManager {
       // Extract to target directory
       const fileCount = await archive.extract(restoreDir);
       
-      console.log(`✅ Restored ${fileCount} files to ${restoreDir}`);
+      console.info(`✅ Restored ${fileCount} files to ${restoreDir}`);
     } catch (error) {
       console.error('❌ Restore failed:', error);
       throw error;
@@ -194,7 +194,7 @@ export class BackupManager {
         
         for (const backup of toDelete) {
           await Deno.remove(backup);
-          console.log(`🗑️ Deleted old backup: ${backup}`);
+          console.info(`🗑️ Deleted old backup: ${backup}`);
         }
       }
     } catch (error) {
@@ -214,13 +214,13 @@ if (import.meta.main) {
       break;
     case 'list':
       const backups = await backupManager.listBackups();
-      console.log('Available backups:');
-      backups.forEach(backup => console.log(`  - ${backup}`));
+      console.info('Available backups:');
+      backups.forEach(backup => console.info(`  - ${backup}`));
       break;
     case 'cleanup':
       await backupManager.cleanupOldBackups();
       break;
     default:
-      console.log('Usage: bun backup-manager.ts [create|list|cleanup]');
+      console.info('Usage: bun backup-manager.ts [create|list|cleanup]');
   }
 }

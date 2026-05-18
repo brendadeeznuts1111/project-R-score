@@ -3,44 +3,44 @@
 
 import { ScopedSecretsManager } from '../utils/scoped-secrets-manager';
 
-console.log('🔐 Bun Secrets API Best Practices Demo');
-console.log('=====================================\n');
+console.info('🔐 Bun Secrets API Best Practices Demo');
+console.info('=====================================\n');
 
 // Example 1: External tools with UTI-style naming
-console.log('1. External Tools (UTI-style naming):');
-console.log('-------------------------------------');
+console.info('1. External Tools (UTI-style naming):');
+console.info('-------------------------------------');
 
 const dockerManager = ScopedSecretsManager.forExternalTool('docker.hub');
 const vercelManager = ScopedSecretsManager.forExternalTool('vercel.cli');
 const ghManager = ScopedSecretsManager.forExternalTool('github.cli');
 
-console.log('✅ Docker Hub:', dockerManager.getStorageConfig().persist);
-console.log('✅ Vercel CLI:', vercelManager.getStorageConfig().persist);
-console.log('✅ GitHub CLI:', ghManager.getStorageConfig().persist);
+console.info('✅ Docker Hub:', dockerManager.getStorageConfig().persist);
+console.info('✅ Vercel CLI:', vercelManager.getStorageConfig().persist);
+console.info('✅ GitHub CLI:', ghManager.getStorageConfig().persist);
 
 // Example 2: Internal services with descriptive naming
-console.log('\n2. Internal Services (descriptive naming):');
-console.log('-----------------------------------------');
+console.info('\n2. Internal Services (descriptive naming):');
+console.info('-----------------------------------------');
 
 const apiManager = ScopedSecretsManager.forInternalService('empire-api', 'production');
 const dashboardManager = ScopedSecretsManager.forInternalService('dashboard', 'frontend');
 
-console.log('✅ Empire API Production:', apiManager.getStorageConfig().persist);
-console.log('✅ Dashboard Frontend:', dashboardManager.getStorageConfig().persist);
+console.info('✅ Empire API Production:', apiManager.getStorageConfig().persist);
+console.info('✅ Dashboard Frontend:', dashboardManager.getStorageConfig().persist);
 
 // Example 3: Recommended service names
-console.log('\n3. Recommended Service Names:');
-console.log('---------------------------');
+console.info('\n3. Recommended Service Names:');
+console.info('---------------------------');
 
 const tools = ['docker', 'npm', 'kubectl', 'vercel'];
 tools.forEach(tool => {
   const recommended = ScopedSecretsManager.getRecommendedServiceName(tool);
-  console.log(`📝 ${tool} → ${recommended}`);
+  console.info(`📝 ${tool} → ${recommended}`);
 });
 
 // Example 4: Proper secret storage patterns
-console.log('\n4. Secret Storage Patterns:');
-console.log('--------------------------');
+console.info('\n4. Secret Storage Patterns:');
+console.info('--------------------------');
 
 async function demonstrateSecrets() {
   const manager = ScopedSecretsManager.forExternalTool('demo.tool');
@@ -52,58 +52,58 @@ async function demonstrateSecrets() {
     'redis-password': 'redis-demo-password'
   };
   
-  console.log('🔒 Storing secrets with descriptive names:');
+  console.info('🔒 Storing secrets with descriptive names:');
   for (const [name, value] of Object.entries(secrets)) {
     const success = await manager.setSecret(name, value);
-    console.log(`   ${success ? '✅' : '❌'} ${name}: ${'*'.repeat(value.length)}`);
+    console.info(`   ${success ? '✅' : '❌'} ${name}: ${'*'.repeat(value.length)}`);
   }
   
-  console.log('\n🔍 Retrieving secrets:');
+  console.info('\n🔍 Retrieving secrets:');
   for (const name of Object.keys(secrets)) {
     const value = await manager.getSecret(name);
-    console.log(`   ${value ? '✅' : '❌'} ${name}: ${value ? '*'.repeat(value.length) : 'not found'}`);
+    console.info(`   ${value ? '✅' : '❌'} ${name}: ${value ? '*'.repeat(value.length) : 'not found'}`);
   }
   
-  console.log('\n🧹 Cleaning up demo secrets:');
+  console.info('\n🧹 Cleaning up demo secrets:');
   for (const name of Object.keys(secrets)) {
     const deleted = await manager.deleteSecret(name);
-    console.log(`   ${deleted ? '✅' : '❌'} ${name}: ${deleted ? 'deleted' : 'failed'}`);
+    console.info(`   ${deleted ? '✅' : '❌'} ${name}: ${deleted ? 'deleted' : 'failed'}`);
   }
 }
 
 // Example 5: Scope-aware service naming
-console.log('\n5. Scope-Aware Service Naming:');
-console.log('------------------------------');
+console.info('\n5. Scope-Aware Service Naming:');
+console.info('------------------------------');
 
 const teamManager = ScopedSecretsManager.forTeam('backend');
 const scopeManager = ScopedSecretsManager.forScope('ENTERPRISE');
 
-console.log('🏢 Team Backend:', teamManager.getScopeConfig().scope);
-console.log('🌐 Enterprise Scope:', scopeManager.getScopeConfig().scope);
+console.info('🏢 Team Backend:', teamManager.getScopeConfig().scope);
+console.info('🌐 Enterprise Scope:', scopeManager.getScopeConfig().scope);
 
 // Example 6: Local development vs production
-console.log('\n6. Local Development vs Production:');
-console.log('------------------------------------');
+console.info('\n6. Local Development vs Production:');
+console.info('------------------------------------');
 
-console.log('✅ Local Development Tools:');
-console.log('   - CLI tools (gh, npm, docker, kubectl)');
-console.log('   - Local development servers');
-console.log('   - Personal API keys for testing');
+console.info('✅ Local Development Tools:');
+console.info('   - CLI tools (gh, npm, docker, kubectl)');
+console.info('   - Local development servers');
+console.info('   - Personal API keys for testing');
 
-console.log('\n❌ Avoid for Production:');
-console.log('   - Production servers (use proper secret management)');
-console.log('   - Shared credentials across environments');
-console.log('   - Sensitive application configuration');
+console.info('\n❌ Avoid for Production:');
+console.info('   - Production servers (use proper secret management)');
+console.info('   - Shared credentials across environments');
+console.info('   - Sensitive application configuration');
 
 // Run the demonstration
 demonstrateSecrets().then(() => {
-  console.log('\n🎉 Best practices demonstration complete!');
-  console.log('\n📚 Key Takeaways:');
-  console.log('   • Use descriptive service names that match the tool');
-  console.log('   • Use UTI-style naming for external tools (com.example.tool)');
-  console.log('   • Store credentials only, not application configuration');
-  console.log('   • Use for local development tools and testing');
-  console.log('   • Avoid for production servers - use proper secret management');
+  console.info('\n🎉 Best practices demonstration complete!');
+  console.info('\n📚 Key Takeaways:');
+  console.info('   • Use descriptive service names that match the tool');
+  console.info('   • Use UTI-style naming for external tools (com.example.tool)');
+  console.info('   • Store credentials only, not application configuration');
+  console.info('   • Use for local development tools and testing');
+  console.info('   • Avoid for production servers - use proper secret management');
 }).catch((error) => {
   console.error('❌ Demo failed:', error);
 });

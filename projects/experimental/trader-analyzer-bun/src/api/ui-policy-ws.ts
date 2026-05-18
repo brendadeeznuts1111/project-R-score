@@ -66,7 +66,7 @@ export function handleUIPolicyMetricsWebSocket<
 export function handleUIPolicyMetricsWebSocketOpen(
 	ws: ServerWebSocket<UIPolicyMetricsWebSocketData>,
 ): void {
-	console.log("[UI Policy Metrics WS] Client connected");
+	console.info("[UI Policy Metrics WS] Client connected");
 
 	// Subscribe to metrics updates
 	const unsubscribe = policyMetrics.subscribe((event: MetricEvent) => {
@@ -142,7 +142,7 @@ export function handleUIPolicyMetricsWebSocketMessage(
 export function handleUIPolicyMetricsWebSocketClose(
 	ws: ServerWebSocket<UIPolicyMetricsWebSocketData>,
 ): void {
-	console.log("[UI Policy Metrics WS] Client disconnected");
+	console.info("[UI Policy Metrics WS] Client disconnected");
 
 	// Unsubscribe from metrics updates
 	if (ws.data?.unsubscribe) {

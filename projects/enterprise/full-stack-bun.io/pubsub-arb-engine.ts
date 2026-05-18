@@ -153,7 +153,7 @@ const server = Bun.serve({
 			ws.subscribe('nba-q2-player-props');
 			ws.subscribe('high-value-arbs'); // >4.0%
 
-			console.log('%j', {
+			console.info('%j', {
 				ws_connected: ws.remoteAddress,
 				subscriptions: ws.subscriptions,
 				total_clients: server.websockets.size
@@ -166,7 +166,7 @@ const server = Bun.serve({
 
 				if (data.subscribe) {
 					ws.subscribe(data.market);
-					console.log('%j', {
+					console.info('%j', {
 						client_subscribed: ws.remoteAddress,
 						market: data.market,
 						total_subs: ws.subscriptions.length
@@ -175,7 +175,7 @@ const server = Bun.serve({
 
 				if (data.unsubscribe) {
 					ws.unsubscribe(data.market);
-					console.log('%j', {
+					console.info('%j', {
 						client_unsubscribed: ws.remoteAddress,
 						market: data.market,
 						total_subs: ws.subscriptions.length
@@ -188,7 +188,7 @@ const server = Bun.serve({
 
 		close(ws) {
 			// Auto-cleanup ✅
-			console.log('%j', {
+			console.info('%j', {
 				ws_disconnected: ws.remoteAddress,
 				subscriptions_cleaned: ws.subscriptions.length === 0,
 				final_sub_count: ws.subscriptions.length
@@ -233,7 +233,7 @@ setInterval(async () => {
 			.flatMap(ws => ws.subscriptions)
 	);
 
-	console.log('%j', {
+	console.info('%j', {
 		pubsub_cycle: true,
 		clients: server.websockets.size,
 		active_subs: allSubscriptions.size,
@@ -242,7 +242,7 @@ setInterval(async () => {
 	});
 }, 1000); // 1s live updates
 
-console.log('%j', {
+console.info('%j', {
 	pubsubEngine: 'LIVE',
 	websocket_subs: true,
 	spawn_sync_isolated: true,

@@ -140,7 +140,7 @@ const metrics = {
 function trackMetric(testId: string, variant: string, action: "view" | "click") {
   if (metrics[testId] && metrics[testId][variant]) {
     metrics[testId][variant][action]++;
-    console.log(`📊 ${testId}/${variant}: ${action} (${metrics[testId][variant][action]} total)`);
+    console.info(`📊 ${testId}/${variant}: ${action} (${metrics[testId][variant][action]} total)`);
   }
 }
 
@@ -646,15 +646,15 @@ const server = serve({
 });
 
 const MODULAR_AB_TESTING_HOST = process.env.MODULAR_AB_TESTING_HOST || process.env.SERVER_HOST || 'localhost';
-console.log(`🧪 Modular A/B Testing Server running on http://${MODULAR_AB_TESTING_HOST}:${MODULAR_AB_TESTING_PORT}`);
-console.log(`📊 Admin Dashboard: http://${MODULAR_AB_TESTING_HOST}:${MODULAR_AB_TESTING_PORT}/admin`);
-console.log("🎲 Force assignment: POST /force/{testId}/{variant}");
-console.log("");
-console.log("Active Tests:");
-console.log("  • url_structure: direct vs fragments (50/50)");
-console.log("  • doc_layout: sidebar vs topnav (60/40)");
-console.log("  • cta_button: blue vs green vs orange (33/33/34)");
-console.log("  • content_density: compact vs balanced vs spacious (20/60/20)");
+console.info(`🧪 Modular A/B Testing Server running on http://${MODULAR_AB_TESTING_HOST}:${MODULAR_AB_TESTING_PORT}`);
+console.info(`📊 Admin Dashboard: http://${MODULAR_AB_TESTING_HOST}:${MODULAR_AB_TESTING_PORT}/admin`);
+console.info("🎲 Force assignment: POST /force/{testId}/{variant}");
+console.info("");
+console.info("Active Tests:");
+console.info("  • url_structure: direct vs fragments (50/50)");
+console.info("  • doc_layout: sidebar vs topnav (60/40)");
+console.info("  • cta_button: blue vs green vs orange (33/33/34)");
+console.info("  • content_density: compact vs balanced vs spacious (20/60/20)");
 
 /**
  * 💡 Performance Tip: For better performance, consider:

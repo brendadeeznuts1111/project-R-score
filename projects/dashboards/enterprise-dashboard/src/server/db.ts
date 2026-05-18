@@ -944,4 +944,4 @@ export function getDeviceVerification(traceId: string): {
 export { db, DB_PATH };
 
 // Log initialization
-console.log(`SQLite database initialized at ${DB_PATH}`);
+console.info(`SQLite database initialized at ${DB_PATH}`);

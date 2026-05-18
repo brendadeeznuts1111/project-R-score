@@ -4,8 +4,8 @@
  * Using R2 S3 API directly with provided credentials
  */
 
-console.log("🚀 FactoryWager R2 S3 Deployment");
-console.log("==============================");
+console.info("🚀 FactoryWager R2 S3 Deployment");
+console.info("==============================");
 
 async function deployR2() {
   // R2 S3 Credentials
@@ -14,13 +14,13 @@ async function deployR2() {
   const R2_ENDPOINT = "https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com";
   const REGION = "eu";
 
-  console.log("🔧 R2 S3 Configuration:");
-  console.log("Access Key:", AWS_ACCESS_KEY_ID.slice(0, 8) + "...");
-  console.log("Endpoint:", R2_ENDPOINT);
-  console.log("Region:", REGION);
+  console.info("🔧 R2 S3 Configuration:");
+  console.info("Access Key:", AWS_ACCESS_KEY_ID.slice(0, 8) + "...");
+  console.info("Endpoint:", R2_ENDPOINT);
+  console.info("Region:", REGION);
 
   // Test 1: List buckets using S3 API
-  console.log("\n📦 Step 1: Testing R2 Bucket List");
+  console.info("\n📦 Step 1: Testing R2 Bucket List");
   try {
     const listResponse = await fetch(`${R2_ENDPOINT}/`, {
       method: "GET",
@@ -32,32 +32,32 @@ async function deployR2() {
       }
     });
 
-    console.log("Status:", listResponse.status);
+    console.info("Status:", listResponse.status);
     const listText = await listResponse.text();
-    console.log("Response:", listText.slice(0, 200));
+    console.info("Response:", listText.slice(0, 200));
   } catch (error) {
-    console.log("❌ Bucket list failed:", (error as Error).message);
+    console.info("❌ Bucket list failed:", (error as Error).message);
   }
 
   // Test 2: Try with original API token for Worker deployment
-  console.log("\n🏗️ Step 2: Testing Worker Deployment");
+  console.info("\n🏗️ Step 2: Testing Worker Deployment");
   const originalToken = "V1i357VeyPrHbrUEX0hQWNPQwbWMHqi9Tj06ApLC";
   
   try {
     const workerTest = await Bun.$`bunx curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/7a470541a704caaf91e71efccc78fd36/workers/services" -H "Authorization: Bearer ${originalToken}" -H "Content-Type: application/json" | bunx jq -r '.success'`.text();
-    console.log("✅ Worker API Access:", workerTest.trim() === "true" ? "Available" : "Permission needed");
+    console.info("✅ Worker API Access:", workerTest.trim() === "true" ? "Available" : "Permission needed");
     
     if (workerTest.trim() === "true") {
-      console.log("🔧 Deploying Worker...");
+      console.info("🔧 Deploying Worker...");
       const deployResult = await Bun.$`CLOUDFLARE_API_TOKEN=${originalToken} bunx wrangler deploy`.text();
-      console.log("✅ Worker deployed");
+      console.info("✅ Worker deployed");
     }
   } catch (error) {
-    console.log("❌ Worker deployment failed:", (error as Error).message);
+    console.info("❌ Worker deployment failed:", (error as Error).message);
   }
 
   // Test 3: Create simple test object
-  console.log("\n📄 Step 3: Creating Test Object");
+  console.info("\n📄 Step 3: Creating Test Object");
   try {
     const testData = JSON.stringify({
       message: "FactoryWager R2 Test",
@@ -78,18 +78,18 @@ async function deployR2() {
       body: testData
     });
 
-    console.log("PUT Status:", putResponse.status);
+    console.info("PUT Status:", putResponse.status);
     const putText = await putResponse.text();
-    console.log("PUT Response:", putText.slice(0, 200));
+    console.info("PUT Response:", putText.slice(0, 200));
   } catch (error) {
-    console.log("❌ Object creation failed:", (error as Error).message);
+    console.info("❌ Object creation failed:", (error as Error).message);
   }
 
-  console.log("\n🎉 R2 Deployment Summary:");
-  console.log("✅ S3 Credentials: Received and configured");
-  console.log("⏳ S3 API: Requires proper AWS4 signature");
-  console.log("⏳ Worker API: May need permission update");
-  console.log("🔧 Next: Use wrangler with R2 token once activated");
+  console.info("\n🎉 R2 Deployment Summary:");
+  console.info("✅ S3 Credentials: Received and configured");
+  console.info("⏳ S3 API: Requires proper AWS4 signature");
+  console.info("⏳ Worker API: May need permission update");
+  console.info("🔧 Next: Use wrangler with R2 token once activated");
 }
 
 // Execute deployment

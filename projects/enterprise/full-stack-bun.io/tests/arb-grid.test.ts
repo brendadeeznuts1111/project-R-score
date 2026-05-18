@@ -89,7 +89,7 @@ describe.serial("Arbitrage Test Grid", () => {
 			// Mock cleanup
 			bookieMocks.clear();
 
-			console.log('%j', {
+			console.info('%j', {
 				test_finished: true,
 				memory_clean: memoryDelta < 50e6,
 				db_connections: 0,
@@ -228,7 +228,7 @@ describe.serial("Arbitrage Test Grid", () => {
 		const finalMemory = process.memoryUsage().heapUsed;
 		const totalDelta = finalMemory - initialMemory;
 		
-		console.log('%j', {
+		console.info('%j', {
 			test_grid_complete: true,
 			total_memory_delta_mb: (totalDelta / 1024 / 1024).toFixed(2),
 			cleanup_successful: totalDelta < 100 * 1024 * 1024

@@ -36,9 +36,9 @@ function analyzeContrast(
 }
 
 function generateComplianceReport(results: ContrastResult[]): void {
-  console.log(colorize('♿ WCAG CONTRAST COMPLIANCE REPORT', 'blue', true));
-  console.log(colorize('═'.repeat(50), 'gray'));
-  console.log();
+  console.info(colorize('♿ WCAG CONTRAST COMPLIANCE REPORT', 'blue', true));
+  console.info(colorize('═'.repeat(50), 'gray'));
+  console.info();
 
   let passCount = 0;
   let aaCount = 0;
@@ -50,28 +50,28 @@ function generateComplianceReport(results: ContrastResult[]): void {
     const statusColor = result.level === 'AAA' ? 'green' :
                         result.level === 'AA' ? 'yellow' : 'red';
 
-    console.log(colorize(`${i + 1}. ${statusIcon} ${result.level}`, statusColor, true));
-    console.log(`   FG: ${result.foreground}`);
-    console.log(`   BG: ${result.background}`);
-    console.log(`   Ratio: ${result.ratio.toFixed(2)}:1`);
-    console.log(`   AA: ${result.aaCompliant ? '✅' : '❌'} | AAA: ${result.aaaCompliant ? '✅' : '❌'}`);
-    console.log();
+    console.info(colorize(`${i + 1}. ${statusIcon} ${result.level}`, statusColor, true));
+    console.info(`   FG: ${result.foreground}`);
+    console.info(`   BG: ${result.background}`);
+    console.info(`   Ratio: ${result.ratio.toFixed(2)}:1`);
+    console.info(`   AA: ${result.aaCompliant ? '✅' : '❌'} | AAA: ${result.aaaCompliant ? '✅' : '❌'}`);
+    console.info();
 
     if (result.level !== 'FAIL') passCount++;
     if (result.aaCompliant) aaCount++;
     if (result.aaaCompliant) aaaCount++;
   });
 
-  console.log(colorize('📊 SUMMARY', 'cyan', true));
-  console.log(`Total Combinations: ${results.length}`);
-  console.log(`AA Compliant: ${aaCount}/${results.length} (${((aaCount/results.length)*100).toFixed(1)}%)`);
-  console.log(`AAA Compliant: ${aaaCount}/${results.length} (${((aaaCount/results.length)*100).toFixed(1)}%)`);
-  console.log(`Overall Pass Rate: ${passCount}/${results.length} (${((passCount/results.length)*100).toFixed(1)}%)`);
+  console.info(colorize('📊 SUMMARY', 'cyan', true));
+  console.info(`Total Combinations: ${results.length}`);
+  console.info(`AA Compliant: ${aaCount}/${results.length} (${((aaCount/results.length)*100).toFixed(1)}%)`);
+  console.info(`AAA Compliant: ${aaaCount}/${results.length} (${((aaaCount/results.length)*100).toFixed(1)}%)`);
+  console.info(`Overall Pass Rate: ${passCount}/${results.length} (${((passCount/results.length)*100).toFixed(1)}%)`);
 }
 
 function demoContrastScenarios(): void {
-  console.log(colorize('🧪 CONTRAST ANALYSIS DEMO', 'magenta', true));
-  console.log();
+  console.info(colorize('🧪 CONTRAST ANALYSIS DEMO', 'magenta', true));
+  console.info();
 
   // Common UI scenarios
   const scenarios = [
@@ -103,12 +103,12 @@ function demoContrastScenarios(): void {
     const statusColor = result.level === 'AAA' ? 'green' :
                         result.level === 'AA' ? 'yellow' : 'red';
 
-    console.log(`${statusIcon} ${colorize(result.name, statusColor)}: ${result.ratio.toFixed(2)}:1`);
+    console.info(`${statusIcon} ${colorize(result.name, statusColor)}: ${result.ratio.toFixed(2)}:1`);
   });
 
-  console.log();
-  console.log(colorize('🔧 AUTO-ADJUSTMENT DEMO', 'cyan', true));
-  console.log();
+  console.info();
+  console.info(colorize('🔧 AUTO-ADJUSTMENT DEMO', 'cyan', true));
+  console.info();
 
   // Show auto-adjustment for poor contrast
   const poorContrast = { fg: { h: 0, s: 95, l: 50 }, bg: { h: 120, s: 95, l: 40 } };
@@ -116,16 +116,16 @@ function demoContrastScenarios(): void {
   const adjustedFg = autoAdjustContrast(poorContrast.fg, poorContrast.bg, 4.5);
   const adjustedResult = analyzeContrast(adjustedFg, poorContrast.bg);
 
-  console.log('Original (poor contrast):');
-  console.log(`  FG: hsl(${poorContrast.fg.h}, ${poorContrast.fg.s}%, ${poorContrast.fg.l}%)`);
-  console.log(`  BG: hsl(${poorContrast.bg.h}, ${poorContrast.bg.s}%, ${poorContrast.bg.l}%)`);
-  console.log(`  Ratio: ${originalResult.ratio.toFixed(2)}:1 ❌ FAIL`);
-  console.log();
+  console.info('Original (poor contrast):');
+  console.info(`  FG: hsl(${poorContrast.fg.h}, ${poorContrast.fg.s}%, ${poorContrast.fg.l}%)`);
+  console.info(`  BG: hsl(${poorContrast.bg.h}, ${poorContrast.bg.s}%, ${poorContrast.bg.l}%)`);
+  console.info(`  Ratio: ${originalResult.ratio.toFixed(2)}:1 ❌ FAIL`);
+  console.info();
 
-  console.log('Auto-adjusted for AA compliance:');
-  console.log(`  FG: hsl(${adjustedFg.h}, ${adjustedFg.s}%, ${adjustedFg.l}%)`);
-  console.log(`  BG: hsl(${poorContrast.bg.h}, ${poorContrast.bg.s}%, ${poorContrast.bg.l}%)`);
-  console.log(`  Ratio: ${adjustedResult.ratio.toFixed(2)}:1 ${adjustedResult.level === 'AA' || adjustedResult.level === 'AAA' ? '✅ PASS' : '❌ FAIL'}`);
+  console.info('Auto-adjusted for AA compliance:');
+  console.info(`  FG: hsl(${adjustedFg.h}, ${adjustedFg.s}%, ${adjustedFg.l}%)`);
+  console.info(`  BG: hsl(${poorContrast.bg.h}, ${poorContrast.bg.s}%, ${poorContrast.bg.l}%)`);
+  console.info(`  Ratio: ${adjustedResult.ratio.toFixed(2)}:1 ${adjustedResult.level === 'AA' || adjustedResult.level === 'AAA' ? '✅ PASS' : '❌ FAIL'}`);
 }
 
 const args = process.argv.slice(2);
@@ -142,14 +142,14 @@ if (command === 'check') {
 
   const result = analyzeContrast({ h: fgH, s: fgS, l: fgL }, { h: bgH, s: bgS, l: bgL });
 
-  console.log(colorize('♿ MANUAL CONTRAST CHECK', 'blue', true));
-  console.log();
-  console.log(`Foreground: hsl(${fgH}, ${fgS}%, ${fgL}%)`);
-  console.log(`Background: hsl(${bgH}, ${bgS}%, ${bgL}%)`);
-  console.log(`Contrast Ratio: ${result.ratio.toFixed(2)}:1`);
-  console.log(`WCAG AA: ${result.aaCompliant ? '✅ PASS' : '❌ FAIL'}`);
-  console.log(`WCAG AAA: ${result.aaaCompliant ? '✅ PASS' : '❌ FAIL'}`);
-  console.log(`Overall: ${colorize(result.level, result.level === 'AAA' ? 'green' : result.level === 'AA' ? 'yellow' : 'red')}`);
+  console.info(colorize('♿ MANUAL CONTRAST CHECK', 'blue', true));
+  console.info();
+  console.info(`Foreground: hsl(${fgH}, ${fgS}%, ${fgL}%)`);
+  console.info(`Background: hsl(${bgH}, ${bgS}%, ${bgL}%)`);
+  console.info(`Contrast Ratio: ${result.ratio.toFixed(2)}:1`);
+  console.info(`WCAG AA: ${result.aaCompliant ? '✅ PASS' : '❌ FAIL'}`);
+  console.info(`WCAG AAA: ${result.aaaCompliant ? '✅ PASS' : '❌ FAIL'}`);
+  console.info(`Overall: ${colorize(result.level, result.level === 'AAA' ? 'green' : result.level === 'AA' ? 'yellow' : 'red')}`);
 
 } else if (command === 'demo') {
   demoContrastScenarios();
@@ -172,17 +172,17 @@ if (command === 'check') {
   generateComplianceReport(commonCombos.map(combo => analyzeContrast(combo.fg, combo.bg)));
 
 } else {
-  console.log(colorize('♿ WCAG Contrast Checker - HSL Edition', 'cyan', true));
-  console.log(colorize('Usage:', 'yellow'));
-  console.log('  bun run bun-contrast-checker.ts demo              # Interactive demo');
-  console.log('  bun run bun-contrast-checker.ts check [fgH fgS fgL bgH bgS bgL]  # Manual check');
-  console.log('  bun run bun-contrast-checker.ts report            # Full compliance report');
-  console.log();
-  console.log(colorize('Examples:', 'gray'));
-  console.log('  bun run bun-contrast-checker.ts check 0 95 65 210 95 10    # Red on dark blue');
-  console.log('  bun run bun-contrast-checker.ts check 135 95 35 0 0 100    # Green on white');
-  console.log();
-  console.log(colorize('HSL Parameters:', 'magenta'));
-  console.log('  fgH/fgS/fgL = Foreground Hue(0-360), Saturation(0-100), Lightness(0-100)');
-  console.log('  bgH/bgS/bgL = Background Hue(0-360), Saturation(0-100), Lightness(0-100)');
+  console.info(colorize('♿ WCAG Contrast Checker - HSL Edition', 'cyan', true));
+  console.info(colorize('Usage:', 'yellow'));
+  console.info('  bun run bun-contrast-checker.ts demo              # Interactive demo');
+  console.info('  bun run bun-contrast-checker.ts check [fgH fgS fgL bgH bgS bgL]  # Manual check');
+  console.info('  bun run bun-contrast-checker.ts report            # Full compliance report');
+  console.info();
+  console.info(colorize('Examples:', 'gray'));
+  console.info('  bun run bun-contrast-checker.ts check 0 95 65 210 95 10    # Red on dark blue');
+  console.info('  bun run bun-contrast-checker.ts check 135 95 35 0 0 100    # Green on white');
+  console.info();
+  console.info(colorize('HSL Parameters:', 'magenta'));
+  console.info('  fgH/fgS/fgL = Foreground Hue(0-360), Saturation(0-100), Lightness(0-100)');
+  console.info('  bgH/bgS/bgL = Background Hue(0-360), Saturation(0-100), Lightness(0-100)');
 }

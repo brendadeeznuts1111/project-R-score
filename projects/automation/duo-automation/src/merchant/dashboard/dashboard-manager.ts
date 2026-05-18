@@ -386,7 +386,7 @@ export class MerchantDashboardManager {
       return cached;
     }
     
-    console.log(`🔍 Building dashboard for merchant ${merchantId} (${timeframe})`);
+    console.info(`🔍 Building dashboard for merchant ${merchantId} (${timeframe})`);
     
     try {
       // Fetch all data in parallel
@@ -427,7 +427,7 @@ export class MerchantDashboardManager {
         this.dashboards.delete(cacheKey);
       }, this.cacheTimeout);
       
-      console.log(`✅ Dashboard built for merchant ${merchantId}`);
+      console.info(`✅ Dashboard built for merchant ${merchantId}`);
       return dashboard;
       
     } catch (error) {

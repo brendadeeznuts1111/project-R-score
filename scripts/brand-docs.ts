@@ -14,7 +14,7 @@ function main(): void {
   const html = Bun.markdown.render(markdown);
   const reactNode = Bun.markdown.react(markdown);
 
-  console.log(
+  console.info(
     JSON.stringify(
       {
         seed,

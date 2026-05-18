@@ -11,11 +11,11 @@ import { initializeScopeTimezone } from './src/bootstrap/bootstrap-timezone.js';
 
 // Initialize timezone system
 const timezoneConfig = initializeScopeTimezone();
-console.log(`🕒 Timezone System Initialized:`);
-console.log(`   Scope: ${timezoneConfig.scope}`);
-console.log(`   Timezone: ${timezoneConfig.timezone}`);
-console.log(`   Offset: ${timezoneConfig.offset}`);
-console.log(`   Platform: ${timezoneConfig.platform}`);
+console.info(`🕒 Timezone System Initialized:`);
+console.info(`   Scope: ${timezoneConfig.scope}`);
+console.info(`   Timezone: ${timezoneConfig.timezone}`);
+console.info(`   Offset: ${timezoneConfig.offset}`);
+console.info(`   Platform: ${timezoneConfig.platform}`);
 
 const server = Bun.serve({
   port: 8081,
@@ -159,7 +159,7 @@ const server = Bun.serve({
   }
 });
 
-console.log(`
+console.info(`
 🕒 Timezone-Aware Dashboard Server v3.7
 ==========================================
 
@@ -191,13 +191,13 @@ Press Ctrl+C to stop
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down timezone-aware dashboard server...');
+  console.info('\n🛑 Shutting down timezone-aware dashboard server...');
   server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n🛑 Shutting down timezone-aware dashboard server...');
+  console.info('\n🛑 Shutting down timezone-aware dashboard server...');
   server.stop();
   process.exit(0);
 });

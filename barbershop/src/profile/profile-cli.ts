@@ -37,11 +37,11 @@ function wrapAnsiLine(text: string, columns = Number(Bun.env.COLUMNS || 100)) {
 }
 
 function out(text: string) {
-  console.log(wrapAnsiLine(text));
+  console.info(wrapAnsiLine(text));
 }
 
 function help() {
-  console.log(`Barbershop Profiling CLI
+  console.info(`Barbershop Profiling CLI
 
 Usage:
   bun run barbershop/profile-cli.ts <command> [options]

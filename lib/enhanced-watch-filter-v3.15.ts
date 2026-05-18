@@ -62,8 +62,8 @@ export async function startWatchFilterCLI(
   const pattern = flags.filter || '*';
   const script = command || 'dev';
   
-  console.log(c.bold('🚀 Enhanced Watch Filter CLI v3.15'));
-  console.log(c.gray('Official Bun CLI integration with enhanced filtering\n'));
+  console.info(c.bold('🚀 Enhanced Watch Filter CLI v3.15'));
+  console.info(c.gray('Official Bun CLI integration with enhanced filtering\n'));
   
   // Create CLI session
   const cliSession = await executeBunCLI([
@@ -110,9 +110,9 @@ export async function startWatchFilterCLI(
     
     watchSession.status = 'watching';
     
-    console.log(c.green(`✅ Watch filter session started: ${sessionId}`));
-    console.log(c.cyan(`📋 Pattern: ${pattern} → Script: ${script}`));
-    console.log(c.gray(`🔗 Dashboard: http://localhost:3001\n`));
+    console.info(c.green(`✅ Watch filter session started: ${sessionId}`));
+    console.info(c.cyan(`📋 Pattern: ${pattern} → Script: ${script}`));
+    console.info(c.gray(`🔗 Dashboard: http://localhost:3001\n`));
     
     // Log initial event
     addWatchEvent(sessionId, 'filter_update', {
@@ -144,7 +144,7 @@ export async function updateWatchFilter(
     throw new Error(`Watch session not found: ${sessionId}`);
   }
   
-  console.log(c.cyan(`\n🔄 Updating filter: ${session.pattern} → ${newPattern}`));
+  console.info(c.cyan(`\n🔄 Updating filter: ${session.pattern} → ${newPattern}`));
   
   // Stop current watch session
   if (session.watchSessionId) {
@@ -177,7 +177,7 @@ export async function updateWatchFilter(
       restartCount: session.restartCount
     });
     
-    console.log(c.green(`✅ Filter updated successfully`));
+    console.info(c.green(`✅ Filter updated successfully`));
     
   } catch (error) {
     session.status = 'error';
@@ -225,7 +225,7 @@ export async function stopWatchSession(sessionId: string): Promise<void> {
   const session = watchSessions.get(sessionId);
   if (!session) return;
   
-  console.log(c.yellow(`🛑 Stopping watch session: ${sessionId}`));
+  console.info(c.yellow(`🛑 Stopping watch session: ${sessionId}`));
   
   session.status = 'stopped';
   session.lastActivity = Date.now();
@@ -237,7 +237,7 @@ export async function stopWatchSession(sessionId: string): Promise<void> {
   });
   
   watchSessions.delete(sessionId);
-  console.log(c.green(`✅ Watch session stopped`));
+  console.info(c.green(`✅ Watch session stopped`));
 }
 
 /**
@@ -270,7 +270,7 @@ export async function runWatchFilterCLI(args: string[]): Promise<void> {
   try {
     startWebSocketDashboard(3001);
   } catch (error) {
-    console.log(c.yellow('⚠️  Dashboard port 3001 in use, continuing without dashboard'));
+    console.info(c.yellow('⚠️  Dashboard port 3001 in use, continuing without dashboard'));
   }
   
   // Parse arguments to check for help
@@ -285,13 +285,13 @@ export async function runWatchFilterCLI(args: string[]): Promise<void> {
     
     // Setup graceful shutdown
     process.on('SIGINT', async () => {
-      console.log(c.yellow('\n\n🛑 Shutting down watch filter...'));
+      console.info(c.yellow('\n\n🛑 Shutting down watch filter...'));
       await stopWatchSession(session.id);
       process.exit(0);
     });
     
     process.on('SIGTERM', async () => {
-      console.log(c.yellow('\n\n🛑 Shutting down watch filter...'));
+      console.info(c.yellow('\n\n🛑 Shutting down watch filter...'));
       await stopWatchSession(session.id);
       process.exit(0);
     });
@@ -309,46 +309,46 @@ export async function runWatchFilterCLI(args: string[]): Promise<void> {
  * Show help for watch filter CLI
  */
 function showWatchFilterHelp(): void {
-  console.log(c.bold('🚀 Enhanced Watch Filter CLI v3.15 - Help\n'));
+  console.info(c.bold('🚀 Enhanced Watch Filter CLI v3.15 - Help\n'));
   
-  console.log(c.cyan('USAGE:'));
-  console.log('  bun watch-filter [options] <script> [args...]\n');
+  console.info(c.cyan('USAGE:'));
+  console.info('  bun watch-filter [options] <script> [args...]\n');
   
-  console.log(c.cyan('OPTIONS:'));
-  console.log('  ' + c.yellow('--filter, -F <pattern>') + '     Filter packages by glob pattern');
-  console.log('  ' + c.yellow('--filter-output-lines <n>') + ' Limit output lines per package (default: 10)');
-  console.log('  ' + c.yellow('--ws') + '                       Run in all workspaces');
-  console.log('  ' + c.yellow('--parallel') + '                 Run packages in parallel (default)');
-  console.log('  ' + c.yellow('--sequential') + '               Run packages sequentially');
-  console.log('  ' + c.yellow('--continue-on-error') + '         Continue on error');
-  console.log('  ' + c.yellow('--watch') + '                    Enable watch mode');
-  console.log('  ' + c.yellow('--hot') + '                      Enable hot reload');
-  console.log('  ' + c.yellow('--no-clear') + '                 Don\'t clear screen on restart');
-  console.log('  ' + c.yellow('--smol') + '                     Use memory-optimized mode');
-  console.log('  ' + c.yellow('--silent') + '                   Suppress output');
-  console.log('  ' + c.yellow('--help, -h') + '                 Show this help\n');
+  console.info(c.cyan('OPTIONS:'));
+  console.info('  ' + c.yellow('--filter, -F <pattern>') + '     Filter packages by glob pattern');
+  console.info('  ' + c.yellow('--filter-output-lines <n>') + ' Limit output lines per package (default: 10)');
+  console.info('  ' + c.yellow('--ws') + '                       Run in all workspaces');
+  console.info('  ' + c.yellow('--parallel') + '                 Run packages in parallel (default)');
+  console.info('  ' + c.yellow('--sequential') + '               Run packages sequentially');
+  console.info('  ' + c.yellow('--continue-on-error') + '         Continue on error');
+  console.info('  ' + c.yellow('--watch') + '                    Enable watch mode');
+  console.info('  ' + c.yellow('--hot') + '                      Enable hot reload');
+  console.info('  ' + c.yellow('--no-clear') + '                 Don\'t clear screen on restart');
+  console.info('  ' + c.yellow('--smol') + '                     Use memory-optimized mode');
+  console.info('  ' + c.yellow('--silent') + '                   Suppress output');
+  console.info('  ' + c.yellow('--help, -h') + '                 Show this help\n');
   
-  console.log(c.cyan('EXAMPLES:'));
-  console.log('  ' + c.gray('# Watch all packages with dev script'));
-  console.log('  ' + c.green('bun watch-filter --filter "*" dev'));
-  console.log('');
-  console.log('  ' + c.gray('# Watch API packages with limited output'));
-  console.log('  ' + c.green('bun watch-filter --filter "api-*" --filter-output-lines 5 dev'));
-  console.log('');
-  console.log('  ' + c.gray('# Hot reload for UI packages'));
-  console.log('  ' + c.green('bun watch-filter --filter "ui-*" --hot storybook'));
-  console.log('');
-  console.log('  ' + c.gray('# Memory-optimized watching'));
-  console.log('  ' + c.green('bun watch-filter --filter "worker-*" --smol start'));
-  console.log('');
-  console.log('  ' + c.gray('# Sequential execution with continue on error'));
-  console.log('  ' + c.green('bun watch-filter --filter "test-*" --sequential --continue-on-error test'));
-  console.log('');
+  console.info(c.cyan('EXAMPLES:'));
+  console.info('  ' + c.gray('# Watch all packages with dev script'));
+  console.info('  ' + c.green('bun watch-filter --filter "*" dev'));
+  console.info('');
+  console.info('  ' + c.gray('# Watch API packages with limited output'));
+  console.info('  ' + c.green('bun watch-filter --filter "api-*" --filter-output-lines 5 dev'));
+  console.info('');
+  console.info('  ' + c.gray('# Hot reload for UI packages'));
+  console.info('  ' + c.green('bun watch-filter --filter "ui-*" --hot storybook'));
+  console.info('');
+  console.info('  ' + c.gray('# Memory-optimized watching'));
+  console.info('  ' + c.green('bun watch-filter --filter "worker-*" --smol start'));
+  console.info('');
+  console.info('  ' + c.gray('# Sequential execution with continue on error'));
+  console.info('  ' + c.green('bun watch-filter --filter "test-*" --sequential --continue-on-error test'));
+  console.info('');
   
-  console.log(c.cyan('DASHBOARD:'));
-  console.log('  ' + c.blue('http://localhost:3001') + ' - Real-time monitoring dashboard\n');
+  console.info(c.cyan('DASHBOARD:'));
+  console.info('  ' + c.blue('http://localhost:3001') + ' - Real-time monitoring dashboard\n');
   
-  console.log(c.gray('For more information, visit: https://bun.com/docs/runtime'));
+  console.info(c.gray('For more information, visit: https://bun.com/docs/runtime'));
 }
 
 // Auto-run if this is the main module

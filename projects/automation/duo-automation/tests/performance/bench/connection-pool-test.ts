@@ -7,11 +7,11 @@ config({ path: './.env' });
 import { BunR2AppleManager } from '../../src/storage/r2-apple-manager.js';
 
 async function testConnectionPooling() {
-  console.log('🔗 Testing Fixed HTTP Connection Pooling...');
-  console.log('✅ Fixed: keepAlive property name (was keepalive)');
-  console.log('✅ Fixed: Connection: keep-alive header handling');
-  console.log('✅ Fixed: Case-insensitive response header parsing');
-  console.log('');
+  console.info('🔗 Testing Fixed HTTP Connection Pooling...');
+  console.info('✅ Fixed: keepAlive property name (was keepalive)');
+  console.info('✅ Fixed: Connection: keep-alive header handling');
+  console.info('✅ Fixed: Case-insensitive response header parsing');
+  console.info('');
   
   const manager = new BunR2AppleManager({}, Bun.env.R2_BUCKET!);
   
@@ -20,7 +20,7 @@ async function testConnectionPooling() {
   const iterations = 15;
   const times: number[] = [];
   
-  console.log(`🔄 Testing ${iterations} rapid uploads...`);
+  console.info(`🔄 Testing ${iterations} rapid uploads...`);
   
   for (let i = 0; i < iterations; i++) {
     const start = Date.now();
@@ -30,7 +30,7 @@ async function testConnectionPooling() {
     
     // Show progress
     if (i % 5 === 0) {
-      console.log(`  Progress: ${i + 1}/${iterations} uploads`);
+      console.info(`  Progress: ${i + 1}/${iterations} uploads`);
     }
   }
   
@@ -40,27 +40,27 @@ async function testConnectionPooling() {
   const fastest = Math.min(...times);
   const slowest = Math.max(...times);
   
-  console.log('');
-  console.log('📊 Connection Pooling Results:');
-  console.log(`  First request (cold): ${firstTime}ms`);
-  console.log(`  Warm average: ${warmAvg.toFixed(1)}ms`);
-  console.log(`  Overall average: ${avgTime.toFixed(1)}ms`);
-  console.log(`  Fastest: ${fastest}ms`);
-  console.log(`  Slowest: ${slowest}ms`);
-  console.log(`  Variance: ${(slowest - fastest).toFixed(1)}ms`);
+  console.info('');
+  console.info('📊 Connection Pooling Results:');
+  console.info(`  First request (cold): ${firstTime}ms`);
+  console.info(`  Warm average: ${warmAvg.toFixed(1)}ms`);
+  console.info(`  Overall average: ${avgTime.toFixed(1)}ms`);
+  console.info(`  Fastest: ${fastest}ms`);
+  console.info(`  Slowest: ${slowest}ms`);
+  console.info(`  Variance: ${(slowest - fastest).toFixed(1)}ms`);
   
   const connectionReuseBenefit = ((firstTime - warmAvg) / firstTime * 100);
-  console.log(`  🚀 Connection reuse benefit: ${connectionReuseBenefit.toFixed(1)}%`);
+  console.info(`  🚀 Connection reuse benefit: ${connectionReuseBenefit.toFixed(1)}%`);
   
   // Verify connection pooling is working
   if (connectionReuseBenefit > 10) {
-    console.log('✅ Connection pooling is working effectively!');
+    console.info('✅ Connection pooling is working effectively!');
   } else {
-    console.log('⚠️ Connection pooling benefit is minimal');
+    console.info('⚠️ Connection pooling benefit is minimal');
   }
   
-  console.log('');
-  console.log('🎉 HTTP connection pooling test complete!');
+  console.info('');
+  console.info('🎉 HTTP connection pooling test complete!');
 }
 
 testConnectionPooling();

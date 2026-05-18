@@ -74,10 +74,10 @@ const generateMockShortcuts = (count: number): Record<string, ShortcutBinding> =
 
 const results: BenchmarkResult[] = [];
 
-console.log("\n⌨️  Shortcuts Performance Benchmark Suite\n");
-console.log(`Iterations: ${ITERATIONS.toLocaleString()}`);
-console.log(`Warmup: ${WARMUP}`);
-console.log("-".repeat(70));
+console.info("\n⌨️  Shortcuts Performance Benchmark Suite\n");
+console.info(`Iterations: ${ITERATIONS.toLocaleString()}`);
+console.info(`Warmup: ${WARMUP}`);
+console.info("-".repeat(70));
 
 // Benchmark: Load shortcuts config
 results.push(benchmark("Load shortcuts config", () => {
@@ -235,7 +235,7 @@ results.push(benchmark("Filter shortcuts by search", () => {
 // Output Results
 // ============================================
 
-console.log("\n📊 Results:\n");
+console.info("\n📊 Results:\n");
 
 // Sort by ops/sec descending
 results.sort((a, b) => b.opsPerSec - a.opsPerSec);
@@ -250,41 +250,41 @@ const tableData = results.map((r, i) => ({
   "Ops/sec": r.opsPerSec.toLocaleString(),
 }));
 
-console.log(Bun.inspect.table(tableData, { colors: true }));
+console.info(Bun.inspect.table(tableData, { colors: true }));
 
 // Summary stats
 const fastestOps = Math.max(...results.map(r => r.opsPerSec));
 const slowestOps = Math.min(...results.map(r => r.opsPerSec));
 const avgOps = Math.floor(results.reduce((sum, r) => sum + r.opsPerSec, 0) / results.length);
 
-console.log("\n📈 Summary:");
-console.log(`  Fastest:  ${fastestOps.toLocaleString()} ops/sec`);
-console.log(`  Slowest:  ${slowestOps.toLocaleString()} ops/sec`);
-console.log(`  Average:  ${avgOps.toLocaleString()} ops/sec`);
+console.info("\n📈 Summary:");
+console.info(`  Fastest:  ${fastestOps.toLocaleString()} ops/sec`);
+console.info(`  Slowest:  ${slowestOps.toLocaleString()} ops/sec`);
+console.info(`  Average:  ${avgOps.toLocaleString()} ops/sec`);
 
 // Performance assertions
-console.log("\n✅ Performance Assertions:");
+console.info("\n✅ Performance Assertions:");
 
 const configLoad = results.find(r => r.name === "Load shortcuts config");
 if (configLoad && configLoad.avgNs < 1000) {
-  console.log(`  ✓ Config load: ${configLoad.avgNs.toFixed(0)}ns < 1000ns`);
+  console.info(`  ✓ Config load: ${configLoad.avgNs.toFixed(0)}ns < 1000ns`);
 } else {
-  console.log(`  ✗ Config load too slow: ${configLoad?.avgNs.toFixed(0)}ns`);
+  console.info(`  ✗ Config load too slow: ${configLoad?.avgNs.toFixed(0)}ns`);
 }
 
 const conflictSmall = results.find(r => r.name === "Conflict detection (10 shortcuts)");
 if (conflictSmall && conflictSmall.opsPerSec > 100_000) {
-  console.log(`  ✓ Small conflict detection: ${conflictSmall.opsPerSec.toLocaleString()} ops/sec > 100K`);
+  console.info(`  ✓ Small conflict detection: ${conflictSmall.opsPerSec.toLocaleString()} ops/sec > 100K`);
 } else {
-  console.log(`  ✗ Small conflict detection too slow: ${conflictSmall?.opsPerSec.toLocaleString()} ops/sec`);
+  console.info(`  ✗ Small conflict detection too slow: ${conflictSmall?.opsPerSec.toLocaleString()} ops/sec`);
 }
 
 const conflictLarge = results.find(r => r.name === "Conflict detection (1000 shortcuts)");
 if (conflictLarge && conflictLarge.opsPerSec > 1_000) {
-  console.log(`  ✓ Large conflict detection: ${conflictLarge.opsPerSec.toLocaleString()} ops/sec > 1K`);
+  console.info(`  ✓ Large conflict detection: ${conflictLarge.opsPerSec.toLocaleString()} ops/sec > 1K`);
 } else {
-  console.log(`  ✗ Large conflict detection too slow: ${conflictLarge?.opsPerSec.toLocaleString()} ops/sec`);
+  console.info(`  ✗ Large conflict detection too slow: ${conflictLarge?.opsPerSec.toLocaleString()} ops/sec`);
 }
 
-console.log("\n" + "=".repeat(70));
-console.log("Benchmark complete.\n");
+console.info("\n" + "=".repeat(70));
+console.info("Benchmark complete.\n");

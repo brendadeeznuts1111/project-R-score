@@ -32,14 +32,14 @@ export class CustomerSearch {
     const startTime = Date.now();
 
     try {
-      console.log(`🔍 Searching customers: "${options.query}"`);
+      console.info(`🔍 Searching customers: "${options.query}"`);
 
       // Check cache first
       const cacheKey = this.generateCacheKey(options);
       const cached = this.getCachedResults(cacheKey);
 
       if (cached) {
-        console.log('✅ Using cached search results');
+        console.info('✅ Using cached search results');
         return {
           ...cached,
           searchTime: Date.now() - startTime,
@@ -78,7 +78,7 @@ export class CustomerSearch {
         totalFound: customers.length,
       });
 
-      console.log(`✅ Search completed: ${results.length} results in ${searchResult.searchTime}ms`);
+      console.info(`✅ Search completed: ${results.length} results in ${searchResult.searchTime}ms`);
       return searchResult;
     } catch (error) {
       console.error('❌ Search failed:', error);
@@ -102,7 +102,7 @@ export class CustomerSearch {
     tags?: string[];
     customFields?: Record<string, any>;
   }): Promise<CustomerProfile[]> {
-    console.log('🔬 Performing advanced search');
+    console.info('🔬 Performing advanced search');
 
     const filters: CustomerSearchFilters = {};
 
@@ -126,7 +126,7 @@ export class CustomerSearch {
    * Search customers by tags
    */
   async searchByTags(tags: string[], matchAll: boolean = false): Promise<CustomerProfile[]> {
-    console.log(`🏷️ Searching by tags: ${tags.join(', ')}`);
+    console.info(`🏷️ Searching by tags: ${tags.join(', ')}`);
 
     const filters: CustomerSearchFilters = {
       tags: matchAll ? tags : undefined,
@@ -146,7 +146,7 @@ export class CustomerSearch {
    * Search customers by VIP tier
    */
   async searchByVIPTier(tiers: string[]): Promise<CustomerProfile[]> {
-    console.log(`👑 Searching by VIP tiers: ${tiers.join(', ')}`);
+    console.info(`👑 Searching by VIP tiers: ${tiers.join(', ')}`);
 
     const filters: CustomerSearchFilters = {
       vipTier: tiers,
@@ -159,7 +159,7 @@ export class CustomerSearch {
    * Search customers by risk level
    */
   async searchByRiskLevel(riskLevels: string[]): Promise<CustomerProfile[]> {
-    console.log(`⚠️ Searching by risk levels: ${riskLevels.join(', ')}`);
+    console.info(`⚠️ Searching by risk levels: ${riskLevels.join(', ')}`);
 
     const filters: CustomerSearchFilters = {
       riskLevel: riskLevels,
@@ -172,7 +172,7 @@ export class CustomerSearch {
    * Search customers with balance in range
    */
   async searchByBalanceRange(min: number, max: number): Promise<CustomerProfile[]> {
-    console.log(`💰 Searching by balance range: $${min} - $${max}`);
+    console.info(`💰 Searching by balance range: $${min} - $${max}`);
 
     const filters: CustomerSearchFilters = {
       balance: { min, max },
@@ -189,7 +189,7 @@ export class CustomerSearch {
     endDate: Date,
     activityType: 'created' | 'login' | 'transaction' = 'login'
   ): Promise<CustomerProfile[]> {
-    console.log(
+    console.info(
       `📅 Searching by ${activityType} date range: ${startDate.toISOString()} - ${endDate.toISOString()}`
     );
 
@@ -290,7 +290,7 @@ export class CustomerSearch {
    */
   clearCache(): void {
     this.searchCache.clear();
-    console.log('🧹 Search cache cleared');
+    console.info('🧹 Search cache cleared');
   }
 
   /**

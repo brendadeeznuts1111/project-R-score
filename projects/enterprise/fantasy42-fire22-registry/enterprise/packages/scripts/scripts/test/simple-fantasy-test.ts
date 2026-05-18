@@ -7,11 +7,11 @@ import { FantasySportEvent } from './src/domains/external/fantasy402/entities/fa
 import { Money } from './src/domains/shared/value-object';
 
 async function test() {
-  console.log('Testing Fantasy42 entities...');
+  console.info('Testing Fantasy42 entities...');
 
   // Test Money value object
   const money = Money.create(100, 'USD');
-  console.log('Money created:', money.getAmount(), money.getCurrency());
+  console.info('Money created:', money.getAmount(), money.getCurrency());
 
   // Test FantasyAccount
   const account = new FantasyAccount(
@@ -27,9 +27,9 @@ async function test() {
     new Date(),
     new Date()
   );
-  console.log('Account created:', account.getId());
+  console.info('Account created:', account.getId());
 
-  console.log('✅ Basic Fantasy42 entities work!');
+  console.info('✅ Basic Fantasy42 entities work!');
 }
 
 test().catch(console.error);

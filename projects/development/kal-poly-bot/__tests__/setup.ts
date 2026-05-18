@@ -28,12 +28,12 @@ globalThis.TEST_CONFIG = {
 
 // Configure Bun runtime for testing
 if (Bun.env.BUN_RUNTIME === 'test') {
-  console.log('\n🧪 MCP Tool Test Environment Initialized');
-  console.log(`   Node.js Version: ${process.version}`);
-  console.log(`   Bun Version: ${Bun.version}`);
-  console.log(`   Platform: ${process.platform}`);
-  console.log(`   Architecture: ${process.arch}`);
-  console.log(`   Test Seed: ${globalThis.TEST_CONFIG.seed}`);
+  console.info('\n🧪 MCP Tool Test Environment Initialized');
+  console.info(`   Node.js Version: ${process.version}`);
+  console.info(`   Bun Version: ${Bun.version}`);
+  console.info(`   Platform: ${process.platform}`);
+  console.info(`   Architecture: ${process.arch}`);
+  console.info(`   Test Seed: ${globalThis.TEST_CONFIG.seed}`);
 }
 
 // =============================================================================
@@ -106,7 +106,7 @@ globalThis.measureMemoryUsage = async <T>(operation: () => Promise<T>): Promise<
   const heapAfter = process.memoryUsage().heapUsed;
   const memoryDelta = heapAfter - heapBefore;
 
-  console.log(`   📊 Memory usage: ${(memoryDelta / 1024 / 1024).toFixed(2)}MB`);
+  console.info(`   📊 Memory usage: ${(memoryDelta / 1024 / 1024).toFixed(2)}MB`);
 
   return result;
 };
@@ -132,7 +132,7 @@ globalThis.cleanupTestFiles = async (files: string[]): Promise<void> => {
  * Global test setup - runs once before all tests
  */
 beforeAll(async () => {
-  console.log('\n🔧 Setting up MCP Tool Test Environment...');
+  console.info('\n🔧 Setting up MCP Tool Test Environment...');
 
   // Preload matrix data for all tests
   globalThis.TEST_MATRIX_DATA = {
@@ -164,14 +164,14 @@ beforeAll(async () => {
   // Warm up the test environment
   await new Promise(resolve => setTimeout(resolve, 10));
 
-  console.log('✅ MCP Tool Test Environment Ready');
+  console.info('✅ MCP Tool Test Environment Ready');
 });
 
 /**
  * Global test teardown - runs once after all tests
  */
 afterAll(async () => {
-  console.log('\n🧹 Cleaning up MCP Tool Test Environment...');
+  console.info('\n🧹 Cleaning up MCP Tool Test Environment...');
 
   // Clean up global test data
   delete globalThis.TEST_CONFIG;
@@ -180,7 +180,7 @@ afterAll(async () => {
   // Wait for any pending operations
   await new Promise(resolve => setTimeout(resolve, 10));
 
-  console.log('✅ MCP Tool Test Environment Cleaned Up');
+  console.info('✅ MCP Tool Test Environment Cleaned Up');
 });
 
 /**
@@ -374,4 +374,4 @@ export const TEST_METADATA = {
   }
 };
 
-console.log('🎯 MCP Tool Test Setup Complete - Ready for Test Execution');
+console.info('🎯 MCP Tool Test Setup Complete - Ready for Test Execution');

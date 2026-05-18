@@ -597,7 +597,7 @@ export class WorkspaceManager {
     }
 
     // Remove from catalog (would need to implement in RootCatalogManager)
-    console.log(`Workspace ${workspaceId} marked for deletion`);
+    console.info(`Workspace ${workspaceId} marked for deletion`);
   }
 
   /**
@@ -610,7 +610,7 @@ export class WorkspaceManager {
     // Delete from R2 storage
     await this.r2Storage.deletePackage(packageId);
     
-    console.log(`Package ${packageId} deleted`);
+    console.info(`Package ${packageId} deleted`);
   }
 }
 

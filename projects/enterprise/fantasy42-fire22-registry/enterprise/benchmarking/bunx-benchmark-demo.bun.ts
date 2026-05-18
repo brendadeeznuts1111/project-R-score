@@ -4,8 +4,8 @@
  * Real-world performance benchmarking for enterprise bunx usage
  */
 
-console.log('🚀 Fantasy42-Fire22 Registry - Bunx Performance Benchmark');
-console.log('======================================================\n');
+console.info('🚀 Fantasy42-Fire22 Registry - Bunx Performance Benchmark');
+console.info('======================================================\n');
 
 // Performance Metrics Collection
 interface BenchmarkResult {
@@ -23,8 +23,8 @@ class BunxBenchmark {
   private results: BenchmarkResult[] = [];
 
   async benchmarkCommand(description: string, command: string): Promise<BenchmarkResult> {
-    console.log(`📊 Benchmarking: ${description}`);
-    console.log(`🔧 Command: ${command}`);
+    console.info(`📊 Benchmarking: ${description}`);
+    console.info(`🔧 Command: ${command}`);
 
     const startTime = Date.now();
     const proc = Bun.spawn(['sh', '-c', `time -p ${command} 2>&1`], {
@@ -67,19 +67,19 @@ class BunxBenchmark {
 
     this.results.push(result);
 
-    console.log(`⏱️  Total Time: ${totalTime.toFixed(3)}ms`);
-    console.log(`👤 User Time: ${userTime.toFixed(3)}ms`);
-    console.log(`⚙️  System Time: ${systemTime.toFixed(3)}ms`);
-    console.log(`💻 CPU Usage: ${cpuUsage.toFixed(1)}%`);
-    console.log(`📝 Exit Code: ${exitCode}`);
-    console.log('');
+    console.info(`⏱️  Total Time: ${totalTime.toFixed(3)}ms`);
+    console.info(`👤 User Time: ${userTime.toFixed(3)}ms`);
+    console.info(`⚙️  System Time: ${systemTime.toFixed(3)}ms`);
+    console.info(`💻 CPU Usage: ${cpuUsage.toFixed(1)}%`);
+    console.info(`📝 Exit Code: ${exitCode}`);
+    console.info('');
 
     return result;
   }
 
   async runEnterpriseBenchmarks(): Promise<void> {
-    console.log('🏢 ENTERPRISE REGISTRY BENCHMARKS');
-    console.log('=================================');
+    console.info('🏢 ENTERPRISE REGISTRY BENCHMARKS');
+    console.info('=================================');
 
     // Registry Package Benchmarks
     await this.benchmarkCommand(
@@ -117,8 +117,8 @@ class BunxBenchmark {
       'bunx --bun --package @fire22-registry/user-management verify'
     );
 
-    console.log('📦 NPM REGISTRY BENCHMARKS');
-    console.log('==========================');
+    console.info('📦 NPM REGISTRY BENCHMARKS');
+    console.info('==========================');
 
     // Real Package Benchmarks
     await this.benchmarkCommand('Prettier (NPM Registry)', 'bunx prettier --version');
@@ -129,16 +129,16 @@ class BunxBenchmark {
 
     await this.benchmarkCommand('Lodash (NPM Registry)', 'bunx lodash --version');
 
-    console.log('🔄 CACHED PACKAGE BENCHMARKS');
-    console.log('============================');
+    console.info('🔄 CACHED PACKAGE BENCHMARKS');
+    console.info('============================');
 
     // Run the same commands again to test caching
     await this.benchmarkCommand('Prettier (Cached)', 'bunx prettier --version');
 
     await this.benchmarkCommand('ESLint (Cached)', 'bunx eslint --version');
 
-    console.log('⚡ PERFORMANCE COMPARISON');
-    console.log('========================');
+    console.info('⚡ PERFORMANCE COMPARISON');
+    console.info('========================');
 
     await this.generatePerformanceReport();
   }
@@ -155,38 +155,38 @@ class BunxBenchmark {
 
     const cachedResults = this.results.filter(r => r.command.includes('(Cached)'));
 
-    console.log('📊 Registry Package Performance:');
-    console.log(
+    console.info('📊 Registry Package Performance:');
+    console.info(
       `   Average Total Time: ${(registryResults.reduce((sum, r) => sum + r.totalTime, 0) / registryResults.length).toFixed(3)}ms`
     );
-    console.log(
+    console.info(
       `   Average CPU Usage: ${(registryResults.reduce((sum, r) => sum + r.cpuUsage, 0) / registryResults.length).toFixed(1)}%`
     );
-    console.log(
+    console.info(
       `   Success Rate: ${((registryResults.filter(r => r.exitCode === 0).length / registryResults.length) * 100).toFixed(1)}%`
     );
 
-    console.log('');
-    console.log('📦 NPM Package Performance:');
-    console.log(
+    console.info('');
+    console.info('📦 NPM Package Performance:');
+    console.info(
       `   Average Total Time: ${(npmResults.reduce((sum, r) => sum + r.totalTime, 0) / npmResults.length).toFixed(3)}ms`
     );
-    console.log(
+    console.info(
       `   Average CPU Usage: ${(npmResults.reduce((sum, r) => sum + r.cpuUsage, 0) / npmResults.length).toFixed(1)}%`
     );
-    console.log(
+    console.info(
       `   Success Rate: ${((npmResults.filter(r => r.exitCode === 0).length / npmResults.length) * 100).toFixed(1)}%`
     );
 
-    console.log('');
-    console.log('🔄 Cached Package Performance:');
-    console.log(
+    console.info('');
+    console.info('🔄 Cached Package Performance:');
+    console.info(
       `   Average Total Time: ${(cachedResults.reduce((sum, r) => sum + r.totalTime, 0) / cachedResults.length).toFixed(3)}ms`
     );
-    console.log(
+    console.info(
       `   Average CPU Usage: ${(cachedResults.reduce((sum, r) => sum + r.cpuUsage, 0) / cachedResults.length).toFixed(1)}%`
     );
-    console.log(
+    console.info(
       `   Success Rate: ${((cachedResults.filter(r => r.exitCode === 0).length / cachedResults.length) * 100).toFixed(1)}%`
     );
 
@@ -199,24 +199,24 @@ class BunxBenchmark {
           ).toFixed(1)
         : 'N/A';
 
-    console.log('');
-    console.log(`🚀 Cache Performance Improvement: ${cacheImprovement}x faster`);
+    console.info('');
+    console.info(`🚀 Cache Performance Improvement: ${cacheImprovement}x faster`);
 
-    console.log('');
-    console.log('📋 DETAILED RESULTS');
-    console.log('==================');
+    console.info('');
+    console.info('📋 DETAILED RESULTS');
+    console.info('==================');
 
     this.results.forEach((result, index) => {
       const status = result.exitCode === 0 ? '✅' : '❌';
-      console.log(`${index + 1}. ${status} ${result.command.split(' ').slice(-2).join(' ')}`);
-      console.log(
+      console.info(`${index + 1}. ${status} ${result.command.split(' ').slice(-2).join(' ')}`);
+      console.info(
         `   Time: ${result.totalTime.toFixed(3)}ms, CPU: ${result.cpuUsage.toFixed(1)}%, Exit: ${result.exitCode}`
       );
     });
 
-    console.log('');
-    console.log('💾 BENCHMARK DATA EXPORT');
-    console.log('=======================');
+    console.info('');
+    console.info('💾 BENCHMARK DATA EXPORT');
+    console.info('=======================');
 
     const exportData = {
       timestamp: new Date().toISOString(),
@@ -238,13 +238,13 @@ class BunxBenchmark {
       },
     };
 
-    console.log('📄 JSON Export:');
-    console.log(JSON.stringify(exportData, null, 2));
+    console.info('📄 JSON Export:');
+    console.info(JSON.stringify(exportData, null, 2));
 
     // Save to file
     const filename = `bunx-benchmark-${Date.now()}.json`;
     await Bun.write(filename, JSON.stringify(exportData, null, 2));
-    console.log(`💾 Saved benchmark data to: ${filename}`);
+    console.info(`💾 Saved benchmark data to: ${filename}`);
   }
 }
 
@@ -252,6 +252,6 @@ class BunxBenchmark {
 const benchmark = new BunxBenchmark();
 await benchmark.runEnterpriseBenchmarks();
 
-console.log('');
-console.log('🎉 Fantasy42-Fire22 Registry - Bunx Benchmark Complete!');
-console.log('Benchmark data saved and performance metrics calculated! 🚀');
+console.info('');
+console.info('🎉 Fantasy42-Fire22 Registry - Bunx Benchmark Complete!');
+console.info('Benchmark data saved and performance metrics calculated! 🚀');

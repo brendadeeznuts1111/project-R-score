@@ -26,20 +26,20 @@ export class OddsRouter {
 
 	// Production methods - spied automatically
 	updateOdds(url: string, odds: any) {
-		console.log(`📊 Odds update: ${url}`, odds);
+		console.info(`📊 Odds update: ${url}`, odds);
 	}
 
 	updateArb(url: string, opp: any) {
-		console.log(`💰 Arb found: ${url}`, opp);
+		console.info(`💰 Arb found: ${url}`, opp);
 	}
 
 	// 🔍 Production test methods
 	testOddsFeed(url: string) {
 		const groups = this.oddsSpy.exec(url);
 		if (groups) {
-			console.log('✅ Bookie:', groups.hostname.groups!.bookie);
-			console.log('✅ Market:', groups.pathname.groups!.market);
-			console.log('✅ Type:', groups.search.groups!.type);
+			console.info('✅ Bookie:', groups.hostname.groups!.bookie);
+			console.info('✅ Market:', groups.pathname.groups!.market);
+			console.info('✅ Type:', groups.search.groups!.type);
 			// Only verify if spy was called
 			if (this.oddsSpy.spy.mock.calls.length > 0) {
 				this.oddsSpy.verify(url);  // Spy assertion
@@ -51,8 +51,8 @@ export class OddsRouter {
 	testArbOpportunity(url: string) {
 		const groups = this.arbSpy.exec(url);
 		if (groups) {
-			console.log('✅ Pair:', groups.pathname.groups!.pair);   // "BTC-USD"
-			console.log('✅ Spread:', groups.pathname.groups!.spread); // "0.02"
+			console.info('✅ Pair:', groups.pathname.groups!.pair);   // "BTC-USD"
+			console.info('✅ Spread:', groups.pathname.groups!.spread); // "0.02"
 			// Only verify if spy was called
 			if (this.arbSpy.spy.mock.calls.length > 0) {
 				this.arbSpy.verify(url);

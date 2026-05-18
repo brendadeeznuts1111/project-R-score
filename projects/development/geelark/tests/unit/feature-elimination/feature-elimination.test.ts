@@ -18,7 +18,7 @@ describe("Feature Elimination Tests", () => {
 import { feature } from "bun:bundle";
 
 if (feature("FEAT_PREMIUM")) {
-  console.log("🏆 Premium features enabled");
+  console.info("🏆 Premium features enabled");
   const premiumService = {
     analytics: () => "premium-analytics",
     export: () => "premium-export",
@@ -27,9 +27,9 @@ if (feature("FEAT_PREMIUM")) {
   premiumService.analytics();
   premiumService.export();
 } else {
-  console.log("📱 Free tier - no premium features");
+  console.info("📱 Free tier - no premium features");
 }
-console.log("✅ Base functionality");
+console.info("✅ Base functionality");
 `;
 
     // Write test file
@@ -53,9 +53,9 @@ console.log("✅ Base functionality");
       const sizeRatio = parseInt(premiumSize) / parseInt(freeSize);
       expect(sizeRatio).toBeGreaterThan(1.5);
 
-      console.log(`Premium bundle: ${premiumSize} bytes`);
-      console.log(`Free bundle: ${freeSize} bytes`);
-      console.log(`Size ratio: ${sizeRatio.toFixed(2)}x`);
+      console.info(`Premium bundle: ${premiumSize} bytes`);
+      console.info(`Free bundle: ${freeSize} bytes`);
+      console.info(`Size ratio: ${sizeRatio.toFixed(2)}x`);
     } finally {
       // Cleanup
       try {
@@ -91,7 +91,7 @@ if (feature("FEAT_BATCH_PROCESSING")) {
   features.push(...new Array(200).fill(0).map((_, i) => \`batch_\${i}\`));
 }
 
-console.log("Features loaded:", features.length);
+console.info("Features loaded:", features.length);
 `;
 
     await Bun.write(testFile, testCode);
@@ -113,9 +113,9 @@ console.log("Features loaded:", features.length);
       const sizeRatio = parseInt(fullSize) / parseInt(minimalSize);
       expect(sizeRatio).toBeGreaterThan(2.0); // Should be at least 2x larger
 
-      console.log(`Full bundle: ${fullSize} bytes`);
-      console.log(`Minimal bundle: ${minimalSize} bytes`);
-      console.log(`Size ratio: ${sizeRatio.toFixed(2)}x`);
+      console.info(`Full bundle: ${fullSize} bytes`);
+      console.info(`Minimal bundle: ${minimalSize} bytes`);
+      console.info(`Size ratio: ${sizeRatio.toFixed(2)}x`);
     } finally {
       try {
         unlinkSync(fullOutput);
@@ -158,7 +158,7 @@ if (feature("FEAT_PREMIUM")) {
   }));
 }
 
-console.log("Service level:", serviceLevel);
+console.info("Service level:", serviceLevel);
 `;
 
     await Bun.write(testFile, testCode);
@@ -184,9 +184,9 @@ console.log("Service level:", serviceLevel);
       expect(parseInt(enterpriseSize)).toBeGreaterThan(parseInt(premiumSize));
       expect(parseInt(premiumSize)).toBeGreaterThan(parseInt(basicSize));
 
-      console.log(`Enterprise bundle: ${enterpriseSize} bytes`);
-      console.log(`Premium bundle: ${premiumSize} bytes`);
-      console.log(`Basic bundle: ${basicSize} bytes`);
+      console.info(`Enterprise bundle: ${enterpriseSize} bytes`);
+      console.info(`Premium bundle: ${premiumSize} bytes`);
+      console.info(`Basic bundle: ${basicSize} bytes`);
     } finally {
       try {
         unlinkSync(enterpriseOutput);
@@ -206,7 +206,7 @@ console.log("Service level:", serviceLevel);
 import { feature } from "bun:bundle";
 
 if (feature("FEAT_PREMIUM")) {
-  console.log("Premium code that should be eliminated");
+  console.info("Premium code that should be eliminated");
   const heavyPremiumLogic = {
     process: () => {
       // This entire block should disappear in free builds
@@ -225,7 +225,7 @@ if (feature("FEAT_PREMIUM")) {
   };
   heavyPremiumLogic.process();
 } else {
-  console.log("Free tier code");
+  console.info("Free tier code");
 }
 `;
 
@@ -250,9 +250,9 @@ if (feature("FEAT_PREMIUM")) {
       expect(freeContent).not.toContain("premium_meta");
       expect(freeContent).toContain("Free tier code");
 
-      console.log("✅ Dead code elimination verified");
-      console.log(`Premium content length: ${premiumContent.length}`);
-      console.log(`Free content length: ${freeContent.length}`);
+      console.info("✅ Dead code elimination verified");
+      console.info(`Premium content length: ${premiumContent.length}`);
+      console.info(`Free content length: ${freeContent.length}`);
     } finally {
       try {
         unlinkSync(premiumOutput);

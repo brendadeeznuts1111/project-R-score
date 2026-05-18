@@ -34,8 +34,8 @@ async function setupEnvironmentFile() {
   // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file existence check
   try {
     await Bun.file(envPath).exists();
-    console.log('✅ .env.local already exists. Skipping creation.');
-    console.log('⚠️  IMPORTANT: Never commit .env.local to version control!');
+    console.info('✅ .env.local already exists. Skipping creation.');
+    console.info('⚠️  IMPORTANT: Never commit .env.local to version control!');
     return;
   } catch (error) {
     // File doesn't exist, continue with creation
@@ -74,18 +74,18 @@ BUN_AUDIT_PRODUCTION=true
   try {
     // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file writing
     await Bun.write(envPath, envContent);
-    console.log('✅ Created .env.local for development environment setup');
-    console.log('🔐 Environment variables configured for security tools');
-    console.log('');
-    console.log('🚨 SECURITY REMINDERS:');
-    console.log('   • Add .env.local to .gitignore');
-    console.log('   • Use environment variables in CI/CD pipelines');
-    console.log('   • Never commit sensitive tokens to version control');
-    console.log('   • Rotate tokens regularly');
-    console.log('');
-    console.log('🔧 Next steps:');
-    console.log('   • Run: bun run security:setup');
-    console.log('   • Run: bun run security:audit');
+    console.info('✅ Created .env.local for development environment setup');
+    console.info('🔐 Environment variables configured for security tools');
+    console.info('');
+    console.info('🚨 SECURITY REMINDERS:');
+    console.info('   • Add .env.local to .gitignore');
+    console.info('   • Use environment variables in CI/CD pipelines');
+    console.info('   • Never commit sensitive tokens to version control');
+    console.info('   • Rotate tokens regularly');
+    console.info('');
+    console.info('🔧 Next steps:');
+    console.info('   • Run: bun run security:setup');
+    console.info('   • Run: bun run security:audit');
   } catch (error) {
     console.error('❌ Failed to create .env.local:', error);
     process.exit(1);
@@ -99,7 +99,7 @@ async function validateGitIgnore() {
   try {
     await Bun.file(gitignorePath).exists();
   } catch (error) {
-    console.log('⚠️  No .gitignore file found. Creating one...');
+    console.info('⚠️  No .gitignore file found. Creating one...');
     const gitignoreContent = `# Dependencies
 node_modules/
 bun.lockb
@@ -210,39 +210,39 @@ license-reports/
 
     // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file writing
     await Bun.write(gitignorePath, gitignoreContent);
-    console.log('✅ Created .gitignore with security exclusions');
+    console.info('✅ Created .gitignore with security exclusions');
   }
 
   // Check if .env.local is in .gitignore
   // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file reading
   const gitignoreContent = await Bun.file(gitignorePath).text();
   if (!gitignoreContent.includes('.env.local') && !gitignoreContent.includes('.env')) {
-    console.log('⚠️  Adding environment files to .gitignore...');
+    console.info('⚠️  Adding environment files to .gitignore...');
     const updatedGitignore =
       gitignoreContent + '\n\n# Environment files\n.env\n.env.local\n.env.*.local\n';
     // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file writing
     await Bun.write(gitignorePath, updatedGitignore);
-    console.log('✅ Added environment files to .gitignore');
+    console.info('✅ Added environment files to .gitignore');
   } else {
-    console.log('✅ Environment files already excluded in .gitignore');
+    console.info('✅ Environment files already excluded in .gitignore');
   }
 }
 
 async function main() {
-  console.log('🔐 Fantasy42-Fire22 Security Environment Setup');
-  console.log('==============================================');
+  console.info('🔐 Fantasy42-Fire22 Security Environment Setup');
+  console.info('==============================================');
 
   await validateGitIgnore();
   await setupEnvironmentFile();
 
-  console.log('');
-  console.log('🎉 Security environment setup complete!');
-  console.log('');
-  console.log('📋 Next steps:');
-  console.log('   1. Review and update tokens in .env.local');
-  console.log('   2. Run: bun run security:install-tools');
-  console.log('   3. Run: bun run security:audit');
-  console.log('   4. Run: bun run security:check-licenses');
+  console.info('');
+  console.info('🎉 Security environment setup complete!');
+  console.info('');
+  console.info('📋 Next steps:');
+  console.info('   1. Review and update tokens in .env.local');
+  console.info('   2. Run: bun run security:install-tools');
+  console.info('   3. Run: bun run security:audit');
+  console.info('   4. Run: bun run security:check-licenses');
 }
 
 // Run the setup

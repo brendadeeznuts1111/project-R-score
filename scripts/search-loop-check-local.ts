@@ -109,15 +109,15 @@ export async function main(): Promise<void> {
 
   if (forceSnapshot || !freshness.reuse) {
     if (options.mode === 'full') {
-      console.log('[search:loop:check:local] forcing snapshot refresh (mode=full)');
+      console.info('[search:loop:check:local] forcing snapshot refresh (mode=full)');
     } else if (options.forceSnapshot) {
-      console.log('[search:loop:check:local] forcing snapshot refresh (--force-snapshot)');
+      console.info('[search:loop:check:local] forcing snapshot refresh (--force-snapshot)');
     } else {
-      console.log(`[search:loop:check:local] refreshing snapshot: ${freshness.reason}`);
+      console.info(`[search:loop:check:local] refreshing snapshot: ${freshness.reason}`);
     }
     await run(['bun', 'run', 'search:bench:snapshot:core:wide:local']);
   } else {
-    console.log(`[search:loop:check:local] reusing snapshot: ${freshness.reason}`);
+    console.info(`[search:loop:check:local] reusing snapshot: ${freshness.reason}`);
   }
 
   await run(['bun', 'run', 'search:loop:status']);

@@ -97,7 +97,7 @@ const EnhancedPaymentQRDisplay: React.FC<PaymentQRDisplayProps> = ({
       
       wsRef.current.onopen = () => {
         setIsConnected(true);
-        console.log('WebSocket connected for payment updates');
+        console.info('WebSocket connected for payment updates');
       };
       
       wsRef.current.onmessage = (event) => {
@@ -111,7 +111,7 @@ const EnhancedPaymentQRDisplay: React.FC<PaymentQRDisplayProps> = ({
       
       wsRef.current.onclose = () => {
         setIsConnected(false);
-        console.log('WebSocket disconnected, attempting reconnect...');
+        console.info('WebSocket disconnected, attempting reconnect...');
         
         // Attempt to reconnect after 3 seconds
         setTimeout(connectWebSocket, 3000);

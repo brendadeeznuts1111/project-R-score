@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
 // Minimal CLI test to isolate issues
 
-console.log('🔧 Testing minimal CLI...');
+console.info('🔧 Testing minimal CLI...');
 
 // Test basic flag parsing
 const args = process.argv.slice(2);
-console.log('Args:', args);
+console.info('Args:', args);
 
 const flags: any = {};
 
@@ -23,19 +23,19 @@ for (let i = 0; i < args.length; i++) {
   }
 }
 
-console.log('Parsed flags:', flags);
+console.info('Parsed flags:', flags);
 
 // Test specific flags
 if (flags['--metrics']) {
-  console.log('✅ --metrics flag detected');
+  console.info('✅ --metrics flag detected');
 }
 
 if (flags['--hex-colors']) {
-  console.log('✅ --hex-colors flag detected');
+  console.info('✅ --hex-colors flag detected');
 }
 
 if (flags['--domains']) {
-  console.log(`✅ --domains flag: ${flags['--domains']}`);
+  console.info(`✅ --domains flag: ${flags['--domains']}`);
 }
 
-console.log('🎉 Minimal CLI test completed successfully!');
+console.info('🎉 Minimal CLI test completed successfully!');

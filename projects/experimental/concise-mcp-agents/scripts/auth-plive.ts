@@ -12,7 +12,7 @@ if (!username || !password) {
 	process.exit(1);
 }
 
-console.log("🔑 Authenticating with plive.sportswidgets.pro...");
+console.info("🔑 Authenticating with plive.sportswidgets.pro...");
 
 const loginResponse = await fetch(
 	"https://plive.sportswidgets.pro/api/v3/manager-tools/signin/",
@@ -58,13 +58,13 @@ await storePliveSession({
 	sessionId,
 });
 
-console.log("✅ Session stored in Bun.secrets");
-console.log(`🍪 Cookie: ${redactSecret(cookies)}`);
+console.info("✅ Session stored in Bun.secrets");
+console.info(`🍪 Cookie: ${redactSecret(cookies)}`);
 if (sessionId) {
-	console.log(`🪪 x-gs-session: ${redactSecret(sessionId)}`);
+	console.info(`🪪 x-gs-session: ${redactSecret(sessionId)}`);
 }
 
-console.log("🧪 Testing live data endpoint...");
+console.info("🧪 Testing live data endpoint...");
 const testHeaders: Record<string, string> = {
 	cookie: cookies,
 	"User-Agent":
@@ -88,4 +88,4 @@ if (!testResponse.ok) {
 	process.exit(1);
 }
 
-console.log("✅ Live data endpoint accessible");
+console.info("✅ Live data endpoint accessible");

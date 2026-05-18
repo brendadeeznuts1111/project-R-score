@@ -238,31 +238,31 @@ export function renderInheritanceChain(analysis: InheritanceAnalysis): void {
   const c = (hsl: string) => (Bun.color(hsl) ?? "").toString();
   const reset = "\x1b[0m";
 
-  console.log('\n' + "┌".repeat(70) + "┐");
-  console.log(`│  ${c("hsl(280, 60%, 60%)")}🧬 INHERITANCE CHAIN ANALYSIS${reset} ${"".padEnd(33, ' ')} │`);
-  console.log("├".repeat(70) + "┤");
+  console.info('\n' + "┌".repeat(70) + "┐");
+  console.info(`│  ${c("hsl(280, 60%, 60%)")}🧬 INHERITANCE CHAIN ANALYSIS${reset} ${"".padEnd(33, ' ')} │`);
+  console.info("├".repeat(70) + "┤");
 
   // Base anchor info
-  console.log(`│  ${c("hsl(210, 20%, 50%)")}Base Anchor: ${analysis.baseAnchor}${reset} ${"".padEnd(47 - analysis.baseAnchor.length, ' ')} │`);
+  console.info(`│  ${c("hsl(210, 20%, 50%)")}Base Anchor: ${analysis.baseAnchor}${reset} ${"".padEnd(47 - analysis.baseAnchor.length, ' ')} │`);
 
   // Environments
   const envList = analysis.environments.join(" → ");
-  console.log(`│  ${c("hsl(210, 20%, 50%)")}Environments: ${envList}${reset} ${"".padEnd(47 - envList.length, ' ')} │`);
-  console.log("│".padEnd(71, ' ') + "│");
+  console.info(`│  ${c("hsl(210, 20%, 50%)")}Environments: ${envList}${reset} ${"".padEnd(47 - envList.length, ' ')} │`);
+  console.info("│".padEnd(71, ' ') + "│");
 
   // Override analysis
-  console.log(`│  ${c("hsl(10, 90%, 55%)")}⚠ OVERRIDES DETECTED:${reset} ${"".padEnd(48, ' ')} │`);
+  console.info(`│  ${c("hsl(10, 90%, 55%)")}⚠ OVERRIDES DETECTED:${reset} ${"".padEnd(48, ' ')} │`);
 
   for (const env of analysis.environments) {
     const overrides = analysis.chain.overriddenKeys.get(env) || [];
     if (overrides.length > 0) {
-      console.log(`│    ${c("hsl(10, 90%, 55%)")}• ${env}:${reset} ${overrides.join(', ')} ${"".padEnd(45 - env.length - overrides.join(', ').length, ' ')} │`);
+      console.info(`│    ${c("hsl(10, 90%, 55%)")}• ${env}:${reset} ${overrides.join(', ')} ${"".padEnd(45 - env.length - overrides.join(', ').length, ' ')} │`);
     }
   }
 
   // Inheritance analysis
-  console.log("│".padEnd(71, ' ') + "│");
-  console.log(`│  ${c("hsl(145, 80%, 45%)")}✓ INHERITED KEYS:${reset} ${"".padEnd(52, ' ')} │`);
+  console.info("│".padEnd(71, ' ') + "│");
+  console.info(`│  ${c("hsl(145, 80%, 45%)")}✓ INHERITED KEYS:${reset} ${"".padEnd(52, ' ')} │`);
 
   for (const env of analysis.environments) {
     const inherited = analysis.chain.inheritedKeys.get(env) || [];
@@ -270,34 +270,34 @@ export function renderInheritanceChain(analysis: InheritanceAnalysis): void {
       const display = inherited.length > 3 ?
         `${inherited.slice(0, 3).join(', ')}... (${inherited.length} total)` :
         inherited.join(', ');
-      console.log(`│    ${c("hsl(145, 80%, 45%)")}• ${env}:${reset} ${display} ${"".padEnd(45 - env.length - display.length, ' ')} │`);
+      console.info(`│    ${c("hsl(145, 80%, 45%)")}• ${env}:${reset} ${display} ${"".padEnd(45 - env.length - display.length, ' ')} │`);
     }
   }
 
   // Summary
-  console.log("│".padEnd(71, ' ') + "│");
+  console.info("│".padEnd(71, ' ') + "│");
   const hardeningColor = analysis.summary.hardeningLevel === 'production' ? c("hsl(10, 90%, 55%)") :
                         analysis.summary.hardeningLevel === 'staging' ? c("hsl(48, 100%, 60%)") :
                         c("hsl(145, 80%, 45%)");
 
-  console.log(`│  ${c("hsl(210, 20%, 50%)")}Summary:${reset} ${analysis.summary.totalEnvironments} envs, ${analysis.summary.totalOverrides} overrides, ${analysis.summary.totalInherited} inherited ${"".padEnd(0, ' ')} │`);
-  console.log(`│  ${hardeningColor}Hardening Level: ${analysis.summary.hardeningLevel.toUpperCase()}${reset} ${"".padEnd(38 - analysis.summary.hardeningLevel.length, ' ')} │`);
+  console.info(`│  ${c("hsl(210, 20%, 50%)")}Summary:${reset} ${analysis.summary.totalEnvironments} envs, ${analysis.summary.totalOverrides} overrides, ${analysis.summary.totalInherited} inherited ${"".padEnd(0, ' ')} │`);
+  console.info(`│  ${hardeningColor}Hardening Level: ${analysis.summary.hardeningLevel.toUpperCase()}${reset} ${"".padEnd(38 - analysis.summary.hardeningLevel.length, ' ')} │`);
 
-  console.log("└".repeat(70) + "┘");
+  console.info("└".repeat(70) + "┘");
 
   // Chromatic Legend - Visual Color Reference
-  console.log("\n" + "─".repeat(70));
-  console.log(
+  console.info("\n" + "─".repeat(70));
+  console.info(
     c("hsl(145, 80%, 45%)") + "████" + reset + " Inherited   " +
     c("hsl(10, 90%, 55%)") + "████" + reset + " Overridden   " +
     c("hsl(220, 20%, 40%)") + "████" + reset + " Base Configuration"
   );
-  console.log(
+  console.info(
     c("hsl(280, 60%, 60%)") + "████" + reset + " Merge Analysis   " +
     c("hsl(48, 100%, 60%)") + "████" + reset + " Staging Level   " +
     c("hsl(210, 20%, 50%)") + "████" + reset + " Summary Information"
   );
-  console.log("─".repeat(70) + "\n");
+  console.info("─".repeat(70) + "\n");
 }
 
 export function generateInheritanceReport(analysis: InheritanceAnalysis): string {

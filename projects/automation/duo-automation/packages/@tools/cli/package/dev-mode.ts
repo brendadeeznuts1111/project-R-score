@@ -7,19 +7,19 @@ import { $ } from "bun";
 import { SovereignLinkOrchestrator } from "../utils/sovereign-link-orchestrator";
 
 export async function enableLocalLinking() {
-  console.log("🏰 [SOVEREIGN DEV] Activating Local Symlink Mode...");
+  console.info("🏰 [SOVEREIGN DEV] Activating Local Symlink Mode...");
   const modules = await SovereignLinkOrchestrator.registerModules();
   if (modules.length > 0) {
     await SovereignLinkOrchestrator.linkToTarget(".", modules);
-    console.log("💎 Local Module Matrix SYNCHRONIZED.");
+    console.info("💎 Local Module Matrix SYNCHRONIZED.");
   }
 }
 
 export async function enableR2Production() {
-  console.log("🛰️ [SOVEREIGN PROD] Reverting to Cloudflare R2 Registry...");
+  console.info("🛰️ [SOVEREIGN PROD] Reverting to Cloudflare R2 Registry...");
   // Standard v4.0 Registry
   const registry = "https://duo-npm-registry.utahj4754.workers.dev";
-  console.log(`🔗 Target Registry: ${registry}`);
+  console.info(`🔗 Target Registry: ${registry}`);
   
   const proc = Bun.spawn(["bun", "install", "--registry", registry], {
     stdout: "inherit",
@@ -28,7 +28,7 @@ export async function enableR2Production() {
 
   const exitCode = await proc.exited;
   if (exitCode === 0) {
-    console.log("✅ Sovereign Fleet re-anchored to Production Registry.");
+    console.info("✅ Sovereign Fleet re-anchored to Production Registry.");
   } else {
     console.error("❌ Production sync failed. Check mTLS certificates.");
   }
@@ -42,7 +42,7 @@ if (command === "--dev") {
 } else if (command === "--prod") {
   await enableR2Production();
 } else {
-  console.log(`
+  console.info(`
 🏰 Sovereign dev-mode CLI
 ========================
 Usage:

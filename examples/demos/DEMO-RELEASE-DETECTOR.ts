@@ -4,28 +4,28 @@
 import { BunReleaseDetector } from '../../docs/bun-complete/BUN-COMPLETE-RELEASE-DETECTOR';
 
 async function demonstrateReleaseDetector() {
-  console.log('🚀 Bun Complete Release Detector Demo');
-  console.log('=====================================\n');
+  console.info('🚀 Bun Complete Release Detector Demo');
+  console.info('=====================================\n');
 
   // Initialize the detector with all sources
   const detector = new BunReleaseDetector(process.env.GITHUB_TOKEN);
 
-  console.log('📡 Configured Sources:');
-  console.log('1. RSS Feed: https://bun.com/rss.xml');
-  console.log('2. GitHub Releases: https://github.com/oven-sh/bun/releases');
-  console.log('3. GitHub Tags: https://github.com/oven-sh/bun/tags');
-  console.log('4. Blog Posts: https://bun.com/blog');
-  console.log('5. GitHub Discussions: https://github.com/oven-sh/bun/discussions/categories/announcements');
-  console.log('6. GitHub Commits: https://github.com/oven-sh/bun/commits/main/');
-  console.log('');
+  console.info('📡 Configured Sources:');
+  console.info('1. RSS Feed: https://bun.com/rss.xml');
+  console.info('2. GitHub Releases: https://github.com/oven-sh/bun/releases');
+  console.info('3. GitHub Tags: https://github.com/oven-sh/bun/tags');
+  console.info('4. Blog Posts: https://bun.com/blog');
+  console.info('5. GitHub Discussions: https://github.com/oven-sh/bun/discussions/categories/announcements');
+  console.info('6. GitHub Commits: https://github.com/oven-sh/bun/commits/main/');
+  console.info('');
 
   // Manual check of each source
-  console.log('🔍 Manual Source Check:');
-  console.log('========================');
+  console.info('🔍 Manual Source Check:');
+  console.info('========================');
 
   try {
     // 1. Check RSS Feed
-    console.log('\n1️⃣ Checking RSS Feed...');
+    console.info('\n1️⃣ Checking RSS Feed...');
     const rssResponse = await fetch('https://bun.com/rss.xml');
     const rssXml = await rssResponse.text();
     
@@ -36,13 +36,13 @@ async function demonstrateReleaseDetector() {
       const pubDateMatch = itemMatch[0].match(/<pubDate>(.*?)<\/pubDate>/);
       
       if (titleMatch && pubDateMatch) {
-        console.log(`   ✅ Latest: ${titleMatch[1]}`);
-        console.log(`   📅 Date: ${pubDateMatch[1]}`);
+        console.info(`   ✅ Latest: ${titleMatch[1]}`);
+        console.info(`   📅 Date: ${pubDateMatch[1]}`);
       }
     }
 
     // 2. Check GitHub Releases
-    console.log('\n2️⃣ Checking GitHub Releases...');
+    console.info('\n2️⃣ Checking GitHub Releases...');
     const releasesResponse = await fetch('https://api.github.com/repos/oven-sh/bun/releases?per_page=3', {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
@@ -53,14 +53,14 @@ async function demonstrateReleaseDetector() {
     if (releasesResponse.ok) {
       const releases = await releasesResponse.json();
       const latestRelease = releases[0];
-      console.log(`   ✅ Latest: ${latestRelease.tag_name}`);
-      console.log(`   📋 Name: ${latestRelease.name}`);
-      console.log(`   📅 Published: ${latestRelease.published_at}`);
-      console.log(`   📦 Assets: ${latestRelease.assets?.length || 0}`);
+      console.info(`   ✅ Latest: ${latestRelease.tag_name}`);
+      console.info(`   📋 Name: ${latestRelease.name}`);
+      console.info(`   📅 Published: ${latestRelease.published_at}`);
+      console.info(`   📦 Assets: ${latestRelease.assets?.length || 0}`);
     }
 
     // 3. Check GitHub Tags
-    console.log('\n3️⃣ Checking GitHub Tags...');
+    console.info('\n3️⃣ Checking GitHub Tags...');
     const tagsResponse = await fetch('https://api.github.com/repos/oven-sh/bun/tags?per_page=3', {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
@@ -71,13 +71,13 @@ async function demonstrateReleaseDetector() {
     if (tagsResponse.ok) {
       const tags = await tagsResponse.json();
       const latestTag = tags[0];
-      console.log(`   ✅ Latest Tag: ${latestTag.name}`);
-      console.log(`   📝 Commit: ${latestTag.commit.sha.substring(0, 7)}`);
-      console.log(`   📦 Zip: ${latestTag.zipball_url}`);
+      console.info(`   ✅ Latest Tag: ${latestTag.name}`);
+      console.info(`   📝 Commit: ${latestTag.commit.sha.substring(0, 7)}`);
+      console.info(`   📦 Zip: ${latestTag.zipball_url}`);
     }
 
     // 4. Check Blog Posts
-    console.log('\n4️⃣ Checking Blog Posts...');
+    console.info('\n4️⃣ Checking Blog Posts...');
     const blogResponse = await fetch('https://bun.com/blog');
     if (blogResponse.ok) {
       const blogHtml = await blogResponse.text();
@@ -85,13 +85,13 @@ async function demonstrateReleaseDetector() {
       // Look for release posts
       const releaseMatch = blogHtml.match(/<a[^>]*href="\/blog\/bun-v(\d+\.\d+\.\d+)"[^>]*>(.*?)<\/a>/);
       if (releaseMatch) {
-        console.log(`   ✅ Latest Release Post: bun-v${releaseMatch[1]}`);
-        console.log(`   🔗 URL: https://bun.com/blog/bun-v${releaseMatch[1]}`);
+        console.info(`   ✅ Latest Release Post: bun-v${releaseMatch[1]}`);
+        console.info(`   🔗 URL: https://bun.com/blog/bun-v${releaseMatch[1]}`);
       }
     }
 
     // 5. Check GitHub Discussions
-    console.log('\n5️⃣ Checking GitHub Discussions...');
+    console.info('\n5️⃣ Checking GitHub Discussions...');
     const discussionsResponse = await fetch('https://api.github.com/repos/oven-sh/bun/discussions?category=announcements&per_page=3', {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
@@ -103,14 +103,14 @@ async function demonstrateReleaseDetector() {
       const discussions = await discussionsResponse.json();
       const latestDiscussion = discussions[0];
       if (latestDiscussion) {
-        console.log(`   ✅ Latest: ${latestDiscussion.title}`);
-        console.log(`   📅 Created: ${latestDiscussion.created_at}`);
-        console.log(`   💬 Comments: ${latestDiscussion.comments || 0}`);
+        console.info(`   ✅ Latest: ${latestDiscussion.title}`);
+        console.info(`   📅 Created: ${latestDiscussion.created_at}`);
+        console.info(`   💬 Comments: ${latestDiscussion.comments || 0}`);
       }
     }
 
     // 6. Check Latest Commits
-    console.log('\n6️⃣ Checking Latest Commits...');
+    console.info('\n6️⃣ Checking Latest Commits...');
     const commitsResponse = await fetch('https://api.github.com/repos/oven-sh/bun/commits?per_page=5', {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
@@ -120,9 +120,9 @@ async function demonstrateReleaseDetector() {
     
     if (commitsResponse.ok) {
       const commits = await commitsResponse.json();
-      console.log(`   ✅ Latest 5 commits:`);
+      console.info(`   ✅ Latest 5 commits:`);
       commits.forEach((commit: any, index: number) => {
-        console.log(`   ${index + 1}. ${commit.sha.substring(0, 7)}: ${commit.message.split('\n')[0].substring(0, 60)}...`);
+        console.info(`   ${index + 1}. ${commit.sha.substring(0, 7)}: ${commit.message.split('\n')[0].substring(0, 60)}...`);
       });
     }
 
@@ -130,53 +130,53 @@ async function demonstrateReleaseDetector() {
     console.error('❌ Error during manual check:', error);
   }
 
-  console.log('\n🔄 Starting Automatic Monitoring...');
-  console.log('=====================================');
+  console.info('\n🔄 Starting Automatic Monitoring...');
+  console.info('=====================================');
 
   // Start the automatic monitoring
   // detector.startMonitoring();
 
-  console.log('\n📊 Monitoring Strategy:');
-  console.log('========================');
-  console.log('1. RSS Feed (Priority 1) - Check every 5 minutes');
-  console.log('2. GitHub Releases (Priority 2) - Check every 10 minutes');
-  console.log('3. GitHub Tags (Priority 3) - Check every 15 minutes');
-  console.log('4. Blog Posts (Priority 4) - Check every 20 minutes');
-  console.log('5. GitHub Discussions (Priority 5) - Check every 30 minutes');
-  console.log('6. GitHub Commits (Priority 6) - Check every 60 minutes');
+  console.info('\n📊 Monitoring Strategy:');
+  console.info('========================');
+  console.info('1. RSS Feed (Priority 1) - Check every 5 minutes');
+  console.info('2. GitHub Releases (Priority 2) - Check every 10 minutes');
+  console.info('3. GitHub Tags (Priority 3) - Check every 15 minutes');
+  console.info('4. Blog Posts (Priority 4) - Check every 20 minutes');
+  console.info('5. GitHub Discussions (Priority 5) - Check every 30 minutes');
+  console.info('6. GitHub Commits (Priority 6) - Check every 60 minutes');
 
-  console.log('\n🎯 Detection Workflow:');
-  console.log('=====================');
-  console.log('T=0min: RSS Feed detects new release → Immediate notification');
-  console.log('T=2min: Blog post parsing → Feature extraction');
-  console.log('T=5min: Commit analysis → Technical details');
-  console.log('T=10min: Complete release data ready');
+  console.info('\n🎯 Detection Workflow:');
+  console.info('=====================');
+  console.info('T=0min: RSS Feed detects new release → Immediate notification');
+  console.info('T=2min: Blog post parsing → Feature extraction');
+  console.info('T=5min: Commit analysis → Technical details');
+  console.info('T=10min: Complete release data ready');
 
-  console.log('\n🏗️ Pattern Generation:');
-  console.log('=======================');
-  console.log('- Extract code examples from blog markdown');
-  console.log('- Parse performance metrics from release notes');
-  console.log('- Generate Factory-Wager one-liner patterns');
-  console.log('- Create provider-enhanced documentation');
-  console.log('- Update cross-reference matrices');
+  console.info('\n🏗️ Pattern Generation:');
+  console.info('=======================');
+  console.info('- Extract code examples from blog markdown');
+  console.info('- Parse performance metrics from release notes');
+  console.info('- Generate Factory-Wager one-liner patterns');
+  console.info('- Create provider-enhanced documentation');
+  console.info('- Update cross-reference matrices');
 
-  console.log('\n📤 Output Files Generated:');
-  console.log('=========================');
-  console.log('- bun-release-v{version}.json - Complete release data');
-  console.log('- BUN-V{version}-RELEASE-SUMMARY.md - Human-readable summary');
-  console.log('- factory-wager-patterns-v{version}.ts - Generated patterns');
-  console.log('- provider-cross-reference-v{version}.md - Provider mappings');
+  console.info('\n📤 Output Files Generated:');
+  console.info('=========================');
+  console.info('- bun-release-v{version}.json - Complete release data');
+  console.info('- BUN-V{version}-RELEASE-SUMMARY.md - Human-readable summary');
+  console.info('- factory-wager-patterns-v{version}.ts - Generated patterns');
+  console.info('- provider-cross-reference-v{version}.md - Provider mappings');
 
-  console.log('\n✨ Demo Complete!');
-  console.log('================');
-  console.log('The detector is ready to monitor all sources and automatically');
-  console.log('generate enhanced patterns when new Bun releases are published.');
+  console.info('\n✨ Demo Complete!');
+  console.info('================');
+  console.info('The detector is ready to monitor all sources and automatically');
+  console.info('generate enhanced patterns when new Bun releases are published.');
 }
 
 // Simulate processing the v1.3.7 release as an example
 async function simulateV137Processing() {
-  console.log('\n🎭 Simulating Bun v1.3.7 Processing...');
-  console.log('=======================================');
+  console.info('\n🎭 Simulating Bun v1.3.7 Processing...');
+  console.info('=======================================');
 
   const v137Data = {
     version: '1.3.7',
@@ -265,13 +265,13 @@ async function simulateV137Processing() {
     downloadUrls: []
   };
 
-  console.log('📋 Release Data:');
-  console.log(`   Version: ${v137Data.version}`);
-  console.log(`   Title: ${v137Data.title}`);
-  console.log(`   Published: ${v137Data.publicationDate.toISOString()}`);
-  console.log(`   Sources: ${Object.keys(v137Data.sources).length}`);
+  console.info('📋 Release Data:');
+  console.info(`   Version: ${v137Data.version}`);
+  console.info(`   Title: ${v137Data.title}`);
+  console.info(`   Published: ${v137Data.publicationDate.toISOString()}`);
+  console.info(`   Sources: ${Object.keys(v137Data.sources).length}`);
 
-  console.log('\n🏗️ Generated Patterns:');
+  console.info('\n🏗️ Generated Patterns:');
   const patterns = [
     {
       id: 'bun-v1.3.7-0',
@@ -300,24 +300,24 @@ async function simulateV137Processing() {
   ];
 
   patterns.forEach((pattern, index) => {
-    console.log(`   ${index + 1}. ${pattern.name}`);
-    console.log(`      Category: ${pattern.category}`);
-    console.log(`      Command: ${pattern.command}`);
-    console.log(`      Tags: ${pattern.tags.join(', ')}`);
+    console.info(`   ${index + 1}. ${pattern.name}`);
+    console.info(`      Category: ${pattern.category}`);
+    console.info(`      Command: ${pattern.command}`);
+    console.info(`      Tags: ${pattern.tags.join(', ')}`);
   });
 
-  console.log('\n📊 Performance Improvements:');
+  console.info('\n📊 Performance Improvements:');
   v137Data.sources.blogPost?.performanceMetrics.forEach((metric, index) => {
-    console.log(`   ${index + 1}. ${metric.operation}: ${metric.before} → ${metric.after} (${metric.improvement})`);
+    console.info(`   ${index + 1}. ${metric.operation}: ${metric.before} → ${metric.after} (${metric.improvement})`);
   });
 
-  console.log('\n💾 Files Generated:');
-  console.log('   ✅ bun-release-v1.3.7.json');
-  console.log('   ✅ BUN-V1.3.7-RELEASE-SUMMARY.md');
-  console.log('   ✅ factory-wager-patterns-v1.3.7.ts');
-  console.log('   ✅ provider-cross-reference-v1.3.7.md');
+  console.info('\n💾 Files Generated:');
+  console.info('   ✅ bun-release-v1.3.7.json');
+  console.info('   ✅ BUN-V1.3.7-RELEASE-SUMMARY.md');
+  console.info('   ✅ factory-wager-patterns-v1.3.7.ts');
+  console.info('   ✅ provider-cross-reference-v1.3.7.md');
 
-  console.log('\n🎯 Integration Complete!');
+  console.info('\n🎯 Integration Complete!');
 }
 
 // Run the demonstration

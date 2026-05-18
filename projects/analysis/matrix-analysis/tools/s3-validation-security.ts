@@ -5,15 +5,15 @@
  * Tests the S3 credential validation improvements
  */
 
-console.log("🔒 S3 Credential Validation Security Fix");
-console.log("=====================================\n");
+console.info("🔒 S3 Credential Validation Security Fix");
+console.info("=====================================\n");
 
 // ===== Test 1: S3 Credential Parameter Validation =====
-console.log("1️⃣ S3 Credential Parameter Validation");
-console.log("------------------------------------");
+console.info("1️⃣ S3 Credential Parameter Validation");
+console.info("------------------------------------");
 
 function testS3CredentialValidation() {
-	console.log("Testing S3 credential validation for invalid parameters...");
+	console.info("Testing S3 credential validation for invalid parameters...");
 
 	// Import S3 module
 	const { s3 } = require("bun") as any;
@@ -115,36 +115,36 @@ function testS3CredentialValidation() {
 		},
 	];
 
-	console.log("\n📋 Valid Parameter Ranges:");
-	console.log("• pageSize: 1 - 1000");
-	console.log("• partSize: 5MB - 5GB");
-	console.log("• retry: 0 - 10");
+	console.info("\n📋 Valid Parameter Ranges:");
+	console.info("• pageSize: 1 - 1000");
+	console.info("• partSize: 5MB - 5GB");
+	console.info("• retry: 0 - 10");
 
-	console.log("\n❌ Invalid Configurations (should be rejected):");
+	console.info("\n❌ Invalid Configurations (should be rejected):");
 	for (const test of invalidConfigs) {
-		console.log(`   • ${test.name}`);
+		console.info(`   • ${test.name}`);
 		try {
 			// This would throw an error in real usage
 			// s3.configure(test.config);
-			console.log("     ⚠️ Would be rejected (validation active)");
+			console.info("     ⚠️ Would be rejected (validation active)");
 		} catch (error) {
-			console.log(`     ✅ Rejected: ${error}`);
+			console.info(`     ✅ Rejected: ${error}`);
 		}
 	}
 
-	console.log("\n✅ Valid Configurations (should be accepted):");
+	console.info("\n✅ Valid Configurations (should be accepted):");
 	for (const test of validConfigs) {
-		console.log(`   • ${test.name}`);
-		console.log("     ✅ Would be accepted");
+		console.info(`   • ${test.name}`);
+		console.info("     ✅ Would be accepted");
 	}
 }
 
 // ===== Test 2: S3 File Operations with Validation =====
-console.log("\n2️⃣ S3 File Operations with Validation");
-console.log("------------------------------------");
+console.info("\n2️⃣ S3 File Operations with Validation");
+console.info("------------------------------------");
 
 function testS3FileOperations() {
-	console.log("Testing S3 file operations with validation...");
+	console.info("Testing S3 file operations with validation...");
 
 	// Test file operations with validated parameters
 	const operations = [
@@ -189,53 +189,53 @@ function testS3FileOperations() {
 		},
 	];
 
-	console.log("Operations with parameter validation:");
+	console.info("Operations with parameter validation:");
 	for (const op of operations) {
-		console.log(`\n${op.operation}:`);
-		console.log(
+		console.info(`\n${op.operation}:`);
+		console.info(
 			`  Valid params: pageSize=${op.validParams.pageSize || "default"}, partSize=${op.validParams.partSize || "default"}, retry=${op.validParams.retry || "default"}`,
 		);
-		console.log(
+		console.info(
 			`  Invalid params: pageSize=${op.invalidParams.pageSize || "default"}, partSize=${op.invalidParams.partSize || "default"}, retry=${op.invalidParams.retry || "default"}`,
 		);
-		console.log("  ✅ Validation prevents invalid configurations");
+		console.info("  ✅ Validation prevents invalid configurations");
 	}
 }
 
 // ===== Test 3: Security Benefits =====
-console.log("\n3️⃣ Security Benefits of Validation");
-console.log("--------------------------------");
+console.info("\n3️⃣ Security Benefits of Validation");
+console.info("--------------------------------");
 
 function demonstrateSecurityBenefits() {
-	console.log("Security benefits of S3 credential validation...");
+	console.info("Security benefits of S3 credential validation...");
 
-	console.log("\n🛡️ Prevents:");
-	console.log("• Resource exhaustion from large page sizes");
-	console.log("• Memory issues from oversized multipart uploads");
-	console.log("• Infinite loops from excessive retry attempts");
-	console.log("• API rate limiting from invalid parameters");
+	console.info("\n🛡️ Prevents:");
+	console.info("• Resource exhaustion from large page sizes");
+	console.info("• Memory issues from oversized multipart uploads");
+	console.info("• Infinite loops from excessive retry attempts");
+	console.info("• API rate limiting from invalid parameters");
 
-	console.log("\n✅ Ensures:");
-	console.log("• Predictable resource usage");
-	console.log("• Stable connection handling");
-	console.log("• Compliance with AWS S3 limits");
-	console.log("• Better error messages for misconfiguration");
+	console.info("\n✅ Ensures:");
+	console.info("• Predictable resource usage");
+	console.info("• Stable connection handling");
+	console.info("• Compliance with AWS S3 limits");
+	console.info("• Better error messages for misconfiguration");
 
 	// Example of security scenario
-	console.log("\n📝 Security Scenario:");
-	console.log("Attacker tries to cause resource exhaustion:");
-	console.log("1. Sets pageSize to 1,000,000");
-	console.log("2. Attempts to list millions of objects");
-	console.log("3. Validation rejects pageSize > 1000");
-	console.log("4. Attack prevented - resources protected");
+	console.info("\n📝 Security Scenario:");
+	console.info("Attacker tries to cause resource exhaustion:");
+	console.info("1. Sets pageSize to 1,000,000");
+	console.info("2. Attempts to list millions of objects");
+	console.info("3. Validation rejects pageSize > 1000");
+	console.info("4. Attack prevented - resources protected");
 }
 
 // ===== Test 4: Best Practices =====
-console.log("\n4️⃣ S3 Configuration Best Practices");
-console.log("---------------------------------");
+console.info("\n4️⃣ S3 Configuration Best Practices");
+console.info("---------------------------------");
 
 function showBestPractices() {
-	console.log("S3 configuration best practices...");
+	console.info("S3 configuration best practices...");
 
 	const recommendedConfigs = {
 		smallFiles: {
@@ -258,24 +258,24 @@ function showBestPractices() {
 		},
 	};
 
-	console.log("\n📚 Recommended configurations:");
+	console.info("\n📚 Recommended configurations:");
 	for (const [name, config] of Object.entries(recommendedConfigs)) {
-		console.log(`\n${config.description}:`);
-		console.log(`  pageSize: ${config.pageSize}`);
-		console.log(`  partSize: ${(config.partSize / 1024 / 1024).toFixed(0)}MB`);
-		console.log(`  retry: ${config.retry}`);
+		console.info(`\n${config.description}:`);
+		console.info(`  pageSize: ${config.pageSize}`);
+		console.info(`  partSize: ${(config.partSize / 1024 / 1024).toFixed(0)}MB`);
+		console.info(`  retry: ${config.retry}`);
 	}
 
-	console.log("\n💡 Tips:");
-	console.log("• Use smaller page sizes for frequent listing");
-	console.log("• Increase part size for faster uploads of large files");
-	console.log("• Adjust retry based on network reliability");
-	console.log("• Monitor S3 API costs with larger page sizes");
+	console.info("\n💡 Tips:");
+	console.info("• Use smaller page sizes for frequent listing");
+	console.info("• Increase part size for faster uploads of large files");
+	console.info("• Adjust retry based on network reliability");
+	console.info("• Monitor S3 API costs with larger page sizes");
 }
 
 // ===== Main Execution =====
 async function runS3ValidationTests(): Promise<void> {
-	console.log("🎯 Running S3 Credential Validation Tests\n");
+	console.info("🎯 Running S3 Credential Validation Tests\n");
 
 	try {
 		testS3CredentialValidation();
@@ -308,19 +308,19 @@ async function runS3ValidationTests(): Promise<void> {
 			"./s3-validation-security-results.json",
 			JSON.stringify(report, null, 2),
 		);
-		console.log("\n💾 Results saved to ./s3-validation-security-results.json");
+		console.info("\n💾 Results saved to ./s3-validation-security-results.json");
 	} catch (error) {
 		console.error("❌ Test failed:", error);
 	}
 
-	console.log("\n🎉 S3 Credential Validation Tests Complete!");
-	console.log("\n🔒 Security Improvements Verified:");
-	console.log("• ✅ pageSize validation (1-1000)");
-	console.log("• ✅ partSize validation (5MB-5GB)");
-	console.log("• ✅ retry validation (0-10)");
-	console.log("• ✅ Prevents resource exhaustion attacks");
-	console.log("• ✅ Ensures AWS S3 API compliance");
-	console.log("• ✅ Better error handling for misconfiguration");
+	console.info("\n🎉 S3 Credential Validation Tests Complete!");
+	console.info("\n🔒 Security Improvements Verified:");
+	console.info("• ✅ pageSize validation (1-1000)");
+	console.info("• ✅ partSize validation (5MB-5GB)");
+	console.info("• ✅ retry validation (0-10)");
+	console.info("• ✅ Prevents resource exhaustion attacks");
+	console.info("• ✅ Ensures AWS S3 API compliance");
+	console.info("• ✅ Better error handling for misconfiguration");
 }
 
 // Run tests

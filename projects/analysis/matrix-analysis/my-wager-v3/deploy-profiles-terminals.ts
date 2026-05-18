@@ -33,7 +33,7 @@ class ProfileTerminalBindingManager {
     const parsed = Bun.TOML.parse(raw) as any; // <1ms vs 15ms YAML parse
 
     const end = performance.now();
-    console.log(`⚡ Profile loaded in ${(end - start).toFixed(3)}ms`);
+    console.info(`⚡ Profile loaded in ${(end - start).toFixed(3)}ms`);
 
     // Basic validation
     return {
@@ -57,12 +57,12 @@ class ProfileTerminalBindingManager {
     const matrix = await this.generateProfileMatrix();
 
     // RSS feed for dashboard
-    console.log('📡 Broadcasting matrix update via RSS...');
-    console.log(`Matrix checksum: ${Bun.hash.wyhash(matrix)}`);
+    console.info('📡 Broadcasting matrix update via RSS...');
+    console.info(`Matrix checksum: ${Bun.hash.wyhash(matrix)}`);
 
     // MCP resource for ACP
-    console.log('🔌 Notifying MCP server...');
-    console.log({
+    console.info('🔌 Notifying MCP server...');
+    console.info({
       uri: 'bun://profiles/matrix/realtime',
       data: {
         profiles: this.profiles.size,
@@ -98,7 +98,7 @@ class ProfileTerminalBindingManager {
   }
 
   async deployToRegion(region: string): Promise<void> {
-    console.log(`\n🌍 Deploying to ${region}...`);
+    console.info(`\n🌍 Deploying to ${region}...`);
 
     // Load profiles
     const profiles = ['global', 'quantum', 'environment', 'security'];
@@ -119,11 +119,11 @@ class ProfileTerminalBindingManager {
       });
     }
 
-    console.log(`✅ ${region}: ${profiles.length} profiles, 5 terminals active`);
+    console.info(`✅ ${region}: ${profiles.length} profiles, 5 terminals active`);
   }
 
   async verifyDeployment(): Promise<void> {
-    console.log('\n📊 Verifying Tier-1380 deployment...');
+    console.info('\n📊 Verifying Tier-1380 deployment...');
 
     // In verify mode, load profiles to get accurate counts
     if (this.profiles.size === 0) {
@@ -150,13 +150,13 @@ class ProfileTerminalBindingManager {
     const terminalCount = 25; // 5 terminals per region
     const bindingCount = this.bindings.size;
 
-    console.log(`✅ ${profileCount} profiles sealed (${profileCount}/20)`);
-    console.log(`✅ ${terminalCount} terminals active (${terminalCount}/25)`);
-    console.log(`✅ ${bindingCount} bindings quantum-entangled`);
-    console.log(`✅ Col 93 matrix: 93 chars exact`);
-    console.log(`✅ GB9c encoding: Devanagari compatible`);
-    console.log(`✅ CSRF tokens: ${bindingCount}x valid scopes`);
-    console.log('🔒 TIER-1380 PROFILES & TERMINALS EMPIRE SEALED');
+    console.info(`✅ ${profileCount} profiles sealed (${profileCount}/20)`);
+    console.info(`✅ ${terminalCount} terminals active (${terminalCount}/25)`);
+    console.info(`✅ ${bindingCount} bindings quantum-entangled`);
+    console.info(`✅ Col 93 matrix: 93 chars exact`);
+    console.info(`✅ GB9c encoding: Devanagari compatible`);
+    console.info(`✅ CSRF tokens: ${bindingCount}x valid scopes`);
+    console.info('🔒 TIER-1380 PROFILES & TERMINALS EMPIRE SEALED');
 
     await this.broadcastMatrixUpdate();
   }
@@ -168,8 +168,8 @@ async function main() {
   const args = process.argv.slice(2);
   const isVerifyMode = args.includes('--verify');
 
-  console.log('🚀 Tier-1380 Profiles & Terminals Deployment');
-  console.log('==========================================');
+  console.info('🚀 Tier-1380 Profiles & Terminals Deployment');
+  console.info('==========================================');
 
   const manager = new ProfileTerminalBindingManager();
 
@@ -184,9 +184,9 @@ async function main() {
   await manager.verifyDeployment();
 
   if (!isVerifyMode) {
-    console.log('\n✅ Deployment complete across all 5 regions!');
+    console.info('\n✅ Deployment complete across all 5 regions!');
   } else {
-    console.log('\n✅ Verification complete!');
+    console.info('\n✅ Verification complete!');
   }
 }
 

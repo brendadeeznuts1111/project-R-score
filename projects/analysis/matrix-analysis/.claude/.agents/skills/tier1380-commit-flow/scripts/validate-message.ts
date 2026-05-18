@@ -130,19 +130,19 @@ if (import.meta.main) {
 	const message = Bun.argv[2];
 
 	if (!message) {
-		console.log("╔════════════════════════════════════════════════════════╗");
-		console.log("║     Tier-1380 OMEGA Commit Message Validation          ║");
-		console.log("╚════════════════════════════════════════════════════════╝");
-		console.log();
-		console.log("Usage:");
-		console.log('  bun validate-message.ts "[RUNTIME][CHROME][TIER:1380] Fix entropy"');
-		console.log(
+		console.info("╔════════════════════════════════════════════════════════╗");
+		console.info("║     Tier-1380 OMEGA Commit Message Validation          ║");
+		console.info("╚════════════════════════════════════════════════════════╝");
+		console.info();
+		console.info("Usage:");
+		console.info('  bun validate-message.ts "[RUNTIME][CHROME][TIER:1380] Fix entropy"');
+		console.info(
 			'  bun validate-message.ts "[MARKET][MICROSTRUCTURE][FEAT][META:{TIER:1380}][Analyzer][detect][T11][#REF:52][BUN-NATIVE] Hidden Steam T11_v2"',
 		);
-		console.log();
-		console.log("Formats:");
-		console.log("  Legacy:   [DOMAIN][COMPONENT:NAME][TIER:XXXX] Description");
-		console.log(
+		console.info();
+		console.info("Formats:");
+		console.info("  Legacy:   [DOMAIN][COMPONENT:NAME][TIER:XXXX] Description");
+		console.info(
 			"  Extended: [DOMAIN][SCOPE][TYPE][META:{TIER:XXXX}][Class][func][Iface][#REF:N][BUN-NATIVE] Description",
 		);
 		process.exit(1);
@@ -150,56 +150,56 @@ if (import.meta.main) {
 
 	const result = validateCommitMessage(message);
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Commit Message Validation          ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
-	console.log(`Message: ${message.slice(0, 80)}${message.length > 80 ? "..." : ""}`);
-	console.log(`Format:  ${result.format.toUpperCase()}`);
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Commit Message Validation          ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
+	console.info(`Message: ${message.slice(0, 80)}${message.length > 80 ? "..." : ""}`);
+	console.info(`Format:  ${result.format.toUpperCase()}`);
+	console.info();
 
 	if (result.valid) {
-		console.log("✅ Message format is VALID");
+		console.info("✅ Message format is VALID");
 
 		if (result.parsed) {
-			console.log("\nParsed Components:");
-			console.log(`  Domain:     ${result.parsed.domain}`);
-			console.log(`  Scope:      ${result.parsed.scope}`);
-			console.log(`  Type:       ${result.parsed.type}`);
-			console.log(`  META:       ${JSON.stringify(result.parsed.meta)}`);
+			console.info("\nParsed Components:");
+			console.info(`  Domain:     ${result.parsed.domain}`);
+			console.info(`  Scope:      ${result.parsed.scope}`);
+			console.info(`  Type:       ${result.parsed.type}`);
+			console.info(`  META:       ${JSON.stringify(result.parsed.meta)}`);
 			if (result.parsed.className)
-				console.log(`  Class:      ${result.parsed.className}`);
+				console.info(`  Class:      ${result.parsed.className}`);
 			if (result.parsed.functionName)
-				console.log(`  Function:   ${result.parsed.functionName}`);
+				console.info(`  Function:   ${result.parsed.functionName}`);
 			if (result.parsed.interfaceName)
-				console.log(`  Interface:  ${result.parsed.interfaceName}`);
-			if (result.parsed.ref) console.log(`  Ref:        ${result.parsed.ref}`);
-			if (result.parsed.bunNative) console.log(`  Bun-Native: ✅`);
-			console.log(`  Subject:    ${result.parsed.subject.slice(0, 50)}...`);
+				console.info(`  Interface:  ${result.parsed.interfaceName}`);
+			if (result.parsed.ref) console.info(`  Ref:        ${result.parsed.ref}`);
+			if (result.parsed.bunNative) console.info(`  Bun-Native: ✅`);
+			console.info(`  Subject:    ${result.parsed.subject.slice(0, 50)}...`);
 		}
 	} else {
-		console.log("❌ Message format is INVALID");
+		console.info("❌ Message format is INVALID");
 	}
 
 	if (result.errors.length > 0) {
-		console.log("\nErrors:");
+		console.info("\nErrors:");
 		for (const error of result.errors) {
-			console.log(`  ❌ ${error}`);
+			console.info(`  ❌ ${error}`);
 		}
 	}
 
 	if (result.warnings.length > 0) {
-		console.log("\nWarnings:");
+		console.info("\nWarnings:");
 		for (const warning of result.warnings) {
-			console.log(`  ⚠️  ${warning}`);
+			console.info(`  ⚠️  ${warning}`);
 		}
 	}
 
 	if (result.valid && result.warnings.length === 0) {
-		console.log("\n✨ Perfect commit message!");
+		console.info("\n✨ Perfect commit message!");
 	}
 
-	console.log();
+	console.info();
 	process.exit(result.valid ? 0 : 1);
 }
 

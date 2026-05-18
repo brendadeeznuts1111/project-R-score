@@ -185,8 +185,8 @@ class TypedRegistryManager {
 			"windows-x64",
 		];
 
-		console.log(color.blue(bold(`🚀 Building & Uploading v${this.version}`)));
-		console.log(
+		console.info(color.blue(bold(`🚀 Building & Uploading v${this.version}`)));
+		console.info(
 			color.gray(`${this.buildTime} | ${this.gitCommit.slice(0, 8)}\n`),
 		);
 
@@ -237,7 +237,7 @@ class TypedRegistryManager {
 			outfile,
 		];
 
-		console.log(color.cyan(`🔨 Building ${platform}...`));
+		console.info(color.cyan(`🔨 Building ${platform}...`));
 
 		const proc = Bun.spawn(buildCmd, {
 			stdout: "pipe",
@@ -265,12 +265,12 @@ class TypedRegistryManager {
 		const body = await file.arrayBuffer();
 		const sizeMB = body.byteLength / 1e6;
 
-		console.log(color.cyan(`📤 [${sizeMB.toFixed(1)}MB] ${platform}`));
+		console.info(color.cyan(`📤 [${sizeMB.toFixed(1)}MB] ${platform}`));
 
 		const result = await this.client.putObject(key, body);
 
 		if (result.success) {
-			console.log(color.gray(`   → ${result.url || key}\n`));
+			console.info(color.gray(`   → ${result.url || key}\n`));
 
 			// Clean up
 			try {
@@ -295,7 +295,7 @@ class TypedRegistryManager {
 		const filename = `${pkg}-${platform}${platform.startsWith("windows") ? ".exe" : ""}`;
 		const key = `v${this.version}/${filename}`;
 
-		console.log(color.gray(`📦 Fetching ${filename} from registry...`));
+		console.info(color.gray(`📦 Fetching ${filename} from registry...`));
 
 		const binary = await this.client.getObject(key);
 
@@ -311,12 +311,12 @@ class TypedRegistryManager {
 			await $`chmod +x ${tempPath}`.quiet();
 		}
 
-		console.log(
+		console.info(
 			color.green(
 				`✅ Downloaded ${filename} (${Math.round(binary.byteLength / 1e6)}MB)`,
 			),
 		);
-		console.log(color.cyan(`🚀 Executing...\n`));
+		console.info(color.cyan(`🚀 Executing...\n`));
 
 		const proc = Bun.spawn([tempPath, ...process.argv.slice(4)], {
 			stdin: "inherit",
@@ -337,8 +337,8 @@ class TypedRegistryManager {
 	}
 
 	async version(): Promise<void> {
-		console.log(color.blue(bold(`${this.packageName} v${this.version}`)));
-		console.log(
+		console.info(color.blue(bold(`${this.packageName} v${this.version}`)));
+		console.info(
 			color.gray(`${this.buildTime} | ${this.gitCommit.slice(0, 8)}`),
 		);
 	}
@@ -367,7 +367,7 @@ function printTypedSummary(uploads: BinaryMetadata[]): void {
 	const totalMB = uploads.reduce((sum, u) => sum + u.sizeMB, 0);
 	const successful = uploads.filter((u) => u.success).length;
 
-	console.log(
+	console.info(
 		color.green(
 			bold(`
 ┌──────────────────────────────────────────────────────┬──────────────┐
@@ -377,14 +377,14 @@ function printTypedSummary(uploads: BinaryMetadata[]): void {
 		),
 	);
 
-	console.log(color.gray("Uploaded platforms:"));
+	console.info(color.gray("Uploaded platforms:"));
 	uploads.forEach((u) => {
 		if (u.success) {
-			console.log(
+			console.info(
 				color.green(`  ✅ ${u.platform.padEnd(15)} ${u.sizeMB.toFixed(1)}MB`),
 			);
 		} else {
-			console.log(color.red(`  ❌ ${u.platform}`));
+			console.info(color.red(`  ❌ ${u.platform}`));
 		}
 	});
 }
@@ -406,10 +406,10 @@ async function main() {
 					BUILD_VERSION || process.env.npm_package_version || "1.0.0";
 				const buildTime = BUILD_TIME || new Date().toISOString();
 				const gitCommit = GIT_COMMIT || "unknown";
-				console.log(color.blue(bold(`${packageName} v${version}`)));
-				console.log(color.gray(`${buildTime} | ${gitCommit.slice(0, 8)}`));
+				console.info(color.blue(bold(`${packageName} v${version}`)));
+				console.info(color.gray(`${buildTime} | ${gitCommit.slice(0, 8)}`));
 			} catch {
-				console.log(
+				console.info(
 					color.blue(
 						bold(
 							`${packageName} v${process.env.npm_package_version || "1.0.0"}`,

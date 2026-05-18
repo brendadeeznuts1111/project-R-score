@@ -154,9 +154,9 @@ function calculateComplexity(
 }
 
 /* ---------- ultimate quantum table ----------------------- */
-console.log("\n🌟 Ultimate Quantum stdin Analysis");
-console.log("======================================");
-console.log(
+console.info("\n🌟 Ultimate Quantum stdin Analysis");
+console.info("======================================");
+console.info(
   inspect.table(stats, {
     border: true,
     header: true,
@@ -189,22 +189,22 @@ const totalSpecial = lines.reduce(
 const avgComplexity =
   stats.reduce((sum, s) => sum + parseFloat(s.complexity), 0) / stats.length;
 
-console.log("\n📊 Comprehensive Analytics:");
-console.log("┌─────────────────┬──────────┐");
-console.log("│ Metric          │ Value    │");
-console.log("├─────────────────┼──────────┤");
-console.log(`│ Total lines     │ ${lines.length.toString().padEnd(8)} │`);
-console.log(`│ Total words     │ ${totalWords.toString().padEnd(8)} │`);
-console.log(`│ Total chars     │ ${totalChars.toString().padEnd(8)} │`);
-console.log(`│ Total vowels    │ ${totalVowels.toString().padEnd(8)} │`);
-console.log(`│ Total consonants│ ${totalConsonants.toString().padEnd(8)} │`);
-console.log(`│ Total numbers   │ ${totalNumbers.toString().padEnd(8)} │`);
-console.log(`│ Total special   │ ${totalSpecial.toString().padEnd(8)} │`);
-console.log(`│ Avg complexity  │ ${avgComplexity.toFixed(1).padEnd(8)} │`);
-console.log("└─────────────────┴──────────┘");
+console.info("\n📊 Comprehensive Analytics:");
+console.info("┌─────────────────┬──────────┐");
+console.info("│ Metric          │ Value    │");
+console.info("├─────────────────┼──────────┤");
+console.info(`│ Total lines     │ ${lines.length.toString().padEnd(8)} │`);
+console.info(`│ Total words     │ ${totalWords.toString().padEnd(8)} │`);
+console.info(`│ Total chars     │ ${totalChars.toString().padEnd(8)} │`);
+console.info(`│ Total vowels    │ ${totalVowels.toString().padEnd(8)} │`);
+console.info(`│ Total consonants│ ${totalConsonants.toString().padEnd(8)} │`);
+console.info(`│ Total numbers   │ ${totalNumbers.toString().padEnd(8)} │`);
+console.info(`│ Total special   │ ${totalSpecial.toString().padEnd(8)} │`);
+console.info(`│ Avg complexity  │ ${avgComplexity.toFixed(1).padEnd(8)} │`);
+console.info("└─────────────────┴──────────┘");
 
 /* ---------- character distribution chart ---------------- */
-console.log("\n📈 Character Distribution:");
+console.info("\n📈 Character Distribution:");
 const total = totalVowels + totalConsonants + totalNumbers + totalSpecial;
 if (total > 0) {
   const vowelPercent = ((totalVowels / total) * 100).toFixed(1);
@@ -212,18 +212,18 @@ if (total > 0) {
   const numberPercent = ((totalNumbers / total) * 100).toFixed(1);
   const specialPercent = ((totalSpecial / total) * 100).toFixed(1);
 
-  console.log(
+  console.info(
     `Vowels:     ${"█".repeat(Math.round(vowelPercent / 5))} ${vowelPercent}%`
   );
-  console.log(
+  console.info(
     `Consonants: ${"█".repeat(
       Math.round(consonantPercent / 5)
     )} ${consonantPercent}%`
   );
-  console.log(
+  console.info(
     `Numbers:    ${"█".repeat(Math.round(numberPercent / 5))} ${numberPercent}%`
   );
-  console.log(
+  console.info(
     `Special:    ${"█".repeat(
       Math.round(specialPercent / 5)
     )} ${specialPercent}%`
@@ -253,9 +253,9 @@ if (!Bun.deepEquals(snapshot, prev, true)) {
     "/tmp/stdin-snapshot-ultimate.json",
     JSON.stringify(snapshot, null, 2)
   );
-  console.log("✅ Ultimate snapshot updated (strict mode)");
+  console.info("✅ Ultimate snapshot updated (strict mode)");
 } else {
-  console.log("📋 No changes detected (stable snapshot)");
+  console.info("📋 No changes detected (stable snapshot)");
 }
 
 /* ---------- ultimate compressed artefacts -------------- */
@@ -298,8 +298,8 @@ const safe = JSON.stringify(report);
 const gz = gzipSync(new TextEncoder().encode(safe), { level: 9 });
 await Bun.write("/tmp/stdin-ultimate.json.gz", gz);
 
-console.log(`📊 Ultimate gzipped report: ${gz.byteLength} bytes`);
-console.log(
+console.info(`📊 Ultimate gzipped report: ${gz.byteLength} bytes`);
+console.info(
   `💾 Compression ratio: ${((gz.byteLength / safe.length) * 100).toFixed(1)}%`
 );
 
@@ -310,26 +310,26 @@ const decompressed = new TextDecoder().decode(decompressedBuffer);
 const parsed = JSON.parse(decompressed);
 const perfEnd = performance.now();
 
-console.log(`⚡ Decompression + parse: ${(perfEnd - perfStart).toFixed(2)}ms`);
+console.info(`⚡ Decompression + parse: ${(perfEnd - perfStart).toFixed(2)}ms`);
 
 /* ---------- visual summary ------------------------------- */
-console.log("\n🎨 Ultimate Visual Summary:");
+console.info("\n🎨 Ultimate Visual Summary:");
 const maxTension = Math.max(...stats.map((s) => parseFloat(s.tension)));
 const maxComplexity = Math.max(...stats.map((s) => parseFloat(s.complexity)));
 const tensionBar = "█".repeat(Math.round(maxTension / 5));
 const complexityBar = "█".repeat(Math.round(maxComplexity / 10));
 
-console.log(`Max tension: ${maxTension.toFixed(1)}% ${tensionBar}`);
-console.log(`Max complexity: ${maxComplexity.toFixed(1)}/50 ${complexityBar}`);
+console.info(`Max tension: ${maxTension.toFixed(1)}% ${tensionBar}`);
+console.info(`Max complexity: ${maxComplexity.toFixed(1)}/50 ${complexityBar}`);
 
 /* ---------- entropy calculation -------------------------- */
 const entropy = calculateEntropy(text);
-console.log(`🔢 Text entropy: ${entropy.toFixed(3)} bits/char`);
+console.info(`🔢 Text entropy: ${entropy.toFixed(3)} bits/char`);
 
-console.log("\n🎉 Ultimate Quantum Analysis Complete!");
-console.log("📁 Generated files:");
-console.log("  • /tmp/stdin-snapshot-ultimate.json");
-console.log("  • /tmp/stdin-ultimate.json.gz");
+console.info("\n🎉 Ultimate Quantum Analysis Complete!");
+console.info("📁 Generated files:");
+console.info("  • /tmp/stdin-snapshot-ultimate.json");
+console.info("  • /tmp/stdin-ultimate.json.gz");
 
 /* ---------- entropy calculation function ---------------- */
 function calculateEntropy(text: string): number {

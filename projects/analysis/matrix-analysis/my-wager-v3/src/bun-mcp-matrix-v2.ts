@@ -331,18 +331,18 @@ export class BunMatrixAnalyzer {
 // Initialize and demonstrate
 const analyzer = new BunMatrixAnalyzer();
 
-console.log('\n🔒 Bun MCP Matrix View v2.0 — Tier-1380 Enhanced');
-console.log('='.repeat(60));
-console.log(`📊 Schema: ${BUN_VERSION_CONSTRAINTS.matrixSchema} | 🦾 Bun: v${BUN_VERSION_CONSTRAINTS.current} | 📅 Last Audit: ${BUN_VERSION_CONSTRAINTS.lastAudit}`);
-console.log('');
+console.info('\n🔒 Bun MCP Matrix View v2.0 — Tier-1380 Enhanced');
+console.info('='.repeat(60));
+console.info(`📊 Schema: ${BUN_VERSION_CONSTRAINTS.matrixSchema} | 🦾 Bun: v${BUN_VERSION_CONSTRAINTS.current} | 📅 Last Audit: ${BUN_VERSION_CONSTRAINTS.lastAudit}`);
+console.info('');
 
 // Enhanced matrix overview with visual indicators
 const report = analyzer.generateReport();
 
-console.log('� Matrix Overview:');
-console.log('┌─────────────────────────────────────────────────────┐');
-console.log('│ 📦 Total APIs:'.padEnd(25) + report.total.toString().padStart(5) + ' │');
-console.log('├─────────────────────────────────────────────────────┤');
+console.info('� Matrix Overview:');
+console.info('┌─────────────────────────────────────────────────────┐');
+console.info('│ 📦 Total APIs:'.padEnd(25) + report.total.toString().padStart(5) + ' │');
+console.info('├─────────────────────────────────────────────────────┤');
 
 // Category breakdown with icons
 const categoryIcons = {
@@ -354,84 +354,84 @@ const categoryIcons = {
   pm: '📋'
 };
 
-console.log('│ By Category:');
+console.info('│ By Category:');
 Object.entries(report.byCategory).forEach(([cat, count]) => {
   const icon = categoryIcons[cat as keyof typeof categoryIcons] || '📄';
-  console.log('│   ' + `${icon} ${cat}`.padEnd(20) + count.toString().padStart(5) + ' │');
+  console.info('│   ' + `${icon} ${cat}`.padEnd(20) + count.toString().padStart(5) + ' │');
 });
 
 // Stability breakdown with colored indicators
-console.log('├─────────────────────────────────────────────────────┤');
-console.log('│ By Stability:');
+console.info('├─────────────────────────────────────────────────────┤');
+console.info('│ By Stability:');
 Object.entries(report.byStability).forEach(([stab, count]) => {
   const indicator = stab === 'stable' ? '✅' :
                     stab === 'experimental' ? '🔬' :
                     stab === 'deprecated' ? '⚠️' : '❓';
-  console.log('│   ' + `${indicator} ${stab}`.padEnd(20) + count.toString().padStart(5) + ' │');
+  console.info('│   ' + `${indicator} ${stab}`.padEnd(20) + count.toString().padStart(5) + ' │');
 });
 
 // Platform support with progress bars
-console.log('├─────────────────────────────────────────────────────┤');
-console.log('│ Platform Support:');
+console.info('├─────────────────────────────────────────────────────┤');
+console.info('│ Platform Support:');
 Object.entries(report.platformSupport).forEach(([plat, count]) => {
   const icon = plat === 'darwin' ? '🍎' : plat === 'linux' ? '🐧' : '🪟';
   const percentage = Math.round((count / report.total) * 100);
   const bar = '█'.repeat(Math.floor(percentage / 5)).padEnd(20);
-  console.log('│   ' + `${icon} ${plat}`.padEnd(15) + bar + ` ${percentage}% │`);
+  console.info('│   ' + `${icon} ${plat}`.padEnd(15) + bar + ` ${percentage}% │`);
 });
 
 // Security classification with severity indicators
-console.log('├─────────────────────────────────────────────────────┤');
-console.log('│ Security Classification:');
+console.info('├─────────────────────────────────────────────────────┤');
+console.info('│ Security Classification:');
 Object.entries(report.securityBreakdown).forEach(([sec, count]) => {
   const indicator = sec === 'critical' ? '🚨' :
                     sec === 'high' ? '⚡' :
                     sec === 'medium' ? '⚠️' : '💚';
-  console.log('│   ' + `${indicator} ${sec}`.padEnd(20) + count.toString().padStart(5) + ' │');
+  console.info('│   ' + `${indicator} ${sec}`.padEnd(20) + count.toString().padStart(5) + ' │');
 });
 
-console.log('└─────────────────────────────────────────────────────┘');
+console.info('└─────────────────────────────────────────────────────┘');
 
 // Enhanced ACP queries with better formatting
-console.log('\n🚀 ACP Query Examples:');
-console.log('═'.repeat(60));
+console.info('\n🚀 ACP Query Examples:');
+console.info('═'.repeat(60));
 
 // Production-safe APIs with performance highlights
 const productionSafe = analyzer.queryACP(['productionSafe']);
-console.log('\n✅ Production-Safe APIs (' + productionSafe.length + '/' + report.total + '):');
-console.log('┌─────────────┬────────────┬─────────────────────────────────┐');
-console.log('│ API         │ Category   │ Performance Baseline            │');
-console.log('├─────────────┼────────────┼─────────────────────────────────┤');
+console.info('\n✅ Production-Safe APIs (' + productionSafe.length + '/' + report.total + '):');
+console.info('┌─────────────┬────────────┬─────────────────────────────────┐');
+console.info('│ API         │ Category   │ Performance Baseline            │');
+console.info('├─────────────┼────────────┼─────────────────────────────────┤');
 
 productionSafe.forEach(api => {
   const apiName = api.term.padEnd(11);
   const category = api.category.padEnd(10);
   const baseline = api.perfBaseline ? api.perfBaseline.comparison.padEnd(31) : 'N/A'.padEnd(31);
-  console.log(`│ ${apiName} │ ${category} │ ${baseline} │`);
+  console.info(`│ ${apiName} │ ${category} │ ${baseline} │`);
 });
-console.log('└─────────────┴────────────┴─────────────────────────────────┘');
+console.info('└─────────────┴────────────┴─────────────────────────────────┘');
 
 // High-security APIs with requirements
 const highSecurity = analyzer.getSecurityCritical();
-console.log('\n🔒 Security-Critical APIs (' + highSecurity.length + '):');
-console.log('┌─────────────┬─────────────┬──────────────┬─────────────────┐');
-console.log('│ API         │ Classification │ Root Required │ Zero-Trust      │');
-console.log('├─────────────┼─────────────┼──────────────┼─────────────────┤');
+console.info('\n🔒 Security-Critical APIs (' + highSecurity.length + '):');
+console.info('┌─────────────┬─────────────┬──────────────┬─────────────────┐');
+console.info('│ API         │ Classification │ Root Required │ Zero-Trust      │');
+console.info('├─────────────┼─────────────┼──────────────┼─────────────────┤');
 
 highSecurity.forEach(api => {
   const apiName = api.term.padEnd(11);
   const classification = api.securityScope.classification.padEnd(13);
   const rootReq = api.securityScope.requiresRoot ? 'Yes'.padEnd(12) : 'No'.padEnd(12);
   const zeroTrust = api.securityScope.zeroTrustEnforced ? '✅ Enforced'.padEnd(15) : '❌ Not Enforced'.padEnd(15);
-  console.log(`│ ${apiName} │ ${classification} │ ${rootReq} │ ${zeroTrust} │`);
+  console.info(`│ ${apiName} │ ${classification} │ ${rootReq} │ ${zeroTrust} │`);
 });
-console.log('└─────────────┴─────────────┴──────────────┴─────────────────┘');
+console.info('└─────────────┴─────────────┴──────────────┴─────────────────┘');
 
 // Platform limitations with visual matrix
-console.log('\n🌐 Platform Compatibility Matrix:');
-console.log('┌─────────────┬─────────┬─────────┬─────────┬─────────────────┐');
-console.log('│ API         │ Darwin  │ Linux   │ Windows │ Notes           │');
-console.log('├─────────────┼─────────┼─────────┼─────────┼─────────────────┤');
+console.info('\n🌐 Platform Compatibility Matrix:');
+console.info('┌─────────────┬─────────┬─────────┬─────────┬─────────────────┐');
+console.info('│ API         │ Darwin  │ Linux   │ Windows │ Notes           │');
+console.info('├─────────────┼─────────┼─────────┼─────────┼─────────────────┤');
 
 const allAPIs = analyzer.entries;
 allAPIs.forEach(api => {
@@ -441,15 +441,15 @@ allAPIs.forEach(api => {
   const windows = api.platforms.includes('win32') ? '✅'.padEnd(7) : '❌'.padEnd(7);
   const notes = (!api.platforms.includes('win32')) ? 'No Windows support' :
                 api.requiredFlags ? `Flags: ${api.requiredFlags.join(', ')}` : '';
-  console.log(`│ ${apiName} │ ${darwin} │ ${linux} │ ${windows} │ ${notes.padEnd(15)} │`);
+  console.info(`│ ${apiName} │ ${darwin} │ ${linux} │ ${windows} │ ${notes.padEnd(15)} │`);
 });
-console.log('└─────────────┴─────────┴─────────┴─────────┴─────────────────┘');
+console.info('└─────────────┴─────────┴─────────┴─────────┴─────────────────┘');
 
 // Performance leaderboard
-console.log('\n🏆 Performance Leaderboard:');
-console.log('┌─────────────┬─────────────────┬─────────────────────────────────┐');
-console.log('│ API         │ Metric           │ Comparison                     │');
-console.log('├─────────────┼─────────────────┼─────────────────────────────────┤');
+console.info('\n🏆 Performance Leaderboard:');
+console.info('┌─────────────┬─────────────────┬─────────────────────────────────┐');
+console.info('│ API         │ Metric           │ Comparison                     │');
+console.info('├─────────────┼─────────────────┼─────────────────────────────────┤');
 
 const withPerf = analyzer.entries
   .filter(e => e.perfBaseline)
@@ -464,45 +464,45 @@ withPerf.forEach((api, index) => {
   const apiName = `${medal} ${api.term}`.padEnd(11);
   const metric = api.perfBaseline!.metric.padEnd(15);
   const comparison = api.perfBaseline!.comparison.padEnd(31);
-  console.log(`│ ${apiName} │ ${metric} │ ${comparison} │`);
+  console.info(`│ ${apiName} │ ${metric} │ ${comparison} │`);
 });
-console.log('└─────────────┴─────────────────┴─────────────────────────────────┘');
+console.info('└─────────────┴─────────────────┴─────────────────────────────────┘');
 
 // Breaking changes warning
 const withBreaking = analyzer.entries.filter(e => e.breakingSince && e.breakingSince.length > 0);
 if (withBreaking.length > 0) {
-  console.log('\n⚠️  Breaking Changes Alert:');
-  console.log('┌─────────────┬─────────────────┬─────────────────────────────────┐');
-  console.log('│ API         │ Breaking Since  │ Affected Versions               │');
-  console.log('├─────────────┼─────────────────┼─────────────────────────────────┤');
+  console.info('\n⚠️  Breaking Changes Alert:');
+  console.info('┌─────────────┬─────────────────┬─────────────────────────────────┐');
+  console.info('│ API         │ Breaking Since  │ Affected Versions               │');
+  console.info('├─────────────┼─────────────────┼─────────────────────────────────┤');
 
   withBreaking.forEach(api => {
     const apiName = api.term.padEnd(11);
     const breaking = api.breakingSince!.join(', ').padEnd(15);
     const affected = `>= ${api.breakingSince![0]}`.padEnd(31);
-    console.log(`│ ${apiName} │ ${breaking} │ ${affected} │`);
+    console.info(`│ ${apiName} │ ${breaking} │ ${affected} │`);
   });
-  console.log('└─────────────┴─────────────────┴─────────────────────────────────┘');
+  console.info('└─────────────┴─────────────────┴─────────────────────────────────┘');
 }
 
 // Experimental features
 const experimental = analyzer.getByStability('experimental');
 if (experimental.length > 0) {
-  console.log('\n🔬 Experimental Features:');
-  console.log('┌─────────────┬─────────────────┬─────────────────────────────────┐');
-  console.log('│ API         │ Required Flags   │ Platform Support                │');
-  console.log('├─────────────┼─────────────────┼─────────────────────────────────┤');
+  console.info('\n🔬 Experimental Features:');
+  console.info('┌─────────────┬─────────────────┬─────────────────────────────────┐');
+  console.info('│ API         │ Required Flags   │ Platform Support                │');
+  console.info('├─────────────┼─────────────────┼─────────────────────────────────┤');
 
   experimental.forEach(api => {
     const apiName = api.term.padEnd(11);
     const flags = api.requiredFlags ? api.requiredFlags.join(', ') : 'None'.padEnd(15);
     const platforms = api.platforms.join(', ').padEnd(31);
-    console.log(`│ ${apiName} │ ${flags} │ ${platforms} │`);
+    console.info(`│ ${apiName} │ ${flags} │ ${platforms} │`);
   });
-  console.log('└─────────────┴─────────────────┴─────────────────────────────────┘');
+  console.info('└─────────────┴─────────────────┴─────────────────────────────────┘');
 }
 
-console.log('\n' + '═'.repeat(60));
-console.log('✅ Column 93 sealed with Tier-1380 traceability! 🔒');
-console.log('🚀 Ready for ACP integration with intelligent routing');
-console.log('═'.repeat(60));
+console.info('\n' + '═'.repeat(60));
+console.info('✅ Column 93 sealed with Tier-1380 traceability! 🔒');
+console.info('🚀 Ready for ACP integration with intelligent routing');
+console.info('═'.repeat(60));

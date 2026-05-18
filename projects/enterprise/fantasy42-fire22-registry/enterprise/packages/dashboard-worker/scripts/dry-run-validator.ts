@@ -26,7 +26,7 @@ class DryRunValidator {
    * Validate deployment readiness
    */
   async validateDeployment(): Promise<DryRunValidation> {
-    console.log('🚀 Validating deployment readiness...\n');
+    console.info('🚀 Validating deployment readiness...\n');
 
     const warnings: string[] = [];
     const blockers: string[] = [];
@@ -35,45 +35,45 @@ class DryRunValidator {
 
     // Check build
     try {
-      console.log('   🔨 Testing build process...');
+      console.info('   🔨 Testing build process...');
       await this.execCommand('bun', ['run', 'build:quick']);
-      console.log('   ✅ Build: OK');
+      console.info('   ✅ Build: OK');
     } catch (error) {
       blockers.push('Build process fails');
       safe = false;
-      console.log('   ❌ Build: FAILED');
+      console.info('   ❌ Build: FAILED');
     }
 
     // Check tests (quick)
     try {
-      console.log('   🧪 Running quick tests...');
+      console.info('   🧪 Running quick tests...');
       await this.execCommand('bun', ['run', 'test:quick'], 10000);
-      console.log('   ✅ Tests: OK');
+      console.info('   ✅ Tests: OK');
     } catch (error) {
       warnings.push('Quick tests failed - run full test suite');
-      console.log('   ⚠️  Tests: WARNING');
+      console.info('   ⚠️  Tests: WARNING');
     }
 
     // Check environment
-    console.log('   🔧 Checking environment configuration...');
+    console.info('   🔧 Checking environment configuration...');
     const envFiles = ['.env', '.env.production', 'wrangler.toml'];
     const missingEnv = envFiles.filter(f => !existsSync(f));
 
     if (missingEnv.length > 0) {
       warnings.push(`Missing environment files: ${missingEnv.join(', ')}`);
-      console.log('   ⚠️  Environment: INCOMPLETE');
+      console.info('   ⚠️  Environment: INCOMPLETE');
     } else {
-      console.log('   ✅ Environment: OK');
+      console.info('   ✅ Environment: OK');
     }
 
     // Check git status
-    console.log('   📊 Checking git status...');
+    console.info('   📊 Checking git status...');
     try {
       await this.execCommand('git', ['status', '--porcelain']);
-      console.log('   ✅ Git: Clean');
+      console.info('   ✅ Git: Clean');
     } catch (error) {
       warnings.push('Uncommitted changes detected');
-      console.log('   ⚠️  Git: DIRTY');
+      console.info('   ⚠️  Git: DIRTY');
     }
 
     // Generate recommendations
@@ -102,7 +102,7 @@ class DryRunValidator {
    * Validate configuration changes
    */
   async validateConfiguration(): Promise<DryRunValidation> {
-    console.log('⚙️  Validating configuration changes...\n');
+    console.info('⚙️  Validating configuration changes...\n');
 
     const warnings: string[] = [];
     const blockers: string[] = [];
@@ -110,39 +110,39 @@ class DryRunValidator {
     let safe = true;
 
     // Check package.json syntax
-    console.log('   📦 Validating package.json...');
+    console.info('   📦 Validating package.json...');
     try {
       const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
-      console.log('   ✅ package.json: Valid JSON');
+      console.info('   ✅ package.json: Valid JSON');
     } catch (error) {
       blockers.push('package.json has invalid JSON syntax');
       safe = false;
-      console.log('   ❌ package.json: INVALID JSON');
+      console.info('   ❌ package.json: INVALID JSON');
     }
 
     // Check TypeScript config
-    console.log('   📝 Validating tsconfig.json...');
+    console.info('   📝 Validating tsconfig.json...');
     if (existsSync('tsconfig.json')) {
       try {
         JSON.parse(readFileSync('tsconfig.json', 'utf8'));
-        console.log('   ✅ tsconfig.json: Valid');
+        console.info('   ✅ tsconfig.json: Valid');
       } catch (error) {
         blockers.push('tsconfig.json has invalid JSON syntax');
         safe = false;
-        console.log('   ❌ tsconfig.json: INVALID');
+        console.info('   ❌ tsconfig.json: INVALID');
       }
     } else {
       warnings.push('tsconfig.json not found');
-      console.log('   ⚠️  tsconfig.json: MISSING');
+      console.info('   ⚠️  tsconfig.json: MISSING');
     }
 
     // Check Wrangler config
-    console.log('   ☁️  Validating wrangler.toml...');
+    console.info('   ☁️  Validating wrangler.toml...');
     if (existsSync('wrangler.toml')) {
-      console.log('   ✅ wrangler.toml: Present');
+      console.info('   ✅ wrangler.toml: Present');
     } else {
       warnings.push('wrangler.toml not found for Cloudflare deployment');
-      console.log('   ⚠️  wrangler.toml: MISSING');
+      console.info('   ⚠️  wrangler.toml: MISSING');
     }
 
     recommendations.push(
@@ -163,7 +163,7 @@ class DryRunValidator {
    * Validate dependency updates
    */
   async validateDependencies(): Promise<DryRunValidation> {
-    console.log('📚 Validating dependency updates...\n');
+    console.info('📚 Validating dependency updates...\n');
 
     const warnings: string[] = [];
     const blockers: string[] = [];
@@ -171,32 +171,32 @@ class DryRunValidator {
     let safe = true;
 
     // Check for outdated dependencies
-    console.log('   🔍 Checking for outdated dependencies...');
+    console.info('   🔍 Checking for outdated dependencies...');
     try {
       await this.execCommand('bun', ['outdated'], true);
-      console.log('   ℹ️  Dependencies: Checked');
+      console.info('   ℹ️  Dependencies: Checked');
     } catch (error) {
       // This is expected to "fail" if there are outdated deps
-      console.log('   ℹ️  Dependencies: Some may be outdated');
+      console.info('   ℹ️  Dependencies: Some may be outdated');
     }
 
     // Security audit
-    console.log('   🛡️  Running security audit...');
+    console.info('   🛡️  Running security audit...');
     try {
       await this.execCommand('bun', ['audit', '--audit-level', 'high'], true);
-      console.log('   ✅ Security: No high-risk vulnerabilities');
+      console.info('   ✅ Security: No high-risk vulnerabilities');
     } catch (error) {
       warnings.push('Security vulnerabilities detected in dependencies');
-      console.log('   ⚠️  Security: Vulnerabilities found');
+      console.info('   ⚠️  Security: Vulnerabilities found');
     }
 
     // Check lock file
-    console.log('   🔒 Checking lock file...');
+    console.info('   🔒 Checking lock file...');
     if (existsSync('bun.lockb')) {
-      console.log('   ✅ Lock file: Present');
+      console.info('   ✅ Lock file: Present');
     } else {
       warnings.push('Lock file missing - dependency versions not locked');
-      console.log('   ⚠️  Lock file: Missing');
+      console.info('   ⚠️  Lock file: Missing');
     }
 
     recommendations.push(
@@ -250,8 +250,8 @@ class DryRunValidator {
    * Display validation results
    */
   displayResults(validations: DryRunValidation[]): void {
-    console.log('\n🧪 Dry-Run Validation Summary');
-    console.log('='.repeat(40));
+    console.info('\n🧪 Dry-Run Validation Summary');
+    console.info('='.repeat(40));
 
     let allSafe = true;
     let totalWarnings = 0;
@@ -264,38 +264,38 @@ class DryRunValidator {
           ? ` (Est. ${Math.floor(validation.estimatedTime / 60)}m ${validation.estimatedTime % 60}s)`
           : '';
 
-      console.log(`\n${statusIcon} ${validation.operation}${timeStr}`);
+      console.info(`\n${statusIcon} ${validation.operation}${timeStr}`);
 
       if (validation.blockers.length > 0) {
-        console.log('   🚫 Blockers:');
-        validation.blockers.forEach(b => console.log(`     • ${b}`));
+        console.info('   🚫 Blockers:');
+        validation.blockers.forEach(b => console.info(`     • ${b}`));
         allSafe = false;
         totalBlockers += validation.blockers.length;
       }
 
       if (validation.warnings.length > 0) {
-        console.log('   ⚠️  Warnings:');
-        validation.warnings.forEach(w => console.log(`     • ${w}`));
+        console.info('   ⚠️  Warnings:');
+        validation.warnings.forEach(w => console.info(`     • ${w}`));
         totalWarnings += validation.warnings.length;
       }
 
       if (validation.recommendations.length > 0) {
-        console.log('   💡 Recommendations:');
-        validation.recommendations.forEach(r => console.log(`     • ${r}`));
+        console.info('   💡 Recommendations:');
+        validation.recommendations.forEach(r => console.info(`     • ${r}`));
       }
     });
 
-    console.log('\n📊 Overall Status:');
-    console.log(`   Safety: ${allSafe ? '✅ SAFE' : '❌ NOT SAFE'}`);
-    console.log(`   Blockers: ${totalBlockers}`);
-    console.log(`   Warnings: ${totalWarnings}`);
+    console.info('\n📊 Overall Status:');
+    console.info(`   Safety: ${allSafe ? '✅ SAFE' : '❌ NOT SAFE'}`);
+    console.info(`   Blockers: ${totalBlockers}`);
+    console.info(`   Warnings: ${totalWarnings}`);
 
     if (allSafe && totalWarnings === 0) {
-      console.log('\n🎉 All validations passed! Operations are safe to proceed.');
+      console.info('\n🎉 All validations passed! Operations are safe to proceed.');
     } else if (allSafe) {
-      console.log('\n⚠️  Operations are safe but have warnings. Review carefully.');
+      console.info('\n⚠️  Operations are safe but have warnings. Review carefully.');
     } else {
-      console.log('\n🚫 Operations are NOT SAFE. Fix blocking issues first.');
+      console.info('\n🚫 Operations are NOT SAFE. Fix blocking issues first.');
     }
   }
 
@@ -320,7 +320,7 @@ async function main() {
   const validator = new DryRunValidator();
 
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🧪 Fire22 Dry-Run Validator
 
 USAGE:

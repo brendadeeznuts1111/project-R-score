@@ -8,46 +8,46 @@ import { BRIGHT, GREENS, REDS, YELLOWS, GRAYS, RESET, fgRGB } from "../src/color
 import { edgeGradient } from "../src/colors/gradients";
 import { formatEdge, formatMoney, EDGE, BOOK } from "../src/colors/arb-colors";
 
-console.log("\n" + "═".repeat(55));
-console.log(BRIGHT.CYAN.ansi + "  UUIDv7 + DEEP ANSI COLORS FOR ARB TRACKING" + RESET);
-console.log("═".repeat(55) + "\n");
+console.info("\n" + "═".repeat(55));
+console.info(BRIGHT.CYAN.ansi + "  UUIDv7 + DEEP ANSI COLORS FOR ARB TRACKING" + RESET);
+console.info("═".repeat(55) + "\n");
 
 // ════════════════════════════════════════════════════════════
 // 1. UUIDv7 FORMATS
 // ════════════════════════════════════════════════════════════
-console.log(BRIGHT.WHITE.ansi + "1. UUIDv7 FORMATS" + RESET);
-console.log("─".repeat(40));
+console.info(BRIGHT.WHITE.ansi + "1. UUIDv7 FORMATS" + RESET);
+console.info("─".repeat(40));
 
 // String format (36 chars) - monotonic, sortable
 const arbId = Bun.randomUUIDv7();
-console.log(`   String:    ${BRIGHT.CYAN.ansi}${arbId}${RESET}`);
+console.info(`   String:    ${BRIGHT.CYAN.ansi}${arbId}${RESET}`);
 
 // Buffer format (16 bytes) - zero-copy for binary protocol
 const arbBuffer = Bun.randomUUIDv7("buffer");
 const hexBytes = Array.from(arbBuffer).map(b => b.toString(16).padStart(2, '0')).join('');
-console.log(`   Buffer:    ${GRAYS.GRAY_12.ansi}${hexBytes}${RESET} (${arbBuffer.length} bytes)`);
+console.info(`   Buffer:    ${GRAYS.GRAY_12.ansi}${hexBytes}${RESET} (${arbBuffer.length} bytes)`);
 
 // Base64url (22 chars) - shorter for logs/URLs
 const arbShort = Bun.randomUUIDv7("base64url");
-console.log(`   Base64url: ${YELLOWS.GOLD.ansi}${arbShort}${RESET} (22 chars)`);
+console.info(`   Base64url: ${YELLOWS.GOLD.ansi}${arbShort}${RESET} (22 chars)`);
 
 // Extract timestamp from UUIDv7
 const timestampHex = arbId.slice(0, 8) + arbId.slice(9, 13);
 const timestamp = parseInt(timestampHex, 16);
-console.log(`   Timestamp: ${GRAYS.GRAY_14.ansi}${new Date(timestamp).toISOString()}${RESET}`);
+console.info(`   Timestamp: ${GRAYS.GRAY_14.ansi}${new Date(timestamp).toISOString()}${RESET}`);
 
 // ════════════════════════════════════════════════════════════
 // 2. JSON LOG FORMAT (%j)
 // ════════════════════════════════════════════════════════════
-console.log("\n" + BRIGHT.WHITE.ansi + "2. JSON LOG FORMAT (%j)" + RESET);
-console.log("─".repeat(40));
-console.log('%j', { arbId: Bun.randomUUIDv7(), edge: 0.0234, ts: Date.now() });
+console.info("\n" + BRIGHT.WHITE.ansi + "2. JSON LOG FORMAT (%j)" + RESET);
+console.info("─".repeat(40));
+console.info('%j', { arbId: Bun.randomUUIDv7(), edge: 0.0234, ts: Date.now() });
 
 // ════════════════════════════════════════════════════════════
 // 3. COLORED ARB DETECTION
 // ════════════════════════════════════════════════════════════
-console.log("\n" + BRIGHT.WHITE.ansi + "3. COLORED ARB DETECTION" + RESET);
-console.log("─".repeat(40));
+console.info("\n" + BRIGHT.WHITE.ansi + "3. COLORED ARB DETECTION" + RESET);
+console.info("─".repeat(40));
 
 // Simulate arb detections
 const arbs = [
@@ -74,14 +74,14 @@ for (const arb of arbs) {
     arb.live ? BRIGHT.RED.ansi + "●" + RESET : GRAYS.GRAY_6.ansi + "○" + RESET,
   ].filter(Boolean).join(" ");
 
-  console.log("   " + line);
+  console.info("   " + line);
 }
 
 // ════════════════════════════════════════════════════════════
 // 4. BINARY PROTOCOL WITH UUIDv7
 // ════════════════════════════════════════════════════════════
-console.log("\n" + BRIGHT.WHITE.ansi + "4. BINARY PROTOCOL WITH UUIDv7" + RESET);
-console.log("─".repeat(40));
+console.info("\n" + BRIGHT.WHITE.ansi + "4. BINARY PROTOCOL WITH UUIDv7" + RESET);
+console.info("─".repeat(40));
 
 // 48-byte arb record
 // Offset 0-15:  UUIDv7 (16 bytes)
@@ -110,18 +110,18 @@ view.setUint8(25, color.rgb[1]); // G
 view.setUint8(26, color.rgb[2]); // B
 view.setUint8(27, 0b00000111);   // Flags: profit + steam + live
 
-console.log(`   Record size: ${arbRecord.byteLength} bytes`);
-console.log(`   UUID bytes:  ${Array.from(bytes.slice(0, 16)).map(b => b.toString(16).padStart(2, '0')).join('')}`);
-console.log(`   Edge:        ${view.getFloat32(16, true).toFixed(4)}`);
-console.log(`   Profit:      $${view.getFloat32(20, true).toFixed(2)}`);
-console.log(`   Color RGB:   (${view.getUint8(24)}, ${view.getUint8(25)}, ${view.getUint8(26)})`);
-console.log(`   Color:       ${fgRGB(view.getUint8(24), view.getUint8(25), view.getUint8(26))}████${RESET}`);
+console.info(`   Record size: ${arbRecord.byteLength} bytes`);
+console.info(`   UUID bytes:  ${Array.from(bytes.slice(0, 16)).map(b => b.toString(16).padStart(2, '0')).join('')}`);
+console.info(`   Edge:        ${view.getFloat32(16, true).toFixed(4)}`);
+console.info(`   Profit:      $${view.getFloat32(20, true).toFixed(2)}`);
+console.info(`   Color RGB:   (${view.getUint8(24)}, ${view.getUint8(25)}, ${view.getUint8(26)})`);
+console.info(`   Color:       ${fgRGB(view.getUint8(24), view.getUint8(25), view.getUint8(26))}████${RESET}`);
 
 // ════════════════════════════════════════════════════════════
 // 5. BATCH GENERATION (25K)
 // ════════════════════════════════════════════════════════════
-console.log("\n" + BRIGHT.WHITE.ansi + "5. BATCH UUID GENERATION" + RESET);
-console.log("─".repeat(40));
+console.info("\n" + BRIGHT.WHITE.ansi + "5. BATCH UUID GENERATION" + RESET);
+console.info("─".repeat(40));
 
 const count = 25_000;
 const start = Bun.nanoseconds();
@@ -131,17 +131,17 @@ for (let i = 0; i < count; i++) {
 }
 const elapsed = (Bun.nanoseconds() - start) / 1e6;
 
-console.log(`   Generated: ${BRIGHT.GREEN.ansi}${count.toLocaleString()}${RESET} UUIDs`);
-console.log(`   Time:      ${YELLOWS.GOLD.ansi}${elapsed.toFixed(2)}ms${RESET}`);
-console.log(`   Rate:      ${BRIGHT.CYAN.ansi}${((count / elapsed) * 1000).toFixed(0)}${RESET} UUIDs/sec`);
-console.log(`   First:     ${GRAYS.GRAY_12.ansi}${uuids[0]}${RESET}`);
-console.log(`   Last:      ${GRAYS.GRAY_12.ansi}${uuids[count - 1]}${RESET}`);
+console.info(`   Generated: ${BRIGHT.GREEN.ansi}${count.toLocaleString()}${RESET} UUIDs`);
+console.info(`   Time:      ${YELLOWS.GOLD.ansi}${elapsed.toFixed(2)}ms${RESET}`);
+console.info(`   Rate:      ${BRIGHT.CYAN.ansi}${((count / elapsed) * 1000).toFixed(0)}${RESET} UUIDs/sec`);
+console.info(`   First:     ${GRAYS.GRAY_12.ansi}${uuids[0]}${RESET}`);
+console.info(`   Last:      ${GRAYS.GRAY_12.ansi}${uuids[count - 1]}${RESET}`);
 
 // Verify monotonic ordering
 const sorted = [...uuids].sort();
 const isMonotonic = uuids.every((u, i) => u === sorted[i]);
-console.log(`   Monotonic: ${isMonotonic ? GREENS.BRIGHT.ansi + "✓ YES" : REDS.BRIGHT.ansi + "✗ NO"}${RESET}`);
+console.info(`   Monotonic: ${isMonotonic ? GREENS.BRIGHT.ansi + "✓ YES" : REDS.BRIGHT.ansi + "✗ NO"}${RESET}`);
 
-console.log("\n" + "═".repeat(55));
-console.log(GRAYS.GRAY_12.ansi + "  UUIDv7: Monotonic • Sortable • 16 bytes • Zero-copy" + RESET);
-console.log("═".repeat(55) + "\n");
+console.info("\n" + "═".repeat(55));
+console.info(GRAYS.GRAY_12.ansi + "  UUIDv7: Monotonic • Sortable • 16 bytes • Zero-copy" + RESET);
+console.info("═".repeat(55) + "\n");

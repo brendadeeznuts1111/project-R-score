@@ -3810,7 +3810,7 @@ class ConfigServer {
         ws = new WebSocket(wsUrl);
         
         ws.onopen = () => {
-          console.log('WebSocket connected');
+          console.info('WebSocket connected');
           showToast('success', 'Connected', 'Real-time updates enabled', 2000);
         };
         
@@ -3829,7 +3829,7 @@ class ConfigServer {
         };
         
         ws.onclose = () => {
-          console.log('WebSocket disconnected, reconnecting...');
+          console.info('WebSocket disconnected, reconnecting...');
           showToast('warning', 'Disconnected', 'Reconnecting to server...', 2000);
           setTimeout(initWebSocket, 3000);
         };

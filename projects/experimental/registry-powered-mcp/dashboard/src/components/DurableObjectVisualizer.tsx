@@ -131,7 +131,7 @@ export const DurableObjectVisualizer: React.FC = () => {
                     <div>async alarm() &#123;</div>
                     <div className="pl-4">const keys = await this.storage.list();</div>
                     <div className="pl-4">await this.storage.deleteAll();</div>
-                    <div className="pl-4">console.log("Cleanup complete");</div>
+                    <div className="pl-4">console.info("Cleanup complete");</div>
                     <div>&#125;</div>
                 </div>
                 <p className="text-[10px] text-slate-500 leading-relaxed italic">

@@ -52,7 +52,7 @@ export class StreamingPipeline {
         
         const elapsedNs = nanoseconds() - startNs;
         if (elapsedNs > 1e6) {
-          console.log(`[STREAM] Compression took ${(elapsedNs / 1e6).toFixed(2)}ms`);
+          console.info(`[STREAM] Compression took ${(elapsedNs / 1e6).toFixed(2)}ms`);
         }
         
         controller.enqueue(compressed);
@@ -61,7 +61,7 @@ export class StreamingPipeline {
         self.metrics.compressionRatio = totalOut / totalIn;
       },
       flush() {
-        console.log(`[STREAM] Compression ratio: ${(self.metrics.compressionRatio * 100).toFixed(1)}%`);
+        console.info(`[STREAM] Compression ratio: ${(self.metrics.compressionRatio * 100).toFixed(1)}%`);
       },
     });
   }

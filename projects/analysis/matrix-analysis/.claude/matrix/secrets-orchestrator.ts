@@ -70,9 +70,9 @@ export class SecureOrchestrator {
 			},
 		});
 
-		console.log("🔐 Tier-1380 Secrets Orchestrator Initialized");
-		console.log(`   R2 Bucket: ${this.mask(config.bucket)}`);
-		console.log(`   Account: ${this.mask(config.accountId)}`);
+		console.info("🔐 Tier-1380 Secrets Orchestrator Initialized");
+		console.info(`   R2 Bucket: ${this.mask(config.bucket)}`);
+		console.info(`   Account: ${this.mask(config.accountId)}`);
 	}
 
 	/**
@@ -89,7 +89,7 @@ export class SecureOrchestrator {
 	async uploadProfile(profileId: string, markdown: string): Promise<string> {
 		const key = `profiles/${profileId}.md`;
 
-		console.log(`📤 Uploading ${profileId} to R2...`);
+		console.info(`📤 Uploading ${profileId} to R2...`);
 
 		try {
 			await this.s3.write(key, markdown, {
@@ -102,7 +102,7 @@ export class SecureOrchestrator {
 			});
 
 			const url = `https://${this.config.bucket}.r2.cloudflarestorage.com/${key}`;
-			console.log(`✅ Profile secured: ${url}`);
+			console.info(`✅ Profile secured: ${url}`);
 
 			return url;
 		} catch (error) {
@@ -116,7 +116,7 @@ export class SecureOrchestrator {
 	 * Spawn worker with automatic secret inheritance
 	 */
 	spawnWorker(script: string): ReturnType<typeof Bun.spawn> {
-		console.log(`👷 Spawning worker: ${script}`);
+		console.info(`👷 Spawning worker: ${script}`);
 
 		const worker = Bun.spawn({
 			cmd: ["bun", "run", script],
@@ -163,7 +163,7 @@ async function workerMain() {
 		process.exit(1);
 	}
 
-	console.log("✅ Worker authenticated via inherited secrets");
+	console.info("✅ Worker authenticated via inherited secrets");
 
 	// Handle IPC messages from parent
 	process.on("message", async (msg: { type: string; id: string; data?: string }) => {
@@ -206,36 +206,36 @@ async function main() {
 
 	switch (command) {
 		case "init": {
-			console.log("🔐 Tier-1380 Secrets Initialization\n");
-			console.log("Required secrets (service:name format):");
-			console.log("  - cloudflare:account-id");
-			console.log("  - r2:access-key-id");
-			console.log("  - r2:secret-access-key");
-			console.log("  - r2:bucket (optional, default: tier1380-profiles)");
-			console.log("");
-			console.log("Set secrets with:");
-			console.log('  bun secret set cloudflare:account-id "<value>"');
-			console.log('  bun secret set r2:access-key-id "<value>"');
-			console.log('  bun secret set r2:secret-access-key "<value>"');
-			console.log("");
-			console.log("Verify with:");
-			console.log("  bun secret list");
+			console.info("🔐 Tier-1380 Secrets Initialization\n");
+			console.info("Required secrets (service:name format):");
+			console.info("  - cloudflare:account-id");
+			console.info("  - r2:access-key-id");
+			console.info("  - r2:secret-access-key");
+			console.info("  - r2:bucket (optional, default: tier1380-profiles)");
+			console.info("");
+			console.info("Set secrets with:");
+			console.info('  bun secret set cloudflare:account-id "<value>"');
+			console.info('  bun secret set r2:access-key-id "<value>"');
+			console.info('  bun secret set r2:secret-access-key "<value>"');
+			console.info("");
+			console.info("Verify with:");
+			console.info("  bun secret list");
 			break;
 		}
 
 		case "status": {
 			const config = await loadSecrets();
 			if (!config) {
-				console.log("❌ Secrets not configured");
-				console.log("Run: bun run matrix/secrets-orchestrator.ts init");
+				console.info("❌ Secrets not configured");
+				console.info("Run: bun run matrix/secrets-orchestrator.ts init");
 				process.exit(1);
 			}
 
-			console.log("🔐 Tier-1380 Secrets Status\n");
-			console.log(`✅ CF_ACCOUNT_ID: ${config.accountId.slice(0, 4)}••••`);
-			console.log(`✅ R2_ACCESS_KEY_ID: ${config.accessKeyId.slice(0, 4)}••••`);
-			console.log(`✅ R2_SECRET_ACCESS_KEY: ••••••••••••`);
-			console.log(`✅ R2_BUCKET: ${config.bucket}`);
+			console.info("🔐 Tier-1380 Secrets Status\n");
+			console.info(`✅ CF_ACCOUNT_ID: ${config.accountId.slice(0, 4)}••••`);
+			console.info(`✅ R2_ACCESS_KEY_ID: ${config.accessKeyId.slice(0, 4)}••••`);
+			console.info(`✅ R2_SECRET_ACCESS_KEY: ••••••••••••`);
+			console.info(`✅ R2_BUCKET: ${config.bucket}`);
 			break;
 		}
 
@@ -283,14 +283,14 @@ async function main() {
 			const worker = orchestrator.spawnWorker("./matrix/secrets-orchestrator.ts worker");
 
 			worker.on("message", (msg) => {
-				console.log("📨 Worker message:", msg);
+				console.info("📨 Worker message:", msg);
 			});
 
 			// Wait for worker to be ready
 			await new Promise<void>((resolve) => {
 				worker.on("message", (msg: { type: string }) => {
 					if (msg.type === "ready") {
-						console.log("✅ Worker ready with inherited secrets");
+						console.info("✅ Worker ready with inherited secrets");
 
 						// Send test job
 						worker.send?.({
@@ -308,7 +308,7 @@ async function main() {
 			await new Promise<void>((resolve) => {
 				worker.on("message", (msg: { type: string }) => {
 					if (msg.type === "complete" || msg.type === "error") {
-						console.log("✅ Worker completed:", msg);
+						console.info("✅ Worker completed:", msg);
 						worker.kill();
 						resolve();
 					}
@@ -319,13 +319,13 @@ async function main() {
 		}
 
 		default: {
-			console.log("Tier-1380 OMEGA Secrets Orchestrator\n");
-			console.log("Commands:");
-			console.log("  init         Show initialization instructions");
-			console.log("  status       Verify secrets configuration");
-			console.log("  upload       Upload profile to R2");
-			console.log("  worker       Run as worker (inherits secrets)");
-			console.log("  test-worker  Test secret inheritance");
+			console.info("Tier-1380 OMEGA Secrets Orchestrator\n");
+			console.info("Commands:");
+			console.info("  init         Show initialization instructions");
+			console.info("  status       Verify secrets configuration");
+			console.info("  upload       Upload profile to R2");
+			console.info("  worker       Run as worker (inherits secrets)");
+			console.info("  test-worker  Test secret inheritance");
 		}
 	}
 }

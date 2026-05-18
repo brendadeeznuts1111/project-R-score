@@ -114,7 +114,7 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
 
   // Initialize official RPA templates
   private initializeOfficialTemplates(): void {
-    console.log('📋 Initializing Official DuoPlus RPA Templates...');
+    console.info('📋 Initializing Official DuoPlus RPA Templates...');
     
     const officialTemplates: RPATemplate[] = [
       {
@@ -243,11 +243,11 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
       this.templates.set(template.id, template);
     });
 
-    console.log(`✅ Loaded ${officialTemplates.length} official RPA templates`);
-    console.log('   🤖 Guardian Nomination Auto-Approve');
-    console.log('   🔍 Google Verification Bypass');
-    console.log('   🔗 Recovery Approval Flow');
-    console.log('   📂 Batch Config Sync');
+    console.info(`✅ Loaded ${officialTemplates.length} official RPA templates`);
+    console.info('   🤖 Guardian Nomination Auto-Approve');
+    console.info('   🔍 Google Verification Bypass');
+    console.info('   🔗 Recovery Approval Flow');
+    console.info('   📂 Batch Config Sync');
   }
 
   // Batch Update Cloud Phone Parameters
@@ -256,7 +256,7 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
     fail: string[];
     fail_reason: Record<string, string>;
   }> {
-    console.log(`🔄 Batch updating ${images.length} cloud phones...`);
+    console.info(`🔄 Batch updating ${images.length} cloud phones...`);
     
     try {
       const response = await fetch(`${this.config.baseUrl}/api/v1/cloudPhone/update`, {
@@ -268,12 +268,12 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
       const result = await response.json() as any;
       
       if (result.code === 200) {
-        console.log(`✅ Batch update completed:`);
-        console.log(`   ✅ Success: ${result.data.success.length} devices`);
-        console.log(`   ❌ Failed: ${result.data.fail.length} devices`);
+        console.info(`✅ Batch update completed:`);
+        console.info(`   ✅ Success: ${result.data.success.length} devices`);
+        console.info(`   ❌ Failed: ${result.data.fail.length} devices`);
         
         if (result.data.fail.length > 0) {
-          console.log(`   Failures:`, result.data.fail_reason);
+          console.info(`   Failures:`, result.data.fail_reason);
         }
         
         return result.data;
@@ -311,14 +311,14 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
     this.tasks.set(task.id, task);
     this.taskQueue.push(task);
 
-    console.log(`✅ RPA Task Created:`);
-    console.log(`   🆔 Task ID: ${task.id}`);
-    console.log(`   📋 Template: ${template.name}`);
-    console.log(`   📱 Target Devices: ${imageIds.length}`);
-    console.log(`   ⚙️ Variables:`, Object.keys(task.variables));
+    console.info(`✅ RPA Task Created:`);
+    console.info(`   🆔 Task ID: ${task.id}`);
+    console.info(`   📋 Template: ${template.name}`);
+    console.info(`   📱 Target Devices: ${imageIds.length}`);
+    console.info(`   ⚙️ Variables:`, Object.keys(task.variables));
     
     if (schedule) {
-      console.log(`   ⏰ Schedule: ${schedule.type} ${schedule.pattern || schedule.loop_count || 'once'}`);
+      console.info(`   ⏰ Schedule: ${schedule.type} ${schedule.pattern || schedule.loop_count || 'once'}`);
     }
 
     return task.id;
@@ -353,7 +353,7 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
 
   // Execute RPA Task
   private async executeTask(task: RPATask): Promise<void> {
-    console.log(`🤖 Executing RPA Task: ${task.id}`);
+    console.info(`🤖 Executing RPA Task: ${task.id}`);
     task.status = 'running';
     task.started_at = new Date().toISOString();
 
@@ -366,7 +366,7 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
     // Execute on each target device
     for (const imageId of task.image_ids) {
       try {
-        console.log(`   📱 Executing on device: ${imageId}`);
+        console.info(`   📱 Executing on device: ${imageId}`);
         
         const deviceResult = await this.executeOnDevice(template, imageId, task.variables);
         task.results.push({
@@ -375,7 +375,7 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
           data: deviceResult
         });
         
-        console.log(`   ✅ Device ${imageId} completed successfully`);
+        console.info(`   ✅ Device ${imageId} completed successfully`);
       } catch (error) {
         task.results.push({
           image_id: imageId,
@@ -383,7 +383,7 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
           error: error instanceof Error ? error.message : 'Unknown error'
         });
         
-        console.log(`   ❌ Device ${imageId} failed: ${error}`);
+        console.info(`   ❌ Device ${imageId} failed: ${error}`);
       }
 
       // Rate limiting - respect QPS limit
@@ -400,7 +400,7 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
     
     for (const step of template.steps) {
       try {
-        console.log(`      ⚙️ Step ${step.id}: ${step.type} - ${step.params.description || ''}`);
+        console.info(`      ⚙️ Step ${step.id}: ${step.type} - ${step.params.description || ''}`);
         
         switch (step.type) {
           case 'launch':
@@ -426,7 +426,7 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
             const conditionResult = await this.evaluateCondition(step.params, variables, results);
             results[step.id] = conditionResult;
             if (!conditionResult.proceed) {
-              console.log(`      ⛔ Condition failed, stopping execution`);
+              console.info(`      ⛔ Condition failed, stopping execution`);
               break;
             }
             break;
@@ -438,7 +438,7 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
         }
         
       } catch (error) {
-        console.log(`      ❌ Step ${step.id} failed: ${error}`);
+        console.info(`      ❌ Step ${step.id} failed: ${error}`);
         throw error;
       }
     }
@@ -448,35 +448,35 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
 
   // RPA Step Implementations
   private async launchApp(appPackage: string, imageId: string): Promise<string> {
-    console.log(`         🚀 Launching app: ${appPackage}`);
+    console.info(`         🚀 Launching app: ${appPackage}`);
     // Mock implementation - would use ADB commands in real system
     await this.wait(2000);
     return `app_launched_${appPackage}`;
   }
 
   private async simulateTap(imageId: string, x: number, y: number): Promise<string> {
-    console.log(`         👆 Tapping at (${x}, ${y})`);
+    console.info(`         👆 Tapping at (${x}, ${y})`);
     // Mock ADB tap command
     await this.wait(500);
     return `tapped_${x}_${y}`;
   }
 
   private async simulateInput(imageId: string, selector: string, text: string): Promise<string> {
-    console.log(`         ⌨️ Inputting text: ${text} into ${selector}`);
+    console.info(`         ⌨️ Inputting text: ${text} into ${selector}`);
     // Mock ADB input command
     await this.wait(800);
     return `input_${text}`;
   }
 
   private async extractData(imageId: string, selector: string): Promise<string> {
-    console.log(`         📤 Extracting data from: ${selector}`);
+    console.info(`         📤 Extracting data from: ${selector}`);
     // Mock data extraction
     await this.wait(300);
     return `extracted_data_${Date.now()}`;
   }
 
   private async executeNetworkCall(params: any, variables: Record<string, any>): Promise<any> {
-    console.log(`         🌐 Network call: ${params.method} ${params.url}`);
+    console.info(`         🌐 Network call: ${params.method} ${params.url}`);
     
     // Mock network call with variable interpolation
     const url = this.interpolateVariables(params.url, variables);
@@ -487,13 +487,13 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
   }
 
   private async evaluateCondition(params: any, variables: Record<string, any>, results: any): Promise<{ proceed: boolean; result?: any }> {
-    console.log(`         🔍 Evaluating condition: ${params.type}`);
+    console.info(`         🔍 Evaluating condition: ${params.type}`);
     
     switch (params.type) {
       case 'risk_threshold':
         const riskScore = variables.riskScore || 0;
         const proceed = riskScore >= params.threshold;
-        console.log(`         📊 Risk score: ${riskScore}, threshold: ${params.threshold}`);
+        console.info(`         📊 Risk score: ${riskScore}, threshold: ${params.threshold}`);
         return { proceed, result: riskScore };
         
       case 'verification_success':
@@ -534,9 +534,9 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
     const successCount = task.results.filter(r => r.status === 'success').length;
     const failCount = task.results.filter(r => r.status === 'failed').length;
     
-    console.log(`✅ Task ${task.id} completed:`);
-    console.log(`   ✅ Successful: ${successCount}/${task.results.length}`);
-    console.log(`   ❌ Failed: ${failCount}/${task.results.length}`);
+    console.info(`✅ Task ${task.id} completed:`);
+    console.info(`   ✅ Successful: ${successCount}/${task.results.length}`);
+    console.info(`   ❌ Failed: ${failCount}/${task.results.length}`);
     
     // Handle scheduled/loop tasks
     if (task.schedule) {
@@ -555,18 +555,18 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
           
           this.tasks.set(nextTask.id, nextTask);
           this.taskQueue.push(nextTask);
-          console.log(`   🔄 Task re-queued for loop execution`);
+          console.info(`   🔄 Task re-queued for loop execution`);
         }
       } else if (task.schedule.type === 'cron') {
         // Would implement cron scheduling here
-        console.log(`   ⏰ Task scheduled for next cron execution`);
+        console.info(`   ⏰ Task scheduled for next cron execution`);
       }
     }
   }
 
   // Start Task Processor
   private startTaskProcessor(): void {
-    console.log('🔄 Starting RPA Task Processor...');
+    console.info('🔄 Starting RPA Task Processor...');
     
     setInterval(async () => {
       if (!this.isProcessing && this.taskQueue.length > 0) {
@@ -588,11 +588,11 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
   // Guardian Network Integration Methods
   async triggerGuardianNominationOnRisk(teenId: string, riskScore: number): Promise<string> {
     if (riskScore < 0.75) {
-      console.log(`📊 Risk score ${riskScore} below threshold (0.75) - no RPA trigger`);
+      console.info(`📊 Risk score ${riskScore} below threshold (0.75) - no RPA trigger`);
       return 'no-action';
     }
 
-    console.log(`🚨 High risk detected (${(riskScore * 100).toFixed(1)}%) - triggering guardian nomination RPA`);
+    console.info(`🚨 High risk detected (${(riskScore * 100).toFixed(1)}%) - triggering guardian nomination RPA`);
 
     // Get network guardians
     const networkData = this.guardianNetwork.getNetworkVisualization(teenId);
@@ -628,12 +628,12 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
 
     await this.batchUpdateCloudPhones(fingerprintUpdates);
 
-    console.log(`✅ Guardian nomination RPA triggered: ${taskId}`);
+    console.info(`✅ Guardian nomination RPA triggered: ${taskId}`);
     return taskId;
   }
 
   async triggerRecoveryApprovalFlow(guardianId: string, recoveryId: string): Promise<string> {
-    console.log(`🔗 Triggering recovery approval RPA flow...`);
+    console.info(`🔗 Triggering recovery approval RPA flow...`);
 
     const taskId = await this.createRPATask(
       'recovery_approval_flow',
@@ -645,12 +645,12 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
       }
     );
 
-    console.log(`✅ Recovery approval RPA triggered: ${taskId}`);
+    console.info(`✅ Recovery approval RPA triggered: ${taskId}`);
     return taskId;
   }
 
   async batchSyncGuardianConfigs(teenId: string, configData: any): Promise<void> {
-    console.log(`📂 Batch syncing guardian configs...`);
+    console.info(`📂 Batch syncing guardian configs...`);
 
     const networkData = this.guardianNetwork.getNetworkVisualization(teenId);
     const guardianIds = networkData.nodes.map(node => node.id);
@@ -665,7 +665,7 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
       }
     );
 
-    console.log(`✅ Batch config sync RPA triggered: ${taskId}`);
+    console.info(`✅ Batch config sync RPA triggered: ${taskId}`);
   }
 
   // Random ID Generators for Fingerprints
@@ -714,8 +714,8 @@ export const DuoPlusRPAEngine = feature("PREMIUM") ? class {
 
 } : undefined as any;
 
-console.log('🤖 DuoPlus RPA Automation Engine Loaded');
-console.log('🔧 Features: API Batch Control, Custom Templates, Scheduled Tasks, Google Verification');
-console.log('📱 Batch Operations: 20 devices in <2s');
-console.log('🎯 Template System: Official + Custom templates');
-console.log('⚡ Performance: <300ms task spawn, 96% ban resistance');
+console.info('🤖 DuoPlus RPA Automation Engine Loaded');
+console.info('🔧 Features: API Batch Control, Custom Templates, Scheduled Tasks, Google Verification');
+console.info('📱 Batch Operations: 20 devices in <2s');
+console.info('🎯 Template System: Official + Custom templates');
+console.info('⚡ Performance: <300ms task spawn, 96% ban resistance');

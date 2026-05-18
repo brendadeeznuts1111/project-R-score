@@ -16,10 +16,10 @@ class PerformanceRegressionDetector {
     private threshold = 1.5; // 50% regression threshold
 
     async runPerformanceTest(testPattern: string, timeoutMs: number = 30000) {
-        console.log('⚡ Performance Regression Testing');
-        console.log(`   Pattern: ${testPattern}`);
-        console.log(`   Timeout: ${timeoutMs}ms`);
-        console.log(`   Bail: 1 (stop on first failure)\n`);
+        console.info('⚡ Performance Regression Testing');
+        console.info(`   Pattern: ${testPattern}`);
+        console.info(`   Timeout: ${timeoutMs}ms`);
+        console.info(`   Bail: 1 (stop on first failure)\n`);
 
         const startTime = performance.now();
 
@@ -30,14 +30,14 @@ class PerformanceRegressionDetector {
             const endTime = performance.now();
             const totalTime = endTime - startTime;
 
-            console.log(`📊 Performance Test Results:`);
-            console.log(`   Total execution time: ${totalTime.toFixed(2)}ms`);
-            console.log(`   Bail triggered: ${result.bailTriggered}`);
-            console.log(`   Status: ${result.status}`);
+            console.info(`📊 Performance Test Results:`);
+            console.info(`   Total execution time: ${totalTime.toFixed(2)}ms`);
+            console.info(`   Bail triggered: ${result.bailTriggered}`);
+            console.info(`   Status: ${result.status}`);
 
             if (result.bailTriggered) {
-                console.log(`   ✅ Early failure detected - saved time!`);
-                console.log(`   🎯 Performance regression caught quickly`);
+                console.info(`   ✅ Early failure detected - saved time!`);
+                console.info(`   🎯 Performance regression caught quickly`);
             }
 
             return result;
@@ -120,7 +120,7 @@ class PerformanceRegressionDetector {
 
     setBaseline(result: PerformanceTestResult) {
         this.baseline.set(result.testName, result);
-        console.log(`📝 Baseline set for ${result.testName}: ${result.executionTime.toFixed(2)}ms`);
+        console.info(`📝 Baseline set for ${result.testName}: ${result.executionTime.toFixed(2)}ms`);
     }
 }
 
@@ -193,7 +193,7 @@ export const PerformanceTestingBestPractices = [
 
 // Run performance regression demo
 async function runPerformanceRegressionDemo() {
-    console.log('🎯 Performance Regression Testing Demo\n');
+    console.info('🎯 Performance Regression Testing Demo\n');
 
     const detector = new PerformanceRegressionDetector();
 
@@ -205,7 +205,7 @@ async function runPerformanceRegressionDemo() {
     ];
 
     for (const pattern of testPatterns) {
-        console.log(`\n🧪 Testing pattern: ${pattern}`);
+        console.info(`\n🧪 Testing pattern: ${pattern}`);
 
         try {
             const result = await detector.runPerformanceTest(pattern, 30000);
@@ -215,7 +215,7 @@ async function runPerformanceRegressionDemo() {
                 detector.setBaseline(result);
             } else {
                 const comparison = detector.compareWithBaseline(result);
-                console.log(`   ${comparison.recommendation}`);
+                console.info(`   ${comparison.recommendation}`);
             }
 
         } catch (error) {
@@ -223,11 +223,11 @@ async function runPerformanceRegressionDemo() {
         }
     }
 
-    console.log('\n📈 Performance Testing Summary:');
-    console.log('   ✅ Bail=1 provides immediate regression detection');
-    console.log('   ✅ Timeout prevents hanging tests');
-    console.log('   ✅ Significant time savings in CI/CD');
-    console.log('   ✅ Works with all advanced testing features');
+    console.info('\n📈 Performance Testing Summary:');
+    console.info('   ✅ Bail=1 provides immediate regression detection');
+    console.info('   ✅ Timeout prevents hanging tests');
+    console.info('   ✅ Significant time savings in CI/CD');
+    console.info('   ✅ Works with all advanced testing features');
 }
 
 // Export for use

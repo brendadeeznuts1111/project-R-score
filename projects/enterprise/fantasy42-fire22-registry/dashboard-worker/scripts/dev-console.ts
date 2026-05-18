@@ -41,11 +41,11 @@ class Fire22DevConsole {
   }
 
   async start() {
-    console.log('🚀 Fire22 Enhanced Development Console');
-    console.log('!==!==!==!==!==!==!==');
-    console.log(`📊 Console depth: ${this.session.debugDepth} levels`);
-    console.log(`⏰ Session started: ${new Date().toLocaleTimeString()}`);
-    console.log('💡 Type "help" for available commands\n');
+    console.info('🚀 Fire22 Enhanced Development Console');
+    console.info('!==!==!==!==!==!==!==');
+    console.info(`📊 Console depth: ${this.session.debugDepth} levels`);
+    console.info(`⏰ Session started: ${new Date().toLocaleTimeString()}`);
+    console.info('💡 Type "help" for available commands\n');
 
     await this.interactiveLoop();
   }
@@ -70,8 +70,8 @@ class Fire22DevConsole {
 
         // Demonstrate deep object inspection on errors
         if (error instanceof Error) {
-          console.log('🔍 Error details:');
-          console.log({
+          console.info('🔍 Error details:');
+          console.info({
             name: error.name,
             message: error.message,
             stack: error.stack?.split('\n').slice(0, 3), // First 3 stack frames
@@ -96,8 +96,8 @@ class Fire22DevConsole {
     if (handler) {
       await handler(args);
     } else {
-      console.log(`❓ Unknown command: ${command}`);
-      console.log('💡 Type "help" for available commands');
+      console.info(`❓ Unknown command: ${command}`);
+      console.info('💡 Type "help" for available commands');
     }
   }
 
@@ -106,7 +106,7 @@ class Fire22DevConsole {
       title: '🚀 Fire22 Development Console Commands',
       commands: {
         console: {
-          depth: 'Set console.log() inspection depth (1-10)',
+          depth: 'Set console.info() inspection depth (1-10)',
           inspect: 'Deep inspect any object with custom depth',
         },
         workspace: {
@@ -134,14 +134,14 @@ class Fire22DevConsole {
       },
     };
 
-    console.log(helpData);
+    console.info(helpData);
   }
 
   private async setConsoleDepth(args: string[]): Promise<void> {
     if (args.length === 0) {
-      console.log(`📊 Current console depth: ${this.session.debugDepth}`);
-      console.log('🎯 Usage: depth <number> (1-10)');
-      console.log(
+      console.info(`📊 Current console depth: ${this.session.debugDepth}`);
+      console.info('🎯 Usage: depth <number> (1-10)');
+      console.info(
         '📝 Note: This affects current session only. Update bunfig.toml for persistence.'
       );
       return;
@@ -150,14 +150,14 @@ class Fire22DevConsole {
     const newDepth = parseInt(args[0]);
 
     if (isNaN(newDepth) || newDepth < 1 || newDepth > 10) {
-      console.log('❌ Invalid depth. Please use a number between 1 and 10.');
+      console.info('❌ Invalid depth. Please use a number between 1 and 10.');
       return;
     }
 
     const oldDepth = this.session.debugDepth;
     this.session.debugDepth = newDepth;
 
-    console.log(`✅ Console depth changed: ${oldDepth} → ${newDepth}`);
+    console.info(`✅ Console depth changed: ${oldDepth} → ${newDepth}`);
 
     // Demonstrate the difference
     const testObject = {
@@ -175,21 +175,21 @@ class Fire22DevConsole {
       },
     };
 
-    console.log('🔍 Test object with new depth:');
-    console.log(testObject);
+    console.info('🔍 Test object with new depth:');
+    console.info(testObject);
   }
 
   private async inspectObject(args: string[]): Promise<void> {
     if (args.length === 0) {
-      console.log('🎯 Usage: inspect <object-expression>');
-      console.log('📝 Example: inspect { a: { b: { c: "deep" } } }');
+      console.info('🎯 Usage: inspect <object-expression>');
+      console.info('📝 Example: inspect { a: { b: { c: "deep" } } }');
       return;
     }
 
     try {
       // Join args and evaluate as object (simplified for demo)
       const objectStr = args.join(' ');
-      console.log(`🔍 Inspecting with depth ${this.session.debugDepth}:`);
+      console.info(`🔍 Inspecting with depth ${this.session.debugDepth}:`);
 
       // For demo purposes, create a complex nested object
       const complexObject = {
@@ -217,15 +217,15 @@ class Fire22DevConsole {
         },
       };
 
-      console.log(complexObject);
+      console.info(complexObject);
     } catch (error) {
-      console.log('❌ Could not inspect object:', error);
+      console.info('❌ Could not inspect object:', error);
     }
   }
 
   private async setWorkspace(args: string[]): Promise<void> {
     if (args.length === 0) {
-      console.log(`📂 Current workspace: ${this.session.workspaceContext || 'root'}`);
+      console.info(`📂 Current workspace: ${this.session.workspaceContext || 'root'}`);
 
       // List available workspaces
       try {
@@ -241,14 +241,14 @@ class Fire22DevConsole {
           }
         }
 
-        console.log('🎯 Available workspaces:');
-        console.log({
+        console.info('🎯 Available workspaces:');
+        console.info({
           count: workspaces.length,
           workspaces: workspaces.sort(),
           usage: 'workspace <name> (without @fire22- prefix)',
         });
       } catch (error) {
-        console.log('❌ Could not list workspaces');
+        console.info('❌ Could not list workspaces');
       }
       return;
     }
@@ -263,13 +263,13 @@ class Fire22DevConsole {
       const stats = await stat(workspacePath);
       if (stats.isDirectory()) {
         this.session.workspaceContext = fullName;
-        console.log(`✅ Switched to workspace: ${fullName}`);
+        console.info(`✅ Switched to workspace: ${fullName}`);
 
         // Show workspace info
         try {
           const packageJson = await Bun.file(`${workspacePath}/package.json`).json();
-          console.log('📋 Workspace info:');
-          console.log({
+          console.info('📋 Workspace info:');
+          console.info({
             name: packageJson.name,
             version: packageJson.version,
             description: packageJson.description,
@@ -282,18 +282,18 @@ class Fire22DevConsole {
             scripts: packageJson.scripts ? Object.keys(packageJson.scripts).length : 0,
           });
         } catch {
-          console.log('📋 Workspace found but package.json not readable');
+          console.info('📋 Workspace found but package.json not readable');
         }
       }
     } catch (error) {
-      console.log(`❌ Workspace not found: ${fullName}`);
-      console.log('💡 Use "workspace" without arguments to see available workspaces');
+      console.info(`❌ Workspace not found: ${fullName}`);
+      console.info('💡 Use "workspace" without arguments to see available workspaces');
     }
   }
 
   private async analyzeDependencies(): Promise<void> {
     const context = this.session.workspaceContext || 'root';
-    console.log(`🔍 Analyzing dependencies for: ${context}`);
+    console.info(`🔍 Analyzing dependencies for: ${context}`);
 
     try {
       // Use our enhanced dependency analysis
@@ -303,15 +303,15 @@ class Fire22DevConsole {
       });
 
       const output = await new Response(proc.stdout).text();
-      console.log(output);
+      console.info(output);
     } catch (error) {
-      console.log('❌ Could not analyze dependencies:', error);
+      console.info('❌ Could not analyze dependencies:', error);
     }
   }
 
   private async runTests(): Promise<void> {
     const context = this.session.workspaceContext || 'root';
-    console.log(`🧪 Running tests for: ${context}`);
+    console.info(`🧪 Running tests for: ${context}`);
 
     try {
       const proc = Bun.spawn(['bun', 'test'], {
@@ -320,15 +320,15 @@ class Fire22DevConsole {
       });
 
       const output = await new Response(proc.stdout).text();
-      console.log(output);
+      console.info(output);
     } catch (error) {
-      console.log('❌ Could not run tests:', error);
+      console.info('❌ Could not run tests:', error);
     }
   }
 
   private async buildWorkspace(): Promise<void> {
     const context = this.session.workspaceContext || 'root';
-    console.log(`🔨 Building: ${context}`);
+    console.info(`🔨 Building: ${context}`);
 
     try {
       const proc = Bun.spawn(['bun', 'run', 'build'], {
@@ -337,9 +337,9 @@ class Fire22DevConsole {
       });
 
       const output = await new Response(proc.stdout).text();
-      console.log(output);
+      console.info(output);
     } catch (error) {
-      console.log('❌ Could not build workspace:', error);
+      console.info('❌ Could not build workspace:', error);
     }
   }
 
@@ -369,20 +369,20 @@ class Fire22DevConsole {
       },
     };
 
-    console.log('📊 Fire22 Development Console Status:');
-    console.log(statusInfo);
+    console.info('📊 Fire22 Development Console Status:');
+    console.info(statusInfo);
   }
 
   private async resetSession(): Promise<void> {
     this.session.commandCount = 0;
     this.session.startTime = Date.now();
-    console.log('✅ Session counters reset');
+    console.info('✅ Session counters reset');
   }
 
   private async exit(): Promise<void> {
     const uptime = Date.now() - this.session.startTime;
-    console.log('\n👋 Fire22 Development Console Session Complete');
-    console.log({
+    console.info('\n👋 Fire22 Development Console Session Complete');
+    console.info({
       duration: `${Math.round(uptime / 1000)}s`,
       commands: this.session.commandCount,
       workspace: this.session.workspaceContext || 'root',

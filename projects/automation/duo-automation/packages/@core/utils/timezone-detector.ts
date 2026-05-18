@@ -24,6 +24,6 @@ export class TimezoneDetector {
    */
   static logRegionalContext(label: string = "AUDIT"): void {
     const ctx = this.getContext();
-    console.log(`🌍 [${label}] Node TZ: ${ctx.systemTZ} | Local: ${ctx.localTime} | Offset: ${ctx.offsetMinutes}m`);
+    console.info(`🌍 [${label}] Node TZ: ${ctx.systemTZ} | Local: ${ctx.localTime} | Offset: ${ctx.offsetMinutes}m`);
   }
 }

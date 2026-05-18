@@ -99,15 +99,15 @@ export class RiskHunterCLI {
 		try {
 			const options = this.parseArguments(args);
 
-			console.log("🔍 Factory Wager Risk Hunter CLI v2.0");
-			console.log("=======================================");
-			console.log(
+			console.info("🔍 Factory Wager Risk Hunter CLI v2.0");
+			console.info("=======================================");
+			console.info(
 				`🌐 Network Optimization: ${this.config.networkOptimization ? "Enabled" : "Disabled"}`,
 			);
-			console.log(
+			console.info(
 				`🔗 External APIs: ${this.config.enableExternalAPIs ? "Enabled" : "Disabled"}`,
 			);
-			console.log("");
+			console.info("");
 
 			switch (options.command) {
 				case "hunt":
@@ -213,16 +213,16 @@ export class RiskHunterCLI {
 
 	// Hunt for high-risk sessions
 	private async huntHighRiskSessions(options: CLIOptions): Promise<void> {
-		console.log(`🎯 Hunting high-risk sessions...`);
+		console.info(`🎯 Hunting high-risk sessions...`);
 
 		const threshold = options.threshold || 0.92;
 		const since = options.parseSince
 			? this.parseSince(options.since!)
 			: Date.now() - 60 * 60 * 1000; // Default 1 hour
 
-		console.log(`   Threshold: ${threshold}`);
-		console.log(`   Since: ${new Date(since).toLocaleString()}`);
-		console.log("");
+		console.info(`   Threshold: ${threshold}`);
+		console.info(`   Since: ${new Date(since).toLocaleString()}`);
+		console.info("");
 
 		try {
 			// Fetch recent sessions from API
@@ -240,21 +240,21 @@ export class RiskHunterCLI {
 				.slice(0, this.config.maxResults);
 
 			if (highRiskSessions.length === 0) {
-				console.log("✅ No high-risk sessions found.");
+				console.info("✅ No high-risk sessions found.");
 				return;
 			}
 
-			console.log(`🚨 Found ${highRiskSessions.length} high-risk sessions:`);
-			console.log("");
+			console.info(`🚨 Found ${highRiskSessions.length} high-risk sessions:`);
+			console.info("");
 
 			// Display results
 			this.displaySessions(highRiskSessions, options.output);
 
 			// Show detailed analysis for top sessions
 			if (options.verbose && highRiskSessions.length > 0) {
-				console.log("");
-				console.log("📊 Detailed Analysis:");
-				console.log("=====================");
+				console.info("");
+				console.info("📊 Detailed Analysis:");
+				console.info("=====================");
 
 				for (const session of highRiskSessions.slice(0, 3)) {
 					await this.analyzeSessionDetails(session);
@@ -286,7 +286,7 @@ export class RiskHunterCLI {
 		featuresStr: string,
 		options: CLIOptions,
 	): Promise<void> {
-		console.log("🔬 Analyzing session with provided features...");
+		console.info("🔬 Analyzing session with provided features...");
 
 		try {
 			// Parse features (comma-separated values)
@@ -294,8 +294,8 @@ export class RiskHunterCLI {
 			const sessionId = `cli-analysis-${Date.now()}`;
 			const merchantId = options.merchant || "cli-test";
 
-			console.log(`   Features: ${JSON.stringify(features)}`);
-			console.log("");
+			console.info(`   Features: ${JSON.stringify(features)}`);
+			console.info("");
 
 			// Run fraud detection
 			const session = await predictRisk(features, sessionId, merchantId);
@@ -312,11 +312,11 @@ export class RiskHunterCLI {
 		sessionId: string,
 		options: CLIOptions,
 	): Promise<void> {
-		console.log(`🔍 Analyzing session: ${sessionId}`);
+		console.info(`🔍 Analyzing session: ${sessionId}`);
 
 		try {
 			// Fetch session details (mock implementation)
-			console.log("   Fetching session details...");
+			console.info("   Fetching session details...");
 
 			// Simulate session data
 			const mockSession = {
@@ -344,14 +344,14 @@ export class RiskHunterCLI {
 
 	// Monitor real-time sessions
 	private async monitorRealTime(options: CLIOptions): Promise<void> {
-		console.log("📡 Starting real-time monitoring...");
-		console.log("   Press Ctrl+C to stop");
-		console.log("");
+		console.info("📡 Starting real-time monitoring...");
+		console.info("   Press Ctrl+C to stop");
+		console.info("");
 
 		const ws = new WebSocket(this.config.wsEndpoint);
 
 		ws.onopen = () => {
-			console.log("✅ Connected to real-time stream");
+			console.info("✅ Connected to real-time stream");
 		};
 
 		ws.onmessage = (event) => {
@@ -360,7 +360,7 @@ export class RiskHunterCLI {
 		};
 
 		ws.onclose = () => {
-			console.log("❌ Disconnected from real-time stream");
+			console.info("❌ Disconnected from real-time stream");
 		};
 
 		ws.onerror = (error) => {
@@ -369,7 +369,7 @@ export class RiskHunterCLI {
 
 		// Keep process alive
 		process.on("SIGINT", () => {
-			console.log("\\n🛑 Stopping real-time monitoring...");
+			console.info("\\n🛑 Stopping real-time monitoring...");
 			ws.close();
 			process.exit(0);
 		});
@@ -381,20 +381,20 @@ export class RiskHunterCLI {
 
 		switch (data.event) {
 			case "fraud:blocked":
-				console.log(
+				console.info(
 					`🚨 [${timestamp}] BLOCKED: ${data.sessionId} | Score: ${data.score.toFixed(3)} | ${data.reason}`,
 				);
 				break;
 			case "fraud:detected":
 				if (data.score >= (options.threshold || 0.8)) {
-					console.log(
+					console.info(
 						`⚠️  [${timestamp}] DETECTED: ${data.sessionId} | Score: ${data.score.toFixed(3)} | ${data.riskLevel}`,
 					);
 				}
 				break;
 			case "risk:score":
 				if (options.verbose) {
-					console.log(
+					console.info(
 						`📊 [${timestamp}] SCORE: ${data.sessionId} | ${data.score.toFixed(3)} | ${data.riskLevel}`,
 					);
 				}
@@ -404,7 +404,7 @@ export class RiskHunterCLI {
 
 	// Generate report
 	private async generateReport(options: CLIOptions): Promise<void> {
-		console.log("📈 Generating fraud detection report...");
+		console.info("📈 Generating fraud detection report...");
 
 		try {
 			const since = options.since
@@ -456,7 +456,7 @@ export class RiskHunterCLI {
 
 			// Output report
 			if (options.output === "json") {
-				console.log(JSON.stringify(report, null, 2));
+				console.info(JSON.stringify(report, null, 2));
 			} else {
 				this.displayReport(report);
 			}
@@ -467,7 +467,7 @@ export class RiskHunterCLI {
 
 	// Run tests
 	private async runTests(options: CLIOptions): Promise<void> {
-		console.log("🧪 Running fraud detection tests...");
+		console.info("🧪 Running fraud detection tests...");
 
 		const testCases = [
 			{
@@ -505,11 +505,11 @@ export class RiskHunterCLI {
 			},
 		];
 
-		console.log("");
+		console.info("");
 
 		for (const testCase of testCases) {
-			console.log(`Testing: ${testCase.name}`);
-			console.log(`   Expected: ${testCase.expectedScore}`);
+			console.info(`Testing: ${testCase.name}`);
+			console.info(`   Expected: ${testCase.expectedScore}`);
 
 			try {
 				const sessionId = `test-${Date.now()}-${Math.random()}`;
@@ -519,23 +519,23 @@ export class RiskHunterCLI {
 					"test-merchant",
 				);
 
-				console.log(
+				console.info(
 					`   Actual: ${result.score.toFixed(3)} (${result.riskLevel})`,
 				);
-				console.log(`   Status: ${result.blocked ? "BLOCKED" : "ALLOWED"}`);
+				console.info(`   Status: ${result.blocked ? "BLOCKED" : "ALLOWED"}`);
 
 				if (options.verbose) {
-					console.log(`   Features: ${JSON.stringify(testCase.features)}`);
-					console.log(`   Reason: ${result.reason || "N/A"}`);
+					console.info(`   Features: ${JSON.stringify(testCase.features)}`);
+					console.info(`   Reason: ${result.reason || "N/A"}`);
 				}
 			} catch (error) {
-				console.log(`   Error: ${error}`);
+				console.info(`   Error: ${error}`);
 			}
 
-			console.log("");
+			console.info("");
 		}
 
-		console.log("✅ Test suite completed");
+		console.info("✅ Test suite completed");
 	}
 
 	// Parse features from string
@@ -577,7 +577,7 @@ export class RiskHunterCLI {
 
 		switch (format) {
 			case "json":
-				console.log(JSON.stringify(sessions, null, 2));
+				console.info(JSON.stringify(sessions, null, 2));
 				break;
 			case "csv":
 				this.displaySessionsAsCSV(sessions);
@@ -603,22 +603,22 @@ export class RiskHunterCLI {
 			Timestamp: new Date(session.timestamp).toLocaleString(),
 		}));
 
-		console.log("📊 Risk Sessions Table:");
-		console.log("");
+		console.info("📊 Risk Sessions Table:");
+		console.info("");
 
 		// Use bun.inspect.table for formatted display
 		console.table(tableData);
 
-		console.log("");
-		console.log(`📈 Summary: ${sessions.length} sessions displayed`);
+		console.info("");
+		console.info(`📈 Summary: ${sessions.length} sessions displayed`);
 	}
 
 	// Display sessions as CSV
 	private displaySessionsAsCSV(sessions: any[]): void {
-		console.log("Session ID,Merchant ID,Score,Risk Level,Blocked,Timestamp");
+		console.info("Session ID,Merchant ID,Score,Risk Level,Blocked,Timestamp");
 
 		sessions.forEach((session) => {
-			console.log(
+			console.info(
 				`"${session.sessionId}","${session.merchantId}",${session.score},"${session.riskLevel}",${session.blocked},${session.timestamp}`,
 			);
 		});
@@ -626,8 +626,8 @@ export class RiskHunterCLI {
 
 	// Display matrix configuration using bun.inspect.table
 	private displayMatrixConfig(): void {
-		console.log("🏗️ Matrix Configuration System");
-		console.log("================================");
+		console.info("🏗️ Matrix Configuration System");
+		console.info("================================");
 
 		// Feature matrix columns
 		const featureColumns = {
@@ -672,8 +672,8 @@ export class RiskHunterCLI {
 			],
 		};
 
-		console.log("");
-		console.log("📊 Feature Matrix Columns:");
+		console.info("");
+		console.info("📊 Feature Matrix Columns:");
 		console.table(featureColumns);
 
 		// Feature details
@@ -725,8 +725,8 @@ export class RiskHunterCLI {
 			},
 		];
 
-		console.log("");
-		console.log("🎯 Feature Details:");
+		console.info("");
+		console.info("🎯 Feature Details:");
 		console.table(featureDetails);
 
 		// Ensemble models
@@ -743,62 +743,62 @@ export class RiskHunterCLI {
 			},
 		];
 
-		console.log("");
-		console.log("🤖 Ensemble Models:");
+		console.info("");
+		console.info("🤖 Ensemble Models:");
 		console.table(ensembleModels);
 
-		console.log("");
-		console.log("✅ Matrix configuration loaded successfully");
+		console.info("");
+		console.info("✅ Matrix configuration loaded successfully");
 	}
 
 	// Display single session
 	private displaySession(session: any): void {
-		console.log("📊 Session Results:");
-		console.log("==================");
-		console.log(`Session ID: ${session.sessionId}`);
-		console.log(`Merchant ID: ${session.merchantId}`);
-		console.log(`Risk Score: ${session.score.toFixed(3)}`);
-		console.log(`Risk Level: ${session.riskLevel}`);
-		console.log(`Blocked: ${session.blocked ? "Yes" : "No"}`);
+		console.info("📊 Session Results:");
+		console.info("==================");
+		console.info(`Session ID: ${session.sessionId}`);
+		console.info(`Merchant ID: ${session.merchantId}`);
+		console.info(`Risk Score: ${session.score.toFixed(3)}`);
+		console.info(`Risk Level: ${session.riskLevel}`);
+		console.info(`Blocked: ${session.blocked ? "Yes" : "No"}`);
 		if (session.reason) {
-			console.log(`Reason: ${session.reason}`);
+			console.info(`Reason: ${session.reason}`);
 		}
-		console.log(`Timestamp: ${new Date(session.timestamp).toLocaleString()}`);
-		console.log("");
+		console.info(`Timestamp: ${new Date(session.timestamp).toLocaleString()}`);
+		console.info("");
 	}
 
 	// Display session analysis
 	private displaySessionAnalysis(session: any, options: CLIOptions): void {
-		console.log("📊 Session Analysis Results:");
-		console.log("==========================");
-		console.log(`Session ID: ${session.sessionId}`);
-		console.log(`Merchant: ${session.merchantId}`);
-		console.log(
+		console.info("📊 Session Analysis Results:");
+		console.info("==========================");
+		console.info(`Session ID: ${session.sessionId}`);
+		console.info(`Merchant: ${session.merchantId}`);
+		console.info(
 			`Score: ${session.score.toFixed(3)} (${(session.score * 100).toFixed(1)}%)`,
 		);
-		console.log(`Risk Level: ${session.riskLevel.toUpperCase()}`);
-		console.log(`Status: ${session.blocked ? "🚫 BLOCKED" : "✅ ACTIVE"}`);
+		console.info(`Risk Level: ${session.riskLevel.toUpperCase()}`);
+		console.info(`Status: ${session.blocked ? "🚫 BLOCKED" : "✅ ACTIVE"}`);
 
 		if (session.reason) {
-			console.log(`Reason: ${session.reason}`);
+			console.info(`Reason: ${session.reason}`);
 		}
 
 		if (options.verbose && session.features) {
-			console.log("");
-			console.log("Feature Breakdown:");
-			console.log("------------------");
+			console.info("");
+			console.info("Feature Breakdown:");
+			console.info("------------------");
 			Object.entries(session.features).forEach(([feature, value]) => {
-				console.log(`${feature}: ${value}`);
+				console.info(`${feature}: ${value}`);
 			});
 		}
 
-		console.log("");
+		console.info("");
 	}
 
 	// Analyze session details
 	private async analyzeSessionDetails(session: any): Promise<void> {
-		console.log(`🔍 Deep Analysis: ${session.sessionId}`);
-		console.log("=====================================");
+		console.info(`🔍 Deep Analysis: ${session.sessionId}`);
+		console.info("=====================================");
 
 		// Simulate detailed analysis
 		const analysis = {
@@ -819,19 +819,19 @@ export class RiskHunterCLI {
 			],
 		};
 
-		console.log(
+		console.info(
 			`Ghost Shield: ${analysis.ghostShieldResult.isGhostFriendly ? "✅ Friendly" : "⚠️ Suspicious"}`,
 		);
-		console.log(
+		console.info(
 			`Proxy Detection: ${analysis.proxyAnalysis.isProxyDetected ? "🔍 Detected" : "✅ Clean"}`,
 		);
-		console.log(`Patterns Found: ${analysis.patterns.length}`);
+		console.info(`Patterns Found: ${analysis.patterns.length}`);
 
 		analysis.patterns.forEach((pattern, index) => {
-			console.log(`  ${index + 1}. ${pattern}`);
+			console.info(`  ${index + 1}. ${pattern}`);
 		});
 
-		console.log("");
+		console.info("");
 	}
 
 	// Calculate risk distribution
@@ -875,53 +875,53 @@ export class RiskHunterCLI {
 
 	// Display report
 	private displayReport(report: any): void {
-		console.log("📈 Fraud Detection Report");
-		console.log("========================");
-		console.log(`Generated: ${new Date(report.generatedAt).toLocaleString()}`);
-		console.log(
+		console.info("📈 Fraud Detection Report");
+		console.info("========================");
+		console.info(`Generated: ${new Date(report.generatedAt).toLocaleString()}`);
+		console.info(
 			`Period: ${new Date(report.period.start).toLocaleString()} - ${new Date(report.period.end).toLocaleString()}`,
 		);
-		console.log("");
+		console.info("");
 
-		console.log("📊 Summary:");
-		console.log(`   Total Sessions: ${report.summary.totalSessions}`);
-		console.log(`   Blocked Sessions: ${report.summary.blockedSessions}`);
-		console.log(
+		console.info("📊 Summary:");
+		console.info(`   Total Sessions: ${report.summary.totalSessions}`);
+		console.info(`   Blocked Sessions: ${report.summary.blockedSessions}`);
+		console.info(
 			`   Average Risk Score: ${report.summary.averageRiskScore.toFixed(3)}`,
 		);
-		console.log(`   Detection Rate: ${report.summary.detectionRate}`);
-		console.log("");
+		console.info(`   Detection Rate: ${report.summary.detectionRate}`);
+		console.info("");
 
-		console.log("🎯 Risk Distribution:");
+		console.info("🎯 Risk Distribution:");
 		Object.entries(report.riskDistribution).forEach(([level, count]) => {
-			console.log(
+			console.info(
 				`   ${level.charAt(0).toUpperCase() + level.slice(1)}: ${count}`,
 			);
 		});
-		console.log("");
+		console.info("");
 
 		if (report.topRiskSessions.length > 0) {
-			console.log("🚨 Top Risk Sessions:");
+			console.info("🚨 Top Risk Sessions:");
 			report.topRiskSessions
 				.slice(0, 5)
 				.forEach((session: any, index: number) => {
-					console.log(
+					console.info(
 						`   ${index + 1}. ${session.sessionId} | Score: ${session.score.toFixed(3)} | ${session.riskLevel}`,
 					);
 				});
-			console.log("");
+			console.info("");
 		}
 
-		console.log("💡 Recommendations:");
+		console.info("💡 Recommendations:");
 		report.recommendations.forEach((rec: string, index: number) => {
-			console.log(`   ${index + 1}. ${rec}`);
+			console.info(`   ${index + 1}. ${rec}`);
 		});
 	}
 
 	// Show network performance metrics
 	private async showNetworkMetrics(options: CLIOptions): Promise<void> {
-		console.log("🌐 Network Performance Metrics");
-		console.log("=============================");
+		console.info("🌐 Network Performance Metrics");
+		console.info("=============================");
 
 		try {
 			const metrics = getNetworkMetrics();
@@ -965,7 +965,7 @@ export class RiskHunterCLI {
 				},
 			];
 
-			console.log("📊 Connection Statistics:");
+			console.info("📊 Connection Statistics:");
 			console.table(connectionStats);
 
 			// Top hosts table
@@ -984,8 +984,8 @@ export class RiskHunterCLI {
 									: "📉 Low",
 					}));
 
-				console.log("");
-				console.log("🔗 Top Hosts by Request Count:");
+				console.info("");
+				console.info("🔗 Top Hosts by Request Count:");
 				console.table(topHostsData);
 			}
 
@@ -1001,8 +1001,8 @@ export class RiskHunterCLI {
 					Severity: error.error.includes("timeout") ? "🔴 High" : "⚠️ Medium",
 				}));
 
-				console.log("");
-				console.log("⚠️ Recent Errors:");
+				console.info("");
+				console.info("⚠️ Recent Errors:");
 				console.table(errorsData);
 			}
 
@@ -1041,8 +1041,8 @@ export class RiskHunterCLI {
 				},
 			];
 
-			console.log("");
-			console.log("📈 Performance Summary:");
+			console.info("");
+			console.info("📈 Performance Summary:");
 			console.table(performanceSummary);
 		} catch (error) {
 			console.error("❌ Failed to fetch network metrics:", error);
@@ -1050,11 +1050,11 @@ export class RiskHunterCLI {
 	}
 	// Test external APIs
 	private async testExternalAPIs(options: CLIOptions): Promise<void> {
-		console.log("🔗 External API Testing");
-		console.log("========================");
+		console.info("🔗 External API Testing");
+		console.info("========================");
 
 		if (!this.config.enableExternalAPIs) {
-			console.log("❌ External APIs are disabled in configuration");
+			console.info("❌ External APIs are disabled in configuration");
 			return;
 		}
 
@@ -1062,59 +1062,59 @@ export class RiskHunterCLI {
 			const testIP = "8.8.8.8"; // Google DNS for testing
 			const testFingerprint = "test-device-fingerprint";
 
-			console.log(`📍 Testing with IP: ${testIP}`);
-			console.log(`🖥️ Testing with Fingerprint: ${testFingerprint}`);
-			console.log("");
+			console.info(`📍 Testing with IP: ${testIP}`);
+			console.info(`🖥️ Testing with Fingerprint: ${testFingerprint}`);
+			console.info("");
 
 			const startTime = Date.now();
 			const externalData = await fetchExternalData(testIP, testFingerprint);
 			const duration = Date.now() - startTime;
 
-			console.log(`⚡ External data fetched in ${duration}ms`);
-			console.log("");
+			console.info(`⚡ External data fetched in ${duration}ms`);
+			console.info("");
 
-			console.log("📱 Device Intelligence:");
-			console.log(
+			console.info("📱 Device Intelligence:");
+			console.info(
 				`   Risk Score: ${externalData.deviceIntelligence.riskScore}`,
 			);
-			console.log(
+			console.info(
 				`   Is Emulator: ${externalData.deviceIntelligence.isEmulator}`,
 			);
-			console.log(`   Is Rooted: ${externalData.deviceIntelligence.isRooted}`);
-			console.log(
+			console.info(`   Is Rooted: ${externalData.deviceIntelligence.isRooted}`);
+			console.info(
 				`   Trust Score: ${externalData.deviceIntelligence.trustScore}`,
 			);
-			console.log("");
+			console.info("");
 
-			console.log("🌍 Geolocation:");
-			console.log(`   Country: ${externalData.geolocation.country}`);
-			console.log(
+			console.info("🌍 Geolocation:");
+			console.info(`   Country: ${externalData.geolocation.country}`);
+			console.info(
 				`   High Risk Country: ${externalData.geolocation.isHighRiskCountry}`,
 			);
-			console.log(
+			console.info(
 				`   VPN Probability: ${externalData.geolocation.vpnProbability}`,
 			);
-			console.log(`   Proxy Score: ${externalData.geolocation.proxyScore}`);
-			console.log("");
+			console.info(`   Proxy Score: ${externalData.geolocation.proxyScore}`);
+			console.info("");
 
-			console.log("🛡️ Threat Intelligence:");
-			console.log(
+			console.info("🛡️ Threat Intelligence:");
+			console.info(
 				`   Malicious Score: ${externalData.threatIntelligence.maliciousScore}`,
 			);
-			console.log(
+			console.info(
 				`   Known Attacker: ${externalData.threatIntelligence.isKnownAttacker}`,
 			);
-			console.log(
+			console.info(
 				`   Threat Types: ${externalData.threatIntelligence.threatTypes.join(", ")}`,
 			);
-			console.log(
+			console.info(
 				`   Confidence: ${externalData.threatIntelligence.confidence}`,
 			);
-			console.log("");
+			console.info("");
 
 			// Test enhanced prediction with external data
 			if (options.features) {
-				console.log("🧪 Testing Enhanced Prediction:");
+				console.info("🧪 Testing Enhanced Prediction:");
 				const features = this.parseFeatures(options.features);
 				const sessionId = `test-${Date.now()}`;
 				const merchantId = options.merchant || "test-merchant";
@@ -1125,13 +1125,13 @@ export class RiskHunterCLI {
 					merchantId,
 					externalData,
 				);
-				console.log(
+				console.info(
 					`   Original Score: ${(enhancedSession.score - 0.15).toFixed(3)}`,
 				);
-				console.log(`   Enhanced Score: ${enhancedSession.score.toFixed(3)}`);
-				console.log(`   Risk Level: ${enhancedSession.riskLevel}`);
-				console.log(`   Blocked: ${enhancedSession.blocked}`);
-				console.log(`   Reason: ${enhancedSession.reason || "N/A"}`);
+				console.info(`   Enhanced Score: ${enhancedSession.score.toFixed(3)}`);
+				console.info(`   Risk Level: ${enhancedSession.riskLevel}`);
+				console.info(`   Blocked: ${enhancedSession.blocked}`);
+				console.info(`   Reason: ${enhancedSession.reason || "N/A"}`);
 			}
 		} catch (error) {
 			console.error("❌ External API test failed:", error);
@@ -1145,8 +1145,8 @@ export class RiskHunterCLI {
 			return;
 		}
 
-		console.log("🔬 Enhanced Session Analysis");
-		console.log("============================");
+		console.info("🔬 Enhanced Session Analysis");
+		console.info("============================");
 
 		try {
 			let features: FeatureVector;
@@ -1157,7 +1157,7 @@ export class RiskHunterCLI {
 				sessionId = options.sessionId || `analysis-${Date.now()}`;
 			} else {
 				// Fetch session data would go here
-				console.log("❌ Session fetching not implemented in this demo");
+				console.info("❌ Session fetching not implemented in this demo");
 				return;
 			}
 
@@ -1165,12 +1165,12 @@ export class RiskHunterCLI {
 			const startTime = Date.now();
 
 			// Base prediction
-			console.log("📊 Running base prediction...");
+			console.info("📊 Running base prediction...");
 			const baseSession = await predictRisk(features, sessionId, merchantId);
 
 			// Enhanced prediction with external data
 			if (this.config.enableExternalAPIs && options.external) {
-				console.log("🌐 Fetching external data...");
+				console.info("🌐 Fetching external data...");
 				const externalData = await fetchExternalData(
 					"8.8.8.8",
 					"test-fingerprint",
@@ -1184,38 +1184,38 @@ export class RiskHunterCLI {
 
 				const processingTime = Date.now() - startTime;
 
-				console.log(`⚡ Analysis completed in ${processingTime}ms`);
-				console.log("");
+				console.info(`⚡ Analysis completed in ${processingTime}ms`);
+				console.info("");
 
-				console.log("📈 Comparison Results:");
-				console.log(
+				console.info("📈 Comparison Results:");
+				console.info(
 					`   Base Score: ${baseSession.score.toFixed(3)} (${baseSession.riskLevel})`,
 				);
-				console.log(
+				console.info(
 					`   Enhanced Score: ${enhancedSession.score.toFixed(3)} (${enhancedSession.riskLevel})`,
 				);
-				console.log(
+				console.info(
 					`   Score Improvement: ${(enhancedSession.score - baseSession.score).toFixed(3)}`,
 				);
-				console.log(`   Base Blocked: ${baseSession.blocked}`);
-				console.log(`   Enhanced Blocked: ${enhancedSession.blocked}`);
-				console.log("");
+				console.info(`   Base Blocked: ${baseSession.blocked}`);
+				console.info(`   Enhanced Blocked: ${enhancedSession.blocked}`);
+				console.info("");
 
-				console.log("🔗 External Data Impact:");
-				console.log(
+				console.info("🔗 External Data Impact:");
+				console.info(
 					`   Device Risk: ${externalData.deviceIntelligence.riskScore > 0.7 ? "High" : "Normal"}`,
 				);
-				console.log(
+				console.info(
 					`   Geo Risk: ${externalData.geolocation.isHighRiskCountry ? "High" : "Normal"}`,
 				);
-				console.log(
+				console.info(
 					`   Threat Risk: ${externalData.threatIntelligence.maliciousScore > 0.8 ? "High" : "Normal"}`,
 				);
-				console.log(`   Final Reason: ${enhancedSession.reason || "N/A"}`);
+				console.info(`   Final Reason: ${enhancedSession.reason || "N/A"}`);
 			} else {
 				const processingTime = Date.now() - startTime;
-				console.log(`⚡ Analysis completed in ${processingTime}ms`);
-				console.log("");
+				console.info(`⚡ Analysis completed in ${processingTime}ms`);
+				console.info("");
 				this.displaySession(baseSession);
 			}
 		} catch (error) {
@@ -1225,52 +1225,52 @@ export class RiskHunterCLI {
 
 	// Show help
 	private showHelp(): void {
-		console.log("Factory Wager Risk Hunter CLI v2.0");
-		console.log("===================================");
-		console.log("");
-		console.log("Usage: bun run risk-hunter.ts [command] [options]");
-		console.log("");
-		console.log("Commands:");
-		console.log("  hunt       Hunt for high-risk sessions");
-		console.log("  analyze    Analyze specific session or features");
-		console.log("  monitor    Monitor real-time fraud alerts");
-		console.log("  report     Generate fraud detection report");
-		console.log("  test       Run detection test suite");
-		console.log("  network    Show network performance metrics");
-		console.log("  external   Test external API integration");
-		console.log("  matrix     Display matrix configuration system");
-		console.log("");
-		console.log("Options:");
-		console.log("  --sessionId <id>      Session ID to analyze");
-		console.log("  --merchant <id>       Merchant ID for analysis");
-		console.log("  --features <json>     Feature vector (JSON format)");
-		console.log("  --threshold <num>     Risk threshold (0.0-1.0)");
-		console.log("  --output <format>     Output format: json|table|csv");
-		console.log("  --verbose             Enable verbose logging");
-		console.log("  --realTime            Enable real-time monitoring");
-		console.log("  --external            Enable external API data");
-		console.log("  --network             Show network metrics");
-		console.log("");
-		console.log("Examples:");
-		console.log("  # Analyze with external APIs");
-		console.log(
+		console.info("Factory Wager Risk Hunter CLI v2.0");
+		console.info("===================================");
+		console.info("");
+		console.info("Usage: bun run risk-hunter.ts [command] [options]");
+		console.info("");
+		console.info("Commands:");
+		console.info("  hunt       Hunt for high-risk sessions");
+		console.info("  analyze    Analyze specific session or features");
+		console.info("  monitor    Monitor real-time fraud alerts");
+		console.info("  report     Generate fraud detection report");
+		console.info("  test       Run detection test suite");
+		console.info("  network    Show network performance metrics");
+		console.info("  external   Test external API integration");
+		console.info("  matrix     Display matrix configuration system");
+		console.info("");
+		console.info("Options:");
+		console.info("  --sessionId <id>      Session ID to analyze");
+		console.info("  --merchant <id>       Merchant ID for analysis");
+		console.info("  --features <json>     Feature vector (JSON format)");
+		console.info("  --threshold <num>     Risk threshold (0.0-1.0)");
+		console.info("  --output <format>     Output format: json|table|csv");
+		console.info("  --verbose             Enable verbose logging");
+		console.info("  --realTime            Enable real-time monitoring");
+		console.info("  --external            Enable external API data");
+		console.info("  --network             Show network metrics");
+		console.info("");
+		console.info("Examples:");
+		console.info("  # Analyze with external APIs");
+		console.info(
 			'  bun run risk-hunter.ts analyze --features \'{"root_detected":1,"vpn_active":0}\' --external',
 		);
-		console.log("");
-		console.log("  # Test network performance");
-		console.log("  bun run risk-hunter.ts network");
-		console.log("");
-		console.log("  # Test external APIs");
-		console.log(
+		console.info("");
+		console.info("  # Test network performance");
+		console.info("  bun run risk-hunter.ts network");
+		console.info("");
+		console.info("  # Test external APIs");
+		console.info(
 			"  bun run risk-hunter.ts external --features '{\"root_detected\":1}'",
 		);
-		console.log("");
-		console.log("  # Monitor with enhanced features");
-		console.log("  bun run risk-hunter.ts monitor --realTime --external");
-		console.log("");
-		console.log("  # Display matrix configuration");
-		console.log("  bun run risk-hunter.ts matrix");
-		console.log("");
+		console.info("");
+		console.info("  # Monitor with enhanced features");
+		console.info("  bun run risk-hunter.ts monitor --realTime --external");
+		console.info("");
+		console.info("  # Display matrix configuration");
+		console.info("  bun run risk-hunter.ts matrix");
+		console.info("");
 	}
 }
 

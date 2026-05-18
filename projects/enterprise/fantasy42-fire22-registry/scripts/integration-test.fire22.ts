@@ -262,8 +262,8 @@ async function runTest(test: IntegrationTest): Promise<TestResult> {
 }
 
 async function runTestSuite(name: string, tests: IntegrationTest[]): Promise<TestResult[]> {
-  console.log(`\n🔍 Testing ${name} Integration`);
-  console.log('═'.repeat(50));
+  console.info(`\n🔍 Testing ${name} Integration`);
+  console.info('═'.repeat(50));
 
   const results: TestResult[] = [];
 
@@ -273,12 +273,12 @@ async function runTestSuite(name: string, tests: IntegrationTest[]): Promise<Tes
     const result = await runTest(test);
 
     if (result.success) {
-      console.log(`✅ ${result.message} (${result.duration}ms)`);
+      console.info(`✅ ${result.message} (${result.duration}ms)`);
     } else {
       const icon = result.required ? '❌' : '⚠️';
-      console.log(`${icon} ${result.message} (${result.duration}ms)`);
+      console.info(`${icon} ${result.message} (${result.duration}ms)`);
       if (result.required) {
-        console.log(`      └─ ${test.description}`);
+        console.info(`      └─ ${test.description}`);
       }
     }
 
@@ -293,10 +293,10 @@ async function runTestSuite(name: string, tests: IntegrationTest[]): Promise<Tes
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function runIntegrationTest(): Promise<void> {
-  console.log('🔥 FIRE22 SYSTEM INTEGRATION TEST');
-  console.log('══════════════════════════════════');
-  console.log('Testing Repository ↔️ Registry ↔️ Hub ↔️ Cloudflare integration');
-  console.log('');
+  console.info('🔥 FIRE22 SYSTEM INTEGRATION TEST');
+  console.info('══════════════════════════════════');
+  console.info('Testing Repository ↔️ Registry ↔️ Hub ↔️ Cloudflare integration');
+  console.info('');
 
   const allResults: TestResult[] = [];
 
@@ -321,61 +321,61 @@ async function runIntegrationTest(): Promise<void> {
   const successRate = ((passedTests / totalTests) * 100).toFixed(1);
 
   // Display summary
-  console.log('');
-  console.log('📊 INTEGRATION TEST SUMMARY');
-  console.log('═══════════════════════════');
-  console.log(`Total Tests: ${totalTests}`);
-  console.log(`✅ Passed: ${passedTests}`);
-  console.log(`❌ Failed: ${failedTests}`);
-  console.log(`📈 Success Rate: ${successRate}%`);
+  console.info('');
+  console.info('📊 INTEGRATION TEST SUMMARY');
+  console.info('═══════════════════════════');
+  console.info(`Total Tests: ${totalTests}`);
+  console.info(`✅ Passed: ${passedTests}`);
+  console.info(`❌ Failed: ${failedTests}`);
+  console.info(`📈 Success Rate: ${successRate}%`);
 
   if (requiredFailed > 0) {
-    console.log(`🚨 Required Failures: ${requiredFailed}`);
+    console.info(`🚨 Required Failures: ${requiredFailed}`);
   }
 
   // Overall assessment
-  console.log('');
+  console.info('');
   if (requiredFailed === 0) {
-    console.log('🎉 INTEGRATION TEST PASSED!');
-    console.log('✅ All required integrations are working');
-    console.log('🚀 Your Fantasy42-Fire22 system is production-ready');
+    console.info('🎉 INTEGRATION TEST PASSED!');
+    console.info('✅ All required integrations are working');
+    console.info('🚀 Your Fantasy42-Fire22 system is production-ready');
 
     if (failedTests > 0) {
-      console.log('');
-      console.log('ℹ️ OPTIONAL IMPROVEMENTS:');
+      console.info('');
+      console.info('ℹ️ OPTIONAL IMPROVEMENTS:');
       allResults
         .filter(r => !r.success && !r.required)
         .forEach(result => {
-          console.log(`   • ${result.name}`);
+          console.info(`   • ${result.name}`);
         });
     }
   } else {
-    console.log('⚠️ INTEGRATION TEST FAILED!');
-    console.log('❌ Critical integrations are not working');
-    console.log('');
-    console.log('🔧 REQUIRED FIXES:');
+    console.info('⚠️ INTEGRATION TEST FAILED!');
+    console.info('❌ Critical integrations are not working');
+    console.info('');
+    console.info('🔧 REQUIRED FIXES:');
     allResults
       .filter(r => !r.success && r.required)
       .forEach(result => {
-        console.log(`   ❌ ${result.name}: ${result.message}`);
+        console.info(`   ❌ ${result.name}: ${result.message}`);
       });
 
-    console.log('');
-    console.log('💡 RUN SETUP COMMANDS:');
-    console.log('   bun run global:setup     # Complete system setup');
-    console.log('   bun run enterprise:setup # Deploy infrastructure');
-    console.log('   bun run global:validate  # Re-run validation');
+    console.info('');
+    console.info('💡 RUN SETUP COMMANDS:');
+    console.info('   bun run global:setup     # Complete system setup');
+    console.info('   bun run enterprise:setup # Deploy infrastructure');
+    console.info('   bun run global:validate  # Re-run validation');
   }
 
   // Performance metrics
   const totalDuration = allResults.reduce((sum, r) => sum + r.duration, 0);
   const avgDuration = (totalDuration / totalTests).toFixed(0);
 
-  console.log('');
-  console.log('⏱️ PERFORMANCE METRICS:');
-  console.log(`Total Duration: ${totalDuration}ms`);
-  console.log(`Average per Test: ${avgDuration}ms`);
-  console.log(`Tests per Second: ${(1000 / parseInt(avgDuration)).toFixed(1)}`);
+  console.info('');
+  console.info('⏱️ PERFORMANCE METRICS:');
+  console.info(`Total Duration: ${totalDuration}ms`);
+  console.info(`Average per Test: ${avgDuration}ms`);
+  console.info(`Tests per Second: ${(1000 / parseInt(avgDuration)).toFixed(1)}`);
 }
 
 // ╔══════════════════════════════════════════════════════════════╗
@@ -383,7 +383,7 @@ async function runIntegrationTest(): Promise<void> {
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function showHelp(): Promise<void> {
-  console.log(`
+  console.info(`
 🔥 FIRE22 SYSTEM INTEGRATION TEST
 Validates Repository ↔️ Registry ↔️ Hub ↔️ Cloudflare integration
 
@@ -435,8 +435,8 @@ async function main(): Promise<void> {
       break;
 
     case 'quick':
-      console.log('🔍 QUICK INTEGRATION VALIDATION');
-      console.log('════════════════════════════════');
+      console.info('🔍 QUICK INTEGRATION VALIDATION');
+      console.info('════════════════════════════════');
 
       // Quick validation of essential components
       const essentialTests = [
@@ -453,22 +453,22 @@ async function main(): Promise<void> {
       const passed = results.filter(r => r.success).length;
       const total = results.length;
 
-      console.log('');
-      console.log('📊 QUICK VALIDATION RESULTS:');
-      console.log(`✅ Passed: ${passed}/${total}`);
-      console.log(`📈 Success Rate: ${((passed / total) * 100).toFixed(1)}%`);
+      console.info('');
+      console.info('📊 QUICK VALIDATION RESULTS:');
+      console.info(`✅ Passed: ${passed}/${total}`);
+      console.info(`📈 Success Rate: ${((passed / total) * 100).toFixed(1)}%`);
 
       if (passed === total) {
-        console.log('🎉 All essential integrations are working!');
+        console.info('🎉 All essential integrations are working!');
       } else {
-        console.log('⚠️ Some integrations need attention.');
-        console.log("Run 'bun run scripts/integration-test.fire22.ts test' for details.");
+        console.info('⚠️ Some integrations need attention.');
+        console.info("Run 'bun run scripts/integration-test.fire22.ts test' for details.");
       }
       break;
 
     case 'status':
-      console.log('📊 SYSTEM INTEGRATION STATUS');
-      console.log('════════════════════════════');
+      console.info('📊 SYSTEM INTEGRATION STATUS');
+      console.info('════════════════════════════');
 
       // Show current configuration status
       const configChecks = [
@@ -485,7 +485,7 @@ async function main(): Promise<void> {
 
       configChecks.forEach(check => {
         const configured = check.value && check.value !== `your_${check.name.toLowerCase()}_here`;
-        console.log(
+        console.info(
           `${configured ? '✅' : '❌'} ${check.name}: ${configured ? 'CONFIGURED' : 'NOT SET'}`
         );
       });

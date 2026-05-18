@@ -341,16 +341,16 @@ const server = Bun.serve({
   },
 });
 
-console.log("🧩 FactoryWager Inspection System Ready");
-console.log(`📊 Server running on http://localhost:${server.port}`);
-console.log(`🌐 Debug view: http://localhost:${server.port}/debug`);
-console.log(`📄 JSON API: http://localhost:${server.port}/scope.json`);
-console.log(`📈 Metrics: http://localhost:${server.port}/metrics`);
-console.log(`💚 Health: http://localhost:${server.port}/health`);
+console.info("🧩 FactoryWager Inspection System Ready");
+console.info(`📊 Server running on http://localhost:${server.port}`);
+console.info(`🌐 Debug view: http://localhost:${server.port}/debug`);
+console.info(`📄 JSON API: http://localhost:${server.port}/scope.json`);
+console.info(`📈 Metrics: http://localhost:${server.port}/metrics`);
+console.info(`💚 Health: http://localhost:${server.port}/health`);
 
 // Display initial inspection in terminal
-console.log("\n🔍 Initial Inspection Tree:");
-console.log(Bun.inspect(domainCtx, { depth: 6, colors: true }));
+console.info("\n🔍 Initial Inspection Tree:");
+console.info(Bun.inspect(domainCtx, { depth: 6, colors: true }));
 
 // Export for external use
 export { domainCtx, server };

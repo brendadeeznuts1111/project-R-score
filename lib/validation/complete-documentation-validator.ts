@@ -33,13 +33,13 @@ class CompleteDocumentationValidator {
     errors: string[];
     categories: Record<string, { total: number; valid: number; avgTime: number }>;
   }> {
-    console.log('🌐 VALIDATING ALL DOCUMENTATION URLs...');
+    console.info('🌐 VALIDATING ALL DOCUMENTATION URLs...');
 
     const categories: Record<string, { total: number; valid: number; times: number[] }> = {};
     const allResults = [];
 
     // 1. Validate DOCS base URLs
-    console.log('   📚 Base Documentation URLs:');
+    console.info('   📚 Base Documentation URLs:');
     categories['base'] = { total: 0, valid: 0, times: [] };
 
     for (const [key, url] of Object.entries(DOCS.BUN)) {
@@ -54,23 +54,23 @@ class CompleteDocumentationValidator {
         const responseTime = performance.now() - startTime;
 
         if (response.ok) {
-          console.log(`     ✅ ${key}: ${responseTime.toFixed(0)}ms`);
+          console.info(`     ✅ ${key}: ${responseTime.toFixed(0)}ms`);
           categories['base'].valid++;
           categories['base'].times.push(responseTime);
         } else {
-          console.log(`     ❌ ${key}: HTTP ${response.status}`);
+          console.info(`     ❌ ${key}: HTTP ${response.status}`);
         }
         categories['base'].total++;
         allResults.push({ name: key, url, valid: response.ok, responseTime });
       } catch (error) {
-        console.log(`     ❌ ${key}: ${error}`);
+        console.info(`     ❌ ${key}: ${error}`);
         categories['base'].total++;
         allResults.push({ name: key, url, valid: false, responseTime: 0 });
       }
     }
 
     // 2. Validate DOC_PATHS
-    console.log('   🛤️  Documentation Paths:');
+    console.info('   🛤️  Documentation Paths:');
     categories['paths'] = { total: 0, valid: 0, times: [] };
 
     for (const [key, path] of Object.entries(DOC_PATHS)) {
@@ -85,23 +85,23 @@ class CompleteDocumentationValidator {
         const responseTime = performance.now() - startTime;
 
         if (response.ok) {
-          console.log(`     ✅ ${key}: ${responseTime.toFixed(0)}ms`);
+          console.info(`     ✅ ${key}: ${responseTime.toFixed(0)}ms`);
           categories['paths'].valid++;
           categories['paths'].times.push(responseTime);
         } else {
-          console.log(`     ❌ ${key}: HTTP ${response.status}`);
+          console.info(`     ❌ ${key}: HTTP ${response.status}`);
         }
         categories['paths'].total++;
         allResults.push({ name: key, url: fullUrl, valid: response.ok, responseTime });
       } catch (error) {
-        console.log(`     ❌ ${key}: ${error}`);
+        console.info(`     ❌ ${key}: ${error}`);
         categories['paths'].total++;
         allResults.push({ name: key, url: fullUrl, valid: false, responseTime: 0 });
       }
     }
 
     // 3. Validate CLI documentation URLs (from constants)
-    console.log('   📋 CLI Documentation URLs:');
+    console.info('   📋 CLI Documentation URLs:');
     categories['cli'] = { total: 0, valid: 0, times: [] };
 
     for (const [category, urls] of Object.entries(CLI_DOCUMENTATION_URLS)) {
@@ -117,11 +117,11 @@ class CompleteDocumentationValidator {
           const responseTime = performance.now() - startTime;
 
           if (response.ok) {
-            console.log(`       ✅ ${category}.${name}: ${responseTime.toFixed(0)}ms`);
+            console.info(`       ✅ ${category}.${name}: ${responseTime.toFixed(0)}ms`);
             categories['cli'].valid++;
             categories['cli'].times.push(responseTime);
           } else {
-            console.log(`       ❌ ${category}.${name}: HTTP ${response.status}`);
+            console.info(`       ❌ ${category}.${name}: HTTP ${response.status}`);
           }
           categories['cli'].total++;
           allResults.push({
@@ -131,7 +131,7 @@ class CompleteDocumentationValidator {
             responseTime,
           });
         } catch (error) {
-          console.log(`       ❌ ${category}.${name}: ${error}`);
+          console.info(`       ❌ ${category}.${name}: ${error}`);
           categories['cli'].total++;
           allResults.push({
             name: `${category}.${name}`,
@@ -144,7 +144,7 @@ class CompleteDocumentationValidator {
     }
 
     // 4. Validate Utils documentation URLs (from constants)
-    console.log('   🔧 Utils Documentation URLs:');
+    console.info('   🔧 Utils Documentation URLs:');
     categories['utils'] = { total: 0, valid: 0, times: [] };
 
     for (const [category, urls] of Object.entries(BUN_UTILS_URLS)) {
@@ -160,11 +160,11 @@ class CompleteDocumentationValidator {
           const responseTime = performance.now() - startTime;
 
           if (response.ok) {
-            console.log(`       ✅ ${category}.${name}: ${responseTime.toFixed(0)}ms`);
+            console.info(`       ✅ ${category}.${name}: ${responseTime.toFixed(0)}ms`);
             categories['utils'].valid++;
             categories['utils'].times.push(responseTime);
           } else {
-            console.log(`       ❌ ${category}.${name}: HTTP ${response.status}`);
+            console.info(`       ❌ ${category}.${name}: HTTP ${response.status}`);
           }
           categories['utils'].total++;
           allResults.push({
@@ -174,7 +174,7 @@ class CompleteDocumentationValidator {
             responseTime,
           });
         } catch (error) {
-          console.log(`       ❌ ${category}.${name}: ${error}`);
+          console.info(`       ❌ ${category}.${name}: ${error}`);
           categories['utils'].total++;
           allResults.push({
             name: `${category}.${name}`,
@@ -217,7 +217,7 @@ class CompleteDocumentationValidator {
     valid: number;
     errors: string[];
   } {
-    console.log('🔍 VALIDATING URL PATTERNS...');
+    console.info('🔍 VALIDATING URL PATTERNS...');
 
     const results = [];
     const errors: string[] = [];
@@ -237,15 +237,15 @@ class CompleteDocumentationValidator {
       if (pattern) {
         const match = pattern.exec(testCase.url);
         if (match) {
-          console.log(`   ✅ ${testCase.pattern}: Matches ${testCase.url}`);
+          console.info(`   ✅ ${testCase.pattern}: Matches ${testCase.url}`);
           results.push({ pattern: testCase.pattern, valid: true });
         } else {
-          console.log(`   ❌ ${testCase.pattern}: Failed to match ${testCase.url}`);
+          console.info(`   ❌ ${testCase.pattern}: Failed to match ${testCase.url}`);
           errors.push(`${testCase.pattern}: Pattern mismatch`);
           results.push({ pattern: testCase.pattern, valid: false });
         }
       } else {
-        console.log(`   ❌ ${testCase.pattern}: Pattern not found`);
+        console.info(`   ❌ ${testCase.pattern}: Pattern not found`);
         errors.push(`${testCase.pattern}: Pattern not found`);
         results.push({ pattern: testCase.pattern, valid: false });
       }
@@ -265,7 +265,7 @@ class CompleteDocumentationValidator {
     valid: number;
     errors: string[];
   } {
-    console.log('📚 VALIDATING DOCS REFERENCE...');
+    console.info('📚 VALIDATING DOCS REFERENCE...');
 
     const results = [];
     const errors: string[] = [];
@@ -276,10 +276,10 @@ class CompleteDocumentationValidator {
       // Test URL building
       const builtUrl = docsRef.buildUrl('/docs/test', 'section');
       if (builtUrl.includes('bun.sh') && builtUrl.includes('/docs/test')) {
-        console.log('   ✅ URL building: Functional');
+        console.info('   ✅ URL building: Functional');
         results.push({ test: 'url-building', valid: true });
       } else {
-        console.log(`   ❌ URL building: Invalid result ${builtUrl}`);
+        console.info(`   ❌ URL building: Invalid result ${builtUrl}`);
         errors.push('URL building failed');
         results.push({ test: 'url-building', valid: false });
       }
@@ -287,10 +287,10 @@ class CompleteDocumentationValidator {
       // Test URL parsing
       const parseResult = docsRef.parseUrl('https://bun.sh/docs/api/utils');
       if (parseResult.valid) {
-        console.log('   ✅ URL parsing: Functional');
+        console.info('   ✅ URL parsing: Functional');
         results.push({ test: 'url-parsing', valid: true });
       } else {
-        console.log('   ❌ URL parsing: Failed to parse valid URL');
+        console.info('   ❌ URL parsing: Failed to parse valid URL');
         errors.push('URL parsing failed');
         results.push({ test: 'url-parsing', valid: false });
       }
@@ -299,20 +299,20 @@ class CompleteDocumentationValidator {
       try {
         const refUrl = docsRef.getUrl('API_UTILS');
         if (refUrl && refUrl.includes('bun.sh')) {
-          console.log('   ✅ Reference retrieval: Functional');
+          console.info('   ✅ Reference retrieval: Functional');
           results.push({ test: 'reference-retrieval', valid: true });
         } else {
-          console.log('   ❌ Reference retrieval: Invalid URL');
+          console.info('   ❌ Reference retrieval: Invalid URL');
           errors.push('Reference retrieval failed');
           results.push({ test: 'reference-retrieval', valid: false });
         }
       } catch (error) {
-        console.log(`   ❌ Reference retrieval: ${error}`);
+        console.info(`   ❌ Reference retrieval: ${error}`);
         errors.push(`Reference retrieval error: ${error}`);
         results.push({ test: 'reference-retrieval', valid: false });
       }
     } catch (error) {
-      console.log(`   ❌ DocsReference initialization: ${error}`);
+      console.info(`   ❌ DocsReference initialization: ${error}`);
       errors.push(`DocsReference error: ${error}`);
       results.push({ test: 'initialization', valid: false });
     }
@@ -331,7 +331,7 @@ class CompleteDocumentationValidator {
     valid: number;
     errors: string[];
   } {
-    console.log('📊 VALIDATING ALL DOCUMENTATION CONSTANTS...');
+    console.info('📊 VALIDATING ALL DOCUMENTATION CONSTANTS...');
 
     const constants = [
       'cli-categories-count',
@@ -345,10 +345,10 @@ class CompleteDocumentationValidator {
 
     const results = constants.map(name => {
       const validation = ConstantValidator.validateConstant(name);
-      console.log(`   ${validation.isValid ? '✅' : '❌'} ${name}`);
+      console.info(`   ${validation.isValid ? '✅' : '❌'} ${name}`);
 
       if (!validation.isValid) {
-        validation.errors.forEach(error => console.log(`      Error: ${error}`));
+        validation.errors.forEach(error => console.info(`      Error: ${error}`));
       }
 
       return { name, ...validation };
@@ -368,31 +368,31 @@ class CompleteDocumentationValidator {
    * Generate comprehensive documentation report
    */
   static async generateCompleteReport(): Promise<void> {
-    console.log('\n📚 COMPLETE DOCUMENTATION SYSTEM VALIDATION');
-    console.log('='.repeat(60));
+    console.info('\n📚 COMPLETE DOCUMENTATION SYSTEM VALIDATION');
+    console.info('='.repeat(60));
 
     // Validate all URLs
     const urlResults = await this.validateAllDocumentationURLs();
-    console.log(`\n🌐 URL Validation Summary:`);
-    console.log(`   Total: ${urlResults.valid}/${urlResults.total} valid`);
+    console.info(`\n🌐 URL Validation Summary:`);
+    console.info(`   Total: ${urlResults.valid}/${urlResults.total} valid`);
 
     for (const [category, stats] of Object.entries(urlResults.categories)) {
-      console.log(
+      console.info(
         `   ${category}: ${stats.valid}/${stats.total} valid (avg: ${stats.avgTime.toFixed(0)}ms)`
       );
     }
 
     // Validate URL patterns
     const patternResults = this.validateURLPatterns();
-    console.log(`\n🔍 URL Patterns: ${patternResults.valid}/${patternResults.total} valid`);
+    console.info(`\n🔍 URL Patterns: ${patternResults.valid}/${patternResults.total} valid`);
 
     // Validate docs reference
     const refResults = this.validateDocsReference();
-    console.log(`\n📚 Docs Reference: ${refResults.valid}/${refResults.total} valid`);
+    console.info(`\n📚 Docs Reference: ${refResults.valid}/${refResults.total} valid`);
 
     // Validate constants
     const constantResults = this.validateAllConstants();
-    console.log(`\n📊 Constants: ${constantResults.valid}/${constantResults.total} valid`);
+    console.info(`\n📊 Constants: ${constantResults.valid}/${constantResults.total} valid`);
 
     // Overall summary
     const totalTests =
@@ -405,24 +405,24 @@ class CompleteDocumentationValidator {
       refResults.errors.length +
       constantResults.errors.length;
 
-    console.log('\n📈 OVERALL SUMMARY:');
-    console.log(`   Total Tests: ${totalValid}/${totalTests} valid`);
-    console.log(`   Success Rate: ${((totalValid / totalTests) * 100).toFixed(1)}%`);
-    console.log(`   Total Issues: ${totalErrors}`);
+    console.info('\n📈 OVERALL SUMMARY:');
+    console.info(`   Total Tests: ${totalValid}/${totalTests} valid`);
+    console.info(`   Success Rate: ${((totalValid / totalTests) * 100).toFixed(1)}%`);
+    console.info(`   Total Issues: ${totalErrors}`);
 
     if (totalErrors > 0) {
-      console.log('\n🚨 ALL ISSUES FOUND:');
+      console.info('\n🚨 ALL ISSUES FOUND:');
       [
         ...urlResults.errors,
         ...patternResults.errors,
         ...refResults.errors,
         ...constantResults.errors,
-      ].forEach(error => console.log(`   • ${error}`));
+      ].forEach(error => console.info(`   • ${error}`));
     } else {
-      console.log('\n✅ Complete documentation system is fully functional!');
+      console.info('\n✅ Complete documentation system is fully functional!');
     }
 
-    console.log('\n' + '='.repeat(60));
+    console.info('\n' + '='.repeat(60));
   }
 }
 
@@ -453,7 +453,7 @@ function parseArgs(): CompleteDocOptions {
 }
 
 function showHelp(): void {
-  console.log(`
+  console.info(`
 📚 Complete Documentation System Validator
 
 USAGE:
@@ -502,8 +502,8 @@ async function main(): Promise<void> {
     return;
   }
 
-  console.log('📚 COMPLETE DOCUMENTATION VALIDATION TOOL');
-  console.log('='.repeat(60));
+  console.info('📚 COMPLETE DOCUMENTATION VALIDATION TOOL');
+  console.info('='.repeat(60));
 
   try {
     if (options.urls || (!options.constants && !options.patterns && !options.reference)) {
@@ -512,17 +512,17 @@ async function main(): Promise<void> {
 
     if (options.constants) {
       const results = CompleteDocumentationValidator.validateAllConstants();
-      console.log(`\n📊 Constants: ${results.valid}/${results.total} valid`);
+      console.info(`\n📊 Constants: ${results.valid}/${results.total} valid`);
     }
 
     if (options.patterns) {
       const results = CompleteDocumentationValidator.validateURLPatterns();
-      console.log(`\n🔍 URL Patterns: ${results.valid}/${results.total} valid`);
+      console.info(`\n🔍 URL Patterns: ${results.valid}/${results.total} valid`);
     }
 
     if (options.reference) {
       const results = CompleteDocumentationValidator.validateDocsReference();
-      console.log(`\n📚 Docs Reference: ${results.valid}/${results.total} valid`);
+      console.info(`\n📚 Docs Reference: ${results.valid}/${results.total} valid`);
     }
 
     if (!options.urls && !options.constants && !options.patterns && !options.reference) {
@@ -530,12 +530,12 @@ async function main(): Promise<void> {
     }
 
     if (options.heal) {
-      console.log('\n🔧 STARTING AUTO-HEALING...');
+      console.info('\n🔧 STARTING AUTO-HEALING...');
       const result = await AutoHealer.healAll();
-      console.log(`✅ Applied ${result.totalFixes} fixes`);
+      console.info(`✅ Applied ${result.totalFixes} fixes`);
     }
 
-    console.log('\n✅ Complete documentation validation finished!');
+    console.info('\n✅ Complete documentation validation finished!');
   } catch (error) {
     console.error('\n❌ Documentation validation failed:', error);
     process.exit(1);

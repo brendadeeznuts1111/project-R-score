@@ -3,8 +3,8 @@
  * Chromatic terminal fortress with HSL precision and Unicode safety
  */
 
-console.log('🎨 FACTORYWAGER TABULAR v4.3 - HSL CHROMATIC DOMINION!')
-console.log('=' .repeat(80))
+console.info('🎨 FACTORYWAGER TABULAR v4.3 - HSL CHROMATIC DOMINION!')
+console.info('=' .repeat(80))
 
 // ═══════════════════════════════════════════════════════════════
 // HSL COLOR PALETTE (Bun.color Native)
@@ -178,13 +178,13 @@ export async function renderFactoryTabular(fmEntries: any[]) {
   const headerColor = PALETTE.header;
 
   // Header
-  console.log(borderLine);
+  console.info(borderLine);
   const headers = COLUMNS.map(col => {
     const color = col.key === "status" ? headerColor : Bun.color(col.hsl || "hsl(0,0%,70%)", "ansi-16m");
     return `${color}${uPad(col.name, col.width, col.align)}${RESET}`;
   }).join(`${borderColor} │ ${RESET}`);
-  console.log(`${borderColor} ${headers} ${RESET}`);
-  console.log(borderLine);
+  console.info(`${borderColor} ${headers} ${RESET}`);
+  console.info(borderLine);
 
   // Rows
   enriched.forEach((row, idx) => {
@@ -196,14 +196,14 @@ export async function renderFactoryTabular(fmEntries: any[]) {
       return renderCell(val, col, isDefault && col.key !== null);
     }).join(`${borderColor} │ ${RESET}`);
 
-    console.log(`${borderColor} ${cells} ${RESET}`);
+    console.info(`${borderColor} ${cells} ${RESET}`);
   });
 
-  console.log(borderLine);
+  console.info(borderLine);
 
   // Footer legend with HSL semantics
   const legendColor = PALETTE.dim;
-  console.log(`${legendColor}Defaults: type=unknown(version=none(bun=any(author=anon(status=active${RESET}`);
+  console.info(`${legendColor}Defaults: type=unknown(version=none(bun=any(author=anon(status=active${RESET}`);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -225,8 +225,8 @@ export const statusColor = (status: string) => {
 // PRODUCTION DEMO - Chromatic Tabular in Action
 // ═══════════════════════════════════════════════════════════════
 
-console.log('\n🔥 FACTORYWAGER TABULAR v4.3 - CHROMATIC DEMO')
-console.log('-' .repeat(50))
+console.info('\n🔥 FACTORYWAGER TABULAR v4.3 - CHROMATIC DEMO')
+console.info('-' .repeat(50))
 
 // Sample data with Unicode and various types
 const sampleData = [
@@ -282,8 +282,8 @@ await renderFactoryTabular(sampleData);
 // HSL COLOR TESTING SUITE
 // ═══════════════════════════════════════════════════════════════
 
-console.log('\n🎨 HSL COLOR TESTING SUITE')
-console.log('-' .repeat(50))
+console.info('\n🎨 HSL COLOR TESTING SUITE')
+console.info('-' .repeat(50))
 
 const hslTests = [
   { name: "Success/Active", hsl: "hsl(145, 80%, 45%)" },
@@ -298,15 +298,15 @@ hslTests.forEach(test => {
   const color = Bun.color(test.hsl, "ansi-16m");
   const hex = Bun.color(test.hsl, "hex");
   const rgb = Bun.color(test.hsl, "[rgb]");
-  console.log(`  ${test.name.padEnd(18)}: ${color}${test.hsl}${RESET} → ${hex} → RGB[${rgb?.join(', ')}]`);
+  console.info(`  ${test.name.padEnd(18)}: ${color}${test.hsl}${RESET} → ${hex} → RGB[${rgb?.join(', ')}]`);
 });
 
 // ═══════════════════════════════════════════════════════════════
 // UNICODE WIDTH TESTING
 // ═══════════════════════════════════════════════════════════════
 
-console.log('\n🌐 UNICODE WIDTH TESTING')
-console.log('-' .repeat(50))
+console.info('\n🌐 UNICODE WIDTH TESTING')
+console.info('-' .repeat(50))
 
 const unicodeTests = [
   "ASCII",
@@ -322,10 +322,10 @@ unicodeTests.forEach(str => {
   const length = str.length;
   const width = uWidth(str);
   const padded = uPad(str, 15, "left");
-  console.log(`  "${str}" → Length: ${length}, Width: ${width}, Padded: "${padded}"`);
+  console.info(`  "${str}" → Length: ${length}, Width: ${width}, Padded: "${padded}"`);
 });
 
-console.log('\n🏆 FACTORYWAGER TABULAR v4.3 - CHROMATIC DOMINION ACHIEVED!')
-console.log('🚀 HSL precision + Unicode safety + Guaranteed defaults!')
-console.log('💎 Computational aesthetic perfection - Terminal chromatics unleashed!')
-console.log('🎨 Next vector: v4.4 gradient interpolation? Your command awaits!')
+console.info('\n🏆 FACTORYWAGER TABULAR v4.3 - CHROMATIC DOMINION ACHIEVED!')
+console.info('🚀 HSL precision + Unicode safety + Guaranteed defaults!')
+console.info('💎 Computational aesthetic perfection - Terminal chromatics unleashed!')
+console.info('🎨 Next vector: v4.4 gradient interpolation? Your command awaits!')

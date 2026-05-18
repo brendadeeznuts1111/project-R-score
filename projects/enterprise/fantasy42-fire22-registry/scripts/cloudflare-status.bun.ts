@@ -285,125 +285,125 @@ async function checkGitHubActions(): Promise<StatusCheck> {
 }
 
 async function runStatusCheck() {
-  console.log(`🔍 Fantasy42-Fire22 Cloudflare Status Check`);
-  console.log('═'.repeat(60));
-  console.log('');
+  console.info(`🔍 Fantasy42-Fire22 Cloudflare Status Check`);
+  console.info('═'.repeat(60));
+  console.info('');
 
   const allChecks: StatusCheck[] = [];
 
   // Repository Privacy
-  console.log(`📦 Checking repository privacy...`);
+  console.info(`📦 Checking repository privacy...`);
   const repoCheck = await checkRepositoryPrivacy();
   allChecks.push(repoCheck);
-  console.log(`${repoCheck.status} ${repoCheck.name}: ${repoCheck.message}`);
-  if (repoCheck.details) console.log(`   └─ ${repoCheck.details}`);
-  console.log('');
+  console.info(`${repoCheck.status} ${repoCheck.name}: ${repoCheck.message}`);
+  if (repoCheck.details) console.info(`   └─ ${repoCheck.details}`);
+  console.info('');
 
   // Wrangler Authentication
-  console.log(`🔐 Checking Wrangler authentication...`);
+  console.info(`🔐 Checking Wrangler authentication...`);
   const authCheck = await checkWranglerAuth();
   allChecks.push(authCheck);
-  console.log(`${authCheck.status} ${authCheck.name}: ${authCheck.message}`);
-  if (authCheck.details) console.log(`   └─ ${authCheck.details}`);
-  console.log('');
+  console.info(`${authCheck.status} ${authCheck.name}: ${authCheck.message}`);
+  if (authCheck.details) console.info(`   └─ ${authCheck.details}`);
+  console.info('');
 
   // Environment Configuration
-  console.log(`⚙️ Checking environment configuration...`);
+  console.info(`⚙️ Checking environment configuration...`);
   const envCheck = await checkEnvironmentConfig();
   allChecks.push(envCheck);
-  console.log(`${envCheck.status} ${envCheck.name}: ${envCheck.message}`);
-  if (envCheck.details) console.log(`   └─ ${envCheck.details}`);
-  console.log('');
+  console.info(`${envCheck.status} ${envCheck.name}: ${envCheck.message}`);
+  if (envCheck.details) console.info(`   └─ ${envCheck.details}`);
+  console.info('');
 
   // Cloudflare Resources
-  console.log(`☁️ Checking Cloudflare resources...`);
+  console.info(`☁️ Checking Cloudflare resources...`);
   const resourceChecks = await checkCloudflareResources();
   allChecks.push(...resourceChecks);
 
   for (const check of resourceChecks) {
-    console.log(`${check.status} ${check.name}: ${check.message}`);
-    if (check.details) console.log(`   └─ ${check.details}`);
+    console.info(`${check.status} ${check.name}: ${check.message}`);
+    if (check.details) console.info(`   └─ ${check.details}`);
   }
-  console.log('');
+  console.info('');
 
   // GitHub Actions
-  console.log(`🚀 Checking GitHub Actions...`);
+  console.info(`🚀 Checking GitHub Actions...`);
   const githubCheck = await checkGitHubActions();
   allChecks.push(githubCheck);
-  console.log(`${githubCheck.status} ${githubCheck.name}: ${githubCheck.message}`);
-  if (githubCheck.details) console.log(`   └─ ${githubCheck.details}`);
-  console.log('');
+  console.info(`${githubCheck.status} ${githubCheck.name}: ${githubCheck.message}`);
+  if (githubCheck.details) console.info(`   └─ ${githubCheck.details}`);
+  console.info('');
 
   // Summary
-  console.log(`📊 Status Summary`);
-  console.log('═'.repeat(60));
+  console.info(`📊 Status Summary`);
+  console.info('═'.repeat(60));
 
   const successCount = allChecks.filter(c => c.status === '✅').length;
   const warningCount = allChecks.filter(c => c.status === '⚠️').length;
   const errorCount = allChecks.filter(c => c.status === '❌').length;
   const totalCount = allChecks.length;
 
-  console.log(`Total Checks: ${totalCount}`);
-  console.log(`✅ Successful: ${successCount}`);
-  console.log(`⚠️ Warnings: ${warningCount}`);
-  console.log(`❌ Errors: ${errorCount}`);
-  console.log(`📈 Success Rate: ${((successCount / totalCount) * 100).toFixed(1)}%`);
-  console.log('');
+  console.info(`Total Checks: ${totalCount}`);
+  console.info(`✅ Successful: ${successCount}`);
+  console.info(`⚠️ Warnings: ${warningCount}`);
+  console.info(`❌ Errors: ${errorCount}`);
+  console.info(`📈 Success Rate: ${((successCount / totalCount) * 100).toFixed(1)}%`);
+  console.info('');
 
   // Critical Issues
   const criticalIssues = allChecks.filter(c => c.status === '❌');
   if (criticalIssues.length > 0) {
-    console.log(`🚨 CRITICAL ISSUES REQUIRING IMMEDIATE ATTENTION:`);
+    console.info(`🚨 CRITICAL ISSUES REQUIRING IMMEDIATE ATTENTION:`);
     for (const issue of criticalIssues) {
-      console.log(`   ❌ ${issue.name}: ${issue.message}`);
+      console.info(`   ❌ ${issue.name}: ${issue.message}`);
     }
-    console.log('');
+    console.info('');
   }
 
   // Recommendations
-  console.log(`💡 RECOMMENDATIONS:`);
+  console.info(`💡 RECOMMENDATIONS:`);
 
   if (repoCheck.status === '❌') {
-    console.log(`   🔒 Make repository private immediately`);
-    console.log(
+    console.info(`   🔒 Make repository private immediately`);
+    console.info(
       `      Visit: https://github.com/brendadeeznuts1111/fantasy42-fire22-registry/settings`
     );
   }
 
   if (authCheck.status === '❌') {
-    console.log(`   🔑 Authenticate with Cloudflare`);
-    console.log(`      Run: wrangler auth login`);
+    console.info(`   🔑 Authenticate with Cloudflare`);
+    console.info(`      Run: wrangler auth login`);
   }
 
   if (envCheck.status === '⚠️' || envCheck.status === '❌') {
-    console.log(`   ⚙️ Configure environment variables`);
-    console.log(`      Copy: enterprise/config/.env.example to .env`);
-    console.log(`      Fill in your Cloudflare credentials`);
+    console.info(`   ⚙️ Configure environment variables`);
+    console.info(`      Copy: enterprise/config/.env.example to .env`);
+    console.info(`      Fill in your Cloudflare credentials`);
   }
 
   if (resourceChecks.some(c => c.status === '⚠️' || c.status === '❌')) {
-    console.log(`   🏗️ Setup Cloudflare resources`);
-    console.log(`      Run: bun run enterprise:setup`);
+    console.info(`   🏗️ Setup Cloudflare resources`);
+    console.info(`      Run: bun run enterprise:setup`);
   }
 
   if (githubCheck.status === '⚠️' || githubCheck.status === '❌') {
-    console.log(`   🚀 Configure GitHub Actions`);
-    console.log(`      Add required secrets to repository settings`);
+    console.info(`   🚀 Configure GitHub Actions`);
+    console.info(`      Add required secrets to repository settings`);
   }
 
-  console.log('');
-  console.log(`🔧 QUICK SETUP COMMANDS:`);
-  console.log(`   bun run enterprise:setup     # Complete setup`);
-  console.log(`   bun run enterprise:verify    # Verify everything`);
-  console.log(`   wrangler auth login         # Authenticate`);
-  console.log(`   bun run dns:check           # Check DNS`);
+  console.info('');
+  console.info(`🔧 QUICK SETUP COMMANDS:`);
+  console.info(`   bun run enterprise:setup     # Complete setup`);
+  console.info(`   bun run enterprise:verify    # Verify everything`);
+  console.info(`   wrangler auth login         # Authenticate`);
+  console.info(`   bun run dns:check           # Check DNS`);
 
   if (successCount === totalCount) {
-    console.log('');
-    console.log(`🎉 ALL CHECKS PASSED! Cloudflare integration is ready!`);
+    console.info('');
+    console.info(`🎉 ALL CHECKS PASSED! Cloudflare integration is ready!`);
   } else {
-    console.log('');
-    console.log(`⚠️ Some issues found. Follow the recommendations above.`);
+    console.info('');
+    console.info(`⚠️ Some issues found. Follow the recommendations above.`);
   }
 }
 

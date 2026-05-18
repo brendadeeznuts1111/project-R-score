@@ -397,7 +397,7 @@ export async function fetchAPI<T>(
  *   { method: "POST", body: formData }
  * );
  * if (response.success && response.data) {
- *   console.log(response.data.uploadId);
+ *   console.info(response.data.uploadId);
  * }
  * ```
  */

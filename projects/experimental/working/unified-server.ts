@@ -130,7 +130,7 @@ const server = serve({
 
   websocket: {
     open(ws) {
-      console.log(Bun.color(`WebSocket connected: ${ws.data.id}`, 'green'));
+      console.info(Bun.color(`WebSocket connected: ${ws.data.id}`, 'green'));
       ws.send(JSON.stringify({ type: 'SYSTEM_STATUS', status: 'ACTIVE' }));
     },
 
@@ -148,15 +148,15 @@ const server = serve({
     },
 
     close(ws) {
-      console.log(Bun.color(`WebSocket disconnected: ${ws.data.id}`, 'yellow'));
+      console.info(Bun.color(`WebSocket disconnected: ${ws.data.id}`, 'yellow'));
     }
   }
 });
 
-console.log(`
+console.info(`
 ╔══════════════════════════════════════════════════════════════╗
 ║    T3-Lattice v4.0 + Quantum Weaver Unified System           ║
 ╚══════════════════════════════════════════════════════════════╝
 `);
 
-console.log(`Server running at http://${server.hostname}:${server.port}`);
+console.info(`Server running at http://${server.hostname}:${server.port}`);

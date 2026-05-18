@@ -587,7 +587,7 @@ export function initializeGoldenMatrix(config?: EnvironmentConfig): void {
     // Security hardening is initialized automatically on import
   }
 
-  console.log(
+  console.info(
     `🚀 Golden Matrix v2.4.2 initialized in ${config ? "custom" : "production"} mode`
   );
 }

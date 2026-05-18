@@ -5,13 +5,13 @@ import { DomainEntity } from './src/domains/shared/domain-entity';
 import { Money } from './src/domains/collections/entities/payment';
 
 async function test() {
-  console.log('Testing direct imports...');
+  console.info('Testing direct imports...');
 
   // Test Money value object
   const money = Money.create(100, 'USD');
-  console.log('Money created:', money.getAmount(), money.getCurrency());
+  console.info('Money created:', money.getAmount(), money.getCurrency());
 
-  console.log('✅ Direct imports work!');
+  console.info('✅ Direct imports work!');
 }
 
 test().catch(console.error);

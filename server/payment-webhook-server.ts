@@ -86,7 +86,7 @@ export type PaymentResult = {
 };
 
 function vlog(...args: unknown[]): void {
-  if (VERBOSE) console.log(...args);
+  if (VERBOSE) console.info(...args);
 }
 
 function jsonResponse(body: unknown, init?: ResponseInit): Response {
@@ -563,24 +563,24 @@ User Pays → Webhook → Bun Server → Pinecone Query → Risk Check → Depos
 // ============================================================================
 
 if (VERBOSE) {
-  console.log('');
-  console.log('╔════════════════════════════════════════════════════════════╗');
-  console.log('║     🦘 Payment Webhook Server (Bun-Optimized)              ║');
-  console.log('╠════════════════════════════════════════════════════════════╣');
-  console.log(`║  URL:     http://localhost:${PORT}                        ║`);
-  console.log(`║  Health:  http://localhost:${PORT}/health                 ║`);
-  console.log('╠════════════════════════════════════════════════════════════╣');
-  console.log('║  Endpoints:                                                ║');
-  console.log(`║    • POST /webhook/paypal                                  ║`);
-  console.log(`║    • POST /webhook/venmo                                   ║`);
-  console.log(`║    • POST /test/payment                                    ║`);
-  console.log('╚════════════════════════════════════════════════════════════╝');
-  console.log('');
-  console.log('Test with:');
-  console.log(`  curl -X POST http://localhost:${PORT}/test/payment \\`);
-  console.log('    -H "Content-Type: application/json" \\');
-  console.log(`    -d '{"userId":"@ashschaeffer1","amount":10.00}'`);
-  console.log('');
+  console.info('');
+  console.info('╔════════════════════════════════════════════════════════════╗');
+  console.info('║     🦘 Payment Webhook Server (Bun-Optimized)              ║');
+  console.info('╠════════════════════════════════════════════════════════════╣');
+  console.info(`║  URL:     http://localhost:${PORT}                        ║`);
+  console.info(`║  Health:  http://localhost:${PORT}/health                 ║`);
+  console.info('╠════════════════════════════════════════════════════════════╣');
+  console.info('║  Endpoints:                                                ║');
+  console.info(`║    • POST /webhook/paypal                                  ║`);
+  console.info(`║    • POST /webhook/venmo                                   ║`);
+  console.info(`║    • POST /test/payment                                    ║`);
+  console.info('╚════════════════════════════════════════════════════════════╝');
+  console.info('');
+  console.info('Test with:');
+  console.info(`  curl -X POST http://localhost:${PORT}/test/payment \\`);
+  console.info('    -H "Content-Type: application/json" \\');
+  console.info(`    -d '{"userId":"@ashschaeffer1","amount":10.00}'`);
+  console.info('');
 }
 
 export default server;

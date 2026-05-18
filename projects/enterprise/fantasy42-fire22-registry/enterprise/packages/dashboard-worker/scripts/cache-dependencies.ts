@@ -30,12 +30,12 @@ class DependencyCacheManager {
   private ensureCacheDirectory(): void {
     if (!existsSync(this.cacheDir)) {
       mkdirSync(this.cacheDir, { recursive: true });
-      console.log(`📁 Created cache directory: ${this.cacheDir}`);
+      console.info(`📁 Created cache directory: ${this.cacheDir}`);
     }
   }
 
   async warmCache(): Promise<void> {
-    console.log('🔥 Warming dependency cache...');
+    console.info('🔥 Warming dependency cache...');
 
     // Prefetch heavy packages
     const heavyPackages = [
@@ -48,15 +48,15 @@ class DependencyCacheManager {
     ];
 
     for (const pkg of heavyPackages) {
-      console.log(`  📦 Prefetching ${pkg}...`);
+      console.info(`  📦 Prefetching ${pkg}...`);
       try {
         await $`bun add ${pkg} --dry-run --cache-dir ${this.cacheDir}`.quiet();
       } catch (error) {
-        console.log(`  ⚠️ Could not prefetch ${pkg}`);
+        console.info(`  ⚠️ Could not prefetch ${pkg}`);
       }
     }
 
-    console.log('✅ Cache warming complete');
+    console.info('✅ Cache warming complete');
   }
 
   async getCacheStats(): Promise<CacheStats> {
@@ -73,20 +73,20 @@ class DependencyCacheManager {
   }
 
   async optimizeCache(): Promise<void> {
-    console.log('🔧 Optimizing cache...');
+    console.info('🔧 Optimizing cache...');
 
     // Remove old cache entries (older than 30 days)
     await $`find ${this.cacheDir} -type f -mtime +30 -delete 2>/dev/null`.quiet();
 
     // Deduplicate cache entries
-    console.log('  🔍 Deduplicating cache entries...');
+    console.info('  🔍 Deduplicating cache entries...');
     await $`bun pm cache prune`.quiet();
 
-    console.log('✅ Cache optimization complete');
+    console.info('✅ Cache optimization complete');
   }
 
   async setupCDNMirrors(): Promise<void> {
-    console.log('🌐 Setting up CDN mirrors...');
+    console.info('🌐 Setting up CDN mirrors...');
 
     // Create .npmrc with mirror configurations for CI/CD
     const npmrcContent = `
@@ -110,11 +110,11 @@ cache-min=3600
 `.trim();
 
     await Bun.write('.npmrc', npmrcContent);
-    console.log('✅ CDN mirrors configured');
+    console.info('✅ CDN mirrors configured');
   }
 
   async createLocalRegistry(): Promise<void> {
-    console.log('🏗️ Setting up local registry proxy...');
+    console.info('🏗️ Setting up local registry proxy...');
 
     // Check if Verdaccio is available
     const hasVerdaccio = await $`which verdaccio`
@@ -123,9 +123,9 @@ cache-min=3600
       .catch(() => false);
 
     if (!hasVerdaccio) {
-      console.log('  ℹ️ Verdaccio not installed. For local registry, run:');
-      console.log('    bun add -g verdaccio');
-      console.log('    verdaccio --config ./verdaccio.yaml');
+      console.info('  ℹ️ Verdaccio not installed. For local registry, run:');
+      console.info('    bun add -g verdaccio');
+      console.info('    verdaccio --config ./verdaccio.yaml');
       return;
     }
 
@@ -160,22 +160,22 @@ logs:
 `.trim();
 
     await Bun.write('verdaccio.yaml', verdaccioConfig);
-    console.log('✅ Local registry configuration created');
+    console.info('✅ Local registry configuration created');
   }
 
   async generateReport(): Promise<void> {
-    console.log('\n📊 Cache Report');
-    console.log('═'.repeat(50));
+    console.info('\n📊 Cache Report');
+    console.info('═'.repeat(50));
 
     const stats = await this.getCacheStats();
 
-    console.log(`📦 Local Cache: ${stats.localCacheSize}`);
-    console.log(`🌍 Global Cache: ${stats.globalCacheSize}`);
-    console.log(`📚 Cached Packages: ${stats.packagesCount}`);
-    console.log(`🕐 Last Update: ${stats.lastUpdate.toLocaleString()}`);
+    console.info(`📦 Local Cache: ${stats.localCacheSize}`);
+    console.info(`🌍 Global Cache: ${stats.globalCacheSize}`);
+    console.info(`📚 Cached Packages: ${stats.packagesCount}`);
+    console.info(`🕐 Last Update: ${stats.lastUpdate.toLocaleString()}`);
 
     // Test registry connectivity
-    console.log('\n🔗 Registry Connectivity:');
+    console.info('\n🔗 Registry Connectivity:');
 
     const registries = [
       { name: 'NPM', url: 'https://registry.npmjs.org/-/ping' },
@@ -195,20 +195,20 @@ logs:
         const ms = (end - start) / 1_000_000;
 
         if (response.ok) {
-          console.log(`  ✅ ${registry.name}: ${ms.toFixed(2)}ms`);
+          console.info(`  ✅ ${registry.name}: ${ms.toFixed(2)}ms`);
         } else {
-          console.log(`  ⚠️ ${registry.name}: HTTP ${response.status}`);
+          console.info(`  ⚠️ ${registry.name}: HTTP ${response.status}`);
         }
       } catch (error) {
-        console.log(`  ❌ ${registry.name}: Offline`);
+        console.info(`  ❌ ${registry.name}: Offline`);
       }
     }
 
-    console.log('\n💡 Optimization Tips:');
-    console.log('  • Use "bun run install:optimized" for fastest installs');
-    console.log('  • Run "bun run cache:warm" before CI builds');
-    console.log('  • Enable local registry with Verdaccio for offline development');
-    console.log('  • Use CDN mirrors for heavy packages in production');
+    console.info('\n💡 Optimization Tips:');
+    console.info('  • Use "bun run install:optimized" for fastest installs');
+    console.info('  • Run "bun run cache:warm" before CI builds');
+    console.info('  • Enable local registry with Verdaccio for offline development');
+    console.info('  • Use CDN mirrors for heavy packages in production');
   }
 }
 
@@ -233,7 +233,7 @@ async function main() {
       break;
     case 'stats':
       const stats = await manager.getCacheStats();
-      console.log(JSON.stringify(stats, null, 2));
+      console.info(JSON.stringify(stats, null, 2));
       break;
     case 'report':
     default:

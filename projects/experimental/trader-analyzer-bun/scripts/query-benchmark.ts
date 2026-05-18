@@ -101,10 +101,10 @@ async function runBenchmark(): Promise<void> {
 	const db = findDatabase() || createMockDatabase();
 	const nodeIds = ["node-0", "node-1", "node-2", "node-3", "node-4"];
 
-	console.log(`🚀 Starting SQLite query benchmark...`);
-	console.log(`   Query type: ${queryType}`);
-	console.log(`   Iterations: ${iterations}`);
-	console.log("");
+	console.info(`🚀 Starting SQLite query benchmark...`);
+	console.info(`   Query type: ${queryType}`);
+	console.info(`   Iterations: ${iterations}`);
+	console.info("");
 
 	const latencies: number[] = [];
 
@@ -140,17 +140,17 @@ async function runBenchmark(): Promise<void> {
 	const max = Math.max(...latencies);
 	const mean = latencies.reduce((a, b) => a + b, 0) / latencies.length;
 
-	console.log("📊 Query Benchmark Results:");
-	console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-	console.log(`   Total queries: ${iterations}`);
-	console.log(`   p50: ${p50.toFixed(2)}ms`);
-	console.log(`   p90: ${p90.toFixed(2)}ms`);
-	console.log(`   p95: ${p95.toFixed(2)}ms`);
-	console.log(`   p99: ${p99.toFixed(2)}ms`);
-	console.log(`   min: ${min.toFixed(2)}ms`);
-	console.log(`   max: ${max.toFixed(2)}ms`);
-	console.log(`   mean: ${mean.toFixed(2)}ms`);
-	console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+	console.info("📊 Query Benchmark Results:");
+	console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+	console.info(`   Total queries: ${iterations}`);
+	console.info(`   p50: ${p50.toFixed(2)}ms`);
+	console.info(`   p90: ${p90.toFixed(2)}ms`);
+	console.info(`   p95: ${p95.toFixed(2)}ms`);
+	console.info(`   p99: ${p99.toFixed(2)}ms`);
+	console.info(`   min: ${min.toFixed(2)}ms`);
+	console.info(`   max: ${max.toFixed(2)}ms`);
+	console.info(`   mean: ${mean.toFixed(2)}ms`);
+	console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
 	if (db.filename !== ":memory:") {
 		db.close();

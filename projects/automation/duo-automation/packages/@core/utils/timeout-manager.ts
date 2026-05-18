@@ -67,7 +67,7 @@ export class TimeoutManager {
         lastError = error instanceof Error ? error : new Error(String(error));
         
         if (attempt <= retryAttempts) {
-          console.log(`⏳ Attempt ${attempt} failed, retrying in ${retryDelay}ms...`);
+          console.info(`⏳ Attempt ${attempt} failed, retrying in ${retryDelay}ms...`);
           await new Promise(resolve => setTimeout(resolve, retryDelay));
         }
       }
@@ -89,7 +89,7 @@ export class TimeoutManager {
   static async withMultipleTimeouts<T>(
     operations: Array<{ promise: Promise<T>; timeout: number; id?: string }>
   ): Promise<Array<RaceResult<T> & { id?: string }>> {
-    console.log(`🏃 Executing ${operations.length} operations with individual timeouts...`);
+    console.info(`🏃 Executing ${operations.length} operations with individual timeouts...`);
     
     // Execute all operations with their respective timeouts
     const results = await Promise.allSettled(
@@ -126,7 +126,7 @@ export class TimeoutManager {
       }
     });
 
-    console.log(`📊 Results: ${successCount} success, ${timeoutCount} timeouts, ${errorCount} errors`);
+    console.info(`📊 Results: ${successCount} success, ${timeoutCount} timeouts, ${errorCount} errors`);
     return raceResults;
   }
 
@@ -139,7 +139,7 @@ export class TimeoutManager {
     maxTimeout: number,
     multiplier = 1.5
   ): Promise<RaceResult<T>> {
-    console.log(`⏱️ Using progressive timeout strategy: ${initialTimeout}ms → ${maxTimeout}ms`);
+    console.info(`⏱️ Using progressive timeout strategy: ${initialTimeout}ms → ${maxTimeout}ms`);
     
     let currentTimeout = initialTimeout;
     let attempt = 0;
@@ -147,7 +147,7 @@ export class TimeoutManager {
 
     while (currentTimeout <= maxTimeout && attempt < maxAttempts) {
       attempt++;
-      console.log(`🔄 Attempt ${attempt}: timeout = ${currentTimeout}ms`);
+      console.info(`🔄 Attempt ${attempt}: timeout = ${currentTimeout}ms`);
 
       const result = await this.withTimeout(operation(), {
         timeout: currentTimeout,
@@ -155,7 +155,7 @@ export class TimeoutManager {
       });
 
       if (result.success) {
-        console.log(`✅ Operation succeeded on attempt ${attempt} (${currentTimeout}ms timeout)`);
+        console.info(`✅ Operation succeeded on attempt ${attempt} (${currentTimeout}ms timeout)`);
         return { ...result, retryCount: attempt - 1 };
       }
 
@@ -204,7 +204,7 @@ export class TimeoutManager {
         circuitOpen = false;
         failureCount = 0;
         if (onCircuitClose) onCircuitClose();
-        console.log(`🔓 Circuit breaker reset`);
+        console.info(`🔓 Circuit breaker reset`);
       }
 
       // Reject if circuit is open
@@ -228,7 +228,7 @@ export class TimeoutManager {
         if (failureCount >= failureThreshold) {
           circuitOpen = true;
           if (onCircuitOpen) onCircuitOpen();
-          console.log(`🔒 Circuit breaker opened after ${failureCount} failures`);
+          console.info(`🔒 Circuit breaker opened after ${failureCount} failures`);
         }
       } else {
         // Reset failure count on success
@@ -299,7 +299,7 @@ export class TimeoutManager {
     }
   ): Promise<Array<RaceResult<T>>> {
     const { timeout, concurrency, progressCallback } = config;
-    console.log(`🚀 Processing ${operations.length} operations with concurrency ${concurrency}`);
+    console.info(`🚀 Processing ${operations.length} operations with concurrency ${concurrency}`);
 
     const results: Array<RaceResult<T>> = [];
     let completed = 0;
@@ -307,7 +307,7 @@ export class TimeoutManager {
     // Process in batches
     for (let i = 0; i < operations.length; i += concurrency) {
       const batch = operations.slice(i, i + concurrency);
-      console.log(`📦 Processing batch ${Math.floor(i / concurrency) + 1}/${Math.ceil(operations.length / concurrency)}`);
+      console.info(`📦 Processing batch ${Math.floor(i / concurrency) + 1}/${Math.ceil(operations.length / concurrency)}`);
 
       const batchResults = await Promise.allSettled(
         batch.map(op => this.withTimeout(op(), { timeout }))
@@ -334,7 +334,7 @@ export class TimeoutManager {
     }
 
     const successCount = results.filter(r => r.success).length;
-    console.log(`✅ Batch completed: ${successCount}/${operations.length} successful`);
+    console.info(`✅ Batch completed: ${successCount}/${operations.length} successful`);
 
     return results;
   }
@@ -366,7 +366,7 @@ export class TimeoutManager {
     return {
       execute: async () => {
         const timeout = getRecommendedTimeout();
-        console.log(`🎯 Using adaptive timeout: ${timeout}ms (based on ${history.length} historical samples)`);
+        console.info(`🎯 Using adaptive timeout: ${timeout}ms (based on ${history.length} historical samples)`);
         
         const result = await this.withTimeout(operation(), { timeout });
         
@@ -394,7 +394,7 @@ export class TimeoutManager {
    * Benchmark timeout performance
    */
   static async benchmarkTimeoutPerformance(): Promise<void> {
-    console.log('🏃 Benchmarking Promise.race timeout performance (Bun v1.3.6 optimization)...');
+    console.info('🏃 Benchmarking Promise.race timeout performance (Bun v1.3.6 optimization)...');
     
     const testOperation = (delay: number) => 
       new Promise(resolve => setTimeout(() => resolve('completed'), delay));
@@ -406,19 +406,19 @@ export class TimeoutManager {
     ];
 
     for (const testCase of testCases) {
-      console.log(`\n📊 Testing: ${testCase.description}`);
+      console.info(`\n📊 Testing: ${testCase.description}`);
       
       const startTime = performance.now();
       const result = await this.withTimeout(testOperation(testCase.delay), testCase.timeout);
       const benchmarkTime = performance.now() - startTime;
       
-      console.log(`   Result: ${result.success ? '✅ Success' : '❌ Failed'}`);
-      console.log(`   Timed out: ${result.timedOut}`);
-      console.log(`   Execution time: ${result.executionTime.toFixed(3)}ms`);
-      console.log(`   Total benchmark time: ${benchmarkTime.toFixed(3)}ms`);
+      console.info(`   Result: ${result.success ? '✅ Success' : '❌ Failed'}`);
+      console.info(`   Timed out: ${result.timedOut}`);
+      console.info(`   Execution time: ${result.executionTime.toFixed(3)}ms`);
+      console.info(`   Total benchmark time: ${benchmarkTime.toFixed(3)}ms`);
     }
     
-    console.log('\n✅ Promise.race optimization provides ~30% better performance in Bun v1.3.6');
+    console.info('\n✅ Promise.race optimization provides ~30% better performance in Bun v1.3.6');
   }
 }
 
@@ -435,24 +435,24 @@ if (import.meta.main) {
       const testDelay = parseInt(process.argv[3]) || 1000;
       const testTimeout = parseInt(process.argv[4]) || 500;
       
-      console.log(`🧪 Testing operation with ${testDelay}ms delay and ${testTimeout}ms timeout`);
+      console.info(`🧪 Testing operation with ${testDelay}ms delay and ${testTimeout}ms timeout`);
       
       const testOp = new Promise(resolve => setTimeout(() => resolve('Test completed'), testDelay));
       const result = await TimeoutManager.withTimeout(testOp, testTimeout);
       
-      console.log('\n📊 Test Result:');
-      console.log(`✅ Success: ${result.success}`);
-      console.log(`⏱️ Time: ${result.executionTime.toFixed(3)}ms`);
-      console.log(`⏰ Timed out: ${result.timedOut}`);
-      if (result.error) console.log(`❌ Error: ${result.error.message}`);
+      console.info('\n📊 Test Result:');
+      console.info(`✅ Success: ${result.success}`);
+      console.info(`⏱️ Time: ${result.executionTime.toFixed(3)}ms`);
+      console.info(`⏰ Timed out: ${result.timedOut}`);
+      if (result.error) console.info(`❌ Error: ${result.error.message}`);
       break;
       
     default:
-      console.log('Available commands:');
-      console.log('  benchmark                    - Benchmark Promise.race performance');
-      console.log('  test <delay> <timeout>       - Test timeout with custom delays');
-      console.log('');
-      console.log('All operations use Bun v1.3.6 optimized Promise.race for 30% better performance');
+      console.info('Available commands:');
+      console.info('  benchmark                    - Benchmark Promise.race performance');
+      console.info('  test <delay> <timeout>       - Test timeout with custom delays');
+      console.info('');
+      console.info('All operations use Bun v1.3.6 optimized Promise.race for 30% better performance');
   }
 }
 

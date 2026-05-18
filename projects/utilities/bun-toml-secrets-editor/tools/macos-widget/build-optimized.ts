@@ -38,19 +38,19 @@ class OptimizedBuildPipeline {
 		};
 
 		this.startTime = Date.now();
-		console.log("🚀 Optimized Build Pipeline");
-		console.log("==========================");
-		console.log(`🎯 Target: ${this.config.target}`);
-		console.log(`⚡ Optimization: ${this.config.optimization}`);
-		console.log(`🖥️  Platform: ${this.config.platform}`);
-		console.log(`🔧 Architecture: ${this.config.arch}`);
-		console.log(`🌟 Features: ${this.config.features.join(", ")}`);
-		console.log("");
+		console.info("🚀 Optimized Build Pipeline");
+		console.info("==========================");
+		console.info(`🎯 Target: ${this.config.target}`);
+		console.info(`⚡ Optimization: ${this.config.optimization}`);
+		console.info(`🖥️  Platform: ${this.config.platform}`);
+		console.info(`🔧 Architecture: ${this.config.arch}`);
+		console.info(`🌟 Features: ${this.config.features.join(", ")}`);
+		console.info("");
 	}
 
 	async build(): Promise<void> {
 		try {
-			console.log("🔨 Starting optimized build process...");
+			console.info("🔨 Starting optimized build process...");
 
 			// 1. Pre-build optimizations
 			await this.preBuildOptimizations();
@@ -70,7 +70,7 @@ class OptimizedBuildPipeline {
 			// 6. Generate build report
 			this.generateBuildReport();
 
-			console.log("✅ Build completed successfully!");
+			console.info("✅ Build completed successfully!");
 		} catch (error) {
 			console.error(`❌ Build failed: ${error}`);
 			process.exit(1);
@@ -78,7 +78,7 @@ class OptimizedBuildPipeline {
 	}
 
 	private async preBuildOptimizations(): Promise<void> {
-		console.log("🔧 Running pre-build optimizations...");
+		console.info("🔧 Running pre-build optimizations...");
 
 		// Clean previous builds
 		if (existsSync("./dist")) {
@@ -108,15 +108,15 @@ class OptimizedBuildPipeline {
 		};
 
 		writeFileSync("./tsconfig.build.json", JSON.stringify(tsConfig, null, 2));
-		console.log("   ✅ TypeScript configuration optimized");
+		console.info("   ✅ TypeScript configuration optimized");
 
 		// Run type checking
 		execSync("bun run typecheck", { stdio: "inherit" });
-		console.log("   ✅ Type checking completed");
+		console.info("   ✅ Type checking completed");
 	}
 
 	private async compileTypeScript(): Promise<void> {
-		console.log("📝 Compiling TypeScript with optimizations...");
+		console.info("📝 Compiling TypeScript with optimizations...");
 
 		const start = performance.now();
 
@@ -146,11 +146,11 @@ class OptimizedBuildPipeline {
 			targetPlatform: `${this.config.platform}-${this.config.arch}`,
 		});
 
-		console.log(`   ✅ TypeScript compiled in ${duration.toFixed(2)}ms`);
+		console.info(`   ✅ TypeScript compiled in ${duration.toFixed(2)}ms`);
 	}
 
 	private async optimizeBundles(): Promise<void> {
-		console.log("🗜️  Optimizing bundles...");
+		console.info("🗜️  Optimizing bundles...");
 
 		// Apply tree-shaking and dead code elimination
 		const optimizationConfig = {
@@ -187,7 +187,7 @@ class OptimizedBuildPipeline {
 			if (existsSync(entry)) {
 				const optimized = await this.optimizeFile(entry);
 				writeFileSync(entry.replace(".js", ".optimized.js"), optimized);
-				console.log(`   ✅ Optimized ${name}`);
+				console.info(`   ✅ Optimized ${name}`);
 			}
 		}
 	}
@@ -228,7 +228,7 @@ class OptimizedBuildPipeline {
 
 			for (const platform of platforms) {
 				for (const arch of architectures) {
-					console.log(`🖥️  Building for ${platform}-${arch}...`);
+					console.info(`🖥️  Building for ${platform}-${arch}...`);
 					await this.buildForPlatform(platform, arch);
 				}
 			}
@@ -277,13 +277,13 @@ class OptimizedBuildPipeline {
 			targetPlatform: `${platform}-${arch}`,
 		});
 
-		console.log(
+		console.info(
 			`   ✅ ${platform}-${arch} built in ${duration.toFixed(2)}ms (${(bundleSize / 1024 / 1024).toFixed(1)}MB)`,
 		);
 	}
 
 	private async applyPerformanceOptimizations(): Promise<void> {
-		console.log("⚡ Applying performance optimizations...");
+		console.info("⚡ Applying performance optimizations...");
 
 		// Generate performance-optimized package.json
 		const packageConfig = {
@@ -332,7 +332,7 @@ fi
 		writeFileSync("./dist/start.sh", startupScript);
 		execSync("chmod +x ./dist/start.sh");
 
-		console.log("   ✅ Performance optimizations applied");
+		console.info("   ✅ Performance optimizations applied");
 	}
 
 	private calculateBundleSize(dir: string): number {
@@ -345,7 +345,7 @@ fi
 	}
 
 	private generateBuildReport(): void {
-		console.log("📊 Generating build report...");
+		console.info("📊 Generating build report...");
 
 		const totalBuildTime = Date.now() - this.startTime;
 		const totalBundleSize = this.metrics.reduce(
@@ -377,29 +377,29 @@ fi
 		writeFileSync("./dist/build-report.json", JSON.stringify(report, null, 2));
 
 		// Display summary
-		console.log("");
-		console.log("📋 Build Summary");
-		console.log("===============");
-		console.log(`⏱️  Total build time: ${totalBuildTime}ms`);
-		console.log(
+		console.info("");
+		console.info("📋 Build Summary");
+		console.info("===============");
+		console.info(`⏱️  Total build time: ${totalBuildTime}ms`);
+		console.info(
 			`📦 Total bundle size: ${(totalBundleSize / 1024 / 1024).toFixed(1)}MB`,
 		);
-		console.log(`🖥️  Platforms built: ${this.metrics.length}`);
-		console.log(`🎯 Optimization level: ${this.config.optimization}`);
-		console.log("");
+		console.info(`🖥️  Platforms built: ${this.metrics.length}`);
+		console.info(`🎯 Optimization level: ${this.config.optimization}`);
+		console.info("");
 
-		console.log("📈 Platform Performance:");
+		console.info("📈 Platform Performance:");
 		this.metrics.forEach((metric) => {
 			const sizeMB = (metric.bundleSize / 1024 / 1024).toFixed(1);
-			console.log(
+			console.info(
 				`   ${metric.targetPlatform}: ${metric.buildTime.toFixed(0)}ms, ${sizeMB}MB`,
 			);
 		});
 
-		console.log("");
-		console.log("💡 Recommendations:");
+		console.info("");
+		console.info("💡 Recommendations:");
 		report.recommendations.forEach((rec: string) => {
-			console.log(`   • ${rec}`);
+			console.info(`   • ${rec}`);
 		});
 	}
 
@@ -462,7 +462,7 @@ async function main() {
 				config.features = args[++i].split(",");
 				break;
 			case "--help":
-				console.log(`
+				console.info(`
 Optimized Build Pipeline
 
 Usage: bun run build-optimized.ts [options]

@@ -30,7 +30,7 @@ export class BunNamespaceIsolator {
     };
 
     this.sandboxes.set(agentId, sandbox);
-    console.log(`🛡️ Created isolated sandbox for agent: ${agentId} (Limit: 128MB)`);
+    console.info(`🛡️ Created isolated sandbox for agent: ${agentId} (Limit: 128MB)`);
     return sandbox;
   }
 
@@ -51,7 +51,7 @@ export class BunNamespaceIsolator {
     const sandbox = this.sandboxes.get(agentId);
     if (!sandbox) return;
 
-    console.log(`🧹 Purging session for agent: ${agentId}`);
+    console.info(`🧹 Purging session for agent: ${agentId}`);
 
     // 1. Wipe vault key from memory
     sandbox.vaultKey.fill(0);
@@ -68,7 +68,7 @@ export class BunNamespaceIsolator {
       global.gc();
     }
 
-    console.log(`✅ Session ${agentId} successfully purged from memory kernel.`);
+    console.info(`✅ Session ${agentId} successfully purged from memory kernel.`);
   }
 
   /**

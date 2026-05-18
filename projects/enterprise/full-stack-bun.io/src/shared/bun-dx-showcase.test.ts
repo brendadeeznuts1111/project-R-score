@@ -29,7 +29,7 @@ test("Bun 1.3 DX showcase – API endpoints functional", async () => {
   try {
     const healthRes = await fetch("http://localhost:3001/api/health");
     if (healthRes.status === 404) {
-      console.log("⚠️ Server not running - skipping API endpoint tests");
+      console.info("⚠️ Server not running - skipping API endpoint tests");
       return;
     }
 
@@ -51,7 +51,7 @@ test("Bun 1.3 DX showcase – API endpoints functional", async () => {
     // Should not fail with 500, even if test execution has issues
     expect([200, 400, 500]).toContain(testRes.status);
   } catch (error) {
-    console.log("⚠️ Server not accessible - skipping API endpoint tests:", error.message);
+    console.info("⚠️ Server not accessible - skipping API endpoint tests:", error.message);
   }
 });
 

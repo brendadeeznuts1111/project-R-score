@@ -15,7 +15,7 @@ const redis = new Redis(REDIS_URL, {
   maxRetriesPerRequest: 3,
 });
 
-redis.on('connect', () => console.log('✅ Redis connected for registry'));
+redis.on('connect', () => console.info('✅ Redis connected for registry'));
 
 // ============================================================================
 // HTML Template
@@ -433,7 +433,8 @@ function generateRegistryHTML(businesses: any[]): string {
         const logoUrl = branding.logoUrl;
         const logoText = branding.logoText || business.name.charAt(0);
         const isActive = business.current === 'true';
-        const proxyUrl = Bun.env.PROXY_URL || 'http://localhost:3002';
+        import { PORTS } from '../config/ports.ts';
+const proxyUrl = Bun.env.PROXY_URL || `http://localhost:${PORTS.P2P_PROXY}`;
         
         // Render specialty section based on business type
         const renderSpecialty = () => {
@@ -793,14 +794,14 @@ const server = Bun.serve({
   },
 });
 
-console.log('');
-console.log('╔════════════════════════════════════════════════════════════╗');
-console.log(`║  🏢 Business Registry Dashboard                           ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log(`║  URL:     http://localhost:${PORT}                        ║`);
-console.log(`║  Registry: http://localhost:${PORT}/registry              ║`);
-console.log(`║  API:     http://localhost:${PORT}/api/businesses         ║`);
-console.log('╚════════════════════════════════════════════════════════════╝');
-console.log('');
+console.info('');
+console.info('╔════════════════════════════════════════════════════════════╗');
+console.info(`║  🏢 Business Registry Dashboard                           ║`);
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info(`║  URL:     http://localhost:${PORT}                        ║`);
+console.info(`║  Registry: http://localhost:${PORT}/registry              ║`);
+console.info(`║  API:     http://localhost:${PORT}/api/businesses         ║`);
+console.info('╚════════════════════════════════════════════════════════════╝');
+console.info('');
 
 export default server;

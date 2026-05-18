@@ -293,7 +293,7 @@ export class EnhancedInspectionSystem extends EventEmitter {
     
     // Send invitations (mock implementation)
     for (const email of participantEmails) {
-      console.log(`📧 Invitation sent to ${email} for session ${sessionId}`);
+      console.info(`📧 Invitation sent to ${email} for session ${sessionId}`);
     }
     
     this.emit('session-created', { sessionId, session });
@@ -802,7 +802,7 @@ class SecurityInspectionPlugin implements InspectionPlugin {
   description = 'Advanced security analysis and threat detection';
   
   initialize(): void {
-    console.log('🔒 Security inspection plugin initialized');
+    console.info('🔒 Security inspection plugin initialized');
   }
   
   inspect(data: any, context: InspectionContext): any {
@@ -814,7 +814,7 @@ class SecurityInspectionPlugin implements InspectionPlugin {
   }
   
   cleanup(): void {
-    console.log('🔒 Security inspection plugin cleaned up');
+    console.info('🔒 Security inspection plugin cleaned up');
   }
 }
 
@@ -824,7 +824,7 @@ class PerformanceInspectionPlugin implements InspectionPlugin {
   description = 'Performance monitoring and optimization recommendations';
   
   initialize(): void {
-    console.log('⚡ Performance inspection plugin initialized');
+    console.info('⚡ Performance inspection plugin initialized');
   }
   
   inspect(data: any, context: InspectionContext): any {
@@ -836,7 +836,7 @@ class PerformanceInspectionPlugin implements InspectionPlugin {
   }
   
   cleanup(): void {
-    console.log('⚡ Performance inspection plugin cleaned up');
+    console.info('⚡ Performance inspection plugin cleaned up');
   }
 }
 
@@ -846,7 +846,7 @@ class DataValidationPlugin implements InspectionPlugin {
   description = 'Data structure validation and schema compliance';
   
   initialize(): void {
-    console.log('✅ Data validation plugin initialized');
+    console.info('✅ Data validation plugin initialized');
   }
   
   inspect(data: any, context: InspectionContext): any {
@@ -859,7 +859,7 @@ class DataValidationPlugin implements InspectionPlugin {
   }
   
   cleanup(): void {
-    console.log('✅ Data validation plugin cleaned up');
+    console.info('✅ Data validation plugin cleaned up');
   }
 }
 
@@ -873,7 +873,7 @@ export function setupEnhancedInspection(): void {
     return enhancedInspectionSystem.inspect(data, context);
   };
   
-  console.log('🎨 Enhanced Inspection System v2.0 initialized');
-  console.log('📊 Available themes:', enhancedInspectionSystem.getAvailableThemes().join(', '));
-  console.log('🔌 Registered plugins:', Array.from((enhancedInspectionSystem as any).plugins.keys()).join(', '));
+  console.info('🎨 Enhanced Inspection System v2.0 initialized');
+  console.info('📊 Available themes:', enhancedInspectionSystem.getAvailableThemes().join(', '));
+  console.info('🔌 Registered plugins:', Array.from((enhancedInspectionSystem as any).plugins.keys()).join(', '));
 }

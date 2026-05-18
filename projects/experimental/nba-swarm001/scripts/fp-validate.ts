@@ -58,41 +58,41 @@ export function validateEdgeDrift(graph: ReturnType<typeof buildGraph>) {
  * Run validation on test data
  */
 function runValidation() {
-  console.log("=".repeat(50));
-  console.log("Floating-Point Drift Validation");
-  console.log("=".repeat(50));
-  console.log();
+  console.info("=".repeat(50));
+  console.info("Floating-Point Drift Validation");
+  console.info("=".repeat(50));
+  console.info();
 
   const config = loadConfig().edge;
   const games = generateMockGames(50);
   
-  console.log(`Building graph with ${games.length} games...`);
+  console.info(`Building graph with ${games.length} games...`);
   const graph = buildGraph(games, config);
-  console.log(`Built graph with ${graph.edges.length} edges`);
-  console.log();
+  console.info(`Built graph with ${graph.edges.length} edges`);
+  console.info();
 
-  console.log("Validating edges for drift...");
+  console.info("Validating edges for drift...");
   const validation = validateEdgeDrift(graph);
 
-  console.log(`Total edges: ${validation.totalEdges}`);
-  console.log(`Drifted edges: ${validation.driftedCount}`);
-  console.log(`Drift tolerance: ${DRIFT_TOLERANCE}`);
-  console.log();
+  console.info(`Total edges: ${validation.totalEdges}`);
+  console.info(`Drifted edges: ${validation.driftedCount}`);
+  console.info(`Drift tolerance: ${DRIFT_TOLERANCE}`);
+  console.info();
 
   if (validation.errors.length === 0) {
-    console.log("✅ No drift detected - all edges are consistent");
+    console.info("✅ No drift detected - all edges are consistent");
   } else {
-    console.log(`❌ Found ${validation.errors.length} drift issues:`);
+    console.info(`❌ Found ${validation.errors.length} drift issues:`);
     validation.errors.slice(0, 10).forEach((error) => {
-      console.log(`  ${error}`);
+      console.info(`  ${error}`);
     });
     if (validation.errors.length > 10) {
-      console.log(`  ... and ${validation.errors.length - 10} more`);
+      console.info(`  ... and ${validation.errors.length - 10} more`);
     }
   }
 
-  console.log();
-  console.log("=".repeat(50));
+  console.info();
+  console.info("=".repeat(50));
 
   return validation.errors.length === 0 ? 0 : 1;
 }

@@ -108,85 +108,85 @@ function getRiskColor(score: number): string {
 }
 
 async function displayGitHubHealth(health: GitHubHealth) {
-  console.log(color('\n🔗 GitHub Health Integration', 'cyan', 'bold'));
-  console.log(color('─'.repeat(60), 'gray'));
+  console.info(color('\n🔗 GitHub Health Integration', 'cyan', 'bold'));
+  console.info(color('─'.repeat(60), 'gray'));
   
   // Repository Info
-  console.log(color('\n📁 Repository Information:', 'yellow', 'bold'));
-  console.log(`  Name: ${color(`${health.repository.owner}/${health.repository.name}`, 'green')}`);
-  console.log(`  Branch: ${color(health.repository.branch, 'green')}`);
-  console.log(`  Commits: ${color(health.repository.commits.toString(), 'cyan')}`);
-  console.log(`  Issues: ${color(health.repository.issues.toString(), 'cyan')}`);
-  console.log(`  Pull Requests: ${color(health.repository.prs.toString(), 'cyan')}`);
+  console.info(color('\n📁 Repository Information:', 'yellow', 'bold'));
+  console.info(`  Name: ${color(`${health.repository.owner}/${health.repository.name}`, 'green')}`);
+  console.info(`  Branch: ${color(health.repository.branch, 'green')}`);
+  console.info(`  Commits: ${color(health.repository.commits.toString(), 'cyan')}`);
+  console.info(`  Issues: ${color(health.repository.issues.toString(), 'cyan')}`);
+  console.info(`  Pull Requests: ${color(health.repository.prs.toString(), 'cyan')}`);
   
   // Security Analysis
   const secColor = getSecurityColor(health.security.score);
-  console.log(color('\n🔒 Security Analysis:', 'yellow', 'bold'));
-  console.log(`  Security Score: ${color(health.security.score.toString(), secColor)}`);
-  console.log(`  Vulnerabilities: ${color(health.security.vulnerabilities.toString(), 
+  console.info(color('\n🔒 Security Analysis:', 'yellow', 'bold'));
+  console.info(`  Security Score: ${color(health.security.score.toString(), secColor)}`);
+  console.info(`  Vulnerabilities: ${color(health.security.vulnerabilities.toString(), 
     health.security.vulnerabilities > 0 ? 'red' : 'green')}`);
-  console.log(`  Dependencies: ${color(health.security.dependencies.toString(), 'cyan')}`);
-  console.log(`  Secrets Detected: ${color(health.security.secrets.toString(), 
+  console.info(`  Dependencies: ${color(health.security.dependencies.toString(), 'cyan')}`);
+  console.info(`  Secrets Detected: ${color(health.security.secrets.toString(), 
     health.security.secrets > 0 ? 'red' : 'green')}`);
   
   // Activity Metrics
-  console.log(color('\n📊 Activity Metrics:', 'yellow', 'bold'));
-  console.log(`  Last Commit: ${color(new Date(health.activity.lastCommit).toLocaleDateString(), 'cyan')}`);
-  console.log(`  Contributors: ${color(health.activity.contributors.toString(), 'cyan')}`);
-  console.log(`  Releases: ${color(health.activity.releases.toString(), 'cyan')}`);
-  console.log(`  Stars: ${color(health.activity.stars.toString(), 'cyan')}`);
+  console.info(color('\n📊 Activity Metrics:', 'yellow', 'bold'));
+  console.info(`  Last Commit: ${color(new Date(health.activity.lastCommit).toLocaleDateString(), 'cyan')}`);
+  console.info(`  Contributors: ${color(health.activity.contributors.toString(), 'cyan')}`);
+  console.info(`  Releases: ${color(health.activity.releases.toString(), 'cyan')}`);
+  console.info(`  Stars: ${color(health.activity.stars.toString(), 'cyan')}`);
   
   // AI Insights
-  console.log(color('\n🤖 AI-Powered Insights:', 'yellow', 'bold'));
+  console.info(color('\n🤖 AI-Powered Insights:', 'yellow', 'bold'));
   if (health.ai.insights.length > 0) {
     health.ai.insights.forEach((insight, i) => {
-      console.log(`  ${i + 1}. ${color(insight, 'cyan')}`);
+      console.info(`  ${i + 1}. ${color(insight, 'cyan')}`);
     });
   } else {
-    console.log(`  ${color('No critical insights detected', 'green')}`);
+    console.info(`  ${color('No critical insights detected', 'green')}`);
   }
   
   // AI Recommendations
-  console.log(color('\n💡 AI Recommendations:', 'yellow', 'bold'));
+  console.info(color('\n💡 AI Recommendations:', 'yellow', 'bold'));
   if (health.ai.recommendations.length > 0) {
     health.ai.recommendations.forEach((rec, i) => {
-      console.log(`  ${i + 1}. ${color(rec, 'cyan')}`);
+      console.info(`  ${i + 1}. ${color(rec, 'cyan')}`);
     });
   } else {
-    console.log(`  ${color('No recommendations at this time', 'green')}`);
+    console.info(`  ${color('No recommendations at this time', 'green')}`);
   }
   
   // Risk Assessment
   const riskColor = getRiskColor(health.ai.riskScore);
-  console.log(color('\n⚠️  Risk Assessment:', 'yellow', 'bold'));
-  console.log(`  Overall Risk Score: ${color(health.ai.riskScore.toString(), riskColor)}`);
+  console.info(color('\n⚠️  Risk Assessment:', 'yellow', 'bold'));
+  console.info(`  Overall Risk Score: ${color(health.ai.riskScore.toString(), riskColor)}`);
   
   const riskLevel = health.ai.riskScore <= 20 ? 'Low' : health.ai.riskScore <= 50 ? 'Medium' : 'High';
-  console.log(`  Risk Level: ${color(riskLevel, riskColor)}`);
+  console.info(`  Risk Level: ${color(riskLevel, riskColor)}`);
   
   // Health Summary
-  console.log(color('\n🏥 Health Summary:', 'yellow', 'bold'));
+  console.info(color('\n🏥 Health Summary:', 'yellow', 'bold'));
   const overallHealth = health.security.score >= 85 && health.ai.riskScore <= 30;
-  console.log(`  Overall Status: ${color(overallHealth ? '✅ Healthy' : '⚠️  Needs Attention', 
+  console.info(`  Overall Status: ${color(overallHealth ? '✅ Healthy' : '⚠️  Needs Attention', 
     overallHealth ? 'green' : 'yellow')}`);
   
   // Action Items
   if (!overallHealth) {
-    console.log(color('\n📋 Recommended Actions:', 'yellow', 'bold'));
+    console.info(color('\n📋 Recommended Actions:', 'yellow', 'bold'));
     if (health.security.vulnerabilities > 0) {
-      console.log(`  • ${color('Address security vulnerabilities', 'red')}`);
+      console.info(`  • ${color('Address security vulnerabilities', 'red')}`);
     }
     if (health.ai.riskScore > 30) {
-      console.log(`  • ${color('Review AI risk factors', 'yellow')}`);
+      console.info(`  • ${color('Review AI risk factors', 'yellow')}`);
     }
     if (health.repository.issues > 20) {
-      console.log(`  • ${color('Reduce open issue count', 'yellow')}`);
+      console.info(`  • ${color('Reduce open issue count', 'yellow')}`);
     }
   }
 }
 
 async function performSecurityValidation() {
-  console.log(color('\n🔐 Performing Security Validation...', 'yellow'));
+  console.info(color('\n🔐 Performing Security Validation...', 'yellow'));
   
   try {
     // Test zero-trust authentication
@@ -202,11 +202,11 @@ async function performSecurityValidation() {
       permissions: ['read', 'analyze']
     });
     
-    console.log(color('  ✅ Zero-trust authentication validated', 'green'));
+    console.info(color('  ✅ Zero-trust authentication validated', 'green'));
     
     // Check for security anomalies
     const anomalyStats = await (await import('../lib/ai/anomaly-detector.ts')).anomalyDetector.getStatistics();
-    console.log(color(`  📊 Anomaly detection active: ${anomalyStats.totalAnomalies} monitored`, 'cyan'));
+    console.info(color(`  📊 Anomaly detection active: ${anomalyStats.totalAnomalies} monitored`, 'cyan'));
     
   } catch (error) {
     console.error(color('  ❌ Security validation failed:', 'red'), error.message);
@@ -219,16 +219,16 @@ async function main() {
   const start = nanoseconds();
   
   try {
-    console.log(color('🚀 Initializing GitHub Health Integration...', 'cyan'));
+    console.info(color('🚀 Initializing GitHub Health Integration...', 'cyan'));
     
     const health = await analyzeGitHubHealth();
     
     if (shortMode) {
       // Ultra-fast mode for one-liners
-      console.log(color('🔗 GitHub Health', 'cyan'));
-      console.log(`  Repo: ${color(`${health.repository.owner}/${health.repository.name}`, 'green')} | Score: ${color(health.security.score.toString(), health.security.score >= 85 ? 'green' : 'yellow')}`);
-      console.log(`  Issues: ${color(health.repository.issues.toString(), 'cyan')} | PRs: ${color(health.repository.prs.toString(), 'cyan')} | Risk: ${color(health.ai.riskScore.toString(), health.ai.riskScore <= 30 ? 'green' : 'yellow')}`);
-      console.log(`  Status: ${color(health.security.score >= 85 && health.ai.riskScore <= 30 ? '✅ Healthy' : '⚠️ Needs Attention', health.security.score >= 85 && health.ai.riskScore <= 30 ? 'green' : 'yellow')}`);
+      console.info(color('🔗 GitHub Health', 'cyan'));
+      console.info(`  Repo: ${color(`${health.repository.owner}/${health.repository.name}`, 'green')} | Score: ${color(health.security.score.toString(), health.security.score >= 85 ? 'green' : 'yellow')}`);
+      console.info(`  Issues: ${color(health.repository.issues.toString(), 'cyan')} | PRs: ${color(health.repository.prs.toString(), 'cyan')} | Risk: ${color(health.ai.riskScore.toString(), health.ai.riskScore <= 30 ? 'green' : 'yellow')}`);
+      console.info(`  Status: ${color(health.security.score >= 85 && health.ai.riskScore <= 30 ? '✅ Healthy' : '⚠️ Needs Attention', health.security.score >= 85 && health.ai.riskScore <= 30 ? 'green' : 'yellow')}`);
       return;
     }
     
@@ -236,7 +236,7 @@ async function main() {
     await performSecurityValidation();
     
     const elapsed = (nanoseconds() - start) / 1e6;
-    console.log(color(`\n✨ GitHub health analysis completed in ${elapsed.toFixed(2)}ms`, 'green'));
+    console.info(color(`\n✨ GitHub health analysis completed in ${elapsed.toFixed(2)}ms`, 'green'));
     
   } catch (error) {
     console.error(color('❌ GitHub integration failed:', 'red'), error?.message || String(error));

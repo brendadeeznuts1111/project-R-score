@@ -62,7 +62,7 @@ export class AnimationEngine {
     this.setupPerformanceMonitoring();
     
     this.isInitialized = true;
-    console.log('AnimationEngine initialized');
+    console.info('AnimationEngine initialized');
   }
   
   private setupPerformanceMonitoring(): void {

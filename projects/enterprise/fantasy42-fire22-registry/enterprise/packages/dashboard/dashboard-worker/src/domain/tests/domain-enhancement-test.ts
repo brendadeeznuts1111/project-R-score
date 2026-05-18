@@ -13,7 +13,7 @@ import { CollectionFilters, SettlementFilters, MetricCalculationParams } from '.
 const testLogger = Logger.configure('DomainTest');
 
 export async function runDomainEnhancementTests() {
-  console.log('🚀 Starting Domain Enhancement Tests...\n');
+  console.info('🚀 Starting Domain Enhancement Tests...\n');
 
   const testResults = {
     total: 0,
@@ -72,7 +72,7 @@ export async function runDomainEnhancementTests() {
         'Processing time should be positive if defined'
       );
 
-      console.log(
+      console.info(
         `📊 Collection Summary: ${summary.totalCollections} total, ${summary.pendingCollections} pending, ${summary.processedCollections} processed`
       );
       return true;
@@ -105,7 +105,7 @@ export async function runDomainEnhancementTests() {
       console.assert(typeof result.totalAmount === 'number', 'Should return total amount');
       console.assert(typeof result.estimatedFees === 'number', 'Should return estimated fees');
 
-      console.log(
+      console.info(
         `💰 Settlement Processing: ${result.pending} pending, ${result.processed} processed, ${result.failed} failed`
       );
       return true;
@@ -131,7 +131,7 @@ export async function runDomainEnhancementTests() {
         console.assert(fee < amount, 'Fee should be less than amount');
       }
 
-      console.log(`💵 Fee Calculation: Verified for amounts ${testAmounts.join(', ')}`);
+      console.info(`💵 Fee Calculation: Verified for amounts ${testAmounts.join(', ')}`);
       return true;
     },
     testResults
@@ -160,7 +160,7 @@ export async function runDomainEnhancementTests() {
       console.assert(metrics.dailyVolume >= 0, 'Daily volume should be non-negative');
       console.assert(metrics.totalTransactions >= 0, 'Total transactions should be non-negative');
 
-      console.log(
+      console.info(
         `📈 Revenue Metrics: $${metrics.totalRevenue} total, ${metrics.successRate}% success rate, ${metrics.totalTransactions} transactions`
       );
       return true;
@@ -182,7 +182,7 @@ export async function runDomainEnhancementTests() {
         'Agent success rate should be between 0-100'
       );
 
-      console.log(
+      console.info(
         `👥 Agent Performance: ${agentMetrics.length} agents, top performer: ${agentMetrics[0]?.agentName || agentMetrics[0]?.agentId}`
       );
       return true;
@@ -207,7 +207,7 @@ export async function runDomainEnhancementTests() {
         'Daily transactions should be non-negative'
       );
 
-      console.log(
+      console.info(
         `📅 Daily Breakdown: ${dailyBreakdown.length} days, average daily revenue: $${(dailyBreakdown.reduce((sum, d) => sum + d.revenue, 0) / dailyBreakdown.length).toFixed(2)}`
       );
       return true;
@@ -245,10 +245,10 @@ export async function runDomainEnhancementTests() {
         'Calculated revenue should be close to metrics revenue'
       );
 
-      console.log(`🔗 Integration Test: All services working together successfully`);
-      console.log(`   Collections: ${collections.length}`);
-      console.log(`   Revenue: $${revenueMetrics.totalRevenue.toFixed(2)}`);
-      console.log(`   Success Rate: ${revenueMetrics.successRate}%`);
+      console.info(`🔗 Integration Test: All services working together successfully`);
+      console.info(`   Collections: ${collections.length}`);
+      console.info(`   Revenue: $${revenueMetrics.totalRevenue.toFixed(2)}`);
+      console.info(`   Success Rate: ${revenueMetrics.successRate}%`);
 
       return true;
     },
@@ -293,44 +293,44 @@ export async function runDomainEnhancementTests() {
         );
       }
 
-      console.log(`📋 Business Rules: Fee calculations validated for all test cases`);
+      console.info(`📋 Business Rules: Fee calculations validated for all test cases`);
       return true;
     },
     testResults
   );
 
   // Print test results
-  console.log('\n' + '='.repeat(50));
-  console.log('🏁 DOMAIN ENHANCEMENT TEST RESULTS');
-  console.log('='.repeat(50));
-  console.log(`Total Tests: ${testResults.total}`);
-  console.log(`Passed: ${testResults.passed}`);
-  console.log(`Failed: ${testResults.failed}`);
-  console.log(`Success Rate: ${((testResults.passed / testResults.total) * 100).toFixed(1)}%`);
+  console.info('\n' + '='.repeat(50));
+  console.info('🏁 DOMAIN ENHANCEMENT TEST RESULTS');
+  console.info('='.repeat(50));
+  console.info(`Total Tests: ${testResults.total}`);
+  console.info(`Passed: ${testResults.passed}`);
+  console.info(`Failed: ${testResults.failed}`);
+  console.info(`Success Rate: ${((testResults.passed / testResults.total) * 100).toFixed(1)}%`);
 
   if (testResults.failed > 0) {
-    console.log('\n❌ FAILED TESTS:');
-    testResults.errors.forEach(error => console.log(`   - ${error}`));
+    console.info('\n❌ FAILED TESTS:');
+    testResults.errors.forEach(error => console.info(`   - ${error}`));
   }
 
-  console.log('\n' + '='.repeat(50));
+  console.info('\n' + '='.repeat(50));
 
   if (testResults.failed === 0) {
-    console.log('🎉 ALL TESTS PASSED! Domain Enhancement is working correctly.');
-    console.log('✅ Collections Service: Operational');
-    console.log('✅ Settlement Processor: Operational');
-    console.log('✅ Metrics Calculator: Operational');
-    console.log('✅ Domain Models: Validated');
-    console.log('✅ Business Logic: Verified');
+    console.info('🎉 ALL TESTS PASSED! Domain Enhancement is working correctly.');
+    console.info('✅ Collections Service: Operational');
+    console.info('✅ Settlement Processor: Operational');
+    console.info('✅ Metrics Calculator: Operational');
+    console.info('✅ Domain Models: Validated');
+    console.info('✅ Business Logic: Verified');
   } else {
-    console.log('⚠️ Some tests failed. Please review the implementation.');
+    console.info('⚠️ Some tests failed. Please review the implementation.');
   }
 
   return testResults;
 }
 
 async function runTest(testName: string, testFn: () => Promise<boolean>, results: any) {
-  console.log(`\n🧪 Running: ${testName}`);
+  console.info(`\n🧪 Running: ${testName}`);
 
   try {
     const success = await testFn();
@@ -338,11 +338,11 @@ async function runTest(testName: string, testFn: () => Promise<boolean>, results
 
     if (success) {
       results.passed++;
-      console.log(`✅ PASSED: ${testName}`);
+      console.info(`✅ PASSED: ${testName}`);
     } else {
       results.failed++;
       results.errors.push(testName);
-      console.log(`❌ FAILED: ${testName}`);
+      console.info(`❌ FAILED: ${testName}`);
     }
   } catch (error) {
     results.total++;
@@ -350,7 +350,7 @@ async function runTest(testName: string, testFn: () => Promise<boolean>, results
     results.errors.push(
       `${testName} - ${error instanceof Error ? error.message : 'Unknown error'}`
     );
-    console.log(
+    console.info(
       `❌ ERROR: ${testName} - ${error instanceof Error ? error.message : 'Unknown error'}`
     );
   }

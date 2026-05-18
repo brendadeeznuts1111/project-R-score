@@ -88,7 +88,7 @@ export async function listAllHabits(): Promise<string[]> {
 
 // CLI test
 if (import.meta.main) {
-  console.log('🧪 Testing Habits Classifier...\n');
+  console.info('🧪 Testing Habits Classifier...\n');
 
   const testCases = [
     { txns: Array(5).fill({ amount: 15 }), expected: 'casual' },
@@ -100,7 +100,7 @@ if (import.meta.main) {
   for (const test of testCases) {
     const habits = classifyHabits(test.txns);
     const bonus = calculateBonus(100, habits);
-    console.log(
+    console.info(
       `Tier: ${habits.tier.padEnd(12)} | Txns: ${habits.txnCount} | Avg: $${habits.avgTxn.toFixed(2)} | Bonus on $100: $${bonus.bonus.toFixed(2)}`
     );
   }

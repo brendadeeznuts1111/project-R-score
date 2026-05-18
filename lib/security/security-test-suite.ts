@@ -32,7 +32,7 @@ export class SecurityTestSuite {
     summary: { passed: number; failed: number; warnings: number; total: number };
     overallStatus: 'secure' | 'vulnerable' | 'needs_attention';
   }> {
-    console.log('🧪 Starting Security Test Suite...');
+    console.info('🧪 Starting Security Test Suite...');
     
     // Clear previous results
     this.results = [];
@@ -369,7 +369,7 @@ export class SecurityTestSuite {
         details
       });
       
-      console.log(`✅ ${testName}: ${defaultStatus.toUpperCase()} (${duration.toFixed(2)}ms)`);
+      console.info(`✅ ${testName}: ${defaultStatus.toUpperCase()} (${duration.toFixed(2)}ms)`);
       
     } catch (error) {
       const duration = performance.now() - start;
@@ -382,7 +382,7 @@ export class SecurityTestSuite {
         recommendations: this.getRecommendations(error)
       });
       
-      console.log(`❌ ${testName}: FAIL (${duration.toFixed(2)}ms) - ${error.message}`);
+      console.info(`❌ ${testName}: FAIL (${duration.toFixed(2)}ms) - ${error.message}`);
     }
   }
 
@@ -421,23 +421,23 @@ export async function runSecurityTests(): Promise<{
   const testSuite = new SecurityTestSuite();
   const results = await testSuite.runFullSuite();
   
-  console.log('\n📊 Security Test Results Summary:');
-  console.log('='.repeat(50));
-  console.log(`✅ Passed: ${results.summary.passed}`);
-  console.log(`❌ Failed: ${results.summary.failed}`);
-  console.log(`⚠️  Warnings: ${results.summary.warnings}`);
-  console.log(`📈 Total: ${results.summary.total}`);
-  console.log(`🎯 Overall Status: ${results.overallStatus.toUpperCase()}`);
+  console.info('\n📊 Security Test Results Summary:');
+  console.info('='.repeat(50));
+  console.info(`✅ Passed: ${results.summary.passed}`);
+  console.info(`❌ Failed: ${results.summary.failed}`);
+  console.info(`⚠️  Warnings: ${results.summary.warnings}`);
+  console.info(`📈 Total: ${results.summary.total}`);
+  console.info(`🎯 Overall Status: ${results.overallStatus.toUpperCase()}`);
   
   // Show failed tests
   const failedTests = results.results.filter(r => r.status === 'fail');
   if (failedTests.length > 0) {
-    console.log('\n❌ Failed Tests:');
+    console.info('\n❌ Failed Tests:');
     failedTests.forEach(test => {
-      console.log(`   • ${test.testName}: ${test.details}`);
+      console.info(`   • ${test.testName}: ${test.details}`);
       if (test.recommendations) {
         test.recommendations.forEach(rec => {
-          console.log(`     → ${rec}`);
+          console.info(`     → ${rec}`);
         });
       }
     });
@@ -446,9 +446,9 @@ export async function runSecurityTests(): Promise<{
   // Show warnings
   const warningTests = results.results.filter(r => r.status === 'warning');
   if (warningTests.length > 0) {
-    console.log('\n⚠️  Warnings:');
+    console.info('\n⚠️  Warnings:');
     warningTests.forEach(test => {
-      console.log(`   • ${test.testName}: ${test.details}`);
+      console.info(`   • ${test.testName}: ${test.details}`);
     });
   }
   

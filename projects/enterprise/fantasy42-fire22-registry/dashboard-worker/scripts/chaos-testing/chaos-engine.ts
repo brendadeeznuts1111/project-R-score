@@ -100,7 +100,7 @@ class ChaosTestEngine {
         config.tests?.forEach((test: ChaosTestConfig) => {
           this.testConfigs.set(test.id, test);
         });
-        console.log(`✅ Loaded ${this.testConfigs.size} chaos test configurations`);
+        console.info(`✅ Loaded ${this.testConfigs.size} chaos test configurations`);
       } catch (error) {
         console.warn(`⚠️ Failed to load chaos test config: ${error.message}`);
         this.createDefaultConfigs();
@@ -291,14 +291,14 @@ class ChaosTestEngine {
 
     // Load into memory
     defaultTests.forEach(test => this.testConfigs.set(test.id, test));
-    console.log(`✅ Created ${defaultTests.length} default chaos test configurations`);
+    console.info(`✅ Created ${defaultTests.length} default chaos test configurations`);
   }
 
   /**
    * Capture baseline system health
    */
   private async captureBaselineHealth(): Promise<any> {
-    console.log('📊 Capturing baseline system health...');
+    console.info('📊 Capturing baseline system health...');
 
     try {
       const health = await hubConnection.healthCheck();
@@ -328,7 +328,7 @@ class ChaosTestEngine {
    * Execute a single chaos test
    */
   private async executeChaosTest(config: ChaosTestConfig): Promise<ChaosTestResult> {
-    console.log(color('#f97316', 'css') + `🌪️ Starting chaos test: ${config.name}`);
+    console.info(color('#f97316', 'css') + `🌪️ Starting chaos test: ${config.name}`);
 
     const result: ChaosTestResult = {
       testId: config.id,
@@ -409,7 +409,7 @@ class ChaosTestEngine {
       });
     }
 
-    console.log(
+    console.info(
       color('#10b981', 'css') + `✅ Chaos test completed: ${config.name} (${result.status})`
     );
     return result;
@@ -422,7 +422,7 @@ class ChaosTestEngine {
     config: ChaosTestConfig,
     result: ChaosTestResult
   ): Promise<void> {
-    console.log('🗄️ Injecting database chaos...');
+    console.info('🗄️ Injecting database chaos...');
 
     result.injectedFailures.push('database_connection_timeout');
     result.details.timeline.push({
@@ -455,7 +455,7 @@ class ChaosTestEngine {
    * Inject API chaos
    */
   private async injectAPIChao(config: ChaosTestConfig, result: ChaosTestResult): Promise<void> {
-    console.log('🌐 Injecting API chaos...');
+    console.info('🌐 Injecting API chaos...');
 
     result.injectedFailures.push('api_rate_limit_surge');
     result.details.timeline.push({
@@ -534,7 +534,7 @@ class ChaosTestEngine {
     config: ChaosTestConfig,
     result: ChaosTestResult
   ): Promise<void> {
-    console.log('🌐 Injecting network chaos...');
+    console.info('🌐 Injecting network chaos...');
 
     result.injectedFailures.push('network_partition');
     result.details.timeline.push({
@@ -576,7 +576,7 @@ class ChaosTestEngine {
     config: ChaosTestConfig,
     result: ChaosTestResult
   ): Promise<void> {
-    console.log('🚨 Injecting error system chaos...');
+    console.info('🚨 Injecting error system chaos...');
 
     result.injectedFailures.push('error_system_overload');
     result.details.timeline.push({
@@ -615,7 +615,7 @@ class ChaosTestEngine {
    * Inject system chaos
    */
   private async injectSystemChaos(config: ChaosTestConfig, result: ChaosTestResult): Promise<void> {
-    console.log('⚡ Injecting system chaos...');
+    console.info('⚡ Injecting system chaos...');
 
     if (config.id === 'memory-pressure') {
       result.injectedFailures.push('memory_pressure');
@@ -729,8 +729,8 @@ class ChaosTestEngine {
     }
 
     this.isRunning = true;
-    console.log(color('#dc2626', 'css') + '🌪️ STARTING CHAOS TESTING ENGINE');
-    console.log('='.repeat(80));
+    console.info(color('#dc2626', 'css') + '🌪️ STARTING CHAOS TESTING ENGINE');
+    console.info('='.repeat(80));
 
     try {
       // Capture baseline health
@@ -741,7 +741,7 @@ class ChaosTestEngine {
         config => config.enabled && (!testIds || testIds.includes(config.id))
       );
 
-      console.log(`🎯 Running ${testsToRun.length} chaos tests...`);
+      console.info(`🎯 Running ${testsToRun.length} chaos tests...`);
 
       // Execute tests sequentially to avoid interference
       this.results = [];
@@ -760,7 +760,7 @@ class ChaosTestEngine {
       const report = this.generateReport(finalHealth);
       this.saveReport(report);
 
-      console.log(color('#10b981', 'css') + '✅ CHAOS TESTING COMPLETED');
+      console.info(color('#10b981', 'css') + '✅ CHAOS TESTING COMPLETED');
       this.displayReport(report);
 
       return report;
@@ -865,7 +865,7 @@ class ChaosTestEngine {
       }
 
       writeFileSync(reportPath, JSON.stringify(report, null, 2), 'utf-8');
-      console.log(`📊 Report saved: ${reportPath}`);
+      console.info(`📊 Report saved: ${reportPath}`);
     } catch (error) {
       console.warn('⚠️ Failed to save report:', error.message);
     }
@@ -875,21 +875,21 @@ class ChaosTestEngine {
    * Display chaos test report
    */
   private displayReport(report: ChaosTestReport): void {
-    console.log('\n📊 CHAOS TEST REPORT');
-    console.log('='.repeat(80));
+    console.info('\n📊 CHAOS TEST REPORT');
+    console.info('='.repeat(80));
 
-    console.log('\n🎯 Summary:');
-    console.log(`   Total Tests: ${report.summary.totalTests}`);
-    console.log(
+    console.info('\n🎯 Summary:');
+    console.info(`   Total Tests: ${report.summary.totalTests}`);
+    console.info(
       `   ${color('#10b981', 'css')}Passed: ${report.summary.passed}${color('#ffffff', 'css')}`
     );
-    console.log(
+    console.info(
       `   ${color('#f59e0b', 'css')}Partial: ${report.summary.partial}${color('#ffffff', 'css')}`
     );
-    console.log(
+    console.info(
       `   ${color('#ef4444', 'css')}Failed: ${report.summary.failed}${color('#ffffff', 'css')}`
     );
-    console.log(
+    console.info(
       `   ${color('#dc2626', 'css')}Errors: ${report.summary.errors}${color('#ffffff', 'css')}`
     );
 
@@ -899,11 +899,11 @@ class ChaosTestEngine {
         : report.summary.overallResilience >= 60
           ? color('#f59e0b', 'css')
           : color('#ef4444', 'css');
-    console.log(
+    console.info(
       `   Overall Resilience: ${resilienceColor}${report.summary.overallResilience}%${color('#ffffff', 'css')}`
     );
 
-    console.log('\n🌪️ Test Results:');
+    console.info('\n🌪️ Test Results:');
     report.results.forEach((result, index) => {
       const statusColor =
         result.status === 'passed'
@@ -914,30 +914,30 @@ class ChaosTestEngine {
               ? color('#ef4444', 'css')
               : color('#dc2626', 'css');
 
-      console.log(
+      console.info(
         `   ${index + 1}. ${statusColor}${result.status.toUpperCase()}${color('#ffffff', 'css')} - ${result.name}`
       );
-      console.log(
+      console.info(
         `      Duration: ${Math.round(result.duration / 1000)}s | Errors: ${result.metrics.errorCount} | Stability: ${Math.round(result.metrics.systemStability * 100)}%`
       );
     });
 
-    console.log('\n💡 Recommendations:');
+    console.info('\n💡 Recommendations:');
     if (report.recommendations.length === 0) {
-      console.log('   🎉 No recommendations - excellent resilience!');
+      console.info('   🎉 No recommendations - excellent resilience!');
     } else {
       report.recommendations.forEach((rec, index) => {
-        console.log(`   ${index + 1}. ${rec}`);
+        console.info(`   ${index + 1}. ${rec}`);
       });
     }
 
-    console.log('\n🏥 System Recovery:');
+    console.info('\n🏥 System Recovery:');
     const recoveryIcon = report.systemHealth.recovered ? '✅' : '❌';
-    console.log(
+    console.info(
       `   ${recoveryIcon} System Recovery: ${report.systemHealth.recovered ? 'Successful' : 'Incomplete'}`
     );
 
-    console.log('\n' + '='.repeat(80));
+    console.info('\n' + '='.repeat(80));
   }
 }
 
@@ -949,7 +949,7 @@ if (import.meta.main) {
   const testIds = args.length > 0 ? args : undefined;
 
   if (testIds) {
-    console.log(`🎯 Running specific chaos tests: ${testIds.join(', ')}`);
+    console.info(`🎯 Running specific chaos tests: ${testIds.join(', ')}`);
   }
 
   try {

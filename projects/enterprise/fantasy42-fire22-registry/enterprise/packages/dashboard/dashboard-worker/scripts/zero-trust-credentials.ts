@@ -340,7 +340,7 @@ export class ZeroTrustCredentialManager {
       details: { backupName },
     });
 
-    console.log(`✅ Rotated credential ${credential.name} successfully`);
+    console.info(`✅ Rotated credential ${credential.name} successfully`);
     return credential;
   }
 
@@ -380,7 +380,7 @@ export class ZeroTrustCredentialManager {
       details: { name: credential.name },
     });
 
-    console.log(`✅ Deleted credential ${credential.name}`);
+    console.info(`✅ Deleted credential ${credential.name}`);
   }
 
   /**
@@ -396,7 +396,7 @@ export class ZeroTrustCredentialManager {
 
     // Log security events
     if (!log.success || log.action === 'delete' || log.action === 'rotate') {
-      console.log(
+      console.info(
         `🔒 Security Event: ${log.action} on credential ${log.credentialId} - Success: ${log.success}`
       );
     }
@@ -422,7 +422,7 @@ export class ZeroTrustCredentialManager {
     }));
 
     await Bun.write(filepath, JSON.stringify(logs, null, 2));
-    console.log(`✅ Exported ${logs.length} audit logs to ${filepath}`);
+    console.info(`✅ Exported ${logs.length} audit logs to ${filepath}`);
   }
 
   /**
@@ -439,7 +439,7 @@ export class ZeroTrustCredentialManager {
         );
 
         if (daysSinceRotation > credential.rotateAfterDays) {
-          console.log(`🔄 Auto-rotating credential ${credential.name}`);
+          console.info(`🔄 Auto-rotating credential ${credential.name}`);
 
           // Generate new secure value (in production, would integrate with secret generator)
           const newValue = randomBytes(32).toString('hex');
@@ -455,7 +455,7 @@ export class ZeroTrustCredentialManager {
     }
 
     if (rotatedCount > 0) {
-      console.log(`✅ Auto-rotated ${rotatedCount} credentials`);
+      console.info(`✅ Auto-rotated ${rotatedCount} credentials`);
     }
   }
 }
@@ -467,7 +467,7 @@ export const zeroTrustManager = new ZeroTrustCredentialManager();
 if (import.meta.main) {
   const manager = new ZeroTrustCredentialManager();
 
-  console.log('🔐 Zero-Trust Credential Manager Demo\n');
+  console.info('🔐 Zero-Trust Credential Manager Demo\n');
 
   // Demo: Store credential
   const cred = await manager.storeCredential('api_key', 'super-secret-key-123', {
@@ -476,21 +476,21 @@ if (import.meta.main) {
     tags: ['api', 'production'],
   });
 
-  console.log('✅ Stored credential:', cred.id);
+  console.info('✅ Stored credential:', cred.id);
 
   // Demo: Retrieve credential
   const value = await manager.getCredential('api_key');
-  console.log('✅ Retrieved value:', value ? '***hidden***' : 'not found');
+  console.info('✅ Retrieved value:', value ? '***hidden***' : 'not found');
 
   // Demo: Rotate credential
   const rotated = await manager.rotateCredential('api_key', 'new-secret-key-456');
-  console.log('✅ Rotated credential:', rotated.id);
+  console.info('✅ Rotated credential:', rotated.id);
 
   // Demo: Get audit trail
   const audit = manager.getAuditTrail();
-  console.log(`\n📊 Audit Trail: ${audit.length} events`);
+  console.info(`\n📊 Audit Trail: ${audit.length} events`);
   audit.forEach(log => {
-    console.log(`  - ${log.action} at ${log.timestamp.toISOString()} - Success: ${log.success}`);
+    console.info(`  - ${log.action} at ${log.timestamp.toISOString()} - Success: ${log.success}`);
   });
 
   // Demo: Export audit logs

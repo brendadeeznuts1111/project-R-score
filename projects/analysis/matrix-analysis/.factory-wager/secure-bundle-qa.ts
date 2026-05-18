@@ -42,17 +42,17 @@ async function runCheck(name: string, fn: () => Promise<QAResult>): Promise<void
     const result = await fn();
     results.push(result);
     if (result.passed) {
-      console.log(`${CHECK} ${result.message}`);
+      console.info(`${CHECK} ${result.message}`);
     } else {
-      console.log(`${CROSS} ${result.message}`);
+      console.info(`${CROSS} ${result.message}`);
     }
     if (result.details) {
-      console.log(`  ${COLORS.dim}${result.details}${COLORS.reset}`);
+      console.info(`  ${COLORS.dim}${result.details}${COLORS.reset}`);
     }
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err);
     results.push({ passed: false, message: errorMsg });
-    console.log(`${CROSS} ${errorMsg}`);
+    console.info(`${CROSS} ${errorMsg}`);
   }
 }
 
@@ -262,18 +262,18 @@ async function runTests(): Promise<QAResult> {
 
 /** Main QA flow */
 async function main() {
-  console.log(`${COLORS.bold}${COLORS.cyan}
+  console.info(`${COLORS.bold}${COLORS.cyan}
 ╔══════════════════════════════════════════════════════════════════╗
 ║  Factory Wager Secure Bundle QA (Tier-1380)                       ║
 ║  Production Validation & Security Hardening                       ║
 ╚══════════════════════════════════════════════════════════════════╝
 ${COLORS.reset}`);
 
-  console.log(`${COLORS.dim}Environment:${COLORS.reset}`);
-  console.log(`  FW_MODE: ${process.env.FW_MODE || "not set"}`);
-  console.log(`  TIER: ${process.env.TIER || "not set"}`);
-  console.log(`  Bun: ${Bun.version}`);
-  console.log();
+  console.info(`${COLORS.dim}Environment:${COLORS.reset}`);
+  console.info(`  FW_MODE: ${process.env.FW_MODE || "not set"}`);
+  console.info(`  TIER: ${process.env.TIER || "not set"}`);
+  console.info(`  Bun: ${Bun.version}`);
+  console.info();
 
   // Run all checks
   await runCheck("Secret Leak Detection", checkSecretLeaks);
@@ -288,16 +288,16 @@ ${COLORS.reset}`);
   const total = results.length;
   const allPassed = passed === total;
 
-  console.log();
-  console.log("─".repeat(60));
+  console.info();
+  console.info("─".repeat(60));
 
   if (allPassed) {
-    console.log(`${CHECK} ${COLORS.green}${COLORS.bold}All ${passed}/${total} checks passed${COLORS.reset}`);
-    console.log(`${COLORS.green}✓ Bundle ready for production${COLORS.reset}`);
+    console.info(`${CHECK} ${COLORS.green}${COLORS.bold}All ${passed}/${total} checks passed${COLORS.reset}`);
+    console.info(`${COLORS.green}✓ Bundle ready for production${COLORS.reset}`);
     process.exit(0);
   } else {
-    console.log(`${CROSS} ${COLORS.red}${COLORS.bold}${passed}/${total} checks passed${COLORS.reset}`);
-    console.log(`${COLORS.red}✗ Bundle validation failed${COLORS.reset}`);
+    console.info(`${CROSS} ${COLORS.red}${COLORS.bold}${passed}/${total} checks passed${COLORS.reset}`);
+    console.info(`${COLORS.red}✗ Bundle validation failed${COLORS.reset}`);
     process.exit(1);
   }
 }

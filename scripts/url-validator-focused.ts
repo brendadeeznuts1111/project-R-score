@@ -32,7 +32,7 @@ class FocusedUrlValidator {
   private readonly fileExtensions = ['.ts', '.js', '.md'];
   
   async validateProject(): Promise<FocusedValidationReport> {
-    console.log('🔍 Starting focused URL validation...\n');
+    console.info('🔍 Starting focused URL validation...\n');
     
     const urls = await this.extractSourceUrls();
     const results = await this.validateUrls(urls);
@@ -44,7 +44,7 @@ class FocusedUrlValidator {
   }
   
   private async extractSourceUrls(): Promise<Array<{ url: string; file: string; line: number }>> {
-    console.log('📂 Scanning source files for URLs...');
+    console.info('📂 Scanning source files for URLs...');
     
     const urls: Array<{ url: string; file: string; line: number }> = [];
     
@@ -58,7 +58,7 @@ class FocusedUrlValidator {
       }
     }
     
-    console.log(`Found ${urls.length} URLs in source files\n`);
+    console.info(`Found ${urls.length} URLs in source files\n`);
     return urls;
   }
   
@@ -136,7 +136,7 @@ class FocusedUrlValidator {
   }
   
   private async validateUrls(urls: Array<{ url: string; file: string; line: number }>): Promise<UrlValidationResult[]> {
-    console.log('🧪 Validating URL formats and standards compliance...');
+    console.info('🧪 Validating URL formats and standards compliance...');
     
     const results: UrlValidationResult[] = [];
     
@@ -217,24 +217,24 @@ class FocusedUrlValidator {
   }
   
   private printSummary(report: FocusedValidationReport): void {
-    console.log('🎯 Focused URL Validation Summary');
-    console.log('===============================');
-    console.log(`📊 Statistics:`);
-    console.log(`   Total URLs: ${report.totalUrls}`);
-    console.log(`   Valid URLs: ${report.validUrls}`);
-    console.log(`   HTTPS URLs: ${report.httpsUrls} ✅`);
-    console.log(`   HTTP URLs: ${report.httpUrls} ${report.httpUrls > 10 ? '⚠️' : '✅'}`);
-    console.log(`   Localhost URLs: ${report.hardcodedLocalhostUrls} ${report.hardcodedLocalhostUrls > 0 ? '❌' : '✅'}`);
+    console.info('🎯 Focused URL Validation Summary');
+    console.info('===============================');
+    console.info(`📊 Statistics:`);
+    console.info(`   Total URLs: ${report.totalUrls}`);
+    console.info(`   Valid URLs: ${report.validUrls}`);
+    console.info(`   HTTPS URLs: ${report.httpsUrls} ✅`);
+    console.info(`   HTTP URLs: ${report.httpUrls} ${report.httpUrls > 10 ? '⚠️' : '✅'}`);
+    console.info(`   Localhost URLs: ${report.hardcodedLocalhostUrls} ${report.hardcodedLocalhostUrls > 0 ? '❌' : '✅'}`);
     
     // Count example.com URLs
     const exampleComUrls = report.results.filter(r => r.url.includes('example.com')).length;
     if (exampleComUrls > 0) {
-      console.log(`   Example.com URLs: ${exampleComUrls} ✅ (portable examples)`);
+      console.info(`   Example.com URLs: ${exampleComUrls} ✅ (portable examples)`);
     }
     
     const statusIcon = report.status === 'pass' ? '✅' : 
                       report.status === 'warning' ? '⚠️' : '❌';
-    console.log(`\n🎯 Status: ${statusIcon} ${report.status.toUpperCase()}`);
+    console.info(`\n🎯 Status: ${statusIcon} ${report.status.toUpperCase()}`);
     
     // Show problematic URLs (only localhost and invalid URLs)
     const problematicResults = report.results.filter(r => !r.valid || 
@@ -242,38 +242,38 @@ class FocusedUrlValidator {
     );
     
     if (problematicResults.length > 0) {
-      console.log('\n🔍 Problematic URLs:');
+      console.info('\n🔍 Problematic URLs:');
       problematicResults.slice(0, 10).forEach(result => {
         const icon = result.valid ? '⚠️' : '❌';
-        console.log(`   ${icon} ${result.url}`);
-        console.log(`      File: ${result.file}:${result.line}`);
+        console.info(`   ${icon} ${result.url}`);
+        console.info(`      File: ${result.file}:${result.line}`);
         if (result.issues.length > 0) {
           result.issues.forEach(issue => {
-            console.log(`      Issue: ${issue}`);
+            console.info(`      Issue: ${issue}`);
           });
         }
-        console.log('');
+        console.info('');
       });
       
       if (problematicResults.length > 10) {
-        console.log(`   ... and ${problematicResults.length - 10} more`);
+        console.info(`   ... and ${problematicResults.length - 10} more`);
       }
     }
     
-    console.log('\n' + '='.repeat(50));
+    console.info('\n' + '='.repeat(50));
     
     if (report.status === 'pass') {
-      console.log('🎉 All source file URLs are properly configured!');
-      console.log('✅ Ready for production deployment');
+      console.info('🎉 All source file URLs are properly configured!');
+      console.info('✅ Ready for production deployment');
       if (exampleComUrls > 0) {
-        console.log('✅ Using portable example.com URLs instead of localhost');
+        console.info('✅ Using portable example.com URLs instead of localhost');
       }
     } else if (report.status === 'warning') {
-      console.log('⚠️  Some improvements recommended');
-      console.log('🔧 Fix issues before production deployment');
+      console.info('⚠️  Some improvements recommended');
+      console.info('🔧 Fix issues before production deployment');
     } else {
-      console.log('❌ Critical issues found');
-      console.log('🚫 Must fix issues before deployment');
+      console.info('❌ Critical issues found');
+      console.info('🚫 Must fix issues before deployment');
     }
   }
 }
@@ -290,7 +290,7 @@ async function main(): Promise<void> {
     case 'check':
     case 'quick':
     case '':
-      console.log('🔗 Focused URL Validator - Source Files Only\n');
+      console.info('🔗 Focused URL Validator - Source Files Only\n');
       const report = await validator.validateProject();
       
       // Return appropriate exit code

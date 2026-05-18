@@ -170,19 +170,19 @@ export class SignalIntegration {
    */
   async connect(): Promise<boolean> {
     if (!this.config.enabled) {
-      console.log('Signal integration is disabled');
+      console.info('Signal integration is disabled');
       return false;
     }
 
     try {
       // In a real implementation, this would establish a connection to Signal
-      console.log('🔐 Connecting to Signal server...');
+      console.info('🔐 Connecting to Signal server...');
 
       // Simulate connection process
       await this.delay(1000);
 
       this.isConnected = true;
-      console.log('✅ Signal connection established');
+      console.info('✅ Signal connection established');
 
       // Start message processing
       this.startMessageProcessing();
@@ -198,10 +198,10 @@ export class SignalIntegration {
    * Disconnect from Signal server
    */
   async disconnect(): Promise<void> {
-    console.log('🔌 Disconnecting from Signal...');
+    console.info('🔌 Disconnecting from Signal...');
     this.isConnected = false;
     this.messageQueue = [];
-    console.log('✅ Signal disconnected');
+    console.info('✅ Signal disconnected');
   }
 
   /**
@@ -222,7 +222,7 @@ export class SignalIntegration {
     // Add to queue for processing
     this.messageQueue.push(fullMessage);
 
-    console.log(`📤 Signal message queued: ${messageId}`);
+    console.info(`📤 Signal message queued: ${messageId}`);
     return messageId;
   }
 
@@ -550,12 +550,12 @@ You have been removed from group: ${group.name}
   private async processMessage(message: SignalMessage): Promise<void> {
     try {
       // In a real implementation, this would send via Signal API
-      console.log(`📤 Processing Signal message: ${message.id}`);
+      console.info(`📤 Processing Signal message: ${message.id}`);
 
       // Simulate sending delay
       await this.delay(100);
 
-      console.log(`✅ Signal message sent: ${message.id}`);
+      console.info(`✅ Signal message sent: ${message.id}`);
     } catch (error) {
       console.error(`❌ Failed to send Signal message ${message.id}:`, error);
 

@@ -20,32 +20,32 @@ function parseBunxArgs(args: string[]): string[] {
 }
 
 async function testBunxArgumentParsing() {
-	console.log("🧪 Testing bunx Argument Parsing (Bun v1.3.6+)\n");
+	console.info("🧪 Testing bunx Argument Parsing (Bun v1.3.6+)\n");
 
 	// Test 1: Empty string arguments
-	console.log("1. Empty String Arguments:");
+	console.info("1. Empty String Arguments:");
 	const emptyStringTest = parseBunxArgs(["", "arg1", ""]);
-	console.log(`   Input: ['', 'arg1', '']`);
-	console.log(`   Output: ${JSON.stringify(emptyStringTest)}`);
-	console.log(
+	console.info(`   Input: ['', 'arg1', '']`);
+	console.info(`   Output: ${JSON.stringify(emptyStringTest)}`);
+	console.info(
 		`   ✅ Empty strings preserved: ${emptyStringTest.length === 3 && emptyStringTest[0] === ""}\n`,
 	);
 
 	// Test 2: Quoted arguments with spaces
-	console.log("2. Quoted Arguments with Spaces:");
+	console.info("2. Quoted Arguments with Spaces:");
 	const quotedTest = parseBunxArgs([
 		'"first second"',
 		"third",
 		'"fourth fifth"',
 	]);
-	console.log(`   Input: ["first second", "third", "fourth fifth"]`);
-	console.log(`   Output: ${JSON.stringify(quotedTest)}`);
-	console.log(
+	console.info(`   Input: ["first second", "third", "fourth fifth"]`);
+	console.info(`   Output: ${JSON.stringify(quotedTest)}`);
+	console.info(
 		`   ✅ Spaces preserved: ${quotedTest[0] === '"first second"'}\n`,
 	);
 
 	// Test 3: Complex argument combinations
-	console.log("3. Complex Argument Combinations:");
+	console.info("3. Complex Argument Combinations:");
 	const complexTest = parseBunxArgs([
 		"validate",
 		"",
@@ -55,14 +55,14 @@ async function testBunxArgumentParsing() {
 		"",
 		"--patterns",
 	]);
-	console.log(
+	console.info(
 		`   Input: validate "" "config/secrets with spaces.toml" --verbose --scan "" --patterns`,
 	);
-	console.log(`   Output: ${JSON.stringify(complexTest)}`);
-	console.log(`   ✅ All arguments preserved: ${complexTest.length === 7}\n`);
+	console.info(`   Output: ${JSON.stringify(complexTest)}`);
+	console.info(`   ✅ All arguments preserved: ${complexTest.length === 7}\n`);
 
 	// Test 4: Registry manager specific arguments
-	console.log("4. Registry Manager Arguments:");
+	console.info("4. Registry Manager Arguments:");
 	const registryArgs = parseBunxArgs([
 		"bunx",
 		"--package",
@@ -73,36 +73,36 @@ async function testBunxArgumentParsing() {
 		"--scan",
 		"--patterns",
 	]);
-	console.log(
+	console.info(
 		`   Input: bunx --package bun-toml-secrets-editor-linux-x64 validate config/secrets.toml --verbose --scan --patterns`,
 	);
-	console.log(`   Output: ${JSON.stringify(registryArgs)}`);
-	console.log(
+	console.info(`   Output: ${JSON.stringify(registryArgs)}`);
+	console.info(
 		`   ✅ All flags preserved: ${registryArgs.includes("--verbose") && registryArgs.includes("--scan")}\n`,
 	);
 
 	// Test 5: File paths with spaces (Windows-style)
-	console.log("5. File Paths with Spaces (Windows):");
+	console.info("5. File Paths with Spaces (Windows):");
 	const windowsPathTest = parseBunxArgs([
 		"validate",
 		"C:\\Program Files\\My App\\config\\secrets.toml",
 		"--output",
 		"C:\\Program Files\\My App\\output\\results.json",
 	]);
-	console.log(
+	console.info(
 		`   Input: validate "C:\\Program Files\\My App\\config\\secrets.toml" --output "C:\\Program Files\\My App\\output\\results.json"`,
 	);
-	console.log(`   Output: ${JSON.stringify(windowsPathTest)}`);
-	console.log(
+	console.info(`   Output: ${JSON.stringify(windowsPathTest)}`);
+	console.info(
 		`   ✅ Windows paths preserved: ${windowsPathTest[1].includes("Program Files")}\n`,
 	);
 
-	console.log("✅ All bunx argument parsing tests passed!");
-	console.log("\n💡 Benefits:");
-	console.log("   • Empty strings handled correctly");
-	console.log("   • Quoted arguments with spaces preserved");
-	console.log("   • Windows file paths work correctly");
-	console.log("   • Complex CLI invocations reliable");
+	console.info("✅ All bunx argument parsing tests passed!");
+	console.info("\n💡 Benefits:");
+	console.info("   • Empty strings handled correctly");
+	console.info("   • Quoted arguments with spaces preserved");
+	console.info("   • Windows file paths work correctly");
+	console.info("   • Complex CLI invocations reliable");
 }
 
 // Run if executed directly

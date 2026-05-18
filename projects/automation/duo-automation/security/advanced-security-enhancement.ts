@@ -78,7 +78,7 @@ export class AdvancedSecurityManager {
    * Initialize security system
    */
   async initialize(): Promise<void> {
-    console.log('🔒 Initializing Advanced Security System...');
+    console.info('🔒 Initializing Advanced Security System...');
     
     // Setup encryption
     if (this.config.enableEncryption) {
@@ -100,7 +100,7 @@ export class AdvancedSecurityManager {
       await this.initializeAccessControl();
     }
     
-    console.log('✅ Security system initialized');
+    console.info('✅ Security system initialized');
   }
   
   /**
@@ -176,7 +176,7 @@ export class AdvancedSecurityManager {
       await this.checkCompliance(securityEvent);
     }
     
-    console.log(`🔒 Security event logged: ${event.type} - ${event.action}`);
+    console.info(`🔒 Security event logged: ${event.type} - ${event.action}`);
   }
   
   /**
@@ -296,7 +296,7 @@ export class AdvancedSecurityManager {
    * Setup encryption
    */
   private async setupEncryption(): Promise<void> {
-    console.log('   🔐 Setting up encryption...');
+    console.info('   🔐 Setting up encryption...');
     
     // Test encryption/decryption
     const testData = 'test encryption';
@@ -307,14 +307,14 @@ export class AdvancedSecurityManager {
       throw new Error('Encryption setup failed');
     }
     
-    console.log('   ✅ Encryption setup complete');
+    console.info('   ✅ Encryption setup complete');
   }
   
   /**
    * Initialize threat detection
    */
   private async initializeThreatDetection(): Promise<void> {
-    console.log('   🛡️ Initializing threat detection...');
+    console.info('   🛡️ Initializing threat detection...');
     
     // Load threat patterns
     this.threatModel.patterns = {
@@ -324,14 +324,14 @@ export class AdvancedSecurityManager {
       unusualFileAccess: ['/etc/passwd', '/etc/shadow', '/root/'],
     };
     
-    console.log('   ✅ Threat detection initialized');
+    console.info('   ✅ Threat detection initialized');
   }
   
   /**
    * Setup compliance monitoring
    */
   private async setupComplianceMonitoring(): Promise<void> {
-    console.log('   📋 Setting up compliance monitoring...');
+    console.info('   📋 Setting up compliance monitoring...');
     
     this.complianceRules = {
       requireAuthentication: true,
@@ -342,19 +342,19 @@ export class AdvancedSecurityManager {
       accessControl: true,
     };
     
-    console.log('   ✅ Compliance monitoring setup');
+    console.info('   ✅ Compliance monitoring setup');
   }
   
   /**
    * Initialize access control
    */
   private async initializeAccessControl(): Promise<void> {
-    console.log('   🔑 Initializing access control...');
+    console.info('   🔑 Initializing access control...');
     
     // Load user permissions
     this.loadUserPermissions();
     
-    console.log('   ✅ Access control initialized');
+    console.info('   ✅ Access control initialized');
   }
   
   /**
@@ -700,8 +700,8 @@ export class AdvancedSecurityManager {
 
 // Demonstration
 async function demonstrateAdvancedSecurity() {
-  console.log('🔒 Advanced Security Enhancement Demo');
-  console.log('='.repeat(60));
+  console.info('🔒 Advanced Security Enhancement Demo');
+  console.info('='.repeat(60));
   
   const securityManager = new AdvancedSecurityManager({
     enableEncryption: true,
@@ -714,25 +714,25 @@ async function demonstrateAdvancedSecurity() {
   await securityManager.initialize();
   
   // Demonstrate encryption
-  console.log('\n🔐 Encryption Demo:');
+  console.info('\n🔐 Encryption Demo:');
   const sensitiveData = 'user:admin,password:secret123';
   const encrypted = securityManager.encrypt(sensitiveData);
   const decrypted = securityManager.decrypt(encrypted);
   
-  console.log(`   Original: ${sensitiveData}`);
-  console.log(`   Encrypted: ${encrypted.substring(0, 50)}...`);
-  console.log(`   Decrypted: ${decrypted}`);
+  console.info(`   Original: ${sensitiveData}`);
+  console.info(`   Encrypted: ${encrypted.substring(0, 50)}...`);
+  console.info(`   Decrypted: ${decrypted}`);
   
   // Demonstrate access control
-  console.log('\n🔑 Access Control Demo:');
+  console.info('\n🔑 Access Control Demo:');
   const adminAccess = await securityManager.validateAccess('admin', 'src/api', 'write');
   const userAccess = await securityManager.validateAccess('user', 'src/api', 'write');
   
-  console.log(`   Admin access to src/api:write: ${adminAccess ? '✅ Granted' : '❌ Denied'}`);
-  console.log(`   User access to src/api:write: ${userAccess ? '✅ Granted' : '❌ Denied'}`);
+  console.info(`   Admin access to src/api:write: ${adminAccess ? '✅ Granted' : '❌ Denied'}`);
+  console.info(`   User access to src/api:write: ${userAccess ? '✅ Granted' : '❌ Denied'}`);
   
   // Demonstrate threat detection
-  console.log('\n🛡️ Threat Detection Demo:');
+  console.info('\n🛡️ Threat Detection Demo:');
   const threatContext = {
     user: 'unknown',
     command: 'sudo rm -rf /',
@@ -741,27 +741,27 @@ async function demonstrateAdvancedSecurity() {
   };
   
   const threats = await securityManager.detectThreats(threatContext);
-  console.log(`   Anomaly score: ${threats.anomalyScore.toFixed(2)}`);
-  console.log(`   Threats detected: ${threats.threats.join(', ')}`);
-  console.log(`   Recommendations: ${threats.recommendations.join(', ')}`);
+  console.info(`   Anomaly score: ${threats.anomalyScore.toFixed(2)}`);
+  console.info(`   Threats detected: ${threats.threats.join(', ')}`);
+  console.info(`   Recommendations: ${threats.recommendations.join(', ')}`);
   
   // Generate compliance report
-  console.log('\n📋 Compliance Report:');
+  console.info('\n📋 Compliance Report:');
   const complianceReport = await securityManager.generateComplianceReport();
-  console.log(`   Overall score: ${(complianceReport.overallScore * 100).toFixed(1)}%`);
-  console.log(`   Access Control: ${(complianceReport.categories.accessControl * 100).toFixed(1)}%`);
-  console.log(`   Data Protection: ${(complianceReport.categories.dataProtection * 100).toFixed(1)}%`);
-  console.log(`   Audit Trail: ${(complianceReport.categories.auditTrail * 100).toFixed(1)}%`);
-  console.log(`   Encryption: ${(complianceReport.categories.encryption * 100).toFixed(1)}%`);
+  console.info(`   Overall score: ${(complianceReport.overallScore * 100).toFixed(1)}%`);
+  console.info(`   Access Control: ${(complianceReport.categories.accessControl * 100).toFixed(1)}%`);
+  console.info(`   Data Protection: ${(complianceReport.categories.dataProtection * 100).toFixed(1)}%`);
+  console.info(`   Audit Trail: ${(complianceReport.categories.auditTrail * 100).toFixed(1)}%`);
+  console.info(`   Encryption: ${(complianceReport.categories.encryption * 100).toFixed(1)}%`);
   
   // Show security metrics
-  console.log('\n📊 Security Metrics:');
+  console.info('\n📊 Security Metrics:');
   const metrics = securityManager.getSecurityMetrics();
-  console.log(`   Total events (24h): ${metrics.totalEvents}`);
-  console.log(`   Events by type: ${Object.entries(metrics.eventsByType).map(([k, v]) => `${k}: ${v}`).join(', ')}`);
-  console.log(`   Events by severity: ${Object.entries(metrics.eventsBySeverity).map(([k, v]) => `${k}: ${v}`).join(', ')}`);
+  console.info(`   Total events (24h): ${metrics.totalEvents}`);
+  console.info(`   Events by type: ${Object.entries(metrics.eventsByType).map(([k, v]) => `${k}: ${v}`).join(', ')}`);
+  console.info(`   Events by severity: ${Object.entries(metrics.eventsBySeverity).map(([k, v]) => `${k}: ${v}`).join(', ')}`);
   
-  console.log('\n🎉 Advanced Security Demo Complete!');
+  console.info('\n🎉 Advanced Security Demo Complete!');
 }
 
 if (import.meta.main) {

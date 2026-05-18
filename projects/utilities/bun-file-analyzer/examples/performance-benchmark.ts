@@ -45,7 +45,7 @@ class PerformanceBenchmark {
   }
 
   async benchmark(name: string, fn: () => Promise<void> | void, iterations: number = 1000): Promise<BenchmarkResult> {
-    console.log(`🏃 Running ${name}...`);
+    console.info(`🏃 Running ${name}...`);
     
     const memoryBefore = this.getMemoryUsage();
     let peakMemory = memoryBefore;
@@ -84,7 +84,7 @@ class PerformanceBenchmark {
       };
       
       this.results.push(result);
-      console.log(`✅ ${name}: ${result.opsPerSecond.toLocaleString()} ops/sec (${duration.toFixed(2)}ms)`);
+      console.info(`✅ ${name}: ${result.opsPerSecond.toLocaleString()} ops/sec (${duration.toFixed(2)}ms)`);
       
       return result;
     } catch (error) {
@@ -103,7 +103,7 @@ class PerformanceBenchmark {
       };
       
       this.results.push(result);
-      console.log(`❌ ${name}: Failed - ${result.error}`);
+      console.info(`❌ ${name}: Failed - ${result.error}`);
       
       return result;
     }
@@ -121,7 +121,7 @@ class PerformanceBenchmark {
   }
 
   async runBunBenchmarks(): Promise<BenchmarkSuite> {
-    console.log("🚀 Starting Bun Performance Benchmarks\n");
+    console.info("🚀 Starting Bun Performance Benchmarks\n");
     
     // String operations
     await this.benchmark("String Concatenation", () => {
@@ -245,7 +245,7 @@ class PerformanceBenchmark {
   }
 
   async runServerBenchmarks(port: number = 3000): Promise<BenchmarkSuite> {
-    console.log(`🌐 Running Server Benchmarks on port ${port}\n`);
+    console.info(`🌐 Running Server Benchmarks on port ${port}\n`);
     
     const baseUrl = `http://localhost:${port}`;
     
@@ -284,7 +284,7 @@ class PerformanceBenchmark {
   }
 
   async runMemoryBenchmarks(): Promise<BenchmarkSuite> {
-    console.log("💾 Running Memory Benchmarks\n");
+    console.info("💾 Running Memory Benchmarks\n");
     
     // Large object creation
     await this.benchmark("Large Object Creation", () => {
@@ -342,38 +342,38 @@ class PerformanceBenchmark {
   }
 
   printResults(suite: BenchmarkSuite): void {
-    console.log("\n" + "=".repeat(60));
-    console.log(`📊 ${suite.name} Results`);
-    console.log("=".repeat(60));
+    console.info("\n" + "=".repeat(60));
+    console.info(`📊 ${suite.name} Results`);
+    console.info("=".repeat(60));
     
-    console.log(`\n📈 Summary:`);
-    console.log(`  Total Benchmarks: ${suite.summary.totalBenchmarks}`);
-    console.log(`  Successful: ${suite.summary.successful} ✅`);
-    console.log(`  Failed: ${suite.summary.failed} ${suite.summary.failed > 0 ? '❌' : ''}`);
-    console.log(`  Average Performance: ${suite.summary.averageOpsPerSecond.toLocaleString()} ops/sec`);
-    console.log(`  Total Time: ${suite.totalTime.toFixed(2)}ms`);
-    console.log(`  Memory Used: ${(suite.summary.totalMemoryUsed / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`\n📈 Summary:`);
+    console.info(`  Total Benchmarks: ${suite.summary.totalBenchmarks}`);
+    console.info(`  Successful: ${suite.summary.successful} ✅`);
+    console.info(`  Failed: ${suite.summary.failed} ${suite.summary.failed > 0 ? '❌' : ''}`);
+    console.info(`  Average Performance: ${suite.summary.averageOpsPerSecond.toLocaleString()} ops/sec`);
+    console.info(`  Total Time: ${suite.totalTime.toFixed(2)}ms`);
+    console.info(`  Memory Used: ${(suite.summary.totalMemoryUsed / 1024 / 1024).toFixed(2)}MB`);
     
-    console.log(`\n🏆 Top Performers:`);
+    console.info(`\n🏆 Top Performers:`);
     const sortedResults = suite.benchmarks
       .filter(r => r.success)
       .sort((a, b) => b.opsPerSecond - a.opsPerSecond)
       .slice(0, 5);
     
     sortedResults.forEach((result, index) => {
-      console.log(`  ${index + 1}. ${result.name}: ${result.opsPerSecond.toLocaleString()} ops/sec`);
+      console.info(`  ${index + 1}. ${result.name}: ${result.opsPerSecond.toLocaleString()} ops/sec`);
     });
     
     if (suite.summary.failed > 0) {
-      console.log(`\n❌ Failed Benchmarks:`);
+      console.info(`\n❌ Failed Benchmarks:`);
       suite.benchmarks
         .filter(r => !r.success)
         .forEach(result => {
-          console.log(`  • ${result.name}: ${result.error}`);
+          console.info(`  • ${result.name}: ${result.error}`);
         });
     }
     
-    console.log("\n" + "=".repeat(60));
+    console.info("\n" + "=".repeat(60));
   }
 
   async saveResults(suite: BenchmarkSuite, filename: string): Promise<void> {
@@ -389,7 +389,7 @@ class PerformanceBenchmark {
     };
     
     writeFileSync(filename, JSON.stringify(report, null, 2));
-    console.log(`💾 Results saved to: ${filename}`);
+    console.info(`💾 Results saved to: ${filename}`);
   }
 
   clear(): void {
@@ -421,7 +421,7 @@ async function main() {
       break;
     case 'all':
     default:
-      console.log("🚀 Running Complete Performance Suite\n");
+      console.info("🚀 Running Complete Performance Suite\n");
       await benchmark.runBunBenchmarks();
       await benchmark.runMemoryBenchmarks();
       suite = benchmark.generateSuite();

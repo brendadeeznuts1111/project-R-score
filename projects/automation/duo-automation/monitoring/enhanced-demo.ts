@@ -2,7 +2,7 @@
 import { feature } from "bun:bundle";
 import { EnhancedDuplexMonitor, EnhancedTerminalLayout } from './enhanced-terminal-dashboard';
 
-console.log(`
+console.info(`
 🚀 **ENHANCED TERMINAL MONITORING WITH BUN v1.3.5 FEATURES**
 ═══════════════════════════════════════════════════════════════════
 
@@ -16,7 +16,7 @@ Demonstrating the enhanced monitoring system with:
 `);
 
 // Feature flag demonstration
-console.log(`
+console.info(`
 🚩 **COMPILE-TIME FEATURE FLAGS DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -25,36 +25,36 @@ import { feature } from "bun:bundle";
 
 if (feature("ADVANCED_MONITORING")) {
   // Only included when ADVANCED_MONITORING flag is enabled
-  console.log("🚀 Advanced monitoring features enabled");
+  console.info("🚀 Advanced monitoring features enabled");
   initAdvancedFeatures();
 }
 
 if (feature("DEBUG_MODE")) {
   // Eliminated entirely when DEBUG_MODE flag is disabled
-  console.log("🐛 Debug mode active - verbose logging enabled");
+  console.info("🐛 Debug mode active - verbose logging enabled");
 }
 
 if (feature("PTY_SESSIONS")) {
   // PTY session management
-  console.log("🖥️ PTY session support enabled");
+  console.info("🖥️ PTY session support enabled");
   setupPTYManagement();
 }
 
 // Feature flag status at runtime
-console.log("Feature Flags Status:");
-console.log("  ADVANCED_MONITORING:", feature("ADVANCED_MONITORING") ? "✅" : "❌");
-console.log("  DEBUG_MODE:", feature("DEBUG_MODE") ? "✅" : "❌");
-console.log("  PTY_SESSIONS:", feature("PTY_SESSIONS") ? "✅" : "❌");
+console.info("Feature Flags Status:");
+console.info("  ADVANCED_MONITORING:", feature("ADVANCED_MONITORING") ? "✅" : "❌");
+console.info("  DEBUG_MODE:", feature("DEBUG_MODE") ? "✅" : "❌");
+console.info("  PTY_SESSIONS:", feature("PTY_SESSIONS") ? "✅" : "❌");
 `);
 
 // Show current feature flags
-console.log("Current Feature Flags:");
-console.log(`  ADVANCED_MONITORING: ${feature("ADVANCED_MONITORING") ? '✅' : '❌'}`);
-console.log(`  DEBUG_MODE: ${feature("DEBUG_MODE") ? '✅' : '❌'}`);
-console.log(`  PTY_SESSIONS: ${feature("PTY_SESSIONS") ? '✅' : '❌'}`);
+console.info("Current Feature Flags:");
+console.info(`  ADVANCED_MONITORING: ${feature("ADVANCED_MONITORING") ? '✅' : '❌'}`);
+console.info(`  DEBUG_MODE: ${feature("DEBUG_MODE") ? '✅' : '❌'}`);
+console.info(`  PTY_SESSIONS: ${feature("PTY_SESSIONS") ? '✅' : '❌'}`);
 
 // Bun.Terminal API demonstration
-console.log(`
+console.info(`
 🖥️ **BUN.TERMINAL API DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -99,24 +99,24 @@ for await (const chunk of process.stdin) {
 
 // Demonstrate terminal creation
 const createTerminalDemo = () => {
-  console.log("Creating reusable terminal...");
+  console.info("Creating reusable terminal...");
   
   const terminal = new Bun.Terminal({
     cols: 80,
     rows: 24,
     data: (term: any, data: string) => {
-      console.log(`Terminal data: ${data.replace(/\n/g, '\\n')}`);
+      console.info(`Terminal data: ${data.replace(/\n/g, '\\n')}`);
     }
   });
   
-  console.log("✅ Terminal created successfully");
-  console.log(`Dimensions: ${terminal.cols}x${terminal.rows}`);
+  console.info("✅ Terminal created successfully");
+  console.info(`Dimensions: ${terminal.cols}x${terminal.rows}`);
   
   return terminal;
 };
 
 // Enhanced Unicode string width demonstration
-console.log(`
+console.info(`
 📏 **ENHANCED UNICODE STRING WIDTH DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -138,7 +138,7 @@ const testStrings = [
 
 testStrings.forEach(str => {
   const width = Bun.stringWidth(str);
-  console.log(\`"\${str}" → width: \${width}\`);
+  console.info(\`"\${str}" → width: \${width}\`);
 });
 `);
 
@@ -151,14 +151,14 @@ const testStrings = [
   'Normal text'
 ];
 
-console.log('Unicode Width Tests:');
+console.info('Unicode Width Tests:');
 testStrings.forEach(str => {
   const width = Bun.stringWidth(str);
-  console.log(`  "${str}" → width: ${width}`);
+  console.info(`  "${str}" → width: ${width}`);
 });
 
 // ANSI escape sequence handling
-console.log('\nANSI Escape Sequence Tests:');
+console.info('\nANSI Escape Sequence Tests:');
 const ansiTests = [
   '\x1b[31mRed text\x1b[0m',
   '\x1b[8mhttps://example.com\x1b[8m\x1b]8;;\x1b\\Hyperlink\x1b]8;;\x1b\\',
@@ -167,11 +167,11 @@ const ansiTests = [
 
 ansiTests.forEach(str => {
   const width = Bun.stringWidth(str);
-  console.log(`  ANSI: "${str.replace(/\x1b/g, '\\x1b')}" → width: ${width}`);
+  console.info(`  ANSI: "${str.replace(/\x1b/g, '\\x1b')}" → width: ${width}`);
 });
 
 // V8 Value Type Checking APIs demo
-console.log(`
+console.info(`
 🔍 **V8 VALUE TYPE CHECKING APIS DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -192,7 +192,7 @@ const testValues = [
 ];
 
 testValues.forEach(value => {
-  console.log(\`\${value} → Map: \${value instanceof Map}, Array: \${Array.isArray(value)}, Int32: \${Number.isInteger(value)}, BigInt: \${typeof value === 'bigint'}\`);
+  console.info(\`\${value} → Map: \${value instanceof Map}, Array: \${Array.isArray(value)}, Int32: \${Number.isInteger(value)}, BigInt: \${typeof value === 'bigint'}\`);
 });
 `);
 
@@ -206,13 +206,13 @@ const testValues = [
   { key: 'value' }
 ];
 
-console.log('V8 Type Checking Tests:');
+console.info('V8 Type Checking Tests:');
 testValues.forEach(value => {
-  console.log(`  ${value} → Map: ${value instanceof Map}, Array: ${Array.isArray(value)}, Int32: ${Number.isInteger(value)}, BigInt: ${typeof value === 'bigint'}`);
+  console.info(`  ${value} → Map: ${value instanceof Map}, Array: ${Array.isArray(value)}, Int32: ${Number.isInteger(value)}, BigInt: ${typeof value === 'bigint'}`);
 });
 
 // Content-Disposition support demo
-console.log(`
+console.info(`
 📎 **CONTENT-DISPOSITION SUPPORT DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -235,13 +235,13 @@ await s3.write("image.png", imageData, {
 // • Streaming uploads
 `);
 
-console.log('Content-Disposition Examples:');
-console.log('  attachment; filename="report.pdf"');
-console.log('  inline');
-console.log('  form-data; name="file"; filename="data.csv"');
+console.info('Content-Disposition Examples:');
+console.info('  attachment; filename="report.pdf"');
+console.info('  inline');
+console.info('  form-data; name="file"; filename="data.csv"');
 
 // Environment variable expansion demo
-console.log(`
+console.info(`
 🌍 **ENVIRONMENT VARIABLE EXPANSION DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -271,13 +271,13 @@ const auth = "Bearer \${TOKEN?}";  // "Bearer "
 process.env.NPM_TOKEN = 'abc123';
 process.env.TOKEN = undefined;
 
-console.log('Environment Variable Expansion:');
-console.log(`  NPM_TOKEN: ${process.env.NPM_TOKEN}`);
-console.log(`  TOKEN: ${process.env.TOKEN || '(undefined)'}`);
-console.log(`  With ? modifier: ${process.env.TOKEN || '(empty)'}`);
+console.info('Environment Variable Expansion:');
+console.info(`  NPM_TOKEN: ${process.env.NPM_TOKEN}`);
+console.info(`  TOKEN: ${process.env.TOKEN || '(undefined)'}`);
+console.info(`  With ? modifier: ${process.env.TOKEN || '(empty)'}`);
 
 // Enhanced layout system with Unicode support
-console.log(`
+console.info(`
 🎨 **ENHANCED LAYOUT SYSTEM WITH UNICODE SUPPORT**
 ═══════════════════════════════════════════════════════════════════
 
@@ -306,11 +306,11 @@ const unicodeBox = layout.createBox(
   '🇺🇸 Flag emojis work correctly!\n👋🏽 Skin tone modifiers\n👨‍👩‍👧 Family sequences'
 );
 
-console.log('Unicode Box Demo:');
-console.log(unicodeBox);
+console.info('Unicode Box Demo:');
+console.info(unicodeBox);
 
 // PTY session management demo
-console.log(`
+console.info(`
 🖥️ **PTY SESSION MANAGEMENT DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -342,17 +342,17 @@ const proc = Bun.spawn(["bash"], {
 `);
 
 if (feature("PTY_SESSIONS")) {
-  console.log('PTY Session Features:');
-  console.log('  ✅ Multiple concurrent sessions');
-  console.log('  ✅ Interactive shell access');
-  console.log('  ✅ Resource monitoring');
-  console.log('  ✅ Session lifecycle management');
+  console.info('PTY Session Features:');
+  console.info('  ✅ Multiple concurrent sessions');
+  console.info('  ✅ Interactive shell access');
+  console.info('  ✅ Resource monitoring');
+  console.info('  ✅ Session lifecycle management');
 } else {
-  console.log('PTY sessions disabled (enable with --feature=PTY_SESSIONS)');
+  console.info('PTY sessions disabled (enable with --feature=PTY_SESSIONS)');
 }
 
 // Build system integration demo
-console.log(`
+console.info(`
 🔨 **BUILD SYSTEM INTEGRATION DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -370,9 +370,9 @@ const buildResult = await Bun.build({
 });
 
 if (buildResult.success) {
-  console.log(\`✅ Built \${buildResult.outputs.length} files\`);
+  console.info(\`✅ Built \${buildResult.outputs.length} files\`);
   buildResult.outputs.forEach(output => {
-    console.log(\`   - \${output.path}\`);
+    console.info(\`   - \${output.path}\`);
   });
 }
 
@@ -382,15 +382,15 @@ if (buildResult.success) {
 // bun test --feature=MOCK_API
 `);
 
-console.log('Build Integration:');
-console.log('  ✅ Compile-time feature flags');
-console.log('  ✅ Dead-code elimination');
-console.log('  ✅ Conditional compilation');
-console.log('  ✅ Minification support');
-console.log('  ✅ Source map generation');
+console.info('Build Integration:');
+console.info('  ✅ Compile-time feature flags');
+console.info('  ✅ Dead-code elimination');
+console.info('  ✅ Conditional compilation');
+console.info('  ✅ Minification support');
+console.info('  ✅ Source map generation');
 
 // Start the enhanced monitoring demo
-console.log(`
+console.info(`
 🚀 **STARTING ENHANCED MONITORING DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -438,7 +438,7 @@ if (feature("DEBUG_MODE")) {
 
 const enhancedMonitor = new EnhancedDuplexMonitor(monitorOptions);
 
-console.log(`
+console.info(`
 🎯 **ENHANCED MONITORING FEATURES**
 ═══════════════════════════════════════════════════════════════════
 

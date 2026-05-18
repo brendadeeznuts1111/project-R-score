@@ -57,8 +57,8 @@ class EnhancedQuantumIntegration {
       return;
     }
 
-    console.log('🚀 Enhanced Quantum Hash CLI');
-    console.log('===============================\n');
+    console.info('🚀 Enhanced Quantum Hash CLI');
+    console.info('===============================\n');
 
     try {
       switch (command) {
@@ -87,7 +87,7 @@ class EnhancedQuantumIntegration {
           await this.testIntegritySystem();
           break;
         default:
-          console.log(`❌ Unknown command: ${command}`);
+          console.info(`❌ Unknown command: ${command}`);
           this.showEnhancedHelp();
       }
     } catch (error) {
@@ -118,7 +118,7 @@ class EnhancedQuantumIntegration {
         await this.unsealData(args[1]);
         break;
       default:
-        console.log('Quantum subcommands: hash, batch, verify, seal, unseal');
+        console.info('Quantum subcommands: hash, batch, verify, seal, unseal');
     }
   }
 
@@ -126,26 +126,26 @@ class EnhancedQuantumIntegration {
    * Run quantum benchmarks
    */
   private async runQuantumBenchmarks(): Promise<void> {
-    console.log('🚀 Running Quantum Hash Benchmarks...\n');
+    console.info('🚀 Running Quantum Hash Benchmarks...\n');
     
     const results = await this.quantumHash.runBenchmarks();
     
     // Show performance comparison
-    console.log('\n🏆 PERFORMANCE COMPARISON');
-    console.log('═'.repeat(60));
-    console.log('Software CRC32 (old): ~2,644 µs per 1MB');
-    console.log('Quantum CRC32 (new): ~124 µs per 1MB');
-    console.log(`Speedup: ${(2644 / 124).toFixed(1)}x faster! 🚀`);
+    console.info('\n🏆 PERFORMANCE COMPARISON');
+    console.info('═'.repeat(60));
+    console.info('Software CRC32 (old): ~2,644 µs per 1MB');
+    console.info('Quantum CRC32 (new): ~124 µs per 1MB');
+    console.info(`Speedup: ${(2644 / 124).toFixed(1)}x faster! 🚀`);
     
     // Show current stats
     const stats = this.quantumHash.getPerformanceStats();
-    console.log('\n📊 CURRENT PERFORMANCE');
-    console.log('─'.repeat(40));
-    console.log(`Total Operations: ${stats.totalOperations.toLocaleString()}`);
-    console.log(`Data Processed: ${(stats.totalBytes / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`Average Time: ${stats.averageTime.toFixed(3)} ms`);
-    console.log(`Throughput: ${stats.throughput.toFixed(2)} KB/s`);
-    console.log(`Cache Efficiency: ${(stats.cacheEfficiency * 100).toFixed(1)}%`);
+    console.info('\n📊 CURRENT PERFORMANCE');
+    console.info('─'.repeat(40));
+    console.info(`Total Operations: ${stats.totalOperations.toLocaleString()}`);
+    console.info(`Data Processed: ${(stats.totalBytes / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`Average Time: ${stats.averageTime.toFixed(3)} ms`);
+    console.info(`Throughput: ${stats.throughput.toFixed(2)} KB/s`);
+    console.info(`Cache Efficiency: ${(stats.cacheEfficiency * 100).toFixed(1)}%`);
   }
 
   /**
@@ -153,11 +153,11 @@ class EnhancedQuantumIntegration {
    */
   private async verifyFile(filePath: string): Promise<void> {
     if (!existsSync(filePath)) {
-      console.log(`❌ File not found: ${filePath}`);
+      console.info(`❌ File not found: ${filePath}`);
       return;
     }
     
-    console.log(`🔍 Quantum verifying ${filePath}...`);
+    console.info(`🔍 Quantum verifying ${filePath}...`);
     
     const startTime = performance.now();
     const hash = await this.quantumHash.crc32File(filePath);
@@ -165,11 +165,11 @@ class EnhancedQuantumIntegration {
     const file = Bun.file(filePath);
     const size = (await file.size) / 1024;
     
-    console.log(`✅ Quantum verification complete in ${duration.toFixed(2)}ms`);
-    console.log(`📊 File size: ${size.toFixed(2)} KB`);
-    console.log(`🔑 CRC32 Hash: ${hash.toString(16)}`);
-    console.log(`🚀 Speed: ${(size / (duration / 1000)).toFixed(2)} KB/s`);
-    console.log(`⚡ 20x faster than software implementation!`);
+    console.info(`✅ Quantum verification complete in ${duration.toFixed(2)}ms`);
+    console.info(`📊 File size: ${size.toFixed(2)} KB`);
+    console.info(`🔑 CRC32 Hash: ${hash.toString(16)}`);
+    console.info(`🚀 Speed: ${(size / (duration / 1000)).toFixed(2)} KB/s`);
+    console.info(`⚡ 20x faster than software implementation!`);
     
     // Compare with expected hash if .hash file exists
     const hashFile = `${filePath}.hash`;
@@ -178,11 +178,11 @@ class EnhancedQuantumIntegration {
       const expectedHash = parseInt(expected.trim(), 16);
       
       if (hash === expectedHash) {
-        console.log('🎉 Integrity check: PASS ✅');
+        console.info('🎉 Integrity check: PASS ✅');
       } else {
-        console.log('🚨 Integrity check: FAIL ❌');
-        console.log(`   Expected: ${expectedHash.toString(16)}`);
-        console.log(`   Got: ${hash.toString(16)}`);
+        console.info('🚨 Integrity check: FAIL ❌');
+        console.info(`   Expected: ${expectedHash.toString(16)}`);
+        console.info(`   Got: ${hash.toString(16)}`);
       }
     }
   }
@@ -191,20 +191,20 @@ class EnhancedQuantumIntegration {
    * Monitor file with quantum speed
    */
   private async monitorFile(filePath: string, interval = 5000): Promise<void> {
-    console.log(`🔒 Starting quantum file monitor for ${filePath}`);
-    console.log(`   Check interval: ${interval}ms (20x faster!)`);
-    console.log('   Press Ctrl+C to stop\n');
+    console.info(`🔒 Starting quantum file monitor for ${filePath}`);
+    console.info(`   Check interval: ${interval}ms (20x faster!)`);
+    console.info('   Press Ctrl+C to stop\n');
     
     const monitor = new FileMonitor(filePath, this.quantumHash, {
       interval,
       onTamper: (event) => {
-        console.log(`\n🚨 QUANTUM TAMPER DETECTED!`);
-        console.log(`   File: ${event.filePath}`);
-        console.log(`   Time: ${new Date(event.timestamp).toISOString()}`);
-        console.log(`   Type: ${event.type}`);
-        console.log(`   Old hash: ${event.oldHash.toString(16)}`);
-        console.log(`   New hash: ${event.newHash.toString(16)}`);
-        console.log(`   Detection speed: 20x faster!`);
+        console.info(`\n🚨 QUANTUM TAMPER DETECTED!`);
+        console.info(`   File: ${event.filePath}`);
+        console.info(`   Time: ${new Date(event.timestamp).toISOString()}`);
+        console.info(`   Type: ${event.type}`);
+        console.info(`   Old hash: ${event.oldHash.toString(16)}`);
+        console.info(`   New hash: ${event.newHash.toString(16)}`);
+        console.info(`   Detection speed: 20x faster!`);
       },
     });
     
@@ -216,7 +216,7 @@ class EnhancedQuantumIntegration {
       process.on('SIGINT', () => {
         monitor.stop();
         this.fileMonitors.delete(filePath);
-        console.log('\n🔒 Quantum monitoring stopped');
+        console.info('\n🔒 Quantum monitoring stopped');
         resolve();
       });
     });
@@ -226,7 +226,7 @@ class EnhancedQuantumIntegration {
    * Test data pipeline with quantum hashing
    */
   private async testDataPipeline(): Promise<void> {
-    console.log('🧪 Testing Quantum Data Pipeline...\n');
+    console.info('🧪 Testing Quantum Data Pipeline...\n');
     
     const testData = {
       timestamp: Date.now(),
@@ -238,7 +238,7 @@ class EnhancedQuantumIntegration {
       })),
     };
     
-    console.log('1. Creating quantum pipeline with compression...');
+    console.info('1. Creating quantum pipeline with compression...');
     const startTime = performance.now();
     
     // Serialize and compute integrity hash
@@ -255,19 +255,19 @@ class EnhancedQuantumIntegration {
     
     const duration = performance.now() - startTime;
     
-    console.log(`✅ Quantum pipeline created in ${duration.toFixed(2)}ms`);
-    console.log(`   Original: ${serialized.length} bytes`);
-    console.log(`   Compressed: ${compressed.length} bytes`);
-    console.log(`   Ratio: ${compressionRatio.toFixed(2)}x`);
-    console.log(`   CRC32: ${integrity.crc32.toString(16)}`);
-    console.log(`   SHA256: ${integrity.sha256}`);
-    console.log(`   Hash speed: ${(serialized.length / (duration / 1000) / 1024).toFixed(2)} KB/s`);
-    console.log(`   20x faster than software!`);
+    console.info(`✅ Quantum pipeline created in ${duration.toFixed(2)}ms`);
+    console.info(`   Original: ${serialized.length} bytes`);
+    console.info(`   Compressed: ${compressed.length} bytes`);
+    console.info(`   Ratio: ${compressionRatio.toFixed(2)}x`);
+    console.info(`   CRC32: ${integrity.crc32.toString(16)}`);
+    console.info(`   SHA256: ${integrity.sha256}`);
+    console.info(`   Hash speed: ${(serialized.length / (duration / 1000) / 1024).toFixed(2)} KB/s`);
+    console.info(`   20x faster than software!`);
     
     if (sealed) {
-      console.log('\n🔐 Quantum sealed data:');
-      console.log(`   Signature: ${sealed.signature}`);
-      console.log(`   Timestamp: ${new Date(sealed.timestamp).toISOString()}`);
+      console.info('\n🔐 Quantum sealed data:');
+      console.info(`   Signature: ${sealed.signature}`);
+      console.info(`   Timestamp: ${new Date(sealed.timestamp).toISOString()}`);
     }
   }
 
@@ -275,7 +275,7 @@ class EnhancedQuantumIntegration {
    * Test batch processing with quantum speed
    */
   private async testBatchProcessing(): Promise<void> {
-    console.log('📦 Testing Quantum Batch Processing...\n');
+    console.info('📦 Testing Quantum Batch Processing...\n');
     
     // Create test items
     const items = Array.from({ length: 1000 }, (_, i) => ({
@@ -284,7 +284,7 @@ class EnhancedQuantumIntegration {
       value: Math.random() * 1000,
     }));
     
-    console.log(`Processing ${items.length} items with quantum speed...`);
+    console.info(`Processing ${items.length} items with quantum speed...`);
     
     let processed = 0;
     const startTime = performance.now();
@@ -310,12 +310,12 @@ class EnhancedQuantumIntegration {
       Buffer.concat(results.map(r => Buffer.from(JSON.stringify(r))))
     );
     
-    console.log(`\n✅ Quantum batch processing complete!`);
-    console.log(`   Processed: ${results.length} items`);
-    console.log(`   Duration: ${duration.toFixed(2)}ms`);
-    console.log(`   Speed: ${(results.length / (duration / 1000)).toFixed(0)} items/sec`);
-    console.log(`   Batch fingerprint: ${batchFingerprint.toString(16)}`);
-    console.log(`   20x faster than software batch processing!`);
+    console.info(`\n✅ Quantum batch processing complete!`);
+    console.info(`   Processed: ${results.length} items`);
+    console.info(`   Duration: ${duration.toFixed(2)}ms`);
+    console.info(`   Speed: ${(results.length / (duration / 1000)).toFixed(0)} items/sec`);
+    console.info(`   Batch fingerprint: ${batchFingerprint.toString(16)}`);
+    console.info(`   20x faster than software batch processing!`);
   }
 
   /**
@@ -325,23 +325,23 @@ class EnhancedQuantumIntegration {
     const stats = this.quantumHash.getPerformanceStats();
     const cacheStats = this.requestCache.stats();
     
-    console.log('📊 QUANTUM CACHE STATISTICS');
-    console.log('═'.repeat(50));
-    console.log(`Total operations: ${stats.totalOperations.toLocaleString()}`);
-    console.log(`Data processed: ${(stats.totalBytes / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`Cache hits: ${stats.cacheHits}`);
-    console.log(`Cache misses: ${stats.cacheMisses}`);
-    console.log(`Cache efficiency: ${(stats.cacheEfficiency * 100).toFixed(1)}%`);
-    console.log(`Average operation time: ${stats.averageTime.toFixed(3)}ms`);
-    console.log(`Throughput: ${stats.throughput.toFixed(2)} KB/s`);
-    console.log(`Performance boost: 20x faster!`);
+    console.info('📊 QUANTUM CACHE STATISTICS');
+    console.info('═'.repeat(50));
+    console.info(`Total operations: ${stats.totalOperations.toLocaleString()}`);
+    console.info(`Data processed: ${(stats.totalBytes / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`Cache hits: ${stats.cacheHits}`);
+    console.info(`Cache misses: ${stats.cacheMisses}`);
+    console.info(`Cache efficiency: ${(stats.cacheEfficiency * 100).toFixed(1)}%`);
+    console.info(`Average operation time: ${stats.averageTime.toFixed(3)}ms`);
+    console.info(`Throughput: ${stats.throughput.toFixed(2)} KB/s`);
+    console.info(`Performance boost: 20x faster!`);
   }
 
   /**
    * Test integrity system
    */
   private async testIntegritySystem(): Promise<void> {
-    console.log('🛡️ Testing Quantum Integrity System...\n');
+    console.info('🛡️ Testing Quantum Integrity System...\n');
     
     const testData = {
       message: 'Quantum integrity test data',
@@ -349,29 +349,29 @@ class EnhancedQuantumIntegration {
       sensitive: 'This should be tamper-evident',
     };
     
-    console.log('1. Sealing data with quantum hash...');
+    console.info('1. Sealing data with quantum hash...');
     const sealed = this.quantumHash.sealData(testData, 'test-secret');
     
-    console.log(`✅ Data sealed with signature: ${sealed.signature}`);
-    console.log(`   CRC32: ${sealed.crc32.toString(16)}`);
-    console.log(`   Timestamp: ${new Date(sealed.timestamp).toISOString()}`);
+    console.info(`✅ Data sealed with signature: ${sealed.signature}`);
+    console.info(`   CRC32: ${sealed.crc32.toString(16)}`);
+    console.info(`   Timestamp: ${new Date(sealed.timestamp).toISOString()}`);
     
-    console.log('\n2. Verifying sealed data...');
+    console.info('\n2. Verifying sealed data...');
     const verification = this.quantumHash.verifySealedData(sealed, 'test-secret');
     
-    console.log(`✅ Verification results:`);
-    console.log(`   Valid: ${verification.valid ? '✅' : '❌'}`);
-    console.log(`   Tampered: ${verification.tampered ? '❌' : '✅'}`);
-    console.log(`   Age: ${(verification.age / 1000).toFixed(1)} seconds`);
+    console.info(`✅ Verification results:`);
+    console.info(`   Valid: ${verification.valid ? '✅' : '❌'}`);
+    console.info(`   Tampered: ${verification.tampered ? '❌' : '✅'}`);
+    console.info(`   Age: ${(verification.age / 1000).toFixed(1)} seconds`);
     
     // Test tampering
-    console.log('\n3. Testing tamper detection...');
+    console.info('\n3. Testing tamper detection...');
     const tamperedData = { ...sealed.data, message: 'Tampered data!' };
     const tamperedSealed = { ...sealed, data: tamperedData };
     
     const tamperVerification = this.quantumHash.verifySealedData(tamperedSealed, 'test-secret');
-    console.log(`   Tampered detected: ${tamperVerification.tampered ? '✅' : '❌'}`);
-    console.log(`   Quantum tamper detection: 20x faster!`);
+    console.info(`   Tampered detected: ${tamperVerification.tampered ? '✅' : '❌'}`);
+    console.info(`   Quantum tamper detection: 20x faster!`);
   }
 
   /**
@@ -379,11 +379,11 @@ class EnhancedQuantumIntegration {
    */
   private async quantumHashFile(filePath: string): Promise<void> {
     if (!existsSync(filePath)) {
-      console.log(`❌ File not found: ${filePath}`);
+      console.info(`❌ File not found: ${filePath}`);
       return;
     }
     
-    console.log(`🔒 Quantum hashing ${filePath}...`);
+    console.info(`🔒 Quantum hashing ${filePath}...`);
     
     const startTime = performance.now();
     const hash = await this.quantumHash.crc32File(filePath);
@@ -391,24 +391,24 @@ class EnhancedQuantumIntegration {
     const file = Bun.file(filePath);
     const size = (await file.size) / 1024;
     
-    console.log(`✅ Quantum hash complete in ${duration.toFixed(2)}ms`);
-    console.log(`📊 File size: ${size.toFixed(2)} KB`);
-    console.log(`🔑 CRC32 Hash: ${hash.toString(16)}`);
-    console.log(`🚀 Speed: ${(size / (duration / 1000)).toFixed(2)} KB/s`);
-    console.log(`⚡ 20x faster than software!`);
+    console.info(`✅ Quantum hash complete in ${duration.toFixed(2)}ms`);
+    console.info(`📊 File size: ${size.toFixed(2)} KB`);
+    console.info(`🔑 CRC32 Hash: ${hash.toString(16)}`);
+    console.info(`🚀 Speed: ${(size / (duration / 1000)).toFixed(2)} KB/s`);
+    console.info(`⚡ 20x faster than software!`);
   }
 
   /**
    * Quantum batch hash
    */
   private async quantumBatchHash(directory: string): Promise<void> {
-    console.log(`📦 Quantum batch hashing directory: ${directory}`);
+    console.info(`📦 Quantum batch hashing directory: ${directory}`);
     
     try {
       const result = execSync(`find ${directory} -name "*.js" | head -5`, { encoding: 'utf8' });
       const files = result.trim().split('\n').filter(Boolean);
       
-      console.log(`Processing ${files.length} files with quantum speed...`);
+      console.info(`Processing ${files.length} files with quantum speed...`);
       
       const startTime = performance.now();
       
@@ -419,13 +419,13 @@ class EnhancedQuantumIntegration {
       }
       
       const duration = performance.now() - startTime;
-      console.log(`\n✅ Quantum batch processing complete!`);
-      console.log(`   Total time: ${duration.toFixed(2)}ms`);
-      console.log(`   Average per file: ${(duration / files.length).toFixed(2)}ms`);
-      console.log(`   20x faster than software batch!`);
+      console.info(`\n✅ Quantum batch processing complete!`);
+      console.info(`   Total time: ${duration.toFixed(2)}ms`);
+      console.info(`   Average per file: ${(duration / files.length).toFixed(2)}ms`);
+      console.info(`   20x faster than software batch!`);
       
     } catch (error) {
-      console.log(`❌ Batch processing failed: ${error.message}`);
+      console.info(`❌ Batch processing failed: ${error.message}`);
     }
   }
 
@@ -434,11 +434,11 @@ class EnhancedQuantumIntegration {
    */
   private async quantumVerify(filePath: string, expectedHash: string): Promise<void> {
     if (!existsSync(filePath)) {
-      console.log(`❌ File not found: ${filePath}`);
+      console.info(`❌ File not found: ${filePath}`);
       return;
     }
     
-    console.log(`🔍 Quantum verifying ${filePath}...`);
+    console.info(`🔍 Quantum verifying ${filePath}...`);
     
     const startTime = performance.now();
     const actualHash = await this.quantumHash.crc32File(filePath);
@@ -446,11 +446,11 @@ class EnhancedQuantumIntegration {
     
     const isValid = actualHash === parseInt(expectedHash, 16);
     
-    console.log(`✅ Quantum verification complete in ${duration.toFixed(2)}ms`);
-    console.log(`   Expected: ${expectedHash}`);
-    console.log(`   Actual: ${actualHash.toString(16)}`);
-    console.log(`   Valid: ${isValid ? '✅' : '❌'}`);
-    console.log(`   20x faster than software!`);
+    console.info(`✅ Quantum verification complete in ${duration.toFixed(2)}ms`);
+    console.info(`   Expected: ${expectedHash}`);
+    console.info(`   Actual: ${actualHash.toString(16)}`);
+    console.info(`   Valid: ${isValid ? '✅' : '❌'}`);
+    console.info(`   20x faster than software!`);
   }
 
   /**
@@ -458,22 +458,22 @@ class EnhancedQuantumIntegration {
    */
   private async sealData(dataPath: string): Promise<void> {
     if (!existsSync(dataPath)) {
-      console.log(`❌ File not found: ${dataPath}`);
+      console.info(`❌ File not found: ${dataPath}`);
       return;
     }
     
     const data = JSON.parse(readFileSync(dataPath, 'utf8'));
     const sealed = this.quantumHash.sealData(data, process.env.DATA_SIGNING_SECRET);
     
-    console.log(`🔐 Data sealed with quantum hash:`);
-    console.log(`   Signature: ${sealed.signature}`);
-    console.log(`   CRC32: ${sealed.crc32.toString(16)}`);
-    console.log(`   Timestamp: ${new Date(sealed.timestamp).toISOString()}`);
+    console.info(`🔐 Data sealed with quantum hash:`);
+    console.info(`   Signature: ${sealed.signature}`);
+    console.info(`   CRC32: ${sealed.crc32.toString(16)}`);
+    console.info(`   Timestamp: ${new Date(sealed.timestamp).toISOString()}`);
     
     // Save sealed data
     const sealedPath = `${dataPath}.sealed`;
     writeFileSync(sealedPath, JSON.stringify(sealed, null, 2));
-    console.log(`   Saved to: ${sealedPath}`);
+    console.info(`   Saved to: ${sealedPath}`);
   }
 
   /**
@@ -481,22 +481,22 @@ class EnhancedQuantumIntegration {
    */
   private async unsealData(sealedPath: string): Promise<void> {
     if (!existsSync(sealedPath)) {
-      console.log(`❌ File not found: ${sealedPath}`);
+      console.info(`❌ File not found: ${sealedPath}`);
       return;
     }
     
     const sealed = JSON.parse(readFileSync(sealedPath, 'utf8'));
     const verification = this.quantumHash.verifySealedData(sealed, process.env.DATA_SIGNING_SECRET);
     
-    console.log(`🔓 Quantum unseal results:`);
-    console.log(`   Valid: ${verification.valid ? '✅' : '❌'}`);
-    console.log(`   Tampered: ${verification.tampered ? '❌' : '✅'}`);
-    console.log(`   Age: ${(verification.age / 1000).toFixed(1)} seconds`);
-    console.log(`   20x faster than software!`);
+    console.info(`🔓 Quantum unseal results:`);
+    console.info(`   Valid: ${verification.valid ? '✅' : '❌'}`);
+    console.info(`   Tampered: ${verification.tampered ? '❌' : '✅'}`);
+    console.info(`   Age: ${(verification.age / 1000).toFixed(1)} seconds`);
+    console.info(`   20x faster than software!`);
     
     if (verification.valid && !verification.tampered) {
-      console.log(`\n📄 Original data:`);
-      console.log(JSON.stringify(sealed.data, null, 2));
+      console.info(`\n📄 Original data:`);
+      console.info(JSON.stringify(sealed.data, null, 2));
     }
   }
 
@@ -504,7 +504,7 @@ class EnhancedQuantumIntegration {
    * Show enhanced help
    */
   private showEnhancedHelp(): void {
-    console.log(`
+    console.info(`
 🚀 Enhanced Quantum Hash CLI - 20x Performance Boost
 
 USAGE:

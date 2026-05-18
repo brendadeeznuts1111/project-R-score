@@ -61,15 +61,15 @@ class SecurityBriefingScheduler {
    * 📅 Schedule security briefings for all departments
    */
   async scheduleSecurityBriefings(): Promise<void> {
-    console.log('📅 FIRE22 SECURITY BRIEFING SCHEDULER');
-    console.log('!==!==!==!==!==!=====');
-    console.log(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
-    console.log(`⏰ Time: ${new Date().toLocaleTimeString()}`);
-    console.log(`🎯 Operation: SECURE-COMM-22\n`);
+    console.info('📅 FIRE22 SECURITY BRIEFING SCHEDULER');
+    console.info('!==!==!==!==!==!=====');
+    console.info(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
+    console.info(`⏰ Time: ${new Date().toLocaleTimeString()}`);
+    console.info(`🎯 Operation: SECURE-COMM-22\n`);
 
     // Process acknowledged team leads
     const acknowledgedLeads = this.teamLeads.filter(tl => tl.responseStatus === 'ACKNOWLEDGED');
-    console.log(
+    console.info(
       `📋 Processing ${acknowledgedLeads.length} acknowledged team leads for briefing scheduling`
     );
 
@@ -87,16 +87,16 @@ class SecurityBriefingScheduler {
     // Generate coordination summary
     await this.generateCoordinationSummary();
 
-    console.log(`\n📅 Security briefing scheduling completed`);
-    console.log(`✅ ${this.briefings.length} briefings scheduled`);
-    console.log(`📧 Invitations generated for all attendees`);
+    console.info(`\n📅 Security briefing scheduling completed`);
+    console.info(`✅ ${this.briefings.length} briefings scheduled`);
+    console.info(`📧 Invitations generated for all attendees`);
   }
 
   /**
    * 🔒 Schedule Tier 1 (Maximum Security) briefings
    */
   private async scheduleTier1Briefings(): Promise<void> {
-    console.log('🔒 Scheduling Tier 1 (Maximum Security) briefings...');
+    console.info('🔒 Scheduling Tier 1 (Maximum Security) briefings...');
 
     const tier1Leads = this.teamLeads.filter(
       tl => tl.securityTier === 'TIER_1_MAXIMUM' && tl.responseStatus === 'ACKNOWLEDGED'
@@ -157,14 +157,14 @@ class SecurityBriefingScheduler {
       }
     }
 
-    console.log(`  ✅ ${tier1Leads.length} Tier 1 briefings scheduled`);
+    console.info(`  ✅ ${tier1Leads.length} Tier 1 briefings scheduled`);
   }
 
   /**
    * 🛡️ Schedule Tier 2 (High Security) briefings
    */
   private async scheduleTier2Briefings(): Promise<void> {
-    console.log('🛡️ Scheduling Tier 2 (High Security) briefings...');
+    console.info('🛡️ Scheduling Tier 2 (High Security) briefings...');
 
     const tier2Leads = this.teamLeads.filter(
       tl => tl.securityTier === 'TIER_2_HIGH' && tl.responseStatus === 'ACKNOWLEDGED'
@@ -240,14 +240,14 @@ class SecurityBriefingScheduler {
       }
     }
 
-    console.log(`  ✅ ${tier2Leads.length} Tier 2 briefings scheduled`);
+    console.info(`  ✅ ${tier2Leads.length} Tier 2 briefings scheduled`);
   }
 
   /**
    * 🔓 Schedule Tier 3 (Medium Security) briefings
    */
   private async scheduleTier3Briefings(): Promise<void> {
-    console.log('🔓 Scheduling Tier 3 (Medium Security) briefings...');
+    console.info('🔓 Scheduling Tier 3 (Medium Security) briefings...');
 
     const tier3Leads = this.teamLeads.filter(
       tl => tl.securityTier === 'TIER_3_MEDIUM' && tl.responseStatus === 'ACKNOWLEDGED'
@@ -280,14 +280,14 @@ class SecurityBriefingScheduler {
       });
     }
 
-    console.log(`  ✅ ${tier3Leads.length} Tier 3 briefings scheduled`);
+    console.info(`  ✅ ${tier3Leads.length} Tier 3 briefings scheduled`);
   }
 
   /**
    * 📋 Generate master briefing schedule
    */
   private async generateMasterSchedule(): Promise<void> {
-    console.log('📋 Generating master briefing schedule...');
+    console.info('📋 Generating master briefing schedule...');
 
     const schedule = `# 📅 Fire22 Security Briefing Master Schedule
 **OPERATION: SECURE-COMM-22 - Security Briefings**
@@ -402,14 +402,14 @@ ${this.briefings
     const schedulePath = join(this.schedulingDir, 'master-briefing-schedule.md');
     writeFileSync(schedulePath, schedule);
 
-    console.log('  ✅ Master briefing schedule generated');
+    console.info('  ✅ Master briefing schedule generated');
   }
 
   /**
    * 📧 Create briefing invitations
    */
   private async createBriefingInvitations(): Promise<void> {
-    console.log('📧 Creating briefing invitations...');
+    console.info('📧 Creating briefing invitations...');
 
     for (const briefing of this.briefings) {
       const invitation = this.generateBriefingInvitation(briefing);
@@ -417,7 +417,7 @@ ${this.briefings
       writeFileSync(invitationPath, invitation);
     }
 
-    console.log(`  ✅ ${this.briefings.length} briefing invitations created`);
+    console.info(`  ✅ ${this.briefings.length} briefing invitations created`);
   }
 
   /**
@@ -702,12 +702,12 @@ async function main() {
     const scheduler = new SecurityBriefingScheduler();
     await scheduler.scheduleSecurityBriefings();
 
-    console.log('\n📅 SECURITY BRIEFING SCHEDULING COMPLETE!');
-    console.log('!==!==!==!==!==!==!=====');
-    console.log('✅ All security briefings scheduled');
-    console.log('✅ Invitations generated and ready to send');
-    console.log('✅ Master schedule created');
-    console.log('✅ Coordination summary prepared');
+    console.info('\n📅 SECURITY BRIEFING SCHEDULING COMPLETE!');
+    console.info('!==!==!==!==!==!==!=====');
+    console.info('✅ All security briefings scheduled');
+    console.info('✅ Invitations generated and ready to send');
+    console.info('✅ Master schedule created');
+    console.info('✅ Coordination summary prepared');
   } catch (error) {
     console.error('❌ Security briefing scheduling failed:', error);
     process.exit(1);

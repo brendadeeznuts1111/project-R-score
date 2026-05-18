@@ -272,19 +272,19 @@ export { server };
 
 // Only log and set up signal handlers when run directly (not imported)
 if ((import.meta as any).main) {
-  console.log(`🚀 Dev HQ v1.3 API Server running on ${server.url.href}`);
-  console.log("🛡️ All Bun APIs bulletproof and crash-tested!");
-  console.log("📊 Visit /health for API status or / for available endpoints");
+  console.info(`🚀 Dev HQ v1.3 API Server running on ${server.url.href}`);
+  console.info("🛡️ All Bun APIs bulletproof and crash-tested!");
+  console.info("📊 Visit /health for API status or / for available endpoints");
 
   // Handle graceful shutdown
   process.on("SIGINT", () => {
-    console.log("\n🛑 Shutting down server...");
+    console.info("\n🛑 Shutting down server...");
     server.stop();
     process.exit(0);
   });
 
   process.on("SIGTERM", () => {
-    console.log("\n🛑 Shutting down server...");
+    console.info("\n🛑 Shutting down server...");
     server.stop();
     process.exit(0);
   });

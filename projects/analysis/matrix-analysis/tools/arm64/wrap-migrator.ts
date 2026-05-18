@@ -74,7 +74,7 @@ const { values, positionals } = parseArgs({
 });
 
 if (values.help) {
-	console.log(`
+	console.info(`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                    WRAP-MIGRATOR v4.2 - ARM64 EDITION                        ║
 ║              CCMP-Optimized AST Transmuter for wrap-ansi Migration           ║
@@ -253,17 +253,17 @@ async function executeMigration(): Promise<MigrationStats> {
 		skipAddingFilesFromTsConfig: true,
 	});
 
-	console.log(`🔍 Discovering files in ${values.dir}...`);
+	console.info(`🔍 Discovering files in ${values.dir}...`);
 	const files = await discoverFiles(values.dir);
 	stats.filesScanned = files.length;
-	console.log(`   Found ${files.length} files`);
+	console.info(`   Found ${files.length} files`);
 
 	if (values.verbose) {
-		console.log(`   Architecture: ${process.arch}`);
-		console.log(`   Optimizations: ${HAS_ARM64_OPTIMIZATIONS ? "ENABLED" : "STANDARD"}`);
+		console.info(`   Architecture: ${process.arch}`);
+		console.info(`   Optimizations: ${HAS_ARM64_OPTIMIZATIONS ? "ENABLED" : "STANDARD"}`);
 	}
 
-	console.log(`\n🚀 Processing files...`);
+	console.info(`\n🚀 Processing files...`);
 
 	// Process files with SIMD-optimized batching
 	const batchSize = IS_ARM64 ? 100 : 50; // Larger batches on ARM64
@@ -282,9 +282,9 @@ async function executeMigration(): Promise<MigrationStats> {
 						stats.importsMigrated += values.dryRun ? 0 : result.changes.length;
 
 						if (values.verbose) {
-							console.log(`   ✓ ${filePath}`);
+							console.info(`   ✓ ${filePath}`);
 							for (const change of result.changes) {
-								console.log(`     L${change.line}: ${change.original.slice(0, 50)}...`);
+								console.info(`     L${change.line}: ${change.original.slice(0, 50)}...`);
 							}
 						}
 					}
@@ -307,7 +307,7 @@ async function executeMigration(): Promise<MigrationStats> {
 	}
 
 	if (!values.verbose && files.length > 100) {
-		console.log(); // Newline after progress
+		console.info(); // Newline after progress
 	}
 
 	// Save changes if not dry run
@@ -339,10 +339,10 @@ async function runBenchmarks(): Promise<BenchmarkResult[]> {
 	const results: BenchmarkResult[] = [];
 	const iterations = 1000000;
 
-	console.log(`\n🏁 Running ARM64 Performance Benchmarks...`);
-	console.log(`   Iterations per test: ${iterations.toLocaleString()}`);
-	console.log(`   Architecture: ${process.arch}`);
-	console.log();
+	console.info(`\n🏁 Running ARM64 Performance Benchmarks...`);
+	console.info(`   Iterations per test: ${iterations.toLocaleString()}`);
+	console.info(`   Architecture: ${process.arch}`);
+	console.info();
 
 	// Benchmark 1: Compound Boolean Evaluation (CCMP chain)
 	{
@@ -421,7 +421,7 @@ async function runBenchmarks(): Promise<BenchmarkResult[]> {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function main() {
-	console.log(`
+	console.info(`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                    WRAP-MIGRATOR v4.2 - ARM64 EDITION                        ║
 ║              CCMP-Optimized AST Transmuter for wrap-ansi Migration           ║
@@ -435,13 +435,13 @@ async function main() {
 	if (values.benchmark) {
 		const benchmarks = await runBenchmarks();
 
-		console.log(`\n📊 BENCHMARK RESULTS`);
-		console.log(
+		console.info(`\n📊 BENCHMARK RESULTS`);
+		console.info(
 			`═══════════════════════════════════════════════════════════════════════════════`,
 		);
 
 		for (const result of benchmarks) {
-			console.log(`
+			console.info(`
 ${result.operation}:
   Total Time:    ${result.totalTime.toFixed(2)}ms
   Avg Time:      ${(result.avgTime * 1000000).toFixed(2)}ns
@@ -450,12 +450,12 @@ ${result.operation}:
 		}
 
 		const metrics = getPerformanceMetrics();
-		console.log(`\n🚀 ARM64 OPTIMIZATION STATUS`);
-		console.log(
+		console.info(`\n🚀 ARM64 OPTIMIZATION STATUS`);
+		console.info(
 			`   Branch Miss Rate: ${(metrics.estimatedBranchMissRate * 100).toFixed(1)}%`,
 		);
-		console.log(`   Buffer Speedup:   ${metrics.bufferAllocSpeedup}x`);
-		console.log(`   AST Validation:   ${metrics.astValidationSpeedup}x`);
+		console.info(`   Buffer Speedup:   ${metrics.bufferAllocSpeedup}x`);
+		console.info(`   AST Validation:   ${metrics.astValidationSpeedup}x`);
 
 		return;
 	}
@@ -465,32 +465,32 @@ ${result.operation}:
 	const duration = stats.endTime - stats.startTime;
 
 	// Print results
-	console.log(`\n📊 MIGRATION COMPLETE`);
-	console.log(
+	console.info(`\n📊 MIGRATION COMPLETE`);
+	console.info(
 		`═══════════════════════════════════════════════════════════════════════════════`,
 	);
-	console.log(`   Files Scanned:     ${stats.filesScanned}`);
-	console.log(`   Files Modified:    ${stats.filesModified}`);
-	console.log(`   Imports Detected:  ${stats.importsDetected}`);
-	console.log(`   Imports Migrated:  ${stats.importsMigrated}`);
-	console.log(`   Duration:          ${(duration / 1000).toFixed(2)}s`);
-	console.log(
+	console.info(`   Files Scanned:     ${stats.filesScanned}`);
+	console.info(`   Files Modified:    ${stats.filesModified}`);
+	console.info(`   Imports Detected:  ${stats.importsDetected}`);
+	console.info(`   Imports Migrated:  ${stats.importsMigrated}`);
+	console.info(`   Duration:          ${(duration / 1000).toFixed(2)}s`);
+	console.info(
 		`   Files/Second:      ${(stats.filesScanned / (duration / 1000)).toFixed(1)}`,
 	);
 
 	if (values.dryRun) {
-		console.log(`\n⚠️  DRY RUN MODE - No changes were applied`);
-		console.log(`   Run without --dry-run to apply changes`);
+		console.info(`\n⚠️  DRY RUN MODE - No changes were applied`);
+		console.info(`   Run without --dry-run to apply changes`);
 	} else {
-		console.log(`\n✅ Changes applied successfully`);
+		console.info(`\n✅ Changes applied successfully`);
 	}
 
 	// ARM64 performance note
 	if (IS_ARM64 && HAS_ARM64_OPTIMIZATIONS) {
-		console.log(`\n🚀 ARM64 OPTIMIZATIONS ACTIVE`);
-		console.log(`   CCMP chains reduced branch mispredictions to <1%`);
-		console.log(`   SIMD Buffer operations enabled`);
-		console.log(`   FP constants materialized in vector registers`);
+		console.info(`\n🚀 ARM64 OPTIMIZATIONS ACTIVE`);
+		console.info(`   CCMP chains reduced branch mispredictions to <1%`);
+		console.info(`   SIMD Buffer operations enabled`);
+		console.info(`   FP constants materialized in vector registers`);
 	}
 }
 

@@ -25,7 +25,7 @@ import {
 beforeAll(async () => {
   try {
     await initializeBalanceTables();
-    console.log('✅ Balance management tables initialized for testing');
+    console.info('✅ Balance management tables initialized for testing');
   } catch (error) {
     console.error('❌ Failed to initialize balance tables:', error);
     throw error;
@@ -605,4 +605,4 @@ describe('Error Handling', () => {
   });
 });
 
-console.log('✅ Balance management test suite loaded successfully');
+console.info('✅ Balance management test suite loaded successfully');

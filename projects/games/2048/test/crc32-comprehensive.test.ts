@@ -13,7 +13,7 @@ describe("CRC32 Comprehensive Test Suite", () => {
     expect(typeof checksum).toBe("number");
     expect(checksum).toBeGreaterThanOrEqual(0);
     expect(checksum).toBeLessThan(0x100000000);
-    console.log(
+    console.info(
       `Hardware CRC32: ${throughput.toFixed(
         2,
       )} MB/s, checksum: 0x${checksum.toString(16)}`,
@@ -36,7 +36,7 @@ describe("CRC32 Comprehensive Test Suite", () => {
     expect(testData.id).toBeDefined();
     expect(testData.filename).toBe("test.bin");
 
-    console.log("✅ Undefined values handled correctly");
+    console.info("✅ Undefined values handled correctly");
   });
 
   test("Performance Throughput Benchmark", async () => {
@@ -59,13 +59,13 @@ describe("CRC32 Comprehensive Test Suite", () => {
       results.reduce((sum, r) => sum + r.throughput, 0) / results.length;
     expect(avgThroughput).toBeGreaterThan(0);
 
-    console.log(
+    console.info(
       "Performance Results:",
       results
         .map((r) => `${r.size}B: ${r.throughput.toFixed(2)} MB/s`)
         .join(", "),
     );
-    console.log(`Average throughput: ${avgThroughput.toFixed(2)} MB/s`);
+    console.info(`Average throughput: ${avgThroughput.toFixed(2)} MB/s`);
   });
 
   test("Batch Processing with Intelligent Chunking", async () => {
@@ -95,7 +95,7 @@ describe("CRC32 Comprehensive Test Suite", () => {
     expect(checksums.every((c) => typeof c === "number")).toBe(true);
     expect(throughput).toBeGreaterThan(0);
 
-    console.log(
+    console.info(
       `Batch processed: 100 items, ${totalBytes} bytes, ${throughput.toFixed(
         2,
       )} MB/s`,
@@ -115,12 +115,12 @@ describe("CRC32 Comprehensive Test Suite", () => {
     expect(checksum).toBeLessThan(0x100000000);
     expect(throughput).toBeGreaterThan(0);
 
-    console.log(
+    console.info(
       `Integration test: 10MB processed in ${duration.toFixed(
         2,
       )}ms at ${throughput.toFixed(2)} MB/s`,
     );
-    console.log(`CRC32: 0x${checksum.toString(16).toUpperCase()}`);
+    console.info(`CRC32: 0x${checksum.toString(16).toUpperCase()}`);
   });
 });
 
@@ -142,7 +142,7 @@ describe("Performance Benchmarks", () => {
     const avgTime = totalTime / iterations;
     const throughput = data.length / (avgTime / 1000) / (1024 * 1024);
 
-    console.log("Hardware CRC32 Performance:", {
+    console.info("Hardware CRC32 Performance:", {
       iterations,
       totalTime: totalTime.toFixed(2) + "ms",
       avgTime: avgTime.toFixed(2) + "ms",
@@ -168,7 +168,7 @@ describe("Performance Benchmarks", () => {
     expect(checksum2).toBe(checksum3);
     expect(checksum1).toBeGreaterThanOrEqual(0);
 
-    console.log(
+    console.info(
       `CRC32 consistency: 0x${checksum1
         .toString(16)
         .toUpperCase()} (verified 3x)`,
@@ -208,7 +208,7 @@ describe("Performance Benchmarks", () => {
     const softwareThroughput =
       data.length / (softwareTime / 1000) / (1024 * 1024);
 
-    console.log("Hardware vs Software CRC32:", {
+    console.info("Hardware vs Software CRC32:", {
       hardware: {
         time: hardwareTime.toFixed(2) + "ms",
         throughput: hardwareThroughput.toFixed(2) + " MB/s",
@@ -253,7 +253,7 @@ describe("Real-time Audit Streaming", () => {
     expect(mockAuditEvent.throughput).toBeGreaterThan(0);
     expect(mockAuditEvent.hardwareUtilized).toBe(true);
 
-    console.log("✅ Audit event processed:", mockAuditEvent.id);
+    console.info("✅ Audit event processed:", mockAuditEvent.id);
   });
 });
 
@@ -275,7 +275,7 @@ describe("Anomaly Detection and Self-Healing", () => {
     expect(mean).toBeGreaterThan(baselineThroughput * 0.99);
     expect(anomalies.length).toBe(0);
 
-    console.log(
+    console.info(
       `Anomaly detection: ${
         testMeasurements.length
       } measurements, mean=${mean.toFixed(2)} MB/s, stdDev=${stdDev.toFixed(
@@ -291,7 +291,7 @@ describe("Edge Cases and Boundary Testing", () => {
     const checksum = Bun.hash.crc32(data.buffer);
     expect(typeof checksum).toBe("number");
     expect(checksum).toBe(0);
-    console.log(
+    console.info(
       "✅ Empty buffer checksum: 0x" + checksum.toString(16).toUpperCase(),
     );
   });
@@ -301,7 +301,7 @@ describe("Edge Cases and Boundary Testing", () => {
     const checksum = Bun.hash.crc32(data.buffer);
     expect(typeof checksum).toBe("number");
     expect(checksum).toBeGreaterThanOrEqual(0);
-    console.log(
+    console.info(
       "✅ Single byte checksum: 0x" + checksum.toString(16).toUpperCase(),
     );
   });
@@ -312,7 +312,7 @@ describe("Edge Cases and Boundary Testing", () => {
     const checksum = Bun.hash.crc32(data.buffer);
     expect(typeof checksum).toBe("number");
     expect(checksum).toBeLessThan(0x100000000);
-    console.log(
+    console.info(
       "✅ Large buffer (2MB) checksum: 0x" +
         checksum.toString(16).toUpperCase(),
     );
@@ -323,7 +323,7 @@ describe("Edge Cases and Boundary Testing", () => {
     const checksum = Bun.hash.crc32(data.buffer);
     expect(typeof checksum).toBe("number");
     expect(checksum).toBe(0xc71c0011);
-    console.log(
+    console.info(
       "✅ All zeros checksum: 0x" + checksum.toString(16).toUpperCase(),
     );
   });
@@ -333,7 +333,7 @@ describe("Edge Cases and Boundary Testing", () => {
     const checksum = Bun.hash.crc32(data.buffer);
     expect(typeof checksum).toBe("number");
     expect(checksum).toBe(0xf154670a);
-    console.log(
+    console.info(
       "✅ All ones checksum: 0x" + checksum.toString(16).toUpperCase(),
     );
   });
@@ -345,7 +345,7 @@ describe("Edge Cases and Boundary Testing", () => {
     }
     const checksum = Bun.hash.crc32(data.buffer);
     expect(typeof checksum).toBe("number");
-    console.log(
+    console.info(
       "✅ Alternating pattern checksum: 0x" +
         checksum.toString(16).toUpperCase(),
     );
@@ -359,7 +359,7 @@ describe("Edge Cases and Boundary Testing", () => {
     const checksum = Bun.hash.crc32(data.buffer);
     expect(typeof checksum).toBe("number");
     expect(checksum).toBe(0x29058c73);
-    console.log(
+    console.info(
       "✅ Incremental sequence checksum: 0x" +
         checksum.toString(16).toUpperCase(),
     );
@@ -371,7 +371,7 @@ describe("Edge Cases and Boundary Testing", () => {
     const data = encoder.encode(text);
     const checksum = Bun.hash.crc32(data.buffer);
     expect(typeof checksum).toBe("number");
-    console.log(
+    console.info(
       "✅ Unicode string checksum: 0x" + checksum.toString(16).toUpperCase(),
     );
   });
@@ -386,7 +386,7 @@ describe("Edge Cases and Boundary Testing", () => {
     const data = new TextEncoder().encode(JSON.stringify(jsonData));
     const checksum = Bun.hash.crc32(data.buffer);
     expect(typeof checksum).toBe("number");
-    console.log(
+    console.info(
       "✅ JSON data checksum: 0x" + checksum.toString(16).toUpperCase(),
     );
   });
@@ -402,7 +402,7 @@ describe("Edge Cases and Boundary Testing", () => {
     crypto.getRandomValues(protocolData.subarray(8));
     const checksum = Bun.hash.crc32(protocolData.buffer);
     expect(typeof checksum).toBe("number");
-    console.log(
+    console.info(
       "✅ Binary protocol checksum: 0x" + checksum.toString(16).toUpperCase(),
     );
   });
@@ -421,7 +421,7 @@ describe("Stress Testing", () => {
     const duration = performance.now() - start;
     const opsPerSec = (iterations / duration) * 1000;
     expect(opsPerSec).toBeGreaterThan(1000);
-    console.log(
+    console.info(
       `✅ High frequency: ${iterations} ops in ${duration.toFixed(
         2,
       )}ms (${opsPerSec.toFixed(0)} ops/s)`,
@@ -442,7 +442,7 @@ describe("Stress Testing", () => {
     const totalMB = (chunks * chunkSize) / (1024 * 1024);
     expect(checksums.length).toBe(chunks);
     expect(duration).toBeLessThan(10000);
-    console.log(
+    console.info(
       `✅ Memory pressure: ${totalMB.toFixed(0)}MB in ${duration.toFixed(2)}ms`,
     );
   });
@@ -464,7 +464,7 @@ describe("Stress Testing", () => {
     const duration = performance.now() - start;
     const totalOps = batches * batchSize;
     expect(results.flat().length).toBe(totalOps);
-    console.log(
+    console.info(
       `✅ Concurrent simulation: ${totalOps} checksums in ${duration.toFixed(
         2,
       )}ms`,
@@ -483,7 +483,7 @@ describe("Stress Testing", () => {
     }
     const elapsed = performance.now() - start;
     expect(count).toBeGreaterThan(1000);
-    console.log(
+    console.info(
       `✅ Sustained load: ${count} operations in ${elapsed.toFixed(2)}ms`,
     );
   });
@@ -496,7 +496,7 @@ describe("Error Handling and Robustness", () => {
     crypto.getRandomValues(view);
     const checksum = Bun.hash.crc32(sab);
     expect(typeof checksum).toBe("number");
-    console.log(
+    console.info(
       "✅ SharedArrayBuffer checksum: 0x" + checksum.toString(16).toUpperCase(),
     );
   });
@@ -507,7 +507,7 @@ describe("Error Handling and Robustness", () => {
     const buffer = data.buffer;
     const checksum = Bun.hash.crc32(buffer);
     expect(typeof checksum).toBe("number");
-    console.log(
+    console.info(
       "✅ Buffer handling checksum: 0x" + checksum.toString(16).toUpperCase(),
     );
   });
@@ -525,7 +525,7 @@ describe("Error Handling and Robustness", () => {
       combinedChecksum ^= Bun.hash.crc32(chunk.buffer);
     }
     expect(typeof combinedChecksum).toBe("number");
-    console.log(
+    console.info(
       "✅ Split processing checksum: 0x" +
         combinedChecksum.toString(16).toUpperCase(),
     );
@@ -537,7 +537,7 @@ describe("Error Handling and Robustness", () => {
     const view = new Uint8Array(original.buffer, 1024, 2048);
     const checksum = Bun.hash.crc32(view.buffer);
     expect(typeof checksum).toBe("number");
-    console.log(
+    console.info(
       "✅ Zero-copy view checksum: 0x" + checksum.toString(16).toUpperCase(),
     );
   });
@@ -550,7 +550,7 @@ describe("Error Handling and Robustness", () => {
     }
     const checksum = Bun.hash.crc32(buffer);
     expect(typeof checksum).toBe("number");
-    console.log(
+    console.info(
       "✅ DataView processing checksum: 0x" +
         checksum.toString(16).toUpperCase(),
     );
@@ -566,7 +566,7 @@ describe("Security and Validation", () => {
       checksums.add(Bun.hash.crc32(data.buffer));
     }
     expect(checksums.size).toBeGreaterThan(900);
-    console.log(`✅ Uniqueness: ${checksums.size}/1000 unique checksums`);
+    console.info(`✅ Uniqueness: ${checksums.size}/1000 unique checksums`);
   });
 
   test("Collision Resistance", async () => {
@@ -582,7 +582,7 @@ describe("Security and Validation", () => {
       }
     }
     expect(collisions).toBe(0);
-    console.log(`✅ Collision test: 0 collisions in 10000 variations`);
+    console.info(`✅ Collision test: 0 collisions in 10000 variations`);
   });
 
   test("Avalanche Effect Verification", async () => {
@@ -594,7 +594,7 @@ describe("Security and Validation", () => {
       .toString(2)
       .replace(/0/g, "").length;
     expect(bitDiff).toBeGreaterThan(10);
-    console.log(
+    console.info(
       `✅ Avalanche effect: ${bitDiff} bits differ for 1-byte change`,
     );
   });
@@ -613,7 +613,7 @@ describe("Security and Validation", () => {
       times.length;
     const stdDev = Math.sqrt(variance);
     expect(stdDev).toBeLessThan(1);
-    console.log(`✅ Timing consistency: stdDev=${stdDev.toFixed(4)}ms`);
+    console.info(`✅ Timing consistency: stdDev=${stdDev.toFixed(4)}ms`);
   });
 
   test("Boundary Value Validation", async () => {
@@ -625,7 +625,7 @@ describe("Security and Validation", () => {
       const checksum = Bun.hash.crc32(data.buffer);
       expect(typeof checksum).toBe("number");
     }
-    console.log(
+    console.info(
       `✅ Boundary validation: ${boundaryValues.length} values processed`,
     );
   });
@@ -644,7 +644,7 @@ describe("Regression and Known Values", () => {
       const checksum = Bun.hash.crc32(tc.input.buffer);
       expect(checksum).toBe(tc.expected);
     }
-    console.log(`✅ ${testCases.length} CRC32 test vectors validated`);
+    console.info(`✅ ${testCases.length} CRC32 test vectors validated`);
   });
 
   test("Reproducibility Verification", async () => {
@@ -659,6 +659,6 @@ describe("Regression and Known Values", () => {
     }
     const unique = new Set(results);
     expect(unique.size).toBe(10);
-    console.log(`✅ Reproducibility: ${unique.size}/10 unique checksums`);
+    console.info(`✅ Reproducibility: ${unique.size}/10 unique checksums`);
   });
 });

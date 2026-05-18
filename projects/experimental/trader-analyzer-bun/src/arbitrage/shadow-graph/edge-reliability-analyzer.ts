@@ -93,7 +93,7 @@ export class EdgeReliabilityAnalyzer {
 		eventId: string,
 		windowHours: number = 24,
 	): Promise<void> {
-		console.log(`🔍 Analyzing edge reliability for event ${eventId}...`);
+		console.info(`🔍 Analyzing edge reliability for event ${eventId}...`);
 
 		// Get all edges for the event
 		const edges = this.db
@@ -140,7 +140,7 @@ export class EdgeReliabilityAnalyzer {
 			updatedCount++;
 		}
 
-		console.log(`✅ Updated reliability scores for ${updatedCount} edges`);
+		console.info(`✅ Updated reliability scores for ${updatedCount} edges`);
 	}
 
 	/**

@@ -43,8 +43,8 @@ class VenmoWebUIBundleManager {
    * 🚀 Create production bundle
    */
   async createBundle(): Promise<void> {
-    console.log('🚀 Creating Venmo Family Web UI Bundle...');
-    console.log('═'.repeat(60));
+    console.info('🚀 Creating Venmo Family Web UI Bundle...');
+    console.info('═'.repeat(60));
 
     try {
       // Create output directory
@@ -68,7 +68,7 @@ class VenmoWebUIBundleManager {
       // Create health check
       await this.createHealthCheck();
       
-      console.log('✅ Bundle created successfully!');
+      console.info('✅ Bundle created successfully!');
       this.displayBundleInfo();
       
     } catch (error) {
@@ -87,14 +87,14 @@ class VenmoWebUIBundleManager {
       await Bun.write(`${dir}/.gitkeep`, '');
     }
     
-    console.log(`📁 Output directory: ${dir}`);
+    console.info(`📁 Output directory: ${dir}`);
   }
 
   /**
    * 📦 Bundle all files
    */
   private async bundleFiles(): Promise<void> {
-    console.log('📦 Bundling files...');
+    console.info('📦 Bundling files...');
     
     for (const file of this.config.files) {
       const sourcePath = `demos/venmo/webui-demo/${file}`;
@@ -103,9 +103,9 @@ class VenmoWebUIBundleManager {
       if (existsSync(sourcePath)) {
         const content = await Bun.file(sourcePath).text();
         await Bun.write(destPath, content);
-        console.log(`   ✅ ${file}`);
+        console.info(`   ✅ ${file}`);
       } else {
-        console.log(`   ❌ ${file} (not found)`);
+        console.info(`   ❌ ${file} (not found)`);
       }
     }
   }
@@ -152,7 +152,7 @@ class VenmoWebUIBundleManager {
 
     const packagePath = `${this.config.outputDir}/${this.config.name}/package.json`;
     await Bun.write(packagePath, JSON.stringify(packageJson, null, 2));
-    console.log('📋 package.json created');
+    console.info('📋 package.json created');
   }
 
   /**
@@ -307,7 +307,7 @@ MIT License - see LICENSE file for details
 
     const readmePath = `${this.config.outputDir}/${this.config.name}/README.md`;
     await Bun.write(readmePath, readme);
-    console.log('📖 README.md created');
+    console.info('📖 README.md created');
   }
 
   /**
@@ -337,7 +337,7 @@ MIT License - see LICENSE file for details
 
     const hashPath = `${this.config.outputDir}/${this.config.name}/bundle-hash.json`;
     await Bun.write(hashPath, JSON.stringify(hashFile, null, 2));
-    console.log('🔐 Hash verification created');
+    console.info('🔐 Hash verification created');
   }
 
   /**
@@ -405,7 +405,7 @@ echo "🛑 To stop: pkill -f 'bun server.ts'"
     
     // Make it executable
     await Bun.write(deployPath, deployScript);
-    console.log('🚀 deploy.sh created');
+    console.info('🚀 deploy.sh created');
   }
 
   /**
@@ -422,39 +422,39 @@ echo "🛑 To stop: pkill -f 'bun server.ts'"
 import { fetch } from 'bun';
 
 async function healthCheck(): Promise<void> {
-  console.log('🏥 Venmo Family Web UI Demo - Health Check');
-  console.log('═'.repeat(50));
+  console.info('🏥 Venmo Family Web UI Demo - Health Check');
+  console.info('═'.repeat(50));
   
   try {
     // Check API server
-    console.log('🌐 Checking API server...');
+    console.info('🌐 Checking API server...');
     const response = await fetch('http://localhost:3003/api/stats');
     
     if (response.ok) {
       const stats = await response.json();
-      console.log('✅ API server is healthy');
-      console.log(\`📊 Total Families: \${stats.totalFamilies}\`);
-      console.log(\`👥 Active Members: \${stats.totalMembers}\`);
-      console.log(\`💰 Monthly Volume: $\${stats.monthlyVolume}\`);
+      console.info('✅ API server is healthy');
+      console.info(\`📊 Total Families: \${stats.totalFamilies}\`);
+      console.info(\`👥 Active Members: \${stats.totalMembers}\`);
+      console.info(\`💰 Monthly Volume: $\${stats.monthlyVolume}\`);
     } else {
-      console.log('❌ API server is not responding');
+      console.info('❌ API server is not responding');
       process.exit(1);
     }
     
     // Check bundle integrity
-    console.log('\\n🔐 Checking bundle integrity...');
+    console.info('\\n🔐 Checking bundle integrity...');
     try {
       const bundleHash = await Bun.file('bundle-hash.json').text();
       const hashData = JSON.parse(bundleHash);
-      console.log(\`✅ Bundle verified: \${hashData.bundleHash.substring(0, 16)}...\`);
+      console.info(\`✅ Bundle verified: \${hashData.bundleHash.substring(0, 16)}...\`);
     } catch (error) {
-      console.log('❌ Bundle verification failed');
+      console.info('❌ Bundle verification failed');
       process.exit(1);
     }
     
-    console.log('\\n🎉 All systems healthy!');
-    console.log('🌐 Web UI: Open index.html in your browser');
-    console.log('📊 Dashboard: http://localhost:3003/api/stats');
+    console.info('\\n🎉 All systems healthy!');
+    console.info('🌐 Web UI: Open index.html in your browser');
+    console.info('📊 Dashboard: http://localhost:3003/api/stats');
     
   } catch (error) {
     console.error('❌ Health check failed:', error);
@@ -468,7 +468,7 @@ healthCheck().catch(console.error);
 
     const healthPath = `${this.config.outputDir}/${this.config.name}/health-check.ts`;
     await Bun.write(healthPath, healthCheck);
-    console.log('🏥 health-check.ts created');
+    console.info('🏥 health-check.ts created');
   }
 
   /**
@@ -483,22 +483,22 @@ healthCheck().catch(console.error);
    * 📊 Display bundle information
    */
   private displayBundleInfo(): void {
-    console.log('\n📊 Bundle Information:');
-    console.log('─'.repeat(40));
-    console.log(`📦 Name: ${this.config.name}`);
-    console.log(`🏷️  Version: ${this.config.version}`);
-    console.log(`🔐 Hash: ${this.bundleHash}`);
-    console.log(`📁 Location: ${this.config.outputDir}/${this.config.name}`);
-    console.log(`📄 Files: ${this.config.files.length}`);
-    console.log('');
-    console.log('🚀 Next Steps:');
-    console.log(`   cd ${this.config.outputDir}/${this.config.name}`);
-    console.log('   bun install');
-    console.log('   bun demo');
-    console.log('');
-    console.log('🌐 Web UI: Open index.html in your browser');
-    console.log('📊 API Server: http://localhost:3003');
-    console.log('🏥 Health Check: bun health-check');
+    console.info('\n📊 Bundle Information:');
+    console.info('─'.repeat(40));
+    console.info(`📦 Name: ${this.config.name}`);
+    console.info(`🏷️  Version: ${this.config.version}`);
+    console.info(`🔐 Hash: ${this.bundleHash}`);
+    console.info(`📁 Location: ${this.config.outputDir}/${this.config.name}`);
+    console.info(`📄 Files: ${this.config.files.length}`);
+    console.info('');
+    console.info('🚀 Next Steps:');
+    console.info(`   cd ${this.config.outputDir}/${this.config.name}`);
+    console.info('   bun install');
+    console.info('   bun demo');
+    console.info('');
+    console.info('🌐 Web UI: Open index.html in your browser');
+    console.info('📊 API Server: http://localhost:3003');
+    console.info('🏥 Health Check: bun health-check');
   }
 }
 

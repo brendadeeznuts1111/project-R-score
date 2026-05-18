@@ -12,7 +12,7 @@ async function generateComparisonReport() {
     const baseline = await BundleMatrixAnalyzer.loadMetrics("./metrics/bundle-baseline.json");
 
     if (!pr || !baseline) {
-      console.log("No metrics to compare");
+      console.info("No metrics to compare");
       return;
     }
 
@@ -56,10 +56,10 @@ ${getImpactAssessment(comparison)}
 
     // Write report
     await Bun.write("./metrics/comparison-report.md", report);
-    console.log("✓ Comparison report generated");
+    console.info("✓ Comparison report generated");
 
     // Print to console
-    console.log(report);
+    console.info(report);
   } catch (error) {
     console.error("Failed to generate comparison:", error);
   }

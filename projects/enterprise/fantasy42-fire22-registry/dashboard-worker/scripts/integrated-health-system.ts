@@ -79,15 +79,15 @@ class IntegratedHealthSystem {
   private maxHistoryLength = 100;
 
   constructor() {
-    console.log('🏥 Fire22 Integrated Health & Dry-Run System');
-    console.log('!==!==!==!==!==!==!==!===\n');
+    console.info('🏥 Fire22 Integrated Health & Dry-Run System');
+    console.info('!==!==!==!==!==!==!==!===\n');
   }
 
   /**
    * Run comprehensive health check with dry-run validations
    */
   async runFullHealthCheck(): Promise<IntegratedHealthReport> {
-    console.log('🔍 Running comprehensive system health check...\n');
+    console.info('🔍 Running comprehensive system health check...\n');
 
     const components = await Promise.all([
       this.checkAPIHealth(),
@@ -100,7 +100,7 @@ class IntegratedHealthSystem {
       this.checkDependencyHealth(),
     ]);
 
-    console.log('🧪 Running dry-run validations...\n');
+    console.info('🧪 Running dry-run validations...\n');
 
     const dryRunValidations = await Promise.all([
       this.validateDeploymentReadiness(),
@@ -836,61 +836,61 @@ class IntegratedHealthSystem {
   private async saveReport(report: IntegratedHealthReport): Promise<void> {
     const reportPath = join(process.cwd(), `integrated-health-report-${Date.now()}.json`);
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`\n💾 Health report saved to: ${reportPath}`);
+    console.info(`\n💾 Health report saved to: ${reportPath}`);
   }
 
   /**
    * Display comprehensive health report
    */
   private displayReport(report: IntegratedHealthReport): void {
-    console.log('\n🏥 Integrated Health & Dry-Run Report');
-    console.log('='.repeat(50));
-    console.log(
+    console.info('\n🏥 Integrated Health & Dry-Run Report');
+    console.info('='.repeat(50));
+    console.info(
       `📊 Overall Health: ${this.getStatusIcon(report.overallHealth)} ${report.overallHealth.toUpperCase()}`
     );
-    console.log(`📈 Overall Score: ${report.overallScore}%`);
-    console.log(`⏱️  Report Generated: ${new Date(report.timestamp).toLocaleString()}\n`);
+    console.info(`📈 Overall Score: ${report.overallScore}%`);
+    console.info(`⏱️  Report Generated: ${new Date(report.timestamp).toLocaleString()}\n`);
 
     // Component Health
-    console.log('🔧 Component Health:');
+    console.info('🔧 Component Health:');
     report.components.forEach(c => {
       const icon = this.getStatusIcon(c.status);
       const responseTime = c.responseTime ? ` (${c.responseTime.toFixed(0)}ms)` : '';
-      console.log(`   ${icon} ${c.component}: ${c.score}%${responseTime} - ${c.message}`);
+      console.info(`   ${icon} ${c.component}: ${c.score}%${responseTime} - ${c.message}`);
     });
-    console.log('');
+    console.info('');
 
     // Dry-Run Validations
-    console.log('🧪 Dry-Run Validations:');
+    console.info('🧪 Dry-Run Validations:');
     report.dryRunValidations.forEach(dr => {
       const icon = dr.wouldSucceed ? '✅' : '❌';
       const risk = dr.risks.level.toUpperCase();
-      console.log(
+      console.info(
         `   ${icon} ${dr.operation}: ${dr.wouldSucceed ? 'READY' : 'NOT READY'} (Risk: ${risk})`
       );
     });
-    console.log('');
+    console.info('');
 
     // Alerts
     if (report.alerts.length > 0) {
-      console.log('🚨 Active Alerts:');
-      report.alerts.forEach(alert => console.log(`   ${alert}`));
-      console.log('');
+      console.info('🚨 Active Alerts:');
+      report.alerts.forEach(alert => console.info(`   ${alert}`));
+      console.info('');
     }
 
     // Recommendations
-    console.log('💡 Recommendations:');
-    report.recommendations.forEach(rec => console.log(`   • ${rec}`));
-    console.log('');
+    console.info('💡 Recommendations:');
+    report.recommendations.forEach(rec => console.info(`   • ${rec}`));
+    console.info('');
 
     // Trends
-    console.log('📈 System Trends:');
-    console.log(
+    console.info('📈 System Trends:');
+    console.info(
       `   Uptime: ${Math.floor(report.trends.uptime / 60)}m ${Math.floor(report.trends.uptime % 60)}s`
     );
-    console.log(`   Avg Response Time: ${report.trends.averageResponseTime.toFixed(2)}ms`);
-    console.log(`   Error Rate: ${report.trends.errorRate.toFixed(1)}%`);
-    console.log(
+    console.info(`   Avg Response Time: ${report.trends.averageResponseTime.toFixed(2)}ms`);
+    console.info(`   Error Rate: ${report.trends.errorRate.toFixed(1)}%`);
+    console.info(
       `   Health Trend: ${report.trends.healthImproving ? '📈 Improving' : '📉 Declining'}`
     );
   }
@@ -924,7 +924,7 @@ async function main() {
     switch (arg) {
       case '--help':
       case '-h':
-        console.log(`
+        console.info(`
 🏥 Fire22 Integrated Health & Dry-Run System
 
 USAGE:
@@ -971,13 +971,13 @@ INTEGRATION:
 
     // Exit with appropriate code based on health status
     if (report.overallHealth === 'critical') {
-      console.log('\n🚫 System health is critical. Immediate attention required.');
+      console.info('\n🚫 System health is critical. Immediate attention required.');
       process.exit(1);
     } else if (report.overallHealth === 'warning') {
-      console.log('\n⚠️ System health has warnings. Review recommended.');
+      console.info('\n⚠️ System health has warnings. Review recommended.');
       process.exit(0);
     } else {
-      console.log('\n✅ System health is excellent. All systems operational.');
+      console.info('\n✅ System health is excellent. All systems operational.');
       process.exit(0);
     }
   } catch (error) {

@@ -107,7 +107,7 @@ describe('Terminal TUI', () => {
   // TUI components write spinners, tables, and errors to stdout during tests.
   // Suppress via spyOn to keep test output clean.
   beforeEach(() => {
-    spyOn(console, 'log').mockImplementation(() => {});
+    spyOn(console, 'info').mockImplementation(() => {});
     spyOn(console, 'error').mockImplementation(() => {});
     spyOn(process.stdout, 'write').mockImplementation(() => true);
   });

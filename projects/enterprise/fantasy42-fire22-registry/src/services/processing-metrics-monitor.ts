@@ -667,25 +667,25 @@ export class AdvancedProcessingMetricsMonitor extends EventEmitter {
       critical: '💥',
     }[alert.severity];
 
-    console.log(`${severityEmoji} ${alert.severity.toUpperCase()} ALERT: ${alert.title}`);
-    console.log(`   ${alert.description}`);
-    console.log(`   Affected: ${alert.affectedComponents.join(', ')}`);
-    console.log(`   Actions: ${alert.suggestedActions.join(', ')}`);
+    console.info(`${severityEmoji} ${alert.severity.toUpperCase()} ALERT: ${alert.title}`);
+    console.info(`   ${alert.description}`);
+    console.info(`   Affected: ${alert.affectedComponents.join(', ')}`);
+    console.info(`   Actions: ${alert.suggestedActions.join(', ')}`);
   }
 
   private async sendEmailAlert(alert: Alert): Promise<void> {
     // Implementation for email alerts
-    console.log(`📧 Email alert: ${alert.title}`);
+    console.info(`📧 Email alert: ${alert.title}`);
   }
 
   private async sendSlackAlert(alert: Alert): Promise<void> {
     // Implementation for Slack alerts
-    console.log(`💬 Slack alert: ${alert.title}`);
+    console.info(`💬 Slack alert: ${alert.title}`);
   }
 
   private async sendWebhookAlert(alert: Alert): Promise<void> {
     // Implementation for webhook alerts
-    console.log(`🔗 Webhook alert: ${alert.title}`);
+    console.info(`🔗 Webhook alert: ${alert.title}`);
   }
 
   // ============================================================================

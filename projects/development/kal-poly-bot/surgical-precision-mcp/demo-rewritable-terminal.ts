@@ -1,11 +1,11 @@
 import { RewritableTerminal, StandardRewriters, StandardFilters } from './rewritable-terminal';
 
 async function demo() {
-  console.log('\n🚀 Starting RewritableTerminal Demo');
-  console.log('━'.repeat(50));
+  console.info('\n🚀 Starting RewritableTerminal Demo');
+  console.info('━'.repeat(50));
   
   // 1. Basic Interactive Session with Colorization and Timestamps
-  console.log('\n📝 Scenario 1: Interactive Shell with colorizer + timestamps');
+  console.info('\n📝 Scenario 1: Interactive Shell with colorizer + timestamps');
   const term1 = new RewritableTerminal(['bash'], {
     rewriters: [
       StandardRewriters.colorizer,
@@ -23,7 +23,7 @@ async function demo() {
   await new Promise(r => setTimeout(r, 500));
   
   // 2. Sensitive Data Masking demo
-  console.log('\n🔒 Scenario 2: Adding Sensitive Data Masking');
+  console.info('\n🔒 Scenario 2: Adding Sensitive Data Masking');
   term1.addRewriter(StandardRewriters.sensitiveDataMask);
   await new Promise(r => setTimeout(r, 100)); // Brief pause to ensure rewriter is registered
   term1.write('echo "password=supersecret"\n');
@@ -31,7 +31,7 @@ async function demo() {
   await new Promise(r => setTimeout(r, 500));
 
   // 3. Team Attribution demo
-  console.log('\n👥 Scenario 3: Team Attribution (Alice)');
+  console.info('\n👥 Scenario 3: Team Attribution (Alice)');
   const aliceTerm = new RewritableTerminal(['bash'], {
     rewriters: [
       StandardRewriters.teamAttribution('Alice'),
@@ -44,7 +44,7 @@ async function demo() {
   await new Promise(r => setTimeout(r, 500));
 
   // 4. Filtering demo
-  console.log('\n🔍 Scenario 4: Severity Filtering (Errors Only)');
+  console.info('\n🔍 Scenario 4: Severity Filtering (Errors Only)');
   const errorOnlyTerm = new RewritableTerminal(['bash'], {
     filters: [
       StandardFilters.minimumSeverity('error')
@@ -64,7 +64,7 @@ async function demo() {
   aliceTerm.close();
   errorOnlyTerm.close();
   
-  console.log('\n✅ Demo Complete');
+  console.info('\n✅ Demo Complete');
   process.exit(0);
 }
 

@@ -10,9 +10,9 @@
  * explicit process.exit() calls, or natural process completion.
  */
 
-console.log("🚀 Process Lifecycle Demo starting...");
-console.log("This demo shows beforeExit and exit events");
-console.log("Watch for the lifecycle events when the process ends\n");
+console.info("🚀 Process Lifecycle Demo starting...");
+console.info("This demo shows beforeExit and exit events");
+console.info("Watch for the lifecycle events when the process ends\n");
 
 // Counter to show event order
 let lifecycleEventCount = 0;
@@ -20,32 +20,32 @@ let lifecycleEventCount = 0;
 // Listen for beforeExit event
 process.on("beforeExit", (code) => {
   lifecycleEventCount++;
-  console.log(`${lifecycleEventCount}. 🔔 beforeExit: Event loop is empty! (exit code: ${code})`);
-  console.log("   ↳ Process is about to exit naturally");
-  console.log("   ↳ No async operations allowed in beforeExit!");
-  console.log("   ↳ Use this for cleanup that must be synchronous");
+  console.info(`${lifecycleEventCount}. 🔔 beforeExit: Event loop is empty! (exit code: ${code})`);
+  console.info("   ↳ Process is about to exit naturally");
+  console.info("   ↳ No async operations allowed in beforeExit!");
+  console.info("   ↳ Use this for cleanup that must be synchronous");
 });
 
 // Listen for exit event
 process.on("exit", (code) => {
   lifecycleEventCount++;
-  console.log(`${lifecycleEventCount}. 👋 exit: Process is exiting with code ${code}`);
-  console.log("   ↳ This is the last event before process termination");
-  console.log("   ↳ Only synchronous operations allowed here");
-  console.log("   ↳ Perfect for final logging or cleanup");
+  console.info(`${lifecycleEventCount}. 👋 exit: Process is exiting with code ${code}`);
+  console.info("   ↳ This is the last event before process termination");
+  console.info("   ↳ Only synchronous operations allowed here");
+  console.info("   ↳ Perfect for final logging or cleanup");
 });
 
 // Demonstrate different exit scenarios
-console.log("Demonstrating exit scenarios:\n");
+console.info("Demonstrating exit scenarios:\n");
 
 setTimeout(() => {
-  console.log("1️⃣ Natural exit (no more work to do):");
+  console.info("1️⃣ Natural exit (no more work to do):");
   // No more async operations, process will exit naturally
-  console.log("   ↳ Event loop empty → beforeExit → exit\n");
+  console.info("   ↳ Event loop empty → beforeExit → exit\n");
 }, 1000);
 
 setTimeout(() => {
-  console.log("2️⃣ Explicit exit with code:");
+  console.info("2️⃣ Explicit exit with code:");
   process.exit(0); // Triggers beforeExit (if event loop is empty) then exit
 }, 2000);
 
@@ -58,5 +58,5 @@ const keepAlive = setInterval(() => {
 // Clear the keep-alive after first scenario
 setTimeout(() => {
   clearInterval(keepAlive);
-  console.log("\n   ↳ Cleared interval (event loop may become empty)");
+  console.info("\n   ↳ Cleared interval (event loop may become empty)");
 }, 500);

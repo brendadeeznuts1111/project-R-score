@@ -24,10 +24,10 @@ describe("toSanitizedMarkdownHtml", () => {
   });
 
   it("renders fenced code blocks", () => {
-    const html = toSanitizedMarkdownHtml(["```ts", "console.log(1)", "```"].join("\n"));
+    const html = toSanitizedMarkdownHtml(["```ts", "console.info(1)", "```"].join("\n"));
     expect(html).toContain("<pre>");
     expect(html).toContain("<code");
-    expect(html).toContain("console.log(1)");
+    expect(html).toContain("console.info(1)");
   });
 });
 

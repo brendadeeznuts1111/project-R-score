@@ -508,7 +508,7 @@ describe('DocumentationScanner', () => {
 		});
 
 		test('returns empty for code with no Bun APIs', () => {
-			const code = 'const x = 1 + 2; console.log(x);';
+			const code = 'const x = 1 + 2; console.info(x);';
 			expect(scanner.scanCode(code)).toEqual([]);
 		});
 

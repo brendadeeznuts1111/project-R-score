@@ -261,7 +261,7 @@ function generateReport(result: ValidationResult): string {
 }
 
 // Main execution
-console.log("🔍 Validating documentation links...\n");
+console.info("🔍 Validating documentation links...\n");
 
 const result = validateAllLinks();
 const report = generateReport(result);
@@ -271,7 +271,7 @@ const reportPath = "/Users/nolarose/geelark/docs/reference/LINK_VALIDATION_REPOR
 fs.writeFileSync(reportPath, report);
 
 // Output summary to console
-console.log(report);
+console.info(report);
 
-console.log(`\n📄 Full report saved to: ${reportPath}`);
-console.log(`\n✨ Validation complete!`);
+console.info(`\n📄 Full report saved to: ${reportPath}`);
+console.info(`\n✨ Validation complete!`);

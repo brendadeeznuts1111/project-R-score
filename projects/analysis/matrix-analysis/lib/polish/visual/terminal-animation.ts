@@ -18,7 +18,7 @@ export async function typeText(
 
   if (!Runtime.supportsTTY) {
     // Non-TTY: just print the text
-    console.log(text);
+    console.info(text);
     return;
   }
 
@@ -97,7 +97,7 @@ export async function rainbowText(
   speed = 100
 ): Promise<void> {
   if (!Runtime.supportsTTY || !Runtime.supportsColors) {
-    console.log(text);
+    console.info(text);
     return;
   }
 
@@ -126,7 +126,7 @@ export async function fadeInText(
   stepDuration = 150
 ): Promise<void> {
   if (!Runtime.supportsTTY) {
-    console.log(text);
+    console.info(text);
     return;
   }
 
@@ -169,7 +169,7 @@ export async function pulseText(
   duration = 200
 ): Promise<void> {
   if (!Runtime.supportsTTY) {
-    console.log(text);
+    console.info(text);
     return;
   }
 
@@ -197,7 +197,7 @@ export async function slideInText(
   speed = 30
 ): Promise<void> {
   if (!Runtime.supportsTTY) {
-    console.log(text);
+    console.info(text);
     return;
   }
 
@@ -223,7 +223,7 @@ export async function countdown(
   message = "Starting in"
 ): Promise<void> {
   if (!Runtime.supportsTTY) {
-    console.log(`${message} ${from}...`);
+    console.info(`${message} ${from}...`);
     await Runtime.sleep(from * 1000);
     return;
   }
@@ -253,7 +253,7 @@ export async function matrixRain(
   const columns: number[] = Array(width).fill(0);
 
   process.stdout.write(ANSI.hideCursor);
-  console.log(); // Create space
+  console.info(); // Create space
 
   const startTime = Date.now();
   while (Date.now() - startTime < duration) {

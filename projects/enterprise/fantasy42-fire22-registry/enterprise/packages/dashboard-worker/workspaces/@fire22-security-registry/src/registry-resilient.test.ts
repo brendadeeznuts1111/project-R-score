@@ -51,7 +51,7 @@ class ResilientRegistryClient {
       ...options.headers,
     };
 
-    console.log(`🔧 Testing ${options.method || 'GET'} ${path}`);
+    console.info(`🔧 Testing ${options.method || 'GET'} ${path}`);
 
     let lastError: Error | null = null;
 
@@ -177,20 +177,20 @@ describe('Fire22 Registry Resilient Tests', () => {
   let hasConnectivity = false;
 
   beforeAll(async () => {
-    console.log('\n🚀 Fire22 Registry Resilient Test Suite');
-    console.log(`🎯 Registry URL: ${TEST_REGISTRY_URL}`);
-    console.log(`⏱️  Timeout: ${REQUEST_TIMEOUT}ms`);
-    console.log(`🔄 Max retries: ${MAX_RETRIES}`);
-    console.log('━'.repeat(60));
+    console.info('\n🚀 Fire22 Registry Resilient Test Suite');
+    console.info(`🎯 Registry URL: ${TEST_REGISTRY_URL}`);
+    console.info(`⏱️  Timeout: ${REQUEST_TIMEOUT}ms`);
+    console.info(`🔄 Max retries: ${MAX_RETRIES}`);
+    console.info('━'.repeat(60));
 
     // Test connectivity first
-    console.log('🌐 Testing network connectivity...');
+    console.info('🌐 Testing network connectivity...');
     hasConnectivity = await client.testConnectivity();
 
     if (hasConnectivity) {
-      console.log('✅ Network connectivity confirmed');
+      console.info('✅ Network connectivity confirmed');
     } else {
-      console.log('⚠️  No network connectivity - tests will be limited');
+      console.info('⚠️  No network connectivity - tests will be limited');
     }
   });
 
@@ -203,7 +203,7 @@ describe('Fire22 Registry Resilient Tests', () => {
       }
 
       expect(response.ok).toBe(true);
-      console.log('✅ Network connection established');
+      console.info('✅ Network connection established');
     });
   });
 
@@ -224,9 +224,9 @@ describe('Fire22 Registry Resilient Tests', () => {
         expect(health).toHaveProperty('version');
         expect(health.version).toBe('2.0.0'); // Production version
 
-        console.log('✅ Health status:', health.status);
-        console.log('🏷️  Registry version:', health.version);
-        console.log('🔧 Environment:', health.environment);
+        console.info('✅ Health status:', health.status);
+        console.info('🏷️  Registry version:', health.version);
+        console.info('🔧 Environment:', health.environment);
       }
     });
 
@@ -246,9 +246,9 @@ describe('Fire22 Registry Resilient Tests', () => {
         expect(stats).toHaveProperty('circuitBreakers');
         expect(typeof stats.totalPackages).toBe('number');
 
-        console.log('📈 Total packages:', stats.totalPackages);
-        console.log('🔄 Circuit breakers:', Object.keys(stats.circuitBreakers));
-        console.log('💾 Health services:', Object.keys(stats.health));
+        console.info('📈 Total packages:', stats.totalPackages);
+        console.info('🔄 Circuit breakers:', Object.keys(stats.circuitBreakers));
+        console.info('💾 Health services:', Object.keys(stats.health));
       }
     });
   });
@@ -275,8 +275,8 @@ describe('Fire22 Registry Resilient Tests', () => {
         expect(error).toHaveProperty('error');
         expect(error).toHaveProperty('code');
 
-        console.log('🔐 Error code:', error.code);
-        console.log('📋 Error type:', error.error);
+        console.info('🔐 Error code:', error.code);
+        console.info('📋 Error type:', error.error);
       }
     });
 
@@ -296,7 +296,7 @@ describe('Fire22 Registry Resilient Tests', () => {
       if (response.status === 400) {
         const error = await response.json();
         expect(error.error).toContain('validation');
-        console.log('🔧 JSON validation working:', error.code);
+        console.info('🔧 JSON validation working:', error.code);
       }
     });
 
@@ -309,7 +309,7 @@ describe('Fire22 Registry Resilient Tests', () => {
 
       if (response.ok) {
         expect(response.headers.get('Access-Control-Allow-Origin')).toBe('*');
-        console.log('🌐 CORS headers verified');
+        console.info('🌐 CORS headers verified');
       }
     });
 
@@ -321,7 +321,7 @@ describe('Fire22 Registry Resilient Tests', () => {
       }
 
       expect(response.status).toBe(200);
-      console.log('✈️ Preflight requests handled');
+      console.info('✈️ Preflight requests handled');
     });
   });
 
@@ -354,9 +354,9 @@ describe('Fire22 Registry Resilient Tests', () => {
       }
 
       if (response.ok) {
-        console.log('📦 Package published:', result.id);
+        console.info('📦 Package published:', result.id);
       } else {
-        console.log('📦 Publish blocked (expected):', result.error);
+        console.info('📦 Publish blocked (expected):', result.error);
       }
     });
 
@@ -373,7 +373,7 @@ describe('Fire22 Registry Resilient Tests', () => {
       if (response.status === 404) {
         const error = await response.json();
         expect(error.error).toBe('not_found');
-        console.log('🔍 Not found handled correctly');
+        console.info('🔍 Not found handled correctly');
       }
     });
   });
@@ -392,7 +392,7 @@ describe('Fire22 Registry Resilient Tests', () => {
         const results = await response.json();
         expect(results).toHaveProperty('objects');
         expect(Array.isArray(results.objects)).toBe(true);
-        console.log(`🔍 Search returned ${results.objects.length} results`);
+        console.info(`🔍 Search returned ${results.objects.length} results`);
       }
     });
 
@@ -404,7 +404,7 @@ describe('Fire22 Registry Resilient Tests', () => {
       }
 
       expectNetworkOrSuccess(response, 200);
-      console.log('🔤 Special characters handled in search');
+      console.info('🔤 Special characters handled in search');
     });
   });
 
@@ -425,8 +425,8 @@ describe('Fire22 Registry Resilient Tests', () => {
         expect(registryVersion).toBe('2.0.0');
         expect(requestId).toBeTruthy();
 
-        console.log('📊 Monitoring headers verified');
-        console.log(`🏷️  Version: ${registryVersion}`);
+        console.info('📊 Monitoring headers verified');
+        console.info(`🏷️  Version: ${registryVersion}`);
       }
     });
 
@@ -437,7 +437,7 @@ describe('Fire22 Registry Resilient Tests', () => {
 
       if (!skipIfNoConnectivity('response time test', response)) {
         expect(duration).toBeLessThan(REQUEST_TIMEOUT);
-        console.log(`⚡ Response time: ${Math.round(duration)}ms`);
+        console.info(`⚡ Response time: ${Math.round(duration)}ms`);
       }
     });
   });
@@ -456,10 +456,10 @@ describe('Fire22 Registry Resilient Tests', () => {
       const successfulResponses = responses.filter(r => r.ok).length;
       const networkErrors = responses.filter(r => r.error).length;
 
-      console.log(
+      console.info(
         `🔄 ${concurrency} concurrent requests: ${successfulResponses} successful, ${networkErrors} network errors`
       );
-      console.log(`⏱️  Total time: ${Math.round(duration)}ms`);
+      console.info(`⏱️  Total time: ${Math.round(duration)}ms`);
 
       // At least some requests should work if we have connectivity
       if (hasConnectivity) {
@@ -486,16 +486,16 @@ describe('🧪 Production Environment Validation', () => {
       expect(health.environment.securityScanning).toBe(true);
       expect(health.environment.fallbackMode).toBe(true);
 
-      console.log('✅ Production configuration verified');
-      console.log('🔒 Security scanning:', health.environment.securityScanning);
-      console.log('🛡️  Fallback mode:', health.environment.fallbackMode);
+      console.info('✅ Production configuration verified');
+      console.info('🔒 Security scanning:', health.environment.securityScanning);
+      console.info('🛡️  Fallback mode:', health.environment.fallbackMode);
     }
   });
 });
 
-console.log('\n🚀 Starting Fire22 Registry Resilient Test Suite...\n');
-console.log(`🎯 Testing registry at: ${TEST_REGISTRY_URL}`);
-console.log(`🔐 Using auth token: ${TEST_AUTH_TOKEN.substring(0, 15)}...`);
-console.log(`⏱️  Request timeout: ${REQUEST_TIMEOUT}ms`);
-console.log(`🔄 Max retry attempts: ${MAX_RETRIES}`);
-console.log('━'.repeat(80));
+console.info('\n🚀 Starting Fire22 Registry Resilient Test Suite...\n');
+console.info(`🎯 Testing registry at: ${TEST_REGISTRY_URL}`);
+console.info(`🔐 Using auth token: ${TEST_AUTH_TOKEN.substring(0, 15)}...`);
+console.info(`⏱️  Request timeout: ${REQUEST_TIMEOUT}ms`);
+console.info(`🔄 Max retry attempts: ${MAX_RETRIES}`);
+console.info('━'.repeat(80));

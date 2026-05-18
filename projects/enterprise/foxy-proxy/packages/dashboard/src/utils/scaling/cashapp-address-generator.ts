@@ -282,12 +282,12 @@ export class CashAppAddressGenerator {
 
   private async loadUsedAddresses() {
     // In production, load from database
-    console.log("🏠 Loading used addresses from database...");
+    console.info("🏠 Loading used addresses from database...");
   }
 
   private async persistAddress(fullAddress: string) {
     // In production, save to database
-    console.log(`💾 Saving address: ${fullAddress}`);
+    console.info(`💾 Saving address: ${fullAddress}`);
   }
 }
 

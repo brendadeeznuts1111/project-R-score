@@ -39,23 +39,23 @@ const C = {
 };
 
 function printHeader(title: string): void {
-	console.log(`\n${C.orange}${"═".repeat(50)}${C.reset}`);
-	console.log(
+	console.info(`\n${C.orange}${"═".repeat(50)}${C.reset}`);
+	console.info(
 		`${C.orange}║${C.reset} ${C.bold}${title.padEnd(46)}${C.reset} ${C.orange}║${C.reset}`,
 	);
-	console.log(`${C.orange}${"═".repeat(50)}${C.reset}\n`);
+	console.info(`${C.orange}${"═".repeat(50)}${C.reset}\n`);
 }
 
 function printOk(msg: string): void {
-	console.log(`${C.green}✓${C.reset} ${msg}`);
+	console.info(`${C.green}✓${C.reset} ${msg}`);
 }
 
 function printErr(msg: string): void {
-	console.log(`${C.red}✗${C.reset} ${msg}`);
+	console.info(`${C.red}✗${C.reset} ${msg}`);
 }
 
 function printKV(key: string, value: string): void {
-	console.log(`  ${C.dim}${key.padEnd(20)}${C.reset} ${C.cyan}${value}${C.reset}`);
+	console.info(`  ${C.dim}${key.padEnd(20)}${C.reset} ${C.cyan}${value}${C.reset}`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -149,7 +149,7 @@ export async function cmdTeamShow(profileName: string): Promise<void> {
 	if (profile.environment) printKV("Environment", profile.environment);
 
 	if (profile.team) {
-		console.log();
+		console.info();
 		printKV("Team", profile.team.id);
 		printKV("Role", profile.team.role);
 		printKV("Tier", String(profile.team.tier));
@@ -157,7 +157,7 @@ export async function cmdTeamShow(profileName: string): Promise<void> {
 		printKV("Joined", profile.team.joinedAt);
 		printKV("Permissions", enabledFlags(profile.team.permissions).join(", "));
 	} else {
-		console.log(`\n  ${C.dim}No team membership${C.reset}`);
+		console.info(`\n  ${C.dim}No team membership${C.reset}`);
 	}
 }
 
@@ -180,7 +180,7 @@ export async function cmdTeamHierarchy(teamId?: string): Promise<void> {
 		if (members.length === 0) continue;
 
 		const tier = ROLE_TIER_MAP[role];
-		console.log(`  ${roleLabels[role]} ${C.dim}(Tier ${tier})${C.reset}`);
+		console.info(`  ${roleLabels[role]} ${C.dim}(Tier ${tier})${C.reset}`);
 
 		const tableData = members.map((m) => ({
 			profile: m.name,
@@ -189,7 +189,7 @@ export async function cmdTeamHierarchy(teamId?: string): Promise<void> {
 			permissions: enabledFlags(m.team!.permissions).join(", "),
 		}));
 
-		console.log(
+		console.info(
 			Bun.inspect.table(tableData, ["profile", "team", "email", "permissions"]),
 		);
 
@@ -197,9 +197,9 @@ export async function cmdTeamHierarchy(teamId?: string): Promise<void> {
 	}
 
 	if (total === 0) {
-		console.log(`  ${C.dim}No team members found${C.reset}`);
+		console.info(`  ${C.dim}No team members found${C.reset}`);
 	} else {
-		console.log(`  ${C.dim}Total: ${total} members${C.reset}`);
+		console.info(`  ${C.dim}Total: ${total} members${C.reset}`);
 	}
 }
 
@@ -243,8 +243,8 @@ export async function cmdTerminalLaunch(profileName: string): Promise<void> {
 		50,
 	);
 
-	console.log(banner);
-	console.log();
+	console.info(banner);
+	console.info();
 
 	// Use AsyncLocalStorage-based terminal launcher
 	// Bun v1.3.7+ ensures Terminal callbacks fire correctly inside AsyncLocalStorage.run()
@@ -257,7 +257,7 @@ export async function cmdTerminalLaunch(profileName: string): Promise<void> {
 		enableR2Streaming: false, // CLI mode - no R2 streaming
 	});
 
-	console.log();
+	console.info();
 	printOk(`Session complete (${result.duration}ms, ${result.bytesStreamed} bytes)`);
 }
 
@@ -266,7 +266,7 @@ export async function cmdTerminalLaunch(profileName: string): Promise<void> {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export function printTeamHelp(): void {
-	console.log(`
+	console.info(`
 ${C.bold}Team Hierarchy Commands${C.reset}
 
 ${C.bold}Usage:${C.reset} bun tier1380 team <subcommand> [args]

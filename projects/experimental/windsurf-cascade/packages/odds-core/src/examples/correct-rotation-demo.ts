@@ -18,23 +18,23 @@ export class CorrectRotationDemo {
      * Display rotation number ranges by sport
      */
     static displayRotationRanges(): void {
-        console.log('🏈 Rotation Number Ranges by Sport\n');
+        console.info('🏈 Rotation Number Ranges by Sport\n');
 
         Object.entries(ROTATION_RANGES).forEach(([sport, [min, max]]) => {
-            console.log(`${sport.padEnd(6)}: ${min} - ${max}`);
+            console.info(`${sport.padEnd(6)}: ${min} - ${max}`);
         });
 
-        console.log('\n📊 Range Statistics:');
-        console.log(`   Total Sports: ${Object.keys(ROTATION_RANGES).length}`);
-        console.log(`   Range Size: 1000 numbers per sport`);
-        console.log(`   Total Range: ${Object.keys(ROTATION_RANGES).length * 1000} numbers`);
+        console.info('\n📊 Range Statistics:');
+        console.info(`   Total Sports: ${Object.keys(ROTATION_RANGES).length}`);
+        console.info(`   Range Size: 1000 numbers per sport`);
+        console.info(`   Total Range: ${Object.keys(ROTATION_RANGES).length * 1000} numbers`);
     }
 
     /**
      * Create sample team rotation numbers using correct structure
      */
     static createTeamRotationNumbers(): TeamRotationNumber[] {
-        console.log('\n🏀 Creating Team Rotation Numbers\n');
+        console.info('\n🏀 Creating Team Rotation Numbers\n');
 
         const teams: TeamRotationNumber[] = [
             {
@@ -87,12 +87,12 @@ export class CorrectRotationDemo {
             }
         ];
 
-        console.log('✅ Created team rotation numbers:');
+        console.info('✅ Created team rotation numbers:');
         teams.forEach(team => {
             const homeAway = team.isHome ? 'Home' : 'Away';
-            console.log(`   ${team.rotationId}: ${team.teamName} (${homeAway}) - ${team.location}`);
+            console.info(`   ${team.rotationId}: ${team.teamName} (${homeAway}) - ${team.location}`);
             if (team.opponentRotationId) {
-                console.log(`      Opponent: ${team.opponentRotationId} | Game: ${team.gameRotationId}`);
+                console.info(`      Opponent: ${team.opponentRotationId} | Game: ${team.gameRotationId}`);
             }
         });
 
@@ -103,7 +103,7 @@ export class CorrectRotationDemo {
      * Create game rotation numbers using correct structure
      */
     static createGameRotationNumbers(): GameRotationNumbers[] {
-        console.log('\n🎯 Creating Game Rotation Numbers\n');
+        console.info('\n🎯 Creating Game Rotation Numbers\n');
 
         const games: GameRotationNumbers[] = [
             {
@@ -146,12 +146,12 @@ export class CorrectRotationDemo {
             }
         ];
 
-        console.log('✅ Created game rotation numbers:');
+        console.info('✅ Created game rotation numbers:');
         games.forEach((game, index) => {
-            console.log(`   Game ${game.gameRotationId}:`);
-            console.log(`      Moneyline: Away ${game.moneyline.away} vs Home ${game.moneyline.home}`);
-            console.log(`      Spread: Away ${game.spread.away} vs Home ${game.spread.home} (${game.spread.points})`);
-            console.log(`      Total: Over ${game.total.over} / Under ${game.total.under} (${game.total.points} points)`);
+            console.info(`   Game ${game.gameRotationId}:`);
+            console.info(`      Moneyline: Away ${game.moneyline.away} vs Home ${game.moneyline.home}`);
+            console.info(`      Spread: Away ${game.spread.away} vs Home ${game.spread.home} (${game.spread.points})`);
+            console.info(`      Total: Over ${game.total.over} / Under ${game.total.under} (${game.total.points} points)`);
         });
 
         return games;
@@ -161,7 +161,7 @@ export class CorrectRotationDemo {
      * Create rotation analytics
      */
     static createRotationAnalytics(games: GameRotationNumbers[]): RotationAnalytics[] {
-        console.log('\n📈 Creating Rotation Analytics\n');
+        console.info('\n📈 Creating Rotation Analytics\n');
 
         const analytics: RotationAnalytics[] = games.map((game, index) => ({
             rotationId: game.gameRotationId,
@@ -171,13 +171,13 @@ export class CorrectRotationDemo {
             lineEfficiency: 0.85 - (index * 0.05) // 85%, 80% efficiency
         }));
 
-        console.log('✅ Created rotation analytics:');
+        console.info('✅ Created rotation analytics:');
         analytics.forEach((analytic, index) => {
-            console.log(`   Rotation ${analytic.rotationId}:`);
-            console.log(`      Volatility: ${(analytic.volatility * 100).toFixed(1)}%`);
-            console.log(`      Liquidity: $${analytic.liquidity.toLocaleString()}`);
-            console.log(`      Sharp Consensus: ${(analytic.sharpConsensus * 100).toFixed(1)}%`);
-            console.log(`      Line Efficiency: ${(analytic.lineEfficiency * 100).toFixed(1)}%`);
+            console.info(`   Rotation ${analytic.rotationId}:`);
+            console.info(`      Volatility: ${(analytic.volatility * 100).toFixed(1)}%`);
+            console.info(`      Liquidity: $${analytic.liquidity.toLocaleString()}`);
+            console.info(`      Sharp Consensus: ${(analytic.sharpConsensus * 100).toFixed(1)}%`);
+            console.info(`      Line Efficiency: ${(analytic.lineEfficiency * 100).toFixed(1)}%`);
         });
 
         return analytics;
@@ -187,9 +187,9 @@ export class CorrectRotationDemo {
      * Demonstrate rotation number validation
      */
     static validateRotationNumbers(teams: TeamRotationNumber[]): void {
-        console.log('\n🔍 Validating Rotation Numbers\n');
+        console.info('\n🔍 Validating Rotation Numbers\n');
 
-        console.log('Validation Results:');
+        console.info('Validation Results:');
         let validCount = 0;
         let invalidCount = 0;
 
@@ -198,36 +198,36 @@ export class CorrectRotationDemo {
             const isValid = team.rotationId >= minRange && team.rotationId <= maxRange;
 
             if (isValid) {
-                console.log(`   ✅ ${team.rotationId}: Valid ${team.sport} rotation - ${team.teamName}`);
+                console.info(`   ✅ ${team.rotationId}: Valid ${team.sport} rotation - ${team.teamName}`);
                 validCount++;
             } else {
-                console.log(`   ❌ ${team.rotationId}: Invalid ${team.sport} rotation (expected ${minRange}-${maxRange})`);
+                console.info(`   ❌ ${team.rotationId}: Invalid ${team.sport} rotation (expected ${minRange}-${maxRange})`);
                 invalidCount++;
             }
         });
 
-        console.log(`\n📊 Validation Summary:`);
-        console.log(`   Valid: ${validCount} | Invalid: ${invalidCount}`);
-        console.log(`   Success Rate: ${((validCount / teams.length) * 100).toFixed(1)}%`);
+        console.info(`\n📊 Validation Summary:`);
+        console.info(`   Valid: ${validCount} | Invalid: ${invalidCount}`);
+        console.info(`   Success Rate: ${((validCount / teams.length) * 100).toFixed(1)}%`);
     }
 
     /**
      * Demonstrate rotation number lookup
      */
     static demonstrateRotationLookup(): void {
-        console.log('\n🔎 Rotation Number Lookup Demo\n');
+        console.info('\n🔎 Rotation Number Lookup Demo\n');
 
         const testRotations = [2001, 3005, 4500, 7001, 10500];
 
-        console.log('Rotation Lookups:');
+        console.info('Rotation Lookups:');
         testRotations.forEach(rotation => {
             const sport = this.findSportByRotation(rotation);
             if (sport) {
                 const [min, max] = ROTATION_RANGES[sport];
                 const position = ((rotation - min) / (max - min)) * 100;
-                console.log(`   ${rotation}: ${sport} (${position.toFixed(1)}% through range)`);
+                console.info(`   ${rotation}: ${sport} (${position.toFixed(1)}% through range)`);
             } else {
-                console.log(`   ${rotation}: Unknown sport`);
+                console.info(`   ${rotation}: Unknown sport`);
             }
         });
     }
@@ -248,42 +248,42 @@ export class CorrectRotationDemo {
      * Demonstrate rotation number performance metrics
      */
     static demonstratePerformanceMetrics(analytics: RotationAnalytics[]): void {
-        console.log('\n📊 Performance Metrics Analysis\n');
+        console.info('\n📊 Performance Metrics Analysis\n');
 
         const avgVolatility = analytics.reduce((sum, a) => sum + a.volatility, 0) / analytics.length;
         const avgLiquidity = analytics.reduce((sum, a) => sum + a.liquidity, 0) / analytics.length;
         const avgSharpConsensus = analytics.reduce((sum, a) => sum + a.sharpConsensus, 0) / analytics.length;
         const avgLineEfficiency = analytics.reduce((sum, a) => sum + a.lineEfficiency, 0) / analytics.length;
 
-        console.log('📈 Aggregate Metrics:');
-        console.log(`   Average Volatility: ${(avgVolatility * 100).toFixed(1)}%`);
-        console.log(`   Average Liquidity: $${avgLiquidity.toLocaleString()}`);
-        console.log(`   Average Sharp Consensus: ${(avgSharpConsensus * 100).toFixed(1)}%`);
-        console.log(`   Average Line Efficiency: ${(avgLineEfficiency * 100).toFixed(1)}%`);
+        console.info('📈 Aggregate Metrics:');
+        console.info(`   Average Volatility: ${(avgVolatility * 100).toFixed(1)}%`);
+        console.info(`   Average Liquidity: $${avgLiquidity.toLocaleString()}`);
+        console.info(`   Average Sharp Consensus: ${(avgSharpConsensus * 100).toFixed(1)}%`);
+        console.info(`   Average Line Efficiency: ${(avgLineEfficiency * 100).toFixed(1)}%`);
 
-        console.log('\n🎯 Risk Assessment:');
+        console.info('\n🎯 Risk Assessment:');
         if (avgVolatility > 0.2) {
-            console.log('   ⚠️  High volatility detected - increased risk');
+            console.info('   ⚠️  High volatility detected - increased risk');
         } else if (avgVolatility > 0.1) {
-            console.log('   ⚡ Moderate volatility - normal market conditions');
+            console.info('   ⚡ Moderate volatility - normal market conditions');
         } else {
-            console.log('   ✅ Low volatility - stable market');
+            console.info('   ✅ Low volatility - stable market');
         }
 
         if (avgLiquidity > 100000) {
-            console.log('   💰 High liquidity - good for large positions');
+            console.info('   💰 High liquidity - good for large positions');
         } else if (avgLiquidity > 50000) {
-            console.log('   💵 Moderate liquidity - standard market');
+            console.info('   💵 Moderate liquidity - standard market');
         } else {
-            console.log('   💸 Low liquidity - position size limitations');
+            console.info('   💸 Low liquidity - position size limitations');
         }
 
         if (avgSharpConsensus > 0.7) {
-            console.log('   🎯 Strong sharp consensus - follow professional money');
+            console.info('   🎯 Strong sharp consensus - follow professional money');
         } else if (avgSharpConsensus > 0.5) {
-            console.log('   ⚖️  Moderate sharp consensus - mixed signals');
+            console.info('   ⚖️  Moderate sharp consensus - mixed signals');
         } else {
-            console.log('   📊 Weak sharp consensus - retail dominated');
+            console.info('   📊 Weak sharp consensus - retail dominated');
         }
     }
 
@@ -291,27 +291,27 @@ export class CorrectRotationDemo {
      * Demonstrate market analysis using rotation numbers
      */
     static demonstrateMarketAnalysis(games: GameRotationNumbers[]): void {
-        console.log('\n📈 Market Analysis Using Rotation Numbers\n');
+        console.info('\n📈 Market Analysis Using Rotation Numbers\n');
 
         games.forEach((game, index) => {
-            console.log(`Game ${index + 1} (Rotation ${game.gameRotationId}):`);
+            console.info(`Game ${index + 1} (Rotation ${game.gameRotationId}):`);
 
             // Moneyline analysis
-            console.log(`   Moneyline Market:`);
-            console.log(`      Away Rotation: ${game.moneyline.away} | Home Rotation: ${game.moneyline.home}`);
+            console.info(`   Moneyline Market:`);
+            console.info(`      Away Rotation: ${game.moneyline.away} | Home Rotation: ${game.moneyline.home}`);
 
             // Spread analysis
             const spreadFavorite = game.spread.points < 0 ? 'Home' : 'Away';
-            console.log(`   Spread Market:`);
-            console.log(`      ${spreadFavorite} favored by ${Math.abs(game.spread.points)} points`);
-            console.log(`      Away Rotation: ${game.spread.away} | Home Rotation: ${game.spread.home}`);
+            console.info(`   Spread Market:`);
+            console.info(`      ${spreadFavorite} favored by ${Math.abs(game.spread.points)} points`);
+            console.info(`      Away Rotation: ${game.spread.away} | Home Rotation: ${game.spread.home}`);
 
             // Total analysis
-            console.log(`   Total Market:`);
-            console.log(`      Line: ${game.total.points} points`);
-            console.log(`      Over Rotation: ${game.total.over} | Under Rotation: ${game.total.under}`);
+            console.info(`   Total Market:`);
+            console.info(`      Line: ${game.total.points} points`);
+            console.info(`      Over Rotation: ${game.total.over} | Under Rotation: ${game.total.under}`);
 
-            console.log('');
+            console.info('');
         });
     }
 
@@ -319,58 +319,58 @@ export class CorrectRotationDemo {
      * Run the complete correct demonstration
      */
     static runCompleteDemo(): void {
-        console.log('🚀 Correct Rotation Numbers Demonstration\n');
-        console.log('This demo uses the correct rotation number type structure.\n');
-        console.log('='.repeat(80));
+        console.info('🚀 Correct Rotation Numbers Demonstration\n');
+        console.info('This demo uses the correct rotation number type structure.\n');
+        console.info('='.repeat(80));
 
         // Display rotation ranges
         this.displayRotationRanges();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Create team rotation numbers
         const teams = this.createTeamRotationNumbers();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Create game rotation numbers
         const games = this.createGameRotationNumbers();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Create analytics
         const analytics = this.createRotationAnalytics(games);
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Validate rotation numbers
         this.validateRotationNumbers(teams);
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Demonstrate lookup
         this.demonstrateRotationLookup();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Performance metrics
         this.demonstratePerformanceMetrics(analytics);
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Market analysis
         this.demonstrateMarketAnalysis(games);
 
-        console.log('\n✅ Correct rotation numbers demonstration completed!');
-        console.log('\n🎯 Key Capabilities Demonstrated:');
-        console.log('   • Rotation number range validation');
-        console.log('   • Team and game rotation number creation');
-        console.log('   • Sport-based rotation lookup');
-        console.log('   • Performance analytics calculation');
-        console.log('   • Risk assessment based on metrics');
-        console.log('   • Market analysis (moneyline, spread, total)');
-        console.log('   • Liquidity and consensus analysis');
-        console.log('   • Market efficiency evaluation');
+        console.info('\n✅ Correct rotation numbers demonstration completed!');
+        console.info('\n🎯 Key Capabilities Demonstrated:');
+        console.info('   • Rotation number range validation');
+        console.info('   • Team and game rotation number creation');
+        console.info('   • Sport-based rotation lookup');
+        console.info('   • Performance analytics calculation');
+        console.info('   • Risk assessment based on metrics');
+        console.info('   • Market analysis (moneyline, spread, total)');
+        console.info('   • Liquidity and consensus analysis');
+        console.info('   • Market efficiency evaluation');
     }
 }
 

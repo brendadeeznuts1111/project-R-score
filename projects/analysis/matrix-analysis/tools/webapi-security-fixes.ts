@@ -5,27 +5,27 @@
  * Tests the Web API security and compliance fixes
  */
 
-console.log("🌐 Web API Security Fixes Verification");
-console.log("=====================================\n");
+console.info("🌐 Web API Security Fixes Verification");
+console.info("=====================================\n");
 
 // ===== Test 1: URLSearchParams.prototype.size Configurable =====
-console.log("1️⃣ URLSearchParams.prototype.size Configurability");
-console.log("-----------------------------------------------");
+console.info("1️⃣ URLSearchParams.prototype.size Configurability");
+console.info("-----------------------------------------------");
 
 function testURLSearchParamsConfigurable() {
-	console.log("Testing URLSearchParams.size property configurability...");
+	console.info("Testing URLSearchParams.size property configurability...");
 
 	const params = new URLSearchParams("key1=value1&key2=value2");
-	console.log(`Initial size: ${params.size}`);
+	console.info(`Initial size: ${params.size}`);
 
 	// Test if size property is configurable (Web IDL compliance)
 	const descriptor = Object.getOwnPropertyDescriptor(
 		params.constructor.prototype,
 		"size",
 	);
-	console.log(`Size property configurable: ${descriptor?.configurable}`);
-	console.log(`Size property enumerable: ${descriptor?.enumerable}`);
-	console.log(`Size property writable: ${descriptor?.writable}`);
+	console.info(`Size property configurable: ${descriptor?.configurable}`);
+	console.info(`Size property enumerable: ${descriptor?.enumerable}`);
+	console.info(`Size property writable: ${descriptor?.writable}`);
 
 	// Test redefining the property (should work now)
 	try {
@@ -35,48 +35,48 @@ function testURLSearchParamsConfigurable() {
 			enumerable: true,
 			writable: true,
 		});
-		console.log("✅ Successfully redefined size property");
-		console.log(`New size value: ${params.size}`);
+		console.info("✅ Successfully redefined size property");
+		console.info(`New size value: ${params.size}`);
 	} catch (error) {
-		console.log("❌ Failed to redefine size property:", error);
+		console.info("❌ Failed to redefine size property:", error);
 	}
 
 	// Test with a fresh instance
 	const params2 = new URLSearchParams("a=1&b=2&c=3");
-	console.log(`Fresh instance size: ${params2.size}`);
+	console.info(`Fresh instance size: ${params2.size}`);
 
-	console.log("✅ URLSearchParams Web IDL compliance verified");
+	console.info("✅ URLSearchParams Web IDL compliance verified");
 }
 
 // ===== Test 2: WebSocket Decompression Bomb Protection =====
-console.log("\n2️⃣ WebSocket Decompression Bomb Protection");
-console.log("-------------------------------------------");
+console.info("\n2️⃣ WebSocket Decompression Bomb Protection");
+console.info("-------------------------------------------");
 
 function testWebSocketProtection() {
-	console.log("Testing WebSocket decompression bomb protection...");
+	console.info("Testing WebSocket decompression bomb protection...");
 
 	// Note: Actual decompression bomb test requires malicious server
 	// This test verifies the protection mechanism exists
 
-	console.log("✅ WebSocket client enforces 128MB decompression limit");
-	console.log("   - Protects against memory exhaustion attacks");
-	console.log("   - Automatic rejection of oversized compressed messages");
-	console.log("   - No configuration needed - protection is built-in");
+	console.info("✅ WebSocket client enforces 128MB decompression limit");
+	console.info("   - Protects against memory exhaustion attacks");
+	console.info("   - Automatic rejection of oversized compressed messages");
+	console.info("   - No configuration needed - protection is built-in");
 
 	// Example of what would be blocked
-	console.log("\nExample protection scenario:");
-	console.log("  // Malicious server sends 1KB compressed data");
-	console.log("  // that expands to 500MB when decompressed");
-	console.log("  // WebSocket will reject the message");
-	console.log("  // Connection remains stable");
+	console.info("\nExample protection scenario:");
+	console.info("  // Malicious server sends 1KB compressed data");
+	console.info("  // that expands to 500MB when decompressed");
+	console.info("  // WebSocket will reject the message");
+	console.info("  // Connection remains stable");
 }
 
 // ===== Test 3: fetch() ReadableStream Memory Leak Fix =====
-console.log("\n3️⃣ fetch() ReadableStream Memory Leak Fix");
-console.log("----------------------------------------");
+console.info("\n3️⃣ fetch() ReadableStream Memory Leak Fix");
+console.info("----------------------------------------");
 
 async function testFetchStreamCleanup() {
-	console.log("Testing fetch() ReadableStream cleanup...");
+	console.info("Testing fetch() ReadableStream cleanup...");
 
 	// Create a test readable stream
 	const streamData = "x".repeat(1000); // 1KB of data
@@ -95,40 +95,40 @@ async function testFetchStreamCleanup() {
 			headers: { "Content-Type": "text/plain" },
 		});
 
-		console.log("✅ Stream sent successfully");
+		console.info("✅ Stream sent successfully");
 
 		// The stream should be automatically cleaned up after the request
 		// In v1.3.5, this could leak memory in rare cases
-		console.log("✅ ReadableStream automatically cleaned up after request");
+		console.info("✅ ReadableStream automatically cleaned up after request");
 
 		// Verify the stream is closed
-		console.log("Stream state: closed (properly cleaned up)");
+		console.info("Stream state: closed (properly cleaned up)");
 	} catch (error) {
-		console.log("ℹ️ Network request failed (expected in test environment)");
-		console.log("✅ Stream cleanup still occurs even on network errors");
+		console.info("ℹ️ Network request failed (expected in test environment)");
+		console.info("✅ Stream cleanup still occurs even on network errors");
 	}
 }
 
 // ===== Test 4: Additional Web API Compliance =====
-console.log("\n4️⃣ Additional Web API Compliance Checks");
-console.log("--------------------------------------");
+console.info("\n4️⃣ Additional Web API Compliance Checks");
+console.info("--------------------------------------");
 
 function testWebAPICompliance() {
-	console.log("Testing additional Web API compliance...");
+	console.info("Testing additional Web API compliance...");
 
 	// Test URL object compliance
 	const url = new URL("https://example.com/path?query=value#hash");
-	console.log(`URL protocol: ${url.protocol}`);
-	console.log(`URL hostname: ${url.hostname}`);
-	console.log(`URL pathname: ${url.pathname}`);
-	console.log(`URL search: ${url.search}`);
-	console.log(`URL hash: ${url.hash}`);
+	console.info(`URL protocol: ${url.protocol}`);
+	console.info(`URL hostname: ${url.hostname}`);
+	console.info(`URL pathname: ${url.pathname}`);
+	console.info(`URL search: ${url.search}`);
+	console.info(`URL hash: ${url.hash}`);
 
 	// Test Headers object compliance
 	const headers = new Headers();
 	headers.set("Content-Type", "application/json");
 	headers.set("Authorization", "Bearer token");
-	console.log(`Headers count: ${[...headers.keys()].length}`);
+	console.info(`Headers count: ${[...headers.keys()].length}`);
 
 	// Test Request object compliance
 	const request = new Request("https://api.example.com", {
@@ -136,52 +136,52 @@ function testWebAPICompliance() {
 		headers: { "Content-Type": "application/json" },
 		body: '{"test": true}',
 	});
-	console.log(`Request method: ${request.method}`);
-	console.log(`Request URL: ${request.url}`);
+	console.info(`Request method: ${request.method}`);
+	console.info(`Request URL: ${request.url}`);
 
 	// Test Response object compliance
 	const response = new Response('{"success": true}', {
 		status: 200,
 		headers: { "Content-Type": "application/json" },
 	});
-	console.log(`Response status: ${response.status}`);
-	console.log(`Response ok: ${response.ok}`);
+	console.info(`Response status: ${response.status}`);
+	console.info(`Response ok: ${response.ok}`);
 
-	console.log("✅ Web API compliance checks passed");
+	console.info("✅ Web API compliance checks passed");
 }
 
 // ===== Test 5: Security Best Practices =====
-console.log("\n5️⃣ Security Best Practices Demonstration");
-console.log("--------------------------------------");
+console.info("\n5️⃣ Security Best Practices Demonstration");
+console.info("--------------------------------------");
 
 function demonstrateSecurityPractices() {
-	console.log("Demonstrating security best practices...");
+	console.info("Demonstrating security best practices...");
 
 	// 1. Safe URL parameter handling
 	const safeParams = new URLSearchParams();
 	safeParams.set("user", "alice");
 	safeParams.set("action", "view");
 	// URLSearchParams automatically escapes special characters
-	console.log(`Safe params: ${safeParams.toString()}`);
+	console.info(`Safe params: ${safeParams.toString()}`);
 
 	// 2. WebSocket connection with security
-	console.log("\nWebSocket security features:");
-	console.log("✅ Decompression bomb protection (128MB limit)");
-	console.log("✅ Automatic message size validation");
-	console.log("✅ Memory exhaustion prevention");
+	console.info("\nWebSocket security features:");
+	console.info("✅ Decompression bomb protection (128MB limit)");
+	console.info("✅ Automatic message size validation");
+	console.info("✅ Memory exhaustion prevention");
 
 	// 3. Stream handling best practices
-	console.log("\nStream handling best practices:");
-	console.log("✅ Automatic cleanup after request completion");
-	console.log("✅ No manual close() required for fetch() bodies");
-	console.log("✅ Memory leak prevention in edge cases");
+	console.info("\nStream handling best practices:");
+	console.info("✅ Automatic cleanup after request completion");
+	console.info("✅ No manual close() required for fetch() bodies");
+	console.info("✅ Memory leak prevention in edge cases");
 
-	console.log("✅ Security best practices demonstrated");
+	console.info("✅ Security best practices demonstrated");
 }
 
 // ===== Main Execution =====
 async function runWebAPITests(): Promise<void> {
-	console.log("🎯 Running Web API Security Fix Tests\n");
+	console.info("🎯 Running Web API Security Fix Tests\n");
 
 	try {
 		testURLSearchParamsConfigurable();
@@ -213,18 +213,18 @@ async function runWebAPITests(): Promise<void> {
 			"./webapi-security-fixes-results.json",
 			JSON.stringify(report, null, 2),
 		);
-		console.log("\n💾 Results saved to ./webapi-security-fixes-results.json");
+		console.info("\n💾 Results saved to ./webapi-security-fixes-results.json");
 	} catch (error) {
 		console.error("❌ Test failed:", error);
 	}
 
-	console.log("\n🎉 Web API Security Fix Tests Complete!");
-	console.log("\n🌐 Key Security Fixes Verified:");
-	console.log("• ✅ URLSearchParams.size now configurable (Web IDL compliant)");
-	console.log("• ✅ WebSocket decompression bomb protection (128MB limit)");
-	console.log("• ✅ fetch() ReadableStream memory leak fixed");
-	console.log("• ✅ Improved resource management and cleanup");
-	console.log("• ✅ Enhanced security against memory exhaustion attacks");
+	console.info("\n🎉 Web API Security Fix Tests Complete!");
+	console.info("\n🌐 Key Security Fixes Verified:");
+	console.info("• ✅ URLSearchParams.size now configurable (Web IDL compliant)");
+	console.info("• ✅ WebSocket decompression bomb protection (128MB limit)");
+	console.info("• ✅ fetch() ReadableStream memory leak fixed");
+	console.info("• ✅ Improved resource management and cleanup");
+	console.info("• ✅ Enhanced security against memory exhaustion attacks");
 }
 
 // Run tests

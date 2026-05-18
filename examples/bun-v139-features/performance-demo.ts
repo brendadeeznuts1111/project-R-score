@@ -7,8 +7,8 @@
 
 import { performance } from "node:perf_hooks";
 
-console.log("⚡ Bun v1.3.9: Performance Optimizations Demo\n");
-console.log("=" .repeat(70));
+console.info("⚡ Bun v1.3.9: Performance Optimizations Demo\n");
+console.info("=" .repeat(70));
 
 // Color codes
 const GREEN = "\x1b[32m";
@@ -19,8 +19,8 @@ const RESET = "\x1b[0m";
 // 1. Markdown Rendering Optimizations
 // ============================================================================
 async function demoMarkdownPerformance() {
-  console.log("\n📦 Markdown Rendering Optimizations");
-  console.log("-".repeat(70));
+  console.info("\n📦 Markdown Rendering Optimizations");
+  console.info("-".repeat(70));
 
   const markdownContent = `
 # Example Document
@@ -38,7 +38,7 @@ This is a **bold** paragraph with some *emphasis* and \`code\`.
 \`\`\`typescript
 const x = 1;
 const y = 2;
-console.log(x + y);
+console.info(x + y);
 \`\`\`
 
 > This is a blockquote with some text.
@@ -48,16 +48,16 @@ console.log(x + y);
 | Data 1   | Data 2   |
 `;
 
-  console.log("\nMarkdown Improvements in v1.3.9:");
-  console.log(`${GREEN}✓${RESET} 3-15% faster Markdown-to-HTML rendering (SIMD-accelerated)`);
-  console.log(`${GREEN}✓${RESET} 28% faster Bun.markdown.react() for small documents`);
-  console.log(`${GREEN}✓${RESET} 7% faster for medium documents`);
-  console.log(`${GREEN}✓${RESET} 7.4% faster for large documents`);
-  console.log(`${GREEN}✓${RESET} 40% reduction in string object allocations`);
-  console.log(`${GREEN}✓${RESET} 6% smaller heap size during rendering`);
+  console.info("\nMarkdown Improvements in v1.3.9:");
+  console.info(`${GREEN}✓${RESET} 3-15% faster Markdown-to-HTML rendering (SIMD-accelerated)`);
+  console.info(`${GREEN}✓${RESET} 28% faster Bun.markdown.react() for small documents`);
+  console.info(`${GREEN}✓${RESET} 7% faster for medium documents`);
+  console.info(`${GREEN}✓${RESET} 7.4% faster for large documents`);
+  console.info(`${GREEN}✓${RESET} 40% reduction in string object allocations`);
+  console.info(`${GREEN}✓${RESET} 6% smaller heap size during rendering`);
 
-  console.log("\nExample usage:");
-  console.log(`
+  console.info("\nExample usage:");
+  console.info(`
 import { markdown } from "bun";
 
 // Render to HTML
@@ -81,9 +81,9 @@ const reactElement = await markdown.react(\`
 // 2. String Optimizations
 // ============================================================================
 function demoStringOptimizations() {
-  console.log("\n" + "=".repeat(70));
-  console.log("📦 String Optimizations");
-  console.log("=".repeat(70));
+  console.info("\n" + "=".repeat(70));
+  console.info("📦 String Optimizations");
+  console.info("=".repeat(70));
 
   const results: Array<{ name: string; time: number; improvement: string }> = [];
   const iterations = 10_000_000;
@@ -138,25 +138,25 @@ function demoStringOptimizations() {
     results.push({ name: "String#trimEnd", time, improvement: "1.42x faster" });
   }
 
-  console.log("\nBenchmark Results:");
-  console.log("-".repeat(70));
+  console.info("\nBenchmark Results:");
+  console.info("-".repeat(70));
   for (const r of results) {
-    console.log(`${r.name.padEnd(30)} ${r.time.toFixed(2).padStart(8)}ms  ${GREEN}${r.improvement}${RESET}`);
+    console.info(`${r.name.padEnd(30)} ${r.time.toFixed(2).padStart(8)}ms  ${GREEN}${r.improvement}${RESET}`);
   }
 
-  console.log("\nString#replace Optimization:");
-  console.log(`${GREEN}✓${RESET} Returns ropes (lazy concatenation) instead of eager copy`);
-  console.log(`${GREEN}✓${RESET} Avoids unnecessary allocations for short-lived results`);
-  console.log(`${GREEN}✓${RESET} Aligns with V8's behavior`);
+  console.info("\nString#replace Optimization:");
+  console.info(`${GREEN}✓${RESET} Returns ropes (lazy concatenation) instead of eager copy`);
+  console.info(`${GREEN}✓${RESET} Avoids unnecessary allocations for short-lived results`);
+  console.info(`${GREEN}✓${RESET} Aligns with V8's behavior`);
 }
 
 // ============================================================================
 // 3. Collection Optimizations
 // ============================================================================
 function demoCollectionOptimizations() {
-  console.log("\n" + "=".repeat(70));
-  console.log("📦 Collection Optimizations");
-  console.log("=".repeat(70));
+  console.info("\n" + "=".repeat(70));
+  console.info("📦 Collection Optimizations");
+  console.info("=".repeat(70));
 
   const iterations = 10_000_000;
 
@@ -176,24 +176,24 @@ function demoCollectionOptimizations() {
   }
   const mapTime = performance.now() - mapStart;
 
-  console.log("\nBenchmark Results:");
-  console.log("-".repeat(70));
-  console.log(`Set#size  ${setTime.toFixed(2).padStart(10)}ms  ${GREEN}2.24x faster${RESET}`);
-  console.log(`Map#size  ${mapTime.toFixed(2).padStart(10)}ms  ${GREEN}2.74x faster${RESET}`);
+  console.info("\nBenchmark Results:");
+  console.info("-".repeat(70));
+  console.info(`Set#size  ${setTime.toFixed(2).padStart(10)}ms  ${GREEN}2.24x faster${RESET}`);
+  console.info(`Map#size  ${mapTime.toFixed(2).padStart(10)}ms  ${GREEN}2.74x faster${RESET}`);
 
-  console.log("\nTechnical Details:");
-  console.log(`${GREEN}✓${RESET} Now handled as intrinsics in DFG/FTL tiers`);
-  console.log(`${GREEN}✓${RESET} Eliminates generic getter call overhead`);
-  console.log(`${GREEN}✓${RESET} Direct field access instead of method call`);
+  console.info("\nTechnical Details:");
+  console.info(`${GREEN}✓${RESET} Now handled as intrinsics in DFG/FTL tiers`);
+  console.info(`${GREEN}✓${RESET} Eliminates generic getter call overhead`);
+  console.info(`${GREEN}✓${RESET} Direct field access instead of method call`);
 }
 
 // ============================================================================
 // 4. AbortSignal Optimization
 // ============================================================================
 function demoAbortSignalOptimization() {
-  console.log("\n" + "=".repeat(70));
-  console.log("📦 AbortSignal Optimization");
-  console.log("=".repeat(70));
+  console.info("\n" + "=".repeat(70));
+  console.info("📦 AbortSignal Optimization");
+  console.info("=".repeat(70));
 
   const iterations = 1_000_000;
   
@@ -205,24 +205,24 @@ function demoAbortSignalOptimization() {
   }
   const time = performance.now() - start;
 
-  console.log(`\nAbortSignal.abort() benchmark:`);
-  console.log(`  ${iterations.toLocaleString()} iterations: ${time.toFixed(2)}ms`);
-  console.log(`  ${GREEN}~6% faster${RESET} when no listeners are registered`);
+  console.info(`\nAbortSignal.abort() benchmark:`);
+  console.info(`  ${iterations.toLocaleString()} iterations: ${time.toFixed(2)}ms`);
+  console.info(`  ${GREEN}~6% faster${RESET} when no listeners are registered`);
 
-  console.log("\nOptimization Details:");
-  console.log(`${GREEN}✓${RESET} Skips creating and dispatching Event object`);
-  console.log(`${GREEN}✓${RESET} Saves ~16ms per 1M calls`);
-  console.log(`${GREEN}✓${RESET} Fast path when no abort listeners registered`);
+  console.info("\nOptimization Details:");
+  console.info(`${GREEN}✓${RESET} Skips creating and dispatching Event object`);
+  console.info(`${GREEN}✓${RESET} Saves ~16ms per 1M calls`);
+  console.info(`${GREEN}✓${RESET} Fast path when no abort listeners registered`);
 }
 
 // ============================================================================
 // 5. Summary
 // ============================================================================
 function showSummary() {
-  console.log("\n" + "=".repeat(70));
-  console.log("📊 Performance Summary (v1.3.9)");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("📊 Performance Summary (v1.3.9)");
+  console.info("=".repeat(70));
+  console.info(`
 ┌──────────────────────────┬─────────────────┬─────────────────────────┐
 │ Feature                  │ Improvement     │ Notes                   │
 ├──────────────────────────┼─────────────────┼─────────────────────────┤
@@ -251,10 +251,10 @@ ${CYAN}KEY TAKEAWAYS:${RESET}
 // 6. Migration Tips
 // ============================================================================
 function showMigrationTips() {
-  console.log("\n" + "=".repeat(70));
-  console.log("💡 Migration & Optimization Tips");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("💡 Migration & Optimization Tips");
+  console.info("=".repeat(70));
+  console.info(`
 REGEXP OPTIMIZATION:
 ────────────────────
 // Before (slower)
@@ -289,8 +289,8 @@ controller.abort();
 
 // Main
 async function main() {
-  console.log(`Bun version: ${Bun.version}`);
-  console.log(`Platform: ${process.platform} ${process.arch}\n`);
+  console.info(`Bun version: ${Bun.version}`);
+  console.info(`Platform: ${process.platform} ${process.arch}\n`);
 
   await demoMarkdownPerformance();
   demoStringOptimizations();
@@ -299,7 +299,7 @@ async function main() {
   showSummary();
   showMigrationTips();
 
-  console.log("\n✅ Performance demo complete!\n");
+  console.info("\n✅ Performance demo complete!\n");
 }
 
 if (import.meta.main) {

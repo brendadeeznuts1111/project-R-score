@@ -43,16 +43,16 @@ class DevelopmentWorkflow {
         process.argv.includes("--watch") || process.env.BUN_WATCH === "1",
     };
 
-    console.log("🔥 Advanced Bun Development Workflow");
-    console.log("=====================================");
-    console.log(
+    console.info("🔥 Advanced Bun Development Workflow");
+    console.info("=====================================");
+    console.info(
       `📊 Hot Reload: ${this.metrics.hotReloadEnabled ? "✅ Enabled" : "❌ Disabled"}`
     );
-    console.log(
+    console.info(
       `👀 Watch Mode: ${this.metrics.watchModeEnabled ? "✅ Enabled" : "❌ Disabled"}`
     );
-    console.log(`🔄 Reload Count: ${this.metrics.reloadCount}`);
-    console.log(
+    console.info(`🔄 Reload Count: ${this.metrics.reloadCount}`);
+    console.info(
       `⏰ Start Time: ${new Date(globalThis.startTime).toLocaleTimeString()}`
     );
 
@@ -71,15 +71,15 @@ class DevelopmentWorkflow {
       },
     });
 
-    console.log(
+    console.info(
       `🚀 Development server running at http://localhost:${this.port}`
     );
-    console.log("🔧 Development Features:");
-    console.log("  • Hot reload with --hot flag");
-    console.log("  • File watching with --watch flag");
-    console.log("  • WebSocket for live updates");
-    console.log("  • Development metrics tracking");
-    console.log("  • Memory usage monitoring");
+    console.info("🔧 Development Features:");
+    console.info("  • Hot reload with --hot flag");
+    console.info("  • File watching with --watch flag");
+    console.info("  • WebSocket for live updates");
+    console.info("  • Development metrics tracking");
+    console.info("  • Memory usage monitoring");
   }
 
   private createRequestHandler() {
@@ -121,7 +121,7 @@ class DevelopmentWorkflow {
 
           case "/api/force-reload":
             // Simulate a hot reload
-            console.log("🔄 Simulating hot reload...");
+            console.info("🔄 Simulating hot reload...");
             globalThis.reloadCount++;
             globalThis.lastChange = new Date().toISOString();
             this.updateMetrics();
@@ -230,11 +230,11 @@ class DevelopmentWorkflow {
   private setupDevelopmentFeatures(): void {
     // Development-specific features
     if (this.metrics.hotReloadEnabled) {
-      console.log("🔥 Hot reload is active - edit files to see changes");
+      console.info("🔥 Hot reload is active - edit files to see changes");
     }
 
     if (this.metrics.watchModeEnabled) {
-      console.log("👀 Watch mode is active - files are being monitored");
+      console.info("👀 Watch mode is active - files are being monitored");
     }
 
     // Set up periodic development metrics
@@ -243,7 +243,7 @@ class DevelopmentWorkflow {
 
       // Log development status every 30 seconds
       if (Date.now() % 30000 < 1000) {
-        console.log(
+        console.info(
           `📊 Development Status: ${this.metrics.reloadCount} reloads, ${(this.metrics.uptime / 1000).toFixed(1)}s uptime`
         );
       }
@@ -254,14 +254,14 @@ class DevelopmentWorkflow {
       const memUsage = process.memoryUsage();
       if (memUsage.heapUsed > 100 * 1024 * 1024) {
         // 100MB
-        console.log("🧹 High memory usage in development, running GC...");
+        console.info("🧹 High memory usage in development, running GC...");
         gc();
       }
     }, 15000);
   }
 
   private handleWebSocketMessage(ws: any, message: string | Buffer): void {
-    console.log(`📨 WebSocket message: ${message}`);
+    console.info(`📨 WebSocket message: ${message}`);
 
     try {
       const data = JSON.parse(message.toString());
@@ -318,7 +318,7 @@ class DevelopmentWorkflow {
   }
 
   private handleWebSocketOpen(ws: any): void {
-    console.log("🔌 WebSocket connection opened");
+    console.info("🔌 WebSocket connection opened");
     ws.send(
       JSON.stringify({
         type: "connected",
@@ -330,7 +330,7 @@ class DevelopmentWorkflow {
   }
 
   private handleWebSocketClose(ws: any): void {
-    console.log("🔌 WebSocket connection closed");
+    console.info("🔌 WebSocket connection closed");
   }
 
   private async getHomePage(): Promise<string> {
@@ -439,12 +439,12 @@ class DevelopmentWorkflow {
 
             ws.onopen = () => {
                 this.wsConnected = true;
-                console.log('WebSocket connected');
+                console.info('WebSocket connected');
             };
 
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
-                console.log('WebSocket message:', data);
+                console.info('WebSocket message:', data);
 
                 if (data.type === 'reloaded') {
                     this.reloadCount = data.reloadCount;
@@ -454,7 +454,7 @@ class DevelopmentWorkflow {
 
             ws.onclose = () => {
                 this.wsConnected = false;
-                console.log('WebSocket disconnected');
+                console.info('WebSocket disconnected');
                 // Try to reconnect after 2 seconds
                 setTimeout(() => initWebSocket(), 2000);
             };
@@ -464,7 +464,7 @@ class DevelopmentWorkflow {
             fetch('/api/force-reload')
                 .then(r => r.json())
                 .then(data => {
-                    console.log('Force reload:', data);
+                    console.info('Force reload:', data);
                     refreshMetrics();
                 });
         }
@@ -473,7 +473,7 @@ class DevelopmentWorkflow {
             fetch('/api/memory')
                 .then(r => r.json())
                 .then(data => {
-                    console.log('GC completed:', data);
+                    console.info('GC completed:', data);
                     alert('Garbage collection completed');
                 });
         }
@@ -506,12 +506,12 @@ class DevelopmentWorkflow {
 }
 
 // Development workflow demonstration
-console.log("🚀 Starting Advanced Bun Development Workflow...");
-console.log("💡 Usage:");
-console.log("  bun --hot run bun-dev-workflow.ts    # Hot reload enabled");
-console.log("  bun --watch run bun-dev-workflow.ts  # Watch mode enabled");
-console.log("  bun --hot --watch run bun-dev-workflow.ts  # Both enabled");
-console.log("");
+console.info("🚀 Starting Advanced Bun Development Workflow...");
+console.info("💡 Usage:");
+console.info("  bun --hot run bun-dev-workflow.ts    # Hot reload enabled");
+console.info("  bun --watch run bun-dev-workflow.ts  # Watch mode enabled");
+console.info("  bun --hot --watch run bun-dev-workflow.ts  # Both enabled");
+console.info("");
 
 // Start the development workflow
 const devWorkflow = new DevelopmentWorkflow();
@@ -521,7 +521,7 @@ setInterval(() => {
   // Prevent process from exiting
 }, 1000000);
 
-console.log("✅ Development workflow initialized successfully!");
-console.log("🔥 Edit this file to see hot reload in action!");
-console.log("👀 Watch mode monitors file changes automatically");
-console.log("🔌 WebSocket connection available for real-time updates");
+console.info("✅ Development workflow initialized successfully!");
+console.info("🔥 Edit this file to see hot reload in action!");
+console.info("👀 Watch mode monitors file changes automatically");
+console.info("🔌 WebSocket connection available for real-time updates");

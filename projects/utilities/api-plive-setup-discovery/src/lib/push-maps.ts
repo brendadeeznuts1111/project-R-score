@@ -52,17 +52,17 @@ export async function pushMaps(options: PushOptions): Promise<PushResult[]> {
   const results: PushResult[] = [];
 
   if (maps.length === 0) {
-    console.log('[push] No .map files found to upload');
+    console.info('[push] No .map files found to upload');
     return results;
   }
 
-  console.log(`📤 Pushing ${maps.length} source map(s) to: ${endpoint}`);
+  console.info(`📤 Pushing ${maps.length} source map(s) to: ${endpoint}`);
 
   if (id) {
-    console.log(`🏷️  Release identifier: ${id}`);
+    console.info(`🏷️  Release identifier: ${id}`);
   }
   if (buildId) {
-    console.log(`🆔 Build ID: ${buildId}`);
+    console.info(`🆔 Build ID: ${buildId}`);
   }
 
   if (dryRun) {
@@ -105,7 +105,7 @@ export async function pushMaps(options: PushOptions): Promise<PushResult[]> {
 
         if (response.ok) {
           results.push({ name, status: response.status, success: true });
-          console.log(`✅ [${attempt}/${maxRetries}] ${name} → ${response.status}`);
+          console.info(`✅ [${attempt}/${maxRetries}] ${name} → ${response.status}`);
           break;
         } else {
           const errorText = await response.text();
@@ -113,7 +113,7 @@ export async function pushMaps(options: PushOptions): Promise<PushResult[]> {
         }
       } catch (error: any) {
         lastError = error;
-        console.log(`⚠️ [${attempt}/${maxRetries}] ${name} failed: ${error.message}`);
+        console.info(`⚠️ [${attempt}/${maxRetries}] ${name} failed: ${error.message}`);
 
         if (attempt < maxRetries) {
           await Bun.sleep(1000 * Math.pow(2, attempt - 1)); // Exponential backoff
@@ -131,7 +131,7 @@ export async function pushMaps(options: PushOptions): Promise<PushResult[]> {
   }
 
   const successCount = results.filter(r => r.success).length;
-  console.log(`📊 Push complete: ${successCount}/${maps.length} successful`);
+  console.info(`📊 Push complete: ${successCount}/${maps.length} successful`);
 
   return results;
 }
@@ -186,7 +186,7 @@ async function generateDryRunCurl(
   service: string = 'generic',
   userAgent?: string
 ): Promise<void> {
-  console.log('\n📋 DRY RUN: Would push maps via:');
+  console.info('\n📋 DRY RUN: Would push maps via:');
 
   const curlParts = [
     'curl -X POST',
@@ -216,8 +216,8 @@ async function generateDryRunCurl(
     curlParts.push(`# ... and ${maps.length - 1} more files`);
   }
 
-  console.log(curlParts.join(' \\\n  '));
-  console.log(`\nTotal files: ${maps.length}`);
+  console.info(curlParts.join(' \\\n  '));
+  console.info(`\nTotal files: ${maps.length}`);
 }
 
 // [FUNCTION][IMPLEMENTATION][PUSH][DRY-RUN-FIELDS-01][v2.0][ACTIVE]

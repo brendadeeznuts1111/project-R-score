@@ -13,7 +13,7 @@ type CheckResult = {
 
 function printChecks(checks: CheckResult[]) {
   for (const c of checks) {
-    console.log(`[${c.ok ? "PASS" : "FAIL"}] ${c.name} :: ${c.details}`);
+    console.info(`[${c.ok ? "PASS" : "FAIL"}] ${c.name} :: ${c.details}`);
   }
 }
 
@@ -102,7 +102,7 @@ async function run(): Promise<number> {
 
   printChecks(checks);
   const failed = checks.filter((c) => !c.ok);
-  console.log(`Checked ${checks.length} websocket assertions against ${wsUrl}`);
+  console.info(`Checked ${checks.length} websocket assertions against ${wsUrl}`);
   return failed.length === 0 ? 0 : 1;
 }
 

@@ -115,9 +115,9 @@ function verifyFile(filePath: string): VerificationResult {
 }
 
 async function runRipgrepTests() {
-  console.log("\n" + "═".repeat(70));
-  console.log(colors.bold("  Ripgrep Pattern Verification Tests"));
-  console.log("═".repeat(70) + "\n");
+  console.info("\n" + "═".repeat(70));
+  console.info(colors.bold("  Ripgrep Pattern Verification Tests"));
+  console.info("═".repeat(70) + "\n");
 
   const testCases = [
     {
@@ -151,11 +151,11 @@ async function runRipgrepTests() {
       if (testCase.expectedFiles.length === 0) {
         // Just check that we found something
         if (matches.length > 0) {
-          console.log(
+          console.info(
             `${colors.green("✅")} ${testCase.name}: Found ${matches.length} matches`,
           );
         } else {
-          console.log(
+          console.info(
             `${colors.red("❌")} ${testCase.name}: No matches found`,
           );
         }
@@ -164,17 +164,17 @@ async function runRipgrepTests() {
           matches.some((match) => match.includes(file)),
         );
         if (foundFiles.length === testCase.expectedFiles.length) {
-          console.log(
+          console.info(
             `${colors.green("✅")} ${testCase.name}: Found all expected files`,
           );
         } else {
-          console.log(
+          console.info(
             `${colors.red("❌")} ${testCase.name}: Missing files`,
           );
         }
       }
     } catch (error) {
-      console.log(
+      console.info(
         `${colors.yellow("⚠️")}  ${testCase.name}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
@@ -182,9 +182,9 @@ async function runRipgrepTests() {
 }
 
 async function main() {
-  console.log("\n" + "═".repeat(70));
-  console.log(colors.bold("  Example Files JSDoc Verification"));
-  console.log("═".repeat(70) + "\n");
+  console.info("\n" + "═".repeat(70));
+  console.info(colors.bold("  Example Files JSDoc Verification"));
+  console.info("═".repeat(70) + "\n");
 
   const exampleGlob = new Bun.Glob("examples/demos/demo-*.ts");
   const tagManagerGlob = new Bun.Glob("examples/demos/tag-manager*.ts");
@@ -218,37 +218,37 @@ async function main() {
   // Display results
   for (const result of results) {
     if (result.errors.length === 0) {
-      console.log(
+      console.info(
         `${colors.green("✅")} ${result.file} ${colors.dim(`(${result.version})`)}`,
       );
     } else {
-      console.log(`${colors.red("❌")} ${result.file}`);
+      console.info(`${colors.red("❌")} ${result.file}`);
       for (const error of result.errors) {
-        console.log(`   ${colors.dim(`• ${error}`)}`);
+        console.info(`   ${colors.dim(`• ${error}`)}`);
       }
     }
   }
 
-  console.log("\n" + "─".repeat(70));
-  console.log(
+  console.info("\n" + "─".repeat(70));
+  console.info(
     `Total files checked: ${allFiles.length}`,
   );
-  console.log(
+  console.info(
     `Files with errors: ${results.filter((r) => r.errors.length > 0).length}`,
   );
-  console.log(`Total errors: ${totalErrors}`);
+  console.info(`Total errors: ${totalErrors}`);
 
   // Run ripgrep tests
   await runRipgrepTests();
 
-  console.log("\n" + "═".repeat(70));
+  console.info("\n" + "═".repeat(70));
   if (totalErrors === 0) {
-    console.log(colors.green("✅ All verifications passed!"));
+    console.info(colors.green("✅ All verifications passed!"));
   } else {
-    console.log(colors.red(`❌ Found ${totalErrors} verification errors`));
+    console.info(colors.red(`❌ Found ${totalErrors} verification errors`));
     process.exit(1);
   }
-  console.log("═".repeat(70) + "\n");
+  console.info("═".repeat(70) + "\n");
 }
 
 main().catch((error) => {

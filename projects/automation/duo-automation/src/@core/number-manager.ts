@@ -48,7 +48,7 @@ export class NumberManager {
     if (!sanitized.isValid) throw new Error('Invalid number format');
     
     // Release logic simulation
-    console.log(`[NumberManager] Retiring ${sanitized.e164} due to ${reason}`);
+    console.info(`[NumberManager] Retiring ${sanitized.e164} due to ${reason}`);
   }
 
   async optimizePool(): Promise<{ savings: number; retiredCount: number }> {

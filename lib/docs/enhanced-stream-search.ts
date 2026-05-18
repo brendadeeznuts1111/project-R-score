@@ -118,7 +118,7 @@ export class EnhancedZenStreamSearcher {
       const cached = this.searchCache.get(cacheKey);
       
       if (cached && this.isCacheValid(cached)) {
-        console.log(`🎯 Cache hit for query: "${options.query}"`);
+        console.info(`🎯 Cache hit for query: "${options.query}"`);
         this.searchStats = { ...cached.stats };
         this.searchStats.cacheHitRate = 1;
         return cached.stats;
@@ -199,7 +199,7 @@ export class EnhancedZenStreamSearcher {
       
     } catch (error) {
       if (error.name === 'AbortError') {
-        console.log('🛑 Search aborted by user');
+        console.info('🛑 Search aborted by user');
       } else {
         console.error('❌ Enhanced search error:', error);
       }
@@ -389,7 +389,7 @@ export class EnhancedZenStreamSearcher {
     });
 
     await proc.exited;
-    console.log('✅ Enhanced PTY search complete');
+    console.info('✅ Enhanced PTY search complete');
   }
 
   /**
@@ -511,11 +511,11 @@ export class EnhancedZenStreamSearcher {
    * Enhanced metrics logging
    */
   private logEnhancedMetrics(metrics: ResourceMetrics): void {
-    console.log(`📊 Enhanced Resource Usage:`);
-    console.log(`   Max Memory: ${(metrics.maxRSS / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`   CPU Time: ${metrics.cpuTime?.total || 'N/A'}ms`);
-    console.log(`   Peak Throughput: ${metrics.peakThroughput.toFixed(2)} matches/sec`);
-    console.log(`   Block I/O: ${metrics.blockInputs} in, ${metrics.blockOutputs} out`);
+    console.info(`📊 Enhanced Resource Usage:`);
+    console.info(`   Max Memory: ${(metrics.maxRSS / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`   CPU Time: ${metrics.cpuTime?.total || 'N/A'}ms`);
+    console.info(`   Peak Throughput: ${metrics.peakThroughput.toFixed(2)} matches/sec`);
+    console.info(`   Block I/O: ${metrics.blockInputs} in, ${metrics.blockOutputs} out`);
   }
 
   /**
@@ -588,28 +588,28 @@ export const ZenStreamSearcher = EnhancedZenStreamSearcher;
  * Enhanced demonstration of all streaming capabilities
  */
 export async function demonstrateEnhancedStreaming(): Promise<void> {
-  console.log('🚀 Enhanced Ultra-Zen Documentation Streaming System v2.0');
-  console.log('=' .repeat(80));
+  console.info('🚀 Enhanced Ultra-Zen Documentation Streaming System v2.0');
+  console.info('=' .repeat(80));
   
   const searcher = new EnhancedZenStreamSearcher();
   
   try {
     // Demo 1: Basic enhanced search
-    console.log('\n📋 Demo 1: Enhanced Search with Caching');
+    console.info('\n📋 Demo 1: Enhanced Search with Caching');
     const basicStats = await searcher.streamSearch({
       query: 'Bun.spawn',
       cachePath: '/Users/nolarose/Projects/.cache',
       enableCache: true,
       maxResults: 10,
-      onProgress: (stats) => console.log(`   Progress: ${stats.matchesFound} matches, ${stats.bytesProcessed} bytes`)
+      onProgress: (stats) => console.info(`   Progress: ${stats.matchesFound} matches, ${stats.bytesProcessed} bytes`)
     });
-    console.log(`✅ Enhanced Search: ${basicStats.matchesFound} matches in ${basicStats.elapsedTime.toFixed(2)}ms`);
-    console.log(`   Files with matches: ${basicStats.filesWithMatches}`);
-    console.log(`   Average match depth: ${basicStats.averageMatchDepth.toFixed(2)}`);
-    console.log(`   Cache hit rate: ${(basicStats.cacheHitRate * 100).toFixed(1)}%`);
+    console.info(`✅ Enhanced Search: ${basicStats.matchesFound} matches in ${basicStats.elapsedTime.toFixed(2)}ms`);
+    console.info(`   Files with matches: ${basicStats.filesWithMatches}`);
+    console.info(`   Average match depth: ${basicStats.averageMatchDepth.toFixed(2)}`);
+    console.info(`   Cache hit rate: ${(basicStats.cacheHitRate * 100).toFixed(1)}%`);
     
     // Demo 2: Search with patterns and filtering
-    console.log('\n📋 Demo 2: Pattern-based Search with Filtering');
+    console.info('\n📋 Demo 2: Pattern-based Search with Filtering');
     const patternStats = await searcher.streamSearch({
       query: 'interface',
       cachePath: '/Users/nolarose/Projects/.cache',
@@ -617,12 +617,12 @@ export async function demonstrateEnhancedStreaming(): Promise<void> {
       excludePatterns: ['node_modules/*', '*.min.js'],
       caseSensitive: false,
       contextLines: 2,
-      onProgress: (stats) => console.log(`   Pattern search: ${stats.matchesFound} matches`)
+      onProgress: (stats) => console.info(`   Pattern search: ${stats.matchesFound} matches`)
     });
-    console.log(`✅ Pattern Search: ${patternStats.matchesFound} matches in ${patternStats.elapsedTime.toFixed(2)}ms`);
+    console.info(`✅ Pattern Search: ${patternStats.matchesFound} matches in ${patternStats.elapsedTime.toFixed(2)}ms`);
     
     // Demo 3: Network streaming
-    console.log('\n📋 Demo 3: Network-to-Process Streaming');
+    console.info('\n📋 Demo 3: Network-to-Process Streaming');
     try {
       const networkStats = await searcher.networkStreamSearch(
         'https://bun.sh/docs/llms.txt',
@@ -630,29 +630,29 @@ export async function demonstrateEnhancedStreaming(): Promise<void> {
         {
           timeout: 10000,
           headers: { 'User-Agent': 'Enhanced-Zen-Stream/2.0' },
-          onProgress: (stats) => console.log(`   Network streaming: ${stats.matchesFound} matches`)
+          onProgress: (stats) => console.info(`   Network streaming: ${stats.matchesFound} matches`)
         }
       );
-      console.log(`✅ Network Search: ${networkStats.matchesFound} matches in ${networkStats.elapsedTime.toFixed(2)}ms`);
+      console.info(`✅ Network Search: ${networkStats.matchesFound} matches in ${networkStats.elapsedTime.toFixed(2)}ms`);
     } catch (error) {
-      console.log(`⚠️ Network search failed (expected in some environments): ${error.message}`);
+      console.info(`⚠️ Network search failed (expected in some environments): ${error.message}`);
     }
     
     // Demo 4: Performance analytics
-    console.log('\n📋 Demo 4: Performance Analytics');
+    console.info('\n📋 Demo 4: Performance Analytics');
     const analytics = searcher.getPerformanceAnalytics();
-    console.log(`   Average Memory: ${(analytics.averageMemory / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`   Average Throughput: ${analytics.averageThroughput.toFixed(2)} matches/sec`);
-    console.log(`   Cache Efficiency: ${(analytics.cacheEfficiency * 100).toFixed(1)}%`);
+    console.info(`   Average Memory: ${(analytics.averageMemory / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`   Average Throughput: ${analytics.averageThroughput.toFixed(2)} matches/sec`);
+    console.info(`   Cache Efficiency: ${(analytics.cacheEfficiency * 100).toFixed(1)}%`);
     
     // Demo 5: PTY search with colors
-    console.log('\n📋 Demo 5: Enhanced PTY Search with Colors');
+    console.info('\n📋 Demo 5: Enhanced PTY Search with Colors');
     await searcher.ptySearch('ReadableStream', '/Users/nolarose/Projects/.cache', {
       colors: true,
       context: 1
     });
     
-    console.log('\n🎉 All enhanced streaming demos completed successfully!');
+    console.info('\n🎉 All enhanced streaming demos completed successfully!');
     
   } catch (error) {
     console.error('❌ Enhanced streaming demo failed:', error);

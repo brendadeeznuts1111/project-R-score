@@ -26,9 +26,9 @@ class DuoPlusCLI {
     const proxyPassword = this.getArgValue(args, '--proxy-password=') || 'default_pass';
     const teamId = this.getArgValue(args, '--team-id=');
 
-    console.log(`🚀 Deploying ${count} ${platform} agents...`);
-    console.log(`   Warming period: ${warmingDays} days`);
-    console.log(`   Team ID: ${teamId || 'default'}`);
+    console.info(`🚀 Deploying ${count} ${platform} agents...`);
+    console.info(`   Warming period: ${warmingDays} days`);
+    console.info(`   Team ID: ${teamId || 'default'}`);
 
     try {
       // Test connection first
@@ -54,10 +54,10 @@ class DuoPlusCLI {
 
       const matrix = await automation.setupAccountMatrix(config);
       
-      console.log('✅ Matrix deployment complete!');
-      console.log(`   📱 ${matrix.phones.length} Cloud Phones`);
-      console.log(`   📞 ${matrix.numbers.length} Cloud Numbers`);
-      console.log(`   🔥 ${matrix.warmingTasks.length} Warming Tasks`);
+      console.info('✅ Matrix deployment complete!');
+      console.info(`   📱 ${matrix.phones.length} Cloud Phones`);
+      console.info(`   📞 ${matrix.numbers.length} Cloud Numbers`);
+      console.info(`   🔥 ${matrix.warmingTasks.length} Warming Tasks`);
 
     } catch (error) {
       console.error('❌ Deployment failed:', error instanceof Error ? error.message : String(error));
@@ -74,19 +74,19 @@ class DuoPlusCLI {
       const usage = await this.sdk.getUsageStats('month');
 
       if (format === 'json') {
-        console.log(JSON.stringify({ teamStats: stats, usage }, null, 2));
+        console.info(JSON.stringify({ teamStats: stats, usage }, null, 2));
       } else {
-        console.log('📊 DuoPlus Team Health Report');
-        console.log('==============================');
-        console.log(`👥 Members: ${stats.activeMembers}/${stats.totalMembers} active`);
-        console.log(`📱 Phones: ${stats.assignedPhones}/${stats.totalPhones} assigned`);
-        console.log(`🔥 Workflows: ${stats.activeWorkflows} running`);
-        console.log(`💰 Monthly Cost: $${stats.monthlyCost}`);
-        console.log('');
-        console.log('📈 Usage Statistics (Last 30 Days):');
-        console.log(`   Phones: ${usage.phones.active}/${usage.phones.total} active`);
-        console.log(`   RPA Tasks: ${usage.rpa.tasksCompleted}/${usage.rpa.tasksCreated} completed`);
-        console.log(`   Success Rate: ${Math.round(usage.rpa.successRate * 100)}%`);
+        console.info('📊 DuoPlus Team Health Report');
+        console.info('==============================');
+        console.info(`👥 Members: ${stats.activeMembers}/${stats.totalMembers} active`);
+        console.info(`📱 Phones: ${stats.assignedPhones}/${stats.totalPhones} assigned`);
+        console.info(`🔥 Workflows: ${stats.activeWorkflows} running`);
+        console.info(`💰 Monthly Cost: $${stats.monthlyCost}`);
+        console.info('');
+        console.info('📈 Usage Statistics (Last 30 Days):');
+        console.info(`   Phones: ${usage.phones.active}/${usage.phones.total} active`);
+        console.info(`   RPA Tasks: ${usage.rpa.tasksCompleted}/${usage.rpa.tasksCreated} completed`);
+        console.info(`   Success Rate: ${Math.round(usage.rpa.successRate * 100)}%`);
       }
     } catch (error) {
       console.error('❌ Health check failed:', error instanceof Error ? error.message : String(error));
@@ -105,7 +105,7 @@ class DuoPlusCLI {
     }
 
     try {
-      console.log(`📤 Distributing file: ${filePath}`);
+      console.info(`📤 Distributing file: ${filePath}`);
       
       // Read file
       const file = Bun.file(filePath);
@@ -127,7 +127,7 @@ class DuoPlusCLI {
       const phones = await this.sdk.phones.listPhones({ teamId });
       const phoneIds = phones.map(p => p.id);
 
-      console.log(`📱 Found ${phoneIds.length} phones in team`);
+      console.info(`📱 Found ${phoneIds.length} phones in team`);
 
       // Distribute to phones
       const batchResult = await this.sdk.batch.batchPushFiles({
@@ -137,12 +137,12 @@ class DuoPlusCLI {
         destinationPath: '/sdcard/Download/'
       });
 
-      console.log('✅ File distribution complete!');
-      console.log(`   File ID: ${fileId}`);
-      console.log(`   Phones: ${batchResult.succeeded}/${batchResult.total} successful`);
+      console.info('✅ File distribution complete!');
+      console.info(`   File ID: ${fileId}`);
+      console.info(`   Phones: ${batchResult.succeeded}/${batchResult.total} successful`);
       
       if (batchResult.failed > 0) {
-        console.log(`   Failed: ${batchResult.failed} phones`);
+        console.info(`   Failed: ${batchResult.failed} phones`);
       }
 
     } catch (error) {
@@ -157,7 +157,7 @@ class DuoPlusCLI {
     const outputFile = this.getArgValue(args, '--output=');
 
     try {
-      console.log(`📱 Getting verification codes for ${service}...`);
+      console.info(`📱 Getting verification codes for ${service}...`);
 
       // Get team phones and numbers
       const phones = await this.sdk.phones.listPhones({ teamId });
@@ -174,15 +174,15 @@ class DuoPlusCLI {
       const results = await this.sdk.getVerificationCodes(phoneNumbers, service);
       const validCodes = results.filter(r => r.code !== null);
 
-      console.log(`✅ Found ${validCodes.length} verification codes`);
+      console.info(`✅ Found ${validCodes.length} verification codes`);
 
       if (outputFile) {
         await Bun.write(outputFile, JSON.stringify(results, null, 2));
-        console.log(`📁 Results saved to: ${outputFile}`);
+        console.info(`📁 Results saved to: ${outputFile}`);
       } else {
-        console.log('📋 Verification Codes:');
+        console.info('📋 Verification Codes:');
         validCodes.forEach(result => {
-          console.log(`   ${result.phoneNumber}: ${result.code}`);
+          console.info(`   ${result.phoneNumber}: ${result.code}`);
         });
       }
 
@@ -198,17 +198,17 @@ class DuoPlusCLI {
     const autoRenew = args.includes('--auto-renew');
 
     try {
-      console.log(`🔄 Renewing phones expiring within ${daysUntilExpiry} days...`);
+      console.info(`🔄 Renewing phones expiring within ${daysUntilExpiry} days...`);
 
       const result = await this.sdk.bulkRenewExpiringPhones(daysUntilExpiry);
 
-      console.log('✅ Renewal complete!');
-      console.log(`   Renewed: ${result.renewed} phones`);
-      console.log(`   Failed: ${result.failed} phones`);
-      console.log(`   Total: ${result.total} phones`);
+      console.info('✅ Renewal complete!');
+      console.info(`   Renewed: ${result.renewed} phones`);
+      console.info(`   Failed: ${result.failed} phones`);
+      console.info(`   Total: ${result.total} phones`);
 
       if (result.failed > 0) {
-        console.log('⚠️  Some phones failed to renew. Check the dashboard for details.');
+        console.info('⚠️  Some phones failed to renew. Check the dashboard for details.');
       }
 
     } catch (error) {
@@ -219,44 +219,44 @@ class DuoPlusCLI {
 
   async status(args: string[]): Promise<void> {
     try {
-      console.log('🔍 DuoPlus System Status');
-      console.log('=========================');
+      console.info('🔍 DuoPlus System Status');
+      console.info('=========================');
 
       // Test API connection
       const connection = await this.sdk.testConnection();
-      console.log(`API Connection: ${connection.success ? '✅ Connected' : '❌ Failed'}`);
+      console.info(`API Connection: ${connection.success ? '✅ Connected' : '❌ Failed'}`);
       
       if (connection.success) {
-        console.log(`Account: ${connection.accountInfo.email}`);
-        console.log(`Plan: ${connection.accountInfo.plan}`);
-        console.log(`Credits: ${connection.accountInfo.credits}`);
+        console.info(`Account: ${connection.accountInfo.email}`);
+        console.info(`Plan: ${connection.accountInfo.plan}`);
+        console.info(`Credits: ${connection.accountInfo.credits}`);
       }
 
       // System status
       const systemStatus = await this.sdk.getSystemStatus();
-      console.log(`System Status: ${systemStatus.status}`);
+      console.info(`System Status: ${systemStatus.status}`);
       
-      console.log('');
-      console.log('Services:');
+      console.info('');
+      console.info('Services:');
       Object.entries(systemStatus.services).forEach(([service, status]) => {
         const icon = status === 'operational' ? '✅' : '⚠️';
-        console.log(`   ${icon} ${service}: ${status}`);
+        console.info(`   ${icon} ${service}: ${status}`);
       });
 
       // Check system keychain status
-      console.log('');
-      console.log('🔐 Security Status:');
+      console.info('');
+      console.info('🔐 Security Status:');
       const keychainInfo = await this.secretManager.getSystemKeychainInfo();
-      console.log(`   System Keychain: ${keychainInfo.available ? '✅ Available' : '❌ Unavailable'}`);
-      console.log(`   Service Name: ${keychainInfo.serviceName}`);
-      console.log(`   Platform: ${keychainInfo.platform}`);
+      console.info(`   System Keychain: ${keychainInfo.available ? '✅ Available' : '❌ Unavailable'}`);
+      console.info(`   Service Name: ${keychainInfo.serviceName}`);
+      console.info(`   Platform: ${keychainInfo.platform}`);
 
       if (systemStatus.announcements.length > 0) {
-        console.log('');
-        console.log('Announcements:');
+        console.info('');
+        console.info('Announcements:');
         systemStatus.announcements.forEach(ann => {
           const icon = ann.severity === 'critical' ? '🚨' : ann.severity === 'warning' ? '⚠️' : 'ℹ️';
-          console.log(`   ${icon} ${ann.title}: ${ann.message}`);
+          console.info(`   ${icon} ${ann.title}: ${ann.message}`);
         });
       }
 
@@ -281,9 +281,9 @@ class DuoPlusCLI {
     try {
       const stored = await this.secretManager.storeApiKeySecurely(apiKey, teamId);
       if (stored) {
-        console.log('✅ API key stored securely in system keychain');
+        console.info('✅ API key stored securely in system keychain');
         if (teamId) {
-          console.log(`   Team ID: ${teamId}`);
+          console.info(`   Team ID: ${teamId}`);
         }
       } else {
         console.error('❌ Failed to store API key');
@@ -306,21 +306,21 @@ class DuoPlusCLI {
       const apiKey = await this.secretManager.getApiKeySecurely(teamId);
       
       if (apiKey) {
-        console.log('✅ API key retrieved from system keychain');
+        console.info('✅ API key retrieved from system keychain');
         if (teamId) {
-          console.log(`   Team ID: ${teamId}`);
+          console.info(`   Team ID: ${teamId}`);
         }
         if (showKey) {
-          console.log(`   API Key: ${apiKey}`);
+          console.info(`   API Key: ${apiKey}`);
         } else {
-          console.log('   Use --show to display the actual key');
+          console.info('   Use --show to display the actual key');
         }
       } else {
-        console.log('❌ No API key found in system keychain');
+        console.info('❌ No API key found in system keychain');
         if (teamId) {
-          console.log(`   Team ID: ${teamId}`);
+          console.info(`   Team ID: ${teamId}`);
         }
-        console.log('   Use "store-api-key" command to store one');
+        console.info('   Use "store-api-key" command to store one');
       }
     } catch (error) {
       console.error('❌ Failed to retrieve API key:', error instanceof Error ? error.message : String(error));
@@ -337,7 +337,7 @@ class DuoPlusCLI {
 
     if (!confirm) {
       console.error('❌ --confirm flag required to delete API key');
-      console.log('   This action cannot be undone');
+      console.info('   This action cannot be undone');
       process.exit(1);
     }
 
@@ -345,14 +345,14 @@ class DuoPlusCLI {
       const deleted = await this.secretManager.deleteApiKeySecurely(teamId);
       
       if (deleted) {
-        console.log('✅ API key deleted from system keychain');
+        console.info('✅ API key deleted from system keychain');
         if (teamId) {
-          console.log(`   Team ID: ${teamId}`);
+          console.info(`   Team ID: ${teamId}`);
         }
       } else {
-        console.log('❌ No API key found to delete');
+        console.info('❌ No API key found to delete');
         if (teamId) {
-          console.log(`   Team ID: ${teamId}`);
+          console.info(`   Team ID: ${teamId}`);
         }
       }
     } catch (error) {
@@ -377,9 +377,9 @@ class DuoPlusCLI {
     try {
       const stored = await this.secretManager.storeProxyCredentialsSecurely(username, password, provider);
       if (stored) {
-        console.log('✅ Proxy credentials stored securely in system keychain');
-        console.log(`   Provider: ${provider}`);
-        console.log(`   Username: ${username}`);
+        console.info('✅ Proxy credentials stored securely in system keychain');
+        console.info(`   Provider: ${provider}`);
+        console.info(`   Username: ${username}`);
       } else {
         console.error('❌ Failed to store proxy credentials');
         process.exit(1);
@@ -396,7 +396,7 @@ class DuoPlusCLI {
   }
 
   showHelp(): void {
-    console.log(`
+    console.info(`
 🤖 DuoPlus CLI - Cloud Phone Automation Tool
 
 Usage: bun run duoplus-cli.ts <command> [options]

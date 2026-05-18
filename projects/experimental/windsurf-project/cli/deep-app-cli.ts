@@ -54,8 +54,8 @@ async function main() {
   const system = new EnhancedPhoneIntelligenceSystem({ timeout, retry, realCashApp, mockMode });
 
   if (cmd === COMMANDS.BUILD) {
-    console.log(`🚀 DCE Build (--feature=PREMIUM)`);
-    console.log('✅ Build complete: ./bin/epcli.js [DCE: -60%]');
+    console.info(`🚀 DCE Build (--feature=PREMIUM)`);
+    console.info('✅ Build complete: ./bin/epcli.js [DCE: -60%]');
     process.exit(0);
   }
 
@@ -63,13 +63,13 @@ async function main() {
     if (!target) { console.error('❌ Error: target required for bench.'); process.exit(1); }
     const start = performance.now();
     await system.processEnhanced(target, { dryRun, mockMode, realCashApp });
-    console.log(`§Bench: ${(performance.now() - start).toFixed(2)}ms [ROI: ∞]`);
+    console.info(`§Bench: ${(performance.now() - start).toFixed(2)}ms [ROI: ∞]`);
     return;
   }
 
   if (cmd === COMMANDS.SYNC) {
-    console.log('🔄 R2 Sync: Local → Remote (SelfHealingCircuit §104)');
-    console.log('🟢 STABLE [CLICK→R2/mirror] Cycles:0');
+    console.info('🔄 R2 Sync: Local → Remote (SelfHealingCircuit §104)');
+    console.info('🟢 STABLE [CLICK→R2/mirror] Cycles:0');
     process.exit(0);
   }
 
@@ -78,16 +78,16 @@ async function main() {
       ? await runSwarm(target || 'phones.txt', system, { dryRun, swarmSize, mockMode })
       : [await system.processEnhanced(target!, { dryRun, mockMode, realCashApp })];
 
-    if (hyper && results[0]) console.log(createHyperAudit(results[0]));
+    if (hyper && results[0]) console.info(createHyperAudit(results[0]));
     
     if (cmd === COMMANDS.GRAPH) {
       const res = results[0];
-      console.log('digraph G {');
-      console.log(`  "${target}" [label="Ident:${res.autonomicState?.fingerprint}"];`);
+      console.info('digraph G {');
+      console.info(`  "${target}" [label="Ident:${res.autonomicState?.fingerprint}"];`);
       res.identityGraph.connections?.forEach((c: any) => {
-        console.log(`  "${target}" -> "${c.target}" [label="${c.type} (${c.strength})"];`);
+        console.info(`  "${target}" -> "${c.target}" [label="${c.type} (${c.strength})"];`);
       });
-      console.log('}');
+      console.info('}');
       process.exit(0);
     }
 
@@ -103,7 +103,7 @@ async function main() {
 }
 
 async function runSwarm(file: string, system: any, opts: any) {
-  console.log(`🚀 Executing Swarm (§Farm:82) for ${file} [Size: ${opts.swarmSize}]...`);
+  console.info(`🚀 Executing Swarm (§Farm:82) for ${file} [Size: ${opts.swarmSize}]...`);
   const phones = (file && file.endsWith('.txt'))
     ? (await (globalThis as any).Bun.file(file).text()).split('\n').filter(Boolean).slice(0, opts.swarmSize)
     : [file || '+15550000000'];
@@ -112,8 +112,8 @@ async function runSwarm(file: string, system: any, opts: any) {
   const results = await Promise.all(phones.map((p: string) => system.processEnhanced(p, { dryRun: true, mockMode: opts.mockMode })));
   const duration = (performance.now() - startTime) / 1000;
 
-  console.log(`✅ Swarm Complete: ${results.length} processed in ${duration.toFixed(2)}s`);
-  console.log(`📊 Throughput: ${Math.round(results.length / duration)}/sec [ROI: ∞]`);
+  console.info(`✅ Swarm Complete: ${results.length} processed in ${duration.toFixed(2)}s`);
+  console.info(`📊 Throughput: ${Math.round(results.length / duration)}/sec [ROI: ∞]`);
   return results;
 }
 
@@ -122,23 +122,23 @@ function displayOutput(result: any, autonomicV2: boolean) {
   if (!data) return;
   
   if (Array.isArray(result) && result.length > 1) {
-    console.log(`Processed ${result.length} items.`);
+    console.info(`Processed ${result.length} items.`);
     return;
   }
   
-  console.log(`Trust Score: ${data.trustScore || 0} (v2.4)`);
+  console.info(`Trust Score: ${data.trustScore || 0} (v2.4)`);
   if (data.autonomicState) {
-    console.log(`Fingerprint: ${data.autonomicState.fingerprint}`);
-    console.log(`Actions: ${data.autonomicState.actions.join(', ')}`);
+    console.info(`Fingerprint: ${data.autonomicState.fingerprint}`);
+    console.info(`Actions: ${data.autonomicState.actions.join(', ')}`);
   }
 }
 
 function displayHelp() {
-  console.log('🚀 Empire Pro CLI v2.4 - Resolver Swarm (§CLI:148)');
-  console.log('================================================');
-  console.log('Flags: --mock=low|high|full|hybrid --real-cashapp --timeout=5s --retry=3 --swarm=20 --hyper');
-  console.log('Cmds: build intel audit batch graph export pty bench sync swarm');
-  console.log('\nEx: bun run deep-app-cli.ts phones.txt swarm --mock=hybrid --real-cashapp --hyper');
+  console.info('🚀 Empire Pro CLI v2.4 - Resolver Swarm (§CLI:148)');
+  console.info('================================================');
+  console.info('Flags: --mock=low|high|full|hybrid --real-cashapp --timeout=5s --retry=3 --swarm=20 --hyper');
+  console.info('Cmds: build intel audit batch graph export pty bench sync swarm');
+  console.info('\nEx: bun run deep-app-cli.ts phones.txt swarm --mock=hybrid --real-cashapp --hyper');
 }
 
 main();

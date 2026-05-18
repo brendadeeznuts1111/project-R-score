@@ -132,7 +132,7 @@ async function updateHtmlFooter(filePath: string): Promise<boolean> {
 
     // Skip files that already have the standardized footer
     if (content.includes('FIRE22 DASHBOARD WORKER FOOTER v4.0.0-staging')) {
-      console.log(`✅ ${filePath} - Already standardized`);
+      console.info(`✅ ${filePath} - Already standardized`);
       return false;
     }
 
@@ -153,14 +153,14 @@ async function updateHtmlFooter(filePath: string): Promise<boolean> {
 </body>`
       );
     } else {
-      console.log(`⚠️ ${filePath} - No footer or body tag found, skipping`);
+      console.info(`⚠️ ${filePath} - No footer or body tag found, skipping`);
       return false;
     }
 
     // Only write if content changed
     if (updatedContent !== content) {
       await writeFile(filePath, updatedContent, 'utf-8');
-      console.log(`🔄 ${filePath} - Footer standardized`);
+      console.info(`🔄 ${filePath} - Footer standardized`);
       return true;
     }
 
@@ -172,8 +172,8 @@ async function updateHtmlFooter(filePath: string): Promise<boolean> {
 }
 
 async function standardizeFooters() {
-  console.log('🔥 Fire22 Dashboard Worker Footer Standardization');
-  console.log('═'.repeat(60));
+  console.info('🔥 Fire22 Dashboard Worker Footer Standardization');
+  console.info('═'.repeat(60));
 
   let processed = 0;
   let updated = 0;
@@ -181,19 +181,19 @@ async function standardizeFooters() {
 
   try {
     // Process priority files first
-    console.log('\n📋 Processing Priority Files:');
+    console.info('\n📋 Processing Priority Files:');
     for (const filePath of PRIORITY_FILES) {
       try {
         const result = await updateHtmlFooter(filePath);
         processed++;
         if (result) updated++;
       } catch (error) {
-        console.log(`⚠️ ${filePath} - File not found or inaccessible`);
+        console.info(`⚠️ ${filePath} - File not found or inaccessible`);
       }
     }
 
     // Process all other HTML files
-    console.log('\n📂 Processing Additional HTML Files:');
+    console.info('\n📂 Processing Additional HTML Files:');
     const allHtmlFiles = await glob('**/*.html', {
       ignore: [
         ...SKIP_PATTERNS,
@@ -211,19 +211,19 @@ async function standardizeFooters() {
     errors++;
   }
 
-  console.log('\n🎯 Standardization Complete');
-  console.log('═'.repeat(60));
-  console.log(`📊 Files processed: ${processed}`);
-  console.log(`🔄 Files updated: ${updated}`);
-  console.log(`❌ Errors: ${errors}`);
-  console.log(`✅ Success rate: ${Math.round((updated / processed) * 100)}%`);
+  console.info('\n🎯 Standardization Complete');
+  console.info('═'.repeat(60));
+  console.info(`📊 Files processed: ${processed}`);
+  console.info(`🔄 Files updated: ${updated}`);
+  console.info(`❌ Errors: ${errors}`);
+  console.info(`✅ Success rate: ${Math.round((updated / processed) * 100)}%`);
 
   if (updated > 0) {
-    console.log(
+    console.info(
       '\n🔥 All HTML footers now standardized with Fire22 Dashboard Worker v4.0.0-staging'
     );
-    console.log('📦 Package: fire22-dashboard-worker@4.0.0-staging');
-    console.log('🚀 Enhanced with Bun v1.01.04-alpha features');
+    console.info('📦 Package: fire22-dashboard-worker@4.0.0-staging');
+    console.info('🚀 Enhanced with Bun v1.01.04-alpha features');
   }
 }
 

@@ -153,7 +153,7 @@ function identifyOptimizations(report: string): Optimization[] {
  * Apply function object optimizations
  */
 async function optimizeFunctions(project: string): Promise<boolean> {
-  console.log(`  🔧 Applying function optimizations for ${project}...`);
+  console.info(`  🔧 Applying function optimizations for ${project}...`);
   
   // For clawdbot, focus on plugin system optimizations
   if (project === 'clawdbot') {
@@ -191,7 +191,7 @@ function memoizeFunction<T extends Function>(fn: T): T {
         
         if (modified) {
           writeFileSync(pluginRegistryPath, content, 'utf-8');
-          console.log(`    ✅ Added function memoization to ${pluginRegistryPath}`);
+          console.info(`    ✅ Added function memoization to ${pluginRegistryPath}`);
           return true;
         }
       } catch (error) {
@@ -246,7 +246,7 @@ export function cleanupFunction(fn: Function): void {
 }
 `;
         writeFileSync(utilsPath, cleanupCode, 'utf-8');
-        console.log(`    ✅ Created function cleanup utilities at ${utilsPath}`);
+        console.info(`    ✅ Created function cleanup utilities at ${utilsPath}`);
         return true;
       } catch (error) {
         const profilingError = handleProfilingError(
@@ -267,7 +267,7 @@ export function cleanupFunction(fn: Function): void {
  * Apply large object optimizations
  */
 async function optimizeLargeObjects(project: string): Promise<boolean> {
-  console.log(`  🔧 Applying large object optimizations for ${project}...`);
+  console.info(`  🔧 Applying large object optimizations for ${project}...`);
   
   // Create object pool utility
   const poolPath = join(ROOT_DIR, project, 'utils', 'object-pool.ts');
@@ -327,7 +327,7 @@ export class ObjectPool<T> {
 }
 `;
       writeFileSync(poolPath, poolCode, 'utf-8');
-      console.log(`    ✅ Created object pool utility at ${poolPath}`);
+      console.info(`    ✅ Created object pool utility at ${poolPath}`);
       return true;
     }
   } catch (error) {
@@ -347,7 +347,7 @@ export class ObjectPool<T> {
  * Apply GC root optimizations
  */
 async function optimizeGCRoots(project: string): Promise<boolean> {
-  console.log(`  🔧 Applying GC root optimizations for ${project}...`);
+  console.info(`  🔧 Applying GC root optimizations for ${project}...`);
   
   // Create cleanup manager
   const cleanupPath = join(ROOT_DIR, project, 'utils', 'cleanup-manager.ts');
@@ -425,7 +425,7 @@ if (typeof process !== 'undefined') {
 }
 `;
       writeFileSync(cleanupPath, cleanupCode, 'utf-8');
-      console.log(`    ✅ Created cleanup manager at ${cleanupPath}`);
+      console.info(`    ✅ Created cleanup manager at ${cleanupPath}`);
       return true;
     }
   } catch (error) {
@@ -445,29 +445,29 @@ if (typeof process !== 'undefined') {
  * Main execution
  */
 async function main() {
-  console.log('🔍 Reading bottleneck report...\n');
+  console.info('🔍 Reading bottleneck report...\n');
   
   const report = readBottleneckReport();
   if (!report) {
     process.exit(1);
   }
   
-  console.log('📊 Identifying optimizations...\n');
+  console.info('📊 Identifying optimizations...\n');
   
   const optimizations = identifyOptimizations(report);
   
   if (optimizations.length === 0) {
-    console.log('✅ No optimizations needed!');
+    console.info('✅ No optimizations needed!');
     return;
   }
   
-  console.log(`Found ${optimizations.length} optimization opportunities:\n`);
+  console.info(`Found ${optimizations.length} optimization opportunities:\n`);
   optimizations.forEach((opt, idx) => {
-    console.log(`${idx + 1}. [${opt.type}] ${opt.project}: ${opt.description}`);
-    console.log(`   Fix: ${opt.fix}\n`);
+    console.info(`${idx + 1}. [${opt.type}] ${opt.project}: ${opt.description}`);
+    console.info(`   Fix: ${opt.fix}\n`);
   });
   
-  console.log('🚀 Applying optimizations...\n');
+  console.info('🚀 Applying optimizations...\n');
   
   const results = {
     applied: 0,
@@ -484,7 +484,7 @@ async function main() {
   }
   
   for (const [project, opts] of byProject.entries()) {
-    console.log(`\n📦 Processing ${project}:`);
+    console.info(`\n📦 Processing ${project}:`);
     
     for (const opt of opts) {
       try {
@@ -520,16 +520,16 @@ async function main() {
     }
   }
   
-  console.log(`\n\n📈 Summary:`);
-  console.log(`   ✅ Applied: ${results.applied}`);
-  console.log(`   ❌ Failed: ${results.failed}`);
-  console.log(`   📊 Total: ${optimizations.length}`);
+  console.info(`\n\n📈 Summary:`);
+  console.info(`   ✅ Applied: ${results.applied}`);
+  console.info(`   ❌ Failed: ${results.failed}`);
+  console.info(`   📊 Total: ${optimizations.length}`);
   
-  console.log(`\n💡 Next steps:`);
-  console.log(`   1. Review the created utility files`);
-  console.log(`   2. Integrate them into your codebase`);
-  console.log(`   3. Re-run profile generation and analysis`);
-  console.log(`   4. Verify improvements`);
+  console.info(`\n💡 Next steps:`);
+  console.info(`   1. Review the created utility files`);
+  console.info(`   2. Integrate them into your codebase`);
+  console.info(`   3. Re-run profile generation and analysis`);
+  console.info(`   4. Verify improvements`);
 }
 
 if (import.meta.main) {

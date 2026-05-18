@@ -52,7 +52,7 @@ class DNSHealthChecker {
     }
 
     async checkAllDomains() {
-        console.log('🔍 Starting DNS health check...\n');
+        console.info('🔍 Starting DNS health check...\n');
         
         const domains = [this.primary, ...this.fallbacks];
         const results = await Promise.allSettled(
@@ -66,22 +66,22 @@ class DNSHealthChecker {
     }
 
     displayResults() {
-        console.log('📊 DNS Health Check Results:\n');
+        console.info('📊 DNS Health Check Results:\n');
         
         this.results.forEach((result, index) => {
             const status = result.success ? '✅' : '❌';
             const type = index === 0 ? 'PRIMARY' : index === 1 ? 'FALLBACK 1' : index === 2 ? 'FALLBACK 2' : 'EMERGENCY';
             
-            console.log(`${status} ${type}: ${result.domain}`);
-            console.log(`   Response Time: ${result.responseTime.toFixed(2)}ms`);
+            console.info(`${status} ${type}: ${result.domain}`);
+            console.info(`   Response Time: ${result.responseTime.toFixed(2)}ms`);
             
             if (result.success) {
-                console.log(`   IP Addresses: ${result.ips.join(', ')}`);
+                console.info(`   IP Addresses: ${result.ips.join(', ')}`);
             } else {
-                console.log(`   Error: ${result.error}`);
+                console.info(`   Error: ${result.error}`);
             }
             
-            console.log(`   Timestamp: ${result.timestamp}\n`);
+            console.info(`   Timestamp: ${result.timestamp}\n`);
         });
 
         this.showSummary();
@@ -92,22 +92,22 @@ class DNSHealthChecker {
         const failed = this.results.filter(r => !r.success);
         const avgResponseTime = successful.reduce((sum, r) => sum + r.responseTime, 0) / successful.length;
 
-        console.log('📈 Summary:');
-        console.log(`   ✓ Successful: ${successful.length}/${this.results.length}`);
-        console.log(`   ✗ Failed: ${failed.length}/${this.results.length}`);
-        console.log(`   ⚡ Average Response Time: ${avgResponseTime.toFixed(2)}ms`);
+        console.info('📈 Summary:');
+        console.info(`   ✓ Successful: ${successful.length}/${this.results.length}`);
+        console.info(`   ✗ Failed: ${failed.length}/${this.results.length}`);
+        console.info(`   ⚡ Average Response Time: ${avgResponseTime.toFixed(2)}ms`);
         
         if (failed.length > 0) {
-            console.log('\n⚠️  Recommendations:');
+            console.info('\n⚠️  Recommendations:');
             failed.forEach(result => {
-                console.log(`   - Check ${result.domain} configuration`);
+                console.info(`   - Check ${result.domain} configuration`);
             });
         }
 
         if (successful.length >= 2) {
-            console.log('\n🛡️  DNS Fallback: Ready');
+            console.info('\n🛡️  DNS Fallback: Ready');
         } else {
-            console.log('\n🚨 DNS Fallback: Critical - Less than 2 servers available');
+            console.info('\n🚨 DNS Fallback: Critical - Less than 2 servers available');
         }
     }
 

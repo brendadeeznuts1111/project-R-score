@@ -223,7 +223,7 @@ export class MarketDataRouter {
 		const profileSession = `hidden_edge_detection_l${layer}_${Date.now()}`;
 
 		if (process.env.BUN_CPU_PROF === "true") {
-			console.log(`📊 Profiling hidden edge detection for layer ${layer}`);
+			console.info(`📊 Profiling hidden edge detection for layer ${layer}`);
 		}
 
 		const startTime = performance.now();
@@ -307,7 +307,7 @@ export class MarketDataRouter {
 		edgesFound: number;
 		profileSession: string;
 	}): void {
-		console.log("📊 Detection Performance:", metrics);
+		console.info("📊 Detection Performance:", metrics);
 	}
 
 	/**
@@ -368,7 +368,7 @@ export class MarketDataRouter {
 		request: Request,
 	): boolean {
 		// In production, would perform actual WebSocket upgrade
-		console.log("WebSocket upgrade:", match.pathname.groups);
+		console.info("WebSocket upgrade:", match.pathname.groups);
 		return true;
 	}
 }

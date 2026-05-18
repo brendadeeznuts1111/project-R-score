@@ -17,11 +17,11 @@ import {
   timingSafeEqual,
 } from '../src/utils/elite-security';
 
-console.log('\n╔══════════════════════════════════════════════════════════════════╗');
-console.log('║  🔐 ELITE SECURITY MODULE BENCHMARKS                             ║');
-console.log('╠══════════════════════════════════════════════════════════════════╣');
-console.log('║  Argon2id • HMAC-SHA256 • Wyhash/xxHash • Token Generation       ║');
-console.log('╚══════════════════════════════════════════════════════════════════╝\n');
+console.info('\n╔══════════════════════════════════════════════════════════════════╗');
+console.info('║  🔐 ELITE SECURITY MODULE BENCHMARKS                             ║');
+console.info('╠══════════════════════════════════════════════════════════════════╣');
+console.info('║  Argon2id • HMAC-SHA256 • Wyhash/xxHash • Token Generation       ║');
+console.info('╚══════════════════════════════════════════════════════════════════╝\n');
 
 // Benchmark helper
 async function benchmark(name: string, fn: () => void | Promise<void>, iterations = 10000) {
@@ -33,7 +33,7 @@ async function benchmark(name: string, fn: () => void | Promise<void>, iteration
   const opsPerSecond = Math.round((iterations / elapsed) * 1000);
   const avgMs = (elapsed / iterations).toFixed(4);
   
-  console.log(`${name.padEnd(45)} ${opsPerSecond.toString().padStart(10)} ops/s  (${avgMs} ms/op)`);
+  console.info(`${name.padEnd(45)} ${opsPerSecond.toString().padStart(10)} ops/s  (${avgMs} ms/op)`);
   return opsPerSecond;
 }
 
@@ -50,8 +50,8 @@ const testData = JSON.stringify({
 // PASSWORD HASHING BENCHMARKS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('Password Hashing (Argon2id)');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('Password Hashing (Argon2id)');
+console.info('──────────────────────────────────────────────────────────────────');
 
 // Pre-hash for verify benchmarks
 const hashedPassword = await passwordManager.hash('benchmark-password-123');
@@ -68,8 +68,8 @@ await benchmark('verify password', async () => {
 // HMAC SIGNING BENCHMARKS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('\nHMAC Request Signing (SHA-256)');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('\nHMAC Request Signing (SHA-256)');
+console.info('──────────────────────────────────────────────────────────────────');
 
 const signature = signer.sign(testData);
 const { signature: tsSig, timestamp } = signer.signWithTimestamp(testData, 300);
@@ -98,8 +98,8 @@ await benchmark('generate API key', () => {
 // FAST HASHING BENCHMARKS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('\nFast Non-Cryptographic Hashing');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('\nFast Non-Cryptographic Hashing');
+console.info('──────────────────────────────────────────────────────────────────');
 
 const smallData = 'barbershop:elite:v4';
 const mediumData = 'x'.repeat(100);
@@ -141,8 +141,8 @@ await benchmark('Cache key generation', () => {
 // TOKEN GENERATION BENCHMARKS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('\nToken Generation');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('\nToken Generation');
+console.info('──────────────────────────────────────────────────────────────────');
 
 await benchmark('generate random token (32 bytes)', () => {
   EliteTokenManager.generateToken(32);
@@ -165,8 +165,8 @@ await benchmark('hash token for storage', () => {
 // TIMING-SAFE COMPARISON BENCHMARKS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('\nTiming-Safe Comparison');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('\nTiming-Safe Comparison');
+console.info('──────────────────────────────────────────────────────────────────');
 
 const str1 = 'a'.repeat(64);
 const str2 = 'a'.repeat(64);
@@ -184,21 +184,21 @@ await benchmark('different strings (64 chars)', () => {
 // THROUGHPUT SUMMARY
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('\nThroughput Summary');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('\nThroughput Summary');
+console.info('──────────────────────────────────────────────────────────────────');
 
 const start = performance.now();
 for (let i = 0; i < 1000000; i++) {
   EliteFastHash.hash(`data-${i}`);
 }
 const wyhashElapsed = performance.now() - start;
-console.log(`1M Wyhash operations`.padEnd(45) + `${Math.round(1000000 / wyhashElapsed * 1000).toString().padStart(10)} ops/s`);
+console.info(`1M Wyhash operations`.padEnd(45) + `${Math.round(1000000 / wyhashElapsed * 1000).toString().padStart(10)} ops/s`);
 
 const start2 = performance.now();
 for (let i = 0; i < 1000000; i++) {
   EliteTokenManager.generateToken(16);
 }
 const tokenElapsed = performance.now() - start2;
-console.log(`1M token generations`.padEnd(45) + `${Math.round(1000000 / tokenElapsed * 1000).toString().padStart(10)} ops/s`);
+console.info(`1M token generations`.padEnd(45) + `${Math.round(1000000 / tokenElapsed * 1000).toString().padStart(10)} ops/s`);
 
-console.log('\n✅ Security benchmarks complete!\n');
+console.info('\n✅ Security benchmarks complete!\n');

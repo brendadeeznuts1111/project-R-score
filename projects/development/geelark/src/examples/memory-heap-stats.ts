@@ -7,15 +7,15 @@
 
 import { heapStats } from "bun:jsc";
 
-console.log("🧠 JavaScript Heap Statistics Demo");
-console.log("=====================================\n");
+console.info("🧠 JavaScript Heap Statistics Demo");
+console.info("=====================================\n");
 
 // Initial heap state
-console.log("📊 Initial Heap State:");
-console.log(JSON.stringify(heapStats(), null, 2));
+console.info("📊 Initial Heap State:");
+console.info(JSON.stringify(heapStats(), null, 2));
 
 // Create some objects to see the heap grow
-console.log("\n🏗️  Creating objects to observe heap growth...");
+console.info("\n🏗️  Creating objects to observe heap growth...");
 
 const objects = [];
 for (let i = 0; i < 1000; i++) {
@@ -31,12 +31,12 @@ for (let i = 0; i < 1000; i++) {
   });
 }
 
-console.log(`✅ Created ${objects.length} objects`);
+console.info(`✅ Created ${objects.length} objects`);
 
 // Heap state after object creation
-console.log("\n📈 Heap State After Object Creation:");
+console.info("\n📈 Heap State After Object Creation:");
 const afterCreation = heapStats();
-console.log({
+console.info({
   heapSize: `${(afterCreation.heapSize / 1024 / 1024).toFixed(2)} MB`,
   heapCapacity: `${(afterCreation.heapCapacity / 1024 / 1024).toFixed(2)} MB`,
   objectCount: afterCreation.objectCount,
@@ -44,31 +44,31 @@ console.log({
 });
 
 // Show top object types
-console.log("\n🏷️  Top Object Types:");
+console.info("\n🏷️  Top Object Types:");
 const sortedTypes = Object.entries(afterCreation.objectTypeCounts)
   .sort(([, a], [, b]) => b - a)
   .slice(0, 10);
 
 sortedTypes.forEach(([type, count]) => {
-  console.log(`  ${type}: ${count}`);
+  console.info(`  ${type}: ${count}`);
 });
 
 // Force garbage collection
-console.log("\n🗑️  Forcing garbage collection...");
+console.info("\n🗑️  Forcing garbage collection...");
 const beforeGC = heapStats().heapSize;
 Bun.gc(true); // synchronous garbage collection
 const afterGC = heapStats().heapSize;
 
-console.log(`📉 Heap size reduced by: ${((beforeGC - afterGC) / 1024).toFixed(2)} KB`);
+console.info(`📉 Heap size reduced by: ${((beforeGC - afterGC) / 1024).toFixed(2)} KB`);
 
 // Clear references and GC again
-console.log("\n🧹 Clearing object references...");
+console.info("\n🧹 Clearing object references...");
 objects.length = 0;
 Bun.gc(true);
 
 const finalStats = heapStats();
-console.log("\n📋 Final Heap State:");
-console.log({
+console.info("\n📋 Final Heap State:");
+console.info({
   heapSize: `${(finalStats.heapSize / 1024 / 1024).toFixed(2)} MB`,
   heapCapacity: `${(finalStats.heapCapacity / 1024 / 1024).toFixed(2)} MB`,
   objectCount: finalStats.objectCount,
@@ -77,9 +77,9 @@ console.log({
 });
 
 // Memory usage comparison with process.memoryUsage()
-console.log("\n🔍 Process Memory Usage (Node.js compatible):");
+console.info("\n🔍 Process Memory Usage (Node.js compatible):");
 const nodeMemory = process.memoryUsage();
-console.log({
+console.info({
   rss: `${(nodeMemory.rss / 1024 / 1024).toFixed(2)} MB`,
   heapTotal: `${(nodeMemory.heapTotal / 1024 / 1024).toFixed(2)} MB`,
   heapUsed: `${(nodeMemory.heapUsed / 1024 / 1024).toFixed(2)} MB`,
@@ -87,8 +87,8 @@ console.log({
   arrayBuffers: `${(nodeMemory.arrayBuffers / 1024 / 1024).toFixed(2)} MB`
 });
 
-console.log("\n🎯 Heap Stats Demo Complete!");
-console.log("💡 Tips:");
-console.log("   - Use heapStats() for real-time memory monitoring");
-console.log("   - Use Bun.gc() to force garbage collection in development");
-console.log("   - Monitor objectCount to detect memory leaks");
+console.info("\n🎯 Heap Stats Demo Complete!");
+console.info("💡 Tips:");
+console.info("   - Use heapStats() for real-time memory monitoring");
+console.info("   - Use Bun.gc() to force garbage collection in development");
+console.info("   - Monitor objectCount to detect memory leaks");

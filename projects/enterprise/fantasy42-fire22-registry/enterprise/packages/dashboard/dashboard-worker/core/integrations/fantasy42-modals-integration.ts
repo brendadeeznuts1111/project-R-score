@@ -192,7 +192,7 @@ export class Fantasy42ModalsIntegration {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🚪 Initializing Fantasy42 Modals Integration...');
+      console.info('🚪 Initializing Fantasy42 Modals Integration...');
 
       // Detect all modals
       const modalsDetected = await this.detectModals();
@@ -209,7 +209,7 @@ export class Fantasy42ModalsIntegration {
       // Setup global modal management
       await this.setupGlobalModalManagement();
 
-      console.log('✅ Fantasy42 Modals Integration initialized');
+      console.info('✅ Fantasy42 Modals Integration initialized');
       return true;
     } catch (error) {
       console.error('❌ Failed to initialize modals integration:', error);
@@ -227,7 +227,7 @@ export class Fantasy42ModalsIntegration {
       const modal = document.getElementById(modalId);
       if (modal) {
         this.activeModals.set(modalId, modal);
-        console.log(`✅ Modal detected: ${modalId}`);
+        console.info(`✅ Modal detected: ${modalId}`);
       } else {
         console.warn(`⚠️ Modal not found: ${modalId}`);
         allDetected = false;
@@ -245,7 +245,7 @@ export class Fantasy42ModalsIntegration {
       this.setupModalObserver(modalId, modal);
     }
 
-    console.log('✅ Modal observers setup');
+    console.info('✅ Modal observers setup');
   }
 
   /**
@@ -279,7 +279,7 @@ export class Fantasy42ModalsIntegration {
    * Handle modal open event
    */
   private async handleModalOpen(modalId: string, modal: HTMLElement): Promise<void> {
-    console.log(`📂 Modal opened: ${modalId}`);
+    console.info(`📂 Modal opened: ${modalId}`);
 
     // Apply enhancements for this modal
     await this.applyModalEnhancements(modalId, modal);
@@ -295,7 +295,7 @@ export class Fantasy42ModalsIntegration {
    * Handle modal close event
    */
   private async handleModalClose(modalId: string, modal: HTMLElement): Promise<void> {
-    console.log(`📂 Modal closed: ${modalId}`);
+    console.info(`📂 Modal closed: ${modalId}`);
 
     // Cleanup enhancements
     await this.cleanupModalEnhancements(modalId, modal);
@@ -350,7 +350,7 @@ export class Fantasy42ModalsIntegration {
         await this.applyPasswordStrength(modalId, modal);
         break;
       default:
-        console.log(`Unknown enhancement feature: ${feature}`);
+        console.info(`Unknown enhancement feature: ${feature}`);
     }
   }
 
@@ -567,7 +567,7 @@ export class Fantasy42ModalsIntegration {
 
   // Implementation methods for various features
   private async checkPlayerPropStatus(): Promise<void> {
-    console.log('🔍 Checking player Prop Builder status...');
+    console.info('🔍 Checking player Prop Builder status...');
     // Implementation for checking player status
   }
 
@@ -577,39 +577,39 @@ export class Fantasy42ModalsIntegration {
 
     if (query.length < 3) return;
 
-    console.log(`🔍 Searching for players: ${query}`);
+    console.info(`🔍 Searching for players: ${query}`);
     // Implementation for player search
   }
 
   private async exportTableData(table: HTMLTableElement): Promise<void> {
-    console.log('📊 Exporting table data...');
+    console.info('📊 Exporting table data...');
     // Implementation for table data export
   }
 
   private async enableBulkEdit(table: HTMLTableElement): Promise<void> {
-    console.log('✏️ Enabling bulk edit mode...');
+    console.info('✏️ Enabling bulk edit mode...');
     // Implementation for bulk edit functionality
   }
 
   private async validateTableLimits(table: HTMLTableElement): Promise<void> {
-    console.log('✅ Validating table limits...');
+    console.info('✅ Validating table limits...');
     // Implementation for limit validation
   }
 
   private async showTableView(): Promise<void> {
-    console.log('📊 Showing table view');
+    console.info('📊 Showing table view');
   }
 
   private async showChartView(): Promise<void> {
-    console.log('📈 Showing chart view');
+    console.info('📈 Showing chart view');
   }
 
   private async showStatsView(): Promise<void> {
-    console.log('📈 Showing statistics view');
+    console.info('📈 Showing statistics view');
   }
 
   private async calculatePayout(): Promise<void> {
-    console.log('💰 Calculating payout...');
+    console.info('💰 Calculating payout...');
     // Implementation for payout calculation
   }
 
@@ -617,13 +617,13 @@ export class Fantasy42ModalsIntegration {
     const button = event.target as HTMLElement;
     const sport = button.getAttribute('data-section-in');
 
-    console.log(`🏈 Switching to sport: ${sport}`);
+    console.info(`🏈 Switching to sport: ${sport}`);
     // Implementation for sport change handling
   }
 
   private addSportPresets(modal: HTMLElement): void {
     // Add preset configurations for each sport
-    console.log('⚙️ Adding sport presets...');
+    console.info('⚙️ Adding sport presets...');
   }
 
   private async validatePasswordStrength(event: Event): Promise<void> {
@@ -679,7 +679,7 @@ export class Fantasy42ModalsIntegration {
 
   private setModalOpen(modalId: string, isOpen: boolean): void {
     // Track modal state
-    console.log(`📂 Modal ${modalId} ${isOpen ? 'opened' : 'closed'}`);
+    console.info(`📂 Modal ${modalId} ${isOpen ? 'opened' : 'closed'}`);
   }
 
   private async executeModalOpenLogic(modalId: string, modal: HTMLElement): Promise<void> {
@@ -699,12 +699,12 @@ export class Fantasy42ModalsIntegration {
 
   private async executeModalCloseLogic(modalId: string, modal: HTMLElement): Promise<void> {
     // Execute modal-specific close logic
-    console.log(`📂 Executing close logic for ${modalId}`);
+    console.info(`📂 Executing close logic for ${modalId}`);
   }
 
   private async cleanupModalEnhancements(modalId: string, modal: HTMLElement): Promise<void> {
     // Cleanup enhancements when modal closes
-    console.log(`🧹 Cleaning up enhancements for ${modalId}`);
+    console.info(`🧹 Cleaning up enhancements for ${modalId}`);
   }
 
   private async initializeModalEnhancements(): Promise<void> {
@@ -718,20 +718,20 @@ export class Fantasy42ModalsIntegration {
 
   private async setupGlobalModalManagement(): Promise<void> {
     // Setup global modal management features
-    console.log('🎛️ Global modal management setup');
+    console.info('🎛️ Global modal management setup');
   }
 
   // Data loading methods
   private async loadTeaserConfiguration(): Promise<void> {
-    console.log('🎯 Loading teaser configuration...');
+    console.info('🎯 Loading teaser configuration...');
   }
 
   private async loadParlayConfiguration(): Promise<void> {
-    console.log('🎲 Loading parlay configuration...');
+    console.info('🎲 Loading parlay configuration...');
   }
 
   private async loadPointBuyingConfiguration(): Promise<void> {
-    console.log('🏈 Loading point buying configuration...');
+    console.info('🏈 Loading point buying configuration...');
   }
 
   /**
@@ -788,14 +788,14 @@ export class Fantasy42ModalsIntegration {
     // Disconnect all observers
     this.modalObservers.forEach((observer, modalId) => {
       observer.disconnect();
-      console.log(`Observer disconnected for modal: ${modalId}`);
+      console.info(`Observer disconnected for modal: ${modalId}`);
     });
     this.modalObservers.clear();
 
     // Clear active modals
     this.activeModals.clear();
 
-    console.log('🧹 Fantasy42 Modals Integration cleaned up');
+    console.info('🧹 Fantasy42 Modals Integration cleaned up');
   }
 }
 

@@ -235,111 +235,111 @@ function demonstrateTypeScript(): void {
   };
 
   // Type-safe function calls
-  console.log('🔧 TypeScript Configuration:');
-  console.log(`   Domain: ${config.domain}`);
-  console.log(`   Environment: ${config.environment}`);
-  console.log(`   Analytics: ${config.features.analytics ? '✅' : '❌'}`);
-  console.log(`   Caching: ${config.features.caching ? '✅' : '❌'}`);
-  console.log(`   Monitoring: ${config.features.monitoring ? '✅' : '❌'}`);
+  console.info('🔧 TypeScript Configuration:');
+  console.info(`   Domain: ${config.domain}`);
+  console.info(`   Environment: ${config.environment}`);
+  console.info(`   Analytics: ${config.features.analytics ? '✅' : '❌'}`);
+  console.info(`   Caching: ${config.features.caching ? '✅' : '❌'}`);
+  console.info(`   Monitoring: ${config.features.monitoring ? '✅' : '❌'}`);
 }
 
 // Main demonstration function
 async function main(): Promise<void> {
-  console.log('🚀 Crystal Clear Architecture - Cross-Platform Demo');
-  console.log('!==!==!==!==!==!==!==!==!=====');
-  console.log('');
+  console.info('🚀 Crystal Clear Architecture - Cross-Platform Demo');
+  console.info('!==!==!==!==!==!==!==!==!=====');
+  console.info('');
 
   // 1. System Information
-  console.log('1️⃣ System Information');
-  console.log('!==!==!==!==');
+  console.info('1️⃣ System Information');
+  console.info('!==!==!==!==');
 
   const systemInfo = await getSystemInfo();
-  console.log(`   Platform: ${systemInfo.platform}`);
-  console.log(`   Architecture: ${systemInfo.arch}`);
-  console.log(`   Hostname: ${systemInfo.hostname}`);
-  console.log(`   Node Version: ${systemInfo.nodeVersion}`);
-  console.log(`   Bun Version: ${systemInfo.bunVersion}`);
-  console.log(`   Uptime: ${systemInfo.uptime}s`);
-  console.log('');
+  console.info(`   Platform: ${systemInfo.platform}`);
+  console.info(`   Architecture: ${systemInfo.arch}`);
+  console.info(`   Hostname: ${systemInfo.hostname}`);
+  console.info(`   Node Version: ${systemInfo.nodeVersion}`);
+  console.info(`   Bun Version: ${systemInfo.bunVersion}`);
+  console.info(`   Uptime: ${systemInfo.uptime}s`);
+  console.info('');
 
   // 2. File Operations
-  console.log('2️⃣ File Operations (Cross-Platform)');
-  console.log('!==!==!==!==!==!==!==');
+  console.info('2️⃣ File Operations (Cross-Platform)');
+  console.info('!==!==!==!==!==!==!==');
 
   const fileResults = await demonstrateFileOperations();
   fileResults.forEach((result, index) => {
     const status = result.success ? '✅' : '❌';
-    console.log(`   ${index + 1}. ${status} ${result.operation}: ${result.path}`);
+    console.info(`   ${index + 1}. ${status} ${result.operation}: ${result.path}`);
     if (result.size) {
-      console.log(`      Size: ${result.size} bytes`);
+      console.info(`      Size: ${result.size} bytes`);
     }
     if (result.error) {
-      console.log(`      Error: ${result.error}`);
+      console.info(`      Error: ${result.error}`);
     }
   });
-  console.log('');
+  console.info('');
 
   // 3. Network Testing
-  console.log('3️⃣ Network Connectivity');
-  console.log('!==!==!==!=====');
+  console.info('3️⃣ Network Connectivity');
+  console.info('!==!==!==!=====');
 
   const networkTests = await testNetworkConnectivity();
   networkTests.forEach((test, index) => {
     const status = test.success ? '✅' : '❌';
-    console.log(`   ${index + 1}. ${status} ${test.url}`);
-    console.log(`      Status: ${test.status}`);
-    console.log(`      Response Time: ${test.responseTime}ms`);
+    console.info(`   ${index + 1}. ${status} ${test.url}`);
+    console.info(`      Status: ${test.status}`);
+    console.info(`      Response Time: ${test.responseTime}ms`);
   });
-  console.log('');
+  console.info('');
 
   // 4. TypeScript Demonstration
-  console.log('4️⃣ TypeScript Features');
-  console.log('!==!==!==!====');
+  console.info('4️⃣ TypeScript Features');
+  console.info('!==!==!==!====');
   demonstrateTypeScript();
-  console.log('');
+  console.info('');
 
   // 5. Performance Metrics
-  console.log('5️⃣ Performance Summary');
-  console.log('!==!==!==!====');
+  console.info('5️⃣ Performance Summary');
+  console.info('!==!==!==!====');
 
   const successfulFiles = fileResults.filter(r => r.success).length;
   const successfulNetwork = networkTests.filter(t => t.success).length;
 
-  console.log(`   File Operations: ${successfulFiles}/${fileResults.length} successful`);
-  console.log(`   Network Tests: ${successfulNetwork}/${networkTests.length} successful`);
-  console.log(`   Platform: ${systemInfo.platform} (✅ Cross-platform)`);
-  console.log(`   TypeScript: ✅ Full support with autocomplete`);
-  console.log(`   Execution Time: Instant startup ⚡`);
-  console.log('');
+  console.info(`   File Operations: ${successfulFiles}/${fileResults.length} successful`);
+  console.info(`   Network Tests: ${successfulNetwork}/${networkTests.length} successful`);
+  console.info(`   Platform: ${systemInfo.platform} (✅ Cross-platform)`);
+  console.info(`   TypeScript: ✅ Full support with autocomplete`);
+  console.info(`   Execution Time: Instant startup ⚡`);
+  console.info('');
 
   // 6. Platform-specific notes
-  console.log('6️⃣ Platform-Specific Features');
-  console.log('!==!==!==!==!=====');
+  console.info('6️⃣ Platform-Specific Features');
+  console.info('!==!==!==!==!=====');
 
   if (systemInfo.platform === 'win32') {
-    console.log('   ✅ Windows: Full PowerShell/cmd compatibility');
-    console.log('   ✅ Windows: Automatic path handling');
-    console.log('   ✅ Windows: Native file operations');
+    console.info('   ✅ Windows: Full PowerShell/cmd compatibility');
+    console.info('   ✅ Windows: Automatic path handling');
+    console.info('   ✅ Windows: Native file operations');
   } else if (systemInfo.platform === 'darwin') {
-    console.log('   ✅ macOS: Full bash/zsh compatibility');
-    console.log('   ✅ macOS: Homebrew integration');
-    console.log('   ✅ macOS: Native macOS commands');
+    console.info('   ✅ macOS: Full bash/zsh compatibility');
+    console.info('   ✅ macOS: Homebrew integration');
+    console.info('   ✅ macOS: Native macOS commands');
   } else {
-    console.log('   ✅ Linux: Full bash compatibility');
-    console.log('   ✅ Linux: Systemd integration');
-    console.log('   ✅ Linux: Native Linux commands');
+    console.info('   ✅ Linux: Full bash compatibility');
+    console.info('   ✅ Linux: Systemd integration');
+    console.info('   ✅ Linux: Native Linux commands');
   }
-  console.log('');
+  console.info('');
 
-  console.log('🎉 Demo Complete!');
-  console.log('!==!==!====');
-  console.log('');
-  console.log('✅ Cross-platform: Works on Windows, Mac, and Linux');
-  console.log('✅ Type-safe: Full TypeScript support with autocomplete');
-  console.log('✅ Maintainable: Clean, readable code structure');
-  console.log('✅ Performant: Instant startup, native execution');
-  console.log('');
-  console.log('🚀 This demonstrates modern developer tooling excellence!');
+  console.info('🎉 Demo Complete!');
+  console.info('!==!==!====');
+  console.info('');
+  console.info('✅ Cross-platform: Works on Windows, Mac, and Linux');
+  console.info('✅ Type-safe: Full TypeScript support with autocomplete');
+  console.info('✅ Maintainable: Clean, readable code structure');
+  console.info('✅ Performant: Instant startup, native execution');
+  console.info('');
+  console.info('🚀 This demonstrates modern developer tooling excellence!');
 }
 
 // Handle command line arguments
@@ -353,21 +353,21 @@ switch (command) {
 
   case 'system':
     const systemInfo = await getSystemInfo();
-    console.log(JSON.stringify(systemInfo, null, 2));
+    console.info(JSON.stringify(systemInfo, null, 2));
     break;
 
   case 'files':
     const fileResults = await demonstrateFileOperations();
-    console.log(JSON.stringify(fileResults, null, 2));
+    console.info(JSON.stringify(fileResults, null, 2));
     break;
 
   case 'network':
     const networkTests = await testNetworkConnectivity();
-    console.log(JSON.stringify(networkTests, null, 2));
+    console.info(JSON.stringify(networkTests, null, 2));
     break;
 
   case 'help':
-    console.log(`
+    console.info(`
 🚀 Cross-Platform Demo Script
 
 Usage:
@@ -388,8 +388,8 @@ Examples:
     break;
 
   default:
-    console.log(`Unknown command: ${command}`);
-    console.log('Run with --help for usage information');
+    console.info(`Unknown command: ${command}`);
+    console.info('Run with --help for usage information');
     process.exit(1);
 }
 

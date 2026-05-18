@@ -28,7 +28,7 @@ for (let i = 0; i < args.length; i++) {
 const months = options.months || 6;
 const bookie = options.bookie || 'pinnacle';
 
-console.log(`📊 Backfilling ${months} months of data for ${bookie}...`);
+console.info(`📊 Backfilling ${months} months of data for ${bookie}...`);
 
 const r2Loader = new R2Loader({
 	accountId: process.env.R2_ACCOUNT_ID || '',
@@ -43,8 +43,8 @@ startDate.setMonth(startDate.getMonth() - months);
 
 const ticks = await r2Loader.loadHistorical('nfl-spread', bookie, startDate, endDate);
 
-console.log(`✅ Loaded ${ticks.length} ticks from R2`);
-console.log(`📅 Date range: ${startDate.toISOString()} → ${endDate.toISOString()}`);
+console.info(`✅ Loaded ${ticks.length} ticks from R2`);
+console.info(`📅 Date range: ${startDate.toISOString()} → ${endDate.toISOString()}`);
 
 
 

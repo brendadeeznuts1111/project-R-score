@@ -70,7 +70,7 @@ export class HookRegistry {
    * Adaptive: Auto-register hooks based on rules/skills/workflows
    */
   async discoverAndRegisterHooks(): Promise<void> {
-    console.log('🔍 Discovering adaptive hooks...');
+    console.info('🔍 Discovering adaptive hooks...');
     
     const ruleHooks = await this.extractHooksFromRules();
     const skillHooks = await this.extractHooksFromSkills();
@@ -82,7 +82,7 @@ export class HookRegistry {
       this.register(hook);
     }
     
-    console.log(`✅ Discovered and registered ${allHooks.length} adaptive hooks`);
+    console.info(`✅ Discovered and registered ${allHooks.length} adaptive hooks`);
   }
 
   /**
@@ -101,7 +101,7 @@ export class HookRegistry {
     // Sort by priority (higher first)
     hooks.sort((a, b) => b.priority - a.priority);
     
-    console.log(`🪝 Registered hook: ${hook.id} (priority: ${hook.priority})`);
+    console.info(`🪝 Registered hook: ${hook.id} (priority: ${hook.priority})`);
   }
 
   /**
@@ -181,7 +181,7 @@ export class HookRegistry {
     });
     
     this.hooks.set(operation, sorted);
-    console.log(`⚡ Optimized hook order for ${operation}`);
+    console.info(`⚡ Optimized hook order for ${operation}`);
   }
 
   /**
@@ -365,7 +365,7 @@ export class HookRegistry {
         priority: 60,
         handler: async (context) => {
           // Record workflow execution for audit
-          console.log(`📝 Workflow executed: ${context.operation}`);
+          console.info(`📝 Workflow executed: ${context.operation}`);
         },
         metadata: {
           createdBy: 'workflow-extractor',

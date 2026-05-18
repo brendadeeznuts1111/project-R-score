@@ -15,13 +15,13 @@ import { UDPRealtimeService } from "../../../../lib/udp/udp-realtime-service";
 import { CircuitState } from "../../../../lib/core/circuit-breaker";
 
 function section(n: number, title: string) {
-  console.log(`\n${"=".repeat(70)}`);
-  console.log(`  Section ${n}: ${title}`);
-  console.log("=".repeat(70));
+  console.info(`\n${"=".repeat(70)}`);
+  console.info(`  Section ${n}: ${title}`);
+  console.info("=".repeat(70));
 }
 
 async function main() {
-  console.log("UDP Realtime Service Demo\n");
+  console.info("UDP Realtime Service Demo\n");
 
   // ------------------------------------------------------------------
   // Section 1: Basic UDP send/receive
@@ -40,10 +40,10 @@ async function main() {
   sender.send("hello from sender", receiver.port!, "127.0.0.1");
   await Bun.sleep(50);
 
-  console.log(`  Sender port:   ${sender.port}`);
-  console.log(`  Receiver port: ${receiver.port}`);
-  console.log(`  Received:      ${received.length} packet(s) — "${received[0] ?? "(none)"}"`);
-  console.log(`  Metrics:       sent=${sender.getMetrics().packetsSent}, recv=${receiver.getMetrics().packetsReceived}`);
+  console.info(`  Sender port:   ${sender.port}`);
+  console.info(`  Receiver port: ${receiver.port}`);
+  console.info(`  Received:      ${received.length} packet(s) — "${received[0] ?? "(none)"}"`);
+  console.info(`  Metrics:       sent=${sender.getMetrics().packetsSent}, recv=${receiver.getMetrics().packetsReceived}`);
 
   sender.close();
   receiver.close();
@@ -65,13 +65,13 @@ async function main() {
   batchTx.scheduleSend("batch-1", batchRx.port!, "127.0.0.1");
   batchTx.scheduleSend("batch-2", batchRx.port!, "127.0.0.1");
   batchTx.scheduleSend("batch-3", batchRx.port!, "127.0.0.1");
-  console.log(`  Queued: ${batchTx.pendingBatchSize} packets`);
+  console.info(`  Queued: ${batchTx.pendingBatchSize} packets`);
 
   const flushed = batchTx.flush();
   await Bun.sleep(50);
 
-  console.log(`  Flushed: ${flushed} packets`);
-  console.log(`  Received: [${batchMsgs.join(", ")}]`);
+  console.info(`  Flushed: ${flushed} packets`);
+  console.info(`  Received: [${batchMsgs.join(", ")}]`);
 
   batchTx.close();
   batchRx.close();
@@ -97,8 +97,8 @@ async function main() {
   }
   await Bun.sleep(50);
 
-  console.log(`  Sequence IDs received: [${seqIds.join(", ")}]`);
-  console.log(`  Sender outSeq:  ${trackTx.getMetrics().sequenceId}`);
+  console.info(`  Sequence IDs received: [${seqIds.join(", ")}]`);
+  console.info(`  Sender outSeq:  ${trackTx.getMetrics().sequenceId}`);
 
   trackTx.close();
   trackRx.close();
@@ -132,9 +132,9 @@ async function main() {
 
   const peers = hbRx.getPeers();
   const hbMetrics = hbRx.getMetrics();
-  console.log(`  Peers detected: ${peers.length}`);
-  console.log(`  Heartbeats received: ${hbMetrics.heartbeatsReceived}`);
-  console.log(`  Heartbeats sent (tx): ${hbTx.getMetrics().heartbeatsSent}`);
+  console.info(`  Peers detected: ${peers.length}`);
+  console.info(`  Heartbeats received: ${hbMetrics.heartbeatsReceived}`);
+  console.info(`  Heartbeats sent (tx): ${hbTx.getMetrics().heartbeatsSent}`);
 
   hbTx.close();
   hbRx.close();
@@ -151,12 +151,12 @@ async function main() {
   shutSvc.onShutdown(() => { shutdownFired = true; });
 
   shutSvc.scheduleSend("pending-data", 4000, "10.0.0.1");
-  console.log(`  Pending before shutdown: ${shutSvc.pendingBatchSize}`);
+  console.info(`  Pending before shutdown: ${shutSvc.pendingBatchSize}`);
 
   await shutSvc.shutdown(500);
-  console.log(`  State after shutdown:    ${shutSvc.state}`);
-  console.log(`  Shutdown handler fired:  ${shutdownFired}`);
-  console.log(`  Batch flushes:           ${shutSvc.getMetrics().batchFlushes}`);
+  console.info(`  State after shutdown:    ${shutSvc.state}`);
+  console.info(`  Shutdown handler fired:  ${shutdownFired}`);
+  console.info(`  Batch flushes:           ${shutSvc.getMetrics().batchFlushes}`);
 
   // ------------------------------------------------------------------
   // Section 6: Circuit Breaker
@@ -174,64 +174,64 @@ async function main() {
   await cbSvc.bind();
 
   const breaker = cbSvc.getCircuitBreaker()!;
-  console.log(`  Breaker configured: failureThreshold=3, resetTimeoutMs=1000, successThreshold=2`);
-  console.log(`  Initial state: ${breaker.getState()}`);
+  console.info(`  Breaker configured: failureThreshold=3, resetTimeoutMs=1000, successThreshold=2`);
+  console.info(`  Initial state: ${breaker.getState()}`);
 
   // Send some successful packets (localhost won't backpressure)
   for (let i = 0; i < 3; i++) {
     cbSvc.send(`data-${i}`, 4000, "10.0.0.1");
   }
   let stats = breaker.getStats();
-  console.log(`  After 3 sends: state=${stats.state}, successes=${stats.successes}, failures=${stats.failures}`);
+  console.info(`  After 3 sends: state=${stats.state}, successes=${stats.successes}, failures=${stats.failures}`);
 
   // Force the breaker open (simulates production backpressure scenario)
-  console.log("\n  [Simulating backpressure — forcing breaker OPEN]");
+  console.info("\n  [Simulating backpressure — forcing breaker OPEN]");
   breaker.forceOpen();
-  console.log(`  State after forceOpen(): ${breaker.getState()}`);
+  console.info(`  State after forceOpen(): ${breaker.getState()}`);
 
   // Attempt to send — should be rejected
   try {
     cbSvc.send("blocked", 4000, "10.0.0.1");
-    console.log("  ERROR: send should have thrown!");
+    console.info("  ERROR: send should have thrown!");
   } catch (err: any) {
-    console.log(`  send() rejected: ${err.name}`);
+    console.info(`  send() rejected: ${err.name}`);
   }
 
   // scheduleSend should also reject
   try {
     cbSvc.scheduleSend("blocked", 4000, "10.0.0.1");
-    console.log("  ERROR: scheduleSend should have thrown!");
+    console.info("  ERROR: scheduleSend should have thrown!");
   } catch (err: any) {
-    console.log(`  scheduleSend() rejected: ${err.name}`);
+    console.info(`  scheduleSend() rejected: ${err.name}`);
   }
 
   stats = breaker.getStats();
-  console.log(`  Rejected calls: ${stats.rejectedCalls}`);
+  console.info(`  Rejected calls: ${stats.rejectedCalls}`);
 
   // Wait for resetTimeoutMs to trigger HALF_OPEN recovery
-  console.log("\n  [Waiting 1.1s for HALF_OPEN recovery window...]");
+  console.info("\n  [Waiting 1.1s for HALF_OPEN recovery window...]");
   await Bun.sleep(1100);
 
   // isOpen() should now transition to HALF_OPEN
   const stillOpen = breaker.isOpen();
-  console.log(`  isOpen() after timeout: ${stillOpen} (state=${breaker.getState()})`);
+  console.info(`  isOpen() after timeout: ${stillOpen} (state=${breaker.getState()})`);
 
   // Send successThreshold packets to close the breaker
   cbSvc.send("recovery-1", 4000, "10.0.0.1");
   cbSvc.send("recovery-2", 4000, "10.0.0.1");
 
-  console.log(`  After 2 successful sends: state=${breaker.getState()}`);
+  console.info(`  After 2 successful sends: state=${breaker.getState()}`);
 
   stats = breaker.getStats();
-  console.log(`  Final stats: total=${stats.totalCalls}, rejected=${stats.rejectedCalls}, stateChanges=${stats.stateChanges}`);
+  console.info(`  Final stats: total=${stats.totalCalls}, rejected=${stats.rejectedCalls}, stateChanges=${stats.stateChanges}`);
 
   cbSvc.close();
   breaker.destroy();
 
   // ------------------------------------------------------------------
-  console.log(`\n${"=".repeat(70)}`);
-  console.log("  All 6 sections complete.");
-  console.log("=".repeat(70));
+  console.info(`\n${"=".repeat(70)}`);
+  console.info("  All 6 sections complete.");
+  console.info("=".repeat(70));
 }
 
 main().catch(console.error);

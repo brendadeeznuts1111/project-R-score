@@ -141,9 +141,9 @@ export class IPWhitelistSystem {
     if (!this.whitelist.allowedIPs.includes(ip)) {
       this.whitelist.allowedIPs.push(ip);
       this.saveConfig();
-      console.log(`✅ Added ${ip} to whitelist`);
+      console.info(`✅ Added ${ip} to whitelist`);
     } else {
-      console.log(`ℹ️  ${ip} already in whitelist`);
+      console.info(`ℹ️  ${ip} already in whitelist`);
     }
   }
 
@@ -152,9 +152,9 @@ export class IPWhitelistSystem {
     if (index > -1) {
       this.whitelist.allowedIPs.splice(index, 1);
       this.saveConfig();
-      console.log(`✅ Removed ${ip} from whitelist`);
+      console.info(`✅ Removed ${ip} from whitelist`);
     } else {
-      console.log(`ℹ️  ${ip} not in whitelist`);
+      console.info(`ℹ️  ${ip} not in whitelist`);
     }
   }
 
@@ -162,25 +162,25 @@ export class IPWhitelistSystem {
     if (!this.whitelist.blockedIPs.includes(ip)) {
       this.whitelist.blockedIPs.push(ip);
       this.saveConfig();
-      console.log(`🚫 Added ${ip} to blocklist`);
+      console.info(`🚫 Added ${ip} to blocklist`);
     } else {
-      console.log(`ℹ️  ${ip} already blocked`);
+      console.info(`ℹ️  ${ip} already blocked`);
     }
   }
 
   listIPs(): void {
-    console.log(`📋 IP Whitelist Configuration:`);
-    console.log(`   Allowed IPs: ${this.whitelist.allowedIPs.join(', ')}`);
-    console.log(`   Blocked IPs: ${this.whitelist.blockedIPs.join(', ')}`);
-    console.log(`   VPN Required: ${this.whitelist.vpnRequired ? 'Yes' : 'No'}`);
+    console.info(`📋 IP Whitelist Configuration:`);
+    console.info(`   Allowed IPs: ${this.whitelist.allowedIPs.join(', ')}`);
+    console.info(`   Blocked IPs: ${this.whitelist.blockedIPs.join(', ')}`);
+    console.info(`   VPN Required: ${this.whitelist.vpnRequired ? 'Yes' : 'No'}`);
   }
 
   async testIP(ip: string): Promise<void> {
     const result = await this.checkIP(ip);
     if (result.allowed) {
-      console.log(`✅ ${ip} is allowed`);
+      console.info(`✅ ${ip} is allowed`);
     } else {
-      console.log(`❌ ${ip} is blocked: ${result.reason}`);
+      console.info(`❌ ${ip} is blocked: ${result.reason}`);
     }
   }
 }
@@ -191,7 +191,7 @@ async function main() {
   const ipSystem = new IPWhitelistSystem();
 
   if (args.length === 0) {
-    console.log(`🌐 IP Whitelist System v2.11
+    console.info(`🌐 IP Whitelist System v2.11
 
 USAGE:
   bun ip:add <ip>         # Add IP to whitelist
@@ -252,7 +252,7 @@ EXAMPLES:
 
       default:
         console.error(`Unknown command: ${command}`);
-        console.log('Use: bun ip --help');
+        console.info('Use: bun ip --help');
         process.exit(1);
     }
   } catch (error) {

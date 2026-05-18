@@ -85,7 +85,7 @@ export const createStatusCommand = (
           break;
       }
 
-      console.log(output);
+      console.info(output);
 
       // Open in browser if requested
       if (openBrowser) {

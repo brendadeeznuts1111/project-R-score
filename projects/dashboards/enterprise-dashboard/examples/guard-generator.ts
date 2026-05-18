@@ -337,7 +337,7 @@ export function createGuardedMatcher(pattern: string, baseUrl?: string) {
       await Bun.write(this.outputFile, code);
       console.error(`\x1b[32m✅ Generated ${this.patterns.length} guards → ${this.outputFile}\x1b[0m`);
     } else {
-      console.log(code);
+      console.info(code);
     }
 
     const high = this.patterns.filter(p => p.riskLevel === "high").length;
@@ -378,7 +378,7 @@ const TIMEOUT = getNumArg("--timeout") || 5;
 const NO_AUDIT = args.has("--no-audit");
 
 if (HELP) {
-  console.log(`
+  console.info(`
 \x1b[1m🛡️  URLPattern Guard Generator\x1b[0m
 
 \x1b[1mUSAGE:\x1b[0m

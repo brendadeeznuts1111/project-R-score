@@ -11,7 +11,7 @@ import type { WinningPlay, TickDataExtended } from '../src/types';
 const args = Bun.argv.slice(2);
 const playFile = args[0] || 'play.json';
 
-console.log(`🔍 Backworking play from ${playFile}...`);
+console.info(`🔍 Backworking play from ${playFile}...`);
 
 // Load winning play
 let winningPlay: WinningPlay;
@@ -28,7 +28,7 @@ try {
 			timestamp: Date.now() - 3600000,
 			profit: 0.042
 		};
-		console.log('⚠️  Using default play (file not found)');
+		console.info('⚠️  Using default play (file not found)');
 	}
 } catch (error) {
 	console.error('Failed to load play:', error);
@@ -41,8 +41,8 @@ const engine = new BackworkEngine(mockTicks);
 
 const result = await engine.reverseEngineer(winningPlay);
 
-console.log('\n🎯 BACKWORK RESULT:');
-console.log(JSON.stringify(result, null, 2));
+console.info('\n🎯 BACKWORK RESULT:');
+console.info(JSON.stringify(result, null, 2));
 
 
 

@@ -43,7 +43,7 @@ export class Container {
    * Initialize all dependencies
    */
   async initialize(): Promise<void> {
-    console.log('🔧 Initializing dependency container...');
+    console.info('🔧 Initializing dependency container...');
 
     // Initialize database
     const db = this.initializeDatabase();
@@ -77,7 +77,7 @@ export class Container {
 
     this.register('BetController', betController);
 
-    console.log('✅ Dependency container initialized');
+    console.info('✅ Dependency container initialized');
   }
 
   /**
@@ -110,7 +110,7 @@ export class Container {
    */
   private initializeDatabase(): SQL {
     const dbPath = process.env.DATABASE_URL || './betting_platform.db';
-    console.log(`📁 Initializing database at: ${dbPath}`);
+    console.info(`📁 Initializing database at: ${dbPath}`);
 
     const db = new SQL(dbPath);
 
@@ -124,7 +124,7 @@ export class Container {
    * Initialize database schema
    */
   private initializeSchema(db: SQL): void {
-    console.log('📋 Initializing database schema...');
+    console.info('📋 Initializing database schema...');
 
     // Create bets table
     db.run(`
@@ -187,7 +187,7 @@ export class Container {
     );
     db.run(`CREATE INDEX IF NOT EXISTS idx_ledger_posted_at ON ledger_entries(posted_at)`);
 
-    console.log('✅ Database schema initialized');
+    console.info('✅ Database schema initialized');
   }
 
   /**

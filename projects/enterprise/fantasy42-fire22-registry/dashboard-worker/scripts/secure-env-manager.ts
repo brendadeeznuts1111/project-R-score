@@ -89,13 +89,13 @@ class SecureEnvironmentManager {
    * Setup environment with secure credential management
    */
   async setupEnvironment(env: string = 'development'): Promise<void> {
-    console.log(`🚀 Fire22 Secure Environment Setup - ${env.toUpperCase()}\n`);
+    console.info(`🚀 Fire22 Secure Environment Setup - ${env.toUpperCase()}\n`);
 
     for (const config of this.environmentConfigs) {
-      console.log(`⚙️ Configuring: ${config.name}`);
-      console.log(`   Description: ${config.description}`);
-      console.log(`   Sensitive: ${config.sensitive ? '🔐 YES' : '📝 NO'}`);
-      console.log(`   Required: ${config.required ? '✅ YES' : '⚪ NO'}\n`);
+      console.info(`⚙️ Configuring: ${config.name}`);
+      console.info(`   Description: ${config.description}`);
+      console.info(`   Sensitive: ${config.sensitive ? '🔐 YES' : '📝 NO'}`);
+      console.info(`   Required: ${config.required ? '✅ YES' : '⚪ NO'}\n`);
 
       if (config.sensitive) {
         await this.handleSensitiveVariable(config, env);
@@ -103,7 +103,7 @@ class SecureEnvironmentManager {
         await this.handlePublicVariable(config, env);
       }
 
-      console.log(''); // spacing
+      console.info(''); // spacing
     }
   }
 
@@ -117,15 +117,15 @@ class SecureEnvironmentManager {
     const existing = await this.credManager.getCredential(keyName);
 
     if (existing) {
-      console.log(`✅ Found existing secure credential for ${config.name}`);
+      console.info(`✅ Found existing secure credential for ${config.name}`);
 
       // Validate if possible
       if (config.validation && !config.validation.test(existing)) {
-        console.log(`⚠️ Validation failed for ${config.name}, prompting for new value...`);
+        console.info(`⚠️ Validation failed for ${config.name}, prompting for new value...`);
         await this.promptForSensitiveValue(config, env, keyName);
       }
     } else {
-      console.log(`🔍 No existing credential found for ${config.name}`);
+      console.info(`🔍 No existing credential found for ${config.name}`);
       if (config.required) {
         await this.promptForSensitiveValue(config, env, keyName);
       }
@@ -141,16 +141,16 @@ class SecureEnvironmentManager {
 
     if (envValue) {
       if (config.validation && !config.validation.test(envValue)) {
-        console.log(`❌ Invalid value for ${config.name}: ${envValue}`);
-        console.log(`   Expected pattern: ${config.validation.source}`);
+        console.info(`❌ Invalid value for ${config.name}: ${envValue}`);
+        console.info(`   Expected pattern: ${config.validation.source}`);
       } else {
-        console.log(`✅ Valid public environment variable: ${config.name}=${envValue}`);
+        console.info(`✅ Valid public environment variable: ${config.name}=${envValue}`);
       }
     } else if (config.required) {
-      console.log(`❌ Missing required environment variable: ${config.name}`);
-      console.log(`   Set with: export ${config.name}=<value>`);
+      console.info(`❌ Missing required environment variable: ${config.name}`);
+      console.info(`   Set with: export ${config.name}=<value>`);
     } else {
-      console.log(`⚪ Optional environment variable not set: ${config.name}`);
+      console.info(`⚪ Optional environment variable not set: ${config.name}`);
     }
   }
 
@@ -186,7 +186,7 @@ class SecureEnvironmentManager {
         demoValue = `secure_value_${Math.random().toString(36).substring(2, 15)}`;
     }
 
-    console.log(`🔐 Storing secure credential for ${config.name}...`);
+    console.info(`🔐 Storing secure credential for ${config.name}...`);
     await this.credManager.storeCredential(keyName, demoValue, `${config.description} (${env})`);
   }
 
@@ -194,7 +194,7 @@ class SecureEnvironmentManager {
    * Load environment from secure storage
    */
   async loadEnvironment(env: string = 'development'): Promise<Record<string, string>> {
-    console.log(`🔄 Loading Fire22 environment: ${env.toUpperCase()}\n`);
+    console.info(`🔄 Loading Fire22 environment: ${env.toUpperCase()}\n`);
 
     const environment: Record<string, string> = {};
     const errors: string[] = [];
@@ -206,30 +206,30 @@ class SecureEnvironmentManager {
 
         if (value) {
           environment[config.name] = value;
-          console.log(`✅ Loaded ${config.name} from keychain`);
+          console.info(`✅ Loaded ${config.name} from keychain`);
         } else if (config.required) {
           errors.push(`Missing required credential: ${config.name}`);
-          console.log(`❌ Missing required credential: ${config.name}`);
+          console.info(`❌ Missing required credential: ${config.name}`);
         }
       } else {
         const value = process.env[config.name] || config.defaultValue;
         if (value) {
           environment[config.name] = value;
-          console.log(`✅ Using ${config.name}=${value}`);
+          console.info(`✅ Using ${config.name}=${value}`);
         } else if (config.required) {
           errors.push(`Missing required environment variable: ${config.name}`);
-          console.log(`❌ Missing required variable: ${config.name}`);
+          console.info(`❌ Missing required variable: ${config.name}`);
         }
       }
     }
 
     if (errors.length > 0) {
-      console.log('\n❌ Environment validation failed:');
-      errors.forEach(error => console.log(`   • ${error}`));
+      console.info('\n❌ Environment validation failed:');
+      errors.forEach(error => console.info(`   • ${error}`));
       throw new Error('Environment validation failed');
     }
 
-    console.log(
+    console.info(
       `\n✅ Environment loaded successfully (${Object.keys(environment).length} variables)`
     );
     return environment;
@@ -239,12 +239,12 @@ class SecureEnvironmentManager {
    * Migrate from .env to secure storage
    */
   async migrateFromDotEnv(envPath: string = '.env'): Promise<void> {
-    console.log(`🔄 Migrating from ${envPath} to secure storage\n`);
+    console.info(`🔄 Migrating from ${envPath} to secure storage\n`);
 
     try {
       const envFile = Bun.file(envPath);
       if (!(await envFile.exists())) {
-        console.log(`⚠️ File ${envPath} not found, skipping migration`);
+        console.info(`⚠️ File ${envPath} not found, skipping migration`);
         return;
       }
 
@@ -266,21 +266,21 @@ class SecureEnvironmentManager {
         if (config?.sensitive) {
           const keyName = `${key.toLowerCase()}_development`; // Default to dev env
           await this.credManager.storeCredential(keyName, value, `Migrated from ${envPath}`);
-          console.log(`✅ Migrated ${key} to secure storage`);
+          console.info(`✅ Migrated ${key} to secure storage`);
           migrated++;
         } else {
-          console.log(`⚪ Skipped ${key} (not sensitive)`);
+          console.info(`⚪ Skipped ${key} (not sensitive)`);
           skipped++;
         }
       }
 
-      console.log(`\n📊 Migration Summary:`);
-      console.log(`   ✅ Migrated: ${migrated} sensitive credentials`);
-      console.log(`   ⚪ Skipped: ${skipped} public variables`);
-      console.log(`\n💡 Next steps:`);
-      console.log(`   1. Verify credentials with: bun run loadEnvironment`);
-      console.log(`   2. Remove sensitive values from ${envPath}`);
-      console.log(`   3. Add ${envPath} to .gitignore`);
+      console.info(`\n📊 Migration Summary:`);
+      console.info(`   ✅ Migrated: ${migrated} sensitive credentials`);
+      console.info(`   ⚪ Skipped: ${skipped} public variables`);
+      console.info(`\n💡 Next steps:`);
+      console.info(`   1. Verify credentials with: bun run loadEnvironment`);
+      console.info(`   2. Remove sensitive values from ${envPath}`);
+      console.info(`   3. Add ${envPath} to .gitignore`);
     } catch (error) {
       console.error(`❌ Migration failed: ${error}`);
     }
@@ -290,7 +290,7 @@ class SecureEnvironmentManager {
    * Security audit of current environment
    */
   async auditEnvironment(): Promise<void> {
-    console.log('🔍 Fire22 Environment Security Audit\n');
+    console.info('🔍 Fire22 Environment Security Audit\n');
 
     const issues: string[] = [];
     const warnings: string[] = [];
@@ -325,36 +325,36 @@ class SecureEnvironmentManager {
     }
 
     // Generate audit report
-    console.log('🛡️ Security Audit Results');
-    console.log('='.repeat(30));
+    console.info('🛡️ Security Audit Results');
+    console.info('='.repeat(30));
 
     if (issues.length === 0 && warnings.length === 0) {
-      console.log('✅ No security issues found!');
+      console.info('✅ No security issues found!');
     } else {
       if (issues.length > 0) {
-        console.log(`\n🚨 Issues (${issues.length}):`);
-        issues.forEach(issue => console.log(`   • ${issue}`));
+        console.info(`\n🚨 Issues (${issues.length}):`);
+        issues.forEach(issue => console.info(`   • ${issue}`));
       }
 
       if (warnings.length > 0) {
-        console.log(`\n⚠️ Warnings (${warnings.length}):`);
-        warnings.forEach(warning => console.log(`   • ${warning}`));
+        console.info(`\n⚠️ Warnings (${warnings.length}):`);
+        warnings.forEach(warning => console.info(`   • ${warning}`));
       }
     }
 
-    console.log('\n💡 Security Best Practices:');
-    console.log('   • Use Bun.secrets for all sensitive credentials');
-    console.log('   • Keep .env files out of version control');
-    console.log('   • Rotate credentials regularly');
-    console.log('   • Use environment-specific credentials');
-    console.log('   • Audit environment security monthly');
+    console.info('\n💡 Security Best Practices:');
+    console.info('   • Use Bun.secrets for all sensitive credentials');
+    console.info('   • Keep .env files out of version control');
+    console.info('   • Rotate credentials regularly');
+    console.info('   • Use environment-specific credentials');
+    console.info('   • Audit environment security monthly');
   }
 }
 
 // Demo execution
 async function runSecureEnvDemo(): Promise<void> {
-  console.log('🔐 Fire22 Secure Environment Manager Demo');
-  console.log('='.repeat(50));
+  console.info('🔐 Fire22 Secure Environment Manager Demo');
+  console.info('='.repeat(50));
 
   const envManager = new SecureEnvironmentManager();
 
@@ -362,13 +362,13 @@ async function runSecureEnvDemo(): Promise<void> {
     // Setup development environment
     await envManager.setupEnvironment('development');
 
-    console.log('\n' + '='.repeat(50));
+    console.info('\n' + '='.repeat(50));
 
     // Load environment
     const env = await envManager.loadEnvironment('development');
-    console.log(`\n🎯 Loaded ${Object.keys(env).length} environment variables`);
+    console.info(`\n🎯 Loaded ${Object.keys(env).length} environment variables`);
 
-    console.log('\n' + '='.repeat(50));
+    console.info('\n' + '='.repeat(50));
 
     // Security audit
     await envManager.auditEnvironment();
@@ -376,13 +376,13 @@ async function runSecureEnvDemo(): Promise<void> {
     console.error('❌ Demo failed:', error);
   }
 
-  console.log('\n🎉 Secure Environment Demo Complete!');
-  console.log('\n💡 Integration Benefits:');
-  console.log('   • Zero plaintext secrets in code or config');
-  console.log('   • OS-native credential encryption');
-  console.log('   • Environment-specific credential isolation');
-  console.log('   • Automated security auditing');
-  console.log('   • Seamless Fire22 dashboard integration');
+  console.info('\n🎉 Secure Environment Demo Complete!');
+  console.info('\n💡 Integration Benefits:');
+  console.info('   • Zero plaintext secrets in code or config');
+  console.info('   • OS-native credential encryption');
+  console.info('   • Environment-specific credential isolation');
+  console.info('   • Automated security auditing');
+  console.info('   • Seamless Fire22 dashboard integration');
 }
 
 // CLI interface

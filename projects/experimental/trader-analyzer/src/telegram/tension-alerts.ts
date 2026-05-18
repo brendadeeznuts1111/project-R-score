@@ -92,7 +92,7 @@ export class TensionAlertRouter {
 			const messageId = result.ok ? result.messageId : undefined;
 			await this.logToRSS(event, team, message, messageId);
 
-			console.log(
+			console.info(
 				`✅ Tension alert routed to ${team} topic ${topicId} (${severity})`,
 			);
 		} catch (error) {

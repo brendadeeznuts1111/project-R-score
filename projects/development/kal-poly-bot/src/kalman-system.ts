@@ -51,8 +51,8 @@ export class v242KalmanSystem {
   private dashboard: PerformanceDashboard;
 
   constructor(configYaml?: string) {
-    console.log("🚀 Initializing Kalman System v2.4.2");
-    console.log("=====================================");
+    console.info("🚀 Initializing Kalman System v2.4.2");
+    console.info("=====================================");
 
     // Load secure configuration
     if (configYaml) {
@@ -66,9 +66,9 @@ export class v242KalmanSystem {
       };
     }
 
-    console.log(`   Security Level: ${this.config.securityLevel}`);
-    console.log(`   Patterns: ${this.config.patterns.length}`);
-    console.log(`   Features: ${this.config.features.join(", ")}`);
+    console.info(`   Security Level: ${this.config.securityLevel}`);
+    console.info(`   Patterns: ${this.config.patterns.length}`);
+    console.info(`   Features: ${this.config.features.join(", ")}`);
 
     // Initialize with v2.4.2 features
     this.filters = new Map();
@@ -81,10 +81,10 @@ export class v242KalmanSystem {
     this.executionContext =
       KalmanInfrastructureIntegration.createIsolatedFilterContext();
 
-    console.log(
+    console.info(
       `   Execution Context: ${Object.keys(this.executionContext).length} safe globals`
     );
-    console.log("✅ Kalman System v2.4.2 initialized");
+    console.info("✅ Kalman System v2.4.2 initialized");
   }
 
   private loadConfig(yamlContent: string): SystemConfig {
@@ -110,7 +110,7 @@ export class v242KalmanSystem {
   }
 
   private initializePatterns(): void {
-    console.log("🔧 Initializing pattern detectors...");
+    console.info("🔧 Initializing pattern detectors...");
 
     for (const patternId of this.config.patterns) {
       const init = initializePatternDetector(patternId);
@@ -143,7 +143,7 @@ export class v242KalmanSystem {
 
         if (hardeningResult.hardened) {
           this.filters.set(patternId, filter);
-          console.log(`   ✅ Pattern #${patternId}: ${init.detector}`);
+          console.info(`   ✅ Pattern #${patternId}: ${init.detector}`);
         } else {
           console.warn(
             `   ❌ Pattern #${patternId}: Security hardening failed`
@@ -161,7 +161,7 @@ export class v242KalmanSystem {
       }
     }
 
-    console.log(`   Active filters: ${this.filters.size}`);
+    console.info(`   Active filters: ${this.filters.size}`);
   }
 
   async processTick(tick: MarketTick): Promise<Trigger[]> {
@@ -256,7 +256,7 @@ export class v242KalmanSystem {
   }
 
   startRealTimeMonitoring(): void {
-    console.log("🔄 Starting real-time monitoring...");
+    console.info("🔄 Starting real-time monitoring...");
 
     const monitor = setInterval(() => {
       const status = this.getSystemStatus();
@@ -281,7 +281,7 @@ export class v242KalmanSystem {
     // Cleanup
     process.on("SIGINT", () => {
       clearInterval(monitor);
-      console.log("\n📊 Monitoring stopped");
+      console.info("\n📊 Monitoring stopped");
       process.exit(0);
     });
   }
@@ -296,14 +296,14 @@ export class v242KalmanSystem {
       Array.from(this.filters.keys())
     );
 
-    console.log("🔒 Security Audit Results:");
-    console.log(`   Status: ${audit.secure ? "✅ SECURE" : "❌ VULNERABLE"}`);
+    console.info("🔒 Security Audit Results:");
+    console.info(`   Status: ${audit.secure ? "✅ SECURE" : "❌ VULNERABLE"}`);
 
     if (!audit.secure) {
-      console.log("   Violations:");
-      audit.violations.forEach((v) => console.log(`     • ${v}`));
-      console.log("   Recommendations:");
-      audit.recommendations.forEach((r) => console.log(`     • ${r}`));
+      console.info("   Violations:");
+      audit.violations.forEach((v) => console.info(`     • ${v}`));
+      console.info("   Recommendations:");
+      audit.recommendations.forEach((r) => console.info(`     • ${r}`));
     }
 
     return audit;
@@ -311,8 +311,8 @@ export class v242KalmanSystem {
 
   // Demonstration function
   static demonstrate(): void {
-    console.log("🚀 Kalman System v2.4.2: Complete Architecture");
-    console.log("=================================================");
+    console.info("🚀 Kalman System v2.4.2: Complete Architecture");
+    console.info("=================================================");
 
     const system = new v242KalmanSystem();
 
@@ -326,11 +326,11 @@ export class v242KalmanSystem {
       provider: "sportradar",
     };
 
-    console.log("\n📊 Processing sample tick...");
+    console.info("\n📊 Processing sample tick...");
     system.processTick(sampleTick).then((triggers) => {
-      console.log(`   Triggers detected: ${triggers.length}`);
+      console.info(`   Triggers detected: ${triggers.length}`);
       triggers.forEach((trigger) => {
-        console.log(
+        console.info(
           `   • Pattern #${trigger.pattern}: ${trigger.action} (${(trigger.confidence * 100).toFixed(1)}%)`
         );
       });
@@ -338,33 +338,33 @@ export class v242KalmanSystem {
 
     // System status
     const status = system.getSystemStatus();
-    console.log("\n📈 System Status:");
-    console.log(`   Version: ${status.version}`);
-    console.log(`   Active Patterns: ${status.patterns}`);
-    console.log(`   Security: ${status.security}`);
-    console.log(`   Features: ${status.features.join(", ")}`);
-    console.log(`   Uptime: ${status.uptime.toFixed(2)}s`);
+    console.info("\n📈 System Status:");
+    console.info(`   Version: ${status.version}`);
+    console.info(`   Active Patterns: ${status.patterns}`);
+    console.info(`   Security: ${status.security}`);
+    console.info(`   Features: ${status.features.join(", ")}`);
+    console.info(`   Uptime: ${status.uptime.toFixed(2)}s`);
 
     // Security audit
-    console.log("\n🔒 Security Audit:");
+    console.info("\n🔒 Security Audit:");
     const audit = system.auditSecurity();
-    console.log(`   Overall: ${audit.secure ? "✅" : "❌"}`);
+    console.info(`   Overall: ${audit.secure ? "✅" : "❌"}`);
 
     // Feature summary
-    console.log("\n⚡ Infrastructure Features:");
-    console.log(
+    console.info("\n⚡ Infrastructure Features:");
+    console.info(
       `   Unicode Engine: ${KALMAN_FEATURES.UNICODE_ALIGNMENT ? "✅" : "❌"}`
     );
-    console.log(
+    console.info(
       `   V8 Type Bridge: ${KALMAN_FEATURES.NATIVE_TYPE_CHECKS ? "✅" : "❌"}`
     );
-    console.log(`   YAML Parser: ${KALMAN_FEATURES.YAML_CONFIG ? "✅" : "❌"}`);
-    console.log(
+    console.info(`   YAML Parser: ${KALMAN_FEATURES.YAML_CONFIG ? "✅" : "❌"}`);
+    console.info(
       `   Security Layer: ${KALMAN_FEATURES.SECURITY_HARDENED ? "✅" : "❌"}`
     );
 
-    console.log("\n✅ Kalman System v2.4.2 demonstration complete");
-    console.log("🎯 Ready for production deployment with <5ms latency");
+    console.info("\n✅ Kalman System v2.4.2 demonstration complete");
+    console.info("🎯 Ready for production deployment with <5ms latency");
   }
 }
 
@@ -373,7 +373,7 @@ export function startSecureServer(
   system: v242KalmanSystem,
   port: number = 8080
 ): void {
-  console.log(`🌐 Starting secure server on port ${port}`);
+  console.info(`🌐 Starting secure server on port ${port}`);
 
   Bun.serve({
     port,
@@ -387,7 +387,7 @@ export function startSecureServer(
 
         try {
           const _data = secureHandler.onMessage(message);
-          console.log("📨 Secure message processed");
+          console.info("📨 Secure message processed");
         } catch (error: unknown) {
           secureHandler.onError(
             error instanceof Error ? error : new Error(String(error))
@@ -396,7 +396,7 @@ export function startSecureServer(
       },
 
       open(ws) {
-        console.log("🔗 Secure WebSocket connection established");
+        console.info("🔗 Secure WebSocket connection established");
         ws.send(
           JSON.stringify({
             type: "welcome",
@@ -408,7 +408,7 @@ export function startSecureServer(
       },
 
       close(ws, code, message) {
-        console.log(`🔌 WebSocket closed: ${code} - ${message}`);
+        console.info(`🔌 WebSocket closed: ${code} - ${message}`);
       },
     },
 

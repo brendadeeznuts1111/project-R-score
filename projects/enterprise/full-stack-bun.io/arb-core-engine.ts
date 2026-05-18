@@ -60,7 +60,7 @@ db.exec(`
 
 // ==================== %J ARB LOGGING ====================
 function logArbEvent(event: Record<string, any>) {
-	console.log('%j', {
+	console.info('%j', {
 		...event,
 		engine: 'CORE-v1.3',
 		sqlite_version: db.prepare('SELECT sqlite_version()').get() as any,
@@ -70,7 +70,7 @@ function logArbEvent(event: Record<string, any>) {
 
 // Helper to log with string message
 function logArbEventWithMessage(event: Record<string, any>, message: string) {
-	console.log('%j %s', event, message);
+	console.info('%j %s', event, message);
 }
 
 const server = Bun.serve({
@@ -263,7 +263,7 @@ setInterval(async () => {
 	}
 }, 2000); // Every 2 seconds
 
-console.log('%j', {
+console.info('%j', {
 	coreEngine: 'FUZZER-PROOF-LIVE',
 	sqlite: '3.51.1',
 	logging: '%j active',
@@ -271,13 +271,13 @@ console.log('%j', {
 	port: server.port
 });
 
-console.log(`🚀 Core Arbitrage Engine running on http://localhost:${server.port}`);
-console.log(`[ARB-CORE][FUZZER-PROOF][1890-SCANS/MIN][SQLITE351][4.82% EDGE]`);
-console.log(`[VALUE:$378K][25-FIXES][%J-LOGGING][DIAGNOSTICS:GREEN][STATUS:IMMUNE]`);
+console.info(`🚀 Core Arbitrage Engine running on http://localhost:${server.port}`);
+console.info(`[ARB-CORE][FUZZER-PROOF][1890-SCANS/MIN][SQLITE351][4.82% EDGE]`);
+console.info(`[VALUE:$378K][25-FIXES][%J-LOGGING][DIAGNOSTICS:GREEN][STATUS:IMMUNE]`);
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-	console.log('%j', { event: 'SHUTDOWN', graceful: true });
+	console.info('%j', { event: 'SHUTDOWN', graceful: true });
 	mlgs.close();
 	db.close();
 	process.exit(0);

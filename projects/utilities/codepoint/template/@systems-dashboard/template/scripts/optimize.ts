@@ -204,41 +204,41 @@ class PerformanceCollector {
 
 // Optimization functions
 async function optimizeFileIO(): Promise<void> {
-  if (!args.silent) console.log("🔧 Optimizing file I/O operations...");
+  if (!args.silent) console.info("🔧 Optimizing file I/O operations...");
 
   const collector = new PerformanceCollector();
   await collector.collectFileIOMetrics();
 
   if (args.verbose) {
-    console.log("📊 File I/O Metrics:");
-    console.log(`  Write: ${collector.metrics.file_write?.toFixed(2)}ms`);
-    console.log(`  Read: ${collector.metrics.file_read?.toFixed(2)}ms`);
-    console.log(`  Copy: ${collector.metrics.file_copy?.toFixed(2)}ms`);
-    console.log(`  Stream: ${collector.metrics.file_stream?.toFixed(2)}ms`);
+    console.info("📊 File I/O Metrics:");
+    console.info(`  Write: ${collector.metrics.file_write?.toFixed(2)}ms`);
+    console.info(`  Read: ${collector.metrics.file_read?.toFixed(2)}ms`);
+    console.info(`  Copy: ${collector.metrics.file_copy?.toFixed(2)}ms`);
+    console.info(`  Stream: ${collector.metrics.file_stream?.toFixed(2)}ms`);
   }
 }
 
 async function optimizeMemory(): Promise<void> {
-  if (!args.silent) console.log("🧠 Optimizing memory usage...");
+  if (!args.silent) console.info("🧠 Optimizing memory usage...");
 
   const collector = new PerformanceCollector();
   await collector.collectMemoryMetrics();
 
   if (args.verbose) {
-    console.log("💾 Memory Metrics:");
-    console.log(
+    console.info("💾 Memory Metrics:");
+    console.info(
       `  Initial: ${(collector.metrics.initial_memory?.heapUsed / 1024 / 1024).toFixed(2)}MB`
     );
-    console.log(
+    console.info(
       `  Pressure: ${(collector.metrics.pressure_memory?.heapUsed / 1024 / 1024).toFixed(2)}MB`
     );
     if (collector.metrics.after_gc) {
-      console.log(
+      console.info(
         `  After GC: ${(collector.metrics.after_gc.heapUsed / 1024 / 1024).toFixed(2)}MB`
       );
     }
     if (collector.metrics.final_memory) {
-      console.log(
+      console.info(
         `  Final: ${(collector.metrics.final_memory.heapUsed / 1024 / 1024).toFixed(2)}MB`
       );
     }
@@ -246,25 +246,25 @@ async function optimizeMemory(): Promise<void> {
 }
 
 async function optimizeCLI(): Promise<void> {
-  if (!args.silent) console.log("⚡ Optimizing CLI performance...");
+  if (!args.silent) console.info("⚡ Optimizing CLI performance...");
 
   const collector = new PerformanceCollector();
   await collector.collectCLIMetrics();
 
   if (args.verbose) {
-    console.log("🚀 CLI Metrics:");
-    console.log(
+    console.info("🚀 CLI Metrics:");
+    console.info(
       `  Argument parsing: ${collector.metrics.cli_parsing?.toFixed(2)}ms`
     );
-    console.log(
+    console.info(
       `  Stdin processing: ${collector.metrics.stdin_processing?.toFixed(2)}ms`
     );
-    console.log(`  Args processed: ${collector.metrics.cli_args_count}`);
+    console.info(`  Args processed: ${collector.metrics.cli_args_count}`);
   }
 }
 
 async function runBenchmark(): Promise<void> {
-  if (!args.silent) console.log("🏃 Running comprehensive benchmark...");
+  if (!args.silent) console.info("🏃 Running comprehensive benchmark...");
 
   const collector = new PerformanceCollector();
 
@@ -287,22 +287,22 @@ async function runBenchmark(): Promise<void> {
   await Bun.write(args.output, JSON.stringify(report, null, 2));
 
   if (!args.silent) {
-    console.log("📋 Benchmark complete!");
-    console.log(`📄 Report saved to: ${args.output}`);
-    console.log(`📊 Summary:`);
-    console.log(`  Memory efficiency: ${report.summary.memory_efficiency}`);
-    console.log(`  I/O performance: ${report.summary.io_performance}`);
-    console.log(`  CLI performance: ${report.summary.cli_performance}`);
+    console.info("📋 Benchmark complete!");
+    console.info(`📄 Report saved to: ${args.output}`);
+    console.info(`📊 Summary:`);
+    console.info(`  Memory efficiency: ${report.summary.memory_efficiency}`);
+    console.info(`  I/O performance: ${report.summary.io_performance}`);
+    console.info(`  CLI performance: ${report.summary.cli_performance}`);
   }
 
   if (args.verbose) {
-    console.log("\n🔍 Detailed Metrics:");
-    console.log(JSON.stringify(report.metrics, null, 2));
+    console.info("\n🔍 Detailed Metrics:");
+    console.info(JSON.stringify(report.metrics, null, 2));
   }
 }
 
 async function analyzeProject(): Promise<void> {
-  if (!args.silent) console.log("🔍 Analyzing project structure...");
+  if (!args.silent) console.info("🔍 Analyzing project structure...");
 
   const analysis = {
     timestamp: new Date().toISOString(),
@@ -340,15 +340,15 @@ async function analyzeProject(): Promise<void> {
   await Bun.write("project-analysis.json", JSON.stringify(analysis, null, 2));
 
   if (!args.silent) {
-    console.log("📊 Project analysis complete!");
-    console.log(`📄 Analysis saved to: project-analysis.json`);
-    console.log(
+    console.info("📊 Project analysis complete!");
+    console.info(`📄 Analysis saved to: project-analysis.json`);
+    console.info(
       `💡 Recommendations: ${analysis.recommendations.length || "None"}`
     );
 
     if (analysis.recommendations.length > 0) {
       analysis.recommendations.forEach((rec: string, i: number) => {
-        console.log(`  ${i + 1}. ${rec}`);
+        console.info(`  ${i + 1}. ${rec}`);
       });
     }
   }
@@ -439,12 +439,12 @@ async function analyzeScripts(): Promise<any> {
 // Main optimization function
 async function optimize() {
   if (!args.silent) {
-    console.log("🚀 Starting performance optimization...");
-    console.log(`🔧 Configuration:`);
-    console.log(`  Smol mode: ${args.smol}`);
-    console.log(`  Expose GC: ${args.exposeGc}`);
-    console.log(`  Console depth: ${args.consoleDepth}`);
-    console.log(`  Verbose: ${args.verbose}`);
+    console.info("🚀 Starting performance optimization...");
+    console.info(`🔧 Configuration:`);
+    console.info(`  Smol mode: ${args.smol}`);
+    console.info(`  Expose GC: ${args.exposeGc}`);
+    console.info(`  Console depth: ${args.consoleDepth}`);
+    console.info(`  Verbose: ${args.verbose}`);
   }
 
   // Apply optimizations based on arguments
@@ -473,20 +473,20 @@ async function optimize() {
   }
 
   if (!args.silent) {
-    console.log("✅ Optimization complete!");
+    console.info("✅ Optimization complete!");
 
     if (args.exposeGc && global.gc) {
-      console.log("🗑️  Garbage collection available - call global.gc()");
+      console.info("🗑️  Garbage collection available - call global.gc()");
     }
 
     if (args.smol) {
-      console.log("📦 Smol mode enabled for reduced memory usage");
+      console.info("📦 Smol mode enabled for reduced memory usage");
     }
   }
 }
 
 async function runProfile(): Promise<void> {
-  if (!args.silent) console.log("🔍 Running performance profile...");
+  if (!args.silent) console.info("🔍 Running performance profile...");
 
   const profileData = {
     timestamp: new Date().toISOString(),
@@ -519,7 +519,7 @@ async function runProfile(): Promise<void> {
   );
 
   if (!args.silent) {
-    console.log("📊 Profile saved to: performance-profile.json");
+    console.info("📊 Profile saved to: performance-profile.json");
   }
 }
 

@@ -311,19 +311,19 @@ function main() {
     const max = Math.max(...benchmarks.map((b) => b.value));
     benchmarks.forEach((b) => {
       const bar = "█".repeat(Math.round((b.value / max) * 40));
-      console.log(`${b.name.padEnd(12)} │${bar}│ ${b.value.toFixed(2)}M`);
+      console.info(`${b.name.padEnd(12)} │${bar}│ ${b.value.toFixed(2)}M`);
     });
     return;
   }
 
   if (!detectSixelSupport() && !force) {
-    console.log("SIXEL not detected. Use --force to try anyway, or --text for ASCII.");
-    console.log("Supported: Ghostty, iTerm2, mlterm, foot, WezTerm");
+    console.info("SIXEL not detected. Use --force to try anyway, or --text for ASCII.");
+    console.info("Supported: Ghostty, iTerm2, mlterm, foot, WezTerm");
     return;
   }
 
   // Output SIXEL graphics
-  console.log(generateBenchmarkChart());
+  console.info(generateBenchmarkChart());
 }
 
 main();

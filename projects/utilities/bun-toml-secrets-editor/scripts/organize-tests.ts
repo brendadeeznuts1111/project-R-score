@@ -8,7 +8,7 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-console.log("🔧 Organizing test structure...\n");
+console.info("🔧 Organizing test structure...\n");
 
 // Define the organized test structure
 const testStructure = {
@@ -56,12 +56,12 @@ const testStructure = {
 
 // Create the organized directory structure
 for (const [category, config] of Object.entries(testStructure)) {
-	console.log(`📁 Creating ${category} test directories...`);
+	console.info(`📁 Creating ${category} test directories...`);
 
 	for (const dir of config.directories) {
 		if (!existsSync(dir)) {
 			mkdirSync(dir, { recursive: true });
-			console.log(`  Created: ${dir}`);
+			console.info(`  Created: ${dir}`);
 
 			// Create an index file for each directory
 			const indexPath = join(dir, "index.ts");
@@ -158,26 +158,26 @@ export function runTestsByCategory(category: keyof typeof TEST_CATEGORIES) {
     throw new Error(\`Unknown test category: \${category}\`);
   }
   
-  console.log(\`🧪 Running \${category} tests...\`);
+  console.info(\`🧪 Running \${category} tests...\`);
   
   return Bun.$\`bun test --preload ./tests/setup.ts \${config.pattern} \${config.parallel ? "" : "--no-parallel"}\`;
 }
 
 // Run all tests in order
 export async function runAllTests() {
-  console.log("🚀 Running all tests in organized order...");
+  console.info("🚀 Running all tests in organized order...");
   
   for (const category of TEST_CATEGORIES) {
     try {
       await runTestsByCategory(category.name as keyof typeof TEST_CATEGORIES);
-      console.log(\`✅ \${category.name} tests passed\`);
+      console.info(\`✅ \${category.name} tests passed\`);
     } catch (error) {
       console.error(\`❌ \${category.name} tests failed:\`, error);
       process.exit(1);
     }
   }
   
-  console.log("🎉 All tests passed!");
+  console.info("🎉 All tests passed!");
 }
 
 // CLI interface
@@ -217,7 +217,7 @@ if (existsSync(packageJsonPath)) {
 	};
 
 	writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-	console.log("✅ Updated package.json with organized test scripts");
+	console.info("✅ Updated package.json with organized test scripts");
 }
 
 // Create a test documentation file
@@ -320,9 +320,9 @@ See \`test-config.ts\` for:
 `,
 );
 
-console.log("\n✅ Test structure organized successfully!");
-console.log("\n📋 Next steps:");
-console.log("1. Move existing tests to appropriate directories");
-console.log("2. Update test imports to use new structure");
-console.log("3. Run 'bun run test:organized' to verify");
-console.log("4. Update CI/CD to use new test scripts");
+console.info("\n✅ Test structure organized successfully!");
+console.info("\n📋 Next steps:");
+console.info("1. Move existing tests to appropriate directories");
+console.info("2. Update test imports to use new structure");
+console.info("3. Run 'bun run test:organized' to verify");
+console.info("4. Update CI/CD to use new test scripts");

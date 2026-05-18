@@ -397,7 +397,7 @@ const rotateSigningKey = (): string => {
   );
 
   writeFileSync('.env.secret', lines.join('\n'));
-  console.log('🔑️ TIER1380_SIGNING_KEY rotated successfully');
+  console.info('🔑️ TIER1380_SIGNING_KEY rotated successfully');
   return newKey;
 };
 
@@ -409,7 +409,7 @@ const rotateSigningKey = (): string => {
 // MASTER_KEY=your_master_key bun -e '
 import { validateSecrets, rotateSigningKey } from "./secrets-integration";
 
-console.log(`
+console.info(`
 🔐 TIER-1380 SECRETS STATUS
 ===========================
 Signing Key: ${Bun.secrets.TIER1380_SIGNING_KEY ? '✅ Loaded' : '❌ Missing'}
@@ -432,7 +432,7 @@ const testSecureFetch = async () => {
         csrf: true
       }
     );
-    console.log('✅ Secure fetch test passed:', response.ok);
+    console.info('✅ Secure fetch test passed:', response.ok);
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     console.error('❌ Secure fetch test failed:', errorMessage);
@@ -440,7 +440,7 @@ const testSecureFetch = async () => {
 };
 
 await testSecureFetch();
-console.log('🔒 Security integration test complete!');
+console.info('🔒 Security integration test complete!');
 '
 
 /**

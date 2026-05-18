@@ -53,7 +53,7 @@ export class TimescaleLoader {
 		`;
 
 		// In production, would use pg client
-		console.log('TimescaleDB initialized:', createTable);
+		console.info('TimescaleDB initialized:', createTable);
 	}
 
 	/**
@@ -72,7 +72,7 @@ export class TimescaleLoader {
 		const query = `INSERT INTO ticks (time, bookie, market, bid, ask, volume, region) VALUES ${values}`;
 		
 		// In production, would execute via pg client
-		console.log(`Inserted ${ticks.length} ticks into TimescaleDB`);
+		console.info(`Inserted ${ticks.length} ticks into TimescaleDB`);
 	}
 
 	/**

@@ -5,23 +5,23 @@
 import { TIMEZONE_MATRIX } from '../config/constants-v37.ts';
 import { initializeScopeTimezone, getActiveTimezoneConfig, _resetTimezoneState } from '../bootstrap-timezone.ts';
 
-console.log('🌍 Empire Pro v3.7 - Canonical Timezone Verification\n');
+console.info('🌍 Empire Pro v3.7 - Canonical Timezone Verification\n');
 
 // Initialize timezone for verification
 initializeScopeTimezone('ENTERPRISE');
 
-console.log('📋 Active Timezone Configuration:');
-console.log('='.repeat(50));
+console.info('📋 Active Timezone Configuration:');
+console.info('='.repeat(50));
 
 const activeConfig = getActiveTimezoneConfig();
-console.log(`Scope Timezone: ${activeConfig.scopeTimezone}`);
-console.log(`Display Name: ${activeConfig.displayName}`);
-console.log(`Standard Offset: ${activeConfig.standardOffset}`);
-console.log(`Observes DST: ${activeConfig.observesDst}`);
-console.log(`Is UTC: ${activeConfig.isUtc}`);
+console.info(`Scope Timezone: ${activeConfig.scopeTimezone}`);
+console.info(`Display Name: ${activeConfig.displayName}`);
+console.info(`Standard Offset: ${activeConfig.standardOffset}`);
+console.info(`Observes DST: ${activeConfig.observesDst}`);
+console.info(`Is UTC: ${activeConfig.isUtc}`);
 
-console.log('\n🔍 Canonical Zone Validation:');
-console.log('='.repeat(50));
+console.info('\n🔍 Canonical Zone Validation:');
+console.info('='.repeat(50));
 
 // List of canonical zones from tz database 2025c
 const canonicalZones = [
@@ -46,23 +46,23 @@ const deprecatedZones = [
   "Australia/ACT"
 ];
 
-console.log('✅ TIMEZONE_MATRIX zones (all canonical):');
+console.info('✅ TIMEZONE_MATRIX zones (all canonical):');
 for (const [zone, offset] of Object.entries(TIMEZONE_MATRIX.BASELINE_OFFSETS)) {
   const isCanonical = canonicalZones.includes(zone);
   const status = isCanonical ? '✅' : '❌';
   const dstStatus = TIMEZONE_MATRIX.DST_AFFECTED[zone] ? 'DST' : 'No DST';
-  console.log(`  ${status} ${zone.padEnd(20)} ${offset.padEnd(8)} ${dstStatus}`);
+  console.info(`  ${status} ${zone.padEnd(20)} ${offset.padEnd(8)} ${dstStatus}`);
 }
 
-console.log('\n🚫 Deprecated zones (correctly excluded):');
+console.info('\n🚫 Deprecated zones (correctly excluded):');
 for (const deprecated of deprecatedZones) {
   const isPresent = Object.keys(TIMEZONE_MATRIX.BASELINE_OFFSETS).includes(deprecated);
   const status = isPresent ? '❌ PRESENT' : '✅ ABSENT';
-  console.log(`  ${status} ${deprecated}`);
+  console.info(`  ${status} ${deprecated}`);
 }
 
-console.log('\n🎯 Scope Timezone Validation:');
-console.log('='.repeat(50));
+console.info('\n🎯 Scope Timezone Validation:');
+console.info('='.repeat(50));
 
 // Test all scope configurations
 const scopeTests = [
@@ -80,15 +80,15 @@ for (const test of scopeTests) {
   const status = isCanonical ? '✅' : '❌';
   const matchesExpected = config.scopeTimezone === test.expected;
   const expectedStatus = matchesExpected ? '✅' : '❌';
-  console.log(`  ${status} ${test.scope.padEnd(15)} → ${config.scopeTimezone.padEnd(20)} ${expectedStatus}(${test.expected})`);
+  console.info(`  ${status} ${test.scope.padEnd(15)} → ${config.scopeTimezone.padEnd(20)} ${expectedStatus}(${test.expected})`);
 }
 
-console.log('\n📊 Summary:');
-console.log('='.repeat(50));
-console.log(`✅ Total TIMEZONE_MATRIX zones: ${Object.keys(TIMEZONE_MATRIX.BASELINE_OFFSETS).length}`);
-console.log(`✅ All zones are canonical: ${canonicalZones.every(zone => Object.keys(TIMEZONE_MATRIX.BASELINE_OFFSETS).includes(zone) || !Object.keys(TIMEZONE_MATRIX.BASELINE_OFFSETS).includes(zone))}`);
-console.log(`✅ No deprecated zones present: ${deprecatedZones.every(zone => !Object.keys(TIMEZONE_MATRIX.BASELINE_OFFSETS).includes(zone))}`);
-console.log(`✅ All scope timezones canonical: ${scopeTests.every(test => canonicalZones.includes(test.expected))}`);
+console.info('\n📊 Summary:');
+console.info('='.repeat(50));
+console.info(`✅ Total TIMEZONE_MATRIX zones: ${Object.keys(TIMEZONE_MATRIX.BASELINE_OFFSETS).length}`);
+console.info(`✅ All zones are canonical: ${canonicalZones.every(zone => Object.keys(TIMEZONE_MATRIX.BASELINE_OFFSETS).includes(zone) || !Object.keys(TIMEZONE_MATRIX.BASELINE_OFFSETS).includes(zone))}`);
+console.info(`✅ No deprecated zones present: ${deprecatedZones.every(zone => !Object.keys(TIMEZONE_MATRIX.BASELINE_OFFSETS).includes(zone))}`);
+console.info(`✅ All scope timezones canonical: ${scopeTests.every(test => canonicalZones.includes(test.expected))}`);
 
-console.log('\n🎉 Empire Pro v3.7 - 100% Canonical Timezone Compliance!');
-console.log('🚀 Fully compliant with tz database 2025c standards!');
+console.info('\n🎉 Empire Pro v3.7 - 100% Canonical Timezone Compliance!');
+console.info('🚀 Fully compliant with tz database 2025c standards!');

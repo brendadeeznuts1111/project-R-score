@@ -40,7 +40,7 @@ const registry = {
       createdAt: Date.now()
     });
 
-    console.log(`📦 Stored ETL stream ${streamId} with ${data.length} records (hash: ${dataHash})`);
+    console.info(`📦 Stored ETL stream ${streamId} with ${data.length} records (hash: ${dataHash})`);
     return streamId;
   }
 };
@@ -112,7 +112,7 @@ export async function startETL(data: any, dataType: string = 'JSON'): Promise<Re
   const startTime = performance.now();
   const streamId = `etl_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-  console.log(`⚡ Starting ETL pipeline ${streamId} for ${dataType} data`);
+  console.info(`⚡ Starting ETL pipeline ${streamId} for ${dataType} data`);
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -167,8 +167,8 @@ export async function startETL(data: any, dataType: string = 'JSON'): Promise<Re
         controller.enqueue(compressed);
 
         const processingTime = performance.now() - startTime;
-        console.log(`✅ ETL pipeline ${streamId} completed in ${processingTime.toFixed(2)}ms`);
-        console.log(`   Processed ${records.length} records, hash: ${finalHash}`);
+        console.info(`✅ ETL pipeline ${streamId} completed in ${processingTime.toFixed(2)}ms`);
+        console.info(`   Processed ${records.length} records, hash: ${finalHash}`);
 
         controller.close();
 
@@ -179,7 +179,7 @@ export async function startETL(data: any, dataType: string = 'JSON'): Promise<Re
     },
 
     cancel(reason) {
-      console.log(`🛑 ETL pipeline ${streamId} cancelled:`, reason);
+      console.info(`🛑 ETL pipeline ${streamId} cancelled:`, reason);
     }
   });
 
@@ -223,7 +223,7 @@ export async function handleETLStart(request: Request): Promise<Response> {
     const finalHash = hashData(finalData);
 
     const totalTime = performance.now() - startTime;
-    console.log(`🚀 ETL request completed in ${totalTime.toFixed(2)}ms`);
+    console.info(`🚀 ETL request completed in ${totalTime.toFixed(2)}ms`);
 
     return new Response(JSON.stringify({
       streamId: `etl_${Date.now()}`,
@@ -256,7 +256,7 @@ export async function handleETLStart(request: Request): Promise<Response> {
 
 // For direct testing
 if (import.meta.main) {
-  console.log('⚡ Testing ETL stream pipeline...');
+  console.info('⚡ Testing ETL stream pipeline...');
 
   const testData = {
     cpu: 65.5,
@@ -265,13 +265,13 @@ if (import.meta.main) {
     timestamp: new Date().toISOString()
   };
 
-  console.log('Test data:', testData);
+  console.info('Test data:', testData);
 
   const stream = await startETL(testData, 'TELEMETRY');
   const reader = stream.getReader();
   const result = await reader.read();
 
-  console.log('ETL stream result:', {
+  console.info('ETL stream result:', {
     done: result.done,
     dataLength: result.value?.length || 0
   });

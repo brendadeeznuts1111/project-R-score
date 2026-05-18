@@ -328,10 +328,10 @@ $
   },
 });
 
-console.log(`🚀 DuoPlus Dashboard v4.2 - PTY Terminal + Feature Flags`);
-console.log(`🖥️ Bun.Terminal PTY Integration Active`);
-console.log(`🏳️ Feature Flags: PTY_TERMINAL, URLPATTERN`);
-console.log(`📊 Bundle Size: 1.45MB (with PTY)`);
-console.log(`⚡ Route Time: 34μs (412% faster)`);
-console.log(`🌐 Dashboard: http://localhost:${server.port}/`);
-console.log(`🖥️ PTY Demo: http://localhost:${server.port}/`);
+console.info(`🚀 DuoPlus Dashboard v4.2 - PTY Terminal + Feature Flags`);
+console.info(`🖥️ Bun.Terminal PTY Integration Active`);
+console.info(`🏳️ Feature Flags: PTY_TERMINAL, URLPATTERN`);
+console.info(`📊 Bundle Size: 1.45MB (with PTY)`);
+console.info(`⚡ Route Time: 34μs (412% faster)`);
+console.info(`🌐 Dashboard: http://localhost:${server.port}/`);
+console.info(`🖥️ PTY Demo: http://localhost:${server.port}/`);

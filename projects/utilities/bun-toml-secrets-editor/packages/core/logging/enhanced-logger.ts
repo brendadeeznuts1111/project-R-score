@@ -228,7 +228,7 @@ export class EnhancedLogger {
 		} catch (error) {
 			console.error("❌ Failed to log entry:", error);
 			// Fallback to console logging
-			console.log(`[${level.toUpperCase()}] ${message}`, metadata);
+			console.info(`[${level.toUpperCase()}] ${message}`, metadata);
 		}
 	}
 
@@ -378,12 +378,12 @@ export class EnhancedLogger {
 			if (typeof Bun !== "undefined" && "wrapAnsi" in (Bun as any)) {
 				try {
 					const wrapped = (Bun as any).wrapAnsi(output, { width: 120 });
-					console.log(wrapped);
+					console.info(wrapped);
 				} catch {
-					console.log(output);
+					console.info(output);
 				}
 			} else {
-				console.log(output);
+				console.info(output);
 			}
 		} catch (error) {
 			console.error("❌ Failed to write to terminal:", error);

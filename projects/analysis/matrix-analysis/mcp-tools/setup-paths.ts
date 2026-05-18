@@ -175,7 +175,7 @@ function createDirectories() {
 
   for (const dir of directories) {
     Bun.spawnSync(["mkdir", "-p", dir]);
-    console.log(`✅ Ensured directory: ${dir}`);
+    console.info(`✅ Ensured directory: ${dir}`);
   }
 }
 
@@ -252,7 +252,7 @@ echo "💿 Backups Directory: $DASHBOARD_BACKUPS_DIR"
 `;
 
   await Bun.write(join(BASE_DIR, "setup-paths.sh"), shellScript);
-  console.log(`✅ Created shell script: ${join(BASE_DIR, "setup-paths.sh")}`);
+  console.info(`✅ Created shell script: ${join(BASE_DIR, "setup-paths.sh")}`);
 }
 
 // Generate TypeScript paths file
@@ -298,7 +298,7 @@ export function getAuditPath(tenant: string): string {
 `;
 
   await Bun.write(join(BASE_DIR, "paths.ts"), tsContent);
-  console.log(`✅ Created TypeScript paths file: ${join(BASE_DIR, "paths.ts")}`);
+  console.info(`✅ Created TypeScript paths file: ${join(BASE_DIR, "paths.ts")}`);
 }
 
 // Generate .env file template
@@ -356,36 +356,36 @@ AUDIT_LOG=${pathConfig.LOGS.AUDIT}
 `;
 
   await Bun.write(join(BASE_DIR, ".env.template"), envTemplate);
-  console.log(`✅ Created .env template: ${join(BASE_DIR, ".env.template")}`);
+  console.info(`✅ Created .env template: ${join(BASE_DIR, ".env.template")}`);
 }
 
 // Main execution
 async function main() {
-  console.log("🔧 Setting up Enhanced Multi-Tenant Dashboard paths...");
-  console.log("=" .repeat(60));
+  console.info("🔧 Setting up Enhanced Multi-Tenant Dashboard paths...");
+  console.info("=" .repeat(60));
 
   createDirectories();
   await generateShellScript();
   await generateTypeScriptPaths();
   await generateEnvTemplate();
 
-  console.log("\n✅ Path setup completed!");
-  console.log("\n📋 Generated files:");
-  console.log(`  📄 setup-paths.sh - Shell script for environment variables`);
-  console.log(`  📄 paths.ts - TypeScript path constants`);
-  console.log(`  📄 .env.template - Environment variables template`);
-  console.log(`  📁 All required directories created`);
+  console.info("\n✅ Path setup completed!");
+  console.info("\n📋 Generated files:");
+  console.info(`  📄 setup-paths.sh - Shell script for environment variables`);
+  console.info(`  📄 paths.ts - TypeScript path constants`);
+  console.info(`  📄 .env.template - Environment variables template`);
+  console.info(`  📁 All required directories created`);
 
-  console.log("\n🚀 Usage:");
-  console.log(`  # Load environment variables`);
-  console.log(`  source ${BASE_DIR}/setup-paths.sh`);
-  console.log();
-  console.log(`  # Import paths in TypeScript`);
-  console.log(`  import { PATHS, getPaths } from './paths';`);
-  console.log();
-  console.log(`  # Copy environment template`);
-  console.log(`  cp .env.template .env`);
-  console.log(`  # Edit .env with your settings`);
+  console.info("\n🚀 Usage:");
+  console.info(`  # Load environment variables`);
+  console.info(`  source ${BASE_DIR}/setup-paths.sh`);
+  console.info();
+  console.info(`  # Import paths in TypeScript`);
+  console.info(`  import { PATHS, getPaths } from './paths';`);
+  console.info();
+  console.info(`  # Copy environment template`);
+  console.info(`  cp .env.template .env`);
+  console.info(`  # Edit .env with your settings`);
 }
 
 // Run if called directly

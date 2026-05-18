@@ -82,7 +82,7 @@ export class NumberHealthMonitor extends Pattern {
   }
 
   private async forceRevalidation(e164: string): Promise<void> {
-    console.log(`🔄 Forcing revalidation for ${e164}`);
+    console.info(`🔄 Forcing revalidation for ${e164}`);
     // Implementation would force fresh validation
   }
 
@@ -99,7 +99,7 @@ export class NumberHealthMonitor extends Pattern {
       checker: () => this.exec(phone),
       alert: (report: HealthReport) => {
         if (report.healthScore < 50) {
-          console.log(`⚠️ ${phone} health dropped to ${report.healthScore}`);
+          console.info(`⚠️ ${phone} health dropped to ${report.healthScore}`);
         }
       }
     });
@@ -302,7 +302,7 @@ export class PredictiveCampaignRouter extends Pattern {
   }
 
   private async queueForReview(decision: RoutingDecision): Promise<void> {
-    console.log(`🚨 Queued for review: ${decision.phone} (risk: ${decision.risk})`);
+    console.info(`🚨 Queued for review: ${decision.phone} (risk: ${decision.risk})`);
   }
 
   async startCampaign(campaign: Campaign, phones: string[]): Promise<CampaignMetrics> {
@@ -331,7 +331,7 @@ export class PredictiveCampaignRouter extends Pattern {
   }
 
   private async pauseCampaign(campaignId: string, reason: string): Promise<void> {
-    console.log(`⏸️ Paused campaign ${campaignId}: ${reason}`);
+    console.info(`⏸️ Paused campaign ${campaignId}: ${reason}`);
   }
 }
 
@@ -418,7 +418,7 @@ export class AutonomicController extends Pattern {
       for (const subsystem of subsystems) {
         if (this.test(subsystem)) {
           const result = await this.exec(subsystem);
-          console.log(`🛠️ Autonomic: ${subsystem} ${result.healed ? 'HEALED' : 'OK'} (${result.action})`);
+          console.info(`🛠️ Autonomic: ${subsystem} ${result.healed ? 'HEALED' : 'OK'} (${result.action})`);
           
           // Update §Metric:87
           this.metrics.record('autonomic', {
@@ -438,7 +438,7 @@ class Monitor {
     return {
       phone,
       interval: config.interval,
-      stop: () => console.log(`Stopped monitoring ${phone}`)
+      stop: () => console.info(`Stopped monitoring ${phone}`)
     };
   }
 }
@@ -469,7 +469,7 @@ class PoolManager {
 
   async add(e164: string, metadata: any): Promise<void> {
     this.size++;
-    console.log(`Added ${e164} to pool`);
+    console.info(`Added ${e164} to pool`);
   }
 }
 
@@ -482,7 +482,7 @@ class MetricsCollector {
   }
 
   record(type: string, data: any): void {
-    console.log(`Recorded ${type}:`, data);
+    console.info(`Recorded ${type}:`, data);
   }
 }
 
@@ -505,7 +505,7 @@ class Query {
   constructor(private type: string) {}
 
   async exec(config: any): Promise<void> {
-    console.log(`Query ${this.type} executed with config:`, config);
+    console.info(`Query ${this.type} executed with config:`, config);
   }
 }
 

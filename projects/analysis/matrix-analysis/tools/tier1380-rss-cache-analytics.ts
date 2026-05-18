@@ -2,12 +2,12 @@
 // @bun v1.3.7+
 // Tier-1380 RSS Cache & Performance Analytics
 
-console.log("🚀 Tier-1380 RSS Cache & Performance Analytics\n");
+console.info("🚀 Tier-1380 RSS Cache & Performance Analytics\n");
 
 // ─── Cache Management ─────────────────────────────────
 // @ts-expect-error - Implicit any types for runtime compatibility
 async function checkETag(url, savedETag = null) {
-	console.log("🏷️  ETag Cache Validation:");
+	console.info("🏷️  ETag Cache Validation:");
 
 	/** @type {any} */
 	const headers = {};
@@ -24,16 +24,16 @@ async function checkETag(url, savedETag = null) {
 		const status = response.status;
 
 		const isCached = status === 304;
-		console.log(
+		console.info(
 			`   Status: ${isCached ? "✅ Not modified – use cache" : "🔄 Fresh fetch"}`,
 		);
-		console.log(`   HTTP Status: ${status}`);
-		console.log(`   ETag: ${currentETag || "None"}`);
-		console.log(`   Fetch Time: ${fetchTime}ms`);
+		console.info(`   HTTP Status: ${status}`);
+		console.info(`   ETag: ${currentETag || "None"}`);
+		console.info(`   Fetch Time: ${fetchTime}ms`);
 
 		if (savedETag) {
-			console.log(`   Saved ETag: ${savedETag}`);
-			console.log(`   Cache Hit: ${isCached ? "✅ Yes" : "❌ No"}`);
+			console.info(`   Saved ETag: ${savedETag}`);
+			console.info(`   Cache Hit: ${isCached ? "✅ Yes" : "❌ No"}`);
 		}
 
 		return {
@@ -48,7 +48,7 @@ async function checkETag(url, savedETag = null) {
 			error && typeof error === "object" && "message" in error
 				? error.message
 				: String(error);
-		console.log(`   ❌ Error: ${errorMsg}`);
+		console.info(`   ❌ Error: ${errorMsg}`);
 		return { error: errorMsg };
 	}
 }
@@ -56,13 +56,13 @@ async function checkETag(url, savedETag = null) {
 // ─── Performance Benchmarking ───────────────────────
 // @ts-expect-error - Implicit any types for runtime compatibility
 async function benchmarkFetchAndParse(url, iterations = 3) {
-	console.log("⚡ Fetch & Parse Benchmark:");
+	console.info("⚡ Fetch & Parse Benchmark:");
 
 	const times = [];
 	const results = [];
 
 	for (let i = 0; i < iterations; i++) {
-		console.log(`   Iteration ${i + 1}:`);
+		console.info(`   Iteration ${i + 1}:`);
 
 		const startTime = Date.now();
 
@@ -87,10 +87,10 @@ async function benchmarkFetchAndParse(url, iterations = 3) {
 				contentSize: text.length,
 			});
 
-			console.log(
+			console.info(
 				`     Fetch+Parse: ${totalTime}ms (Fetch: ${totalTime - parseTime}ms, Parse: ${parseTime}ms)`,
 			);
-			console.log(
+			console.info(
 				`     Items: ${itemMatches.length}, Size: ${(text.length / 1024).toFixed(1)}KB`,
 			);
 		} catch (error) {
@@ -98,7 +98,7 @@ async function benchmarkFetchAndParse(url, iterations = 3) {
 				error && typeof error === "object" && "message" in error
 					? error.message
 					: String(error);
-			console.log(`     ❌ Error: ${errorMsg}`);
+			console.info(`     ❌ Error: ${errorMsg}`);
 		}
 	}
 
@@ -107,11 +107,11 @@ async function benchmarkFetchAndParse(url, iterations = 3) {
 		const min = Math.min(...times);
 		const max = Math.max(...times);
 
-		console.log(`\n📊 Benchmark Summary:`);
-		console.log(`   Average: ${avg.toFixed(2)}ms`);
-		console.log(`   Min: ${min}ms`);
-		console.log(`   Max: ${max}ms`);
-		console.log(`   Success Rate: ${((times.length / iterations) * 100).toFixed(1)}%`);
+		console.info(`\n📊 Benchmark Summary:`);
+		console.info(`   Average: ${avg.toFixed(2)}ms`);
+		console.info(`   Min: ${min}ms`);
+		console.info(`   Max: ${max}ms`);
+		console.info(`   Success Rate: ${((times.length / iterations) * 100).toFixed(1)}%`);
 	}
 
 	return results;
@@ -120,7 +120,7 @@ async function benchmarkFetchAndParse(url, iterations = 3) {
 // ─── Content Size Audit ───────────────────────────────
 // @ts-expect-error - Implicit any types for runtime compatibility
 async function auditFeedSize(url) {
-	console.log("📏 Feed Size Audit:");
+	console.info("📏 Feed Size Audit:");
 
 	try {
 		const response = await fetch(url);
@@ -159,21 +159,21 @@ async function auditFeedSize(url) {
 		const avgTitleLength = itemCount > 0 ? totalTitleLength / itemCount : 0;
 		const totalChars = totalDescLength + totalTitleLength;
 
-		console.log(`   Items: ${itemCount}`);
-		console.log(`   Total description chars: ${totalDescLength.toLocaleString()}`);
-		console.log(`   Total title chars: ${totalTitleLength.toLocaleString()}`);
-		console.log(`   Total content chars: ${totalChars.toLocaleString()}`);
-		console.log(`   Avg description length: ${Math.round(avgDescLength)} chars`);
-		console.log(`   Avg title length: ${Math.round(avgTitleLength)} chars`);
-		console.log(`   Feed size: ${(text.length / 1024).toFixed(1)}KB`);
+		console.info(`   Items: ${itemCount}`);
+		console.info(`   Total description chars: ${totalDescLength.toLocaleString()}`);
+		console.info(`   Total title chars: ${totalTitleLength.toLocaleString()}`);
+		console.info(`   Total content chars: ${totalChars.toLocaleString()}`);
+		console.info(`   Avg description length: ${Math.round(avgDescLength)} chars`);
+		console.info(`   Avg title length: ${Math.round(avgTitleLength)} chars`);
+		console.info(`   Feed size: ${(text.length / 1024).toFixed(1)}KB`);
 
 		// Show largest items
 		if (itemDetails.length > 0) {
-			console.log(`\n📊 Top 5 Items by Size:`);
+			console.info(`\n📊 Top 5 Items by Size:`);
 			itemDetails
 				.sort((a, b) => b.totalLength - a.totalLength)
 				.forEach((item) => {
-					console.log(
+					console.info(
 						`   Item ${item.index}: ${item.totalLength} chars (Title: ${item.titleLength}, Desc: ${item.descLength})`,
 					);
 				});
@@ -193,17 +193,17 @@ async function auditFeedSize(url) {
 			error && typeof error === "object" && "message" in error
 				? error.message
 				: String(error);
-		console.log(`   ❌ Error: ${errorMsg}`);
+		console.info(`   ❌ Error: ${errorMsg}`);
 		return { error: errorMsg };
 	}
 }
 
 // ─── One-Liner Demonstrations (Bun Compatible) ───────
 async function demonstrateOneLiners() {
-	console.log("⚡ Bun-Compatible One-Liner Demonstrations:\n");
+	console.info("⚡ Bun-Compatible One-Liner Demonstrations:\n");
 
 	// 12. Simple ETag check
-	console.log("12. ETag Cache Validation:");
+	console.info("12. ETag Cache Validation:");
 	try {
 		const etagResult = await fetch("https://bun.com/rss.xml").then((r) => ({
 			status: r.status,
@@ -211,14 +211,14 @@ async function demonstrateOneLiners() {
 		}));
 
 		const isCached = etagResult.status === 304;
-		console.log(`   ${isCached ? "✅ Not modified – use cache" : "🔄 Fresh fetch"}`);
-		console.log(`   ETag: ${etagResult.etag || "None"}`);
+		console.info(`   ${isCached ? "✅ Not modified – use cache" : "🔄 Fresh fetch"}`);
+		console.info(`   ETag: ${etagResult.etag || "None"}`);
 	} catch (e) {
-		console.log(`   Error: ${e}`);
+		console.info(`   Error: ${e}`);
 	}
 
 	// 13. Performance benchmark (simplified)
-	console.log("\n13. Performance Benchmark:");
+	console.info("\n13. Performance Benchmark:");
 	try {
 		const start = Date.now();
 		await fetch("https://bun.com/rss.xml")
@@ -226,14 +226,14 @@ async function demonstrateOneLiners() {
 			.then((text) => {
 				const items = (text.match(/<item/g) || []).length;
 				const duration = Date.now() - start;
-				console.log(`   Fetch+parse: ${duration.toFixed(2)}ms (${items} items)`);
+				console.info(`   Fetch+parse: ${duration.toFixed(2)}ms (${items} items)`);
 			});
 	} catch (e) {
-		console.log(`   Error: ${e}`);
+		console.info(`   Error: ${e}`);
 	}
 
 	// 14. Content size audit
-	console.log("\n14. Content Size Audit:");
+	console.info("\n14. Content Size Audit:");
 	try {
 		await fetch("https://bun.com/rss.xml")
 			.then((r) => r.text())
@@ -249,37 +249,37 @@ async function demonstrateOneLiners() {
 				const itemCount = (text.match(/<item/g) || []).length;
 				const avgLength = itemCount > 0 ? totalDescLength / itemCount : 0;
 
-				console.log(`   Items: ${itemCount}`);
-				console.log(`   Total desc chars: ${totalDescLength}`);
-				console.log(`   Avg: ${Math.round(avgLength)}`);
+				console.info(`   Items: ${itemCount}`);
+				console.info(`   Total desc chars: ${totalDescLength}`);
+				console.info(`   Avg: ${Math.round(avgLength)}`);
 			});
 	} catch (e) {
-		console.log(`   Error: ${e}`);
+		console.info(`   Error: ${e}`);
 	}
 }
 
 // ─── Cache Simulation ─────────────────────────────────
 async function simulateCacheWorkflow() {
-	console.log("\n🔄 Cache Workflow Simulation:");
+	console.info("\n🔄 Cache Workflow Simulation:");
 
 	const url = "https://bun.com/rss.xml";
 
 	// First fetch - should get fresh content
-	console.log("1. Initial fetch (cache miss expected):");
+	console.info("1. Initial fetch (cache miss expected):");
 	const firstResult = await checkETag(url);
 
 	if (firstResult.etag) {
-		console.log("\n2. Second fetch with ETag (cache hit expected):");
+		console.info("\n2. Second fetch with ETag (cache hit expected):");
 		// @ts-expect-error - Type mismatch for runtime compatibility
 		const secondResult = await checkETag(url, firstResult.etag);
 
-		console.log("\n3. Cache Analysis:");
+		console.info("\n3. Cache Analysis:");
 		const timeSaved = firstResult.fetchTime - (secondResult.fetchTime || 0);
-		console.log(`   Time saved: ${Math.max(0, timeSaved)}ms`);
-		console.log(
+		console.info(`   Time saved: ${Math.max(0, timeSaved)}ms`);
+		console.info(
 			`   Bandwidth saved: ${secondResult.isCached ? `${(firstResult.content?.length || 0) / 1024}KB` : "0KB"}`,
 		);
-		console.log(
+		console.info(
 			`   Cache efficiency: ${secondResult.isCached ? "✅ Optimal" : "⚠️  No caching benefit"}`,
 		);
 	}
@@ -287,42 +287,42 @@ async function simulateCacheWorkflow() {
 
 // ─── Main Execution ─────────────────────────────────
 async function main() {
-	console.log("🎯 Tier-1380 RSS Cache & Performance Analytics\n");
+	console.info("🎯 Tier-1380 RSS Cache & Performance Analytics\n");
 
 	const rssUrl = "https://bun.com/rss.xml";
 
 	// One-liner demonstrations
 	await demonstrateOneLiners();
 
-	console.log("\n" + "=".repeat(60));
+	console.info("\n" + "=".repeat(60));
 
 	// Comprehensive ETag check
 	await checkETag(rssUrl);
 
-	console.log("\n" + "─".repeat(40));
+	console.info("\n" + "─".repeat(40));
 
 	// Performance benchmark
 	await benchmarkFetchAndParse(rssUrl, 3);
 
-	console.log("\n" + "─".repeat(40));
+	console.info("\n" + "─".repeat(40));
 
 	// Content size audit
 	await auditFeedSize(rssUrl);
 
-	console.log("\n" + "=".repeat(60));
+	console.info("\n" + "=".repeat(60));
 
 	// Cache workflow simulation
 	await simulateCacheWorkflow();
 
-	console.log("\n💡 Bun-Compatible One-Liner Examples:");
-	console.log(
-		'   12. ETag check: bun -e \'fetch("url").then(r=>console.log(r.status===304?"Not modified":"Fresh fetch",r.headers.get("etag")))\'',
+	console.info("\n💡 Bun-Compatible One-Liner Examples:");
+	console.info(
+		'   12. ETag check: bun -e \'fetch("url").then(r=>console.info(r.status===304?"Not modified":"Fresh fetch",r.headers.get("etag")))\'',
 	);
-	console.log(
-		'   13. Benchmark: bun -e \'const s=Date.now();fetch("url").then(r=>r.text()).then(t=>console.log("Time:",Date.now()-s,"ms"))\'',
+	console.info(
+		'   13. Benchmark: bun -e \'const s=Date.now();fetch("url").then(r=>r.text()).then(t=>console.info("Time:",Date.now()-s,"ms"))\'',
 	);
-	console.log(
-		"   14. Size audit: bun -e 'fetch(\"url\").then(r=>r.text()).then(t=>{const items=(t.match(/<item/g)||[]).length;const descs=(t.match(/<description[^>]*>([^<]+)<\\/description>/gi)||[]).reduce((sum,d)=>sum+d.match(/<description[^>]*>([^<]+)<\\/description>/i)[1].length,0);console.log(`Items:${items},Desc chars:${descs},Avg:${Math.round(descs/items)}`)})'",
+	console.info(
+		"   14. Size audit: bun -e 'fetch(\"url\").then(r=>r.text()).then(t=>{const items=(t.match(/<item/g)||[]).length;const descs=(t.match(/<description[^>]*>([^<]+)<\\/description>/gi)||[]).reduce((sum,d)=>sum+d.match(/<description[^>]*>([^<]+)<\\/description>/i)[1].length,0);console.info(`Items:${items},Desc chars:${descs},Avg:${Math.round(descs/items)}`)})'",
 	);
 }
 

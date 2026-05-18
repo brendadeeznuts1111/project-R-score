@@ -1,4 +1,4 @@
 import { createDevHQTerminal } from "@devhq/cli";
 
-console.log("Importing from @devhq/cli successful!");
-console.log("createDevHQTerminal is a", typeof createDevHQTerminal);
+console.info("Importing from @devhq/cli successful!");
+console.info("createDevHQTerminal is a", typeof createDevHQTerminal);

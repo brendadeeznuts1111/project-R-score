@@ -23,19 +23,19 @@ program
   .option('--filesystem-only', 'Only heal filesystem, skip circuits')
   .option('--verbose', 'Enable verbose output')
   .action(async (options) => {
-    console.log('🔄 Integrated Healing System v2.01.05');
-    console.log('=====================================');
+    console.info('🔄 Integrated Healing System v2.01.05');
+    console.info('=====================================');
     
     try {
       // Get current status
       const status = await integratedHealingSystem.getSystemStatus();
-      console.log(`📊 Current health score: ${(status.currentHealthScore * 100).toFixed(1)}%`);
-      console.log(`🔧 Last healing: ${new Date(status.lastHealingTime).toLocaleString()}`);
-      console.log(`🔄 Currently healing: ${status.isHealing ? 'Yes' : 'No'}`);
-      console.log('');
+      console.info(`📊 Current health score: ${(status.currentHealthScore * 100).toFixed(1)}%`);
+      console.info(`🔧 Last healing: ${new Date(status.lastHealingTime).toLocaleString()}`);
+      console.info(`🔄 Currently healing: ${status.isHealing ? 'Yes' : 'No'}`);
+      console.info('');
 
       if (status.isHealing) {
-        console.log('⚠️  Healing already in progress. Please wait...');
+        console.info('⚠️  Healing already in progress. Please wait...');
         return;
       }
 
@@ -59,7 +59,7 @@ program
       }
 
       // Perform healing
-      console.log('🚀 Starting integrated healing...');
+      console.info('🚀 Starting integrated healing...');
       const startTime = Date.now();
       
       const result = await integratedHealingSystem.performIntegratedHealing();
@@ -67,57 +67,57 @@ program
       const duration = Date.now() - startTime;
       
       // Display results
-      console.log('\\n📊 Healing Results:');
-      console.log('==================');
-      console.log(`✅ Success: ${result.success ? 'Yes' : 'No'}`);
-      console.log(`⏱️  Duration: ${duration}ms`);
-      console.log(`🏥 Health Status: ${result.overall.healthStatus}`);
-      console.log(`📈 Unified Health Score: ${(result.integration.unifiedHealthScore * 100).toFixed(1)}%`);
+      console.info('\\n📊 Healing Results:');
+      console.info('==================');
+      console.info(`✅ Success: ${result.success ? 'Yes' : 'No'}`);
+      console.info(`⏱️  Duration: ${duration}ms`);
+      console.info(`🏥 Health Status: ${result.overall.healthStatus}`);
+      console.info(`📈 Unified Health Score: ${(result.integration.unifiedHealthScore * 100).toFixed(1)}%`);
       
       if (options.verbose) {
-        console.log('\\n📁 Filesystem Healing:');
-        console.log(`   Files Found: ${result.filesystem.metrics.filesFound}`);
-        console.log(`   Files Deleted: ${result.filesystem.metrics.filesDeleted}`);
-        console.log(`   Files Backed Up: ${result.filesystem.metrics.filesBackedUp}`);
-        console.log(`   Hashes Generated: ${result.filesystem.metrics.metrics?.hashesGenerated || 0}`);
+        console.info('\\n📁 Filesystem Healing:');
+        console.info(`   Files Found: ${result.filesystem.metrics.filesFound}`);
+        console.info(`   Files Deleted: ${result.filesystem.metrics.filesDeleted}`);
+        console.info(`   Files Backed Up: ${result.filesystem.metrics.filesBackedUp}`);
+        console.info(`   Hashes Generated: ${result.filesystem.metrics.metrics?.hashesGenerated || 0}`);
         
         if (result.filesystem.issues.length > 0) {
-          console.log('\\n   Issues:');
-          result.filesystem.issues.forEach(issue => console.log(`   • ${issue}`));
+          console.info('\\n   Issues:');
+          result.filesystem.issues.forEach(issue => console.info(`   • ${issue}`));
         }
         
         if (result.filesystem.repairs.length > 0) {
-          console.log('\\n   Repairs:');
-          result.filesystem.repairs.forEach(repair => console.log(`   • ${repair}`));
+          console.info('\\n   Repairs:');
+          result.filesystem.repairs.forEach(repair => console.info(`   • ${repair}`));
         }
         
-        console.log('\\n🔌 Circuit Healing:');
-        console.log(`   Total Circuits: ${result.circuits.totalCircuits}`);
-        console.log(`   Healed Circuits: ${result.circuits.healedCircuits}`);
+        console.info('\\n🔌 Circuit Healing:');
+        console.info(`   Total Circuits: ${result.circuits.totalCircuits}`);
+        console.info(`   Healed Circuits: ${result.circuits.healedCircuits}`);
         
         if (result.circuits.issues.length > 0) {
-          console.log('\\n   Issues:');
-          result.circuits.issues.forEach(issue => console.log(`   • ${issue}`));
+          console.info('\\n   Issues:');
+          result.circuits.issues.forEach(issue => console.info(`   • ${issue}`));
         }
         
-        console.log('\\n🔗 Integration:');
+        console.info('\\n🔗 Integration:');
         if (result.integration.crossSystemIssues.length > 0) {
-          console.log('   Cross-System Issues:');
-          result.integration.crossSystemIssues.forEach(issue => console.log(`   • ${issue}`));
+          console.info('   Cross-System Issues:');
+          result.integration.crossSystemIssues.forEach(issue => console.info(`   • ${issue}`));
         }
         
         if (result.integration.coordinatedRepairs.length > 0) {
-          console.log('   Coordinated Repairs:');
-          result.integration.coordinatedRepairs.forEach(repair => console.log(`   • ${repair}`));
+          console.info('   Coordinated Repairs:');
+          result.integration.coordinatedRepairs.forEach(repair => console.info(`   • ${repair}`));
         }
       }
       
       if (result.overall.recommendations.length > 0) {
-        console.log('\\n💡 Recommendations:');
-        result.overall.recommendations.forEach(rec => console.log(`   • ${rec}`));
+        console.info('\\n💡 Recommendations:');
+        result.overall.recommendations.forEach(rec => console.info(`   • ${rec}`));
       }
       
-      console.log(`\\n⏰ Next healing scheduled: ${new Date(result.overall.nextHealingTime).toLocaleString()}`);
+      console.info(`\\n⏰ Next healing scheduled: ${new Date(result.overall.nextHealingTime).toLocaleString()}`);
       
     } catch (error) {
       console.error('❌ Integrated healing failed:', error);
@@ -136,26 +136,26 @@ program
       const history = await integratedHealingSystem.getHealingHistory(5);
       
       if (options.json) {
-        console.log(JSON.stringify({
+        console.info(JSON.stringify({
           status,
           recentHistory: history
         }, null, 2));
       } else {
-        console.log('🏥 Integrated Healing System Status');
-        console.log('==================================');
-        console.log(`📊 Health Score: ${(status.currentHealthScore * 100).toFixed(1)}%`);
-        console.log(`🔄 Currently Healing: ${status.isHealing ? 'Yes' : 'No'}`);
-        console.log(`🕐 Last Healing: ${new Date(status.lastHealingTime).toLocaleString()}`);
-        console.log(`📁 Target Directory: ${status.config.filesystem.targetDir}`);
-        console.log(`🔌 Auto-Heal Circuits: ${status.config.circuits.autoHeal ? 'Enabled' : 'Disabled'}`);
-        console.log(`🔗 Cross-System Healing: ${status.config.integration.enableCrossSystemHealing ? 'Enabled' : 'Disabled'}`);
+        console.info('🏥 Integrated Healing System Status');
+        console.info('==================================');
+        console.info(`📊 Health Score: ${(status.currentHealthScore * 100).toFixed(1)}%`);
+        console.info(`🔄 Currently Healing: ${status.isHealing ? 'Yes' : 'No'}`);
+        console.info(`🕐 Last Healing: ${new Date(status.lastHealingTime).toLocaleString()}`);
+        console.info(`📁 Target Directory: ${status.config.filesystem.targetDir}`);
+        console.info(`🔌 Auto-Heal Circuits: ${status.config.circuits.autoHeal ? 'Enabled' : 'Disabled'}`);
+        console.info(`🔗 Cross-System Healing: ${status.config.integration.enableCrossSystemHealing ? 'Enabled' : 'Disabled'}`);
         
         if (history.length > 0) {
-          console.log('\\n📈 Recent Healing History:');
+          console.info('\\n📈 Recent Healing History:');
           history.forEach((healing, index) => {
             const status = healing.success ? '✅' : '❌';
             const health = (healing.integration.unifiedHealthScore * 100).toFixed(1);
-            console.log(`   ${index + 1}. ${status} ${new Date(healing.timestamp).toLocaleString()} - ${health}% health`);
+            console.info(`   ${index + 1}. ${status} ${new Date(healing.timestamp).toLocaleString()} - ${health}% health`);
           });
         }
       }
@@ -177,28 +177,28 @@ program
       const limit = parseInt(options.limit);
       const history = await integratedHealingSystem.getHealingHistory(limit);
       
-      console.log(`📜 Healing History (Last ${history.length} healings)`);
-      console.log('==========================================');
+      console.info(`📜 Healing History (Last ${history.length} healings)`);
+      console.info('==========================================');
       
       history.forEach((healing, index) => {
         const status = healing.success ? '✅' : '❌';
         const health = (healing.integration.unifiedHealthScore * 100).toFixed(1);
         const duration = healing.duration;
         
-        console.log(`${index + 1}. ${status} ${new Date(healing.timestamp).toLocaleString()}`);
-        console.log(`   Duration: ${duration}ms | Health: ${health}% | Status: ${healing.overall.healthStatus}`);
+        console.info(`${index + 1}. ${status} ${new Date(healing.timestamp).toLocaleString()}`);
+        console.info(`   Duration: ${duration}ms | Health: ${health}% | Status: ${healing.overall.healthStatus}`);
         
         if (healing.filesystem.issues.length > 0 || healing.circuits.issues.length > 0) {
-          console.log(`   Issues: ${healing.filesystem.issues.length + healing.circuits.issues.length}`);
+          console.info(`   Issues: ${healing.filesystem.issues.length + healing.circuits.issues.length}`);
         }
         
-        if (index < history.length - 1) console.log('');
+        if (index < history.length - 1) console.info('');
       });
       
       // Export if requested
       if (options.export) {
         await writeFile(options.export, JSON.stringify(history, null, 2));
-        console.log(`\\n💾 History exported to: ${options.export}`);
+        console.info(`\\n💾 History exported to: ${options.export}`);
       }
       
     } catch (error) {
@@ -218,9 +218,9 @@ program
       const status = await integratedHealingSystem.getSystemStatus();
       
       if (options.show || !options.set) {
-        console.log('⚙️  Current Configuration');
-        console.log('========================');
-        console.log(JSON.stringify(status.config, null, 2));
+        console.info('⚙️  Current Configuration');
+        console.info('========================');
+        console.info(JSON.stringify(status.config, null, 2));
         return;
       }
       
@@ -253,7 +253,7 @@ program
       }
       
       await integratedHealingSystem.updateConfig(configUpdates);
-      console.log('✅ Configuration updated successfully');
+      console.info('✅ Configuration updated successfully');
       
     } catch (error) {
       console.error('❌ Configuration operation failed:', error);
@@ -268,10 +268,10 @@ program
   .option('--interval <seconds>', 'Monitoring interval in seconds', '30')
   .option('--alert-threshold <number>', 'Alert when health score falls below this', '70')
   .action(async (options) => {
-    console.log('🔍 Starting real-time monitoring...');
-    console.log(`📊 Health threshold: ${options.alertThreshold}%`);
-    console.log(`⏱️  Check interval: ${options.interval}s`);
-    console.log('Press Ctrl+C to stop monitoring\\n');
+    console.info('🔍 Starting real-time monitoring...');
+    console.info(`📊 Health threshold: ${options.alertThreshold}%`);
+    console.info(`⏱️  Check interval: ${options.interval}s`);
+    console.info('Press Ctrl+C to stop monitoring\\n');
     
     const interval = parseInt(options.interval) * 1000;
     const threshold = parseFloat(options.alertThreshold) / 100;
@@ -283,9 +283,9 @@ program
         const timestamp = new Date().toLocaleTimeString();
         
         if (healthScore < threshold) {
-          console.log(`🚨 ${timestamp} - ALERT: Health score ${healthPercent}% (threshold: ${options.alertThreshold}%)`);
+          console.info(`🚨 ${timestamp} - ALERT: Health score ${healthPercent}% (threshold: ${options.alertThreshold}%)`);
         } else {
-          console.log(`✅ ${timestamp} - Health score: ${healthPercent}%`);
+          console.info(`✅ ${timestamp} - Health score: ${healthPercent}%`);
         }
         
       } catch (error) {
@@ -296,7 +296,7 @@ program
     // Handle cleanup
     process.on('SIGINT', () => {
       clearInterval(monitor);
-      console.log('\\n🛑 Monitoring stopped');
+      console.info('\\n🛑 Monitoring stopped');
       process.exit(0);
     });
   });
@@ -309,8 +309,8 @@ program
   .option('--circuits', 'Test only circuit healing')
   .option('--integration', 'Test only integration features')
   .action(async (options) => {
-    console.log('🧪 Running Integrated Healing System Tests');
-    console.log('==========================================');
+    console.info('🧪 Running Integrated Healing System Tests');
+    console.info('==========================================');
     
     try {
       let testsPassed = 0;
@@ -319,7 +319,7 @@ program
       // Test filesystem healing
       if (!options.circuits && !options.integration) {
         testsTotal++;
-        console.log('\\n📁 Testing Filesystem Healing...');
+        console.info('\\n📁 Testing Filesystem Healing...');
         
         try {
           const testConfig = {
@@ -339,64 +339,64 @@ program
           const result = await integratedHealingSystem.performIntegratedHealing();
           
           if (result.filesystem.metrics.filesFound >= 2) {
-            console.log('✅ Filesystem healing test passed');
+            console.info('✅ Filesystem healing test passed');
             testsPassed++;
           } else {
-            console.log('❌ Filesystem healing test failed - insufficient files found');
+            console.info('❌ Filesystem healing test failed - insufficient files found');
           }
           
         } catch (error) {
-          console.log(`❌ Filesystem healing test failed: ${error}`);
+          console.info(`❌ Filesystem healing test failed: ${error}`);
         }
       }
       
       // Test circuit healing
       if (!options.filesystem && !options.integration) {
         testsTotal++;
-        console.log('\\n🔌 Testing Circuit Healing...');
+        console.info('\\n🔌 Testing Circuit Healing...');
         
         try {
           const status = await integratedHealingSystem.getSystemStatus();
           
           if (status.config.circuits.autoHeal) {
-            console.log('✅ Circuit healing test passed - auto-heal enabled');
+            console.info('✅ Circuit healing test passed - auto-heal enabled');
             testsPassed++;
           } else {
-            console.log('❌ Circuit healing test failed - auto-heal disabled');
+            console.info('❌ Circuit healing test failed - auto-heal disabled');
           }
           
         } catch (error) {
-          console.log(`❌ Circuit healing test failed: ${error}`);
+          console.info(`❌ Circuit healing test failed: ${error}`);
         }
       }
       
       // Test integration
       if (!options.filesystem && !options.circuits) {
         testsTotal++;
-        console.log('\\n🔗 Testing Integration Features...');
+        console.info('\\n🔗 Testing Integration Features...');
         
         try {
           const healthScore = await integratedHealingSystem.getCurrentHealthScore();
           
           if (typeof healthScore === 'number' && healthScore >= 0 && healthScore <= 1) {
-            console.log('✅ Integration test passed - valid health score');
+            console.info('✅ Integration test passed - valid health score');
             testsPassed++;
           } else {
-            console.log('❌ Integration test failed - invalid health score');
+            console.info('❌ Integration test failed - invalid health score');
           }
           
         } catch (error) {
-          console.log(`❌ Integration test failed: ${error}`);
+          console.info(`❌ Integration test failed: ${error}`);
         }
       }
       
       // Summary
-      console.log(`\\n📊 Test Results: ${testsPassed}/${testsTotal} tests passed`);
+      console.info(`\\n📊 Test Results: ${testsPassed}/${testsTotal} tests passed`);
       
       if (testsPassed === testsTotal) {
-        console.log('🎉 All tests passed!');
+        console.info('🎉 All tests passed!');
       } else {
-        console.log('⚠️  Some tests failed');
+        console.info('⚠️  Some tests failed');
         process.exit(1);
       }
       

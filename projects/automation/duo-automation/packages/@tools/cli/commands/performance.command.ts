@@ -27,8 +27,8 @@ export class PerformanceCommand {
    * 🚀 Execute performance command
    */
   async execute(options: PerformanceCommandOptions = {}): Promise<void> {
-    console.log('🎯 Empire Pro CLI - Performance Command');
-    console.log('═'.repeat(50));
+    console.info('🎯 Empire Pro CLI - Performance Command');
+    console.info('═'.repeat(50));
 
     if (options.dashboard) {
       await this.startDashboard();
@@ -45,7 +45,7 @@ export class PerformanceCommand {
    * 📊 Start performance dashboard
    */
   private async startDashboard(): Promise<void> {
-    console.log('🚀 Starting Performance Dashboard...');
+    console.info('🚀 Starting Performance Dashboard...');
     const dashboard = new PerformanceDashboard();
     await dashboard.startDashboard();
   }
@@ -54,10 +54,10 @@ export class PerformanceCommand {
    * 📋 Generate performance report
    */
   private async generateReport(exportFormat?: string): Promise<void> {
-    console.log('📋 Generating Performance Report...');
+    console.info('📋 Generating Performance Report...');
     
     const report = await this.tracker.saveReport();
-    console.log(`✅ Report saved to: ${report}`);
+    console.info(`✅ Report saved to: ${report}`);
 
     if (exportFormat) {
       await this.exportReport(report, exportFormat);
@@ -68,31 +68,31 @@ export class PerformanceCommand {
    * 📈 Analyze performance patterns
    */
   private async analyzePerformance(): Promise<void> {
-    console.log('📈 Analyzing Performance Patterns...');
+    console.info('📈 Analyzing Performance Patterns...');
     
     const summary = this.tracker.getSummaryStatistics();
     const domainBreakdown = this.tracker.getDomainBreakdown();
     
-    console.log('─'.repeat(50));
-    console.log('📊 Performance Analysis Results:');
-    console.log('─'.repeat(50));
+    console.info('─'.repeat(50));
+    console.info('📊 Performance Analysis Results:');
+    console.info('─'.repeat(50));
     
     // Performance insights
-    console.log(`🔥 Native Implementation Rate: ${summary.nativeImplementationRate.toFixed(1)}%`);
-    console.log(`⚡ Average Response Time: ${summary.averageResponseTime.toFixed(2)}ms`);
-    console.log(`📈 Total API Calls: ${summary.totalCalls}`);
-    console.log(`🎯 APIs Tracked: ${summary.totalAPIs}`);
-    console.log(`❌ Error Rate: ${summary.errorRate.toFixed(2)}%`);
+    console.info(`🔥 Native Implementation Rate: ${summary.nativeImplementationRate.toFixed(1)}%`);
+    console.info(`⚡ Average Response Time: ${summary.averageResponseTime.toFixed(2)}ms`);
+    console.info(`📈 Total API Calls: ${summary.totalCalls}`);
+    console.info(`🎯 APIs Tracked: ${summary.totalAPIs}`);
+    console.info(`❌ Error Rate: ${summary.errorRate.toFixed(2)}%`);
     
-    console.log('\n🏆 Top Performing Domains:');
+    console.info('\n🏆 Top Performing Domains:');
     const domainStats = this.analyzeDomainPerformance(domainBreakdown);
     domainStats.slice(0, 3).forEach((stat, index) => {
-      console.log(`${index + 1}. ${stat.domain} - ${stat.avgTime.toFixed(2)}ms avg, ${stat.totalCalls} calls`);
+      console.info(`${index + 1}. ${stat.domain} - ${stat.avgTime.toFixed(2)}ms avg, ${stat.totalCalls} calls`);
     });
 
-    console.log('\n⚠️  Performance Recommendations:');
+    console.info('\n⚠️  Performance Recommendations:');
     const recommendations = this.generateRecommendations(summary, domainStats);
-    recommendations.forEach(rec => console.log(`• ${rec}`));
+    recommendations.forEach(rec => console.info(`• ${rec}`));
   }
 
   /**
@@ -146,7 +146,7 @@ export class PerformanceCommand {
    * 📤 Export report in different formats
    */
   private async exportReport(reportPath: string, format: string): Promise<void> {
-    console.log(`📤 Exporting report as ${format}...`);
+    console.info(`📤 Exporting report as ${format}...`);
     
     const reportFile = Bun.file(reportPath);
     const report = JSON.parse(await reportFile.text());
@@ -156,13 +156,13 @@ export class PerformanceCommand {
         await this.exportAsCSV(report);
         break;
       case 'json':
-        console.log('✅ Report already in JSON format');
+        console.info('✅ Report already in JSON format');
         break;
       case 'summary':
         await this.exportAsSummary(report);
         break;
       default:
-        console.log(`❌ Unsupported export format: ${format}`);
+        console.info(`❌ Unsupported export format: ${format}`);
     }
   }
 
@@ -180,7 +180,7 @@ export class PerformanceCommand {
     
     const csvPath = reportPath.replace('.json', '.csv');
     await Bun.write(csvPath, csvLines.join('\n'));
-    console.log(`✅ CSV exported to: ${csvPath}`);
+    console.info(`✅ CSV exported to: ${csvPath}`);
   }
 
   /**
@@ -212,26 +212,26 @@ ${Object.entries(report.domainBreakdown).map(([domain, metrics]: [string, any]) 
     
     const summaryPath = reportPath.replace('.json', '.txt');
     await Bun.write(summaryPath, summary);
-    console.log(`✅ Summary exported to: ${summaryPath}`);
+    console.info(`✅ Summary exported to: ${summaryPath}`);
   }
 
   /**
    * ❓ Show help information
    */
   private showHelp(): void {
-    console.log('📋 Performance Command Usage:');
-    console.log('');
-    console.log('Options:');
-    console.log('  --dashboard     Start real-time performance dashboard');
-    console.log('  --report        Generate performance report');
-    console.log('  --analyze       Analyze performance patterns');
-    console.log('  --export <fmt>  Export report (json|csv|summary)');
-    console.log('  --interval <ms> Set update interval for dashboard');
-    console.log('');
-    console.log('Examples:');
-    console.log('  performance --dashboard');
-    console.log('  performance --report --export csv');
-    console.log('  performance --analyze');
+    console.info('📋 Performance Command Usage:');
+    console.info('');
+    console.info('Options:');
+    console.info('  --dashboard     Start real-time performance dashboard');
+    console.info('  --report        Generate performance report');
+    console.info('  --analyze       Analyze performance patterns');
+    console.info('  --export <fmt>  Export report (json|csv|summary)');
+    console.info('  --interval <ms> Set update interval for dashboard');
+    console.info('');
+    console.info('Examples:');
+    console.info('  performance --dashboard');
+    console.info('  performance --report --export csv');
+    console.info('  performance --analyze');
   }
 }
 

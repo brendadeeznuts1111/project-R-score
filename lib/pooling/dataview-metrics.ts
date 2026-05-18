@@ -216,7 +216,7 @@ export class DataViewPoolMetrics {
       this.recordCount = recordCount;
       this.offset = recordCount * recordSize;
       
-      console.log(`✅ Imported ${recordCount} metrics records from ${new Date(exportTimestamp).toISOString()}`);
+      console.info(`✅ Imported ${recordCount} metrics records from ${new Date(exportTimestamp).toISOString()}`);
       return true;
       
     } catch (error) {

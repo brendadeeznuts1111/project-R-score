@@ -52,7 +52,7 @@ export function useBunDevServer() {
     try {
       // Simulate starting Bun's dev server
       // In real Bun: const server = Bun.serve({...})
-      console.log(`Starting Bun dev server on ${finalConfig.https ? 'https' : 'http'}://${finalConfig.host}:${finalConfig.port}`);
+      console.info(`Starting Bun dev server on ${finalConfig.https ? 'https' : 'http'}://${finalConfig.host}:${finalConfig.port}`);
       
       // Simulate hot reload events
       const mockEvents: HotReloadEvent[] = [
@@ -120,7 +120,7 @@ export function useBunDevServer() {
     setStats(prev => ({ ...prev, reloads: prev.reloads + 1 }));
 
     // Simulate browser reload
-    console.log('Triggering hot reload...');
+    console.info('Triggering hot reload...');
   };
 
   const updateConfig = (newConfig: Partial<DevServerConfig>) => {

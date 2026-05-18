@@ -57,61 +57,61 @@ class RealityAwareAnalyzer {
     jsonOnly?: boolean;
     html?: boolean;
   } = {}): Promise<void> {
-    console.log("🔍 FactoryWager Reality-Aware Configuration Analysis");
-    console.log("=" .repeat(60));
-    console.log(`Config: ${configFile}`);
-    console.log(`Time: ${new Date().toISOString()}`);
-    console.log("");
+    console.info("🔍 FactoryWager Reality-Aware Configuration Analysis");
+    console.info("=" .repeat(60));
+    console.info(`Config: ${configFile}`);
+    console.info(`Time: ${new Date().toISOString()}`);
+    console.info("");
 
     // Phase 1: Reality Check
-    console.log("🌐 Phase 1: Infrastructure Reality Assessment");
-    console.log("============================================");
+    console.info("🌐 Phase 1: Infrastructure Reality Assessment");
+    console.info("============================================");
 
     const realityStatus = await RealityCheck.overall.getRealityStatus();
     
-    console.log(`📊 Reality Mode: ${realityStatus.overall}`);
-    console.log(`   R2 Storage: ${realityStatus.r2.mode}`);
-    console.log(`   MCP Servers: ${realityStatus.mcp.installed}/${realityStatus.mcp.total}`);
-    console.log(`   Secrets: ${realityStatus.secrets.real}/${realityStatus.secrets.total}`);
-    console.log("");
+    console.info(`📊 Reality Mode: ${realityStatus.overall}`);
+    console.info(`   R2 Storage: ${realityStatus.r2.mode}`);
+    console.info(`   MCP Servers: ${realityStatus.mcp.installed}/${realityStatus.mcp.total}`);
+    console.info(`   Secrets: ${realityStatus.secrets.real}/${realityStatus.secrets.total}`);
+    console.info("");
 
     // Phase 2: Configuration Analysis
-    console.log("📋 Phase 2: Configuration Analysis");
-    console.log("===============================");
+    console.info("📋 Phase 2: Configuration Analysis");
+    console.info("===============================");
 
     const analysisResult = await this.runConfigParser(configFile, options);
     
-    console.log(`📈 Analysis Results:`);
-    console.log(`   Documents: ${analysisResult.stats.documents}`);
-    console.log(`   Anchors: ${analysisResult.stats.anchors}`);
-    console.log(`   Aliases: ${analysisResult.stats.aliases}`);
-    console.log(`   Interpolations: ${analysisResult.stats.interpolations}`);
-    console.log(`   Risk Score: ${analysisResult.risk_score}/100`);
-    console.log("");
+    console.info(`📈 Analysis Results:`);
+    console.info(`   Documents: ${analysisResult.stats.documents}`);
+    console.info(`   Anchors: ${analysisResult.stats.anchors}`);
+    console.info(`   Aliases: ${analysisResult.stats.aliases}`);
+    console.info(`   Interpolations: ${analysisResult.stats.interpolations}`);
+    console.info(`   Risk Score: ${analysisResult.risk_score}/100`);
+    console.info("");
 
     // Phase 3: Reality-Integrated Risk Assessment
-    console.log("🔒 Phase 3: Reality-Integrated Risk Assessment");
-    console.log("=============================================");
+    console.info("🔒 Phase 3: Reality-Integrated Risk Assessment");
+    console.info("=============================================");
 
     const deploymentAssessment = this.assessDeploymentReadiness(analysisResult, realityStatus);
     
-    console.log(`🚀 Deployment Readiness:`);
-    console.log(`   Safe for Production: ${deploymentAssessment.safe_for_production ? '✅ YES' : '❌ NO'}`);
+    console.info(`🚀 Deployment Readiness:`);
+    console.info(`   Safe for Production: ${deploymentAssessment.safe_for_production ? '✅ YES' : '❌ NO'}`);
     
     if (deploymentAssessment.warnings.length > 0) {
-      console.log("   ⚠️  Warnings:");
-      deploymentAssessment.warnings.forEach(warning => console.log(`      • ${warning}`));
+      console.info("   ⚠️  Warnings:");
+      deploymentAssessment.warnings.forEach(warning => console.info(`      • ${warning}`));
     }
     
     if (deploymentAssessment.recommendations.length > 0) {
-      console.log("   💡 Recommendations:");
-      deploymentAssessment.recommendations.forEach(rec => console.log(`      • ${rec}`));
+      console.info("   💡 Recommendations:");
+      deploymentAssessment.recommendations.forEach(rec => console.info(`      • ${rec}`));
     }
-    console.log("");
+    console.info("");
 
     // Phase 4: Generate Reality-Aware Report
-    console.log("📄 Phase 4: Reality-Aware Report Generation");
-    console.log("===========================================");
+    console.info("📄 Phase 4: Reality-Aware Report Generation");
+    console.info("===========================================");
 
     const realityAwareReport: RealityAwareReport = {
       analysis: analysisResult,
@@ -134,40 +134,40 @@ class RealityAwareAnalyzer {
     const reportFile = join(this.reportsDir, `fw-analyze-reality-${timestamp}.json`);
     
     writeFileSync(reportFile, JSON.stringify(realityAwareReport, null, 2));
-    console.log(`📁 Reality-aware report saved: ${reportFile}`);
+    console.info(`📁 Reality-aware report saved: ${reportFile}`);
 
     // Phase 5: Summary and Next Steps
-    console.log("");
-    console.log("🎯 Analysis Summary");
-    console.log("==================");
+    console.info("");
+    console.info("🎯 Analysis Summary");
+    console.info("==================");
     
     const overallRisk = this.calculateOverallRisk(analysisResult.risk_score, realityStatus);
-    console.log(`📊 Overall Risk Score: ${overallRisk}/100`);
+    console.info(`📊 Overall Risk Score: ${overallRisk}/100`);
     
     if (overallRisk < 50) {
-      console.log("✅ LOW RISK - Configuration suitable for deployment");
+      console.info("✅ LOW RISK - Configuration suitable for deployment");
     } else if (overallRisk < 75) {
-      console.log("⚠️  MEDIUM RISK - Review recommended before deployment");
+      console.info("⚠️  MEDIUM RISK - Review recommended before deployment");
     } else {
-      console.log("❌ HIGH RISK - Deployment not recommended");
+      console.info("❌ HIGH RISK - Deployment not recommended");
     }
 
-    console.log("");
-    console.log("🔧 Next Steps:");
+    console.info("");
+    console.info("🔧 Next Steps:");
     if (realityStatus.overall === "SIMULATED") {
-      console.log("   1. Configure real infrastructure for production deployment");
-      console.log("   2. Run: bun run fw --mode=audit-reality for setup guidance");
+      console.info("   1. Configure real infrastructure for production deployment");
+      console.info("   2. Run: bun run fw --mode=audit-reality for setup guidance");
     }
     
     if (analysisResult.risk_score > 50) {
-      console.log("   3. Address configuration issues (see analysis above)");
+      console.info("   3. Address configuration issues (see analysis above)");
     }
     
     if (!deploymentAssessment.safe_for_production) {
-      console.log("   4. Resolve warnings before production deployment");
+      console.info("   4. Resolve warnings before production deployment");
     }
 
-    console.log(`   5. Monitor with: bun run fw reality:status`);
+    console.info(`   5. Monitor with: bun run fw reality:status`);
   }
 
   private async runConfigParser(configFile: string, options: any): Promise<AnalysisResult> {

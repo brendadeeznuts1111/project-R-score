@@ -23,12 +23,12 @@ class NetworkClient {
     return new Promise((resolve, reject) => {
       try {
         const url = `ws://${this.hostname}:${this.port}/ws`;
-        console.log(`🔌 Connecting to ${url}...`);
+        console.info(`🔌 Connecting to ${url}...`);
         
         this.ws = new WebSocket(url);
 
         this.ws.onopen = () => {
-          console.log("✅ Connected to unified network server\n");
+          console.info("✅ Connected to unified network server\n");
           resolve();
         };
 
@@ -43,7 +43,7 @@ class NetworkClient {
         };
 
         this.ws.onclose = () => {
-          console.log("🔌 Disconnected from server");
+          console.info("🔌 Disconnected from server");
         };
       } catch (error) {
         reject(error);
@@ -57,22 +57,22 @@ class NetworkClient {
   private handleMessage(data: any): void {
     switch (data.type) {
       case "welcome":
-        console.log("📨 Welcome message:");
-        console.log(`   Client ID: ${data.clientId}`);
-        console.log(`   Server: ${data.server.hostname}`);
-        console.log(`   Server IPv4: ${data.server.ipv4.join(", ")}`);
-        console.log(`   Your IPv4: ${data.client.ipv4 || "N/A"}\n`);
+        console.info("📨 Welcome message:");
+        console.info(`   Client ID: ${data.clientId}`);
+        console.info(`   Server: ${data.server.hostname}`);
+        console.info(`   Server IPv4: ${data.server.ipv4.join(", ")}`);
+        console.info(`   Your IPv4: ${data.client.ipv4 || "N/A"}\n`);
         break;
 
       case "dns_resolved":
-        console.log(`📡 DNS Resolution for ${data.hostname}:`);
-        console.log(`   IPv4: ${data.ipv4?.join(", ") || "N/A"}`);
-        console.log(`   IPv6: ${data.ipv6?.join(", ") || "N/A"}`);
-        console.log(`   Cached: ${data.cached ? "Yes" : "No"}\n`);
+        console.info(`📡 DNS Resolution for ${data.hostname}:`);
+        console.info(`   IPv4: ${data.ipv4?.join(", ") || "N/A"}`);
+        console.info(`   IPv6: ${data.ipv6?.join(", ") || "N/A"}`);
+        console.info(`   Cached: ${data.cached ? "Yes" : "No"}\n`);
         break;
 
       case "echo":
-        console.log("📨 Echo:", data.original);
+        console.info("📨 Echo:", data.original);
         break;
 
       case "error":
@@ -80,7 +80,7 @@ class NetworkClient {
         break;
 
       default:
-        console.log("📨 Message:", data);
+        console.info("📨 Message:", data);
     }
   }
 
@@ -93,7 +93,7 @@ class NetworkClient {
       return;
     }
 
-    console.log(`🔍 Requesting DNS resolution for ${hostname}...`);
+    console.info(`🔍 Requesting DNS resolution for ${hostname}...`);
     this.ws.send(JSON.stringify({
       type: "resolve",
       hostname,
@@ -128,8 +128,8 @@ if (import.meta.main) {
   const hostname = process.argv[2] || "localhost";
   const port = parseInt(process.argv[3] || "3000", 10);
 
-  console.log("🚀 Unified Network System - Client\n");
-  console.log("=".repeat(60) + "\n");
+  console.info("🚀 Unified Network System - Client\n");
+  console.info("=".repeat(60) + "\n");
 
   const client = new NetworkClient(hostname, port);
 
@@ -137,7 +137,7 @@ if (import.meta.main) {
     await client.connect();
 
     // Example: Resolve some hostnames
-    console.log("📡 Testing DNS Resolution:\n");
+    console.info("📡 Testing DNS Resolution:\n");
     client.resolveDNS("bun.sh");
     await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -148,7 +148,7 @@ if (import.meta.main) {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Send a test message
-    console.log("\n📤 Sending test message...");
+    console.info("\n📤 Sending test message...");
     client.send({
       type: "test",
       message: "Hello from client!",
@@ -156,11 +156,11 @@ if (import.meta.main) {
     });
 
     // Keep connection alive
-    console.log("\n💡 Client connected. Press Ctrl+C to exit.\n");
+    console.info("\n💡 Client connected. Press Ctrl+C to exit.\n");
     
     // Keep process alive
     process.on("SIGINT", () => {
-      console.log("\n🛑 Disconnecting...");
+      console.info("\n🛑 Disconnecting...");
       client.disconnect();
       process.exit(0);
     });

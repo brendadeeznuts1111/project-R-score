@@ -15,7 +15,7 @@ export class MockDatabase {
   // Mock database methods
   exec(sql: string): void {
     // Mock SQL execution - just log for testing
-    console.log(`Mock DB exec: ${sql}`);
+    console.info(`Mock DB exec: ${sql}`);
   }
 
   prepare(sql: string): MockStatement {
@@ -25,7 +25,7 @@ export class MockDatabase {
   }
 
   close(): void {
-    console.log('Mock DB closed');
+    console.info('Mock DB closed');
   }
 
   // Test helper methods
@@ -50,7 +50,7 @@ export class MockStatement {
   ) {}
 
   run(...params: any[]): { changes: number; lastInsertRowid: number } {
-    console.log(`Mock statement run: ${this.sql}`, params);
+    console.info(`Mock statement run: ${this.sql}`, params);
 
     // Simulate insert operation
     if (this.sql.toLowerCase().includes('insert')) {
@@ -61,7 +61,7 @@ export class MockStatement {
   }
 
   get(...params: any[]): any {
-    console.log(`Mock statement get: ${this.sql}`, params);
+    console.info(`Mock statement get: ${this.sql}`, params);
 
     // Simulate select operations
     if (this.sql.toLowerCase().includes('select')) {
@@ -81,7 +81,7 @@ export class MockStatement {
   }
 
   all(...params: any[]): any[] {
-    console.log(`Mock statement all: ${this.sql}`, params);
+    console.info(`Mock statement all: ${this.sql}`, params);
 
     // Return mock data based on query
     if (this.sql.toLowerCase().includes('packages')) {
@@ -96,13 +96,13 @@ export class MockStatement {
   }
 
   transaction<T>(callback: () => T): T {
-    console.log(`Mock transaction started`);
+    console.info(`Mock transaction started`);
     try {
       const result = callback();
-      console.log(`Mock transaction committed`);
+      console.info(`Mock transaction committed`);
       return result;
     } catch (error) {
-      console.log(`Mock transaction rolled back`);
+      console.info(`Mock transaction rolled back`);
       throw error;
     }
   }
@@ -116,11 +116,11 @@ export function createMockDatabase(): MockDatabase {
 // Mock database backup
 export class MockDatabaseBackup {
   step(pages: number): boolean {
-    console.log(`Mock backup step: ${pages} pages`);
+    console.info(`Mock backup step: ${pages} pages`);
     return true;
   }
 
   finish(): void {
-    console.log('Mock backup finished');
+    console.info('Mock backup finished');
   }
 }

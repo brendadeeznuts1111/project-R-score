@@ -19,18 +19,18 @@ class VaultDashboard {
    * Generate comprehensive vault status report
    */
   async generateStatusReport(): Promise<void> {
-    console.log("🔐 FactoryWager Vault Status Dashboard");
-    console.log("=====================================");
-    console.log(`Generated: ${new Date().toISOString()}`);
-    console.log(`Runtime: Bun ${process.versions.bun}`);
-    console.log(`Platform: ${process.platform} ${process.arch}`);
-    console.log("");
+    console.info("🔐 FactoryWager Vault Status Dashboard");
+    console.info("=====================================");
+    console.info(`Generated: ${new Date().toISOString()}`);
+    console.info(`Runtime: Bun ${process.versions.bun}`);
+    console.info(`Platform: ${process.platform} ${process.arch}`);
+    console.info("");
 
     // Health check
-    console.log("📊 Health Check Results:");
+    console.info("📊 Health Check Results:");
     const healthStatus = await this.vault.healthCheck();
-    console.log(`Overall Status: ${healthStatus ? "✅ Healthy" : "⚠️  Issues Detected"}`);
-    console.log("");
+    console.info(`Overall Status: ${healthStatus ? "✅ Healthy" : "⚠️  Issues Detected"}`);
+    console.info("");
 
     // Credential summary
     await this.displayCredentialSummary();
@@ -49,8 +49,8 @@ class VaultDashboard {
    * Display credential summary with detailed information
    */
   private async displayCredentialSummary(): Promise<void> {
-    console.log("📋 Credential Summary:");
-    console.log("=====================");
+    console.info("📋 Credential Summary:");
+    console.info("=====================");
 
     const services = ["registry", "r2", "domain", "mcp"] as const;
     let totalCredentials = 0;
@@ -77,30 +77,30 @@ class VaultDashboard {
           const status = isExpired ? "❌ Expired" : isExpiringSoon ? "⚠️  Expiring Soon" : "✅ Active";
           const preview = value.length > 12 ? `${value.substring(0, 12)}...` : value;
           
-          console.log(`  ${service}.${key}: ${preview} (${status})`);
+          console.info(`  ${service}.${key}: ${preview} (${status})`);
         }
       }
 
       if (serviceCount > 0) {
-        console.log(`  └─ ${service}: ${serviceCount} credentials`);
+        console.info(`  └─ ${service}: ${serviceCount} credentials`);
       }
     }
 
-    console.log("");
-    console.log(`📈 Summary Statistics:`);
-    console.log(`  Total Credentials: ${totalCredentials}`);
-    console.log(`  Expired: ${expiredCredentials}`);
-    console.log(`  Expiring Soon (30 days): ${expiringSoon}`);
-    console.log(`  Active: ${totalCredentials - expiredCredentials}`);
-    console.log("");
+    console.info("");
+    console.info(`📈 Summary Statistics:`);
+    console.info(`  Total Credentials: ${totalCredentials}`);
+    console.info(`  Expired: ${expiredCredentials}`);
+    console.info(`  Expiring Soon (30 days): ${expiringSoon}`);
+    console.info(`  Active: ${totalCredentials - expiredCredentials}`);
+    console.info("");
   }
 
   /**
    * Display security analysis
    */
   private async displaySecurityAnalysis(): Promise<void> {
-    console.log("🔒 Security Analysis:");
-    console.log("====================");
+    console.info("🔒 Security Analysis:");
+    console.info("====================");
 
     // Check for common security issues
     const securityChecks = [
@@ -132,19 +132,19 @@ class VaultDashboard {
     ];
 
     for (const check of securityChecks) {
-      console.log(`  ${check.status} ${check.name}`);
-      console.log(`     ${check.description}`);
+      console.info(`  ${check.status} ${check.name}`);
+      console.info(`     ${check.description}`);
     }
 
-    console.log("");
+    console.info("");
   }
 
   /**
    * Display performance metrics
    */
   private async displayPerformanceMetrics(): Promise<void> {
-    console.log("⚡ Performance Metrics:");
-    console.log("======================");
+    console.info("⚡ Performance Metrics:");
+    console.info("======================");
 
     // Measure vault operations performance
     const startRead = performance.now();
@@ -155,20 +155,20 @@ class VaultDashboard {
     // List operation is synchronous, so we measure the time it takes
     const listTime = performance.now() - startList;
 
-    console.log(`  Read Operation: ${readTime.toFixed(2)}ms`);
-    console.log(`  List Operation: ${listTime.toFixed(2)}ms`);
-    console.log(`  Storage Backend: Bun.secrets (OS Keychain)`);
-    console.log(`  Encryption: OS-level (AES-256 equivalent)`);
-    console.log(`  Memory Usage: On-demand loading`);
-    console.log("");
+    console.info(`  Read Operation: ${readTime.toFixed(2)}ms`);
+    console.info(`  List Operation: ${listTime.toFixed(2)}ms`);
+    console.info(`  Storage Backend: Bun.secrets (OS Keychain)`);
+    console.info(`  Encryption: OS-level (AES-256 equivalent)`);
+    console.info(`  Memory Usage: On-demand loading`);
+    console.info("");
   }
 
   /**
    * Display recommendations based on vault status
    */
   private async displayRecommendations(healthStatus: boolean): Promise<void> {
-    console.log("💡 Recommendations:");
-    console.log("==================");
+    console.info("💡 Recommendations:");
+    console.info("==================");
 
     const recommendations = [];
 
@@ -203,10 +203,10 @@ class VaultDashboard {
     );
 
     for (const rec of recommendations) {
-      console.log(`  ${rec.priority} ${rec.action}`);
-      console.log(`     Command: ${rec.command}`);
-      console.log(`     Reason: ${rec.reason}`);
-      console.log("");
+      console.info(`  ${rec.priority} ${rec.action}`);
+      console.info(`     Command: ${rec.command}`);
+      console.info(`     Reason: ${rec.reason}`);
+      console.info("");
     }
   }
 
@@ -245,16 +245,16 @@ class VaultDashboard {
    * Monitor vault status continuously
    */
   async startMonitoring(intervalMinutes: number = 5): Promise<void> {
-    console.log(`🔍 Starting vault monitoring (interval: ${intervalMinutes} minutes)`);
-    console.log("Press Ctrl+C to stop monitoring");
-    console.log("");
+    console.info(`🔍 Starting vault monitoring (interval: ${intervalMinutes} minutes)`);
+    console.info("Press Ctrl+C to stop monitoring");
+    console.info("");
 
     const interval = intervalMinutes * 60 * 1000;
 
     while (true) {
       await this.generateStatusReport();
-      console.log(`\n⏰ Next check in ${intervalMinutes} minutes...`);
-      console.log("=" * 60);
+      console.info(`\n⏰ Next check in ${intervalMinutes} minutes...`);
+      console.info("=" * 60);
       
       await new Promise(resolve => setTimeout(resolve, interval));
     }
@@ -272,7 +272,7 @@ async function main(): Promise<void> {
   switch (cmd) {
     case "json":
       const jsonStatus = await dashboard.generateJsonStatus();
-      console.log(JSON.stringify(jsonStatus, null, 2));
+      console.info(JSON.stringify(jsonStatus, null, 2));
       break;
     case "monitor":
       const interval = parseInt(process.argv[3]) || 5;
@@ -281,7 +281,7 @@ async function main(): Promise<void> {
     case "help":
     case "--help":
     case "-h":
-      console.log(`
+      console.info(`
 🔐 FactoryWager Vault Dashboard v1.3.8
 
 Usage:

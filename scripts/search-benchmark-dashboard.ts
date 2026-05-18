@@ -8631,24 +8631,24 @@ async function main(): Promise<void> {
   });
 
   const ansi = (text: string, hex: string): string => `${Bun.color(hex, 'ansi')}${text}\x1b[0m`;
-  console.log(ansi(`[search-bench:dashboard] http://localhost:${options.port}/dashboard`, '#22c55e'));
-  console.log(ansi(`[search-bench:dashboard] dir=${dir}`, '#60a5fa'));
+  console.info(ansi(`[search-bench:dashboard] http://localhost:${options.port}/dashboard`, '#22c55e'));
+  console.info(ansi(`[search-bench:dashboard] dir=${dir}`, '#60a5fa'));
   const proxyCfg = resolveProxyConfig();
   if (proxyCfg) {
-    console.log(ansi(`[search-bench:dashboard] proxy=${proxyCfg.url}`, '#f59e0b'));
+    console.info(ansi(`[search-bench:dashboard] proxy=${proxyCfg.url}`, '#f59e0b'));
   }
   if (options.r2Base) {
-    console.log(ansi(`[search-bench:dashboard] r2-base=${options.r2Base}`, '#f59e0b'));
+    console.info(ansi(`[search-bench:dashboard] r2-base=${options.r2Base}`, '#f59e0b'));
   } else {
     const r2Creds = resolveR2ReadOptions();
     if (r2Creds) {
-      console.log(ansi(`[search-bench:dashboard] r2=credentialed bucket=${r2Creds.bucket}`, '#f59e0b'));
+      console.info(ansi(`[search-bench:dashboard] r2=credentialed bucket=${r2Creds.bucket}`, '#f59e0b'));
     } else {
-      console.log(ansi('[search-bench:dashboard] r2=not-configured (set R2_* or --r2-base)', '#ef4444'));
+      console.info(ansi('[search-bench:dashboard] r2=not-configured (set R2_* or --r2-base)', '#ef4444'));
     }
   }
-  console.log(ansi(`[search-bench:dashboard] cache-ttl-ms=${options.cacheTtlMs}`, '#a78bfa'));
-  console.log(ansi(`[search-bench:dashboard] domain=${options.domain}`, '#22d3ee'));
+  console.info(ansi(`[search-bench:dashboard] cache-ttl-ms=${options.cacheTtlMs}`, '#a78bfa'));
+  console.info(ansi(`[search-bench:dashboard] domain=${options.domain}`, '#22d3ee'));
 }
 
 await main();

@@ -28,7 +28,7 @@ interface ViolationSummary {
 }
 
 async function organizeViolations() {
-  console.log('🔧 Organizing Golden Rules Violations...\n');
+  console.info('🔧 Organizing Golden Rules Violations...\n');
   
   const enforcer = new GoldenRuleEnforcer();
   const result = await enforcer.validateCodebase();
@@ -39,8 +39,8 @@ async function organizeViolations() {
   // Generate organized reports
   await generateOrganizedReports(organized, summary);
   
-  console.log('✅ Violations organized successfully!');
-  console.log(`📊 ${summary.total} violations categorized and prioritized`);
+  console.info('✅ Violations organized successfully!');
+  console.info(`📊 ${summary.total} violations categorized and prioritized`);
 }
 
 function organizeViolationData(violations: any[]): OrganizedViolation[] {
@@ -146,12 +146,12 @@ async function generateOrganizedReports(violations: OrganizedViolation[], summar
   const actionPlan = generateActionPlan(violations, summary);
   await writeFile('./reports/violations-action-plan.md', actionPlan);
   
-  console.log('📄 Reports generated:');
-  console.log('   - Executive Summary: reports/violations-executive-summary.md');
-  console.log('   - Critical Issues: reports/violations-critical.md');
-  console.log('   - Quick Wins: reports/violations-quick-wins.md');
-  console.log('   - Detailed Report: reports/violations-detailed.md');
-  console.log('   - Action Plan: reports/violations-action-plan.md');
+  console.info('📄 Reports generated:');
+  console.info('   - Executive Summary: reports/violations-executive-summary.md');
+  console.info('   - Critical Issues: reports/violations-critical.md');
+  console.info('   - Quick Wins: reports/violations-quick-wins.md');
+  console.info('   - Detailed Report: reports/violations-detailed.md');
+  console.info('   - Action Plan: reports/violations-action-plan.md');
 }
 
 function generateExecutiveReport(summary: ViolationSummary): string {

@@ -32,15 +32,15 @@ import {
 
 import chalk from 'chalk';
 
-console.log(chalk.magenta.bold('🔗 REFERENCE & METADATA Types Demonstration'));
-console.log(chalk.magenta('='.repeat(55)));
+console.info(chalk.magenta.bold('🔗 REFERENCE & METADATA Types Demonstration'));
+console.info(chalk.magenta('='.repeat(55)));
 
 // =============================================================================
 // REFERENCE SYSTEM DEMONSTRATION
 // =============================================================================
 
-console.log(chalk.blue.bold('\n🔗 Reference System Types:'));
-console.log(chalk.white('  Complete vault cross-linking management:'));
+console.info(chalk.blue.bold('\n🔗 Reference System Types:'));
+console.info(chalk.white('  Complete vault cross-linking management:'));
 
 // Example reference
 const exampleReference: VaultReference = {
@@ -57,9 +57,9 @@ const exampleReference: VaultReference = {
     metadata: { confidence: 0.95 }
 };
 
-console.log(chalk.cyan(`  Example: ${exampleReference.type} from "${exampleReference.source}"`));
-console.log(chalk.gray(`    Context: "${exampleReference.context}"`));
-console.log(chalk.gray(`    Valid: ${exampleReference.isValid}, Confidence: ${(exampleReference.metadata?.confidence as number)?.toFixed(2)}`));
+console.info(chalk.cyan(`  Example: ${exampleReference.type} from "${exampleReference.source}"`));
+console.info(chalk.gray(`    Context: "${exampleReference.context}"`));
+console.info(chalk.gray(`    Valid: ${exampleReference.isValid}, Confidence: ${(exampleReference.metadata?.confidence as number)?.toFixed(2)}`));
 
 // Reference graph metrics
 const referenceMetrics = {
@@ -72,18 +72,18 @@ const referenceMetrics = {
     leastReferenced: ['/docs/archive/old-spec.md']
 };
 
-console.log(chalk.yellow('\n  📊 Reference Metrics:'));
-console.log(chalk.gray(`    Total: ${referenceMetrics.totalReferences}`));
-console.log(chalk.gray(`    Valid: ${referenceMetrics.validReferences} (${((referenceMetrics.validReferences / referenceMetrics.totalReferences) * 100).toFixed(1)}%)`));
-console.log(chalk.gray(`    Broken: ${referenceMetrics.brokenReferences} (need fixing)`));
-console.log(chalk.gray(`    Orphaned: ${referenceMetrics.orphanedPages} pages`));
+console.info(chalk.yellow('\n  📊 Reference Metrics:'));
+console.info(chalk.gray(`    Total: ${referenceMetrics.totalReferences}`));
+console.info(chalk.gray(`    Valid: ${referenceMetrics.validReferences} (${((referenceMetrics.validReferences / referenceMetrics.totalReferences) * 100).toFixed(1)}%)`));
+console.info(chalk.gray(`    Broken: ${referenceMetrics.brokenReferences} (need fixing)`));
+console.info(chalk.gray(`    Orphaned: ${referenceMetrics.orphanedPages} pages`));
 
 // =============================================================================
 // METADATA SYSTEM DEMONSTRATION
 // =============================================================================
 
-console.log(chalk.blue.bold('\n📋 Metadata System Types:'));
-console.log(chalk.white('  Comprehensive vault file metadata management:'));
+console.info(chalk.blue.bold('\n📋 Metadata System Types:'));
+console.info(chalk.white('  Comprehensive vault file metadata management:'));
 
 // Example metadata
 const exampleMetadata: VaultMetadata = {
@@ -145,10 +145,10 @@ const exampleMetadata: VaultMetadata = {
     }
 };
 
-console.log(chalk.cyan(`  Example: ${exampleMetadata.title}`));
-console.log(chalk.gray(`    Status: ${exampleMetadata.status}, Priority: ${exampleMetadata.priority}`));
-console.log(chalk.gray(`    Tags: ${exampleMetadata.tags.join(', ')}`));
-console.log(chalk.gray(`    Analytics: ${exampleMetadata.analytics.viewCount} views, ${exampleMetadata.analytics.popularityScore.toFixed(2)} popularity`));
+console.info(chalk.cyan(`  Example: ${exampleMetadata.title}`));
+console.info(chalk.gray(`    Status: ${exampleMetadata.status}, Priority: ${exampleMetadata.priority}`));
+console.info(chalk.gray(`    Tags: ${exampleMetadata.tags.join(', ')}`));
+console.info(chalk.gray(`    Analytics: ${exampleMetadata.analytics.viewCount} views, ${exampleMetadata.analytics.popularityScore.toFixed(2)} popularity`));
 
 // Metadata schema example
 const documentationSchema: MetadataSchema = {
@@ -205,17 +205,17 @@ const documentationSchema: MetadataSchema = {
     ]
 };
 
-console.log(chalk.yellow('\n  📋 Metadata Schema:'));
-console.log(chalk.gray(`    Name: ${documentationSchema.name} v${documentationSchema.version}`));
-console.log(chalk.gray(`    Fields: ${documentationSchema.fields.length} defined`));
-console.log(chalk.gray(`    Templates: ${documentationSchema.templates.length} available`));
+console.info(chalk.yellow('\n  📋 Metadata Schema:'));
+console.info(chalk.gray(`    Name: ${documentationSchema.name} v${documentationSchema.version}`));
+console.info(chalk.gray(`    Fields: ${documentationSchema.fields.length} defined`));
+console.info(chalk.gray(`    Templates: ${documentationSchema.templates.length} available`));
 
 // =============================================================================
 // QUERY SYSTEM DEMONSTRATION
 // =============================================================================
 
-console.log(chalk.blue.bold('\n🔍 Query System Types:'));
-console.log(chalk.white('  Advanced metadata search and filtering:'));
+console.info(chalk.blue.bold('\n🔍 Query System Types:'));
+console.info(chalk.white('  Advanced metadata search and filtering:'));
 
 // Example query
 const exampleQuery: MetadataQuery = {
@@ -253,44 +253,44 @@ const exampleQuery: MetadataQuery = {
     facets: ['category', 'status', 'priority']
 };
 
-console.log(chalk.cyan('  Example Query: Find popular published documentation'));
-console.log(chalk.gray('    Filters:'));
+console.info(chalk.cyan('  Example Query: Find popular published documentation'));
+console.info(chalk.gray('    Filters:'));
 exampleQuery.filters.forEach((filter, index) => {
-    console.log(chalk.gray(`      ${index + 1}. ${filter.field} ${filter.operator} "${filter.value}"`));
+    console.info(chalk.gray(`      ${index + 1}. ${filter.field} ${filter.operator} "${filter.value}"`));
 });
-console.log(chalk.gray('    Sort: By popularity (desc), then modified (desc)'));
-console.log(chalk.gray(`    Limit: ${exampleQuery.limit} results with facets`));
+console.info(chalk.gray('    Sort: By popularity (desc), then modified (desc)'));
+console.info(chalk.gray(`    Limit: ${exampleQuery.limit} results with facets`));
 
 // =============================================================================
 // SYSTEM INTEGRATION BENEFITS
 // =============================================================================
 
-console.log(chalk.green.bold('\n🎯 System Integration Benefits:'));
-console.log(chalk.white('✅ Complete Reference Management:'));
-console.log(chalk.gray('    • Track all vault cross-links and references'));
-console.log(chalk.gray('    • Detect broken links and orphaned pages'));
-console.log(chalk.gray('    • Analyze reference patterns and metrics'));
+console.info(chalk.green.bold('\n🎯 System Integration Benefits:'));
+console.info(chalk.white('✅ Complete Reference Management:'));
+console.info(chalk.gray('    • Track all vault cross-links and references'));
+console.info(chalk.gray('    • Detect broken links and orphaned pages'));
+console.info(chalk.gray('    • Analyze reference patterns and metrics'));
 
-console.log(chalk.white('✅ Comprehensive Metadata System:'));
-console.log(chalk.gray('    • Full document lifecycle tracking'));
-console.log(chalk.gray('    • Advanced analytics and popularity scoring'));
-console.log(chalk.gray('    • Schema-based validation and templates'));
+console.info(chalk.white('✅ Comprehensive Metadata System:'));
+console.info(chalk.gray('    • Full document lifecycle tracking'));
+console.info(chalk.gray('    • Advanced analytics and popularity scoring'));
+console.info(chalk.gray('    • Schema-based validation and templates'));
 
-console.log(chalk.white('✅ Advanced Query Capabilities:'));
-console.log(chalk.gray('    • Complex filtering with multiple operators'));
-console.log(chalk.gray('    • Faceted search and sorting'));
-console.log(chalk.gray('    • Performance-optimized queries'));
+console.info(chalk.white('✅ Advanced Query Capabilities:'));
+console.info(chalk.gray('    • Complex filtering with multiple operators'));
+console.info(chalk.gray('    • Faceted search and sorting'));
+console.info(chalk.gray('    • Performance-optimized queries'));
 
-console.log(chalk.white('✅ Enterprise Features:'));
-console.log(chalk.gray('    • Version control and changelog tracking'));
-console.log(chalk.gray('    • Relationship management between documents'));
-console.log(chalk.gray('    • Custom field support and transformations'));
+console.info(chalk.white('✅ Enterprise Features:'));
+console.info(chalk.gray('    • Version control and changelog tracking'));
+console.info(chalk.gray('    • Relationship management between documents'));
+console.info(chalk.gray('    • Custom field support and transformations'));
 
-console.log(chalk.magenta.bold('\n📊 Final Statistics:'));
-console.log(chalk.white('• Total Lines: 1,925 lines of comprehensive type definitions'));
-console.log(chalk.white('• Total Sections: 26 complete, grepable sections'));
-console.log(chalk.white('• Total Types: 205 interfaces, enums, and type aliases'));
-console.log(chalk.white('• Coverage: Complete vault system with REF & META support'));
-console.log(chalk.white('• Quality: 49/49 tests passing (100% success rate)'));
+console.info(chalk.magenta.bold('\n📊 Final Statistics:'));
+console.info(chalk.white('• Total Lines: 1,925 lines of comprehensive type definitions'));
+console.info(chalk.white('• Total Sections: 26 complete, grepable sections'));
+console.info(chalk.white('• Total Types: 205 interfaces, enums, and type aliases'));
+console.info(chalk.white('• Coverage: Complete vault system with REF & META support'));
+console.info(chalk.white('• Quality: 49/49 tests passing (100% success rate)'));
 
-console.log(chalk.yellow.bold('\n🚀 This is now a TRULY COMPLETE enterprise-grade type system!'));
+console.info(chalk.yellow.bold('\n🚀 This is now a TRULY COMPLETE enterprise-grade type system!'));

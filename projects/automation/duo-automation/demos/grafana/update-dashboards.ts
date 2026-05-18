@@ -26,7 +26,7 @@ interface GrafanaResponse {
 }
 
 async function findOrCreateFolder(): Promise<number> {
-  console.log(`📁 Looking for Grafana folder: ${config.grafana.dashboardFolder}`);
+  console.info(`📁 Looking for Grafana folder: ${config.grafana.dashboardFolder}`);
   
   try {
     // Search for existing folder
@@ -45,12 +45,12 @@ async function findOrCreateFolder(): Promise<number> {
     const existingFolder = folders.find((f: any) => f.title === config.grafana.dashboardFolder);
     
     if (existingFolder) {
-      console.log(`✅ Found existing folder: ${existingFolder.title} (ID: ${existingFolder.id})`);
+      console.info(`✅ Found existing folder: ${existingFolder.title} (ID: ${existingFolder.id})`);
       return existingFolder.id;
     }
 
     // Create new folder
-    console.log(`📁 Creating new folder: ${config.grafana.dashboardFolder}`);
+    console.info(`📁 Creating new folder: ${config.grafana.dashboardFolder}`);
     const createResponse = await fetch(`${config.grafana.url}/api/folders`, {
       method: 'POST',
       headers: {
@@ -67,7 +67,7 @@ async function findOrCreateFolder(): Promise<number> {
     }
 
     const newFolder = await createResponse.json();
-    console.log(`✅ Created folder: ${newFolder.title} (ID: ${newFolder.id})`);
+    console.info(`✅ Created folder: ${newFolder.title} (ID: ${newFolder.id})`);
     return newFolder.id;
 
   } catch (error) {
@@ -77,7 +77,7 @@ async function findOrCreateFolder(): Promise<number> {
 }
 
 async function updateGrafanaDashboards() {
-  console.log('🔄 Updating Grafana dashboards...');
+  console.info('🔄 Updating Grafana dashboards...');
   
   // Validate configuration
   const validation = validateConfig();
@@ -101,10 +101,10 @@ async function updateGrafanaDashboards() {
       folderId
     };
 
-    console.log(`📊 Deploying dashboard to Grafana at ${config.grafana.url}`);
-    console.log(`  Dashboard: ${dashboard.dashboard.title}`);
-    console.log(`  Panels: ${dashboard.dashboard.panels.length}`);
-    console.log(`  Folder: ${config.grafana.dashboardFolder} (ID: ${folderId})`);
+    console.info(`📊 Deploying dashboard to Grafana at ${config.grafana.url}`);
+    console.info(`  Dashboard: ${dashboard.dashboard.title}`);
+    console.info(`  Panels: ${dashboard.dashboard.panels.length}`);
+    console.info(`  Folder: ${config.grafana.dashboardFolder} (ID: ${folderId})`);
     
     // Deploy to Grafana with retry logic
     const response = await retryGrafana(async () => {
@@ -126,11 +126,11 @@ async function updateGrafanaDashboards() {
       return deployResponse.json();
     });
 
-    console.log('✅ Dashboard deployed successfully:');
-    console.log(`  ID: ${response.id}`);
-    console.log(`  UID: ${response.uid}`);
-    console.log(`  Status: ${response.status}`);
-    console.log(`  URL: ${config.grafana.url}/d/${response.uid}`);
+    console.info('✅ Dashboard deployed successfully:');
+    console.info(`  ID: ${response.id}`);
+    console.info(`  UID: ${response.uid}`);
+    console.info(`  Status: ${response.status}`);
+    console.info(`  URL: ${config.grafana.url}/d/${response.uid}`);
 
     // Register pattern in matrix
     addPattern('Pattern', 'GrafanaIntegration', {

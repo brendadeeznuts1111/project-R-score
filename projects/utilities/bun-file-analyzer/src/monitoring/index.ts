@@ -41,7 +41,7 @@ export async function initializeMonitoring(options: {
     enablePerformance = true,
   } = options;
 
-  console.log(colorize("🚀 Initializing monitoring system...", "ansi"));
+  console.info(colorize("🚀 Initializing monitoring system...", "ansi"));
 
   // Initialize main monitor
   const monitor = new AppMonitor(metafilePath);
@@ -58,10 +58,10 @@ export async function initializeMonitoring(options: {
   const securityMiddleware = monitor.getSecurityMiddleware();
   const performanceDashboard = monitor.getPerformanceDashboard();
   
-  console.log(colorize("✅ Monitoring system initialized", "ansi"));
-  console.log(colorize("📊 Dashboard: http://localhost:" + monitoringPort, "ansi"));
-  console.log(colorize("🔍 Bundle Analysis: http://localhost:" + monitoringPort + "/bundle-analysis", "ansi"));
-  console.log(colorize("📈 Metrics API: http://localhost:" + monitoringPort + "/metrics", "ansi"));
+  console.info(colorize("✅ Monitoring system initialized", "ansi"));
+  console.info(colorize("📊 Dashboard: http://localhost:" + monitoringPort, "ansi"));
+  console.info(colorize("🔍 Bundle Analysis: http://localhost:" + monitoringPort + "/bundle-analysis", "ansi"));
+  console.info(colorize("📈 Metrics API: http://localhost:" + monitoringPort + "/metrics", "ansi"));
   
   return {
     monitor,
@@ -90,7 +90,7 @@ if (import.meta.hot) {
   };
   
   import.meta.hot.accept(async () => {
-    console.log(colorize("🔄 Monitoring system hot reloaded", "ansi"));
+    console.info(colorize("🔄 Monitoring system hot reloaded", "ansi"));
     
     // Re-initialize monitoring with current options
     const monitoring = await initializeMonitoring();
@@ -104,7 +104,7 @@ if (import.meta.hot) {
   
   // Handle HMR disconnect
   import.meta.hot.on("monitoring:disconnect", () => {
-    console.log(colorize("🔌 Monitoring system disconnected", "ansi"));
+    console.info(colorize("🔌 Monitoring system disconnected", "ansi"));
   });
 }
 

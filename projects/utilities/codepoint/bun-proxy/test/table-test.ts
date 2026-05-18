@@ -16,8 +16,8 @@ function testBasicTable() {
     zebra: true
   });
 
-  console.log("Basic Table Test:");
-  console.log(table);
+  console.info("Basic Table Test:");
+  console.info(table);
   return table;
 }
 
@@ -44,8 +44,8 @@ function testCustomTable() {
   ]);
 
   const table = builder.render();
-  console.log("\nCustom Table Test:");
-  console.log(table);
+  console.info("\nCustom Table Test:");
+  console.info(table);
   return table;
 }
 
@@ -75,19 +75,19 @@ function testConfigurationTable() {
     caption: 'Configuration Test'
   });
 
-  console.log("\nConfiguration Table Test:");
-  console.log(table);
+  console.info("\nConfiguration Table Test:");
+  console.info(table);
   return table;
 }
 
 // Run tests
-console.log("=== Table Functionality Tests ===");
+console.info("=== Table Functionality Tests ===");
 
 try {
   testBasicTable();
   testCustomTable();
   testConfigurationTable();
-  console.log("\n✅ All tests passed successfully!");
+  console.info("\n✅ All tests passed successfully!");
 } catch (error) {
   console.error("\n❌ Test failed:", error);
 }

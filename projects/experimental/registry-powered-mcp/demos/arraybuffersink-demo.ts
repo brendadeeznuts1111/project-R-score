@@ -19,10 +19,10 @@ class StreamingResponseBuilder {
         this.sink = new Bun.ArrayBufferSink();
         this.sink.start({ highWaterMark, stream, asUint8Array: true });
         this.useArrayBufferSink = true;
-        console.log('✅ Using ArrayBufferSink for optimal performance');
+        console.info('✅ Using ArrayBufferSink for optimal performance');
       }
     } catch (error) {
-      console.log('⚠️ ArrayBufferSink not available, using fallback implementation');
+      console.info('⚠️ ArrayBufferSink not available, using fallback implementation');
       this.useArrayBufferSink = false;
     }
   }
@@ -88,14 +88,14 @@ class StreamingResponseBuilder {
 
 // Performance benchmark
 async function benchmarkArrayBufferSink() {
-  console.log('\n🚀 ArrayBufferSink Performance Benchmark\n');
+  console.info('\n🚀 ArrayBufferSink Performance Benchmark\n');
 
   const iterations = 1000;
   const chunkSize = 1024; // 1KB chunks
   const testData = 'x'.repeat(chunkSize);
 
-  console.log(`Testing with ${iterations} iterations of ${chunkSize} bytes each`);
-  console.log(`Total data: ${(iterations * chunkSize / 1024 / 1024).toFixed(2)} MB\n`);
+  console.info(`Testing with ${iterations} iterations of ${chunkSize} bytes each`);
+  console.info(`Total data: ${(iterations * chunkSize / 1024 / 1024).toFixed(2)} MB\n`);
 
   // Benchmark ArrayBufferSink
   const sinkBuilder = new StreamingResponseBuilder({ highWaterMark: 65536 });
@@ -109,11 +109,11 @@ async function benchmarkArrayBufferSink() {
   const sinkEnd = performance.now();
   const sinkTime = sinkEnd - sinkStart;
 
-  console.log('📊 ArrayBufferSink Results:');
-  console.log(`   Time: ${sinkTime.toFixed(2)}ms`);
-  console.log(`   Throughput: ${((iterations * chunkSize / 1024 / 1024) / (sinkTime / 1000)).toFixed(2)} MB/s`);
-  console.log(`   Buffer size: ${(sinkBuffer instanceof Uint8Array ? sinkBuffer.length : sinkBuffer.byteLength) / 1024 / 1024} MB`);
-  console.log(`   Using ArrayBufferSink: ${sinkBuilder.isUsingArrayBufferSink()}\n`);
+  console.info('📊 ArrayBufferSink Results:');
+  console.info(`   Time: ${sinkTime.toFixed(2)}ms`);
+  console.info(`   Throughput: ${((iterations * chunkSize / 1024 / 1024) / (sinkTime / 1000)).toFixed(2)} MB/s`);
+  console.info(`   Buffer size: ${(sinkBuffer instanceof Uint8Array ? sinkBuffer.length : sinkBuffer.byteLength) / 1024 / 1024} MB`);
+  console.info(`   Using ArrayBufferSink: ${sinkBuilder.isUsingArrayBufferSink()}\n`);
 
   // Benchmark traditional approach
   const traditionalStart = performance.now();
@@ -135,21 +135,21 @@ async function benchmarkArrayBufferSink() {
   const traditionalEnd = performance.now();
   const traditionalTime = traditionalEnd - traditionalStart;
 
-  console.log('📊 Traditional Array Concatenation Results:');
-  console.log(`   Time: ${traditionalTime.toFixed(2)}ms`);
-  console.log(`   Throughput: ${((iterations * chunkSize / 1024 / 1024) / (traditionalTime / 1000)).toFixed(2)} MB/s`);
-  console.log(`   Buffer size: ${traditionalBuffer.length / 1024 / 1024} MB\n`);
+  console.info('📊 Traditional Array Concatenation Results:');
+  console.info(`   Time: ${traditionalTime.toFixed(2)}ms`);
+  console.info(`   Throughput: ${((iterations * chunkSize / 1024 / 1024) / (traditionalTime / 1000)).toFixed(2)} MB/s`);
+  console.info(`   Buffer size: ${traditionalBuffer.length / 1024 / 1024} MB\n`);
 
   // Calculate improvement
   const improvement = ((traditionalTime - sinkTime) / traditionalTime * 100);
-  console.log('🏆 Performance Comparison:');
-  console.log(`   ArrayBufferSink is ${improvement > 0 ? improvement.toFixed(1) + '%' : 'comparable'} faster`);
-  console.log(`   Memory efficiency: ${(traditionalBuffer.length / (sinkBuffer instanceof Uint8Array ? sinkBuffer.length : sinkBuffer.byteLength)).toFixed(2)}x\n`);
+  console.info('🏆 Performance Comparison:');
+  console.info(`   ArrayBufferSink is ${improvement > 0 ? improvement.toFixed(1) + '%' : 'comparable'} faster`);
+  console.info(`   Memory efficiency: ${(traditionalBuffer.length / (sinkBuffer instanceof Uint8Array ? sinkBuffer.length : sinkBuffer.byteLength)).toFixed(2)}x\n`);
 }
 
 // Demonstrate streaming JSON building
 function demonstrateStreamingJSON() {
-  console.log('🔄 Streaming JSON Building Demo\n');
+  console.info('🔄 Streaming JSON Building Demo\n');
 
   const builder = new StreamingResponseBuilder({ highWaterMark: 8192 });
 
@@ -179,32 +179,32 @@ function demonstrateStreamingJSON() {
   const result = builder.end();
   const jsonString = new TextDecoder().decode(result);
 
-  console.log('✅ Generated JSON Response:');
-  console.log(`   Size: ${result instanceof Uint8Array ? result.length : result.byteLength} bytes`);
-  console.log(`   Valid JSON: ${(() => { try { JSON.parse(jsonString); return true; } catch { return false; } })()}`);
-  console.log(`   Using ArrayBufferSink: ${builder.isUsingArrayBufferSink()}\n`);
+  console.info('✅ Generated JSON Response:');
+  console.info(`   Size: ${result instanceof Uint8Array ? result.length : result.byteLength} bytes`);
+  console.info(`   Valid JSON: ${(() => { try { JSON.parse(jsonString); return true; } catch { return false; } })()}`);
+  console.info(`   Using ArrayBufferSink: ${builder.isUsingArrayBufferSink()}\n`);
 
   // Show first 200 chars
-  console.log('📄 Sample output:');
-  console.log(jsonString.substring(0, 200) + '...\n');
+  console.info('📄 Sample output:');
+  console.info(jsonString.substring(0, 200) + '...\n');
 }
 
 // Run demonstrations
 async function main() {
-  console.log('🌟 Bun ArrayBufferSink Demonstration');
-  console.log('=====================================\n');
+  console.info('🌟 Bun ArrayBufferSink Demonstration');
+  console.info('=====================================\n');
 
-  console.log('ArrayBufferSink is Bun\'s high-performance streaming buffer for:');
-  console.log('• Incremental data writing (strings, ArrayBuffers, Uint8Arrays)');
-  console.log('• Efficient memory allocation with highWaterMark preallocation');
-  console.log('• Streaming mode for continuous data processing');
-  console.log('• Final conversion to ArrayBuffer or Uint8Array');
-  console.log('• Zero-copy operations where possible\n');
+  console.info('ArrayBufferSink is Bun\'s high-performance streaming buffer for:');
+  console.info('• Incremental data writing (strings, ArrayBuffers, Uint8Arrays)');
+  console.info('• Efficient memory allocation with highWaterMark preallocation');
+  console.info('• Streaming mode for continuous data processing');
+  console.info('• Final conversion to ArrayBuffer or Uint8Array');
+  console.info('• Zero-copy operations where possible\n');
 
   await benchmarkArrayBufferSink();
   demonstrateStreamingJSON();
 
-  console.log('✨ ArrayBufferSink demonstration complete!');
+  console.info('✨ ArrayBufferSink demonstration complete!');
 }
 
 if (import.meta.main) {

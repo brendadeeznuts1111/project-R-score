@@ -416,13 +416,13 @@ export async function queue(batch: Message[], env: Env): Promise<void> {
   for (const message of batch) {
     const trigger: TriggerSignal = message.body as any;
 
-    console.log(
+    console.info(
       `Queue: Processing trigger for pattern ${trigger.pattern} on ${trigger.bookId}`
     );
 
     // Here you would integrate with your execution system
     // For now, just log the trigger
-    console.log(`Bet signal:`, {
+    console.info(`Bet signal:`, {
       pattern: trigger.pattern,
       book: trigger.bookId,
       target: trigger.targetPrice,
@@ -443,9 +443,9 @@ export async function scheduled(
   env: Env,
   ctx: ExecutionContext
 ): Promise<void> {
-  console.log("Running scheduled cleanup of old filter states");
+  console.info("Running scheduled cleanup of old filter states");
 
   // In a real implementation, you would clean up old KV entries
   // For now, just log the cleanup
-  console.log("Cleanup completed");
+  console.info("Cleanup completed");
 }

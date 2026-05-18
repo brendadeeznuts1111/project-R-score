@@ -36,8 +36,8 @@ class R2AuthenticationFix {
     const missing = required.filter(key => !this.config[key as keyof typeof this.config]);
 
     if (missing.length > 0) {
-      console.log(`⚠️  R2 Configuration Missing: ${missing.join(", ")}`);
-      console.log(`🔧 Setting up demo configuration for testing...`);
+      console.info(`⚠️  R2 Configuration Missing: ${missing.join(", ")}`);
+      console.info(`🔧 Setting up demo configuration for testing...`);
       this.setupDemoConfig();
     }
   }
@@ -132,7 +132,7 @@ class R2AuthenticationFix {
    * Store markdown profile in R2 with proper authentication
    */
   async storeProfileInR2(key: string, content: string): Promise<boolean> {
-    console.log(`🔧 Storing ${key} in R2 with proper authentication...`);
+    console.info(`🔧 Storing ${key} in R2 with proper authentication...`);
 
     const method = 'PUT';
     const path = `/${this.config.bucketName}/${key}`;
@@ -156,16 +156,16 @@ class R2AuthenticationFix {
       });
 
       if (response.ok) {
-        console.log(`✅ Successfully stored ${key} in R2 bucket`);
+        console.info(`✅ Successfully stored ${key} in R2 bucket`);
         return true;
       } else {
-        console.log(`⚠️  R2 storage simulation: ${key} stored locally`);
+        console.info(`⚠️  R2 storage simulation: ${key} stored locally`);
         // For demo purposes, store locally when R2 is not available
         await Bun.write(`./profiles/${key}`, content);
         return true;
       }
     } catch (error) {
-      console.log(`⚠️  R2 storage failed, storing locally: ${(error as Error).message}`);
+      console.info(`⚠️  R2 storage failed, storing locally: ${(error as Error).message}`);
       await Bun.write(`./profiles/${key}`, content);
       return true;
     }
@@ -175,8 +175,8 @@ class R2AuthenticationFix {
    * Complete Strike 3 with fixed authentication
    */
   async completeStrike3(): Promise<void> {
-    console.log(`🚀 Completing FactoryWager v1.3.8 Strike 3 - R2 Authentication Fix`);
-    console.log(`================================================================`);
+    console.info(`🚀 Completing FactoryWager v1.3.8 Strike 3 - R2 Authentication Fix`);
+    console.info(`================================================================`);
 
     // Ensure profiles directory exists
     await Bun.write("./profiles/.gitkeep", "");
@@ -193,15 +193,15 @@ class R2AuthenticationFix {
     const heapSuccess = await this.storeProfileInR2(`${profileName}-heap.md`, heapProfile);
 
     if (cpuSuccess && heapSuccess) {
-      console.log(`✅ Strike 3 Complete - Markdown profiles stored successfully`);
-      console.log(`📊 CPU Profile: ${profileName}-cpu.md`);
-      console.log(`💾 Heap Profile: ${profileName}-heap.md`);
-      console.log(`🔗 R2 Bucket: ${this.config.bucketName}`);
+      console.info(`✅ Strike 3 Complete - Markdown profiles stored successfully`);
+      console.info(`📊 CPU Profile: ${profileName}-cpu.md`);
+      console.info(`💾 Heap Profile: ${profileName}-heap.md`);
+      console.info(`🔗 R2 Bucket: ${this.config.bucketName}`);
 
       // Generate completion report
       await this.generateCompletionReport(profileName);
     } else {
-      console.log(`❌ Strike 3 failed - Unable to store profiles`);
+      console.info(`❌ Strike 3 failed - Unable to store profiles`);
     }
   }
 
@@ -291,7 +291,7 @@ Commit: $(git rev-parse HEAD 2>/dev/null || echo 'local')
 Status: ✅ v1.3.8 TRIPLE STRIKE COMPLETE`;
 
     await Bun.write(`./profiles/${profileName}-completion.md`, report);
-    console.log(`📄 Completion report: ${profileName}-completion.md`);
+    console.info(`📄 Completion report: ${profileName}-completion.md`);
     return report;
   }
 }

@@ -108,7 +108,7 @@ export class NeuralNet {
 	 * Retrain neural network with new patterns
 	 */
 	retrain(newPatterns: any[]): void {
-		console.log(`🧠 Neural Net: Retraining with ${newPatterns.length} patterns`);
+		console.info(`🧠 Neural Net: Retraining with ${newPatterns.length} patterns`);
 		// In production, would perform actual backpropagation
 		this.patterns = newPatterns.map((p, i) => ({
 			pattern: p.pathname || p,

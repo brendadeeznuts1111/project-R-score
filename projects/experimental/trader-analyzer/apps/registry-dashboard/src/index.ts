@@ -106,6 +106,6 @@ const app = new Elysia()
 	})
 	.listen(PORT);
 
-console.log(`🚀 Registry Dashboard running on http://localhost:${PORT}`);
+console.info(`🚀 Registry Dashboard running on http://localhost:${PORT}`);
 
 export default app;

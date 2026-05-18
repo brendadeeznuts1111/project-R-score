@@ -164,7 +164,7 @@ export const handle = async (req: Request) => {
     if (heartbeatInterval) {
       clearInterval(heartbeatInterval);
     }
-    console.log('WebSocket telemetry connection closed');
+    console.info('WebSocket telemetry connection closed');
   };
 
   // Handle errors

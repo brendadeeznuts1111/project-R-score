@@ -163,7 +163,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
 
       this.startHeartbeat();
       
-      console.log(`Collaboration server started on port ${this.config.port}`);
+      console.info(`Collaboration server started on port ${this.config.port}`);
       this.emit('started');
     } catch (error) {
       console.error('Failed to start collaboration server:', error);
@@ -197,7 +197,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       
       await this.cache.destroy();
       
-      console.log('Collaboration server stopped');
+      console.info('Collaboration server stopped');
       this.emit('stopped');
     } catch (error) {
       console.error('Error stopping collaboration server:', error);

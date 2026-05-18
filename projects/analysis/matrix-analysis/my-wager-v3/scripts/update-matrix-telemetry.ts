@@ -95,7 +95,7 @@ class MatrixTelemetry {
 
         for (const pattern of secretPatterns) {
           if (pattern.test(content)) {
-            console.log(`Secret leak detected in ${file}: ${pattern.source}`);
+            console.info(`Secret leak detected in ${file}: ${pattern.source}`);
             return true;
           }
         }
@@ -128,11 +128,11 @@ class MatrixTelemetry {
       update.col_100_leak_check || false
     );
 
-    console.log('✅ Matrix telemetry updated');
+    console.info('✅ Matrix telemetry updated');
   }
 
   async fullTelemetryUpdate() {
-    console.log('📊 Collecting Tier-1380 telemetry...');
+    console.info('📊 Collecting Tier-1380 telemetry...');
 
     const startTime = Date.now();
 
@@ -166,15 +166,15 @@ class MatrixTelemetry {
     });
 
     // Report
-    console.log('\n📊 Tier-1380 Telemetry Report:');
-    console.log('================================');
-    console.log(`Col 94 - Redis Patch: ${redisChecksum}`);
-    console.log(`Col 95 - Public Env: ${publicEnvCount > 0 ? '✅' : '❌'} (${publicEnvCount} vars)`);
-    console.log(`Col 96 - Bundle CRC32: ${bundleChecksum}`);
-    console.log(`Col 97 - Lockfile Clean: ${lockfileClean ? '✅' : '❌'}`);
-    console.log(`Col 98 - Patch Time: ${patchTime.toFixed(2)}s`);
-    console.log(`Col 99 - Env Count: ${publicEnvCount}`);
-    console.log(`Col 100 - Leak Check: ${hasLeaks ? '❌ LEAK' : '✅ CLEAN'}`);
+    console.info('\n📊 Tier-1380 Telemetry Report:');
+    console.info('================================');
+    console.info(`Col 94 - Redis Patch: ${redisChecksum}`);
+    console.info(`Col 95 - Public Env: ${publicEnvCount > 0 ? '✅' : '❌'} (${publicEnvCount} vars)`);
+    console.info(`Col 96 - Bundle CRC32: ${bundleChecksum}`);
+    console.info(`Col 97 - Lockfile Clean: ${lockfileClean ? '✅' : '❌'}`);
+    console.info(`Col 98 - Patch Time: ${patchTime.toFixed(2)}s`);
+    console.info(`Col 99 - Env Count: ${publicEnvCount}`);
+    console.info(`Col 100 - Leak Check: ${hasLeaks ? '❌ LEAK' : '✅ CLEAN'}`);
 
     return {
       redisChecksum,
@@ -208,11 +208,11 @@ if (import.meta.main) {
       break;
 
     case 'latest':
-      console.log(telemetry.getLatestTelemetry());
+      console.info(telemetry.getLatestTelemetry());
       break;
 
     default:
-      console.log('Usage: bun scripts/update-matrix-telemetry.ts [update|latest]');
+      console.info('Usage: bun scripts/update-matrix-telemetry.ts [update|latest]');
   }
 }
 

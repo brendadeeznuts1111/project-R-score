@@ -256,11 +256,11 @@ async function runInteractiveCLI() {
   console.clear();
 
   // Display header
-  console.log(AestheticBox.drawHeader('🔥 Fire22 Customer API Test Suite'));
-  console.log();
+  console.info(AestheticBox.drawHeader('🔥 Fire22 Customer API Test Suite'));
+  console.info();
 
   // Display configuration
-  console.log(
+  console.info(
     AestheticBox.drawSection('Configuration', [
       `${colors.cyan}Base URL:${colors.reset}    ${config.baseURL}`,
       `${colors.cyan}Customer ID:${colors.reset} ${config.customerId}`,
@@ -269,7 +269,7 @@ async function runInteractiveCLI() {
     ])
   );
 
-  console.log();
+  console.info();
 
   // Create tester instance
   const tester = new CustomerAPITester(config.baseURL, config.authToken);
@@ -278,8 +278,8 @@ async function runInteractiveCLI() {
   const results: { endpoint: string; success: boolean; message: string }[] = [];
 
   // ╭────────────── Test 1: Get Profile ──────────────╮
-  console.log(AestheticBox.drawDivider());
-  console.log(
+  console.info(AestheticBox.drawDivider());
+  console.info(
     AestheticBox.drawSection('Test 1: Get Profile', [
       `${colors.dim}Endpoint: GET /api/customer/profile${colors.reset}`,
       `${colors.dim}Testing customer profile retrieval...${colors.reset}`,
@@ -296,15 +296,15 @@ async function runInteractiveCLI() {
   });
 
   if (config.verbose && profileResult.success) {
-    console.log(
+    console.info(
       `${colors.dim}Response:${colors.reset}`,
       JSON.stringify(profileResult.data, null, 2)
     );
   }
 
   // ╭────────────── Test 2: Get Hierarchy ──────────────╮
-  console.log(AestheticBox.drawDivider());
-  console.log(
+  console.info(AestheticBox.drawDivider());
+  console.info(
     AestheticBox.drawSection('Test 2: Get Hierarchy', [
       `${colors.dim}Endpoint: POST /api/customer/hierarchy${colors.reset}`,
       `${colors.dim}Testing customer hierarchy retrieval...${colors.reset}`,
@@ -321,8 +321,8 @@ async function runInteractiveCLI() {
   });
 
   // ╭────────────── Test 3: Get Balance ──────────────╮
-  console.log(AestheticBox.drawDivider());
-  console.log(
+  console.info(AestheticBox.drawDivider());
+  console.info(
     AestheticBox.drawSection('Test 3: Get Balance', [
       `${colors.dim}Endpoint: GET /api/customer/balance${colors.reset}`,
       `${colors.dim}Testing balance retrieval...${colors.reset}`,
@@ -339,8 +339,8 @@ async function runInteractiveCLI() {
   });
 
   // ╭────────────── Test 4: Betting History ──────────────╮
-  console.log(AestheticBox.drawDivider());
-  console.log(
+  console.info(AestheticBox.drawDivider());
+  console.info(
     AestheticBox.drawSection('Test 4: Betting History', [
       `${colors.dim}Endpoint: GET /api/customer/betting-history${colors.reset}`,
       `${colors.dim}Testing betting history retrieval...${colors.reset}`,
@@ -357,8 +357,8 @@ async function runInteractiveCLI() {
   });
 
   // ╭────────────── Test 5: Update Profile ──────────────╮
-  console.log(AestheticBox.drawDivider());
-  console.log(
+  console.info(AestheticBox.drawDivider());
+  console.info(
     AestheticBox.drawSection('Test 5: Update Profile', [
       `${colors.dim}Endpoint: PUT /api/customer/profile${colors.reset}`,
       `${colors.dim}Testing profile update...${colors.reset}`,
@@ -378,8 +378,8 @@ async function runInteractiveCLI() {
   });
 
   // ╭────────────── Summary ──────────────╮
-  console.log();
-  console.log(AestheticBox.drawHeader('Test Results Summary'));
+  console.info();
+  console.info(AestheticBox.drawHeader('Test Results Summary'));
 
   const summaryContent: string[] = [];
   let passedTests = 0;
@@ -398,11 +398,11 @@ async function runInteractiveCLI() {
     else failedTests++;
   });
 
-  console.log(AestheticBox.drawSection('Results', summaryContent));
+  console.info(AestheticBox.drawSection('Results', summaryContent));
 
   // Final statistics
-  console.log();
-  console.log(
+  console.info();
+  console.info(
     AestheticBox.drawSection('Statistics', [
       `${colors.green}Passed:${colors.reset} ${passedTests}/${results.length}`,
       `${colors.red}Failed:${colors.reset} ${failedTests}/${results.length}`,
@@ -411,8 +411,8 @@ async function runInteractiveCLI() {
   );
 
   // Footer
-  console.log();
-  console.log(
+  console.info();
+  console.info(
     `${colors.dim}╰─────────────────────────────────────────────────────────────────╯${colors.reset}`
   );
 }

@@ -24,7 +24,7 @@ async function broadcastYAMLUpdate(options: WSBroadcastOptions = {}) {
   }
 
   try {
-    console.log(`📡 Broadcasting ${file} via WebSocket...`);
+    console.info(`📡 Broadcasting ${file} via WebSocket...`);
 
     // Read and store the YAML file
     const content = await Bun.file(file).text();
@@ -51,15 +51,15 @@ async function broadcastYAMLUpdate(options: WSBroadcastOptions = {}) {
     };
 
     // For now, just log the broadcast (WebSocket server would handle actual broadcasting)
-    console.log(`📡 Broadcast prepared for hash: ${hash}`);
-    console.log(`🔗 WebSocket URL: ${wsUrl}`);
-    console.log(`📋 Subprotocol: ${subprotocol}`);
-    console.log(`📦 Message:`, JSON.stringify(message, null, 2));
+    console.info(`📡 Broadcast prepared for hash: ${hash}`);
+    console.info(`🔗 WebSocket URL: ${wsUrl}`);
+    console.info(`📋 Subprotocol: ${subprotocol}`);
+    console.info(`📦 Message:`, JSON.stringify(message, null, 2));
 
     // In a real implementation, this would connect to the WebSocket server
     // and send the broadcast message to all connected clients
 
-    console.log(`✅ YAML broadcast complete!`);
+    console.info(`✅ YAML broadcast complete!`);
 
   } catch (error) {
     console.error(`❌ Broadcast failed:`, error.message);

@@ -599,8 +599,8 @@ describe('Performance Benchmarks', () => {
     expect(avgTime).toBeLessThan(500); // Average under 500ms
     expect(maxTime).toBeLessThan(1000); // Max under 1 second
     
-    console.log(`Average inspection time: ${avgTime.toFixed(2)}ms`);
-    console.log(`Max inspection time: ${maxTime.toFixed(2)}ms`);
+    console.info(`Average inspection time: ${avgTime.toFixed(2)}ms`);
+    console.info(`Max inspection time: ${maxTime.toFixed(2)}ms`);
   });
   
   test('should handle memory efficiently', async () => {
@@ -623,6 +623,6 @@ describe('Performance Benchmarks', () => {
     // Memory should not grow excessively
     expect(memoryIncrease).toBeLessThan(50 * 1024 * 1024); // Less than 50MB increase
     
-    console.log(`Memory increase: ${(memoryIncrease / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`Memory increase: ${(memoryIncrease / 1024 / 1024).toFixed(2)}MB`);
   });
 });

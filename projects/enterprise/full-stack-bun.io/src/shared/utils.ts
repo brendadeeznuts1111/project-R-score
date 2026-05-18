@@ -6,9 +6,9 @@ export function structuredLog(message: string, data?: any, level: 'info' | 'warn
   const prefix = level === 'error' ? '❌' : level === 'warn' ? '⚠️' : 'ℹ️';
 
   if (data) {
-    console.log(`${prefix} [${timestamp}] ${message}`, inspect(data, { colors: true, depth: 3 }));
+    console.info(`${prefix} [${timestamp}] ${message}`, inspect(data, { colors: true, depth: 3 }));
   } else {
-    console.log(`${prefix} [${timestamp}] ${message}`);
+    console.info(`${prefix} [${timestamp}] ${message}`);
   }
 }
 

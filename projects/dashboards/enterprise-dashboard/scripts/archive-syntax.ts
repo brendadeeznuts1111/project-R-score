@@ -5,7 +5,7 @@
  * Usage: bun scripts/archive-syntax.ts
  */
 
-console.log("📦 Bun.Archive Godhood Activated...\n");
+console.info("📦 Bun.Archive Godhood Activated...\n");
 
 const start = performance.now();
 
@@ -45,14 +45,14 @@ const elapsed = (performance.now() - start).toFixed(2);
 const archiveSize = (await Bun.file("./dist/syntax-bundle.tar.gz").arrayBuffer()).byteLength;
 const originalSize = syntaxToml.length + JSON.stringify(manifest).length;
 
-console.log("┌─────────────────────────────────────────────┐");
-console.log("│       SYNTAX ARCHIVE DEPLOYED               │");
-console.log("├─────────────────────────────────────────────┤");
-console.log(`│  CRC32 Integrity: ${integrity}              │`);
-console.log(`│  Original Size:   ${originalSize.toLocaleString().padStart(8)} bytes       │`);
-console.log(`│  Archive Size:    ${archiveSize.toLocaleString().padStart(8)} bytes       │`);
-console.log(`│  Compression:     ${((1 - archiveSize / originalSize) * 100).toFixed(1).padStart(6)}%              │`);
-console.log(`│  Build Time:      ${elapsed.padStart(8)} ms           │`);
-console.log("├─────────────────────────────────────────────┤");
-console.log("│  Output: ./dist/syntax-bundle.tar.gz       │");
-console.log("└─────────────────────────────────────────────┘");
+console.info("┌─────────────────────────────────────────────┐");
+console.info("│       SYNTAX ARCHIVE DEPLOYED               │");
+console.info("├─────────────────────────────────────────────┤");
+console.info(`│  CRC32 Integrity: ${integrity}              │`);
+console.info(`│  Original Size:   ${originalSize.toLocaleString().padStart(8)} bytes       │`);
+console.info(`│  Archive Size:    ${archiveSize.toLocaleString().padStart(8)} bytes       │`);
+console.info(`│  Compression:     ${((1 - archiveSize / originalSize) * 100).toFixed(1).padStart(6)}%              │`);
+console.info(`│  Build Time:      ${elapsed.padStart(8)} ms           │`);
+console.info("├─────────────────────────────────────────────┤");
+console.info("│  Output: ./dist/syntax-bundle.tar.gz       │");
+console.info("└─────────────────────────────────────────────┘");

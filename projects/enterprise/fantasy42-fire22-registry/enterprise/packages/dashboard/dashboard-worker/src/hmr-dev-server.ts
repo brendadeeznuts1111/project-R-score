@@ -344,18 +344,18 @@ let metrics = import.meta.hot?.data?.metrics ?? {
 
 // HMR Event Handlers
 if (import.meta.hot) {
-    console.log("🔥 HMR enabled for dashboard client");
+    console.info("🔥 HMR enabled for dashboard client");
     
     // Before update - preserve state
     import.meta.hot.on("bun:beforeUpdate", () => {
-        console.log("📦 Preserving state before HMR update");
+        console.info("📦 Preserving state before HMR update");
         import.meta.hot.data.clickCount = clickCount;
         import.meta.hot.data.metrics = metrics;
     });
     
     // After update - restore state
     import.meta.hot.on("bun:afterUpdate", () => {
-        console.log("✅ State restored after HMR update");
+        console.info("✅ State restored after HMR update");
         updateUI();
         showHMRNotification("🔥 Hot reload applied - state preserved!", 'success');
     });
@@ -515,7 +515,7 @@ function addHMRStatus() {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("🚀 Dashboard initialized with HMR support and Bun v1.01.04-alpha features");
+    console.info("🚀 Dashboard initialized with HMR support and Bun v1.01.04-alpha features");
     addHMRStatus();
     updateUI();
     addLogEntry('success', 'DASHBOARD', '2.1.0', 'Enhanced dashboard with Bun features initialized');
@@ -1395,7 +1395,7 @@ logger.info(
 );
 
 // Log server capabilities
-console.log(`
+console.info(`
 🌈 **WATER DASHBOARD HMR SERVER** 🌈
 !==!==!==!==!==!==!==
 🔗 URL: http://localhost:${server.port}

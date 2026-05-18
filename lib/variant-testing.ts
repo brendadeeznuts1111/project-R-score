@@ -71,7 +71,7 @@ export class VariantTesting {
     for (const [testId, test] of this.activeTests) {
       const variant = this.cookieManager.assignVariant(testId);
       if (variant) {
-        console.log(`Assigned variant ${variant.id} for test ${test.name}`);
+        console.info(`Assigned variant ${variant.id} for test ${test.name}`);
         this.trackEvent('variant_assigned', {
           testId,
           variantId: variant.id,

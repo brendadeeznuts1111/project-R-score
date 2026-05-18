@@ -60,20 +60,20 @@ class CITestRunner {
     // Build test command
     const args = this.buildTestCommand(patterns);
 
-    console.log('🧪 Test Configuration:');
-    console.log(`   Environment: ${this.ci.name}`);
-    console.log(`   Timeout: ${this.config.timeout}ms`);
-    console.log(`   Concurrency: ${this.config.concurrency}`);
-    console.log(`   Coverage: ${this.config.coverage ? 'enabled' : 'disabled'}`);
-    console.log(`   Retry Count: ${this.config.retryCount}`);
+    console.info('🧪 Test Configuration:');
+    console.info(`   Environment: ${this.ci.name}`);
+    console.info(`   Timeout: ${this.config.timeout}ms`);
+    console.info(`   Concurrency: ${this.config.concurrency}`);
+    console.info(`   Coverage: ${this.config.coverage ? 'enabled' : 'disabled'}`);
+    console.info(`   Retry Count: ${this.config.retryCount}`);
 
     if (this.ci.isPR) {
-      console.log(`   Pull Request: Yes`);
+      console.info(`   Pull Request: Yes`);
     }
 
-    console.log();
-    console.log('📝 Command:', `bun ${args.join(' ')}`);
-    console.log();
+    console.info();
+    console.info('📝 Command:', `bun ${args.join(' ')}`);
+    console.info();
 
     // Emit start annotation
     if (this.ci.isGitHubActions) {
@@ -325,55 +325,55 @@ class CITestRunner {
    * Print execution banner
    */
   private printBanner(): void {
-    console.log('╔══════════════════════════════════════════════════════════════════════════════╗');
-    console.log('║              CI-aware Test Runner - Environment Detection               ║');
-    console.log('╚══════════════════════════════════════════════════════════════════════════════╝');
-    console.log();
+    console.info('╔══════════════════════════════════════════════════════════════════════════════╗');
+    console.info('║              CI-aware Test Runner - Environment Detection               ║');
+    console.info('╚══════════════════════════════════════════════════════════════════════════════╝');
+    console.info();
   }
 
   /**
    * Print test results
    */
   private printResults(results: TestResult): void {
-    console.log();
-    console.log('📊 Test Results:');
-    console.log('══════════════════════════════════════════════════════════════════════════════');
+    console.info();
+    console.info('📊 Test Results:');
+    console.info('══════════════════════════════════════════════════════════════════════════════');
 
     const status = results.passed ? '✅ PASSED' : '❌ FAILED';
     const statusColor = results.passed ? '\x1b[32m' : '\x1b[31m';
     const reset = '\x1b[0m';
 
-    console.log(`   Status: ${statusColor}${status}${reset}`);
-    console.log(`   Total:  ${results.total} tests`);
-    console.log(`   Passed: ${results.passed} tests`);
-    console.log(`   Failed: ${results.failed} tests`);
-    console.log(`   Time:   ${(results.duration / 1000).toFixed(2)}s`);
+    console.info(`   Status: ${statusColor}${status}${reset}`);
+    console.info(`   Total:  ${results.total} tests`);
+    console.info(`   Passed: ${results.passed} tests`);
+    console.info(`   Failed: ${results.failed} tests`);
+    console.info(`   Time:   ${(results.duration / 1000).toFixed(2)}s`);
 
     if (results.coverage !== undefined) {
       const coverageColor = results.coverage >= 80 ? '\x1b[32m' :
                            results.coverage >= 60 ? '\x1b[33m' : '\x1b[31m';
-      console.log(`   Coverage: ${coverageColor}${results.coverage}%${reset}`);
+      console.info(`   Coverage: ${coverageColor}${results.coverage}%${reset}`);
     }
 
-    console.log('══════════════════════════════════════════════════════════════════════════════');
-    console.log();
+    console.info('══════════════════════════════════════════════════════════════════════════════');
+    console.info();
 
     // Emit GitHub Actions summary
     if (this.ci.isGitHubActions) {
-      console.log('## Test Summary');
-      console.log(`- **Status**: ${results.passed ? '✅ Passed' : '❌ Failed'}`);
-      console.log(`- **Duration**: ${(results.duration / 1000).toFixed(2)}s`);
+      console.info('## Test Summary');
+      console.info(`- **Status**: ${results.passed ? '✅ Passed' : '❌ Failed'}`);
+      console.info(`- **Duration**: ${(results.duration / 1000).toFixed(2)}s`);
 
       if (results.coverage) {
-        console.log(`- **Coverage**: ${results.coverage}%`);
+        console.info(`- **Coverage**: ${results.coverage}%`);
       }
 
       if (this.ci.branch) {
-        console.log(`- **Branch**: ${this.ci.branch}`);
+        console.info(`- **Branch**: ${this.ci.branch}`);
       }
 
       if (this.ci.commit) {
-        console.log(`- **Commit**: ${this.ci.commit.substring(0, 7)}`);
+        console.info(`- **Commit**: ${this.ci.commit.substring(0, 7)}`);
       }
     }
   }

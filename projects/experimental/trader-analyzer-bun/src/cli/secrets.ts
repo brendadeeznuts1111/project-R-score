@@ -12,7 +12,7 @@ import { globalLogger as logger } from '../logging/logger';
 import { versionManager } from '../secrets/version-manager';
 
 function printUsage() {
-  console.log(`
+  console.info(`
 Secrets Management CLI
 
 USAGE:
@@ -58,22 +58,22 @@ async function listSecrets(): Promise<void> {
 
   try {
     // Note: Bun.secrets doesn't have a list method, so we show status
-    console.log('🔐 Secrets Management Status');
-    console.log('=' .repeat(50));
+    console.info('🔐 Secrets Management Status');
+    console.info('=' .repeat(50));
 
     // Check if secrets are available
     const testSecret = await secrets.get({ service: 'nexus', name: 'test' }).catch(() => null);
-    console.log(`Secrets API: ${testSecret !== null ? '✅ Available' : '⚠️  Limited access'}`);
+    console.info(`Secrets API: ${testSecret !== null ? '✅ Available' : '⚠️  Limited access'}`);
 
     // Show rotation status (placeholder - would need implementation)
-    console.log('Rotation Status: Not implemented');
-    console.log('Last Rotation: Never');
+    console.info('Rotation Status: Not implemented');
+    console.info('Last Rotation: Never');
 
-    console.log('\n📋 Available Services:');
-    console.log('  - nexus (MCP API keys)');
-    console.log('  - telegram (Bot tokens)');
-    console.log('  - github (API tokens)');
-    console.log('  - database (Connection strings)');
+    console.info('\n📋 Available Services:');
+    console.info('  - nexus (MCP API keys)');
+    console.info('  - telegram (Bot tokens)');
+    console.info('  - github (API tokens)');
+    console.info('  - database (Connection strings)');
 
     logger.info('SE-200', 'Secrets list accessed', undefined, { operator: (await getCurrentOperator())?.id });
   } catch (error) {
@@ -94,7 +94,7 @@ async function setSecret(service: string, name: string, value: string): Promise<
   try {
     // Use version manager for version tracking
     const version = await versionManager.setWithVersion(name, value, 'manual');
-    console.log(`✅ Secret set: ${service}.${name} (version ${version})`);
+    console.info(`✅ Secret set: ${service}.${name} (version ${version})`);
 
     logger.info('HBSE-005', 'Secret created/updated', undefined, {
       service,
@@ -120,7 +120,7 @@ async function deleteSecret(service: string, name: string): Promise<void> {
   try {
     // Use version manager to delete all versions
     await versionManager.delete(name);
-    console.log(`✅ Secret deleted: ${service}.${name} (all versions)`);
+    console.info(`✅ Secret deleted: ${service}.${name} (all versions)`);
 
     logger.info('HBSE-001', 'Secret deleted', undefined, {
       service,
@@ -145,15 +145,15 @@ async function showVersions(service: string, name: string): Promise<void> {
   try {
     const history = await versionManager.getVersionHistory(name);
     
-    console.log(`\n📋 Version History: ${service}.${name}`);
-    console.log(`Current Version: ${history.currentVersion}`);
-    console.log(`Last Rotation: ${history.lastRotation ? new Date(history.lastRotation).toISOString() : 'Never'}`);
-    console.log('\nVersions:');
+    console.info(`\n📋 Version History: ${service}.${name}`);
+    console.info(`Current Version: ${history.currentVersion}`);
+    console.info(`Last Rotation: ${history.lastRotation ? new Date(history.lastRotation).toISOString() : 'Never'}`);
+    console.info('\nVersions:');
     
     for (const version of history.versions.reverse()) {
       const date = new Date(version.timestamp).toISOString();
       const reason = version.reason || 'manual';
-      console.log(`  v${version.version} - ${date} (${reason}) [${version.fingerprint}]`);
+      console.info(`  v${version.version} - ${date} (${reason}) [${version.fingerprint}]`);
     }
   } catch (error) {
     logger.error('HBSE-004', 'Failed to get version history', error);
@@ -172,7 +172,7 @@ async function rollbackSecret(service: string, name: string, targetVersion: numb
 
   try {
     await versionManager.rollback(name, targetVersion);
-    console.log(`✅ Secret rolled back to version ${targetVersion}: ${service}.${name}`);
+    console.info(`✅ Secret rolled back to version ${targetVersion}: ${service}.${name}`);
 
     logger.info('HBSE-005', 'Secret rolled back', undefined, {
       service,
@@ -190,7 +190,7 @@ async function rollbackSecret(service: string, name: string, targetVersion: numb
 async function rotateSecrets(all: boolean): Promise<void> {
   await requireSecretAccess('nexus', 'write');
 
-  console.log('🔄 Rotating secrets...');
+  console.info('🔄 Rotating secrets...');
 
   if (!all) {
     console.error('❌ --all flag required for rotation');
@@ -202,7 +202,7 @@ async function rotateSecrets(all: boolean): Promise<void> {
     const { rotateAllSecrets } = await import('../../scripts/secrets-rotate-cron');
     await rotateAllSecrets();
     
-    console.log('✅ Secret rotation completed');
+    console.info('✅ Secret rotation completed');
     logger.info('HBSE-005', 'Secrets rotated via CLI', undefined, {
       operator: (await getCurrentOperator())?.id,
       method: 'cli'

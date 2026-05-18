@@ -5,8 +5,8 @@
 
 import { fetch } from "bun";
 
-console.log("🚀 Bun Fetch Optimization Demo");
-console.log("=" .repeat(40));
+console.info("🚀 Bun Fetch Optimization Demo");
+console.info("=" .repeat(40));
 
 // Configuration
 const BASE_URL = "https://httpbin.org";
@@ -23,14 +23,14 @@ interface TestResult {
 
 // Demonstrate connection pooling efficiency
 async function demonstrateConnectionPooling() {
-  console.log("🔄 Connection Pooling Demo");
-  console.log("-".repeat(30));
+  console.info("🔄 Connection Pooling Demo");
+  console.info("-".repeat(30));
   
   const sameHostUrl = `${BASE_URL}/get`;
   const requestCount = 10;
   const times: number[] = [];
   
-  console.log(`Making ${requestCount} sequential requests to test connection reuse...`);
+  console.info(`Making ${requestCount} sequential requests to test connection reuse...`);
   
   for (let i = 0; i < requestCount; i++) {
     const start = performance.now();
@@ -40,13 +40,13 @@ async function demonstrateConnectionPooling() {
       times.push(time);
       
       if (i === 0) {
-        console.log(`   First request: ${time.toFixed(2)}ms (establishing connection)`);
+        console.info(`   First request: ${time.toFixed(2)}ms (establishing connection)`);
       } else if (i === requestCount - 1) {
         const improvement = times[0] && times[times.length - 1] !== undefined ? ((times[0] - times[times.length - 1]) / times[0]) * 100 : 0;
-        console.log(`   Last request: ${time.toFixed(2)}ms (${improvement.toFixed(1)}% improvement)`);
+        console.info(`   Last request: ${time.toFixed(2)}ms (${improvement.toFixed(1)}% improvement)`);
       }
     } catch (error) {
-      console.log(`   Request ${i + 1} failed:`, error);
+      console.info(`   Request ${i + 1} failed:`, error);
     }
   }
   
@@ -54,8 +54,8 @@ async function demonstrateConnectionPooling() {
     const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
     const poolEfficiency = times[0] ? ((times[0] - avgTime) / times[0]) * 100 : 0;
     
-    console.log(`   📊 Average time: ${avgTime.toFixed(2)}ms`);
-    console.log(`   🚀 Pool efficiency: ${poolEfficiency.toFixed(1)}%`);
+    console.info(`   📊 Average time: ${avgTime.toFixed(2)}ms`);
+    console.info(`   🚀 Pool efficiency: ${poolEfficiency.toFixed(1)}%`);
     
     return { times, avgTime, poolEfficiency };
   }
@@ -65,7 +65,7 @@ async function demonstrateConnectionPooling() {
 
 // Test concurrency performance
 async function testConcurrency(concurrency: number): Promise<TestResult> {
-  console.log(`Testing ${concurrency} concurrent requests...`);
+  console.info(`Testing ${concurrency} concurrent requests...`);
   
   const startTime = performance.now();
   const promises: Promise<{ success: boolean; latency: number }>[] = [];
@@ -96,28 +96,28 @@ async function testConcurrency(concurrency: number): Promise<TestResult> {
   const requestsPerSecond = (successCount / totalTime) * 1000;
   const avgLatency = results.reduce((sum, r) => sum + r.latency, 0) / results.length;
   
-  console.log(`   ✅ Completed in ${totalTime.toFixed(2)}ms`);
-  console.log(`   📈 ${requestsPerSecond.toFixed(0)} req/sec`);
-  console.log(`   🎯 Success rate: ${successRate.toFixed(1)}%`);
-  console.log(`   ⏱️ Avg latency: ${avgLatency.toFixed(2)}ms`);
+  console.info(`   ✅ Completed in ${totalTime.toFixed(2)}ms`);
+  console.info(`   📈 ${requestsPerSecond.toFixed(0)} req/sec`);
+  console.info(`   🎯 Success rate: ${successRate.toFixed(1)}%`);
+  console.info(`   ⏱️ Avg latency: ${avgLatency.toFixed(2)}ms`);
   
   return { concurrency, totalTime, requestsPerSecond, avgLatency, successRate };
 }
 
 // Demonstrate high-concurrency patterns
 async function demonstrateHighConcurrency() {
-  console.log("\n⚡ High-Concurrency Demo");
-  console.log("-".repeat(30));
+  console.info("\n⚡ High-Concurrency Demo");
+  console.info("-".repeat(30));
   
   const maxRequests = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || "256";
-  console.log(`🔧 Max concurrent requests: ${maxRequests}`);
-  console.log("");
+  console.info(`🔧 Max concurrent requests: ${maxRequests}`);
+  console.info("");
   
   const results: TestResult[] = [];
   
   for (const concurrency of CONCURRENCY_LEVELS) {
     if (parseInt(maxRequests) < concurrency) {
-      console.log(`⚠️ Skipping ${concurrency} - exceeds BUN_CONFIG_MAX_HTTP_REQUESTS`);
+      console.info(`⚠️ Skipping ${concurrency} - exceeds BUN_CONFIG_MAX_HTTP_REQUESTS`);
       continue;
     }
     
@@ -133,15 +133,15 @@ async function demonstrateHighConcurrency() {
 
 // Test different request patterns
 async function testRequestPatterns() {
-  console.log("\n🎯 Request Pattern Demo");
-  console.log("-".repeat(30));
+  console.info("\n🎯 Request Pattern Demo");
+  console.info("-".repeat(30));
   
   // Test sequential vs parallel
   const url = `${BASE_URL}/delay/0`;
   const requestCount = 20;
   
   // Sequential requests
-  console.log("Testing sequential requests...");
+  console.info("Testing sequential requests...");
   const sequentialStart = performance.now();
   for (let i = 0; i < requestCount; i++) {
     await fetch(`${url}?seq=${i}`);
@@ -149,7 +149,7 @@ async function testRequestPatterns() {
   const sequentialTime = performance.now() - sequentialStart;
   
   // Parallel requests
-  console.log("Testing parallel requests...");
+  console.info("Testing parallel requests...");
   const parallelStart = performance.now();
   const parallelPromises = Array.from({ length: requestCount }, (_, i) => 
     fetch(`${url}?par=${i}`)
@@ -159,24 +159,24 @@ async function testRequestPatterns() {
   
   const speedup = sequentialTime / parallelTime;
   
-  console.log(`   📊 Sequential: ${sequentialTime.toFixed(2)}ms`);
-  console.log(`   ⚡ Parallel: ${parallelTime.toFixed(2)}ms`);
-  console.log(`   🚀 Speedup: ${speedup.toFixed(1)}x faster`);
+  console.info(`   📊 Sequential: ${sequentialTime.toFixed(2)}ms`);
+  console.info(`   ⚡ Parallel: ${parallelTime.toFixed(2)}ms`);
+  console.info(`   🚀 Speedup: ${speedup.toFixed(1)}x faster`);
   
   return { sequentialTime, parallelTime, speedup };
 }
 
 // Test keep-alive and connection reuse
 async function testKeepAlive() {
-  console.log("\n🔗 Keep-Alive & Connection Reuse");
-  console.log("-".repeat(35));
+  console.info("\n🔗 Keep-Alive & Connection Reuse");
+  console.info("-".repeat(35));
   
   const targetUrl = `${BASE_URL}/get`;
   const rounds = 3;
   const requestsPerRound = 5;
   
   for (let round = 0; round < rounds; round++) {
-    console.log(`Round ${round + 1}:`);
+    console.info(`Round ${round + 1}:`);
     const roundTimes: number[] = [];
     
     for (let i = 0; i < requestsPerRound; i++) {
@@ -187,16 +187,16 @@ async function testKeepAlive() {
         roundTimes.push(time);
         
         if (i === 0) {
-          console.log(`   First request: ${time.toFixed(2)}ms`);
+          console.info(`   First request: ${time.toFixed(2)}ms`);
         }
       } catch (error) {
-        console.log(`   Request ${i + 1}: Failed`);
+        console.info(`   Request ${i + 1}: Failed`);
       }
     }
     
     if (roundTimes.length > 0) {
       const avgTime = roundTimes.reduce((a, b) => a + b, 0) / roundTimes.length;
-      console.log(`   Average: ${avgTime.toFixed(2)}ms`);
+      console.info(`   Average: ${avgTime.toFixed(2)}ms`);
     }
     
     // Brief pause between rounds
@@ -206,41 +206,41 @@ async function testKeepAlive() {
 
 // Performance summary
 function printSummary(poolingResults: any, concurrencyResults: TestResult[], patternResults: any) {
-  console.log("\n📊 PERFORMANCE SUMMARY");
-  console.log("=" .repeat(40));
+  console.info("\n📊 PERFORMANCE SUMMARY");
+  console.info("=" .repeat(40));
   
-  console.log("🔄 Connection Pooling:");
-  console.log(`   Pool efficiency: ${poolingResults.poolEfficiency.toFixed(1)}%`);
-  console.log(`   Average time: ${poolingResults.avgTime.toFixed(2)}ms`);
+  console.info("🔄 Connection Pooling:");
+  console.info(`   Pool efficiency: ${poolingResults.poolEfficiency.toFixed(1)}%`);
+  console.info(`   Average time: ${poolingResults.avgTime.toFixed(2)}ms`);
   
-  console.log("\n⚡ Concurrency Results:");
-  console.log("Concurrency | RPS      | Latency  | Success");
-  console.log("-".repeat(45));
+  console.info("\n⚡ Concurrency Results:");
+  console.info("Concurrency | RPS      | Latency  | Success");
+  console.info("-".repeat(45));
   for (const result of concurrencyResults) {
     const status = result.successRate >= 95 ? "🟢" : result.successRate >= 80 ? "🟡" : "🔴";
-    console.log(`${result.concurrency.toString().padEnd(11)} | ${result.requestsPerSecond.toFixed(0).padEnd(9)} | ${result.avgLatency.toFixed(1).padEnd(9)} | ${status}`);
+    console.info(`${result.concurrency.toString().padEnd(11)} | ${result.requestsPerSecond.toFixed(0).padEnd(9)} | ${result.avgLatency.toFixed(1).padEnd(9)} | ${status}`);
   }
   
-  console.log("\n🎯 Request Patterns:");
-  console.log(`   Parallel speedup: ${patternResults.speedup.toFixed(1)}x`);
-  console.log(`   Sequential time: ${patternResults.sequentialTime.toFixed(2)}ms`);
-  console.log(`   Parallel time: ${patternResults.parallelTime.toFixed(2)}ms`);
+  console.info("\n🎯 Request Patterns:");
+  console.info(`   Parallel speedup: ${patternResults.speedup.toFixed(1)}x`);
+  console.info(`   Sequential time: ${patternResults.sequentialTime.toFixed(2)}ms`);
+  console.info(`   Parallel time: ${patternResults.parallelTime.toFixed(2)}ms`);
   
   if (concurrencyResults.length > 0) {
     const bestThroughput = Math.max(...concurrencyResults.map(r => r.requestsPerSecond));
     const bestResult = concurrencyResults.find(r => r.requestsPerSecond === bestThroughput);
-    console.log(`\n🏆 Best Performance:`);
-    console.log(`   Peak throughput: ${bestThroughput.toFixed(0)} req/sec`);
-    console.log(`   Optimal concurrency: ${bestResult?.concurrency}`);
+    console.info(`\n🏆 Best Performance:`);
+    console.info(`   Peak throughput: ${bestThroughput.toFixed(0)} req/sec`);
+    console.info(`   Optimal concurrency: ${bestResult?.concurrency}`);
   }
 }
 
 // Main demonstration
 async function main() {
   try {
-    console.log(`🔧 Environment: BUN_CONFIG_MAX_HTTP_REQUESTS=${process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '256'}`);
-    console.log(`🌐 Target: ${BASE_URL}`);
-    console.log("");
+    console.info(`🔧 Environment: BUN_CONFIG_MAX_HTTP_REQUESTS=${process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '256'}`);
+    console.info(`🌐 Target: ${BASE_URL}`);
+    console.info("");
     
     // Run all demonstrations
     const poolingResults = await demonstrateConnectionPooling();
@@ -251,15 +251,15 @@ async function main() {
     // Print comprehensive summary
     printSummary(poolingResults, concurrencyResults, patternResults);
     
-    console.log("\n💡 OPTIMIZATION TIPS");
-    console.log("-".repeat(20));
-    console.log("• Same-host requests automatically reuse connections");
-    console.log("• Set BUN_CONFIG_MAX_HTTP_REQUESTS for higher concurrency");
-    console.log("• Use Promise.all() for parallel request processing");
-    console.log("• Batch requests to respect concurrency limits");
-    console.log("• Monitor connection pool efficiency in production");
+    console.info("\n💡 OPTIMIZATION TIPS");
+    console.info("-".repeat(20));
+    console.info("• Same-host requests automatically reuse connections");
+    console.info("• Set BUN_CONFIG_MAX_HTTP_REQUESTS for higher concurrency");
+    console.info("• Use Promise.all() for parallel request processing");
+    console.info("• Batch requests to respect concurrency limits");
+    console.info("• Monitor connection pool efficiency in production");
     
-    console.log("\n🎯 Fetch Optimization Demo Complete!");
+    console.info("\n🎯 Fetch Optimization Demo Complete!");
     
   } catch (error) {
     console.error("❌ Demo failed:", error);

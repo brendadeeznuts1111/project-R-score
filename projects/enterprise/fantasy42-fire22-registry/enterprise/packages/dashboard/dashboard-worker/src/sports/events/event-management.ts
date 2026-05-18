@@ -41,7 +41,7 @@ export class EventManagement {
     this.events.set(event.id, event);
     this.updateEventIndex(event);
 
-    console.log(`🏈 Created sports event: ${event.name} (${event.id})`);
+    console.info(`🏈 Created sports event: ${event.name} (${event.id})`);
     return event;
   }
 
@@ -68,7 +68,7 @@ export class EventManagement {
     this.events.set(eventId, updatedEvent);
     this.updateEventIndex(updatedEvent);
 
-    console.log(`📝 Updated sports event: ${updatedEvent.name} (${eventId})`);
+    console.info(`📝 Updated sports event: ${updatedEvent.name} (${eventId})`);
     return updatedEvent;
   }
 
@@ -85,7 +85,7 @@ export class EventManagement {
     this.removeFromEventIndex(event);
     this.events.delete(eventId);
 
-    console.log(`🗑️ Deleted sports event: ${event.name} (${eventId})`);
+    console.info(`🗑️ Deleted sports event: ${event.name} (${eventId})`);
     return true;
   }
 
@@ -382,7 +382,7 @@ export class EventManagement {
       }
     });
 
-    console.log(`✅ Initialized ${defaultEvents.length} default sports events`);
+    console.info(`✅ Initialized ${defaultEvents.length} default sports events`);
   }
 
   // Private helper methods

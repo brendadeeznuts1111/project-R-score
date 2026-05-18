@@ -65,9 +65,9 @@ let MAX_ITERATIONS = Number(env.MAX_ITERATIONS) || 100;
 
     // Check if secret exists by attempting to get it
     const hasSecret = !!(await secrets.get({ service: "tension-propagator", name: "PROPAGATION_SIGN_KEY" }));
-    console.log(`🟢 Secrets loaded (SIGN_KEY ${hasSecret ? 'vaulted' : 'fallback'})`);
+    console.info(`🟢 Secrets loaded (SIGN_KEY ${hasSecret ? 'vaulted' : 'fallback'})`);
   } catch (e) {
-    console.log(`🟡 Secrets fallback mode`);
+    console.info(`🟡 Secrets fallback mode`);
   }
 })();
 
@@ -122,20 +122,20 @@ export class TensionGraphPropagator {
 
     // Signal handlers for runtime control
     process.on('SIGINT', () => {
-      console.log("\n🛑 SIGINT → dumping stats & resetting");
+      console.info("\n🛑 SIGINT → dumping stats & resetting");
       console.dir(this.getGraphOverviewStats(), { depth: null });
       this.resetGraphState();
       process.exit(EXIT_CODES.SUCCESS);
     });
 
     process.on('SIGTERM', () => {
-      console.log("\n🛑 SIGTERM → graceful shutdown");
+      console.info("\n🛑 SIGTERM → graceful shutdown");
       process.exit(EXIT_CODES.SUCCESS);
     });
 
     if (IS_CLI_MODE) {
-      console.log(`[CLI] Propagator ready with args:`, CLI_ARGS);
-      console.log(`[CLI] Config:`, this.config);
+      console.info(`[CLI] Propagator ready with args:`, CLI_ARGS);
+      console.info(`[CLI] Config:`, this.config);
     }
   }
 
@@ -163,7 +163,7 @@ export class TensionGraphPropagator {
     this.edgesByTarget.clear();
     this.legacyEdgeList = [];
     gc(true);
-    console.log("🧹 Graph state reset, GC triggered");
+    console.info("🧹 Graph state reset, GC triggered");
   }
 
   // ────────────────────────────────────────────────
@@ -264,7 +264,7 @@ export class TensionGraphPropagator {
               try {
                 const childData = JSON.parse(childResult.stdout.toString());
                 nextTensions = new Map(Object.entries(childData));
-                console.log(`🔄 Spawned batch processed at iteration ${iterations}`);
+                console.info(`🔄 Spawned batch processed at iteration ${iterations}`);
               } catch (e) {
                 await errorHandler.handleError(errorHandler.createError(
                   TensionErrorCode.CORRUPTED_DATA,
@@ -394,7 +394,7 @@ if (IS_CLI_MODE) {
     const command = positionalArgs[0] || 'demo';
 
     if (command === 'help' || CLI_ARGS.help) {
-      console.log(`
+      console.info(`
 Tension Graph Propagator CLI
 
 Commands:
@@ -448,15 +448,15 @@ Secrets (via Bun.secrets):
         });
       }
 
-      console.log("🚀 Running propagation demo...");
+      console.info("🚀 Running propagation demo...");
       const result = await propagator.propagateFullGraph(['node-0', 'node-1']);
-      console.log("Result:", result);
+      console.info("Result:", result);
 
       if (CLI_ARGS.jsx) {
-        console.log(propagator.renderAnomalyReportJSX(result));
+        console.info(propagator.renderAnomalyReportJSX(result));
       }
     } else if (command === 'help') {
-      console.log(`
+      console.info(`
 Tension Graph Propagator CLI
 
 Commands:

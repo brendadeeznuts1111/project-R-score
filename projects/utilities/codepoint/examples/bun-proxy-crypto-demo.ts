@@ -59,7 +59,7 @@ class PerformanceTester {
 
 // Test encryption performance
 async function testEncryptionPerformance() {
-  console.log("🔐 Testing Encryption Performance...\n");
+  console.info("🔐 Testing Encryption Performance...\n");
 
   const key = SymmetricEncryption.generateKey();
   const results = [];
@@ -100,14 +100,14 @@ async function testEncryptionPerformance() {
     }
   }
 
-  console.log(Bun.inspect.table(results, { colors: true }));
+  console.info(Bun.inspect.table(results, { colors: true }));
 
   return results;
 }
 
 // Test key derivation performance
 async function testKeyDerivationPerformance() {
-  console.log("\n🔑 Testing Key Derivation Performance...\n");
+  console.info("\n🔑 Testing Key Derivation Performance...\n");
 
   const masterKey = 'super-secret-master-key';
   const salt = SymmetricEncryption.generateSalt(32);
@@ -164,14 +164,14 @@ async function testKeyDerivationPerformance() {
     }
   );
 
-  console.log(Bun.inspect.table(results, { colors: true }));
+  console.info(Bun.inspect.table(results, { colors: true }));
 
   return results;
 }
 
 // Test hashing performance
 async function testHashingPerformance() {
-  console.log("\n🔢 Testing Hashing Performance...\n");
+  console.info("\n🔢 Testing Hashing Performance...\n");
 
   const results = [];
 
@@ -198,14 +198,14 @@ async function testHashingPerformance() {
     }
   }
 
-  console.log(Bun.inspect.table(results, { colors: true }));
+  console.info(Bun.inspect.table(results, { colors: true }));
 
   return results;
 }
 
 // Test prime number generation
 async function testPrimeGeneration() {
-  console.log("\n🔢 Testing Prime Number Generation...\n");
+  console.info("\n🔢 Testing Prime Number Generation...\n");
 
   const bitLengths = [128, 256, 512, 1024, 2048];
   const results = [];
@@ -239,14 +239,14 @@ async function testPrimeGeneration() {
     });
   }
 
-  console.log(Bun.inspect.table(results, { colors: true }));
+  console.info(Bun.inspect.table(results, { colors: true }));
 
   return results;
 }
 
 // Test encryption/decryption workflow
 async function testEncryptionWorkflow() {
-  console.log("\n🔐 Testing Encryption Workflow...\n");
+  console.info("\n🔐 Testing Encryption Workflow...\n");
 
   const testData = [
     'Hello, World!',
@@ -284,14 +284,14 @@ async function testEncryptionWorkflow() {
     });
   }
 
-  console.log(Bun.inspect.table(results, { colors: true }));
+  console.info(Bun.inspect.table(results, { colors: true }));
 
   return results;
 }
 
 // Test HKDF key derivation
 async function testHKDF() {
-  console.log("\n🔑 Testing HKDF Key Derivation...\n");
+  console.info("\n🔑 Testing HKDF Key Derivation...\n");
 
   const masterKey = 'my-super-secret-master-key';
   const salt = 'random-salt-value';
@@ -315,14 +315,14 @@ async function testHKDF() {
     });
   }
 
-  console.log(Bun.inspect.table(results, { colors: true }));
+  console.info(Bun.inspect.table(results, { colors: true }));
 
   return results;
 }
 
 // Performance comparison with Node.js
 function displayBunVsNodeComparison() {
-  console.log("\n⚡ Bun v1.2.6 Crypto Performance vs Node.js:\n");
+  console.info("\n⚡ Bun v1.2.6 Crypto Performance vs Node.js:\n");
 
   const comparisons = [
     {
@@ -345,26 +345,26 @@ function displayBunVsNodeComparison() {
     }
   ];
 
-  console.log(Bun.inspect.table(comparisons, { colors: true }));
+  console.info(Bun.inspect.table(comparisons, { colors: true }));
 
-  console.log("\n💡 Key improvements:");
-  console.log("   • Native BoringSSL implementations");
-  console.log("   • Optimized cipher operations");
-  console.log("   • Faster key derivation algorithms");
-  console.log("   • Enhanced prime number generation");
+  console.info("\n💡 Key improvements:");
+  console.info("   • Native BoringSSL implementations");
+  console.info("   • Optimized cipher operations");
+  console.info("   • Faster key derivation algorithms");
+  console.info("   • Enhanced prime number generation");
 }
 
 // Main demo execution
 async function runCryptoDemo() {
-  console.log("🚀 Bun Proxy Crypto Performance Demo");
-  console.log("====================================\n");
+  console.info("🚀 Bun Proxy Crypto Performance Demo");
+  console.info("====================================\n");
 
-  console.log("🎯 Demonstrating Bun v1.2.6 crypto optimizations:");
-  console.log("   • Native BoringSSL implementations");
-  console.log("   • HKDF key derivation support");
-  console.log("   • Prime number generation");
-  console.log("   • Enhanced ED25519 support");
-  console.log();
+  console.info("🎯 Demonstrating Bun v1.2.6 crypto optimizations:");
+  console.info("   • Native BoringSSL implementations");
+  console.info("   • HKDF key derivation support");
+  console.info("   • Prime number generation");
+  console.info("   • Enhanced ED25519 support");
+  console.info();
 
   try {
     // Run all performance tests
@@ -378,11 +378,11 @@ async function runCryptoDemo() {
     // Show Bun vs Node.js comparison
     displayBunVsNodeComparison();
 
-    console.log("\n🏆 Crypto Performance Demo Complete!");
-    console.log("===================================");
-    console.log("✅ Demonstrated Bun's optimized crypto performance");
-    console.log("🔐 Showcased encryption, key derivation, and hashing");
-    console.log("⚡ Highlighted major performance improvements in v1.2.6");
+    console.info("\n🏆 Crypto Performance Demo Complete!");
+    console.info("===================================");
+    console.info("✅ Demonstrated Bun's optimized crypto performance");
+    console.info("🔐 Showcased encryption, key derivation, and hashing");
+    console.info("⚡ Highlighted major performance improvements in v1.2.6");
 
   } catch (error) {
     console.error("💥 Demo failed:", error);

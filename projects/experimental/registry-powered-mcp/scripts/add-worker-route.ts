@@ -27,17 +27,17 @@ async function main() {
   const checkData = await checkRes.json() as any;
 
   if (!checkData.success) {
-    console.log("Check failed:", checkData.errors);
+    console.info("Check failed:", checkData.errors);
     return;
   }
 
   const existingRoute = checkData.result?.find((r: any) => r.pattern.includes("blog.factory-wager.com"));
   if (existingRoute) {
-    console.log("Route already exists:", existingRoute.pattern, "->", existingRoute.script);
+    console.info("Route already exists:", existingRoute.pattern, "->", existingRoute.script);
     return;
   }
 
-  console.log("Adding route...");
+  console.info("Adding route...");
   const addRes = await fetch(
     `https://api.cloudflare.com/client/v4/zones/${zoneId}/workers/routes`,
     {
@@ -55,9 +55,9 @@ async function main() {
   const addData = await addRes.json() as any;
 
   if (addData.success) {
-    console.log("✅ Route added:", addData.result.pattern, "->", addData.result.script);
+    console.info("✅ Route added:", addData.result.pattern, "->", addData.result.script);
   } else {
-    console.log("Error:", addData.errors);
+    console.info("Error:", addData.errors);
   }
 }
 

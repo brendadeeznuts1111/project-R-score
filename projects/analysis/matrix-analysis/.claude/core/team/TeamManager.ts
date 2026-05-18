@@ -280,31 +280,31 @@ if (import.meta.main) {
 
 	switch (command) {
 		case "list": {
-			console.log("Tier-1380 OMEGA Teams (90-Column Matrix):\n");
+			console.info("Tier-1380 OMEGA Teams (90-Column Matrix):\n");
 			for (const team of listTeams()) {
-				console.log(`${formatTeamBadge(team)}`);
-				console.log(`  Tier: ${team.tier}`);
-				console.log(`  Email: ${team.email}`);
-				console.log(
+				console.info(`${formatTeamBadge(team)}`);
+				console.info(`  Tier: ${team.tier}`);
+				console.info(`  Email: ${team.email}`);
+				console.info(
 					`  Columns: ${team.matrixColumns[0]}-${team.matrixColumns[team.matrixColumns.length - 1]} (${team.matrixColumns.length} cols)`,
 				);
-				console.log(`  Responsibilities: ${team.responsibilities.join(", ")}`);
-				console.log();
+				console.info(`  Responsibilities: ${team.responsibilities.join(", ")}`);
+				console.info();
 			}
 			break;
 		}
 
 		case "matrix": {
-			console.log(getTeamMatrixVisualization());
+			console.info(getTeamMatrixVisualization());
 			break;
 		}
 
 		case "stats": {
-			console.log("Team Statistics (90-Column Matrix):\n");
+			console.info("Team Statistics (90-Column Matrix):\n");
 			const stats = getTeamStats();
 			for (const [teamId, stat] of Object.entries(stats)) {
 				const team = TEAMS[teamId as TeamId];
-				console.log(
+				console.info(
 					`${team.emoji} ${team.name}: ${stat.columns} columns (${stat.percentage})`,
 				);
 			}
@@ -314,15 +314,15 @@ if (import.meta.main) {
 		case "owns": {
 			const col = parseInt(Bun.argv[3], 10);
 			if (Number.isNaN(col) || col < 1 || col > 90) {
-				console.log("Usage: bun run TeamManager.ts owns <column (1-90)>");
+				console.info("Usage: bun run TeamManager.ts owns <column (1-90)>");
 				process.exit(1);
 			}
 			const team = getTeamForColumn(col);
 			const zone = getZoneForColumn(col);
 			if (team) {
-				console.log(`Column ${col} (${zone}): ${formatTeamBadge(team)}`);
+				console.info(`Column ${col} (${zone}): ${formatTeamBadge(team)}`);
 			} else {
-				console.log(`Column ${col}: Unassigned`);
+				console.info(`Column ${col}: Unassigned`);
 			}
 			break;
 		}
@@ -331,16 +331,16 @@ if (import.meta.main) {
 			const teamId = Bun.argv[3] as TeamId;
 			const col = parseInt(Bun.argv[4], 10);
 			if (!teamId || Number.isNaN(col)) {
-				console.log("Usage: bun run TeamManager.ts can <team> <column>");
+				console.info("Usage: bun run TeamManager.ts can <team> <column>");
 				process.exit(1);
 			}
 			if (!TEAMS[teamId]) {
-				console.log(`Unknown team: ${teamId}`);
-				console.log(`Available: ${Object.keys(TEAMS).join(", ")}`);
+				console.info(`Unknown team: ${teamId}`);
+				console.info(`Available: ${Object.keys(TEAMS).join(", ")}`);
 				process.exit(1);
 			}
 			const can = canAccessColumn(teamId, col);
-			console.log(
+			console.info(
 				`${TEAMS[teamId].emoji} ${teamId} ${can ? "✅ CAN" : "❌ CANNOT"} access column ${col}`,
 			);
 			break;
@@ -349,27 +349,27 @@ if (import.meta.main) {
 		case "zone": {
 			const col = parseInt(Bun.argv[3], 10);
 			if (Number.isNaN(col) || col < 1 || col > 90) {
-				console.log("Usage: bun run TeamManager.ts zone <column (1-90)>");
+				console.info("Usage: bun run TeamManager.ts zone <column (1-90)>");
 				process.exit(1);
 			}
 			const zone = getZoneForColumn(col);
 			const team = getTeamForColumn(col);
-			console.log(`Column ${col}:`);
-			console.log(`  Zone: ${zone || "unknown"}`);
-			console.log(`  Team: ${team ? formatTeamBadge(team) : "unassigned"}`);
+			console.info(`Column ${col}:`);
+			console.info(`  Zone: ${zone || "unknown"}`);
+			console.info(`  Team: ${team ? formatTeamBadge(team) : "unassigned"}`);
 			break;
 		}
 
 		default: {
-			console.log("Tier-1380 OMEGA Team Manager (90-Column)\n");
-			console.log("Commands:");
-			console.log("  list              List all teams with 90-column ownership");
-			console.log("  matrix            Show 90-column team ownership grid");
-			console.log("  stats             Show team column statistics");
-			console.log("  owns <col>        Show which team owns a column (1-90)");
-			console.log("  can <team> <col>  Check if team can access column");
-			console.log("  zone <col>        Show zone and team for column");
-			console.log("\nTeams: runtime, security, platform, tension, infra, validation");
+			console.info("Tier-1380 OMEGA Team Manager (90-Column)\n");
+			console.info("Commands:");
+			console.info("  list              List all teams with 90-column ownership");
+			console.info("  matrix            Show 90-column team ownership grid");
+			console.info("  stats             Show team column statistics");
+			console.info("  owns <col>        Show which team owns a column (1-90)");
+			console.info("  can <team> <col>  Check if team can access column");
+			console.info("  zone <col>        Show zone and team for column");
+			console.info("\nTeams: runtime, security, platform, tension, infra, validation");
 		}
 	}
 }

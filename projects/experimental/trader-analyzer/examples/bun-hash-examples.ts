@@ -11,7 +11,7 @@ import { hash } from "bun";
  * Using rapidhash for fast, consistent cache keys
  */
 export function cacheKeyExamples() {
-  console.log("=== Cache Key Generation ===\n");
+  console.info("=== Cache Key Generation ===\n");
 
   // Generate cache keys for API responses
   const apiRequests = [
@@ -20,11 +20,11 @@ export function cacheKeyExamples() {
     { endpoint: "/api/markets", params: { exchange: "binance", type: "spot" } },
   ];
 
-  console.log("API Cache Keys:");
+  console.info("API Cache Keys:");
   for (const req of apiRequests) {
     const keyData = JSON.stringify({ endpoint: req.endpoint, params: req.params });
     const cacheKey = hash.rapidhash(keyData).toString(36); // Base36 for shorter keys
-    console.log(`${req.endpoint}: ${cacheKey}`);
+    console.info(`${req.endpoint}: ${cacheKey}`);
   }
 
   // Database query result caching
@@ -34,13 +34,13 @@ export function cacheKeyExamples() {
     "SELECT AVG(price) FROM market_data WHERE exchange = 'binance'",
   ];
 
-  console.log("\nDatabase Query Cache Keys:");
+  console.info("\nDatabase Query Cache Keys:");
   for (const query of queries) {
     const queryKey = hash.rapidhash(query).toString(16).slice(0, 16); // 16-char hex
-    console.log(`Query: ${queryKey} -> ${query.slice(0, 50)}...`);
+    console.info(`Query: ${queryKey} -> ${query.slice(0, 50)}...`);
   }
 
-  console.log("✅ Consistent, fast cache key generation\n");
+  console.info("✅ Consistent, fast cache key generation\n");
 }
 
 /**
@@ -48,7 +48,7 @@ export function cacheKeyExamples() {
  * Using hash for checksums and data validation
  */
 export function dataIntegrityExamples() {
-  console.log("=== Data Integrity & Checksums ===\n");
+  console.info("=== Data Integrity & Checksums ===\n");
 
   // File content integrity
   const fileContents = [
@@ -57,12 +57,12 @@ export function dataIntegrityExamples() {
     "market_prices.json",
   ];
 
-  console.log("File Integrity Checksums:");
+  console.info("File Integrity Checksums:");
   for (const filename of fileContents) {
     // Simulate file content
     const content = `Content of ${filename} at ${new Date().toISOString()}`;
     const checksum = hash.rapidhash(content);
-    console.log(`${filename}: ${checksum.toString(16).slice(0, 16)}`);
+    console.info(`${filename}: ${checksum.toString(16).slice(0, 16)}`);
   }
 
   // API response integrity
@@ -72,14 +72,14 @@ export function dataIntegrityExamples() {
     { data: { markets: 25, exchanges: 8 }, timestamp: Date.now() },
   ];
 
-  console.log("\nAPI Response Integrity:");
+  console.info("\nAPI Response Integrity:");
   for (const response of apiResponses) {
     const responseStr = JSON.stringify(response);
     const integrityHash = hash.crc32(responseStr); // 32-bit for smaller footprint
-    console.log(`Response: ${integrityHash.toString(16)} (CRC32)`);
+    console.info(`Response: ${integrityHash.toString(16)} (CRC32)`);
   }
 
-  console.log("✅ Data integrity verification\n");
+  console.info("✅ Data integrity verification\n");
 }
 
 /**
@@ -87,7 +87,7 @@ export function dataIntegrityExamples() {
  * Using hash for generating unique identifiers
  */
 export function idGenerationExamples() {
-  console.log("=== ID Generation & Deduplication ===\n");
+  console.info("=== ID Generation & Deduplication ===\n");
 
   // Generate short IDs from complex data
   const entities = [
@@ -96,11 +96,11 @@ export function idGenerationExamples() {
     { type: "market", pair: "ETH/BTC", venue: "coinbase" },
   ];
 
-  console.log("Entity Short IDs:");
+  console.info("Entity Short IDs:");
   for (const entity of entities) {
     const entityStr = JSON.stringify(entity);
     const shortId = hash.rapidhash(entityStr).toString(36).slice(0, 8); // 8-char base36
-    console.log(`${entity.type}: ${shortId} (${JSON.stringify(entity).slice(0, 40)}...)`);
+    console.info(`${entity.type}: ${shortId} (${JSON.stringify(entity).slice(0, 40)}...)`);
   }
 
   // Deduplication using hash
@@ -113,7 +113,7 @@ export function idGenerationExamples() {
     "Trade executed: ETH 2.0",
   ];
 
-  console.log("\nEvent Deduplication:");
+  console.info("\nEvent Deduplication:");
   const seenHashes = new Set<bigint>();
   let duplicates = 0;
 
@@ -121,15 +121,15 @@ export function idGenerationExamples() {
     const eventHash = hash.wyhash(event);
     if (seenHashes.has(eventHash)) {
       duplicates++;
-      console.log(`DUPLICATE: ${event} (hash: ${eventHash.toString(16).slice(0, 8)})`);
+      console.info(`DUPLICATE: ${event} (hash: ${eventHash.toString(16).slice(0, 8)})`);
     } else {
       seenHashes.add(eventHash);
-      console.log(`NEW: ${event} (hash: ${eventHash.toString(16).slice(0, 8)})`);
+      console.info(`NEW: ${event} (hash: ${eventHash.toString(16).slice(0, 8)})`);
     }
   }
 
-  console.log(`\nFound ${duplicates} duplicate events`);
-  console.log("✅ Efficient ID generation and deduplication\n");
+  console.info(`\nFound ${duplicates} duplicate events`);
+  console.info("✅ Efficient ID generation and deduplication\n");
 }
 
 /**
@@ -137,7 +137,7 @@ export function idGenerationExamples() {
  * Comparing hash algorithms for different use cases
  */
 export function performanceComparison() {
-  console.log("=== Hash Algorithm Performance Comparison ===\n");
+  console.info("=== Hash Algorithm Performance Comparison ===\n");
 
   const testData = "Performance test data for Bun hash algorithms comparison";
   const iterations = 100000;
@@ -148,7 +148,7 @@ export function performanceComparison() {
     { name: "crc32", fn: hash.crc32 },
   ];
 
-  console.log(`Testing ${iterations.toLocaleString()} iterations with "${testData}"\n`);
+  console.info(`Testing ${iterations.toLocaleString()} iterations with "${testData}"\n`);
 
   for (const algo of algorithms) {
     const start = performance.now();
@@ -161,17 +161,17 @@ export function performanceComparison() {
     const totalTime = end - start;
     const rate = iterations / (totalTime / 1000);
 
-    console.log(`${algo.name}:`);
-    console.log(`  Time: ${totalTime.toFixed(2)}ms`);
-    console.log(`  Rate: ${rate.toLocaleString()}/sec`);
-    console.log(`  Per op: ${(totalTime / iterations * 1000).toFixed(3)}μs\n`);
+    console.info(`${algo.name}:`);
+    console.info(`  Time: ${totalTime.toFixed(2)}ms`);
+    console.info(`  Rate: ${rate.toLocaleString()}/sec`);
+    console.info(`  Per op: ${(totalTime / iterations * 1000).toFixed(3)}μs\n`);
   }
 
-  console.log("💡 Choose algorithm based on your needs:");
-  console.log("   • rapidhash: General purpose, fastest for most cases");
-  console.log("   • wyhash: Alternative high-performance option");
-  console.log("   • crc32: Smaller output (32-bit), good for checksums");
-  console.log("✅ Performance-optimized hashing\n");
+  console.info("💡 Choose algorithm based on your needs:");
+  console.info("   • rapidhash: General purpose, fastest for most cases");
+  console.info("   • wyhash: Alternative high-performance option");
+  console.info("   • crc32: Smaller output (32-bit), good for checksums");
+  console.info("✅ Performance-optimized hashing\n");
 }
 
 /**
@@ -179,7 +179,7 @@ export function performanceComparison() {
  * Using hash for generating short URLs
  */
 export function urlShortenerExample() {
-  console.log("=== Real-World: URL Shortener ===\n");
+  console.info("=== Real-World: URL Shortener ===\n");
 
   // Simulate URL shortening service
   const urls = [
@@ -189,7 +189,7 @@ export function urlShortenerExample() {
     "https://api.github.com/repos/oven-sh/bun/issues",
   ];
 
-  console.log("URL Shortener using Bun.hash:");
+  console.info("URL Shortener using Bun.hash:");
   const shortCodes = new Map<string, string>();
 
   for (const url of urls) {
@@ -198,23 +198,23 @@ export function urlShortenerExample() {
     const shortCode = urlHash.toString(36).slice(0, 6); // 6-char base36
 
     shortCodes.set(shortCode, url);
-    console.log(`${shortCode} -> ${url}`);
+    console.info(`${shortCode} -> ${url}`);
   }
 
   // Simulate lookups
-  console.log("\nReverse lookups:");
+  console.info("\nReverse lookups:");
   const testCodes = ["abc123", "def456", shortCodes.keys().next().value];
   for (const code of testCodes) {
     const originalUrl = shortCodes.get(code);
-    console.log(`${code} -> ${originalUrl || "NOT FOUND"}`);
+    console.info(`${code} -> ${originalUrl || "NOT FOUND"}`);
   }
 
-  console.log("✅ Efficient URL shortening with hash-based codes\n");
+  console.info("✅ Efficient URL shortening with hash-based codes\n");
 }
 
 // Run all examples
 export function runAllHashExamples() {
-  console.log("🚀 Bun 1.3 Hash Utilities - Practical Examples\n");
+  console.info("🚀 Bun 1.3 Hash Utilities - Practical Examples\n");
 
   cacheKeyExamples();
   dataIntegrityExamples();
@@ -222,11 +222,11 @@ export function runAllHashExamples() {
   performanceComparison();
   urlShortenerExample();
 
-  console.log("🎯 Bun.hash provides enterprise-grade hashing performance!");
-  console.log("   • Ultra-fast algorithms (millions of ops/sec)");
-  console.log("   • Multiple hash functions for different needs");
-  console.log("   • Perfect for caching, integrity, and ID generation");
-  console.log("   • Zero external dependencies");
+  console.info("🎯 Bun.hash provides enterprise-grade hashing performance!");
+  console.info("   • Ultra-fast algorithms (millions of ops/sec)");
+  console.info("   • Multiple hash functions for different needs");
+  console.info("   • Perfect for caching, integrity, and ID generation");
+  console.info("   • Zero external dependencies");
 }
 
 // Allow running as standalone script

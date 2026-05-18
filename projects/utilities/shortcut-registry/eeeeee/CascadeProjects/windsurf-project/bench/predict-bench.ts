@@ -123,16 +123,16 @@ class PredictBenchmarkRunner {
 			iterations: 5,
 		},
 	): Promise<void> {
-		console.log("🚀 Starting ANOMALY PREDICT Performance Apocalypse");
-		console.log(
+		console.info("🚀 Starting ANOMALY PREDICT Performance Apocalypse");
+		console.info(
 			`📊 Configuration: ${config.sessionCount} sessions, ${config.concurrency} concurrency`,
 		);
-		console.log("");
+		console.info("");
 
 		// Generate test data
 		const testVectors = generateTestVectors(config.sessionCount);
-		console.log(`🎯 Generated ${testVectors.length} test vectors`);
-		console.log("");
+		console.info(`🎯 Generated ${testVectors.length} test vectors`);
+		console.info("");
 
 		// Run individual benchmarks
 		await this.benchmarkGNNPrediction(testVectors, config);
@@ -153,7 +153,7 @@ class PredictBenchmarkRunner {
 		vectors: Array<any>,
 		config: BenchmarkConfig,
 	): Promise<void> {
-		console.log("🧠 Benchmarking GNN Prediction...");
+		console.info("🧠 Benchmarking GNN Prediction...");
 
 		const latencies: number[] = [];
 		const startTime = performance.now();
@@ -189,14 +189,14 @@ class PredictBenchmarkRunner {
 			improvement: "959% faster than legacy if-else",
 		});
 
-		console.log(
+		console.info(
 			`   ✅ ${vectors.length} predictions in ${duration.toFixed(2)}ms`,
 		);
-		console.log(`   ⚡ Throughput: ${throughput.toFixed(0)} predictions/sec`);
-		console.log(
+		console.info(`   ⚡ Throughput: ${throughput.toFixed(0)} predictions/sec`);
+		console.info(
 			`   📊 Avg latency: ${(latencies.reduce((a, b) => a + b, 0) / latencies.length).toFixed(2)}ms`,
 		);
-		console.log("");
+		console.info("");
 	}
 
 	// Benchmark Vector Validation
@@ -204,7 +204,7 @@ class PredictBenchmarkRunner {
 		vectors: Array<any>,
 		config: BenchmarkConfig,
 	): Promise<void> {
-		console.log("🔍 Benchmarking Vector Validation...");
+		console.info("🔍 Benchmarking Vector Validation...");
 
 		const latencies: number[] = [];
 		const startTime = performance.now();
@@ -231,11 +231,11 @@ class PredictBenchmarkRunner {
 			improvement: "4700% faster than legacy validation",
 		});
 
-		console.log(
+		console.info(
 			`   ✅ ${vectors.length} validations in ${duration.toFixed(2)}ms`,
 		);
-		console.log(`   ⚡ Throughput: ${throughput.toFixed(0)} validations/sec`);
-		console.log("");
+		console.info(`   ⚡ Throughput: ${throughput.toFixed(0)} validations/sec`);
+		console.info("");
 	}
 
 	// Benchmark Feature Extraction
@@ -243,7 +243,7 @@ class PredictBenchmarkRunner {
 		vectors: Array<any>,
 		config: BenchmarkConfig,
 	): Promise<void> {
-		console.log("⚙️ Benchmarking Feature Extraction...");
+		console.info("⚙️ Benchmarking Feature Extraction...");
 
 		const latencies: number[] = [];
 		const startTime = performance.now();
@@ -276,11 +276,11 @@ class PredictBenchmarkRunner {
 			improvement: "1220% faster than legacy extraction",
 		});
 
-		console.log(
+		console.info(
 			`   ✅ ${vectors.length} extractions in ${duration.toFixed(2)}ms`,
 		);
-		console.log(`   ⚡ Throughput: ${throughput.toFixed(0)} extractions/sec`);
-		console.log("");
+		console.info(`   ⚡ Throughput: ${throughput.toFixed(0)} extractions/sec`);
+		console.info("");
 	}
 
 	// Benchmark Inference Generation
@@ -288,7 +288,7 @@ class PredictBenchmarkRunner {
 		vectors: Array<any>,
 		config: BenchmarkConfig,
 	): Promise<void> {
-		console.log("🔮 Benchmarking Inference Generation...");
+		console.info("🔮 Benchmarking Inference Generation...");
 
 		const latencies: number[] = [];
 		const startTime = performance.now();
@@ -315,11 +315,11 @@ class PredictBenchmarkRunner {
 			improvement: "2011% faster than legacy inference",
 		});
 
-		console.log(
+		console.info(
 			`   ✅ ${vectors.length} inferences in ${duration.toFixed(2)}ms`,
 		);
-		console.log(`   ⚡ Throughput: ${throughput.toFixed(0)} inferences/sec`);
-		console.log("");
+		console.info(`   ⚡ Throughput: ${throughput.toFixed(0)} inferences/sec`);
+		console.info("");
 	}
 
 	// Benchmark Block Enforcement
@@ -327,7 +327,7 @@ class PredictBenchmarkRunner {
 		vectors: Array<any>,
 		config: BenchmarkConfig,
 	): Promise<void> {
-		console.log("🚫 Benchmarking Block Enforcement...");
+		console.info("🚫 Benchmarking Block Enforcement...");
 
 		const latencies: number[] = [];
 		const blockedCount = { count: 0 };
@@ -361,12 +361,12 @@ class PredictBenchmarkRunner {
 			improvement: "893% faster than legacy enforcement",
 		});
 
-		console.log(
+		console.info(
 			`   ✅ ${vectors.length} enforcement checks in ${duration.toFixed(2)}ms`,
 		);
-		console.log(`   🚫 Blocked ${blockedCount.count} high-risk sessions`);
-		console.log(`   ⚡ Throughput: ${throughput.toFixed(0)} checks/sec`);
-		console.log("");
+		console.info(`   🚫 Blocked ${blockedCount.count} high-risk sessions`);
+		console.info(`   ⚡ Throughput: ${throughput.toFixed(0)} checks/sec`);
+		console.info("");
 	}
 
 	// Benchmark Risk Index Build
@@ -374,7 +374,7 @@ class PredictBenchmarkRunner {
 		vectors: Array<any>,
 		config: BenchmarkConfig,
 	): Promise<void> {
-		console.log("📚 Benchmarking Risk Index Build...");
+		console.info("📚 Benchmarking Risk Index Build...");
 
 		const startTime = performance.now();
 
@@ -406,11 +406,11 @@ class PredictBenchmarkRunner {
 			improvement: "1100% faster than legacy indexing",
 		});
 
-		console.log(
+		console.info(
 			`   ✅ Built risk index with ${riskIndex.length} entries in ${duration.toFixed(2)}ms`,
 		);
-		console.log(`   ⚡ Throughput: ${throughput.toFixed(0)} entries/sec`);
-		console.log("");
+		console.info(`   ⚡ Throughput: ${throughput.toFixed(0)} entries/sec`);
+		console.info("");
 	}
 
 	// Benchmark Concurrent Sessions
@@ -418,7 +418,7 @@ class PredictBenchmarkRunner {
 		vectors: Array<any>,
 		config: BenchmarkConfig,
 	): Promise<void> {
-		console.log("🔄 Benchmarking Concurrent Sessions...");
+		console.info("🔄 Benchmarking Concurrent Sessions...");
 
 		const startTime = performance.now();
 		const batchSize = config.concurrency;
@@ -462,11 +462,11 @@ class PredictBenchmarkRunner {
 			memoryUsage: this.getMemoryUsage(),
 		});
 
-		console.log(
+		console.info(
 			`   ✅ Processed ${vectors.length} sessions concurrently in ${duration.toFixed(2)}ms`,
 		);
-		console.log(`   ⚡ Throughput: ${throughput.toFixed(0)} sessions/sec`);
-		console.log("");
+		console.info(`   ⚡ Throughput: ${throughput.toFixed(0)} sessions/sec`);
+		console.info("");
 	}
 
 	// Benchmark Memory Usage
@@ -474,7 +474,7 @@ class PredictBenchmarkRunner {
 		vectors: Array<any>,
 		config: BenchmarkConfig,
 	): Promise<void> {
-		console.log("💾 Benchmarking Memory Usage...");
+		console.info("💾 Benchmarking Memory Usage...");
 
 		const initialMemory = this.getMemoryUsage();
 		const sessions = [];
@@ -508,13 +508,13 @@ class PredictBenchmarkRunner {
 			memoryUsage: memoryIncrease,
 		});
 
-		console.log(
+		console.info(
 			`   ✅ Memory increase: ${(memoryIncrease / 1024 / 1024).toFixed(2)} MB`,
 		);
-		console.log(
+		console.info(
 			`   📊 Memory per session: ${(memoryPerSession / 1024).toFixed(2)} KB`,
 		);
-		console.log("");
+		console.info("");
 	}
 
 	// Validate vector (simulated)
@@ -589,26 +589,26 @@ class PredictBenchmarkRunner {
 
 	// Generate performance report
 	private generatePerformanceReport(): void {
-		console.log("📈 ANOMALY PREDICT Performance Report");
-		console.log("=======================================");
-		console.log("");
+		console.info("📈 ANOMALY PREDICT Performance Report");
+		console.info("=======================================");
+		console.info("");
 
 		let totalImprovement = 0;
 		let validImprovements = 0;
 
 		this.results.forEach((result) => {
-			console.log(`🔧 ${result.name}:`);
-			console.log(`   Duration: ${result.duration.toFixed(2)}ms`);
-			console.log(`   Throughput: ${result.throughput.toFixed(0)} ops/sec`);
-			console.log(
+			console.info(`🔧 ${result.name}:`);
+			console.info(`   Duration: ${result.duration.toFixed(2)}ms`);
+			console.info(`   Throughput: ${result.throughput.toFixed(0)} ops/sec`);
+			console.info(
 				`   Latency: avg=${result.latency.avg.toFixed(2)}ms, p95=${result.latency.p95.toFixed(2)}ms`,
 			);
-			console.log(
+			console.info(
 				`   Memory: ${(result.memoryUsage / 1024 / 1024).toFixed(2)}MB`,
 			);
 
 			if (result.improvement) {
-				console.log(`   🚀 Improvement: ${result.improvement}`);
+				console.info(`   🚀 Improvement: ${result.improvement}`);
 				// Extract percentage from improvement string
 				const match = result.improvement.match(/(\d+)%/);
 				if (match) {
@@ -616,42 +616,42 @@ class PredictBenchmarkRunner {
 					validImprovements++;
 				}
 			}
-			console.log("");
+			console.info("");
 		});
 
 		// Calculate overall system surge
 		const avgImprovement =
 			validImprovements > 0 ? totalImprovement / validImprovements : 0;
 
-		console.log("🎯 SYSTEM PERFORMANCE SURGE:");
-		console.log(`   Average Improvement: ${avgImprovement.toFixed(0)}%`);
-		console.log(`   Total Benchmarks: ${this.results.length}`);
-		console.log(
+		console.info("🎯 SYSTEM PERFORMANCE SURGE:");
+		console.info(`   Average Improvement: ${avgImprovement.toFixed(0)}%`);
+		console.info(`   Total Benchmarks: ${this.results.length}`);
+		console.info(
 			`   System Surge: ~${(avgImprovement * this.results.length).toFixed(0)}%`,
 		);
-		console.log("");
+		console.info("");
 
 		// Performance targets
-		console.log("✅ PERFORMANCE TARGETS ACHIEVED:");
-		console.log("   🧠 GNN Prediction: <1ms average latency");
-		console.log("   🔍 Vector Validation: <20ms for 1000 vectors");
-		console.log("   ⚙️ Feature Extraction: <15ms for 1000 sessions");
-		console.log("   🔮 Inference Generation: <2ms per inference");
-		console.log("   🚫 Block Enforcement: <30ms for 1000 checks");
-		console.log("   📚 Risk Index Build: <100ms for 1000 entries");
-		console.log("   🔄 Concurrent Sessions: 1000+ sessions/sec");
-		console.log("   💾 Memory Efficiency: <50KB per session");
-		console.log("");
+		console.info("✅ PERFORMANCE TARGETS ACHIEVED:");
+		console.info("   🧠 GNN Prediction: <1ms average latency");
+		console.info("   🔍 Vector Validation: <20ms for 1000 vectors");
+		console.info("   ⚙️ Feature Extraction: <15ms for 1000 sessions");
+		console.info("   🔮 Inference Generation: <2ms per inference");
+		console.info("   🚫 Block Enforcement: <30ms for 1000 checks");
+		console.info("   📚 Risk Index Build: <100ms for 1000 entries");
+		console.info("   🔄 Concurrent Sessions: 1000+ sessions/sec");
+		console.info("   💾 Memory Efficiency: <50KB per session");
+		console.info("");
 
 		// Final verdict
 		if (avgImprovement > 1000) {
-			console.log("🏆 APOCALYPTIC PERFORMANCE ACHIEVED!");
-			console.log("   System surge exceeds 1000% improvement");
-			console.log("   Ready for production deployment at scale");
+			console.info("🏆 APOCALYPTIC PERFORMANCE ACHIEVED!");
+			console.info("   System surge exceeds 1000% improvement");
+			console.info("   Ready for production deployment at scale");
 		} else {
-			console.log("⚡ Excellent Performance Achieved!");
-			console.log("   System shows significant improvement");
-			console.log("   Ready for production deployment");
+			console.info("⚡ Excellent Performance Achieved!");
+			console.info("   System shows significant improvement");
+			console.info("   Ready for production deployment");
 		}
 	}
 }

@@ -74,7 +74,7 @@ class HealthChecker {
     const checks: HealthCheck[] = [];
     const environment = this.config.environment || 'development';
 
-    console.log(`🏥 Running health checks for ${environment} environment...`);
+    console.info(`🏥 Running health checks for ${environment} environment...`);
 
     // 1. Database connectivity check
     checks.push(await this.checkDatabase());
@@ -331,30 +331,30 @@ class HealthChecker {
 if (import.meta.main) {
   const checker = new HealthChecker();
   
-  console.log('🏥 FactoryWager Infrastructure Health Checker');
-  console.log('==============================================');
-  console.log();
+  console.info('🏥 FactoryWager Infrastructure Health Checker');
+  console.info('==============================================');
+  console.info();
 
   checker.runHealthChecks()
     .then(report => {
-      console.log(`📊 Health Check Results:`);
-      console.log(`  Overall Status: ${report.overall.toUpperCase()}`);
-      console.log(`  Health Score: ${report.score}/100`);
-      console.log(`  Timestamp: ${report.timestamp}`);
-      console.log();
+      console.info(`📊 Health Check Results:`);
+      console.info(`  Overall Status: ${report.overall.toUpperCase()}`);
+      console.info(`  Health Score: ${report.score}/100`);
+      console.info(`  Timestamp: ${report.timestamp}`);
+      console.info();
 
       report.checks.forEach(check => {
         const status = check.status === 'healthy' ? '✅' : check.status === 'warning' ? '⚠️' : '❌';
         const time = check.responseTime ? ` (${check.responseTime}ms)` : '';
-        console.log(`  ${status} ${check.name}: ${check.message}${time}`);
+        console.info(`  ${status} ${check.name}: ${check.message}${time}`);
       });
 
-      console.log();
+      console.info();
       
       // Generate audit entry
       const auditEntry = checker.generateAuditEntry(report);
-      console.log('📝 Audit Entry:');
-      console.log(auditEntry);
+      console.info('📝 Audit Entry:');
+      console.info(auditEntry);
 
       // Exit with appropriate code
       process.exit(report.overall === 'healthy' ? 0 : report.overall === 'warning' ? 1 : 2);

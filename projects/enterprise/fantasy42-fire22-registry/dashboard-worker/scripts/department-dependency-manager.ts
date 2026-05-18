@@ -212,7 +212,7 @@ class DepartmentDependencyManager {
         this.saveDepartments(departments);
       }
 
-      console.log(`✅ Dependencies submitted for ${department} department`);
+      console.info(`✅ Dependencies submitted for ${department} department`);
       return true;
     } catch (error) {
       console.error(`❌ Failed to submit dependencies for ${department}:`, error);
@@ -321,7 +321,7 @@ class DepartmentDependencyManager {
     this.saveAssignments(assignments);
     this.saveDepartments(departments);
 
-    console.log('✅ Package assignments generated successfully');
+    console.info('✅ Package assignments generated successfully');
     return assignments;
   }
 
@@ -362,7 +362,7 @@ class DepartmentDependencyManager {
 
     // Save notifications
     writeFileSync(this.notificationsPath, JSON.stringify(notifications, null, 2));
-    console.log('✅ Department notifications created');
+    console.info('✅ Department notifications created');
     return notifications;
   }
 
@@ -458,7 +458,7 @@ Timestamp: ${new Date().toISOString()}[${(Bun.nanoseconds() / 1_000_000).toFixed
       'src/notifications/department-email-templates.json',
       JSON.stringify(templates, null, 2)
     );
-    console.log('✅ Email templates generated');
+    console.info('✅ Email templates generated');
     return templates;
   }
 
@@ -468,38 +468,38 @@ Timestamp: ${new Date().toISOString()}[${(Bun.nanoseconds() / 1_000_000).toFixed
     const assignments = this.loadAssignments();
     const submissions = this.loadSubmissions();
 
-    console.log('\n📊 DEPARTMENT STATUS REPORT');
-    console.log('!==!==!==!==!===');
+    console.info('\n📊 DEPARTMENT STATUS REPORT');
+    console.info('!==!==!==!==!===');
 
     departments.forEach(dept => {
       const deptAssignments = assignments.filter(a => a.department === dept.name);
       const deptSubmissions = submissions.filter(s => s.department === dept.name);
 
-      console.log(`\n🏢 ${dept.name.toUpperCase()} DEPARTMENT`);
-      console.log(`ID: ${dept.internalId}`);
-      console.log(`Head: ${dept.head} (${dept.email})`);
-      console.log(`Employee ID: ${dept.headEmployeeId}`);
-      console.log(`Status: ${dept.status.toUpperCase()}`);
-      console.log(`Packages: ${deptAssignments.length}`);
-      console.log(`Dependencies: ${dept.dependencies.length}`);
-      console.log(`Submissions: ${deptSubmissions.length}`);
+      console.info(`\n🏢 ${dept.name.toUpperCase()} DEPARTMENT`);
+      console.info(`ID: ${dept.internalId}`);
+      console.info(`Head: ${dept.head} (${dept.email})`);
+      console.info(`Employee ID: ${dept.headEmployeeId}`);
+      console.info(`Status: ${dept.status.toUpperCase()}`);
+      console.info(`Packages: ${deptAssignments.length}`);
+      console.info(`Dependencies: ${dept.dependencies.length}`);
+      console.info(`Submissions: ${deptSubmissions.length}`);
 
       if (deptAssignments.length > 0) {
-        console.log('Package Assignments:');
+        console.info('Package Assignments:');
         deptAssignments.forEach(a => {
-          console.log(`  • ${a.packageName} (${a.priority})`);
-          console.log(`    └─ Maintainer: ${a.maintainer} (${a.maintainerEmail})`);
-          console.log(`    └─ Employee ID: ${a.maintainerEmployeeId}`);
+          console.info(`  • ${a.packageName} (${a.priority})`);
+          console.info(`    └─ Maintainer: ${a.maintainer} (${a.maintainerEmail})`);
+          console.info(`    └─ Employee ID: ${a.maintainerEmployeeId}`);
         });
       }
     });
 
-    console.log('\n📋 SUMMARY:');
-    console.log(`Total Departments: ${departments.length}`);
-    console.log(`Active Departments: ${departments.filter(d => d.status === 'active').length}`);
-    console.log(`Pending Departments: ${departments.filter(d => d.status === 'pending').length}`);
-    console.log(`Total Packages: ${assignments.length}`);
-    console.log(`Total Submissions: ${submissions.length}`);
+    console.info('\n📋 SUMMARY:');
+    console.info(`Total Departments: ${departments.length}`);
+    console.info(`Active Departments: ${departments.filter(d => d.status === 'active').length}`);
+    console.info(`Pending Departments: ${departments.filter(d => d.status === 'pending').length}`);
+    console.info(`Total Packages: ${assignments.length}`);
+    console.info(`Total Submissions: ${submissions.length}`);
   }
 
   // CLI handler
@@ -507,7 +507,7 @@ Timestamp: ${new Date().toISOString()}[${(Bun.nanoseconds() / 1_000_000).toFixed
     switch (command) {
       case 'submit':
         if (args.length < 4) {
-          console.log(
+          console.info(
             'Usage: bun run deps:submit --department "Department" --deps "dep1,dep2" --justification "reason"'
           );
           return;
@@ -538,7 +538,7 @@ Timestamp: ${new Date().toISOString()}[${(Bun.nanoseconds() / 1_000_000).toFixed
         break;
 
       default:
-        console.log(`
+        console.info(`
 🏢 Fire22 Department Dependency Manager
 
 Usage:

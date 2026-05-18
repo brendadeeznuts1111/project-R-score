@@ -108,34 +108,34 @@ class DomainCLI {
   // ==================== UI Helpers ====================
 
   private printHeader(): void {
-    console.log();
-    console.log(`${icon} ${c(name, 'bold')} ${c('Domain Manager', 'cyan')}`);
-    console.log(c('   Cloudflare API Integration', 'gray'));
-    console.log();
+    console.info();
+    console.info(`${icon} ${c(name, 'bold')} ${c('Domain Manager', 'cyan')}`);
+    console.info(c('   Cloudflare API Integration', 'gray'));
+    console.info();
   }
 
   private printSuccess(message: string): void {
-    console.log(`  ${c('✓', 'green')} ${message}`);
+    console.info(`  ${c('✓', 'green')} ${message}`);
   }
 
   private printError(message: string): void {
-    console.log(`  ${c('✗', 'red')} ${message}`);
+    console.info(`  ${c('✗', 'red')} ${message}`);
   }
 
   private printWarning(message: string): void {
-    console.log(`  ${c('⚠', 'yellow')} ${message}`);
+    console.info(`  ${c('⚠', 'yellow')} ${message}`);
   }
 
   private printInfo(message: string): void {
-    console.log(`  ${c('ℹ', 'blue')} ${message}`);
+    console.info(`  ${c('ℹ', 'blue')} ${message}`);
   }
 
   // ==================== Zone Commands ====================
 
   async listZones(domainFilter?: string): Promise<void> {
     const startTime = nanoseconds();
-    console.log(c('📋 Listing Zones...', 'cyan'));
-    console.log();
+    console.info(c('📋 Listing Zones...', 'cyan'));
+    console.info();
 
     try {
       const zones = (await this.getClient()).listZones(domainFilter);
@@ -170,7 +170,7 @@ class DomainCLI {
       });
 
       const elapsed = ((nanoseconds() - startTime) / 1_000_000).toFixed(2);
-      console.log();
+      console.info();
       this.printSuccess(`Found ${zones.length} zone(s) in ${elapsed}ms`);
     } catch (error) {
       this.printError(`Failed to list zones: ${(error as Error).message}`);
@@ -178,42 +178,42 @@ class DomainCLI {
   }
 
   async getZone(domain: string): Promise<void> {
-    console.log(c(`🔍 Getting zone details for ${domain}...`, 'cyan'));
-    console.log();
+    console.info(c(`🔍 Getting zone details for ${domain}...`, 'cyan'));
+    console.info();
 
     try {
       const zoneId = (await this.getClient()).getZoneId(domain);
       const zone = (await this.getClient()).getZone(zoneId);
 
-      console.log(`  ${c('Domain:', 'bold')}      ${zone.name}`);
-      console.log(`  ${c('Zone ID:', 'bold')}     ${zone.id}`);
-      console.log(
+      console.info(`  ${c('Domain:', 'bold')}      ${zone.name}`);
+      console.info(`  ${c('Zone ID:', 'bold')}     ${zone.id}`);
+      console.info(
         `  ${c('Status:', 'bold')}      ${zone.status === 'active' ? c('active', 'green') : c(zone.status, 'yellow')}`
       );
-      console.log(
+      console.info(
         `  ${c('Paused:', 'bold')}      ${zone.paused ? c('yes', 'red') : c('no', 'green')}`
       );
-      console.log(`  ${c('Plan:', 'bold')}        ${zone.plan.name}`);
-      console.log(
+      console.info(`  ${c('Plan:', 'bold')}        ${zone.plan.name}`);
+      console.info(
         `  ${c('Created:', 'bold')}     ${new Date(zone.created_on).toLocaleDateString()}`
       );
-      console.log(
+      console.info(
         `  ${c('Modified:', 'bold')}    ${new Date(zone.modified_on).toLocaleDateString()}`
       );
-      console.log();
-      console.log(`  ${c('Name Servers:', 'bold')}`);
-      zone.name_servers.forEach(ns => console.log(`    • ${ns}`));
-      console.log();
-      console.log(`  ${c('Original Name Servers:', 'bold')}`);
-      zone.original_name_servers?.forEach(ns => console.log(`    • ${ns}`));
+      console.info();
+      console.info(`  ${c('Name Servers:', 'bold')}`);
+      zone.name_servers.forEach(ns => console.info(`    • ${ns}`));
+      console.info();
+      console.info(`  ${c('Original Name Servers:', 'bold')}`);
+      zone.original_name_servers?.forEach(ns => console.info(`    • ${ns}`));
     } catch (error) {
       this.printError(`Failed to get zone: ${(error as Error).message}`);
     }
   }
 
   async createZone(domain: string, jumpStart = true): Promise<void> {
-    console.log(c(`🆕 Creating zone for ${domain}...`, 'cyan'));
-    console.log();
+    console.info(c(`🆕 Creating zone for ${domain}...`, 'cyan'));
+    console.info();
 
     try {
       const zone = (await this.getClient()).createZone(domain, undefined, jumpStart);
@@ -221,26 +221,26 @@ class DomainCLI {
       this.printInfo(`Zone ID: ${zone.id}`);
       this.printInfo(`Status: ${zone.status}`);
       this.printInfo(`Name servers:`);
-      zone.name_servers.forEach(ns => console.log(`    • ${ns}`));
+      zone.name_servers.forEach(ns => console.info(`    • ${ns}`));
     } catch (error) {
       this.printError(`Failed to create zone: ${(error as Error).message}`);
     }
   }
 
   async deleteZone(domain: string): Promise<void> {
-    console.log(c(`🗑️  Deleting zone for ${domain}...`, 'yellow'));
-    console.log();
+    console.info(c(`🗑️  Deleting zone for ${domain}...`, 'yellow'));
+    console.info();
 
     // Confirmation
-    console.log(
+    console.info(
       c('  ⚠️  WARNING: This will permanently delete the zone and all its configuration!', 'red')
     );
-    console.log(c('  Type the domain name to confirm:', 'yellow'));
+    console.info(c('  Type the domain name to confirm:', 'yellow'));
 
     // For non-interactive use, skip confirmation or use --force flag
     const force = process.argv.includes('--force');
     if (!force) {
-      console.log(c('  (Use --force to skip confirmation)', 'gray'));
+      console.info(c('  (Use --force to skip confirmation)', 'gray'));
       // In a real CLI, we'd prompt here
     }
 
@@ -256,8 +256,8 @@ class DomainCLI {
   // ==================== DNS Commands ====================
 
   async listDNS(domain: string, filter?: { type?: string; name?: string }): Promise<void> {
-    console.log(c(`📋 Listing DNS records for ${domain}...`, 'cyan'));
-    console.log();
+    console.info(c(`📋 Listing DNS records for ${domain}...`, 'cyan'));
+    console.info();
 
     try {
       const zoneId = (await this.getClient()).getZoneId(domain);
@@ -293,7 +293,7 @@ class DomainCLI {
       ];
 
       printTable(records, columns, { border: 'single', maxWidth: 140 });
-      console.log();
+      console.info();
       this.printSuccess(`Found ${records.length} DNS record(s)`);
     } catch (error) {
       this.printError(`Failed to list DNS records: ${(error as Error).message}`);
@@ -307,8 +307,8 @@ class DomainCLI {
     content: string,
     options?: { ttl?: number; proxied?: boolean; priority?: number }
   ): Promise<void> {
-    console.log(c(`➕ Adding DNS record to ${domain}...`, 'cyan'));
-    console.log();
+    console.info(c(`➕ Adding DNS record to ${domain}...`, 'cyan'));
+    console.info();
 
     try {
       const zoneId = (await this.getClient()).getZoneId(domain);
@@ -333,8 +333,8 @@ class DomainCLI {
   }
 
   async deleteDNS(domain: string, recordId: string): Promise<void> {
-    console.log(c(`🗑️  Deleting DNS record from ${domain}...`, 'yellow'));
-    console.log();
+    console.info(c(`🗑️  Deleting DNS record from ${domain}...`, 'yellow'));
+    console.info();
 
     try {
       const zoneId = (await this.getClient()).getZoneId(domain);
@@ -348,8 +348,8 @@ class DomainCLI {
   // ==================== SSL Commands ====================
 
   async getSSLStatus(domain: string): Promise<void> {
-    console.log(c(`🔒 Checking SSL status for ${domain}...`, 'cyan'));
-    console.log();
+    console.info(c(`🔒 Checking SSL status for ${domain}...`, 'cyan'));
+    console.info();
 
     try {
       const zoneId = (await this.getClient()).getZoneId(domain);
@@ -358,17 +358,17 @@ class DomainCLI {
         this.client.getSSLSettings(zoneId),
       ]);
 
-      console.log(`  ${c('SSL Mode:', 'bold')}      ${settings.value.toUpperCase()}`);
-      console.log(`  ${c('Editable:', 'bold')}     ${settings.editable ? 'Yes' : 'No'}`);
-      console.log(
+      console.info(`  ${c('SSL Mode:', 'bold')}      ${settings.value.toUpperCase()}`);
+      console.info(`  ${c('Editable:', 'bold')}     ${settings.editable ? 'Yes' : 'No'}`);
+      console.info(
         `  ${c('Modified:', 'bold')}     ${new Date(settings.modified_on).toLocaleString()}`
       );
 
       if (verification) {
-        console.log();
-        console.log(`  ${c('Certificate Status:', 'bold')} ${verification.certificate_status}`);
-        console.log(`  ${c('Verification Type:', 'bold')}   ${verification.verification_type}`);
-        console.log(`  ${c('Verification Status:', 'bold')} ${verification.verification_status}`);
+        console.info();
+        console.info(`  ${c('Certificate Status:', 'bold')} ${verification.certificate_status}`);
+        console.info(`  ${c('Verification Type:', 'bold')}   ${verification.verification_type}`);
+        console.info(`  ${c('Verification Status:', 'bold')} ${verification.verification_status}`);
       }
     } catch (error) {
       this.printError(`Failed to get SSL status: ${(error as Error).message}`);
@@ -376,8 +376,8 @@ class DomainCLI {
   }
 
   async setSSLMode(domain: string, mode: 'off' | 'flexible' | 'full' | 'strict'): Promise<void> {
-    console.log(c(`🔒 Setting SSL mode for ${domain} to ${mode}...`, 'cyan'));
-    console.log();
+    console.info(c(`🔒 Setting SSL mode for ${domain} to ${mode}...`, 'cyan'));
+    console.info();
 
     const validModes = ['off', 'flexible', 'full', 'strict'];
     if (!validModes.includes(mode)) {
@@ -397,8 +397,8 @@ class DomainCLI {
   // ==================== Cache Commands ====================
 
   async purgeCache(domain: string): Promise<void> {
-    console.log(c(`🧹 Purging all cache for ${domain}...`, 'cyan'));
-    console.log();
+    console.info(c(`🧹 Purging all cache for ${domain}...`, 'cyan'));
+    console.info();
 
     try {
       const zoneId = (await this.getClient()).getZoneId(domain);
@@ -410,8 +410,8 @@ class DomainCLI {
   }
 
   async purgeFiles(domain: string, files: string[]): Promise<void> {
-    console.log(c(`🧹 Purging specific files for ${domain}...`, 'cyan'));
-    console.log();
+    console.info(c(`🧹 Purging specific files for ${domain}...`, 'cyan'));
+    console.info();
 
     try {
       const zoneId = (await this.getClient()).getZoneId(domain);
@@ -425,8 +425,8 @@ class DomainCLI {
   // ==================== Analytics Commands ====================
 
   async showAnalytics(domain: string, days = 7): Promise<void> {
-    console.log(c(`📊 Analytics for ${domain} (last ${days} days)...`, 'cyan'));
-    console.log();
+    console.info(c(`📊 Analytics for ${domain} (last ${days} days)...`, 'cyan'));
+    console.info();
 
     try {
       const zoneId = (await this.getClient()).getZoneId(domain);
@@ -444,20 +444,20 @@ class DomainCLI {
         return `${(b / 1e3).toFixed(2)} KB`;
       };
 
-      console.log(`  ${c('Requests:', 'bold')}`);
-      console.log(`    Total:   ${formatNumber(analytics.totals.requests.all)}`);
-      console.log(
+      console.info(`  ${c('Requests:', 'bold')}`);
+      console.info(`    Total:   ${formatNumber(analytics.totals.requests.all)}`);
+      console.info(
         `    Cached:  ${formatNumber(analytics.totals.requests.cached)} (${((analytics.totals.requests.cached / analytics.totals.requests.all) * 100).toFixed(1)}%)`
       );
-      console.log(`    Uncached: ${formatNumber(analytics.totals.requests.uncached)}`);
-      console.log();
-      console.log(`  ${c('Bandwidth:', 'bold')}`);
-      console.log(`    Total:   ${formatBytes(analytics.totals.bandwidth.all)}`);
-      console.log(`    Cached:  ${formatBytes(analytics.totals.bandwidth.cached)}`);
-      console.log(`    Uncached: ${formatBytes(analytics.totals.bandwidth.uncached)}`);
-      console.log();
-      console.log(`  ${c('Threats:', 'bold')} ${formatNumber(analytics.totals.threats.all)}`);
-      console.log(`  ${c('Pageviews:', 'bold')} ${formatNumber(analytics.totals.pageviews.all)}`);
+      console.info(`    Uncached: ${formatNumber(analytics.totals.requests.uncached)}`);
+      console.info();
+      console.info(`  ${c('Bandwidth:', 'bold')}`);
+      console.info(`    Total:   ${formatBytes(analytics.totals.bandwidth.all)}`);
+      console.info(`    Cached:  ${formatBytes(analytics.totals.bandwidth.cached)}`);
+      console.info(`    Uncached: ${formatBytes(analytics.totals.bandwidth.uncached)}`);
+      console.info();
+      console.info(`  ${c('Threats:', 'bold')} ${formatNumber(analytics.totals.threats.all)}`);
+      console.info(`  ${c('Pageviews:', 'bold')} ${formatNumber(analytics.totals.pageviews.all)}`);
     } catch (error) {
       this.printError(`Failed to get analytics: ${(error as Error).message}`);
     }
@@ -469,13 +469,13 @@ class DomainCLI {
     const config = getDomainConfig(env);
     const domain = config.primary;
 
-    console.log(c(`🏭 Setting up FactoryWager domains for ${domain}...`, 'cyan'));
-    console.log();
+    console.info(c(`🏭 Setting up FactoryWager domains for ${domain}...`, 'cyan'));
+    console.info();
 
     try {
       const zoneId = (await this.getClient()).getZoneId(domain);
       this.printInfo(`Zone ID: ${zoneId}`);
-      console.log();
+      console.info();
 
       // Define all subdomains
       const subdomains = [
@@ -488,7 +488,7 @@ class DomainCLI {
         { name: config.registry, type: 'CNAME', content: config.primary },
       ];
 
-      console.log(c('  Creating DNS records:', 'bold'));
+      console.info(c('  Creating DNS records:', 'bold'));
 
       for (const sub of subdomains) {
         try {
@@ -515,7 +515,7 @@ class DomainCLI {
         }
       }
 
-      console.log();
+      console.info();
       this.printSuccess('FactoryWager domain setup complete!');
       this.printInfo('SSL certificates will be provisioned automatically');
     } catch (error) {
@@ -526,14 +526,14 @@ class DomainCLI {
   // ==================== Verify Command ====================
 
   async verify(): Promise<void> {
-    console.log(c('🔍 Verifying Cloudflare API connection...', 'cyan'));
-    console.log();
+    console.info(c('🔍 Verifying Cloudflare API connection...', 'cyan'));
+    console.info();
 
     // Check credentials source
     const credStatus = await this.checkCredentials();
     if (credStatus.configured) {
       this.printInfo(`Credentials source: ${credStatus.source}`);
-      console.log();
+      console.info();
     }
 
     try {
@@ -547,8 +547,8 @@ class DomainCLI {
       this.printInfo(`API requests made: ${client.getRequestCount()}`);
 
       // Show FactoryWager domain status
-      console.log();
-      console.log(c('  FactoryWager Domain Status:', 'bold'));
+      console.info();
+      console.info(c('  FactoryWager Domain Status:', 'bold'));
       const fwDomain = FACTORY_WAGER_DOMAIN.primary;
       const fwZone = zones.find(z => z.name === fwDomain);
 
@@ -561,11 +561,11 @@ class DomainCLI {
       }
     } catch (error) {
       this.printError(`API connection failed: ${(error as Error).message}`);
-      console.log();
-      console.log(c('  Troubleshooting:', 'yellow'));
-      console.log('  1. Check CLOUDFLARE_API_TOKEN is set');
-      console.log('  2. Verify token has Zone:Read permissions');
-      console.log('  3. Check token is not expired');
+      console.info();
+      console.info(c('  Troubleshooting:', 'yellow'));
+      console.info('  1. Check CLOUDFLARE_API_TOKEN is set');
+      console.info('  2. Verify token has Zone:Read permissions');
+      console.info('  3. Check token is not expired');
     }
   }
 }
@@ -580,49 +580,49 @@ async function main(): Promise<void> {
 
   // Show help if no command
   if (!command) {
-    console.log();
-    console.log(`${icon} ${c(name, 'bold')} ${c('Domain Manager', 'cyan')}`);
-    console.log(c('   Cloudflare API Integration', 'gray'));
-    console.log();
-    console.log(c('Usage:', 'bold'));
-    console.log('  bun run scripts/domain/cf-domain-cli.ts <command> [options]');
-    console.log();
-    console.log(c('Commands:', 'bold'));
-    console.log('  zones list [domain]              List all zones (optionally filter by domain)');
-    console.log('  zones get <domain>               Get zone details');
-    console.log('  zones create <domain>            Create new zone');
-    console.log(
+    console.info();
+    console.info(`${icon} ${c(name, 'bold')} ${c('Domain Manager', 'cyan')}`);
+    console.info(c('   Cloudflare API Integration', 'gray'));
+    console.info();
+    console.info(c('Usage:', 'bold'));
+    console.info('  bun run scripts/domain/cf-domain-cli.ts <command> [options]');
+    console.info();
+    console.info(c('Commands:', 'bold'));
+    console.info('  zones list [domain]              List all zones (optionally filter by domain)');
+    console.info('  zones get <domain>               Get zone details');
+    console.info('  zones create <domain>            Create new zone');
+    console.info(
       '  zones delete <domain>            Delete zone (use --force to skip confirmation)'
     );
-    console.log();
-    console.log('  dns list <domain>                List DNS records');
-    console.log('  dns add <domain> <type> <name> <content>  Add DNS record');
-    console.log('  dns delete <domain> <record-id>  Delete DNS record');
-    console.log();
-    console.log('  ssl status <domain>              Check SSL status');
-    console.log('  ssl set <domain> <mode>          Set SSL mode (off/flexible/full/strict)');
-    console.log();
-    console.log('  cache purge <domain>             Purge all cache');
-    console.log('  cache purge-files <domain> <urls...>  Purge specific URLs');
-    console.log();
-    console.log('  analytics <domain> [days]        Show analytics (default: 7 days)');
-    console.log();
-    console.log('  setup factory-wager [env]        Setup all FactoryWager subdomains');
-    console.log('  verify                           Verify API connectivity');
-    console.log();
-    console.log(c('Authentication (priority order):', 'bold'));
-    console.log('  1. Bun.secrets (recommended)');
-    console.log('     bun run cf:secrets:setup <token> [account-id]');
-    console.log();
-    console.log('  2. Environment Variables');
-    console.log('     CLOUDFLARE_API_TOKEN    API token with Zone permissions');
-    console.log('     CLOUDFLARE_ACCOUNT_ID   Account ID for zone creation');
-    console.log();
-    console.log(c('Related Commands:', 'bold'));
-    console.log('  bun run cf:secrets:status       Check credentials status');
-    console.log('  bun run cf:secrets:setup        Configure credentials');
-    console.log('  bun run cf:secrets:rotate       Rotate API token');
-    console.log();
+    console.info();
+    console.info('  dns list <domain>                List DNS records');
+    console.info('  dns add <domain> <type> <name> <content>  Add DNS record');
+    console.info('  dns delete <domain> <record-id>  Delete DNS record');
+    console.info();
+    console.info('  ssl status <domain>              Check SSL status');
+    console.info('  ssl set <domain> <mode>          Set SSL mode (off/flexible/full/strict)');
+    console.info();
+    console.info('  cache purge <domain>             Purge all cache');
+    console.info('  cache purge-files <domain> <urls...>  Purge specific URLs');
+    console.info();
+    console.info('  analytics <domain> [days]        Show analytics (default: 7 days)');
+    console.info();
+    console.info('  setup factory-wager [env]        Setup all FactoryWager subdomains');
+    console.info('  verify                           Verify API connectivity');
+    console.info();
+    console.info(c('Authentication (priority order):', 'bold'));
+    console.info('  1. Bun.secrets (recommended)');
+    console.info('     bun run cf:secrets:setup <token> [account-id]');
+    console.info();
+    console.info('  2. Environment Variables');
+    console.info('     CLOUDFLARE_API_TOKEN    API token with Zone permissions');
+    console.info('     CLOUDFLARE_ACCOUNT_ID   Account ID for zone creation');
+    console.info();
+    console.info(c('Related Commands:', 'bold'));
+    console.info('  bun run cf:secrets:status       Check credentials status');
+    console.info('  bun run cf:secrets:setup        Configure credentials');
+    console.info('  bun run cf:secrets:rotate       Rotate API token');
+    console.info();
     process.exit(0);
   }
 
@@ -723,7 +723,7 @@ async function main(): Promise<void> {
 
       default:
         console.error(c(`Unknown command: ${command}`, 'red'));
-        console.log('Run without arguments to see help');
+        console.info('Run without arguments to see help');
         process.exit(1);
     }
   } catch (error) {

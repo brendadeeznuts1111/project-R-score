@@ -168,7 +168,7 @@ async function uploadFilesToR2(options: Options, artifactRoot: string, files: st
     const type = file.type || "application/octet-stream";
     await client.file(key).write(file, { type });
     uploaded += 1;
-    console.log(`↑ uploaded ${key}`);
+    console.info(`↑ uploaded ${key}`);
   }
   return uploaded;
 }
@@ -220,13 +220,13 @@ async function main() {
     plannedMoves.push({ kind: "dir", from: dirPath, to: target });
   }
 
-  console.log(`Found ${metafiles.length} root metafile(s) and ${distDirs.length} dist-like directorie(s).`);
+  console.info(`Found ${metafiles.length} root metafile(s) and ${distDirs.length} dist-like directorie(s).`);
   for (const move of plannedMoves) {
-    console.log(`- ${options.apply ? "move" : "plan"} ${move.from} -> ${move.to}`);
+    console.info(`- ${options.apply ? "move" : "plan"} ${move.from} -> ${move.to}`);
   }
 
   if (!options.apply) {
-    console.log("Dry run complete. Re-run with --apply to execute moves.");
+    console.info("Dry run complete. Re-run with --apply to execute moves.");
     return;
   }
 
@@ -254,17 +254,17 @@ async function main() {
   };
   await Bun.write(manifestPath, JSON.stringify(manifest, null, 2));
 
-  console.log(`Wrote manifest: ${manifestPath}`);
+  console.info(`Wrote manifest: ${manifestPath}`);
 
   let archivePath = "";
   if (options.archive) {
     const archive = await createArchive(artifactRoot, manifestDir, options.archiveLevel);
     archivePath = archive.archivePath;
-    console.log(`Created archive: ${archive.archivePath} (${archive.fileCount} file(s))`);
+    console.info(`Created archive: ${archive.archivePath} (${archive.fileCount} file(s))`);
   }
 
   if (!options.upload) {
-    console.log("Organization complete (no upload requested).");
+    console.info("Organization complete (no upload requested).");
     return;
   }
 
@@ -273,10 +273,10 @@ async function main() {
   if (archivePath) {
     const archiveKey = `${options.prefix}/archive/${archivePath.split("/").pop()}`;
     await Bun.write(`s3://${options.bucket}/${archiveKey}`, Bun.file(archivePath));
-    console.log(`↑ uploaded ${archiveKey}`);
+    console.info(`↑ uploaded ${archiveKey}`);
   }
 
-  console.log(`Upload complete: ${uploadedCount} file(s) to s3://${options.bucket}/${options.prefix}/`);
+  console.info(`Upload complete: ${uploadedCount} file(s) to s3://${options.bucket}/${options.prefix}/`);
 }
 
 if (import.meta.main) {

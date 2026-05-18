@@ -227,13 +227,13 @@ if (import.meta.main) {
 
   switch (command) {
     case 'demo':
-      console.log(renderer.demoAllOptions());
+      console.info(renderer.demoAllOptions());
       break;
     case 'compare':
-      console.log(renderer.generateComparison());
+      console.info(renderer.generateComparison());
       break;
     case 'minimal':
-      console.log(
+      console.info(
         renderer.testOptionCombination('Minimal Options', {
           tables: false,
           strikethrough: false,
@@ -244,7 +244,7 @@ if (import.meta.main) {
       );
       break;
     case 'gfm':
-      console.log(
+      console.info(
         renderer.testOptionCombination('GFM Only', {
           tables: true,
           strikethrough: true,
@@ -255,7 +255,7 @@ if (import.meta.main) {
       );
       break;
     case 'extended':
-      console.log(
+      console.info(
         renderer.testOptionCombination('Extended Features', {
           tables: true,
           strikethrough: true,
@@ -269,7 +269,7 @@ if (import.meta.main) {
       );
       break;
     default:
-      console.log(
+      console.info(
         'Usage: bun run lib/official-markdown-options.ts [demo|compare|minimal|gfm|extended]'
       );
       process.exit(1);

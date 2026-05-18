@@ -98,7 +98,7 @@ export function createCLI(): EnterpriseArchiveCLI {
  * Quick start example for enterprise archive creation
  */
 export async function quickStartExample() {
-	console.log("🚀 Tier-1380 Enterprise Archive Suite - Quick Start");
+	console.info("🚀 Tier-1380 Enterprise Archive Suite - Quick Start");
 
 	// Create archive manager
 	const archiveManager = createArchiveManager("production");
@@ -111,8 +111,8 @@ export async function quickStartExample() {
 			validateIntegrity: true,
 		});
 
-		console.log(`✅ Archive created: ${result.archiveId}`);
-		console.log(`📊 Performance: ${result.metrics.creationTimeMs.toFixed(2)}ms`);
+		console.info(`✅ Archive created: ${result.archiveId}`);
+		console.info(`📊 Performance: ${result.metrics.creationTimeMs.toFixed(2)}ms`);
 	} finally {
 		archiveManager.close();
 	}
@@ -122,7 +122,7 @@ export async function quickStartExample() {
  * Security validation example
  */
 export async function securityExample() {
-	console.log("🔒 Security Validation Example");
+	console.info("🔒 Security Validation Example");
 
 	const validator = createSecurityValidator();
 
@@ -135,16 +135,16 @@ export async function securityExample() {
 
 	const report = await validator.validateArchive(files);
 
-	console.log(`📊 Risk level: ${report.overallRisk}`);
-	console.log(`🚫 Blocked files: ${report.blockedFiles.length}`);
-	console.log(`✅ Allowed files: ${report.allowedFiles.length}`);
+	console.info(`📊 Risk level: ${report.overallRisk}`);
+	console.info(`🚫 Blocked files: ${report.blockedFiles.length}`);
+	console.info(`✅ Allowed files: ${report.allowedFiles.length}`);
 }
 
 /**
  * Comprehensive enterprise workflow example
  */
 export async function enterpriseWorkflowExample() {
-	console.log("🚀 Tier-1380 Enterprise Archive Suite - Complete Workflow");
+	console.info("🚀 Tier-1380 Enterprise Archive Suite - Complete Workflow");
 
 	// Initialize all enterprise components
 	const archiveManager = createArchiveManager("production");
@@ -154,7 +154,7 @@ export async function enterpriseWorkflowExample() {
 
 	try {
 		// Step 1: Create archive with performance monitoring
-		console.log("📦 Step 1: Creating secure archive...");
+		console.info("📦 Step 1: Creating secure archive...");
 		const archiveResult = await performanceAnalyzer.runBenchmark(
 			() =>
 				archiveManager.createSecureArchive("./data", {
@@ -168,7 +168,7 @@ export async function enterpriseWorkflowExample() {
 		);
 
 		// Step 2: Security validation
-		console.log("🔒 Step 2: Security validation...");
+		console.info("🔒 Step 2: Security validation...");
 		const files = new Map([
 			["config.json", new TextEncoder().encode('{"apiKey": "secret"}')],
 			["data.txt", new TextEncoder().encode("Hello World")],
@@ -177,7 +177,7 @@ export async function enterpriseWorkflowExample() {
 		const securityReport = await securityValidator.validateArchive(files);
 
 		// Step 3: Audit compliance
-		console.log("📋 Step 3: Audit compliance...");
+		console.info("📋 Step 3: Audit compliance...");
 		await auditManager.recordEvent({
 			timestamp: new Date(),
 			eventType: "archive_created",
@@ -208,11 +208,11 @@ export async function enterpriseWorkflowExample() {
 		// Step 5: Performance analytics
 		const performanceReport = await performanceAnalyzer.generateReport("production");
 
-		console.log("✅ Enterprise workflow completed successfully!");
-		console.log(`📊 Archive ID: ${archiveResult.archiveId}`);
-		console.log(`🔒 Security risk: ${securityReport.overallRisk}`);
-		console.log(`📈 Compliance score: ${complianceReport.summary.complianceScore}%`);
-		console.log(`⚡ Performance: ${archiveResult.averageTime.toFixed(2)}ms average`);
+		console.info("✅ Enterprise workflow completed successfully!");
+		console.info(`📊 Archive ID: ${archiveResult.archiveId}`);
+		console.info(`🔒 Security risk: ${securityReport.overallRisk}`);
+		console.info(`📈 Compliance score: ${complianceReport.summary.complianceScore}%`);
+		console.info(`⚡ Performance: ${archiveResult.averageTime.toFixed(2)}ms average`);
 	} finally {
 		// Clean up resources
 		archiveManager.close();
@@ -230,40 +230,40 @@ export class MigrationHelper {
 	 * Migrate from legacy archive-tools.ts to EnterpriseArchiveManager
 	 */
 	static migrateFromArchiveTools() {
-		console.log("🔄 Migration Guide: archive-tools.ts → EnterpriseArchiveManager");
-		console.log("");
-		console.log("Legacy usage:");
-		console.log("  bun tools/archive-tools.ts create ./src ./backup.tar.gz");
-		console.log("");
-		console.log("Enterprise usage:");
-		console.log(
+		console.info("🔄 Migration Guide: archive-tools.ts → EnterpriseArchiveManager");
+		console.info("");
+		console.info("Legacy usage:");
+		console.info("  bun tools/archive-tools.ts create ./src ./backup.tar.gz");
+		console.info("");
+		console.info("Enterprise usage:");
+		console.info(
 			"  bun tools/enterprise/cli/EnterpriseArchiveCLI.ts create ./src --tenant production",
 		);
-		console.log("");
-		console.log("Programmatic usage:");
-		console.log('  const manager = new EnterpriseArchiveManager("production");');
-		console.log('  await manager.createSecureArchive("./src", { auditEnabled: true });');
+		console.info("");
+		console.info("Programmatic usage:");
+		console.info('  const manager = new EnterpriseArchiveManager("production");');
+		console.info('  await manager.createSecureArchive("./src", { auditEnabled: true });');
 	}
 
 	/**
 	 * Migrate from tier1380-archive-secure.ts to EnterpriseArchiveManager
 	 */
 	static migrateFromTier1380ArchiveSecure() {
-		console.log(
+		console.info(
 			"🔄 Migration Guide: tier1380-archive-secure.ts → EnterpriseArchiveManager",
 		);
-		console.log("");
-		console.log("Legacy features now enhanced:");
-		console.log("  ✅ SBOM generation → Integrated metadata management");
-		console.log("  ✅ Audit logging → Comprehensive audit trails");
-		console.log("  ✅ Multi-tenancy → Full tenant isolation");
-		console.log("  ✅ Security validation → Advanced threat detection");
-		console.log("");
-		console.log("New enterprise features:");
-		console.log("  🚀 Performance analytics and benchmarking");
-		console.log("  🔍 Advanced security rule engine");
-		console.log("  📊 Real-time metrics and reporting");
-		console.log("  🏢 Enterprise-grade CLI interface");
+		console.info("");
+		console.info("Legacy features now enhanced:");
+		console.info("  ✅ SBOM generation → Integrated metadata management");
+		console.info("  ✅ Audit logging → Comprehensive audit trails");
+		console.info("  ✅ Multi-tenancy → Full tenant isolation");
+		console.info("  ✅ Security validation → Advanced threat detection");
+		console.info("");
+		console.info("New enterprise features:");
+		console.info("  🚀 Performance analytics and benchmarking");
+		console.info("  🔍 Advanced security rule engine");
+		console.info("  📊 Real-time metrics and reporting");
+		console.info("  🏢 Enterprise-grade CLI interface");
 	}
 }
 
@@ -432,9 +432,9 @@ export function formatDuration(ms: number): string {
  * - Retention policies
  * - Access logging
  */
-console.log(`🏢 Enterprise Archive Suite v${VERSION} loaded successfully`);
-console.log(`📊 Features: ${Object.values(FEATURES).filter(Boolean).length} enabled`);
-console.log(`🔒 Enterprise security: ${FEATURES.ENTERPRISE_SECURITY ? "✅" : "❌"}`);
-console.log(`📈 Performance analytics: ${FEATURES.PERFORMANCE_ANALYTICS ? "✅" : "❌"}`);
-console.log(`🏢 Multi-tenancy: ${FEATURES.MULTI_TENANCY ? "✅" : "❌"}`);
-console.log(`🔄 Legacy compatibility: ${FEATURES.LEGACY_COMPATIBILITY ? "✅" : "❌"}`);
+console.info(`🏢 Enterprise Archive Suite v${VERSION} loaded successfully`);
+console.info(`📊 Features: ${Object.values(FEATURES).filter(Boolean).length} enabled`);
+console.info(`🔒 Enterprise security: ${FEATURES.ENTERPRISE_SECURITY ? "✅" : "❌"}`);
+console.info(`📈 Performance analytics: ${FEATURES.PERFORMANCE_ANALYTICS ? "✅" : "❌"}`);
+console.info(`🏢 Multi-tenancy: ${FEATURES.MULTI_TENANCY ? "✅" : "❌"}`);
+console.info(`🔄 Legacy compatibility: ${FEATURES.LEGACY_COMPATIBILITY ? "✅" : "❌"}`);

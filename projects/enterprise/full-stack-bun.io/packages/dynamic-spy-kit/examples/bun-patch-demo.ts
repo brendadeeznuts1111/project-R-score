@@ -37,11 +37,11 @@ interface PatchedDependency {
 // 1. Overview
 // =============================================================================
 function demoPatchOverview() {
-	console.log("=".repeat(70));
-	console.log("1. 🩹 BUN PATCH OVERVIEW");
-	console.log("=".repeat(70));
+	console.info("=".repeat(70));
+	console.info("1. 🩹 BUN PATCH OVERVIEW");
+	console.info("=".repeat(70));
 
-	console.log(`
+	console.info(`
 📋 What is bun patch?
    Persistently patch node_modules packages in a maintainable, git-friendly way.
 
@@ -66,9 +66,9 @@ function demoPatchOverview() {
 // 2. Patch Commands Reference
 // =============================================================================
 function demoPatchCommands() {
-	console.log("\n" + "=".repeat(70));
-	console.log("2. 📋 PATCH COMMANDS REFERENCE");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("2. 📋 PATCH COMMANDS REFERENCE");
+	console.info("=".repeat(70));
 
 	const commands = [
 		{ cmd: "bun patch <pkg>", desc: "Prepare package for patching", example: "bun patch lodash" },
@@ -79,26 +79,26 @@ function demoPatchCommands() {
 		{ cmd: "bun patch-commit <pkg>", desc: "Alias for --commit (pnpm compat)", example: "bun patch-commit react" },
 	];
 
-	console.log(`\n📋 Available Commands:\n`);
-	console.log(Bun.inspect.table(commands));
+	console.info(`\n📋 Available Commands:\n`);
+	console.info(Bun.inspect.table(commands));
 }
 
 // =============================================================================
 // 3. Arbitrage Patch Examples
 // =============================================================================
 function demoArbPatches() {
-	console.log("\n" + "=".repeat(70));
-	console.log("3. 🏀 ARBITRAGE PATCH EXAMPLES");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("3. 🏀 ARBITRAGE PATCH EXAMPLES");
+	console.info("=".repeat(70));
 
-	console.log(`
+	console.info(`
 📦 Example 1: Patch axios for custom retry logic
    
    # Step 1: Prepare axios for patching
    bun patch axios
 
    # Step 2: Edit node_modules/axios/lib/core/Axios.js
-   # Add: console.log('[ARB] Request:', config.url);
+   # Add: console.info('[ARB] Request:', config.url);
 
    # Step 3: Commit the patch
    bun patch --commit axios
@@ -131,7 +131,7 @@ function demoArbPatches() {
 `);
 
 	// Show what package.json looks like after patching
-	console.log(`📄 package.json after patching:`);
+	console.info(`📄 package.json after patching:`);
 	const examplePackageJson = {
 		name: "arb-engine",
 		version: "1.0.0",
@@ -147,16 +147,16 @@ function demoArbPatches() {
 		}
 	};
 
-	console.log(JSON.stringify(examplePackageJson, null, 2));
+	console.info(JSON.stringify(examplePackageJson, null, 2));
 }
 
 // =============================================================================
 // 4. Sample Patch File
 // =============================================================================
 function demoSamplePatch() {
-	console.log("\n" + "=".repeat(70));
-	console.log("4. 📝 SAMPLE PATCH FILE");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("4. 📝 SAMPLE PATCH FILE");
+	console.info("=".repeat(70));
 
 	const samplePatch = `
 --- a/lib/core/Axios.js
@@ -167,9 +167,9 @@ function demoSamplePatch() {
    async request(configOrUrl, config) {
 +    // [ARB-PATCH] Custom logging for arbitrage requests
 +    const startTime = Date.now();
-+    console.log('[ARB] Request:', typeof configOrUrl === 'string' ? configOrUrl : configOrUrl.url);
++    console.info('[ARB] Request:', typeof configOrUrl === 'string' ? configOrUrl : configOrUrl.url);
 +    const result = await this._request(configOrUrl, config);
-+    console.log('[ARB] Response:', Date.now() - startTime, 'ms');
++    console.info('[ARB] Response:', Date.now() - startTime, 'ms');
 +    return result;
 +  }
 +
@@ -179,21 +179,21 @@ function demoSamplePatch() {
      } catch (error) {
 `;
 
-	console.log(`\n📄 patches/axios@1.6.0.patch:`);
-	console.log("```diff");
-	console.log(samplePatch);
-	console.log("```");
+	console.info(`\n📄 patches/axios@1.6.0.patch:`);
+	console.info("```diff");
+	console.info(samplePatch);
+	console.info("```");
 }
 
 // =============================================================================
 // 5. Patch Workflow Script
 // =============================================================================
 function demoPatchWorkflow() {
-	console.log("\n" + "=".repeat(70));
-	console.log("5. 🔄 AUTOMATED PATCH WORKFLOW");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("5. 🔄 AUTOMATED PATCH WORKFLOW");
+	console.info("=".repeat(70));
 
-	console.log(`
+	console.info(`
 📜 scripts/apply-arb-patches.ts:
 
 \`\`\`typescript
@@ -211,22 +211,22 @@ const patches: Record<string, string> = {
 };
 
 async function applyPatches() {
-  console.log("🩹 Applying arbitrage patches...");
+  console.info("🩹 Applying arbitrage patches...");
   
   for (const [pkg, description] of Object.entries(patches)) {
     const patchFile = \`patches/\${pkg}@*.patch\`;
     const exists = await Bun.file(patchFile).exists();
     
     if (exists) {
-      console.log(\`  ✅ \${pkg}: \${description}\`);
+      console.info(\`  ✅ \${pkg}: \${description}\`);
     } else {
-      console.log(\`  ⚠️ \${pkg}: Patch file not found\`);
+      console.info(\`  ⚠️ \${pkg}: Patch file not found\`);
     }
   }
   
   // Run bun install to apply patches
   await $\`bun install\`;
-  console.log("✅ All patches applied!");
+  console.info("✅ All patches applied!");
 }
 
 if (import.meta.main) {
@@ -240,17 +240,17 @@ if (import.meta.main) {
 // 6. Check Current Patches
 // =============================================================================
 async function checkCurrentPatches() {
-	console.log("\n" + "=".repeat(70));
-	console.log("6. 🔍 CHECK CURRENT PATCHES");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("6. 🔍 CHECK CURRENT PATCHES");
+	console.info("=".repeat(70));
 
 	// Check if patches directory exists
 	const patchesDir = "./patches";
 	const patchesDirExists = await Bun.file(patchesDir).exists().catch(() => false);
 
-	console.log(`\n📂 Patches Directory:`);
-	console.log(`   Path: ${patchesDir}`);
-	console.log(`   Exists: ${patchesDirExists ? "✅ Yes" : "❌ No"}`);
+	console.info(`\n📂 Patches Directory:`);
+	console.info(`   Path: ${patchesDir}`);
+	console.info(`   Exists: ${patchesDirExists ? "✅ Yes" : "❌ No"}`);
 
 	// Check package.json for patchedDependencies
 	try {
@@ -262,17 +262,17 @@ async function checkCurrentPatches() {
 			const patched = pkg.patchedDependencies || {};
 			const patchCount = Object.keys(patched).length;
 
-			console.log(`\n📦 package.json patchedDependencies:`);
+			console.info(`\n📦 package.json patchedDependencies:`);
 			if (patchCount > 0) {
 				for (const [dep, path] of Object.entries(patched)) {
-					console.log(`   ${dep}: ${path}`);
+					console.info(`   ${dep}: ${path}`);
 				}
 			} else {
-				console.log(`   No patched dependencies found`);
+				console.info(`   No patched dependencies found`);
 			}
 		}
 	} catch (e) {
-		console.log(`   Could not read package.json`);
+		console.info(`   Could not read package.json`);
 	}
 
 	// List patch files if directory exists
@@ -281,17 +281,17 @@ async function checkCurrentPatches() {
 			const glob = new Bun.Glob("*.patch");
 			const patches = await Array.fromAsync(glob.scan(patchesDir));
 			
-			console.log(`\n📄 Patch Files:`);
+			console.info(`\n📄 Patch Files:`);
 			if (patches.length > 0) {
 				for (const patch of patches) {
 					const stats = await Bun.file(`${patchesDir}/${patch}`).stat();
-					console.log(`   ${patch} (${stats.size} bytes)`);
+					console.info(`   ${patch} (${stats.size} bytes)`);
 				}
 			} else {
-				console.log(`   No .patch files found`);
+				console.info(`   No .patch files found`);
 			}
 		} catch (e) {
-			console.log(`   Could not list patch files`);
+			console.info(`   Could not list patch files`);
 		}
 	}
 }
@@ -300,9 +300,9 @@ async function checkCurrentPatches() {
 // 7. CLI Options Reference
 // =============================================================================
 function demoCLIOptions() {
-	console.log("\n" + "=".repeat(70));
-	console.log("7. ⚙️ CLI OPTIONS REFERENCE");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("7. ⚙️ CLI OPTIONS REFERENCE");
+	console.info("=".repeat(70));
 
 	const options = [
 		{ flag: "--commit", type: "boolean", desc: "Generate patch file from modifications" },
@@ -316,19 +316,19 @@ function demoCLIOptions() {
 		{ flag: "--silent", type: "boolean", desc: "No output" },
 	];
 
-	console.log(`\n📋 bun patch Options:\n`);
-	console.log(Bun.inspect.table(options));
+	console.info(`\n📋 bun patch Options:\n`);
+	console.info(Bun.inspect.table(options));
 }
 
 // =============================================================================
 // 8. Best Practices
 // =============================================================================
 function demoBestPractices() {
-	console.log("\n" + "=".repeat(70));
-	console.log("8. 💡 BEST PRACTICES");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("8. 💡 BEST PRACTICES");
+	console.info("=".repeat(70));
 
-	console.log(`
+	console.info(`
 ✅ DO:
    • Always run 'bun patch <pkg>' before editing
    • Keep patches small and focused
@@ -359,8 +359,8 @@ function demoBestPractices() {
 // Main
 // =============================================================================
 async function main() {
-	console.log("\n⚡ @dynamic-spy/kit v8.2 - BUN PATCH DEMO 🩹\n");
-	console.log(`Bun version: ${Bun.version}`);
+	console.info("\n⚡ @dynamic-spy/kit v8.2 - BUN PATCH DEMO 🩹\n");
+	console.info(`Bun version: ${Bun.version}`);
 
 	const args = Bun.argv.slice(2);
 	const listPatches = args.includes("--list-patches");
@@ -378,10 +378,10 @@ async function main() {
 	demoCLIOptions();
 	demoBestPractices();
 
-	console.log("\n" + "=".repeat(70));
-	console.log("✅ BUN PATCH SUMMARY");
-	console.log("=".repeat(70));
-	console.log(`
+	console.info("\n" + "=".repeat(70));
+	console.info("✅ BUN PATCH SUMMARY");
+	console.info("=".repeat(70));
+	console.info(`
 🩹 Quick Start:
    1. bun patch <package>           # Prepare for editing
    2. Edit node_modules/<package>   # Make your changes

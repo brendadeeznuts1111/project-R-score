@@ -12,11 +12,11 @@ import { EliteLogger } from '../src/utils/elite-logger';
 import { s } from '../src/utils/elite-config';
 import { EliteFastHash } from '../src/utils/elite-security';
 
-console.log('\n╔══════════════════════════════════════════════════════════════════╗');
-console.log('║  🏗️ ELITE INFRASTRUCTURE MODULE BENCHMARKS                      ║');
-console.log('╠══════════════════════════════════════════════════════════════════╣');
-console.log('║  Logger • Config • Fast Hashing • Throughput                     ║');
-console.log('╚══════════════════════════════════════════════════════════════════╝\n');
+console.info('\n╔══════════════════════════════════════════════════════════════════╗');
+console.info('║  🏗️ ELITE INFRASTRUCTURE MODULE BENCHMARKS                      ║');
+console.info('╠══════════════════════════════════════════════════════════════════╣');
+console.info('║  Logger • Config • Fast Hashing • Throughput                     ║');
+console.info('╚══════════════════════════════════════════════════════════════════╝\n');
 
 // Benchmark helper
 async function benchmark(name: string, fn: () => void | Promise<void>, iterations = 10000) {
@@ -28,7 +28,7 @@ async function benchmark(name: string, fn: () => void | Promise<void>, iteration
   const opsPerSecond = Math.round((iterations / elapsed) * 1000);
   const avgMs = (elapsed / iterations).toFixed(4);
   
-  console.log(`${name.padEnd(45)} ${opsPerSecond.toString().padStart(10)} ops/s  (${avgMs} ms/op)`);
+  console.info(`${name.padEnd(45)} ${opsPerSecond.toString().padStart(10)} ops/s  (${avgMs} ms/op)`);
   return opsPerSecond;
 }
 
@@ -36,8 +36,8 @@ async function benchmark(name: string, fn: () => void | Promise<void>, iteration
 // LOGGER BENCHMARKS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('EliteLogger - Log Levels');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('EliteLogger - Log Levels');
+console.info('──────────────────────────────────────────────────────────────────');
 
 const logger = new EliteLogger({
   level: 'DEBUG',
@@ -72,8 +72,8 @@ await logger.close();
 // LOGGER BATCHING
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('\nEliteLogger - Batching Performance');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('\nEliteLogger - Batching Performance');
+console.info('──────────────────────────────────────────────────────────────────');
 
 await benchmark('batch size 1 (immediate)', async () => {
   const l = new EliteLogger({
@@ -120,8 +120,8 @@ await benchmark('batch size 100', async () => {
 // CONFIG SCHEMA BENCHMARKS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('\nEliteConfig - Schema Building');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('\nEliteConfig - Schema Building');
+console.info('──────────────────────────────────────────────────────────────────');
 
 await benchmark('simple string schema', () => {
   s.string().parse('test');
@@ -166,8 +166,8 @@ await benchmark('object schema', () => {
 // FAST HASHING BENCHMARKS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('\nFast Hashing - Data Sizes');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('\nFast Hashing - Data Sizes');
+console.info('──────────────────────────────────────────────────────────────────');
 
 const small = 'test';
 const medium = 'x'.repeat(100);
@@ -197,15 +197,15 @@ await benchmark('xxHash32 - 4 bytes', () => {
 // THROUGHPUT SUMMARY
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log('\nThroughput Summary');
-console.log('──────────────────────────────────────────────────────────────────');
+console.info('\nThroughput Summary');
+console.info('──────────────────────────────────────────────────────────────────');
 
 const hashStart = performance.now();
 for (let i = 0; i < 1000000; i++) {
   EliteFastHash.hash(`data-${i}`);
 }
 const hashElapsed = performance.now() - hashStart;
-console.log(`1M Wyhash operations`.padEnd(45) + `${Math.round(1000000 / hashElapsed * 1000).toString().padStart(10)} ops/s`);
+console.info(`1M Wyhash operations`.padEnd(45) + `${Math.round(1000000 / hashElapsed * 1000).toString().padStart(10)} ops/s`);
 
 const schemaStart = performance.now();
 const testSchema = s.object({
@@ -216,6 +216,6 @@ for (let i = 0; i < 1000000; i++) {
   testSchema.parse({ id: i, name: `Item ${i}` });
 }
 const schemaElapsed = performance.now() - schemaStart;
-console.log(`1M schema validations`.padEnd(45) + `${Math.round(1000000 / schemaElapsed * 1000).toString().padStart(10)} ops/s`);
+console.info(`1M schema validations`.padEnd(45) + `${Math.round(1000000 / schemaElapsed * 1000).toString().padStart(10)} ops/s`);
 
-console.log('\n✅ Infrastructure benchmarks complete!\n');
+console.info('\n✅ Infrastructure benchmarks complete!\n');

@@ -81,7 +81,7 @@ class MockLSPClient extends LSPClient {
 
   override async applyQuickFix(code: string): Promise<void> {
     // Mock applying quick fix
-    console.log(`Applied quick fix: ${code}`);
+    console.info(`Applied quick fix: ${code}`);
   }
 
   override getAverageResponseTime(): number {

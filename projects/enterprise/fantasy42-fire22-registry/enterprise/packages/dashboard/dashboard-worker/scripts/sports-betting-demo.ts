@@ -21,8 +21,8 @@ class SportsBettingDemo {
    * Run complete sports betting demo
    */
   async runCompleteDemo() {
-    console.log('🏈 **Fire22 Sports Betting Management System Demo**\n');
-    console.log('This demo showcases the complete sports betting management capabilities:\n');
+    console.info('🏈 **Fire22 Sports Betting Management System Demo**\n');
+    console.info('This demo showcases the complete sports betting management capabilities:\n');
 
     await this.runEventsDemo();
     await this.runBettingDemo();
@@ -32,73 +32,73 @@ class SportsBettingDemo {
     await this.runWinningCalculationsDemo();
     await this.runSystemStatsDemo();
 
-    console.log('🎉 **Sports Betting Demo Complete!**\n');
-    console.log('✅ Event Management: 3 sports events with full details');
-    console.log('✅ Betting System: Complete bet placement and management');
-    console.log('✅ Rate Management: Sport and bet type specific rates');
-    console.log('✅ Risk Assessment: Player risk profiling and management');
-    console.log('✅ VIP Management: Tier-based benefits and requirements');
-    console.log('✅ Winning Calculations: Advanced win amount calculations');
-    console.log('✅ System Statistics: Comprehensive overview and reporting\n');
+    console.info('🎉 **Sports Betting Demo Complete!**\n');
+    console.info('✅ Event Management: 3 sports events with full details');
+    console.info('✅ Betting System: Complete bet placement and management');
+    console.info('✅ Rate Management: Sport and bet type specific rates');
+    console.info('✅ Risk Assessment: Player risk profiling and management');
+    console.info('✅ VIP Management: Tier-based benefits and requirements');
+    console.info('✅ Winning Calculations: Advanced win amount calculations');
+    console.info('✅ System Statistics: Comprehensive overview and reporting\n');
 
-    console.log('🚀 **Your Fire22 Sports Betting Management System is ready for production!**');
-    console.log('💡 **Next Steps:**');
-    console.log('  • Integrate with your existing sports_rate database field');
-    console.log('  • Connect with real-time sports data providers');
-    console.log('  • Implement automated risk assessment updates');
-    console.log('  • Add advanced analytics and reporting');
-    console.log('  • Create admin dashboard for sports management');
+    console.info('🚀 **Your Fire22 Sports Betting Management System is ready for production!**');
+    console.info('💡 **Next Steps:**');
+    console.info('  • Integrate with your existing sports_rate database field');
+    console.info('  • Connect with real-time sports data providers');
+    console.info('  • Implement automated risk assessment updates');
+    console.info('  • Add advanced analytics and reporting');
+    console.info('  • Create admin dashboard for sports management');
   }
 
   /**
    * Run events demo
    */
   async runEventsDemo() {
-    console.log('🏆 **Sports Events Demo**\n');
+    console.info('🏆 **Sports Events Demo**\n');
 
     // Show all events
     const events = this.sportsSystem.getAllEvents();
-    console.log('📊 **Available Sports Events:**');
+    console.info('📊 **Available Sports Events:**');
     events.forEach(event => {
-      console.log(`\n${event.name} (${event.sport})`);
-      console.log(`  🏆 League: ${event.league}`);
-      console.log(`  🏠 ${event.homeTeam} vs 🚌 ${event.awayTeam}`);
-      console.log(`  ⏰ Start: ${event.startTime.toLocaleString()}`);
-      console.log(`  📊 Status: ${event.status}`);
-      console.log(`  ⚠️ Risk Level: ${event.riskLevel}`);
-      console.log(`  👑 VIP Access: ${event.vipAccess.join(', ')}`);
-      console.log(`  💰 Odds: ${event.odds.homeWin} / ${event.odds.awayWin}`);
-      if (event.odds.overUnder) console.log(`  📊 Over/Under: ${event.odds.overUnder}`);
-      if (event.odds.handicap) console.log(`  ⚖️ Handicap: ${event.odds.handicap}`);
+      console.info(`\n${event.name} (${event.sport})`);
+      console.info(`  🏆 League: ${event.league}`);
+      console.info(`  🏠 ${event.homeTeam} vs 🚌 ${event.awayTeam}`);
+      console.info(`  ⏰ Start: ${event.startTime.toLocaleString()}`);
+      console.info(`  📊 Status: ${event.status}`);
+      console.info(`  ⚠️ Risk Level: ${event.riskLevel}`);
+      console.info(`  👑 VIP Access: ${event.vipAccess.join(', ')}`);
+      console.info(`  💰 Odds: ${event.odds.homeWin} / ${event.odds.awayWin}`);
+      if (event.odds.overUnder) console.info(`  📊 Over/Under: ${event.odds.overUnder}`);
+      if (event.odds.handicap) console.info(`  ⚖️ Handicap: ${event.odds.handicap}`);
       if (event.odds.specialBets.length > 0) {
-        console.log(`  🎯 Special Bets: ${event.odds.specialBets.length} available`);
+        console.info(`  🎯 Special Bets: ${event.odds.specialBets.length} available`);
       }
     });
 
     // Show events by sport
-    console.log('\n📋 **Events by Sport:**');
+    console.info('\n📋 **Events by Sport:**');
     const sports = ['football', 'basketball', 'soccer'];
 
     sports.forEach(sport => {
       const sportEvents = this.sportsSystem.getEventsBySport(sport as any);
       if (sportEvents.length > 0) {
-        console.log(`\n${sport.charAt(0).toUpperCase() + sport.slice(1)} Events:`);
+        console.info(`\n${sport.charAt(0).toUpperCase() + sport.slice(1)} Events:`);
         sportEvents.forEach(event => {
-          console.log(`  • ${event.name} - ${event.league} (${event.status})`);
+          console.info(`  • ${event.name} - ${event.league} (${event.status})`);
         });
       }
     });
 
     // Show events by VIP tier
-    console.log('\n👑 **Events by VIP Tier:**');
+    console.info('\n👑 **Events by VIP Tier:**');
     const vipTiers = ['bronze', 'silver', 'gold', 'platinum'];
 
     vipTiers.forEach(tier => {
       const tierEvents = this.sportsSystem.getEventsByVIP(tier as any);
       if (tierEvents.length > 0) {
-        console.log(`\n${tier.charAt(0).toUpperCase() + tier.slice(1)} Tier Events:`);
+        console.info(`\n${tier.charAt(0).toUpperCase() + tier.slice(1)} Tier Events:`);
         tierEvents.forEach(event => {
-          console.log(`  • ${event.name} - ${event.sport}`);
+          console.info(`  • ${event.name} - ${event.sport}`);
         });
       }
     });
@@ -108,10 +108,10 @@ class SportsBettingDemo {
    * Run betting demo
    */
   async runBettingDemo() {
-    console.log('\n🎯 **Sports Betting Demo**\n');
+    console.info('\n🎯 **Sports Betting Demo**\n');
 
     // Place sample bets
-    console.log('🆕 **Placing Sample Bets:**');
+    console.info('🆕 **Placing Sample Bets:**');
 
     const events = this.sportsSystem.getAllEvents();
     const players = ['player1', 'player2', 'player3'];
@@ -147,21 +147,21 @@ class SportsBettingDemo {
 
       if (bet) {
         bets.push(bet);
-        console.log(`  ✅ Placed bet ${bet.id}:`);
-        console.log(`    Event: ${event.name}`);
-        console.log(`    Player: ${playerId}`);
-        console.log(`    Type: ${betType.replace('_', ' ')}`);
-        console.log(`    Selection: ${selection}`);
-        console.log(`    Stake: $${stake.toLocaleString()}`);
-        console.log(`    Odds: ${odds.toFixed(2)}`);
-        console.log(`    Potential Win: $${bet.potentialWin.toLocaleString()}`);
-        console.log(`    Risk Level: ${bet.riskLevel}`);
-        console.log(`    VIP Tier: ${bet.vipTier}\n`);
+        console.info(`  ✅ Placed bet ${bet.id}:`);
+        console.info(`    Event: ${event.name}`);
+        console.info(`    Player: ${playerId}`);
+        console.info(`    Type: ${betType.replace('_', ' ')}`);
+        console.info(`    Selection: ${selection}`);
+        console.info(`    Stake: $${stake.toLocaleString()}`);
+        console.info(`    Odds: ${odds.toFixed(2)}`);
+        console.info(`    Potential Win: $${bet.potentialWin.toLocaleString()}`);
+        console.info(`    Risk Level: ${bet.riskLevel}`);
+        console.info(`    VIP Tier: ${bet.vipTier}\n`);
       }
     }
 
     // Settle some bets
-    console.log('🏁 **Settling Bets:**');
+    console.info('🏁 **Settling Bets:**');
     bets.slice(0, 4).forEach((bet, index) => {
       const won = Math.random() > 0.4; // 60% win rate
       const actualOdds = won ? bet.odds * (0.9 + Math.random() * 0.2) : bet.odds;
@@ -169,28 +169,28 @@ class SportsBettingDemo {
       const settledBet = this.sportsSystem.settleBet(bet.id, won, actualOdds);
 
       if (settledBet) {
-        console.log(`  ${won ? '🏆' : '❌'} Settled bet ${bet.id}:`);
-        console.log(`    Result: ${won ? 'WON' : 'LOST'}`);
-        console.log(`    Stake: $${settledBet.stake.toLocaleString()}`);
-        console.log(`    Original Odds: ${settledBet.odds.toFixed(2)}`);
-        console.log(`    Potential Win: $${settledBet.potentialWin.toLocaleString()}`);
+        console.info(`  ${won ? '🏆' : '❌'} Settled bet ${bet.id}:`);
+        console.info(`    Result: ${won ? 'WON' : 'LOST'}`);
+        console.info(`    Stake: $${settledBet.stake.toLocaleString()}`);
+        console.info(`    Original Odds: ${settledBet.odds.toFixed(2)}`);
+        console.info(`    Potential Win: $${settledBet.potentialWin.toLocaleString()}`);
         if (won) {
-          console.log(`    Actual Win: $${settledBet.actualWin?.toLocaleString()}`);
+          console.info(`    Actual Win: $${settledBet.actualWin?.toLocaleString()}`);
         }
-        console.log(`    Status: ${settledBet.status.toUpperCase()}\n`);
+        console.info(`    Status: ${settledBet.status.toUpperCase()}\n`);
       }
     });
 
     // Show betting history
-    console.log('📋 **Betting History Demo:**');
+    console.info('📋 **Betting History Demo:**');
     const samplePlayer = 'player1';
     const bettingHistory = this.sportsSystem.getPlayerBettingHistory(samplePlayer);
 
     if (bettingHistory.length > 0) {
-      console.log(`Betting history for ${samplePlayer}:`);
+      console.info(`Betting history for ${samplePlayer}:`);
       bettingHistory.forEach(bet => {
         const event = events.find(e => e.id === bet.eventId);
-        console.log(
+        console.info(
           `  ${bet.id}: ${event?.name || 'Unknown Event'} - ${bet.betType.replace('_', ' ')} - $${bet.stake} - ${bet.status.toUpperCase()}`
         );
       });
@@ -201,7 +201,7 @@ class SportsBettingDemo {
    * Run rates demo
    */
   async runRatesDemo() {
-    console.log('\n💎 **Sports Betting Rates Demo**\n');
+    console.info('\n💎 **Sports Betting Rates Demo**\n');
 
     // Show default rates for agents
     const agents = ['agent1', 'agent2', 'agent3'];
@@ -209,32 +209,32 @@ class SportsBettingDemo {
     const betTypes = ['moneyline', 'spread', 'over_under'];
 
     agents.forEach(agentId => {
-      console.log(`👤 **Agent: ${agentId}**\n`);
+      console.info(`👤 **Agent: ${agentId}**\n`);
 
       sports.forEach(sport => {
-        console.log(`  ${sport.charAt(0).toUpperCase() + sport.slice(1)}:`);
+        console.info(`  ${sport.charAt(0).toUpperCase() + sport.slice(1)}:`);
         betTypes.forEach(betType => {
           const rate = this.sportsSystem.getRate(agentId, sport, betType as any);
           if (rate) {
-            console.log(
+            console.info(
               `    ${betType.replace('_', ' ')}: ${(rate.adjustedRate * 100).toFixed(1)}%`
             );
           }
         });
-        console.log('');
+        console.info('');
       });
     });
 
     // Demonstrate rate update
-    console.log('🔄 **Rate Update Demo:**');
+    console.info('🔄 **Rate Update Demo:**');
     const agentId = 'agent1';
     const sport = 'football';
     const betType = 'moneyline';
     const oldRate = this.sportsSystem.getRate(agentId, sport, betType as any);
 
     if (oldRate) {
-      console.log(`\nUpdating rate for ${agentId} on ${sport} ${betType}:`);
-      console.log(`  Old Rate: ${(oldRate.adjustedRate * 100).toFixed(1)}%`);
+      console.info(`\nUpdating rate for ${agentId} on ${sport} ${betType}:`);
+      console.info(`  Old Rate: ${(oldRate.adjustedRate * 100).toFixed(1)}%`);
 
       const newRate = oldRate.adjustedRate * 1.15; // 15% increase
       const updatedRate = this.sportsSystem.updateAgentRate(
@@ -246,9 +246,9 @@ class SportsBettingDemo {
       );
 
       if (updatedRate) {
-        console.log(`  New Rate: ${(updatedRate.adjustedRate * 100).toFixed(1)}%`);
-        console.log(`  Adjustment: ${(updatedRate.adjustmentFactor * 100).toFixed(0)}%`);
-        console.log(`  Effective From: ${updatedRate.effectiveFrom.toLocaleDateString()}`);
+        console.info(`  New Rate: ${(updatedRate.adjustedRate * 100).toFixed(1)}%`);
+        console.info(`  Adjustment: ${(updatedRate.adjustmentFactor * 100).toFixed(0)}%`);
+        console.info(`  Effective From: ${updatedRate.effectiveFrom.toLocaleDateString()}`);
       }
     }
   }
@@ -257,7 +257,7 @@ class SportsBettingDemo {
    * Run risk management demo
    */
   async runRiskManagementDemo() {
-    console.log('\n⚠️ **Risk Management Demo**\n');
+    console.info('\n⚠️ **Risk Management Demo**\n');
 
     // Show risk assessments
     const players = ['player1', 'player2', 'player3', 'player4', 'player5'];
@@ -265,36 +265,36 @@ class SportsBettingDemo {
     players.forEach(playerId => {
       const assessment = this.sportsSystem.getRiskAssessment(playerId);
       if (assessment) {
-        console.log(`👤 **${playerId} Risk Assessment:**`);
-        console.log(`  Overall Risk: ${assessment.overallRisk.toUpperCase()}`);
-        console.log(`  Risk Score: ${assessment.riskScore}/100`);
-        console.log(`  Last Assessed: ${assessment.lastAssessed.toLocaleDateString()}`);
-        console.log(`  Next Assessment: ${assessment.nextAssessment.toLocaleDateString()}`);
+        console.info(`👤 **${playerId} Risk Assessment:**`);
+        console.info(`  Overall Risk: ${assessment.overallRisk.toUpperCase()}`);
+        console.info(`  Risk Score: ${assessment.riskScore}/100`);
+        console.info(`  Last Assessed: ${assessment.lastAssessed.toLocaleDateString()}`);
+        console.info(`  Next Assessment: ${assessment.nextAssessment.toLocaleDateString()}`);
 
-        console.log(`  Risk Factors:`);
+        console.info(`  Risk Factors:`);
         assessment.factors.forEach(factor => {
           const emoji =
             factor.impact === 'positive' ? '✅' : factor.impact === 'negative' ? '❌' : '⚖️';
-          console.log(`    ${emoji} ${factor.factor}: ${factor.score}/100 (${factor.description})`);
+          console.info(`    ${emoji} ${factor.factor}: ${factor.score}/100 (${factor.description})`);
         });
 
-        console.log(`  Recommendations:`);
+        console.info(`  Recommendations:`);
         assessment.recommendations.forEach(rec => {
-          console.log(`    • ${rec}`);
+          console.info(`    • ${rec}`);
         });
-        console.log('');
+        console.info('');
       }
     });
 
     // Demonstrate risk assessment update
-    console.log('🔄 **Risk Assessment Update Demo:**');
+    console.info('🔄 **Risk Assessment Update Demo:**');
     const playerToUpdate = 'player1';
     const currentAssessment = this.sportsSystem.getRiskAssessment(playerToUpdate);
 
     if (currentAssessment) {
-      console.log(`\nUpdating risk assessment for ${playerToUpdate}:`);
-      console.log(`  Current Risk Level: ${currentAssessment.overallRisk.toUpperCase()}`);
-      console.log(`  Current Risk Score: ${currentAssessment.riskScore}/100`);
+      console.info(`\nUpdating risk assessment for ${playerToUpdate}:`);
+      console.info(`  Current Risk Level: ${currentAssessment.overallRisk.toUpperCase()}`);
+      console.info(`  Current Risk Score: ${currentAssessment.riskScore}/100`);
 
       const newRiskLevel = currentAssessment.overallRisk === 'low' ? 'medium' : 'low';
       const newRiskScore = Math.max(
@@ -310,9 +310,9 @@ class SportsBettingDemo {
       );
 
       if (updatedAssessment) {
-        console.log(`  New Risk Level: ${updatedAssessment.overallRisk.toUpperCase()}`);
-        console.log(`  New Risk Score: ${updatedAssessment.riskScore}/100`);
-        console.log(`  Updated: ${updatedAssessment.lastAssessed.toLocaleDateString()}`);
+        console.info(`  New Risk Level: ${updatedAssessment.overallRisk.toUpperCase()}`);
+        console.info(`  New Risk Score: ${updatedAssessment.riskScore}/100`);
+        console.info(`  Updated: ${updatedAssessment.lastAssessed.toLocaleDateString()}`);
       }
     }
   }
@@ -321,7 +321,7 @@ class SportsBettingDemo {
    * Run VIP management demo
    */
   async runVIPManagementDemo() {
-    console.log('\n👑 **VIP Management Demo**\n');
+    console.info('\n👑 **VIP Management Demo**\n');
 
     // Show VIP profiles
     const players = ['player1', 'player2', 'player3', 'player4', 'player5'];
@@ -329,75 +329,75 @@ class SportsBettingDemo {
     players.forEach(playerId => {
       const profile = this.sportsSystem.getVIPProfile(playerId);
       if (profile) {
-        console.log(`👤 **${playerId} VIP Profile:**`);
-        console.log(`  Current Tier: ${profile.currentTier.toUpperCase()}`);
-        console.log(`  Points: ${profile.points.toLocaleString()}`);
-        console.log(`  Joined: ${profile.joinedAt.toLocaleDateString()}`);
-        console.log(`  Status: ${profile.status}`);
+        console.info(`👤 **${playerId} VIP Profile:**`);
+        console.info(`  Current Tier: ${profile.currentTier.toUpperCase()}`);
+        console.info(`  Points: ${profile.points.toLocaleString()}`);
+        console.info(`  Joined: ${profile.joinedAt.toLocaleDateString()}`);
+        console.info(`  Status: ${profile.status}`);
 
-        console.log(`  Requirements:`);
-        console.log(`    Min Balance: $${profile.requirements.minBalance.toLocaleString()}`);
-        console.log(`    Min Volume: $${profile.requirements.minVolume.toLocaleString()}`);
-        console.log(`    Min Bets: ${profile.requirements.minBets}`);
-        console.log(`    Min Win Rate: ${profile.requirements.minWinRate}%`);
-        console.log(`    Risk Threshold: ${profile.requirements.riskThreshold}%`);
+        console.info(`  Requirements:`);
+        console.info(`    Min Balance: $${profile.requirements.minBalance.toLocaleString()}`);
+        console.info(`    Min Volume: $${profile.requirements.minVolume.toLocaleString()}`);
+        console.info(`    Min Bets: ${profile.requirements.minBets}`);
+        console.info(`    Min Win Rate: ${profile.requirements.minWinRate}%`);
+        console.info(`    Risk Threshold: ${profile.requirements.riskThreshold}%`);
 
-        console.log(`  Benefits:`);
-        console.log(`    Max Bet Increase: ${profile.benefits.maxBetIncrease}x`);
-        console.log(`    Rate Discount: ${(profile.benefits.rateDiscount * 100).toFixed(1)}%`);
-        console.log(`    Cashback: ${profile.benefits.cashbackPercentage}%`);
-        console.log(
+        console.info(`  Benefits:`);
+        console.info(`    Max Bet Increase: ${profile.benefits.maxBetIncrease}x`);
+        console.info(`    Rate Discount: ${(profile.benefits.rateDiscount * 100).toFixed(1)}%`);
+        console.info(`    Cashback: ${profile.benefits.cashbackPercentage}%`);
+        console.info(
           `    Exclusive Events: ${profile.benefits.exclusiveEvents.join(', ') || 'None'}`
         );
-        console.log(`    Priority Support: ${profile.benefits.prioritySupport ? 'Yes' : 'No'}`);
-        console.log(`    Personal Manager: ${profile.benefits.personalManager ? 'Yes' : 'No'}\n`);
+        console.info(`    Priority Support: ${profile.benefits.prioritySupport ? 'Yes' : 'No'}`);
+        console.info(`    Personal Manager: ${profile.benefits.personalManager ? 'Yes' : 'No'}\n`);
       }
     });
 
     // Demonstrate VIP tier upgrade
-    console.log('🔄 **VIP Tier Upgrade Demo:**');
+    console.info('🔄 **VIP Tier Upgrade Demo:**');
     const playerToUpgrade = 'player2';
     const currentProfile = this.sportsSystem.getVIPProfile(playerToUpgrade);
 
     if (currentProfile) {
-      console.log(`\nUpgrading VIP tier for ${playerToUpgrade}:`);
-      console.log(`  Current Tier: ${currentProfile.currentTier.toUpperCase()}`);
+      console.info(`\nUpgrading VIP tier for ${playerToUpgrade}:`);
+      console.info(`  Current Tier: ${currentProfile.currentTier.toUpperCase()}`);
 
       const nextTier = this.getNextTier(currentProfile.currentTier);
       if (nextTier) {
         const updatedProfile = this.sportsSystem.updateVIPTier(playerToUpgrade, nextTier);
 
         if (updatedProfile) {
-          console.log(`  New Tier: ${updatedProfile.currentTier.toUpperCase()}`);
-          console.log(`  Updated: ${updatedProfile.lastUpdated.toLocaleDateString()}`);
-          console.log(`  New Benefits:`);
-          console.log(`    Max Bet Increase: ${updatedProfile.benefits.maxBetIncrease}x`);
-          console.log(
+          console.info(`  New Tier: ${updatedProfile.currentTier.toUpperCase()}`);
+          console.info(`  Updated: ${updatedProfile.lastUpdated.toLocaleDateString()}`);
+          console.info(`  New Benefits:`);
+          console.info(`    Max Bet Increase: ${updatedProfile.benefits.maxBetIncrease}x`);
+          console.info(
             `    Rate Discount: ${(updatedProfile.benefits.rateDiscount * 100).toFixed(1)}%`
           );
-          console.log(`    Cashback: ${updatedProfile.benefits.cashbackPercentage}%`);
+          console.info(`    Cashback: ${updatedProfile.benefits.cashbackPercentage}%`);
         }
       }
     }
 
     // Demonstrate adding VIP points
-    console.log('\n🔄 **VIP Points Addition Demo:**');
+    console.info('\n🔄 **VIP Points Addition Demo:**');
     const playerToAddPoints = 'player3';
     const profileToUpdate = this.sportsSystem.getVIPProfile(playerToAddPoints);
 
     if (profileToUpdate) {
-      console.log(`\nAdding VIP points for ${playerToAddPoints}:`);
-      console.log(`  Current Points: ${profileToUpdate.points.toLocaleString()}`);
-      console.log(`  Current Tier: ${profileToUpdate.currentTier.toUpperCase()}`);
+      console.info(`\nAdding VIP points for ${playerToAddPoints}:`);
+      console.info(`  Current Points: ${profileToUpdate.points.toLocaleString()}`);
+      console.info(`  Current Tier: ${profileToUpdate.currentTier.toUpperCase()}`);
 
       const pointsToAdd = 5000;
       const updatedProfile = this.sportsSystem.addVIPPoints(playerToAddPoints, pointsToAdd);
 
       if (updatedProfile) {
-        console.log(`  Points Added: ${pointsToAdd.toLocaleString()}`);
-        console.log(`  New Points: ${updatedProfile.points.toLocaleString()}`);
-        console.log(`  Tier Status: ${updatedProfile.status}`);
-        console.log(`  Updated: ${updatedProfile.lastUpdated.toLocaleDateString()}`);
+        console.info(`  Points Added: ${pointsToAdd.toLocaleString()}`);
+        console.info(`  New Points: ${updatedProfile.points.toLocaleString()}`);
+        console.info(`  Tier Status: ${updatedProfile.status}`);
+        console.info(`  Updated: ${updatedProfile.lastUpdated.toLocaleDateString()}`);
       }
     }
   }
@@ -415,7 +415,7 @@ class SportsBettingDemo {
    * Run winning calculations demo
    */
   async runWinningCalculationsDemo() {
-    console.log('\n💰 **Winning Calculations Demo**\n');
+    console.info('\n💰 **Winning Calculations Demo**\n');
 
     // Show winning calculations for won bets
     const players = ['player1', 'player2', 'player3'];
@@ -425,32 +425,32 @@ class SportsBettingDemo {
       const wonBets = bettingHistory.filter(bet => bet.status === 'won');
 
       if (wonBets.length > 0) {
-        console.log(`👤 **${playerId} Winning Calculations:**`);
+        console.info(`👤 **${playerId} Winning Calculations:**`);
 
         wonBets.forEach(bet => {
-          console.log(`\n  Bet ${bet.id}:`);
-          console.log(`    Stake: $${bet.stake.toLocaleString()}`);
-          console.log(`    Odds: ${bet.odds.toFixed(2)}`);
-          console.log(`    Potential Win: $${bet.potentialWin.toLocaleString()}`);
-          console.log(`    Actual Win: $${bet.actualWin?.toLocaleString()}`);
-          console.log(`    Risk Level: ${bet.riskLevel}`);
-          console.log(`    VIP Tier: ${bet.vipTier}`);
+          console.info(`\n  Bet ${bet.id}:`);
+          console.info(`    Stake: $${bet.stake.toLocaleString()}`);
+          console.info(`    Odds: ${bet.odds.toFixed(2)}`);
+          console.info(`    Potential Win: $${bet.potentialWin.toLocaleString()}`);
+          console.info(`    Actual Win: $${bet.actualWin?.toLocaleString()}`);
+          console.info(`    Risk Level: ${bet.riskLevel}`);
+          console.info(`    VIP Tier: ${bet.vipTier}`);
         });
       }
     });
 
     // Demonstrate potential win calculation
-    console.log('\n🔄 **Potential Win Calculation Demo:**');
+    console.info('\n🔄 **Potential Win Calculation Demo:**');
     const stake = 100;
     const odds = 2.5;
     const vipTier = 'gold';
     const riskLevel = 'medium';
 
-    console.log(`\nCalculating potential win for:`);
-    console.log(`  Stake: $${stake.toLocaleString()}`);
-    console.log(`  Odds: ${odds}`);
-    console.log(`  VIP Tier: ${vipTier}`);
-    console.log(`  Risk Level: ${riskLevel}`);
+    console.info(`\nCalculating potential win for:`);
+    console.info(`  Stake: $${stake.toLocaleString()}`);
+    console.info(`  Odds: ${odds}`);
+    console.info(`  VIP Tier: ${vipTier}`);
+    console.info(`  Risk Level: ${riskLevel}`);
 
     const potentialWin = this.sportsSystem.calculatePotentialWin(
       stake,
@@ -458,78 +458,78 @@ class SportsBettingDemo {
       vipTier as any,
       riskLevel as any
     );
-    console.log(`  Potential Win: $${potentialWin.toLocaleString()}`);
+    console.info(`  Potential Win: $${potentialWin.toLocaleString()}`);
 
     const baseWin = stake * odds;
     const vipProfile = this.sportsSystem.getVIPProfile('player1');
     const vipBonus = vipProfile ? vipProfile.benefits.rateDiscount * stake : 0;
     const riskAdjustment = riskLevel === 'medium' ? 0.95 : 1.0;
 
-    console.log(`  Calculation Breakdown:`);
-    console.log(`    Base Win: $${stake} × ${odds} = $${baseWin.toLocaleString()}`);
-    console.log(
+    console.info(`  Calculation Breakdown:`);
+    console.info(`    Base Win: $${stake} × ${odds} = $${baseWin.toLocaleString()}`);
+    console.info(
       `    VIP Bonus: ${vipProfile ? (vipProfile.benefits.rateDiscount * 100).toFixed(1) : 0}% = $${vipBonus.toFixed(2)}`
     );
-    console.log(
+    console.info(
       `    Risk Adjustment: ${riskAdjustment} = ${((riskAdjustment - 1) * 100).toFixed(0)}%`
     );
-    console.log(`    Final Win: $${potentialWin.toLocaleString()}`);
+    console.info(`    Final Win: $${potentialWin.toLocaleString()}`);
   }
 
   /**
    * Run system statistics demo
    */
   async runSystemStatsDemo() {
-    console.log('\n📈 **Sports Betting System Statistics Demo**\n');
+    console.info('\n📈 **Sports Betting System Statistics Demo**\n');
 
     const stats = this.sportsSystem.getSystemStats();
 
-    console.log('🏈 **Overall System Status:**');
-    console.log(`  🏆 Total Events: ${stats.totalEvents}`);
-    console.log(`  ✅ Active Events: ${stats.activeEvents}`);
-    console.log(`  🎯 Total Bets: ${stats.totalBets}`);
-    console.log(`  🎬 Active Bets: ${stats.activeBets}`);
-    console.log(`  💎 Total Rates: ${stats.totalRates}`);
-    console.log(`  ✅ Active Rates: ${stats.activeRates}`);
-    console.log(`  👑 Total VIP Profiles: ${stats.totalVIPProfiles}`);
-    console.log(`  ⚠️ Total Risk Assessments: ${stats.totalRiskAssessments}\n`);
+    console.info('🏈 **Overall System Status:**');
+    console.info(`  🏆 Total Events: ${stats.totalEvents}`);
+    console.info(`  ✅ Active Events: ${stats.activeEvents}`);
+    console.info(`  🎯 Total Bets: ${stats.totalBets}`);
+    console.info(`  🎬 Active Bets: ${stats.activeBets}`);
+    console.info(`  💎 Total Rates: ${stats.totalRates}`);
+    console.info(`  ✅ Active Rates: ${stats.activeRates}`);
+    console.info(`  👑 Total VIP Profiles: ${stats.totalVIPProfiles}`);
+    console.info(`  ⚠️ Total Risk Assessments: ${stats.totalRiskAssessments}\n`);
 
     // Calculate additional metrics
     const eventUtilization = (stats.activeEvents / stats.totalEvents) * 100;
     const betUtilization = (stats.activeBets / stats.totalBets) * 100;
     const rateUtilization = (stats.activeRates / stats.totalRates) * 100;
 
-    console.log('📊 **System Utilization:**');
-    console.log(`  🏆 Event Utilization: ${eventUtilization.toFixed(1)}%`);
-    console.log(`  🎯 Bet Utilization: ${betUtilization.toFixed(1)}%`);
-    console.log(`  💎 Rate Utilization: ${rateUtilization.toFixed(1)}%`);
+    console.info('📊 **System Utilization:**');
+    console.info(`  🏆 Event Utilization: ${eventUtilization.toFixed(1)}%`);
+    console.info(`  🎯 Bet Utilization: ${betUtilization.toFixed(1)}%`);
+    console.info(`  💎 Rate Utilization: ${rateUtilization.toFixed(1)}%`);
 
     // Show agent performance
-    console.log('\n👤 **Agent Performance Demo:**');
+    console.info('\n👤 **Agent Performance Demo:**');
     const agents = ['agent1', 'agent2', 'agent3'];
     const currentPeriod = new Date().toISOString().slice(0, 7);
 
     agents.forEach(agentId => {
       const performance = this.sportsSystem.getAgentPerformance(agentId, currentPeriod);
 
-      console.log(`\n${agentId}:`);
-      console.log(`  🎯 Total Bets: ${performance.totalBets}`);
-      console.log(`  💰 Total Stake: $${performance.totalStake.toLocaleString()}`);
-      console.log(`  🏆 Total Wins: $${performance.totalWins.toLocaleString()}`);
-      console.log(`  📊 Win Rate: ${performance.winRate.toFixed(1)}%`);
-      console.log(`  📈 Average Odds: ${performance.averageOdds.toFixed(2)}`);
+      console.info(`\n${agentId}:`);
+      console.info(`  🎯 Total Bets: ${performance.totalBets}`);
+      console.info(`  💰 Total Stake: $${performance.totalStake.toLocaleString()}`);
+      console.info(`  🏆 Total Wins: $${performance.totalWins.toLocaleString()}`);
+      console.info(`  📊 Win Rate: ${performance.winRate.toFixed(1)}%`);
+      console.info(`  📈 Average Odds: ${performance.averageOdds.toFixed(2)}`);
 
-      console.log(`  Risk Distribution:`);
+      console.info(`  Risk Distribution:`);
       Object.entries(performance.riskDistribution).forEach(([risk, count]) => {
         if (count > 0) {
-          console.log(`    ${risk}: ${count}`);
+          console.info(`    ${risk}: ${count}`);
         }
       });
 
-      console.log(`  VIP Distribution:`);
+      console.info(`  VIP Distribution:`);
       Object.entries(performance.vipDistribution).forEach(([vip, count]) => {
         if (count > 0) {
-          console.log(`    ${vip}: ${count}`);
+          console.info(`    ${vip}: ${count}`);
         }
       });
     });

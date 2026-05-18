@@ -44,7 +44,7 @@ interface FormattedMetric {
  * });
  * 
  * expensiveOp(5, 10);
- * console.log(monitor.formatMetrics());
+ * console.info(monitor.formatMetrics());
  * ```
  */
 export class PerformanceMonitor {

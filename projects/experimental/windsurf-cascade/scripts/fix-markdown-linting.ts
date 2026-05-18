@@ -44,9 +44,9 @@ try {
 
     if (content !== fixed) {
         writeFileSync(markdownFile, fixed);
-        console.log("✅ Markdown linting issues fixed successfully");
+        console.info("✅ Markdown linting issues fixed successfully");
     } else {
-        console.log("ℹ️  No markdown linting issues found");
+        console.info("ℹ️  No markdown linting issues found");
     }
 } catch (error) {
     console.error("❌ Error fixing markdown linting:", error);

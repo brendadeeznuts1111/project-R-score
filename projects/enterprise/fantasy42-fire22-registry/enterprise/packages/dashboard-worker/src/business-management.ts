@@ -365,7 +365,7 @@ export class BusinessManagementSystem {
     if (!tier) return false;
 
     // TODO: Implement user tier upgrade logic
-    console.log(`User ${userId} upgraded to ${tier.name}`);
+    console.info(`User ${userId} upgraded to ${tier.name}`);
     return true;
   }
 
@@ -550,7 +550,7 @@ export class BusinessManagementSystem {
     record.paidAt = new Date();
 
     // TODO: Implement actual payout processing
-    console.log(`Commission ${commissionId} paid: $${record.totalPayout}`);
+    console.info(`Commission ${commissionId} paid: $${record.totalPayout}`);
     return true;
   }
 
@@ -566,7 +566,7 @@ export class BusinessManagementSystem {
     const linkId = `${linkType}_${userId}_${timestamp}`;
 
     // TODO: Store link in database
-    console.log(`Created ${linkType} link: ${linkId} for user ${userId}`);
+    console.info(`Created ${linkType} link: ${linkId} for user ${userId}`);
 
     return `https://fire22.com/join/${linkId}`;
   }

@@ -14,11 +14,11 @@ const DASHBOARD_PORT = config.dashboard.port;
 const API_PORT = config.api.port;
 const WEBSOCKET_PORT = config.websocket.port;
 
-console.log("🏛️ Citadel Dashboard Server Starting...");
-console.log(`📊 Dashboard: http://localhost:${DASHBOARD_PORT}`);
-console.log(`🔌 API Server: http://localhost:${API_PORT}`);
-console.log(`🌐 WebSocket: ws://localhost:${WEBSOCKET_PORT}${config.websocket.path}`);
-console.log(`⚙️ Config: ${JSON.stringify(config.timing, null, 2)}`);
+console.info("🏛️ Citadel Dashboard Server Starting...");
+console.info(`📊 Dashboard: http://localhost:${DASHBOARD_PORT}`);
+console.info(`🔌 API Server: http://localhost:${API_PORT}`);
+console.info(`🌐 WebSocket: ws://localhost:${WEBSOCKET_PORT}${config.websocket.path}`);
+console.info(`⚙️ Config: ${JSON.stringify(config.timing, null, 2)}`);
 
 // Serve static dashboard
 serve({
@@ -141,10 +141,10 @@ const wsServer = Bun.serve({
   websocket: {
     message(ws: any, message: string | Buffer) {
       // Echo messages or handle real-time updates
-      console.log("WebSocket message received:", message);
+      console.info("WebSocket message received:", message);
     },
     open(ws: any) {
-      console.log("WebSocket connection opened");
+      console.info("WebSocket connection opened");
       ws.send(JSON.stringify({
         type: "connected",
         message: "Connected to Citadel WebSocket",
@@ -152,7 +152,7 @@ const wsServer = Bun.serve({
       }));
     },
     close(ws: any, code: number, message: string) {
-      console.log("WebSocket connection closed");
+      console.info("WebSocket connection closed");
     },
     drain(ws: any) {
       // Handle drain if needed
@@ -179,14 +179,14 @@ setInterval(() => {
   }
 }, config.timing.metricsUpdateInterval);
 
-console.log("🚀 All servers started successfully!");
-console.log(`📱 Open http://localhost:${DASHBOARD_PORT} to view the dashboard`);
-console.log(`🔧 API available at http://localhost:${API_PORT}/api/`);
-console.log(`🌐 WebSocket listening on port ${WEBSOCKET_PORT}`);
+console.info("🚀 All servers started successfully!");
+console.info(`📱 Open http://localhost:${DASHBOARD_PORT} to view the dashboard`);
+console.info(`🔧 API available at http://localhost:${API_PORT}/api/`);
+console.info(`🌐 WebSocket listening on port ${WEBSOCKET_PORT}`);
 
 // Graceful shutdown
 process.on("SIGINT", () => {
-  console.log("\n🛑 Shutting down Citadel servers...");
+  console.info("\n🛑 Shutting down Citadel servers...");
   apiServer.stop();
   wsServer.stop();
   process.exit(0);

@@ -579,6 +579,6 @@ describe('HistoryCLI Test Suite Summary', () => {
     ];
 
     expect(testGroups.length).toBeGreaterThanOrEqual(8);
-    console.log(`\n✅ HistoryCLI: ${testGroups.length} test groups completed`);
+    console.info(`\n✅ HistoryCLI: ${testGroups.length} test groups completed`);
   });
 });

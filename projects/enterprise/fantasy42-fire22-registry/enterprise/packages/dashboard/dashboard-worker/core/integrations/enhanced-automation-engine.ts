@@ -373,7 +373,7 @@ export class EnhancedAutomationEngine {
   addRule(rule: AutomationRule): void {
     this.rules.set(rule.id, rule);
     this.setupRuleTriggers(rule);
-    console.log(`✅ Automation rule added: ${rule.name}`);
+    console.info(`✅ Automation rule added: ${rule.name}`);
   }
 
   updateRule(ruleId: string, updates: Partial<AutomationRule>): void {
@@ -381,7 +381,7 @@ export class EnhancedAutomationEngine {
     if (rule) {
       Object.assign(rule, updates);
       this.setupRuleTriggers(rule);
-      console.log(`🔄 Automation rule updated: ${rule.name}`);
+      console.info(`🔄 Automation rule updated: ${rule.name}`);
     }
   }
 
@@ -390,7 +390,7 @@ export class EnhancedAutomationEngine {
     if (rule) {
       this.cleanupRuleTriggers(rule);
       this.rules.delete(ruleId);
-      console.log(`🗑️ Automation rule removed: ${rule.name}`);
+      console.info(`🗑️ Automation rule removed: ${rule.name}`);
     }
   }
 
@@ -399,7 +399,7 @@ export class EnhancedAutomationEngine {
     if (rule) {
       rule.enabled = true;
       this.setupRuleTriggers(rule);
-      console.log(`▶️ Automation rule enabled: ${rule.name}`);
+      console.info(`▶️ Automation rule enabled: ${rule.name}`);
     }
   }
 
@@ -408,7 +408,7 @@ export class EnhancedAutomationEngine {
     if (rule) {
       rule.enabled = false;
       this.cleanupRuleTriggers(rule);
-      console.log(`⏸️ Automation rule disabled: ${rule.name}`);
+      console.info(`⏸️ Automation rule disabled: ${rule.name}`);
     }
   }
 
@@ -610,13 +610,13 @@ export class EnhancedAutomationEngine {
       case 'block_ip':
         if (action.blockIP) {
           // This would need IP context from the triggering event
-          console.log(`Would block IP for: ${action.blockIP.reason}`);
+          console.info(`Would block IP for: ${action.blockIP.reason}`);
         }
         break;
       case 'settle_wager':
         if (action.settleWager) {
           // This would need wager context from the triggering event
-          console.log(`Would settle wager as: ${action.settleWager.settlementType}`);
+          console.info(`Would settle wager as: ${action.settleWager.settlementType}`);
         }
         break;
       case 'send_notification':
@@ -741,7 +741,7 @@ export class EnhancedAutomationEngine {
   }
 
   private startAutomationEngine(): void {
-    console.log('🤖 Enhanced Automation Engine started');
+    console.info('🤖 Enhanced Automation Engine started');
 
     // Set up event listeners for dashboard updates
     this.setupEventListeners();
@@ -795,6 +795,6 @@ export class EnhancedAutomationEngine {
     this.rules.clear();
     this.ruleExecutionHistory.clear();
 
-    console.log('🧹 Enhanced Automation Engine cleaned up');
+    console.info('🧹 Enhanced Automation Engine cleaned up');
   }
 }

@@ -17,17 +17,17 @@ const program = new Command();
 // Enhanced logging with %j for better JSON output
 function logInfo(message: string, data?: any): void {
   if (data) {
-    console.log(`ℹ️  ${message}: %j`, data);
+    console.info(`ℹ️  ${message}: %j`, data);
   } else {
-    console.log(`ℹ️  ${message}`);
+    console.info(`ℹ️  ${message}`);
   }
 }
 
 function logSuccess(message: string, data?: any): void {
   if (data) {
-    console.log(`✅ ${message}: %j`, data);
+    console.info(`✅ ${message}: %j`, data);
   } else {
-    console.log(`✅ ${message}`);
+    console.info(`✅ ${message}`);
   }
 }
 
@@ -63,18 +63,18 @@ program
       const metrics = db.getPerformanceMetrics();
       
       if (options.format === "json") {
-        console.log(JSON.stringify(metrics, null, 2));
+        console.info(JSON.stringify(metrics, null, 2));
       } else {
-        console.log("📊 Database Statistics");
-        console.log("========================");
-        console.log(`Total Payments: ${metrics.totalPayments}`);
-        console.log(`Total Members: ${metrics.totalMembers}`);
-        console.log(`Total Quests: ${metrics.totalQuests}`);
-        console.log(`Total Invitations: ${metrics.totalInvitations}`);
-        console.log(`Database Size: ${(metrics.databaseSize / 1024 / 1024).toFixed(2)} MB`);
-        console.log("\n📈 Index Usage:");
+        console.info("📊 Database Statistics");
+        console.info("========================");
+        console.info(`Total Payments: ${metrics.totalPayments}`);
+        console.info(`Total Members: ${metrics.totalMembers}`);
+        console.info(`Total Quests: ${metrics.totalQuests}`);
+        console.info(`Total Invitations: ${metrics.totalInvitations}`);
+        console.info(`Database Size: ${(metrics.databaseSize / 1024 / 1024).toFixed(2)} MB`);
+        console.info("\n📈 Index Usage:");
         metrics.indexUsage.forEach(index => {
-          console.log(`  ${index.name}: ${index.entries} entries`);
+          console.info(`  ${index.name}: ${index.entries} entries`);
         });
       }
     } catch (error) {
@@ -109,22 +109,22 @@ program
       const members = db.getFamilyMembersWithActivity(familyId);
       
       if (options.format === "json") {
-        console.log(JSON.stringify(members, null, 2));
+        console.info(JSON.stringify(members, null, 2));
       } else {
-        console.log(`👥 Family Members: ${familyId}`);
-        console.log("===============================");
+        console.info(`👥 Family Members: ${familyId}`);
+        console.info("===============================");
         members.forEach(member => {
-          console.log(`${member.userId} (${member.role})`);
-          console.log(`  Trust Score: ${member.trustScore}`);
-          console.log(`  Tier: ${member.tier}`);
-          console.log(`  Onboarding: ${member.onboardingStatus || 'N/A'}`);
-          console.log(`  MRR Impact: $${(member.mrrContribution || 0).toFixed(2)}`);
-          console.log(`  Enterprise Ready: ${member.enterpriseReady ? '✅' : '❌'}`);
-          console.log(`  Payments: ${member.paymentCount} ($${member.totalPaid.toFixed(2)})`);
+          console.info(`${member.userId} (${member.role})`);
+          console.info(`  Trust Score: ${member.trustScore}`);
+          console.info(`  Tier: ${member.tier}`);
+          console.info(`  Onboarding: ${member.onboardingStatus || 'N/A'}`);
+          console.info(`  MRR Impact: $${(member.mrrContribution || 0).toFixed(2)}`);
+          console.info(`  Enterprise Ready: ${member.enterpriseReady ? '✅' : '❌'}`);
+          console.info(`  Payments: ${member.paymentCount} ($${member.totalPaid.toFixed(2)})`);
           if (member.lastPaymentAt) {
-            console.log(`  Last Payment: ${new Date(member.lastPaymentAt).toLocaleDateString()}`);
+            console.info(`  Last Payment: ${new Date(member.lastPaymentAt).toLocaleDateString()}`);
           }
-          console.log("");
+          console.info("");
         });
       }
     } catch (error) {
@@ -141,13 +141,13 @@ program
       const db = getDatabase();
       const stats = db.getFamilyPaymentStats(familyId);
       
-      console.log(`📊 Family Statistics: ${familyId}`);
-      console.log("===============================");
-      console.log(`Total Payments: ${stats.totalPayments}`);
-      console.log(`Total Amount: $${stats.totalAmount.toFixed(2)}`);
-      console.log(`Pending Payments: ${stats.pendingPayments}`);
-      console.log(`Completed Payments: ${stats.completedPayments}`);
-      console.log(`Average Amount: $${stats.averageAmount.toFixed(2)}`);
+      console.info(`📊 Family Statistics: ${familyId}`);
+      console.info("===============================");
+      console.info(`Total Payments: ${stats.totalPayments}`);
+      console.info(`Total Amount: $${stats.totalAmount.toFixed(2)}`);
+      console.info(`Pending Payments: ${stats.pendingPayments}`);
+      console.info(`Completed Payments: ${stats.completedPayments}`);
+      console.info(`Average Amount: $${stats.averageAmount.toFixed(2)}`);
     } catch (error) {
       logError("Failed to get family stats", error);
       process.exit(1);
@@ -166,21 +166,21 @@ program
       const quests = db.getUserQuests(userId, options.status as any);
       
       if (options.format === "json") {
-        console.log(JSON.stringify(quests, null, 2));
+        console.info(JSON.stringify(quests, null, 2));
       } else {
-        console.log(`🎮 Quests for ${userId}`);
-        console.log("=====================");
+        console.info(`🎮 Quests for ${userId}`);
+        console.info("=====================");
         quests.forEach(quest => {
-          console.log(`${quest.questId} (${quest.status})`);
-          console.log(`  Progress: ${quest.progress}%`);
-          console.log(`  Started: ${new Date(quest.startedAt).toLocaleDateString()}`);
+          console.info(`${quest.questId} (${quest.status})`);
+          console.info(`  Progress: ${quest.progress}%`);
+          console.info(`  Started: ${new Date(quest.startedAt).toLocaleDateString()}`);
           if (quest.completedAt) {
-            console.log(`  Completed: ${new Date(quest.completedAt).toLocaleDateString()}`);
+            console.info(`  Completed: ${new Date(quest.completedAt).toLocaleDateString()}`);
           }
           if (quest.rewards) {
-            console.log(`  Rewards: ${quest.rewards}`);
+            console.info(`  Rewards: ${quest.rewards}`);
           }
-          console.log("");
+          console.info("");
         });
       }
     } catch (error) {
@@ -200,11 +200,11 @@ program
       const ctx = createInspectionContext("localhost");
       
       if (options.format === "json") {
-        console.log(JSON.stringify(ctx, null, 2));
+        console.info(JSON.stringify(ctx, null, 2));
       } else {
-        console.log("🧩 Inspection Tree");
-        console.log("===================");
-        console.log(Bun.inspect(ctx, {
+        console.info("🧩 Inspection Tree");
+        console.info("===================");
+        console.info(Bun.inspect(ctx, {
           depth: parseInt(options.depth),
           colors: true,
           maxArrayLength: 10
@@ -279,11 +279,11 @@ program
         host
       });
       
-      console.log("\n🌐 Available endpoints:");
-      console.log(`  Health: http://${host}:${port}/api/health`);
-      console.log(`  Metrics: http://${host}:${port}/api/metrics`);
-      console.log(`  Inspection: http://${host}:${port}/api/inspection/tree`);
-      console.log(`  QR Generate: http://${host}:${port}/api/qr/generate`);
+      console.info("\n🌐 Available endpoints:");
+      console.info(`  Health: http://${host}:${port}/api/health`);
+      console.info(`  Metrics: http://${host}:${port}/api/metrics`);
+      console.info(`  Inspection: http://${host}:${port}/api/inspection/tree`);
+      console.info(`  QR Generate: http://${host}:${port}/api/qr/generate`);
       
       // Handle graceful shutdown
       process.on("SIGINT", () => {
@@ -315,14 +315,14 @@ program
       const paymentService = new UnifiedPaymentService();
       const connectivity = await paymentService.testConnectivity();
       
-      console.log("🔗 Connectivity Test Results:");
-      console.log("=============================");
-      console.log(`Proxy Connected: ${connectivity.proxy.connected}`);
+      console.info("🔗 Connectivity Test Results:");
+      console.info("=============================");
+      console.info(`Proxy Connected: ${connectivity.proxy.connected}`);
       if (connectivity.proxy.latency) {
-        console.log(`Proxy Latency: ${connectivity.proxy.latency}ms`);
+        console.info(`Proxy Latency: ${connectivity.proxy.latency}ms`);
       }
-      console.log(`Venmo API: ${connectivity.venmo ? "✅" : "❌"}`);
-      console.log(`Cash App API: ${connectivity.cashapp ? "✅" : "❌"}`);
+      console.info(`Venmo API: ${connectivity.venmo ? "✅" : "❌"}`);
+      console.info(`Cash App API: ${connectivity.cashapp ? "✅" : "❌"}`);
       
       if (!connectivity.proxy.connected) {
         logWarning("Proxy not connected", connectivity.proxy.error);
@@ -375,8 +375,8 @@ program
       
       logSuccess("Sample data created", { familyId: sampleFamilyId, members: sampleMembers.length });
       
-      console.log("\n🚀 Development environment ready!");
-      console.log("Run 'bun run cli.ts serve' to start the server");
+      console.info("\n🚀 Development environment ready!");
+      console.info("Run 'bun run cli.ts serve' to start the server");
       
     } catch (error) {
       logError("Development setup failed", error);

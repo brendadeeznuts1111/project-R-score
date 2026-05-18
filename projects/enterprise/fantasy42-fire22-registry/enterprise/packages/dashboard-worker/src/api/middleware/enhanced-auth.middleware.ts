@@ -146,7 +146,7 @@ class SecurityManager {
 
     // Log to console in development
     if (process.env.NODE_ENV !== 'production') {
-      console.log(`🔐 Security Event:`, {
+      console.info(`🔐 Security Event:`, {
         type: event.type,
         userId: event.userId,
         ip: event.ip,

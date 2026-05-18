@@ -82,11 +82,11 @@ export class AIPredictiveOptimizationManager extends EventEmitter {
      */
     async initialize(): Promise<void> {
         if (this.isActive) {
-            console.log('✅ AI Predictive Optimization already active');
+            console.info('✅ AI Predictive Optimization already active');
             return;
         }
 
-        console.log('🤖 Initializing AI Predictive Optimization System...');
+        console.info('🤖 Initializing AI Predictive Optimization System...');
 
         // Initialize AI models
         await this.initializeModels();
@@ -99,9 +99,9 @@ export class AIPredictiveOptimizationManager extends EventEmitter {
 
         this.isActive = true;
 
-        console.log('🧠 AI Predictive Optimization System initialized successfully');
-        console.log(`📊 Active models: ${this.models.size}`);
-        console.log('🎯 Predictive analytics and optimization ready');
+        console.info('🧠 AI Predictive Optimization System initialized successfully');
+        console.info(`📊 Active models: ${this.models.size}`);
+        console.info('🎯 Predictive analytics and optimization ready');
 
         this.emit('ai-optimization:initialized', Array.from(this.models.values()));
     }
@@ -153,7 +153,7 @@ export class AIPredictiveOptimizationManager extends EventEmitter {
             this.models.set(model.id, model);
         }
 
-        console.log('🤖 AI models initialized and ready for predictions');
+        console.info('🤖 AI models initialized and ready for predictions');
     }
 
     /**
@@ -164,7 +164,7 @@ export class AIPredictiveOptimizationManager extends EventEmitter {
             this.performOptimizationCycle();
         }, 30000); // Every 30 seconds for demo (would be hourly in production)
 
-        console.log('⚡ AI optimization engine started');
+        console.info('⚡ AI optimization engine started');
     }
 
     /**
@@ -172,22 +172,22 @@ export class AIPredictiveOptimizationManager extends EventEmitter {
      */
     private setupPredictionEvents(): void {
         this.on('prediction:generated', (prediction: PerformancePrediction) => {
-            console.log(`🔮 Performance Prediction Generated:`);
-            console.log(`   Operation: ${prediction.operation}`);
-            console.log(`   Current: ${prediction.currentTime.toFixed(2)}ms`);
-            console.log(`   Predicted: ${prediction.predictedTime.toFixed(2)}ms`);
-            console.log(`   Trend: ${prediction.trend}`);
-            console.log(`   Confidence: ${prediction.confidence}`);
+            console.info(`🔮 Performance Prediction Generated:`);
+            console.info(`   Operation: ${prediction.operation}`);
+            console.info(`   Current: ${prediction.currentTime.toFixed(2)}ms`);
+            console.info(`   Predicted: ${prediction.predictedTime.toFixed(2)}ms`);
+            console.info(`   Trend: ${prediction.trend}`);
+            console.info(`   Confidence: ${prediction.confidence}`);
 
             this.emit('prediction:updated', prediction);
         });
 
         this.on('recommendation:generated', (recommendation: OptimizationRecommendation) => {
-            console.log(`💡 AI Optimization Recommendation:`);
-            console.log(`   🎯 ${recommendation.title}`);
-            console.log(`   📊 Impact: ${recommendation.impact} (${recommendation.estimatedImprovement}% improvement)`);
-            console.log(`   🧠 Confidence: ${recommendation.confidence}`);
-            console.log(`   ⚡ Priority: ${recommendation.priority}/10`);
+            console.info(`💡 AI Optimization Recommendation:`);
+            console.info(`   🎯 ${recommendation.title}`);
+            console.info(`   📊 Impact: ${recommendation.impact} (${recommendation.estimatedImprovement}% improvement)`);
+            console.info(`   🧠 Confidence: ${recommendation.confidence}`);
+            console.info(`   ⚡ Priority: ${recommendation.priority}/10`);
 
             this.recommendations.push(recommendation);
             this.emit('recommendation:updated', recommendation);
@@ -519,7 +519,7 @@ Status: ${dashboard.averageAccuracy >= 90 ? '🧠 AI Optimization Excellence Ach
             this.optimizationInterval = null;
         }
 
-        console.log('⏹️ AI Predictive Optimization stopped');
+        console.info('⏹️ AI Predictive Optimization stopped');
         this.emit('ai-optimization:stopped');
     }
 }
@@ -534,7 +534,7 @@ export const aiOptimization = new AIPredictiveOptimizationManager();
  */
 export async function initializeAIPredictiveOptimization(): Promise<void> {
     await aiOptimization.initialize();
-    console.log('🧠 AI Predictive Optimization ready for Industry Dominance');
+    console.info('🧠 AI Predictive Optimization ready for Industry Dominance');
 }
 
 /**

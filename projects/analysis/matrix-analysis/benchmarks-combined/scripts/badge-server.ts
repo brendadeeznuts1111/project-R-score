@@ -88,11 +88,11 @@ const server = Bun.serve({
   }
 });
 
-console.log(`🚀 Badge Status Server running on port ${port}`);
-console.log(`Available endpoints:`);
-console.log(`  http://localhost:${port}/api/benchmarks/status`);
-console.log(`  http://localhost:${port}/api/benchmarks/performance`);
-console.log(`  http://localhost:${port}/api/benchmarks/coverage`);
-console.log(`  http://localhost:${port}/api/benchmarks/last-run`);
-console.log(`  http://localhost:${port}/api/benchmarks/all`);
-console.log(`  http://localhost:${port}/health`);
+console.info(`🚀 Badge Status Server running on port ${port}`);
+console.info(`Available endpoints:`);
+console.info(`  http://localhost:${port}/api/benchmarks/status`);
+console.info(`  http://localhost:${port}/api/benchmarks/performance`);
+console.info(`  http://localhost:${port}/api/benchmarks/coverage`);
+console.info(`  http://localhost:${port}/api/benchmarks/last-run`);
+console.info(`  http://localhost:${port}/api/benchmarks/all`);
+console.info(`  http://localhost:${port}/health`);

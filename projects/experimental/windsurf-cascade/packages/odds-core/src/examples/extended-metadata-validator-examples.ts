@@ -19,7 +19,7 @@ export class ExtendedMetadataValidatorExamples {
      * Example 1: Backward compatibility demonstration
      */
     static demonstrateBackwardCompatibility(): void {
-        console.log('🔄 Backward Compatibility Demonstration\n');
+        console.info('🔄 Backward Compatibility Demonstration\n');
 
         // Create metadata using existing builder
         const metadata = MetadataBuilder.createEnhanced()
@@ -30,30 +30,30 @@ export class ExtendedMetadataValidatorExamples {
             .withQuality(0.9, 0.8, 0.9)
             .build();
 
-        console.log('📝 Created sample metadata...');
+        console.info('📝 Created sample metadata...');
 
         // Original validation method (still works)
         const originalResult = MetadataValidator.validate(metadata);
-        console.log('✅ Original validation method:');
-        console.log(`   Valid: ${originalResult.valid}`);
-        console.log(`   Errors: ${originalResult.errors.length}`);
+        console.info('✅ Original validation method:');
+        console.info(`   Valid: ${originalResult.valid}`);
+        console.info(`   Errors: ${originalResult.errors.length}`);
 
         // New validation method with context
         const enhancedResult = MetadataValidator.validateWithContext(metadata);
-        console.log('\n🚀 Enhanced validation method:');
-        console.log(`   Valid: ${enhancedResult.valid}`);
-        console.log(`   Errors: ${enhancedResult.errors.length}`);
-        console.log(`   Warnings: ${enhancedResult.warnings.length}`);
-        console.log(`   Info: ${enhancedResult.info.length}`);
+        console.info('\n🚀 Enhanced validation method:');
+        console.info(`   Valid: ${enhancedResult.valid}`);
+        console.info(`   Errors: ${enhancedResult.errors.length}`);
+        console.info(`   Warnings: ${enhancedResult.warnings.length}`);
+        console.info(`   Info: ${enhancedResult.info.length}`);
 
-        console.log('\n✅ Backward compatibility maintained!');
+        console.info('\n✅ Backward compatibility maintained!');
     }
 
     /**
      * Example 2: Custom validation rules
      */
     static demonstrateCustomRules(): void {
-        console.log('\n🎯 Custom Validation Rules\n');
+        console.info('\n🎯 Custom Validation Rules\n');
 
         // Create custom validation rules
         const idRule = MetadataValidator.createRule(
@@ -108,10 +108,10 @@ export class ExtendedMetadataValidatorExamples {
             'info'
         );
 
-        console.log('📋 Created custom validation rules:');
-        console.log(`   • ${idRule.name}: ${idRule.description}`);
-        console.log(`   • ${qualityRule.name}: ${qualityRule.description}`);
-        console.log(`   • ${timestampRule.name}: ${timestampRule.description}`);
+        console.info('📋 Created custom validation rules:');
+        console.info(`   • ${idRule.name}: ${idRule.description}`);
+        console.info(`   • ${qualityRule.name}: ${qualityRule.description}`);
+        console.info(`   • ${timestampRule.name}: ${timestampRule.description}`);
 
         // Test with different metadata
         const testCases = [
@@ -147,30 +147,30 @@ export class ExtendedMetadataValidatorExamples {
             }
         ];
 
-        console.log('\n🧪 Testing custom rules:\n');
+        console.info('\n🧪 Testing custom rules:\n');
 
         for (const testCase of testCases) {
-            console.log(`📊 ${testCase.name}:`);
+            console.info(`📊 ${testCase.name}:`);
 
             const result = MetadataValidator.validateWithContext(
                 testCase.metadata,
                 { customRules: [idRule, qualityRule, timestampRule], includeWarnings: true }
             );
 
-            console.log(`   Valid: ${result.valid}`);
+            console.info(`   Valid: ${result.valid}`);
             if (result.errors.length > 0) {
-                console.log('   Errors:');
-                result.errors.forEach(error => console.log(`     • ${error}`));
+                console.info('   Errors:');
+                result.errors.forEach(error => console.info(`     • ${error}`));
             }
             if (result.warnings.length > 0) {
-                console.log('   Warnings:');
-                result.warnings.forEach(warning => console.log(`     • ${warning}`));
+                console.info('   Warnings:');
+                result.warnings.forEach(warning => console.info(`     • ${warning}`));
             }
             if (result.info.length > 0) {
-                console.log('   Info:');
-                result.info.forEach(info => console.log(`     • ${info}`));
+                console.info('   Info:');
+                result.info.forEach(info => console.info(`     • ${info}`));
             }
-            console.log('');
+            console.info('');
         }
     }
 
@@ -178,7 +178,7 @@ export class ExtendedMetadataValidatorExamples {
      * Example 3: Custom validation schemas
      */
     static demonstrateCustomSchemas(): void {
-        console.log('📋 Custom Validation Schemas\n');
+        console.info('📋 Custom Validation Schemas\n');
 
         // Create custom validation rules for schemas
         const sportRule = MetadataValidator.createRule(
@@ -256,10 +256,10 @@ export class ExtendedMetadataValidatorExamples {
         MetadataValidator.registerSchema(minimalSchema);
         MetadataValidator.registerSchema(qualitySchema);
 
-        console.log('📝 Registered custom schemas:');
-        console.log(`   • ${strictSchema.name} v${strictSchema.version}`);
-        console.log(`   • ${minimalSchema.name} v${minimalSchema.version}`);
-        console.log(`   • ${qualitySchema.name} v${qualitySchema.version}`);
+        console.info('📝 Registered custom schemas:');
+        console.info(`   • ${strictSchema.name} v${strictSchema.version}`);
+        console.info(`   • ${minimalSchema.name} v${minimalSchema.version}`);
+        console.info(`   • ${qualitySchema.name} v${qualitySchema.version}`);
 
         // Test metadata against different schemas
         const testMetadata = MetadataBuilder.createEnhanced()
@@ -270,12 +270,12 @@ export class ExtendedMetadataValidatorExamples {
             .withQuality(0.8, 0.7, 0.9)
             .build();
 
-        console.log('\n🧪 Testing metadata against schemas:\n');
+        console.info('\n🧪 Testing metadata against schemas:\n');
 
         const schemas = ['strict-market-data', 'minimal-market-data', 'quality-focused'];
 
         for (const schemaName of schemas) {
-            console.log(`📊 Schema: ${schemaName}`);
+            console.info(`📊 Schema: ${schemaName}`);
 
             try {
                 const result = MetadataValidator.validateWithSchema(
@@ -284,26 +284,26 @@ export class ExtendedMetadataValidatorExamples {
                     { includeWarnings: true }
                 );
 
-                console.log(`   Valid: ${result.valid}`);
+                console.info(`   Valid: ${result.valid}`);
                 if (result.errors.length > 0) {
-                    console.log('   Errors:');
-                    result.errors.forEach(error => console.log(`     • ${error}`));
+                    console.info('   Errors:');
+                    result.errors.forEach(error => console.info(`     • ${error}`));
                 }
                 if (result.warnings.length > 0) {
-                    console.log('   Warnings:');
-                    result.warnings.forEach(warning => console.log(`     • ${warning}`));
+                    console.info('   Warnings:');
+                    result.warnings.forEach(warning => console.info(`     • ${warning}`));
                 }
             } catch (error) {
-                console.log(`   Error: ${error}`);
+                console.info(`   Error: ${error}`);
             }
-            console.log('');
+            console.info('');
         }
 
         // Show registered schemas
-        console.log('📋 All registered schemas:');
+        console.info('📋 All registered schemas:');
         const registeredSchemas = MetadataValidator.getRegisteredSchemas();
         registeredSchemas.forEach(schema => {
-            console.log(`   • ${schema.name} v${schema.version} (${schema.rules.length} rules)`);
+            console.info(`   • ${schema.name} v${schema.version} (${schema.rules.length} rules)`);
         });
     }
 
@@ -311,7 +311,7 @@ export class ExtendedMetadataValidatorExamples {
      * Example 4: Global rules and batch validation
      */
     static demonstrateGlobalRulesAndBatch(): void {
-        console.log('🌐 Global Rules and Batch Validation\n');
+        console.info('🌐 Global Rules and Batch Validation\n');
 
         // Create and register global rules
         const globalIdRule = MetadataValidator.createRule(
@@ -350,9 +350,9 @@ export class ExtendedMetadataValidatorExamples {
         MetadataValidator.addGlobalRule(globalIdRule);
         MetadataValidator.addGlobalRule(globalTimestampRule);
 
-        console.log('🌍 Registered global rules:');
-        console.log(`   • ${globalIdRule.name}: ${globalIdRule.description}`);
-        console.log(`   • ${globalTimestampRule.name}: ${globalTimestampRule.description}`);
+        console.info('🌍 Registered global rules:');
+        console.info(`   • ${globalIdRule.name}: ${globalIdRule.description}`);
+        console.info(`   • ${globalTimestampRule.name}: ${globalTimestampRule.description}`);
 
         // Create batch of metadata for testing
         const batchMetadata = [
@@ -382,7 +382,7 @@ export class ExtendedMetadataValidatorExamples {
                 .build()
         ];
 
-        console.log(`\n📦 Created batch of ${batchMetadata.length} metadata objects`);
+        console.info(`\n📦 Created batch of ${batchMetadata.length} metadata objects`);
 
         // Validate batch
         const batchResults = MetadataValidator.validateBatch(
@@ -390,35 +390,35 @@ export class ExtendedMetadataValidatorExamples {
             { includeWarnings: true }
         );
 
-        console.log('\n📊 Batch validation results:\n');
+        console.info('\n📊 Batch validation results:\n');
 
         batchResults.forEach((result, index) => {
-            console.log(`📋 Metadata ${index + 1} (${result.metadata.id}):`);
-            console.log(`   Valid: ${result.result.valid}`);
-            console.log(`   Errors: ${result.result.errors.length}`);
-            console.log(`   Warnings: ${result.result.warnings.length}`);
+            console.info(`📋 Metadata ${index + 1} (${result.metadata.id}):`);
+            console.info(`   Valid: ${result.result.valid}`);
+            console.info(`   Errors: ${result.result.errors.length}`);
+            console.info(`   Warnings: ${result.result.warnings.length}`);
 
             if (result.result.errors.length > 0) {
-                result.result.errors.forEach(error => console.log(`     ❌ ${error}`));
+                result.result.errors.forEach(error => console.info(`     ❌ ${error}`));
             }
             if (result.result.warnings.length > 0) {
-                result.result.warnings.forEach(warning => console.log(`     ⚠️ ${warning}`));
+                result.result.warnings.forEach(warning => console.info(`     ⚠️ ${warning}`));
             }
-            console.log('');
+            console.info('');
         });
 
         // Get validation summary
         const validationResults = batchResults.map(r => r.result);
         const summary = MetadataValidator.getValidationSummary(validationResults);
 
-        console.log('📈 Validation Summary:');
-        console.log(`   Total: ${summary.total}`);
-        console.log(`   Valid: ${summary.valid}`);
-        console.log(`   Invalid: ${summary.invalid}`);
-        console.log(`   Error Rate: ${(summary.errorRate * 100).toFixed(1)}%`);
-        console.log(`   Warning Rate: ${(summary.warningRate * 100).toFixed(1)}%`);
-        console.log(`   Total Errors: ${summary.totalErrors}`);
-        console.log(`   Total Warnings: ${summary.totalWarnings}`);
+        console.info('📈 Validation Summary:');
+        console.info(`   Total: ${summary.total}`);
+        console.info(`   Valid: ${summary.valid}`);
+        console.info(`   Invalid: ${summary.invalid}`);
+        console.info(`   Error Rate: ${(summary.errorRate * 100).toFixed(1)}%`);
+        console.info(`   Warning Rate: ${(summary.warningRate * 100).toFixed(1)}%`);
+        console.info(`   Total Errors: ${summary.totalErrors}`);
+        console.info(`   Total Warnings: ${summary.totalWarnings}`);
 
         // Clean up global rules
         MetadataValidator.removeGlobalRule('global-id-length');
@@ -429,10 +429,10 @@ export class ExtendedMetadataValidatorExamples {
      * Example 5: Advanced validation scenarios
      */
     static demonstrateAdvancedScenarios(): void {
-        console.log('\n🚀 Advanced Validation Scenarios\n');
+        console.info('\n🚀 Advanced Validation Scenarios\n');
 
         // Scenario 1: Strict mode validation
-        console.log('📏 Scenario 1: Strict Mode Validation');
+        console.info('📏 Scenario 1: Strict Mode Validation');
 
         const metadataWithWarnings = MetadataBuilder.createEnhanced()
             .withId('strict-test-001')
@@ -462,12 +462,12 @@ export class ExtendedMetadataValidatorExamples {
             { customRules: [warningRule], strictMode: true }
         );
 
-        console.log(`   Normal Mode - Valid: ${normalResult.valid}, Warnings: ${normalResult.warnings.length}`);
-        console.log(`   Strict Mode - Valid: ${strictResult.valid}, Errors: ${strictResult.errors.length}`);
-        console.log('');
+        console.info(`   Normal Mode - Valid: ${normalResult.valid}, Warnings: ${normalResult.warnings.length}`);
+        console.info(`   Strict Mode - Valid: ${strictResult.valid}, Errors: ${strictResult.errors.length}`);
+        console.info('');
 
         // Scenario 2: Field-specific validation
-        console.log('🎯 Scenario 2: Field-Specific Validation');
+        console.info('🎯 Scenario 2: Field-Specific Validation');
 
         const fieldMetadata = MetadataBuilder.createEnhanced()
             .withId('field-test-001')
@@ -496,19 +496,19 @@ export class ExtendedMetadataValidatorExamples {
             })
         );
 
-        console.log(`   ID Field Valid: ${idValidation.valid}`);
+        console.info(`   ID Field Valid: ${idValidation.valid}`);
         if (!idValidation.valid) {
-            console.log(`   ID Errors: ${idValidation.errors.join(', ')}`);
+            console.info(`   ID Errors: ${idValidation.errors.join(', ')}`);
         }
 
-        console.log(`   Source Field Valid: ${sourceValidation.valid}`);
+        console.info(`   Source Field Valid: ${sourceValidation.valid}`);
         if (!sourceValidation.valid) {
-            console.log(`   Source Errors: ${sourceValidation.errors.join(', ')}`);
+            console.info(`   Source Errors: ${sourceValidation.errors.join(', ')}`);
         }
-        console.log('');
+        console.info('');
 
         // Scenario 3: Enhanced topic validation
-        console.log('🏷️ Scenario 3: Enhanced Topic Validation');
+        console.info('🏷️ Scenario 3: Enhanced Topic Validation');
 
         const topicMetadata = MetadataBuilder.createEnhanced()
             .withId('topic-test-001')
@@ -520,22 +520,22 @@ export class ExtendedMetadataValidatorExamples {
 
         // Standard topic validation
         const standardTopicResult = MetadataValidator.validateTopics(topicMetadata.topics);
-        console.log(`   Standard Topics - Valid: ${standardTopicResult.valid}, Errors: ${standardTopicResult.errors.length}`);
+        console.info(`   Standard Topics - Valid: ${standardTopicResult.valid}, Errors: ${standardTopicResult.errors.length}`);
 
         // Enhanced topic validation with custom topics
         const enhancedTopicResult = MetadataValidator.validateTopics(
             topicMetadata.topics,
             { allowCustom: true, customTopics: ['CUSTOM_TOPIC'] }
         );
-        console.log(`   Enhanced Topics - Valid: ${enhancedTopicResult.valid}, Warnings: ${enhancedTopicResult.warnings?.length || 0}`);
+        console.info(`   Enhanced Topics - Valid: ${enhancedTopicResult.valid}, Warnings: ${enhancedTopicResult.warnings?.length || 0}`);
 
         if (enhancedTopicResult.warnings) {
-            console.log(`   Topic Warnings: ${enhancedTopicResult.warnings.join(', ')}`);
+            console.info(`   Topic Warnings: ${enhancedTopicResult.warnings.join(', ')}`);
         }
-        console.log('');
+        console.info('');
 
         // Scenario 4: Performance comparison
-        console.log('⚡ Scenario 4: Performance Comparison');
+        console.info('⚡ Scenario 4: Performance Comparison');
 
         const performanceMetadata = Array(1000).fill(null).map((_, index) =>
             MetadataBuilder.createEnhanced()
@@ -557,42 +557,42 @@ export class ExtendedMetadataValidatorExamples {
         const enhancedResults = performanceMetadata.map(m => MetadataValidator.validateWithContext(m));
         const enhancedTime = performance.now() - enhancedStart;
 
-        console.log(`   Original Method: ${originalTime.toFixed(2)}ms for ${performanceMetadata.length} validations`);
-        console.log(`   Enhanced Method: ${enhancedTime.toFixed(2)}ms for ${performanceMetadata.length} validations`);
-        console.log(`   Performance Overhead: ${((enhancedTime - originalTime) / originalTime * 100).toFixed(1)}%`);
+        console.info(`   Original Method: ${originalTime.toFixed(2)}ms for ${performanceMetadata.length} validations`);
+        console.info(`   Enhanced Method: ${enhancedTime.toFixed(2)}ms for ${performanceMetadata.length} validations`);
+        console.info(`   Performance Overhead: ${((enhancedTime - originalTime) / originalTime * 100).toFixed(1)}%`);
     }
 
     /**
      * Run all extended validator examples
      */
     static runAllExamples(): void {
-        console.log('🚀 Extended MetadataValidator Examples\n');
-        console.log('='.repeat(80));
+        console.info('🚀 Extended MetadataValidator Examples\n');
+        console.info('='.repeat(80));
 
         this.demonstrateBackwardCompatibility();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         this.demonstrateCustomRules();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         this.demonstrateCustomSchemas();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         this.demonstrateGlobalRulesAndBatch();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         this.demonstrateAdvancedScenarios();
 
-        console.log('\n✅ All extended MetadataValidator examples completed!');
-        console.log('\n🎯 Key Capabilities Demonstrated:');
-        console.log('   • Backward compatibility with existing validation');
-        console.log('   • Custom validation rules with error/warning/info severity');
-        console.log('   • Reusable validation schemas with rule composition');
-        console.log('   • Global rules that apply to all validations');
-        console.log('   • Batch validation with summary statistics');
-        console.log('   • Strict mode and field-specific validation');
-        console.log('   • Enhanced topic validation with custom topics');
-        console.log('   • Performance optimization for large-scale validation');
+        console.info('\n✅ All extended MetadataValidator examples completed!');
+        console.info('\n🎯 Key Capabilities Demonstrated:');
+        console.info('   • Backward compatibility with existing validation');
+        console.info('   • Custom validation rules with error/warning/info severity');
+        console.info('   • Reusable validation schemas with rule composition');
+        console.info('   • Global rules that apply to all validations');
+        console.info('   • Batch validation with summary statistics');
+        console.info('   • Strict mode and field-specific validation');
+        console.info('   • Enhanced topic validation with custom topics');
+        console.info('   • Performance optimization for large-scale validation');
     }
 }
 

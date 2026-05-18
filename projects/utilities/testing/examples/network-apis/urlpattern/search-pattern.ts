@@ -11,4 +11,4 @@ const searchPattern = new URLPattern({
 });
 
 const match = searchPattern.exec("https://example.com/search/javascript?sort=popular&page=1");
-console.log("Search pattern:", match);
+console.info("Search pattern:", match);

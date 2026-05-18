@@ -112,7 +112,7 @@ function checkRule(rule: PackageBoundaryRule): Violation[] {
 function main(): void {
   const violations = RULES.flatMap(checkRule);
   if (violations.length === 0) {
-    console.log('✅ Package import boundaries are clean.');
+    console.info('✅ Package import boundaries are clean.');
     return;
   }
 

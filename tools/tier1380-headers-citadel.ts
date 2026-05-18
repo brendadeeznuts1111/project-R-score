@@ -123,7 +123,7 @@ export class Tier1380HeadersCitadel {
     });
 
     const duration = performance.now() - startTime;
-    console.log(`🪣 R2 atomic write completed in ${duration.toFixed(2)}ms: ${key}`);
+    console.info(`🪣 R2 atomic write completed in ${duration.toFixed(2)}ms: ${key}`);
 
     return result;
   }
@@ -250,13 +250,13 @@ export class Tier1380HeadersCitadel {
     cookies: Map<string, string>
   ): Promise<void> {
     if (!process.env.FW_ALLOW_PTY) {
-      console.log("⚠️ PTY debug disabled. Set FW_ALLOW_PTY=1 to enable.");
+      console.info("⚠️ PTY debug disabled. Set FW_ALLOW_PTY=1 to enable.");
       return;
     }
 
     const term = Bun.terminal({
       onData: (data: string) => {
-        console.log("🖥️ PTY data:", data.slice(0, 60));
+        console.info("🖥️ PTY data:", data.slice(0, 60));
       }
     });
 
@@ -317,7 +317,7 @@ export async function createTier1380Snapshot(
     "checksum:crc32": finalChecksum
   });
 
-  console.log({
+  console.info({
     r2Bucket: config.r2Bucket,
     key,
     headersCount: headers.size,

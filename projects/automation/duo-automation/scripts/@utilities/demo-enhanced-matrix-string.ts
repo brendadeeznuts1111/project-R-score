@@ -5,8 +5,8 @@
 import { MasterPerfTracker } from '../src/storage/r2-apple-manager.ts';
 import { initializeScopeTimezone } from '../bootstrap-timezone.ts';
 
-console.log('🚀 Empire Pro v3.7 - Enhanced getMatrixString() Demo');
-console.log('===================================================\n');
+console.info('🚀 Empire Pro v3.7 - Enhanced getMatrixString() Demo');
+console.info('===================================================\n');
 
 // Initialize timezone for deterministic tracking
 initializeScopeTimezone('ENTERPRISE');
@@ -19,7 +19,7 @@ const tracker = new MasterPerfTracker({
   enableUnicodeFormatting: false // Use enhanced text format
 });
 
-console.log('📊 Adding Sample Metrics for Enhanced Matrix Display...\n');
+console.info('📊 Adding Sample Metrics for Enhanced Matrix Display...\n');
 
 // Add sample metrics with different timestamps and properties
 const sampleMetrics = [
@@ -93,17 +93,17 @@ sampleMetrics.forEach((metric, index) => {
   while (Date.now() - start < 10) { /* wait */ }
 });
 
-console.log('✅ Added 5 sample metrics with timestamps and properties\n');
+console.info('✅ Added 5 sample metrics with timestamps and properties\n');
 
 // Display the enhanced matrix string
-console.log('🎯 Enhanced getMatrixString() Output:');
-console.log('=====================================');
+console.info('🎯 Enhanced getMatrixString() Output:');
+console.info('=====================================');
 
 const matrixString = tracker.getMatrixString();
-console.log(matrixString);
+console.info(matrixString);
 
-console.log('\n🔍 Enhancement Highlights:');
-console.log('========================');
+console.info('\n🔍 Enhancement Highlights:');
+console.info('========================');
 
 const highlights = [
   '✅ v3.7 Enhanced header with timezone and feature flag info',
@@ -118,30 +118,30 @@ const highlights = [
   '✅ Category breakdown for operational insights'
 ];
 
-highlights.forEach(highlight => console.log(`  ${highlight}`));
+highlights.forEach(highlight => console.info(`  ${highlight}`));
 
-console.log('\n📊 Comparison with Legacy Format:');
-console.log('==================================');
-console.log('Legacy: Basic table with 10 columns');
-console.log('Enhanced: Rich table with metadata, sorting, and statistics');
-console.log('');
-console.log('Legacy: Static format without context');
-console.log('Enhanced: Dynamic format with timezone and feature awareness');
-console.log('');
-console.log('Legacy: No sorting or analysis');
-console.log('Enhanced: Smart sorting + comprehensive statistics');
+console.info('\n📊 Comparison with Legacy Format:');
+console.info('==================================');
+console.info('Legacy: Basic table with 10 columns');
+console.info('Enhanced: Rich table with metadata, sorting, and statistics');
+console.info('');
+console.info('Legacy: Static format without context');
+console.info('Enhanced: Dynamic format with timezone and feature awareness');
+console.info('');
+console.info('Legacy: No sorting or analysis');
+console.info('Enhanced: Smart sorting + comprehensive statistics');
 
-console.log('\n🎯 Usage Examples:');
-console.log('================');
-console.log('// Get enhanced matrix string');
-console.log('const matrixString = tracker.getMatrixString();');
-console.log('');
-console.log('// Log to console or write to file');
-console.log('console.log(matrixString);');
-console.log('await Bun.write("performance-report.txt", matrixString);');
-console.log('');
-console.log('// Include in audit reports');
-console.log('const auditReport = `Performance Metrics:\\n${matrixString}`;');
+console.info('\n🎯 Usage Examples:');
+console.info('================');
+console.info('// Get enhanced matrix string');
+console.info('const matrixString = tracker.getMatrixString();');
+console.info('');
+console.info('// Log to console or write to file');
+console.info('console.info(matrixString);');
+console.info('await Bun.write("performance-report.txt", matrixString);');
+console.info('');
+console.info('// Include in audit reports');
+console.info('const auditReport = `Performance Metrics:\\n${matrixString}`;');
 
-console.log('\n✅ Enhanced getMatrixString() Demo Completed!');
-console.log('🚀 Empire Pro v3.7 - Enterprise-grade performance reporting!');
+console.info('\n✅ Enhanced getMatrixString() Demo Completed!');
+console.info('🚀 Empire Pro v3.7 - Enterprise-grade performance reporting!');

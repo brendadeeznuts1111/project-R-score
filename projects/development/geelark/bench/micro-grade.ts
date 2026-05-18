@@ -43,9 +43,9 @@ async function microGrade() {
       results.every((r, i) => r <= t[i]))?.[0] || 'F';
 
     // Output
-    console.log(`\n🏆 ${grade}\n${'-'.repeat(20)}`);
+    console.info(`\n🏆 ${grade}\n${'-'.repeat(20)}`);
     results.forEach((r, i) =>
-      console.log(`${['📏','💾','🔨','🚀'][i]} ${r.toFixed(i?0:1)} ns`));
+      console.info(`${['📏','💾','🔨','🚀'][i]} ${r.toFixed(i?0:1)} ns`));
 
     return grade;
 
@@ -54,4 +54,4 @@ async function microGrade() {
   }
 }
 
-if (import.meta.main) console.log(await microGrade());
+if (import.meta.main) console.info(await microGrade());

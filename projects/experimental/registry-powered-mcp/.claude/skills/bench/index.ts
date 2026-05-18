@@ -31,15 +31,15 @@ export default async function bench(args?: string) {
   if (target && benchmarkFiles[target]) {
     // Run specific benchmark
     command = ["bun", "test", benchmarkFiles[target]];
-    console.log(`\n📊 Running ${target} benchmarks...\n`);
+    console.info(`\n📊 Running ${target} benchmarks...\n`);
   } else if (target === "--quick" || parts.includes("--quick")) {
     // Quick benchmark mode
     command = ["bun", "test", "test/performance/", "--bail"];
-    console.log(`\n⚡ Quick benchmark mode...\n`);
+    console.info(`\n⚡ Quick benchmark mode...\n`);
   } else {
     // Run full benchmark suite
     command = ["bun", "run", "bench"];
-    console.log(`\n📊 Running full benchmark suite...\n`);
+    console.info(`\n📊 Running full benchmark suite...\n`);
   }
 
   const proc = Bun.spawn(command, {

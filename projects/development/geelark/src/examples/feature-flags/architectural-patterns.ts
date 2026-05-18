@@ -16,7 +16,7 @@ export class FeatureGatedExports {
 
     // Core services (always available)
     services.core = {
-      logging: () => console.log("Core logging service"),
+      logging: () => console.info("Core logging service"),
       config: () => ({ env: "core" }),
       utils: { format: (str: string) => str.trim() },
     };
@@ -24,27 +24,27 @@ export class FeatureGatedExports {
     // Premium services (only in premium builds)
     if (feature("FEAT_PREMIUM")) {
       services.premium = {
-        analytics: () => console.log("Premium analytics"),
-        advancedReporting: () => console.log("Advanced reporting"),
-        prioritySupport: () => console.log("Priority support"),
+        analytics: () => console.info("Premium analytics"),
+        advancedReporting: () => console.info("Advanced reporting"),
+        prioritySupport: () => console.info("Priority support"),
       };
     }
 
     // Enterprise services (only in enterprise builds)
     if (feature("FEAT_PREMIUM") && feature("FEAT_ENTERPRISE")) {
       services.enterprise = {
-        ssoIntegration: () => console.log("SSO integration"),
-        auditLogs: () => console.log("Enterprise audit logs"),
-        compliance: () => console.log("Compliance tools"),
+        ssoIntegration: () => console.info("SSO integration"),
+        auditLogs: () => console.info("Enterprise audit logs"),
+        compliance: () => console.info("Compliance tools"),
       };
     }
 
     // Development services (only in development builds)
     if (feature("ENV_DEVELOPMENT")) {
       services.development = {
-        mockData: () => console.log("Mock data service"),
-        debugTools: () => console.log("Debug tools"),
-        hotReload: () => console.log("Hot reload service"),
+        mockData: () => console.info("Mock data service"),
+        debugTools: () => console.info("Debug tools"),
+        hotReload: () => console.info("Hot reload service"),
       };
     }
 
@@ -58,7 +58,7 @@ export class FeatureGatedExports {
       analytics: () => {
         if (feature("FEAT_PREMIUM")) {
           return {
-            track: (event: string) => console.log(`🏆 Premium: ${event}`),
+            track: (event: string) => console.info(`🏆 Premium: ${event}`),
             report: () => ({
               tier: "premium",
               features: ["advanced", "real-time"],
@@ -66,7 +66,7 @@ export class FeatureGatedExports {
           };
         }
         return {
-          track: (event: string) => console.log(`📊 Basic: ${event}`),
+          track: (event: string) => console.info(`📊 Basic: ${event}`),
           report: () => ({ tier: "basic", features: ["simple"] }),
         };
       },
@@ -76,23 +76,23 @@ export class FeatureGatedExports {
         if (feature("PLATFORM_DESKTOP")) {
           return {
             type: "filesystem",
-            save: (key: string, data: any) => console.log(`💾 File: ${key}`),
-            load: (key: string) => console.log(`📖 File: ${key}`),
+            save: (key: string, data: any) => console.info(`💾 File: ${key}`),
+            load: (key: string) => console.info(`📖 File: ${key}`),
           };
         }
 
         if (feature("PLATFORM_WEB")) {
           return {
             type: "localStorage",
-            save: (key: string, data: any) => console.log(`🌐 Local: ${key}`),
-            load: (key: string) => console.log(`🌐 Local: ${key}`),
+            save: (key: string, data: any) => console.info(`🌐 Local: ${key}`),
+            load: (key: string) => console.info(`🌐 Local: ${key}`),
           };
         }
 
         return {
           type: "memory",
-          save: (key: string, data: any) => console.log(`🧠 Memory: ${key}`),
-          load: (key: string) => console.log(`🧠 Memory: ${key}`),
+          save: (key: string, data: any) => console.info(`🧠 Memory: ${key}`),
+          load: (key: string) => console.info(`🧠 Memory: ${key}`),
         };
       },
 
@@ -135,14 +135,14 @@ export class FeatureGatedExports {
     // Always export core modules
     modules.CoreModule = {
       name: "CoreModule",
-      initialize: () => console.log("Core module initialized"),
+      initialize: () => console.info("Core module initialized"),
     };
 
     // Conditionally export premium modules
     if (feature("FEAT_PREMIUM")) {
       modules.PremiumModule = {
         name: "PremiumModule",
-        initialize: () => console.log("Premium module initialized"),
+        initialize: () => console.info("Premium module initialized"),
         features: ["analytics", "batch_processing", "priority_support"],
       };
     }
@@ -151,7 +151,7 @@ export class FeatureGatedExports {
     if (feature("ENV_DEVELOPMENT")) {
       modules.DevModule = {
         name: "DevModule",
-        initialize: () => console.log("Dev module initialized"),
+        initialize: () => console.info("Dev module initialized"),
         tools: ["mock_api", "debug_tools", "hot_reload"],
       };
     }
@@ -175,7 +175,7 @@ export class FeatureGatedMiddleware {
         name: "auth",
         priority: 100,
         execute: (req: any, res: any, next: any) => {
-          console.log("🔐 Authentication middleware");
+          console.info("🔐 Authentication middleware");
           req.authenticated = true;
           next();
         },
@@ -188,7 +188,7 @@ export class FeatureGatedMiddleware {
         name: "rateLimit",
         priority: 90,
         execute: (req: any, res: any, next: any) => {
-          console.log("⚡ Rate limiting middleware");
+          console.info("⚡ Rate limiting middleware");
           next();
         },
       });
@@ -200,7 +200,7 @@ export class FeatureGatedMiddleware {
         name: "notifications",
         priority: 50,
         execute: (req: any, res: any, next: any) => {
-          console.log("🔔 Notification middleware");
+          console.info("🔔 Notification middleware");
           next();
         },
       });
@@ -212,7 +212,7 @@ export class FeatureGatedMiddleware {
         name: "analytics",
         priority: 30,
         execute: (req: any, res: any, next: any) => {
-          console.log("📊 Analytics middleware");
+          console.info("📊 Analytics middleware");
           next();
         },
       });
@@ -224,8 +224,8 @@ export class FeatureGatedMiddleware {
         name: "debug",
         priority: 10,
         execute: (req: any, res: any, next: any) => {
-          console.log("🐛 Debug middleware");
-          console.log(`Request: ${req.method} ${req.url}`);
+          console.info("🐛 Debug middleware");
+          console.info(`Request: ${req.method} ${req.url}`);
           next();
         },
       });
@@ -246,7 +246,7 @@ export class FeatureGatedMiddleware {
           securityMiddleware.push({
             name: "encryption",
             execute: (req: any, res: any, next: any) => {
-              console.log("🔐 Encryption middleware");
+              console.info("🔐 Encryption middleware");
               next();
             },
           });
@@ -256,7 +256,7 @@ export class FeatureGatedMiddleware {
           securityMiddleware.push({
             name: "strictValidation",
             execute: (req: any, res: any, next: any) => {
-              console.log("✅ Strict validation middleware");
+              console.info("✅ Strict validation middleware");
               next();
             },
           });
@@ -273,7 +273,7 @@ export class FeatureGatedMiddleware {
           performanceMiddleware.push({
             name: "cache",
             execute: (req: any, res: any, next: any) => {
-              console.log("⚡ Cache middleware");
+              console.info("⚡ Cache middleware");
               next();
             },
           });
@@ -283,7 +283,7 @@ export class FeatureGatedMiddleware {
           performanceMiddleware.push({
             name: "compression",
             execute: (req: any, res: any, next: any) => {
-              console.log("🗜️ Compression middleware");
+              console.info("🗜️ Compression middleware");
               next();
             },
           });
@@ -293,7 +293,7 @@ export class FeatureGatedMiddleware {
           performanceMiddleware.push({
             name: "batch",
             execute: (req: any, res: any, next: any) => {
-              console.log("📦 Batch processing middleware");
+              console.info("📦 Batch processing middleware");
               next();
             },
           });
@@ -310,7 +310,7 @@ export class FeatureGatedMiddleware {
           monitoringMiddleware.push({
             name: "notifications",
             execute: (req: any, res: any, next: any) => {
-              console.log("🔔 Notification middleware");
+              console.info("🔔 Notification middleware");
               next();
             },
           });
@@ -320,7 +320,7 @@ export class FeatureGatedMiddleware {
           monitoringMiddleware.push({
             name: "advancedMonitoring",
             execute: (req: any, res: any, next: any) => {
-              console.log("📈 Advanced monitoring middleware");
+              console.info("📈 Advanced monitoring middleware");
               next();
             },
           });
@@ -330,7 +330,7 @@ export class FeatureGatedMiddleware {
           monitoringMiddleware.push({
             name: "autoHeal",
             execute: (req: any, res: any, next: any) => {
-              console.log("🔄 Auto-heal middleware");
+              console.info("🔄 Auto-heal middleware");
               next();
             },
           });
@@ -350,12 +350,12 @@ export class FeatureGatedMiddleware {
           return null;
         }
 
-        console.log(`🔧 Loading middleware: ${middlewarePath}`);
+        console.info(`🔧 Loading middleware: ${middlewarePath}`);
         // In a real implementation, this would dynamically import the middleware
         return {
           name: featureName,
           execute: (req: any, res: any, next: any) => {
-            console.log(`⚡ ${featureName} middleware executed`);
+            console.info(`⚡ ${featureName} middleware executed`);
             next();
           },
         };
@@ -437,7 +437,7 @@ export class ArchitecturalPatterns {
       name: "core",
       version: "1.0.0",
       features: ["basic", "essential"],
-      initialize: () => console.log("🔧 Core plugin initialized"),
+      initialize: () => console.info("🔧 Core plugin initialized"),
     });
 
     // Premium plugins (conditional)
@@ -446,14 +446,14 @@ export class ArchitecturalPatterns {
         name: "analytics",
         version: "2.0.0",
         features: ["tracking", "reporting", "insights"],
-        initialize: () => console.log("📊 Analytics plugin initialized"),
+        initialize: () => console.info("📊 Analytics plugin initialized"),
       });
 
       plugins.push({
         name: "batchProcessing",
         version: "1.5.0",
         features: ["batch", "queue", "worker"],
-        initialize: () => console.log("📦 Batch processing plugin initialized"),
+        initialize: () => console.info("📦 Batch processing plugin initialized"),
       });
     }
 
@@ -463,7 +463,7 @@ export class ArchitecturalPatterns {
         name: "monitoring",
         version: "3.0.0",
         features: ["metrics", "alerts", "dashboards"],
-        initialize: () => console.log("📈 Monitoring plugin initialized"),
+        initialize: () => console.info("📈 Monitoring plugin initialized"),
       });
     }
 
@@ -473,7 +473,7 @@ export class ArchitecturalPatterns {
         name: "debugTools",
         version: "0.5.0",
         features: ["debug", "inspect", "profile"],
-        initialize: () => console.log("🐛 Debug tools plugin initialized"),
+        initialize: () => console.info("🐛 Debug tools plugin initialized"),
       });
     }
 
@@ -559,13 +559,13 @@ export class CompositePatterns {
     // Core routes (always available)
     routes.push({
       path: "/",
-      handler: () => console.log("🏠 Home route"),
+      handler: () => console.info("🏠 Home route"),
       features: [],
     });
 
     routes.push({
       path: "/health",
-      handler: () => console.log("💚 Health check route"),
+      handler: () => console.info("💚 Health check route"),
       features: [],
     });
 
@@ -573,13 +573,13 @@ export class CompositePatterns {
     if (feature("FEAT_PREMIUM")) {
       routes.push({
         path: "/analytics",
-        handler: () => console.log("📊 Analytics route"),
+        handler: () => console.info("📊 Analytics route"),
         features: ["FEAT_PREMIUM"],
       });
 
       routes.push({
         path: "/premium",
-        handler: () => console.log("🏆 Premium dashboard"),
+        handler: () => console.info("🏆 Premium dashboard"),
         features: ["FEAT_PREMIUM"],
       });
     }
@@ -588,7 +588,7 @@ export class CompositePatterns {
     if (feature("FEAT_PREMIUM") && feature("FEAT_ADVANCED_MONITORING")) {
       routes.push({
         path: "/admin",
-        handler: () => console.log("🔐 Admin panel"),
+        handler: () => console.info("🔐 Admin panel"),
         features: ["FEAT_PREMIUM", "FEAT_ADVANCED_MONITORING"],
       });
     }
@@ -597,7 +597,7 @@ export class CompositePatterns {
     if (feature("ENV_DEVELOPMENT")) {
       routes.push({
         path: "/debug",
-        handler: () => console.log("🐛 Debug tools"),
+        handler: () => console.info("🐛 Debug tools"),
         features: ["ENV_DEVELOPMENT"],
       });
     }
@@ -693,7 +693,7 @@ export class CompositePatterns {
 
     // Register core services
     services.set("logger", {
-      factory: () => ({ log: (msg: string) => console.log(msg) }),
+      factory: () => ({ log: (msg: string) => console.info(msg) }),
       singleton: true,
       features: [],
     });
@@ -702,7 +702,7 @@ export class CompositePatterns {
     if (feature("FEAT_PREMIUM")) {
       services.set("analytics", {
         factory: () => ({
-          track: (event: string) => console.log(`Track: ${event}`),
+          track: (event: string) => console.info(`Track: ${event}`),
         }),
         singleton: false,
         features: ["FEAT_PREMIUM"],
@@ -744,29 +744,29 @@ export class CompositePatterns {
 export class InitializationPatterns {
   // Pattern 1: Feature-driven application initialization
   static initializeApplication() {
-    console.log("🚀 Initializing Feature-Gated Application");
+    console.info("🚀 Initializing Feature-Gated Application");
 
     // 1. Initialize core services
     const coreServices = FeatureGatedExports.createServices().core;
-    console.log("✅ Core services initialized");
+    console.info("✅ Core services initialized");
 
     // 2. Initialize feature-specific services
     if (feature("FEAT_PREMIUM")) {
       const premiumServices = FeatureGatedExports.createServices().premium;
-      console.log("✅ Premium services initialized");
+      console.info("✅ Premium services initialized");
     }
 
     // 3. Initialize middleware stack
     const middleware = FeatureGatedMiddleware.createMiddlewareStack();
-    console.log(`✅ ${middleware.length} middleware layers initialized`);
+    console.info(`✅ ${middleware.length} middleware layers initialized`);
 
     // 4. Initialize plugins
     const plugins = ArchitecturalPatterns.createPluginArchitecture();
-    console.log(`✅ ${plugins.plugins.length} plugins loaded`);
+    console.info(`✅ ${plugins.plugins.length} plugins loaded`);
 
     // 5. Initialize service registry
     const registry = ArchitecturalPatterns.createServiceRegistry();
-    console.log(`✅ ${registry.getAvailable().length} services registered`);
+    console.info(`✅ ${registry.getAvailable().length} services registered`);
 
     return {
       coreServices,
@@ -791,7 +791,7 @@ export class InitializationPatterns {
           return { featureNotAvailable: true };
         }
 
-        console.log(`🔧 Initializing ${featureName}...`);
+        console.info(`🔧 Initializing ${featureName}...`);
         const result = await initFn();
         initialized.add(featureName);
 
@@ -806,8 +806,8 @@ export class InitializationPatterns {
 
 // Auto-initialize when imported in development
 if (feature("ENV_DEVELOPMENT")) {
-  console.log("🏗️ Architectural patterns available");
-  console.log(
+  console.info("🏗️ Architectural patterns available");
+  console.info(
     "Run: InitializationPatterns.initializeApplication() to initialize"
   );
 }

@@ -58,34 +58,34 @@ class MatrixTestRunner {
   }
 
   private setupEnvironment(): void {
-    console.log('🔧 Setting up test matrix environment...');
+    console.info('🔧 Setting up test matrix environment...');
     
     // Display current configuration
-    console.log('\n📊 Test Matrix Configuration:');
-    console.log(`   Total Tests: ${Object.keys(TEST_MATRIX).length}`);
-    console.log(`   Enabled Tests: ${Object.keys(TEST_MATRIX).filter(key => isTestEnabled(key)).length}`);
+    console.info('\n📊 Test Matrix Configuration:');
+    console.info(`   Total Tests: ${Object.keys(TEST_MATRIX).length}`);
+    console.info(`   Enabled Tests: ${Object.keys(TEST_MATRIX).filter(key => isTestEnabled(key)).length}`);
     
     const summary = getMatrixSummary();
-    console.log(`   Categories: ${summary.categories.join(', ')}`);
-    console.log(`   Priorities: ${summary.priorities.join(', ')}`);
+    console.info(`   Categories: ${summary.categories.join(', ')}`);
+    console.info(`   Priorities: ${summary.priorities.join(', ')}`);
     
-    console.log('\n🎛️ Environment Controls:');
+    console.info('\n🎛️ Environment Controls:');
     Object.entries(ENV_CONTROLS).forEach(([key, value]) => {
       if (key.startsWith('BUN_TEST_')) {
-        console.log(`   ${key}: ${value}`);
+        console.info(`   ${key}: ${value}`);
       }
     });
     
-    console.log('\n⚙️ Execution Controls:');
+    console.info('\n⚙️ Execution Controls:');
     const execControls = getExecutionControlSummary();
-    console.log(`   Timeout: ${execControls.timeout}ms`);
-    console.log(`   Rerun Each: ${execControls.rerunEach}x`);
-    console.log(`   Concurrent: ${execControls.concurrent}`);
-    console.log(`   Randomize: ${execControls.randomize}`);
-    console.log(`   Seed: ${execControls.seed || 'auto'}`);
-    console.log(`   Bail: ${execControls.bail}`);
-    console.log(`   Max Concurrency: ${execControls.maxConcurrency}`);
-    console.log(`   Command: bun ${execControls.commandArgs.join(' ')}`);
+    console.info(`   Timeout: ${execControls.timeout}ms`);
+    console.info(`   Rerun Each: ${execControls.rerunEach}x`);
+    console.info(`   Concurrent: ${execControls.concurrent}`);
+    console.info(`   Randomize: ${execControls.randomize}`);
+    console.info(`   Seed: ${execControls.seed || 'auto'}`);
+    console.info(`   Bail: ${execControls.bail}`);
+    console.info(`   Max Concurrency: ${execControls.maxConcurrency}`);
+    console.info(`   Command: bun ${execControls.commandArgs.join(' ')}`);
   }
 
   async runTests(options: {
@@ -96,7 +96,7 @@ class MatrixTestRunner {
   } = {}): Promise<void> {
     const { category, priority, parallel = false, dryRun = false } = options;
     
-    console.log('\n🚀 Starting matrix test execution...');
+    console.info('\n🚀 Starting matrix test execution...');
     
     // Get tests to run based on filters
     let testsToRun = getExecutionOrder();
@@ -109,7 +109,7 @@ class MatrixTestRunner {
       testsToRun = testsToRun.filter(key => getTestPriority(key) === priority);
     }
     
-    console.log(`\n📋 Tests to execute: ${testsToRun.length}`);
+    console.info(`\n📋 Tests to execute: ${testsToRun.length}`);
     
     // Initialize total tests for progress tracking
     this.totalTests = testsToRun.length;
@@ -131,7 +131,7 @@ class MatrixTestRunner {
       });
     }
     
-    console.log('\n🔄 Executing tests with real-time status updates...\n');
+    console.info('\n🔄 Executing tests with real-time status updates...\n');
     
     // Execute tests
     if (parallel) {
@@ -141,16 +141,16 @@ class MatrixTestRunner {
     }
     
     // Final status update
-    console.log('\n');
+    console.info('\n');
     this.updateStatusDisplay();
-    console.log('\n');
+    console.info('\n');
     
     // Generate report
     await this.generateReport();
   }
 
   private printExecutionPlan(tests: string[]): void {
-    console.log('\n📋 Execution Plan:');
+    console.info('\n📋 Execution Plan:');
     console.table(tests.map(testKey => ({
       'Test Key': testKey,
       'Category': getTestCategory(testKey),
@@ -160,7 +160,7 @@ class MatrixTestRunner {
   }
 
   private async runTestsSequential(tests: string[]): Promise<void> {
-    console.log('\n🔄 Running tests sequentially...');
+    console.info('\n🔄 Running tests sequentially...');
     
     for (const testKey of tests) {
       await this.runSingleTest(testKey);
@@ -168,7 +168,7 @@ class MatrixTestRunner {
   }
 
   private async runTestsParallel(tests: string[]): Promise<void> {
-    console.log('\n⚡ Running tests in parallel...');
+    console.info('\n⚡ Running tests in parallel...');
     
     const promises = tests.map(testKey => this.runSingleTest(testKey));
     await Promise.all(promises);
@@ -180,7 +180,7 @@ class MatrixTestRunner {
     // Update status to running
     this.updateTestStatus(testKey, 'running', 0);
     
-    console.log(`\n🧪 Starting ${testKey} (${result.category} - ${result.priority})...`);
+    console.info(`\n🧪 Starting ${testKey} (${result.category} - ${result.priority})...`);
     
     const startTime = Date.now();
     
@@ -233,7 +233,7 @@ class MatrixTestRunner {
       
       this.updateTestStatus(testKey, 'passed', 100);
       
-      console.log(`✅ ${testKey} passed (${result.duration}ms)`);
+      console.info(`✅ ${testKey} passed (${result.duration}ms)`);
       
     } catch (error) {
       // Clear progress interval if it exists
@@ -246,7 +246,7 @@ class MatrixTestRunner {
       
       this.updateTestStatus(testKey, 'failed', currentProgress);
       
-      console.log(`❌ ${testKey} failed: ${result.error}`);
+      console.info(`❌ ${testKey} failed: ${result.error}`);
     }
   }
 
@@ -309,7 +309,7 @@ class MatrixTestRunner {
   }
 
   private async generateReport(): Promise<void> {
-    console.log('\n📊 Generating test matrix report...');
+    console.info('\n📊 Generating test matrix report...');
     
     const totalDuration = Date.now() - this.startTime;
     const results = Array.from(this.results.values());
@@ -327,11 +327,11 @@ class MatrixTestRunner {
         : 0
     };
     
-    console.log('\n📈 Test Matrix Results:');
+    console.info('\n📈 Test Matrix Results:');
     console.table(summary);
     
     // Enhanced detailed results with status
-    console.log('\n📋 Detailed Results with Status:');
+    console.info('\n📋 Detailed Results with Status:');
     console.table(results.map(r => ({
       'Test': r.testKey,
       'Category': r.category,
@@ -358,7 +358,7 @@ class MatrixTestRunner {
       JSON.stringify(reportData, null, 2)
     );
     
-    console.log('\n📄 Report saved to: reports/test-matrix-report.json');
+    console.info('\n📄 Report saved to: reports/test-matrix-report.json');
   }
 
   private getCategoryBreakdown(): Record<string, any> {
@@ -394,7 +394,7 @@ class MatrixTestRunner {
   }
 
   public showHelp(): void {
-    console.log(`
+    console.info(`
 🚀 Matrix Test Runner - Enhanced Test Execution with Matrix Control
 
 📖 USAGE:

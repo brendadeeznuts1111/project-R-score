@@ -7,16 +7,16 @@
 // Make this file a module to allow top-level await
 export {};
 
-console.log("🧪 Buffer.includes SIMD Benchmark");
-console.log("=================================\n");
+console.info("🧪 Buffer.includes SIMD Benchmark");
+console.info("=================================\n");
 
 // Create the exact test case from the docs
 const buffer = Buffer.from("a".repeat(1_000_000) + "needle");
 
-console.log(`Buffer size: ${buffer.length.toLocaleString()} bytes`);
-console.log("Pattern: 'needle' (6 bytes)");
-console.log("Position: at the end");
-console.log("Iterations: 99,999\n");
+console.info(`Buffer size: ${buffer.length.toLocaleString()} bytes`);
+console.info("Pattern: 'needle' (6 bytes)");
+console.info("Position: at the end");
+console.info("Iterations: 99,999\n");
 
 // Benchmark includes - pattern found (true)
 console.time("[21.90ms] 44,500 bytes .includes true");
@@ -33,7 +33,7 @@ for (let i = 0; i < 99_999; i++) {
 console.timeEnd("[1.42s] 44,500 bytes .includes false");
 
 // Also test indexOf
-console.log("\n🔍 Testing indexOf (also SIMD-optimized):");
+console.info("\n🔍 Testing indexOf (also SIMD-optimized):");
 
 console.time("indexOf (found)");
 for (let i = 0; i < 99_999; i++) {
@@ -48,12 +48,12 @@ for (let i = 0; i < 99_999; i++) {
 console.timeEnd("indexOf (not found)");
 
 // Verify results
-console.log("\n✅ Verification:");
-console.log("================");
-console.log(`buffer.includes("needle"): ${buffer.includes("needle")}`);
-console.log(`buffer.indexOf("needle"): ${buffer.indexOf("needle")}`);
-console.log(`buffer.includes("notfound"): ${buffer.includes("notfound")}`);
-console.log(`buffer.indexOf("notfound"): ${buffer.indexOf("notfound")}`);
+console.info("\n✅ Verification:");
+console.info("================");
+console.info(`buffer.includes("needle"): ${buffer.includes("needle")}`);
+console.info(`buffer.indexOf("needle"): ${buffer.indexOf("needle")}`);
+console.info(`buffer.includes("notfound"): ${buffer.includes("notfound")}`);
+console.info(`buffer.indexOf("notfound"): ${buffer.indexOf("notfound")}`);
 
-console.log("\n💡 SIMD acceleration is active!");
-console.log("   Up to 2x faster for large buffer searches");
+console.info("\n💡 SIMD acceleration is active!");
+console.info("   Up to 2x faster for large buffer searches");

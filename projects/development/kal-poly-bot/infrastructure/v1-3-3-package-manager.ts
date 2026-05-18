@@ -35,7 +35,7 @@ export class NoPeerDepsOptimizer {
     const packageJson = await Bun.file(packageJsonPath).json();
 
     if (this.shouldSkipPeerDependencyWait(packageJson)) {
-      console.log("[Optimizer] No peer dependencies detected, skipping wait");
+      console.info("[Optimizer] No peer dependencies detected, skipping wait");
       this.logOptimization("skip_peer_wait", packageJsonPath);
       return;
     }

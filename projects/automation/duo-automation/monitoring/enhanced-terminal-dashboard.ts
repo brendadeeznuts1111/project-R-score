@@ -3,11 +3,11 @@ import { feature } from "bun:bundle";
 
 // Feature flag based imports and initialization
 if (feature("ADVANCED_MONITORING")) {
-  console.log("🚀 Advanced monitoring features enabled");
+  console.info("🚀 Advanced monitoring features enabled");
 }
 
 if (feature("DEBUG_MODE")) {
-  console.log("🐛 Debug mode active - verbose logging enabled");
+  console.info("🐛 Debug mode active - verbose logging enabled");
 }
 
 export interface EnhancedTerminalMetrics {
@@ -96,12 +96,12 @@ export class EnhancedDuplexMonitor {
     };
     
     if (this.options.debugMode) {
-      console.log("🐛 Enhanced monitor initialized in debug mode");
+      console.info("🐛 Enhanced monitor initialized in debug mode");
     }
   }
   
   async startMonitoring() {
-    console.log('🚀 Starting Enhanced DuoPlus Terminal Monitoring Dashboard...');
+    console.info('🚀 Starting Enhanced DuoPlus Terminal Monitoring Dashboard...');
     
     // Create main monitoring terminal with PTY support
     this.mainTerminal = await this.createEnhancedTerminal();
@@ -132,14 +132,14 @@ export class EnhancedDuplexMonitor {
     // Initial dashboard render
     await this.updateDashboard(this.mainTerminal);
     
-    console.log('✅ Enhanced terminal monitoring dashboard started successfully!');
-    console.log(`🖥️ Dashboard: ${this.mainTerminal.cols}x${this.mainTerminal.rows}`);
-    console.log(`🔄 Update interval: ${this.options.updateInterval}ms`);
-    console.log(`🚀 PTY Support: ${this.options.enablePTY ? 'enabled' : 'disabled'}`);
-    console.log(`🐛 Debug Mode: ${this.options.debugMode ? 'enabled' : 'disabled'}`);
+    console.info('✅ Enhanced terminal monitoring dashboard started successfully!');
+    console.info(`🖥️ Dashboard: ${this.mainTerminal.cols}x${this.mainTerminal.rows}`);
+    console.info(`🔄 Update interval: ${this.options.updateInterval}ms`);
+    console.info(`🚀 PTY Support: ${this.options.enablePTY ? 'enabled' : 'disabled'}`);
+    console.info(`🐛 Debug Mode: ${this.options.debugMode ? 'enabled' : 'disabled'}`);
     
     if (feature("ADVANCED_MONITORING")) {
-      console.log(`📈 Advanced Monitoring: enabled`);
+      console.info(`📈 Advanced Monitoring: enabled`);
     }
   }
   
@@ -162,7 +162,7 @@ export class EnhancedDuplexMonitor {
   private handleTerminalData(terminal: any, data: string) {
     // Handle keyboard input for interactive controls
     if (this.options.debugMode) {
-      console.log(`🐛 Terminal input: ${data.replace(/\n/g, '\\n')}`);
+      console.info(`🐛 Terminal input: ${data.replace(/\n/g, '\\n')}`);
     }
     
     // Handle monitoring commands
@@ -194,7 +194,7 @@ export class EnhancedDuplexMonitor {
   }
   
   private setupPTYSessionManagement() {
-    console.log('🖥️ Setting up PTY session management...');
+    console.info('🖥️ Setting up PTY session management...');
     
     // Create PTY session manager
     const ptyManager = new Bun.Terminal({
@@ -213,7 +213,7 @@ export class EnhancedDuplexMonitor {
     const sessionId = `pty_${Date.now()}`;
     
     if (this.options.debugMode) {
-      console.log(`🐛 Creating PTY session: ${sessionId}`);
+      console.info(`🐛 Creating PTY session: ${sessionId}`);
     }
     
     // Create new terminal for PTY session
@@ -266,7 +266,7 @@ export class EnhancedDuplexMonitor {
       const sessionId = this.findPTYSessionByTerminal(terminal);
       if (sessionId) {
         this.ptySessions.delete(sessionId);
-        console.log(`🗑️ PTY session ${sessionId} cleaned up`);
+        console.info(`🗑️ PTY session ${sessionId} cleaned up`);
       }
     }
   }
@@ -291,7 +291,7 @@ export class EnhancedDuplexMonitor {
         this.options.rows = newRows;
         
         if (this.options.debugMode) {
-          console.log(`🐛 Terminal resized to ${newCols}x${newRows}`);
+          console.info(`🐛 Terminal resized to ${newCols}x${newRows}`);
         }
         
         // Redraw dashboard with new dimensions
@@ -336,17 +336,17 @@ export class EnhancedDuplexMonitor {
         });
       });
       
-      console.log(`👀 Watching feature flags: ${featuresPath}`);
+      console.info(`👀 Watching feature flags: ${featuresPath}`);
       
     } catch (error) {
-      console.log(`⚠️ Could not setup feature flag watching: ${error}`);
+      console.info(`⚠️ Could not setup feature flag watching: ${error}`);
     }
   }
   
   private async rebuildWithFeatures(features: Record<string, boolean>) {
     try {
       if (this.options.debugMode) {
-        console.log('🔨 Rebuilding with new features...');
+        console.info('🔨 Rebuilding with new features...');
       }
       
       // Use Bun.build with compile-time feature flags
@@ -359,12 +359,12 @@ export class EnhancedDuplexMonitor {
       });
       
       if (buildResult.success) {
-        console.log('✅ Build completed successfully');
+        console.info('✅ Build completed successfully');
         
         if (this.options.debugMode) {
-          console.log(`📦 Built ${buildResult.outputs.length} files`);
+          console.info(`📦 Built ${buildResult.outputs.length} files`);
           buildResult.outputs.forEach(output => {
-            console.log(`   - ${output.path}`);
+            console.info(`   - ${output.path}`);
           });
         }
       } else {
@@ -612,7 +612,7 @@ export class EnhancedDuplexMonitor {
   
   private toggleDebugMode() {
     this.options.debugMode = !this.options.debugMode;
-    console.log(`🐛 Debug mode ${this.options.debugMode ? 'enabled' : 'disabled'}`);
+    console.info(`🐛 Debug mode ${this.options.debugMode ? 'enabled' : 'disabled'}`);
     
     if (this.mainTerminal) {
       this.mainTerminal.write(`\n🐛 Debug mode ${this.options.debugMode ? 'enabled' : 'disabled'}\n`);
@@ -734,14 +734,14 @@ export class EnhancedDuplexMonitor {
   }
   
   private async restartServices() {
-    console.log('🔄 Restarting enhanced services...');
+    console.info('🔄 Restarting enhanced services...');
     await new Promise(resolve => setTimeout(resolve, 2000));
-    console.log('✅ Enhanced services restarted successfully');
+    console.info('✅ Enhanced services restarted successfully');
   }
   
   private setupSignalHandlers() {
     const gracefulShutdown = () => {
-      console.log('\n🛑 Shutting down enhanced monitoring gracefully...');
+      console.info('\n🛑 Shutting down enhanced monitoring gracefully...');
       this.stopMonitoring();
       process.exit(0);
     };
@@ -771,7 +771,7 @@ export class EnhancedDuplexMonitor {
     });
     this.terminals.clear();
     
-    console.log('✅ Enhanced terminal monitoring stopped');
+    console.info('✅ Enhanced terminal monitoring stopped');
   }
 }
 

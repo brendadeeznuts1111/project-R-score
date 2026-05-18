@@ -150,7 +150,7 @@ export class EnhancedValidatorManager {
      * Initialize auto-optimization system
      */
     private initializeAutoOptimization(): void {
-        console.log('🤖 Initializing auto-optimization system...');
+        console.info('🤖 Initializing auto-optimization system...');
         // Set up periodic optimization checks
         setInterval(() => {
             this.performAutoOptimization();
@@ -162,7 +162,7 @@ export class EnhancedValidatorManager {
      */
     private async performAutoOptimization(): Promise<void> {
         try {
-            console.log('🔧 Performing auto-optimization...');
+            console.info('🔧 Performing auto-optimization...');
             const analytics = await this.getRuleAnalytics();
 
             // Remove underperforming rules
@@ -171,10 +171,10 @@ export class EnhancedValidatorManager {
             );
 
             for (const rule of underperformingRules) {
-                console.log(`🗑️ Would remove underperforming rule: ${rule.ruleName}`);
+                console.info(`🗑️ Would remove underperforming rule: ${rule.ruleName}`);
             }
 
-            console.log('✅ Auto-optimization complete');
+            console.info('✅ Auto-optimization complete');
         } catch (error) {
             console.error('❌ Auto-optimization failed:', error);
         }
@@ -189,7 +189,7 @@ export class EnhancedValidatorManager {
         const nodes = new Map<string, ObsidianNode>();
         const vaultGraph = new MockVaultGraph();
 
-        console.log(`🔍 Building vault graph from ${files.length} files...`);
+        console.info(`🔍 Building vault graph from ${files.length} files...`);
 
         // Convert all files to nodes
         for (const file of files) {
@@ -204,7 +204,7 @@ export class EnhancedValidatorManager {
         // Build neighbor relationships
         await this.buildNeighborRelationships(nodes);
 
-        console.log(`✅ Vault graph built: ${nodes.size} nodes, ${this.calculateEdgeCount(vaultGraph)} edges`);
+        console.info(`✅ Vault graph built: ${nodes.size} nodes, ${this.calculateEdgeCount(vaultGraph)} edges`);
         return vaultGraph;
     }
 
@@ -290,7 +290,7 @@ export class EnhancedValidatorManager {
      * Build neighbor relationships between nodes
      */
     private async buildNeighborRelationships(nodes: Map<string, ObsidianNode>): Promise<void> {
-        console.log('🔗 Building neighbor relationships...');
+        console.info('🔗 Building neighbor relationships...');
 
         // Build backlink relationships
         nodes.forEach((node, path) => {
@@ -328,14 +328,14 @@ export class EnhancedValidatorManager {
             });
         });
 
-        console.log('✅ Neighbor relationships built');
+        console.info('✅ Neighbor relationships built');
     }
 
     /**
      * Validate the vault and return comprehensive results
      */
     async validateVault(): Promise<ValidationReport> {
-        console.log('🔍 Starting vault validation...');
+        console.info('🔍 Starting vault validation...');
 
         // Build the vault graph
         const graph = await this.buildVaultGraph();
@@ -369,7 +369,7 @@ export class EnhancedValidatorManager {
             analytics: await this.getRuleAnalytics()
         };
 
-        console.log('✅ Validation complete:', report);
+        console.info('✅ Validation complete:', report);
         return report;
     }
 

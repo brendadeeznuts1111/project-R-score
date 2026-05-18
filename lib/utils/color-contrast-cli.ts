@@ -23,39 +23,39 @@ function printContrastResult(
   const fgAnsi = hslToAnsi(foreground);
   const bgAnsi = hslToAnsi(background);
 
-  console.log('\n♿ Contrast Analysis\n');
-  console.log('═'.repeat(80));
+  console.info('\n♿ Contrast Analysis\n');
+  console.info('═'.repeat(80));
 
-  console.log('\n🎨 Colors:');
-  console.log(`  Foreground: ${fgAnsi}███${RESET} ${fgHex} ${formatHSL(foreground)}`);
-  console.log(`  Background: ${bgAnsi}███${RESET} ${bgHex} ${formatHSL(background)}`);
+  console.info('\n🎨 Colors:');
+  console.info(`  Foreground: ${fgAnsi}███${RESET} ${fgHex} ${formatHSL(foreground)}`);
+  console.info(`  Background: ${bgAnsi}███${RESET} ${bgHex} ${formatHSL(background)}`);
 
-  console.log('\n📊 Results:');
+  console.info('\n📊 Results:');
   const ratio = result.ratio;
   const levelColor = result.wcagAAA ? 'success' : result.wcagAA ? 'warning' : 'error';
   const levelEmoji = result.wcagAAA ? '✅' : result.wcagAA ? '⚠️' : '❌';
 
-  console.log(`  Contrast Ratio: ${ratio.toFixed(2)}:1`);
-  console.log(`  WCAG Level: ${levelEmoji} ${result.level.toUpperCase()}`);
-  console.log(`  WCAG AA (Normal): ${result.wcagAA ? '✅ Pass' : '❌ Fail'} (≥4.5:1)`);
-  console.log(`  WCAG AAA (Enhanced): ${result.wcagAAA ? '✅ Pass' : '❌ Fail'} (≥7:1)`);
+  console.info(`  Contrast Ratio: ${ratio.toFixed(2)}:1`);
+  console.info(`  WCAG Level: ${levelEmoji} ${result.level.toUpperCase()}`);
+  console.info(`  WCAG AA (Normal): ${result.wcagAA ? '✅ Pass' : '❌ Fail'} (≥4.5:1)`);
+  console.info(`  WCAG AAA (Enhanced): ${result.wcagAAA ? '✅ Pass' : '❌ Fail'} (≥7:1)`);
 
   if (!result.wcagAA) {
-    console.log('\n💡 Recommendations:');
-    console.log('  • Increase lightness difference between foreground and background');
-    console.log('  • Use higher saturation for better contrast');
-    console.log('  • Consider using a darker/lighter variant');
+    console.info('\n💡 Recommendations:');
+    console.info('  • Increase lightness difference between foreground and background');
+    console.info('  • Use higher saturation for better contrast');
+    console.info('  • Consider using a darker/lighter variant');
   }
 
-  console.log('\n' + '═'.repeat(80));
+  console.info('\n' + '═'.repeat(80));
 }
 
 function printAccessibleForeground(
   background: { h: number; s: number; l: number },
   preferredHue?: number
 ): void {
-  console.log('\n🔍 Finding Accessible Foreground Colors\n');
-  console.log('═'.repeat(80));
+  console.info('\n🔍 Finding Accessible Foreground Colors\n');
+  console.info('═'.repeat(80));
 
   const targets = [
     { name: 'WCAG AA', ratio: 4.5 },
@@ -68,12 +68,12 @@ function printAccessibleForeground(
     const fgHex = hslToHex(foreground);
     const fgAnsi = hslToAnsi(foreground);
 
-    console.log(`\n${target.name} (≥${target.ratio}:1):`);
-    console.log(`  ${fgAnsi}███${RESET} ${fgHex} ${formatHSL(foreground)}`);
-    console.log(`  Actual Ratio: ${result.ratio.toFixed(2)}:1 ${result.wcagAA ? '✅' : '❌'}`);
+    console.info(`\n${target.name} (≥${target.ratio}:1):`);
+    console.info(`  ${fgAnsi}███${RESET} ${fgHex} ${formatHSL(foreground)}`);
+    console.info(`  Actual Ratio: ${result.ratio.toFixed(2)}:1 ${result.wcagAA ? '✅' : '❌'}`);
   });
 
-  console.log('\n' + '═'.repeat(80));
+  console.info('\n' + '═'.repeat(80));
 }
 
 function main(): void {
@@ -164,7 +164,7 @@ function main(): void {
     } else if (arg.startsWith('--hue=')) {
       preferredHue = parseInt(arg.split('=')[1], 10);
     } else if (arg === '--help' || arg === '-h') {
-      console.log(`
+      console.info(`
 ♿ Color Contrast Checker (WCAG Accessibility)
 
 Usage:
@@ -204,7 +204,7 @@ Examples:
 
   if (!foreground || !background) {
     console.error('❌ Error: Both --foreground and --background required');
-    console.log('Use --help for usage information');
+    console.info('Use --help for usage information');
     process.exit(1);
   }
 

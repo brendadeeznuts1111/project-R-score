@@ -20,7 +20,7 @@ export class SecretsManagerService {
    * Initialize and register the service
    */
   public async initialize(): Promise<void> {
-    console.log('🔐 Initializing Secrets Manager Service...');
+    console.info('🔐 Initializing Secrets Manager Service...');
     
     this.coordinator.registerComponent('secrets-manager', {
       componentName: 'secrets-manager',
@@ -41,7 +41,7 @@ export class SecretsManagerService {
       status: 'HEALTHY'
     });
 
-    console.log('✅ Secrets Manager Service ready');
+    console.info('✅ Secrets Manager Service ready');
   }
 
   /**

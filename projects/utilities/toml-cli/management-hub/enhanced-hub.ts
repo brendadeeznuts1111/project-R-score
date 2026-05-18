@@ -27,7 +27,7 @@ export class EnhancedManagementHub {
   private messageHandlers: Map<string, Function[]> = new Map();
 
   constructor() {
-    console.log('🔗 Enhanced Management Hub initialized');
+    console.info('🔗 Enhanced Management Hub initialized');
     this.startHeartbeat();
   }
 
@@ -61,7 +61,7 @@ export class EnhancedManagementHub {
     };
 
     this.clients.set(client.id, fullClient);
-    console.log(`📝 Client registered: ${client.id} (${client.type})`);
+    console.info(`📝 Client registered: ${client.id} (${client.type})`);
 
     return fullClient;
   }
@@ -80,13 +80,13 @@ export class EnhancedManagementHub {
       // Send to specific client
       const client = this.clients.get(targetClientId);
       if (client && client.connected) {
-        console.log(`📤 Message sent to ${targetClientId}: ${message.type}`);
+        console.info(`📤 Message sent to ${targetClientId}: ${message.type}`);
         // In real implementation, send via IPC/WebSocket/etc.
       }
     } else {
       // Broadcast to all connected clients
       const connectedClients = Array.from(this.clients.values()).filter(c => c.connected);
-      console.log(`📢 Message broadcast to ${connectedClients.length} clients: ${message.type}`);
+      console.info(`📢 Message broadcast to ${connectedClients.length} clients: ${message.type}`);
       // In real implementation, broadcast via IPC/WebSocket/etc.
     }
 
@@ -111,7 +111,7 @@ export class EnhancedManagementHub {
    * Handle incoming message
    */
   async handleMessage(message: HubMessage, sender: HubClient): Promise<any> {
-    console.log(`📨 Message received from ${sender.id}: ${message.type}`);
+    console.info(`📨 Message received from ${sender.id}: ${message.type}`);
 
     // Update sender's last seen
     sender.lastSeen = new Date().toISOString();
@@ -156,7 +156,7 @@ export class EnhancedManagementHub {
     if (client) {
       client.connected = false;
       client.lastSeen = new Date().toISOString();
-      console.log(`🔌 Client disconnected: ${clientId}`);
+      console.info(`🔌 Client disconnected: ${clientId}`);
     }
   }
 
@@ -192,7 +192,7 @@ export class EnhancedManagementHub {
       for (const [clientId, client] of this.clients) {
         const lastSeen = new Date(client.lastSeen).getTime();
         if (now - lastSeen > timeoutMs && client.connected) {
-          console.log(`⏰ Client heartbeat timeout: ${clientId}`);
+          console.info(`⏰ Client heartbeat timeout: ${clientId}`);
           this.disconnectClient(clientId);
         }
       }
@@ -206,12 +206,12 @@ export class EnhancedManagementHub {
     const stats = this.getStatistics();
     const clients = this.getConnectedClients();
 
-    console.log('\n🔗 MANAGEMENT HUB STATUS');
-    console.log('═'.repeat(50));
+    console.info('\n🔗 MANAGEMENT HUB STATUS');
+    console.info('═'.repeat(50));
 
     // Hub statistics
-    console.log('📊 Hub Statistics:');
-    console.log(Bun.inspect.table([stats], {
+    console.info('📊 Hub Statistics:');
+    console.info(Bun.inspect.table([stats], {
       colors: true,
       indent: 2,
       maxWidth: 80
@@ -219,21 +219,21 @@ export class EnhancedManagementHub {
 
     // Connected clients
     if (clients.length > 0) {
-      console.log('\n🤝 Connected Clients:');
-      console.log(Bun.inspect.table(clients, {
+      console.info('\n🤝 Connected Clients:');
+      console.info(Bun.inspect.table(clients, {
         colors: true,
         indent: 2,
         maxWidth: 100
       }));
     } else {
-      console.log('\n🤝 No connected clients');
+      console.info('\n🤝 No connected clients');
     }
 
     // Recent messages
     const recentMessages = this.messageQueue.slice(-5);
     if (recentMessages.length > 0) {
-      console.log('\n💬 Recent Messages:');
-      console.log(Bun.inspect.table(recentMessages.map(msg => ({
+      console.info('\n💬 Recent Messages:');
+      console.info(Bun.inspect.table(recentMessages.map(msg => ({
         Type: msg.type,
         Source: msg.source,
         Time: new Date(msg.timestamp).toLocaleTimeString(),

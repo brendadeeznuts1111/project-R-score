@@ -29,8 +29,8 @@ function bench(name: string, fn: () => void, iters = ITERATIONS): BenchResult {
   };
 }
 
-console.log('WASM Inspector Performance Benchmark');
-console.log('='.repeat(60));
+console.info('WASM Inspector Performance Benchmark');
+console.info('='.repeat(60));
 
 const results: BenchResult[] = [];
 
@@ -89,15 +89,15 @@ results.push(bench('WASM_API full iteration', () => {
 }));
 
 // Print results
-console.log('');
-console.log(Bun.inspect.table(results));
+console.info('');
+console.info(Bun.inspect.table(results));
 
 // Summary
 const compileMini = results.find(r => r.operation.includes('minimal'));
 const lookup = results.find(r => r.operation === 'getWasmClass (full name)');
 const urlGen = results.find(r => r.operation === 'getAllWasmUrls');
 
-console.log('Summary:');
-console.log(`  WebAssembly.compile (minimal): ${compileMini?.['ns/op']}ns/op (${compileMini?.['ops/s']} ops/s)`);
-console.log(`  Class lookup: ${lookup?.['ns/op']}ns/op (${lookup?.['ops/s']} ops/s)`);
-console.log(`  URL generation: ${urlGen?.['ns/op']}ns/op (${urlGen?.['ops/s']} ops/s)`);
+console.info('Summary:');
+console.info(`  WebAssembly.compile (minimal): ${compileMini?.['ns/op']}ns/op (${compileMini?.['ops/s']} ops/s)`);
+console.info(`  Class lookup: ${lookup?.['ns/op']}ns/op (${lookup?.['ops/s']} ops/s)`);
+console.info(`  URL generation: ${urlGen?.['ns/op']}ns/op (${urlGen?.['ops/s']} ops/s)`);

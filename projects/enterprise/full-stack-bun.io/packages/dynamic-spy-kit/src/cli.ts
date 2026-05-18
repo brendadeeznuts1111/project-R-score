@@ -9,7 +9,7 @@ import { OddsRouter } from './odds-router.js';
 import spyKit from './index.js';
 
 function showDemo() {
-	console.log('%j', {
+	console.info('%j', {
 		package: '@dynamic-spy/kit',
 		version: '2.4.0',
 		features: [
@@ -25,36 +25,36 @@ function showDemo() {
 		status: 'production-ready'
 	});
 
-	console.log('\n📦 Features:');
-	console.log('  ✅ Dynamic spy factory with URLPattern support');
-	console.log('  ✅ Fake timers integration for rate limiting');
-	console.log('  ✅ Proxy testing utilities');
-	console.log('  ✅ Route sequence verification');
-	console.log('  ✅ Arbitrage pipeline testing');
-	console.log('  ✅ Production OddsRouter');
+	console.info('\n📦 Features:');
+	console.info('  ✅ Dynamic spy factory with URLPattern support');
+	console.info('  ✅ Fake timers integration for rate limiting');
+	console.info('  ✅ Proxy testing utilities');
+	console.info('  ✅ Route sequence verification');
+	console.info('  ✅ Arbitrage pipeline testing');
+	console.info('  ✅ Production OddsRouter');
 
-	console.log('\n🚀 Usage:');
-	console.log('  import { OddsRouter } from "@dynamic-spy/kit";');
-	console.log('  const router = new OddsRouter();');
-	console.log('  router.testOddsFeed("https://bookie1.com/odds/BTC-USD?type=sports");');
+	console.info('\n🚀 Usage:');
+	console.info('  import { OddsRouter } from "@dynamic-spy/kit";');
+	console.info('  const router = new OddsRouter();');
+	console.info('  router.testOddsFeed("https://bookie1.com/odds/BTC-USD?type=sports");');
 
-	console.log('\n📊 Performance:');
-	console.log('  ✅ 1000+ dynamic keys: < 12ms');
-	console.log('  ✅ URLPattern routing: 98% match rate');
-	console.log('  ✅ FakeTimers: 0ms timeouts');
-	console.log('  ✅ Proxy testing: Real HTTP/2 reuse');
-	console.log('  ✅ Match time: <1μs');
+	console.info('\n📊 Performance:');
+	console.info('  ✅ 1000+ dynamic keys: < 12ms');
+	console.info('  ✅ URLPattern routing: 98% match rate');
+	console.info('  ✅ FakeTimers: 0ms timeouts');
+	console.info('  ✅ Proxy testing: Real HTTP/2 reuse');
+	console.info('  ✅ Match time: <1μs');
 
-	console.log('\n🧪 Run Tests:');
-	console.log('  bun test');
-	console.log('  bun test --fake-timers');
-	console.log('  bun test tests/odds-router.test.ts');
+	console.info('\n🧪 Run Tests:');
+	console.info('  bun test');
+	console.info('  bun test --fake-timers');
+	console.info('  bun test tests/odds-router.test.ts');
 }
 
 function showOddsDemo() {
 	const router = new OddsRouter();
 
-	console.log('%j', {
+	console.info('%j', {
 		bookieOdds: router.oddsSpy.exec('https://bookie1.com/odds/BTC-USD?type=sports'),
 		arbOpp: router.arbSpy.exec('https://arb.com/arb/BTC-USD:0.02'),
 		patterns: {
@@ -74,7 +74,7 @@ if (import.meta.main) {
 	} else if (command === 'odds') {
 		showOddsDemo();
 	} else {
-		console.log('Usage: bun run src/cli.ts [demo|odds]');
+		console.info('Usage: bun run src/cli.ts [demo|odds]');
 		process.exit(1);
 	}
 }

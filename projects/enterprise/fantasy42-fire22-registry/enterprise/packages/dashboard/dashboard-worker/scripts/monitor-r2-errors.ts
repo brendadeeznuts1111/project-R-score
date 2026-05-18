@@ -70,7 +70,7 @@ class R2ErrorMonitor {
       teamEmails: ['infrastructure@fire22.ag', 'platform-team@fire22.ag', 'head@technology.fire22'],
     };
 
-    console.log(
+    console.info(
       '📧 INFRASTRUCTURE_TEAM_NOTIFICATION:',
       JSON.stringify(infrastructureNotification, null, 2)
     );
@@ -98,7 +98,7 @@ class R2ErrorMonitor {
       ],
     };
 
-    console.log(
+    console.info(
       '☁️ CLOUDFLARE_TEAM_NOTIFICATION:',
       JSON.stringify(cloudflareNotification, null, 2)
     );
@@ -126,7 +126,7 @@ class R2ErrorMonitor {
         ],
       };
 
-      console.log('🔧 CI_TEAM_NOTIFICATION:', JSON.stringify(ciNotification, null, 2));
+      console.info('🔧 CI_TEAM_NOTIFICATION:', JSON.stringify(ciNotification, null, 2));
     }
   }
 
@@ -134,11 +134,11 @@ class R2ErrorMonitor {
    * Generate summary report
    */
   generateReport(): void {
-    console.log('\n📊 R2 Error Monitoring Report');
-    console.log('='.repeat(50));
+    console.info('\n📊 R2 Error Monitoring Report');
+    console.info('='.repeat(50));
 
     if (this.errorLogs.length === 0) {
-      console.log('✅ No R2 errors detected');
+      console.info('✅ No R2 errors detected');
       return;
     }
 
@@ -152,26 +152,26 @@ class R2ErrorMonitor {
       {} as Record<string, number>
     );
 
-    console.log('\n📈 Error Summary:');
+    console.info('\n📈 Error Summary:');
     Object.entries(errorsByCode).forEach(([code, count]) => {
       const errorType = code === '10004' ? 'Bucket Already Exists' : `Error Code ${code}`;
-      console.log(`  • ${errorType}: ${count} occurrence(s)`);
+      console.info(`  • ${errorType}: ${count} occurrence(s)`);
     });
 
-    console.log('\n📝 Recent Errors:');
+    console.info('\n📝 Recent Errors:');
     this.errorLogs.slice(-5).forEach(log => {
-      console.log(`  • [${log.timestamp}] ${log.bucketName}: ${log.message}`);
+      console.info(`  • [${log.timestamp}] ${log.bucketName}: ${log.message}`);
       if (log.resolution) {
-        console.log(`    → Resolution: ${log.resolution}`);
+        console.info(`    → Resolution: ${log.resolution}`);
       }
     });
 
-    console.log('\n👥 Team Notifications Sent:');
-    console.log('  • Infrastructure Team: Notified');
-    console.log("  • Platform Team: CC'd");
-    console.log("  • Head of Technology: CC'd");
-    console.log('  • Cloudflare Team: Notified (R2/Wrangler issues)');
-    console.log('  • CI Team: Notified (Deployment impact assessment)');
+    console.info('\n👥 Team Notifications Sent:');
+    console.info('  • Infrastructure Team: Notified');
+    console.info("  • Platform Team: CC'd");
+    console.info("  • Head of Technology: CC'd");
+    console.info('  • Cloudflare Team: Notified (R2/Wrangler issues)');
+    console.info('  • CI Team: Notified (Deployment impact assessment)');
   }
 
   /**
@@ -188,12 +188,12 @@ class R2ErrorMonitor {
 
 // Run monitor if executed directly
 if (import.meta.main) {
-  console.log('🚀 Starting R2 Error Monitor...\n');
+  console.info('🚀 Starting R2 Error Monitor...\n');
 
   const monitor = new R2ErrorMonitor();
 
   // Simulate the bucket exists error
-  console.log('📍 Simulating R2 bucket exists error...');
+  console.info('📍 Simulating R2 bucket exists error...');
   monitor.simulateBucketExistsError('fire22-packages');
 
   // Generate report
@@ -202,7 +202,7 @@ if (import.meta.main) {
 
     // Show monitoring status
     const status = monitor.getStatus();
-    console.log('\n✅ Monitor Status:', JSON.stringify(status, null, 2));
+    console.info('\n✅ Monitor Status:', JSON.stringify(status, null, 2));
   }, 100);
 }
 

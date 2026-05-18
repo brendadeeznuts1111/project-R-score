@@ -11,18 +11,18 @@ import { execSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-console.log('📦 Preparing Bun v1.3.7 CLI for Global Distribution');
-console.log('='.repeat(60));
+console.info('📦 Preparing Bun v1.3.7 CLI for Global Distribution');
+console.info('='.repeat(60));
 
 // Check prerequisites
 function checkPrerequisites(): void {
-    console.log('\n🔍 Checking prerequisites...');
+    console.info('\n🔍 Checking prerequisites...');
     
     const bunVersion = Bun.version;
     if (bunVersion < '1.3.7') {
         console.warn(`⚠️  Warning: Bun v${bunVersion} detected. v1.3.7+ recommended`);
     } else {
-        console.log(`✅ Bun v${bunVersion} - OK`);
+        console.info(`✅ Bun v${bunVersion} - OK`);
     }
     
     const requiredFiles = [
@@ -35,7 +35,7 @@ function checkPrerequisites(): void {
     
     for (const file of requiredFiles) {
         if (existsSync(file)) {
-            console.log(`✅ ${file}`);
+            console.info(`✅ ${file}`);
         } else {
             console.error(`❌ Missing: ${file}`);
             process.exit(1);
@@ -45,7 +45,7 @@ function checkPrerequisites(): void {
 
 // Create standalone CLI package
 function createStandalonePackage(): void {
-    console.log('\n📁 Creating standalone package structure...');
+    console.info('\n📁 Creating standalone package structure...');
     
     const distDir = './dist/bun-v1.3.7-cli';
     
@@ -180,25 +180,25 @@ MIT
     
     writeFileSync(join(distDir, 'README.md'), readme);
     
-    console.log(`✅ Standalone package created in ${distDir}`);
+    console.info(`✅ Standalone package created in ${distDir}`);
 }
 
 // Test the standalone package
 function testStandalonePackage(): void {
-    console.log('\n🧪 Testing standalone package...');
+    console.info('\n🧪 Testing standalone package...');
     
     try {
         // Change to standalone directory
         process.chdir('./dist/bun-v1.3.7-cli');
         
         // Test basic commands
-        console.log('Testing help command...');
+        console.info('Testing help command...');
         execSync('bun bin/bun-v1.3.7-cli.ts --help', { stdio: 'pipe' });
-        console.log('✅ Help command works');
+        console.info('✅ Help command works');
         
-        console.log('Testing check command...');
+        console.info('Testing check command...');
         execSync('bun bin/bun-v1.3.7-cli.ts check', { stdio: 'pipe' });
-        console.log('✅ Check command works');
+        console.info('✅ Check command works');
         
         // Change back
         process.chdir('../..');
@@ -211,7 +211,7 @@ function testStandalonePackage(): void {
 
 // Create distribution package
 function createDistributionPackage(): void {
-    console.log('\n📦 Creating distribution package...');
+    console.info('\n📦 Creating distribution package...');
     
     try {
         // Run pack from the standalone directory but output to parent
@@ -222,18 +222,18 @@ function createDistributionPackage(): void {
         execSync('bun pack', { stdio: 'inherit' });
         
         const packageFiles = execSync('ls *.tgz', { encoding: 'utf8' }).trim();
-        console.log(`✅ Package created: ${packageFiles}`);
+        console.info(`✅ Package created: ${packageFiles}`);
         
         // Move to parent directory
         execSync(`mv ${packageFiles} ../..`, { stdio: 'pipe' });
         
         process.chdir(originalDir);
         
-        console.log('\n🎉 Package ready for global distribution!');
-        console.log('\nInstallation options:');
-        console.log(`1. bunx --global ${packageFiles}`);
-        console.log('2. Upload to npm registry');
-        console.log('3. Share the package file directly');
+        console.info('\n🎉 Package ready for global distribution!');
+        console.info('\nInstallation options:');
+        console.info(`1. bunx --global ${packageFiles}`);
+        console.info('2. Upload to npm registry');
+        console.info('3. Share the package file directly');
         
     } catch (error) {
         console.error('❌ Package creation failed:', error);
@@ -248,11 +248,11 @@ async function main(): Promise<void> {
     testStandalonePackage();
     createDistributionPackage();
     
-    console.log('\n🚀 Bun v1.3.7 Performance CLI is ready for global distribution!');
-    console.log('\nNext steps:');
-    console.log('1. Test: bunx --global bun-v1.3.7-performance-cli-*.tgz');
-    console.log('2. Use: bun-v1.3.7 --help');
-    console.log('3. Share: Distribute the .tgz file');
+    console.info('\n🚀 Bun v1.3.7 Performance CLI is ready for global distribution!');
+    console.info('\nNext steps:');
+    console.info('1. Test: bunx --global bun-v1.3.7-performance-cli-*.tgz');
+    console.info('2. Use: bun-v1.3.7 --help');
+    console.info('3. Share: Distribute the .tgz file');
 }
 
 if (import.meta.main) {

@@ -298,23 +298,23 @@ export class PromisePool {
 
 // Demo function
 async function demo() {
-  console.log('🔮 Advanced Promise Utilities Demo\n');
+  console.info('🔮 Advanced Promise Utilities Demo\n');
 
   // 1. Promise peek
-  console.log('Promise Peek:');
+  console.info('Promise Peek:');
   const promise = Promise.resolve('Hello, World!');
-  console.log('Promise status:', Bun.peek.status(promise));
-  console.log('Promise value:', Bun.peek(promise));
-  console.log();
+  console.info('Promise status:', Bun.peek.status(promise));
+  console.info('Promise value:', Bun.peek(promise));
+  console.info();
 
   // 2. Retry with backoff
-  console.log('Retry with Backoff:');
+  console.info('Retry with Backoff:');
   let attempts = 0;
   try {
     await PromiseUtils.retry(
       async () => {
         attempts++;
-        console.log(`  Attempt ${attempts}`);
+        console.info(`  Attempt ${attempts}`);
         if (attempts < 3) {
           throw new Error('Simulated failure');
         }
@@ -322,21 +322,21 @@ async function demo() {
       },
       { retries: 3, delay: 100 }
     );
-    console.log('✅ Operation succeeded after', attempts, 'attempts');
+    console.info('✅ Operation succeeded after', attempts, 'attempts');
   } catch (error) {
-    console.log('❌ Operation failed:', error);
+    console.info('❌ Operation failed:', error);
   }
-  console.log();
+  console.info();
 
   // 3. Timeout
-  console.log('Promise Timeout:');
+  console.info('Promise Timeout:');
   try {
     await PromiseUtils.timeout(
       new Promise(resolve => setTimeout(() => resolve('Slow operation'), 200)),
       100
     );
   } catch (error) {
-    console.log('❌ Timeout:', error instanceof Error ? error.message : String(error));
+    console.info('❌ Timeout:', error instanceof Error ? error.message : String(error));
   }
 
   try {
@@ -344,14 +344,14 @@ async function demo() {
       Promise.resolve('Fast operation'),
       1000
     );
-    console.log('✅ Fast operation:', result);
+    console.info('✅ Fast operation:', result);
   } catch (error) {
-    console.log('❌ Unexpected timeout');
+    console.info('❌ Unexpected timeout');
   }
-  console.log();
+  console.info();
 
   // 4. Parallel limit
-  console.log('Parallel Limit:');
+  console.info('Parallel Limit:');
   const items = Array.from({ length: 10 }, (_, i) => i);
   const results = await PromiseUtils.parallelLimit(
     items,
@@ -361,26 +361,26 @@ async function demo() {
     },
     3 // Max 3 concurrent
   );
-  console.log('Processed', results.length, 'items with concurrency limit of 3');
-  console.log();
+  console.info('Processed', results.length, 'items with concurrency limit of 3');
+  console.info();
 
   // 5. Promise pool
-  console.log('Promise Pool:');
+  console.info('Promise Pool:');
   const pool = new PromisePool(2); // Max 2 concurrent
 
   const poolPromises = items.slice(0, 5).map((item, index) =>
     pool.add(async () => {
-      console.log(`  Processing item ${item} (active: ${pool.activeCount}, queued: ${pool.queueSize})`);
+      console.info(`  Processing item ${item} (active: ${pool.activeCount}, queued: ${pool.queueSize})`);
       await Bun.sleep(200);
       return `Result ${item}`;
     })
   );
 
   const poolResults = await Promise.all(poolPromises);
-  console.log('Pool results:', poolResults.length);
-  console.log();
+  console.info('Pool results:', poolResults.length);
+  console.info();
 
-  console.log('✨ Promise utilities demo complete!');
+  console.info('✨ Promise utilities demo complete!');
 }
 
 // Run demo if executed directly

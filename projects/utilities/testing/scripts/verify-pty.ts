@@ -5,8 +5,8 @@
 
 import { PtyRunner } from "../utils/pty-runner";
 
-console.log("🔍 Verifying Bun.Terminal PTY Support");
-console.log("======================================");
+console.info("🔍 Verifying Bun.Terminal PTY Support");
+console.info("======================================");
 
 // Simulation: Run 'ls -G' (colored) and 'echo'
 const commands = ["ls -G", "echo 'PTY TEST SUCCESSFUL'", "exit"];
@@ -31,4 +31,4 @@ const proc = Bun.spawn(["/bin/zsh"], {
 });
 
 await proc.exited;
-console.log("\n✅ PTY session finished.");
+console.info("\n✅ PTY session finished.");

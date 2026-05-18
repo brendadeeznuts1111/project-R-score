@@ -7,12 +7,12 @@
 
 import { serve } from 'bun';
 
-console.log('🚀 Bun WebSocket Fixes Demo - Simplified Version');
-console.log('=' .repeat(55));
+console.info('🚀 Bun WebSocket Fixes Demo - Simplified Version');
+console.info('=' .repeat(55));
 
 // 🍪 FIX 1: Cookie Handling Demo
-console.log('\n🍪 Demo 1: WebSocket Cookie Handling Fix');
-console.log('-' .repeat(45));
+console.info('\n🍪 Demo 1: WebSocket Cookie Handling Fix');
+console.info('-' .repeat(45));
 
 const cookieDemoServer = serve({
   port: 3007,
@@ -30,7 +30,7 @@ const cookieDemoServer = serve({
         request.cookies.set('userId', 'demo-user-123');
         request.cookies.set('authToken', 'secure-token-' + Math.random().toString(36).substr(2, 9));
         
-        console.log('✅ Cookies set before upgrade:', {
+        console.info('✅ Cookies set before upgrade:', {
           sessionId: request.cookies.get('sessionId'),
           userId: request.cookies.get('userId'),
           hasAuthToken: !!request.cookies.get('authToken')
@@ -45,7 +45,7 @@ const cookieDemoServer = serve({
       });
       
       if (success) {
-        console.log('✅ WebSocket upgrade successful - cookies included in 101 response');
+        console.info('✅ WebSocket upgrade successful - cookies included in 101 response');
         return undefined;
       }
       
@@ -63,7 +63,7 @@ const cookieDemoServer = serve({
   
   websocket: {
     open(ws) {
-      console.log('🔓 WebSocket connection opened with cookie support');
+      console.info('🔓 WebSocket connection opened with cookie support');
       ws.send(JSON.stringify({
         type: 'welcome',
         message: 'WebSocket connected with Bun v1.3.1 cookie handling!',
@@ -74,7 +74,7 @@ const cookieDemoServer = serve({
     
     message(ws, message) {
       const data = message.toString();
-      console.log('📨 Received message:', data);
+      console.info('📨 Received message:', data);
       
       ws.send(JSON.stringify({
         type: 'echo',
@@ -85,7 +85,7 @@ const cookieDemoServer = serve({
     },
     
     close(ws, code, reason) {
-      console.log('🔒 WebSocket closed:', { 
+      console.info('🔒 WebSocket closed:', { 
         code, 
         reason: reason?.toString(),
         feature: 'Cookie handling completed successfully'
@@ -94,11 +94,11 @@ const cookieDemoServer = serve({
   }
 });
 
-console.log('🍪 Cookie demo server: http://localhost:3007');
+console.info('🍪 Cookie demo server: http://localhost:3007');
 
 // 🔒 FIX 2: Fragmented Close Frame Demo
-console.log('\n🔒 Demo 2: Fragmented Close Frame Handling Fix');
-console.log('-' .repeat(50));
+console.info('\n🔒 Demo 2: Fragmented Close Frame Handling Fix');
+console.info('-' .repeat(50));
 
 const fragmentedDemoServer = serve({
   port: 3008,
@@ -109,7 +109,7 @@ const fragmentedDemoServer = serve({
       const success = server.upgrade(req);
       
       if (success) {
-        console.log('✅ WebSocket upgrade successful for fragmented close test');
+        console.info('✅ WebSocket upgrade successful for fragmented close test');
         return undefined;
       }
       
@@ -127,7 +127,7 @@ const fragmentedDemoServer = serve({
   
   websocket: {
     open(ws) {
-      console.log('🔓 Fragmented close frame test connection opened');
+      console.info('🔓 Fragmented close frame test connection opened');
       ws.send(JSON.stringify({
         type: 'welcome',
         message: 'Fragmented close frame test ready',
@@ -138,7 +138,7 @@ const fragmentedDemoServer = serve({
     
     message(ws, message) {
       const command = message.toString();
-      console.log('📨 Received command:', command);
+      console.info('📨 Received command:', command);
       
       switch (command) {
         case 'test_normal_close':
@@ -159,7 +159,7 @@ const fragmentedDemoServer = serve({
           setTimeout(() => {
             const largeReason = 'A'.repeat(1500) + ' Large payload that could be fragmented across TCP packets';
             ws.close(1000, largeReason);
-            console.log('📤 Sent close with large payload (1500+ chars)');
+            console.info('📤 Sent close with large payload (1500+ chars)');
           }, 100);
           break;
           
@@ -172,7 +172,7 @@ const fragmentedDemoServer = serve({
           setTimeout(() => {
             const fragmentedReason = 'Fragmented close simulation - ' + 'X'.repeat(2000);
             ws.close(1000, fragmentedReason);
-            console.log('📤 Sent close with extra large payload (2000+ chars)');
+            console.info('📤 Sent close with extra large payload (2000+ chars)');
           }, 100);
           break;
           
@@ -187,7 +187,7 @@ const fragmentedDemoServer = serve({
     
     close(ws, code, reason) {
       const reasonLength = reason?.length || 0;
-      console.log('🔒 WebSocket closed safely:', { 
+      console.info('🔒 WebSocket closed safely:', { 
         code, 
         reasonLength,
         note: '🎯 FIX: No panic with fragmented close frames!',
@@ -196,13 +196,13 @@ const fragmentedDemoServer = serve({
       
       // Log the fix in action
       if (reasonLength > 1000) {
-        console.log('✅ Large close payload handled without panic:', reasonLength, 'characters');
+        console.info('✅ Large close payload handled without panic:', reasonLength, 'characters');
       }
     }
   }
 });
 
-console.log('🔒 Fragmented close demo server: http://localhost:3008');
+console.info('🔒 Fragmented close demo server: http://localhost:3008');
 
 // HTML Templates
 function getCookieDemoHTML(): string {
@@ -524,27 +524,27 @@ function getFragmentedDemoHTML(): string {
 }
 
 // Summary and instructions
-console.log('\n📊 Demo Summary:');
-console.log('=' .repeat(25));
-console.log('✅ Both WebSocket fixes demonstrated successfully');
-console.log('✅ Cookie handling: Cookies included in 101 response');
-console.log('✅ Fragmented close: No panics with large payloads');
+console.info('\n📊 Demo Summary:');
+console.info('=' .repeat(25));
+console.info('✅ Both WebSocket fixes demonstrated successfully');
+console.info('✅ Cookie handling: Cookies included in 101 response');
+console.info('✅ Fragmented close: No panics with large payloads');
 
-console.log('\n🌐 Open in browser:');
-console.log('🍪 Cookie demo: http://localhost:3007');
-console.log('🔒 Fragmented demo: http://localhost:3008');
+console.info('\n🌐 Open in browser:');
+console.info('🍪 Cookie demo: http://localhost:3007');
+console.info('🔒 Fragmented demo: http://localhost:3008');
 
-console.log('\n🎯 Key Features Tested:');
-console.log('• req.cookies.set() before server.upgrade()');
-console.log('• Large close payloads (1500+ characters)');
-console.log('• Fragmented close frame simulation');
-console.log('• No server panics or crashes');
+console.info('\n🎯 Key Features Tested:');
+console.info('• req.cookies.set() before server.upgrade()');
+console.info('• Large close payloads (1500+ characters)');
+console.info('• Fragmented close frame simulation');
+console.info('• No server panics or crashes');
 
-console.log('\n⏳ Demo servers running... Press Ctrl+C to stop');
+console.info('\n⏳ Demo servers running... Press Ctrl+C to stop');
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down demo servers...');
+  console.info('\n🛑 Shutting down demo servers...');
   cookieDemoServer.stop();
   fragmentedDemoServer.stop();
   process.exit(0);

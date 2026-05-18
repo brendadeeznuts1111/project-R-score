@@ -259,81 +259,81 @@ const previousMetrics: PerfMetric[] = [
  * 🚀 Main demonstration function
  */
 export function runMasterPerfDemo(): void {
-  console.log('\n🎨 MASTER_PERF Dual-Mode System Demo\n');
-  console.log('📊 Demonstrating rich ANSI colors + clean exports\n');
+  console.info('\n🎨 MASTER_PERF Dual-Mode System Demo\n');
+  console.info('📊 Demonstrating rich ANSI colors + clean exports\n');
   
   // 1. Show colored terminal output
-  console.log('\n' + '='.repeat(80));
-  console.log('📈 1. RICH TERMINAL OUTPUT (with ANSI colors)');
-  console.log('='.repeat(80));
-  console.log(generateMasterPerfTable(sampleMetrics, { 
+  console.info('\n' + '='.repeat(80));
+  console.info('📈 1. RICH TERMINAL OUTPUT (with ANSI colors)');
+  console.info('='.repeat(80));
+  console.info(generateMasterPerfTable(sampleMetrics, { 
     maxRows: 10,
     showProperties: true,
     sortBy: 'category'
   }));
   
   // 2. Show plain text export
-  console.log('\n' + '='.repeat(80));
-  console.log('📄 2. PLAIN TEXT EXPORT (ANSI stripped)');
-  console.log('='.repeat(80));
-  console.log(generateMasterPerfPlainText(sampleMetrics, { 
+  console.info('\n' + '='.repeat(80));
+  console.info('📄 2. PLAIN TEXT EXPORT (ANSI stripped)');
+  console.info('='.repeat(80));
+  console.info(generateMasterPerfPlainText(sampleMetrics, { 
     maxRows: 5,
     includeHeaders: true
   }));
   
   // 3. Show JSON export with colors
-  console.log('\n' + '='.repeat(80));
-  console.log('📋 3. JSON EXPORT (with normalized colors)');
-  console.log('='.repeat(80));
+  console.info('\n' + '='.repeat(80));
+  console.info('📋 3. JSON EXPORT (with normalized colors)');
+  console.info('='.repeat(80));
   const jsonOutput = generateMasterPerfJson(sampleMetrics.slice(0, 3), { 
     includeColors: true,
     includeFormatted: true
   });
-  console.log(jsonOutput);
+  console.info(jsonOutput);
   
   // 4. Show CSV export
-  console.log('\n' + '='.repeat(80));
-  console.log('📈 4. CSV EXPORT (for spreadsheet analysis)');
-  console.log('='.repeat(80));
-  console.log(generateMasterPerfCsv(sampleMetrics.slice(0, 5), { 
+  console.info('\n' + '='.repeat(80));
+  console.info('📈 4. CSV EXPORT (for spreadsheet analysis)');
+  console.info('='.repeat(80));
+  console.info(generateMasterPerfCsv(sampleMetrics.slice(0, 5), { 
     includeHeaders: true
   }));
   
   // 5. Show WebSocket payload
-  console.log('\n' + '='.repeat(80));
-  console.log('🌐 5. WEBSOCKET PAYLOAD (minimal, real-time)');
-  console.log('='.repeat(80));
-  console.log(generateMasterPerfWebSocket(sampleMetrics.slice(0, 5), { 
+  console.info('\n' + '='.repeat(80));
+  console.info('🌐 5. WEBSOCKET PAYLOAD (minimal, real-time)');
+  console.info('='.repeat(80));
+  console.info(generateMasterPerfWebSocket(sampleMetrics.slice(0, 5), { 
     minimal: true
   }));
   
   // 6. Show performance comparison
-  console.log('\n' + '='.repeat(80));
-  console.log('📊 6. PERFORMANCE COMPARISON (vs previous hour)');
-  console.log('='.repeat(80));
-  console.log(comparePerformanceMetrics(previousMetrics, sampleMetrics));
+  console.info('\n' + '='.repeat(80));
+  console.info('📊 6. PERFORMANCE COMPARISON (vs previous hour)');
+  console.info('='.repeat(80));
+  console.info(comparePerformanceMetrics(previousMetrics, sampleMetrics));
   
   // 7. Show color palette
-  console.log('\n' + '='.repeat(80));
-  console.log('🎨 7. COLOR PALETTE (24-bit precise colors)');
-  console.log('='.repeat(80));
-  console.log('\nCategory Colors:');
+  console.info('\n' + '='.repeat(80));
+  console.info('🎨 7. COLOR PALETTE (24-bit precise colors)');
+  console.info('='.repeat(80));
+  console.info('\nCategory Colors:');
   Object.entries(CATEGORY_COLORS).forEach(([name, color]) => {
-    console.log(`  ${color}● ${name}\x1b[0m`);
+    console.info(`  ${color}● ${name}\x1b[0m`);
   });
   
-  console.log('\nStatus Colors:');
+  console.info('\nStatus Colors:');
   Object.entries(STATUS_COLORS).forEach(([name, color]) => {
-    console.log(`  ${color}● ${name}\x1b[0m`);
+    console.info(`  ${color}● ${name}\x1b[0m`);
   });
   
   // 8. Performance benchmarks
-  console.log('\n' + '='.repeat(80));
-  console.log('⚡ 8. PERFORMANCE BENCHMARKS');
-  console.log('='.repeat(80));
+  console.info('\n' + '='.repeat(80));
+  console.info('⚡ 8. PERFORMANCE BENCHMARKS');
+  console.info('='.repeat(80));
   
   const iterations = 1000;
-  console.log(`\n🏃 Running ${iterations} iterations of each operation...\n`);
+  console.info(`\n🏃 Running ${iterations} iterations of each operation...\n`);
   
   // Benchmark ANSI stripping
   const startStrip = performance.now();
@@ -359,71 +359,71 @@ export function runMasterPerfDemo(): void {
   }
   const tableTime = performance.now() - startTable;
   
-  console.log(`📊 Results:`);
-  console.log(`  ANSI Stripping:   ${stripTime.toFixed(2)}ms (${(stripTime/iterations).toFixed(3)}ms per op)`);
-  console.log(`  Color Conversion: ${colorTime.toFixed(2)}ms (${(colorTime/iterations).toFixed(3)}ms per op)`);
-  console.log(`  Table Generation: ${tableTime.toFixed(2)}ms (${(tableTime/iterations).toFixed(3)}ms per op)`);
+  console.info(`📊 Results:`);
+  console.info(`  ANSI Stripping:   ${stripTime.toFixed(2)}ms (${(stripTime/iterations).toFixed(3)}ms per op)`);
+  console.info(`  Color Conversion: ${colorTime.toFixed(2)}ms (${(colorTime/iterations).toFixed(3)}ms per op)`);
+  console.info(`  Table Generation: ${tableTime.toFixed(2)}ms (${(tableTime/iterations).toFixed(3)}ms per op)`);
   
-  console.log(`\n🚀 Performance: All operations under 1ms per iteration - excellent!`);
+  console.info(`\n🚀 Performance: All operations under 1ms per iteration - excellent!`);
 }
 
 /**
  * 💾 Export demo files for testing
  */
 export function exportDemoFiles(): void {
-  console.log('\n💾 Exporting demo files...\n');
+  console.info('\n💾 Exporting demo files...\n');
   
   // Export colored table
   const coloredTable = generateMasterPerfTable(sampleMetrics);
   writeFileSync('master-perf-colored.txt', coloredTable);
-  console.log('✅ Exported: master-perf-colored.txt (with ANSI colors)');
+  console.info('✅ Exported: master-perf-colored.txt (with ANSI colors)');
   
   // Export plain text
   const plainText = generateMasterPerfPlainText(sampleMetrics);
   writeFileSync('master-perf-plain.txt', plainText);
-  console.log('✅ Exported: master-perf-plain.txt (ANSI stripped)');
+  console.info('✅ Exported: master-perf-plain.txt (ANSI stripped)');
   
   // Export JSON
   const jsonExport = generateMasterPerfJson(sampleMetrics, { includeColors: true });
   writeFileSync('master-perf-export.json', jsonExport);
-  console.log('✅ Exported: master-perf-export.json (with color data)');
+  console.info('✅ Exported: master-perf-export.json (with color data)');
   
   // Export CSV
   const csvExport = generateMasterPerfCsv(sampleMetrics);
   writeFileSync('master-perf-export.csv', csvExport);
-  console.log('✅ Exported: master-perf-export.csv (spreadsheet ready)');
+  console.info('✅ Exported: master-perf-export.csv (spreadsheet ready)');
   
   // Export HTML
   const htmlExport = generateMasterPerfHtml(sampleMetrics, { includeStyles: true });
   writeFileSync('master-perf-export.html', htmlExport);
-  console.log('✅ Exported: master-perf-export.html (dashboard ready)');
+  console.info('✅ Exported: master-perf-export.html (dashboard ready)');
   
   // Export WebSocket payload
   const wsExport = generateMasterPerfWebSocket(sampleMetrics, { minimal: false });
   writeFileSync('master-perf-websocket.json', wsExport);
-  console.log('✅ Exported: master-perf-websocket.json (real-time ready)');
+  console.info('✅ Exported: master-perf-websocket.json (real-time ready)');
   
-  console.log('\n🎉 All demo files exported successfully!');
-  console.log('📂 Check the current directory for exported files.');
+  console.info('\n🎉 All demo files exported successfully!');
+  console.info('📂 Check the current directory for exported files.');
 }
 
 /**
  * 🧪 Run comprehensive tests
  */
 export function runMasterPerfTests(): void {
-  console.log('\n🧪 Running MASTER_PERF System Tests\n');
+  console.info('\n🧪 Running MASTER_PERF System Tests\n');
   
   // Test 1: Basic functionality
-  console.log('📋 Test 1: Basic functionality...');
+  console.info('📋 Test 1: Basic functionality...');
   try {
     testMasterPerfInspector();
-    console.log('✅ Basic functionality test passed!\n');
+    console.info('✅ Basic functionality test passed!\n');
   } catch (error) {
     console.error('❌ Basic functionality test failed:', error);
   }
   
   // Test 2: Edge cases
-  console.log('📋 Test 2: Edge cases...');
+  console.info('📋 Test 2: Edge cases...');
   try {
     const edgeMetrics: PerfMetric[] = [
       {
@@ -454,7 +454,7 @@ export function runMasterPerfTests(): void {
     const plain = generateMasterPerfPlainText(edgeMetrics);
     
     if (table.includes('empty-properties') && plain.includes('very/long/path')) {
-      console.log('✅ Edge cases test passed!\n');
+      console.info('✅ Edge cases test passed!\n');
     } else {
       throw new Error('Edge case handling failed');
     }
@@ -463,7 +463,7 @@ export function runMasterPerfTests(): void {
   }
   
   // Test 3: Performance under load
-  console.log('📋 Test 3: Performance under load...');
+  console.info('📋 Test 3: Performance under load...');
   try {
     const largeMetrics: PerfMetric[] = Array.from({ length: 1000 }, (_, i) => ({
       id: `load-test-${i}`,
@@ -483,7 +483,7 @@ export function runMasterPerfTests(): void {
     const duration = performance.now() - start;
     
     if (duration < 100 && plain.includes('load-test-0')) {
-      console.log(`✅ Performance test passed! (${duration.toFixed(2)}ms for 1000 metrics)\n`);
+      console.info(`✅ Performance test passed! (${duration.toFixed(2)}ms for 1000 metrics)\n`);
     } else {
       throw new Error(`Performance test failed: ${duration}ms is too slow`);
     }
@@ -492,14 +492,14 @@ export function runMasterPerfTests(): void {
   }
   
   // Test 4: Color consistency
-  console.log('📋 Test 4: Color consistency...');
+  console.info('📋 Test 4: Color consistency...');
   try {
     const testMetric = new FormattedPerfMetric(sampleMetrics[0]);
     const category1 = testMetric.category;
     const category2 = testMetric.category; // Should be identical
     
     if (category1 === category2) {
-      console.log('✅ Color consistency test passed!\n');
+      console.info('✅ Color consistency test passed!\n');
     } else {
       throw new Error('Color consistency failed');
     }
@@ -507,15 +507,15 @@ export function runMasterPerfTests(): void {
     console.error('❌ Color consistency test failed:', error);
   }
   
-  console.log('🎉 All MASTER_PERF tests completed!');
+  console.info('🎉 All MASTER_PERF tests completed!');
 }
 
 /**
  * 🚀 Main entry point
  */
 if (import.meta.main) {
-  console.log('\n🎨 MASTER_PERF Dual-Mode System');
-  console.log('📊 Rich ANSI colors + Clean exports\n');
+  console.info('\n🎨 MASTER_PERF Dual-Mode System');
+  console.info('📊 Rich ANSI colors + Clean exports\n');
   
   // Run the demo
   runMasterPerfDemo();
@@ -526,7 +526,7 @@ if (import.meta.main) {
   // Run tests
   runMasterPerfTests();
   
-  console.log('\n🏆 MASTER_PERF System Demo Complete!');
-  console.log('📚 Check the exported files for different output formats.');
-  console.log('🌐 Ready for production use with dual-mode output!');
+  console.info('\n🏆 MASTER_PERF System Demo Complete!');
+  console.info('📚 Check the exported files for different output formats.');
+  console.info('🌐 Ready for production use with dual-mode output!');
 }

@@ -135,15 +135,15 @@ export class PhoneManagementSystem {
 
     // Register core components for memory management
     memoryManager.registerResource(this.featureRegistry, () => {
-      console.log("🧹 Cleaning up FeatureRegistry");
+      console.info("🧹 Cleaning up FeatureRegistry");
     }, 'FeatureRegistry');
 
     memoryManager.registerResource(this.logger, () => {
-      console.log("🧹 Cleaning up Logger");
+      console.info("🧹 Cleaning up Logger");
     }, 'Logger');
 
     memoryManager.registerResource(this.dashboard, () => {
-      console.log("🧹 Cleaning up Dashboard");
+      console.info("🧹 Cleaning up Dashboard");
     }, 'Dashboard');
 
     // Log enhanced system initialization
@@ -411,22 +411,22 @@ export class PhoneManagementSystem {
 
     if (enable) {
       this.config.performance.profiling = true;
-      console.log("✅ Performance profiling enabled");
+      console.info("✅ Performance profiling enabled");
     } else if (disable) {
       this.config.performance.profiling = false;
-      console.log("❌ Performance profiling disabled");
+      console.info("❌ Performance profiling disabled");
     } else if (show) {
-      console.log("📊 Performance Profiles:");
+      console.info("📊 Performance Profiles:");
       for (const [name, profile] of this.performanceProfiles) {
         const duration = profile.endTime - profile.startTime;
         const memoryDelta = profile.memoryAfter.heapUsed - profile.memoryBefore.heapUsed;
-        console.log(`  ${name}: ${duration}ms, ${Math.round(memoryDelta / 1024)}KB`);
+        console.info(`  ${name}: ${duration}ms, ${Math.round(memoryDelta / 1024)}KB`);
       }
     } else if (reset) {
       this.performanceProfiles.clear();
-      console.log("🔄 Performance profiles reset");
+      console.info("🔄 Performance profiles reset");
     } else {
-      console.log("Profiling:", this.config.performance.profiling ? "✅ Enabled" : "❌ Disabled");
+      console.info("Profiling:", this.config.performance.profiling ? "✅ Enabled" : "❌ Disabled");
     }
   }
 
@@ -436,9 +436,9 @@ export class PhoneManagementSystem {
     const reset = args.includes("--reset");
 
     if (show) {
-      console.log("📊 Command Metrics:");
+      console.info("📊 Command Metrics:");
       for (const [command, metrics] of this.metrics) {
-        console.log(`  ${command}: ${metrics.executionTime}ms, ${metrics.success ? "✅" : "❌"}`);
+        console.info(`  ${command}: ${metrics.executionTime}ms, ${metrics.success ? "✅" : "❌"}`);
       }
     } else if (export_) {
       const exportData = {
@@ -447,18 +447,18 @@ export class PhoneManagementSystem {
         profiles: Object.fromEntries(this.performanceProfiles),
         timestamp: Date.now(),
       };
-      console.log(JSON.stringify(exportData, null, 2));
+      console.info(JSON.stringify(exportData, null, 2));
     } else if (reset) {
       this.metrics.clear();
       this.commandHistory = [];
-      console.log("🔄 Metrics reset");
+      console.info("🔄 Metrics reset");
     } else {
-      console.log("Metrics:", this.config.performance.metrics ? "✅ Enabled" : "❌ Disabled");
+      console.info("Metrics:", this.config.performance.metrics ? "✅ Enabled" : "❌ Disabled");
     }
   }
 
   private async handleBenchmarkCommand(args: string[]): Promise<void> {
-    console.log("🏃‍♂️ Running system benchmark...");
+    console.info("🏃‍♂️ Running system benchmark...");
 
     const benchmarkStart = this.startPerformanceProfile('benchmark');
 
@@ -487,13 +487,13 @@ export class PhoneManagementSystem {
 
     this.endPerformanceProfile('benchmark');
 
-    console.log("📊 Benchmark Results:");
+    console.info("📊 Benchmark Results:");
     results.forEach(result => {
-      console.log(`  ${result.operation}: ${result.time}ms`);
+      console.info(`  ${result.operation}: ${result.time}ms`);
     });
 
     const totalTime = results.reduce((sum, r) => sum + r.time, 0);
-    console.log(`  Total: ${totalTime}ms`);
+    console.info(`  Total: ${totalTime}ms`);
   }
 
   private async handleTelemetryCommand(args: string[]): Promise<void> {
@@ -505,19 +505,19 @@ export class PhoneManagementSystem {
     if (enable) {
       this.config.advanced.telemetry = true;
       this.setupTelemetry();
-      console.log("✅ Telemetry enabled");
+      console.info("✅ Telemetry enabled");
     } else if (disable) {
       this.config.advanced.telemetry = false;
-      console.log("❌ Telemetry disabled");
+      console.info("❌ Telemetry disabled");
     } else if (show) {
-      console.log("📊 Telemetry Data:");
+      console.info("📊 Telemetry Data:");
       for (const [key, data] of this.telemetryData) {
-        console.log(`  ${key}:`, data);
+        console.info(`  ${key}:`, data);
       }
     } else if (export_) {
-      console.log(JSON.stringify(Object.fromEntries(this.telemetryData), null, 2));
+      console.info(JSON.stringify(Object.fromEntries(this.telemetryData), null, 2));
     } else {
-      console.log("Telemetry:", this.config.advanced.telemetry ? "✅ Enabled" : "❌ Disabled");
+      console.info("Telemetry:", this.config.advanced.telemetry ? "✅ Enabled" : "❌ Disabled");
     }
   }
 
@@ -527,23 +527,23 @@ export class PhoneManagementSystem {
     const export_ = args.includes("--export");
 
     if (show) {
-      console.log("⚙️ System Configuration:");
-      console.log(JSON.stringify(this.config, null, 2));
+      console.info("⚙️ System Configuration:");
+      console.info(JSON.stringify(this.config, null, 2));
     } else if (validate) {
-      console.log("✅ Configuration is valid");
+      console.info("✅ Configuration is valid");
       // Would implement validation logic here
     } else if (export_) {
-      console.log(JSON.stringify(this.config, null, 2));
+      console.info(JSON.stringify(this.config, null, 2));
     } else {
-      console.log("Environment:", this.config.environment);
-      console.log("Platform:", this.config.platform);
-      console.log("Build Type:", this.config.buildType);
-      console.log("Deployment:", this.config.deployment);
+      console.info("Environment:", this.config.environment);
+      console.info("Platform:", this.config.platform);
+      console.info("Build Type:", this.config.buildType);
+      console.info("Deployment:", this.config.deployment);
     }
   }
 
   private showEnhancedHelp(): void {
-    console.log(`
+    console.info(`
 Enhanced Phone Management System - Advanced phone management with feature flags and performance monitoring
 
 Usage: phone-management-system <command> [options]
@@ -814,7 +814,7 @@ For detailed help on each command, use:
         FeatureFlag[args[enableIndex + 1] as keyof typeof FeatureFlag];
       if (flag) {
         this.featureRegistry.enableFeature(flag);
-        console.log(`✅ Enabled ${flag}`);
+        console.info(`✅ Enabled ${flag}`);
       } else {
         console.error(`❌ Unknown feature flag: ${args[enableIndex + 1]}`);
       }
@@ -823,7 +823,7 @@ For detailed help on each command, use:
         FeatureFlag[args[disableIndex + 1] as keyof typeof FeatureFlag];
       if (flag) {
         this.featureRegistry.disableFeature(flag);
-        console.log(`❌ Disabled ${flag}`);
+        console.info(`❌ Disabled ${flag}`);
       } else {
         console.error(`❌ Unknown feature flag: ${args[disableIndex + 1]}`);
       }
@@ -835,16 +835,16 @@ For detailed help on each command, use:
         const status = this.featureRegistry.isEnabled(flag)
           ? "enabled"
           : "disabled";
-        console.log(`${status === "enabled" ? "✅" : "❌"} ${flag} ${status}`);
+        console.info(`${status === "enabled" ? "✅" : "❌"} ${flag} ${status}`);
       } else {
         console.error(`❌ Unknown feature flag: ${args[toggleIndex + 1]}`);
       }
     } else if (reset) {
       this.featureRegistry.resetToDefaults();
-      console.log("🔄 All feature flags reset to defaults");
+      console.info("🔄 All feature flags reset to defaults");
     } else if (rotate) {
       this.featureRegistry.rotateFlags();
-      console.log("🔄 Feature flags rotated for maintenance");
+      console.info("🔄 Feature flags rotated for maintenance");
     } else {
       this.featureRegistry.displayAllFlags();
     }
@@ -855,7 +855,7 @@ For detailed help on each command, use:
     const full = args.includes("--full");
     const reportIndex = args.findIndex((arg) => arg === "--report");
 
-    console.log("🔍 Running system audit...");
+    console.info("🔍 Running system audit...");
 
     if (security) {
       await this.dashboard.runSecurityAudit();
@@ -888,9 +888,9 @@ For detailed help on each command, use:
     } else if (analyze) {
       await this.dashboard.analyzeBuild();
     } else {
-      console.log("🔨 Building system...");
+      console.info("🔨 Building system...");
       // Build logic would be implemented here
-      console.log("✅ Build completed successfully");
+      console.info("✅ Build completed successfully");
     }
   }
 
@@ -903,19 +903,19 @@ For detailed help on each command, use:
       this.featureRegistry.enableFeature(FeatureFlag.FEAT_MOCK_API);
     }
 
-    console.log("🚀 Starting Enhanced Phone Management System...");
-    console.log(`✅ System started on port ${port}`);
-    console.log(`📊 Performance: ${this.config.performance.profiling ? "Profiling enabled" : "Profiling disabled"}`);
-    console.log(`📈 Metrics: ${this.config.performance.metrics ? "Metrics enabled" : "Metrics disabled"}`);
-    console.log(`🔥 Hot Reload: ${this.config.advanced.hotReload ? "Enabled" : "Disabled"}`);
-    console.log(`📡 Telemetry: ${this.config.advanced.telemetry ? "Enabled" : "Disabled"}`);
+    console.info("🚀 Starting Enhanced Phone Management System...");
+    console.info(`✅ System started on port ${port}`);
+    console.info(`📊 Performance: ${this.config.performance.profiling ? "Profiling enabled" : "Profiling disabled"}`);
+    console.info(`📈 Metrics: ${this.config.performance.metrics ? "Metrics enabled" : "Metrics disabled"}`);
+    console.info(`🔥 Hot Reload: ${this.config.advanced.hotReload ? "Enabled" : "Disabled"}`);
+    console.info(`📡 Telemetry: ${this.config.advanced.telemetry ? "Enabled" : "Disabled"}`);
 
     // Display initial status
     this.dashboard.displayStatus();
 
     // Demonstrate concurrent processing capabilities
     if (this.config.performance.metrics) {
-      console.log("🔄 Testing concurrent processing...");
+      console.info("🔄 Testing concurrent processing...");
       const testItems = Array.from({ length: 100 }, (_, i) => ({ id: i, data: `test-${i}` }));
 
       const startTime = Date.now();
@@ -929,8 +929,8 @@ For detailed help on each command, use:
         CONCURRENT_CONFIGS.IO_BOUND
       );
 
-      console.log(`✅ Processed ${results.processed} items concurrently in ${Date.now() - startTime}ms`);
-      console.log(`📊 Memory stats: ${JSON.stringify(memoryManager.getMemoryStats())}`);
+      console.info(`✅ Processed ${results.processed} items concurrently in ${Date.now() - startTime}ms`);
+      console.info(`📊 Memory stats: ${JSON.stringify(memoryManager.getMemoryStats())}`);
     }
 
     // Start monitoring if enabled
@@ -940,13 +940,13 @@ For detailed help on each command, use:
 
     // Setup graceful shutdown
     process.on('SIGINT', () => {
-      console.log("\n🛑 Shutting down gracefully...");
+      console.info("\n🛑 Shutting down gracefully...");
       this.shutdown();
       process.exit(0);
     });
 
     process.on('SIGTERM', () => {
-      console.log("\n🛑 Shutting down gracefully...");
+      console.info("\n🛑 Shutting down gracefully...");
       this.shutdown();
       process.exit(0);
     });
@@ -971,7 +971,7 @@ For detailed help on each command, use:
       // Force garbage collection
       memoryManager.forceGC();
 
-      console.log("✅ System shutdown complete");
+      console.info("✅ System shutdown complete");
     } catch (error) {
       console.error("❌ Error during shutdown:", error);
     }

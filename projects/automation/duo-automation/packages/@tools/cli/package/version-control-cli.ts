@@ -79,45 +79,45 @@ export class VersionControlCLI {
 
     const report = await this.validator.validateVersionCompatibility(nodeId);
     
-    console.log(`🔍 Version Check for ${report.nodeId}@${report.version}`);
-    console.log(`   Status: ${report.satisfiesRange ? '✅ Compatible' : '❌ Incompatible'}`);
+    console.info(`🔍 Version Check for ${report.nodeId}@${report.version}`);
+    console.info(`   Status: ${report.satisfiesRange ? '✅ Compatible' : '❌ Incompatible'}`);
     
     if (report.dependencies.length > 0) {
-      console.log('\n📦 Dependencies:');
+      console.info('\n📦 Dependencies:');
       for (const dep of report.dependencies) {
         const status = dep.compatible ? '✅' : '❌';
-        console.log(`   ${status} ${dep.dependencyId}: ${dep.actualVersion} (requires ${dep.requiredRange})`);
+        console.info(`   ${status} ${dep.dependencyId}: ${dep.actualVersion} (requires ${dep.requiredRange})`);
       }
     }
     
     if (report.recommendations.length > 0) {
-      console.log('\n💡 Recommendations:');
-      report.recommendations.forEach(r => console.log(`   - ${r}`));
+      console.info('\n💡 Recommendations:');
+      report.recommendations.forEach(r => console.info(`   - ${r}`));
     }
   }
 
   private async checkAll(): Promise<void> {
-    console.log('🔍 Checking all version compatibilities...\n');
+    console.info('🔍 Checking all version compatibilities...\n');
     
     const reports = await this.validator.validateAllVersionCompatibilities();
     
     if (reports.length === 0) {
-      console.log('✅ No dependencies to check');
+      console.info('✅ No dependencies to check');
       return;
     }
 
     let totalIssues = 0;
     for (const report of reports) {
       const status = report.satisfiesRange ? '✅' : '❌';
-      console.log(`${status} ${report.nodeId}@${report.version}`);
+      console.info(`${status} ${report.nodeId}@${report.version}`);
       
       if (!report.satisfiesRange) {
         totalIssues++;
-        report.recommendations.forEach(r => console.log(`   - ${r}`));
+        report.recommendations.forEach(r => console.info(`   - ${r}`));
       }
     }
 
-    console.log(`\n📊 Summary: ${reports.length} nodes checked, ${totalIssues} issues found`);
+    console.info(`\n📊 Summary: ${reports.length} nodes checked, ${totalIssues} issues found`);
   }
 
   private async upgrade(nodeId: string, targetVersion: string): Promise<void> {
@@ -128,20 +128,20 @@ export class VersionControlCLI {
 
     const result = this.validator.validateVersionUpgrade(nodeId, targetVersion);
     
-    console.log(`⬆️  Upgrade ${nodeId} to ${targetVersion}`);
-    console.log(`   Safe: ${result.safe ? '✅' : '❌'}`);
+    console.info(`⬆️  Upgrade ${nodeId} to ${targetVersion}`);
+    console.info(`   Safe: ${result.safe ? '✅' : '❌'}`);
     
     if (result.breakingChanges.length > 0) {
-      console.log('\n   ⚠️  Breaking Changes:');
-      result.breakingChanges.forEach(c => console.log(`      - ${c}`));
+      console.info('\n   ⚠️  Breaking Changes:');
+      result.breakingChanges.forEach(c => console.info(`      - ${c}`));
     }
     
     if (result.migrationPath) {
-      console.log(`   📋 Migration script: ${result.migrationPath}`);
+      console.info(`   📋 Migration script: ${result.migrationPath}`);
     }
 
     if (!result.safe) {
-      console.log('\n❌ Upgrade not recommended due to breaking changes');
+      console.info('\n❌ Upgrade not recommended due to breaking changes');
       process.exit(1);
     }
   }
@@ -154,16 +154,16 @@ export class VersionControlCLI {
 
     const history = await this.validator.getVersionHistory(nodeId);
     
-    console.log(`📜 Version History for ${history.nodeId}`);
-    console.log(`   Latest: ${history.latest}`);
-    console.log(`   Outdated: ${history.outdated ? '⚠️' : '✅'}`);
+    console.info(`📜 Version History for ${history.nodeId}`);
+    console.info(`   Latest: ${history.latest}`);
+    console.info(`   Outdated: ${history.outdated ? '⚠️' : '✅'}`);
     
     if (history.versions.length > 0) {
-      console.log('\n📦 Versions:');
+      console.info('\n📦 Versions:');
       history.versions.slice(0, 10).forEach(v => {
         const breaking = v.breaking ? '💥' : '📦';
         const date = new Date(v.date).toLocaleDateString();
-        console.log(`   ${breaking} ${v.version} - ${date} (${v.commitHash})`);
+        console.info(`   ${breaking} ${v.version} - ${date} (${v.commitHash})`);
       });
     }
   }
@@ -176,10 +176,10 @@ export class VersionControlCLI {
 
     const suggestion = await this.validator.suggestVersionBump(nodeId);
     
-    console.log(`💡 Suggested bump for ${nodeId}`);
-    console.log(`   Current: ${suggestion.current}`);
-    console.log(`   Suggested: ${suggestion.suggested} (${suggestion.type})`);
-    console.log(`   Reason: ${suggestion.reason}`);
+    console.info(`💡 Suggested bump for ${nodeId}`);
+    console.info(`   Current: ${suggestion.current}`);
+    console.info(`   Suggested: ${suggestion.suggested} (${suggestion.type})`);
+    console.info(`   Reason: ${suggestion.reason}`);
   }
 
   private async migrate(fromVersion: string, toVersion: string, nodeId?: string): Promise<void> {
@@ -190,34 +190,34 @@ export class VersionControlCLI {
 
     const guide = this.validator.generateMigrationGuide(fromVersion, toVersion);
     
-    console.log(`📋 Migration Guide: ${fromVersion} → ${toVersion}`);
+    console.info(`📋 Migration Guide: ${fromVersion} → ${toVersion}`);
     if (nodeId) {
-      console.log(`   Node: ${nodeId}`);
+      console.info(`   Node: ${nodeId}`);
     }
     
-    console.log('\nSteps:');
-    guide.steps.forEach(s => console.log(`   ${s}`));
+    console.info('\nSteps:');
+    guide.steps.forEach(s => console.info(`   ${s}`));
     
     if (guide.breakingChanges.length > 0) {
-      console.log('\n⚠️  Breaking Changes:');
-      guide.breakingChanges.forEach(c => console.log(`   - ${c}`));
+      console.info('\n⚠️  Breaking Changes:');
+      guide.breakingChanges.forEach(c => console.info(`   - ${c}`));
     }
     
     if (guide.deprecationWarnings.length > 0) {
-      console.log('\n📢 Deprecations:');
-      guide.deprecationWarnings.forEach(w => console.log(`   - ${w}`));
+      console.info('\n📢 Deprecations:');
+      guide.deprecationWarnings.forEach(w => console.info(`   - ${w}`));
     }
   }
 
   private async constraints(): Promise<void> {
     const result = await this.validator.validateVersionConstraints();
     
-    console.log(`🔒 Version Constraints: ${result.valid ? '✅' : '❌'}`);
+    console.info(`🔒 Version Constraints: ${result.valid ? '✅' : '❌'}`);
     
     if (!result.valid) {
-      console.log('\nViolations:');
+      console.info('\nViolations:');
       result.violations.forEach(v => {
-        console.log(`   ${v.nodeId}: ${v.reason}`);
+        console.info(`   ${v.nodeId}: ${v.reason}`);
       });
     }
   }
@@ -230,11 +230,11 @@ export class VersionControlCLI {
 
     const sorted = this.validator.sortNodesByVersion(nodeIds);
     
-    console.log('📊 Sorted by version:');
+    console.info('📊 Sorted by version:');
     sorted.forEach(id => {
       const node = this.validator.getSemverNode(id);
       if (node) {
-        console.log(`   ${id}@${node.version}`);
+        console.info(`   ${id}@${node.version}`);
       }
     });
   }
@@ -247,31 +247,31 @@ export class VersionControlCLI {
 
     const graph = this.validator.getDependencyGraph(nodeId);
     
-    console.log(`🔗 Dependency Graph for ${nodeId}`);
+    console.info(`🔗 Dependency Graph for ${nodeId}`);
     
     if (graph.direct.length > 0) {
-      console.log('\n📦 Direct Dependencies:');
+      console.info('\n📦 Direct Dependencies:');
       graph.direct.forEach(dep => {
         const node = this.validator.getSemverNode(dep);
-        console.log(`   - ${dep}@${node?.version || 'unknown'}`);
+        console.info(`   - ${dep}@${node?.version || 'unknown'}`);
       });
     }
     
     if (graph.indirect.length > 0) {
-      console.log('\n📦 Indirect Dependencies:');
+      console.info('\n📦 Indirect Dependencies:');
       graph.indirect.forEach(dep => {
         const node = this.validator.getSemverNode(dep);
-        console.log(`   - ${dep}@${node?.version || 'unknown'}`);
+        console.info(`   - ${dep}@${node?.version || 'unknown'}`);
       });
     }
     
     if (graph.circular.length > 0) {
-      console.log('\n🔄 Circular Dependencies:');
-      graph.circular.forEach(dep => console.log(`   - ${dep}`));
+      console.info('\n🔄 Circular Dependencies:');
+      graph.circular.forEach(dep => console.info(`   - ${dep}`));
     }
     
     if (graph.direct.length === 0 && graph.indirect.length === 0) {
-      console.log('   No dependencies found');
+      console.info('   No dependencies found');
     }
   }
 
@@ -283,16 +283,16 @@ export class VersionControlCLI {
 
     const dependents = this.validator.getReverseDependencyGraph(nodeId);
     
-    console.log(`🔗 Reverse Dependencies for ${nodeId}`);
+    console.info(`🔗 Reverse Dependencies for ${nodeId}`);
     
     if (dependents.length > 0) {
-      console.log('\n📦 Nodes that depend on this:');
+      console.info('\n📦 Nodes that depend on this:');
       dependents.forEach(dep => {
         const node = this.validator.getSemverNode(dep);
-        console.log(`   - ${dep}@${node?.version || 'unknown'}`);
+        console.info(`   - ${dep}@${node?.version || 'unknown'}`);
       });
     } else {
-      console.log('   No dependents found');
+      console.info('   No dependents found');
     }
   }
 
@@ -300,11 +300,11 @@ export class VersionControlCLI {
     switch (format.toLowerCase()) {
       case 'json':
         const json = this.validator.exportSemverJSON();
-        console.log(json);
+        console.info(json);
         break;
       case 'markdown':
         const markdown = this.validator.exportMarkdown();
-        console.log(markdown);
+        console.info(markdown);
         break;
       default:
         console.error('❌ Supported formats: json, markdown');
@@ -324,38 +324,38 @@ export class VersionControlCLI {
       process.exit(1);
     }
 
-    console.log(`🔍 Validating ${nodeId}`);
+    console.info(`🔍 Validating ${nodeId}`);
     
     // Check version format
     const validVersion = semver.satisfies(node.version, node.version);
-    console.log(`   Version format: ${validVersion ? '✅' : '❌'} ${node.version}`);
+    console.info(`   Version format: ${validVersion ? '✅' : '❌'} ${node.version}`);
     
     // Check version range
     if (node.versionRange) {
       try {
         semver.satisfies('1.0.0', node.versionRange);
-        console.log(`   Version range: ✅ ${node.versionRange}`);
+        console.info(`   Version range: ✅ ${node.versionRange}`);
       } catch {
-        console.log(`   Version range: ❌ ${node.versionRange}`);
+        console.info(`   Version range: ❌ ${node.versionRange}`);
       }
     }
     
     // Check dependencies
     if (node.dependencies) {
-      console.log(`   Dependencies: ${node.dependencies.length} found`);
+      console.info(`   Dependencies: ${node.dependencies.length} found`);
       for (const dep of node.dependencies) {
         try {
           semver.satisfies('1.0.0', dep.versionRange);
-          console.log(`     - ${dep.nodeId}: ✅ ${dep.versionRange}`);
+          console.info(`     - ${dep.nodeId}: ✅ ${dep.versionRange}`);
         } catch {
-          console.log(`     - ${dep.nodeId}: ❌ ${dep.versionRange}`);
+          console.info(`     - ${dep.nodeId}: ❌ ${dep.versionRange}`);
         }
       }
     }
   }
 
   private async graph(): Promise<void> {
-    console.log('🕸️  Dependency Graph Overview');
+    console.info('🕸️  Dependency Graph Overview');
     
     const nodes = this.validator.getAllSemverNodes();
     const stats = {
@@ -373,10 +373,10 @@ export class VersionControlCLI {
       if (history.outdated) stats.outdated++;
     }
 
-    console.log(`   Total nodes: ${stats.total}`);
-    console.log(`   With dependencies: ${stats.withDeps}`);
-    console.log(`   With migrations: ${stats.withMigrations}`);
-    console.log(`   Outdated: ${stats.outdated}`);
+    console.info(`   Total nodes: ${stats.total}`);
+    console.info(`   With dependencies: ${stats.withDeps}`);
+    console.info(`   With migrations: ${stats.withMigrations}`);
+    console.info(`   Outdated: ${stats.outdated}`);
   }
 
   private async bump(nodeId: string, bumpType: string): Promise<void> {
@@ -411,21 +411,21 @@ export class VersionControlCLI {
         process.exit(1);
     }
 
-    console.log(`🔧 Bumping ${nodeId} version`);
-    console.log(`   Current: ${current}`);
-    console.log(`   New: ${newVersion}`);
-    console.log(`   Type: ${bumpType}`);
+    console.info(`🔧 Bumping ${nodeId} version`);
+    console.info(`   Current: ${current}`);
+    console.info(`   New: ${newVersion}`);
+    console.info(`   Type: ${bumpType}`);
     
     // Validate the upgrade
     const validation = this.validator.validateVersionUpgrade(nodeId, newVersion);
     if (!validation.safe) {
-      console.log('\n⚠️  Warning: Upgrade may have breaking changes');
-      validation.breakingChanges.forEach(c => console.log(`   - ${c}`));
+      console.info('\n⚠️  Warning: Upgrade may have breaking changes');
+      validation.breakingChanges.forEach(c => console.info(`   - ${c}`));
     }
   }
 
   private async list(): Promise<void> {
-    console.log('📋 All Semver Nodes');
+    console.info('📋 All Semver Nodes');
     
     const nodes = this.validator.getAllSemverNodes();
     const sorted = Array.from(nodes.entries())
@@ -434,14 +434,14 @@ export class VersionControlCLI {
     for (const [id, node] of sorted) {
       const status = node.dependencies?.length ? '📦' : '🔸';
       const migration = node.migrations?.length ? '🔄' : '';
-      console.log(`   ${status}${migration} ${id}@${node.version}`);
+      console.info(`   ${status}${migration} ${id}@${node.version}`);
     }
     
-    console.log(`\nTotal: ${nodes.size} nodes`);
+    console.info(`\nTotal: ${nodes.size} nodes`);
   }
 
   private showHelp(): void {
-    console.log(`
+    console.info(`
 Version Control CLI - Versioned Taxonomy Management
 
 Commands:

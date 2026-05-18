@@ -2,7 +2,7 @@
 // @bun v1.3.7+
 // Tier-1380 Development Suite - Quick Index
 
-console.log("🎯 Tier-1380 Development Suite - Quick Index\n");
+console.info("🎯 Tier-1380 Development Suite - Quick Index\n");
 
 const tools = [
 	{
@@ -67,30 +67,30 @@ const tools = [
 	},
 ];
 
-console.log("Available Tools:\n");
+console.info("Available Tools:\n");
 
 tools.forEach((category) => {
-	console.log(`${category.category}`);
-	console.log("─".repeat(40));
+	console.info(`${category.category}`);
+	console.info("─".repeat(40));
 	category.tools.forEach((tool, index) => {
-		console.log(`${index + 1}. ${tool.name}`);
-		console.log(`   bun tools/${tool.file}`);
-		console.log(`   └─ ${tool.desc}\n`);
+		console.info(`${index + 1}. ${tool.name}`);
+		console.info(`   bun tools/${tool.file}`);
+		console.info(`   └─ ${tool.desc}\n`);
 	});
 });
 
-console.log("🚀 Quick Start Examples:");
-console.log("─".repeat(40));
-console.log("# Performance check");
-console.log("bun tools/tier1380-tracking.ts check tools/tier1380-tracking.ts");
-console.log("");
-console.log("# RSS analytics");
-console.log("bun tools/tier1380-rss-cache-analytics.ts");
-console.log("");
-console.log("# Secure execution");
-console.log("bun tools/tier1380-exec.ts echo 'Hello World'");
-console.log("");
-console.log("# Feed validation");
-console.log("bun tools/tier1380-feed-validator-bun.ts");
-console.log("");
-console.log("📚 For detailed documentation, see: TIER1380-ORGANIZATION.md");
+console.info("🚀 Quick Start Examples:");
+console.info("─".repeat(40));
+console.info("# Performance check");
+console.info("bun tools/tier1380-tracking.ts check tools/tier1380-tracking.ts");
+console.info("");
+console.info("# RSS analytics");
+console.info("bun tools/tier1380-rss-cache-analytics.ts");
+console.info("");
+console.info("# Secure execution");
+console.info("bun tools/tier1380-exec.ts echo 'Hello World'");
+console.info("");
+console.info("# Feed validation");
+console.info("bun tools/tier1380-feed-validator-bun.ts");
+console.info("");
+console.info("📚 For detailed documentation, see: TIER1380-ORGANIZATION.md");

@@ -1,4 +1,4 @@
 function test() {	
-  console.log('hello ');   // trailing space
+  console.info('hello ');   // trailing space
   return true;
 }

@@ -5,8 +5,8 @@
  *
  * @example
  * const stats = calculateMMStats(trades, orders, quotes);
- * console.log(`Maker ratio: ${(stats.makerRatio * 100).toFixed(1)}%`);
- * console.log(`Net PnL: ${stats.netPnl.toFixed(2)}`);
+ * console.info(`Maker ratio: ${(stats.makerRatio * 100).toFixed(1)}%`);
+ * console.info(`Net PnL: ${stats.netPnl.toFixed(2)}`);
  */
 
 import type {
@@ -36,7 +36,7 @@ import type {
  *
  * @example
  * const stats = calculateMMStats(trades, orders, quotes);
- * console.log(`Sharpe Ratio: ${stats.sharpeRatio.toFixed(2)}`);
+ * console.info(`Sharpe Ratio: ${stats.sharpeRatio.toFixed(2)}`);
  */
 export function calculateMMStats(
 	trades: Trade[],
@@ -510,7 +510,7 @@ function calculateRiskMetrics(trades: Trade[]): {
  * @example
  * const sessions = buildMMSessions(trades, orders, 30);
  * sessions.forEach(s => {
- *   console.log(`${s.startTime}: ${s.stats.netPnl} PnL`);
+ *   console.info(`${s.startTime}: ${s.stats.netPnl} PnL`);
  * });
  */
 export function buildMMSessions(
@@ -602,7 +602,7 @@ function createSession(
  *
  * @example
  * const analysis = analyzeQuotes(quotes);
- * console.log(`Avg spread: ${analysis.avgSpreadBps.toFixed(2)} bps`);
+ * console.info(`Avg spread: ${analysis.avgSpreadBps.toFixed(2)} bps`);
  */
 export function analyzeQuotes(quotes: QuoteSnapshot[]): {
 	avgSpreadBps: number;

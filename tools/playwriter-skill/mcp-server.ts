@@ -221,7 +221,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'browser_navigate': {
         const { session, url } = args as { session: number; url: string };
-        const code = `await page.goto('${url}'); console.log('Navigated to: ${url}');`;
+        const code = `await page.goto('${url}'); console.info('Navigated to: ${url}');`;
         const result = await executePlaywriter(['-s', String(session), '-e', code]);
         return {
           content: [{ type: 'text', text: result.stdout || result.stderr }],
@@ -230,7 +230,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'browser_click': {
         const { session, selector } = args as { session: number; selector: string };
-        const code = `await page.locator('${selector}').click(); console.log('Clicked: ${selector}');`;
+        const code = `await page.locator('${selector}').click(); console.info('Clicked: ${selector}');`;
         const result = await executePlaywriter(['-s', String(session), '-e', code]);
         return {
           content: [{ type: 'text', text: result.stdout || result.stderr }],
@@ -239,7 +239,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'browser_fill': {
         const { session, selector, value } = args as { session: number; selector: string; value: string };
-        const code = `await page.locator('${selector}').fill('${value}'); console.log('Filled: ${selector}');`;
+        const code = `await page.locator('${selector}').fill('${value}'); console.info('Filled: ${selector}');`;
         const result = await executePlaywriter(['-s', String(session), '-e', code]);
         return {
           content: [{ type: 'text', text: result.stdout || result.stderr }],
@@ -248,7 +248,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'browser_get_text': {
         const { session, selector } = args as { session: number; selector: string };
-        const code = `const texts = await page.locator('${selector}').allTextContents(); console.log(JSON.stringify(texts, null, 2));`;
+        const code = `const texts = await page.locator('${selector}').allTextContents(); console.info(JSON.stringify(texts, null, 2));`;
         const result = await executePlaywriter(['-s', String(session), '-e', code]);
         return {
           content: [{ type: 'text', text: result.stdout || result.stderr }],
@@ -259,10 +259,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const { session, path, labels = true } = args as { session: number; path?: string; labels?: boolean };
         let code: string;
         if (labels) {
-          code = `await screenshotWithAccessibilityLabels({ page }); console.log('Screenshot taken with labels');`;
+          code = `await screenshotWithAccessibilityLabels({ page }); console.info('Screenshot taken with labels');`;
         } else {
           const pathArg = path ? `'${path}'` : `'screenshot.png'`;
-          code = `await page.screenshot({ path: ${pathArg} }); console.log('Screenshot saved to: ${pathArg}');`;
+          code = `await page.screenshot({ path: ${pathArg} }); console.info('Screenshot saved to: ${pathArg}');`;
         }
         const result = await executePlaywriter(['-s', String(session), '-e', code]);
         return {
@@ -297,9 +297,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           // Take screenshot via playwriter
           let code: string;
           if (labels) {
-            code = `const buffer = await screenshotWithAccessibilityLabels({ page }); console.log('SCREENSHOT_BASE64:' + buffer.toString('base64'));`;
+            code = `const buffer = await screenshotWithAccessibilityLabels({ page }); console.info('SCREENSHOT_BASE64:' + buffer.toString('base64'));`;
           } else {
-            code = `const buffer = await page.screenshot({ fullPage: ${fullPage} }); console.log('SCREENSHOT_BASE64:' + buffer.toString('base64'));`;
+            code = `const buffer = await page.screenshot({ fullPage: ${fullPage} }); console.info('SCREENSHOT_BASE64:' + buffer.toString('base64'));`;
           }
 
           const result = await executePlaywriter(['-s', String(session), '-e', code]);
@@ -350,7 +350,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           const r2 = new PlaywriterR2Integration({ sessionId: session, bucket });
 
           // Get accessibility snapshot
-          const code = `const snapshot = await accessibilitySnapshot({ page }); console.log('SNAPSHOT_JSON:' + JSON.stringify(snapshot));`;
+          const code = `const snapshot = await accessibilitySnapshot({ page }); console.info('SNAPSHOT_JSON:' + JSON.stringify(snapshot));`;
           const result = await executePlaywriter(['-s', String(session), '-e', code]);
           const match = result.stdout.match(/SNAPSHOT_JSON:(.+)/);
 

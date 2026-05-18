@@ -15,7 +15,7 @@ export class ChaosTester {
     this.registerScenario({
       name: "latency_simulation",
       execute: async () => {
-        console.log("🌊 Injecting 500ms network latency simulation...");
+        console.info("🌊 Injecting 500ms network latency simulation...");
         process.env.CHAOS_LATENCY = "500";
         // Simulate a period of instability
         await Bun.sleep(3000);
@@ -26,7 +26,7 @@ export class ChaosTester {
     this.registerScenario({
       name: "proxy_failure",
       execute: async () => {
-        console.log("🔥 Triggering proxy failure wave...");
+        console.info("🔥 Triggering proxy failure wave...");
         process.env.PROXY_FAIL_RATE = "0.8"; // 80% failure rate
         await Bun.sleep(4000);
         process.env.PROXY_FAIL_RATE = "0.05"; // Back to normal 5%
@@ -36,7 +36,7 @@ export class ChaosTester {
     this.registerScenario({
       name: "rate_limit_storm",
       execute: async () => {
-        console.log("⚡ Simulating rate limit storm...");
+        console.info("⚡ Simulating rate limit storm...");
         process.env.SIMULATE_RATE_LIMITS = "true";
         await Bun.sleep(2000);
         process.env.SIMULATE_RATE_LIMITS = "false";

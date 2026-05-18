@@ -236,14 +236,14 @@ const server = Bun.serve({
   },
 });
 
-console.log("🏥 Health Check API Server running on http://localhost:3001");
-console.log("📊 Available endpoints:");
-console.log("  GET  /api/health - Full health check");
-console.log("  GET  /api/health/services - Services status");
-console.log("  GET  /api/health/system - System resources");
-console.log("  GET  /api/health/errors - Error logs");
-console.log("  POST /api/health/test-error - Test error logging");
-console.log("  DELETE /api/health/errors - Clear all errors");
-console.log("  GET  /api/health/metrics - Performance metrics");
+console.info("🏥 Health Check API Server running on http://localhost:3001");
+console.info("📊 Available endpoints:");
+console.info("  GET  /api/health - Full health check");
+console.info("  GET  /api/health/services - Services status");
+console.info("  GET  /api/health/system - System resources");
+console.info("  GET  /api/health/errors - Error logs");
+console.info("  POST /api/health/test-error - Test error logging");
+console.info("  DELETE /api/health/errors - Clear all errors");
+console.info("  GET  /api/health/metrics - Performance metrics");
 
 export default server;

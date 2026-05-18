@@ -404,17 +404,17 @@ class WorkflowAutomation {
     this.currentWorkflow = workflowId;
     this.results = [];
 
-    console.log(`\n${workflow.icon} Starting Workflow: ${workflow.name}`);
-    console.log('='.repeat(60));
-    console.log(`📝 ${workflow.description}\n`);
+    console.info(`\n${workflow.icon} Starting Workflow: ${workflow.name}`);
+    console.info('='.repeat(60));
+    console.info(`📝 ${workflow.description}\n`);
 
     // Check prerequisites
     if (workflow.prerequisites && workflow.prerequisites.length > 0) {
-      console.log('📋 Prerequisites:');
+      console.info('📋 Prerequisites:');
       workflow.prerequisites.forEach(prereq => {
-        console.log(`   • ${prereq}`);
+        console.info(`   • ${prereq}`);
       });
-      console.log('');
+      console.info('');
     }
 
     // Execute steps
@@ -425,8 +425,8 @@ class WorkflowAutomation {
       const step = workflow.steps[i];
       const stepNumber = i + 1;
 
-      console.log(`📍 Step ${stepNumber}/${workflow.steps.length}: ${step.name}`);
-      console.log(`   ${step.description}`);
+      console.info(`📍 Step ${stepNumber}/${workflow.steps.length}: ${step.name}`);
+      console.info(`   ${step.description}`);
 
       const result = await this.executeStep(step);
       this.results.push(result);
@@ -434,11 +434,11 @@ class WorkflowAutomation {
       const statusIcon = result.success ? '✅' : '❌';
       const duration = `(${(result.duration / 1000).toFixed(1)}s)`;
 
-      console.log(`   ${statusIcon} ${result.success ? 'Success' : 'Failed'} ${duration}\n`);
+      console.info(`   ${statusIcon} ${result.success ? 'Success' : 'Failed'} ${duration}\n`);
 
       if (!result.success && step.required && !step.continueOnError) {
         allSuccess = false;
-        console.log('🛑 Workflow stopped due to failed required step');
+        console.info('🛑 Workflow stopped due to failed required step');
         break;
       }
 
@@ -454,9 +454,9 @@ class WorkflowAutomation {
 
     // Execute post actions
     if (allSuccess && workflow.postActions) {
-      console.log('\n📮 Post Actions:');
+      console.info('\n📮 Post Actions:');
       workflow.postActions.forEach(action => {
-        console.log(`   • ${action}`);
+        console.info(`   • ${action}`);
       });
     }
 
@@ -548,24 +548,24 @@ class WorkflowAutomation {
    * Display workflow summary
    */
   private displaySummary(workflow: Workflow, success: boolean, duration: number): void {
-    console.log('\n📊 Workflow Summary');
-    console.log('='.repeat(60));
-    console.log(`${workflow.icon} ${workflow.name}`);
-    console.log(`🎯 Status: ${success ? '✅ SUCCESS' : '❌ FAILED'}`);
-    console.log(`⏱️  Duration: ${(duration / 1000).toFixed(1)}s`);
+    console.info('\n📊 Workflow Summary');
+    console.info('='.repeat(60));
+    console.info(`${workflow.icon} ${workflow.name}`);
+    console.info(`🎯 Status: ${success ? '✅ SUCCESS' : '❌ FAILED'}`);
+    console.info(`⏱️  Duration: ${(duration / 1000).toFixed(1)}s`);
 
     const successCount = this.results.filter(r => r.success).length;
     const failedCount = this.results.filter(r => !r.success).length;
 
-    console.log(`✅ Successful Steps: ${successCount}`);
-    console.log(`❌ Failed Steps: ${failedCount}`);
+    console.info(`✅ Successful Steps: ${successCount}`);
+    console.info(`❌ Failed Steps: ${failedCount}`);
 
     if (failedCount > 0) {
-      console.log('\n❌ Failed Steps:');
+      console.info('\n❌ Failed Steps:');
       this.results
         .filter(r => !r.success)
         .forEach(result => {
-          console.log(`   • ${result.step}: ${result.error}`);
+          console.info(`   • ${result.step}: ${result.error}`);
         });
     }
 
@@ -596,33 +596,33 @@ class WorkflowAutomation {
     const reportPath = `workflow-report-${workflow.id}-${Date.now()}.json`;
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
-    console.log(`\n📄 Report saved to: ${reportPath}`);
+    console.info(`\n📄 Report saved to: ${reportPath}`);
   }
 
   /**
    * List available workflows
    */
   listWorkflows(): void {
-    console.log('\n🔄 Available Workflows');
-    console.log('='.repeat(60));
+    console.info('\n🔄 Available Workflows');
+    console.info('='.repeat(60));
 
     Array.from(this.workflows.values()).forEach(workflow => {
-      console.log(`\n${workflow.icon} ${workflow.name} (${workflow.id})`);
-      console.log(`   ${workflow.description}`);
-      console.log(`   Steps: ${workflow.steps.length}`);
-      console.log(`   Required: ${workflow.steps.filter(s => s.required).length}`);
+      console.info(`\n${workflow.icon} ${workflow.name} (${workflow.id})`);
+      console.info(`   ${workflow.description}`);
+      console.info(`   Steps: ${workflow.steps.length}`);
+      console.info(`   Required: ${workflow.steps.filter(s => s.required).length}`);
     });
 
-    console.log('\n💡 Run a workflow with: fire22 workflow <id>');
+    console.info('\n💡 Run a workflow with: fire22 workflow <id>');
   }
 
   /**
    * Create custom workflow interactively
    */
   async createCustomWorkflow(): Promise<void> {
-    console.log('\n🎨 Create Custom Workflow');
-    console.log('='.repeat(60));
-    console.log('Feature coming soon! Use predefined workflows for now.');
+    console.info('\n🎨 Create Custom Workflow');
+    console.info('='.repeat(60));
+    console.info('Feature coming soon! Use predefined workflows for now.');
 
     // In a real implementation, this would guide users through
     // creating a custom workflow with interactive prompts
@@ -635,7 +635,7 @@ async function main() {
   const automation = new WorkflowAutomation();
 
   if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🔄 Fire22 Workflow Automation
 
 DESCRIPTION:

@@ -65,7 +65,7 @@ export const HTTPHeadersDemo = () => {
       setCORSStatus(corsEnabled ? "✅ CORS Enabled" : "❌ CORS Disabled");
 
       const data = await response.json();
-      console.log("API Response:", data);
+      console.info("API Response:", data);
 
     } catch (error) {
       console.error("API Error:", error);
@@ -95,7 +95,7 @@ export const HTTPHeadersDemo = () => {
       });
 
       const data = await response.json();
-      console.log("File Analysis Response:", data);
+      console.info("File Analysis Response:", data);
 
       setRequestInfo((prev: RequestInfo) => ({
         ...prev,

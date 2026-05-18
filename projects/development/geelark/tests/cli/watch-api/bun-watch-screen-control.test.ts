@@ -23,9 +23,9 @@ describe("👁️ Bun --watch - Screen Control Options", () => {
 
     // Create a TypeScript file to watch
     const tsFile = `
-console.log('Dev server running at:', new Date().toISOString());
+console.info('Dev server running at:', new Date().toISOString());
 setInterval(() => {
-  console.log('Heartbeat:', new Date().toISOString());
+  console.info('Heartbeat:', new Date().toISOString());
 }, 2000);
 `;
 
@@ -71,12 +71,12 @@ setInterval(() => {
 import { test, expect } from "bun:test";
 
 test("sample test", () => {
-  console.log('Test executed at:', new Date().toISOString());
+  console.info('Test executed at:', new Date().toISOString());
   expect(true).toBe(true);
 });
 
 test("another test", () => {
-  console.log('Another test at:', new Date().toISOString());
+  console.info('Another test at:', new Date().toISOString());
   expect(1 + 1).toBe(2);
 });
 `;
@@ -104,8 +104,8 @@ test("another test", () => {
   test("✅ --no-clear-screen with file watching", async () => {
     // Create a file to watch
     const watchFile = `
-console.log('File started at:', new Date().toISOString());
-console.log('This should not clear the screen on restart');
+console.info('File started at:', new Date().toISOString());
+console.info('This should not clear the screen on restart');
 `;
 
     await Bun.write(`${tempDir}/watch.ts`, watchFile);
@@ -135,7 +135,7 @@ export function hello(name: string): string {
   return \`Hello, \${name}!\`;
 }
 
-console.log('Source file loaded');
+console.info('Source file loaded');
 `;
 
     await Bun.write(`${tempDir}/src/index.ts`, sourceFile);
@@ -186,9 +186,9 @@ console.log('Source file loaded');
 
     // Create a development file
     const devFile = `
-console.log('Combined watch mode test');
-console.log('Screen should not clear');
-console.log('Output should be preserved');
+console.info('Combined watch mode test');
+console.info('Screen should not clear');
+console.info('Output should be preserved');
 `;
 
     await Bun.write(`${tempDir}/combined.ts`, devFile);
@@ -223,14 +223,14 @@ console.log('Output should be preserved');
     const mainFile = `
 import { utils } from './utils';
 
-console.log('Main file with TypeScript');
+console.info('Main file with TypeScript');
 utils.greet('World');
 `;
 
     const utilsFile = `
 export const utils = {
   greet: (name: string) => {
-    console.log(\`Hello, \${name}! From utils at \${new Date().toISOString()}\`);
+    console.info(\`Hello, \${name}! From utils at \${new Date().toISOString()}\`);
   },
   calculate: (a: number, b: number) => a + b
 };
@@ -295,9 +295,9 @@ export const utils = {
   test("✅ Watch options with environment variables", async () => {
     // Create file that uses environment variables
     const envFile = `
-console.log('NODE_ENV:', process.env.NODE_ENV || 'development');
-console.log('Watch mode with env vars at:', new Date().toISOString());
-console.log('Screen control options active');
+console.info('NODE_ENV:', process.env.NODE_ENV || 'development');
+console.info('Watch mode with env vars at:', new Date().toISOString());
+console.info('Screen control options active');
 `;
 
     await Bun.write(`${tempDir}/env-watch.ts`, envFile);

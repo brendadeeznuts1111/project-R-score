@@ -91,7 +91,7 @@ class EnhancedCommandRegistry {
       }
     }
 
-    console.log(`Loaded ${this.commands.size} enhanced commands`);
+    console.info(`Loaded ${this.commands.size} enhanced commands`);
   }
 
   // Load alias definitions
@@ -365,7 +365,7 @@ async function main() {
   const [command, ...args] = process.argv.slice(2);
 
   if (!command) {
-    console.log(`
+    console.info(`
 Enhanced Command Registry v2.0.0 - Type-safe slash commands
 
 Usage:
@@ -399,16 +399,16 @@ Examples:
     switch (command) {
       case 'list':
         const commands = registry.listCommands();
-        console.log('Enhanced Commands:');
+        console.info('Enhanced Commands:');
         commands.forEach(cmd => {
-          console.log(`  ${cmd.command} - ${cmd.description}`);
+          console.info(`  ${cmd.command} - ${cmd.description}`);
           if (cmd.schema) {
             const params = Object.keys(cmd.schema).length;
-            console.log(`    Schema: ${params} parameters`);
+            console.info(`    Schema: ${params} parameters`);
           }
           if (cmd.nl_mapping) {
             const mappings = Object.keys(cmd.nl_mapping).length;
-            console.log(`    NL Mappings: ${mappings} patterns`);
+            console.info(`    NL Mappings: ${mappings} patterns`);
           }
         });
         break;
@@ -418,10 +418,10 @@ Examples:
         const validateParams = args[1] ? JSON.parse(args[1]) : {};
         const validation = registry.validateCommand(validateCmd, validateParams);
         if (validation.valid) {
-          console.log('✅ Command validation passed');
+          console.info('✅ Command validation passed');
         } else {
-          console.log('❌ Validation errors:');
-          validation.errors.forEach(error => console.log(`  - ${error}`));
+          console.info('❌ Validation errors:');
+          validation.errors.forEach(error => console.info(`  - ${error}`));
           process.exit(1);
         }
         break;
@@ -429,8 +429,8 @@ Examples:
       case 'nl-parse':
         const nlInput = args.join(' ');
         const parsed = registry.parseNaturalLanguage(nlInput);
-        console.log(`Natural Language: "${nlInput}"`);
-        console.log(`Parsed Command: ${parsed}`);
+        console.info(`Natural Language: "${nlInput}"`);
+        console.info(`Parsed Command: ${parsed}`);
         break;
 
       case 'autocomplete':
@@ -438,8 +438,8 @@ Examples:
         const acParam = args[1];
         const acPartial = args[2] || '';
         const suggestions = registry.getAutocomplete(acCmd, acParam, acPartial);
-        console.log(`Autocomplete suggestions for ${acCmd}.${acParam} "${acPartial}":`);
-        suggestions.forEach(suggestion => console.log(`  - ${suggestion}`));
+        console.info(`Autocomplete suggestions for ${acCmd}.${acParam} "${acPartial}":`);
+        suggestions.forEach(suggestion => console.info(`  - ${suggestion}`));
         break;
 
       case 'alias-set':
@@ -447,31 +447,31 @@ Examples:
         const aliasCmd = args.slice(1).join(' ');
         const category = args[2]; // Optional category
         const set = registry.setAlias(alias, aliasCmd, category);
-        console.log(set ? `✅ Alias set: ${alias} → ${aliasCmd}` : '❌ Failed to set alias');
+        console.info(set ? `✅ Alias set: ${alias} → ${aliasCmd}` : '❌ Failed to set alias');
         break;
 
       case 'alias-remove':
         const removeAlias = args[0];
         const removed = registry.removeAlias(removeAlias);
-        console.log(removed ? `✅ Alias removed: ${removeAlias}` : '❌ Failed to remove alias');
+        console.info(removed ? `✅ Alias removed: ${removeAlias}` : '❌ Failed to remove alias');
         break;
 
       case 'alias-list':
         const aliasCategory = args[0];
         const aliases = registry.getAliases(aliasCategory);
-        console.log(`Aliases ${aliasCategory ? `(${aliasCategory})` : ''}:`);
+        console.info(`Aliases ${aliasCategory ? `(${aliasCategory})` : ''}:`);
         Object.entries(aliases).forEach(([alias, cmd]) => {
-          console.log(`  ${alias} → ${cmd}`);
+          console.info(`  ${alias} → ${cmd}`);
         });
         break;
 
       case 'schema-docs':
-        console.log(registry.generateSchemaDocs());
+        console.info(registry.generateSchemaDocs());
         break;
 
       case 'export':
         const exported = registry.exportForCursor();
-        console.log(JSON.stringify(exported, null, 2));
+        console.info(JSON.stringify(exported, null, 2));
         break;
 
       default:

@@ -3,8 +3,8 @@
  * Chromatic terminal fortress with dynamic width adaptation and visual polish
  */
 
-console.log("🎨 FACTORYWAGER TABULAR v4.3.1 - RESPONSIVE CHROMATIC DOMINION!");
-console.log("=".repeat(80));
+console.info("🎨 FACTORYWAGER TABULAR v4.3.1 - RESPONSIVE CHROMATIC DOMINION!");
+console.info("=".repeat(80));
 
 // ═══════════════════════════════════════════════════════════════
 // TERMINAL WIDTH DETECTION
@@ -186,7 +186,7 @@ function renderColorSwatches(): void {
     { label: "bunVer", hsl: [220, 90, 60] },
   ];
 
-  console.log("");
+  console.info("");
   let legendLine = `${PALETTE.dim}Legend: ${RESET}`;
 
   swatches.forEach((swatch, idx) => {
@@ -196,7 +196,7 @@ function renderColorSwatches(): void {
     if (idx < swatches.length - 1) legendLine += "  ";
   });
 
-  console.log(legendLine);
+  console.info(legendLine);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -207,7 +207,7 @@ export async function renderFactoryTabular(fmEntries: any[], options?: { badges?
 
   // Show compression notice for narrow terminals
   if (IS_NARROW) {
-    console.log(`${PALETTE.dim}📱 Responsive mode: ${TERMINAL_WIDTH} cols (compressed)${RESET}`);
+    console.info(`${PALETTE.dim}📱 Responsive mode: ${TERMINAL_WIDTH} cols (compressed)${RESET}`);
   }
 
   // Enrich entries
@@ -259,13 +259,13 @@ export async function renderFactoryTabular(fmEntries: any[], options?: { badges?
   const headerColor = PALETTE.header;
 
   // Header
-  console.log(borderLine);
+  console.info(borderLine);
   const headers = COLUMNS.map((col) => {
     const color = col.key === "status" ? headerColor : Bun.color(col.hsl || "hsl(0,0%,70%)", "ansi-16m");
     return `${color}${uPad(col.name, col.width, col.align)}${RESET}`;
   }).join(`${borderColor} │ ${RESET}`);
-  console.log(`${borderColor} ${headers} ${RESET}`);
-  console.log(borderLine);
+  console.info(`${borderColor} ${headers} ${RESET}`);
+  console.info(borderLine);
 
   // Rows
   enriched.forEach((row, idx) => {
@@ -277,17 +277,17 @@ export async function renderFactoryTabular(fmEntries: any[], options?: { badges?
       return renderCell(val, col, isDefault && col.key !== null, useBadges);
     }).join(`${borderColor} │ ${RESET}`);
 
-    console.log(`${borderColor} ${cells} ${RESET}`);
+    console.info(`${borderColor} ${cells} ${RESET}`);
   });
 
-  console.log(borderLine);
+  console.info(borderLine);
 
   // Color swatch legend
   renderColorSwatches();
 
   // Footer defaults
   const legendColor = PALETTE.dim;
-  console.log(
+  console.info(
     `${legendColor}Defaults: type=unknown  version=none  bun=any  author=anon  status=active${RESET}`,
   );
 }
@@ -314,8 +314,8 @@ export const statusColor = (status: string) => {
 // PRODUCTION DEMO - v4.3.1 Responsive Chromatic Table
 // ═══════════════════════════════════════════════════════════════
 
-console.log("\n🔥 FACTORYWAGER TABULAR v4.3.1 - RESPONSIVE CHROMATIC DEMO");
-console.log("-".repeat(50));
+console.info("\n🔥 FACTORYWAGER TABULAR v4.3.1 - RESPONSIVE CHROMATIC DEMO");
+console.info("-".repeat(50));
 
 // Sample data with Unicode and various types
 const sampleData = [
@@ -371,12 +371,12 @@ await renderFactoryTabular(sampleData, { badges: true });
 // FEATURE HIGHLIGHT
 // ═══════════════════════════════════════════════════════════════
 
-console.log("\n✨ v4.3.1 FEATURES:");
-console.log("  • Responsive column compression (< 120 cols)");
-console.log("  • Status badges (███ active / ▒▒▒ draft / ░░░ deprecated)");
-console.log("  • Color swatch legend at bottom");
-console.log(`  • Terminal width: ${TERMINAL_WIDTH} cols ${IS_NARROW ? "(compressed)" : "(full)"}`);
+console.info("\n✨ v4.3.1 FEATURES:");
+console.info("  • Responsive column compression (< 120 cols)");
+console.info("  • Status badges (███ active / ▒▒▒ draft / ░░░ deprecated)");
+console.info("  • Color swatch legend at bottom");
+console.info(`  • Terminal width: ${TERMINAL_WIDTH} cols ${IS_NARROW ? "(compressed)" : "(full)"}`);
 
-console.log("\n🏆 FACTORYWAGER TABULAR v4.3.1 - RESPONSIVE CHROMATIC DOMINION ACHIEVED!");
-console.log("🚀 Dynamic compression + Status badges + Color swatches!");
-console.log("💎 Terminal visual supremacy - Now responsive!");
+console.info("\n🏆 FACTORYWAGER TABULAR v4.3.1 - RESPONSIVE CHROMATIC DOMINION ACHIEVED!");
+console.info("🚀 Dynamic compression + Status badges + Color swatches!");
+console.info("💎 Terminal visual supremacy - Now responsive!");

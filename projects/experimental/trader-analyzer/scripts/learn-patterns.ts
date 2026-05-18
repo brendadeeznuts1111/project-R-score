@@ -121,14 +121,14 @@ export class PatternLearner {
     };
 
     await Bun.write(outputPath, JSON.stringify(data, null, 2));
-    console.log(`✅ Exported ${patterns.length} learned patterns to ${outputPath}`);
+    console.info(`✅ Exported ${patterns.length} learned patterns to ${outputPath}`);
   }
 
   /**
    * Print learned patterns
    */
   printPatterns(patterns: LearnedPattern[]): void {
-    console.log(`\n📚 Learned ${patterns.length} patterns:\n`);
+    console.info(`\n📚 Learned ${patterns.length} patterns:\n`);
 
     // Group by category
     const byCategory = new Map<string, LearnedPattern[]>();
@@ -140,12 +140,12 @@ export class PatternLearner {
     }
 
     for (const [category, categoryPatterns] of byCategory.entries()) {
-      console.log(`### ${category} (${categoryPatterns.length})`);
+      console.info(`### ${category} (${categoryPatterns.length})`);
       for (const pattern of categoryPatterns.slice(0, 10)) {
-        console.log(`  ${pattern.pattern} (${pattern.occurrences} occurrences)`);
-        console.log(`    Files: ${pattern.files.length}`);
+        console.info(`  ${pattern.pattern} (${pattern.occurrences} occurrences)`);
+        console.info(`    Files: ${pattern.files.length}`);
       }
-      console.log();
+      console.info();
     }
   }
 }

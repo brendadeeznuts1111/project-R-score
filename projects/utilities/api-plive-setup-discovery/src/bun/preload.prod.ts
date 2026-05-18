@@ -19,7 +19,7 @@ logger.info('Bun preload complete', {
 if (typeof crypto !== 'undefined' && crypto.randomUUID) {
   // Generate a test UUID to ensure crypto is ready
   const testUUID = crypto.randomUUID();
-  console.log(`🔐 UUID generation ready: ${testUUID.substring(0, 8)}...`);
+  console.info(`🔐 UUID generation ready: ${testUUID.substring(0, 8)}...`);
 }
 
 // Optional: Pre-allocate any global buffers or caches

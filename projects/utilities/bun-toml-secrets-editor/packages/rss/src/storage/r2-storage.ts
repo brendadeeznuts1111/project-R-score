@@ -98,7 +98,7 @@ export class R2Storage {
 				);
 			}
 
-			console.log(`✅ RSS feed stored: ${key}`);
+			console.info(`✅ RSS feed stored: ${key}`);
 			return key;
 		} catch (error) {
 			console.error(`❌ Failed to store RSS feed: ${error}`);
@@ -145,7 +145,7 @@ export class R2Storage {
 				);
 			}
 
-			console.log(`✅ Profiling report stored: ${key}`);
+			console.info(`✅ Profiling report stored: ${key}`);
 			return key;
 		} catch (error) {
 			console.error(`❌ Failed to store profiling report: ${error}`);

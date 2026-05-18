@@ -54,15 +54,15 @@ class DepartmentReadinessAcceleration {
    * 🎯 Execute department readiness acceleration to achieve 100%
    */
   async accelerateToFullReadiness(): Promise<void> {
-    console.log('🎯 FIRE22 DEPARTMENT READINESS ACCELERATION');
-    console.log('!==!==!==!==!==!==!==!==');
-    console.log(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
-    console.log(`⏰ Time: ${new Date().toLocaleTimeString()}`);
-    console.log(`🎯 Mission: ACHIEVE 100% DEPARTMENT READINESS\n`);
+    console.info('🎯 FIRE22 DEPARTMENT READINESS ACCELERATION');
+    console.info('!==!==!==!==!==!==!==!==');
+    console.info(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
+    console.info(`⏰ Time: ${new Date().toLocaleTimeString()}`);
+    console.info(`🎯 Mission: ACHIEVE 100% DEPARTMENT READINESS\n`);
 
-    console.log(`🚨 Current Status: 70% Ready (7/10 departments)`);
-    console.log(`🎯 Target Status: 100% Ready (10/10 departments)`);
-    console.log(`📊 Gap to Close: 3 departments requiring intervention\n`);
+    console.info(`🚨 Current Status: 70% Ready (7/10 departments)`);
+    console.info(`🎯 Target Status: 100% Ready (10/10 departments)`);
+    console.info(`📊 Gap to Close: 3 departments requiring intervention\n`);
 
     // Analyze non-ready departments
     await this.analyzeNonReadyDepartments();
@@ -79,37 +79,37 @@ class DepartmentReadinessAcceleration {
     // Generate acceleration report
     await this.generateAccelerationReport();
 
-    console.log('\n🎯 DEPARTMENT READINESS ACCELERATION COMPLETE');
-    console.log('✅ Targeted interventions deployed for 3 departments');
-    console.log('✅ Executive escalation procedures activated');
-    console.log('✅ Alternate contact strategies implemented');
+    console.info('\n🎯 DEPARTMENT READINESS ACCELERATION COMPLETE');
+    console.info('✅ Targeted interventions deployed for 3 departments');
+    console.info('✅ Executive escalation procedures activated');
+    console.info('✅ Alternate contact strategies implemented');
   }
 
   /**
    * 🔍 Analyze non-ready departments
    */
   private async analyzeNonReadyDepartments(): Promise<void> {
-    console.log('🔍 Analyzing non-ready departments...');
+    console.info('🔍 Analyzing non-ready departments...');
 
     for (const dept of this.nonReadyDepartments) {
-      console.log(`  🚨 ${dept.department}:`);
-      console.log(`    - Status: ${dept.currentStatus}`);
-      console.log(`    - Hours Overdue: ${dept.hoursOverdue}`);
-      console.log(`    - Business Impact: ${dept.businessImpact}`);
-      console.log(`    - Escalation Level: ${dept.escalationLevel}`);
+      console.info(`  🚨 ${dept.department}:`);
+      console.info(`    - Status: ${dept.currentStatus}`);
+      console.info(`    - Hours Overdue: ${dept.hoursOverdue}`);
+      console.info(`    - Business Impact: ${dept.businessImpact}`);
+      console.info(`    - Escalation Level: ${dept.escalationLevel}`);
     }
 
-    console.log(`\n📊 Analysis Summary:`);
-    console.log(`  - Critical (Tier 2): 1 department (Operations)`);
-    console.log(`  - Important (Tier 3): 2 departments (Design, Contributors)`);
-    console.log(`  - Total Impact: 30% deployment readiness gap`);
+    console.info(`\n📊 Analysis Summary:`);
+    console.info(`  - Critical (Tier 2): 1 department (Operations)`);
+    console.info(`  - Important (Tier 3): 2 departments (Design, Contributors)`);
+    console.info(`  - Total Impact: 30% deployment readiness gap`);
   }
 
   /**
    * 📋 Create targeted intervention plans
    */
   private async createTargetedInterventionPlans(): Promise<void> {
-    console.log('📋 Creating targeted intervention plans...');
+    console.info('📋 Creating targeted intervention plans...');
 
     // Operations Department - Critical Tier 2
     this.accelerationPlans.push({
@@ -141,14 +141,14 @@ class DepartmentReadinessAcceleration {
       fallbackPlan: 'Assign Taylor Johnson as alternate coordinator',
     });
 
-    console.log(`  ✅ ${this.accelerationPlans.length} targeted intervention plans created`);
+    console.info(`  ✅ ${this.accelerationPlans.length} targeted intervention plans created`);
   }
 
   /**
    * 🚀 Execute immediate interventions
    */
   private async executeImmediateInterventions(): Promise<void> {
-    console.log('🚀 Executing immediate interventions...');
+    console.info('🚀 Executing immediate interventions...');
 
     // Intervention 1: Operations Department - CEO Direct Call
     await this.executeOperationsIntervention();
@@ -159,14 +159,14 @@ class DepartmentReadinessAcceleration {
     // Intervention 3: Team Contributors - Direct Technical Intervention
     await this.executeContributorsIntervention();
 
-    console.log('  ✅ All immediate interventions executed');
+    console.info('  ✅ All immediate interventions executed');
   }
 
   /**
    * ⚙️ Execute Operations Department intervention
    */
   private async executeOperationsIntervention(): Promise<void> {
-    console.log('  ⚙️ Executing Operations Department intervention...');
+    console.info('  ⚙️ Executing Operations Department intervention...');
 
     const interventionPlan = `# 🚨 URGENT: Operations Department CEO Intervention
 **FIRE22 SECURITY DEPLOYMENT - CEO DIRECT INTERVENTION**
@@ -247,14 +247,14 @@ class DepartmentReadinessAcceleration {
     const interventionPath = join(this.accelerationDir, 'ceo-operations-intervention.md');
     writeFileSync(interventionPath, interventionPlan);
 
-    console.log('    ✅ CEO intervention plan for Operations Department created');
+    console.info('    ✅ CEO intervention plan for Operations Department created');
   }
 
   /**
    * 🎨 Execute Design Team intervention
    */
   private async executeDesignTeamIntervention(): Promise<void> {
-    console.log('  🎨 Executing Design Team intervention...');
+    console.info('  🎨 Executing Design Team intervention...');
 
     const managerEscalation = `# 🚨 MANAGER ESCALATION: Design Team Non-Response
 **FIRE22 SECURITY DEPLOYMENT - MANAGER INTERVENTION REQUIRED**
@@ -342,14 +342,14 @@ class DepartmentReadinessAcceleration {
     const escalationPath = join(this.accelerationDir, 'manager-design-escalation.md');
     writeFileSync(escalationPath, managerEscalation);
 
-    console.log('    ✅ Manager escalation for Design Team created');
+    console.info('    ✅ Manager escalation for Design Team created');
   }
 
   /**
    * 👥 Execute Contributors intervention
    */
   private async executeContributorsIntervention(): Promise<void> {
-    console.log('  👥 Executing Contributors intervention...');
+    console.info('  👥 Executing Contributors intervention...');
 
     const directIntervention = `# 🔧 DIRECT INTERVENTION: Team Contributors
 **FIRE22 SECURITY DEPLOYMENT - TECHNICAL INTERVENTION**
@@ -451,14 +451,14 @@ class DepartmentReadinessAcceleration {
     const interventionPath = join(this.accelerationDir, 'cto-contributors-intervention.md');
     writeFileSync(interventionPath, directIntervention);
 
-    console.log('    ✅ CTO direct intervention for Contributors created');
+    console.info('    ✅ CTO direct intervention for Contributors created');
   }
 
   /**
    * 🔄 Deploy alternate contact strategies
    */
   private async deployAlternateContactStrategies(): Promise<void> {
-    console.log('🔄 Deploying alternate contact strategies...');
+    console.info('🔄 Deploying alternate contact strategies...');
 
     const alternateStrategy = `# 🔄 Alternate Contact Strategies
 **FIRE22 DEPARTMENT READINESS - BACKUP PLANS**
@@ -513,14 +513,14 @@ class DepartmentReadinessAcceleration {
     const strategyPath = join(this.accelerationDir, 'alternate-contact-strategies.md');
     writeFileSync(strategyPath, alternateStrategy);
 
-    console.log('  ✅ Alternate contact strategies deployed');
+    console.info('  ✅ Alternate contact strategies deployed');
   }
 
   /**
    * 📊 Generate acceleration report
    */
   private async generateAccelerationReport(): Promise<void> {
-    console.log('📊 Generating acceleration report...');
+    console.info('📊 Generating acceleration report...');
 
     const accelerationReport = `# 📊 Department Readiness Acceleration Report
 **OPERATION: SECURE-COMM-22 - 100% READINESS TARGET**
@@ -606,7 +606,7 @@ class DepartmentReadinessAcceleration {
     const reportPath = join(this.accelerationDir, 'acceleration-report.md');
     writeFileSync(reportPath, accelerationReport);
 
-    console.log('  ✅ Acceleration report generated');
+    console.info('  ✅ Acceleration report generated');
   }
 
   // Helper methods
@@ -664,16 +664,16 @@ async function main() {
     const acceleration = new DepartmentReadinessAcceleration();
     await acceleration.accelerateToFullReadiness();
 
-    console.log('\n🎯 DEPARTMENT READINESS ACCELERATION COMPLETE!');
-    console.log('!==!==!==!==!==!==!==!=====');
-    console.log('✅ CEO intervention deployed for Operations Department');
-    console.log('✅ Manager escalation deployed for Design Team');
-    console.log('✅ CTO engagement deployed for Team Contributors');
-    console.log('✅ Alternate contact strategies prepared');
-    console.log('✅ Timeline protection measures activated');
+    console.info('\n🎯 DEPARTMENT READINESS ACCELERATION COMPLETE!');
+    console.info('!==!==!==!==!==!==!==!=====');
+    console.info('✅ CEO intervention deployed for Operations Department');
+    console.info('✅ Manager escalation deployed for Design Team');
+    console.info('✅ CTO engagement deployed for Team Contributors');
+    console.info('✅ Alternate contact strategies prepared');
+    console.info('✅ Timeline protection measures activated');
 
-    console.log('\n📊 Expected Outcome: 100% Department Readiness within 8 hours');
-    console.log('🎯 Target: All 10 departments ready for September 5 deployment');
+    console.info('\n📊 Expected Outcome: 100% Department Readiness within 8 hours');
+    console.info('🎯 Target: All 10 departments ready for September 5 deployment');
   } catch (error) {
     console.error('❌ Department readiness acceleration failed:', error);
     process.exit(1);

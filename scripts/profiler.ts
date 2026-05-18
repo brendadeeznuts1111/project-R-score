@@ -25,15 +25,15 @@ function getProfileFilename(): string {
 
 // Profile a function and save results
 async function profileAndSave<T>(fn: () => T | Promise<T>): Promise<T> {
-  console.log(`Starting profiling for: ${Bun.main}`);
+  console.info(`Starting profiling for: ${Bun.main}`);
 
   const result = await profile(fn) as ProfileResult;
 
   const outputFile = getProfileFilename();
   await Bun.write(outputFile, JSON.stringify(result, null, 2));
 
-  console.log(`Profile saved to: ${outputFile}`);
-  console.log(`Top spending functions:`);
+  console.info(`Profile saved to: ${outputFile}`);
+  console.info(`Top spending functions:`);
 
   if (result.summary && result.summary.functions) {
     const sortedFunctions = Object.entries(result.summary.functions)
@@ -41,7 +41,7 @@ async function profileAndSave<T>(fn: () => T | Promise<T>): Promise<T> {
       .slice(0, 5);
 
     sortedFunctions.forEach(([name, data]: [string, any], idx) => {
-      console.log(`  ${idx + 1}. ${name}: ${data.selfTime}ms (self)`);
+      console.info(`  ${idx + 1}. ${name}: ${data.selfTime}ms (self)`);
     });
   }
 
@@ -50,7 +50,7 @@ async function profileAndSave<T>(fn: () => T | Promise<T>): Promise<T> {
 
 // Example workload to profile
 async function exampleWorkload() {
-  console.log("Running example workload...");
+  console.info("Running example workload...");
 
   // Simulate some async work
   await new Promise(resolve => setTimeout(resolve, 100));
@@ -61,7 +61,7 @@ async function exampleWorkload() {
     sum += i;
   }
 
-  console.log(`Workload complete. Sum: ${sum}`);
+  console.info(`Workload complete. Sum: ${sum}`);
   return sum;
 }
 
@@ -69,7 +69,7 @@ async function exampleWorkload() {
 const args = Bun.argv.slice(2);
 
 if (args.includes('--help') || args.includes('-h')) {
-  console.log(`
+  console.info(`
 Project Profiler - CPU profiling with project-specific outputs
 
 Usage:
@@ -92,7 +92,7 @@ Note: Profile files are saved relative to the current working directory
 if (args.includes('--run')) {
   profileAndSave(exampleWorkload)
     .then(() => {
-      console.log("Profiling complete!");
+      console.info("Profiling complete!");
       Bun.exit(0);
     })
     .catch(err => {
@@ -100,7 +100,7 @@ if (args.includes('--run')) {
       Bun.exit(1);
     });
 } else {
-  console.log(`
+  console.info(`
 Project Profiler ready.
 
 Run with --run to profile the example workload.

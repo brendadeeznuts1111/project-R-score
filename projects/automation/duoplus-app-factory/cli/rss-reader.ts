@@ -92,24 +92,24 @@ async function fetchFeed(url: string): Promise<RSSFeed> {
 
 function displayFeed(feed: RSSFeed, maxItems: number = 10): void {
   console.clear();
-  console.log('\n📰 ' + '='.repeat(70));
-  console.log(`📰 ${feed.title}`);
-  console.log('📰 ' + '='.repeat(70));
-  console.log(`\n📝 ${feed.description}`);
-  console.log(`🔗 ${feed.link}`);
-  console.log(`⏰ Last updated: ${feed.lastBuildDate || 'Unknown'}\n`);
+  console.info('\n📰 ' + '='.repeat(70));
+  console.info(`📰 ${feed.title}`);
+  console.info('📰 ' + '='.repeat(70));
+  console.info(`\n📝 ${feed.description}`);
+  console.info(`🔗 ${feed.link}`);
+  console.info(`⏰ Last updated: ${feed.lastBuildDate || 'Unknown'}\n`);
 
   const items = feed.items.slice(0, maxItems);
   items.forEach((item, index) => {
-    console.log(`\n${index + 1}. ${item.title}`);
-    console.log(`   🔗 ${item.link}`);
-    console.log(`   📅 ${new Date(item.pubDate).toLocaleString()}`);
-    if (item.author) console.log(`   ✍️  ${item.author}`);
-    if (item.category?.length) console.log(`   🏷️  ${item.category.join(', ')}`);
-    console.log(`   📄 ${item.description.substring(0, 150)}${item.description.length > 150 ? '...' : ''}`);
+    console.info(`\n${index + 1}. ${item.title}`);
+    console.info(`   🔗 ${item.link}`);
+    console.info(`   📅 ${new Date(item.pubDate).toLocaleString()}`);
+    if (item.author) console.info(`   ✍️  ${item.author}`);
+    if (item.category?.length) console.info(`   🏷️  ${item.category.join(', ')}`);
+    console.info(`   📄 ${item.description.substring(0, 150)}${item.description.length > 150 ? '...' : ''}`);
   });
 
-  console.log('\n' + '='.repeat(72) + '\n');
+  console.info('\n' + '='.repeat(72) + '\n');
 }
 
 async function main() {
@@ -124,7 +124,7 @@ async function main() {
   });
 
   if (args.values.help) {
-    console.log(`
+    console.info(`
 📰 DuoPlus RSS Feed Reader
 
 Usage: bun run rss-reader [options]
@@ -164,21 +164,21 @@ Examples:
 
   const displayFeedWithError = async () => {
     try {
-      console.log(`\n⏳ Fetching feed from ${feedUrl}...`);
+      console.info(`\n⏳ Fetching feed from ${feedUrl}...`);
       const feed = await fetchFeed(feedUrl);
       displayFeed(feed, maxItems);
     } catch (error) {
       console.clear();
-      console.log(`\n❌ Error fetching feed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      console.log(`\n💡 Make sure the server is running: bun run web-app/server.js\n`);
+      console.info(`\n❌ Error fetching feed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.info(`\n💡 Make sure the server is running: bun run web-app/server.js\n`);
     }
   };
 
   await displayFeedWithError();
 
   if (watch) {
-    console.log('👀 Watching for updates (refreshing every 5 minutes)...');
-    console.log('Press Ctrl+C to stop\n');
+    console.info('👀 Watching for updates (refreshing every 5 minutes)...');
+    console.info('Press Ctrl+C to stop\n');
     setInterval(displayFeedWithError, 5 * 60 * 1000);
   }
 }

@@ -106,7 +106,7 @@ class XSSSafeDeployment {
   // Run Tier-1380 security audit
   private async runSecurityAudit(): Promise<any> {
     try {
-      console.log('🔒 Running Tier-1380 security audit...');
+      console.info('🔒 Running Tier-1380 security audit...');
 
       // Run Col-89 compliance check
       const auditResult = execSync('bun ../cli/tier1380-audit.ts check src/', {
@@ -178,11 +178,11 @@ export default = originalHandler;
   // Deploy to Cloudflare Workers with XSS protection
   async deploy(): Promise<DeploymentResult> {
     try {
-      console.log('🚀 Starting XSS-Safe deployment of FactoryWager Edge...');
+      console.info('🚀 Starting XSS-Safe deployment of FactoryWager Edge...');
 
       // 1. Run security audit
       const auditResults = await this.runSecurityAudit();
-      console.log(`📊 Security audit: ${auditResults.status} (${auditResults.violations} violations)`);
+      console.info(`📊 Security audit: ${auditResults.status} (${auditResults.violations} violations)`);
 
       if (auditResults.status === 'ERROR') {
         throw new Error('Security audit failed');
@@ -202,7 +202,7 @@ export default = originalHandler;
       writeFileSync('wrangler.toml', securedConfig);
 
       // 5. Deploy to Cloudflare Workers
-      console.log('🌐 Deploying to Cloudflare Workers...');
+      console.info('🌐 Deploying to Cloudflare Workers...');
 
       try {
         execSync('wrangler deploy', {
@@ -228,7 +228,7 @@ export default = originalHandler;
       // 7. Restore original configuration
       writeFileSync('wrangler.toml', wranglerConfig);
 
-      console.log('✅ XSS-Safe deployment completed successfully!');
+      console.info('✅ XSS-Safe deployment completed successfully!');
 
       return {
         success: true,
@@ -250,7 +250,7 @@ export default = originalHandler;
   // Test XSS protection
   async testXSSProtection(url: string): Promise<boolean> {
     try {
-      console.log('🧪 Testing XSS protection...');
+      console.info('🧪 Testing XSS protection...');
 
       // Test various XSS payloads
       const xssPayloads = [
@@ -270,15 +270,15 @@ export default = originalHandler;
 
           // Check if payload was sanitized
           if (content.includes(payload)) {
-            console.log(`❌ XSS payload not sanitized: ${payload}`);
+            console.info(`❌ XSS payload not sanitized: ${payload}`);
             return false;
           }
         } catch (error) {
-          console.log(`⚠️ Could not test payload: ${payload}`);
+          console.info(`⚠️ Could not test payload: ${payload}`);
         }
       }
 
-      console.log('✅ XSS protection test passed');
+      console.info('✅ XSS protection test passed');
       return true;
 
     } catch (error) {
@@ -292,33 +292,33 @@ export default = originalHandler;
 if (import.meta.main) {
   const deployer = new XSSSafeDeployment();
 
-  console.log('🛡️ FactoryWager Edge - XSS-Safe Deployment');
-  console.log('==========================================');
+  console.info('🛡️ FactoryWager Edge - XSS-Safe Deployment');
+  console.info('==========================================');
 
   deployer.deploy()
     .then(async (result) => {
       if (result.success) {
-        console.log('\n🎉 Deployment Results:');
-        console.log(`   URL: ${result.url}`);
-        console.log(`   Security Audit: ${result.auditResults?.status}`);
-        console.log(`   Violations: ${result.auditResults?.violations}`);
+        console.info('\n🎉 Deployment Results:');
+        console.info(`   URL: ${result.url}`);
+        console.info(`   Security Audit: ${result.auditResults?.status}`);
+        console.info(`   Violations: ${result.auditResults?.violations}`);
 
-        console.log('\n🔒 Security Headers Applied:');
+        console.info('\n🔒 Security Headers Applied:');
         Object.entries(result.securityHeaders || {}).forEach(([key, value]) => {
-          console.log(`   ${key}: ${value}`);
+          console.info(`   ${key}: ${value}`);
         });
 
         // Test XSS protection
         if (result.url) {
           const xssSafe = await deployer.testXSSProtection(result.url);
-          console.log(`\n🧪 XSS Protection Test: ${xssSafe ? '✅ PASSED' : '❌ FAILED'}`);
+          console.info(`\n🧪 XSS Protection Test: ${xssSafe ? '✅ PASSED' : '❌ FAILED'}`);
         }
 
-        console.log(`\n🚀 FactoryWager Edge is live at: ${result.url}`);
-        console.log('   Endpoints:');
-        console.log(`     POST ${result.url}/workflow`);
-        console.log(`     GET  ${result.url}/metrics`);
-        console.log(`     GET  ${result.url}/health`);
+        console.info(`\n🚀 FactoryWager Edge is live at: ${result.url}`);
+        console.info('   Endpoints:');
+        console.info(`     POST ${result.url}/workflow`);
+        console.info(`     GET  ${result.url}/metrics`);
+        console.info(`     GET  ${result.url}/health`);
       } else {
         console.error('\n❌ Deployment failed:', result.error);
         process.exit(1);

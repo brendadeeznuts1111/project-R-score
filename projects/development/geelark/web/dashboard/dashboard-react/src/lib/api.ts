@@ -119,7 +119,7 @@ class DashboardAPI {
     this.ws = new WebSocket(API_CONFIG.WS_BASE);
 
     this.ws.onopen = () => {
-      console.log('WebSocket connected');
+      console.info('WebSocket connected');
     };
 
     this.ws.onmessage = (event) => {
@@ -138,7 +138,7 @@ class DashboardAPI {
     };
 
     this.ws.onclose = () => {
-      console.log('WebSocket disconnected');
+      console.info('WebSocket disconnected');
       // Auto-reconnect after configured interval
       setTimeout(() => this.connectWebSocket(), WS_CONFIG.RECONNECT_INTERVAL);
     };

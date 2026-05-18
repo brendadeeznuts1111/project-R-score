@@ -259,34 +259,34 @@ export function validateExtendedMessage(message: string): ValidationResult {
 // ============================================================================
 
 if (import.meta.main) {
-	console.log("🏭 FACTORY_WAGER Tier-1380 Manifest\n");
+	console.info("🏭 FACTORY_WAGER Tier-1380 Manifest\n");
 
 	// Test governance parsing
 	const testMsg =
 		"[MARKET][MICROSTRUCTURE:PATTERNS][FEAT][META:{TIER:1380,RISK:HIGH}][MarketAnalyzer][detectHiddenSteam][T11_v2Pattern][#REF:52][BUN-NATIVE] Implement Hidden Steam T11_v2";
 
-	console.log("🔍 Parsing:", testMsg.slice(0, 60) + "...\n");
+	console.info("🔍 Parsing:", testMsg.slice(0, 60) + "...\n");
 	const parsed = parseExtendedCommit(testMsg);
 	if (parsed) {
-		console.log("Parsed Result:");
-		console.log(Bun.inspect(parsed, { colors: true, depth: null }));
+		console.info("Parsed Result:");
+		console.info(Bun.inspect(parsed, { colors: true, depth: null }));
 	}
 
 	// Validate
-	console.log("\n✅ Validation:");
+	console.info("\n✅ Validation:");
 	const validation = validateExtendedMessage(testMsg);
-	console.log(Bun.inspect(validation, { colors: true }));
+	console.info(Bun.inspect(validation, { colors: true }));
 
 	// Constants table
-	console.log("\n🎨 Constants Table:");
-	console.log(renderConstantsTable());
+	console.info("\n🎨 Constants Table:");
+	console.info(renderConstantsTable());
 
 	// Example commit commands
-	console.log("\n📝 Example Commit Commands:");
-	console.log(
+	console.info("\n📝 Example Commit Commands:");
+	console.info(
 		'git commit -m "[MARKET][MICROSTRUCTURE][FEAT][META:{TIER:1380}][MarketAnalyzer][detectSteam][T11][#REF:52][BUN-NATIVE] Hidden Steam T11_v2"',
 	);
-	console.log(
+	console.info(
 		'git commit -m "[INFRA][R2:STORAGE][FIX][META:{TIER:1380}][BucketManager][upload][R2Client][#REF:123] Fix upload retry logic"',
 	);
 }

@@ -6,14 +6,14 @@
  */
 
 async function debugAgentView() {
-  console.log('🔍 Debugging Agent View Tab Issues');
-  console.log('!==!==!==!==!==!====');
+  console.info('🔍 Debugging Agent View Tab Issues');
+  console.info('!==!==!==!==!==!====');
 
   const BASE_URL = 'http://localhost:3000';
 
   // 1. Check if dashboard loads
-  console.log('\n1. Testing Dashboard Load');
-  console.log('-------------------------');
+  console.info('\n1. Testing Dashboard Load');
+  console.info('-------------------------');
   try {
     const response = await fetch(`${BASE_URL}/dashboard`);
     if (response.ok) {
@@ -29,48 +29,48 @@ async function debugAgentView() {
         'Auto-refresh Logic': html.includes('startAutoRefresh()'),
       };
 
-      console.log('Dashboard Elements Check:');
+      console.info('Dashboard Elements Check:');
       Object.entries(checks).forEach(([key, passed]) => {
-        console.log(`  ${passed ? '✅' : '❌'} ${key}`);
+        console.info(`  ${passed ? '✅' : '❌'} ${key}`);
       });
 
       const allPassed = Object.values(checks).every(Boolean);
-      console.log(`\nOverall: ${allPassed ? '✅ All elements present' : '❌ Missing elements'}`);
+      console.info(`\nOverall: ${allPassed ? '✅ All elements present' : '❌ Missing elements'}`);
     } else {
-      console.log(`❌ Dashboard failed to load: ${response.status}`);
+      console.info(`❌ Dashboard failed to load: ${response.status}`);
     }
   } catch (error) {
-    console.log(`❌ Error loading dashboard: ${error.message}`);
+    console.info(`❌ Error loading dashboard: ${error.message}`);
   }
 
   // 2. Check API endpoint
-  console.log('\n2. Testing API Endpoint');
-  console.log('----------------------');
+  console.info('\n2. Testing API Endpoint');
+  console.info('----------------------');
   try {
     const response = await fetch(`${BASE_URL}/api/fantasy402/agent-dashboard`);
     if (response.ok) {
       const data = await response.json();
       if (data.success) {
-        console.log('✅ API working');
-        console.log(`   Agent: ${data.data.agentProfile?.customerID}`);
-        console.log(
+        console.info('✅ API working');
+        console.info(`   Agent: ${data.data.agentProfile?.customerID}`);
+        console.info(
           `   Weekly P&L: $${data.data.financialPerformance?.currentWeek?.profit?.toLocaleString()}`
         );
-        console.log(`   Players: ${data.data.financialPerformance?.currentWeek?.activePlayers}`);
-        console.log(`   Token Status: ${data.data.operationalStatus?.tokenStatus}`);
+        console.info(`   Players: ${data.data.financialPerformance?.currentWeek?.activePlayers}`);
+        console.info(`   Token Status: ${data.data.operationalStatus?.tokenStatus}`);
       } else {
-        console.log(`❌ API returned error: ${data.error}`);
+        console.info(`❌ API returned error: ${data.error}`);
       }
     } else {
-      console.log(`❌ API failed: ${response.status}`);
+      console.info(`❌ API failed: ${response.status}`);
     }
   } catch (error) {
-    console.log(`❌ API error: ${error.message}`);
+    console.info(`❌ API error: ${error.message}`);
   }
 
   // 3. Check for JavaScript syntax issues
-  console.log('\n3. JavaScript Syntax Check');
-  console.log('--------------------------');
+  console.info('\n3. JavaScript Syntax Check');
+  console.info('--------------------------');
   try {
     const response = await fetch(`${BASE_URL}/dashboard`);
     const html = await response.text();
@@ -90,7 +90,7 @@ async function debugAgentView() {
         'Event Handlers': jsCode.includes('@click="refreshData()"'),
       };
 
-      console.log('JavaScript Analysis:');
+      console.info('JavaScript Analysis:');
       Object.entries(issues).forEach(([key, hasIssue]) => {
         const status =
           key === 'Template Literals' || key === 'Unescaped Quotes' || key === 'Missing Semicolons'
@@ -100,35 +100,35 @@ async function debugAgentView() {
             : hasIssue
               ? '✅'
               : '❌';
-        console.log(`  ${status} ${key}`);
+        console.info(`  ${status} ${key}`);
       });
     }
   } catch (error) {
-    console.log(`❌ JS analysis error: ${error.message}`);
+    console.info(`❌ JS analysis error: ${error.message}`);
   }
 
   // 4. Recommend fixes
-  console.log('\n4. Troubleshooting Steps');
-  console.log('-----------------------');
-  console.log('Try these steps in the browser:');
-  console.log('1. Open Developer Tools (F12)');
-  console.log('2. Go to Console tab');
-  console.log('3. Click "🎯 Agent View" tab');
-  console.log('4. Look for JavaScript errors');
-  console.log('5. Check Network tab for failed API calls');
-  console.log('');
-  console.log('Common Issues:');
-  console.log('• AlpineJS not loaded properly');
-  console.log('• JavaScript syntax errors');
-  console.log('• agentViewData() not initializing');
-  console.log('• API endpoint not accessible');
-  console.log('• Browser cache showing old version');
-  console.log('');
-  console.log('Quick Fixes:');
-  console.log('• Hard refresh (Ctrl+Shift+R)');
-  console.log('• Clear browser cache');
-  console.log('• Check browser console for errors');
-  console.log('• Verify AlpineJS is loaded');
+  console.info('\n4. Troubleshooting Steps');
+  console.info('-----------------------');
+  console.info('Try these steps in the browser:');
+  console.info('1. Open Developer Tools (F12)');
+  console.info('2. Go to Console tab');
+  console.info('3. Click "🎯 Agent View" tab');
+  console.info('4. Look for JavaScript errors');
+  console.info('5. Check Network tab for failed API calls');
+  console.info('');
+  console.info('Common Issues:');
+  console.info('• AlpineJS not loaded properly');
+  console.info('• JavaScript syntax errors');
+  console.info('• agentViewData() not initializing');
+  console.info('• API endpoint not accessible');
+  console.info('• Browser cache showing old version');
+  console.info('');
+  console.info('Quick Fixes:');
+  console.info('• Hard refresh (Ctrl+Shift+R)');
+  console.info('• Clear browser cache');
+  console.info('• Check browser console for errors');
+  console.info('• Verify AlpineJS is loaded');
 }
 
 debugAgentView().catch(console.error);

@@ -612,7 +612,7 @@ function createHealthEndpointApp(): Elysia {
  * Demonstrate the enhanced health endpoint system
  */
 async function demonstrateEnhancedHealthEndpoint(): Promise<void> {
-  console.log(EmpireProDashboard.generateHeader(
+  console.info(EmpireProDashboard.generateHeader(
     'ENHANCED HEALTH ENDPOINT SYSTEM',
     'Improved Type Definitions and Organized Structure'
   ));
@@ -620,37 +620,37 @@ async function demonstrateEnhancedHealthEndpoint(): Promise<void> {
   const healthOrchestrator = new HealthOrchestrator();
   
   try {
-    console.log(UnicodeTableFormatter.colorize('🔍 Performing Comprehensive Health Check...', DesignSystem.text.accent.blue));
+    console.info(UnicodeTableFormatter.colorize('🔍 Performing Comprehensive Health Check...', DesignSystem.text.accent.blue));
     
     const healthResponse = await healthOrchestrator.performCompleteHealthCheck();
     
     // Display overall health status
-    console.log(UnicodeTableFormatter.colorize('\n📊 Overall Health Status:', DesignSystem.text.accent.blue));
-    console.log(UnicodeTableFormatter.colorize(`  Status: ${healthResponse.overall.status}`, 
+    console.info(UnicodeTableFormatter.colorize('\n📊 Overall Health Status:', DesignSystem.text.accent.blue));
+    console.info(UnicodeTableFormatter.colorize(`  Status: ${healthResponse.overall.status}`, 
       healthResponse.overall.status === 'healthy' ? DesignSystem.status.operational :
       healthResponse.overall.status === 'degraded' ? DesignSystem.status.degraded :
       DesignSystem.status.downtime));
-    console.log(UnicodeTableFormatter.colorize(`  Scope: ${healthResponse.overall.scope}`, DesignSystem.text.accent.purple));
-    console.log(UnicodeTableFormatter.colorize(`  Environment: ${healthResponse.overall.environment}`, DesignSystem.text.secondary));
-    console.log(UnicodeTableFormatter.colorize(`  Uptime: ${Math.floor(healthResponse.overall.uptime)}s`, DesignSystem.text.accent.green));
+    console.info(UnicodeTableFormatter.colorize(`  Scope: ${healthResponse.overall.scope}`, DesignSystem.text.accent.purple));
+    console.info(UnicodeTableFormatter.colorize(`  Environment: ${healthResponse.overall.environment}`, DesignSystem.text.secondary));
+    console.info(UnicodeTableFormatter.colorize(`  Uptime: ${Math.floor(healthResponse.overall.uptime)}s`, DesignSystem.text.accent.green));
     
     // Display secrets health
-    console.log(UnicodeTableFormatter.colorize('\n🔐 Secrets Backend Health:', DesignSystem.text.accent.blue));
+    console.info(UnicodeTableFormatter.colorize('\n🔐 Secrets Backend Health:', DesignSystem.text.accent.blue));
     const secrets = healthResponse.secrets;
-    console.log(UnicodeTableFormatter.colorize(`  Backend: ${secrets.backend}`, DesignSystem.text.accent.purple));
-    console.log(UnicodeTableFormatter.colorize(`  Service: ${secrets.serviceName}`, DesignSystem.text.accent.green));
-    console.log(UnicodeTableFormatter.colorize(`  Connected: ${secrets.connected ? 'Yes' : 'No'}`, 
+    console.info(UnicodeTableFormatter.colorize(`  Backend: ${secrets.backend}`, DesignSystem.text.accent.purple));
+    console.info(UnicodeTableFormatter.colorize(`  Service: ${secrets.serviceName}`, DesignSystem.text.accent.green));
+    console.info(UnicodeTableFormatter.colorize(`  Connected: ${secrets.connected ? 'Yes' : 'No'}`, 
       secrets.connected ? DesignSystem.status.operational : DesignSystem.status.downtime));
-    console.log(UnicodeTableFormatter.colorize(`  Response Time: ${secrets.responseTime}ms`, 
+    console.info(UnicodeTableFormatter.colorize(`  Response Time: ${secrets.responseTime}ms`, 
       secrets.responseTime < 1000 ? DesignSystem.status.operational : DesignSystem.status.degraded));
-    console.log(UnicodeTableFormatter.colorize(`  Secrets Count: ${secrets.secretsCount}`, DesignSystem.text.accent.blue));
-    console.log(UnicodeTableFormatter.colorize(`  Encryption: ${secrets.encryptionLevel}`, 
+    console.info(UnicodeTableFormatter.colorize(`  Secrets Count: ${secrets.secretsCount}`, DesignSystem.text.accent.blue));
+    console.info(UnicodeTableFormatter.colorize(`  Encryption: ${secrets.encryptionLevel}`, 
       secrets.encryptionLevel === 'maximum' ? DesignSystem.status.operational :
       secrets.encryptionLevel === 'enhanced' ? DesignSystem.status.degraded :
       DesignSystem.text.muted));
     
     // Display system health summary
-    console.log(UnicodeTableFormatter.colorize('\n⚙️ System Components Health:', DesignSystem.text.accent.blue));
+    console.info(UnicodeTableFormatter.colorize('\n⚙️ System Components Health:', DesignSystem.text.accent.blue));
     const systemTableData = healthResponse.systems.map(system => ({
       Component: UnicodeTableFormatter.colorize(system.component, DesignSystem.text.primary),
       Status: UnicodeTableFormatter.formatStatus(system.status),
@@ -661,21 +661,21 @@ async function demonstrateEnhancedHealthEndpoint(): Promise<void> {
       Details: UnicodeTableFormatter.colorize(system.details || 'N/A', DesignSystem.text.secondary)
     }));
     
-    console.log(UnicodeTableFormatter.generateTable(systemTableData, { maxWidth: 120 }));
+    console.info(UnicodeTableFormatter.generateTable(systemTableData, { maxWidth: 120 }));
     
     // Display summary
-    console.log(UnicodeTableFormatter.colorize('\n📋 Health Summary:', DesignSystem.text.accent.blue));
+    console.info(UnicodeTableFormatter.colorize('\n📋 Health Summary:', DesignSystem.text.accent.blue));
     const summary = healthResponse.summary;
-    console.log(UnicodeTableFormatter.colorize(`  Total Checks: ${summary.total}`, DesignSystem.text.primary));
-    console.log(UnicodeTableFormatter.colorize(`  ✅ Passed: ${summary.passed}`, DesignSystem.status.operational));
-    console.log(UnicodeTableFormatter.colorize(`  ⚠️  Degraded: ${summary.degraded}`, DesignSystem.status.degraded));
-    console.log(UnicodeTableFormatter.colorize(`  ❌ Failed: ${summary.failed}`, DesignSystem.status.downtime));
+    console.info(UnicodeTableFormatter.colorize(`  Total Checks: ${summary.total}`, DesignSystem.text.primary));
+    console.info(UnicodeTableFormatter.colorize(`  ✅ Passed: ${summary.passed}`, DesignSystem.status.operational));
+    console.info(UnicodeTableFormatter.colorize(`  ⚠️  Degraded: ${summary.degraded}`, DesignSystem.status.degraded));
+    console.info(UnicodeTableFormatter.colorize(`  ❌ Failed: ${summary.failed}`, DesignSystem.status.downtime));
     
     // Display recommendations
     if (healthResponse.recommendations.length > 0) {
-      console.log(UnicodeTableFormatter.colorize('\n💡 Recommendations:', DesignSystem.text.accent.blue));
+      console.info(UnicodeTableFormatter.colorize('\n💡 Recommendations:', DesignSystem.text.accent.blue));
       healthResponse.recommendations.forEach((rec, index) => {
-        console.log(`  ${index + 1}. ${UnicodeTableFormatter.colorize(rec, DesignSystem.text.secondary)}`);
+        console.info(`  ${index + 1}. ${UnicodeTableFormatter.colorize(rec, DesignSystem.text.secondary)}`);
       });
     }
     
@@ -683,7 +683,7 @@ async function demonstrateEnhancedHealthEndpoint(): Promise<void> {
     console.error(UnicodeTableFormatter.colorize(`❌ Health check failed: ${error}`, DesignSystem.status.downtime));
   }
   
-  console.log(EmpireProDashboard.generateFooter());
+  console.info(EmpireProDashboard.generateFooter());
 }
 
 // Start the enhanced health endpoint server
@@ -693,25 +693,25 @@ async function startEnhancedHealthServer(): Promise<void> {
   
   const server = app.listen(port);
   
-  console.log(UnicodeTableFormatter.colorize('🚀 Enhanced Health Endpoint Server Started', DesignSystem.status.operational));
-  console.log(UnicodeTableFormatter.colorize(`🌐 Server: http://localhost:${port}`, DesignSystem.text.accent.blue));
-  console.log(UnicodeTableFormatter.colorize(`📊 Health: http://localhost:${port}/health`, DesignSystem.text.accent.green));
-  console.log(UnicodeTableFormatter.colorize(`🔐 Secrets: http://localhost:${port}/health/secrets`, DesignSystem.text.accent.purple));
-  console.log(UnicodeTableFormatter.colorize(`⚙️  Systems: http://localhost:${port}/health/systems`, DesignSystem.text.accent.yellow));
+  console.info(UnicodeTableFormatter.colorize('🚀 Enhanced Health Endpoint Server Started', DesignSystem.status.operational));
+  console.info(UnicodeTableFormatter.colorize(`🌐 Server: http://localhost:${port}`, DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize(`📊 Health: http://localhost:${port}/health`, DesignSystem.text.accent.green));
+  console.info(UnicodeTableFormatter.colorize(`🔐 Secrets: http://localhost:${port}/health/secrets`, DesignSystem.text.accent.purple));
+  console.info(UnicodeTableFormatter.colorize(`⚙️  Systems: http://localhost:${port}/health/systems`, DesignSystem.text.accent.yellow));
   
   // Run demonstration
   await demonstrateEnhancedHealthEndpoint();
   
-  console.log('\n🎉 ENHANCED HEALTH ENDPOINT SYSTEM READY!');
-  console.log('✅ Improved type definitions with clear naming');
-  console.log('✅ Organized interface structure with comprehensive documentation');
-  console.log('✅ Enhanced code organization with logical grouping');
-  console.log('✅ Professional health monitoring with actionable insights');
-  console.log('✅ Production-ready with comprehensive error handling');
+  console.info('\n🎉 ENHANCED HEALTH ENDPOINT SYSTEM READY!');
+  console.info('✅ Improved type definitions with clear naming');
+  console.info('✅ Organized interface structure with comprehensive documentation');
+  console.info('✅ Enhanced code organization with logical grouping');
+  console.info('✅ Professional health monitoring with actionable insights');
+  console.info('✅ Production-ready with comprehensive error handling');
   
   // Handle graceful shutdown
   process.on('SIGINT', () => {
-    console.log(UnicodeTableFormatter.colorize('\n🛑 Shutting down enhanced health server...', DesignSystem.text.secondary));
+    console.info(UnicodeTableFormatter.colorize('\n🛑 Shutting down enhanced health server...', DesignSystem.text.secondary));
     server.stop();
     process.exit(0);
   });

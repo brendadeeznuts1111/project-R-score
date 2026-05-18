@@ -69,5 +69,5 @@ if (isCanary && !allowCanary) {
 if (isCanary && allowCanary) {
   console.warn(`Canary build allowed by ALLOW_CANARY_BUN_CI: ${version} (${revision})`);
 } else {
-  console.log(`Bun runtime check passed: ${version} (${revision})`);
+  console.info(`Bun runtime check passed: ${version} (${revision})`);
 }

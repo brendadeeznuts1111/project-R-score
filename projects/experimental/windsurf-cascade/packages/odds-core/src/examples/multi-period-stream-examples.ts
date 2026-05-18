@@ -13,7 +13,7 @@ export class MultiPeriodStreamExamples {
      * Example 1: Basic multi-period stream processing
      */
     static async demonstrateBasicStreamProcessing(): Promise<void> {
-        console.log('🔄 Basic Multi-Period Stream Processing\n');
+        console.info('🔄 Basic Multi-Period Stream Processing\n');
 
         // Create NBA processor
         const processor = MultiPeriodStreamProcessorFactory.createNBAProcessor();
@@ -22,13 +22,13 @@ export class MultiPeriodStreamExamples {
         const factory = new SyntheticArbitrageV1Factory();
         const nbaGames = factory.createMultipleNBAExamples(10);
 
-        console.log(`📊 Generated ${nbaGames.length} NBA games for stream processing`);
+        console.info(`📊 Generated ${nbaGames.length} NBA games for stream processing`);
 
         // Convert to stream format
         const streamData = this.convertToStreamData(nbaGames);
 
-        console.log(`📈 Stream data contains ${Object.keys(streamData[0].periods).length} periods`);
-        console.log(`   Periods: ${Object.keys(streamData[0].periods).join(', ')}`);
+        console.info(`📈 Stream data contains ${Object.keys(streamData[0].periods).length} periods`);
+        console.info(`   Periods: ${Object.keys(streamData[0].periods).join(', ')}`);
 
         // Set up event listeners
         let opportunitiesDetected = 0;
@@ -37,19 +37,19 @@ export class MultiPeriodStreamExamples {
         processor.addEventListener('opportunitiesDetected', (data: any) => {
             opportunitiesDetected += data.opportunities.length;
             totalProcessingTime += data.processingTime;
-            console.log(`   🎯 Detected ${data.opportunities.length} opportunities (${data.processingTime.toFixed(2)}ms)`);
+            console.info(`   🎯 Detected ${data.opportunities.length} opportunities (${data.processingTime.toFixed(2)}ms)`);
         });
 
         processor.addEventListener('immediateOpportunity', (data: any) => {
-            console.log(`   ⚡ Immediate opportunity: ${data.opportunities.length} opportunities`);
+            console.info(`   ⚡ Immediate opportunity: ${data.opportunities.length} opportunities`);
         });
 
         // Process stream data
-        console.log('\n🔄 Processing market streams...\n');
+        console.info('\n🔄 Processing market streams...\n');
 
         for (let i = 0; i < streamData.length; i++) {
             const stream = streamData[i];
-            console.log(`Processing game ${i + 1}/${streamData.length}: ${stream.gameId}`);
+            console.info(`Processing game ${i + 1}/${streamData.length}: ${stream.gameId}`);
 
             await processor.processMarketStream(stream);
 
@@ -64,54 +64,54 @@ export class MultiPeriodStreamExamples {
         const metrics = processor.getMetrics();
         const realTimeOpportunities = processor.getRealTimeOpportunities();
 
-        console.log('\n📊 Processing Results:');
-        console.log(`   Total Markets Processed: ${metrics.totalMarketsProcessed}`);
-        console.log(`   Opportunities Detected: ${opportunitiesDetected}`);
-        console.log(`   Average Processing Time: ${metrics.averageProcessingTime.toFixed(2)}ms`);
-        console.log(`   Buffer Utilization: ${(metrics.bufferUtilization * 100).toFixed(1)}%`);
-        console.log(`   Real-Time Opportunities: ${realTimeOpportunities.length}`);
+        console.info('\n📊 Processing Results:');
+        console.info(`   Total Markets Processed: ${metrics.totalMarketsProcessed}`);
+        console.info(`   Opportunities Detected: ${opportunitiesDetected}`);
+        console.info(`   Average Processing Time: ${metrics.averageProcessingTime.toFixed(2)}ms`);
+        console.info(`   Buffer Utilization: ${(metrics.bufferUtilization * 100).toFixed(1)}%`);
+        console.info(`   Real-Time Opportunities: ${realTimeOpportunities.length}`);
 
-        console.log('\n📈 Period Coverage:');
+        console.info('\n📈 Period Coverage:');
         Object.entries(metrics.periodCoverage).forEach(([period, count]) => {
-            console.log(`   ${period}: ${count} markets`);
+            console.info(`   ${period}: ${count} markets`);
         });
 
-        console.log('\n⚡ Real-Time Performance:');
-        console.log(`   Latency: ${metrics.realTimePerformance.latency.toFixed(2)}ms`);
-        console.log(`   Throughput: ${metrics.realTimePerformance.throughput.toFixed(1)} markets/sec`);
-        console.log(`   Success Rate: ${(metrics.realTimePerformance.successRate * 100).toFixed(1)}%`);
+        console.info('\n⚡ Real-Time Performance:');
+        console.info(`   Latency: ${metrics.realTimePerformance.latency.toFixed(2)}ms`);
+        console.info(`   Throughput: ${metrics.realTimePerformance.throughput.toFixed(1)} markets/sec`);
+        console.info(`   Success Rate: ${(metrics.realTimePerformance.successRate * 100).toFixed(1)}%`);
     }
 
     /**
      * Example 2: Real-time opportunity detection
      */
     static async demonstrateRealTimeOpportunities(): Promise<void> {
-        console.log('\n⚡ Real-Time Opportunity Detection\n');
+        console.info('\n⚡ Real-Time Opportunity Detection\n');
 
         // Create live processor for ultra-fast processing
         const processor = MultiPeriodStreamProcessorFactory.createLiveProcessor();
 
         // Set up real-time event listeners
         processor.addEventListener('immediateOpportunity', (data: any) => {
-            console.log(`🚨 IMMEDIATE OPPORTUNITY DETECTED!`);
-            console.log(`   Game: ${data.streamData.gameId}`);
-            console.log(`   Opportunities: ${data.opportunities.length}`);
+            console.info(`🚨 IMMEDIATE OPPORTUNITY DETECTED!`);
+            console.info(`   Game: ${data.streamData.gameId}`);
+            console.info(`   Opportunities: ${data.opportunities.length}`);
 
             data.opportunities.forEach((opp: PeriodSyntheticArbitrage, index: number) => {
-                console.log(`   ${index + 1}. ${opp.primaryPeriod} ↔ ${opp.secondaryPeriod}`);
-                console.log(`      Return: ${(opp.arbitrage.expectedReturn * 100).toFixed(3)}%`);
-                console.log(`      Execution Window: ${opp.executionWindow.optimal.toLocaleTimeString()}`);
-                console.log(`      Correlation: ${opp.periodCorrelation.toFixed(4)}`);
+                console.info(`   ${index + 1}. ${opp.primaryPeriod} ↔ ${opp.secondaryPeriod}`);
+                console.info(`      Return: ${(opp.arbitrage.expectedReturn * 100).toFixed(3)}%`);
+                console.info(`      Execution Window: ${opp.executionWindow.optimal.toLocaleTimeString()}`);
+                console.info(`      Correlation: ${opp.periodCorrelation.toFixed(4)}`);
             });
         });
 
         // Simulate live game data
-        console.log('🏀 Simulating live NBA game data...\n');
+        console.info('🏀 Simulating live NBA game data...\n');
 
         const factory = new SyntheticArbitrageV1Factory();
 
         for (let quarter = 1; quarter <= 4; quarter++) {
-            console.log(`📺 Quarter ${quarter} - Live Data Stream`);
+            console.info(`📺 Quarter ${quarter} - Live Data Stream`);
 
             // Generate live data for current quarter
             const liveGame = factory.createNBAExample();
@@ -122,14 +122,14 @@ export class MultiPeriodStreamExamples {
             // Check for real-time opportunities
             const realTimeOpps = processor.getRealTimeOpportunities();
             if (realTimeOpps.length > 0) {
-                console.log(`   🎯 ${realTimeOpps.length} real-time opportunities available`);
+                console.info(`   🎯 ${realTimeOpps.length} real-time opportunities available`);
 
                 // Show top opportunity
                 const topOpp = realTimeOpps[0];
-                console.log(`   🏆 Top Opportunity:`);
-                console.log(`      ${topOpp.primaryPeriod} ↔ ${topOpp.secondaryPeriod}`);
-                console.log(`      Expected Return: ${(topOpp.arbitrage.expectedReturn * 100).toFixed(3)}%`);
-                console.log(`      Optimal Execution: ${topOpp.executionWindow.optimal.toLocaleTimeString()}`);
+                console.info(`   🏆 Top Opportunity:`);
+                console.info(`      ${topOpp.primaryPeriod} ↔ ${topOpp.secondaryPeriod}`);
+                console.info(`      Expected Return: ${(topOpp.arbitrage.expectedReturn * 100).toFixed(3)}%`);
+                console.info(`      Optimal Execution: ${topOpp.executionWindow.optimal.toLocaleTimeString()}`);
             }
 
             // Simulate quarter break
@@ -140,18 +140,18 @@ export class MultiPeriodStreamExamples {
         await processor.processBufferedOpportunities();
 
         const metrics = processor.getMetrics();
-        console.log('\n📊 Live Processing Summary:');
-        console.log(`   Total Markets: ${metrics.totalMarketsProcessed}`);
-        console.log(`   Opportunities: ${metrics.opportunitiesDetected}`);
-        console.log(`   Average Latency: ${metrics.realTimePerformance.latency.toFixed(2)}ms`);
-        console.log(`   Success Rate: ${(metrics.realTimePerformance.successRate * 100).toFixed(1)}%`);
+        console.info('\n📊 Live Processing Summary:');
+        console.info(`   Total Markets: ${metrics.totalMarketsProcessed}`);
+        console.info(`   Opportunities: ${metrics.opportunitiesDetected}`);
+        console.info(`   Average Latency: ${metrics.realTimePerformance.latency.toFixed(2)}ms`);
+        console.info(`   Success Rate: ${(metrics.realTimePerformance.successRate * 100).toFixed(1)}%`);
     }
 
     /**
      * Example 3: Multi-sport comparison
      */
     static async demonstrateMultiSportComparison(): Promise<void> {
-        console.log('\n🏈⚾🏀 Multi-Sport Stream Processing Comparison\n');
+        console.info('\n🏈⚾🏀 Multi-Sport Stream Processing Comparison\n');
 
         // Create processors for different sports
         const nbaProcessor = MultiPeriodStreamProcessorFactory.createNBAProcessor();
@@ -166,12 +166,12 @@ export class MultiPeriodStreamExamples {
         const nbaStreams = this.convertToStreamData(nbaGames);
         const nflStreams = this.convertToStreamData(nflGames);
 
-        console.log('📊 Test Data:');
-        console.log(`   NBA Games: ${nbaStreams.length}`);
-        console.log(`   NFL Games: ${nflStreams.length}`);
+        console.info('📊 Test Data:');
+        console.info(`   NBA Games: ${nbaStreams.length}`);
+        console.info(`   NFL Games: ${nflStreams.length}`);
 
         // Process NBA streams
-        console.log('\n🏀 Processing NBA Streams...');
+        console.info('\n🏀 Processing NBA Streams...');
         const nbaStartTime = performance.now();
 
         for (const stream of nbaStreams) {
@@ -184,7 +184,7 @@ export class MultiPeriodStreamExamples {
         const nbaOpportunities = await nbaProcessor.processBufferedOpportunities();
 
         // Process NFL streams
-        console.log('\n🏈 Processing NFL Streams...');
+        console.info('\n🏈 Processing NFL Streams...');
         const nflStartTime = performance.now();
 
         for (const stream of nflStreams) {
@@ -197,36 +197,36 @@ export class MultiPeriodStreamExamples {
         const nflOpportunities = await nflProcessor.processBufferedOpportunities();
 
         // Compare results
-        console.log('\n📈 Multi-Sport Comparison:');
-        console.log('Sport'.padEnd(8) + ' | Time (ms)'.padEnd(12) + ' | Opportunities'.padEnd(15) + ' | Success Rate');
-        console.log(''.padEnd(8) + ' | '.padEnd(12) + ' | '.padEnd(15) + ' | ' + '-'.repeat(12));
+        console.info('\n📈 Multi-Sport Comparison:');
+        console.info('Sport'.padEnd(8) + ' | Time (ms)'.padEnd(12) + ' | Opportunities'.padEnd(15) + ' | Success Rate');
+        console.info(''.padEnd(8) + ' | '.padEnd(12) + ' | '.padEnd(15) + ' | ' + '-'.repeat(12));
 
-        console.log(
+        console.info(
             `NBA`.padEnd(8) + ' | ' + `${nbaProcessingTime.toFixed(2)}`.padEnd(12) + ' | ' +
             `${nbaOpportunities.length}`.padEnd(15) + ' | ' +
             `${((nbaOpportunities.length / nbaMetrics.totalMarketsProcessed) * 100).toFixed(1)}%`
         );
 
-        console.log(
+        console.info(
             `NFL`.padEnd(8) + ' | ' + `${nflProcessingTime.toFixed(2)}`.padEnd(12) + ' | ' +
             `${nflOpportunities.length}`.padEnd(15) + ' | ' +
             `${((nflOpportunities.length / nflMetrics.totalMarketsProcessed) * 100).toFixed(1)}%`
         );
 
         // Period analysis
-        console.log('\n🎯 Period-Specific Analysis:');
+        console.info('\n🎯 Period-Specific Analysis:');
 
-        console.log('\nNBA Period Opportunities:');
+        console.info('\nNBA Period Opportunities:');
         nbaOpportunities.forEach((opp, index) => {
             if (index < 5) { // Show top 5
-                console.log(`   ${index + 1}. ${opp.primaryPeriod} ↔ ${opp.secondaryPeriod}: ${(opp.arbitrage.expectedReturn * 100).toFixed(3)}%`);
+                console.info(`   ${index + 1}. ${opp.primaryPeriod} ↔ ${opp.secondaryPeriod}: ${(opp.arbitrage.expectedReturn * 100).toFixed(3)}%`);
             }
         });
 
-        console.log('\nNFL Period Opportunities:');
+        console.info('\nNFL Period Opportunities:');
         nflOpportunities.forEach((opp, index) => {
             if (index < 5) { // Show top 5
-                console.log(`   ${index + 1}. ${opp.primaryPeriod} ↔ ${opp.secondaryPeriod}: ${(opp.arbitrage.expectedReturn * 100).toFixed(3)}%`);
+                console.info(`   ${index + 1}. ${opp.primaryPeriod} ↔ ${opp.secondaryPeriod}: ${(opp.arbitrage.expectedReturn * 100).toFixed(3)}%`);
             }
         });
     }
@@ -235,14 +235,14 @@ export class MultiPeriodStreamExamples {
      * Example 4: Performance benchmarking
      */
     static async demonstratePerformanceBenchmarking(): Promise<void> {
-        console.log('\n🚀 Multi-Period Stream Performance Benchmarking\n');
+        console.info('\n🚀 Multi-Period Stream Performance Benchmarking\n');
 
         const dataSizes = [50, 100, 200, 500];
         const processor = MultiPeriodStreamProcessorFactory.createNBAProcessor();
 
-        console.log('📊 Scaling Performance Test:');
-        console.log('Size'.padEnd(8) + ' | Time (ms)'.padEnd(12) + ' | Buffer %'.padEnd(10) + ' | Throughput');
-        console.log(''.padEnd(8) + ' | '.padEnd(12) + ' | '.padEnd(10) + ' | ' + '-'.repeat(10));
+        console.info('📊 Scaling Performance Test:');
+        console.info('Size'.padEnd(8) + ' | Time (ms)'.padEnd(12) + ' | Buffer %'.padEnd(10) + ' | Throughput');
+        console.info(''.padEnd(8) + ' | '.padEnd(12) + ' | '.padEnd(10) + ' | ' + '-'.repeat(10));
 
         for (const size of dataSizes) {
             // Clear processor for clean test
@@ -266,14 +266,14 @@ export class MultiPeriodStreamExamples {
             const metrics = processor.getMetrics();
             const throughput = (metrics.totalMarketsProcessed / (processingTime / 1000)).toFixed(1);
 
-            console.log(
+            console.info(
                 `${size.toString().padEnd(8)} | ${processingTime.toFixed(2).padEnd(12)} | ` +
                 `${(metrics.bufferUtilization * 100).toFixed(1).padEnd(10)} | ${throughput} markets/sec`
             );
         }
 
         // Latency benchmark
-        console.log('\n⚡ Latency Analysis:');
+        console.info('\n⚡ Latency Analysis:');
 
         const latencyTests = [10, 25, 50, 100]; // Processing intervals
 
@@ -295,7 +295,7 @@ export class MultiPeriodStreamExamples {
             const processingTime = performance.now() - startTime;
             const testMetrics = testProcessor.getMetrics();
 
-            console.log(`   ${interval}ms interval: ${testMetrics.realTimePerformance.latency.toFixed(2)}ms avg latency`);
+            console.info(`   ${interval}ms interval: ${testMetrics.realTimePerformance.latency.toFixed(2)}ms avg latency`);
 
             testProcessor.stopProcessing();
         }
@@ -305,7 +305,7 @@ export class MultiPeriodStreamExamples {
      * Example 5: Period pair analysis
      */
     static async demonstratePeriodPairAnalysis(): Promise<void> {
-        console.log('\n🎯 Period Pair Analysis\n');
+        console.info('\n🎯 Period Pair Analysis\n');
 
         const processor = MultiPeriodStreamProcessorFactory.createNBAProcessor();
         const factory = new SyntheticArbitrageV1Factory();
@@ -330,9 +330,9 @@ export class MultiPeriodStreamExamples {
             ['second-quarter', 'first-half']
         ];
 
-        console.log('📊 Period Pair Performance:');
-        console.log('Period Pair'.padEnd(25) + ' | Opportunities | Avg Return | Avg Correlation');
-        console.log(''.padEnd(25) + ' | ' + '-'.repeat(12) + ' | ' + '-'.repeat(10) + ' | ' + '-'.repeat(14));
+        console.info('📊 Period Pair Performance:');
+        console.info('Period Pair'.padEnd(25) + ' | Opportunities | Avg Return | Avg Correlation');
+        console.info(''.padEnd(25) + ' | ' + '-'.repeat(12) + ' | ' + '-'.repeat(10) + ' | ' + '-'.repeat(14));
 
         for (const [primary, secondary] of periodPairs) {
             const opportunities = processor.getOpportunitiesByPeriodPair(
@@ -344,14 +344,14 @@ export class MultiPeriodStreamExamples {
                 const avgReturn = opportunities.reduce((sum, opp) => sum + opp.arbitrage.expectedReturn, 0) / opportunities.length;
                 const avgCorrelation = opportunities.reduce((sum, opp) => sum + opp.periodCorrelation, 0) / opportunities.length;
 
-                console.log(
+                console.info(
                     `${primary} ↔ ${secondary}`.padEnd(25) + ' | ' +
                     `${opportunities.length.toString().padEnd(12)} | ` +
                     `${(avgReturn * 100).toFixed(3).padEnd(10)}% | ` +
                     `${avgCorrelation.toFixed(4)}`
                 );
             } else {
-                console.log(
+                console.info(
                     `${primary} ↔ ${secondary}`.padEnd(25) + ' | ' +
                     `0`.padEnd(12) + ' | ' +
                     `0.000%`.padEnd(10) + ' | ' +
@@ -361,7 +361,7 @@ export class MultiPeriodStreamExamples {
         }
 
         // Show best opportunities by period pair
-        console.log('\n🏆 Best Opportunities by Period Pair:');
+        console.info('\n🏆 Best Opportunities by Period Pair:');
 
         for (const [primary, secondary] of periodPairs) {
             const opportunities = processor.getOpportunitiesByPeriodPair(
@@ -371,11 +371,11 @@ export class MultiPeriodStreamExamples {
 
             if (opportunities.length > 0) {
                 const best = opportunities[0]; // Already sorted by return
-                console.log(`\n   ${primary} ↔ ${secondary}:`);
-                console.log(`      Best Return: ${(best.arbitrage.expectedReturn * 100).toFixed(3)}%`);
-                console.log(`      Correlation: ${best.periodCorrelation.toFixed(4)}`);
-                console.log(`      Execution Window: ${best.executionWindow.optimal.toLocaleTimeString()}`);
-                console.log(`      Time Decay: ${best.timeDecay.toFixed(4)}`);
+                console.info(`\n   ${primary} ↔ ${secondary}:`);
+                console.info(`      Best Return: ${(best.arbitrage.expectedReturn * 100).toFixed(3)}%`);
+                console.info(`      Correlation: ${best.periodCorrelation.toFixed(4)}`);
+                console.info(`      Execution Window: ${best.executionWindow.optimal.toLocaleTimeString()}`);
+                console.info(`      Time Decay: ${best.timeDecay.toFixed(4)}`);
             }
         }
     }
@@ -426,31 +426,31 @@ export class MultiPeriodStreamExamples {
      * Run all multi-period stream examples
      */
     static async runAllExamples(): Promise<void> {
-        console.log('🚀 Multi-Period Stream Processor Examples\n');
-        console.log('='.repeat(80));
+        console.info('🚀 Multi-Period Stream Processor Examples\n');
+        console.info('='.repeat(80));
 
         await this.demonstrateBasicStreamProcessing();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         await this.demonstrateRealTimeOpportunities();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         await this.demonstrateMultiSportComparison();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         await this.demonstratePerformanceBenchmarking();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         await this.demonstratePeriodPairAnalysis();
 
-        console.log('\n✅ All multi-period stream processor examples completed!');
-        console.log('\n🎯 Key Capabilities Demonstrated:');
-        console.log('   • Multi-period market stream processing');
-        console.log('   • Real-time opportunity detection with sub-50ms latency');
-        console.log('   • Sport-specific processor configurations');
-        console.log('   • Performance benchmarking and scalability');
-        console.log('   • Period pair analysis and optimization');
-        console.log('   • Event-driven architecture with live updates');
+        console.info('\n✅ All multi-period stream processor examples completed!');
+        console.info('\n🎯 Key Capabilities Demonstrated:');
+        console.info('   • Multi-period market stream processing');
+        console.info('   • Real-time opportunity detection with sub-50ms latency');
+        console.info('   • Sport-specific processor configurations');
+        console.info('   • Performance benchmarking and scalability');
+        console.info('   • Period pair analysis and optimization');
+        console.info('   • Event-driven architecture with live updates');
     }
 }
 

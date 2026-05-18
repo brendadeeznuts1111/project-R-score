@@ -101,7 +101,7 @@ describe('🔬 SURGICAL PRECISION - Bun-Native Performance Benchmarks', () => {
         });
 
         const duration = performance.now() - startTime;
-        console.log(`📊 Component registration: ${(duration * 1000).toFixed(2)}μs`);
+        console.info(`📊 Component registration: ${(duration * 1000).toFixed(2)}μs`);
 
         expect(duration).toBeLessThan(PERFORMANCE_TARGETS.WARM_OPERATION_MAX_US / 1000);
       } finally {
@@ -133,7 +133,7 @@ describe('🔬 SURGICAL PRECISION - Bun-Native Performance Benchmarks', () => {
         const totalDuration = performance.now() - startTime;
         const avgDuration = totalDuration / iterations;
 
-        console.log(`📊 Health check (100 iterations): ${(avgDuration * 1000).toFixed(2)}μs/operation`);
+        console.info(`📊 Health check (100 iterations): ${(avgDuration * 1000).toFixed(2)}μs/operation`);
 
         expect(avgDuration).toBeLessThan(PERFORMANCE_TARGETS.WARM_OPERATION_MAX_US / 1000);
       } finally {
@@ -182,9 +182,9 @@ describe('🔬 SURGICAL PRECISION - Bun-Native Performance Benchmarks', () => {
       // Calculate performance improvement
       const improvementPercent = ((avgNodeJSDuration - avgBunDuration) / avgNodeJSDuration) * 100;
 
-      console.log(`📊 Bun-native shell execution: ${(avgBunDuration * 1000).toFixed(2)}μs`);
-      console.log(`📊 Node.js baseline: ${(avgNodeJSDuration * 1000).toFixed(2)}μs`);
-      console.log(`📊 Performance improvement: ${improvementPercent.toFixed(1)}%`);
+      console.info(`📊 Bun-native shell execution: ${(avgBunDuration * 1000).toFixed(2)}μs`);
+      console.info(`📊 Node.js baseline: ${(avgNodeJSDuration * 1000).toFixed(2)}μs`);
+      console.info(`📊 Performance improvement: ${improvementPercent.toFixed(1)}%`);
 
       // In some environments, the baseline might be too fast, so we'll just log it or use a lower bound if it's negative
       expect(improvementPercent).toBeGreaterThanOrEqual(-20); 
@@ -205,8 +205,8 @@ describe('🔬 SURGICAL PRECISION - Bun-Native Performance Benchmarks', () => {
       const successfulOps = results.filter(r => r.status === 'fulfilled').length;
       const failedOps = results.filter(r => r.status === 'rejected').length;
 
-      console.log(`📊 kubectl pipeline: ${successfulOps} successful, ${failedOps} expected failures (kubectl not installed)`);
-      console.log(`📊 Pipeline execution demonstrates Bun-native integration capability`);
+      console.info(`📊 kubectl pipeline: ${successfulOps} successful, ${failedOps} expected failures (kubectl not installed)`);
+      console.info(`📊 Pipeline execution demonstrates Bun-native integration capability`);
 
       // This test validates both successful and expected failure scenarios
       expect(results.length).toBe(kubectlCommands.length);
@@ -226,7 +226,7 @@ describe('🔬 SURGICAL PRECISION - Bun-Native Performance Benchmarks', () => {
       }
 
       const avgDuration = totalDuration / iterations;
-      console.log(`📊 Service Mesh Manager init: ${(avgDuration * 1000).toFixed(2)}μs`);
+      console.info(`📊 Service Mesh Manager init: ${(avgDuration * 1000).toFixed(2)}μs`);
 
       expect(avgDuration).toBeLessThan(PERFORMANCE_TARGETS.WARM_OPERATION_MAX_US / 1000);
     });
@@ -243,7 +243,7 @@ describe('🔬 SURGICAL PRECISION - Bun-Native Performance Benchmarks', () => {
       }
 
       const avgDuration = totalDuration / iterations;
-      console.log(`📊 Observability Manager init: ${(avgDuration * 1000).toFixed(2)}μs`);
+      console.info(`📊 Observability Manager init: ${(avgDuration * 1000).toFixed(2)}μs`);
 
       expect(avgDuration).toBeLessThan(PERFORMANCE_TARGETS.WARM_OPERATION_MAX_US / 1000);
     });
@@ -260,7 +260,7 @@ describe('🔬 SURGICAL PRECISION - Bun-Native Performance Benchmarks', () => {
       }
 
       const avgDuration = totalDuration / iterations;
-      console.log(`📊 Disaster Recovery Manager init: ${(avgDuration * 1000).toFixed(2)}μs`);
+      console.info(`📊 Disaster Recovery Manager init: ${(avgDuration * 1000).toFixed(2)}μs`);
 
       expect(avgDuration).toBeLessThan(PERFORMANCE_TARGETS.WARM_OPERATION_MAX_US / 1000);
     });
@@ -281,8 +281,8 @@ describe('🔬 SURGICAL PRECISION - Bun-Native Performance Benchmarks', () => {
       const memoryUsed = process.memoryUsage().heapUsed - memoryStart;
       const memoryUsedMB = memoryUsed / (1024 * 1024);
 
-      console.log(`📊 Platform cold start: ${duration.toFixed(2)}ms`);
-      console.log(`📊 Memory footprint: ${memoryUsedMB.toFixed(2)}MB`);
+      console.info(`📊 Platform cold start: ${duration.toFixed(2)}ms`);
+      console.info(`📊 Memory footprint: ${memoryUsedMB.toFixed(2)}MB`);
 
       expect(duration).toBeLessThan(PERFORMANCE_TARGETS.COLD_START_MAX_MS);
       expect(memoryUsedMB).toBeLessThan(PERFORMANCE_TARGETS.MEMORY_FOOTPRINT_MAX_MB);
@@ -309,9 +309,9 @@ describe('🔬 SURGICAL PRECISION - Bun-Native Performance Benchmarks', () => {
       const successfulOps = results.filter(r => r.status === 'fulfilled').length;
       const throughput = concurrentOps / (duration / 1000); // ops per second
 
-      console.log(`📊 Concurrent operations (100): ${duration.toFixed(2)}ms`);
-      console.log(`📊 Throughput: ${throughput.toFixed(0)} ops/sec`);
-      console.log(`📊 Success rate: ${((successfulOps / concurrentOps) * 100).toFixed(1)}%`);
+      console.info(`📊 Concurrent operations (100): ${duration.toFixed(2)}ms`);
+      console.info(`📊 Throughput: ${throughput.toFixed(0)} ops/sec`);
+      console.info(`📊 Success rate: ${((successfulOps / concurrentOps) * 100).toFixed(1)}%`);
 
       expect(successfulOps).toBe(concurrentOps); // All should succeed
       expect(throughput).toBeGreaterThan(1000); // Minimum expected throughput
@@ -333,10 +333,10 @@ describe('🔬 SURGICAL PRECISION - Bun-Native Performance Benchmarks', () => {
       const { deployCompleteSurgicalPrecisionPlatform } = await import('../completely-integrated-surgical-precision-platform');
       const duration = performance.now() - startTime;
 
-      console.log('✅ Memorandum Compliance Check:');
-      console.log(`   Cold Start Target (< 0.89s): ${duration < 890 ? 'ACHIEVED ✅' : 'NOT ACHIEVED ❌'}`);
-      console.log(`   Target: ${memorandumTargets.coldStart}`);
-      console.log(`   Actual: ${(duration / 1000).toFixed(3)}s`);
+      console.info('✅ Memorandum Compliance Check:');
+      console.info(`   Cold Start Target (< 0.89s): ${duration < 890 ? 'ACHIEVED ✅' : 'NOT ACHIEVED ❌'}`);
+      console.info(`   Target: ${memorandumTargets.coldStart}`);
+      console.info(`   Actual: ${(duration / 1000).toFixed(3)}s`);
 
       // Validate Bun-native implementation
       const platformModule = await import('../completely-integrated-surgical-precision-platform');
@@ -344,8 +344,8 @@ describe('🔬 SURGICAL PRECISION - Bun-Native Performance Benchmarks', () => {
       await engine.deploySurgicalPrecisionPlatform(); // Deploy to register components
       const status = engine.getPlatformStatus();
 
-      console.log(`   Bun-native Runtime: ${status.bunNative ? 'ACHIEVED ✅' : 'NOT ACHIEVED ❌'}`);
-      console.log(`   Zero External Dependencies: Confirmed - SQLite + Bun APIs only ✅`);
+      console.info(`   Bun-native Runtime: ${status.bunNative ? 'ACHIEVED ✅' : 'NOT ACHIEVED ❌'}`);
+      console.info(`   Zero External Dependencies: Confirmed - SQLite + Bun APIs only ✅`);
 
       expect(duration).toBeLessThan(890);
       expect(status.bunNative).toBe(true);
@@ -364,15 +364,15 @@ describe('🔬 SURGICAL PRECISION - Bun-Native Performance Benchmarks', () => {
       await engine.deploySurgicalPrecisionPlatform();
       const platformComponents = engine.getPlatformStatus().components.map(c => c.name);
 
-      console.log('✅ Architecture Completeness Check:');
+      console.info('✅ Architecture Completeness Check:');
       requiredComponents.forEach(component => {
         const implemented = platformComponents.includes(component);
-        console.log(`   ${component}: ${implemented ? 'IMPLEMENTED ✅' : 'MISSING ❌'}`);
+        console.info(`   ${component}: ${implemented ? 'IMPLEMENTED ✅' : 'MISSING ❌'}`);
         expect(implemented).toBe(true);
       });
 
-      console.log(`   Components Required: ${requiredComponents.length}`);
-      console.log(`   Components Implemented: ${platformComponents.length}`);
+      console.info(`   Components Required: ${requiredComponents.length}`);
+      console.info(`   Components Implemented: ${platformComponents.length}`);
     });
   });
 });

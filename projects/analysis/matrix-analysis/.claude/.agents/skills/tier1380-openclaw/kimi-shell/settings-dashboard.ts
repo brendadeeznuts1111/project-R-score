@@ -35,16 +35,16 @@ interface ComponentInfo {
 }
 
 function printHeader(title: string): void {
-	console.log(`\n${BOLD}${BLUE}┌${"─".repeat(78)}┐${RESET}`);
-	console.log(
+	console.info(`\n${BOLD}${BLUE}┌${"─".repeat(78)}┐${RESET}`);
+	console.info(
 		`${BOLD}${BLUE}│${RESET} ${CYAN}${title.padEnd(76)}${RESET}${BOLD}${BLUE} │${RESET}`,
 	);
-	console.log(`${BOLD}${BLUE}└${"─".repeat(78)}┘${RESET}`);
+	console.info(`${BOLD}${BLUE}└${"─".repeat(78)}┘${RESET}`);
 }
 
 function printSubHeader(title: string): void {
-	console.log(`\n  ${BOLD}${WHITE}${title}${RESET}`);
-	console.log(`  ${GRAY}${"─".repeat(74)}${RESET}`);
+	console.info(`\n  ${BOLD}${WHITE}${title}${RESET}`);
+	console.info(`  ${GRAY}${"─".repeat(74)}${RESET}`);
 }
 
 async function countLines(filePath: string): Promise<number> {
@@ -117,17 +117,17 @@ async function checkComponent(path: string): Promise<boolean> {
 }
 
 async function main(): Promise<void> {
-	console.log(`${BOLD}${CYAN}`);
-	console.log(
+	console.info(`${BOLD}${CYAN}`);
+	console.info(
 		"  ╔════════════════════════════════════════════════════════════════════════════╗",
 	);
-	console.log(
+	console.info(
 		"  ║        🚀 KIMI TIER-1380 OMEGA SETTINGS DASHBOARD v1.3.8                   ║",
 	);
-	console.log(
+	console.info(
 		"  ╚════════════════════════════════════════════════════════════════════════════╝",
 	);
-	console.log(`${RESET}`);
+	console.info(`${RESET}`);
 
 	const home = homedir();
 
@@ -171,17 +171,17 @@ async function main(): Promise<void> {
 	];
 
 	// Print component metrics table
-	console.log(
+	console.info(
 		`\n  ${BOLD}Component                    Files    Lines    Classes  Interfaces  Types    Functions${RESET}`,
 	);
-	console.log(`  ${GRAY}${"─".repeat(90)}${RESET}`);
+	console.info(`  ${GRAY}${"─".repeat(90)}${RESET}`);
 
 	for (const comp of components) {
 		const m = comp.metrics;
 		const status = (await checkComponent(comp.path))
 			? `${GREEN}●${RESET}`
 			: `${YELLOW}○${RESET}`;
-		console.log(
+		console.info(
 			`  ${status} ${comp.name.padEnd(26)} ` +
 				`${String(m.files).padStart(5)}  ` +
 				`${String(m.lines).padStart(7)}  ` +
@@ -190,7 +190,7 @@ async function main(): Promise<void> {
 				`${String(m.types).padStart(5)}  ` +
 				`${String(m.functions).padStart(9)}`,
 		);
-		console.log(`    ${DIM}${comp.description}${RESET}`);
+		console.info(`    ${DIM}${comp.description}${RESET}`);
 	}
 
 	// System Status Section
@@ -220,16 +220,16 @@ async function main(): Promise<void> {
 		},
 	];
 
-	console.log(
+	console.info(
 		`\n  ${DIM}Component                     State     Version / Details${RESET}`,
 	);
-	console.log(`  ${GRAY}${"─".repeat(76)}${RESET}`);
+	console.info(`  ${GRAY}${"─".repeat(76)}${RESET}`);
 
 	for (const comp of systemComponents) {
 		const status = (await checkComponent(comp.path))
 			? `${GREEN}✓ ON${RESET}`
 			: `${YELLOW}○ OFF${RESET}`;
-		console.log(
+		console.info(
 			`  ${comp.name.padEnd(28)} ${status.padEnd(10)} ${DIM}${comp.detail}${RESET}`,
 		);
 	}
@@ -248,7 +248,7 @@ async function main(): Promise<void> {
 	];
 
 	for (const cfg of execConfig) {
-		console.log(
+		console.info(
 			`  ${DIM}${cfg.key.padEnd(18)}${RESET} ${WHITE}${cfg.value.padEnd(12)}${RESET} ${GRAY}${cfg.note}${RESET}`,
 		);
 	}
@@ -269,7 +269,7 @@ async function main(): Promise<void> {
 	];
 
 	for (const cfg of openclawConfig) {
-		console.log(
+		console.info(
 			`  ${DIM}${cfg.key.padEnd(18)}${RESET} ${WHITE}${cfg.value.padEnd(30)}${RESET} ${GRAY}${cfg.note}${RESET}`,
 		);
 	}
@@ -295,7 +295,7 @@ async function main(): Promise<void> {
 	];
 
 	for (const cfg of matrixConfig) {
-		console.log(
+		console.info(
 			`  ${DIM}${cfg.key.padEnd(18)}${RESET} ${WHITE}${cfg.value.padEnd(36)}${RESET} ${GRAY}${cfg.note}${RESET}`,
 		);
 	}
@@ -330,15 +330,15 @@ async function main(): Promise<void> {
 		},
 	];
 
-	console.log(
+	console.info(
 		`\n  ${DIM}Skill                          Files  Tests  Description${RESET}`,
 	);
-	console.log(`  ${GRAY}${"─".repeat(76)}${RESET}`);
+	console.info(`  ${GRAY}${"─".repeat(76)}${RESET}`);
 
 	for (const skill of skills) {
 		const installed = await checkComponent(`${home}/.kimi/skills/${skill.name}`);
 		const status = installed ? `${GREEN}●${RESET}` : `${YELLOW}○${RESET}`;
-		console.log(
+		console.info(
 			`  ${status} ${skill.name.padEnd(28)} ` +
 				`${String(skill.files).padStart(5)}  ` +
 				`${String(skill.tests).padStart(5)}  ` +
@@ -362,7 +362,7 @@ async function main(): Promise<void> {
 		{ name: "cron_list", desc: "List cron jobs" },
 	];
 
-	console.log();
+	console.info();
 	for (let i = 0; i < tools.length; i += 2) {
 		const t1 = tools[i];
 		const t2 = tools[i + 1];
@@ -370,13 +370,13 @@ async function main(): Promise<void> {
 		const col2 = t2
 			? `${GREEN}▸${RESET} ${CYAN}${t2.name.padEnd(24)}${RESET} ${GRAY}${t2.desc}${RESET}`
 			: "";
-		console.log(`${col1.padEnd(50)} ${col2}`);
+		console.info(`${col1.padEnd(50)} ${col2}`);
 	}
 
 	// Quick Commands
 	printHeader("⌨️  QUICK COMMANDS");
 
-	console.log(`
+	console.info(`
   ${BOLD}Status Checks:${RESET}
     ${CYAN}ocstatus${RESET}                    One-shot status display
     ${CYAN}ocwatch${RESET}                     Continuous monitoring (5s)
@@ -434,12 +434,12 @@ async function main(): Promise<void> {
 		},
 	];
 
-	console.log(`\n  ${DIM}Component              Metric          Status  Note${RESET}`);
-	console.log(`  ${GRAY}${"─".repeat(76)}${RESET}`);
+	console.info(`\n  ${DIM}Component              Metric          Status  Note${RESET}`);
+	console.info(`  ${GRAY}${"─".repeat(76)}${RESET}`);
 
 	for (const pm of perfMetrics) {
 		const statusColor = pm.status === "✓" ? GREEN : YELLOW;
-		console.log(
+		console.info(
 			`  ${pm.component.padEnd(22)} ` +
 				`${WHITE}${pm.metric.padEnd(15)}${RESET} ` +
 				`${statusColor}${pm.status.padEnd(6)}${RESET} ` +
@@ -473,11 +473,11 @@ async function main(): Promise<void> {
 		},
 	];
 
-	console.log(`\n  ${DIM}Category              Count  Examples${RESET}`);
-	console.log(`  ${GRAY}${"─".repeat(76)}${RESET}`);
+	console.info(`\n  ${DIM}Category              Count  Examples${RESET}`);
+	console.info(`  ${GRAY}${"─".repeat(76)}${RESET}`);
 
 	for (const ts of typeSummary) {
-		console.log(
+		console.info(
 			`  ${ts.category.padEnd(20)} ${String(ts.count).padStart(5)}  ${GRAY}${ts.examples}${RESET}`,
 		);
 	}
@@ -485,7 +485,7 @@ async function main(): Promise<void> {
 	// New v2.0 Features
 	printHeader("🆕 NEW IN v2.0");
 
-	console.log(`
+	console.info(`
   ${BOLD}Interactive Mode:${RESET}
     ${CYAN}kimi-cli.ts interactive${RESET}    - Start interactive shell with auto-completion
     ${CYAN}kimi-cli.ts i${RESET}              - Shortcut for interactive mode
@@ -499,11 +499,11 @@ async function main(): Promise<void> {
 `);
 
 	// Footer
-	console.log(`\n${GRAY}  ┌${"─".repeat(78)}┐${RESET}`);
-	console.log(
+	console.info(`\n${GRAY}  ┌${"─".repeat(78)}┐${RESET}`);
+	console.info(
 		`${GRAY}  │${RESET}  ${CYAN}Tier-1380 OMEGA${RESET} v1.3.8 | ${GREEN}Bun${RESET} ${Bun.version} | ${BLUE}TypeScript${RESET} 5.7+    ${GRAY}│${RESET}`,
 	);
-	console.log(`${GRAY}  └${"─".repeat(78)}┘${RESET}\n`);
+	console.info(`${GRAY}  └${"─".repeat(78)}┘${RESET}\n`);
 }
 
 if (import.meta.main) {

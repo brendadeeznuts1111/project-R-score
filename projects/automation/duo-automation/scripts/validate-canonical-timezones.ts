@@ -5,8 +5,8 @@
 import { TIMEZONE_MATRIX } from '../config/constants-v37.ts';
 import { getTimezoneFromScope } from '../bootstrap-timezone.ts';
 
-console.log('🌍 Empire Pro v3.7 - Canonical Timezone Validator');
-console.log('==================================================\n');
+console.info('🌍 Empire Pro v3.7 - Canonical Timezone Validator');
+console.info('==================================================\n');
 
 // Official Canonical zones from tz database 2025c
 const CANONICAL_ZONES_2025C = new Set([
@@ -132,7 +132,7 @@ function validateTimezoneMatrix(): ValidationResult {
     }
   };
 
-  console.log('🔍 Validating TIMEZONE_MATRIX.BASELINE_OFFSETS...\n');
+  console.info('🔍 Validating TIMEZONE_MATRIX.BASELINE_OFFSETS...\n');
 
   // Check each timezone in our matrix
   for (const [zone, offset] of Object.entries(TIMEZONE_MATRIX.BASELINE_OFFSETS)) {
@@ -141,16 +141,16 @@ function validateTimezoneMatrix(): ValidationResult {
     
     if (validation.isValid) {
       result.summary.canonicalCount++;
-      console.log(`✅ ${zone.padEnd(25)} ${offset.padEnd(8)} Canonical`);
+      console.info(`✅ ${zone.padEnd(25)} ${offset.padEnd(8)} Canonical`);
     } else if (validation.isDeprecated) {
       result.summary.deprecatedCount++;
       result.errors.push(`Deprecated Link zone: ${zone} (should use canonical alternative)`);
-      console.log(`❌ ${zone.padEnd(25)} ${offset.padEnd(8)} DEPRECATED LINK`);
+      console.info(`❌ ${zone.padEnd(25)} ${offset.padEnd(8)} DEPRECATED LINK`);
       result.isValid = false;
     } else {
       result.summary.invalidCount++;
       result.errors.push(`Invalid/Unknown zone: ${zone}`);
-      console.log(`❌ ${zone.padEnd(25)} ${offset.padEnd(8)} INVALID`);
+      console.info(`❌ ${zone.padEnd(25)} ${offset.padEnd(8)} INVALID`);
       result.isValid = false;
     }
   }
@@ -171,7 +171,7 @@ function validateScopeMappings(): ValidationResult {
     }
   };
 
-  console.log('\n🎯 Validating Scope Timezone Mappings...\n');
+  console.info('\n🎯 Validating Scope Timezone Mappings...\n');
 
   const scopes = ['ENTERPRISE', 'DEVELOPMENT', 'LOCAL-SANDBOX'];
   
@@ -183,16 +183,16 @@ function validateScopeMappings(): ValidationResult {
       
       if (validation.isValid) {
         result.summary.canonicalCount++;
-        console.log(`✅ ${scope.padEnd(15)} → ${timezone.padEnd(25)} Canonical`);
+        console.info(`✅ ${scope.padEnd(15)} → ${timezone.padEnd(25)} Canonical`);
       } else if (validation.isDeprecated) {
         result.summary.deprecatedCount++;
         result.errors.push(`Scope ${scope} uses deprecated Link zone: ${timezone}`);
-        console.log(`❌ ${scope.padEnd(15)} → ${timezone.padEnd(25)} DEPRECATED LINK`);
+        console.info(`❌ ${scope.padEnd(15)} → ${timezone.padEnd(25)} DEPRECATED LINK`);
         result.isValid = false;
       } else {
         result.summary.invalidCount++;
         result.errors.push(`Scope ${scope} uses invalid zone: ${timezone}`);
-        console.log(`❌ ${scope.padEnd(15)} → ${timezone.padEnd(25)} INVALID`);
+        console.info(`❌ ${scope.padEnd(15)} → ${timezone.padEnd(25)} INVALID`);
         result.isValid = false;
       }
     } catch (error) {
@@ -205,68 +205,68 @@ function validateScopeMappings(): ValidationResult {
 }
 
 function generateComplianceReport(matrixResult: ValidationResult, scopeResult: ValidationResult): void {
-  console.log('\n📊 COMPLIANCE REPORT');
-  console.log('====================\n');
+  console.info('\n📊 COMPLIANCE REPORT');
+  console.info('====================\n');
   
   const totalErrors = matrixResult.errors.length + scopeResult.errors.length;
   const totalWarnings = matrixResult.warnings.length + scopeResult.warnings.length;
   
-  console.log(`🔍 Total Zones Checked: ${matrixResult.summary.totalChecked + scopeResult.summary.totalChecked}`);
-  console.log(`✅ Canonical Zones: ${matrixResult.summary.canonicalCount + scopeResult.summary.canonicalCount}`);
-  console.log(`❌ Deprecated Links: ${matrixResult.summary.deprecatedCount + scopeResult.summary.deprecatedCount}`);
-  console.log(`🚫 Invalid Zones: ${matrixResult.summary.invalidCount + scopeResult.summary.invalidCount}`);
-  console.log(`⚠️  Warnings: ${totalWarnings}`);
-  console.log(`❌ Errors: ${totalErrors}`);
+  console.info(`🔍 Total Zones Checked: ${matrixResult.summary.totalChecked + scopeResult.summary.totalChecked}`);
+  console.info(`✅ Canonical Zones: ${matrixResult.summary.canonicalCount + scopeResult.summary.canonicalCount}`);
+  console.info(`❌ Deprecated Links: ${matrixResult.summary.deprecatedCount + scopeResult.summary.deprecatedCount}`);
+  console.info(`🚫 Invalid Zones: ${matrixResult.summary.invalidCount + scopeResult.summary.invalidCount}`);
+  console.info(`⚠️  Warnings: ${totalWarnings}`);
+  console.info(`❌ Errors: ${totalErrors}`);
   
   if (totalErrors === 0 && totalWarnings === 0) {
-    console.log('\n🎉 PERFECT COMPLIANCE!');
-    console.log('✅ All zones are Canonical tzdb 2025c entries');
-    console.log('✅ No deprecated Link zones detected');
-    console.log('✅ Enterprise-ready timezone configuration');
+    console.info('\n🎉 PERFECT COMPLIANCE!');
+    console.info('✅ All zones are Canonical tzdb 2025c entries');
+    console.info('✅ No deprecated Link zones detected');
+    console.info('✅ Enterprise-ready timezone configuration');
   } else {
-    console.log('\n⚠️  COMPLIANCE ISSUES FOUND:');
+    console.info('\n⚠️  COMPLIANCE ISSUES FOUND:');
     
     if (matrixResult.errors.length > 0) {
-      console.log('\n📋 TIMEZONE_MATRIX Errors:');
-      matrixResult.errors.forEach(error => console.log(`   ❌ ${error}`));
+      console.info('\n📋 TIMEZONE_MATRIX Errors:');
+      matrixResult.errors.forEach(error => console.info(`   ❌ ${error}`));
     }
     
     if (scopeResult.errors.length > 0) {
-      console.log('\n🎯 Scope Mapping Errors:');
-      scopeResult.errors.forEach(error => console.log(`   ❌ ${error}`));
+      console.info('\n🎯 Scope Mapping Errors:');
+      scopeResult.errors.forEach(error => console.info(`   ❌ ${error}`));
     }
     
     if (totalWarnings > 0) {
-      console.log('\n⚠️  Warnings:');
-      [...matrixResult.warnings, ...scopeResult.warnings].forEach(warning => console.log(`   ⚠️  ${warning}`));
+      console.info('\n⚠️  Warnings:');
+      [...matrixResult.warnings, ...scopeResult.warnings].forEach(warning => console.info(`   ⚠️  ${warning}`));
     }
   }
 }
 
 function generateRecommendations(): void {
-  console.log('\n💡 RECOMMENDATIONS');
-  console.log('==================\n');
+  console.info('\n💡 RECOMMENDATIONS');
+  console.info('==================\n');
   
-  console.log('🔒 Enterprise Best Practices:');
-  console.log('   • Always use Canonical zones from tzdb 2025c');
-  console.log('   • Avoid Link zones (US/Eastern, GMT, etc.)');
-  console.log('   • Document timezone choices in compliance reports');
-  console.log('   • Use this validator in CI/CD pipeline');
+  console.info('🔒 Enterprise Best Practices:');
+  console.info('   • Always use Canonical zones from tzdb 2025c');
+  console.info('   • Avoid Link zones (US/Eastern, GMT, etc.)');
+  console.info('   • Document timezone choices in compliance reports');
+  console.info('   • Use this validator in CI/CD pipeline');
   
-  console.log('\n📝 Documentation Updates:');
-  console.log('   • Add Canonical zone requirement to TIMEZONE_MATRIX comments');
-  console.log('   • Include tzdb version in deployment documentation');
-  console.log('   • Document timezone mapping rationale for audit trails');
+  console.info('\n📝 Documentation Updates:');
+  console.info('   • Add Canonical zone requirement to TIMEZONE_MATRIX comments');
+  console.info('   • Include tzdb version in deployment documentation');
+  console.info('   • Document timezone mapping rationale for audit trails');
   
-  console.log('\n🚀 CI/CD Integration:');
-  console.log('   • Add this validator to GitHub Actions workflow');
-  console.log('   • Fail builds if deprecated zones are detected');
-  console.log('   • Generate compliance report for audit trails');
+  console.info('\n🚀 CI/CD Integration:');
+  console.info('   • Add this validator to GitHub Actions workflow');
+  console.info('   • Fail builds if deprecated zones are detected');
+  console.info('   • Generate compliance report for audit trails');
 }
 
 // Main validation execution
 function main(): void {
-  console.log('📅 tz Database Version: 2025c\n');
+  console.info('📅 tz Database Version: 2025c\n');
   
   const matrixResult = validateTimezoneMatrix();
   const scopeResult = validateScopeMappings();
@@ -277,10 +277,10 @@ function main(): void {
   // Exit with error code if validation failed
   const totalErrors = matrixResult.errors.length + scopeResult.errors.length;
   if (totalErrors > 0) {
-    console.log(`\n❌ Validation failed with ${totalErrors} error(s)`);
+    console.info(`\n❌ Validation failed with ${totalErrors} error(s)`);
     process.exit(1);
   } else {
-    console.log('\n✅ All timezone validations passed!');
+    console.info('\n✅ All timezone validations passed!');
     process.exit(0);
   }
 }

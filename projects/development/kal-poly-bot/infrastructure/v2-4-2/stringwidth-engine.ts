@@ -268,10 +268,10 @@ export class UnicodeStringWidthEngine {
 
   // Performance testing utilities
   static benchmark(text: string, iterations: number = 10000): void {
-    console.log(`🧪 Unicode StringWidth Engine Benchmark`);
-    console.log(`====================================`);
-    console.log(`Text: "${text}"`);
-    console.log(`Iterations: ${iterations}`);
+    console.info(`🧪 Unicode StringWidth Engine Benchmark`);
+    console.info(`====================================`);
+    console.info(`Text: "${text}"`);
+    console.info(`Iterations: ${iterations}`);
 
     // Test optimized version
     const startOptimized = performance.now();
@@ -290,15 +290,15 @@ export class UnicodeStringWidthEngine {
     const optimizedWidth = this.optimizedStringWidth(text);
     const nativeWidth = this.nativeStringWidth(text);
 
-    console.log(`\n📊 Results:`);
-    console.log(
+    console.info(`\n📊 Results:`);
+    console.info(
       `   Optimized: ${optimizedWidth} width, ${optimizedTime.toFixed(2)}ms`
     );
-    console.log(
+    console.info(
       `   Native:    ${nativeWidth} width, ${nativeTime.toFixed(2)}ms`
     );
-    console.log(`   Speedup:   ${(nativeTime / optimizedTime).toFixed(2)}x`);
-    console.log(
+    console.info(`   Speedup:   ${(nativeTime / optimizedTime).toFixed(2)}x`);
+    console.info(
       `   Accuracy:  ${optimizedWidth === nativeWidth ? "✅" : "⚠️"}`
     );
   }
@@ -315,8 +315,8 @@ export const stripANSI = feature("ANSI_CSI_PARSER")
 
 // Demonstration function
 export function demonstrateUnicodeEngine(): void {
-  console.log("🚀 Component #42: Unicode StringWidth Engine");
-  console.log("==========================================");
+  console.info("🚀 Component #42: Unicode StringWidth Engine");
+  console.info("==========================================");
 
   const testCases = [
     "Hello World",
@@ -329,26 +329,26 @@ export function demonstrateUnicodeEngine(): void {
     "漢字 Chinese Characters",
   ];
 
-  console.log("\n📏 Width Calculations:");
+  console.info("\n📏 Width Calculations:");
   for (const testCase of testCases) {
     const optimized = UnicodeStringWidthEngine.calculateWidth(testCase);
     const native = UnicodeStringWidthEngine.nativeStringWidth(testCase);
     const status = optimized === native ? "✅" : "🔄";
-    console.log(
+    console.info(
       `   ${status} "${testCase}" → ${optimized} (native: ${native})`
     );
   }
 
-  console.log("\n🧪 Performance Benchmark:");
+  console.info("\n🧪 Performance Benchmark:");
   UnicodeStringWidthEngine.benchmark("👋🏽 Test Emoji 🇺🇸", 5000);
 
-  console.log("\n🎯 Key Features:");
-  console.log(`   ✅ Zero-width character detection`);
-  console.log(`   ✅ ZWJ sequence handling`);
-  console.log(`   ✅ ANSI escape code stripping`);
-  console.log(`   ✅ East Asian width support`);
-  console.log(`   ✅ Flag emoji accuracy`);
-  console.log(`   ✅ Skin tone sequences`);
+  console.info("\n🎯 Key Features:");
+  console.info(`   ✅ Zero-width character detection`);
+  console.info(`   ✅ ZWJ sequence handling`);
+  console.info(`   ✅ ANSI escape code stripping`);
+  console.info(`   ✅ East Asian width support`);
+  console.info(`   ✅ Flag emoji accuracy`);
+  console.info(`   ✅ Skin tone sequences`);
 }
 
 // Run demonstration if called directly

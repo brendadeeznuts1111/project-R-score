@@ -731,9 +731,9 @@ export function createCookieAwareServer(port: number = 3000) {
     }
   });
 
-  console.log(`🚀 Cookie Security Server running on http://localhost:${port}`);
-  console.log(`📊 Benchmark: http://localhost:${port}/benchmark`);
-  console.log(`🔍 Profile: http://localhost:${port}/profile`);
+  console.info(`🚀 Cookie Security Server running on http://localhost:${port}`);
+  console.info(`📊 Benchmark: http://localhost:${port}/benchmark`);
+  console.info(`🔍 Profile: http://localhost:${port}/profile`);
   
   return server;
 }
@@ -768,8 +768,8 @@ export class CookieCLI {
     const header = args[0] || 'session=abc; Secure; HttpOnly; SameSite=Strict';
     try {
       const cookie = Cookie.parse(header);
-      console.log('✅ Parsed Cookie:');
-      console.log(JSON.stringify(cookie, null, 2));
+      console.info('✅ Parsed Cookie:');
+      console.info(JSON.stringify(cookie, null, 2));
     } catch (error) {
       console.error('❌ Parse failed:', error);
     }
@@ -784,8 +784,8 @@ export class CookieCLI {
 
     try {
       const cookie = Cookie.from(name, value, { secure: true, httpOnly: true });
-      console.log('✅ Created Cookie:');
-      console.log(cookie.serialize());
+      console.info('✅ Created Cookie:');
+      console.info(cookie.serialize());
     } catch (error) {
       console.error('❌ Creation failed:', error);
     }
@@ -797,18 +797,18 @@ export class CookieCLI {
       const cookie = Cookie.parse(header);
       const inspection = CookieInspector.validate(cookie);
       
-      console.log('🔍 Cookie Inspection:');
-      console.log(`Valid: ${inspection.valid ? '✅' : '❌'}`);
-      console.log(`Score: ${inspection.score}/100`);
+      console.info('🔍 Cookie Inspection:');
+      console.info(`Valid: ${inspection.valid ? '✅' : '❌'}`);
+      console.info(`Score: ${inspection.score}/100`);
       
       if (inspection.issues.length > 0) {
-        console.log('\n🚨 Issues:');
-        inspection.issues.forEach(issue => console.log(`  ❌ ${issue}`));
+        console.info('\n🚨 Issues:');
+        inspection.issues.forEach(issue => console.info(`  ❌ ${issue}`));
       }
       
       if (inspection.recommendations.length > 0) {
-        console.log('\n💡 Recommendations:');
-        inspection.recommendations.forEach(rec => console.log(`  💡 ${rec}`));
+        console.info('\n💡 Recommendations:');
+        inspection.recommendations.forEach(rec => console.info(`  💡 ${rec}`));
       }
     } catch (error) {
       console.error('❌ Inspection failed:', error);
@@ -816,14 +816,14 @@ export class CookieCLI {
   }
 
   private static async benchmarkCommand(): Promise<void> {
-    console.log('⚡ Running Cookie Performance Benchmark...');
+    console.info('⚡ Running Cookie Performance Benchmark...');
     const results = await CookieBenchmark.benchmark();
     
-    console.log('\n📊 Benchmark Results:');
-    console.log(`Cookie.parse:   ${results.parse.opsPerSecond.toLocaleString()} ops/s (${results.parse.avgTime}ms)`);
-    console.log(`Cookie.from:    ${results.from.opsPerSecond.toLocaleString()} ops/s (${results.from.avgTime}ms)`);
-    console.log(`CookieInspector:${results.inspector.opsPerSecond.toLocaleString()} ops/s (${results.inspector.avgTime}ms)`);
-    console.log(`Full Pipeline:  ${results.full.opsPerSecond.toLocaleString()} ops/s (${results.full.avgTime}ms)`);
+    console.info('\n📊 Benchmark Results:');
+    console.info(`Cookie.parse:   ${results.parse.opsPerSecond.toLocaleString()} ops/s (${results.parse.avgTime}ms)`);
+    console.info(`Cookie.from:    ${results.from.opsPerSecond.toLocaleString()} ops/s (${results.from.avgTime}ms)`);
+    console.info(`CookieInspector:${results.inspector.opsPerSecond.toLocaleString()} ops/s (${results.inspector.avgTime}ms)`);
+    console.info(`Full Pipeline:  ${results.full.opsPerSecond.toLocaleString()} ops/s (${results.full.avgTime}ms)`);
   }
 
   private static async serverCommand(args: string[]): Promise<void> {
@@ -832,7 +832,7 @@ export class CookieCLI {
   }
 
   private static showHelp(): void {
-    console.log(`
+    console.info(`
 🍪 Cookie Security v3.25 CLI
 
 Usage: bun run cookie-security <command> [options]

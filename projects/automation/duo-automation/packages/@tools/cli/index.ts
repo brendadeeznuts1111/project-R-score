@@ -165,9 +165,9 @@ async function setupCLI(): Promise<void> {
     .description('Display help for commands')
     .action((commandName?: string) => {
       if (commandName) {
-        console.log(commandService.getHelp(commandName));
+        console.info(commandService.getHelp(commandName));
       } else {
-        console.log(commandService.getHelp());
+        console.info(commandService.getHelp());
       }
     });
 
@@ -198,10 +198,10 @@ async function setupCLI(): Promise<void> {
       try {
         if (options.show) {
           const config = configService.exportSanitized();
-          console.log(JSON.stringify(config, null, 2));
+          console.info(JSON.stringify(config, null, 2));
         } else if (options.scope) {
           const scope = configService.getScope();
-          console.log(`Current Scope: ${scope}`);
+          console.info(`Current Scope: ${scope}`);
         } else if (options.validate) {
           const validation = configService.validateConfiguration();
           if (validation.valid) {
@@ -211,7 +211,7 @@ async function setupCLI(): Promise<void> {
             process.exit(1);
           }
         } else {
-          console.log('Use --show, --scope, or --validate options');
+          console.info('Use --show, --scope, or --validate options');
         }
       } catch (error) {
         logger.error('Config command failed', { error });
@@ -243,30 +243,30 @@ async function setupCLI(): Promise<void> {
             process.exit(1);
           }
           await secretsService.set(name, value);
-          console.log(`✅ Secret set: ${name}`);
+          console.info(`✅ Secret set: ${name}`);
           
         } else if (options.get) {
           const value = await secretsService.get(options.get);
           if (value) {
-            console.log(`🔑 ${options.get}: ${value}`);
+            console.info(`🔑 ${options.get}: ${value}`);
           } else {
-            console.log(`❌ Secret not found: ${options.get}`);
+            console.info(`❌ Secret not found: ${options.get}`);
             process.exit(1);
           }
           
         } else if (options.delete) {
           await secretsService.delete(options.delete);
-          console.log(`🗑️ Secret deleted: ${options.delete}`);
+          console.info(`🗑️ Secret deleted: ${options.delete}`);
           
         } else if (options.list) {
           const secrets = await secretsService.list();
-          console.log(`📋 Secrets (${secrets.length}):`);
-          secrets.forEach(name => console.log(`  - ${name}`));
+          console.info(`📋 Secrets (${secrets.length}):`);
+          secrets.forEach(name => console.info(`  - ${name}`));
           
         } else if (options.export) {
           const exported = await secretsService.export();
-          console.log('📤 Exported secrets:');
-          console.log(JSON.stringify(exported, null, 2));
+          console.info('📤 Exported secrets:');
+          console.info(JSON.stringify(exported, null, 2));
           
         } else if (options.import) {
           try {
@@ -277,44 +277,44 @@ async function setupCLI(): Promise<void> {
             }
             const secrets = await file.json();
             await secretsService.import(secrets);
-            console.log(`📥 Imported ${Object.keys(secrets).length} secrets`);
+            console.info(`📥 Imported ${Object.keys(secrets).length} secrets`);
           } catch (error) {
             console.error(`❌ Import failed: ${error}`);
             process.exit(1);
           }
           
         } else if (options.sync) {
-          console.log(`🔄 Syncing secrets to Cloudflare Worker: ${options.sync}`);
+          console.info(`🔄 Syncing secrets to Cloudflare Worker: ${options.sync}`);
           await secretsService.syncToCloudflare?.(options.sync);
-          console.log('✅ Secrets synced successfully');
+          console.info('✅ Secrets synced successfully');
           
         } else if (options.health) {
           const health = await secretsService.healthCheck();
-          console.log('🏥 Secrets Service Health:');
-          console.log(`  Healthy: ${health.healthy ? '✅' : '❌'}`);
-          console.log('  Checks:');
+          console.info('🏥 Secrets Service Health:');
+          console.info(`  Healthy: ${health.healthy ? '✅' : '❌'}`);
+          console.info('  Checks:');
           Object.entries(health.checks).forEach(([check, passed]) => {
-            console.log(`    ${check}: ${passed ? '✅' : '❌'}`);
+            console.info(`    ${check}: ${passed ? '✅' : '❌'}`);
           });
           
         } else if (options.info) {
           const info = secretsService.getPlatformInfo();
-          console.log('ℹ️  Secrets Service Info:');
-          console.log(JSON.stringify(info, null, 2));
+          console.info('ℹ️  Secrets Service Info:');
+          console.info(JSON.stringify(info, null, 2));
           
         } else {
-          console.log('🔑 Empire Pro Secrets Management');
-          console.log('');
-          console.log('Usage:');
-          console.log('  empire secrets --set NAME:VALUE    Set a secret');
-          console.log('  empire secrets --get NAME          Get a secret');
-          console.log('  empire secrets --delete NAME       Delete a secret');
-          console.log('  empire secrets --list              List all secrets');
-          console.log('  empire secrets --export            Export all secrets');
-          console.log('  empire secrets --import FILE       Import secrets from file');
-          console.log('  empire secrets --sync WORKER       Sync to Cloudflare Worker');
-          console.log('  empire secrets --health            Check service health');
-          console.log('  empire secrets --info              Show platform info');
+          console.info('🔑 Empire Pro Secrets Management');
+          console.info('');
+          console.info('Usage:');
+          console.info('  empire secrets --set NAME:VALUE    Set a secret');
+          console.info('  empire secrets --get NAME          Get a secret');
+          console.info('  empire secrets --delete NAME       Delete a secret');
+          console.info('  empire secrets --list              List all secrets');
+          console.info('  empire secrets --export            Export all secrets');
+          console.info('  empire secrets --import FILE       Import secrets from file');
+          console.info('  empire secrets --sync WORKER       Sync to Cloudflare Worker');
+          console.info('  empire secrets --health            Check service health');
+          console.info('  empire secrets --info              Show platform info');
         }
       } catch (error) {
         logger.error('Secrets command failed', { error });
@@ -340,51 +340,51 @@ async function setupCLI(): Promise<void> {
         
         if (options.setWebhook) {
           await secretsService.set('WEBHOOK_URL', options.setWebhook);
-          console.log('✅ Webhook URL secret set');
+          console.info('✅ Webhook URL secret set');
         }
         
         if (options.setAuth) {
           await secretsService.set('AUTH_TOKEN', options.setAuth);
-          console.log('✅ Auth token secret set');
+          console.info('✅ Auth token secret set');
         }
         
         if (options.setSubscription) {
           await secretsService.set('SUBSCRIPTION_SECRET', options.setSubscription);
-          console.log('✅ Subscription secret set');
+          console.info('✅ Subscription secret set');
         }
         
         if (options.getWebhook) {
           const webhook = await secretsService.get('WEBHOOK_URL');
-          console.log(webhook ? `🔗 Webhook URL: ${webhook}` : '❌ Webhook URL not found');
+          console.info(webhook ? `🔗 Webhook URL: ${webhook}` : '❌ Webhook URL not found');
         }
         
         if (options.getAuth) {
           const auth = await secretsService.get('AUTH_TOKEN');
-          console.log(auth ? `🔑 Auth Token: ${auth}` : '❌ Auth token not found');
+          console.info(auth ? `🔑 Auth Token: ${auth}` : '❌ Auth token not found');
         }
         
         if (options.getSubscription) {
           const sub = await secretsService.get('SUBSCRIPTION_SECRET');
-          console.log(sub ? `🔐 Subscription Secret: ${sub}` : '❌ Subscription secret not found');
+          console.info(sub ? `🔐 Subscription Secret: ${sub}` : '❌ Subscription secret not found');
         }
         
         if (options.deploy) {
-          console.log('🚀 Deploying status system secrets to Cloudflare...');
+          console.info('🚀 Deploying status system secrets to Cloudflare...');
           await secretsService.syncToCloudflare?.('empire-pro-status');
-          console.log('✅ Status secrets deployed successfully');
+          console.info('✅ Status secrets deployed successfully');
         }
         
         if (!Object.values(options).some(v => v !== undefined)) {
-          console.log('🔐 Status System Secrets Management');
-          console.log('');
-          console.log('Usage:');
-          console.log('  empire status-secrets --set-webhook <url>    Set webhook URL');
-          console.log('  empire status-secrets --set-auth <token>      Set auth token');
-          console.log('  empire status-secrets --set-subscription <secret>  Set subscription secret');
-          console.log('  empire status-secrets --get-webhook           Get webhook URL');
-          console.log('  empire status-secrets --get-auth               Get auth token');
-          console.log('  empire status-secrets --get-subscription        Get subscription secret');
-          console.log('  empire status-secrets --deploy                 Deploy all to Cloudflare');
+          console.info('🔐 Status System Secrets Management');
+          console.info('');
+          console.info('Usage:');
+          console.info('  empire status-secrets --set-webhook <url>    Set webhook URL');
+          console.info('  empire status-secrets --set-auth <token>      Set auth token');
+          console.info('  empire status-secrets --set-subscription <secret>  Set subscription secret');
+          console.info('  empire status-secrets --get-webhook           Get webhook URL');
+          console.info('  empire status-secrets --get-auth               Get auth token');
+          console.info('  empire status-secrets --get-subscription        Get subscription secret');
+          console.info('  empire status-secrets --deploy                 Deploy all to Cloudflare');
         }
       } catch (error) {
         logger.error('Status secrets command failed', { error });
@@ -405,24 +405,24 @@ async function setupCLI(): Promise<void> {
       try {
         if (options.recent) {
           const entries = auditService.getRecent(parseInt(options.recent));
-          console.log(`📋 Recent ${entries.length} audit entries:`);
+          console.info(`📋 Recent ${entries.length} audit entries:`);
           entries.forEach(e => {
-            console.log(`  [${e.timestamp.toISOString()}] ${e.type}::${e.action} - ${e.status}`);
+            console.info(`  [${e.timestamp.toISOString()}] ${e.type}::${e.action} - ${e.status}`);
           });
         } else if (options.filter) {
           const filtered = auditService.query({ type: options.filter as any });
-          console.log(`📋 Filtered audit entries (${options.filter}): ${filtered.length} entries`);
+          console.info(`📋 Filtered audit entries (${options.filter}): ${filtered.length} entries`);
         } else if (options.export) {
           const exported = auditService.export();
-          console.log(JSON.stringify(exported, null, 2));
+          console.info(JSON.stringify(exported, null, 2));
         } else if (options.clear) {
           logger.warn('Clearing audit log...');
           auditService.clear();
           logger.info('✅ Audit log cleared');
         } else {
           const stats = auditService.getStats();
-          console.log('📊 Audit Log Statistics:');
-          console.log(JSON.stringify(stats, null, 2));
+          console.info('📊 Audit Log Statistics:');
+          console.info(JSON.stringify(stats, null, 2));
         }
       } catch (error) {
         logger.error('Audit command failed', { error });
@@ -439,10 +439,10 @@ async function setupCLI(): Promise<void> {
         const platformInfo = configService.getPlatformRecommendations();
         const stats = auditService.getStats();
         
-        console.log('🏗️  Empire Pro System Information\n');
-        console.log('Platform:', JSON.stringify(platformInfo, null, 2));
-        console.log('\nAudit Statistics:');
-        console.log(JSON.stringify(stats, null, 2));
+        console.info('🏗️  Empire Pro System Information\n');
+        console.info('Platform:', JSON.stringify(platformInfo, null, 2));
+        console.info('\nAudit Statistics:');
+        console.info(JSON.stringify(stats, null, 2));
       } catch (error) {
         logger.error('Info command failed', { error });
         process.exit(1);

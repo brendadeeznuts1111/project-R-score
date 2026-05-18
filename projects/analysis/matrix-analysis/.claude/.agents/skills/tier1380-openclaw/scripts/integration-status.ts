@@ -80,20 +80,20 @@ async function getRepoInfo(projectPath: string) {
 
 async function showDashboard() {
 	console.clear();
-	console.log(`${COLORS.bold}${COLORS.cyan}`);
-	console.log(
+	console.info(`${COLORS.bold}${COLORS.cyan}`);
+	console.info(
 		"╔══════════════════════════════════════════════════════════════════════════╗",
 	);
-	console.log(
+	console.info(
 		"║     🔗 TOPIC-PROJECT-CHANNEL INTEGRATION STATUS                          ║",
 	);
-	console.log(
+	console.info(
 		"║     Tier-1380 OpenClaw v1.0.0                                            ║",
 	);
-	console.log(
+	console.info(
 		"╚══════════════════════════════════════════════════════════════════════════╝",
 	);
-	console.log(`${COLORS.reset}`);
+	console.info(`${COLORS.reset}`);
 
 	const [topicsConfig, projectsConfig] = await Promise.all([
 		loadTopicsConfig(),
@@ -101,8 +101,8 @@ async function showDashboard() {
 	]);
 
 	// Topics Section
-	console.log(`\n${COLORS.bold}📡 Telegram Topics${COLORS.reset}`);
-	console.log("─".repeat(74));
+	console.info(`\n${COLORS.bold}📡 Telegram Topics${COLORS.reset}`);
+	console.info("─".repeat(74));
 
 	const topics = topicsConfig.topics || {};
 	for (const [id, topic] of Object.entries(topics)) {
@@ -111,26 +111,26 @@ async function showDashboard() {
 		const priority = t.priority || "normal";
 		const color =
 			priority === "high" ? COLORS.red : priority === "low" ? COLORS.gray : COLORS.green;
-		console.log(
+		console.info(
 			`  ${icon} Topic ${id}: ${t.name.padEnd(15)} ${color}[${priority}]${COLORS.reset}`,
 		);
 	}
 
 	// Super Topics
-	console.log(`\n${COLORS.bold}🔀 Super Topics${COLORS.reset}`);
-	console.log("─".repeat(74));
+	console.info(`\n${COLORS.bold}🔀 Super Topics${COLORS.reset}`);
+	console.info("─".repeat(74));
 
 	const superTopics = topicsConfig.super_topics || {};
 	for (const [name, st] of Object.entries(superTopics)) {
 		const superTopic = st as any;
-		console.log(
+		console.info(
 			`  ${superTopic.icon || "📦"} ${name.padEnd(15)} → Topics: [${superTopic.topics?.join(", ") || "none"}]`,
 		);
 	}
 
 	// Projects Section
-	console.log(`\n${COLORS.bold}📁 Projects${COLORS.reset}`);
-	console.log("─".repeat(74));
+	console.info(`\n${COLORS.bold}📁 Projects${COLORS.reset}`);
+	console.info("─".repeat(74));
 
 	const projects = projectsConfig.projects || {};
 	for (const [name, proj] of Object.entries(projects)) {
@@ -151,36 +151,36 @@ async function showDashboard() {
 				? `${COLORS.green}✓ hooks${COLORS.reset}`
 				: `${COLORS.yellow}⚠ hooks${COLORS.reset}`;
 
-		console.log(
+		console.info(
 			`  ${repoStatus} ${name.padEnd(22)} → Topic ${project.default_topic}  ${hookStatus}`,
 		);
-		console.log(`    Path: ${project.path}`);
+		console.info(`    Path: ${project.path}`);
 		if (hasRepo && repoInfo.remote !== "none") {
-			console.log(
+			console.info(
 				`    Repo: ${COLORS.gray}${repoInfo.remote}${COLORS.reset} (${repoInfo.branch})`,
 			);
 		}
 	}
 
 	// Routing Rules Summary
-	console.log(`\n${COLORS.bold}🔄 Routing Rules${COLORS.reset}`);
-	console.log("─".repeat(74));
+	console.info(`\n${COLORS.bold}🔄 Routing Rules${COLORS.reset}`);
+	console.info("─".repeat(74));
 
 	const routing = topicsConfig.routing_rules || {};
 
-	console.log("  Content Patterns:");
+	console.info("  Content Patterns:");
 	for (const [pattern, topicId] of Object.entries(routing.content || {})) {
-		console.log(`    "${pattern}" → Topic ${topicId}`);
+		console.info(`    "${pattern}" → Topic ${topicId}`);
 	}
 
-	console.log("  Command Routing:");
+	console.info("  Command Routing:");
 	for (const [cmd, topicId] of Object.entries(routing.commands || {})) {
-		console.log(`    ${cmd} → Topic ${topicId}`);
+		console.info(`    ${cmd} → Topic ${topicId}`);
 	}
 
 	// Integration Health
-	console.log(`\n${COLORS.bold}🏥 Integration Health${COLORS.reset}`);
-	console.log("─".repeat(74));
+	console.info(`\n${COLORS.bold}🏥 Integration Health${COLORS.reset}`);
+	console.info("─".repeat(74));
 
 	const totalProjects = Object.keys(projects).length;
 	let reposWithHooks = 0;
@@ -200,37 +200,37 @@ async function showDashboard() {
 	const healthColor =
 		hookHealth >= 80 ? COLORS.green : hookHealth >= 50 ? COLORS.yellow : COLORS.red;
 
-	console.log(`  Projects Configured:  ${totalProjects}`);
-	console.log(`  Git Repositories:     ${totalRepos}`);
-	console.log(
+	console.info(`  Projects Configured:  ${totalProjects}`);
+	console.info(`  Git Repositories:     ${totalRepos}`);
+	console.info(
 		`  Hooks Installed:      ${reposWithHooks}/${totalRepos} ${healthColor}(${hookHealth}%)${COLORS.reset}`,
 	);
 
 	// Quick Actions
-	console.log(`\n${COLORS.bold}⚡ Quick Actions${COLORS.reset}`);
-	console.log("─".repeat(74));
-	console.log(
+	console.info(`\n${COLORS.bold}⚡ Quick Actions${COLORS.reset}`);
+	console.info("─".repeat(74));
+	console.info(
 		`  ${COLORS.cyan}kimi hooks install${COLORS.reset}        Install git hooks for all projects`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}kimi watch start${COLORS.reset}          Start file watcher`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}kimi project list${COLORS.reset}         List all projects`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}kimi topic list${COLORS.reset}           List all topics`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}kimi channel dashboard${COLORS.reset}    Open channel monitor`,
 	);
 
-	console.log();
+	console.info();
 }
 
 async function showStats() {
-	console.log(`${COLORS.bold}📊 Integration Statistics${COLORS.reset}`);
-	console.log("=".repeat(74));
+	console.info(`${COLORS.bold}📊 Integration Statistics${COLORS.reset}`);
+	console.info("=".repeat(74));
 
 	// Read log files using streaming for efficiency
 	const logs = {
@@ -260,12 +260,12 @@ async function showStats() {
 				}
 			}
 
-			console.log(
+			console.info(
 				`\n${name.charAt(0).toUpperCase() + name.slice(1)} Events: ${totalLines}`,
 			);
-			console.log(`  Last 24h: ${recentLines}`);
+			console.info(`  Last 24h: ${recentLines}`);
 		} catch {
-			console.log(`\n${name}: No data`);
+			console.info(`\n${name}: No data`);
 		}
 	}
 }
@@ -276,8 +276,8 @@ async function showMatrix() {
 		loadProjectsConfig(),
 	]);
 
-	console.log(`${COLORS.bold}📋 Topic-Project Mapping Matrix${COLORS.reset}`);
-	console.log("=".repeat(74));
+	console.info(`${COLORS.bold}📋 Topic-Project Mapping Matrix${COLORS.reset}`);
+	console.info("=".repeat(74));
 
 	const topics = topicsConfig.topics || {};
 	const projects = projectsConfig.projects || {};
@@ -287,8 +287,8 @@ async function showMatrix() {
 	for (const id of Object.keys(topics)) {
 		header += `T${id} `.padStart(4);
 	}
-	console.log(header);
-	console.log("─".repeat(74));
+	console.info(header);
+	console.info("─".repeat(74));
 
 	// Rows
 	for (const [name, proj] of Object.entries(projects)) {
@@ -304,10 +304,10 @@ async function showMatrix() {
 			row += mapped.padStart(4);
 		}
 
-		console.log(row);
+		console.info(row);
 	}
 
-	console.log("\nLegend: ● = Has patterns, ○ = Default topic,   = Not mapped");
+	console.info("\nLegend: ● = Has patterns, ○ = Default topic,   = Not mapped");
 }
 
 // CLI

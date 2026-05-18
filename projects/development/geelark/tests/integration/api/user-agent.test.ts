@@ -71,10 +71,10 @@ describe("User-Agent HTTP Configuration", () => {
       const data = await response.json();
 
       expect(data).toHaveProperty("user-agent");
-      console.log("httpbin.org User-Agent:", data["user-agent"]);
+      console.info("httpbin.org User-Agent:", data["user-agent"]);
     } catch (error) {
       // Skip gracefully if httpbin.org unavailable
-      console.log("httpbin.org unavailable, using local server tests");
+      console.info("httpbin.org unavailable, using local server tests");
       expect(true).toBe(true);
     }
   });

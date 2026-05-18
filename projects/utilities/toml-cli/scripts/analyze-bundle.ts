@@ -6,7 +6,7 @@
 import { BundleMatrixAnalyzer } from "../src/analyzers/BundleMatrix";
 
 async function main() {
-  console.log("🐰 Analyzing bundle with Bun-native DuoPlus...\n");
+  console.info("🐰 Analyzing bundle with Bun-native DuoPlus...\n");
 
   // Analyze the main project
   const matrix = await BundleMatrixAnalyzer.analyzeProject(
@@ -37,10 +37,10 @@ async function main() {
       previousMetrics,
       matrix
     );
-    console.log("\n📈 COMPARISON WITH PREVIOUS BUILD");
-    console.log("=".repeat(60));
-    console.log(comparison.summary);
-    console.log("=".repeat(60));
+    console.info("\n📈 COMPARISON WITH PREVIOUS BUILD");
+    console.info("=".repeat(60));
+    console.info(comparison.summary);
+    console.info("=".repeat(60));
 
     // Fail CI if health dropped significantly
     if (comparison.healthChange < -10) {
@@ -67,8 +67,8 @@ async function main() {
     process.exit(1);
   }
 
-  console.log("\n✅ All checks passed!");
-  console.log(`🎯 Final health score: ${matrix.summary.bundleHealth}/100`);
+  console.info("\n✅ All checks passed!");
+  console.info(`🎯 Final health score: ${matrix.summary.bundleHealth}/100`);
 }
 
 main().catch(err => {

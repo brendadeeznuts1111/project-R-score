@@ -40,38 +40,38 @@ const colors = options.noColor ? {
 
 // Show help
 if (options.help) {
-  console.log(`${colors.cyan}🔍 Documentation Status Checker${colors.reset}`);
-  console.log('');
-  console.log('Usage: bun documentation-status-checker.ts [options]');
-  console.log('');
-  console.log('Options:');
-  console.log('  -v, --verbose       Verbose output with detailed information');
-  console.log('  -q, --quiet         Quiet mode with minimal output');
-  console.log('  --url-only          Check only URL validation');
-  console.log('  --constants-only    Check only constants loading');
-  console.log('  --imports-only      Check only import functionality');
-  console.log('  --full-check        Run comprehensive check including network tests');
-  console.log('  --json              Output results in JSON format');
-  console.log('  --no-color          Disable colored output');
-  console.log('  -h, --help          Show this help message');
-  console.log('');
-  console.log('Examples:');
-  console.log('  bun documentation-status-checker.ts');
-  console.log('  bun documentation-status-checker.ts --verbose');
-  console.log('  bun documentation-status-checker.ts --url-only --json');
-  console.log('  bun documentation-status-checker.ts --full-check');
+  console.info(`${colors.cyan}🔍 Documentation Status Checker${colors.reset}`);
+  console.info('');
+  console.info('Usage: bun documentation-status-checker.ts [options]');
+  console.info('');
+  console.info('Options:');
+  console.info('  -v, --verbose       Verbose output with detailed information');
+  console.info('  -q, --quiet         Quiet mode with minimal output');
+  console.info('  --url-only          Check only URL validation');
+  console.info('  --constants-only    Check only constants loading');
+  console.info('  --imports-only      Check only import functionality');
+  console.info('  --full-check        Run comprehensive check including network tests');
+  console.info('  --json              Output results in JSON format');
+  console.info('  --no-color          Disable colored output');
+  console.info('  -h, --help          Show this help message');
+  console.info('');
+  console.info('Examples:');
+  console.info('  bun documentation-status-checker.ts');
+  console.info('  bun documentation-status-checker.ts --verbose');
+  console.info('  bun documentation-status-checker.ts --url-only --json');
+  console.info('  bun documentation-status-checker.ts --full-check');
   process.exit(0);
 }
 
 // Logging utilities
 const log = {
-  info: (msg: string) => !options.quiet && console.log(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) => !options.quiet && console.log(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) => !options.quiet && console.log(`${colors.yellow}⚠️${colors.reset} ${msg}`),
-  error: (msg: string) => console.log(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) => options.verbose && console.log(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) => !options.quiet && console.log(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.log(JSON.stringify(data, null, 2))
+  info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
+  success: (msg: string) => !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
+  warning: (msg: string) => !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
+  error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
+  verbose: (msg: string) => options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
+  section: (title: string) => !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
+  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2))
 };
 
 // Test results storage
@@ -422,8 +422,8 @@ async function checkErrorHandling() {
 
 // Main check function
 async function runStatusCheck() {
-  console.log(`${colors.cyan}🔍 Documentation Status Checker${colors.reset}`);
-  console.log(`${colors.gray}Checking all constants and URLs...${colors.reset}\n`);
+  console.info(`${colors.cyan}🔍 Documentation Status Checker${colors.reset}`);
+  console.info(`${colors.gray}Checking all constants and URLs...${colors.reset}\n`);
 
   const startTime = Date.now();
 
@@ -449,11 +449,11 @@ async function runStatusCheck() {
     const { total, passed, failed } = testResults.summary;
     const successRate = total > 0 ? ((passed / total) * 100).toFixed(1) : '0';
 
-    console.log(`${colors.white}Total Tests:${colors.reset} ${total}`);
-    console.log(`${colors.green}Passed:${colors.reset} ${passed}`);
-    console.log(`${colors.red}Failed:${colors.reset} ${failed}`);
-    console.log(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
-    console.log(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
+    console.info(`${colors.white}Total Tests:${colors.reset} ${total}`);
+    console.info(`${colors.green}Passed:${colors.reset} ${passed}`);
+    console.info(`${colors.red}Failed:${colors.reset} ${failed}`);
+    console.info(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
+    console.info(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
 
     // Output JSON if requested
     if (options.json) {
@@ -462,10 +462,10 @@ async function runStatusCheck() {
 
     // Exit with appropriate code
     if (failed > 0) {
-      console.log(`\n${colors.yellow}⚠️ Some checks failed. See details above.${colors.reset}`);
+      console.info(`\n${colors.yellow}⚠️ Some checks failed. See details above.${colors.reset}`);
       process.exit(1);
     } else {
-      console.log(`\n${colors.green}🎉 All checks passed!${colors.reset}`);
+      console.info(`\n${colors.green}🎉 All checks passed!${colors.reset}`);
       process.exit(0);
     }
 

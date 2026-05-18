@@ -31,7 +31,7 @@ export function startMetricsBridge(port = 3001) {
       if (server.upgrade(req)) return;
       if (req.method === "POST" && new URL(req.url).pathname === "/control") {
         const body = await req.json();
-        console.log(`[Control] Action: ${body.action}`);
+        console.info(`[Control] Action: ${body.action}`);
         
         let result = { success: true };
         if (body.action === "run_quality_gate" && body.phoneId) {
@@ -50,10 +50,10 @@ export function startMetricsBridge(port = 3001) {
     websocket: {
       open(ws) {
         ws.subscribe("metrics");
-        console.log("[ws] Dashboard connected");
+        console.info("[ws] Dashboard connected");
       },
       message(ws, message) {
-        console.log(`[ws] Received: ${message}`);
+        console.info(`[ws] Received: ${message}`);
       },
     },
   });
@@ -84,7 +84,7 @@ export function startMetricsBridge(port = 3001) {
     server.publish("metrics", JSON.stringify(data));
   }, 2000);
 
-  console.log(`[ws] Metrics Bridge started on port ${port}`);
+  console.info(`[ws] Metrics Bridge started on port ${port}`);
   return server;
 }
 

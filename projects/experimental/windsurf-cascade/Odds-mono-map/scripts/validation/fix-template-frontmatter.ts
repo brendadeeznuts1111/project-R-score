@@ -34,13 +34,13 @@ class TemplateFrontmatterFixer {
 
     async fixAllTemplates(): Promise<void> {
         const files = await this.getTemplateFiles();
-        console.log(`🔧 Found ${files.length} template files to fix...`);
+        console.info(`🔧 Found ${files.length} template files to fix...`);
 
         for (const file of files) {
             await this.fixTemplateFile(file);
         }
 
-        console.log('✅ All template files fixed successfully!');
+        console.info('✅ All template files fixed successfully!');
     }
 
     private async getTemplateFiles(): Promise<string[]> {
@@ -58,7 +58,7 @@ class TemplateFrontmatterFixer {
             if (fixedContent !== content) {
                 await writeFile(filePath, fixedContent, 'utf-8');
                 const fileName = filePath.split('/').pop();
-                console.log(`  ✅ Fixed: ${fileName}`);
+                console.info(`  ✅ Fixed: ${fileName}`);
             }
         } catch (error) {
             console.error(`  ❌ Error fixing ${filePath}:`, error);
@@ -226,8 +226,8 @@ async function main(): Promise<void> {
     const templatesPath = process.argv[2] || join(process.cwd(), '06 - Templates');
 
     if (process.argv.includes('--help') || process.argv.includes('-h')) {
-        console.log('🔧 Template Frontmatter Fixer');
-        console.log('Usage: bun fix-template-frontmatter.ts [templates-path]');
+        console.info('🔧 Template Frontmatter Fixer');
+        console.info('Usage: bun fix-template-frontmatter.ts [templates-path]');
         process.exit(0);
     }
 

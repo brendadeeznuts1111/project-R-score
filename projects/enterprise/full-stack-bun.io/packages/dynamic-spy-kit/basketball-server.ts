@@ -63,7 +63,7 @@ const server = Bun.serve({
 
 			try {
 				const callCount = await nbaSpyEngine.updateLiveOdds(gameIndex, fullOdds);
-				console.log(`[SPY] ${fullOdds} → Market #${gameIndex} updated (${callCount} calls)`);
+				console.info(`[SPY] ${fullOdds} → Market #${gameIndex} updated (${callCount} calls)`);
 
 				return Response.json({
 					success: true,
@@ -157,10 +157,10 @@ const server = Bun.serve({
 	}
 });
 
-console.log(`🏀 Basketball Market Spy Server v9.0 running on port ${server.port}`);
-console.log(`📊 Dashboard: http://localhost:${server.port}/basketball/spy-stats`);
-console.log(`🔍 Live Feed: http://localhost:${server.port}/basketball/live/0`);
-console.log(`💰 Arb Opportunities: http://localhost:${server.port}/basketball/arb`);
+console.info(`🏀 Basketball Market Spy Server v9.0 running on port ${server.port}`);
+console.info(`📊 Dashboard: http://localhost:${server.port}/basketball/spy-stats`);
+console.info(`🔍 Live Feed: http://localhost:${server.port}/basketball/live/0`);
+console.info(`💰 Arb Opportunities: http://localhost:${server.port}/basketball/arb`);
 
 
 

@@ -25,7 +25,7 @@ class CloudflarePublisher {
   }
   
   async publishAll() {
-    console.log('🚀 Publishing DuoPlus Enterprise Components to Cloudflare Registry...\n');
+    console.info('🚀 Publishing DuoPlus Enterprise Components to Cloudflare Registry...\n');
     
     // Validate configuration
     await this.validateConfig();
@@ -35,12 +35,12 @@ class CloudflarePublisher {
       await this.publishPackage(pkg);
     }
     
-    console.log('\n✅ All packages published successfully!');
+    console.info('\n✅ All packages published successfully!');
     this.generateReport();
   }
   
   private async validateConfig() {
-    console.log('🔍 Validating configuration...');
+    console.info('🔍 Validating configuration...');
     
     if (!this.config.registry) {
       throw new Error('Registry URL is required');
@@ -56,14 +56,14 @@ class CloudflarePublisher {
       if (!response.ok) {
         throw new Error('Registry health check failed');
       }
-      console.log('  ✅ Registry connection successful');
+      console.info('  ✅ Registry connection successful');
     } catch (error) {
       throw new Error(`Registry connection failed: ${error.message}`);
     }
   }
   
   private async publishPackage(pkg: PackageConfig) {
-    console.log(`📦 Publishing ${pkg.name}@${pkg.version}...`);
+    console.info(`📦 Publishing ${pkg.name}@${pkg.version}...`);
     
     try {
       // 1. Validate package
@@ -81,7 +81,7 @@ class CloudflarePublisher {
       // 5. Verify publication
       await this.verifyPublication(pkg);
       
-      console.log(`  ✅ ${pkg.name} published successfully`);
+      console.info(`  ✅ ${pkg.name} published successfully`);
       
     } catch (error) {
       throw new Error(`Failed to publish ${pkg.name}: ${error.message}`);
@@ -89,7 +89,7 @@ class CloudflarePublisher {
   }
   
   private async validatePackage(pkg: PackageConfig) {
-    console.log(`  🔍 Validating ${pkg.name}...`);
+    console.info(`  🔍 Validating ${pkg.name}...`);
     
     const packageJsonPath = join(pkg.path, 'package.json');
     
@@ -115,7 +115,7 @@ class CloudflarePublisher {
         }
       }
       
-      console.log(`    ✅ Package validation passed`);
+      console.info(`    ✅ Package validation passed`);
       
     } catch (error) {
       throw new Error(`Package validation failed: ${error.message}`);
@@ -123,18 +123,18 @@ class CloudflarePublisher {
   }
   
   private async buildPackage(pkg: PackageConfig) {
-    console.log(`  🔨 Building ${pkg.name}...`);
+    console.info(`  🔨 Building ${pkg.name}...`);
     
     try {
       await $`cd ${pkg.path} && bun run build`.quiet();
-      console.log(`    ✅ Build complete`);
+      console.info(`    ✅ Build complete`);
     } catch (error) {
       throw new Error(`Build failed: ${error.message}`);
     }
   }
   
   private async createTarball(pkg: PackageConfig): Promise<string> {
-    console.log(`  📦 Creating tarball for ${pkg.name}...`);
+    console.info(`  📦 Creating tarball for ${pkg.name}...`);
     
     const tarballName = `${pkg.name.replace('@', '').replace('/', '-')}-${pkg.version}.tgz`;
     const tempDir = join(process.cwd(), 'temp');
@@ -151,7 +151,7 @@ class CloudflarePublisher {
       const tarballPath = join(tempDir, tarballName);
       await $`cd ${tempDir} && tar -czf ${tarballName} package/`.quiet();
       
-      console.log(`    ✅ Tarball created: ${tarballName}`);
+      console.info(`    ✅ Tarball created: ${tarballName}`);
       return tarballPath;
       
     } catch (error) {
@@ -160,7 +160,7 @@ class CloudflarePublisher {
   }
   
   private async uploadToRegistry(pkg: PackageConfig, tarballPath: string) {
-    console.log(`  ⬆️  Uploading ${pkg.name} to registry...`);
+    console.info(`  ⬆️  Uploading ${pkg.name} to registry...`);
     
     try {
       // Read package metadata
@@ -192,7 +192,7 @@ class CloudflarePublisher {
       }
       
       const result = await response.json();
-      console.log(`    ✅ Upload successful: ${result.url}`);
+      console.info(`    ✅ Upload successful: ${result.url}`);
       
     } catch (error) {
       throw new Error(`Upload failed: ${error.message}`);
@@ -200,7 +200,7 @@ class CloudflarePublisher {
   }
   
   private async verifyPublication(pkg: PackageConfig) {
-    console.log(`  ✅ Verifying publication of ${pkg.name}...`);
+    console.info(`  ✅ Verifying publication of ${pkg.name}...`);
     
     try {
       const response = await fetch(`${this.config.registry}/@duoplus/${pkg.name.split('/')[1]}/${pkg.version}`);
@@ -215,7 +215,7 @@ class CloudflarePublisher {
         throw new Error('Package metadata mismatch');
       }
       
-      console.log(`    ✅ Publication verified`);
+      console.info(`    ✅ Publication verified`);
       
     } catch (error) {
       throw new Error(`Verification failed: ${error.message}`);
@@ -237,7 +237,7 @@ class CloudflarePublisher {
     const reportPath = join(process.cwd(), 'cloudflare-publish-report.json');
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
     
-    console.log(`\n📊 Report generated: ${reportPath}`);
+    console.info(`\n📊 Report generated: ${reportPath}`);
     
     // Create installation instructions
     const instructions = `
@@ -282,7 +282,7 @@ bunx @duoplus/monitoring --version
     `.trim();
     
     writeFileSync('INSTALLATION.md', instructions);
-    console.log('📝 Installation instructions created: INSTALLATION.md');
+    console.info('📝 Installation instructions created: INSTALLATION.md');
   }
 }
 
@@ -315,13 +315,13 @@ async function main() {
       break;
       
     case 'validate':
-      console.log('🔍 Validating configuration...');
+      console.info('🔍 Validating configuration...');
       await publisher.validateConfig();
-      console.log('✅ Configuration valid');
+      console.info('✅ Configuration valid');
       break;
       
     default:
-      console.log(`
+      console.info(`
 Usage: bun run tools/publish-to-cloudflare.ts [command]
 
 Commands:

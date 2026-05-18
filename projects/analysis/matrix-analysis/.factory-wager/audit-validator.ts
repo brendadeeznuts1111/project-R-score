@@ -198,34 +198,34 @@ class AuditValidator {
 if (import.meta.main) {
   const validator = new AuditValidator();
 
-  console.log('🔍 FactoryWager Audit Log Validator');
-  console.log('==================================');
-  console.log();
+  console.info('🔍 FactoryWager Audit Log Validator');
+  console.info('==================================');
+  console.info();
 
   // Validate schema first
   const schemaResult = validator.validateSchema();
   if (!schemaResult.valid) {
-    console.log('❌ Schema validation failed:');
-    schemaResult.issues.forEach(issue => console.log(`  - ${issue}`));
+    console.info('❌ Schema validation failed:');
+    schemaResult.issues.forEach(issue => console.info(`  - ${issue}`));
   }
 
   // Validate and fix audit log
   const result = await validator.validateAndFix();
 
-  console.log(`📊 Audit Log Validation Results:`);
-  console.log(`  ✅ Entries fixed: ${result.fixed}`);
-  console.log(`  ❌ Errors found: ${result.errors.length}`);
+  console.info(`📊 Audit Log Validation Results:`);
+  console.info(`  ✅ Entries fixed: ${result.fixed}`);
+  console.info(`  ❌ Errors found: ${result.errors.length}`);
 
   if (result.errors.length > 0) {
-    console.log('\n🔧 Errors:');
-    result.errors.forEach(error => console.log(`  - ${error}`));
+    console.info('\n🔧 Errors:');
+    result.errors.forEach(error => console.info(`  - ${error}`));
   }
 
   if (result.fixed > 0) {
-    console.log('\n✅ Audit log has been fixed and standardized to JSON format');
+    console.info('\n✅ Audit log has been fixed and standardized to JSON format');
   }
 
-  console.log('\n🎯 Recommendation: Run this validator before each deployment');
+  console.info('\n🎯 Recommendation: Run this validator before each deployment');
 }
 
 export { AuditValidator, type AuditEntry };

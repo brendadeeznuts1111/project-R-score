@@ -3,12 +3,12 @@
 // Enhanced spawn demo with postMessage and Bun.file operations
 import { colourKit, pad, sse } from "./quantum-toolkit-patch.ts";
 
-console.log(colourKit(0.8).ansi + "🚀 Enhanced Bun.spawn() Demo" + "\x1b[0m");
-console.log("=".repeat(50));
+console.info(colourKit(0.8).ansi + "🚀 Enhanced Bun.spawn() Demo" + "\x1b[0m");
+console.info("=".repeat(50));
 
 // Demo 1: Advanced stderr capture with parsing
 async function advancedStderrDemo() {
-  console.log("\n📡 Advanced stderr capture...");
+  console.info("\n📡 Advanced stderr capture...");
 
   const commands = [
     { cmd: ["ls", "/nonexistent"], desc: "Nonexistent path" },
@@ -22,14 +22,14 @@ async function advancedStderrDemo() {
     const exitCode = await proc.exited;
 
     const color = exitCode === 0 ? colourKit(0.2) : colourKit(0.8);
-    console.log(`  ${pad(desc, 20)}: ${color.ansi}Exit ${exitCode}\x1b[0m`);
-    if (stderr) console.log(`    Stderr: ${stderr.trim()}`);
+    console.info(`  ${pad(desc, 20)}: ${color.ansi}Exit ${exitCode}\x1b[0m`);
+    if (stderr) console.info(`    Stderr: ${stderr.trim()}`);
   }
 }
 
 // Demo 2: Performance comparison with metrics
 async function performanceComparison() {
-  console.log("\n⚡ Performance comparison...");
+  console.info("\n⚡ Performance comparison...");
 
   const tests = [
     { name: "true", cmd: ["true"] },
@@ -37,9 +37,9 @@ async function performanceComparison() {
     { name: "date", cmd: ["date"] },
   ];
 
-  console.log("┌──────┬─────────┬──────────┬──────────┐");
-  console.log("│ Test │ Count  │ Avg (ms) │ Max (ms) │");
-  console.log("├──────┼─────────┼──────────┼──────────┤");
+  console.info("┌──────┬─────────┬──────────┬──────────┐");
+  console.info("│ Test │ Count  │ Avg (ms) │ Max (ms) │");
+  console.info("├──────┼─────────┼──────────┼──────────┤");
 
   for (const { name, cmd } of tests) {
     const times = [];
@@ -56,7 +56,7 @@ async function performanceComparison() {
     const avg = times.reduce((a, b) => a + b, 0) / times.length;
     const max = Math.max(...times);
 
-    console.log(
+    console.info(
       `│ ${pad(name, 4)} │ ${pad(iterations.toString(), 7)} │ ${pad(
         avg.toFixed(2),
         8
@@ -64,12 +64,12 @@ async function performanceComparison() {
     );
   }
 
-  console.log("└──────┴─────────┴──────────┴──────────┘");
+  console.info("└──────┴─────────┴──────────┴──────────┘");
 }
 
 // Demo 3: Simulated postMessage with worker
 async function postMessageDemo() {
-  console.log("\n📨 postMessage simulation...");
+  console.info("\n📨 postMessage simulation...");
 
   // Create worker script
   const workerScript = `
@@ -80,7 +80,7 @@ async function postMessageDemo() {
         timestamp: Date.now(),
         calculated: data.numbers ? data.numbers.reduce((a, b) => a + b, 0) : 0
       };
-      console.log(JSON.stringify(result));
+      console.info(JSON.stringify(result));
     };
   `;
 
@@ -99,38 +99,38 @@ async function postMessageDemo() {
     { id: 2, data: { numbers: [10, 20, 30] } },
   ];
 
-  console.log("📤 Sending messages:");
-  messages.forEach((msg) => console.log(`  ${JSON.stringify(msg)}`));
+  console.info("📤 Sending messages:");
+  messages.forEach((msg) => console.info(`  ${JSON.stringify(msg)}`));
 
   const stdout = await worker.stdout.text();
   const stderr = await worker.stderr.text();
 
   if (stdout) {
-    console.log("📥 Received responses:");
+    console.info("📥 Received responses:");
     stdout
       .trim()
       .split("\n")
       .forEach((line) => {
-        if (line) console.log(`  ${line}`);
+        if (line) console.info(`  ${line}`);
       });
   }
 
-  if (stderr) console.log(`⚠️ Worker stderr: ${stderr}`);
+  if (stderr) console.info(`⚠️ Worker stderr: ${stderr}`);
 
   await worker.exited;
 }
 
 // Demo 4: Bun.file operations with error handling
 async function bunFileDemo() {
-  console.log("\n📁 Bun.file operations...");
+  console.info("\n📁 Bun.file operations...");
 
   try {
     // Read multiple files
     const files = ["package.json", "serve.js", "adder.ts"];
 
-    console.log("┌─────────────┬──────────┬──────────┐");
-    console.log("│ File        │ Size     │ Lines    │");
-    console.log("├─────────────┼──────────┼──────────┤");
+    console.info("┌─────────────┬──────────┬──────────┐");
+    console.info("│ File        │ Size     │ Lines    │");
+    console.info("├─────────────┼──────────┼──────────┤");
 
     for (const file of files) {
       try {
@@ -139,20 +139,20 @@ async function bunFileDemo() {
         const content = await fileObj.text();
         const lines = content.split("\n").length;
 
-        console.log(
+        console.info(
           `│ ${pad(file, 11)} │ ${pad(size.toString(), 8)} │ ${pad(
             lines.toString(),
             8
           )} │`
         );
       } catch (error) {
-        console.log(
+        console.info(
           `│ ${pad(file, 11)} │ ${pad("ERROR", 8)} │ ${pad("N/A", 8)} │`
         );
       }
     }
 
-    console.log("└─────────────┴──────────┴──────────┘");
+    console.info("└─────────────┴──────────┴──────────┘");
 
     // Create backup with metadata
     const backup = {
@@ -162,15 +162,15 @@ async function bunFileDemo() {
     };
 
     await Bun.write("backup.json", JSON.stringify(backup, null, 2));
-    console.log("✅ Backup created: backup.json");
+    console.info("✅ Backup created: backup.json");
   } catch (error) {
-    console.log(`❌ File error: ${error.message}`);
+    console.info(`❌ File error: ${error.message}`);
   }
 }
 
 // Demo 5: SSE generation from spawn results
 async function sseDemo() {
-  console.log("\n📡 SSE generation...");
+  console.info("\n📡 SSE generation...");
 
   const results = [
     { command: "ls", status: "success", duration: 2.1 },
@@ -180,8 +180,8 @@ async function sseDemo() {
 
   results.forEach((result, i) => {
     const event = sse("spawn-result", result);
-    console.log(`Event ${i + 1}:`);
-    console.log(event.trim());
+    console.info(`Event ${i + 1}:`);
+    console.info(event.trim());
   });
 }
 
@@ -194,14 +194,14 @@ async function runEnhancedDemos() {
     await bunFileDemo();
     await sseDemo();
 
-    console.log(
+    console.info(
       "\n" +
         colourKit(0.2).ansi +
         "🎉 All enhanced demos completed!" +
         "\x1b[0m"
     );
   } catch (error) {
-    console.log(colourKit(0.8).ansi + `❌ Error: ${error.message}` + "\x1b[0m");
+    console.info(colourKit(0.8).ansi + `❌ Error: ${error.message}` + "\x1b[0m");
   }
 }
 

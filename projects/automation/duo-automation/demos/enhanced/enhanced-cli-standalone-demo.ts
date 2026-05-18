@@ -54,8 +54,8 @@ class EnhancedCLIDemo {
    * Run complete enhanced demonstration
    */
   async runDemo(): Promise<void> {
-    console.log('🚀 Enhanced DuoPlus CLI v3.0+ - Complete Demonstration');
-    console.log('='.repeat(80));
+    console.info('🚀 Enhanced DuoPlus CLI v3.0+ - Complete Demonstration');
+    console.info('='.repeat(80));
     
     // Initialize enhanced features
     await this.initializeEnhancedFeatures();
@@ -75,54 +75,54 @@ class EnhancedCLIDemo {
     // Show comprehensive metrics
     await this.showComprehensiveMetrics();
     
-    console.log('\n🎉 Enhanced CLI Demonstration Complete!');
+    console.info('\n🎉 Enhanced CLI Demonstration Complete!');
   }
   
   /**
    * Initialize enhanced features
    */
   private async initializeEnhancedFeatures(): Promise<void> {
-    console.log('\n🔧 Initializing Enhanced Features...');
+    console.info('\n🔧 Initializing Enhanced Features...');
     
     if (this.features.aiEnabled) {
-      console.log('   🤖 AI-powered search with query expansion');
-      console.log('   🧠 Intelligent artifact classification');
-      console.log('   💡 Smart recommendations engine');
+      console.info('   🤖 AI-powered search with query expansion');
+      console.info('   🧠 Intelligent artifact classification');
+      console.info('   💡 Smart recommendations engine');
     }
     
     if (this.features.predictiveSearch) {
-      console.log('   🔮 Predictive search with context awareness');
-      console.log('   📊 Usage pattern analysis');
-      console.log('   🎯 Personalized result ranking');
+      console.info('   🔮 Predictive search with context awareness');
+      console.info('   📊 Usage pattern analysis');
+      console.info('   🎯 Personalized result ranking');
     }
     
     if (this.features.advancedAnalytics) {
-      console.log('   📈 Real-time usage tracking');
-      console.log('   📊 Performance metrics collection');
-      console.log('   📋 Trend analysis and insights');
+      console.info('   📈 Real-time usage tracking');
+      console.info('   📊 Performance metrics collection');
+      console.info('   📋 Trend analysis and insights');
     }
     
     if (this.features.securityEnhanced) {
-      console.log('   🔒 Enterprise-grade encryption');
-      console.log('   🛡️ Advanced threat detection');
-      console.log('   📋 Compliance monitoring');
+      console.info('   🔒 Enterprise-grade encryption');
+      console.info('   🛡️ Advanced threat detection');
+      console.info('   📋 Compliance monitoring');
     }
     
     if (this.features.performanceMonitoring) {
-      console.log('   ⚡ Real-time performance tracking');
-      console.log('   🧠 Automated optimization');
-      console.log('   📊 Resource usage monitoring');
+      console.info('   ⚡ Real-time performance tracking');
+      console.info('   🧠 Automated optimization');
+      console.info('   📊 Resource usage monitoring');
     }
     
-    console.log('✅ Enhanced features initialized');
+    console.info('✅ Enhanced features initialized');
   }
   
   /**
    * Demonstrate AI-powered search
    */
   private async demonstrateAISearch(): Promise<void> {
-    console.log('\n🤖 AI-Powered Search Demonstration:');
-    console.log('-'.repeat(50));
+    console.info('\n🤖 AI-Powered Search Demonstration:');
+    console.info('-'.repeat(50));
     
     const searches = [
       { query: 'sec api', expanded: 'security api rest graphql endpoint authentication' },
@@ -140,23 +140,23 @@ class EnhancedCLIDemo {
       const searchTime = Date.now() - startTime;
       this.metrics.searchTimes.push(searchTime);
       
-      console.log(`\n📝 Query: "${search.query}"`);
-      console.log(`   🧠 AI Expanded: "${search.expanded}"`);
-      console.log(`   ⚡ Search Time: ${searchTime}ms`);
-      console.log(`   📊 Results: ${results.length} artifacts found`);
-      console.log(`   🎯 Top Result: ${results[0]?.path || 'N/A'}`);
-      console.log(`   💡 Suggestions: ${this.generateSuggestions(search.query).join(', ')}`);
+      console.info(`\n📝 Query: "${search.query}"`);
+      console.info(`   🧠 AI Expanded: "${search.expanded}"`);
+      console.info(`   ⚡ Search Time: ${searchTime}ms`);
+      console.info(`   📊 Results: ${results.length} artifacts found`);
+      console.info(`   🎯 Top Result: ${results[0]?.path || 'N/A'}`);
+      console.info(`   💡 Suggestions: ${this.generateSuggestions(search.query).join(', ')}`);
     }
     
-    console.log(`\n✅ AI Search Demo Complete - Avg: ${this.average(this.metrics.searchTimes).toFixed(1)}ms`);
+    console.info(`\n✅ AI Search Demo Complete - Avg: ${this.average(this.metrics.searchTimes).toFixed(1)}ms`);
   }
   
   /**
    * Demonstrate predictive analytics
    */
   private async demonstratePredictiveAnalytics(): Promise<void> {
-    console.log('\n🔮 Predictive Analytics Demonstration:');
-    console.log('-'.repeat(50));
+    console.info('\n🔮 Predictive Analytics Demonstration:');
+    console.info('-'.repeat(50));
     
     // Simulate predictive insights
     const insights = [
@@ -180,15 +180,15 @@ class EnhancedCLIDemo {
       },
     ];
     
-    console.log('\n🧠 Predictive Insights:');
+    console.info('\n🧠 Predictive Insights:');
     insights.forEach((insight, index) => {
-      console.log(`\n   ${index + 1}. ${insight.description}`);
-      console.log(`      📊 Confidence: ${(insight.confidence * 100).toFixed(1)}%`);
-      console.log(`      💡 Recommendation: ${insight.recommendation}`);
+      console.info(`\n   ${index + 1}. ${insight.description}`);
+      console.info(`      📊 Confidence: ${(insight.confidence * 100).toFixed(1)}%`);
+      console.info(`      💡 Recommendation: ${insight.recommendation}`);
     });
     
     // Simulate predictive search ranking
-    console.log('\n🎯 Predictive Search Ranking:');
+    console.info('\n🎯 Predictive Search Ranking:');
     const artifacts = [
       { path: 'src/api/auth.ts', score: 0.95, reason: 'High relevance, recently modified' },
       { path: 'src/ui/components/Button.tsx', score: 0.87, reason: 'Popular component, good usage' },
@@ -196,33 +196,33 @@ class EnhancedCLIDemo {
     ];
     
     artifacts.forEach((artifact, index) => {
-      console.log(`   ${index + 1}. ${artifact.path} (Score: ${artifact.score.toFixed(2)})`);
-      console.log(`      📝 ${artifact.reason}`);
+      console.info(`   ${index + 1}. ${artifact.path} (Score: ${artifact.score.toFixed(2)})`);
+      console.info(`      📝 ${artifact.reason}`);
     });
     
-    console.log('\n✅ Predictive Analytics Demo Complete');
+    console.info('\n✅ Predictive Analytics Demo Complete');
   }
   
   /**
    * Demonstrate advanced security
    */
   private async demonstrateAdvancedSecurity(): Promise<void> {
-    console.log('\n🔒 Advanced Security Demonstration:');
-    console.log('-'.repeat(50));
+    console.info('\n🔒 Advanced Security Demonstration:');
+    console.info('-'.repeat(50));
     
     // Simulate encryption
-    console.log('\n🔐 Encryption Demo:');
+    console.info('\n🔐 Encryption Demo:');
     const sensitiveData = 'user:admin,password:secret123,token:abc123';
     const encrypted = this.simulateEncryption(sensitiveData);
     const decrypted = this.simulateDecryption(encrypted);
     
-    console.log(`   Original: ${sensitiveData}`);
-    console.log(`   Encrypted: ${encrypted.substring(0, 50)}...`);
-    console.log(`   Decrypted: ${decrypted}`);
-    console.log(`   ✅ Encryption successful: ${decrypted === sensitiveData}`);
+    console.info(`   Original: ${sensitiveData}`);
+    console.info(`   Encrypted: ${encrypted.substring(0, 50)}...`);
+    console.info(`   Decrypted: ${decrypted}`);
+    console.info(`   ✅ Encryption successful: ${decrypted === sensitiveData}`);
     
     // Simulate threat detection
-    console.log('\n🛡️ Threat Detection Demo:');
+    console.info('\n🛡️ Threat Detection Demo:');
     const threats = [
       {
         type: 'unusual_access_time',
@@ -246,12 +246,12 @@ class EnhancedCLIDemo {
     
     threats.forEach((threat, index) => {
       const emoji = threat.severity === 'high' ? '🚨' : threat.severity === 'medium' ? '⚠️' : 'ℹ️';
-      console.log(`   ${emoji} ${threat.description}`);
-      console.log(`      💡 ${threat.recommendation}`);
+      console.info(`   ${emoji} ${threat.description}`);
+      console.info(`      💡 ${threat.recommendation}`);
     });
     
     // Simulate compliance report
-    console.log('\n📋 Compliance Report:');
+    console.info('\n📋 Compliance Report:');
     const compliance = {
       overallScore: 87.5,
       categories: {
@@ -267,22 +267,22 @@ class EnhancedCLIDemo {
       ],
     };
     
-    console.log(`   Overall Score: ${compliance.overallScore}%`);
-    console.log(`   Access Control: ${compliance.categories.accessControl}%`);
-    console.log(`   Data Protection: ${compliance.categories.dataProtection}%`);
-    console.log(`   Audit Trail: ${compliance.categories.auditTrail}%`);
-    console.log(`   Encryption: ${compliance.categories.encryption}%`);
-    console.log(`   Violations: ${compliance.violations}`);
+    console.info(`   Overall Score: ${compliance.overallScore}%`);
+    console.info(`   Access Control: ${compliance.categories.accessControl}%`);
+    console.info(`   Data Protection: ${compliance.categories.dataProtection}%`);
+    console.info(`   Audit Trail: ${compliance.categories.auditTrail}%`);
+    console.info(`   Encryption: ${compliance.categories.encryption}%`);
+    console.info(`   Violations: ${compliance.violations}`);
     
-    console.log('\n✅ Advanced Security Demo Complete');
+    console.info('\n✅ Advanced Security Demo Complete');
   }
   
   /**
    * Demonstrate performance monitoring
    */
   private async demonstratePerformanceMonitoring(): Promise<void> {
-    console.log('\n⚡ Performance Monitoring Demonstration:');
-    console.log('-'.repeat(50));
+    console.info('\n⚡ Performance Monitoring Demonstration:');
+    console.info('-'.repeat(50));
     
     // Simulate performance metrics
     const currentMetrics = {
@@ -303,24 +303,24 @@ class EnhancedCLIDemo {
       },
     };
     
-    console.log('\n📊 Performance Metrics:');
-    console.log(`   Search Performance:`);
-    console.log(`     Average: ${currentMetrics.search.averageTime.toFixed(1)}ms`);
-    console.log(`     Min: ${currentMetrics.search.minTime}ms`);
-    console.log(`     Max: ${currentMetrics.search.maxTime}ms`);
-    console.log(`     Total Searches: ${currentMetrics.search.totalSearches}`);
+    console.info('\n📊 Performance Metrics:');
+    console.info(`   Search Performance:`);
+    console.info(`     Average: ${currentMetrics.search.averageTime.toFixed(1)}ms`);
+    console.info(`     Min: ${currentMetrics.search.minTime}ms`);
+    console.info(`     Max: ${currentMetrics.search.maxTime}ms`);
+    console.info(`     Total Searches: ${currentMetrics.search.totalSearches}`);
     
-    console.log(`   Memory Usage:`);
-    console.log(`     Current: ${(currentMetrics.memory.current.heapUsed / 1024 / 1024).toFixed(1)}MB`);
-    console.log(`     Peak: ${(currentMetrics.memory.peak / 1024 / 1024).toFixed(1)}MB`);
-    console.log(`     Average: ${(currentMetrics.memory.average / 1024 / 1024).toFixed(1)}MB`);
+    console.info(`   Memory Usage:`);
+    console.info(`     Current: ${(currentMetrics.memory.current.heapUsed / 1024 / 1024).toFixed(1)}MB`);
+    console.info(`     Peak: ${(currentMetrics.memory.peak / 1024 / 1024).toFixed(1)}MB`);
+    console.info(`     Average: ${(currentMetrics.memory.average / 1024 / 1024).toFixed(1)}MB`);
     
-    console.log(`   CPU Usage:`);
-    console.log(`     User: ${(currentMetrics.cpu.current.user / 1000000).toFixed(1)}ms`);
-    console.log(`     System: ${(currentMetrics.cpu.current.system / 1000000).toFixed(1)}ms`);
+    console.info(`   CPU Usage:`);
+    console.info(`     User: ${(currentMetrics.cpu.current.user / 1000000).toFixed(1)}ms`);
+    console.info(`     System: ${(currentMetrics.cpu.current.system / 1000000).toFixed(1)}ms`);
     
     // Simulate optimization recommendations
-    console.log('\n🧠 Optimization Recommendations:');
+    console.info('\n🧠 Optimization Recommendations:');
     const recommendations = [
       {
         type: 'memory',
@@ -341,37 +341,37 @@ class EnhancedCLIDemo {
     
     recommendations.forEach((rec, index) => {
       const emoji = rec.type === 'memory' ? '💾' : rec.type === 'search' ? '🔍' : '⚙️';
-      console.log(`   ${emoji} ${rec.description}`);
-      console.log(`      💡 ${rec.action}`);
+      console.info(`   ${emoji} ${rec.description}`);
+      console.info(`      💡 ${rec.action}`);
     });
     
-    console.log('\n✅ Performance Monitoring Demo Complete');
+    console.info('\n✅ Performance Monitoring Demo Complete');
   }
   
   /**
    * Show comprehensive metrics
    */
   private async showComprehensiveMetrics(): Promise<void> {
-    console.log('\n📈 Comprehensive System Metrics:');
-    console.log('-'.repeat(50));
+    console.info('\n📈 Comprehensive System Metrics:');
+    console.info('-'.repeat(50));
     
     const totalTime = Date.now() - this.startTime;
     
-    console.log('\n🎯 System Performance:');
-    console.log(`   Total Runtime: ${totalTime}ms`);
-    console.log(`   AI Features: ${this.features.aiEnabled ? '✅ Enabled' : '❌ Disabled'}`);
-    console.log(`   Predictive Search: ${this.features.predictiveSearch ? '✅ Enabled' : '❌ Disabled'}`);
-    console.log(`   Advanced Analytics: ${this.features.advancedAnalytics ? '✅ Enabled' : '❌ Disabled'}`);
-    console.log(`   Security Enhanced: ${this.features.securityEnhanced ? '✅ Enabled' : '❌ Disabled'}`);
-    console.log(`   Performance Monitoring: ${this.features.performanceMonitoring ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info('\n🎯 System Performance:');
+    console.info(`   Total Runtime: ${totalTime}ms`);
+    console.info(`   AI Features: ${this.features.aiEnabled ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info(`   Predictive Search: ${this.features.predictiveSearch ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info(`   Advanced Analytics: ${this.features.advancedAnalytics ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info(`   Security Enhanced: ${this.features.securityEnhanced ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info(`   Performance Monitoring: ${this.features.performanceMonitoring ? '✅ Enabled' : '❌ Disabled'}`);
     
-    console.log('\n📊 Feature Usage Statistics:');
-    console.log(`   AI Queries Processed: ${this.metrics.searchTimes.length}`);
-    console.log(`   Average Response Time: ${this.average(this.metrics.searchTimes).toFixed(1)}ms`);
-    console.log(`   Memory Efficiency: ${(this.getMemoryEfficiency() * 100).toFixed(1)}%`);
-    console.log(`   CPU Efficiency: ${(this.getCpuEfficiency() * 100).toFixed(1)}%`);
+    console.info('\n📊 Feature Usage Statistics:');
+    console.info(`   AI Queries Processed: ${this.metrics.searchTimes.length}`);
+    console.info(`   Average Response Time: ${this.average(this.metrics.searchTimes).toFixed(1)}ms`);
+    console.info(`   Memory Efficiency: ${(this.getMemoryEfficiency() * 100).toFixed(1)}%`);
+    console.info(`   CPU Efficiency: ${(this.getCpuEfficiency() * 100).toFixed(1)}%`);
     
-    console.log('\n🌟 Enhancement Benefits:');
+    console.info('\n🌟 Enhancement Benefits:');
     const benefits = [
       '🤖 AI-powered search with 95% accuracy improvement',
       '🔮 Predictive analytics reducing search time by 60%',
@@ -382,10 +382,10 @@ class EnhancedCLIDemo {
     ];
     
     benefits.forEach(benefit => {
-      console.log(`   ${benefit}`);
+      console.info(`   ${benefit}`);
     });
     
-    console.log('\n🚀 Production Readiness:');
+    console.info('\n🚀 Production Readiness:');
     const readiness = {
       scalability: '✅ Handles 10,000+ artifacts',
       performance: '✅ Sub-second response times',
@@ -396,7 +396,7 @@ class EnhancedCLIDemo {
     };
     
     Object.entries(readiness).forEach(([aspect, status]) => {
-      console.log(`   ${status} ${aspect.charAt(0).toUpperCase() + aspect.slice(1).replace(/([A-Z])/g, ' $1')}`);
+      console.info(`   ${status} ${aspect.charAt(0).toUpperCase() + aspect.slice(1).replace(/([A-Z])/g, ' $1')}`);
     });
   }
   

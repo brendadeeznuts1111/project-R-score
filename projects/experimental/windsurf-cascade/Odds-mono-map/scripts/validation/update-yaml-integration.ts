@@ -57,7 +57,7 @@ class YAMLIntegrationUpdater {
 
     async updateAllTemplates(): Promise<void> {
         const files = await this.getTemplateFiles();
-        console.log(`📄 Updating Bun YAML integration in ${files.length} templates...`);
+        console.info(`📄 Updating Bun YAML integration in ${files.length} templates...`);
 
         for (const file of files) {
             await this.updateTemplateYAML(file);
@@ -66,7 +66,7 @@ class YAMLIntegrationUpdater {
         // Create example YAML configurations
         await this.createYAMLExamples();
 
-        console.log('✅ All templates updated with Bun YAML support!');
+        console.info('✅ All templates updated with Bun YAML support!');
     }
 
     private async getTemplateFiles(): Promise<string[]> {
@@ -86,7 +86,7 @@ class YAMLIntegrationUpdater {
 
             if (updatedContent !== content) {
                 await writeFile(filePath, updatedContent, 'utf-8');
-                console.log(`  📄 Updated: ${fileName}`);
+                console.info(`  📄 Updated: ${fileName}`);
             }
         } catch (error) {
             console.error(`  ❌ Error updating ${filePath}:`, error);
@@ -333,17 +333,17 @@ async function main(): Promise<void> {
     const templatesPath = process.argv[2] || join(process.cwd(), '06 - Templates');
 
     if (process.argv.includes('--help') || process.argv.includes('-h')) {
-        console.log('📄 Bun YAML Integration Updater');
-        console.log('Usage: bun update-yaml-integration.ts [templates-path]');
-        console.log('');
-        console.log('Updates templates with Bun YAML support:');
-        console.log('  - Bun.YAML.parse() API');
-        console.log('  - ES Module imports');
-        console.log('  - Hot reloading support');
-        console.log('  - Configuration management');
-        console.log('  - Environment variable interpolation');
-        console.log('  - Feature flags');
-        console.log('  - Database configuration');
+        console.info('📄 Bun YAML Integration Updater');
+        console.info('Usage: bun update-yaml-integration.ts [templates-path]');
+        console.info('');
+        console.info('Updates templates with Bun YAML support:');
+        console.info('  - Bun.YAML.parse() API');
+        console.info('  - ES Module imports');
+        console.info('  - Hot reloading support');
+        console.info('  - Configuration management');
+        console.info('  - Environment variable interpolation');
+        console.info('  - Feature flags');
+        console.info('  - Database configuration');
         process.exit(0);
     }
 
@@ -351,19 +351,19 @@ async function main(): Promise<void> {
         const updater = new YAMLIntegrationUpdater(templatesPath);
         await updater.updateAllTemplates();
 
-        console.log('');
-        console.log('🚀 Bun YAML Integration Complete!');
-        console.log('Templates now support:');
-        console.log('  📄 YAML parsing with Bun.YAML.parse()');
-        console.log('  🔥 Hot reloading with bun --hot');
-        console.log('  📦 ES Module imports (default & named)');
-        console.log('  ⚙️  Configuration management');
-        console.log('  🚩 Feature flags');
-        console.log('  🗄️  Database configuration');
-        console.log('  🌍 Environment variable interpolation');
-        console.log('  📦 Bundler integration');
-        console.log('');
-        console.log('Example files created in config/examples/');
+        console.info('');
+        console.info('🚀 Bun YAML Integration Complete!');
+        console.info('Templates now support:');
+        console.info('  📄 YAML parsing with Bun.YAML.parse()');
+        console.info('  🔥 Hot reloading with bun --hot');
+        console.info('  📦 ES Module imports (default & named)');
+        console.info('  ⚙️  Configuration management');
+        console.info('  🚩 Feature flags');
+        console.info('  🗄️  Database configuration');
+        console.info('  🌍 Environment variable interpolation');
+        console.info('  📦 Bundler integration');
+        console.info('');
+        console.info('Example files created in config/examples/');
 
     } catch (error) {
         console.error('❌ YAML integration update failed:', error);

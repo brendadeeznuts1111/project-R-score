@@ -32,7 +32,7 @@ async function cmdLoad(args: string[]): Promise<void> {
     console.error("Failed to load config");
     process.exit(1);
   }
-  console.log(Bun.inspect(config, { colors: true, depth: 3 }));
+  console.info(Bun.inspect(config, { colors: true, depth: 3 }));
 }
 
 async function cmdValidate(args: string[]): Promise<void> {
@@ -50,7 +50,7 @@ async function cmdValidate(args: string[]): Promise<void> {
     console.error("Invalid config: expected object");
     process.exit(1);
   }
-  console.log("Valid");
+  console.info("Valid");
 }
 
 function cmdWatch(args: string[]): Promise<void> {
@@ -60,14 +60,14 @@ function cmdWatch(args: string[]): Promise<void> {
   ];
   const watcher = loader.watch(
     paths,
-    (event, path) => console.log(`[${event}] ${path}`),
+    (event, path) => console.info(`[${event}] ${path}`),
     CONFIG_DIR,
   );
   process.on("SIGINT", () => {
     watcher.stop();
     process.exit(0);
   });
-  console.log("Watching:", paths.join(", "));
+  console.info("Watching:", paths.join(", "));
   return new Promise(() => {});
 }
 
@@ -84,7 +84,7 @@ async function cmdCompress(args: string[]): Promise<void> {
   }
   const compressed = loader.compress(config);
   await Bun.write(output, compressed);
-  console.log(`Compressed: ${compressed.length} bytes -> ${output}`);
+  console.info(`Compressed: ${compressed.length} bytes -> ${output}`);
 }
 
 async function main(): Promise<void> {

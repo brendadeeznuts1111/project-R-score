@@ -120,7 +120,7 @@ export class UIPolicyManagerSQL {
 	 * ```typescript
 	 * const sql = new UIPolicyManagerSQL("./data/manifests.db");
 	 * const hash = await sql.storeManifest(manifest);
-	 * console.log(`Stored manifest with hash: ${hash}`);
+	 * console.info(`Stored manifest with hash: ${hash}`);
 	 * ```
 	 */
 	async storeManifest(manifest: HyperBunUIPolicyManifest): Promise<string> {
@@ -181,7 +181,7 @@ export class UIPolicyManagerSQL {
 	 * ```typescript
 	 * const manifest = await sql.retrieveManifest(hash);
 	 * if (manifest) {
-	 *   console.log(`Retrieved manifest version: ${manifest.metadata.version}`);
+	 *   console.info(`Retrieved manifest version: ${manifest.metadata.version}`);
 	 * }
 	 * ```
 	 */

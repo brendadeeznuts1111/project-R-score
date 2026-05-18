@@ -77,17 +77,17 @@ class DepthOptimizerCLI {
   private static async handleDebug(args: string[]): Promise<void> {
     if (args.length === 0) {
       console.error('❌ Debug command requires a target file');
-      console.log('Usage: bun depth-optimizer debug <file.ts> [options]');
-      console.log('');
-      console.log('Options:');
-      console.log('  --progressive     Use progressive disclosure');
-      console.log('  --streaming       Enable streaming for large objects');
-      console.log('  --analyze-circular Analyze circular references');
-      console.log('  --depth <n>       Use specific depth (overrides progressive)');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun depth-optimizer debug bench.ts --progressive');
-      console.log('  bun depth-optimizer debug app.ts --depth 4');
+      console.info('Usage: bun depth-optimizer debug <file.ts> [options]');
+      console.info('');
+      console.info('Options:');
+      console.info('  --progressive     Use progressive disclosure');
+      console.info('  --streaming       Enable streaming for large objects');
+      console.info('  --analyze-circular Analyze circular references');
+      console.info('  --depth <n>       Use specific depth (overrides progressive)');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun depth-optimizer debug bench.ts --progressive');
+      console.info('  bun depth-optimizer debug app.ts --depth 4');
       process.exit(1);
     }
 
@@ -99,19 +99,19 @@ class DepthOptimizerCLI {
     const depthIndex = options.findIndex(opt => opt === '--depth');
     const specificDepth = depthIndex !== -1 ? parseInt(options[depthIndex + 1]) : null;
 
-    console.log('🔧 Depth Optimizer Debug Mode');
-    console.log('='.repeat(50));
-    console.log(`Target: ${targetFile}`);
-    console.log(`Environment: ${this.getCurrentEnvironment()}`);
+    console.info('🔧 Depth Optimizer Debug Mode');
+    console.info('='.repeat(50));
+    console.info(`Target: ${targetFile}`);
+    console.info(`Environment: ${this.getCurrentEnvironment()}`);
     
     const config = this.loadConfig();
-    console.log(`Config: depth=${config.defaultDepth}, max=${config.maxDepth}`);
+    console.info(`Config: depth=${config.defaultDepth}, max=${config.maxDepth}`);
 
     if (specificDepth !== null) {
-      console.log(`\n🎯 Using specific depth: ${specificDepth}`);
+      console.info(`\n🎯 Using specific depth: ${specificDepth}`);
       await this.runWithSpecificDepth(targetFile, specificDepth, options);
     } else if (isProgressive) {
-      console.log(`\n🚀 Using progressive disclosure`);
+      console.info(`\n🚀 Using progressive disclosure`);
       const streamingOptions = enableStreaming ? {
         strategy: config.strategies[0] as any,
         streamingThreshold: config.streamingThreshold
@@ -127,55 +127,55 @@ class DepthOptimizerCLI {
         }
       );
     } else {
-      console.log(`\n⚡ Using smart depth detection`);
+      console.info(`\n⚡ Using smart depth detection`);
       const analysis = await this.analyzeFile(targetFile);
-      console.log(`Recommended depth: ${analysis.recommendedDepth}`);
-      console.log(`Reasoning: ${analysis.reasoning}`);
-      console.log(`Confidence: ${(analysis.confidence * 100).toFixed(1)}%`);
+      console.info(`Recommended depth: ${analysis.recommendedDepth}`);
+      console.info(`Reasoning: ${analysis.reasoning}`);
+      console.info(`Confidence: ${(analysis.confidence * 100).toFixed(1)}%`);
       
       await this.runWithSpecificDepth(targetFile, analysis.recommendedDepth, options);
     }
   }
 
   private static async handleAnalyze(args: string[]): Promise<void> {
-    console.log('📊 Depth Analysis Mode');
-    console.log('='.repeat(50));
+    console.info('📊 Depth Analysis Mode');
+    console.info('='.repeat(50));
 
     if (args.length > 0) {
       // Analyze specific file
       const [targetFile] = args;
-      console.log(`Analyzing: ${targetFile}`);
+      console.info(`Analyzing: ${targetFile}`);
       
       const analysis = await this.analyzeFile(targetFile);
       
-      console.log('\n📋 Analysis Results:');
-      console.log(`   Recommended Depth: ${analysis.recommendedDepth}`);
-      console.log(`   Reasoning: ${analysis.reasoning}`);
-      console.log(`   Performance Impact: ${analysis.performanceImpact}`);
-      console.log(`   Circular References: ${analysis.circularRefs}`);
-      console.log(`   Estimated Output Size: ${analysis.estimatedSize}`);
-      console.log(`   Confidence: ${(analysis.confidence * 100).toFixed(1)}%`);
+      console.info('\n📋 Analysis Results:');
+      console.info(`   Recommended Depth: ${analysis.recommendedDepth}`);
+      console.info(`   Reasoning: ${analysis.reasoning}`);
+      console.info(`   Performance Impact: ${analysis.performanceImpact}`);
+      console.info(`   Circular References: ${analysis.circularRefs}`);
+      console.info(`   Estimated Output Size: ${analysis.estimatedSize}`);
+      console.info(`   Confidence: ${(analysis.confidence * 100).toFixed(1)}%`);
       
       // Provide recommendations
-      console.log('\n💡 Recommendations:');
+      console.info('\n💡 Recommendations:');
       if (analysis.recommendedDepth <= 2) {
-        console.log('   ✅ Safe for production environments');
+        console.info('   ✅ Safe for production environments');
       } else if (analysis.recommendedDepth <= 4) {
-        console.log('   ⚠️  Good for development, use with caution in production');
+        console.info('   ⚠️  Good for development, use with caution in production');
       } else {
-        console.log('   🔥 Deep inspection only - debugging purposes only');
+        console.info('   🔥 Deep inspection only - debugging purposes only');
       }
       
       if (analysis.circularRefs > 0) {
-        console.log('   🔄 Consider using --analyze-circular for detailed circular reference analysis');
+        console.info('   🔄 Consider using --analyze-circular for detailed circular reference analysis');
       }
       
       if (analysis.estimatedSize.includes('MB')) {
-        console.log('   📡 Consider enabling streaming for large outputs');
+        console.info('   📡 Consider enabling streaming for large outputs');
       }
     } else {
       // Analyze current project
-      console.log('Analyzing project depth patterns...');
+      console.info('Analyzing project depth patterns...');
       
       const projectAnalysis = await this.analyzeProject();
       this.displayProjectAnalysis(projectAnalysis);
@@ -183,45 +183,45 @@ class DepthOptimizerCLI {
   }
 
   private static async handleOptimize(args: string[]): Promise<void> {
-    console.log('⚡ Depth Optimization Mode');
-    console.log('='.repeat(50));
+    console.info('⚡ Depth Optimization Mode');
+    console.info('='.repeat(50));
 
     const config = this.loadConfig();
     const env = args[0] || this.getCurrentEnvironment();
     
-    console.log(`Optimizing for environment: ${env}`);
+    console.info(`Optimizing for environment: ${env}`);
     
     const optimizedConfig = await this.generateOptimizedConfig(env);
     
-    console.log('\n🎯 Optimized Configuration:');
-    console.log(`   Default Depth: ${optimizedConfig.defaultDepth}`);
-    console.log(`   Max Depth: ${optimizedConfig.maxDepth}`);
-    console.log(`   Streaming Threshold: ${this.formatBytes(optimizedConfig.streamingThreshold)}`);
-    console.log(`   Circular Handling: ${optimizedConfig.circularHandling}`);
-    console.log(`   Strategy: ${optimizedConfig.strategies.join(', ')}`);
+    console.info('\n🎯 Optimized Configuration:');
+    console.info(`   Default Depth: ${optimizedConfig.defaultDepth}`);
+    console.info(`   Max Depth: ${optimizedConfig.maxDepth}`);
+    console.info(`   Streaming Threshold: ${this.formatBytes(optimizedConfig.streamingThreshold)}`);
+    console.info(`   Circular Handling: ${optimizedConfig.circularHandling}`);
+    console.info(`   Strategy: ${optimizedConfig.strategies.join(', ')}`);
     
     // Save optimized config
     if (args.includes('--save')) {
       this.saveConfig(optimizedConfig);
-      console.log('\n✅ Configuration saved to .depth-optimizer.json');
+      console.info('\n✅ Configuration saved to .depth-optimizer.json');
     }
     
     // Generate package.json scripts
     if (args.includes('--generate-scripts')) {
       this.generatePackageScripts(optimizedConfig);
-      console.log('\n✅ Package.json scripts generated');
+      console.info('\n✅ Package.json scripts generated');
     }
     
-    console.log('\n📋 Recommended package.json scripts:');
-    console.log(this.generatePackageScriptSnippet(optimizedConfig));
+    console.info('\n📋 Recommended package.json scripts:');
+    console.info(this.generatePackageScriptSnippet(optimizedConfig));
   }
 
   private static async handleConfig(args: string[]): Promise<void> {
     const config = this.loadConfig();
     
     if (args.length === 0) {
-      console.log('⚙️  Current Configuration:');
-      console.log(JSON.stringify(config, null, 2));
+      console.info('⚙️  Current Configuration:');
+      console.info(JSON.stringify(config, null, 2));
       return;
     }
 
@@ -229,53 +229,53 @@ class DepthOptimizerCLI {
     
     switch (action) {
       case 'get':
-        console.log(`${key}: ${config[key as keyof DepthConfig]}`);
+        console.info(`${key}: ${config[key as keyof DepthConfig]}`);
         break;
       case 'set':
         if (key && value) {
           (config as any)[key] = this.parseConfigValue(key, value);
           this.saveConfig(config);
-          console.log(`✅ Set ${key} = ${value}`);
+          console.info(`✅ Set ${key} = ${value}`);
         }
         break;
       case 'reset':
         this.saveConfig(this.DEFAULT_CONFIG);
-        console.log('✅ Configuration reset to defaults');
+        console.info('✅ Configuration reset to defaults');
         break;
       default:
         console.error('❌ Invalid config action');
-        console.log('Usage: bun depth-optimizer config <get|set|reset> [key] [value]');
+        console.info('Usage: bun depth-optimizer config <get|set|reset> [key] [value]');
     }
   }
 
   private static async handleInit(args: string[]): Promise<void> {
     const projectType = args[0] || 'typescript';
     
-    console.log('🚀 Initializing Depth Optimizer');
-    console.log(`Project type: ${projectType}`);
+    console.info('🚀 Initializing Depth Optimizer');
+    console.info(`Project type: ${projectType}`);
     
     // Create config file
     this.saveConfig(this.DEFAULT_CONFIG);
-    console.log('✅ Created .depth-optimizer.json');
+    console.info('✅ Created .depth-optimizer.json');
     
     // Create example files
     this.createExampleFiles(projectType);
-    console.log('✅ Created example files');
+    console.info('✅ Created example files');
     
     // Update package.json
     this.updatePackageJson();
-    console.log('✅ Updated package.json');
+    console.info('✅ Updated package.json');
     
-    console.log('\n🎉 Depth Optimizer initialized successfully!');
-    console.log('\nNext steps:');
-    console.log('  1. Run: bun depth-optimizer analyze');
-    console.log('  2. Try: bun depth-optimizer debug your-file.ts --progressive');
-    console.log('  3. Optimize: bun depth-optimizer optimize --save');
+    console.info('\n🎉 Depth Optimizer initialized successfully!');
+    console.info('\nNext steps:');
+    console.info('  1. Run: bun depth-optimizer analyze');
+    console.info('  2. Try: bun depth-optimizer debug your-file.ts --progressive');
+    console.info('  3. Optimize: bun depth-optimizer optimize --save');
   }
 
   private static async handleProfile(args: string[]): Promise<void> {
-    console.log('📈 Depth Profiling Mode');
-    console.log('='.repeat(50));
+    console.info('📈 Depth Profiling Mode');
+    console.info('='.repeat(50));
     
     const [targetFile] = args;
     if (!targetFile) {
@@ -283,14 +283,14 @@ class DepthOptimizerCLI {
       process.exit(1);
     }
     
-    console.log(`Profiling: ${targetFile}`);
+    console.info(`Profiling: ${targetFile}`);
     
     // Test different depths and measure performance
     const depths = [1, 2, 3, 4, 6, 8];
     const results: Array<{ depth: number; time: number; size: number; truncated: boolean }> = [];
     
     for (const depth of depths) {
-      console.log(`\n🔍 Testing depth ${depth}...`);
+      console.info(`\n🔍 Testing depth ${depth}...`);
       
       const startTime = performance.now();
       const result = await this.runWithSpecificDepth(targetFile, depth, []);
@@ -303,24 +303,24 @@ class DepthOptimizerCLI {
         truncated: result.truncated || false
       });
       
-      console.log(`   Time: ${duration.toFixed(2)}ms`);
-      console.log(`   Size: ${this.formatBytes(result.estimatedSize || 0)}`);
-      console.log(`   Truncated: ${result.truncated ? 'Yes' : 'No'}`);
+      console.info(`   Time: ${duration.toFixed(2)}ms`);
+      console.info(`   Size: ${this.formatBytes(result.estimatedSize || 0)}`);
+      console.info(`   Truncated: ${result.truncated ? 'Yes' : 'No'}`);
     }
     
     // Display performance analysis
-    console.log('\n📊 Performance Analysis:');
-    console.log('Depth | Time (ms) | Size     | Truncated | Recommendation');
-    console.log('------|-----------|----------|-----------|----------------');
+    console.info('\n📊 Performance Analysis:');
+    console.info('Depth | Time (ms) | Size     | Truncated | Recommendation');
+    console.info('------|-----------|----------|-----------|----------------');
     
     results.forEach(result => {
       const recommendation = this.getDepthRecommendation(result, results);
-      console.log(`${result.depth.toString().padEnd(5)} | ${result.time.toFixed(2).padEnd(9)} | ${this.formatBytes(result.size).padEnd(8)} | ${(result.truncated ? 'Yes'.padEnd(9) : 'No'.padEnd(9))} | ${recommendation}`);
+      console.info(`${result.depth.toString().padEnd(5)} | ${result.time.toFixed(2).padEnd(9)} | ${this.formatBytes(result.size).padEnd(8)} | ${(result.truncated ? 'Yes'.padEnd(9) : 'No'.padEnd(9))} | ${recommendation}`);
     });
     
     // Find optimal depth
     const optimal = this.findOptimalDepth(results);
-    console.log(`\n🎯 Optimal depth: ${optimal.depth} (${optimal.reason})`);
+    console.info(`\n🎯 Optimal depth: ${optimal.depth} (${optimal.reason})`);
   }
 
   private static async runWithSpecificDepth(targetFile: string, depth: number, options: string[]): Promise<any> {
@@ -383,14 +383,14 @@ class DepthOptimizerCLI {
   }
 
   private static displayProjectAnalysis(analysis: any): void {
-    console.log('\n📊 Project Analysis:');
-    console.log(`   Total Files: ${analysis.totalFiles}`);
-    console.log(`   Average Complexity: ${(analysis.averageComplexity * 100).toFixed(1)}%`);
-    console.log(`   Recommended Depth: ${analysis.recommendedDepth}`);
+    console.info('\n📊 Project Analysis:');
+    console.info(`   Total Files: ${analysis.totalFiles}`);
+    console.info(`   Average Complexity: ${(analysis.averageComplexity * 100).toFixed(1)}%`);
+    console.info(`   Recommended Depth: ${analysis.recommendedDepth}`);
     
-    console.log('\n🌍 Environment Recommendations:');
+    console.info('\n🌍 Environment Recommendations:');
     Object.entries(analysis.environments).forEach(([env, config]: [string, any]) => {
-      console.log(`   ${env}: depth=${config.depth}, strategy=${config.strategy}`);
+      console.info(`   ${env}: depth=${config.depth}, strategy=${config.strategy}`);
     });
   }
 
@@ -506,12 +506,12 @@ class DepthOptimizerCLI {
     };
     
     // Mock implementation
-    console.log(`Created ${examples[projectType as keyof typeof examples] || examples.typescript}`);
+    console.info(`Created ${examples[projectType as keyof typeof examples] || examples.typescript}`);
   }
 
   private static updatePackageJson(): void {
     // Mock implementation
-    console.log('Updated package.json with depth optimizer scripts');
+    console.info('Updated package.json with depth optimizer scripts');
   }
 
   private static getDepthRecommendation(result: any, allResults: any[]): string {
@@ -540,26 +540,26 @@ class DepthOptimizerCLI {
   }
 
   private static showHelp(): void {
-    console.log('🔧 Depth Optimizer CLI - Intelligent Console Depth Management');
-    console.log('');
-    console.log('Usage: bun depth-optimizer <command> [options]');
-    console.log('');
-    console.log('Commands:');
-    console.log('  debug <file>      Debug with intelligent depth selection');
-    console.log('  analyze [file]    Analyze depth requirements');
-    console.log('  optimize [env]    Generate optimized configuration');
-    console.log('  config <action>   Manage configuration');
-    console.log('  init [type]       Initialize project');
-    console.log('  profile <file>    Profile depth performance');
-    console.log('');
-    console.log('Examples:');
-    console.log('  bun depth-optimizer debug app.ts --progressive');
-    console.log('  bun depth-optimizer analyze');
-    console.log('  bun depth-optimizer optimize production --save');
-    console.log('  bun depth-optimizer init');
-    console.log('');
-    console.log('For detailed help on any command:');
-    console.log('  bun depth-optimizer <command> --help');
+    console.info('🔧 Depth Optimizer CLI - Intelligent Console Depth Management');
+    console.info('');
+    console.info('Usage: bun depth-optimizer <command> [options]');
+    console.info('');
+    console.info('Commands:');
+    console.info('  debug <file>      Debug with intelligent depth selection');
+    console.info('  analyze [file]    Analyze depth requirements');
+    console.info('  optimize [env]    Generate optimized configuration');
+    console.info('  config <action>   Manage configuration');
+    console.info('  init [type]       Initialize project');
+    console.info('  profile <file>    Profile depth performance');
+    console.info('');
+    console.info('Examples:');
+    console.info('  bun depth-optimizer debug app.ts --progressive');
+    console.info('  bun depth-optimizer analyze');
+    console.info('  bun depth-optimizer optimize production --save');
+    console.info('  bun depth-optimizer init');
+    console.info('');
+    console.info('For detailed help on any command:');
+    console.info('  bun depth-optimizer <command> --help');
   }
 }
 

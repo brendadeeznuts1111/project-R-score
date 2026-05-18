@@ -151,7 +151,7 @@ class LockfileProtector {
   // Verify lockfile matches current package.json
   async verifyConsistency(): Promise<{ isConsistent: boolean; message: string }> {
     try {
-      console.log("LOCKFILE.FROZEN - Verifying lockfile consistency...");
+      console.info("LOCKFILE.FROZEN - Verifying lockfile consistency...");
 
       // Run bun install --dry-run to check consistency
       const result = spawn({
@@ -184,28 +184,28 @@ class LockfileProtector {
 
   // Comprehensive lockfile audit
   async audit(): Promise<{ passed: boolean; results: any[] }> {
-    console.log("🔍 Performing comprehensive lockfile audit...\n");
+    console.info("🔍 Performing comprehensive lockfile audit...\n");
 
     const results = [];
 
     // 1. Check integrity
     const integrity = await this.checkIntegrity();
     results.push({ check: "Integrity", ...integrity });
-    console.log(integrity.message);
+    console.info(integrity.message);
 
     // 2. Check git status
     const gitStatus = await this.checkGitStatus();
     results.push({ check: "Git Status", ...gitStatus });
-    console.log(gitStatus.message);
+    console.info(gitStatus.message);
 
     // 3. Verify consistency
     const consistency = await this.verifyConsistency();
     results.push({ check: "Consistency", ...consistency });
-    console.log(consistency.message);
+    console.info(consistency.message);
 
     const passed = results.every(r => r.isValid !== false && r.isClean !== false && r.isConsistent !== false);
 
-    console.log(`\n${passed ? '✅' : '❌'} Lockfile audit ${passed ? 'PASSED' : 'FAILED'}`);
+    console.info(`\n${passed ? '✅' : '❌'} Lockfile audit ${passed ? 'PASSED' : 'FAILED'}`);
 
     return { passed, results };
   }
@@ -222,25 +222,25 @@ async function main() {
     switch (command) {
       case 'check':
         const result = await protector.checkIntegrity();
-        console.log(result.message);
+        console.info(result.message);
         process.exit(result.isValid ? 0 : 1);
         break;
 
       case 'baseline':
         const baseline = await protector.createBaseline();
-        console.log(baseline.message);
+        console.info(baseline.message);
         process.exit(baseline.success ? 0 : 1);
         break;
 
       case 'git-check':
         const gitResult = await protector.checkGitStatus();
-        console.log(gitResult.message);
+        console.info(gitResult.message);
         process.exit(gitResult.isClean ? 0 : 1);
         break;
 
       case 'verify':
         const verifyResult = await protector.verifyConsistency();
-        console.log(verifyResult.message);
+        console.info(verifyResult.message);
         process.exit(verifyResult.isConsistent ? 0 : 1);
         break;
 
@@ -250,7 +250,7 @@ async function main() {
         break;
 
       default:
-        console.log(`
+        console.info(`
 LOCKFILE.FROZEN - Frozen Lockfile Protection v1.3.5
 
 Usage:

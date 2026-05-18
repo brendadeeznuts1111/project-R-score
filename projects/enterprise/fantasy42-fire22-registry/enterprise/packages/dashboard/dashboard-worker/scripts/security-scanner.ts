@@ -5,20 +5,20 @@ export class SecurityScanner {
   private scannerPackage = '@fire22/security-scanner';
 
   async installScanner() {
-    console.log('🔧 Installing security scanner...');
+    console.info('🔧 Installing security scanner...');
     await $`bun add -d ${this.scannerPackage}`;
   }
 
   async scanDependencies() {
     try {
-      console.log('🔍 Scanning dependencies for vulnerabilities...');
+      console.info('🔍 Scanning dependencies for vulnerabilities...');
 
       // Try to run bun audit with production-only focus
       // Use a more robust approach to handle bun executable issues
       try {
         const auditProcess = $`bun audit --prod --audit-level=high`;
         await auditProcess;
-        console.log('✅ No critical vulnerabilities found in production dependencies');
+        console.info('✅ No critical vulnerabilities found in production dependencies');
         return true;
       } catch (bunError) {
         console.warn('⚠️  bun audit failed, trying alternative approach...');
@@ -27,7 +27,7 @@ export class SecurityScanner {
         try {
           const npmAuditProcess = $`npm audit --prod --audit-level=high`;
           await npmAuditProcess;
-          console.log(
+          console.info(
             '✅ No critical vulnerabilities found in production dependencies (npm audit)'
           );
           return true;
@@ -38,7 +38,7 @@ export class SecurityScanner {
 
           // For now, return true to allow deployment in development
           // In production, you might want to be more strict
-          console.log('⚠️  Continuing with deployment despite audit failures (development mode)');
+          console.info('⚠️  Continuing with deployment despite audit failures (development mode)');
           return true;
         }
       }

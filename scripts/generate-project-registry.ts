@@ -163,7 +163,7 @@ async function scanCategory(categoryPath: string, categoryName: string): Promise
 }
 
 async function main() {
-  console.log("🔍 Generating Projects Registry...\n");
+  console.info("🔍 Generating Projects Registry...\n");
 
   const allProjects: ProjectEntry[] = [];
   const byCategory: Record<string, number> = {};
@@ -175,7 +175,7 @@ async function main() {
     if (!cat.isDirectory() || cat.name === "README.md") continue;
 
     const catPath = join(PROJECTS_ROOT, cat.name);
-    console.log(`Scanning category: ${cat.name}`);
+    console.info(`Scanning category: ${cat.name}`);
 
     const projectsInCat = await scanCategory(catPath, cat.name);
     allProjects.push(...projectsInCat);
@@ -183,7 +183,7 @@ async function main() {
   }
 
   // Add featured projects from root
-  console.log("\nScanning featured root projects...");
+  console.info("\nScanning featured root projects...");
   const featured: ProjectEntry[] = [];
 
   for (const name of FEATURED_AT_ROOT) {
@@ -192,7 +192,7 @@ async function main() {
     if (project) {
       project.category = "featured";
       featured.push(project);
-      console.log(`  ✓ ${name}`);
+      console.info(`  ✓ ${name}`);
     }
   }
 
@@ -219,10 +219,10 @@ async function main() {
   // Write registry
   await Bun.write(OUTPUT_FILE, JSON.stringify(registry, null, 2));
 
-  console.log("\n✅ Registry generated successfully!");
-  console.log(`   Total projects: ${registry.stats.total_projects}`);
-  console.log(`   Total size: ${registry.stats.total_size_human}`);
-  console.log(`   Output: ${relative(ROOT, OUTPUT_FILE)}`);
+  console.info("\n✅ Registry generated successfully!");
+  console.info(`   Total projects: ${registry.stats.total_projects}`);
+  console.info(`   Total size: ${registry.stats.total_size_human}`);
+  console.info(`   Output: ${relative(ROOT, OUTPUT_FILE)}`);
 }
 
 main().catch(console.error);

@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
 
 export async function demoAdvancedHTTP() {
-  console.log('🚀 Advanced HTTP Features');
-  console.log('='.repeat(40));
+  console.info('🚀 Advanced HTTP Features');
+  console.info('='.repeat(40));
   
   // 1. Request interceptors
-  console.log('\n1. 📡 Request Interceptors:');
+  console.info('\n1. 📡 Request Interceptors:');
   const interceptors = {
     request: [],
     response: []
@@ -21,12 +21,12 @@ export async function demoAdvancedHTTP() {
   
   // Add logging interceptor
   addRequestInterceptor((config) => {
-    console.log(`   📤 Request: ${config.method || 'GET'} ${config.url}`);
+    console.info(`   📤 Request: ${config.method || 'GET'} ${config.url}`);
     return config;
   });
   
   addResponseInterceptor((response) => {
-    console.log(`   📥 Response: ${response.status} ${response.statusText}`);
+    console.info(`   📥 Response: ${response.status} ${response.statusText}`);
     return response;
   });
   
@@ -53,11 +53,11 @@ export async function demoAdvancedHTTP() {
   try {
     await enhancedFetch('https://httpbin.org/get');
   } catch (error) {
-    console.log(`   Error: ${error.message}`);
+    console.info(`   Error: ${error.message}`);
   }
   
   // 2. Request caching
-  console.log('\n2. 💾 Request Caching:');
+  console.info('\n2. 💾 Request Caching:');
   const cache = new Map();
   
   async function cachedFetch(url, options = {}) {
@@ -66,12 +66,12 @@ export async function demoAdvancedHTTP() {
     if (cache.has(cacheKey)) {
       const cached = cache.get(cacheKey);
       if (Date.now() - cached.timestamp < 60000) { // 1 minute cache
-        console.log('   📦 Serving from cache');
+        console.info('   📦 Serving from cache');
         return cached.response;
       }
     }
     
-    console.log('   🌐 Fresh request');
+    console.info('   🌐 Fresh request');
     const response = await fetch(url, options);
     
     cache.set(cacheKey, {
@@ -88,11 +88,11 @@ export async function demoAdvancedHTTP() {
     // Second request (cached)
     await cachedFetch('https://httpbin.org/json');
   } catch (error) {
-    console.log(`   Error: ${error.message}`);
+    console.info(`   Error: ${error.message}`);
   }
   
   // 3. Concurrent requests
-  console.log('\n3. ⚡ Concurrent Requests:');
+  console.info('\n3. ⚡ Concurrent Requests:');
   const urls = [
     'https://httpbin.org/delay/1',
     'https://httpbin.org/delay/1',
@@ -106,17 +106,17 @@ export async function demoAdvancedHTTP() {
     );
     const endTime = Date.now();
     
-    console.log(`   ✅ Completed ${responses.length} requests in ${endTime - startTime}ms`);
+    console.info(`   ✅ Completed ${responses.length} requests in ${endTime - startTime}ms`);
   } catch (error) {
-    console.log(`   Error: ${error.message}`);
+    console.info(`   Error: ${error.message}`);
   }
   
   // 4. Streaming response
-  console.log('\n4. 🌊 Streaming Response:');
+  console.info('\n4. 🌊 Streaming Response:');
   try {
     const response = await fetch('https://httpbin.org/stream/5');
     
-    console.log('   📡 Streaming data:');
+    console.info('   📡 Streaming data:');
     let count = 0;
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
@@ -131,18 +131,18 @@ export async function demoAdvancedHTTP() {
       for (const line of lines) {
         if (line) {
           count++;
-          console.log(`   📨 Chunk ${count}: ${line.substring(0, 50)}...`);
+          console.info(`   📨 Chunk ${count}: ${line.substring(0, 50)}...`);
         }
       }
     }
     
-    console.log(`   ✅ Streamed ${count} chunks`);
+    console.info(`   ✅ Streamed ${count} chunks`);
   } catch (error) {
-    console.log(`   Error: ${error.message}`);
+    console.info(`   Error: ${error.message}`);
   }
   
   // 5. File upload
-  console.log('\n5. 📁 File Upload:');
+  console.info('\n5. 📁 File Upload:');
   try {
     const fileContent = 'Hello from Bun!\nThis is a test file upload.';
     const blob = new Blob([fileContent], { type: 'text/plain' });
@@ -157,14 +157,14 @@ export async function demoAdvancedHTTP() {
     });
     
     const data = await response.json();
-    console.log('   ✅ File uploaded successfully');
-    console.log(`   File name: ${data.files.file}`);
-    console.log(`   Description: ${data.form.description}`);
+    console.info('   ✅ File uploaded successfully');
+    console.info(`   File name: ${data.files.file}`);
+    console.info(`   Description: ${data.form.description}`);
   } catch (error) {
-    console.log(`   Error: ${error.message}`);
+    console.info(`   Error: ${error.message}`);
   }
   
-  console.log('\n✅ Advanced HTTP demo completed!');
+  console.info('\n✅ Advanced HTTP demo completed!');
 }
 
 if (import.meta.main) {

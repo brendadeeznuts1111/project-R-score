@@ -2,7 +2,7 @@
 const SIZES = [1024, 10240, 102400, 1024000, 10240000]; // 1KB to 10MB
 
 function benchCRC32() {
-  console.log("Bun v1.3.6 CRC32 Benchmark (SIMD Hardware Accelerated)\n");
+  console.info("Bun v1.3.6 CRC32 Benchmark (SIMD Hardware Accelerated)\n");
 
   const results: { Size: string; Time: string; Throughput: string; CRC32: string }[] = [];
 
@@ -35,8 +35,8 @@ function benchCRC32() {
     });
   }
 
-  console.log(Bun.inspect.table(results, { colors: true }));
-  console.log("\n25x faster than v1.3.5 via SIMD intrinsics");
+  console.info(Bun.inspect.table(results, { colors: true }));
+  console.info("\n25x faster than v1.3.5 via SIMD intrinsics");
 }
 
 benchCRC32();

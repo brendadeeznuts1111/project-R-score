@@ -8,7 +8,7 @@ import { ScopedSecretsManager } from "../utils/scoped-secrets-manager";
 import { write } from "bun";
 
 export async function generateReport() {
-  console.log("📄 SOC2 Compliance Report Generator Initializing...");
+  console.info("📄 SOC2 Compliance Report Generator Initializing...");
 
   const secretsManager = new ScopedSecretsManager();
   const health = await secretsManager.getHealthReport();
@@ -38,21 +38,21 @@ export async function generateReport() {
 
   const reportPath = "./reports/soc2-compliance-v3-7.json";
   await write(reportPath, JSON.stringify(report, null, 2));
-  console.log(`✅ Local report generated: ${reportPath}`);
+  console.info(`✅ Local report generated: ${reportPath}`);
 
-  console.log("☁️ Uploading artifact to Cloudflare R2...");
+  console.info("☁️ Uploading artifact to Cloudflare R2...");
   try {
     // Use static uploadArtifact method
     const success = await R2NativeArtifactUploader.uploadArtifact("soc2-compliance-report", report);
     
     if (success) {
-      console.log(`✅ SOC2 Artifact secure in cold-storage.`);
+      console.info(`✅ SOC2 Artifact secure in cold-storage.`);
     } else {
       console.warn("⚠️ Upload unsuccessful, but no error thrown.");
     }
   } catch (e) {
     console.error("❌ R2 Upload failed (check credentials):", e);
-    console.log("⚠️ Falling back to local air-gapped storage.");
+    console.info("⚠️ Falling back to local air-gapped storage.");
   }
 }
 

@@ -134,13 +134,13 @@ export class CRC32MLAnalytics {
   }
 
   async predictOptimalSettings(entity: EntityData): Promise<OptimalSettings> {
-    console.log(
+    console.info(
       `🧠 Predicting optimal settings for ${entity.type} (size: ${entity.size})`
     );
 
     // Analyze historical performance data
     const historicalData = await this.getHistoricalPerformance(entity.type);
-    console.log(`📊 Found ${historicalData.length} historical data points`);
+    console.info(`📊 Found ${historicalData.length} historical data points`);
 
     // Use statistical analysis to predict optimal settings
     const predictions = await this.analyzePerformancePatterns(
@@ -157,14 +157,14 @@ export class CRC32MLAnalytics {
       confidence: predictions.confidenceScore,
     };
 
-    console.log(`🎯 Predicted optimal settings:`);
-    console.log(`   Chunk size: ${settings.chunkSize}`);
-    console.log(`   Concurrency: ${settings.concurrency}`);
-    console.log(`   Hardware acceleration: ${settings.hardwareAcceleration}`);
-    console.log(
+    console.info(`🎯 Predicted optimal settings:`);
+    console.info(`   Chunk size: ${settings.chunkSize}`);
+    console.info(`   Concurrency: ${settings.concurrency}`);
+    console.info(`   Hardware acceleration: ${settings.hardwareAcceleration}`);
+    console.info(
       `   Expected throughput: ${settings.expectedThroughput.toFixed(1)} MB/s`
     );
-    console.log(`   Confidence: ${(settings.confidence * 100).toFixed(1)}%`);
+    console.info(`   Confidence: ${(settings.confidence * 100).toFixed(1)}%`);
 
     return settings;
   }
@@ -356,7 +356,7 @@ export class CRC32MLAnalytics {
   }
 
   async detectAnomalies(timeRange: string = "1h"): Promise<AnomalyDetection> {
-    console.log(`🔍 Detecting anomalies in ${timeRange} time range`);
+    console.info(`🔍 Detecting anomalies in ${timeRange} time range`);
 
     const recentData = await this.sql`
       SELECT
@@ -372,7 +372,7 @@ export class CRC32MLAnalytics {
       ORDER BY created_at DESC
     `;
 
-    console.log(`📊 Analyzing ${recentData.length} data points for anomalies`);
+    console.info(`📊 Analyzing ${recentData.length} data points for anomalies`);
 
     // Statistical anomaly detection
     const anomalies = this.statisticalAnomalyDetection(recentData);
@@ -383,7 +383,7 @@ export class CRC32MLAnalytics {
       affectedEntities: this.getAffectedEntities(anomalies),
     };
 
-    console.log(`⚠️  Detected ${anomalies.length} anomalies`);
+    console.info(`⚠️  Detected ${anomalies.length} anomalies`);
 
     return {
       anomalies,
@@ -488,7 +488,7 @@ export class CRC32MLAnalytics {
   async generatePerformanceReport(
     timeRange: string = "24h"
   ): Promise<PerformanceReport> {
-    console.log(`📊 Generating performance report for ${timeRange}`);
+    console.info(`📊 Generating performance report for ${timeRange}`);
 
     const [performance, integrity, anomalies] = await Promise.all([
       this.getPerformanceMetrics(timeRange),
@@ -512,7 +512,7 @@ export class CRC32MLAnalytics {
       nextSteps,
     };
 
-    console.log(`📋 Performance report generated for ${timeRange}`);
+    console.info(`📋 Performance report generated for ${timeRange}`);
 
     return report;
   }
@@ -652,7 +652,7 @@ export class CRC32MLAnalytics {
   }
 
   async trainModels(timeRange: string = "7d"): Promise<void> {
-    console.log("🧠 Training ML models with recent data...");
+    console.info("🧠 Training ML models with recent data...");
 
     // Get training data
     const trainingData = await this.sql`
@@ -668,11 +668,11 @@ export class CRC32MLAnalytics {
       WHERE created_at >= NOW() - INTERVAL ${this.parseTimeRange(timeRange)}
     `;
 
-    console.log(`📊 Training with ${trainingData.length} data points`);
+    console.info(`📊 Training with ${trainingData.length} data points`);
 
     // Simulate model training (in production, use actual ML libraries)
     for (const [modelName, model] of this.models.entries()) {
-      console.log(`🔄 Training ${modelName} model...`);
+      console.info(`🔄 Training ${modelName} model...`);
 
       // Simulate training time
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -681,14 +681,14 @@ export class CRC32MLAnalytics {
       model.accuracy = Math.min(0.99, model.accuracy + 0.01);
       model.lastTrained = new Date();
 
-      console.log(
+      console.info(
         `✅ ${modelName} model trained (accuracy: ${(
           model.accuracy * 100
         ).toFixed(1)}%)`
       );
     }
 
-    console.log("🎯 ML model training complete!");
+    console.info("🎯 ML model training complete!");
   }
 
   private parseTimeRange(timeRange: string): string {
@@ -715,8 +715,8 @@ export async function runMLAnalytics(
 ): Promise<void> {
   const analytics = new CRC32MLAnalytics(sql);
 
-  console.log("🧠 CRC32 ML Analytics System");
-  console.log("============================");
+  console.info("🧠 CRC32 ML Analytics System");
+  console.info("============================");
 
   switch (command) {
     case "predict":
@@ -728,41 +728,41 @@ export async function runMLAnalytics(
       };
 
       const settings = await analytics.predictOptimalSettings(testEntity);
-      console.log("\n🎯 Prediction Results:");
-      console.log(JSON.stringify(settings, null, 2));
+      console.info("\n🎯 Prediction Results:");
+      console.info(JSON.stringify(settings, null, 2));
       break;
 
     case "anomalies":
       const anomalies = await analytics.detectAnomalies(timeRange);
-      console.log("\n⚠️  Anomaly Detection Results:");
-      console.log(`Total anomalies: ${anomalies.summary.totalAnomalies}`);
-      console.log(
+      console.info("\n⚠️  Anomaly Detection Results:");
+      console.info(`Total anomalies: ${anomalies.summary.totalAnomalies}`);
+      console.info(
         "Severity distribution:",
         anomalies.summary.severityDistribution
       );
 
       if (anomalies.anomalies.length > 0) {
-        console.log("\nRecent anomalies:");
+        console.info("\nRecent anomalies:");
         anomalies.anomalies.slice(0, 5).forEach((a) => {
-          console.log(`  ${a.anomalousMetric}: ${a.value} (${a.severity})`);
+          console.info(`  ${a.anomalousMetric}: ${a.value} (${a.severity})`);
         });
       }
       break;
 
     case "report":
       const report = await analytics.generatePerformanceReport(timeRange);
-      console.log("\n📊 Performance Report:");
-      console.log(`Period: ${report.period}`);
-      console.log(
+      console.info("\n📊 Performance Report:");
+      console.info(`Period: ${report.period}`);
+      console.info(
         `Avg throughput: ${report.performance.avg_throughput.toFixed(1)} MB/s`
       );
-      console.log(
+      console.info(
         `Integrity rate: ${(report.integrity.valid_rate * 100).toFixed(1)}%`
       );
-      console.log(`Anomalies: ${report.anomalies.summary.totalAnomalies}`);
+      console.info(`Anomalies: ${report.anomalies.summary.totalAnomalies}`);
 
-      console.log("\n💡 Recommendations:");
-      report.recommendations.forEach((r) => console.log(`• ${r}`));
+      console.info("\n💡 Recommendations:");
+      report.recommendations.forEach((r) => console.info(`• ${r}`));
       break;
 
     case "train":
@@ -770,8 +770,8 @@ export async function runMLAnalytics(
       break;
 
     default:
-      console.log("Available commands: predict, anomalies, report, train");
+      console.info("Available commands: predict, anomalies, report, train");
   }
 
-  console.log("\n✅ ML analytics complete!");
+  console.info("\n✅ ML analytics complete!");
 }

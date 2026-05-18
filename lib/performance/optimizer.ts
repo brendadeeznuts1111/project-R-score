@@ -187,8 +187,8 @@ class SpawnOptimizer {
    * Benchmark spawn performance
    */
   static async benchmarkSpawn(): Promise<void> {
-    console.log('🚀 SPAWN PERFORMANCE BENCHMARK');
-    console.log('='.repeat(50));
+    console.info('🚀 SPAWN PERFORMANCE BENCHMARK');
+    console.info('='.repeat(50));
 
     const tests = [
       {
@@ -214,7 +214,7 @@ class SpawnOptimizer {
           await test.fn();
           times.push(performance.now() - start);
         } catch (error) {
-          console.log(`❌ ${test.name} failed: ${error.message}`);
+          console.info(`❌ ${test.name} failed: ${error.message}`);
         }
       }
 
@@ -223,11 +223,11 @@ class SpawnOptimizer {
         const min = Math.min(...times);
         const max = Math.max(...times);
 
-        console.log(`${test.name}:`);
-        console.log(`   Average: ${avg.toFixed(2)}ms`);
-        console.log(`   Min: ${min.toFixed(2)}ms`);
-        console.log(`   Max: ${max.toFixed(2)}ms`);
-        console.log('');
+        console.info(`${test.name}:`);
+        console.info(`   Average: ${avg.toFixed(2)}ms`);
+        console.info(`   Min: ${min.toFixed(2)}ms`);
+        console.info(`   Max: ${max.toFixed(2)}ms`);
+        console.info('');
       }
     }
   }
@@ -302,15 +302,15 @@ class EnvironmentOptimizer {
     ];
 
     this.getBatchEnv(criticalVars);
-    console.log(`Preloaded ${criticalVars.length} critical environment variables`);
+    console.info(`Preloaded ${criticalVars.length} critical environment variables`);
   }
 
   /**
    * Benchmark environment variable performance
    */
   static async benchmarkEnvAccess(): Promise<void> {
-    console.log('🌍 ENVIRONMENT VARIABLE BENCHMARK');
-    console.log('='.repeat(50));
+    console.info('🌍 ENVIRONMENT VARIABLE BENCHMARK');
+    console.info('='.repeat(50));
 
     const testVar = 'PATH';
     const iterations = 10000;
@@ -330,10 +330,10 @@ class EnvironmentOptimizer {
     }
     const optimizedTime = performance.now() - optimizedStart;
 
-    console.log(`Standard access (${iterations} iterations): ${standardTime.toFixed(2)}ms`);
-    console.log(`Optimized access (${iterations} iterations): ${optimizedTime.toFixed(2)}ms`);
-    console.log(`Improvement: ${(standardTime / optimizedTime).toFixed(2)}x faster`);
-    console.log('');
+    console.info(`Standard access (${iterations} iterations): ${standardTime.toFixed(2)}ms`);
+    console.info(`Optimized access (${iterations} iterations): ${optimizedTime.toFixed(2)}ms`);
+    console.info(`Improvement: ${(standardTime / optimizedTime).toFixed(2)}x faster`);
+    console.info('');
   }
 }
 
@@ -362,7 +362,7 @@ class ServerOptimizer {
 
           if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
             const responseTime = performance.now() - start;
-            console.log(`Cache hit in ${responseTime.toFixed(2)}ms`);
+            console.info(`Cache hit in ${responseTime.toFixed(2)}ms`);
             return new Response(JSON.stringify(cached.data), {
               headers: { 'Content-Type': 'application/json' },
             });
@@ -384,7 +384,7 @@ class ServerOptimizer {
             });
 
           const responseTime = performance.now() - start;
-          console.log(`Response generated in ${responseTime.toFixed(2)}ms`);
+          console.info(`Response generated in ${responseTime.toFixed(2)}ms`);
 
           return new Response(JSON.stringify(data), {
             headers: {
@@ -394,7 +394,7 @@ class ServerOptimizer {
           });
         } catch (error) {
           const responseTime = performance.now() - start;
-          console.log(`Error in ${responseTime.toFixed(2)}ms: ${error.message}`);
+          console.info(`Error in ${responseTime.toFixed(2)}ms: ${error.message}`);
 
           return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
             status: 500,
@@ -405,7 +405,7 @@ class ServerOptimizer {
     });
 
     this.server = server;
-    console.log(`Optimized server running on port ${port}`);
+    console.info(`Optimized server running on port ${port}`);
     return server;
   }
 
@@ -413,8 +413,8 @@ class ServerOptimizer {
    * Benchmark server performance
    */
   static async benchmarkServer(): Promise<void> {
-    console.log('🌐 SERVER PERFORMANCE BENCHMARK');
-    console.log('='.repeat(50));
+    console.info('🌐 SERVER PERFORMANCE BENCHMARK');
+    console.info('='.repeat(50));
 
     const server = this.createOptimizedServer(3001);
 
@@ -438,7 +438,7 @@ class ServerOptimizer {
           await response.text();
           times.push(performance.now() - start);
         } catch (error) {
-          console.log(`❌ Request failed: ${error.message}`);
+          console.info(`❌ Request failed: ${error.message}`);
         }
       }
 
@@ -447,11 +447,11 @@ class ServerOptimizer {
         const min = Math.min(...times);
         const max = Math.max(...times);
 
-        console.log(`${url}:`);
-        console.log(`   Average: ${avg.toFixed(2)}ms`);
-        console.log(`   Min: ${min.toFixed(2)}ms`);
-        console.log(`   Max: ${max.toFixed(2)}ms`);
-        console.log('');
+        console.info(`${url}:`);
+        console.info(`   Average: ${avg.toFixed(2)}ms`);
+        console.info(`   Min: ${min.toFixed(2)}ms`);
+        console.info(`   Max: ${max.toFixed(2)}ms`);
+        console.info('');
       }
     }
 
@@ -464,7 +464,7 @@ class ServerOptimizer {
    */
   static clearCache(): void {
     this.responseCache.clear();
-    console.log('Server response cache cleared');
+    console.info('Server response cache cleared');
   }
 }
 
@@ -474,28 +474,28 @@ class ServerOptimizer {
 
 class OptimizationRunner {
   static async runAllOptimizations(): Promise<void> {
-    console.log('🔧 PERFORMANCE OPTIMIZATION SUITE');
-    console.log('='.repeat(60));
-    console.log('Addressing critical performance bottlenecks...\n');
+    console.info('🔧 PERFORMANCE OPTIMIZATION SUITE');
+    console.info('='.repeat(60));
+    console.info('Addressing critical performance bottlenecks...\n');
 
     try {
       // 1. Environment Variable Optimization
-      console.log('1️⃣ Optimizing Environment Variable Access...');
+      console.info('1️⃣ Optimizing Environment Variable Access...');
       await EnvironmentOptimizer.benchmarkEnvAccess();
 
       // 2. Spawn Performance Optimization
-      console.log('2️⃣ Optimizing Spawn Performance...');
+      console.info('2️⃣ Optimizing Spawn Performance...');
       await SpawnOptimizer.benchmarkSpawn();
 
       // 3. Server Performance Optimization
-      console.log('3️⃣ Optimizing Server Performance...');
+      console.info('3️⃣ Optimizing Server Performance...');
       await ServerOptimizer.benchmarkServer();
 
-      console.log('✅ All optimizations completed!');
-      console.log('\n🎯 Expected Improvements:');
-      console.log('   • spawnSync: 21x → 2-3x faster');
-      console.log('   • Environment vars: 7x → 1-2x faster');
-      console.log('   • Server response: 3.3x → <1x faster');
+      console.info('✅ All optimizations completed!');
+      console.info('\n🎯 Expected Improvements:');
+      console.info('   • spawnSync: 21x → 2-3x faster');
+      console.info('   • Environment vars: 7x → 1-2x faster');
+      console.info('   • Server response: 3.3x → <1x faster');
     } catch (error) {
       console.error('❌ Optimization failed:', error);
       process.exit(1);

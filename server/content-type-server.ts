@@ -319,12 +319,12 @@ const response = await fetch('/api/endpoint', {
   <div class="code-block">
     <pre><code>// From Bun documentation: ${BUN_DOCS.BASE}/runtime/networking/fetch
 const response = await fetch('${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}');
-console.log(response.status); // => 200
+console.info(response.status); // => 200
 
 // Handle binary response
 const arrayBuffer = await response.arrayBuffer();
 const uint8Array = new Uint8Array(arrayBuffer);
-console.log('Received', uint8Array.length, 'bytes');</code></pre>
+console.info('Received', uint8Array.length, 'bytes');</code></pre>
   </div>
   
   <h2>Response Content-Type Handling</h2>
@@ -472,5 +472,5 @@ const response = await fetch('http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_
   });
 }
 
-console.log(`📨 Content-Type Server running on http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT}`);
-console.log(`📚 Documentation: ${BUN_DOCS.BASE}/runtime/networking/fetch#content-type-handling`);
+console.info(`📨 Content-Type Server running on http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT}`);
+console.info(`📚 Documentation: ${BUN_DOCS.BASE}/runtime/networking/fetch#content-type-handling`);

@@ -68,7 +68,7 @@ describe("WebSocket Performance Tests", () => {
             const metrics = server.getPerformanceMetrics();
             expect(metrics.averageProcessingTime).toBeLessThan(0.1); // Sub-millisecond average
 
-            console.log(`🚀 Processed ${messageCount} messages in ${duration.toFixed(2)}ms (${throughput.toFixed(0)} msg/sec)`);
+            console.info(`🚀 Processed ${messageCount} messages in ${duration.toFixed(2)}ms (${throughput.toFixed(0)} msg/sec)`);
         });
 
         test("handles large message payloads efficiently", async () => {
@@ -91,7 +91,7 @@ describe("WebSocket Performance Tests", () => {
             const throughput = (largeMessages.length * avgMessageSize) / (duration / 1000);
             expect(throughput).toBeGreaterThan(100000); // At least 100KB/sec processing
 
-            console.log(`📊 Processed ${largeMessages.length} large messages (${avgMessageSize} bytes each) in ${duration.toFixed(2)}ms`);
+            console.info(`📊 Processed ${largeMessages.length} large messages (${avgMessageSize} bytes each) in ${duration.toFixed(2)}ms`);
         });
 
         test("maintains performance under sustained load", async () => {
@@ -124,7 +124,7 @@ describe("WebSocket Performance Tests", () => {
             expect(actualRate).toBeGreaterThan(targetRate * 0.8); // At least 80% of target rate
             expect(processedCount).toBeGreaterThan(totalMessages * 0.8);
 
-            console.log(`🔥 Sustained load: ${actualRate.toFixed(0)} msg/sec for ${actualDuration.toFixed(0)}ms`);
+            console.info(`🔥 Sustained load: ${actualRate.toFixed(0)} msg/sec for ${actualDuration.toFixed(0)}ms`);
         });
     });
 
@@ -170,7 +170,7 @@ describe("WebSocket Performance Tests", () => {
 
             expect(mockClients[0].sentMessages).toHaveLength(messageCount);
 
-            console.log(`📡 Broadcasted ${totalBroadcasts} messages to ${clientCount} clients in ${duration.toFixed(2)}ms (${broadcastThroughput.toFixed(0)} broadcasts/sec)`);
+            console.info(`📡 Broadcasted ${totalBroadcasts} messages to ${clientCount} clients in ${duration.toFixed(2)}ms (${broadcastThroughput.toFixed(0)} broadcasts/sec)`);
         });
 
         test("handles targeted message sending efficiently", async () => {
@@ -217,7 +217,7 @@ describe("WebSocket Performance Tests", () => {
                 expect(client.sentMessages).toHaveLength(messagesPerClient);
             });
 
-            console.log(`🎯 Sent ${totalMessages} targeted messages in ${duration.toFixed(2)}ms (${throughput.toFixed(0)} msg/sec)`);
+            console.info(`🎯 Sent ${totalMessages} targeted messages in ${duration.toFixed(2)}ms (${throughput.toFixed(0)} msg/sec)`);
         });
     });
 
@@ -256,7 +256,7 @@ describe("WebSocket Performance Tests", () => {
             expect(cyclesPerSecond).toBeGreaterThan(100); // At least 100 cycles/sec
             expect(duration).toBeLessThan(15000); // Should complete in under 15 seconds
 
-            console.log(`🔄 Completed ${cycleCount} connection cycles in ${duration.toFixed(2)}ms (${cyclesPerSecond.toFixed(0)} cycles/sec)`);
+            console.info(`🔄 Completed ${cycleCount} connection cycles in ${duration.toFixed(2)}ms (${cyclesPerSecond.toFixed(0)} cycles/sec)`);
         });
 
         test("manages large numbers of concurrent connections", async () => {
@@ -301,7 +301,7 @@ describe("WebSocket Performance Tests", () => {
 
             expect(broadcastDuration).toBeLessThan(100); // Should broadcast to 150 clients in under 100ms
 
-            console.log(`👥 Managed ${targetConnections} connections: ${connectionDuration.toFixed(2)}ms setup, ${broadcastDuration.toFixed(2)}ms broadcast`);
+            console.info(`👥 Managed ${targetConnections} connections: ${connectionDuration.toFixed(2)}ms setup, ${broadcastDuration.toFixed(2)}ms broadcast`);
         });
     });
 
@@ -329,7 +329,7 @@ describe("WebSocket Performance Tests", () => {
 
             expect(increaseMB).toBeLessThan(100); // Less than 100MB increase for 50k messages
 
-            console.log(`🧠 Memory usage: +${increaseMB.toFixed(2)}MB for ${messageCount} messages`);
+            console.info(`🧠 Memory usage: +${increaseMB.toFixed(2)}MB for ${messageCount} messages`);
         });
 
         test("efficiently handles large message payloads", async () => {
@@ -357,7 +357,7 @@ describe("WebSocket Performance Tests", () => {
             // Should handle 10MB of message data with reasonable memory overhead
             expect(increaseMB).toBeLessThan(50); // Less than 50MB overhead for 10MB of data
 
-            console.log(`📦 Large payload memory: +${increaseMB.toFixed(2)}MB for ~10MB of message data`);
+            console.info(`📦 Large payload memory: +${increaseMB.toFixed(2)}MB for ~10MB of message data`);
         });
 
         test("cleans up resources after client disconnection", async () => {
@@ -396,7 +396,7 @@ describe("WebSocket Performance Tests", () => {
             const cleanupEfficiency = 1 - (memoryAfterCleanup / memoryWithClientsIncrease);
             expect(cleanupEfficiency).toBeGreaterThan(0.8); // At least 80% cleanup
 
-            console.log(`🧹 Memory cleanup: ${cleanupEfficiency.toFixed(1)}% efficiency (${(memoryWithClientsIncrease / 1024 / 1024).toFixed(2)}MB -> ${(memoryAfterCleanup / 1024 / 1024).toFixed(2)}MB)`);
+            console.info(`🧹 Memory cleanup: ${cleanupEfficiency.toFixed(1)}% efficiency (${(memoryWithClientsIncrease / 1024 / 1024).toFixed(2)}MB -> ${(memoryAfterCleanup / 1024 / 1024).toFixed(2)}MB)`);
         });
     });
 
@@ -432,7 +432,7 @@ describe("WebSocket Performance Tests", () => {
 
             expect(totalDuration).toBeLessThan(10000); // Should complete in under 10 seconds
 
-            console.log(`🔥 Extreme volume: ${extremeMessageCount} messages in ${totalDuration.toFixed(2)}ms (avg batch: ${avgBatchTime.toFixed(2)}ms, max: ${maxBatchTime.toFixed(2)}ms)`);
+            console.info(`🔥 Extreme volume: ${extremeMessageCount} messages in ${totalDuration.toFixed(2)}ms (avg batch: ${avgBatchTime.toFixed(2)}ms, max: ${maxBatchTime.toFixed(2)}ms)`);
         });
 
         test("maintains performance under memory pressure", async () => {
@@ -461,7 +461,7 @@ describe("WebSocket Performance Tests", () => {
 
             expect(duration).toBeLessThan(3000); // Should still perform reasonably under pressure
 
-            console.log(`🏋️ Performance under pressure: ${duration.toFixed(2)}ms for ${messageCount} messages`);
+            console.info(`🏋️ Performance under pressure: ${duration.toFixed(2)}ms for ${messageCount} messages`);
         });
 
         test("handles concurrent operations efficiently", async () => {
@@ -495,7 +495,7 @@ describe("WebSocket Performance Tests", () => {
 
             expect(throughput).toBeGreaterThan(30000); // At least 30k ops/sec concurrent
 
-            console.log(`⚡ Concurrent operations: ${throughput.toFixed(0)} ops/sec (${totalOperations} total operations)`);
+            console.info(`⚡ Concurrent operations: ${throughput.toFixed(0)} ops/sec (${totalOperations} total operations)`);
         });
     });
 
@@ -537,11 +537,11 @@ describe("WebSocket Performance Tests", () => {
                 }
             });
 
-            console.log(`📊 Performance Benchmarks:`);
+            console.info(`📊 Performance Benchmarks:`);
             results.forEach(result => {
                 const benchmark = benchmarks.find(b => b.name === result.name);
                 const status = result.opsPerSec >= benchmark?.minOpsPerSec ? '✅' : '❌';
-                console.log(`  ${result.name}: ${result.opsPerSec.toFixed(0)} ops/sec ${status}`);
+                console.info(`  ${result.name}: ${result.opsPerSec.toFixed(0)} ops/sec ${status}`);
             });
         });
 
@@ -560,11 +560,11 @@ describe("WebSocket Performance Tests", () => {
             expect(report.connectionMetrics).toBeDefined();
             expect(report.performanceAlerts).toBeDefined();
 
-            console.log(`📈 Performance Report:`);
-            console.log(`  Messages processed: ${report.totalMessagesProcessed}`);
-            console.log(`  Avg processing time: ${report.averageProcessingTime.toFixed(3)}ms`);
-            console.log(`  Throughput: ${report.messagesPerSecond.toFixed(0)} msg/sec`);
-            console.log(`  Peak memory: ${(report.peakMemoryUsage / 1024 / 1024).toFixed(2)}MB`);
+            console.info(`📈 Performance Report:`);
+            console.info(`  Messages processed: ${report.totalMessagesProcessed}`);
+            console.info(`  Avg processing time: ${report.averageProcessingTime.toFixed(3)}ms`);
+            console.info(`  Throughput: ${report.messagesPerSecond.toFixed(0)} msg/sec`);
+            console.info(`  Peak memory: ${(report.peakMemoryUsage / 1024 / 1024).toFixed(2)}MB`);
         });
     });
 });

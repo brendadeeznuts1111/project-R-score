@@ -66,17 +66,17 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  console.log(`🚀 Starting ${type} release workflow...\n`);
-  console.log(`   Registry: ${REGISTRY_URL}`);
-  console.log(`   R2 Store: ${R2_BUCKET_URL}\n`);
+  console.info(`🚀 Starting ${type} release workflow...\n`);
+  console.info(`   Registry: ${REGISTRY_URL}`);
+  console.info(`   R2 Store: ${R2_BUCKET_URL}\n`);
 
   const steps = getReleaseSteps(type);
 
   for (const step of steps) {
-    console.log(`📋 ${step.name}...`);
+    console.info(`📋 ${step.name}...`);
     try {
       await $`${{ raw: step.cmd }}`;
-      console.log(`   ✓ ${step.name} complete\n`);
+      console.info(`   ✓ ${step.name} complete\n`);
     } catch (error) {
       console.error(`   ✗ ${step.name} failed`);
       process.exit(1);
@@ -87,18 +87,18 @@ async function main(): Promise<void> {
   const pkg = await Bun.file("package.json").json();
   const version = pkg.version;
 
-  console.log(`\n✅ Release ${version} ready!`);
-  console.log(`\n📦 Package Info:`);
-  console.log(`   Name:    ${pkg.name}`);
-  console.log(`   Version: ${version}`);
-  console.log(`   Registry: ${REGISTRY_URL}`);
-  console.log(`\n🚀 Next steps:`);
-  console.log(`   1. Review the changes: git diff HEAD~1`);
-  console.log(`   2. Commit: git add -A && git commit -m "chore: release v${version}"`);
-  console.log(`   3. Tag: git tag -a v${version} -m "Release v${version}"`);
-  console.log(`   4. Push: git push && git push --tags`);
-  console.log(`   5. Publish: bun run pack:all && npm publish dist/packs/*.tgz --registry=${REGISTRY_URL}`);
-  console.log(`   6. Upload to R2: bun run r2:sync`);
+  console.info(`\n✅ Release ${version} ready!`);
+  console.info(`\n📦 Package Info:`);
+  console.info(`   Name:    ${pkg.name}`);
+  console.info(`   Version: ${version}`);
+  console.info(`   Registry: ${REGISTRY_URL}`);
+  console.info(`\n🚀 Next steps:`);
+  console.info(`   1. Review the changes: git diff HEAD~1`);
+  console.info(`   2. Commit: git add -A && git commit -m "chore: release v${version}"`);
+  console.info(`   3. Tag: git tag -a v${version} -m "Release v${version}"`);
+  console.info(`   4. Push: git push && git push --tags`);
+  console.info(`   5. Publish: bun run pack:all && npm publish dist/packs/*.tgz --registry=${REGISTRY_URL}`);
+  console.info(`   6. Upload to R2: bun run r2:sync`);
 }
 
 await main();

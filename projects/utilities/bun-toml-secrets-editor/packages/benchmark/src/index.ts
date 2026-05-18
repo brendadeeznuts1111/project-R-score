@@ -82,7 +82,7 @@ export class Benchmark {
 		name: string,
 		implementations: Record<string, () => void | Promise<void>>,
 	): Promise<void> {
-		console.log(colorize(`\nBenchmark: ${name}`, "bold"));
+		console.info(colorize(`\nBenchmark: ${name}`, "bold"));
 
 		for (const [implName, fn] of Object.entries(implementations)) {
 			await this.run(implName, fn);
@@ -136,7 +136,7 @@ export class Benchmark {
 			});
 		});
 
-		console.log(`\n${table.render()}`);
+		console.info(`\n${table.render()}`);
 	}
 
 	/**

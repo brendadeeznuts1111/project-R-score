@@ -366,7 +366,7 @@ function generateAnalysisHTML(): void {
   const outputPath = join(process.cwd(), 'docs', 'dependency-analysis.html');
   writeFileSync(outputPath, html);
 
-  console.log(`✅ Dependency analysis HTML report generated: ${outputPath}`);
+  console.info(`✅ Dependency analysis HTML report generated: ${outputPath}`);
 }
 
 // Run if called directly

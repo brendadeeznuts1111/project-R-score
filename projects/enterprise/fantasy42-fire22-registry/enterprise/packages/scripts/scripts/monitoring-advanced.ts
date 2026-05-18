@@ -285,37 +285,37 @@ class AdvancedMonitoring {
   }
 
   public renderAdvancedMetrics(): void {
-    console.log('\n🔬 Advanced Monitoring Features\n');
-    console.log('═'.repeat(70));
+    console.info('\n🔬 Advanced Monitoring Features\n');
+    console.info('═'.repeat(70));
 
     // Anomaly Detection
-    console.log('\n📡 Anomaly Detection Systems');
-    console.log('─'.repeat(60));
+    console.info('\n📡 Anomaly Detection Systems');
+    console.info('─'.repeat(60));
     this.anomalyDetectors.forEach(detector => {
-      console.log(`  ✓ ${detector.name.padEnd(25)} Sensitivity: ${detector.sensitivity}`);
+      console.info(`  ✓ ${detector.name.padEnd(25)} Sensitivity: ${detector.sensitivity}`);
     });
 
     // Predictive Analytics
-    console.log('\n🔮 Predictive Analytics');
-    console.log('─'.repeat(60));
+    console.info('\n🔮 Predictive Analytics');
+    console.info('─'.repeat(60));
     this.predictions.forEach(prediction => {
       const trend =
         prediction.trend === 'increasing' ? '📈' : prediction.trend === 'decreasing' ? '📉' : '➡️';
 
-      console.log(
+      console.info(
         `  ${prediction.metric.padEnd(20)} Current: ${prediction.currentValue.toString().padEnd(5)} ` +
           `Predicted: ${prediction.predictedValue} ${trend} ` +
           `(${prediction.confidence}% confidence)`
       );
 
       if (prediction.alertThreshold && prediction.predictedValue > prediction.alertThreshold) {
-        console.log(`    ⚠️  Alert: Predicted to exceed threshold of ${prediction.alertThreshold}`);
+        console.info(`    ⚠️  Alert: Predicted to exceed threshold of ${prediction.alertThreshold}`);
       }
     });
 
     // SLA Monitoring
-    console.log('\n📊 SLA Compliance');
-    console.log('─'.repeat(60));
+    console.info('\n📊 SLA Compliance');
+    console.info('─'.repeat(60));
     this.slaTargets.forEach(sla => {
       const icon = sla.status === 'meeting' ? '✅' : sla.status === 'at_risk' ? '⚠️' : '❌';
       const color =
@@ -323,7 +323,7 @@ class AdvancedMonitoring {
 
       const compliance = ((sla.current / sla.target) * 100).toFixed(1);
 
-      console.log(
+      console.info(
         `  ${icon} ${sla.name.padEnd(25)} ` +
           `Target: ${sla.target} Current: ${sla.current} ` +
           `${color}(${compliance}% compliance)\x1b[0m`
@@ -331,20 +331,20 @@ class AdvancedMonitoring {
     });
 
     // Distributed Tracing
-    console.log('\n🔍 Distributed Tracing');
-    console.log('─'.repeat(60));
+    console.info('\n🔍 Distributed Tracing');
+    console.info('─'.repeat(60));
     this.traces.forEach(trace => {
       this.renderTraceTree(trace, 0);
     });
 
     // Custom Metrics
-    console.log('\n📐 Custom Metrics Collection');
-    console.log('─'.repeat(60));
-    console.log('  • Business Metrics: Revenue, User Activity, Conversion Rates');
-    console.log('  • Infrastructure: Container Health, Service Mesh Stats');
-    console.log('  • Application: Feature Flags, A/B Test Results');
-    console.log('  • Security: Failed Auth Attempts, API Key Usage');
-    console.log('  • Compliance: Data Retention, Audit Trail Completeness');
+    console.info('\n📐 Custom Metrics Collection');
+    console.info('─'.repeat(60));
+    console.info('  • Business Metrics: Revenue, User Activity, Conversion Rates');
+    console.info('  • Infrastructure: Container Health, Service Mesh Stats');
+    console.info('  • Application: Feature Flags, A/B Test Results');
+    console.info('  • Security: Failed Auth Attempts, API Key Usage');
+    console.info('  • Compliance: Data Retention, Audit Trail Completeness');
   }
 
   private renderTraceTree(span: TraceSpan, depth: number): void {
@@ -352,7 +352,7 @@ class AdvancedMonitoring {
     const icon = span.status === 'success' ? '✓' : '✗';
     const color = span.status === 'success' ? '\x1b[32m' : '\x1b[31m';
 
-    console.log(`  ${indent}${icon} ${span.operation} ${color}[${span.duration}ms]\x1b[0m`);
+    console.info(`  ${indent}${icon} ${span.operation} ${color}[${span.duration}ms]\x1b[0m`);
 
     span.children.forEach(child => {
       this.renderTraceTree(child, depth + 1);
@@ -374,10 +374,10 @@ const anomalies = monitor.detectAnomalies(sampleMetrics);
 monitor.renderAdvancedMetrics();
 
 if (anomalies.length > 0) {
-  console.log('\n🚨 Detected Anomalies');
-  console.log('─'.repeat(60));
-  anomalies.forEach(anomaly => console.log(anomaly));
+  console.info('\n🚨 Detected Anomalies');
+  console.info('─'.repeat(60));
+  anomalies.forEach(anomaly => console.info(anomaly));
 }
 
-console.log('\n' + '═'.repeat(70));
-console.log('\n✨ Advanced monitoring features demonstration complete!');
+console.info('\n' + '═'.repeat(70));
+console.info('\n✨ Advanced monitoring features demonstration complete!');

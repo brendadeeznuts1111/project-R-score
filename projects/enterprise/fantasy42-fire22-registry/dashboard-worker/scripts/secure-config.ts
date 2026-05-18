@@ -24,7 +24,7 @@ export class ConfigManager {
             name: key,
             value: value.toString(),
           });
-          console.log(`✓ Securely stored ${key}`);
+          console.info(`✓ Securely stored ${key}`);
           results[key] = true;
         } catch (error) {
           console.error(`✗ Failed to store ${key}:`, error);
@@ -93,7 +93,7 @@ export class ConfigManager {
       }
     }
 
-    console.log('✓ All credentials cleared from secure storage');
+    console.info('✓ All credentials cleared from secure storage');
   }
 
   async validateConfig(): Promise<{
@@ -140,7 +140,7 @@ if (import.meta.main) {
     configManager
       .clearConfig()
       .then(() => {
-        console.log('✅ Credentials cleared successfully');
+        console.info('✅ Credentials cleared successfully');
         process.exit(0);
       })
       .catch(error => {

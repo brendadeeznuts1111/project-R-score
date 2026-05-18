@@ -403,12 +403,12 @@ logInfo("@registry", "Local registry started", {
 });
 
 // Also log to console for visibility
-console.log(`🚀 Local registry running at http://localhost:4873`);
-console.log(`📊 Dashboard: http://localhost:4873/_dashboard`);
-console.log(`💻 Terminal: bun run registry/terminal/term.ts`);
-console.log(`📦 Publish: bun publish ./pkg --registry http://localhost:4873`);
-console.log(`⚙️  Config version: ${registry.config.version}`);
-console.log(`🔑 Features:`, registry.config.features);
+console.info(`🚀 Local registry running at http://localhost:4873`);
+console.info(`📊 Dashboard: http://localhost:4873/_dashboard`);
+console.info(`💻 Terminal: bun run registry/terminal/term.ts`);
+console.info(`📦 Publish: bun publish ./pkg --registry http://localhost:4873`);
+console.info(`⚙️  Config version: ${registry.config.version}`);
+console.info(`🔑 Features:`, registry.config.features);
 
 // Broadcast config updates to all WebSocket clients
 const wsClients = new Set<any>();

@@ -54,12 +54,12 @@ class AdminDashboardDeployer {
   }
 
   async deploy(): Promise<void> {
-    console.log('🚀 DEPLOYING ADMIN DASHBOARD TO CLOUDFLARE WORKERS');
-    console.log('='.repeat(60));
-    console.log(`📊 Environment: ${this.config.environment}`);
-    console.log(`🌐 Domain: ${this.config.domain}`);
-    console.log(`🏭 Worker: ${this.config.workerName}`);
-    console.log('');
+    console.info('🚀 DEPLOYING ADMIN DASHBOARD TO CLOUDFLARE WORKERS');
+    console.info('='.repeat(60));
+    console.info(`📊 Environment: ${this.config.environment}`);
+    console.info(`🌐 Domain: ${this.config.domain}`);
+    console.info(`🏭 Worker: ${this.config.workerName}`);
+    console.info('');
 
     try {
       await this.prerequisites();
@@ -69,10 +69,10 @@ class AdminDashboardDeployer {
       await this.verifyDeployment();
       await this.postDeployment();
 
-      console.log('');
-      console.log('✅ ADMIN DASHBOARD DEPLOYMENT SUCCESSFUL!');
-      console.log(`🌐 Available at: https://${this.config.domain}`);
-      console.log('');
+      console.info('');
+      console.info('✅ ADMIN DASHBOARD DEPLOYMENT SUCCESSFUL!');
+      console.info(`🌐 Available at: https://${this.config.domain}`);
+      console.info('');
     } catch (error) {
       console.error('❌ DEPLOYMENT FAILED:', error);
       process.exit(1);
@@ -80,12 +80,12 @@ class AdminDashboardDeployer {
   }
 
   private async prerequisites(): Promise<void> {
-    console.log('🔍 CHECKING PREREQUISITES...');
+    console.info('🔍 CHECKING PREREQUISITES...');
 
     // Check if Wrangler CLI is installed
     try {
       execSync('wrangler --version', { stdio: 'pipe' });
-      console.log('✅ Wrangler CLI found');
+      console.info('✅ Wrangler CLI found');
     } catch (error) {
       console.error('❌ Wrangler CLI not found. Please install it with: npm install -g wrangler');
       throw error;
@@ -94,7 +94,7 @@ class AdminDashboardDeployer {
     // Check if user is logged in to Cloudflare
     try {
       execSync('wrangler whoami', { stdio: 'pipe' });
-      console.log('✅ Cloudflare authentication verified');
+      console.info('✅ Cloudflare authentication verified');
     } catch (error) {
       console.error('❌ Not logged in to Cloudflare. Please run: wrangler auth login');
       throw error;
@@ -107,84 +107,84 @@ class AdminDashboardDeployer {
     try {
       readFileSync(workerFile);
       readFileSync(wranglerFile);
-      console.log('✅ Source files verified');
+      console.info('✅ Source files verified');
     } catch (error) {
       console.error('❌ Source files not found');
       throw error;
     }
 
-    console.log('✅ Prerequisites check completed\n');
+    console.info('✅ Prerequisites check completed\n');
   }
 
   private async setupKVNamespace(): Promise<void> {
-    console.log('📦 SETTING UP KV NAMESPACE...');
+    console.info('📦 SETTING UP KV NAMESPACE...');
 
     if (!this.config.kvNamespace) {
-      console.log('⏭️ Skipping KV namespace setup');
+      console.info('⏭️ Skipping KV namespace setup');
       return;
     }
 
     try {
       // Create KV namespace if it doesn't exist
-      console.log(`🔧 Creating KV namespace: ${this.config.kvNamespace}`);
+      console.info(`🔧 Creating KV namespace: ${this.config.kvNamespace}`);
       
       const createCommand = `wrangler kv:namespace create "${this.config.kvNamespace}" --env ${this.config.environment}`;
       execSync(createCommand, { stdio: 'pipe' });
       
-      console.log('✅ KV namespace created/verified');
+      console.info('✅ KV namespace created/verified');
     } catch (error) {
       // KV namespace might already exist, which is fine
-      console.log('⚠️ KV namespace might already exist');
+      console.info('⚠️ KV namespace might already exist');
     }
 
-    console.log('✅ KV namespace setup completed\n');
+    console.info('✅ KV namespace setup completed\n');
   }
 
   private async setupD1Database(): Promise<void> {
-    console.log('🗄️ SETTING UP D1 DATABASE...');
+    console.info('🗄️ SETTING UP D1 DATABASE...');
 
     if (!this.config.d1Database) {
-      console.log('⏭️ Skipping D1 database setup');
+      console.info('⏭️ Skipping D1 database setup');
       return;
     }
 
     try {
       // Create D1 database if it doesn't exist
-      console.log(`🔧 Creating D1 database: ${this.config.d1Database}`);
+      console.info(`🔧 Creating D1 database: ${this.config.d1Database}`);
       
       const createCommand = `wrangler d1 create "${this.config.d1Database}"`;
       execSync(createCommand, { stdio: 'pipe' });
       
-      console.log('✅ D1 database created/verified');
+      console.info('✅ D1 database created/verified');
     } catch (error) {
       // D1 database might already exist, which is fine
-      console.log('⚠️ D1 database might already exist');
+      console.info('⚠️ D1 database might already exist');
     }
 
-    console.log('✅ D1 database setup completed\n');
+    console.info('✅ D1 database setup completed\n');
   }
 
   private async deployWorker(): Promise<void> {
-    console.log('🚀 DEPLOYING WORKER...');
+    console.info('🚀 DEPLOYING WORKER...');
 
     try {
       // Deploy the worker
       const deployCommand = `wrangler deploy --config src/registry/admin-wrangler.toml --env ${this.config.environment}`;
-      console.log(`🔧 Running: ${deployCommand}`);
+      console.info(`🔧 Running: ${deployCommand}`);
       
       execSync(deployCommand, { stdio: 'inherit' });
       
-      console.log('✅ Worker deployed successfully');
+      console.info('✅ Worker deployed successfully');
     } catch (error) {
       console.error('❌ Worker deployment failed');
       throw error;
     }
 
-    console.log('✅ Worker deployment completed\n');
+    console.info('✅ Worker deployment completed\n');
   }
 
   private async verifyDeployment(): Promise<void> {
-    console.log('🔍 VERIFYING DEPLOYMENT...');
+    console.info('🔍 VERIFYING DEPLOYMENT...');
 
     try {
       // Wait a moment for the deployment to propagate
@@ -192,29 +192,29 @@ class AdminDashboardDeployer {
 
       // Test the deployed worker
       const testUrl = `https://${this.config.domain}/health`;
-      console.log(`🔧 Testing: ${testUrl}`);
+      console.info(`🔧 Testing: ${testUrl}`);
 
       const response = await fetch(testUrl);
       
       if (response.ok) {
-        console.log('✅ Health check passed');
+        console.info('✅ Health check passed');
       } else {
         throw new Error(`Health check failed with status: ${response.status}`);
       }
 
       // Test the main dashboard
       const dashboardUrl = `https://${this.config.domain}`;
-      console.log(`🔧 Testing dashboard: ${dashboardUrl}`);
+      console.info(`🔧 Testing dashboard: ${dashboardUrl}`);
 
       const dashboardResponse = await fetch(dashboardUrl);
       
       if (dashboardResponse.ok) {
-        console.log('✅ Dashboard test passed');
+        console.info('✅ Dashboard test passed');
       } else {
         throw new Error(`Dashboard test failed with status: ${dashboardResponse.status}`);
       }
 
-      console.log('✅ Deployment verification completed\n');
+      console.info('✅ Deployment verification completed\n');
     } catch (error) {
       console.error('❌ Deployment verification failed');
       throw error;
@@ -222,7 +222,7 @@ class AdminDashboardDeployer {
   }
 
   private async postDeployment(): Promise<void> {
-    console.log('📋 POST-DEPLOYMENT TASKS...');
+    console.info('📋 POST-DEPLOYMENT TASKS...');
 
     // Generate deployment report
     const report = {
@@ -258,35 +258,35 @@ class AdminDashboardDeployer {
     // Save deployment report
     const reportPath = join(process.cwd(), `admin-dashboard-deployment-${this.config.environment}-${Date.now()}.json`);
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`📊 Deployment report saved to: ${reportPath}`);
+    console.info(`📊 Deployment report saved to: ${reportPath}`);
 
-    console.log('');
-    console.log('🎉 ADMIN DASHBOARD IS LIVE!');
-    console.log('='.repeat(40));
-    console.log(`🌐 Dashboard: https://${this.config.domain}`);
-    console.log(`🔍 Health Check: https://${this.config.domain}/health`);
-    console.log(`📊 API Status: https://${this.config.domain}/api/system/status`);
-    console.log('');
-    console.log('🚀 Features Available:');
-    console.log('  ✅ Global CDN (275+ edge locations)');
-    console.log('  ✅ Real-time domain monitoring');
-    console.log('  ✅ DNS record management');
-    console.log('  ✅ SSL certificate tracking');
-    console.log('  ✅ Performance analytics');
-    console.log('  ✅ System logs and monitoring');
-    console.log('  ✅ Administrative controls');
-    console.log('');
+    console.info('');
+    console.info('🎉 ADMIN DASHBOARD IS LIVE!');
+    console.info('='.repeat(40));
+    console.info(`🌐 Dashboard: https://${this.config.domain}`);
+    console.info(`🔍 Health Check: https://${this.config.domain}/health`);
+    console.info(`📊 API Status: https://${this.config.domain}/api/system/status`);
+    console.info('');
+    console.info('🚀 Features Available:');
+    console.info('  ✅ Global CDN (275+ edge locations)');
+    console.info('  ✅ Real-time domain monitoring');
+    console.info('  ✅ DNS record management');
+    console.info('  ✅ SSL certificate tracking');
+    console.info('  ✅ Performance analytics');
+    console.info('  ✅ System logs and monitoring');
+    console.info('  ✅ Administrative controls');
+    console.info('');
   }
 
   async rollback(): Promise<void> {
-    console.log('🔄 ROLLING BACK DEPLOYMENT...');
+    console.info('🔄 ROLLING BACK DEPLOYMENT...');
 
     try {
       // Get previous deployment info
       const rollbackCommand = `wrangler rollback --config src/registry/admin-wrangler.toml --env ${this.config.environment}`;
       execSync(rollbackCommand, { stdio: 'inherit' });
       
-      console.log('✅ Rollback completed successfully');
+      console.info('✅ Rollback completed successfully');
     } catch (error) {
       console.error('❌ Rollback failed');
       throw error;
@@ -294,7 +294,7 @@ class AdminDashboardDeployer {
   }
 
   async getLogs(): Promise<void> {
-    console.log('📋 FETCHING WORKER LOGS...');
+    console.info('📋 FETCHING WORKER LOGS...');
 
     try {
       const logsCommand = `wrangler tail --config src/registry/admin-wrangler.toml --env ${this.config.environment}`;
@@ -331,26 +331,26 @@ async function main() {
         await deployer.getLogs();
         break;
       case 'status':
-        console.log(`📊 Admin Dashboard Status (${environment}):`);
-        console.log(`🌐 Domain: ${deployer.config.domain}`);
-        console.log(`🏭 Worker: ${deployer.config.workerName}`);
-        console.log(`🔗 URL: https://${deployer.config.domain}`);
+        console.info(`📊 Admin Dashboard Status (${environment}):`);
+        console.info(`🌐 Domain: ${deployer.config.domain}`);
+        console.info(`🏭 Worker: ${deployer.config.workerName}`);
+        console.info(`🔗 URL: https://${deployer.config.domain}`);
         break;
       default:
-        console.log('🚀 Admin Dashboard Deployment Script');
-        console.log('='.repeat(40));
-        console.log('');
-        console.log('Usage:');
-        console.log('  bun run deploy-admin-dashboard.ts deploy [environment]');
-        console.log('  bun run deploy-admin-dashboard.ts rollback [environment]');
-        console.log('  bun run deploy-admin-dashboard.ts logs [environment]');
-        console.log('  bun run deploy-admin-dashboard.ts status [environment]');
-        console.log('');
-        console.log('Environments:');
-        console.log('  development - admin-dev.factory-wager.com');
-        console.log('  staging     - admin-staging.factory-wager.com');
-        console.log('  production  - admin.factory-wager.com');
-        console.log('');
+        console.info('🚀 Admin Dashboard Deployment Script');
+        console.info('='.repeat(40));
+        console.info('');
+        console.info('Usage:');
+        console.info('  bun run deploy-admin-dashboard.ts deploy [environment]');
+        console.info('  bun run deploy-admin-dashboard.ts rollback [environment]');
+        console.info('  bun run deploy-admin-dashboard.ts logs [environment]');
+        console.info('  bun run deploy-admin-dashboard.ts status [environment]');
+        console.info('');
+        console.info('Environments:');
+        console.info('  development - admin-dev.factory-wager.com');
+        console.info('  staging     - admin-staging.factory-wager.com');
+        console.info('  production  - admin.factory-wager.com');
+        console.info('');
         break;
     }
   } catch (error) {

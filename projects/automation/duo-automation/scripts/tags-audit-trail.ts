@@ -151,7 +151,7 @@ class AuditTrailManager {
    * Generate audit entry for current state
    */
   async generateAudit(): Promise<AuditEntry> {
-    console.log('🔐 Generating audit trail...');
+    console.info('🔐 Generating audit trail...');
 
     await this.ensureDirectories();
 
@@ -160,14 +160,14 @@ class AuditTrailManager {
     const timestamp = new Date().toISOString();
 
     const repoUrl = this.getRepoUrl();
-    console.log(`📋 Commit: ${commitLink(commit, repoUrl)}`);
-    console.log(`👤 Author: ${author.name} <${author.email}>`);
+    console.info(`📋 Commit: ${commitLink(commit, repoUrl)}`);
+    console.info(`👤 Author: ${author.name} <${author.email}>`);
 
     // Collect all tags using AI tagger
     const aiTagger = new AITagger();
     const tags: Array<{ filePath: string; tags: TagSet }> = [];
 
-    console.log('📁 Scanning files for tags...');
+    console.info('📁 Scanning files for tags...');
 
     const files = await this.getAllTypeScriptFiles('.');
     let processed = 0;
@@ -179,18 +179,18 @@ class AuditTrailManager {
         processed++;
 
         if (processed % 50 === 0) {
-          console.log(`   Processed ${processed}/${files.length} files...`);
+          console.info(`   Processed ${processed}/${files.length} files...`);
         }
       } catch {
         // Skip files that can't be tagged
       }
     }
 
-    console.log(`✅ Tagged ${tags.length} files`);
+    console.info(`✅ Tagged ${tags.length} files`);
 
     // Generate Merkle root
     const merkleRoot = MerkleTree.createRoot(tags);
-    console.log(`🌳 Merkle root: ${merkleRoot}`);
+    console.info(`🌳 Merkle root: ${merkleRoot}`);
 
     const entry: AuditEntry = {
       commit,
@@ -205,11 +205,11 @@ class AuditTrailManager {
     // Write audit file
     const auditFilePath = join(this.auditDir, `${commit}.json`);
     await writeFile(auditFilePath, JSON.stringify(entry, null, 2));
-    console.log(`📄 Audit file: ${fileLink(auditFilePath)}`);
+    console.info(`📄 Audit file: ${fileLink(auditFilePath)}`);
 
     // Append to roots file
     await appendFile(this.rootsFile, `${commit}:${merkleRoot}:${timestamp}\n`);
-    console.log(`📝 Root appended to: ${fileLink(this.rootsFile)}`);
+    console.info(`📝 Root appended to: ${fileLink(this.rootsFile)}`);
 
     return entry;
   }
@@ -218,7 +218,7 @@ class AuditTrailManager {
    * Verify audit entry integrity
    */
   async verify(commitSha?: string): Promise<VerificationResult[]> {
-    console.log('🔍 Verifying audit trail integrity...');
+    console.info('🔍 Verifying audit trail integrity...');
 
     await this.ensureDirectories();
 
@@ -234,7 +234,7 @@ class AuditTrailManager {
         const files = await readdir(this.auditDir);
         const auditFiles = files.filter(f => f.endsWith('.json'));
 
-        console.log(`📋 Found ${auditFiles.length} audit entries to verify`);
+        console.info(`📋 Found ${auditFiles.length} audit entries to verify`);
 
         for (const file of auditFiles) {
           const commit = file.replace('.json', '');
@@ -242,7 +242,7 @@ class AuditTrailManager {
           results.push(result);
         }
       } catch {
-        console.log('⚠️ No audit entries found');
+        console.info('⚠️ No audit entries found');
       }
     }
 
@@ -250,16 +250,16 @@ class AuditTrailManager {
     const valid = results.filter(r => r.valid).length;
     const invalid = results.filter(r => !r.valid).length;
 
-    console.log('\n📊 VERIFICATION SUMMARY');
-    console.log('═'.repeat(50));
-    console.log(`✅ Valid:   ${valid}`);
-    console.log(`❌ Invalid: ${invalid}`);
-    console.log('═'.repeat(50));
+    console.info('\n📊 VERIFICATION SUMMARY');
+    console.info('═'.repeat(50));
+    console.info(`✅ Valid:   ${valid}`);
+    console.info(`❌ Invalid: ${invalid}`);
+    console.info('═'.repeat(50));
 
     if (invalid === 0) {
-      console.log('✅ All audit entries verified successfully');
+      console.info('✅ All audit entries verified successfully');
     } else {
-      console.log('⚠️ Some audit entries failed verification');
+      console.info('⚠️ Some audit entries failed verification');
     }
 
     return results;
@@ -281,7 +281,7 @@ class AuditTrailManager {
 
       const status = valid ? '✅' : '❌';
       const commitDisplay = commitLink(commit.slice(0, 8), repoUrl);
-      console.log(`${status} ${commitDisplay}: ${valid ? 'Valid' : 'INVALID - Merkle root mismatch'}`);
+      console.info(`${status} ${commitDisplay}: ${valid ? 'Valid' : 'INVALID - Merkle root mismatch'}`);
 
       return {
         valid,
@@ -292,7 +292,7 @@ class AuditTrailManager {
       };
     } catch (error) {
       const commitDisplay = commitLink(commit.slice(0, 8), repoUrl);
-      console.log(`❌ ${commitDisplay}: Audit file not found or corrupted`);
+      console.info(`❌ ${commitDisplay}: Audit file not found or corrupted`);
 
       return {
         valid: false,
@@ -308,8 +308,8 @@ class AuditTrailManager {
    * Show audit history
    */
   async showHistory(): Promise<void> {
-    console.log('📜 Audit Trail History');
-    console.log('═'.repeat(70));
+    console.info('📜 Audit Trail History');
+    console.info('═'.repeat(70));
 
     const repoUrl = this.getRepoUrl();
 
@@ -318,24 +318,24 @@ class AuditTrailManager {
       const lines = content.trim().split('\n').filter(l => l);
 
       if (lines.length === 0) {
-        console.log('No audit entries found');
+        console.info('No audit entries found');
         return;
       }
 
-      console.log(`| ${'Commit'.padEnd(12)} | ${'Merkle Root'.padEnd(20)} | ${'Timestamp'.padEnd(25)} |`);
-      console.log(`|${'-'.repeat(14)}|${'-'.repeat(22)}|${'-'.repeat(27)}|`);
+      console.info(`| ${'Commit'.padEnd(12)} | ${'Merkle Root'.padEnd(20)} | ${'Timestamp'.padEnd(25)} |`);
+      console.info(`|${'-'.repeat(14)}|${'-'.repeat(22)}|${'-'.repeat(27)}|`);
 
       for (const line of lines.slice(-20)) { // Show last 20
         const [commit, root, timestamp] = line.split(':');
         const commitDisplay = commitLink(commit.slice(0, 12), repoUrl);
-        console.log(`| ${commitDisplay.padEnd(12)} | ${root.slice(0, 20).padEnd(20)} | ${timestamp.padEnd(25)} |`);
+        console.info(`| ${commitDisplay.padEnd(12)} | ${root.slice(0, 20).padEnd(20)} | ${timestamp.padEnd(25)} |`);
       }
 
-      console.log('═'.repeat(70));
-      console.log(`Total entries: ${lines.length}`);
-      console.log(`📄 Roots file: ${fileLink(this.rootsFile)}`);
+      console.info('═'.repeat(70));
+      console.info(`Total entries: ${lines.length}`);
+      console.info(`📄 Roots file: ${fileLink(this.rootsFile)}`);
     } catch {
-      console.log('No audit history found. Run --audit to create first entry.');
+      console.info('No audit history found. Run --audit to create first entry.');
     }
   }
 
@@ -390,7 +390,7 @@ async function main() {
 
     case '--help':
     default:
-      console.log(`
+      console.info(`
 🔐 Tags Audit Trail v4.1
 
 Git-backed immutable audit trail with SHA-256 Merkle tree verification.

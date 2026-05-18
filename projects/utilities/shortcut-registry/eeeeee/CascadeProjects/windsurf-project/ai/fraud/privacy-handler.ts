@@ -157,7 +157,7 @@ export class GhostShield {
 		// Update statistics
 		this.updateServiceStats(serviceFingerprint.service);
 
-		console.log(
+		console.info(
 			`👻 Ghost Shield: ${serviceFingerprint.service} detected | De-weighting: ${deWeightingResult.deWeightingApplied ? "YES" : "NO"}`,
 		);
 

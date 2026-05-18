@@ -101,7 +101,7 @@ export class ModelTrainingSystem {
       return;
     }
 
-    console.log('🚀 Starting continuous model training for user:', userId);
+    console.info('🚀 Starting continuous model training for user:', userId);
 
     this.isTraining = true;
 
@@ -122,7 +122,7 @@ export class ModelTrainingSystem {
   stopContinuousTraining(): void {
     if (!this.isTraining) return;
 
-    console.log('⏹️ Stopping continuous model training');
+    console.info('⏹️ Stopping continuous model training');
 
     if (this.trainingInterval) {
       clearInterval(this.trainingInterval);
@@ -607,7 +607,7 @@ export class ModelTrainingSystem {
    * Log training event
    */
   private logTrainingEvent(event: string, data: any): void {
-    console.log(`🎓 Training Event: ${event}`, data);
+    console.info(`🎓 Training Event: ${event}`, data);
 
     // Store in training history
     this.trainingHistory.push({

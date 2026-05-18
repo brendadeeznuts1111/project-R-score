@@ -6,16 +6,16 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.hex("#FF6B35").bold(`
+console.info(chalk.hex("#FF6B35").bold(`
 ╔══════════════════════════════════════════════╗
 ║     🖥️  NEBULA-FLOW™ WEB CONTROL CENTER      ║
 ║        Complete Ecosystem Oversight          ║
 ╚══════════════════════════════════════════════╝
 `));
 
-console.log(chalk.blue.bold("🌐 Web Interface Features:"));
+console.info(chalk.blue.bold("🌐 Web Interface Features:"));
 
-console.log(`
+console.info(`
 ${chalk.green("✅")} Modern Dark UI        - Nebula-themed design
 ${chalk.green("✅")} Real-time Dashboards   - Live metrics & charts
 ${chalk.green("✅")} Device Commander      - Full fleet management
@@ -28,9 +28,9 @@ ${chalk.green("✅")} API Integration       - RESTful backend
 ${chalk.green("✅")} Interactive Charts     - Chart.js visualizations
 `);
 
-console.log(chalk.cyan.bold("🎮 Interface Sections:"));
+console.info(chalk.cyan.bold("🎮 Interface Sections:"));
 
-console.log(`
+console.info(`
 ${chalk.yellow("1. ⚡ LIGHTNING DASHBOARD")}
    • Real-time BTC balances (Local/Remote/Pending)
    • Daily yield & profit tracking
@@ -69,9 +69,9 @@ ${chalk.yellow("5. 📋 SYSTEM LOGS")}
    • Auto-cleanup (last 100 entries)
 `);
 
-console.log(chalk.magenta.bold("⌨️ Keyboard Shortcuts:"));
+console.info(chalk.magenta.bold("⌨️ Keyboard Shortcuts:"));
 
-console.log(`
+console.info(`
 ┌─────────────────────────────────────┐
 │ Key │ Section              │ Action │
 ├─────┼──────────────────────┼────────┤
@@ -88,9 +88,9 @@ console.log(`
 └─────────────────────────────────────┘
 `);
 
-console.log(chalk.green.bold("🚀 Launch Commands:"));
+console.info(chalk.green.bold("🚀 Launch Commands:"));
 
-console.log(`
+console.info(`
 // Start the web control center
 ${chalk.gray("$")} bun run web-app
 
@@ -101,9 +101,9 @@ ${chalk.gray("// Navigate to: http://localhost:3000")}
 ${chalk.gray("$")} cd web-app && bun run server.js
 `);
 
-console.log(chalk.blue.bold("🔧 Technical Stack:"));
+console.info(chalk.blue.bold("🔧 Technical Stack:"));
 
-console.log(`
+console.info(`
 ${chalk.cyan("Frontend:")}
 • HTML5 - Semantic markup
 • CSS3 - Modern dark theme, animations, responsive
@@ -123,9 +123,9 @@ ${chalk.cyan("Architecture:")}
 • Progressive enhancement
 `);
 
-console.log(chalk.yellow.bold("🎯 Key Capabilities:"));
+console.info(chalk.yellow.bold("🎯 Key Capabilities:"));
 
-console.log(`
+console.info(`
 ${chalk.green("Real-time Monitoring:")}
 • Live Lightning Network metrics
 • Device fleet status updates
@@ -145,9 +145,9 @@ ${chalk.green("Comprehensive Oversight:")}
 • Automated alerting system
 `);
 
-console.log(chalk.magenta.bold("📱 Responsive Design:"));
+console.info(chalk.magenta.bold("📱 Responsive Design:"));
 
-console.log(`
+console.info(`
 ${chalk.cyan("Desktop (>1024px):")}
 • Full feature set with charts
 • Multi-column layouts
@@ -164,9 +164,9 @@ ${chalk.cyan("Mobile (<768px):")}
 • Simplified interactions
 `);
 
-console.log(chalk.red.bold("🔒 Security & Privacy:"));
+console.info(chalk.red.bold("🔒 Security & Privacy:"));
 
-console.log(`
+console.info(`
 ${chalk.green("Local Operation:")}
 • Runs entirely on localhost
 • No external data transmission
@@ -178,9 +178,9 @@ ${chalk.green("Data Protection:")}
 • Session-only data retention
 `);
 
-console.log(chalk.blue.bold("🚀 Performance:"));
+console.info(chalk.blue.bold("🚀 Performance:"));
 
-console.log(`
+console.info(`
 ${chalk.cyan("Load Times:")}
 • Initial page load: <500ms
 • API responses: <100ms
@@ -192,13 +192,13 @@ ${chalk.cyan("Resource Usage:")}
 • Network: Lightweight API calls
 `);
 
-console.log("");
-console.log(chalk.green.bold("🎉 Nebula-Flow™ Web Control Center Ready!"));
-console.log("");
-console.log(chalk.yellow.bold("🌐 OPEN YOUR BROWSER TO: http://localhost:3000"));
-console.log("");
-console.log(chalk.gray("The web server should already be running. If not:"));
-console.log(chalk.gray("$ bun run web-app"));
-console.log("");
-console.log(chalk.cyan.bold("Navigate through all 5 sections using the tabs or keyboard shortcuts 1-5"));
-console.log(chalk.cyan.bold("Try the Device Commander - clone devices, run mass flash, manage your fleet!"));
+console.info("");
+console.info(chalk.green.bold("🎉 Nebula-Flow™ Web Control Center Ready!"));
+console.info("");
+console.info(chalk.yellow.bold("🌐 OPEN YOUR BROWSER TO: http://localhost:3000"));
+console.info("");
+console.info(chalk.gray("The web server should already be running. If not:"));
+console.info(chalk.gray("$ bun run web-app"));
+console.info("");
+console.info(chalk.cyan.bold("Navigate through all 5 sections using the tabs or keyboard shortcuts 1-5"));
+console.info(chalk.cyan.bold("Try the Device Commander - clone devices, run mass flash, manage your fleet!"));

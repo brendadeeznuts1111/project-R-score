@@ -41,7 +41,7 @@ class ModularMCPServer {
    */
   private initializeTools(): void {
     // Bun Documentation Search Tool
-    console.log("Initializing SearchBun tool");
+    console.info("Initializing SearchBun tool");
     this.server.tool(
       "SearchBun",
       "Search across the Bun knowledge base to find relevant information, code examples, API references, and guides.",
@@ -49,7 +49,7 @@ class ModularMCPServer {
         query: z.string().describe("A query to search the content with."),
       },
       async ({ query }) => {
-        console.log(`SearchBun called with query: ${query}`);
+        console.info(`SearchBun called with query: ${query}`);
         try {
           const searchResults = await bunDocumentationSearch.search(query);
           
@@ -506,7 +506,7 @@ Focus on:
     // Basic TypeScript file
     files.push({
       path: `${config.projectName}/src/index.ts`,
-      content: `console.log("Hello from ${config.projectName}!");\n`,
+      content: `console.info("Hello from ${config.projectName}!");\n`,
     });
 
     return files;
@@ -555,7 +555,7 @@ ${config.cors ? `  async fetch(request) {
   },`}
 });
 
-console.log(\`🚀 Bun HTTP Server running on http://${config.hostname}:${config.port}\`);`;
+console.info(\`🚀 Bun HTTP Server running on http://${config.hostname}:${config.port}\`);`;
   }
 
   /**

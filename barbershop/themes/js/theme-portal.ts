@@ -23,7 +23,7 @@ function init(): void {
 
   // Listen for theme changes
   window.addEventListener('themechange', ((e: CustomEvent) => {
-    console.log('Theme changed to:', e.detail.name);
+    console.info('Theme changed to:', e.detail.name);
   }) as EventListener);
 }
 
@@ -89,7 +89,7 @@ function selectTheme(themeId: ThemeName): void {
   // Store preference
   localStorage.setItem('fw-theme', themeId);
 
-  console.log(`✅ Applied theme: ${themeId}`);
+  console.info(`✅ Applied theme: ${themeId}`);
 }
 
 /**
@@ -180,6 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
   currentTheme: () => currentTheme,
 };
 
-console.log('🏰 FactoryWager Theme Portal loaded');
-console.log('Available themes:', Object.keys(themes).join(', '));
-console.log('Debug: window.themePortal');
+console.info('🏰 FactoryWager Theme Portal loaded');
+console.info('Available themes:', Object.keys(themes).join(', '));
+console.info('Debug: window.themePortal');

@@ -33,7 +33,7 @@ describe('Nebula Flow v3.6', () => {
       const content = fs.readFileSync(CONFIG_TOML, 'utf8');
       expect(content).toContain('# Nebula Flow Configuration v3.6');
       
-      console.log('✅ TOML export test passed');
+      console.info('✅ TOML export test passed');
     });
     
     it('should have valid TOML structure', async () => {
@@ -44,7 +44,7 @@ describe('Nebula Flow v3.6', () => {
       expect(content).toContain('[severityColors]');
       expect(content).toContain('[projects.');
       
-      console.log('✅ TOML structure test passed');
+      console.info('✅ TOML structure test passed');
     });
   });
   
@@ -59,7 +59,7 @@ describe('Nebula Flow v3.6', () => {
       expect(result).toContain('Index Generation:');
       expect(result).toContain('Projects Count:');
       
-      console.log('✅ Performance metrics test passed');
+      console.info('✅ Performance metrics test passed');
     });
   });
   
@@ -70,7 +70,7 @@ describe('Nebula Flow v3.6', () => {
       // Should output observatory header
       expect(result).toContain('🔍 URLPattern Observatory');
       
-      console.log('✅ URLPattern analysis test passed');
+      console.info('✅ URLPattern analysis test passed');
     });
   });
   
@@ -83,7 +83,7 @@ describe('Nebula Flow v3.6', () => {
       expect(result).toContain('Remote hash:');
       expect(result).toContain('Sync Status:');
       
-      console.log('✅ Sync status test passed');
+      console.info('✅ Sync status test passed');
     });
     
     it('should perform configuration sync', async () => {
@@ -92,7 +92,7 @@ describe('Nebula Flow v3.6', () => {
       expect(result).toContain('🔄 Syncing configuration');
       expect(result).toContain('✅ Remote sync completed');
       
-      console.log('✅ Configuration sync test passed');
+      console.info('✅ Configuration sync test passed');
     });
   });
   
@@ -111,7 +111,7 @@ describe('Nebula Flow v3.6', () => {
       const indexContent = JSON.parse(fs.readFileSync(TAGS_INDEX, 'utf8'));
       expect(Array.isArray(indexContent)).toBe(true);
       
-      console.log('✅ Tags index generation test passed');
+      console.info('✅ Tags index generation test passed');
     });
   });
   
@@ -121,7 +121,7 @@ describe('Nebula Flow v3.6', () => {
       
       expect(result).toContain('🟢 Configuration valid');
       
-      console.log('✅ Configuration validation test passed');
+      console.info('✅ Configuration validation test passed');
     });
   });
 });

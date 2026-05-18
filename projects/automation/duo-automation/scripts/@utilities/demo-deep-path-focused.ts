@@ -8,7 +8,7 @@ import { initializeScopeTimezone } from '../bootstrap-timezone.ts';
 // Initialize timezone for the demo
 initializeScopeTimezone('DEVELOPMENT');
 
-console.log('🔍 Empire Pro v3.7 - Deep Path Access Focused Demo\n');
+console.info('🔍 Empire Pro v3.7 - Deep Path Access Focused Demo\n');
 
 // Simplified nested data for clear demonstration
 const userData = [
@@ -83,57 +83,57 @@ const userData = [
   }
 ];
 
-console.log('📧 Example 1: user.profile.email Deep Access');
-console.log('='.repeat(60));
+console.info('📧 Example 1: user.profile.email Deep Access');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(userData, {
+console.info(UnicodeTableFormatter.generateTable(userData, {
   sortBy: [
     { column: 'user.profile.email', direction: 'asc' }
   ]
 }));
 
-console.log('\n🔐 Example 2: user.security.riskScore Numeric Sorting');
-console.log('='.repeat(60));
+console.info('\n🔐 Example 2: user.security.riskScore Numeric Sorting');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(userData, {
+console.info(UnicodeTableFormatter.generateTable(userData, {
   sortBy: [
     { column: 'user.security.riskScore', direction: 'asc', type: 'number' }
   ]
 }));
 
-console.log('\n🏢 Example 3: user.profile.department + user.performance.score');
-console.log('='.repeat(60));
+console.info('\n🏢 Example 3: user.profile.department + user.performance.score');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(userData, {
+console.info(UnicodeTableFormatter.generateTable(userData, {
   sortBy: [
     { column: 'user.profile.department', direction: 'asc' },
     { column: 'user.performance.score', direction: 'desc', type: 'number' }
   ]
 }));
 
-console.log('\n📅 Example 4: user.security.lastLogin Date Sorting');
-console.log('='.repeat(60));
+console.info('\n📅 Example 4: user.security.lastLogin Date Sorting');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(userData, {
+console.info(UnicodeTableFormatter.generateTable(userData, {
   sortBy: [
     { column: 'user.security.lastLogin', direction: 'desc', type: 'date' }
   ]
 }));
 
-console.log('\n🌍 Example 5: metadata.region + metadata.created Multi-level');
-console.log('='.repeat(60));
+console.info('\n🌍 Example 5: metadata.region + metadata.created Multi-level');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(userData, {
+console.info(UnicodeTableFormatter.generateTable(userData, {
   sortBy: [
     { column: 'metadata.region', direction: 'asc' },
     { column: 'metadata.created', direction: 'asc', type: 'date' }
   ]
 }));
 
-console.log('\n🎯 Example 6: Complex Multi-level Deep Path Sorting');
-console.log('='.repeat(60));
+console.info('\n🎯 Example 6: Complex Multi-level Deep Path Sorting');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(userData, {
+console.info(UnicodeTableFormatter.generateTable(userData, {
   sortBy: [
     { column: 'user.profile.department', direction: 'asc' },
     { column: 'user.security.riskScore', direction: 'asc', type: 'number' },
@@ -141,28 +141,28 @@ console.log(UnicodeTableFormatter.generateTable(userData, {
   ]
 }));
 
-console.log('\n🔍 Example 7: Deep Path Filtering');
-console.log('='.repeat(60));
+console.info('\n🔍 Example 7: Deep Path Filtering');
+console.info('='.repeat(60));
 
-console.log(UnicodeTableFormatter.generateTable(userData, {
+console.info(UnicodeTableFormatter.generateTable(userData, {
   filter: { 'user.profile.department': 'Engineering' },
   sortBy: [
     { column: 'user.security.riskScore', direction: 'asc', type: 'number' }
   ]
 }));
 
-console.log('\n✅ Deep Path Access Summary:');
-console.log('='.repeat(60));
-console.log('🔹 user.profile.email - Direct email access');
-console.log('🔹 user.security.riskScore - Numeric risk scoring');
-console.log('🔹 user.performance.score - Performance metrics');
-console.log('🔹 user.security.lastLogin - Date-based sorting');
-console.log('🔹 metadata.region - Geographic organization');
-console.log('🔹 user.profile.department - Department grouping');
-console.log('🔹 Multi-level: department → risk → score');
-console.log('🔹 Filtering: user.profile.department = "Engineering"');
-console.log('🔹 Type inference: auto-detects number/date/string');
-console.log('🔹 Unicode preserved: emojis, flags, special chars');
+console.info('\n✅ Deep Path Access Summary:');
+console.info('='.repeat(60));
+console.info('🔹 user.profile.email - Direct email access');
+console.info('🔹 user.security.riskScore - Numeric risk scoring');
+console.info('🔹 user.performance.score - Performance metrics');
+console.info('🔹 user.security.lastLogin - Date-based sorting');
+console.info('🔹 metadata.region - Geographic organization');
+console.info('🔹 user.profile.department - Department grouping');
+console.info('🔹 Multi-level: department → risk → score');
+console.info('🔹 Filtering: user.profile.department = "Engineering"');
+console.info('🔹 Type inference: auto-detects number/date/string');
+console.info('🔹 Unicode preserved: emojis, flags, special chars');
 
-console.log('\n🎉 Deep Path Access - Enterprise Ready!');
-console.log('🚀 Perfect for complex nested data analysis!');
+console.info('\n🎉 Deep Path Access - Enterprise Ready!');
+console.info('🚀 Perfect for complex nested data analysis!');

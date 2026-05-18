@@ -18,7 +18,7 @@ export class ONNXInferenceSession {
 
   async loadModel(modelPath: string): Promise<void> {
     // In production: await ort.InferenceSession.create(modelPath);
-    console.log(`Loading ONNX model from: ${modelPath}`);
+    console.info(`Loading ONNX model from: ${modelPath}`);
     this.modelLoaded = true;
     
     // Simulate model loading delay

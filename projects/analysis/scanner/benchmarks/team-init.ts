@@ -103,7 +103,7 @@ if (consoleDepth != null) inspectOpts.depth = consoleDepth;
 
 function printMetrics(): void {
 	if (!cliArgs.metrics) return;
-	console.log(`\n${B}Process Metrics${R}`);
+	console.info(`\n${B}Process Metrics${R}`);
 	runRiskDiagnostic({
 		mode: cliArgs.verbose ? 'verbose' : 'default',
 		colors: useColor,
@@ -1506,12 +1506,12 @@ function printIssues(
 		if (issue.fix) fixable++;
 		if (issue.severity === 'error') {
 			errors++;
-			console.log(
+			console.info(
 				`    ${cRed}error${R}  ${issue.field}: ${issue.message}${issue.value ? ` ${D}[${issue.value}]${R}` : ''}${showFix ? fixTag : ''}`,
 			);
 		} else {
 			warnings++;
-			console.log(
+			console.info(
 				`    ${cYellow}warn${R}   ${issue.field}: ${issue.message}${issue.value ? ` ${D}[${issue.value}]${R}` : ''}${showFix ? fixTag : ''}`,
 			);
 		}
@@ -1536,11 +1536,11 @@ if (await benchrcFile.exists()) {
 // ── Check mode ──────────────────────────────────────────────────────
 
 if (cliArgs.check) {
-	console.log(`${B}Validating .benchrc.json${R}\n`);
+	console.info(`${B}Validating .benchrc.json${R}\n`);
 
 	const teamKeys = Object.keys(benchrc.team);
 	if (teamKeys.length === 0) {
-		console.log(`  ${cYellow}No team members found.${R}`);
+		console.info(`  ${cYellow}No team members found.${R}`);
 		process.exit(0);
 	}
 
@@ -1555,16 +1555,16 @@ if (cliArgs.check) {
 			: issues.length > 0
 				? `${cYellow}~${R}`
 				: `${cGreen}✓${R}`;
-		console.log(`  ${icon} ${B}${key}${R} ${D}(${profile.name})${R}`);
+		console.info(`  ${icon} ${B}${key}${R} ${D}(${profile.name})${R}`);
 
 		if (issues.length === 0) {
-			console.log(`    ${cGreen}all checks passed${R}`);
+			console.info(`    ${cGreen}all checks passed${R}`);
 		} else {
 			const {errors, warnings} = printIssues(key, issues);
 			totalErrors += errors;
 			totalWarnings += warnings;
 		}
-		console.log();
+		console.info();
 	}
 
 	// Machine drift detection (current machine vs stored profile)
@@ -1573,14 +1573,14 @@ if (cliArgs.check) {
 	if (storedProfile?.machine) {
 		const currentMachine = detectMachine();
 		if (!Bun.deepEquals(storedProfile.machine, currentMachine)) {
-			console.log(`  ${cYellow}~${R} ${B}${currentUser}${R} machine drift detected:`);
+			console.info(`  ${cYellow}~${R} ${B}${currentUser}${R} machine drift detected:`);
 			for (const k of Object.keys(currentMachine) as (keyof MachineInfo)[]) {
 				if (!Bun.deepEquals((storedProfile.machine as any)[k], currentMachine[k])) {
-					console.log(`    ${k}: ${D}${(storedProfile.machine as any)[k]}${R} → ${currentMachine[k]}`);
+					console.info(`    ${k}: ${D}${(storedProfile.machine as any)[k]}${R} → ${currentMachine[k]}`);
 				}
 			}
 			totalWarnings++;
-			console.log();
+			console.info();
 		}
 	}
 
@@ -1588,11 +1588,11 @@ if (cliArgs.check) {
 	if (teamKeys.length > 1) {
 		const crossIssues = validateCrossProfile(benchrc.team);
 		if (crossIssues.length > 0) {
-			console.log(`  ${B}Cross-profile checks${R}`);
+			console.info(`  ${B}Cross-profile checks${R}`);
 			const {errors, warnings} = printIssues('(team)', crossIssues);
 			totalErrors += errors;
 			totalWarnings += warnings;
-			console.log();
+			console.info();
 		}
 	}
 
@@ -1604,19 +1604,19 @@ if (cliArgs.check) {
 		colMetrics = cm;
 		if (colIssues.length > 0) {
 			const colIcon = colIssues.some(i => i.severity === 'error') ? `${cRed}✗${R}` : `${cYellow}~${R}`;
-			console.log(`  ${colIcon} ${B}scan-columns.ts${R} ${D}(${cm.tables} tables, ${cm.columns} columns)${R}`);
+			console.info(`  ${colIcon} ${B}scan-columns.ts${R} ${D}(${cm.tables} tables, ${cm.columns} columns)${R}`);
 			const {errors, warnings} = printIssues('columns', colIssues);
 			totalErrors += errors;
 			totalWarnings += warnings;
-			console.log();
+			console.info();
 		} else {
-			console.log(
+			console.info(
 				`  ${cGreen}✓${R} ${B}scan-columns.ts${R} — all column checks passed ${D}(${cm.tables} tables, ${cm.columns} columns)${R}\n`,
 			);
 		}
 	} catch (err) {
 		const msg = err instanceof Error ? err.message : String(err);
-		console.log(`  ${cYellow}~${R} ${B}scan-columns.ts${R} — import failed: ${msg}\n`);
+		console.info(`  ${cYellow}~${R} ${B}scan-columns.ts${R} — import failed: ${msg}\n`);
 	}
 
 	// Summary table
@@ -1649,7 +1649,7 @@ if (cliArgs.check) {
 		{Field: 'Status', Value: totalErrors > 0 ? 'FAIL' : totalWarnings > 0 ? 'PASS (with warnings)' : 'PASS'},
 	];
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(Bun.inspect.table(summaryRows, ['Field', 'Value'], inspectOpts));
+	console.info(Bun.inspect.table(summaryRows, ['Field', 'Value'], inspectOpts));
 
 	printMetrics();
 	process.exit(totalErrors > 0 ? 1 : 0);
@@ -1705,11 +1705,11 @@ function applyFixes(key: string, profile: MemberProfile, issues: Issue[]): {appl
 }
 
 if (cliArgs.fix) {
-	console.log(`${B}Auto-fixing .benchrc.json${R}\n`);
+	console.info(`${B}Auto-fixing .benchrc.json${R}\n`);
 
 	const teamKeys = Object.keys(benchrc.team);
 	if (teamKeys.length === 0) {
-		console.log(`  ${cYellow}No team members found.${R}`);
+		console.info(`  ${cYellow}No team members found.${R}`);
 		process.exit(0);
 	}
 
@@ -1719,7 +1719,7 @@ if (cliArgs.fix) {
 	let applyAll = autoApply; // --yes → auto-apply, else prompt
 
 	if (noInteraction) {
-		console.log(`  ${D}(non-interactive stdin — use --yes to auto-apply, or run in a terminal)${R}\n`);
+		console.info(`  ${D}(non-interactive stdin — use --yes to auto-apply, or run in a terminal)${R}\n`);
 	}
 
 	for (const key of teamKeys) {
@@ -1727,7 +1727,7 @@ if (cliArgs.fix) {
 		const issues = validateProfile(key, profile);
 
 		if (issues.length === 0) {
-			console.log(`  ${cGreen}✓${R} ${B}${key}${R} — no issues`);
+			console.info(`  ${cGreen}✓${R} ${B}${key}${R} — no issues`);
 			continue;
 		}
 
@@ -1735,20 +1735,20 @@ if (cliArgs.fix) {
 		const unfixable = issues.filter(i => !i.fix);
 
 		// Show what we found and what we'll fix
-		console.log(`  ${cCyan}⚡${R} ${B}${key}${R} ${D}(${issues.length} issues, ${fixable.length} fixable)${R}`);
+		console.info(`  ${cCyan}⚡${R} ${B}${key}${R} ${D}(${issues.length} issues, ${fixable.length} fixable)${R}`);
 		printIssues(key, issues, true);
 
 		if (fixable.length > 0) {
 			// Preview proposed fixes before prompting
 			for (const issue of fixable) {
-				console.log(`    ${cCyan}would fix${R}  ${issue.field}: ${issue.fix}`);
+				console.info(`    ${cCyan}would fix${R}  ${issue.field}: ${issue.fix}`);
 			}
 
 			let apply = applyAll;
 			if (!apply && noInteraction) {
 				// Can't prompt — skip
 				totalSkipped += fixable.length;
-				console.log(`    ${D}skipped (non-interactive)${R}`);
+				console.info(`    ${D}skipped (non-interactive)${R}`);
 			} else if (!apply) {
 				const action = await confirmFix(key);
 				switch (action) {
@@ -1760,11 +1760,11 @@ if (cliArgs.fix) {
 						applyAll = true;
 						break;
 					case 'quit':
-						console.log(`\n  ${D}Quit — no changes written.${R}\n`);
+						console.info(`\n  ${D}Quit — no changes written.${R}\n`);
 						process.exit(0);
 					case 'no':
 						totalSkipped += fixable.length;
-						console.log(`    ${D}skipped${R}`);
+						console.info(`    ${D}skipped${R}`);
 				}
 			}
 
@@ -1773,13 +1773,13 @@ if (cliArgs.fix) {
 				benchrc.team[key] = fixed;
 				totalFixed += applied.length;
 				for (const a of applied) {
-					console.log(`    ${cGreen}fixed${R}  ${a}`);
+					console.info(`    ${cGreen}fixed${R}  ${a}`);
 				}
 			}
 		}
 
 		totalUnfixable += unfixable.length;
-		console.log();
+		console.info();
 	}
 
 	// Write
@@ -1803,19 +1803,19 @@ if (cliArgs.fix) {
 		colWarnings = colIssues.length;
 		if (colIssues.length > 0) {
 			const colIcon = colIssues.some(i => i.severity === 'error') ? `${cRed}✗${R}` : `${cYellow}~${R}`;
-			console.log(
+			console.info(
 				`  ${colIcon} ${B}scan-columns.ts${R} ${D}(report only — ${cm.tables} tables, ${cm.columns} columns)${R}`,
 			);
 			printIssues('columns', colIssues, true);
-			console.log();
+			console.info();
 		} else {
-			console.log(
+			console.info(
 				`  ${cGreen}✓${R} ${B}scan-columns.ts${R} — all column checks passed ${D}(${cm.tables} tables, ${cm.columns} columns)${R}\n`,
 			);
 		}
 	} catch (err) {
 		const msg = err instanceof Error ? err.message : String(err);
-		console.log(`  ${cYellow}~${R} ${B}scan-columns.ts${R} — import failed: ${msg}\n`);
+		console.info(`  ${cYellow}~${R} ${B}scan-columns.ts${R} — import failed: ${msg}\n`);
 	}
 
 	// Summary table
@@ -1854,7 +1854,7 @@ if (cliArgs.fix) {
 		{Field: 'Written', Value: totalFixed > 0 ? `${cGreen}yes${R}` : `${D}no changes${R}`},
 	];
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(Bun.inspect.table(summaryRows, ['Field', 'Value'], inspectOpts));
+	console.info(Bun.inspect.table(summaryRows, ['Field', 'Value'], inspectOpts));
 
 	printMetrics();
 	process.exit(remainingIssues > 0 ? 1 : 0);
@@ -1872,13 +1872,13 @@ const existing = benchrc.team[username];
 
 // Machine drift detection
 if (existing?.machine && !Bun.deepEquals(existing.machine, detected)) {
-	console.log(`${cYellow}Machine config changed since last profile write:${R}`);
+	console.info(`${cYellow}Machine config changed since last profile write:${R}`);
 	for (const k of Object.keys(detected) as (keyof MachineInfo)[]) {
 		if (!Bun.deepEquals((existing.machine as any)[k], detected[k])) {
-			console.log(`  ${k}: ${D}${(existing.machine as any)[k]}${R} → ${detected[k]}`);
+			console.info(`  ${k}: ${D}${(existing.machine as any)[k]}${R} → ${detected[k]}`);
 		}
 	}
-	console.log();
+	console.info();
 }
 
 const profile: MemberProfile = {
@@ -1893,16 +1893,16 @@ const profile: MemberProfile = {
 
 const issues = validateProfile(username, profile);
 if (issues.length > 0) {
-	console.log(`${B}Validation results:${R}\n`);
+	console.info(`${B}Validation results:${R}\n`);
 	const {errors, warnings} = printIssues(username, issues);
-	console.log();
+	console.info();
 	if (errors > 0) {
-		console.log(`  ${cRed}${errors} error(s) found. Fix before writing.${R}`);
-		console.log(`  ${D}Use --name, --email, --notes to set values.${R}`);
+		console.info(`  ${cRed}${errors} error(s) found. Fix before writing.${R}`);
+		console.info(`  ${D}Use --name, --email, --notes to set values.${R}`);
 		process.exit(1);
 	}
 	if (warnings > 0) {
-		console.log(`  ${cYellow}${warnings} warning(s) — writing anyway.${R}\n`);
+		console.info(`  ${cYellow}${warnings} warning(s) — writing anyway.${R}\n`);
 	}
 }
 
@@ -1914,7 +1914,7 @@ await Bun.write(BENCHRC_PATH, JSON.stringify(benchrc, null, 2) + '\n');
 
 // ── Print result ────────────────────────────────────────────────────
 
-console.log(`Profile written to .benchrc.json\n`);
+console.info(`Profile written to .benchrc.json\n`);
 
 const resultRows = [
 	{Field: 'User', Value: username},
@@ -1929,6 +1929,6 @@ const resultRows = [
 ];
 
 // @ts-expect-error Bun.inspect.table accepts options as third arg
-console.log(Bun.inspect.table(resultRows, ['Field', 'Value'], inspectOpts));
+console.info(Bun.inspect.table(resultRows, ['Field', 'Value'], inspectOpts));
 
 printMetrics();

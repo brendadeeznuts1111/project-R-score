@@ -38,7 +38,7 @@ class CLILogger {
   }
 
   static success(message: string): void {
-    console.log(this.colorize(CLI_CONFIG.COLORS.GREEN, `✅ ${message}`));
+    console.info(this.colorize(CLI_CONFIG.COLORS.GREEN, `✅ ${message}`));
   }
 
   static error(message: string): void {
@@ -50,14 +50,14 @@ class CLILogger {
   }
 
   static info(message: string): void {
-    console.log(this.colorize(CLI_CONFIG.COLORS.BLUE, `ℹ️ ${message}`));
+    console.info(this.colorize(CLI_CONFIG.COLORS.BLUE, `ℹ️ ${message}`));
   }
 
   static banner(): void {
-    console.log(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '╔════════════════════════════════════════════════════════════════════════════════╗'));
-    console.log(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '║                    SURGICAL PRECISION ISSUE CLI                           ║'));
-    console.log(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '║               Enterprise Issue Management System                          ║'));
-    console.log(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '╚════════════════════════════════════════════════════════════════════════════════╝'));
+    console.info(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '╔════════════════════════════════════════════════════════════════════════════════╗'));
+    console.info(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '║                    SURGICAL PRECISION ISSUE CLI                           ║'));
+    console.info(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '║               Enterprise Issue Management System                          ║'));
+    console.info(this.colorize(CLI_CONFIG.COLORS.MAGENTA, '╚════════════════════════════════════════════════════════════════════════════════╝'));
   }
 }
 
@@ -137,7 +137,7 @@ class IssueCLICommands {
     const title = args.args[0];
     if (!title) {
       CLILogger.error('Title is required for issue creation');
-      console.log('Usage: issue-cli create "Issue Title" [--type=bug|feature|task] [--priority=low|medium|high]');
+      console.info('Usage: issue-cli create "Issue Title" [--type=bug|feature|task] [--priority=low|medium|high]');
       return;
     }
 
@@ -154,9 +154,9 @@ class IssueCLICommands {
       });
 
       CLILogger.success(`Issue ${issue.id} created successfully!`);
-      console.log(`Title: ${issue.title}`);
-      console.log(`Type: ${issue.type} | Priority: ${issue.priority}`);
-      console.log(`Status: ${issue.status}`);
+      console.info(`Title: ${issue.title}`);
+      console.info(`Type: ${issue.type} | Priority: ${issue.priority}`);
+      console.info(`Status: ${issue.status}`);
 
     } catch (error) {
       CLILogger.error(`Failed to create issue: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -178,18 +178,18 @@ class IssueCLICommands {
         return;
       }
 
-      console.log(`\nFound ${issues.length} issue(s):\n`);
+      console.info(`\nFound ${issues.length} issue(s):\n`);
 
       issues.forEach((issue, index) => {
         const statusColor = this.getStatusColor(issue.status);
         const priorityColor = this.getPriorityColor(issue.priority);
 
-        console.log(`${String(index + 1).padStart(2)}. ${CLILogger.colorize(statusColor, issue.status.padEnd(8))} ${issue.id}`);
-        console.log(`    ${CLILogger.colorize(priorityColor, issue.priority.padEnd(6))} ${issue.title}`);
+        console.info(`${String(index + 1).padStart(2)}. ${CLILogger.colorize(statusColor, issue.status.padEnd(8))} ${issue.id}`);
+        console.info(`    ${CLILogger.colorize(priorityColor, issue.priority.padEnd(6))} ${issue.title}`);
         if (issue.assignee) {
-          console.log(`    👤 ${issue.assignee}`);
+          console.info(`    👤 ${issue.assignee}`);
         }
-        console.log('');
+        console.info('');
       });
 
     } catch (error) {
@@ -203,25 +203,25 @@ class IssueCLICommands {
     const issueId = args.args[0];
     if (!issueId) {
       CLILogger.error('Issue ID is required');
-      console.log('Usage: issue-cli show SP-2024-001');
+      console.info('Usage: issue-cli show SP-2024-001');
       return;
     }
 
     try {
       const issue = await this.manager.getIssue(issueId);
 
-      console.log(`\n${CLILogger.colorize(CLI_CONFIG.COLORS.CYAN, 'Issue Details')}`);
-      console.log('━'.repeat(50));
-      console.log(`ID: ${issue.id}`);
-      console.log(`Title: ${issue.title}`);
-      console.log(`Type: ${issue.type}`);
-      console.log(`Status: ${this.getStatusColor(issue.status)}${issue.status}${CLI_CONFIG.COLORS.RESET}`);
-      console.log(`Priority: ${this.getPriorityColor(issue.priority)}${issue.priority}${CLI_CONFIG.COLORS.RESET}`);
-      if (issue.assignee) console.log(`Assignee: ${issue.assignee}`);
-      if (issue.description) console.log(`Description: ${issue.description}`);
-      console.log(`Created: ${issue.created.toISOString()}`);
-      console.log(`Updated: ${issue.updated.toISOString()}`);
-      if (issue.closed) console.log(`Closed: ${issue.closed.toISOString()}`);
+      console.info(`\n${CLILogger.colorize(CLI_CONFIG.COLORS.CYAN, 'Issue Details')}`);
+      console.info('━'.repeat(50));
+      console.info(`ID: ${issue.id}`);
+      console.info(`Title: ${issue.title}`);
+      console.info(`Type: ${issue.type}`);
+      console.info(`Status: ${this.getStatusColor(issue.status)}${issue.status}${CLI_CONFIG.COLORS.RESET}`);
+      console.info(`Priority: ${this.getPriorityColor(issue.priority)}${issue.priority}${CLI_CONFIG.COLORS.RESET}`);
+      if (issue.assignee) console.info(`Assignee: ${issue.assignee}`);
+      if (issue.description) console.info(`Description: ${issue.description}`);
+      console.info(`Created: ${issue.created.toISOString()}`);
+      console.info(`Updated: ${issue.updated.toISOString()}`);
+      if (issue.closed) console.info(`Closed: ${issue.closed.toISOString()}`);
 
     } catch (error) {
       CLILogger.error(`Failed to show issue: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -234,7 +234,7 @@ class IssueCLICommands {
     const issueId = args.args[0];
     if (!issueId) {
       CLILogger.error('Issue ID is required');
-      console.log('Usage: issue-cli update SP-2024-001 --status=in-progress --assignee=alice');
+      console.info('Usage: issue-cli update SP-2024-001 --status=in-progress --assignee=alice');
       return;
     }
 
@@ -249,8 +249,8 @@ class IssueCLICommands {
       const issue = await this.manager.updateIssue(issueId, updates);
 
       CLILogger.success(`Issue ${issueId} updated successfully!`);
-      console.log(`Status: ${issue.status}`);
-      if (issue.assignee) console.log(`Assignee: ${issue.assignee}`);
+      console.info(`Status: ${issue.status}`);
+      if (issue.assignee) console.info(`Assignee: ${issue.assignee}`);
 
     } catch (error) {
       CLILogger.error(`Failed to update issue: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -263,7 +263,7 @@ class IssueCLICommands {
     const issueId = args.args[0];
     if (!issueId) {
       CLILogger.error('Issue ID is required');
-      console.log('Usage: issue-cli close SP-2024-001 [--reason="Fixed in PR #123"]');
+      console.info('Usage: issue-cli close SP-2024-001 [--reason="Fixed in PR #123"]');
       return;
     }
 
@@ -284,7 +284,7 @@ class IssueCLICommands {
     const query = args.args[0] || args.options.query as string;
     if (!query) {
       CLILogger.error('Search query is required');
-      console.log('Usage: issue-cli search "bug fix" [--status=open]');
+      console.info('Usage: issue-cli search "bug fix" [--status=open]');
       return;
     }
 
@@ -299,10 +299,10 @@ class IssueCLICommands {
         return;
       }
 
-      console.log(`\nFound ${issues.length} issue(s) matching "${query}":\n`);
+      console.info(`\nFound ${issues.length} issue(s) matching "${query}":\n`);
 
       issues.forEach((issue, index) => {
-        console.log(`${String(index + 1).padStart(2)}. ${issue.id} - ${issue.title}`);
+        console.info(`${String(index + 1).padStart(2)}. ${issue.id} - ${issue.title}`);
       });
 
     } catch (error) {
@@ -316,25 +316,25 @@ class IssueCLICommands {
     try {
       const stats = await this.manager.getStats();
 
-      console.log(`\n${CLILogger.colorize(CLI_CONFIG.COLORS.CYAN, 'Issue Statistics')}`);
-      console.log('━'.repeat(30));
-      console.log(`Total Issues: ${stats.total}`);
-      console.log(`Open Issues: ${stats.open}`);
-      console.log(`Closed Issues: ${stats.closed}`);
-      console.log(`Average Resolution Time: ${stats.avgResolutionTime}ms`);
+      console.info(`\n${CLILogger.colorize(CLI_CONFIG.COLORS.CYAN, 'Issue Statistics')}`);
+      console.info('━'.repeat(30));
+      console.info(`Total Issues: ${stats.total}`);
+      console.info(`Open Issues: ${stats.open}`);
+      console.info(`Closed Issues: ${stats.closed}`);
+      console.info(`Average Resolution Time: ${stats.avgResolutionTime}ms`);
 
       if (stats.byStatus && Object.keys(stats.byStatus).length > 0) {
-        console.log('\nBy Status:');
+        console.info('\nBy Status:');
         Object.entries(stats.byStatus).forEach(([status, count]) => {
-          console.log(`  ${status}: ${count}`);
+          console.info(`  ${status}: ${count}`);
         });
       }
 
       if (stats.byPriority && Object.keys(stats.byPriority).length > 0) {
-        console.log('\nBy Priority:');
+        console.info('\nBy Priority:');
         Object.entries(stats.byPriority).forEach(([priority, count]) => {
           const color = this.getPriorityColor(priority as any);
-          console.log(`  ${CLILogger.colorize(color, priority)}: ${count}`);
+          console.info(`  ${CLILogger.colorize(color, priority)}: ${count}`);
         });
       }
 
@@ -345,31 +345,31 @@ class IssueCLICommands {
 
   static help(): void {
     CLILogger.banner();
-    console.log('');
-    console.log(CLI_CONFIG.DESCRIPTION);
-    console.log('');
-    console.log('📋 Commands:');
-    console.log('  create <title>              Create a new issue');
-    console.log('  list                        List all issues');
-    console.log('  show <id>                   Show issue details');
-    console.log('  update <id>                 Update issue properties');
-    console.log('  close <id>                  Close an issue');
-    console.log('  search <query>              Search issues by title/content');
-    console.log('  stats                       Show issue statistics');
-    console.log('  help                        Show this help message');
-    console.log('');
-    console.log('🔧 Options:');
-    console.log('  --type=bug|feature|task     Issue type');
-    console.log('  --status=open|closed        Issue status');
-    console.log('  --priority=low|medium|high  Issue priority');
-    console.log('  --assignee=<name>           Assign to user');
-    console.log('');
-    console.log('📖 Examples:');
-    console.log('  issue-cli create "Fix memory leak" --type=bug --priority=high');
-    console.log('  issue-cli list --status=open --type=bug');
-    console.log('  issue-cli update SP-2024-001 --status=in-progress --assignee=alice');
-    console.log('  issue-cli search "authentication" --status=open');
-    console.log('  issue-cli close SP-2024-001 --reason="Fixed in PR #123"');
+    console.info('');
+    console.info(CLI_CONFIG.DESCRIPTION);
+    console.info('');
+    console.info('📋 Commands:');
+    console.info('  create <title>              Create a new issue');
+    console.info('  list                        List all issues');
+    console.info('  show <id>                   Show issue details');
+    console.info('  update <id>                 Update issue properties');
+    console.info('  close <id>                  Close an issue');
+    console.info('  search <query>              Search issues by title/content');
+    console.info('  stats                       Show issue statistics');
+    console.info('  help                        Show this help message');
+    console.info('');
+    console.info('🔧 Options:');
+    console.info('  --type=bug|feature|task     Issue type');
+    console.info('  --status=open|closed        Issue status');
+    console.info('  --priority=low|medium|high  Issue priority');
+    console.info('  --assignee=<name>           Assign to user');
+    console.info('');
+    console.info('📖 Examples:');
+    console.info('  issue-cli create "Fix memory leak" --type=bug --priority=high');
+    console.info('  issue-cli list --status=open --type=bug');
+    console.info('  issue-cli update SP-2024-001 --status=in-progress --assignee=alice');
+    console.info('  issue-cli search "authentication" --status=open');
+    console.info('  issue-cli close SP-2024-001 --reason="Fixed in PR #123"');
   }
 
   private static getStatusColor(status: string): string {

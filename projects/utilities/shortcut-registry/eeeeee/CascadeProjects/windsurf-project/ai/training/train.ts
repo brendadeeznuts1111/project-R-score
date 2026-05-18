@@ -6,7 +6,7 @@
 import { Database } from 'bun:sqlite';
 import { writeFileSync, readFileSync } from 'fs';
 
-console.log("🎯 Nebula-Flow™ Training Script - Starting");
+console.info("🎯 Nebula-Flow™ Training Script - Starting");
 
 interface TrainingLeg {
   deviceId: string;
@@ -34,7 +34,7 @@ interface TrainingMetrics {
 }
 
 export async function trainModel(): Promise<TrainingMetrics> {
-  console.log('🚀 Starting nightly anomaly model training...');
+  console.info('🚀 Starting nightly anomaly model training...');
   
   try {
     // 1. Load recent data
@@ -42,11 +42,11 @@ export async function trainModel(): Promise<TrainingMetrics> {
     const legs = await loadTrainingData(db);
     
     if (legs.length < 1000) {
-      console.log('⚠️ Insufficient data for training (<1000 samples)');
+      console.info('⚠️ Insufficient data for training (<1000 samples)');
       throw new Error('Insufficient training data');
     }
     
-    console.log(`📊 Training on ${legs.length} recent legs`);
+    console.info(`📊 Training on ${legs.length} recent legs`);
     
     // 2. Prepare features and labels
     const { features, labels } = prepareTrainingData(legs);
@@ -62,7 +62,7 @@ export async function trainModel(): Promise<TrainingMetrics> {
     
     db.close();
     
-    console.log(`🎯 Training complete: Loss=${metrics.loss.toFixed(4)}, Acc=${metrics.accuracy.toFixed(4)}`);
+    console.info(`🎯 Training complete: Loss=${metrics.loss.toFixed(4)}, Acc=${metrics.accuracy.toFixed(4)}`);
     
     return metrics;
     
@@ -120,7 +120,7 @@ function prepareTrainingData(legs: TrainingLeg[]) {
 }
 
 async function trainMockModel(features: number[][], labels: number[]): Promise<TrainingMetrics> {
-  console.log('🔄 Training mock model...');
+  console.info('🔄 Training mock model...');
   
   // Simulate training epochs
   let accuracy = 0.85;
@@ -132,7 +132,7 @@ async function trainMockModel(features: number[][], labels: number[]): Promise<T
     loss -= Math.random() * 0.01;
     
     if (epoch % 10 === 0) {
-      console.log(`Epoch ${epoch}: loss=${loss.toFixed(4)}, acc=${accuracy.toFixed(4)}`);
+      console.info(`Epoch ${epoch}: loss=${loss.toFixed(4)}, acc=${accuracy.toFixed(4)}`);
     }
   }
   
@@ -153,7 +153,7 @@ async function trainMockModel(features: number[][], labels: number[]): Promise<T
 }
 
 async function saveModel(metrics: TrainingMetrics): Promise<void> {
-  console.log('💾 Saving model...');
+  console.info('💾 Saving model...');
   
   // Create mock ONNX model file (28KB)
   const modelBuffer = new Uint8Array(28000);
@@ -173,7 +173,7 @@ async function saveModel(metrics: TrainingMetrics): Promise<void> {
   modelBuffer.set(metadataBytes.slice(0, bytesToWrite), 0);
   
   writeFileSync('./ai/model.onnx', modelBuffer);
-  console.log(`✅ Model saved: ${modelBuffer.length} bytes`);
+  console.info(`✅ Model saved: ${modelBuffer.length} bytes`);
 }
 
 async function logTrainingMetrics(db: Database, metrics: TrainingMetrics, sampleCount: number): Promise<void> {
@@ -206,7 +206,7 @@ async function logTrainingMetrics(db: Database, metrics: TrainingMetrics, sample
       28 // Size in KB
     ]);
     
-    console.log('📊 Training metrics logged to database');
+    console.info('📊 Training metrics logged to database');
   } catch (error) {
     console.warn('⚠️ Failed to log training metrics:', error instanceof Error ? error.message : String(error));
   }
@@ -237,8 +237,8 @@ export async function getTrainingHistory(limit: number = 10): Promise<TrainingMe
 if (import.meta.main) {
   trainModel()
     .then(metrics => {
-      console.log('✅ Training completed successfully');
-      console.log(`📈 Final metrics: Accuracy ${(metrics.accuracy * 100).toFixed(1)}%, Loss ${metrics.loss.toFixed(4)}`);
+      console.info('✅ Training completed successfully');
+      console.info(`📈 Final metrics: Accuracy ${(metrics.accuracy * 100).toFixed(1)}%, Loss ${metrics.loss.toFixed(4)}`);
       process.exit(0);
     })
     .catch(error => {

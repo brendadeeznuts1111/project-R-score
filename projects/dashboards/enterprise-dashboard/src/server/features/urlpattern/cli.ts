@@ -14,7 +14,7 @@ export class CLI {
     switch (command) {
       case 'test-bun134':
         const results = await this.analyzer.testBun134AllFeatures();
-        console.log(this.formatBun134TestResults(results));
+        console.info(this.formatBun134TestResults(results));
         break;
         
       case 'exec-analysis':
@@ -70,7 +70,7 @@ ${results.recommendations.map((r: string) => `  • ${r}`).join('\n')}
   }
   
   private async runExecAnalysis() {
-    console.log('🔍 Analyzing URLPattern.exec() behavior...\n');
+    console.info('🔍 Analyzing URLPattern.exec() behavior...\n');
     
     const BASE_URL = 'https://example.com';
     const testPatterns = [
@@ -106,7 +106,7 @@ ${results.recommendations.map((r: string) => `  • ${r}`).join('\n')}
       });
     }
     
-    console.log(`
+    console.info(`
 📊 URLPattern.exec() vs test() COMPARISON
 ==========================================
 ${results.map((r: any) => `
@@ -125,7 +125,7 @@ Pattern: ${r.pattern}
   }
   
   private async generateProxyReport() {
-    console.log('🔌 Generating Proxy Feature Report...\n');
+    console.info('🔌 Generating Proxy Feature Report...\n');
     
     const proxyConfigs = [
       {
@@ -148,7 +148,7 @@ Pattern: ${r.pattern}
       }
     ];
     
-    console.log(`
+    console.info(`
 🎯 PROXY CONFIGURATION RECOMMENDATIONS FOR BUN 1.3.4
 ====================================================
 
@@ -187,7 +187,7 @@ ${config.name.toUpperCase()}:
   }
   
   private async optimizeAgentConfig() {
-    console.log('🔗 Optimizing http.Agent Configuration...\n');
+    console.info('🔗 Optimizing http.Agent Configuration...\n');
     
     const optimizations = [
       {
@@ -210,7 +210,7 @@ ${config.name.toUpperCase()}:
       }
     ];
     
-    console.log(`
+    console.info(`
 🔧 HTTP.AGENT OPTIMIZATION GUIDE FOR BUN 1.3.4
 ===============================================
 
@@ -252,7 +252,7 @@ ${i + 1}. ${opt.issue.toUpperCase()}
   }
   
   private async runComprehensiveAnalysis() {
-    console.log('🚀 Running comprehensive Bun 1.3.4 analysis...\n');
+    console.info('🚀 Running comprehensive Bun 1.3.4 analysis...\n');
     
     // Test all features
     const [bunTest, analyses] = await Promise.all([
@@ -264,10 +264,10 @@ ${i + 1}. ${opt.issue.toUpperCase()}
     
     const validAnalyses = analyses.filter((a): a is PatternAnalysis => a !== null);
     
-    console.log(this.analyzer.generateComprehensiveBun134Report());
+    console.info(this.analyzer.generateComprehensiveBun134Report());
     
     // Show actionable recommendations
-    console.log(`
+    console.info(`
 🎯 ACTIONABLE RECOMMENDATIONS:
 ${this.getActionableRecommendations(bunTest, validAnalyses).map((r, i) => 
   `  ${i + 1}. ${r}`
@@ -328,7 +328,7 @@ ${this.getActionableRecommendations(bunTest, validAnalyses).map((r, i) =>
   }
   
   showEnhancedHelp() {
-    console.log(`
+    console.info(`
 🚀 BUN 1.3.4 ULTIMATE URLPATTERN OBSERVABILITY
 ==============================================
 

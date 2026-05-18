@@ -113,9 +113,9 @@ export class ProgressIndicator {
 		process.stdout.write(`\r${" ".repeat(process.stdout.columns || 80)}\r`);
 
 		if (message) {
-			console.log(`✅ ${message}`);
+			console.info(`✅ ${message}`);
 		} else {
-			console.log("✅ Complete!");
+			console.info("✅ Complete!");
 		}
 	}
 
@@ -136,9 +136,9 @@ export class ProgressIndicator {
 		process.stdout.write(`\r${" ".repeat(process.stdout.columns || 80)}\r`);
 
 		if (message) {
-			console.log(`❌ ${message}`);
+			console.info(`❌ ${message}`);
 		} else {
-			console.log("❌ Failed!");
+			console.info("❌ Failed!");
 		}
 	}
 
@@ -219,7 +219,7 @@ export class ProgressIndicator {
 		});
 
 		if (message) {
-			console.log(`${message}...`);
+			console.info(`${message}...`);
 		}
 
 		progress.start();
@@ -237,7 +237,7 @@ export class ProgressIndicator {
 		});
 
 		if (message) {
-			console.log(`${message}...`);
+			console.info(`${message}...`);
 		}
 
 		progress.start();
@@ -317,7 +317,7 @@ export class ProgressUtils {
 		});
 
 		if (message) {
-			console.log(`${message}...`);
+			console.info(`${message}...`);
 		}
 
 		progress.start();
@@ -339,7 +339,7 @@ export class ProgressUtils {
 		});
 
 		const message = filename ? `Transferring ${filename}` : "Transferring file";
-		console.log(`${message}...`);
+		console.info(`${message}...`);
 		progress.start();
 
 		return progress;
@@ -359,7 +359,7 @@ export class ProgressUtils {
 			showPercentage: true,
 		});
 
-		console.log(`${operation} (${totalItems} items)...`);
+		console.info(`${operation} (${totalItems} items)...`);
 		progress.start();
 
 		return progress;
@@ -380,7 +380,7 @@ export class ProgressUtils {
 			showRate: false,
 		});
 
-		console.log(`${operation}...`);
+		console.info(`${operation}...`);
 		progress.start();
 
 		// Auto-increment every 100ms

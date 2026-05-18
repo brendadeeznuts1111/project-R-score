@@ -2,7 +2,7 @@
 import type { BunRequest, Serve } from "bun";
 
 /* ---------- helpers ----------------------------------------------------- */
-const log = (...a: any[]) => console.log(`[${new Date().toISOString()}]`, ...a);
+const log = (...a: any[]) => console.info(`[${new Date().toISOString()}]`, ...a);
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /* ---------- state for hot reload ---------------------------------------- */

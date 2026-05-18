@@ -29,8 +29,8 @@ class DevHQTestRunner {
   };
 
   async run(options: TestOptions = {}) {
-    console.log(`${this.theme.info}🧪 Dev HQ Test Runner${this.theme.reset}`);
-    console.log(
+    console.info(`${this.theme.info}🧪 Dev HQ Test Runner${this.theme.reset}`);
+    console.info(
       `${this.theme.dim}Running tests with enhanced insights...${this.theme.reset}\n`
     );
 
@@ -41,7 +41,7 @@ class DevHQTestRunner {
     await this.analyzeTestEnvironment(options);
 
     // Run tests
-    console.log(
+    console.info(
       `${this.theme.info}▶️  Executing: bun ${testArgs.join(" ")}${
         this.theme.reset
       }\n`
@@ -114,33 +114,33 @@ class DevHQTestRunner {
   }
 
   private async analyzeTestEnvironment(options: TestOptions) {
-    console.log(
+    console.info(
       `${this.theme.info}📊 Test Environment Analysis${this.theme.reset}`
     );
 
     // Check test files
     const testFiles = await this.findTestFiles();
-    console.log(`   📁 Test files found: ${testFiles.length}`);
+    console.info(`   📁 Test files found: ${testFiles.length}`);
 
     // Check dependencies
     const deps = await this.checkDependencies();
-    console.log(
+    console.info(
       `   📦 Dependencies: ${deps.available}/${deps.total} available`
     );
 
     // Check TypeScript config
     const tsConfig = await this.checkTypeScriptConfig();
-    console.log(`   📝 TypeScript config: ${tsConfig ? "Found" : "Not found"}`);
+    console.info(`   📝 TypeScript config: ${tsConfig ? "Found" : "Not found"}`);
 
     // Check coverage setup
     if (options.coverage) {
       const coverageReady = await this.checkCoverageSetup();
-      console.log(
+      console.info(
         `   📊 Coverage setup: ${coverageReady ? "Ready" : "Not configured"}`
       );
     }
 
-    console.log("");
+    console.info("");
   }
 
   private async findTestFiles(): Promise<string[]> {
@@ -156,7 +156,7 @@ class DevHQTestRunner {
       }
     } catch (error) {
       // Fallback to glob pattern
-      console.log(
+      console.info(
         `${this.theme.warning}⚠️  Could not count test files${this.theme.reset}`
       );
     }
@@ -214,20 +214,20 @@ class DevHQTestRunner {
     duration: number,
     options: TestOptions
   ) {
-    console.log(
+    console.info(
       `\n${this.theme.info}📊 Test Results Analysis${this.theme.reset}`
     );
 
     // Duration
-    console.log(`   ⏱️  Duration: ${duration}ms`);
+    console.info(`   ⏱️  Duration: ${duration}ms`);
 
     // Exit code
     if (exitCode === 0) {
-      console.log(
+      console.info(
         `   ${this.theme.success}✅ Status: All tests passed${this.theme.reset}`
       );
     } else {
-      console.log(
+      console.info(
         `   ${this.theme.error}❌ Status: Tests failed (exit code: ${exitCode})${this.theme.reset}`
       );
     }
@@ -239,7 +239,7 @@ class DevHQTestRunner {
 
     // Performance metrics
     if (duration > 10000) {
-      console.log(
+      console.info(
         `   ${this.theme.warning}⚠️  Slow test execution (>10s)${this.theme.reset}`
       );
     }
@@ -257,22 +257,22 @@ class DevHQTestRunner {
         const coverageData = await Bun.file(coverageFile).text();
         const coverage = JSON.parse(coverageData);
 
-        console.log(`   📊 Coverage Report:`);
-        console.log(`      Lines: ${coverage.total?.lines?.pct || "N/A"}%`);
-        console.log(
+        console.info(`   📊 Coverage Report:`);
+        console.info(`      Lines: ${coverage.total?.lines?.pct || "N/A"}%`);
+        console.info(
           `      Functions: ${coverage.total?.functions?.pct || "N/A"}%`
         );
-        console.log(
+        console.info(
           `      Branches: ${coverage.total?.branches?.pct || "N/A"}%`
         );
-        console.log(
+        console.info(
           `      Statements: ${coverage.total?.statements?.pct || "N/A"}%`
         );
       } catch {
-        console.log(`   📊 Coverage: Report not found at ${coverageFile}`);
+        console.info(`   📊 Coverage: Report not found at ${coverageFile}`);
       }
     } catch (error) {
-      console.log(`   📊 Coverage: Could not analyze coverage report`);
+      console.info(`   📊 Coverage: Could not analyze coverage report`);
     }
   }
 
@@ -281,7 +281,7 @@ class DevHQTestRunner {
     duration: number,
     options: TestOptions
   ) {
-    console.log(`\n${this.theme.info}💡 Recommendations${this.theme.reset}`);
+    console.info(`\n${this.theme.info}💡 Recommendations${this.theme.reset}`);
 
     const recommendations: string[] = [];
 
@@ -309,15 +309,15 @@ class DevHQTestRunner {
     }
 
     recommendations.forEach((rec) => {
-      console.log(`   ${rec}`);
+      console.info(`   ${rec}`);
     });
   }
 
   async watch(options: TestOptions = {}) {
-    console.log(
+    console.info(
       `${this.theme.info}👁️  Dev HQ Test Watch Mode${this.theme.reset}`
     );
-    console.log(
+    console.info(
       `${this.theme.dim}Watching for test file changes...${this.theme.reset}\n`
     );
 
@@ -329,8 +329,8 @@ class DevHQTestRunner {
   }
 
   async coverage(options: TestOptions = {}) {
-    console.log(`${this.theme.info}📊 Dev HQ Coverage Mode${this.theme.reset}`);
-    console.log(
+    console.info(`${this.theme.info}📊 Dev HQ Coverage Mode${this.theme.reset}`);
+    console.info(
       `${this.theme.dim}Running tests with coverage analysis...${this.theme.reset}\n`
     );
 
@@ -341,8 +341,8 @@ class DevHQTestRunner {
   }
 
   async filter(pattern: string, options: TestOptions = {}) {
-    console.log(`${this.theme.info}🔍 Dev HQ Filter Mode${this.theme.reset}`);
-    console.log(
+    console.info(`${this.theme.info}🔍 Dev HQ Filter Mode${this.theme.reset}`);
+    console.info(
       `${this.theme.dim}Running tests matching: ${pattern}${this.theme.reset}\n`
     );
 

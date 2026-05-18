@@ -55,11 +55,11 @@ function main(): void {
   const palette = generatePalette({ h: seed, s: saturation, l: lightness });
 
   if (format === 'css') {
-    console.log(toCssVars(palette, seed));
+    console.info(toCssVars(palette, seed));
     return;
   }
 
-  console.log(
+  console.info(
     JSON.stringify(
       {
         seed,

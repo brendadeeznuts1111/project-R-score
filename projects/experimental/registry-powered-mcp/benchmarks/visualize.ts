@@ -19,7 +19,7 @@ interface BenchmarkData {
 
 class BenchmarkVisualizer {
   async generateVisualization() {
-    console.log('📊 Generating Performance Visualization\n');
+    console.info('📊 Generating Performance Visualization\n');
 
     // Find latest benchmark file
     const resultsDir = 'benchmarks/results';
@@ -29,12 +29,12 @@ class BenchmarkVisualizer {
       .reverse();
 
     if (files.length === 0) {
-      console.log('No benchmark results found');
+      console.info('No benchmark results found');
       return;
     }
 
     const latestFile = files[0];
-    console.log(`Using results from: ${latestFile}\n`);
+    console.info(`Using results from: ${latestFile}\n`);
 
     const content = readFileSync(join(resultsDir, latestFile), 'utf-8');
     const data = this.parseMarkdown(content);
@@ -81,7 +81,7 @@ class BenchmarkVisualizer {
   }
 
   private generateConsoleChart(data: BenchmarkData) {
-    console.log('📈 PERFORMANCE CHART\n');
+    console.info('📈 PERFORMANCE CHART\n');
 
     // Group by test case
     const grouped = new Map<string, any[]>();
@@ -111,14 +111,14 @@ class BenchmarkVisualizer {
       const urlPatternBars = Math.round((urlPattern.opsPerSecond / maxOps) * 30);
       const regexBars = Math.round((regex.opsPerSecond / maxOps) * 30);
 
-      console.log(`${testCase}:`);
-      console.log(`  URLPattern ${'█'.repeat(urlPatternBars)} ${urlPattern.opsPerSecond.toLocaleString().padStart(10)} ops/sec`);
-      console.log(`  RegExp     ${'█'.repeat(regexBars)} ${regex.opsPerSecond.toLocaleString().padStart(10)} ops/sec`);
+      console.info(`${testCase}:`);
+      console.info(`  URLPattern ${'█'.repeat(urlPatternBars)} ${urlPattern.opsPerSecond.toLocaleString().padStart(10)} ops/sec`);
+      console.info(`  RegExp     ${'█'.repeat(regexBars)} ${regex.opsPerSecond.toLocaleString().padStart(10)} ops/sec`);
 
       if (urlPattern.opsPerSecond > regex.opsPerSecond) {
-        console.log(`  URLPattern is ${((urlPattern.opsPerSecond - regex.opsPerSecond) / regex.opsPerSecond * 100).toFixed(1)}% faster\n`);
+        console.info(`  URLPattern is ${((urlPattern.opsPerSecond - regex.opsPerSecond) / regex.opsPerSecond * 100).toFixed(1)}% faster\n`);
       } else {
-        console.log(`  RegExp is ${((regex.opsPerSecond - urlPattern.opsPerSecond) / urlPattern.opsPerSecond * 100).toFixed(1)}% faster\n`);
+        console.info(`  RegExp is ${((regex.opsPerSecond - urlPattern.opsPerSecond) / urlPattern.opsPerSecond * 100).toFixed(1)}% faster\n`);
       }
     }
   }
@@ -414,8 +414,8 @@ class BenchmarkVisualizer {
 
     const outputFile = `benchmarks/results/visualization-${Date.now()}.html`;
     Bun.write(outputFile, html);
-    console.log(`\n🌐 HTML report generated: ${outputFile}`);
-    console.log(`   Open in browser to view interactive charts`);
+    console.info(`\n🌐 HTML report generated: ${outputFile}`);
+    console.info(`   Open in browser to view interactive charts`);
   }
 
   private generateResultCards(data: BenchmarkData): string {

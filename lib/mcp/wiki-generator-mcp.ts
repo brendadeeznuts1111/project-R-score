@@ -422,7 +422,7 @@ export class MCPWikiGenerator {
     
     toDelete.forEach(name => MCPWikiGenerator.templateMetrics.delete(name));
     if (toDelete.length > 0) {
-      console.log(styled(`🧹 Cleaned up ${toDelete.length} old template metrics`, 'info'));
+      console.info(styled(`🧹 Cleaned up ${toDelete.length} old template metrics`, 'info'));
     }
   }
 
@@ -1415,7 +1415,7 @@ export class MCPWikiGenerator {
         }
       }
 
-      console.log(styled('🌐 Generating MCP Wiki Content...', 'primary'));
+      console.info(styled('🌐 Generating MCP Wiki Content...', 'primary'));
 
       // Resolve provider metadata if provider is specified
       let resolvedBaseUrl = request.baseUrl;
@@ -1435,11 +1435,11 @@ export class MCPWikiGenerator {
         }
 
         // Log provider information
-        console.log(styled(`📋 Using provider: ${providerMetadata.name}`, 'info'));
-        console.log(styled(`🔗 Provider URL: ${resolvedBaseUrl}`, 'info'));
+        console.info(styled(`📋 Using provider: ${providerMetadata.name}`, 'info'));
+        console.info(styled(`🔗 Provider URL: ${resolvedBaseUrl}`, 'info'));
         
         if (providerMetadata.requiresAuth) {
-          console.log(styled(`🔐 Provider '${request.provider}' requires authentication`, 'warning'));
+          console.info(styled(`🔐 Provider '${request.provider}' requires authentication`, 'warning'));
         }
       }
 
@@ -1524,15 +1524,15 @@ export class MCPWikiGenerator {
           url: await r2MCPIntegration.getSignedURL(r2Key, 3600),
         };
 
-        console.log(styled('📦 Wiki content stored in R2', 'success'));
+        console.info(styled('📦 Wiki content stored in R2', 'success'));
       } catch (r2Error) {
-        console.log(styled('⚠️ R2 storage not available, using local only', 'warning'));
+        console.info(styled('⚠️ R2 storage not available, using local only', 'warning'));
       }
 
       // Track successful generation
       MCPWikiGenerator.trackTemplateUsage(templateName, generationTime, true);
 
-      console.log(
+      console.info(
         styled(
           `✅ Wiki generated: ${wikiResult.total} utilities in ${wikiResult.categories} categories (${generationTime}ms)`,
           'success'
@@ -2709,7 +2709,7 @@ export class MCPWikiGenerator {
       };
 
       await Bun.write(configPath, JSON.stringify(config, null, 2));
-      console.log(styled(`📄 Templates exported to: ${configPath}`, 'success'));
+      console.info(styled(`📄 Templates exported to: ${configPath}`, 'success'));
     } catch (error) {
       console.error(styled(`❌ Failed to export templates: ${error.message}`, 'error'));
     }
@@ -2775,7 +2775,7 @@ export class MCPWikiGenerator {
         totalUtilities: entry.metadata?.totalUtilities || 0,
       }));
     } catch (error) {
-      console.log(styled('⚠️ Could not retrieve wiki history from R2', 'warning'));
+      console.info(styled('⚠️ Could not retrieve wiki history from R2', 'warning'));
       return [];
     }
   }
@@ -2871,11 +2871,11 @@ export class MCPWikiGenerator {
     };
 
     const interval = setInterval(async () => {
-      console.log(styled(`🔄 Scheduled wiki generation (${schedule})`, 'info'));
+      console.info(styled(`🔄 Scheduled wiki generation (${schedule})`, 'info'));
       const result = await MCPWikiGenerator.generateFromTemplate(template, customizations);
 
       if (result.success) {
-        console.log(
+        console.info(
           styled(`✅ Scheduled wiki generated: ${result.metadata.total} utilities`, 'success')
         );
       } else {
@@ -2883,9 +2883,9 @@ export class MCPWikiGenerator {
       }
     }, intervals[schedule]);
 
-    console.log(styled(`⏰ Wiki generation scheduled: ${schedule}`, 'success'));
-    console.log(styled(`   Template: ${template}`, 'info'));
-    console.log(styled(`   Interval: ${intervals[schedule] / 1000}s`, 'muted'));
+    console.info(styled(`⏰ Wiki generation scheduled: ${schedule}`, 'success'));
+    console.info(styled(`   Template: ${template}`, 'info'));
+    console.info(styled(`   Interval: ${intervals[schedule] / 1000}s`, 'muted'));
   }
 }
 
@@ -2915,14 +2915,14 @@ if (import.meta.main) {
           });
 
           if (result.success) {
-            console.log(styled('✅ Wiki generated successfully!', 'success'));
-            console.log(styled(`📊 Total utilities: ${result.metadata.total}`, 'info'));
-            console.log(styled(`📂 Categories: ${result.metadata.categories}`, 'info'));
-            console.log(styled(`🌐 Base URL: ${result.metadata.baseUrl}`, 'muted'));
-            console.log(styled(`📁 Workspace: ${result.metadata.workspace}`, 'muted'));
+            console.info(styled('✅ Wiki generated successfully!', 'success'));
+            console.info(styled(`📊 Total utilities: ${result.metadata.total}`, 'info'));
+            console.info(styled(`📂 Categories: ${result.metadata.categories}`, 'info'));
+            console.info(styled(`🌐 Base URL: ${result.metadata.baseUrl}`, 'muted'));
+            console.info(styled(`📁 Workspace: ${result.metadata.workspace}`, 'muted'));
 
             if (result.r2Stored) {
-              console.log(styled(`📦 Stored in R2: ${result.r2Stored.key}`, 'success'));
+              console.info(styled(`📦 Stored in R2: ${result.r2Stored.key}`, 'success'));
             }
           } else {
             console.error(styled(`❌ Generation failed: ${result.error}`, 'error'));
@@ -2931,11 +2931,11 @@ if (import.meta.main) {
 
         case 'templates':
           const templates = MCPWikiGenerator.getWikiTemplates();
-          console.log(styled('📋 Available Wiki Templates:', 'primary'));
+          console.info(styled('📋 Available Wiki Templates:', 'primary'));
           templates.forEach((template, index) => {
-            console.log(styled(`\n${index + 1}. ${template.name}`, 'accent'));
-            console.log(styled(`   ${template.description}`, 'muted'));
-            console.log(
+            console.info(styled(`\n${index + 1}. ${template.name}`, 'accent'));
+            console.info(styled(`   ${template.description}`, 'muted'));
+            console.info(
               styled(`   Format: ${template.format} | Workspace: ${template.workspace}`, 'info')
             );
           });
@@ -2950,8 +2950,8 @@ if (import.meta.main) {
 
           const templateResult = await MCPWikiGenerator.generateFromTemplate(templateName);
           if (templateResult.success) {
-            console.log(styled(`✅ Wiki generated from template: ${templateName}`, 'success'));
-            console.log(styled(`📊 Total utilities: ${templateResult.metadata.total}`, 'info'));
+            console.info(styled(`✅ Wiki generated from template: ${templateName}`, 'success'));
+            console.info(styled(`📊 Total utilities: ${templateResult.metadata.total}`, 'info'));
           } else {
             console.error(
               styled(`❌ Template generation failed: ${templateResult.error}`, 'error')
@@ -2964,17 +2964,17 @@ if (import.meta.main) {
           const history = await MCPWikiGenerator.getWikiHistory(limit);
 
           if (history.length === 0) {
-            console.log(styled('📭 No wiki generation history found', 'muted'));
+            console.info(styled('📭 No wiki generation history found', 'muted'));
           } else {
-            console.log(styled(`📋 Wiki Generation History (Last ${limit}):`, 'primary'));
+            console.info(styled(`📋 Wiki Generation History (Last ${limit}):`, 'primary'));
             history.forEach((entry, index) => {
-              console.log(styled(`\n${index + 1}. ${entry.id}`, 'accent'));
-              console.log(
+              console.info(styled(`\n${index + 1}. ${entry.id}`, 'accent'));
+              console.info(
                 styled(`   Time: ${new Date(entry.timestamp).toLocaleString()}`, 'muted')
               );
-              console.log(styled(`   Workspace: ${entry.workspace}`, 'info'));
-              console.log(styled(`   Format: ${entry.format}`, 'info'));
-              console.log(styled(`   Utilities: ${entry.totalUtilities}`, 'primary'));
+              console.info(styled(`   Workspace: ${entry.workspace}`, 'info'));
+              console.info(styled(`   Format: ${entry.format}`, 'info'));
+              console.info(styled(`   Utilities: ${entry.totalUtilities}`, 'primary'));
             });
           }
           break;
@@ -2988,13 +2988,13 @@ if (import.meta.main) {
           });
 
           if (fwResult.success) {
-            console.log(
+            console.info(
               styled(`✅ FactoryWager wiki generated for context: ${context}`, 'success')
             );
-            console.log(styled(`📊 Total utilities: ${fwResult.metadata.total}`, 'info'));
-            console.log(styled('🔐 Security notes added', 'success'));
-            console.log(styled('⚡ Performance tips added', 'success'));
-            console.log(styled('🏛️ FactoryWager patterns added', 'success'));
+            console.info(styled(`📊 Total utilities: ${fwResult.metadata.total}`, 'info'));
+            console.info(styled('🔐 Security notes added', 'success'));
+            console.info(styled('⚡ Performance tips added', 'success'));
+            console.info(styled('🏛️ FactoryWager patterns added', 'success'));
           } else {
             console.error(
               styled(`❌ FactoryWager wiki generation failed: ${fwResult.error}`, 'error')
@@ -3003,37 +3003,37 @@ if (import.meta.main) {
           break;
 
         default:
-          console.log(styled('🌐 FactoryWager MCP Wiki Generator', 'accent'));
-          console.log(styled('==================================', 'accent'));
-          console.log('');
-          console.log(styled('Commands:', 'primary'));
-          console.log(
+          console.info(styled('🌐 FactoryWager MCP Wiki Generator', 'accent'));
+          console.info(styled('==================================', 'accent'));
+          console.info('');
+          console.info(styled('Commands:', 'primary'));
+          console.info(
             styled(
               '  generate [--format=markdown|html|json|all] [--base-url=URL] [--workspace=NAME]',
               'info'
             )
           );
-          console.log(styled('  templates                    - List available templates', 'info'));
-          console.log(styled('  template <name>             - Generate from template', 'info'));
-          console.log(styled('  history [limit]              - Show generation history', 'info'));
-          console.log(
+          console.info(styled('  templates                    - List available templates', 'info'));
+          console.info(styled('  template <name>             - Generate from template', 'info'));
+          console.info(styled('  history [limit]              - Show generation history', 'info'));
+          console.info(
             styled(
               '  factorywager [context]       - Generate with FactoryWager enhancements',
               'info'
             )
           );
-          console.log('');
-          console.log(styled('Examples:', 'primary'));
-          console.log(
+          console.info('');
+          console.info(styled('Examples:', 'primary'));
+          console.info(
             styled('  bun run lib/mcp/wiki-generator-mcp.ts generate --format=all', 'muted')
           );
-          console.log(
+          console.info(
             styled(
               '  bun run lib/mcp/wiki-generator-mcp.ts template "Confluence Integration"',
               'muted'
             )
           );
-          console.log(
+          console.info(
             styled('  bun run lib/mcp/wiki-generator-mcp.ts factorywager security', 'muted')
           );
       }

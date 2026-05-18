@@ -18,8 +18,8 @@ if (!existsSync(RESULTS_DIR)) {
   mkdirSync(RESULTS_DIR, { recursive: true });
 }
 
-console.log('🚀 Nolarose Unified Benchmark Suite');
-console.log('===================================\n');
+console.info('🚀 Nolarose Unified Benchmark Suite');
+console.info('===================================\n');
 
 const results = {
   timestamp: new Date().toISOString(),
@@ -34,7 +34,7 @@ const results = {
 
 // Run a benchmark file and capture results
 async function runBenchmark(category: string, file: string): Promise<any> {
-  console.log(`\n📊 Running ${category}/${file}...`);
+  console.info(`\n📊 Running ${category}/${file}...`);
 
   try {
     const startTime = performance.now();
@@ -48,7 +48,7 @@ async function runBenchmark(category: string, file: string): Promise<any> {
     const endTime = performance.now();
     const duration = endTime - startTime;
 
-    console.log(`✅ Completed in ${duration.toFixed(2)}ms`);
+    console.info(`✅ Completed in ${duration.toFixed(2)}ms`);
 
     return {
       status: 'passed',
@@ -88,8 +88,8 @@ async function runAllBenchmarks() {
   const categories = ['core', 'utils', 'performance', 'skills'];
 
   for (const category of categories) {
-    console.log(`\n🔍 ${category.toUpperCase()} BENCHMARKS`);
-    console.log('-'.repeat(40));
+    console.info(`\n🔍 ${category.toUpperCase()} BENCHMARKS`);
+    console.info('-'.repeat(40));
 
     const files = getBenchmarkFiles(category);
     results.suites[category] = [];
@@ -116,12 +116,12 @@ async function runAllBenchmarks() {
 function generateReports() {
   // JSON Report
   writeFileSync(JSON_REPORT, JSON.stringify(results, null, 2));
-  console.log(`\n📄 JSON report saved: ${JSON_REPORT}`);
+  console.info(`\n📄 JSON report saved: ${JSON_REPORT}`);
 
   // Markdown Report
   const mdContent = generateMarkdownReport();
   writeFileSync(MD_REPORT, mdContent);
-  console.log(`📄 Markdown report saved: ${MD_REPORT}`);
+  console.info(`📄 Markdown report saved: ${MD_REPORT}`);
 }
 
 function generateMarkdownReport(): string {
@@ -160,22 +160,22 @@ function generateMarkdownReport(): string {
 }
 
 function printSummary() {
-  console.log('\n📈 BENCHMARK SUMMARY');
-  console.log('='.repeat(80));
-  console.log(`Total Benchmarks: ${results.summary.totalBenchmarks}`);
-  console.log(`Passed: ${results.summary.passed} ✅`);
-  console.log(`Failed: ${results.summary.failed} ${results.summary.failed > 0 ? '❌' : '✅'}`);
-  console.log(`Success Rate: ${((results.summary.passed / results.summary.totalBenchmarks) * 100).toFixed(1)}%`);
+  console.info('\n📈 BENCHMARK SUMMARY');
+  console.info('='.repeat(80));
+  console.info(`Total Benchmarks: ${results.summary.totalBenchmarks}`);
+  console.info(`Passed: ${results.summary.passed} ✅`);
+  console.info(`Failed: ${results.summary.failed} ${results.summary.failed > 0 ? '❌' : '✅'}`);
+  console.info(`Success Rate: ${((results.summary.passed / results.summary.totalBenchmarks) * 100).toFixed(1)}%`);
 
   if (results.summary.failed > 0) {
-    console.log('\n⚠️  Some benchmarks failed. Check reports for details.');
+    console.info('\n⚠️  Some benchmarks failed. Check reports for details.');
   } else {
-    console.log('\n🎉 All benchmarks passed successfully!');
+    console.info('\n🎉 All benchmarks passed successfully!');
   }
 
-  console.log('\n📊 Reports generated:');
-  console.log(`  JSON: ${JSON_REPORT}`);
-  console.log(`  Markdown: ${MD_REPORT}`);
+  console.info('\n📊 Reports generated:');
+  console.info(`  JSON: ${JSON_REPORT}`);
+  console.info(`  Markdown: ${MD_REPORT}`);
 }
 
 // Run if executed directly

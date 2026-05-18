@@ -60,7 +60,7 @@ async function main() {
     );
   }
 
-  console.log(
+  console.info(
     `[ci:r2:version:check][pass] version=${version} bucket=${runtimeBucket} source=${bucket.source}`
   );
 }

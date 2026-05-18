@@ -20,7 +20,7 @@ const OPTIONS = process.argv.slice(3);
 // Col-89 safe logging helper
 function safeLog(message: string): void {
 	const width = Bun.stringWidth(message, { countAnsiEscapeCodes: false });
-	console.log(width <= 89 ? message : Bun.escapeHTML(message.slice(0, 86)) + "…");
+	console.info(width <= 89 ? message : Bun.escapeHTML(message.slice(0, 86)) + "…");
 }
 
 // CLI Commands
@@ -85,12 +85,12 @@ async function handleCreate(): Promise<void> {
 	safeLog(`📸 Creating Tier-1380 snapshot for tenant: ${tenant}`);
 	const result = await createTenantSnapshot(tenant, options);
 
-	console.log(`✅ Snapshot created successfully:`);
-	console.log(`   ID: ${result.id}`);
-	console.log(`   Path: ${result.path}`);
-	console.log(`   Size: ${Math.round(result.size / 1024)} KiB`);
-	console.log(`   SHA-256: ${result.sha256}`);
-	console.log(`   Entries: ${result.entries}`);
+	console.info(`✅ Snapshot created successfully:`);
+	console.info(`   ID: ${result.id}`);
+	console.info(`   Path: ${result.path}`);
+	console.info(`   Size: ${Math.round(result.size / 1024)} KiB`);
+	console.info(`   SHA-256: ${result.sha256}`);
+	console.info(`   Entries: ${result.entries}`);
 }
 
 async function handleList(): Promise<void> {
@@ -112,7 +112,7 @@ async function handleList(): Promise<void> {
 		return;
 	}
 
-	console.log(`📋 Recent Snapshots (${snapshots.length} found):`);
+	console.info(`📋 Recent Snapshots (${snapshots.length} found):`);
 	console.table(
 		snapshots.map((s) => ({
 			Tenant: s.tenant,
@@ -145,13 +145,13 @@ async function handleExtract(): Promise<void> {
 	safeLog(`📦 Extracting snapshot: ${snapshotPath}`);
 	const result = await extractSnapshot(snapshotPath, targetDir, options);
 
-	console.log(`✅ Extraction completed:`);
-	console.log(`   Entries extracted: ${result.entries}`);
-	console.log(`   Integrity: ${result.integrity.valid ? "✅ Valid" : "❌ Invalid"}`);
-	console.log(`   Files: ${result.files.length}`);
+	console.info(`✅ Extraction completed:`);
+	console.info(`   Entries extracted: ${result.entries}`);
+	console.info(`   Integrity: ${result.integrity.valid ? "✅ Valid" : "❌ Invalid"}`);
+	console.info(`   Files: ${result.files.length}`);
 
 	if (result.files.length <= 10) {
-		console.log(`   File list: ${result.files.join(", ")}`);
+		console.info(`   File list: ${result.files.join(", ")}`);
 	}
 }
 
@@ -166,14 +166,14 @@ async function handleVerify(): Promise<void> {
 	safeLog(`🔍 Verifying snapshot integrity: ${snapshotPath}`);
 	const result = await verifySnapshot(snapshotPath);
 
-	console.log(`📊 Verification Results:`);
-	console.log(`   File exists: ${result.file_exists ? "✅ Yes" : "❌ No"}`);
-	console.log(`   Size matches: ${result.size_matches ? "✅ Yes" : "❌ No"}`);
-	console.log(`   Hash valid: ${result.valid ? "✅ Yes" : "❌ No"}`);
+	console.info(`📊 Verification Results:`);
+	console.info(`   File exists: ${result.file_exists ? "✅ Yes" : "❌ No"}`);
+	console.info(`   Size matches: ${result.size_matches ? "✅ Yes" : "❌ No"}`);
+	console.info(`   Hash valid: ${result.valid ? "✅ Yes" : "❌ No"}`);
 
 	if (result.expected_hash) {
-		console.log(`   Expected hash: ${result.expected_hash.slice(0, 16)}…`);
-		console.log(`   Actual hash: ${result.actual_hash.slice(0, 16)}…`);
+		console.info(`   Expected hash: ${result.expected_hash.slice(0, 16)}…`);
+		console.info(`   Actual hash: ${result.actual_hash.slice(0, 16)}…`);
 	}
 }
 
@@ -187,14 +187,14 @@ async function handleCleanup(): Promise<void> {
 
 	const result = cleanupOldSnapshots(retentionDays, dryRun);
 
-	console.log(`📊 Cleanup Results:`);
-	console.log(`   Snapshots to delete: ${result.deleted}`);
-	console.log(`   Total size: ${Math.round(result.totalSize / 1024 / 1024)} MiB`);
+	console.info(`📊 Cleanup Results:`);
+	console.info(`   Snapshots to delete: ${result.deleted}`);
+	console.info(`   Total size: ${Math.round(result.totalSize / 1024 / 1024)} MiB`);
 
 	if (result.snapshots.length > 0 && result.snapshots.length <= 5) {
-		console.log(`   Affected snapshots:`);
+		console.info(`   Affected snapshots:`);
 		result.snapshots.forEach((s) => {
-			console.log(`     - ${s.tenant}: ${new Date(s.created_at).toLocaleString()}`);
+			console.info(`     - ${s.tenant}: ${new Date(s.created_at).toLocaleString()}`);
 		});
 	}
 }
@@ -204,74 +204,74 @@ async function handleStats(): Promise<void> {
 
 	const stats = getStorageStats();
 
-	console.log(`📈 Overall Statistics:`);
-	console.log(`   Total snapshots: ${stats.totalSnapshots}`);
-	console.log(`   Total storage: ${stats.totalSizeMB} MiB`);
-	console.log(`   Average size: ${stats.averageSizeMB} MiB`);
-	console.log(`   Unique tenants: ${Object.keys(stats.tenantCounts).length}`);
+	console.info(`📈 Overall Statistics:`);
+	console.info(`   Total snapshots: ${stats.totalSnapshots}`);
+	console.info(`   Total storage: ${stats.totalSizeMB} MiB`);
+	console.info(`   Average size: ${stats.averageSizeMB} MiB`);
+	console.info(`   Unique tenants: ${Object.keys(stats.tenantCounts).length}`);
 
 	if (stats.oldestSnapshot) {
-		console.log(`   Oldest snapshot: ${stats.oldestSnapshot.toLocaleString()}`);
+		console.info(`   Oldest snapshot: ${stats.oldestSnapshot.toLocaleString()}`);
 	}
 	if (stats.newestSnapshot) {
-		console.log(`   Newest snapshot: ${stats.newestSnapshot.toLocaleString()}`);
+		console.info(`   Newest snapshot: ${stats.newestSnapshot.toLocaleString()}`);
 	}
 
-	console.log(`📊 Tenant Breakdown:`);
+	console.info(`📊 Tenant Breakdown:`);
 	Object.entries(stats.tenantCounts)
 		.sort(([, a], [, b]) => b - a)
 		.slice(0, 10)
 		.forEach(([tenant, count]) => {
-			console.log(`   ${tenant}: ${count} snapshots`);
+			console.info(`   ${tenant}: ${count} snapshots`);
 		});
 }
 
 function showHelp(): void {
-	console.log(`🏢 Tier-1380 Snapshot CLI - hardened multi-tenant archive management`);
-	console.log(``);
-	console.log(`Usage: bun snapshot-cli.ts <command> [options]`);
-	console.log(``);
-	console.log(`Commands:`);
-	console.log(`  create <tenant>        Create snapshot for tenant`);
-	console.log(`  list [limit]           List recent snapshots`);
-	console.log(`  extract <path> <dir>   Extract snapshot to directory`);
-	console.log(`  verify <path>          Verify snapshot integrity`);
-	console.log(`  cleanup [days]         Cleanup old snapshots`);
-	console.log(`  stats                  Show storage statistics`);
-	console.log(`  help                   Show this help`);
-	console.log(``);
-	console.log(`Create Options:`);
-	console.log(`  --variant=<name>       Tenant variant (default: production)`);
-	console.log(`  --pool-size=<n>        Pool size (default: 10)`);
-	console.log(`  --compression=<1-9>    Compression level (default: 7)`);
-	console.log(`  --include-config       Include tenant configuration`);
-	console.log(``);
-	console.log(`List Options:`);
-	console.log(`  --tenant=<id>          Filter by tenant`);
-	console.log(`  --variant=<name>       Filter by variant`);
-	console.log(`  --min-size=<MB>        Minimum size filter`);
-	console.log(`  --max-size=<MB>        Maximum size filter`);
-	console.log(``);
-	console.log(`Extract Options:`);
-	console.log(`  --validate             Verify integrity during extraction`);
-	console.log(`  --max-size=<bytes>     Maximum extraction size`);
-	console.log(``);
-	console.log(`Cleanup Options:`);
-	console.log(`  --execute              Actually delete (default: dry run)`);
-	console.log(``);
-	console.log(`Examples:`);
-	console.log(
+	console.info(`🏢 Tier-1380 Snapshot CLI - hardened multi-tenant archive management`);
+	console.info(``);
+	console.info(`Usage: bun snapshot-cli.ts <command> [options]`);
+	console.info(``);
+	console.info(`Commands:`);
+	console.info(`  create <tenant>        Create snapshot for tenant`);
+	console.info(`  list [limit]           List recent snapshots`);
+	console.info(`  extract <path> <dir>   Extract snapshot to directory`);
+	console.info(`  verify <path>          Verify snapshot integrity`);
+	console.info(`  cleanup [days]         Cleanup old snapshots`);
+	console.info(`  stats                  Show storage statistics`);
+	console.info(`  help                   Show this help`);
+	console.info(``);
+	console.info(`Create Options:`);
+	console.info(`  --variant=<name>       Tenant variant (default: production)`);
+	console.info(`  --pool-size=<n>        Pool size (default: 10)`);
+	console.info(`  --compression=<1-9>    Compression level (default: 7)`);
+	console.info(`  --include-config       Include tenant configuration`);
+	console.info(``);
+	console.info(`List Options:`);
+	console.info(`  --tenant=<id>          Filter by tenant`);
+	console.info(`  --variant=<name>       Filter by variant`);
+	console.info(`  --min-size=<MB>        Minimum size filter`);
+	console.info(`  --max-size=<MB>        Maximum size filter`);
+	console.info(``);
+	console.info(`Extract Options:`);
+	console.info(`  --validate             Verify integrity during extraction`);
+	console.info(`  --max-size=<bytes>     Maximum extraction size`);
+	console.info(``);
+	console.info(`Cleanup Options:`);
+	console.info(`  --execute              Actually delete (default: dry run)`);
+	console.info(``);
+	console.info(`Examples:`);
+	console.info(
 		`  bun snapshot-cli.ts create tenant-a --variant=production --compression=9`,
 	);
-	console.log(`  bun snapshot-cli.ts list 20 --tenant=tenant-a`);
-	console.log(
+	console.info(`  bun snapshot-cli.ts list 20 --tenant=tenant-a`);
+	console.info(
 		`  bun snapshot-cli.ts extract ./snapshots/tenant-a-2026-01-31T12-34-56.tar.gz ./restore/`,
 	);
-	console.log(
+	console.info(
 		`  bun snapshot-cli.ts verify ./snapshots/tenant-a-2026-01-31T12-34-56.tar.gz`,
 	);
-	console.log(`  bun snapshot-cli.ts cleanup 30 --execute`);
-	console.log(`  bun snapshot-cli.ts stats`);
+	console.info(`  bun snapshot-cli.ts cleanup 30 --execute`);
+	console.info(`  bun snapshot-cli.ts stats`);
 }
 
 // Run CLI

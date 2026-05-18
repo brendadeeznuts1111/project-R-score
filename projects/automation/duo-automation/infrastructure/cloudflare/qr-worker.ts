@@ -60,7 +60,7 @@ export class QRWorker {
       }
     };
 
-    console.log(`🌐 Cloudflare Worker: ${request.method} ${url.pathname} - ${requestContext.geo.country || 'Unknown'}`);
+    console.info(`🌐 Cloudflare Worker: ${request.method} ${url.pathname} - ${requestContext.geo.country || 'Unknown'}`);
 
     try {
       // Route based on path patterns
@@ -385,7 +385,7 @@ export class QRWorker {
         webSocket: {
           accept: () => {
             // WebSocket accepted, handle in separate handler
-            console.log(`🔌 WebSocket connected: ${connectionId} for ${authResult.merchantId}`);
+            console.info(`🔌 WebSocket connected: ${connectionId} for ${authResult.merchantId}`);
           }
         }
       });
@@ -627,11 +627,11 @@ export default {
 
   async scheduled(event: ScheduledEvent, env: IWorkerEnv, ctx: IWorkerContext): Promise<void> {
     // Handle scheduled tasks (e.g., cleanup, analytics aggregation)
-    console.log('🕐 Scheduled task executed:', event.cron);
+    console.info('🕐 Scheduled task executed:', event.cron);
   },
 
   async queue(batch: MessageBatch, env: IWorkerEnv, ctx: IWorkerContext): Promise<void> {
     // Handle queue messages (e.g., analytics events, notifications)
-    console.log('📨 Queue batch processed:', batch.messages.length);
+    console.info('📨 Queue batch processed:', batch.messages.length);
   }
 };

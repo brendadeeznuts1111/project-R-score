@@ -5,7 +5,7 @@ import { dnsCache } from "../src/proxy/dns";
 import { validateProxyHeader } from "../src/proxy/validator";
 
 async function benchmarkValidation() {
-  console.log("⚡ Benchmarking header validation...\n");
+  console.info("⚡ Benchmarking header validation...\n");
   
   const headers = generateValidHeaders();
   const headersArray = Array.from(headers.entries());
@@ -35,18 +35,18 @@ async function benchmarkValidation() {
   const perValidation = totalTime / (iterations * headerCount);
   const nsPerValidation = (perValidation * 1e6).toFixed(0);
   
-  console.log(`📊 Validation Benchmark:`);
-  console.log(`  Iterations: ${iterations}`);
-  console.log(`  Headers per iteration: ${headerCount}`);
-  console.log(`  Total validations: ${iterations * headerCount}`);
-  console.log(`  Total time: ${totalTime.toFixed(2)}ms`);
-  console.log(`  Average per validation: ${perValidation.toFixed(3)}ms`);
-  console.log(`  Average per validation: ${nsPerValidation}ns`);
-  console.log(`  Operations per second: ${Math.floor((iterations * headerCount) / (totalTime / 1000)).toLocaleString()}`);
+  console.info(`📊 Validation Benchmark:`);
+  console.info(`  Iterations: ${iterations}`);
+  console.info(`  Headers per iteration: ${headerCount}`);
+  console.info(`  Total validations: ${iterations * headerCount}`);
+  console.info(`  Total time: ${totalTime.toFixed(2)}ms`);
+  console.info(`  Average per validation: ${perValidation.toFixed(3)}ms`);
+  console.info(`  Average per validation: ${nsPerValidation}ns`);
+  console.info(`  Operations per second: ${Math.floor((iterations * headerCount) / (totalTime / 1000)).toLocaleString()}`);
 }
 
 async function benchmarkDNS() {
-  console.log("\n⚡ Benchmarking DNS cache...\n");
+  console.info("\n⚡ Benchmarking DNS cache...\n");
   
   const hosts = ["localhost", "google.com", "github.com", "npmjs.com"];
   const iterations = 1000;
@@ -62,17 +62,17 @@ async function benchmarkDNS() {
   }
   const hitEnd = performance.now();
   
-  console.log(`📊 DNS Cache Benchmark:`);
-  console.log(`  Cache hits (${iterations * hosts.length}): ${((hitEnd - hitStart) / (iterations * hosts.length)).toFixed(3)}ms each`);
+  console.info(`📊 DNS Cache Benchmark:`);
+  console.info(`  Cache hits (${iterations * hosts.length}): ${((hitEnd - hitStart) / (iterations * hosts.length)).toFixed(3)}ms each`);
 }
 
 async function main() {
-  console.log("🚀 Starting proxy benchmarks...\n");
+  console.info("🚀 Starting proxy benchmarks...\n");
   
   await benchmarkValidation();
   await benchmarkDNS();
   
-  console.log("\n🎉 Benchmarks completed!");
+  console.info("\n🎉 Benchmarks completed!");
 }
 
 if (import.meta.main) {

@@ -212,8 +212,8 @@ function formatMs(ms: number): string {
 
 /** Print system info table */
 function printSystemInfo(info: SystemInfo): void {
-	console.log(`\n${c.bold}📋 System Information${c.reset}\n`);
-	console.log(
+	console.info(`\n${c.bold}📋 System Information${c.reset}\n`);
+	console.info(
 		Bun.inspect.table([
 			{ Property: "Platform", Value: `${info.platform}/${info.arch}` },
 			{ Property: "Bun Version", Value: info.bunVersion },
@@ -235,7 +235,7 @@ function printSystemInfo(info: SystemInfo): void {
 
 /** Print benchmark results */
 function printBenchmark(stats: SpawnStats, info: SystemInfo): void {
-	console.log(
+	console.info(
 		`\n${c.bold}⏱️  Spawn Performance (${stats.samples} iterations)${c.reset}\n`,
 	);
 
@@ -251,7 +251,7 @@ function printBenchmark(stats: SpawnStats, info: SystemInfo): void {
 		return `${c.red}❌ Very Slow${c.reset}`;
 	};
 
-	console.log(
+	console.info(
 		Bun.inspect.table([
 			{ Metric: "Min", Value: formatMs(stats.min) },
 			{ Metric: "Median", Value: formatMs(stats.median) },
@@ -261,21 +261,21 @@ function printBenchmark(stats: SpawnStats, info: SystemInfo): void {
 		]),
 	);
 
-	console.log(
+	console.info(
 		`\n${c.bold}Status:${c.reset} ${getStatus(stats.mean, info.hasCloseRange)}\n`,
 	);
 
 	// Recommendations
 	if (!info.hasCloseRange && info.platform === "linux") {
-		console.log(`${c.yellow}💡 Recommendations:${c.reset}`);
-		console.log(`   • Upgrade to glibc ≥ 2.34 and kernel ≥ 5.9 for 20-30x speedup`);
-		console.log(`   • Current performance is normal for older systems\n`);
+		console.info(`${c.yellow}💡 Recommendations:${c.reset}`);
+		console.info(`   • Upgrade to glibc ≥ 2.34 and kernel ≥ 5.9 for 20-30x speedup`);
+		console.info(`   • Current performance is normal for older systems\n`);
 	} else if (info.hasCloseRange && stats.mean > 2) {
-		console.log(`${c.yellow}⚠️  Warning:${c.reset}`);
-		console.log(
+		console.info(`${c.yellow}⚠️  Warning:${c.reset}`);
+		console.info(
 			`   • close_range() is available but spawn is slow (${formatMs(stats.mean)})`,
 		);
-		console.log(`   • Check for system resource constraints\n`);
+		console.info(`   • Check for system resource constraints\n`);
 	}
 }
 
@@ -284,7 +284,7 @@ async function main(): Promise<void> {
 	const action = args[0] ?? "validate";
 
 	if (action === "--help" || action === "-h") {
-		console.log(`
+		console.info(`
 ${c.bold}Spawn Performance Monitor${c.reset}
 
 ${c.bold}USAGE:${c.reset}
@@ -318,8 +318,8 @@ ${c.bold}EXAMPLES:${c.reset}
 	}
 
 	if (action === "validate") {
-		console.log(`${c.cyan}${c.bold}🚀 Spawn Performance Validator${c.reset}\n`);
-		console.log(`${c.dim}Checking system capabilities...${c.reset}`);
+		console.info(`${c.cyan}${c.bold}🚀 Spawn Performance Validator${c.reset}\n`);
+		console.info(`${c.dim}Checking system capabilities...${c.reset}`);
 
 		const info = await checkCloseRangeSupport();
 		printSystemInfo(info);
@@ -331,13 +331,13 @@ ${c.bold}EXAMPLES:${c.reset}
 			iterations = parseInt(args[nIndex + 1], 10);
 		}
 
-		console.log(`\n${c.dim}Running benchmark...${c.reset}`);
+		console.info(`\n${c.dim}Running benchmark...${c.reset}`);
 		const stats = benchmarkSpawnSync(iterations);
 		printBenchmark(stats, info);
 
 		// Expected performance guide
-		console.log(`${c.bold}📊 Expected Performance:${c.reset}\n`);
-		console.log(
+		console.info(`${c.bold}📊 Expected Performance:${c.reset}\n`);
+		console.info(
 			Bun.inspect.table([
 				{
 					Platform: "Linux (close_range)",

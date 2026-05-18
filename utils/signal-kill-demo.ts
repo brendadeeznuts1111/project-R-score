@@ -16,8 +16,8 @@ class SignalKillDemo {
 
   // 🚀 Demonstrate SIGKILL behavior
   async demonstrateSIGKILL(): Promise<void> {
-    console.log('🚀 SIGKILL Signal Handling Demonstration');
-    console.log('=' .repeat(50));
+    console.info('🚀 SIGKILL Signal Handling Demonstration');
+    console.info('=' .repeat(50));
 
     // Test 1: Immediate termination with SIGKILL
     await this.testSignalKill('SIGKILL', 'Immediate termination - cannot be caught');
@@ -34,7 +34,7 @@ class SignalKillDemo {
 
   // 🔫 Test SIGKILL (cannot be caught)
   private async testSignalKill(signal: string, description: string): Promise<void> {
-    console.log(`\n🔫 Testing ${signal}: ${description}`);
+    console.info(`\n🔫 Testing ${signal}: ${description}`);
 
     return new Promise((resolve) => {
       // Create a long-running test process
@@ -57,7 +57,7 @@ class SignalKillDemo {
 
       // Wait for process to start
       setTimeout(() => {
-        console.log(`  📡 Sending ${signal} to PID ${testProcess.pid}...`);
+        console.info(`  📡 Sending ${signal} to PID ${testProcess.pid}...`);
         
         // Send SIGKILL - this cannot be caught!
         process.kill(testProcess.pid!, signal);
@@ -78,9 +78,9 @@ class SignalKillDemo {
 
           this.results.push(result);
           
-          console.log(`  ⚡ Process terminated in ${duration}ms`);
-          console.log(`  📊 Exit code: ${code}, Signal: ${signal}`);
-          console.log(`  🛡️  Handled: ${result.handled ? 'Yes' : 'No'}`);
+          console.info(`  ⚡ Process terminated in ${duration}ms`);
+          console.info(`  📊 Exit code: ${code}, Signal: ${signal}`);
+          console.info(`  🛡️  Handled: ${result.handled ? 'Yes' : 'No'}`);
           
           resolve();
         });
@@ -91,22 +91,22 @@ class SignalKillDemo {
 
   // 🛑 Test SIGTERM (graceful shutdown)
   private async testSignalTerm(signal: string, description: string): Promise<void> {
-    console.log(`\n🛑 Testing ${signal}: ${description}`);
+    console.info(`\n🛑 Testing ${signal}: ${description}`);
 
     return new Promise((resolve) => {
       // Create a test process with signal handling
       const testScript = `
         process.on('SIGTERM', () => {
-          console.log('🛑 SIGTERM received - cleaning up...');
+          console.info('🛑 SIGTERM received - cleaning up...');
           setTimeout(() => {
-            console.log('✅ Cleanup complete - exiting gracefully');
+            console.info('✅ Cleanup complete - exiting gracefully');
             process.exit(143); // 128 + 15 (SIGTERM)
           }, 100);
         });
 
-        console.log('🔄 Long-running process started...');
+        console.info('🔄 Long-running process started...');
         setInterval(() => {
-          console.log('💓 Still running...');
+          console.info('💓 Still running...');
         }, 500);
 
         // Run for a while
@@ -134,7 +134,7 @@ class SignalKillDemo {
       });
 
       setTimeout(() => {
-        console.log(`  📡 Sending ${signal} to PID ${testProcess.pid}...`);
+        console.info(`  📡 Sending ${signal} to PID ${testProcess.pid}...`);
         
         process.kill(testProcess.pid!, signal);
         const killTime = Date.now();
@@ -153,9 +153,9 @@ class SignalKillDemo {
 
           this.results.push(result);
           
-          console.log(`  ⚡ Process terminated in ${duration}ms`);
-          console.log(`  📊 Exit code: ${code} (graceful shutdown)`);
-          console.log(`  🛡️  Handled: Yes - cleanup executed`);
+          console.info(`  ⚡ Process terminated in ${duration}ms`);
+          console.info(`  📊 Exit code: ${code} (graceful shutdown)`);
+          console.info(`  🛡️  Handled: Yes - cleanup executed`);
           
           resolve();
         });
@@ -166,24 +166,24 @@ class SignalKillDemo {
 
   // ⚡ Test SIGINT (Ctrl+C)
   private async testSignalInt(signal: string, description: string): Promise<void> {
-    console.log(`\n⚡ Testing ${signal}: ${description}`);
+    console.info(`\n⚡ Testing ${signal}: ${description}`);
 
     return new Promise((resolve) => {
       // Create a test process with SIGINT handling
       const testScript = `
         process.on('SIGINT', () => {
-          console.log('⚡ SIGINT received (Ctrl+C) - interrupting...');
+          console.info('⚡ SIGINT received (Ctrl+C) - interrupting...');
           setTimeout(() => {
-            console.log('🛑 Interrupt handled - exiting');
+            console.info('🛑 Interrupt handled - exiting');
             process.exit(130); // 128 + 2 (SIGINT)
           }, 50);
         });
 
-        console.log('🔄 Interactive process started...');
+        console.info('🔄 Interactive process started...');
         let counter = 0;
         const interval = setInterval(() => {
           counter++;
-          console.log(\`💓 Working... \${counter}s\`);
+          console.info(\`💓 Working... \${counter}s\`);
         }, 1000);
 
         process.on('exit', () => {
@@ -211,7 +211,7 @@ class SignalKillDemo {
       });
 
       setTimeout(() => {
-        console.log(`  📡 Sending ${signal} to PID ${testProcess.pid}...`);
+        console.info(`  📡 Sending ${signal} to PID ${testProcess.pid}...`);
         
         process.kill(testProcess.pid!, signal);
         const killTime = Date.now();
@@ -230,9 +230,9 @@ class SignalKillDemo {
 
           this.results.push(result);
           
-          console.log(`  ⚡ Process terminated in ${duration}ms`);
-          console.log(`  📊 Exit code: ${code} (interrupt)`);
-          console.log(`  🛡️  Handled: Yes - interrupt handled`);
+          console.info(`  ⚡ Process terminated in ${duration}ms`);
+          console.info(`  📊 Exit code: ${code} (interrupt)`);
+          console.info(`  🛡️  Handled: Yes - interrupt handled`);
           
           resolve();
         });
@@ -243,11 +243,11 @@ class SignalKillDemo {
 
   // 📊 Generate comprehensive report
   private generateReport(): void {
-    console.log('\n' + '=' .repeat(50));
-    console.log('📊 SIGNAL HANDLING REPORT');
-    console.log('=' .repeat(50));
+    console.info('\n' + '=' .repeat(50));
+    console.info('📊 SIGNAL HANDLING REPORT');
+    console.info('=' .repeat(50));
 
-    console.log('\n🔍 Signal Behavior Analysis:');
+    console.info('\n🔍 Signal Behavior Analysis:');
     console.table(this.results.map(r => ({
       Signal: r.signal,
       Description: r.description,
@@ -256,52 +256,52 @@ class SignalKillDemo {
       Handled: r.handled ? '✅ Yes' : '❌ No'
     })));
 
-    console.log('\n💡 Key Insights:');
+    console.info('\n💡 Key Insights:');
     
     const sigkillResult = this.results.find(r => r.signal === 'SIGKILL');
     if (sigkillResult) {
-      console.log('🔫 SIGKILL:');
-      console.log('   • Cannot be caught or handled by the process');
-      console.log('   • Immediate termination - no cleanup possible');
-      console.log('   • Used for force-killing unresponsive processes');
-      console.log('   • Exit code typically -1 or null');
+      console.info('🔫 SIGKILL:');
+      console.info('   • Cannot be caught or handled by the process');
+      console.info('   • Immediate termination - no cleanup possible');
+      console.info('   • Used for force-killing unresponsive processes');
+      console.info('   • Exit code typically -1 or null');
     }
 
     const sigtermResult = this.results.find(r => r.signal === 'SIGTERM');
     if (sigtermResult) {
-      console.log('🛑 SIGTERM:');
-      console.log('   • Can be caught and handled gracefully');
-      console.log('   • Allows cleanup before termination');
-      console.log('   • Standard way to request process shutdown');
-      console.log('   • Exit code 143 (128 + 15) for graceful shutdown');
+      console.info('🛑 SIGTERM:');
+      console.info('   • Can be caught and handled gracefully');
+      console.info('   • Allows cleanup before termination');
+      console.info('   • Standard way to request process shutdown');
+      console.info('   • Exit code 143 (128 + 15) for graceful shutdown');
     }
 
     const sigintResult = this.results.find(r => r.signal === 'SIGINT');
     if (sigintResult) {
-      console.log('⚡ SIGINT:');
-      console.log('   • Can be caught (Ctrl+C simulation)');
-      console.log('   • Allows interrupt handling');
-      console.log('   • Exit code 130 (128 + 2) for interrupt');
-      console.log('   • Commonly used for user interrupts');
+      console.info('⚡ SIGINT:');
+      console.info('   • Can be caught (Ctrl+C simulation)');
+      console.info('   • Allows interrupt handling');
+      console.info('   • Exit code 130 (128 + 2) for interrupt');
+      console.info('   • Commonly used for user interrupts');
     }
 
-    console.log('\n🎯 Best Practices:');
-    console.log('   • Use SIGTERM for graceful shutdown requests');
-    console.log('   • Use SIGKILL only for unresponsive processes');
-    console.log('   • Implement cleanup handlers for SIGTERM/SIGINT');
-    console.log('   • Test signal handling in your applications');
-    console.log('   • Use proper exit codes (128 + signal number)');
+    console.info('\n🎯 Best Practices:');
+    console.info('   • Use SIGTERM for graceful shutdown requests');
+    console.info('   • Use SIGKILL only for unresponsive processes');
+    console.info('   • Implement cleanup handlers for SIGTERM/SIGINT');
+    console.info('   • Test signal handling in your applications');
+    console.info('   • Use proper exit codes (128 + signal number)');
 
-    console.log('\n🚀 Integration with Test Framework:');
-    console.log('   • Test Process Integration v2.8 handles SIGTERM/SIGINT');
-    console.log('   • SIGKILL cannot be handled (by design)');
-    console.log('   • Graceful shutdown preserves test state');
-    console.log('   • Signal handlers ensure proper cleanup');
+    console.info('\n🚀 Integration with Test Framework:');
+    console.info('   • Test Process Integration v2.8 handles SIGTERM/SIGINT');
+    console.info('   • SIGKILL cannot be handled (by design)');
+    console.info('   • Graceful shutdown preserves test state');
+    console.info('   • Signal handlers ensure proper cleanup');
 
     // Save detailed report
     const report = this.generateMarkdownReport();
     Bun.write('signal-kill-report.md', report);
-    console.log('\n📄 Detailed report saved to: signal-kill-report.md');
+    console.info('\n📄 Detailed report saved to: signal-kill-report.md');
   }
 
   private generateMarkdownReport(): string {
@@ -367,15 +367,15 @@ class SignalKillDemo {
 // CLI interface
 async function main() {
   if (process.argv.includes('--help') || process.argv.includes('-h')) {
-    console.log('Signal Kill Demonstration v2.8');
-    console.log('');
-    console.log('Demonstrates signal handling behavior:');
-    console.log('• SIGKILL - Cannot be caught (immediate termination)');
-    console.log('• SIGTERM - Graceful shutdown (can be caught)');
-    console.log('• SIGINT - Interrupt signal (can be caught)');
-    console.log('');
-    console.log('Usage:');
-    console.log('  bun run signal-kill-demo.ts');
+    console.info('Signal Kill Demonstration v2.8');
+    console.info('');
+    console.info('Demonstrates signal handling behavior:');
+    console.info('• SIGKILL - Cannot be caught (immediate termination)');
+    console.info('• SIGTERM - Graceful shutdown (can be caught)');
+    console.info('• SIGINT - Interrupt signal (can be caught)');
+    console.info('');
+    console.info('Usage:');
+    console.info('  bun run signal-kill-demo.ts');
     return;
   }
 
@@ -383,7 +383,7 @@ async function main() {
   
   try {
     await demo.demonstrateSIGKILL();
-    console.log('\n✅ Signal handling demonstration complete!');
+    console.info('\n✅ Signal handling demonstration complete!');
   } catch (error: any) {
     console.error('❌ Demonstration failed:', error.message);
     process.exit(1);

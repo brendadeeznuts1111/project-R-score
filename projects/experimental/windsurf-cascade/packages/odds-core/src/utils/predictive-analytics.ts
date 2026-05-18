@@ -65,7 +65,7 @@ export class PredictiveAnalyticsEngine extends EventEmitter {
     this.startPredictionLoop();
 
     this.emit('engineStarted', { timestamp: Date.now() });
-    console.log('🧠 Predictive analytics engine started');
+    console.info('🧠 Predictive analytics engine started');
   }
 
   /**
@@ -78,7 +78,7 @@ export class PredictiveAnalyticsEngine extends EventEmitter {
 
     this.isRunning = false;
     this.emit('engineStopped', { timestamp: Date.now() });
-    console.log('🛑 Predictive analytics engine stopped');
+    console.info('🛑 Predictive analytics engine stopped');
   }
 
   /**

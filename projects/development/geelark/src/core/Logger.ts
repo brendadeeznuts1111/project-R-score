@@ -31,7 +31,7 @@ export class Logger {
     this.externalServices.set("elasticsearch", async (entry: LogEntry) => {
       if (this.featureRegistry.isEnabled(FeatureFlag.FEAT_EXTENDED_LOGGING)) {
         // Simulate Elasticsearch logging
-        console.log(`[ES] ${entry.level}: ${entry.message}`);
+        console.info(`[ES] ${entry.level}: ${entry.message}`);
       }
     });
 
@@ -39,7 +39,7 @@ export class Logger {
     this.externalServices.set("splunk", async (entry: LogEntry) => {
       if (entry.type === LogType.SECURITY_EVENT) {
         // Simulate Splunk logging for security events
-        console.log(`[SPLUNK] ${entry.level}: ${entry.message}`);
+        console.info(`[SPLUNK] ${entry.level}: ${entry.message}`);
       }
     });
 
@@ -47,7 +47,7 @@ export class Logger {
     this.externalServices.set("datadog", async (entry: LogEntry) => {
       if (entry.type === LogType.INTEGRATION_EVENT) {
         // Simulate Datadog logging for integration events
-        console.log(`[DD] ${entry.level}: ${entry.message}`);
+        console.info(`[DD] ${entry.level}: ${entry.message}`);
       }
     });
 
@@ -55,7 +55,7 @@ export class Logger {
     this.externalServices.set("prometheus", async (entry: LogEntry) => {
       if (entry.type === LogType.PERFORMANCE_METRIC) {
         // Simulate Prometheus metrics
-        console.log(`[PROM] ${entry.level}: ${entry.message}`);
+        console.info(`[PROM] ${entry.level}: ${entry.message}`);
       }
     });
 
@@ -63,7 +63,7 @@ export class Logger {
     this.externalServices.set("sentry", async (entry: LogEntry) => {
       if (entry.type === LogType.ERROR_OCCURRED) {
         // Simulate Sentry error reporting
-        console.log(`[SENTRY] ${entry.level}: ${entry.message}`);
+        console.info(`[SENTRY] ${entry.level}: ${entry.message}`);
       }
     });
 
@@ -71,7 +71,7 @@ export class Logger {
     this.externalServices.set("cloudwatch", async (entry: LogEntry) => {
       if (entry.type === LogType.HEALTH_CHECK) {
         // Simulate CloudWatch logging
-        console.log(`[CW] ${entry.level}: ${entry.message}`);
+        console.info(`[CW] ${entry.level}: ${entry.message}`);
       }
     });
   }
@@ -306,13 +306,13 @@ export class Logger {
   }
 
   tailLogs(): void {
-    console.log("📋 Tailing logs (Press Ctrl+C to stop)...");
+    console.info("📋 Tailing logs (Press Ctrl+C to stop)...");
 
     const interval = setInterval(() => {
       const recentLogs = this.getRecentLogs(1);
       if (recentLogs.length > 0) {
         recentLogs.forEach((log) => {
-          console.log(`${log.prefix} ${log.message}`);
+          console.info(`${log.prefix} ${log.message}`);
         });
       }
     }, 1000);
@@ -321,25 +321,25 @@ export class Logger {
     if (typeof process !== "undefined") {
       process.on("SIGINT", () => {
         clearInterval(interval);
-        console.log("\n📋 Log tailing stopped");
+        console.info("\n📋 Log tailing stopped");
       });
     }
   }
 
   displayLogs(logs: LogEntry[]): void {
-    console.log(`📋 Displaying ${logs.length} logs:`);
-    console.log("=".repeat(80));
+    console.info(`📋 Displaying ${logs.length} logs:`);
+    console.info("=".repeat(80));
 
     logs.forEach((log) => {
       const timestamp = log.timestamp.toISOString();
       const color = this.getLevelColor(log.level);
       const reset = "\x1b[0m";
-      console.log(
+      console.info(
         `${color}[${timestamp}] ${log.prefix} ${log.message}${reset}`
       );
     });
 
-    console.log("=".repeat(80));
+    console.info("=".repeat(80));
   }
 
   async exportLogsToFormat(logs: LogEntry[], format: string): Promise<void> {
@@ -365,7 +365,7 @@ export class Logger {
         return;
     }
 
-    console.log(output);
+    console.info(output);
   }
 
   private getLevelColor(level: LogLevel): string {

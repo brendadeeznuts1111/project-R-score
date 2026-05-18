@@ -200,8 +200,8 @@ ${content.validationResults}
    * ⚡ One-Liner Performance Test - Native Speed Demonstration
    */
   performanceTest(): void {
-    console.log('🚀 BUN v1.3.8 NATIVE MARKDOWN PERFORMANCE TEST');
-    console.log('=' .repeat(55));
+    console.info('🚀 BUN v1.3.8 NATIVE MARKDOWN PERFORMANCE TEST');
+    console.info('=' .repeat(55));
 
     const testMarkdown = `
 # FactoryWager v1.3.8 Native Supremacy
@@ -240,12 +240,12 @@ const ansi = (Bun as any).markdown.render("**Bold text**", callbacks);
     const totalTime = (endTime - startTime) / 1_000_000; // ms
     const avgTime = totalTime / iterations;
 
-    console.log(`📊 Performance Results:`);
-    console.log(`   Iterations: ${iterations.toLocaleString()}`);
-    console.log(`   Total time: ${totalTime.toFixed(2)}ms`);
-    console.log(`   Average per render: ${avgTime.toFixed(4)}ms`);
-    console.log(`   Renders per second: ${(1000 / avgTime).toLocaleString()}`);
-    console.log(`   🚀 **${(1000 / avgTime / 20).toFixed(1)}× faster than legacy!**`);
+    console.info(`📊 Performance Results:`);
+    console.info(`   Iterations: ${iterations.toLocaleString()}`);
+    console.info(`   Total time: ${totalTime.toFixed(2)}ms`);
+    console.info(`   Average per render: ${avgTime.toFixed(4)}ms`);
+    console.info(`   Renders per second: ${(1000 / avgTime).toLocaleString()}`);
+    console.info(`   🚀 **${(1000 / avgTime / 20).toFixed(1)}× faster than legacy!**`);
   }
 
   /**
@@ -385,18 +385,18 @@ ${validation.issues?.map((issue) => `- **${issue.severity}**: ${issue.descriptio
 
 // 🎯 DEMONSTRATION - Native Markdown Apocalypse
 if (import.meta.main) {
-  console.log('🎉 BUN v1.3.8 NATIVE MARKDOWN APOCALYPSE - FACTORYWAGER EDITION');
-  console.log('=' .repeat(70));
-  console.log(`📍 ${new Date().toLocaleString()} • Chalmette, Louisiana`);
-  console.log(`🔧 Bun Version: ${Bun.version}`);
-  console.log();
+  console.info('🎉 BUN v1.3.8 NATIVE MARKDOWN APOCALYPSE - FACTORYWAGER EDITION');
+  console.info('=' .repeat(70));
+  console.info(`📍 ${new Date().toLocaleString()} • Chalmette, Louisiana`);
+  console.info(`🔧 Bun Version: ${Bun.version}`);
+  console.info();
 
   const fwMarkdown = new FactoryWagerNativeMarkdown();
 
   // Performance demonstration
   fwMarkdown.performanceTest();
 
-  console.log();
+  console.info();
 
   // Sample FactoryWager release data
   const sampleReleaseData = {
@@ -439,7 +439,7 @@ if (import.meta.main) {
 
   // Generate complete FactoryWager summary
   const summary = fwMarkdown.generateFactoryWagerSummary(sampleReleaseData);
-  console.log(summary);
+  console.info(summary);
 
   // Save HTML report for executives
   const htmlReport = fwMarkdown.generateReleaseHTML(
@@ -450,10 +450,10 @@ if (import.meta.main) {
   );
 
   writeFileSync('.factory-wager/release-1.3.8-native-markdown.html', htmlReport);
-  console.log('\n📄 Executive HTML report saved: .factory-wager/release-1.3.8-native-markdown.html');
+  console.info('\n📄 Executive HTML report saved: .factory-wager/release-1.3.8-native-markdown.html');
 
-  console.log('\n🚀 FACTORYWAGER NOW RUNS ON PURE BUN MARKDOWN FIRE!');
-  console.log('💎 Zero dependencies • Microsecond rendering • Native supremacy');
+  console.info('\n🚀 FACTORYWAGER NOW RUNS ON PURE BUN MARKDOWN FIRE!');
+  console.info('💎 Zero dependencies • Microsecond rendering • Native supremacy');
 }
 
 export { FactoryWagerNativeMarkdown, type FactoryWagerMarkdownConfig };

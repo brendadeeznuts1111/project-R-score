@@ -94,7 +94,7 @@ function lookupScopeAndConfig(
   return globalFallback;
 }
 
-console.log(EmpireProDashboard.generateHeader(
+console.info(EmpireProDashboard.generateHeader(
   'SCOPE LOOKUP DEMO - FEATURE BRANCH',
   'Integration with Timezone Matrix v3.7 and UnicodeTableFormatter'
 ));
@@ -109,7 +109,7 @@ const scenarios = [
   { domain: null, platform: 'aix', description: 'Null Domain Fallback' }
 ];
 
-console.log(UnicodeTableFormatter.colorize('🔍 SCOPE LOOKUP SCENARIOS', DesignSystem.text.accent.blue));
+console.info(UnicodeTableFormatter.colorize('🔍 SCOPE LOOKUP SCENARIOS', DesignSystem.text.accent.blue));
 
 const results = scenarios.map(scenario => {
   const config = lookupScopeAndConfig(scenario.domain, scenario.platform);
@@ -154,10 +154,10 @@ const results = scenarios.map(scenario => {
   };
 });
 
-console.log(UnicodeTableFormatter.generateTable(results, { maxWidth: 140 }));
+console.info(UnicodeTableFormatter.generateTable(results, { maxWidth: 140 }));
 
 // Timezone validation demo
-console.log(EmpireProDashboard.generateSection('TIMEZONE VALIDATION', '🌍'));
+console.info(EmpireProDashboard.generateSection('TIMEZONE VALIDATION', '🌍'));
 
 const timezoneValidation = [
   { scope: 'ENTERPRISE', expected: 'America/New_York', actual: 'America/New_York', status: 'operational' },
@@ -176,11 +176,11 @@ const validationResults = timezoneValidation.map(tz => ({
   )
 }));
 
-console.log(UnicodeTableFormatter.colorize('🧪 Timezone Matrix v3.7 Validation', DesignSystem.text.accent.blue));
-console.log(UnicodeTableFormatter.generateTable(validationResults, { maxWidth: 100 }));
+console.info(UnicodeTableFormatter.colorize('🧪 Timezone Matrix v3.7 Validation', DesignSystem.text.accent.blue));
+console.info(UnicodeTableFormatter.generateTable(validationResults, { maxWidth: 100 }));
 
 // Feature flag integration demo
-console.log(EmpireProDashboard.generateSection('FEATURE FLAG INTEGRATION', '🚩'));
+console.info(EmpireProDashboard.generateSection('FEATURE FLAG INTEGRATION', '🚩'));
 
 const featureFlagDemo = [
   {
@@ -207,11 +207,11 @@ const featureResults = featureFlagDemo.map(feature => ({
   Status: UnicodeTableFormatter.formatStatus(feature.status)
 }));
 
-console.log(UnicodeTableFormatter.colorize('🚩 Feature Flag Framework Integration', DesignSystem.text.accent.blue));
-console.log(UnicodeTableFormatter.generateTable(featureResults, { maxWidth: 100 }));
+console.info(UnicodeTableFormatter.colorize('🚩 Feature Flag Framework Integration', DesignSystem.text.accent.blue));
+console.info(UnicodeTableFormatter.generateTable(featureResults, { maxWidth: 100 }));
 
 // Cross-platform compatibility demo
-console.log(EmpireProDashboard.generateSection('CROSS-PLATFORM COMPATIBILITY', '🔄'));
+console.info(EmpireProDashboard.generateSection('CROSS-PLATFORM COMPATIBILITY', '🔄'));
 
 const platformScenarios = [
   { input: 'win32', normalized: 'Windows', status: 'operational' },
@@ -231,17 +231,17 @@ const platformResults = platformScenarios.map(platform => ({
   )
 }));
 
-console.log(UnicodeTableFormatter.colorize('🔄 Platform Normalization Results', DesignSystem.text.accent.blue));
-console.log(UnicodeTableFormatter.generateTable(platformResults, { maxWidth: 100 }));
+console.info(UnicodeTableFormatter.colorize('🔄 Platform Normalization Results', DesignSystem.text.accent.blue));
+console.info(UnicodeTableFormatter.generateTable(platformResults, { maxWidth: 100 }));
 
-console.log(EmpireProDashboard.generateFooter());
+console.info(EmpireProDashboard.generateFooter());
 
-console.log('\n🎉 SCOPE LOOKUP DEMO COMPLETE!');
-console.log('✅ Feature branch: feature/scope-lookup-demo');
-console.log('✅ Scope lookup integration with timezone matrix v3.7');
-console.log('✅ Cross-platform compatibility demonstrated');
-console.log('✅ Feature flag framework integration');
-console.log('✅ UnicodeTableFormatter with Empire Pro v3.7 colors');
-console.log('\n📋 USAGE IN PRODUCTION:');
-console.log('  const config = lookupScopeAndConfig(Bun.env.HOST || "localhost", process.platform);');
-console.log('  // Returns proper scope, timezone, and configuration for any environment');
+console.info('\n🎉 SCOPE LOOKUP DEMO COMPLETE!');
+console.info('✅ Feature branch: feature/scope-lookup-demo');
+console.info('✅ Scope lookup integration with timezone matrix v3.7');
+console.info('✅ Cross-platform compatibility demonstrated');
+console.info('✅ Feature flag framework integration');
+console.info('✅ UnicodeTableFormatter with Empire Pro v3.7 colors');
+console.info('\n📋 USAGE IN PRODUCTION:');
+console.info('  const config = lookupScopeAndConfig(Bun.env.HOST || "localhost", process.platform);');
+console.info('  // Returns proper scope, timezone, and configuration for any environment');

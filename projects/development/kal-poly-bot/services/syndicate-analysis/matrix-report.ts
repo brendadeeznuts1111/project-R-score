@@ -30,5 +30,5 @@ if (import.meta.main) {
     throw new Error(`Unknown command: ${command}`);
   }
   
-  console.log(handler());
+  console.info(handler());
 }

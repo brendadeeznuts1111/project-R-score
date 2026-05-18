@@ -36,9 +36,9 @@ test("~400 Patterns × 200K Markets = ~80M matches (FFI+Cached)", async () => {
 	const duration = performance.now() - start;
 	const matchesPerSec = (totalMatches / duration) * 1000;
 
-	console.log(`⚡ ~80M matches: ${duration.toFixed(1)}ms (${Math.floor(matchesPerSec).toLocaleString()} matches/sec)`);
-	console.log(`📊 Cache Hit Rate: 98.1% exec, 99.9% compile`);
-	console.log(`📊 FFI Hit Rate: 92.3%`);
+	console.info(`⚡ ~80M matches: ${duration.toFixed(1)}ms (${Math.floor(matchesPerSec).toLocaleString()} matches/sec)`);
+	console.info(`📊 Cache Hit Rate: 98.1% exec, 99.9% compile`);
+	console.info(`📊 FFI Hit Rate: 92.3%`);
 
 	// Benchmark should complete in reasonable time (scaled down for test)
 	expect(duration).toBeLessThan(5000); // 5s for scaled test

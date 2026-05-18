@@ -337,14 +337,14 @@ const server = serve({
 });
 
 const AB_TESTING_SERVICE_HOST = process.env.AB_TESTING_SERVICE_HOST || process.env.SERVER_HOST || 'localhost';
-console.log(`🧪 A/B Testing Service running on http://${AB_TESTING_SERVICE_HOST}:${AB_TESTING_SERVICE_PORT}`);
-console.log('Endpoints:');
-console.log('  GET  /health - Health check');
-console.log('  GET  /variant - Get user variant assignment');
-console.log('  POST /track - Track metrics');
-console.log('  GET  /results - Get test results');
-console.log('  POST /config - Configure test');
-console.log('  POST /reset - Reset test data');
+console.info(`🧪 A/B Testing Service running on http://${AB_TESTING_SERVICE_HOST}:${AB_TESTING_SERVICE_PORT}`);
+console.info('Endpoints:');
+console.info('  GET  /health - Health check');
+console.info('  GET  /variant - Get user variant assignment');
+console.info('  POST /track - Track metrics');
+console.info('  GET  /results - Get test results');
+console.info('  POST /config - Configure test');
+console.info('  POST /reset - Reset test data');
 
 /**
  * 💡 Performance Tip: For better performance, consider:

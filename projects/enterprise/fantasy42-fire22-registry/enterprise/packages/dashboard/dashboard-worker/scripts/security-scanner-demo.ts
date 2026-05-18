@@ -141,7 +141,7 @@ class Fire22SecurityScanner {
    * Scan all dependencies in package.json
    */
   async scanDependencies(): Promise<ScanResult> {
-    console.log('🛡️ Fire22 Security Scanner - Scanning Dependencies\n');
+    console.info('🛡️ Fire22 Security Scanner - Scanning Dependencies\n');
 
     const startTime = Bun.nanoseconds();
     const issues: SecurityIssue[] = [];
@@ -160,11 +160,11 @@ class Fire22SecurityScanner {
         ...pkg.devDependencies,
       };
 
-      console.log(`📦 Scanning ${Object.keys(allDeps).length} packages...\n`);
+      console.info(`📦 Scanning ${Object.keys(allDeps).length} packages...\n`);
 
       // Scan each dependency
       for (const [name, version] of Object.entries(allDeps)) {
-        console.log(`🔍 Scanning ${name}@${version}...`);
+        console.info(`🔍 Scanning ${name}@${version}...`);
 
         const packageIssues = await this.scanPackage(name, version as string);
         issues.push(...packageIssues);
@@ -173,10 +173,10 @@ class Fire22SecurityScanner {
         if (packageIssues.length > 0) {
           for (const issue of packageIssues) {
             const icon = issue.severity === 'fatal' ? '🚨' : '⚠️';
-            console.log(`   ${icon} ${issue.type.toUpperCase()}: ${issue.description}`);
+            console.info(`   ${icon} ${issue.type.toUpperCase()}: ${issue.description}`);
           }
         } else {
-          console.log('   ✅ No issues found');
+          console.info('   ✅ No issues found');
         }
       }
 
@@ -207,16 +207,16 @@ class Fire22SecurityScanner {
    * Generate security report
    */
   generateReport(result: ScanResult): void {
-    console.log('\n' + '='.repeat(50));
-    console.log('🛡️ Fire22 Security Scan Report');
-    console.log('='.repeat(50));
+    console.info('\n' + '='.repeat(50));
+    console.info('🛡️ Fire22 Security Scan Report');
+    console.info('='.repeat(50));
 
-    console.log(`📊 Packages Scanned: ${result.packagesScanned}`);
-    console.log(`⏱️ Scan Time: ${result.scanTime.toFixed(2)}ms`);
-    console.log(`🎯 Status: ${result.passed ? '✅ PASSED' : '❌ FAILED'}`);
+    console.info(`📊 Packages Scanned: ${result.packagesScanned}`);
+    console.info(`⏱️ Scan Time: ${result.scanTime.toFixed(2)}ms`);
+    console.info(`🎯 Status: ${result.passed ? '✅ PASSED' : '❌ FAILED'}`);
 
     if (result.issues.length === 0) {
-      console.log('\n🎉 No security issues found! Your Fire22 dashboard is secure.');
+      console.info('\n🎉 No security issues found! Your Fire22 dashboard is secure.');
       return;
     }
 
@@ -224,44 +224,44 @@ class Fire22SecurityScanner {
     const fatalIssues = result.issues.filter(i => i.severity === 'fatal');
     const warnIssues = result.issues.filter(i => i.severity === 'warn');
 
-    console.log(`\n🚨 Fatal Issues: ${fatalIssues.length}`);
-    console.log(`⚠️ Warnings: ${warnIssues.length}`);
+    console.info(`\n🚨 Fatal Issues: ${fatalIssues.length}`);
+    console.info(`⚠️ Warnings: ${warnIssues.length}`);
 
     // Show fatal issues first
     if (fatalIssues.length > 0) {
-      console.log('\n🚨 FATAL ISSUES (Installation blocked):');
+      console.info('\n🚨 FATAL ISSUES (Installation blocked):');
       for (const issue of fatalIssues) {
-        console.log(`\n📦 ${issue.package}@${issue.version}`);
-        console.log(`   Type: ${issue.type.toUpperCase()}`);
-        if (issue.cve) console.log(`   CVE: ${issue.cve}`);
-        console.log(`   Issue: ${issue.description}`);
-        console.log(`   Fix: ${issue.recommendation}`);
+        console.info(`\n📦 ${issue.package}@${issue.version}`);
+        console.info(`   Type: ${issue.type.toUpperCase()}`);
+        if (issue.cve) console.info(`   CVE: ${issue.cve}`);
+        console.info(`   Issue: ${issue.description}`);
+        console.info(`   Fix: ${issue.recommendation}`);
       }
     }
 
     // Show warnings
     if (warnIssues.length > 0) {
-      console.log('\n⚠️ WARNINGS:');
+      console.info('\n⚠️ WARNINGS:');
       for (const issue of warnIssues) {
-        console.log(`\n📦 ${issue.package}@${issue.version}`);
-        console.log(`   Type: ${issue.type.toUpperCase()}`);
-        if (issue.cve) console.log(`   CVE: ${issue.cve}`);
-        console.log(`   Issue: ${issue.description}`);
-        console.log(`   Recommendation: ${issue.recommendation}`);
+        console.info(`\n📦 ${issue.package}@${issue.version}`);
+        console.info(`   Type: ${issue.type.toUpperCase()}`);
+        if (issue.cve) console.info(`   CVE: ${issue.cve}`);
+        console.info(`   Issue: ${issue.description}`);
+        console.info(`   Recommendation: ${issue.recommendation}`);
       }
     }
 
     // Show next steps
-    console.log('\n💡 Next Steps:');
+    console.info('\n💡 Next Steps:');
     if (fatalIssues.length > 0) {
-      console.log('   1. Fix all FATAL issues before proceeding');
-      console.log('   2. Update vulnerable packages');
-      console.log('   3. Remove malicious packages');
-      console.log('   4. Re-run security scan');
+      console.info('   1. Fix all FATAL issues before proceeding');
+      console.info('   2. Update vulnerable packages');
+      console.info('   3. Remove malicious packages');
+      console.info('   4. Re-run security scan');
     } else {
-      console.log('   1. Review warnings and update packages');
-      console.log('   2. Contact security team for policy violations');
-      console.log('   3. Schedule regular security scans');
+      console.info('   1. Review warnings and update packages');
+      console.info('   2. Contact security team for policy violations');
+      console.info('   3. Schedule regular security scans');
     }
   }
 
@@ -309,26 +309,26 @@ optional = false`;
    * Demo: bunfig.toml integration
    */
   async demoBunfigIntegration(): Promise<void> {
-    console.log('\n🔧 Bunfig.toml Security Integration Demo\n');
+    console.info('\n🔧 Bunfig.toml Security Integration Demo\n');
 
     const config = this.createBunfigConfig();
     const configFile = Bun.file('bunfig-security-demo.toml');
 
-    console.log('📝 Creating security-enhanced bunfig.toml...');
+    console.info('📝 Creating security-enhanced bunfig.toml...');
     await Bun.write(configFile, config);
 
-    console.log('✅ Created bunfig-security-demo.toml');
-    console.log('\n📋 Security Configuration:');
-    console.log('   • Custom Fire22 security scanner enabled');
-    console.log('   • Auto-install disabled for security');
-    console.log('   • Exact version matching enforced');
-    console.log('   • Production-grade install settings');
-    console.log('   • Private @fire22 registry support');
+    console.info('✅ Created bunfig-security-demo.toml');
+    console.info('\n📋 Security Configuration:');
+    console.info('   • Custom Fire22 security scanner enabled');
+    console.info('   • Auto-install disabled for security');
+    console.info('   • Exact version matching enforced');
+    console.info('   • Production-grade install settings');
+    console.info('   • Private @fire22 registry support');
 
-    console.log('\n💡 To activate:');
-    console.log('   1. cp bunfig-security-demo.toml bunfig.toml');
-    console.log('   2. bun install (will use security scanner)');
-    console.log('   3. All package operations now security-scanned');
+    console.info('\n💡 To activate:');
+    console.info('   1. cp bunfig-security-demo.toml bunfig.toml');
+    console.info('   2. bun install (will use security scanner)');
+    console.info('   3. All package operations now security-scanned');
   }
 }
 
@@ -380,7 +380,7 @@ class Fire22PackagePolicy {
   }
 
   demoPolicy(): void {
-    console.log('\n📋 Fire22 Package Policy Demo\n');
+    console.info('\n📋 Fire22 Package Policy Demo\n');
 
     const testPackages = [
       '@fire22/core-dashboard',
@@ -392,21 +392,21 @@ class Fire22PackagePolicy {
       'some-unknown-package',
     ];
 
-    console.log('Testing packages against Fire22 security policy:\n');
+    console.info('Testing packages against Fire22 security policy:\n');
 
     for (const pkg of testPackages) {
       const result = this.checkPackage(pkg);
       const icon = result.allowed ? '✅' : '❌';
-      console.log(`${icon} ${pkg}`);
-      console.log(`   ${result.reason}\n`);
+      console.info(`${icon} ${pkg}`);
+      console.info(`   ${result.reason}\n`);
     }
   }
 }
 
 // Main demo execution
 async function runSecurityDemo(): Promise<void> {
-  console.log('🛡️ Fire22 Security Scanner Demo');
-  console.log('='.repeat(50));
+  console.info('🛡️ Fire22 Security Scanner Demo');
+  console.info('='.repeat(50));
 
   const scanner = new Fire22SecurityScanner();
   const policy = new Fire22PackagePolicy();
@@ -421,14 +421,14 @@ async function runSecurityDemo(): Promise<void> {
   // Demo bunfig.toml integration
   await scanner.demoBunfigIntegration();
 
-  console.log('\n🎉 Security Demo Complete!');
-  console.log('\n💡 Fire22 Security Integration Benefits:');
-  console.log('   • Automatic vulnerability scanning on bun install');
-  console.log('   • Custom Fire22 security policies enforced');
-  console.log('   • Supply chain attack prevention');
-  console.log('   • License compliance checking');
-  console.log('   • Malicious package detection');
-  console.log('   • Enterprise security standards');
+  console.info('\n🎉 Security Demo Complete!');
+  console.info('\n💡 Fire22 Security Integration Benefits:');
+  console.info('   • Automatic vulnerability scanning on bun install');
+  console.info('   • Custom Fire22 security policies enforced');
+  console.info('   • Supply chain attack prevention');
+  console.info('   • License compliance checking');
+  console.info('   • Malicious package detection');
+  console.info('   • Enterprise security standards');
 }
 
 // Run if called directly

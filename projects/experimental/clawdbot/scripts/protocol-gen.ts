@@ -37,7 +37,7 @@ async function writeJsonSchema() {
   await fs.mkdir(distDir, { recursive: true });
   const jsonSchemaPath = path.join(distDir, "protocol.schema.json");
   await fs.writeFile(jsonSchemaPath, JSON.stringify(rootSchema, null, 2));
-  console.log(`wrote ${jsonSchemaPath}`);
+  console.info(`wrote ${jsonSchemaPath}`);
   return { jsonSchemaPath, schemaString: JSON.stringify(rootSchema) };
 }
 

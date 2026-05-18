@@ -64,7 +64,7 @@ async function getOpenIssues() {
 async function assignIssue(issueNumber: number, assignee: string, department: string) {
   try {
     execSync(`gh issue edit ${issueNumber} --add-assignee ${assignee}`, { stdio: 'inherit' });
-    console.log(`✅ Assigned issue #${issueNumber} to ${assignee} (${department})`);
+    console.info(`✅ Assigned issue #${issueNumber} to ${assignee} (${department})`);
     return true;
   } catch (error) {
     console.error(`❌ Failed to assign issue #${issueNumber} to ${assignee}:`, error);
@@ -121,29 +121,29 @@ function findBestAssignee(issue: any): { assignee: string; department: string } 
 
 // Main reassignment function
 async function reassignIssues() {
-  console.log('🚀 Fantasy42-Fire22 Issue Reassignment');
-  console.log('=====================================');
+  console.info('🚀 Fantasy42-Fire22 Issue Reassignment');
+  console.info('=====================================');
 
   const issues = await getOpenIssues();
 
   if (issues.length === 0) {
-    console.log('No open issues found.');
+    console.info('No open issues found.');
     return;
   }
 
-  console.log(`Found ${issues.length} open issues to reassign.`);
-  console.log('');
+  console.info(`Found ${issues.length} open issues to reassign.`);
+  console.info('');
 
   let assignedCount = 0;
   let skippedCount = 0;
 
   for (const issue of issues) {
-    console.log(`🔍 Analyzing issue #${issue.number}: "${issue.title}"`);
+    console.info(`🔍 Analyzing issue #${issue.number}: "${issue.title}"`);
 
     const bestAssignee = findBestAssignee(issue);
 
     if (bestAssignee) {
-      console.log(`   → Best match: ${bestAssignee.assignee} (${bestAssignee.department})`);
+      console.info(`   → Best match: ${bestAssignee.assignee} (${bestAssignee.department})`);
 
       // Ask for confirmation before assigning
       const shouldAssign = await confirmAssignment(issue, bestAssignee);
@@ -158,22 +158,22 @@ async function reassignIssues() {
           assignedCount++;
         }
       } else {
-        console.log(`   → Skipped assignment for issue #${issue.number}`);
+        console.info(`   → Skipped assignment for issue #${issue.number}`);
         skippedCount++;
       }
     } else {
-      console.log(`   → No suitable assignee found for issue #${issue.number}`);
+      console.info(`   → No suitable assignee found for issue #${issue.number}`);
       skippedCount++;
     }
 
-    console.log('');
+    console.info('');
   }
 
-  console.log('📊 Reassignment Summary');
-  console.log('=======================');
-  console.log(`✅ Issues assigned: ${assignedCount}`);
-  console.log(`⏭️  Issues skipped: ${skippedCount}`);
-  console.log(`📋 Total issues processed: ${issues.length}`);
+  console.info('📊 Reassignment Summary');
+  console.info('=======================');
+  console.info(`✅ Issues assigned: ${assignedCount}`);
+  console.info(`⏭️  Issues skipped: ${skippedCount}`);
+  console.info(`📋 Total issues processed: ${issues.length}`);
 }
 
 // Simple confirmation function (in real implementation, this would be interactive)

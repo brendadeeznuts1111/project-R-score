@@ -10,159 +10,159 @@ import { enhanceSecurityMetric, SecurityMetric } from './tools/types/enhance-met
 import { ScopeDetector } from './packages/@core/utils/scope-detector.ts';
 
 async function demonstrateSecurityMetricsIntegration() {
-  console.log('🛡️ Security Metrics-Enhanced Dispute Dashboard Demo');
-  console.log('='.repeat(70));
+  console.info('🛡️ Security Metrics-Enhanced Dispute Dashboard Demo');
+  console.info('='.repeat(70));
   
   const dashboard = new DisputeDashboard();
   
   try {
     // Get dashboard data with security metrics
-    console.log('\n🔍 Loading dashboard with security metrics integration...');
+    console.info('\n🔍 Loading dashboard with security metrics integration...');
     const dashboardData = await dashboard.getDashboardData();
     
     // Display security metrics overview
     if (dashboardData.securityMetrics) {
       const security = dashboardData.securityMetrics;
       
-      console.log('\n🛡️ Security Metrics Overview:');
-      console.log(`  Overall Security Score: ${security.overallScore}/100`);
-      console.log(`  Risk Level: ${security.riskLevel}`);
-      console.log(`  Compliance Status: ${security.complianceStatus.replace('_', ' ')}`);
-      console.log(`  Last Verified: ${new Date(security.lastVerified).toLocaleString()}`);
-      console.log(`  Total Metrics: ${security.metrics.length}`);
+      console.info('\n🛡️ Security Metrics Overview:');
+      console.info(`  Overall Security Score: ${security.overallScore}/100`);
+      console.info(`  Risk Level: ${security.riskLevel}`);
+      console.info(`  Compliance Status: ${security.complianceStatus.replace('_', ' ')}`);
+      console.info(`  Last Verified: ${new Date(security.lastVerified).toLocaleString()}`);
+      console.info(`  Total Metrics: ${security.metrics.length}`);
       
       // Display category breakdown
-      console.log('\n📊 Security Category Breakdown:');
+      console.info('\n📊 Security Category Breakdown:');
       Object.entries(security.categories).forEach(([category, metrics]) => {
         const avgScore = metrics.length > 0 ? 
           Math.round(metrics.reduce((sum, m) => sum + m.securityScore, 0) / metrics.length) : 0;
-        console.log(`  ${category.charAt(0).toUpperCase() + category.slice(1)}: ${avgScore}/100 (${metrics.length} metrics)`);
+        console.info(`  ${category.charAt(0).toUpperCase() + category.slice(1)}: ${avgScore}/100 (${metrics.length} metrics)`);
       });
       
       // Display detailed metrics
-      console.log('\n🔍 Detailed Security Metrics:');
+      console.info('\n🔍 Detailed Security Metrics:');
       security.metrics.forEach((metric, index) => {
-        console.log(`  ${index + 1}. [${metric.type.toUpperCase()}] ${metric.topic}`);
-        console.log(`     Status: ${metric.value} | Score: ${metric.securityScore}/100`);
-        console.log(`     Risk: ${metric.riskLevel} | Compliance: ${metric.complianceStatus}`);
-        console.log(`     Domain: ${metric.domain} | Impact: ${metric.impact}`);
+        console.info(`  ${index + 1}. [${metric.type.toUpperCase()}] ${metric.topic}`);
+        console.info(`     Status: ${metric.value} | Score: ${metric.securityScore}/100`);
+        console.info(`     Risk: ${metric.riskLevel} | Compliance: ${metric.complianceStatus}`);
+        console.info(`     Domain: ${metric.domain} | Impact: ${metric.impact}`);
         
         if (metric.properties) {
-          console.log(`     Properties: ${JSON.stringify(metric.properties, null, 6).slice(0, 100)}...`);
+          console.info(`     Properties: ${JSON.stringify(metric.properties, null, 6).slice(0, 100)}...`);
         }
-        console.log('');
+        console.info('');
       });
       
       // Display security trends
-      console.log('\n📈 Security Trends Analysis:');
+      console.info('\n📈 Security Trends Analysis:');
       if (security.trends.improving.length > 0) {
-        console.log('  📈 Improving:');
-        security.trends.improving.forEach(item => console.log(`    • ${item}`));
+        console.info('  📈 Improving:');
+        security.trends.improving.forEach(item => console.info(`    • ${item}`));
       }
       
       if (security.trends.stable.length > 0) {
-        console.log('  ➡️ Stable:');
-        security.trends.stable.forEach(item => console.log(`    • ${item}`));
+        console.info('  ➡️ Stable:');
+        security.trends.stable.forEach(item => console.info(`    • ${item}`));
       }
       
       if (security.trends.degrading.length > 0) {
-        console.log('  📉 Degrading:');
-        security.trends.degrading.forEach(item => console.log(`    • ${item}`));
+        console.info('  📉 Degrading:');
+        security.trends.degrading.forEach(item => console.info(`    • ${item}`));
       }
       
       // Display security recommendations
-      console.log('\n💡 Security Recommendations:');
+      console.info('\n💡 Security Recommendations:');
       const recommendations = generateSecurityRecommendations(security);
       recommendations.forEach((rec, index) => {
-        console.log(`  ${index + 1}. ${rec}`);
+        console.info(`  ${index + 1}. ${rec}`);
       });
       
       // Display compliance status
-      console.log('\n📋 Compliance Status:');
-      console.log(`  Overall: ${security.complianceStatus.replace('_', ' ')}`);
+      console.info('\n📋 Compliance Status:');
+      console.info(`  Overall: ${security.complianceStatus.replace('_', ' ')}`);
       
       const complianceMetrics = security.metrics.filter(m => m.type === 'compliance');
       complianceMetrics.forEach(metric => {
-        console.log(`  ${metric.topic}: ${metric.complianceStatus}`);
+        console.info(`  ${metric.topic}: ${metric.complianceStatus}`);
       });
     }
     
     // Display scope information
     if (dashboardData.scopeInfo) {
-      console.log('\n🎯 Scope-Integrated Security:');
-      console.log(`  Scope: ${dashboardData.scopeInfo.detectedScope}`);
-      console.log(`  Domain: ${dashboardData.scopeInfo.servingDomain}`);
-      console.log(`  Environment: ${dashboardData.scopeInfo.environment}`);
-      console.log(`  Platform Security: ${dashboardData.scopeInfo.securityFeatures.available.length} features`);
+      console.info('\n🎯 Scope-Integrated Security:');
+      console.info(`  Scope: ${dashboardData.scopeInfo.detectedScope}`);
+      console.info(`  Domain: ${dashboardData.scopeInfo.servingDomain}`);
+      console.info(`  Environment: ${dashboardData.scopeInfo.environment}`);
+      console.info(`  Platform Security: ${dashboardData.scopeInfo.securityFeatures.available.length} features`);
       
       // Show how scope affects security
-      console.log('\n🔒 Scope-Based Security Configuration:');
+      console.info('\n🔒 Scope-Based Security Configuration:');
       const scope = dashboardData.scopeInfo.detectedScope;
       if (scope === 'ENTERPRISE') {
-        console.log('  🏢 Enterprise Security:');
-        console.log('    • Multi-Factor Authentication: Required');
-        console.log('    • Role-Based Access Control: Full');
-        console.log('    • Audit Logging: Comprehensive');
-        console.log('    • Compliance: GDPR & SOC2 Compliant');
-        console.log('    • Encryption: AES-256 at rest and in transit');
+        console.info('  🏢 Enterprise Security:');
+        console.info('    • Multi-Factor Authentication: Required');
+        console.info('    • Role-Based Access Control: Full');
+        console.info('    • Audit Logging: Comprehensive');
+        console.info('    • Compliance: GDPR & SOC2 Compliant');
+        console.info('    • Encryption: AES-256 at rest and in transit');
       } else if (scope === 'DEVELOPMENT') {
-        console.log('  🧪 Development Security:');
-        console.log('    • Multi-Factor Authentication: Partial');
-        console.log('    • Role-Based Access Control: Basic');
-        console.log('    • Audit Logging: Limited');
-        console.log('    • Compliance: Partial GDPR');
-        console.log('    • Encryption: AES-256 at rest and in transit');
+        console.info('  🧪 Development Security:');
+        console.info('    • Multi-Factor Authentication: Partial');
+        console.info('    • Role-Based Access Control: Basic');
+        console.info('    • Audit Logging: Limited');
+        console.info('    • Compliance: Partial GDPR');
+        console.info('    • Encryption: AES-256 at rest and in transit');
       } else {
-        console.log('  💻 Local Security:');
-        console.log('    • Multi-Factor Authentication: Optional');
-        console.log('    • Role-Based Access Control: Minimal');
-        console.log('    • Audit Logging: Basic');
-        console.log('    • Compliance: Non-compliant');
-        console.log('    • Encryption: Platform-specific');
+        console.info('  💻 Local Security:');
+        console.info('    • Multi-Factor Authentication: Optional');
+        console.info('    • Role-Based Access Control: Minimal');
+        console.info('    • Audit Logging: Basic');
+        console.info('    • Compliance: Non-compliant');
+        console.info('    • Encryption: Platform-specific');
       }
     }
     
     // Display AI insights if available
     if (dashboardData.aiInsights) {
-      console.log('\n🧠 AI-Powered Security Insights:');
-      console.log(`  Risk Assessment: ${dashboardData.aiInsights.riskLevel.toUpperCase()}`);
-      console.log(`  Anomalies Detected: ${dashboardData.aiInsights.anomalyAlerts.length}`);
+      console.info('\n🧠 AI-Powered Security Insights:');
+      console.info(`  Risk Assessment: ${dashboardData.aiInsights.riskLevel.toUpperCase()}`);
+      console.info(`  Anomalies Detected: ${dashboardData.aiInsights.anomalyAlerts.length}`);
       
       if (dashboardData.aiInsights.anomalyAlerts.length > 0) {
-        console.log('  🚨 Security Anomalies:');
+        console.info('  🚨 Security Anomalies:');
         dashboardData.aiInsights.anomalyAlerts.forEach((alert, index) => {
-          console.log(`    ${index + 1}. [${alert.severity}] ${alert.type}: ${alert.message}`);
+          console.info(`    ${index + 1}. [${alert.severity}] ${alert.type}: ${alert.message}`);
         });
       }
     }
     
     // Display system statistics
-    console.log('\n📊 System Security Statistics:');
-    console.log(`  Total Disputes: ${dashboardData.systemStats.totalDisputes.toLocaleString()}`);
-    console.log(`  Active Disputes: ${dashboardData.systemStats.activeDisputes.toLocaleString()}`);
-    console.log(`  Resolved Today: ${dashboardData.systemStats.resolvedToday.toLocaleString()}`);
-    console.log(`  Refund Rate: ${dashboardData.systemStats.refundRate}`);
+    console.info('\n📊 System Security Statistics:');
+    console.info(`  Total Disputes: ${dashboardData.systemStats.totalDisputes.toLocaleString()}`);
+    console.info(`  Active Disputes: ${dashboardData.systemStats.activeDisputes.toLocaleString()}`);
+    console.info(`  Resolved Today: ${dashboardData.systemStats.resolvedToday.toLocaleString()}`);
+    console.info(`  Refund Rate: ${dashboardData.systemStats.refundRate}`);
     
-    console.log('\n🎨 Web Dashboard Security Features:');
-    console.log('  • Real-time security score monitoring');
-    console.log('  • Risk level assessment with color coding');
-    console.log('  • Compliance status tracking');
-    console.log('  • Category-based security breakdown');
-    console.log('  • Security trends analysis');
-    console.log('  • Detailed metrics table');
-    console.log('  • Scope-aware security configuration');
+    console.info('\n🎨 Web Dashboard Security Features:');
+    console.info('  • Real-time security score monitoring');
+    console.info('  • Risk level assessment with color coding');
+    console.info('  • Compliance status tracking');
+    console.info('  • Category-based security breakdown');
+    console.info('  • Security trends analysis');
+    console.info('  • Detailed metrics table');
+    console.info('  • Scope-aware security configuration');
     
-    console.log('\n🔗 Security Integration Benefits:');
-    console.log('  ✅ Comprehensive security monitoring');
-    console.log('  ✅ Real-time risk assessment');
-    console.log('  ✅ Compliance tracking (GDPR, SOC2)');
-    console.log('  ✅ Scope-based security configuration');
-    console.log('  ✅ AI-powered anomaly detection');
-    console.log('  ✅ Detailed security analytics');
-    console.log('  ✅ Trend analysis and recommendations');
+    console.info('\n🔗 Security Integration Benefits:');
+    console.info('  ✅ Comprehensive security monitoring');
+    console.info('  ✅ Real-time risk assessment');
+    console.info('  ✅ Compliance tracking (GDPR, SOC2)');
+    console.info('  ✅ Scope-based security configuration');
+    console.info('  ✅ AI-powered anomaly detection');
+    console.info('  ✅ Detailed security analytics');
+    console.info('  ✅ Trend analysis and recommendations');
     
-    console.log('\n🎉 Security Metrics Integration Demo Complete!');
-    console.log('\n💡 Open web/dispute-dashboard.html to see the full security monitoring interface');
+    console.info('\n🎉 Security Metrics Integration Demo Complete!');
+    console.info('\n💡 Open web/dispute-dashboard.html to see the full security monitoring interface');
     
   } catch (error) {
     console.error('❌ Demo failed:', error.message);
@@ -225,8 +225,8 @@ function generateSecurityRecommendations(security: any): string[] {
 
 // Test security metrics across different scopes
 async function testSecurityAcrossScopes() {
-  console.log('\n🔄 Testing Security Metrics Across Scopes');
-  console.log('='.repeat(50));
+  console.info('\n🔄 Testing Security Metrics Across Scopes');
+  console.info('='.repeat(50));
   
   const scopes = [
     { host: 'localhost', description: 'Local Development' },
@@ -235,7 +235,7 @@ async function testSecurityAcrossScopes() {
   ];
   
   for (const scope of scopes) {
-    console.log(`\n📍 Testing ${scope.description} (${scope.host}):`);
+    console.info(`\n📍 Testing ${scope.description} (${scope.host}):`);
     
     // Set environment variable for scope detection
     process.env.HOST = scope.host;
@@ -246,10 +246,10 @@ async function testSecurityAcrossScopes() {
       
       if (data.securityMetrics) {
         const security = data.securityMetrics;
-        console.log(`  ✅ Security Score: ${security.overallScore}/100`);
-        console.log(`  🛡️ Risk Level: ${security.riskLevel}`);
-        console.log(`  📋 Compliance: ${security.complianceStatus.replace('_', ' ')}`);
-        console.log(`  📊 Metrics: ${security.metrics.length} total`);
+        console.info(`  ✅ Security Score: ${security.overallScore}/100`);
+        console.info(`  🛡️ Risk Level: ${security.riskLevel}`);
+        console.info(`  📋 Compliance: ${security.complianceStatus.replace('_', ' ')}`);
+        console.info(`  📊 Metrics: ${security.metrics.length} total`);
         
         // Show key security features
         const authScore = security.categories.authentication.length > 0 ?
@@ -257,11 +257,11 @@ async function testSecurityAcrossScopes() {
         const encryptScore = security.categories.encryption.length > 0 ?
           Math.round(security.categories.encryption.reduce((sum: number, m: any) => sum + m.securityScore, 0) / security.categories.encryption.length) : 0;
         
-        console.log(`  🔐 Authentication: ${authScore}/100`);
-        console.log(`  🔒 Encryption: ${encryptScore}/100`);
+        console.info(`  🔐 Authentication: ${authScore}/100`);
+        console.info(`  🔒 Encryption: ${encryptScore}/100`);
       }
     } catch (error) {
-      console.log(`  ❌ Error: ${error.message}`);
+      console.info(`  ❌ Error: ${error.message}`);
     }
   }
 }

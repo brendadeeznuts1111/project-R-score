@@ -63,8 +63,8 @@ class LanguageKeyValidator {
    * Main validation entry point
    */
   async validate(): Promise<ValidationResult> {
-    console.log('🌐 Fire22 Language Keys Validation Started');
-    console.log('='.repeat(50));
+    console.info('🌐 Fire22 Language Keys Validation Started');
+    console.info('='.repeat(50));
 
     try {
       // Load language data
@@ -99,8 +99,8 @@ class LanguageKeyValidator {
       const fileContent = await readFile(languageFilePath, 'utf-8');
       this.languageData = JSON.parse(fileContent);
 
-      console.log(`✅ Loaded language data: ${this.languageData!.meta.totalKeys} keys`);
-      console.log(`📅 Version: ${this.languageData!.meta.version}`);
+      console.info(`✅ Loaded language data: ${this.languageData!.meta.totalKeys} keys`);
+      console.info(`📅 Version: ${this.languageData!.meta.version}`);
     } catch (error) {
       throw new Error(`Failed to load language data from ${languageFilePath}: ${error.message}`);
     }
@@ -136,10 +136,10 @@ class LanguageKeyValidator {
       keys.forEach(key => this.keysFoundInFiles.add(key));
       this.filesScanned++;
 
-      console.log(`📄 Scanned ${filePath}: found ${keys.length} language keys`);
+      console.info(`📄 Scanned ${filePath}: found ${keys.length} language keys`);
 
       if (keys.length > 0) {
-        console.log(`   Keys: ${keys.join(', ')}`);
+        console.info(`   Keys: ${keys.join(', ')}`);
       }
     } catch (error) {
       this.validationResult.warnings.push(`Failed to read ${filePath}: ${error.message}`);
@@ -248,40 +248,40 @@ class LanguageKeyValidator {
    * Print validation results
    */
   private printResults(): void {
-    console.log('\n' + '='.repeat(50));
-    console.log('📊 VALIDATION RESULTS');
-    console.log('='.repeat(50));
+    console.info('\n' + '='.repeat(50));
+    console.info('📊 VALIDATION RESULTS');
+    console.info('='.repeat(50));
 
     // Print statistics
-    console.log('\n📈 Statistics:');
-    console.log(`   Files scanned: ${this.validationResult.stats.filesScanned}`);
-    console.log(`   Language keys found in files: ${this.validationResult.stats.totalKeysFound}`);
-    console.log(`   Language keys defined: ${this.validationResult.stats.totalKeysInFile}`);
-    console.log(`   Missing translations: ${this.validationResult.stats.missingTranslations}`);
-    console.log(`   Unused keys: ${this.validationResult.stats.unusedKeys}`);
+    console.info('\n📈 Statistics:');
+    console.info(`   Files scanned: ${this.validationResult.stats.filesScanned}`);
+    console.info(`   Language keys found in files: ${this.validationResult.stats.totalKeysFound}`);
+    console.info(`   Language keys defined: ${this.validationResult.stats.totalKeysInFile}`);
+    console.info(`   Missing translations: ${this.validationResult.stats.missingTranslations}`);
+    console.info(`   Unused keys: ${this.validationResult.stats.unusedKeys}`);
 
     // Print errors
     if (this.validationResult.errors.length > 0) {
-      console.log('\n❌ Errors:');
-      this.validationResult.errors.forEach(error => console.log(`   • ${error}`));
+      console.info('\n❌ Errors:');
+      this.validationResult.errors.forEach(error => console.info(`   • ${error}`));
     }
 
     // Print warnings
     if (this.validationResult.warnings.length > 0) {
-      console.log('\n⚠️  Warnings:');
-      this.validationResult.warnings.forEach(warning => console.log(`   • ${warning}`));
+      console.info('\n⚠️  Warnings:');
+      this.validationResult.warnings.forEach(warning => console.info(`   • ${warning}`));
     }
 
     // Overall result
-    console.log('\n' + '='.repeat(50));
+    console.info('\n' + '='.repeat(50));
     if (this.validationResult.success) {
-      console.log('✅ VALIDATION PASSED');
-      console.log('🌐 Language key implementation is valid!');
+      console.info('✅ VALIDATION PASSED');
+      console.info('🌐 Language key implementation is valid!');
     } else {
-      console.log('❌ VALIDATION FAILED');
-      console.log('🔧 Please fix the errors above before proceeding.');
+      console.info('❌ VALIDATION FAILED');
+      console.info('🔧 Please fix the errors above before proceeding.');
     }
-    console.log('='.repeat(50));
+    console.info('='.repeat(50));
   }
 
   /**
@@ -306,7 +306,7 @@ class LanguageKeyValidator {
   exportReport(outputPath?: string): ValidationResult {
     if (outputPath) {
       // In a real implementation, you would write to file
-      console.log(`📄 Report would be exported to: ${outputPath}`);
+      console.info(`📄 Report would be exported to: ${outputPath}`);
     }
 
     return this.validationResult;
@@ -349,7 +349,7 @@ class LanguageKeyCLI {
    * Print CLI help
    */
   static printHelp(): void {
-    console.log(`
+    console.info(`
 🌐 Fire22 Language Keys Validation Tool
 
 Usage: bun run validate-language-keys [options]

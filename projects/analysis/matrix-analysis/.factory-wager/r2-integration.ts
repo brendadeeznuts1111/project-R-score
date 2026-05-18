@@ -277,10 +277,10 @@ class R2ArchiveManager {
     // In a real implementation, this would use the Cloudflare R2 API
     // For now, we'll simulate the upload
     
-    console.log(`📤 Uploading to R2: ${key}`);
-    console.log(`   Size: ${content.length} bytes`);
-    console.log(`   Compressed: ${metadata.compressed}`);
-    console.log(`   Type: ${metadata.type}`);
+    console.info(`📤 Uploading to R2: ${key}`);
+    console.info(`   Size: ${content.length} bytes`);
+    console.info(`   Compressed: ${metadata.compressed}`);
+    console.info(`   Type: ${metadata.type}`);
     
     // Simulate upload delay
     await new Promise(resolve => setTimeout(resolve, 100));
@@ -375,7 +375,7 @@ class R2ArchiveManager {
       // Write back only recent entries
       writeFileSync(auditPath, recentLines.join('\n') + '\n', 'utf-8');
       
-      console.log(`🧹 Cleaned up ${lines.length - recentLines.length} old audit entries`);
+      console.info(`🧹 Cleaned up ${lines.length - recentLines.length} old audit entries`);
       
     } catch (error) {
       console.error('Failed to cleanup audit logs:', error);
@@ -444,9 +444,9 @@ class R2ArchiveManager {
 
 // CLI interface
 if (import.meta.main) {
-  console.log('📦 FactoryWager R2 Archive Manager');
-  console.log('==================================');
-  console.log();
+  console.info('📦 FactoryWager R2 Archive Manager');
+  console.info('==================================');
+  console.info();
 
   // Load R2 configuration from environment or config
   const r2Config: R2Config = {
@@ -467,13 +467,13 @@ if (import.meta.main) {
     const allResults = [...auditResults, ...reportResults, ...releaseResults];
     const report = archiver.generateArchiveReport(allResults);
     
-    console.log('📊 Archive Operation Results:');
-    console.log(report);
+    console.info('📊 Archive Operation Results:');
+    console.info(report);
     
     // Save archive report
     const reportPath = `.factory-wager/archive-report-${Date.now()}.json`;
     writeFileSync(reportPath, report, 'utf-8');
-    console.log(`\n📄 Archive report saved: ${reportPath}`);
+    console.info(`\n📄 Archive report saved: ${reportPath}`);
     
   }).catch((error: unknown) => {
     console.error('❌ Archive operation failed:', error instanceof Error ? error.message : String(error));

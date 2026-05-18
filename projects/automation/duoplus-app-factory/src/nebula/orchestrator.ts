@@ -160,7 +160,7 @@ export class NebulaFlowOrchestrator {
     // 3. Update the database
     // 4. Reload the configuration
     
-    console.log(`Updating groups with ${guards.length} new guards`);
+    console.info(`Updating groups with ${guards.length} new guards`);
     
     // Simulate updating groups
     guards.forEach(guard => {

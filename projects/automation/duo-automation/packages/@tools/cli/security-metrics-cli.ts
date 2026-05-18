@@ -4,7 +4,7 @@
 import { DesignSystem } from '../terminal/src/design-system';
 import { UnicodeTableFormatter, EmpireProDashboard } from '../terminal/src/enhanced-unicode-formatter';
 
-console.log(EmpireProDashboard.generateHeader(
+console.info(EmpireProDashboard.generateHeader(
   'EMPIRE PRO v3.7 SECURITY METRICS',
   'Advanced Security Configuration Dashboard with Native UnicodeTableFormatter'
 ));
@@ -105,11 +105,11 @@ const coloredSecurityData = securityMetrics.map(metric => ({
   Owner: UnicodeTableFormatter.colorize(metric.metadata.owner, DesignSystem.text.muted)
 }));
 
-console.log(UnicodeTableFormatter.colorize(`🔒 Security Configuration Dashboard - ${securityMetrics.length} security features`, DesignSystem.text.accent.blue));
-console.log(UnicodeTableFormatter.generateTable(coloredSecurityData, { maxWidth: 140 }));
+console.info(UnicodeTableFormatter.colorize(`🔒 Security Configuration Dashboard - ${securityMetrics.length} security features`, DesignSystem.text.accent.blue));
+console.info(UnicodeTableFormatter.generateTable(coloredSecurityData, { maxWidth: 140 }));
 
 // Filter by ENTERPRISE scope with proper sorting
-console.log(EmpireProDashboard.generateSection('ENTERPRISE SCOPE SECURITY', '🏢'));
+console.info(EmpireProDashboard.generateSection('ENTERPRISE SCOPE SECURITY', '🏢'));
 
 const enterpriseMetrics = securityMetrics.filter(m => m.scope === 'ENTERPRISE');
 const coloredEnterpriseData = enterpriseMetrics.map(metric => ({
@@ -124,11 +124,11 @@ const coloredEnterpriseData = enterpriseMetrics.map(metric => ({
   Owner: UnicodeTableFormatter.colorize(metric.metadata.owner, DesignSystem.text.muted)
 }));
 
-console.log(UnicodeTableFormatter.colorize(`🏢 Enterprise Security Features - ${enterpriseMetrics.length} features`, DesignSystem.text.accent.blue));
-console.log(UnicodeTableFormatter.generateTable(coloredEnterpriseData, { maxWidth: 120 }));
+console.info(UnicodeTableFormatter.colorize(`🏢 Enterprise Security Features - ${enterpriseMetrics.length} features`, DesignSystem.text.accent.blue));
+console.info(UnicodeTableFormatter.generateTable(coloredEnterpriseData, { maxWidth: 120 }));
 
 // Security status summary
-console.log(EmpireProDashboard.generateSection('SECURITY STATUS SUMMARY', '📊'));
+console.info(EmpireProDashboard.generateSection('SECURITY STATUS SUMMARY', '📊'));
 
 const operationalCount = securityMetrics.filter(m => m.status === true).length;
 const totalFeatures = securityMetrics.length;
@@ -163,10 +163,10 @@ const summaryData = [
   }
 ];
 
-console.log(UnicodeTableFormatter.generateTable(summaryData, { maxWidth: 100 }));
+console.info(UnicodeTableFormatter.generateTable(summaryData, { maxWidth: 100 }));
 
 // Risk assessment by category
-console.log(EmpireProDashboard.generateSection('RISK ASSESSMENT BY CATEGORY', '⚠️'));
+console.info(EmpireProDashboard.generateSection('RISK ASSESSMENT BY CATEGORY', '⚠️'));
 
 const riskByCategory = securityMetrics.reduce((acc, metric) => {
   if (!acc[metric.category]) {
@@ -193,17 +193,17 @@ const riskData = Object.entries(riskByCategory).map(([category, data]) => ({
   )
 }));
 
-console.log(UnicodeTableFormatter.generateTable(riskData, { maxWidth: 100 }));
+console.info(UnicodeTableFormatter.generateTable(riskData, { maxWidth: 100 }));
 
-console.log(EmpireProDashboard.generateFooter());
+console.info(EmpireProDashboard.generateFooter());
 
-console.log('\n🎉 EMPIRE PRO v3.7 SECURITY METRICS - PROPER TABLE FORMATTING RESTORED!');
-console.log('✅ Advanced security metrics dashboard with native UnicodeTableFormatter');
-console.log('✅ Multi-level filtering and sorting capabilities');
-console.log('✅ Color-coded risk assessment and compliance scoring');
-console.log('✅ Enterprise-grade security visualization');
-console.log('✅ Professional CLI experience with Empire Pro v3.7 colors');
-console.log('\n📋 USAGE EXAMPLES:');
-console.log('  bun security-metrics-cli.ts                    # Full security dashboard');
-console.log('  bun empire.ts security dashboard                # Empire CLI integration');
-console.log('  bun security-dashboard.ts                       # Original security CLI');
+console.info('\n🎉 EMPIRE PRO v3.7 SECURITY METRICS - PROPER TABLE FORMATTING RESTORED!');
+console.info('✅ Advanced security metrics dashboard with native UnicodeTableFormatter');
+console.info('✅ Multi-level filtering and sorting capabilities');
+console.info('✅ Color-coded risk assessment and compliance scoring');
+console.info('✅ Enterprise-grade security visualization');
+console.info('✅ Professional CLI experience with Empire Pro v3.7 colors');
+console.info('\n📋 USAGE EXAMPLES:');
+console.info('  bun security-metrics-cli.ts                    # Full security dashboard');
+console.info('  bun empire.ts security dashboard                # Empire CLI integration');
+console.info('  bun security-dashboard.ts                       # Original security CLI');

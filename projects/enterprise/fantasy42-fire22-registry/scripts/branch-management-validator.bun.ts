@@ -519,60 +519,60 @@ async function main() {
   try {
     switch (command) {
       case 'validate':
-        console.log('🔍 Validating branch management...');
+        console.info('🔍 Validating branch management...');
         const results = await validator.validateBranches();
 
-        console.log(`\n📊 Validation Results:`);
-        console.log(`Total branches: ${results.length}`);
-        console.log(`Compliant: ${results.filter(r => r.valid).length}`);
-        console.log(`Issues: ${results.reduce((sum, r) => sum + r.issues.length, 0)}`);
+        console.info(`\n📊 Validation Results:`);
+        console.info(`Total branches: ${results.length}`);
+        console.info(`Compliant: ${results.filter(r => r.valid).length}`);
+        console.info(`Issues: ${results.reduce((sum, r) => sum + r.issues.length, 0)}`);
 
         for (const result of results) {
           if (!result.valid || result.issues.length > 0) {
-            console.log(`\n❌ ${result.branch}:`);
+            console.info(`\n❌ ${result.branch}:`);
             for (const issue of result.issues) {
-              console.log(`  - ${issue}`);
+              console.info(`  - ${issue}`);
             }
           }
         }
         break;
 
       case 'generate':
-        console.log('🔧 Generating branch protection rules...');
+        console.info('🔧 Generating branch protection rules...');
         const rules = validator.generateProtectionRules();
         const rulesPath = join(process.cwd(), '.github', 'branch-protection-rules-generated.json');
         writeFileSync(rulesPath, validator.exportProtectionRules());
-        console.log(`Protection rules saved to ${rulesPath}`);
+        console.info(`Protection rules saved to ${rulesPath}`);
         break;
 
       case 'report':
-        console.log('📊 Generating branch management report...');
+        console.info('📊 Generating branch management report...');
         const report = await validator.generateReport();
         const reportPath = join(process.cwd(), 'BRANCH-MANAGEMENT-REPORT.md');
         writeFileSync(reportPath, report);
-        console.log(`Report saved to ${reportPath}`);
+        console.info(`Report saved to ${reportPath}`);
         break;
 
       case 'types':
-        console.log('📋 Branch Types:');
+        console.info('📋 Branch Types:');
         for (const [type, config] of Object.entries(validator['config'].branchTypes)) {
-          console.log(`  ${type}: ${config.pattern} (${config.protection})`);
-          console.log(`    Purpose: ${config.purpose}`);
-          console.log(
+          console.info(`  ${type}: ${config.pattern} (${config.protection})`);
+          console.info(`    Purpose: ${config.purpose}`);
+          console.info(
             `    Reviews: ${config.requiredReviews}, CODEOWNERS: ${config.codeOwnerRequired}`
           );
-          console.log(`    Status Checks: ${config.statusChecks.join(', ')}`);
-          console.log('');
+          console.info(`    Status Checks: ${config.statusChecks.join(', ')}`);
+          console.info('');
         }
         break;
 
       default:
-        console.log('Usage: bun run branch-management-validator.bun.ts <command>');
-        console.log('Commands:');
-        console.log('  validate  - Validate current branch protection rules');
-        console.log('  generate  - Generate new branch protection rules');
-        console.log('  report    - Generate branch management report');
-        console.log('  types     - List branch types and configurations');
+        console.info('Usage: bun run branch-management-validator.bun.ts <command>');
+        console.info('Commands:');
+        console.info('  validate  - Validate current branch protection rules');
+        console.info('  generate  - Generate new branch protection rules');
+        console.info('  report    - Generate branch management report');
+        console.info('  types     - List branch types and configurations');
     }
   } catch (error) {
     console.error('Error:', error);

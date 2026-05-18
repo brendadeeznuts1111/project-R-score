@@ -59,7 +59,7 @@ export const logOmega = async (
                     level === 'WARN' ? '\x1b[43m' :
                     level === 'INFO' ? '\x1b[42m' : '\x1b[44m';
   const reset = '\x1b[0m';
-  console.log(`${colorCode}[${level}]${reset} ${msg}`);
+  console.info(`${colorCode}[${level}]${reset} ${msg}`);
 
   // 2. Persistent Matrix Log (Col 75-80)
   try {

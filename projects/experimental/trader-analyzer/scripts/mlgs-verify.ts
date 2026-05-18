@@ -16,21 +16,21 @@ async function verifyRouterIntegration(): Promise<void> {
 		
 		const result = router.verifyRouterIntegration();
 		
-		console.log("\n🔍 Router Integration Verification:");
-		console.log("=".repeat(50));
+		console.info("\n🔍 Router Integration Verification:");
+		console.info("=".repeat(50));
 		result.details.forEach((detail: string) => {
-			console.log(detail);
+			console.info(detail);
 		});
-		console.log("=".repeat(50));
-		console.log(`\n🎯 Status: ${result.status}\n`);
+		console.info("=".repeat(50));
+		console.info(`\n🎯 Status: ${result.status}\n`);
 		
 		// For validation script parsing
-		console.log(`Status: ${result.status}`);
+		console.info(`Status: ${result.status}`);
 		
 		process.exit(result.status === "READY" ? 0 : 1);
 	} catch (error: any) {
 		console.error("Verification failed:", error);
-		console.log(`Status: NOT_READY`);
+		console.info(`Status: NOT_READY`);
 		process.exit(1);
 	}
 }

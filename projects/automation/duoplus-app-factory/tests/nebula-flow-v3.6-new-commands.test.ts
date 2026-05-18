@@ -60,7 +60,7 @@ describe('Nebula Flow v3.6 New Commands', () => {
       expect(code).toBe(0);
       expect(stdout).toContain('Simple Dashboard Mode');
       
-      console.log('✅ Dashboard command test passed');
+      console.info('✅ Dashboard command test passed');
     });
   });
   
@@ -78,7 +78,7 @@ describe('Nebula Flow v3.6 New Commands', () => {
       const content = fs.readFileSync(outputFile, 'utf8');
       expect(content).toContain('digraph nebula_topology');
       
-      console.log('✅ Topology DOT format test passed');
+      console.info('✅ Topology DOT format test passed');
     });
     
     it('should generate topology diagram in text format', async () => {
@@ -94,7 +94,7 @@ describe('Nebula Flow v3.6 New Commands', () => {
       const content = fs.readFileSync(outputFile, 'utf8');
       expect(content).toContain('Nebula Flow Topology');
       
-      console.log('✅ Topology text format test passed');
+      console.info('✅ Topology text format test passed');
     });
   });
   
@@ -105,7 +105,7 @@ describe('Nebula Flow v3.6 New Commands', () => {
       expect(result).toContain('Nebula Flow Configuration Audit');
       expect(result).toContain('Audit Summary');
       
-      console.log('✅ Audit without fail-on-critical test passed');
+      console.info('✅ Audit without fail-on-critical test passed');
     });
     
     it('should export audit report to JSON file', async () => {
@@ -122,7 +122,7 @@ describe('Nebula Flow v3.6 New Commands', () => {
       expect(content.version).toBe('3.6.0');
       expect(typeof content.valid).toBe('boolean');
       
-      console.log('✅ Audit export test passed');
+      console.info('✅ Audit export test passed');
     });
   });
   
@@ -139,7 +139,7 @@ describe('Nebula Flow v3.6 New Commands', () => {
       expect(result).toContain('Syncing secrets');
       expect(result).toContain('completed successfully');
       
-      console.log('✅ Secrets sync test passed');
+      console.info('✅ Secrets sync test passed');
     });
     
     it('should sync secrets to keychain', async () => {
@@ -148,7 +148,7 @@ describe('Nebula Flow v3.6 New Commands', () => {
       expect(result).toContain('Storing secrets in system keychain');
       expect(result).toContain('completed successfully');
       
-      console.log('✅ Secrets keychain sync test passed');
+      console.info('✅ Secrets keychain sync test passed');
     });
   });
   
@@ -169,7 +169,7 @@ describe('Nebula Flow v3.6 New Commands', () => {
       expect(content).toContain('interface ProjectGuard');
       expect(content).toContain('GROUP_GUARDS');
       
-      console.log('✅ Runtime guards generation test passed');
+      console.info('✅ Runtime guards generation test passed');
     });
     
     it('should generate guards for specific groups', async () => {
@@ -195,9 +195,9 @@ describe('Nebula Flow v3.6 New Commands', () => {
         const content = fs.readFileSync(outputFile, 'utf8');
         expect(content).toContain('GROUP_GUARDS');
         
-        console.log(`✅ Specific groups guards generation test passed for group: ${testGroup}`);
+        console.info(`✅ Specific groups guards generation test passed for group: ${testGroup}`);
       } else {
-        console.log('⚠️  No groups available for specific group guards test - skipping');
+        console.info('⚠️  No groups available for specific group guards test - skipping');
         expect(true).toBe(true); // Pass test if no groups
       }
     });
@@ -214,7 +214,7 @@ describe('Nebula Flow v3.6 New Commands', () => {
       const packageExists = fs.existsSync(packageFile);
       expect(packageExists).toBe(true);
       
-      console.log('✅ Basic package creation test passed');
+      console.info('✅ Basic package creation test passed');
     });
     
     it('should create package with feature flag', async () => {
@@ -227,7 +227,7 @@ describe('Nebula Flow v3.6 New Commands', () => {
       const packageExists = fs.existsSync(packageFile);
       expect(packageExists).toBe(true);
       
-      console.log('✅ Feature flag package creation test passed');
+      console.info('✅ Feature flag package creation test passed');
     });
     
     it('should compile and create package', async () => {
@@ -242,7 +242,7 @@ describe('Nebula Flow v3.6 New Commands', () => {
       const packageExists = fs.existsSync(packageFile);
       expect(packageExists).toBe(true);
       
-      console.log('✅ Compiled package creation test passed');
+      console.info('✅ Compiled package creation test passed');
     });
   });
   
@@ -257,7 +257,7 @@ describe('Nebula Flow v3.6 New Commands', () => {
       expect(result).toContain('nebula-flow.ts guard');
       expect(result).toContain('nebula-flow.ts package');
       
-      console.log('✅ All commands listed in help test passed');
+      console.info('✅ All commands listed in help test passed');
     });
   });
 });

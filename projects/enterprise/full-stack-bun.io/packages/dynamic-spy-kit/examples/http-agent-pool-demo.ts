@@ -8,7 +8,7 @@
 import { HTTPAgentPool, getGlobalAgentPool } from '../src/utils/http-agent-pool';
 import http from "node:http";
 
-console.log('🌐 HTTP Agent Connection Pool Demo\n');
+console.info('🌐 HTTP Agent Connection Pool Demo\n');
 
 // Create agent pool with keepAlive enabled
 const agentPool = new HTTPAgentPool({
@@ -19,7 +19,7 @@ const agentPool = new HTTPAgentPool({
 	timeout: 60000
 });
 
-console.log('✅ Agent pool created with keepAlive: true\n');
+console.info('✅ Agent pool created with keepAlive: true\n');
 
 // Example: Make multiple requests (connections will be reused)
 const makeRequest = (path: string): Promise<void> => {
@@ -38,7 +38,7 @@ const makeRequest = (path: string): Promise<void> => {
 					data += chunk;
 				});
 				res.on('end', () => {
-					console.log(`✅ Request to ${path} completed (${res.statusCode})`);
+					console.info(`✅ Request to ${path} completed (${res.statusCode})`);
 					resolve();
 				});
 			}
@@ -54,7 +54,7 @@ const makeRequest = (path: string): Promise<void> => {
 };
 
 // Make multiple requests to demonstrate connection reuse
-console.log('📡 Making multiple requests (connections will be reused)...\n');
+console.info('📡 Making multiple requests (connections will be reused)...\n');
 
 (async () => {
 	try {
@@ -67,21 +67,21 @@ console.log('📡 Making multiple requests (connections will be reused)...\n');
 		await makeRequest('/path3');
 
 		// Show connection pool statistics
-		console.log('\n📊 Connection Pool Statistics:');
+		console.info('\n📊 Connection Pool Statistics:');
 		const stats = agentPool.getStats();
-		console.log(`  Total Requests: ${stats.totalRequests}`);
-		console.log(`  Reused Connections: ${stats.reusedConnections}`);
-		console.log(`  New Connections: ${stats.newConnections}`);
-		console.log(`  Reuse Rate: ${stats.reuseRate}`);
-		console.log(`  Active Connections: ${stats.activeConnections}`);
-		console.log(`\n  HTTP Agent Config:`);
-		console.log(`    keepAlive: ${stats.httpAgent.keepAlive}`);
-		console.log(`    keepAliveMsecs: ${stats.httpAgent.keepAliveMsecs}`);
-		console.log(`    maxSockets: ${stats.httpAgent.maxSockets}`);
-		console.log(`    maxFreeSockets: ${stats.httpAgent.maxFreeSockets}`);
+		console.info(`  Total Requests: ${stats.totalRequests}`);
+		console.info(`  Reused Connections: ${stats.reusedConnections}`);
+		console.info(`  New Connections: ${stats.newConnections}`);
+		console.info(`  Reuse Rate: ${stats.reuseRate}`);
+		console.info(`  Active Connections: ${stats.activeConnections}`);
+		console.info(`\n  HTTP Agent Config:`);
+		console.info(`    keepAlive: ${stats.httpAgent.keepAlive}`);
+		console.info(`    keepAliveMsecs: ${stats.httpAgent.keepAliveMsecs}`);
+		console.info(`    maxSockets: ${stats.httpAgent.maxSockets}`);
+		console.info(`    maxFreeSockets: ${stats.httpAgent.maxFreeSockets}`);
 
-		console.log('\n✅ Connection pooling working correctly!');
-		console.log('   Connections are properly reused with keepAlive: true\n');
+		console.info('\n✅ Connection pooling working correctly!');
+		console.info('   Connections are properly reused with keepAlive: true\n');
 
 		// Cleanup
 		agentPool.destroy();

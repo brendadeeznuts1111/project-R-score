@@ -4,8 +4,8 @@ import { SecurityMetricEnhancer } from '../types/enhance-metric';
 import type { PerfMetric } from '../types/perf-metric';
 
 async function demonstrateRealtimeSecurityQuery() {
-  console.log('🔒 Real-time Security Configuration Query');
-  console.log('==========================================\n');
+  console.info('🔒 Real-time Security Configuration Query');
+  console.info('==========================================\n');
   
   // Simulate the telemetry endpoint response
   const telemetryData: PerfMetric[] = [
@@ -63,28 +63,28 @@ async function demonstrateRealtimeSecurityQuery() {
   // Filter security metrics (equivalent to jq filter)
   const securityMetrics = telemetryData.filter(m => m.category === "Security");
   
-  console.log('📊 Live Security Configurations:');
+  console.info('📊 Live Security Configurations:');
   const securityEnhancer = SecurityMetricEnhancer.create();
   const enhancedSecurityMetrics = securityEnhancer.enhanceMetrics(securityMetrics);
-  console.log(Bun.inspect.table(enhancedSecurityMetrics, { colors: true }));
+  console.info(Bun.inspect.table(enhancedSecurityMetrics, { colors: true }));
   
-  console.log('\n🎯 Query Analysis:');
-  console.log(`• Total Security Features: ${securityMetrics.length}`);
-  console.log(`• Enabled Features: ${securityMetrics.filter(m => m.value === "ENABLED" || m.value === "ENFORCED" || m.value === "ACTIVE").length}`);
-  console.log(`• Security Categories: ${[...new Set(securityMetrics.map(m => m.type))].join(", ")}`);
-  console.log(`• Implementation Locations: ${[...new Set(securityMetrics.map(m => m.locations))].join(", ")}`);
+  console.info('\n🎯 Query Analysis:');
+  console.info(`• Total Security Features: ${securityMetrics.length}`);
+  console.info(`• Enabled Features: ${securityMetrics.filter(m => m.value === "ENABLED" || m.value === "ENFORCED" || m.value === "ACTIVE").length}`);
+  console.info(`• Security Categories: ${[...new Set(securityMetrics.map(m => m.type))].join(", ")}`);
+  console.info(`• Implementation Locations: ${[...new Set(securityMetrics.map(m => m.locations))].join(", ")}`);
   
-  console.log('\n🚀 One-Liner Query Examples:');
-  console.log('# View all security configurations in real-time');
-  console.log('curl -H "Authorization: Bearer ${NPM_TOKEN}" \\');
-  console.log('  https://duo-npm-registry.utahj4754.workers.dev/-/metrics | \\');
-  console.log('  jq \'.[] | select(.category == "Security")\' | \\');
-  console.log('  bun -e \'console.log(Bun.inspect.table(JSON.parse(Bun.file(Bun.stdin).text()), {colors:true}))\'');
+  console.info('\n🚀 One-Liner Query Examples:');
+  console.info('# View all security configurations in real-time');
+  console.info('curl -H "Authorization: Bearer ${NPM_TOKEN}" \\');
+  console.info('  https://duo-npm-registry.utahj4754.workers.dev/-/metrics | \\');
+  console.info('  jq \'.[] | select(.category == "Security")\' | \\');
+  console.info('  bun -e \'console.info(Bun.inspect.table(JSON.parse(Bun.file(Bun.stdin).text()), {colors:true}))\'');
   
-  console.log('\n# Find all ENABLED security features');
-  console.log('bun -e \'console.log(Bun.inspect.table(JSON.parse(await Bun.file("./perf-metrics.json").text()).filter(m => m.category === "Security" && m.value === "ENABLED"), {colors:true}))\'');
+  console.info('\n# Find all ENABLED security features');
+  console.info('bun -e \'console.info(Bun.inspect.table(JSON.parse(await Bun.file("./perf-metrics.json").text()).filter(m => m.category === "Security" && m.value === "ENABLED"), {colors:true}))\'');
   
-  console.log('\n✅ Real-time telemetry system operational!');
+  console.info('\n✅ Real-time telemetry system operational!');
 }
 
 demonstrateRealtimeSecurityQuery().catch(console.error);

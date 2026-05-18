@@ -50,9 +50,9 @@ class FactoryWagerVaultHealth {
   }
 
   async execute(): Promise<VaultHealthReport> {
-    console.log(`🏥 FactoryWager Vault Health Monitor v2.0`);
-    console.log(`==========================================`);
-    console.log(`🔍 Starting comprehensive health check...\n`);
+    console.info(`🏥 FactoryWager Vault Health Monitor v2.0`);
+    console.info(`==========================================`);
+    console.info(`🔍 Starting comprehensive health check...\n`);
 
     const startTime = Date.now();
 
@@ -563,69 +563,69 @@ class FactoryWagerVaultHealth {
     const statusIcon = report.overall === 'healthy' ? '✅' :
                       report.overall === 'warning' ? '⚠️' : '❌';
 
-    console.log(`${statusIcon} Overall Vault Health: ${report.overall.toUpperCase()}`);
-    console.log(`📊 Summary: ${report.summary.healthy} healthy | ${report.summary.warning} warnings | ${report.summary.critical} critical\n`);
+    console.info(`${statusIcon} Overall Vault Health: ${report.overall.toUpperCase()}`);
+    console.info(`📊 Summary: ${report.summary.healthy} healthy | ${report.summary.warning} warnings | ${report.summary.critical} critical\n`);
 
     // Detailed checks
-    console.log(`🔍 Detailed Health Checks:`);
+    console.info(`🔍 Detailed Health Checks:`);
     report.checks.forEach(check => {
       const icon = check.status === 'healthy' ? '✅' :
                    check.status === 'warning' ? '⚠️' :
                    check.status === 'critical' ? '❌' : '❓';
 
-      console.log(`   ${icon} ${check.name}: ${check.message}`);
+      console.info(`   ${icon} ${check.name}: ${check.message}`);
 
       if (this.verbose && check.details) {
         Object.entries(check.details).forEach(([key, value]) => {
-          console.log(`      • ${key}: ${JSON.stringify(value)}`);
+          console.info(`      • ${key}: ${JSON.stringify(value)}`);
         });
       }
     });
 
     // Recommendations
     if (report.recommendations.length > 0) {
-      console.log(`\n💡 Recommendations:`);
+      console.info(`\n💡 Recommendations:`);
       report.recommendations.forEach((rec, i) => {
-        console.log(`   ${i + 1}. ${rec}`);
+        console.info(`   ${i + 1}. ${rec}`);
       });
     }
 
     // Footer
-    console.log(`\n📅 Generated: ${new Date(report.generatedAt).toLocaleString()}`);
-    console.log(`🔄 Next check: ${new Date(report.nextCheck).toLocaleString()}`);
+    console.info(`\n📅 Generated: ${new Date(report.generatedAt).toLocaleString()}`);
+    console.info(`🔄 Next check: ${new Date(report.nextCheck).toLocaleString()}`);
 
     // Exit code based on health
     if (report.summary.critical > 0) {
-      console.log(`\n❌ Exit code: 1 (Critical issues found)`);
+      console.info(`\n❌ Exit code: 1 (Critical issues found)`);
     } else if (report.summary.warning > 0) {
-      console.log(`\n⚠️ Exit code: 0 (Warnings found)`);
+      console.info(`\n⚠️ Exit code: 0 (Warnings found)`);
     } else {
-      console.log(`\n✅ Exit code: 0 (All healthy)`);
+      console.info(`\n✅ Exit code: 0 (All healthy)`);
     }
   }
 
   private async performAutoFix(report: VaultHealthReport): Promise<void> {
-    console.log(`\n🔧 Performing automatic fixes...`);
+    console.info(`\n🔧 Performing automatic fixes...`);
 
     for (const check of report.checks) {
       if (check.status === 'critical' && check.fixAvailable) {
         try {
-          console.log(`   🔧 Fixing: ${check.name}`);
+          console.info(`   🔧 Fixing: ${check.name}`);
 
           switch (check.name) {
             case 'Backup System Health':
               await this.enterpriseManager.backupAllSecrets();
-              console.log(`   ✅ Backup created`);
+              console.info(`   ✅ Backup created`);
               break;
             case 'Profile Secrets Health':
               // Would trigger profile setup
-              console.log(`   ⚠️ Manual setup required for profile secrets`);
+              console.info(`   ⚠️ Manual setup required for profile secrets`);
               break;
             default:
-              console.log(`   ⚠️ Auto-fix not available for ${check.name}`);
+              console.info(`   ⚠️ Auto-fix not available for ${check.name}`);
           }
         } catch (error) {
-          console.log(`   ❌ Auto-fix failed: ${(error as Error).message}`);
+          console.info(`   ❌ Auto-fix failed: ${(error as Error).message}`);
         }
       }
     }
@@ -642,7 +642,7 @@ class FactoryWagerVaultHealth {
       }
 
       writeFileSync(reportPath, JSON.stringify(report, null, 2));
-      console.log(`📄 Report saved to: ${reportPath}`);
+      console.info(`📄 Report saved to: ${reportPath}`);
     } catch (error) {
       console.error(`❌ Failed to save report: ${(error as Error).message}`);
     }

@@ -4,7 +4,7 @@
 import { DesignSystem } from '../terminal/src/design-system';
 import { UnicodeTableFormatter, EmpireProDashboard } from '../terminal/src/enhanced-unicode-formatter';
 
-console.log(EmpireProDashboard.generateHeader(
+console.info(EmpireProDashboard.generateHeader(
   'EMPIRE PRO v3.7 CLI - NATIVE UNICODE TABLE FORMATTER',
   'Demonstrating native integration with Empire Pro colors'
 ));
@@ -72,8 +72,8 @@ const coloredData = patterns.map(pattern => ({
     DesignSystem.text.muted)
 }));
 
-console.log(UnicodeTableFormatter.colorize(`📂 Empire Pro v3.7 Pattern Registry - ${patterns.length} patterns`, DesignSystem.text.accent.blue));
-console.log(UnicodeTableFormatter.generateTable(coloredData, { maxWidth: 120 }));
+console.info(UnicodeTableFormatter.colorize(`📂 Empire Pro v3.7 Pattern Registry - ${patterns.length} patterns`, DesignSystem.text.accent.blue));
+console.info(UnicodeTableFormatter.generateTable(coloredData, { maxWidth: 120 }));
 
 // Validation results
 const validationResults = [
@@ -126,21 +126,21 @@ const coloredValidation = validationResults.map(result => ({
   Recommendation: UnicodeTableFormatter.colorize(result.Recommendation, DesignSystem.text.accent.green)
 }));
 
-console.log(EmpireProDashboard.generateSection('VALIDATION RESULTS', '🧪'));
-console.log(UnicodeTableFormatter.colorize(`🧪 Architectural Validation - ${validationResults.length} patterns checked`, DesignSystem.text.accent.blue));
-console.log(UnicodeTableFormatter.generateTable(coloredValidation, { maxWidth: 140 }));
+console.info(EmpireProDashboard.generateSection('VALIDATION RESULTS', '🧪'));
+console.info(UnicodeTableFormatter.colorize(`🧪 Architectural Validation - ${validationResults.length} patterns checked`, DesignSystem.text.accent.blue));
+console.info(UnicodeTableFormatter.generateTable(coloredValidation, { maxWidth: 140 }));
 
 const operationalCount = validationResults.filter(r => r.Status === 'operational').length;
 const degradedCount = validationResults.filter(r => r.Status === 'degraded').length;
 
-console.log(UnicodeTableFormatter.colorize(`\n✅ Operational: ${operationalCount} | 🟡 Degraded: ${degradedCount}`, 
+console.info(UnicodeTableFormatter.colorize(`\n✅ Operational: ${operationalCount} | 🟡 Degraded: ${degradedCount}`, 
   operationalCount === validationResults.length ? DesignSystem.status.operational : DesignSystem.status.degraded));
 
-console.log(EmpireProDashboard.generateFooter());
+console.info(EmpireProDashboard.generateFooter());
 
-console.log('\n🎉 EMPIRE PRO v3.7 CLI - NATIVE INTEGRATION COMPLETE!');
-console.log('✅ Replaced console.table with UnicodeTableFormatter.generateTable()');
-console.log('✅ Added EmpireProDashboard headers and footers');
-console.log('✅ Integrated DesignSystem colors for consistent branding');
-console.log('✅ Added color-coded status indicators');
-console.log('✅ Professional CLI experience with Empire Pro v3.7 colors');
+console.info('\n🎉 EMPIRE PRO v3.7 CLI - NATIVE INTEGRATION COMPLETE!');
+console.info('✅ Replaced console.table with UnicodeTableFormatter.generateTable()');
+console.info('✅ Added EmpireProDashboard headers and footers');
+console.info('✅ Integrated DesignSystem colors for consistent branding');
+console.info('✅ Added color-coded status indicators');
+console.info('✅ Professional CLI experience with Empire Pro v3.7 colors');

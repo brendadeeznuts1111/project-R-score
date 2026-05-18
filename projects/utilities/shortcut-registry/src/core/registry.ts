@@ -24,7 +24,7 @@
  * });
  * 
  * registry.on('file.save', () => {
- *   console.log('Save triggered!');
+ *   console.info('Save triggered!');
  * });
  * ```
  */
@@ -313,7 +313,7 @@ export class ShortcutRegistry {
    * ```typescript
    * const success = registry.trigger('file.save', { scope: 'editor' });
    * if (success) {
-   *   console.log('Save action executed');
+   *   console.info('Save action executed');
    * }
    * ```
    */
@@ -397,7 +397,7 @@ export class ShortcutRegistry {
    * @example
    * ```typescript
    * const unsubscribe = registry.on('file.save', (context, event) => {
-   *   console.log('Save triggered!', context);
+   *   console.info('Save triggered!', context);
    * });
    * 
    * // Later, to unsubscribe:
@@ -614,7 +614,7 @@ export class ShortcutRegistry {
    * ```typescript
    * const conflicts = registry.detectConflicts();
    * conflicts.forEach(conflict => {
-   *   console.log(`Conflict: ${conflict.key} - ${conflict.severity}`);
+   *   console.info(`Conflict: ${conflict.key} - ${conflict.severity}`);
    * });
    * ```
    */
@@ -650,11 +650,11 @@ export class ShortcutRegistry {
     const alternative = this.suggestAlternativeKey(shortcutId, key);
     if (alternative && this.findConflicts(alternative, shortcutId).length === 0) {
       this.setOverride(shortcutId, alternative);
-      console.log(`Auto-resolved conflict: ${shortcutId} -> ${alternative}`);
+      console.info(`Auto-resolved conflict: ${shortcutId} -> ${alternative}`);
     } else {
       // Disable the conflicting shortcut
       this.disableShortcut(conflicts[0]);
-      console.log(`Disabled conflicting shortcut: ${conflicts[0]}`);
+      console.info(`Disabled conflicting shortcut: ${conflicts[0]}`);
     }
   }
   
@@ -791,7 +791,7 @@ export class ShortcutRegistry {
    * @example
    * ```typescript
    * const key = registry.getEffectiveKey(shortcut);
-   * console.log(`Shortcut uses: ${key}`);
+   * console.info(`Shortcut uses: ${key}`);
    * ```
    */
   getEffectiveKey(config: ShortcutConfig, profileId?: string): string {
@@ -839,7 +839,7 @@ export class ShortcutRegistry {
    * ```typescript
    * const stats = registry.getUsageStatistics(7); // Last 7 days
    * stats.forEach(stat => {
-   *   console.log(`${stat.description}: ${stat.usage_count} uses`);
+   *   console.info(`${stat.description}: ${stat.usage_count} uses`);
    * });
    * ```
    */

@@ -105,7 +105,7 @@ export const ASCII = {
 ╚══════╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚══════╝   ╚═╝   `
 };
 
-export const renderLogo = () => console.log(`${colors.empireBlue}${ASCII.LOGO}${colors.reset}\n`);
+export const renderLogo = () => console.info(`${colors.empireBlue}${ASCII.LOGO}${colors.reset}\n`);
 
 // --- TABLES ---
 export function alignedTable(data: any[], cols: string[]) {

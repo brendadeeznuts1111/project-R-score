@@ -18,17 +18,17 @@ export class StringWidthUtils {
    * Test various string width scenarios
    */
   static runTests(): void {
-    console.log("🔤 String Width Tests:");
-    console.log("🇺🇸 Flag emoji width:", Bun.stringWidth("🇺🇸"), "=== 2");
-    console.log("👋🏽 Skin tone emoji width:", Bun.stringWidth("👋🏽"), "=== 2");
-    console.log("👨‍👩‍👧 Family emoji width:", Bun.stringWidth("👨‍👩‍👧"), "=== 2");
-    console.log("Zero-width space:", Bun.stringWidth("\u2060"), "=== 0");
-    console.log(
+    console.info("🔤 String Width Tests:");
+    console.info("🇺🇸 Flag emoji width:", Bun.stringWidth("🇺🇸"), "=== 2");
+    console.info("👋🏽 Skin tone emoji width:", Bun.stringWidth("👋🏽"), "=== 2");
+    console.info("👨‍👩‍👧 Family emoji width:", Bun.stringWidth("👨‍👩‍👧"), "=== 2");
+    console.info("Zero-width space:", Bun.stringWidth("\u2060"), "=== 0");
+    console.info(
       "ANSI red text:",
       Bun.stringWidth("\x1b[31mRed\x1b[0m"),
       "=== 3"
     );
-    console.log(
+    console.info(
       "Hyperlink ANSI:",
       Bun.stringWidth("\x1b]8;;https://bun.sh\x07Bun\x1b]8;;\x07"),
       "=== 3"
@@ -170,12 +170,12 @@ export class FeatureFlagUtils {
     });
 
     if (buildResult.logs.length > 0) {
-      console.log("Build logs:");
-      buildResult.logs.forEach((log) => console.log(log));
+      console.info("Build logs:");
+      buildResult.logs.forEach((log) => console.info(log));
     }
 
-    console.log(`✅ Built with features: ${features.join(", ")}`);
-    console.log(`📁 Output directory: ${outdir}`);
+    console.info(`✅ Built with features: ${features.join(", ")}`);
+    console.info(`📁 Output directory: ${outdir}`);
   }
 
   /**
@@ -185,7 +185,7 @@ export class FeatureFlagUtils {
     const featureChecks = features
       .map(
         (feature) =>
-          `if (feature("${feature}")) {\n    console.log("${feature} feature enabled");\n  } else {\n    console.log("${feature} feature disabled");\n  }`
+          `if (feature("${feature}")) {\n    console.info("${feature} feature enabled");\n  } else {\n    console.info("${feature} feature disabled");\n  }`
       )
       .join("\n\n");
 
@@ -193,7 +193,7 @@ export class FeatureFlagUtils {
 
 ${featureChecks}
 
-console.log("Feature flags test completed");
+console.info("Feature flags test completed");
 `;
   }
 
@@ -201,7 +201,7 @@ console.log("Feature flags test completed");
    * Test feature flags by building and running
    */
   static async testFeatures(features: string[]): Promise<void> {
-    console.log(`🧪 Testing feature flags: ${features.join(", ")}`);
+    console.info(`🧪 Testing feature flags: ${features.join(", ")}`);
 
     // Create test file
     const testCode = this.createFeatureCode(features);
@@ -213,7 +213,7 @@ console.log("Feature flags test completed");
     });
 
     // Run the built file
-    console.log("📋 Running feature test:");
+    console.info("📋 Running feature test:");
     const process = Bun.spawn(["bun", "./out/feature-test.js"]);
     await process.exited;
 
@@ -262,18 +262,18 @@ export class AdvancedBunUtils {
    * Run all advanced feature tests
    */
   static async runAllTests(): Promise<void> {
-    console.log("🚀 Running Advanced Bun Features Tests\n");
+    console.info("🚀 Running Advanced Bun Features Tests\n");
 
     // String width tests
     StringWidthUtils.runTests();
-    console.log();
+    console.info();
 
     // Feature flag tests
     await FeatureFlagUtils.testFeatures(["DEBUG", "PERFORMANCE"]);
-    console.log();
+    console.info();
 
     // Demonstrate table creation
-    console.log("📊 Table Creation Demo:");
+    console.info("📊 Table Creation Demo:");
     const headers = ["Name", "Status", "Progress"];
     const rows = [
       ["🇺🇸 Project Alpha", "✅ Active", "75%"],
@@ -281,23 +281,23 @@ export class AdvancedBunUtils {
       ["👨‍👩‍👧 Team Gamma", "⏸️ Paused", "90%"],
     ];
 
-    console.log(StringWidthUtils.createTable(headers, rows));
-    console.log();
+    console.info(StringWidthUtils.createTable(headers, rows));
+    console.info();
 
     // Demonstrate colorized output
-    console.log("🎨 Colorized Output Demo:");
-    console.log(StringWidthUtils.colorize("Success", "green"));
-    console.log(StringWidthUtils.colorize("Warning", "yellow"));
-    console.log(StringWidthUtils.colorize("Error", "red"));
-    console.log(
+    console.info("🎨 Colorized Output Demo:");
+    console.info(StringWidthUtils.colorize("Success", "green"));
+    console.info(StringWidthUtils.colorize("Warning", "yellow"));
+    console.info(StringWidthUtils.colorize("Error", "red"));
+    console.info(
       StringWidthUtils.hyperlink("Bun Documentation", "https://bun.sh/docs")
     );
-    console.log();
+    console.info();
 
     // Show available features
-    console.log("🏷️ Available Feature Flags:");
+    console.info("🏷️ Available Feature Flags:");
     FeatureFlagUtils.getAvailableFeatures().forEach((feature) => {
-      console.log(`  • ${feature}`);
+      console.info(`  • ${feature}`);
     });
   }
 
@@ -314,16 +314,16 @@ const command = process.argv[2];
 switch (command) {
   case "string-width":
     const text = process.argv[3] || "Hello 🌍";
-    console.log(\`Text: "\${text}"\`);
-    console.log(\`Width: \${StringWidthUtils.calculateWidth(text)}\`);
-    console.log(\`Visible width: \${StringWidthUtils.getVisibleWidth(text)}\`);
+    console.info(\`Text: "\${text}"\`);
+    console.info(\`Width: \${StringWidthUtils.calculateWidth(text)}\`);
+    console.info(\`Visible width: \${StringWidthUtils.getVisibleWidth(text)}\`);
     break;
 
   case "truncate":
     const truncateText = process.argv[3] || "This is a long text that needs truncation";
     const maxWidth = parseInt(process.argv[4]) || 10;
-    console.log(\`Original: "\${truncateText}"\`);
-    console.log(\`Truncated: "\${StringWidthUtils.truncate(truncateText, maxWidth)}"\`);
+    console.info(\`Original: "\${truncateText}"\`);
+    console.info(\`Truncated: "\${StringWidthUtils.truncate(truncateText, maxWidth)}"\`);
     break;
 
   case "table":
@@ -332,14 +332,14 @@ switch (command) {
       ["🇺🇸 Project", "✅ Active", "75%"],
       ["👋🏽 Feature", "🔄 Progress", "45%"]
     ];
-    console.log(StringWidthUtils.createTable(headers, rows));
+    console.info(StringWidthUtils.createTable(headers, rows));
     break;
 
   case "features":
     const features = process.argv.slice(3);
     if (features.length === 0) {
-      console.log("Available features:");
-      FeatureFlagUtils.getAvailableFeatures().forEach(f => console.log(\`  • \${f}\`));
+      console.info("Available features:");
+      FeatureFlagUtils.getAvailableFeatures().forEach(f => console.info(\`  • \${f}\`));
     } else {
       await FeatureFlagUtils.testFeatures(features);
     }
@@ -350,13 +350,13 @@ switch (command) {
     break;
 
   default:
-    console.log("Advanced Bun CLI Utilities");
-    console.log("Commands:");
-    console.log("  string-width <text>     - Calculate string width");
-    console.log("  truncate <text> <width> - Truncate text to width");
-    console.log("  table                   - Show table demo");
-    console.log("  features [features...]  - Test feature flags");
-    console.log("  test-all                - Run all tests");
+    console.info("Advanced Bun CLI Utilities");
+    console.info("Commands:");
+    console.info("  string-width <text>     - Calculate string width");
+    console.info("  truncate <text> <width> - Truncate text to width");
+    console.info("  table                   - Show table demo");
+    console.info("  features [features...]  - Test feature flags");
+    console.info("  test-all                - Run all tests");
     break;
 }
 `;

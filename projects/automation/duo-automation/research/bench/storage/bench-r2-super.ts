@@ -87,7 +87,7 @@ const client = new S3Client({
 const scale = +process.argv[2] || 100;
 const bucket = process.argv[3] || process.env.R2_BUCKET!;
 
-console.log(\`🐌 Node SDK Benchmark: \${scale} uploads to \${bucket}\`);
+console.info(\`🐌 Node SDK Benchmark: \${scale} uploads to \${bucket}\`);
 
 const start = Date.now();
 const promises = Array(scale).fill(0).map(async (_, i) => {
@@ -113,16 +113,16 @@ await Promise.all(promises);
 const nodeTime = Date.now() - start;
 const throughput = scale / (nodeTime / 1000);
 
-console.log(\`Node SDK Time: \${nodeTime}ms (\${throughput.toFixed(0)} IDs/s)\`);
+console.info(\`Node SDK Time: \${nodeTime}ms (\${throughput.toFixed(0)} IDs/s)\`);
 `;
 
   writeFileSync('node-sdk-bench.ts', nodeScript);
-  console.log('📝 Generated node-sdk-bench.ts for comparison');
+  console.info('📝 Generated node-sdk-bench.ts for comparison');
 }
 
 // SUPER Benchmark with Node SDK comparison
 async function superBenchmark(name: string, uploads: number, bucket: string): Promise<SuperBenchResult> {
-  console.log(`\n🚀 Running ${name} benchmark: ${uploads} uploads`);
+  console.info(`\n🚀 Running ${name} benchmark: ${uploads} uploads`);
   
   const times: number[] = [];
   const savingsArray: number[] = [];
@@ -148,11 +148,11 @@ async function superBenchmark(name: string, uploads: number, bucket: string): Pr
   });
   
   await Promise.all(presignPromises);
-  console.log(`✅ Generated ${Object.keys(presigns).length} presigned URLs`);
+  console.info(`✅ Generated ${Object.keys(presigns).length} presigned URLs`);
   
   // Run benchmark iterations
   for (let run = 1; run <= R2_SUPER_BENCH.RUNS; run++) {
-    console.log(`   Run ${run}/${R2_SUPER_BENCH.RUNS}...`);
+    console.info(`   Run ${run}/${R2_SUPER_BENCH.RUNS}...`);
     
     const start = Bun.nanoseconds();
     const uploadPromises = bulkApples.map(async (apple) => {
@@ -188,7 +188,7 @@ async function superBenchmark(name: string, uploads: number, bucket: string): Pr
   const savingsAvg = savingsArray.reduce((a, b) => a + b, 0) / savingsArray.length;
   
   // Node SDK comparison
-  console.log(`🐌 Running Node SDK comparison...`);
+  console.info(`🐌 Running Node SDK comparison...`);
   const nodeStart = Bun.nanoseconds();
   
   // Use high-performance Bun.spawnSync native API
@@ -242,15 +242,15 @@ async function autoExportBench(results: SuperBenchResult[], manager: BunR2AppleM
       timestamp: Date.now(),
       results: results 
     }, 'reports/super-bench-results.json');
-    console.log('💾 Auto-Export: r2-super-bench-results.{json,csv} → R2');
+    console.info('💾 Auto-Export: r2-super-bench-results.{json,csv} → R2');
   } catch (error) {
-    console.log('💾 Export: r2-super-bench-results.{json,csv} saved locally');
+    console.info('💾 Export: r2-super-bench-results.{json,csv} saved locally');
   }
 }
 
 // DuoPlus trigger (mock)
 async function triggerDuoPlus(results: SuperBenchResult[]) {
-  console.log('🤖 DuoPlus: Bench data pushed to RPA dashboard');
+  console.info('🤖 DuoPlus: Bench data pushed to RPA dashboard');
   // In real implementation: await sdk.createRPATask({ benchResults });
 }
 
@@ -260,15 +260,15 @@ async function cleanupBenchObjects(bucket: string) {
     const manager = new BunR2AppleManager({}, bucket);
     await manager.initialize();
     // Mock cleanup - would list and delete bench-prefixed objects
-    console.log('🧹 Cleanup completed');
+    console.info('🧹 Cleanup completed');
   } catch (error) {
-    console.log('⚠️ Cleanup skipped');
+    console.info('⚠️ Cleanup skipped');
   }
 }
 
 // Main execution
 if (Bun.main === import.meta.path) {
-  console.log('🚀 SUPER R2 Benchmark - Node SDK Compare + Graphs + Cost + 1k + Export');
+  console.info('🚀 SUPER R2 Benchmark - Node SDK Compare + Graphs + Cost + 1k + Export');
   
   // Parse command line arguments
   const args = process.argv.slice(2);
@@ -282,31 +282,31 @@ if (Bun.main === import.meta.path) {
   const allFeatures = args.includes('--all');
   
   if (failOnError) {
-    console.log('⚠️  --fail mode enabled: Will exit on errors');
+    console.info('⚠️  --fail mode enabled: Will exit on errors');
   }
   
   // Run compression comparison if requested
   if (compressionCompare || allFeatures) {
-    console.log('🗜️ Running compression algorithm comparison...');
+    console.info('🗜️ Running compression algorithm comparison...');
     const { CompressionBenchmark } = await import('../tools/compression-compare.ts');
     const testData = Array(100).fill(0).map((_, i) => generateAppleID(i));
     const compressionBench = new CompressionBenchmark();
     await compressionBench.runComparison(testData, 3);
-    console.log('🎉 Compression comparison complete!\n');
+    console.info('🎉 Compression comparison complete!\n');
   }
   
   // Run multi-region benchmark if requested
   if (multiRegion || allFeatures) {
-    console.log('🌍 Running multi-region benchmark...');
+    console.info('🌍 Running multi-region benchmark...');
     const { MultiRegionBenchmark } = await import('../tools/multi-region-bench.ts');
     const regionBench = new MultiRegionBenchmark();
     await regionBench.runMultiRegionBenchmark(50);
-    console.log('🎉 Multi-region benchmark complete!\n');
+    console.info('🎉 Multi-region benchmark complete!\n');
   }
   
   // Run regression detection if requested
   if (regressionTest || allFeatures) {
-    console.log('🔍 Running performance regression detection...');
+    console.info('🔍 Running performance regression detection...');
     const { PerformanceRegressionDetector } = await import('../tools/regression-detector.ts');
     const detector = new PerformanceRegressionDetector();
     
@@ -321,24 +321,24 @@ if (Bun.main === import.meta.path) {
     };
     
     const alerts = await detector.detectRegressions(currentMetrics);
-    console.log('🎉 Regression detection complete!\n');
+    console.info('🎉 Regression detection complete!\n');
   }
   
   // Test load balancing if requested
   if (loadBalancing || allFeatures) {
-    console.log('⚖️ Testing intelligent load balancing...');
+    console.info('⚖️ Testing intelligent load balancing...');
     const { IntelligentLoadBalancer } = await import('../tools/load-balancer.ts');
     const loadBalancer = new IntelligentLoadBalancer();
     await loadBalancer.startHealthMonitoring();
     await Bun.sleep(2000); // Let health checks run
     loadBalancer.displayStats();
-    console.log('🎉 Load balancing test complete!\n');
+    console.info('🎉 Load balancing test complete!\n');
   }
   
   // Start monitoring if requested
   let monitor: any = null;
   if (enableMonitoring) {
-    console.log('📊 Starting real-time monitoring...');
+    console.info('📊 Starting real-time monitoring...');
     const { R2MonitorDashboard } = await import('../tools/monitor-dashboard.ts');
     monitor = new R2MonitorDashboard();
     monitor.startMonitoring(10000).catch(console.error);
@@ -352,10 +352,10 @@ if (Bun.main === import.meta.path) {
   generateNodeSDKBench();
   
   // Install AWS SDK if needed
-  console.log('📦 Checking AWS SDK for Node comparison...');
+  console.info('📦 Checking AWS SDK for Node comparison...');
   const installResult = Bun.spawnSync(['bun', 'add', '@aws-sdk/client-s3'], { stdout: 'pipe' });
   if (installResult.exitCode === 0) {
-    console.log('✅ AWS SDK ready for comparison');
+    console.info('✅ AWS SDK ready for comparison');
   } else if (failOnError) {
     console.error('❌ Failed to install AWS SDK');
     process.exit(1);
@@ -377,8 +377,8 @@ if (Bun.main === import.meta.path) {
   }
   
   // Display SUPER table with graphs
-  console.log('\n📊 SUPER R2 Benchmark Results:');
-  console.log(Bun.inspect.table(results.map(r => ({
+  console.info('\n📊 SUPER R2 Benchmark Results:');
+  console.info(Bun.inspect.table(results.map(r => ({
     Benchmark: r.name,
     Time: `${r.avg.toFixed(0)}ms`,
     'Bun IDs/s': r.throughput.toLocaleString(),
@@ -404,16 +404,16 @@ if (Bun.main === import.meta.path) {
   
   // Generate enhanced report if requested
   if (generateReport) {
-    console.log('📊 Generating enhanced performance report...');
+    console.info('📊 Generating enhanced performance report...');
     const { ReportGenerator } = await import('../tools/report-generator.ts');
     const generator = new ReportGenerator();
     await generator.generateReport(results);
-    console.log('🎉 Enhanced report generated!\n');
+    console.info('🎉 Enhanced report generated!\n');
   }
   
   const finalResult = results[results.length - 1];
-  console.log(`\n🚀 SUPER Summary: 1k parallel → ${finalResult.avg.toFixed(0)}ms | ${finalResult.throughput.toLocaleString()} IDs/s 🔥`);
-  console.log('🎉 SUPER R2 Benchmark Complete - Performance Godmode! 🚀');
+  console.info(`\n🚀 SUPER Summary: 1k parallel → ${finalResult.avg.toFixed(0)}ms | ${finalResult.throughput.toLocaleString()} IDs/s 🔥`);
+  console.info('🎉 SUPER R2 Benchmark Complete - Performance Godmode! 🚀');
   
   // Check if any benchmarks failed
   const failedBenchmarks = results.filter(r => r.etags === 0);
@@ -425,7 +425,7 @@ if (Bun.main === import.meta.path) {
   
   // Stop monitoring
   if (monitor) {
-    console.log('\n📊 Stopping monitoring...');
+    console.info('\n📊 Stopping monitoring...');
     monitor.stop();
   }
 }

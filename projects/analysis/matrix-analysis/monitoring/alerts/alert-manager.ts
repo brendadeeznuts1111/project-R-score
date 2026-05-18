@@ -25,7 +25,7 @@ class AlertManager {
   async init() {
     await $`mkdir -p ${process.env.HOME}/.matrix/alerts`.quiet();
     this.startMonitoring();
-    console.log("🚨 Alert Manager started");
+    console.info("🚨 Alert Manager started");
   }
   
   private async startMonitoring() {
@@ -104,7 +104,7 @@ class AlertManager {
     this.persistAlerts();
     this.notify(alert);
     
-    console.log(`🚨 ALERT [${severity.toUpperCase()}] ${component}: ${message}`);
+    console.info(`🚨 ALERT [${severity.toUpperCase()}] ${component}: ${message}`);
   }
   
   private clearAlert(component: string) {
@@ -113,7 +113,7 @@ class AlertManager {
       const alert = this.alerts[index];
       alert.acknowledged = true;
       this.persistAlerts();
-      console.log(`✅ CLEARED ${component}`);
+      console.info(`✅ CLEARED ${component}`);
     }
   }
   

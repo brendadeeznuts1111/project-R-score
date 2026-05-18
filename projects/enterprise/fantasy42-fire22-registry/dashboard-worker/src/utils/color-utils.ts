@@ -358,31 +358,31 @@ if (import.meta.main) {
   // Original example
   const exampleColor: RGBAColor = { r: 255, g: 99, b: 71, a: 1 };
 
-  console.log('🎨 Color Conversion Demo');
-  console.log('Input:', exampleColor);
+  console.info('🎨 Color Conversion Demo');
+  console.info('Input:', exampleColor);
 
   const formats = ColorConverter.fromRGBA(exampleColor);
-  console.log('\n📊 All Formats:');
+  console.info('\n📊 All Formats:');
   console.table(formats);
 
   // New: Parse your color string
   const colorString = '0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1';
-  console.log('\n🌈 Parsing Color String:', colorString);
+  console.info('\n🌈 Parsing Color String:', colorString);
 
   const parsedColors = parseColorString(colorString);
-  console.log('\n📊 Parsed Colors:');
+  console.info('\n📊 Parsed Colors:');
   console.table(parsedColors);
 
   // Show what this color looks like
   const firstColor = parsedColors[0];
   if (firstColor) {
     const colorFormats = ColorConverter.fromRGBA(firstColor);
-    console.log('\n🎨 First Color Analysis:');
+    console.info('\n🎨 First Color Analysis:');
     console.table(colorFormats);
 
     // Create gradient
     const gradient = createGradient(parsedColors);
-    console.log('\n🌈 CSS Gradient:');
-    console.log(gradient);
+    console.info('\n🌈 CSS Gradient:');
+    console.info(gradient);
   }
 }

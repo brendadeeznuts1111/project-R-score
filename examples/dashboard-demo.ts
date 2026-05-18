@@ -86,59 +86,59 @@ async function showDashboardInfo(dashboardKey: string): Promise<void> {
   
   if (!dashboard) {
     console.error(`❌ Unknown dashboard: ${dashboardKey}`);
-    console.log('Available dashboards:', Object.keys(dashboards).join(', '));
+    console.info('Available dashboards:', Object.keys(dashboards).join(', '));
     return;
   }
   
-  console.log(`🎯 ${dashboard.name}`);
-  console.log('═════════════════════════════════════════════════');
-  console.log(`📝 ${dashboard.description}`);
-  console.log('');
+  console.info(`🎯 ${dashboard.name}`);
+  console.info('═════════════════════════════════════════════════');
+  console.info(`📝 ${dashboard.description}`);
+  console.info('');
   
   if (dashboard.url) {
-    console.log(`🌐 URL: ${dashboard.url}`);
-    console.log(`📂 File: ${dashboard.url}`);
+    console.info(`🌐 URL: ${dashboard.url}`);
+    console.info(`📂 File: ${dashboard.url}`);
   }
   
   if (dashboard.command) {
-    console.log(`⚡ Command: ${dashboard.command}`);
+    console.info(`⚡ Command: ${dashboard.command}`);
   }
   
-  console.log('');
-  console.log('✨ Features:');
+  console.info('');
+  console.info('✨ Features:');
   dashboard.features.forEach((feature, index) => {
-    console.log(`   ${index + 1}. ${feature}`);
+    console.info(`   ${index + 1}. ${feature}`);
   });
   
-  console.log('');
+  console.info('');
   
   // Provide access instructions
   if (dashboard.url) {
-    console.log('🚀 Access Instructions:');
-    console.log('   1. Make sure the dashboard server is running');
-    console.log(`   2. Open your browser and navigate to: ${dashboard.url}`);
-    console.log('   3. Or use the appropriate start command from package.json');
-    console.log('');
+    console.info('🚀 Access Instructions:');
+    console.info('   1. Make sure the dashboard server is running');
+    console.info(`   2. Open your browser and navigate to: ${dashboard.url}`);
+    console.info('   3. Or use the appropriate start command from package.json');
+    console.info('');
     
     // Try to detect if file exists
     try {
       const file = Bun.file(dashboard.url);
       if (await file.exists()) {
-        console.log('✅ Dashboard file exists locally');
-        console.log(`📂 Path: ${Bun.resolveSync(dashboard.url)}`);
+        console.info('✅ Dashboard file exists locally');
+        console.info(`📂 Path: ${Bun.resolveSync(dashboard.url)}`);
       } else {
-        console.log('⚠️  Dashboard file not found - may need to start server first');
+        console.info('⚠️  Dashboard file not found - may need to start server first');
       }
     } catch (error) {
-      console.log('ℹ️  Cannot verify dashboard file existence');
+      console.info('ℹ️  Cannot verify dashboard file existence');
     }
   }
   
   if (dashboard.command) {
-    console.log('🚀 Access Instructions:');
-    console.log('   1. Run the command directly with Bun');
-    console.log('   2. Or use: bun run dashboard:live');
-    console.log('');
+    console.info('🚀 Access Instructions:');
+    console.info('   1. Run the command directly with Bun');
+    console.info('   2. Or use: bun run dashboard:live');
+    console.info('');
   }
 }
 
@@ -154,45 +154,45 @@ function launchDashboard(dashboardKey: string): void {
     return;
   }
   
-  console.log(`🚀 Launching ${dashboard.name}...`);
-  console.log('═════════════════════════════════════════════════');
+  console.info(`🚀 Launching ${dashboard.name}...`);
+  console.info('═════════════════════════════════════════════════');
   
   if (dashboard.url) {
     // For web dashboards, provide instructions instead of trying to open
-    console.log(`📂 Dashboard File: ${dashboard.url}`);
-    console.log('');
-    console.log('🌐 To access the web dashboard:');
-    console.log('   1. Start the required server first');
-    console.log('   2. Open your web browser');
-    console.log(`   3. Navigate to: ${dashboard.url}`);
-    console.log('');
+    console.info(`📂 Dashboard File: ${dashboard.url}`);
+    console.info('');
+    console.info('🌐 To access the web dashboard:');
+    console.info('   1. Start the required server first');
+    console.info('   2. Open your web browser');
+    console.info(`   3. Navigate to: ${dashboard.url}`);
+    console.info('');
     
     // Check if we can provide more specific instructions
     if (dashboardKey === 'web') {
-      console.log('💡 Quick Start:');
-      console.log('   bun run start:p2p-dashboard    # Start P2P dashboard server');
-      console.log('   Then open: http://localhost:3000');
+      console.info('💡 Quick Start:');
+      console.info('   bun run start:p2p-dashboard    # Start P2P dashboard server');
+      console.info('   Then open: http://localhost:3000');
     } else if (dashboardKey === 'mcp') {
-      console.log('💡 Quick Start:');
-      console.log('   bun run mcp:security            # Start MCP server');
-      console.log('   Then open: http://localhost:3000');
+      console.info('💡 Quick Start:');
+      console.info('   bun run mcp:security            # Start MCP server');
+      console.info('   Then open: http://localhost:3000');
     }
   }
   
   if (dashboard.command) {
-    console.log(`⚡ Executing: ${dashboard.command}`);
-    console.log('');
-    console.log('💡 Alternative: Use "bun run dashboard:live"');
-    console.log('');
+    console.info(`⚡ Executing: ${dashboard.command}`);
+    console.info('');
+    console.info('💡 Alternative: Use "bun run dashboard:live"');
+    console.info('');
     
     // For live dashboard, we can't execute the complex inline command easily
     // so we provide the user with the exact command to run
-    console.log('🔧 To run the live dashboard manually:');
-    console.log(`   bun -e "${dashboard.command}"`);
+    console.info('🔧 To run the live dashboard manually:');
+    console.info(`   bun -e "${dashboard.command}"`);
   }
   
-  console.log('');
-  console.log('✨ Dashboard Information:');
+  console.info('');
+  console.info('✨ Dashboard Information:');
   showDashboardInfo(dashboardKey);
 }
 
@@ -202,55 +202,55 @@ function launchDashboard(dashboardKey: string): void {
 function listDashboards(): void {
   const dashboards = getDashboards();
   
-  console.log('🎯 Available Dashboards');
-  console.log('═════════════════════════════════════════════════');
-  console.log('');
+  console.info('🎯 Available Dashboards');
+  console.info('═════════════════════════════════════════════════');
+  console.info('');
   
   Object.entries(dashboards).forEach(([key, dashboard]) => {
     const type = dashboard.url ? '🌐 Web' : '⚡ Live';
-    console.log(`${type} ${key.padEnd(8)} - ${dashboard.name}`);
-    console.log(`     ${dashboard.description}`);
-    console.log('');
+    console.info(`${type} ${key.padEnd(8)} - ${dashboard.name}`);
+    console.info(`     ${dashboard.description}`);
+    console.info('');
   });
   
-  console.log('🚀 Usage Examples:');
-  console.log('   bun run examples/dashboard-demo.ts web     # Show web dashboard info');
-  console.log('   bun run examples/dashboard-demo.ts live    # Show live dashboard info');
-  console.log('   bun run examples/dashboard-demo.ts list    # List all dashboards');
-  console.log('');
-  console.log('📋 Package.json Aliases:');
-  console.log('   bun run dashboard:web      # Web dashboard info');
-  console.log('   bun run dashboard:live     # Live dashboard info');
-  console.log('   bun run dashboard           # MCP dashboard status');
+  console.info('🚀 Usage Examples:');
+  console.info('   bun run examples/dashboard-demo.ts web     # Show web dashboard info');
+  console.info('   bun run examples/dashboard-demo.ts live    # Show live dashboard info');
+  console.info('   bun run examples/dashboard-demo.ts list    # List all dashboards');
+  console.info('');
+  console.info('📋 Package.json Aliases:');
+  console.info('   bun run dashboard:web      # Web dashboard info');
+  console.info('   bun run dashboard:live     # Live dashboard info');
+  console.info('   bun run dashboard           # MCP dashboard status');
 }
 
 /**
  * Show help information
  */
 function showHelp(): void {
-  console.log('🎯 Dashboard Demo - FactoryWager Enterprise Platform');
-  console.log('═════════════════════════════════════════════════');
-  console.log('');
-  console.log('USAGE:');
-  console.log('  bun run examples/dashboard-demo.ts <command> [dashboard]');
-  console.log('');
-  console.log('COMMANDS:');
-  console.log('  info <dashboard>    Show detailed dashboard information');
-  console.log('  launch <dashboard>  Launch or show launch instructions');
-  console.log('  list                List all available dashboards');
-  console.log('  help                Show this help message');
-  console.log('');
-  console.log('DASHBOARDS:');
-  console.log('  web                 Web-based dashboard');
-  console.log('  live                Live terminal dashboard');
-  console.log('  mcp                 MCP overview dashboard');
-  console.log('  p2p                 P2P network dashboard');
-  console.log('  business            Business registry dashboard');
-  console.log('');
-  console.log('ALIASES:');
-  console.log('  bun run dashboard:web   Same as "info web"');
-  console.log('  bun run dashboard:live  Same as "info live"');
-  console.log('');
+  console.info('🎯 Dashboard Demo - FactoryWager Enterprise Platform');
+  console.info('═════════════════════════════════════════════════');
+  console.info('');
+  console.info('USAGE:');
+  console.info('  bun run examples/dashboard-demo.ts <command> [dashboard]');
+  console.info('');
+  console.info('COMMANDS:');
+  console.info('  info <dashboard>    Show detailed dashboard information');
+  console.info('  launch <dashboard>  Launch or show launch instructions');
+  console.info('  list                List all available dashboards');
+  console.info('  help                Show this help message');
+  console.info('');
+  console.info('DASHBOARDS:');
+  console.info('  web                 Web-based dashboard');
+  console.info('  live                Live terminal dashboard');
+  console.info('  mcp                 MCP overview dashboard');
+  console.info('  p2p                 P2P network dashboard');
+  console.info('  business            Business registry dashboard');
+  console.info('');
+  console.info('ALIASES:');
+  console.info('  bun run dashboard:web   Same as "info web"');
+  console.info('  bun run dashboard:live  Same as "info live"');
+  console.info('');
 }
 
 /**
@@ -266,7 +266,7 @@ async function main(): Promise<void> {
       case 'info':
         if (!dashboard) {
           console.error('❌ Please specify a dashboard');
-          console.log('Available dashboards:', Object.keys(getDashboards()).join(', '));
+          console.info('Available dashboards:', Object.keys(getDashboards()).join(', '));
           process.exit(1);
         }
         await showDashboardInfo(dashboard);
@@ -275,7 +275,7 @@ async function main(): Promise<void> {
       case 'launch':
         if (!dashboard) {
           console.error('❌ Please specify a dashboard');
-          console.log('Available dashboards:', Object.keys(getDashboards()).join(', '));
+          console.info('Available dashboards:', Object.keys(getDashboards()).join(', '));
           process.exit(1);
         }
         launchDashboard(dashboard);

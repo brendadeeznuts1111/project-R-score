@@ -27,12 +27,12 @@ program
     
     if (monitor.test(phone)) {
       const result = await monitor.exec(phone);
-      console.log(`✅ Phone: ${result.e164}`);
-      console.log(`📊 Health Score: ${result.healthScore}`);
-      console.log(`🔍 Recommended Action: ${result.recommendedAction}`);
-      console.log(`⏰ Last Checked: ${result.lastChecked.toISOString()}`);
+      console.info(`✅ Phone: ${result.e164}`);
+      console.info(`📊 Health Score: ${result.healthScore}`);
+      console.info(`🔍 Recommended Action: ${result.recommendedAction}`);
+      console.info(`⏰ Last Checked: ${result.lastChecked.toISOString()}`);
     } else {
-      console.log('❌ Phone number failed validation');
+      console.info('❌ Phone number failed validation');
     }
   });
 
@@ -41,7 +41,7 @@ program
   .description('Bulk process phone numbers')
   .option('-c, --concurrency <number>', 'Processing concurrency', '1000')
   .action(async (options) => {
-    console.log(`🏃 Processing phone numbers from ${options.file} with concurrency ${options.concurrency}`);
+    console.info(`🏃 Processing phone numbers from ${options.file} with concurrency ${options.concurrency}`);
     
     // Simulate bulk processing
     const startTime = Date.now();
@@ -53,9 +53,9 @@ program
     const duration = Date.now() - startTime;
     const throughput = Math.round(phoneCount / (duration / 1000));
     
-    console.log(`✅ Processed ${phoneCount} numbers`);
-    console.log(`⏱️ Duration: ${duration}ms`);
-    console.log(`🚀 Throughput: ${throughput.toLocaleString()} phones/sec`);
+    console.info(`✅ Processed ${phoneCount} numbers`);
+    console.info(`⏱️ Duration: ${duration}ms`);
+    console.info(`🚀 Throughput: ${throughput.toLocaleString()} phones/sec`);
   });
 
 program
@@ -69,17 +69,17 @@ program
     });
     
     const watcher = await monitor.startMonitoring(phone);
-    console.log(`👁️ Started monitoring ${phone}`);
-    console.log(`📊 Watcher ID: w_${Math.random().toString(36).substr(2, 9)}`);
-    console.log(`⏰ Interval: ${options.interval}`);
-    console.log(`🛑 Stop with: phone monitor stop ${watcher.phone}`);
+    console.info(`👁️ Started monitoring ${phone}`);
+    console.info(`📊 Watcher ID: w_${Math.random().toString(36).substr(2, 9)}`);
+    console.info(`⏰ Interval: ${options.interval}`);
+    console.info(`🛑 Stop with: phone monitor stop ${watcher.phone}`);
   });
 
 program
   .command('phone monitor stop <phone>')
   .description('Stop monitoring phone number')
   .action(async (phone) => {
-    console.log(`🛑 Stopped monitoring ${phone}`);
+    console.info(`🛑 Stopped monitoring ${phone}`);
   });
 
 // Smart pool management commands
@@ -94,10 +94,10 @@ program
     const pool = new SmartNumberPool({ poolName: options.name, size: parseInt(options.size) });
     
     const result = await pool.exec('provision');
-    console.log(`✅ Provisioned number: ${result.number}`);
-    console.log(`📊 Trust Score: ${result.trustScore}`);
-    console.log(`💰 Cost: $${result.cost.toFixed(3)}`);
-    console.log(`🏊 Pool: ${options.name} (${options.size} capacity)`);
+    console.info(`✅ Provisioned number: ${result.number}`);
+    console.info(`📊 Trust Score: ${result.trustScore}`);
+    console.info(`💰 Cost: $${result.cost.toFixed(3)}`);
+    console.info(`🏊 Pool: ${options.name} (${options.size} capacity)`);
   });
 
 program
@@ -107,9 +107,9 @@ program
     const pool = new SmartNumberPool({ poolName: options.name, size: 1000 });
     
     const result = await pool.exec('retire');
-    console.log(`🗑️ Retired ${result.retired} numbers`);
-    console.log(`💰 Savings: $${result.savings.toFixed(2)}`);
-    console.log(`🏊 Pool: ${options.name}`);
+    console.info(`🗑️ Retired ${result.retired} numbers`);
+    console.info(`💰 Savings: $${result.savings.toFixed(2)}`);
+    console.info(`🏊 Pool: ${options.name}`);
   });
 
 program
@@ -119,11 +119,11 @@ program
     const pool = new SmartNumberPool({ poolName: options.name, size: 1000 });
     
     const result = await pool.exec('optimize');
-    console.log(`⚡ Optimized pool: ${options.name}`);
-    console.log(`📊 Utilization: ${(result.utilization! * 100).toFixed(1)}%`);
+    console.info(`⚡ Optimized pool: ${options.name}`);
+    console.info(`📊 Utilization: ${(result.utilization! * 100).toFixed(1)}%`);
     
     if (result.optimized) {
-      console.log('✅ Pool optimization completed');
+      console.info('✅ Pool optimization completed');
     }
   });
 
@@ -134,11 +134,11 @@ program
     const pool = new SmartNumberPool({ poolName: options.name, size: 1000 });
     
     const metrics = await pool.getMetrics();
-    console.log(`📊 Pool Metrics: ${options.name}`);
-    console.log(`🏊 Utilization: ${(metrics.utilization * 100).toFixed(1)}%`);
-    console.log(`📈 Avg Trust Score: ${metrics.avgTrustScore}`);
-    console.log(`💰 Cost per Number: $${metrics.costPerNumber.toFixed(4)}`);
-    console.log(`🏥 Health: ${metrics.health}`);
+    console.info(`📊 Pool Metrics: ${options.name}`);
+    console.info(`🏊 Utilization: ${(metrics.utilization * 100).toFixed(1)}%`);
+    console.info(`📈 Avg Trust Score: ${metrics.avgTrustScore}`);
+    console.info(`💰 Cost per Number: $${metrics.costPerNumber.toFixed(4)}`);
+    console.info(`🏥 Health: ${metrics.health}`);
   });
 
 // Campaign routing commands
@@ -160,16 +160,16 @@ program
     
     const decision = await router.exec(options.phone, campaign);
     
-    console.log(`📱 Phone: ${decision.phone}`);
-    console.log(`📤 Send: ${decision.send ? '✅ YES' : '❌ NO'}`);
-    console.log(`📡 Channel: ${decision.channel}`);
-    console.log(`🌐 Provider: ${decision.provider}`);
-    console.log(`💰 Cost: $${decision.cost.toFixed(3)}`);
-    console.log(`📈 Expected ROI: ${decision.expectedRoi}x`);
-    console.log(`⚠️ Risk: ${(decision.risk * 100).toFixed(1)}%`);
+    console.info(`📱 Phone: ${decision.phone}`);
+    console.info(`📤 Send: ${decision.send ? '✅ YES' : '❌ NO'}`);
+    console.info(`📡 Channel: ${decision.channel}`);
+    console.info(`🌐 Provider: ${decision.provider}`);
+    console.info(`💰 Cost: $${decision.cost.toFixed(3)}`);
+    console.info(`📈 Expected ROI: ${decision.expectedRoi}x`);
+    console.info(`⚠️ Risk: ${(decision.risk * 100).toFixed(1)}%`);
     
     if (decision.reason) {
-      console.log(`🚫 Reason: ${decision.reason}`);
+      console.info(`🚫 Reason: ${decision.reason}`);
     }
   });
 
@@ -191,13 +191,13 @@ program
     
     const metrics = await router.startCampaign(campaign, phones);
     
-    console.log(`📊 Campaign Metrics: ${options.id}`);
-    console.log(`📱 Total Phones: ${metrics.total}`);
-    console.log(`✅ Send: ${metrics.send}`);
-    console.log(`🚫 Blocked: ${metrics.blocked}`);
-    console.log(`📈 Avg ROI: ${metrics.avgRoi.toFixed(2)}x`);
-    console.log(`💰 Total Cost: $${metrics.totalCost.toFixed(2)}`);
-    console.log(`🎯 Success Rate: ${((metrics.send / metrics.total) * 100).toFixed(1)}%`);
+    console.info(`📊 Campaign Metrics: ${options.id}`);
+    console.info(`📱 Total Phones: ${metrics.total}`);
+    console.info(`✅ Send: ${metrics.send}`);
+    console.info(`🚫 Blocked: ${metrics.blocked}`);
+    console.info(`📈 Avg ROI: ${metrics.avgRoi.toFixed(2)}x`);
+    console.info(`💰 Total Cost: $${metrics.totalCost.toFixed(2)}`);
+    console.info(`🎯 Success Rate: ${((metrics.send / metrics.total) * 100).toFixed(1)}%`);
   });
 
 // Autonomic system commands
@@ -211,21 +211,21 @@ program
   .action(async () => {
     const controller = new AutonomicController();
     
-    console.log('🤖 Autonomic System Status');
-    console.log('═'.repeat(40));
+    console.info('🤖 Autonomic System Status');
+    console.info('═'.repeat(40));
     
     const subsystems = ['cache', 'pool', 'router'];
     
     for (const subsystem of subsystems) {
       const needsHealing = controller.test(subsystem);
       const status = needsHealing ? '⚠️ NEEDS HEALING' : '✅ HEALTHY';
-      console.log(`${subsystem.padEnd(10)}: ${status}`);
+      console.info(`${subsystem.padEnd(10)}: ${status}`);
     }
     
-    console.log('');
-    console.log('🔄 Auto-healing loop: RUNNING');
-    console.log('⏰ Check interval: 30 seconds');
-    console.log('📊 Last check: Just now');
+    console.info('');
+    console.info('🔄 Auto-healing loop: RUNNING');
+    console.info('⏰ Check interval: 30 seconds');
+    console.info('📊 Last check: Just now');
   });
 
 program
@@ -239,14 +239,14 @@ program
       return;
     }
     
-    console.log(`🛠️ Healing subsystem: ${options.subsystem}`);
+    console.info(`🛠️ Healing subsystem: ${options.subsystem}`);
     
     const result = await controller.exec(options.subsystem as any);
     
     if (result.healed) {
-      console.log(`✅ Healed: ${result.action}`);
+      console.info(`✅ Healed: ${result.action}`);
     } else {
-      console.log(`ℹ️ No healing needed: ${result.action}`);
+      console.info(`ℹ️ No healing needed: ${result.action}`);
     }
   });
 
@@ -256,12 +256,12 @@ program
   .action(async () => {
     const controller = new AutonomicController();
     
-    console.log('🚀 Starting autonomic healing loop...');
+    console.info('🚀 Starting autonomic healing loop...');
     await controller.startAutonomicLoop();
     
-    console.log('✅ Autonomic loop started');
-    console.log('🔄 Monitoring every 30 seconds');
-    console.log('📊 Logs will appear when healing actions are taken');
+    console.info('✅ Autonomic loop started');
+    console.info('🔄 Monitoring every 30 seconds');
+    console.info('📊 Logs will appear when healing actions are taken');
   });
 
 // System metrics and reporting
@@ -269,8 +269,8 @@ program
   .command('system metrics')
   .description('Show overall system metrics')
   .action(async () => {
-    console.log('📊 System Performance Metrics');
-    console.log('═'.repeat(50));
+    console.info('📊 System Performance Metrics');
+    console.info('═'.repeat(50));
     
     // Simulated metrics
     const metrics = {
@@ -284,22 +284,22 @@ program
       healingActions: 47
     };
     
-    console.log(`🧠 Total Patterns: ${metrics.totalPatterns}`);
-    console.log(`⚡ Active Workflows: ${metrics.activeWorkflows}`);
-    console.log(`⏱️ Avg Latency: ${metrics.avgLatency}`);
-    console.log(`💰 Total ROI: ${metrics.totalROI}`);
-    console.log(`🟢 Uptime: ${metrics.uptime}`);
-    console.log(`🚀 Requests/sec: ${metrics.requestsPerSecond}`);
-    console.log(`💸 Cost/1k: ${metrics.costPerThousand}`);
-    console.log(`🛠️ Healing Actions (24h): ${metrics.healingActions}`);
+    console.info(`🧠 Total Patterns: ${metrics.totalPatterns}`);
+    console.info(`⚡ Active Workflows: ${metrics.activeWorkflows}`);
+    console.info(`⏱️ Avg Latency: ${metrics.avgLatency}`);
+    console.info(`💰 Total ROI: ${metrics.totalROI}`);
+    console.info(`🟢 Uptime: ${metrics.uptime}`);
+    console.info(`🚀 Requests/sec: ${metrics.requestsPerSecond}`);
+    console.info(`💸 Cost/1k: ${metrics.costPerThousand}`);
+    console.info(`🛠️ Healing Actions (24h): ${metrics.healingActions}`);
   });
 
 program
   .command('system health')
   .description('Comprehensive system health check')
   .action(async () => {
-    console.log('🏥 System Health Check');
-    console.log('═'.repeat(40));
+    console.info('🏥 System Health Check');
+    console.info('═'.repeat(40));
     
     const checks = [
       { name: 'Phone Sanitizer', status: '✅ HEALTHY', latency: '0.08ms' },
@@ -312,13 +312,13 @@ program
     ];
     
     checks.forEach(check => {
-      console.log(`${check.name.padEnd(20)}: ${check.status.padEnd(12)} (${check.latency})`);
+      console.info(`${check.name.padEnd(20)}: ${check.status.padEnd(12)} (${check.latency})`);
     });
     
     const healthyCount = checks.filter(c => c.status.includes('HEALTHY')).length;
-    console.log('');
-    console.log(`🎯 Overall Health: ${healthyCount}/${checks.length} systems healthy`);
-    console.log('✅ System is fully operational');
+    console.info('');
+    console.info(`🎯 Overall Health: ${healthyCount}/${checks.length} systems healthy`);
+    console.info('✅ System is fully operational');
   });
 
 // Cost analysis
@@ -326,8 +326,8 @@ program
   .command('system costs')
   .description('Show cost analysis and ROI')
   .action(async () => {
-    console.log('💰 Cost Analysis & ROI');
-    console.log('═'.repeat(40));
+    console.info('💰 Cost Analysis & ROI');
+    console.info('═'.repeat(40));
     
     const costs = {
       sanitize: 0.00,
@@ -338,17 +338,17 @@ program
       total: 0.011023
     };
     
-    console.log('Per-number costs:');
+    console.info('Per-number costs:');
     Object.entries(costs).forEach(([component, cost]) => {
       const percentage = (cost / costs.total * 100).toFixed(1);
-      console.log(`  ${component.padEnd(12)}: $${cost.toFixed(6)} (${percentage}%)`);
+      console.info(`  ${component.padEnd(12)}: $${cost.toFixed(6)} (${percentage}%)`);
     });
     
-    console.log('');
-    console.log(`💸 Total per 1,000 numbers: $${(costs.total * 1000).toFixed(2)}`);
-    console.log(`📈 Revenue per number: $2.50`);
-    console.log(`🎯 ROI: ${((2.5 - costs.total) / costs.total).toFixed(0)}x`);
-    console.log(`💵 Profit per 1,000: $${((2.5 - costs.total) * 1000).toFixed(2)}`);
+    console.info('');
+    console.info(`💸 Total per 1,000 numbers: $${(costs.total * 1000).toFixed(2)}`);
+    console.info(`📈 Revenue per number: $2.50`);
+    console.info(`🎯 ROI: ${((2.5 - costs.total) / costs.total).toFixed(0)}x`);
+    console.info(`💵 Profit per 1,000: $${((2.5 - costs.total) * 1000).toFixed(2)}`);
   });
 
 // Help and examples
@@ -356,37 +356,37 @@ program
   .command('examples')
   .description('Show usage examples')
   .action(() => {
-    console.log('📚 Usage Examples');
-    console.log('═'.repeat(40));
+    console.info('📚 Usage Examples');
+    console.info('═'.repeat(40));
     
-    console.log('');
-    console.log('🔍 Phone Intelligence:');
-    console.log('  bun phone sanitize +14155552671 --ipqs');
-    console.log('  bun phone farm --file=phones.txt --concurrency=1000');
-    console.log('  bun phone monitor start +14155552671 --interval=1h');
+    console.info('');
+    console.info('🔍 Phone Intelligence:');
+    console.info('  bun phone sanitize +14155552671 --ipqs');
+    console.info('  bun phone farm --file=phones.txt --concurrency=1000');
+    console.info('  bun phone monitor start +14155552671 --interval=1h');
     
-    console.log('');
-    console.log('🏊 Smart Pool Management:');
-    console.log('  bun phone pool provision --name=marketing --size=1000');
-    console.log('  bun phone pool retire --name=marketing');
-    console.log('  bun phone pool metrics --name=marketing');
+    console.info('');
+    console.info('🏊 Smart Pool Management:');
+    console.info('  bun phone pool provision --name=marketing --size=1000');
+    console.info('  bun phone pool retire --name=marketing');
+    console.info('  bun phone pool metrics --name=marketing');
     
-    console.log('');
-    console.log('📤 Campaign Routing:');
-    console.log('  bun phone campaign route --id=summer --phone=+14155552671');
-    console.log('  bun phone campaign start --id=summer --file=phones.txt');
+    console.info('');
+    console.info('📤 Campaign Routing:');
+    console.info('  bun phone campaign route --id=summer --phone=+14155552671');
+    console.info('  bun phone campaign start --id=summer --file=phones.txt');
     
-    console.log('');
-    console.log('🤖 Autonomic System:');
-    console.log('  bun autonomic status');
-    console.log('  bun autonomic heal --subsystem=cache');
-    console.log('  bun autonomic start');
+    console.info('');
+    console.info('🤖 Autonomic System:');
+    console.info('  bun autonomic status');
+    console.info('  bun autonomic heal --subsystem=cache');
+    console.info('  bun autonomic start');
     
-    console.log('');
-    console.log('📊 System Metrics:');
-    console.log('  bun system metrics');
-    console.log('  bun system health');
-    console.log('  bun system costs');
+    console.info('');
+    console.info('📊 System Metrics:');
+    console.info('  bun system metrics');
+    console.info('  bun system health');
+    console.info('  bun system costs');
   });
 
 // Version and info
@@ -394,18 +394,18 @@ program
   .command('version')
   .description('Show version information')
   .action(() => {
-    console.log('🧠 Empire Pro Phone Intelligence');
-    console.log('Version: 1.0.0');
-    console.log('Patterns: 100+ autonomous workflows');
-    console.log('Performance: 2.1ms avg latency');
-    console.log('ROI: 3310% cumulative');
-    console.log('Status: PRODUCTION READY');
+    console.info('🧠 Empire Pro Phone Intelligence');
+    console.info('Version: 1.0.0');
+    console.info('Patterns: 100+ autonomous workflows');
+    console.info('Performance: 2.1ms avg latency');
+    console.info('ROI: 3310% cumulative');
+    console.info('Status: PRODUCTION READY');
   });
 
 // Error handling
 program.on('command:*', () => {
   console.error('❌ Invalid command: %s', program.args.join(' '));
-  console.log('See --help for a list of available commands.');
+  console.info('See --help for a list of available commands.');
   process.exit(1);
 });
 
@@ -413,7 +413,7 @@ program.on('command:*', () => {
 export default program;
 
 // Auto-generated help
-console.log(`
+console.info(`
 🧠 Empire Pro - Composable Workflow Commands
 
 🔍 Phone Intelligence:

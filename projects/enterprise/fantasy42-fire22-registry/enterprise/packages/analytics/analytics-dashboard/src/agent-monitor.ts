@@ -63,7 +63,7 @@ export class Fantasy42AgentMonitor extends Fantasy42SecureClient {
    * Start real-time monitoring
    */
   startMonitoring(intervalMs: number = 60000): void {
-    console.log('📊 Starting Fantasy42 User-Agent monitoring...');
+    console.info('📊 Starting Fantasy42 User-Agent monitoring...');
 
     this.metricsInterval = setInterval(async () => {
       await this.collectMetrics();
@@ -71,7 +71,7 @@ export class Fantasy42AgentMonitor extends Fantasy42SecureClient {
       await this.generateComplianceReport();
     }, intervalMs);
 
-    console.log(`✅ Monitoring started (interval: ${intervalMs}ms)`);
+    console.info(`✅ Monitoring started (interval: ${intervalMs}ms)`);
   }
 
   /**
@@ -81,7 +81,7 @@ export class Fantasy42AgentMonitor extends Fantasy42SecureClient {
     if (this.metricsInterval) {
       clearInterval(this.metricsInterval);
       this.metricsInterval = null;
-      console.log('🛑 Monitoring stopped');
+      console.info('🛑 Monitoring stopped');
     }
   }
 
@@ -218,7 +218,7 @@ export class Fantasy42AgentMonitor extends Fantasy42SecureClient {
 
     // Log metrics for compliance
     const cleanMetrics = JSON.stringify(metrics).replace(/\x1b\[[0-9;]*m/g, '');
-    console.log(
+    console.info(
       `📊 Metrics collected: ${metrics.totalRequests} requests, ${metrics.uniqueAgents} unique agents`
     );
   }

@@ -122,7 +122,7 @@ class StructuredLogger {
 			if (entry.level === "error") {
 				console.error(consoleOutput);
 			} else {
-				console.log(consoleOutput);
+				console.info(consoleOutput);
 			}
 		}
 
@@ -283,7 +283,7 @@ async function main() {
 			testLogger.error("Error message", new Error("Test error"));
 			testLogger.audit("user.login", "admin", { ip: "127.0.0.1" });
 
-			console.log("\n✓ Test logs written");
+			console.info("\n✓ Test logs written");
 			break;
 		}
 
@@ -293,7 +293,7 @@ async function main() {
 
 			const entries = await logger.query({ level, limit });
 
-			console.log(`Found ${entries.length} entries:\n`);
+			console.info(`Found ${entries.length} entries:\n`);
 
 			for (const entry of entries) {
 				const timestamp = entry.timestamp.slice(0, 19).replace("T", " ");
@@ -306,18 +306,18 @@ async function main() {
 				};
 				const reset = "\x1b[0m";
 
-				console.log(
+				console.info(
 					`${timestamp} ${levelColor[entry.level]}[${entry.level.toUpperCase()}]${reset} ${entry.message}`,
 				);
 
 				if (entry.context && Object.keys(entry.context).length > 0) {
-					console.log(
+					console.info(
 						`  ${"\x1b[90m"}Context: ${JSON.stringify(entry.context)}${reset}`,
 					);
 				}
 
 				if (entry.error) {
-					console.log(`  ${"\x1b[31m"}Error: ${entry.error.message}${reset}`);
+					console.info(`  ${"\x1b[31m"}Error: ${entry.error.message}${reset}`);
 				}
 			}
 			break;
@@ -328,30 +328,30 @@ async function main() {
 			const entries = await logger.query({ limit: lines });
 
 			entries.reverse().forEach((entry) => {
-				console.log(`${entry.timestamp} [${entry.level}] ${entry.message}`);
+				console.info(`${entry.timestamp} [${entry.level}] ${entry.message}`);
 			});
 			break;
 		}
 
 		case "path": {
-			console.log(LOG_DIR);
+			console.info(LOG_DIR);
 			break;
 		}
 
 		default: {
-			console.log("🐚 Kimi Structured Logger\n");
-			console.log("Usage:");
-			console.log("  logger.ts test              Write test logs");
-			console.log(
+			console.info("🐚 Kimi Structured Logger\n");
+			console.info("Usage:");
+			console.info("  logger.ts test              Write test logs");
+			console.info(
 				"  logger.ts query [level] [n] Query logs (level: debug|info|warn|error|audit)",
 			);
-			console.log("  logger.ts tail [n]          Show last n log lines");
-			console.log("  logger.ts path              Show log directory");
-			console.log("\nFeatures:");
-			console.log("  • JSON structured logging");
-			console.log("  • 5 log levels (debug, info, warn, error, audit)");
-			console.log("  • Automatic rotation (10MB per file, 5 files max)");
-			console.log("  • Query/filter logs by level, time, component");
+			console.info("  logger.ts tail [n]          Show last n log lines");
+			console.info("  logger.ts path              Show log directory");
+			console.info("\nFeatures:");
+			console.info("  • JSON structured logging");
+			console.info("  • 5 log levels (debug, info, warn, error, audit)");
+			console.info("  • Automatic rotation (10MB per file, 5 files max)");
+			console.info("  • Query/filter logs by level, time, component");
 		}
 	}
 }

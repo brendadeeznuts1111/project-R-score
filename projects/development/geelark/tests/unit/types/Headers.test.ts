@@ -56,12 +56,12 @@ function testHeadersMethods() {
 
   // Test forEach
   headers.forEach((value, key, parent) => {
-    console.log(`${key}: ${value}`);
+    console.info(`${key}: ${value}`);
   });
 
   // Test default iteration
   for (const [key, value] of headers.entries()) {
-    console.log(`${key}: ${value}`);
+    console.info(`${key}: ${value}`);
   }
 
   // Test special Set-Cookie handling
@@ -139,38 +139,38 @@ function testTypeSafety() {
 
 // Test runner
 if (typeof Bun !== 'undefined' && process.argv[1] && process.argv[1].endsWith('Headers.test.ts')) {
-  console.log('🧪 Running Headers type implementation tests...\n');
+  console.info('🧪 Running Headers type implementation tests...\n');
 
   try {
-    console.log('✅ HeadersInit type tests:');
+    console.info('✅ HeadersInit type tests:');
     const initTests = testHeadersInitTypes();
-    console.log('  - Array initialization:', initTests.arrayInit);
-    console.log('  - Record initialization:', initTests.recordInit);
-    console.log('  - Record with arrays:', initTests.recordArrayInit);
-    console.log('  - Headers object initialization: ✓');
+    console.info('  - Array initialization:', initTests.arrayInit);
+    console.info('  - Record initialization:', initTests.recordInit);
+    console.info('  - Record with arrays:', initTests.recordArrayInit);
+    console.info('  - Headers object initialization: ✓');
 
-    console.log('\n✅ Headers methods tests:');
+    console.info('\n✅ Headers methods tests:');
     const methodTests = testHeadersMethods();
-    console.log('  - Basic operations: ✓');
-    console.log('  - Iteration methods: ✓');
-    console.log('  - Set-Cookie handling:', methodTests.allCookies);
-    console.log('  - Serialization: ✓');
+    console.info('  - Basic operations: ✓');
+    console.info('  - Iteration methods: ✓');
+    console.info('  - Set-Cookie handling:', methodTests.allCookies);
+    console.info('  - Serialization: ✓');
 
-    console.log('\n✅ Headers constructor tests:');
+    console.info('\n✅ Headers constructor tests:');
     const constructorTests = testHeadersConstructor();
-    console.log('  - Empty constructor: ✓');
-    console.log('  - Record constructor: ✓');
-    console.log('  - Array constructor: ✓');
-    console.log('  - Copy constructor: ✓');
+    console.info('  - Empty constructor: ✓');
+    console.info('  - Record constructor: ✓');
+    console.info('  - Array constructor: ✓');
+    console.info('  - Copy constructor: ✓');
 
-    console.log('\n✅ Type safety tests:');
+    console.info('\n✅ Type safety tests:');
     const safetyTests = testTypeSafety();
-    console.log('  - Case insensitive access: ✓');
-    console.log('  - getAll restrictions: ✓');
-    console.log('  - Function parameters: ✓');
+    console.info('  - Case insensitive access: ✓');
+    console.info('  - getAll restrictions: ✓');
+    console.info('  - Function parameters: ✓');
 
-    console.log('\n🎉 All Headers type tests passed!');
-    console.log('📋 Headers implementation matches Bun specification');
+    console.info('\n🎉 All Headers type tests passed!');
+    console.info('📋 Headers implementation matches Bun specification');
 
   } catch (error) {
     console.error('❌ Test failed:', error);

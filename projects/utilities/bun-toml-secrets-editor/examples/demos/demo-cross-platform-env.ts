@@ -7,34 +7,34 @@
 
 export {}; // Make this file a module
 
-console.log("🌍 Cross-Platform Environment Variables");
-console.log("=======================================");
+console.info("🌍 Cross-Platform Environment Variables");
+console.info("=======================================");
 
 // Detect platform
 const platform = process.platform;
-console.log(`🖥️  Platform: ${platform}`);
+console.info(`🖥️  Platform: ${platform}`);
 
 // Environment variable access (works on all platforms)
-console.log("\n📋 Environment Variables:");
-console.log(`FOO: ${Bun.env.FOO || process.env.FOO || "not set"}`);
-console.log(`BAR: ${Bun.env.BAR || process.env.BAR || "not set"}`);
-console.log(
+console.info("\n📋 Environment Variables:");
+console.info(`FOO: ${Bun.env.FOO || process.env.FOO || "not set"}`);
+console.info(`BAR: ${Bun.env.BAR || process.env.BAR || "not set"}`);
+console.info(
 	`NODE_ENV: ${Bun.env.NODE_ENV || process.env.NODE_ENV || "not set"}`,
 );
 
 // Platform-specific environment variables
-console.log("\n🔍 Platform-Specific Variables:");
+console.info("\n🔍 Platform-Specific Variables:");
 
 switch (platform) {
 	case "win32":
-		console.log("Windows detected");
-		console.log(
+		console.info("Windows detected");
+		console.info(
 			`USERNAME: ${Bun.env.USERNAME || process.env.USERNAME || "not set"}`,
 		);
-		console.log(
+		console.info(
 			`USERPROFILE: ${Bun.env.USERPROFILE || process.env.USERPROFILE || "not set"}`,
 		);
-		console.log(
+		console.info(
 			`${`PATH: ${Bun.env.PATH || process.env.PATH || "not set"}`.substring(
 				0,
 				50,
@@ -43,25 +43,25 @@ switch (platform) {
 		break;
 
 	case "darwin":
-		console.log("macOS detected");
-		console.log(`USER: ${Bun.env.USER || process.env.USER || "not set"}`);
-		console.log(`HOME: ${Bun.env.HOME || process.env.HOME || "not set"}`);
-		console.log(`SHELL: ${Bun.env.SHELL || process.env.SHELL || "not set"}`);
+		console.info("macOS detected");
+		console.info(`USER: ${Bun.env.USER || process.env.USER || "not set"}`);
+		console.info(`HOME: ${Bun.env.HOME || process.env.HOME || "not set"}`);
+		console.info(`SHELL: ${Bun.env.SHELL || process.env.SHELL || "not set"}`);
 		break;
 
 	case "linux":
-		console.log("Linux detected");
-		console.log(`USER: ${Bun.env.USER || process.env.USER || "not set"}`);
-		console.log(`HOME: ${Bun.env.HOME || process.env.HOME || "not set"}`);
-		console.log(`SHELL: ${Bun.env.SHELL || process.env.SHELL || "not set"}`);
+		console.info("Linux detected");
+		console.info(`USER: ${Bun.env.USER || process.env.USER || "not set"}`);
+		console.info(`HOME: ${Bun.env.HOME || process.env.HOME || "not set"}`);
+		console.info(`SHELL: ${Bun.env.SHELL || process.env.SHELL || "not set"}`);
 		break;
 
 	default:
-		console.log(`Unknown platform: ${platform}`);
+		console.info(`Unknown platform: ${platform}`);
 }
 
 // CLI Configuration from environment
-console.log("\n⚙️  CLI Configuration:");
+console.info("\n⚙️  CLI Configuration:");
 const cliConfig = {
 	foo: Bun.env.FOO || process.env.FOO || "default",
 	bar: Bun.env.BAR || process.env.BAR || "default",
@@ -71,29 +71,29 @@ const cliConfig = {
 	isProduction: (Bun.env.NODE_ENV || process.env.NODE_ENV) === "production",
 };
 
-console.log("CLI Config:", cliConfig);
+console.info("CLI Config:", cliConfig);
 
 // Environment-specific behavior
-console.log("\n🎯 Environment-Specific Behavior:");
+console.info("\n🎯 Environment-Specific Behavior:");
 
 if (cliConfig.foo) {
-	console.log(`✅ FOO is set to: ${cliConfig.foo}`);
+	console.info(`✅ FOO is set to: ${cliConfig.foo}`);
 }
 
 if (cliConfig.isWindows) {
-	console.log("🪟 Windows-specific features enabled");
+	console.info("🪟 Windows-specific features enabled");
 } else {
-	console.log("🐧 Unix-like features enabled");
+	console.info("🐧 Unix-like features enabled");
 }
 
 if (cliConfig.isProduction) {
-	console.log("🚀 Production mode optimizations active");
+	console.info("🚀 Production mode optimizations active");
 } else {
-	console.log("🛠️  Development mode features active");
+	console.info("🛠️  Development mode features active");
 }
 
 // Cross-platform path handling
-console.log("\n📁 Cross-Platform Paths:");
+console.info("\n📁 Cross-Platform Paths:");
 const paths = {
 	home:
 		Bun.env.HOME ||
@@ -107,34 +107,34 @@ const paths = {
 		`${Bun.env.HOME || process.env.HOME}/.config`,
 };
 
-console.log("Paths:", paths);
+console.info("Paths:", paths);
 
 // Environment validation for CLI
-console.log("\n✅ CLI Environment Validation:");
+console.info("\n✅ CLI Environment Validation:");
 const requiredVars = ["FOO"];
 const missingVars = requiredVars.filter(
 	(varName) => !(Bun.env[varName] || process.env[varName]),
 );
 
 if (missingVars.length === 0) {
-	console.log("✅ All required CLI environment variables are set");
-	console.log("🚀 CLI is ready to run!");
+	console.info("✅ All required CLI environment variables are set");
+	console.info("🚀 CLI is ready to run!");
 } else {
-	console.log(`⚠️  Optional variables not set: ${missingVars.join(", ")}`);
-	console.log("🔧 CLI will use defaults for missing variables");
+	console.info(`⚠️  Optional variables not set: ${missingVars.join(", ")}`);
+	console.info("🔧 CLI will use defaults for missing variables");
 }
 
 // Show how to set variables on each platform
-console.log("\n📖 How to Set Environment Variables:");
-console.log("Windows CMD:");
-console.log("  set FOO=helloworld && bun run demo-cross-platform-env.ts");
-console.log("");
-console.log("Windows PowerShell:");
-console.log('  $env:FOO="helloworld"; bun run demo-cross-platform-env.ts');
-console.log("");
-console.log("macOS/Linux:");
-console.log("  FOO=helloworld bun run demo-cross-platform-env.ts");
-console.log("  # or");
-console.log("  export FOO=helloworld && bun run demo-cross-platform-env.ts");
+console.info("\n📖 How to Set Environment Variables:");
+console.info("Windows CMD:");
+console.info("  set FOO=helloworld && bun run demo-cross-platform-env.ts");
+console.info("");
+console.info("Windows PowerShell:");
+console.info('  $env:FOO="helloworld"; bun run demo-cross-platform-env.ts');
+console.info("");
+console.info("macOS/Linux:");
+console.info("  FOO=helloworld bun run demo-cross-platform-env.ts");
+console.info("  # or");
+console.info("  export FOO=helloworld && bun run demo-cross-platform-env.ts");
 
-console.log("\n✅ Cross-platform environment test complete!");
+console.info("\n✅ Cross-platform environment test complete!");

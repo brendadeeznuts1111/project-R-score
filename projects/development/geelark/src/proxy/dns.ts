@@ -60,14 +60,14 @@ class DNSCacheManager {
         // Resolve with 5-minute TTL
         await this.resolve(hostname, 300);
         this.warmedUp.add(hostname);
-        console.log(`[DNS] Warmed up: ${hostname}`);
+        console.info(`[DNS] Warmed up: ${hostname}`);
       } catch (error) {
         console.error(`[DNS] Failed to warm up ${hostname}:`, error);
       }
     }
 
     const duration = performance.now() - start;
-    console.log(`[DNS] Cache warmup complete: ${hostnames.length} hostnames in ${duration.toFixed(2)}ms`);
+    console.info(`[DNS] Cache warmup complete: ${hostnames.length} hostnames in ${duration.toFixed(2)}ms`);
   }
 
   /**
@@ -109,10 +109,10 @@ class DNSCacheManager {
 
       if (cached) {
         this.hits++;
-        console.log(`[DNS] Cache hit: ${hostname} → ${result.address} (${durationNs}ns)`);
+        console.info(`[DNS] Cache hit: ${hostname} → ${result.address} (${durationNs}ns)`);
       } else {
         this.misses++;
-        console.log(`[DNS] Cache miss: ${hostname} → ${result.address} (${duration.toFixed(2)}ms)`);
+        console.info(`[DNS] Cache miss: ${hostname} → ${result.address} (${duration.toFixed(2)}ms)`);
       }
 
       return result.address;
@@ -137,7 +137,7 @@ class DNSCacheManager {
     url.hostname = ip;
 
     const resolved = url.toString();
-    console.log(`[DNS] Resolved: ${originalHostname} → ${ip}`);
+    console.info(`[DNS] Resolved: ${originalHostname} → ${ip}`);
 
     return resolved;
   }
@@ -234,7 +234,7 @@ export function startDNSMonitor(intervalMs: number = 30000): void {
 
   setInterval(() => {
     const stats = getDNSStats();
-    console.log(`[DNS Monitor] Stats:`, {
+    console.info(`[DNS Monitor] Stats:`, {
       hits: stats.hits,
       misses: stats.misses,
       warmedUp: stats.size,
@@ -242,7 +242,7 @@ export function startDNSMonitor(intervalMs: number = 30000): void {
     });
   }, intervalMs);
 
-  console.log(`[DNS Monitor] Started (interval: ${intervalMs}ms)`);
+  console.info(`[DNS Monitor] Started (interval: ${intervalMs}ms)`);
 }
 
 // ============================================================================
@@ -253,7 +253,7 @@ export function startDNSMonitor(intervalMs: number = 30000): void {
  * Benchmark DNS resolution performance
  */
 export async function benchmarkDNS(hostname: string, iterations: number = 100) {
-  console.log(`[DNS Benchmark] Testing ${hostname} (${iterations} iterations)`);
+  console.info(`[DNS Benchmark] Testing ${hostname} (${iterations} iterations)`);
 
   const times: number[] = [];
 
@@ -261,7 +261,7 @@ export async function benchmarkDNS(hostname: string, iterations: number = 100) {
   let start = performance.now();
   await resolveHostname(hostname);
   let duration = performance.now() - start;
-  console.log(`[DNS Benchmark] First call (cold): ${duration.toFixed(2)}ms`);
+  console.info(`[DNS Benchmark] First call (cold): ${duration.toFixed(2)}ms`);
 
   // Subsequent calls (cache hits)
   for (let i = 0; i < iterations; i++) {
@@ -279,7 +279,7 @@ export async function benchmarkDNS(hostname: string, iterations: number = 100) {
   const p95 = times[Math.floor(times.length * 0.95)];
   const p99 = times[Math.floor(times.length * 0.99)];
 
-  console.log(`[DNS Benchmark] Results:`, {
+  console.info(`[DNS Benchmark] Results:`, {
     avg: `${avg.toFixed(3)}ms`,
     min: `${min.toFixed(3)}ms`,
     max: `${max.toFixed(3)}ms`,

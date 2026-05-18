@@ -45,7 +45,7 @@ class R2Toolkit {
    * Rapid bucket connectivity check
    */
   async checkConnectivity(bucket: string = R2_CONFIG.buckets.primary): Promise<boolean> {
-    console.log(`🔍 Checking R2 connectivity for bucket: ${bucket}`);
+    console.info(`🔍 Checking R2 connectivity for bucket: ${bucket}`);
     
     try {
       console.time('Connectivity Check');
@@ -59,17 +59,17 @@ class R2Toolkit {
       console.timeEnd('Connectivity Check');
       
       if (response.status === 403) {
-        console.log('✅ R2 Endpoint Reachable (Authentication Required)');
+        console.info('✅ R2 Endpoint Reachable (Authentication Required)');
         return true;
       } else if (response.status === 200) {
-        console.log('✅ R2 Endpoint Accessible (Public Bucket)');
+        console.info('✅ R2 Endpoint Accessible (Public Bucket)');
         return true;
       } else {
-        console.log(`⚠️  Unexpected response: ${response.status}`);
+        console.info(`⚠️  Unexpected response: ${response.status}`);
         return false;
       }
     } catch (error) {
-      console.log('❌ Connection Error:', error.message);
+      console.info('❌ Connection Error:', error.message);
       return false;
     }
   }
@@ -78,13 +78,13 @@ class R2Toolkit {
    * Large file integrity audit with quantum hash simulation
    */
   async auditFileIntegrity(filePath: string): Promise<void> {
-    console.log(`🔬 Auditing file integrity: ${filePath}`);
+    console.info(`🔬 Auditing file integrity: ${filePath}`);
     
     try {
       const fileStats = await stat(filePath);
       const fileSize = fileStats.size;
       
-      console.log(`📊 File size: ${(fileSize / 1024 / 1024).toFixed(2)} MB`);
+      console.info(`📊 File size: ${(fileSize / 1024 / 1024).toFixed(2)} MB`);
       
       // Simulate chunked upload check
       console.time('Chunked Upload Simulation');
@@ -94,7 +94,7 @@ class R2Toolkit {
       const fileBuffer = await readFile(filePath);
       const chunks = Math.ceil(fileBuffer.length / chunkSize);
       
-      console.log(`📦 Processing ${chunks} chunks of ${chunkSize / 1024 / 1024}MB each...`);
+      console.info(`📦 Processing ${chunks} chunks of ${chunkSize / 1024 / 1024}MB each...`);
       
       const hashes: string[] = [];
       for (let i = 0; i < chunks; i++) {
@@ -112,7 +112,7 @@ class R2Toolkit {
       }
       
       console.timeEnd('Chunked Upload Simulation');
-      console.log('\n');
+      console.info('\n');
       
       // Compute master hash (quantum hash simulation)
       console.time('Quantum Hash Calculation');
@@ -121,8 +121,8 @@ class R2Toolkit {
         .digest('hex');
       console.timeEnd('Quantum Hash Calculation');
       
-      console.log(`🔐 Quantum Hash: ${masterHash}`);
-      console.log(`📋 Chunk Hashes: ${hashes.length} computed`);
+      console.info(`🔐 Quantum Hash: ${masterHash}`);
+      console.info(`📋 Chunk Hashes: ${hashes.length} computed`);
       
       // Record metrics
       this.recordMetric('file-audit', Date.now(), fileSize, true);
@@ -137,8 +137,8 @@ class R2Toolkit {
    * Operation tracking and Cloudflare limits monitoring
    */
   async trackOperations(): Promise<void> {
-    console.log('📊 Operation Tracking Dashboard');
-    console.log('================================');
+    console.info('📊 Operation Tracking Dashboard');
+    console.info('================================');
     
     // Simulate operation counting
     this.operationCount++;
@@ -149,9 +149,9 @@ class R2Toolkit {
     
     const usagePercent = (this.operationCount / classALimit * 100).toFixed(2);
     
-    console.log(`📈 Total Operations: ${this.operationCount.toLocaleString()}`);
-    console.log(`🎯 Class A Usage: ${usagePercent}% (${classALimit.toLocaleString()} limit)`);
-    console.log(`💰 Estimated Cost: $${(this.operationCount * 0.0004).toFixed(2)}/month`);
+    console.info(`📈 Total Operations: ${this.operationCount.toLocaleString()}`);
+    console.info(`🎯 Class A Usage: ${usagePercent}% (${classALimit.toLocaleString()} limit)`);
+    console.info(`💰 Estimated Cost: $${(this.operationCount * 0.0004).toFixed(2)}/month`);
     
     // File type breakdown simulation
     const fileTypes = {
@@ -163,21 +163,21 @@ class R2Toolkit {
       'Other': { percentage: 3, size: '72GB' }
     };
     
-    console.log('\n📁 Storage Breakdown:');
+    console.info('\n📁 Storage Breakdown:');
     Object.entries(fileTypes).forEach(([type, data]) => {
-      console.log(`  ${type}: ${data.percentage}% (${data.size})`);
+      console.info(`  ${type}: ${data.percentage}% (${data.size})`);
     });
     
-    console.log('\n💾 Total Storage: 2.4TB');
-    console.log('🚀 Bandwidth Used: 125GB/month (FREE with R2!)');
+    console.info('\n💾 Total Storage: 2.4TB');
+    console.info('🚀 Bandwidth Used: 125GB/month (FREE with R2!)');
   }
 
   /**
    * Security audit for Evidence Integrity Pipeline
    */
   async securityAudit(): Promise<void> {
-    console.log('🛡️  Evidence Integrity Security Audit');
-    console.log('===================================');
+    console.info('🛡️  Evidence Integrity Security Audit');
+    console.info('===================================');
     
     const securityChecks = [
       {
@@ -208,26 +208,26 @@ class R2Toolkit {
     ];
     
     securityChecks.forEach(check => {
-      console.log(`${check.status} ${check.name}`);
-      console.log(`   ${check.description}`);
+      console.info(`${check.status} ${check.name}`);
+      console.info(`   ${check.description}`);
     });
     
-    console.log('\n🎯 Security Score: 100/100');
-    console.log('📋 Audit Complete: All systems operational');
+    console.info('\n🎯 Security Score: 100/100');
+    console.info('📋 Audit Complete: All systems operational');
   }
 
   /**
    * Launch local dashboard server
    */
   async launchDashboard(port: number = 8081): Promise<void> {
-    console.log(`🚀 Launching Evidence Integrity Dashboard on port ${port}`);
-    console.log(`📱 Dashboard URL: http://localhost:${port}/demos/@web/r2-storage-dashboard.html`);
+    console.info(`🚀 Launching Evidence Integrity Dashboard on port ${port}`);
+    console.info(`📱 Dashboard URL: http://localhost:${port}/demos/@web/r2-storage-dashboard.html`);
     
     // This would typically use a server like Bun.serve
     // For now, we'll provide the instructions
-    console.log('\n📋 To start the dashboard server:');
-    console.log(`   bun x serve ./demos/@web --port ${port}`);
-    console.log(`   Then visit: http://localhost:${port}/r2-storage-dashboard.html`);
+    console.info('\n📋 To start the dashboard server:');
+    console.info(`   bun x serve ./demos/@web --port ${port}`);
+    console.info(`   Then visit: http://localhost:${port}/r2-storage-dashboard.html`);
   }
 
   /**
@@ -247,21 +247,21 @@ class R2Toolkit {
    * Generate performance report
    */
   generateReport(): void {
-    console.log('\n📊 Performance Report');
-    console.log('====================');
+    console.info('\n📊 Performance Report');
+    console.info('====================');
     
     const successfulOps = this.metrics.filter(m => m.success);
     const failedOps = this.metrics.filter(m => !m.success);
     
-    console.log(`✅ Successful Operations: ${successfulOps.length}`);
-    console.log(`❌ Failed Operations: ${failedOps.length}`);
+    console.info(`✅ Successful Operations: ${successfulOps.length}`);
+    console.info(`❌ Failed Operations: ${failedOps.length}`);
     
     if (successfulOps.length > 0) {
       const avgDuration = successfulOps.reduce((sum, m) => sum + m.duration, 0) / successfulOps.length;
-      console.log(`⏱️  Average Duration: ${(avgDuration / 1000).toFixed(2)}s`);
+      console.info(`⏱️  Average Duration: ${(avgDuration / 1000).toFixed(2)}s`);
       
       const totalSize = successfulOps.reduce((sum, m) => sum + (m.size || 0), 0);
-      console.log(`📦 Total Processed: ${(totalSize / 1024 / 1024 / 1024).toFixed(2)}GB`);
+      console.info(`📦 Total Processed: ${(totalSize / 1024 / 1024 / 1024).toFixed(2)}GB`);
     }
   }
 }

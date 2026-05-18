@@ -417,7 +417,7 @@ export class AuditTrailManager {
 		tenantId: string,
 		dateRange: { start: Date; end: Date },
 	): Promise<ComplianceReport> {
-		console.log(`📋 Generating compliance report for tenant: ${tenantId}`);
+		console.info(`📋 Generating compliance report for tenant: ${tenantId}`);
 
 		const events = this.queryEvents({
 			tenantId,
@@ -486,10 +486,10 @@ export class AuditTrailManager {
 		// Store report
 		await this.storeReport(report);
 
-		console.log(`✅ Compliance report generated:`);
-		console.log(`  Total events: ${totalEvents}`);
-		console.log(`  Compliance score: ${complianceScore}%`);
-		console.log(`  Violations: ${violations.count}`);
+		console.info(`✅ Compliance report generated:`);
+		console.info(`  Total events: ${totalEvents}`);
+		console.info(`  Compliance score: ${complianceScore}%`);
+		console.info(`  Violations: ${violations.count}`);
 
 		return report;
 	}
@@ -502,7 +502,7 @@ export class AuditTrailManager {
 		archived: number;
 		deleted: number;
 	}> {
-		console.log(`🗄️ Applying retention policies...`);
+		console.info(`🗄️ Applying retention policies...`);
 
 		let processed = 0;
 		let archived = 0;
@@ -537,10 +537,10 @@ export class AuditTrailManager {
 			}
 		}
 
-		console.log(`✅ Retention policies applied:`);
-		console.log(`  Processed: ${processed} events`);
-		console.log(`  Archived: ${archived} events`);
-		console.log(`  Deleted: ${deleted} events`);
+		console.info(`✅ Retention policies applied:`);
+		console.info(`  Processed: ${processed} events`);
+		console.info(`  Archived: ${archived} events`);
+		console.info(`  Deleted: ${deleted} events`);
 
 		return { processed, archived, deleted };
 	}
@@ -663,7 +663,7 @@ export class AuditTrailManager {
 			);
 		}
 
-		console.log(`📝 Flushed ${events.length} audit events to database`);
+		console.info(`📝 Flushed ${events.length} audit events to database`);
 	}
 
 	private async checkComplianceRules(event: AuditEvent): Promise<void> {
@@ -924,7 +924,7 @@ export class AuditTrailManager {
 
 	private async archiveEvent(event: any, location: string): Promise<void> {
 		// Simulate archival to cold storage
-		console.log(`🗄️ Archiving event ${event.id} to ${location}`);
+		console.info(`🗄️ Archiving event ${event.id} to ${location}`);
 		// In a real implementation, this would move to S3, Glacier, etc.
 	}
 

@@ -12,7 +12,7 @@ export class AIEngine {
     const evidenceUrls = 'evidenceUrls' in dispute ? dispute.evidenceUrls : dispute.evidence;
     const description = dispute.description;
 
-    console.log(`${Bun.color(STATUS_COLORS.info)}AI Engine: Analyzing evidence for ${disputeId}${Bun.color('reset')}`);
+    console.info(`${Bun.color(STATUS_COLORS.info)}AI Engine: Analyzing evidence for ${disputeId}${Bun.color('reset')}`);
     
     const findings: string[] = [];
     const anomalies: string[] = [];
@@ -54,7 +54,7 @@ export class AIEngine {
     const overallScore = this.calculateOverallScore(evidenceValidation, description);
     const recommendation = this.determineRecommendation(overallScore, anomalies);
 
-    console.log(`${Bun.color(overallScore > 0.7 ? STATUS_COLORS.success : STATUS_COLORS.warning)}AI Engine: Analysis complete. Recommendation: ${recommendation}${Bun.color('reset')}`);
+    console.info(`${Bun.color(overallScore > 0.7 ? STATUS_COLORS.success : STATUS_COLORS.warning)}AI Engine: Analysis complete. Recommendation: ${recommendation}${Bun.color('reset')}`);
 
     return {
       disputeId,

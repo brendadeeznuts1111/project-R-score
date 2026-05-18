@@ -64,8 +64,8 @@ export async function withRetry<T>(
       const jitter = delay * 0.25 * (Math.random() * 2 - 1);
       const finalDelay = Math.max(0, delay + jitter);
       
-      console.log(`⚠️ Attempt ${attempt} failed, retrying in ${Math.round(finalDelay)}ms...`);
-      console.log(`   Error: ${lastError.message}`);
+      console.info(`⚠️ Attempt ${attempt} failed, retrying in ${Math.round(finalDelay)}ms...`);
+      console.info(`   Error: ${lastError.message}`);
       
       if (onRetry) {
         onRetry(attempt, lastError);
@@ -84,7 +84,7 @@ export const retryDeploy = <T>(operation: () => Promise<T>) =>
     maxAttempts: 3,
     baseDelay: 2000,
     onRetry: (attempt, error) => {
-      console.log(`🔄 Deploy retry ${attempt}/3: ${error.message}`);
+      console.info(`🔄 Deploy retry ${attempt}/3: ${error.message}`);
     }
   });
 
@@ -97,7 +97,7 @@ export const retryGrafana = <T>(operation: () => Promise<T>) =>
       return !error.message.includes('401') && !error.message.includes('403');
     },
     onRetry: (attempt, error) => {
-      console.log(`🔄 Grafana retry ${attempt}/2: ${error.message}`);
+      console.info(`🔄 Grafana retry ${attempt}/2: ${error.message}`);
     }
   });
 
@@ -110,6 +110,6 @@ export const retryNotification = <T>(operation: () => Promise<T>) =>
       return error.message.includes('429') || error.message.includes('5xx');
     },
     onRetry: (attempt, error) => {
-      console.log(`🔄 Notification retry ${attempt}/2: ${error.message}`);
+      console.info(`🔄 Notification retry ${attempt}/2: ${error.message}`);
     }
   });

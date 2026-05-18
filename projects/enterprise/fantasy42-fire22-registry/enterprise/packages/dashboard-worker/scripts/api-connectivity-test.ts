@@ -104,9 +104,9 @@ class APIConnectivityTester {
   ];
 
   async runConnectivityTest(): Promise<void> {
-    console.log('🔗 FIRE22 API CONNECTIVITY TEST');
-    console.log('!==!==!==!==!==!==!==');
-    console.log(`Testing ${this.endpoints.length} endpoints...\n`);
+    console.info('🔗 FIRE22 API CONNECTIVITY TEST');
+    console.info('!==!==!==!==!==!==!==');
+    console.info(`Testing ${this.endpoints.length} endpoints...\n`);
 
     for (const endpoint of this.endpoints) {
       await this.testEndpoint(endpoint);
@@ -146,10 +146,10 @@ class APIConnectivityTester {
       this.results.push(result);
 
       const statusIcon = response.status === endpoint.expectedStatus ? '✅' : '❌';
-      console.log(`${statusIcon} ${endpoint.name}: ${response.status} (${responseTime}ms)`);
+      console.info(`${statusIcon} ${endpoint.name}: ${response.status} (${responseTime}ms)`);
 
       if (response.status !== endpoint.expectedStatus) {
-        console.log(`   Expected: ${endpoint.expectedStatus}, Got: ${response.status}`);
+        console.info(`   Expected: ${endpoint.expectedStatus}, Got: ${response.status}`);
       }
     } catch (error) {
       const responseTime = Date.now() - startTime;
@@ -163,37 +163,37 @@ class APIConnectivityTester {
       this.results.push(result);
 
       const statusIcon = error.name === 'AbortError' ? '⏰' : '❌';
-      console.log(
+      console.info(
         `${statusIcon} ${endpoint.name}: ${error.name === 'AbortError' ? 'TIMEOUT' : 'ERROR'} (${responseTime}ms)`
       );
-      console.log(`   Error: ${error.message}`);
+      console.info(`   Error: ${error.message}`);
     }
   }
 
   private displayResults(): void {
-    console.log('\n📊 CONNECTIVITY TEST RESULTS');
-    console.log('!==!==!==!==!====');
+    console.info('\n📊 CONNECTIVITY TEST RESULTS');
+    console.info('!==!==!==!==!====');
 
     const successful = this.results.filter(r => r.status === 'success').length;
     const failed = this.results.filter(r => r.status === 'failed').length;
     const timeouts = this.results.filter(r => r.status === 'timeout').length;
 
-    console.log(`✅ Successful: ${successful}`);
-    console.log(`❌ Failed: ${failed}`);
-    console.log(`⏰ Timeouts: ${timeouts}`);
-    console.log(`📈 Success Rate: ${((successful / this.results.length) * 100).toFixed(1)}%`);
+    console.info(`✅ Successful: ${successful}`);
+    console.info(`❌ Failed: ${failed}`);
+    console.info(`⏰ Timeouts: ${timeouts}`);
+    console.info(`📈 Success Rate: ${((successful / this.results.length) * 100).toFixed(1)}%`);
 
     const avgResponseTime =
       this.results.reduce((sum, r) => sum + r.responseTime, 0) / this.results.length;
-    console.log(`⚡ Average Response Time: ${avgResponseTime.toFixed(0)}ms`);
+    console.info(`⚡ Average Response Time: ${avgResponseTime.toFixed(0)}ms`);
 
     // Show failed endpoints
     const failedEndpoints = this.results.filter(r => r.status !== 'success');
     if (failedEndpoints.length > 0) {
-      console.log('\n❌ FAILED ENDPOINTS:');
+      console.info('\n❌ FAILED ENDPOINTS:');
       failedEndpoints.forEach(endpoint => {
-        console.log(`   ${endpoint.endpoint}: ${endpoint.status.toUpperCase()}`);
-        if (endpoint.error) console.log(`     Error: ${endpoint.error}`);
+        console.info(`   ${endpoint.endpoint}: ${endpoint.status.toUpperCase()}`);
+        if (endpoint.error) console.info(`     Error: ${endpoint.error}`);
       });
     }
   }
@@ -223,12 +223,12 @@ class APIConnectivityTester {
     }
 
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`\n📄 Report saved: ${reportPath}`);
+    console.info(`\n📄 Report saved: ${reportPath}`);
 
     // Display recommendations
     if (report.recommendations.length > 0) {
-      console.log('\n💡 RECOMMENDATIONS:');
-      report.recommendations.forEach(rec => console.log(`   ${rec}`));
+      console.info('\n💡 RECOMMENDATIONS:');
+      report.recommendations.forEach(rec => console.info(`   ${rec}`));
     }
   }
 
@@ -264,15 +264,15 @@ class APIConnectivityTester {
   }
 
   async testDataConsistency(): Promise<void> {
-    console.log('\n🔍 DATA CONSISTENCY CHECK');
-    console.log('!==!==!==!==!==');
+    console.info('\n🔍 DATA CONSISTENCY CHECK');
+    console.info('!==!==!==!==!==');
 
     try {
       // Test agent count consistency
       const agentResponse = await fetch(`${this.baseUrl}/api/agents`);
       if (agentResponse.ok) {
         const agentData = await agentResponse.json();
-        console.log(`✅ Agent count: ${agentData.length || 'N/A'}`);
+        console.info(`✅ Agent count: ${agentData.length || 'N/A'}`);
       }
 
       // Test customer count consistency
@@ -280,14 +280,14 @@ class APIConnectivityTester {
       if (customerResponse.ok) {
         const customerData = await customerResponse.json();
         const activeCount = customerData.filter((c: any) => c.active).length;
-        console.log(`✅ Active customers: ${activeCount}`);
+        console.info(`✅ Active customers: ${activeCount}`);
 
         if (activeCount !== 4320) {
-          console.log(`⚠️  Expected 4,320 active customers, got ${activeCount}`);
+          console.info(`⚠️  Expected 4,320 active customers, got ${activeCount}`);
         }
       }
     } catch (error) {
-      console.log(`❌ Data consistency check failed: ${error.message}`);
+      console.info(`❌ Data consistency check failed: ${error.message}`);
     }
   }
 }
@@ -296,13 +296,13 @@ class APIConnectivityTester {
 async function main() {
   const tester = new APIConnectivityTester();
 
-  console.log('🚀 Starting Fire22 API Connectivity Test...\n');
+  console.info('🚀 Starting Fire22 API Connectivity Test...\n');
 
   await tester.runConnectivityTest();
   await tester.testDataConsistency();
 
-  console.log('\n🎯 Connectivity test completed!');
-  console.log('Check reports/ directory for detailed results.');
+  console.info('\n🎯 Connectivity test completed!');
+  console.info('Check reports/ directory for detailed results.');
 }
 
 // Run if called directly

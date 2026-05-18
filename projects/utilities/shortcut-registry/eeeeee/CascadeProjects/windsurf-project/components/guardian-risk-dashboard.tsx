@@ -62,7 +62,7 @@ export const GuardianRiskDashboard = feature("PREMIUM") ? function() {
   const handlePreventiveAction = async (action: string) => {
     try {
       setLoading(true);
-      console.log(`🛡️ Triggering preventive action: ${action}`);
+      console.info(`🛡️ Triggering preventive action: ${action}`);
       
       // Mock action execution
       await new Promise(resolve => setTimeout(resolve, 1000));

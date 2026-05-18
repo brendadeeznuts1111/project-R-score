@@ -64,7 +64,7 @@ export async function main(): Promise<void> {
   const importHits = rgAvailable() ? scanBlockedImportsWithRipgrep() : scanBlockedImportsWithGrep();
 
   if (blockedDeps.length === 0 && !importHits) {
-    console.log('[security:guard:deps] ok');
+    console.info('[security:guard:deps] ok');
     return;
   }
 

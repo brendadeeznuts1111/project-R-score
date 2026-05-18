@@ -334,7 +334,7 @@ export class BunAntiDetection {
     const now = Date.now();
     for (const [proxy, health] of this.proxyHealth.entries()) {
       if (!health.isHealthy && now - health.lastFailure > 60000) { // 1 minute cooldown
-        console.log(`🔄 Attempting recovery for proxy ${proxy}`);
+        console.info(`🔄 Attempting recovery for proxy ${proxy}`);
         health.isHealthy = true;
         health.failures = Math.max(0, health.failures - 1);
       }

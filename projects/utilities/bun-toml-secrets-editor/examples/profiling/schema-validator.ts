@@ -30,7 +30,7 @@ class ProfilingSchemaValidator {
 
 	// Test CPU Profiling APIs
 	async validateCPUProfiling(): Promise<void> {
-		console.log("🔥 Validating CPU Profiling APIs...");
+		console.info("🔥 Validating CPU Profiling APIs...");
 
 		const cpuTests = [
 			{
@@ -60,7 +60,7 @@ class ProfilingSchemaValidator {
 					tested: true,
 					notes: "✅ Working correctly",
 				});
-				console.log(`   ✅ ${test.api}`);
+				console.info(`   ✅ ${test.api}`);
 			} catch (error) {
 				this.results.push({
 					api: test.api,
@@ -68,14 +68,14 @@ class ProfilingSchemaValidator {
 					tested: false,
 					notes: `❌ Error: ${error}`,
 				});
-				console.log(`   ❌ ${test.api}: ${error}`);
+				console.info(`   ❌ ${test.api}: ${error}`);
 			}
 		}
 	}
 
 	// Test Heap Profiling APIs
 	async validateHeapProfiling(): Promise<void> {
-		console.log("💾 Validating Heap Profiling APIs...");
+		console.info("💾 Validating Heap Profiling APIs...");
 
 		const heapTests = [
 			{
@@ -105,7 +105,7 @@ class ProfilingSchemaValidator {
 					tested: true,
 					notes: "✅ Working correctly",
 				});
-				console.log(`   ✅ ${test.api}`);
+				console.info(`   ✅ ${test.api}`);
 			} catch (error) {
 				this.results.push({
 					api: test.api,
@@ -113,14 +113,14 @@ class ProfilingSchemaValidator {
 					tested: false,
 					notes: `❌ Error: ${error}`,
 				});
-				console.log(`   ❌ ${test.api}: ${error}`);
+				console.info(`   ❌ ${test.api}: ${error}`);
 			}
 		}
 	}
 
 	// Test Node.js Inspector APIs
 	async validateInspectorAPI(): Promise<void> {
-		console.log("🔍 Validating Node.js Inspector APIs...");
+		console.info("🔍 Validating Node.js Inspector APIs...");
 
 		const inspectorTests = [
 			{
@@ -154,7 +154,7 @@ class ProfilingSchemaValidator {
 					tested: true,
 					notes: "✅ Working correctly",
 				});
-				console.log(`   ✅ ${test.api}`);
+				console.info(`   ✅ ${test.api}`);
 			} catch (error) {
 				this.results.push({
 					api: test.api,
@@ -162,14 +162,14 @@ class ProfilingSchemaValidator {
 					tested: false,
 					notes: `⚠️  Not available in Bun: ${error}`,
 				});
-				console.log(`   ⚠️  ${test.api}: Not available in Bun`);
+				console.info(`   ⚠️  ${test.api}: Not available in Bun`);
 			}
 		}
 	}
 
 	// Test Buffer Optimizations
 	async validateBufferOptimizations(): Promise<void> {
-		console.log("📦 Validating Buffer Optimizations...");
+		console.info("📦 Validating Buffer Optimizations...");
 
 		const bufferTests = [
 			{
@@ -195,7 +195,7 @@ class ProfilingSchemaValidator {
 					tested: true,
 					notes: "✅ Optimized version active",
 				});
-				console.log(`   ✅ ${test.api}`);
+				console.info(`   ✅ ${test.api}`);
 			} catch (error) {
 				this.results.push({
 					api: test.api,
@@ -203,7 +203,7 @@ class ProfilingSchemaValidator {
 					tested: false,
 					notes: `❌ Error: ${error}`,
 				});
-				console.log(`   ❌ ${test.api}: ${error}`);
+				console.info(`   ❌ ${test.api}: ${error}`);
 			}
 		}
 	}
@@ -211,41 +211,41 @@ class ProfilingSchemaValidator {
 	// Individual test implementations
 	private async testCPUProfiling(): Promise<void> {
 		// This would be tested via CLI in real scenario
-		console.log("      Testing: bun --cpu-prof script.js");
+		console.info("      Testing: bun --cpu-prof script.js");
 	}
 
 	private async testCPUProfilingMarkdown(): Promise<void> {
-		console.log("      Testing: bun --cpu-prof-md script.js");
+		console.info("      Testing: bun --cpu-prof-md script.js");
 	}
 
 	private async testCPUProfilingName(): Promise<void> {
-		console.log("      Testing: bun --cpu-prof-name=custom script.js");
+		console.info("      Testing: bun --cpu-prof-name=custom script.js");
 	}
 
 	private async testCPUProfilingDir(): Promise<void> {
-		console.log("      Testing: bun --cpu-prof-dir=./custom script.js");
+		console.info("      Testing: bun --cpu-prof-dir=./custom script.js");
 	}
 
 	private async testHeapProfiling(): Promise<void> {
-		console.log("      Testing: bun --heap-prof script.js");
+		console.info("      Testing: bun --heap-prof script.js");
 	}
 
 	private async testHeapProfilingMarkdown(): Promise<void> {
-		console.log("      Testing: bun --heap-prof-md script.js");
+		console.info("      Testing: bun --heap-prof-md script.js");
 	}
 
 	private async testHeapProfilingName(): Promise<void> {
-		console.log("      Testing: bun --heap-prof-name=custom script.js");
+		console.info("      Testing: bun --heap-prof-name=custom script.js");
 	}
 
 	private async testHeapProfilingDir(): Promise<void> {
-		console.log("      Testing: bun --heap-prof-dir=./custom script.js");
+		console.info("      Testing: bun --heap-prof-dir=./custom script.js");
 	}
 
 	private async testProfilerEnable(): Promise<void> {
 		// Node.js inspector API - may not be available in Bun
 		if (typeof globalThis !== "undefined" && "inspector" in globalThis) {
-			console.log("      Testing: inspector.Profiler.enable()");
+			console.info("      Testing: inspector.Profiler.enable()");
 		} else {
 			throw new Error("Inspector API not available");
 		}
@@ -253,7 +253,7 @@ class ProfilingSchemaValidator {
 
 	private async testProfilerDisable(): Promise<void> {
 		if (typeof globalThis !== "undefined" && "inspector" in globalThis) {
-			console.log("      Testing: inspector.Profiler.disable()");
+			console.info("      Testing: inspector.Profiler.disable()");
 		} else {
 			throw new Error("Inspector API not available");
 		}
@@ -261,7 +261,7 @@ class ProfilingSchemaValidator {
 
 	private async testProfilerStart(): Promise<void> {
 		if (typeof globalThis !== "undefined" && "inspector" in globalThis) {
-			console.log("      Testing: inspector.Profiler.start()");
+			console.info("      Testing: inspector.Profiler.start()");
 		} else {
 			throw new Error("Inspector API not available");
 		}
@@ -269,7 +269,7 @@ class ProfilingSchemaValidator {
 
 	private async testProfilerStop(): Promise<void> {
 		if (typeof globalThis !== "undefined" && "inspector" in globalThis) {
-			console.log("      Testing: inspector.Profiler.stop()");
+			console.info("      Testing: inspector.Profiler.stop()");
 		} else {
 			throw new Error("Inspector API not available");
 		}
@@ -277,7 +277,7 @@ class ProfilingSchemaValidator {
 
 	private async testSamplingInterval(): Promise<void> {
 		if (typeof globalThis !== "undefined" && "inspector" in globalThis) {
-			console.log("      Testing: inspector.Profiler.setSamplingInterval()");
+			console.info("      Testing: inspector.Profiler.setSamplingInterval()");
 		} else {
 			throw new Error("Inspector API not available");
 		}
@@ -287,7 +287,7 @@ class ProfilingSchemaValidator {
 		const start = performance.now();
 		const _buffer = Buffer.from("Hello, Bun v1.3.7!");
 		const end = performance.now();
-		console.log(
+		console.info(
 			`      Buffer.from() took ${(end - start).toFixed(4)}ms (50% faster than Node.js)`,
 		);
 	}
@@ -297,7 +297,7 @@ class ProfilingSchemaValidator {
 		const start = performance.now();
 		buffer.swap16();
 		const end = performance.now();
-		console.log(
+		console.info(
 			`      Buffer.swap16() took ${(end - start).toFixed(4)}ms (1.8x faster than Node.js)`,
 		);
 	}
@@ -309,7 +309,7 @@ class ProfilingSchemaValidator {
 		const start = performance.now();
 		buffer.swap64();
 		const end = performance.now();
-		console.log(
+		console.info(
 			`      Buffer.swap64() took ${(end - start).toFixed(4)}ms (3.6x faster than Node.js)`,
 		);
 	}
@@ -402,29 +402,29 @@ class ProfilingSchemaValidator {
 		report += `**Ready for production use and future iteration cycles**\n`;
 
 		writeFileSync(reportPath, report);
-		console.log(`\n📋 Validation report generated: ${reportPath}`);
+		console.info(`\n📋 Validation report generated: ${reportPath}`);
 	}
 
 	// Run complete validation
 	async runFullValidation(): Promise<void> {
-		console.log("🔍 Starting Bun v1.3.7 Profiling Schema Validation");
-		console.log("====================================================\n");
+		console.info("🔍 Starting Bun v1.3.7 Profiling Schema Validation");
+		console.info("====================================================\n");
 
 		await this.validateCPUProfiling();
-		console.log();
+		console.info();
 
 		await this.validateHeapProfiling();
-		console.log();
+		console.info();
 
 		await this.validateInspectorAPI();
-		console.log();
+		console.info();
 
 		await this.validateBufferOptimizations();
-		console.log();
+		console.info();
 
 		this.generateReport();
 
-		console.log("✅ Schema validation complete!");
+		console.info("✅ Schema validation complete!");
 	}
 }
 

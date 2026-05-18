@@ -5,19 +5,19 @@ import { MatrixProfileRunner } from "../../src/cli/matrix-profile-runner";
 import { demonstrateSpawnPerformance } from "../../src/performance/spawn-benchmark";
 
 async function demonstrateRealWorldPerformance() {
-	console.log("🎯 Real-World Performance Demonstration");
-	console.log("=".repeat(50));
+	console.info("🎯 Real-World Performance Demonstration");
+	console.info("=".repeat(50));
 
 	// Scenario 1: CI/CD Pipeline Optimization
-	console.log("\n📦 CI/CD Pipeline Scenario:");
-	console.log("Before: 13ms per spawn = 130ms for 10 operations");
-	console.log("After: 0.4ms per spawn = 4ms for 10 operations");
-	console.log("Improvement: 32.5x faster! 🚀");
+	console.info("\n📦 CI/CD Pipeline Scenario:");
+	console.info("Before: 13ms per spawn = 130ms for 10 operations");
+	console.info("After: 0.4ms per spawn = 4ms for 10 operations");
+	console.info("Improvement: 32.5x faster! 🚀");
 
 	// Simulate the performance difference
 	const profiles = ["dev", "staging", "prod", "test", "ci-cd"];
 
-	console.log("\n🏃 Running profile validations...");
+	console.info("\n🏃 Running profile validations...");
 
 	const _runner = new MatrixProfileRunner();
 
@@ -31,9 +31,9 @@ async function demonstrateRealWorldPerformance() {
 				stderr: "pipe",
 				onExit(_proc, exitCode, _signalCode, _error) {
 					if (exitCode === 0) {
-						console.log(`   ✅ ${p}: Validated`);
+						console.info(`   ✅ ${p}: Validated`);
 					} else {
-						console.log(`   ❌ ${p}: Failed (${exitCode})`);
+						console.info(`   ❌ ${p}: Failed (${exitCode})`);
 					}
 				},
 			}),
@@ -43,12 +43,12 @@ async function demonstrateRealWorldPerformance() {
 	const endTime = Bun.nanoseconds();
 	const totalTime = (endTime - startTime) / 1_000_000;
 
-	console.log(`\n📊 Performance Results:`);
-	console.log(`   Total time: ${totalTime.toFixed(2)}ms`);
-	console.log(
+	console.info(`\n📊 Performance Results:`);
+	console.info(`   Total time: ${totalTime.toFixed(2)}ms`);
+	console.info(
 		`   Average per profile: ${(totalTime / profiles.length).toFixed(2)}ms`,
 	);
-	console.log(
+	console.info(
 		`   Throughput: ${(profiles.length / (totalTime / 1000)).toFixed(0)} profiles/sec`,
 	);
 
@@ -56,19 +56,19 @@ async function demonstrateRealWorldPerformance() {
 	const oldTime = profiles.length * 13; // 13ms per old spawn
 	const speedup = oldTime / totalTime;
 
-	console.log(`\n🎉 Performance Improvement:`);
-	console.log(`   Old method: ${oldTime}ms`);
-	console.log(`   New method: ${totalTime.toFixed(2)}ms`);
-	console.log(`   Speedup: ${speedup.toFixed(1)}x faster`);
+	console.info(`\n🎉 Performance Improvement:`);
+	console.info(`   Old method: ${oldTime}ms`);
+	console.info(`   New method: ${totalTime.toFixed(2)}ms`);
+	console.info(`   Speedup: ${speedup.toFixed(1)}x faster`);
 
 	if (speedup > 20) {
-		console.log(`   🔥 MASSIVE performance gain!`);
+		console.info(`   🔥 MASSIVE performance gain!`);
 	}
 }
 
 async function demonstrateBatchOperations() {
-	console.log("\n🔄 Batch Operations Demonstration");
-	console.log("=".repeat(40));
+	console.info("\n🔄 Batch Operations Demonstration");
+	console.info("=".repeat(40));
 
 	const operations = [
 		["matrix", "build", "--production"],
@@ -78,7 +78,7 @@ async function demonstrateBatchOperations() {
 		["matrix", "docs", "--build"],
 	];
 
-	console.log(`\n⚡ Running ${operations.length} operations in parallel...`);
+	console.info(`\n⚡ Running ${operations.length} operations in parallel...`);
 
 	const start = Bun.nanoseconds();
 
@@ -96,48 +96,48 @@ async function demonstrateBatchOperations() {
 	const end = Bun.nanoseconds();
 	const duration = (end - start) / 1_000_000;
 
-	console.log(`\n📊 Batch Results:`);
-	console.log(
+	console.info(`\n📊 Batch Results:`);
+	console.info(
 		`   Completed ${operations.length} operations in ${duration.toFixed(2)}ms`,
 	);
-	console.log(
+	console.info(
 		`   Average: ${(duration / operations.length).toFixed(2)}ms per operation`,
 	);
-	console.log(
+	console.info(
 		`   Efficiency: ${((operations.length / (duration / 1000)) * 60).toFixed(0)} operations/minute`,
 	);
 }
 
 async function demonstrateScalingBenefits() {
-	console.log("\n📈 Scaling Benefits Demonstration");
-	console.log("=".repeat(40));
+	console.info("\n📈 Scaling Benefits Demonstration");
+	console.info("=".repeat(40));
 
 	const scales = [10, 50, 100, 500];
 
-	console.log("\n📊 Performance at Different Scales:");
-	console.log("Scale | Old (13ms) | New (0.4ms) | Speedup");
-	console.log("------|------------|------------|--------");
+	console.info("\n📊 Performance at Different Scales:");
+	console.info("Scale | Old (13ms) | New (0.4ms) | Speedup");
+	console.info("------|------------|------------|--------");
 
 	scales.forEach((scale) => {
 		const oldTime = scale * 13;
 		const newTime = scale * 0.4;
 		const speedup = oldTime / newTime;
 
-		console.log(
+		console.info(
 			`${scale.toString().padEnd(5)} | ${oldTime.toString().padEnd(10)} | ${newTime.toFixed(1).padEnd(10)} | ${speedup.toFixed(1)}x`,
 		);
 	});
 
-	console.log("\n💡 Key Insights:");
-	console.log("   • Performance improvement scales linearly");
-	console.log("   • Larger operations see bigger absolute gains");
-	console.log("   • Resource usage reduced by ~97%");
-	console.log("   • Enables new real-time use cases");
+	console.info("\n💡 Key Insights:");
+	console.info("   • Performance improvement scales linearly");
+	console.info("   • Larger operations see bigger absolute gains");
+	console.info("   • Resource usage reduced by ~97%");
+	console.info("   • Enables new real-time use cases");
 }
 
 async function demonstrateRealWorldUseCases() {
-	console.log("\n🌍 Real-World Use Cases");
-	console.log("=".repeat(30));
+	console.info("\n🌍 Real-World Use Cases");
+	console.info("=".repeat(30));
 
 	const useCases = [
 		{
@@ -171,19 +171,19 @@ async function demonstrateRealWorldUseCases() {
 	];
 
 	useCases.forEach((useCase) => {
-		console.log(`\n📋 ${useCase.name}:`);
-		console.log(`   Description: ${useCase.description}`);
-		console.log(`   Before: ${useCase.oldTime}`);
-		console.log(`   After: ${useCase.newTime}`);
-		console.log(`   Benefit: ${useCase.benefit}`);
+		console.info(`\n📋 ${useCase.name}:`);
+		console.info(`   Description: ${useCase.description}`);
+		console.info(`   Before: ${useCase.oldTime}`);
+		console.info(`   After: ${useCase.newTime}`);
+		console.info(`   Benefit: ${useCase.benefit}`);
 	});
 }
 
 export async function runSpawnPerformanceDemo() {
-	console.log("🚀 Bun.spawn Performance Optimization Demo");
-	console.log("Before: 13ms per spawn (slow on high-fd systems)");
-	console.log("After: 0.4ms per spawn (30x faster)");
-	console.log("=".repeat(60));
+	console.info("🚀 Bun.spawn Performance Optimization Demo");
+	console.info("Before: 13ms per spawn (slow on high-fd systems)");
+	console.info("After: 0.4ms per spawn (30x faster)");
+	console.info("=".repeat(60));
 
 	try {
 		// Run the comprehensive benchmark
@@ -201,18 +201,18 @@ export async function runSpawnPerformanceDemo() {
 		// Real-world use cases
 		await demonstrateRealWorldUseCases();
 
-		console.log("\n✅ Performance demonstration completed!");
+		console.info("\n✅ Performance demonstration completed!");
 
-		console.log("\n🎯 Key Takeaways:");
-		console.log("   • Bun.spawn provides 30x+ performance improvement");
-		console.log("   • Enables real-time parallel processing");
-		console.log("   • Reduces resource consumption dramatically");
-		console.log("   • Scales linearly with operation count");
-		console.log("   • Perfect for CI/CD and microservices");
+		console.info("\n🎯 Key Takeaways:");
+		console.info("   • Bun.spawn provides 30x+ performance improvement");
+		console.info("   • Enables real-time parallel processing");
+		console.info("   • Reduces resource consumption dramatically");
+		console.info("   • Scales linearly with operation count");
+		console.info("   • Perfect for CI/CD and microservices");
 
-		console.log("\n💡 Implementation Tip:");
-		console.log("   Replace all your process spawning with Bun.spawn");
-		console.log("   Your users will thank you for the speed boost! 🚀");
+		console.info("\n💡 Implementation Tip:");
+		console.info("   Replace all your process spawning with Bun.spawn");
+		console.info("   Your users will thank you for the speed boost! 🚀");
 	} catch (error) {
 		console.error("❌ Demo failed:", error);
 	}

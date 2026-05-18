@@ -14,8 +14,8 @@ import {
   INSPECT_CUSTOM 
 } from '../../ecosystem/inspect-custom.ts';
 
-console.log('📡 REAL-TIME INSPECTION MONITOR');
-console.log('='.repeat(50));
+console.info('📡 REAL-TIME INSPECTION MONITOR');
+console.info('='.repeat(50));
 
 // ============================================================================
 // REAL-TIME MONITORING CLASS
@@ -34,7 +34,7 @@ class RealTimeInspectionMonitor {
     if (this.isRunning) return;
     
     this.isRunning = true;
-    console.log('🚀 Starting real-time inspection monitor...');
+    console.info('🚀 Starting real-time inspection monitor...');
     
     this.interval = setInterval(() => {
       this.updateMetrics();
@@ -50,7 +50,7 @@ class RealTimeInspectionMonitor {
       clearInterval(this.interval);
       this.interval = null;
     }
-    console.log('⏹️  Real-time inspection monitor stopped');
+    console.info('⏹️  Real-time inspection monitor stopped');
   }
 
   private updateMetrics() {
@@ -64,10 +64,10 @@ class RealTimeInspectionMonitor {
     
     // Clear screen and show status
     console.clear();
-    console.log('📡 REAL-TIME INSPECTION MONITOR');
-    console.log('='.repeat(50));
-    console.log(`⏱️  Uptime: ${uptime}s | 📊 Inspections: ${this.metrics.inspections} | 🚀 Rate: ${rate}/sec`);
-    console.log(`🕐 Last Update: ${new Date(this.metrics.lastUpdate).toLocaleTimeString()}`);
+    console.info('📡 REAL-TIME INSPECTION MONITOR');
+    console.info('='.repeat(50));
+    console.info(`⏱️  Uptime: ${uptime}s | 📊 Inspections: ${this.metrics.inspections} | 🚀 Rate: ${rate}/sec`);
+    console.info(`🕐 Last Update: ${new Date(this.metrics.lastUpdate).toLocaleTimeString()}`);
     
     this.showCurrentInspections();
   }
@@ -78,22 +78,22 @@ class RealTimeInspectionMonitor {
     const connections = this.generateConnections();
     const payments = this.generatePayments();
 
-    console.log('\n🛡️  SECURITY CHECKS');
-    console.log('-'.repeat(30));
+    console.info('\n🛡️  SECURITY CHECKS');
+    console.info('-'.repeat(30));
     securityChecks.forEach((check, index) => {
-      console.log(`${index + 1}. ${check[INSPECT_CUSTOM]()}`);
+      console.info(`${index + 1}. ${check[INSPECT_CUSTOM]()}`);
     });
 
-    console.log('\n🗄️  DATABASE CONNECTIONS');
-    console.log('-'.repeat(30));
+    console.info('\n🗄️  DATABASE CONNECTIONS');
+    console.info('-'.repeat(30));
     connections.forEach((conn, index) => {
-      console.log(`${index + 1}. ${conn[INSPECT_CUSTOM]()}`);
+      console.info(`${index + 1}. ${conn[INSPECT_CUSTOM]()}`);
     });
 
-    console.log('\n💳 RECENT PAYMENTS');
-    console.log('-'.repeat(30));
+    console.info('\n💳 RECENT PAYMENTS');
+    console.info('-'.repeat(30));
     payments.forEach((payment, index) => {
-      console.log(`${index + 1}. ${payment[INSPECT_CUSTOM]()}`);
+      console.info(`${index + 1}. ${payment[INSPECT_CUSTOM]()}`);
     });
 
     this.showSystemHealth();
@@ -214,15 +214,15 @@ class RealTimeInspectionMonitor {
       connections: Math.floor(Math.random() * 100)
     };
 
-    console.log('\n📊 SYSTEM HEALTH');
-    console.log('-'.repeat(30));
-    console.log(`🔍 Evidence:   ${this.createHealthBar(health.evidence)} ${health.evidence}%`);
-    console.log(`🛡️  Security:   ${this.createHealthBar(health.security)} ${health.security}%`);
-    console.log(`💳 Payments:   ${this.createHealthBar(health.payments)} ${health.payments}%`);
-    console.log(`🔗 Connections: ${this.createHealthBar(health.connections)} ${health.connections}%`);
+    console.info('\n📊 SYSTEM HEALTH');
+    console.info('-'.repeat(30));
+    console.info(`🔍 Evidence:   ${this.createHealthBar(health.evidence)} ${health.evidence}%`);
+    console.info(`🛡️  Security:   ${this.createHealthBar(health.security)} ${health.security}%`);
+    console.info(`💳 Payments:   ${this.createHealthBar(health.payments)} ${health.payments}%`);
+    console.info(`🔗 Connections: ${this.createHealthBar(health.connections)} ${health.connections}%`);
     
     const overallHealth = Math.floor((health.evidence + health.security + health.payments + health.connections) / 4);
-    console.log(`\n🎯 Overall Health: ${this.createHealthBar(overallHealth)} ${overallHealth}%`);
+    console.info(`\n🎯 Overall Health: ${this.createHealthBar(overallHealth)} ${overallHealth}%`);
   }
 
   private createHealthBar(percentage: number): string {
@@ -244,8 +244,8 @@ class RealTimeInspectionMonitor {
 // ============================================================================
 
 async function runRealTimeDemo() {
-  console.log('🎯 Starting Real-Time Inspection Monitor Demo');
-  console.log('This will run for 10 seconds to demonstrate dynamic updates...\n');
+  console.info('🎯 Starting Real-Time Inspection Monitor Demo');
+  console.info('This will run for 10 seconds to demonstrate dynamic updates...\n');
 
   const monitor = new RealTimeInspectionMonitor();
   
@@ -258,16 +258,16 @@ async function runRealTimeDemo() {
   // Stop monitoring
   monitor.stop();
   
-  console.log('\n✅ Real-Time Inspection Monitor Demo Complete!');
-  console.log('\n🎯 Key Features Demonstrated:');
-  console.log('  • Real-time security check monitoring');
-  console.log('  • Dynamic database connection status');
-  console.log('  • Live payment transaction tracking');
-  console.log('  • System health visualization');
-  console.log('  • Performance metrics tracking');
-  console.log('  • Automatic screen updates');
-  console.log('  • Color-coded health indicators');
-  console.log('  • Dynamic data generation');
+  console.info('\n✅ Real-Time Inspection Monitor Demo Complete!');
+  console.info('\n🎯 Key Features Demonstrated:');
+  console.info('  • Real-time security check monitoring');
+  console.info('  • Dynamic database connection status');
+  console.info('  • Live payment transaction tracking');
+  console.info('  • System health visualization');
+  console.info('  • Performance metrics tracking');
+  console.info('  • Automatic screen updates');
+  console.info('  • Color-coded health indicators');
+  console.info('  • Dynamic data generation');
 }
 
 // Run the demo if this is the main module

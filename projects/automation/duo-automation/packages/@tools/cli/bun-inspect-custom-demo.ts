@@ -218,7 +218,7 @@ class EnhancedMatrixEntry implements MatrixEntry {
 
 // Demo function to show Bun.inspect.custom in action
 function demonstrateBunInspectCustom() {
-  console.log(EmpireProDashboard.generateHeader(
+  console.info(EmpireProDashboard.generateHeader(
     'BUN.INSPECT.CUSTOM DEMO',
     'Custom Object Formatting for Enhanced CLI Display'
   ));
@@ -237,8 +237,8 @@ function demonstrateBunInspectCustom() {
     'operational'
   );
 
-  console.log(UnicodeTableFormatter.colorize('🔍 Custom System Metrics Display:', DesignSystem.text.accent.blue));
-  console.log(metrics); // Uses Bun.inspect.custom automatically
+  console.info(UnicodeTableFormatter.colorize('🔍 Custom System Metrics Display:', DesignSystem.text.accent.blue));
+  console.info(metrics); // Uses Bun.inspect.custom automatically
 
   // Create enhanced secret config with custom inspector
   const secretConfig = new EnhancedSecretConfig(
@@ -253,8 +253,8 @@ function demonstrateBunInspectCustom() {
     'admin'
   );
 
-  console.log('\n' + UnicodeTableFormatter.colorize('🔐 Custom Secret Config Display:', DesignSystem.text.accent.blue));
-  console.log(secretConfig); // Uses Bun.inspect.custom automatically
+  console.info('\n' + UnicodeTableFormatter.colorize('🔐 Custom Secret Config Display:', DesignSystem.text.accent.blue));
+  console.info(secretConfig); // Uses Bun.inspect.custom automatically
 
   // Create enhanced matrix entry with custom inspector
   const matrixEntry = new EnhancedMatrixEntry(
@@ -270,11 +270,11 @@ function demonstrateBunInspectCustom() {
     ['scope-lookup', 'secrets-manager', 'timezone-matrix', 'unicode-formatter']
   );
 
-  console.log('\n' + UnicodeTableFormatter.colorize('📋 Custom Matrix Entry Display:', DesignSystem.text.accent.blue));
-  console.log(matrixEntry); // Uses Bun.inspect.custom automatically
+  console.info('\n' + UnicodeTableFormatter.colorize('📋 Custom Matrix Entry Display:', DesignSystem.text.accent.blue));
+  console.info(matrixEntry); // Uses Bun.inspect.custom automatically
 
   // Show comparison with regular objects
-  console.log('\n' + UnicodeTableFormatter.colorize('📊 Comparison: Regular vs Custom Objects', DesignSystem.text.accent.blue));
+  console.info('\n' + UnicodeTableFormatter.colorize('📊 Comparison: Regular vs Custom Objects', DesignSystem.text.accent.blue));
   
   const regularMetrics = {
     cpu: 94.2,
@@ -285,14 +285,14 @@ function demonstrateBunInspectCustom() {
     timestamp: new Date()
   };
 
-  console.log('\n🔍 Regular Object (Bun.inspect default):');
-  console.log(regularMetrics);
+  console.info('\n🔍 Regular Object (Bun.inspect default):');
+  console.info(regularMetrics);
 
-  console.log('\n🎨 Enhanced Object (Bun.inspect.custom):');
-  console.log(metrics);
+  console.info('\n🎨 Enhanced Object (Bun.inspect.custom):');
+  console.info(metrics);
 
   // Demonstrate Bun.inspect with options
-  console.log('\n' + UnicodeTableFormatter.colorize('⚙️  Bun.inspect Options Demo', DesignSystem.text.accent.blue));
+  console.info('\n' + UnicodeTableFormatter.colorize('⚙️  Bun.inspect Options Demo', DesignSystem.text.accent.blue));
   
   const inspectOptions = {
     colors: true,
@@ -300,11 +300,11 @@ function demonstrateBunInspectCustom() {
     maxStringLength: 1000
   };
 
-  console.log('\n🔍 Bun.inspect with custom options:');
-  console.log(Bun.inspect(metrics, inspectOptions));
+  console.info('\n🔍 Bun.inspect with custom options:');
+  console.info(Bun.inspect(metrics, inspectOptions));
 
   // Show array of custom objects
-  console.log('\n' + UnicodeTableFormatter.colorize('📚 Array of Custom Objects', DesignSystem.text.accent.blue));
+  console.info('\n' + UnicodeTableFormatter.colorize('📚 Array of Custom Objects', DesignSystem.text.accent.blue));
   
   const customObjects = [
     metrics,
@@ -312,10 +312,10 @@ function demonstrateBunInspectCustom() {
     matrixEntry
   ];
 
-  console.log('\n🔍 Array display with custom inspectors:');
-  console.log(customObjects);
+  console.info('\n🔍 Array display with custom inspectors:');
+  console.info(customObjects);
 
-  console.log(EmpireProDashboard.generateFooter());
+  console.info(EmpireProDashboard.generateFooter());
 }
 
 // Advanced usage: Custom inspector for complex data structures
@@ -369,7 +369,7 @@ class SystemReport {
 demonstrateBunInspectCustom();
 
 // Show advanced system report
-console.log('\n' + UnicodeTableFormatter.colorize('🚀 ADVANCED SYSTEM REPORT DEMO', DesignSystem.text.accent.blue));
+console.info('\n' + UnicodeTableFormatter.colorize('🚀 ADVANCED SYSTEM REPORT DEMO', DesignSystem.text.accent.blue));
 
 const systemReport = new SystemReport(
   {
@@ -407,20 +407,20 @@ const systemReport = new SystemReport(
   ]
 );
 
-console.log(systemReport);
+console.info(systemReport);
 
-console.log('\n🎉 BUN.INSPECT.CUSTOM DEMO COMPLETE!');
-console.log('✅ Custom object formatting for enhanced CLI display');
-console.log('✅ Integration with Empire Pro v3.7 color system');
-console.log('✅ Professional object visualization with UnicodeTableFormatter');
-console.log('✅ Advanced data structure support with nested custom inspectors');
-console.log('✅ Comparison with regular Bun.inspect behavior');
-console.log('\n📋 USAGE IN YOUR CLI:');
-console.log('  class MyCustomClass {');
-console.log('    [Symbol.for("Bun.inspect.custom")]() {');
-console.log('      return "Custom display with colors! 🎨";');
-console.log('    }');
-console.log('  }');
-console.log('  ');
-console.log('  const obj = new MyCustomClass();');
-console.log('  console.log(obj); // Uses custom display!');
+console.info('\n🎉 BUN.INSPECT.CUSTOM DEMO COMPLETE!');
+console.info('✅ Custom object formatting for enhanced CLI display');
+console.info('✅ Integration with Empire Pro v3.7 color system');
+console.info('✅ Professional object visualization with UnicodeTableFormatter');
+console.info('✅ Advanced data structure support with nested custom inspectors');
+console.info('✅ Comparison with regular Bun.inspect behavior');
+console.info('\n📋 USAGE IN YOUR CLI:');
+console.info('  class MyCustomClass {');
+console.info('    [Symbol.for("Bun.inspect.custom")]() {');
+console.info('      return "Custom display with colors! 🎨";');
+console.info('    }');
+console.info('  }');
+console.info('  ');
+console.info('  const obj = new MyCustomClass();');
+console.info('  console.info(obj); // Uses custom display!');

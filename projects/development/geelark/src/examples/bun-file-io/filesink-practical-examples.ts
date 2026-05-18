@@ -59,7 +59,7 @@ class Logger {
 }
 
 async function loggingExample() {
-  console.log('📝 Application Logging System');
+  console.info('📝 Application Logging System');
 
   const logger = new Logger('./output/application.log');
 
@@ -73,7 +73,7 @@ async function loggingExample() {
     logger.info('Operation completed successfully');
 
     logger.close();
-    console.log('✅ Logging example completed');
+    console.info('✅ Logging example completed');
 
   } catch (error) {
     console.error('❌ Logging error:', error);
@@ -83,7 +83,7 @@ async function loggingExample() {
 
 // Example 2: CSV data export
 async function csvDataExport() {
-  console.log('\n📊 CSV Data Export');
+  console.info('\n📊 CSV Data Export');
 
   const file = Bun.file('./output/data-export.csv');
   const writer = file.writer({ highWaterMark: 128 * 1024 }); // 128KB buffer
@@ -98,7 +98,7 @@ async function csvDataExport() {
     const firstNames = ['John', 'Jane', 'Bob', 'Alice', 'Charlie', 'Diana', 'Eve', 'Frank'];
     const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis'];
 
-    console.log('🔄 Generating 10,000 records...');
+    console.info('🔄 Generating 10,000 records...');
 
     for (let i = 1; i <= 10000; i++) {
       const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
@@ -120,13 +120,13 @@ async function csvDataExport() {
 
       // Progress indicator
       if (i % 2000 === 0) {
-        console.log(`📈 Exported ${i} records...`);
+        console.info(`📈 Exported ${i} records...`);
         writer.flush();
       }
     }
 
     writer.end();
-    console.log('✅ CSV export completed');
+    console.info('✅ CSV export completed');
 
   } catch (error) {
     console.error('❌ CSV export error:', error);
@@ -136,13 +136,13 @@ async function csvDataExport() {
 
 // Example 3: JSON streaming export
 async function jsonStreamingExport() {
-  console.log('\n🔄 JSON Streaming Export');
+  console.info('\n🔄 JSON Streaming Export');
 
   const file = Bun.file('./output/large-dataset.jsonl');
   const writer = file.writer({ highWaterMark: 256 * 1024 }); // 256KB buffer
 
   try {
-    console.log('🔄 Streaming JSON dataset...');
+    console.info('🔄 Streaming JSON dataset...');
 
     // Start JSON array
     writer.write('[\n');
@@ -174,14 +174,14 @@ async function jsonStreamingExport() {
         }
         items.length = 0; // Clear array
 
-        console.log(`📦 Processed ${Math.min(i + 1, 5000)} items...`);
+        console.info(`📦 Processed ${Math.min(i + 1, 5000)} items...`);
       }
     }
 
     // Close JSON array
     writer.write('\n]');
     writer.end();
-    console.log('✅ JSON streaming export completed');
+    console.info('✅ JSON streaming export completed');
 
   } catch (error) {
     console.error('❌ JSON export error:', error);
@@ -191,7 +191,7 @@ async function jsonStreamingExport() {
 
 // Example 4: Backup and archiving
 async function backupAndArchive() {
-  console.log('\n💾 Backup and Archiving');
+  console.info('\n💾 Backup and Archiving');
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const backupFile = Bun.file(`./output/backup-${timestamp}.tar`);
@@ -206,7 +206,7 @@ async function backupAndArchive() {
       { name: 'large-data.bin', content: Buffer.alloc(1024 * 100, 0) } // 100KB of zeros
     ];
 
-    console.log('🔄 Creating backup archive...');
+    console.info('🔄 Creating backup archive...');
 
     // Simple tar-like format (just for demonstration)
     let offset = 0;
@@ -230,11 +230,11 @@ async function backupAndArchive() {
       // Write separator
       writer.write('\n---FILE-END---\n');
 
-      console.log(`📁 Added ${file.name} (${file.content.length} bytes)`);
+      console.info(`📁 Added ${file.name} (${file.content.length} bytes)`);
     }
 
     writer.end();
-    console.log(`✅ Backup completed: backup-${timestamp}.tar`);
+    console.info(`✅ Backup completed: backup-${timestamp}.tar`);
 
   } catch (error) {
     console.error('❌ Backup error:', error);
@@ -244,13 +244,13 @@ async function backupAndArchive() {
 
 // Example 5: Real-time data collection
 async function realTimeDataCollection() {
-  console.log('\n📡 Real-time Data Collection');
+  console.info('\n📡 Real-time Data Collection');
 
   const file = Bun.file('./output/real-time-data.txt');
   const writer = file.writer({ highWaterMark: 32 * 1024 }); // 32KB buffer
 
   try {
-    console.log('🔄 Simulating real-time sensor data...');
+    console.info('🔄 Simulating real-time sensor data...');
 
     // Simulate collecting sensor data over time
     const sensors = ['temperature', 'humidity', 'pressure', 'light', 'motion'];
@@ -276,7 +276,7 @@ async function realTimeDataCollection() {
       // Flush every second
       if (Math.random() > 0.8) {
         writer.flush();
-        console.log(`💾 Data flushed at ${timestamp}`);
+        console.info(`💾 Data flushed at ${timestamp}`);
       }
 
       // Simulate real-time delay
@@ -284,7 +284,7 @@ async function realTimeDataCollection() {
     }
 
     writer.end();
-    console.log('✅ Real-time data collection completed');
+    console.info('✅ Real-time data collection completed');
 
   } catch (error) {
     console.error('❌ Data collection error:', error);
@@ -294,8 +294,8 @@ async function realTimeDataCollection() {
 
 // Main execution
 async function runPracticalExamples() {
-  console.log('🚀 Bun FileSink - Practical Examples');
-  console.log('=====================================\n');
+  console.info('🚀 Bun FileSink - Practical Examples');
+  console.info('=====================================\n');
 
   try {
     // Ensure output directory exists
@@ -311,8 +311,8 @@ async function runPracticalExamples() {
     await backupAndArchive();
     await realTimeDataCollection();
 
-    console.log('\n🎉 All practical examples completed!');
-    console.log('📁 Check ./output/ directory for generated files');
+    console.info('\n🎉 All practical examples completed!');
+    console.info('📁 Check ./output/ directory for generated files');
 
   } catch (error) {
     console.error('\n❌ Error:', error);

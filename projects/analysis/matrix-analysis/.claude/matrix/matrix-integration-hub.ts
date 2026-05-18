@@ -516,20 +516,20 @@ if (import.meta.main) {
 	const command = Bun.argv[2];
 	const arg = Bun.argv[3];
 
-	console.log("🔥 Tier-1380 OMEGA Matrix Integration Hub\n");
+	console.info("🔥 Tier-1380 OMEGA Matrix Integration Hub\n");
 
 	switch (command) {
 		case "subdomains": {
-			console.log("Matrix Subdomains:\n");
+			console.info("Matrix Subdomains:\n");
 			for (const sub of MATRIX_SUBDOMAINS) {
-				console.log(`  ${sub.subdomain}`);
-				console.log(`    Path: ${sub.path}`);
-				console.log(`    Team: ${TEAMS[sub.team].emoji} ${TEAMS[sub.team].name}`);
-				console.log(
+				console.info(`  ${sub.subdomain}`);
+				console.info(`    Path: ${sub.path}`);
+				console.info(`    Team: ${TEAMS[sub.team].emoji} ${TEAMS[sub.team].name}`);
+				console.info(
 					`    Columns: ${sub.matrixColumns[0]}-${sub.matrixColumns[sub.matrixColumns.length - 1]}`,
 				);
-				console.log(`    Features: ${sub.features.join(", ")}`);
-				console.log();
+				console.info(`    Features: ${sub.features.join(", ")}`);
+				console.info();
 			}
 			break;
 		}
@@ -537,13 +537,13 @@ if (import.meta.main) {
 		case "rss": {
 			const rss = new MatrixRSSFeed();
 			if (arg === "anomaly") {
-				rss.generateAnomalyFeed().then((feed) => console.log(feed));
+				rss.generateAnomalyFeed().then((feed) => console.info(feed));
 			} else if (arg === "profile") {
-				rss.generateProfileFeed().then((feed) => console.log(feed));
+				rss.generateProfileFeed().then((feed) => console.info(feed));
 			} else {
 				rss
 					.generateMatrixFeed({ team: arg as TeamId })
-					.then((feed) => console.log(feed));
+					.then((feed) => console.info(feed));
 			}
 			break;
 		}
@@ -551,29 +551,29 @@ if (import.meta.main) {
 		case "dashboard": {
 			const dashboard = new MatrixDashboard();
 			const html = dashboard.generateDashboard({ view: "grid" });
-			console.log(`Dashboard HTML generated (${html.length} bytes)`);
-			console.log("\nPreview:");
-			console.log(`${html.slice(0, 1000)}...`);
+			console.info(`Dashboard HTML generated (${html.length} bytes)`);
+			console.info("\nPreview:");
+			console.info(`${html.slice(0, 1000)}...`);
 			break;
 		}
 
 		case "api": {
-			console.log("Bun APIs used in Matrix:\n");
+			console.info("Bun APIs used in Matrix:\n");
 			for (const api of BUN_API_CATALOG.slice(0, 10)) {
-				console.log(`  ${api.id}. ${api.api}`);
-				console.log(`     Areas: ${api.matrixArea.join(", ")}`);
-				console.log();
+				console.info(`  ${api.id}. ${api.api}`);
+				console.info(`     Areas: ${api.matrixArea.join(", ")}`);
+				console.info();
 			}
 			break;
 		}
 
 		default: {
-			console.log("Commands:");
-			console.log("  subdomains          List matrix subdomains");
-			console.log("  rss [team|anomaly|profile]  Generate RSS feed");
-			console.log("  dashboard           Generate dashboard HTML");
-			console.log("  api                 List Bun APIs");
-			console.log("\nIntegration complete: matrix ↔ subdomain ↔ rss ↔ dashboard");
+			console.info("Commands:");
+			console.info("  subdomains          List matrix subdomains");
+			console.info("  rss [team|anomaly|profile]  Generate RSS feed");
+			console.info("  dashboard           Generate dashboard HTML");
+			console.info("  api                 List Bun APIs");
+			console.info("\nIntegration complete: matrix ↔ subdomain ↔ rss ↔ dashboard");
 		}
 	}
 }

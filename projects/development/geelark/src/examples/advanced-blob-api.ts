@@ -11,8 +11,8 @@
 
 // Main execution function to handle async operations
 async function startBlobAPIServer() {
-  console.log("🫧 Advanced Blob API Server");
-  console.log("==========================\n");
+  console.info("🫧 Advanced Blob API Server");
+  console.info("==========================\n");
 
   const server = Bun.serve({
     port: 3001,
@@ -271,32 +271,32 @@ async function startBlobAPIServer() {
     },
   });
 
-  console.log(`🚀 Advanced Blob API Server started on http://localhost:${server.port}`);
-  console.log("\n📋 Available Endpoints:");
-  console.log("  GET  /api/response-methods/blob              - Basic blob info");
-  console.log("  GET  /api/response-methods/blob/advanced      - Advanced capabilities");
-  console.log("  GET  /api/response-methods/blob/image         - SVG image (603 bytes)");
-  console.log("  GET  /api/response-methods/blob/file          - File download");
-  console.log("  GET  /api/response-methods/blob/slice         - Interactive slice (1817 bytes)");
-  console.log("  GET  /api/response-methods/blob/slice-api     - Slice API with params");
-  console.log("  GET  /api/response-methods/blob/transform     - Text transformation");
-  console.log("  GET  /api/response-methods/blob/compress      - Compression demo");
-  console.log("  GET  /health                                   - Health check");
+  console.info(`🚀 Advanced Blob API Server started on http://localhost:${server.port}`);
+  console.info("\n📋 Available Endpoints:");
+  console.info("  GET  /api/response-methods/blob              - Basic blob info");
+  console.info("  GET  /api/response-methods/blob/advanced      - Advanced capabilities");
+  console.info("  GET  /api/response-methods/blob/image         - SVG image (603 bytes)");
+  console.info("  GET  /api/response-methods/blob/file          - File download");
+  console.info("  GET  /api/response-methods/blob/slice         - Interactive slice (1817 bytes)");
+  console.info("  GET  /api/response-methods/blob/slice-api     - Slice API with params");
+  console.info("  GET  /api/response-methods/blob/transform     - Text transformation");
+  console.info("  GET  /api/response-methods/blob/compress      - Compression demo");
+  console.info("  GET  /health                                   - Health check");
 
-  console.log("\n🧪 Example Commands:");
-  console.log('  curl http://localhost:3000/api/response-methods/blob/advanced | jq .');
-  console.log('  curl -I http://localhost:3000/api/response-methods/blob/image');
-  console.log('  curl -O http://localhost:3000/api/response-methods/blob/file');
-  console.log('  curl -I http://localhost:3000/api/response-methods/blob/slice');
-  console.log('  curl http://localhost:3000/api/response-methods/blob/slice-api?start=10&end=50');
-  console.log('  curl http://localhost:3000/api/response-methods/blob/transform');
-  console.log('  curl http://localhost:3000/health | jq .');
+  console.info("\n🧪 Example Commands:");
+  console.info('  curl http://localhost:3000/api/response-methods/blob/advanced | jq .');
+  console.info('  curl -I http://localhost:3000/api/response-methods/blob/image');
+  console.info('  curl -O http://localhost:3000/api/response-methods/blob/file');
+  console.info('  curl -I http://localhost:3000/api/response-methods/blob/slice');
+  console.info('  curl http://localhost:3000/api/response-methods/blob/slice-api?start=10&end=50');
+  console.info('  curl http://localhost:3000/api/response-methods/blob/transform');
+  console.info('  curl http://localhost:3000/health | jq .');
 
-  console.log("\n⏹️  Press Ctrl+C to stop the server");
+  console.info("\n⏹️  Press Ctrl+C to stop the server");
 
   // Handle graceful shutdown
   process.on("SIGINT", () => {
-    console.log("\n🛑 Shutting down Advanced Blob API Server...");
+    console.info("\n🛑 Shutting down Advanced Blob API Server...");
     server.stop();
     process.exit(0);
   });

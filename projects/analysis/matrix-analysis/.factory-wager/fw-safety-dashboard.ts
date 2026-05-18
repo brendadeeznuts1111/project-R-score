@@ -42,7 +42,7 @@ export class SafetyDashboard {
   }
 
   async generateSafetyReport(): Promise<SafetyReport> {
-    console.log("🛡️ Generating FactoryWager Safety Report...");
+    console.info("🛡️ Generating FactoryWager Safety Report...");
 
     const guard = new RealityGuard();
     const realityReport = await guard.audit();
@@ -133,19 +133,19 @@ export class SafetyDashboard {
       CRITICAL: "#f44725"
     };
 
-    console.log("\n╔════════════════════════════════════════════════════════╗");
-    console.log("║  🛡️ FACTORYWAGER SAFETY DASHBOARD                      ║");
-    console.log("╚════════════════════════════════════════════════════════╝");
+    console.info("\n╔════════════════════════════════════════════════════════╗");
+    console.info("║  🛡️ FACTORYWAGER SAFETY DASHBOARD                      ║");
+    console.info("╚════════════════════════════════════════════════════════╝");
 
     // Overall status
     const overallColor = colors[report.overall as keyof typeof colors];
-    console.log(`\n🎯 Overall Safety: ${overallColor}${report.overall}\x1b[0m`);
-    console.log(`📅 Generated: ${report.timestamp.substring(0, 19)}`);
+    console.info(`\n🎯 Overall Safety: ${overallColor}${report.overall}\x1b[0m`);
+    console.info(`📅 Generated: ${report.timestamp.substring(0, 19)}`);
 
     // Component table
-    console.log("\n┌──────────────────────┬─────────────────┬─────┬────────┬─────────────┐");
-    console.log("│ Component            │ Status           │ Ind │ Latency│ Mode        │");
-    console.log("├──────────────────────┼─────────────────┼─────┼────────┼─────────────┤");
+    console.info("\n┌──────────────────────┬─────────────────┬─────┬────────┬─────────────┐");
+    console.info("│ Component            │ Status           │ Ind │ Latency│ Mode        │");
+    console.info("├──────────────────────┼─────────────────┼─────┼────────┼─────────────┤");
 
     report.components.forEach(comp => {
       const modeColor = colors[comp.mode as keyof typeof colors] || colors.BASIC;
@@ -153,26 +153,26 @@ export class SafetyDashboard {
                             comp.indicator === '⚠' ? '\x1b[93m' :
                             comp.indicator === '○' ? '\x1b[90m' : '\x1b[91m';
 
-      console.log(`│ ${comp.component.padEnd(20)} │ ${comp.status.padEnd(15)} │ ${indicatorColor}${comp.indicator}\x1b[0m │ ${comp.latency.padEnd(6)} │ ${modeColor}${comp.mode.padEnd(11)}\x1b[0m │`);
+      console.info(`│ ${comp.component.padEnd(20)} │ ${comp.status.padEnd(15)} │ ${indicatorColor}${comp.indicator}\x1b[0m │ ${comp.latency.padEnd(6)} │ ${modeColor}${comp.mode.padEnd(11)}\x1b[0m │`);
     });
 
-    console.log("└──────────────────────┴─────────────────┴─────┴────────┴─────────────┘");
+    console.info("└──────────────────────┴─────────────────┴─────┴────────┴─────────────┘");
 
     // Compliance status
-    console.log("\n📋 Tier-1380 Compliance:");
-    console.log(`   Governance: ${report.compliance.tier1380 ? '\x1b[92m✓ Compliant\x1b[0m' : '\x1b[91m✗ Non-compliant\x1b[0m'}`);
-    console.log(`   Audit Trail: ${report.compliance.auditTrail ? '\x1b[92m✓ Active\x1b[0m' : '\x1b[91m✗ Missing\x1b[0m'}`);
-    console.log(`   Quarantine: ${report.compliance.quarantineActive ? '\x1b[93m⚠ Active\x1b[0m' : '\x1b[92m✓ Clear\x1b[0m'}`);
+    console.info("\n📋 Tier-1380 Compliance:");
+    console.info(`   Governance: ${report.compliance.tier1380 ? '\x1b[92m✓ Compliant\x1b[0m' : '\x1b[91m✗ Non-compliant\x1b[0m'}`);
+    console.info(`   Audit Trail: ${report.compliance.auditTrail ? '\x1b[92m✓ Active\x1b[0m' : '\x1b[91m✗ Missing\x1b[0m'}`);
+    console.info(`   Quarantine: ${report.compliance.quarantineActive ? '\x1b[93m⚠ Active\x1b[0m' : '\x1b[92m✓ Clear\x1b[0m'}`);
 
     // Risks and recommendations
     if (report.risks.length > 0) {
-      console.log("\n⚠️  Active Risks:");
-      report.risks.forEach(risk => console.log(`   • ${risk}`));
+      console.info("\n⚠️  Active Risks:");
+      report.risks.forEach(risk => console.info(`   • ${risk}`));
     }
 
     if (report.recommendations.length > 0) {
-      console.log("\n💡 Recommendations:");
-      report.recommendations.forEach(rec => console.log(`   ${rec}`));
+      console.info("\n💡 Recommendations:");
+      report.recommendations.forEach(rec => console.info(`   ${rec}`));
     }
   }
 
@@ -217,7 +217,7 @@ export class SafetyDashboard {
   }
 
   async quarantineCredentials(): Promise<void> {
-    console.log("🔒 Quarantining credentials...");
+    console.info("🔒 Quarantining credentials...");
 
     const timestamp = Date.now();
     const quarantinePath = join(this.quarantineDir, timestamp.toString());
@@ -233,8 +233,8 @@ export class SafetyDashboard {
     await Bun.write(".env", "NODE_ENV=development\nFW_MODE=SIMULATED\n");
     await Bun.write(".env.local", "# Safe mode - configure credentials to enable cloud features\n");
 
-    console.log(`✅ Credentials quarantined to: ${quarantinePath}`);
-    console.log("💡 System reset to safe simulation mode");
+    console.info(`✅ Credentials quarantined to: ${quarantinePath}`);
+    console.info("💡 System reset to safe simulation mode");
 
     // Log quarantine action
     await this.logQuarantineAction(quarantinePath);
@@ -257,20 +257,20 @@ export class SafetyDashboard {
   }
 
   async listQuarantined(): Promise<void> {
-    console.log("🔒 Quarantined Credentials:");
+    console.info("🔒 Quarantined Credentials:");
 
     try {
       const quarantines = await Bun.$`ls -la ${this.quarantineDir}`.text();
 
       if (quarantines.trim().split('\n').length <= 1) {
-        console.log("   No quarantined credentials found");
+        console.info("   No quarantined credentials found");
         return;
       }
 
-      console.log(quarantines);
+      console.info(quarantines);
 
     } catch (error) {
-      console.log("   No quarantine directory found");
+      console.info("   No quarantine directory found");
     }
   }
 }
@@ -295,9 +295,9 @@ if (import.meta.main) {
       break;
 
     default:
-      console.log("Usage:");
-      console.log("  bun run fw-safety-dashboard.ts status    # Show safety dashboard");
-      console.log("  bun run fw-safety-dashboard.ts quarantine # Quarantine credentials");
-      console.log("  bun run fw-safety-dashboard.ts list      # List quarantined items");
+      console.info("Usage:");
+      console.info("  bun run fw-safety-dashboard.ts status    # Show safety dashboard");
+      console.info("  bun run fw-safety-dashboard.ts quarantine # Quarantine credentials");
+      console.info("  bun run fw-safety-dashboard.ts list      # List quarantined items");
   }
 }

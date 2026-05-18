@@ -8,7 +8,7 @@ import { createRoutes } from './api.js';
 import { trainModel } from './train.js';
 import { readFileSync } from 'fs';
 
-console.log("🚀 Nebula-Flow™ AI System v1.0 - Starting");
+console.info("🚀 Nebula-Flow™ AI System v1.0 - Starting");
 
 export class NebulaAISystem {
     private engine: AnomalyEngine;
@@ -24,7 +24,7 @@ export class NebulaAISystem {
      * Initialize the AI system
      */
     async initialize(): Promise<void> {
-        console.log('🔧 Initializing Nebula AI System...');
+        console.info('🔧 Initializing Nebula AI System...');
         
         try {
             // Check if model exists, create dummy if not
@@ -36,7 +36,7 @@ export class NebulaAISystem {
             // Setup nightly training schedule
             this.setupNightlyTraining();
             
-            console.log('✅ Nebula AI System initialized successfully');
+            console.info('✅ Nebula AI System initialized successfully');
         } catch (error) {
             console.error('❌ Failed to initialize AI System:', error);
             throw error;
@@ -52,9 +52,9 @@ export class NebulaAISystem {
             
             try {
                 readFileSync(modelPath);
-                console.log('✅ Model file exists');
+                console.info('✅ Model file exists');
             } catch (error) {
-                console.log('📄 Creating dummy model file...');
+                console.info('📄 Creating dummy model file...');
                 
                 // Create a 28KB dummy model file
                 const modelBuffer = new Uint8Array(28000);
@@ -72,7 +72,7 @@ export class NebulaAISystem {
                 modelBuffer.set(metadataBytes.slice(0, bytesToWrite), 0);
                 
                 require('fs').writeFileSync(modelPath, modelBuffer);
-                console.log('✅ Dummy model created');
+                console.info('✅ Dummy model created');
             }
         } catch (error) {
             console.warn('⚠️ Could not ensure model exists:', error instanceof Error ? error.message : String(error));
@@ -92,7 +92,7 @@ export class NebulaAISystem {
             
             const msUntilTraining = tomorrow.getTime() - now.getTime();
             
-            console.log(`📅 Next training scheduled for: ${tomorrow.toISOString()}`);
+            console.info(`📅 Next training scheduled for: ${tomorrow.toISOString()}`);
             
             this.trainingInterval = setTimeout(async () => {
                 await this.runScheduledTraining();
@@ -109,16 +109,16 @@ export class NebulaAISystem {
      */
     private async runScheduledTraining(): Promise<void> {
         if (this.isTraining) {
-            console.log('⚠️ Training already in progress, skipping');
+            console.info('⚠️ Training already in progress, skipping');
             return;
         }
         
         this.isTraining = true;
-        console.log('🎯 Starting scheduled training...');
+        console.info('🎯 Starting scheduled training...');
         
         try {
             const metrics = await trainModel();
-            console.log(`✅ Training completed: Accuracy ${(metrics.accuracy * 100).toFixed(1)}%`);
+            console.info(`✅ Training completed: Accuracy ${(metrics.accuracy * 100).toFixed(1)}%`);
         } catch (error) {
             console.error('❌ Scheduled training failed:', error);
         } finally {
@@ -144,14 +144,14 @@ export class NebulaAISystem {
      * Shutdown the system
      */
     async shutdown(): Promise<void> {
-        console.log('🛑 Shutting down Nebula AI System...');
+        console.info('🛑 Shutting down Nebula AI System...');
         
         if (this.trainingInterval) {
             clearTimeout(this.trainingInterval);
             this.trainingInterval = null;
         }
         
-        console.log('✅ Nebula AI System shut down complete');
+        console.info('✅ Nebula AI System shut down complete');
     }
 }
 
@@ -161,7 +161,7 @@ export function createAISystem(app: any) {
     
     // Initialize before starting server
     aiSystem.initialize().then(() => {
-        console.log('🤖 AI System ready');
+        console.info('🤖 AI System ready');
     }).catch(error => {
         console.error('❌ AI System initialization failed:', error);
     });
@@ -174,13 +174,13 @@ export function createAISystem(app: any) {
     
     // Graceful shutdown
     process.on('SIGINT', async () => {
-        console.log('\n🛑 Shutting down AI System...');
+        console.info('\n🛑 Shutting down AI System...');
         await aiSystem.shutdown();
         process.exit(0);
     });
     
     process.on('SIGTERM', async () => {
-        console.log('\n🛑 Shutting down AI System...');
+        console.info('\n🛑 Shutting down AI System...');
         await aiSystem.shutdown();
         process.exit(0);
     });
@@ -194,11 +194,11 @@ if (import.meta.main) {
     
     switch (command) {
         case 'train':
-            console.log('🎯 Running manual training...');
+            console.info('🎯 Running manual training...');
             trainModel()
                 .then(metrics => {
-                    console.log('✅ Training completed successfully');
-                    console.log(`📈 Accuracy: ${(metrics.accuracy * 100).toFixed(1)}%`);
+                    console.info('✅ Training completed successfully');
+                    console.info(`📈 Accuracy: ${(metrics.accuracy * 100).toFixed(1)}%`);
                     process.exit(0);
                 })
                 .catch(error => {
@@ -210,8 +210,8 @@ if (import.meta.main) {
         case 'status':
             const system = new NebulaAISystem();
             system.initialize().then(() => {
-                console.log('📊 System Status:');
-                console.log(JSON.stringify(system.getStatus(), null, 2));
+                console.info('📊 System Status:');
+                console.info(JSON.stringify(system.getStatus(), null, 2));
                 process.exit(0);
             }).catch(error => {
                 console.error('❌ Failed to get status:', error);
@@ -220,26 +220,26 @@ if (import.meta.main) {
             break;
             
         case 'serve':
-            console.log('🌐 Starting AI API server...');
+            console.info('🌐 Starting AI API server...');
             // This would start an Express server in a real implementation
-            console.log('📡 API server would start on http://localhost:3001');
-            console.log('🎮 Dashboard available at http://localhost:3001/ai/dashboard.html');
+            console.info('📡 API server would start on http://localhost:3001');
+            console.info('🎮 Dashboard available at http://localhost:3001/ai/dashboard.html');
             break;
             
         default:
-            console.log('🤖 Nebula-Flow™ AI System v1.0');
-            console.log('');
-            console.log('Usage:');
-            console.log('  bun ai/index.ts train     - Train the model');
-            console.log('  bun ai/index.ts status    - Show system status');
-            console.log('  bun ai/index.ts serve     - Start API server');
-            console.log('');
-            console.log('Features:');
-            console.log('  ✅ Real-time anomaly detection');
-            console.log('  ✅ WebAssembly ONNX inference');
-            console.log('  ✅ Nightly automated training');
-            console.log('  ✅ REST API with dashboard');
-            console.log('  ✅ Performance monitoring');
+            console.info('🤖 Nebula-Flow™ AI System v1.0');
+            console.info('');
+            console.info('Usage:');
+            console.info('  bun ai/index.ts train     - Train the model');
+            console.info('  bun ai/index.ts status    - Show system status');
+            console.info('  bun ai/index.ts serve     - Start API server');
+            console.info('');
+            console.info('Features:');
+            console.info('  ✅ Real-time anomaly detection');
+            console.info('  ✅ WebAssembly ONNX inference');
+            console.info('  ✅ Nightly automated training');
+            console.info('  ✅ REST API with dashboard');
+            console.info('  ✅ Performance monitoring');
             break;
     }
 }

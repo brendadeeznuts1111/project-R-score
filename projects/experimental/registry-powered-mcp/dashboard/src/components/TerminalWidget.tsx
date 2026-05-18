@@ -83,7 +83,7 @@ export const TerminalWidget: React.FC<TerminalWidgetProps> = ({ connectionUrl, t
             await fn(resource);
         } finally {
             // Resource cleanup simulation
-            console.log(`[POSIX] Resource cleanup: ${JSON.stringify(resource)}`);
+            console.info(`[POSIX] Resource cleanup: ${JSON.stringify(resource)}`);
         }
     };
 

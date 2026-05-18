@@ -5,15 +5,15 @@
  * Tests the TypeScript type fixes and improvements
  */
 
-console.log("🔧 TypeScript Type Fixes Verification");
-console.log("====================================\n");
+console.info("🔧 TypeScript Type Fixes Verification");
+console.info("====================================\n");
 
 // ===== Test 1: Bun.build() autoloadTsconfig and autoloadPackageJson =====
-console.log("1️⃣ Bun.build() TypeScript Types");
-console.log("------------------------------");
+console.info("1️⃣ Bun.build() TypeScript Types");
+console.info("------------------------------");
 
 async function testBunBuildTypes() {
-	console.log("Testing Bun.build() options with proper TypeScript types...");
+	console.info("Testing Bun.build() options with proper TypeScript types...");
 
 	// Test standalone compilation with autoload options
 	const buildConfig = {
@@ -26,8 +26,8 @@ async function testBunBuildTypes() {
 		minify: true,
 	};
 
-	console.log("✅ Build config with autoloadTsconfig:", buildConfig.autoloadTsconfig);
-	console.log(
+	console.info("✅ Build config with autoloadTsconfig:", buildConfig.autoloadTsconfig);
+	console.info(
 		"✅ Build config with autoloadPackageJson:",
 		buildConfig.autoloadPackageJson,
 	);
@@ -36,15 +36,15 @@ async function testBunBuildTypes() {
 	type BuildConfig = typeof buildConfig;
 	const config: BuildConfig = buildConfig;
 
-	console.log("✅ TypeScript types for autoload options verified");
+	console.info("✅ TypeScript types for autoload options verified");
 }
 
 // ===== Test 2: bun:sqlite .run() method return type =====
-console.log("\n2️⃣ bun:sqlite .run() Return Type");
-console.log("------------------------------");
+console.info("\n2️⃣ bun:sqlite .run() Return Type");
+console.info("------------------------------");
 
 function testSqliteRunReturnType() {
-	console.log("Testing SQLite .run() method return type...");
+	console.info("Testing SQLite .run() method return type...");
 
 	const { Database } = require("bun:sqlite");
 	const db = new Database(":memory:");
@@ -56,42 +56,42 @@ function testSqliteRunReturnType() {
 	const result = db.run("INSERT INTO test (name) VALUES (?)", ["test"]);
 
 	// Result should now correctly be typed as Changes object
-	console.log("✅ .run() returns Changes object");
-	console.log("   changes:", result.changes);
-	console.log("   lastInsertRowid:", result.lastInsertRowid);
+	console.info("✅ .run() returns Changes object");
+	console.info("   changes:", result.changes);
+	console.info("   lastInsertRowid:", result.lastInsertRowid);
 
 	// TypeScript now knows these properties exist
 	const changes: number = result.changes;
 	const lastInsertRowid: number | bigint = result.lastInsertRowid;
 
-	console.log("✅ TypeScript types for Changes object verified");
-	console.log(`   Inserted ${changes} row(s) with ID ${lastInsertRowid}`);
+	console.info("✅ TypeScript types for Changes object verified");
+	console.info(`   Inserted ${changes} row(s) with ID ${lastInsertRowid}`);
 
 	db.close();
 }
 
 // ===== Test 3: FileSink.write() return type =====
-console.log("\n3️⃣ FileSink.write() Return Type");
-console.log("-------------------------------");
+console.info("\n3️⃣ FileSink.write() Return Type");
+console.info("-------------------------------");
 
 async function testFileSinkWriteType() {
-	console.log("Testing FileSink.write() return type...");
+	console.info("Testing FileSink.write() return type...");
 
 	const file = Bun.file("./test-output.txt");
 	const writer = file.writer();
 
 	// Test synchronous write (returns number)
 	const syncResult = writer.write("Sync data");
-	console.log("✅ Sync write returns:", typeof syncResult, syncResult);
+	console.info("✅ Sync write returns:", typeof syncResult, syncResult);
 
 	// Test asynchronous write (returns Promise<number>)
 	const asyncResult = writer.write("Async data");
-	console.log("✅ Async write returns:", typeof asyncResult);
+	console.info("✅ Async write returns:", typeof asyncResult);
 
 	// TypeScript now correctly infers Promise<number> for pending writes
 	if (asyncResult instanceof Promise) {
 		const bytes = await asyncResult;
-		console.log("✅ Async write resolved to:", bytes, "bytes");
+		console.info("✅ Async write resolved to:", bytes, "bytes");
 	}
 
 	writer.end();
@@ -101,16 +101,16 @@ async function testFileSinkWriteType() {
 	if (fs.existsSync("./test-output.txt")) {
 		fs.unlinkSync("./test-output.txt");
 	}
-	console.log("✅ TypeScript types for FileSink.write() verified");
+	console.info("✅ TypeScript types for FileSink.write() verified");
 }
 
 // ===== Test 4: Additional TypeScript Improvements =====
-console.log("\n4️⃣ Additional TypeScript Improvements");
-console.log("-----------------------------------");
+console.info("\n4️⃣ Additional TypeScript Improvements");
+console.info("-----------------------------------");
 
 function testAdditionalTypeImprovements() {
 	// Test that types are properly exported and documented
-	console.log("Testing additional TypeScript type improvements...");
+	console.info("Testing additional TypeScript type improvements...");
 
 	// Bun.build options type
 	type BunBuildOptions = Parameters<typeof Bun.build>[0];
@@ -118,28 +118,28 @@ function testAdditionalTypeImprovements() {
 		entrypoints: ["./test.ts"],
 		outdir: "./out",
 	};
-	console.log("✅ BunBuildOptions type available");
+	console.info("✅ BunBuildOptions type available");
 
 	// SQLite Changes type
 	const sqlite = require("bun:sqlite") as any;
 	type Changes = ReturnType<sqlite.Database.prototype.run>;
-	console.log("✅ Changes type available");
+	console.info("✅ Changes type available");
 
 	// FileSink type
 	const file = Bun.file("./test.txt");
 	const fileSink = file.writer();
 	type FileSink = typeof fileSink;
-	console.log("✅ FileSink type available");
+	console.info("✅ FileSink type available");
 
 	fileSink.end();
 }
 
 // ===== Type Safety Verification =====
-console.log("\n5️⃣ Type Safety Verification");
-console.log("---------------------------");
+console.info("\n5️⃣ Type Safety Verification");
+console.info("---------------------------");
 
 function verifyTypeSafety() {
-	console.log("Verifying type safety improvements...");
+	console.info("Verifying type safety improvements...");
 
 	// 1. autoloadTsconfig should be boolean
 	const config1 = {
@@ -173,12 +173,12 @@ function verifyTypeSafety() {
 		return { syncBytes, resolved };
 	}
 
-	console.log("✅ All type safety checks passed");
+	console.info("✅ All type safety checks passed");
 }
 
 // ===== Main Execution =====
 async function runTypeTests(): Promise<void> {
-	console.log("🎯 Running TypeScript Type Fix Tests\n");
+	console.info("🎯 Running TypeScript Type Fix Tests\n");
 
 	try {
 		await testBunBuildTypes();
@@ -208,17 +208,17 @@ async function runTypeTests(): Promise<void> {
 			"./typescript-type-fixes-results.json",
 			JSON.stringify(report, null, 2),
 		);
-		console.log("\n💾 Results saved to ./typescript-type-fixes-results.json");
+		console.info("\n💾 Results saved to ./typescript-type-fixes-results.json");
 	} catch (error) {
 		console.error("❌ Test failed:", error);
 	}
 
-	console.log("\n🎉 TypeScript Type Fix Tests Complete!");
-	console.log("\n🔧 Key Fixes Verified:");
-	console.log("• ✅ Bun.build() autoload options now properly typed");
-	console.log("• ✅ SQLite .run() returns typed Changes object");
-	console.log("• ✅ FileSink.write() includes Promise<number> for async");
-	console.log("• ✅ Improved type safety and documentation");
+	console.info("\n🎉 TypeScript Type Fix Tests Complete!");
+	console.info("\n🔧 Key Fixes Verified:");
+	console.info("• ✅ Bun.build() autoload options now properly typed");
+	console.info("• ✅ SQLite .run() returns typed Changes object");
+	console.info("• ✅ FileSink.write() includes Promise<number> for async");
+	console.info("• ✅ Improved type safety and documentation");
 }
 
 // Run tests

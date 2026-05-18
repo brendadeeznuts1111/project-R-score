@@ -5,8 +5,8 @@ export class EntryPointGuard {
     const main = Bun.main;
     const cwd = process.cwd();
     
-    console.log(`📁 Main Entry: ${main}`);
-    console.log(`📁 Current Dir: ${cwd}`);
+    console.info(`📁 Main Entry: ${main}`);
+    console.info(`📁 Current Dir: ${cwd}`);
     
     // Validate we're running from correct entry point if specified
     if (expectedMain && !main.includes(expectedMain)) {

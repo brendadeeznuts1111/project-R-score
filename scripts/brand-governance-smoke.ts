@@ -54,7 +54,7 @@ async function main(): Promise<void> {
       exitCode: step.exitCode,
     })),
   };
-  console.log(JSON.stringify(summary, null, 2));
+  console.info(JSON.stringify(summary, null, 2));
   process.exit(summary.ok ? 0 : 1);
 }
 

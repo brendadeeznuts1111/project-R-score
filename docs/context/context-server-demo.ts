@@ -82,7 +82,7 @@ class DemoUtils {
         return response;
       } catch (error) {
         if (i === retries - 1) throw error;
-        console.log(`⚠️ Retry ${i + 1}/${retries} for ${url}`);
+        console.info(`⚠️ Retry ${i + 1}/${retries} for ${url}`);
         await this.delay(1000 * (i + 1)); // Exponential backoff
       }
     }
@@ -104,40 +104,40 @@ class DemoUtils {
 
 // Server health check
 async function checkServerHealth(): Promise<boolean> {
-  console.log('🏥 Checking server health...');
+  console.info('🏥 Checking server health...');
   
   try {
     const response = await DemoUtils.fetchWithRetry(`${DEMO_CONFIG.serverUrl}/api/health`);
     const result = await response.json();
     
     if (result.success && result.data.status === 'healthy') {
-      console.log('✅ Server is healthy');
-      console.log(`   Version: ${result.data.version}`);
-      console.log(`   Uptime: ${DemoUtils.formatDuration(result.data.uptime)}`);
-      console.log(`   Environment: ${result.data.environment}`);
-      console.log();
+      console.info('✅ Server is healthy');
+      console.info(`   Version: ${result.data.version}`);
+      console.info(`   Uptime: ${DemoUtils.formatDuration(result.data.uptime)}`);
+      console.info(`   Environment: ${result.data.environment}`);
+      console.info();
       
       // Show integration status
-      console.log('🔌 Integration Status:');
+      console.info('🔌 Integration Status:');
       Object.entries(result.data.integrations).forEach(([name, enabled]: [string, boolean]) => {
-        console.log(`   ${name}: ${enabled ? '✅ Enabled' : '❌ Disabled'}`);
+        console.info(`   ${name}: ${enabled ? '✅ Enabled' : '❌ Disabled'}`);
       });
-      console.log();
+      console.info();
       
       return true;
     } else {
-      console.log('❌ Server is not healthy');
+      console.info('❌ Server is not healthy');
       return false;
     }
   } catch (error) {
-    console.log('❌ Server health check failed:', error instanceof Error ? error.message : String(error));
+    console.info('❌ Server health check failed:', error instanceof Error ? error.message : String(error));
     return false;
   }
 }
 
 // Deep link processing demo
 async function demonstrateDeepLinkProcessing(): Promise<void> {
-  console.log('🔗 Deep Link Processing Demo\n');
+  console.info('🔗 Deep Link Processing Demo\n');
   
   let sessionId: string | undefined;
   let totalProcessingTime = 0;
@@ -145,8 +145,8 @@ async function demonstrateDeepLinkProcessing(): Promise<void> {
   let errorCount = 0;
 
   for (const testCase of TEST_DEEP_LINKS) {
-    console.log(`🧪 ${testCase.name}:`);
-    console.log(`   URL: ${testCase.url}`);
+    console.info(`🧪 ${testCase.name}:`);
+    console.info(`   URL: ${testCase.url}`);
     
     try {
       const startTime = Date.now();
@@ -170,65 +170,65 @@ async function demonstrateDeepLinkProcessing(): Promise<void> {
       
       if (result.success) {
         successCount++;
-        console.log(`   ✅ Success (${processingTime}ms)`);
-        console.log(`   Action: ${result.data.type}`);
-        console.log(`   Result: ${result.data.action}`);
+        console.info(`   ✅ Success (${processingTime}ms)`);
+        console.info(`   Action: ${result.data.type}`);
+        console.info(`   Result: ${result.data.action}`);
         
         // Extract session ID from first successful request
         if (!sessionId && result.data.session) {
           sessionId = result.data.session.id;
-          console.log(`   📝 Session: ${sessionId}`);
+          console.info(`   📝 Session: ${sessionId}`);
         }
         
         // Show documentation if available
         if (result.data.documentation) {
-          console.log(`   📚 Docs: ${result.data.documentation.title}`);
+          console.info(`   📚 Docs: ${result.data.documentation.title}`);
         }
         
         // Show analytics if available
         if (result.data.analytics) {
-          console.log(`   📊 Analytics: ${result.data.analytics.processingTime}ms`);
+          console.info(`   📊 Analytics: ${result.data.analytics.processingTime}ms`);
         }
         
         // Show session context
         if (result.data.session) {
           const context = result.data.session.context;
-          console.log(`   🔐 Context: Shop=${context.currentShop || 'None'}, Barber=${context.currentBarber || 'None'}`);
+          console.info(`   🔐 Context: Shop=${context.currentShop || 'None'}, Barber=${context.currentBarber || 'None'}`);
         }
       } else {
         errorCount++;
-        console.log(`   ❌ Failed: ${result.error || 'Unknown error'}`);
+        console.info(`   ❌ Failed: ${result.error || 'Unknown error'}`);
       }
       
     } catch (error) {
       errorCount++;
-      console.log(`   ❌ Error: ${error instanceof Error ? error.message : String(error)}`);
+      console.info(`   ❌ Error: ${error instanceof Error ? error.message : String(error)}`);
     }
     
-    console.log();
+    console.info();
     await DemoUtils.delay(500); // Small delay between requests
   }
 
   // Summary
-  console.log('📊 Deep Link Processing Summary:');
-  console.log(`   Total Requests: ${TEST_DEEP_LINKS.length}`);
-  console.log(`   Successful: ${successCount}`);
-  console.log(`   Failed: ${errorCount}`);
-  console.log(`   Success Rate: ${((successCount / TEST_DEEP_LINKS.length) * 100).toFixed(2)}%`);
-  console.log(`   Average Processing Time: ${DemoUtils.formatDuration(totalProcessingTime / TEST_DEEP_LINKS.length)}`);
-  console.log(`   Total Processing Time: ${DemoUtils.formatDuration(totalProcessingTime)}`);
-  console.log();
+  console.info('📊 Deep Link Processing Summary:');
+  console.info(`   Total Requests: ${TEST_DEEP_LINKS.length}`);
+  console.info(`   Successful: ${successCount}`);
+  console.info(`   Failed: ${errorCount}`);
+  console.info(`   Success Rate: ${((successCount / TEST_DEEP_LINKS.length) * 100).toFixed(2)}%`);
+  console.info(`   Average Processing Time: ${DemoUtils.formatDuration(totalProcessingTime / TEST_DEEP_LINKS.length)}`);
+  console.info(`   Total Processing Time: ${DemoUtils.formatDuration(totalProcessingTime)}`);
+  console.info();
 }
 
 // Performance testing
 async function demonstratePerformanceTesting(): Promise<void> {
-  console.log('⚡ Performance Testing Demo\n');
+  console.info('⚡ Performance Testing Demo\n');
   
   const concurrentRequests = 20;
   const requestsPerBatch = 5;
   const testUrl = 'freshcuts://payment?amount=25&shop=test';
   
-  console.log(`🚀 Running ${concurrentRequests} concurrent requests in batches of ${requestsPerBatch}...`);
+  console.info(`🚀 Running ${concurrentRequests} concurrent requests in batches of ${requestsPerBatch}...`);
   
   const startTime = Date.now();
   const results: Array<{ success: boolean; responseTime: number; error?: string }> = [];
@@ -271,7 +271,7 @@ async function demonstratePerformanceTesting(): Promise<void> {
     }
     
     await Promise.all(batchPromises);
-    console.log(`   Batch ${Math.floor(i / requestsPerBatch) + 1}/${Math.ceil(concurrentRequests / requestsPerBatch)} completed`);
+    console.info(`   Batch ${Math.floor(i / requestsPerBatch) + 1}/${Math.ceil(concurrentRequests / requestsPerBatch)} completed`);
   }
   
   const totalTime = Date.now() - startTime;
@@ -281,13 +281,13 @@ async function demonstratePerformanceTesting(): Promise<void> {
   const failed = results.filter(r => !r.success);
   const responseTimes = successful.map(r => r.responseTime).sort((a, b) => a - b);
   
-  console.log('\n📈 Performance Test Results:');
-  console.log(`   Total Requests: ${concurrentRequests}`);
-  console.log(`   Successful: ${successful.length}`);
-  console.log(`   Failed: ${failed.length}`);
-  console.log(`   Success Rate: ${((successful.length / concurrentRequests) * 100).toFixed(2)}%`);
-  console.log(`   Total Time: ${DemoUtils.formatDuration(totalTime)}`);
-  console.log(`   Requests/Second: ${(concurrentRequests / (totalTime / 1000)).toFixed(2)}`);
+  console.info('\n📈 Performance Test Results:');
+  console.info(`   Total Requests: ${concurrentRequests}`);
+  console.info(`   Successful: ${successful.length}`);
+  console.info(`   Failed: ${failed.length}`);
+  console.info(`   Success Rate: ${((successful.length / concurrentRequests) * 100).toFixed(2)}%`);
+  console.info(`   Total Time: ${DemoUtils.formatDuration(totalTime)}`);
+  console.info(`   Requests/Second: ${(concurrentRequests / (totalTime / 1000)).toFixed(2)}`);
   
   if (responseTimes.length > 0) {
     const avgResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
@@ -295,100 +295,100 @@ async function demonstratePerformanceTesting(): Promise<void> {
     const maxResponseTime = responseTimes[responseTimes.length - 1];
     const p95ResponseTime = responseTimes[Math.floor(responseTimes.length * 0.95)];
     
-    console.log(`   Average Response Time: ${DemoUtils.formatDuration(avgResponseTime)}`);
-    console.log(`   Min Response Time: ${DemoUtils.formatDuration(minResponseTime)}`);
-    console.log(`   Max Response Time: ${DemoUtils.formatDuration(maxResponseTime)}`);
-    console.log(`   95th Percentile: ${DemoUtils.formatDuration(p95ResponseTime)}`);
+    console.info(`   Average Response Time: ${DemoUtils.formatDuration(avgResponseTime)}`);
+    console.info(`   Min Response Time: ${DemoUtils.formatDuration(minResponseTime)}`);
+    console.info(`   Max Response Time: ${DemoUtils.formatDuration(maxResponseTime)}`);
+    console.info(`   95th Percentile: ${DemoUtils.formatDuration(p95ResponseTime)}`);
   }
   
-  console.log();
+  console.info();
 }
 
 // Analytics dashboard demo
 async function demonstrateAnalyticsDashboard(): Promise<void> {
-  console.log('📊 Analytics Dashboard Demo\n');
+  console.info('📊 Analytics Dashboard Demo\n');
   
   try {
     // Get analytics data
-    console.log('🔍 Fetching analytics data...');
+    console.info('🔍 Fetching analytics data...');
     const analyticsResponse = await DemoUtils.fetchWithRetry(`${DEMO_CONFIG.serverUrl}/api/analytics?days=7`);
     const analyticsResult = await analyticsResponse.json();
     
     if (analyticsResult.success) {
       const analytics = analyticsResult.data;
       
-      console.log('📈 Analytics Summary:');
-      console.log(`   Total Deep Links: ${analytics.totalDeepLinks || 0}`);
-      console.log(`   Error Rate: ${analytics.errorRate?.toFixed(2) || 0}%`);
-      console.log(`   Average Processing Time: ${analytics.averageProcessingTime?.toFixed(2) || 0}ms`);
+      console.info('📈 Analytics Summary:');
+      console.info(`   Total Deep Links: ${analytics.totalDeepLinks || 0}`);
+      console.info(`   Error Rate: ${analytics.errorRate?.toFixed(2) || 0}%`);
+      console.info(`   Average Processing Time: ${analytics.averageProcessingTime?.toFixed(2) || 0}ms`);
       
       if (analytics.actionCounts) {
-        console.log('\n🔗 Action Breakdown:');
+        console.info('\n🔗 Action Breakdown:');
         Object.entries(analytics.actionCounts).forEach(([action, count]: [string, number]) => {
-          console.log(`   ${action}: ${count}`);
+          console.info(`   ${action}: ${count}`);
         });
       }
       
       if (analytics.topShops) {
-        console.log('\n🏪 Top Shops:');
+        console.info('\n🏪 Top Shops:');
         Object.entries(analytics.topShops).slice(0, 5).forEach(([shop, count]: [string, number]) => {
-          console.log(`   ${shop}: ${count}`);
+          console.info(`   ${shop}: ${count}`);
         });
       }
       
       if (analytics.topBarbers) {
-        console.log('\n💇 Top Barbers:');
+        console.info('\n💇 Top Barbers:');
         Object.entries(analytics.topBarbers).slice(0, 5).forEach(([barber, count]: [string, number]) => {
-          console.log(`   ${barber}: ${count}`);
+          console.info(`   ${barber}: ${count}`);
         });
       }
     }
     
     // Get server metrics
-    console.log('\n🔍 Fetching server metrics...');
+    console.info('\n🔍 Fetching server metrics...');
     const metricsResponse = await DemoUtils.fetchWithRetry(`${DEMO_CONFIG.serverUrl}/api/metrics`);
     const metricsResult = await metricsResponse.json();
     
     if (metricsResult.success) {
       const metrics = metricsResult.data;
       
-      console.log('\n🖥️ Server Metrics:');
-      console.log(`   Total Requests: ${metrics.requests.total.toLocaleString()}`);
-      console.log(`   Deep Links Processed: ${metrics.requests.deepLinks.toLocaleString()}`);
-      console.log(`   Average Response Time: ${metrics.performance.averageResponseTime.toFixed(2)}ms`);
-      console.log(`   Slow Requests: ${metrics.performance.slowRequests}`);
-      console.log(`   Memory Usage: ${DemoUtils.formatBytes(metrics.memory.heapUsed)}/${DemoUtils.formatBytes(metrics.memory.heapTotal)}`);
-      console.log(`   Server Uptime: ${DemoUtils.formatDuration(metrics.uptime)}`);
+      console.info('\n🖥️ Server Metrics:');
+      console.info(`   Total Requests: ${metrics.requests.total.toLocaleString()}`);
+      console.info(`   Deep Links Processed: ${metrics.requests.deepLinks.toLocaleString()}`);
+      console.info(`   Average Response Time: ${metrics.performance.averageResponseTime.toFixed(2)}ms`);
+      console.info(`   Slow Requests: ${metrics.performance.slowRequests}`);
+      console.info(`   Memory Usage: ${DemoUtils.formatBytes(metrics.memory.heapUsed)}/${DemoUtils.formatBytes(metrics.memory.heapTotal)}`);
+      console.info(`   Server Uptime: ${DemoUtils.formatDuration(metrics.uptime)}`);
       
       if (metrics.sessions) {
-        console.log('\n🔐 Session Statistics:');
-        console.log(`   Active Sessions: ${metrics.sessions.active}`);
-        console.log(`   Total Sessions: ${metrics.sessions.total}`);
+        console.info('\n🔐 Session Statistics:');
+        console.info(`   Active Sessions: ${metrics.sessions.active}`);
+        console.info(`   Total Sessions: ${metrics.sessions.total}`);
       }
       
       if (metrics.integrations) {
-        console.log('\n🔌 Integration Statistics:');
-        console.log(`   Wiki: ${metrics.integrations.wiki.hits} hits, ${metrics.integrations.wiki.errors} errors`);
-        console.log(`   R2: ${metrics.integrations.r2.uploads} uploads, ${metrics.integrations.r2.downloads} downloads, ${metrics.integrations.r2.errors} errors`);
+        console.info('\n🔌 Integration Statistics:');
+        console.info(`   Wiki: ${metrics.integrations.wiki.hits} hits, ${metrics.integrations.wiki.errors} errors`);
+        console.info(`   R2: ${metrics.integrations.r2.uploads} uploads, ${metrics.integrations.r2.downloads} downloads, ${metrics.integrations.r2.errors} errors`);
       }
     }
     
   } catch (error) {
-    console.log('❌ Analytics demo failed:', error instanceof Error ? error.message : String(error));
+    console.info('❌ Analytics demo failed:', error instanceof Error ? error.message : String(error));
   }
   
-  console.log();
+  console.info();
 }
 
 // Session management demo
 async function demonstrateSessionManagement(): Promise<void> {
-  console.log('🔐 Session Management Demo\n');
+  console.info('🔐 Session Management Demo\n');
   
   let sessionId: string | undefined;
   
   try {
     // First request to create session
-    console.log('📝 Creating new session...');
+    console.info('📝 Creating new session...');
     const response1 = await DemoUtils.fetchWithRetry(
       `${DEMO_CONFIG.serverUrl}/api/deep-link`,
       {
@@ -401,13 +401,13 @@ async function demonstrateSessionManagement(): Promise<void> {
     const result1 = await response1.json();
     if (result1.success && result1.data.session) {
       sessionId = result1.data.session.id;
-      console.log(`✅ Session created: ${sessionId}`);
-      console.log(`   Current Shop: ${result1.data.session.context.currentShop}`);
+      console.info(`✅ Session created: ${sessionId}`);
+      console.info(`   Current Shop: ${result1.data.session.context.currentShop}`);
     }
     
     if (sessionId) {
       // Second request with same session
-      console.log('\n📝 Using existing session...');
+      console.info('\n📝 Using existing session...');
       const response2 = await DemoUtils.fetchWithRetry(
         `${DEMO_CONFIG.serverUrl}/api/deep-link`,
         {
@@ -422,33 +422,33 @@ async function demonstrateSessionManagement(): Promise<void> {
       
       const result2 = await response2.json();
       if (result2.success && result2.data.session) {
-        console.log(`✅ Session updated: ${result2.data.session.id}`);
-        console.log(`   Current Shop: ${result2.data.session.context.currentShop}`);
-        console.log(`   Current Barber: ${result2.data.session.context.currentBarber}`);
-        console.log(`   Navigation History: ${result2.data.session.context.navigationHistory.length} links`);
+        console.info(`✅ Session updated: ${result2.data.session.id}`);
+        console.info(`   Current Shop: ${result2.data.session.context.currentShop}`);
+        console.info(`   Current Barber: ${result2.data.session.context.currentBarber}`);
+        console.info(`   Navigation History: ${result2.data.session.context.navigationHistory.length} links`);
       }
     }
     
   } catch (error) {
-    console.log('❌ Session management demo failed:', error instanceof Error ? error.message : String(error));
+    console.info('❌ Session management demo failed:', error instanceof Error ? error.message : String(error));
   }
   
-  console.log();
+  console.info();
 }
 
 // Main demo function
 async function runContextServerDemo(): Promise<void> {
-  console.log('🚀 Context Run Server v3.15 - Demo Suite\n');
-  console.log(`🌐 Target Server: ${DEMO_CONFIG.serverUrl}`);
-  console.log(`⏱️ Timeout: ${DEMO_CONFIG.timeout}ms`);
-  console.log(`🔄 Retries: ${DEMO_CONFIG.retries}`);
-  console.log(`⚡ Parallel Requests: ${DEMO_CONFIG.parallelRequests}\n`);
+  console.info('🚀 Context Run Server v3.15 - Demo Suite\n');
+  console.info(`🌐 Target Server: ${DEMO_CONFIG.serverUrl}`);
+  console.info(`⏱️ Timeout: ${DEMO_CONFIG.timeout}ms`);
+  console.info(`🔄 Retries: ${DEMO_CONFIG.retries}`);
+  console.info(`⚡ Parallel Requests: ${DEMO_CONFIG.parallelRequests}\n`);
   
   // Check server health first
   const isHealthy = await checkServerHealth();
   if (!isHealthy) {
-    console.log('❌ Server is not available. Please start the server first:');
-    console.log(`   bun run context-run-server-v315.ts\n`);
+    console.info('❌ Server is not available. Please start the server first:');
+    console.info(`   bun run context-run-server-v315.ts\n`);
     return;
   }
   
@@ -458,28 +458,28 @@ async function runContextServerDemo(): Promise<void> {
   await demonstratePerformanceTesting();
   await demonstrateAnalyticsDashboard();
   
-  console.log('🎉 Context Run Server v3.15 Demo Completed Successfully!\n');
+  console.info('🎉 Context Run Server v3.15 Demo Completed Successfully!\n');
   
-  console.log('📋 Demo Summary:');
-  console.log('   ✅ Server health check');
-  console.log('   ✅ Deep link processing with all action types');
-  console.log('   ✅ Session management with context persistence');
-  console.log('   ✅ Performance testing with concurrent requests');
-  console.log('   ✅ Analytics dashboard and metrics');
-  console.log('   ✅ Integration status monitoring');
+  console.info('📋 Demo Summary:');
+  console.info('   ✅ Server health check');
+  console.info('   ✅ Deep link processing with all action types');
+  console.info('   ✅ Session management with context persistence');
+  console.info('   ✅ Performance testing with concurrent requests');
+  console.info('   ✅ Analytics dashboard and metrics');
+  console.info('   ✅ Integration status monitoring');
   
-  console.log('\n🌐 Access Points:');
-  console.log(`   Dashboard: ${DEMO_CONFIG.serverUrl}/`);
-  console.log(`   Health: ${DEMO_CONFIG.serverUrl}/api/health`);
-  console.log(`   Metrics: ${DEMO_CONFIG.serverUrl}/api/metrics`);
-  console.log(`   Analytics: ${DEMO_CONFIG.serverUrl}/api/analytics`);
+  console.info('\n🌐 Access Points:');
+  console.info(`   Dashboard: ${DEMO_CONFIG.serverUrl}/`);
+  console.info(`   Health: ${DEMO_CONFIG.serverUrl}/api/health`);
+  console.info(`   Metrics: ${DEMO_CONFIG.serverUrl}/api/metrics`);
+  console.info(`   Analytics: ${DEMO_CONFIG.serverUrl}/api/analytics`);
   
-  console.log('\n🔧 Next Steps:');
-  console.log('   • Open the dashboard for real-time monitoring');
-  console.log('   • Test with your own deep links');
-  console.log('   • Configure R2 storage for persistent analytics');
-  console.log('   • Set up wiki integration for documentation');
-  console.log('   • Monitor performance and optimize as needed');
+  console.info('\n🔧 Next Steps:');
+  console.info('   • Open the dashboard for real-time monitoring');
+  console.info('   • Test with your own deep links');
+  console.info('   • Configure R2 storage for persistent analytics');
+  console.info('   • Set up wiki integration for documentation');
+  console.info('   • Monitor performance and optimize as needed');
 }
 
 // Run demo if this file is executed directly

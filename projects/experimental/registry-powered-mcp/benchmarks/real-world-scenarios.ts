@@ -76,13 +76,13 @@ class RealWorldBenchmark {
   ];
 
   async runScenarios() {
-    console.log('🌍 Real-World Scenario Benchmarks\n');
+    console.info('🌍 Real-World Scenario Benchmarks\n');
 
     const results: any[] = [];
 
     for (const scenario of this.scenarios) {
-      console.log(`📦 ${scenario.name}`);
-      console.log(`   ${scenario.description}`);
+      console.info(`📦 ${scenario.name}`);
+      console.info(`   ${scenario.description}`);
 
       const urlPattern = new URLPattern(scenario.urlPattern);
       const regex = scenario.regex;
@@ -132,22 +132,22 @@ class RealWorldBenchmark {
         faster: urlPatternOps > regexOps ? 'URLPattern' : 'RegExp'
       });
 
-      console.log(`   URLPattern: ${Math.round(urlPatternOps).toLocaleString()} ops/sec`);
-      console.log(`   RegExp:     ${Math.round(regexOps).toLocaleString()} ops/sec`);
-      console.log(`   Difference: ${urlPatternOps > regexOps ? 'URLPattern' : 'RegExp'} is ${Math.abs(difference).toFixed(1)}% faster\n`);
+      console.info(`   URLPattern: ${Math.round(urlPatternOps).toLocaleString()} ops/sec`);
+      console.info(`   RegExp:     ${Math.round(regexOps).toLocaleString()} ops/sec`);
+      console.info(`   Difference: ${urlPatternOps > regexOps ? 'URLPattern' : 'RegExp'} is ${Math.abs(difference).toFixed(1)}% faster\n`);
     }
 
     this.printSummary(results);
   }
 
   private printSummary(results: any[]) {
-    console.log('📊 SUMMARY');
-    console.log('='.repeat(60));
-    console.log('Scenario           | URLPattern   | RegExp       | Faster by');
-    console.log('-'.repeat(60));
+    console.info('📊 SUMMARY');
+    console.info('='.repeat(60));
+    console.info('Scenario           | URLPattern   | RegExp       | Faster by');
+    console.info('-'.repeat(60));
 
     for (const result of results) {
-      console.log(
+      console.info(
         result.scenario.padEnd(18),
         '|',
         result.urlPatternOps.toLocaleString().padEnd(12),
@@ -163,25 +163,25 @@ class RealWorldBenchmark {
     const avgRegExp = results.reduce((sum, r) => sum + r.regexOps, 0) / results.length;
     const overallDifference = ((avgURLPattern - avgRegExp) / avgRegExp) * 100;
 
-    console.log('\n📈 Overall Performance:');
-    console.log(`   Average URLPattern: ${Math.round(avgURLPattern).toLocaleString()} ops/sec`);
-    console.log(`   Average RegExp:     ${Math.round(avgRegExp).toLocaleString()} ops/sec`);
-    console.log(`   Overall difference: ${overallDifference.toFixed(1)}%`);
+    console.info('\n📈 Overall Performance:');
+    console.info(`   Average URLPattern: ${Math.round(avgURLPattern).toLocaleString()} ops/sec`);
+    console.info(`   Average RegExp:     ${Math.round(avgRegExp).toLocaleString()} ops/sec`);
+    console.info(`   Overall difference: ${overallDifference.toFixed(1)}%`);
 
     // Recommendations
-    console.log('\n💡 Recommendations:');
+    console.info('\n💡 Recommendations:');
     if (overallDifference > 0) {
-      console.log('✅ URLPattern performs better in real-world scenarios');
-      console.log('   Consider using URLPattern for:');
-      console.log('   • Production API routing');
-      console.log('   • Maintainable codebases');
-      console.log('   • TypeScript projects');
+      console.info('✅ URLPattern performs better in real-world scenarios');
+      console.info('   Consider using URLPattern for:');
+      console.info('   • Production API routing');
+      console.info('   • Maintainable codebases');
+      console.info('   • TypeScript projects');
     } else {
-      console.log('✅ RegExp performs better in real-world scenarios');
-      console.log('   Consider using RegExp for:');
-      console.log('   • Performance-critical paths');
-      console.log('   • Simple pattern matching');
-      console.log('   • Legacy codebases');
+      console.info('✅ RegExp performs better in real-world scenarios');
+      console.info('   Consider using RegExp for:');
+      console.info('   • Performance-critical paths');
+      console.info('   • Simple pattern matching');
+      console.info('   • Legacy codebases');
     }
   }
 }

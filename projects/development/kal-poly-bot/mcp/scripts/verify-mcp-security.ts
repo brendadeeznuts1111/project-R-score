@@ -112,8 +112,8 @@ class MCPSecurityVerifier {
   }
 
   async verify(): Promise<SecurityReport> {
-    console.log("🔒 MCP Server Security Verification");
-    console.log("=".repeat(50));
+    console.info("🔒 MCP Server Security Verification");
+    console.info("=".repeat(50));
 
     if (!existsSync(this.bundlePath)) {
       throw new Error(`Bundle not found: ${this.bundlePath}`);
@@ -122,8 +122,8 @@ class MCPSecurityVerifier {
     const bundleContent = readFileSync(this.bundlePath, "utf8");
     const results: SecurityCheckResult[] = [];
 
-    console.log(`📦 Analyzing bundle: ${this.bundlePath}`);
-    console.log(`📊 Bundle size: ${Math.round(bundleContent.length / 1024)}KB`);
+    console.info(`📦 Analyzing bundle: ${this.bundlePath}`);
+    console.info(`📊 Bundle size: ${Math.round(bundleContent.length / 1024)}KB`);
 
     for (const check of this.securityChecks) {
       const result = this.runSecurityCheck(bundleContent, check);
@@ -132,10 +132,10 @@ class MCPSecurityVerifier {
       const status = result.passed ? "✅" : "❌";
       const matches =
         result.matches.length > 0 ? ` (${result.matches.length})` : "";
-      console.log(`   ${status} ${check.name}${matches}`);
+      console.info(`   ${status} ${check.name}${matches}`);
 
       if (!result.passed && result.matches.length > 0) {
-        console.log(
+        console.info(
           `      Found: ${result.matches.slice(0, 3).join(", ")}${result.matches.length > 3 ? "..." : ""}`
         );
       }
@@ -199,8 +199,8 @@ class MCPSecurityVerifier {
   }
 
   private displaySummary(report: SecurityReport): void {
-    console.log("\n📋 Security Verification Summary");
-    console.log("-".repeat(40));
+    console.info("\n📋 Security Verification Summary");
+    console.info("-".repeat(40));
 
     const passed = report.checks.filter((r) => r.passed).length;
     const failed = report.checks.filter((r) => !r.passed).length;
@@ -214,43 +214,43 @@ class MCPSecurityVerifier {
       (r) => !r.passed && r.severity === "LOW"
     ).length;
 
-    console.log(`   Overall Status: ${report.overall}`);
-    console.log(`   Security Score: ${report.score}/100`);
-    console.log(`   Checks Passed: ${passed}/${report.checks.length}`);
+    console.info(`   Overall Status: ${report.overall}`);
+    console.info(`   Security Score: ${report.score}/100`);
+    console.info(`   Checks Passed: ${passed}/${report.checks.length}`);
 
     if (failed > 0) {
-      console.log(
+      console.info(
         `   Failed Checks: ${failed} (HIGH: ${high}, MEDIUM: ${medium}, LOW: ${low})`
       );
     }
 
-    console.log(`   Bundle: ${report.bundlePath}`);
-    console.log(`   Verified: ${report.timestamp}`);
+    console.info(`   Bundle: ${report.bundlePath}`);
+    console.info(`   Verified: ${report.timestamp}`);
 
     // Recommendations
     if (report.overall !== "PASS") {
-      console.log("\n💡 Recommendations:");
+      console.info("\n💡 Recommendations:");
       if (high > 0) {
-        console.log("   🔴 Fix HIGH severity issues before deployment");
+        console.info("   🔴 Fix HIGH severity issues before deployment");
       }
       if (medium > 0) {
-        console.log("   🟡 Address MEDIUM severity issues for better security");
+        console.info("   🟡 Address MEDIUM severity issues for better security");
       }
       if (low > 0) {
-        console.log(
+        console.info(
           "   🟢 Consider fixing LOW severity issues for production quality"
         );
       }
     } else {
-      console.log(
+      console.info(
         "\n✅ Security verification passed - bundle is production ready!"
       );
     }
   }
 
   async verifyFeatureFlags(): Promise<void> {
-    console.log("\n🚩 Verifying Feature Flag Configuration");
-    console.log("-".repeat(45));
+    console.info("\n🚩 Verifying Feature Flag Configuration");
+    console.info("-".repeat(45));
 
     const bundleContent = readFileSync(this.bundlePath, "utf8");
 
@@ -270,16 +270,16 @@ class MCPSecurityVerifier {
       "QUANTUM_READY",
     ];
 
-    console.log("✅ Enabled Features:");
+    console.info("✅ Enabled Features:");
     for (const feature of expectedFeatures) {
       const present = bundleContent.includes(feature);
-      console.log(`   ${present ? "✅" : "❌"} ${feature}`);
+      console.info(`   ${present ? "✅" : "❌"} ${feature}`);
     }
 
-    console.log("\n🚫 Disabled Features:");
+    console.info("\n🚫 Disabled Features:");
     for (const feature of disabledFeatures) {
       const present = bundleContent.includes(feature);
-      console.log(
+      console.info(
         `   ${present ? "❌" : "✅"} ${feature} (should be disabled)`
       );
     }
@@ -288,7 +288,7 @@ class MCPSecurityVerifier {
   async saveReport(report: SecurityReport): Promise<void> {
     const reportPath = "dist/security-report.json";
     require("fs").writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`\n📄 Security report saved to: ${reportPath}`);
+    console.info(`\n📄 Security report saved to: ${reportPath}`);
   }
 }
 

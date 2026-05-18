@@ -82,7 +82,7 @@ const server = Bun.serve({
 		if (req.headers.get('transfer-encoding')?.includes('chunked')) {
 			const validation = await chunkedGuard.validateChunkedBody(req);
 			if (!validation.isValid) {
-				console.log(JSON.stringify({ 
+				console.info(JSON.stringify({ 
 					attack: 'MARKETScoped_SMUGGLING', 
 					path: new URL(req.url).pathname 
 				}));
@@ -325,7 +325,7 @@ setInterval(async () => {
 		const edges = await mlgs.findHiddenEdges(combo);
 
 		if (edges.length > 0) {
-			console.log(JSON.stringify({ 
+			console.info(JSON.stringify({ 
 				marketPrecisionHit: true,
 				...combo,
 				edges: edges.length,
@@ -337,7 +337,7 @@ setInterval(async () => {
 	recordTiming('market-precision-cycle', startTime);
 }, 2000);
 
-console.log(JSON.stringify({ 
+console.info(JSON.stringify({ 
 	edgeServiceV3_1: 'MARKET-PRECISION-LIVE',
 	routes: {
 		precision: '17 active',
@@ -346,13 +346,13 @@ console.log(JSON.stringify({
 	}
 }));
 
-console.log(`🚀 Market Precision Edge Service v3.1 running on http://localhost:${server.port}`);
-console.log(`[SPORTS-EDGE-V3.1][MARKET-PRECISION][1580-SCANS/MIN][4.82% EDGE]`);
-console.log(`[VALUE:$214K][ROUTING:8µs][PRECISION:247][STATUS:ULTIMATE]`);
+console.info(`🚀 Market Precision Edge Service v3.1 running on http://localhost:${server.port}`);
+console.info(`[SPORTS-EDGE-V3.1][MARKET-PRECISION][1580-SCANS/MIN][4.82% EDGE]`);
+console.info(`[VALUE:$214K][ROUTING:8µs][PRECISION:247][STATUS:ULTIMATE]`);
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-	console.log('Shutting down gracefully...');
+	console.info('Shutting down gracefully...');
 	mlgs.close();
 	db.close();
 	process.exit(0);

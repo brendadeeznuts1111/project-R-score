@@ -22,10 +22,10 @@ class ExitCodeAnalyzer {
   
   // 🚀 Run test and analyze exit code
   async analyzeExitCode(testFile: string): Promise<ExitCodeAnalysis> {
-    console.log('🔍 Exit Code Analysis');
-    console.log('==================');
-    console.log(`📁 Test File: ${testFile}`);
-    console.log('');
+    console.info('🔍 Exit Code Analysis');
+    console.info('==================');
+    console.info(`📁 Test File: ${testFile}`);
+    console.info('');
 
     const startTime = performance.now();
     
@@ -67,9 +67,9 @@ class ExitCodeAnalyzer {
         const executionTime = performance.now() - startTime;
         const exitCode = code || 0;
         
-        console.log('');
-        console.log('📊 Exit Code Analysis Results');
-        console.log('============================');
+        console.info('');
+        console.info('📊 Exit Code Analysis Results');
+        console.info('============================');
         
         const analysis = this.generateAnalysis(exitCode, testResults, unhandledErrors, executionTime, output, errorOutput);
         
@@ -82,7 +82,7 @@ class ExitCodeAnalyzer {
       // Safety timeout
       setTimeout(() => {
         if (!testProcess.killed) {
-          console.log('⏰ Test timeout - killing process');
+          console.info('⏰ Test timeout - killing process');
           testProcess.kill('SIGKILL');
         }
       }, 30000);
@@ -180,28 +180,28 @@ class ExitCodeAnalyzer {
 
   // 📋 Display analysis results
   private displayAnalysis(analysis: ExitCodeAnalysis): void {
-    console.log(`🎯 Exit Code: ${analysis.exitCode}`);
-    console.log(`📝 Meaning: ${analysis.meaning}`);
-    console.log(`⏱️  Execution Time: ${analysis.executionTime.toFixed(2)}ms`);
-    console.log('');
+    console.info(`🎯 Exit Code: ${analysis.exitCode}`);
+    console.info(`📝 Meaning: ${analysis.meaning}`);
+    console.info(`⏱️  Execution Time: ${analysis.executionTime.toFixed(2)}ms`);
+    console.info('');
     
-    console.log('📊 Test Results:');
-    console.log(`   Total Tests: ${analysis.testResults.total}`);
-    console.log(`   ✅ Passed: ${analysis.testResults.passed}`);
-    console.log(`   ❌ Failed: ${analysis.testResults.failed}`);
-    console.log(`   🚨 Errors: ${analysis.testResults.errors}`);
-    console.log(`   ⏭️  Skipped: ${analysis.testResults.skipped}`);
-    console.log(`   🚫 Unhandled: ${analysis.unhandledErrors}`);
-    console.log('');
+    console.info('📊 Test Results:');
+    console.info(`   Total Tests: ${analysis.testResults.total}`);
+    console.info(`   ✅ Passed: ${analysis.testResults.passed}`);
+    console.info(`   ❌ Failed: ${analysis.testResults.failed}`);
+    console.info(`   🚨 Errors: ${analysis.testResults.errors}`);
+    console.info(`   ⏭️  Skipped: ${analysis.testResults.skipped}`);
+    console.info(`   🚫 Unhandled: ${analysis.unhandledErrors}`);
+    console.info('');
   }
 
   // 💡 Generate and display recommendations
   private generateRecommendations(analysis: ExitCodeAnalysis): void {
-    console.log('💡 Recommendations:');
+    console.info('💡 Recommendations:');
     analysis.recommendations.forEach((rec, index) => {
-      console.log(`   ${index + 1}. ${rec}`);
+      console.info(`   ${index + 1}. ${rec}`);
     });
-    console.log('');
+    console.info('');
   }
 
   // 📄 Generate detailed report
@@ -262,18 +262,18 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log('Exit Code Analyzer v2.8');
-    console.log('');
-    console.log('Analyzes Bun test exit codes and provides detailed insights:');
-    console.log('• Exit Code 0: All tests passed, no unhandled errors');
-    console.log('• Exit Code 1: Test failures occurred');
-    console.log('• Exit Code >1: Number of unhandled errors');
-    console.log('');
-    console.log('Usage:');
-    console.log('  bun run exit-code-analyzer.ts <test-file>');
-    console.log('');
-    console.log('Examples:');
-    console.log('  bun run exit-code-analyzer.ts utils/exit-code-demo.ts');
+    console.info('Exit Code Analyzer v2.8');
+    console.info('');
+    console.info('Analyzes Bun test exit codes and provides detailed insights:');
+    console.info('• Exit Code 0: All tests passed, no unhandled errors');
+    console.info('• Exit Code 1: Test failures occurred');
+    console.info('• Exit Code >1: Number of unhandled errors');
+    console.info('');
+    console.info('Usage:');
+    console.info('  bun run exit-code-analyzer.ts <test-file>');
+    console.info('');
+    console.info('Examples:');
+    console.info('  bun run exit-code-analyzer.ts utils/exit-code-demo.ts');
     return;
   }
 
@@ -282,7 +282,7 @@ async function main() {
   const analyzer = new ExitCodeAnalyzer();
   
   try {
-    console.log('🚀 Starting exit code analysis...\n');
+    console.info('🚀 Starting exit code analysis...\n');
     
     const analysis = await analyzer.analyzeExitCode(testFile);
     
@@ -290,14 +290,14 @@ async function main() {
     const report = analyzer.generateMarkdownReport(analysis, testFile);
     const reportFile = 'exit-code-analysis-report.md';
     await Bun.write(reportFile, report);
-    console.log(`📄 Detailed report saved to: ${reportFile}`);
+    console.info(`📄 Detailed report saved to: ${reportFile}`);
     
     // Save JSON data
     const jsonFile = 'exit-code-analysis-results.json';
     await Bun.write(jsonFile, JSON.stringify(analysis, null, 2));
-    console.log(`📊 JSON data saved to: ${jsonFile}`);
+    console.info(`📊 JSON data saved to: ${jsonFile}`);
     
-    console.log('\n✅ Exit code analysis complete!');
+    console.info('\n✅ Exit code analysis complete!');
     
     // Exit with same code as analyzed test for demonstration
     process.exit(analysis.exitCode);

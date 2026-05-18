@@ -175,7 +175,7 @@ export async function dispatchCommand(cmd: any, user: any): Promise<Response> {
 async function storeConfig(payload: any, nodeId?: string): Promise<any> {
   // TODO: Integrate with actual registry
   const configId = `config_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  console.log(`📦 Storing config ${configId} for node ${nodeId || 'GOV-0000'}`);
+  console.info(`📦 Storing config ${configId} for node ${nodeId || 'GOV-0000'}`);
   
   return {
     id: configId,
@@ -187,7 +187,7 @@ async function storeConfig(payload: any, nodeId?: string): Promise<any> {
 
 // Handle telemetry command
 async function handleTelemetry(payload: any, nodeId?: string): Promise<any> {
-  console.log(`📡 Processing telemetry for node ${nodeId || 'GOV-0000'}`);
+  console.info(`📡 Processing telemetry for node ${nodeId || 'GOV-0000'}`);
   
   return {
     processed: true,
@@ -199,7 +199,7 @@ async function handleTelemetry(payload: any, nodeId?: string): Promise<any> {
 // Broadcast alert
 async function broadcastAlert(payload: any, nodeId?: string): Promise<any> {
   // TODO: Integrate with WebSocket broadcast system
-  console.log(`🚨 Broadcasting alert from node ${nodeId || 'GOV-0000'}`);
+  console.info(`🚨 Broadcasting alert from node ${nodeId || 'GOV-0000'}`);
   
   return {
     broadcast: true,
@@ -210,7 +210,7 @@ async function broadcastAlert(payload: any, nodeId?: string): Promise<any> {
 
 // Log node disconnect
 async function logNodeDisconnect(nodeId: string): Promise<void> {
-  console.log(`🔌 Node ${nodeId} disconnected`);
+  console.info(`🔌 Node ${nodeId} disconnected`);
   // TODO: Log to audit system
 }
 
@@ -325,7 +325,7 @@ const server = serve<WSConnectionData>({
         timestamp: new Date().toISOString()
       }));
 
-      console.log(`🟢 CCS WebSocket connected: ${ws.data.nodeId} (user: ${ws.data.userId})`);
+      console.info(`🟢 CCS WebSocket connected: ${ws.data.nodeId} (user: ${ws.data.userId})`);
     },
 
     async message(ws, msg) {
@@ -397,14 +397,14 @@ const server = serve<WSConnectionData>({
     async close(ws) {
       ws.unsubscribe('command.all');
       await logNodeDisconnect(ws.data.nodeId);
-      console.log(`🔌 CCS WebSocket disconnected: ${ws.data.nodeId}`);
+      console.info(`🔌 CCS WebSocket disconnected: ${ws.data.nodeId}`);
     }
   }
 });
 
-console.log(`🚀 Central Command Station (CCS) listening on port ${server.port}`);
-console.log(`   REST: ${ccs.endpoint}`);
-console.log(`   WebSocket: ws://localhost:${server.port}/ws/command.all`);
-console.log(`   Command Types: ${COMMAND_TYPES.join(', ')}`);
-console.log(`   Node Pattern: ${ccs.schema.nodeId.pattern}`);
+console.info(`🚀 Central Command Station (CCS) listening on port ${server.port}`);
+console.info(`   REST: ${ccs.endpoint}`);
+console.info(`   WebSocket: ws://localhost:${server.port}/ws/command.all`);
+console.info(`   Command Types: ${COMMAND_TYPES.join(', ')}`);
+console.info(`   Node Pattern: ${ccs.schema.nodeId.pattern}`);
 

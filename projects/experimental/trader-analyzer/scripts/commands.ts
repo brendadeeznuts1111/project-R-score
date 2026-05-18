@@ -111,16 +111,16 @@ function main(): void {
   }
 
   // Display
-  console.log('\n📚 Available Commands\n');
-  console.log('='.repeat(80));
-  console.log('');
+  console.info('\n📚 Available Commands\n');
+  console.info('='.repeat(80));
+  console.info('');
 
   for (const [key, label] of Object.entries(CATEGORY_LABELS)) {
     const scriptsInCategory = categorized[key];
     if (scriptsInCategory.length === 0) continue;
 
-    console.log(`\n${label}`);
-    console.log('─'.repeat(80));
+    console.info(`\n${label}`);
+    console.info('─'.repeat(80));
     
     // Sort scripts alphabetically
     scriptsInCategory.sort((a, b) => a.name.localeCompare(b.name));
@@ -129,17 +129,17 @@ function main(): void {
       const truncatedCommand = script.command.length > 60 
         ? script.command.substring(0, 57) + '...'
         : script.command;
-      console.log(`  ${'bun run '.padEnd(12)}${script.name.padEnd(30)} ${truncatedCommand}`);
+      console.info(`  ${'bun run '.padEnd(12)}${script.name.padEnd(30)} ${truncatedCommand}`);
     }
   }
 
-  console.log('\n' + '='.repeat(80));
-  console.log('\n💡 Tips:');
-  console.log('  • Use "bun run <script>" to execute any command');
-  console.log('  • Press Tab in VS Code/Cursor to see available scripts');
-  console.log('  • Use "bun run" without arguments to see all scripts');
-  console.log('  • Common commands: dev, test, lint, typecheck, format');
-  console.log('');
+  console.info('\n' + '='.repeat(80));
+  console.info('\n💡 Tips:');
+  console.info('  • Use "bun run <script>" to execute any command');
+  console.info('  • Press Tab in VS Code/Cursor to see available scripts');
+  console.info('  • Use "bun run" without arguments to see all scripts');
+  console.info('  • Common commands: dev, test, lint, typecheck, format');
+  console.info('');
 }
 
 if (import.meta.main) {

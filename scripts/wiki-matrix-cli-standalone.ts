@@ -70,7 +70,7 @@ class WikiMatrixCLI {
   private setupExitHandlers(): void {
     const cleanup = () => {
       if (this.isRunning) {
-        console.log(styled('\n👋 Shutting down Wiki Matrix CLI...', 'muted'));
+        console.info(styled('\n👋 Shutting down Wiki Matrix CLI...', 'muted'));
         this.cleanup();
         exitWithCode(EXIT_CODES.SUCCESS);
       }
@@ -247,14 +247,14 @@ class WikiMatrixCLI {
   }
 
   displayMatrix(): void {
-    console.log(styled('\n🎯 Wiki Template Matrix Analysis', 'accent'));
-    console.log(colorBar('accent', 60));
-    console.log(styled('Comprehensive template overview with Bun inspect formatting', 'muted'));
-    console.log('');
+    console.info(styled('\n🎯 Wiki Template Matrix Analysis', 'accent'));
+    console.info(colorBar('accent', 60));
+    console.info(styled('Comprehensive template overview with Bun inspect formatting', 'muted'));
+    console.info('');
 
     // Validate we have templates
     if (this.templates.length === 0) {
-      console.log(styled('❌ No templates available to display', 'error'));
+      console.info(styled('❌ No templates available to display', 'error'));
       return;
     }
 
@@ -273,9 +273,9 @@ class WikiMatrixCLI {
     }));
 
     // Use Bun.inspect.table with proper API
-    console.log(Bun.inspect.table(matrixData, undefined, { colors: true }));
+    console.info(Bun.inspect.table(matrixData, undefined, { colors: true }));
 
-    console.log('');
+    console.info('');
 
     // Display enhanced formatted table using custom implementation
     this.displayCustomTable(matrixData);
@@ -287,12 +287,12 @@ class WikiMatrixCLI {
   private displayCustomTable(data: any[]): void {
     // Validate data
     if (!data || data.length === 0) {
-      console.log(styled('❌ No data to display', 'error'));
+      console.info(styled('❌ No data to display', 'error'));
       return;
     }
 
-    console.log(styled('\n📋 Enhanced Template Matrix', 'primary'));
-    console.log(colorBar('primary', 80));
+    console.info(styled('\n📋 Enhanced Template Matrix', 'primary'));
+    console.info(colorBar('primary', 80));
 
     // Calculate column widths using Bun.stringWidth
     const headers = Object.keys(data[0]);
@@ -323,7 +323,7 @@ class WikiMatrixCLI {
     const headerSeparator = createSeparator('├', '┼', '┤', '┼');
     const bottomBorder = createSeparator('└', '┴', '┘', '┴');
 
-    console.log(styled(topBorder, 'muted'));
+    console.info(styled(topBorder, 'muted'));
     
     // Print header row
     let headerRow = '│';
@@ -331,9 +331,9 @@ class WikiMatrixCLI {
       const paddedHeader = header.padEnd(colWidths[i]);
       headerRow += ` ${styled(paddedHeader, 'accent')} │`;
     });
-    console.log(headerRow);
+    console.info(headerRow);
     
-    console.log(styled(headerSeparator, 'muted'));
+    console.info(styled(headerSeparator, 'muted'));
 
     // Print data rows
     data.forEach((row, rowIndex) => {
@@ -369,21 +369,21 @@ class WikiMatrixCLI {
         const paddedValue = value.padEnd(colWidths[colIndex]);
         dataRow += ` ${styled(paddedValue, color)} │`;
       });
-      console.log(dataRow);
+      console.info(dataRow);
       
       // Add row separator (except for last row)
       if (rowIndex < data.length - 1) {
-        console.log(styled(createSeparator('├', '┼', '┤', '┼'), 'muted'));
+        console.info(styled(createSeparator('├', '┼', '┤', '┼'), 'muted'));
       }
     });
 
-    console.log(styled(bottomBorder, 'muted'));
+    console.info(styled(bottomBorder, 'muted'));
   }
 
   private displayStatsTable(data: any[]): void {
     // Validate data
     if (!data || data.length === 0) {
-      console.log(styled('❌ No statistics data to display', 'error'));
+      console.info(styled('❌ No statistics data to display', 'error'));
       return;
     }
 
@@ -415,7 +415,7 @@ class WikiMatrixCLI {
     const topBorder = createSeparator('┌', '┬', '┐', '┼');
     const bottomBorder = createSeparator('└', '┴', '┘', '┴');
 
-    console.log(styled(topBorder, 'muted'));
+    console.info(styled(topBorder, 'muted'));
     
     // Header row
     let headerRow = '│';
@@ -424,9 +424,9 @@ class WikiMatrixCLI {
       const paddedHeader = header.padEnd(colWidths[i]);
       headerRow += ` ${styled(paddedHeader, color)} │`;
     });
-    console.log(headerRow);
+    console.info(headerRow);
     
-    console.log(styled(createSeparator('├', '┼', '┤', '┼'), 'muted'));
+    console.info(styled(createSeparator('├', '┼', '┤', '┼'), 'muted'));
 
     // Data rows
     data.forEach(row => {
@@ -437,15 +437,15 @@ class WikiMatrixCLI {
         const paddedValue = value.padEnd(colWidths[i]);
         dataRow += ` ${styled(paddedValue, color)} │`;
       });
-      console.log(dataRow);
+      console.info(dataRow);
     });
 
-    console.log(styled(bottomBorder, 'muted'));
+    console.info(styled(bottomBorder, 'muted'));
   }
 
   private displayStatistics(): void {
-    console.log(styled('\n📊 Template Statistics', 'primary'));
-    console.log(colorBar('primary', 40));
+    console.info(styled('\n📊 Template Statistics', 'primary'));
+    console.info(colorBar('primary', 40));
 
     const stats = {
       total: this.templates.length,
@@ -479,26 +479,26 @@ class WikiMatrixCLI {
     // Create statistics table using custom formatting
     this.displayStatsTable(statsData);
 
-    console.log('');
+    console.info('');
 
     // Display complexity distribution
-    console.log(styled('🎯 Complexity Distribution:', 'warning'));
+    console.info(styled('🎯 Complexity Distribution:', 'warning'));
     Object.entries(stats.complexities).forEach(([complexity, count]) => {
       const percentage = Math.round((count / stats.total) * 100);
       const bar = '█'.repeat(Math.round(percentage / 10));
       const color = complexity === 'Simple' ? 'success' : complexity === 'Medium' ? 'warning' : 'error';
-      console.log(styled(`   ${complexity}:`, color) + styled(` ${bar} ${count} (${percentage}%)`, 'muted'));
+      console.info(styled(`   ${complexity}:`, color) + styled(` ${bar} ${count} (${percentage}%)`, 'muted'));
     });
 
-    console.log('');
+    console.info('');
 
     // Display format distribution
-    console.log(styled('📄 Format Distribution:', 'info'));
+    console.info(styled('📄 Format Distribution:', 'info'));
     Object.entries(stats.formats).forEach(([format, count]) => {
       const percentage = Math.round((count / stats.total) * 100);
       const bar = '█'.repeat(Math.round(percentage / 10));
       const color = format === 'markdown' ? 'success' : format === 'html' ? 'warning' : 'error';
-      console.log(styled(`   ${format.toUpperCase()}:`, color) + styled(` ${bar} ${count} (${percentage}%)`, 'muted'));
+      console.info(styled(`   ${format.toUpperCase()}:`, color) + styled(` ${bar} ${count} (${percentage}%)`, 'muted'));
     });
   }
 
@@ -506,14 +506,14 @@ class WikiMatrixCLI {
     // Validate index
     if (!Number.isInteger(index) || index < 1 || index > this.templates.length) {
       const maxIndex = this.templates.length;
-      console.log(styled(`❌ Invalid template index. Use 1-${maxIndex}`, 'error'));
+      console.info(styled(`❌ Invalid template index. Use 1-${maxIndex}`, 'error'));
       return;
     }
 
     const template = this.templates[index - 1];
     
-    console.log(styled(`\n🔍 Detailed View: ${template.name}`, 'accent'));
-    console.log(colorBar('accent', 50));
+    console.info(styled(`\n🔍 Detailed View: ${template.name}`, 'accent'));
+    console.info(colorBar('accent', 50));
 
     const details = [
       { Property: 'Name', Value: template.name },
@@ -530,18 +530,18 @@ class WikiMatrixCLI {
 
     this.displayStatsTable(details);
 
-    console.log('');
-    console.log(styled('💡 Usage Example:', 'success'));
-    console.log(styled(`   bun run wiki:template "${template.name}"`, 'muted'));
+    console.info('');
+    console.info(styled('💡 Usage Example:', 'success'));
+    console.info(styled(`   bun run wiki:template "${template.name}"`, 'muted'));
   }
 
   displayComparisonMatrix(): void {
-    console.log(styled('\n⚖️ Feature Comparison Matrix', 'warning'));
-    console.log(colorBar('warning', 60));
+    console.info(styled('\n⚖️ Feature Comparison Matrix', 'warning'));
+    console.info(colorBar('warning', 60));
 
     // Validate we have templates
     if (this.templates.length === 0) {
-      console.log(styled('❌ No templates available for comparison', 'error'));
+      console.info(styled('❌ No templates available for comparison', 'error'));
       return;
     }
 
@@ -578,9 +578,9 @@ class WikiMatrixCLI {
     });
 
     // Display comparison using Bun.inspect.table
-    console.log(Bun.inspect.table(comparisonData, undefined, { colors: true }));
+    console.info(Bun.inspect.table(comparisonData, undefined, { colors: true }));
 
-    console.log('');
+    console.info('');
   }
 
   async run(): Promise<void> {
@@ -610,14 +610,14 @@ class WikiMatrixCLI {
       case 'details':
         const indexStr = args[1];
         if (!indexStr) {
-          console.log(styled('❌ Please provide a template index', 'error'));
+          console.info(styled('❌ Please provide a template index', 'error'));
           this.showHelp();
           return;
         }
         
         const index = parseInt(indexStr);
         if (isNaN(index) || index < 1) {
-          console.log(styled('❌ Invalid index. Please provide a valid positive number.', 'error'));
+          console.info(styled('❌ Invalid index. Please provide a valid positive number.', 'error'));
           return;
         }
         
@@ -643,16 +643,16 @@ class WikiMatrixCLI {
         break;
 
       default:
-        console.log(styled(`❌ Unknown command: ${command}`, 'error'));
+        console.info(styled(`❌ Unknown command: ${command}`, 'error'));
         this.showHelp();
     }
   }
 
   private async runInteractiveMode(): Promise<void> {
-    console.log(styled('\n🎮 Interactive Wiki Matrix Mode', 'accent'));
-    console.log(colorBar('accent', 50));
-    console.log(styled('Type "help" for commands, "exit" to quit', 'muted'));
-    console.log('');
+    console.info(styled('\n🎮 Interactive Wiki Matrix Mode', 'accent'));
+    console.info(colorBar('accent', 50));
+    console.info(styled('Type "help" for commands, "exit" to quit', 'muted'));
+    console.info('');
 
     let readline;
     try {
@@ -676,7 +676,7 @@ class WikiMatrixCLI {
         const trimmedCommand = command.trim().toLowerCase();
         
         if (trimmedCommand === 'exit' || trimmedCommand === 'quit') {
-          console.log(styled('👋 Goodbye!', 'success'));
+          console.info(styled('👋 Goodbye!', 'success'));
           break;
         } else if (trimmedCommand === 'help') {
           this.showInteractiveHelp();
@@ -685,13 +685,13 @@ class WikiMatrixCLI {
         } else if (trimmedCommand.startsWith('details ')) {
           const indexStr = trimmedCommand.split(' ')[1];
           if (!indexStr) {
-            console.log(styled('❌ Please provide a template index', 'error'));
+            console.info(styled('❌ Please provide a template index', 'error'));
             continue;
           }
           
           const index = parseInt(indexStr);
           if (isNaN(index) || index < 1) {
-            console.log(styled('❌ Invalid index. Please provide a valid positive number.', 'error'));
+            console.info(styled('❌ Invalid index. Please provide a valid positive number.', 'error'));
             continue;
           }
           
@@ -705,8 +705,8 @@ class WikiMatrixCLI {
         } else if (trimmedCommand === '') {
           continue;
         } else {
-          console.log(styled(`❌ Unknown command: ${command}`, 'error'));
-          console.log(styled('Type "help" for available commands', 'muted'));
+          console.info(styled(`❌ Unknown command: ${command}`, 'error'));
+          console.info(styled('Type "help" for available commands', 'muted'));
         }
       }
     } finally {
@@ -715,45 +715,45 @@ class WikiMatrixCLI {
   }
 
   private showInteractiveHelp(): void {
-    console.log(styled('\n📚 Interactive Commands:', 'info'));
-    console.log(styled('  matrix     - Show complete template matrix', 'muted'));
-    console.log(styled('  details N  - Show details for template N', 'muted'));
-    console.log(styled('  compare    - Show feature comparison', 'muted'));
-    console.log(styled('  stats      - Show statistics only', 'muted'));
-    console.log(styled('  clear      - Clear screen', 'muted'));
-    console.log(styled('  help       - Show this help', 'muted'));
-    console.log(styled('  exit       - Exit interactive mode', 'muted'));
-    console.log('');
+    console.info(styled('\n📚 Interactive Commands:', 'info'));
+    console.info(styled('  matrix     - Show complete template matrix', 'muted'));
+    console.info(styled('  details N  - Show details for template N', 'muted'));
+    console.info(styled('  compare    - Show feature comparison', 'muted'));
+    console.info(styled('  stats      - Show statistics only', 'muted'));
+    console.info(styled('  clear      - Clear screen', 'muted'));
+    console.info(styled('  help       - Show this help', 'muted'));
+    console.info(styled('  exit       - Exit interactive mode', 'muted'));
+    console.info('');
   }
 
   private showHelp(): void {
-    console.log(styled('\n🎯 Wiki Template Matrix CLI', 'accent'));
-    console.log(styled('================================', 'accent'));
-    console.log('');
-    console.log(styled('Commands:', 'primary'));
-    console.log(styled('  matrix                    - Display complete template matrix', 'info'));
-    console.log(styled('  details <index>           - Show detailed view of template', 'info'));
-    console.log(styled('  compare                   - Show feature comparison matrix', 'info'));
-    console.log(styled('  stats                     - Display statistics only', 'info'));
-    console.log(styled('  interactive               - Start interactive mode', 'info'));
-    console.log(styled('  help                      - Show this help', 'info'));
-    console.log('');
-    console.log(styled('Examples:', 'primary'));
-    console.log(styled('  bun run scripts/wiki-matrix-cli-standalone.ts', 'muted'));
-    console.log(styled('  bun run scripts/wiki-matrix-cli-standalone.ts details 2', 'muted'));
-    console.log(styled('  bun run scripts/wiki-matrix-cli-standalone.ts compare', 'muted'));
-    console.log(styled('  bun run scripts/wiki-matrix-cli-standalone.ts interactive', 'muted'));
-    console.log('');
-    console.log(styled('Features:', 'primary'));
-    console.log(styled('  • Bun.stringWidth for proper column sizing', 'success'));
-    console.log(styled('  • Bun.inspect.table for native table formatting', 'success'));
-    console.log(styled('  • Custom table formatting with Unicode borders', 'success'));
-    console.log(styled('  • Color-coded complexity and format indicators', 'success'));
-    console.log(styled('  • Statistical analysis and distribution charts', 'success'));
-    console.log(styled('  • Feature comparison matrix', 'success'));
-    console.log(styled('  • Interactive console mode', 'success'));
-    console.log(styled('  • Proper exit handling and cleanup', 'success'));
-    console.log(styled('  • Input validation and error handling', 'success'));
+    console.info(styled('\n🎯 Wiki Template Matrix CLI', 'accent'));
+    console.info(styled('================================', 'accent'));
+    console.info('');
+    console.info(styled('Commands:', 'primary'));
+    console.info(styled('  matrix                    - Display complete template matrix', 'info'));
+    console.info(styled('  details <index>           - Show detailed view of template', 'info'));
+    console.info(styled('  compare                   - Show feature comparison matrix', 'info'));
+    console.info(styled('  stats                     - Display statistics only', 'info'));
+    console.info(styled('  interactive               - Start interactive mode', 'info'));
+    console.info(styled('  help                      - Show this help', 'info'));
+    console.info('');
+    console.info(styled('Examples:', 'primary'));
+    console.info(styled('  bun run scripts/wiki-matrix-cli-standalone.ts', 'muted'));
+    console.info(styled('  bun run scripts/wiki-matrix-cli-standalone.ts details 2', 'muted'));
+    console.info(styled('  bun run scripts/wiki-matrix-cli-standalone.ts compare', 'muted'));
+    console.info(styled('  bun run scripts/wiki-matrix-cli-standalone.ts interactive', 'muted'));
+    console.info('');
+    console.info(styled('Features:', 'primary'));
+    console.info(styled('  • Bun.stringWidth for proper column sizing', 'success'));
+    console.info(styled('  • Bun.inspect.table for native table formatting', 'success'));
+    console.info(styled('  • Custom table formatting with Unicode borders', 'success'));
+    console.info(styled('  • Color-coded complexity and format indicators', 'success'));
+    console.info(styled('  • Statistical analysis and distribution charts', 'success'));
+    console.info(styled('  • Feature comparison matrix', 'success'));
+    console.info(styled('  • Interactive console mode', 'success'));
+    console.info(styled('  • Proper exit handling and cleanup', 'success'));
+    console.info(styled('  • Input validation and error handling', 'success'));
   }
 }
 

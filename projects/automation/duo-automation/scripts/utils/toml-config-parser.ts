@@ -73,7 +73,7 @@ class TomlConfigParser {
   private config: EmpireProConfig | null = null;
   
   async loadConfig(filePath: string): Promise<EmpireProConfig> {
-    console.log(`📄 Loading TOML configuration from: ${filePath}`);
+    console.info(`📄 Loading TOML configuration from: ${filePath}`);
     
     const start = performance.now();
     
@@ -82,7 +82,7 @@ class TomlConfigParser {
     this.config = module.default as EmpireProConfig;
     
     const end = performance.now();
-    console.log(`⚡ Configuration loaded in ${(end - start).toFixed(3)}ms`);
+    console.info(`⚡ Configuration loaded in ${(end - start).toFixed(3)}ms`);
     
     return this.config;
   }
@@ -201,33 +201,33 @@ class TomlConfigParser {
     
     const json = JSON.stringify(this.config, null, 2);
     await writeFile(filePath, json);
-    console.log(`✅ Configuration exported to JSON: ${filePath}`);
+    console.info(`✅ Configuration exported to JSON: ${filePath}`);
   }
   
   printConfigSummary(): void {
     if (!this.config) {
-      console.log("❌ No configuration loaded");
+      console.info("❌ No configuration loaded");
       return;
     }
     
-    console.log("🏰 Empire Pro Configuration Summary");
-    console.log("===================================");
-    console.log(`📦 Service: ${this.config.service.name} v${this.config.service.version}`);
-    console.log(`🌍 Environment: ${this.config.service.environment}`);
-    console.log(`🗄️ Database: ${this.config.database.url.split('@')[1] || 'configured'}`);
-    console.log(`🚀 API: ${this.config.api.host}:${this.config.api.port}`);
-    console.log(`☁️ Cloudflare R2: ${this.config.cloudflare.r2_bucket}`);
-    console.log(`🔧 Features: ${Object.values(this.config.features).filter(Boolean).length} enabled`);
-    console.log(`🔗 Services: ${this.config.services.length} configured`);
-    console.log("");
+    console.info("🏰 Empire Pro Configuration Summary");
+    console.info("===================================");
+    console.info(`📦 Service: ${this.config.service.name} v${this.config.service.version}`);
+    console.info(`🌍 Environment: ${this.config.service.environment}`);
+    console.info(`🗄️ Database: ${this.config.database.url.split('@')[1] || 'configured'}`);
+    console.info(`🚀 API: ${this.config.api.host}:${this.config.api.port}`);
+    console.info(`☁️ Cloudflare R2: ${this.config.cloudflare.r2_bucket}`);
+    console.info(`🔧 Features: ${Object.values(this.config.features).filter(Boolean).length} enabled`);
+    console.info(`🔗 Services: ${this.config.services.length} configured`);
+    console.info("");
   }
 }
 
 // Demonstration function
 async function demonstrateTomlConfig() {
-  console.log("🚀 Empire Pro TOML Configuration Parser Demo");
-  console.log("============================================");
-  console.log("");
+  console.info("🚀 Empire Pro TOML Configuration Parser Demo");
+  console.info("============================================");
+  console.info("");
   
   const parser = new TomlConfigParser();
   
@@ -239,49 +239,49 @@ async function demonstrateTomlConfig() {
     parser.printConfigSummary();
     
     // Validate configuration
-    console.log("🔍 Configuration Validation:");
+    console.info("🔍 Configuration Validation:");
     const validation = parser.validateConfig();
     if (validation.valid) {
-      console.log("✅ Configuration is valid");
+      console.info("✅ Configuration is valid");
     } else {
-      console.log("❌ Configuration has errors:");
-      validation.errors.forEach(error => console.log(`   - ${error}`));
+      console.info("❌ Configuration has errors:");
+      validation.errors.forEach(error => console.info(`   - ${error}`));
     }
-    console.log("");
+    console.info("");
     
     // Show specific sections
-    console.log("📊 Configuration Sections:");
-    console.log(`🔧 API Config: ${JSON.stringify(parser.getApiConfig(), null, 2)}`);
-    console.log("");
-    console.log(`🌐 Services: ${parser.getServices().length} configured`);
+    console.info("📊 Configuration Sections:");
+    console.info(`🔧 API Config: ${JSON.stringify(parser.getApiConfig(), null, 2)}`);
+    console.info("");
+    console.info(`🌐 Services: ${parser.getServices().length} configured`);
     parser.getServices().forEach((service, index) => {
-      console.log(`   ${index + 1}. ${service.name}: ${service.url} (timeout: ${service.timeout}s)`);
+      console.info(`   ${index + 1}. ${service.name}: ${service.url} (timeout: ${service.timeout}s)`);
     });
-    console.log("");
+    console.info("");
     
     // Show features
-    console.log("🚀 Enabled Features:");
+    console.info("🚀 Enabled Features:");
     const features = parser.getFeatures();
     Object.entries(features).forEach(([key, value]) => {
       const status = value ? "✅" : "❌";
       const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-      console.log(`   ${status} ${formattedKey}`);
+      console.info(`   ${status} ${formattedKey}`);
     });
-    console.log("");
+    console.info("");
     
     // Performance test
-    console.log("⚡ Performance Test:");
+    console.info("⚡ Performance Test:");
     const start = performance.now();
     for (let i = 0; i < 1000; i++) {
       await parser.loadConfig("../example.toml");
     }
     const end = performance.now();
-    console.log(`   Loaded 1000 times in ${(end - start).toFixed(3)}ms`);
-    console.log(`   Average: ${((end - start) / 1000).toFixed(6)}ms per load`);
-    console.log("");
+    console.info(`   Loaded 1000 times in ${(end - start).toFixed(3)}ms`);
+    console.info(`   Average: ${((end - start) / 1000).toFixed(6)}ms per load`);
+    console.info("");
     
-    console.log("✅ TOML Configuration Parser Demo Complete!");
-    console.log("🚀 Empire Pro Config Empire with enhanced TOML support!");
+    console.info("✅ TOML Configuration Parser Demo Complete!");
+    console.info("🚀 Empire Pro Config Empire with enhanced TOML support!");
     
   } catch (error) {
     console.error("❌ Error:", error);

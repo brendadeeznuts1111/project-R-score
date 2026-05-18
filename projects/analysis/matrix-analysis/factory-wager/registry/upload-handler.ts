@@ -134,12 +134,12 @@ export class RegistryUploadHandler {
 
     try {
       // 1. Stream to disk efficiently - convert ReadableStream to buffer
-      console.log(`📥 Streaming upload: ${filename} (${(contentLength / 1024 / 1024).toFixed(1)} MB)`)
+      console.info(`📥 Streaming upload: ${filename} (${(contentLength / 1024 / 1024).toFixed(1)} MB)`)
       const buffer = await new Response(stream).arrayBuffer()
       await Bun.write(tempPath, buffer)
 
       // 2. Validate immediately after write
-      console.log(`🔍 Validating integrity...`)
+      console.info(`🔍 Validating integrity...`)
       const report = await this.validator.validateStream(tempPath, expectedCrc32)
 
       if (report.status === 'invalid') {
@@ -168,10 +168,10 @@ export class RegistryUploadHandler {
         }
       }
 
-      console.log(`✅ Upload complete: ${filename}`)
-      console.log(`   CRC32: ${report.calculatedCrc.toString(16).padStart(8, '0')}`)
-      console.log(`   Throughput: ${report.throughputMbps.toFixed(1)} MB/s`)
-      console.log(`   Duration: ${totalDuration.toFixed(2)} ms`)
+      console.info(`✅ Upload complete: ${filename}`)
+      console.info(`   CRC32: ${report.calculatedCrc.toString(16).padStart(8, '0')}`)
+      console.info(`   Throughput: ${report.throughputMbps.toFixed(1)} MB/s`)
+      console.info(`   Duration: ${totalDuration.toFixed(2)} ms`)
 
       return result
 
@@ -198,7 +198,7 @@ export class RegistryUploadHandler {
       expectedCrc32?: number
     }>
   ): Promise<UploadResult[]> {
-    console.log(`🔄 Processing batch upload: ${uploads.length} files`)
+    console.info(`🔄 Processing batch upload: ${uploads.length} files`)
 
     const results = await Promise.allSettled(
       uploads.map(upload =>
@@ -229,7 +229,7 @@ export class RegistryUploadHandler {
       })
     }
 
-    console.log(`✅ Batch complete: ${successful.length}/${uploads.length} files uploaded`)
+    console.info(`✅ Batch complete: ${successful.length}/${uploads.length} files uploaded`)
 
     return successful
   }
@@ -341,8 +341,8 @@ export class RegistryUploadHandler {
    * Cleanup temporary files older than specified age
    */
   async cleanupTempFiles(maxAgeHours: number = 24): Promise<number> {
-    console.log(`🧹 Cleanup scheduled for files older than ${maxAgeHours}h`)
-    console.log(`   Note: Directory scanning would be implemented with fs.readdir in Node.js context`)
+    console.info(`🧹 Cleanup scheduled for files older than ${maxAgeHours}h`)
+    console.info(`   Note: Directory scanning would be implemented with fs.readdir in Node.js context`)
 
     // Return 0 for now - would implement actual cleanup in production
     return 0
@@ -357,7 +357,7 @@ async function main() {
   const args = process.argv.slice(2)
 
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 📥 FactoryWager Registry Upload Handler
 
 Usage:
@@ -397,9 +397,9 @@ Examples:
 
     try {
       const result = await handler.handleUpload(stream, filePath, size)
-      console.log(`\n🎉 Test upload successful!`)
-      console.log(`📍 Path: ${result.path}`)
-      console.log(`🔐 Integrity: ${result.integrity.algorithm}-${result.integrity.crc32.toString(16).padStart(8, '0')}`)
+      console.info(`\n🎉 Test upload successful!`)
+      console.info(`📍 Path: ${result.path}`)
+      console.info(`🔐 Integrity: ${result.integrity.algorithm}-${result.integrity.crc32.toString(16).padStart(8, '0')}`)
 
     } catch (error: any) {
       console.error(`❌ Test upload failed: ${error.message}`)
@@ -415,7 +415,7 @@ Examples:
 
     const handler = new RegistryUploadHandler()
     const cleaned = await handler.cleanupTempFiles(hours)
-    console.log(`✅ Cleanup complete: ${cleaned} files removed`)
+    console.info(`✅ Cleanup complete: ${cleaned} files removed`)
     return
   }
 

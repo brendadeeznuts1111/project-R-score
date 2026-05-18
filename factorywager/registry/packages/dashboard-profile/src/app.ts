@@ -114,7 +114,7 @@ const dashboardHTML = `
     let profileData = null;
     
     ws.onopen = () => {
-      console.log('✅ WebSocket connected');
+      console.info('✅ WebSocket connected');
       // Request profile data - try to get userId from URL or default
       let userId = '@ashschaeffer1';
       const pathMatch = window.location.pathname.match(/\/profile\/(.+)/);
@@ -126,7 +126,7 @@ const dashboardHTML = `
       if (urlParams.get('user')) {
         userId = urlParams.get('user');
       }
-      console.log('Requesting profile for:', userId);
+      console.info('Requesting profile for:', userId);
       ws.send(JSON.stringify({ type: 'getProfile', userId }));
     };
     
@@ -164,7 +164,7 @@ const dashboardHTML = `
     function render3D(profile) {
       // 3D visualization would use THREE.js here
       // For now, just log the data
-      console.log('3D Render:', profile);
+      console.info('3D Render:', profile);
     }
   </script>
 </body>

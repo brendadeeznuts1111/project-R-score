@@ -26,60 +26,60 @@ function styled(
 }
 
 function showHelp() {
-  console.log(styled('🏰 FactoryWager Security Citadel v5.1', 'accent'));
-  console.log(styled('=====================================', 'muted'));
-  console.log();
-  console.log(styled('Enterprise-grade secrets management with immutable versioning', 'info'));
-  console.log();
-  console.log(styled('Core Features:', 'primary'));
-  console.log('  📜 Immutable Versioning      - One-click rollback with full audit trail');
-  console.log('  🔄 Lifecycle Automation      - Scheduled rotations and expiration monitoring');
-  console.log('  📊 Visual Version Graphs     - Mermaid, D3.js, and terminal visualizations');
-  console.log('  🌐 R2 Temporal Storage       - Persistent storage with compliance metadata');
-  console.log();
-  console.log(styled('Commands:', 'primary'));
-  console.log('  create <key> <value> [author] [description]     Create immutable version');
-  console.log('  rollback <key> <version> [author] [reason]      One-click rollback');
-  console.log('  visualize <key>                                   Generate visual graphs');
-  console.log('  timeline <key> [limit]                            Show version timeline');
-  console.log('  automate <key> <schedule> [config]               Setup lifecycle automation');
-  console.log('  dashboard                                         Show dashboard stats');
-  console.log('  audit <key> [format]                              Export audit report');
-  console.log('  help                                              Show this help');
-  console.log();
-  console.log(styled('Examples:', 'primary'));
-  console.log('  # Create a new secret version');
-  console.log(
+  console.info(styled('🏰 FactoryWager Security Citadel v5.1', 'accent'));
+  console.info(styled('=====================================', 'muted'));
+  console.info();
+  console.info(styled('Enterprise-grade secrets management with immutable versioning', 'info'));
+  console.info();
+  console.info(styled('Core Features:', 'primary'));
+  console.info('  📜 Immutable Versioning      - One-click rollback with full audit trail');
+  console.info('  🔄 Lifecycle Automation      - Scheduled rotations and expiration monitoring');
+  console.info('  📊 Visual Version Graphs     - Mermaid, D3.js, and terminal visualizations');
+  console.info('  🌐 R2 Temporal Storage       - Persistent storage with compliance metadata');
+  console.info();
+  console.info(styled('Commands:', 'primary'));
+  console.info('  create <key> <value> [author] [description]     Create immutable version');
+  console.info('  rollback <key> <version> [author] [reason]      One-click rollback');
+  console.info('  visualize <key>                                   Generate visual graphs');
+  console.info('  timeline <key> [limit]                            Show version timeline');
+  console.info('  automate <key> <schedule> [config]               Setup lifecycle automation');
+  console.info('  dashboard                                         Show dashboard stats');
+  console.info('  audit <key> [format]                              Export audit report');
+  console.info('  help                                              Show this help');
+  console.info();
+  console.info(styled('Examples:', 'primary'));
+  console.info('  # Create a new secret version');
+  console.info(
     '  bun run scripts/security-citadel.ts create API_KEY "sk_live_xxx" "developer" "Production API key"'
   );
-  console.log();
-  console.log('  # One-click rollback');
-  console.log(
+  console.info();
+  console.info('  # One-click rollback');
+  console.info(
     '  bun run scripts/security-citadel.ts rollback API_KEY v2.1.5 "admin" "Security issue"'
   );
-  console.log();
-  console.log('  # Generate visualizations');
-  console.log('  bun run scripts/security-citadel.ts visualize API_KEY');
-  console.log();
-  console.log('  # Setup automated rotation');
-  console.log('  bun run scripts/security-citadel.ts automate API_KEY cron "0 0 1 * *"');
-  console.log();
-  console.log(styled(`📖 Documentation: ${BUN_DOCS.factorywager.secrets}`, 'accent'));
+  console.info();
+  console.info('  # Generate visualizations');
+  console.info('  bun run scripts/security-citadel.ts visualize API_KEY');
+  console.info();
+  console.info('  # Setup automated rotation');
+  console.info('  bun run scripts/security-citadel.ts automate API_KEY cron "0 0 1 * *"');
+  console.info();
+  console.info(styled(`📖 Documentation: ${BUN_DOCS.factorywager.secrets}`, 'accent'));
 }
 
 async function handleCreate() {
   const [key, value, author, description] = [args[1], args[2], args[3], args[4]];
 
   if (!key || !value) {
-    console.log(styled('❌ Missing key or value', 'error'));
-    console.log(styled('Usage: create <key> <value> [author] [description]', 'muted'));
+    console.info(styled('❌ Missing key or value', 'error'));
+    console.info(styled('Usage: create <key> <value> [author] [description]', 'muted'));
     return;
   }
 
   try {
-    console.log(styled('📜 Creating immutable version...', 'info'));
-    console.log(styled(`   Key: ${key}`, 'primary'));
-    console.log(
+    console.info(styled('📜 Creating immutable version...', 'info'));
+    console.info(styled(`   Key: ${key}`, 'primary'));
+    console.info(
       styled(`   Value: ${value.substring(0, 20)}${value.length > 20 ? '...' : ''}`, 'muted')
     );
 
@@ -90,18 +90,18 @@ async function handleCreate() {
       description
     );
 
-    console.log();
-    console.log(styled('✅ Immutable version created!', 'success'));
-    console.log(styled(`   Version: ${version.version}`, 'primary'));
-    console.log(styled(`   Author: ${version.author}`, 'info'));
-    console.log(styled(`   Timestamp: ${version.timestamp}`, 'muted'));
-    console.log(styled(`   Checksum: ${version.checksum}`, 'muted'));
+    console.info();
+    console.info(styled('✅ Immutable version created!', 'success'));
+    console.info(styled(`   Version: ${version.version}`, 'primary'));
+    console.info(styled(`   Author: ${version.author}`, 'info'));
+    console.info(styled(`   Timestamp: ${version.timestamp}`, 'muted'));
+    console.info(styled(`   Checksum: ${version.checksum}`, 'muted'));
 
     if (version.description) {
-      console.log(styled(`   Description: ${version.description}`, 'info'));
+      console.info(styled(`   Description: ${version.description}`, 'info'));
     }
   } catch (error) {
-    console.log(styled(`❌ Failed to create version: ${error.message}`, 'error'));
+    console.info(styled(`❌ Failed to create version: ${error.message}`, 'error'));
     process.exit(1);
   }
 }
@@ -110,15 +110,15 @@ async function handleRollback() {
   const [key, targetVersion, author, reason] = [args[1], args[2], args[3], args[4]];
 
   if (!key || !targetVersion) {
-    console.log(styled('❌ Missing key or target version', 'error'));
-    console.log(styled('Usage: rollback <key> <version> [author] [reason]', 'muted'));
+    console.info(styled('❌ Missing key or target version', 'error'));
+    console.info(styled('Usage: rollback <key> <version> [author] [reason]', 'muted'));
     return;
   }
 
   try {
-    console.log(styled('⏪ One-click rollback...', 'warning'));
-    console.log(styled(`   Key: ${key}`, 'primary'));
-    console.log(styled(`   Target: ${targetVersion}`, 'info'));
+    console.info(styled('⏪ One-click rollback...', 'warning'));
+    console.info(styled(`   Key: ${key}`, 'primary'));
+    console.info(styled(`   Target: ${targetVersion}`, 'info'));
 
     const result = await factoryWagerSecurityCitadel.oneClickRollback(
       key,
@@ -127,13 +127,13 @@ async function handleRollback() {
       reason
     );
 
-    console.log();
-    console.log(styled('✅ Rollback completed!', 'success'));
-    console.log(styled(`   Rolled back to: ${result.rolledBackTo}`, 'primary'));
-    console.log(styled(`   Previous version: ${result.previousVersion}`, 'muted'));
-    console.log(styled(`   Audit ID: ${result.auditId}`, 'info'));
+    console.info();
+    console.info(styled('✅ Rollback completed!', 'success'));
+    console.info(styled(`   Rolled back to: ${result.rolledBackTo}`, 'primary'));
+    console.info(styled(`   Previous version: ${result.previousVersion}`, 'muted'));
+    console.info(styled(`   Audit ID: ${result.auditId}`, 'info'));
   } catch (error) {
-    console.log(styled(`❌ Rollback failed: ${error.message}`, 'error'));
+    console.info(styled(`❌ Rollback failed: ${error.message}`, 'error'));
     process.exit(1);
   }
 }
@@ -142,40 +142,40 @@ async function handleVisualize() {
   const key = args[1];
 
   if (!key) {
-    console.log(styled('❌ Missing key', 'error'));
-    console.log(styled('Usage: visualize <key>', 'muted'));
+    console.info(styled('❌ Missing key', 'error'));
+    console.info(styled('Usage: visualize <key>', 'muted'));
     return;
   }
 
   try {
-    console.log(styled('📊 Generating visual graphs...', 'info'));
-    console.log(styled(`   Key: ${key}`, 'primary'));
+    console.info(styled('📊 Generating visual graphs...', 'info'));
+    console.info(styled(`   Key: ${key}`, 'primary'));
 
     const visualData = await factoryWagerSecurityCitadel.generateVisualGraph(key);
 
-    console.log();
-    console.log(styled('📊 Visual Graphs Generated!', 'success'));
-    console.log();
+    console.info();
+    console.info(styled('📊 Visual Graphs Generated!', 'success'));
+    console.info();
 
     // Show terminal visualization
-    console.log(styled('🖥️  Terminal Visualization:', 'accent'));
-    console.log(visualData.terminal);
-    console.log();
+    console.info(styled('🖥️  Terminal Visualization:', 'accent'));
+    console.info(visualData.terminal);
+    console.info();
 
     // Show Mermaid diagram
-    console.log(styled('🔗 Mermaid Diagram:', 'accent'));
-    console.log(styled('```mermaid', 'muted'));
-    console.log(visualData.mermaid);
-    console.log(styled('```', 'muted'));
-    console.log();
+    console.info(styled('🔗 Mermaid Diagram:', 'accent'));
+    console.info(styled('```mermaid', 'muted'));
+    console.info(visualData.mermaid);
+    console.info(styled('```', 'muted'));
+    console.info();
 
     // Show D3 data summary
-    console.log(styled('📈 D3.js Data:', 'accent'));
-    console.log(styled(`   Nodes: ${visualData.d3.nodes.length}`, 'info'));
-    console.log(styled(`   Links: ${visualData.d3.links.length}`, 'info'));
-    console.log(styled(`   Latest: ${visualData.timeline[0]?.version || 'N/A'}`, 'primary'));
+    console.info(styled('📈 D3.js Data:', 'accent'));
+    console.info(styled(`   Nodes: ${visualData.d3.nodes.length}`, 'info'));
+    console.info(styled(`   Links: ${visualData.d3.links.length}`, 'info'));
+    console.info(styled(`   Latest: ${visualData.timeline[0]?.version || 'N/A'}`, 'primary'));
   } catch (error) {
-    console.log(styled(`❌ Visualization failed: ${error.message}`, 'error'));
+    console.info(styled(`❌ Visualization failed: ${error.message}`, 'error'));
     process.exit(1);
   }
 }
@@ -184,21 +184,21 @@ async function handleTimeline() {
   const [key, limitStr] = [args[1], args[2]];
 
   if (!key) {
-    console.log(styled('❌ Missing key', 'error'));
-    console.log(styled('Usage: timeline <key> [limit]', 'muted'));
+    console.info(styled('❌ Missing key', 'error'));
+    console.info(styled('Usage: timeline <key> [limit]', 'muted'));
     return;
   }
 
   const limit = parseInt(limitStr) || 10;
 
   try {
-    console.log(styled('📅 Loading timeline...', 'info'));
+    console.info(styled('📅 Loading timeline...', 'info'));
 
     const timeline = await factoryWagerSecurityCitadel.getSecretTimeline(key, limit);
 
-    console.log();
-    console.log(styled(`📅 Timeline for ${key} (showing ${timeline.length})`, 'primary'));
-    console.log(styled('─'.repeat(60), 'muted'));
+    console.info();
+    console.info(styled(`📅 Timeline for ${key} (showing ${timeline.length})`, 'primary'));
+    console.info(styled('─'.repeat(60), 'muted'));
 
     timeline.forEach((entry, index) => {
       const isLatest = index === 0;
@@ -206,18 +206,18 @@ async function handleTimeline() {
       const color =
         entry.action === 'CREATE' ? 'success' : entry.action === 'ROLLBACK' ? 'warning' : 'info';
 
-      console.log(
+      console.info(
         styled(`${prefix} ${entry.version}`, color) +
           styled(` | ${entry.timestamp.split('T')[0]}`, 'muted') +
           styled(` | ${entry.author}`, 'primary')
       );
 
       if (entry.description) {
-        console.log(styled(`   "${entry.description}"`, 'muted'));
+        console.info(styled(`   "${entry.description}"`, 'muted'));
       }
     });
   } catch (error) {
-    console.log(styled(`❌ Timeline failed: ${error.message}`, 'error'));
+    console.info(styled(`❌ Timeline failed: ${error.message}`, 'error'));
     process.exit(1);
   }
 }
@@ -226,18 +226,18 @@ async function handleAutomate() {
   const [key, scheduleType, expression] = [args[1], args[2], args[3]];
 
   if (!key || !scheduleType || !expression) {
-    console.log(styled('❌ Missing key, schedule type, or expression', 'error'));
-    console.log(styled('Usage: automate <key> <cron|interval> <expression>', 'muted'));
-    console.log(styled('Examples:', 'primary'));
-    console.log('  automate API_KEY cron "0 0 1 * *"     # Monthly');
-    console.log('  automate DB_PASS interval 2592000000   # 30 days');
+    console.info(styled('❌ Missing key, schedule type, or expression', 'error'));
+    console.info(styled('Usage: automate <key> <cron|interval> <expression>', 'muted'));
+    console.info(styled('Examples:', 'primary'));
+    console.info('  automate API_KEY cron "0 0 1 * *"     # Monthly');
+    console.info('  automate DB_PASS interval 2592000000   # 30 days');
     return;
   }
 
   try {
-    console.log(styled('🔄 Setting up lifecycle automation...', 'info'));
-    console.log(styled(`   Key: ${key}`, 'primary'));
-    console.log(styled(`   Schedule: ${scheduleType} ${expression}`, 'success'));
+    console.info(styled('🔄 Setting up lifecycle automation...', 'info'));
+    console.info(styled(`   Key: ${key}`, 'primary'));
+    console.info(styled(`   Schedule: ${scheduleType} ${expression}`, 'success'));
 
     const ruleId = await factoryWagerSecurityCitadel.setupLifecycleAutomation(key, {
       schedule: scheduleType as 'cron' | 'interval',
@@ -247,50 +247,50 @@ async function handleAutomate() {
       notifications: ['admin@company.com'],
     });
 
-    console.log();
-    console.log(styled('✅ Lifecycle automation configured!', 'success'));
-    console.log(styled(`   Rule ID: ${ruleId}`, 'primary'));
-    console.log(styled(`   Auto-rotate: enabled`, 'success'));
-    console.log(styled(`   Warning days: 7`, 'info'));
+    console.info();
+    console.info(styled('✅ Lifecycle automation configured!', 'success'));
+    console.info(styled(`   Rule ID: ${ruleId}`, 'primary'));
+    console.info(styled(`   Auto-rotate: enabled`, 'success'));
+    console.info(styled(`   Warning days: 7`, 'info'));
   } catch (error) {
-    console.log(styled(`❌ Automation setup failed: ${error.message}`, 'error'));
+    console.info(styled(`❌ Automation setup failed: ${error.message}`, 'error'));
     process.exit(1);
   }
 }
 
 async function handleDashboard() {
   try {
-    console.log(styled('📊 Security Citadel Dashboard', 'accent'));
-    console.log(styled('================================', 'muted'));
+    console.info(styled('📊 Security Citadel Dashboard', 'accent'));
+    console.info(styled('================================', 'muted'));
 
     const stats = await factoryWagerSecurityCitadel.getDashboardStats();
 
-    console.log(styled(`🔑 Total Secrets: ${stats.totalSecrets}`, 'primary'));
-    console.log(styled(`📜 Total Versions: ${stats.totalVersions}`, 'info'));
-    console.log(styled(`🤖 Active Automations: ${stats.activeAutomations}`, 'success'));
-    console.log(
+    console.info(styled(`🔑 Total Secrets: ${stats.totalSecrets}`, 'primary'));
+    console.info(styled(`📜 Total Versions: ${stats.totalVersions}`, 'info'));
+    console.info(styled(`🤖 Active Automations: ${stats.activeAutomations}`, 'success'));
+    console.info(
       styled(
         `⚠️  Recent Activity: ${stats.recentActivity}`,
         stats.recentActivity > 0 ? 'warning' : 'success'
       )
     );
-    console.log(
+    console.info(
       styled(
         `📈 Compliance Score: ${stats.complianceScore}%`,
         stats.complianceScore >= 95 ? 'success' : 'warning'
       )
     );
 
-    console.log();
-    console.log(styled('🏭 FactoryWager v5.1 Features Active:', 'info'));
-    console.log(styled('   ✅ Immutable Versioning', 'success'));
-    console.log(styled('   ✅ One-Click Rollback', 'success'));
-    console.log(styled('   ✅ Visual Graphs', 'success'));
-    console.log(styled('   ✅ Lifecycle Automation', 'success'));
-    console.log(styled('   ✅ R2 Temporal Storage', 'success'));
-    console.log(styled('   ✅ Audit Trails', 'success'));
+    console.info();
+    console.info(styled('🏭 FactoryWager v5.1 Features Active:', 'info'));
+    console.info(styled('   ✅ Immutable Versioning', 'success'));
+    console.info(styled('   ✅ One-Click Rollback', 'success'));
+    console.info(styled('   ✅ Visual Graphs', 'success'));
+    console.info(styled('   ✅ Lifecycle Automation', 'success'));
+    console.info(styled('   ✅ R2 Temporal Storage', 'success'));
+    console.info(styled('   ✅ Audit Trails', 'success'));
   } catch (error) {
-    console.log(styled(`❌ Dashboard failed: ${error.message}`, 'error'));
+    console.info(styled(`❌ Dashboard failed: ${error.message}`, 'error'));
     process.exit(1);
   }
 }
@@ -299,13 +299,13 @@ async function handleAudit() {
   const [key, format] = [args[1], args[2]];
 
   if (!key) {
-    console.log(styled('❌ Missing key', 'error'));
-    console.log(styled('Usage: audit <key> [format]', 'muted'));
+    console.info(styled('❌ Missing key', 'error'));
+    console.info(styled('Usage: audit <key> [format]', 'muted'));
     return;
   }
 
   try {
-    console.log(styled('📋 Generating audit report...', 'info'));
+    console.info(styled('📋 Generating audit report...', 'info'));
 
     const report = await factoryWagerSecurityCitadel.exportAuditReport(
       key,
@@ -317,13 +317,13 @@ async function handleAudit() {
 
     await Bun.write(filename, report);
 
-    console.log();
-    console.log(styled('📋 Audit report generated!', 'success'));
-    console.log(styled(`   File: ${filename}`, 'primary'));
-    console.log(styled(`   Format: ${format || 'json'}`, 'info'));
-    console.log(styled(`   Size: ${report.length} bytes`, 'muted'));
+    console.info();
+    console.info(styled('📋 Audit report generated!', 'success'));
+    console.info(styled(`   File: ${filename}`, 'primary'));
+    console.info(styled(`   Format: ${format || 'json'}`, 'info'));
+    console.info(styled(`   Size: ${report.length} bytes`, 'muted'));
   } catch (error) {
-    console.log(styled(`❌ Audit report failed: ${error.message}`, 'error'));
+    console.info(styled(`❌ Audit report failed: ${error.message}`, 'error'));
     process.exit(1);
   }
 }
@@ -369,8 +369,8 @@ async function main() {
         if (!command) {
           showHelp();
         } else {
-          console.log(styled(`❌ Unknown command: ${command}`, 'error'));
-          console.log(styled('Use "help" to see available commands', 'muted'));
+          console.info(styled(`❌ Unknown command: ${command}`, 'error'));
+          console.info(styled('Use "help" to see available commands', 'muted'));
         }
     }
   } catch (error) {

@@ -24,12 +24,12 @@ export function logVerbose(message: string) {
     // ignore logger failures to avoid breaking verbose printing
   }
   if (!globalVerbose) return;
-  console.log(theme.muted(message));
+  console.info(theme.muted(message));
 }
 
 export function logVerboseConsole(message: string) {
   if (!globalVerbose) return;
-  console.log(theme.muted(message));
+  console.info(theme.muted(message));
 }
 
 export function setYes(v: boolean) {

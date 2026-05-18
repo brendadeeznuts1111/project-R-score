@@ -11,7 +11,7 @@ if (import.meta.path !== Bun.main) {
 
 import { which, spawn } from "bun";
 
-console.log(`
+console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  CLI Dashboard Starting                                   ║
 ║  Entrypoint: ${Bun.main}${' '.repeat(Math.max(0, 80 - Bun.main.length))}║
@@ -21,10 +21,10 @@ console.log(`
 
 const mainDir = Bun.main.slice(0, Bun.main.lastIndexOf('/'));
 
-console.log(`Project Home: ${process.env.PROJECT_HOME || mainDir}`);
-console.log(`BUN_PLATFORM_HOME: ${process.env.BUN_PLATFORM_HOME || 'Not set'}`);
-console.log(`PROJECT_BIN: ${process.env.PROJECT_BIN || mainDir}/scripts`);
-console.log('');
+console.info(`Project Home: ${process.env.PROJECT_HOME || mainDir}`);
+console.info(`BUN_PLATFORM_HOME: ${process.env.BUN_PLATFORM_HOME || 'Not set'}`);
+console.info(`PROJECT_BIN: ${process.env.PROJECT_BIN || mainDir}/scripts`);
+console.info('');
 
 // Interactive dashboard components
 interface DashboardComponent {
@@ -99,7 +99,7 @@ async function renderDashboard() {
   const debug = process.env.LOG_LEVEL === 'debug';
 
   console.clear();
-  console.log(`
+  console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  CLI Dashboard - Live Updates                            ║
 ║  Entrypoint: ${Bun.main.split('/').pop()}${' '.repeat(Math.max(0, 45 - Bun.main.split('/').pop()!.length))}║
@@ -109,17 +109,17 @@ async function renderDashboard() {
   for (const comp of components) {
     try {
       const output = await comp.update();
-      console.log(output);
+      console.info(output);
     } catch (err) {
       if (debug) {
-        console.log(`│ [ERROR] ${comp.name}: ${err}`);
+        console.info(`│ [ERROR] ${comp.name}: ${err}`);
       } else {
-        console.log(`│ [ERROR] ${comp.name}: (enable debug for details)`);
+        console.info(`│ [ERROR] ${comp.name}: (enable debug for details)`);
       }
     }
   }
 
-  console.log(`
+  console.info(`
 ┌─ Quick Actions
 │ Press Ctrl+C to exit
 │ Run: bun tools/overseer-cli.ts cli-dashboard bun run dashboard --debug
@@ -133,7 +133,7 @@ let running = true;
 async function startDashboard() {
   // Handle graceful shutdown
   process.on('SIGINT', () => {
-    console.log('\n\n👋 Dashboard shutting down...');
+    console.info('\n\n👋 Dashboard shutting down...');
     running = false;
     Bun.exit(0);
   });
@@ -144,8 +144,8 @@ async function startDashboard() {
   }
 }
 
-console.log('Starting dashboard (refresh:', refreshInterval, 'ms)...');
-console.log('Press Ctrl+C to exit.\n');
+console.info('Starting dashboard (refresh:', refreshInterval, 'ms)...');
+console.info('Press Ctrl+C to exit.\n');
 
 // Start after brief delay
 setTimeout(startDashboard, 500);

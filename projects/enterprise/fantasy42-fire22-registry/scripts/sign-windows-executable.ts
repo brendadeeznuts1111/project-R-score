@@ -53,12 +53,12 @@ class WindowsCodeSigner {
   }
 
   async signExecutables(files: string[]): Promise<SigningResult[]> {
-    console.log('🔐 Fantasy42-Fire22 Windows Code Signing');
-    console.log('========================================');
-    console.log(`📜 Certificate: ${basename(this.config.certificatePath)}`);
-    console.log(`⏰ Timestamp Server: ${this.config.timestampServer}`);
-    console.log(`📁 Files to sign: ${files.length}`);
-    console.log('');
+    console.info('🔐 Fantasy42-Fire22 Windows Code Signing');
+    console.info('========================================');
+    console.info(`📜 Certificate: ${basename(this.config.certificatePath)}`);
+    console.info(`⏰ Timestamp Server: ${this.config.timestampServer}`);
+    console.info(`📁 Files to sign: ${files.length}`);
+    console.info('');
 
     try {
       // Validate certificate
@@ -82,7 +82,7 @@ class WindowsCodeSigner {
   }
 
   private async validateCertificate(): Promise<void> {
-    console.log('🔍 Validating certificate...');
+    console.info('🔍 Validating certificate...');
 
     // Check if certificate file exists
     if (!existsSync(this.config.certificatePath)) {
@@ -99,11 +99,11 @@ class WindowsCodeSigner {
       // Extract certificate information
       this.certificateInfo = await this.extractCertificateInfo();
 
-      console.log('✅ Certificate validation passed');
+      console.info('✅ Certificate validation passed');
       if (this.config.verbose && this.certificateInfo) {
-        console.log(`   Subject: ${this.certificateInfo.subject}`);
-        console.log(`   Issuer: ${this.certificateInfo.issuer}`);
-        console.log(
+        console.info(`   Subject: ${this.certificateInfo.subject}`);
+        console.info(`   Issuer: ${this.certificateInfo.issuer}`);
+        console.info(
           `   Valid: ${this.certificateInfo.validFrom} to ${this.certificateInfo.validTo}`
         );
       }
@@ -154,7 +154,7 @@ class WindowsCodeSigner {
   }
 
   private async signFile(filePath: string): Promise<SigningResult> {
-    console.log(`🔐 Signing: ${basename(filePath)}`);
+    console.info(`🔐 Signing: ${basename(filePath)}`);
 
     const result: SigningResult = {
       file: filePath,
@@ -179,7 +179,7 @@ class WindowsCodeSigner {
       if (!this.config.force) {
         const alreadySigned = await this.isFileSigned(filePath);
         if (alreadySigned) {
-          console.log(`   ℹ️ Already signed (use --force to re-sign)`);
+          console.info(`   ℹ️ Already signed (use --force to re-sign)`);
           result.signed = true;
           result.success = true;
           return result;
@@ -196,7 +196,7 @@ class WindowsCodeSigner {
         result.verified = await this.verifySignature(filePath);
       }
 
-      console.log(`   ✅ Signed successfully`);
+      console.info(`   ✅ Signed successfully`);
     } catch (error) {
       result.error = error instanceof Error ? error.message : String(error);
       console.error(`   ❌ Signing failed: ${result.error}`);
@@ -294,7 +294,7 @@ class WindowsCodeSigner {
 
   private async verifySignature(filePath: string): Promise<boolean> {
     try {
-      console.log(`   🔍 Verifying signature...`);
+      console.info(`   🔍 Verifying signature...`);
 
       if (process.platform === 'win32') {
         execSync(`signtool verify /pa /v "${filePath}"`, {
@@ -306,10 +306,10 @@ class WindowsCodeSigner {
         });
       }
 
-      console.log(`   ✅ Signature verified`);
+      console.info(`   ✅ Signature verified`);
       return true;
     } catch (error) {
-      console.log(`   ❌ Signature verification failed`);
+      console.info(`   ❌ Signature verification failed`);
       return false;
     }
   }
@@ -338,7 +338,7 @@ class WindowsCodeSigner {
     };
 
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`📊 Signing report: ${basename(reportPath)}`);
+    console.info(`📊 Signing report: ${basename(reportPath)}`);
   }
 
   private showSigningSummary(): void {
@@ -347,35 +347,35 @@ class WindowsCodeSigner {
     const failed = this.signingResults.filter(r => !r.success).length;
     const verified = this.signingResults.filter(r => r.verified).length;
 
-    console.log('\n🏆 Code Signing Summary');
-    console.log('=======================');
-    console.log(`📁 Total Files: ${total}`);
-    console.log(`✅ Successfully Signed: ${signed}`);
-    console.log(`❌ Failed: ${failed}`);
+    console.info('\n🏆 Code Signing Summary');
+    console.info('=======================');
+    console.info(`📁 Total Files: ${total}`);
+    console.info(`✅ Successfully Signed: ${signed}`);
+    console.info(`❌ Failed: ${failed}`);
 
     if (this.config.verify) {
-      console.log(`🔍 Verified: ${verified}`);
+      console.info(`🔍 Verified: ${verified}`);
     }
 
     if (failed > 0) {
-      console.log('\n❌ Failed Files:');
+      console.info('\n❌ Failed Files:');
       this.signingResults
         .filter(r => !r.success)
-        .forEach(r => console.log(`   • ${basename(r.file)}: ${r.error}`));
+        .forEach(r => console.info(`   • ${basename(r.file)}: ${r.error}`));
     }
 
     if (signed > 0) {
-      console.log('\n🚀 Next Steps:');
-      console.log('1. Test signed executables on Windows systems');
-      console.log('2. Verify signatures show correctly in file properties');
-      console.log('3. Check Windows SmartScreen compatibility');
-      console.log('4. Distribute signed executables to users');
+      console.info('\n🚀 Next Steps:');
+      console.info('1. Test signed executables on Windows systems');
+      console.info('2. Verify signatures show correctly in file properties');
+      console.info('3. Check Windows SmartScreen compatibility');
+      console.info('4. Distribute signed executables to users');
     }
   }
 
   // Static utility methods
   static async setupCertificate(certPath: string, password: string): Promise<boolean> {
-    console.log('🔧 Setting up code signing certificate...');
+    console.info('🔧 Setting up code signing certificate...');
 
     try {
       // Create certificates directory
@@ -400,11 +400,11 @@ class WindowsCodeSigner {
 
       await signer.validateCertificate();
 
-      console.log('✅ Certificate setup completed');
-      console.log(`📁 Certificate directory: ${certDir}`);
-      console.log('💡 Set environment variables:');
-      console.log(`   FIRE22_WINDOWS_CERT_PATH="${certPath}"`);
-      console.log(`   FIRE22_WINDOWS_CERT_PASSWORD="${password}"`);
+      console.info('✅ Certificate setup completed');
+      console.info(`📁 Certificate directory: ${certDir}`);
+      console.info('💡 Set environment variables:');
+      console.info(`   FIRE22_WINDOWS_CERT_PATH="${certPath}"`);
+      console.info(`   FIRE22_WINDOWS_CERT_PASSWORD="${password}"`);
 
       return true;
     } catch (error) {
@@ -465,8 +465,8 @@ async function main() {
       config.outputDir = arg.split('=')[1];
     } else if (arg === 'setup') {
       // Certificate setup mode
-      console.log('🔧 Certificate Setup Mode');
-      console.log('Please provide certificate path and password as arguments');
+      console.info('🔧 Certificate Setup Mode');
+      console.info('Please provide certificate path and password as arguments');
       process.exit(1);
     } else if (!arg.startsWith('--')) {
       // Treat as file to sign
@@ -504,7 +504,7 @@ async function main() {
 }
 
 function showHelp() {
-  console.log(`
+  console.info(`
 🔐 Fantasy42-Fire22 Windows Code Signing
 
 Usage: bun run scripts/sign-windows-executable.ts [options] <files...>

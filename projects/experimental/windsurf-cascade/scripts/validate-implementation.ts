@@ -8,8 +8,8 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 
-console.log('🔍 Validating Bun v1.3 Implementation');
-console.log('=====================================');
+console.info('🔍 Validating Bun v1.3 Implementation');
+console.info('=====================================');
 
 // Check CSS files
 const cssFiles = [
@@ -18,24 +18,24 @@ const cssFiles = [
     'apps/dashboard/src/index.css'
 ];
 
-console.log('\n📁 Checking CSS Files:');
+console.info('\n📁 Checking CSS Files:');
 cssFiles.forEach(file => {
     try {
         const content = readFileSync(resolve(file), 'utf8');
-        console.log(`✅ ${file} - ${content.length} bytes`);
+        console.info(`✅ ${file} - ${content.length} bytes`);
 
         // Check for key features
         if (content.includes('::view-transition-old(')) {
-            console.log('   🎨 View transition pseudo-elements found');
+            console.info('   🎨 View transition pseudo-elements found');
         }
         if (content.includes('@layer')) {
-            console.log('   📦 @layer blocks found');
+            console.info('   📦 @layer blocks found');
         }
         if (content.includes('color-scheme')) {
-            console.log('   🌈 Color-scheme support found');
+            console.info('   🌈 Color-scheme support found');
         }
     } catch (error) {
-        console.log(`❌ ${file} - Not found`);
+        console.info(`❌ ${file} - Not found`);
     }
 });
 
@@ -47,24 +47,24 @@ const tsFiles = [
     'property-tests/memory-leak.property.test.ts'
 ];
 
-console.log('\n📝 Checking TypeScript Files:');
+console.info('\n📝 Checking TypeScript Files:');
 tsFiles.forEach(file => {
     try {
         const content = readFileSync(resolve(file), 'utf8');
-        console.log(`✅ ${file} - ${content.length} bytes`);
+        console.info(`✅ ${file} - ${content.length} bytes`);
 
         // Check for key features
         if (content.includes('performViewTransition')) {
-            console.log('   🔄 View transition utilities found');
+            console.info('   🔄 View transition utilities found');
         }
         if (content.includes('useViewTransition')) {
-            console.log('   ⚛️  React hooks found');
+            console.info('   ⚛️  React hooks found');
         }
         if (content.includes('createHeapSnapshot')) {
-            console.log('   🧠 Memory leak detection found');
+            console.info('   🧠 Memory leak detection found');
         }
     } catch (error) {
-        console.log(`❌ ${file} - Not found`);
+        console.info(`❌ ${file} - Not found`);
     }
 });
 
@@ -80,18 +80,18 @@ const docFiles = [
     'ORGANIZATION_SUMMARY.md'
 ];
 
-console.log('\n📚 Checking Documentation:');
+console.info('\n📚 Checking Documentation:');
 docFiles.forEach(file => {
     try {
         const content = readFileSync(resolve(file), 'utf8');
-        console.log(`✅ ${file} - ${content.length} bytes`);
+        console.info(`✅ ${file} - ${content.length} bytes`);
     } catch (error) {
-        console.log(`❌ ${file} - Not found`);
+        console.info(`❌ ${file} - Not found`);
     }
 });
 
 // Validate CSS syntax by checking for key patterns
-console.log('\n🎨 Validating CSS Features:');
+console.info('\n🎨 Validating CSS Features:');
 
 try {
     const cssContent = readFileSync(resolve('apps/dashboard/src/bun-v13-features.css'), 'utf8');
@@ -109,17 +109,17 @@ try {
 
     Object.entries(features).forEach(([name, pattern]) => {
         if (pattern.test(cssContent)) {
-            console.log(`✅ ${name}`);
+            console.info(`✅ ${name}`);
         } else {
-            console.log(`❌ ${name} - Pattern not found`);
+            console.info(`❌ ${name} - Pattern not found`);
         }
     });
 } catch (error) {
-    console.log('❌ Could not validate CSS features');
+    console.info('❌ Could not validate CSS features');
 }
 
 // Validate TypeScript implementation
-console.log('\n⚛️  Validating TypeScript Implementation:');
+console.info('\n⚛️  Validating TypeScript Implementation:');
 
 try {
     const tsContent = readFileSync(resolve('apps/dashboard/src/utils/view-transitions.ts'), 'utf8');
@@ -136,17 +136,17 @@ try {
 
     Object.entries(features).forEach(([name, pattern]) => {
         if (pattern.test(tsContent)) {
-            console.log(`✅ ${name}`);
+            console.info(`✅ ${name}`);
         } else {
-            console.log(`❌ ${name} - Pattern not found`);
+            console.info(`❌ ${name} - Pattern not found`);
         }
     });
 } catch (error) {
-    console.log('❌ Could not validate TypeScript implementation');
+    console.info('❌ Could not validate TypeScript implementation');
 }
 
 // Validate memory leak detection
-console.log('\n🧠 Validating Memory Leak Detection:');
+console.info('\n🧠 Validating Memory Leak Detection:');
 
 try {
     const testContent = readFileSync(resolve('property-tests/memory-leak.property.test.ts'), 'utf8');
@@ -164,37 +164,37 @@ try {
 
     Object.entries(features).forEach(([name, pattern]) => {
         if (pattern.test(testContent)) {
-            console.log(`✅ ${name}`);
+            console.info(`✅ ${name}`);
         } else {
-            console.log(`❌ ${name} - Pattern not found`);
+            console.info(`❌ ${name} - Pattern not found`);
         }
     });
 } catch (error) {
-    console.log('❌ Could not validate memory leak detection');
+    console.info('❌ Could not validate memory leak detection');
 }
 
 // Summary
-console.log('\n📊 Implementation Summary:');
-console.log('=========================');
+console.info('\n📊 Implementation Summary:');
+console.info('=========================');
 
 const totalChecks = 8 + 7 + 8 + 4; // CSS + TS + Memory + Docs
-console.log(`📁 Files checked: ${cssFiles.length + tsFiles.length + docFiles.length}`);
-console.log(`🎯 Features validated: ${totalChecks}`);
-console.log('🚀 Status: PRODUCTION READY');
+console.info(`📁 Files checked: ${cssFiles.length + tsFiles.length + docFiles.length}`);
+console.info(`🎯 Features validated: ${totalChecks}`);
+console.info('🚀 Status: PRODUCTION READY');
 
-console.log('\n🎉 Implementation Complete!');
-console.log('============================');
-console.log('✅ Bun v1.3 CSS features implemented');
-console.log('✅ Memory leak detection system operational');
-console.log('✅ React hooks and components ready');
-console.log('✅ Documentation comprehensive');
-console.log('✅ Test coverage thorough');
-console.log('✅ Performance monitoring active');
+console.info('\n🎉 Implementation Complete!');
+console.info('============================');
+console.info('✅ Bun v1.3 CSS features implemented');
+console.info('✅ Memory leak detection system operational');
+console.info('✅ React hooks and components ready');
+console.info('✅ Documentation comprehensive');
+console.info('✅ Test coverage thorough');
+console.info('✅ Performance monitoring active');
 
-console.log('\n📚 Next Steps:');
-console.log('1. Run: bun test property-tests/memory-leak.property.test.ts');
-console.log('2. Start: cd apps/dashboard && bun run dev');
-console.log('3. Navigate to: http://localhost:3000 and click "Bun v1.3 CSS"');
-console.log('4. Review: docs/BUN_V13_CSS_FEATURES.md');
+console.info('\n📚 Next Steps:');
+console.info('1. Run: bun test property-tests/memory-leak.property.test.ts');
+console.info('2. Start: cd apps/dashboard && bun run dev');
+console.info('3. Navigate to: http://localhost:3000 and click "Bun v1.3 CSS"');
+console.info('4. Review: docs/BUN_V13_CSS_FEATURES.md');
 
-console.log('\n🎯 Ready for production deployment!');
+console.info('\n🎯 Ready for production deployment!');

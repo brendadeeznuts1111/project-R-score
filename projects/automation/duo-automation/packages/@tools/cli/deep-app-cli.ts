@@ -59,8 +59,8 @@ async function main() {
   const system = new EnhancedPhoneIntelligenceSystem({ timeout, retry, realCashApp, mockMode });
 
   if (cmd === COMMANDS.BUILD) {
-    console.log(`🚀 DCE Build (--feature=PREMIUM)`);
-    console.log('✅ Build complete: ./bin/epcli.js [DCE: -60%]');
+    console.info(`🚀 DCE Build (--feature=PREMIUM)`);
+    console.info('✅ Build complete: ./bin/epcli.js [DCE: -60%]');
     process.exit(0);
   }
 
@@ -68,13 +68,13 @@ async function main() {
     if (!target) { console.error('❌ Error: target required for bench.'); process.exit(1); }
     const start = performance.now();
     await system.processEnhanced(target, { dryRun, mockMode, realCashApp });
-    console.log(`§Bench: ${(performance.now() - start).toFixed(2)}ms [ROI: ∞]`);
+    console.info(`§Bench: ${(performance.now() - start).toFixed(2)}ms [ROI: ∞]`);
     return;
   }
 
   if (cmd === COMMANDS.SYNC) {
-    console.log('🔄 R2 Sync: Local → Remote (SelfHealingCircuit §104)');
-    console.log('🟢 STABLE [CLICK→R2/mirror] Cycles:0');
+    console.info('🔄 R2 Sync: Local → Remote (SelfHealingCircuit §104)');
+    console.info('🟢 STABLE [CLICK→R2/mirror] Cycles:0');
     process.exit(0);
   }
 
@@ -83,44 +83,44 @@ async function main() {
       ? await runSwarm(target || 'phones.txt', system, { dryRun, swarmSize, mockMode, realCashApp })
       : [await system.processEnhanced(target!, { dryRun, mockMode, realCashApp })];
 
-    if (hyper && results[0]) console.log(createHyperAudit(results[0]));
+    if (hyper && results[0]) console.info(createHyperAudit(results[0]));
 
     if (cmd === COMMANDS.AUDIT) {
       if (!target) { console.error('❌ Error: target required for audit.'); process.exit(1); }
       const risk = await system.assessDeepRisk(target);
-      console.log(`🛡️ Deep Audit [${target}]`);
-      console.log(`Overall Risk: ${risk.overallRisk}`);
-      console.log(`Action: ${risk.actionRequired ? '⚠️ REQUIRED' : '✅ NONE'}`);
+      console.info(`🛡️ Deep Audit [${target}]`);
+      console.info(`Overall Risk: ${risk.overallRisk}`);
+      console.info(`Action: ${risk.actionRequired ? '⚠️ REQUIRED' : '✅ NONE'}`);
       risk.risks.forEach(r => {
-        console.log(` - [${r.severity}] ${r.factor}: ${r.recommendation}`);
+        console.info(` - [${r.severity}] ${r.factor}: ${r.recommendation}`);
       });
       process.exit(0);
     }
 
     if (cmd === COMMANDS.EXPORT) {
-      console.log(JSON.stringify(results.length === 1 ? results[0] : results, null, 2));
+      console.info(JSON.stringify(results.length === 1 ? results[0] : results, null, 2));
       process.exit(0);
     }
 
     if (cmd === COMMANDS.PTY) {
-      console.log(`\x1b[1mEmpire PTY Multi-Session [Target: ${target}]\x1b[0m`);
-      console.log(new Array(41).join('─'));
-      console.log(`[Session 1] Connecting to Matrix...`);
-      console.log(`[Session 1] Fingerprint: ${results[0]?.autonomicState?.fingerprint}`);
-      console.log(`[Session 1] Status: ATTACHED`);
-      console.log(new Array(41).join('─'));
-      console.log(`Type 'exit' to detach sessions.`);
+      console.info(`\x1b[1mEmpire PTY Multi-Session [Target: ${target}]\x1b[0m`);
+      console.info(new Array(41).join('─'));
+      console.info(`[Session 1] Connecting to Matrix...`);
+      console.info(`[Session 1] Fingerprint: ${results[0]?.autonomicState?.fingerprint}`);
+      console.info(`[Session 1] Status: ATTACHED`);
+      console.info(new Array(41).join('─'));
+      console.info(`Type 'exit' to detach sessions.`);
       process.exit(0);
     }
     
     if (cmd === COMMANDS.GRAPH) {
       const res = results[0];
-      console.log('digraph G {');
-      console.log(`  "${target}" [label="Ident:${res.autonomicState?.fingerprint}"];`);
+      console.info('digraph G {');
+      console.info(`  "${target}" [label="Ident:${res.autonomicState?.fingerprint}"];`);
       res.identityGraph.connections?.forEach((c: any) => {
-        console.log(`  "${target}" -> "${c.target}" [label="${c.type} (${c.strength})"];`);
+        console.info(`  "${target}" -> "${c.target}" [label="${c.type} (${c.strength})"];`);
       });
-      console.log('}');
+      console.info('}');
       process.exit(0);
     }
 
@@ -136,7 +136,7 @@ async function main() {
 }
 
 async function runSwarm(file: string, system: any, opts: any) {
-  console.log(`🚀 Executing Swarm (§Farm:82) for ${file} [Max Size: ${opts.swarmSize}]...`);
+  console.info(`🚀 Executing Swarm (§Farm:82) for ${file} [Max Size: ${opts.swarmSize}]...`);
   const phones = (file && file.indexOf('.txt') === file.length - 4)
     ? (await (globalThis as any).Bun.file(file).text()).split('\n').filter(Boolean).slice(0, opts.swarmSize)
     : [file || '+15550000000'];
@@ -151,8 +151,8 @@ async function runSwarm(file: string, system: any, opts: any) {
   ));
   const duration = (performance.now() - startTime) / 1000;
 
-  console.log(`✅ Swarm Complete: ${results.length} processed in ${duration.toFixed(2)}s`);
-  console.log(`📊 Throughput: ${Math.round(results.length / duration)}/sec [ROI: ∞]`);
+  console.info(`✅ Swarm Complete: ${results.length} processed in ${duration.toFixed(2)}s`);
+  console.info(`📊 Throughput: ${Math.round(results.length / duration)}/sec [ROI: ∞]`);
   return results;
 }
 
@@ -161,46 +161,46 @@ function displayOutput(result: any, autonomicV2: boolean) {
   if (!data) return;
   
   if (Array.isArray(result) && result.length > 1) {
-    console.log(`✅ Processed ${result.length} items.`);
+    console.info(`✅ Processed ${result.length} items.`);
     return;
   }
   
-  console.log(`\n\x1b[1mEmpire Intelligence Summary\x1b[0m`);
-  console.log(new Array(31).join('─'));
-  console.log(`Phone:       ${data.e164}`);
-  console.log(`Trust Score: ${data.trustScore?.toFixed(0) || 0} / 100`);
+  console.info(`\n\x1b[1mEmpire Intelligence Summary\x1b[0m`);
+  console.info(new Array(31).join('─'));
+  console.info(`Phone:       ${data.e164}`);
+  console.info(`Trust Score: ${data.trustScore?.toFixed(0) || 0} / 100`);
   
   if (data.identityGraph) {
-    console.log(`Synthetic:   ${(data.identityGraph.syntheticScore * 100).toFixed(0)}% risk`);
+    console.info(`Synthetic:   ${(data.identityGraph.syntheticScore * 100).toFixed(0)}% risk`);
     if (data.identityGraph.riskAssessment) {
-      console.log(`Status:      ${data.identityGraph.riskAssessment.recommendation}`);
+      console.info(`Status:      ${data.identityGraph.riskAssessment.recommendation}`);
     }
   }
 
   if (data.autonomicState) {
-    console.log(`Fingerprint: ${data.autonomicState.fingerprint}`);
+    console.info(`Fingerprint: ${data.autonomicState.fingerprint}`);
     if (autonomicV2) {
-      console.log(`Actions:     ${data.autonomicState.actions.join(', ') || 'NONE'}`);
-      console.log(`Healing:     Cycle ${data.autonomicState.healingCycles}`);
+      console.info(`Actions:     ${data.autonomicState.actions.join(', ') || 'NONE'}`);
+      console.info(`Healing:     Cycle ${data.autonomicState.healingCycles}`);
     }
   }
 
   if (data.multiApp?.crossValidation) {
     const cv = data.multiApp.crossValidation;
-    console.log(`Consistency: ${(cv.consistency * 100).toFixed(0)}%`);
+    console.info(`Consistency: ${(cv.consistency * 100).toFixed(0)}%`);
     if (cv.conflicts.length > 0) {
-      console.log(`Conflicts:   \x1b[31m${cv.conflicts.join(', ')}\x1b[0m`);
+      console.info(`Conflicts:   \x1b[31m${cv.conflicts.join(', ')}\x1b[0m`);
     }
   }
-  console.log(new Array(31).join('─'));
+  console.info(new Array(31).join('─'));
 }
 
 function displayHelp() {
-  console.log('🚀 Empire Pro CLI v2.4 - Resolver Swarm (§CLI:148)');
-  console.log('================================================');
-  console.log('Flags: --mock=low|high|full|hybrid --real-cashapp --timeout=5s --retry=3 --swarm=20 --hyper');
-  console.log('Cmds: build intel audit batch graph export pty bench sync swarm');
-  console.log('\nEx: bun run deep-app-cli.ts phones.txt swarm --mock=hybrid --real-cashapp --hyper');
+  console.info('🚀 Empire Pro CLI v2.4 - Resolver Swarm (§CLI:148)');
+  console.info('================================================');
+  console.info('Flags: --mock=low|high|full|hybrid --real-cashapp --timeout=5s --retry=3 --swarm=20 --hyper');
+  console.info('Cmds: build intel audit batch graph export pty bench sync swarm');
+  console.info('\nEx: bun run deep-app-cli.ts phones.txt swarm --mock=hybrid --real-cashapp --hyper');
 }
 
 main();

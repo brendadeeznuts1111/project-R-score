@@ -6,13 +6,13 @@
 
 function printMemory() {
   const usage = process.memoryUsage();
-  console.log(`RSS: ${(usage.rss / 1024 / 1024).toFixed(2)} MB | Heap Used: ${(usage.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`RSS: ${(usage.rss / 1024 / 1024).toFixed(2)} MB | Heap Used: ${(usage.heapUsed / 1024 / 1024).toFixed(2)} MB`);
 }
 
-console.log("--- Memory Usage Observation ---");
+console.info("--- Memory Usage Observation ---");
 printMemory();
 
-console.log("\nAllocating memory...");
+console.info("\nAllocating memory...");
 const data = [];
 for (let i = 0; i < 5; i++) {
   // Allocate roughly 10MB of strings in each iteration
@@ -20,9 +20,9 @@ for (let i = 0; i < 5; i++) {
   printMemory();
 }
 
-console.log("\nClearing references and forcing GC...");
+console.info("\nClearing references and forcing GC...");
 data.length = 0;
 Bun.gc(true);
 printMemory();
 
-console.log("\nNote: Try running this with and without the `--smol` flag to observe differences in GC frequency and memory overhead.");
+console.info("\nNote: Try running this with and without the `--smol` flag to observe differences in GC frequency and memory overhead.");

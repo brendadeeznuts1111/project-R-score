@@ -19,7 +19,7 @@ export class S3InlineManager {
    * Perfect alignment for Empire Pro dashboards.
    */
   async displayInlineDashboard() {
-    console.log('\n🚀 Empire Inline Dashboard Status:');
+    console.info('\n🚀 Empire Inline Dashboard Status:');
     
     // Get demo metadata with emoji/links
     const metadata = this.manager.generateDemoMetadata();
@@ -35,8 +35,8 @@ export class S3InlineManager {
 
     emojiAlignedTable(tableData, ['Metric', 'Value', 'Width']);
     
-    console.log('\n🔗 Dashboard OSC 8 Test:');
-    console.log(`\u001b]8;;${publicDomain}\u001b\\Click to verify R2 Connection\u001b[0m`);
+    console.info('\n🔗 Dashboard OSC 8 Test:');
+    console.info(`\u001b]8;;${publicDomain}\u001b\\Click to verify R2 Connection\u001b[0m`);
   }
 }
 

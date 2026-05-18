@@ -8,7 +8,7 @@ mock.module("pg", () => ({
     Pool: mock(() => ({
         connect: mock(() => Promise.resolve({
             query: mock((sql: string, params?: any[]) => {
-                console.log(`[Mock DB] ${sql.substring(0, 50)}...`);
+                console.info(`[Mock DB] ${sql.substring(0, 50)}...`);
                 return Promise.resolve({
                     rows: [{ id: 1, name: 'test', created_at: new Date() }],
                     rowCount: 1
@@ -29,7 +29,7 @@ mock.module("pg", () => ({
 mock.module("axios", () => ({
     default: mock(() => ({
         get: mock((url: string) => {
-            console.log(`[Mock Axios GET] ${url}`);
+            console.info(`[Mock Axios GET] ${url}`);
             return Promise.resolve({
                 data: { url, method: 'GET', timestamp: Date.now() },
                 status: 200,
@@ -37,7 +37,7 @@ mock.module("axios", () => ({
             });
         }),
         post: mock((url: string, data?: any) => {
-            console.log(`[Mock Axios POST] ${url}`);
+            console.info(`[Mock Axios POST] ${url}`);
             return Promise.resolve({
                 data: { url, method: 'POST', data, timestamp: Date.now() },
                 status: 201,
@@ -45,7 +45,7 @@ mock.module("axios", () => ({
             });
         }),
         put: mock((url: string, data?: any) => {
-            console.log(`[Mock Axios PUT] ${url}`);
+            console.info(`[Mock Axios PUT] ${url}`);
             return Promise.resolve({
                 data: { url, method: 'PUT', data, timestamp: Date.now() },
                 status: 200,
@@ -53,7 +53,7 @@ mock.module("axios", () => ({
             });
         }),
         delete: mock((url: string) => {
-            console.log(`[Mock Axios DELETE] ${url}`);
+            console.info(`[Mock Axios DELETE] ${url}`);
             return Promise.resolve({
                 data: { url, method: 'DELETE', timestamp: Date.now() },
                 status: 204,
@@ -66,19 +66,19 @@ mock.module("axios", () => ({
 // Mock filesystem operations
 mock.module("fs/promises", () => ({
     readFile: mock((path: string) => {
-        console.log(`[Mock FS] Reading file: ${path}`);
+        console.info(`[Mock FS] Reading file: ${path}`);
         return Promise.resolve(JSON.stringify({ path, content: 'mock data' }));
     }),
     writeFile: mock((path: string, data: string) => {
-        console.log(`[Mock FS] Writing file: ${path}`);
+        console.info(`[Mock FS] Writing file: ${path}`);
         return Promise.resolve();
     }),
     access: mock((path: string) => {
-        console.log(`[Mock FS] Checking access: ${path}`);
+        console.info(`[Mock FS] Checking access: ${path}`);
         return Promise.resolve();
     }),
     mkdir: mock((path: string) => {
-        console.log(`[Mock FS] Creating directory: ${path}`);
+        console.info(`[Mock FS] Creating directory: ${path}`);
         return Promise.resolve();
     })
 }));
@@ -107,7 +107,7 @@ mock.module("./config.js", () => ({
 mock.module("./src/utils/logger.js", () => ({
     info: mock((message: string, ...args: any[]) => {
         if (process.env.LOG_LEVEL !== 'error') {
-            console.log(`[INFO] ${message}`, ...args);
+            console.info(`[INFO] ${message}`, ...args);
         }
     }),
     warn: mock((message: string, ...args: any[]) => {
@@ -120,7 +120,7 @@ mock.module("./src/utils/logger.js", () => ({
     }),
     debug: mock((message: string, ...args: any[]) => {
         if (process.env.LOG_LEVEL === 'debug') {
-            console.log(`[DEBUG] ${message}`, ...args);
+            console.info(`[DEBUG] ${message}`, ...args);
         }
     })
 }));
@@ -128,7 +128,7 @@ mock.module("./src/utils/logger.js", () => ({
 // Mock external services
 mock.module("./src/services/external-service.js", () => ({
     fetchData: mock((endpoint: string) => {
-        console.log(`[Mock Service] Fetching from: ${endpoint}`);
+        console.info(`[Mock Service] Fetching from: ${endpoint}`);
         return Promise.resolve({
             endpoint,
             data: { mock: true, timestamp: Date.now() },
@@ -136,7 +136,7 @@ mock.module("./src/services/external-service.js", () => ({
         });
     }),
     submitData: mock((endpoint: string, data: any) => {
-        console.log(`[Mock Service] Submitting to: ${endpoint}`);
+        console.info(`[Mock Service] Submitting to: ${endpoint}`);
         return Promise.resolve({
             endpoint,
             submitted: true,
@@ -148,7 +148,7 @@ mock.module("./src/services/external-service.js", () => ({
 
 // Global fetch mock
 global.fetch = mock((url: string, options?: any) => {
-    console.log(`[Mock Fetch] ${options?.method || 'GET'} ${url}`);
+    console.info(`[Mock Fetch] ${options?.method || 'GET'} ${url}`);
 
     return Promise.resolve({
         ok: true,
@@ -223,9 +223,9 @@ global.console = {
     })
 };
 
-console.log('🎭 Comprehensive global mocks loaded');
-console.log('   Environment variables set');
-console.log('   External services mocked');
-console.log('   Database operations mocked');
-console.log('   Filesystem operations mocked');
-console.log('   Network requests mocked');
+console.info('🎭 Comprehensive global mocks loaded');
+console.info('   Environment variables set');
+console.info('   External services mocked');
+console.info('   Database operations mocked');
+console.info('   Filesystem operations mocked');
+console.info('   Network requests mocked');

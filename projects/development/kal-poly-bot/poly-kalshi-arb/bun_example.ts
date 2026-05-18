@@ -23,20 +23,20 @@ interface MarketTick {
  * Simulate real-time market data processing
  */
 async function processMarketTicks(): Promise<void> {
-  console.log("🚀 Starting real-time market tick processing...\n");
+  console.info("🚀 Starting real-time market tick processing...\n");
 
   // Initialize the filter
   const kf = new HalfTimeInferenceKF(0.05); // 50ms time step
 
-  console.log("📊 Filter initialized:");
-  console.log(`   Regime: ${kf.getState().regime}`);
-  console.log(
+  console.info("📊 Filter initialized:");
+  console.info(`   Regime: ${kf.getState().regime}`);
+  console.info(
     `   State: [${kf
       .getStateVector()
       .map((v) => v.toFixed(3))
       .join(", ")}]`
   );
-  console.log();
+  console.info();
 
   // Simulate market ticks (in real scenario, this would come from WebSocket/API)
   const mockTicks: MarketTick[] = [
@@ -77,7 +77,7 @@ async function processMarketTicks(): Promise<void> {
   let totalPnL = 0;
 
   for (const tick of mockTicks) {
-    console.log(
+    console.info(
       `⏰ Processing tick at ${new Date(tick.timestamp).toISOString().split("T")[1].split(".")[0]}`
     );
 
@@ -96,13 +96,13 @@ async function processMarketTicks(): Promise<void> {
       // Evaluate trigger
       const trigger = kf.evaluateTrigger(tick.ft_price, 0.5);
 
-      console.log(
+      console.info(
         `   HT Delta: ${tick.ht_delta.toFixed(2)}, FT Price: ${tick.ft_price.toFixed(1)}`
       );
-      console.log(
+      console.info(
         `   Predicted FT: ${predictedFT.toFixed(2)}, Edge: ${edge.toFixed(2)}`
       );
-      console.log(
+      console.info(
         `   Regime: ${trigger.regime}, Confidence: ${(trigger.confidence * 100).toFixed(1)}%`
       );
 
@@ -120,40 +120,40 @@ async function processMarketTicks(): Promise<void> {
         );
         totalPnL += simulatedPnL;
 
-        console.log(
+        console.info(
           `   🎯 TRADE SIGNAL: Bet FT ${trigger.target_price.toFixed(2)}`
         );
-        console.log(
+        console.info(
           `   💰 Position size: $${positionSize.toFixed(2)}, Simulated P&L: $${simulatedPnL.toFixed(2)}`
         );
       } else if (edge > 0.3) {
-        console.log(
+        console.info(
           `   ⚠️  WATCHING: Edge ${edge.toFixed(2)} approaching threshold`
         );
       } else {
-        console.log(`   ❌ NO SIGNAL: Edge ${edge.toFixed(2)} below threshold`);
+        console.info(`   ❌ NO SIGNAL: Edge ${edge.toFixed(2)} below threshold`);
       }
 
-      console.log(
+      console.info(
         `   📈 Velocity: ${kf.getVelocity().toFixed(3)} pt/s, HT Influence: ${kf.getRegimeInfo().htInfluence.toFixed(3)}`
       );
     }
 
-    console.log();
+    console.info();
 
     // Simulate real-time processing delay
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
   // Summary
-  console.log("📊 Processing Summary:");
-  console.log(`   Total trades executed: ${tradeCount}`);
-  console.log(`   Total simulated P&L: $${totalPnL.toFixed(2)}`);
-  console.log(
+  console.info("📊 Processing Summary:");
+  console.info(`   Total trades executed: ${tradeCount}`);
+  console.info(`   Total simulated P&L: $${totalPnL.toFixed(2)}`);
+  console.info(
     `   Average P&L per trade: $${tradeCount > 0 ? (totalPnL / tradeCount).toFixed(2) : "0.00"}`
   );
-  console.log(`   Final regime: ${kf.getState().regime}`);
-  console.log(
+  console.info(`   Final regime: ${kf.getState().regime}`);
+  console.info(
     `   Final uncertainty: ${kf.getPositionUncertainty().toFixed(6)}`
   );
 }
@@ -189,7 +189,7 @@ function simulateTrade(
  * Performance benchmark for the filter
  */
 function benchmarkFilter(): void {
-  console.log("⚡ Performance Benchmark:");
+  console.info("⚡ Performance Benchmark:");
 
   const iterations = 10000;
   const kf = new HalfTimeInferenceKF(0.01);
@@ -208,68 +208,68 @@ function benchmarkFilter(): void {
   const endTime = performance.now();
   const avgTime = (endTime - startTime) / iterations;
 
-  console.log(`   Processed ${iterations} iterations`);
-  console.log(`   Average time per update: ${avgTime.toFixed(3)}ms`);
-  console.log(`   Updates per second: ${(1000 / avgTime).toFixed(0)}`);
-  console.log(
+  console.info(`   Processed ${iterations} iterations`);
+  console.info(`   Average time per update: ${avgTime.toFixed(3)}ms`);
+  console.info(`   Updates per second: ${(1000 / avgTime).toFixed(0)}`);
+  console.info(
     `   Latency budget status: ${avgTime < 6 ? "✅ PASS" : "❌ FAIL"} (< 6ms required)`
   );
-  console.log();
+  console.info();
 }
 
 /**
  * Demonstrate regime detection dynamics
  */
 function demonstrateRegimeDetection(): void {
-  console.log("🔄 Regime Detection Demonstration:");
+  console.info("🔄 Regime Detection Demonstration:");
 
   const kf = new HalfTimeInferenceKF(0.05);
 
   // Quiet regime phase
-  console.log("   Phase 1: Quiet regime (low volatility)");
+  console.info("   Phase 1: Quiet regime (low volatility)");
   for (let i = 0; i < 15; i++) {
     const htTick: HTTickData = { price_delta: (Math.random() - 0.5) * 0.2 };
     const ftTick: FTTickData = { price: 220 + (Math.random() - 0.5) * 0.5 };
 
     kf.updateWithBothMarkets(htTick, ftTick);
   }
-  console.log(
+  console.info(
     `   Regime: ${kf.getState().regime}, Velocity: ${kf.getVelocity().toFixed(3)} pt/s`
   );
 
   // Transition to steam regime
-  console.log("   Phase 2: Transition to steam regime (high volatility)");
+  console.info("   Phase 2: Transition to steam regime (high volatility)");
   for (let i = 0; i < 15; i++) {
     const htTick: HTTickData = { price_delta: (Math.random() - 0.5) * 2.0 };
     const ftTick: FTTickData = { price: 220 + (Math.random() - 0.5) * 3.0 };
 
     kf.updateWithBothMarkets(htTick, ftTick);
   }
-  console.log(
+  console.info(
     `   Regime: ${kf.getState().regime}, Velocity: ${kf.getVelocity().toFixed(3)} pt/s`
   );
 
   // Back to quiet
-  console.log("   Phase 3: Return to quiet regime");
+  console.info("   Phase 3: Return to quiet regime");
   for (let i = 0; i < 15; i++) {
     const htTick: HTTickData = { price_delta: (Math.random() - 0.5) * 0.1 };
     const ftTick: FTTickData = { price: 220 + (Math.random() - 0.5) * 0.2 };
 
     kf.updateWithBothMarkets(htTick, ftTick);
   }
-  console.log(
+  console.info(
     `   Regime: ${kf.getState().regime}, Velocity: ${kf.getVelocity().toFixed(3)} pt/s`
   );
-  console.log();
+  console.info();
 }
 
 /**
  * Main execution function
  */
 async function main(): Promise<void> {
-  console.log("🎯 Half-Time Inference Kalman Filter - Bun Implementation");
-  console.log("=".repeat(60));
-  console.log();
+  console.info("🎯 Half-Time Inference Kalman Filter - Bun Implementation");
+  console.info("=".repeat(60));
+  console.info();
 
   try {
     // Run demonstrations
@@ -277,7 +277,7 @@ async function main(): Promise<void> {
     benchmarkFilter();
     demonstrateRegimeDetection();
 
-    console.log("✅ All demonstrations completed successfully!");
+    console.info("✅ All demonstrations completed successfully!");
   } catch (error) {
     console.error("❌ Error:", error);
     process.exit(1);

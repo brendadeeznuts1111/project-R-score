@@ -9,11 +9,11 @@ import {
 } from "../../src/utils/string-formatting";
 
 async function currencyFormattingExample() {
-	console.log("💰 Currency Formatting Examples with Unicode-Aware Spacing\n");
-	console.log(`${"=".repeat(60)}\n`);
+	console.info("💰 Currency Formatting Examples with Unicode-Aware Spacing\n");
+	console.info(`${"=".repeat(60)}\n`);
 
 	// Example 1: Basic currency formatting
-	console.log("1. Basic Currency Formatting:");
+	console.info("1. Basic Currency Formatting:");
 	const prices = [
 		{ symbol: "💲", amount: "100", currency: "USD" },
 		{ symbol: "€", amount: "85", currency: "EUR" },
@@ -23,18 +23,18 @@ async function currencyFormattingExample() {
 	];
 
 	prices.forEach(({ symbol, amount, currency }) => {
-		console.log(formatCurrency(symbol, amount, currency));
+		console.info(formatCurrency(symbol, amount, currency));
 	});
-	console.log();
+	console.info();
 
 	// Example 2: Formatted currency list with alignment
-	console.log("2. Formatted Currency List (Aligned):");
+	console.info("2. Formatted Currency List (Aligned):");
 	const formatted = formatCurrencyList(prices);
-	formatted.forEach((line) => console.log(line));
-	console.log();
+	formatted.forEach((line) => console.info(line));
+	console.info();
 
 	// Example 3: Mixed emoji and Unicode symbols
-	console.log("3. Mixed Emoji and Unicode Symbols:");
+	console.info("3. Mixed Emoji and Unicode Symbols:");
 	const mixedPrices = [
 		{ symbol: "💲", amount: 100, currency: "USD" },
 		{ symbol: "€", amount: 85, currency: "EUR" },
@@ -44,11 +44,11 @@ async function currencyFormattingExample() {
 		{ symbol: "₪", amount: 350, currency: "ILS" },
 	];
 
-	formatCurrencyList(mixedPrices).forEach((line) => console.log(line));
-	console.log();
+	formatCurrencyList(mixedPrices).forEach((line) => console.info(line));
+	console.info();
 
 	// Example 4: Large amounts with proper alignment
-	console.log("4. Large Amounts with Proper Alignment:");
+	console.info("4. Large Amounts with Proper Alignment:");
 	const largeAmounts = [
 		{ symbol: "💲", amount: "1,234,567", currency: "USD" },
 		{ symbol: "€", amount: "987,654", currency: "EUR" },
@@ -57,15 +57,15 @@ async function currencyFormattingExample() {
 	];
 
 	formatCurrencyList(largeAmounts, { amountWidth: 12 }).forEach((line) =>
-		console.log(line),
+		console.info(line),
 	);
-	console.log();
+	console.info();
 
 	// Example 5: Price comparison table
-	console.log("5. Price Comparison Table:");
-	console.log("┌──────────┬─────────────┬──────┐");
-	console.log("│ Symbol   │ Amount      │ Code │");
-	console.log("├──────────┼─────────────┼──────┤");
+	console.info("5. Price Comparison Table:");
+	console.info("┌──────────┬─────────────┬──────┐");
+	console.info("│ Symbol   │ Amount      │ Code │");
+	console.info("├──────────┼─────────────┼──────┤");
 
 	const tablePrices = [
 		{ symbol: "💲", amount: "100", currency: "USD" },
@@ -75,20 +75,20 @@ async function currencyFormattingExample() {
 
 	tablePrices.forEach(({ symbol, amount, currency }) => {
 		const symbolFormatted = formatCurrency(symbol, "", "", 3).trim();
-		console.log(
+		console.info(
 			`│ ${symbolFormatted.padEnd(8)} │ ${amount.padStart(11)} │ ${currency.padEnd(4)} │`,
 		);
 	});
 
-	console.log("└──────────┴─────────────┴──────┘");
-	console.log();
+	console.info("└──────────┴─────────────┴──────┘");
+	console.info();
 
-	console.log("✅ All currency formatting examples completed!");
-	console.log("\n💡 Key Features:");
-	console.log("   • Unicode-aware symbol width calculation");
-	console.log("   • Proper alignment with emoji symbols");
-	console.log("   • Supports both string and number amounts");
-	console.log("   • Automatic column alignment");
+	console.info("✅ All currency formatting examples completed!");
+	console.info("\n💡 Key Features:");
+	console.info("   • Unicode-aware symbol width calculation");
+	console.info("   • Proper alignment with emoji symbols");
+	console.info("   • Supports both string and number amounts");
+	console.info("   • Automatic column alignment");
 }
 
 // Run if executed directly

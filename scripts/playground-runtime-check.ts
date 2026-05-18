@@ -34,7 +34,7 @@ async function main() {
   );
 
   const failed = results.filter((row) => !row.ok);
-  console.log(JSON.stringify({ base, host: runtime.host, port: runtime.port, results }, null, 2));
+  console.info(JSON.stringify({ base, host: runtime.host, port: runtime.port, results }, null, 2));
   if (failed.length > 0) {
     process.exit(1);
   }

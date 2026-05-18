@@ -46,7 +46,7 @@ export class ASTParser {
   async analyze(
     pattern: string = "**/*.{ts,tsx,js,jsx}"
   ): Promise<TableCall[]> {
-    console.log("🔍 Analyzing codebase with AST parsing...");
+    console.info("🔍 Analyzing codebase with AST parsing...");
 
     const baseDir = process.cwd();
     const files: string[] = [];

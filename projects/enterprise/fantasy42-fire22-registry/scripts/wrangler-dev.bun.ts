@@ -28,7 +28,7 @@ const ENVIRONMENTS = {
 };
 
 async function showHelp() {
-  console.log(`
+  console.info(`
 🚀 Fantasy42-Fire22 Wrangler CLI
 Easy-to-use Cloudflare Workers development tools
 
@@ -63,14 +63,14 @@ async function runWranglerCommand(command: string, env: string = 'development') 
   const wranglerDir = 'enterprise/packages/cloudflare';
   const envFlag = env !== 'development' ? `--env ${env}` : '';
 
-  console.log(`🔧 Running: wrangler ${command} ${envFlag}`);
-  console.log(`📁 Working directory: ${wranglerDir}`);
-  console.log(`🌍 Environment: ${env}`);
-  console.log('─'.repeat(50));
+  console.info(`🔧 Running: wrangler ${command} ${envFlag}`);
+  console.info(`📁 Working directory: ${wranglerDir}`);
+  console.info(`🌍 Environment: ${env}`);
+  console.info('─'.repeat(50));
 
   try {
     const result = await $`cd ${wranglerDir} && wrangler ${command} ${envFlag}`.quiet();
-    console.log(result.stdout);
+    console.info(result.stdout);
     if (result.stderr) {
       console.error(result.stderr);
     }
@@ -93,13 +93,13 @@ async function main() {
 
   if (!Object.keys(COMMANDS).includes(command)) {
     console.error(`❌ Unknown command: ${command}`);
-    console.log(`Available commands: ${Object.keys(COMMANDS).join(', ')}`);
+    console.info(`Available commands: ${Object.keys(COMMANDS).join(', ')}`);
     return;
   }
 
   if (!Object.keys(ENVIRONMENTS).includes(env)) {
     console.error(`❌ Unknown environment: ${env}`);
-    console.log(`Available environments: ${Object.keys(ENVIRONMENTS).join(', ')}`);
+    console.info(`Available environments: ${Object.keys(ENVIRONMENTS).join(', ')}`);
     return;
   }
 
@@ -114,72 +114,72 @@ async function main() {
       break;
 
     case 'deploy':
-      console.log(`🚀 Deploying to ${env} environment...`);
+      console.info(`🚀 Deploying to ${env} environment...`);
       await runWranglerCommand('deploy', env);
       break;
 
     case 'tail':
-      console.log(`📊 Tailing logs for ${env} environment...`);
+      console.info(`📊 Tailing logs for ${env} environment...`);
       await runWranglerCommand('tail', env);
       break;
 
     case 'kv':
       const kvSubcommand = args[2] || 'list';
-      console.log(`📦 Managing KV for ${env} environment...`);
+      console.info(`📦 Managing KV for ${env} environment...`);
       await runWranglerCommand(`kv:${kvSubcommand}`, env);
       break;
 
     case 'd1':
       const d1Subcommand = args[2] || 'list';
-      console.log(`🗄️ Managing D1 for ${env} environment...`);
+      console.info(`🗄️ Managing D1 for ${env} environment...`);
       await runWranglerCommand(`d1:${d1Subcommand}`, env);
       break;
 
     case 'r2':
       const r2Subcommand = args[2] || 'bucket';
-      console.log(`☁️ Managing R2 for ${env} environment...`);
+      console.info(`☁️ Managing R2 for ${env} environment...`);
       await runWranglerCommand(`r2:${r2Subcommand}`, env);
       break;
 
     case 'queues':
       const queueSubcommand = args[2] || 'list';
-      console.log(`📋 Managing Queues for ${env} environment...`);
+      console.info(`📋 Managing Queues for ${env} environment...`);
       await runWranglerCommand(`queues:${queueSubcommand}`, env);
       break;
 
     case 'secrets':
       const secretSubcommand = args[2] || 'list';
-      console.log(`🔐 Managing Secrets for ${env} environment...`);
+      console.info(`🔐 Managing Secrets for ${env} environment...`);
       await runWranglerCommand(`secret:${secretSubcommand}`, env);
       break;
 
     case 'analytics':
-      console.log(`📊 Fetching analytics for ${env} environment...`);
+      console.info(`📊 Fetching analytics for ${env} environment...`);
       // Custom analytics command - you might need to implement this
-      console.log('Analytics feature coming soon...');
+      console.info('Analytics feature coming soon...');
       break;
 
     case 'health':
-      console.log(`🏥 Checking health of ${env} environment...`);
+      console.info(`🏥 Checking health of ${env} environment...`);
       try {
         const response = await fetch(
           `https://${env === 'production' ? 'api' : env}.apexodds.net/health`
         );
         const health = await response.json();
-        console.log(JSON.stringify(health, null, 2));
+        console.info(JSON.stringify(health, null, 2));
       } catch (error) {
         console.error(`❌ Health check failed:`, error.message);
       }
       break;
 
     case 'config':
-      console.log(`⚙️ Configuration for ${env} environment:`);
+      console.info(`⚙️ Configuration for ${env} environment:`);
       await runWranglerCommand('whoami', env);
-      console.log('\n📄 Worker Configuration:');
+      console.info('\n📄 Worker Configuration:');
       const configPath = `enterprise/packages/cloudflare/wrangler.toml`;
       try {
         const config = await Bun.file(configPath).text();
-        console.log(config);
+        console.info(config);
       } catch (error) {
         console.error(`❌ Could not read config:`, error.message);
       }

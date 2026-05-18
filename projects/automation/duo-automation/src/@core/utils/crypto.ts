@@ -357,17 +357,17 @@ const encryptionKey = "my-secret-key";
 
 // Encrypt
 const encrypted = await encrypt(sensitiveData, encryptionKey);
-console.log('Encrypted:', encrypted);
+console.info('Encrypted:', encrypted);
 
 // Decrypt
 const decrypted = await decrypt(encrypted, encryptionKey);
-console.log('Decrypted:', decrypted);
+console.info('Decrypted:', decrypted);
 
 // Hash password
 const { hash: passwordHash, salt } = await CryptoUtils.hashPassword("my-password");
-console.log('Password hash:', passwordHash);
+console.info('Password hash:', passwordHash);
 
 // Verify password
 const isValid = await CryptoUtils.verifyPassword("my-password", passwordHash, salt);
-console.log('Password valid:', isValid);
+console.info('Password valid:', isValid);
 */

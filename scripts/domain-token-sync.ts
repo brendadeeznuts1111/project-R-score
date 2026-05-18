@@ -112,7 +112,7 @@ function printStructuredError(
     ...extra,
   };
   if (options.json) {
-    console.log(JSON.stringify(payload, null, 2));
+    console.info(JSON.stringify(payload, null, 2));
   } else {
     console.error(`[domain-token-sync] ${code}: ${message}`);
     if (extra.hint) {
@@ -220,22 +220,22 @@ async function main(): Promise<void> {
   };
 
   if (options.json) {
-    console.log(JSON.stringify(result, null, 2));
+    console.info(JSON.stringify(result, null, 2));
   } else {
-    console.log(`Domain token vars: ${tokenEnvVars.length}`);
-    console.log(`Token: ${result.tokenPreview}`);
+    console.info(`Domain token vars: ${tokenEnvVars.length}`);
+    console.info(`Token: ${result.tokenPreview}`);
     if (options.applyBunSecrets) {
-      console.log(`Applied to Bun secrets: ${result.appliedSuccess}/${tokenEnvVars.length}`);
+      console.info(`Applied to Bun secrets: ${result.appliedSuccess}/${tokenEnvVars.length}`);
       if (result.appliedFailed > 0) {
-        console.log('Failures:');
-        for (const fail of appliedFailures) console.log(`- ${fail.key}: ${fail.detail}`);
+        console.info('Failures:');
+        for (const fail of appliedFailures) console.info(`- ${fail.key}: ${fail.detail}`);
       }
     } else {
-      console.log('Dry run (no writes). Use --apply-bun-secrets to apply.');
+      console.info('Dry run (no writes). Use --apply-bun-secrets to apply.');
     }
     if (options.emitWrangler) {
-      console.log('Wrangler commands:');
-      for (const cmd of wranglerCommands) console.log(`- ${cmd}`);
+      console.info('Wrangler commands:');
+      for (const cmd of wranglerCommands) console.info(`- ${cmd}`);
     }
   }
 

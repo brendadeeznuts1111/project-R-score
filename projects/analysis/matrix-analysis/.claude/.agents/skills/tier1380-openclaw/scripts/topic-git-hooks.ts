@@ -72,7 +72,7 @@ async function routeCommit(
 	const project = config.projects[projectName];
 
 	if (!project) {
-		console.log(`⚠️ Project ${projectName} not found in config`);
+		console.info(`⚠️ Project ${projectName} not found in config`);
 		return;
 	}
 
@@ -87,8 +87,8 @@ async function routeCommit(
 	const shortHash = hash.substring(0, 7);
 	const shortMsg = message.split("\n")[0].substring(0, 50);
 
-	console.log(`📨 Routing commit to Topic ${topicId} (${topicNames[topicId]}):`);
-	console.log(`   ${shortHash} by ${author}: ${shortMsg}`);
+	console.info(`📨 Routing commit to Topic ${topicId} (${topicNames[topicId]}):`);
+	console.info(`   ${shortHash} by ${author}: ${shortMsg}`);
 
 	// In production, this would send to Telegram API
 	// For now, log to file
@@ -165,21 +165,21 @@ bun ${import.meta.dir}/topic-git-hooks.ts merge "${projectName}" "$BRANCH" "$HAS
 		// Hook doesn't exist, skip
 	}
 
-	console.log(`✅ Installed topic hooks for ${projectName} at ${projectPath}`);
+	console.info(`✅ Installed topic hooks for ${projectName} at ${projectPath}`);
 }
 
 async function uninstallHooks(projectPath: string) {
 	const hookDir = `${projectPath}/.git/hooks`;
 
 	await $`rm -f ${hookDir}/post-commit-topic ${hookDir}/post-merge-topic`.quiet();
-	console.log(`🗑️ Removed topic hooks from ${projectPath}`);
+	console.info(`🗑️ Removed topic hooks from ${projectPath}`);
 }
 
 async function listInstalledHooks() {
 	const config = await loadConfig();
 
-	console.log("📋 Installed Topic Hooks:");
-	console.log("=".repeat(60));
+	console.info("📋 Installed Topic Hooks:");
+	console.info("=".repeat(60));
 
 	for (const [name, project] of Object.entries(config.projects)) {
 		const hookDir = `${project.path}/.git/hooks`;
@@ -187,10 +187,10 @@ async function listInstalledHooks() {
 		const hasMergeHook = await Bun.file(`${hookDir}/post-merge-topic`).exists();
 
 		const status = hasCommitHook && hasMergeHook ? "✅ Installed" : "❌ Not installed";
-		console.log(`${status} ${name}`);
-		console.log(`   Path: ${project.path}`);
-		console.log(`   Default Topic: ${project.default_topic}`);
-		console.log();
+		console.info(`${status} ${name}`);
+		console.info(`   Path: ${project.path}`);
+		console.info(`   Default Topic: ${project.default_topic}`);
+		console.info();
 	}
 }
 
@@ -208,8 +208,8 @@ async function handleMerge(
 	// Merges go to General (1) by default
 	const topicId = 1;
 
-	console.log(`🔀 Merge detected on ${branch} by ${author}`);
-	console.log(`📨 Routed to Topic ${topicId} (General)`);
+	console.info(`🔀 Merge detected on ${branch} by ${author}`);
+	console.info(`📨 Routed to Topic ${topicId} (General)`);
 
 	const logEntry = {
 		timestamp: new Date().toISOString(),
@@ -291,7 +291,7 @@ switch (command) {
 		break;
 
 	default:
-		console.log(`
+		console.info(`
 Topic Git Hooks Manager
 
 Usage:

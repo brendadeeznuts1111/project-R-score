@@ -23,11 +23,11 @@ export class MarkdownPlugin implements FileWatcherPlugin {
   };
 
   async initialize(): Promise<void> {
-    console.log(`🔧 Initializing ${this.name} plugin - watching for documentation changes`);
+    console.info(`🔧 Initializing ${this.name} plugin - watching for documentation changes`);
   }
 
   async cleanup(): Promise<void> {
-    console.log(`🧹 Cleaning up ${this.name} plugin`);
+    console.info(`🧹 Cleaning up ${this.name} plugin`);
   }
 
   canHandle(filePath: string): boolean {
@@ -36,7 +36,7 @@ export class MarkdownPlugin implements FileWatcherPlugin {
   }
 
   async processFileChange(change: FileChangeEvent): Promise<FileChangeResult> {
-    console.log(`📝 Processing markdown file: ${change.path}`);
+    console.info(`📝 Processing markdown file: ${change.path}`);
 
     // For documentation files, we might want to trigger a rebuild
     if (change.path.includes('README') || change.path.includes('docs/')) {
@@ -94,11 +94,11 @@ export class VuePlugin implements FileWatcherPlugin {
   };
 
   async initialize(): Promise<void> {
-    console.log(`🔧 Initializing ${this.name} plugin - Vue SFC support enabled`);
+    console.info(`🔧 Initializing ${this.name} plugin - Vue SFC support enabled`);
   }
 
   async cleanup(): Promise<void> {
-    console.log(`🧹 Cleaning up ${this.name} plugin`);
+    console.info(`🧹 Cleaning up ${this.name} plugin`);
   }
 
   canHandle(filePath: string): boolean {
@@ -106,7 +106,7 @@ export class VuePlugin implements FileWatcherPlugin {
   }
 
   async processFileChange(change: FileChangeEvent): Promise<FileChangeResult> {
-    console.log(`🖼️ Processing Vue SFC: ${change.path}`);
+    console.info(`🖼️ Processing Vue SFC: ${change.path}`);
 
     // Vue files typically support HMR
     return {
@@ -151,11 +151,11 @@ export class DatabaseMigrationPlugin implements FileWatcherPlugin {
   };
 
   async initialize(): Promise<void> {
-    console.log(`🔧 Initializing ${this.name} plugin - database migration monitoring`);
+    console.info(`🔧 Initializing ${this.name} plugin - database migration monitoring`);
   }
 
   async cleanup(): Promise<void> {
-    console.log(`🧹 Cleaning up ${this.name} plugin`);
+    console.info(`🧹 Cleaning up ${this.name} plugin`);
   }
 
   canHandle(filePath: string): boolean {
@@ -167,7 +167,7 @@ export class DatabaseMigrationPlugin implements FileWatcherPlugin {
   }
 
   async processFileChange(change: FileChangeEvent): Promise<FileChangeResult> {
-    console.log(`🗄️ Processing database file: ${change.path}`);
+    console.info(`🗄️ Processing database file: ${change.path}`);
 
     // Database changes require careful handling
     return {
@@ -213,11 +213,11 @@ export class LogFilePlugin implements FileWatcherPlugin {
   };
 
   async initialize(): Promise<void> {
-    console.log(`🔧 Initializing ${this.name} plugin - log file monitoring`);
+    console.info(`🔧 Initializing ${this.name} plugin - log file monitoring`);
   }
 
   async cleanup(): Promise<void> {
-    console.log(`🧹 Cleaning up ${this.name} plugin`);
+    console.info(`🧹 Cleaning up ${this.name} plugin`);
   }
 
   canHandle(filePath: string): boolean {
@@ -231,7 +231,7 @@ export class LogFilePlugin implements FileWatcherPlugin {
   }
 
   async processFileChange(change: FileChangeEvent): Promise<FileChangeResult> {
-    console.log(`📋 Log file changed: ${change.path}`);
+    console.info(`📋 Log file changed: ${change.path}`);
 
     // Log files should generally be ignored for HMR
     return {
@@ -294,13 +294,13 @@ export class PluginRegistry {
 
   register(name: string, plugin: FileWatcherPlugin): void {
     this.plugins.set(name, plugin);
-    console.log(`📦 Registered custom plugin: ${name}`);
+    console.info(`📦 Registered custom plugin: ${name}`);
   }
 
   unregister(name: string): boolean {
     const removed = this.plugins.delete(name);
     if (removed) {
-      console.log(`📦 Unregistered plugin: ${name}`);
+      console.info(`📦 Unregistered plugin: ${name}`);
     }
     return removed;
   }

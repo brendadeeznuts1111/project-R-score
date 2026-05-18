@@ -176,7 +176,7 @@ describe('v3.7 Timezone Matrix - Hardened Validation', () => {
       // Test that timezone is properly propagated to child processes
       process.env.TZ = 'Europe/London';
 
-      const proc = Bun.spawn(['bun', '-e', 'console.log(process.env.TZ)'], {
+      const proc = Bun.spawn(['bun', '-e', 'console.info(process.env.TZ)'], {
         env: { ...process.env, TZ: process.env.TZ },
         stdout: 'pipe'
       });

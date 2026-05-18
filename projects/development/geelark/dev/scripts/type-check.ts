@@ -7,7 +7,7 @@
 
 import { spawn } from 'bun';
 
-console.log('🔍 Running TypeScript type check...');
+console.info('🔍 Running TypeScript type check...');
 
 try {
   const tscProcess = spawn(['tsc', '--noEmit', '--strict'], {
@@ -22,7 +22,7 @@ try {
     process.exit(result);
   }
 
-  console.log('✅ Type check passed');
+  console.info('✅ Type check passed');
 } catch (error) {
   console.error('❌ Type check failed:', error);
   process.exit(1);

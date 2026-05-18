@@ -257,7 +257,7 @@ function swPadStart(str: string, width: number, char = ' '): string {
 // ============================================================================
 
 if (import.meta.main) {
-  console.log(`
+  console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  Terminal Color Quantization Utility v1.0                 ║
 ║  tmux-style RGB → 256-color conversion                  ║
@@ -274,41 +274,41 @@ if (import.meta.main) {
     { name: 'Orange', r: 255, g: 165, b: 0 },
   ];
 
-  console.log('RGB to 256-color conversions:');
-  console.log('='.repeat(50));
+  console.info('RGB to 256-color conversions:');
+  console.info('='.repeat(50));
 
   for (const { name, r, g, b } of testColors) {
     const idx = rgbTo256(r, g, b);
     const ansi = rgbToAnsi256(r, g, b);
     const info = get256ColorInfo(idx);
 
-    console.log(
+    console.info(
       `${swPad(name, 12)} rgb(${r},${g},${b}) → idx ${swPadStart(idx.toString(), 3)} ${swPad(info.type, 7)} ${info.description}`
     );
-    console.log(`             ANSI: ${JSON.stringify(ansi)}`);
-    console.log();
+    console.info(`             ANSI: ${JSON.stringify(ansi)}`);
+    console.info();
   }
 
   // Test color palette info
-  console.log('256-color palette structure:');
-  console.log('='.repeat(50));
-  console.log('0-15:    Standard colors');
-  console.log('16-231:  6x6x6 color cube');
-  console.log('232-255: 24 grey levels');
-  console.log();
+  console.info('256-color palette structure:');
+  console.info('='.repeat(50));
+  console.info('0-15:    Standard colors');
+  console.info('16-231:  6x6x6 color cube');
+  console.info('232-255: 24 grey levels');
+  console.info();
 
   // Demo toAnsi256 with various inputs
-  console.log('Universal color input conversion:');
-  console.log('='.repeat(50));
+  console.info('Universal color input conversion:');
+  console.info('='.repeat(50));
   const inputs = ['#ff0000', 'rgb(255, 0, 0)', 0xff0000, [255, 0, 0], { r: 255, g: 0, b: 0 }];
 
   for (const input of inputs) {
     const result = toAnsi256(input);
-    console.log(`${swPad(JSON.stringify(input), 25)} → ${result}`);
+    console.info(`${swPad(JSON.stringify(input), 25)} → ${result}`);
   }
 
-  console.log();
-  console.log('✅ All conversions complete');
+  console.info();
+  console.info('✅ All conversions complete');
 }
 
 export default {

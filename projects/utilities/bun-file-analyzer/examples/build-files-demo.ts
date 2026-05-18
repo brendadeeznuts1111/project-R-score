@@ -4,7 +4,7 @@
 
 // Example 1: Pure virtual build - no files on disk needed
 async function buildVirtualApp() {
-  console.log("🌐 Building pure virtual application...");
+  console.info("🌐 Building pure virtual application...");
   
   const result = await Bun.build({
     entrypoints: ["/app/index.ts"],
@@ -13,8 +13,8 @@ async function buildVirtualApp() {
         import { greet } from "./greet.ts";
         import { version } from "./version.ts";
         
-        console.log(greet("World"));
-        console.log(\`App version: \${version}\`);
+        console.info(greet("World"));
+        console.info(\`App version: \${version}\`);
         
         // Create a simple UI
         document.body.innerHTML = \`
@@ -44,9 +44,9 @@ async function buildVirtualApp() {
     format: "esm",
   });
 
-  console.log(`✅ Virtual app built! Generated ${result.outputs.length} files`);
+  console.info(`✅ Virtual app built! Generated ${result.outputs.length} files`);
   result.outputs.forEach((output, index) => {
-    console.log(`   ${index + 1}. ${output.path} (${output.size} bytes)`);
+    console.info(`   ${index + 1}. ${output.path} (${output.size} bytes)`);
   });
 
   return result;
@@ -54,7 +54,7 @@ async function buildVirtualApp() {
 
 // Example 2: Override real files with virtual content
 async function buildWithOverrides() {
-  console.log("🔄 Building with file overrides...");
+  console.info("🔄 Building with file overrides...");
   
   const result = await Bun.build({
     entrypoints: ["./src/index.tsx"],
@@ -75,7 +75,7 @@ async function buildWithOverrides() {
           production: { primary: "#dc2626", stroke: "#b91c1c", gradient: "rgba(220, 38, 38, 0.1)" },
         } as const;
         
-        console.log("🎨 Production color theme loaded");
+        console.info("🎨 Production color theme loaded");
       `,
       
       // Inject build-time constants
@@ -85,7 +85,7 @@ async function buildWithOverrides() {
         export const BUILD_VERSION = "${process.env.npm_package_version || "1.0.0"}";
         export const IS_PRODUCTION = true;
         
-        console.log("🏭 Build info injected:", {
+        console.info("🏭 Build info injected:", {
           id: BUILD_ID,
           time: new Date(BUILD_TIME).toISOString(),
           version: BUILD_VERSION,
@@ -102,15 +102,15 @@ async function buildWithOverrides() {
     },
   });
 
-  console.log(`✅ Production build with overrides completed!`);
-  console.log(`📦 Generated ${result.outputs.length} files`);
+  console.info(`✅ Production build with overrides completed!`);
+  console.info(`📦 Generated ${result.outputs.length} files`);
   
   return result;
 }
 
 // Example 3: Code generation and injection
 async function buildWithGeneratedCode() {
-  console.log("⚡ Building with generated code...");
+  console.info("⚡ Building with generated code...");
   
   // Generate some dynamic content
   const features = ["File Analysis", "DOM Inspector", "Cookie Manager", "URL Router"];
@@ -142,7 +142,7 @@ async function buildWithGeneratedCode() {
         export const ENABLED_FEATURES = FEATURES.filter(f => f.enabled);
         export const FEATURE_COUNT = FEATURES.length;
         
-        console.log("🚀 Generated features loaded:", FEATURE_COUNT, "features");
+        console.info("🚀 Generated features loaded:", FEATURE_COUNT, "features");
       `,
       
       // Generate mock API responses for development
@@ -171,7 +171,7 @@ async function buildWithGeneratedCode() {
           features: FEATURES.map(f => f.name),
         };
         
-        console.log("🎭 Mock data generated");
+        console.info("🎭 Mock data generated");
       `,
       
       // Generate type definitions
@@ -204,15 +204,15 @@ async function buildWithGeneratedCode() {
     sourcemap: "external",
   });
 
-  console.log(`✅ Build with generated code completed!`);
-  console.log(`📦 Generated ${result.outputs.length} files`);
+  console.info(`✅ Build with generated code completed!`);
+  console.info(`📦 Generated ${result.outputs.length} files`);
   
   return result;
 }
 
 // Example 4: Testing with virtual mocks
 async function buildForTesting() {
-  console.log("🧪 Building for testing with virtual mocks...");
+  console.info("🧪 Building for testing with virtual mocks...");
   
   const result = await Bun.build({
     entrypoints: ["./src/index.tsx"],
@@ -245,7 +245,7 @@ async function buildForTesting() {
           }
         };
         
-        console.log("🎭 Mock API client initialized");
+        console.info("🎭 Mock API client initialized");
       `,
       
       // Mock React components for testing
@@ -297,21 +297,21 @@ async function buildForTesting() {
     },
   });
 
-  console.log(`✅ Test build with mocks completed!`);
-  console.log(`📦 Generated ${result.outputs.length} files`);
+  console.info(`✅ Test build with mocks completed!`);
+  console.info(`📦 Generated ${result.outputs.length} files`);
   
   return result;
 }
 
 // Example 5: Multi-environment builds
 async function buildMultiEnvironment() {
-  console.log("🌍 Building for multiple environments...");
+  console.info("🌍 Building for multiple environments...");
   
   const environments = ["development", "staging", "production"];
   const results = [];
   
   for (const env of environments) {
-    console.log(`\n📦 Building for ${env}...`);
+    console.info(`\n📦 Building for ${env}...`);
     
     const envConfig = {
       development: {
@@ -346,7 +346,7 @@ async function buildMultiEnvironment() {
           export const SENTRY_DSN = ${config.SENTRY_DSN};
           export const ANALYTICS = ${config.ANALYTICS};
           
-          console.log("🌍 Environment loaded:", {
+          console.info("🌍 Environment loaded:", {
             env: "${env}",
             apiUrl: "${config.API_URL}",
             debug: ${config.DEBUG},
@@ -371,7 +371,7 @@ async function buildMultiEnvironment() {
     });
     
     results.push({ environment: env, result });
-    console.log(`✅ ${env} build completed!`);
+    console.info(`✅ ${env} build completed!`);
   }
   
   return results;
@@ -379,7 +379,7 @@ async function buildMultiEnvironment() {
 
 // Example 6: Using different content types
 async function buildWithContentTypes() {
-  console.log("📄 Building with different content types...");
+  console.info("📄 Building with different content types...");
   
   // Create different types of content
   const textContent = "export const message = 'Hello from text!';";
@@ -397,10 +397,10 @@ async function buildWithContentTypes() {
         import { arrayBufferMessage, timestamp } from "./buffer.ts";
         import { blobMessage } from "./blob.ts";
         
-        console.log(message);
-        console.log(arrayBufferMessage);
-        console.log(blobMessage);
-        console.log("Timestamp:", timestamp);
+        console.info(message);
+        console.info(arrayBufferMessage);
+        console.info(blobMessage);
+        console.info("Timestamp:", timestamp);
         
         document.body.innerHTML = \`
           <div style="padding: 2rem; font-family: system-ui;">
@@ -427,35 +427,35 @@ async function buildWithContentTypes() {
     format: "esm",
   });
 
-  console.log(`✅ Content types demo built!`);
-  console.log(`📦 Generated ${result.outputs.length} files`);
+  console.info(`✅ Content types demo built!`);
+  console.info(`📦 Generated ${result.outputs.length} files`);
   
   return result;
 }
 
 // Run all examples
 async function runAllExamples() {
-  console.log("🚀 Bun.build files option Examples\n");
+  console.info("🚀 Bun.build files option Examples\n");
   
   try {
     await buildVirtualApp();
-    console.log("\n" + "=".repeat(50) + "\n");
+    console.info("\n" + "=".repeat(50) + "\n");
     
     await buildWithOverrides();
-    console.log("\n" + "=".repeat(50) + "\n");
+    console.info("\n" + "=".repeat(50) + "\n");
     
     await buildWithGeneratedCode();
-    console.log("\n" + "=".repeat(50) + "\n");
+    console.info("\n" + "=".repeat(50) + "\n");
     
     await buildForTesting();
-    console.log("\n" + "=".repeat(50) + "\n");
+    console.info("\n" + "=".repeat(50) + "\n");
     
     await buildMultiEnvironment();
-    console.log("\n" + "=".repeat(50) + "\n");
+    console.info("\n" + "=".repeat(50) + "\n");
     
     await buildWithContentTypes();
     
-    console.log("\n✅ All files option examples completed successfully!");
+    console.info("\n✅ All files option examples completed successfully!");
     
   } catch (error) {
     console.error("❌ Build error:", error);

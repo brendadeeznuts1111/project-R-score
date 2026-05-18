@@ -5,10 +5,10 @@ class ConcurrentBenchmark {
   private results: any[] = [];
 
   async runConcurrentTests() {
-    console.log('🧪 Running Concurrent URLPattern Benchmarks\n');
+    console.info('🧪 Running Concurrent URLPattern Benchmarks\n');
 
     for (const concurrency of this.concurrencyLevels) {
-      console.log(`🔁 Testing with ${concurrency} concurrent operations...`);
+      console.info(`🔁 Testing with ${concurrency} concurrent operations...`);
 
       const startTime = performance.now();
       const promises: Promise<void>[] = [];
@@ -47,13 +47,13 @@ class ConcurrentBenchmark {
   }
 
   private printResults() {
-    console.log('\n📊 Concurrent Benchmark Results');
-    console.log('='.repeat(60));
-    console.log('Concurrency | Duration     | Throughput');
-    console.log('-'.repeat(60));
+    console.info('\n📊 Concurrent Benchmark Results');
+    console.info('='.repeat(60));
+    console.info('Concurrency | Duration     | Throughput');
+    console.info('-'.repeat(60));
 
     for (const result of this.results) {
-      console.log(
+      console.info(
         result.concurrency.toString().padEnd(11),
         '|',
         result.duration.padEnd(12),
@@ -68,7 +68,7 @@ class ConcurrentBenchmark {
     const efficiency = (parseFloat(singleThread.throughput) / this.concurrencyLevels[this.concurrencyLevels.length - 1])
       / parseFloat(bestThread.throughput) * 100;
 
-    console.log('\n📈 Scaling Efficiency:', efficiency.toFixed(1), '%');
+    console.info('\n📈 Scaling Efficiency:', efficiency.toFixed(1), '%');
   }
 }
 

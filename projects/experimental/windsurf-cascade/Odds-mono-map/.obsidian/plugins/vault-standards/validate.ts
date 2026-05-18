@@ -27,7 +27,7 @@ function logToFile(filePath: string, message: string): void {
 }
 
 function logValidation(message: string): void {
-    console.log(message);
+    console.info(message);
     logToFile(VALIDATION_LOG, message);
 }
 

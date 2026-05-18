@@ -39,7 +39,7 @@ async function main(): Promise<void> {
 	const version =
 		args.find((a) => a.startsWith("--version="))?.split("=")[1] ?? BUN_DOCS_VERSION;
 
-	console.log(
+	console.info(
 		`\n  🔷 Tier-1380 RSS Hydration\n  Source: ${source}\n  Output: ${output}\n`,
 	);
 
@@ -52,7 +52,7 @@ async function main(): Promise<void> {
 	const dir = output.replace(/\/[^/]+$/, "");
 	if (dir && !existsSync(dir)) mkdirSync(dir, { recursive: true });
 	await Bun.write(output, filtered);
-	console.log(`  ✓ Wrote ${output}\n`);
+	console.info(`  ✓ Wrote ${output}\n`);
 }
 
 main();

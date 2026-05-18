@@ -83,7 +83,7 @@ class WorkingQRCli {
 
     // Show help
     showHelp() {
-        console.log(`
+        console.info(`
 🚀 Global QR Device Onboarding System CLI v${this.version}
 
 USAGE:
@@ -117,9 +117,9 @@ For more information, visit: https://monitor.factory-wager.com/qr-onboard
     async generateQR(options: QRConfig = {}) {
         const { merchant = 'demo-merchant', device = 'MOBILE', scope = 'GLOBAL', output = 'json' } = options;
         
-        console.log(`🔍 Generating QR code for merchant: ${merchant}`);
-        console.log(`📱 Device: ${device}`);
-        console.log(`🌍 Scope: ${scope}`);
+        console.info(`🔍 Generating QR code for merchant: ${merchant}`);
+        console.info(`📱 Device: ${device}`);
+        console.info(`🌍 Scope: ${scope}`);
         
         // Generate mock QR data
         const timestamp = new Date().toISOString();
@@ -146,47 +146,47 @@ For more information, visit: https://monitor.factory-wager.com/qr-onboard
         } else if (Bun) {
             await Bun.write(filepath, JSON.stringify(qrData, null, 2));
         } else {
-            console.log(`⚠️ Could not save file: ${filepath}`);
+            console.info(`⚠️ Could not save file: ${filepath}`);
         }
         
         // Display results
         if (output === 'json') {
-            console.log('\n📊 QR Code Generated:');
-            console.log(JSON.stringify(qrData, null, 2));
+            console.info('\n📊 QR Code Generated:');
+            console.info(JSON.stringify(qrData, null, 2));
         } else if (output === 'table') {
-            console.log('\n📊 QR Code Details:');
-            console.log('┌─────────────────┬──────────────────────────────────┐');
-            console.log('│ Property        │ Value                            │');
-            console.log('├─────────────────┼──────────────────────────────────┤');
-            console.log(`│ Merchant ID     │ ${merchant.padEnd(32)} │`);
-            console.log(`│ Device          │ ${device.padEnd(32)} │`);
-            console.log(`│ Scope           │ ${scope.padEnd(32)} │`);
-            console.log(`│ Token           │ ${qrData.token.substring(0, 30)}... │`);
-            console.log(`│ Status          │ ${qrData.status.padEnd(32)} │`);
-            console.log(`│ Expires         │ ${qrData.expiresAt.padEnd(32)} │`);
-            console.log('└─────────────────┴──────────────────────────────────┘');
+            console.info('\n📊 QR Code Details:');
+            console.info('┌─────────────────┬──────────────────────────────────┐');
+            console.info('│ Property        │ Value                            │');
+            console.info('├─────────────────┼──────────────────────────────────┤');
+            console.info(`│ Merchant ID     │ ${merchant.padEnd(32)} │`);
+            console.info(`│ Device          │ ${device.padEnd(32)} │`);
+            console.info(`│ Scope           │ ${scope.padEnd(32)} │`);
+            console.info(`│ Token           │ ${qrData.token.substring(0, 30)}... │`);
+            console.info(`│ Status          │ ${qrData.status.padEnd(32)} │`);
+            console.info(`│ Expires         │ ${qrData.expiresAt.padEnd(32)} │`);
+            console.info('└─────────────────┴──────────────────────────────────┘');
         }
         
-        console.log(`\n✅ QR code saved to: ${filepath}`);
-        console.log(`🔗 Dashboard: https://monitor.factory-wager.com/qr-onboard?merchant=${merchant}`);
+        console.info(`\n✅ QR code saved to: ${filepath}`);
+        console.info(`🔗 Dashboard: https://monitor.factory-wager.com/qr-onboard?merchant=${merchant}`);
         
         return qrData;
     }
 
     // Validate token
     validateToken(token: string): boolean {
-        console.log(`🔍 Validating token: ${token.substring(0, 20)}...`);
+        console.info(`🔍 Validating token: ${token.substring(0, 20)}...`);
         
         // Mock validation
         const isValid = this.validateMockToken(token);
         
         if (isValid) {
-            console.log('✅ Token is valid');
-            console.log('📱 Device can be onboarded');
-            console.log('🔗 Proceed to: https://monitor.factory-wager.com/qr-onboard');
+            console.info('✅ Token is valid');
+            console.info('📱 Device can be onboarded');
+            console.info('🔗 Proceed to: https://monitor.factory-wager.com/qr-onboard');
         } else {
-            console.log('❌ Token is invalid or expired');
-            console.log('🔄 Please generate a new QR code');
+            console.info('❌ Token is invalid or expired');
+            console.info('🔄 Please generate a new QR code');
         }
         
         return isValid;
@@ -194,8 +194,8 @@ For more information, visit: https://monitor.factory-wager.com/qr-onboard
 
     // Show system status
     async showStatus() {
-        console.log('📊 Global QR Device Onboarding System Status');
-        console.log('='.repeat(50));
+        console.info('📊 Global QR Device Onboarding System Status');
+        console.info('='.repeat(50));
         
         // Check system components
         const components = [
@@ -210,7 +210,7 @@ For more information, visit: https://monitor.factory-wager.com/qr-onboard
             { name: 'K8s Deployment', file: 'k8s/qr-onboarding-deployment.yaml' }
         ];
         
-        console.log('\n📁 System Components:');
+        console.info('\n📁 System Components:');
         components.forEach(comp => {
             let status = '❓';
             try {
@@ -229,11 +229,11 @@ For more information, visit: https://monitor.factory-wager.com/qr-onboard
             } catch (error) {
                 status = '❌';
             }
-            console.log(`  ${status} ${comp.name}: ${comp.file}`);
+            console.info(`  ${status} ${comp.name}: ${comp.file}`);
         });
         
         // Show configuration
-        console.log('\n⚙️ Configuration:');
+        console.info('\n⚙️ Configuration:');
         try {
             // Try to read package.json using Bun first
             if (Bun) {
@@ -241,26 +241,26 @@ For more information, visit: https://monitor.factory-wager.com/qr-onboard
                 if (packageFile.exists()) {
                     const packageText = await packageFile.text();
                     const packageJson = JSON.parse(packageText);
-                    console.log(`  📦 Project: ${packageJson.name || 'QR Device Onboarding'}`);
-                    console.log(`  🏷️  Version: ${packageJson.version || '1.0.0'}`);
-                    console.log(`  📝 Description: ${packageJson.description || 'Enterprise QR Device Onboarding System'}`);
+                    console.info(`  📦 Project: ${packageJson.name || 'QR Device Onboarding'}`);
+                    console.info(`  🏷️  Version: ${packageJson.version || '1.0.0'}`);
+                    console.info(`  📝 Description: ${packageJson.description || 'Enterprise QR Device Onboarding System'}`);
                 } else {
-                    console.log('  ❌ package.json not found');
+                    console.info('  ❌ package.json not found');
                 }
             } else {
                 // Fallback to fs if available
                 const fsObj = (globalThis as any).fs;
                 if (fsObj && fsObj.readFileSync) {
                     const packageJson = JSON.parse(fsObj.readFileSync('package.json', 'utf8'));
-                    console.log(`  📦 Project: ${packageJson.name || 'QR Device Onboarding'}`);
-                    console.log(`  🏷️  Version: ${packageJson.version || '1.0.0'}`);
-                    console.log(`  📝 Description: ${packageJson.description || 'Enterprise QR Device Onboarding System'}`);
+                    console.info(`  📦 Project: ${packageJson.name || 'QR Device Onboarding'}`);
+                    console.info(`  🏷️  Version: ${packageJson.version || '1.0.0'}`);
+                    console.info(`  📝 Description: ${packageJson.description || 'Enterprise QR Device Onboarding System'}`);
                 } else {
-                    console.log('  ❌ Cannot read package.json');
+                    console.info('  ❌ Cannot read package.json');
                 }
             }
         } catch (error) {
-            console.log('  ❌ package.json not readable');
+            console.info('  ❌ package.json not readable');
         }
         
         // Show output directory
@@ -275,28 +275,28 @@ For more information, visit: https://monitor.factory-wager.com/qr-onboard
         } catch (error) {
             outputFiles = [];
         }
-        console.log(`\n📁 Output Directory: ${outputFiles.length} files generated`);
+        console.info(`\n📁 Output Directory: ${outputFiles.length} files generated`);
         
         // Show deployment URLs
-        console.log('\n🌐 Deployment URLs:');
-        console.log('  📊 Dashboard: https://monitor.factory-wager.com/qr-onboard');
-        console.log('  🔌 API: https://api.factory-wager.com/api/*');
-        console.log('  🌐 WebSocket: https://ws.factory-wager.com/ws/dashboard');
-        console.log('  🔐 Auth: https://auth.factory-wager.com/auth/*');
-        console.log('  📈 Analytics: https://analytics.factory-wager.com/analytics/*');
+        console.info('\n🌐 Deployment URLs:');
+        console.info('  📊 Dashboard: https://monitor.factory-wager.com/qr-onboard');
+        console.info('  🔌 API: https://api.factory-wager.com/api/*');
+        console.info('  🌐 WebSocket: https://ws.factory-wager.com/ws/dashboard');
+        console.info('  🔐 Auth: https://auth.factory-wager.com/auth/*');
+        console.info('  📈 Analytics: https://analytics.factory-wager.com/analytics/*');
         
-        console.log('\n✅ System Status: OPERATIONAL');
-        console.log('🚀 Ready for production deployment');
+        console.info('\n✅ System Status: OPERATIONAL');
+        console.info('🚀 Ready for production deployment');
     }
 
     // Deploy system
     deploy(options: DeployOptions = {}) {
         const { environment = 'staging' } = options;
         
-        console.log(`🚀 Deploying QR Device Onboarding System...`);
-        console.log(`🌍 Environment: ${environment}`);
+        console.info(`🚀 Deploying QR Device Onboarding System...`);
+        console.info(`🌍 Environment: ${environment}`);
         
-        console.log('\n📋 Deployment Checklist:');
+        console.info('\n📋 Deployment Checklist:');
         
         const checks = [
             { name: 'Core system files', check: () => {
@@ -367,15 +367,15 @@ For more information, visit: https://monitor.factory-wager.com/qr-onboard
         let allPassed = true;
         checks.forEach(({ name, check }) => {
             const passed = check();
-            console.log(`  ${passed ? '✅' : '❌'} ${name}`);
+            console.info(`  ${passed ? '✅' : '❌'} ${name}`);
             if (!passed) allPassed = false;
         });
         
         if (allPassed) {
-            console.log('\n✅ All deployment checks passed!');
-            console.log('\n🚀 Deployment Commands:');
-            console.log('  # Build for production');
-            console.log('  bun run build');
+            console.info('\n✅ All deployment checks passed!');
+            console.info('\n🚀 Deployment Commands:');
+            console.info('  # Build for production');
+            console.info('  bun run build');
         }
     }
     
@@ -461,8 +461,8 @@ For more information, visit: https://monitor.factory-wager.com/qr-onboard
                 break;
             case 'validate':
                 if (!options.token) {
-                    console.log('❌ Token required for validation');
-                    console.log('Usage: node cli/working-qr-cli.ts validate --token <token>');
+                    console.info('❌ Token required for validation');
+                    console.info('Usage: node cli/working-qr-cli.ts validate --token <token>');
                     process.exit(1);
                 }
                 this.validateToken(options.token as string);

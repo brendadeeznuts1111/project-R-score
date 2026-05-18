@@ -30,9 +30,9 @@ class SecretsManager {
   ];
 
   async audit(): Promise<void> {
-    console.log("🔍 FactoryWager Secrets Audit");
-    console.log("============================");
-    console.log("Timestamp:", new Date().toISOString());
+    console.info("🔍 FactoryWager Secrets Audit");
+    console.info("============================");
+    console.info("Timestamp:", new Date().toISOString());
 
     let totalSecrets = this.secrets.length;
     let storedSecrets = 0;
@@ -47,27 +47,27 @@ class SecretsManager {
         if (value) {
           const masked = this.maskSecret(secret.name, value.toString());
           const status = secret.critical ? "🔴" : "🟡";
-          console.log(`${status} ✅ ${secret.service}:${secret.name} = ${masked}`);
-          console.log(`      ${secret.description}`);
+          console.info(`${status} ✅ ${secret.service}:${secret.name} = ${masked}`);
+          console.info(`      ${secret.description}`);
           storedSecrets++;
           if (secret.critical) storedCriticalSecrets++;
         } else {
-          console.log(`❌ ${secret.service}:${secret.name} = NOT STORED`);
-          console.log(`      ${secret.description}`);
+          console.info(`❌ ${secret.service}:${secret.name} = NOT STORED`);
+          console.info(`      ${secret.description}`);
         }
       } catch (error) {
-        console.log(`❌ ${secret.service}:${secret.name} = ERROR - ${(error as Error).message}`);
+        console.info(`❌ ${secret.service}:${secret.name} = ERROR - ${(error as Error).message}`);
       }
     }
 
-    console.log(`\n📊 Audit Summary:`);
-    console.log(`   Total Secrets: ${storedSecrets}/${totalSecrets}`);
-    console.log(`   Critical Secrets: ${storedCriticalSecrets}/${criticalSecrets}`);
+    console.info(`\n📊 Audit Summary:`);
+    console.info(`   Total Secrets: ${storedSecrets}/${totalSecrets}`);
+    console.info(`   Critical Secrets: ${storedCriticalSecrets}/${criticalSecrets}`);
 
     if (storedSecrets === totalSecrets && storedCriticalSecrets === criticalSecrets) {
-      console.log("🎉 All secrets stored securely!");
+      console.info("🎉 All secrets stored securely!");
     } else {
-      console.log("⚠️ Some secrets missing - action required");
+      console.info("⚠️ Some secrets missing - action required");
     }
   }
 
@@ -82,8 +82,8 @@ class SecretsManager {
   }
 
   async testAccess(): Promise<void> {
-    console.log("\n🧪 Testing Secret Access");
-    console.log("========================");
+    console.info("\n🧪 Testing Secret Access");
+    console.info("========================");
 
     const criticalSecrets = this.secrets.filter(s => s.critical);
     let successCount = 0;
@@ -92,51 +92,51 @@ class SecretsManager {
       try {
         const value = await Bun.secrets.get({ service: secret.service, name: secret.name });
         if (value) {
-          console.log(`✅ ${secret.name}: ACCESSIBLE`);
+          console.info(`✅ ${secret.name}: ACCESSIBLE`);
           successCount++;
         } else {
-          console.log(`❌ ${secret.name}: NOT FOUND`);
+          console.info(`❌ ${secret.name}: NOT FOUND`);
         }
       } catch (error) {
-        console.log(`❌ ${secret.name}: ERROR - ${(error as Error).message}`);
+        console.info(`❌ ${secret.name}: ERROR - ${(error as Error).message}`);
       }
     }
 
-    console.log(`\n🎯 Access Test: ${successCount}/${criticalSecrets.length} critical secrets accessible`);
+    console.info(`\n🎯 Access Test: ${successCount}/${criticalSecrets.length} critical secrets accessible`);
 
     if (successCount === criticalSecrets.length) {
-      console.log("🚀 All critical secrets accessible - ready for production!");
+      console.info("🚀 All critical secrets accessible - ready for production!");
     } else {
-      console.log("⚠️ Some critical secrets inaccessible - check permissions");
+      console.info("⚠️ Some critical secrets inaccessible - check permissions");
     }
   }
 
   async backupInfo(): Promise<void> {
-    console.log("\n💾 Secrets Backup Information");
-    console.log("============================");
+    console.info("\n💾 Secrets Backup Information");
+    console.info("============================");
 
-    console.log("🔐 Security Features:");
-    console.log("   ✅ OS-native keychain storage");
-    console.log("   ✅ Encrypted at rest");
-    console.log("   ✅ Process-isolated access");
-    console.log("   ✅ Automatic masking in logs");
+    console.info("🔐 Security Features:");
+    console.info("   ✅ OS-native keychain storage");
+    console.info("   ✅ Encrypted at rest");
+    console.info("   ✅ Process-isolated access");
+    console.info("   ✅ Automatic masking in logs");
 
-    console.log("\n📋 Backup Strategy:");
-    console.log("   • Secrets stored in system keychain");
-    console.log("   • No plaintext files containing secrets");
-    console.log("   • Environment-specific isolation");
-    console.log("   • Version-controlled configuration only");
+    console.info("\n📋 Backup Strategy:");
+    console.info("   • Secrets stored in system keychain");
+    console.info("   • No plaintext files containing secrets");
+    console.info("   • Environment-specific isolation");
+    console.info("   • Version-controlled configuration only");
 
-    console.log("\n🔄 Recovery Process:");
-    console.log("   1. Access system keychain");
-    console.log("   2. Retrieve secrets by service:name");
-    console.log("   3. Validate critical secret access");
-    console.log("   4. Update as needed with this script");
+    console.info("\n🔄 Recovery Process:");
+    console.info("   1. Access system keychain");
+    console.info("   2. Retrieve secrets by service:name");
+    console.info("   3. Validate critical secret access");
+    console.info("   4. Update as needed with this script");
   }
 
   async generateEnvFile(): Promise<void> {
-    console.log("\n📝 Generating Environment Template");
-    console.log("=================================");
+    console.info("\n📝 Generating Environment Template");
+    console.info("=================================");
 
     try {
       const apiToken = await Bun.secrets.get({ service: "cloudflare", name: "API_TOKEN" });
@@ -163,16 +163,16 @@ REGISTRY_DOMAIN=registry.factory-wager.co
 REGISTRY_VERSION=1.3.8
 
 # Usage:
-# export CLOUDFLARE_API_TOKEN=$(bun -e 'console.log(await Bun.secrets.get("cloudflare", "API_TOKEN"))')
-# export R2_ACCESS_KEY_ID=$(bun -e 'console.log(await Bun.secrets.get("r2", "AWS_ACCESS_KEY_ID"))')
+# export CLOUDFLARE_API_TOKEN=$(bun -e 'console.info(await Bun.secrets.get("cloudflare", "API_TOKEN"))')
+# export R2_ACCESS_KEY_ID=$(bun -e 'console.info(await Bun.secrets.get("r2", "AWS_ACCESS_KEY_ID"))')
 `;
 
       await Bun.write(Bun.file('./.env.template'), envTemplate);
-      console.log("✅ Environment template created: .env.template");
-      console.log("⚠️  Use Bun.secrets for actual values in production");
+      console.info("✅ Environment template created: .env.template");
+      console.info("⚠️  Use Bun.secrets for actual values in production");
 
     } catch (error) {
-      console.log("❌ Template generation failed:", (error as Error).message);
+      console.info("❌ Template generation failed:", (error as Error).message);
     }
   }
 }
@@ -199,11 +199,11 @@ async function main() {
       await manager.generateEnvFile();
       break;
     default:
-      console.log("Usage: bun run secrets-manager.ts [audit|test|backup|env]");
-      console.log("  audit  - Full secrets audit and access test");
-      console.log("  test   - Test critical secret access only");
-      console.log("  backup - Show backup information");
-      console.log("  env    - Generate environment template");
+      console.info("Usage: bun run secrets-manager.ts [audit|test|backup|env]");
+      console.info("  audit  - Full secrets audit and access test");
+      console.info("  test   - Test critical secret access only");
+      console.info("  backup - Show backup information");
+      console.info("  env    - Generate environment template");
   }
 }
 

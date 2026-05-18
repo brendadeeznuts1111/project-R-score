@@ -123,7 +123,7 @@ export class SecurityConfigManager {
     this.config = { ...this.config, ...updates };
     this.initializeFeatureFlags();
 
-    console.log('🔧 Security configuration updated:', {
+    console.info('🔧 Security configuration updated:', {
       updates,
       newConfig: this.config,
       timestamp: new Date().toISOString(),
@@ -278,7 +278,7 @@ export class SecurityConfigManager {
     const featureKey = `${category}:${feature}`;
     this.featureFlags.set(featureKey, enabled);
 
-    console.log(`🔄 Feature ${featureKey} ${enabled ? 'enabled' : 'disabled'}`, {
+    console.info(`🔄 Feature ${featureKey} ${enabled ? 'enabled' : 'disabled'}`, {
       timestamp: new Date().toISOString(),
     });
   }

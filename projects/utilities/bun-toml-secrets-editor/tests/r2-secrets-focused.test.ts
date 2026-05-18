@@ -298,7 +298,7 @@ describe("R2 Storage and Secrets - Focused Tests", () => {
 			const duration = performance.now() - start;
 			const avgTime = duration / iterations;
 
-			console.log(`Basic secret operations: ${avgTime.toFixed(3)}ms avg`);
+			console.info(`Basic secret operations: ${avgTime.toFixed(3)}ms avg`);
 			expect(avgTime).toBeLessThan(1000); // Under 1 second per operation (very lenient)
 
 			// Cleanup

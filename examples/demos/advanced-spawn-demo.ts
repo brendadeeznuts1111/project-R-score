@@ -11,43 +11,43 @@ import { IPCDocumentationOrchestrator, TerminalDocumentationExplorer } from '../
  * Demo 1: Multi-Worker Parallel Documentation Search
  */
 async function demoMultiWorkerSearch() {
-  console.log('🚀 Demo 1: Multi-Worker Parallel Documentation Search');
-  console.log('=' .repeat(60));
+  console.info('🚀 Demo 1: Multi-Worker Parallel Documentation Search');
+  console.info('=' .repeat(60));
 
   const orchestrator = new IPCDocumentationOrchestrator();
 
   try {
     // Spawn multiple workers
-    console.log('📡 Spawning worker processes...');
+    console.info('📡 Spawning worker processes...');
     const worker1 = orchestrator.spawnWorker('search-worker-1');
     const worker2 = orchestrator.spawnWorker('search-worker-2');
     const worker3 = orchestrator.spawnWorker('search-worker-3');
 
     if (!worker1 || !worker2 || !worker3) {
-      console.log('❌ Failed to spawn workers');
+      console.info('❌ Failed to spawn workers');
       return;
     }
 
     // Wait for workers to initialize
-    console.log('⏳ Waiting for workers to initialize...');
+    console.info('⏳ Waiting for workers to initialize...');
     await new Promise(resolve => setTimeout(resolve, 2000));
 
     // Execute parallel searches with different queries
     const queries = ['bun', 'stream', 'performance', 'readable', 'async'];
     
     for (const query of queries) {
-      console.log(`\n🔍 Executing parallel search: "${query}"`);
+      console.info(`\n🔍 Executing parallel search: "${query}"`);
       await orchestrator.searchAcrossWorkers(query);
       
       // Wait for results
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       const results = orchestrator.getAggregatedResults();
-      console.log(`📊 Results for "${query}": ${results.totalMatches} total matches`);
+      console.info(`📊 Results for "${query}": ${results.totalMatches} total matches`);
       
       // Show breakdown by worker
       for (const stat of results.stats) {
-        console.log(`   ${stat.workerId}: ${stat.matchesFound} matches, ${stat.elapsedTime.toFixed(2)}ms`);
+        console.info(`   ${stat.workerId}: ${stat.matchesFound} matches, ${stat.elapsedTime.toFixed(2)}ms`);
       }
     }
 
@@ -56,7 +56,7 @@ async function demoMultiWorkerSearch() {
   } finally {
     // Cleanup
     await orchestrator.shutdownWorkers();
-    console.log('✅ All workers shutdown complete');
+    console.info('✅ All workers shutdown complete');
   }
 }
 
@@ -64,21 +64,21 @@ async function demoMultiWorkerSearch() {
  * Demo 2: Terminal-based Interactive Documentation Explorer
  */
 async function demoTerminalExplorer() {
-  console.log('\n📟 Demo 2: Terminal-based Interactive Documentation Explorer');
-  console.log('=' .repeat(60));
+  console.info('\n📟 Demo 2: Terminal-based Interactive Documentation Explorer');
+  console.info('=' .repeat(60));
 
   const explorer = new TerminalDocumentationExplorer();
 
   try {
-    console.log('🎯 Starting interactive bash session for documentation exploration...');
-    console.log('💡 Try running: rg --color=always "bun" /Users/nolarose/Projects/.cache');
-    console.log('⏰ Session will timeout after 15 seconds');
+    console.info('🎯 Starting interactive bash session for documentation exploration...');
+    console.info('💡 Try running: rg --color=always "bun" /Users/nolarose/Projects/.cache');
+    console.info('⏰ Session will timeout after 15 seconds');
 
     // Start bash session with timeout
     const bashPromise = explorer.startBashSession();
     const timeoutPromise = new Promise(resolve => {
       setTimeout(() => {
-        console.log('\n⏰ Bash session timeout - terminating...');
+        console.info('\n⏰ Bash session timeout - terminating...');
         resolve(null);
       }, 15000);
     });
@@ -89,7 +89,7 @@ async function demoTerminalExplorer() {
     console.error('❌ Terminal explorer error:', error);
   } finally {
     explorer.close();
-    console.log('✅ Terminal explorer closed');
+    console.info('✅ Terminal explorer closed');
   }
 }
 
@@ -97,13 +97,13 @@ async function demoTerminalExplorer() {
  * Demo 3: IPC Communication Patterns
  */
 async function demoIPCPatterns() {
-  console.log('\n📡 Demo 3: Advanced IPC Communication Patterns');
-  console.log('=' .repeat(60));
+  console.info('\n📡 Demo 3: Advanced IPC Communication Patterns');
+  console.info('=' .repeat(60));
 
   // Create a custom worker for demonstration
   const worker = Bun.spawn(["bun", "--import", "./lib/docs/ipc-stream-search.ts"], {
     ipc: (message, subprocess) => {
-      console.log(`📨 Parent received: ${message.type}`, message.results?.length || 0, 'items');
+      console.info(`📨 Parent received: ${message.type}`, message.results?.length || 0, 'items');
       
       // Demonstrate bidirectional communication
       if (message.type === 'complete') {
@@ -118,7 +118,7 @@ async function demoIPCPatterns() {
   });
 
   // Send various message types
-  console.log('📤 Sending test messages...');
+  console.info('📤 Sending test messages...');
   
   worker.send({
     type: 'search',
@@ -131,20 +131,20 @@ async function demoIPCPatterns() {
 
   // Cleanup
   worker.kill();
-  console.log('✅ IPC demo complete');
+  console.info('✅ IPC demo complete');
 }
 
 /**
  * Demo 4: Performance Comparison
  */
 async function demoPerformanceComparison() {
-  console.log('\n⚡ Demo 4: Performance Comparison - Single vs Multi-Process');
-  console.log('=' .repeat(60));
+  console.info('\n⚡ Demo 4: Performance Comparison - Single vs Multi-Process');
+  console.info('=' .repeat(60));
 
   const { ZenStreamSearcher } = await import('../lib/docs/stream-search');
   
   // Single process search
-  console.log('🔍 Single process search...');
+  console.info('🔍 Single process search...');
   const singleStart = performance.now();
   
   const searcher = new ZenStreamSearcher();
@@ -157,10 +157,10 @@ async function demoPerformanceComparison() {
   });
   
   const singleTime = performance.now() - singleStart;
-  console.log(`✅ Single process: ${singleResults.matchesFound} matches in ${singleTime.toFixed(2)}ms`);
+  console.info(`✅ Single process: ${singleResults.matchesFound} matches in ${singleTime.toFixed(2)}ms`);
 
   // Multi-process search (simplified)
-  console.log('🔍 Multi-process search...');
+  console.info('🔍 Multi-process search...');
   const multiStart = performance.now();
   
   const orchestrator = new IPCDocumentationOrchestrator();
@@ -174,8 +174,8 @@ async function demoPerformanceComparison() {
     const multiResults = orchestrator.getAggregatedResults();
     const multiTime = performance.now() - multiStart;
     
-    console.log(`✅ Multi-process: ${multiResults.totalMatches} matches in ${multiTime.toFixed(2)}ms`);
-    console.log(`📊 Performance ratio: ${(multiTime / singleTime).toFixed(2)}x`);
+    console.info(`✅ Multi-process: ${multiResults.totalMatches} matches in ${multiTime.toFixed(2)}ms`);
+    console.info(`📊 Performance ratio: ${(multiTime / singleTime).toFixed(2)}x`);
     
     await orchestrator.shutdownWorkers();
   }
@@ -185,9 +185,9 @@ async function demoPerformanceComparison() {
  * Main demonstration runner
  */
 async function runDemos() {
-  console.log('🎪 Advanced Bun.spawn Features Showcase');
-  console.log('🔥 Demonstrating IPC, Terminal (PTY), and Multi-Process Capabilities');
-  console.log('=' .repeat(80));
+  console.info('🎪 Advanced Bun.spawn Features Showcase');
+  console.info('🔥 Demonstrating IPC, Terminal (PTY), and Multi-Process Capabilities');
+  console.info('=' .repeat(80));
 
   try {
     await demoMultiWorkerSearch();
@@ -195,12 +195,12 @@ async function runDemos() {
     await demoIPCPatterns();
     await demoPerformanceComparison();
     
-    console.log('\n🎉 All demos completed successfully!');
-    console.log('💡 Key Takeaways:');
-    console.log('   - IPC enables powerful multi-process coordination');
-    console.log('   - Terminal (PTY) support enables interactive CLI tools');
-    console.log('   - AsyncDisposable pattern ensures clean resource management');
-    console.log('   - Web Standard APIs integration provides streaming efficiency');
+    console.info('\n🎉 All demos completed successfully!');
+    console.info('💡 Key Takeaways:');
+    console.info('   - IPC enables powerful multi-process coordination');
+    console.info('   - Terminal (PTY) support enables interactive CLI tools');
+    console.info('   - AsyncDisposable pattern ensures clean resource management');
+    console.info('   - Web Standard APIs integration provides streaming efficiency');
     
   } catch (error) {
     console.error('❌ Demo error:', error);

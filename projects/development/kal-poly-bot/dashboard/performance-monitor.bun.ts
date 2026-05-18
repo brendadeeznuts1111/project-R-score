@@ -44,10 +44,10 @@ export class PerformanceDashboard {
       };
     }
 
-    console.log("📊 Performance Dashboard initialized");
-    console.log(`   Refresh rate: ${this.config.refreshRate}ms`);
-    console.log(`   Max patterns: ${this.config.maxPatterns}`);
-    console.log(`   Security: ${this.config.securityLevel}`);
+    console.info("📊 Performance Dashboard initialized");
+    console.info(`   Refresh rate: ${this.config.refreshRate}ms`);
+    console.info(`   Max patterns: ${this.config.maxPatterns}`);
+    console.info(`   Security: ${this.config.securityLevel}`);
   }
 
   // Component #42: Zero-cost table rendering
@@ -213,7 +213,7 @@ export class PerformanceDashboard {
 
   // Real-time dashboard updates
   startRealTimeUpdates(): void {
-    console.log("🔄 Starting real-time dashboard updates");
+    console.info("🔄 Starting real-time dashboard updates");
 
     const updateInterval = setInterval(() => {
       this.renderDashboard();
@@ -222,7 +222,7 @@ export class PerformanceDashboard {
     // Cleanup on process exit
     process.on("SIGINT", () => {
       clearInterval(updateInterval);
-      console.log("\n📊 Dashboard stopped");
+      console.info("\n📊 Dashboard stopped");
       process.exit(0);
     });
   }
@@ -231,21 +231,21 @@ export class PerformanceDashboard {
     // Clear screen (works in most terminals)
     console.clear();
 
-    console.log("🚀 Kalman Filter Performance Dashboard v2.4.2");
-    console.log("=".repeat(60));
-    console.log(`Last updated: ${new Date().toISOString()}`);
-    console.log(
+    console.info("🚀 Kalman Filter Performance Dashboard v2.4.2");
+    console.info("=".repeat(60));
+    console.info(`Last updated: ${new Date().toISOString()}`);
+    console.info(
       `Security: ${this.config.securityLevel} | Features: ${this.config.features.join(", ")}`
     );
-    console.log();
+    console.info();
 
-    console.log("📈 Market Half-Life Analysis");
-    console.log(this.renderHalfLifeTable());
-    console.log();
+    console.info("📈 Market Half-Life Analysis");
+    console.info(this.renderHalfLifeTable());
+    console.info();
 
-    console.log("📊 Recent Performance Metrics");
-    console.log(this.renderMetricsTable());
-    console.log();
+    console.info("📊 Recent Performance Metrics");
+    console.info(this.renderMetricsTable());
+    console.info();
 
     // System status
     const avgLatency =
@@ -260,12 +260,12 @@ export class PerformanceDashboard {
           this.metrics.length
         : 0;
 
-    console.log("🔧 System Status");
-    console.log(`   Average Latency: ${avgLatency.toFixed(2)}ms`);
-    console.log(`   Average Accuracy: ${(avgAccuracy * 100).toFixed(1)}%`);
-    console.log(`   Active Patterns: ${this.metrics.length}`);
-    console.log(`   Unicode Engine: ✅ Zero-cost rendering`);
-    console.log(`   Security Layer: ✅ CVE-2024 protected`);
+    console.info("🔧 System Status");
+    console.info(`   Average Latency: ${avgLatency.toFixed(2)}ms`);
+    console.info(`   Average Accuracy: ${(avgAccuracy * 100).toFixed(1)}%`);
+    console.info(`   Active Patterns: ${this.metrics.length}`);
+    console.info(`   Unicode Engine: ✅ Zero-cost rendering`);
+    console.info(`   Security Layer: ✅ CVE-2024 protected`);
   }
 
   // Performance analytics
@@ -329,8 +329,8 @@ export class PerformanceDashboard {
 
   // Demonstration function
   static demonstrate(): void {
-    console.log("🚀 Zero-Cost Performance Dashboard");
-    console.log("====================================");
+    console.info("🚀 Zero-Cost Performance Dashboard");
+    console.info("====================================");
 
     const dashboard = new PerformanceDashboard();
 
@@ -373,34 +373,34 @@ export class PerformanceDashboard {
     sampleMetrics.forEach((metric) => dashboard.addMetric(metric));
 
     // Render tables
-    console.log("📈 Market Half-Life Analysis");
-    console.log(dashboard.renderHalfLifeTable());
-    console.log();
+    console.info("📈 Market Half-Life Analysis");
+    console.info(dashboard.renderHalfLifeTable());
+    console.info();
 
-    console.log("📊 Performance Metrics");
-    console.log(dashboard.renderMetricsTable());
-    console.log();
+    console.info("📊 Performance Metrics");
+    console.info(dashboard.renderMetricsTable());
+    console.info();
 
     // Performance analysis
     const analysis = dashboard.analyzePerformance();
-    console.log("📊 Performance Analysis");
-    console.log(`   Average Latency: ${analysis.avgLatency.toFixed(2)}ms`);
-    console.log(
+    console.info("📊 Performance Analysis");
+    console.info(`   Average Latency: ${analysis.avgLatency.toFixed(2)}ms`);
+    console.info(
       `   Average Throughput: ${analysis.avgThroughput.toFixed(0)} req/s`
     );
-    console.log(
+    console.info(
       `   Average Accuracy: ${(analysis.avgAccuracy * 100).toFixed(1)}%`
     );
-    console.log(
+    console.info(
       `   Security Score: ${(analysis.securityScore * 100).toFixed(1)}%`
     );
 
     if (analysis.recommendations.length > 0) {
-      console.log("   Recommendations:");
-      analysis.recommendations.forEach((rec) => console.log(`     • ${rec}`));
+      console.info("   Recommendations:");
+      analysis.recommendations.forEach((rec) => console.info(`     • ${rec}`));
     }
 
-    console.log("\n✅ Dashboard demonstration complete");
+    console.info("\n✅ Dashboard demonstration complete");
   }
 }
 

@@ -43,7 +43,7 @@ async function createCommit(options: CommitOptions): Promise<CommitResult> {
 		// Try to stage all changes
 		try {
 			await $`git add -A`;
-			console.log("📦 Auto-staged all changes");
+			console.info("📦 Auto-staged all changes");
 		} catch {
 			return {
 				success: false,
@@ -153,30 +153,30 @@ if (import.meta.main) {
 	// Get message from args or suggest
 	const message = args.find((a) => !a.startsWith("--") && !a.startsWith("-"));
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Git Commit                         ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Git Commit                         ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	if (!message) {
 		const suggested = await suggestMessage();
 		if (suggested) {
-			console.log("Suggested message:");
-			console.log(`  ${suggested}`);
-			console.log();
-			console.log("Use with:");
-			console.log(`  bun git-commit.ts "${suggested}"`);
+			console.info("Suggested message:");
+			console.info(`  ${suggested}`);
+			console.info();
+			console.info("Use with:");
+			console.info(`  bun git-commit.ts "${suggested}"`);
 		} else {
-			console.log("❌ No staged changes. Stage files first:");
-			console.log("  git add <files>");
+			console.info("❌ No staged changes. Stage files first:");
+			console.info("  git add <files>");
 		}
 		process.exit(1);
 	}
 
-	console.log(`Message: ${message}`);
-	console.log(`Sign: ${sign ? "Yes" : "No"}`);
-	console.log(`Amend: ${amend ? "Yes" : "No"}`);
-	console.log();
+	console.info(`Message: ${message}`);
+	console.info(`Sign: ${sign ? "Yes" : "No"}`);
+	console.info(`Amend: ${amend ? "Yes" : "No"}`);
+	console.info();
 
 	const result = await createCommit({
 		message,
@@ -187,14 +187,14 @@ if (import.meta.main) {
 	});
 
 	if (result.success) {
-		console.log(`✅ Commit created: ${result.hash}`);
-		console.log();
-		console.log("Next steps:");
-		console.log("  git push origin main");
+		console.info(`✅ Commit created: ${result.hash}`);
+		console.info();
+		console.info("Next steps:");
+		console.info("  git push origin main");
 	} else {
-		console.log("❌ Commit failed:");
+		console.info("❌ Commit failed:");
 		for (const error of result.errors) {
-			console.log(`  ${error}`);
+			console.info(`  ${error}`);
 		}
 		process.exit(1);
 	}

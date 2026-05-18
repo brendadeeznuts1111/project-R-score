@@ -7,12 +7,12 @@
 // Test the @ff/ alias with direct import
 import packageJson from '@ff/package.json';
 
-console.log('🔧 New @ff/ Alias Test');
-console.log('='.repeat(40));
+console.info('🔧 New @ff/ Alias Test');
+console.info('='.repeat(40));
 
-console.log('📦 Package.json via @ff/ alias:');
-console.log(`   Name: ${packageJson.name}`);
-console.log(`   Version: ${packageJson.version}`);
-console.log(`   Scripts count: ${Object.keys(packageJson.scripts || {}).length}`);
+console.info('📦 Package.json via @ff/ alias:');
+console.info(`   Name: ${packageJson.name}`);
+console.info(`   Version: ${packageJson.version}`);
+console.info(`   Scripts count: ${Object.keys(packageJson.scripts || {}).length}`);
 
-console.log('\n✅ @ff/ alias working with ES6 imports!');
+console.info('\n✅ @ff/ alias working with ES6 imports!');

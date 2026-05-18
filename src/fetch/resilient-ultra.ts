@@ -10,6 +10,72 @@ export interface OriginConfig {
 
 export type CircuitState = "closed" | "open" | "half-open";
 
+export interface CircuitBreakerConfig {
+  failureThreshold: number;
+  resetTimeoutMs: number;
+  halfOpenMaxCalls: number;
+}
+
+export class CircuitBreaker {
+  private state: CircuitState = "closed";
+  private failures = 0;
+  private lastFailureTime = 0;
+  private halfOpenCalls = 0;
+
+  constructor(private readonly config: CircuitBreakerConfig) {}
+
+  canExecute(): boolean {
+    if (this.state === "closed") return true;
+    if (this.state === "open") {
+      if (Date.now() - this.lastFailureTime > this.config.resetTimeoutMs) {
+        this.state = "half-open";
+        this.halfOpenCalls = 0;
+        return true;
+      }
+      return false;
+    }
+    if (this.halfOpenCalls < this.config.halfOpenMaxCalls) {
+      this.halfOpenCalls += 1;
+      return true;
+    }
+    return false;
+  }
+
+  recordSuccess(): void {
+    this.failures = 0;
+    this.state = "closed";
+    this.halfOpenCalls = 0;
+  }
+
+  recordFailure(): void {
+    this.failures += 1;
+    this.lastFailureTime = Date.now();
+    if (this.state === "half-open" || this.failures >= this.config.failureThreshold) {
+      this.state = "open";
+      this.halfOpenCalls = 0;
+    }
+  }
+
+  getState(): CircuitState {
+    return this.state;
+  }
+
+  reset(): void {
+    this.state = "closed";
+    this.failures = 0;
+    this.lastFailureTime = 0;
+    this.halfOpenCalls = 0;
+  }
+}
+
+export function createCircuitBreaker(config: Partial<CircuitBreakerConfig> = {}): CircuitBreaker {
+  return new CircuitBreaker({
+    failureThreshold: config.failureThreshold ?? 3,
+    resetTimeoutMs: config.resetTimeoutMs ?? 30_000,
+    halfOpenMaxCalls: config.halfOpenMaxCalls ?? 1,
+  });
+}
+
 export interface FetchMetric {
   timestamp: number;
   origin: string;
@@ -48,57 +114,6 @@ export interface UltraResilientOptions extends Omit<RequestInit, "signal"> {
     latencyThresholdMs: number;
     errorRateThreshold: number;
   };
-}
-
-class CircuitBreaker {
-  private state: CircuitState = "closed";
-  private failures = 0;
-  private lastFailureTime = 0;
-  private halfOpenCalls = 0;
-
-  constructor(
-    private readonly config: {
-      failureThreshold: number;
-      resetTimeoutMs: number;
-      halfOpenMaxCalls: number;
-    }
-  ) {}
-
-  canExecute(): boolean {
-    if (this.state === "closed") return true;
-    if (this.state === "open") {
-      if (Date.now() - this.lastFailureTime > this.config.resetTimeoutMs) {
-        this.state = "half-open";
-        this.halfOpenCalls = 0;
-        return true;
-      }
-      return false;
-    }
-    if (this.halfOpenCalls < this.config.halfOpenMaxCalls) {
-      this.halfOpenCalls += 1;
-      return true;
-    }
-    return false;
-  }
-
-  recordSuccess(): void {
-    this.failures = 0;
-    this.state = "closed";
-    this.halfOpenCalls = 0;
-  }
-
-  recordFailure(): void {
-    this.failures += 1;
-    this.lastFailureTime = Date.now();
-    if (this.state === "half-open" || this.failures >= this.config.failureThreshold) {
-      this.state = "open";
-      this.halfOpenCalls = 0;
-    }
-  }
-
-  getState(): CircuitState {
-    return this.state;
-  }
 }
 
 class OriginHealthMonitor {

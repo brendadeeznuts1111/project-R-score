@@ -607,21 +607,21 @@ export default {
 
   // Scheduled event for cleanup and health checks
   async scheduled(event: ScheduledEvent, env: Env): Promise<void> {
-    console.log('Running scheduled maintenance tasks...');
+    console.info('Running scheduled maintenance tasks...');
 
     try {
       // Clean up rate limiter
       rateLimiter.cleanup();
-      console.log('Rate limiter cleanup completed');
+      console.info('Rate limiter cleanup completed');
 
       // Force health check
       await connectionManager.getConnection('database', env);
-      console.log('Health check completed');
+      console.info('Health check completed');
 
       // Reset metrics (could also send to external monitoring)
       if (env.ENABLE_MONITORING === 'true') {
         const currentMetrics = metrics.getMetrics();
-        console.log('Current metrics:', JSON.stringify(currentMetrics, null, 2));
+        console.info('Current metrics:', JSON.stringify(currentMetrics, null, 2));
 
         // In production, you would send these to your monitoring system
         // await sendMetricsToMonitoring(currentMetrics);

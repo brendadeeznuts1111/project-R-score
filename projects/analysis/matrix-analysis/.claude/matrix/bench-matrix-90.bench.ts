@@ -29,12 +29,12 @@ const BENCH_ENV = {
 	ENABLE_CPU_PROF: process.env.ENABLE_CPU_PROF === "true",
 };
 
-console.log("\n🔥 Tier-1380 OMEGA Matrix Benchmarks");
-console.log("=====================================\n");
-console.log(`Environment: ${BENCH_ENV.MATRIX_TIER}`);
-console.log(`Iterations: ${BENCH_ENV.BENCH_ITERATIONS}`);
-console.log(`CPU Profiling: ${BENCH_ENV.ENABLE_CPU_PROF ? "enabled" : "disabled"}`);
-console.log();
+console.info("\n🔥 Tier-1380 OMEGA Matrix Benchmarks");
+console.info("=====================================\n");
+console.info(`Environment: ${BENCH_ENV.MATRIX_TIER}`);
+console.info(`Iterations: ${BENCH_ENV.BENCH_ITERATIONS}`);
+console.info(`CPU Profiling: ${BENCH_ENV.ENABLE_CPU_PROF ? "enabled" : "disabled"}`);
+console.info();
 
 // ═════════════════════════════════════════════════════════════════════════════
 // BENCHMARKS: Column Access
@@ -170,7 +170,7 @@ bench("Serialize to JSON", () => {
 
 // CPU Profile capture (if enabled)
 if (BENCH_ENV.ENABLE_CPU_PROF) {
-	console.log("📝 Starting with CPU profiling...\n");
+	console.info("📝 Starting with CPU profiling...\n");
 	// Bun will generate CPU profile when --cpu-prof flag is used
 }
 
@@ -181,4 +181,4 @@ await run({
 	percentiles: [50, 95, 99],
 });
 
-console.log("\n✅ Benchmarks complete");
+console.info("\n✅ Benchmarks complete");

@@ -87,7 +87,7 @@ class UltraZenSearcher {
     // Check if ripgrep is available
     const rgPath = which('rg');
     if (!rgPath) {
-      console.log(c.yellow('⚠️  ripgrep not found, falling back to JS search'));
+      console.info(c.yellow('⚠️  ripgrep not found, falling back to JS search'));
       yield* this.fallbackSearch(query);
       return;
     }
@@ -115,7 +115,7 @@ class UltraZenSearcher {
         for await (const chunk of proc.stdout) {
           // Check for abort
           if (this.abortController.signal.aborted) {
-            console.log(c.gray('  [Search cancelled]'));
+            console.info(c.gray('  [Search cancelled]'));
             return;
           }
           
@@ -155,16 +155,16 @@ class UltraZenSearcher {
       // Log resource usage if available
       if (proc.resourceUsage) {
         const { maxRSS, cpuTime } = proc.resourceUsage;
-        console.log(c.gray(`  📊 ripgrep: ${resultCount} results, ${(maxRSS / 1024).toFixed(1)}KB RAM, ${cpuTime.total.toFixed(1)}ms CPU, ${wallTime.toFixed(1)}ms wall`));
+        console.info(c.gray(`  📊 ripgrep: ${resultCount} results, ${(maxRSS / 1024).toFixed(1)}KB RAM, ${cpuTime.total.toFixed(1)}ms CPU, ${wallTime.toFixed(1)}ms wall`));
       }
 
       // Exit code 1 means no matches found (normal for ripgrep)
       if (exitCode !== 0 && exitCode !== 1) {
-        console.log(c.gray(`  (ripgrep exit: ${exitCode})`));
+        console.info(c.gray(`  (ripgrep exit: ${exitCode})`));
       }
     } catch (error) {
       if ((error as Error).name === 'AbortError') {
-        console.log(c.gray('  [Search aborted]'));
+        console.info(c.gray('  [Search aborted]'));
       } else {
         console.error(c.red(`  Search error: ${(error as Error).message}`));
       }
@@ -199,7 +199,7 @@ class UltraZenSearcher {
   private async *fallbackSearch(query: string): AsyncGenerator<SearchResult, void, unknown> {
     const content = await readFile(FLAT_DOCS_PATH, 'utf-8').catch(() => '');
     if (!content) {
-      console.log(c.yellow('  No documentation cached. Run with --index first.'));
+      console.info(c.yellow('  No documentation cached. Run with --index first.'));
       return;
     }
 
@@ -246,7 +246,7 @@ class UltraZenSearcher {
     }
 
     // Fetch and flatten docs
-    console.log(c.yellow('📡 Fetching documentation...'));
+    console.info(c.yellow('📡 Fetching documentation...'));
 
     try {
       const response = await fetch(DOCS_INDEX_URL, {
@@ -262,7 +262,7 @@ class UltraZenSearcher {
       await mkdir(CACHE_DIR, { recursive: true });
       await writeFile(FLAT_DOCS_PATH, content);
 
-      console.log(c.green(`✓ Cached ${(content.length / 1024).toFixed(1)}KB to ${FLAT_DOCS_PATH}`));
+      console.info(c.green(`✓ Cached ${(content.length / 1024).toFixed(1)}KB to ${FLAT_DOCS_PATH}`));
       this.cacheValid = true;
     } catch (error) {
       console.error(c.red(`Failed to fetch docs: ${(error as Error).message}`));
@@ -445,8 +445,8 @@ class InteractiveSearcher {
       if (query !== this.lastQuery) return this.results;
     }
 
-    console.log(c.bold(c.cyan(`\n🔍 "${query}"`)));
-    console.log(c.gray('─'.repeat(60)));
+    console.info(c.bold(c.cyan(`\n🔍 "${query}"`)));
+    console.info(c.gray('─'.repeat(60)));
 
     this.results = [];
     let count = 0;
@@ -460,11 +460,11 @@ class InteractiveSearcher {
         ? result.text.slice(0, 77) + '...'
         : result.text;
 
-      console.log(`${c.green(`${count}.`)} ${c.bold(truncatedText)}`);
-      console.log(`   ${c.gray(`${result.path}:${result.line}`)} ${c.gray(`(score: ${result.score})`)}`);
+      console.info(`${c.green(`${count}.`)} ${c.bold(truncatedText)}`);
+      console.info(`   ${c.gray(`${result.path}:${result.line}`)} ${c.gray(`(score: ${result.score})`)}`);
 
       if (count >= maxResults) {
-        console.log(c.gray(`   ... and more results available`));
+        console.info(c.gray(`   ... and more results available`));
         break;
       }
     }
@@ -472,10 +472,10 @@ class InteractiveSearcher {
     const elapsedMs = Number(nanoseconds() - startNs) / 1e6;
 
     if (count === 0) {
-      console.log(c.yellow('   No results found'));
-      console.log(c.gray('   Try: bun-docs-ultra --index (to refresh cache)'));
+      console.info(c.yellow('   No results found'));
+      console.info(c.gray('   Try: bun-docs-ultra --index (to refresh cache)'));
     } else {
-      console.log(c.gray(`\n  ${count} results in ${elapsedMs.toFixed(2)}ms`));
+      console.info(c.gray(`\n  ${count} results in ${elapsedMs.toFixed(2)}ms`));
     }
 
     return this.results;
@@ -501,7 +501,7 @@ class InteractiveSearcher {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function showHelp(): void {
-  console.log(`
+  console.info(`
 ╔══════════════════════════════════════════════════════════════════╗
 ║  🔍 bun-docs-ultra - Ultra-Zen Documentation Search v2.0        ║
 ╠══════════════════════════════════════════════════════════════════╣
@@ -584,7 +584,7 @@ async function main(): Promise<void> {
   if (forceIndex) {
     await interactive.refreshCache();
     if (!query) {
-      console.log(c.green('✓ Cache refreshed'));
+      console.info(c.green('✓ Cache refreshed'));
       process.exit(0);
     }
   }
@@ -592,10 +592,10 @@ async function main(): Promise<void> {
   const results = await interactive.adaptiveSearch(query, options);
 
   if (outputJson) {
-    console.log(JSON.stringify(results, null, 2));
+    console.info(JSON.stringify(results, null, 2));
   }
 
-  console.log();
+  console.info();
 }
 
 if (import.meta.main) {

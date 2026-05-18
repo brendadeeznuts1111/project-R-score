@@ -3,7 +3,7 @@
 
 import { BundleAnalyzerServer } from "./server/BundleAnalyzerServer.js";
 
-console.log(`
+console.info(`
 📦 DuoPlus Bundle Matrix Analyzer
 ====================================
 
@@ -36,13 +36,13 @@ BundleAnalyzerServer.serve();
 
 // Also run a quick analysis in terminal
 async function terminalAnalysis() {
-  console.log('\n🧪 Running quick bundle analysis...\n');
+  console.info('\n🧪 Running quick bundle analysis...\n');
   
   const files = {
     '/test.ts': `
       import { greet } from './utils.ts';
       export function main() {
-        console.log(greet('Bundle Analyzer'));
+        console.info(greet('Bundle Analyzer'));
       }
     `,
     '/utils.ts': `
@@ -58,9 +58,9 @@ async function terminalAnalysis() {
     metafile: true
   });
   
-  console.log('Build successful:', result.success);
-  console.log('Outputs:', Object.keys(result.metafile.outputs));
-  console.log('Total bytes:', Object.values(result.metafile.outputs)
+  console.info('Build successful:', result.success);
+  console.info('Outputs:', Object.keys(result.metafile.outputs));
+  console.info('Total bytes:', Object.values(result.metafile.outputs)
     .reduce((sum, output) => sum + output.bytes, 0));
 }
 

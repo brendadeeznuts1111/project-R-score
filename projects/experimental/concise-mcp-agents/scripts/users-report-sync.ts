@@ -39,7 +39,7 @@ async function syncUsersReport(start = 0, limit = 100) {
       await createUserReportRule(report);
     }
 
-    console.log(`✅ Synced ${reports.length} user reports`);
+    console.info(`✅ Synced ${reports.length} user reports`);
   } catch (error) {
     console.error('❌ Failed to sync user reports:', error);
     throw error;

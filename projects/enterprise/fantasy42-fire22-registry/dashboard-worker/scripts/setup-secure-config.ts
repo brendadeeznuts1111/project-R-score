@@ -17,7 +17,7 @@ async function promptQuestion(question: string, isPassword = false): Promise<str
 }
 
 async function setupSecureConfig() {
-  console.log('🔐 Fire22 Secure Configuration Setup\n');
+  console.info('🔐 Fire22 Secure Configuration Setup\n');
 
   const BOT_TOKEN = await promptQuestion('Enter your Telegram Bot Token: ');
   const CASHIER_BOT_TOKEN = await promptQuestion('Enter your Cashier Bot Token: ');
@@ -33,7 +33,7 @@ async function setupSecureConfig() {
   };
 
   await configManager.setConfig(config);
-  console.log('\n✅ Configuration securely stored using Bun.secrets');
+  console.info('\n✅ Configuration securely stored using Bun.secrets');
 }
 
 // Run setup if this script is executed directly

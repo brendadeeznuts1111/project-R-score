@@ -310,7 +310,7 @@ const serverData = {
   )}
 };
 
-console.log(inspect.table(serverData, {
+console.info(inspect.table(serverData, {
   theme: "dark",
   showBorder: true,
   zebra: true,
@@ -330,7 +330,7 @@ const apiData = {
   rows: ${JSON.stringify(apiEndpoints, null, 2)}
 };
 
-console.log(inspect.table(apiData, {
+console.info(inspect.table(apiData, {
   theme: "dark",
   zebra: true,
   sortBy: "method",
@@ -361,7 +361,7 @@ const metricsData = {
   )}
 };
 
-console.log(inspect.table(metricsData, {
+console.info(inspect.table(metricsData, {
   theme: "dark",
   showBorder: true,
   zebra: true,
@@ -696,7 +696,7 @@ console.log(inspect.table(metricsData, {
               <h3 className="text-white font-semibold mb-2">Basic Usage</h3>
               <pre className="text-xs text-green-400 overflow-x-auto">
                 {`import { inspect } from "bun";
-console.log(inspect.table(data));`}
+console.info(inspect.table(data));`}
               </pre>
             </div>
             <div className="bg-black/30 rounded-lg p-4 border border-white/10">

@@ -275,7 +275,7 @@ export class Logger {
         break;
       case 'debug':
       default:
-        console.log(logMessage, metadata);
+        console.info(logMessage, metadata);
         break;
     }
   }

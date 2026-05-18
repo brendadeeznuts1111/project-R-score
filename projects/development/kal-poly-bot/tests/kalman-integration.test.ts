@@ -12,15 +12,15 @@ import { KalmanStabilityIntegration } from "../infrastructure/v1.3.3-integration
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 describe("Kalman Infrastructure Integration: v2.4.2 + v1.3.3", () => {
-  console.log("🧪 Testing Golden Matrix Integration");
-  console.log("=====================================\n");
+  console.info("🧪 Testing Golden Matrix Integration");
+  console.info("=====================================\n");
 
   // Display feature status
-  console.log("📊 Feature Status:");
+  console.info("📊 Feature Status:");
   for (const [key, value] of Object.entries(KALMAN_FEATURES)) {
-    console.log(`  ${key}: ${value ? "✅" : "❌"}`);
+    console.info(`  ${key}: ${value ? "✅" : "❌"}`);
   }
-  console.log();
+  console.info();
 
   test("Component #42: Unicode String Width Engine", () => {
     const testCases = [
@@ -336,8 +336,8 @@ trustedDependencies: true
 
 // Run performance benchmarks
 async function runBenchmarks() {
-  console.log("\n⚡ PERFORMANCE BENCHMARKS");
-  console.log("=========================\n");
+  console.info("\n⚡ PERFORMANCE BENCHMARKS");
+  console.info("=========================\n");
 
   const system = new KalmanSystemV2_4_2();
 
@@ -351,9 +351,9 @@ async function runBenchmarks() {
   }
   const tickDuration = performance.now() - tickStart;
 
-  console.log(`Tick Processing (1000 iterations): ${tickDuration.toFixed(2)}ms`);
-  console.log(`Average per tick: ${(tickDuration / 1000).toFixed(3)}ms`);
-  console.log(`Throughput: ${Math.round(1000 / (tickDuration / 1000))} ticks/sec`);
+  console.info(`Tick Processing (1000 iterations): ${tickDuration.toFixed(2)}ms`);
+  console.info(`Average per tick: ${(tickDuration / 1000).toFixed(3)}ms`);
+  console.info(`Throughput: ${Math.round(1000 / (tickDuration / 1000))} ticks/sec`);
 
   // Benchmark 2: Infrastructure Operations
   const infraStart = performance.now();
@@ -363,8 +363,8 @@ async function runBenchmarks() {
   }
   const infraDuration = performance.now() - infraStart;
 
-  console.log(`\nInfrastructure Ops (20k calls): ${infraDuration.toFixed(2)}ms`);
-  console.log(`Average per op: ${(infraDuration / 20000).toFixed(3)}ms`);
+  console.info(`\nInfrastructure Ops (20k calls): ${infraDuration.toFixed(2)}ms`);
+  console.info(`Average per op: ${(infraDuration / 20000).toFixed(3)}ms`);
 
   // Benchmark 3: Combined Performance
   const combinedStart = performance.now();
@@ -383,20 +383,20 @@ maxDivergence: 0.03
   const profilePath = profiler.stop();
   const combinedDuration = performance.now() - combinedStart;
 
-  console.log(`\nCombined Operations (500 iterations): ${combinedDuration.toFixed(2)}ms`);
-  console.log(`Profile saved: ${profilePath || 'N/A'}`);
+  console.info(`\nCombined Operations (500 iterations): ${combinedDuration.toFixed(2)}ms`);
+  console.info(`Profile saved: ${profilePath || 'N/A'}`);
 
   // Success rate calculation
   const successRate = (1000 / 1000) * 100; // All operations succeeded
-  console.log(`\n✅ Success Rate: ${successRate.toFixed(1)}%`);
-  console.log(`🎯 Target: 98.5%+`);
-  console.log(`📊 Status: ${successRate >= 98.5 ? "PASSED" : "FAILED"}`);
+  console.info(`\n✅ Success Rate: ${successRate.toFixed(1)}%`);
+  console.info(`🎯 Target: 98.5%+`);
+  console.info(`📊 Status: ${successRate >= 98.5 ? "PASSED" : "FAILED"}`);
 }
 
 // Main execution
 if (import.meta.main) {
-  console.log("🚀 Kalman Filter Infrastructure Integration Test Suite");
-  console.log("=====================================================\n");
+  console.info("🚀 Kalman Filter Infrastructure Integration Test Suite");
+  console.info("=====================================================\n");
 
   // Run benchmarks
   runBenchmarks().catch(console.error);

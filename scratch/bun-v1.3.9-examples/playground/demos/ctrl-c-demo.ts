@@ -5,8 +5,8 @@
  * https://bun.com/docs/guides/process/ctrl-c
  */
 
-console.log("⌨️  Bun CTRL+C Demo (Hardened)\n");
-console.log("=".repeat(74));
+console.info("⌨️  Bun CTRL+C Demo (Hardened)\n");
+console.info("=".repeat(74));
 
 const resources: Array<{ name: string; close: () => Promise<void> | void }> = [];
 let shuttingDown = false;
@@ -20,40 +20,40 @@ async function gracefulShutdown(reason: string, exitCode = 0) {
   if (shuttingDown) return;
   shuttingDown = true;
 
-  console.log(`\n🔄 gracefulShutdown(${reason})`);
-  console.log(`   step 1/3: stop intake`);
-  console.log(`   step 2/3: close ${resources.length} resource(s) in reverse order`);
+  console.info(`\n🔄 gracefulShutdown(${reason})`);
+  console.info(`   step 1/3: stop intake`);
+  console.info(`   step 2/3: close ${resources.length} resource(s) in reverse order`);
   for (const resource of resources.slice().reverse()) {
-    console.log(`   - closing ${resource.name}`);
+    console.info(`   - closing ${resource.name}`);
     await resource.close();
   }
-  console.log(`   step 3/3: exit(${exitCode})`);
+  console.info(`   step 3/3: exit(${exitCode})`);
   process.exit(exitCode);
 }
 
 process.on("SIGINT", () => {
   interruptCount += 1;
-  console.log(`\n⚡ SIGINT received (count=${interruptCount})`);
+  console.info(`\n⚡ SIGINT received (count=${interruptCount})`);
   if (interruptCount >= 2) {
     void gracefulShutdown("SIGINT");
     return;
   }
-  console.log("   send SIGINT again to confirm shutdown");
+  console.info("   send SIGINT again to confirm shutdown");
 });
 
 process.on("beforeExit", (code) => {
-  console.log(`[lifecycle] beforeExit code=${code}`);
+  console.info(`[lifecycle] beforeExit code=${code}`);
 });
 process.on("exit", (code) => {
-  console.log(`[lifecycle] exit code=${code}`);
+  console.info(`[lifecycle] exit code=${code}`);
 });
 
-console.log("\n1️⃣ Registering resources");
-console.log("-".repeat(74));
+console.info("\n1️⃣ Registering resources");
+console.info("-".repeat(74));
 let ticks = 0;
 const heartbeat = setInterval(() => {
   ticks += 1;
-  console.log(`heartbeat ${ticks}`);
+  console.info(`heartbeat ${ticks}`);
 }, 120);
 registerResource("heartbeat-interval", () => clearInterval(heartbeat));
 
@@ -63,7 +63,7 @@ const worker = Bun.spawn({
     "-e",
     `
       process.on("SIGTERM", () => process.exit(0));
-      setInterval(() => console.log("[child] alive"), 200);
+      setInterval(() => console.info("[child] alive"), 200);
     `,
   ],
   stdout: "pipe",
@@ -79,13 +79,13 @@ registerResource("child-process", () => {
 void (async () => {
   for await (const chunk of worker.stdout) {
     const line = new TextDecoder().decode(chunk).trim();
-    if (line) console.log(line);
+    if (line) console.info(line);
   }
 })();
 
-console.log("\n2️⃣ Deterministic SIGINT simulation");
-console.log("-".repeat(74));
-console.log("sending SIGINT now, then a confirming SIGINT in 300ms...");
+console.info("\n2️⃣ Deterministic SIGINT simulation");
+console.info("-".repeat(74));
+console.info("sending SIGINT now, then a confirming SIGINT in 300ms...");
 process.kill(process.pid, "SIGINT");
 setTimeout(() => {
   process.kill(process.pid, "SIGINT");

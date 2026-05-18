@@ -26,8 +26,8 @@ const c = {
  * Demo 1: Official CLI Resolution Order
  */
 async function demoResolutionOrder(): Promise<void> {
-  console.log(c.bold('\n🎯 Demo 1: Official CLI Resolution Order'));
-  console.log(c.gray('=====================================\n'));
+  console.info(c.bold('\n🎯 Demo 1: Official CLI Resolution Order'));
+  console.info(c.gray('=====================================\n'));
   
   const testCommands = [
     // Resolution Order 1: package.json scripts
@@ -48,16 +48,16 @@ async function demoResolutionOrder(): Promise<void> {
   ];
   
   for (const cmd of testCommands) {
-    console.log(c.cyan(`📋 Testing: ${cmd.join(' ')}`));
+    console.info(c.cyan(`📋 Testing: ${cmd.join(' ')}`));
     
     try {
       const session = await executeBunCLI(cmd, { captureOutput: true });
-      console.log(c.green(`  ✓ ${session.command} - ${session.durationMs?.toFixed(2)}ms`));
+      console.info(c.green(`  ✓ ${session.command} - ${session.durationMs?.toFixed(2)}ms`));
     } catch (error) {
-      console.log(c.red(`  ✗ Error: ${error}`));
+      console.info(c.red(`  ✗ Error: ${error}`));
     }
     
-    console.log('');
+    console.info('');
   }
 }
 
@@ -65,13 +65,13 @@ async function demoResolutionOrder(): Promise<void> {
  * Demo 2: Complete Flag Coverage
  */
 async function demoFlagCoverage(): Promise<void> {
-  console.log(c.bold('\n🚀 Demo 2: Complete Flag Coverage'));
-  console.log(c.gray('===============================\n'));
+  console.info(c.bold('\n🚀 Demo 2: Complete Flag Coverage'));
+  console.info(c.gray('===============================\n'));
   
   const flagTests = [
     // Execution flags
     { name: 'Silent execution', flags: ['--silent', '--if-present', 'echo', 'test'] },
-    { name: 'Eval mode', flags: ['-e', 'console.log("Hello from eval")'] },
+    { name: 'Eval mode', flags: ['-e', 'console.info("Hello from eval")'] },
     { name: 'Print mode', flags: ['-p', '"2 + 2"'] },
     
     // Workspace flags
@@ -107,17 +107,17 @@ async function demoFlagCoverage(): Promise<void> {
   ];
   
   for (const test of flagTests) {
-    console.log(c.cyan(`🔧 ${test.name}:`));
-    console.log(c.gray(`   Flags: ${test.flags.join(' ')}`));
+    console.info(c.cyan(`🔧 ${test.name}:`));
+    console.info(c.gray(`   Flags: ${test.flags.join(' ')}`));
     
     try {
       const session = await executeBunCLI(test.flags, { captureOutput: true });
-      console.log(c.green(`   ✓ Success - ${session.durationMs?.toFixed(2)}ms`));
+      console.info(c.green(`   ✓ Success - ${session.durationMs?.toFixed(2)}ms`));
     } catch (error) {
-      console.log(c.yellow(`   ⚠ Expected: ${error}`));
+      console.info(c.yellow(`   ⚠ Expected: ${error}`));
     }
     
-    console.log('');
+    console.info('');
   }
 }
 
@@ -125,8 +125,8 @@ async function demoFlagCoverage(): Promise<void> {
  * Demo 3: Enhanced Watch Filter Integration
  */
 async function demoWatchFilterIntegration(): Promise<void> {
-  console.log(c.bold('\n👁️ Demo 3: Enhanced Watch Filter Integration'));
-  console.log(c.gray('==========================================\n'));
+  console.info(c.bold('\n👁️ Demo 3: Enhanced Watch Filter Integration'));
+  console.info(c.gray('==========================================\n'));
   
   const watchTests = [
     {
@@ -148,18 +148,18 @@ async function demoWatchFilterIntegration(): Promise<void> {
   ];
   
   for (const test of watchTests) {
-    console.log(c.cyan(`🔄 ${test.name}:`));
-    console.log(c.gray(`   Args: ${test.args.join(' ')}`));
+    console.info(c.cyan(`🔄 ${test.name}:`));
+    console.info(c.gray(`   Args: ${test.args.join(' ')}`));
     
     try {
       const session = await startWatchFilterCLI(test.args);
-      console.log(c.green(`   ✓ Session started: ${session.id}`));
+      console.info(c.green(`   ✓ Session started: ${session.id}`));
       
       // Show session stats
       const stats = getWatchSessionStats(session.id);
       if (stats) {
-        console.log(c.blue(`   📊 Uptime: ${(stats.uptime / 1000).toFixed(1)}s`));
-        console.log(c.blue(`   📋 Events: ${Object.keys(stats.eventSummary).join(', ')}`));
+        console.info(c.blue(`   📊 Uptime: ${(stats.uptime / 1000).toFixed(1)}s`));
+        console.info(c.blue(`   📋 Events: ${Object.keys(stats.eventSummary).join(', ')}`));
       }
       
       // Clean up
@@ -167,10 +167,10 @@ async function demoWatchFilterIntegration(): Promise<void> {
       // Note: In real usage, you wouldn't immediately stop the session
       
     } catch (error) {
-      console.log(c.red(`   ✗ Error: ${error}`));
+      console.info(c.red(`   ✗ Error: ${error}`));
     }
     
-    console.log('');
+    console.info('');
   }
 }
 
@@ -178,8 +178,8 @@ async function demoWatchFilterIntegration(): Promise<void> {
  * Demo 4: Advanced CLI Patterns
  */
 async function demoAdvancedPatterns(): Promise<void> {
-  console.log(c.bold('\n⚡ Demo 4: Advanced CLI Patterns'));
-  console.log(c.gray('===============================\n'));
+  console.info(c.bold('\n⚡ Demo 4: Advanced CLI Patterns'));
+  console.info(c.gray('===============================\n'));
   
   const advancedTests = [
     {
@@ -205,29 +205,29 @@ async function demoAdvancedPatterns(): Promise<void> {
   ];
   
   for (const test of advancedTests) {
-    console.log(c.magenta(`🎨 ${test.name}:`));
-    console.log(c.gray(`   Pattern: ${test.pattern}`));
-    console.log(c.blue(`   ${test.description}\n`));
+    console.info(c.magenta(`🎨 ${test.name}:`));
+    console.info(c.gray(`   Pattern: ${test.pattern}`));
+    console.info(c.blue(`   ${test.description}\n`));
     
     // Parse and show the flags
     const args = test.pattern.split(' ').slice(1); // Remove 'bun'
     const { flags, command, args: cmdArgs } = parseOfficialFlags(args);
     
-    console.log(c.cyan(`   📋 Parsed Command: ${command}`));
-    console.log(c.cyan(`   📋 Parsed Args: ${cmdArgs.join(', ')}`));
+    console.info(c.cyan(`   📋 Parsed Command: ${command}`));
+    console.info(c.cyan(`   📋 Parsed Args: ${cmdArgs.join(', ')}`));
     
     if (Object.keys(flags).length > 0) {
-      console.log(c.cyan(`   📋 Active Flags:`));
+      console.info(c.cyan(`   📋 Active Flags:`));
       Object.entries(flags).forEach(([key, value]) => {
         if (typeof value === 'boolean' && value) {
-          console.log(c.gray(`     --${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`));
+          console.info(c.gray(`     --${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`));
         } else if (value !== undefined && value !== '') {
-          console.log(c.gray(`     --${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value}`));
+          console.info(c.gray(`     --${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value}`));
         }
       });
     }
     
-    console.log('');
+    console.info('');
   }
 }
 
@@ -235,8 +235,8 @@ async function demoAdvancedPatterns(): Promise<void> {
  * Demo 5: Performance Benchmarks
  */
 async function demoPerformanceBenchmarks(): Promise<void> {
-  console.log(c.bold('\n📊 Demo 5: Performance Benchmarks'));
-  console.log(c.gray('================================\n'));
+  console.info(c.bold('\n📊 Demo 5: Performance Benchmarks'));
+  console.info(c.gray('================================\n'));
   
   const benchmarkTests = [
     { name: 'Simple command', flags: ['echo', 'test'] },
@@ -245,7 +245,7 @@ async function demoPerformanceBenchmarks(): Promise<void> {
     { name: 'Complex command', flags: ['--filter', '*', '--parallel', '--filter-output-lines', '5', '--define', 'NODE_ENV:"dev"', 'echo', 'test'] }
   ];
   
-  console.log(c.cyan('Running performance benchmarks...\n'));
+  console.info(c.cyan('Running performance benchmarks...\n'));
   
   for (const test of benchmarkTests) {
     const times: number[] = [];
@@ -266,10 +266,10 @@ async function demoPerformanceBenchmarks(): Promise<void> {
       const min = Math.min(...times);
       const max = Math.max(...times);
       
-      console.log(c.yellow(`${test.name}:`));
-      console.log(c.gray(`   Average: ${avg.toFixed(2)}ms`));
-      console.log(c.gray(`   Min: ${min.toFixed(2)}ms`));
-      console.log(c.gray(`   Max: ${max.toFixed(2)}ms\n`));
+      console.info(c.yellow(`${test.name}:`));
+      console.info(c.gray(`   Average: ${avg.toFixed(2)}ms`));
+      console.info(c.gray(`   Min: ${min.toFixed(2)}ms`));
+      console.info(c.gray(`   Max: ${max.toFixed(2)}ms\n`));
     }
   }
 }
@@ -278,10 +278,10 @@ async function demoPerformanceBenchmarks(): Promise<void> {
  * Main demo runner
  */
 async function main(): Promise<void> {
-  console.log(c.bold('🎯 Official CLI Integration Demo v3.15'));
-  console.log(c.gray('=======================================\n'));
-  console.log(c.blue('Demonstrating 100% Bun-native CLI integration'));
-  console.log(c.blue('with official resolution order and complete flag coverage\n'));
+  console.info(c.bold('🎯 Official CLI Integration Demo v3.15'));
+  console.info(c.gray('=======================================\n'));
+  console.info(c.blue('Demonstrating 100% Bun-native CLI integration'));
+  console.info(c.blue('with official resolution order and complete flag coverage\n'));
   
   const demo = process.argv[2] || 'all';
   
@@ -320,23 +320,23 @@ async function main(): Promise<void> {
   const sessions = getAllSessions();
   const watchSessions = listWatchSessions();
   
-  console.log(c.bold('\n📈 Session Summary'));
-  console.log(c.gray('==================\n'));
-  console.log(c.cyan(`CLI Sessions: ${sessions.length}`));
-  console.log(c.cyan(`Watch Sessions: ${watchSessions.length}`));
+  console.info(c.bold('\n📈 Session Summary'));
+  console.info(c.gray('==================\n'));
+  console.info(c.cyan(`CLI Sessions: ${sessions.length}`));
+  console.info(c.cyan(`Watch Sessions: ${watchSessions.length}`));
   
   if (sessions.length > 0) {
-    console.log(c.gray('\nCLI Sessions:'));
+    console.info(c.gray('\nCLI Sessions:'));
     sessions.forEach(session => {
-      console.log(c.gray(`  ${session.id}: ${session.command} (${session.status}) - ${(session.durationMs || 0).toFixed(2)}ms`));
+      console.info(c.gray(`  ${session.id}: ${session.command} (${session.status}) - ${(session.durationMs || 0).toFixed(2)}ms`));
     });
   }
   
   // Cleanup
   clearSessions();
   
-  console.log(c.green('\n✅ Demo completed successfully!'));
-  console.log(c.blue('📚 Documentation: https://bun.com/docs/runtime'));
+  console.info(c.green('\n✅ Demo completed successfully!'));
+  console.info(c.blue('📚 Documentation: https://bun.com/docs/runtime'));
 }
 
 // Run demo if this file is executed directly

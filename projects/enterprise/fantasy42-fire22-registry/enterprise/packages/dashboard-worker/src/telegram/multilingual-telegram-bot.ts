@@ -595,7 +595,7 @@ export class MultilingualTelegramBot {
     try {
       // For now, we'll simulate sending a notification
       // In a real implementation, this would use the Telegram Bot API
-      console.log(`📱 Sending ${data.type || 'info'} notification to ${telegramId}: ${data.text}`);
+      console.info(`📱 Sending ${data.type || 'info'} notification to ${telegramId}: ${data.text}`);
 
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -657,9 +657,9 @@ export class MultilingualTelegramBot {
     try {
       // This would typically send to a support group or channel
       // For now, we'll log it and simulate success
-      console.log(`🔔 Support team notification: Ticket #${data.ticketId} from ${data.userName}`);
-      console.log(`   Subject: ${data.subject}`);
-      console.log(`   Priority: ${data.priority}, Service Level: ${data.serviceLevel}`);
+      console.info(`🔔 Support team notification: Ticket #${data.ticketId} from ${data.userName}`);
+      console.info(`   Subject: ${data.subject}`);
+      console.info(`   Priority: ${data.priority}, Service Level: ${data.serviceLevel}`);
 
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 100));

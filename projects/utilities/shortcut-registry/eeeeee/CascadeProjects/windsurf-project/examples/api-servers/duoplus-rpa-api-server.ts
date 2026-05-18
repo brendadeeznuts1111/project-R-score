@@ -404,7 +404,7 @@ async function handleDeleteTask(req: Request): Promise<Response> {
     const taskId = url.pathname.split('/')[4];
     
     // Mock task deletion - in real system would cancel and remove from queue
-    console.log(`🗑️ Deleting RPA task: ${taskId}`);
+    console.info(`🗑️ Deleting RPA task: ${taskId}`);
     
     return Response.json({
       success: true,
@@ -433,7 +433,7 @@ async function handleControlTask(req: Request): Promise<Response> {
     }
     
     // Mock task control - in real system would control task execution
-    console.log(`🎮 Controlling RPA task ${taskId}: ${action}`);
+    console.info(`🎮 Controlling RPA task ${taskId}: ${action}`);
     
     return Response.json({
       success: true,
@@ -558,10 +558,10 @@ async function handleGoogleVerification(req: Request): Promise<Response> {
     // Mock Google verification RPA task creation
     const taskId = `google-verify-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
-    console.log(`🔍 Google Verification RPA triggered:`);
-    console.log(`   📱 Target Devices: ${imageIds.length}`);
-    console.log(`   🔒 Proxy ID: ${proxyId || 'default'}`);
-    console.log(`   🎯 Verification Type: ${verificationType || 'standard'}`);
+    console.info(`🔍 Google Verification RPA triggered:`);
+    console.info(`   📱 Target Devices: ${imageIds.length}`);
+    console.info(`   🔒 Proxy ID: ${proxyId || 'default'}`);
+    console.info(`   🎯 Verification Type: ${verificationType || 'standard'}`);
     
     return Response.json({
       success: true,
@@ -882,26 +882,26 @@ async function handleGetADBDevices(req: Request): Promise<Response> {
   }
 }
 
-console.log('🤖 DuoPlus RPA API Server running on port 3006');
-console.log('🔧 Available endpoints:');
-console.log('  POST /api/rpa/batch/update - Batch update cloud phone parameters');
-console.log('  GET  /api/rpa/batch/status - Get batch operation status');
-console.log('  GET  /api/rpa/templates - List RPA templates');
-console.log('  POST /api/rpa/templates - Create new template');
-console.log('  GET  /api/rpa/templates/:id - Get specific template');
-console.log('  POST /api/rpa/tasks - Create RPA task');
-console.log('  GET  /api/rpa/tasks - List RPA tasks');
-console.log('  GET  /api/rpa/tasks/:id - Get specific task');
-console.log('  DELETE /api/rpa/tasks/:id - Delete task');
-console.log('  POST /api/rpa/tasks/:id - Control task (pause/resume/cancel)');
-console.log('  POST /api/rpa/guardian/trigger-nomination - Trigger guardian nomination RPA');
-console.log('  POST /api/rpa/guardian/recovery-approval - Trigger recovery approval RPA');
-console.log('  POST /api/rpa/guardian/batch-sync - Batch sync guardian configs');
-console.log('  POST /api/rpa/google/verify - Trigger Google verification RPA');
-console.log('  GET  /api/rpa/google/status - Get verification status');
-console.log('  GET  /api/rpa/metrics - Get RPA metrics');
-console.log('  GET  /api/rpa/performance - Get detailed performance data');
-console.log('  GET  /api/rpa/plugins - List available plugins');
-console.log('  POST /api/rpa/plugins - Upload new plugin');
-console.log('  POST /api/rpa/adb/execute - Execute ADB command');
-console.log('  GET  /api/rpa/adb/devices - Get connected ADB devices');
+console.info('🤖 DuoPlus RPA API Server running on port 3006');
+console.info('🔧 Available endpoints:');
+console.info('  POST /api/rpa/batch/update - Batch update cloud phone parameters');
+console.info('  GET  /api/rpa/batch/status - Get batch operation status');
+console.info('  GET  /api/rpa/templates - List RPA templates');
+console.info('  POST /api/rpa/templates - Create new template');
+console.info('  GET  /api/rpa/templates/:id - Get specific template');
+console.info('  POST /api/rpa/tasks - Create RPA task');
+console.info('  GET  /api/rpa/tasks - List RPA tasks');
+console.info('  GET  /api/rpa/tasks/:id - Get specific task');
+console.info('  DELETE /api/rpa/tasks/:id - Delete task');
+console.info('  POST /api/rpa/tasks/:id - Control task (pause/resume/cancel)');
+console.info('  POST /api/rpa/guardian/trigger-nomination - Trigger guardian nomination RPA');
+console.info('  POST /api/rpa/guardian/recovery-approval - Trigger recovery approval RPA');
+console.info('  POST /api/rpa/guardian/batch-sync - Batch sync guardian configs');
+console.info('  POST /api/rpa/google/verify - Trigger Google verification RPA');
+console.info('  GET  /api/rpa/google/status - Get verification status');
+console.info('  GET  /api/rpa/metrics - Get RPA metrics');
+console.info('  GET  /api/rpa/performance - Get detailed performance data');
+console.info('  GET  /api/rpa/plugins - List available plugins');
+console.info('  POST /api/rpa/plugins - Upload new plugin');
+console.info('  POST /api/rpa/adb/execute - Execute ADB command');
+console.info('  GET  /api/rpa/adb/devices - Get connected ADB devices');

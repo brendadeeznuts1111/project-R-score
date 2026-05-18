@@ -47,7 +47,7 @@ class AutomatedMaintenance {
    * Run complete maintenance suite
    */
   async runMaintenance(options: MaintenanceOptions = {}): Promise<MaintenanceReport> {
-    console.log('🔧 Starting Automated Maintenance Suite...');
+    console.info('🔧 Starting Automated Maintenance Suite...');
     const startTime = Date.now();
 
     try {
@@ -57,39 +57,39 @@ class AutomatedMaintenance {
       }
 
       // Step 1: Validate all artifacts
-      console.log('\n📋 Step 1: Validating artifacts...');
+      console.info('\n📋 Step 1: Validating artifacts...');
       await this.validateArtifacts();
 
       // Step 2: Fix common issues
       if (options.fixIssues) {
-        console.log('\n🔨 Step 2: Fixing common issues...');
+        console.info('\n🔨 Step 2: Fixing common issues...');
         await this.fixCommonIssues();
       }
 
       // Step 3: Update indexes
       if (options.updateIndexes) {
-        console.log('\n📊 Step 3: Updating indexes...');
+        console.info('\n📊 Step 3: Updating indexes...');
         await this.updateIndexes();
       }
 
       // Step 4: Cleanup deprecated tags
       if (options.cleanupDeprecated) {
-        console.log('\n🧹 Step 4: Cleaning up deprecated tags...');
+        console.info('\n🧹 Step 4: Cleaning up deprecated tags...');
         await this.cleanupDeprecatedTags();
       }
 
       // Step 5: Generate reports
       if (options.generateReports) {
-        console.log('\n📄 Step 5: Generating maintenance reports...');
+        console.info('\n📄 Step 5: Generating maintenance reports...');
         await this.generateReports();
       }
 
       // Step 6: Performance optimization
-      console.log('\n⚡ Step 6: Performance optimization...');
+      console.info('\n⚡ Step 6: Performance optimization...');
       await this.optimizePerformance();
 
       const elapsed = Date.now() - startTime;
-      console.log(`✅ Maintenance completed in ${elapsed}ms`);
+      console.info(`✅ Maintenance completed in ${elapsed}ms`);
 
       this.finalizeReport();
       await this.saveReport();
@@ -119,8 +119,8 @@ class AutomatedMaintenance {
     this.report.summary.issuesFound = results.filter(r => !r.valid).length;
     this.report.details.validationResults = results;
 
-    console.log(`  ✓ Validated ${results.length} artifacts`);
-    console.log(`  ✓ Found ${this.report.summary.issuesFound} issues`);
+    console.info(`  ✓ Validated ${results.length} artifacts`);
+    console.info(`  ✓ Found ${this.report.summary.issuesFound} issues`);
   }
 
   /**
@@ -152,7 +152,7 @@ class AutomatedMaintenance {
     }
 
     this.report.summary.issuesFixed = fixesApplied;
-    console.log(`  ✓ Applied ${fixesApplied} automatic fixes`);
+    console.info(`  ✓ Applied ${fixesApplied} automatic fixes`);
   }
 
   /**
@@ -183,8 +183,8 @@ class AutomatedMaintenance {
       writeFileSync('./cache/search-index.json', JSON.stringify(indexData, null, 2));
       this.report.summary.indexesUpdated = true;
       
-      console.log('  ✓ Search index updated');
-      console.log(`  ✓ Indexed ${stats.totalArtifacts} artifacts with ${stats.totalTags} tags`);
+      console.info('  ✓ Search index updated');
+      console.info(`  ✓ Indexed ${stats.totalArtifacts} artifacts with ${stats.totalTags} tags`);
     } catch (error) {
       console.error('  ❌ Failed to update indexes:', error.message);
       this.report.summary.indexesUpdated = false;
@@ -228,8 +228,8 @@ class AutomatedMaintenance {
       this.report.summary.deprecatedRemoved = removedCount;
       this.report.details.deprecatedTags = deprecatedTags;
       
-      console.log(`  ✓ Removed ${removedCount} deprecated tag occurrences`);
-      console.log(`  ✓ Deprecated tags: ${deprecatedTags.join(', ')}`);
+      console.info(`  ✓ Removed ${removedCount} deprecated tag occurrences`);
+      console.info(`  ✓ Deprecated tags: ${deprecatedTags.join(', ')}`);
     } catch (error) {
       console.error('  ❌ Failed to cleanup deprecated tags:', error.message);
     }
@@ -250,7 +250,7 @@ class AutomatedMaintenance {
       await this.generateReport(report);
     }
 
-    console.log(`  ✓ Generated ${reports.length} maintenance reports`);
+    console.info(`  ✓ Generated ${reports.length} maintenance reports`);
   }
 
   /**
@@ -268,9 +268,9 @@ class AutomatedMaintenance {
       const metrics = await this.collectPerformanceMetrics();
       this.report.details.performanceMetrics = metrics;
 
-      console.log('  ✓ Cache cleaned');
-      console.log('  ✓ Registry optimized');
-      console.log('  ✓ Performance metrics collected');
+      console.info('  ✓ Cache cleaned');
+      console.info('  ✓ Registry optimized');
+      console.info('  ✓ Performance metrics collected');
     } catch (error) {
       console.error('  ❌ Performance optimization failed:', error.message);
     }
@@ -292,7 +292,7 @@ class AutomatedMaintenance {
     execSync(`cp -r scripts ${backupPath}/`);
     execSync(`cp -r src ${backupPath}/`);
 
-    console.log(`  ✓ Backup created: ${backupPath}`);
+    console.info(`  ✓ Backup created: ${backupPath}`);
   }
 
   /**
@@ -705,7 +705,7 @@ ${this.report.details.recommendations.map(rec => `- ${rec}`).join('\n')}
       const reportPath = `./reports/maintenance-${Date.now()}.json`;
       writeFileSync(reportPath, JSON.stringify(this.report, null, 2));
       
-      console.log(`  ✓ Report saved: ${reportPath}`);
+      console.info(`  ✓ Report saved: ${reportPath}`);
     } catch (error) {
       console.error('Failed to save report:', error.message);
     }
@@ -775,7 +775,7 @@ async function main() {
         break;
       case '--help':
       case '-h':
-        console.log(`
+        console.info(`
 🔧 Automated Maintenance CLI
 
 Usage: bun run scripts/automated-maintenance.ts [options]
@@ -800,18 +800,18 @@ Examples:
   }
 
   if (options.dryRun) {
-    console.log('🔍 DRY RUN MODE - No changes will be made');
+    console.info('🔍 DRY RUN MODE - No changes will be made');
   }
 
   const maintenance = new AutomatedMaintenance();
   const report = await maintenance.runMaintenance(options);
   
-  console.log('\n📊 Maintenance Summary:');
-  console.log(`  Artifacts Validated: ${report.summary.validatedArtifacts}`);
-  console.log(`  Issues Found: ${report.summary.issuesFound}`);
-  console.log(`  Issues Fixed: ${report.summary.issuesFixed}`);
-  console.log(`  Deprecated Removed: ${report.summary.deprecatedRemoved}`);
-  console.log(`  Indexes Updated: ${report.summary.indexesUpdated ? 'Yes' : 'No'}`);
+  console.info('\n📊 Maintenance Summary:');
+  console.info(`  Artifacts Validated: ${report.summary.validatedArtifacts}`);
+  console.info(`  Issues Found: ${report.summary.issuesFound}`);
+  console.info(`  Issues Fixed: ${report.summary.issuesFixed}`);
+  console.info(`  Deprecated Removed: ${report.summary.deprecatedRemoved}`);
+  console.info(`  Indexes Updated: ${report.summary.indexesUpdated ? 'Yes' : 'No'}`);
 }
 
 // Run CLI if called directly

@@ -195,14 +195,14 @@ class EnhancedSecurityScanner {
   async scan(packages: PackageInfo[]): Promise<void> {
     const scanStart = performance.now();
 
-    console.log('🔍 Enhanced Fire22 Security Scanner');
-    console.log('='.repeat(50));
-    console.log(`   📊 Environment: ${this.scanMetadata.environment}`);
-    console.log(`   🎯 CI Mode: ${this.config.ciMode ? 'Enabled' : 'Disabled'}`);
-    console.log(
+    console.info('🔍 Enhanced Fire22 Security Scanner');
+    console.info('='.repeat(50));
+    console.info(`   📊 Environment: ${this.scanMetadata.environment}`);
+    console.info(`   🎯 CI Mode: ${this.config.ciMode ? 'Enabled' : 'Disabled'}`);
+    console.info(
       `   📋 Thresholds: Fatal ≤ ${this.config.thresholds.maxFatalIssues}, Warnings ≤ ${this.config.thresholds.maxWarningIssues}`
     );
-    console.log(`   📈 Max Risk Score: ${this.config.thresholds.maxRiskScore}`);
+    console.info(`   📈 Max Risk Score: ${this.config.thresholds.maxRiskScore}`);
 
     const result = await this.performEnhancedScan(packages);
 
@@ -228,10 +228,10 @@ class EnhancedSecurityScanner {
     }
 
     if (hasValidExceptions) {
-      console.log(
+      console.info(
         `\n⚠️  SECURITY EXCEPTIONS APPLIED: Some issues were exempted based on approved exceptions.`
       );
-      console.log(`   Review exception details above for justification.`);
+      console.info(`   Review exception details above for justification.`);
     }
   }
 
@@ -372,11 +372,11 @@ class EnhancedSecurityScanner {
       const exception = this.findApplicableException(issue);
 
       if (exception) {
-        console.log(`   ⚠️  EXCEPTION APPLIED: ${issue.package}@${issue.version}`);
-        console.log(`      📝 Reason: ${exception.reason}`);
-        console.log(`      👤 Approved by: ${exception.approvedBy}`);
+        console.info(`   ⚠️  EXCEPTION APPLIED: ${issue.package}@${issue.version}`);
+        console.info(`      📝 Reason: ${exception.reason}`);
+        console.info(`      👤 Approved by: ${exception.approvedBy}`);
         if (exception.expiresAt) {
-          console.log(`      ⏰ Expires: ${exception.expiresAt.toISOString().split('T')[0]}`);
+          console.info(`      ⏰ Expires: ${exception.expiresAt.toISOString().split('T')[0]}`);
         }
         exceptionsApplied = true;
         return false; // Remove from issues list
@@ -411,36 +411,36 @@ class EnhancedSecurityScanner {
     thresholdExceeded: boolean,
     exceptionsApplied: boolean
   ): void {
-    console.log(`\n📊 Enhanced Security Scan Results:`);
-    console.log(`   📦 Total packages: ${result.summary.totalPackages}`);
-    console.log(`   🔍 Issues found: ${result.summary.issuesFound}`);
-    console.log(`   🚨 Fatal issues: ${result.summary.fatalIssues}`);
-    console.log(`   ⚠️  Warnings: ${result.summary.warningIssues}`);
-    console.log(`   📊 Overall risk score: ${this.calculateOverallRiskScore(result)}/100`);
+    console.info(`\n📊 Enhanced Security Scan Results:`);
+    console.info(`   📦 Total packages: ${result.summary.totalPackages}`);
+    console.info(`   🔍 Issues found: ${result.summary.issuesFound}`);
+    console.info(`   🚨 Fatal issues: ${result.summary.fatalIssues}`);
+    console.info(`   ⚠️  Warnings: ${result.summary.warningIssues}`);
+    console.info(`   📊 Overall risk score: ${this.calculateOverallRiskScore(result)}/100`);
 
     if (thresholdExceeded) {
-      console.log(`   🚫 THRESHOLDS EXCEEDED: Build will fail!`);
+      console.info(`   🚫 THRESHOLDS EXCEEDED: Build will fail!`);
     } else {
-      console.log(`   ✅ THRESHOLDS MET: Security requirements satisfied`);
+      console.info(`   ✅ THRESHOLDS MET: Security requirements satisfied`);
     }
 
     if (result.issues.length > 0) {
-      console.log(`\n🔍 Detailed Issues:`);
+      console.info(`\n🔍 Detailed Issues:`);
 
       result.issues.forEach((issue, index) => {
         const icon = issue.severity === 'fatal' ? '🚨' : '⚠️';
-        console.log(`\n   ${index + 1}. ${icon} ${issue.package}@${issue.version}`);
-        console.log(`      Severity: ${issue.severity.toUpperCase()}`);
-        console.log(`      ${issue.description}`);
-        if (issue.cve) console.log(`      CVE: ${issue.cve}`);
-        if (issue.recommendation) console.log(`      💡 ${issue.recommendation}`);
-        if (issue.url) console.log(`      🔗 ${issue.url}`);
+        console.info(`\n   ${index + 1}. ${icon} ${issue.package}@${issue.version}`);
+        console.info(`      Severity: ${issue.severity.toUpperCase()}`);
+        console.info(`      ${issue.description}`);
+        if (issue.cve) console.info(`      CVE: ${issue.cve}`);
+        if (issue.recommendation) console.info(`      💡 ${issue.recommendation}`);
+        if (issue.url) console.info(`      🔗 ${issue.url}`);
       });
     } else {
-      console.log(`\n✅ No security issues found!`);
+      console.info(`\n✅ No security issues found!`);
     }
 
-    console.log(`\n📈 Performance: ${this.scanMetadata.scanDuration.toFixed(2)}ms scan time`);
+    console.info(`\n📈 Performance: ${this.scanMetadata.scanDuration.toFixed(2)}ms scan time`);
   }
 
   private calculateOverallRiskScore(result: ScanResult): number {
@@ -477,7 +477,7 @@ class EnhancedSecurityScanner {
     };
 
     await Bun.write(logFile, JSON.stringify(historicalScan, null, 2));
-    console.log(`   📝 Scan results logged to: ${logFile}`);
+    console.info(`   📝 Scan results logged to: ${logFile}`);
   }
 
   private detectEnvironment(): string {
@@ -555,8 +555,8 @@ export function validateSecurityConfig(config: Partial<ScanConfig>): {
  * Demo the enhanced security scanner with configurable thresholds
  */
 export async function runEnhancedDemo(): Promise<void> {
-  console.log('🚀 Enhanced Fire22 Security Scanner Demo');
-  console.log('='.repeat(60));
+  console.info('🚀 Enhanced Fire22 Security Scanner Demo');
+  console.info('='.repeat(60));
 
   const demoPackages: PackageInfo[] = [
     { name: 'react', version: '18.2.0' },
@@ -571,25 +571,25 @@ export async function runEnhancedDemo(): Promise<void> {
     },
   ];
 
-  console.log('🔧 Testing with different threshold configurations:');
-  console.log(`   📦 Scanning ${demoPackages.length} packages`);
+  console.info('🔧 Testing with different threshold configurations:');
+  console.info(`   📦 Scanning ${demoPackages.length} packages`);
 
   // Test 1: Strict production thresholds
-  console.log('\n🏭 PRODUCTION THRESHOLDS:');
+  console.info('\n🏭 PRODUCTION THRESHOLDS:');
   await enhancedScan(demoPackages, {
     thresholds: ENVIRONMENT_THRESHOLDS.production,
     enableLogging: false,
   });
 
   // Test 2: Lenient development thresholds
-  console.log('\n🔧 DEVELOPMENT THRESHOLDS:');
+  console.info('\n🔧 DEVELOPMENT THRESHOLDS:');
   await enhancedScan(demoPackages, {
     thresholds: ENVIRONMENT_THRESHOLDS.development,
     enableLogging: false,
   });
 
   // Test 3: Custom thresholds with exceptions
-  console.log('\n⚙️  CUSTOM THRESHOLDS WITH EXCEPTIONS:');
+  console.info('\n⚙️  CUSTOM THRESHOLDS WITH EXCEPTIONS:');
   await enhancedScan(demoPackages, {
     thresholds: {
       ...DEFAULT_THRESHOLDS,
@@ -600,10 +600,10 @@ export async function runEnhancedDemo(): Promise<void> {
     enableLogging: false,
   });
 
-  console.log('\n🎉 Enhanced Security Scanner Demo Complete!');
-  console.log('   ✅ Threshold-based scanning demonstrated');
-  console.log('   ✅ Exception handling shown');
-  console.log('   ✅ Environment-specific configurations tested');
+  console.info('\n🎉 Enhanced Security Scanner Demo Complete!');
+  console.info('   ✅ Threshold-based scanning demonstrated');
+  console.info('   ✅ Exception handling shown');
+  console.info('   ✅ Environment-specific configurations tested');
 }
 
 // Run demo if this file is executed directly

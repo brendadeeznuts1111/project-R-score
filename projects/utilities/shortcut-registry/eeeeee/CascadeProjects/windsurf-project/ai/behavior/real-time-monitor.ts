@@ -106,7 +106,7 @@ export class RealTimeBehaviorMonitor {
       return;
     }
 
-    console.log('🚀 Starting real-time behavior monitoring for user:', userId);
+    console.info('🚀 Starting real-time behavior monitoring for user:', userId);
 
     this.isMonitoring = true;
 
@@ -127,7 +127,7 @@ export class RealTimeBehaviorMonitor {
   stopMonitoring(): void {
     if (!this.isMonitoring) return;
 
-    console.log('⏹️ Stopping real-time behavior monitoring');
+    console.info('⏹️ Stopping real-time behavior monitoring');
 
     if (this.monitoringInterval) {
       clearInterval(this.monitoringInterval);
@@ -850,7 +850,7 @@ export class RealTimeBehaviorMonitor {
     document.dispatchEvent(customEvent);
 
     // Also log to console for debugging
-    console.log(`📊 Monitoring Event: ${event}`, data);
+    console.info(`📊 Monitoring Event: ${event}`, data);
   }
 
   /**

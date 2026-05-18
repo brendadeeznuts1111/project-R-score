@@ -4,7 +4,7 @@
 if (import.meta.main) {
   main().catch(console.error);
 } else {
-  console.log('ℹ️  URL Pattern Analyzer imported, not executed directly');
+  console.info('ℹ️  URL Pattern Analyzer imported, not executed directly');
 }
 
 import { write } from 'bun';
@@ -133,7 +133,7 @@ class URLPatternAnalyzer {
     categories: Record<string, number>;
     issues: Array<{ pattern: string; issue: string; severity: 'low' | 'medium' | 'high' }>;
   }> {
-    console.log('🔍 ANALYZING URL PATTERNS FROM @[lib] DIRECTORY...');
+    console.info('🔍 ANALYZING URL PATTERNS FROM @[lib] DIRECTORY...');
 
     let totalPatterns = 0;
     const categories: Record<string, number> = {};
@@ -167,7 +167,7 @@ class URLPatternAnalyzer {
       }
     }
 
-    console.log(
+    console.info(
       `   Found ${totalPatterns} URL patterns across ${Object.keys(categories).length} categories`
     );
 
@@ -182,7 +182,7 @@ class URLPatternAnalyzer {
     urls: number;
     patterns: Map<string, Array<{ file: string; line: number; context: string }>>;
   }> {
-    console.log('\n📁 SCANNING CODEBASE FOR URL USAGE...');
+    console.info('\n📁 SCANNING CODEBASE FOR URL USAGE...');
 
     const patterns = new Map<string, Array<{ file: string; line: number; context: string }>>();
     let totalUrls = 0;
@@ -196,7 +196,7 @@ class URLPatternAnalyzer {
         const files = await this.scanDirectory(dir, patterns);
         filesScanned += files;
       } catch (error) {
-        console.log(`   ⚠️  Could not scan ${dir}: ${error.message}`);
+        console.info(`   ⚠️  Could not scan ${dir}: ${error.message}`);
       }
     }
 
@@ -205,9 +205,9 @@ class URLPatternAnalyzer {
       totalUrls += occurrences.length;
     }
 
-    console.log(`   Scanned ${filesScanned} files`);
-    console.log(`   Found ${totalUrls} URL occurrences`);
-    console.log(`   Unique URLs: ${patterns.size}`);
+    console.info(`   Scanned ${filesScanned} files`);
+    console.info(`   Found ${totalUrls} URL occurrences`);
+    console.info(`   Unique URLs: ${patterns.size}`);
 
     return { files: filesScanned, urls: totalUrls, patterns };
   }
@@ -288,7 +288,7 @@ class URLPatternAnalyzer {
     urlsFixed: number;
     fixes: Array<{ url: string; fixed: string; files: string[] }>;
   }> {
-    console.log('\n🔧 APPLYING URL FIXES...');
+    console.info('\n🔧 APPLYING URL FIXES...');
 
     let filesFixed = 0;
     let urlsFixed = 0;
@@ -310,11 +310,11 @@ class URLPatternAnalyzer {
 
             if (content !== fixedContent) {
               await write(file, fixedContent);
-              console.log(`   ✅ Fixed ${brokenUrl} → ${fixedUrl} in ${file}`);
+              console.info(`   ✅ Fixed ${brokenUrl} → ${fixedUrl} in ${file}`);
               filesFixed++;
             }
           } catch (error) {
-            console.log(`   ❌ Failed to fix ${file}: ${error.message}`);
+            console.info(`   ❌ Failed to fix ${file}: ${error.message}`);
           }
         }
 
@@ -335,73 +335,73 @@ class URLPatternAnalyzer {
    * Generate comprehensive analysis report
    */
   static generateReport(analysis: any, scan: any, fixes: any): void {
-    console.log('\n📊 COMPREHENSIVE URL PATTERN ANALYSIS REPORT');
-    console.log('='.repeat(80));
+    console.info('\n📊 COMPREHENSIVE URL PATTERN ANALYSIS REPORT');
+    console.info('='.repeat(80));
 
     // Pattern Analysis
-    console.log('\n🔍 PATTERN ANALYSIS:');
-    console.log(`   Total URL Patterns: ${analysis.totalPatterns}`);
-    console.log('\n   Categories:');
+    console.info('\n🔍 PATTERN ANALYSIS:');
+    console.info(`   Total URL Patterns: ${analysis.totalPatterns}`);
+    console.info('\n   Categories:');
     for (const [category, count] of Object.entries(analysis.categories)) {
-      console.log(`      ${category}: ${count} patterns`);
+      console.info(`      ${category}: ${count} patterns`);
     }
 
     // Issues Found
     if (analysis.issues.length > 0) {
-      console.log('\n🚨 ISSUES FOUND:');
+      console.info('\n🚨 ISSUES FOUND:');
       analysis.issues.forEach((issue: any) => {
         const icon = issue.severity === 'high' ? '🔴' : issue.severity === 'medium' ? '🟡' : '🟠';
-        console.log(`   ${icon} ${issue.pattern}: ${issue.issue}`);
+        console.info(`   ${icon} ${issue.pattern}: ${issue.issue}`);
       });
     }
 
     // Scan Results
-    console.log('\n📁 SCAN RESULTS:');
-    console.log(`   Files Scanned: ${scan.files}`);
-    console.log(`   URL Occurrences: ${scan.urls}`);
-    console.log(`   Unique URLs: ${scan.patterns.size}`);
+    console.info('\n📁 SCAN RESULTS:');
+    console.info(`   Files Scanned: ${scan.files}`);
+    console.info(`   URL Occurrences: ${scan.urls}`);
+    console.info(`   Unique URLs: ${scan.patterns.size}`);
 
     // Top URLs by usage
     const topUrls = Array.from(scan.patterns.entries())
       .sort((a, b) => b[1].length - a[1].length)
       .slice(0, 10);
 
-    console.log('\n   TOP 10 MOST USED URLS:');
+    console.info('\n   TOP 10 MOST USED URLS:');
     topUrls.forEach(([url, occurrences], index) => {
-      console.log(`      ${index + 1}. ${url} (${occurrences.length} occurrences)`);
+      console.info(`      ${index + 1}. ${url} (${occurrences.length} occurrences)`);
     });
 
     // Fix Results
-    console.log('\n🔧 FIX RESULTS:');
-    console.log(`   Files Fixed: ${fixes.filesFixed}`);
-    console.log(`   URLs Fixed: ${fixes.urlsFixed}`);
+    console.info('\n🔧 FIX RESULTS:');
+    console.info(`   Files Fixed: ${fixes.filesFixed}`);
+    console.info(`   URLs Fixed: ${fixes.urlsFixed}`);
 
     if (fixes.fixes.length > 0) {
-      console.log('\n   APPLIED FIXES:');
+      console.info('\n   APPLIED FIXES:');
       fixes.fixes.forEach((fix: any) => {
-        console.log(`      ${fix.url} → ${fix.fixed} (${fix.files.length} files)`);
+        console.info(`      ${fix.url} → ${fix.fixed} (${fix.files.length} files)`);
       });
     }
 
     // Recommendations
-    console.log('\n💡 RECOMMENDATIONS:');
-    console.log('   1. Replace all factory-wager registry URLs with npmjs.org');
-    console.log('   2. Use HTTPS for all external URLs');
-    console.log('   3. Consider CDN optimization for frequently accessed docs');
-    console.log('   4. Add URL validation to CI/CD pipeline');
-    console.log('   5. Create URL constants for better maintainability');
+    console.info('\n💡 RECOMMENDATIONS:');
+    console.info('   1. Replace all factory-wager registry URLs with npmjs.org');
+    console.info('   2. Use HTTPS for all external URLs');
+    console.info('   3. Consider CDN optimization for frequently accessed docs');
+    console.info('   4. Add URL validation to CI/CD pipeline');
+    console.info('   5. Create URL constants for better maintainability');
 
-    console.log('\n' + '='.repeat(80));
-    console.log('✅ URL PATTERN ANALYSIS COMPLETE!');
+    console.info('\n' + '='.repeat(80));
+    console.info('✅ URL PATTERN ANALYSIS COMPLETE!');
   }
 
   /**
    * Run complete analysis
    */
   static async runCompleteAnalysis(): Promise<void> {
-    console.log('🌐 COMPREHENSIVE URL PATTERN ANALYSIS & FIX SYSTEM');
-    console.log('Based on @[lib] directory pattern discovery');
-    console.log('='.repeat(80));
+    console.info('🌐 COMPREHENSIVE URL PATTERN ANALYSIS & FIX SYSTEM');
+    console.info('Based on @[lib] directory pattern discovery');
+    console.info('='.repeat(80));
 
     // Step 1: Analyze patterns
     const analysis = await this.analyzePatterns();

@@ -50,7 +50,7 @@ export class ProfilingMultiLayerGraphSystem {
     this.performanceMonitor = new PerformanceMonitor();
 
     if (this.profilingEnabled) {
-      console.log('🔧 CPU Profiling enabled for multi-layer graph system');
+      console.info('🔧 CPU Profiling enabled for multi-layer graph system');
       this.startProfilingSession('system_init');
     }
 
@@ -362,7 +362,7 @@ export class ProfilingMultiLayerGraphSystem {
     this.performanceMonitor.markStart(sessionName);
 
     if (process.env.BUN_CPU_PROF === 'true') {
-      console.log(`📊 Starting CPU profile: ${sessionName}`);
+      console.info(`📊 Starting CPU profile: ${sessionName}`);
     }
   }
 
@@ -419,8 +419,8 @@ export class ProfilingMultiLayerGraphSystem {
     const metrics = this.performanceMonitor.getMetrics();
     const anomalies = this.performanceMonitor.getAnomalies();
 
-    console.log(`📊 Profile Report:`);
-    console.log(`   Metrics: ${metrics.length}`);
-    console.log(`   Anomalies: ${anomalies.length}`);
+    console.info(`📊 Profile Report:`);
+    console.info(`   Metrics: ${metrics.length}`);
+    console.info(`   Anomalies: ${anomalies.length}`);
   }
 }

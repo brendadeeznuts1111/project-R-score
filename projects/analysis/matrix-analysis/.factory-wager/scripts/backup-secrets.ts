@@ -85,9 +85,9 @@ class EnterpriseSecretManager {
       const metadataKey = `${service}.${name}.meta`;
       await (Bun.secrets.set as any)(metadataKey, "metadata", JSON.stringify(metadata));
 
-      console.log(`${GLYPH.ENTERPRISE} Enterprise secret stored: ${service}/${name}`);
-      console.log(`   Persistence: ${metadata.persistence}`);
-      console.log(`   Category: ${metadata.category}`);
+      console.info(`${GLYPH.ENTERPRISE} Enterprise secret stored: ${service}/${name}`);
+      console.info(`   Persistence: ${metadata.persistence}`);
+      console.info(`   Category: ${metadata.category}`);
       
     } catch (error) {
       throw new Error(`Failed to set enterprise secret: ${(error as Error).message}`);
@@ -183,9 +183,9 @@ class EnterpriseSecretManager {
       const rotationKey = `${service}.${name}.rotation`;
       await (Bun.secrets.set as any)(rotationKey, "metadata", JSON.stringify(rotationMeta));
 
-      console.log(`${GLYPH.ROTATE} Secret rotated successfully: ${service}/${name}`);
-      console.log(`   Old hash: ${oldHash.substring(0, 12)}...`);
-      console.log(`   New hash: ${newHash.substring(0, 12)}...`);
+      console.info(`${GLYPH.ROTATE} Secret rotated successfully: ${service}/${name}`);
+      console.info(`   Old hash: ${oldHash.substring(0, 12)}...`);
+      console.info(`   New hash: ${newHash.substring(0, 12)}...`);
 
       return { oldHash, newHash, success: true };
 
@@ -202,9 +202,9 @@ class EnterpriseSecretManager {
     const id = backupId || new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
     const timestamp = new Date().toISOString();
 
-    console.log(`${GLYPH.BACKUP} Starting enterprise secrets backup...`);
-    console.log(`   Backup ID: ${id}`);
-    console.log(`   Platform: ${process.platform}`);
+    console.info(`${GLYPH.BACKUP} Starting enterprise secrets backup...`);
+    console.info(`   Backup ID: ${id}`);
+    console.info(`   Platform: ${process.platform}`);
 
     const secrets = await this.listEnterpriseSecrets();
     const backupData: SecretBackup = {
@@ -250,10 +250,10 @@ class EnterpriseSecretManager {
     const plainPath = join(this.backupDir, `secrets-backup-${id}.json`);
     writeFileSync(plainPath, dataString);
 
-    console.log(`${GLYPH.SUCCESS} Backup completed successfully!`);
-    console.log(`   Secrets backed up: ${backupData.secrets.length}`);
-    console.log(`   File: ${backupPath}`);
-    console.log(`   Checksum: ${backupData.checksum.substring(0, 16)}...`);
+    console.info(`${GLYPH.SUCCESS} Backup completed successfully!`);
+    console.info(`   Secrets backed up: ${backupData.secrets.length}`);
+    console.info(`   File: ${backupPath}`);
+    console.info(`   Checksum: ${backupData.checksum.substring(0, 16)}...`);
 
     return backupPath;
   }
@@ -270,7 +270,7 @@ class EnterpriseSecretManager {
     }
 
     try {
-      console.log(`${GLYPH.BACKUP} Restoring secrets from backup: ${backupId}`);
+      console.info(`${GLYPH.BACKUP} Restoring secrets from backup: ${backupId}`);
       
       // Decompress and parse backup
       const compressed = readFileSync(backupPath);
@@ -286,16 +286,16 @@ class EnterpriseSecretManager {
         return false;
       }
 
-      console.log(`${GLYPH.SUCCESS} Checksum verified. Restoring ${backupData.secrets.length} secrets...`);
+      console.info(`${GLYPH.SUCCESS} Checksum verified. Restoring ${backupData.secrets.length} secrets...`);
 
       // Restore secrets (note: this would require actual values, not just hashes)
       // In a real implementation, you'd store encrypted values in the backup
       for (const secret of backupData.secrets) {
-        console.log(`   ${GLYPH.LOCK} ${secret.service}/${secret.name} (${secret.persistence})`);
+        console.info(`   ${GLYPH.LOCK} ${secret.service}/${secret.name} (${secret.persistence})`);
         // Note: Actual restoration would require storing encrypted values
       }
 
-      console.log(`${GLYPH.SUCCESS} Restore completed successfully!`);
+      console.info(`${GLYPH.SUCCESS} Restore completed successfully!`);
       return true;
 
     } catch (error) {
@@ -356,7 +356,7 @@ class EnterpriseSecretManager {
   configureRotation(config: SecretRotationConfig[]): void {
     try {
       writeFileSync(this.configPath, JSON.stringify(config, null, 2));
-      console.log(`${GLYPH.SUCCESS} Rotation configuration saved for ${config.length} secrets`);
+      console.info(`${GLYPH.SUCCESS} Rotation configuration saved for ${config.length} secrets`);
     } catch (error) {
       console.error(`${GLYPH.WARNING} Failed to save rotation config: ${(error as Error).message}`);
     }
@@ -491,8 +491,8 @@ class EnterpriseSecretCLI {
 
   private async setSecret(args: string[]): Promise<void> {
     if (args.length < 3) {
-      console.log("Usage: backup-secrets set <service> <name> <value> [options]");
-      console.log("Options: --persist=enterprise --category=api --description='desc'");
+      console.info("Usage: backup-secrets set <service> <name> <value> [options]");
+      console.info("Options: --persist=enterprise --category=api --description='desc'");
       return;
     }
 
@@ -511,24 +511,24 @@ class EnterpriseSecretCLI {
   private async listSecrets(): Promise<void> {
     const secrets = await this.manager.listEnterpriseSecrets();
     
-    console.log(`\n${GLYPH.ENTERPRISE} Enterprise Secrets:\n`);
+    console.info(`\n${GLYPH.ENTERPRISE} Enterprise Secrets:\n`);
     
     for (const secret of secrets) {
-      console.log(`${GLYPH.LOCK} ${secret.service}/${secret.name}`);
+      console.info(`${GLYPH.LOCK} ${secret.service}/${secret.name}`);
       if (secret.metadata) {
-        console.log(`   Persistence: ${secret.metadata.persistence || 'unknown'}`);
-        console.log(`   Category: ${secret.metadata.category || 'general'}`);
+        console.info(`   Persistence: ${secret.metadata.persistence || 'unknown'}`);
+        console.info(`   Category: ${secret.metadata.category || 'general'}`);
         if (secret.metadata.createdAt) {
-          console.log(`   Created: ${secret.metadata.createdAt}`);
+          console.info(`   Created: ${secret.metadata.createdAt}`);
         }
       }
-      console.log();
+      console.info();
     }
   }
 
   private async rotateSecret(args: string[]): Promise<void> {
     if (args.length < 2) {
-      console.log("Usage: backup-secrets rotate <service> <name> [newValue]");
+      console.info("Usage: backup-secrets rotate <service> <name> [newValue]");
       return;
     }
 
@@ -538,72 +538,72 @@ class EnterpriseSecretCLI {
     const result = await this.manager.rotateSecret(service, name, newValue);
     
     if (result.success) {
-      console.log(`${GLYPH.SUCCESS} Rotation completed successfully`);
+      console.info(`${GLYPH.SUCCESS} Rotation completed successfully`);
     } else {
-      console.log(`${GLYPH.WARNING} Rotation failed`);
+      console.info(`${GLYPH.WARNING} Rotation failed`);
     }
   }
 
   private async backup(args: string[]): Promise<void> {
     const backupId = args.find(arg => arg.startsWith('--backup-id='))?.split('=')[1];
     const backupPath = await this.manager.backupAllSecrets(backupId);
-    console.log(`Backup saved to: ${backupPath}`);
+    console.info(`Backup saved to: ${backupPath}`);
   }
 
   private async restore(args: string[]): Promise<void> {
     const backupId = args.find(arg => arg.startsWith('--backup-id='))?.split('=')[1];
     
     if (!backupId) {
-      console.log("Usage: backup-secrets restore --backup-id=<YYYY-MM-DD>");
+      console.info("Usage: backup-secrets restore --backup-id=<YYYY-MM-DD>");
       return;
     }
 
     const success = await this.manager.restoreFromBackup(backupId);
     
     if (success) {
-      console.log(`${GLYPH.SUCCESS} Restore completed successfully`);
+      console.info(`${GLYPH.SUCCESS} Restore completed successfully`);
     } else {
-      console.log(`${GLYPH.WARNING} Restore failed`);
+      console.info(`${GLYPH.WARNING} Restore failed`);
     }
   }
 
   private async listBackups(): Promise<void> {
     const backups = this.manager.listBackups();
     
-    console.log(`\n${GLYPH.BACKUP} Available Backups:\n`);
+    console.info(`\n${GLYPH.BACKUP} Available Backups:\n`);
     
     if (backups.length === 0) {
-      console.log("No backups found.");
+      console.info("No backups found.");
       return;
     }
 
     for (const backup of backups) {
-      console.log(`${GLYPH.BACKUP} ${backup.id}`);
-      console.log(`   Timestamp: ${backup.timestamp}`);
-      console.log(`   Size: ${backup.size}`);
-      console.log();
+      console.info(`${GLYPH.BACKUP} ${backup.id}`);
+      console.info(`   Timestamp: ${backup.timestamp}`);
+      console.info(`   Size: ${backup.size}`);
+      console.info();
     }
   }
 
   private async checkRotation(): Promise<void> {
     const needsRotation = await this.manager.checkRotationNeeded();
     
-    console.log(`\n${GLYPH.ROTATE} Rotation Status:\n`);
+    console.info(`\n${GLYPH.ROTATE} Rotation Status:\n`);
     
     if (needsRotation.length === 0) {
-      console.log(`${GLYPH.SUCCESS} All secrets are within rotation limits.`);
+      console.info(`${GLYPH.SUCCESS} All secrets are within rotation limits.`);
       return;
     }
 
     for (const secret of needsRotation) {
-      console.log(`${GLYPH.WARNING} ${secret.service}/${secret.name}`);
-      console.log(`   Overdue by: ${secret.daysOverdue} days`);
-      console.log();
+      console.info(`${GLYPH.WARNING} ${secret.service}/${secret.name}`);
+      console.info(`   Overdue by: ${secret.daysOverdue} days`);
+      console.info();
     }
   }
 
   private showHelp(): void {
-    console.log(`
+    console.info(`
 ${GLYPH.ENTERPRISE} FactoryWager Enterprise Secrets Manager
 
 Commands:

@@ -13,7 +13,7 @@ class S3Uploader {
 
   async uploadFile(localPath: string, s3Key: string): Promise<boolean> {
     try {
-      console.log(`📤 Uploading ${localPath} → ${s3Key}`);
+      console.info(`📤 Uploading ${localPath} → ${s3Key}`);
 
       // Read file content
       const fileContent = readFileSync(localPath);
@@ -39,7 +39,7 @@ class S3Uploader {
       });
 
       if (response.ok) {
-        console.log(`✅ Successfully uploaded ${s3Key}`);
+        console.info(`✅ Successfully uploaded ${s3Key}`);
         return true;
       } else {
         console.error(
@@ -77,13 +77,13 @@ class S3Uploader {
   }
 
   async uploadDashboard(): Promise<boolean> {
-    console.log("🚀 Starting dashboard upload to S3...");
+    console.info("🚀 Starting dashboard upload to S3...");
 
     if (!validateS3Config()) {
       console.error(
         "❌ S3 configuration is invalid. Please check your environment variables."
       );
-      console.log(
+      console.info(
         "Required: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, S3_BUCKET"
       );
       return false;
@@ -95,7 +95,7 @@ class S3Uploader {
     let allSuccessful = true;
 
     // Upload main dashboard files
-    console.log("📁 Uploading dashboard files...");
+    console.info("📁 Uploading dashboard files...");
     for (const file of uploadPaths.dashboard) {
       const localPath = join(process.cwd(), file);
       const s3Key = `${s3Prefix}/${basename(file)}`;
@@ -104,7 +104,7 @@ class S3Uploader {
     }
 
     // Upload documentation files
-    console.log("📚 Uploading documentation...");
+    console.info("📚 Uploading documentation...");
     for (const pattern of uploadPaths.docs) {
       const files = this.getFilesByPattern(pattern);
       for (const file of files) {
@@ -117,7 +117,7 @@ class S3Uploader {
     // Upload build files if they exist
     const distPath = join(process.cwd(), "dist");
     if (statSync(distPath).isDirectory()) {
-      console.log("🏗️ Uploading build files...");
+      console.info("🏗️ Uploading build files...");
       const success = await this.uploadDirectory(distPath, `${s3Prefix}/dist`);
       if (!success) allSuccessful = false;
     }
@@ -126,13 +126,13 @@ class S3Uploader {
     await this.createManifest(s3Prefix);
 
     if (allSuccessful) {
-      console.log(`🎉 All files uploaded successfully to S3!`);
-      console.log(`📂 S3 Location: ${this.baseUrl}/${s3Prefix}/`);
-      console.log(
+      console.info(`🎉 All files uploaded successfully to S3!`);
+      console.info(`📂 S3 Location: ${this.baseUrl}/${s3Prefix}/`);
+      console.info(
         `🔗 Access your dashboard at: https://${this.config.bucket}.s3.amazonaws.com/${s3Prefix}/index.html`
       );
     } else {
-      console.log("⚠️ Some files failed to upload. Check the logs above.");
+      console.info("⚠️ Some files failed to upload. Check the logs above.");
     }
 
     return allSuccessful;
@@ -168,7 +168,7 @@ class S3Uploader {
     });
 
     if (response.ok) {
-      console.log("📋 Manifest created successfully");
+      console.info("📋 Manifest created successfully");
     }
   }
 
@@ -252,28 +252,28 @@ async function main() {
     case "validate":
     case "check":
       if (validateS3Config()) {
-        console.log("✅ S3 configuration is valid");
+        console.info("✅ S3 configuration is valid");
       } else {
-        console.log("❌ S3 configuration is invalid");
-        console.log(
+        console.info("❌ S3 configuration is invalid");
+        console.info(
           "Required: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, S3_BUCKET"
         );
       }
       break;
 
     default:
-      console.log("📋 S3 Dashboard Uploader");
-      console.log("");
-      console.log("Commands:");
-      console.log("  upload, up    - Upload dashboard to S3");
-      console.log("  validate, check - Validate S3 configuration");
-      console.log("");
-      console.log("Environment Variables:");
-      console.log("  AWS_ACCESS_KEY_ID  - AWS access key");
-      console.log("  AWS_SECRET_ACCESS_KEY  - AWS secret key");
-      console.log("  S3_BUCKET          - S3 bucket name");
-      console.log("  AWS_REGION         - AWS region (default: us-east-1)");
-      console.log("  S3_ENDPOINT        - Custom S3 endpoint (optional)");
+      console.info("📋 S3 Dashboard Uploader");
+      console.info("");
+      console.info("Commands:");
+      console.info("  upload, up    - Upload dashboard to S3");
+      console.info("  validate, check - Validate S3 configuration");
+      console.info("");
+      console.info("Environment Variables:");
+      console.info("  AWS_ACCESS_KEY_ID  - AWS access key");
+      console.info("  AWS_SECRET_ACCESS_KEY  - AWS secret key");
+      console.info("  S3_BUCKET          - S3 bucket name");
+      console.info("  AWS_REGION         - AWS region (default: us-east-1)");
+      console.info("  S3_ENDPOINT        - Custom S3 endpoint (optional)");
       break;
   }
 }

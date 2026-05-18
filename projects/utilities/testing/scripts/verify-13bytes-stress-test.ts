@@ -59,8 +59,8 @@ const stringWidthTests: StringWidthTest[] = [
 ];
 
 function runStringWidthTests(): { passed: boolean; results: string[]; totalNs: number } {
-  console.log("\n📊 Phase 1: Bun.stringWidth() Tests (6 Grapheme Decisions)");
-  console.log("=".repeat(70));
+  console.info("\n📊 Phase 1: Bun.stringWidth() Tests (6 Grapheme Decisions)");
+  console.info("=".repeat(70));
   
   const results: string[] = [];
   let totalNs = 0;
@@ -79,7 +79,7 @@ function runStringWidthTests(): { passed: boolean; results: string[]; totalNs: n
     const status = passed ? "✅" : "❌";
     const graphemeCount = [...test.input].length;
     
-    console.log(
+    console.info(
       `${status} ${test.label.padEnd(28)} | ` +
       `Width: ${width} (expected ${test.expectedWidth}) | ` +
       `${ns}ns | Graphemes: ${graphemeCount}`
@@ -105,19 +105,19 @@ interface WriteMetrics {
 }
 
 async function runWriteTest(): Promise<WriteMetrics> {
-  console.log("\n📝 Phase 2: Bun.write() - File System Call");
-  console.log("=".repeat(70));
+  console.info("\n📝 Phase 2: Bun.write() - File System Call");
+  console.info("=".repeat(70));
   
-  const testContent = `import {feature} from "bun:bundle"; if (feature("DEBUG")) { console.log(true); }`;
+  const testContent = `import {feature} from "bun:bundle"; if (feature("DEBUG")) { console.info(true); }`;
   
   const start = Bun.nanoseconds();
   const bytesWritten = await Bun.write(TEST_FILE, testContent);
   const end = Bun.nanoseconds();
   const ns = end - start;
   
-  console.log(`✅ File written: ${TEST_FILE}`);
-  console.log(`   Bytes: ${bytesWritten}`);
-  console.log(`   Time: ${ns}ns`);
+  console.info(`✅ File written: ${TEST_FILE}`);
+  console.info(`   Bytes: ${bytesWritten}`);
+  console.info(`   Time: ${ns}ns`);
   
   return {
     passed: bytesWritten === testContent.length,
@@ -139,10 +139,10 @@ interface BuildMetrics {
 }
 
 async function runBuildTest(): Promise<BuildMetrics> {
-  console.log("\n⚡ Phase 3: Bun.build() - Compile-Time Feature Elimination");
-  console.log("=".repeat(70));
+  console.info("\n⚡ Phase 3: Bun.build() - Compile-Time Feature Elimination");
+  console.info("=".repeat(70));
   
-  const testContent = `import {feature} from "bun:bundle"; if (feature("DEBUG")) { console.log(true); }`;
+  const testContent = `import {feature} from "bun:bundle"; if (feature("DEBUG")) { console.info(true); }`;
   
   const start = Bun.nanoseconds();
   
@@ -171,15 +171,15 @@ async function runBuildTest(): Promise<BuildMetrics> {
   const outputPath = `${OUTPUT_DIR}/${TEST_FILE.replace('.ts', '.js')}`;
   const outputContent = await Bun.file(outputPath).text();
   
-  console.log(`✅ Build completed successfully`);
-  console.log(`   Input: ${testContent.length} bytes`);
-  console.log(`   Output: ${outputContent.length} bytes`);
-  console.log(`   Time: ${ns}ns`);
-  console.log(`   Output content: ${outputContent}`);
+  console.info(`✅ Build completed successfully`);
+  console.info(`   Input: ${testContent.length} bytes`);
+  console.info(`   Output: ${outputContent.length} bytes`);
+  console.info(`   Time: ${ns}ns`);
+  console.info(`   Output content: ${outputContent}`);
   
   // Verify DCE occurred (feature("DEBUG") should be eliminated)
   const dceVerified = !outputContent.includes("feature");
-  console.log(`   DCE Verified: ${dceVerified ? "✅" : "❌"} (feature() call removed)`);
+  console.info(`   DCE Verified: ${dceVerified ? "✅" : "❌"} (feature() call removed)`);
   
   return {
     passed: buildResult.success && dceVerified,
@@ -202,8 +202,8 @@ interface SpawnMetrics {
 }
 
 async function runSpawnTest(outputFile: string): Promise<SpawnMetrics> {
-  console.log("\n🚀 Phase 4: Bun.spawn() - Process Execution");
-  console.log("=".repeat(70));
+  console.info("\n🚀 Phase 4: Bun.spawn() - Process Execution");
+  console.info("=".repeat(70));
   
   const start = Bun.nanoseconds();
   
@@ -214,10 +214,10 @@ async function runSpawnTest(outputFile: string): Promise<SpawnMetrics> {
   const end = Bun.nanoseconds();
   const ns = end - start;
   
-  console.log(`✅ Process spawned and executed`);
-  console.log(`   Exit code: ${exitCode}`);
-  console.log(`   Stdout: ${stdout.trim()}`);
-  console.log(`   Time: ${ns}ns`);
+  console.info(`✅ Process spawned and executed`);
+  console.info(`   Exit code: ${exitCode}`);
+  console.info(`   Stdout: ${stdout.trim()}`);
+  console.info(`   Time: ${ns}ns`);
   
   const trimmed = stdout.trim();
   const passed = exitCode === 0 && trimmed.toLowerCase().includes("true");
@@ -234,14 +234,14 @@ async function runSpawnTest(outputFile: string): Promise<SpawnMetrics> {
 // ============================================
 
 async function main() {
-  console.log("🧪 BUN.JS 13-BYTE STRESS TEST - Complete Pipeline Verification");
-  console.log("=".repeat(70));
-  console.log("This test executes all 13 bytes of functionality in a single pipeline:");
-  console.log("  1. stringWidth() - 6 Unicode grapheme width decisions");
-  console.log("  2. write() - File system operation");
-  console.log("  3. build() - Compile-time feature elimination");
-  console.log("  4. spawn() - Process execution");
-  console.log("");
+  console.info("🧪 BUN.JS 13-BYTE STRESS TEST - Complete Pipeline Verification");
+  console.info("=".repeat(70));
+  console.info("This test executes all 13 bytes of functionality in a single pipeline:");
+  console.info("  1. stringWidth() - 6 Unicode grapheme width decisions");
+  console.info("  2. write() - File system operation");
+  console.info("  3. build() - Compile-time feature elimination");
+  console.info("  4. spawn() - Process execution");
+  console.info("");
   
   const overallStart = Bun.nanoseconds();
   
@@ -270,37 +270,37 @@ async function main() {
   // FINAL RESULTS SUMMARY
   // ============================================
   
-  console.log("\n" + "🏁 FINAL RESULTS".padEnd(70, "="));
+  console.info("\n" + "🏁 FINAL RESULTS".padEnd(70, "="));
   
   const allPassed = phase1Passed && writeMetrics.passed && buildMetrics.passed && spawnMetrics.passed;
   
-  console.log("\nPhase-by-Phase Breakdown:");
-  console.log(`  1. stringWidth (6 tests): ${phase1Passed ? "✅ PASS" : "❌ FAIL"} | ${phase1Ns}ns`);
-  console.log(`  2. write()              : ${writeMetrics.passed ? "✅ PASS" : "❌ FAIL"} | ${writeMetrics.nanoseconds}ns | ${writeMetrics.bytesWritten}B written`);
-  console.log(`  3. build() + DCE        : ${buildMetrics.passed ? "✅ PASS" : "❌ FAIL"} | ${buildMetrics.nanoseconds}ns | ${buildMetrics.inputBytes}B → ${buildMetrics.outputBytes}B`);
-  console.log(`  4. spawn() + execute    : ${spawnMetrics.passed ? "✅ PASS" : "❌ FAIL"} | ${spawnMetrics.nanoseconds}ns | exit:${spawnMetrics.exitCode}`);
+  console.info("\nPhase-by-Phase Breakdown:");
+  console.info(`  1. stringWidth (6 tests): ${phase1Passed ? "✅ PASS" : "❌ FAIL"} | ${phase1Ns}ns`);
+  console.info(`  2. write()              : ${writeMetrics.passed ? "✅ PASS" : "❌ FAIL"} | ${writeMetrics.nanoseconds}ns | ${writeMetrics.bytesWritten}B written`);
+  console.info(`  3. build() + DCE        : ${buildMetrics.passed ? "✅ PASS" : "❌ FAIL"} | ${buildMetrics.nanoseconds}ns | ${buildMetrics.inputBytes}B → ${buildMetrics.outputBytes}B`);
+  console.info(`  4. spawn() + execute    : ${spawnMetrics.passed ? "✅ PASS" : "❌ FAIL"} | ${spawnMetrics.nanoseconds}ns | exit:${spawnMetrics.exitCode}`);
   
-  console.log("\n" + "-".repeat(70));
-  console.log(`TOTAL ELAPSED TIME: ${totalNs}ns (${(totalNs / 1000).toFixed(2)}µs)`);
-  console.log(`OVERALL STATUS: ${allPassed ? "✅ ALL TESTS PASSED" : "❌ SOME TESTS FAILED"}`);
+  console.info("\n" + "-".repeat(70));
+  console.info(`TOTAL ELAPSED TIME: ${totalNs}ns (${(totalNs / 1000).toFixed(2)}µs)`);
+  console.info(`OVERALL STATUS: ${allPassed ? "✅ ALL TESTS PASSED" : "❌ SOME TESTS FAILED"}`);
   
   // Expected metrics comparison
   const expectedTotal = 25000; // ~25µs expected
   const performanceRatio = totalNs / expectedTotal;
   
-  console.log("\n📈 Performance Analysis:");
-  console.log(`  Expected: ~${expectedTotal}ns`);
-  console.log(`  Actual:   ${totalNs}ns`);
-  console.log(`  Ratio:    ${performanceRatio.toFixed(2)}x ${performanceRatio <= 1 ? "(ahead of schedule! 🎉)" : "(within expected variance)"}`);
+  console.info("\n📈 Performance Analysis:");
+  console.info(`  Expected: ~${expectedTotal}ns`);
+  console.info(`  Actual:   ${totalNs}ns`);
+  console.info(`  Ratio:    ${performanceRatio.toFixed(2)}x ${performanceRatio <= 1 ? "(ahead of schedule! 🎉)" : "(within expected variance)"}`);
   
   // Throughput calculations
   const totalBytes = writeMetrics.bytesWritten + buildMetrics.outputBytes;
   const throughput = (totalBytes / (totalNs / 1000000000)) / 1024 / 1024; // MB/s
   
-  console.log(`  Throughput: ${throughput.toFixed(2)} MB/s`);
+  console.info(`  Throughput: ${throughput.toFixed(2)} MB/s`);
   
-  console.log("\n" + "=".repeat(70));
-  console.log("The 13-byte contract verified successfully! 🎯");
+  console.info("\n" + "=".repeat(70));
+  console.info("The 13-byte contract verified successfully! 🎯");
   
   process.exit(allPassed ? 0 : 1);
 }

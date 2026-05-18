@@ -250,41 +250,41 @@ export function benchmarkComparison(): {
 
 // CLI entry
 if (import.meta.main) {
-	console.log("🔥 Bun 1.3.8 ccmp-Optimized Matrix Search\n");
+	console.info("🔥 Bun 1.3.8 ccmp-Optimized Matrix Search\n");
 
 	// Demo searches
-	console.log("Demo: searchOptionsCCMP('watch')");
+	console.info("Demo: searchOptionsCCMP('watch')");
 	const watchResults = searchOptionsCCMP("watch");
-	console.log(`Found ${watchResults.length} results:`);
+	console.info(`Found ${watchResults.length} results:`);
 	for (const r of watchResults.slice(0, 5)) {
-		console.log(`  ${r.Name} (${r.matchType}, score: ${r.score})`);
+		console.info(`  ${r.Name} (${r.matchType}, score: ${r.score})`);
 	}
 
-	console.log("\nDemo: fuzzySearch('timeot', maxDistance=2)");
+	console.info("\nDemo: fuzzySearch('timeot', maxDistance=2)");
 	const fuzzyResults = fuzzySearch("timeot", 2);
-	console.log(`Found ${fuzzyResults.length} results:`);
+	console.info(`Found ${fuzzyResults.length} results:`);
 	for (const r of fuzzyResults.slice(0, 5)) {
-		console.log(`  ${r.Name} (distance: ${100 - r.score}/4)`);
+		console.info(`  ${r.Name} (distance: ${100 - r.score}/4)`);
 	}
 
-	console.log("\nDemo: prefixSearch('--wat')");
+	console.info("\nDemo: prefixSearch('--wat')");
 	const prefixResults = prefixSearch("--wat");
-	console.log(`Found ${prefixResults.length} results:`);
+	console.info(`Found ${prefixResults.length} results:`);
 	for (const r of prefixResults) {
-		console.log(`  ${r.Name}`);
+		console.info(`  ${r.Name}`);
 	}
 
 	// Benchmark
-	console.log("\n📊 Benchmark (1000 iterations):");
+	console.info("\n📊 Benchmark (1000 iterations):");
 	const stats = benchmarkSearch(1000);
-	console.log(`  Average time: ${stats.timeMs.toFixed(3)}ms`);
-	console.log(`  ccmp optimized: ${stats.ccmpOptimized ? "✅" : "❌"}`);
+	console.info(`  Average time: ${stats.timeMs.toFixed(3)}ms`);
+	console.info(`  ccmp optimized: ${stats.ccmpOptimized ? "✅" : "❌"}`);
 
-	console.log("\n📊 Comparison with legacy JSON.parse:");
+	console.info("\n📊 Comparison with legacy JSON.parse:");
 	const comparison = benchmarkComparison();
-	console.log(`  ccmp:   ${(comparison.ccmp / 1e6).toFixed(3)}ms`);
-	console.log(`  legacy: ${(comparison.legacy / 1e6).toFixed(3)}ms`);
-	console.log(`  speedup: ${comparison.speedup.toFixed(1)}x`);
+	console.info(`  ccmp:   ${(comparison.ccmp / 1e6).toFixed(3)}ms`);
+	console.info(`  legacy: ${(comparison.legacy / 1e6).toFixed(3)}ms`);
+	console.info(`  speedup: ${comparison.speedup.toFixed(1)}x`);
 }
 
 export default {

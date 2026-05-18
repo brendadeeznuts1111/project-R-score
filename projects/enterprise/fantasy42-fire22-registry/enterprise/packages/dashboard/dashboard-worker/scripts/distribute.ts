@@ -23,8 +23,8 @@ export class DistributionBuilder {
    * Build executable distribution
    */
   async buildExecutable(platform?: string): Promise<void> {
-    console.log('🔨 Building Executable Distribution');
-    console.log('='.repeat(50));
+    console.info('🔨 Building Executable Distribution');
+    console.info('='.repeat(50));
 
     const platforms = platform ? [platform] : ['darwin', 'linux', 'windows'];
 
@@ -34,16 +34,16 @@ export class DistributionBuilder {
           ? `${this.distDir}/fire22-dashboard.exe`
           : `${this.distDir}/fire22-dashboard-${plt}`;
 
-      console.log(`\n📦 Building for ${plt}...`);
+      console.info(`\n📦 Building for ${plt}...`);
 
       try {
         await $`bun build ./src/index.ts --compile --target=bun-${plt} --outfile=${outfile}`;
 
         const stats = await Bun.file(outfile).size();
         const sizeMB = (stats / 1024 / 1024).toFixed(2);
-        console.log(`   ✅ Success: ${sizeMB}MB`);
+        console.info(`   ✅ Success: ${sizeMB}MB`);
       } catch (error) {
-        console.log(`   ❌ Failed: ${error}`);
+        console.info(`   ❌ Failed: ${error}`);
       }
     }
   }
@@ -52,8 +52,8 @@ export class DistributionBuilder {
    * Build workspace packages
    */
   async buildWorkspacePackages(): Promise<void> {
-    console.log('📦 Building Workspace Packages');
-    console.log('='.repeat(50));
+    console.info('📦 Building Workspace Packages');
+    console.info('='.repeat(50));
 
     const packages = [
       { name: '@fire22/core', path: 'packages/core' },
@@ -63,11 +63,11 @@ export class DistributionBuilder {
 
     for (const pkg of packages) {
       if (!existsSync(pkg.path)) {
-        console.log(`\n⏭️  Skipping ${pkg.name} (not found)`);
+        console.info(`\n⏭️  Skipping ${pkg.name} (not found)`);
         continue;
       }
 
-      console.log(`\n🏗️  Building ${pkg.name}...`);
+      console.info(`\n🏗️  Building ${pkg.name}...`);
       process.chdir(pkg.path);
 
       try {
@@ -76,9 +76,9 @@ export class DistributionBuilder {
 
         // Pack it
         const tarball = await $`bun pm pack --quiet`.text();
-        console.log(`   ✅ Created: ${tarball.trim()}`);
+        console.info(`   ✅ Created: ${tarball.trim()}`);
       } catch (error) {
-        console.log(`   ❌ Failed to build`);
+        console.info(`   ❌ Failed to build`);
       }
     }
 
@@ -89,11 +89,11 @@ export class DistributionBuilder {
    * Create minimal npm package
    */
   async createMinimalPackage(): Promise<void> {
-    console.log('📦 Creating Minimal NPM Package');
-    console.log('='.repeat(50));
+    console.info('📦 Creating Minimal NPM Package');
+    console.info('='.repeat(50));
 
     // Build optimized bundle
-    console.log('\n🏗️  Building optimized bundle...');
+    console.info('\n🏗️  Building optimized bundle...');
     await $`bun build ./src/index.ts --target=node --outdir=${this.distDir}/npm --minify --splitting --format=esm`;
 
     // Create minimal package.json
@@ -123,20 +123,20 @@ export class DistributionBuilder {
     // Pack it
     process.chdir(join(this.distDir, 'npm'));
     const tarball = await $`bun pm pack --quiet`.text();
-    console.log(`\n✅ Minimal package: ${tarball.trim()}`);
+    console.info(`\n✅ Minimal package: ${tarball.trim()}`);
 
     // Get size
     const stats = await Bun.file(tarball.trim()).size;
     const sizeKB = (stats / 1024).toFixed(2);
-    console.log(`   Size: ${sizeKB}KB`);
+    console.info(`   Size: ${sizeKB}KB`);
   }
 
   /**
    * Create Docker distribution
    */
   async createDockerImage(): Promise<void> {
-    console.log('🐳 Creating Docker Distribution');
-    console.log('='.repeat(50));
+    console.info('🐳 Creating Docker Distribution');
+    console.info('='.repeat(50));
 
     const dockerfile = `FROM oven/bun:1-alpine
 
@@ -157,17 +157,17 @@ CMD ["./dist/fire22-dashboard"]
 
     await Bun.write(join(this.distDir, 'Dockerfile'), dockerfile);
 
-    console.log('📝 Dockerfile created');
-    console.log('\nTo build: docker build -t fire22/dashboard .');
-    console.log('To run: docker run -p 3000:3000 fire22/dashboard');
+    console.info('📝 Dockerfile created');
+    console.info('\nTo build: docker build -t fire22/dashboard .');
+    console.info('To run: docker run -p 3000:3000 fire22/dashboard');
   }
 
   /**
    * Show distribution summary
    */
   async showSummary(): Promise<void> {
-    console.log('\n📊 Distribution Summary');
-    console.log('='.repeat(50));
+    console.info('\n📊 Distribution Summary');
+    console.info('='.repeat(50));
 
     const distributions = [
       { type: 'Executable', path: 'dist/fire22-dashboard', desc: 'Standalone binary' },
@@ -177,16 +177,16 @@ CMD ["./dist/fire22-dashboard"]
     ];
 
     for (const dist of distributions) {
-      console.log(`\n${dist.type}:`);
-      console.log(`   Path: ${dist.path}`);
-      console.log(`   Description: ${dist.desc}`);
+      console.info(`\n${dist.type}:`);
+      console.info(`   Path: ${dist.path}`);
+      console.info(`   Description: ${dist.desc}`);
     }
 
-    console.log('\n📦 Usage Examples:');
-    console.log('   Executable: ./dist/fire22-dashboard');
-    console.log('   Package: npm install fire22-dashboard-3.0.8.tgz');
-    console.log('   Workspace: npm install @fire22/core');
-    console.log('   Docker: docker run fire22/dashboard');
+    console.info('\n📦 Usage Examples:');
+    console.info('   Executable: ./dist/fire22-dashboard');
+    console.info('   Package: npm install fire22-dashboard-3.0.8.tgz');
+    console.info('   Workspace: npm install @fire22/core');
+    console.info('   Docker: docker run fire22/dashboard');
   }
 }
 
@@ -222,7 +222,7 @@ if (import.meta.main) {
         break;
 
       default:
-        console.log(`
+        console.info(`
 🚀 Fire22 Distribution Builder
 !==!==!==!==!=====
 

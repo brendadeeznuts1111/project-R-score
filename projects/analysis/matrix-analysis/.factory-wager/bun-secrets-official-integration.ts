@@ -21,7 +21,7 @@ class FactoryWagerOfficialSecretsIntegration {
    * Store API token using official API
    */
   async storeApiToken(token: string): Promise<void> {
-    console.log(`🔐 Storing FactoryWager API token...`);
+    console.info(`🔐 Storing FactoryWager API token...`);
     
     try {
       // Official API: object syntax
@@ -31,9 +31,9 @@ class FactoryWagerOfficialSecretsIntegration {
         value: token
       });
       
-      console.log(`✅ API token stored securely in OS keychain`);
-      console.log(`   Service: ${this.serviceName}`);
-      console.log(`   Environment: ${this.environment}`);
+      console.info(`✅ API token stored securely in OS keychain`);
+      console.info(`   Service: ${this.serviceName}`);
+      console.info(`   Environment: ${this.environment}`);
       
     } catch (error) {
       console.error(`❌ Failed to store API token: ${(error as Error).message}`);
@@ -45,7 +45,7 @@ class FactoryWagerOfficialSecretsIntegration {
    * Retrieve API token using official API
    */
   async getApiToken(): Promise<string | null> {
-    console.log(`🔍 Retrieving FactoryWager API token...`);
+    console.info(`🔍 Retrieving FactoryWager API token...`);
     
     try {
       // Official API: object syntax
@@ -55,12 +55,12 @@ class FactoryWagerOfficialSecretsIntegration {
       });
       
       if (token) {
-        console.log(`✅ API token retrieved successfully`);
-        console.log(`   Token preview: ${token.substring(0, 8)}...`);
-        console.log(`   Token length: ${token.length} characters`);
+        console.info(`✅ API token retrieved successfully`);
+        console.info(`   Token preview: ${token.substring(0, 8)}...`);
+        console.info(`   Token length: ${token.length} characters`);
         return token;
       } else {
-        console.log(`⚠️  No API token found in keychain`);
+        console.info(`⚠️  No API token found in keychain`);
         return null;
       }
       
@@ -80,7 +80,7 @@ class FactoryWagerOfficialSecretsIntegration {
     password: string;
     database: string;
   }): Promise<void> {
-    console.log(`🗄️  Storing database credentials...`);
+    console.info(`🗄️  Storing database credentials...`);
     
     const credentials = [
       { name: "db-host", value: config.host },
@@ -102,10 +102,10 @@ class FactoryWagerOfficialSecretsIntegration {
         )
       );
       
-      console.log(`✅ Database credentials stored securely`);
-      console.log(`   Host: ${config.host}:${config.port}`);
-      console.log(`   Database: ${config.database}`);
-      console.log(`   User: ${config.user}`);
+      console.info(`✅ Database credentials stored securely`);
+      console.info(`   Host: ${config.host}:${config.port}`);
+      console.info(`   Database: ${config.database}`);
+      console.info(`   User: ${config.user}`);
       
     } catch (error) {
       console.error(`❌ Failed to store database credentials: ${(error as Error).message}`);
@@ -123,7 +123,7 @@ class FactoryWagerOfficialSecretsIntegration {
     password: string;
     database: string;
   } | null> {
-    console.log(`🔍 Retrieving database credentials...`);
+    console.info(`🔍 Retrieving database credentials...`);
     
     const credentialNames = [
       "db-host", "db-port", "db-user", "db-password", "db-database"
@@ -150,15 +150,15 @@ class FactoryWagerOfficialSecretsIntegration {
           database: credentials[4]!
         };
         
-        console.log(`✅ Database credentials retrieved`);
-        console.log(`   Host: ${result.host}:${result.port}`);
-        console.log(`   Database: ${result.database}`);
-        console.log(`   User: ${result.user}`);
-        console.log(`   Password: ${result.password.substring(0, 4)}...`);
+        console.info(`✅ Database credentials retrieved`);
+        console.info(`   Host: ${result.host}:${result.port}`);
+        console.info(`   Database: ${result.database}`);
+        console.info(`   User: ${result.user}`);
+        console.info(`   Password: ${result.password.substring(0, 4)}...`);
         
         return result;
       } else {
-        console.log(`⚠️  Incomplete database credentials found`);
+        console.info(`⚠️  Incomplete database credentials found`);
         return null;
       }
       
@@ -172,7 +172,7 @@ class FactoryWagerOfficialSecretsIntegration {
    * Store JWT signing key using official API
    */
   async storeJwtSigningKey(): Promise<string> {
-    console.log(`🔑 Generating and storing JWT signing key...`);
+    console.info(`🔑 Generating and storing JWT signing key...`);
     
     try {
       // Generate cryptographically secure key
@@ -189,9 +189,9 @@ class FactoryWagerOfficialSecretsIntegration {
         value: hexKey
       });
       
-      console.log(`✅ JWT signing key generated and stored`);
-      console.log(`   Key length: ${hexKey.length} characters (256 bits)`);
-      console.log(`   Key preview: ${hexKey.substring(0, 16)}...`);
+      console.info(`✅ JWT signing key generated and stored`);
+      console.info(`   Key length: ${hexKey.length} characters (256 bits)`);
+      console.info(`   Key preview: ${hexKey.substring(0, 16)}...`);
       
       return hexKey;
       
@@ -205,7 +205,7 @@ class FactoryWagerOfficialSecretsIntegration {
    * Retrieve JWT signing key using official API
    */
   async getJwtSigningKey(): Promise<string | null> {
-    console.log(`🔍 Retrieving JWT signing key...`);
+    console.info(`🔍 Retrieving JWT signing key...`);
     
     try {
       const key = await secrets.get({
@@ -214,12 +214,12 @@ class FactoryWagerOfficialSecretsIntegration {
       });
       
       if (key) {
-        console.log(`✅ JWT signing key retrieved`);
-        console.log(`   Key length: ${key.length} characters`);
-        console.log(`   Key preview: ${key.substring(0, 16)}...`);
+        console.info(`✅ JWT signing key retrieved`);
+        console.info(`   Key length: ${key.length} characters`);
+        console.info(`   Key preview: ${key.substring(0, 16)}...`);
         return key;
       } else {
-        console.log(`⚠️  No JWT signing key found`);
+        console.info(`⚠️  No JWT signing key found`);
         return null;
       }
       
@@ -233,7 +233,7 @@ class FactoryWagerOfficialSecretsIntegration {
    * Migrate from .env file to official Bun.secrets
    */
   async migrateFromEnvFile(): Promise<void> {
-    console.log(`🔄 Migrating from .env file to Bun.secrets...`);
+    console.info(`🔄 Migrating from .env file to Bun.secrets...`);
     
     const envMappings = [
       { env: "TIER_API_TOKEN", secret: "tier-api-token" },
@@ -258,26 +258,26 @@ class FactoryWagerOfficialSecretsIntegration {
             value: envValue
           });
           
-          console.log(`✅ Migrated ${mapping.env} → ${mapping.secret}`);
+          console.info(`✅ Migrated ${mapping.env} → ${mapping.secret}`);
           migratedCount++;
           
         } catch (error) {
           console.error(`❌ Failed to migrate ${mapping.env}: ${(error as Error).message}`);
         }
       } else {
-        console.log(`⚠️  ${mapping.env} not found in environment`);
+        console.info(`⚠️  ${mapping.env} not found in environment`);
       }
     }
     
-    console.log(`\n🎉 Migration complete: ${migratedCount} secrets migrated`);
-    console.log(`💡 Consider removing sensitive values from .env file`);
+    console.info(`\n🎉 Migration complete: ${migratedCount} secrets migrated`);
+    console.info(`💡 Consider removing sensitive values from .env file`);
   }
 
   /**
    * List all stored secrets for debugging
    */
   async listStoredSecrets(): Promise<void> {
-    console.log(`📋 Listing stored secrets for ${this.serviceName}...`);
+    console.info(`📋 Listing stored secrets for ${this.serviceName}...`);
     
     const commonSecretNames = [
       "tier-api-token",
@@ -299,24 +299,24 @@ class FactoryWagerOfficialSecretsIntegration {
             ? `${value.substring(0, 4)}...`
             : value;
           
-          console.log(`   ✅ ${name}: ${displayValue}`);
+          console.info(`   ✅ ${name}: ${displayValue}`);
           foundSecrets.push(name);
         } else {
-          console.log(`   ❌ ${name}: not found`);
+          console.info(`   ❌ ${name}: not found`);
         }
       } catch (error) {
-        console.log(`   ⚠️  ${name}: error - ${(error as Error).message}`);
+        console.info(`   ⚠️  ${name}: error - ${(error as Error).message}`);
       }
     }
     
-    console.log(`\n📊 Summary: ${foundSecrets.length}/${commonSecretNames.length} secrets found`);
+    console.info(`\n📊 Summary: ${foundSecrets.length}/${commonSecretNames.length} secrets found`);
   }
 
   /**
    * Delete a secret using official API
    */
   async deleteSecret(name: string): Promise<boolean> {
-    console.log(`🗑️  Deleting secret: ${name}...`);
+    console.info(`🗑️  Deleting secret: ${name}...`);
     
     try {
       const deleted = await secrets.delete({
@@ -325,9 +325,9 @@ class FactoryWagerOfficialSecretsIntegration {
       });
       
       if (deleted) {
-        console.log(`✅ Secret ${name} deleted successfully`);
+        console.info(`✅ Secret ${name} deleted successfully`);
       } else {
-        console.log(`⚠️  Secret ${name} not found`);
+        console.info(`⚠️  Secret ${name} not found`);
       }
       
       return deleted;
@@ -342,22 +342,22 @@ class FactoryWagerOfficialSecretsIntegration {
    * Demonstrate official API usage patterns
    */
   async demonstrateOfficialApi(): Promise<void> {
-    console.log(`🚀 FactoryWager Official Bun.secrets API Demonstration`);
-    console.log(`====================================================`);
-    console.log(`Service: ${this.serviceName}`);
-    console.log(`Environment: ${this.environment}`);
-    console.log(`Runtime: Bun ${process.versions.bun}`);
-    console.log(`Platform: ${process.platform} ${process.arch}`);
-    console.log(``);
+    console.info(`🚀 FactoryWager Official Bun.secrets API Demonstration`);
+    console.info(`====================================================`);
+    console.info(`Service: ${this.serviceName}`);
+    console.info(`Environment: ${this.environment}`);
+    console.info(`Runtime: Bun ${process.versions.bun}`);
+    console.info(`Platform: ${process.platform} ${process.arch}`);
+    console.info(``);
 
     // Demo 1: Store and retrieve API token
-    console.log(`📝 Demo 1: API Token Management`);
+    console.info(`📝 Demo 1: API Token Management`);
     await this.storeApiToken("demo-tier-api-token-12345");
     const token = await this.getApiToken();
-    console.log(``);
+    console.info(``);
 
     // Demo 2: Database credentials
-    console.log(`📝 Demo 2: Database Credentials`);
+    console.info(`📝 Demo 2: Database Credentials`);
     await this.storeDatabaseCredentials({
       host: "localhost",
       port: "5432",
@@ -366,41 +366,41 @@ class FactoryWagerOfficialSecretsIntegration {
       database: "factorywager_prod"
     });
     const dbCreds = await this.getDatabaseCredentials();
-    console.log(``);
+    console.info(``);
 
     // Demo 3: JWT signing key
-    console.log(`📝 Demo 3: JWT Signing Key`);
+    console.info(`📝 Demo 3: JWT Signing Key`);
     const jwtKey = await this.storeJwtSigningKey();
     const retrievedKey = await this.getJwtSigningKey();
-    console.log(``);
+    console.info(``);
 
     // Demo 4: List all secrets
-    console.log(`📝 Demo 4: Secret Inventory`);
+    console.info(`📝 Demo 4: Secret Inventory`);
     await this.listStoredSecrets();
-    console.log(``);
+    console.info(``);
 
     // Demo 5: Alternative API syntax (official support)
-    console.log(`📝 Demo 5: Alternative API Syntax`);
+    console.info(`📝 Demo 5: Alternative API Syntax`);
     try {
       // Official alternative syntax: service, name parameters
       const altToken = await secrets.get(this.serviceName, "tier-api-token");
-      console.log(`✅ Alternative syntax works: ${altToken?.substring(0, 8)}...`);
+      console.info(`✅ Alternative syntax works: ${altToken?.substring(0, 8)}...`);
       
       // Store with alternative syntax
       await secrets.set(this.serviceName, "alt-test", "alternative-syntax-value");
-      console.log(`✅ Alternative store syntax works`);
+      console.info(`✅ Alternative store syntax works`);
       
       // Clean up
       await this.deleteSecret("alt-test");
-      console.log(`✅ Alternative delete syntax works`);
+      console.info(`✅ Alternative delete syntax works`);
       
     } catch (error) {
-      console.log(`⚠️  Alternative syntax: ${(error as Error).message}`);
+      console.info(`⚠️  Alternative syntax: ${(error as Error).message}`);
     }
 
-    console.log(`\n🎉 Official Bun.secrets API demonstration complete!`);
-    console.log(`✅ All official API patterns verified`);
-    console.log(`✅ FactoryWager integration ready for production`);
+    console.info(`\n🎉 Official Bun.secrets API demonstration complete!`);
+    console.info(`✅ All official API patterns verified`);
+    console.info(`✅ FactoryWager integration ready for production`);
   }
 }
 
@@ -413,7 +413,7 @@ async function main(): Promise<void> {
   const command = args[0];
   
   if (args.includes("--help") || args.includes("-h")) {
-    console.log(`
+    console.info(`
 🚀 FactoryWager Official Bun.secrets Integration
 
 Usage:
@@ -464,7 +464,7 @@ Based on official Bun documentation: https://bun.com/docs/bun/secrets
     case "get-token":
       const retrievedToken = await integration.getApiToken();
       if (retrievedToken) {
-        console.log(`Token: ${retrievedToken}`);
+        console.info(`Token: ${retrievedToken}`);
       }
       break;
     case "store-db":
@@ -478,7 +478,7 @@ Based on official Bun documentation: https://bun.com/docs/bun/secrets
     case "get-db":
       const dbCreds = await integration.getDatabaseCredentials();
       if (dbCreds) {
-        console.log(JSON.stringify(dbCreds, null, 2));
+        console.info(JSON.stringify(dbCreds, null, 2));
       }
       break;
     case "generate-jwt":

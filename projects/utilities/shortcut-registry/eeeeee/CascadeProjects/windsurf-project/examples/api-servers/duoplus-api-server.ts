@@ -441,17 +441,17 @@ function handleWebSocketSync(req: Request): Response {
   });
 }
 
-console.log('📱 DuoPlus API Server running on port 3005');
-console.log('🔗 Available endpoints:');
-console.log('  POST /api/duoplus/rpa/nominate - Trigger RPA nomination workflow');
-console.log('  POST /api/duoplus/rpa/create - Create RPA task');
-console.log('  GET  /api/duoplus/rpa/tasks - Get RPA tasks');
-console.log('  POST /api/duoplus/cloud-number - Assign cloud number');
-console.log('  GET  /api/duoplus/cloud-numbers - Get cloud numbers');
-console.log('  POST /api/duoplus/recovery/send-sms - Send recovery SMS');
-console.log('  POST /api/duoplus/recovery/verify - Verify recovery code');
-console.log('  POST /api/duoplus/tension/propagate - Propagate tension to cloud phones');
-console.log('  POST /api/duoplus/batch/push - Batch push configs');
-console.log('  GET  /api/duoplus/anti-detection/status - Get anti-detection status');
-console.log('  GET  /api/duoplus/metrics - Get performance metrics');
-console.log('  WS   /ws/duoplus-tension-sync - Real-time tension sync');
+console.info('📱 DuoPlus API Server running on port 3005');
+console.info('🔗 Available endpoints:');
+console.info('  POST /api/duoplus/rpa/nominate - Trigger RPA nomination workflow');
+console.info('  POST /api/duoplus/rpa/create - Create RPA task');
+console.info('  GET  /api/duoplus/rpa/tasks - Get RPA tasks');
+console.info('  POST /api/duoplus/cloud-number - Assign cloud number');
+console.info('  GET  /api/duoplus/cloud-numbers - Get cloud numbers');
+console.info('  POST /api/duoplus/recovery/send-sms - Send recovery SMS');
+console.info('  POST /api/duoplus/recovery/verify - Verify recovery code');
+console.info('  POST /api/duoplus/tension/propagate - Propagate tension to cloud phones');
+console.info('  POST /api/duoplus/batch/push - Batch push configs');
+console.info('  GET  /api/duoplus/anti-detection/status - Get anti-detection status');
+console.info('  GET  /api/duoplus/metrics - Get performance metrics');
+console.info('  WS   /ws/duoplus-tension-sync - Real-time tension sync');

@@ -14,12 +14,12 @@ import {
 } from '../src/patterns/identity-resolver.js';
 
 function demonstrateMultiPlatformAnalysis() {
-  console.log('🌐 Enhanced Multi-Platform Identity Analysis Demo');
-  console.log('================================================\n');
+  console.info('🌐 Enhanced Multi-Platform Identity Analysis Demo');
+  console.info('================================================\n');
 
   // Example 1: Sophisticated Synthetic Identity with Multiple Platforms
-  console.log('1. SCENARIO: Sophisticated Synthetic Identity');
-  console.log('--------------------------------------------');
+  console.info('1. SCENARIO: Sophisticated Synthetic Identity');
+  console.info('--------------------------------------------');
   const sophisticatedSynthetic: SyntheticIdentityResult = {
     phone: '+15551234567',
     syntheticScore: 0.89, // Very high risk
@@ -215,53 +215,53 @@ function demonstrateMultiPlatformAnalysis() {
     ]
   };
 
-  console.log('📊 Sophisticated Synthetic Identity Analysis:');
-  console.log('===========================================');
-  console.log(`Phone: ${sophisticatedSynthetic.phone}`);
-  console.log(`Synthetic Score: ${(sophisticatedSynthetic.syntheticScore * 100).toFixed(1)}%`);
-  console.log(`Is Synthetic: ${sophisticatedSynthetic.isSynthetic}`);
-  console.log(`Overall Confidence: ${(sophisticatedSynthetic.confidence * 100).toFixed(1)}%\n`);
+  console.info('📊 Sophisticated Synthetic Identity Analysis:');
+  console.info('===========================================');
+  console.info(`Phone: ${sophisticatedSynthetic.phone}`);
+  console.info(`Synthetic Score: ${(sophisticatedSynthetic.syntheticScore * 100).toFixed(1)}%`);
+  console.info(`Is Synthetic: ${sophisticatedSynthetic.isSynthetic}`);
+  console.info(`Overall Confidence: ${(sophisticatedSynthetic.confidence * 100).toFixed(1)}%\n`);
 
-  console.log('🔍 Platform-Specific Analysis:');
-  console.log('------------------------------');
+  console.info('🔍 Platform-Specific Analysis:');
+  console.info('------------------------------');
   if (sophisticatedSynthetic.platformAnalysis) {
     Object.entries(sophisticatedSynthetic.platformAnalysis).forEach(([platform, data]) => {
-      console.log(`\n${platform.toUpperCase()}:`);
-      console.log(`  Status: ${(data as any)?.verificationStatus || (data as any)?.accountStatus || 'N/A'}`);
-      console.log(`  Risk Score: ${(data as any)?.riskScore || 'N/A'}`);
-      console.log(`  Activity: ${(data as any)?.transactionVolume30d ? `$${(data as any).transactionVolume30d.toLocaleString()}/30d` : (data as any)?.transactionCount ? `${(data as any).transactionCount} transactions` : 'N/A'}`);
-      console.log(`  Account Age: ${(data as any)?.accountAgeDays ? `${(data as any).accountAgeDays} days` : 'N/A'}`);
-      console.log(`  Flags: ${JSON.stringify((data as any)?.fraudFlags || (data as any)?.fraudIndicators || (data as any)?.restrictions || [])}`);
+      console.info(`\n${platform.toUpperCase()}:`);
+      console.info(`  Status: ${(data as any)?.verificationStatus || (data as any)?.accountStatus || 'N/A'}`);
+      console.info(`  Risk Score: ${(data as any)?.riskScore || 'N/A'}`);
+      console.info(`  Activity: ${(data as any)?.transactionVolume30d ? `$${(data as any).transactionVolume30d.toLocaleString()}/30d` : (data as any)?.transactionCount ? `${(data as any).transactionCount} transactions` : 'N/A'}`);
+      console.info(`  Account Age: ${(data as any)?.accountAgeDays ? `${(data as any).accountAgeDays} days` : 'N/A'}`);
+      console.info(`  Flags: ${JSON.stringify((data as any)?.fraudFlags || (data as any)?.fraudIndicators || (data as any)?.restrictions || [])}`);
     });
   }
 
-  console.log('\n📡 Data Sources Status:');
-  console.log('----------------------');
+  console.info('\n📡 Data Sources Status:');
+  console.info('----------------------');
   sophisticatedSynthetic.provenanceSources?.forEach(source => {
     const status = source.status === 'success' ? '✅' : source.status === 'partial' ? '⚠️' : '❌';
-    console.log(`${status} ${source.platform}: ${(source.confidence * 100).toFixed(1)}% confidence${source.errorDetails ? ` (${source.errorDetails})` : ''}`);
+    console.info(`${status} ${source.platform}: ${(source.confidence * 100).toFixed(1)}% confidence${source.errorDetails ? ` (${source.errorDetails})` : ''}`);
   });
 
-  console.log('\n🚨 Cross-Platform Patterns:');
-  console.log('---------------------------');
+  console.info('\n🚨 Cross-Platform Patterns:');
+  console.info('---------------------------');
   sophisticatedSynthetic.crossPlatformPatterns?.forEach((pattern, index) => {
     const severity = pattern.severity === 'critical' ? '🔴' : 
                     pattern.severity === 'high' ? '🟠' : 
                     pattern.severity === 'medium' ? '🟡' : '🟢';
-    console.log(`${index + 1}. ${severity} ${pattern.patternType}: ${pattern.description}`);
-    console.log(`   Platforms: ${pattern.involvedPlatforms.join(', ')}`);
-    console.log(`   Evidence: ${pattern.evidence.slice(0, 2).join('; ')}${pattern.evidence.length > 2 ? '...' : ''}`);
+    console.info(`${index + 1}. ${severity} ${pattern.patternType}: ${pattern.description}`);
+    console.info(`   Platforms: ${pattern.involvedPlatforms.join(', ')}`);
+    console.info(`   Evidence: ${pattern.evidence.slice(0, 2).join('; ')}${pattern.evidence.length > 2 ? '...' : ''}`);
   });
 
-  console.log('\n🎯 Risk Assessment Summary:');
-  console.log('===========================');
-  console.log(`Risk Level: ${sophisticatedSynthetic.syntheticScore > 0.8 ? 'CRITICAL' : sophisticatedSynthetic.syntheticScore > 0.6 ? 'HIGH' : sophisticatedSynthetic.syntheticScore > 0.4 ? 'MEDIUM' : 'LOW'}`);
-  console.log(`Primary Concerns: ${sophisticatedSynthetic.riskFactors?.slice(0, 3).join(', ') || 'None identified'}`);
-  console.log(`Recommended Action: ${sophisticatedSynthetic.isSynthetic ? 'BLOCK AND INVESTIGATE' : 'MONITOR'}`);
+  console.info('\n🎯 Risk Assessment Summary:');
+  console.info('===========================');
+  console.info(`Risk Level: ${sophisticatedSynthetic.syntheticScore > 0.8 ? 'CRITICAL' : sophisticatedSynthetic.syntheticScore > 0.6 ? 'HIGH' : sophisticatedSynthetic.syntheticScore > 0.4 ? 'MEDIUM' : 'LOW'}`);
+  console.info(`Primary Concerns: ${sophisticatedSynthetic.riskFactors?.slice(0, 3).join(', ') || 'None identified'}`);
+  console.info(`Recommended Action: ${sophisticatedSynthetic.isSynthetic ? 'BLOCK AND INVESTIGATE' : 'MONITOR'}`);
 
   // Example 2: Legitimate User with Consistent Identity
-  console.log('\n\n2. SCENARIO: Legitimate User with Consistent Identity');
-  console.log('---------------------------------------------------');
+  console.info('\n\n2. SCENARIO: Legitimate User with Consistent Identity');
+  console.info('---------------------------------------------------');
   const legitimateUser: SyntheticIdentityResult = {
     phone: '+15559876543',
     syntheticScore: 0.12, // Very low risk
@@ -355,16 +355,16 @@ function demonstrateMultiPlatformAnalysis() {
     crossPlatformPatterns: [] // No patterns detected
   };
 
-  console.log('Legitimate User Analysis:');
-  console.log('========================');
-  console.log(`Synthetic Score: ${(legitimateUser.syntheticScore * 100).toFixed(1)}%`);
-  console.log(`Risk Level: LOW ✅`);
-  console.log(`Identity Consistency: ${legitimateUser.provenanceSources?.every((s: any) => s.status === 'success') ? 'CONSISTENT' : 'INCONSISTENT'}`);
-  console.log(`Account History: ${Math.min(...legitimateUser.connections.map(c => Math.floor((Date.now() - c.discoveredAt) / 86400000)))}+ days`);
+  console.info('Legitimate User Analysis:');
+  console.info('========================');
+  console.info(`Synthetic Score: ${(legitimateUser.syntheticScore * 100).toFixed(1)}%`);
+  console.info(`Risk Level: LOW ✅`);
+  console.info(`Identity Consistency: ${legitimateUser.provenanceSources?.every((s: any) => s.status === 'success') ? 'CONSISTENT' : 'INCONSISTENT'}`);
+  console.info(`Account History: ${Math.min(...legitimateUser.connections.map(c => Math.floor((Date.now() - c.discoveredAt) / 86400000)))}+ days`);
 
   // Example 3: Edge Case - Partial Data with Inconclusive Results
-  console.log('\n\n3. SCENARIO: Partial Data with Inconclusive Results');
-  console.log('--------------------------------------------------');
+  console.info('\n\n3. SCENARIO: Partial Data with Inconclusive Results');
+  console.info('--------------------------------------------------');
   const inconclusiveCase: SyntheticIdentityResult = {
     phone: '+15551112222',
     syntheticScore: 0.45, // Medium risk - inconclusive
@@ -439,29 +439,29 @@ function demonstrateMultiPlatformAnalysis() {
     ]
   };
 
-  console.log('Inconclusive Case Analysis:');
-  console.log('===========================');
-  console.log(`Synthetic Score: ${(inconclusiveCase.syntheticScore * 100).toFixed(1)}%`);
-  console.log(`Risk Level: MEDIUM ⚠️`);
-  console.log(`Confidence: ${(inconclusiveCase.confidence * 100).toFixed(1)}%`);
-  console.log(`Available Data: ${inconclusiveCase.provenanceSources?.filter((s: any) => s.status === 'success').length}/${inconclusiveCase.provenanceSources?.length} platforms`);
-  console.log(`Recommended Action: ADDITIONAL VERIFICATION REQUIRED`);
+  console.info('Inconclusive Case Analysis:');
+  console.info('===========================');
+  console.info(`Synthetic Score: ${(inconclusiveCase.syntheticScore * 100).toFixed(1)}%`);
+  console.info(`Risk Level: MEDIUM ⚠️`);
+  console.info(`Confidence: ${(inconclusiveCase.confidence * 100).toFixed(1)}%`);
+  console.info(`Available Data: ${inconclusiveCase.provenanceSources?.filter((s: any) => s.status === 'success').length}/${inconclusiveCase.provenanceSources?.length} platforms`);
+  console.info(`Recommended Action: ADDITIONAL VERIFICATION REQUIRED`);
 
-  console.log('\n🎯 Key Multi-Platform Analysis Benefits:');
-  console.log('==========================================');
-  console.log('✅ **Pattern Recognition**: Detects sophisticated synthetic identities');
-  console.log('✅ **Cross-Platform Correlation**: Identifies inconsistencies across services');
-  console.log('✅ **Temporal Analysis**: Flags unusual timing patterns');
-  console.log('✅ **Source Reliability**: Tracks data quality and availability');
-  console.log('✅ **Risk-Based Decisions**: Provides actionable intelligence');
-  console.log('✅ **Audit Trail**: Complete evidence for compliance');
+  console.info('\n🎯 Key Multi-Platform Analysis Benefits:');
+  console.info('==========================================');
+  console.info('✅ **Pattern Recognition**: Detects sophisticated synthetic identities');
+  console.info('✅ **Cross-Platform Correlation**: Identifies inconsistencies across services');
+  console.info('✅ **Temporal Analysis**: Flags unusual timing patterns');
+  console.info('✅ **Source Reliability**: Tracks data quality and availability');
+  console.info('✅ **Risk-Based Decisions**: Provides actionable intelligence');
+  console.info('✅ **Audit Trail**: Complete evidence for compliance');
   
-  console.log('\n📈 Implementation Maturity:');
-  console.log('===========================');
-  console.log('🔴 **Critical Detection**: Sophisticated synthetic patterns');
-  console.log('🟡 **Medium Risk**: Partial data or inconsistencies');
-  console.log('🟢 **Low Risk**: Consistent, legitimate identities');
-  console.log('⚪ **Inconclusive**: Insufficient data - requires manual review');
+  console.info('\n📈 Implementation Maturity:');
+  console.info('===========================');
+  console.info('🔴 **Critical Detection**: Sophisticated synthetic patterns');
+  console.info('🟡 **Medium Risk**: Partial data or inconsistencies');
+  console.info('🟢 **Low Risk**: Consistent, legitimate identities');
+  console.info('⚪ **Inconclusive**: Insufficient data - requires manual review');
 }
 
 // Run the demonstration

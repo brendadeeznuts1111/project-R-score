@@ -13,7 +13,7 @@ class VariantTester {
     }
 
     async runTests() {
-        console.log('🧪 Running Variant Testing Tests...\n');
+        console.info('🧪 Running Variant Testing Tests...\n');
 
         try {
             await this.testVariantAssignment();
@@ -30,7 +30,7 @@ class VariantTester {
     }
 
     async testVariantAssignment() {
-        console.log('🎲 Testing variant assignment...');
+        console.info('🎲 Testing variant assignment...');
 
         // Simulate variant assignment
         const variants = ['control', 'enhanced', 'minimal'];
@@ -67,9 +67,9 @@ class VariantTester {
             
             if (deviation > tolerance) {
                 passed = false;
-                console.log(`   ❌ ${variant}: Expected ${expected}, got ${actual} (${(deviation * 100).toFixed(1)}% deviation)`);
+                console.info(`   ❌ ${variant}: Expected ${expected}, got ${actual} (${(deviation * 100).toFixed(1)}% deviation)`);
             } else {
-                console.log(`   ✅ ${variant}: Expected ${expected}, got ${actual} (${(deviation * 100).toFixed(1)}% deviation)`);
+                console.info(`   ✅ ${variant}: Expected ${expected}, got ${actual} (${(deviation * 100).toFixed(1)}% deviation)`);
             }
         }
 
@@ -79,11 +79,11 @@ class VariantTester {
             details: assignments
         });
 
-        console.log('');
+        console.info('');
     }
 
     async testFeatureFlags() {
-        console.log('🚩 Testing feature flags...');
+        console.info('🚩 Testing feature flags...');
 
         const featureFlags = [
             { id: 'enhanced_ui', enabled: false },
@@ -98,9 +98,9 @@ class VariantTester {
             const isEnabled = this.mockIsFeatureEnabled(flag.id);
             
             if (isEnabled === flag.enabled) {
-                console.log(`   ✅ ${flag.id}: ${isEnabled ? 'enabled' : 'disabled'}`);
+                console.info(`   ✅ ${flag.id}: ${isEnabled ? 'enabled' : 'disabled'}`);
             } else {
-                console.log(`   ❌ ${flag.id}: Expected ${flag.enabled}, got ${isEnabled}`);
+                console.info(`   ❌ ${flag.id}: Expected ${flag.enabled}, got ${isEnabled}`);
                 passed = false;
             }
         });
@@ -111,11 +111,11 @@ class VariantTester {
             details: featureFlags
         });
 
-        console.log('');
+        console.info('');
     }
 
     async testAnalytics() {
-        console.log('📊 Testing analytics tracking...');
+        console.info('📊 Testing analytics tracking...');
 
         const events = [
             { type: 'impression', element: 'button' },
@@ -130,9 +130,9 @@ class VariantTester {
             try {
                 this.mockTrackEvent(event.type, event);
                 trackedEvents.push(event);
-                console.log(`   ✅ Tracked ${event.type}: ${event.element || event.value}`);
+                console.info(`   ✅ Tracked ${event.type}: ${event.element || event.value}`);
             } catch (error) {
-                console.log(`   ❌ Failed to track ${event.type}: ${error.message}`);
+                console.info(`   ❌ Failed to track ${event.type}: ${error.message}`);
                 passed = false;
             }
         });
@@ -143,11 +143,11 @@ class VariantTester {
             details: { trackedEvents: trackedEvents.length }
         });
 
-        console.log('');
+        console.info('');
     }
 
     async testVariantContent() {
-        console.log('🎨 Testing variant content...');
+        console.info('🎨 Testing variant content...');
 
         const contentTests = [
             { variant: 'control', expected: { theme: 'default' } },
@@ -161,9 +161,9 @@ class VariantTester {
             const content = this.mockGetVariantContent('theme', 'ui_variant_2024', test.variant);
             
             if (content && content.theme === test.expected.theme) {
-                console.log(`   ✅ ${test.variant}: Theme is ${content.theme}`);
+                console.info(`   ✅ ${test.variant}: Theme is ${content.theme}`);
             } else {
-                console.log(`   ❌ ${test.variant}: Expected theme ${test.expected.theme}, got ${content?.theme}`);
+                console.info(`   ❌ ${test.variant}: Expected theme ${test.expected.theme}, got ${content?.theme}`);
                 passed = false;
             }
         });
@@ -174,7 +174,7 @@ class VariantTester {
             details: contentTests
         });
 
-        console.log('');
+        console.info('');
     }
 
     mockIsFeatureEnabled(featureId) {
@@ -202,25 +202,25 @@ class VariantTester {
     }
 
     displayResults() {
-        console.log('📈 Test Results Summary:');
-        console.log('');
+        console.info('📈 Test Results Summary:');
+        console.info('');
 
         const passed = this.testResults.filter(r => r.passed).length;
         const total = this.testResults.length;
 
         this.testResults.forEach(result => {
             const status = result.passed ? '✅' : '❌';
-            console.log(`${status} ${result.test}`);
+            console.info(`${status} ${result.test}`);
         });
 
-        console.log('');
-        console.log(`Overall: ${passed}/${total} tests passed`);
+        console.info('');
+        console.info(`Overall: ${passed}/${total} tests passed`);
 
         if (passed === total) {
-            console.log('🎉 All tests passed!');
+            console.info('🎉 All tests passed!');
             process.exit(0);
         } else {
-            console.log('❌ Some tests failed');
+            console.info('❌ Some tests failed');
             process.exit(1);
         }
     }

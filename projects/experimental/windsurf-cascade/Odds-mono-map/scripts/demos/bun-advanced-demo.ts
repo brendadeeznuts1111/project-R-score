@@ -18,37 +18,37 @@
 import chalk from 'chalk';
 import { estimateShallowMemoryUsageOf, serialize, deserialize } from 'bun:jsc';
 
-console.log(chalk.blue.bold('🔧 Advanced Bun Utilities Demo'));
-console.log(chalk.gray('Demonstrating compression, inspection, streams, and memory utilities\n'));
+console.info(chalk.blue.bold('🔧 Advanced Bun Utilities Demo'));
+console.info(chalk.gray('Demonstrating compression, inspection, streams, and memory utilities\n'));
 
 // Compression utilities
-console.log(chalk.yellow('📦 Compression Utilities:'));
+console.info(chalk.yellow('📦 Compression Utilities:'));
 
 const testData = 'Hello World! '.repeat(100);
 const buffer = Buffer.from(testData);
 
-console.log(chalk.gray(`   📊 Original data: ${buffer.length} bytes`));
+console.info(chalk.gray(`   📊 Original data: ${buffer.length} bytes`));
 
 // GZIP
 const gzipped = Bun.gzipSync(buffer);
 const gunzipped = Bun.gunzipSync(gzipped);
-console.log(chalk.gray(`   🗜️  GZIP: ${gzipped.length} bytes (${Math.round((1 - gzipped.length / buffer.length) * 100)}% reduction)`));
+console.info(chalk.gray(`   🗜️  GZIP: ${gzipped.length} bytes (${Math.round((1 - gzipped.length / buffer.length) * 100)}% reduction)`));
 
 // DEFLATE
 const deflated = Bun.deflateSync(buffer);
 const inflated = Bun.inflateSync(deflated);
-console.log(chalk.gray(`   🗜️  DEFLATE: ${deflated.length} bytes (${Math.round((1 - deflated.length / buffer.length) * 100)}% reduction)`));
+console.info(chalk.gray(`   🗜️  DEFLATE: ${deflated.length} bytes (${Math.round((1 - deflated.length / buffer.length) * 100)}% reduction)`));
 
 // Zstandard
 const zstdCompressed = Bun.zstdCompressSync(buffer, { level: 6 });
 const zstdDecompressed = Bun.zstdDecompressSync(zstdCompressed);
-console.log(chalk.gray(`   🗜️  ZSTD: ${zstdCompressed.length} bytes (${Math.round((1 - zstdCompressed.length / buffer.length) * 100)}% reduction)`));
+console.info(chalk.gray(`   🗜️  ZSTD: ${zstdCompressed.length} bytes (${Math.round((1 - zstdCompressed.length / buffer.length) * 100)}% reduction)`));
 
 // Verify decompression
-console.log(chalk.gray(`   ✅ All decompression successful: ${gunzipped.toString() === buffer.toString() && inflated.toString() === buffer.toString() && zstdDecompressed.toString() === buffer.toString()}`));
+console.info(chalk.gray(`   ✅ All decompression successful: ${gunzipped.toString() === buffer.toString() && inflated.toString() === buffer.toString() && zstdDecompressed.toString() === buffer.toString()}`));
 
 // Inspect utilities
-console.log(chalk.yellow('\n📊 Inspect Utilities:'));
+console.info(chalk.yellow('\n📊 Inspect Utilities:'));
 
 const testObject = {
     name: 'Demo',
@@ -59,10 +59,10 @@ const testObject = {
 
 const testArray = new Uint8Array([10, 20, 30, 40, 50]);
 
-console.log(chalk.gray('   📋 Object inspection:'));
-console.log(chalk.gray(`      ${Bun.inspect(testObject).replace(/\n/g, '\n      ')}`));
+console.info(chalk.gray('   📋 Object inspection:'));
+console.info(chalk.gray(`      ${Bun.inspect(testObject).replace(/\n/g, '\n      ')}`));
 
-console.log(chalk.gray(`   📋 Typed array inspection: ${Bun.inspect(testArray)}`));
+console.info(chalk.gray(`   📋 Typed array inspection: ${Bun.inspect(testArray)}`));
 
 // Table formatting
 const validationResults = [
@@ -72,49 +72,49 @@ const validationResults = [
     { file: 'config.json', errors: 0, warnings: 0, status: '✅', score: 100 }
 ];
 
-console.log(chalk.gray('\n   📊 Table format (all columns):'));
+console.info(chalk.gray('\n   📊 Table format (all columns):'));
 const fullTable = Bun.inspect.table(validationResults);
-console.log(chalk.gray(`      ${fullTable.replace(/\n/g, '\n      ')}`));
+console.info(chalk.gray(`      ${fullTable.replace(/\n/g, '\n      ')}`));
 
-console.log(chalk.gray('\n   📊 Table format (selected columns):'));
+console.info(chalk.gray('\n   📊 Table format (selected columns):'));
 const selectedTable = Bun.inspect.table(validationResults, ['file', 'errors', 'status']);
-console.log(chalk.gray(`      ${selectedTable.replace(/\n/g, '\n      ')}`));
+console.info(chalk.gray(`      ${selectedTable.replace(/\n/g, '\n      ')}`));
 
 // Path utilities
-console.log(chalk.yellow('\n🗂️  Path Utilities:'));
+console.info(chalk.yellow('\n🗂️  Path Utilities:'));
 
 const currentPath = import.meta.path;
 const fileUrl = Bun.pathToFileURL(currentPath);
 const backToPath = Bun.fileURLToPath(fileUrl);
 
-console.log(chalk.gray(`   📁 Current path: ${currentPath}`));
-console.log(chalk.gray(`   🌐 File URL: ${fileUrl}`));
-console.log(chalk.gray(`   🔄 Back to path: ${backToPath}`));
-console.log(chalk.gray(`   ✅ Round-trip successful: ${currentPath === backToPath}`));
+console.info(chalk.gray(`   📁 Current path: ${currentPath}`));
+console.info(chalk.gray(`   🌐 File URL: ${fileUrl}`));
+console.info(chalk.gray(`   🔄 Back to path: ${backToPath}`));
+console.info(chalk.gray(`   ✅ Round-trip successful: ${currentPath === backToPath}`));
 
 // Module resolution
-console.log(chalk.yellow('\n🔧 Module Resolution:'));
+console.info(chalk.yellow('\n🔧 Module Resolution:'));
 
 try {
     const resolvedPath = Bun.resolveSync('./validate.ts', import.meta.dir);
-    console.log(chalk.gray(`   🔍 Resolved validate.ts: ${resolvedPath}`));
+    console.info(chalk.gray(`   🔍 Resolved validate.ts: ${resolvedPath}`));
 } catch (error) {
-    console.log(chalk.red(`   ❌ Resolution failed: ${error.message}`));
+    console.info(chalk.red(`   ❌ Resolution failed: ${error.message}`));
 }
 
 // Memory utilities
-console.log(chalk.yellow('\n💾 Memory Utilities:'));
+console.info(chalk.yellow('\n💾 Memory Utilities:'));
 
 const smallObject = { name: 'test', value: 42 };
 const mediumArray = Array(100).fill(0).map((_, i) => ({ id: i, data: `item-${i}` }));
 const largeBuffer = Buffer.alloc(10 * 1024); // 10KB
 
-console.log(chalk.gray(`   📊 Small object: ~${estimateShallowMemoryUsageOf(smallObject)} bytes`));
-console.log(chalk.gray(`   📊 Medium array (100 items): ~${estimateShallowMemoryUsageOf(mediumArray)} bytes`));
-console.log(chalk.gray(`   📊 Large buffer (10KB): ~${estimateShallowMemoryUsageOf(largeBuffer)} bytes`));
+console.info(chalk.gray(`   📊 Small object: ~${estimateShallowMemoryUsageOf(smallObject)} bytes`));
+console.info(chalk.gray(`   📊 Medium array (100 items): ~${estimateShallowMemoryUsageOf(mediumArray)} bytes`));
+console.info(chalk.gray(`   📊 Large buffer (10KB): ~${estimateShallowMemoryUsageOf(largeBuffer)} bytes`));
 
 // Serialization
-console.log(chalk.yellow('\n🔄 Serialization Utilities:'));
+console.info(chalk.yellow('\n🔄 Serialization Utilities:'));
 
 const complexObject = {
     metadata: { version: '1.0.0', created: new Date().toISOString() },
@@ -125,68 +125,68 @@ const complexObject = {
 const serialized = serialize(complexObject);
 const deserialized = deserialize(serialized);
 
-console.log(chalk.gray(`   📦 Serialized size: ${serialized.byteLength} bytes`));
-console.log(chalk.gray(`   ✅ Deserialization successful: ${Bun.deepEquals(complexObject, deserialized)}`));
+console.info(chalk.gray(`   📦 Serialized size: ${serialized.byteLength} bytes`));
+console.info(chalk.gray(`   ✅ Deserialization successful: ${Bun.deepEquals(complexObject, deserialized)}`));
 
 // String utilities
-console.log(chalk.yellow('\n🎨 String Utilities:'));
+console.info(chalk.yellow('\n🎨 String Utilities:'));
 
 const coloredText = '\u001b[31mRed\u001b[0m \u001b[32mGreen\u001b[0m \u001b[34mBlue\u001b[0m';
 const plainText = Bun.stripANSI(coloredText);
 const ansiWidth = Bun.stringWidth(coloredText, { countAnsiEscapeCodes: true });
 const displayWidth = Bun.stringWidth(coloredText);
 
-console.log(chalk.gray(`   🎨 Original: "${coloredText}"`));
-console.log(chalk.gray(`   🎨 Stripped: "${plainText}"`));
-console.log(chalk.gray(`   📏 Width with ANSI codes: ${ansiWidth}`));
-console.log(chalk.gray(`   📏 Visual display width: ${displayWidth}`));
+console.info(chalk.gray(`   🎨 Original: "${coloredText}"`));
+console.info(chalk.gray(`   🎨 Stripped: "${plainText}"`));
+console.info(chalk.gray(`   📏 Width with ANSI codes: ${ansiWidth}`));
+console.info(chalk.gray(`   📏 Visual display width: ${displayWidth}`));
 
 // HTML escaping
-console.log(chalk.yellow('\n🛡️  HTML Security:'));
+console.info(chalk.yellow('\n🛡️  HTML Security:'));
 
 const unsafeHTML = '<script>alert("XSS")</script>';
 const safeHTML = Bun.escapeHTML(unsafeHTML);
 
-console.log(chalk.gray(`   ⚠️  Unsafe: ${unsafeHTML}`));
-console.log(chalk.gray(`   ✅ Safe: ${safeHTML}`));
+console.info(chalk.gray(`   ⚠️  Unsafe: ${unsafeHTML}`));
+console.info(chalk.gray(`   ✅ Safe: ${safeHTML}`));
 
 // Performance timing
-console.log(chalk.yellow('\n🕐 Performance Timing:'));
+console.info(chalk.yellow('\n🕐 Performance Timing:'));
 
 const startNanos = Bun.nanoseconds();
 await Bun.sleep(10); // 10ms
 const endNanos = Bun.nanoseconds();
 const durationNanos = endNanos - startNanos;
 
-console.log(chalk.gray(`   🕐 Start: ${startNanos} nanoseconds`));
-console.log(chalk.gray(`   🕐 End: ${endNanos} nanoseconds`));
-console.log(chalk.gray(`   ⏱️  Duration: ${durationNanos} nanoseconds (${(durationNanos / 1_000_000).toFixed(2)}ms)`));
+console.info(chalk.gray(`   🕐 Start: ${startNanos} nanoseconds`));
+console.info(chalk.gray(`   🕐 End: ${endNanos} nanoseconds`));
+console.info(chalk.gray(`   ⏱️  Duration: ${durationNanos} nanoseconds (${(durationNanos / 1_000_000).toFixed(2)}ms)`));
 
 // Practical examples
-console.log(chalk.blue('\n💡 Practical Usage Examples:'));
+console.info(chalk.blue('\n💡 Practical Usage Examples:'));
 
-console.log(chalk.gray('   // Data compression for storage'));
-console.log(chalk.gray('   function compressData(data) {'));
-console.log(chalk.gray('     const buffer = Buffer.from(JSON.stringify(data));'));
-console.log(chalk.gray('     return Bun.gzipSync(buffer);'));
-console.log(chalk.gray('   }'));
+console.info(chalk.gray('   // Data compression for storage'));
+console.info(chalk.gray('   function compressData(data) {'));
+console.info(chalk.gray('     const buffer = Buffer.from(JSON.stringify(data));'));
+console.info(chalk.gray('     return Bun.gzipSync(buffer);'));
+console.info(chalk.gray('   }'));
 
-console.log(chalk.gray('\n   // Pretty table formatting'));
-console.log(chalk.gray('   function formatReport(data) {'));
-console.log(chalk.gray('     return Bun.inspect.table(data, ["name", "score", "status"]);'));
-console.log(chalk.gray('   }'));
+console.info(chalk.gray('\n   // Pretty table formatting'));
+console.info(chalk.gray('   function formatReport(data) {'));
+console.info(chalk.gray('     return Bun.inspect.table(data, ["name", "score", "status"]);'));
+console.info(chalk.gray('   }'));
 
-console.log(chalk.gray('\n   // Memory usage monitoring'));
-console.log(chalk.gray('   function checkMemoryUsage(obj) {'));
-console.log(chalk.gray('     return estimateShallowMemoryUsageOf(obj);'));
-console.log(chalk.gray('   }'));
+console.info(chalk.gray('\n   // Memory usage monitoring'));
+console.info(chalk.gray('   function checkMemoryUsage(obj) {'));
+console.info(chalk.gray('     return estimateShallowMemoryUsageOf(obj);'));
+console.info(chalk.gray('   }'));
 
-console.log(chalk.gray('\n   // High-precision timing'));
-console.log(chalk.gray('   function measureTime(fn) {'));
-console.log(chalk.gray('     const start = Bun.nanoseconds();'));
-console.log(chalk.gray('     const result = fn();'));
-console.log(chalk.gray('     const end = Bun.nanoseconds();'));
-console.log(chalk.gray('     return { result, duration: end - start };'));
-console.log(chalk.gray('   }'));
+console.info(chalk.gray('\n   // High-precision timing'));
+console.info(chalk.gray('   function measureTime(fn) {'));
+console.info(chalk.gray('     const start = Bun.nanoseconds();'));
+console.info(chalk.gray('     const result = fn();'));
+console.info(chalk.gray('     const end = Bun.nanoseconds();'));
+console.info(chalk.gray('     return { result, duration: end - start };'));
+console.info(chalk.gray('   }'));
 
-console.log(chalk.green('\n✅ Advanced utilities demo completed!'));
+console.info(chalk.green('\n✅ Advanced utilities demo completed!'));

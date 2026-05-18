@@ -67,9 +67,9 @@ export class EnhancedLSPLogger {
 
     if (this.enableStructuredLogging) {
       // Use %j for structured JSON logging - Bun's new feature
-      console.log('[%s] %s: %s - %j', timestamp, level.toUpperCase(), this.component, logEntry);
+      console.info('[%s] %s: %s - %j', timestamp, level.toUpperCase(), this.component, logEntry);
     } else {
-      console.log(`[${timestamp}] ${level.toUpperCase()}: ${this.component} - ${message}`);
+      console.info(`[${timestamp}] ${level.toUpperCase()}: ${this.component} - ${message}`);
     }
   }
 
@@ -175,7 +175,7 @@ export class EnhancedLSPLogger {
       count: entries.length
     };
 
-    console.log('[%s] %s: %s - Batch Log - %j', timestamp, 'INFO', this.component, batchEntry);
+    console.info('[%s] %s: %s - Batch Log - %j', timestamp, 'INFO', this.component, batchEntry);
   }
 
   /**
@@ -361,5 +361,5 @@ if (import.meta.main) {
     items: [{ label: 'test' }]
   }, 150, 'session-123', requestId);
   
-  console.log('✅ Enhanced LSP Logger test completed');
+  console.info('✅ Enhanced LSP Logger test completed');
 }

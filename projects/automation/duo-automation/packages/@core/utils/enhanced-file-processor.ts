@@ -36,7 +36,7 @@ export class EnhancedFileProcessor {
       const buffer = Buffer.from(await file.arrayBuffer());
       const size = buffer.length;
       
-      console.log(`📁 Processing ${filePath} (${(size / 1024).toFixed(2)}KB)`);
+      console.info(`📁 Processing ${filePath} (${(size / 1024).toFixed(2)}KB)`);
       
       const patternsFound: Array<{ pattern: string; count: number; positions: number[] }> = [];
       
@@ -51,7 +51,7 @@ export class EnhancedFileProcessor {
       const processingTime = performance.now() - startTime;
       const throughput = size / (processingTime / 1000);
       
-      console.log(`✅ Processed ${filePath} in ${processingTime.toFixed(3)}ms (${(throughput / 1024 / 1024).toFixed(2)}MB/s)`);
+      console.info(`✅ Processed ${filePath} in ${processingTime.toFixed(3)}ms (${(throughput / 1024 / 1024).toFixed(2)}MB/s)`);
       
       return {
         filePath,
@@ -87,7 +87,7 @@ export class EnhancedFileProcessor {
     }
     
     const simdUsed = buffer.length > this.SIMD_THRESHOLD;
-    console.log(`🔍 Pattern "${pattern}": ${count} matches (SIMD: ${simdUsed ? 'ON' : 'OFF'})`);
+    console.info(`🔍 Pattern "${pattern}": ${count} matches (SIMD: ${simdUsed ? 'ON' : 'OFF'})`);
     
     return {
       pattern,
@@ -101,7 +101,7 @@ export class EnhancedFileProcessor {
    */
   async processBatch(filePaths: string[], patterns: string[], concurrency = 4): Promise<BatchProcessingResult> {
     const startTime = performance.now();
-    console.log(`🚀 Processing ${filePaths.length} files with ${patterns.length} patterns (concurrency: ${concurrency})`);
+    console.info(`🚀 Processing ${filePaths.length} files with ${patterns.length} patterns (concurrency: ${concurrency})`);
     
     // Process files in batches to control memory usage
     const results: ProcessingResult[] = [];
@@ -115,7 +115,7 @@ export class EnhancedFileProcessor {
     
     for (let i = 0; i < filePaths.length; i += concurrency) {
       const batch = filePaths.slice(i, i + concurrency);
-      console.log(`📦 Processing batch ${Math.floor(i / concurrency) + 1}/${Math.ceil(filePaths.length / concurrency)}`);
+      console.info(`📦 Processing batch ${Math.floor(i / concurrency) + 1}/${Math.ceil(filePaths.length / concurrency)}`);
       
       // Process batch in parallel
       const batchResults = await Promise.allSettled(
@@ -136,9 +136,9 @@ export class EnhancedFileProcessor {
       sum + result.patternsFound.reduce((pSum, pattern) => pSum + pattern.count, 0), 0);
     const throughput = totalBytes / (processingTime / 1000);
     
-    console.log(`✅ Batch processing completed in ${processingTime.toFixed(0)}ms`);
-    console.log(`📊 Total patterns found: ${totalPatterns}`);
-    console.log(`🚀 Overall throughput: ${(throughput / 1024 / 1024).toFixed(2)}MB/s`);
+    console.info(`✅ Batch processing completed in ${processingTime.toFixed(0)}ms`);
+    console.info(`📊 Total patterns found: ${totalPatterns}`);
+    console.info(`🚀 Overall throughput: ${(throughput / 1024 / 1024).toFixed(2)}MB/s`);
     
     return {
       totalFiles: filePaths.length,
@@ -168,7 +168,7 @@ export class EnhancedFileProcessor {
     ];
     
     const logFiles = await this.findLogFiles(logDirectory, recursive);
-    console.log(`📋 Found ${logFiles.length} log files in ${logDirectory}`);
+    console.info(`📋 Found ${logFiles.length} log files in ${logDirectory}`);
     
     return await this.processBatch(logFiles, logPatterns);
   }
@@ -192,7 +192,7 @@ export class EnhancedFileProcessor {
     
     // Temporarily remove extension filter for testing
     const files = await this.findFiles(directory, recursive);
-    console.log(`🔍 Scanning ${files.length} files for sensitive data`);
+    console.info(`🔍 Scanning ${files.length} files for sensitive data`);
     
     return await this.processBatch(files, sensitivePatterns);
   }
@@ -207,7 +207,7 @@ export class EnhancedFileProcessor {
       const file = Bun.file(filePath);
       const totalSize = await file.size();
       
-      console.log(`📄 Processing large file: ${filePath} (${(totalSize / 1024 / 1024).toFixed(2)}MB)`);
+      console.info(`📄 Processing large file: ${filePath} (${(totalSize / 1024 / 1024).toFixed(2)}MB)`);
       
       const allPatternsFound: Array<{ pattern: string; count: number; positions: number[] }> = [];
       
@@ -249,7 +249,7 @@ export class EnhancedFileProcessor {
         // Progress reporting
         if (chunkIndex % 10 === 0) {
           const progress = (processedBytes / totalSize * 100).toFixed(1);
-          console.log(`📈 Progress: ${progress}% (${chunkIndex} chunks)`);
+          console.info(`📈 Progress: ${progress}% (${chunkIndex} chunks)`);
         }
       }
       
@@ -265,8 +265,8 @@ export class EnhancedFileProcessor {
       const processingTime = performance.now() - startTime;
       const throughput = totalSize / (processingTime / 1000);
       
-      console.log(`✅ Large file processed in ${processingTime.toFixed(0)}ms`);
-      console.log(`🚀 Throughput: ${(throughput / 1024 / 1024).toFixed(2)}MB/s`);
+      console.info(`✅ Large file processed in ${processingTime.toFixed(0)}ms`);
+      console.info(`🚀 Throughput: ${(throughput / 1024 / 1024).toFixed(2)}MB/s`);
       
       return {
         filePath,
@@ -377,18 +377,18 @@ if (import.meta.main) {
     case 'analyze':
       if (target) {
         const result = await processor.analyzeLogFiles(target);
-        console.log('\n' + processor.generateReport(result));
+        console.info('\n' + processor.generateReport(result));
       } else {
-        console.log('Usage: bun enhanced-file-processor.ts analyze <log-directory>');
+        console.info('Usage: bun enhanced-file-processor.ts analyze <log-directory>');
       }
       break;
       
     case 'scan':
       if (target) {
         const result = await processor.scanForSensitiveData(target);
-        console.log('\n' + processor.generateReport(result));
+        console.info('\n' + processor.generateReport(result));
       } else {
-        console.log('Usage: bun enhanced-file-processor.ts scan <directory>');
+        console.info('Usage: bun enhanced-file-processor.ts scan <directory>');
       }
       break;
       
@@ -396,29 +396,29 @@ if (import.meta.main) {
       if (target) {
         const patterns = ['error', 'warning', 'info'];
         const result = await processor.processFile(target, patterns);
-        console.log('\n📊 Processing Result:');
-        console.log(`✅ File: ${result.filePath}`);
-        console.log(`📏 Size: ${(result.size / 1024).toFixed(2)}KB`);
-        console.log(`⏱️ Time: ${result.processingTime.toFixed(3)}ms`);
-        console.log(`🚀 Throughput: ${(result.throughput / 1024).toFixed(2)}KB/s`);
-        console.log(`🔍 Patterns: ${result.patternsFound.length}`);
+        console.info('\n📊 Processing Result:');
+        console.info(`✅ File: ${result.filePath}`);
+        console.info(`📏 Size: ${(result.size / 1024).toFixed(2)}KB`);
+        console.info(`⏱️ Time: ${result.processingTime.toFixed(3)}ms`);
+        console.info(`🚀 Throughput: ${(result.throughput / 1024).toFixed(2)}KB/s`);
+        console.info(`🔍 Patterns: ${result.patternsFound.length}`);
         result.patternsFound.forEach(pattern => {
           if (pattern.count > 0) {
-            console.log(`   - ${pattern.pattern}: ${pattern.count} matches`);
+            console.info(`   - ${pattern.pattern}: ${pattern.count} matches`);
           }
         });
       } else {
-        console.log('Usage: bun enhanced-file-processor.ts process <file-path>');
+        console.info('Usage: bun enhanced-file-processor.ts process <file-path>');
       }
       break;
       
     default:
-      console.log('Available commands:');
-      console.log('  analyze <dir>    - Analyze log files for error patterns');
-      console.log('  scan <dir>       - Scan files for sensitive data');
-      console.log('  process <file>   - Process single file with patterns');
-      console.log('');
-      console.log('All operations use Bun v1.3.6 SIMD-optimized Buffer.indexOf() for 2x faster performance');
+      console.info('Available commands:');
+      console.info('  analyze <dir>    - Analyze log files for error patterns');
+      console.info('  scan <dir>       - Scan files for sensitive data');
+      console.info('  process <file>   - Process single file with patterns');
+      console.info('');
+      console.info('All operations use Bun v1.3.6 SIMD-optimized Buffer.indexOf() for 2x faster performance');
   }
 }
 

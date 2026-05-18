@@ -46,11 +46,11 @@ class MaintenanceScheduler {
    * 🕐 Initialize and start the maintenance scheduler
    */
   async start(): Promise<void> {
-    console.log('🕐 Fire22 Maintenance Scheduler Starting');
-    console.log('!==!==!==!==!==!==!====');
-    console.log(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
-    console.log(`⏰ Time: ${new Date().toLocaleTimeString()}`);
-    console.log(`📋 Loaded ${this.schedule.tasks.length} maintenance tasks\n`);
+    console.info('🕐 Fire22 Maintenance Scheduler Starting');
+    console.info('!==!==!==!==!==!==!====');
+    console.info(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
+    console.info(`⏰ Time: ${new Date().toLocaleTimeString()}`);
+    console.info(`📋 Loaded ${this.schedule.tasks.length} maintenance tasks\n`);
 
     this.isRunning = true;
 
@@ -93,7 +93,7 @@ class MaintenanceScheduler {
    * 🏃 Run a specific maintenance task
    */
   private async runTask(task: MaintenanceTask): Promise<void> {
-    console.log(`🏃 Running task: ${task.name}`);
+    console.info(`🏃 Running task: ${task.name}`);
 
     // Update task status
     task.status = 'running';
@@ -107,7 +107,7 @@ class MaintenanceScheduler {
       if (task.dependencies) {
         const dependenciesMet = await this.checkDependencies(task.dependencies);
         if (!dependenciesMet) {
-          console.log(`  ⚠️ Dependencies not met for ${task.name}, skipping`);
+          console.info(`  ⚠️ Dependencies not met for ${task.name}, skipping`);
           task.status = 'pending';
           this.updateNextRunTime(task);
           return;
@@ -121,14 +121,14 @@ class MaintenanceScheduler {
 
       if (result.success) {
         task.status = 'completed';
-        console.log(`  ✅ Task completed: ${task.name} (${duration}m)`);
+        console.info(`  ✅ Task completed: ${task.name} (${duration}m)`);
       } else {
         task.status = 'failed';
-        console.log(`  ❌ Task failed: ${task.name} - ${result.error}`);
+        console.info(`  ❌ Task failed: ${task.name} - ${result.error}`);
       }
     } catch (error) {
       task.status = 'failed';
-      console.log(`  ❌ Task error: ${task.name} - ${error}`);
+      console.info(`  ❌ Task error: ${task.name} - ${error}`);
     }
 
     // Update next run time
@@ -400,7 +400,7 @@ class MaintenanceScheduler {
     const reportPath = join(process.cwd(), 'maintenance', 'reports', 'scheduler-status.json');
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
-    console.log(`📊 Status report generated: ${reportPath}`);
+    console.info(`📊 Status report generated: ${reportPath}`);
   }
 
   /**
@@ -414,7 +414,7 @@ class MaintenanceScheduler {
    * 🛑 Stop the scheduler
    */
   stop(): void {
-    console.log('🛑 Stopping maintenance scheduler...');
+    console.info('🛑 Stopping maintenance scheduler...');
     this.isRunning = false;
   }
 }
@@ -433,7 +433,7 @@ async function main() {
 
     case 'status':
       await scheduler.generateStatusReport();
-      console.log('📊 Status report generated');
+      console.info('📊 Status report generated');
       break;
 
     case 'stop':
@@ -441,14 +441,14 @@ async function main() {
       break;
 
     default:
-      console.log('Fire22 Maintenance Scheduler');
-      console.log('');
-      console.log('Usage:');
-      console.log('  bun maintenance/maintenance-scheduler.ts start   # Start the scheduler');
-      console.log('  bun maintenance/maintenance-scheduler.ts status  # Generate status report');
-      console.log('  bun maintenance/maintenance-scheduler.ts stop    # Stop the scheduler');
-      console.log('');
-      console.log(
+      console.info('Fire22 Maintenance Scheduler');
+      console.info('');
+      console.info('Usage:');
+      console.info('  bun maintenance/maintenance-scheduler.ts start   # Start the scheduler');
+      console.info('  bun maintenance/maintenance-scheduler.ts status  # Generate status report');
+      console.info('  bun maintenance/maintenance-scheduler.ts stop    # Stop the scheduler');
+      console.info('');
+      console.info(
         'The scheduler runs continuously and executes maintenance tasks based on their schedules.'
       );
       process.exit(1);

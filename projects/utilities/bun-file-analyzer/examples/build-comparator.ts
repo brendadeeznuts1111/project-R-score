@@ -109,7 +109,7 @@ class BuildComparator {
   }
 
   async captureBuild(buildDir: string = "./dist", label?: string): Promise<string> {
-    console.log(`📸 Capturing build from ${buildDir}...`);
+    console.info(`📸 Capturing build from ${buildDir}...`);
     
     const buildInfo = await this.analyzeBuild(buildDir);
     const timestamp = Date.now();
@@ -127,7 +127,7 @@ class BuildComparator {
     };
     
     writeFileSync(filepath, JSON.stringify(captureData, null, 2));
-    console.log(`✅ Build captured: ${filename}`);
+    console.info(`✅ Build captured: ${filename}`);
     
     return filename;
   }
@@ -198,7 +198,7 @@ class BuildComparator {
   }
 
   async compareBuilds(baselineFile: string, comparisonFile: string): Promise<ComparisonResult> {
-    console.log(`🔍 Comparing builds: ${baselineFile} vs ${comparisonFile}`);
+    console.info(`🔍 Comparing builds: ${baselineFile} vs ${comparisonFile}`);
     
     const baseline = this.loadBuild(baselineFile);
     const comparison = this.loadBuild(comparisonFile);
@@ -540,45 +540,45 @@ class BuildComparator {
   }
 
   printComparison(result: ComparisonResult): void {
-    console.log("\n" + "=".repeat(60));
-    console.log("📊 Build Comparison Results");
-    console.log("=".repeat(60));
+    console.info("\n" + "=".repeat(60));
+    console.info("📊 Build Comparison Results");
+    console.info("=".repeat(60));
     
-    console.log(`\n📈 Summary:`);
-    console.log(`  Total Size Change: ${result.summary.totalSizeChange > 0 ? '+' : ''}${this.formatBytes(result.summary.totalSizeChange)} (${result.summary.totalSizeChangePercent > 0 ? '+' : ''}${result.summary.totalSizeChangePercent.toFixed(1)}%)`);
-    console.log(`  Chunks: +${result.summary.chunksAdded} / -${result.summary.chunksRemoved}`);
-    console.log(`  Dependencies: +${result.summary.dependenciesAdded} / -${result.summary.dependenciesRemoved} (${result.summary.dependenciesUpdated} updated)`);
-    console.log(`  Assets: +${result.summary.assetsAdded} / -${result.summary.assetsRemoved}`);
-    console.log(`  Build Time Change: ${result.summary.buildTimeChange > 0 ? '+' : ''}${result.summary.buildTimeChange}ms`);
+    console.info(`\n📈 Summary:`);
+    console.info(`  Total Size Change: ${result.summary.totalSizeChange > 0 ? '+' : ''}${this.formatBytes(result.summary.totalSizeChange)} (${result.summary.totalSizeChangePercent > 0 ? '+' : ''}${result.summary.totalSizeChangePercent.toFixed(1)}%)`);
+    console.info(`  Chunks: +${result.summary.chunksAdded} / -${result.summary.chunksRemoved}`);
+    console.info(`  Dependencies: +${result.summary.dependenciesAdded} / -${result.summary.dependenciesRemoved} (${result.summary.dependenciesUpdated} updated)`);
+    console.info(`  Assets: +${result.summary.assetsAdded} / -${result.summary.assetsRemoved}`);
+    console.info(`  Build Time Change: ${result.summary.buildTimeChange > 0 ? '+' : ''}${result.summary.buildTimeChange}ms`);
 
-    console.log(`\n📋 Size Breakdown by Type:`);
+    console.info(`\n📋 Size Breakdown by Type:`);
     Object.entries(result.details.sizeBreakdown.byType).forEach(([type, sizes]) => {
       const change = sizes.change > 0 ? '+' : '';
-      console.log(`  ${type}: ${this.formatBytes(sizes.before)} → ${this.formatBytes(sizes.after)} (${change}${this.formatBytes(sizes.change)})`);
+      console.info(`  ${type}: ${this.formatBytes(sizes.before)} → ${this.formatBytes(sizes.after)} (${change}${this.formatBytes(sizes.change)})`);
     });
 
     if (result.details.chunkChanges.length > 0) {
-      console.log(`\n📄 Significant Chunk Changes:`);
+      console.info(`\n📄 Significant Chunk Changes:`);
       result.details.chunkChanges.slice(0, 5).forEach(change => {
         const changeStr = change.sizeChange ? `${change.sizeChange > 0 ? '+' : ''}${this.formatBytes(change.sizeChange || 0)}` : '';
-        console.log(`  ${change.name}: ${change.type} ${changeStr}`);
+        console.info(`  ${change.name}: ${change.type} ${changeStr}`);
       });
     }
 
     if (result.details.dependencyChanges.length > 0) {
-      console.log(`\n📦 Dependency Changes:`);
+      console.info(`\n📦 Dependency Changes:`);
       result.details.dependencyChanges.slice(0, 5).forEach(change => {
         const changeStr = change.sizeChange ? `${change.sizeChange > 0 ? '+' : ''}${this.formatBytes(change.sizeChange || 0)}` : '';
-        console.log(`  ${change.name}: ${change.type} ${changeStr}`);
+        console.info(`  ${change.name}: ${change.type} ${changeStr}`);
       });
     }
 
-    console.log(`\n💡 Recommendations:`);
+    console.info(`\n💡 Recommendations:`);
     result.recommendations.forEach(rec => {
-      console.log(`  ${rec}`);
+      console.info(`  ${rec}`);
     });
 
-    console.log("\n" + "=".repeat(60));
+    console.info("\n" + "=".repeat(60));
   }
 
   async saveComparison(result: ComparisonResult, filename: string): Promise<void> {
@@ -592,7 +592,7 @@ class BuildComparator {
     };
     
     writeFileSync(filename, JSON.stringify(report, null, 2));
-    console.log(`💾 Comparison saved to: ${filename}`);
+    console.info(`💾 Comparison saved to: ${filename}`);
   }
 
   // Helper methods
@@ -679,14 +679,14 @@ async function main() {
 
     case 'list':
       const builds = comparator.listBuilds();
-      console.log('📁 Available builds:');
+      console.info('📁 Available builds:');
       builds.forEach((build, index) => {
-        console.log(`  ${index + 1}. ${build}`);
+        console.info(`  ${index + 1}. ${build}`);
       });
       break;
 
     default:
-      console.log(`
+      console.info(`
 Build Comparison Tool
 
 Usage:

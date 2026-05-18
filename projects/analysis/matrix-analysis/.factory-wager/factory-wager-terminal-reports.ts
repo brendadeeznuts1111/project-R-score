@@ -178,25 +178,25 @@ function simpleMarkdownRenderer(content: string, renderers: any = {}): string {
 }
 
 // Generate and render the report
-console.log('🏭 FactoryWager Terminal Reports with Bun Markdown');
-console.log('==================================================');
-console.log();
+console.info('🏭 FactoryWager Terminal Reports with Bun Markdown');
+console.info('==================================================');
+console.info();
 
 const markdown = generateReleaseMarkdown(sampleReport);
 const rendered = simpleMarkdownRenderer(markdown, factoryWagerRenderers);
 
-console.log('📊 Generated FactoryWager Release Report:');
-console.log('========================================');
-console.log(rendered);
+console.info('📊 Generated FactoryWager Release Report:');
+console.info('========================================');
+console.info(rendered);
 
-console.log();
-console.log('🚀 FactoryWager + Bun Integration Features:');
-console.log('  • Color-coded status indicators');
-console.log('  • Themed headings for brand consistency');
-console.log('  • Syntax-highlighted command output');
-console.log('  • Risk-aware coloring based on metrics');
-console.log('  • Professional terminal reports');
-console.log();
-console.log('💡 This integrates perfectly with the FactoryWager audit infrastructure!');
+console.info();
+console.info('🚀 FactoryWager + Bun Integration Features:');
+console.info('  • Color-coded status indicators');
+console.info('  • Themed headings for brand consistency');
+console.info('  • Syntax-highlighted command output');
+console.info('  • Risk-aware coloring based on metrics');
+console.info('  • Professional terminal reports');
+console.info();
+console.info('💡 This integrates perfectly with the FactoryWager audit infrastructure!');
 
 export { factoryWagerRenderers, generateReleaseMarkdown, type ReleaseReport };

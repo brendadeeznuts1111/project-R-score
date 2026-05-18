@@ -16,7 +16,7 @@ class ProfilerDashboard {
 	}
 
 	async startDashboard(port = 3001) {
-		console.log(`🚀 Starting Profiler Dashboard on port ${port}`);
+		console.info(`🚀 Starting Profiler Dashboard on port ${port}`);
 
 		// Start collecting metrics
 		this.startMetricsCollection();
@@ -24,8 +24,8 @@ class ProfilerDashboard {
 		// Start web server
 		await this.startWebServer(port);
 
-		console.log(`📊 Dashboard available at http://localhost:${port}`);
-		console.log(`🔍 Real-time profiling metrics and analytics`);
+		console.info(`📊 Dashboard available at http://localhost:${port}`);
+		console.info(`🔍 Real-time profiling metrics and analytics`);
 	}
 
 	startMetricsCollection() {
@@ -497,7 +497,7 @@ async function main() {
 			port = parseInt(args[i + 1], 10);
 			i++;
 		} else if (args[i] === "--help") {
-			console.log(`
+			console.info(`
 📊 Profiler Dashboard - Real-time performance monitoring
 
 USAGE:
@@ -526,7 +526,7 @@ FEATURES:
 
 	// Handle graceful shutdown
 	process.on("SIGINT", () => {
-		console.log("\n👋 Shutting down Profiler Dashboard...");
+		console.info("\n👋 Shutting down Profiler Dashboard...");
 		dashboard.stop();
 		process.exit(0);
 	});

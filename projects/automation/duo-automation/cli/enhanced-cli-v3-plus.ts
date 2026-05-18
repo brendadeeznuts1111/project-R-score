@@ -51,8 +51,8 @@ export class EnhancedDuoPlusCLI {
    * Initialize enhanced system with AI capabilities
    */
   async initializeEnhancedSystem(): Promise<void> {
-    console.log('🚀 Initializing Enhanced DuoPlus CLI v3.0+');
-    console.log('🤖 AI-Powered Features Loading...\n');
+    console.info('🚀 Initializing Enhanced DuoPlus CLI v3.0+');
+    console.info('🤖 AI-Powered Features Loading...\n');
     
     // Initialize core components
     this.searchEngine = new ArtifactSearchEngine();
@@ -79,14 +79,14 @@ export class EnhancedDuoPlusCLI {
       await this.initializePerformanceMonitoring();
     }
     
-    console.log('✅ Enhanced system initialized successfully');
+    console.info('✅ Enhanced system initialized successfully');
   }
   
   /**
    * AI-powered features initialization
    */
   private async initializeAIFeatures(): Promise<void> {
-    console.log('🤖 Loading AI capabilities...');
+    console.info('🤖 Loading AI capabilities...');
     
     // AI-powered tag suggestions
     this.searchEngine.enableAISuggestions = true;
@@ -97,16 +97,16 @@ export class EnhancedDuoPlusCLI {
     // Smart visualization recommendations
     this.visualizer.enableAIRecommendations = true;
     
-    console.log('   ✅ AI tag suggestions enabled');
-    console.log('   ✅ Intelligent classification enabled');
-    console.log('   ✅ Smart recommendations enabled');
+    console.info('   ✅ AI tag suggestions enabled');
+    console.info('   ✅ Intelligent classification enabled');
+    console.info('   ✅ Smart recommendations enabled');
   }
   
   /**
    * Predictive search initialization
    */
   private async initializePredictiveSearch(): Promise<void> {
-    console.log('🔮 Loading predictive search...');
+    console.info('🔮 Loading predictive search...');
     
     // Learn from user patterns
     await this.searchEngine.enablePredictiveSearch();
@@ -117,16 +117,16 @@ export class EnhancedDuoPlusCLI {
     // Search pattern analysis
     await this.searchEngine.analyzeSearchPatterns();
     
-    console.log('   ✅ Predictive search enabled');
-    console.log('   ✅ Context awareness enabled');
-    console.log('   ✅ Pattern analysis completed');
+    console.info('   ✅ Predictive search enabled');
+    console.info('   ✅ Context awareness enabled');
+    console.info('   ✅ Pattern analysis completed');
   }
   
   /**
    * Advanced analytics initialization
    */
   private async initializeAdvancedAnalytics(): Promise<void> {
-    console.log('📊 Loading advanced analytics...');
+    console.info('📊 Loading advanced analytics...');
     
     // Real-time usage tracking
     this.searchEngine.enableUsageTracking = true;
@@ -137,16 +137,16 @@ export class EnhancedDuoPlusCLI {
     // Trend analysis
     await this.visualizer.enableTrendAnalysis();
     
-    console.log('   ✅ Usage tracking enabled');
-    console.log('   ✅ Metrics collection enabled');
-    console.log('   ✅ Trend analysis enabled');
+    console.info('   ✅ Usage tracking enabled');
+    console.info('   ✅ Metrics collection enabled');
+    console.info('   ✅ Trend analysis enabled');
   }
   
   /**
    * Performance monitoring initialization
    */
   private async initializePerformanceMonitoring(): Promise<void> {
-    console.log('⚡ Loading performance monitoring...');
+    console.info('⚡ Loading performance monitoring...');
     
     // Real-time performance tracking
     this.enablePerformanceTracking();
@@ -157,16 +157,16 @@ export class EnhancedDuoPlusCLI {
     // Automated optimization
     this.enableAutoOptimization();
     
-    console.log('   ✅ Performance tracking enabled');
-    console.log('   ✅ Resource monitoring enabled');
-    console.log('   ✅ Auto-optimization enabled');
+    console.info('   ✅ Performance tracking enabled');
+    console.info('   ✅ Resource monitoring enabled');
+    console.info('   ✅ Auto-optimization enabled');
   }
   
   /**
    * Enhanced search with AI capabilities
    */
   async enhancedSearch(query: string, options: any = {}): Promise<any> {
-    console.log(`🔍 Enhanced search: "${query}"`);
+    console.info(`🔍 Enhanced search: "${query}"`);
     
     const startTime = Date.now();
     
@@ -333,7 +333,7 @@ export class EnhancedDuoPlusCLI {
    * Enhanced validation with AI
    */
   async enhancedValidation(options: any = {}): Promise<any> {
-    console.log('🛡️ Enhanced validation with AI...');
+    console.info('🛡️ Enhanced validation with AI...');
     
     const startTime = Date.now();
     
@@ -467,7 +467,7 @@ export class EnhancedDuoPlusCLI {
    * Advanced visualization with AI
    */
   async enhancedVisualization(options: any = {}): Promise<any> {
-    console.log('🎨 Enhanced visualization with AI...');
+    console.info('🎨 Enhanced visualization with AI...');
     
     const startTime = Date.now();
     
@@ -629,7 +629,7 @@ export class EnhancedDuoPlusCLI {
     const threshold = 100 * 1024 * 1024; // 100MB
     
     if (memUsage.heapUsed > threshold) {
-      console.log('🧹 Performing memory cleanup...');
+      console.info('🧹 Performing memory cleanup...');
       // Clear caches and perform garbage collection
       if (global.gc) {
         global.gc();
@@ -715,8 +715,8 @@ export class EnhancedDuoPlusCLI {
 
 // Enhanced CLI demonstration
 async function demonstrateEnhancedCLI() {
-  console.log('🚀 Enhanced DuoPlus CLI v3.0+ - Advanced Features Demo');
-  console.log('='.repeat(80));
+  console.info('🚀 Enhanced DuoPlus CLI v3.0+ - Advanced Features Demo');
+  console.info('='.repeat(80));
   
   const enhancedCLI = new EnhancedDuoPlusCLI({
     aiEnabled: true,
@@ -729,55 +729,55 @@ async function demonstrateEnhancedCLI() {
   await enhancedCLI.initializeEnhancedSystem();
   
   // Demonstrate enhanced search
-  console.log('\n🔍 Enhanced AI-Powered Search:');
+  console.info('\n🔍 Enhanced AI-Powered Search:');
   const searchResults = await enhancedCLI.enhancedSearch('sec api', {
     maxResults: 10,
     includeRecommendations: true,
   });
   
-  console.log(`   Found ${searchResults.results.length} results in ${searchResults.metrics.searchTime}ms`);
-  console.log(`   AI enhancements: ${searchResults.metrics.aiEnhancements ? 'Enabled' : 'Disabled'}`);
-  console.log(`   Query expanded: "${searchResults.expandedQuery}"`);
-  console.log(`   Smart suggestions: ${searchResults.suggestions.length}`);
+  console.info(`   Found ${searchResults.results.length} results in ${searchResults.metrics.searchTime}ms`);
+  console.info(`   AI enhancements: ${searchResults.metrics.aiEnhancements ? 'Enabled' : 'Disabled'}`);
+  console.info(`   Query expanded: "${searchResults.expandedQuery}"`);
+  console.info(`   Smart suggestions: ${searchResults.suggestions.length}`);
   
   // Demonstrate enhanced validation
-  console.log('\n🛡️ Enhanced AI-Powered Validation:');
+  console.info('\n🛡️ Enhanced AI-Powered Validation:');
   const validationResults = await enhancedCLI.enhancedValidation({
     includeAI: true,
     generateFixes: true,
   });
   
-  console.log(`   Validation completed in ${validationResults.metrics.validationTime}ms`);
-  console.log(`   Issues found: ${validationResults.metrics.issuesFound}`);
-  console.log(`   Smart fixes: ${validationResults.metrics.fixesGenerated}`);
-  console.log(`   Improvements suggested: ${validationResults.metrics.improvements}`);
+  console.info(`   Validation completed in ${validationResults.metrics.validationTime}ms`);
+  console.info(`   Issues found: ${validationResults.metrics.issuesFound}`);
+  console.info(`   Smart fixes: ${validationResults.metrics.fixesGenerated}`);
+  console.info(`   Improvements suggested: ${validationResults.metrics.improvements}`);
   
   // Demonstrate enhanced visualization
-  console.log('\n🎨 Enhanced AI-Powered Visualization:');
+  console.info('\n🎨 Enhanced AI-Powered Visualization:');
   const vizResults = await enhancedCLI.enhancedVisualization({
     includeInsights: true,
     optimizeLayout: true,
   });
   
-  console.log(`   Visualization completed in ${vizResults.metrics.visualizationTime}ms`);
-  console.log(`   Insights generated: ${vizResults.metrics.insightsGenerated}`);
-  console.log(`   Recommendations: ${vizResults.metrics.recommendations}`);
+  console.info(`   Visualization completed in ${vizResults.metrics.visualizationTime}ms`);
+  console.info(`   Insights generated: ${vizResults.metrics.insightsGenerated}`);
+  console.info(`   Recommendations: ${vizResults.metrics.recommendations}`);
   
   // Show performance metrics
-  console.log('\n⚡ Performance Metrics:');
+  console.info('\n⚡ Performance Metrics:');
   const metrics = enhancedCLI.getPerformanceMetrics();
-  console.log(`   Search avg time: ${metrics.search.averageTime.toFixed(2)}ms`);
-  console.log(`   Validation avg time: ${metrics.validation.averageTime.toFixed(2)}ms`);
-  console.log(`   Memory usage: ${(metrics.resources.currentMemory.heapUsed / 1024 / 1024).toFixed(1)}MB`);
+  console.info(`   Search avg time: ${metrics.search.averageTime.toFixed(2)}ms`);
+  console.info(`   Validation avg time: ${metrics.validation.averageTime.toFixed(2)}ms`);
+  console.info(`   Memory usage: ${(metrics.resources.currentMemory.heapUsed / 1024 / 1024).toFixed(1)}MB`);
   
-  console.log('\n🎉 Enhanced CLI Demo Complete!');
-  console.log('\n💡 New Capabilities:');
-  console.log('  🤖 AI-powered search with query expansion');
-  console.log('  🔮 Predictive search with context awareness');
-  console.log('  🛡️ Intelligent validation with smart fixes');
-  console.log('  🎨 AI-enhanced visualization with insights');
-  console.log('  ⚡ Real-time performance monitoring');
-  console.log('  🧠 Automated optimization and cleanup');
+  console.info('\n🎉 Enhanced CLI Demo Complete!');
+  console.info('\n💡 New Capabilities:');
+  console.info('  🤖 AI-powered search with query expansion');
+  console.info('  🔮 Predictive search with context awareness');
+  console.info('  🛡️ Intelligent validation with smart fixes');
+  console.info('  🎨 AI-enhanced visualization with insights');
+  console.info('  ⚡ Real-time performance monitoring');
+  console.info('  🧠 Automated optimization and cleanup');
 }
 
 // Run enhanced demonstration

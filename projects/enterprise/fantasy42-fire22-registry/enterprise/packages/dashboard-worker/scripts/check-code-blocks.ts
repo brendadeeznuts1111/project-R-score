@@ -45,27 +45,27 @@ const keyFiles = [
   'wiki/Home.md',
 ];
 
-console.log('🔍 Checking for code blocks starting at odd line numbers...\n');
+console.info('🔍 Checking for code blocks starting at odd line numbers...\n');
 
 let totalIssues = 0;
 
 keyFiles.forEach(file => {
   const issues = checkCodeBlocks(file);
   if (issues.length > 0) {
-    console.log(`📄 ${file}:`);
+    console.info(`📄 ${file}:`);
     issues.slice(0, 10).forEach(issue => {
-      console.log(`   Line ${issue.line}: ${issue.content}`);
+      console.info(`   Line ${issue.line}: ${issue.content}`);
     });
     if (issues.length > 10) {
-      console.log(`   ... and ${issues.length - 10} more issues`);
+      console.info(`   ... and ${issues.length - 10} more issues`);
     }
-    console.log();
+    console.info();
     totalIssues += issues.length;
   }
 });
 
 if (totalIssues === 0) {
-  console.log('✅ All code blocks start at even line numbers!');
+  console.info('✅ All code blocks start at even line numbers!');
 } else {
-  console.log(`❌ Found ${totalIssues} code blocks starting at odd line numbers`);
+  console.info(`❌ Found ${totalIssues} code blocks starting at odd line numbers`);
 }

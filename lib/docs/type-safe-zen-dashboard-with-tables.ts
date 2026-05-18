@@ -479,7 +479,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
       { ext: '.csv', file: 'package.json', desc: 'CSV data files' }
     ];
 
-    console.log('🎯 Type-Safe MIME Type Detection Initialized:');
+    console.info('🎯 Type-Safe MIME Type Detection Initialized:');
     
     for (const { ext, file, desc } of testFiles) {
       try {
@@ -500,7 +500,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
             detected: true
           });
           
-          console.log(`   ${ext} → ${mimeType || 'unknown'} (${desc}) ✅ ${this.formatBytes(size)}`);
+          console.info(`   ${ext} → ${mimeType || 'unknown'} (${desc}) ✅ ${this.formatBytes(size)}`);
         } else {
           // Fallback for missing files
           this.metrics.supportedMimeTypes.push({
@@ -511,7 +511,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
             detected: false
           });
           
-          console.log(`   ${ext} → ${this.getMimeTypeFallback(ext)} (${desc}) ⚠️ (file not found)`);
+          console.info(`   ${ext} → ${this.getMimeTypeFallback(ext)} (${desc}) ⚠️ (file not found)`);
         }
       } catch (error) {
         console.error(`❌ Error detecting MIME type for ${ext}:`, error);
@@ -553,7 +553,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
   }
 
   async startTypeSafeEnhancedDashboardWithTables(): Promise<void> {
-    console.log('🎯 Starting Type-Safe Enhanced Zen Dashboard with Dynamic Tables!');
+    console.info('🎯 Starting Type-Safe Enhanced Zen Dashboard with Dynamic Tables!');
     
     const bun = (globalThis as any).Bun as any;
     this.server = bun.serve({
@@ -609,21 +609,21 @@ export class TypeSafeEnhancedZenDashboardWithTables {
       },
     });
 
-    console.log('🌐 Type-Safe Enhanced Zen Dashboard with Dynamic Tables Started!');
-    console.log('=' .repeat(80));
-    console.log(`📱 Dashboard: http://localhost:${this.server.port}/dashboard`);
-    console.log(`🔗 Bun Protocol: bun://localhost:${this.server.port}/dashboard`);
-    console.log(`📊 Table Data: http://localhost:${this.server.port}/api/table-data`);
-    console.log(`📋 Render Table: http://localhost:${this.server.port}/api/render-table`);
-    console.log(`🛡️ Type-Safe Metrics: http://localhost:${this.server.port}/api/type-safe-metrics`);
-    console.log(`🔍 Live Search: http://localhost:${this.server.port}/api/search?query=zen`);
-    console.log('');
-    console.log('🛡️ Enhanced Features:');
-    console.log('   ✅ Official Bun interfaces integration');
-    console.log('   ✅ Dynamic table rendering with auto-type detection');
-    console.log('   ✅ Beautiful ASCII tables with colors');
-    console.log('   ✅ 100% type-safe file operations');
-    console.log('   ✅ Real-time search visualization');
+    console.info('🌐 Type-Safe Enhanced Zen Dashboard with Dynamic Tables Started!');
+    console.info('=' .repeat(80));
+    console.info(`📱 Dashboard: http://localhost:${this.server.port}/dashboard`);
+    console.info(`🔗 Bun Protocol: bun://localhost:${this.server.port}/dashboard`);
+    console.info(`📊 Table Data: http://localhost:${this.server.port}/api/table-data`);
+    console.info(`📋 Render Table: http://localhost:${this.server.port}/api/render-table`);
+    console.info(`🛡️ Type-Safe Metrics: http://localhost:${this.server.port}/api/type-safe-metrics`);
+    console.info(`🔍 Live Search: http://localhost:${this.server.port}/api/search?query=zen`);
+    console.info('');
+    console.info('🛡️ Enhanced Features:');
+    console.info('   ✅ Official Bun interfaces integration');
+    console.info('   ✅ Dynamic table rendering with auto-type detection');
+    console.info('   ✅ Beautiful ASCII tables with colors');
+    console.info('   ✅ 100% type-safe file operations');
+    console.info('   ✅ Real-time search visualization');
     
     this.startRealSearches();
     await this.generateTableEnhancedStaticDashboard();
@@ -642,7 +642,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
   }
 
   private async performRealSearch(query: string): Promise<any> {
-    console.log(`🔍 Performing ENHANCED REAL search: "${query}"`);
+    console.info(`🔍 Performing ENHANCED REAL search: "${query}"`);
     
     try {
       const startTime = performance.now();
@@ -660,7 +660,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
         priority: 'normal',
         onProgress: (stats) => {
           if (stats.matchesFound % 50 === 0) {
-            console.log(`   📊 Progress: ${stats.matchesFound} matches, ${stats.filesWithMatches} files, ${stats.throughput.toFixed(1)} matches/sec`);
+            console.info(`   📊 Progress: ${stats.matchesFound} matches, ${stats.filesWithMatches} files, ${stats.throughput.toFixed(1)} matches/sec`);
           }
         }
       });
@@ -691,11 +691,11 @@ export class TypeSafeEnhancedZenDashboardWithTables {
       this.updateSystemHealth();
       this.metrics.lastUpdate = new Date().toISOString();
 
-      console.log(`✅ ENHANCED REAL Search Results: ${results.matchesFound || 0} matches in ${searchTime.toFixed(2)}ms`);
-      console.log(`   📁 Files with matches: ${results.filesWithMatches || 0}`);
-      console.log(`   🎯 Average match depth: ${results.averageMatchDepth?.toFixed(2) || 'N/A'}`);
-      console.log(`   🚀 Throughput: ${results.throughput?.toFixed(1) || 'N/A'} matches/sec`);
-      console.log(`   💾 Cache hit rate: ${((results.cacheHitRate || 0) * 100).toFixed(1)}%`);
+      console.info(`✅ ENHANCED REAL Search Results: ${results.matchesFound || 0} matches in ${searchTime.toFixed(2)}ms`);
+      console.info(`   📁 Files with matches: ${results.filesWithMatches || 0}`);
+      console.info(`   🎯 Average match depth: ${results.averageMatchDepth?.toFixed(2) || 'N/A'}`);
+      console.info(`   🚀 Throughput: ${results.throughput?.toFixed(1) || 'N/A'} matches/sec`);
+      console.info(`   💾 Cache hit rate: ${((results.cacheHitRate || 0) * 100).toFixed(1)}%`);
       
       return {
         success: true,
@@ -965,7 +965,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
                 document.getElementById('tableOutput').textContent = data.rendered;
                 currentTableData = data;
                 
-                console.log('📊 Dynamic table refreshed:', {
+                console.info('📊 Dynamic table refreshed:', {
                     columns: data.columns.length,
                     hidden: data.hidden.length,
                     rows: data.json.length
@@ -982,12 +982,12 @@ export class TypeSafeEnhancedZenDashboardWithTables {
             if (!query) return;
             
             try {
-                console.log(\`🔍 Performing search: \${query}\`);
+                console.info(\`🔍 Performing search: \${query}\`);
                 const response = await fetch(\`/api/search?query=\${query}\`);
                 const result = await response.json();
                 
                 if (result.success) {
-                    console.log(\`✅ Search completed: \${result.matches} matches in \${result.time.toFixed(2)}ms\`);
+                    console.info(\`✅ Search completed: \${result.matches} matches in \${result.time.toFixed(2)}ms\`);
                     // Refresh table after search
                     setTimeout(refreshTable, 1000);
                 } else {
@@ -1027,7 +1027,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
                 a.click();
                 URL.revokeObjectURL(url);
                 
-                console.log(\`📤 Exported \${format.toUpperCase()}: \${filename}\`);
+                console.info(\`📤 Exported \${format.toUpperCase()}: \${filename}\`);
                 
             } catch (error) {
                 console.error(\`❌ Failed to export \${format}:\`, error);
@@ -1043,7 +1043,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
             
             try {
                 await navigator.clipboard.writeText(currentTableData.rendered);
-                console.log('📋 Table copied to clipboard');
+                console.info('📋 Table copied to clipboard');
                 alert('Table copied to clipboard!');
             } catch (error) {
                 console.error('❌ Failed to copy table:', error);
@@ -1057,9 +1057,9 @@ export class TypeSafeEnhancedZenDashboardWithTables {
         // Initial load
         refreshTable();
         
-        console.log('🛡️ Type-Safe Enhanced Zen Dashboard with Dynamic Tables loaded!');
-        console.log('📊 Dynamic table rendering: Active');
-        console.log('🎯 Auto-type detection: Enabled');
+        console.info('🛡️ Type-Safe Enhanced Zen Dashboard with Dynamic Tables loaded!');
+        console.info('📊 Dynamic table rendering: Active');
+        console.info('🎯 Auto-type detection: Enabled');
     </script>
 </body>
 </html>`;
@@ -1074,8 +1074,8 @@ export class TypeSafeEnhancedZenDashboardWithTables {
     
     await bun.write(staticFile, html);
     
-    console.log('📄 Type-safe dashboard with tables saved: type-safe-zen-dashboard-with-tables.html');
-    console.log('🛡️ Open with: open type-safe-zen-dashboard-with-tables.html');
+    console.info('📄 Type-safe dashboard with tables saved: type-safe-zen-dashboard-with-tables.html');
+    console.info('🛡️ Open with: open type-safe-zen-dashboard-with-tables.html');
   }
 
   stopDashboard(): void {
@@ -1087,7 +1087,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
       this.server.stop();
       this.server = null;
     }
-    console.log('👋 Type-Safe Enhanced Zen Dashboard with Tables stopped.');
+    console.info('👋 Type-Safe Enhanced Zen Dashboard with Tables stopped.');
   }
 }
 
@@ -1098,7 +1098,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   typeSafeDashboardWithTables.startTypeSafeEnhancedDashboardWithTables().catch(console.error);
   
   process.on('SIGINT', () => {
-    console.log('\n👋 Shutting down Type-Safe Enhanced Zen Dashboard with Tables...');
+    console.info('\n👋 Shutting down Type-Safe Enhanced Zen Dashboard with Tables...');
     typeSafeDashboardWithTables.stopDashboard();
     process.exit(0);
   });

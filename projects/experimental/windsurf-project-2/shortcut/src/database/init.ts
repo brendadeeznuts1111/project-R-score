@@ -84,7 +84,7 @@ async function seedDefaultData(): Promise<void> {
   const { count } = db!.query('SELECT COUNT(*) as count FROM shortcuts').get() as { count: number };
   
   if (count === 0) {
-    console.log('Seeding default data...');
+    console.info('Seeding default data...');
     
     // Load default shortcuts from JSON file
     const defaultShortcuts = await Bun.file(join(import.meta.dir, '..', '..', 'config', 'defaults.json')).json();
@@ -141,7 +141,7 @@ async function seedDefaultData(): Promise<void> {
       `);
       
       db!.exec('COMMIT');
-      console.log('Default data seeded successfully');
+      console.info('Default data seeded successfully');
     } catch (error) {
       db!.exec('ROLLBACK');
       console.error('Failed to seed default data:', error);

@@ -619,7 +619,7 @@ class AdvancedSecuritySystem {
 		if (this.config.audit.enabled) {
 			const logLevel = this.getLogLevel(securityEvent.severity);
 			if (this.shouldLog(logLevel)) {
-				console.log(
+				console.info(
 					`[SECURITY-${securityEvent.severity.toUpperCase()}] ${securityEvent.action}: ${securityEvent.resource} - ${securityEvent.outcome}`,
 				);
 			}
@@ -655,13 +655,13 @@ class AdvancedSecuritySystem {
 
 	private async triggerSecurityAlert(event: SecurityEvent): Promise<void> {
 		// In real implementation, would send to alerting system
-		console.log(
+		console.info(
 			`🚨 SECURITY ALERT: ${event.type.toUpperCase()} - ${event.action}`,
 		);
-		console.log(`   Severity: ${event.severity}`);
-		console.log(`   Resource: ${event.resource}`);
-		console.log(`   IP: ${event.ipAddress}`);
-		console.log(`   Details:`, event.details);
+		console.info(`   Severity: ${event.severity}`);
+		console.info(`   Resource: ${event.resource}`);
+		console.info(`   IP: ${event.ipAddress}`);
+		console.info(`   Details:`, event.details);
 	}
 
 	// Security Monitoring
@@ -731,7 +731,7 @@ class AdvancedSecuritySystem {
 		});
 
 		if (expiredSessions.length > 0) {
-			console.log(`🧹 Cleaned up ${expiredSessions.length} expired sessions`);
+			console.info(`🧹 Cleaned up ${expiredSessions.length} expired sessions`);
 		}
 	}
 
@@ -760,7 +760,7 @@ class AdvancedSecuritySystem {
 
 		const removed = initialSize - this.auditLog.length;
 		if (removed > 0) {
-			console.log(`🗂️  Rotated audit logs: removed ${removed} old entries`);
+			console.info(`🗂️  Rotated audit logs: removed ${removed} old entries`);
 		}
 	}
 
@@ -865,7 +865,7 @@ class AdvancedSecuritySystem {
 
 	public updateSecurityConfig(updates: Partial<SecurityConfig>): void {
 		Object.assign(this.config, updates);
-		console.log("✅ Security configuration updated");
+		console.info("✅ Security configuration updated");
 	}
 
 	public getSecurityConfig(): SecurityConfig {

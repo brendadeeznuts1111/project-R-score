@@ -80,7 +80,7 @@ function main(): void {
     assertExists(candidate);
   }
 
-  console.log("✅ TypeScript check configuration looks consistent.");
+  console.info("✅ TypeScript check configuration looks consistent.");
 }
 
 main();

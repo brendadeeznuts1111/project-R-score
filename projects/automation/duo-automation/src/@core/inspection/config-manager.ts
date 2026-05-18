@@ -101,7 +101,7 @@ class ConfigManager extends EventEmitter {
       // Apply scope-specific configuration
       this.config = this.applyScopeConfig(rawConfig, this.currentScope);
       
-      console.log(`📋 Configuration loaded for scope: ${this.currentScope}`);
+      console.info(`📋 Configuration loaded for scope: ${this.currentScope}`);
       this.emit('configLoaded', this.config);
     } catch (error) {
       console.error(`❌ Failed to load config from ${this.configPath}:`, error);
@@ -146,7 +146,7 @@ class ConfigManager extends EventEmitter {
         const currentFile = Bun.file(this.configPath);
         if (currentFile.lastModified > lastModified) {
           lastModified = currentFile.lastModified;
-          console.log('🔄 Configuration file changed, reloading...');
+          console.info('🔄 Configuration file changed, reloading...');
           await this.loadConfig();
         }
       }, 1000);
@@ -221,7 +221,7 @@ class ConfigManager extends EventEmitter {
 
     this.currentScope = newScope;
     this.loadConfig();
-    console.log(`🔄 Switched to scope: ${newScope}`);
+    console.info(`🔄 Switched to scope: ${newScope}`);
   }
 
   public getCurrentScope(): string {

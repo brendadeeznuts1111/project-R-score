@@ -132,13 +132,13 @@ const server = Bun.serve({
   },
 });
 
-console.log(`🚀 Fire22 Dashboard API Server running on http://${server.hostname}:${server.port}`);
-console.log(`📊 Dashboard endpoints available at:`);
-console.log(`   • http://${server.hostname}:${server.port}/api/dashboard/metrics`);
-console.log(`   • http://${server.hostname}:${server.port}/api/dashboard/analytics`);
-console.log(`   • http://${server.hostname}:${server.port}/api/dashboard/health`);
-console.log(`   • http://${server.hostname}:${server.port}/api/dashboard/performance`);
-console.log(`🏥 Health check: http://${server.hostname}:${server.port}/health`);
-console.log(`📖 API info: http://${server.hostname}:${server.port}/api`);
+console.info(`🚀 Fire22 Dashboard API Server running on http://${server.hostname}:${server.port}`);
+console.info(`📊 Dashboard endpoints available at:`);
+console.info(`   • http://${server.hostname}:${server.port}/api/dashboard/metrics`);
+console.info(`   • http://${server.hostname}:${server.port}/api/dashboard/analytics`);
+console.info(`   • http://${server.hostname}:${server.port}/api/dashboard/health`);
+console.info(`   • http://${server.hostname}:${server.port}/api/dashboard/performance`);
+console.info(`🏥 Health check: http://${server.hostname}:${server.port}/health`);
+console.info(`📖 API info: http://${server.hostname}:${server.port}/api`);
 
 export default server;

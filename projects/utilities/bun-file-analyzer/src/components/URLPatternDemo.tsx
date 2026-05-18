@@ -13,8 +13,8 @@ export const URLPatternDemo = () => {
 
   useEffect(() => {
     // Log colorful URLPattern info
-    console.log("%c=== URLPattern Demo ===", "color: #3b82f6; font-size: 16px");
-    console.log("%cTesting URLPattern routing with Bun", "color: #3b82f6");
+    console.info("%c=== URLPattern Demo ===", "color: #3b82f6; font-size: 16px");
+    console.info("%cTesting URLPattern routing with Bun", "color: #3b82f6");
   }, []);
 
   const testPatterns = () => {

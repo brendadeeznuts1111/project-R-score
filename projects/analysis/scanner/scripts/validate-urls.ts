@@ -83,10 +83,10 @@ async function findFilesToScan(dir: string, extensions: string[] = ['.ts', '.md'
 }
 
 async function main() {
-	console.log('🔍 URL and Link Validation for Bun MCP Project\n');
+	console.info('🔍 URL and Link Validation for Bun MCP Project\n');
 
 	const filesToScan = await findFilesToScan(process.cwd(), ['.ts', '.md', '.js']);
-	console.log(`📁 Scanning ${filesToScan.length} files...\n`);
+	console.info(`📁 Scanning ${filesToScan.length} files...\n`);
 
 	const allUrls = new Map<string, string[]>(); // url -> [files]
 
@@ -101,7 +101,7 @@ async function main() {
 		}
 	}
 
-	console.log(`🔗 Found ${allUrls.size} unique URLs to validate\n`);
+	console.info(`🔗 Found ${allUrls.size} unique URLs to validate\n`);
 
 	// Check URLs
 	const results: ValidationResult[] = [];
@@ -111,9 +111,9 @@ async function main() {
 		results.push(result);
 
 		if (result.ok) {
-			console.log(`✅ ${result.status}`);
+			console.info(`✅ ${result.status}`);
 		} else {
-			console.log(`❌ ${result.status}${result.error ? ` (${result.error})` : ''}`);
+			console.info(`❌ ${result.status}${result.error ? ` (${result.error})` : ''}`);
 		}
 	}
 
@@ -121,17 +121,17 @@ async function main() {
 	const okUrls = results.filter(r => r.ok);
 	const badUrls = results.filter(r => !r.ok);
 
-	console.log('\n📊 Validation Summary:');
-	console.log(`   Total URLs: ${results.length}`);
-	console.log(`   ✅ Valid: ${okUrls.length}`);
-	console.log(`   ❌ Invalid: ${badUrls.length}`);
+	console.info('\n📊 Validation Summary:');
+	console.info(`   Total URLs: ${results.length}`);
+	console.info(`   ✅ Valid: ${okUrls.length}`);
+	console.info(`   ❌ Invalid: ${badUrls.length}`);
 
 	if (badUrls.length > 0) {
-		console.log('\n❌ Invalid URLs:');
+		console.info('\n❌ Invalid URLs:');
 		for (const bad of badUrls) {
 			const files = allUrls.get(bad.url) || [];
-			console.log(`   ${bad.url} (${bad.status})`);
-			console.log(`      Found in: ${files.map(f => f.replace(process.cwd(), '.')).join(', ')}`);
+			console.info(`   ${bad.url} (${bad.status})`);
+			console.info(`      Found in: ${files.map(f => f.replace(process.cwd(), '.')).join(', ')}`);
 		}
 	}
 
@@ -139,15 +139,15 @@ async function main() {
 	const bunUrls = results.filter(r => r.url.includes('bun.com'));
 	const bunOk = bunUrls.filter(r => r.ok);
 
-	console.log('\n🍔 Bun.com URLs:');
-	console.log(`   Total: ${bunUrls.length}`);
-	console.log(`   ✅ Valid: ${bunOk.length}`);
-	console.log(`   ❌ Invalid: ${bunUrls.length - bunOk.length}`);
+	console.info('\n🍔 Bun.com URLs:');
+	console.info(`   Total: ${bunUrls.length}`);
+	console.info(`   ✅ Valid: ${bunOk.length}`);
+	console.info(`   ❌ Invalid: ${bunUrls.length - bunOk.length}`);
 
 	if (bunUrls.length - bunOk.length > 0) {
-		console.log('\n❌ Invalid Bun.com URLs:');
+		console.info('\n❌ Invalid Bun.com URLs:');
 		for (const bad of bunUrls.filter(r => !r.ok)) {
-			console.log(`   ${bad.url} (${bad.status})`);
+			console.info(`   ${bad.url} (${bad.status})`);
 		}
 	}
 

@@ -77,10 +77,10 @@ export function setupGlobalInspection() {
     return originalArrayInspect.call(this);
   };
   
-  console.log('🔍 Custom inspection system activated');
-  console.log('   - Enhanced console.log, console.error, console.warn');
-  console.log('   - Overridden Bun.inspect');
-  console.log('   - Array pretty printing for inspectable objects');
+  console.info('🔍 Custom inspection system activated');
+  console.info('   - Enhanced console.log, console.error, console.warn');
+  console.info('   - Overridden Bun.inspect');
+  console.info('   - Array pretty printing for inspectable objects');
 }
 
 // ============================================
@@ -151,7 +151,7 @@ export function inspectIfPossible(obj: any, fallback?: string): string {
 
 export function logInspectable(...args: any[]) {
   const formattedArgs = args.map(arg => inspectIfPossible(arg));
-  console.log(...formattedArgs);
+  console.info(...formattedArgs);
 }
 
 export function errorInspectable(...args: any[]) {
@@ -199,16 +199,16 @@ export function createInspectableProxy<T extends object>(target: T, name?: strin
       if (typeof value === 'function') {
         return function(...args: any[]) {
           const methodName = String(prop);
-          console.log(`🔍 Calling ${name || 'Object'}.${methodName}(${args.map(inspectIfPossible).join(', ')})`);
+          console.info(`🔍 Calling ${name || 'Object'}.${methodName}(${args.map(inspectIfPossible).join(', ')})`);
           
           try {
             const result = value.apply(obj, args);
             
             if (result && typeof result === 'object') {
-              console.log(`✅ ${name || 'Object'}.${methodName} returned:`);
-              console.log(result);
+              console.info(`✅ ${name || 'Object'}.${methodName} returned:`);
+              console.info(result);
             } else {
-              console.log(`✅ ${name || 'Object'}.${methodName} returned: ${inspectIfPossible(result)}`);
+              console.info(`✅ ${name || 'Object'}.${methodName} returned: ${inspectIfPossible(result)}`);
             }
             
             return result;
@@ -275,14 +275,14 @@ export class InspectionStats {
   
   printStats() {
     const stats = this.getStats();
-    console.log('\n📊 INSPECTION STATISTICS');
-    console.log('═'.repeat(40));
-    console.log(`Total Inspections: ${stats.totalInspections}`);
-    console.log(`Average Time: ${stats.averageTime.toFixed(4)}ms`);
-    console.log(`Errors: ${stats.errors}`);
-    console.log('\nBy Type:');
+    console.info('\n📊 INSPECTION STATISTICS');
+    console.info('═'.repeat(40));
+    console.info(`Total Inspections: ${stats.totalInspections}`);
+    console.info(`Average Time: ${stats.averageTime.toFixed(4)}ms`);
+    console.info(`Errors: ${stats.errors}`);
+    console.info('\nBy Type:');
     Object.entries(stats.byType).forEach(([type, count]) => {
-      console.log(`  ${type}: ${count}`);
+      console.info(`  ${type}: ${count}`);
     });
   }
 }

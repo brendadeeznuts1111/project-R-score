@@ -19,15 +19,15 @@ export default {
 
 	// Pre-install hook - runs before dependencies are installed
 	async preinstall(ctx: InitContext) {
-		console.log("🚀 Initializing RSS Feed Optimization...");
-		console.log(`📁 Project: ${ctx.projectName}`);
-		console.log(`📂 Directory: ${ctx.projectDir}`);
+		console.info("🚀 Initializing RSS Feed Optimization...");
+		console.info(`📁 Project: ${ctx.projectName}`);
+		console.info(`📂 Directory: ${ctx.projectDir}`);
 
 		// Check for environment variables
 		const hasR2Creds =
 			process.env.R2_ACCOUNT_ID && process.env.R2_ACCESS_KEY_ID;
 		if (hasR2Creds) {
-			console.log("✅ R2 credentials detected in environment");
+			console.info("✅ R2 credentials detected in environment");
 		}
 
 		return {
@@ -41,10 +41,10 @@ export default {
 		ctx: InitContext,
 		preinstallResult?: { credentialsDetected?: boolean },
 	) {
-		console.log("\n📦 Dependencies installed");
+		console.info("\n📦 Dependencies installed");
 
 		if (preinstallResult?.credentialsDetected) {
-			console.log("🔧 Auto-configuring R2 credentials...");
+			console.info("🔧 Auto-configuring R2 credentials...");
 		}
 
 		// Run setup script
@@ -56,10 +56,10 @@ export default {
 
 		await setupProc.exited;
 
-		console.log("\n✅ RSS Feed Optimization initialized successfully!");
-		console.log("\nNext steps:");
-		console.log(`  cd ${ctx.projectName}`);
-		console.log("  bun dev");
+		console.info("\n✅ RSS Feed Optimization initialized successfully!");
+		console.info("\nNext steps:");
+		console.info(`  cd ${ctx.projectName}`);
+		console.info("  bun dev");
 
 		return {
 			success: true,
@@ -196,12 +196,12 @@ export default {
 
 // Export individual hooks for direct use
 export const preinstall = async (ctx: InitContext) => {
-	console.log(`Setting up ${ctx.projectName}...`);
+	console.info(`Setting up ${ctx.projectName}...`);
 	return { success: true };
 };
 
 export const postinstall = async (ctx: InitContext) => {
-	console.log(`Setup complete for ${ctx.projectName}`);
+	console.info(`Setup complete for ${ctx.projectName}`);
 	return { success: true };
 };
 
@@ -298,7 +298,7 @@ export const help = {
 
 // Print help message
 export function printHelp(): void {
-	console.log(`
+	console.info(`
 ${help.name} v${help.version}
 ${help.description}
 

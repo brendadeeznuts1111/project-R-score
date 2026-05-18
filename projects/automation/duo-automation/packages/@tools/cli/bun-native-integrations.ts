@@ -329,7 +329,7 @@ export class BunNativeCookieStore {
           this.cookieMap.set(name, cookieInit.value || '', cookieInit);
         });
         
-        console.log(`Loaded ${cookies.length} persistent cookies`);
+        console.info(`Loaded ${cookies.length} persistent cookies`);
       }
     } catch (error) {
       console.warn('Failed to load persistent cookies:', error);
@@ -346,7 +346,7 @@ export class BunNativeCookieStore {
       });
       const data = JSON.stringify(cookies);
       await Bun.write(this.filePath, data);
-      console.log(`Saved ${cookies.length} persistent cookies`);
+      console.info(`Saved ${cookies.length} persistent cookies`);
     } catch (error) {
       console.error('Failed to save persistent cookies:', error);
     }
@@ -558,7 +558,7 @@ export class BunNativeCookieStore {
     });
     
     if (expired.length > 0) {
-      console.log(`Cleaned up ${expired.length} expired cookies`);
+      console.info(`Cleaned up ${expired.length} expired cookies`);
       this.savePersistentCookies().catch(console.error);
     }
   }
@@ -653,7 +653,7 @@ export class BunFileManager {
         });
       }
       
-      console.log(`File written: ${filePath}`);
+      console.info(`File written: ${filePath}`);
     } catch (error) {
       console.error(`Failed to write file ${filePath}:`, error);
       throw error;
@@ -1163,7 +1163,7 @@ export class BunNativeEcosystem extends UnifiedColorTensionEcosystem {
     };
 
     await this.fileManager.writeFile(filePath, JSON.stringify(state, null, 2));
-    console.log(`Ecosystem state saved to ${filePath}`);
+    console.info(`Ecosystem state saved to ${filePath}`);
   }
 
   /**
@@ -1174,10 +1174,10 @@ export class BunNativeEcosystem extends UnifiedColorTensionEcosystem {
       const data = await this.fileManager.readFile(filePath);
       const state = JSON.parse(data);
       
-      console.log(`Loaded ecosystem state from ${filePath}`);
-      console.log(`State timestamp: ${state.timestamp}`);
-      console.log(`Systems: ${state.systems.length}`);
-      console.log(`Cookies: ${Object.keys(state.cookies).length}`);
+      console.info(`Loaded ecosystem state from ${filePath}`);
+      console.info(`State timestamp: ${state.timestamp}`);
+      console.info(`Systems: ${state.systems.length}`);
+      console.info(`Cookies: ${Object.keys(state.cookies).length}`);
       
     } catch (error) {
       console.warn(`Failed to load ecosystem state: ${error}`);
@@ -1231,9 +1231,9 @@ export class BunNativeEcosystem extends UnifiedColorTensionEcosystem {
       const configData = this.binaryProcessor.convertArrayBuffer(buffer, 'binary');
       const config = JSON.parse(configData);
       
-      console.log(`Processed binary configuration from ${configPath}`);
-      console.log(`Buffer size: ${buffer.byteLength} bytes`);
-      console.log(`Data views: ${Object.keys(views).length}`);
+      console.info(`Processed binary configuration from ${configPath}`);
+      console.info(`Buffer size: ${buffer.byteLength} bytes`);
+      console.info(`Data views: ${Object.keys(views).length}`);
       
       return config;
     } catch (error) {
@@ -2069,18 +2069,18 @@ export const trackedBun = new TrackedBunAPIs();
  * Demonstrate the comprehensive BunNativeAPIMetrics integration with official Bun APIs
  */
 export async function demonstrateBunNativeMetricsIntegration(): Promise<void> {
-  console.log('🔍 BUN NATIVE METRICS INTEGRATION DEMONSTRATION');
-  console.log('============================================================');
-  console.log('📚 Featuring ALL official Bun APIs from https://bun.com/docs/runtime/bun-apis');
+  console.info('🔍 BUN NATIVE METRICS INTEGRATION DEMONSTRATION');
+  console.info('============================================================');
+  console.info('📚 Featuring ALL official Bun APIs from https://bun.com/docs/runtime/bun-apis');
   
   // Create tracker and tracked APIs
   const tracker = new BunNativeAPITracker();
   const trackedAPIs = new TrackedBunAPIs(tracker);
   
-  console.log('\n📊 TRACKED OFFICIAL BUN API CALLS:');
+  console.info('\n📊 TRACKED OFFICIAL BUN API CALLS:');
   
   // 1. Networking APIs
-  console.log('  🌐 Networking APIs:');
+  console.info('  🌐 Networking APIs:');
   await trackedAPIs.trackedFetch('https://example.com');
   await trackedAPIs.trackedFetch('https://example.com', { 
     method: 'POST',
@@ -2089,37 +2089,37 @@ export async function demonstrateBunNativeMetricsIntegration(): Promise<void> {
   });
   
   // Unix Domain Socket examples (from Bun docs)
-  console.log('  🔗 Unix Domain Socket APIs:');
+  console.info('  🔗 Unix Domain Socket APIs:');
   try {
     // Example: Docker socket communication
-    console.log('    Testing Docker socket communication...');
+    console.info('    Testing Docker socket communication...');
     // Note: This would only work if Docker is running and socket is accessible
     // await trackedAPIs.trackedUnixFetch('http://localhost/info', '/var/run/docker.sock');
-    console.log('    ✅ Unix domain socket tracking ready (Docker socket example commented out)');
+    console.info('    ✅ Unix domain socket tracking ready (Docker socket example commented out)');
     
     // Example: Generic Unix socket
-    console.log('    Testing generic Unix socket pattern...');
+    console.info('    Testing generic Unix socket pattern...');
     // await trackedAPIs.trackedUnixFetch('http://localhost/api', '/tmp/app.sock', {
     //   method: 'POST',
     //   body: JSON.stringify({ message: 'Hello from Bun Unix socket!' })
     // });
-    console.log('    ✅ Generic Unix socket tracking ready (example commented out)');
+    console.info('    ✅ Generic Unix socket tracking ready (example commented out)');
   } catch (error) {
-    console.log(`    ⚠️ Unix socket test skipped: ${error.message}`);
+    console.info(`    ⚠️ Unix socket test skipped: ${error.message}`);
   }
   
   // 2. File I/O APIs
-  console.log('  📁 File I/O APIs:');
+  console.info('  📁 File I/O APIs:');
   const testFile = 'integration-test.json';
   const testData = { message: 'Bun Native Metrics Integration', timestamp: new Date().toISOString() };
   
   await trackedAPIs.trackedWrite(testFile, JSON.stringify(testData, null, 2));
   const file = trackedAPIs.trackedFile(testFile);
   const content = await file.text();
-  console.log(`    File written and read: ${JSON.parse(content).message}`);
+  console.info(`    File written and read: ${JSON.parse(content).message}`);
   
   // 3. Cookie APIs
-  console.log('  🍪 Cookie APIs:');
+  console.info('  🍪 Cookie APIs:');
   const cookieMap = trackedAPIs.trackedCookieMap('session=abc123; theme=dark');
   const cookie = trackedAPIs.trackedCookie('user', 'john', { 
     httpOnly: true, 
@@ -2127,60 +2127,60 @@ export async function demonstrateBunNativeMetricsIntegration(): Promise<void> {
     sameSite: 'strict' 
   });
   
-  console.log(`    CookieMap size: ${cookieMap.size}`);
-  console.log(`    Cookie created: ${cookie.name}=${cookie.value}`);
+  console.info(`    CookieMap size: ${cookieMap.size}`);
+  console.info(`    Cookie created: ${cookie.name}=${cookie.value}`);
   
   // 4. Crypto APIs
-  console.log('  🔐 Crypto APIs:');
+  console.info('  🔐 Crypto APIs:');
   const hash = trackedAPIs.trackedHash('test data');
-  console.log(`    Hash generated: ${hash.substring(0, 16)}...`);
+  console.info(`    Hash generated: ${hash.substring(0, 16)}...`);
   
   const hasher = trackedAPIs.trackedCryptoHasher('sha256');
   hasher.update('crypto test');
   const cryptoHash = hasher.digest('hex');
-  console.log(`    CryptoHash: ${cryptoHash.substring(0, 16)}...`);
+  console.info(`    CryptoHash: ${cryptoHash.substring(0, 16)}...`);
   
   // 5. System APIs
-  console.log('  ⚙️ System APIs:');
+  console.info('  ⚙️ System APIs:');
   await trackedAPIs.trackedSleep(1_000_000); // 1ms in nanoseconds
-  console.log('    Sleep completed');
+  console.info('    Sleep completed');
   
   // 6. Binary APIs
-  console.log('  📦 Binary APIs:');
+  console.info('  📦 Binary APIs:');
   const testDataBuffer = new TextEncoder().encode('compression test data');
   const compressed = trackedAPIs.trackedGzipSync(testDataBuffer);
-  console.log(`    Compressed: ${testDataBuffer.length} → ${compressed.byteLength} bytes`);
+  console.info(`    Compressed: ${testDataBuffer.length} → ${compressed.byteLength} bytes`);
   
   // 7. Utility APIs
-  console.log('  🛠️ Utility APIs:');
+  console.info('  🛠️ Utility APIs:');
   const testObject = { a: 1, b: { c: 2 } };
   const testObject2 = { a: 1, b: { c: 2 } };
   const isEqual = trackedAPIs.trackedDeepEquals(testObject, testObject2);
-  console.log(`    Deep equals: ${isEqual}`);
+  console.info(`    Deep equals: ${isEqual}`);
   
   const inspected = trackedAPIs.trackedInspect(testObject, { depth: 2, colors: false });
-  console.log(`    Inspected: ${inspected.substring(0, 30)}...`);
+  console.info(`    Inspected: ${inspected.substring(0, 30)}...`);
   
   // 8. Build APIs
-  console.log('  🔨 Build APIs:');
+  console.info('  🔨 Build APIs:');
   try {
     await trackedAPIs.trackedBuild({
       entrypoints: ['./test-entry.js'],
       target: 'browser',
       format: 'esm'
     });
-    console.log('    Build completed (simulated)');
+    console.info('    Build completed (simulated)');
   } catch (error) {
-    console.log('    Build attempted (expected error for demo)');
+    console.info('    Build attempted (expected error for demo)');
   }
   
   // 9. Glob APIs
-  console.log('  🔍 Glob APIs:');
+  console.info('  🔍 Glob APIs:');
   const glob = trackedAPIs.trackedGlob('*.ts');
-  console.log(`    Glob pattern created: *.ts`);
+  console.info(`    Glob pattern created: *.ts`);
   
   // 10. Manual tracking examples
-  console.log('  🔧 Manual tracking examples:');
+  console.info('  🔧 Manual tracking examples:');
   tracker.trackCallSync('custom-operation', () => {
     // Simulate some work
     const start = Date.now();
@@ -2195,31 +2195,31 @@ export async function demonstrateBunNativeMetricsIntegration(): Promise<void> {
   }, 'custom', { operation: 'test', type: 'async' });
   
   // Get comprehensive metrics
-  console.log('\n📈 COMPREHENSIVE METRICS ANALYSIS:');
+  console.info('\n📈 COMPREHENSIVE METRICS ANALYSIS:');
   const allMetrics = tracker.getAllMetrics();
   const summary = tracker.getSummary();
   
-  console.log(`  Total APIs Tracked: ${summary.totalAPIs}`);
-  console.log(`  Total Calls: ${summary.totalCalls}`);
-  console.log(`  Average Duration: ${summary.averageCallDuration.toFixed(2)}ms`);
-  console.log(`  Error Rate: ${summary.errorRate.toFixed(1)}%`);
-  console.log(`  Native Implementation Rate: ${summary.nativeRate.toFixed(1)}%`);
+  console.info(`  Total APIs Tracked: ${summary.totalAPIs}`);
+  console.info(`  Total Calls: ${summary.totalCalls}`);
+  console.info(`  Average Duration: ${summary.averageCallDuration.toFixed(2)}ms`);
+  console.info(`  Error Rate: ${summary.errorRate.toFixed(1)}%`);
+  console.info(`  Native Implementation Rate: ${summary.nativeRate.toFixed(1)}%`);
   
-  console.log('\n🔝 DETAILED API METRICS:');
+  console.info('\n🔝 DETAILED API METRICS:');
   allMetrics.forEach((metric, index) => {
-    console.log(`  ${index + 1}. ${metric.apiName}`);
-    console.log(`     Domain: ${metric.domain}`);
-    console.log(`     Implementation: ${metric.implementation} (${metric.implementationSource.source})`);
-    console.log(`     Performance: ${metric.callCount} calls, ${metric.averageDuration.toFixed(2)}ms avg`);
-    console.log(`     Source: ${metric.implementationSource.source}, Tier: ${metric.implementationSource.performanceTier}`);
-    console.log(`     Memory: ${metric.implementationSource.memoryEfficiency}, Success: ${((metric.successCount / metric.callCount) * 100).toFixed(1)}%`);
+    console.info(`  ${index + 1}. ${metric.apiName}`);
+    console.info(`     Domain: ${metric.domain}`);
+    console.info(`     Implementation: ${metric.implementation} (${metric.implementationSource.source})`);
+    console.info(`     Performance: ${metric.callCount} calls, ${metric.averageDuration.toFixed(2)}ms avg`);
+    console.info(`     Source: ${metric.implementationSource.source}, Tier: ${metric.implementationSource.performanceTier}`);
+    console.info(`     Memory: ${metric.implementationSource.memoryEfficiency}, Success: ${((metric.successCount / metric.callCount) * 100).toFixed(1)}%`);
     if (metric.metadata) {
-      console.log(`     Metadata: ${JSON.stringify(metric.metadata)}`);
+      console.info(`     Metadata: ${JSON.stringify(metric.metadata)}`);
     }
   });
   
   // Enhanced domain analysis with new categories
-  console.log('\n🌐 ENHANCED DOMAIN ANALYSIS (Official Bun API Categories):');
+  console.info('\n🌐 ENHANCED DOMAIN ANALYSIS (Official Bun API Categories):');
   const domainGroups = allMetrics.reduce((acc, metric) => {
     if (!acc[metric.domain]) acc[metric.domain] = [];
     acc[metric.domain].push(metric);
@@ -2231,11 +2231,11 @@ export async function demonstrateBunNativeMetricsIntegration(): Promise<void> {
     const avgDuration = metrics.reduce((sum, m) => sum + m.averageDuration, 0) / metrics.length;
     const nativeCount = metrics.filter(m => m.implementation === 'native').length;
     
-    console.log(`  ${domain}: ${metrics.length} APIs, ${totalCalls} calls, ${avgDuration.toFixed(2)}ms avg, ${(nativeCount/metrics.length*100).toFixed(1)}% native`);
+    console.info(`  ${domain}: ${metrics.length} APIs, ${totalCalls} calls, ${avgDuration.toFixed(2)}ms avg, ${(nativeCount/metrics.length*100).toFixed(1)}% native`);
   });
   
   // Implementation analysis
-  console.log('\n🔧 IMPLEMENTATION ANALYSIS:');
+  console.info('\n🔧 IMPLEMENTATION ANALYSIS:');
   const implGroups = allMetrics.reduce((acc, metric) => {
     if (!acc[metric.implementation]) acc[metric.implementation] = [];
     acc[metric.implementation].push(metric);
@@ -2246,41 +2246,41 @@ export async function demonstrateBunNativeMetricsIntegration(): Promise<void> {
     const totalCalls = metrics.reduce((sum, m) => sum + m.callCount, 0);
     const sources = [...new Set(metrics.map(m => m.implementationSource.source))];
     
-    console.log(`  ${impl}: ${metrics.length} APIs, ${totalCalls} calls, sources: ${sources.join(', ')}`);
+    console.info(`  ${impl}: ${metrics.length} APIs, ${totalCalls} calls, sources: ${sources.join(', ')}`);
   });
   
   // Export functionality
-  console.log('\n📤 EXPORT CAPABILITIES:');
+  console.info('\n📤 EXPORT CAPABILITIES:');
   const exportData = tracker.export();
-  console.log(`  Export timestamp: ${exportData.timestamp}`);
-  console.log(`  Summary: ${exportData.summary.totalAPIs} APIs, ${exportData.summary.totalCalls} calls`);
-  console.log(`  Metrics included: ${exportData.metrics.length} detailed entries`);
+  console.info(`  Export timestamp: ${exportData.timestamp}`);
+  console.info(`  Summary: ${exportData.summary.totalAPIs} APIs, ${exportData.summary.totalCalls} calls`);
+  console.info(`  Metrics included: ${exportData.metrics.length} detailed entries`);
   
   // Enable/disable demonstration
-  console.log('\n⚙️ TRACKING CONTROL:');
-  console.log('  Disabling tracking...');
+  console.info('\n⚙️ TRACKING CONTROL:');
+  console.info('  Disabling tracking...');
   tracker.setEnabled(false);
   
   await trackedAPIs.trackedFetch('https://example.com'); // This won't be tracked
   const metricsAfterDisable = tracker.getAllMetrics();
-  console.log(`  Metrics after disable: ${metricsAfterDisable.length} (unchanged)`);
+  console.info(`  Metrics after disable: ${metricsAfterDisable.length} (unchanged)`);
   
-  console.log('  Re-enabling tracking...');
+  console.info('  Re-enabling tracking...');
   tracker.setEnabled(true);
   
   await trackedAPIs.trackedFetch('https://example.com'); // This will be tracked
   const metricsAfterEnable = tracker.getAllMetrics();
-  console.log(`  Metrics after re-enable: ${metricsAfterEnable.length} (updated)`);
+  console.info(`  Metrics after re-enable: ${metricsAfterEnable.length} (updated)`);
   
   // Reset demonstration
-  console.log('\n🔄 RESET FUNCTIONALITY:');
-  console.log('  Resetting all metrics...');
+  console.info('\n🔄 RESET FUNCTIONALITY:');
+  console.info('  Resetting all metrics...');
   tracker.reset();
   
   const metricsAfterReset = tracker.getAllMetrics();
   const summaryAfterReset = tracker.getSummary();
-  console.log(`  Metrics after reset: ${metricsAfterReset.length}`);
-  console.log(`  Summary after reset: ${summaryAfterReset.totalAPIs} APIs, ${summaryAfterReset.totalCalls} calls`);
+  console.info(`  Metrics after reset: ${metricsAfterReset.length}`);
+  console.info(`  Summary after reset: ${summaryAfterReset.totalAPIs} APIs, ${summaryAfterReset.totalCalls} calls`);
   
   // Cleanup
   await Bun.write(testFile, JSON.stringify({
@@ -2294,50 +2294,50 @@ export async function demonstrateBunNativeMetricsIntegration(): Promise<void> {
     ]
   }, null, 2));
   
-  console.log('\n🎯 OFFICIAL BUN API INTEGRATION SUMMARY:');
-  console.log('  ✅ BunNativeAPIMetrics interface updated for all official Bun API categories');
-  console.log('  ✅ Comprehensive tracker with enhanced domain classification');
-  console.log('  ✅ Tracked wrappers for major official Bun APIs from documentation');
-  console.log('  ✅ Real-time metrics collection with official API detection');
-  console.log('  ✅ Enhanced domain analysis: filesystem, networking, crypto, cookies, streams, binary, system, runtime, database, build, web, workers, utilities');
-  console.log('  ✅ Implementation source tracking for all official Bun APIs');
-  console.log('  ✅ Export functionality for comprehensive monitoring');
-  console.log('  ✅ Enable/disable tracking control');
-  console.log('  ✅ Reset functionality for clean testing');
-  console.log('  ✅ Memory and performance tier classification');
-  console.log('  ✅ Full compliance with https://bun.com/docs/runtime/bun-apis');
+  console.info('\n🎯 OFFICIAL BUN API INTEGRATION SUMMARY:');
+  console.info('  ✅ BunNativeAPIMetrics interface updated for all official Bun API categories');
+  console.info('  ✅ Comprehensive tracker with enhanced domain classification');
+  console.info('  ✅ Tracked wrappers for major official Bun APIs from documentation');
+  console.info('  ✅ Real-time metrics collection with official API detection');
+  console.info('  ✅ Enhanced domain analysis: filesystem, networking, crypto, cookies, streams, binary, system, runtime, database, build, web, workers, utilities');
+  console.info('  ✅ Implementation source tracking for all official Bun APIs');
+  console.info('  ✅ Export functionality for comprehensive monitoring');
+  console.info('  ✅ Enable/disable tracking control');
+  console.info('  ✅ Reset functionality for clean testing');
+  console.info('  ✅ Memory and performance tier classification');
+  console.info('  ✅ Full compliance with https://bun.com/docs/runtime/bun-apis');
   
-  console.log('\n📚 OFFICIAL BUN API CATEGORIES COVERED:');
-  console.log('  📁 File I/O: Bun.file, Bun.write, Bun.stdin, Bun.stdout, Bun.stderr');
-  console.log('  🌐 Networking: fetch, Bun.serve, Bun.listen, Bun.connect, Bun.udpSocket, Bun.dns.*');
-  console.log('  🔐 Crypto: Bun.hash, Bun.password, Bun.CryptoHasher, Bun.sha');
-  console.log('  🍪 Cookies: Bun.Cookie, Bun.CookieMap');
-  console.log('  ⚙️ System: Bun.spawn, Bun.spawnSync, Bun.sleep, Bun.env');
-  console.log('  📦 Binary: Bun.gzipSync, Bun.gunzipSync, Bun.deflateSync, Bun.inflateSync');
-  console.log('  🔨 Build: Bun.build, Bun.plugin, Bun.Glob');
-  console.log('  🛠️ Utilities: Bun.inspect, Bun.deepEquals, Bun.version, Bun.which');
-  console.log('  🧪 Testing: bun:test');
-  console.log('  👥 Workers: new Worker()');
-  console.log('  🔗 FFI: bun:ffi');
-  console.log('  🗄️ Database: bun:sqlite, Bun.sql, Bun.redis');
+  console.info('\n📚 OFFICIAL BUN API CATEGORIES COVERED:');
+  console.info('  📁 File I/O: Bun.file, Bun.write, Bun.stdin, Bun.stdout, Bun.stderr');
+  console.info('  🌐 Networking: fetch, Bun.serve, Bun.listen, Bun.connect, Bun.udpSocket, Bun.dns.*');
+  console.info('  🔐 Crypto: Bun.hash, Bun.password, Bun.CryptoHasher, Bun.sha');
+  console.info('  🍪 Cookies: Bun.Cookie, Bun.CookieMap');
+  console.info('  ⚙️ System: Bun.spawn, Bun.spawnSync, Bun.sleep, Bun.env');
+  console.info('  📦 Binary: Bun.gzipSync, Bun.gunzipSync, Bun.deflateSync, Bun.inflateSync');
+  console.info('  🔨 Build: Bun.build, Bun.plugin, Bun.Glob');
+  console.info('  🛠️ Utilities: Bun.inspect, Bun.deepEquals, Bun.version, Bun.which');
+  console.info('  🧪 Testing: bun:test');
+  console.info('  👥 Workers: new Worker()');
+  console.info('  🔗 FFI: bun:ffi');
+  console.info('  🗄️ Database: bun:sqlite, Bun.sql, Bun.redis');
   
-  console.log('\n💡 USAGE EXAMPLES:');
-  console.log('  // Basic usage with official Bun APIs');
-  console.log('  const tracker = new BunNativeAPITracker();');
-  console.log('  const trackedAPIs = new TrackedBunAPIs(tracker);');
-  console.log('  ');
-  console.log('  // Track official Bun APIs');
-  console.log('  await trackedAPIs.trackedFetch("https://example.com");');
-  console.log('  const file = trackedAPIs.trackedFile("data.json");');
-  console.log('  await trackedAPIs.trackedWrite("output.json", data);');
-  console.log('  const hash = trackedAPIs.trackedHash("data");');
-  console.log('  await trackedAPIs.trackedSleep(1000000);');
-  console.log('  const compressed = trackedAPIs.trackedGzipSync(buffer);');
-  console.log('  ');
-  console.log('  // Get comprehensive metrics');
-  console.log('  const metrics = tracker.getAllMetrics();');
-  console.log('  const summary = tracker.getSummary();');
-  console.log('  const exportData = tracker.export();');
+  console.info('\n💡 USAGE EXAMPLES:');
+  console.info('  // Basic usage with official Bun APIs');
+  console.info('  const tracker = new BunNativeAPITracker();');
+  console.info('  const trackedAPIs = new TrackedBunAPIs(tracker);');
+  console.info('  ');
+  console.info('  // Track official Bun APIs');
+  console.info('  await trackedAPIs.trackedFetch("https://example.com");');
+  console.info('  const file = trackedAPIs.trackedFile("data.json");');
+  console.info('  await trackedAPIs.trackedWrite("output.json", data);');
+  console.info('  const hash = trackedAPIs.trackedHash("data");');
+  console.info('  await trackedAPIs.trackedSleep(1000000);');
+  console.info('  const compressed = trackedAPIs.trackedGzipSync(buffer);');
+  console.info('  ');
+  console.info('  // Get comprehensive metrics');
+  console.info('  const metrics = tracker.getAllMetrics();');
+  console.info('  const summary = tracker.getSummary();');
+  console.info('  const exportData = tracker.export();');
 }
 
 // Start the integration demonstration

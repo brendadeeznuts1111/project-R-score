@@ -10,8 +10,8 @@ const variants = new SecureVariantManager();
 
 const secureCookie = 'session=abc123; Secure; HttpOnly; SameSite=Strict; Path=/';
 
-console.log('🍪 Cookie Security v3.26 Benchmarks');
-console.log('=====================================\n');
+console.info('🍪 Cookie Security v3.26 Benchmarks');
+console.info('=====================================\n');
 
 // Benchmark helper
 async function benchmark(name: string, fn: () => void | Promise<void>, iterations = 10000) {
@@ -23,7 +23,7 @@ async function benchmark(name: string, fn: () => void | Promise<void>, iteration
   const opsPerSecond = Math.round((iterations / elapsed) * 1000);
   const avgMs = (elapsed / iterations).toFixed(3);
   
-  console.log(`${name.padEnd(35)} ${opsPerSecond.toString().padStart(8)} ops/s  (${avgMs} ms/op)`);
+  console.info(`${name.padEnd(35)} ${opsPerSecond.toString().padStart(8)} ops/s  (${avgMs} ms/op)`);
   return opsPerSecond;
 }
 
@@ -110,23 +110,23 @@ results.variantInvalid = await benchmark('validateVariant (invalid)', () => {
 }, 50000);
 
 // Summary
-console.log('\n📊 Summary');
-console.log('==========');
+console.info('\n📊 Summary');
+console.info('==========');
 const ops = Object.values(results);
 const avg = Math.round(ops.reduce((a, b) => a + b, 0) / ops.length);
 const total = ops.reduce((a, b) => a + b, 0);
 
-console.log(`Total operations: ${total.toLocaleString()} ops/s`);
-console.log(`Average:          ${avg.toLocaleString()} ops/s`);
-console.log(`Target:           285,000 ops/s`);
-console.log(`Status:           ${avg >= 285000 ? '✅ EXCEEDED' : avg >= 200000 ? '✅ GOOD' : '⚠️ BELOW TARGET'}`);
+console.info(`Total operations: ${total.toLocaleString()} ops/s`);
+console.info(`Average:          ${avg.toLocaleString()} ops/s`);
+console.info(`Target:           285,000 ops/s`);
+console.info(`Status:           ${avg >= 285000 ? '✅ EXCEEDED' : avg >= 200000 ? '✅ GOOD' : '⚠️ BELOW TARGET'}`);
 
 // Per-operation breakdown
-console.log('\n📝 Per-Operation Performance:');
-console.log(`Cookie.parse:      ~${results.parseSecure.toLocaleString()} ops/s`);
-console.log(`Cookie.from:       ~${results.createSession.toLocaleString()} ops/s`);
-console.log(`Full audit:        ~${results.audit.toLocaleString()} ops/s`);
-console.log(`CSRF generate:     ~${results.csrfGenerate.toLocaleString()} ops/s`);
-console.log(`CSRF validate:     ~${results.csrfValidate.toLocaleString()} ops/s`);
+console.info('\n📝 Per-Operation Performance:');
+console.info(`Cookie.parse:      ~${results.parseSecure.toLocaleString()} ops/s`);
+console.info(`Cookie.from:       ~${results.createSession.toLocaleString()} ops/s`);
+console.info(`Full audit:        ~${results.audit.toLocaleString()} ops/s`);
+console.info(`CSRF generate:     ~${results.csrfGenerate.toLocaleString()} ops/s`);
+console.info(`CSRF validate:     ~${results.csrfValidate.toLocaleString()} ops/s`);
 
-console.log('\n🚀 Benchmark complete!');
+console.info('\n🚀 Benchmark complete!');

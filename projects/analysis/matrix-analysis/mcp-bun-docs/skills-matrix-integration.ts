@@ -117,7 +117,7 @@ export class SecureMatrixMonitor {
 	 * Run security audit on matrix features
 	 */
 	async runSecurityAudit(): Promise<void> {
-		console.log("🔍 Starting Tier-1380 Security Audit...");
+		console.info("🔍 Starting Tier-1380 Security Audit...");
 
 		const classifications = await this.getSecurityClassifications();
 		const criticalEntries = classifications.filter(
@@ -126,10 +126,10 @@ export class SecureMatrixMonitor {
 		const authRequired = classifications.filter((e) => e.requiresAuth);
 		const auditRequired = classifications.filter((e) => e.auditRequired);
 
-		console.log(`\n📊 Audit Results:`);
-		console.log(`  • Critical security features: ${criticalEntries.length}`);
-		console.log(`  • Features requiring authentication: ${authRequired.length}`);
-		console.log(`  • Features requiring audit: ${auditRequired.length}`);
+		console.info(`\n📊 Audit Results:`);
+		console.info(`  • Critical security features: ${criticalEntries.length}`);
+		console.info(`  • Features requiring authentication: ${authRequired.length}`);
+		console.info(`  • Features requiring audit: ${auditRequired.length}`);
 
 		// Log to Skills Registry for tracking
 		if (this.authToken) {
@@ -156,7 +156,7 @@ export class SecureMatrixMonitor {
 			secureStorage: await this.measureSecureStorage(),
 		};
 
-		console.log("🔒 Security Metrics:", securityMetrics);
+		console.info("🔒 Security Metrics:", securityMetrics);
 	}
 
 	// Private helper methods
@@ -247,8 +247,8 @@ export const secureMatrixMonitor = new SecureMatrixMonitor();
 
 // CLI integration
 if (import.meta.main) {
-	console.log("🔐 Secure Matrix Monitor CLI");
-	console.log("Commands: monitor, audit, profile");
+	console.info("🔐 Secure Matrix Monitor CLI");
+	console.info("Commands: monitor, audit, profile");
 
 	const command = process.argv[2];
 
@@ -263,7 +263,7 @@ if (import.meta.main) {
 			secureMatrixMonitor.profileWithSecurityMetrics(process.argv[3] || "test.ts");
 			break;
 		default:
-			console.log(
+			console.info(
 				"Usage: bun skills-matrix-integration.ts [monitor|audit|profile] [script]",
 			);
 	}

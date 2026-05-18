@@ -61,7 +61,7 @@ export class RiskAssessmentEngine {
 
     this.assessments.set(playerId, assessment);
 
-    console.log(`🎯 Risk assessment for ${playerId}: ${overallRisk} (${riskScore})`);
+    console.info(`🎯 Risk assessment for ${playerId}: ${overallRisk} (${riskScore})`);
     return assessment;
   }
 

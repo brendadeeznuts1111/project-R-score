@@ -20,9 +20,9 @@ import {
 } from '../optimizations/bun-optimizations.ts';
 
 function example1(): void {
-	console.log('═══════════════════════════════════════════════════════════');
-	console.log('Example 1: High-Performance Optimization (ID 8)');
-	console.log('═══════════════════════════════════════════════════════════\n');
+	console.info('═══════════════════════════════════════════════════════════');
+	console.info('Example 1: High-Performance Optimization (ID 8)');
+	console.info('═══════════════════════════════════════════════════════════\n');
 
 	// ID 8 from docs/BUN_CONSTANTS_TABLE.md: 90ns native vs 1850ns userland
 	const pRatio = calculatePRatio(90, 1850);
@@ -38,32 +38,32 @@ function example1(): void {
 
 	const rScore = calculateRScore(params);
 
-	console.log('Performance Metrics:');
-	console.log(`  Native: 90ns, Userland: 1850ns → P_ratio: ${pRatio.toFixed(4)}`);
-	console.log(`  Memory saved: 320B / 1024B → M_impact: ${mImpact.toFixed(4)}\n`);
+	console.info('Performance Metrics:');
+	console.info(`  Native: 90ns, Userland: 1850ns → P_ratio: ${pRatio.toFixed(4)}`);
+	console.info(`  Memory saved: 320B / 1024B → M_impact: ${mImpact.toFixed(4)}\n`);
 
-	console.log(formatRScoreTable(params));
-	console.log(`\nOverall R-Score: ${formatRScore(rScore)}\n`);
+	console.info(formatRScoreTable(params));
+	console.info(`\nOverall R-Score: ${formatRScore(rScore)}\n`);
 }
 
 function example2(): void {
-	console.log('═══════════════════════════════════════════════════════════');
-	console.log('Example 2: Speedup Scaling by Payload Size');
-	console.log('═══════════════════════════════════════════════════════════\n');
+	console.info('═══════════════════════════════════════════════════════════');
+	console.info('Example 2: Speedup Scaling by Payload Size');
+	console.info('═══════════════════════════════════════════════════════════\n');
 
 	const sizes = [0.1, 1, 10, 100, 1024, 10240, 102400];
 
-	console.log('Payload Size → Speedup:');
+	console.info('Payload Size → Speedup:');
 	for (const sizeKB of sizes) {
-		console.log(`  ${formatSpeedup(sizeKB)}`);
+		console.info(`  ${formatSpeedup(sizeKB)}`);
 	}
-	console.log('');
+	console.info('');
 }
 
 function example3(): void {
-	console.log('═══════════════════════════════════════════════════════════');
-	console.log('Example 3: R-Score Threshold Comparison');
-	console.log('═══════════════════════════════════════════════════════════\n');
+	console.info('═══════════════════════════════════════════════════════════');
+	console.info('Example 3: R-Score Threshold Comparison');
+	console.info('═══════════════════════════════════════════════════════════\n');
 
 	const examples: Array<{name: string; params: RScoreParams}> = [
 		{
@@ -86,9 +86,9 @@ function example3(): void {
 
 	for (const example of examples) {
 		const rScore = calculateRScore(example.params);
-		console.log(`${example.name}:`);
-		console.log(`  ${formatRScore(rScore)}`);
-		console.log('');
+		console.info(`${example.name}:`);
+		console.info(`  ${formatRScore(rScore)}`);
+		console.info('');
 	}
 }
 
@@ -106,9 +106,9 @@ function main(): void {
 	} else {
 		// Run all examples
 		example1();
-		console.log('\n');
+		console.info('\n');
 		example2();
-		console.log('\n');
+		console.info('\n');
 		example3();
 	}
 }

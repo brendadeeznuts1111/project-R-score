@@ -33,7 +33,7 @@ const mockFetch = (response: any, options: any = {}) => {
   
   // Mock fetch.preconnect
   (global.fetch as any).preconnect = async (url: string) => {
-    console.log(`Preconnecting to: ${url}`);
+    console.info(`Preconnecting to: ${url}`);
   };
 };
 

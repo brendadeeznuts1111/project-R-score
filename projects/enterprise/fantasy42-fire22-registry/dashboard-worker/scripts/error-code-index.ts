@@ -456,23 +456,23 @@ export class ErrorTracker {
 
 // !==!==!===== DISPLAY UTILITIES !==!==!=====
 export function displayErrorIndex(): void {
-  console.log('\n📚 **ERROR CODE INDEX & REFERENCE** 📚\n');
-  console.log('='.repeat(80));
+  console.info('\n📚 **ERROR CODE INDEX & REFERENCE** 📚\n');
+  console.info('='.repeat(80));
 
   // Display categories
-  console.log('\n🏷️ **ERROR CATEGORIES**');
-  console.log('-'.repeat(80));
+  console.info('\n🏷️ **ERROR CATEGORIES**');
+  console.info('-'.repeat(80));
 
   Object.entries(ERROR_CATEGORIES).forEach(([key, category]) => {
-    console.log(
+    console.info(
       `${category.color}${category.prefix}xxx${color('#ffffff', 'css')} | ${category.name.padEnd(20)} | Range: ${category.range}`
     );
-    console.log(`       ${category.description}\n`);
+    console.info(`       ${category.description}\n`);
   });
 
   // Display all errors
-  console.log('📋 **COMPLETE ERROR INDEX**');
-  console.log('-'.repeat(80));
+  console.info('📋 **COMPLETE ERROR INDEX**');
+  console.info('-'.repeat(80));
 
   Object.entries(ERROR_CATEGORIES).forEach(([categoryKey, category]) => {
     const categoryErrors = Object.values(ERROR_INDEX).filter(
@@ -480,23 +480,23 @@ export function displayErrorIndex(): void {
     );
 
     if (categoryErrors.length > 0) {
-      console.log(`\n${category.color}${category.name.toUpperCase()}${color('#ffffff', 'css')}`);
-      console.log('-'.repeat(40));
+      console.info(`\n${category.color}${category.name.toUpperCase()}${color('#ffffff', 'css')}`);
+      console.info('-'.repeat(40));
 
       categoryErrors.forEach(error => {
-        console.log(`${category.color}${error.code}${color('#ffffff', 'css')} | ${error.name}`);
-        console.log(`       ${error.message}`);
-        console.log(
+        console.info(`${category.color}${error.code}${color('#ffffff', 'css')} | ${error.name}`);
+        console.info(`       ${error.message}`);
+        console.info(
           `       Severity: ${color('#fbbf24', 'css')}${error.severity}${color('#ffffff', 'css')}`
         );
-        console.log(`       Solutions: ${error.solutions.length} available`);
-        console.log(`       Links: ${error.links.length} documentation links`);
+        console.info(`       Solutions: ${error.solutions.length} available`);
+        console.info(`       Links: ${error.links.length} documentation links`);
         if (error.occurrences > 0) {
-          console.log(
+          console.info(
             `       ${color('#ef4444', 'css')}Occurrences: ${error.occurrences}${color('#ffffff', 'css')}`
           );
         }
-        console.log();
+        console.info();
       });
     }
   });
@@ -511,8 +511,8 @@ if (import.meta.main) {
   displayErrorIndex();
 
   // Demo error tracking
-  console.log('\n🔥 **ERROR TRACKING DEMO** 🔥');
-  console.log('='.repeat(80));
+  console.info('\n🔥 **ERROR TRACKING DEMO** 🔥');
+  console.info('='.repeat(80));
 
   // Simulate some errors
   const testErrors = ['E1001', 'E2001', 'E3001', 'E4001', 'E1001', 'E2001', 'E3002'];
@@ -524,35 +524,35 @@ if (import.meta.main) {
   // Generate report
   const report = errorTracker.generateReport();
 
-  console.log('\n📊 **ERROR REPORT**');
-  console.log('-'.repeat(80));
-  console.log(
+  console.info('\n📊 **ERROR REPORT**');
+  console.info('-'.repeat(80));
+  console.info(
     `Total Errors: ${color('#ef4444', 'css')}${report.totalErrors}${color('#ffffff', 'css')}`
   );
 
-  console.log('\n🏷️ **Errors by Category:**');
+  console.info('\n🏷️ **Errors by Category:**');
   Object.entries(report.categoryCounts).forEach(([category, count]) => {
-    console.log(
+    console.info(
       `${category.padEnd(15)}: ${color('#ef4444', 'css')}${count}${color('#ffffff', 'css')}`
     );
   });
 
-  console.log('\n⚠️ **Errors by Severity:**');
+  console.info('\n⚠️ **Errors by Severity:**');
   Object.entries(report.severityCounts).forEach(([severity, count]) => {
-    console.log(
+    console.info(
       `${severity.padEnd(15)}: ${color('#f59e0b', 'css')}${count}${color('#ffffff', 'css')}`
     );
   });
 
-  console.log('\n🔥 **Top 5 Errors:**');
+  console.info('\n🔥 **Top 5 Errors:**');
   report.topErrors.forEach((error, index) => {
     if (error.occurrences > 0) {
-      console.log(
+      console.info(
         `${index + 1}. ${color('#ef4444', 'css')}${error.code}${color('#ffffff', 'css')} - ${error.message} (${color('#fbbf24', 'css')}${error.occurrences}${color('#ffffff', 'css')} times)`
       );
     }
   });
 
-  console.log('\n' + '='.repeat(80));
-  console.log('Error index and tracking system ready!');
+  console.info('\n' + '='.repeat(80));
+  console.info('Error index and tracking system ready!');
 }

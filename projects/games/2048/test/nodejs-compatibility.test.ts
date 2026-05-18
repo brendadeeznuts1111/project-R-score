@@ -115,7 +115,7 @@ import { createServer } from "node:http";
 const server = createServer((req, res) => {
   if (req.method === 'CONNECT') {
     // v1.3.6 fix: req.head now contains pipelined data
-    console.log('CONNECT request head length:', req.head?.length || 0);
+    console.info('CONNECT request head length:', req.head?.length || 0);
     res.writeHead(200, 'Connection Established');
     res.end();
   }
@@ -158,7 +158,7 @@ import { createServer } from "node:http2";
 const server = createServer((req, res) => {
   // Improved flow control in v1.3.6
   res.stream.on('drain', () => {
-    console.log('Stream drained, ready for more data');
+    console.info('Stream drained, ready for more data');
   });
 
   res.writeHead(200, { 'content-type': 'application/json' });
@@ -234,5 +234,5 @@ describe("Node.js Compatibility - Migration Support", () => {
   });
 });
 
-console.log("🧪 Node.js Compatibility Tests Loaded!");
-console.log("   Run with: bun test --grep 'Node.js Compatibility'");
+console.info("🧪 Node.js Compatibility Tests Loaded!");
+console.info("   Run with: bun test --grep 'Node.js Compatibility'");

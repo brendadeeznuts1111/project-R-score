@@ -62,12 +62,12 @@ class WorkspacePerformanceProfiler {
    * 🚀 Run performance profiling
    */
   async profile(): Promise<void> {
-    console.log('⚡ Fire22 Workspace Performance Profiler');
-    console.log('='.repeat(60));
-    console.log('🔍 Profiling', this.workspaces.length, 'workspaces...\n');
+    console.info('⚡ Fire22 Workspace Performance Profiler');
+    console.info('='.repeat(60));
+    console.info('🔍 Profiling', this.workspaces.length, 'workspaces...\n');
 
     for (const workspace of this.workspaces) {
-      console.log(`\n📊 Profiling ${workspace}...`);
+      console.info(`\n📊 Profiling ${workspace}...`);
       const metrics = await this.profileWorkspace(workspace);
       this.results.push(metrics);
       this.printMetrics(metrics);
@@ -107,7 +107,7 @@ class WorkspacePerformanceProfiler {
     };
 
     // Measure install time
-    console.log('  📦 Measuring install time...');
+    console.info('  📦 Measuring install time...');
     const installStart = performance.now();
     try {
       await $`cd ${workspacePath} && rm -rf node_modules bun.lockb && bun install --production`.quiet();
@@ -117,7 +117,7 @@ class WorkspacePerformanceProfiler {
     }
 
     // Measure build time
-    console.log('  🔨 Measuring build time...');
+    console.info('  🔨 Measuring build time...');
     const buildStart = performance.now();
     try {
       await $`cd ${workspacePath} && bun run build:standalone`.quiet();
@@ -127,14 +127,14 @@ class WorkspacePerformanceProfiler {
     }
 
     // Measure bundle size
-    console.log('  📏 Measuring bundle size...');
+    console.info('  📏 Measuring bundle size...');
     const distPath = join(workspacePath, 'dist', 'standalone');
     if (existsSync(distPath)) {
       metrics.bundleSize = await this.getDirectorySize(distPath);
     }
 
     // Measure test time
-    console.log('  🧪 Measuring test time...');
+    console.info('  🧪 Measuring test time...');
     const testStart = performance.now();
     try {
       await $`cd ${workspacePath} && bun test`.quiet();
@@ -144,7 +144,7 @@ class WorkspacePerformanceProfiler {
     }
 
     // Measure startup time
-    console.log('  🚀 Measuring startup time...');
+    console.info('  🚀 Measuring startup time...');
     const startupStart = performance.now();
     try {
       const mainFile = join(workspacePath, 'src', 'index.ts');
@@ -157,7 +157,7 @@ class WorkspacePerformanceProfiler {
     }
 
     // Measure memory usage
-    console.log('  💾 Measuring memory usage...');
+    console.info('  💾 Measuring memory usage...');
     const memUsage = process.memoryUsage();
     metrics.memoryUsage = {
       heap: Math.round(memUsage.heapUsed / 1024 / 1024),
@@ -166,7 +166,7 @@ class WorkspacePerformanceProfiler {
     };
 
     // Count dependencies
-    console.log('  📊 Analyzing dependencies...');
+    console.info('  📊 Analyzing dependencies...');
     const nodeModulesPath = join(workspacePath, 'node_modules');
     if (existsSync(nodeModulesPath)) {
       try {
@@ -245,18 +245,18 @@ class WorkspacePerformanceProfiler {
    * 📊 Print metrics for a workspace
    */
   private printMetrics(metrics: PerformanceMetrics): void {
-    console.log(`  ⏱️  Build Time: ${this.formatTime(metrics.buildTime)}`);
-    console.log(`  📦 Bundle Size: ${this.formatSize(metrics.bundleSize)}`);
-    console.log(`  📥 Install Time: ${this.formatTime(metrics.installTime)}`);
-    console.log(`  🧪 Test Time: ${this.formatTime(metrics.testTime)}`);
-    console.log(`  🚀 Startup Time: ${this.formatTime(metrics.startupTime)}`);
-    console.log(
+    console.info(`  ⏱️  Build Time: ${this.formatTime(metrics.buildTime)}`);
+    console.info(`  📦 Bundle Size: ${this.formatSize(metrics.bundleSize)}`);
+    console.info(`  📥 Install Time: ${this.formatTime(metrics.installTime)}`);
+    console.info(`  🧪 Test Time: ${this.formatTime(metrics.testTime)}`);
+    console.info(`  🚀 Startup Time: ${this.formatTime(metrics.startupTime)}`);
+    console.info(
       `  💾 Memory: ${metrics.memoryUsage.total}MB (heap: ${metrics.memoryUsage.heap}MB)`
     );
-    console.log(
+    console.info(
       `  📚 Dependencies: ${metrics.dependencies.count} (${this.formatSize(metrics.dependencies.size)})`
     );
-    console.log(
+    console.info(
       `  🎯 Performance Score: ${metrics.performance.score}/100 (${metrics.performance.grade})`
     );
   }
@@ -283,17 +283,17 @@ class WorkspacePerformanceProfiler {
    * 📊 Generate performance report
    */
   private generateReport(): void {
-    console.log('\n' + '='.repeat(60));
-    console.log('📊 PERFORMANCE REPORT');
-    console.log('='.repeat(60));
+    console.info('\n' + '='.repeat(60));
+    console.info('📊 PERFORMANCE REPORT');
+    console.info('='.repeat(60));
 
     // Sort by performance score
     const sorted = [...this.results].sort((a, b) => b.performance.score - a.performance.score);
 
-    console.log('\n🏆 Performance Rankings:');
+    console.info('\n🏆 Performance Rankings:');
     sorted.forEach((metrics, index) => {
       const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '  ';
-      console.log(
+      console.info(
         `${medal} ${metrics.workspace}: ${metrics.performance.score}/100 (${metrics.performance.grade})`
       );
     });
@@ -311,18 +311,18 @@ class WorkspacePerformanceProfiler {
       ),
     };
 
-    console.log('\n📈 Aggregate Metrics:');
-    console.log(`  Total Build Time: ${this.formatTime(totals.buildTime)}`);
-    console.log(`  Total Bundle Size: ${this.formatSize(totals.bundleSize)}`);
-    console.log(`  Total Install Time: ${this.formatTime(totals.installTime)}`);
-    console.log(`  Total Test Time: ${this.formatTime(totals.testTime)}`);
-    console.log(
+    console.info('\n📈 Aggregate Metrics:');
+    console.info(`  Total Build Time: ${this.formatTime(totals.buildTime)}`);
+    console.info(`  Total Bundle Size: ${this.formatSize(totals.bundleSize)}`);
+    console.info(`  Total Install Time: ${this.formatTime(totals.installTime)}`);
+    console.info(`  Total Test Time: ${this.formatTime(totals.testTime)}`);
+    console.info(
       `  Total Dependencies: ${totals.dependencies} (${this.formatSize(totals.dependenciesSize)})`
     );
-    console.log(`  Average Score: ${totals.avgScore}/100`);
+    console.info(`  Average Score: ${totals.avgScore}/100`);
 
     // Recommendations
-    console.log('\n💡 Recommendations:');
+    console.info('\n💡 Recommendations:');
     for (const metrics of this.results) {
       const recommendations = [];
 
@@ -340,8 +340,8 @@ class WorkspacePerformanceProfiler {
       }
 
       if (recommendations.length > 0) {
-        console.log(`\n  ${metrics.workspace}:`);
-        recommendations.forEach(r => console.log(`    • ${r}`));
+        console.info(`\n  ${metrics.workspace}:`);
+        recommendations.forEach(r => console.info(`    • ${r}`));
       }
     }
   }
@@ -371,7 +371,7 @@ class WorkspacePerformanceProfiler {
 
     const reportPath = join(process.cwd(), 'workspace-performance-report.json');
     await Bun.write(reportPath, JSON.stringify(report, null, 2));
-    console.log(`\n📄 Performance report saved to: ${reportPath}`);
+    console.info(`\n📄 Performance report saved to: ${reportPath}`);
   }
 }
 

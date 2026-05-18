@@ -36,7 +36,7 @@ function createMarketHours(config: { open: string; close: string }) {
 // Mock consciousness ledger for snapshot updates
 const ConsciousLedger = {
     log: (entry: any) => {
-        console.log(`[ConsciousLedger] ${JSON.stringify(entry)}`);
+        console.info(`[ConsciousLedger] ${JSON.stringify(entry)}`);
     }
 };
 

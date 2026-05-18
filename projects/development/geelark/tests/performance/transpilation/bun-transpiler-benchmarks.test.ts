@@ -87,7 +87,7 @@ describe("⚡ Bun Transpilation & Module Resolution Benchmarks", () => {
             <div className="container">
               <h1>{title}</h1>
               <p>Count: {count}</p>
-              <button onClick={() => console.log('clicked')}>
+              <button onClick={() => console.info('clicked')}>
                 Click me
               </button>
             </div>
@@ -120,7 +120,7 @@ describe("⚡ Bun Transpilation & Module Resolution Benchmarks", () => {
           const [count, setCount] = useState(initial);
 
           useEffect(() => {
-            console.log('Count changed:', count);
+            console.info('Count changed:', count);
           }, [count]);
 
           const increment = (): void => {
@@ -331,9 +331,9 @@ describe("⚡ Bun Transpilation & Module Resolution Benchmarks", () => {
         results[loader] = time;
       });
 
-      console.log("📊 Loader performance comparison:");
+      console.info("📊 Loader performance comparison:");
       Object.entries(results).forEach(([loader, time]) => {
-        console.log(`  ${loader}: ${time.toFixed(2)}ms`);
+        console.info(`  ${loader}: ${time.toFixed(2)}ms`);
       });
 
       // All loaders should complete successfully
@@ -431,10 +431,10 @@ describe("⚡ Bun Transpilation & Module Resolution Benchmarks", () => {
       expect(result.length).toBeGreaterThan(10000);
 
       if (beforeMemory > 0) {
-        console.log(`🧠 Memory usage during transpilation:`);
-        console.log(`  Before: ${(beforeMemory / 1024).toFixed(2)}KB`);
-        console.log(`  After: ${(afterMemory / 1024).toFixed(2)}KB`);
-        console.log(`  Delta: ${((afterMemory - beforeMemory) / 1024).toFixed(2)}KB`);
+        console.info(`🧠 Memory usage during transpilation:`);
+        console.info(`  Before: ${(beforeMemory / 1024).toFixed(2)}KB`);
+        console.info(`  After: ${(afterMemory / 1024).toFixed(2)}KB`);
+        console.info(`  Delta: ${((afterMemory - beforeMemory) / 1024).toFixed(2)}KB`);
       }
     });
   });
@@ -477,7 +477,7 @@ describe("⚡ Bun Transpilation & Module Resolution Benchmarks", () => {
           }, [user.id, onUpdate]);
 
           useEffect(() => {
-            console.log('UserProfile mounted for user:', user.id);
+            console.info('UserProfile mounted for user:', user.id);
           }, [user.id]);
 
           if (loading) return <div>Loading...</div>;

@@ -29,7 +29,7 @@ class GovernanceEnforcer {
   }
 
   async enforceSecurity(): Promise<void> {
-    console.log('🔒 ENFORCING SECURITY RULES v2.11\n');
+    console.info('🔒 ENFORCING SECURITY RULES v2.11\n');
 
     const checks: SecurityCheck[] = [
       {
@@ -78,41 +78,41 @@ class GovernanceEnforcer {
     let failed = 0;
 
     for (const check of checks) {
-      console.log(`🔍 ${check.name}...`);
+      console.info(`🔍 ${check.name}...`);
       try {
         const result = await check.check();
         if (result.passed) {
-          console.log(`  ✅ PASSED: ${result.details}`);
+          console.info(`  ✅ PASSED: ${result.details}`);
           passed++;
         } else {
-          console.log(`  ❌ FAILED: ${result.details}`);
+          console.info(`  ❌ FAILED: ${result.details}`);
           if (result.fix) {
-            console.log(`    💡 FIX: ${result.fix}`);
+            console.info(`    💡 FIX: ${result.fix}`);
           }
           failed++;
         }
       } catch (error) {
-        console.log(`  ❌ ERROR: ${error.message}`);
+        console.info(`  ❌ ERROR: ${error.message}`);
         failed++;
       }
-      console.log('');
+      console.info('');
     }
 
-    console.log(`📊 SECURITY ENFORCEMENT COMPLETE:`);
-    console.log(`   ✅ Passed: ${passed}`);
-    console.log(`   ❌ Failed: ${failed}`);
-    console.log(`   📈 Compliance: ${Math.round((passed / (passed + failed)) * 100)}%`);
+    console.info(`📊 SECURITY ENFORCEMENT COMPLETE:`);
+    console.info(`   ✅ Passed: ${passed}`);
+    console.info(`   ❌ Failed: ${failed}`);
+    console.info(`   📈 Compliance: ${Math.round((passed / (passed + failed)) * 100)}%`);
 
     if (failed > 0) {
-      console.log('\n🚨 SECURITY VIOLATIONS DETECTED - MANUAL REVIEW REQUIRED');
+      console.info('\n🚨 SECURITY VIOLATIONS DETECTED - MANUAL REVIEW REQUIRED');
       process.exit(1);
     } else {
-      console.log('\n🛡️  SECURITY ENFORCEMENT PASSED - SYSTEM SECURE');
+      console.info('\n🛡️  SECURITY ENFORCEMENT PASSED - SYSTEM SECURE');
     }
   }
 
   async enforceAccess(): Promise<void> {
-    console.log('🔐 ENFORCING ACCESS CONTROL RULES v2.11\n');
+    console.info('🔐 ENFORCING ACCESS CONTROL RULES v2.11\n');
 
     const checks: AccessCheck[] = [
       {
@@ -156,36 +156,36 @@ class GovernanceEnforcer {
     let failed = 0;
 
     for (const check of checks) {
-      console.log(`🔍 ${check.name}...`);
+      console.info(`🔍 ${check.name}...`);
       try {
         const result = await check.check();
         if (result.passed) {
-          console.log(`  ✅ PASSED: ${result.details}`);
+          console.info(`  ✅ PASSED: ${result.details}`);
           passed++;
         } else {
-          console.log(`  ❌ FAILED: ${result.details}`);
+          console.info(`  ❌ FAILED: ${result.details}`);
           if (result.fix) {
-            console.log(`    💡 FIX: ${result.fix}`);
+            console.info(`    💡 FIX: ${result.fix}`);
           }
           failed++;
         }
       } catch (error) {
-        console.log(`  ❌ ERROR: ${error.message}`);
+        console.info(`  ❌ ERROR: ${error.message}`);
         failed++;
       }
-      console.log('');
+      console.info('');
     }
 
-    console.log(`📊 ACCESS ENFORCEMENT COMPLETE:`);
-    console.log(`   ✅ Passed: ${passed}`);
-    console.log(`   ❌ Failed: ${failed}`);
-    console.log(`   📈 Compliance: ${Math.round((passed / (passed + failed)) * 100)}%`);
+    console.info(`📊 ACCESS ENFORCEMENT COMPLETE:`);
+    console.info(`   ✅ Passed: ${passed}`);
+    console.info(`   ❌ Failed: ${failed}`);
+    console.info(`   📈 Compliance: ${Math.round((passed / (passed + failed)) * 100)}%`);
 
     if (failed > 0) {
-      console.log('\n🚨 ACCESS VIOLATIONS DETECTED - MANUAL REVIEW REQUIRED');
+      console.info('\n🚨 ACCESS VIOLATIONS DETECTED - MANUAL REVIEW REQUIRED');
       process.exit(1);
     } else {
-      console.log('\n🔒 ACCESS ENFORCEMENT PASSED - SYSTEM LOCKED DOWN');
+      console.info('\n🔒 ACCESS ENFORCEMENT PASSED - SYSTEM LOCKED DOWN');
     }
   }
 
@@ -683,7 +683,7 @@ if (import.meta.main) {
       enforcer.enforceAccess();
       break;
     default:
-      console.log('Usage: bun gov-enforce.ts <security|access>');
+      console.info('Usage: bun gov-enforce.ts <security|access>');
       process.exit(1);
   }
 }

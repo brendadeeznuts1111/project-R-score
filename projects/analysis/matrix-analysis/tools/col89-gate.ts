@@ -26,7 +26,7 @@ try {
 		process.exit(1);
 	}
 
-	console.log(`✅ Col-89 compliant: ${lines.length} lines checked`);
+	console.info(`✅ Col-89 compliant: ${lines.length} lines checked`);
 	process.exit(0);
 } catch (error: any) {
 	console.error(`❌ Error reading file: ${error?.message || error}`);

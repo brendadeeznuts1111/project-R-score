@@ -37,9 +37,9 @@ class ProfilingManager {
 		const profileName = options.name || `cpu-profile-${timestamp}`;
 		const format = options.format || "both";
 
-		console.log(`🔥 Starting CPU profiling for: ${scriptPath}`);
-		console.log(`📁 Output directory: ${this.outputDir}`);
-		console.log(`📊 Format: ${format}`);
+		console.info(`🔥 Starting CPU profiling for: ${scriptPath}`);
+		console.info(`📁 Output directory: ${this.outputDir}`);
+		console.info(`📊 Format: ${format}`);
 
 		const startTime = Date.now();
 
@@ -59,7 +59,7 @@ class ProfilingManager {
 					scriptPath,
 				];
 
-				console.log(`⚡ Running: ${command.join(" ")}`);
+				console.info(`⚡ Running: ${command.join(" ")}`);
 				const proc = Bun.spawn(command, {
 					stdout: "pipe",
 					stderr: "pipe",
@@ -70,7 +70,7 @@ class ProfilingManager {
 
 				if (proc.exitCode === 0) {
 					files.push(mdFile);
-					console.log(`✅ CPU profile (Markdown) saved: ${mdFile}`);
+					console.info(`✅ CPU profile (Markdown) saved: ${mdFile}`);
 				} else {
 					const error = await new Response(proc.stderr).text();
 					throw new Error(`CPU profiling failed: ${error}`);
@@ -89,7 +89,7 @@ class ProfilingManager {
 					scriptPath,
 				];
 
-				console.log(`⚡ Running: ${command.join(" ")}`);
+				console.info(`⚡ Running: ${command.join(" ")}`);
 				const proc = Bun.spawn(command, {
 					stdout: "pipe",
 					stderr: "pipe",
@@ -100,7 +100,7 @@ class ProfilingManager {
 
 				if (proc.exitCode === 0) {
 					files.push(jsonFile);
-					console.log(`✅ CPU profile (JSON) saved: ${jsonFile}`);
+					console.info(`✅ CPU profile (JSON) saved: ${jsonFile}`);
 				}
 			}
 
@@ -129,9 +129,9 @@ class ProfilingManager {
 		const profileName = options.name || `heap-profile-${timestamp}`;
 		const format = options.format || "both";
 
-		console.log(`💾 Starting heap profiling for: ${scriptPath}`);
-		console.log(`📁 Output directory: ${this.outputDir}`);
-		console.log(`📊 Format: ${format}`);
+		console.info(`💾 Starting heap profiling for: ${scriptPath}`);
+		console.info(`📁 Output directory: ${this.outputDir}`);
+		console.info(`📊 Format: ${format}`);
 
 		const startTime = Date.now();
 
@@ -150,7 +150,7 @@ class ProfilingManager {
 					scriptPath,
 				];
 
-				console.log(`⚡ Running: ${command.join(" ")}`);
+				console.info(`⚡ Running: ${command.join(" ")}`);
 				const proc = Bun.spawn(command, {
 					stdout: "pipe",
 					stderr: "pipe",
@@ -162,7 +162,7 @@ class ProfilingManager {
 				if (proc.exitCode === 0) {
 					const mdFile = join(this.outputDir, `${profileName}.md`);
 					files.push(mdFile);
-					console.log(`✅ Heap profile (Markdown) saved: ${mdFile}`);
+					console.info(`✅ Heap profile (Markdown) saved: ${mdFile}`);
 				} else {
 					const error = await new Response(proc.stderr).text();
 					throw new Error(`Heap profiling failed: ${error}`);
@@ -180,7 +180,7 @@ class ProfilingManager {
 					scriptPath,
 				];
 
-				console.log(`⚡ Running: ${command.join(" ")}`);
+				console.info(`⚡ Running: ${command.join(" ")}`);
 				const proc = Bun.spawn(command, {
 					stdout: "pipe",
 					stderr: "pipe",
@@ -192,7 +192,7 @@ class ProfilingManager {
 				if (proc.exitCode === 0) {
 					const heapFile = join(this.outputDir, `${profileName}.heapsnapshot`);
 					files.push(heapFile);
-					console.log(`✅ Heap profile (Snapshot) saved: ${heapFile}`);
+					console.info(`✅ Heap profile (Snapshot) saved: ${heapFile}`);
 				}
 			}
 
@@ -345,38 +345,38 @@ class ProfilingManager {
 	}
 
 	async compareProfiles(profileFiles: string[]): Promise<void> {
-		console.log("📊 Profile Comparison Analysis");
-		console.log("================================");
+		console.info("📊 Profile Comparison Analysis");
+		console.info("================================");
 
 		for (const file of profileFiles) {
 			if (!existsSync(file)) {
-				console.log(`❌ File not found: ${file}`);
+				console.info(`❌ File not found: ${file}`);
 				continue;
 			}
 
-			console.log(`\n📁 Analyzing: ${file}`);
+			console.info(`\n📁 Analyzing: ${file}`);
 
 			if (file.endsWith(".md")) {
 				const _content = await Bun.file(file).text();
 
 				if (file.includes("cpu")) {
 					const analysis = await this.analyzeCPUProfile(file);
-					console.log(`  Duration: ${analysis.duration}ms`);
-					console.log(`  Samples: ${analysis.samples}`);
-					console.log(`  Hot Functions: ${analysis.hotFunctions.length}`);
+					console.info(`  Duration: ${analysis.duration}ms`);
+					console.info(`  Samples: ${analysis.samples}`);
+					console.info(`  Hot Functions: ${analysis.hotFunctions.length}`);
 				} else if (file.includes("heap")) {
 					const analysis = await this.analyzeHeapProfile(file);
-					console.log(`  Heap Size: ${analysis.totalHeapSize}KB`);
-					console.log(`  Total Objects: ${analysis.totalObjects}`);
-					console.log(`  GC Roots: ${analysis.gcRoots}`);
+					console.info(`  Heap Size: ${analysis.totalHeapSize}KB`);
+					console.info(`  Total Objects: ${analysis.totalObjects}`);
+					console.info(`  GC Roots: ${analysis.gcRoots}`);
 				}
 			}
 		}
 	}
 
 	async listProfiles(): Promise<void> {
-		console.log("📁 Available Profiles:");
-		console.log("=======================");
+		console.info("📁 Available Profiles:");
+		console.info("=======================");
 
 		try {
 			// Use filesystem listing since Bun.file().list() may not be available
@@ -385,7 +385,7 @@ class ProfilingManager {
 			await proc.exited;
 
 			if (proc.exitCode !== 0) {
-				console.log("No profiles found. Run profiling first.");
+				console.info("No profiles found. Run profiling first.");
 				return;
 			}
 
@@ -407,7 +407,7 @@ class ProfilingManager {
 			}
 
 			if (profiles.length === 0) {
-				console.log("No profiles found. Run profiling first.");
+				console.info("No profiles found. Run profiling first.");
 				return;
 			}
 
@@ -420,10 +420,10 @@ class ProfilingManager {
 					: file.endsWith(".cpuprofile")
 						? "CPU Profile"
 						: "Heap Snapshot";
-				console.log(`  ${file} (${sizeKB}KB, ${type})`);
+				console.info(`  ${file} (${sizeKB}KB, ${type})`);
 			}
 		} catch (error) {
-			console.log(`Error listing profiles: ${error}`);
+			console.info(`Error listing profiles: ${error}`);
 		}
 	}
 
@@ -464,7 +464,7 @@ class ProfilingManager {
 		});
 
 		writeFileSync(reportPath, report);
-		console.log(`📋 Report generated: ${reportPath}`);
+		console.info(`📋 Report generated: ${reportPath}`);
 	}
 }
 
@@ -495,9 +495,9 @@ async function main() {
 		case "report": {
 			// Generate report from recent profiles
 			const _outputDir = args[0] || "./profiles";
-			console.log("📋 Generating profiling report...");
+			console.info("📋 Generating profiling report...");
 			// This would need to track recent profiles or accept them as args
-			console.log("Report generation requires profile results as arguments");
+			console.info("Report generation requires profile results as arguments");
 			break;
 		}
 
@@ -511,7 +511,7 @@ async function handleCPUProfile(profiler: ProfilingManager, args: string[]) {
 	const scriptPath = args[0];
 	if (!scriptPath) {
 		console.error("❌ Please provide a script path to profile");
-		console.log("Usage: bun profiling-cli.ts cpu <script.ts> [options]");
+		console.info("Usage: bun profiling-cli.ts cpu <script.ts> [options]");
 		process.exit(1);
 	}
 
@@ -527,9 +527,9 @@ async function handleCPUProfile(profiler: ProfilingManager, args: string[]) {
 
 	try {
 		const result = await profiler.runCPUProfile(scriptPath, options);
-		console.log("\n🎉 CPU profiling completed successfully!");
-		console.log(`📊 Duration: ${result.duration}ms`);
-		console.log(`📁 Files: ${result.files.join(", ")}`);
+		console.info("\n🎉 CPU profiling completed successfully!");
+		console.info(`📊 Duration: ${result.duration}ms`);
+		console.info(`📁 Files: ${result.files.join(", ")}`);
 	} catch (error) {
 		console.error("❌ CPU profiling failed:", error);
 		process.exit(1);
@@ -540,7 +540,7 @@ async function handleHeapProfile(profiler: ProfilingManager, args: string[]) {
 	const scriptPath = args[0];
 	if (!scriptPath) {
 		console.error("❌ Please provide a script path to profile");
-		console.log("Usage: bun profiling-cli.ts heap <script.ts> [options]");
+		console.info("Usage: bun profiling-cli.ts heap <script.ts> [options]");
 		process.exit(1);
 	}
 
@@ -556,9 +556,9 @@ async function handleHeapProfile(profiler: ProfilingManager, args: string[]) {
 
 	try {
 		const result = await profiler.runHeapProfile(scriptPath, options);
-		console.log("\n🎉 Heap profiling completed successfully!");
-		console.log(`📊 Duration: ${result.duration}ms`);
-		console.log(`📁 Files: ${result.files.join(", ")}`);
+		console.info("\n🎉 Heap profiling completed successfully!");
+		console.info(`📊 Duration: ${result.duration}ms`);
+		console.info(`📁 Files: ${result.files.join(", ")}`);
 	} catch (error) {
 		console.error("❌ Heap profiling failed:", error);
 		process.exit(1);
@@ -566,7 +566,7 @@ async function handleHeapProfile(profiler: ProfilingManager, args: string[]) {
 }
 
 function showHelp() {
-	console.log(`
+	console.info(`
 🔥 Bun v1.3.7 Profiling CLI
 
 USAGE:

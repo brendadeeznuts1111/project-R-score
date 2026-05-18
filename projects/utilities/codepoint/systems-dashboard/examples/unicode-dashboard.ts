@@ -20,9 +20,9 @@ const config: Config13Byte = {
 };
 
 // Render full Unicode dashboard
-console.log(inspector.inspectConfig(config));
-console.log("\n\n");
-console.log(inspector.inspectSystem());
+console.info(inspector.inspectConfig(config));
+console.info("\n\n");
+console.info(inspector.inspectSystem());
 
 // Simulate some calculations
 setInterval(() => {
@@ -38,7 +38,7 @@ setInterval(() => {
   // Update dashboard
   inspector.renderDashboard();
 
-  console.log(
+  console.info(
     `\nLatest Score: ${score.toFixed(3)} ${fromCache ? "[CACHED]" : ""}`
   );
 }, 5000);

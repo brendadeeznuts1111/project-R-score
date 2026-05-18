@@ -521,9 +521,9 @@ export function propagationBenchmarks() {
  * Run all propagation benchmarks standalone
  */
 export function runPropagationBenchmarks() {
-  console.log('========================================');
-  console.log('Propagation Half-Life Framework Benchmarks');
-  console.log('========================================\n');
+  console.info('========================================');
+  console.info('Propagation Half-Life Framework Benchmarks');
+  console.info('========================================\n');
 
   propagationBenchmarks();
 }

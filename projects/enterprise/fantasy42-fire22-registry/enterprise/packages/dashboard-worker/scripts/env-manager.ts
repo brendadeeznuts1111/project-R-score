@@ -149,34 +149,34 @@ class EnvironmentManager {
    * Validate environment configuration
    */
   async validate(): Promise<void> {
-    console.log('🔍 Validating environment configuration...\n');
+    console.info('🔍 Validating environment configuration...\n');
 
     const result = await this.validateEnvironment();
 
     if (result.isValid) {
-      console.log('✅ Environment validation passed!');
+      console.info('✅ Environment validation passed!');
     } else {
-      console.log('❌ Environment validation failed!');
+      console.info('❌ Environment validation failed!');
     }
 
     if (result.errors.length > 0) {
-      console.log('\n❌ Errors:');
-      result.errors.forEach(error => console.log(`  • ${error}`));
+      console.info('\n❌ Errors:');
+      result.errors.forEach(error => console.info(`  • ${error}`));
     }
 
     if (result.warnings.length > 0) {
-      console.log('\n⚠️  Warnings:');
-      result.warnings.forEach(warning => console.log(`  • ${warning}`));
+      console.info('\n⚠️  Warnings:');
+      result.warnings.forEach(warning => console.info(`  • ${warning}`));
     }
 
     if (result.missing.length > 0) {
-      console.log('\n🔍 Missing variables:');
-      result.missing.forEach(missing => console.log(`  • ${missing}`));
+      console.info('\n🔍 Missing variables:');
+      result.missing.forEach(missing => console.info(`  • ${missing}`));
     }
 
     if (result.recommendations.length > 0) {
-      console.log('\n💡 Recommendations:');
-      result.recommendations.forEach(rec => console.log(`  • ${rec}`));
+      console.info('\n💡 Recommendations:');
+      result.recommendations.forEach(rec => console.info(`  • ${rec}`));
     }
 
     if (!result.isValid) {
@@ -188,42 +188,42 @@ class EnvironmentManager {
    * Check environment status
    */
   async check(): Promise<void> {
-    console.log('🔍 Checking environment status...\n');
+    console.info('🔍 Checking environment status...\n');
 
     const envFiles = this.getEnvFiles();
     const currentEnv = process.env.NODE_ENV || 'development';
 
-    console.log(`Current Environment: ${currentEnv}`);
-    console.log(`Project Root: ${this.projectRoot}\n`);
+    console.info(`Current Environment: ${currentEnv}`);
+    console.info(`Project Root: ${this.projectRoot}\n`);
 
-    console.log('Environment Files:');
+    console.info('Environment Files:');
     envFiles.forEach(file => {
       const exists = existsSync(file);
       const status = exists ? '✅' : '❌';
-      console.log(`  ${status} ${file}`);
+      console.info(`  ${status} ${file}`);
     });
 
-    console.log('\nRequired Variables:');
+    console.info('\nRequired Variables:');
     this.requiredVars.forEach(varName => {
       const value = process.env[varName];
       const status = value ? '✅' : '❌';
       const displayValue = this.sensitiveVars.includes(varName) ? '***' : value;
-      console.log(`  ${status} ${varName}=${displayValue}`);
+      console.info(`  ${status} ${varName}=${displayValue}`);
     });
 
-    console.log('\nEnvironment Health:');
+    console.info('\nEnvironment Health:');
     const result = await this.validateEnvironment();
     const healthScore = this.calculateHealthScore(result);
-    console.log(`  Overall Health: ${healthScore}%`);
+    console.info(`  Overall Health: ${healthScore}%`);
 
     if (healthScore >= 90) {
-      console.log('  Status: 🟢 Excellent');
+      console.info('  Status: 🟢 Excellent');
     } else if (healthScore >= 70) {
-      console.log('  Status: 🟡 Good');
+      console.info('  Status: 🟡 Good');
     } else if (healthScore >= 50) {
-      console.log('  Status: 🟠 Fair');
+      console.info('  Status: 🟠 Fair');
     } else {
-      console.log('  Status: 🔴 Poor');
+      console.info('  Status: 🔴 Poor');
     }
   }
 
@@ -231,25 +231,25 @@ class EnvironmentManager {
    * List environment variables (masked)
    */
   async list(): Promise<void> {
-    console.log('📋 Listing environment variables (sensitive values masked)...\n');
+    console.info('📋 Listing environment variables (sensitive values masked)...\n');
 
     const allVars = this.getAllEnvironmentVariables();
 
-    console.log('Environment Variables:');
+    console.info('Environment Variables:');
     Object.entries(allVars).forEach(([key, value]) => {
       const maskedValue = this.sensitiveVars.includes(key) ? '***' : value;
-      console.log(`  ${key}=${maskedValue}`);
+      console.info(`  ${key}=${maskedValue}`);
     });
 
-    console.log(`\nTotal Variables: ${Object.keys(allVars).length}`);
-    console.log(`Sensitive Variables: ${this.sensitiveVars.length}`);
+    console.info(`\nTotal Variables: ${Object.keys(allVars).length}`);
+    console.info(`Sensitive Variables: ${this.sensitiveVars.length}`);
   }
 
   /**
    * Security audit
    */
   async audit(): Promise<void> {
-    console.log('🔒 Running security audit...\n');
+    console.info('🔒 Running security audit...\n');
 
     const issues: string[] = [];
     const recommendations: string[] = [];
@@ -282,15 +282,15 @@ class EnvironmentManager {
     }
 
     if (issues.length === 0) {
-      console.log('✅ Security audit passed! No issues found.');
+      console.info('✅ Security audit passed! No issues found.');
     } else {
-      console.log('❌ Security audit failed! Issues found:');
-      issues.forEach(issue => console.log(`  • ${issue}`));
+      console.info('❌ Security audit failed! Issues found:');
+      issues.forEach(issue => console.info(`  • ${issue}`));
     }
 
     if (recommendations.length > 0) {
-      console.log('\n💡 Recommendations:');
-      recommendations.forEach(rec => console.log(`  • ${rec}`));
+      console.info('\n💡 Recommendations:');
+      recommendations.forEach(rec => console.info(`  • ${rec}`));
     }
   }
 
@@ -298,7 +298,7 @@ class EnvironmentManager {
    * Performance check
    */
   async performance(): Promise<void> {
-    console.log('⚡ Running performance check...\n');
+    console.info('⚡ Running performance check...\n');
 
     const startTime = performance.now();
 
@@ -312,84 +312,84 @@ class EnvironmentManager {
     const endTime = performance.now();
     const duration = endTime - startTime;
 
-    console.log('Performance Metrics:');
-    console.log(`  Environment Access: ${duration.toFixed(2)}ms for 1000 operations`);
-    console.log(`  Operations/Second: ${(1000 / (duration / 1000)).toFixed(0)}`);
+    console.info('Performance Metrics:');
+    console.info(`  Environment Access: ${duration.toFixed(2)}ms for 1000 operations`);
+    console.info(`  Operations/Second: ${(1000 / (duration / 1000)).toFixed(0)}`);
 
     if (duration < 10) {
-      console.log('  Status: 🟢 Excellent performance');
+      console.info('  Status: 🟢 Excellent performance');
     } else if (duration < 50) {
-      console.log('  Status: 🟡 Good performance');
+      console.info('  Status: 🟡 Good performance');
     } else {
-      console.log('  Status: 🟠 Performance could be improved');
+      console.info('  Status: 🟠 Performance could be improved');
     }
 
-    console.log('\nRecommendations:');
-    console.log('  • Use Bun.env for better performance');
-    console.log('  • Cache frequently accessed values');
-    console.log('  • Minimize environment variable lookups in hot paths');
+    console.info('\nRecommendations:');
+    console.info('  • Use Bun.env for better performance');
+    console.info('  • Cache frequently accessed values');
+    console.info('  • Minimize environment variable lookups in hot paths');
   }
 
   /**
    * Integration test
    */
   async integration(): Promise<void> {
-    console.log('🧪 Running integration test...\n');
+    console.info('🧪 Running integration test...\n');
 
-    console.log('Testing environment variable loading...');
+    console.info('Testing environment variable loading...');
     const envVars = this.getAllEnvironmentVariables();
 
     if (Object.keys(envVars).length === 0) {
-      console.log('❌ No environment variables found');
+      console.info('❌ No environment variables found');
       process.exit(1);
     }
 
-    console.log('✅ Environment variables loaded successfully');
+    console.info('✅ Environment variables loaded successfully');
 
-    console.log('\nTesting configuration validation...');
+    console.info('\nTesting configuration validation...');
     const validation = await this.validateEnvironment();
 
     if (!validation.isValid) {
-      console.log('❌ Configuration validation failed');
+      console.info('❌ Configuration validation failed');
       process.exit(1);
     }
 
-    console.log('✅ Configuration validation passed');
+    console.info('✅ Configuration validation passed');
 
-    console.log('\nTesting sensitive variable masking...');
+    console.info('\nTesting sensitive variable masking...');
     const hasSensitiveVars = this.sensitiveVars.some(
       varName => process.env[varName] && process.env[varName] !== '***'
     );
 
     if (hasSensitiveVars) {
-      console.log('✅ Sensitive variables are properly masked');
+      console.info('✅ Sensitive variables are properly masked');
     } else {
-      console.log('⚠️  No sensitive variables found');
+      console.info('⚠️  No sensitive variables found');
     }
 
-    console.log('\n🎉 Integration test completed successfully!');
+    console.info('\n🎉 Integration test completed successfully!');
   }
 
   /**
    * Interactive setup wizard
    */
   async setup(): Promise<void> {
-    console.log('🚀 Interactive Environment Setup Wizard\n');
+    console.info('🚀 Interactive Environment Setup Wizard\n');
 
-    console.log('This will help you set up your environment configuration.');
-    console.log('Press Enter to use default values, or type custom values.\n');
+    console.info('This will help you set up your environment configuration.');
+    console.info('Press Enter to use default values, or type custom values.\n');
 
     // This would be interactive in a real implementation
-    console.log('Setup wizard would prompt for:');
-    console.log('  • NODE_ENV (development/production/test)');
-    console.log('  • DATABASE_URL');
-    console.log('  • JWT_SECRET');
-    console.log('  • API_BASE_URL');
-    console.log('  • FIRE22_API_KEY');
-    console.log('  • FIRE22_API_SECRET');
+    console.info('Setup wizard would prompt for:');
+    console.info('  • NODE_ENV (development/production/test)');
+    console.info('  • DATABASE_URL');
+    console.info('  • JWT_SECRET');
+    console.info('  • API_BASE_URL');
+    console.info('  • FIRE22_API_KEY');
+    console.info('  • FIRE22_API_SECRET');
 
-    console.log('\nFor now, use the generate command to create template files:');
-    console.log('  bun run env:generate');
+    console.info('\nFor now, use the generate command to create template files:');
+    console.info('  bun run env:generate');
   }
 
   /**
@@ -398,19 +398,19 @@ class EnvironmentManager {
   async generate(args: string[]): Promise<void> {
     const environment = args[0] || 'development';
 
-    console.log(`🎯 Generating .env.${environment} file...\n`);
+    console.info(`🎯 Generating .env.${environment} file...\n`);
 
     const template = this.getEnvTemplate(environment);
     const filename = `.env.${environment}`;
 
     writeFileSync(filename, template);
-    console.log(`✅ Created ${filename}`);
+    console.info(`✅ Created ${filename}`);
 
     if (environment === 'development') {
-      console.log('\n💡 Next steps:');
-      console.log('  1. Review and customize the generated file');
-      console.log('  2. Run: bun run env:validate');
-      console.log('  3. Run: bun run env:check');
+      console.info('\n💡 Next steps:');
+      console.info('  1. Review and customize the generated file');
+      console.info('  2. Run: bun run env:validate');
+      console.info('  3. Run: bun run env:check');
     }
   }
 
@@ -418,55 +418,55 @@ class EnvironmentManager {
    * Demo package.json integration
    */
   async demo(): Promise<void> {
-    console.log('🎯 Demo: Package.json Integration with bun pm pkg\n');
+    console.info('🎯 Demo: Package.json Integration with bun pm pkg\n');
 
-    console.log('This demonstrates how to use bun pm pkg with environment configuration:');
-    console.log('');
+    console.info('This demonstrates how to use bun pm pkg with environment configuration:');
+    console.info('');
 
-    console.log('1. Get environment settings:');
-    console.log('   bun pm pkg get config.environment');
-    console.log('   bun pm pkg get config.port');
-    console.log('');
+    console.info('1. Get environment settings:');
+    console.info('   bun pm pkg get config.environment');
+    console.info('   bun pm pkg get config.port');
+    console.info('');
 
-    console.log('2. Update configuration:');
-    console.log('   bun pm pkg set config.environment="staging"');
-    console.log('   bun pm pkg set config.port=8080');
-    console.log('');
+    console.info('2. Update configuration:');
+    console.info('   bun pm pkg set config.environment="staging"');
+    console.info('   bun pm pkg set config.port=8080');
+    console.info('');
 
-    console.log('3. View environment metadata:');
-    console.log('   bun pm pkg get metadata.environment.cliCommands');
-    console.log('   bun pm pkg get metadata.environment.supportedEnvironments');
-    console.log('');
+    console.info('3. View environment metadata:');
+    console.info('   bun pm pkg get metadata.environment.cliCommands');
+    console.info('   bun pm pkg get metadata.environment.supportedEnvironments');
+    console.info('');
 
-    console.log('Try these commands with your test package!');
+    console.info('Try these commands with your test package!');
   }
 
   /**
    * Show help information
    */
   showHelp(): void {
-    console.log('🔥 Fire22 Dashboard Environment Manager\n');
-    console.log('Usage: bun run env:<command> [options]\n');
+    console.info('🔥 Fire22 Dashboard Environment Manager\n');
+    console.info('Usage: bun run env:<command> [options]\n');
 
-    console.log('Commands:');
-    console.log('  validate     Validate environment configuration');
-    console.log('  check        Check environment status and health');
-    console.log('  list         List all environment variables (masked)');
-    console.log('  audit        Run security audit');
-    console.log('  performance  Check environment performance');
-    console.log('  integration  Run full integration test');
-    console.log('  setup        Interactive setup wizard');
-    console.log('  generate     Generate environment file templates');
-    console.log('  demo         Demo package.json integration');
-    console.log('  help         Show this help message\n');
+    console.info('Commands:');
+    console.info('  validate     Validate environment configuration');
+    console.info('  check        Check environment status and health');
+    console.info('  list         List all environment variables (masked)');
+    console.info('  audit        Run security audit');
+    console.info('  performance  Check environment performance');
+    console.info('  integration  Run full integration test');
+    console.info('  setup        Interactive setup wizard');
+    console.info('  generate     Generate environment file templates');
+    console.info('  demo         Demo package.json integration');
+    console.info('  help         Show this help message\n');
 
-    console.log('Examples:');
-    console.log('  bun run env:validate');
-    console.log('  bun run env:check');
-    console.log('  bun run env:generate production');
-    console.log('  bun run env:audit');
+    console.info('Examples:');
+    console.info('  bun run env:validate');
+    console.info('  bun run env:check');
+    console.info('  bun run env:generate production');
+    console.info('  bun run env:audit');
 
-    console.log('\nFor more information, see the documentation.');
+    console.info('\nFor more information, see the documentation.');
   }
 
   // Helper methods

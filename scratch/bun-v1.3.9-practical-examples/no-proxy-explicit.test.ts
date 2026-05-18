@@ -39,9 +39,9 @@ describe("NO_PROXY with Explicit Proxy Option (v1.3.9+)", () => {
     //   proxy: "http://proxy:8080"  // Bypassed because NO_PROXY includes localhost!
     // });
     
-    console.log("✅ v1.3.9 behavior: NO_PROXY respected with explicit proxy option");
-    console.log(`   NO_PROXY=${noProxy}`);
-    console.log(`   Would bypass proxy for: http://localhost:3000`);
+    console.info("✅ v1.3.9 behavior: NO_PROXY respected with explicit proxy option");
+    console.info(`   NO_PROXY=${noProxy}`);
+    console.info(`   Would bypass proxy for: http://localhost:3000`);
   });
   
   test("external URL uses explicit proxy (not in NO_PROXY)", async () => {
@@ -65,9 +65,9 @@ describe("NO_PROXY with Explicit Proxy Option (v1.3.9+)", () => {
     //   proxy: "http://proxy:8080"  // Used because not in NO_PROXY
     // });
     
-    console.log("✅ External URL would use proxy (not in NO_PROXY)");
-    console.log(`   URL: ${externalUrl}`);
-    console.log(`   Would use proxy: http://proxy:8080`);
+    console.info("✅ External URL would use proxy (not in NO_PROXY)");
+    console.info(`   URL: ${externalUrl}`);
+    console.info(`   Would use proxy: http://proxy:8080`);
   });
   
   test("real-world pattern: corporate proxy with local dev", async () => {
@@ -104,7 +104,7 @@ describe("NO_PROXY with Explicit Proxy Option (v1.3.9+)", () => {
       
       expect(bypasses).toBe(scenario.expectedBypass);
       
-      console.log(`   ${scenario.description}: ${bypasses ? "BYPASSES" : "USES PROXY"} proxy`);
+      console.info(`   ${scenario.description}: ${bypasses ? "BYPASSES" : "USES PROXY"} proxy`);
     }
   });
   
@@ -128,8 +128,8 @@ const apiResp = await fetch("https://api.example.com", {
     expect(codeExample).toContain("proxy:");
     expect(codeExample).toContain("localhost:3000");
     
-    console.log("\n📄 Code Example:");
-    console.log(codeExample);
+    console.info("\n📄 Code Example:");
+    console.info(codeExample);
   });
 });
 

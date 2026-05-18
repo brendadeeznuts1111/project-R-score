@@ -33,21 +33,21 @@ function parseArgs(): InitOptions {
 }
 
 function showHelp() {
-  console.log('🔄 Initialize Versioning for Existing Secrets');
-  console.log('==========================================');
-  console.log();
-  console.log('Migrate existing secrets to immutable versioning system.');
-  console.log();
-  console.log('Options:');
-  console.log('  --migrate-all    Migrate all existing secrets');
-  console.log('  --backup-r2      Create backup in R2 before migration');
-  console.log('  --dry-run        Show what would be migrated without doing it');
-  console.log('  --force          Force migration even if already versioned');
-  console.log('  --help, -h       Show this help');
-  console.log();
-  console.log('Examples:');
-  console.log('  bun init-versioning.ts --migrate-all --backup-r2');
-  console.log('  bun init-versioning.ts --dry-run');
+  console.info('🔄 Initialize Versioning for Existing Secrets');
+  console.info('==========================================');
+  console.info();
+  console.info('Migrate existing secrets to immutable versioning system.');
+  console.info();
+  console.info('Options:');
+  console.info('  --migrate-all    Migrate all existing secrets');
+  console.info('  --backup-r2      Create backup in R2 before migration');
+  console.info('  --dry-run        Show what would be migrated without doing it');
+  console.info('  --force          Force migration even if already versioned');
+  console.info('  --help, -h       Show this help');
+  console.info();
+  console.info('Examples:');
+  console.info('  bun init-versioning.ts --migrate-all --backup-r2');
+  console.info('  bun init-versioning.ts --dry-run');
 }
 
 function styled(
@@ -70,71 +70,71 @@ function styled(
 async function main() {
   const options = parseArgs();
 
-  console.log(styled('🔄 Initializing Versioning System', 'primary'));
-  console.log(styled('================================', 'muted'));
-  console.log();
+  console.info(styled('🔄 Initializing Versioning System', 'primary'));
+  console.info(styled('================================', 'muted'));
+  console.info();
 
   if (options.dryRun) {
-    console.log(styled('🔍 DRY RUN MODE - No changes will be made', 'warning'));
-    console.log();
+    console.info(styled('🔍 DRY RUN MODE - No changes will be made', 'warning'));
+    console.info();
   }
 
   try {
     // Step 1: Discover existing secrets
-    console.log(styled('📋 Step 1: Discovering existing secrets...', 'info'));
+    console.info(styled('📋 Step 1: Discovering existing secrets...', 'info'));
     const existingSecrets = await discoverExistingSecrets();
 
-    console.log(styled(`   Found ${existingSecrets.length} existing secrets`, 'success'));
+    console.info(styled(`   Found ${existingSecrets.length} existing secrets`, 'success'));
     existingSecrets.forEach(secret => {
-      console.log(styled(`   • ${secret.key}`, 'muted'));
+      console.info(styled(`   • ${secret.key}`, 'muted'));
     });
-    console.log();
+    console.info();
 
     // Step 2: Create backup if requested
     if (options.backupR2 && !options.dryRun) {
-      console.log(styled('💾 Step 2: Creating R2 backup...', 'info'));
+      console.info(styled('💾 Step 2: Creating R2 backup...', 'info'));
       await createBackupInR2(existingSecrets);
-      console.log(styled('   ✅ Backup created in R2', 'success'));
-      console.log();
+      console.info(styled('   ✅ Backup created in R2', 'success'));
+      console.info();
     } else if (options.backupR2 && options.dryRun) {
-      console.log(styled('💾 Step 2: Would create R2 backup', 'info'));
-      console.log();
+      console.info(styled('💾 Step 2: Would create R2 backup', 'info'));
+      console.info();
     }
 
     // Step 3: Migrate to versioning system
     if (options.migrateAll) {
-      console.log(styled('🔄 Step 3: Migrating to versioning system...', 'info'));
+      console.info(styled('🔄 Step 3: Migrating to versioning system...', 'info'));
 
       for (const secret of existingSecrets) {
         const alreadyVersioned = await checkIfVersioned(secret.key);
 
         if (alreadyVersioned && !options.force) {
-          console.log(styled(`   ⏭️  Skipping ${secret.key} (already versioned)`, 'muted'));
+          console.info(styled(`   ⏭️  Skipping ${secret.key} (already versioned)`, 'muted'));
           continue;
         }
 
         if (options.dryRun) {
-          console.log(styled(`   🔄 Would migrate: ${secret.key}`, 'info'));
+          console.info(styled(`   🔄 Would migrate: ${secret.key}`, 'info'));
         } else {
           await migrateSecretToVersioning(secret);
-          console.log(styled(`   ✅ Migrated: ${secret.key}`, 'success'));
+          console.info(styled(`   ✅ Migrated: ${secret.key}`, 'success'));
         }
       }
-      console.log();
+      console.info();
     }
 
     // Step 4: Generate initial reports
     if (!options.dryRun) {
-      console.log(styled('📊 Step 4: Generating initial reports...', 'info'));
+      console.info(styled('📊 Step 4: Generating initial reports...', 'info'));
       await generateInitialReports(existingSecrets);
-      console.log(styled('   ✅ Reports generated', 'success'));
-      console.log();
+      console.info(styled('   ✅ Reports generated', 'success'));
+      console.info();
     }
 
-    console.log(styled('🎉 Versioning initialization completed!', 'success'));
+    console.info(styled('🎉 Versioning initialization completed!', 'success'));
 
     if (options.dryRun) {
-      console.log(styled('💡 Remove --dry-run to perform actual migration', 'info'));
+      console.info(styled('💡 Remove --dry-run to perform actual migration', 'info'));
     }
   } catch (error) {
     console.error(styled(`❌ Initialization failed: ${error.message}`, 'error'));

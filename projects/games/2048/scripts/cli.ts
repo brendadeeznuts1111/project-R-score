@@ -66,37 +66,37 @@ const VERSION = "1.0.0";
 const APP_NAME = "Quantum CLI";
 
 function showHelp() {
-  console.log(colourKit(0.7).ansi + `${APP_NAME} v${VERSION}` + "\x1b[0m");
-  console.log("Enhanced CLI with quantum toolkit integration\n");
-  console.log("Usage: bun run cli.ts [options] [positionals]\n");
-  console.log("Options:");
-  console.log("  -h, --help      Show this help message");
-  console.log("  -v, --version   Show version information");
-  console.log("  -c, --count     Count iterations (default: 10)");
-  console.log("  -C, --color     Enable color output");
-  console.log("  -l, --lattice   Generate lattice with tension 0-1");
-  console.log("  -V, --verbose   Verbose output");
-  console.log("  -d, --demo      Run demo mode");
-  console.log("  -b, --benchmark Run performance benchmark");
-  console.log("  -f, --format    Output format (text|json|table)");
-  console.log("  -o, --output    Output file path");
-  console.log("  -L, --limit     Limit results (e.g., 1000)");
-  console.log("  -j, --json      Output JSON format (shorthand)");
-  console.log("\nExamples:");
-  console.log("  bun run cli.ts --help");
-  console.log("  bun run cli.ts --count 100 --color");
-  console.log("  bun run cli.ts --lattice 0.5 --verbose");
-  console.log("  bun run cli.ts --demo --benchmark");
+  console.info(colourKit(0.7).ansi + `${APP_NAME} v${VERSION}` + "\x1b[0m");
+  console.info("Enhanced CLI with quantum toolkit integration\n");
+  console.info("Usage: bun run cli.ts [options] [positionals]\n");
+  console.info("Options:");
+  console.info("  -h, --help      Show this help message");
+  console.info("  -v, --version   Show version information");
+  console.info("  -c, --count     Count iterations (default: 10)");
+  console.info("  -C, --color     Enable color output");
+  console.info("  -l, --lattice   Generate lattice with tension 0-1");
+  console.info("  -V, --verbose   Verbose output");
+  console.info("  -d, --demo      Run demo mode");
+  console.info("  -b, --benchmark Run performance benchmark");
+  console.info("  -f, --format    Output format (text|json|table)");
+  console.info("  -o, --output    Output file path");
+  console.info("  -L, --limit     Limit results (e.g., 1000)");
+  console.info("  -j, --json      Output JSON format (shorthand)");
+  console.info("\nExamples:");
+  console.info("  bun run cli.ts --help");
+  console.info("  bun run cli.ts --count 100 --color");
+  console.info("  bun run cli.ts --lattice 0.5 --verbose");
+  console.info("  bun run cli.ts --demo --benchmark");
 }
 
 function showVersion() {
-  console.log(`${APP_NAME} version ${VERSION}`);
-  console.log("Built with Bun runtime and quantum toolkit");
+  console.info(`${APP_NAME} version ${VERSION}`);
+  console.info("Built with Bun runtime and quantum toolkit");
 }
 
 // Demo function
 function runDemo(count: number, useColor: boolean) {
-  console.log(`\n🎮 Running demo with ${count} iterations...`);
+  console.info(`\n🎮 Running demo with ${count} iterations...`);
 
   const start = performance.now();
   const results = [];
@@ -118,9 +118,9 @@ function runDemo(count: number, useColor: boolean) {
   const duration = performance.now() - start;
   const avg = results.reduce((a, b) => a + b, 0) / results.length;
 
-  console.log(`\n✅ Completed in ${duration.toFixed(2)}ms`);
-  console.log(`📊 Average: ${avg.toFixed(2)}`);
-  console.log(
+  console.info(`\n✅ Completed in ${duration.toFixed(2)}ms`);
+  console.info(`📊 Average: ${avg.toFixed(2)}`);
+  console.info(
     `📈 Min: ${Math.min(...results).toFixed(2)}, Max: ${Math.max(
       ...results
     ).toFixed(2)}`
@@ -131,17 +131,17 @@ function runDemo(count: number, useColor: boolean) {
 function generateLattice(tension: string) {
   const t = parseFloat(tension);
   if (isNaN(t) || t < 0 || t > 1) {
-    console.log("❌ Tension must be a number between 0 and 1");
+    console.info("❌ Tension must be a number between 0 and 1");
     return;
   }
 
-  console.log(`\n🎨 Generating lattice with tension ${t}...`);
-  console.log(rgbaLattice(t * 10));
+  console.info(`\n🎨 Generating lattice with tension ${t}...`);
+  console.info(rgbaLattice(t * 10));
 }
 
 // Benchmark
 async function runBenchmark() {
-  console.log("\n⚡ Running performance benchmark...");
+  console.info("\n⚡ Running performance benchmark...");
 
   const limit = parseInt(values.limit || "100");
   const useJson = values.json || values.format === "json";
@@ -185,7 +185,7 @@ async function runBenchmark() {
     });
 
     if (!useJson) {
-      console.log(
+      console.info(
         `│ ${pad(test.name, 15)} │ ${pad(limit.toString(), 10)} │ ${pad(
           avg.toFixed(3),
           8
@@ -204,12 +204,12 @@ async function runBenchmark() {
 
     if (values.output) {
       await Bun.write(values.output, JSON.stringify(output, null, 2));
-      console.log(`\n📁 Results written to: ${values.output}`);
+      console.info(`\n📁 Results written to: ${values.output}`);
     } else {
-      console.log(JSON.stringify(output, null, 2));
+      console.info(JSON.stringify(output, null, 2));
     }
   } else {
-    console.log("└─────────────────┴──────────┴──────────┴──────────┘");
+    console.info("└─────────────────┴──────────┴──────────┴──────────┘");
   }
 }
 
@@ -228,11 +228,11 @@ async function main() {
 
   // Show parsed arguments if verbose
   if (values.verbose) {
-    console.log(colourKit(0.5).ansi + "📋 Parsed arguments:" + "\x1b[0m");
-    console.log("Values:", JSON.stringify(values, null, 2));
-    console.log("Positionals:", positionals);
-    console.log("Bun.argv:", Bun.argv);
-    console.log("");
+    console.info(colourKit(0.5).ansi + "📋 Parsed arguments:" + "\x1b[0m");
+    console.info("Values:", JSON.stringify(values, null, 2));
+    console.info("Positionals:", positionals);
+    console.info("Bun.argv:", Bun.argv);
+    console.info("");
   }
 
   // Execute based on flags
@@ -252,8 +252,8 @@ async function main() {
 
   // Default behavior if no flags
   if (Object.keys(values).length === 0 && positionals.length <= 2) {
-    console.log(`${APP_NAME} v${VERSION} - Use --help for usage information`);
-    console.log("Try: bun run cli.ts --demo --color");
+    console.info(`${APP_NAME} v${VERSION} - Use --help for usage information`);
+    console.info("Try: bun run cli.ts --demo --color");
   }
 }
 

@@ -53,11 +53,11 @@ class FileLoader {
     try {
       // SQL injection risk
       const result = database.exec(query);
-      console.log('Operation completed'); // Console log in production
+      console.info('Operation completed'); // Console log in production
       return result;
     } catch (e) {
       // Poor error handling - no type assertion
-      console.log('Error occurred: ' + e.message);
+      console.info('Error occurred: ' + e.message);
       return null;
     }
   }
@@ -79,8 +79,8 @@ function legacyFunction() {
 `;
 
 async function runDemo() {
-  console.log('🔍 Enterprise Scanner Demo');
-  console.log('═════════════════════════════════\n');
+  console.info('🔍 Enterprise Scanner Demo');
+  console.info('═════════════════════════════════\n');
   
   const scanner = new EnterpriseScanner();
   
@@ -119,60 +119,60 @@ async function runDemo() {
   ];
   
   // Perform annotation
-  console.log('📝 Annotating demo code...\n');
+  console.info('📝 Annotating demo code...\n');
   const result = scanner.suggestAnnotations(demoSourceCode, customRules);
   
   // Display annotated code
-  console.log('🎯 Annotated Code:');
-  console.log('─────────────────');
-  console.log(result.annotatedCode);
+  console.info('🎯 Annotated Code:');
+  console.info('─────────────────');
+  console.info(result.annotatedCode);
   
   // Display summary
-  console.log('\n📊 Annotation Summary:');
-  console.log('────────────────────');
-  console.log(`Total Annotations: ${result.summary.totalAnnotations}`);
-  console.log('By Domain:', Object.entries(result.summary.byDomain).map(([d, c]) => `${d}: ${c}`).join(', '));
-  console.log('By Severity:', Object.entries(result.summary.bySeverity).map(([s, c]) => `${s}: ${c}`).join(', '));
+  console.info('\n📊 Annotation Summary:');
+  console.info('────────────────────');
+  console.info(`Total Annotations: ${result.summary.totalAnnotations}`);
+  console.info('By Domain:', Object.entries(result.summary.byDomain).map(([d, c]) => `${d}: ${c}`).join(', '));
+  console.info('By Severity:', Object.entries(result.summary.bySeverity).map(([s, c]) => `${s}: ${c}`).join(', '));
   
   // Display detailed report
-  console.log('\n📋 Detailed Report:');
-  console.log('──────────────────');
-  console.log(scanner.generateReport(result));
+  console.info('\n📋 Detailed Report:');
+  console.info('──────────────────');
+  console.info(scanner.generateReport(result));
   
   // Export JSON example
-  console.log('📄 JSON Export (first 500 chars):');
-  console.log('─────────────────────────────────');
+  console.info('📄 JSON Export (first 500 chars):');
+  console.info('─────────────────────────────────');
   const jsonExport = scanner.exportJSON(result);
-  console.log(jsonExport.substring(0, 500) + '...');
+  console.info(jsonExport.substring(0, 500) + '...');
   
   // Demonstrate CLI-like usage
-  console.log('\n🖥️  CLI Usage Examples:');
-  console.log('──────────────────────');
-  console.log('# Basic annotation:');
-  console.log('bun enterprise-scanner.ts src/app.ts');
-  console.log('');
-  console.log('# JSON output with high severity threshold:');
-  console.log('bun enterprise-scanner.ts src/app.ts --format json --severity high');
-  console.log('');
-  console.log('# Generate detailed report:');
-  console.log('bun enterprise-scanner.ts src/app.ts --report');
-  console.log('');
-  console.log('# Pipe from stdin:');
-  console.log('cat src/app.ts | bun enterprise-scanner.ts --format summary');
+  console.info('\n🖥️  CLI Usage Examples:');
+  console.info('──────────────────────');
+  console.info('# Basic annotation:');
+  console.info('bun enterprise-scanner.ts src/app.ts');
+  console.info('');
+  console.info('# JSON output with high severity threshold:');
+  console.info('bun enterprise-scanner.ts src/app.ts --format json --severity high');
+  console.info('');
+  console.info('# Generate detailed report:');
+  console.info('bun enterprise-scanner.ts src/app.ts --report');
+  console.info('');
+  console.info('# Pipe from stdin:');
+  console.info('cat src/app.ts | bun enterprise-scanner.ts --format summary');
   
-  console.log('\n✅ Demo completed successfully!');
+  console.info('\n✅ Demo completed successfully!');
 }
 
 // Performance comparison demo
 async function performanceDemo() {
-  console.log('\n⚡ Performance Comparison Demo');
-  console.log('═══════════════════════════════════\n');
+  console.info('\n⚡ Performance Comparison Demo');
+  console.info('═══════════════════════════════════\n');
   
   const largeSourceCode = demoSourceCode.repeat(100); // Simulate larger codebase
   const scanner = new EnterpriseScanner();
   
   const iterations = 1000;
-  console.log(`Running ${iterations} iterations on ${largeSourceCode.length} character source...`);
+  console.info(`Running ${iterations} iterations on ${largeSourceCode.length} character source...`);
   
   const startTime = performance.now();
   
@@ -184,17 +184,17 @@ async function performanceDemo() {
   const totalTime = endTime - startTime;
   const avgTime = totalTime / iterations;
   
-  console.log(`⏱️  Performance Results:`);
-  console.log(`   Total time: ${totalTime.toFixed(2)}ms`);
-  console.log(`   Average per scan: ${avgTime.toFixed(3)}ms`);
-  console.log(`   Scans per second: ${(1000 / avgTime).toFixed(0)}`);
-  console.log(`   Throughput: ${(largeSourceCode.length / avgTime / 1000).toFixed(2)} KB/s`);
+  console.info(`⏱️  Performance Results:`);
+  console.info(`   Total time: ${totalTime.toFixed(2)}ms`);
+  console.info(`   Average per scan: ${avgTime.toFixed(3)}ms`);
+  console.info(`   Scans per second: ${(1000 / avgTime).toFixed(0)}`);
+  console.info(`   Throughput: ${(largeSourceCode.length / avgTime / 1000).toFixed(2)} KB/s`);
 }
 
 // Integration demo with existing codebase
 async function codebaseDemo() {
-  console.log('\n🏗️  Codebase Integration Demo');
-  console.log('═════════════════════════════════\n');
+  console.info('\n🏗️  Codebase Integration Demo');
+  console.info('═════════════════════════════════\n');
   
   const scanner = new EnterpriseScanner();
   
@@ -203,12 +203,12 @@ async function codebaseDemo() {
   
   try {
     const sourceCode = await Bun.file(testFile).text();
-    console.log(`📁 Scanning ${testFile} (${sourceCode.length} characters)...`);
+    console.info(`📁 Scanning ${testFile} (${sourceCode.length} characters)...`);
     
     const result = scanner.suggestAnnotations(sourceCode);
     
-    console.log(`🎯 Found ${result.summary.totalAnnotations} annotations`);
-    console.log('Top issues:');
+    console.info(`🎯 Found ${result.summary.totalAnnotations} annotations`);
+    console.info('Top issues:');
     
     result.appliedRules.slice(0, 5).forEach((rule, index) => {
       const severity = rule.meta.severity || 'medium';
@@ -216,11 +216,11 @@ async function codebaseDemo() {
                   severity === 'high' ? '🟠' : 
                   severity === 'medium' ? '🟡' : '🟢';
       
-      console.log(`   ${index + 1}. ${icon} Line ${rule.line}: ${rule.meta.fix} (${rule.meta.issueId})`);
+      console.info(`   ${index + 1}. ${icon} Line ${rule.line}: ${rule.meta.fix} (${rule.meta.issueId})`);
     });
     
   } catch (error) {
-    console.log(`⚠️  Could not scan ${testFile}: ${(error as Error).message}`);
+    console.info(`⚠️  Could not scan ${testFile}: ${(error as Error).message}`);
   }
 }
 
@@ -231,12 +231,12 @@ async function main() {
     await performanceDemo();
     await codebaseDemo();
     
-    console.log('\n🎉 All demos completed!');
-    console.log('\n💡 Next Steps:');
-    console.log('   1. Integrate with your CI/CD pipeline');
-    console.log('   2. Add custom rules for your specific codebase');
-    console.log('   3. Configure severity thresholds for your team');
-    console.log('   4. Export reports for code review processes');
+    console.info('\n🎉 All demos completed!');
+    console.info('\n💡 Next Steps:');
+    console.info('   1. Integrate with your CI/CD pipeline');
+    console.info('   2. Add custom rules for your specific codebase');
+    console.info('   3. Configure severity thresholds for your team');
+    console.info('   4. Export reports for code review processes');
     
   } catch (error) {
     console.error('❌ Demo failed:', error);

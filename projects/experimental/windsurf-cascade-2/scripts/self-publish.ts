@@ -41,14 +41,14 @@ async function createPackageJson() {
   const packageJsonContent = JSON.stringify(SELF_PUBLISH_CONFIG, null, 2);
   
   await Bun.write(packageJsonPath, packageJsonContent);
-  console.log("✅ Created package.json for self-publishing");
+  console.info("✅ Created package.json for self-publishing");
   
   return packageJsonPath;
 }
 
 // Build registry for publishing
 async function buildRegistry() {
-  console.log("🔨 Building registry for publishing...");
+  console.info("🔨 Building registry for publishing...");
   
   try {
     // Create dist directory
@@ -74,11 +74,11 @@ async function buildRegistry() {
         const destDir = destPath.substring(0, destPath.lastIndexOf('/'));
         await Bun.file(destDir).exists() || await Bun.write(destDir + "/.gitkeep", "");
         await Bun.write(destPath, await source.text());
-        console.log(`  📄 Copied ${file} -> ${destPath}`);
+        console.info(`  📄 Copied ${file} -> ${destPath}`);
       }
     }
     
-    console.log("✅ Registry built successfully");
+    console.info("✅ Registry built successfully");
     return true;
   } catch (error) {
     console.error("❌ Build failed:", error);
@@ -88,7 +88,7 @@ async function buildRegistry() {
 
 // Publish to local registry
 async function publishToLocalRegistry() {
-  console.log("📦 Publishing to local registry...");
+  console.info("📦 Publishing to local registry...");
   
   try {
     const proc = spawn(["bun", "publish", "registry/dist", "--registry", "http://localhost:4873"], {
@@ -113,7 +113,7 @@ async function publishToLocalRegistry() {
     const exitCode = await proc.exited;
     
     if (exitCode === 0) {
-      console.log("✅ Published to local registry successfully");
+      console.info("✅ Published to local registry successfully");
       return true;
     } else {
       console.error(`❌ Publish failed with exit code ${exitCode}`);
@@ -128,7 +128,7 @@ async function publishToLocalRegistry() {
 
 // Update lockfile with self-reference
 async function updateLockfileSelfReference() {
-  console.log("🔐 Updating lockfile with self-reference...");
+  console.info("🔐 Updating lockfile with self-reference...");
   
   try {
     const config = await getConfig();
@@ -150,8 +150,8 @@ async function updateLockfileSelfReference() {
     
     // In a real implementation, this would update the actual lockfile format
     // For now, we'll just log the self-reference
-    console.log("📝 Self-reference entry:");
-    console.log(JSON.stringify(selfReference, null, 2));
+    console.info("📝 Self-reference entry:");
+    console.info(JSON.stringify(selfReference, null, 2));
     
     // Update config to mark self-published
     await updateConfig({
@@ -159,7 +159,7 @@ async function updateLockfileSelfReference() {
       registryHash: config.registryHash
     });
     
-    console.log("✅ Lockfile updated with self-reference");
+    console.info("✅ Lockfile updated with self-reference");
     return true;
   } catch (error) {
     console.error("❌ Failed to update lockfile:", error);
@@ -169,7 +169,7 @@ async function updateLockfileSelfReference() {
 
 // Verify self-publish
 async function verifySelfPublish() {
-  console.log("🔍 Verifying self-publish...");
+  console.info("🔍 Verifying self-publish...");
   
   try {
     // Try to fetch the package from the local registry
@@ -177,8 +177,8 @@ async function verifySelfPublish() {
     
     if (response.ok) {
       const packageInfo = await response.json();
-      console.log("✅ Self-publish verification successful");
-      console.log("📦 Package info:", packageInfo);
+      console.info("✅ Self-publish verification successful");
+      console.info("📦 Package info:", packageInfo);
       return true;
     } else {
       console.error(`❌ Verification failed: ${response.status} ${response.statusText}`);
@@ -199,12 +199,12 @@ function measurePerformance() {
     mark: (label: string) => {
       const now = Bun.nanoseconds();
       const elapsed = now - startTime;
-      console.log(`⏱️  ${label}: ${(elapsed / 1000000).toFixed(2)}ms`);
+      console.info(`⏱️  ${label}: ${(elapsed / 1000000).toFixed(2)}ms`);
       return elapsed;
     },
     end: () => {
       const total = Bun.nanoseconds() - startTime;
-      console.log(`🏁 Total time: ${(total / 1000000).toFixed(2)}ms`);
+      console.info(`🏁 Total time: ${(total / 1000000).toFixed(2)}ms`);
       return total;
     }
   };
@@ -212,8 +212,8 @@ function measurePerformance() {
 
 // Main self-publish function
 async function selfPublish() {
-  console.log("🚀 Starting registry self-publish process...");
-  console.log("═".repeat(50));
+  console.info("🚀 Starting registry self-publish process...");
+  console.info("═".repeat(50));
   
   const perf = measurePerformance();
   
@@ -252,11 +252,11 @@ async function selfPublish() {
     
     perf.end();
     
-    console.log("═".repeat(50));
-    console.log("🎉 Registry self-publish completed successfully!");
-    console.log(`📦 Package: ${SELF_PUBLISH_CONFIG.name}@${SELF_PUBLISH_CONFIG.version}`);
-    console.log(`🌐 Registry: ${SELF_PUBLISH_CONFIG.registry}`);
-    console.log(`⚡ Performance: ~150ms total`);
+    console.info("═".repeat(50));
+    console.info("🎉 Registry self-publish completed successfully!");
+    console.info(`📦 Package: ${SELF_PUBLISH_CONFIG.name}@${SELF_PUBLISH_CONFIG.version}`);
+    console.info(`🌐 Registry: ${SELF_PUBLISH_CONFIG.registry}`);
+    console.info(`⚡ Performance: ~150ms total`);
     
     return true;
   } catch (error) {
@@ -279,12 +279,12 @@ async function checkRegistryRunning() {
 
 // Start registry if not running
 async function ensureRegistryRunning() {
-  console.log("🔍 Checking if registry is running...");
+  console.info("🔍 Checking if registry is running...");
   
   const isRunning = await checkRegistryRunning();
   
   if (!isRunning) {
-    console.log("🚀 Starting registry server...");
+    console.info("🚀 Starting registry server...");
     
     const registryProc = spawn(["bun", "registry/api.ts"], {
       cwd: process.cwd(),
@@ -301,10 +301,10 @@ async function ensureRegistryRunning() {
       throw new Error("Failed to start registry server");
     }
     
-    console.log("✅ Registry server started");
+    console.info("✅ Registry server started");
     return registryProc;
   } else {
-    console.log("✅ Registry server already running");
+    console.info("✅ Registry server already running");
     return null;
   }
 }
@@ -314,7 +314,7 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes("--help") || args.includes("-h")) {
-    console.log(`
+    console.info(`
 🏠 Bun Local Registry - Self-Publish Tool
 
 Usage:
@@ -338,7 +338,7 @@ Examples:
   
   if (args.includes("--check")) {
     const running = await checkRegistryRunning();
-    console.log(`Registry status: ${running ? "✅ Running" : "❌ Stopped"}`);
+    console.info(`Registry status: ${running ? "✅ Running" : "❌ Stopped"}`);
     return;
   }
   
@@ -350,7 +350,7 @@ Examples:
   if (args.includes("--build-only")) {
     await createPackageJson();
     await buildRegistry();
-    console.log("✅ Build completed");
+    console.info("✅ Build completed");
     return;
   }
   
@@ -366,12 +366,12 @@ Examples:
 
 // Handle signals
 process.on('SIGINT', () => {
-  console.log("\n👋 Self-publish interrupted");
+  console.info("\n👋 Self-publish interrupted");
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log("\n👋 Self-publish terminated");
+  console.info("\n👋 Self-publish terminated");
   process.exit(0);
 });
 

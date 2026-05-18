@@ -364,15 +364,15 @@ class CustomProxyServer {
 class HMRDashboard {
   static displayLiveStatus(servers: CustomProxyServer[]) {
     console.clear();
-    console.log("🔄 Live HMR Monitoring Dashboard");
-    console.log("=".repeat(60));
-    console.log(`Last update: ${new Date().toLocaleTimeString()}\n`);
+    console.info("🔄 Live HMR Monitoring Dashboard");
+    console.info("=".repeat(60));
+    console.info(`Last update: ${new Date().toLocaleTimeString()}\n`);
 
     // Display each server's HMR status
     servers.forEach((server, index) => {
-      console.log(`${index + 1}. ${server.name}`);
-      console.log(`   HMR Events: ${server.hmrEvents.length}`);
-      console.log(
+      console.info(`${index + 1}. ${server.name}`);
+      console.info(`   HMR Events: ${server.hmrEvents.length}`);
+      console.info(
         `   Last Event: ${
           server.hmrEvents.length > 0
             ? `${
@@ -387,10 +387,10 @@ class HMRDashboard {
       // Show recent events
       const recent = server.hmrEvents.slice(-2);
       if (recent.length > 0) {
-        console.log(`   Recent: ${recent.map((e) => e.name).join(", ")}`);
+        console.info(`   Recent: ${recent.map((e) => e.name).join(", ")}`);
       }
 
-      console.log();
+      console.info();
     });
 
     // Show aggregated statistics
@@ -406,7 +406,7 @@ class HMRDashboard {
       {}
     );
 
-    console.log("📈 Aggregate Statistics:");
+    console.info("📈 Aggregate Statistics:");
     console.table(eventCounts);
   }
 }
@@ -488,16 +488,16 @@ function demonstrateHMRTracking() {
     details: { error: "Failed to compile" },
   });
 
-  console.log("📊 Server Overview with HMR Status:");
+  console.info("📊 Server Overview with HMR Status:");
   const serverTable = CustomProxyServer.formatServerTable(servers);
-  console.log(Bun.inspect.table(serverTable, { colors: true }));
+  console.info(Bun.inspect.table(serverTable, { colors: true }));
 
-  console.log("\n📈 Detailed HMR Events for WebSocket Proxy:");
+  console.info("\n📈 Detailed HMR Events for WebSocket Proxy:");
   const hmrEventsTable = CustomProxyServer.formatHMREventsTable(devServer);
-  console.log(Bun.inspect.table(hmrEventsTable, { colors: true }));
+  console.info(Bun.inspect.table(hmrEventsTable, { colors: true }));
 
-  console.log("\n📊 HMR Statistics (Nested Object Display):");
-  console.log(
+  console.info("\n📊 HMR Statistics (Nested Object Display):");
+  console.info(
     Bun.inspect(devServer.hmrStats, {
       colors: true,
       depth: 3,
@@ -506,7 +506,7 @@ function demonstrateHMRTracking() {
     })
   );
 
-  console.log("\n📈 HMR Event Statistics Table:");
+  console.info("\n📈 HMR Event Statistics Table:");
   const statsArray: { Metric: string; Value: any }[] = [];
   for (const key in devServer.hmrStats) {
     statsArray.push({
@@ -514,13 +514,13 @@ function demonstrateHMRTracking() {
       Value: devServer.hmrStats[key],
     });
   }
-  console.log(Bun.inspect.table(statsArray, { colors: true }));
+  console.info(Bun.inspect.table(statsArray, { colors: true }));
 
-  console.log("\n📤 HMR Data Export (JSON):");
-  console.log(exportHMRData(devServer, "json"));
+  console.info("\n📤 HMR Data Export (JSON):");
+  console.info(exportHMRData(devServer, "json"));
 
-  console.log("\n📤 HMR Data Export (Markdown Table):");
-  console.log(exportHMRData(devServer, "markdown"));
+  console.info("\n📤 HMR Data Export (Markdown Table):");
+  console.info(exportHMRData(devServer, "markdown"));
 
   return { servers, devServer };
 }

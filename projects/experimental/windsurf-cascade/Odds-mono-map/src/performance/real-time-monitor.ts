@@ -64,7 +64,7 @@ export class RealTimePerformanceMonitor extends EventEmitter {
      */
     startMonitoring(intervalMs: number = 1000): void {
         if (this.isMonitoring) {
-            console.log('📊 Monitoring already active');
+            console.info('📊 Monitoring already active');
             return;
         }
 
@@ -73,7 +73,7 @@ export class RealTimePerformanceMonitor extends EventEmitter {
             this.performHealthCheck();
         }, intervalMs);
 
-        console.log(`🚀 Real-time performance monitoring started (${intervalMs}ms interval)`);
+        console.info(`🚀 Real-time performance monitoring started (${intervalMs}ms interval)`);
         this.emit('monitoring:started');
     }
 
@@ -89,7 +89,7 @@ export class RealTimePerformanceMonitor extends EventEmitter {
             this.monitoringInterval = null;
         }
 
-        console.log('⏹️ Real-time performance monitoring stopped');
+        console.info('⏹️ Real-time performance monitoring stopped');
         this.emit('monitoring:stopped');
     }
 
@@ -439,16 +439,16 @@ export function initializeRealTimeMonitoring(): void {
 
     // Setup event listeners
     realTimeMonitor.on('alert:triggered', (alert) => {
-        console.log('🚨 Performance alert triggered:', alert.alert.operation);
+        console.info('🚨 Performance alert triggered:', alert.alert.operation);
     });
 
     realTimeMonitor.on('health:check', (health) => {
         if (health.status !== 'healthy') {
-            console.log(`🏥 Health status: ${health.status} (${health.budgetCompliance.toFixed(1)}% compliance)`);
+            console.info(`🏥 Health status: ${health.status} (${health.budgetCompliance.toFixed(1)}% compliance)`);
         }
     });
 
-    console.log('🚀 Real-time performance monitoring initialized for Industry Dominance');
+    console.info('🚀 Real-time performance monitoring initialized for Industry Dominance');
 }
 
 /**

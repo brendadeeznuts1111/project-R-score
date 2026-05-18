@@ -70,20 +70,20 @@ function colorInit(options: Options): void {
 
 	const palette = Tier1380Colors.generateTeamPalette(team, profile);
 
-	console.log(fmt.ok("Color system initialized"));
-	console.log(fmt.dim(`  Team: ${team}`));
-	console.log(fmt.dim(`  Profile: ${profile}`));
-	console.log("");
-	console.log(fmt.bold("Palette"));
-	console.log(
+	console.info(fmt.ok("Color system initialized"));
+	console.info(fmt.dim(`  Team: ${team}`));
+	console.info(fmt.dim(`  Profile: ${profile}`));
+	console.info("");
+	console.info(fmt.bold("Palette"));
+	console.info(
 		`  Primary:  ${palette.primary.ansi}${palette.primary.hex}${COLORS.reset}`,
 	);
-	console.log(
+	console.info(
 		`  Secondary: ${palette.secondary.ansi}${palette.secondary.hex}${COLORS.reset}`,
 	);
-	console.log(`  Accent:   ${palette.accent.ansi}${palette.accent.hex}${COLORS.reset}`);
-	console.log("");
-	console.log(
+	console.info(`  Accent:   ${palette.accent.ansi}${palette.accent.hex}${COLORS.reset}`);
+	console.info("");
+	console.info(
 		fmt.info("Config written to TIER1380_COLOR_TEAM and TIER1380_COLOR_PROFILE (env)."),
 	);
 }
@@ -93,28 +93,28 @@ function colorGenerate(options: Options): void {
 	const wcag = getOpt(options, "wcag", "aa") as string;
 	const formats = getOpt(options, "formats", "all") as string;
 
-	console.log(fmt.ok("Enterprise palette generated"));
-	console.log(fmt.dim(`  WCAG: ${wcag}`));
-	console.log(fmt.dim(`  Formats: ${formats}`));
-	console.log("");
+	console.info(fmt.ok("Enterprise palette generated"));
+	console.info(fmt.dim(`  WCAG: ${wcag}`));
+	console.info(fmt.dim(`  Formats: ${formats}`));
+	console.info("");
 
 	const teams = Tier1380Colors.teams();
 	const hexKeys = Object.keys(HEX) as (keyof typeof HEX)[];
-	console.log(fmt.bold("Hex (source of truth)"));
+	console.info(fmt.bold("Hex (source of truth)"));
 	for (const k of hexKeys) {
 		const v = HEX[k];
-		if (typeof v === "string") console.log(`  ${k}: ${v}`);
+		if (typeof v === "string") console.info(`  ${k}: ${v}`);
 	}
-	console.log("");
-	console.log(fmt.bold("Palette (status / terminal / dashboard / quantum)"));
+	console.info("");
+	console.info(fmt.bold("Palette (status / terminal / dashboard / quantum)"));
 	for (const team of teams) {
 		const base = Tier1380Colors.getTeamBase(team);
-		console.log(
+		console.info(
 			`  ${team}: primary=${base.primary} secondary=${base.secondary} accent=${base.accent}`,
 		);
 	}
-	console.log("");
-	console.log(
+	console.info("");
+	console.info(
 		fmt.info("Use --formats=hex,css,rgb,rgba,ansi to export specific formats."),
 	);
 }
@@ -124,11 +124,11 @@ function colorDeploy(options: Options): void {
 	const env = getOpt(options, "env", "production") as string;
 	const scale = getOpt(options, "scale", "3") as string;
 
-	console.log(fmt.ok("Color system deployed"));
-	console.log(fmt.dim(`  Env: ${env}`));
-	console.log(fmt.dim(`  Scale: ${scale} instances`));
-	console.log("");
-	console.log(
+	console.info(fmt.ok("Color system deployed"));
+	console.info(fmt.dim(`  Env: ${env}`));
+	console.info(fmt.dim(`  Scale: ${scale} instances`));
+	console.info("");
+	console.info(
 		fmt.info("Palette and theme tokens are available at TIER1380_COLOR_* in runtime."),
 	);
 }
@@ -138,19 +138,19 @@ function colorMetrics(options: Options): void {
 	const team = getOpt(options, "team", "quantum-team") as string;
 	const live = getOpt(options, "live", false) as boolean;
 
-	console.log(fmt.ok("Color metrics"));
-	console.log(fmt.dim(`  Team: ${team}`));
-	console.log(fmt.dim(`  Live: ${live}`));
-	console.log("");
+	console.info(fmt.ok("Color metrics"));
+	console.info(fmt.dim(`  Team: ${team}`));
+	console.info(fmt.dim(`  Live: ${live}`));
+	console.info("");
 
 	const palette = Tier1380Colors.generateTeamPalette(team, "metrics");
-	console.log(fmt.bold("Current palette"));
-	console.log(`  primary.hex:  ${palette.primary.hex}`);
-	console.log(`  secondary.hex: ${palette.secondary.hex}`);
-	console.log(`  accent.hex:    ${palette.accent.hex}`);
-	console.log("");
+	console.info(fmt.bold("Current palette"));
+	console.info(`  primary.hex:  ${palette.primary.hex}`);
+	console.info(`  secondary.hex: ${palette.secondary.hex}`);
+	console.info(`  accent.hex:    ${palette.accent.hex}`);
+	console.info("");
 	if (live) {
-		console.log(
+		console.info(
 			fmt.info(
 				"Live metrics stream not implemented; run with --live=false for snapshot.",
 			),
@@ -161,19 +161,19 @@ function colorMetrics(options: Options): void {
 // ─── colors deploy (team positional + --profile) ────────────────────────────
 function colorsDeploy(team: string, profile: string): void {
 	const palette = Tier1380Colors.generateTeamPalette(team, profile);
-	console.log(fmt.ok("Colors deployed for team"));
-	console.log(fmt.dim(`  Team: ${team}`));
-	console.log(fmt.dim(`  Profile: ${profile}`));
-	console.log("");
-	console.log(
+	console.info(fmt.ok("Colors deployed for team"));
+	console.info(fmt.dim(`  Team: ${team}`));
+	console.info(fmt.dim(`  Profile: ${profile}`));
+	console.info("");
+	console.info(
 		`  Primary:  ${palette.primary.ansi}${palette.primary.hex}${COLORS.reset}`,
 	);
-	console.log(
+	console.info(
 		`  Secondary: ${palette.secondary.ansi}${palette.secondary.hex}${COLORS.reset}`,
 	);
-	console.log(`  Accent:   ${palette.accent.ansi}${palette.accent.hex}${COLORS.reset}`);
-	console.log("");
-	console.log(fmt.info("Palette active for this session."));
+	console.info(`  Accent:   ${palette.accent.ansi}${palette.accent.hex}${COLORS.reset}`);
+	console.info("");
+	console.info(fmt.info("Palette active for this session."));
 }
 
 // ─── terminal (colored banner via Bun.stdout) ───────────────────────────────
@@ -201,16 +201,16 @@ async function terminalBanner(team: string, profile: string): Promise<void> {
 // ─── dashboard (open URL or print) ──────────────────────────────────────────
 function dashboardOpen(team: string, profile: string): void {
 	const url = `http://localhost:${DASHBOARD_PORT}/dashboard?teamId=${encodeURIComponent(team)}&profileId=${encodeURIComponent(profile)}`;
-	console.log(fmt.info("Metrics dashboard"));
-	console.log(fmt.dim(`  URL: ${url}`));
-	console.log("");
+	console.info(fmt.info("Metrics dashboard"));
+	console.info(fmt.dim(`  URL: ${url}`));
+	console.info("");
 	try {
 		const proc = Bun.spawn(["open", url], { stdout: "ignore", stderr: "pipe" });
 		proc.exited.then((code) => {
-			if (code !== 0) console.log(fmt.warn("Run: open " + url));
+			if (code !== 0) console.info(fmt.warn("Run: open " + url));
 		});
 	} catch {
-		console.log(fmt.warn("Open in browser: " + url));
+		console.info(fmt.warn("Open in browser: " + url));
 	}
 }
 
@@ -222,7 +222,7 @@ async function main(): Promise<void> {
 	if (cmd === "colors") {
 		if (sub !== "deploy") {
 			console.error(fmt.fail(`Unknown colors subcommand: ${sub || "(missing)"}`));
-			console.log("  deploy <team> --profile <name>");
+			console.info("  deploy <team> --profile <name>");
 			process.exit(1);
 		}
 		const team = positionals[0] ?? "quantum-team";
@@ -335,32 +335,32 @@ async function main(): Promise<void> {
 				break;
 			default:
 				console.error(fmt.fail(`Unknown color subcommand: ${colorSub || "(missing)"}`));
-				console.log("  init | generate | deploy | metrics");
+				console.info("  init | generate | deploy | metrics");
 				process.exit(1);
 		}
 		return;
 	}
 
 	// no/invalid command
-	console.log("Usage: tier1380 <color|colors|terminal|dashboard> [options]");
-	console.log("");
-	console.log("Commands:");
-	console.log("  color init       --team=quantum-team --profile=admin");
-	console.log("  color generate   --wcag=aa --formats=all");
-	console.log("  color deploy     --env=production --scale=3");
-	console.log("  color metrics    --team=quantum-team --live");
-	console.log("  colors deploy    <team> --profile <name>   # Deploy colors for team");
-	console.log(
+	console.info("Usage: tier1380 <color|colors|terminal|dashboard> [options]");
+	console.info("");
+	console.info("Commands:");
+	console.info("  color init       --team=quantum-team --profile=admin");
+	console.info("  color generate   --wcag=aa --formats=all");
+	console.info("  color deploy     --env=production --scale=3");
+	console.info("  color metrics    --team=quantum-team --live");
+	console.info("  colors deploy    <team> --profile <name>   # Deploy colors for team");
+	console.info(
 		"  terminal         <team> <profile>         # Launch colored terminal banner",
 	);
-	console.log(
+	console.info(
 		"  dashboard        --team=quantum-team --profile=alice   # Open metrics dashboard",
 	);
-	console.log("");
-	console.log("Examples:");
-	console.log("  bun tier1380 colors deploy quantum-team --profile alice");
-	console.log("  bun tier1380 terminal quantum-team alice");
-	console.log(
+	console.info("");
+	console.info("Examples:");
+	console.info("  bun tier1380 colors deploy quantum-team --profile alice");
+	console.info("  bun tier1380 terminal quantum-team alice");
+	console.info(
 		`  open http://localhost:${DASHBOARD_PORT}/dashboard?teamId=quantum-team&profileId=alice`,
 	);
 	process.exit(1);

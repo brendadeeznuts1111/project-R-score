@@ -96,12 +96,12 @@ export class R2LifecycleManager {
    * Initialize the lifecycle manager
    */
   async initialize(): Promise<void> {
-    console.log(styled('⏰ Initializing R2 Lifecycle Manager', 'accent'));
+    console.info(styled('⏰ Initializing R2 Lifecycle Manager', 'accent'));
 
     // Start background scanning
     this.startBackgroundScan();
 
-    console.log(styled('✅ Lifecycle manager initialized', 'success'));
+    console.info(styled('✅ Lifecycle manager initialized', 'success'));
   }
 
   /**
@@ -159,7 +159,7 @@ export class R2LifecycleManager {
    */
   addRule(rule: LifecycleRule): void {
     this.rules.set(rule.id, rule);
-    console.log(styled(`📋 Added lifecycle rule: ${rule.name}`, 'info'));
+    console.info(styled(`📋 Added lifecycle rule: ${rule.name}`, 'info'));
   }
 
   /**
@@ -279,7 +279,7 @@ export class R2LifecycleManager {
       this.performLifecycleScan();
     }, this.scanInterval);
 
-    console.log(
+    console.info(
       styled(`🔄 Background scan started (interval: ${this.scanInterval / 60000}min)`, 'info')
     );
   }
@@ -293,14 +293,14 @@ export class R2LifecycleManager {
       this.intervalId = undefined;
     }
     this.isRunning = false;
-    console.log(styled('🛑 Background scan stopped', 'warning'));
+    console.info(styled('🛑 Background scan stopped', 'warning'));
   }
 
   /**
    * Perform lifecycle scan
    */
   async performLifecycleScan(): Promise<CleanupReport> {
-    console.log(styled('🔍 Performing lifecycle scan...', 'info'));
+    console.info(styled('🔍 Performing lifecycle scan...', 'info'));
 
     const report: CleanupReport = {
       timestamp: new Date().toISOString(),
@@ -409,7 +409,7 @@ export class R2LifecycleManager {
       .filter(r => r.enabled)
       .map(r => r.id);
 
-    console.log(
+    console.info(
       styled(
         `✅ Lifecycle scan complete: ${report.objectsDeleted} deleted, ${report.objectsTransitioned} transitioned`,
         'success'
@@ -444,14 +444,14 @@ export class R2LifecycleManager {
       metadata: { fromClass, toClass },
     });
 
-    console.log(styled(`📦 Transitioned ${key}: ${fromClass} → ${toClass}`, 'info'));
+    console.info(styled(`📦 Transitioned ${key}: ${fromClass} → ${toClass}`, 'info'));
   }
 
   /**
    * Manually delete expired objects
    */
   async cleanupExpired(bucket?: string): Promise<CleanupReport> {
-    console.log(styled('🧹 Cleaning up expired objects...', 'info'));
+    console.info(styled('🧹 Cleaning up expired objects...', 'info'));
     return this.performLifecycleScan();
   }
 
@@ -581,41 +581,41 @@ export class R2LifecycleManager {
    * Display lifecycle status
    */
   displayStatus(): void {
-    console.log(styled('\n⏰ R2 Lifecycle Manager Status', 'accent'));
-    console.log(styled('==============================', 'accent'));
+    console.info(styled('\n⏰ R2 Lifecycle Manager Status', 'accent'));
+    console.info(styled('==============================', 'accent'));
 
-    console.log(styled('\n📋 Active Rules:', 'info'));
+    console.info(styled('\n📋 Active Rules:', 'info'));
     for (const rule of this.rules.values()) {
       const status = rule.enabled ? styled('✅', 'success') : styled('❌', 'error');
-      console.log(styled(`  ${status} ${rule.name} (${rule.id})`, 'muted'));
+      console.info(styled(`  ${status} ${rule.name} (${rule.id})`, 'muted'));
       if (rule.ttl) {
-        console.log(styled(`     TTL: ${rule.ttl.deleteAfterDays} days`, 'muted'));
+        console.info(styled(`     TTL: ${rule.ttl.deleteAfterDays} days`, 'muted'));
       }
       if (rule.transitions) {
         rule.transitions.forEach(t => {
-          console.log(styled(`     → ${t.storageClass}: ${t.days} days`, 'muted'));
+          console.info(styled(`     → ${t.storageClass}: ${t.days} days`, 'muted'));
         });
       }
     }
 
     const metrics = this.getMetrics();
-    console.log(styled('\n📊 Storage Metrics:', 'info'));
-    console.log(styled(`  Total Objects: ${metrics.totalObjects}`, 'muted'));
-    console.log(
+    console.info(styled('\n📊 Storage Metrics:', 'info'));
+    console.info(styled(`  Total Objects: ${metrics.totalObjects}`, 'muted'));
+    console.info(
       styled(`  Total Size: ${(metrics.totalSize / 1024 / 1024).toFixed(2)} MB`, 'muted')
     );
-    console.log(
+    console.info(
       styled(
         `  Expired Objects: ${metrics.expiredObjects}`,
         metrics.expiredObjects > 0 ? 'warning' : 'muted'
       )
     );
 
-    console.log(styled('\n📦 Storage Distribution:', 'info'));
+    console.info(styled('\n📦 Storage Distribution:', 'info'));
     for (const [cls, count] of Object.entries(metrics.byStorageClass)) {
       if (count > 0) {
         const size = (metrics.sizeByClass[cls as StorageClass] / 1024 / 1024).toFixed(2);
-        console.log(styled(`  ${cls}: ${count} objects (${size} MB)`, 'muted'));
+        console.info(styled(`  ${cls}: ${count} objects (${size} MB)`, 'muted'));
       }
     }
   }
@@ -629,8 +629,8 @@ if (import.meta.main) {
   const lifecycle = r2LifecycleManager;
   await lifecycle.initialize();
 
-  console.log(styled('⏰ R2 Lifecycle Manager Demo', 'accent'));
-  console.log(styled('============================', 'accent'));
+  console.info(styled('⏰ R2 Lifecycle Manager Demo', 'accent'));
+  console.info(styled('============================', 'accent'));
 
   // Register some test objects
   lifecycle.registerObject(
@@ -658,26 +658,26 @@ if (import.meta.main) {
   lifecycle.displayStatus();
 
   // Perform cleanup
-  console.log(styled('\n🧹 Running cleanup scan...', 'info'));
+  console.info(styled('\n🧹 Running cleanup scan...', 'info'));
   const report = await lifecycle.performLifecycleScan();
 
-  console.log(styled('\n📋 Cleanup Report:', 'info'));
-  console.log(styled(`  Objects Deleted: ${report.objectsDeleted}`, 'muted'));
-  console.log(styled(`  Objects Transitioned: ${report.objectsTransitioned}`, 'muted'));
-  console.log(
+  console.info(styled('\n📋 Cleanup Report:', 'info'));
+  console.info(styled(`  Objects Deleted: ${report.objectsDeleted}`, 'muted'));
+  console.info(styled(`  Objects Transitioned: ${report.objectsTransitioned}`, 'muted'));
+  console.info(
     styled(`  Space Reclaimed: ${(report.spaceReclaimed / 1024 / 1024).toFixed(2)} MB`, 'muted')
   );
 
   // Compliance report
   const compliance = lifecycle.generateComplianceReport();
-  console.log(
+  console.info(
     styled(
       '\n📜 Compliance Status:',
       compliance.complianceStatus === 'compliant' ? 'success' : 'warning'
     )
   );
-  console.log(styled(`  Status: ${compliance.complianceStatus.toUpperCase()}`, 'muted'));
+  console.info(styled(`  Status: ${compliance.complianceStatus.toUpperCase()}`, 'muted'));
   compliance.recommendations.forEach(rec => {
-    console.log(styled(`  💡 ${rec}`, 'info'));
+    console.info(styled(`  💡 ${rec}`, 'info'));
   });
 }

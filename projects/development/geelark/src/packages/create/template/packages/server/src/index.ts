@@ -11,7 +11,7 @@ const server = Bun.serve({
   },
 });
 
-console.log(`@dev-hq/server running at ${server.url.href}`);
+console.info(`@dev-hq/server running at ${server.url.href}`);
 
 
 

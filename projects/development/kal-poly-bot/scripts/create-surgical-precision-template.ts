@@ -42,10 +42,10 @@ export class SurgicalPrecisionTemplate implements BunTemplateAPI.Template {
   description = TEMPLATE_CONFIG.description;
 
   async scaffoldProject(dir: string, name: string, variant: string = 'full-platform'): Promise<void> {
-    console.log(`🚀 Creating Surgical Precision Platform: ${name}`);
-    console.log(`📁 Location: ${dir}`);
-    console.log(`🎯 Variant: ${variant}`);
-    console.log('');
+    console.info(`🚀 Creating Surgical Precision Platform: ${name}`);
+    console.info(`📁 Location: ${dir}`);
+    console.info(`🎯 Variant: ${variant}`);
+    console.info('');
 
     // Validate variant
     if (!TEMPLATE_CONFIG.variants[variant as keyof typeof TEMPLATE_CONFIG.variants]) {
@@ -53,8 +53,8 @@ export class SurgicalPrecisionTemplate implements BunTemplateAPI.Template {
     }
 
     const config = TEMPLATE_CONFIG.variants[variant as keyof typeof TEMPLATE_CONFIG.variants];
-    console.log(`✨ Features: ${config.features.join(', ')}`);
-    console.log('');
+    console.info(`✨ Features: ${config.features.join(', ')}`);
+    console.info('');
 
     // Create directory structure
     await this.createDirectories(dir);
@@ -74,17 +74,17 @@ export class SurgicalPrecisionTemplate implements BunTemplateAPI.Template {
     // Initialize git
     await this.initializeGit(dir);
 
-    console.log('✅ Surgical Precision Platform created successfully!');
-    console.log('');
-    console.log('🚀 Next steps:');
-    console.log(`   cd ${dir}`);
-    console.log('   bun install');
-    console.log('   bun run dev');
-    console.log('');
-    console.log('📚 Documentation:');
-    console.log('   bun run help');
-    console.log('   README.md');
-    console.log('');
+    console.info('✅ Surgical Precision Platform created successfully!');
+    console.info('');
+    console.info('🚀 Next steps:');
+    console.info(`   cd ${dir}`);
+    console.info('   bun install');
+    console.info('   bun run dev');
+    console.info('');
+    console.info('📚 Documentation:');
+    console.info('   bun run help');
+    console.info('   README.md');
+    console.info('');
   }
 
   private async createDirectories(dir: string): Promise<void> {
@@ -101,7 +101,7 @@ export class SurgicalPrecisionTemplate implements BunTemplateAPI.Template {
     for (const subdir of directories) {
       mkdirSync(join(dir, subdir), { recursive: true });
     }
-    console.log('📁 Created directory structure');
+    console.info('📁 Created directory structure');
   }
 
   private async createPackageJson(dir: string, name: string, variant: string): Promise<void> {
@@ -124,7 +124,7 @@ export class SurgicalPrecisionTemplate implements BunTemplateAPI.Template {
     };
 
     writeFileSync(join(dir, 'package.json'), JSON.stringify(packageJson, null, 2));
-    console.log('📦 Created package.json');
+    console.info('📦 Created package.json');
   }
 
   private generateScripts(features: string[]): Record<string, string> {
@@ -169,9 +169,9 @@ export class SurgicalPrecisionTemplate implements BunTemplateAPI.Template {
     const mainContent = `#!/usr/bin/env bun
 // src/index.ts - Surgical Precision Platform Entry Point
 
-console.log('🔬 ${name} - Surgical Precision Platform');
-console.log('🚀 Starting up...');
-console.log('');
+console.info('🔬 ${name} - Surgical Precision Platform');
+console.info('🚀 Starting up...');
+console.info('');
 
 ${config.features.includes('mcp') ? `
 // Start MCP server if enabled
@@ -183,18 +183,18 @@ ${config.features.includes('ab-testing') ? `
 import './ab-config.ts';
 ` : ''}
 
-console.log('✅ Platform initialized successfully!');
-console.log('');
-console.log('🎯 Available commands:');
-console.log('   bun run help    - Show help');
-${config.features.includes('mcp') ? 'console.log(\'   bun run mcp:start - Start MCP server\');' : ''}
-${config.features.includes('ab-testing') ? 'console.log(\'   bun run ab:test   - Run A/B tests\');' : ''}
-console.log('');
+console.info('✅ Platform initialized successfully!');
+console.info('');
+console.info('🎯 Available commands:');
+console.info('   bun run help    - Show help');
+${config.features.includes('mcp') ? 'console.info(\'   bun run mcp:start - Start MCP server\');' : ''}
+${config.features.includes('ab-testing') ? 'console.info(\'   bun run ab:test   - Run A/B tests\');' : ''}
+console.info('');
 
 // Keep the process alive if MCP server is running
 ${config.features.includes('mcp') ? `
 process.on('SIGINT', () => {
-  console.log('\\n👋 Shutting down gracefully...');
+  console.info('\\n👋 Shutting down gracefully...');
   process.exit(0);
 });
 
@@ -210,7 +210,7 @@ setInterval(() => {}, 1000);
       const mcpInitContent = `// src/mcp-init.ts - MCP Server Initialization
 import { BunMCPServer } from '../mcp/server.ts';
 
-console.log('🔍 Initializing MCP CodeSearch server...');
+console.info('🔍 Initializing MCP CodeSearch server...');
 
 const server = new BunMCPServer();
 server.start().catch(error => {
@@ -231,12 +231,12 @@ export const AB_CONFIG = {
   features: ['basic-analytics', 'conservative-logging']
 };
 
-console.log('🧪 A/B Testing Config:', AB_CONFIG);
+console.info('🧪 A/B Testing Config:', AB_CONFIG);
 `;
       writeFileSync(join(dir, 'src/ab-config.ts'), abConfigContent);
     }
 
-    console.log('📝 Created source files');
+    console.info('📝 Created source files');
   }
 
   private async createConfigFiles(dir: string, variant: string): Promise<void> {
@@ -305,7 +305,7 @@ hostname = "localhost"
 }`;
     writeFileSync(join(dir, 'eslint.config.js'), eslintContent);
 
-    console.log('⚙️ Created configuration files');
+    console.info('⚙️ Created configuration files');
   }
 
   private async createDocumentation(dir: string, name: string, variant: string): Promise<void> {
@@ -363,13 +363,13 @@ ${TEMPLATE_CONFIG.license} - ${TEMPLATE_CONFIG.author}
     const helpContent = `#!/usr/bin/env bun
 // scripts/help.ts - Help system for ${name}
 
-console.log('🖥️  ${name} - Surgical Precision Platform');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log('');
-console.log('${config.description}');
-console.log('');
-console.log('📋 Available Commands:');
-console.log('');
+console.info('🖥️  ${name} - Surgical Precision Platform');
+console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.info('');
+console.info('${config.description}');
+console.info('');
+console.info('📋 Available Commands:');
+console.info('');
 
 // Group commands by category
 const commands = {
@@ -406,29 +406,29 @@ commands['Benchmarks'] = {
 };` : ''}
 
 for (const [category, cmds] of Object.entries(commands)) {
-  console.log(\`\${category}:\`);
+  console.info(\`\${category}:\`);
   for (const [cmd, desc] of Object.entries(cmds)) {
-    console.log(\`  \${cmd.padEnd(20)} - \${desc}\`);
+    console.info(\`  \${cmd.padEnd(20)} - \${desc}\`);
   }
-  console.log('');
+  console.info('');
 }
 
-console.log('📚 For more information:');
-console.log('  README.md          - Project documentation');
-console.log('  docs/              - Additional documentation');
-console.log('');
+console.info('📚 For more information:');
+console.info('  README.md          - Project documentation');
+console.info('  docs/              - Additional documentation');
+console.info('');
 `;
 
     writeFileSync(join(dir, 'scripts/help.ts'), helpContent);
 
-    console.log('📚 Created documentation');
+    console.info('📚 Created documentation');
   }
 
   private async initializeGit(dir: string): Promise<void> {
     try {
       const { exitCode } = await Bun.spawn(['git', 'init'], { cwd: dir });
       if (exitCode === 0) {
-        console.log('📋 Initialized Git repository');
+        console.info('📋 Initialized Git repository');
       }
     } catch (error) {
       console.warn('⚠️  Git initialization skipped (git not available)');
@@ -447,14 +447,14 @@ if (import.meta.main) {
   const testDir = './test-surgical-precision-app';
   const testName = 'my-test-app';
 
-  console.log('🧪 Testing template scaffold...');
+  console.info('🧪 Testing template scaffold...');
   await template.scaffoldProject(testDir, testName, 'full-platform');
 
   // Verify creation
   const exists = await Bun.file(`${testDir}/src/index.ts`).exists();
   console.assert(exists, 'Template file should be created');
 
-  console.log('✅ Template test passed!');
-  console.log(`📁 Created test app in: ${testDir}`);
-  console.log('💡 You can now cd into the directory and run: bun install && bun run dev');
+  console.info('✅ Template test passed!');
+  console.info(`📁 Created test app in: ${testDir}`);
+  console.info('💡 You can now cd into the directory and run: bun install && bun run dev');
 }

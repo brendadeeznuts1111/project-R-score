@@ -47,13 +47,13 @@ async function benchmarkComparison() {
   const iterations = [1000, 5000, 10000, 50000];
   const headers = createTestHeaders(25);
 
-  console.log('🚀 Headers toJSON() Performance Benchmark');
-  console.log('========================================\n');
+  console.info('🚀 Headers toJSON() Performance Benchmark');
+  console.info('========================================\n');
 
-  console.log(`📊 Testing with ${headers.count} headers including multiple Set-Cookie values\n`);
+  console.info(`📊 Testing with ${headers.count} headers including multiple Set-Cookie values\n`);
 
   for (const iter of iterations) {
-    console.log(`🔄 Testing ${iter} iterations:`);
+    console.info(`🔄 Testing ${iter} iterations:`);
 
     // Warm up
     for (let i = 0; i < 100; i++) {
@@ -79,22 +79,22 @@ async function benchmarkComparison() {
     const toJSONOps = iter / (toJSONTime / 1000);
     const fromEntriesOps = iter / (fromEntriesTime / 1000);
 
-    console.log(`   toJSON():           ${toJSONTime.toFixed(2)}ms (${toJSONOps.toFixed(0)} ops/sec)`);
-    console.log(`   Object.fromEntries(): ${fromEntriesTime.toFixed(2)}ms (${fromEntriesOps.toFixed(0)} ops/sec)`);
-    console.log(`   📈 Speedup: ${speedup.toFixed(1)}x faster\n`);
+    console.info(`   toJSON():           ${toJSONTime.toFixed(2)}ms (${toJSONOps.toFixed(0)} ops/sec)`);
+    console.info(`   Object.fromEntries(): ${fromEntriesTime.toFixed(2)}ms (${fromEntriesOps.toFixed(0)} ops/sec)`);
+    console.info(`   📈 Speedup: ${speedup.toFixed(1)}x faster\n`);
   }
 }
 
 // Memory usage comparison
 function memoryUsageComparison() {
-  console.log('💾 Memory Usage Comparison');
-  console.log('==========================\n');
+  console.info('💾 Memory Usage Comparison');
+  console.info('==========================\n');
 
   const headers = createTestHeaders(50);
   const iterations = 10000;
 
   // Test toJSON() memory pattern
-  console.log('🔄 Testing toJSON() memory usage...');
+  console.info('🔄 Testing toJSON() memory usage...');
   const toJSONStart = performance.now();
   const toJSONResults = [];
   for (let i = 0; i < iterations; i++) {
@@ -103,7 +103,7 @@ function memoryUsageComparison() {
   const toJSONTime = performance.now() - toJSONStart;
 
   // Test Object.fromEntries() memory pattern
-  console.log('🔄 Testing Object.fromEntries() memory usage...');
+  console.info('🔄 Testing Object.fromEntries() memory usage...');
   const fromEntriesStart = performance.now();
   const fromEntriesResults = [];
   for (let i = 0; i < iterations; i++) {
@@ -111,10 +111,10 @@ function memoryUsageComparison() {
   }
   const fromEntriesTime = performance.now() - fromEntriesStart;
 
-  console.log(`\n📊 Results (${iterations} iterations):`);
-  console.log(`   toJSON(): ${toJSONTime.toFixed(2)}ms`);
-  console.log(`   Object.fromEntries(): ${fromEntriesTime.toFixed(2)}ms`);
-  console.log(`   📈 Speedup: ${(fromEntriesTime / toJSONTime).toFixed(1)}x`);
+  console.info(`\n📊 Results (${iterations} iterations):`);
+  console.info(`   toJSON(): ${toJSONTime.toFixed(2)}ms`);
+  console.info(`   Object.fromEntries(): ${fromEntriesTime.toFixed(2)}ms`);
+  console.info(`   📈 Speedup: ${(fromEntriesTime / toJSONTime).toFixed(1)}x`);
 
   // Clean up
   toJSONResults.length = 0;
@@ -122,21 +122,21 @@ function memoryUsageComparison() {
 
   if (global.gc) {
     global.gc();
-    console.log('🗑️ Garbage collected');
+    console.info('🗑️ Garbage collected');
   }
 }
 
 // Real-world scenario: High-volume API server simulation
 async function apiServerSimulation() {
-  console.log('\n🌐 High-Volume API Server Simulation');
-  console.log('=====================================\n');
+  console.info('\n🌐 High-Volume API Server Simulation');
+  console.info('=====================================\n');
 
   const requestsPerSecond = 1000;
   const simulationDuration = 5; // seconds
   const totalRequests = requestsPerSecond * simulationDuration;
 
-  console.log(`📊 Simulating ${requestsPerSecond} requests/sec for ${simulationDuration} seconds`);
-  console.log(`   Total requests: ${totalRequests}\n`);
+  console.info(`📊 Simulating ${requestsPerSecond} requests/sec for ${simulationDuration} seconds`);
+  console.info(`   Total requests: ${totalRequests}\n`);
 
   // Simulate incoming request headers
   const requestHeaders = createTestHeaders(15);
@@ -148,7 +148,7 @@ async function apiServerSimulation() {
   responseHeaders.append('X-Cache', 'MISS');
   responseHeaders.append('Set-Cookie', 'tracking-id=' + Math.random().toString(36).substr(2, 9));
 
-  console.log('🔄 Processing requests...');
+  console.info('🔄 Processing requests...');
 
   const startTime = performance.now();
   let processedRequests = 0;
@@ -171,34 +171,34 @@ async function apiServerSimulation() {
     const currentRate = (batchSize / (batchTime / 1000)).toFixed(0);
 
     if (processedRequests % 1000 === 0) {
-      console.log(`   Processed ${processedRequests}/${totalRequests} (${currentRate} req/sec)`);
+      console.info(`   Processed ${processedRequests}/${totalRequests} (${currentRate} req/sec)`);
     }
   }
 
   const totalTime = performance.now() - startTime;
   const actualRate = processedRequests / (totalTime / 1000);
 
-  console.log(`\n✅ Simulation completed:`);
-  console.log(`   Total time: ${totalTime.toFixed(2)}ms`);
-  console.log(`   Actual rate: ${actualRate.toFixed(0)} requests/sec`);
-  console.log(`   Avg per request: ${(totalTime / processedRequests).toFixed(3)}ms`);
+  console.info(`\n✅ Simulation completed:`);
+  console.info(`   Total time: ${totalTime.toFixed(2)}ms`);
+  console.info(`   Actual rate: ${actualRate.toFixed(0)} requests/sec`);
+  console.info(`   Avg per request: ${(totalTime / processedRequests).toFixed(3)}ms`);
 }
 
 // Main execution
 async function runBenchmark() {
-  console.log('🎯 Bun Headers toJSON() Performance Analysis\n');
+  console.info('🎯 Bun Headers toJSON() Performance Analysis\n');
 
   try {
     await benchmarkComparison();
     memoryUsageComparison();
     await apiServerSimulation();
 
-    console.log('\n🎉 Benchmark completed!');
-    console.log('💡 Key insights:');
-    console.log('   • toJSON() is significantly faster for serialization');
-    console.log('   • Performance advantage increases with header count');
-    console.log('   • Ideal for high-volume API servers and logging');
-    console.log('   • Use when you need fast plain object conversion');
+    console.info('\n🎉 Benchmark completed!');
+    console.info('💡 Key insights:');
+    console.info('   • toJSON() is significantly faster for serialization');
+    console.info('   • Performance advantage increases with header count');
+    console.info('   • Ideal for high-volume API servers and logging');
+    console.info('   • Use when you need fast plain object conversion');
 
   } catch (error) {
     console.error('\n❌ Benchmark error:', error);

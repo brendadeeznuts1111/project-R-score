@@ -3,7 +3,7 @@
 // monitoring/advanced-monitoring.ts - Real-time Monitoring & Analytics
 // Enterprise-grade monitoring with AI-powered insights and predictive analytics
 
-console.log("📊 Advanced Monitoring System - Real-time Analytics Starting...");
+console.info("📊 Advanced Monitoring System - Real-time Analytics Starting...");
 
 export interface SystemMetrics {
   timestamp: number;
@@ -146,7 +146,7 @@ export class AdvancedMonitoringSystem {
     if (this.isMonitoring) return;
     
     this.isMonitoring = true;
-    console.log("📊 Starting advanced monitoring...");
+    console.info("📊 Starting advanced monitoring...");
     
     this.monitoringInterval = setInterval(async () => {
       await this.collectMetrics();
@@ -164,7 +164,7 @@ export class AdvancedMonitoringSystem {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
     }
-    console.log("⏹️ Monitoring stopped");
+    console.info("⏹️ Monitoring stopped");
   }
 
   private async collectMetrics() {
@@ -439,7 +439,7 @@ export class AdvancedMonitoringSystem {
       this.alerts = this.alerts.slice(-1000);
     }
 
-    console.log(`🚨 Alert generated: ${alert.title} (${alert.severity})`);
+    console.info(`🚨 Alert generated: ${alert.title} (${alert.severity})`);
     
     // Notify subscribers
     this.alertSubscribers.forEach(callback => callback(alert));
@@ -450,7 +450,7 @@ export class AdvancedMonitoringSystem {
     if (alert) {
       alert.resolved = true;
       alert.resolvedAt = Date.now();
-      console.log(`✅ Alert resolved: ${alert.title}`);
+      console.info(`✅ Alert resolved: ${alert.title}`);
     }
   }
 
@@ -471,7 +471,7 @@ export class AdvancedMonitoringSystem {
         this.insights = this.insights.slice(-100);
       }
 
-      console.log(`💡 Insight generated: ${insight.title} (confidence: ${(insight.confidence * 100).toFixed(1)}%)`);
+      console.info(`💡 Insight generated: ${insight.title} (confidence: ${(insight.confidence * 100).toFixed(1)}%)`);
     }
   }
 
@@ -538,7 +538,7 @@ export class AdvancedMonitoringSystem {
 
   private async runPredictiveModels() {
     // Simulate AI predictive models
-    console.log('🤖 Running predictive analysis models...');
+    console.info('🤖 Running predictive analysis models...');
     
     // Predict system load
     await this.predictSystemLoad();
@@ -632,74 +632,74 @@ export class AdvancedMonitoringSystem {
 
 // Demo and testing
 async function demonstrateAdvancedMonitoring() {
-  console.log("📊 Advanced Monitoring System - Real-time Analytics Demo");
-  console.log("=" .repeat(60));
+  console.info("📊 Advanced Monitoring System - Real-time Analytics Demo");
+  console.info("=" .repeat(60));
 
   const monitoring = new AdvancedMonitoringSystem();
 
   // Wait for some metrics to be collected
-  console.log("\n⏳ Collecting initial metrics...");
+  console.info("\n⏳ Collecting initial metrics...");
   await new Promise(resolve => setTimeout(resolve, 10000));
 
   // Show system metrics
-  console.log("\n📈 System Metrics:");
+  console.info("\n📈 System Metrics:");
   const systemMetrics = monitoring.getSystemMetrics(5);
   systemMetrics.forEach((metric, index) => {
-    console.log(`   ${index + 1}. CPU: ${metric.cpu.usage.toFixed(1)}%, Memory: ${metric.memory.usage.toFixed(1)}%, Disk: ${metric.disk.usage.toFixed(1)}%`);
+    console.info(`   ${index + 1}. CPU: ${metric.cpu.usage.toFixed(1)}%, Memory: ${metric.memory.usage.toFixed(1)}%, Disk: ${metric.disk.usage.toFixed(1)}%`);
   });
 
   // Show business metrics
-  console.log("\n💰 Business Metrics:");
+  console.info("\n💰 Business Metrics:");
   const businessMetrics = monitoring.getBusinessMetrics(3);
   businessMetrics.forEach((metric, index) => {
-    console.log(`   ${index + 1}. Orders: ${metric.shopping.totalOrders}, Revenue: $${metric.shopping.totalRevenue.toFixed(2)}, Fraud Accuracy: ${metric.fraudDetection.accuracy.toFixed(1)}%`);
+    console.info(`   ${index + 1}. Orders: ${metric.shopping.totalOrders}, Revenue: $${metric.shopping.totalRevenue.toFixed(2)}, Fraud Accuracy: ${metric.fraudDetection.accuracy.toFixed(1)}%`);
   });
 
   // Show alerts
-  console.log("\n🚨 Active Alerts:");
+  console.info("\n🚨 Active Alerts:");
   const alerts = monitoring.getAlerts();
   if (alerts.length > 0) {
     alerts.forEach((alert, index) => {
-      console.log(`   ${index + 1}. [${alert.severity.toUpperCase()}] ${alert.title}: ${alert.message}`);
+      console.info(`   ${index + 1}. [${alert.severity.toUpperCase()}] ${alert.title}: ${alert.message}`);
     });
   } else {
-    console.log("   No active alerts");
+    console.info("   No active alerts");
   }
 
   // Show insights
-  console.log("\n💡 Predictive Insights:");
+  console.info("\n💡 Predictive Insights:");
   const insights = monitoring.getInsights(5);
   if (insights.length > 0) {
     insights.forEach((insight, index) => {
-      console.log(`   ${index + 1}. [${insight.impact.toUpperCase()}] ${insight.title}: ${insight.description}`);
-      console.log(`      Confidence: ${(insight.confidence * 100).toFixed(1)}%, Time Horizon: ${insight.timeHorizon}`);
+      console.info(`   ${index + 1}. [${insight.impact.toUpperCase()}] ${insight.title}: ${insight.description}`);
+      console.info(`      Confidence: ${(insight.confidence * 100).toFixed(1)}%, Time Horizon: ${insight.timeHorizon}`);
     });
   } else {
-    console.log("   No insights available yet");
+    console.info("   No insights available yet");
   }
 
   // Show monitoring status
-  console.log("\n📊 Monitoring Status:");
+  console.info("\n📊 Monitoring Status:");
   const status = monitoring.getMonitoringStatus();
-  console.log(`   Monitoring Active: ${status.isMonitoring ? '✅ Yes' : '❌ No'}`);
-  console.log(`   Uptime: ${Math.floor(status.uptime / 1000 / 60)} minutes`);
-  console.log(`   Total Metrics Collected: ${status.totalMetrics}`);
-  console.log(`   Total Alerts Generated: ${status.totalAlerts}`);
-  console.log(`   Active Alerts: ${status.activeAlerts}`);
-  console.log(`   Predictive Insights: ${status.totalInsights}`);
+  console.info(`   Monitoring Active: ${status.isMonitoring ? '✅ Yes' : '❌ No'}`);
+  console.info(`   Uptime: ${Math.floor(status.uptime / 1000 / 60)} minutes`);
+  console.info(`   Total Metrics Collected: ${status.totalMetrics}`);
+  console.info(`   Total Alerts Generated: ${status.totalAlerts}`);
+  console.info(`   Active Alerts: ${status.activeAlerts}`);
+  console.info(`   Predictive Insights: ${status.totalInsights}`);
 
   // Test alert subscription
-  console.log("\n🔔 Testing Alert Subscription...");
+  console.info("\n🔔 Testing Alert Subscription...");
   monitoring.subscribeToAlerts('demo', (alert) => {
-    console.log(`📢 Real-time alert received: ${alert.title} (${alert.severity})`);
+    console.info(`📢 Real-time alert received: ${alert.title} (${alert.severity})`);
   });
 
   // Wait for potential alerts
-  console.log("\n⏳ Monitoring for 10 more seconds to catch potential alerts...");
+  console.info("\n⏳ Monitoring for 10 more seconds to catch potential alerts...");
   await new Promise(resolve => setTimeout(resolve, 10000));
 
-  console.log("\n🎉 Advanced Monitoring System Demo Complete!");
-  console.log("💚 Real-time analytics with AI-powered insights and predictive monitoring operational!");
+  console.info("\n🎉 Advanced Monitoring System Demo Complete!");
+  console.info("💚 Real-time analytics with AI-powered insights and predictive monitoring operational!");
 }
 
 // Run demo if executed directly

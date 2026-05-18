@@ -51,18 +51,18 @@ function printSessionUpdate(notification: SessionNotification): void {
       return;
     }
     case "tool_call": {
-      console.log(`\n[tool] ${update.title} (${update.status})`);
+      console.info(`\n[tool] ${update.title} (${update.status})`);
       return;
     }
     case "tool_call_update": {
       if (update.status) {
-        console.log(`[tool update] ${update.toolCallId}: ${update.status}`);
+        console.info(`[tool update] ${update.toolCallId}: ${update.status}`);
       }
       return;
     }
     case "available_commands_update": {
       const names = update.availableCommands?.map((cmd) => `/${cmd.name}`).join(" ");
-      if (names) console.log(`\n[commands] ${names}`);
+      if (names) console.info(`\n[commands] ${names}`);
       return;
     }
     default:
@@ -100,7 +100,7 @@ export async function createAcpClient(opts: AcpClientOptions = {}): Promise<AcpC
         printSessionUpdate(params);
       },
       requestPermission: async (params: RequestPermissionRequest) => {
-        console.log("\n[permission requested]", params.toolCall?.title ?? "tool");
+        console.info("\n[permission requested]", params.toolCall?.title ?? "tool");
         const options = params.options ?? [];
         const allowOnce = options.find((option) => option.kind === "allow_once");
         const fallback = options[0];
@@ -146,9 +146,9 @@ export async function runAcpClientInteractive(opts: AcpClientOptions = {}): Prom
     output: process.stdout,
   });
 
-  console.log("Clawdbot ACP client");
-  console.log(`Session: ${sessionId}`);
-  console.log('Type a prompt, or "exit" to quit.\n');
+  console.info("Clawdbot ACP client");
+  console.info(`Session: ${sessionId}`);
+  console.info('Type a prompt, or "exit" to quit.\n');
 
   const prompt = () => {
     rl.question("> ", async (input) => {
@@ -168,7 +168,7 @@ export async function runAcpClientInteractive(opts: AcpClientOptions = {}): Prom
           sessionId,
           prompt: [{ type: "text", text }],
         });
-        console.log(`\n[${response.stopReason}]\n`);
+        console.info(`\n[${response.stopReason}]\n`);
       } catch (err) {
         console.error(`\n[error] ${String(err)}\n`);
       }
@@ -180,7 +180,7 @@ export async function runAcpClientInteractive(opts: AcpClientOptions = {}): Prom
   prompt();
 
   agent.on("exit", (code) => {
-    console.log(`\nAgent exited with code ${code ?? 0}`);
+    console.info(`\nAgent exited with code ${code ?? 0}`);
     rl.close();
     process.exit(code ?? 0);
   });

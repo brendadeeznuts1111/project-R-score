@@ -38,11 +38,11 @@ const unicodeConfig = {
 };
 
 async function main() {
-  console.log('Starting Lightning Shortcut System with Unicode Support...');
+  console.info('Starting Lightning Shortcut System with Unicode Support...');
   
   // Check Unicode capabilities
   const unicodeInfo = GraphemeUtils.getUnicodeInfo();
-  console.log('Unicode Capabilities:', unicodeInfo);
+  console.info('Unicode Capabilities:', unicodeInfo);
   
   if (!unicodeInfo.hasSegmenter) {
     console.warn('Intl.Segmenter not available. Using fallback grapheme clustering.');
@@ -72,8 +72,8 @@ async function main() {
     
     const serverPort = server.getPort();
     const serverHostname = server.getHostname();
-    console.log(`Server running at http://${serverHostname}:${serverPort}`);
-    console.log('Unicode support: ENABLED');
+    console.info(`Server running at http://${serverHostname}:${serverPort}`);
+    console.info('Unicode support: ENABLED');
     
   } catch (error) {
     console.error('Failed to start server:', error);
@@ -82,7 +82,7 @@ async function main() {
 }
 
 async function loadAndValidateShortcuts() {
-  console.log('Loading and validating shortcuts...');
+  console.info('Loading and validating shortcuts...');
   
   // Load shortcuts from database
   const shortcuts = await shortcutRegistry.getEnabledShortcuts();
@@ -115,7 +115,7 @@ async function loadAndValidateShortcuts() {
       if (unicodeConfig.normalization.enabled && validation.normalizedText) {
         // Update shortcut with normalized text using the registry's update method
         // Note: This would need to be implemented in ShortcutRegistry
-        console.log(`Shortcut ${shortcut.id} normalized successfully`);
+        console.info(`Shortcut ${shortcut.id} normalized successfully`);
       }
     } else {
       errorCount++;
@@ -124,12 +124,12 @@ async function loadAndValidateShortcuts() {
       // Disable invalid shortcuts if in strict mode
       if (unicodeConfig.validation.strict) {
         // Note: This would need to be implemented in ShortcutRegistry
-        console.log(`Would disable shortcut ${shortcut.id} due to validation errors`);
+        console.info(`Would disable shortcut ${shortcut.id} due to validation errors`);
       }
     }
   }
   
-  console.log(`Validation complete: ${validCount} valid, ${warningCount} warnings, ${errorCount} errors`);
+  console.info(`Validation complete: ${validCount} valid, ${warningCount} warnings, ${errorCount} errors`);
 }
 
 function addUnicodeEndpoints(server: any) {

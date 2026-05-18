@@ -284,13 +284,13 @@ export class AutonomousMitigationEngine extends EventEmitter {
 
   private async blockTransaction(phone: string): Promise<void> {
     // Implement transaction blocking logic
-    console.log(`Blocking transactions for ${phone}`);
+    console.info(`Blocking transactions for ${phone}`);
     // Integrate with payment gateways, APIs, etc.
   }
 
   private async requireMFA(phone: string): Promise<void> {
     // Implement MFA requirement logic
-    console.log(`Requiring MFA for ${phone}`);
+    console.info(`Requiring MFA for ${phone}`);
     // Send SMS, push notification, etc.
   }
 

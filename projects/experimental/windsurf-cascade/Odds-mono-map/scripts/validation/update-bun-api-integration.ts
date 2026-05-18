@@ -170,13 +170,13 @@ class BunAPIIntegrationUpdater {
 
     async updateAllTemplates(): Promise<void> {
         const files = await this.getTemplateFiles();
-        console.log(`🦊 Updating Bun API integration in ${files.length} templates...`);
+        console.info(`🦊 Updating Bun API integration in ${files.length} templates...`);
 
         for (const file of files) {
             await this.updateTemplateAPIs(file);
         }
 
-        console.log('✅ All templates updated with official Bun APIs!');
+        console.info('✅ All templates updated with official Bun APIs!');
     }
 
     private async getTemplateFiles(): Promise<string[]> {
@@ -196,7 +196,7 @@ class BunAPIIntegrationUpdater {
 
             if (updatedContent !== content) {
                 await writeFile(filePath, updatedContent, 'utf-8');
-                console.log(`  🦊 Updated: ${fileName}`);
+                console.info(`  🦊 Updated: ${fileName}`);
             }
         } catch (error) {
             console.error(`  ❌ Error updating ${filePath}:`, error);
@@ -335,16 +335,16 @@ async function main(): Promise<void> {
     const templatesPath = process.argv[2] || join(process.cwd(), '06 - Templates');
 
     if (process.argv.includes('--help') || process.argv.includes('-h')) {
-        console.log('🦊 Bun API Integration Updater');
-        console.log('Usage: bun update-bun-api-integration.ts [templates-path]');
-        console.log('');
-        console.log('Updates templates with official Bun APIs:');
-        console.log('  - HTTP Server (Bun.serve)');
-        console.log('  - File I/O (Bun.file, Bun.write)');
-        console.log('  - Database (bun:sqlite, Bun.SQL)');
-        console.log('  - Networking (Bun.listen, Bun.connect)');
-        console.log('  - Utilities (Bun.env, Bun.version)');
-        console.log('  - And 20+ more API categories');
+        console.info('🦊 Bun API Integration Updater');
+        console.info('Usage: bun update-bun-api-integration.ts [templates-path]');
+        console.info('');
+        console.info('Updates templates with official Bun APIs:');
+        console.info('  - HTTP Server (Bun.serve)');
+        console.info('  - File I/O (Bun.file, Bun.write)');
+        console.info('  - Database (bun:sqlite, Bun.SQL)');
+        console.info('  - Networking (Bun.listen, Bun.connect)');
+        console.info('  - Utilities (Bun.env, Bun.version)');
+        console.info('  - And 20+ more API categories');
         process.exit(0);
     }
 
@@ -352,18 +352,18 @@ async function main(): Promise<void> {
         const updater = new BunAPIIntegrationUpdater(templatesPath);
         await updater.updateAllTemplates();
 
-        console.log('');
-        console.log('🚀 Bun API Integration Complete!');
-        console.log('Templates now include official Bun APIs from:');
-        console.log('  📡 HTTP Server & WebSockets');
-        console.log('  📁 File I/O & Stream Processing');
-        console.log('  🗄️ Database Clients (SQLite, PostgreSQL, Redis)');
-        console.log('  🔧 Shell & Process Management');
-        console.log('  🌐 Networking & DNS');
-        console.log('  🔐 Hashing & Cryptography');
-        console.log('  ⚡ Performance & Memory Management');
-        console.log('  🧪 Testing & Workers');
-        console.log('  🛠️ 25+ total API categories');
+        console.info('');
+        console.info('🚀 Bun API Integration Complete!');
+        console.info('Templates now include official Bun APIs from:');
+        console.info('  📡 HTTP Server & WebSockets');
+        console.info('  📁 File I/O & Stream Processing');
+        console.info('  🗄️ Database Clients (SQLite, PostgreSQL, Redis)');
+        console.info('  🔧 Shell & Process Management');
+        console.info('  🌐 Networking & DNS');
+        console.info('  🔐 Hashing & Cryptography');
+        console.info('  ⚡ Performance & Memory Management');
+        console.info('  🧪 Testing & Workers');
+        console.info('  🛠️ 25+ total API categories');
 
     } catch (error) {
         console.error('❌ API integration update failed:', error);

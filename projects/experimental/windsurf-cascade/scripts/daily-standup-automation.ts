@@ -42,7 +42,7 @@ interface HistoricalData {
 }
 
 async function generateDailyStandup() {
-  console.log('🗓️ Generating daily standup report...\n');
+  console.info('🗓️ Generating daily standup report...\n');
   
   const enforcer = new GoldenRuleEnforcer();
   const currentResult = await enforcer.validateCodebase();
@@ -65,9 +65,9 @@ async function generateDailyStandup() {
   // Save reports
   await saveStandupReports(standupReport, currentResult);
   
-  console.log('✅ Daily standup report generated!');
-  console.log(`📊 Day ${standupReport.dayNumber} - ${standupReport.violationsResolved} violations resolved`);
-  console.log('📋 See reports/daily-standup.md for details');
+  console.info('✅ Daily standup report generated!');
+  console.info(`📊 Day ${standupReport.dayNumber} - ${standupReport.violationsResolved} violations resolved`);
+  console.info('📋 See reports/daily-standup.md for details');
 }
 
 async function loadHistoricalData(): Promise<HistoricalData[]> {

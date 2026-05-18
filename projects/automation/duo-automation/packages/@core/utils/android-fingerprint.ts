@@ -60,7 +60,7 @@ export class AndroidFingerprintBenchmark {
   private static benchmarkVersion(version: string): FingerprintResult[] {
     const results: FingerprintResult[] = [];
     
-    console.log(`📱 Benchmarking Android ${version} fingerprint generation...`);
+    console.info(`📱 Benchmarking Android ${version} fingerprint generation...`);
     
     for (let i = 0; i < this.ITERATIONS; i++) {
       const startMemory = process.memoryUsage();
@@ -87,7 +87,7 @@ export class AndroidFingerprintBenchmark {
       
       // Progress indicator
       if ((i + 1) % 100 === 0) {
-        console.log(`   Progress: ${i + 1}/${this.ITERATIONS}`);
+        console.info(`   Progress: ${i + 1}/${this.ITERATIONS}`);
       }
     }
     
@@ -121,10 +121,10 @@ export class AndroidFingerprintBenchmark {
    * Run complete benchmark suite for all Android versions
    */
   static async runFullBenchmark(): Promise<BenchmarkResults[]> {
-    console.log('🚀 Starting Android Fingerprint Benchmark Suite');
-    console.log(`📊 Testing ${ANDROID_VERSIONS.length} Android versions`);
-    console.log(`🔄 ${this.ITERATIONS} iterations per version`);
-    console.log('');
+    console.info('🚀 Starting Android Fingerprint Benchmark Suite');
+    console.info(`📊 Testing ${ANDROID_VERSIONS.length} Android versions`);
+    console.info(`🔄 ${this.ITERATIONS} iterations per version`);
+    console.info('');
     
     const allResults: BenchmarkResults[] = [];
     
@@ -133,12 +133,12 @@ export class AndroidFingerprintBenchmark {
       const stats = this.calculateStats(results);
       allResults.push(stats);
       
-      console.log(`✅ Android ${version} completed:`);
-      console.log(`   Average time: ${stats.avgTime.toFixed(4)}ms`);
-      console.log(`   Min/Max: ${stats.minTime.toFixed(4)}ms / ${stats.maxTime.toFixed(4)}ms`);
-      console.log(`   Throughput: ${stats.opsPerSecond.toFixed(0)} ops/sec`);
-      console.log(`   Memory: ${(stats.memoryEfficiency / 1024).toFixed(2)}KB avg`);
-      console.log('');
+      console.info(`✅ Android ${version} completed:`);
+      console.info(`   Average time: ${stats.avgTime.toFixed(4)}ms`);
+      console.info(`   Min/Max: ${stats.minTime.toFixed(4)}ms / ${stats.maxTime.toFixed(4)}ms`);
+      console.info(`   Throughput: ${stats.opsPerSecond.toFixed(0)} ops/sec`);
+      console.info(`   Memory: ${(stats.memoryEfficiency / 1024).toFixed(2)}KB avg`);
+      console.info('');
     }
     
     return allResults;
@@ -148,18 +148,18 @@ export class AndroidFingerprintBenchmark {
    * Compare performance across versions
    */
   static compareVersions(results: BenchmarkResults[]): void {
-    console.log('📈 Performance Comparison Across Android Versions');
-    console.log('');
+    console.info('📈 Performance Comparison Across Android Versions');
+    console.info('');
     
     const header = '| Version | Avg Time (ms) | Min Time (ms) | Max Time (ms) | Ops/Sec | Memory (KB) |';
     const separator = '|---------|---------------|---------------|---------------|---------|-------------|';
     
-    console.log(header);
-    console.log(separator);
+    console.info(header);
+    console.info(separator);
     
     results.forEach(result => {
       const row = `| ${result.version.padEnd(7)} | ${result.avgTime.toFixed(4).padStart(12)} | ${result.minTime.toFixed(4).padStart(12)} | ${result.maxTime.toFixed(4).padStart(12)} | ${result.opsPerSecond.toFixed(0).padStart(7)} | ${(result.memoryEfficiency / 1024).toFixed(2).padStart(10)} |`;
-      console.log(row);
+      console.info(row);
     });
     
     // Find best performing version
@@ -171,18 +171,18 @@ export class AndroidFingerprintBenchmark {
       prev.opsPerSecond > current.opsPerSecond ? prev : current
     );
     
-    console.log('');
-    console.log('🏆 Performance Leaders:');
-    console.log(`   Fastest: Android ${fastestVersion.version} (${fastestVersion.avgTime.toFixed(4)}ms avg)`);
-    console.log(`   Highest Throughput: Android ${highestThroughput.version} (${highestThroughput.opsPerSecond.toFixed(0)} ops/sec)`);
+    console.info('');
+    console.info('🏆 Performance Leaders:');
+    console.info(`   Fastest: Android ${fastestVersion.version} (${fastestVersion.avgTime.toFixed(4)}ms avg)`);
+    console.info(`   Highest Throughput: Android ${highestThroughput.version} (${highestThroughput.opsPerSecond.toFixed(0)} ops/sec)`);
   }
 
   /**
    * Simulate DuoPlus anti-detection effectiveness
    */
   static simulateAntiDetection(): void {
-    console.log('🛡️ Simulating DuoPlus Anti-Detection Effectiveness');
-    console.log('');
+    console.info('🛡️ Simulating DuoPlus Anti-Detection Effectiveness');
+    console.info('');
     
     const testCases = [
       { platform: 'Reddit', version: '10', effectiveness: 0.92 },
@@ -196,19 +196,19 @@ export class AndroidFingerprintBenchmark {
       { platform: 'Instagram', version: '12B', effectiveness: 0.92 }
     ];
     
-    console.log('| Platform | Android Version | Detection Rate | Success Rate |');
-    console.log('|----------|-----------------|---------------|--------------|');
+    console.info('| Platform | Android Version | Detection Rate | Success Rate |');
+    console.info('|----------|-----------------|---------------|--------------|');
     
     testCases.forEach(test => {
       const detectionRate = ((1 - test.effectiveness) * 100).toFixed(1);
       const successRate = (test.effectiveness * 100).toFixed(1);
-      console.log(`| ${test.platform.padEnd(8)} | ${test.version.padEnd(15)} | ${detectionRate.padStart(12)}% | ${successRate.padStart(11)}% |`);
+      console.info(`| ${test.platform.padEnd(8)} | ${test.version.padEnd(15)} | ${detectionRate.padStart(12)}% | ${successRate.padStart(11)}% |`);
     });
     
-    console.log('');
-    console.log('📊 Anti-Detection Summary:');
-    console.log(`   Best Platform: Reddit (${Math.max(...testCases.filter(t => t.platform === 'Reddit').map(t => t.effectiveness * 100)).toFixed(1)}% success)`);
-    console.log(`   Best Version: Android 12B (${Math.max(...testCases.filter(t => t.version === '12B').map(t => t.effectiveness * 100)).toFixed(1)}% avg success)`);
+    console.info('');
+    console.info('📊 Anti-Detection Summary:');
+    console.info(`   Best Platform: Reddit (${Math.max(...testCases.filter(t => t.platform === 'Reddit').map(t => t.effectiveness * 100)).toFixed(1)}% success)`);
+    console.info(`   Best Version: Android 12B (${Math.max(...testCases.filter(t => t.version === '12B').map(t => t.effectiveness * 100)).toFixed(1)}% avg success)`);
   }
 
   /**
@@ -231,30 +231,30 @@ export class AndroidFingerprintBenchmark {
     };
     
     await Bun.write(filename, JSON.stringify(exportData, null, 2));
-    console.log(`💾 Benchmark results exported to: ${filename}`);
+    console.info(`💾 Benchmark results exported to: ${filename}`);
   }
 }
 
 // CLI interface for running benchmarks
 if (import.meta.main) {
   const main = async () => {
-    console.log('🔍 Android Fingerprint Anti-Detection Benchmark');
-    console.log('================================================');
-    console.log('');
+    console.info('🔍 Android Fingerprint Anti-Detection Benchmark');
+    console.info('================================================');
+    console.info('');
     
     if (process.argv.includes('--help') || process.argv.includes('-h')) {
-      console.log('Usage: bun perf/android-fingerprint.ts [options]');
-      console.log('');
-      console.log('Options:');
-      console.log('  --full         Run complete benchmark suite');
-      console.log('  --quick        Run quick benchmark (100 iterations)');
-      console.log('  --simulate     Simulate anti-detection effectiveness');
-      console.log('  --export       Export results to JSON');
-      console.log('  --help, -h     Show this help message');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun perf/android-fingerprint.ts --full');
-      console.log('  bun perf/android-fingerprint.ts --simulate');
+      console.info('Usage: bun perf/android-fingerprint.ts [options]');
+      console.info('');
+      console.info('Options:');
+      console.info('  --full         Run complete benchmark suite');
+      console.info('  --quick        Run quick benchmark (100 iterations)');
+      console.info('  --simulate     Simulate anti-detection effectiveness');
+      console.info('  --export       Export results to JSON');
+      console.info('  --help, -h     Show this help message');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun perf/android-fingerprint.ts --full');
+      console.info('  bun perf/android-fingerprint.ts --simulate');
       process.exit(0);
     }
     
@@ -271,8 +271,8 @@ if (import.meta.main) {
         }
       }
       
-      console.log('');
-      console.log('✅ Benchmark completed successfully!');
+      console.info('');
+      console.info('✅ Benchmark completed successfully!');
       
     } catch (error: any) {
       console.error('❌ Benchmark failed:', error.message);

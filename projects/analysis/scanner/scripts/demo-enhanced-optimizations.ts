@@ -25,11 +25,11 @@ import {
 	type FastPathParams,
 } from '../optimizations/bun-optimizations.ts';
 
-console.log('🚀 Enhanced Bun Native Performance Demo - Tier-1380 Certified\n');
+console.info('🚀 Enhanced Bun Native Performance Demo - Tier-1380 Certified\n');
 
 // ── 1. Fast-Path Completion Formula Demo ─────────────────────────────────────
-console.log('📊 Fast-Path Completion Formula Demo');
-console.log('=====================================');
+console.info('📊 Fast-Path Completion Formula Demo');
+console.info('=====================================');
 
 const fastPathScenarios = [
 	{
@@ -56,17 +56,17 @@ for (const scenario of fastPathScenarios) {
 	const bypassRatio = calculateBypassRatio(scenario.totalTime, scenario.marshalTime, scenario.numCalls);
 	const useFastPath = shouldUseFastPath(scenario.totalTime, scenario.marshalTime, scenario.numCalls);
 
-	console.log(`\n📋 ${scenario.name}:`);
-	console.log(`   Total Time: ${(scenario.totalTime / 1000000).toFixed(2)}ms`);
-	console.log(`   Marshal Time: ${(scenario.marshalTime / 1000).toFixed(1)}μs`);
-	console.log(`   Calls: ${scenario.numCalls}`);
-	console.log(`   Bypass Ratio: ${(bypassRatio * 100).toFixed(1)}%`);
-	console.log(`   Fast Path: ${useFastPath ? '✅ YES' : '❌ NO'}`);
+	console.info(`\n📋 ${scenario.name}:`);
+	console.info(`   Total Time: ${(scenario.totalTime / 1000000).toFixed(2)}ms`);
+	console.info(`   Marshal Time: ${(scenario.marshalTime / 1000).toFixed(1)}μs`);
+	console.info(`   Calls: ${scenario.numCalls}`);
+	console.info(`   Bypass Ratio: ${(bypassRatio * 100).toFixed(1)}%`);
+	console.info(`   Fast Path: ${useFastPath ? '✅ YES' : '❌ NO'}`);
 }
 
 // ── 2. Native Buffer Allocation Strategy Demo ─────────────────────────────────
-console.log('\n\n💾 Native Buffer Allocation Strategy Demo');
-console.log('========================================');
+console.info('\n\n💾 Native Buffer Allocation Strategy Demo');
+console.info('========================================');
 
 const bufferSizes = [
 	1024, // 1KB
@@ -77,28 +77,28 @@ const bufferSizes = [
 	200 * 1024 * 1024, // 200MB
 ];
 
-console.log('\n📈 Growth-Cap Formula Application:');
+console.info('\n📈 Growth-Cap Formula Application:');
 for (const size of bufferSizes) {
 	const nextSize = calculateNextBufferSize(size);
 	const growth = ((nextSize - size) / size) * 100;
 
-	console.log(
+	console.info(
 		`   ${(size / 1024 / 1024).toFixed(1)}MB → ${(nextSize / 1024 / 1024).toFixed(1)}MB (${growth > 100 ? '+16MB cap' : `+${growth.toFixed(0)}%`})`,
 	);
 }
 
 // Create a native buffer demo
 const demoBuffer = createNativeBuffer(1024 * 1024); // 1MB initial
-console.log(`\n🔧 Created native buffer: ${(demoBuffer.capacity / 1024 / 1024).toFixed(1)}MB SharedArrayBuffer`);
+console.info(`\n🔧 Created native buffer: ${(demoBuffer.capacity / 1024 / 1024).toFixed(1)}MB SharedArrayBuffer`);
 
 // ── 11b. NativeBufferManager Demo ───────────────────────────────────────────────
-console.log('\n🧪 NativeBufferManager Demo - Growth-Cap Formula in Action');
-console.log('==========================================================');
+console.info('\n🧪 NativeBufferManager Demo - Growth-Cap Formula in Action');
+console.info('==========================================================');
 
 const bufferManager = new NativeBufferManager(1024, 10 * 1024 * 1024); // 1KB initial, 10MB max
 
-console.log('\n📈 Buffer Growth with Growth-Cap Formula:');
-console.log(`   Initial: capacity=${bufferManager.capacity}B, size=${bufferManager.size}B`);
+console.info('\n📈 Buffer Growth with Growth-Cap Formula:');
+console.info(`   Initial: capacity=${bufferManager.capacity}B, size=${bufferManager.size}B`);
 
 // Simulate chunk appends
 const chunks = [
@@ -113,23 +113,23 @@ for (let i = 0; i < chunks.length; i++) {
 	bufferManager.append(chunk);
 
 	const growthPercent = (((bufferManager.capacity - 1024) / 1024) * 100).toFixed(0);
-	console.log(
+	console.info(
 		`   Chunk ${i + 1}: +${chunk.length}B → capacity=${bufferManager.capacity}B, size=${bufferManager.size}B (${growthPercent}% growth)`,
 	);
 }
 
-console.log(`\n✅ Final buffer: ${bufferManager.size}B data in ${bufferManager.capacity}B capacity`);
-console.log(`   Growth efficiency: ${((bufferManager.size / bufferManager.capacity) * 100).toFixed(1)}% utilization`);
+console.info(`\n✅ Final buffer: ${bufferManager.size}B data in ${bufferManager.capacity}B capacity`);
+console.info(`   Growth efficiency: ${((bufferManager.size / bufferManager.capacity) * 100).toFixed(1)}% utilization`);
 
 // Test toArrayBuffer conversion
 const finalBuffer = bufferManager.toArrayBuffer();
-console.log(
+console.info(
 	`   ArrayBuffer result: ${finalBuffer.byteLength}B (matches size: ${finalBuffer.byteLength === bufferManager.size ? '✅' : '❌'})`,
 );
 
 // ── 11c. Enhanced Stream Processing Demo ────────────────────────────────────────
-console.log('\n🔄 Enhanced Stream Processing Demo - Zero-Copy with Growth-Cap');
-console.log('==================================================================');
+console.info('\n🔄 Enhanced Stream Processing Demo - Zero-Copy with Growth-Cap');
+console.info('==================================================================');
 
 // Create a mock stream to demonstrate the enhanced streamToNativeBuffer
 class MockReadableStream {
@@ -168,32 +168,32 @@ const startTime = performance.now();
 const streamBuffer = await streamToNativeBuffer(mockStream as any, 2048); // 2KB initial
 const endTime = performance.now();
 
-console.log(`\n📊 Stream Processing Results:`);
-console.log(`   Total chunks: ${mockChunks.length}`);
-console.log(`   Total input size: ${mockChunks.reduce((sum, chunk) => sum + chunk.length, 0)}B`);
-console.log(`   Output buffer size: ${streamBuffer.byteLength}B`);
-console.log(`   Processing time: ${(endTime - startTime).toFixed(2)}ms`);
-console.log(
+console.info(`\n📊 Stream Processing Results:`);
+console.info(`   Total chunks: ${mockChunks.length}`);
+console.info(`   Total input size: ${mockChunks.reduce((sum, chunk) => sum + chunk.length, 0)}B`);
+console.info(`   Output buffer size: ${streamBuffer.byteLength}B`);
+console.info(`   Processing time: ${(endTime - startTime).toFixed(2)}ms`);
+console.info(
 	`   Data integrity: ${streamBuffer.byteLength === mockChunks.reduce((sum, chunk) => sum + chunk.length, 0) ? '✅' : '❌'}`,
 );
 
 // Verify content
 const outputArray = new Uint8Array(streamBuffer);
-console.log(
+console.info(
 	`   Content preview: ${Array.from(outputArray.slice(0, 11))
 		.map(b => String.fromCharCode(b))
 		.join('')}...`,
 );
 
-console.log(`\n🎯 Growth-Cap Formula Benefits:`);
-console.log(`   ✅ Pre-allocated SharedArrayBuffer reduces heap fragmentation`);
-console.log(`   ✅ TypedArray.prototype.set() enables zero-copy transfers`);
-console.log(`   ✅ Dynamic growth prevents excessive reallocations`);
-console.log(`   ✅ Maintains Fast Path by avoiding JS-to-Native bridge crossings`);
+console.info(`\n🎯 Growth-Cap Formula Benefits:`);
+console.info(`   ✅ Pre-allocated SharedArrayBuffer reduces heap fragmentation`);
+console.info(`   ✅ TypedArray.prototype.set() enables zero-copy transfers`);
+console.info(`   ✅ Dynamic growth prevents excessive reallocations`);
+console.info(`   ✅ Maintains Fast Path by avoiding JS-to-Native bridge crossings`);
 
 // ── 3. Enhanced R-Score Calculations Demo ───────────────────────────────────────
-console.log('\n\n📈 Enhanced R-Score Calculations Demo');
-console.log('===================================');
+console.info('\n\n📈 Enhanced R-Score Calculations Demo');
+console.info('===================================');
 
 const rScoreScenarios: Array<{
 	name: string;
@@ -252,15 +252,15 @@ for (const scenario of rScoreScenarios) {
 	const enhancedScore = calculateEnhancedRScore(scenario.baseParams, scenario.fastPathParams);
 	const tier = getPerformanceTier(enhancedScore);
 
-	console.log(`\n🎯 ${scenario.name}:`);
-	console.log(`   Base R-Score: ${baseScore.toFixed(3)}`);
-	console.log(`   Enhanced R-Score: ${enhancedScore.toFixed(3)} (+${(enhancedScore - baseScore).toFixed(3)})`);
-	console.log(`   Performance Tier: ${tier.tier} - ${tier.action}`);
+	console.info(`\n🎯 ${scenario.name}:`);
+	console.info(`   Base R-Score: ${baseScore.toFixed(3)}`);
+	console.info(`   Enhanced R-Score: ${enhancedScore.toFixed(3)} (+${(enhancedScore - baseScore).toFixed(3)})`);
+	console.info(`   Performance Tier: ${tier.tier} - ${tier.action}`);
 }
 
 // ── 4. Speedup Formula Demo ─────────────────────────────────────────────────────
-console.log('\n\n⚡ Speedup Formula Demo');
-console.log('======================');
+console.info('\n\n⚡ Speedup Formula Demo');
+console.info('======================');
 
 const payloadSizes = [
 	512, // 512B
@@ -272,16 +272,16 @@ const payloadSizes = [
 	100 * 1024 * 1024, // 100MB
 ];
 
-console.log('\n📊 Theoretical Speedup by Payload Size:');
+console.info('\n📊 Theoretical Speedup by Payload Size:');
 for (const size of payloadSizes) {
 	const speedup = calculateSpeedup(size);
 	const formatted = formatSpeedup(size);
-	console.log(`   ${formatted.padEnd(20)} → ${speedup.toFixed(2)}x speedup`);
+	console.info(`   ${formatted.padEnd(20)} → ${speedup.toFixed(2)}x speedup`);
 }
 
 // ── 5. Native Optimization Decision Tree Demo ───────────────────────────────────
-console.log('\n\n🌳 Native Optimization Decision Tree Demo');
-console.log('=======================================');
+console.info('\n\n🌳 Native Optimization Decision Tree Demo');
+console.info('=======================================');
 
 const decisionScenarios = [
 	{
@@ -319,19 +319,19 @@ for (const scenario of decisionScenarios) {
 	const mImpact = 1 - scenario.memDelta / scenario.memUserland;
 	const speedup = scenario.pUserland / scenario.pNative;
 
-	console.log(`\n📦 ${scenario.name}:`);
-	console.log(`   Performance Ratio: ${pRatio.toFixed(3)} (${speedup.toFixed(1)}x faster)`);
-	console.log(`   Memory Impact: ${(mImpact * 100).toFixed(1)}%`);
-	console.log(`   Native Path: ${isOptimal ? '✅ RECOMMENDED' : '❌ NOT OPTIMAL'}`);
+	console.info(`\n📦 ${scenario.name}:`);
+	console.info(`   Performance Ratio: ${pRatio.toFixed(3)} (${speedup.toFixed(1)}x faster)`);
+	console.info(`   Memory Impact: ${(mImpact * 100).toFixed(1)}%`);
+	console.info(`   Native Path: ${isOptimal ? '✅ RECOMMENDED' : '❌ NOT OPTIMAL'}`);
 }
 
 // ── 6. Summary Table ─────────────────────────────────────────────────────────────
-console.log('\n\n📋 Optimization Summary Table');
-console.log('=============================');
+console.info('\n\n📋 Optimization Summary Table');
+console.info('=============================');
 
-console.log('\n┌─────────────────────────────┬───────────┬─────────────┬──────────────┐');
-console.log('│ Optimization Technique     │ R-Score   │ Speedup     │ Status       │');
-console.log('├─────────────────────────────┼───────────┼─────────────┼──────────────┤');
+console.info('\n┌─────────────────────────────┬───────────┬─────────────┬──────────────┐');
+console.info('│ Optimization Technique     │ R-Score   │ Speedup     │ Status       │');
+console.info('├─────────────────────────────┼───────────┼─────────────┼──────────────┤');
 
 const summaryData = [
 	{
@@ -371,18 +371,18 @@ for (const item of summaryData) {
 	const rScore = item.rScore.padEnd(9);
 	const speedup = item.speedup.padEnd(11);
 	const status = item.status.padEnd(12);
-	console.log(`│ ${technique} │ ${rScore} │ ${speedup} │ ${status} │`);
+	console.info(`│ ${technique} │ ${rScore} │ ${speedup} │ ${status} │`);
 }
 
-console.log('└─────────────────────────────┴───────────┴─────────────┴──────────────┘');
+console.info('└─────────────────────────────┴───────────┴─────────────┴──────────────┘');
 
-console.log('\n🎯 Key Takeaways:');
-console.log('   • Fast-Path Bypass Ratio > 85% is critical for native performance');
-console.log('   • Growth-Cap Formula prevents heap fragmentation in large buffers');
-console.log('   • NativeBufferManager enables zero-copy via TypedArray.prototype.set()');
-console.log('   • Zero-copy transfers can boost R-Score by up to +0.05');
-console.log('   • R-Score > 0.95 indicates "Native-Grade" optimizations');
-console.log('   • Payload size significantly impacts theoretical speedup');
-console.log('   • SharedArrayBuffer + Growth-Cap = optimal memory efficiency');
+console.info('\n🎯 Key Takeaways:');
+console.info('   • Fast-Path Bypass Ratio > 85% is critical for native performance');
+console.info('   • Growth-Cap Formula prevents heap fragmentation in large buffers');
+console.info('   • NativeBufferManager enables zero-copy via TypedArray.prototype.set()');
+console.info('   • Zero-copy transfers can boost R-Score by up to +0.05');
+console.info('   • R-Score > 0.95 indicates "Native-Grade" optimizations');
+console.info('   • Payload size significantly impacts theoretical speedup');
+console.info('   • SharedArrayBuffer + Growth-Cap = optimal memory efficiency');
 
-console.log('\n✅ Demo completed - Tier-1380 Certified Enhanced Optimizations');
+console.info('\n✅ Demo completed - Tier-1380 Certified Enhanced Optimizations');

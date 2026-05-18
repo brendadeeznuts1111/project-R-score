@@ -94,7 +94,7 @@ describe("WebSocket End-to-End Tests", () => {
 
             await new Promise<void>((resolve, reject) => {
                 tradingClient.on('open', () => {
-                    console.log('📡 Trading client connected');
+                    console.info('📡 Trading client connected');
 
                     tradingClient.on('message', (data) => {
                         const message = JSON.parse(data.toString());
@@ -195,7 +195,7 @@ describe("WebSocket End-to-End Tests", () => {
             // Performance validation
             expect(duration).toBeLessThan(8000); // Should complete in under 8 seconds
 
-            console.log(`🎯 Full arbitrage workflow completed in ${duration.toFixed(2)}ms`);
+            console.info(`🎯 Full arbitrage workflow completed in ${duration.toFixed(2)}ms`);
 
             tradingClient.close();
         });
@@ -267,7 +267,7 @@ describe("WebSocket End-to-End Tests", () => {
                 expect(clientMessages[i].every(msg => msg.type === 'odds-update')).toBe(true);
             }
 
-            console.log(`📡 Streamed ${messageCount} messages to ${clientCount} clients over ${streamDuration}ms`);
+            console.info(`📡 Streamed ${messageCount} messages to ${clientCount} clients over ${streamDuration}ms`);
 
             clients.forEach(client => client.close());
         });
@@ -329,7 +329,7 @@ describe("WebSocket End-to-End Tests", () => {
                 });
             }
 
-            console.log(`🏀 Multi-sport aggregation: ${Object.values(sportData).map(data => data.length).join(', ')} odds received`);
+            console.info(`🏀 Multi-sport aggregation: ${Object.values(sportData).map(data => data.length).join(', ')} odds received`);
 
             Object.values(sportClients).forEach(client => client.close());
         });
@@ -445,7 +445,7 @@ describe("WebSocket End-to-End Tests", () => {
             const metrics = server.getPerformanceMetrics();
             expect(metrics.totalMessagesProcessed).toBeGreaterThan(0);
 
-            console.log(`🔄 Handled client disconnection: ${clientCount - 5} clients remaining, server operational`);
+            console.info(`🔄 Handled client disconnection: ${clientCount - 5} clients remaining, server operational`);
 
             clients.forEach(client => {
                 if (client.readyState === WebSocket.OPEN) {
@@ -516,7 +516,7 @@ describe("WebSocket End-to-End Tests", () => {
             const serverMetrics = server.getPerformanceMetrics();
             expect(serverMetrics.messagesPerSecond).toBeGreaterThan(messagesPerSecond * 0.8);
 
-            console.log(`⚡ High-frequency trading: ${averageMessagesPerClient.toFixed(0)} avg messages per client, ${serverMetrics.messagesPerSecond.toFixed(0)} msg/sec server throughput`);
+            console.info(`⚡ High-frequency trading: ${averageMessagesPerClient.toFixed(0)} avg messages per client, ${serverMetrics.messagesPerSecond.toFixed(0)} msg/sec server throughput`);
 
             clients.forEach(client => client.close());
         });
@@ -569,7 +569,7 @@ describe("WebSocket End-to-End Tests", () => {
             expect(performanceMaintained).toBe(true);
             expect(server.isRunning()).toBe(true);
 
-            console.log(`🏋️ Performance maintained under memory pressure: ${performanceMaintained}`);
+            console.info(`🏋️ Performance maintained under memory pressure: ${performanceMaintained}`);
 
             client.close();
         });
@@ -641,7 +641,7 @@ describe("WebSocket End-to-End Tests", () => {
             expect(reconnectedData.event).toBe(initialData.event);
             expect(reconnectedData.odds).toEqual(initialData.odds);
 
-            console.log(`🔄 Data consistency maintained across reconnection`);
+            console.info(`🔄 Data consistency maintained across reconnection`);
 
             client2.close();
         });
@@ -707,7 +707,7 @@ describe("WebSocket End-to-End Tests", () => {
 
             expect(transformationValid).toBe(true);
 
-            console.log(`🔄 End-to-end data transformation validated`);
+            console.info(`🔄 End-to-end data transformation validated`);
 
             client.close();
         });

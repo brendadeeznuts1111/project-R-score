@@ -6,9 +6,9 @@
  */
 
 // Simple table with perfect Unicode alignment
-console.log('┌─────────────────┬────────────────────┬──────────────┐');
-console.log('│ Country         │ Region             │ Status       │');
-console.log('├─────────────────┼────────────────────┼──────────────┤');
+console.info('┌─────────────────┬────────────────────┬──────────────┐');
+console.info('│ Country         │ Region             │ Status       │');
+console.info('├─────────────────┼────────────────────┼──────────────┤');
 
 // Create rows with perfect alignment using Bun.stringWidth()
 const rows = [
@@ -30,18 +30,18 @@ rows.forEach((row) => {
   const regionPadded = row.region + ' '.repeat(Math.max(0, 18 - regionDisplayWidth));
   const statusPadded = row.status + ' '.repeat(Math.max(0, 12 - statusDisplayWidth));
 
-  console.log(`│ ${countryPadded} │ ${regionPadded} │ ${statusPadded} │`);
+  console.info(`│ ${countryPadded} │ ${regionPadded} │ ${statusPadded} │`);
 });
 
-console.log('└─────────────────┴────────────────────┴──────────────┘');
+console.info('└─────────────────┴────────────────────┴──────────────┘');
 
 // Simpler example - single row alignment
-console.log('\n📊 Simple Alignment Example:\n');
-console.log('│ ' + '🇺🇸 USA'.padEnd(Bun.stringWidth('🇺🇸 USA') + 5) + '│');
-console.log('│ ' + '🇬🇧 UK'.padEnd(Bun.stringWidth('🇬🇧 UK') + 7) + '│');
-console.log('│ ' + '🇯🇵 Japan'.padEnd(Bun.stringWidth('🇯🇵 Japan') + 4) + '│');
-console.log('│ ' + '🇨🇦 Canada'.padEnd(Bun.stringWidth('🇨🇦 Canada') + 3) + '│');
+console.info('\n📊 Simple Alignment Example:\n');
+console.info('│ ' + '🇺🇸 USA'.padEnd(Bun.stringWidth('🇺🇸 USA') + 5) + '│');
+console.info('│ ' + '🇬🇧 UK'.padEnd(Bun.stringWidth('🇬🇧 UK') + 7) + '│');
+console.info('│ ' + '🇯🇵 Japan'.padEnd(Bun.stringWidth('🇯🇵 Japan') + 4) + '│');
+console.info('│ ' + '🇨🇦 Canada'.padEnd(Bun.stringWidth('🇨🇦 Canada') + 3) + '│');
 
 // ✅ Perfect alignment with any Unicode!
-console.log('\n✅ Perfect alignment with emojis, flags, and Unicode characters!');
+console.info('\n✅ Perfect alignment with emojis, flags, and Unicode characters!');
 

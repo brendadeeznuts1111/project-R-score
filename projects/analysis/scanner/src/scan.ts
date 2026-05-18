@@ -206,9 +206,9 @@ function timeSync<T>(label: string, fn: () => T): T {
 
 function printProfileSummary(): void {
 	if (!_profileEnabled || _profileTotals.size === 0) return;
-	console.log();
-	console.log(c.bold('  Profiling (ms)'));
-	console.log();
+	console.info();
+	console.info(c.bold('  Profiling (ms)'));
+	console.info();
 	const rows = [..._profileTotals.entries()]
 		.map(([label, total]) => {
 			const count = _profileCounts.get(label) ?? 1;
@@ -225,9 +225,9 @@ function printProfileSummary(): void {
 
 function printProjectProfileSummary(): void {
 	if (!_profileEnabled || _profileProjectTotals.size === 0) return;
-	console.log();
-	console.log(c.bold('  Project Profiling (ms)'));
-	console.log();
+	console.info();
+	console.info(c.bold('  Project Profiling (ms)'));
+	console.info();
 	const rows = [..._profileProjectTotals.entries()]
 		.map(([label, total]) => {
 			const count = _profileProjectCounts.get(label) ?? 1;
@@ -239,7 +239,7 @@ function printProjectProfileSummary(): void {
 			};
 		})
 		.sort((a, b) => Number(b.Total) - Number(a.Total));
-	console.log(Bun.inspect.table(rows, ['Label', 'Total', 'Count', 'Avg'], {colors: _useColor}));
+	console.info(Bun.inspect.table(rows, ['Label', 'Total', 'Count', 'Avg'], {colors: _useColor}));
 }
 
 function pctDiff(current: number, baseline: number): number {
@@ -298,25 +298,25 @@ async function writeProfileBaseline(): Promise<void> {
 			const key = getProfileBaselineKey();
 			const res = await r2Fetch('PUT', key, payload, 'application/json');
 			if (!res.ok) throw new Error(`R2 write failed: ${res.status} ${res.statusText}`);
-			console.log();
-			console.log(c.green(`  Wrote profile baseline to R2: ${key}`));
+			console.info();
+			console.info(c.green(`  Wrote profile baseline to R2: ${key}`));
 			return;
 		}
 		const file = Bun.file(PROFILE_BASELINE_PATH);
 		await Bun.write(file, payload);
-		console.log();
-		console.log(c.green(`  Wrote profile baseline: ${PROFILE_BASELINE_PATH}`));
+		console.info();
+		console.info(c.green(`  Wrote profile baseline: ${PROFILE_BASELINE_PATH}`));
 	} catch (err) {
-		console.log();
+		console.info();
 		console.error(c.red(`  Failed to write profile baseline: ${err instanceof Error ? err.message : String(err)}`));
 	}
 }
 
 function printProfileSummaryTable(): void {
 	if (!_profileEnabled || !_profileSummary) return;
-	console.log();
-	console.log(c.bold('  Profile Summary'));
-	console.log();
+	console.info();
+	console.info(c.bold('  Profile Summary'));
+	console.info();
 	const rows = [
 		{Field: 'Projects', Value: _profileSummary.projectsScanned},
 		{Field: 'Elapsed', Value: `${_profileSummary.scanMs.toFixed(1)} ms`},
@@ -325,15 +325,15 @@ function printProfileSummaryTable(): void {
 			Value: `${_profileSummary.memoryDeltaBytes >= 0 ? '+' : ''}${(_profileSummary.memoryDeltaBytes / 1024).toFixed(1)} KiB`,
 		},
 	];
-	console.log(Bun.inspect.table(rows, ['Field', 'Value'], {colors: _useColor}));
+	console.info(Bun.inspect.table(rows, ['Field', 'Value'], {colors: _useColor}));
 }
 
 async function checkProfileRegression(): Promise<void> {
 	if (!_profileEnabled || !_profileSummary) return;
 	const baseline = await readProfileBaseline();
 	if (!baseline) {
-		console.log();
-		console.log(c.dim(`  Profile baseline not found: ${PROFILE_BASELINE_PATH}`));
+		console.info();
+		console.info(c.dim(`  Profile baseline not found: ${PROFILE_BASELINE_PATH}`));
 		return;
 	}
 
@@ -342,9 +342,9 @@ async function checkProfileRegression(): Promise<void> {
 	const driftMem = pctDiff(_profileSummary.memoryDeltaBytes, baseline.memoryDeltaBytes);
 	const hasRegression = driftProjects > 10 || driftMs > 10 || driftMem > 10;
 
-	console.log();
-	console.log(c.bold(`  Profile Regression (${hasRegression ? c.red('REGRESSION') : c.green('OK')})`));
-	console.log();
+	console.info();
+	console.info(c.bold(`  Profile Regression (${hasRegression ? c.red('REGRESSION') : c.green('OK')})`));
+	console.info();
 	const rows = [
 		{
 			Metric: 'projectsScanned',
@@ -365,7 +365,7 @@ async function checkProfileRegression(): Promise<void> {
 			Drift: `${driftMem.toFixed(1)}%`,
 		},
 	];
-	console.log(Bun.inspect.table(rows, ['Metric', 'Baseline', 'Current', 'Drift'], {colors: _useColor}));
+	console.info(Bun.inspect.table(rows, ['Metric', 'Baseline', 'Current', 'Drift'], {colors: _useColor}));
 
 	if (hasRegression && process.stdout.isTTY && typeof Bun.openInEditor === 'function') {
 		Bun.openInEditor(import.meta.path, {line: 1});
@@ -821,10 +821,10 @@ export function displayTable<T extends Record<string, any>>(
 	const table = Bun.inspect.table(data, columns as string[], {colors: options?.colors ?? _useColor});
 
 	if (options?.title) {
-		console.log(c.bold(options.title));
-		console.log(table);
+		console.info(c.bold(options.title));
+		console.info(table);
 	} else {
-		console.log(table);
+		console.info(table);
 	}
 }
 
@@ -1781,8 +1781,8 @@ async function discoverRegistryUrl(): Promise<string> {
 
 async function checkTokenHealth(): Promise<void> {
 	const registryUrl = await discoverRegistryUrl();
-	console.log(`\n${c.bold('  Token Health Check')}`);
-	console.log(`  ${c.dim(`registry: ${registryUrl}`)}\n`);
+	console.info(`\n${c.bold('  Token Health Check')}`);
+	console.info(`  ${c.dim(`registry: ${registryUrl}`)}\n`);
 
 	for (const name of BUN_KEYCHAIN_TOKEN_NAMES) {
 		const kcResult = await keychainGet(name);
@@ -1790,13 +1790,13 @@ async function checkTokenHealth(): Promise<void> {
 		const value = kcResult.ok && kcResult.value ? kcResult.value : envVal;
 
 		if (!value) {
-			console.log(`    ${c.cyan(name.padEnd(24))} ${c.yellow('MISS')}  not set in keychain or env`);
+			console.info(`    ${c.cyan(name.padEnd(24))} ${c.yellow('MISS')}  not set in keychain or env`);
 			continue;
 		}
 
 		const check = validateTokenValue(value);
 		if (!check.valid) {
-			console.log(`    ${c.cyan(name.padEnd(24))} ${c.red('BAD ')}  ${check.reason}`);
+			console.info(`    ${c.cyan(name.padEnd(24))} ${c.red('BAD ')}  ${check.reason}`);
 			await logTokenEvent({event: 'check_fail', tokenName: name, result: 'bad_format', detail: check.reason});
 			continue;
 		}
@@ -1819,9 +1819,9 @@ async function checkTokenHealth(): Promise<void> {
 				} catch {
 					/* no body */
 				}
-				console.log(`    ${c.cyan(name.padEnd(24))} ${c.green('AUTH')}  registry returned 200${username}`);
+				console.info(`    ${c.cyan(name.padEnd(24))} ${c.green('AUTH')}  registry returned 200${username}`);
 			} else if (res.status === 401 || res.status === 403) {
-				console.log(
+				console.info(
 					`    ${c.cyan(name.padEnd(24))} ${c.red('DENY')}  registry returned ${res.status} (token rejected)`,
 				);
 				await logTokenEvent({
@@ -1831,7 +1831,7 @@ async function checkTokenHealth(): Promise<void> {
 					detail: `HTTP ${res.status}`,
 				});
 			} else {
-				console.log(`    ${c.cyan(name.padEnd(24))} ${c.yellow('WARN')}  unexpected HTTP ${res.status}`);
+				console.info(`    ${c.cyan(name.padEnd(24))} ${c.yellow('WARN')}  unexpected HTTP ${res.status}`);
 				await logTokenEvent({
 					event: 'check_fail',
 					tokenName: name,
@@ -1842,11 +1842,11 @@ async function checkTokenHealth(): Promise<void> {
 		} catch (err) {
 			const msg = err instanceof Error ? err.message : String(err);
 			const label = msg.includes('abort') ? 'timeout' : 'network error';
-			console.log(`    ${c.cyan(name.padEnd(24))} ${c.red('NET ')}  ${label}: ${msg}`);
+			console.info(`    ${c.cyan(name.padEnd(24))} ${c.red('NET ')}  ${label}: ${msg}`);
 			await logTokenEvent({event: 'check_fail', tokenName: name, result: 'network', detail: msg});
 		}
 	}
-	console.log();
+	console.info();
 }
 
 // ── Xref types ────────────────────────────────────────────────────────
@@ -2053,7 +2053,7 @@ async function publishTokenEventsRss(): Promise<void> {
 
 		await ensureSnapshotDir();
 		await Bun.write(BUN_TOKEN_AUDIT_RSS_PATH, xml);
-		console.log(`  RSS  ${BUN_TOKEN_AUDIT_RSS_PATH} (${items.length} events)`);
+		console.info(`  RSS  ${BUN_TOKEN_AUDIT_RSS_PATH} (${items.length} events)`);
 	} catch (err) {
 		console.error(
 			'  Warning: failed to generate token events RSS:',
@@ -2078,7 +2078,7 @@ async function consumeAdvisoryFeed(feedUrl: string, projects: ProjectInfo[]): Pr
 		const xmlText = await res.text();
 		const advisories = parseRssFeed(xmlText);
 		if (advisories.length === 0) {
-			console.log('  Advisory feed: no entries found.');
+			console.info('  Advisory feed: no entries found.');
 			return;
 		}
 
@@ -2103,7 +2103,7 @@ async function consumeAdvisoryFeed(feedUrl: string, projects: ProjectInfo[]): Pr
 		}
 
 		if (matches.length === 0) {
-			console.log(`  Advisory feed: ${advisories.length} entries, no matches to local packages.`);
+			console.info(`  Advisory feed: ${advisories.length} entries, no matches to local packages.`);
 			return;
 		}
 
@@ -2120,7 +2120,7 @@ async function consumeAdvisoryFeed(feedUrl: string, projects: ProjectInfo[]): Pr
 		await ensureSnapshotDir();
 		const lines = matches.map(m => JSON.stringify({...m, fetchedAt: new Date().toISOString()})).join('\n') + '\n';
 		await appendFile(BUN_ADVISORY_MATCHES_PATH, lines);
-		console.log(`  Appended ${matches.length} match(es) to ${BUN_ADVISORY_MATCHES_PATH}`);
+		console.info(`  Appended ${matches.length} match(es) to ${BUN_ADVISORY_MATCHES_PATH}`);
 	} catch (err) {
 		const msg =
 			err instanceof Error ? (err.name === 'AbortError' ? 'request timed out' : err.message) : String(err);
@@ -2172,7 +2172,7 @@ async function publishScanResultsRss(projects: ProjectInfo[]): Promise<void> {
 
 		await ensureSnapshotDir();
 		await Bun.write(BUN_SCAN_RESULTS_RSS_PATH, xml);
-		console.log(`  RSS  ${BUN_SCAN_RESULTS_RSS_PATH} (${items.length} project(s))`);
+		console.info(`  RSS  ${BUN_SCAN_RESULTS_RSS_PATH} (${items.length} project(s))`);
 	} catch (err) {
 		console.error(
 			'  Warning: failed to generate scan results RSS:',
@@ -2911,23 +2911,23 @@ function matchFilter(p: ProjectInfo, pattern: string): boolean {
 // ── Deep inspect view ──────────────────────────────────────────────────
 function inspectProject(p: ProjectInfo): void {
 	const line = (label: string, value: string | number | boolean) =>
-		console.log(`  ${c.cyan(label.padEnd(16))} ${value}`);
+		console.info(`  ${c.cyan(label.padEnd(16))} ${value}`);
 
-	console.log();
-	console.log(c.bold(c.magenta(`  ╭─ ${p.name} ─╮`)));
-	console.log();
+	console.info();
+	console.info(c.bold(c.magenta(`  ╭─ ${p.name} ─╮`)));
+	console.info();
 	line('Folder', p.folder);
 	line('Name', p.name);
 	line('Version', p.version);
 	line('Description', p.description);
 	line('Author', p.author);
 	line('License', p.license);
-	console.log();
+	console.info();
 	line('Dependencies', p.deps);
 	line('DevDeps', p.devDeps);
 	line('Total Deps', p.totalDeps);
 	line('Scripts', p.scriptsCount);
-	console.log();
+	console.info();
 	line('Engine (bun)', p.engine);
 	line('Lock File', p.lock);
 	line('Bunfig', p.bunfig ? c.green('yes') : c.dim('no'));
@@ -2953,7 +2953,7 @@ function inspectProject(p: ProjectInfo): void {
 	line('Has pkg.json', p.hasPkg ? c.green('yes') : c.red('no'));
 	line('TZ', p.projectTz === 'UTC' ? c.dim('UTC (default)') : c.cyan(p.projectTz));
 	line('DNS TTL', p.projectDnsTtl !== '-' ? c.cyan(`${p.projectDnsTtl}s`) : c.yellow('not set (--fix → 5s)'));
-	console.log();
+	console.info();
 	line('Bin', p.bin.length ? p.bin.join(', ') : c.dim('none'));
 	line('Key Deps', p.keyDeps.length ? p.keyDeps.join(', ') : c.dim('none'));
 	line('Peer Deps', p.peerDeps.length ? p.peerDeps.join(', ') : c.dim('none'));
@@ -2963,9 +2963,9 @@ function inspectProject(p: ProjectInfo): void {
 
 	// bunfig [install] settings
 	if (p.bunfig) {
-		console.log();
-		console.log(`  ${c.bold(c.cyan('bunfig [install]'))}`);
-		console.log();
+		console.info();
+		console.info(`  ${c.bold(c.cyan('bunfig [install]'))}`);
+		console.info();
 		line(
 			'Auto',
 			p.installAuto !== '-'
@@ -3058,9 +3058,9 @@ function inspectProject(p: ProjectInfo): void {
 		// bunfig [run] section
 		const hasRun = p.runShell !== '-' || p.runBun || p.runSilent;
 		if (hasRun) {
-			console.log();
-			console.log(c.bold('  bunfig [run]'));
-			console.log();
+			console.info();
+			console.info(c.bold('  bunfig [run]'));
+			console.info();
 			if (p.runShell !== '-') line('Shell', p.runShell);
 			if (p.runBun) line('Bun Alias', c.green('yes (node → bun)'));
 			if (p.runSilent) line('Silent', c.dim('yes'));
@@ -3068,9 +3068,9 @@ function inspectProject(p: ProjectInfo): void {
 
 		// bunfig [debug] section
 		if (p.debugEditor !== '-') {
-			console.log();
-			console.log(c.bold('  bunfig [debug]'));
-			console.log();
+			console.info();
+			console.info(c.bold('  bunfig [debug]'));
+			console.info();
 			line('Editor', p.debugEditor);
 		}
 	}
@@ -3080,22 +3080,22 @@ function inspectProject(p: ProjectInfo): void {
 	const resolutionKeys = Object.keys(p.resolutions);
 	const hasOverrides = overrideKeys.length > 0 || resolutionKeys.length > 0;
 	if (hasOverrides) {
-		console.log();
-		console.log(`  ${c.bold(c.cyan('Dependency Overrides'))}`);
-		console.log();
+		console.info();
+		console.info(`  ${c.bold(c.cyan('Dependency Overrides'))}`);
+		console.info();
 		const printEntries = (label: string, entries: Record<string, string>) => {
 			const keys = Object.keys(entries);
 			line(label, `${c.yellow(String(keys.length))} mapping(s)`);
 			for (const [k, v] of Object.entries(entries)) {
 				const risk = classifyOverrideValue(v);
 				const flag = risk ? ` ${c.red(`[${risk}]`)}` : '';
-				console.log(`      ${c.dim('•')} ${k} ${c.dim('→')} ${v}${flag}`);
+				console.info(`      ${c.dim('•')} ${k} ${c.dim('→')} ${v}${flag}`);
 			}
 		};
 		if (overrideKeys.length > 0) printEntries('overrides', p.overrides);
 		if (resolutionKeys.length > 0) printEntries('resolutions', p.resolutions);
 	}
-	console.log();
+	console.info();
 }
 
 // ── Table rendering ────────────────────────────────────────────────────
@@ -3146,14 +3146,14 @@ function renderTable(projects: ProjectInfo[], detail: boolean, tokenStatusByFold
 
 	const headers = columnDefs.map(col => col.header);
 	if (detail) headers.push('Author', 'License', 'Description');
-	console.log(Bun.inspect.table(rows, headers, {colors: _useColor}));
+	console.info(Bun.inspect.table(rows, headers, {colors: _useColor}));
 }
 
 function renderMatrix(
 	rows: Record<string, string | number>[],
 	columns: ReadonlyArray<{readonly key: string; readonly header: string}>,
 ): void {
-	console.log(
+	console.info(
 		Bun.inspect.table(
 			rows,
 			columns.map(c => c.header),
@@ -3163,8 +3163,8 @@ function renderMatrix(
 }
 
 function sectionHeader(title: string): void {
-	console.log();
-	console.log(`  ${c.bold(c.cyan(title))}${c.dim('  ' + fmtStamp())}`);
+	console.info();
+	console.info(`  ${c.bold(c.cyan(title))}${c.dim('  ' + fmtStamp())}`);
 }
 
 // ── Sort comparator ────────────────────────────────────────────────────
@@ -3213,17 +3213,17 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 
 	if (withPkg.length === 0) {
 		sectionHeader('Metadata Audit');
-		console.log();
-		console.log(c.yellow('  No projects with package.json found.'));
+		console.info();
+		console.info(c.yellow('  No projects with package.json found.'));
 		if (withoutPkg.length > 0) {
-			console.log();
-			console.log(
+			console.info();
+			console.info(
 				c.dim(
 					`  ${withoutPkg.length} directories without package.json: ${withoutPkg.map(p => p.folder).join(', ')}`,
 				),
 			);
 		}
-		console.log();
+		console.info();
 		return;
 	}
 
@@ -3246,16 +3246,16 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 	}
 
 	sectionHeader('Metadata Audit');
-	console.log();
+	console.info();
 
 	// Summary counts
 	sectionHeader(`Field Coverage (${withPkg.length} projects)`);
-	console.log();
+	console.info();
 	for (const f of AUDIT_FIELDS) {
 		const present = withPkg.length - totals[f];
 		const pct = ((present / withPkg.length) * 100).toFixed(0);
 		const bar = present === withPkg.length ? c.green('OK') : c.yellow(`${totals[f]} missing`);
-		console.log(`    ${c.cyan(f.padEnd(14))} ${String(present).padStart(2)}/${withPkg.length}  (${pct}%)  ${bar}`);
+		console.info(`    ${c.cyan(f.padEnd(14))} ${String(present).padStart(2)}/${withPkg.length}  (${pct}%)  ${bar}`);
 	}
 
 	// Global environment overrides (BUN_CONFIG_* have higher priority than bunfig.toml)
@@ -3312,7 +3312,7 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 	];
 
 	sectionHeader('Global Overrides');
-	console.log();
+	console.info();
 	const PAD = 42;
 	for (const {key, desc, offLabel, recommend} of BUN_ENV_VARS) {
 		const val = Bun.env[key];
@@ -3324,23 +3324,23 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 					: flag.state === 'active'
 						? c.yellow(flag.label)
 						: c.dim(flag.label);
-			console.log(`    ${c.cyan(key.padEnd(PAD))} ${display}  ${c.dim(desc)}`);
+			console.info(`    ${c.cyan(key.padEnd(PAD))} ${display}  ${c.dim(desc)}`);
 		} else if (val) {
 			// Flag NODE_TLS_REJECT_UNAUTHORIZED=0 as a security risk
 			const valColor = key === 'NODE_TLS_REJECT_UNAUTHORIZED' && val === '0' ? c.red : c.green;
-			console.log(`    ${c.cyan(key.padEnd(PAD))} ${valColor(val)}  ${c.dim(desc)}`);
+			console.info(`    ${c.cyan(key.padEnd(PAD))} ${valColor(val)}  ${c.dim(desc)}`);
 		} else if (recommend) {
-			console.log(
+			console.info(
 				`    ${c.cyan(key.padEnd(PAD))} ${c.yellow('not set')}  ${c.dim(desc)}  ${c.yellow(`-> recommend ${key}=${recommend}`)}`,
 			);
 		} else {
-			console.log(`    ${c.cyan(key.padEnd(PAD))} ${c.dim('not set')}  ${c.dim(desc)}`);
+			console.info(`    ${c.cyan(key.padEnd(PAD))} ${c.dim('not set')}  ${c.dim(desc)}`);
 		}
 	}
 
 	// DNS cache stats
 	sectionHeader('DNS Cache');
-	console.log();
+	console.info();
 	const dnsStats = dns.getCacheStats();
 	const dnsRows = [
 		{Stat: 'cacheHitsCompleted', Value: dnsStats.cacheHitsCompleted, Description: 'resolved from cache'},
@@ -3350,24 +3350,24 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 		{Stat: 'errors', Value: dnsStats.errors, Description: 'failed lookups'},
 		{Stat: 'totalCount', Value: dnsStats.totalCount, Description: 'total requests'},
 	];
-	console.log(Bun.inspect.table(dnsRows, {colors: _useColor}));
+	console.info(Bun.inspect.table(dnsRows, {colors: _useColor}));
 	const hitRate =
 		dnsStats.totalCount > 0
 			? (((dnsStats.cacheHitsCompleted + dnsStats.cacheHitsInflight) / dnsStats.totalCount) * 100).toFixed(0)
 			: null;
 	if (dnsStats.errors > 0) {
-		console.log(
+		console.info(
 			`    ${c.red('⚠')} ${c.red(`${dnsStats.errors} DNS error(s)`)} — check connectivity or registry URLs`,
 		);
 	}
 	if (hitRate !== null && Number(hitRate) < 50 && dnsStats.totalCount >= 5) {
-		console.log(
+		console.info(
 			`    ${c.yellow('→')} hit rate ${c.yellow(hitRate + '%')} — use ${c.cyan('dns.prefetch(host, port)')} for known hosts`,
 		);
 	}
-	console.log(`    ${c.dim('Tip: use dns.prefetch(host, 443) for known registry domains at startup.')}`);
-	console.log(`    ${c.dim('Run --fix-dns to auto-generate dns-prefetch.ts across all projects.')}`);
-	console.log(`    ${c.dim('Monitor: bun install --verbose shows DNS prefetch activity in real time.')}`);
+	console.info(`    ${c.dim('Tip: use dns.prefetch(host, 443) for known registry domains at startup.')}`);
+	console.info(`    ${c.dim('Run --fix-dns to auto-generate dns-prefetch.ts across all projects.')}`);
+	console.info(`    ${c.dim('Monitor: bun install --verbose shows DNS prefetch activity in real time.')}`);
 
 	// dns-prefetch.ts coverage
 	const prefetchChecks = await Promise.all(
@@ -3381,7 +3381,7 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 			: prefetchCount === 0
 				? c.yellow(`0/${withPkg.length}`)
 				: c.yellow(`${prefetchCount}/${withPkg.length}`);
-	console.log(
+	console.info(
 		`    ${c.cyan('dns-prefetch'.padEnd(14))} ${String(prefetchCount).padStart(2)}/${withPkg.length}  (${prefetchPct}%)  ${prefetchBar}  ${c.dim('dns-prefetch.ts present (run --fix-dns)')}`,
 	);
 
@@ -3454,7 +3454,7 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 		const hint = src === 'not set' ? `(--store-token ${tkn})` : '';
 		return {Token: tkn, Source: src, Hint: hint};
 	});
-	console.log(Bun.inspect.table(tokenRows, ['Token', 'Source', 'Hint'], {colors: _useColor}));
+	console.info(Bun.inspect.table(tokenRows, ['Token', 'Source', 'Hint'], {colors: _useColor}));
 
 	// Dependency overrides / resolutions
 	const withOverrides = withPkg.filter(p => Object.keys(p.overrides).length > 0);
@@ -3463,27 +3463,27 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 	const totalResolutionCount = withResolutions.reduce((n, p) => n + Object.keys(p.resolutions).length, 0);
 	if (withOverrides.length > 0 || withResolutions.length > 0) {
 		sectionHeader('Dependency Overrides');
-		console.log();
+		console.info();
 		if (withOverrides.length > 0) {
-			console.log(
+			console.info(
 				`    ${c.cyan('overrides'.padEnd(14))} ${c.yellow(String(withOverrides.length))} project(s), ${totalOverrideCount} pinned metadependencies`,
 			);
 			for (const p of withOverrides) {
 				const mappings = Object.entries(p.overrides)
 					.map(([k, v]) => `${k} -> ${v}`)
 					.join(', ');
-				console.log(`      ${c.dim('•')} ${p.folder.padEnd(28)} ${c.dim(mappings)}`);
+				console.info(`      ${c.dim('•')} ${p.folder.padEnd(28)} ${c.dim(mappings)}`);
 			}
 		}
 		if (withResolutions.length > 0) {
-			console.log(
+			console.info(
 				`    ${c.cyan('resolutions'.padEnd(14))} ${c.yellow(String(withResolutions.length))} project(s), ${totalResolutionCount} pinned metadependencies`,
 			);
 			for (const p of withResolutions) {
 				const mappings = Object.entries(p.resolutions)
 					.map(([k, v]) => `${k} -> ${v}`)
 					.join(', ');
-				console.log(`      ${c.dim('•')} ${p.folder.padEnd(28)} ${c.dim(mappings)}`);
+				console.info(`      ${c.dim('•')} ${p.folder.padEnd(28)} ${c.dim(mappings)}`);
 			}
 		}
 		// Suspicious overrides summary
@@ -3496,10 +3496,10 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 			}
 		}
 		if (suspicious.length > 0) {
-			console.log();
-			console.log(`    ${c.red('Suspicious overrides:')} ${c.yellow(String(suspicious.length))} detected`);
+			console.info();
+			console.info(`    ${c.red('Suspicious overrides:')} ${c.yellow(String(suspicious.length))} detected`);
 			for (const s of suspicious) {
-				console.log(
+				console.info(
 					`      ${c.red('!')} ${s.folder.padEnd(28)} ${s.pkg} -> ${s.value} ${c.red(`[${s.risk}]`)}`,
 				);
 			}
@@ -3513,17 +3513,17 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 	const totalOptionalCount = withOptionalPeers.reduce((n, p) => n + p.peerDepsMeta.length, 0);
 	if (withPeers.length > 0) {
 		sectionHeader('Peer Dependencies');
-		console.log();
-		console.log(
+		console.info();
+		console.info(
 			`    ${c.cyan('declared'.padEnd(14))} ${c.green(String(withPeers.length))} project(s), ${totalPeerCount} peer(s) total`,
 		);
 		for (const p of withPeers) {
 			const optionals = new Set(p.peerDepsMeta);
 			const labels = p.peerDeps.map(d => (optionals.has(d) ? `${d} ${c.dim('(optional)')}` : d));
-			console.log(`      ${c.dim('•')} ${p.folder.padEnd(28)} ${c.dim(labels.join(', '))}`);
+			console.info(`      ${c.dim('•')} ${p.folder.padEnd(28)} ${c.dim(labels.join(', '))}`);
 		}
 		if (totalOptionalCount > 0) {
-			console.log(
+			console.info(
 				`    ${c.cyan('optional'.padEnd(14))} ${totalOptionalCount} peer(s) marked optional via peerDependenciesMeta`,
 			);
 		}
@@ -3538,10 +3538,10 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 			tzGroups.set(p.projectTz, list);
 		}
 		sectionHeader('Project Timezones (.env TZ)');
-		console.log();
+		console.info();
 		for (const [tz, folders] of [...tzGroups.entries()].sort((a, b) => b[1].length - a[1].length)) {
 			const label = tz === 'UTC' ? `${tz} (default)` : tz;
-			console.log(`    ${c.cyan(label.padEnd(24))} ${folders.length} project(s)`);
+			console.info(`    ${c.cyan(label.padEnd(24))} ${folders.length} project(s)`);
 		}
 	}
 
@@ -3556,14 +3556,14 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 			ttlGroups.set(p.projectDnsTtl, list);
 		}
 		sectionHeader('DNS Cache TTL');
-		console.log();
+		console.info();
 		for (const [ttl, folders] of [...ttlGroups.entries()].sort((a, b) => Number(a) - Number(b))) {
-			console.log(
+			console.info(
 				`    ${c.cyan(`${ttl}s`.padEnd(24))} ${folders.length} project(s)  ${c.dim(folders.join(', '))}`,
 			);
 		}
 		if (withoutDnsTtl > 0) {
-			console.log(`    ${c.yellow('not set'.padEnd(24))} ${withoutDnsTtl} project(s)  ${c.dim('--fix → 5s')}`);
+			console.info(`    ${c.yellow('not set'.padEnd(24))} ${withoutDnsTtl} project(s)  ${c.dim('--fix → 5s')}`);
 		}
 	}
 
@@ -3829,17 +3829,17 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 
 	renderMatrix(hookRows, BUN_SCANNER_COLUMNS.LIFECYCLE_HOOKS);
 
-	console.log();
-	console.log(
+	console.info();
+	console.info(
 		`    ${c.cyan('locked down'.padEnd(14))} ${String(defaultSecure).padStart(2)}/${withPkg.length}  ${defaultSecure === withPkg.length ? c.green('OK') : c.green(`${defaultSecure}`)}  ${c.dim('no trustedDependencies — all scripts blocked')}`,
 	);
 	if (withTrusted > 0) {
-		console.log(
+		console.info(
 			`    ${c.cyan('explicit trust'.padEnd(14))} ${String(withTrusted).padStart(2)}/${withPkg.length}  ${c.yellow(`${withTrusted}`)}  ${c.dim('trustedDependencies declared — scripts allowed for listed packages')}`,
 		);
 		const trustedProjects = withPkg.filter(p => p.trustedDeps.length > 0);
 		for (const p of trustedProjects) {
-			console.log(`      ${c.dim('•')} ${p.folder.padEnd(28)} ${c.dim(p.trustedDeps.join(', '))}`);
+			console.info(`      ${c.dim('•')} ${p.folder.padEnd(28)} ${c.dim(p.trustedDeps.join(', '))}`);
 		}
 	}
 
@@ -3862,11 +3862,11 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 			return c.dim('='.padStart(5));
 		};
 
-		console.log();
-		console.log(c.bold(`  Bun default trust cross-reference (${BUN_DEFAULT_TRUSTED.size} known packages):`));
-		console.log();
+		console.info();
+		console.info(c.bold(`  Bun default trust cross-reference (${BUN_DEFAULT_TRUSTED.size} known packages):`));
+		console.info();
 		const deltaHeader = hasDelta ? `  ${'Δ Def'.padStart(5)}  ${'Δ Exp'.padStart(5)}  ${'Δ Blk'.padStart(5)}` : '';
-		console.log(
+		console.info(
 			`    ${'Project'.padEnd(30)} ${'Default'.padStart(7)}  ${'Explicit'.padStart(8)}  ${'Blocked'.padStart(7)}${deltaHeader}  Packages`,
 		);
 		for (const x of xrefWithScripts) {
@@ -3881,12 +3881,12 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 				const prev = prevMap.get(x.folder);
 				deltaCols = `  ${formatDelta(x.bunDefault.length, prev?.bunDefault.length)}  ${formatDelta(x.explicit.length, prev?.explicit.length)}  ${formatDelta(x.blocked.length, prev?.blocked.length)}`;
 			}
-			console.log(
+			console.info(
 				`    ${x.folder.padEnd(30)} ${defColor(String(x.bunDefault.length).padStart(7))}  ${expColor(String(x.explicit.length).padStart(8))}  ${(x.blocked.length > 0 ? c.yellow : (s: string) => s)(String(x.blocked.length).padStart(7))}${deltaCols}   ${parts.join(c.dim(' | '))}`,
 			);
 		}
-		console.log();
-		console.log(
+		console.info();
+		console.info(
 			`  Summary: ${c.bold(String(totalBunDefault))} packages auto-trusted by Bun defaults across ${xrefData.length} projects`,
 		);
 
@@ -3911,22 +3911,22 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 				if (diffs.length > 0) changedProjects.push(`${x.folder} (${diffs.join(', ')})`);
 				else unchangedCount.value++;
 			}
-			console.log();
-			console.log(
+			console.info();
+			console.info(
 				c.bold(
 					`  Cross-reference delta (vs ${prevSnapshot.date ?? prevSnapshot.timestamp}${prevSnapshot.tz ? ` ${prevSnapshot.tz}` : ''}):`,
 				),
 			);
-			console.log(
+			console.info(
 				`    ${'New projects:'.padEnd(18)} ${c.cyan(String(newProjects.length))}${newProjects.length > 0 ? '   ' + newProjects.map(x => x.folder).join(', ') : ''}`,
 			);
-			console.log(
+			console.info(
 				`    ${'Removed:'.padEnd(18)} ${removedProjects.length > 0 ? c.red(String(removedProjects.length)) : c.dim(String(removedProjects.length))}${removedProjects.length > 0 ? '   ' + removedProjects.map(p => p.folder).join(', ') : ''}`,
 			);
-			console.log(
+			console.info(
 				`    ${'Changed:'.padEnd(18)} ${changedProjects.length > 0 ? c.yellow(String(changedProjects.length)) : c.dim(String(changedProjects.length))}${changedProjects.length > 0 ? '   ' + changedProjects.join(', ') : ''}`,
 			);
-			console.log(`    ${'Unchanged:'.padEnd(18)} ${c.dim(String(unchangedCount.value))}`);
+			console.info(`    ${'Unchanged:'.padEnd(18)} ${c.dim(String(unchangedCount.value))}`);
 		}
 
 		// Save snapshot (unless --compare or --no-auto-snapshot)
@@ -3936,8 +3936,8 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 
 		// --snapshot early return: save and exit after xref section
 		if (flags.snapshot) {
-			console.log();
-			console.log(`  Snapshot saved to .audit/xref-snapshot.json (${xrefWithScripts.length} projects)`);
+			console.info();
+			console.info(`  Snapshot saved to .audit/xref-snapshot.json (${xrefWithScripts.length} projects)`);
 			return;
 		}
 	}
@@ -3950,32 +3950,32 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 	const hasGlobalBunfig = await globalBunfigFile.exists();
 
 	sectionHeader('Global bunfig');
-	console.log();
+	console.info();
 	if (hasGlobalBunfig) {
 		try {
 			const gToml = await globalBunfigFile.text();
-			console.log(`    ${c.cyan('path'.padEnd(20))} ${c.green(globalBunfigPath)}`);
+			console.info(`    ${c.cyan('path'.padEnd(20))} ${c.green(globalBunfigPath)}`);
 			const gReg = gToml.match(/^\s*registry\s*=\s*"([^"]+)"/m);
-			if (gReg) console.log(`    ${c.cyan('registry'.padEnd(20))} ${gReg[1]}`);
+			if (gReg) console.info(`    ${c.cyan('registry'.padEnd(20))} ${gReg[1]}`);
 			const gLinker = gToml.match(/^\s*linker\s*=\s*"([^"]+)"/m);
-			if (gLinker) console.log(`    ${c.cyan('linker'.padEnd(20))} ${gLinker[1]}`);
+			if (gLinker) console.info(`    ${c.cyan('linker'.padEnd(20))} ${gLinker[1]}`);
 			const gFrozen = gToml.match(/^\s*frozenLockfile\s*=\s*(true|false)/m);
-			if (gFrozen) console.log(`    ${c.cyan('frozenLockfile'.padEnd(20))} ${gFrozen[1]}`);
+			if (gFrozen) console.info(`    ${c.cyan('frozenLockfile'.padEnd(20))} ${gFrozen[1]}`);
 			const gAge = gToml.match(/^\s*minimumReleaseAge\s*=\s*(\d+)/m);
 			if (gAge)
-				console.log(
+				console.info(
 					`    ${c.cyan('minimumReleaseAge'.padEnd(20))} ${gAge[1]}s (${(parseInt(gAge[1]) / 86400).toFixed(1)}d)`,
 				);
 			const gCache =
 				gToml.match(/^\s*cache\.dir\s*=\s*"([^"]+)"/m) ??
 				gToml.match(/\[install\.cache\][\s\S]*?dir\s*=\s*"([^"]+)"/m);
-			if (gCache) console.log(`    ${c.cyan('cache.dir'.padEnd(20))} ${gCache[1]}`);
-			console.log(`    ${c.dim('(shallow-merged under local bunfig.toml)')}`);
+			if (gCache) console.info(`    ${c.cyan('cache.dir'.padEnd(20))} ${gCache[1]}`);
+			console.info(`    ${c.dim('(shallow-merged under local bunfig.toml)')}`);
 		} catch {
-			console.log(`    ${c.yellow(globalBunfigPath)} ${c.red('(unreadable)')}`);
+			console.info(`    ${c.yellow(globalBunfigPath)} ${c.red('(unreadable)')}`);
 		}
 	} else {
-		console.log(`    ${c.dim('~/.bunfig.toml not found')}`);
+		console.info(`    ${c.dim('~/.bunfig.toml not found')}`);
 	}
 
 	// bunfig [install] coverage across projects
@@ -4110,67 +4110,67 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 	const withDebugEditor = withBunfig.filter(p => p.debugEditor !== '-');
 	if (withDebugEditor.length > 0) {
 		sectionHeader('bunfig [debug] Coverage');
-		console.log();
+		console.info();
 		const display = c.green(`${withDebugEditor.length}/${withBunfig.length}`);
-		console.log(`    ${c.cyan('editor'.padEnd(18))} ${display}  ${c.dim('debug.editor (Bun.openInEditor)')}`);
+		console.info(`    ${c.cyan('editor'.padEnd(18))} ${display}  ${c.dim('debug.editor (Bun.openInEditor)')}`);
 	}
 
 	// Cross-platform target validation
 	const crossProjects = withBunfig.filter(p => p.targetCpu !== '-' || p.targetOs !== '-');
 	if (crossProjects.length > 0) {
-		console.log();
-		console.log(c.bold(`  Cross-platform targets (${crossProjects.length} project(s)):`));
-		console.log(`    ${c.dim(`cpu: ${[...VALID_CPU].join(', ')}`)}`);
-		console.log(`    ${c.dim(`os:  ${[...VALID_OS].join(', ')}`)}`);
-		console.log();
+		console.info();
+		console.info(c.bold(`  Cross-platform targets (${crossProjects.length} project(s)):`));
+		console.info(`    ${c.dim(`cpu: ${[...VALID_CPU].join(', ')}`)}`);
+		console.info(`    ${c.dim(`os:  ${[...VALID_OS].join(', ')}`)}`);
+		console.info();
 		for (const p of crossProjects) {
 			const cpuOk = p.targetCpu === '-' || VALID_CPU.has(p.targetCpu);
 			const osOk = p.targetOs === '-' || VALID_OS.has(p.targetOs);
 			const cpuStr = p.targetCpu !== '-' ? (cpuOk ? p.targetCpu : c.red(p.targetCpu)) : c.dim('native');
 			const osStr = p.targetOs !== '-' ? (osOk ? p.targetOs : c.red(p.targetOs)) : c.dim('native');
 			const status = cpuOk && osOk ? c.green('OK') : c.red('INVALID');
-			console.log(`    ${p.folder.padEnd(28)} ${cpuStr}/${osStr}  ${status}`);
+			console.info(`    ${p.folder.padEnd(28)} ${cpuStr}/${osStr}  ${status}`);
 		}
 	}
 
 	// Linker strategy distribution (v1.3.2: configVersion determines default)
 	const withLock = withPkg.filter(p => p.lock !== 'none');
 	if (withLock.length > 0) {
-		console.log();
-		console.log(c.bold(`  Linker strategy (${withLock.length} projects with lockfile):`));
-		console.log();
+		console.info();
+		console.info(c.bold(`  Linker strategy (${withLock.length} projects with lockfile):`));
+		console.info();
 
 		// Decision matrix (Bun v1.3.2 rules)
-		console.log(`    ${c.dim('configVersion')}  ${c.dim('Workspaces?')}  ${c.dim('Default Linker')}`);
-		console.log(`    ${c.cyan('0')}              ${c.dim('any')}          hoisted ${c.dim('(backward compat)')}`);
-		console.log(`    ${c.cyan('1')}              no           hoisted`);
-		console.log(`    ${c.cyan('1')}              yes          ${c.cyan('isolated')}`);
-		console.log();
+		console.info(`    ${c.dim('configVersion')}  ${c.dim('Workspaces?')}  ${c.dim('Default Linker')}`);
+		console.info(`    ${c.cyan('0')}              ${c.dim('any')}          hoisted ${c.dim('(backward compat)')}`);
+		console.info(`    ${c.cyan('1')}              no           hoisted`);
+		console.info(`    ${c.cyan('1')}              yes          ${c.cyan('isolated')}`);
+		console.info();
 
 		const cv0 = withLock.filter(p => p.configVersion === 0).length;
 		const cv1 = withLock.filter(p => p.configVersion === 1).length;
 		const cvUnknown = withLock.filter(p => p.configVersion === -1).length;
-		console.log(
+		console.info(
 			`    ${c.cyan('configVersion'.padEnd(18))} ${c.dim('v0=')}${cv0}  ${c.dim('v1=')}${cv1}${cvUnknown > 0 ? `  ${c.dim('unknown=')}${cvUnknown}` : ''}`,
 		);
 
 		const hoisted = withLock.filter(p => effectiveLinker(p).strategy === 'hoisted').length;
 		const isolated = withLock.filter(p => effectiveLinker(p).strategy === 'isolated').length;
-		console.log(
+		console.info(
 			`    ${c.cyan('effective'.padEnd(18))} hoisted=${hoisted}  ${isolated > 0 ? c.cyan(`isolated=${isolated}`) : `isolated=${isolated}`}`,
 		);
 
 		const explicit = withLock.filter(p => p.linker !== '-').length;
 		if (explicit > 0) {
-			console.log(
+			console.info(
 				`    ${c.cyan('explicit bunfig'.padEnd(18))} ${explicit} project(s) override configVersion default`,
 			);
 		}
 	}
 
 	if (withoutPkg.length > 0) {
-		console.log();
-		console.log(
+		console.info();
+		console.info(
 			c.dim(
 				`  ${withoutPkg.length} directories without package.json: ${withoutPkg.map(p => p.folder).join(', ')}`,
 			),
@@ -4179,18 +4179,18 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 
 	// Per-project breakdown
 	if (issues.length > 0) {
-		console.log();
-		console.log(c.bold('  Projects with missing fields:'));
-		console.log();
+		console.info();
+		console.info(c.bold('  Projects with missing fields:'));
+		console.info();
 		for (const row of issues) {
-			console.log(`    ${c.yellow(row.folder.padEnd(30))} ${row.missing}`);
+			console.info(`    ${c.yellow(row.folder.padEnd(30))} ${row.missing}`);
 		}
 	} else {
-		console.log();
-		console.log(c.green('  All projects have complete metadata!'));
+		console.info();
+		console.info(c.green('  All projects have complete metadata!'));
 	}
 
-	console.log();
+	console.info();
 
 	// Hint about --fix
 	const fixableMeta = withPkg.filter(p => p.author === '-' || p.license === '-').length;
@@ -4200,9 +4200,9 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 		const parts: string[] = [];
 		if (fixableMeta > 0) parts.push(`patch ${fixableMeta} package.json(s)`);
 		if (fixableInit > 0) parts.push(`init ${fixableInit} missing package.json(s) + bun install`);
-		console.log(c.dim(`  Tip: run with --fix to ${parts.join(' & ')}`));
-		console.log(c.dim(`       run with --fix --dry-run to preview changes first`));
-		console.log();
+		console.info(c.dim(`  Tip: run with --fix to ${parts.join(' & ')}`));
+		console.info(c.dim(`       run with --fix --dry-run to preview changes first`));
+		console.info();
 	}
 }
 
@@ -4212,19 +4212,19 @@ async function fixProjects(projects: ProjectInfo[], dryRun: boolean): Promise<vo
 	const initable = projects.filter(p => !p.hasPkg);
 
 	if (patchable.length === 0 && initable.length === 0) {
-		console.log(c.green('\n  Nothing to fix — all projects have package.json with author + license.\n'));
+		console.info(c.green('\n  Nothing to fix — all projects have package.json with author + license.\n'));
 		return;
 	}
 
-	console.log();
-	console.log(c.bold(c.cyan(`  ${dryRun ? 'Dry Run' : 'Fixing'}`)));
-	console.log(c.dim(`  Defaults: author="${DEFAULTS.author}", license="${DEFAULTS.license}"`));
+	console.info();
+	console.info(c.bold(c.cyan(`  ${dryRun ? 'Dry Run' : 'Fixing'}`)));
+	console.info(c.dim(`  Defaults: author="${DEFAULTS.author}", license="${DEFAULTS.license}"`));
 
 	// ── Patch existing package.json files ────────────────────────────
 	if (patchable.length > 0) {
-		console.log();
-		console.log(c.bold(`  Patching ${patchable.length} existing package.json(s):`));
-		console.log();
+		console.info();
+		console.info(c.bold(`  Patching ${patchable.length} existing package.json(s):`));
+		console.info();
 
 		let patched = 0;
 		for (const p of patchable) {
@@ -4246,24 +4246,24 @@ async function fixProjects(projects: ProjectInfo[], dryRun: boolean): Promise<vo
 				const label = changes.map(f => c.green(`+${f}`)).join(' ');
 
 				if (dryRun) {
-					console.log(`    ${c.yellow('DRY')} ${p.folder.padEnd(30)} ${label}`);
+					console.info(`    ${c.yellow('DRY')} ${p.folder.padEnd(30)} ${label}`);
 				} else {
 					await Bun.write(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
-					console.log(`    ${c.green('FIX')} ${p.folder.padEnd(30)} ${label}`);
+					console.info(`    ${c.green('FIX')} ${p.folder.padEnd(30)} ${label}`);
 					patched++;
 				}
 			} catch {
-				console.log(`    ${c.red('ERR')} ${p.folder.padEnd(30)} could not read/write package.json`);
+				console.info(`    ${c.red('ERR')} ${p.folder.padEnd(30)} could not read/write package.json`);
 			}
 		}
-		if (!dryRun) console.log(c.dim(`\n  Patched ${patched} file(s).`));
+		if (!dryRun) console.info(c.dim(`\n  Patched ${patched} file(s).`));
 	}
 
 	// ── Init missing package.json + bun install ──────────────────────
 	if (initable.length > 0) {
-		console.log();
-		console.log(c.bold(`  Initializing ${initable.length} project(s) without package.json:`));
-		console.log();
+		console.info();
+		console.info(c.bold(`  Initializing ${initable.length} project(s) without package.json:`));
+		console.info();
 
 		let inited = 0;
 		for (const p of initable) {
@@ -4278,7 +4278,7 @@ async function fixProjects(projects: ProjectInfo[], dryRun: boolean): Promise<vo
 			};
 
 			if (dryRun) {
-				console.log(
+				console.info(
 					`    ${c.yellow('DRY')} ${p.folder.padEnd(30)} ${c.green('+package.json')} ${c.cyan('+bun install')}`,
 				);
 				continue;
@@ -4286,31 +4286,31 @@ async function fixProjects(projects: ProjectInfo[], dryRun: boolean): Promise<vo
 
 			try {
 				await Bun.write(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
-				console.log(`    ${c.green('NEW')} ${p.folder.padEnd(30)} ${c.green('+package.json')}`);
+				console.info(`    ${c.green('NEW')} ${p.folder.padEnd(30)} ${c.green('+package.json')}`);
 
 				// Run bun install to generate lock file
 				const proc = Bun.spawn(['bun', 'install'], {cwd: dir, stdout: 'pipe', stderr: 'pipe'});
 				const exitCode = await proc.exited;
 				if (exitCode === 0) {
-					console.log(`    ${c.cyan('  ↳')} ${p.folder.padEnd(30)} ${c.cyan('bun install ✓')}`);
+					console.info(`    ${c.cyan('  ↳')} ${p.folder.padEnd(30)} ${c.cyan('bun install ✓')}`);
 				} else {
 					const stderr = await proc.stderr.text();
-					console.log(
+					console.info(
 						`    ${c.yellow('  ↳')} ${p.folder.padEnd(30)} bun install exited ${exitCode}: ${stderr.trim().split('\n')[0]}`,
 					);
 				}
 				inited++;
 			} catch (err) {
-				console.log(`    ${c.red('ERR')} ${p.folder.padEnd(30)} ${err}`);
+				console.info(`    ${c.red('ERR')} ${p.folder.padEnd(30)} ${err}`);
 			}
 		}
-		if (!dryRun) console.log(c.dim(`\n  Initialized ${inited} project(s).`));
+		if (!dryRun) console.info(c.dim(`\n  Initialized ${inited} project(s).`));
 	}
 
-	console.log();
+	console.info();
 	if (dryRun) {
-		console.log(c.dim(`  Run without --dry-run to apply changes.`));
-		console.log();
+		console.info(c.dim(`  Run without --dry-run to apply changes.`));
+		console.info();
 	}
 }
 
@@ -4322,14 +4322,14 @@ async function fixEngine(projects: ProjectInfo[], dryRun: boolean): Promise<void
 	const needsFix = withPkg.filter(p => p.engine !== target);
 
 	if (needsFix.length === 0) {
-		console.log(c.green(`\n  All ${withPkg.length} projects already have engines.bun = "${target}".\n`));
+		console.info(c.green(`\n  All ${withPkg.length} projects already have engines.bun = "${target}".\n`));
 		return;
 	}
 
-	console.log();
-	console.log(c.bold(c.cyan(`  ${dryRun ? 'Dry Run' : 'Unifying'} engines.bun → "${target}"`)));
-	console.log(c.dim(`  ${needsFix.length}/${withPkg.length} projects need updating`));
-	console.log();
+	console.info();
+	console.info(c.bold(c.cyan(`  ${dryRun ? 'Dry Run' : 'Unifying'} engines.bun → "${target}"`)));
+	console.info(c.dim(`  ${needsFix.length}/${withPkg.length} projects need updating`));
+	console.info();
 
 	let updated = 0;
 
@@ -4346,33 +4346,33 @@ async function fixEngine(projects: ProjectInfo[], dryRun: boolean): Promise<void
 				old === '(none)' ? c.green(`+engines.bun = "${target}"`) : `${c.dim(old)} → ${c.green(target)}`;
 
 			if (dryRun) {
-				console.log(`    ${c.yellow('DRY')} ${p.folder.padEnd(30)} ${label}`);
+				console.info(`    ${c.yellow('DRY')} ${p.folder.padEnd(30)} ${label}`);
 			} else {
 				await Bun.write(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
-				console.log(`    ${c.green('FIX')} ${p.folder.padEnd(30)} ${label}`);
+				console.info(`    ${c.green('FIX')} ${p.folder.padEnd(30)} ${label}`);
 				updated++;
 			}
 		} catch {
-			console.log(`    ${c.red('ERR')} ${p.folder.padEnd(30)} could not read/write package.json`);
+			console.info(`    ${c.red('ERR')} ${p.folder.padEnd(30)} could not read/write package.json`);
 		}
 	}
 
-	console.log();
+	console.info();
 	if (dryRun) {
-		console.log(c.dim(`  Run without --dry-run to apply.`));
+		console.info(c.dim(`  Run without --dry-run to apply.`));
 	} else {
-		console.log(c.green(`  Updated ${updated} package.json file(s) to engines.bun = "${target}".`));
+		console.info(c.green(`  Updated ${updated} package.json file(s) to engines.bun = "${target}".`));
 	}
-	console.log();
+	console.info();
 }
 
 // ── Fix DNS: TTL recommendation + per-project dns-prefetch.ts ─────────
 async function fixDns(projects: ProjectInfo[], dryRun: boolean): Promise<void> {
 	const withPkg = projects.filter(p => p.hasPkg);
 
-	console.log();
-	console.log(c.bold(c.cyan(`  ${dryRun ? 'Dry Run:' : 'Generating'} DNS prefetch snippets`)));
-	console.log();
+	console.info();
+	console.info(c.bold(c.cyan(`  ${dryRun ? 'Dry Run:' : 'Generating'} DNS prefetch snippets`)));
+	console.info();
 
 	// ── .env.template update ──────────────────────────────────────
 	const templatePath = `${PROJECTS_ROOT}/scanner/.env.template`;
@@ -4387,19 +4387,19 @@ async function fixDns(projects: ProjectInfo[], dryRun: boolean): Promise<void> {
 		].join('\n');
 
 		if (dryRun) {
-			console.log(`  .env.template:`);
-			console.log(`    ${c.yellow('DRY')}  BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS=5`);
+			console.info(`  .env.template:`);
+			console.info(`    ${c.yellow('DRY')}  BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS=5`);
 		} else {
 			await Bun.write(templatePath, templateContent.trimEnd() + '\n' + dnsBlock + '\n');
-			console.log(`  .env.template:`);
-			console.log(`    ${c.green('FIX')}  BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS=5`);
+			console.info(`  .env.template:`);
+			console.info(`    ${c.green('FIX')}  BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS=5`);
 		}
 	} else {
-		console.log(`  .env.template:`);
-		console.log(c.dim(`    SKIP already contains BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS`));
+		console.info(`  .env.template:`);
+		console.info(c.dim(`    SKIP already contains BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS`));
 	}
 
-	console.log();
+	console.info();
 
 	// ── Per-project dns-prefetch.ts ───────────────────────────────
 	let totalDomains = new Set<string>();
@@ -4509,29 +4509,29 @@ async function fixDns(projects: ProjectInfo[], dryRun: boolean): Promise<void> {
 		const existing = (await prefetchFile.exists()) ? await prefetchFile.text() : null;
 
 		if (existing === lines) {
-			console.log(`    ${c.dim('SKIP')} ${p.folder.padEnd(32)} dns-prefetch.ts already up-to-date`);
+			console.info(`    ${c.dim('SKIP')} ${p.folder.padEnd(32)} dns-prefetch.ts already up-to-date`);
 			skipped++;
 			continue;
 		}
 
 		const domainList = sorted.join(', ');
 		if (dryRun) {
-			console.log(`    ${c.yellow('DRY')}  ${p.folder.padEnd(32)} ${domainList}`);
+			console.info(`    ${c.yellow('DRY')}  ${p.folder.padEnd(32)} ${domainList}`);
 		} else {
 			await Bun.write(prefetchPath, lines);
-			console.log(`    ${c.green('FIX')}  ${p.folder.padEnd(32)} ${domainList}`);
+			console.info(`    ${c.green('FIX')}  ${p.folder.padEnd(32)} ${domainList}`);
 			generated++;
 		}
 	}
 
-	console.log();
+	console.info();
 	if (dryRun) {
-		console.log(c.dim(`  ${totalDomains.size} domain(s) detected across ${withPkg.length} projects.`));
-		console.log(c.dim(`  Run without --dry-run to apply.`));
+		console.info(c.dim(`  ${totalDomains.size} domain(s) detected across ${withPkg.length} projects.`));
+		console.info(c.dim(`  Run without --dry-run to apply.`));
 	} else {
-		console.log(c.green(`  Generated ${generated} dns-prefetch.ts file(s). ${skipped} already up-to-date.`));
+		console.info(c.green(`  Generated ${generated} dns-prefetch.ts file(s). ${skipped} already up-to-date.`));
 	}
-	console.log();
+	console.info();
 }
 
 // ── Fix Scopes: inject [install.scopes] into bunfig.toml ─────────────
@@ -4545,11 +4545,11 @@ async function fixScopes(
 	const url = (registryUrl.startsWith('http') ? registryUrl : `https://${registryUrl}`).replace(/\/+$/, '') + '/';
 	const withPkg = projects.filter(p => p.hasPkg);
 
-	console.log();
-	console.log(c.bold(c.cyan(`  ${dryRun ? 'Dry Run' : 'Configuring'} scoped registries → ${url}`)));
-	console.log(c.dim(`  Scopes: ${scopeNames.join(', ')}`));
-	console.log(c.dim(`  ${withPkg.length} projects | token via $FW_REGISTRY_TOKEN`));
-	console.log();
+	console.info();
+	console.info(c.bold(c.cyan(`  ${dryRun ? 'Dry Run' : 'Configuring'} scoped registries → ${url}`)));
+	console.info(c.dim(`  Scopes: ${scopeNames.join(', ')}`));
+	console.info(c.dim(`  ${withPkg.length} projects | token via $FW_REGISTRY_TOKEN`));
+	console.info();
 
 	// Build the [install.scopes] TOML block
 	const scopeLines = scopeNames.map(s => `"${s}" = { token = "$FW_REGISTRY_TOKEN", url = "${url}" }`).join('\n');
@@ -4605,18 +4605,18 @@ async function fixScopes(
 
 		if (changes.length > 0) {
 			const tag = dryRun ? c.yellow('DRY') : c.green('FIX');
-			console.log(`    ${tag} ${p.folder.padEnd(30)} ${changes.join('  ')}`);
+			console.info(`    ${tag} ${p.folder.padEnd(30)} ${changes.join('  ')}`);
 		}
 	}
 
-	console.log();
+	console.info();
 	if (dryRun) {
-		console.log(c.dim('  Run without --dry-run to apply.'));
+		console.info(c.dim('  Run without --dry-run to apply.'));
 	} else {
-		console.log(c.green(`  Updated ${updated} bunfig.toml(s), created ${created} new.`));
-		console.log(c.dim(`  Set $FW_REGISTRY_TOKEN env var for auth.`));
+		console.info(c.green(`  Updated ${updated} bunfig.toml(s), created ${created} new.`));
+		console.info(c.dim(`  Set $FW_REGISTRY_TOKEN env var for auth.`));
 	}
-	console.log();
+	console.info();
 }
 
 // ── Fix Npmrc: rewrite .npmrc with scoped v1.3.5+ template ───────────
@@ -4642,13 +4642,13 @@ async function fixNpmrc(
 		'',
 	].join('\n');
 
-	console.log();
-	console.log(c.bold(c.cyan(`  ${dryRun ? 'Dry Run' : 'Rewriting'} .npmrc → v1.3.5+ scoped template`)));
-	console.log(c.dim(`  Registry: ${url}`));
-	console.log(c.dim(`  Scopes: ${scopeNames.join(', ')}`));
-	console.log(c.dim(`  Token: \${FW_REGISTRY_TOKEN?} (graceful undefined)`));
-	console.log(c.dim(`  ${withPkg.length} projects`));
-	console.log();
+	console.info();
+	console.info(c.bold(c.cyan(`  ${dryRun ? 'Dry Run' : 'Rewriting'} .npmrc → v1.3.5+ scoped template`)));
+	console.info(c.dim(`  Registry: ${url}`));
+	console.info(c.dim(`  Scopes: ${scopeNames.join(', ')}`));
+	console.info(c.dim(`  Token: \${FW_REGISTRY_TOKEN?} (graceful undefined)`));
+	console.info(c.dim(`  ${withPkg.length} projects`));
+	console.info();
 
 	let updated = 0;
 	let created = 0;
@@ -4679,17 +4679,17 @@ async function fixNpmrc(
 		}
 
 		const tag = dryRun ? c.yellow('DRY') : c.green('FIX');
-		console.log(`    ${tag} ${p.folder.padEnd(30)} ${action}`);
+		console.info(`    ${tag} ${p.folder.padEnd(30)} ${action}`);
 	}
 
-	console.log();
+	console.info();
 	if (dryRun) {
-		console.log(c.dim('  Run without --dry-run to apply.'));
+		console.info(c.dim('  Run without --dry-run to apply.'));
 	} else {
-		console.log(c.green(`  Rewrote ${updated}, created ${created} .npmrc file(s).`));
-		console.log(c.dim(`  Set $FW_REGISTRY_TOKEN env var for auth.`));
+		console.info(c.green(`  Rewrote ${updated}, created ${created} .npmrc file(s).`));
+		console.info(c.dim(`  Set $FW_REGISTRY_TOKEN env var for auth.`));
 	}
-	console.log();
+	console.info();
 }
 
 // ── Fix Registry: unify registry across all projects ─────────────────
@@ -4700,11 +4700,11 @@ async function fixRegistry(projects: ProjectInfo[], registryUrl: string, dryRun:
 	const display = url.replace(/^https?:\/\//, '');
 	const withPkg = projects.filter(p => p.hasPkg);
 
-	console.log();
-	console.log(c.bold(c.cyan(`  ${dryRun ? 'Dry Run' : 'Unifying'} registry → ${url}`)));
-	console.log(c.dim(`  ${withPkg.length} projects with package.json`));
-	console.log(c.dim(`  Targets: bunfig.toml [install] + [publish], package.json publishConfig, .npmrc auth`));
-	console.log();
+	console.info();
+	console.info(c.bold(c.cyan(`  ${dryRun ? 'Dry Run' : 'Unifying'} registry → ${url}`)));
+	console.info(c.dim(`  ${withPkg.length} projects with package.json`));
+	console.info(c.dim(`  Targets: bunfig.toml [install] + [publish], package.json publishConfig, .npmrc auth`));
+	console.info();
 
 	let updatedPkg = 0;
 	let updatedBunfig = 0;
@@ -4818,23 +4818,23 @@ async function fixRegistry(projects: ProjectInfo[], registryUrl: string, dryRun:
 
 		if (changes.length > 0) {
 			const tag = dryRun ? c.yellow('DRY') : c.green('FIX');
-			console.log(`    ${tag} ${p.folder.padEnd(30)} ${changes.join('  ')}`);
+			console.info(`    ${tag} ${p.folder.padEnd(30)} ${changes.join('  ')}`);
 		}
 	}
 
-	console.log();
+	console.info();
 	if (dryRun) {
-		console.log(c.dim(`  Run without --dry-run to apply.`));
-		console.log(c.dim(`  Set $REGISTRY_TOKEN env var for auth before publishing.`));
+		console.info(c.dim(`  Run without --dry-run to apply.`));
+		console.info(c.dim(`  Set $REGISTRY_TOKEN env var for auth before publishing.`));
 	} else {
-		console.log(
+		console.info(
 			c.green(
 				`  Updated ${updatedPkg} package.json(s), ${updatedBunfig} bunfig.toml(s), ${updatedNpmrc} .npmrc(s) → ${url}`,
 			),
 		);
-		console.log(c.dim(`  Set $REGISTRY_TOKEN env var, then: bun publish --dry-run (to verify)`));
+		console.info(c.dim(`  Set $REGISTRY_TOKEN env var, then: bun publish --dry-run (to verify)`));
 	}
-	console.log();
+	console.info();
 }
 
 // ── Fix Trusted: detect native deps and add to trustedDependencies ────
@@ -4844,11 +4844,11 @@ async function fixRegistry(projects: ProjectInfo[], registryUrl: string, dryRun:
 async function fixTrusted(projects: ProjectInfo[], dryRun: boolean): Promise<void> {
 	const withPkg = projects.filter(p => p.hasPkg);
 
-	console.log();
-	console.log(c.bold(c.cyan(`  ${dryRun ? 'Dry Run' : 'Fixing'} trustedDependencies`)));
-	console.log(c.dim(`  Scanning node_modules for native deps with lifecycle scripts`));
-	console.log(c.dim(`  Heuristic: ${NATIVE_PATTERN.source}`));
-	console.log();
+	console.info();
+	console.info(c.bold(c.cyan(`  ${dryRun ? 'Dry Run' : 'Fixing'} trustedDependencies`)));
+	console.info(c.dim(`  Scanning node_modules for native deps with lifecycle scripts`));
+	console.info(c.dim(`  Heuristic: ${NATIVE_PATTERN.source}`));
+	console.info();
 
 	let totalUpdated = 0;
 	let totalDetected = 0;
@@ -4906,7 +4906,7 @@ async function fixTrusted(projects: ProjectInfo[], dryRun: boolean): Promise<voi
 		const merged = [...new Set([...p.trustedDeps, ...detected])].sort();
 
 		if (dryRun) {
-			console.log(
+			console.info(
 				`    ${c.yellow('DRY')} ${p.folder.padEnd(30)} +${detected.length} native: ${c.dim(detected.join(', '))}`,
 			);
 		} else {
@@ -4915,26 +4915,26 @@ async function fixTrusted(projects: ProjectInfo[], dryRun: boolean): Promise<voi
 				const pkg = await Bun.file(pkgPath).json();
 				pkg.trustedDependencies = merged;
 				await Bun.write(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
-				console.log(
+				console.info(
 					`    ${c.green('FIX')} ${p.folder.padEnd(30)} +${detected.length} native: ${c.dim(detected.join(', '))}`,
 				);
 				totalUpdated++;
 			} catch {
-				console.log(`    ${c.red('ERR')} ${p.folder.padEnd(30)} could not write package.json`);
+				console.info(`    ${c.red('ERR')} ${p.folder.padEnd(30)} could not write package.json`);
 			}
 		}
 	}
 
-	console.log();
+	console.info();
 	if (totalDetected === 0) {
-		console.log(c.green(`  No new native deps detected across ${withPkg.length} projects.`));
-		console.log(c.dim(`  Existing trustedDependencies are up to date.`));
+		console.info(c.green(`  No new native deps detected across ${withPkg.length} projects.`));
+		console.info(c.dim(`  Existing trustedDependencies are up to date.`));
 	} else if (dryRun) {
-		console.log(c.dim(`  ${totalDetected} native dep(s) detected. Run without --dry-run to apply.`));
+		console.info(c.dim(`  ${totalDetected} native dep(s) detected. Run without --dry-run to apply.`));
 	} else {
-		console.log(c.green(`  Updated ${totalUpdated} package.json(s) with ${totalDetected} native dep(s).`));
+		console.info(c.green(`  Updated ${totalUpdated} package.json(s) with ${totalDetected} native dep(s).`));
 	}
-	console.log();
+	console.info();
 }
 
 // ── Why: run `bun why <pkg>` across all projects ───────────────────────
@@ -4950,11 +4950,11 @@ async function whyAcrossProjects(
 	if (opts.depth) flagParts.push(`--depth ${opts.depth}`);
 	const flagStr = flagParts.length > 0 ? ` ${flagParts.join(' ')}` : '';
 
-	console.log();
-	console.log(
+	console.info();
+	console.info(
 		c.bold(c.cyan(`  bun why ${pkg}${flagStr}`)) + c.dim(` — scanning ${withLock.length} projects with lock files`),
 	);
-	console.log();
+	console.info();
 
 	interface WhyHit {
 		folder: string;
@@ -5018,24 +5018,24 @@ async function whyAcrossProjects(
 	for (const r of whyResults) {
 		if (!r) continue;
 		hits.push({folder: r.folder, versions: r.versions, depType: r.depType, directBy: r.directBy});
-		console.log(c.bold(c.green(`  ┌─ ${r.folder}`)));
+		console.info(c.bold(c.green(`  ┌─ ${r.folder}`)));
 		for (const line of r.lines) {
-			console.log(c.dim('  │ ') + line);
+			console.info(c.dim('  │ ') + line);
 		}
-		console.log(c.dim('  └─'));
-		console.log();
+		console.info(c.dim('  └─'));
+		console.info();
 	}
 
 	if (hits.length === 0) {
-		console.log(c.yellow(`  "${pkg}" not found in any project.`));
-		console.log();
+		console.info(c.yellow(`  "${pkg}" not found in any project.`));
+		console.info();
 		return;
 	}
 
 	// Summary table
-	console.log(c.bold('  Summary'));
-	console.log();
-	console.log(`    ${c.cyan('Project'.padEnd(32))} ${'Version'.padEnd(16)} ${'Type'.padEnd(12)} Required By`);
+	console.info(c.bold('  Summary'));
+	console.info();
+	console.info(`    ${c.cyan('Project'.padEnd(32))} ${'Version'.padEnd(16)} ${'Type'.padEnd(12)} Required By`);
 	for (const h of hits) {
 		const typeColor =
 			h.depType === 'direct'
@@ -5048,18 +5048,18 @@ async function whyAcrossProjects(
 							? c.cyan
 							: c.dim;
 		const verStr = h.versions.length <= 2 ? h.versions.join(', ') : `${h.versions[0]} +${h.versions.length - 1}`;
-		console.log(
+		console.info(
 			`    ${h.folder.padEnd(32)} ${verStr.padEnd(16)} ${typeColor(h.depType.padEnd(12))} ${c.dim(h.directBy)}`,
 		);
 	}
-	console.log();
+	console.info();
 	// Version spread
 	const allVersions = [...new Set(hits.flatMap(h => h.versions))].sort();
 	if (allVersions.length > 1) {
-		console.log(c.dim(`  ${allVersions.length} versions in use: ${allVersions.join(', ')}`));
+		console.info(c.dim(`  ${allVersions.length} versions in use: ${allVersions.join(', ')}`));
 	}
-	console.log(c.dim(`  Found in ${hits.length} project(s).`));
-	console.log();
+	console.info(c.dim(`  Found in ${hits.length} project(s).`));
+	console.info();
 }
 
 // ── Outdated: run `bun outdated` across all projects ───────────────────
@@ -5089,13 +5089,13 @@ async function outdatedAcrossProjects(projects: ProjectInfo[], opts: OutdatedOpt
 	if (opts.global) parts.push('--global');
 	const flagStr = parts.length > 0 ? ` ${parts.join(' ')}` : '';
 
-	console.log();
-	console.log(
+	console.info();
+	console.info(
 		c.bold(c.cyan('  bun outdated')) +
 			(flagStr ? c.yellow(flagStr) : '') +
 			c.dim(` — checking ${candidates.length} project(s)`),
 	);
-	console.log();
+	console.info();
 
 	interface ProjectHit {
 		folder: string;
@@ -5145,7 +5145,7 @@ async function outdatedAcrossProjects(projects: ProjectInfo[], opts: OutdatedOpt
 	for (const {folder, pkgs} of outdatedResults) {
 		if (pkgs.length > 0) {
 			projectsWithOutdated++;
-			console.log(c.bold(c.yellow(`  ┌─ ${folder}`)));
+			console.info(c.bold(c.yellow(`  ┌─ ${folder}`)));
 			const maxName = Math.max(
 				...pkgs.map(pkg => pkg.name.length + (pkg.depType !== 'prod' ? pkg.depType.length + 3 : 0)),
 			);
@@ -5156,19 +5156,19 @@ async function outdatedAcrossProjects(projects: ProjectInfo[], opts: OutdatedOpt
 				const label = pkg.depType !== 'prod' ? `${pkg.name} ${c.dim(`(${pkg.depType})`)}` : pkg.name;
 				const padName = pkg.depType !== 'prod' ? pkg.name.length + pkg.depType.length + 3 : pkg.name.length;
 				const wsCol = pkg.workspace ? `  ${c.cyan(pkg.workspace)}` : '';
-				console.log(
+				console.info(
 					c.dim('  │ ') +
 						`  ${label}${''.padEnd(maxName - padName)}  ${c.dim(pkg.current.padEnd(maxCur))}  ${pkg.update.padEnd(maxUpd)}  ${pkg.current === pkg.latest ? c.green(pkg.latest) : c.yellow(pkg.latest)}${wsCol}`,
 				);
 			}
-			console.log(c.dim('  └─'));
-			console.log();
+			console.info(c.dim('  └─'));
+			console.info();
 			hits.push({folder, pkgs});
 		}
 	}
 
 	if (projectsWithOutdated === 0) {
-		console.log(
+		console.info(
 			c.green(
 				opts.filter?.length
 					? `  No outdated packages matching ${opts.filter.join(' ')}.`
@@ -5176,7 +5176,7 @@ async function outdatedAcrossProjects(projects: ProjectInfo[], opts: OutdatedOpt
 			),
 		);
 	} else {
-		console.log(c.dim(`  ${projectsWithOutdated}/${candidates.length} project(s) have outdated dependencies.`));
+		console.info(c.dim(`  ${projectsWithOutdated}/${candidates.length} project(s) have outdated dependencies.`));
 	}
 
 	// Summary table
@@ -5206,14 +5206,14 @@ async function outdatedAcrossProjects(projects: ProjectInfo[], opts: OutdatedOpt
 			}
 		}
 
-		console.log();
-		console.log(c.bold('  Summary'));
-		console.log();
+		console.info();
+		console.info(c.bold('  Summary'));
+		console.info();
 		const hasWs = [...byPkg.values()].some(v => v.workspaces.size > 0);
 		const hdr = `    ${c.cyan('Package'.padEnd(32))} ${'Type'.padEnd(6)} ${'Current'.padEnd(20)} ${'Latest'.padEnd(12)} ${hasWs ? 'Workspace'.padEnd(20) : ''}Projects`;
 		const sep = `    ${'─'.repeat(32)} ${'─'.repeat(6)} ${'─'.repeat(20)} ${'─'.repeat(12)} ${hasWs ? '─'.repeat(20) + ' ' : ''}${'─'.repeat(8)}`;
-		console.log(hdr);
-		console.log(sep);
+		console.info(hdr);
+		console.info(sep);
 
 		const sorted = [...byPkg.entries()].sort((a, b) => b[1].projects.length - a[1].projects.length);
 		for (const [name, info] of sorted) {
@@ -5223,19 +5223,19 @@ async function outdatedAcrossProjects(projects: ProjectInfo[], opts: OutdatedOpt
 			const latestStr = allSame ? c.green(info.latest) : c.yellow(info.latest);
 			const typeColor = info.depType === 'dev' ? c.magenta : info.depType === 'peer' ? c.yellow : c.green;
 			const wsStr = hasWs ? c.cyan([...info.workspaces].join(', ').padEnd(20)) + ' ' : '';
-			console.log(
+			console.info(
 				`    ${name.padEnd(32)} ${typeColor(info.depType.padEnd(6))} ${c.dim(curStr.padEnd(20))} ${latestStr.padEnd(12)} ${wsStr}${c.dim(String(info.projects.length))}`,
 			);
 		}
 
-		console.log();
+		console.info();
 		const totalPkgs = byPkg.size;
 		const totalHits = hits.reduce((s, h) => s + h.pkgs.length, 0);
-		console.log(
+		console.info(
 			c.dim(`  ${totalPkgs} unique package(s), ${totalHits} total instance(s) across ${hits.length} project(s).`),
 		);
 	}
-	console.log();
+	console.info();
 }
 
 // ── Update: run `bun update` across all projects ───────────────────────
@@ -5254,13 +5254,13 @@ async function updateAcrossProjects(projects: ProjectInfo[], opts: UpdateOpts): 
 		.filter(Boolean)
 		.join(' ');
 
-	console.log();
-	console.log(c.bold(c.cyan(`  ${label}`)) + c.dim(` — ${withLock.length} projects`));
+	console.info();
+	console.info(c.bold(c.cyan(`  ${label}`)) + c.dim(` — ${withLock.length} projects`));
 	if (semverFilter) {
 		const desc = semverFilter === 'patch' ? 'same major.minor, patch bump only' : 'same major, minor + patch bumps';
-		console.log(c.dim(`  Filter: ${desc}`));
+		console.info(c.dim(`  Filter: ${desc}`));
 	}
-	console.log();
+	console.info();
 
 	// ── Phase 1: Discovery (silent — stdout piped) ─────────────────
 	interface UpdatePlan {
@@ -5313,40 +5313,40 @@ async function updateAcrossProjects(projects: ProjectInfo[], opts: UpdateOpts): 
 		const tag = dryRun ? c.yellow('DRY') : c.yellow('...');
 
 		if (semverFilter) {
-			console.log(`    ${tag} ${p.folder.padEnd(30)} ${c.dim(`${names.length} ${semverFilter}:`)}${method}`);
+			console.info(`    ${tag} ${p.folder.padEnd(30)} ${c.dim(`${names.length} ${semverFilter}:`)}${method}`);
 			for (const pkg of pkgs) {
 				const typeLabel = pkg.depType !== 'prod' ? c.dim(` (${pkg.depType})`) : '';
 				const trustLabel = trusted.has(pkg.name) ? c.dim(' [trusted]') : '';
-				console.log(
+				console.info(
 					`         ${''.padEnd(30)} ${pkg.name}${typeLabel} ${c.dim(pkg.current)} → ${c.green(pkg.latest)}${trustLabel}`,
 				);
 			}
 		} else {
-			console.log(`    ${tag} ${p.folder.padEnd(30)} ${c.dim(`${pkgs.length} outdated package(s)`)}${method}`);
+			console.info(`    ${tag} ${p.folder.padEnd(30)} ${c.dim(`${pkgs.length} outdated package(s)`)}${method}`);
 		}
 		totalPkgs += pkgs.length;
 	}
 
-	console.log();
+	console.info();
 
 	if (plans.length === 0) {
-		console.log(
+		console.info(
 			c.dim(
 				`  All ${skipped} project(s) ${semverFilter ? `have no ${semverFilter} updates` : 'are already up to date'}.`,
 			),
 		);
-		console.log();
+		console.info();
 		return;
 	}
 
 	if (dryRun) {
-		console.log(
+		console.info(
 			c.dim(
 				`  ${plans.length} project(s) would be updated (${totalPkgs} package(s)), ${skipped} ${semverFilter ? `have no ${semverFilter} updates` : 'already up to date'}.`,
 			),
 		);
-		console.log(c.dim(`  Run without --dry-run to apply updates.`));
-		console.log();
+		console.info(c.dim(`  Run without --dry-run to apply updates.`));
+		console.info();
 		return;
 	}
 
@@ -5358,16 +5358,16 @@ async function updateAcrossProjects(projects: ProjectInfo[], opts: UpdateOpts): 
 			confirmed = true;
 			break;
 		}
-		console.log(c.dim('\n  Cancelled.'));
-		console.log();
+		console.info(c.dim('\n  Cancelled.'));
+		console.info();
 		return;
 	}
 	if (!confirmed) {
-		console.log(c.dim('\n  No input received — cancelled.'));
-		console.log();
+		console.info(c.dim('\n  No input received — cancelled.'));
+		console.info();
 		return;
 	}
-	console.log();
+	console.info();
 
 	// ── Phase 4: Execute (stdout inherited — interactive) ──────────
 	let updated = 0;
@@ -5377,25 +5377,25 @@ async function updateAcrossProjects(projects: ProjectInfo[], opts: UpdateOpts): 
 
 	const onSignal = () => {
 		if (interrupted) {
-			console.log(c.red('\n  Force quit.'));
+			console.info(c.red('\n  Force quit.'));
 			process.exit(1);
 		}
 		interrupted = true;
-		console.log(c.yellow('\n  Finishing current project… (ctrl+c again to force quit)'));
+		console.info(c.yellow('\n  Finishing current project… (ctrl+c again to force quit)'));
 	};
 	process.on('SIGINT', onSignal);
 	process.on('SIGTERM', onSignal);
 
 	const onExit = (code: number) => {
 		if (summaryPrinted) return;
-		console.log();
-		console.log(
+		console.info();
+		console.info(
 			c.yellow(
 				`  Exit (code ${code}) — ${completedFolders.length}/${plans.length} project(s) updated before exit.`,
 			),
 		);
 		if (completedFolders.length > 0) {
-			for (const f of completedFolders) console.log(`    ${c.green('OK')}  ${f}`);
+			for (const f of completedFolders) console.info(`    ${c.green('OK')}  ${f}`);
 		}
 	};
 	process.on('exit', onExit);
@@ -5447,7 +5447,7 @@ async function updateAcrossProjects(projects: ProjectInfo[], opts: UpdateOpts): 
 				if (exitCode !== 0) {
 					const errText = await proc.stderr.text();
 					const errLine = extractBunError(errText, `exit code ${exitCode}`);
-					console.log(`    ${c.red('ERR')} ${p.folder.padEnd(30)} ${errLine}`);
+					console.info(`    ${c.red('ERR')} ${p.folder.padEnd(30)} ${errLine}`);
 					ok = false;
 					break;
 				}
@@ -5458,13 +5458,13 @@ async function updateAcrossProjects(projects: ProjectInfo[], opts: UpdateOpts): 
 				if (registryUrl) extras.push('registry');
 				if (trusted.size > 0) extras.push('trust');
 				const via = extras.length > 0 ? ` [${extras.join(', ')}]` : '';
-				console.log(
+				console.info(
 					`    ${c.green('UPD')} ${p.folder.padEnd(30)} ${c.dim(`${pkgs.length} ${semverFilter} update(s) via bun add -E${via}`)}`,
 				);
 				for (const pkg of pkgs) {
 					const typeLabel = pkg.depType !== 'prod' ? c.dim(` (${pkg.depType})`) : '';
 					const trustLabel = trusted.has(pkg.name) ? c.dim(' [trusted]') : '';
-					console.log(
+					console.info(
 						`         ${''.padEnd(30)} ${pkg.name}${typeLabel} ${c.dim(pkg.current)} → ${c.green(pkg.latest)}${trustLabel}`,
 					);
 				}
@@ -5479,10 +5479,10 @@ async function updateAcrossProjects(projects: ProjectInfo[], opts: UpdateOpts): 
 
 			if (exitCode === 0) {
 				const detail = semverFilter ? `${names.length} ${semverFilter} update(s)` : 'done';
-				console.log(`    ${c.green('UPD')} ${p.folder.padEnd(30)} ${c.dim(detail)}`);
+				console.info(`    ${c.green('UPD')} ${p.folder.padEnd(30)} ${c.dim(detail)}`);
 				if (semverFilter) {
 					for (const pkg of pkgs) {
-						console.log(
+						console.info(
 							`         ${''.padEnd(30)} ${pkg.name} ${c.dim(pkg.current)} → ${c.green(pkg.latest)}`,
 						);
 					}
@@ -5492,7 +5492,7 @@ async function updateAcrossProjects(projects: ProjectInfo[], opts: UpdateOpts): 
 			} else {
 				const errText = await proc.stderr.text();
 				const errLine = extractBunError(errText, `exit code ${exitCode}`);
-				console.log(`    ${c.red('ERR')} ${p.folder.padEnd(30)} ${errLine}`);
+				console.info(`    ${c.red('ERR')} ${p.folder.padEnd(30)} ${errLine}`);
 			}
 		}
 	}
@@ -5502,32 +5502,32 @@ async function updateAcrossProjects(projects: ProjectInfo[], opts: UpdateOpts): 
 	process.off('exit', onExit);
 	summaryPrinted = true;
 
-	console.log();
+	console.info();
 	if (interrupted) {
 		const remaining = plans.length - updated;
-		console.log(c.yellow(`  Interrupted — ${updated} project(s) updated, ${remaining} skipped.`));
+		console.info(c.yellow(`  Interrupted — ${updated} project(s) updated, ${remaining} skipped.`));
 		if (completedFolders.length > 0) {
-			for (const f of completedFolders) console.log(`    ${c.green('OK')}  ${f}`);
+			for (const f of completedFolders) console.info(`    ${c.green('OK')}  ${f}`);
 		}
 	} else {
-		console.log(
+		console.info(
 			c.green(
 				`  Updated ${updated} project(s), ${skipped} ${semverFilter ? `have no ${semverFilter} updates` : 'already up to date'}.`,
 			),
 		);
 	}
-	console.log();
+	console.info();
 }
 
 // ── Verify: run `bun install --frozen-lockfile` across projects ──────
 async function verifyLockfiles(projects: ProjectInfo[]): Promise<void> {
 	const withLock = projects.filter(p => p.lock !== 'none');
 
-	console.log();
-	console.log(
+	console.info();
+	console.info(
 		c.bold(c.cyan('  bun install --frozen-lockfile')) + c.dim(` — verifying ${withLock.length} project(s)`),
 	);
-	console.log();
+	console.info();
 
 	let passed = 0;
 	let failed = 0;
@@ -5544,30 +5544,30 @@ async function verifyLockfiles(projects: ProjectInfo[]): Promise<void> {
 	);
 	for (const {folder, exitCode, stderr} of verifyResults) {
 		if (exitCode === 0) {
-			console.log(`    ${c.green('PASS')} ${folder}`);
+			console.info(`    ${c.green('PASS')} ${folder}`);
 			passed++;
 		} else {
 			const errLine = extractBunError(stderr, `exit code ${exitCode}`);
-			console.log(`    ${c.red('FAIL')} ${folder.padEnd(30)} ${c.dim(errLine)}`);
+			console.info(`    ${c.red('FAIL')} ${folder.padEnd(30)} ${c.dim(errLine)}`);
 			failures.push({folder, error: errLine});
 			failed++;
 		}
 	}
 
-	console.log();
+	console.info();
 	if (failed === 0) {
-		console.log(c.green(`  All ${passed} project(s) passed lockfile verification.`));
+		console.info(c.green(`  All ${passed} project(s) passed lockfile verification.`));
 	} else {
-		console.log(c.yellow(`  ${passed} passed, ${c.red(`${failed} failed`)} lockfile verification.`));
-		console.log();
-		console.log(c.bold('  Failed projects:'));
+		console.info(c.yellow(`  ${passed} passed, ${c.red(`${failed} failed`)} lockfile verification.`));
+		console.info();
+		console.info(c.bold('  Failed projects:'));
 		for (const f of failures) {
-			console.log(`    ${c.red('•')} ${f.folder.padEnd(30)} ${c.dim(f.error)}`);
+			console.info(`    ${c.red('•')} ${f.folder.padEnd(30)} ${c.dim(f.error)}`);
 		}
-		console.log();
-		console.log(c.dim('  Run `bun install` in failed projects to regenerate lockfiles.'));
+		console.info();
+		console.info(c.dim('  Run `bun install` in failed projects to regenerate lockfiles.'));
 	}
-	console.log();
+	console.info();
 }
 
 // ── Info: run `bun info <pkg>` and show registry metadata ────────────
@@ -5588,7 +5588,7 @@ async function infoPackage(pkg: string, projects: ProjectInfo[], jsonOut: boolea
 			console.error(c.red(`  bun info ${pkg} ${property}: ${stderr.trim()}`));
 			process.exit(1);
 		}
-		console.log(stdout.trimEnd());
+		console.info(stdout.trimEnd());
 		return;
 	}
 
@@ -5607,22 +5607,22 @@ async function infoPackage(pkg: string, projects: ProjectInfo[], jsonOut: boolea
 		meta = BunInfoResponseSchema.parse(JSON.parse(stdout));
 	} catch {
 		// Fallback: non-JSON or unexpected shape, just print it
-		console.log(stdout);
+		console.info(stdout);
 		return;
 	}
 
 	if (jsonOut) {
-		console.log(JSON.stringify(meta, null, 2));
+		console.info(JSON.stringify(meta, null, 2));
 		return;
 	}
 
 	// Pretty print
 	const line = (label: string, value: string | number | boolean | undefined) =>
-		value !== undefined && value !== '' && console.log(`  ${c.cyan(label.padEnd(18))} ${value}`);
+		value !== undefined && value !== '' && console.info(`  ${c.cyan(label.padEnd(18))} ${value}`);
 
-	console.log();
-	console.log(c.bold(c.magenta(`  ╭─ ${meta?.name ?? pkg} ─╮`)));
-	console.log();
+	console.info();
+	console.info(c.bold(c.magenta(`  ╭─ ${meta?.name ?? pkg} ─╮`)));
+	console.info();
 	line('Name', meta?.name);
 	line('Version', meta?.version ?? meta['dist-tags']?.latest);
 	line('Description', meta?.description);
@@ -5650,43 +5650,43 @@ async function infoPackage(pkg: string, projects: ProjectInfo[], jsonOut: boolea
 	const deps = meta?.dependencies ? Object.keys(meta?.dependencies ?? {}) : [];
 	const devDeps = meta?.devDependencies ? Object.keys(meta?.devDependencies ?? {}) : [];
 	if (deps.length > 0 || devDeps.length > 0) {
-		console.log();
+		console.info();
 		line('Dependencies', deps.length || 0);
 		line('DevDependencies', devDeps.length || 0);
 		if (deps.length > 0 && deps.length <= 15) {
-			console.log();
+			console.info();
 			for (const d of deps) {
-				console.log(`    ${c.dim('•')} ${d} ${c.dim(meta?.dependencies?.[d] ?? '')}`);
+				console.info(`    ${c.dim('•')} ${d} ${c.dim(meta?.dependencies?.[d] ?? '')}`);
 			}
 		} else if (deps.length > 15) {
-			console.log();
+			console.info();
 			for (const d of deps.slice(0, 12)) {
-				console.log(`    ${c.dim('•')} ${d} ${c.dim(meta?.dependencies?.[d] ?? '')}`);
+				console.info(`    ${c.dim('•')} ${d} ${c.dim(meta?.dependencies?.[d] ?? '')}`);
 			}
-			console.log(c.dim(`    ... and ${deps.length - 12} more`));
+			console.info(c.dim(`    ... and ${deps.length - 12} more`));
 		}
 	}
 
 	// dist-tags
 	const tags = meta['dist-tags'];
 	if (tags && Object.keys(tags).length > 0) {
-		console.log();
-		console.log(`  ${c.cyan('Dist Tags'.padEnd(18))}`);
+		console.info();
+		console.info(`  ${c.cyan('Dist Tags'.padEnd(18))}`);
 		for (const [tag, ver] of Object.entries(tags)) {
-			console.log(`    ${c.dim('•')} ${tag.padEnd(12)} ${ver}`);
+			console.info(`    ${c.dim('•')} ${tag.padEnd(12)} ${ver}`);
 		}
 	}
 
 	// Maintainers
 	const maintainers = meta?.maintainers;
 	if (Array.isArray(maintainers) && maintainers.length > 0) {
-		console.log();
-		console.log(`  ${c.cyan('Maintainers'.padEnd(18))}`);
+		console.info();
+		console.info(`  ${c.cyan('Maintainers'.padEnd(18))}`);
 		for (const m of maintainers.slice(0, 8)) {
 			const name = typeof m === 'string' ? m : (m.name ?? m.email ?? JSON.stringify(m));
-			console.log(`    ${c.dim('•')} ${name}`);
+			console.info(`    ${c.dim('•')} ${name}`);
 		}
-		if (maintainers.length > 8) console.log(c.dim(`    ... and ${maintainers.length - 8} more`));
+		if (maintainers.length > 8) console.info(c.dim(`    ... and ${maintainers.length - 8} more`));
 	}
 
 	// Cross-reference: which local projects use this package?
@@ -5710,14 +5710,14 @@ async function infoPackage(pkg: string, projects: ProjectInfo[], jsonOut: boolea
 	).filter((x): x is string => x !== null);
 
 	if (localUsers.length > 0) {
-		console.log();
-		console.log(`  ${c.cyan('Used Locally'.padEnd(18))} ${c.dim(`in ${localUsers.length} project(s)`)}`);
+		console.info();
+		console.info(`  ${c.cyan('Used Locally'.padEnd(18))} ${c.dim(`in ${localUsers.length} project(s)`)}`);
 		for (const u of localUsers) {
-			console.log(`    ${c.green('•')} ${u}`);
+			console.info(`    ${c.green('•')} ${u}`);
 		}
 	}
 
-	console.log();
+	console.info();
 }
 
 // ── Main ───────────────────────────────────────────────────────────────
@@ -5725,13 +5725,13 @@ async function main(): Promise<void> {
 	// Windows + mise function wrapper: if mise is active but MISE_SHELL isn't set,
 	// the PowerShell function wrapper may be mangling argv before bun sees it
 	if (shouldWarnMise(process.platform, Bun.env.MISE_SHELL)) {
-		console.log(c.dim("  Hint: On Windows, use 'mise.exe' for stable argument parsing."));
-		console.log();
+		console.info(c.dim("  Hint: On Windows, use 'mise.exe' for stable argument parsing."));
+		console.info();
 	}
 
 	if (flags.help) {
 		const ph = platformHelp(process.platform);
-		console.log(`
+		console.info(`
 ${c.bold(c.cyan('  bun scan.ts'))} — multi-project scanner for $BUN_PLATFORM_HOME
 
 ${c.dim('  Usage:')}
@@ -5837,7 +5837,7 @@ ${c.bold('  Other:')}
 		}
 		const result = await keychainSet(name, value);
 		if (result.ok) {
-			console.log(`${c.green('✓')} Stored ${c.cyan(name)} in OS keychain (service: ${BUN_KEYCHAIN_SERVICE})`);
+			console.info(`${c.green('✓')} Stored ${c.cyan(name)} in OS keychain (service: ${BUN_KEYCHAIN_SERVICE})`);
 			await logTokenEvent({event: 'store', tokenName: name, result: 'ok'});
 		} else {
 			const hints: Record<KeychainErr['code'], string> = {
@@ -5875,10 +5875,10 @@ ${c.bold('  Other:')}
 			await logTokenEvent({event: 'delete_fail', tokenName: name, result: result.code, detail: result.reason});
 			process.exit(1);
 		} else if (result.value) {
-			console.log(`${c.green('✓')} Removed ${c.cyan(name)} from OS keychain`);
+			console.info(`${c.green('✓')} Removed ${c.cyan(name)} from OS keychain`);
 			await logTokenEvent({event: 'delete', tokenName: name, result: 'ok'});
 		} else {
-			console.log(`${c.yellow('⚠')} ${c.cyan(name)} not found in OS keychain (nothing to remove)`);
+			console.info(`${c.yellow('⚠')} ${c.cyan(name)} not found in OS keychain (nothing to remove)`);
 		}
 		return;
 	}
@@ -5922,7 +5922,7 @@ ${c.bold('  Other:')}
 
 		if (!detail) {
 			// Compact view (default)
-			console.log(`\n${c.bold('  Token sources:')}\n`);
+			console.info(`\n${c.bold('  Token sources:')}\n`);
 			for (const t of tokenData) {
 				const colored =
 					t.source === 'env + keychain'
@@ -5932,29 +5932,29 @@ ${c.bold('  Other:')}
 							: t.source === 'keychain'
 								? c.cyan(t.source)
 								: c.yellow(t.source);
-				console.log(`    ${c.cyan(t.name.padEnd(24))} ${colored}  ${c.dim(`${t.lookupMs.toFixed(1)}ms`)}`);
+				console.info(`    ${c.cyan(t.name.padEnd(24))} ${colored}  ${c.dim(`${t.lookupMs.toFixed(1)}ms`)}`);
 			}
-			console.log();
-			console.log(
+			console.info();
+			console.info(
 				`  ${c.dim(`${found}/${tokenData.length} resolved  ${totalMs.toFixed(1)}ms  backend: ${backend}  service: ${BUN_KEYCHAIN_SERVICE}`)}`,
 			);
 
-			console.log();
-			console.log(`${c.bold('  Lifecycle:')}\n`);
+			console.info();
+			console.info(`${c.bold('  Lifecycle:')}\n`);
 			for (const t of tokenData) {
 				const age = t.storedAt ? c.dim(timeSince(new Date(t.storedAt))) : c.dim('-');
 				const accessed = t.m.accessed > 0 ? c.green(String(t.m.accessed)) : c.dim('0');
 				const failed = t.m.failed > 0 ? c.red(String(t.m.failed)) : c.dim('0');
 				const lastFail = t.m.lastFailCode ? c.red(t.m.lastFailCode) : c.dim('-');
-				console.log(
+				console.info(
 					`    ${c.cyan(t.name.padEnd(24))} accessed: ${accessed}  failed: ${failed}  last-err: ${lastFail}  stored: ${t.storedAt ? c.dim(t.storedAt) : c.dim('-')}  age: ${age}`,
 				);
 			}
 		} else {
 			// Detail view (--detail) — Token Health & Security Assessment
 			const ROTATION_DAYS = 90;
-			console.log(`\n  ${c.bold(c.cyan('Token Health & Security Assessment'))}`);
-			console.log(
+			console.info(`\n  ${c.bold(c.cyan('Token Health & Security Assessment'))}`);
+			console.info(
 				`  ${c.dim(`${found}/${tokenData.length} resolved  ${totalMs.toFixed(1)}ms  backend: ${backend}  service: ${BUN_KEYCHAIN_SERVICE}`)}\n`,
 			);
 
@@ -5993,15 +5993,15 @@ ${c.bold('  Other:')}
 					'Leak Risk': leakRisk,
 				};
 			});
-			console.log(Bun.inspect.table(rows));
-			console.log(`  ${c.dim(`Rendered in ${((Bun.nanoseconds() - t0) / 1e6).toFixed(1)}ms`)}`);
+			console.info(Bun.inspect.table(rows));
+			console.info(`  ${c.dim(`Rendered in ${((Bun.nanoseconds() - t0) / 1e6).toFixed(1)}ms`)}`);
 		}
 
 		if (keychainNote) {
-			console.log(`\n  ${c.yellow('note:')} ${keychainNote}`);
-			console.log(`  ${c.dim('Tokens can still be provided via env vars: export FW_REGISTRY_TOKEN=<value>')}`);
+			console.info(`\n  ${c.yellow('note:')} ${keychainNote}`);
+			console.info(`  ${c.dim('Tokens can still be provided via env vars: export FW_REGISTRY_TOKEN=<value>')}`);
 		}
-		console.log();
+		console.info();
 		return;
 	}
 
@@ -6023,7 +6023,7 @@ ${c.bold('  Other:')}
 
 			const session = await terminalManager.createSessionInteractive(service, project);
 			if (session) {
-				console.log(`${c.green('✓')} Created interactive session ${c.cyan(session.id)}`);
+				console.info(`${c.green('✓')} Created interactive session ${c.cyan(session.id)}`);
 				logProjectContext(projectContext, flags.verbose);
 			} else {
 				console.error(`${c.red('error:')} failed to create interactive session`);
@@ -6051,11 +6051,11 @@ ${c.bold('  Other:')}
 		const projectContext = createProjectContext(projectId);
 		const session = await createProjectSession(projectContext.projectInfo, domain, config);
 
-		console.log(`${c.green('✓')} Created session ${c.cyan(session.id)}`);
-		console.log(`${c.dim('Service:')} ${session.service}`);
-		console.log(`${c.dim('Project:')} ${session.project}`);
-		console.log(`${c.dim('Domain:')} ${session.domain}`);
-		console.log(
+		console.info(`${c.green('✓')} Created session ${c.cyan(session.id)}`);
+		console.info(`${c.dim('Service:')} ${session.service}`);
+		console.info(`${c.dim('Project:')} ${session.project}`);
+		console.info(`${c.dim('Domain:')} ${session.domain}`);
+		console.info(
 			`${c.dim('Expires:')} ${session.expiresAt ? new Date(session.expiresAt).toLocaleString() : 'Never'}`,
 		);
 		logProjectContext(projectContext, flags.verbose);
@@ -6069,7 +6069,7 @@ ${c.bold('  Other:')}
 		const project = projectTokenProject(projectContext.projectInfo);
 
 		const output = await listSessionsForTerminal(service, project);
-		console.log(output);
+		console.info(output);
 		return;
 	}
 
@@ -6086,7 +6086,7 @@ ${c.bold('  Other:')}
 			process.exit(1);
 		}
 
-		console.log(formatSessionForTerminal(session));
+		console.info(formatSessionForTerminal(session));
 		return;
 	}
 
@@ -6099,7 +6099,7 @@ ${c.bold('  Other:')}
 
 		const deleted = await deleteSession(service, project, sessionId);
 		if (deleted) {
-			console.log(`${c.green('✓')} Deleted session ${c.cyan(sessionId)}`);
+			console.info(`${c.green('✓')} Deleted session ${c.cyan(sessionId)}`);
 		} else {
 			console.error(`${c.red('error:')} failed to delete session ${c.cyan(sessionId)}`);
 			process.exit(1);
@@ -6114,7 +6114,7 @@ ${c.bold('  Other:')}
 		const project = projectTokenProject(projectContext.projectInfo);
 
 		const cleaned = await cleanupExpiredSessions(service, project);
-		console.log(`${c.green('✓')} Cleaned up ${cleaned} expired sessions`);
+		console.info(`${c.green('✓')} Cleaned up ${cleaned} expired sessions`);
 		return;
 	}
 
@@ -6188,7 +6188,7 @@ ${c.bold('  Other:')}
 			if (success) added++;
 		}
 
-		console.log(`${c.green('✓')} Added ${added} cookies to session ${c.cyan(sessionId)}`);
+		console.info(`${c.green('✓')} Added ${added} cookies to session ${c.cyan(sessionId)}`);
 		return;
 	}
 
@@ -6228,7 +6228,7 @@ ${c.bold('  Other:')}
 
 		const success = await removeCookieFromSession(service, project, sessionId, cookieName);
 		if (success) {
-			console.log(`${c.green('✓')} Removed cookie ${c.cyan(cookieName)} from session ${c.cyan(sessionId)}`);
+			console.info(`${c.green('✓')} Removed cookie ${c.cyan(cookieName)} from session ${c.cyan(sessionId)}`);
 		} else {
 			console.error(
 				`${c.red('error:')} failed to remove cookie ${c.cyan(cookieName)} from session ${c.cyan(sessionId)}`,
@@ -6321,12 +6321,12 @@ ${c.bold('  Other:')}
 			: null;
 
 		// stdout: clean export statements, safe to eval
-		console.log(`export BUN_PLATFORM_HOME="${PROJECTS_ROOT}"`);
+		console.info(`export BUN_PLATFORM_HOME="${PROJECTS_ROOT}"`);
 		if (fullUrl) {
-			console.log(`export BUN_CONFIG_REGISTRY="${fullUrl}"`);
+			console.info(`export BUN_CONFIG_REGISTRY="${fullUrl}"`);
 		}
 		const pathPrefix = binDirs.join(':');
-		console.log(`export PATH="${pathPrefix}:$PATH"`);
+		console.info(`export PATH="${pathPrefix}:$PATH"`);
 
 		// stderr: human-readable summary (won't pollute eval)
 		process.stderr.write(`# BUN_PLATFORM_HOME=${PROJECTS_ROOT}\n`);
@@ -6346,7 +6346,7 @@ ${c.bold('  Other:')}
 		const {entries: xrefResult, skipped} = await time('xref:scan', async () => scanXrefData(projects, prevSnap));
 		const withPkg = projects.filter(p => p.hasPkg);
 		await time('xref:save-snapshot', async () => saveXrefSnapshot(xrefResult, withPkg.length));
-		console.log(
+		console.info(
 			`  Snapshot saved to .audit/xref-snapshot.json (${xrefResult.length} projects${skipped > 0 ? `, ${skipped} unchanged` : ''})`,
 		);
 		return;
@@ -6358,7 +6358,7 @@ ${c.bold('  Other:')}
 		const prevSnapshot = await time('xref:load-snapshot', async () => loadXrefSnapshot(snapshotPath));
 		if (!prevSnapshot) {
 			const label = snapshotPath ?? '.audit/xref-snapshot.json';
-			console.log(`  No snapshot found at ${label} — run --audit or --snapshot first.`);
+			console.info(`  No snapshot found at ${label} — run --audit or --snapshot first.`);
 			process.exit(1);
 		}
 		const {entries: cmpXrefData} = await time('xref:scan', async () => scanXrefData(projects, prevSnapshot));
@@ -6385,23 +6385,23 @@ ${c.bold('  Other:')}
 			else unchangedCount++;
 		}
 
-		console.log();
-		console.log(
+		console.info();
+		console.info(
 			c.bold(
 				`  Cross-reference delta (vs ${prevSnapshot.date ?? prevSnapshot.timestamp}${prevSnapshot.tz ? ` ${prevSnapshot.tz}` : ''}):`,
 			),
 		);
-		console.log(
+		console.info(
 			`    ${'New projects:'.padEnd(18)} ${c.cyan(String(newProjects.length))}${newProjects.length > 0 ? '   ' + newProjects.map(x => x.folder).join(', ') : ''}`,
 		);
-		console.log(
+		console.info(
 			`    ${'Removed:'.padEnd(18)} ${removedProjects.length > 0 ? c.red(String(removedProjects.length)) : c.dim(String(removedProjects.length))}${removedProjects.length > 0 ? '   ' + removedProjects.map(p => p.folder).join(', ') : ''}`,
 		);
-		console.log(
+		console.info(
 			`    ${'Changed:'.padEnd(18)} ${changedProjects.length > 0 ? c.yellow(String(changedProjects.length)) : c.dim(String(changedProjects.length))}${changedProjects.length > 0 ? '   ' + changedProjects.join(', ') : ''}`,
 		);
-		console.log(`    ${'Unchanged:'.padEnd(18)} ${c.dim(String(unchangedCount))}`);
-		console.log();
+		console.info(`    ${'Unchanged:'.padEnd(18)} ${c.dim(String(unchangedCount))}`);
+		console.info();
 		const hasDrift = newProjects.length > 0 || removedProjects.length > 0 || changedProjects.length > 0;
 		if (hasDrift) process.exit(1);
 		return;
@@ -6453,11 +6453,11 @@ ${c.bold('  Other:')}
 			);
 			changed = true;
 			if (dryRun) {
-				console.log(
+				console.info(
 					`  ${c.yellow('DRY')}  BUN_RUNTIME_TRANSPILER_CACHE_PATH=\${BUN_PLATFORM_HOME}/.bun-cache (promoted from comment)`,
 				);
 			} else {
-				console.log(
+				console.info(
 					`  ${c.green('FIX')}  BUN_RUNTIME_TRANSPILER_CACHE_PATH=\${BUN_PLATFORM_HOME}/.bun-cache (promoted from comment)`,
 				);
 			}
@@ -6465,12 +6465,12 @@ ${c.bold('  Other:')}
 			content += '\nBUN_RUNTIME_TRANSPILER_CACHE_PATH=${BUN_PLATFORM_HOME}/.bun-cache\n';
 			changed = true;
 			if (dryRun) {
-				console.log(`  ${c.yellow('DRY')}  BUN_RUNTIME_TRANSPILER_CACHE_PATH=\${BUN_PLATFORM_HOME}/.bun-cache`);
+				console.info(`  ${c.yellow('DRY')}  BUN_RUNTIME_TRANSPILER_CACHE_PATH=\${BUN_PLATFORM_HOME}/.bun-cache`);
 			} else {
-				console.log(`  ${c.green('FIX')}  BUN_RUNTIME_TRANSPILER_CACHE_PATH=\${BUN_PLATFORM_HOME}/.bun-cache`);
+				console.info(`  ${c.green('FIX')}  BUN_RUNTIME_TRANSPILER_CACHE_PATH=\${BUN_PLATFORM_HOME}/.bun-cache`);
 			}
 		} else {
-			console.log(c.dim('  SKIP  BUN_RUNTIME_TRANSPILER_CACHE_PATH already set'));
+			console.info(c.dim('  SKIP  BUN_RUNTIME_TRANSPILER_CACHE_PATH already set'));
 		}
 
 		// Add concurrency tuning vars
@@ -6482,12 +6482,12 @@ ${c.bold('  Other:')}
 				content += `\n${key}=${val}\n`;
 				changed = true;
 				if (dryRun) {
-					console.log(`  ${c.yellow('DRY')}  ${key}=${val}  (${desc})`);
+					console.info(`  ${c.yellow('DRY')}  ${key}=${val}  (${desc})`);
 				} else {
-					console.log(`  ${c.green('FIX')}  ${key}=${val}  (${desc})`);
+					console.info(`  ${c.green('FIX')}  ${key}=${val}  (${desc})`);
 				}
 			} else {
-				console.log(c.dim(`  SKIP  ${key} already present`));
+				console.info(c.dim(`  SKIP  ${key} already present`));
 			}
 		}
 
@@ -6504,11 +6504,11 @@ ${c.bold('  Other:')}
 
 		if (changed && !dryRun) {
 			await Bun.write(templatePath, content);
-			console.log(c.green('  Updated .env.template with runtime recommendations'));
+			console.info(c.green('  Updated .env.template with runtime recommendations'));
 		} else if (changed && dryRun) {
-			console.log(c.dim('  Run without --dry-run to apply.'));
+			console.info(c.dim('  Run without --dry-run to apply.'));
 		} else {
-			console.log(c.dim('  .env.template already contains all runtime recommendations — no changes'));
+			console.info(c.dim('  .env.template already contains all runtime recommendations — no changes'));
 		}
 		return;
 	}
@@ -6524,15 +6524,15 @@ ${c.bold('  Other:')}
 		const envKey = 'BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS';
 		const missing = projects.filter(p => p.hasPkg && p.projectDnsTtl === '-');
 		if (missing.length === 0) {
-			console.log(c.green('  All projects already have DNS TTL configured.'));
+			console.info(c.green('  All projects already have DNS TTL configured.'));
 			return;
 		}
-		console.log(c.bold(`  Setting ${envKey}=${ttlVal} in ${missing.length} project .env files:`));
-		console.log();
+		console.info(c.bold(`  Setting ${envKey}=${ttlVal} in ${missing.length} project .env files:`));
+		console.info();
 		for (const p of missing) {
 			const envPath = `${projectDir(p)}/.env`;
 			if (dryRun) {
-				console.log(`    ${c.dim('dry-run')} ${p.folder}/.env  +${envKey}=${ttlVal}`);
+				console.info(`    ${c.dim('dry-run')} ${p.folder}/.env  +${envKey}=${ttlVal}`);
 				continue;
 			}
 			const file = Bun.file(envPath);
@@ -6540,9 +6540,9 @@ ${c.bold('  Other:')}
 			if (!content.endsWith('\n') && content.length > 0) content += '\n';
 			content += `${envKey}=${ttlVal}\n`;
 			await Bun.write(envPath, content);
-			console.log(`    ${c.green('✓')} ${p.folder}/.env`);
+			console.info(`    ${c.green('✓')} ${p.folder}/.env`);
 		}
-		if (!dryRun) console.log(c.green(`\n  Done — ${missing.length} projects updated.`));
+		if (!dryRun) console.info(c.green(`\n  Done — ${missing.length} projects updated.`));
 		return;
 	}
 
@@ -6557,7 +6557,7 @@ ${c.bold('  Other:')}
 	if (flags['fix-scopes']) {
 		const scopeNames = positionals.filter(a => a.startsWith('@'));
 		if (scopeNames.length === 0) {
-			console.log(c.red('\n  Usage: --fix-scopes <registry-url> @scope1 @scope2 ...\n'));
+			console.info(c.red('\n  Usage: --fix-scopes <registry-url> @scope1 @scope2 ...\n'));
 			return;
 		}
 		await fixScopes(projects, flags['fix-scopes'], scopeNames, dryRun);
@@ -6569,7 +6569,7 @@ ${c.bold('  Other:')}
 	if (flags['fix-npmrc']) {
 		const scopeNames = positionals.filter(a => a.startsWith('@'));
 		if (scopeNames.length === 0) {
-			console.log(c.red('\n  Usage: --fix-npmrc <registry-url> @scope1 @scope2 ...\n'));
+			console.info(c.red('\n  Usage: --fix-npmrc <registry-url> @scope1 @scope2 ...\n'));
 			return;
 		}
 		await fixNpmrc(projects, flags['fix-npmrc'], scopeNames, dryRun);
@@ -6631,13 +6631,13 @@ ${c.bold('  Other:')}
 
 	// ── JSON output ──────────────────────────────────────────────────
 	if (flags.json) {
-		console.log(JSON.stringify(projects, null, 2));
+		console.info(JSON.stringify(projects, null, 2));
 		return;
 	}
 
 	// ── Table output ─────────────────────────────────────────────────
 	if (projects.length === 0) {
-		console.log(c.yellow('No projects matched the given filters.'));
+		console.info(c.yellow('No projects matched the given filters.'));
 		return;
 	}
 
@@ -6660,13 +6660,13 @@ ${c.bold('  Other:')}
 	});
 
 	if (flags['debug-tokens']) {
-		console.log();
-		console.log(c.bold('  Token Debug (service/name)'));
-		console.log();
+		console.info();
+		console.info(c.bold('  Token Debug (service/name)'));
+		console.info();
 		for (const p of projects) {
 			const service = projectTokenService(p);
 			const tokenName = projectTokenName(p);
-			console.log(`    ${c.cyan(p.folder.padEnd(28))} ${service} / ${tokenName}`);
+			console.info(`    ${c.cyan(p.folder.padEnd(28))} ${service} / ${tokenName}`);
 		}
 	}
 
@@ -6679,19 +6679,19 @@ ${c.bold('  Other:')}
 			memoryDeltaBytes: endMem.rss - _profileStartMem.rss,
 		};
 	}
-	console.log();
+	console.info();
 	const now = new Date();
 	const scanTime = fmtStamp(now);
 	const _commitHash = getGitCommitHash();
-	console.log(
+	console.info(
 		c.bold(
 			c.cyan(
 				`  Project Scanner — ${projects.length} projects scanned in ${elapsed}ms (bun ${Bun.version} ${Bun.revision.slice(0, 9)}${_commitHash ? ` ${_commitHash.slice(0, 9)}` : ''})`,
 			),
 		),
 	);
-	console.log(c.dim(`  ${scanTime}`));
-	console.log();
+	console.info(c.dim(`  ${scanTime}`));
+	console.info();
 
 	renderTable(projects, !!flags.detail, tokenStatusByFolder);
 
@@ -6731,7 +6731,7 @@ ${c.bold('  Other:')}
 			'Linker Δ': '0',
 			'Drift': hasDrift ? 'DETECTED' : 'none',
 		};
-		console.log(Bun.inspect.table([footer], {colors: _useColor}));
+		console.info(Bun.inspect.table([footer], {colors: _useColor}));
 
 		if (!flags['no-auto-snapshot']) {
 			await saveXrefSnapshot(currentXref, projects.filter(p => p.hasPkg).length);
@@ -6752,7 +6752,7 @@ ${c.bold('  Other:')}
 
 	// ── RSS feed generation ──────────────────────────────────────────
 	if (flags.rss) {
-		console.log();
+		console.info();
 		await publishTokenEventsRss();
 		await publishScanResultsRss(projects);
 	}

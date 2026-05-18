@@ -71,7 +71,7 @@ export class BalanceNotificationService {
     this.addToCustomerIndex(customerId, alert.id);
     this.addToAgentIndex(agentId, alert.id);
 
-    console.log(`🚨 Balance alert created: ${customerId} | ${alertType} | $${currentBalance}`);
+    console.info(`🚨 Balance alert created: ${customerId} | ${alertType} | $${currentBalance}`);
 
     // Send notification
     this.sendNotification(alert);
@@ -99,7 +99,7 @@ export class BalanceNotificationService {
     alert.resolutionNotes = notes;
     alert.updatedAt = new Date();
 
-    console.log(`✅ Alert acknowledged: ${alertId} by ${acknowledgedBy}`);
+    console.info(`✅ Alert acknowledged: ${alertId} by ${acknowledgedBy}`);
 
     // Send resolution notification
     this.sendResolutionNotification(alert);
@@ -127,7 +127,7 @@ export class BalanceNotificationService {
       previousLevel: alert.escalationLevel,
     };
 
-    console.log(`🚨 Alert escalated: ${alertId} to level ${newLevel}`);
+    console.info(`🚨 Alert escalated: ${alertId} to level ${newLevel}`);
 
     // Send escalation notification
     this.sendEscalationNotification(alert);
@@ -250,7 +250,7 @@ export class BalanceNotificationService {
 
     // Check cooldown
     if (this.isOnCooldown(alert.customerId, template.id, template.cooldownMinutes)) {
-      console.log(`⏰ Notification on cooldown: ${alert.customerId} - ${template.id}`);
+      console.info(`⏰ Notification on cooldown: ${alert.customerId} - ${template.id}`);
       return;
     }
 
@@ -559,12 +559,12 @@ export class BalanceNotificationService {
     message: string,
     config: any
   ): Promise<void> {
-    console.log(`📧 Sending email notification: ${alert.customerId}`);
+    console.info(`📧 Sending email notification: ${alert.customerId}`);
     // Integration with email service would go here
   }
 
   private async sendSMS(alert: BalanceThresholdAlert, message: string, config: any): Promise<void> {
-    console.log(`📱 Sending SMS notification: ${alert.customerId}`);
+    console.info(`📱 Sending SMS notification: ${alert.customerId}`);
     // Integration with SMS service would go here
   }
 
@@ -573,7 +573,7 @@ export class BalanceNotificationService {
     message: string,
     config: any
   ): Promise<void> {
-    console.log(`🔔 Sending push notification: ${alert.customerId}`);
+    console.info(`🔔 Sending push notification: ${alert.customerId}`);
     // Integration with push notification service would go here
   }
 
@@ -582,7 +582,7 @@ export class BalanceNotificationService {
     message: string,
     config: any
   ): Promise<void> {
-    console.log(`🔗 Sending webhook notification: ${alert.customerId}`);
+    console.info(`🔗 Sending webhook notification: ${alert.customerId}`);
     // Integration with webhook service would go here
   }
 
@@ -591,7 +591,7 @@ export class BalanceNotificationService {
     message: string,
     config: any
   ): Promise<void> {
-    console.log(`📊 Sending dashboard notification: ${alert.customerId}`);
+    console.info(`📊 Sending dashboard notification: ${alert.customerId}`);
     // Dashboard notification logic would go here
   }
 }

@@ -46,9 +46,9 @@ export class ProviderDivergenceKF {
     // Component #42: Zero-cost width for logging alignment
     this.logger = new UnicodeAlignedLogger();
 
-    console.log("🔧 Pattern #81: Provider A/B Feed Divergence initialized");
-    console.log("   V8 Type Bridge: ✅ Native timestamp validation");
-    console.log("   Unicode Logger: ✅ Zero-cost width calculation");
+    console.info("🔧 Pattern #81: Provider A/B Feed Divergence initialized");
+    console.info("   V8 Type Bridge: ✅ Native timestamp validation");
+    console.info("   Unicode Logger: ✅ Zero-cost width calculation");
   }
 
   detectFeedDivergence(
@@ -185,8 +185,8 @@ export class ProviderDivergenceKF {
 
   // Performance monitoring with V8 type checking
   benchmark(iterations: number = 10000): void {
-    console.log("🧪 Pattern #81: V8 Type Bridge Benchmark");
-    console.log("==========================================");
+    console.info("🧪 Pattern #81: V8 Type Bridge Benchmark");
+    console.info("==========================================");
 
     const testTick: FeedTick = {
       price: 100.5,
@@ -211,14 +211,14 @@ export class ProviderDivergenceKF {
     }
     const unicodeTime = performance.now() - unicodeStart;
 
-    console.log(
+    console.info(
       `   Type Validation: ${typeTime.toFixed(2)}ms (${(typeTime / iterations).toFixed(4)}ms per call)`
     );
-    console.log(
+    console.info(
       `   Unicode Width: ${unicodeTime.toFixed(2)}ms (${(unicodeTime / iterations).toFixed(4)}ms per call)`
     );
-    console.log(`   Total: ${(typeTime + unicodeTime).toFixed(2)}ms`);
-    console.log(`   V8 Bridge: ✅ Native addon compatibility`);
+    console.info(`   Total: ${(typeTime + unicodeTime).toFixed(2)}ms`);
+    console.info(`   V8 Bridge: ✅ Native addon compatibility`);
   }
 
   // Security audit for Pattern #81
@@ -256,8 +256,8 @@ export class ProviderDivergenceKF {
 
   // Demonstration function
   static demonstrate(): void {
-    console.log("🚀 Pattern #81: Provider A/B Feed Divergence");
-    console.log("==========================================");
+    console.info("🚀 Pattern #81: Provider A/B Feed Divergence");
+    console.info("==========================================");
 
     const detector = new ProviderDivergenceKF();
 
@@ -283,25 +283,25 @@ export class ProviderDivergenceKF {
     const alert = detector.detectFeedDivergence(primary, backup);
 
     if (alert) {
-      console.log(`🚨 Divergence detected: ${alert.delta}ms`);
-      console.log(`   Action: ${alert.action}`);
-      console.log(`   Confidence: ${(alert.confidence * 100).toFixed(1)}%`);
-      console.log(`   Sources: ${alert.primarySource} → ${alert.backupSource}`);
+      console.info(`🚨 Divergence detected: ${alert.delta}ms`);
+      console.info(`   Action: ${alert.action}`);
+      console.info(`   Confidence: ${(alert.confidence * 100).toFixed(1)}%`);
+      console.info(`   Sources: ${alert.primarySource} → ${alert.backupSource}`);
     } else {
-      console.log("✅ No feed divergence detected");
+      console.info("✅ No feed divergence detected");
     }
 
     // Security audit
     const audit = detector.auditSecurity();
-    console.log(`🔒 Security: ${audit.secure ? "✅" : "❌"}`);
+    console.info(`🔒 Security: ${audit.secure ? "✅" : "❌"}`);
     if (!audit.secure) {
-      audit.issues.forEach((issue) => console.log(`   ⚠️  ${issue}`));
+      audit.issues.forEach((issue) => console.info(`   ⚠️  ${issue}`));
     }
 
     // Performance benchmark
     detector.benchmark(1000);
 
-    console.log("\n✅ Pattern #81 demonstration complete");
+    console.info("\n✅ Pattern #81 demonstration complete");
   }
 }
 
@@ -315,7 +315,7 @@ class UnicodeAlignedLogger {
     // Account for emoji widths in alerts
     const emojiAdjustedWidth = width + this.countEmojiCells(message) * 2;
 
-    console.log(
+    console.info(
       `${category.padEnd(padding, " ")} | ${message.padEnd(emojiAdjustedWidth, " ")}`
     );
   }

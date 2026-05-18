@@ -3,12 +3,12 @@
 // Comprehensive Bun IPC (Inter-Process Communication) Demo
 import { colourKit, pad } from "./quantum-toolkit-patch.ts";
 
-console.log(colourKit(0.8).ansi + "📨 Bun IPC Communication Demo" + "\x1b[0m");
-console.log("=".repeat(50));
+console.info(colourKit(0.8).ansi + "📨 Bun IPC Communication Demo" + "\x1b[0m");
+console.info("=".repeat(50));
 
 // Demo 1: Basic parent-child communication
 async function basicIPC() {
-  console.log("\n🔗 Basic Parent-Child IPC:");
+  console.info("\n🔗 Basic Parent-Child IPC:");
 
   const childCode = `
     globalThis.onmessage = (event) => {
@@ -50,7 +50,7 @@ async function basicIPC() {
     ipc: true,
   });
 
-  console.log("📤 Parent sending messages...");
+  console.info("📤 Parent sending messages...");
 
   // Send messages to child
   child.send({ type: "ping", data: "hello" });
@@ -61,7 +61,7 @@ async function basicIPC() {
   const stdout = await child.stdout.text();
   const stderr = await child.stderr.text();
 
-  console.log("📥 Child responses:");
+  console.info("📥 Child responses:");
   stdout
     .trim()
     .split("\n")
@@ -69,22 +69,22 @@ async function basicIPC() {
       if (line) {
         try {
           const response = JSON.parse(line);
-          console.log(
+          console.info(
             `  ${i + 1}: ${response.type} - ${JSON.stringify(response.data)}`
           );
         } catch {
-          console.log(`  ${i + 1}: ${line}`);
+          console.info(`  ${i + 1}: ${line}`);
         }
       }
     });
 
-  if (stderr) console.log(`Errors: ${stderr}`);
+  if (stderr) console.info(`Errors: ${stderr}`);
   await child.exited;
 }
 
 // Demo 2: Worker pool with task distribution
 async function workerPool() {
-  console.log("\n👥 Worker Pool with Task Distribution:");
+  console.info("\n👥 Worker Pool with Task Distribution:");
 
   const workerCode = `
     const workerId = process.argv[2];
@@ -146,7 +146,7 @@ async function workerPool() {
     workers.push(worker);
   }
 
-  console.log(`Created worker pool with ${workerCount} workers`);
+  console.info(`Created worker pool with ${workerCount} workers`);
 
   // Collect ready signals
   const responses = [];
@@ -165,14 +165,14 @@ async function workerPool() {
     await worker.exited;
   }
 
-  console.log("📊 Worker Pool Results:");
-  console.log("┌─────┬─────────┬──────────┬──────────┐");
-  console.log("│ ID  │ Status  │ Tasks    │ Memory   │");
-  console.log("├─────┼─────────┼──────────┼──────────┤");
+  console.info("📊 Worker Pool Results:");
+  console.info("┌─────┬─────────┬──────────┬──────────┐");
+  console.info("│ ID  │ Status  │ Tasks    │ Memory   │");
+  console.info("├─────┼─────────┼──────────┼──────────┤");
 
   responses.forEach((resp) => {
     if (resp.ready) {
-      console.log(
+      console.info(
         `│ ${pad(resp.workerId.toString(), 3)} │ ${pad("Ready", 7)} │ ${pad(
           "0",
           8
@@ -181,12 +181,12 @@ async function workerPool() {
     }
   });
 
-  console.log("└─────┴─────────┴──────────┴──────────┘");
+  console.info("└─────┴─────────┴──────────┴──────────┘");
 }
 
 // Demo 3: Bidirectional communication
 async function bidirectionalIPC() {
-  console.log("\n🔄 Bidirectional IPC Communication:");
+  console.info("\n🔄 Bidirectional IPC Communication:");
 
   const echoCode = `
     let messageCount = 0;
@@ -231,7 +231,7 @@ async function bidirectionalIPC() {
   // Wait for server ready
   await new Promise((resolve) => setTimeout(resolve, 100));
 
-  console.log("📨 Sending echo messages...");
+  console.info("📨 Sending echo messages...");
 
   const messages = [
     "Hello World",
@@ -248,7 +248,7 @@ async function bidirectionalIPC() {
 
   const stdout = await server.stdout.text();
 
-  console.log("📥 Echo server responses:");
+  console.info("📥 Echo server responses:");
   stdout
     .trim()
     .split("\n")
@@ -257,9 +257,9 @@ async function bidirectionalIPC() {
         try {
           const response = JSON.parse(line);
           if (response.type === "echo-reply") {
-            console.log(`  Echo ${i + 1}: "${response.data.original}" ✓`);
+            console.info(`  Echo ${i + 1}: "${response.data.original}" ✓`);
           } else if (response.type === "status-reply") {
-            console.log(
+            console.info(
               `  Status: ${response.data.messages} messages processed`
             );
           }
@@ -272,7 +272,7 @@ async function bidirectionalIPC() {
 
 // Demo 4: IPC with file sharing
 async function ipcWithFiles() {
-  console.log("\n📁 IPC with File Sharing:");
+  console.info("\n📁 IPC with File Sharing:");
 
   const fileWorkerCode = `
     const fs = require('fs');
@@ -335,16 +335,16 @@ async function ipcWithFiles() {
       "This is a test file created via IPC\\nWith multiple lines\\nAnd special chars: 🚀",
   };
 
-  console.log("📝 Writing file via IPC...");
+  console.info("📝 Writing file via IPC...");
   fileWorker.send({ type: "write-file", data: testData });
 
-  console.log("📖 Reading file via IPC...");
+  console.info("📖 Reading file via IPC...");
   fileWorker.send({ type: "read-file", data: { filename: testData.filename } });
 
   const stdout = await fileWorker.stdout.text();
   const stderr = await fileWorker.stderr.text();
 
-  console.log("📥 File operation results:");
+  console.info("📥 File operation results:");
   stdout
     .trim()
     .split("\n")
@@ -352,18 +352,18 @@ async function ipcWithFiles() {
       if (line) {
         try {
           const response = JSON.parse(line);
-          console.log(`  ${response.type}: ${JSON.stringify(response.data)}`);
+          console.info(`  ${response.type}: ${JSON.stringify(response.data)}`);
         } catch {}
       }
     });
 
-  if (stderr) console.log(`Errors: ${stderr}`);
+  if (stderr) console.info(`Errors: ${stderr}`);
   await fileWorker.exited;
 }
 
 // Demo 5: IPC error handling
 async function ipcErrorHandling() {
-  console.log("\n⚠️ IPC Error Handling:");
+  console.info("\n⚠️ IPC Error Handling:");
 
   const errorProneCode = `
     globalThis.onmessage = (event) => {
@@ -406,7 +406,7 @@ async function ipcErrorHandling() {
   const stdout = await errorWorker.stdout.text();
   const stderr = await errorWorker.stderr.text();
 
-  console.log("📥 Worker responses:");
+  console.info("📥 Worker responses:");
   if (stdout) {
     stdout
       .trim()
@@ -415,26 +415,26 @@ async function ipcErrorHandling() {
         if (line) {
           try {
             const response = JSON.parse(line);
-            console.log(
+            console.info(
               `  ✓ ${response.type}: ${JSON.stringify(response.data)}`
             );
           } catch {
-            console.log(`  ? Raw: ${line}`);
+            console.info(`  ? Raw: ${line}`);
           }
         }
       });
   }
 
-  console.log("⚠️ Worker errors:");
+  console.info("⚠️ Worker errors:");
   if (stderr) {
     stderr
       .trim()
       .split("\n")
       .forEach((line) => {
-        if (line) console.log(`  ✗ ${line}`);
+        if (line) console.info(`  ✗ ${line}`);
       });
   } else {
-    console.log("  ✓ No errors captured");
+    console.info("  ✓ No errors captured");
   }
 
   await errorWorker.exited;
@@ -449,20 +449,20 @@ async function main() {
     await ipcWithFiles();
     await ipcErrorHandling();
 
-    console.log(
+    console.info(
       "\n" +
         colourKit(0.2).ansi +
         "🎉 IPC Demo Completed Successfully!" +
         "\x1b[0m"
     );
-    console.log("💡 All IPC patterns demonstrated:");
-    console.log("  • Parent-child communication");
-    console.log("  • Worker pool distribution");
-    console.log("  • Bidirectional messaging");
-    console.log("  • File sharing via IPC");
-    console.log("  • Error handling patterns");
+    console.info("💡 All IPC patterns demonstrated:");
+    console.info("  • Parent-child communication");
+    console.info("  • Worker pool distribution");
+    console.info("  • Bidirectional messaging");
+    console.info("  • File sharing via IPC");
+    console.info("  • Error handling patterns");
   } catch (error) {
-    console.log(
+    console.info(
       colourKit(0.8).ansi + `❌ IPC Demo Error: ${error.message}` + "\x1b[0m"
     );
   }
@@ -470,7 +470,7 @@ async function main() {
 
 // Handle cleanup
 process.on("SIGINT", () => {
-  console.log("\n\n👋 IPC Demo - Cleaning up temporary files...");
+  console.info("\n\n👋 IPC Demo - Cleaning up temporary files...");
   process.exit(0);
 });
 

@@ -276,7 +276,7 @@ export function measurePerformance<T extends (...args: any[]) => any>(
     );
     
     if (Bun.env.NODE_ENV === 'development') {
-      console.log(`⏱️  ${propertyKey}: ${duration.toFixed(2)}ms (${nanoseconds}ns)`);
+      console.info(`⏱️  ${propertyKey}: ${duration.toFixed(2)}ms (${nanoseconds}ns)`);
     }
     
     return result;
@@ -299,7 +299,7 @@ export function measurePerformanceAsync<T extends (...args: any[]) => Promise<an
     );
     
     if (Bun.env.NODE_ENV === 'development') {
-      console.log(`⏱️  ${propertyKey}: ${duration.toFixed(2)}ms (${nanoseconds}ns) (async)`);
+      console.info(`⏱️  ${propertyKey}: ${duration.toFixed(2)}ms (${nanoseconds}ns) (async)`);
     }
     
     return result;
@@ -319,7 +319,7 @@ export function createPerformanceTimer() {
     log: (label: string) => {
       const duration = performance.now() - start;
       const nanos = BunUtils.getNanoseconds() - startNanos;
-      console.log(`⏱️  ${label}: ${duration.toFixed(2)}ms (${nanos}ns)`);
+      console.info(`⏱️  ${label}: ${duration.toFixed(2)}ms (${nanos}ns)`);
     }
   };
 }

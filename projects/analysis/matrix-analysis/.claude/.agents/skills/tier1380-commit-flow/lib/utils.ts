@@ -44,7 +44,7 @@ export class Timer {
 
 // Table output using Bun.inspect.table
 export function printTable(data: Record<string, unknown>[], columns?: string[]): void {
-	console.log(Bun.inspect.table(data, columns, { colors: true }));
+	console.info(Bun.inspect.table(data, columns, { colors: true }));
 }
 
 // Color output using Bun.color

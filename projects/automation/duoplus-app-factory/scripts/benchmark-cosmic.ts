@@ -94,16 +94,16 @@ async function analyzeDeadCode(variant: string): Promise<string[]> {
  * Main benchmark function
  */
 async function runBenchmark(): Promise<void> {
-  console.log(`\n🌌 COSMIC BUNDLE BENCHMARK`);
-  console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-  console.log(`Timestamp: ${new Date().toISOString()}`);
-  console.log(`Bun: ${Bun.version}`);
-  console.log(`\n`);
+  console.info(`\n🌌 COSMIC BUNDLE BENCHMARK`);
+  console.info(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+  console.info(`Timestamp: ${new Date().toISOString()}`);
+  console.info(`Bun: ${Bun.version}`);
+  console.info(`\n`);
   
   const results: BenchmarkResult[] = [];
   
   for (const variant of VARIANTS) {
-    console.log(`🔍 Analyzing ${variant} variant...`);
+    console.info(`🔍 Analyzing ${variant} variant...`);
     
     const bundle = await getBundleSize(variant);
     const metadata = await getBuildMetadata(variant);
@@ -125,18 +125,18 @@ async function runBenchmark(): Promise<void> {
     
     results.push(result);
     
-    console.log(`  ✅ Bundle: ${bundle.gzipped.toFixed(2)} MB (${bundle.files} files)`);
-    console.log(`  ✅ Performance: LCP ${performance.lcp}ms, TTI ${performance.tti}ms, FPS ${performance.fps}`);
-    console.log(`  ✅ Features: ${features.join(', ') || 'None'}`);
-    console.log(`  ✅ Dead Code: ${deadCode.length > 0 ? deadCode.join(', ') : 'None'}`);
-    console.log(`\n`);
+    console.info(`  ✅ Bundle: ${bundle.gzipped.toFixed(2)} MB (${bundle.files} files)`);
+    console.info(`  ✅ Performance: LCP ${performance.lcp}ms, TTI ${performance.tti}ms, FPS ${performance.fps}`);
+    console.info(`  ✅ Features: ${features.join(', ') || 'None'}`);
+    console.info(`  ✅ Dead Code: ${deadCode.length > 0 ? deadCode.join(', ') : 'None'}`);
+    console.info(`\n`);
   }
   
   // Generate comparison table
-  console.log(`📊 COMPARISON TABLE`);
-  console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-  console.log(`| Variant | Size (MB) | LCP (ms) | TTI (ms) | FPS | Memory (MB) | Dead Code % |`);
-  console.log(`|---------|-----------|----------|----------|-----|-------------|-------------|`);
+  console.info(`📊 COMPARISON TABLE`);
+  console.info(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+  console.info(`| Variant | Size (MB) | LCP (ms) | TTI (ms) | FPS | Memory (MB) | Dead Code % |`);
+  console.info(`|---------|-----------|----------|----------|-----|-------------|-------------|`);
   
   for (const result of results) {
     const sizeReduction = ((BASELINE.bundleSize - result.bundleSize) / BASELINE.bundleSize * 100).toFixed(1);
@@ -146,32 +146,32 @@ async function runBenchmark(): Promise<void> {
     const memoryReduction = ((BASELINE.memory - result.memory) / BASELINE.memory * 100).toFixed(1);
     const deadCodePercent = result.deadCode.length > 0 ? '38-40%' : '0%';
     
-    console.log(`| ${result.variant.padEnd(7)} | ${result.gzipped.toFixed(2).padStart(9)} | ${result.lcp.toString().padStart(8)} | ${result.tti.toString().padStart(8)} | ${result.fps.toString().padStart(3)} | ${result.memory.toString().padStart(11)} | ${deadCodePercent.padStart(11)} |`);
+    console.info(`| ${result.variant.padEnd(7)} | ${result.gzipped.toFixed(2).padStart(9)} | ${result.lcp.toString().padStart(8)} | ${result.tti.toString().padStart(8)} | ${result.fps.toString().padStart(3)} | ${result.memory.toString().padStart(11)} | ${deadCodePercent.padStart(11)} |`);
   }
   
-  console.log(`\n`);
+  console.info(`\n`);
   
   // Generate summary
-  console.log(`📈 IMPROVEMENT SUMMARY`);
-  console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+  console.info(`📈 IMPROVEMENT SUMMARY`);
+  console.info(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
   
   const free = results.find(r => r.variant === 'free');
   const premium = results.find(r => r.variant === 'premium');
   
   if (free && premium) {
-    console.log(`Bundle Size Reduction: 38-62%`);
-    console.log(`  Free: ${free.gzipped.toFixed(2)} MB (vs 1.82 MB baseline)`);
-    console.log(`  Premium: ${premium.gzipped.toFixed(2)} MB`);
-    console.log(`\n`);
-    console.log(`Performance Improvements:`);
-    console.log(`  LCP: 67-73% faster (${free.lcp}ms vs 3410ms baseline)`);
-    console.log(`  TTI: 67-73% faster (${free.tti}ms vs 5800ms baseline)`);
-    console.log(`  FPS: 400% improvement (${free.fps} vs 12 baseline)`);
-    console.log(`  Memory: 63% reduction (${free.memory}MB vs 184MB baseline)`);
-    console.log(`\n`);
-    console.log(`Dead Code Elimination: 100% (all inactive features stripped)`);
-    console.log(`Build Time: ~1.2s per variant`);
-    console.log(`\n`);
+    console.info(`Bundle Size Reduction: 38-62%`);
+    console.info(`  Free: ${free.gzipped.toFixed(2)} MB (vs 1.82 MB baseline)`);
+    console.info(`  Premium: ${premium.gzipped.toFixed(2)} MB`);
+    console.info(`\n`);
+    console.info(`Performance Improvements:`);
+    console.info(`  LCP: 67-73% faster (${free.lcp}ms vs 3410ms baseline)`);
+    console.info(`  TTI: 67-73% faster (${free.tti}ms vs 5800ms baseline)`);
+    console.info(`  FPS: 400% improvement (${free.fps} vs 12 baseline)`);
+    console.info(`  Memory: 63% reduction (${free.memory}MB vs 184MB baseline)`);
+    console.info(`\n`);
+    console.info(`Dead Code Elimination: 100% (all inactive features stripped)`);
+    console.info(`Build Time: ~1.2s per variant`);
+    console.info(`\n`);
   }
   
   // Write results to file
@@ -194,10 +194,10 @@ async function runBenchmark(): Promise<void> {
     JSON.stringify(report, null, 2)
   );
   
-  console.log(`✅ Benchmark complete!`);
-  console.log(`📄 Report saved: exports/reports/cosmic-bundle-benchmark.json`);
-  console.log(`\n`);
-  console.log(`🚀 Next: Run 'bun run build:free' to verify live metrics`);
+  console.info(`✅ Benchmark complete!`);
+  console.info(`📄 Report saved: exports/reports/cosmic-bundle-benchmark.json`);
+  console.info(`\n`);
+  console.info(`🚀 Next: Run 'bun run build:free' to verify live metrics`);
 }
 
 // Run benchmark

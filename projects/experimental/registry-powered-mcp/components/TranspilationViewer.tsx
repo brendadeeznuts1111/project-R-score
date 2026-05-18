@@ -48,7 +48,7 @@ export const UserBadge = ({ user, isActive = false }) => {
 }
 
 if (false) {
-  console.log("This is removed entirely");
+  console.info("This is removed entirely");
 }`,
     output: `export function app() {
   return initProd();

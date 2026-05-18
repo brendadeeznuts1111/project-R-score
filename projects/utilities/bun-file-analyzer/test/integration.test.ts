@@ -30,7 +30,7 @@ describe("🚀 Bun Enhanced File Analyzer Integration Tests", () => {
       const indexJsContent = await Bun.file("./public/index.js").text();
       expect(indexJsContent.length).toBeGreaterThan(1000);
       
-      console.log(`📦 Build successful: ${(indexJsContent.length / 1024 / 1024).toFixed(2)} MB`);
+      console.info(`📦 Build successful: ${(indexJsContent.length / 1024 / 1024).toFixed(2)} MB`);
     });
   });
 
@@ -108,12 +108,12 @@ describe("🚀 Bun Enhanced File Analyzer Integration Tests", () => {
             expect(sizeMB).toBeGreaterThan(0.01);
             expect(sizeMB).toBeLessThan(0.1);
             
-            console.log(`🎯 Executable compiled: ${sizeMB.toFixed(2)} MB`);
+            console.info(`🎯 Executable compiled: ${sizeMB.toFixed(2)} MB`);
           }
         }
       } catch (error) {
         clearTimeout(timeout);
-        console.log("⚠️ Cross-compilation test timed out");
+        console.info("⚠️ Cross-compilation test timed out");
       }
     }, 35000);
   });
@@ -145,7 +145,7 @@ describe("🚀 Bun Enhanced File Analyzer Integration Tests", () => {
       expect(output).toContain("Performance Results");
       expect(output).toContain("Bun.color() performance");
       
-      console.log("📊 Performance analysis completed");
+      console.info("📊 Performance analysis completed");
     });
 
     it("should demonstrate Response.json() optimization", async () => {
@@ -183,7 +183,7 @@ describe("🚀 Bun Enhanced File Analyzer Integration Tests", () => {
       expect(newResponse.headers.get("content-type")).toContain("application/json");
 
       const speedup = oldTime / newTime;
-      console.log(`⚡ Response.json() speedup: ${speedup.toFixed(2)}x`);
+      console.info(`⚡ Response.json() speedup: ${speedup.toFixed(2)}x`);
       
       // Should be competitive (may not always be faster due to JIT)
       expect(speedup).toBeGreaterThan(0.5);
@@ -289,7 +289,7 @@ describe("🚀 Bun Enhanced File Analyzer Integration Tests", () => {
       
       expect(sizeL12).toBeLessThan(sizeL1); // Higher level = better compression
       
-      console.log(`📦 Archive created: ${(archiveBytes.length / 1024).toFixed(2)} KB`);
+      console.info(`📦 Archive created: ${(archiveBytes.length / 1024).toFixed(2)} KB`);
     });
   });
 
@@ -343,7 +343,7 @@ describe("🚀 Bun Enhanced File Analyzer Integration Tests", () => {
       expect(ansi).toContain("\x1b[");
       expect(hsl).toContain("hsl(210");
       
-      console.log(`🎨 Color conversions: ${hex} | ${rgb} | ${ansi}`);
+      console.info(`🎨 Color conversions: ${hex} | ${rgb} | ${ansi}`);
     });
 
     it("should handle color performance", () => {
@@ -366,7 +366,7 @@ describe("🚀 Bun Enhanced File Analyzer Integration Tests", () => {
       const avgTime = results.reduce((sum, r) => sum + parseFloat(r.time), 0) / results.length;
       expect(avgTime).toBeLessThan(5); // Should be very fast
       
-      console.log(`🎨 Average color conversion time: ${avgTime.toFixed(3)}ms`);
+      console.info(`🎨 Average color conversion time: ${avgTime.toFixed(3)}ms`);
     });
   });
 
@@ -394,7 +394,7 @@ describe("🚀 Bun Enhanced File Analyzer Integration Tests", () => {
         const totalSize = Object.values(outputs).reduce((sum, output) => sum + output.bytes, 0);
         expect(totalSize).toBeGreaterThan(0);
 
-        console.log(`📊 Bundle analysis: ${Object.keys(outputs).length} outputs, ${(totalSize / 1024).toFixed(2)} KB`);
+        console.info(`📊 Bundle analysis: ${Object.keys(outputs).length} outputs, ${(totalSize / 1024).toFixed(2)} KB`);
       }
 
       // Cleanup
@@ -473,11 +473,11 @@ describe("🚀 Bun Enhanced File Analyzer Integration Tests", () => {
       expect(match?.pathname.groups.type).toBe("config");
       expect(match?.pathname.groups.id).toBe("theme");
       
-      console.log("✅ Complete integration workflow successful!");
-      console.log(`📦 Archive size: ${(archiveBytes.length / 1024).toFixed(2)} KB`);
-      console.log(`🎨 Colors generated: ${primaryColor}, ${successColor}`);
-      console.log(`🍪 Session created: ${session.get("sessionId")?.slice(0, 8)}...`);
-      console.log(`⚡ Performance: ${(oldTime / newTime).toFixed(2)}x improvement`);
+      console.info("✅ Complete integration workflow successful!");
+      console.info(`📦 Archive size: ${(archiveBytes.length / 1024).toFixed(2)} KB`);
+      console.info(`🎨 Colors generated: ${primaryColor}, ${successColor}`);
+      console.info(`🍪 Session created: ${session.get("sessionId")?.slice(0, 8)}...`);
+      console.info(`⚡ Performance: ${(oldTime / newTime).toFixed(2)}x improvement`);
     });
   });
 });

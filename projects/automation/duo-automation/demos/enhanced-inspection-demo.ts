@@ -59,9 +59,9 @@ const demoData = {
 class EnhancedInspectionDemo {
   
   async runCompleteDemo(): Promise<void> {
-    console.log('🎨 Enhanced Custom Inspection System v2.0 Demo');
-    console.log('='.repeat(70));
-    console.log('');
+    console.info('🎨 Enhanced Custom Inspection System v2.0 Demo');
+    console.info('='.repeat(70));
+    console.info('');
     
     try {
       // Initialize enhanced inspection
@@ -77,7 +77,7 @@ class EnhancedInspectionDemo {
       await this.demonstratePluginArchitecture();
       await this.demonstrateRealTimeMonitoring();
       
-      console.log('✅ Enhanced inspection demo completed successfully!');
+      console.info('✅ Enhanced inspection demo completed successfully!');
       
     } catch (error) {
       console.error('❌ Demo failed:', error);
@@ -86,11 +86,11 @@ class EnhancedInspectionDemo {
   }
   
   private async demonstrateAIInsights(): Promise<void> {
-    console.log('🤖 AI-POWERED INSIGHTS DEMONSTRATION');
-    console.log('─'.repeat(55));
+    console.info('🤖 AI-POWERED INSIGHTS DEMONSTRATION');
+    console.info('─'.repeat(55));
     
     try {
-      console.log('🧠 Running AI analysis on demo data...');
+      console.info('🧠 Running AI analysis on demo data...');
       
       const result = await enhancedInspectionSystem.inspect(demoData, {
         environment: 'production',
@@ -98,29 +98,29 @@ class EnhancedInspectionDemo {
         metadata: { demo: 'enhanced-inspection-v2' }
       });
       
-      console.log('📊 AI Analysis Results:');
-      console.log('');
-      console.log('🎯 Processing Information:');
-      console.log(`   ⏱️ Processing Time: ${result.metadata.processingTime}ms`);
-      console.log(`   📈 Confidence: ${(result.metadata.confidence * 100).toFixed(1)}%`);
-      console.log(`   🛡️ Security Level: ${result.metadata.securityLevel}`);
-      console.log('');
+      console.info('📊 AI Analysis Results:');
+      console.info('');
+      console.info('🎯 Processing Information:');
+      console.info(`   ⏱️ Processing Time: ${result.metadata.processingTime}ms`);
+      console.info(`   📈 Confidence: ${(result.metadata.confidence * 100).toFixed(1)}%`);
+      console.info(`   🛡️ Security Level: ${result.metadata.securityLevel}`);
+      console.info('');
       
-      console.log('🔍 Detected Anomalies:');
+      console.info('🔍 Detected Anomalies:');
       result.metadata.anomalies.forEach((anomaly, index) => {
-        console.log(`   ${index + 1}. ⚠️ ${anomaly}`);
+        console.info(`   ${index + 1}. ⚠️ ${anomaly}`);
       });
-      console.log('');
+      console.info('');
       
-      console.log('💡 AI Recommendations:');
+      console.info('💡 AI Recommendations:');
       result.metadata.recommendations.forEach((rec, index) => {
-        console.log(`   ${index + 1}. ✨ ${rec}`);
+        console.info(`   ${index + 1}. ✨ ${rec}`);
       });
-      console.log('');
+      console.info('');
       
-      console.log('📋 Formatted Output:');
-      console.log(result.formatted);
-      console.log('');
+      console.info('📋 Formatted Output:');
+      console.info(result.formatted);
+      console.info('');
       
     } catch (error) {
       console.error('❌ AI insights demo failed:', error);
@@ -128,11 +128,11 @@ class EnhancedInspectionDemo {
   }
   
   private async demonstrateSecurityAnalysis(): Promise<void> {
-    console.log('🛡️ ADVANCED SECURITY ANALYSIS DEMONSTRATION');
-    console.log('─'.repeat(55));
+    console.info('🛡️ ADVANCED SECURITY ANALYSIS DEMONSTRATION');
+    console.info('─'.repeat(55));
     
     try {
-      console.log('🔍 Running deep security analysis...');
+      console.info('🔍 Running deep security analysis...');
       
       const securityResult = await enhancedInspectionSystem.analyzeSecurity(demoData, {
         sessionId: 'security-demo-001',
@@ -141,30 +141,30 @@ class EnhancedInspectionDemo {
         metadata: { analysisType: 'comprehensive' }
       });
       
-      console.log('🛡️ Security Analysis Results:');
-      console.log('');
-      console.log(`🎯 Threat Level: ${securityResult.threatLevel}`);
-      console.log('');
+      console.info('🛡️ Security Analysis Results:');
+      console.info('');
+      console.info(`🎯 Threat Level: ${securityResult.threatLevel}`);
+      console.info('');
       
       if (securityResult.vulnerabilities.length > 0) {
-        console.log('⚠️ Detected Vulnerabilities:');
+        console.info('⚠️ Detected Vulnerabilities:');
         securityResult.vulnerabilities.forEach((vuln, index) => {
-          console.log(`   ${index + 1}. ${vuln.severity}: ${vuln.description}`);
-          console.log(`      💡 Recommendation: ${vuln.recommendation}`);
+          console.info(`   ${index + 1}. ${vuln.severity}: ${vuln.description}`);
+          console.info(`      💡 Recommendation: ${vuln.recommendation}`);
         });
-        console.log('');
+        console.info('');
       }
       
-      console.log('📋 Compliance Frameworks:');
+      console.info('📋 Compliance Frameworks:');
       securityResult.compliance.forEach((framework, index) => {
-        console.log(`   ${index + 1}. ${framework.framework}: ${framework.score}/100`);
+        console.info(`   ${index + 1}. ${framework.framework}: ${framework.score}/100`);
         if (framework.issues.length > 0) {
           framework.issues.forEach(issue => {
-            console.log(`      ⚠️ ${issue}`);
+            console.info(`      ⚠️ ${issue}`);
           });
         }
       });
-      console.log('');
+      console.info('');
       
     } catch (error) {
       console.error('❌ Security analysis demo failed:', error);
@@ -172,16 +172,16 @@ class EnhancedInspectionDemo {
   }
   
   private async demonstratePredictiveAnalytics(): Promise<void> {
-    console.log('📈 PREDICTIVE ANALYTICS DEMONSTRATION');
-    console.log('─'.repeat(55));
+    console.info('📈 PREDICTIVE ANALYTICS DEMONSTRATION');
+    console.info('─'.repeat(55));
     
     try {
-      console.log('🔮 Running predictive analytics...');
+      console.info('🔮 Running predictive analytics...');
       
       const predictions = await enhancedInspectionSystem.predictPerformance(demoData, 24);
       
-      console.log('📊 Performance Predictions (24h horizon):');
-      console.log('');
+      console.info('📊 Performance Predictions (24h horizon):');
+      console.info('');
       
       predictions.predictions.forEach((pred, index) => {
         const trendIcon = pred.trend === 'improving' ? '📈' : 
@@ -189,24 +189,24 @@ class EnhancedInspectionDemo {
         const confidenceColor = pred.confidence > 0.8 ? '🟢' : 
                               pred.confidence > 0.6 ? '🟡' : '🔴';
         
-        console.log(`   ${index + 1}. ${trendIcon} ${pred.metric}`);
-        console.log(`      Current: ${pred.currentValue}`);
-        console.log(`      Predicted: ${pred.predictedValue}`);
-        console.log(`      Confidence: ${confidenceColor} ${(pred.confidence * 100).toFixed(1)}%`);
-        console.log('');
+        console.info(`   ${index + 1}. ${trendIcon} ${pred.metric}`);
+        console.info(`      Current: ${pred.currentValue}`);
+        console.info(`      Predicted: ${pred.predictedValue}`);
+        console.info(`      Confidence: ${confidenceColor} ${(pred.confidence * 100).toFixed(1)}%`);
+        console.info('');
       });
       
-      console.log('💡 System Recommendations:');
+      console.info('💡 System Recommendations:');
       predictions.recommendations.forEach((rec, index) => {
-        console.log(`   ${index + 1}. ✨ ${rec}`);
+        console.info(`   ${index + 1}. ✨ ${rec}`);
       });
-      console.log('');
+      console.info('');
       
-      console.log('⚠️ Risk Factors:');
+      console.info('⚠️ Risk Factors:');
       predictions.riskFactors.forEach((risk, index) => {
-        console.log(`   ${index + 1}. 🔴 ${risk}`);
+        console.info(`   ${index + 1}. 🔴 ${risk}`);
       });
-      console.log('');
+      console.info('');
       
     } catch (error) {
       console.error('❌ Predictive analytics demo failed:', error);
@@ -214,40 +214,40 @@ class EnhancedInspectionDemo {
   }
   
   private async demonstrateCollaborativeSession(): Promise<void> {
-    console.log('👥 COLLABORATIVE SESSION DEMONSTRATION');
-    console.log('─'.repeat(55));
+    console.info('👥 COLLABORATIVE SESSION DEMONSTRATION');
+    console.info('─'.repeat(55));
     
     try {
-      console.log('🚀 Creating collaborative inspection session...');
+      console.info('🚀 Creating collaborative inspection session...');
       
       const session = await enhancedInspectionSystem.createCollaborativeSession(
         'demo-user-001',
         ['alice@company.com', 'bob@company.com', 'charlie@company.com']
       );
       
-      console.log('📋 Session Created:');
-      console.log(`   🆔 Session ID: ${session.id}`);
-      console.log(`   👥 Participants: ${session.participants.length}`);
-      console.log(`   📊 Shared Data: ${session.sharedData.length} items`);
-      console.log(`   💬 Chat Messages: ${session.chat.length}`);
-      console.log(`   🟢 Active: ${session.isActive}`);
-      console.log('');
+      console.info('📋 Session Created:');
+      console.info(`   🆔 Session ID: ${session.id}`);
+      console.info(`   👥 Participants: ${session.participants.length}`);
+      console.info(`   📊 Shared Data: ${session.sharedData.length} items`);
+      console.info(`   💬 Chat Messages: ${session.chat.length}`);
+      console.info(`   🟢 Active: ${session.isActive}`);
+      console.info('');
       
-      console.log('👥 Participant List:');
+      console.info('👥 Participant List:');
       session.participants.forEach((participant, index) => {
         const roleIcon = participant.role === 'admin' ? '👑' : 
                         participant.role === 'editor' ? '✏️' : '👁️';
-        console.log(`   ${index + 1}. ${roleIcon} ${participant.name} (${participant.role})`);
-        console.log(`      Joined: ${participant.joinedAt.toLocaleString()}`);
+        console.info(`   ${index + 1}. ${roleIcon} ${participant.name} (${participant.role})`);
+        console.info(`      Joined: ${participant.joinedAt.toLocaleString()}`);
       });
-      console.log('');
+      console.info('');
       
       // Simulate adding data to session
-      console.log('📊 Adding data to collaborative session...');
+      console.info('📊 Adding data to collaborative session...');
       // In a real implementation, this would update the session
       
-      console.log('✅ Collaborative session demo completed');
-      console.log('');
+      console.info('✅ Collaborative session demo completed');
+      console.info('');
       
     } catch (error) {
       console.error('❌ Collaborative session demo failed:', error);
@@ -255,22 +255,22 @@ class EnhancedInspectionDemo {
   }
   
   private async demonstrateAdvancedVisualizations(): Promise<void> {
-    console.log('🎨 ADVANCED VISUALIZATIONS DEMONSTRATION');
-    console.log('─'.repeat(55));
+    console.info('🎨 ADVANCED VISUALIZATIONS DEMONSTRATION');
+    console.info('─'.repeat(55));
     
     try {
       const visualizationTypes = ['3d', 'interactive', 'realtime', 'comparative'] as const;
       
       for (const vizType of visualizationTypes) {
-        console.log(`📊 Generating ${vizType.toUpperCase()} visualization...`);
+        console.info(`📊 Generating ${vizType.toUpperCase()} visualization...`);
         
         const vizOutput = enhancedInspectionSystem.generateAdvancedVisualization(
           demoData,
           vizType
         );
         
-        console.log(vizOutput);
-        console.log('');
+        console.info(vizOutput);
+        console.info('');
       }
       
     } catch (error) {
@@ -279,36 +279,36 @@ class EnhancedInspectionDemo {
   }
   
   private async demonstrateThemeSystem(): Promise<void> {
-    console.log('🎨 THEME SYSTEM DEMONSTRATION');
-    console.log('─'.repeat(55));
+    console.info('🎨 THEME SYSTEM DEMONSTRATION');
+    console.info('─'.repeat(55));
     
     try {
-      console.log('🌈 Available Themes:');
+      console.info('🌈 Available Themes:');
       const themes = enhancedInspectionSystem.getAvailableThemes();
       themes.forEach((theme, index) => {
-        console.log(`   ${index + 1}. 🎨 ${theme}`);
+        console.info(`   ${index + 1}. 🎨 ${theme}`);
       });
-      console.log('');
+      console.info('');
       
       // Test different themes
       const themeTests = ['default', 'dark', 'minimal'];
       
       for (const themeName of themeTests) {
-        console.log(`🎨 Switching to '${themeName}' theme...`);
+        console.info(`🎨 Switching to '${themeName}' theme...`);
         enhancedInspectionSystem.setTheme(themeName);
         
         const result = await enhancedInspectionSystem.inspect(demoData.application, {
           sessionId: `theme-test-${themeName}`
         });
         
-        console.log(result.formatted);
-        console.log('');
+        console.info(result.formatted);
+        console.info('');
       }
       
       // Reset to default theme
       enhancedInspectionSystem.setTheme('default');
-      console.log('🎨 Reset to default theme');
-      console.log('');
+      console.info('🎨 Reset to default theme');
+      console.info('');
       
     } catch (error) {
       console.error('❌ Theme system demo failed:', error);
@@ -316,36 +316,36 @@ class EnhancedInspectionDemo {
   }
   
   private async demonstratePluginArchitecture(): Promise<void> {
-    console.log('🔌 PLUGIN ARCHITECTURE DEMONSTRATION');
-    console.log('─'.repeat(55));
+    console.info('🔌 PLUGIN ARCHITECTURE DEMONSTRATION');
+    console.info('─'.repeat(55));
     
     try {
-      console.log('📋 Registered Plugins:');
+      console.info('📋 Registered Plugins:');
       const plugins = (enhancedInspectionSystem as any).plugins;
       plugins.forEach((plugin: any, name: string) => {
-        console.log(`   🔌 ${name} v${plugin.version}`);
-        console.log(`      📝 ${plugin.description}`);
+        console.info(`   🔌 ${name} v${plugin.version}`);
+        console.info(`      📝 ${plugin.description}`);
       });
-      console.log('');
+      console.info('');
       
       // Demonstrate plugin-based inspection
-      console.log('🔍 Running plugin-based inspection...');
+      console.info('🔍 Running plugin-based inspection...');
       
       const result = await enhancedInspectionSystem.inspect(demoData, {
         sessionId: 'plugin-demo',
         metadata: { usePlugins: true }
       });
       
-      console.log('📊 Plugin Analysis Results:');
-      console.log(`   ⏱️ Processing Time: ${result.metadata.processingTime}ms`);
-      console.log(`   📈 Confidence: ${(result.metadata.confidence * 100).toFixed(1)}%`);
-      console.log(`   🔍 Anomalies Found: ${result.metadata.anomalies.length}`);
-      console.log(`   💡 Recommendations: ${result.metadata.recommendations.length}`);
-      console.log('');
+      console.info('📊 Plugin Analysis Results:');
+      console.info(`   ⏱️ Processing Time: ${result.metadata.processingTime}ms`);
+      console.info(`   📈 Confidence: ${(result.metadata.confidence * 100).toFixed(1)}%`);
+      console.info(`   🔍 Anomalies Found: ${result.metadata.anomalies.length}`);
+      console.info(`   💡 Recommendations: ${result.metadata.recommendations.length}`);
+      console.info('');
       
-      console.log('📋 Formatted Plugin Output:');
-      console.log(result.formatted);
-      console.log('');
+      console.info('📋 Formatted Plugin Output:');
+      console.info(result.formatted);
+      console.info('');
       
     } catch (error) {
       console.error('❌ Plugin architecture demo failed:', error);
@@ -353,29 +353,29 @@ class EnhancedInspectionDemo {
   }
   
   private async demonstrateRealTimeMonitoring(): Promise<void> {
-    console.log('📡 REAL-TIME MONITORING DEMONSTRATION');
-    console.log('─'.repeat(55));
+    console.info('📡 REAL-TIME MONITORING DEMONSTRATION');
+    console.info('─'.repeat(55));
     
     try {
-      console.log('🔄 Setting up real-time monitoring...');
+      console.info('🔄 Setting up real-time monitoring...');
       
       // Set up event listeners
       enhancedInspectionSystem.on('inspection-completed', (event) => {
-        console.log(`📊 Inspection completed for session: ${event.sessionId}`);
-        console.log(`   ⏱️ Processing time: ${event.result.metadata.processingTime}ms`);
-        console.log(`   📈 Confidence: ${(event.result.metadata.confidence * 100).toFixed(1)}%`);
+        console.info(`📊 Inspection completed for session: ${event.sessionId}`);
+        console.info(`   ⏱️ Processing time: ${event.result.metadata.processingTime}ms`);
+        console.info(`   📈 Confidence: ${(event.result.metadata.confidence * 100).toFixed(1)}%`);
       });
       
       enhancedInspectionSystem.on('theme-changed', (event) => {
-        console.log(`🎨 Theme changed to: ${event.theme}`);
+        console.info(`🎨 Theme changed to: ${event.theme}`);
       });
       
       enhancedInspectionSystem.on('plugin-registered', (event) => {
-        console.log(`🔌 Plugin registered: ${event.plugin}`);
+        console.info(`🔌 Plugin registered: ${event.plugin}`);
       });
       
       // Simulate real-time data updates
-      console.log('📡 Simulating real-time data updates...');
+      console.info('📡 Simulating real-time data updates...');
       
       for (let i = 0; i < 5; i++) {
         const updateData = {
@@ -389,7 +389,7 @@ class EnhancedInspectionDemo {
           }
         };
         
-        console.log(`📊 Processing update ${i + 1}/5...`);
+        console.info(`📊 Processing update ${i + 1}/5...`);
         
         const result = await enhancedInspectionSystem.inspect(updateData, {
           sessionId: `realtime-update-${i}`,
@@ -400,8 +400,8 @@ class EnhancedInspectionDemo {
         await new Promise(resolve => setTimeout(resolve, 100));
       }
       
-      console.log('✅ Real-time monitoring demo completed');
-      console.log('');
+      console.info('✅ Real-time monitoring demo completed');
+      console.info('');
       
     } catch (error) {
       console.error('❌ Real-time monitoring demo failed:', error);
@@ -409,11 +409,11 @@ class EnhancedInspectionDemo {
   }
   
   async demonstrateAnomalyDetection(): Promise<void> {
-    console.log('🔍 ANOMALY DETECTION DEMONSTRATION');
-    console.log('─'.repeat(55));
+    console.info('🔍 ANOMALY DETECTION DEMONSTRATION');
+    console.info('─'.repeat(55));
     
     try {
-      console.log('🧠 Running AI anomaly detection...');
+      console.info('🧠 Running AI anomaly detection...');
       
       // Create data with anomalies
       const anomalousData = {
@@ -438,18 +438,18 @@ class EnhancedInspectionDemo {
       
       const anomalies = await enhancedInspectionSystem.detectAnomalies(anomalousData);
       
-      console.log('🚨 Detected Anomalies:');
+      console.info('🚨 Detected Anomalies:');
       anomalies.forEach((anomaly, index) => {
         const severityIcon = anomaly.impact === 'CRITICAL' ? '🔴' : 
                            anomaly.impact === 'HIGH' ? '🟠' : 
                            anomaly.impact === 'MEDIUM' ? '🟡' : '🟢';
         
-        console.log(`   ${index + 1}. ${severityIcon} ${anomaly.title}`);
-        console.log(`      📝 Description: ${anomaly.description}`);
-        console.log(`      📈 Confidence: ${(anomaly.confidence * 100).toFixed(1)}%`);
-        console.log(`      ⚡ Impact: ${anomaly.impact}`);
-        console.log(`      🎯 Actionable: ${anomaly.actionable ? 'Yes' : 'No'}`);
-        console.log('');
+        console.info(`   ${index + 1}. ${severityIcon} ${anomaly.title}`);
+        console.info(`      📝 Description: ${anomaly.description}`);
+        console.info(`      📈 Confidence: ${(anomaly.confidence * 100).toFixed(1)}%`);
+        console.info(`      ⚡ Impact: ${anomaly.impact}`);
+        console.info(`      🎯 Actionable: ${anomaly.actionable ? 'Yes' : 'No'}`);
+        console.info('');
       });
       
     } catch (error) {
@@ -465,29 +465,29 @@ async function runEnhancedInspectionDemo(): Promise<void> {
   try {
     await demo.runCompleteDemo();
     
-    console.log('🎉 Enhanced Inspection System v2.0 Demo Summary');
-    console.log('='.repeat(65));
-    console.log('');
-    console.log('✅ Features Demonstrated:');
-    console.log('   🤖 AI-powered insights and anomaly detection');
-    console.log('   🛡️ Advanced security analysis and threat detection');
-    console.log('   📈 Predictive analytics and performance forecasting');
-    console.log('   👥 Collaborative inspection sessions');
-    console.log('   🎨 Advanced visualizations (3D, interactive, real-time)');
-    console.log('   🌈 Dynamic theme system');
-    console.log('   🔌 Extensible plugin architecture');
-    console.log('   📡 Real-time monitoring and event streaming');
-    console.log('');
-    console.log('🎯 Key Enhancements:');
-    console.log('   • 85% improvement in anomaly detection accuracy');
-    console.log('   • Real-time collaborative inspection capabilities');
-    console.log('   • Predictive analytics with 95% confidence');
-    console.log('   • Advanced 3D and interactive visualizations');
-    console.log('   • Enterprise-grade security analysis');
-    console.log('   • Plugin-based extensibility');
-    console.log('   • Multi-theme support with customization');
-    console.log('');
-    console.log('🚀 Production Ready! 🎉');
+    console.info('🎉 Enhanced Inspection System v2.0 Demo Summary');
+    console.info('='.repeat(65));
+    console.info('');
+    console.info('✅ Features Demonstrated:');
+    console.info('   🤖 AI-powered insights and anomaly detection');
+    console.info('   🛡️ Advanced security analysis and threat detection');
+    console.info('   📈 Predictive analytics and performance forecasting');
+    console.info('   👥 Collaborative inspection sessions');
+    console.info('   🎨 Advanced visualizations (3D, interactive, real-time)');
+    console.info('   🌈 Dynamic theme system');
+    console.info('   🔌 Extensible plugin architecture');
+    console.info('   📡 Real-time monitoring and event streaming');
+    console.info('');
+    console.info('🎯 Key Enhancements:');
+    console.info('   • 85% improvement in anomaly detection accuracy');
+    console.info('   • Real-time collaborative inspection capabilities');
+    console.info('   • Predictive analytics with 95% confidence');
+    console.info('   • Advanced 3D and interactive visualizations');
+    console.info('   • Enterprise-grade security analysis');
+    console.info('   • Plugin-based extensibility');
+    console.info('   • Multi-theme support with customization');
+    console.info('');
+    console.info('🚀 Production Ready! 🎉');
     
   } catch (error) {
     console.error('❌ Enhanced inspection demo failed to complete:', error);

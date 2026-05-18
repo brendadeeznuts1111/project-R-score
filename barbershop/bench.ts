@@ -6,7 +6,7 @@
 
 export {}; // Make this file a module
 
-console.log('🚀 Starting benchmark...');
+console.info('🚀 Starting benchmark...');
 
 // Create a complex nested object that will trigger depth escalation
 const complexData = {
@@ -63,10 +63,10 @@ const complexData = {
 // Create a circular reference
 (complexData.benchmark as any).self = complexData.benchmark;
 
-console.log('📊 Benchmark data created');
-console.log('📈 Data structure analysis:');
-console.log(`   - Max depth: ${calculateDepth(complexData)}`);
-console.log(`   - Has circular references: ${hasCircular(complexData)}`);
+console.info('📊 Benchmark data created');
+console.info('📈 Data structure analysis:');
+console.info(`   - Max depth: ${calculateDepth(complexData)}`);
+console.info(`   - Has circular references: ${hasCircular(complexData)}`);
 
 // Handle circular reference in size estimation
 let sizeEstimate = 0;
@@ -75,15 +75,15 @@ try {
 } catch (error) {
   sizeEstimate = -1; // Indicates circular reference
 }
-console.log(`   - Size estimate: ${sizeEstimate >= 0 ? `${sizeEstimate} chars` : 'Circular reference (cannot serialize)'}`);
+console.info(`   - Size estimate: ${sizeEstimate >= 0 ? `${sizeEstimate} chars` : 'Circular reference (cannot serialize)'}`);
 
 // Simulate some processing
 const start = performance.now();
 await new Promise(resolve => setTimeout(resolve, 100));
 const end = performance.now();
 
-console.log(`⚡ Processing completed in ${(end - start).toFixed(2)}ms`);
-console.log('✅ Benchmark completed successfully');
+console.info(`⚡ Processing completed in ${(end - start).toFixed(2)}ms`);
+console.info('✅ Benchmark completed successfully');
 
 // Helper functions
 function calculateDepth(obj: any, currentDepth = 0): number {

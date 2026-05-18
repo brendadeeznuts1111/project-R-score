@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 
 async function runMigration() {
-  console.log("🔄 Database Migration Tool");
-  console.log("=".repeat(40));
+  console.info("🔄 Database Migration Tool");
+  console.info("=".repeat(40));
 
   const args = process.argv.slice(2);
   const command = args[0];
@@ -10,29 +10,29 @@ async function runMigration() {
 
   if (command === "up" && fileArg) {
     const filename = fileArg.split("=")[1];
-    console.log(`📁 Applying migration: ${filename}`);
+    console.info(`📁 Applying migration: ${filename}`);
 
     try {
       // Read migration file
       const migrationFile = `./migrations/${filename}`;
       const migrationSQL = await Bun.file(migrationFile).text();
 
-      console.log("📋 Migration SQL loaded:");
-      console.log(migrationSQL.substring(0, 200) + "...");
+      console.info("📋 Migration SQL loaded:");
+      console.info(migrationSQL.substring(0, 200) + "...");
 
       // In a real implementation, this would execute against your database
-      console.log("✅ Migration applied successfully!");
-      console.log(`📊 Created: crc32_audit table with indexes`);
-      console.log(`🔍 Sample data inserted for testing`);
+      console.info("✅ Migration applied successfully!");
+      console.info(`📊 Created: crc32_audit table with indexes`);
+      console.info(`🔍 Sample data inserted for testing`);
     } catch (error) {
       console.error(`❌ Migration failed:`, error);
       process.exit(1);
     }
   } else if (command === "down") {
-    console.log("⏪ Rolling back migrations...");
-    console.log("✅ Rollback completed (simulated)");
+    console.info("⏪ Rolling back migrations...");
+    console.info("✅ Rollback completed (simulated)");
   } else {
-    console.log(`
+    console.info(`
 Usage: bun run migrate:up --file=<migration-file>
 
 Commands:

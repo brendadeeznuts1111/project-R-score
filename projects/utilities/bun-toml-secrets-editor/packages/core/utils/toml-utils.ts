@@ -261,7 +261,7 @@ export function createTomlFunction<T extends object = any>(
 				if (cached) {
 					metrics.cacheHits++;
 					if (monitor) {
-						console.log(
+						console.info(
 							`📊 Cache hit for ${context} - ${(performance.now() - startTime).toFixed(2)}ms`,
 						);
 					}
@@ -308,7 +308,7 @@ export function createTomlFunction<T extends object = any>(
 				metrics.totalParseTime += parseTime;
 
 				if (monitor) {
-					console.log(
+					console.info(
 						`📊 Parsed ${context} - ${parseTime.toFixed(2)}ms - Cache hit rate: ${((metrics.cacheHits / metrics.parseCount) * 100).toFixed(1)}%`,
 					);
 				}

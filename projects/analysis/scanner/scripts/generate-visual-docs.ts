@@ -258,7 +258,7 @@ function generateBadges(registry: VersionRegistry): void {
 			.join(' ');
 
 		writeFileSync(join(BADGES_DIR, 'README.md'), `# Tier-1380 Badges\n\n${badgesMarkdown}\n`);
-		console.log(`🏷️  Generated ${badges.length} badges in ${BADGES_DIR}`);
+		console.info(`🏷️  Generated ${badges.length} badges in ${BADGES_DIR}`);
 	} catch {
 		console.warn(`⚠️  Failed to generate badges: ${error instanceof Error ? error.message : String(error)}`);
 	}
@@ -1188,7 +1188,7 @@ async function main(): Promise<void> {
 	try {
 		// Read registry
 		const registry: VersionRegistry = JSON.parse(readFileSync(REGISTRY_FILE, 'utf-8'));
-		console.log(`📊 Loaded registry: v${registry.version} with ${registry.metadata.totalConstants} constants`);
+		console.info(`📊 Loaded registry: v${registry.version} with ${registry.metadata.totalConstants} constants`);
 
 		// Generate badges
 		generateBadges(registry);
@@ -1202,7 +1202,7 @@ async function main(): Promise<void> {
 			// Generate dashboard HTML
 			const html = await generateDashboardHTML(registry);
 			writeFileSync(DASHBOARD_FILE, html);
-			console.log(`🎨 Generated dashboard: ${DASHBOARD_FILE}`);
+			console.info(`🎨 Generated dashboard: ${DASHBOARD_FILE}`);
 
 			// Copy badges to dashboard directory
 			const dashboardBadgesDir = join(OUTPUT_DIR, 'dashboard-badges');
@@ -1217,7 +1217,7 @@ async function main(): Promise<void> {
 						writeFileSync(join(dashboardBadgesDir, badgeFile), content);
 					}
 				}
-				console.log(`🏷️  Copied badges to dashboard directory`);
+				console.info(`🏷️  Copied badges to dashboard directory`);
 			} catch (error) {
 				const errorMessage = error instanceof Error ? error.message : String(error);
 				console.warn(`⚠️  Failed to copy badges: ${errorMessage}`);
@@ -1226,8 +1226,8 @@ async function main(): Promise<void> {
 			if (serveMode) {
 				const DASHBOARD_PORT = parseInt(process.env.DASHBOARD_PORT || '3000', 10);
 				const DASHBOARD_HOST = process.env.DASHBOARD_HOST || process.env.SERVER_HOST || 'localhost';
-				console.log(`🌐 Starting dashboard server...`);
-				console.log(`📱 Open http://${DASHBOARD_HOST}:${DASHBOARD_PORT} to view the dashboard`);
+				console.info(`🌐 Starting dashboard server...`);
+				console.info(`📱 Open http://${DASHBOARD_HOST}:${DASHBOARD_PORT} to view the dashboard`);
 
 				const server = Bun.serve({
 					port: DASHBOARD_PORT,
@@ -1280,19 +1280,19 @@ async function main(): Promise<void> {
 					},
 				});
 
-				console.log(`🚀 Dashboard running at http://${DASHBOARD_HOST}:${DASHBOARD_PORT}`);
-				console.log(`🛑 Press Ctrl+C to stop the server`);
+				console.info(`🚀 Dashboard running at http://${DASHBOARD_HOST}:${DASHBOARD_PORT}`);
+				console.info(`🛑 Press Ctrl+C to stop the server`);
 
 				// Keep server running
 				process.on('SIGINT', () => {
-					console.log('\n🛑 Shutting down dashboard server...');
+					console.info('\n🛑 Shutting down dashboard server...');
 					void server.stop();
 					process.exit(0);
 				});
 			}
 		}
 
-		console.log(`✅ Visual documentation generation complete!`);
+		console.info(`✅ Visual documentation generation complete!`);
 	} catch (error) {
 		const errorMessage = error instanceof Error ? error.message : String(error);
 		console.error(`❌ Failed to generate visual documentation: ${errorMessage}`);

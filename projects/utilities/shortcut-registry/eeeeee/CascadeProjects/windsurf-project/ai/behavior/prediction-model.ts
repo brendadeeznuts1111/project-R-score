@@ -61,7 +61,7 @@ export class BehaviorPredictionModel implements PredictionModel {
     this.trainingData.set(userId, trainingData);
     this.performanceMetrics.set(userId, validationResults);
 
-    console.log(`Trained ${modelConfig.algorithm} model for user ${userId}:`, validationResults);
+    console.info(`Trained ${modelConfig.algorithm} model for user ${userId}:`, validationResults);
   }
 
   /**

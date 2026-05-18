@@ -97,48 +97,48 @@ function formatDate(): string {
 }
 
 function simulateQuickInfo(): void {
-  console.log("🌅 Daily Development Routine - February 05, 2026");
-  console.log("=".repeat(50));
-  console.log();
+  console.info("🌅 Daily Development Routine - February 05, 2026");
+  console.info("=".repeat(50));
+  console.info();
 
-  console.log("### bun run quick-info # ⚡ Fast status check");
-  console.log("**Simulated Output** (system overview + Bun info):");
-  console.log("```");
-  console.log(`Bun v${simulatedData.system.version} (${simulatedData.system.revision}) | Node compat: v20.11.1`);
-  console.log(`Platform: ${simulatedData.system.platform} | CWD: ${simulatedData.system.cwd}`);
-  console.log(`Env vars: ${simulatedData.system.envVars} keys | Memory: rss ${simulatedData.system.memory.rss}MB, heap ${simulatedData.system.memory.heap}MB`);
-  console.log(`Status: ${simulatedData.system.status} | Uptime: ${simulatedData.system.uptime} ns`);
-  console.log("```");
-  console.log("(Real run: Use `Bun.version`, `Bun.revision`, `process.platform`, `Bun.nanoseconds()` for precision.)\n");
+  console.info("### bun run quick-info # ⚡ Fast status check");
+  console.info("**Simulated Output** (system overview + Bun info):");
+  console.info("```");
+  console.info(`Bun v${simulatedData.system.version} (${simulatedData.system.revision}) | Node compat: v20.11.1`);
+  console.info(`Platform: ${simulatedData.system.platform} | CWD: ${simulatedData.system.cwd}`);
+  console.info(`Env vars: ${simulatedData.system.envVars} keys | Memory: rss ${simulatedData.system.memory.rss}MB, heap ${simulatedData.system.memory.heap}MB`);
+  console.info(`Status: ${simulatedData.system.status} | Uptime: ${simulatedData.system.uptime} ns`);
+  console.info("```");
+  console.info("(Real run: Use `Bun.version`, `Bun.revision`, `process.platform`, `Bun.nanoseconds()` for precision.)\n");
 }
 
 function simulateGitHubIntegration(): void {
-  console.log("### bun run github-integration # 🔗 Complete GitHub health");
-  console.log("**Simulated Output** (repo stats + validation):");
-  console.log("```");
-  console.log(`Repo: ${simulatedData.github.repo} | Stars: ${simulatedData.github.stars} | Issues: ${simulatedData.github.issues}`);
-  console.log(`Latest commit: ${simulatedData.github.latestCommit} (${simulatedData.github.version})`);
-  console.log(`Health: ${simulatedData.github.health} (${simulatedData.github.security}) | Actions: ${simulatedData.github.actions}`);
-  console.log(`Your fork/PRs: ${simulatedData.github.prs} open | Integration: ${simulatedData.github.integration}`);
-  console.log("```");
-  console.log("(Real run: Use `fetch(\"https://api.github.com/repos/oven-sh/bun\")` + auth if needed; validate with `deepEquals` against baseline.)\n");
+  console.info("### bun run github-integration # 🔗 Complete GitHub health");
+  console.info("**Simulated Output** (repo stats + validation):");
+  console.info("```");
+  console.info(`Repo: ${simulatedData.github.repo} | Stars: ${simulatedData.github.stars} | Issues: ${simulatedData.github.issues}`);
+  console.info(`Latest commit: ${simulatedData.github.latestCommit} (${simulatedData.github.version})`);
+  console.info(`Health: ${simulatedData.github.health} (${simulatedData.github.security}) | Actions: ${simulatedData.github.actions}`);
+  console.info(`Your fork/PRs: ${simulatedData.github.prs} open | Integration: ${simulatedData.github.integration}`);
+  console.info("```");
+  console.info("(Real run: Use `fetch(\"https://api.github.com/repos/oven-sh/bun\")` + auth if needed; validate with `deepEquals` against baseline.)\n");
 }
 
 function simulateDeepLinks(): void {
-  console.log(`### bun run deep-links "${simulatedData.deepLinks.api}" # 🔗 Generate deep links`);
-  console.log("Assuming \"API_NAME\" = \"Bun.secrets\" (replace as needed).");
-  console.log("**Simulated Output** (generated links with text fragments):");
+  console.info(`### bun run deep-links "${simulatedData.deepLinks.api}" # 🔗 Generate deep links`);
+  console.info("Assuming \"API_NAME\" = \"Bun.secrets\" (replace as needed).");
+  console.info("**Simulated Output** (generated links with text fragments):");
 
   simulatedData.deepLinks.links.forEach(link => {
-    console.log(`- ${link.name}: ${link.url}`);
+    console.info(`- ${link.name}: ${link.url}`);
   });
 
-  console.log("\n(Real run: Use URL builder with `Bun.color` for highlighted output.)\n");
+  console.info("\n(Real run: Use URL builder with `Bun.color` for highlighted output.)\n");
 }
 
 function simulateMCPMonitor(): void {
-  console.log("### bun run mcp-monitor # 📊 Health dashboard");
-  console.log("**Simulated Output** (key metrics table):");
+  console.info("### bun run mcp-monitor # 📊 Health dashboard");
+  console.info("**Simulated Output** (key metrics table):");
 
   // Create table using console.table for formatted output
   const tableData = simulatedData.mcpMonitor.metrics.map((metric, index) => ({
@@ -148,29 +148,29 @@ function simulateMCPMonitor(): void {
   }));
 
   console.table(tableData);
-  console.log(`Status: ${simulatedData.mcpMonitor.status} | Warnings: ${simulatedData.mcpMonitor.warnings}`);
-  console.log("\n(Real run: Use `Bun.inspect.table` with `process.cpuUsage()`, `process.memoryUsage()`, `Bun.nanoseconds()` for live data.)\n");
+  console.info(`Status: ${simulatedData.mcpMonitor.status} | Warnings: ${simulatedData.mcpMonitor.warnings}`);
+  console.info("\n(Real run: Use `Bun.inspect.table` with `process.cpuUsage()`, `process.memoryUsage()`, `Bun.nanoseconds()` for live data.)\n");
 }
 
 function simulateAIDemo(): void {
-  console.log("### bun run ai-demo # 🤖 Intelligent insights");
-  console.log("**Simulated Output** (AI-generated suggestions):");
-  console.log("```");
-  console.log(`🤖 AI Insights (Confidence > ${simulatedData.aiInsights.confidence}%):`);
+  console.info("### bun run ai-demo # 🤖 Intelligent insights");
+  console.info("**Simulated Output** (AI-generated suggestions):");
+  console.info("```");
+  console.info(`🤖 AI Insights (Confidence > ${simulatedData.aiInsights.confidence}%):`);
 
   simulatedData.aiInsights.insights.forEach(insight => {
-    console.log(`- ${insight.type}: ${insight.issue} → ${insight.recommendation} [Impact: ${insight.impact}]`);
+    console.info(`- ${insight.type}: ${insight.issue} → ${insight.recommendation} [Impact: ${insight.impact}]`);
   });
 
-  console.log(`- Prediction (${simulatedData.aiInsights.prediction.timeframe}): ${simulatedData.aiInsights.prediction.forecast} → ${simulatedData.aiInsights.prediction.action}`);
-  console.log("```");
-  console.log("(Real run: Use `Bun.deepEquals` for config checks, `nanoseconds` for trends; integrate with your AI manager script.)\n");
+  console.info(`- Prediction (${simulatedData.aiInsights.prediction.timeframe}): ${simulatedData.aiInsights.prediction.forecast} → ${simulatedData.aiInsights.prediction.action}`);
+  console.info("```");
+  console.info("(Real run: Use `Bun.deepEquals` for config checks, `nanoseconds` for trends; integrate with your AI manager script.)\n");
 }
 
 async function runDailyRoutineDemo(): Promise<void> {
-  console.log(`Hey Ashley (@ashschaeffer1), it's mid-morning on ${formatDate()}, 2026 in New Orleans—perfect time for a quick dev check-in before lunch!`);
-  console.log("I'll simulate running your daily commands based on typical Bun behavior (since I can't execute them directly here).");
-  console.log("Outputs are approximated from latest v1.3.8 docs and benchmarks. If something looks off, run them locally for exacts.\n");
+  console.info(`Hey Ashley (@ashschaeffer1), it's mid-morning on ${formatDate()}, 2026 in New Orleans—perfect time for a quick dev check-in before lunch!`);
+  console.info("I'll simulate running your daily commands based on typical Bun behavior (since I can't execute them directly here).");
+  console.info("Outputs are approximated from latest v1.3.8 docs and benchmarks. If something looks off, run them locally for exacts.\n");
 
   simulateQuickInfo();
   simulateGitHubIntegration();
@@ -178,7 +178,7 @@ async function runDailyRoutineDemo(): Promise<void> {
   simulateMCPMonitor();
   simulateAIDemo();
 
-  console.log("These simulations use Bun-native patterns for accuracy. Run locally for real-time data—let me know outputs or if you want full scripts for any! 🚀");
+  console.info("These simulations use Bun-native patterns for accuracy. Run locally for real-time data—let me know outputs or if you want full scripts for any! 🚀");
 }
 
 // Run the demo

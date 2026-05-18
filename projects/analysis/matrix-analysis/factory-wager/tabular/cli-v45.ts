@@ -30,7 +30,7 @@ const shouldDiffInheritance = args.includes('--diff-inheritance');
 const shouldTrackInheritance = args.includes('--track-inheritance');
 
 try {
-  console.log(`🔍 FactoryWager YAML v4.5 • Parsing ${filepath}...`);
+  console.info(`🔍 FactoryWager YAML v4.5 • Parsing ${filepath}...`);
 
   const content = await file(filepath).text();
   const parser = new YAMLTabularParserV45();
@@ -44,8 +44,8 @@ try {
     if (diff) {
       renderInheritanceDiff(diff);
     } else {
-      console.log("⚠️ No inheritance patterns found for diff analysis");
-      console.log("   Ensure your YAML has merge keys (<<: *anchor) with multiple environments");
+      console.info("⚠️ No inheritance patterns found for diff analysis");
+      console.info("   Ensure your YAML has merge keys (<<: *anchor) with multiple environments");
     }
     process.exit(0);
   }
@@ -57,10 +57,10 @@ try {
 
     if (analysis) {
       renderInheritanceChain(analysis);
-      console.log("\n" + generateInheritanceReport(analysis));
+      console.info("\n" + generateInheritanceReport(analysis));
     } else {
-      console.log("⚠️ No inheritance patterns found for chain tracking");
-      console.log("   Ensure your YAML has merge keys (<<: *anchor) with multiple environments");
+      console.info("⚠️ No inheritance patterns found for chain tracking");
+      console.info("   Ensure your YAML has merge keys (<<: *anchor) with multiple environments");
     }
     process.exit(0);
   }
@@ -70,11 +70,11 @@ try {
     const errors = rows.filter(r => r.jsType === 'error');
     const interpolated = rows.filter(r => r.interpolated);
 
-    console.log(`\n${errors.length > 0 ? '❌' : '✅'} Validation: ${errors.length} errors, ${interpolated.length} interpolations`);
+    console.info(`\n${errors.length > 0 ? '❌' : '✅'} Validation: ${errors.length} errors, ${interpolated.length} interpolations`);
 
     if (errors.length > 0) {
-      console.log("Errors:");
-      errors.forEach(e => console.log(`  Line ${e._lineNumber}: ${e.value}`));
+      console.info("Errors:");
+      errors.forEach(e => console.info(`  Line ${e._lineNumber}: ${e.value}`));
     }
   }
 

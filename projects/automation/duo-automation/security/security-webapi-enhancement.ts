@@ -78,7 +78,7 @@ export class SecurityEnhancedCLI {
             writable: true
           });
           
-          console.log('Configurable size:', params.size); // 100
+          console.info('Configurable size:', params.size); // 100
         `,
         benefits: [
           'Web IDL specification compliance',
@@ -127,9 +127,9 @@ export class SecurityEnhancedCLI {
           }
           
           const enhanced = new EnhancedURLSearchParams('a=1&b=2&c=3');
-          console.log('Size:', enhanced.size);     // 3
-          console.log('Empty:', enhanced.isEmpty); // false
-          console.log('First:', enhanced.firstKey); // 'a'
+          console.info('Size:', enhanced.size);     // 3
+          console.info('Empty:', enhanced.isEmpty); // false
+          console.info('First:', enhanced.firstKey); // 'a'
         `,
         features: [
           'Full property configurability',
@@ -184,7 +184,7 @@ export class SecurityEnhancedCLI {
             try {
               // Large compressed message would be rejected
               const data = event.data;
-              console.log('Message size:', data.length);
+              console.info('Message size:', data.length);
               
               // Before fix: Could cause memory exhaustion
               // After fix: Messages > 128MB decompressed are rejected
@@ -197,7 +197,7 @@ export class SecurityEnhancedCLI {
           
           // Security: Automatic protection against memory exhaustion attacks
           ws.onerror = (error) => {
-            console.log('WebSocket security active');
+            console.info('WebSocket security active');
           };
         `,
         protection: {
@@ -636,68 +636,68 @@ export class SecurityCLI {
    * Run complete security enhancement demonstration
    */
   async runSecurityDemo(): Promise<void> {
-    console.log('🔒 Security & Web API Enhancement Demo');
-    console.log('='.repeat(60));
+    console.info('🔒 Security & Web API Enhancement Demo');
+    console.info('='.repeat(60));
     
     // Demonstrate URLSearchParams fix
-    console.log('\n🔗 URLSearchParams Configurability Fix:');
+    console.info('\n🔗 URLSearchParams Configurability Fix:');
     const urlParamsResult = await this.securityCLI.demonstrateURLSearchParamsFix();
-    console.log(`   Examples: ${urlParamsResult.examples.length}`);
+    console.info(`   Examples: ${urlParamsResult.examples.length}`);
     urlParamsResult.examples.forEach(example => {
-      console.log(`   ${example.name}: ${example.status}`);
+      console.info(`   ${example.name}: ${example.status}`);
     });
-    console.log(`   Web API compliance: ${urlParamsResult.metrics.webAPICompliance}%`);
+    console.info(`   Web API compliance: ${urlParamsResult.metrics.webAPICompliance}%`);
     
     // Demonstrate WebSocket security
-    console.log('\n🌐 WebSocket Security Enhancements:');
+    console.info('\n🌐 WebSocket Security Enhancements:');
     const wsResult = await this.securityCLI.demonstrateWebSocketSecurity();
-    console.log(`   Security features: ${wsResult.securityFeatures.length}`);
+    console.info(`   Security features: ${wsResult.securityFeatures.length}`);
     wsResult.securityFeatures.forEach(feature => {
-      console.log(`   ${feature.name}: ${feature.status}`);
+      console.info(`   ${feature.name}: ${feature.status}`);
     });
-    console.log(`   Security level: ${wsResult.metrics.securityLevel}%`);
+    console.info(`   Security level: ${wsResult.metrics.securityLevel}%`);
     
     // Demonstrate fetch memory fixes
-    console.log('\n📡 Fetch() Memory Leak Prevention:');
+    console.info('\n📡 Fetch() Memory Leak Prevention:');
     const fetchResult = await this.securityCLI.demonstrateFetchMemoryFix();
-    console.log(`   Memory fixes: ${fetchResult.memoryFixes.length}`);
+    console.info(`   Memory fixes: ${fetchResult.memoryFixes.length}`);
     fetchResult.memoryFixes.forEach(fix => {
-      console.log(`   ${fix.name}: ${fix.status}`);
+      console.info(`   ${fix.name}: ${fix.status}`);
     });
-    console.log(`   Memory leaks prevented: ${fetchResult.metrics.memoryLeaksPrevented}`);
+    console.info(`   Memory leaks prevented: ${fetchResult.metrics.memoryLeaksPrevented}`);
     
     // Show security configuration
-    console.log('\n⚙️ Security Configuration:');
+    console.info('\n⚙️ Security Configuration:');
     const config = this.securityCLI.createSecurityConfiguration();
-    console.log(`   URLSearchParams config: ${Object.keys(config.urlSearchParamsConfig).length} areas`);
-    console.log(`   WebSocket security: ${Object.keys(config.webSocketSecurity).length} protections`);
-    console.log(`   Fetch memory config: ${Object.keys(config.fetchMemoryConfig).length} optimizations`);
+    console.info(`   URLSearchParams config: ${Object.keys(config.urlSearchParamsConfig).length} areas`);
+    console.info(`   WebSocket security: ${Object.keys(config.webSocketSecurity).length} protections`);
+    console.info(`   Fetch memory config: ${Object.keys(config.fetchMemoryConfig).length} optimizations`);
     
     // Validate security enhancements
-    console.log('\n✅ Security Enhancement Validation:');
+    console.info('\n✅ Security Enhancement Validation:');
     const validation = await this.securityCLI.validateSecurityEnhancements();
-    console.log(`   Components validated: ${validation.validationResults.length}`);
+    console.info(`   Components validated: ${validation.validationResults.length}`);
     validation.validationResults.forEach(result => {
-      console.log(`   ${result.component}: ${result.status}`);
+      console.info(`   ${result.component}: ${result.status}`);
     });
-    console.log(`   Total vulnerabilities fixed: ${validation.metrics.vulnerabilitiesFixed}`);
+    console.info(`   Total vulnerabilities fixed: ${validation.metrics.vulnerabilitiesFixed}`);
     
     // Show comprehensive metrics
-    console.log('\n📊 Security Metrics:');
+    console.info('\n📊 Security Metrics:');
     const metrics = this.securityCLI.getSecurityMetrics();
-    console.log(`   Total vulnerabilities fixed: ${metrics.totalVulnerabilitiesFixed}`);
-    console.log(`   Total memory leaks prevented: ${metrics.totalMemoryLeaksPrevented}`);
-    console.log(`   Average security level: ${metrics.averageSecurityLevel.toFixed(1)}%`);
-    console.log(`   Web API compliance: ${metrics.webAPICompliance.toFixed(1)}%`);
+    console.info(`   Total vulnerabilities fixed: ${metrics.totalVulnerabilitiesFixed}`);
+    console.info(`   Total memory leaks prevented: ${metrics.totalMemoryLeaksPrevented}`);
+    console.info(`   Average security level: ${metrics.averageSecurityLevel.toFixed(1)}%`);
+    console.info(`   Web API compliance: ${metrics.webAPICompliance.toFixed(1)}%`);
     
-    console.log('\n🎉 Security Enhancement Complete!');
-    console.log('\n💡 Security Benefits Achieved:');
-    console.log('   🔗 URLSearchParams.size now configurable per Web IDL spec');
-    console.log('   🌐 WebSocket decompression bomb protection (128MB limit)');
-    console.log('   📡 ReadableStream memory leak prevention in fetch()');
-    console.log('   🛡️ Enhanced protection against memory exhaustion attacks');
-    console.log('   📊 100% Web API specification compliance');
-    console.log('   🔒 Comprehensive security monitoring and validation');
+    console.info('\n🎉 Security Enhancement Complete!');
+    console.info('\n💡 Security Benefits Achieved:');
+    console.info('   🔗 URLSearchParams.size now configurable per Web IDL spec');
+    console.info('   🌐 WebSocket decompression bomb protection (128MB limit)');
+    console.info('   📡 ReadableStream memory leak prevention in fetch()');
+    console.info('   🛡️ Enhanced protection against memory exhaustion attacks');
+    console.info('   📊 100% Web API specification compliance');
+    console.info('   🔒 Comprehensive security monitoring and validation');
   }
 }
 

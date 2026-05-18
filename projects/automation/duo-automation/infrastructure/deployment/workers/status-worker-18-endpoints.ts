@@ -568,7 +568,7 @@ subscription_success_rate ${stats.averageSuccessRate} ${timestamp}
       }
 
       // Process webhook event
-      console.log('Webhook received:', payload.event, payload.payload);
+      console.info('Webhook received:', payload.event, payload.payload);
       
       return new Response(JSON.stringify({
         success: true,
@@ -1505,11 +1505,11 @@ https://apple-id-dashboards.utahj4754.workers.dev/api/v1/subscriptions
  */
 export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
   try {
-    console.log('Complete 18-endpoint status system health check completed at:', new Date().toISOString());
+    console.info('Complete 18-endpoint status system health check completed at:', new Date().toISOString());
     
     // Process any pending subscription deliveries
-    console.log('Active subscriptions:', subscriptions.size);
-    console.log('Total deliveries:', Array.from(deliveryHistory.values()).flat().length);
+    console.info('Active subscriptions:', subscriptions.size);
+    console.info('Total deliveries:', Array.from(deliveryHistory.values()).flat().length);
   } catch (error) {
     console.error('Scheduled health check failed:', error);
   }

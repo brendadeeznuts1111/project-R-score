@@ -8,7 +8,7 @@
 import { TableFormatter } from '../src/utils/TableFormatter.js';
 
 // Example 1: Simple country table with flags
-console.log('📊 Example 1: Country Flags Table\n');
+console.info('📊 Example 1: Country Flags Table\n');
 const countryTable = TableFormatter.format({
   columns: [
     { header: '🇺🇸 Country', key: 'country', align: 'left' },
@@ -26,10 +26,10 @@ const countryTable = TableFormatter.format({
   headerColor: true,
   alternateRowColors: true,
 });
-console.log(countryTable);
+console.info(countryTable);
 
 // Example 2: Phone management table
-console.log('\n\n📱 Example 2: Phone Management Table\n');
+console.info('\n\n📱 Example 2: Phone Management Table\n');
 const phoneTable = TableFormatter.format({
   columns: [
     { header: '📱 Device', key: 'device', align: 'left' },
@@ -46,10 +46,10 @@ const phoneTable = TableFormatter.format({
   padding: 1,
   headerColor: true,
 });
-console.log(phoneTable);
+console.info(phoneTable);
 
 // Example 3: API response table
-console.log('\n\n🔌 Example 3: API Status Table\n');
+console.info('\n\n🔌 Example 3: API Status Table\n');
 const apiTable = TableFormatter.format({
   columns: [
     { header: '🔌 Service', key: 'service', align: 'left' },
@@ -67,6 +67,6 @@ const apiTable = TableFormatter.format({
   headerColor: true,
   alternateRowColors: true,
 });
-console.log(apiTable);
+console.info(apiTable);
 
-console.log('\n✨ All tables use Bun.stringWidth() for perfect Unicode alignment!\n');
+console.info('\n✨ All tables use Bun.stringWidth() for perfect Unicode alignment!\n');

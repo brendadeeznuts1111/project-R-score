@@ -77,7 +77,7 @@ export class PluginManager {
     }
 
     this.plugins.set(plugin.name, plugin);
-    console.log(`📦 Plugin registered: ${plugin.name} v${plugin.version} - ${plugin.description}`);
+    console.info(`📦 Plugin registered: ${plugin.name} v${plugin.version} - ${plugin.description}`);
   }
 
   /**
@@ -86,7 +86,7 @@ export class PluginManager {
   unregisterPlugin(name: string): boolean {
     const removed = this.plugins.delete(name);
     if (removed) {
-      console.log(`📦 Plugin unregistered: ${name}`);
+      console.info(`📦 Plugin unregistered: ${name}`);
     }
     return removed;
   }
@@ -95,15 +95,15 @@ export class PluginManager {
    * Initialize all registered plugins
    */
   async initialize(): Promise<void> {
-    console.log('🚀 Initializing file watcher plugins...');
+    console.info('🚀 Initializing file watcher plugins...');
 
     const initPromises = Array.from(this.plugins.values()).map(async plugin => {
       try {
         if (plugin.isEnabled()) {
           await plugin.initialize();
-          console.log(`✅ Plugin initialized: ${plugin.name}`);
+          console.info(`✅ Plugin initialized: ${plugin.name}`);
         } else {
-          console.log(`⏸️ Plugin disabled: ${plugin.name}`);
+          console.info(`⏸️ Plugin disabled: ${plugin.name}`);
         }
       } catch (error) {
         console.error(`❌ Failed to initialize plugin ${plugin.name}:`, error);
@@ -113,7 +113,7 @@ export class PluginManager {
     await Promise.allSettled(initPromises);
     this.initialized = true;
 
-    console.log(`✅ Plugin manager initialized with ${this.plugins.size} plugins`);
+    console.info(`✅ Plugin manager initialized with ${this.plugins.size} plugins`);
   }
 
   /**
@@ -144,7 +144,7 @@ export class PluginManager {
     const primaryPlugin = capablePlugins[0];
 
     try {
-      console.log(`🔍 Processing ${change.path} with ${primaryPlugin.name}`);
+      console.info(`🔍 Processing ${change.path} with ${primaryPlugin.name}`);
 
       const result = await this.processWithTimeout(
         primaryPlugin.processFileChange(change),
@@ -152,7 +152,7 @@ export class PluginManager {
       );
 
       const processingTime = Date.now() - startTime;
-      console.log(`✅ File processed by ${primaryPlugin.name} in ${processingTime}ms`);
+      console.info(`✅ File processed by ${primaryPlugin.name} in ${processingTime}ms`);
 
       return {
         ...result,
@@ -213,7 +213,7 @@ export class PluginManager {
 
     // Note: This assumes the plugin has a way to enable/disable itself
     // In a real implementation, you might need to modify the plugin's config
-    console.log(`${enabled ? '✅' : '⏸️'} Plugin ${name} ${enabled ? 'enabled' : 'disabled'}`);
+    console.info(`${enabled ? '✅' : '⏸️'} Plugin ${name} ${enabled ? 'enabled' : 'disabled'}`);
     return true;
   }
 
@@ -235,12 +235,12 @@ export class PluginManager {
    * Cleanup all plugins
    */
   async cleanup(): Promise<void> {
-    console.log('🧹 Cleaning up plugins...');
+    console.info('🧹 Cleaning up plugins...');
 
     const cleanupPromises = Array.from(this.plugins.values()).map(async plugin => {
       try {
         await plugin.cleanup();
-        console.log(`✅ Plugin cleaned up: ${plugin.name}`);
+        console.info(`✅ Plugin cleaned up: ${plugin.name}`);
       } catch (error) {
         console.error(`❌ Failed to cleanup plugin ${plugin.name}:`, error);
       }
@@ -249,7 +249,7 @@ export class PluginManager {
     await Promise.allSettled(cleanupPromises);
     this.plugins.clear();
 
-    console.log('✅ All plugins cleaned up');
+    console.info('✅ All plugins cleaned up');
   }
 
   /**
@@ -295,12 +295,12 @@ export class JavaScriptPlugin implements FileWatcherPlugin {
 
   async initialize(): Promise<void> {
     // Plugin-specific initialization
-    console.log(`🔧 Initializing ${this.name} plugin`);
+    console.info(`🔧 Initializing ${this.name} plugin`);
   }
 
   async cleanup(): Promise<void> {
     // Cleanup resources
-    console.log(`🧹 Cleaning up ${this.name} plugin`);
+    console.info(`🧹 Cleaning up ${this.name} plugin`);
   }
 
   canHandle(filePath: string): boolean {
@@ -350,11 +350,11 @@ export class CSSPlugin implements FileWatcherPlugin {
   };
 
   async initialize(): Promise<void> {
-    console.log(`🔧 Initializing ${this.name} plugin`);
+    console.info(`🔧 Initializing ${this.name} plugin`);
   }
 
   async cleanup(): Promise<void> {
-    console.log(`🧹 Cleaning up ${this.name} plugin`);
+    console.info(`🧹 Cleaning up ${this.name} plugin`);
   }
 
   canHandle(filePath: string): boolean {
@@ -404,11 +404,11 @@ export class HTMLPlugin implements FileWatcherPlugin {
   };
 
   async initialize(): Promise<void> {
-    console.log(`🔧 Initializing ${this.name} plugin`);
+    console.info(`🔧 Initializing ${this.name} plugin`);
   }
 
   async cleanup(): Promise<void> {
-    console.log(`🧹 Cleaning up ${this.name} plugin`);
+    console.info(`🧹 Cleaning up ${this.name} plugin`);
   }
 
   canHandle(filePath: string): boolean {
@@ -458,11 +458,11 @@ export class GraphQLPlugin implements FileWatcherPlugin {
   };
 
   async initialize(): Promise<void> {
-    console.log(`🔧 Initializing ${this.name} plugin`);
+    console.info(`🔧 Initializing ${this.name} plugin`);
   }
 
   async cleanup(): Promise<void> {
-    console.log(`🧹 Cleaning up ${this.name} plugin`);
+    console.info(`🧹 Cleaning up ${this.name} plugin`);
   }
 
   canHandle(filePath: string): boolean {
@@ -517,11 +517,11 @@ export class ConfigPlugin implements FileWatcherPlugin {
   };
 
   async initialize(): Promise<void> {
-    console.log(`🔧 Initializing ${this.name} plugin`);
+    console.info(`🔧 Initializing ${this.name} plugin`);
   }
 
   async cleanup(): Promise<void> {
-    console.log(`🧹 Cleaning up ${this.name} plugin`);
+    console.info(`🧹 Cleaning up ${this.name} plugin`);
   }
 
   canHandle(filePath: string): boolean {

@@ -470,7 +470,7 @@ describe('Services Integration', () => {
       } catch (error) {
         transactionSuccess = false;
         transactionError = error as Error;
-        console.log('Transaction error:', error);
+        console.info('Transaction error:', error);
       }
 
       // Verify all services were updated successfully

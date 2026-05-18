@@ -171,13 +171,13 @@ export class VeiledDiscoveryEngine {
     // Subtle revelation based on subtlety level
     switch (insight.subtlety) {
       case 'faint':
-        console.log(`🌫️ ${insight.message}`);
+        console.info(`🌫️ ${insight.message}`);
         break;
       case 'gentle':
-        console.log(`🌤️ ${insight.message}`);
+        console.info(`🌤️ ${insight.message}`);
         break;
       case 'moderate':
-        console.log(`⛅ ${insight.message}`);
+        console.info(`⛅ ${insight.message}`);
         break;
     }
     
@@ -193,7 +193,7 @@ export class VeiledDiscoveryEngine {
       
       const followUps = await this.followUps.generateFollowUps(followUpContext);
       if (followUps.length > 0 && followUps[0]) {
-        console.log(`🔗 Suggested: ${followUps[0].title}`);
+        console.info(`🔗 Suggested: ${followUps[0].title}`);
       }
     }
   }
@@ -297,7 +297,7 @@ export class VeiledDiscoveryEngine {
    */
   addPattern(pattern: DiscoveryPattern): void {
     this.patterns.push(pattern);
-    console.log(`🔮 Added discovery pattern: ${pattern.name}`);
+    console.info(`🔮 Added discovery pattern: ${pattern.name}`);
   }
   
   /**

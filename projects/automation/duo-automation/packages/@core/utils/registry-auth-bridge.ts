@@ -42,7 +42,7 @@ export class BunRegistryAuthBridge {
       
       process.env.BUN_AUTH_TOKEN = await this.generateRegistryToken(accessKeyId, secretAccessKey);
       
-      console.log(`✅ Authentication bridged for ${this.REGISTRY_URL}`);
+      console.info(`✅ Authentication bridged for ${this.REGISTRY_URL}`);
       return { success: true };
     } catch (error) {
       console.error('Failed to configure R2 registry auth:', error);

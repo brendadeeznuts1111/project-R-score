@@ -206,43 +206,43 @@ class CommandStation {
 
   private displayHeader() {
     console.clear();
-    console.log('\n');
-    console.log('╔══════════════════════════════════════════════════════════════════════════════╗');
-    console.log('║                    🎯 COMMAND STATION - CENTRAL HUB                          ║');
-    console.log('║                    Syndicate GOV Monorepo v3.0                               ║');
-    console.log('╚══════════════════════════════════════════════════════════════════════════════╝');
-    console.log();
+    console.info('\n');
+    console.info('╔══════════════════════════════════════════════════════════════════════════════╗');
+    console.info('║                    🎯 COMMAND STATION - CENTRAL HUB                          ║');
+    console.info('║                    Syndicate GOV Monorepo v3.0                               ║');
+    console.info('╚══════════════════════════════════════════════════════════════════════════════╝');
+    console.info();
   }
 
   private async displayStatus(status: ProjectStatus) {
-    console.log('📊 PROJECT STATUS');
-    console.log('─────────────────────────────────────────────────────────────────────────────');
+    console.info('📊 PROJECT STATUS');
+    console.info('─────────────────────────────────────────────────────────────────────────────');
     
     // Git Status
     const gitIcon = status.git.status === 'clean' ? '✅' : '⚠️';
-    console.log(`Git: ${gitIcon} ${status.git.branch} | ${status.git.status}`);
-    if (status.git.ahead > 0) console.log(`   Ahead: ${status.git.ahead} commits`);
-    if (status.git.behind > 0) console.log(`   Behind: ${status.git.behind} commits`);
+    console.info(`Git: ${gitIcon} ${status.git.branch} | ${status.git.status}`);
+    if (status.git.ahead > 0) console.info(`   Ahead: ${status.git.ahead} commits`);
+    if (status.git.behind > 0) console.info(`   Behind: ${status.git.behind} commits`);
 
     // Dependencies
     const depsIcon = status.dependencies.installed ? '✅' : '❌';
-    console.log(`Dependencies: ${depsIcon} ${status.dependencies.installed ? 'Installed' : 'Not installed'}`);
+    console.info(`Dependencies: ${depsIcon} ${status.dependencies.installed ? 'Installed' : 'Not installed'}`);
 
     // Services
     const apiIcon = status.services.api ? '✅' : '❌';
     const redisIcon = status.services.redis ? '✅' : '❌';
-    console.log(`Services: API ${apiIcon} | Redis ${redisIcon}`);
+    console.info(`Services: API ${apiIcon} | Redis ${redisIcon}`);
 
     // Build
     const buildIcon = status.build.success ? '✅' : '❌';
-    console.log(`Build: ${buildIcon} ${status.build.success ? 'Available' : 'Not built'}`);
+    console.info(`Build: ${buildIcon} ${status.build.success ? 'Available' : 'Not built'}`);
 
-    console.log();
+    console.info();
   }
 
   private displayCommands() {
-    console.log('🚀 QUICK COMMANDS');
-    console.log('─────────────────────────────────────────────────────────────────────────────');
+    console.info('🚀 QUICK COMMANDS');
+    console.info('─────────────────────────────────────────────────────────────────────────────');
     
     const categories = Array.from(new Set(this.commands.map(c => c.category)));
     
@@ -250,25 +250,25 @@ class CommandStation {
       const categoryCommands = this.commands.filter(c => c.category === category);
       if (categoryCommands.length === 0) continue;
 
-      console.log(`\n${category}:`);
+      console.info(`\n${category}:`);
       categoryCommands.slice(0, 10).forEach((cmd, idx) => {
         const icon = cmd.dangerous ? '⚠️' : '  ';
         const key = idx < 9 ? `[${idx + 1}]` : '[ ]';
-        console.log(`  ${icon} ${key.padEnd(5)} ${cmd.name.padEnd(35)} ${cmd.description}`);
+        console.info(`  ${icon} ${key.padEnd(5)} ${cmd.name.padEnd(35)} ${cmd.description}`);
       });
       if (categoryCommands.length > 10) {
-        console.log(`  ... and ${categoryCommands.length - 10} more`);
+        console.info(`  ... and ${categoryCommands.length - 10} more`);
       }
     }
-    console.log();
+    console.info();
   }
 
   private displayShortcuts() {
-    console.log('⌨️  KEYBOARD SHORTCUTS');
-    console.log('─────────────────────────────────────────────────────────────────────────────');
-    console.log('  [d] Development    [t] Testing    [a] AI/Registry    [h] Health Check');
-    console.log('  [b] Build          [s] Status     [c] CI/CD          [x] Exit');
-    console.log();
+    console.info('⌨️  KEYBOARD SHORTCUTS');
+    console.info('─────────────────────────────────────────────────────────────────────────────');
+    console.info('  [d] Development    [t] Testing    [a] AI/Registry    [h] Health Check');
+    console.info('  [b] Build          [s] Status     [c] CI/CD          [x] Exit');
+    console.info();
   }
 
   public async showDashboard() {
@@ -279,13 +279,13 @@ class CommandStation {
     this.displayCommands();
     this.displayShortcuts();
     
-    console.log('💡 Tips:');
-    console.log('   • Type a command name or number to run it');
-    console.log('   • Use shortcuts: d, t, a, h, b, s, c, x');
-    console.log('   • Type "help" for detailed help');
-    console.log('   • Type "status" for detailed status');
-    console.log('   • Type "list" to see all commands');
-    console.log();
+    console.info('💡 Tips:');
+    console.info('   • Type a command name or number to run it');
+    console.info('   • Use shortcuts: d, t, a, h, b, s, c, x');
+    console.info('   • Type "help" for detailed help');
+    console.info('   • Type "status" for detailed status');
+    console.info('   • Type "list" to see all commands');
+    console.info();
   }
 
   public async runCommand(commandId: string) {
@@ -301,20 +301,20 @@ class CommandStation {
     }
 
     if (command.dangerous) {
-      console.log(`⚠️  Warning: This command is potentially dangerous: ${command.name}`);
-      console.log(`   Command: ${command.command}`);
-      console.log('   Are you sure? Type "yes" to continue: ');
+      console.info(`⚠️  Warning: This command is potentially dangerous: ${command.name}`);
+      console.info(`   Command: ${command.command}`);
+      console.info('   Are you sure? Type "yes" to continue: ');
       
       // In a real interactive CLI, you'd use readline here
       // For now, we'll just warn
-      console.log('   (Skipping execution - use direct command for dangerous operations)');
+      console.info('   (Skipping execution - use direct command for dangerous operations)');
       return;
     }
 
-    console.log(`🚀 Running: ${command.name}`);
-    console.log(`   ${command.description}`);
-    console.log(`   Command: ${command.command}`);
-    console.log();
+    console.info(`🚀 Running: ${command.name}`);
+    console.info(`   ${command.description}`);
+    console.info(`   Command: ${command.command}`);
+    console.info();
 
     try {
       // Execute the command
@@ -326,9 +326,9 @@ class CommandStation {
 
       proc.on('close', (code) => {
         if (code === 0) {
-          console.log(`\n✅ Command completed successfully`);
+          console.info(`\n✅ Command completed successfully`);
         } else {
-          console.log(`\n❌ Command exited with code ${code}`);
+          console.info(`\n❌ Command exited with code ${code}`);
         }
       });
 
@@ -346,27 +346,27 @@ class CommandStation {
         )
       : this.commands;
 
-    console.log(`\n📋 Available Commands${filter ? ` (filtered: "${filter}")` : ''}:`);
-    console.log('─────────────────────────────────────────────────────────────────────────────\n');
+    console.info(`\n📋 Available Commands${filter ? ` (filtered: "${filter}")` : ''}:`);
+    console.info('─────────────────────────────────────────────────────────────────────────────\n');
 
     const categories = Array.from(new Set(filtered.map(c => c.category)));
     for (const category of categories) {
-      console.log(`\n${category.toUpperCase()}:`);
+      console.info(`\n${category.toUpperCase()}:`);
       filtered
         .filter(c => c.category === category)
         .forEach(cmd => {
           const icon = cmd.dangerous ? '⚠️' : '  ';
-          console.log(`  ${icon} ${cmd.name.padEnd(40)} ${cmd.description}`);
+          console.info(`  ${icon} ${cmd.name.padEnd(40)} ${cmd.description}`);
         });
     }
-    console.log();
+    console.info();
   }
 
   public async interactive() {
     // Use Bun's built-in readline or a simple prompt
-    console.log('\n🎯 Interactive Mode');
-    console.log('Note: For full interactive mode with readline, use: bun run station:interactive');
-    console.log('Or run specific commands directly: bun run station <command>\n');
+    console.info('\n🎯 Interactive Mode');
+    console.info('Note: For full interactive mode with readline, use: bun run station:interactive');
+    console.info('Or run specific commands directly: bun run station <command>\n');
     
     await this.showDashboard();
   }

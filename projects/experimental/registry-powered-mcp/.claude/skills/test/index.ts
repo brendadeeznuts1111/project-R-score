@@ -82,7 +82,7 @@ export default async function test(args?: string) {
 
   command.push(...flags, testPath);
 
-  console.log(`\n🧪 Running: ${command.join(" ")}\n`);
+  console.info(`\n🧪 Running: ${command.join(" ")}\n`);
 
   const proc = Bun.spawn(command, {
     cwd: process.cwd(),

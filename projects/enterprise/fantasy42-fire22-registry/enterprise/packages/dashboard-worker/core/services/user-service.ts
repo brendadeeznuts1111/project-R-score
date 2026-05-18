@@ -39,7 +39,7 @@ export class UserService extends BaseService {
 
   async initialize(): Promise<void> {
     await super.initialize();
-    console.log('User service initialized successfully');
+    console.info('User service initialized successfully');
   }
 
   /**

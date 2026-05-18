@@ -171,16 +171,16 @@ export class EliteConfigManager<T extends Record<string, ConfigSchema<any>>> {
       const fileContent = await readFile(this.options.path!, 'utf-8');
       const fileConfig = JSON.parse(fileContent);
       sources.push(fileConfig);
-      console.log(`[CONFIG] Loaded from ${this.options.path}`);
+      console.info(`[CONFIG] Loaded from ${this.options.path}`);
     } catch (err) {
-      console.log(`[CONFIG] No file at ${this.options.path}, using defaults/env`);
+      console.info(`[CONFIG] No file at ${this.options.path}, using defaults/env`);
     }
     
     // 2. Load from environment
     const envConfig = this.loadFromEnv();
     if (Object.keys(envConfig).length > 0) {
       sources.push(envConfig);
-      console.log(`[CONFIG] Loaded ${Object.keys(envConfig).length} values from env`);
+      console.info(`[CONFIG] Loaded ${Object.keys(envConfig).length} values from env`);
     }
     
     // 3. Merge and validate
@@ -192,7 +192,7 @@ export class EliteConfigManager<T extends Record<string, ConfigSchema<any>>> {
       this.setupHotReload();
     }
     
-    console.log('[CONFIG] Loaded successfully');
+    console.info('[CONFIG] Loaded successfully');
   }
   
   /**
@@ -264,7 +264,7 @@ export class EliteConfigManager<T extends Record<string, ConfigSchema<any>>> {
     try {
       this.fileWatcher = watch(this.options.path!, async (event) => {
         if (event === 'change') {
-          console.log('[CONFIG] File changed, reloading...');
+          console.info('[CONFIG] File changed, reloading...');
           try {
             await this.load();
             this.notifyWatchers();
@@ -384,7 +384,7 @@ export const AppConfigSchema = {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 if (import.meta.main) {
-  console.log(`
+  console.info(`
 ╔══════════════════════════════════════════════════════════════════╗
 ║  ⚙️  ELITE CONFIG MANAGER                                        ║
 ╠══════════════════════════════════════════════════════════════════╣
@@ -402,29 +402,29 @@ if (import.meta.main) {
     secrets: ['database.password', 'redis.password'],
   });
   
-  console.log('1. Loading Configuration\n');
+  console.info('1. Loading Configuration\n');
   
   try {
     await config.load();
     
-    console.log('\n2. Accessing Values\n');
-    console.log(`   Server port: ${config.get('server').port}`);
-    console.log(`   Database host: ${config.get('database').host}`);
-    console.log(`   WebSockets enabled: ${config.get('features').websockets}`);
+    console.info('\n2. Accessing Values\n');
+    console.info(`   Server port: ${config.get('server').port}`);
+    console.info(`   Database host: ${config.get('database').host}`);
+    console.info(`   WebSockets enabled: ${config.get('features').websockets}`);
     
-    console.log('\n3. Full Config (secrets masked):\n');
-    console.log(config.format());
+    console.info('\n3. Full Config (secrets masked):\n');
+    console.info(config.format());
     
-    console.log('\n4. Type Safety:\n');
-    console.log('   ✓ Port is number:', typeof config.get('server').port === 'number');
-    console.log('   ✓ Host is string:', typeof config.get('database').host === 'string');
-    console.log('   ✓ WebSockets is boolean:', typeof config.get('features').websockets === 'boolean');
+    console.info('\n4. Type Safety:\n');
+    console.info('   ✓ Port is number:', typeof config.get('server').port === 'number');
+    console.info('   ✓ Host is string:', typeof config.get('database').host === 'string');
+    console.info('   ✓ WebSockets is boolean:', typeof config.get('features').websockets === 'boolean');
     
-    console.log('\n✅ Config Manager demo complete!');
-    console.log('\nUsage:');
-    console.log('   const config = new EliteConfigManager(schema, { envPrefix: "APP_" });');
-    console.log('   await config.load();');
-    console.log('   const port = config.get("server").port;');
+    console.info('\n✅ Config Manager demo complete!');
+    console.info('\nUsage:');
+    console.info('   const config = new EliteConfigManager(schema, { envPrefix: "APP_" });');
+    console.info('   await config.load();');
+    console.info('   const port = config.get("server").port;');
     
   } catch (e) {
     console.error('Config error:', e);

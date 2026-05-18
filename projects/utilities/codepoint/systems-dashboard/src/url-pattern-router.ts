@@ -56,7 +56,7 @@ class URLPatternRouter {
     });
 
     if (hasFeature("DEBUG")) {
-      console.log(`🔗 Route added: ${urlPattern.pathname}`);
+      console.info(`🔗 Route added: ${urlPattern.pathname}`);
     }
   }
 
@@ -123,7 +123,7 @@ class URLPatternRouter {
 
         // Execute route handler
         if (hasFeature("DEBUG")) {
-          console.log(
+          console.info(
             `🎯 Route matched: ${route.pattern.pathname} -> ${JSON.stringify(params)}`
           );
         }
@@ -497,33 +497,33 @@ class DashboardRouter extends URLPatternRouter {
 export class URLPatternDemo {
   // Demonstrate basic pattern matching
   static basicDemo(): void {
-    console.log("🔗 URLPattern Basic Demo");
+    console.info("🔗 URLPattern Basic Demo");
 
     // User ID pattern
     const userPattern = new URLPattern({ pathname: "/users/:id" });
-    console.log("Pattern:", userPattern.pathname);
-    console.log(
+    console.info("Pattern:", userPattern.pathname);
+    console.info(
       "Match /users/123:",
       userPattern.test("https://example.com/users/123")
     );
-    console.log(
+    console.info(
       "Match /posts/456:",
       userPattern.test("https://example.com/posts/456")
     );
 
     const result = userPattern.exec("https://example.com/users/123");
-    console.log("Exec result:", result?.pathname.groups.id);
+    console.info("Exec result:", result?.pathname.groups.id);
 
     // Wildcard pattern
     const filesPattern = new URLPattern({ pathname: "/files/*" });
     const fileMatch = filesPattern.exec("https://example.com/files/image.png");
-    console.log("Wildcard match:", fileMatch?.pathname.groups[0]);
+    console.info("Wildcard match:", fileMatch?.pathname.groups[0]);
 
     // Complex pattern
     const complexPattern = new URLPattern({
       pathname: "/api/:version/users/:id/posts/*",
     });
-    console.log("Has regex groups:", complexPattern.hasRegExpGroups);
+    console.info("Has regex groups:", complexPattern.hasRegExpGroups);
   }
 
   // Test multiple patterns
@@ -542,11 +542,11 @@ export class URLPatternDemo {
       const urlPattern = new URLPattern({ pathname: pattern });
       const match = urlPattern.exec(url);
 
-      console.log(`Pattern: ${pattern}`);
-      console.log(`URL: ${url}`);
-      console.log(`Match: ${urlPattern.test(url)}`);
-      console.log(`Groups:`, match?.pathname.groups);
-      console.log("---");
+      console.info(`Pattern: ${pattern}`);
+      console.info(`URL: ${url}`);
+      console.info(`Match: ${urlPattern.test(url)}`);
+      console.info(`Groups:`, match?.pathname.groups);
+      console.info("---");
     });
   }
 
@@ -567,18 +567,18 @@ export class URLPatternDemo {
       pathname: "/files/:filename",
     });
 
-    console.log("Protocol pattern:", protocolPattern.protocol);
-    console.log(
+    console.info("Protocol pattern:", protocolPattern.protocol);
+    console.info(
       "Full pattern test:",
       fullPattern.test("https://api.example.com/users/123")
     );
-    console.log("Simple pattern has groups:", simplePattern.hasRegExpGroups);
+    console.info("Simple pattern has groups:", simplePattern.hasRegExpGroups);
 
     // Test the simple pattern
     const simpleMatch = simplePattern.exec(
       "https://example.com/files/document.jpg"
     );
-    console.log("Simple match:", simpleMatch?.pathname.groups);
+    console.info("Simple match:", simpleMatch?.pathname.groups);
   }
 }
 
@@ -587,10 +587,10 @@ export { DashboardRouter, URLPatternRouter, type Route, type RouteHandler };
 
 // Run demo if this file is executed directly
 if (import.meta.main) {
-  console.log("🚀 URLPattern Demo");
+  console.info("🚀 URLPattern Demo");
   URLPatternDemo.basicDemo();
-  console.log("\n🧪 Pattern Testing");
+  console.info("\n🧪 Pattern Testing");
   URLPatternDemo.testPatterns();
-  console.log("\n🔧 Advanced Features");
+  console.info("\n🔧 Advanced Features");
   URLPatternDemo.advancedDemo();
 }

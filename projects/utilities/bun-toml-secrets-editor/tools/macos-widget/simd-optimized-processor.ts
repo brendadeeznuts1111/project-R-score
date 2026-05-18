@@ -44,12 +44,12 @@ class ARM64SIMDProcessor implements SIMDProcessor {
 		this.simdSupported = this.checkSIMDSupport();
 		this.fallbackProcessor = new FallbackProcessor();
 
-		console.log(`🚀 SIMD Processor initialized`);
-		console.log(
+		console.info(`🚀 SIMD Processor initialized`);
+		console.info(
 			`📊 SIMD Support: ${this.simdSupported ? "Available" : "Using fallback"}`,
 		);
-		console.log(`🔧 Architecture: ${process.arch}`);
-		console.log("");
+		console.info(`🔧 Architecture: ${process.arch}`);
+		console.info("");
 	}
 
 	private checkSIMDSupport(): boolean {
@@ -90,7 +90,7 @@ class ARM64SIMDProcessor implements SIMDProcessor {
 		}
 
 		const duration = performance.now() - startTime;
-		console.log(
+		console.info(
 			`🔥 SIMD processed ${data.length} floats in ${duration.toFixed(2)}ms`,
 		);
 
@@ -126,7 +126,7 @@ class ARM64SIMDProcessor implements SIMDProcessor {
 		}
 
 		const duration = performance.now() - startTime;
-		console.log(
+		console.info(
 			`🔥 SIMD processed ${data.length} doubles in ${duration.toFixed(2)}ms`,
 		);
 
@@ -211,7 +211,7 @@ class ARM64SIMDProcessor implements SIMDProcessor {
 
 		const duration = performance.now() - startTime;
 
-		console.log(`📊 SIMD metrics calculated in ${duration.toFixed(2)}ms`);
+		console.info(`📊 SIMD metrics calculated in ${duration.toFixed(2)}ms`);
 
 		return {
 			count: data.length,
@@ -307,7 +307,7 @@ class SIMDBufferProcessor {
 	}
 
 	processLargeDataset(data: number[], chunkSize = 4096): WidgetMetrics[] {
-		console.log(`🔄 Processing ${data.length} items in chunks of ${chunkSize}`);
+		console.info(`🔄 Processing ${data.length} items in chunks of ${chunkSize}`);
 
 		const results: WidgetMetrics[] = [];
 		const startTime = performance.now();
@@ -320,19 +320,19 @@ class SIMDBufferProcessor {
 			// Progress reporting
 			if ((i / chunkSize) % 10 === 0) {
 				const progress = ((i + chunkSize) / data.length) * 100;
-				console.log(`📈 Progress: ${progress.toFixed(1)}%`);
+				console.info(`📈 Progress: ${progress.toFixed(1)}%`);
 			}
 		}
 
 		const totalDuration = performance.now() - startTime;
-		console.log(`✅ Completed processing in ${totalDuration.toFixed(2)}ms`);
+		console.info(`✅ Completed processing in ${totalDuration.toFixed(2)}ms`);
 
 		return results;
 	}
 
 	compareSIMDVsStandard(data: number[]): void {
-		console.log("🔬 SIMD vs Standard Processing Comparison");
-		console.log("==========================================");
+		console.info("🔬 SIMD vs Standard Processing Comparison");
+		console.info("==========================================");
 
 		// SIMD processing
 		const simdStart = performance.now();
@@ -349,19 +349,19 @@ class SIMDBufferProcessor {
 		const improvement =
 			((standardDuration - simdDuration) / standardDuration) * 100;
 
-		console.log(`📊 Data size: ${data.length} elements`);
-		console.log(`🚀 SIMD: ${simdDuration.toFixed(2)}ms`);
-		console.log(`🐌 Standard: ${standardDuration.toFixed(2)}ms`);
-		console.log(`⚡ Performance improvement: ${improvement.toFixed(1)}%`);
-		console.log(
+		console.info(`📊 Data size: ${data.length} elements`);
+		console.info(`🚀 SIMD: ${simdDuration.toFixed(2)}ms`);
+		console.info(`🐌 Standard: ${standardDuration.toFixed(2)}ms`);
+		console.info(`⚡ Performance improvement: ${improvement.toFixed(1)}%`);
+		console.info(
 			`🔧 SIMD Support: ${this.simdProcessor.isSIMDSupported() ? "Active" : "Fallback"}`,
 		);
-		console.log("");
+		console.info("");
 
 		// Verify results are equivalent
 		const resultsMatch =
 			Math.abs(simdResult.average - standardResult.average) < 0.001;
-		console.log(`✅ Results match: ${resultsMatch ? "Yes" : "No"}`);
+		console.info(`✅ Results match: ${resultsMatch ? "Yes" : "No"}`);
 	}
 }
 
@@ -381,8 +381,8 @@ if (import.meta.main) {
 	// Generate test data
 	const testData = Array.from({ length: 100000 }, () => Math.random() * 1000);
 
-	console.log("🧪 Running SIMD Processor Tests");
-	console.log("===============================");
+	console.info("🧪 Running SIMD Processor Tests");
+	console.info("===============================");
 
 	// Compare SIMD vs standard processing
 	processor.compareSIMDVsStandard(testData);
@@ -390,8 +390,8 @@ if (import.meta.main) {
 	// Process large dataset in chunks
 	const chunkResults = processor.processLargeDataset(testData, 8192);
 
-	console.log(`📊 Processed ${chunkResults.length} chunks`);
-	console.log(
+	console.info(`📊 Processed ${chunkResults.length} chunks`);
+	console.info(
 		`🎯 Average processing time per chunk: ${(chunkResults.reduce((sum, r) => sum + r.processingTime, 0) / chunkResults.length).toFixed(2)}ms`,
 	);
 }

@@ -1,18 +1,18 @@
 #!/usr/bin/env bun
 // env-test.ts - Enhanced environment variable injection testing
 
-console.log("🔧 Enhanced Environment Variable Injection Testing");
-console.log("=".repeat(50));
+console.info("🔧 Enhanced Environment Variable Injection Testing");
+console.info("=".repeat(50));
 
 // Basic environment variables
-console.log("📋 Basic Environment Variables:");
-console.log("PUBLIC_API_URL:", process.env.PUBLIC_API_URL);
-console.log("SECRET_KEY:", process.env.SECRET_KEY);
-console.log("NODE_ENV:", process.env.NODE_ENV);
-console.log("");
+console.info("📋 Basic Environment Variables:");
+console.info("PUBLIC_API_URL:", process.env.PUBLIC_API_URL);
+console.info("SECRET_KEY:", process.env.SECRET_KEY);
+console.info("NODE_ENV:", process.env.NODE_ENV);
+console.info("");
 
 // Advanced environment variable patterns
-console.log("🔍 Advanced Environment Patterns:");
+console.info("🔍 Advanced Environment Patterns:");
 
 // Public API configuration
 const apiConfig = {
@@ -22,7 +22,7 @@ const apiConfig = {
   retries: parseInt(process.env.PUBLIC_API_RETRIES || "3"),
 };
 
-console.log("🌐 API Configuration:", apiConfig);
+console.info("🌐 API Configuration:", apiConfig);
 
 // Database configuration (should remain as process.env)
 const dbConfig = {
@@ -33,7 +33,7 @@ const dbConfig = {
   database: process.env.DB_NAME || "dashboard",
 };
 
-console.log("🗄️ Database Configuration:", {
+console.info("🗄️ Database Configuration:", {
   ...dbConfig,
   password: dbConfig.password ? "***REDACTED***" : undefined,
 });
@@ -46,7 +46,7 @@ const features = {
   maintenanceMode: process.env.PUBLIC_MAINTENANCE === "true",
 };
 
-console.log("🚀 Feature Flags:", features);
+console.info("🚀 Feature Flags:", features);
 
 // Build and deployment info
 const buildInfo = {
@@ -57,7 +57,7 @@ const buildInfo = {
   environment: process.env.NODE_ENV || "development",
 };
 
-console.log("📦 Build Information:", buildInfo);
+console.info("📦 Build Information:", buildInfo);
 
 // Security headers and CORS
 const securityConfig = {
@@ -68,7 +68,7 @@ const securityConfig = {
   credentials: process.env.PUBLIC_CORS_CREDENTIALS === "true",
 };
 
-console.log("🔒 Security Configuration:", securityConfig);
+console.info("🔒 Security Configuration:", securityConfig);
 
 // Performance thresholds
 const performanceThresholds = {
@@ -80,7 +80,7 @@ const performanceThresholds = {
   errorRate: parseFloat(process.env.PUBLIC_PERFORMANCE_ERROR_RATE || "0.05"),
 };
 
-console.log("⚡ Performance Thresholds:", performanceThresholds);
+console.info("⚡ Performance Thresholds:", performanceThresholds);
 
 // Logging configuration
 const loggingConfig = {
@@ -90,7 +90,7 @@ const loggingConfig = {
   enableFile: process.env.PUBLIC_LOG_FILE === "true",
 };
 
-console.log("📝 Logging Configuration:", loggingConfig);
+console.info("📝 Logging Configuration:", loggingConfig);
 
 // Cache configuration
 const cacheConfig = {
@@ -99,7 +99,7 @@ const cacheConfig = {
   strategy: process.env.PUBLIC_CACHE_STRATEGY || "lru",
 };
 
-console.log("💾 Cache Configuration:", cacheConfig);
+console.info("💾 Cache Configuration:", cacheConfig);
 
 // Health check intervals
 const healthConfig = {
@@ -111,20 +111,20 @@ const healthConfig = {
   ),
 };
 
-console.log("🏥 Health Check Configuration:", healthConfig);
+console.info("🏥 Health Check Configuration:", healthConfig);
 
-console.log("");
-console.log("✅ Enhanced Environment Variable Testing Complete!");
-console.log("");
-console.log("🔧 Build Commands:");
-console.log("  bun build --env=inline env-test.ts --outdir dist-inline");
-console.log('  bun build --env="PUBLIC_*" env-test.ts --outdir dist-public');
-console.log("  bun build --env=disable env-test.ts --outdir dist-disabled");
-console.log("");
-console.log("🔑 Environment Variables to Test:");
-console.log("  export PUBLIC_API_URL=https://api.example.com");
-console.log("  export PUBLIC_API_VERSION=v2");
-console.log("  export PUBLIC_ENABLE_HEALTH=true");
-console.log("  export SECRET_KEY=super-secret");
-console.log("  export DB_HOST=localhost");
-console.log("  export NODE_ENV=production");
+console.info("");
+console.info("✅ Enhanced Environment Variable Testing Complete!");
+console.info("");
+console.info("🔧 Build Commands:");
+console.info("  bun build --env=inline env-test.ts --outdir dist-inline");
+console.info('  bun build --env="PUBLIC_*" env-test.ts --outdir dist-public');
+console.info("  bun build --env=disable env-test.ts --outdir dist-disabled");
+console.info("");
+console.info("🔑 Environment Variables to Test:");
+console.info("  export PUBLIC_API_URL=https://api.example.com");
+console.info("  export PUBLIC_API_VERSION=v2");
+console.info("  export PUBLIC_ENABLE_HEALTH=true");
+console.info("  export SECRET_KEY=super-secret");
+console.info("  export DB_HOST=localhost");
+console.info("  export NODE_ENV=production");

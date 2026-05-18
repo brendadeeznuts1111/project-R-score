@@ -5,8 +5,8 @@
  * Shows the suggested related searches from the cross-reference system
  */
 
-console.log('🔗 Related Search Demonstrations');
-console.log('=================================\n');
+console.info('🔗 Related Search Demonstrations');
+console.info('=================================\n');
 
 // Enhanced data for related searches
 const relatedSearchData = {
@@ -112,46 +112,46 @@ const relatedSearchData = {
 };
 
 function demonstrateRelatedSearch(query: string) {
-  console.log(`🔍 Related Search: "${query}"`);
-  console.log('─'.repeat(60));
+  console.info(`🔍 Related Search: "${query}"`);
+  console.info('─'.repeat(60));
   
   const data = relatedSearchData[query as keyof typeof relatedSearchData];
   if (!data) {
-    console.log('❌ No data found for this query');
+    console.info('❌ No data found for this query');
     return;
   }
   
   // Matrix Results
-  console.log('\n📂 Matrix System Results:');
+  console.info('\n📂 Matrix System Results:');
   data.matrix.forEach((item, index) => {
-    console.log(`  ${index + 1}. ${item.scope} Scope`);
-    console.log(`     Features: ${item.features.join(', ')}`);
-    console.log(`     Standards: ${item.standards.join(', ')}`);
+    console.info(`  ${index + 1}. ${item.scope} Scope`);
+    console.info(`     Features: ${item.features.join(', ')}`);
+    console.info(`     Standards: ${item.standards.join(', ')}`);
   });
   
   // Documentation Results
-  console.log('\n📚 Documentation Results:');
+  console.info('\n📚 Documentation Results:');
   data.documentation.forEach((item, index) => {
-    console.log(`  ${index + 1}. ${item.title}`);
-    console.log(`     📁 ${item.file}`);
-    console.log(`     📝 ${item.description}`);
+    console.info(`  ${index + 1}. ${item.title}`);
+    console.info(`     📁 ${item.file}`);
+    console.info(`     📝 ${item.description}`);
   });
   
   // System Components
-  console.log('\n⚙️  System Component Results:');
+  console.info('\n⚙️  System Component Results:');
   data.components.forEach((item, index) => {
-    console.log(`  ${index + 1}. ${item.title}`);
-    console.log(`     📁 ${item.path}`);
-    console.log(`     🔧 Features: ${item.features.join(', ')}`);
+    console.info(`  ${index + 1}. ${item.title}`);
+    console.info(`     📁 ${item.path}`);
+    console.info(`     🔧 Features: ${item.features.join(', ')}`);
   });
   
-  console.log('\n💡 Additional Related Searches:');
+  console.info('\n💡 Additional Related Searches:');
   const suggestions = getAdditionalSuggestions(query);
   suggestions.forEach(suggestion => {
-    console.log(`  • duoplus-enhanced xref "${suggestion}" --type all`);
+    console.info(`  • duoplus-enhanced xref "${suggestion}" --type all`);
   });
   
-  console.log('\n' + '='.repeat(80) + '\n');
+  console.info('\n' + '='.repeat(80) + '\n');
 }
 
 function getAdditionalSuggestions(currentQuery: string): string[] {
@@ -165,17 +165,17 @@ function getAdditionalSuggestions(currentQuery: string): string[] {
 }
 
 // Run all related search demonstrations
-console.log('🚀 Demonstrating Related Search Suggestions\n');
+console.info('🚀 Demonstrating Related Search Suggestions\n');
 
-console.log('From HIPAA PCI DSS search, the system suggested:');
+console.info('From HIPAA PCI DSS search, the system suggested:');
 demonstrateRelatedSearch('security audit');
 demonstrateRelatedSearch('compliance validation');
 demonstrateRelatedSearch('security monitoring');
 
-console.log('✅ Related Search Demonstrations Complete!');
-console.log('📊 Each search provides comprehensive results across:');
-console.log('   • Matrix System configurations');
-console.log('   • Documentation and guides');
-console.log('   • System components and features');
-console.log('   • Additional related search suggestions');
-console.log('🔗 Creates a complete knowledge graph for discovery');
+console.info('✅ Related Search Demonstrations Complete!');
+console.info('📊 Each search provides comprehensive results across:');
+console.info('   • Matrix System configurations');
+console.info('   • Documentation and guides');
+console.info('   • System components and features');
+console.info('   • Additional related search suggestions');
+console.info('🔗 Creates a complete knowledge graph for discovery');

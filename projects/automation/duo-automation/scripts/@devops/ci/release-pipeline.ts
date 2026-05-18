@@ -20,16 +20,16 @@ async function runReleasePipeline() {
     process.exit(1);
   }
 
-  console.log(`🚀 Starting Release Pipeline for: ${moduleId}`);
+  console.info(`🚀 Starting Release Pipeline for: ${moduleId}`);
   
   const packager = new BunModulePackager();
   const validator = new VersionedTaxonomyValidator();
 
   try {
     // 1. Audit & Security Check (Simulated)
-    console.log('🔍 Running BunNativeDependencyAuditor...');
+    console.info('🔍 Running BunNativeDependencyAuditor...');
     // In a real implementation, this would query bun:sqlite vulnerability DB
-    console.log('✅ Security Audit Passed: No critical vulnerabilities found.');
+    console.info('✅ Security Audit Passed: No critical vulnerabilities found.');
 
     // 2. Version Validation & Bump
     const node = validator.getVersionedNode(moduleId);
@@ -38,31 +38,31 @@ async function runReleasePipeline() {
       throw new Error(`Module ${moduleId} not found in taxonomy.`);
     }
 
-    console.log(`📦 Current version: ${node.version}`);
+    console.info(`📦 Current version: ${node.version}`);
     
     if (bumpType) {
       const suggestion = await validator.suggestVersionBump(moduleId);
-      console.log(`📈 Suggested bump: ${suggestion.current} -> ${suggestion.suggested} (${suggestion.type})`);
+      console.info(`📈 Suggested bump: ${suggestion.current} -> ${suggestion.suggested} (${suggestion.type})`);
       // In a real pipeline, we would update the taxonomy file here
     }
 
     // 3. Zero-Copy Packing
-    console.log('🏗️ Packing module using ZeroCopyTarballStreamer...');
+    console.info('🏗️ Packing module using ZeroCopyTarballStreamer...');
     const pkg = await packager.packModule(moduleId);
-    console.log(`✅ Packed: ${pkg.tarball} (${(pkg.size / 1024).toFixed(2)} KB)`);
+    console.info(`✅ Packed: ${pkg.tarball} (${(pkg.size / 1024).toFixed(2)} KB)`);
 
     // 4. Atomic Publishing
-    console.log(`📤 Publishing ${moduleId}@${pkg.version} to R2 Registry...`);
+    console.info(`📤 Publishing ${moduleId}@${pkg.version} to R2 Registry...`);
     await packager.publish(moduleId);
     
-    console.log('\n--- Release Performance Summary ---');
+    console.info('\n--- Release Performance Summary ---');
     console.table([
       { Operation: 'Security Audit', Latency: '12ms', Status: 'Success' },
       { Operation: 'Module Packing', Latency: '85ms', Status: 'Success' },
       { Operation: 'R2 Publishing', Latency: '588ms', Status: 'Success' }
     ]);
 
-    console.log(`\n🎉 Successfully deployed ${moduleId} v${pkg.version}`);
+    console.info(`\n🎉 Successfully deployed ${moduleId} v${pkg.version}`);
   } catch (error) {
     console.error(`\n❌ Release Pipeline Failed: ${error instanceof Error ? error.message : String(error)}`);
     process.exit(1);

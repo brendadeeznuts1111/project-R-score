@@ -20,19 +20,19 @@ async function showSecurityDashboard() {
     // Filter security metrics
     const securityMetrics = metrics.filter(m => m.category === 'Security');
     
-    console.log('🔒 Security Configuration Dashboard');
-    console.log('===================================');
+    console.info('🔒 Security Configuration Dashboard');
+    console.info('===================================');
     
-    console.log('\n📊 All Security Features:');
+    console.info('\n📊 All Security Features:');
     const enhancedSecurityMetrics = securityMetrics.map(m => withInspector(m));
-    console.log(Bun.inspect.table(enhancedSecurityMetrics, { colors: true }));
+    console.info(Bun.inspect.table(enhancedSecurityMetrics, { colors: true }));
     
-    console.log('\n✅ ENABLED Features:');
+    console.info('\n✅ ENABLED Features:');
     const enabledFeatures = securityMetrics.filter(m => m.value === 'ENABLED' || m.value === 'ENFORCED');
     const enhancedEnabledFeatures = enabledFeatures.map(m => withInspector(m));
-    console.log(Bun.inspect.table(enhancedEnabledFeatures, { colors: true }));
+    console.info(Bun.inspect.table(enhancedEnabledFeatures, { colors: true }));
     
-    console.log('\n📈 Security Status Summary:');
+    console.info('\n📈 Security Status Summary:');
     const summary = {
       totalSecurity: securityMetrics.length,
       enabled: enabledFeatures.length,
@@ -40,23 +40,23 @@ async function showSecurityDashboard() {
       locations: [...new Set(securityMetrics.map(m => m.locations))]
     };
     
-    console.log(`• Total Security Features: ${summary.totalSecurity}`);
-    console.log(`• Enabled Features: ${summary.enabled}`);
-    console.log(`• Categories: ${summary.categories.join(', ')}`);
-    console.log(`• Implementation Locations: ${summary.locations.join(', ')}`);
+    console.info(`• Total Security Features: ${summary.totalSecurity}`);
+    console.info(`• Enabled Features: ${summary.enabled}`);
+    console.info(`• Categories: ${summary.categories.join(', ')}`);
+    console.info(`• Implementation Locations: ${summary.locations.join(', ')}`);
     
   } catch (error) {
     console.error('❌ Dashboard Error:', error instanceof Error ? error.message : String(error));
-    console.log('Falling back to local metrics...');
+    console.info('Falling back to local metrics...');
     
     // Fallback to local file
     try {
       const localMetrics: PerfMetric[] = JSON.parse(require('fs').readFileSync('./perf-metrics.json', 'utf-8'));
       const securityMetrics = localMetrics.filter(m => m.category === 'Security');
       
-      console.log('🔒 Local Security Metrics:');
+      console.info('🔒 Local Security Metrics:');
       const enhancedLocalMetrics = securityMetrics.map(m => withInspector(m));
-      console.log(Bun.inspect.table(enhancedLocalMetrics, { colors: true }));
+      console.info(Bun.inspect.table(enhancedLocalMetrics, { colors: true }));
     } catch (fallbackError) {
       console.error('❌ Fallback also failed:', fallbackError instanceof Error ? fallbackError.message : String(fallbackError));
     }

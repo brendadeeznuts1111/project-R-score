@@ -14,7 +14,7 @@ async function benchmark(name: string, fn: () => Promise<void>, iterations = 100
   };
 }
 
-console.log("🚀 Starting Windows Secrets Benchmark (CRED_PERSIST_ENTERPRISE)...");
+console.info("🚀 Starting Windows Secrets Benchmark (CRED_PERSIST_ENTERPRISE)...");
 
 const winBench = await benchmark('Windows ENTERPRISE Load', async () => {
   // We use a pseudo-team to avoid filling the real manager during bench if possible, 
@@ -22,12 +22,12 @@ const winBench = await benchmark('Windows ENTERPRISE Load', async () => {
   await loadScopedSecrets('win-bench-team');
 }, 50);
 
-console.log(`\n--- Results ---`);
-console.log(`Platform: ${process.platform}`);
-console.log(`Windows CRED_PERSIST_ENTERPRISE: ${winBench.avg.toFixed(0)}μs`);
+console.info(`\n--- Results ---`);
+console.info(`Platform: ${process.platform}`);
+console.info(`Windows CRED_PERSIST_ENTERPRISE: ${winBench.avg.toFixed(0)}μs`);
 
 if (winBench.avg < 500) {
-    console.log("✅ Performance within Enterprise spec (< 0.5ms)");
+    console.info("✅ Performance within Enterprise spec (< 0.5ms)");
 } else {
-    console.log("⚠️ Performance slower than expected, check CredMgr latency");
+    console.info("⚠️ Performance slower than expected, check CredMgr latency");
 }

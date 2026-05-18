@@ -15,103 +15,103 @@ import { envConfig } from './src/shared/environment-configuration';
 import { htmlTemplateManager } from './src/shared/html-templates';
 
 async function demonstrateBunHTMLIntegration() {
-  console.log('🚀 Bun HTML Integration Demonstration');
-  console.log('======================================\n');
+  console.info('🚀 Bun HTML Integration Demonstration');
+  console.info('======================================\n');
 
-  console.log('ℹ️  What is Bun HTML Integration?');
-  console.log('   • Native HTML import system: import html from "./template.html"');
-  console.log('   • Automatic ETag generation for all static assets');
-  console.log('   • Ahead-of-time bundling for production');
-  console.log('   • Runtime bundling with development mode');
-  console.log('   • Cache-Control headers automatically managed');
-  console.log('   • JavaScript/TypeScript/JSX minification');
-  console.log('   • CSS processing and optimization\n');
+  console.info('ℹ️  What is Bun HTML Integration?');
+  console.info('   • Native HTML import system: import html from "./template.html"');
+  console.info('   • Automatic ETag generation for all static assets');
+  console.info('   • Ahead-of-time bundling for production');
+  console.info('   • Runtime bundling with development mode');
+  console.info('   • Cache-Control headers automatically managed');
+  console.info('   • JavaScript/TypeScript/JSX minification');
+  console.info('   • CSS processing and optimization\n');
 
-  console.log('🔧 Current System Status:');
+  console.info('🔧 Current System Status:');
 
   const templates = htmlTemplateManager.getAllTemplateNames();
-  console.log(`   📋 Available Templates: ${templates.length}`);
-  console.log(`   🎯 Template Cache: ${htmlTemplateManager.getCacheStats().entries} entries`);
-  console.log(`   💾 Cache Hit Rate: ${htmlTemplateManager.getCacheStats().hitRate.toFixed(2)}%`);
-  console.log(`   🏭 Production Mode: ${envConfig.app.isProduction}`);
-  console.log(`   🕐 Timezone: ${envConfig.timezone.default}\n`);
+  console.info(`   📋 Available Templates: ${templates.length}`);
+  console.info(`   🎯 Template Cache: ${htmlTemplateManager.getCacheStats().entries} entries`);
+  console.info(`   💾 Cache Hit Rate: ${htmlTemplateManager.getCacheStats().hitRate.toFixed(2)}%`);
+  console.info(`   🏭 Production Mode: ${envConfig.app.isProduction}`);
+  console.info(`   🕐 Timezone: ${envConfig.timezone.default}\n`);
 
-  console.log('🎯 Bun HTML Features:');
-  console.log('   ✅ Native HTML imports with type safety');
-  console.log('   ✅ Automatic ETag generation');
-  console.log('   ✅ Cache-Control header management');
-  console.log('   ✅ Ahead-of-time bundling');
-  console.log('   ✅ Runtime bundling in development');
-  console.log('   ✅ Asset optimization and minification');
-  console.log('   ✅ Manifest generation for production\n');
+  console.info('🎯 Bun HTML Features:');
+  console.info('   ✅ Native HTML imports with type safety');
+  console.info('   ✅ Automatic ETag generation');
+  console.info('   ✅ Cache-Control header management');
+  console.info('   ✅ Ahead-of-time bundling');
+  console.info('   ✅ Runtime bundling in development');
+  console.info('   ✅ Asset optimization and minification');
+  console.info('   ✅ Manifest generation for production\n');
 
-  console.log('🌐 Template System Integration:');
-  console.log("   • Templates imported using Bun's native system");
-  console.log('   • Automatic ETag headers for cache efficiency');
-  console.log('   • LRU caching for frequently accessed templates');
-  console.log('   • Dynamic content rendering with data binding');
-  console.log('   • Optimal cache headers for different content types\n');
+  console.info('🌐 Template System Integration:');
+  console.info("   • Templates imported using Bun's native system");
+  console.info('   • Automatic ETag headers for cache efficiency');
+  console.info('   • LRU caching for frequently accessed templates');
+  console.info('   • Dynamic content rendering with data binding');
+  console.info('   • Optimal cache headers for different content types\n');
 
-  console.log('🏗️  Ahead-of-Time Bundling:');
-  console.log('   Command: bun build --target=bun --production --outdir=dist ./src/index.ts');
-  console.log('   Benefits:');
-  console.log('   • Production-ready bundles with minification');
-  console.log('   • Optimized asset loading');
-  console.log('   • Reduced startup time');
-  console.log('   • Better performance for production deployments\n');
+  console.info('🏗️  Ahead-of-Time Bundling:');
+  console.info('   Command: bun build --target=bun --production --outdir=dist ./src/index.ts');
+  console.info('   Benefits:');
+  console.info('   • Production-ready bundles with minification');
+  console.info('   • Optimized asset loading');
+  console.info('   • Reduced startup time');
+  console.info('   • Better performance for production deployments\n');
 
-  console.log('📊 Runtime Bundling (Development):');
-  console.log('   Configuration: development: false in Bun.serve()');
-  console.log('   Benefits:');
-  console.log('   • In-memory caching of bundled assets');
-  console.log('   • Lazy bundling on first request');
-  console.log('   • Automatic ETag and Cache-Control headers');
-  console.log('   • JavaScript/TypeScript minification');
-  console.log('   • Fast development iteration\n');
+  console.info('📊 Runtime Bundling (Development):');
+  console.info('   Configuration: development: false in Bun.serve()');
+  console.info('   Benefits:');
+  console.info('   • In-memory caching of bundled assets');
+  console.info('   • Lazy bundling on first request');
+  console.info('   • Automatic ETag and Cache-Control headers');
+  console.info('   • JavaScript/TypeScript minification');
+  console.info('   • Fast development iteration\n');
 
-  console.log('🔧 Implementation Examples:');
+  console.info('🔧 Implementation Examples:');
 
   // Show how templates are imported
-  console.log('   1. HTML Import:');
-  console.log('      import dashboard from "./templates/dashboard.html";');
-  console.log('');
+  console.info('   1. HTML Import:');
+  console.info('      import dashboard from "./templates/dashboard.html";');
+  console.info('');
 
-  console.log('   2. Server Configuration:');
-  console.log('      const server = Bun.serve({');
-  console.log('        development: false,');
-  console.log('        routes: { "/": dashboard }');
-  console.log('      });');
-  console.log('');
+  console.info('   2. Server Configuration:');
+  console.info('      const server = Bun.serve({');
+  console.info('        development: false,');
+  console.info('        routes: { "/": dashboard }');
+  console.info('      });');
+  console.info('');
 
-  console.log('   3. Automatic ETag Generation:');
-  console.log('      // Bun automatically adds:');
-  console.log('      // ETag: "abc123"');
-  console.log('      // Cache-Control: "public, max-age=300"');
-  console.log('');
+  console.info('   3. Automatic ETag Generation:');
+  console.info('      // Bun automatically adds:');
+  console.info('      // ETag: "abc123"');
+  console.info('      // Cache-Control: "public, max-age=300"');
+  console.info('');
 
-  console.log('🚀 Production Deployment:');
-  console.log('   • Build: bun build --target=bun --production --outdir=dist ./src/index.ts');
-  console.log('   • Run: bun run ./dist/index.js');
-  console.log('   • Assets automatically optimized and cached');
-  console.log('   • ETags generated for all static resources\n');
+  console.info('🚀 Production Deployment:');
+  console.info('   • Build: bun build --target=bun --production --outdir=dist ./src/index.ts');
+  console.info('   • Run: bun run ./dist/index.js');
+  console.info('   • Assets automatically optimized and cached');
+  console.info('   • ETags generated for all static resources\n');
 
-  console.log('💰 Performance Benefits:');
-  console.log('   • Faster page loads with HTTP caching');
-  console.log('   • Reduced bandwidth with ETag efficiency');
-  console.log('   • Optimized bundles for production');
-  console.log('   • Automatic asset minification');
-  console.log('   • Better SEO with proper cache headers\n');
+  console.info('💰 Performance Benefits:');
+  console.info('   • Faster page loads with HTTP caching');
+  console.info('   • Reduced bandwidth with ETag efficiency');
+  console.info('   • Optimized bundles for production');
+  console.info('   • Automatic asset minification');
+  console.info('   • Better SEO with proper cache headers\n');
 
-  console.log('🎯 Domain Integration:');
-  console.log('   • Collections domain templates with transaction data');
-  console.log('   • Financial reporting with compliance data');
-  console.log('   • Regulatory reports with jurisdiction-specific content');
-  console.log('   • Dashboard with real-time business metrics');
-  console.log('   • All with automatic ETag caching\n');
+  console.info('🎯 Domain Integration:');
+  console.info('   • Collections domain templates with transaction data');
+  console.info('   • Financial reporting with compliance data');
+  console.info('   • Regulatory reports with jurisdiction-specific content');
+  console.info('   • Dashboard with real-time business metrics');
+  console.info('   • All with automatic ETag caching\n');
 }
 
 async function demonstrateServer() {
-  console.log('🌐 Starting Bun HTML Server Demo...\n');
+  console.info('🌐 Starting Bun HTML Server Demo...\n');
 
   const bunHTML = new BunHTMLIntegration({
     enableCaching: true,
@@ -121,67 +121,67 @@ async function demonstrateServer() {
   });
 
   const routes = bunHTML.getBundledRoutes();
-  console.log('📋 Configured Routes:');
+  console.info('📋 Configured Routes:');
   Object.keys(routes).forEach(route => {
-    console.log(`   🌐 ${route} - Automatic ETag enabled`);
+    console.info(`   🌐 ${route} - Automatic ETag enabled`);
   });
-  console.log('');
+  console.info('');
 
-  console.log('🎨 Template Integration:');
+  console.info('🎨 Template Integration:');
   const templates = htmlTemplateManager.getAllTemplateNames();
   templates.forEach(template => {
-    console.log(`   📄 ${template}.html - Bun native import`);
+    console.info(`   📄 ${template}.html - Bun native import`);
   });
-  console.log('');
+  console.info('');
 
-  console.log('🔄 Cache Status:');
+  console.info('🔄 Cache Status:');
   const stats = htmlTemplateManager.getCacheStats();
-  console.log(`   📊 Entries: ${stats.entries}`);
-  console.log(`   🎯 Hit Rate: ${stats.hitRate.toFixed(2)}%`);
-  console.log(`   💾 Size: ${(stats.totalSize / 1024).toFixed(2)} KB`);
-  console.log('');
+  console.info(`   📊 Entries: ${stats.entries}`);
+  console.info(`   🎯 Hit Rate: ${stats.hitRate.toFixed(2)}%`);
+  console.info(`   💾 Size: ${(stats.totalSize / 1024).toFixed(2)} KB`);
+  console.info('');
 
-  console.log('⚡ Ready for Production:');
-  console.log('   • Automatic ETag generation');
-  console.log('   • Cache-Control optimization');
-  console.log('   • Asset minification');
-  console.log('   • Ahead-of-time bundling support');
-  console.log('   • Domain-driven template system\n');
+  console.info('⚡ Ready for Production:');
+  console.info('   • Automatic ETag generation');
+  console.info('   • Cache-Control optimization');
+  console.info('   • Asset minification');
+  console.info('   • Ahead-of-time bundling support');
+  console.info('   • Domain-driven template system\n');
 
-  console.log('🚀 To start full server:');
-  console.log('   const server = createBunHTMLServer(3000);');
-  console.log('   // Server will be available at http://localhost:3000');
+  console.info('🚀 To start full server:');
+  console.info('   const server = createBunHTMLServer(3000);');
+  console.info('   // Server will be available at http://localhost:3000');
 }
 
 async function demonstrateBuild() {
-  console.log('🏗️  Ahead-of-Time Bundling Demo...\n');
+  console.info('🏗️  Ahead-of-Time Bundling Demo...\n');
 
   const entryPoint = './src/shared/bun-html-integration.ts';
-  console.log(`📦 Building from: ${entryPoint}`);
-  console.log('   Command: bun build --target=bun --production --outdir=dist');
-  console.log('');
+  console.info(`📦 Building from: ${entryPoint}`);
+  console.info('   Command: bun build --target=bun --production --outdir=dist');
+  console.info('');
 
   try {
     const buildResult = await buildProductionBundle(entryPoint);
 
     if (buildResult.success) {
-      console.log('✅ Build completed successfully!');
-      console.log(`📊 Generated ${buildResult.outputs.length} files`);
-      console.log('');
-      console.log('🎯 Production Bundle Features:');
-      console.log('   • Minified JavaScript/TypeScript');
-      console.log('   • Optimized HTML imports');
-      console.log('   • Automatic ETag generation');
-      console.log('   • Production-ready assets');
-      console.log('   • Reduced bundle size');
-      console.log('');
-      console.log('🚀 Deployment Ready!');
+      console.info('✅ Build completed successfully!');
+      console.info(`📊 Generated ${buildResult.outputs.length} files`);
+      console.info('');
+      console.info('🎯 Production Bundle Features:');
+      console.info('   • Minified JavaScript/TypeScript');
+      console.info('   • Optimized HTML imports');
+      console.info('   • Automatic ETag generation');
+      console.info('   • Production-ready assets');
+      console.info('   • Reduced bundle size');
+      console.info('');
+      console.info('🚀 Deployment Ready!');
     } else {
-      console.log('⚠️  Build completed with warnings');
-      buildResult.logs.forEach(log => console.log(`   ${log}`));
+      console.info('⚠️  Build completed with warnings');
+      buildResult.logs.forEach(log => console.info(`   ${log}`));
     }
   } catch (error) {
-    console.log('❌ Build failed:', error);
+    console.info('❌ Build failed:', error);
   }
 }
 

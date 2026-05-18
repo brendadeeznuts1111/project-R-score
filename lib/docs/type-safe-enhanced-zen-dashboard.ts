@@ -142,10 +142,10 @@ export class TypeSafeEnhancedZenDashboard {
       })
     );
 
-    console.log('🎯 Type-Safe MIME Type Detection Initialized:');
+    console.info('🎯 Type-Safe MIME Type Detection Initialized:');
     this.metrics.supportedMimeTypes.forEach(({ extension, mimeType, description, size, detected }) => {
       const status = detected ? `✅ ${size} bytes` : '❌ not found';
-      console.log(`   ${extension} → ${mimeType} (${description}) ${status}`);
+      console.info(`   ${extension} → ${mimeType} (${description}) ${status}`);
     });
   }
 
@@ -153,7 +153,7 @@ export class TypeSafeEnhancedZenDashboard {
    * Start Type-Safe Enhanced REAL dashboard
    */
   async startTypeSafeEnhancedDashboard(): Promise<void> {
-    console.log('🎯 Starting Type-Safe Enhanced Zen Dashboard with Official Bun Interfaces!');
+    console.info('🎯 Starting Type-Safe Enhanced Zen Dashboard with Official Bun Interfaces!');
     
     // Start Bun server with type-safe MIME support
     const bun = (globalThis as any).Bun as any;
@@ -220,21 +220,21 @@ export class TypeSafeEnhancedZenDashboard {
       },
     });
 
-    console.log('🌐 Type-Safe Enhanced REAL Zen Dashboard Server Started!');
-    console.log('=' .repeat(80));
-    console.log(`📱 Dashboard: http://localhost:${this.server.port}/dashboard`);
-    console.log(`🔗 Bun Protocol: bun://localhost:${this.server.port}/dashboard`);
-    console.log(`📊 Type-Safe Metrics: http://localhost:${this.server.port}/api/type-safe-metrics`);
-    console.log(`🎭 Official MIME Types: http://localhost:${this.server.port}/api/mime-types-official`);
-    console.log(`📁 Type-Safe Analysis: http://localhost:${this.server.port}/api/analyze-file-typesafe?file=package.json`);
-    console.log(`🔍 Live Search: http://localhost:${this.server.port}/api/search?query=zen`);
-    console.log('');
-    console.log('🛡️ Type-Safe Features:');
-    console.log('   ✅ Official Bun interfaces integration');
-    console.log('   ✅ 100% type-safe file operations');
-    console.log('   ✅ Proper BunFile and FileSink usage');
-    console.log('   ✅ Type-checked MIME detection');
-    console.log('   ✅ Safe async/await patterns');
+    console.info('🌐 Type-Safe Enhanced REAL Zen Dashboard Server Started!');
+    console.info('=' .repeat(80));
+    console.info(`📱 Dashboard: http://localhost:${this.server.port}/dashboard`);
+    console.info(`🔗 Bun Protocol: bun://localhost:${this.server.port}/dashboard`);
+    console.info(`📊 Type-Safe Metrics: http://localhost:${this.server.port}/api/type-safe-metrics`);
+    console.info(`🎭 Official MIME Types: http://localhost:${this.server.port}/api/mime-types-official`);
+    console.info(`📁 Type-Safe Analysis: http://localhost:${this.server.port}/api/analyze-file-typesafe?file=package.json`);
+    console.info(`🔍 Live Search: http://localhost:${this.server.port}/api/search?query=zen`);
+    console.info('');
+    console.info('🛡️ Type-Safe Features:');
+    console.info('   ✅ Official Bun interfaces integration');
+    console.info('   ✅ 100% type-safe file operations');
+    console.info('   ✅ Proper BunFile and FileSink usage');
+    console.info('   ✅ Type-checked MIME detection');
+    console.info('   ✅ Safe async/await patterns');
     
     // Start performing real searches
     this.startRealSearches();
@@ -401,7 +401,7 @@ export class TypeSafeEnhancedZenDashboard {
    * Perform real search (same as before)
    */
   private async performRealSearch(query: string): Promise<any> {
-    console.log(`🔍 Performing REAL search: "${query}"`);
+    console.info(`🔍 Performing REAL search: "${query}"`);
     
     try {
       const startTime = performance.now();
@@ -428,7 +428,7 @@ export class TypeSafeEnhancedZenDashboard {
       this.updateSystemHealth();
       this.metrics.lastUpdate = new Date().toISOString();
 
-      console.log(`✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`);
+      console.info(`✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`);
       
       return {
         success: true,
@@ -716,7 +716,7 @@ export class TypeSafeEnhancedZenDashboard {
             try {
                 const response = await fetch('/api/type-safe-metrics');
                 const metrics = await response.json();
-                console.log('🛡️ Type-Safe Metrics:', metrics);
+                console.info('🛡️ Type-Safe Metrics:', metrics);
                 alert(\`Type-safe system with \${metrics.totalSearches} searches and 100% type safety!\`);
             } catch (error) {
                 console.error('❌ Failed to refresh type-safe metrics:', error);
@@ -755,9 +755,9 @@ export class TypeSafeEnhancedZenDashboard {
             }
         }
         
-        console.log('🛡️ Type-Safe Enhanced Zen Dashboard loaded!');
-        console.log('🔧 Official Bun Interfaces: Integrated');
-        console.log('📊 100% Type-Safe operations active!');
+        console.info('🛡️ Type-Safe Enhanced Zen Dashboard loaded!');
+        console.info('🔧 Official Bun Interfaces: Integrated');
+        console.info('📊 100% Type-Safe operations active!');
     </script>
 </body>
 </html>`;
@@ -776,8 +776,8 @@ export class TypeSafeEnhancedZenDashboard {
     // Use official Bun.write with proper typing
     await bun.write(staticFile, html);
     
-    console.log('📄 Type-safe static dashboard saved: type-safe-enhanced-zen-dashboard.html');
-    console.log('🛡️ Open with: open type-safe-enhanced-zen-dashboard.html');
+    console.info('📄 Type-safe static dashboard saved: type-safe-enhanced-zen-dashboard.html');
+    console.info('🛡️ Open with: open type-safe-enhanced-zen-dashboard.html');
   }
 
   /**
@@ -792,7 +792,7 @@ export class TypeSafeEnhancedZenDashboard {
       this.server.stop();
       this.server = null;
     }
-    console.log('👋 Type-Safe Enhanced Zen Dashboard stopped.');
+    console.info('👋 Type-Safe Enhanced Zen Dashboard stopped.');
   }
 }
 
@@ -803,7 +803,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   typeSafeDashboard.startTypeSafeEnhancedDashboard().catch(console.error);
   
   process.on('SIGINT', () => {
-    console.log('\n👋 Shutting down Type-Safe Enhanced Zen Dashboard...');
+    console.info('\n👋 Shutting down Type-Safe Enhanced Zen Dashboard...');
     typeSafeDashboard.stopDashboard();
     process.exit(0);
   });

@@ -336,24 +336,24 @@ if (import.meta.main) {
 		case "info":
 			if (args[0]) {
 				const info = await getFileInfo(args[0]);
-				console.log(`File: ${args[0]}`);
-				console.log(`  Exists: ${info.exists}`);
-				console.log(`  Size: ${formatBytes(info.size)}`);
-				console.log(`  Readable: ${info.isReadable}`);
+				console.info(`File: ${args[0]}`);
+				console.info(`  Exists: ${info.exists}`);
+				console.info(`  Size: ${formatBytes(info.size)}`);
+				console.info(`  Readable: ${info.isReadable}`);
 			}
 			break;
 
 		case "hash":
 			if (args[0]) {
 				const hash = await hashFile(args[0], (args[1] as any) || "sha256");
-				console.log(`Hash (${args[1] || "sha256"}): ${hash}`);
+				console.info(`Hash (${args[1] || "sha256"}): ${hash}`);
 			}
 			break;
 
 		case "tail":
 			if (args[0]) {
 				const lines = await readLastLines(args[0], parseInt(args[1]) || 10);
-				lines.forEach((line) => console.log(line));
+				lines.forEach((line) => console.info(line));
 			}
 			break;
 
@@ -363,15 +363,15 @@ if (import.meta.main) {
 				for await (const line of streamLines(args[0], {
 					maxLines: parseInt(args[1]) || 100,
 				})) {
-					console.log(line);
+					console.info(line);
 					count++;
 				}
-				console.log(`\nStreamed ${count} lines`);
+				console.info(`\nStreamed ${count} lines`);
 			}
 			break;
 
 		default:
-			console.log(`
+			console.info(`
 Byte Utilities CLI
 
 Usage:

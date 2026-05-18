@@ -19,11 +19,11 @@ export class CompileTimeFeatures {
   static initializePremiumFeatures() {
     if (feature("FEAT_PREMIUM")) {
       // This entire block is removed from free tier bundles
-      console.log("🏆 Premium features initialized");
+      console.info("🏆 Premium features initialized");
       return {
-        advancedAnalytics: () => console.log("Advanced analytics running"),
-        batchProcessing: () => console.log("Batch processing enabled"),
-        prioritySupport: () => console.log("Priority support available"),
+        advancedAnalytics: () => console.info("Advanced analytics running"),
+        batchProcessing: () => console.info("Batch processing enabled"),
+        prioritySupport: () => console.info("Priority support available"),
       };
     }
 
@@ -35,7 +35,7 @@ export class CompileTimeFeatures {
   static initializeDevTools() {
     if (feature("FEAT_EXTENDED_LOGGING")) {
       // This code never reaches production bundles
-      console.log("📝 Extended logging enabled");
+      console.info("📝 Extended logging enabled");
       return {
         debugMode: true,
         verboseOutput: true,
@@ -50,7 +50,7 @@ export class CompileTimeFeatures {
   static createApiClient() {
     if (feature("FEAT_MOCK_API")) {
       // Mock client only exists in development/test builds
-      console.log("🧪 Mock API client created");
+      console.info("🧪 Mock API client created");
       return {
         type: "mock",
         request: async () => ({ success: true, mock: true }),
@@ -58,7 +58,7 @@ export class CompileTimeFeatures {
     }
 
     // Production builds get real API client
-    console.log("🚀 Real API client created");
+    console.info("🚀 Real API client created");
     return {
       type: "real",
       request: async () => ({ success: true, real: true }),
@@ -69,7 +69,7 @@ export class CompileTimeFeatures {
   static initializeSecurity() {
     if (feature("FEAT_ENCRYPTION")) {
       // Encryption only included when explicitly enabled
-      console.log("🔐 Encryption enabled");
+      console.info("🔐 Encryption enabled");
       return {
         encrypt: (data: string) => `encrypted_${data}`,
         decrypt: (data: string) => data.replace("encrypted_", ""),
@@ -107,13 +107,13 @@ export class RuntimeFeatures {
       process.env.MAINTENANCE_MODE === "true"
     );
 
-    console.log("🔄 Runtime features initialized from environment");
+    console.info("🔄 Runtime features initialized from environment");
   }
 
   // Runtime toggle method
   static setFeature(feature: string, enabled: boolean) {
     this.config.set(feature, enabled);
-    console.log(`Runtime feature ${feature} set to ${enabled}`);
+    console.info(`Runtime feature ${feature} set to ${enabled}`);
   }
 
   static isFeatureEnabled(feature: string): boolean {
@@ -124,20 +124,20 @@ export class RuntimeFeatures {
   static trackEvent(event: string, data?: any) {
     if (this.isFeatureEnabled("ENABLE_ANALYTICS")) {
       // This code stays in bundle but only executes when enabled
-      console.log(`📊 Analytics: ${event}`, data);
+      console.info(`📊 Analytics: ${event}`, data);
       // Real analytics implementation would go here
     } else {
-      console.log(`📊 Analytics disabled: ${event}`);
+      console.info(`📊 Analytics disabled: ${event}`);
     }
   }
 
   // Example: Cache that can be toggled at runtime
   static async get(key: string) {
     if (this.isFeatureEnabled("ENABLE_CACHE")) {
-      console.log(`⚡ Cache HIT: ${key}`);
+      console.info(`⚡ Cache HIT: ${key}`);
       return `cached_${key}`;
     } else {
-      console.log(`⚡ Cache disabled: ${key}`);
+      console.info(`⚡ Cache disabled: ${key}`);
       return null;
     }
   }
@@ -148,12 +148,12 @@ export class RuntimeFeatures {
       return fn(); // No retry if disabled
     }
 
-    console.log(`🔄 Retry enabled, max attempts: ${maxAttempts}`);
+    console.info(`🔄 Retry enabled, max attempts: ${maxAttempts}`);
     for (let i = 0; i < maxAttempts; i++) {
       try {
         return await fn();
       } catch (error) {
-        console.log(`🔄 Attempt ${i + 1} failed, retrying...`);
+        console.info(`🔄 Attempt ${i + 1} failed, retrying...`);
         if (i === maxAttempts - 1) throw error;
       }
     }
@@ -163,7 +163,7 @@ export class RuntimeFeatures {
   // Example: Metrics collection that can be toggled
   static recordMetric(name: string, value: number) {
     if (this.isFeatureEnabled("ENABLE_METRICS")) {
-      console.log(`📈 Metric: ${name} = ${value}`);
+      console.info(`📈 Metric: ${name} = ${value}`);
       // Real metrics collection would go here
     }
   }
@@ -197,7 +197,7 @@ export class HybridFeatures {
     return {
       track: (event: string, data?: any) => {
         if (process.env.ANALYTICS_ENABLED !== "false") {
-          console.log(`🏆 Premium Analytics: ${event}`, data);
+          console.info(`🏆 Premium Analytics: ${event}`, data);
         }
       },
       isEnabled: () => process.env.ANALYTICS_ENABLED !== "false",
@@ -226,7 +226,7 @@ export class HybridFeatures {
       type: "real",
       baseUrl: process.env.API_BASE_URL || "https://api.example.com",
       request: async (endpoint: string) => {
-        console.log(`🚀 API Request: ${endpoint}`);
+        console.info(`🚀 API Request: ${endpoint}`);
         return { success: true, data: "real_response" };
       },
     };
@@ -244,19 +244,19 @@ export class HybridFeatures {
     return {
       debug: (message: string, data?: any) => {
         if (maxLevel === "debug" && process.env.VERBOSE_LOGGING !== "false") {
-          console.log(`🐛 DEBUG: ${message}`, data);
+          console.info(`🐛 DEBUG: ${message}`, data);
         }
       },
       info: (message: string, data?: any) => {
         if (["debug", "info"].includes(maxLevel)) {
-          console.log(`ℹ️ INFO: ${message}`, data);
+          console.info(`ℹ️ INFO: ${message}`, data);
         }
       },
       warn: (message: string, data?: any) => {
-        console.log(`⚠️ WARN: ${message}`, data);
+        console.info(`⚠️ WARN: ${message}`, data);
       },
       error: (message: string, data?: any) => {
-        console.log(`❌ ERROR: ${message}`, data);
+        console.info(`❌ ERROR: ${message}`, data);
       },
     };
   }
@@ -268,66 +268,66 @@ export class HybridFeatures {
 
 export class FeatureComparison {
   static demonstrateDifference() {
-    console.log("\n🎯 FEATURE FLAG COMPARISON DEMO");
-    console.log("=".repeat(50));
+    console.info("\n🎯 FEATURE FLAG COMPARISON DEMO");
+    console.info("=".repeat(50));
 
     // COMPILE-TIME EXAMPLE
-    console.log("\n📦 COMPILE-TIME FLAGS:");
-    console.log("• Eliminated from bundle when disabled");
-    console.log("• Zero runtime overhead");
-    console.log("• Cannot be changed after build");
+    console.info("\n📦 COMPILE-TIME FLAGS:");
+    console.info("• Eliminated from bundle when disabled");
+    console.info("• Zero runtime overhead");
+    console.info("• Cannot be changed after build");
 
     const premiumFeatures = CompileTimeFeatures.initializePremiumFeatures();
     if (premiumFeatures) {
       premiumFeatures.advancedAnalytics();
     } else {
-      console.log("• Premium features: NOT IN BUNDLE (free tier)");
+      console.info("• Premium features: NOT IN BUNDLE (free tier)");
     }
 
     // RUNTIME EXAMPLE
-    console.log("\n🔄 RUNTIME FLAGS:");
-    console.log("• Stay in bundle regardless of state");
-    console.log("• Can be toggled at startup/runtime");
-    console.log("• Small runtime overhead");
+    console.info("\n🔄 RUNTIME FLAGS:");
+    console.info("• Stay in bundle regardless of state");
+    console.info("• Can be toggled at startup/runtime");
+    console.info("• Small runtime overhead");
 
     RuntimeFeatures.initialize();
     RuntimeFeatures.trackEvent("user_action", { action: "login" });
 
     // HYBRID EXAMPLE
-    console.log("\n🎯 HYBRID FLAGS:");
-    console.log("• Compile-time elimination for major features");
-    console.log("• Runtime control for fine-tuning");
-    console.log("• Best of both worlds");
+    console.info("\n🎯 HYBRID FLAGS:");
+    console.info("• Compile-time elimination for major features");
+    console.info("• Runtime control for fine-tuning");
+    console.info("• Best of both worlds");
 
     const analytics = HybridFeatures.setupAnalytics();
     if (analytics) {
       analytics.track("premium_feature_used");
     } else {
-      console.log("• Analytics: NOT IN BUNDLE (free tier)");
+      console.info("• Analytics: NOT IN BUNDLE (free tier)");
     }
   }
 
   static performanceComparison() {
-    console.log("\n📊 PERFORMANCE COMPARISON:");
-    console.log("=".repeat(30));
+    console.info("\n📊 PERFORMANCE COMPARISON:");
+    console.info("=".repeat(30));
 
-    console.log("Compile-Time Flags:");
-    console.log("• Bundle Size: Minimal (dead code eliminated)");
-    console.log("• Runtime Performance: Zero overhead");
-    console.log("• Memory Usage: Minimal");
-    console.log("• Startup Time: Fastest");
+    console.info("Compile-Time Flags:");
+    console.info("• Bundle Size: Minimal (dead code eliminated)");
+    console.info("• Runtime Performance: Zero overhead");
+    console.info("• Memory Usage: Minimal");
+    console.info("• Startup Time: Fastest");
 
-    console.log("\nRuntime Flags:");
-    console.log("• Bundle Size: Larger (code always included)");
-    console.log("• Runtime Performance: Small overhead");
-    console.log("• Memory Usage: Higher");
-    console.log("• Startup Time: Slightly slower");
+    console.info("\nRuntime Flags:");
+    console.info("• Bundle Size: Larger (code always included)");
+    console.info("• Runtime Performance: Small overhead");
+    console.info("• Memory Usage: Higher");
+    console.info("• Startup Time: Slightly slower");
 
-    console.log("\nHybrid Approach:");
-    console.log("• Bundle Size: Optimized");
-    console.log("• Runtime Performance: Balanced");
-    console.log("• Memory Usage: Efficient");
-    console.log("• Startup Time: Optimized");
+    console.info("\nHybrid Approach:");
+    console.info("• Bundle Size: Optimized");
+    console.info("• Runtime Performance: Balanced");
+    console.info("• Memory Usage: Efficient");
+    console.info("• Startup Time: Optimized");
   }
 }
 
@@ -361,7 +361,7 @@ export class ConfigurationManager {
         feature("FEAT_MOCK_API") && process.env.USE_MOCK_DATA === "true",
     };
 
-    console.log("🎛️ Configuration loaded:", config);
+    console.info("🎛️ Configuration loaded:", config);
     return config;
   }
 
@@ -389,7 +389,7 @@ export class ConfigurationManager {
       throw new Error("Invalid feature configuration");
     }
 
-    console.log("✅ Configuration validation passed");
+    console.info("✅ Configuration validation passed");
     return true;
   }
 }

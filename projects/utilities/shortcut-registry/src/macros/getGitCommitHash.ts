@@ -9,7 +9,7 @@
  * import { getGitCommitHash } from './macros/getGitCommitHash.ts' with { type: 'macro' };
  * 
  * const commitHash = getGitCommitHash();
- * console.log(`Built from commit: ${commitHash}`);
+ * console.info(`Built from commit: ${commitHash}`);
  * ```
  */
 

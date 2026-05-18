@@ -336,7 +336,7 @@ const server = serve({
     // Log with colors in development, clean in production
     const isDevelopment = process.env.NODE_ENV === 'development';
     const logMessage = formatLog('info', `${request.method} ${url.pathname}`, isDevelopment);
-    console.log(logMessage);
+    console.info(logMessage);
     
     try {
       switch (url.pathname) {
@@ -391,14 +391,14 @@ const server = serve({
 });
 
 // Startup logs with colors
-console.log(formatLog('success', `🚀 Water Dashboard Standalone Server started on port ${server.port}`));
-console.log(formatLog('info', `Version: ${RUNTIME_INFO.version}`));
-console.log(formatLog('info', `User Agent: ${RUNTIME_INFO.userAgent}`));
-console.log(formatLog('info', `Platform: ${RUNTIME_INFO.platform}`));
-console.log(formatLog('info', `Runtime Args: ${RUNTIME_INFO.execArgv.join(' ')}`));
+console.info(formatLog('success', `🚀 Water Dashboard Standalone Server started on port ${server.port}`));
+console.info(formatLog('info', `Version: ${RUNTIME_INFO.version}`));
+console.info(formatLog('info', `User Agent: ${RUNTIME_INFO.userAgent}`));
+console.info(formatLog('info', `Platform: ${RUNTIME_INFO.platform}`));
+console.info(formatLog('info', `Runtime Args: ${RUNTIME_INFO.execArgv.join(' ')}`));
 
 // Production log (clean)
 const cleanStartupMessage = cleanLog(`Water Dashboard v${RUNTIME_INFO.version} started successfully on port ${server.port}`);
 if (process.env.NODE_ENV === 'production') {
-  console.log(cleanStartupMessage);
+  console.info(cleanStartupMessage);
 }

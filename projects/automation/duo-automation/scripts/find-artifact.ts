@@ -39,14 +39,14 @@ class ArtifactSearchEngine {
   async initialize(): Promise<void> {
     if (this.initialized) return;
 
-    console.log('🔍 Initializing artifact search engine...');
+    console.info('🔍 Initializing artifact search engine...');
     const startTime = Date.now();
 
     await this.indexArtifacts('./');
     this.buildTagIndex();
 
     const elapsed = Date.now() - startTime;
-    console.log(`✅ Indexed ${this.artifactCache.size} artifacts in ${elapsed}ms`);
+    console.info(`✅ Indexed ${this.artifactCache.size} artifacts in ${elapsed}ms`);
     this.initialized = true;
   }
 
@@ -95,13 +95,13 @@ class ArtifactSearchEngine {
   outputResults(results: ArtifactInfo[], format: string = 'table'): void {
     switch (format) {
       case 'json':
-        console.log(JSON.stringify(results, null, 2));
+        console.info(JSON.stringify(results, null, 2));
         break;
       case 'csv':
         this.outputCSV(results);
         break;
       case 'paths':
-        results.forEach(artifact => console.log(artifact.path));
+        results.forEach(artifact => console.info(artifact.path));
         break;
       case 'table':
       default:
@@ -338,12 +338,12 @@ class ArtifactSearchEngine {
    */
   private outputTable(results: ArtifactInfo[]): void {
     if (results.length === 0) {
-      console.log('No artifacts found matching your criteria.');
+      console.info('No artifacts found matching your criteria.');
       return;
     }
 
-    console.log('\n📋 Search Results:');
-    console.log('─'.repeat(120));
+    console.info('\n📋 Search Results:');
+    console.info('─'.repeat(120));
     
     results.forEach((artifact, index) => {
       const tagsStr = artifact.tags.slice(0, 3).join(', ') + 
@@ -351,21 +351,21 @@ class ArtifactSearchEngine {
       const statusStr = artifact.status || 'N/A';
       const domainStr = artifact.domain || 'N/A';
       
-      console.log(`${(index + 1).toString().padStart(3)}. ${artifact.path}`);
-      console.log(`     Tags: ${tagsStr}`);
-      console.log(`     Status: ${statusStr} | Domain: ${domainStr} | Type: ${artifact.type}`);
-      console.log(`     Modified: ${artifact.lastModified.toLocaleDateString()} | Size: ${artifact.size} bytes`);
-      console.log('');
+      console.info(`${(index + 1).toString().padStart(3)}. ${artifact.path}`);
+      console.info(`     Tags: ${tagsStr}`);
+      console.info(`     Status: ${statusStr} | Domain: ${domainStr} | Type: ${artifact.type}`);
+      console.info(`     Modified: ${artifact.lastModified.toLocaleDateString()} | Size: ${artifact.size} bytes`);
+      console.info('');
     });
     
-    console.log(`Found ${results.length} artifact(s)`);
+    console.info(`Found ${results.length} artifact(s)`);
   }
 
   /**
    * Output results as CSV
    */
   private outputCSV(results: ArtifactInfo[]): void {
-    console.log('Path,Tags,Status,Domain,Type,LastModified,Size');
+    console.info('Path,Tags,Status,Domain,Type,LastModified,Size');
     
     results.forEach(artifact => {
       const row = [
@@ -378,7 +378,7 @@ class ArtifactSearchEngine {
         artifact.size.toString()
       ];
       
-      console.log(row.join(','));
+      console.info(row.join(','));
     });
   }
 }
@@ -423,26 +423,26 @@ async function main() {
         const engine = new ArtifactSearchEngine();
         await engine.initialize();
         const stats = engine.getStats();
-        console.log('📊 Search Engine Statistics:');
-        console.log(`Total Artifacts: ${stats.totalArtifacts}`);
-        console.log(`Total Tags: ${stats.totalTags}`);
-        console.log('\nTag Distribution:');
+        console.info('📊 Search Engine Statistics:');
+        console.info(`Total Artifacts: ${stats.totalArtifacts}`);
+        console.info(`Total Tags: ${stats.totalTags}`);
+        console.info('\nTag Distribution:');
         Object.entries(stats.tagDistribution)
           .sort(([,a], [,b]) => b - a)
           .slice(0, 10)
-          .forEach(([tag, count]) => console.log(`  ${tag}: ${count}`));
+          .forEach(([tag, count]) => console.info(`  ${tag}: ${count}`));
         return;
       case '--suggest':
         const partial = args[++i] || '';
         const suggestEngine = new ArtifactSearchEngine();
         await suggestEngine.initialize();
         const suggestions = suggestEngine.suggestTags(partial);
-        console.log(`💡 Tag suggestions for "${partial}":`);
-        suggestions.forEach(tag => console.log(`  ${tag}`));
+        console.info(`💡 Tag suggestions for "${partial}":`);
+        suggestions.forEach(tag => console.info(`  ${tag}`));
         return;
       case '--help':
       case '-h':
-        console.log(`
+        console.info(`
 🔍 Artifact Search CLI
 
 Usage: bun run scripts/find-artifact.ts [options]

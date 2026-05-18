@@ -91,9 +91,9 @@ async function publishPackage() {
 		const lead = await getTeamLead(packageName);
 		const currentUser = await getCurrentUser();
 
-		console.log(`🔍 Checking ownership for ${packageName}...`);
-		console.log(`   Team Lead: ${lead.name} (${lead.email})`);
-		console.log(`   Current User: ${currentUser.name} (${currentUser.email})`);
+		console.info(`🔍 Checking ownership for ${packageName}...`);
+		console.info(`   Team Lead: ${lead.name} (${lead.email})`);
+		console.info(`   Current User: ${currentUser.name} (${currentUser.email})`);
 
 		if (lead.email.toLowerCase() !== currentUser.email.toLowerCase()) {
 			console.error(
@@ -103,32 +103,32 @@ async function publishPackage() {
 			process.exit(1);
 		}
 
-		console.log(`✅ Ownership verified`);
+		console.info(`✅ Ownership verified`);
 
 		// Run benchmarks
-		console.log(`\n📊 Running benchmarks for ${packageName}...`);
+		console.info(`\n📊 Running benchmarks for ${packageName}...`);
 		try {
 			await $`cd packages/${packageName} && bun run bench`.quiet();
-			console.log(`✅ Benchmarks passed`);
+			console.info(`✅ Benchmarks passed`);
 		} catch (error) {
 			console.warn(`⚠️ Benchmarks failed or not configured, continuing...`);
 		}
 
 		// Run tests
-		console.log(`\n🧪 Running tests...`);
+		console.info(`\n🧪 Running tests...`);
 		try {
 			await $`cd packages/${packageName} && bun test`.quiet();
-			console.log(`✅ Tests passed`);
+			console.info(`✅ Tests passed`);
 		} catch (error) {
 			console.warn(`⚠️ Tests failed or not configured, continuing...`);
 		}
 
 		// Publish
-		console.log(`\n📦 Publishing ${packageName}@${tag}...`);
+		console.info(`\n📦 Publishing ${packageName}@${tag}...`);
 		const registry = "https://npm.internal.yourcompany.com";
 		await $`cd packages/${packageName} && bun publish --registry ${registry} --tag ${tag}`;
 
-		console.log(`\n✅ Published ${packageName}@${tag} by ${lead.name}`);
+		console.info(`\n✅ Published ${packageName}@${tag} by ${lead.name}`);
 
 		// Optional: Send notification
 		if (process.env.SLACK_WEBHOOK_URL) {

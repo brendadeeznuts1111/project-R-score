@@ -50,13 +50,13 @@ export class SecureAPIClient {
   constructor() {
     // This entire initialization block will be removed if ENTERPRISE_SECURITY is false
     if (feature("ENTERPRISE_SECURITY")) {
-      console.log('🏢 Initializing enterprise-grade API client');
+      console.info('🏢 Initializing enterprise-grade API client');
       this.initializeEnterpriseFeatures();
     } else if (feature("STANDARD_SECURITY")) {
-      console.log('🔒 Initializing standard API client');
+      console.info('🔒 Initializing standard API client');
       this.initializeStandardFeatures();
     } else {
-      console.log('🛠️ Initializing development API client');
+      console.info('🛠️ Initializing development API client');
       this.initializeDevelopmentFeatures();
     }
   }
@@ -81,31 +81,31 @@ export class SecureAPIClient {
   }
   
   private setupAdvancedMonitoring(): void {
-    console.log('📊 Advanced monitoring enabled');
+    console.info('📊 Advanced monitoring enabled');
   }
   
   private setupComplianceReporting(): void {
-    console.log('📋 Compliance reporting enabled');
+    console.info('📋 Compliance reporting enabled');
   }
   
   private setupThreatDetection(): void {
-    console.log('🛡️ Threat detection enabled');
+    console.info('🛡️ Threat detection enabled');
   }
   
   private setupBasicMonitoring(): void {
-    console.log('📈 Basic monitoring enabled');
+    console.info('📈 Basic monitoring enabled');
   }
   
   private setupStandardAudit(): void {
-    console.log('🔍 Standard audit enabled');
+    console.info('🔍 Standard audit enabled');
   }
   
   private setupDebugMode(): void {
-    console.log('🐛 Debug mode enabled');
+    console.info('🐛 Debug mode enabled');
   }
   
   private setupMockServices(): void {
-    console.log('🎭 Mock services enabled');
+    console.info('🎭 Mock services enabled');
   }
   
   // Method with feature-based implementation
@@ -118,13 +118,13 @@ export class SecureAPIClient {
   }
   
   private async authenticateWithAWS(): Promise<boolean> {
-    console.log('🔐 Authenticating with AWS Signature V4');
+    console.info('🔐 Authenticating with AWS Signature V4');
     // AWS auth implementation
     return true;
   }
   
   private async authenticateWithBasic(): Promise<boolean> {
-    console.log('🔑 Authenticating with Basic Auth');
+    console.info('🔑 Authenticating with Basic Auth');
     // Basic auth implementation
     return true;
   }
@@ -136,7 +136,7 @@ export class SecureAPIClient {
 
 export class SecretManager {
   async storeSecret(key: string, value: string): Promise<void> {
-    console.log(`🔐 Storing secret: ${key}`);
+    console.info(`🔐 Storing secret: ${key}`);
     
     // Store with appropriate security level
     await setSecureSecret('api', key, value);
@@ -145,12 +145,12 @@ export class SecretManager {
     if (feature("FULL_AUDIT")) {
       await this.logFullAudit('STORE', key, value);
     } else {
-      console.log(`📝 Secret ${key} stored`);
+      console.info(`📝 Secret ${key} stored`);
     }
   }
   
   async retrieveSecret(key: string): Promise<string | null> {
-    console.log(`🔍 Retrieving secret: ${key}`);
+    console.info(`🔍 Retrieving secret: ${key}`);
     
     const secret = await getSecureSecret('api', key);
     
@@ -159,10 +159,10 @@ export class SecretManager {
       if (feature("FULL_AUDIT")) {
         await this.logFullAudit('RETRIEVE', key, '***');
       } else {
-        console.log(`✅ Secret ${key} retrieved`);
+        console.info(`✅ Secret ${key} retrieved`);
       }
     } else {
-      console.log(`❌ Secret ${key} not found`);
+      console.info(`❌ Secret ${key} not found`);
     }
     
     return secret;
@@ -178,16 +178,16 @@ export class SecretManager {
       user: process.env.USER || 'system'
     };
     
-    console.log('📊 Full Audit Entry:', auditEntry);
+    console.info('📊 Full Audit Entry:', auditEntry);
   }
   
   // Auto-rotation feature
   async setupAutoRotation(key: string): Promise<void> {
     if (feature("AUTO_ROTATION")) {
-      console.log(`🔄 Setting up auto-rotation for: ${key}`);
+      console.info(`🔄 Setting up auto-rotation for: ${key}`);
       // Auto-rotation implementation
     } else {
-      console.log(`⚠️ Auto-rotation not enabled for: ${key}`);
+      console.info(`⚠️ Auto-rotation not enabled for: ${key}`);
     }
   }
 }
@@ -216,23 +216,23 @@ export class CacheManager {
   }
   
   private async getFromRedis(key: string): Promise<any> {
-    console.log(`💾 Getting ${key} from Redis`);
+    console.info(`💾 Getting ${key} from Redis`);
     // Redis implementation
     return null;
   }
   
   private getFromMemory(key: string): any {
-    console.log(`🧠 Getting ${key} from memory`);
+    console.info(`🧠 Getting ${key} from memory`);
     return this.cache.get(key);
   }
   
   private async setInRedis(key: string, value: any, ttl?: number): Promise<void> {
-    console.log(`💾 Setting ${key} in Redis`);
+    console.info(`💾 Setting ${key} in Redis`);
     // Redis implementation
   }
   
   private setInMemory(key: string, value: any, ttl?: number): void {
-    console.log(`🧠 Setting ${key} in memory`);
+    console.info(`🧠 Setting ${key} in memory`);
     this.cache.set(key, value);
     
     if (ttl) {
@@ -251,26 +251,26 @@ export function printSecurityConfiguration(): void {
   const config = securityConfig.getConfig();
   const securityLevel = securityConfig.getSecurityLevel();
   
-  console.log('🛡️ Security Configuration:');
-  console.log(`  Environment: ${process.env.NODE_ENV}`);
-  console.log(`  Security Level: ${securityLevel.level} (${securityLevel.score}/15)`);
-  console.log(`  Features:`);
-  console.log(`    Security: ${config.security}`);
-  console.log(`    Cache: ${config.cache}`);
-  console.log(`    Audit: ${config.audit}`);
-  console.log(`    Auth: ${config.auth}`);
-  console.log(`    Storage: ${config.storage}`);
-  console.log(`    Monitoring: ${config.monitoring}`);
+  console.info('🛡️ Security Configuration:');
+  console.info(`  Environment: ${process.env.NODE_ENV}`);
+  console.info(`  Security Level: ${securityLevel.level} (${securityLevel.score}/15)`);
+  console.info(`  Features:`);
+  console.info(`    Security: ${config.security}`);
+  console.info(`    Cache: ${config.cache}`);
+  console.info(`    Audit: ${config.audit}`);
+  console.info(`    Auth: ${config.auth}`);
+  console.info(`    Storage: ${config.storage}`);
+  console.info(`    Monitoring: ${config.monitoring}`);
   
   // Show compile-time features
-  console.log(`\n🔧 Compile-time Features:`);
-  console.log(`  Enterprise Security: ${feature("ENTERPRISE_SECURITY")}`);
-  console.log(`  Standard Security: ${feature("STANDARD_SECURITY")}`);
-  console.log(`  Development Mode: ${feature("DEVELOPMENT_MODE")}`);
-  console.log(`  AWS Auth: ${feature("AWS_SIGV4")}`);
-  console.log(`  Redis Cache: ${feature("REDIS_CACHE")}`);
-  console.log(`  Full Audit: ${feature("FULL_AUDIT")}`);
-  console.log(`  Auto Rotation: ${feature("AUTO_ROTATION")}`);
+  console.info(`\n🔧 Compile-time Features:`);
+  console.info(`  Enterprise Security: ${feature("ENTERPRISE_SECURITY")}`);
+  console.info(`  Standard Security: ${feature("STANDARD_SECURITY")}`);
+  console.info(`  Development Mode: ${feature("DEVELOPMENT_MODE")}`);
+  console.info(`  AWS Auth: ${feature("AWS_SIGV4")}`);
+  console.info(`  Redis Cache: ${feature("REDIS_CACHE")}`);
+  console.info(`  Full Audit: ${feature("FULL_AUDIT")}`);
+  console.info(`  Auto Rotation: ${feature("AUTO_ROTATION")}`);
 }
 
 // ========================================================================
@@ -278,37 +278,37 @@ export function printSecurityConfiguration(): void {
 // ========================================================================
 
 export function demonstrateRuntimeFeatures(): void {
-  console.log('\\n🚀 Runtime Feature Demonstration:');
+  console.info('\\n🚀 Runtime Feature Demonstration:');
   
   // Check if enterprise features are available
   if (enhancedSecurityManager.isFeatureEnabled('ENTERPRISE_SECURITY')) {
-    console.log('✅ Enterprise security features are available');
-    console.log('   - Advanced threat detection');
-    console.log('   - Compliance reporting');
-    console.log('   - Enhanced audit logging');
+    console.info('✅ Enterprise security features are available');
+    console.info('   - Advanced threat detection');
+    console.info('   - Compliance reporting');
+    console.info('   - Enhanced audit logging');
   }
   
   // Check authentication method
   if (enhancedSecurityManager.isFeatureEnabled('AWS_SIGV4')) {
-    console.log('✅ AWS Signature V4 authentication is enabled');
+    console.info('✅ AWS Signature V4 authentication is enabled');
   } else if (enhancedSecurityManager.isFeatureEnabled('BASIC_AUTH')) {
-    console.log('⚠️ Basic authentication is enabled (development only)');
+    console.info('⚠️ Basic authentication is enabled (development only)');
   }
   
   // Check cache implementation
   if (enhancedSecurityManager.isFeatureEnabled('REDIS_CACHE')) {
-    console.log('✅ Redis distributed cache is enabled');
+    console.info('✅ Redis distributed cache is enabled');
   } else if (enhancedSecurityManager.isFeatureEnabled('MEMORY_CACHE')) {
-    console.log('✅ In-memory cache is enabled');
+    console.info('✅ In-memory cache is enabled');
   }
   
   // Get security metrics
   const metrics = enhancedSecurityManager.getMetrics();
-  console.log('\\n📊 Security Metrics:');
-  console.log(`  Secret Operations: ${metrics.secretOperations}`);
-  console.log(`  Auth Operations: ${metrics.authOperations}`);
-  console.log(`  Audit Events: ${metrics.auditEvents}`);
-  console.log(`  Security Events: ${metrics.securityEvents}`);
+  console.info('\\n📊 Security Metrics:');
+  console.info(`  Secret Operations: ${metrics.secretOperations}`);
+  console.info(`  Auth Operations: ${metrics.authOperations}`);
+  console.info(`  Audit Events: ${metrics.auditEvents}`);
+  console.info(`  Security Events: ${metrics.securityEvents}`);
 }
 
 // ========================================================================
@@ -354,7 +354,7 @@ bun build --target=bun examples/security-feature-flags.ts \
 // ========================================================================
 
 export async function main(): Promise<void> {
-  console.log('🚀 FactoryWager Security Feature Flags Demo\\n');
+  console.info('🚀 FactoryWager Security Feature Flags Demo\\n');
   
   // Print configuration
   printSecurityConfiguration();
@@ -366,7 +366,7 @@ export async function main(): Promise<void> {
   const secretManager = new SecretManager();
   await secretManager.storeSecret('api-key', 'sk-1234567890abcdef');
   const retrieved = await secretManager.retrieveSecret('api-key');
-  console.log(`\\n🔑 Retrieved secret: ${retrieved ? '***' + retrieved.slice(-4) : 'null'}`);
+  console.info(`\\n🔑 Retrieved secret: ${retrieved ? '***' + retrieved.slice(-4) : 'null'}`);
   
   // Setup auto-rotation if enabled
   await secretManager.setupAutoRotation('api-key');
@@ -374,22 +374,22 @@ export async function main(): Promise<void> {
   // Test API client
   const apiClient = new SecureAPIClient();
   const authenticated = await apiClient.authenticate();
-  console.log(`\\n🔐 Authentication result: ${authenticated ? 'Success' : 'Failed'}`);
+  console.info(`\\n🔐 Authentication result: ${authenticated ? 'Success' : 'Failed'}`);
   
   // Test cache manager
   const cacheManager = new CacheManager();
   await cacheManager.set('test-key', { data: 'test-value' }, 5000);
   const cached = await cacheManager.get('test-key');
-  console.log(`\\n💾 Cached data: ${cached ? JSON.stringify(cached) : 'null'}`);
+  console.info(`\\n💾 Cached data: ${cached ? JSON.stringify(cached) : 'null'}`);
   
   // Health check
   const health = await enhancedSecurityManager.healthCheck();
-  console.log(`\\n🏥 Health Status: ${health.status}`);
+  console.info(`\\n🏥 Health Status: ${health.status}`);
   if (health.issues.length > 0) {
-    console.log('   Issues:', health.issues);
+    console.info('   Issues:', health.issues);
   }
   
-  console.log('\\n✅ Demo completed successfully!');
+  console.info('\\n✅ Demo completed successfully!');
 }
 
 // Run demo if this file is executed directly

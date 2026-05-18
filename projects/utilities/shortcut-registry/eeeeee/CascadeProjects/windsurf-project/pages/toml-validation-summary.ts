@@ -3,9 +3,9 @@
  * TOML Validation Summary
  */
 
-console.log("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
-console.log("║                         TOML CONFIGURATION VALIDATION SUMMARY                        ║");
-console.log("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
+console.info("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
+console.info("║                         TOML CONFIGURATION VALIDATION SUMMARY                        ║");
+console.info("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
 
 const bunVersion = {
     "Check": "Bun Version",
@@ -14,8 +14,8 @@ const bunVersion = {
     "Note": "No bunfig errors detected"
 };
 
-console.log("🔍 Pre-flight Checks:\n");
-console.log(Bun.inspect.table([bunVersion], undefined, { colors: true }));
+console.info("🔍 Pre-flight Checks:\n");
+console.info(Bun.inspect.table([bunVersion], undefined, { colors: true }));
 
 const tomlFiles = [
     {
@@ -65,8 +65,8 @@ const tomlFiles = [
     }
 ];
 
-console.log("\n📁 TOML Files Found:\n");
-console.log(Bun.inspect.table(tomlFiles, undefined, { colors: true }));
+console.info("\n📁 TOML Files Found:\n");
+console.info(Bun.inspect.table(tomlFiles, undefined, { colors: true }));
 
 const validationResults = [
     {
@@ -85,13 +85,13 @@ const validationResults = [
     }
 ];
 
-console.log("\n📊 Validation Results:\n");
-console.log(Bun.inspect.table(validationResults, undefined, { colors: true }));
+console.info("\n📊 Validation Results:\n");
+console.info(Bun.inspect.table(validationResults, undefined, { colors: true }));
 
-console.log("\n💡 Notes:\n");
-console.log("  • Development environment: Configuration is valid");
-console.log("  • Production environment: Mock KYC provider must be disabled");
-console.log("  • All TOML files are syntactically correct");
-console.log("  • Bun version check passed (no bunfig errors)\n");
+console.info("\n💡 Notes:\n");
+console.info("  • Development environment: Configuration is valid");
+console.info("  • Production environment: Mock KYC provider must be disabled");
+console.info("  • All TOML files are syntactically correct");
+console.info("  • Bun version check passed (no bunfig errors)\n");
 
-console.log("✅ TOML syntax validation complete!\n");
+console.info("✅ TOML syntax validation complete!\n");

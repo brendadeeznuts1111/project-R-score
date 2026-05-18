@@ -1,58 +1,58 @@
 // bun-inspect-table-api-test.ts - Complete API reference test
 
-console.log("🎯 Bun.inspect.table() API Reference Test");
-console.log("====================================");
+console.info("🎯 Bun.inspect.table() API Reference Test");
+console.info("====================================");
 
 // Test 1: Basic usage with all properties
-console.log("\n📊 1. Basic Usage (All Properties):");
+console.info("\n📊 1. Basic Usage (All Properties):");
 const basicData = [
   { id: 1, name: "Alice", email: "alice@example.com", age: 30, active: true },
   { id: 2, name: "Bob", email: "bob@example.com", age: 25, active: false },
 ];
 
-console.log(Bun.inspect.table(basicData));
+console.info(Bun.inspect.table(basicData));
 
 // Test 2: Custom property selection
-console.log("\n🔧 2. Custom Property Selection:");
-console.log(Bun.inspect.table(basicData, ["name", "email", "active"]));
+console.info("\n🔧 2. Custom Property Selection:");
+console.info(Bun.inspect.table(basicData, ["name", "email", "active"]));
 
 // Test 3: Colors option - enabled (default)
-console.log("\n🎨 3. Colors Enabled (Default):");
-console.log(Bun.inspect.table(basicData, ["name", "status"], { colors: true }));
+console.info("\n🎨 3. Colors Enabled (Default):");
+console.info(Bun.inspect.table(basicData, ["name", "status"], { colors: true }));
 
 // Test 4: Colors option - disabled
-console.log("\n⚫ 4. Colors Disabled:");
-console.log(
+console.info("\n⚫ 4. Colors Disabled:");
+console.info(
   Bun.inspect.table(basicData, ["name", "status"], { colors: false })
 );
 
 // Test 5: Empty array
-console.log("\n🔍 5. Empty Array:");
-console.log(Bun.inspect.table([]));
+console.info("\n🔍 5. Empty Array:");
+console.info(Bun.inspect.table([]));
 
 // Test 6: Single object
-console.log("\n📦 6. Single Object:");
-console.log(Bun.inspect.table([{ only: "field", value: 42 }]));
+console.info("\n📦 6. Single Object:");
+console.info(Bun.inspect.table([{ only: "field", value: 42 }]));
 
 // Test 7: Objects with no properties
-console.log("\n📭 7. Objects with No Properties:");
-console.log(Bun.inspect.table([{}, {}]));
+console.info("\n📭 7. Objects with No Properties:");
+console.info(Bun.inspect.table([{}, {}]));
 
 // Test 8: Mixed object shapes
-console.log("\n🎲 8. Mixed Object Shapes:");
+console.info("\n🎲 8. Mixed Object Shapes:");
 const mixedShapes = [
   { name: "Alice", age: 30 },
   { name: "Bob", email: "bob@example.com" }, // missing age
   { city: "Chicago", country: "USA" }, // different properties
 ];
-console.log(Bun.inspect.table(mixedShapes));
+console.info(Bun.inspect.table(mixedShapes));
 
 // Test 9: Non-existent properties
-console.log("\n❌ 9. Non-existent Properties:");
-console.log(Bun.inspect.table(basicData, ["name", "nonexistent", "missing"]));
+console.info("\n❌ 9. Non-existent Properties:");
+console.info(Bun.inspect.table(basicData, ["name", "nonexistent", "missing"]));
 
 // Test 10: Complex data types
-console.log("\n🔧 10. Complex Data Types:");
+console.info("\n🔧 10. Complex Data Types:");
 const complexData = [
   {
     id: 1,
@@ -70,10 +70,10 @@ const complexData = [
     regex: /test/gi,
   },
 ];
-console.log(Bun.inspect.table(complexData));
+console.info(Bun.inspect.table(complexData));
 
 // Test 11: Unicode and international characters
-console.log("\n🌍 11. Unicode and International Characters:");
+console.info("\n🌍 11. Unicode and International Characters:");
 const unicodeData = [
   {
     emoji: "🚀 🎯 🏆 ⚡ 🎨 📊",
@@ -85,10 +85,10 @@ const unicodeData = [
     bullets: "• ◦ ◆ ◇ ◈ ◉ ◊ ○ ◌ ◍ ◎ ●",
   },
 ];
-console.log(Bun.inspect.table(unicodeData));
+console.info(Bun.inspect.table(unicodeData));
 
 // Test 12: Large dataset performance
-console.log("\n📈 12. Large Dataset Performance:");
+console.info("\n📈 12. Large Dataset Performance:");
 const largeData = Array.from({ length: 20 }, (_, i) => ({
   id: i + 1,
   name: `User ${i + 1}`,
@@ -101,7 +101,7 @@ const largeData = Array.from({ length: 20 }, (_, i) => ({
 }));
 
 // Show only first 10 for readability
-console.log(
+console.info(
   Bun.inspect.table(largeData.slice(0, 10), [
     "id",
     "name",
@@ -111,7 +111,7 @@ console.log(
 );
 
 // Test 13: Performance metrics with status indicators
-console.log("\n⚡ 13. Performance Metrics:");
+console.info("\n⚡ 13. Performance Metrics:");
 const performanceData = [
   {
     operation: "Database Query",
@@ -160,10 +160,10 @@ const performanceData = [
   },
 ];
 
-console.log(Bun.inspect.table(performanceData));
+console.info(Bun.inspect.table(performanceData));
 
 // Test 14: Nested objects
-console.log("\n📦 14. Nested Objects:");
+console.info("\n📦 14. Nested Objects:");
 const nestedData = [
   {
     user: {
@@ -190,10 +190,10 @@ const nestedData = [
   },
 ];
 
-console.log(Bun.inspect.table(nestedData));
+console.info(Bun.inspect.table(nestedData));
 
 // Test 15: Arrays as values
-console.log("\n📋 15. Arrays as Values:");
+console.info("\n📋 15. Arrays as Values:");
 const arrayData = [
   {
     project: "Website Redesign",
@@ -213,10 +213,10 @@ const arrayData = [
   },
 ];
 
-console.log(Bun.inspect.table(arrayData));
+console.info(Bun.inspect.table(arrayData));
 
 // Test 16: Function results
-console.log("\n🔧 16. Function Results:");
+console.info("\n🔧 16. Function Results:");
 const functionData = [
   {
     name: "Math.sqrt",
@@ -248,10 +248,10 @@ const functionData = [
   },
 ];
 
-console.log(Bun.inspect.table(functionData));
+console.info(Bun.inspect.table(functionData));
 
 // Test 17: Error objects
-console.log("\n❌ 17. Error Objects:");
+console.info("\n❌ 17. Error Objects:");
 const errorData = [
   {
     type: "ReferenceError",
@@ -279,10 +279,10 @@ const errorData = [
   },
 ];
 
-console.log(Bun.inspect.table(errorData));
+console.info(Bun.inspect.table(errorData));
 
 // Test 18: Configuration display
-console.log("\n⚙️ 18. Configuration Display:");
+console.info("\n⚙️ 18. Configuration Display:");
 const configData = [
   {
     setting: "database.url",
@@ -302,22 +302,22 @@ const configData = [
   { setting: "log.level", value: "info", type: "string", env: "LOG_LEVEL" },
 ];
 
-console.log(Bun.inspect.table(configData));
+console.info(Bun.inspect.table(configData));
 
-console.log("\n✅ Bun.inspect.table() API reference test completed!");
-console.log("\n📋 Features Tested:");
-console.log("   • Basic tabular data display");
-console.log("   • Custom property selection");
-console.log("   • Colors option (enabled/disabled)");
-console.log("   • Edge cases (empty, single, no properties)");
-console.log("   • Mixed object shapes");
-console.log("   • Non-existent property handling");
-console.log("   • Complex data types");
-console.log("   • Unicode and international support");
-console.log("   • Large dataset performance");
-console.log("   • Performance metrics with indicators");
-console.log("   • Nested object structures");
-console.log("   • Arrays as values");
-console.log("   • Function results");
-console.log("   • Error objects");
-console.log("   • Configuration display");
+console.info("\n✅ Bun.inspect.table() API reference test completed!");
+console.info("\n📋 Features Tested:");
+console.info("   • Basic tabular data display");
+console.info("   • Custom property selection");
+console.info("   • Colors option (enabled/disabled)");
+console.info("   • Edge cases (empty, single, no properties)");
+console.info("   • Mixed object shapes");
+console.info("   • Non-existent property handling");
+console.info("   • Complex data types");
+console.info("   • Unicode and international support");
+console.info("   • Large dataset performance");
+console.info("   • Performance metrics with indicators");
+console.info("   • Nested object structures");
+console.info("   • Arrays as values");
+console.info("   • Function results");
+console.info("   • Error objects");
+console.info("   • Configuration display");

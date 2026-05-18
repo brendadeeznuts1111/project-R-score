@@ -97,8 +97,8 @@ export class RedisCacheLayer {
         return false;
       }
 
-      console.log(`🔴 Redis Cache Layer connected (${pong})`);
-      console.log(`   TTL: ${this.config.defaultTTL}s | Max Memory: ${this.config.maxMemoryMB}MB`);
+      console.info(`🔴 Redis Cache Layer connected (${pong})`);
+      console.info(`   TTL: ${this.config.defaultTTL}s | Max Memory: ${this.config.maxMemoryMB}MB`);
 
       return true;
     } catch (error) {
@@ -238,7 +238,7 @@ export class RedisCacheLayer {
         }
       }
 
-      console.log(`🗑️  Invalidated ${deletedCount} cache entries matching: ${pattern}`);
+      console.info(`🗑️  Invalidated ${deletedCount} cache entries matching: ${pattern}`);
       return deletedCount;
     } catch (error) {
       return 0;

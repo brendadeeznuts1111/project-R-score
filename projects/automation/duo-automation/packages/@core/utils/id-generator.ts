@@ -311,55 +311,55 @@ if (import.meta.main) {
   if (args[0] === 'agent') {
     const count = parseInt(args[1]) || 1;
     const result = BunIDGenerator.generateBulkIdsTracked(count, { prefix: 'AG' });
-    console.log(`Generated ${result.count} agent IDs in ${result.generationTime.toFixed(2)}ms`);
-    console.log(`First: ${result.ids[0]}`);
-    console.log(`Last: ${result.ids[result.ids.length - 1]}`);
+    console.info(`Generated ${result.count} agent IDs in ${result.generationTime.toFixed(2)}ms`);
+    console.info(`First: ${result.ids[0]}`);
+    console.info(`Last: ${result.ids[result.ids.length - 1]}`);
     if (result.duplicates > 0) {
       console.warn(`⚠️  Found ${result.duplicates} duplicates`);
     }
   } else if (args[0] === 'transaction') {
     const agentId = args[1] || 'AG000001';
     const tx = BunIDGenerator.generateTxId(agentId);
-    console.log(`Transaction ID: ${tx.id}`);
-    console.log(`Agent ID: ${tx.agentId}`);
-    console.log(`Timestamp: ${new Date(tx.timestamp).toISOString()}`);
-    console.log(`UUID: ${tx.uuid}`);
+    console.info(`Transaction ID: ${tx.id}`);
+    console.info(`Agent ID: ${tx.agentId}`);
+    console.info(`Timestamp: ${new Date(tx.timestamp).toISOString()}`);
+    console.info(`UUID: ${tx.uuid}`);
   } else if (args[0] === 'mixed') {
     const count = parseInt(args[1]) || 10;
     const result = BunIDGenerator.generateMixedBulk(count);
-    console.log('=== Mixed ID Generation ===');
-    console.log(`Agents: ${result.agents.length}`);
-    console.log(`Transactions: ${result.transactions.length}`);
-    console.log(`Sessions: ${result.sessions.length}`);
-    console.log(`Workflows: ${result.workflows.length}`);
-    console.log('');
-    console.log('Sample IDs:');
-    console.log(`Agent: ${result.agents[0]}`);
-    console.log(`Transaction: ${result.transactions[0]}`);
-    console.log(`Session: ${result.sessions[0]}`);
-    console.log(`Workflow: ${result.workflows[0]}`);
+    console.info('=== Mixed ID Generation ===');
+    console.info(`Agents: ${result.agents.length}`);
+    console.info(`Transactions: ${result.transactions.length}`);
+    console.info(`Sessions: ${result.sessions.length}`);
+    console.info(`Workflows: ${result.workflows.length}`);
+    console.info('');
+    console.info('Sample IDs:');
+    console.info(`Agent: ${result.agents[0]}`);
+    console.info(`Transaction: ${result.transactions[0]}`);
+    console.info(`Session: ${result.sessions[0]}`);
+    console.info(`Workflow: ${result.workflows[0]}`);
   } else if (args[0] === 'validate') {
     const id = args[1];
     if (!id) {
-      console.log('Usage: bun id-generator.ts validate <id>');
+      console.info('Usage: bun id-generator.ts validate <id>');
       process.exit(1);
     }
     
-    console.log(`Validating: ${id}`);
-    console.log(`Agent ID: ${BunIDGenerator.validateAgentId(id) ? '✅ Valid' : '❌ Invalid'}`);
-    console.log(`Transaction ID: ${BunIDGenerator.validateTransactionId(id) ? '✅ Valid' : '❌ Invalid'}`);
+    console.info(`Validating: ${id}`);
+    console.info(`Agent ID: ${BunIDGenerator.validateAgentId(id) ? '✅ Valid' : '❌ Invalid'}`);
+    console.info(`Transaction ID: ${BunIDGenerator.validateTransactionId(id) ? '✅ Valid' : '❌ Invalid'}`);
     
     if (BunIDGenerator.validateTransactionId(id)) {
       const agentId = BunIDGenerator.extractAgentIdFromTxId(id);
       const timestamp = BunIDGenerator.extractTimestampFromTxId(id);
-      console.log(`Extracted Agent ID: ${agentId}`);
-      console.log(`Extracted Timestamp: ${timestamp ? new Date(timestamp).toISOString() : 'Invalid'}`);
+      console.info(`Extracted Agent ID: ${agentId}`);
+      console.info(`Extracted Timestamp: ${timestamp ? new Date(timestamp).toISOString() : 'Invalid'}`);
     }
   } else {
-    console.log('Usage:');
-    console.log('  bun id-generator.ts agent [count]');
-    console.log('  bun id-generator.ts transaction [agentId]');
-    console.log('  bun id-generator.ts mixed [count]');
-    console.log('  bun id-generator.ts validate <id>');
+    console.info('Usage:');
+    console.info('  bun id-generator.ts agent [count]');
+    console.info('  bun id-generator.ts transaction [agentId]');
+    console.info('  bun id-generator.ts mixed [count]');
+    console.info('  bun id-generator.ts validate <id>');
   }
 }

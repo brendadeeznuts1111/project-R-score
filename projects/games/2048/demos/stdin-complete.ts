@@ -3,17 +3,17 @@
 // Comprehensive stdin reading demo - All patterns from Bun documentation
 import { colourKit } from "./quantum-toolkit-patch.ts";
 
-console.log(
+console.info(
   colourKit(0.8).ansi + "📥 Comprehensive Bun stdin Demo" + "\x1b[0m"
 );
-console.log("=".repeat(50));
+console.info("=".repeat(50));
 
 // Demo 1: Basic console AsyncIterable (from documentation)
 async function basicConsoleStdin() {
-  console.log(
+  console.info(
     colourKit(0.5).ansi + "\n🔤 Basic Console stdin (AsyncIterable)" + "\x1b[0m"
   );
-  console.log('Type messages (press Enter after each). Type "quit" to exit.\n');
+  console.info('Type messages (press Enter after each). Type "quit" to exit.\n');
 
   const prompt = "Type something: ";
   process.stdout.write(prompt);
@@ -24,28 +24,28 @@ async function basicConsoleStdin() {
     const trimmed = line.trim();
 
     if (trimmed === "quit" || trimmed === "exit") {
-      console.log("👋 Exiting basic stdin demo...");
+      console.info("👋 Exiting basic stdin demo...");
       break;
     }
 
     messageCount++;
     const color = colourKit(Math.random()).ansi;
-    console.log(`${color}You typed (${messageCount}): ${trimmed}\x1b[0m`);
-    console.log(`Length: ${trimmed.length} characters`);
+    console.info(`${color}You typed (${messageCount}): ${trimmed}\x1b[0m`);
+    console.info(`Length: ${trimmed.length} characters`);
 
     process.stdout.write(prompt);
   }
 
-  console.log(`✅ Processed ${messageCount} messages\n`);
+  console.info(`✅ Processed ${messageCount} messages\n`);
 }
 
 // Demo 2: Bun.stdin as BunFile for chunked reading
 async function chunkedStdin() {
-  console.log(
+  console.info(
     colourKit(0.6).ansi + "\n📦 Chunked stdin (Bun.stdin as BunFile)" + "\x1b[0m"
   );
-  console.log("This demo reads Bun.stdin as a file. Try piping data:\n");
-  console.log(
+  console.info("This demo reads Bun.stdin as a file. Try piping data:\n");
+  console.info(
     'Example: echo "hello world" | bun run stdin-complete.ts\n'
   );
 
@@ -58,26 +58,26 @@ async function chunkedStdin() {
     const size = await stdinFile.size;
 
     if (size === 0) {
-      console.log(
+      console.info(
         'ℹ️ No data received. Try piping: echo "test" | bun run stdin-complete.ts'
       );
       return;
     }
 
-    console.log(`📊 stdin file size: ${size} bytes`);
+    console.info(`📊 stdin file size: ${size} bytes`);
 
     // Read the entire stdin content
     const content = await stdinFile.text();
     const chunks = content.split("\n").filter((line) => line.length > 0);
 
-    console.log(`📦 Processing ${chunks.length} chunks:`);
+    console.info(`📦 Processing ${chunks.length} chunks:`);
 
     for (const chunk of chunks) {
       chunkCount++;
       totalBytes += chunk.length;
 
-      console.log(`Chunk ${chunkCount}: ${chunk.length} bytes`);
-      console.log(`Content: "${chunk}"`);
+      console.info(`Chunk ${chunkCount}: ${chunk.length} bytes`);
+      console.info(`Content: "${chunk}"`);
 
       // Show hex representation for binary data
       if (chunk.length > 0) {
@@ -86,24 +86,24 @@ async function chunkedStdin() {
         const hex = Array.from(bytes.slice(0, 16))
           .map((b) => b.toString(16).padStart(2, "0"))
           .join(" ");
-        console.log(`Hex (first 16): ${hex}`);
+        console.info(`Hex (first 16): ${hex}`);
       }
 
-      console.log("---");
+      console.info("---");
     }
 
-    console.log(`✅ Processed ${chunkCount} chunks, ${totalBytes} total bytes\n");
+    console.info(`✅ Processed ${chunkCount} chunks, ${totalBytes} total bytes\n");
   } catch (error) {
-    console.log("❌ Chunk reading error: " + error.message);
+    console.info("❌ Chunk reading error: " + error.message);
   }
 }
 
 // Demo 3: Advanced stdin with processing
 async function advancedStdin() {
-  console.log(
+  console.info(
     colourKit(0.7).ansi + "\n⚡ Advanced stdin with Data Processing" + "\x1b[0m"
   );
-  console.log("Type commands: calc, reverse, stats, or quit\n");
+  console.info("Type commands: calc, reverse, stats, or quit\n");
 
   let totalChars = 0;
   let wordCount = 0;
@@ -121,23 +121,23 @@ async function advancedStdin() {
     switch (input.toLowerCase()) {
       case "quit":
       case "exit":
-        console.log("👋 Exiting advanced demo...");
+        console.info("👋 Exiting advanced demo...");
         break;
 
       case "stats":
-        console.log("\n📊 Current Statistics:");
-        console.log(`Lines processed: ${lineCount}`);
-        console.log(`Total characters: ${totalChars}`);
-        console.log(`Word count: ${wordCount}`);
-        console.log(
+        console.info("\n📊 Current Statistics:");
+        console.info(`Lines processed: ${lineCount}`);
+        console.info(`Total characters: ${totalChars}`);
+        console.info(`Word count: ${wordCount}`);
+        console.info(
           `Average line length: ${(totalChars / lineCount).toFixed(1)}`
         );
         break;
 
       case "calc":
-        console.log("\n🧮 Simple Calculator Mode");
-        console.log('Type expressions like "5 + 3" or "10 * 2"');
-        console.log('Type "back" to return to command mode');
+        console.info("\n🧮 Simple Calculator Mode");
+        console.info('Type expressions like "5 + 3" or "10 * 2"');
+        console.info('Type "back" to return to command mode');
 
         for await (const calcLine of console) {
           const expr = calcLine.trim();
@@ -146,16 +146,16 @@ async function advancedStdin() {
           try {
             // Simple math evaluation (safe for demo)
             const result = Function('"use strict"; return (' + expr + ")")();
-            console.log(`= ${result}`);
+            console.info(`= ${result}`);
           } catch {
-            console.log("❌ Invalid expression");
+            console.info("❌ Invalid expression");
           }
         }
         break;
 
       case "reverse":
-        console.log("\n🔄 Text Reverser Mode");
-        console.log('Type text to reverse, "back" to return');
+        console.info("\n🔄 Text Reverser Mode");
+        console.info('Type text to reverse, "back" to return');
 
         for await (const revLine of console) {
           const text = revLine.trim();
@@ -163,13 +163,13 @@ async function advancedStdin() {
 
           const reversed = text.split("").reverse().join("");
           const color = colourKit(Math.random()).ansi;
-          console.log(`${color}Reversed: ${reversed}\x1b[0m`);
+          console.info(`${color}Reversed: ${reversed}\x1b[0m`);
         }
         break;
 
       default:
         if (input) {
-          console.log(
+          console.info(
             `Unknown command: ${input}. Try: stats, calc, reverse, quit`
           );
         }
@@ -182,17 +182,17 @@ async function advancedStdin() {
     process.stdout.write(prompt);
   }
 
-  console.log(
+  console.info(
     `\n📈 Final Stats: ${lineCount} lines, ${totalChars} chars, ${wordCount} words\n`
   );
 }
 
 // Demo 4: stdin with file operations
 async function fileStdin() {
-  console.log(
+  console.info(
     colourKit(0.4).ansi + "\n📁 stdin with File Operations" + "\x1b[0m"
   );
-  console.log(
+  console.info(
     "Type content to save to files. Commands: save <filename>, read <filename>, quit\n"
   );
 
@@ -214,12 +214,12 @@ async function fileStdin() {
         const content = files.get(filename)!;
         try {
           await Bun.write(filename, content);
-          console.log(`✅ Saved ${filename} (${content.length} bytes)`);
+          console.info(`✅ Saved ${filename} (${content.length} bytes)`);
         } catch (error) {
-          console.log(`❌ Save error: ${error.message}`);
+          console.info(`❌ Save error: ${error.message}`);
         }
       } else {
-        console.log(
+        console.info(
           '❌ No content to save. Type content first, then "save filename"'
         );
       }
@@ -227,22 +227,22 @@ async function fileStdin() {
       const filename = input.slice(5).trim();
       try {
         const content = await Bun.file(filename).text();
-        console.log(`📖 Content of ${filename}:`);
-        console.log(content);
+        console.info(`📖 Content of ${filename}:`);
+        console.info(content);
         files.set(filename, content);
       } catch (error) {
-        console.log(`❌ Read error: ${error.message}`);
+        console.info(`❌ Read error: ${error.message}`);
       }
     } else if (input === "list") {
-      console.log("📋 Files in memory:");
+      console.info("📋 Files in memory:");
       for (const [name, content] of files) {
-        console.log(`  ${name}: ${content.length} bytes`);
+        console.info(`  ${name}: ${content.length} bytes`);
       }
     } else if (input) {
       // Store as content for next save operation
       const lastFile = Array.from(files.keys()).pop() || "default.txt";
       files.set(lastFile, input);
-      console.log(
+      console.info(
         `💾 Content stored for "${lastFile}" (${input.length} bytes)`
       );
     }
@@ -250,16 +250,16 @@ async function fileStdin() {
     process.stdout.write(prompt);
   }
 
-  console.log("👋 File demo completed\n");
+  console.info("👋 File demo completed\n");
 }
 
 // Demo 5: stdin with data analysis
 async function analyticsStdin() {
-  console.log(
+  console.info(
     colourKit(0.8).ansi + "\n📈 stdin with Real-time Analytics" + "\x1b[0m"
   );
-  console.log("Type numbers (one per line) for statistical analysis");
-  console.log("Commands: stats, clear, chart, quit\n");
+  console.info("Type numbers (one per line) for statistical analysis");
+  console.info("Commands: stats, clear, chart, quit\n");
 
   const numbers: number[] = [];
 
@@ -276,7 +276,7 @@ async function analyticsStdin() {
     switch (input.toLowerCase()) {
       case "stats":
         if (numbers.length === 0) {
-          console.log("❌ No numbers to analyze");
+          console.info("❌ No numbers to analyze");
         } else {
           const sum = numbers.reduce((a, b) => a + b, 0);
           const avg = sum / numbers.length;
@@ -288,33 +288,33 @@ async function analyticsStdin() {
               ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
               : sorted[Math.floor(sorted.length / 2)];
 
-          console.log("\n📊 Statistical Analysis:");
-          console.log(`Count: ${numbers.length}`);
-          console.log(`Sum: ${sum.toFixed(2)}`);
-          console.log(`Average: ${avg.toFixed(2)}`);
-          console.log(`Median: ${median.toFixed(2)}`);
-          console.log(`Min: ${min.toFixed(2)}`);
-          console.log(`Max: ${max.toFixed(2)}`);
-          console.log(`Range: ${(max - min).toFixed(2)}`);
+          console.info("\n📊 Statistical Analysis:");
+          console.info(`Count: ${numbers.length}`);
+          console.info(`Sum: ${sum.toFixed(2)}`);
+          console.info(`Average: ${avg.toFixed(2)}`);
+          console.info(`Median: ${median.toFixed(2)}`);
+          console.info(`Min: ${min.toFixed(2)}`);
+          console.info(`Max: ${max.toFixed(2)}`);
+          console.info(`Range: ${(max - min).toFixed(2)}`);
         }
         break;
 
       case "clear":
         numbers.length = 0;
-        console.log("🧹 Numbers cleared");
+        console.info("🧹 Numbers cleared");
         break;
 
       case "chart":
         if (numbers.length === 0) {
-          console.log("❌ No numbers to chart");
+          console.info("❌ No numbers to chart");
         } else {
-          console.log("\n📊 Simple Chart:");
+          console.info("\n📊 Simple Chart:");
           const max = Math.max(...numbers);
           numbers.forEach((num, i) => {
             const barLength = Math.round((num / max) * 20);
             const bar = "█".repeat(barLength);
             const color = colourKit(num / max).ansi;
-            console.log(`${color}${bar}\x1b[0m ${num.toFixed(2)}`);
+            console.info(`${color}${bar}\x1b[0m ${num.toFixed(2)}`);
           });
         }
         break;
@@ -323,28 +323,28 @@ async function analyticsStdin() {
         const num = parseFloat(input);
         if (!isNaN(num)) {
           numbers.push(num);
-          console.log(`✅ Added ${num.toFixed(2)} (total: ${numbers.length})`);
+          console.info(`✅ Added ${num.toFixed(2)} (total: ${numbers.length})`);
         } else if (input) {
-          console.log("❌ Not a valid number");
+          console.info("❌ Not a valid number");
         }
     }
 
     process.stdout.write(prompt);
   }
 
-  console.log(`👋 Analytics demo completed with ${numbers.length} numbers\n`);
+  console.info(`👋 Analytics demo completed with ${numbers.length} numbers\n`);
 }
 
 // Demo selection
 async function selectDemo() {
-  console.log("\n🎯 Select a stdin demo:");
-  console.log("1. Basic Console stdin");
-  console.log("2. Chunked stdin (Bun.stdin.stream)");
-  console.log("3. Advanced stdin with processing");
-  console.log("4. stdin with file operations");
-  console.log("5. stdin with analytics");
-  console.log("6. Run all demos sequentially");
-  console.log('Or just pipe data: echo "test" | bun run stdin-complete.ts\n');
+  console.info("\n🎯 Select a stdin demo:");
+  console.info("1. Basic Console stdin");
+  console.info("2. Chunked stdin (Bun.stdin.stream)");
+  console.info("3. Advanced stdin with processing");
+  console.info("4. stdin with file operations");
+  console.info("5. stdin with analytics");
+  console.info("6. Run all demos sequentially");
+  console.info('Or just pipe data: echo "test" | bun run stdin-complete.ts\n');
 
   const prompt = "Demo number (1-6) > ";
   process.stdout.write(prompt);
@@ -377,7 +377,7 @@ async function selectDemo() {
         break;
       default:
         if (choice) {
-          console.log("❌ Invalid choice. Please enter 1-6");
+          console.info("❌ Invalid choice. Please enter 1-6");
           process.stdout.write(prompt);
           continue;
         } else {
@@ -391,12 +391,12 @@ async function selectDemo() {
 
 // Main execution
 async function main() {
-  console.log("🎯 This demo covers all stdin patterns from Bun documentation:");
-  console.log("  • console as AsyncIterable");
-  console.log("  • Bun.stdin.stream() for chunks");
-  console.log("  • Interactive command processing");
-  console.log("  • File operations via stdin");
-  console.log("  • Real-time data analysis");
+  console.info("🎯 This demo covers all stdin patterns from Bun documentation:");
+  console.info("  • console as AsyncIterable");
+  console.info("  • Bun.stdin.stream() for chunks");
+  console.info("  • Interactive command processing");
+  console.info("  • File operations via stdin");
+  console.info("  • Real-time data analysis");
 
   // Check if data is being piped in by trying to read from stdin
   let hasPipedData = false;
@@ -416,24 +416,24 @@ async function main() {
   }
 
   if (hasPipedData) {
-    console.log("\n📡 Data detected in stdin - running chunked demo...");
+    console.info("\n📡 Data detected in stdin - running chunked demo...");
     await chunkedStdin();
   } else {
-    console.log("\n💡 No piped data detected - running interactive mode...");
+    console.info("\n💡 No piped data detected - running interactive mode...");
     await selectDemo();
   }
 
-  console.log(
+  console.info(
     colourKit(0.2).ansi + "\n🎉 stdin Demo Suite Completed!" + "\x1b[0m"
   );
-  console.log(
+  console.info(
     '💡 Try piping data: echo "hello world" | bun run stdin-complete.ts'
   );
 }
 
 // Handle graceful exit
 process.on("SIGINT", () => {
-  console.log("\n\n👋 stdin demo interrupted gracefully!");
+  console.info("\n\n👋 stdin demo interrupted gracefully!");
   process.exit(0);
 });
 

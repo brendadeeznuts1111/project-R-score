@@ -75,7 +75,7 @@ const streamingTests = [
 
 // Create streaming proxy with rate limiting
 async function createStreamingProxy() {
-  console.log("🔧 Setting up streaming HTTP proxy with rate limiting...");
+  console.info("🔧 Setting up streaming HTTP proxy with rate limiting...");
 
   const rateLimiter = createRateLimiter(streamingConfig.rateLimiter);
 
@@ -102,13 +102,13 @@ async function createStreamingProxy() {
 
 // Test streaming capabilities
 async function testStreaming(proxy: any, rateLimiter: any) {
-  console.log("\n🧪 Testing streaming capabilities...");
+  console.info("\n🧪 Testing streaming capabilities...");
 
   const results = [];
 
   for (const test of streamingTests) {
     try {
-      console.log(`📡 Testing: ${test.name} (${test.description})`);
+      console.info(`📡 Testing: ${test.name} (${test.description})`);
 
       const startTime = Date.now();
       const response = await fetch(`http://localhost:8080${test.url}`);
@@ -138,7 +138,7 @@ async function testStreaming(proxy: any, rateLimiter: any) {
       const actual = isStreaming ? 'streaming' : 'direct response';
       const match = (test.expectStreaming === isStreaming) ? '✅' : '❌';
 
-      console.log(`${match} Expected: ${expected}, Got: ${actual} (${bodySize} bytes)`);
+      console.info(`${match} Expected: ${expected}, Got: ${actual} (${bodySize} bytes)`);
 
     } catch (error) {
       results.push({
@@ -153,7 +153,7 @@ async function testStreaming(proxy: any, rateLimiter: any) {
         'Error': error.message.slice(0, 30) + '...'
       });
 
-      console.log(`💥 Error: ${error.message}`);
+      console.info(`💥 Error: ${error.message}`);
     }
 
     // Small delay between requests
@@ -181,8 +181,8 @@ async function getResponseSize(response: Response): Promise<number> {
 
 // Display streaming test results
 function displayStreamingResults(results: any[]) {
-  console.log("\n📊 Streaming Test Results:");
-  console.log(Bun.inspect.table(results, {
+  console.info("\n📊 Streaming Test Results:");
+  console.info(Bun.inspect.table(results, {
     colors: true,
     columns: [
       { key: 'Test Name', header: 'Test' },
@@ -199,8 +199,8 @@ function displayStreamingResults(results: any[]) {
 function displayRateLimiterStats(rateLimiter: any) {
   const stats = rateLimiter.getStats();
 
-  console.log("\n🧪 Rate Limiter Statistics:");
-  console.log(Bun.inspect.table([{
+  console.info("\n🧪 Rate Limiter Statistics:");
+  console.info(Bun.inspect.table([{
     'Algorithm': rateLimiter.getConfig().algorithm,
     'Total Requests': stats.totalRequests,
     'Allowed': stats.allowedRequests,
@@ -214,8 +214,8 @@ function displayRateLimiterStats(rateLimiter: any) {
 function displayProxyStats(proxy: any) {
   const status = proxy.getStatus();
 
-  console.log("\n📡 HTTP Proxy Statistics:");
-  console.log(Bun.inspect.table([{
+  console.info("\n📡 HTTP Proxy Statistics:");
+  console.info(Bun.inspect.table([{
     'Running': status.isRunning ? '✅' : '❌',
     'Protocol': status.config.protocol?.toUpperCase(),
     'Host': status.config.host,
@@ -230,7 +230,7 @@ function displayProxyStats(proxy: any) {
 
 // Performance comparison
 function displayStreamingComparison() {
-  console.log("\n⚡ Streaming vs Direct Response Comparison:");
+  console.info("\n⚡ Streaming vs Direct Response Comparison:");
 
   const comparisonData = [
     {
@@ -256,13 +256,13 @@ function displayStreamingComparison() {
     }
   ];
 
-  console.log(Bun.inspect.table(comparisonData, { colors: true }));
+  console.info(Bun.inspect.table(comparisonData, { colors: true }));
 }
 
 // Main demo execution
 async function runStreamingDemo() {
-  console.log("🚀 Bun Proxy Streaming Demo");
-  console.log("==========================\n");
+  console.info("🚀 Bun Proxy Streaming Demo");
+  console.info("==========================\n");
 
   const components = {
     proxy: null,
@@ -281,7 +281,7 @@ async function runStreamingDemo() {
     // Wait for server to be ready
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    console.log("✅ Streaming proxy initialized successfully!\n");
+    console.info("✅ Streaming proxy initialized successfully!\n");
 
     // Run streaming tests
     const results = await testStreaming(proxy, rateLimiter);
@@ -293,12 +293,12 @@ async function runStreamingDemo() {
     displayStreamingComparison();
 
     // Cleanup
-    console.log("\n🧹 Cleaning up...");
+    console.info("\n🧹 Cleaning up...");
     await proxy.stop();
 
-    console.log("\n✨ Streaming demo completed successfully!");
-    console.log("💡 Demonstrated: HTTP streaming, rate limiting, large file handling");
-    console.log("📊 All streaming features working with rich table displays");
+    console.info("\n✨ Streaming demo completed successfully!");
+    console.info("💡 Demonstrated: HTTP streaming, rate limiting, large file handling");
+    console.info("📊 All streaming features working with rich table displays");
 
   } catch (error) {
     console.error("💥 Demo failed:", error);

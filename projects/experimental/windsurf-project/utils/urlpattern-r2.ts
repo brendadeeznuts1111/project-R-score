@@ -88,7 +88,7 @@ export function classifyPath(path: string): { pattern: string; metadata: Record<
 
 // Bulk Classify + Upload (Gen paths → classify → R2)
 export async function bulkClassifyUpload(manager: BunR2AppleManager, scale: number = 500) {
-  console.log(`🚀 **Bulk Classify + Upload: ${scale} paths**`);
+  console.info(`🚀 **Bulk Classify + Upload: ${scale} paths**`);
   
   const paths: string[] = [];
   for (let i = 0; i < scale; i++) {
@@ -102,9 +102,9 @@ export async function bulkClassifyUpload(manager: BunR2AppleManager, scale: numb
   }).filter(Boolean) as Array<{ path: string; pattern: string; metadata: Record<string, string> }>;
   const classifyTime = (Bun.nanoseconds() - classifyStart) / 1e6;
 
-  console.log(`🔍 Classified ${scale} paths in ${classifyTime.toFixed(2)}ms (${(scale / classifyTime * 1000).toFixed(0)} paths/s)`);
+  console.info(`🔍 Classified ${scale} paths in ${classifyTime.toFixed(2)}ms (${(scale / classifyTime * 1000).toFixed(0)} paths/s)`);
 
-  console.log(`📤 Uploading ${classified.length} classified files...`);
+  console.info(`📤 Uploading ${classified.length} classified files...`);
   const uploadStart = Bun.nanoseconds();
   
   const uploads = classified.map(({ path, pattern, metadata }, i) => {
@@ -121,7 +121,7 @@ export async function bulkClassifyUpload(manager: BunR2AppleManager, scale: numb
   const uploadTime = (Bun.nanoseconds() - uploadStart) / 1e6;
   
   const successful = results.filter(r => r.success).length;
-  console.log(`✅ Uploaded ${successful}/${results.length} files in ${uploadTime.toFixed(2)}ms`);
+  console.info(`✅ Uploaded ${successful}/${results.length} files in ${uploadTime.toFixed(2)}ms`);
   
   return {
     classified: classified.length,
@@ -134,7 +134,7 @@ export async function bulkClassifyUpload(manager: BunR2AppleManager, scale: numb
 
 // Nanosecond benchmark for 50k paths
 export async function benchmarkURLPattern() {
-  console.log(`⚡ **URLPattern Benchmark: 50k paths**`);
+  console.info(`⚡ **URLPattern Benchmark: 50k paths**`);
   
   const paths = Array(50000).fill(0).map((_, i) => `accounts/apple-id/user${i}.json`);
   
@@ -142,12 +142,12 @@ export async function benchmarkURLPattern() {
   const matches = paths.map(classifyPath).filter(Boolean);
   const time = (Bun.nanoseconds() - start) / 1000; // microseconds
   
-  console.log(`🎯 Results:`);
-  console.log(`  Total paths: ${paths.length}`);
-  console.log(`  Matches: ${matches.length}`);
-  console.log(`  Time: ${time.toFixed(0)}μs`);
-  console.log(`  Throughput: ${(paths.length / time * 1000000).toFixed(0)} paths/s`);
-  console.log(`  Avg per path: ${(time / paths.length).toFixed(2)}μs`);
+  console.info(`🎯 Results:`);
+  console.info(`  Total paths: ${paths.length}`);
+  console.info(`  Matches: ${matches.length}`);
+  console.info(`  Time: ${time.toFixed(0)}μs`);
+  console.info(`  Throughput: ${(paths.length / time * 1000000).toFixed(0)} paths/s`);
+  console.info(`  Avg per path: ${(time / paths.length).toFixed(2)}μs`);
   
   return { paths: paths.length, matches: matches.length, time, throughput: paths.length / time * 1000000 };
 }
@@ -160,8 +160,8 @@ if (import.meta.main) {
   const manager = new BunR2AppleManager({}, config.getEndpoint('storage').r2.bucket || 'apple-ids-bucket');
   const scale = parseInt(process.argv[2]) || 500;
   
-  console.log(`🎯 **URLPattern + R2 SUPERCHARGED** 🎯`);
+  console.info(`🎯 **URLPattern + R2 SUPERCHARGED** 🎯`);
   const bulkResult = await bulkClassifyUpload(manager, scale);
   await benchmarkURLPattern();
-  console.log(`\n🎉 **SUPERCHARGED Complete!**`);
+  console.info(`\n🎉 **SUPERCHARGED Complete!**`);
 }

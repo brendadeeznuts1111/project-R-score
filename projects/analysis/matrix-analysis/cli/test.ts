@@ -115,7 +115,7 @@ function parseArgs(args: string[]): TestOptions {
 }
 
 function showHelp(): void {
-	console.log(`
+	console.info(`
 🧪 TIER-1380 SECURE TEST RUNNER
 
 USAGE:
@@ -184,7 +184,7 @@ function determineContext(options: TestOptions): "ci" | "local" | "staging" {
 async function displayTestResults(result: any, options: TestOptions): Promise<void> {
 	const config = result.config;
 
-	console.log(`
+	console.info(`
 🎯 TIER-1380 SECURE TEST RUN COMPLETE
 ┌─────────────────────────────────────────┐
 │ Context:       ${options.config?.padEnd(20)} │
@@ -229,12 +229,12 @@ async function displaySecurityAudit(
 	options: TestOptions,
 ): Promise<void> {
 	if (violations.length === 0) {
-		console.log("✅ Security audit passed - no violations found");
+		console.info("✅ Security audit passed - no violations found");
 		return;
 	}
 
-	console.log("🚨 SECURITY VIOLATIONS FOUND:");
-	console.log("");
+	console.info("🚨 SECURITY VIOLATIONS FOUND:");
+	console.info("");
 
 	const grouped = violations.reduce(
 		(acc, v) => {
@@ -246,17 +246,17 @@ async function displaySecurityAudit(
 	);
 
 	for (const [type, items] of Object.entries(grouped)) {
-		console.log(`  ${type.toUpperCase()} (${items.length}):`);
+		console.info(`  ${type.toUpperCase()} (${items.length}):`);
 		for (const item of items) {
-			console.log(`    - ${item.message} (${item.context})`);
+			console.info(`    - ${item.message} (${item.context})`);
 			if (options.verbose && item.pattern) {
-				console.log(`      Pattern: ${item.pattern}`);
+				console.info(`      Pattern: ${item.pattern}`);
 			}
 		}
-		console.log("");
+		console.info("");
 	}
 
-	console.log("💡 Fix security violations before running tests");
+	console.info("💡 Fix security violations before running tests");
 }
 
 export async function testCommand(args: string[]): Promise<void> {
@@ -274,23 +274,23 @@ export async function testCommand(args: string[]): Promise<void> {
 
 		// Handle special modes
 		if (options.audit) {
-			console.log("🔍 Running security audit...");
+			console.info("🔍 Running security audit...");
 			// Run audit logic here
-			console.log("✅ Security audit complete");
+			console.info("✅ Security audit complete");
 			return;
 		}
 
 		if (options.matrix) {
 			const { generateTestMatrix } = await import("../packages/test/col93-matrix");
-			console.log(generateTestMatrix(runner.config));
+			console.info(generateTestMatrix(runner.config));
 			return;
 		}
 
 		if (options.dryRun) {
-			console.log("🔍 Dry run - would execute:");
-			console.log(`  Context: ${context}`);
-			console.log(`  Config: ${runner.config}`);
-			console.log(`  Files: ${options.files || "all"}`);
+			console.info("🔍 Dry run - would execute:");
+			console.info(`  Context: ${context}`);
+			console.info(`  Config: ${runner.config}`);
+			console.info(`  Files: ${options.files || "all"}`);
 			return;
 		}
 

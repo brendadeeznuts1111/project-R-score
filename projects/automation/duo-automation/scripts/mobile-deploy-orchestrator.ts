@@ -34,10 +34,10 @@ interface DeploymentResult {
 
 export class MobileDeployOrchestrator {
   async buildMobileApps(platforms: string[]): Promise<BuildResult> {
-    console.log('📱 Mobile Build Orchestrator - 13.X.X.X Tiers');
-    console.log('=============================================');
-    console.log(`📱 Platforms: ${platforms.join(', ')}`);
-    console.log('');
+    console.info('📱 Mobile Build Orchestrator - 13.X.X.X Tiers');
+    console.info('=============================================');
+    console.info(`📱 Platforms: ${platforms.join(', ')}`);
+    console.info('');
     
     const results: BuildResult = { ios: null, android: null };
     
@@ -59,42 +59,42 @@ export class MobileDeployOrchestrator {
     
     // Upload to App Store / Play Store
     if (iosResult?.success) {
-      console.log('📤 Uploading to App Store...');
+      console.info('📤 Uploading to App Store...');
       await this.uploadToAppStore(iosResult);
     }
     
     if (androidResult?.success) {
-      console.log('📤 Uploading to Play Store...');
+      console.info('📤 Uploading to Play Store...');
       await this.uploadToPlayStore(androidResult);
     }
     
-    console.log('');
-    console.log('📊 MOBILE BUILD SUMMARY');
-    console.log('=======================');
+    console.info('');
+    console.info('📊 MOBILE BUILD SUMMARY');
+    console.info('=======================');
     
     if (results.ios) {
-      console.log(`🍎 iOS: ${results.ios.success ? 'SUCCESS' : 'FAILED'} (${results.ios.size.toFixed(1)}MB)`);
+      console.info(`🍎 iOS: ${results.ios.success ? 'SUCCESS' : 'FAILED'} (${results.ios.size.toFixed(1)}MB)`);
     }
     
     if (results.android) {
-      console.log(`🤖 Android: ${results.android.success ? 'SUCCESS' : 'FAILED'} (${results.android.size.toFixed(1)}MB)`);
+      console.info(`🤖 Android: ${results.android.success ? 'SUCCESS' : 'FAILED'} (${results.android.size.toFixed(1)}MB)`);
     }
     
     return results;
   }
 
   private async buildIOS(): Promise<BuildArtifact> {
-    console.log('🍎 Building iOS App...');
+    console.info('🍎 Building iOS App...');
     
     // Simulate Bun-native fastlane integration
-    console.log('   🔄 Running fastlane build...');
+    console.info('   🔄 Running fastlane build...');
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     // Simulate build completion
     const ipaPath = './mobile/ios/DuoPlusMerchant.ipa';
     const size = 24.7; // MB
     
-    console.log(`   ✅ iOS build complete (${size.toFixed(1)}MB)`);
+    console.info(`   ✅ iOS build complete (${size.toFixed(1)}MB)`);
     
     return {
       platform: 'ios',
@@ -106,17 +106,17 @@ export class MobileDeployOrchestrator {
   }
 
   private async buildAndroid(): Promise<BuildArtifact> {
-    console.log('🤖 Building Android App...');
+    console.info('🤖 Building Android App...');
     
     // Simulate Android build process
-    console.log('   🔄 Running Gradle build...');
+    console.info('   🔄 Running Gradle build...');
     await new Promise(resolve => setTimeout(resolve, 1800));
     
     // Simulate build completion
     const apkPath = './mobile/android/DuoPlusMerchant.apk';
     const size = 22.6; // MB
     
-    console.log(`   ✅ Android build complete (${size.toFixed(1)}MB)`);
+    console.info(`   ✅ Android build complete (${size.toFixed(1)}MB)`);
     
     return {
       platform: 'android',
@@ -128,33 +128,33 @@ export class MobileDeployOrchestrator {
   }
 
   private async optimizeBinary(path: string): Promise<string> {
-    console.log('   🔄 Optimizing binary with Bun-native compression...');
+    console.info('   🔄 Optimizing binary with Bun-native compression...');
     
     // Simulate Bun's native compression (beats gzip by 15%)
     await new Promise(resolve => setTimeout(resolve, 500));
     
     const outputPath = path.replace('.ipa', '.opt.ipa');
-    console.log(`   ✅ Binary optimized: ${outputPath}`);
+    console.info(`   ✅ Binary optimized: ${outputPath}`);
     
     return outputPath;
   }
 
   private async uploadToAppStore(artifact: BuildArtifact) {
-    console.log('   🔄 Uploading to App Store Connect...');
+    console.info('   🔄 Uploading to App Store Connect...');
     
     // Simulate App Store upload
     await new Promise(resolve => setTimeout(resolve, 1500));
     
-    console.log('   ✅ Uploaded to App Store (Ready for review)');
+    console.info('   ✅ Uploaded to App Store (Ready for review)');
   }
 
   private async uploadToPlayStore(artifact: BuildArtifact) {
-    console.log('   🔄 Uploading to Google Play Console...');
+    console.info('   🔄 Uploading to Google Play Console...');
     
     // Simulate Play Store upload
     await new Promise(resolve => setTimeout(resolve, 1200));
     
-    console.log('   ✅ Uploaded to Play Store (Ready for review)');
+    console.info('   ✅ Uploaded to Play Store (Ready for review)');
   }
 }
 
@@ -166,10 +166,10 @@ export class PartnerDeployer {
   };
 
   async deploy(partnerIds: string[]): Promise<DeploymentResult> {
-    console.log('🤝 Partner Integration Deployment - 13.X.X.X');
-    console.log('==============================================');
-    console.log(`🏢 Partners: ${partnerIds.join(', ')}`);
-    console.log('');
+    console.info('🤝 Partner Integration Deployment - 13.X.X.X');
+    console.info('==============================================');
+    console.info(`🏢 Partners: ${partnerIds.join(', ')}`);
+    console.info('');
     
     const deployments = partnerIds.map((id) => this.deployPartner(id));
     const results = await Promise.all(deployments);
@@ -177,13 +177,13 @@ export class PartnerDeployer {
     const successful = results.filter(r => r.status === 'deployed').length;
     const failed = results.length - successful;
     
-    console.log('');
-    console.log('💰 PARTNER DEPLOYMENT SUMMARY');
-    console.log('==============================');
-    console.log(`Total Deployments: ${results.length}`);
-    console.log(`Successful: ${successful}`);
-    console.log(`Failed: ${failed}`);
-    console.log(`Success Rate: ${((successful / results.length) * 100).toFixed(1)}%`);
+    console.info('');
+    console.info('💰 PARTNER DEPLOYMENT SUMMARY');
+    console.info('==============================');
+    console.info(`Total Deployments: ${results.length}`);
+    console.info(`Successful: ${successful}`);
+    console.info(`Failed: ${failed}`);
+    console.info(`Success Rate: ${((successful / results.length) * 100).toFixed(1)}%`);
     
     return {
       deployments: results,
@@ -199,7 +199,7 @@ export class PartnerDeployer {
     const partner = this.partners[partnerId];
     
     if (!partner) {
-      console.log(`   ❌ Unknown partner: ${partnerId}`);
+      console.info(`   ❌ Unknown partner: ${partnerId}`);
       return {
         partnerId,
         status: 'failed',
@@ -209,28 +209,28 @@ export class PartnerDeployer {
       };
     }
     
-    console.log(`🏢 Deploying ${partnerId.toUpperCase()} integration...`);
+    console.info(`🏢 Deploying ${partnerId.toUpperCase()} integration...`);
     
     // Deploy webhook endpoints
-    console.log(`   🔄 Deploying webhook endpoints...`);
+    console.info(`   🔄 Deploying webhook endpoints...`);
     await this.deployWebhooks(partnerId);
     
     // Deploy shared credentials (encrypted)
-    console.log(`   🔄 Deploying encrypted credentials...`);
+    console.info(`   🔄 Deploying encrypted credentials...`);
     await this.deployCredentials(partnerId);
     
     // Run partner-specific compliance tests
-    console.log(`   🔄 Running compliance tests...`);
+    console.info(`   🔄 Running compliance tests...`);
     await this.runPartnerCompliance(partnerId);
     
     // Enable mutual TLS
-    console.log(`   🔄 Enabling mutual TLS...`);
+    console.info(`   🔄 Enabling mutual TLS...`);
     await this.enableMTLS(partnerId);
     
     // Check health
     const health = await this.checkHealth(partnerId);
     
-    console.log(`   ✅ ${partnerId.toUpperCase()} deployment complete`);
+    console.info(`   ✅ ${partnerId.toUpperCase()} deployment complete`);
     
     return {
       partnerId,
@@ -244,25 +244,25 @@ export class PartnerDeployer {
   private async deployWebhooks(partnerId: string) {
     // Simulate webhook deployment
     await new Promise(resolve => setTimeout(resolve, 800));
-    console.log(`      ✅ Webhooks deployed for ${partnerId}`);
+    console.info(`      ✅ Webhooks deployed for ${partnerId}`);
   }
 
   private async deployCredentials(partnerId: string) {
     // Simulate credential deployment
     await new Promise(resolve => setTimeout(resolve, 600));
-    console.log(`      ✅ Credentials deployed for ${partnerId}`);
+    console.info(`      ✅ Credentials deployed for ${partnerId}`);
   }
 
   private async runPartnerCompliance(partnerId: string) {
     // Simulate compliance testing
     await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log(`      ✅ Compliance tests passed for ${partnerId}`);
+    console.info(`      ✅ Compliance tests passed for ${partnerId}`);
   }
 
   private async enableMTLS(partnerId: string) {
     // Simulate mTLS enablement
     await new Promise(resolve => setTimeout(resolve, 400));
-    console.log(`      ✅ mTLS enabled for ${partnerId}`);
+    console.info(`      ✅ mTLS enabled for ${partnerId}`);
   }
 
   private getEndpoints(partnerId: string): string[] {
@@ -306,8 +306,8 @@ async function main() {
         const platforms = platformsArg.split(',');
         const mobileDeployer = new MobileDeployOrchestrator();
         const buildResults = await mobileDeployer.buildMobileApps(platforms);
-        console.log('\n✅ Mobile build complete!');
-        console.log(JSON.stringify(buildResults, null, 2));
+        console.info('\n✅ Mobile build complete!');
+        console.info(JSON.stringify(buildResults, null, 2));
         break;
         
       case 'partner:deploy':
@@ -315,21 +315,21 @@ async function main() {
         const partners = partnersArg.split(',');
         const partnerDeployer = new PartnerDeployer();
         const deploymentResults = await partnerDeployer.deploy(partners);
-        console.log('\n✅ Partner deployment complete!');
-        console.log(JSON.stringify(deploymentResults, null, 2));
+        console.info('\n✅ Partner deployment complete!');
+        console.info(JSON.stringify(deploymentResults, null, 2));
         break;
         
       default:
-        console.log('📱 Mobile Deployment CLI');
-        console.log('========================');
-        console.log('');
-        console.log('Available commands:');
-        console.log('  mobile:build    - Build mobile apps');
-        console.log('  partner:deploy  - Deploy partner integrations');
-        console.log('');
-        console.log('Examples:');
-        console.log('  bun run scripts/mobile-deploy-orchestrator.ts mobile:build --platforms="ios,android"');
-        console.log('  bun run scripts/mobile-deploy-orchestrator.ts partner:deploy --partners="square,twilio,stripe"');
+        console.info('📱 Mobile Deployment CLI');
+        console.info('========================');
+        console.info('');
+        console.info('Available commands:');
+        console.info('  mobile:build    - Build mobile apps');
+        console.info('  partner:deploy  - Deploy partner integrations');
+        console.info('');
+        console.info('Examples:');
+        console.info('  bun run scripts/mobile-deploy-orchestrator.ts mobile:build --platforms="ios,android"');
+        console.info('  bun run scripts/mobile-deploy-orchestrator.ts partner:deploy --partners="square,twilio,stripe"');
     }
   } catch (error) {
     console.error('❌ Deployment failed:', error);

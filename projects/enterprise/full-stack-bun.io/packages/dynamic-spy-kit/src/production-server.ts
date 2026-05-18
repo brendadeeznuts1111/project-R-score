@@ -30,7 +30,7 @@ const configLoader = new ConfigLoader();
 
 // Initialize Redis connection (optional)
 redisCache.connect().catch(() => {
-	console.log('Redis not available, using in-memory fallback');
+	console.info('Redis not available, using in-memory fallback');
 });
 
 const server = Bun.serve({
@@ -147,21 +147,21 @@ const server = Bun.serve({
 	}
 });
 
-console.log(`🚀 Arbitrage Server running on http://localhost:${server.port}`);
-console.log(`📊 Endpoints:`);
-console.log(`  GET /health - Health check`);
-console.log(`  GET /markets - Load 12K markets (mmap + Redis + Glob)`);
-console.log(`  GET /arbs - Get arbitrage opportunities`);
-console.log(`  GET /config - List config files`);
-console.log(`🛡️  Fuzzer-proof: ✅ All components integrated`);
+console.info(`🚀 Arbitrage Server running on http://localhost:${server.port}`);
+console.info(`📊 Endpoints:`);
+console.info(`  GET /health - Health check`);
+console.info(`  GET /markets - Load 12K markets (mmap + Redis + Glob)`);
+console.info(`  GET /arbs - Get arbitrage opportunities`);
+console.info(`  GET /config - List config files`);
+console.info(`🛡️  Fuzzer-proof: ✅ All components integrated`);
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-	console.log('Shutting down gracefully...');
+	console.info('Shutting down gracefully...');
 	process.exit(0);
 });
 
 process.on('SIGINT', () => {
-	console.log('Shutting down gracefully...');
+	console.info('Shutting down gracefully...');
 	process.exit(0);
 });

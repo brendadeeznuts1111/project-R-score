@@ -63,19 +63,19 @@ async function uploadToR2(key: string, content: string, contentType: string) {
 }
 
 async function uploadDocsToR2() {
-  console.log('📤 Uploading knowledge base documents to R2...\n');
-  console.log(`Bucket: ${R2_BUCKET}`);
-  console.log(`Prefix: ${R2_PREFIX}\n`);
+  console.info('📤 Uploading knowledge base documents to R2...\n');
+  console.info(`Bucket: ${R2_BUCKET}`);
+  console.info(`Prefix: ${R2_PREFIX}\n`);
 
   try {
     // Read all markdown files
     const files = await readdir(DOCS_DIR);
     const mdFiles = files.filter(f => f.endsWith('.md'));
 
-    console.log(`Found ${mdFiles.length} documents to upload\n`);
+    console.info(`Found ${mdFiles.length} documents to upload\n`);
 
     if (mdFiles.length === 0) {
-      console.log('No documents to upload.');
+      console.info('No documents to upload.');
       return;
     }
 
@@ -88,12 +88,12 @@ async function uploadDocsToR2() {
         const content = await readFile(filepath, 'utf-8');
         const key = `${R2_PREFIX}/${file}`;
 
-        console.log(`Uploading ${file}...`);
+        console.info(`Uploading ${file}...`);
 
         // Upload to R2
         await uploadToR2(key, content, 'text/markdown');
 
-        console.log(`  ✅ Uploaded to ${key}`);
+        console.info(`  ✅ Uploaded to ${key}`);
         successCount++;
       } catch (error: any) {
         console.error(`  ❌ Failed to upload ${file}: ${error.message}`);
@@ -101,20 +101,20 @@ async function uploadDocsToR2() {
       }
     }
 
-    console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log(`✅ Successfully uploaded: ${successCount}`);
-    console.log(`❌ Failed: ${errorCount}`);
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+    console.info('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.info(`✅ Successfully uploaded: ${successCount}`);
+    console.info(`❌ Failed: ${errorCount}`);
+    console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
     if (successCount > 0) {
-      console.log('Next steps:');
-      console.log('1. Create AI Search instance pointing to R2 bucket:', R2_BUCKET);
-      console.log('2. Configure path filter: Include "/knowledge-base/**"');
-      console.log('   (This ensures only knowledge base files are indexed)');
-      console.log('3. Wait for indexing to complete');
-      console.log('4. Update AI_SEARCH_INSTANCE_ID in .env\n');
-      console.log('💡 Tip: Use the setup script for automatic path filtering:');
-      console.log('   bun run scripts/vectorize/setup-ai-search.sh\n');
+      console.info('Next steps:');
+      console.info('1. Create AI Search instance pointing to R2 bucket:', R2_BUCKET);
+      console.info('2. Configure path filter: Include "/knowledge-base/**"');
+      console.info('   (This ensures only knowledge base files are indexed)');
+      console.info('3. Wait for indexing to complete');
+      console.info('4. Update AI_SEARCH_INSTANCE_ID in .env\n');
+      console.info('💡 Tip: Use the setup script for automatic path filtering:');
+      console.info('   bun run scripts/vectorize/setup-ai-search.sh\n');
     }
   } catch (error: any) {
     console.error('Fatal error:', error);

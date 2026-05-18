@@ -9,8 +9,8 @@ const args = Bun.argv.slice(2);
 const scale = parseInt(args[args.indexOf('--scale') + 1]) || 1;
 const team = args[args.indexOf('--team') + 1] || 'default';
 
-console.log(`🏰 Empire Farm CLI [Team: ${team}]`);
-console.log(`🚀 Scaling to ${scale} registrations...`);
+console.info(`🏰 Empire Farm CLI [Team: ${team}]`);
+console.info(`🚀 Scaling to ${scale} registrations...`);
 
 // Inlined via Bun.build env: "PUBLIC_*"
 // @ts-ignore
@@ -18,14 +18,14 @@ const publicR2 = process.env.PUBLIC_R2_URL || 'https://default.r2.dev';
 // @ts-ignore
 const publicDash = process.env.PUBLIC_DASHBOARD_URL || 'https://dash.duoplus.ai';
 
-console.log(`🌐 Public R2: ${publicR2}`);
-console.log(`📱 Dashboard: ${publicDash}`);
+console.info(`🌐 Public R2: ${publicR2}`);
+console.info(`📱 Dashboard: ${publicDash}`);
 
 async function runFarm() {
   const start = Bun.nanoseconds();
   
   if (scale > 0) {
-    console.log(`🌊 Starting Stream Farm: ${scale}x1MB...`);
+    console.info(`🌊 Starting Stream Farm: ${scale}x1MB...`);
     await streamFarm(scale, 1);
   }
 
@@ -37,7 +37,7 @@ async function runFarm() {
   }
 
   const durationMs = (Bun.nanoseconds() - start) / 1e6;
-  console.log(`\n✅ Farm Complete in ${durationMs.toFixed(0)}ms (Scalable)`);
+  console.info(`\n✅ Farm Complete in ${durationMs.toFixed(0)}ms (Scalable)`);
 }
 
 runFarm().catch(console.error);

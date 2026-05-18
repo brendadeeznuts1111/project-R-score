@@ -367,8 +367,8 @@ describe('Integration Tests', () => {
     const avgLatency = latencies.reduce((a, b) => a + b, 0) / latencies.length
     const p99Latency = latencies.sort((a, b) => a - b)[Math.floor(latencies.length * 0.99)]
 
-    console.log(`Average latency: ${avgLatency.toFixed(2)}ms`)
-    console.log(`P99 latency: ${p99Latency.toFixed(2)}ms`)
+    console.info(`Average latency: ${avgLatency.toFixed(2)}ms`)
+    console.info(`P99 latency: ${p99Latency.toFixed(2)}ms`)
 
     // Target: <25ms P99
     expect(p99Latency).toBeLessThan(25)

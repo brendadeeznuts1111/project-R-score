@@ -76,7 +76,7 @@ export async function discoverWorkspacePackages(rootPath: string = process.cwd()
     const packageJson = await Bun.file(packageJsonPath).json();
     
     if (packageJson.workspaces) {
-      console.log(c.blue(`📦 Discovering workspace packages...`));
+      console.info(c.blue(`📦 Discovering workspace packages...`));
       
       const workspacePatterns = Array.isArray(packageJson.workspaces) 
         ? packageJson.workspaces 
@@ -154,7 +154,7 @@ export async function runFilteredScript(
   const matched = await filterPackages(packages, pattern);
   
   if (matched.length === 0) {
-    console.log(c.yellow(`⚠️ No packages match pattern: ${pattern}`));
+    console.info(c.yellow(`⚠️ No packages match pattern: ${pattern}`));
     return {
       pattern,
       script,
@@ -169,11 +169,11 @@ export async function runFilteredScript(
     };
   }
 
-  console.log(c.bold(`🔍 Filter: ${pattern} → ${matched.length} packages`));
+  console.info(c.bold(`🔍 Filter: ${pattern} → ${matched.length} packages`));
   
   if (opts.dryRun) {
-    console.log(c.yellow(`🔍 Dry run - would execute script "${script}" in:`));
-    matched.forEach(pkg => console.log(`  ${c.cyan(pkg.name)} (${pkg.path})`));
+    console.info(c.yellow(`🔍 Dry run - would execute script "${script}" in:`));
+    matched.forEach(pkg => console.info(`  ${c.cyan(pkg.name)} (${pkg.path})`));
     return {
       pattern,
       script,
@@ -194,7 +194,7 @@ export async function runFilteredScript(
   );
   
   if (validPackages.length === 0) {
-    console.log(c.red(`❌ Script "${script}" not found in any matching packages`));
+    console.info(c.red(`❌ Script "${script}" not found in any matching packages`));
     return {
       pattern,
       script,
@@ -210,7 +210,7 @@ export async function runFilteredScript(
   }
   
   if (validPackages.length < matched.length) {
-    console.log(c.yellow(`⚠️ Script "${script}" not found in ${matched.length - validPackages.length} packages`));
+    console.info(c.yellow(`⚠️ Script "${script}" not found in ${matched.length - validPackages.length} packages`));
   }
   
   // Execute script
@@ -230,8 +230,8 @@ export async function runFilteredScript(
   
   // Display results table
   if (!opts.silent) {
-    console.log('\n' + formatFilterResults(results));
-    console.log(formatFilterSummary({
+    console.info('\n' + formatFilterResults(results));
+    console.info(formatFilterSummary({
       pattern,
       script,
       totalPackages: packages.length,
@@ -317,7 +317,7 @@ async function runSequential(
     
     // Bail on first failure if requested
     if (opts.bail && result.exitCode !== 0) {
-      console.log(c.red(`🛑 Bailing: ${pkg.name} failed with exit code ${result.exitCode}`));
+      console.info(c.red(`🛑 Bailing: ${pkg.name} failed with exit code ${result.exitCode}`));
       break;
     }
   }
@@ -349,7 +349,7 @@ async function runParallel(
     // Bail if any failed and bail is enabled
     if (opts.bail && batchResults.some(r => r.exitCode !== 0)) {
       const failed = batchResults.find(r => r.exitCode !== 0);
-      console.log(c.red(`🛑 Bailing: ${failed?.name} failed with exit code ${failed?.exitCode}`));
+      console.info(c.red(`🛑 Bailing: ${failed?.name} failed with exit code ${failed?.exitCode}`));
       break;
     }
   }
@@ -417,7 +417,7 @@ async function runPackageScript(
       const prefix = c.cyan(`[${pkg.name}]`);
       if (stdout) {
         stdout.split('\n').forEach(line => {
-          if (line.trim()) console.log(`${prefix} ${line}`);
+          if (line.trim()) console.info(`${prefix} ${line}`);
         });
       }
       if (stderr) {

@@ -253,6 +253,6 @@ describe("⚡ Performance Benchmark", () => {
     expect(avgTimePerIncident).toBeLessThan(2000); // Less than 2 seconds per incident
     expect(totalTime).toBeLessThan(10000); // Less than 10 seconds total
 
-    console.log(`📊 Performance: ${benchmarkCount} incidents in ${totalTime}ms (${avgTimePerIncident.toFixed(2)}ms per incident)`);
+    console.info(`📊 Performance: ${benchmarkCount} incidents in ${totalTime}ms (${avgTimePerIncident.toFixed(2)}ms per incident)`);
   }, 15000);
 });

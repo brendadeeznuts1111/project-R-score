@@ -104,7 +104,7 @@ export class PerformanceComparison {
     // Test "after" (Bun v1.3.6 fast JSON with %j)
     const afterStart = performance.now();
     for (let i = 0; i < 100; i++) {
-      console.log("%j", testData.metadata); // 3x faster serialization
+      console.info("%j", testData.metadata); // 3x faster serialization
     }
     const afterTime = performance.now() - afterStart;
 
@@ -196,36 +196,36 @@ export class PerformanceComparison {
   }
 
   async runFullComparison(): Promise<PerformanceMetrics[]> {
-    console.log(
+    console.info(
       "🚀 Running Performance Comparison: Before vs After Bun v1.3.6 Optimizations",
     );
-    console.log("=" * 70);
+    console.info("=" * 70);
 
     const results: PerformanceMetrics[] = [];
 
     // Test 1: CRC32 Performance
-    console.log("🔢 Testing CRC32 performance...");
+    console.info("🔢 Testing CRC32 performance...");
     results.push(await this.benchmarkCRC32Performance());
 
     // Test 2: JSON Serialization
-    console.log("📝 Testing JSON serialization...");
+    console.info("📝 Testing JSON serialization...");
     results.push(await this.benchmarkJSONSerialization());
 
     // Test 3: SQLite Operations
-    console.log("🗄️  Testing SQLite operations...");
+    console.info("🗄️  Testing SQLite operations...");
     results.push(await this.benchmarkSQLiteOperations());
 
     return results;
   }
 
   printComparisonResults(results: PerformanceMetrics[]): void {
-    console.log("\n📊 Performance Comparison Results:");
-    console.log("=".repeat(70));
+    console.info("\n📊 Performance Comparison Results:");
+    console.info("=".repeat(70));
 
-    console.log(
+    console.info(
       "| Operation                | Before (ms) | After (ms) | Improvement | Throughput    |",
     );
-    console.log(
+    console.info(
       "|--------------------------|-------------|------------|-------------|---------------|",
     );
 
@@ -235,24 +235,24 @@ export class PerformanceComparison {
       const improvementStr = `${result.improvement.toFixed(1)}x`.padEnd(11);
       const throughputStr = result.throughput.padEnd(12);
 
-      console.log(
+      console.info(
         `| ${result.operation.padEnd(24)} | ${beforeStr} | ${afterStr} | ${improvementStr} | ${throughputStr} |`,
       );
     }
 
-    console.log("=".repeat(70));
+    console.info("=".repeat(70));
 
     const avgImprovement =
       results.reduce((sum, r) => sum + r.improvement, 0) / results.length;
-    console.log(
+    console.info(
       `\n🎯 Average Performance Improvement: ${avgImprovement.toFixed(1)}x`,
     );
-    console.log(`🚀 Key Optimizations Leveraged:`);
-    console.log(`   • Hardware-accelerated CRC32 (~20x faster)`);
-    console.log(`   • Fast JSON serialization with %j format (~3x faster)`);
-    console.log(`   • SQLite 3.51.2 improvements (DISTINCT, OFFSET, WAL)`);
-    console.log(`   • Enhanced undefined handling in SQL operations (v1.3.6)`);
-    console.log(`   • Automatic DEFAULT value usage with undefined filtering`);
+    console.info(`🚀 Key Optimizations Leveraged:`);
+    console.info(`   • Hardware-accelerated CRC32 (~20x faster)`);
+    console.info(`   • Fast JSON serialization with %j format (~3x faster)`);
+    console.info(`   • SQLite 3.51.2 improvements (DISTINCT, OFFSET, WAL)`);
+    console.info(`   • Enhanced undefined handling in SQL operations (v1.3.6)`);
+    console.info(`   • Automatic DEFAULT value usage with undefined filtering`);
   }
 
   close(): void {

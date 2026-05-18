@@ -62,7 +62,7 @@ export const ARM64_CAPS: ARM64Capabilities = {
 /** Print ARM64 weaponization status */
 export function printARM64Status(): void {
 	if (!IS_ARM64) {
-		console.log(`
+		console.info(`
   ⚠️  x86_64 LEGACY MODE
      ├─ Architecture: ${ARCH}
      ├─ CCMP chains: UNAVAILABLE
@@ -73,7 +73,7 @@ export function printARM64Status(): void {
 	}
 
 	if (HAS_ARM64_OPTIMIZATIONS) {
-		console.log(`
+		console.info(`
   🚀 ARM64 WEAPONIZATION ACTIVE
      ├─ Architecture: ${ARCH}
      ├─ Platform: ${process.platform}
@@ -84,7 +84,7 @@ export function printARM64Status(): void {
      └─ NEON SIMD Buffer ops: ENABLED
   `);
 	} else {
-		console.log(`
+		console.info(`
   ⚠️  ARM64 PARTIAL ACTIVATION
      ├─ Architecture: ${ARCH}
      ├─ Bun Version: ${BUN_VERSION}
@@ -317,7 +317,7 @@ export async function verifyARM64Assembly(binaryPath: string): Promise<{
 export function printDeploymentReport(): void {
 	const metrics = getPerformanceMetrics();
 
-	console.log(`
+	console.info(`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                    ARM64 DEPLOYMENT READINESS REPORT                         ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
@@ -331,7 +331,7 @@ export function printDeploymentReport(): void {
 `);
 
 	if (IS_ARM64 && !HAS_ARM64_OPTIMIZATIONS) {
-		console.log(`
+		console.info(`
 ⚠️  UPGRADE RECOMMENDED
    Current Bun version: ${BUN_VERSION}
    Target version: >= 1.3.7

@@ -51,12 +51,12 @@ class EvidenceIntegrator {
    * Complete Evidence Integrity Pipeline demonstration
    */
   async runFullDemo(): Promise<void> {
-    console.log('🚀 Evidence Integrity Pipeline - Full Integration Demo');
-    console.log('====================================================');
-    console.log(`📊 Dashboard: ${EVIDENCE_CONFIG.dashboardUrl}`);
-    console.log(`💾 Storage: ${EVIDENCE_CONFIG.storageEndpoint}`);
-    console.log(`🔐 Algorithm: ${EVIDENCE_CONFIG.quantumHashAlgorithm.toUpperCase()}`);
-    console.log('');
+    console.info('🚀 Evidence Integrity Pipeline - Full Integration Demo');
+    console.info('====================================================');
+    console.info(`📊 Dashboard: ${EVIDENCE_CONFIG.dashboardUrl}`);
+    console.info(`💾 Storage: ${EVIDENCE_CONFIG.storageEndpoint}`);
+    console.info(`🔐 Algorithm: ${EVIDENCE_CONFIG.quantumHashAlgorithm.toUpperCase()}`);
+    console.info('');
 
     // Step 1: Connectivity Check
     await this.verifyConnectivity();
@@ -76,16 +76,16 @@ class EvidenceIntegrator {
     // Step 6: Dashboard Integration
     await this.showDashboardIntegration();
     
-    console.log('\n✅ Evidence Integrity Pipeline Demo Complete!');
-    console.log('🎯 All systems operational and integrated!');
+    console.info('\n✅ Evidence Integrity Pipeline Demo Complete!');
+    console.info('🎯 All systems operational and integrated!');
   }
 
   /**
    * Verify R2 connectivity and dashboard accessibility
    */
   private async verifyConnectivity(): Promise<void> {
-    console.log('🔍 Step 1: Connectivity Verification');
-    console.log('------------------------------------');
+    console.info('🔍 Step 1: Connectivity Verification');
+    console.info('------------------------------------');
     
     // Check R2 endpoint
     try {
@@ -97,34 +97,34 @@ class EvidenceIntegrator {
       });
       
       if (response.status === 403) {
-        console.log('🌐 R2 Endpoint: ✅ Connected (Auth Required)');
+        console.info('🌐 R2 Endpoint: ✅ Connected (Auth Required)');
       } else if (response.status === 200) {
-        console.log('🌐 R2 Endpoint: ✅ Connected (Public)');
+        console.info('🌐 R2 Endpoint: ✅ Connected (Public)');
       } else {
-        console.log(`🌐 R2 Endpoint: ⚠️  Unexpected response: ${response.status}`);
+        console.info(`🌐 R2 Endpoint: ⚠️  Unexpected response: ${response.status}`);
       }
     } catch (error) {
-      console.log('🌐 R2 Endpoint: ❌ Failed to connect');
+      console.info('🌐 R2 Endpoint: ❌ Failed to connect');
     }
     
     // Check dashboard availability
     try {
       const dashboardResponse = await fetch(EVIDENCE_CONFIG.dashboardUrl);
       const dashboardStatus = dashboardResponse.ok ? '✅ Online' : '❌ Offline';
-      console.log(`📱 Dashboard Status: ${dashboardStatus}`);
+      console.info(`📱 Dashboard Status: ${dashboardStatus}`);
     } catch (error) {
-      console.log('📱 Dashboard Status: ❌ Offline (run local server)');
+      console.info('📱 Dashboard Status: ❌ Offline (run local server)');
     }
     
-    console.log('');
+    console.info('');
   }
 
   /**
    * Perform comprehensive security audit
    */
   private async performSecurityAudit(): Promise<void> {
-    console.log('🛡️  Step 2: Security Audit');
-    console.log('-------------------------');
+    console.info('🛡️  Step 2: Security Audit');
+    console.info('-------------------------');
     
     // Additional evidence-specific security checks
     const evidenceSecurity = [
@@ -166,21 +166,21 @@ class EvidenceIntegrator {
     ];
     
     evidenceSecurity.forEach(item => {
-      console.log(`${item.status} ${item.check}`);
-      console.log(`        ${item.detail}`);
+      console.info(`${item.status} ${item.check}`);
+      console.info(`        ${item.detail}`);
     });
     
-    console.log('\n🎯 Security Score: 100/100');
-    console.log('📋 Audit Complete: All systems operational');
-    console.log('');
+    console.info('\n🎯 Security Score: 100/100');
+    console.info('📋 Audit Complete: All systems operational');
+    console.info('');
   }
 
   /**
    * Demonstrate file processing with quantum hashing
    */
   private async demonstrateFileProcessing(): Promise<void> {
-    console.log('📁 Step 3: File Processing Demo');
-    console.log('----------------------------');
+    console.info('📁 Step 3: File Processing Demo');
+    console.info('----------------------------');
     
     // Simulate processing different file types
     const fileTypes = [
@@ -194,15 +194,15 @@ class EvidenceIntegrator {
       await this.processEvidenceFile(file);
     }
     
-    console.log(`📊 Processed ${this.evidenceRegistry.size} evidence files`);
-    console.log('');
+    console.info(`📊 Processed ${this.evidenceRegistry.size} evidence files`);
+    console.info('');
   }
 
   /**
    * Process individual evidence file with quantum hash
    */
   private async processEvidenceFile(fileInfo: { name: string; type: string; size: number }): Promise<void> {
-    console.log(`🔬 Processing: ${fileInfo.name} (${(fileInfo.size / 1024 / 1024).toFixed(1)}MB)`);
+    console.info(`🔬 Processing: ${fileInfo.name} (${(fileInfo.size / 1024 / 1024).toFixed(1)}MB)`);
     
     const startTime = Date.now();
     
@@ -249,21 +249,21 @@ class EvidenceIntegrator {
       throughput: fileInfo.size / (processingTime / 1000) / 1024 / 1024 // MB/s
     });
     
-    console.log(`   ✅ Quantum Hash: ${quantumHash.substring(0, 16)}...`);
-    console.log(`   📦 Chunks: ${chunks}, Time: ${processingTime}ms`);
-    console.log(`   ⚡ Throughput: ${(fileInfo.size / (processingTime / 1000) / 1024 / 1024).toFixed(1)}MB/s`);
-    console.log('');
+    console.info(`   ✅ Quantum Hash: ${quantumHash.substring(0, 16)}...`);
+    console.info(`   📦 Chunks: ${chunks}, Time: ${processingTime}ms`);
+    console.info(`   ⚡ Throughput: ${(fileInfo.size / (processingTime / 1000) / 1024 / 1024).toFixed(1)}MB/s`);
+    console.info('');
   }
 
   /**
    * Analyze performance metrics
    */
   private async analyzePerformance(): Promise<void> {
-    console.log('📈 Step 4: Performance Analysis');
-    console.log('------------------------------');
+    console.info('📈 Step 4: Performance Analysis');
+    console.info('------------------------------');
     
     if (this.performanceMetrics.length === 0) {
-      console.log('❌ No performance data available');
+      console.info('❌ No performance data available');
       return;
     }
     
@@ -271,33 +271,33 @@ class EvidenceIntegrator {
     const totalTime = this.performanceMetrics.reduce((sum, m) => sum + m.processingTime, 0);
     const avgThroughput = this.performanceMetrics.reduce((sum, m) => sum + m.throughput, 0) / this.performanceMetrics.length;
     
-    console.log(`📊 Total Processed: ${(totalSize / 1024 / 1024).toFixed(1)}MB`);
-    console.log(`⏱️  Total Time: ${(totalTime / 1000).toFixed(2)}s`);
-    console.log(`⚡ Average Throughput: ${avgThroughput.toFixed(1)}MB/s`);
+    console.info(`📊 Total Processed: ${(totalSize / 1024 / 1024).toFixed(1)}MB`);
+    console.info(`⏱️  Total Time: ${(totalTime / 1000).toFixed(2)}s`);
+    console.info(`⚡ Average Throughput: ${avgThroughput.toFixed(1)}MB/s`);
     
     // Performance comparison
     const targetSpeed = 100; // MB/s target
     const performancePercent = (avgThroughput / targetSpeed * 100).toFixed(1);
-    console.log(`🎯 Performance: ${performancePercent}% of target (${targetSpeed}MB/s)`);
+    console.info(`🎯 Performance: ${performancePercent}% of target (${targetSpeed}MB/s)`);
     
     // Optimization recommendations
-    console.log('\n💡 Optimization Insights:');
+    console.info('\n💡 Optimization Insights:');
     if (avgThroughput < targetSpeed) {
-      console.log('   📈 Consider increasing chunk size for large files');
-      console.log('   🔧 Implement parallel chunk processing');
+      console.info('   📈 Consider increasing chunk size for large files');
+      console.info('   🔧 Implement parallel chunk processing');
     } else {
-      console.log('   ✅ Performance exceeds targets');
-      console.log('   🚀 System optimized for evidence processing');
+      console.info('   ✅ Performance exceeds targets');
+      console.info('   🚀 System optimized for evidence processing');
     }
-    console.log('');
+    console.info('');
   }
 
   /**
    * Analyze cost implications
    */
   private async analyzeCosts(): Promise<void> {
-    console.log('💰 Step 5: Cost Analysis');
-    console.log('----------------------');
+    console.info('💰 Step 5: Cost Analysis');
+    console.info('----------------------');
     
     // R2 Pricing (simplified)
     const pricing = {
@@ -314,48 +314,48 @@ class EvidenceIntegrator {
     const operationCost = (operationsPerMonth / 1000) * pricing.classAOperations;
     const totalCost = storageCost + operationCost;
     
-    console.log(`💾 Storage Cost: $${storageCost.toFixed(2)}/month (${storageGB}GB)`);
-    console.log(`⚙️  Operations: $${operationCost.toFixed(2)}/month (${operationsPerMonth.toLocaleString()} ops)`);
-    console.log(`🌐 Egress Cost: $0.00/month (FREE with R2!)`);
-    console.log(`💳 Total Cost: $${totalCost.toFixed(2)}/month`);
+    console.info(`💾 Storage Cost: $${storageCost.toFixed(2)}/month (${storageGB}GB)`);
+    console.info(`⚙️  Operations: $${operationCost.toFixed(2)}/month (${operationsPerMonth.toLocaleString()} ops)`);
+    console.info(`🌐 Egress Cost: $0.00/month (FREE with R2!)`);
+    console.info(`💳 Total Cost: $${totalCost.toFixed(2)}/month`);
     
     // Revenue impact
     const revenueTarget = 2100000; // $2.1M goal
     const costPercent = (totalCost / revenueTarget * 100).toFixed(3);
-    console.log(`🎯 Cost vs Revenue: ${costPercent}% of $2.1M target`);
+    console.info(`🎯 Cost vs Revenue: ${costPercent}% of $2.1M target`);
     
-    console.log('\n💡 Cost Optimization:');
-    console.log('   ✅ Zero egress costs with R2 (major competitive advantage)');
-    console.log('   ✅ Predictable monthly costs');
-    console.log('   ✅ No bandwidth overage charges');
-    console.log('');
+    console.info('\n💡 Cost Optimization:');
+    console.info('   ✅ Zero egress costs with R2 (major competitive advantage)');
+    console.info('   ✅ Predictable monthly costs');
+    console.info('   ✅ No bandwidth overage charges');
+    console.info('');
   }
 
   /**
    * Show dashboard integration capabilities
    */
   private async showDashboardIntegration(): Promise<void> {
-    console.log('📱 Step 6: Dashboard Integration');
-    console.log('------------------------------');
+    console.info('📱 Step 6: Dashboard Integration');
+    console.info('------------------------------');
     
-    console.log('🔗 Real-time Integration Features:');
-    console.log(`   📊 Live Storage: 2.4TB across 3 buckets`);
-    console.log(`   📁 File Types: Images (35%), Videos (20%), Documents (25%)`);
-    console.log(`   ⚡ Operations: 1.2M tracked with performance metrics`);
-    console.log(`   🛡️  Security: Access control and audit trails`);
+    console.info('🔗 Real-time Integration Features:');
+    console.info(`   📊 Live Storage: 2.4TB across 3 buckets`);
+    console.info(`   📁 File Types: Images (35%), Videos (20%), Documents (25%)`);
+    console.info(`   ⚡ Operations: 1.2M tracked with performance metrics`);
+    console.info(`   🛡️  Security: Access control and audit trails`);
     
-    console.log('\n🎯 Dashboard Benefits:');
-    console.log('   📈 Visual storage management');
-    console.log('   🔍 Real-time operation monitoring');
-    console.log('   💡 Performance insights and optimization');
-    console.log('   🚨 Instant security alerts');
+    console.info('\n🎯 Dashboard Benefits:');
+    console.info('   📈 Visual storage management');
+    console.info('   🔍 Real-time operation monitoring');
+    console.info('   💡 Performance insights and optimization');
+    console.info('   🚨 Instant security alerts');
     
-    console.log('\n📋 Quick Commands:');
-    console.log('   🖥️  View Dashboard: http://127.0.0.1:8081/demos/@web/r2-storage-dashboard.html');
-    console.log('   🔧 CLI Toolkit: bun run tools/r2-cli-toolkit.ts --help');
-    console.log('   📊 Track Operations: bun run tools/r2-cli-toolkit.ts track');
-    console.log('   🛡️  Security Audit: bun run tools/r2-cli-toolkit.ts security');
-    console.log('');
+    console.info('\n📋 Quick Commands:');
+    console.info('   🖥️  View Dashboard: http://127.0.0.1:8081/demos/@web/r2-storage-dashboard.html');
+    console.info('   🔧 CLI Toolkit: bun run tools/r2-cli-toolkit.ts --help');
+    console.info('   📊 Track Operations: bun run tools/r2-cli-toolkit.ts track');
+    console.info('   🛡️  Security Audit: bun run tools/r2-cli-toolkit.ts security');
+    console.info('');
   }
 
   /**
@@ -393,14 +393,14 @@ class EvidenceIntegrator {
       JSON.stringify(report, null, 2)
     );
     
-    console.log('📋 Integration report saved to: ./reports/evidence-integrity-report.json');
+    console.info('📋 Integration report saved to: ./reports/evidence-integrity-report.json');
   }
 }
 
 // Main execution
 async function main() {
-  console.log('🚀 Evidence Integrity Pipeline - Integration Demo');
-  console.log('==================================================');
+  console.info('🚀 Evidence Integrity Pipeline - Integration Demo');
+  console.info('==================================================');
   
   const integrator = new EvidenceIntegrator();
   
@@ -408,9 +408,9 @@ async function main() {
     await integrator.runFullDemo();
     await integrator.generateReport();
     
-    console.log('🎉 Evidence Integrity Pipeline Integration Complete!');
-    console.log('💾 R2 Dashboard + CLI Toolkit = Enterprise Solution');
-    console.log('🚀 Ready for production with $2.1M revenue target!');
+    console.info('🎉 Evidence Integrity Pipeline Integration Complete!');
+    console.info('💾 R2 Dashboard + CLI Toolkit = Enterprise Solution');
+    console.info('🚀 Ready for production with $2.1M revenue target!');
     
   } catch (error) {
     console.error('❌ Integration failed:', error);

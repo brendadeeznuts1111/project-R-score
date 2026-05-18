@@ -110,7 +110,7 @@ class EnhancedProgressiveDebugger {
     // Check if cache is valid
     if (cached && (Date.now() - cached.timestamp) < this.CACHE_TTL_MS) {
       if (options.verbose) {
-        console.log('📦 Cache hit - using cached result');
+        console.info('📦 Cache hit - using cached result');
       }
       return { ...cached.result, cacheHit: true };
     }
@@ -180,7 +180,7 @@ class EnhancedProgressiveDebugger {
     targetFile: string,
     options: DebugOptions
   ): Promise<DebugResult> {
-    console.log('🚀 Parallel Debug Mode - Testing multiple depths simultaneously');
+    console.info('🚀 Parallel Debug Mode - Testing multiple depths simultaneously');
     
     const depths = [1, 3, 5, 8];
     const env = this.buildEnv(options);
@@ -220,8 +220,8 @@ class EnhancedProgressiveDebugger {
     targetFile: string,
     options: DebugOptions
   ): Promise<void> {
-    console.log(`👀 Watch mode enabled for: ${targetFile}`);
-    console.log('Press Ctrl+C to stop\n');
+    console.info(`👀 Watch mode enabled for: ${targetFile}`);
+    console.info('Press Ctrl+C to stop\n');
 
     let isRunning = false;
     let runCount = 0;
@@ -231,8 +231,8 @@ class EnhancedProgressiveDebugger {
       isRunning = true;
       runCount++;
 
-      console.log(`\n🔄 Run #${runCount} at ${new Date().toLocaleTimeString()}`);
-      console.log('-'.repeat(50));
+      console.info(`\n🔄 Run #${runCount} at ${new Date().toLocaleTimeString()}`);
+      console.info('-'.repeat(50));
 
       try {
         const result = await this.runDebug(targetFile, options);
@@ -250,7 +250,7 @@ class EnhancedProgressiveDebugger {
     // Watch for changes
     const watcher = watch(targetFile, async (eventType) => {
       if (eventType === 'change') {
-        console.log('\n📁 File changed, re-running...');
+        console.info('\n📁 File changed, re-running...');
         // Clear cache for this file
         this.clearCacheForFile(targetFile);
         await runDebug();
@@ -259,7 +259,7 @@ class EnhancedProgressiveDebugger {
 
     // Keep process alive
     process.on('SIGINT', () => {
-      console.log('\n👋 Stopping watch mode');
+      console.info('\n👋 Stopping watch mode');
       watcher.close();
       process.exit(0);
     });
@@ -285,7 +285,7 @@ class EnhancedProgressiveDebugger {
 
     for (const phase of phases) {
       if (options.verbose) {
-        console.log(`\n🔍 Phase: ${phase.name} (depth=${phase.depth})`);
+        console.info(`\n🔍 Phase: ${phase.name} (depth=${phase.depth})`);
       }
 
       const result = await this.runCommand(targetFile, phase.depth, env);
@@ -414,17 +414,17 @@ class EnhancedProgressiveDebugger {
    * Print full result
    */
   private static printResult(result: DebugResult): void {
-    console.log('\n🎯 Debug Session Summary');
-    console.log('='.repeat(50));
-    console.log(`Success: ${result.success ? '✅' : '❌'}`);
-    console.log(`Depth: ${result.depthUsed}`);
-    console.log(`Duration: ${result.duration.toFixed(2)}ms`);
-    console.log(`Size: ${this.formatBytes(result.estimatedSize)}`);
+    console.info('\n🎯 Debug Session Summary');
+    console.info('='.repeat(50));
+    console.info(`Success: ${result.success ? '✅' : '❌'}`);
+    console.info(`Depth: ${result.depthUsed}`);
+    console.info(`Duration: ${result.duration.toFixed(2)}ms`);
+    console.info(`Size: ${this.formatBytes(result.estimatedSize)}`);
     
-    if (result.cacheHit) console.log('📦 Cache: HIT');
-    if (result.circularRefs) console.log(`Circular: ${result.circularRefs}`);
-    if (result.truncated) console.log('⚠️  Truncated');
-    if (result.streamingUsed) console.log('📡 Streaming');
+    if (result.cacheHit) console.info('📦 Cache: HIT');
+    if (result.circularRefs) console.info(`Circular: ${result.circularRefs}`);
+    if (result.truncated) console.info('⚠️  Truncated');
+    if (result.streamingUsed) console.info('📡 Streaming');
   }
 
   /**
@@ -434,7 +434,7 @@ class EnhancedProgressiveDebugger {
     const status = result.success ? '✅' : '❌';
     const cache = result.cacheHit ? ' 📦' : '';
     const trunc = result.truncated ? ' ⚠️' : '';
-    console.log(
+    console.info(
       `${status} Depth=${result.depthUsed} ` +
       `Time=${result.duration.toFixed(0)}ms ` +
       `Size=${this.formatBytes(result.estimatedSize)}${cache}${trunc}`
@@ -482,23 +482,23 @@ class EnhancedProgressiveDebugger {
    * Show help
    */
   private static showHelp(): void {
-    console.log('🐛 Enhanced Progressive Debug');
-    console.log('');
-    console.log('Usage: bun progressive-debug-enhanced <file.ts> [options]');
-    console.log('');
-    console.log('Options:');
-    console.log('  --watch              Watch file and re-run on changes');
-    console.log('  --parallel           Test multiple depths in parallel');
-    console.log('  --no-cache           Disable result caching');
-    console.log('  --profile            Enable performance profiling');
-    console.log('  --depth <n>          Use specific depth');
-    console.log('  --env <env>          Set environment');
-    console.log('  --verbose, -v        Verbose output');
-    console.log('');
-    console.log('Examples:');
-    console.log('  bun progressive-debug-enhanced app.ts --watch');
-    console.log('  bun progressive-debug-enhanced app.ts --parallel');
-    console.log('  bun progressive-debug-enhanced app.ts --no-cache');
+    console.info('🐛 Enhanced Progressive Debug');
+    console.info('');
+    console.info('Usage: bun progressive-debug-enhanced <file.ts> [options]');
+    console.info('');
+    console.info('Options:');
+    console.info('  --watch              Watch file and re-run on changes');
+    console.info('  --parallel           Test multiple depths in parallel');
+    console.info('  --no-cache           Disable result caching');
+    console.info('  --profile            Enable performance profiling');
+    console.info('  --depth <n>          Use specific depth');
+    console.info('  --env <env>          Set environment');
+    console.info('  --verbose, -v        Verbose output');
+    console.info('');
+    console.info('Examples:');
+    console.info('  bun progressive-debug-enhanced app.ts --watch');
+    console.info('  bun progressive-debug-enhanced app.ts --parallel');
+    console.info('  bun progressive-debug-enhanced app.ts --no-cache');
   }
 }
 

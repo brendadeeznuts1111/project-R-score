@@ -6,7 +6,7 @@ import { loadScopedSecrets } from '../../utils/secrets-loader.js';
 import { alignedTable } from '../../utils/super-table.js';
 
 async function main() {
-  console.log('🚀 **Bench S3 Native vs Presign (1k Uploads)**');
+  console.info('🚀 **Bench S3 Native vs Presign (1k Uploads)**');
   
   const secrets = await loadScopedSecrets();
   const bucket = secrets.r2Bucket || 'apple-ids-bucket';
@@ -30,7 +30,7 @@ async function main() {
     batchID: 'bench-123'
   }));
 
-  console.log(`\n⏳ Benchmarking ${count} uploads...`);
+  console.info(`\n⏳ Benchmarking ${count} uploads...`);
 
   // Presign Bench (Old)
   const startPresign = Bun.nanoseconds();
@@ -59,11 +59,11 @@ async function main() {
     }
   ];
 
-  console.log('\n✅ **Live Comparison Results**');
+  console.info('\n✅ **Live Comparison Results**');
   alignedTable(results, ['Method', 'Time', 'Throughput', 'Status']);
 
   const speedup = presignMs / s3Ms;
-  console.log(`\n🏆 **S3 Native is ${speedup.toFixed(2)}x faster than Presign!** 🚀`);
+  console.info(`\n🏆 **S3 Native is ${speedup.toFixed(2)}x faster than Presign!** 🚀`);
 }
 
 main().catch(console.error);

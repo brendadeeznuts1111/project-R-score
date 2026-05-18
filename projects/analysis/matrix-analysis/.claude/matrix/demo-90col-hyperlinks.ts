@@ -29,7 +29,7 @@ const box = {
 };
 
 function printHeader() {
-	console.log(`
+	console.info(`
 ${c.cyan}${box.top}${c.reset}
 ${c.cyan}${box.v}${c.reset}                                                                                                  ${c.cyan}${box.v}${c.reset}
 ${c.cyan}${box.v}${c.reset}   ${c.bold}${c.yellow}🔥 90-COLUMN MATRIX HYPERLINK CITADEL v3.26 🔥${c.reset}                                              ${c.cyan}${box.v}${c.reset}
@@ -40,11 +40,11 @@ ${c.cyan}${box.bot}${c.reset}
 }
 
 function printColumnSummary() {
-	console.log(`${c.cyan}${box.top}${c.reset}`);
-	console.log(
+	console.info(`${c.cyan}${box.top}${c.reset}`);
+	console.info(
 		`${c.cyan}${box.v}${c.reset} ${c.bold}📊 COLUMN ZONE SUMMARY${c.reset} ${" ".repeat(73)}${c.cyan}${box.v}${c.reset}`,
 	);
-	console.log(`${c.cyan}${box.mid}${c.reset}`);
+	console.info(`${c.cyan}${box.mid}${c.reset}`);
 
 	const zones = [
 		{
@@ -128,25 +128,25 @@ function printColumnSummary() {
 
 	for (const zone of zones) {
 		const line = ` ${zone.icon} ${zone.name.padEnd(12)} │ ${zone.range.padEnd(7)} │ ${String(zone.count).padStart(2)} cols │ ${zone.desc}`;
-		console.log(
+		console.info(
 			`${c.cyan}${box.v}${c.reset}${line}${" ".repeat(Math.max(0, 97 - line.length))}${c.cyan}${box.v}${c.reset}`,
 		);
 	}
 
-	console.log(`${c.cyan}${box.mid}${c.reset}`);
+	console.info(`${c.cyan}${box.mid}${c.reset}`);
 	const totalLine = ` ${c.bold}TOTAL:${c.reset} ${TOTAL_COLUMNS} columns across 11 zones │ ${HyperlinkMapper.getLinkedColumns().length} with hyperlinks`;
-	console.log(
+	console.info(
 		`${c.cyan}${box.v}${c.reset}${totalLine}${" ".repeat(Math.max(0, 97 - totalLine.length))}${c.cyan}${box.v}${c.reset}`,
 	);
-	console.log(`${c.cyan}${box.bot}${c.reset}\n`);
+	console.info(`${c.cyan}${box.bot}${c.reset}\n`);
 }
 
 function printHyperlinkStatus() {
-	console.log(`${c.cyan}${box.top}${c.reset}`);
-	console.log(
+	console.info(`${c.cyan}${box.top}${c.reset}`);
+	console.info(
 		`${c.cyan}${box.v}${c.reset} ${c.bold}🔗 HYPERLINK MAPPING STATUS${c.reset} ${" ".repeat(68)}${c.cyan}${box.v}${c.reset}`,
 	);
-	console.log(`${c.cyan}${box.mid}${c.reset}`);
+	console.info(`${c.cyan}${box.mid}${c.reset}`);
 
 	const linked = HyperlinkMapper.getLinkedColumns();
 
@@ -163,19 +163,19 @@ function printHyperlinkStatus() {
 			? `${c.dim}${demoLink.substring(0, 50)}...${c.reset}`
 			: `${c.red}no link${c.reset}`;
 		const line = ` ${item.column.color}${String(item.index).padStart(2)}${c.reset} ${item.column.displayName.padEnd(20)} │ ${linkStr}`;
-		console.log(
+		console.info(
 			`${c.cyan}${box.v}${c.reset}${line}${" ".repeat(Math.max(0, 97 - line.length))}${c.cyan}${box.v}${c.reset}`,
 		);
 	}
 
 	if (linked.length > 10) {
 		const moreLine = ` ${c.dim}... and ${linked.length - 10} more linked columns${c.reset}`;
-		console.log(
+		console.info(
 			`${c.cyan}${box.v}${c.reset}${moreLine}${" ".repeat(Math.max(0, 97 - moreLine.length))}${c.cyan}${box.v}${c.reset}`,
 		);
 	}
 
-	console.log(`${c.cyan}${box.bot}${c.reset}\n`);
+	console.info(`${c.cyan}${box.bot}${c.reset}\n`);
 }
 
 function printSampleMatrix() {
@@ -224,32 +224,32 @@ function printSampleMatrix() {
 		89: "v3.26",
 	};
 
-	console.log(`${c.cyan}${box.top}${c.reset}`);
-	console.log(
+	console.info(`${c.cyan}${box.top}${c.reset}`);
+	console.info(
 		`${c.cyan}${box.v}${c.reset} ${c.bold}🎯 SAMPLE MATRIX RENDER (Zone Mode)${c.reset} ${" ".repeat(60)}${c.cyan}${box.v}${c.reset}`,
 	);
-	console.log(`${c.cyan}${box.mid}${c.reset}`);
+	console.info(`${c.cyan}${box.mid}${c.reset}`);
 
 	// Use MatrixRenderer
 	const output = MatrixRenderer.render90Column(sampleRow, { mode: "zones" });
-	console.log(output);
+	console.info(output);
 
-	console.log(`${c.cyan}${box.bot}${c.reset}\n`);
+	console.info(`${c.cyan}${box.bot}${c.reset}\n`);
 }
 
 function printNavigationDemo() {
-	console.log(`${c.cyan}${box.top}${c.reset}`);
-	console.log(
+	console.info(`${c.cyan}${box.top}${c.reset}`);
+	console.info(
 		`${c.cyan}${box.v}${c.reset} ${c.bold}🧭 CLICKABLE NAVIGATION MENU${c.reset} ${" ".repeat(64)}${c.cyan}${box.v}${c.reset}`,
 	);
-	console.log(`${c.cyan}${box.bot}${c.reset}`);
+	console.info(`${c.cyan}${box.bot}${c.reset}`);
 
 	const navMenu = HyperlinkMapper.generateNavMenu("demo-profile-001");
-	console.log(navMenu);
+	console.info(navMenu);
 }
 
 function printFooter() {
-	console.log(`
+	console.info(`
 ${c.cyan}${box.top}${c.reset}
 ${c.cyan}${box.v}${c.reset}                                                                                                  ${c.cyan}${box.v}${c.reset}
 ${c.cyan}${box.v}${c.reset}   ${c.bold}${c.yellow}✅ 90-COLUMN MATRIX READY${c.reset} │ ${c.cyan}All columns with URI patterns${c.reset} │ ${c.green}OSC 8 Hyperlinks Active${c.reset}     ${c.cyan}${box.v}${c.reset}
@@ -270,11 +270,11 @@ printNavigationDemo();
 printFooter();
 
 // Export stats
-console.log(`${c.dim}Hyperlink Pattern Validation:${c.reset}`);
+console.info(`${c.dim}Hyperlink Pattern Validation:${c.reset}`);
 const validation = HyperlinkMapper.validatePatterns();
-console.log(`  ✅ Valid patterns: ${validation.valid}`);
-console.log(`  ❌ Invalid patterns: ${validation.invalid}`);
+console.info(`  ✅ Valid patterns: ${validation.valid}`);
+console.info(`  ❌ Invalid patterns: ${validation.invalid}`);
 if (validation.errors.length > 0) {
-	console.log(`  Errors: ${validation.errors.join(", ")}`);
+	console.info(`  Errors: ${validation.errors.join(", ")}`);
 }
-console.log();
+console.info();

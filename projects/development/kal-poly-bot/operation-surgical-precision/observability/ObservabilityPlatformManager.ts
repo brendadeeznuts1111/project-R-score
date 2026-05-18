@@ -147,22 +147,22 @@ export class ELKStackManager {
   }
 
   public async deployELKStack(config: ObservabilityConfiguration): Promise<ELKDeploymentResult> {
-    console.log('🚀 Deploying ELK Stack for Observability');
+    console.info('🚀 Deploying ELK Stack for Observability');
 
     try {
       // Step 1: Deploy Elasticsearch cluster
-      console.log('  📊 Deploying Elasticsearch cluster...');
+      console.info('  📊 Deploying Elasticsearch cluster...');
       const elasticsearch = await this._elasticsearchManager.deploy(
         config.scaling.elasticsearch,
         config.security.elasticsearch
       );
 
       // Step 2: Deploy Logstash pipeline
-      console.log('  🔄 Deploying Logstash data pipeline...');
+      console.info('  🔄 Deploying Logstash data pipeline...');
       const logstash = await this._logstashManager.deploy(config.namespace);
 
       // Step 3: Deploy Kibana dashboard
-      console.log('  📈 Deploying Kibana visualization...');
+      console.info('  📈 Deploying Kibana visualization...');
       const kibana = await this._kibanaManager.deploy(config.namespace);
 
       // Step 4: Configure data retention policies
@@ -226,7 +226,7 @@ export class MonitoringPlatformManager {
   }
 
   public async deployMonitoringPlatform(config: ObservabilityConfiguration): Promise<MonitoringDeploymentResult> {
-    console.log('📊 Deploying Monitoring Platform (Prometheus/Grafana)');
+    console.info('📊 Deploying Monitoring Platform (Prometheus/Grafana)');
 
     try {
       // Step 1: Deploy Prometheus
@@ -275,7 +275,7 @@ export class MonitoringPlatformManager {
   }
 
   private async _configureIstioIntegration(): Promise<void> {
-    console.log('  🔗 Configuring Istio monitoring integration...');
+    console.info('  🔗 Configuring Istio monitoring integration...');
 
     const istioMetricsConfig = `
 global:
@@ -322,7 +322,7 @@ export class LoggingPlatformManager {
   }
 
   public async deployLoggingPlatform(config: ObservabilityConfiguration): Promise<LoggingDeploymentResult> {
-    console.log('📝 Deploying Logging Platform (Loki/Promtail)');
+    console.info('📝 Deploying Logging Platform (Loki/Promtail)');
 
     try {
       // Step 1: Deploy Loki
@@ -368,7 +368,7 @@ export class LoggingPlatformManager {
   }
 
   private async _configureKubernetesLogCollection(): Promise<void> {
-    console.log('  🐳 Configuring Kubernetes log collection...');
+    console.info('  🐳 Configuring Kubernetes log collection...');
 
     const kubernetesLogConfig = `
 apiVersion: v1
@@ -431,7 +431,7 @@ export class ObservabilityPlatformManager {
   }
 
   public async deployObservabilityPlatform(config: ObservabilityConfiguration): Promise<ObservabilityDeploymentResult> {
-    console.log('🔍 Deploying Complete Observability Platform');
+    console.info('🔍 Deploying Complete Observability Platform');
 
     if (this._coordinator) {
       this._coordinator.registerComponent('observability', {
@@ -506,7 +506,7 @@ export class ObservabilityPlatformManager {
     monitoring: MonitoringDeploymentResult,
     logging: LoggingDeploymentResult
   ): Promise<void> {
-    console.log('🔗 Configuring cross-platform integrations...');
+    console.info('🔗 Configuring cross-platform integrations...');
 
     // Configure Loki -> Grafana integration
     const datasourceConfig = await BunShellExecutor.kubectl(`create configmap loki-grafana-datasource --from-literal=datasource.json='{
@@ -550,7 +550,7 @@ EOF`);
   }
 
   private async _createUnifiedObservabilityDashboards(): Promise<MonitoringDashboard[]> {
-    console.log('📊 Creating unified observability dashboards...');
+    console.info('📊 Creating unified observability dashboards...');
 
     // Load external dashboard hub configuration
     let cloudflareHub: MonitoringDashboard | null = null;

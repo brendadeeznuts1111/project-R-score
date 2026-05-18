@@ -19,14 +19,14 @@ import { handleRadianceRoute17 } from "./17.16.2-routing.handler";
  * Example 1: Registry Deep Path
  */
 export function exampleRegistryDeep17() {
-	console.log("[17.16.0] Example: Registry Deep Path");
+	console.info("[17.16.0] Example: Registry Deep Path");
 
 	const url = "https://localhost:3001/api/v17/registry/properties/v1.0.0/schema";
 	const match = matchRadiancePattern17(url);
 
 	if (match && match.pattern === "registryDeep") {
-		console.log(`Registry: ${match.groups.registry}`);
-		console.log(`Subpath: ${match.groups["0"]}`);
+		console.info(`Registry: ${match.groups.registry}`);
+		console.info(`Subpath: ${match.groups["0"]}`);
 		// Output:
 		// Registry: properties
 		// Subpath: v1.0.0/schema
@@ -39,7 +39,7 @@ export function exampleRegistryDeep17() {
  * Example 2: Telemetry Ingestion
  */
 export function exampleTelemetryIngest17() {
-	console.log("[17.16.0] Example: Telemetry Ingestion");
+	console.info("[17.16.0] Example: Telemetry Ingestion");
 
 	const url = "https://localhost:3001/ingest/bookmaker/pinnacle/2025-12-07/HBMO-017";
 	const match = matchRadiancePattern17(url);
@@ -47,9 +47,9 @@ export function exampleTelemetryIngest17() {
 	if (match && match.pattern === "telemetryIngest") {
 		const path = match.groups["0"] as string;
 		const segments = path.split("/");
-		console.log(`Bookmaker: ${segments[0]}`);
-		console.log(`Date: ${segments[2]}`);
-		console.log(`Error Code: ${segments[3]}`);
+		console.info(`Bookmaker: ${segments[0]}`);
+		console.info(`Date: ${segments[2]}`);
+		console.info(`Error Code: ${segments[3]}`);
 		// Output:
 		// Bookmaker: pinnacle
 		// Date: 2025-12-07
@@ -63,7 +63,7 @@ export function exampleTelemetryIngest17() {
  * Example 3: Dashboard with Optional Slash
  */
 export function exampleDashboard17() {
-	console.log("[17.16.0] Example: Dashboard");
+	console.info("[17.16.0] Example: Dashboard");
 
 	const urls = [
 		"https://localhost:3001/dashboard/registry",
@@ -74,8 +74,8 @@ export function exampleDashboard17() {
 	urls.forEach((url) => {
 		const match = matchRadiancePattern17(url);
 		if (match && match.pattern === "dashboard") {
-			console.log(`URL: ${url}`);
-			console.log(`Page: ${match.groups.page}`);
+			console.info(`URL: ${url}`);
+			console.info(`Page: ${match.groups.page}`);
 		}
 	});
 }
@@ -84,18 +84,18 @@ export function exampleDashboard17() {
  * Example 4: Extract Segments as Array
  */
 export function exampleExtractSegments17() {
-	console.log("[17.16.0] Example: Extract Segments");
+	console.info("[17.16.0] Example: Extract Segments");
 
 	const url = "https://localhost:3001/logs/2025/12/07/HBMO-017/debug";
 	const match = matchRadiancePattern17(url);
 
 	if (match && match.pattern === "logsWildcard") {
 		const segments = extractSegments17(match);
-		console.log(`Segments: ${segments.join(", ")}`);
+		console.info(`Segments: ${segments.join(", ")}`);
 		// Output: Segments: 2025, 12, 07, HBMO-017, debug
 
 		const allSegments = extractAllSegments17(match);
-		console.log(`All Segments: ${allSegments.join(", ")}`);
+		console.info(`All Segments: ${allSegments.join(", ")}`);
 		// Output: All Segments: 2025, 12, 07, HBMO-017, debug
 	}
 
@@ -106,7 +106,7 @@ export function exampleExtractSegments17() {
  * Example 5: Optional Segments
  */
 export function exampleOptionalSegments17() {
-	console.log("[17.16.0] Example: Optional Segments");
+	console.info("[17.16.0] Example: Optional Segments");
 
 	const urls = [
 		"https://localhost:3001/optional/edit",
@@ -116,9 +116,9 @@ export function exampleOptionalSegments17() {
 	urls.forEach((url) => {
 		const match = matchRadiancePattern17(url);
 		if (match && match.pattern === "optionalSegments") {
-			console.log(`URL: ${url}`);
-			console.log(`ID: ${match.groups.id || "undefined"}`);
-			console.log(`Action: ${match.groups.action}`);
+			console.info(`URL: ${url}`);
+			console.info(`ID: ${match.groups.id || "undefined"}`);
+			console.info(`Action: ${match.groups.action}`);
 		}
 	});
 }
@@ -127,15 +127,15 @@ export function exampleOptionalSegments17() {
  * Example 6: Multiple Wildcards
  */
 export function exampleMultipleWildcards17() {
-	console.log("[17.16.0] Example: Multiple Wildcards");
+	console.info("[17.16.0] Example: Multiple Wildcards");
 
 	const url = "https://localhost:3001/files/alice/documents/confidential/report.pdf";
 	const match = matchRadiancePattern17(url);
 
 	if (match && match.pattern === "multipleWildcards") {
-		console.log(`User: ${match.groups.user}`);
-		console.log(`Middle Path: ${match.groups["0"]}`);
-		console.log(`Type: ${match.groups.type}`);
+		console.info(`User: ${match.groups.user}`);
+		console.info(`Middle Path: ${match.groups["0"]}`);
+		console.info(`Type: ${match.groups.type}`);
 		// Output:
 		// User: alice
 		// Middle Path: documents/confidential
@@ -149,13 +149,13 @@ export function exampleMultipleWildcards17() {
  * Example 7: WebSocket with Token
  */
 export function exampleWebSocket17() {
-	console.log("[17.16.0] Example: WebSocket with Token");
+	console.info("[17.16.0] Example: WebSocket with Token");
 
 	const url = "https://localhost:3001/ws/v17/radiance?token=eng-alpha-001";
 	const match = matchRadiancePattern17(url);
 
 	if (match && match.pattern === "wsRadiance") {
-		console.log(`Token: ${match.searchGroups?.["0"]}`);
+		console.info(`Token: ${match.searchGroups?.["0"]}`);
 		// Output: Token: eng-alpha-001
 	}
 
@@ -166,7 +166,7 @@ export function exampleWebSocket17() {
  * Example 8: Health Probe
  */
 export function exampleHealthProbe17() {
-	console.log("[17.16.0] Example: Health Probe");
+	console.info("[17.16.0] Example: Health Probe");
 
 	const urls = [
 		"https://localhost:3001/health/v17",
@@ -176,8 +176,8 @@ export function exampleHealthProbe17() {
 	urls.forEach((url) => {
 		const match = matchRadiancePattern17(url);
 		if (match && match.pattern === "healthProbe") {
-			console.log(`URL: ${url}`);
-			console.log(`Registry: ${match.groups.registry || "system"}`);
+			console.info(`URL: ${url}`);
+			console.info(`Registry: ${match.groups.registry || "system"}`);
 		}
 	});
 }
@@ -186,7 +186,7 @@ export function exampleHealthProbe17() {
  * Example 9: Pattern Metadata
  */
 export function examplePatternMetadata17() {
-	console.log("[17.16.0] Example: Pattern Metadata");
+	console.info("[17.16.0] Example: Pattern Metadata");
 
 	const patterns: Array<keyof typeof radiancePatterns> = [
 		"registryItem",
@@ -198,11 +198,11 @@ export function examplePatternMetadata17() {
 	patterns.forEach((patternName) => {
 		const metadata = getPatternMetadata17(patternName);
 		if (metadata) {
-			console.log(`\n${patternName}:`);
-			console.log(`  Description: ${metadata.description}`);
-			console.log(`  Example: ${metadata.example}`);
-			console.log(`  Latency: ${metadata.latency}`);
-			console.log(`  Type Safety: ${metadata.typeSafety}`);
+			console.info(`\n${patternName}:`);
+			console.info(`  Description: ${metadata.description}`);
+			console.info(`  Example: ${metadata.example}`);
+			console.info(`  Latency: ${metadata.latency}`);
+			console.info(`  Type Safety: ${metadata.typeSafety}`);
 		}
 	});
 }
@@ -211,7 +211,7 @@ export function examplePatternMetadata17() {
  * Example 10: Complete Routing Handler
  */
 export async function exampleRoutingHandler17() {
-	console.log("[17.16.0] Example: Complete Routing Handler");
+	console.info("[17.16.0] Example: Complete Routing Handler");
 
 	const requests = [
 		new Request("https://localhost:3001/api/v17/registry/properties/v1.0.0/schema"),
@@ -221,11 +221,11 @@ export async function exampleRoutingHandler17() {
 	];
 
 	for (const req of requests) {
-		console.log(`\nRequest: ${req.url}`);
+		console.info(`\nRequest: ${req.url}`);
 		const response = await handleRadianceRoute17(req);
-		console.log(`Status: ${response.status}`);
+		console.info(`Status: ${response.status}`);
 		const text = await response.text();
-		console.log(`Response: ${text.substring(0, 100)}...`);
+		console.info(`Response: ${text.substring(0, 100)}...`);
 	}
 }
 
@@ -233,7 +233,7 @@ export async function exampleRoutingHandler17() {
  * Example 11: Performance Benchmark
  */
 export function examplePerformanceBenchmark17() {
-	console.log("[17.16.0] Example: Performance Benchmark");
+	console.info("[17.16.0] Example: Performance Benchmark");
 
 	const urls = [
 		"https://localhost:3001/api/v17/registry/properties",
@@ -255,59 +255,59 @@ export function examplePerformanceBenchmark17() {
 	const duration = (end - start) / 1_000_000; // Convert to milliseconds
 	const avgLatency = duration / iterations;
 
-	console.log(`\nPerformance Benchmark:`);
-	console.log(`  Iterations: ${iterations}`);
-	console.log(`  Total Time: ${duration.toFixed(2)}ms`);
-	console.log(`  Avg Latency: ${avgLatency.toFixed(4)}ms`);
-	console.log(`  Throughput: ${(iterations / duration * 1000).toFixed(0)} req/s`);
+	console.info(`\nPerformance Benchmark:`);
+	console.info(`  Iterations: ${iterations}`);
+	console.info(`  Total Time: ${duration.toFixed(2)}ms`);
+	console.info(`  Avg Latency: ${avgLatency.toFixed(4)}ms`);
+	console.info(`  Throughput: ${(iterations / duration * 1000).toFixed(0)} req/s`);
 }
 
 /**
  * Run all examples
  */
 export async function runAllExamples17_16() {
-	console.log("=".repeat(60));
-	console.log("17.16.0.0.0.0.0 — URLPattern Wildcard Radiance Patterns");
-	console.log("=".repeat(60));
-	console.log();
+	console.info("=".repeat(60));
+	console.info("17.16.0.0.0.0.0 — URLPattern Wildcard Radiance Patterns");
+	console.info("=".repeat(60));
+	console.info();
 
 	try {
 		exampleRegistryDeep17();
-		console.log();
+		console.info();
 
 		exampleTelemetryIngest17();
-		console.log();
+		console.info();
 
 		exampleDashboard17();
-		console.log();
+		console.info();
 
 		exampleExtractSegments17();
-		console.log();
+		console.info();
 
 		exampleOptionalSegments17();
-		console.log();
+		console.info();
 
 		exampleMultipleWildcards17();
-		console.log();
+		console.info();
 
 		exampleWebSocket17();
-		console.log();
+		console.info();
 
 		exampleHealthProbe17();
-		console.log();
+		console.info();
 
 		examplePatternMetadata17();
-		console.log();
+		console.info();
 
 		await exampleRoutingHandler17();
-		console.log();
+		console.info();
 
 		examplePerformanceBenchmark17();
-		console.log();
+		console.info();
 
-		console.log("=".repeat(60));
-		console.log("All examples completed successfully!");
-		console.log("=".repeat(60));
+		console.info("=".repeat(60));
+		console.info("All examples completed successfully!");
+		console.info("=".repeat(60));
 	} catch (error) {
 		console.error("Example failed:", error);
 		throw error;

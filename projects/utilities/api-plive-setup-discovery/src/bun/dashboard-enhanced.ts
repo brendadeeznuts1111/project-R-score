@@ -62,7 +62,7 @@ export class EnhancedDashboard {
       // Process environment variables
       this.processEnvVariables(this.config);
 
-      console.log("✅ Dashboard configuration loaded with Bun 1.3 YAML");
+      console.info("✅ Dashboard configuration loaded with Bun 1.3 YAML");
     } catch (error) {
       console.error("❌ Failed to load dashboard config:", error);
       // Fallback to basic config
@@ -73,7 +73,7 @@ export class EnhancedDashboard {
           }
         }
       };
-      console.log("⚠️ Using fallback dashboard configuration");
+      console.info("⚠️ Using fallback dashboard configuration");
     }
   }
 
@@ -85,7 +85,7 @@ export class EnhancedDashboard {
       // Process environment variables
       this.processEnvVariables(this.config);
 
-      console.log("✅ Dashboard configuration loaded with Bun 1.3 YAML");
+      console.info("✅ Dashboard configuration loaded with Bun 1.3 YAML");
     } catch (error) {
       console.error("❌ Failed to load dashboard config:", error);
       // Fallback to basic config
@@ -96,7 +96,7 @@ export class EnhancedDashboard {
           }
         }
       };
-      console.log("⚠️ Using fallback dashboard configuration");
+      console.info("⚠️ Using fallback dashboard configuration");
     }
   }
 
@@ -638,7 +638,7 @@ export class EnhancedDashboard {
   // Betting analytics methods
   private async getBettingMetrics(): Promise<BettingMetrics> {
     try {
-      console.log('📊 Fetching real betting metrics from plive platform');
+      console.info('📊 Fetching real betting metrics from plive platform');
 
       // Get real metrics from the betting platform
       const metrics = await this.bettingPlatform.getBettingMetrics();

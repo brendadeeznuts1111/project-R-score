@@ -11,8 +11,8 @@
 import { CrossPlatformIdentityResolver } from '../src/patterns/identity-resolver.js';
 
 async function demonstrateMissingPlatformAnalysis() {
-  console.log('🔍 Missing/Empty platformAnalysis Edge Case Demo');
-  console.log('==================================================\n');
+  console.info('🔍 Missing/Empty platformAnalysis Edge Case Demo');
+  console.info('==================================================\n');
 
   // Set a dummy security secret for demo purposes
   process.env.SECURITY_SECRET = 'demo-secret-key-for-testing-purposes-only';
@@ -22,19 +22,19 @@ async function demonstrateMissingPlatformAnalysis() {
     onAnalysisFailure: 'FAIL_SAFE'
   });
 
-  console.log('🧪 Testing Three Critical States of platformAnalysis:\n');
+  console.info('🧪 Testing Three Critical States of platformAnalysis:\n');
 
   // ==================================================
   // STATE 1: Missing platformAnalysis (undefined)
   // ==================================================
-  console.log('1️⃣ STATE 1: Missing platformAnalysis (undefined)');
-  console.log('--------------------------------------------------');
+  console.info('1️⃣ STATE 1: Missing platformAnalysis (undefined)');
+  console.info('--------------------------------------------------');
 
   // Simulate missing platformAnalysis by mocking the resolver method
   const originalResolveIdentity = resolver.resolveIdentity.bind(resolver);
   resolver.resolveIdentity = async (phone: string) => {
-    console.log('   📞 Resolving identity for:', phone);
-    console.log('   🚫 platformAnalysis: undefined (completely missing)');
+    console.info('   📞 Resolving identity for:', phone);
+    console.info('   🚫 platformAnalysis: undefined (completely missing)');
 
     // Call original but force empty platform data
     const result = await originalResolveIdentity(phone);
@@ -62,26 +62,26 @@ async function demonstrateMissingPlatformAnalysis() {
 
   try {
     const result1 = await resolver.resolveIdentity('+15551234560');
-    console.log('   📊 Result:');
-    console.log('   • Synthetic Score:', `${(result1.syntheticScore * 100).toFixed(1)}%`);
-    console.log('   • Confidence:', `${(result1.confidence * 100).toFixed(1)}%`);
-    console.log('   • Risk Level: CRITICAL 🔴');
-    console.log('   • Action: BLOCK');
-    console.log('   • Risk Factors:', result1.riskFactors?.slice(-4));
-    console.log('   ✅ Expected: High risk, low confidence, automatic block\n');
+    console.info('   📊 Result:');
+    console.info('   • Synthetic Score:', `${(result1.syntheticScore * 100).toFixed(1)}%`);
+    console.info('   • Confidence:', `${(result1.confidence * 100).toFixed(1)}%`);
+    console.info('   • Risk Level: CRITICAL 🔴');
+    console.info('   • Action: BLOCK');
+    console.info('   • Risk Factors:', result1.riskFactors?.slice(-4));
+    console.info('   ✅ Expected: High risk, low confidence, automatic block\n');
   } catch (error: any) {
-    console.log('   ❌ Error:', error.message);
+    console.info('   ❌ Error:', error.message);
   }
 
   // ==================================================
   // STATE 2: Empty platformAnalysis ({})
   // ==================================================
-  console.log('2️⃣ STATE 2: Empty platformAnalysis ({})');
-  console.log('------------------------------------------');
+  console.info('2️⃣ STATE 2: Empty platformAnalysis ({})');
+  console.info('------------------------------------------');
 
   resolver.resolveIdentity = async (phone: string) => {
-    console.log('   📞 Resolving identity for:', phone);
-    console.log('   📭 platformAnalysis: {} (exists but empty)');
+    console.info('   📞 Resolving identity for:', phone);
+    console.info('   📭 platformAnalysis: {} (exists but empty)');
 
     const result = await originalResolveIdentity(phone);
     (result as any).platformAnalysis = {}; // Empty object
@@ -106,26 +106,26 @@ async function demonstrateMissingPlatformAnalysis() {
 
   try {
     const result2 = await resolver.resolveIdentity('+15551234561');
-    console.log('   📊 Result:');
-    console.log('   • Synthetic Score:', `${(result2.syntheticScore * 100).toFixed(1)}%`);
-    console.log('   • Confidence:', `${(result2.confidence * 100).toFixed(1)}%`);
-    console.log('   • Risk Level: CRITICAL 🔴');
-    console.log('   • Action: BLOCK');
-    console.log('   • Risk Factors:', result2.riskFactors?.slice(-4));
-    console.log('   ✅ Expected: High risk, low confidence, automatic block\n');
+    console.info('   📊 Result:');
+    console.info('   • Synthetic Score:', `${(result2.syntheticScore * 100).toFixed(1)}%`);
+    console.info('   • Confidence:', `${(result2.confidence * 100).toFixed(1)}%`);
+    console.info('   • Risk Level: CRITICAL 🔴');
+    console.info('   • Action: BLOCK');
+    console.info('   • Risk Factors:', result2.riskFactors?.slice(-4));
+    console.info('   ✅ Expected: High risk, low confidence, automatic block\n');
   } catch (error: any) {
-    console.log('   ❌ Error:', error.message);
+    console.info('   ❌ Error:', error.message);
   }
 
   // ==================================================
   // STATE 3: Partial platformAnalysis (< 70% complete)
   // ==================================================
-  console.log('3️⃣ STATE 3: Partial platformAnalysis (< 70% complete)');
-  console.log('------------------------------------------------------');
+  console.info('3️⃣ STATE 3: Partial platformAnalysis (< 70% complete)');
+  console.info('------------------------------------------------------');
 
   resolver.resolveIdentity = async (phone: string) => {
-    console.log('   📞 Resolving identity for:', phone);
-    console.log('   ⚠️ platformAnalysis: Partial data (only CashApp)');
+    console.info('   📞 Resolving identity for:', phone);
+    console.info('   ⚠️ platformAnalysis: Partial data (only CashApp)');
 
     const result = await originalResolveIdentity(phone);
 
@@ -144,7 +144,7 @@ async function demonstrateMissingPlatformAnalysis() {
     const availablePlatforms = Object.keys(result.platformAnalysis).length;
     const completenessPercentage = (availablePlatforms / totalPlatforms) * 100;
 
-    console.log(`   📈 Data Completeness: ${completenessPercentage.toFixed(1)}% (${availablePlatforms}/${totalPlatforms} platforms)`);
+    console.info(`   📈 Data Completeness: ${completenessPercentage.toFixed(1)}% (${availablePlatforms}/${totalPlatforms} platforms)`);
 
     if (completenessPercentage < 70) {
       result.riskFactors = [
@@ -163,24 +163,24 @@ async function demonstrateMissingPlatformAnalysis() {
 
   try {
     const result3 = await resolver.resolveIdentity('+15551234562');
-    console.log('   📊 Result:');
-    console.log('   • Synthetic Score:', `${(result3.syntheticScore * 100).toFixed(1)}%`);
-    console.log('   • Confidence:', `${(result3.confidence * 100).toFixed(1)}%`);
-    console.log('   • Risk Level: MEDIUM ⚠️');
-    console.log('   • Action: MANUAL REVIEW');
-    console.log('   • Risk Factors:', result3.riskFactors?.slice(-3));
-    console.log('   ✅ Expected: Moderate risk, reduced confidence, manual review\n');
+    console.info('   📊 Result:');
+    console.info('   • Synthetic Score:', `${(result3.syntheticScore * 100).toFixed(1)}%`);
+    console.info('   • Confidence:', `${(result3.confidence * 100).toFixed(1)}%`);
+    console.info('   • Risk Level: MEDIUM ⚠️');
+    console.info('   • Action: MANUAL REVIEW');
+    console.info('   • Risk Factors:', result3.riskFactors?.slice(-3));
+    console.info('   ✅ Expected: Moderate risk, reduced confidence, manual review\n');
   } catch (error: any) {
-    console.log('   ❌ Error:', error.message);
+    console.info('   ❌ Error:', error.message);
   }
 
   // ==================================================
   // PATTERN ANALYSIS DEMONSTRATION
   // ==================================================
-  console.log('🎯 PATTERN ANALYSIS DEMONSTRATION');
-  console.log('=====================================\n');
+  console.info('🎯 PATTERN ANALYSIS DEMONSTRATION');
+  console.info('=====================================\n');
 
-  console.log('🔍 Critical Pattern Detection for Missing Data:\n');
+  console.info('🔍 Critical Pattern Detection for Missing Data:\n');
 
   // Simulate pattern detection for missing data
   const simulatePatternDetection = (platformData: any) => {
@@ -214,25 +214,25 @@ async function demonstrateMissingPlatformAnalysis() {
   ];
 
   testCases.forEach((testCase, index) => {
-    console.log(`${index + 1}. ${testCase.name}:`);
+    console.info(`${index + 1}. ${testCase.name}:`);
     const patterns = simulatePatternDetection(testCase.data);
 
     if (patterns.length > 0) {
       patterns.forEach(pattern => {
-        console.log(`   🚨 ${pattern.severity.toUpperCase()}: ${pattern.description}`);
-        console.log(`   📋 Evidence: ${pattern.evidence.join(', ')}`);
+        console.info(`   🚨 ${pattern.severity.toUpperCase()}: ${pattern.description}`);
+        console.info(`   📋 Evidence: ${pattern.evidence.join(', ')}`);
       });
     } else {
-      console.log('   ✅ No critical patterns detected');
+      console.info('   ✅ No critical patterns detected');
     }
-    console.log('');
+    console.info('');
   });
 
   // ==================================================
   // DECISION ENGINE SIMULATION
   // ==================================================
-  console.log('⚖️ DECISION ENGINE SIMULATION');
-  console.log('==============================\n');
+  console.info('⚖️ DECISION ENGINE SIMULATION');
+  console.info('==============================\n');
 
   const simulateDecisionEngine = (result: any) => {
     if (!result.platformAnalysis || Object.keys(result.platformAnalysis).length === 0) {
@@ -266,9 +266,9 @@ async function demonstrateMissingPlatformAnalysis() {
     };
   };
 
-  console.log('📊 Decision Matrix:\n');
-  console.log('| Scenario | Synthetic Score | Confidence | Decision | Alert |');
-  console.log('|----------|-----------------|------------|----------|--------|');
+  console.info('📊 Decision Matrix:\n');
+  console.info('| Scenario | Synthetic Score | Confidence | Decision | Alert |');
+  console.info('|----------|-----------------|------------|----------|--------|');
 
   const scenarios = [
     { name: 'Missing', syntheticScore: 0.8, confidence: 0.1, platformAnalysis: undefined },
@@ -284,16 +284,16 @@ async function demonstrateMissingPlatformAnalysis() {
       confidence: scenario.confidence
     });
 
-    console.log(`| ${scenario.name.padEnd(8)} | ${scenario.syntheticScore.toFixed(1).padStart(15)} | ${scenario.confidence.toFixed(1).padStart(10)} | ${decision.action.padEnd(8)} | ${decision.alertLevel.padEnd(6)} |`);
+    console.info(`| ${scenario.name.padEnd(8)} | ${scenario.syntheticScore.toFixed(1).padStart(15)} | ${scenario.confidence.toFixed(1).padStart(10)} | ${decision.action.padEnd(8)} | ${decision.alertLevel.padEnd(6)} |`);
   });
 
-  console.log('\n🎉 Demo Complete!');
-  console.log('\n🔐 Key Security Insights:');
-  console.log('- Missing data = BLOCK (fail-safe security)');
-  console.log('- Empty data = BLOCK (fail-safe security)');
-  console.log('- Partial data = MANUAL REVIEW (balanced approach)');
-  console.log('- Complete data = APPROVE (automated processing)');
-  console.log('- All scenarios logged and monitored for compliance');
+  console.info('\n🎉 Demo Complete!');
+  console.info('\n🔐 Key Security Insights:');
+  console.info('- Missing data = BLOCK (fail-safe security)');
+  console.info('- Empty data = BLOCK (fail-safe security)');
+  console.info('- Partial data = MANUAL REVIEW (balanced approach)');
+  console.info('- Complete data = APPROVE (automated processing)');
+  console.info('- All scenarios logged and monitored for compliance');
 }
 
 // Run the demonstration

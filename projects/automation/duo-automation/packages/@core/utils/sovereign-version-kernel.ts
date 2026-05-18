@@ -10,7 +10,7 @@ export class SovereignVersionKernel {
    * Version the system or audit current versioning
    */
   static async version(action?: string, options: string[] = []) {
-    console.log(`🔢 Sovereign Versioning: ${action || "Audit"}...`);
+    console.info(`🔢 Sovereign Versioning: ${action || "Audit"}...`);
     
     try {
       const args = ["pm", "version"];
@@ -35,7 +35,7 @@ export class SovereignVersionKernel {
         throw new Error(error || "Versioning operation failed");
       }
 
-      console.log(output);
+      console.info(output);
       return output;
     } catch (e) {
       console.error("❌ Versioning error:", e.message);

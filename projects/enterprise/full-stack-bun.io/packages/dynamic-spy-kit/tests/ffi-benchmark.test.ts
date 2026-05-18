@@ -43,9 +43,9 @@ test('FFI vs JS - 187K matches/sec', () => {
 	const ffiMatchesPerSec = (iterations / ffiDuration) * 1000;
 	const speedup = jsDuration / ffiDuration;
 
-	console.log(`📊 ${iterations.toLocaleString()} matches:`);
-	console.log(`├── JS: ${jsDuration.toFixed(1)}ms (${Math.floor(jsMatchesPerSec).toLocaleString()} matches/sec)`);
-	console.log(`└── FFI: ${ffiDuration.toFixed(1)}ms (${Math.floor(ffiMatchesPerSec).toLocaleString()} matches/sec) ⚡ ${speedup.toFixed(1)}x`);
+	console.info(`📊 ${iterations.toLocaleString()} matches:`);
+	console.info(`├── JS: ${jsDuration.toFixed(1)}ms (${Math.floor(jsMatchesPerSec).toLocaleString()} matches/sec)`);
+	console.info(`└── FFI: ${ffiDuration.toFixed(1)}ms (${Math.floor(ffiMatchesPerSec).toLocaleString()} matches/sec) ⚡ ${speedup.toFixed(1)}x`);
 
 	// FFI should be significantly faster (at least 10x in mock, 47x in production)
 	expect(ffiDuration).toBeLessThan(jsDuration / 10);

@@ -298,7 +298,7 @@ describe("🏛️ Citadel Feedback System", () => {
       expect(avgTimePerIncident).toBeLessThan(1000); // Less than 1 second per incident
       expect(totalTime).toBeLessThan(15000); // Less than 15 seconds total
       
-      console.log(`📊 Performance: ${loadTestCount} incidents in ${totalTime}ms (${avgTimePerIncident.toFixed(2)}ms per incident)`);
+      console.info(`📊 Performance: ${loadTestCount} incidents in ${totalTime}ms (${avgTimePerIncident.toFixed(2)}ms per incident)`);
     }, TEST_TIMEOUT);
   });
 
@@ -489,6 +489,6 @@ describe("⚡ Performance Benchmarks", () => {
     expect(avgTimePerIncident).toBeLessThan(500); // Less than 500ms per incident
     expect(totalTimeMs).toBeLessThan(10000); // Less than 10 seconds total
     
-    console.log(`🚀 Benchmark: ${benchmarkCount} incidents in ${totalTimeMs.toFixed(2)}ms (${avgTimePerIncident.toFixed(2)}ms per incident)`);
+    console.info(`🚀 Benchmark: ${benchmarkCount} incidents in ${totalTimeMs.toFixed(2)}ms (${avgTimePerIncident.toFixed(2)}ms per incident)`);
   }, 15000); // 15 second timeout for benchmark
 });

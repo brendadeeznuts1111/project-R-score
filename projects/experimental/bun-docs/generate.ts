@@ -8,6 +8,10 @@
 
 import { mkdirSync } from "node:fs";
 import { join, relative } from "node:path";
+import { startServerDemo } from "./src/server-demo.ts";
+import { buildBunFetchOptions, type FetchOptions, type BunFetchOptionsInput } from "./src/lib/fetch-options.ts";
+import { parseLlmsTxt } from "./src/lib/llms-parser.ts";
+import type { DocPage } from "./src/types/doc.ts";
 
 // ============================================
 // Configuration (can be overridden via CLI)
@@ -82,7 +86,7 @@ function parseArgs(args: string[]) {
 }
 
 function printHelp() {
-  console.log(`
+  console.info(`
 Bun Documentation Generator — powered by Bun's native fetch + Bun.build() + Bun.serve()
 
 A practical showcase of Bun's networking (fetch/serve) and bundler capabilities.
@@ -279,62 +283,7 @@ const OUT_DIR = join(ROOT, mergedConfig.outputDir);
 const SHELL_PATH = join(ROOT, "src/shell.html");
 const DASHBOARD_JS_PATH = join(ROOT, "src/dashboard.js");
 
-// ============================================
-// Types
-// ============================================
 
-interface DocPage {
-  title: string;
-  url: string;
-  category: string;
-  subcategory?: string;
-  description?: string;
-  isBundlerRelated: boolean;
-
-  // Enriched metadata (populated when using HTMLRewriter)
-  image?: string;
-  siteName?: string;
-  type?: string;
-}
-
-// ============================================
-// Bundler Detection
-// ============================================
-
-function isBundlerRelated(title: string, url: string, description: string, category?: string, subcategory?: string) {
-  const text = `${title} ${description} ${category || ""} ${subcategory || ""}`.toLowerCase();
-  const lowerUrl = url.toLowerCase();
-
-  if (lowerUrl.includes("/bundler/")) return true;
-
-  const knownBundlerPages = [
-    "bundler", "loaders", "plugins", "minifier", "macros",
-    "bytecode caching", "bytecode", "esbuild", "single-file executable",
-    "fullstack dev server", "hot reloading", "html & static sites",
-    "standalone html", "css", "hot module replacement",
-  ];
-  if (knownBundlerPages.some((p) => text.includes(p))) return true;
-
-  const bundlerCategoryTerms = ["bundler", "loaders", "plugins", "minifier", "macros", "executables", "bytecode", "fullstack"];
-  if (bundlerCategoryTerms.some((t) => (category || "").toLowerCase().includes(t))) return true;
-  if (bundlerCategoryTerms.some((t) => (subcategory || "").toLowerCase().includes(t))) return true;
-
-  const strongKeywords = [
-    "bun build", "bun.build", "bunbuild", "code splitting", "tree shaking",
-    "dead code elimination", "sourcemap", "metafile", "publicpath",
-    "html loader", "css loader", "bytecode", "optimize imports",
-  ];
-  if (strongKeywords.some((kw) => text.includes(kw))) return true;
-
-  const generalTerms = ["bundler", "loader", "plugin", "macro", "minify", "build", "target", "format", "drop", "features"];
-  if (generalTerms.some((term) => text.includes(term))) {
-    if (text.includes("bun") || text.includes("build") || lowerUrl.includes("build")) {
-      return true;
-    }
-  }
-
-  return false;
-}
 
 // ============================================
 // Connection Test / Dry-Run (for debugging custom sources)
@@ -345,68 +294,63 @@ async function testConnection(opts: FetchOptions = {}): Promise<void> {
   const url = mergedConfig.sourceUrl;
 
   const isLocalFile = url.startsWith("file://");
-  console.log(`\n🧪 Connection test (dry-run) for: ${url}`);
-  console.log(`   Timeout: ${timeout}ms  |  Verbose: ${verbose}  |  Insecure: ${insecure}`);
-  if (isLocalFile) console.log(`   📁 Local file source`);
-  if (proxy) console.log(`   Proxy: ${proxy}`);
-  if (tlsCa || tlsCert || tlsKey) console.log(`   TLS client certs: ca=${!!tlsCa} cert=${!!tlsCert} key=${!!tlsKey}`);
+  console.info(`\n🧪 Connection test (dry-run) for: ${url}`);
+  console.info(`   Timeout: ${timeout}ms  |  Verbose: ${verbose}  |  Insecure: ${insecure}`);
+  if (isLocalFile) console.info(`   📁 Local file source`);
+  if (proxy) console.info(`   Proxy: ${proxy}`);
+  if (tlsCa || tlsCert || tlsKey) console.info(`   TLS client certs: ca=${!!tlsCa} cert=${!!tlsCert} key=${!!tlsKey}`);
 
   // Demonstrate fetch.preconnect in dry-run mode too
   if (!isLocalFile) {
-    console.log(`   ⚡ Calling fetch.preconnect before test...`);
+    console.info(`   ⚡ Calling fetch.preconnect before test...`);
     try { fetch.preconnect(url); } catch {}
   }
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-  const fetchOptions: any = {
-    method: "GET",
-    signal: controller.signal,
-    headers: {
-      "User-Agent": "BunDocs-DryRun/1.0",
-      "Accept": "*/*",
-    },
-  };
+  // Use the shared helper (different UA + Accept for the dry-run diagnostic path)
+  const fetchOptions = await buildBunFetchOptions({
+    verbose,
+    proxy,
+    insecure,
+    tlsCa,
+    tlsCert,
+    tlsKey,
+    userAgent: "BunDocs-DryRun/1.0",
+    accept: "*/*",
+  });
 
-  if (verbose) fetchOptions.verbose = true;
-  if (proxy) fetchOptions.proxy = proxy;
-
-  // TLS (same logic as main fetch path)
-  const tlsOptions: any = {};
-  if (insecure) tlsOptions.rejectUnauthorized = false;
-  if (tlsCa) tlsOptions.ca = await Bun.file(tlsCa).text();
-  if (tlsCert) tlsOptions.cert = await Bun.file(tlsCert).text();
-  if (tlsKey) tlsOptions.key = await Bun.file(tlsKey).text();
-  if (Object.keys(tlsOptions).length > 0) fetchOptions.tls = tlsOptions;
+  fetchOptions.method = "GET";
+  fetchOptions.signal = controller.signal;
 
   const start = Date.now();
 
   try {
-    console.log(`\n→ Attempting fetch...`);
+    console.info(`\n→ Attempting fetch...`);
     const res = await fetch(url, fetchOptions);
     clearTimeout(timeoutId);
 
     const elapsed = Date.now() - start;
-    console.log(`\n✅ Connection successful in ${elapsed}ms`);
-    console.log(`   Status: ${res.status} ${res.statusText}`);
-    console.log(`   Headers received:`);
+    console.info(`\n✅ Connection successful in ${elapsed}ms`);
+    console.info(`   Status: ${res.status} ${res.statusText}`);
+    console.info(`   Headers received:`);
 
     // Print a few interesting headers
     const interesting = ["content-type", "content-length", "server", "date", "x-vercel-id", "cf-ray"];
     for (const [k, v] of res.headers) {
       if (interesting.some((h) => k.toLowerCase().includes(h))) {
-        console.log(`     ${k}: ${v}`);
+        console.info(`     ${k}: ${v}`);
       }
     }
 
     // Consume a small amount of the body so we don't leave the socket hanging
     const preview = await res.text();
     const previewLen = Math.min(preview.length, 200);
-    console.log(`\n   Body preview (${previewLen} chars):`);
-    console.log(`   ${preview.slice(0, previewLen).replace(/\n/g, " ")}${preview.length > previewLen ? "..." : ""}`);
+    console.info(`\n   Body preview (${previewLen} chars):`);
+    console.info(`   ${preview.slice(0, previewLen).replace(/\n/g, " ")}${preview.length > previewLen ? "..." : ""}`);
 
-    console.log(`\n💡 The connection works. You can now run the full generation without --dry-run.`);
+    console.info(`\n💡 The connection works. You can now run the full generation without --dry-run.`);
   } catch (err: any) {
     clearTimeout(timeoutId);
     const elapsed = Date.now() - start;
@@ -429,7 +373,7 @@ async function testConnection(opts: FetchOptions = {}): Promise<void> {
     console.error(`\n   Recommended next steps:`);
     console.error(`     1. The --verbose output above (if any) usually shows the exact connection attempt`);
     console.error(`     2. Try the official known-good source:`);
-    console.error(`        bun run generate --dry-run --source "https://bun.com/llm.txt" --verbose`);
+    console.error(`        bun run generate --dry-run --source "https://bun.com/docs/llms.txt" --verbose`);
     console.error(`     3. Use curl from the exact same terminal:`);
     console.error(`        curl -vI "${url}"`);
 
@@ -443,15 +387,7 @@ async function testConnection(opts: FetchOptions = {}): Promise<void> {
 // Fetch & Parse Documentation Index
 // ============================================
 
-interface FetchOptions {
-  verbose?: boolean;
-  timeout?: number;
-  proxy?: string;
-  insecure?: boolean;
-  tlsCa?: string;
-  tlsCert?: string;
-  tlsKey?: string;
-}
+
 
 async function fetchDocsIndex(opts: FetchOptions = {}): Promise<DocPage[]> {
   const { verbose = false, timeout = 30000, proxy, insecure = false, tlsCa, tlsCert, tlsKey } = opts;
@@ -460,46 +396,28 @@ async function fetchDocsIndex(opts: FetchOptions = {}): Promise<DocPage[]> {
 
   // Performance optimization from Bun docs: preconnect before the actual request
   if (mergedConfig.preconnect && !isLocalFile) {
-    console.log(`   ⚡ Preconnecting to host (fetch.preconnect)...`);
+    console.info(`   ⚡ Preconnecting to host (fetch.preconnect)...`);
     try {
       fetch.preconnect(mergedConfig.sourceUrl);
     } catch {}
   }
 
-  console.log(`📥 Fetching Bun documentation index from ${mergedConfig.sourceUrl}...`);
-  if (isLocalFile) console.log(`   📁 Local file source (Bun fetch file:// protocol)`);
-  if (verbose) console.log(`   🔍 Verbose mode enabled — Bun will print request/response headers`);
-  if (insecure) console.log(`   ⚠️  TLS certificate validation disabled (--insecure)`);
-  if (tlsCa || tlsCert || tlsKey) console.log(`   🔐 Using client TLS certificates (ca/cert/key)`);
-  if (mergedConfig.preconnect && !isLocalFile) console.log(`   ⚡ Preconnect was called before fetch`);
+  console.info(`📥 Fetching Bun documentation index from ${mergedConfig.sourceUrl}...`);
+  if (isLocalFile) console.info(`   📁 Local file source (Bun fetch file:// protocol)`);
+  if (verbose) console.info(`   🔍 Verbose mode enabled — Bun will print request/response headers`);
+  if (insecure) console.info(`   ⚠️  TLS certificate validation disabled (--insecure)`);
+  if (tlsCa || tlsCert || tlsKey) console.info(`   🔐 Using client TLS certificates (ca/cert/key)`);
+  if (mergedConfig.preconnect && !isLocalFile) console.info(`   ⚡ Preconnect was called before fetch`);
 
-  const fetchOptions: RequestInit & {
-    verbose?: boolean;
-    proxy?: string;
-    tls?: { rejectUnauthorized?: boolean; ca?: string; cert?: string; key?: string };
-  } = {
-    headers: {
-      "User-Agent": "BunDocs/1.0 (+https://github.com/bun-docs)",
-      "Accept": "text/plain, text/markdown, */*",
-    },
-  };
-
-  if (verbose) fetchOptions.verbose = true;
-  if (proxy) fetchOptions.proxy = proxy;
-
-  // Build TLS options object for Bun fetch (supports client certificates, custom CA, etc.)
-  const tlsOptions: { rejectUnauthorized?: boolean; ca?: string; cert?: string; key?: string } = {};
-
-  if (insecure) {
-    tlsOptions.rejectUnauthorized = false;
-  }
-  if (tlsCa) tlsOptions.ca = await Bun.file(tlsCa).text();
-  if (tlsCert) tlsOptions.cert = await Bun.file(tlsCert).text();
-  if (tlsKey) tlsOptions.key = await Bun.file(tlsKey).text();
-
-  if (Object.keys(tlsOptions).length > 0) {
-    fetchOptions.tls = tlsOptions;
-  }
+  // Use the shared helper (eliminates TLS/verbose/proxy duplication)
+  const fetchOptions = await buildBunFetchOptions({
+    verbose,
+    proxy,
+    insecure,
+    tlsCa,
+    tlsCert,
+    tlsKey,
+  });
 
   // Support timeout via AbortSignal (recommended Bun pattern)
   const controller = new AbortController();
@@ -515,46 +433,12 @@ async function fetchDocsIndex(opts: FetchOptions = {}): Promise<DocPage[]> {
     }
 
     const markdown = await res.text();
-
-    const pages: DocPage[] = [];
-    let currentMain = "General";
-    let currentSub: string | undefined;
-
-    for (const line of markdown.split("\n")) {
-      const trimmed = line.trim();
-
-      if (trimmed.startsWith("## ") && !trimmed.includes("http")) {
-        currentMain = trimmed.replace("## ", "").trim();
-        currentSub = undefined;
-        continue;
-      }
-      if (trimmed.startsWith("### ") && !trimmed.includes("http")) {
-        currentSub = trimmed.replace("### ", "").trim();
-        continue;
-      }
-
-      const match = trimmed.match(/^- \[(.*?)\]\((https?:\/\/bun\.com\/docs\/[^)]+)\)(?::\s*(.*))?$/);
-      if (match) {
-        const [, title, url, desc] = match;
-        const isBundler = isBundlerRelated(title, url, desc || "", currentMain, currentSub);
-
-        pages.push({
-          title,
-          url,
-          category: currentMain,
-          subcategory: currentSub,
-          description: desc?.trim(),
-          isBundlerRelated: isBundler,
-        });
-      }
-    }
-
-    return pages;
+    return parseLlmsTxt(markdown);
   } catch (err: any) {
     clearTimeout(timeoutId);
 
     const url = mergedConfig.sourceUrl;
-    const isDefaultUrl = url === "https://bun.com/llm.txt";
+    const isDefaultUrl = url === "https://bun.com/docs/llms.txt";
 
     console.error(`\n❌ Fetch failed for: ${url}`);
     console.error(`   Error: ${err?.message || err}`);
@@ -584,11 +468,11 @@ async function fetchDocsIndex(opts: FetchOptions = {}): Promise<DocPage[]> {
     console.error(`     3. Test the same URL from this terminal:`);
     console.error(`        curl -I "${url}"`);
     console.error(`     4. Verify with the official known-good source:`);
-    console.error(`        bun run generate --dry-run --source "https://bun.com/llm.txt"`);
+    console.error(`        bun run generate --dry-run --source "https://bun.com/docs/llms.txt"`);
 
     if (!isDefaultUrl) {
       console.error(`\n   💡 You are using a custom --source URL.`);
-      console.error(`   The default working source is: https://bun.com/llm.txt`);
+      console.error(`   The default working source is: https://bun.com/docs/llms.txt`);
       console.error(`   Make sure your custom endpoint returns valid markdown in the same format.`);
     }
 
@@ -632,7 +516,7 @@ async function main() {
     tlsCert: mergedConfig.tlsCert,
     tlsKey: mergedConfig.tlsKey,
   });
-  console.log(`✅ Parsed ${pages.length} pages`);
+  console.info(`✅ Parsed ${pages.length} pages`);
 
   mkdirSync(OUT_DIR, { recursive: true });
 
@@ -646,7 +530,7 @@ async function main() {
   };
 
   // 1. Build the JS bundle with Bun.build()
-  console.log("🛠️  Bundling dashboard JS with Bun.build()...");
+  console.info("🛠️  Bundling dashboard JS with Bun.build()...");
 
   const buildOptions: any = {
     entrypoints: [DASHBOARD_JS_PATH],
@@ -660,11 +544,11 @@ async function main() {
   // Expose new bundler features (env + sourcemap)
   if (mergedConfig.env) {
     buildOptions.env = mergedConfig.env;
-    console.log(`   env: ${mergedConfig.env}`);
+    console.info(`   env: ${mergedConfig.env}`);
   }
   if (mergedConfig.sourcemap && mergedConfig.sourcemap !== "none") {
     buildOptions.sourcemap = mergedConfig.sourcemap;
-    console.log(`   sourcemap: ${mergedConfig.sourcemap}`);
+    console.info(`   sourcemap: ${mergedConfig.sourcemap}`);
   }
 
   const buildResult = await Bun.build(buildOptions);
@@ -675,7 +559,7 @@ async function main() {
   }
 
   const bundledJS = await buildResult.outputs[0].text();
-  console.log(`   Bundled JS: ${(bundledJS.length / 1024).toFixed(1)} KB`);
+  console.info(`   Bundled JS: ${(bundledJS.length / 1024).toFixed(1)} KB`);
 
   // 2. Assemble final single-file HTML
   let shell = await Bun.file(SHELL_PATH).text();
@@ -692,536 +576,58 @@ async function main() {
   if (mergedConfig.generateRegistryJson) {
     const registryPath = join(OUT_DIR, "bun-docs-registry.json");
     await Bun.write(registryPath, JSON.stringify(registryData, null, 2));
-    console.log(`   📦 Wrote registry: ${relative(ROOT, registryPath)}`);
+    console.info(`   📦 Wrote registry: ${relative(ROOT, registryPath)}`);
   }
 
-  // 4. Clean up leftover build artifacts
-  await Bun.write(join(OUT_DIR, "index.html"), "");
+  // 4. Remove any stale build artifacts left from previous experiments or manual runs.
+  //    Bun.build() keeps outputs in memory (no outdir), but we defensively clean known junk
+  //    (old index.html, code-split chunks, external sourcemaps) so dist/ stays clean.
+  const staleArtifacts: string[] = [
+    join(OUT_DIR, "index.html"),
+    ...(await Array.fromAsync(new Bun.Glob("chunk-*.js").scan({ cwd: OUT_DIR }))).map((f) => join(OUT_DIR, f)),
+  ];
 
-  // Clean up chunk files
-  const chunkFiles = await Array.fromAsync(new Bun.Glob("chunk-*.js").scan({ cwd: OUT_DIR }));
-  for (const file of chunkFiles) {
-    await Bun.write(join(OUT_DIR, file), "");
-  }
-
-  // Clean up sourcemap files unless the user explicitly asked for them
   if (!mergedConfig.sourcemap || mergedConfig.sourcemap === "none") {
-    const mapFiles = await Array.fromAsync(new Bun.Glob("*.js.map").scan({ cwd: OUT_DIR }));
-    for (const file of mapFiles) {
-      await Bun.write(join(OUT_DIR, file), "");
+    const maps = await Array.fromAsync(new Bun.Glob("*.js.map").scan({ cwd: OUT_DIR }));
+    staleArtifacts.push(...maps.map((f) => join(OUT_DIR, f)));
+  }
+
+  for (const artifact of staleArtifacts) {
+    try {
+      await Bun.file(artifact).delete();
+    } catch {
+      // file did not exist — ignore
     }
   }
 
-  console.log(`\n✅ Successfully created single-file dashboard!`);
-  console.log(`   📄 ${finalPath}`);
-  console.log(`   📦 ${pages.length} pages • ${registryData.meta.bundler_pages} Bundler-related`);
+  console.info(`\n✅ Successfully created single-file dashboard!`);
+  console.info(`   📄 ${finalPath}`);
+  console.info(`   📦 ${pages.length} pages • ${registryData.meta.bundler_pages} Bundler-related`);
 
   if (mergedConfig.sourcemap && mergedConfig.sourcemap !== "none") {
-    console.log(`   🗺️  Sourcemap mode: ${mergedConfig.sourcemap}`);
+    console.info(`   🗺️  Sourcemap mode: ${mergedConfig.sourcemap}`);
   }
 
-  console.log(`\n   Open it with:`);
-  console.log(`   open ${finalPath}`);
+  console.info(`\n   Open it with:`);
+  console.info(`   open ${finalPath}`);
 
   if (mergedConfig.serve) {
     const regPath = mergedConfig.generateRegistryJson ? join(OUT_DIR, "bun-docs-registry.json") : null;
-    await startServer(finalPath, regPath, registryData, mergedConfig.watch, mergedConfig.console, mergedConfig.websocket);
-  }
-}
 
-// Bun.serve showcase (modern routes API + server.reload() hot reloading)
-async function startServer(
-  htmlPath: string,
-  registryPath: string | null,
-  registryData: any,
-  enableWatch = false,
-  enableConsole = false,
-  enableWebSocket = false
-) {
-  const idleTimeout = mergedConfig.idleTimeout;
-  const idleTimeoutPerRequest = mergedConfig.idleTimeoutPerRequest;
-  const shouldUnref = mergedConfig.unref;
-  const port = mergedConfig.port || 0;
-  const hostname = mergedConfig.hostname;
-
-  console.log(`\n🚀 Starting Bun.serve using routes API (from the docs you pasted)...`);
-
-  // Simple request logger for visibility (especially useful with --watch)
-  // Logs a structured object so Bun's console pretty-prints it nicely.
-  function logRequest(req: Request) {
-    const url = new URL(req.url);
-    console.log({
-      type: "request",
-      method: req.method,
-      path: url.pathname,
-      time: new Date().toISOString().slice(11, 23),
+    await startServerDemo({
+      htmlPath: finalPath,
+      registryPath: regPath,
+      registryData,
+      watchDir: OUT_DIR, // absolute path to the output directory
+      port: mergedConfig.port,
+      hostname: mergedConfig.hostname,
+      idleTimeout: mergedConfig.idleTimeout,
+      idleTimeoutPerRequest: mergedConfig.idleTimeoutPerRequest,
+      unref: mergedConfig.unref,
+      watch: mergedConfig.watch,
+      console: mergedConfig.console,
+      websocket: mergedConfig.websocket,
     });
-  }
-
-  // WebSocket pub/sub handler (defined here so it can be attached to Bun.serve and
-  // close over wsServerRef for publish + subscriberCount access inside callbacks).
-  // This is only constructed when --ws is passed; otherwise Bun.serve stays lean.
-  const wsServerRef = { current: null as any };
-  let websocketHandler: any = undefined;
-  if (enableWebSocket) {
-    websocketHandler = {
-      open(ws: any) {
-        const room = "demo-room";
-        ws.subscribe(room);
-
-        const count = wsServerRef.current?.subscriberCount?.(room) ?? 0;
-        const info = ws.data ? ` (IP: ${ws.data.clientIP})` : "";
-
-        // Include header demo info in the first message sent to the client
-        const headerInfo = ws.data?.receivedUpgradeHeaders
-          ? { receivedClientHeaders: ws.data.receivedUpgradeHeaders, upgradeResponseHeaders: ws.data.sentUpgradeResponseHeaders }
-          : {};
-
-        ws.send(
-          JSON.stringify({
-            type: "welcome",
-            room,
-            subscriberCount: count,
-            message:
-              "Connected to Bun WebSocket demo room. All messages broadcast via server.publish() + topics. This client also received a direct echo via ws.send().",
-            ...headerInfo,
-            headerDemoNote: "See /api/ws-status and modal for custom upgrade headers (req.headers + server.upgrade headers option + Bun client new WebSocket(url, {headers})).",
-          })
-        );
-
-        console.log(`[WebSocket] Client joined${info} — room=${room} subscriberCount=${count}`);
-        if (ws.data?.receivedUpgradeHeaders) {
-          console.log(`[WebSocket] Upgrade headers received from client:`, ws.data.receivedUpgradeHeaders);
-        }
-      },
-      message(ws: any, message: string | ArrayBuffer) {
-        const text =
-          message instanceof ArrayBuffer
-            ? new TextDecoder().decode(message)
-            : String(message);
-
-        // 1. Direct reply using ws.send() (the simple echo path)
-        ws.send(
-          JSON.stringify({
-            type: "echo",
-            received: text,
-            timestamp: Date.now(),
-          })
-        );
-
-        // 2. Broadcast to the entire room using server.publish() (the powerful pub/sub path)
-        // Every subscriber (including this one) will receive the 'broadcast' message.
-        if (wsServerRef.current) {
-          wsServerRef.current.publish(
-            "demo-room",
-            JSON.stringify({
-              type: "broadcast",
-              message: text,
-              timestamp: Date.now(),
-            })
-          );
-        }
-      },
-      close(ws: any, code: number, reason: string) {
-        console.log(`[WebSocket] Client left (code=${code})`);
-      },
-    };
-  }
-
-  // Helper to build a fresh routes object (critical for reload())
-  async function createRoutes() {
-    const htmlFile = Bun.file(htmlPath);
-    const regFile = registryPath ? Bun.file(registryPath) : null;
-
-    return {
-      "/": htmlFile,
-      "/index.html": htmlFile,
-      "/registry.json": regFile || new Response("No registry", { status: 404 }),
-      "/api/registry": regFile || new Response("No registry", { status: 404 }),
-
-      "/api/status": (req, srv) => {
-        logRequest(req);
-        const ip = srv.requestIP(req);
-        return Response.json({
-          status: "ok",
-          url: srv.url.toString(),
-          pendingRequests: srv.pendingRequests,
-          pendingWebSockets: srv.pendingWebSockets,
-          client: ip?.address,
-        });
-      },
-
-      "/api/page/:slug": (req) => {
-        logRequest(req);
-        const page = registryData.pages.find((p: any) => p.url.includes(req.params.slug));
-        return page ? Response.json(page) : new Response("Not found", { status: 404 });
-      },
-
-      "/api/echo": {
-        POST: async (req) => {
-          logRequest(req);
-          return Response.json({ echo: await req.json().catch(() => ({})) });
-        },
-        GET: (req) => {
-          logRequest(req);
-          return Response.json({ ok: true });
-        },
-      },
-
-      // ============================================================
-      // DEMO: Per-request timeout via server.timeout(req, seconds)
-      // ============================================================
-      // This showcases Bun.serve's powerful per-request idle timeout control.
-      // Unlike the global `idleTimeout` option (set on Bun.serve()), this lets you
-      // dynamically extend (or disable) the timeout for *individual* long-lived requests.
-      //
-      // Use cases: Server-Sent Events (SSE), WebSockets, long-polling, chunked uploads,
-      // or any connection that legitimately stays open longer than the default idleTimeout.
-      //
-      // Call: server.timeout(req, 0)  → disables timeout for this req (infinite keep-alive)
-      //       server.timeout(req, 300) → 5 minutes for this specific connection
-      //
-      // The route also accepts ?timeout=NN query param for live experimentation.
-      // Try: curl -N http://localhost:PORT/api/sse?timeout=0
-      // Or in browser: new EventSource('/api/sse')
-      "/api/sse": (req, server) => {
-        logRequest(req);
-
-        const url = new URL(req.url);
-        const timeoutSec = url.searchParams.has("timeout")
-          ? parseInt(url.searchParams.get("timeout") || "0", 10)
-          : idleTimeoutPerRequest;
-
-        // ★ THE CORE API DEMO
-        server.timeout(req, timeoutSec);
-
-        console.log(`   [SSE] server.timeout(req, ${timeoutSec}) — per-request idle timeout ${timeoutSec === 0 ? "disabled" : `set to ${timeoutSec}s`}`);
-
-        const encoder = new TextEncoder();
-        let eventId = 0;
-        let intervalId: ReturnType<typeof setInterval> | null = null;
-
-        const stream = new ReadableStream({
-          start(controller) {
-            // Initial handshake event
-            controller.enqueue(
-              encoder.encode(`id: ${eventId++}\ndata: connected (per-request timeout=${timeoutSec}s via server.timeout)\n\n`)
-            );
-
-            // Emit "heartbeat" events every second to simulate real-time updates.
-            // This keeps the connection long-lived. The server.timeout() call above ensures
-            // the server's global idleTimeout does not terminate it prematurely.
-            intervalId = setInterval(() => {
-              if (eventId > 20) {
-                // Safety limit for the demo (prevents infinite streams in test runs).
-                // In production SSE you'd omit this and let client disconnect / server push forever.
-                if (intervalId) {
-                  clearInterval(intervalId);
-                  intervalId = null;
-                }
-                try {
-                  controller.enqueue(encoder.encode(`id: ${eventId++}\ndata: [demo] 20 events sent — stream closed by server (try ?timeout=300 for longer)\n\n`));
-                  controller.close();
-                } catch {}
-                return;
-              }
-              try {
-                controller.enqueue(
-                  encoder.encode(
-                    `id: ${eventId++}\ndata: ${new Date().toISOString()} — live event #${eventId} (kept alive by server.timeout(req, ${timeoutSec}))\n\n`
-                  )
-                );
-              } catch (e) {
-                // Controller closed (e.g. client disconnected) — stop timer
-                if (intervalId) {
-                  clearInterval(intervalId);
-                  intervalId = null;
-                }
-              }
-            }, 1000);
-          },
-          cancel() {
-            // Critical: stop the interval when client disconnects, otherwise
-            // later ticks will try to .enqueue() on a closed controller and throw.
-            if (intervalId) {
-              clearInterval(intervalId);
-              intervalId = null;
-            }
-          },
-        });
-
-        return new Response(stream, {
-          headers: {
-            "Content-Type": "text/event-stream",
-            "Cache-Control": "no-cache, no-transform",
-            "Connection": "keep-alive",
-            "X-Accel-Buffering": "no",
-          },
-        });
-      },
-
-      // ============================================================
-      // DEMO: Streaming response body (ReadableStream)
-      // ============================================================
-      // This demonstrates modern streaming response consumption:
-      // - `for await (const chunk of response.body)` 
-      // - Or using `response.body.getReader()`
-      //
-      // Try it from the "Built with Bun" modal → "Stream Response Body" button.
-      // With --console, each chunk will appear in your terminal.
-      "/api/stream-demo": async (req) => {
-        logRequest(req);
-
-        const encoder = new TextEncoder();
-        const chunks = [
-          "Chunk 1: Hello from Bun streaming demo\n",
-          "Chunk 2: This response is being streamed in real time...\n",
-          "Chunk 3: No buffering of the entire body in memory.\n",
-          "Chunk 4: Perfect for large files, SSE, or AI token streams.\n",
-          "Chunk 5: Connection will close after this final chunk.\n",
-        ];
-
-        const stream = new ReadableStream({
-          async start(controller) {
-            for (const chunk of chunks) {
-              controller.enqueue(encoder.encode(chunk));
-              await new Promise(r => setTimeout(r, 350)); // simulate slow network
-            }
-            controller.close();
-          },
-        });
-
-        return new Response(stream, {
-          headers: {
-            "Content-Type": "text/plain; charset=utf-8",
-            "Cache-Control": "no-cache",
-          },
-        });
-      },
-
-      // ============================================================
-      // WebSocket demo (only enabled with --ws or --websocket)
-      // ============================================================
-      // Educational showcase of Bun's first-class WebSocket support + **custom headers on upgrade**:
-      // - Read incoming headers from the original HTTP upgrade request using `req.headers.get(name)`
-      //   (Authorization, X-Client-Id, User-Agent, Cookie, or any custom header the client sends).
-      // - `server.upgrade(req, { headers: { 'X-Foo': 'bar', 'Set-Cookie': '...' }, data })`
-      //   sends custom headers back in the 101 Switching Protocols response.
-      // - Client side (Bun runtime): `new WebSocket(url, { headers: { 'Authorization': 'Bearer ...' } })`
-      //   — the headers arrive in `req.headers` on the server during the /ws route.
-      // - Browser clients have restrictions (can't set arbitrary headers on WebSocket for security),
-      //   but the demo supports query params (?x-client-id=...) as a convenient way to simulate in the UI tester.
-      // - Everything integrates with the existing pub/sub room, ws.data, publish, and subscriberCount.
-      // Works seamlessly alongside routes + SSE + console streaming.
-      ...(enableWebSocket
-        ? {
-            "/ws": (req, srv) => {
-              logRequest(req);
-
-              // === CUSTOM HEADER DEMO: Read headers from the incoming upgrade request ===
-              // `req` is a standard Request; req.headers is a Headers object (case-insensitive).
-              const url = new URL(req.url);
-              const receivedHeaders: Record<string, string | null> = {
-                'x-client-id': req.headers.get('x-client-id') || req.headers.get('X-Client-Id') || url.searchParams.get('x-client-id') || null,
-                'authorization': req.headers.get('authorization') || url.searchParams.get('authorization') || null,
-                'user-agent': req.headers.get('user-agent'),
-                'cookie': req.headers.get('cookie'),
-              };
-
-              // Filter out nulls for cleanliness in the demo payload
-              const cleanReceived = Object.fromEntries(
-                Object.entries(receivedHeaders).filter(([, v]) => v != null)
-              );
-
-              // === Send custom headers in the upgrade response (101) ===
-              const responseHeaders = {
-                'X-Upgrade-Demo': 'Bun custom upgrade headers',
-                'X-Received-Client-Id': cleanReceived['x-client-id'] || 'none',
-                'X-Upgrade-Timestamp': new Date().toISOString(),
-                // Example of setting a cookie on successful WS upgrade (useful for session binding)
-                // 'Set-Cookie': `ws-demo=${Date.now()}; Path=/; SameSite=Strict`,
-              };
-
-              const upgraded = srv.upgrade(req, {
-                headers: responseHeaders,
-                data: {
-                  connectedAt: Date.now(),
-                  clientIP: srv.requestIP(req)?.address ?? "unknown",
-                  // Store what we read from the client request headers (or query fallback for browser tester)
-                  receivedUpgradeHeaders: cleanReceived,
-                  sentUpgradeResponseHeaders: responseHeaders,
-                },
-              });
-              if (upgraded) {
-                return undefined; // 101 Switching Protocols handled by Bun (with our custom headers)
-              }
-              return new Response("WebSocket upgrade failed", { status: 400 });
-            },
-            "/api/ws-status": (req, srv) => {
-              logRequest(req);
-              const room = "demo-room";
-              const count = typeof srv.subscriberCount === "function" ? srv.subscriberCount(room) : 0;
-              return Response.json({
-                websocketEnabled: true,
-                room,
-                subscriberCount: count,
-                note: "Connect with custom headers! Server reads req.headers (or ?x-client-id=... for browser demo). See welcome message for received/sent upgrade headers.",
-                headerDemo: {
-                  description: "Demonstrates reading upgrade request headers + returning custom headers via server.upgrade({ headers })",
-                  clientHeaderExamples: ["X-Client-Id", "Authorization"],
-                  bunClientSyntax: "new WebSocket('ws://host/ws', { headers: { 'X-Client-Id': 'demo123', 'Authorization': 'Bearer ...' } })",
-                },
-                demonstratedAPIs: [
-                  "Bun.serve({ websocket: WebSocketHandler, routes })",
-                  "server.upgrade(req, { headers, data })  ← custom upgrade response headers",
-                  "req.headers.get('x-client-id') inside the upgrade route (before calling upgrade)",
-                  "ws.subscribe('demo-room')",
-                  "ws.send(JSON.stringify(...))",
-                  "server.publish('demo-room', msg)",
-                  "server.subscriberCount('demo-room')",
-                  "ws.data (per-socket context + receivedUpgradeHeaders from the handshake)"
-                ],
-              });
-            },
-          }
-        : {}),
-
-      "/api/*": Response.json({ error: "Not found" }, { status: 404 }),
-      "/docs": Response.redirect("/"),
-
-      // Debug endpoint: allows triggering shutdown from the browser / curl
-      // Only available when --console is passed (dev mode)
-      ...(enableConsole
-        ? {
-            "/__shutdown": {
-              POST: async () => {
-                console.log(`\n[Debug] Received shutdown request via /__shutdown`);
-                // In a real app you'd call server.stop() here.
-                // For the demo we exit cleanly so the user sees the lifecycle.
-                setTimeout(() => process.exit(0), 100);
-                return new Response("Shutting down...", { status: 200 });
-              },
-            },
-          }
-        : {}),
-    };
-  }
-
-  const initialRoutes = await createRoutes();
-
-  const serveOptions: any = {
-    port,
-    hostname,
-    idleTimeout, // configurable via --idle-timeout
-    development: enableConsole ? { console: true } : undefined,
-    routes: initialRoutes,
-    fetch(req) {
-      logRequest(req);
-      return new Response("Not Found", { status: 404 });
-    },
-  };
-
-  if (enableWebSocket && websocketHandler) {
-    serveOptions.websocket = websocketHandler;
-  }
-
-  const server = Bun.serve(serveOptions);
-
-  if (enableWebSocket) {
-    wsServerRef.current = server;
-  }
-
-  console.log(`✅ Server running: ${server.url}`);
-  console.log(
-    `   Useful: /api/status  | POST /api/echo  | /api/page/bytecode  | GET /api/sse (server.timeout demo)  | GET /api/stream-demo (streaming response body)${enableWebSocket ? "  | WS /ws  | GET /api/ws-status (custom upgrade headers + subscriberCount)" : ""}`
-  );
-
-  // === Graceful Shutdown (server.stop) ===
-  let isShuttingDown = false;
-
-  async function shutdown(force = false) {
-    if (isShuttingDown) return;
-    isShuttingDown = true;
-
-    console.log(`\n🛑 Shutting down server...`);
-
-    try {
-      await server.stop(force);
-      console.log(`   ✅ Server stopped successfully ${force ? '(forced)' : '(graceful)'}`);
-    } catch (err) {
-      console.error(`   ❌ Error during shutdown:`, err);
-    }
-
-    // Give a moment for logs to flush
-    setTimeout(() => {
-      process.exit(0);
-    }, 100);
-  }
-
-  // Handle Ctrl+C (SIGINT) and system termination (SIGTERM)
-  process.on('SIGINT', () => {
-    console.log('\n[Signal] Received SIGINT (Ctrl+C)');
-    shutdown(false); // graceful first
-  });
-
-  process.on('SIGTERM', () => {
-    console.log('\n[Signal] Received SIGTERM');
-    shutdown(true); // force on SIGTERM usually
-  });
-
-  // Second Ctrl+C forces immediate shutdown
-  let sigintCount = 0;
-  const originalSigint = process.listeners('SIGINT');
-  process.removeAllListeners('SIGINT');
-  process.on('SIGINT', () => {
-    sigintCount++;
-    if (sigintCount >= 2) {
-      console.log('\n[Signal] Second SIGINT — forcing immediate shutdown');
-      shutdown(true);
-    } else {
-      shutdown(false);
-    }
-  });
-
-  // === Hot Route Reloading via server.reload() ===
-  if (enableWatch) {
-    console.log(`\n👀 Watch mode enabled — using server.reload() for zero-downtime updates`);
-    console.log(`   Edit files in ${mergedConfig.outputDir} and routes will hot-reload`);
-
-    const { watch } = await import("node:fs");
-
-    watch(OUT_DIR, { recursive: true }, async (_eventType, filename) => {
-      if (!filename) return;
-
-      if (filename.includes("bun-docs.html") || filename.includes("bun-docs-registry.json")) {
-        const start = Date.now();
-        console.log(`\n🔄 File changed: ${filename} → calling server.reload()`);
-
-        try {
-          const newRoutes = await createRoutes();
-          server.reload({ routes: newRoutes });
-          const duration = Date.now() - start;
-          console.log(`   ✅ Routes reloaded successfully in ${duration}ms (no dropped connections)`);
-        } catch (err) {
-          console.error(`   ❌ Reload failed:`, err);
-        }
-      }
-    });
-  }
-
-  // Lifecycle control
-  if (shouldUnref) {
-    server.unref();
-    console.log(`   ⚠️  Server will not keep the process alive (--unref)`);
-  } else {
-    server.ref();
-  }
-
-  // === Debug Shutdown Endpoint (only when --console is enabled) ===
-  if (enableConsole) {
-    // We add this route after server creation because it needs access to the server instance
-    // In a real app you'd include it in createRoutes(), but we need `server` here.
-    // For now we document it in the modal instead.
   }
 }
 

@@ -4,8 +4,8 @@
 import { R2ViolationLogger, ViolationLogEntry, WidthViolation } from './r2-storage.js';
 import { broadcastViolation } from './sse-alerts.js';
 
-console.log('🚀 Tier-1380 R2 Storage Demo - Persistent Violation Logs');
-console.log('=' .repeat(60));
+console.info('🚀 Tier-1380 R2 Storage Demo - Persistent Violation Logs');
+console.info('=' .repeat(60));
 
 // Mock R2 configuration for demonstration
 const mockConfig = {
@@ -21,7 +21,7 @@ let r2Logger: R2ViolationLogger | null = null;
 
 try {
   r2Logger = new R2ViolationLogger(mockConfig);
-  console.log('✅ R2 logger initialized (demo mode)');
+  console.info('✅ R2 logger initialized (demo mode)');
 } catch (error) {
   console.error('❌ Failed to initialize R2 logger:', error);
 }
@@ -42,11 +42,11 @@ function createSampleViolation(id: number): WidthViolation {
 
 // Demo 1: Single violation upload
 async function demoSingleUpload() {
-  console.log('\n📦 Demo 1: Single Violation Upload');
-  console.log('-'.repeat(40));
+  console.info('\n📦 Demo 1: Single Violation Upload');
+  console.info('-'.repeat(40));
 
   if (!r2Logger) {
-    console.log('⚠️ Skipping single upload demo (no R2 logger)');
+    console.info('⚠️ Skipping single upload demo (no R2 logger)');
     return;
   }
 
@@ -63,24 +63,24 @@ async function demoSingleUpload() {
     }
   };
 
-  console.log(`📤 Uploading violation: ${violation.file}:${violation.line} (${violation.column}c)`);
+  console.info(`📤 Uploading violation: ${violation.file}:${violation.line} (${violation.column}c)`);
   
   const result = await r2Logger.uploadViolationLog(logEntry);
   
   if (result.success) {
-    console.log(`✅ Upload successful: ${result.url}`);
+    console.info(`✅ Upload successful: ${result.url}`);
   } else {
-    console.log(`❌ Upload failed: ${result.error}`);
+    console.info(`❌ Upload failed: ${result.error}`);
   }
 }
 
 // Demo 2: Batch upload with streaming
 async function demoBatchUpload() {
-  console.log('\n📦 Demo 2: Batch Upload (Streaming)');
-  console.log('-'.repeat(40));
+  console.info('\n📦 Demo 2: Batch Upload (Streaming)');
+  console.info('-'.repeat(40));
 
   if (!r2Logger) {
-    console.log('⚠️ Skipping batch upload demo (no R2 logger)');
+    console.info('⚠️ Skipping batch upload demo (no R2 logger)');
     return;
   }
 
@@ -100,29 +100,29 @@ async function demoBatchUpload() {
     });
   }
 
-  console.log(`📤 Uploading ${violations.length} violations in batches...`);
+  console.info(`📤 Uploading ${violations.length} violations in batches...`);
   
   const result = await r2Logger.streamViolations(violations);
   
   if (result.success) {
-    console.log(`✅ Batch upload successful: ${result.uploaded} violations uploaded`);
+    console.info(`✅ Batch upload successful: ${result.uploaded} violations uploaded`);
   } else {
-    console.log(`❌ Batch upload failed: ${result.error}`);
-    console.log(`📊 Partial upload: ${result.uploaded} violations uploaded`);
+    console.info(`❌ Batch upload failed: ${result.error}`);
+    console.info(`📊 Partial upload: ${result.uploaded} violations uploaded`);
   }
 }
 
 // Demo 3: Query violations from R2
 async function demoQueryViolations() {
-  console.log('\n📦 Demo 3: Query Violations from R2');
-  console.log('-'.repeat(40));
+  console.info('\n📦 Demo 3: Query Violations from R2');
+  console.info('-'.repeat(40));
 
   if (!r2Logger) {
-    console.log('⚠️ Skipping query demo (no R2 logger)');
+    console.info('⚠️ Skipping query demo (no R2 logger)');
     return;
   }
 
-  console.log('🔍 Querying violations for tenant: acme');
+  console.info('🔍 Querying violations for tenant: acme');
   
   const result = await r2Logger.queryViolations({
     tenant: 'acme',
@@ -131,55 +131,55 @@ async function demoQueryViolations() {
   });
 
   if (result.error) {
-    console.log(`❌ Query failed: ${result.error}`);
+    console.info(`❌ Query failed: ${result.error}`);
   } else {
-    console.log(`✅ Query successful: ${result.violations.length} violations found`);
+    console.info(`✅ Query successful: ${result.violations.length} violations found`);
     
     result.violations.slice(0, 3).forEach((entry, index) => {
-      console.log(`  ${index + 1}. ${entry.violation.file}:${entry.violation.line} (${entry.violation.column}c)`);
+      console.info(`  ${index + 1}. ${entry.violation.file}:${entry.violation.line} (${entry.violation.column}c)`);
     });
     
     if (result.violations.length > 3) {
-      console.log(`  ... and ${result.violations.length - 3} more`);
+      console.info(`  ... and ${result.violations.length - 3} more`);
     }
   }
 }
 
 // Demo 4: Get violation statistics
 async function demoGetStats() {
-  console.log('\n📦 Demo 4: Violation Statistics');
-  console.log('-'.repeat(40));
+  console.info('\n📦 Demo 4: Violation Statistics');
+  console.info('-'.repeat(40));
 
   if (!r2Logger) {
-    console.log('⚠️ Skipping stats demo (no R2 logger)');
+    console.info('⚠️ Skipping stats demo (no R2 logger)');
     return;
   }
 
-  console.log('📊 Getting statistics for the last 7 days...');
+  console.info('📊 Getting statistics for the last 7 days...');
   
   const stats = await r2Logger.getViolationStats(undefined, 7);
 
   if (stats.error) {
-    console.log(`❌ Stats failed: ${stats.error}`);
+    console.info(`❌ Stats failed: ${stats.error}`);
   } else {
-    console.log(`✅ Statistics retrieved:`);
-    console.log(`  Total violations: ${stats.total}`);
-    console.log(`  Critical: ${stats.critical}`);
-    console.log(`  Warning: ${stats.warning}`);
-    console.log(`  Top files:`);
+    console.info(`✅ Statistics retrieved:`);
+    console.info(`  Total violations: ${stats.total}`);
+    console.info(`  Critical: ${stats.critical}`);
+    console.info(`  Warning: ${stats.warning}`);
+    console.info(`  Top files:`);
     
     stats.topFiles.slice(0, 5).forEach((file, index) => {
-      console.log(`    ${index + 1}. ${file.file} (${file.count} violations)`);
+      console.info(`    ${index + 1}. ${file.file} (${file.count} violations)`);
     });
   }
 }
 
 // Demo 5: Integration with SSE system
 async function demoSSEIntegration() {
-  console.log('\n📦 Demo 5: SSE System Integration');
-  console.log('-'.repeat(40));
+  console.info('\n📦 Demo 5: SSE System Integration');
+  console.info('-'.repeat(40));
 
-  console.log('🚨 Triggering violation through SSE system (with R2 storage)...');
+  console.info('🚨 Triggering violation through SSE system (with R2 storage)...');
   
   // This will use the updated broadcastViolation function that includes R2 storage
   const testViolation: WidthViolation = {
@@ -195,13 +195,13 @@ async function demoSSEIntegration() {
 
   await broadcastViolation(testViolation);
   
-  console.log('✅ SSE integration demo completed');
-  console.log('💡 Check the console output above for R2 storage results');
+  console.info('✅ SSE integration demo completed');
+  console.info('💡 Check the console output above for R2 storage results');
 }
 
 // Main demo execution
 async function runDemo() {
-  console.log('🎯 Running R2 Storage Demos...\n');
+  console.info('🎯 Running R2 Storage Demos...\n');
 
   await demoSingleUpload();
   await new Promise(resolve => setTimeout(resolve, 1000));
@@ -217,18 +217,18 @@ async function runDemo() {
 
   await demoSSEIntegration();
 
-  console.log('\n🎉 R2 Storage Demo Complete!');
-  console.log('\n📋 Next Steps:');
-  console.log('  1. Set up real R2 credentials in .env file');
-  console.log('  2. Run: bun run r2-demo to test with real storage');
-  console.log('  3. Start SSE server: bun run sse');
-  console.log('  4. Monitor violations with R2 persistence enabled');
+  console.info('\n🎉 R2 Storage Demo Complete!');
+  console.info('\n📋 Next Steps:');
+  console.info('  1. Set up real R2 credentials in .env file');
+  console.info('  2. Run: bun run r2-demo to test with real storage');
+  console.info('  3. Start SSE server: bun run sse');
+  console.info('  4. Monitor violations with R2 persistence enabled');
   
-  console.log('\n🔐 Production Notes:');
-  console.log('  • R2 provides 99.999% durability');
-  console.log('  • Automatic lifecycle policies for old violations');
-  console.log('  • Global CDN distribution for fast access');
-  console.log('  • Cost-effective storage at ~$0.015/GB/month');
+  console.info('\n🔐 Production Notes:');
+  console.info('  • R2 provides 99.999% durability');
+  console.info('  • Automatic lifecycle policies for old violations');
+  console.info('  • Global CDN distribution for fast access');
+  console.info('  • Cost-effective storage at ~$0.015/GB/month');
 }
 
 // Handle errors gracefully

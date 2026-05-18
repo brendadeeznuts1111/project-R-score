@@ -195,41 +195,41 @@ const enhancedChecks = testCases.map(testCase => ({
   }
 }));
 
-console.log("🔍 DuoPlus CLI v3.0+ - Enhanced Custom Inspection Demo");
-console.log("=".repeat(80));
-console.log("Advanced zero-width detection with Bun's stringWidth support");
-console.log("");
+console.info("🔍 DuoPlus CLI v3.0+ - Enhanced Custom Inspection Demo");
+console.info("=".repeat(80));
+console.info("Advanced zero-width detection with Bun's stringWidth support");
+console.info("");
 
-console.log("🎯 Enhanced Single Check:");
-console.log("");
-console.log(enhancedCheck);
-console.log("");
+console.info("🎯 Enhanced Single Check:");
+console.info("");
+console.info(enhancedCheck);
+console.info("");
 
-console.log("📊 Comprehensive Test Suite:");
-console.log("");
+console.info("📊 Comprehensive Test Suite:");
+console.info("");
 
 // Display using Bun's inspect table
-console.log(Bun.inspect.table(enhancedChecks, {
+console.info(Bun.inspect.table(enhancedChecks, {
   colors: true,
   indent: 2
 }));
 
-console.log("");
-console.log("📏 Detailed Width Analysis:");
-console.log("");
+console.info("");
+console.info("📏 Detailed Width Analysis:");
+console.info("");
 
 enhancedChecks.forEach((check, index) => {
-  console.log(`${index + 1}. ${check.longName}`);
-  console.log(`   Raw URI: ${check.rawUri}`);
-  console.log(`   Decoded URI: ${check.decodedUri || "N/A"}`);
-  console.log(`   Display Width: ${check.displayWidth} characters`);
-  console.log(`   Raw Length: ${(check.decodedUri || "").length} characters`);
+  console.info(`${index + 1}. ${check.longName}`);
+  console.info(`   Raw URI: ${check.rawUri}`);
+  console.info(`   Decoded URI: ${check.decodedUri || "N/A"}`);
+  console.info(`   Display Width: ${check.displayWidth} characters`);
+  console.info(`   Raw Length: ${(check.decodedUri || "").length} characters`);
   
   if (check.zeroWidthInfo.has) {
-    console.log(`   Zero-Width Characters: ${check.zeroWidthInfo.count} at positions ${check.zeroWidthInfo.positions.join(", ")}`);
+    console.info(`   Zero-Width Characters: ${check.zeroWidthInfo.count} at positions ${check.zeroWidthInfo.positions.join(", ")}`);
   }
   
-  console.log("");
+  console.info("");
 });
 
-console.log("🎉 Enhanced Custom Inspection Demo Complete!");
+console.info("🎉 Enhanced Custom Inspection Demo Complete!");

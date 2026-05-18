@@ -69,7 +69,7 @@ export class Fantasy42SecureClient {
     this.apiKey = this.getApiKey();
     this.baseURL = options.customBaseURL || this.getBaseURL();
 
-    console.log(`🔐 Fantasy42 Secure Client initialized: ${this.userAgent}`);
+    console.info(`🔐 Fantasy42 Secure Client initialized: ${this.userAgent}`);
   }
 
   private getApiKey(): string {
@@ -174,7 +174,7 @@ export class Fantasy42SecureClient {
         // Wait before retry (exponential backoff)
         if (attempt < maxRetries) {
           const delay = Math.pow(2, attempt) * 1000;
-          console.log(`⏳ Retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
+          console.info(`⏳ Retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
           await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
@@ -249,7 +249,7 @@ export class Fantasy42SecureClient {
     const cleanLog = this.sanitizeLogEntry(logEntry);
 
     // Write to compliance log
-    console.log(JSON.stringify(cleanLog));
+    console.info(JSON.stringify(cleanLog));
 
     // Send to monitoring service if in production
     if (this.environment === 'production' || this.environment === 'enterprise') {

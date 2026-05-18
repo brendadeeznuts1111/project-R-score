@@ -11,7 +11,7 @@ interface MimeEntry {
 type MimeDb = Record<string, MimeEntry>;
 
 async function generateMimeData() {
-  console.log("🌐 Fetching latest MIME database...");
+  console.info("🌐 Fetching latest MIME database...");
   const response = await fetch("https://raw.githubusercontent.com/jshttp/mime-db/master/db.json");
   const json = await response.json() as MimeDb;
 
@@ -51,14 +51,14 @@ async function generateMimeData() {
   zigOutput += "\n";
   zigOutput += `  pub const extensions = ComptimeStringMap(MimeType, .{\n${withExtensions.join(",\n")},\n  });\n};`;
 
-  console.log("✅ MIME data generated successfully.");
+  console.info("✅ MIME data generated successfully.");
   
   // Save as JSON for internal use in T3-Lattice
   await Bun.write(import.meta.dir + "/mime-types.json", JSON.stringify(json, null, 2));
-  console.log(`📝 JSON mapping saved to ${import.meta.dir}/mime-types.json`);
+  console.info(`📝 JSON mapping saved to ${import.meta.dir}/mime-types.json`);
 
   // Log Zig output for reference (as requested in feedback)
-  // console.log(zigOutput);
+  // console.info(zigOutput);
 }
 
 generateMimeData().catch(console.error);

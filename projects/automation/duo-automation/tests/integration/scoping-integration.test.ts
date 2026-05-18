@@ -18,7 +18,7 @@ interface TestResult {
 const testResults: TestResult[] = [];
 
 function log(message: string) {
-  console.log(`[SCOPING-INTEGRATION] ${message}`);
+  console.info(`[SCOPING-INTEGRATION] ${message}`);
 }
 
 function addResult(testName: string, passed: boolean, message: string, details?: any) {

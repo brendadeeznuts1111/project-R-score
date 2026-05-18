@@ -124,7 +124,7 @@ class TargetedMDXFixer {
       let hasChanges = false;
       let fileErrors = 0;
 
-      console.log(`🔧 Processing: ${filePath}`);
+      console.info(`🔧 Processing: ${filePath}`);
 
       for (const rule of TARGETED_RULES) {
         const originalContent = modified;
@@ -138,7 +138,7 @@ class TargetedMDXFixer {
         if (modified !== originalContent) {
           const matches = originalContent.match(rule.pattern)?.length || 0;
           fileErrors += matches;
-          console.log(`   ✅ ${rule.name}: ${matches} fixes applied`);
+          console.info(`   ✅ ${rule.name}: ${matches} fixes applied`);
           hasChanges = true;
         }
       }
@@ -152,10 +152,10 @@ class TargetedMDXFixer {
         await fs.writeFile(filePath, modified);
         this.fixedFiles++;
         this.totalErrors += fileErrors;
-        console.log(`   📝 Fixed ${fileErrors} errors, backup: ${backupPath}`);
+        console.info(`   📝 Fixed ${fileErrors} errors, backup: ${backupPath}`);
         return true;
       } else {
-        console.log(`   ✨ No fixes needed`);
+        console.info(`   ✨ No fixes needed`);
         return false;
       }
     } catch (error) {
@@ -166,10 +166,10 @@ class TargetedMDXFixer {
 
   async run(): Promise<void> {
     const startTime = Date.now();
-    console.log('🎯 Fire22 Targeted MDX Error Fixer');
-    console.log('!==!==!==!==!==!====');
-    console.log(`🔍 Processing ${SPECIFIC_ERROR_FILES.length} specific error files`);
-    console.log('');
+    console.info('🎯 Fire22 Targeted MDX Error Fixer');
+    console.info('!==!==!==!==!==!====');
+    console.info(`🔍 Processing ${SPECIFIC_ERROR_FILES.length} specific error files`);
+    console.info('');
 
     for (const file of SPECIFIC_ERROR_FILES) {
       const fullPath = join(process.cwd(), file);
@@ -177,19 +177,19 @@ class TargetedMDXFixer {
         await fs.access(fullPath);
         await this.fixFile(fullPath);
       } catch (error) {
-        console.log(`⚠️  Skipping missing file: ${file}`);
+        console.info(`⚠️  Skipping missing file: ${file}`);
       }
-      console.log('');
+      console.info('');
     }
 
     const duration = Date.now() - startTime;
-    console.log('📊 Summary:');
-    console.log(`   ✅ Files processed: ${SPECIFIC_ERROR_FILES.length}`);
-    console.log(`   🔧 Files fixed: ${this.fixedFiles}`);
-    console.log(`   🐛 Total errors fixed: ${this.totalErrors}`);
-    console.log(`   ⏱️  Duration: ${duration}ms`);
-    console.log('');
-    console.log('🎉 Targeted fixes complete! Restart Docusaurus to see improvements.');
+    console.info('📊 Summary:');
+    console.info(`   ✅ Files processed: ${SPECIFIC_ERROR_FILES.length}`);
+    console.info(`   🔧 Files fixed: ${this.fixedFiles}`);
+    console.info(`   🐛 Total errors fixed: ${this.totalErrors}`);
+    console.info(`   ⏱️  Duration: ${duration}ms`);
+    console.info('');
+    console.info('🎉 Targeted fixes complete! Restart Docusaurus to see improvements.');
   }
 }
 

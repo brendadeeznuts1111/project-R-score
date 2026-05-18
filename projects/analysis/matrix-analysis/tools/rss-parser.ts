@@ -15,9 +15,9 @@ async function parseRSS() {
 		// Try Bun.xml.parse (v1.3.7+ experimental)
 		try {
 			xml = (Bun as any).xml.parse(text);
-			console.log(`✅ Using Bun.xml.parse (v1.3.7+ experimental)`);
+			console.info(`✅ Using Bun.xml.parse (v1.3.7+ experimental)`);
 		} catch (bunXmlError) {
-			console.log(`⚠️  Bun.xml.parse failed, trying fallback...`);
+			console.info(`⚠️  Bun.xml.parse failed, trying fallback...`);
 
 			// Fallback to basic regex parsing
 			const titleMatch = text.match(/<title>([^<]+)<\/title>/i);
@@ -35,14 +35,14 @@ async function parseRSS() {
 				method: "regex fallback",
 			};
 
-			console.log(`📰 RSS Feed Analysis`);
-			console.log(`🔗 URL: ${feedUrl}`);
-			console.log(`📊 Feed size: ${feed.feedSize.toLocaleString()} bytes`);
-			console.log(`📝 Title: ${feed.title}`);
-			console.log(`📦 Items: ${feed.itemCount}`);
-			console.log(`🕐 Latest: "${feed.latest.title}"`);
-			console.log(`📅 Published: ${feed.latest.pubDate}`);
-			console.log(`🔧 Method: ${feed.method}`);
+			console.info(`📰 RSS Feed Analysis`);
+			console.info(`🔗 URL: ${feedUrl}`);
+			console.info(`📊 Feed size: ${feed.feedSize.toLocaleString()} bytes`);
+			console.info(`📝 Title: ${feed.title}`);
+			console.info(`📦 Items: ${feed.itemCount}`);
+			console.info(`🕐 Latest: "${feed.latest.title}"`);
+			console.info(`📅 Published: ${feed.latest.pubDate}`);
+			console.info(`🔧 Method: ${feed.method}`);
 
 			return feed;
 		}
@@ -66,14 +66,14 @@ async function parseRSS() {
 			method: "Bun.xml.parse",
 		};
 
-		console.log(`📰 RSS Feed Analysis`);
-		console.log(`🔗 URL: ${feedUrl}`);
-		console.log(`📊 Feed size: ${feed.feedSize.toLocaleString()} bytes`);
-		console.log(`📝 Title: ${feed.title}`);
-		console.log(`📦 Items: ${feed.itemCount}`);
-		console.log(`🕐 Latest: "${feed.latest.title}"`);
-		console.log(`📅 Published: ${feed.latest.pubDate}`);
-		console.log(`🔧 Method: ${feed.method}`);
+		console.info(`📰 RSS Feed Analysis`);
+		console.info(`🔗 URL: ${feedUrl}`);
+		console.info(`📊 Feed size: ${feed.feedSize.toLocaleString()} bytes`);
+		console.info(`📝 Title: ${feed.title}`);
+		console.info(`📦 Items: ${feed.itemCount}`);
+		console.info(`🕐 Latest: "${feed.latest.title}"`);
+		console.info(`📅 Published: ${feed.latest.pubDate}`);
+		console.info(`🔧 Method: ${feed.method}`);
 
 		return feed;
 	} catch (error: any) {

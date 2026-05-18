@@ -21,7 +21,7 @@ const registry = new ShortcutRegistry();
 await registry.loadFromDatabase();
 
 // ==================== MACRO SEQUENCES ====================
-console.log('=== Macro Sequences ===');
+console.info('=== Macro Sequences ===');
 
 // Create a macro that does "Save, Copy, Paste" sequence
 const saveCopyPasteMacro = registry.createMacro(
@@ -34,10 +34,10 @@ const saveCopyPasteMacro = registry.createMacro(
   'professional'
 );
 
-console.log(`Created macro: ${saveCopyPasteMacro.name} (${saveCopyPasteMacro.sequence.length} steps)`);
+console.info(`Created macro: ${saveCopyPasteMacro.name} (${saveCopyPasteMacro.sequence.length} steps)`);
 
 // ==================== PROFILE OVERRIDES ====================
-console.log('\n=== Profile Overrides ===');
+console.info('\n=== Profile Overrides ===');
 
 // Create a "Gaming" profile with custom shortcuts
 const gamingProfile = registry.createProfile(
@@ -49,10 +49,10 @@ const gamingProfile = registry.createProfile(
 // Override Ctrl+S to be a quick save in gaming mode
 registry.setOverride('file.save', 'F6', gamingProfile.id);
 
-console.log(`Created gaming profile with Ctrl+S → F5 override`);
+console.info(`Created gaming profile with Ctrl+S → F5 override`);
 
 // ==================== CONDITIONAL SHORTCUTS ====================
-console.log('\n=== Conditional Shortcuts ===');
+console.info('\n=== Conditional Shortcuts ===');
 
 // Register a shortcut that only works when a file is open
 registry.register({
@@ -70,14 +70,14 @@ registry.register({
 });
 
 // ==================== ADVANCED CONFLICT RESOLUTION ====================
-console.log('\n=== Advanced Conflict Resolution ===');
+console.info('\n=== Advanced Conflict Resolution ===');
 
 // Show current conflicts
 const conflicts = registry.detectConflicts();
-console.log(`Found ${conflicts.length} conflicts:`);
+console.info(`Found ${conflicts.length} conflicts:`);
 
 conflicts.forEach(conflict => {
-  console.log(`  ${conflict.severity}: "${conflict.key}" → ${conflict.actions.join(', ')}`);
+  console.info(`  ${conflict.severity}: "${conflict.key}" → ${conflict.actions.join(', ')}`);
 
   // Try to auto-resolve high severity conflicts
   if (conflict.severity === 'high' && conflict.actions.length >= 2) {
@@ -86,59 +86,59 @@ conflicts.forEach(conflict => {
       conflict.key,
       conflict.actions
     );
-    console.log(`    Auto-resolved: ${resolved ? '✅' : '❌'}`);
+    console.info(`    Auto-resolved: ${resolved ? '✅' : '❌'}`);
   }
 });
 
 // ==================== BACKUP AND RESTORE ====================
-console.log('\n=== Backup and Restore ===');
+console.info('\n=== Backup and Restore ===');
 
 try {
   // Save current state to database
   await registry.saveToDatabase();
-  console.log(`✅ Database state saved`);
+  console.info(`✅ Database state saved`);
 
   // Reload from database
   await registry.loadFromDatabase();
-  console.log(`✅ Database state reloaded`);
+  console.info(`✅ Database state reloaded`);
 
 } catch (error) {
-  console.log(`❌ Database operation failed: ${error}`);
+  console.info(`❌ Database operation failed: ${error}`);
 }
 
 // ==================== USAGE ANALYTICS ====================
-console.log('\n=== Usage Analytics ===');
+console.info('\n=== Usage Analytics ===');
 
 // Get detailed usage stats
 const detailedStats = registry.getUsageStatistics(30);
-console.log('Top 5 shortcuts by usage:');
+console.info('Top 5 shortcuts by usage:');
 detailedStats.slice(0, 5).forEach((stat, index) => {
-  console.log(`  ${index + 1}. ${stat.description}: ${stat.usageCount || 0} uses`);
+  console.info(`  ${index + 1}. ${stat.description}: ${stat.usageCount || 0} uses`);
 });
 
 // Get usage statistics for all shortcuts
 const allStats = registry.getUsageStatistics(30);
-console.log('\nAll shortcuts usage:');
+console.info('\nAll shortcuts usage:');
 allStats.slice(0, 5).forEach(stat => {
-  console.log(`  ${stat.description}: ${stat.usageCount || 0} uses`);
+  console.info(`  ${stat.description}: ${stat.usageCount || 0} uses`);
 });
 
 // ==================== PROFILE COMPARISON ====================
-console.log('\n=== Profile Comparison ===');
+console.info('\n=== Profile Comparison ===');
 
 const profiles = registry.getAllProfiles();
 if (profiles.length >= 2) {
   const profile1 = profiles[0];
   const profile2 = profiles[1];
 
-  console.log(`Comparing "${profile1.name}" vs "${profile2.name}":`);
+  console.info(`Comparing "${profile1.name}" vs "${profile2.name}":`);
 
   // Get shortcuts for each profile
   const shortcuts1 = registry.getShortcutsForProfile(profile1.id);
   const shortcuts2 = registry.getShortcutsForProfile(profile2.id);
 
-  console.log(`  ${profile1.name}: ${shortcuts1.length} shortcuts`);
-  console.log(`  ${profile2.name}: ${shortcuts2.length} shortcuts`);
+  console.info(`  ${profile1.name}: ${shortcuts1.length} shortcuts`);
+  console.info(`  ${profile2.name}: ${shortcuts2.length} shortcuts`);
 
   // Find differences
   const diff = shortcuts1.filter(s1 =>
@@ -146,12 +146,12 @@ if (profiles.length >= 2) {
   );
 
   if (diff.length > 0) {
-    console.log(`  Differences: ${diff.length} shortcuts unique to ${profile1.name}`);
+    console.info(`  Differences: ${diff.length} shortcuts unique to ${profile1.name}`);
   }
 }
 
 // ==================== PERFORMANCE MONITORING ====================
-console.log('\n=== Performance Monitoring ===');
+console.info('\n=== Performance Monitoring ===');
 
 // Test shortcut triggering performance
 const startTime = performance.now();
@@ -164,18 +164,18 @@ for (let i = 0; i < 100; i++) {
 const endTime = performance.now();
 const avgTime = (endTime - startTime) / 200;
 
-console.log(`Performance test: ${avgTime.toFixed(3)}ms per shortcut trigger`);
+console.info(`Performance test: ${avgTime.toFixed(3)}ms per shortcut trigger`);
 
 // ==================== CLEANUP ====================
-console.log('\n=== Cleanup ===');
+console.info('\n=== Cleanup ===');
 
 // Validate registry has loaded shortcuts
 const shortcuts = registry.getAllShortcuts();
-console.log(`Registry contains ${shortcuts.length} shortcuts`);
+console.info(`Registry contains ${shortcuts.length} shortcuts`);
 
 // Check if registry is properly initialized
 const activeProfile = registry.getActiveProfile();
-console.log(`Active profile: ${activeProfile?.name || 'None'}`);
+console.info(`Active profile: ${activeProfile?.name || 'None'}`);
 
-console.log('\n🎉 Advanced Features Demo Complete!');
-console.log('Your ShortcutRegistry supports macros, profiles, analytics, and more!');
+console.info('\n🎉 Advanced Features Demo Complete!');
+console.info('Your ShortcutRegistry supports macros, profiles, analytics, and more!');

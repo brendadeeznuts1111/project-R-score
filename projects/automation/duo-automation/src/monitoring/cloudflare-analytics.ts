@@ -267,14 +267,14 @@ export const createEvidencePipelineMonitor = () => new EvidencePipelineAnalytics
 
 // Run demo if this is the main module
 if (import.meta.main) {
-  console.log('📊 CLOUDFLARE ANALYTICS MONITOR DEMO');
-  console.log('='.repeat(45));
+  console.info('📊 CLOUDFLARE ANALYTICS MONITOR DEMO');
+  console.info('='.repeat(45));
   
   const monitor = new CloudflareAnalyticsMonitor();
-  console.log(monitor.generateReport());
+  console.info(monitor.generateReport());
 
-  console.log('\n🔍 EVIDENCE PIPELINE INTEGRATION DEMO');
-  console.log('='.repeat(45));
+  console.info('\n🔍 EVIDENCE PIPELINE INTEGRATION DEMO');
+  console.info('='.repeat(45));
   
   const evidenceMonitor = new EvidencePipelineAnalytics();
   evidenceMonitor.recordEvidenceUpload();
@@ -282,5 +282,5 @@ if (import.meta.main) {
   evidenceMonitor.recordSecurityAlert();
   evidenceMonitor.updateProcessingTime(150);
   
-  console.log(evidenceMonitor.generateEvidenceReport());
+  console.info(evidenceMonitor.generateEvidenceReport());
 }

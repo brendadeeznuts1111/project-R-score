@@ -7,7 +7,7 @@
 const BASE_URL = 'https://dashboard-worker.nolarose1968-806.workers.dev';
 
 async function testEdgeCase(name: string, test: () => Promise<void>) {
-  console.log(`\n🧪 Testing: ${name}`);
+  console.info(`\n🧪 Testing: ${name}`);
   try {
     await test();
   } catch (error: any) {
@@ -16,9 +16,9 @@ async function testEdgeCase(name: string, test: () => Promise<void>) {
 }
 
 async function runEdgeCaseTests() {
-  console.log('='.repeat(60));
-  console.log('Fire22 API Edge Case Testing');
-  console.log('='.repeat(60));
+  console.info('='.repeat(60));
+  console.info('Fire22 API Edge Case Testing');
+  console.info('='.repeat(60));
 
   // Test 1: Large date range
   await testEdgeCase('Agent Performance - Large Date Range', async () => {
@@ -31,11 +31,11 @@ async function runEdgeCaseTests() {
     });
 
     const data = await response.json();
-    console.log('Status:', response.status);
-    console.log('Success:', data.success);
+    console.info('Status:', response.status);
+    console.info('Success:', data.success);
     if (data.data?.metrics) {
-      console.log('Total Volume:', data.data.metrics.totalVolume);
-      console.log('Total Wagers:', data.data.metrics.totalWagers);
+      console.info('Total Volume:', data.data.metrics.totalVolume);
+      console.info('Total Wagers:', data.data.metrics.totalWagers);
     }
   });
 
@@ -50,8 +50,8 @@ async function runEdgeCaseTests() {
     });
 
     const data = await response.json();
-    console.log('Status:', response.status);
-    console.log('Response:', JSON.stringify(data).substring(0, 100));
+    console.info('Status:', response.status);
+    console.info('Response:', JSON.stringify(data).substring(0, 100));
   });
 
   // Test 3: Very large week number
@@ -65,9 +65,9 @@ async function runEdgeCaseTests() {
     });
 
     const data = await response.json();
-    console.log('Status:', response.status);
-    console.log('Week:', data.data?.week);
-    console.log('Summary:', data.data?.summary);
+    console.info('Status:', response.status);
+    console.info('Week:', data.data?.week);
+    console.info('Summary:', data.data?.summary);
   });
 
   // Test 4: Negative week number
@@ -81,8 +81,8 @@ async function runEdgeCaseTests() {
     });
 
     const data = await response.json();
-    console.log('Status:', response.status);
-    console.log('Response:', JSON.stringify(data).substring(0, 100));
+    console.info('Status:', response.status);
+    console.info('Response:', JSON.stringify(data).substring(0, 100));
   });
 
   // Test 5: Missing required parameters
@@ -96,8 +96,8 @@ async function runEdgeCaseTests() {
     });
 
     const data = await response.json();
-    console.log('Status:', response.status);
-    console.log('AgentID in response:', data.data?.agentID);
+    console.info('Status:', response.status);
+    console.info('AgentID in response:', data.data?.agentID);
   });
 
   // Test 6: SQL Injection attempt
@@ -111,8 +111,8 @@ async function runEdgeCaseTests() {
     });
 
     const data = await response.json();
-    console.log('Status:', response.status);
-    console.log('Response success:', data.success);
+    console.info('Status:', response.status);
+    console.info('Response success:', data.success);
   });
 
   // Test 7: XSS attempt
@@ -129,8 +129,8 @@ async function runEdgeCaseTests() {
     });
 
     const data = await response.json();
-    console.log('Status:', response.status);
-    console.log('Error message:', data.error);
+    console.info('Status:', response.status);
+    console.info('Error message:', data.error);
   });
 
   // Test 8: Oversized request
@@ -148,10 +148,10 @@ async function runEdgeCaseTests() {
       }),
     });
 
-    console.log('Status:', response.status);
+    console.info('Status:', response.status);
     if (!response.ok) {
       const text = await response.text();
-      console.log('Error:', text.substring(0, 100));
+      console.info('Error:', text.substring(0, 100));
     }
   });
 
@@ -166,8 +166,8 @@ async function runEdgeCaseTests() {
     });
 
     const data = await response.json();
-    console.log('Status:', response.status);
-    console.log('Success:', data.success);
+    console.info('Status:', response.status);
+    console.info('Success:', data.success);
   });
 
   // Test 10: Concurrent requests
@@ -189,13 +189,13 @@ async function runEdgeCaseTests() {
     const endTime = performance.now();
 
     const statuses = responses.map(r => r.status);
-    console.log('All status codes:', statuses);
-    console.log(
+    console.info('All status codes:', statuses);
+    console.info(
       'All successful:',
       statuses.every(s => s === 200)
     );
-    console.log(`Total time for 10 requests: ${(endTime - startTime).toFixed(2)}ms`);
-    console.log(`Average time per request: ${((endTime - startTime) / 10).toFixed(2)}ms`);
+    console.info(`Total time for 10 requests: ${(endTime - startTime).toFixed(2)}ms`);
+    console.info(`Average time per request: ${((endTime - startTime) / 10).toFixed(2)}ms`);
   });
 
   // Test 11: CORS preflight
@@ -209,11 +209,11 @@ async function runEdgeCaseTests() {
       },
     });
 
-    console.log('Status:', response.status);
-    console.log('CORS Headers:');
-    console.log('  Allow-Origin:', response.headers.get('Access-Control-Allow-Origin'));
-    console.log('  Allow-Methods:', response.headers.get('Access-Control-Allow-Methods'));
-    console.log('  Allow-Headers:', response.headers.get('Access-Control-Allow-Headers'));
+    console.info('Status:', response.status);
+    console.info('CORS Headers:');
+    console.info('  Allow-Origin:', response.headers.get('Access-Control-Allow-Origin'));
+    console.info('  Allow-Methods:', response.headers.get('Access-Control-Allow-Methods'));
+    console.info('  Allow-Headers:', response.headers.get('Access-Control-Allow-Headers'));
   });
 
   // Test 12: Different agent IDs
@@ -230,13 +230,13 @@ async function runEdgeCaseTests() {
       });
 
       const data = await response.json();
-      console.log(`  Agent "${agentID}": Status ${response.status}, Success: ${data.success}`);
+      console.info(`  Agent "${agentID}": Status ${response.status}, Success: ${data.success}`);
     }
   });
 
-  console.log('\n' + '='.repeat(60));
-  console.log('Edge case testing completed');
-  console.log('='.repeat(60));
+  console.info('\n' + '='.repeat(60));
+  console.info('Edge case testing completed');
+  console.info('='.repeat(60));
 }
 
 // Run the tests

@@ -276,12 +276,12 @@ if (import.meta.main) {
 	const command = Bun.argv[2];
 	const mode = getConnectionMode();
 
-	console.log(`🔌 Tier-1380 OMEGA Sovereign Registry (${mode} mode)\n`);
+	console.info(`🔌 Tier-1380 OMEGA Sovereign Registry (${mode} mode)\n`);
 
 	switch (command) {
 		case "init": {
 			await initRegistry();
-			console.log("✅ Sovereign Registry initialized");
+			console.info("✅ Sovereign Registry initialized");
 			break;
 		}
 
@@ -299,15 +299,15 @@ if (import.meta.main) {
 				// cols 53-60 intentionally undefined (will use DEFAULT)
 			};
 			await commitToSovereignRegistry(row);
-			console.log(`✅ Committed row: ${row.id}`);
+			console.info(`✅ Committed row: ${row.id}`);
 			break;
 		}
 
 		case "query": {
 			const rows = await queryRegistry(0n, BigInt(Date.now()));
-			console.log(`📊 ${rows.length} rows in registry`);
+			console.info(`📊 ${rows.length} rows in registry`);
 			if (rows.length > 0) {
-				console.log(
+				console.info(
 					Bun.inspect.table(
 						rows.slice(-5).map((r) => ({
 							id: `${r.id.slice(0, 8)}...`,
@@ -325,24 +325,24 @@ if (import.meta.main) {
 		case "latest": {
 			const latest = await getLatestTelemetry();
 			if (latest.id) {
-				console.log(Bun.inspect.table([latest]));
+				console.info(Bun.inspect.table([latest]));
 			} else {
-				console.log("No telemetry found");
+				console.info("No telemetry found");
 			}
 			break;
 		}
 
 		default: {
-			console.log("Usage: bun matrix/registry.ts <command>\n");
-			console.log("Commands:");
-			console.log("  init     Initialize database schema");
-			console.log("  commit   Commit a sample sparse row");
-			console.log("  query    Query all telemetry");
-			console.log("  latest   Get latest telemetry entry\n");
-			console.log("Environment:");
-			console.log("  TIER1380_SQLITE_PATH  SQLite path (default: data/tier1380.db)");
-			console.log("  DATABASE_URL          PostgreSQL URL (for production)");
-			console.log("  TIER1380_DB_MODE      Mode: sqlite|postgres|auto");
+			console.info("Usage: bun matrix/registry.ts <command>\n");
+			console.info("Commands:");
+			console.info("  init     Initialize database schema");
+			console.info("  commit   Commit a sample sparse row");
+			console.info("  query    Query all telemetry");
+			console.info("  latest   Get latest telemetry entry\n");
+			console.info("Environment:");
+			console.info("  TIER1380_SQLITE_PATH  SQLite path (default: data/tier1380.db)");
+			console.info("  DATABASE_URL          PostgreSQL URL (for production)");
+			console.info("  TIER1380_DB_MODE      Mode: sqlite|postgres|auto");
 		}
 	}
 }

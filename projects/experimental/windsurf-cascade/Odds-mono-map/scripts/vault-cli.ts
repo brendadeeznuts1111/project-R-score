@@ -43,31 +43,31 @@ class VaultCLI {
         const vaultResult = await this.vault.validate();
         const templateResult = await this.templateValidator.validateAll();
 
-        console.log('\n📊 Validation Results:');
-        console.log('======================');
+        console.info('\n📊 Validation Results:');
+        console.info('======================');
 
-        console.log(`\n🏛️ Vault: ${vaultResult.valid ? '✅ PASSED' : '❌ FAILED'}`);
+        console.info(`\n🏛️ Vault: ${vaultResult.valid ? '✅ PASSED' : '❌ FAILED'}`);
         if (vaultResult.errors.length > 0) {
-            console.log('Errors:');
-            vaultResult.errors.forEach(error => console.log(`  ❌ ${error}`));
+            console.info('Errors:');
+            vaultResult.errors.forEach(error => console.info(`  ❌ ${error}`));
         }
         if (vaultResult.warnings.length > 0) {
-            console.log('Warnings:');
-            vaultResult.warnings.forEach(warning => console.log(`  ⚠️ ${warning}`));
+            console.info('Warnings:');
+            vaultResult.warnings.forEach(warning => console.info(`  ⚠️ ${warning}`));
         }
 
-        console.log(`\n📋 Templates: ${templateResult.valid ? '✅ PASSED' : '❌ FAILED'}`);
+        console.info(`\n📋 Templates: ${templateResult.valid ? '✅ PASSED' : '❌ FAILED'}`);
         if (templateResult.errors.length > 0) {
-            console.log('Errors:');
-            templateResult.errors.forEach(error => console.log(`  ❌ ${error}`));
+            console.info('Errors:');
+            templateResult.errors.forEach(error => console.info(`  ❌ ${error}`));
         }
         if (templateResult.warnings.length > 0) {
-            console.log('Warnings:');
-            templateResult.warnings.forEach(warning => console.log(`  ⚠️ ${warning}`));
+            console.info('Warnings:');
+            templateResult.warnings.forEach(warning => console.info(`  ⚠️ ${warning}`));
         }
 
         const overallValid = vaultResult.valid && templateResult.valid;
-        console.log(`\n🎯 Overall: ${overallValid ? '✅ PASSED' : '❌ FAILED'}`);
+        console.info(`\n🎯 Overall: ${overallValid ? '✅ PASSED' : '❌ FAILED'}`);
 
         if (!overallValid) {
             process.exit(1);
@@ -84,31 +84,31 @@ class VaultCLI {
         const vaultStatus = this.vault.getStatus();
         const templateAnalytics = this.templateValidator.getAnalytics();
 
-        console.log('📊 Vault Status');
-        console.log('===============');
-        console.log(`Health: ${vaultStatus.health}`);
-        console.log(`Last Validation: ${vaultStatus.lastValidation || 'Never'}`);
-        console.log(`Last Organization: ${vaultStatus.lastOrganization || 'Never'}`);
-        console.log(`Active Issues: ${vaultStatus.issues.length}`);
+        console.info('📊 Vault Status');
+        console.info('===============');
+        console.info(`Health: ${vaultStatus.health}`);
+        console.info(`Last Validation: ${vaultStatus.lastValidation || 'Never'}`);
+        console.info(`Last Organization: ${vaultStatus.lastOrganization || 'Never'}`);
+        console.info(`Active Issues: ${vaultStatus.issues.length}`);
 
-        console.log('\n📈 Metrics');
-        console.log('=========');
-        console.log(`Total Files: ${vaultStatus.metrics.totalFiles}`);
-        console.log(`Organized Files: ${vaultStatus.metrics.organizedFiles}`);
-        console.log(`Validated Files: ${vaultStatus.metrics.validatedFiles}`);
-        console.log(`Error Count: ${vaultStatus.metrics.errorCount}`);
+        console.info('\n📈 Metrics');
+        console.info('=========');
+        console.info(`Total Files: ${vaultStatus.metrics.totalFiles}`);
+        console.info(`Organized Files: ${vaultStatus.metrics.organizedFiles}`);
+        console.info(`Validated Files: ${vaultStatus.metrics.validatedFiles}`);
+        console.info(`Error Count: ${vaultStatus.metrics.errorCount}`);
 
-        console.log('\n📋 Template Analytics');
-        console.log('====================');
-        console.log(`Total Templates: ${templateAnalytics.performanceMetrics.totalTemplates}`);
-        console.log(`Valid Templates: ${templateAnalytics.performanceMetrics.validTemplates}`);
-        console.log(`Invalid Templates: ${templateAnalytics.performanceMetrics.invalidTemplates}`);
-        console.log(`Validation Time: ${templateAnalytics.performanceMetrics.validationTime}ms`);
+        console.info('\n📋 Template Analytics');
+        console.info('====================');
+        console.info(`Total Templates: ${templateAnalytics.performanceMetrics.totalTemplates}`);
+        console.info(`Valid Templates: ${templateAnalytics.performanceMetrics.validTemplates}`);
+        console.info(`Invalid Templates: ${templateAnalytics.performanceMetrics.invalidTemplates}`);
+        console.info(`Validation Time: ${templateAnalytics.performanceMetrics.validationTime}ms`);
     }
 
     async report(): Promise<void> {
         const report = await this.vault.generateReport();
-        console.log(report);
+        console.info(report);
     }
 
     // ============================================================================
@@ -118,7 +118,7 @@ class VaultCLI {
     async templateValidate(): Promise<void> {
         this.log('🔍 Validating templates...');
         const result = await this.templateValidator.validateAll();
-        console.log(this.templateValidator.generateValidationReport(result));
+        console.info(this.templateValidator.generateValidationReport(result));
     }
 
     async templateWizard(): Promise<void> {
@@ -130,8 +130,8 @@ class VaultCLI {
 
     async templateAnalytics(): Promise<void> {
         const analytics = this.templateValidator.getAnalytics();
-        console.log('📊 Template Analytics:');
-        console.log(JSON.stringify(analytics, null, 2));
+        console.info('📊 Template Analytics:');
+        console.info(JSON.stringify(analytics, null, 2));
     }
 
     // ============================================================================
@@ -145,12 +145,12 @@ class VaultCLI {
 
     async demoTemplates(): Promise<void> {
         this.log('📋 Running template demonstrations...');
-        console.log('Template demos would be implemented here');
+        console.info('Template demos would be implemented here');
     }
 
     async demoDashboards(): Promise<void> {
         this.log('📊 Running dashboard demonstrations...');
-        console.log('Dashboard demos would be implemented here');
+        console.info('Dashboard demos would be implemented here');
     }
 
     // ============================================================================
@@ -162,7 +162,7 @@ class VaultCLI {
         await this.vault.startMonitoring();
 
         // Keep process alive for monitoring
-        console.log('Press Ctrl+C to stop monitoring...');
+        console.info('Press Ctrl+C to stop monitoring...');
         process.on('SIGINT', async () => {
             this.log('⏹️ Stopping vault monitoring...');
             await this.vault.stopMonitoring();
@@ -178,14 +178,14 @@ class VaultCLI {
         this.log('🧹 Starting vault cleanup...');
 
         // This would implement the consolidated cleanup functionality
-        console.log('✅ Cleanup completed');
+        console.info('✅ Cleanup completed');
     }
 
     async fix(): Promise<void> {
         this.log('🔧 Starting vault fixes...');
 
         // This would implement the consolidated fix functionality  
-        console.log('✅ Fixes applied');
+        console.info('✅ Fixes applied');
     }
 
     // ============================================================================
@@ -194,13 +194,13 @@ class VaultCLI {
 
     private log(message: string): void {
         if (!this.options.quiet) {
-            console.log(message);
+            console.info(message);
         }
     }
 
     private success(message: string): void {
         if (!this.options.quiet) {
-            console.log(`✅ ${message}`);
+            console.info(`✅ ${message}`);
         }
     }
 
@@ -313,7 +313,7 @@ async function main() {
 }
 
 function showHelp() {
-    console.log(`
+    console.info(`
 🏛️ Odds-Mono-Map Vault CLI
 
 Usage: bun vault-cli.ts <command> [options]

@@ -189,7 +189,7 @@ class EnterpriseScanner {
                
       case 'COMP_VIOLATION':
         return trimmed.includes('catch (e)') && !trimmed.includes('as Error') ||
-               trimmed.includes('console.log(') ||
+               trimmed.includes('console.info(') ||
                trimmed.includes('any[');
                
       case 'CODE_SMELL':
@@ -293,7 +293,7 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.length === 0 && process.stdin.isTTY || args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🔍 Enterprise Scanner - Advanced Code Annotation System
 
 Usage:
@@ -370,7 +370,7 @@ Examples:
     }
   } else {
     console.error('❌ No input file provided and no data on stdin');
-    console.log('Use --help for usage information');
+    console.info('Use --help for usage information');
     process.exit(1);
   }
   
@@ -393,16 +393,16 @@ Examples:
   // Output based on format
   switch (options.outputFormat) {
     case 'json':
-      console.log(scanner.exportJSON(result));
+      console.info(scanner.exportJSON(result));
       break;
     case 'summary':
-      console.log(scanner.generateReport(result));
+      console.info(scanner.generateReport(result));
       break;
     case 'annotated':
     default:
-      console.log(result.annotatedCode);
+      console.info(result.annotatedCode);
       if (args.includes('--report')) {
-        console.log('\n' + scanner.generateReport(result));
+        console.info('\n' + scanner.generateReport(result));
       }
       break;
   }

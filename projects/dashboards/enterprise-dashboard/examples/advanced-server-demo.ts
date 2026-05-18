@@ -78,7 +78,7 @@ const server = Bun.serve<ClientData>({
 
   websocket: {
     open(ws) {
-      console.log(`Client ${ws.data.id} connected`);
+      console.info(`Client ${ws.data.id} connected`);
       ws.send(JSON.stringify({ type: "connected", id: ws.data.id }));
     },
 
@@ -115,7 +115,7 @@ const server = Bun.serve<ClientData>({
     },
 
     close(ws) {
-      console.log(`Client ${ws.data.id} disconnected`);
+      console.info(`Client ${ws.data.id} disconnected`);
     },
   },
 });
@@ -124,13 +124,13 @@ const server = Bun.serve<ClientData>({
 // Startup
 // =============================================================================
 
-console.log(`Server running at ${server.url}`);
-console.log(`WebSocket: ws://localhost:${server.port}/ws`);
-console.log(`Health: ${server.url}health`);
+console.info(`Server running at ${server.url}`);
+console.info(`WebSocket: ws://localhost:${server.port}/ws`);
+console.info(`Health: ${server.url}health`);
 
 // Graceful shutdown
 process.on("SIGINT", () => {
-  console.log("\nShutting down...");
+  console.info("\nShutting down...");
   server.stop();
   process.exit(0);
 });

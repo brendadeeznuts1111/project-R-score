@@ -205,8 +205,8 @@ export class VenmoFamilyAccountSystem {
       
       this.families.set(familyId, familyAccount);
       
-      console.log(`✅ Created family account: ${familyId} for ${parentEmail}`);
-      console.log(`📱 Added ${children.length} child members`);
+      console.info(`✅ Created family account: ${familyId} for ${parentEmail}`);
+      console.info(`📱 Added ${children.length} child members`);
       
       return familyAccount;
       
@@ -223,7 +223,7 @@ export class VenmoFamilyAccountSystem {
     // In production, this would call Venmo's Business API
     // For development, we simulate the response
     
-    console.log(`🏢 Creating Venmo Business Profile for ${email}`);
+    console.info(`🏢 Creating Venmo Business Profile for ${email}`);
     
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -233,7 +233,7 @@ export class VenmoFamilyAccountSystem {
       status: 'active'
     };
     
-    console.log(`✅ Business profile created: ${businessProfile.id}`);
+    console.info(`✅ Business profile created: ${businessProfile.id}`);
     
     return businessProfile;
   }
@@ -242,7 +242,7 @@ export class VenmoFamilyAccountSystem {
    * 💰 Create Shared Wallet
    */
   private async createSharedWallet(businessProfileId: string): Promise<{ id: string; balance: number }> {
-    console.log(`💰 Creating shared wallet for business profile: ${businessProfileId}`);
+    console.info(`💰 Creating shared wallet for business profile: ${businessProfileId}`);
     
     // Simulate wallet creation
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -252,7 +252,7 @@ export class VenmoFamilyAccountSystem {
       balance: 0
     };
     
-    console.log(`✅ Shared wallet created: ${wallet.id}`);
+    console.info(`✅ Shared wallet created: ${wallet.id}`);
     
     return wallet;
   }
@@ -297,7 +297,7 @@ export class VenmoFamilyAccountSystem {
     // Generate QR code SVG (simplified - in production use proper QR library)
     const qrSvg = this.generateQRCodeSVG(qrData);
     
-    console.log(`📱 Generated QR code for $${amount} to ${recipient}`);
+    console.info(`📱 Generated QR code for $${amount} to ${recipient}`);
     
     return {
       qrCodeData: qrData,
@@ -400,7 +400,7 @@ export class VenmoFamilyAccountSystem {
       transaction.status = 'completed';
       transaction.completedAt = new Date().toISOString();
       
-      console.log(`✅ Payment processed: $${amount} to ${recipientMember.name}`);
+      console.info(`✅ Payment processed: $${amount} to ${recipientMember.name}`);
       
     } catch (error) {
       transaction.status = 'failed';
@@ -420,7 +420,7 @@ export class VenmoFamilyAccountSystem {
    * 💳 Process Venmo Payment (simulated)
    */
   private async processVenmoPayment(transaction: VenmoTransaction): Promise<{ id: string; status: string }> {
-    console.log(`💳 Processing Venmo payment: $${transaction.amount}`);
+    console.info(`💳 Processing Venmo payment: $${transaction.amount}`);
     
     // Simulate Venmo API call
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -431,7 +431,7 @@ export class VenmoFamilyAccountSystem {
       status: 'completed'
     };
     
-    console.log(`✅ Venmo payment completed: ${result.id}`);
+    console.info(`✅ Venmo payment completed: ${result.id}`);
     
     return result;
   }
@@ -499,7 +499,7 @@ export class VenmoFamilyAccountSystem {
       this.transactions.set(transaction.transactionId, transaction);
     }
 
-    console.log(`💰 Payment ${transaction.status}: $${amount} from ${fromMember.name} to ${toMember.name}`);
+    console.info(`💰 Payment ${transaction.status}: $${amount} from ${fromMember.name} to ${toMember.name}`);
 
     return transaction;
   }
@@ -551,7 +551,7 @@ export class VenmoFamilyAccountSystem {
 
     this.transactions.set(splitTransaction.transactionId, splitTransaction);
 
-    console.log(`🔄 Split payment created: $${totalAmount} among ${participantIds.length} participants`);
+    console.info(`🔄 Split payment created: $${totalAmount} among ${participantIds.length} participants`);
 
     return {
       splitPayment: splitTransaction,
@@ -618,7 +618,7 @@ export class VenmoFamilyAccountSystem {
 
     this.transactions.set(transactionId, transaction);
 
-    console.log(`✅ Transaction approved: ${transactionId} by ${approvedBy}`);
+    console.info(`✅ Transaction approved: ${transactionId} by ${approvedBy}`);
 
     return transaction;
   }

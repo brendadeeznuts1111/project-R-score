@@ -12,8 +12,8 @@ class AIAutopilotPhase {
   private spinner = ora();
 
   async execute() {
-    console.log(chalk.blue.bold('\n🤖 Executing Phase 5: AI & Autonomous Operations'));
-    console.log(chalk.gray('Target: AI Autopilot + Blockchain Settlement ($1B ARR Target)\n'));
+    console.info(chalk.blue.bold('\n🤖 Executing Phase 5: AI & Autonomous Operations'));
+    console.info(chalk.gray('Target: AI Autopilot + Blockchain Settlement ($1B ARR Target)\n'));
 
     const steps = [
       { name: 'Deploying AI Autopilot (Predictive Scaling)', duration: 3000 },
@@ -38,15 +38,15 @@ class AIAutopilotPhase {
   }
 
   private displayResults() {
-    console.log(chalk.white('\n📊 Phase 5 Results:'));
-    console.log(chalk.green('   • AI Accuracy: 95% (Autonomous)'));
-    console.log(chalk.green('   • Autonomous Operations: 85% coverage'));
-    console.log(chalk.green('   • Blockchain Transactions: 10K+/day'));
-    console.log(chalk.green('   • Infrastructure Cost Reduction: 40%'));
-    console.log(chalk.green('   • Payout Speed: Instant (Blockchain)'));
+    console.info(chalk.white('\n📊 Phase 5 Results:'));
+    console.info(chalk.green('   • AI Accuracy: 95% (Autonomous)'));
+    console.info(chalk.green('   • Autonomous Operations: 85% coverage'));
+    console.info(chalk.green('   • Blockchain Transactions: 10K+/day'));
+    console.info(chalk.green('   • Infrastructure Cost Reduction: 40%'));
+    console.info(chalk.green('   • Payout Speed: Instant (Blockchain)'));
     
-    console.log(chalk.green.bold('\n🎉 Phase 5 Complete: $1B ARR Achieved!'));
-    console.log(chalk.magenta.bold('\n🚀 UNICORN STATUS ACHIEVED: factory-wager.com is now a $1B ARR Leader!'));
+    console.info(chalk.green.bold('\n🎉 Phase 5 Complete: $1B ARR Achieved!'));
+    console.info(chalk.magenta.bold('\n🚀 UNICORN STATUS ACHIEVED: factory-wager.com is now a $1B ARR Leader!'));
   }
 }
 

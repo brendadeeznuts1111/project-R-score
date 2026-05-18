@@ -84,7 +84,7 @@ class GOVDashboard {
   exportToJSON(): void {
     const data = this.generateLiveData();
     writeFileSync('dashboards/gov-live-data.json', JSON.stringify(data, null, 2));
-    console.log('✅ GOV dashboard data exported to dashboards/gov-live-data.json');
+    console.info('✅ GOV dashboard data exported to dashboards/gov-live-data.json');
   }
 
   exportToMarkdown(): void {
@@ -136,7 +136,7 @@ class GOVDashboard {
 `;
 
     writeFileSync('dashboards/gov-live-dashboard-updated.md', md);
-    console.log('✅ GOV dashboard markdown exported to dashboards/gov-live-dashboard-updated.md');
+    console.info('✅ GOV dashboard markdown exported to dashboards/gov-live-dashboard-updated.md');
   }
 }
 
@@ -157,12 +157,12 @@ switch (cmd) {
   case 'update':
     dashboard.exportToJSON();
     dashboard.exportToMarkdown();
-    console.log('✅ All dashboard data updated');
+    console.info('✅ All dashboard data updated');
     break;
 
   default:
-    console.log('GOV Dashboard Commands:');
-    console.log('  json     - Export live data as JSON');
-    console.log('  markdown - Export dashboard as Markdown');
-    console.log('  update   - Update all dashboard files');
+    console.info('GOV Dashboard Commands:');
+    console.info('  json     - Export live data as JSON');
+    console.info('  markdown - Export dashboard as Markdown');
+    console.info('  update   - Update all dashboard files');
 }

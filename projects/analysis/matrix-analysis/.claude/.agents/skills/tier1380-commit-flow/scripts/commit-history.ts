@@ -226,8 +226,8 @@ function displayHistory(limit = 20): void {
 
 	db.close();
 
-	console.log("\n📜 Recent Commits:");
-	console.log();
+	console.info("\n📜 Recent Commits:");
+	console.info();
 
 	const rows = commits.map((c) => ({
 		Hash: c.hash.slice(0, 7),
@@ -237,37 +237,37 @@ function displayHistory(limit = 20): void {
 		Message: c.message.slice(0, 50) + (c.message.length > 50 ? "…" : ""),
 	}));
 
-	console.log(Bun.inspect.table(rows));
+	console.info(Bun.inspect.table(rows));
 }
 
 function displayAnalytics(): void {
 	const analytics = generateAnalytics();
 
-	console.log("\n📊 Commit Analytics");
-	console.log();
+	console.info("\n📊 Commit Analytics");
+	console.info();
 
-	console.log(`Total Commits:      ${analytics.totalCommits}`);
-	console.log(`Valid Format Rate:  ${analytics.validFormatRate}%`);
-	console.log(`Avg Checks Passed:  ${analytics.avgChecksPassed}%`);
-	console.log();
+	console.info(`Total Commits:      ${analytics.totalCommits}`);
+	console.info(`Valid Format Rate:  ${analytics.validFormatRate}%`);
+	console.info(`Avg Checks Passed:  ${analytics.avgChecksPassed}%`);
+	console.info();
 
-	console.log("Top Domains:");
+	console.info("Top Domains:");
 	for (const { domain, count } of analytics.topDomains) {
-		console.log(`  ${domain}: ${count}`);
+		console.info(`  ${domain}: ${count}`);
 	}
-	console.log();
+	console.info();
 
-	console.log("Top Components:");
+	console.info("Top Components:");
 	for (const { component, count } of analytics.topComponents) {
-		console.log(`  ${component}: ${count}`);
+		console.info(`  ${component}: ${count}`);
 	}
-	console.log();
+	console.info();
 
 	if (analytics.complianceTrend.length > 0) {
-		console.log("Compliance Trend (14 days):");
+		console.info("Compliance Trend (14 days):");
 		for (const { date, rate } of analytics.complianceTrend) {
 			const bar = "█".repeat(Math.round(rate / 10));
-			console.log(`  ${date} ${bar} ${rate}%`);
+			console.info(`  ${date} ${bar} ${rate}%`);
 		}
 	}
 }
@@ -276,14 +276,14 @@ function displayAnalytics(): void {
 if (import.meta.main) {
 	const command = Bun.argv[2] || "history";
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Commit History                     ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Commit History                     ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
 
 	switch (command) {
 		case "sync": {
 			const count = await syncFromGit();
-			console.log(`\n🔄 Synced ${count} new commits from git`);
+			console.info(`\n🔄 Synced ${count} new commits from git`);
 			break;
 		}
 

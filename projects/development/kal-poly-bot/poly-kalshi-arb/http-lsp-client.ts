@@ -28,13 +28,13 @@ export class LSPHTTPClient {
   }
 
   async start(): Promise<void> {
-    console.log('🚀 Starting LSP HTTP integration...');
+    console.info('🚀 Starting LSP HTTP integration...');
 
     try {
       await this.startHttpServer();
       await this.waitForServerReady();
       await this.initializeClient();
-      console.log('✅ LSP HTTP integration ready!');
+      console.info('✅ LSP HTTP integration ready!');
     } catch (error) {
       console.error('❌ LSP initialization failed:', error);
       await this.shutdown();
@@ -43,7 +43,7 @@ export class LSPHTTPClient {
   }
 
   private async startHttpServer(): Promise<void> {
-    console.log('📡 Starting HTTP LSP server...');
+    console.info('📡 Starting HTTP LSP server...');
 
     // Important: Use the correct command to start the HTTP server
     this.serverProcess = spawn('bun', ['run', 'lsp-http-server.ts'], {
@@ -58,13 +58,13 @@ export class LSPHTTPClient {
     });
 
     this.serverProcess.on('exit', (code) => {
-      console.log(`[LSP Server] Process exited with code ${code}`);
+      console.info(`[LSP Server] Process exited with code ${code}`);
       this.serverReady = false;
     });
   }
 
   private async waitForServerReady(): Promise<void> {
-    console.log('⏳ Waiting for server to be ready...');
+    console.info('⏳ Waiting for server to be ready...');
     const startTime = Date.now();
 
     return new Promise((resolve, reject) => {
@@ -82,7 +82,7 @@ export class LSPHTTPClient {
             clearTimeout(timeoutId);
             clearInterval(checkInterval);
             this.serverReady = true;
-            console.log('✅ LSP server ready (health check passed)');
+            console.info('✅ LSP server ready (health check passed)');
             resolve();
           }
         } catch (error) {
@@ -98,7 +98,7 @@ export class LSPHTTPClient {
   }
 
   private async initializeClient(): Promise<void> {
-    console.log('🔌 Initializing LSP client...');
+    console.info('🔌 Initializing LSP client...');
 
     // Send initialize request
     const initResponse = await this.sendRequest('initialize', {
@@ -116,11 +116,11 @@ export class LSPHTTPClient {
       throw new Error(`Initialize failed: ${initResponse.error.message}`);
     }
 
-    console.log('✅ LSP initialized with capabilities:', initResponse.result?.capabilities);
+    console.info('✅ LSP initialized with capabilities:', initResponse.result?.capabilities);
 
     // Send initialized notification
     await this.sendNotification('initialized', {});
-    console.log('✅ LSP client fully initialized');
+    console.info('✅ LSP client fully initialized');
   }
 
   /**
@@ -176,7 +176,7 @@ export class LSPHTTPClient {
   }
 
   async shutdown(): Promise<void> {
-    console.log('🛑 Shutting down LSP HTTP integration...');
+    console.info('🛑 Shutting down LSP HTTP integration...');
 
     if (this.serverProcess) {
       this.serverProcess.kill('SIGTERM');
@@ -186,7 +186,7 @@ export class LSPHTTPClient {
 
     this.serverReady = false;
     this.pendingRequests.clear();
-    console.log('✅ LSP HTTP integration shutdown complete');
+    console.info('✅ LSP HTTP integration shutdown complete');
   }
 }
 
@@ -195,7 +195,7 @@ export const lspClient = new LSPHTTPClient();
 
 // Test the integration if run directly
 if (import.meta.main) {
-  console.log('🧪 Testing LSP HTTP Integration...\n');
+  console.info('🧪 Testing LSP HTTP Integration...\n');
 
   try {
     // Start client (which starts server)
@@ -204,18 +204,18 @@ if (import.meta.main) {
     // Open a document
     await lspClient.openDocument(
       'file:///test.ts',
-      'const greeting = "Hello"; console.log(greeting);'
+      'const greeting = "Hello"; console.info(greeting);'
     );
-    console.log('✅ Document opened');
+    console.info('✅ Document opened');
 
     // Get completions
     const completions = await lspClient.getCompletions('file:///test.ts', {
       line: 0,
       character: 45, // After greeting.
     });
-    console.log('✅ Completions:', completions);
+    console.info('✅ Completions:', completions);
 
-    console.log('\n✅ All tests passed!');
+    console.info('\n✅ All tests passed!');
   } catch (error) {
     console.error('❌ Test failed:', error);
   } finally {

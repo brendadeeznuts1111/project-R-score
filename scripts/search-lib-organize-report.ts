@@ -208,8 +208,8 @@ async function main(): Promise<void> {
 
   await Bun.write('reports/lib-organization-latest.json', `${JSON.stringify(payload, null, 2)}\n`);
   await Bun.write('reports/lib-organization-latest.md', `${lines.join('\n')}\n`);
-  console.log('[search:lib:organize:report] wrote reports/lib-organization-latest.json');
-  console.log('[search:lib:organize:report] wrote reports/lib-organization-latest.md');
+  console.info('[search:lib:organize:report] wrote reports/lib-organization-latest.json');
+  console.info('[search:lib:organize:report] wrote reports/lib-organization-latest.md');
 }
 
 await main();

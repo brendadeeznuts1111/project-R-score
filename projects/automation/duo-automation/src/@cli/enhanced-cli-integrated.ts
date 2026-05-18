@@ -99,8 +99,8 @@ class EnhancedCLI {
   }
 
   private async handleMatrixCommand(options: any): Promise<void> {
-    console.log('🔍 Enhanced Scope Matrix System');
-    console.log('=====================================\n');
+    console.info('🔍 Enhanced Scope Matrix System');
+    console.info('=====================================\n');
 
     const matrix = await this.matrix.getMatrixData();
     
@@ -119,7 +119,7 @@ class EnhancedCLI {
     }
 
     if (options.format === 'json') {
-      console.log(JSON.stringify(filteredMatrix, null, 2));
+      console.info(JSON.stringify(filteredMatrix, null, 2));
     } else if (options.format === 'markdown') {
       this.outputMatrixAsMarkdown(filteredMatrix, options.verbose);
     } else {
@@ -127,15 +127,15 @@ class EnhancedCLI {
     }
 
     // Show related documentation links
-    console.log('\n📚 Related Documentation:');
-    console.log('- [Advanced Custom Inspection System](./docs/Advanced%20Custom%20Inspection%20System%20for%20Du.md)');
-    console.log('- [Enhanced Inspection System V2](./docs/ENHANCED_INSPECTION_SYSTEM_V2.md)');
-    console.log('- [Enterprise Overview](./docs/ENTERPRISE_OVERVIEW.md)');
+    console.info('\n📚 Related Documentation:');
+    console.info('- [Advanced Custom Inspection System](./docs/Advanced%20Custom%20Inspection%20System%20for%20Du.md)');
+    console.info('- [Enhanced Inspection System V2](./docs/ENHANCED_INSPECTION_SYSTEM_V2.md)');
+    console.info('- [Enterprise Overview](./docs/ENTERPRISE_OVERVIEW.md)');
   }
 
   private async handleDocsCommand(options: any): Promise<void> {
-    console.log('📚 Documentation System');
-    console.log('========================\n');
+    console.info('📚 Documentation System');
+    console.info('========================\n');
 
     const docs = {
       'inspection': {
@@ -168,71 +168,71 @@ class EnhancedCLI {
     if (options.topic) {
       const doc = docs[options.topic.toLowerCase()];
       if (doc) {
-        console.log(`📖 ${doc.title}`);
-        console.log(`📁 File: ${doc.file}`);
-        console.log(`📝 ${doc.description}\n`);
+        console.info(`📖 ${doc.title}`);
+        console.info(`📁 File: ${doc.file}`);
+        console.info(`📝 ${doc.description}\n`);
         
         if (options.links) {
-          console.log('🔗 Related Links:');
-          console.log('- [Documentation Index](./docs/DOCUMENTATION_INDEX.md)');
-          console.log('- [Project Structure](./docs/PROJECT_STRUCTURE.md)');
-          console.log('- [Deployment Guide](./docs/DEPLOYMENT_COMPLETE.md)');
+          console.info('🔗 Related Links:');
+          console.info('- [Documentation Index](./docs/DOCUMENTATION_INDEX.md)');
+          console.info('- [Project Structure](./docs/PROJECT_STRUCTURE.md)');
+          console.info('- [Deployment Guide](./docs/DEPLOYMENT_COMPLETE.md)');
         }
       } else {
-        console.log(`❌ Documentation topic '${options.topic}' not found`);
-        console.log('Available topics:', Object.keys(docs).join(', '));
+        console.info(`❌ Documentation topic '${options.topic}' not found`);
+        console.info('Available topics:', Object.keys(docs).join(', '));
       }
     } else {
-      console.log('Available Documentation:');
+      console.info('Available Documentation:');
       Object.entries(docs).forEach(([key, doc]) => {
-        console.log(`  ${key}: ${doc.title}`);
-        console.log(`      ${doc.description}`);
+        console.info(`  ${key}: ${doc.title}`);
+        console.info(`      ${doc.description}`);
       });
     }
   }
 
   private async handleInspectCommand(target: string, options: any): Promise<void> {
-    console.log('🔍 Enhanced Inspection System');
-    console.log('==============================\n');
+    console.info('🔍 Enhanced Inspection System');
+    console.info('==============================\n');
 
     if (!target) {
-      console.log('❌ Please provide a target to inspect');
+      console.info('❌ Please provide a target to inspect');
       return;
     }
 
     // Perform inspection
     const result = await this.inspection.inspectUri(target);
     
-    console.log('Inspection Results:');
-    console.log(JSON.stringify(result, null, 2));
+    console.info('Inspection Results:');
+    console.info(JSON.stringify(result, null, 2));
 
     // Add matrix context if requested
     if (options.matrix) {
-      console.log('\n🔗 Matrix Context:');
+      console.info('\n🔗 Matrix Context:');
       const matrixData = await this.matrix.getMatrixData();
       const scope = result.scope || 'LOCAL-SANDBOX';
       const scopeData = matrixData.filter(row => row.detectedScope === scope);
       
       if (scopeData.length > 0) {
-        console.log(`Scope Configuration for ${scope}:`);
-        console.log(`- Platform: ${scopeData[0].platform}`);
-        console.log(`- Storage Path: ${scopeData[0].storagePathPrefix}`);
-        console.log(`- Secrets Backend: ${scopeData[0].secretsBackend}`);
+        console.info(`Scope Configuration for ${scope}:`);
+        console.info(`- Platform: ${scopeData[0].platform}`);
+        console.info(`- Storage Path: ${scopeData[0].storagePathPrefix}`);
+        console.info(`- Secrets Backend: ${scopeData[0].secretsBackend}`);
       }
     }
 
     // Add documentation links if requested
     if (options.docs) {
-      console.log('\n📚 Related Documentation:');
-      console.log('- [Security WebAPI Enhancement](./SECURITY_WEBAPI_COMPLETE.md)');
-      console.log('- [URI Security Validation](./URI_SECURITY_VALIDATION_COMPLETE.md)');
-      console.log('- [Production URI Inspection](./PRODUCTION_URI_INSPECTION_SYSTEM_COMPLETE.md)');
+      console.info('\n📚 Related Documentation:');
+      console.info('- [Security WebAPI Enhancement](./SECURITY_WEBAPI_COMPLETE.md)');
+      console.info('- [URI Security Validation](./URI_SECURITY_VALIDATION_COMPLETE.md)');
+      console.info('- [Production URI Inspection](./PRODUCTION_URI_INSPECTION_SYSTEM_COMPLETE.md)');
     }
   }
 
   private async handleXrefCommand(query: string, options: any): Promise<void> {
-    console.log(`🔗 Cross-Reference Search: "${query}"`);
-    console.log('=====================================\n');
+    console.info(`🔗 Cross-Reference Search: "${query}"`);
+    console.info('=====================================\n');
 
     const results: any[] = [];
 
@@ -271,30 +271,30 @@ class EnhancedCLI {
     // Display results
     if (results.length > 0) {
       results.forEach(result => {
-        console.log(`📂 ${result.type} (${result.count} results):`);
+        console.info(`📂 ${result.type} (${result.count} results):`);
         result.items.forEach((item: any, index: number) => {
           if (result.type === 'Matrix') {
-            console.log(`  ${index + 1}. ${item.detectedScope} - ${item.platform}`);
+            console.info(`  ${index + 1}. ${item.detectedScope} - ${item.platform}`);
           } else {
-            console.log(`  ${index + 1}. ${item.file}`);
+            console.info(`  ${index + 1}. ${item.file}`);
           }
         });
-        console.log();
+        console.info();
       });
     } else {
-      console.log('❌ No results found');
+      console.info('❌ No results found');
     }
   }
 
   private async handleTimezoneCommand(options: any): Promise<void> {
-    console.log('🕐 Timezone Database Integrity Validation');
-    console.log('==========================================\n');
+    console.info('🕐 Timezone Database Integrity Validation');
+    console.info('==========================================\n');
     
     const validator = new TzdbIntegrityValidator();
     
     if (options.monthly) {
-      console.log('📅 Running monthly validation check...');
-      console.log(`💡 Pro Tip: ${validator.getMonthlyValidationCommand()}\n`);
+      console.info('📅 Running monthly validation check...');
+      console.info(`💡 Pro Tip: ${validator.getMonthlyValidationCommand()}\n`);
     }
     
     // Validate critical zones
@@ -302,49 +302,49 @@ class EnhancedCLI {
     const report = await validator.validateCriticalZones(servers);
     
     // Display results
-    console.log('📊 Validation Results:');
-    console.log(`Total Zones Checked: ${report.totalZones}`);
-    console.log(`Valid Zones: ${report.validZones}`);
-    console.log(`Invalid Zones: ${report.invalidZones}`);
-    console.log(`Canonical Zones: ${report.canonicalZoneCount}`);
-    console.log(`Link Zones: ${report.linkZoneCount}`);
-    console.log(`Integrity Status: ${report.integrityStatus}\n`);
+    console.info('📊 Validation Results:');
+    console.info(`Total Zones Checked: ${report.totalZones}`);
+    console.info(`Valid Zones: ${report.validZones}`);
+    console.info(`Invalid Zones: ${report.invalidZones}`);
+    console.info(`Canonical Zones: ${report.canonicalZoneCount}`);
+    console.info(`Link Zones: ${report.linkZoneCount}`);
+    console.info(`Integrity Status: ${report.integrityStatus}\n`);
     
     // Show detailed results if verbose
     if (options.verbose && report.validationResults.length > 0) {
-      console.log('🔍 Detailed Results:');
+      console.info('🔍 Detailed Results:');
       report.validationResults.forEach(result => {
         const status = result.isValid ? '✅' : '❌';
         const server = result.server ? ` (${result.server})` : '';
-        console.log(`${status} ${result.zone}${server} - ${result.integrityCheck}`);
+        console.info(`${status} ${result.zone}${server} - ${result.integrityCheck}`);
         
         if (!result.isValid) {
-          console.log(`   Error: ${(result as any).error}`);
+          console.info(`   Error: ${(result as any).error}`);
         }
       });
-      console.log();
+      console.info();
     }
     
     // Show recommendations
     if (report.recommendations.length > 0) {
-      console.log('💡 Recommendations:');
+      console.info('💡 Recommendations:');
       report.recommendations.forEach(rec => {
-        console.log(`• ${rec}`);
+        console.info(`• ${rec}`);
       });
-      console.log();
+      console.info();
     }
     
     // Show related documentation
-    console.log('📚 Related Documentation:');
-    console.log('- [Timezone Matrix v3.7](./tests/timezones/timezone-matrix.test.ts)');
-    console.log('- [Enterprise Overview](./docs/ENTERPRISE_OVERVIEW.md)');
-    console.log('- [Integration Matrix](./docs/INTEGRATION_MATRIX_COMPLETE.md)');
+    console.info('📚 Related Documentation:');
+    console.info('- [Timezone Matrix v3.7](./tests/timezones/timezone-matrix.test.ts)');
+    console.info('- [Enterprise Overview](./docs/ENTERPRISE_OVERVIEW.md)');
+    console.info('- [Integration Matrix](./docs/INTEGRATION_MATRIX_COMPLETE.md)');
   }
 
   private async startInteractiveMode(options: any): Promise<void> {
-    console.log('🎮 Interactive Enhanced CLI Mode');
-    console.log('=================================\n');
-    console.log('Available commands: matrix, docs, inspect, xref, timezone, exit');
+    console.info('🎮 Interactive Enhanced CLI Mode');
+    console.info('=================================\n');
+    console.info('Available commands: matrix, docs, inspect, xref, timezone, exit');
     
     // Simple interactive loop
     const readline = await import('readline');
@@ -386,7 +386,7 @@ class EnhancedCLI {
             await this.handleTimezoneCommand({ monthly: true, verbose: options.verbose });
             break;
           default:
-            console.log('Unknown command. Available: matrix, docs, inspect, xref, timezone, exit');
+            console.info('Unknown command. Available: matrix, docs, inspect, xref, timezone, exit');
         }
       } catch (error) {
         console.error(`Error: ${error}`);
@@ -394,42 +394,42 @@ class EnhancedCLI {
     }
 
     rl.close();
-    console.log('\n👋 Goodbye!');
+    console.info('\n👋 Goodbye!');
   }
 
   private outputMatrixAsTable(matrix: any[], verbose: boolean = false): void {
-    console.log('┌─────────────────────┬─────────────┬──────────┬─────────────────┐');
-    console.log('│ Scope              │ Platform    │ Storage  │ Secrets        │');
-    console.log('├─────────────────────┼─────────────┼──────────┼─────────────────┤');
+    console.info('┌─────────────────────┬─────────────┬──────────┬─────────────────┐');
+    console.info('│ Scope              │ Platform    │ Storage  │ Secrets        │');
+    console.info('├─────────────────────┼─────────────┼──────────┼─────────────────┤');
     
     matrix.forEach(row => {
-      console.log(`│ ${row.detectedScope.padEnd(19)} │ ${row.platform.padEnd(11)} │ ${row.storagePathPrefix.padEnd(8)} │ ${row.secretsBackend.padEnd(15)} │`);
+      console.info(`│ ${row.detectedScope.padEnd(19)} │ ${row.platform.padEnd(11)} │ ${row.storagePathPrefix.padEnd(8)} │ ${row.secretsBackend.padEnd(15)} │`);
     });
     
-    console.log('└─────────────────────┴─────────────┴──────────┴─────────────────┘');
+    console.info('└─────────────────────┴─────────────┴──────────┴─────────────────┘');
     
     if (verbose) {
-      console.log('\n📊 Matrix Statistics:');
-      console.log(`Total Entries: ${matrix.length}`);
-      console.log(`Scopes: ${[...new Set(matrix.map(r => r.detectedScope))].join(', ')}`);
-      console.log(`Platforms: ${[...new Set(matrix.map(r => r.platform))].join(', ')}`);
+      console.info('\n📊 Matrix Statistics:');
+      console.info(`Total Entries: ${matrix.length}`);
+      console.info(`Scopes: ${[...new Set(matrix.map(r => r.detectedScope))].join(', ')}`);
+      console.info(`Platforms: ${[...new Set(matrix.map(r => r.platform))].join(', ')}`);
     }
   }
 
   private outputMatrixAsMarkdown(matrix: any[], verbose: boolean = false): void {
-    console.log('# Enhanced Scope Matrix\n');
-    console.log('| Scope | Platform | Storage | Secrets |');
-    console.log('|-------|----------|---------|---------|');
+    console.info('# Enhanced Scope Matrix\n');
+    console.info('| Scope | Platform | Storage | Secrets |');
+    console.info('|-------|----------|---------|---------|');
     
     matrix.forEach(row => {
-      console.log(`| ${row.detectedScope} | ${row.platform} | ${row.storagePathPrefix} | ${row.secretsBackend} |`);
+      console.info(`| ${row.detectedScope} | ${row.platform} | ${row.storagePathPrefix} | ${row.secretsBackend} |`);
     });
     
     if (verbose) {
-      console.log('\n## Statistics\n');
-      console.log(`- **Total Entries**: ${matrix.length}`);
-      console.log(`- **Scopes**: ${[...new Set(matrix.map(r => r.detectedScope))].join(', ')}`);
-      console.log(`- **Platforms**: ${[...new Set(matrix.map(r => r.platform))].join(', ')}`);
+      console.info('\n## Statistics\n');
+      console.info(`- **Total Entries**: ${matrix.length}`);
+      console.info(`- **Scopes**: ${[...new Set(matrix.map(r => r.detectedScope))].join(', ')}`);
+      console.info(`- **Platforms**: ${[...new Set(matrix.map(r => r.platform))].join(', ')}`);
     }
   }
 }

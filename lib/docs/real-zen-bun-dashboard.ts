@@ -45,7 +45,7 @@ export class RealZenBunDashboard {
    * Start REAL dashboard with Bun file protocol
    */
   async startRealBunDashboard(): Promise<void> {
-    console.log('🎯 Starting REAL Zen Dashboard with Bun File Protocol!');
+    console.info('🎯 Starting REAL Zen Dashboard with Bun File Protocol!');
     
     // Start Bun server with file protocol
     this.server = (Bun as any).serve({
@@ -92,16 +92,16 @@ export class RealZenBunDashboard {
       },
     });
 
-    console.log('🌐 REAL Zen Dashboard Server Started!');
-    console.log('=' .repeat(60));
-    console.log(`📱 Standard URL: http://localhost:${this.server.port}/dashboard`);
-    console.log(`🔗 Bun Protocol: bun://localhost:${this.server.port}/dashboard`);
-    console.log(`📊 Real Metrics: http://localhost:${this.server.port}/api/real-metrics`);
-    console.log(`🔍 Live Search: http://localhost:${this.server.port}/api/search?query=zen`);
-    console.log(`📋 Bun Info: http://localhost:${this.server.port}/api/bun-protocol`);
-    console.log('');
-    console.log('🎯 This dashboard shows 100% REAL search data!');
-    console.log('🚀 Try opening: bun://localhost:3002/dashboard');
+    console.info('🌐 REAL Zen Dashboard Server Started!');
+    console.info('=' .repeat(60));
+    console.info(`📱 Standard URL: http://localhost:${this.server.port}/dashboard`);
+    console.info(`🔗 Bun Protocol: bun://localhost:${this.server.port}/dashboard`);
+    console.info(`📊 Real Metrics: http://localhost:${this.server.port}/api/real-metrics`);
+    console.info(`🔍 Live Search: http://localhost:${this.server.port}/api/search?query=zen`);
+    console.info(`📋 Bun Info: http://localhost:${this.server.port}/api/bun-protocol`);
+    console.info('');
+    console.info('🎯 This dashboard shows 100% REAL search data!');
+    console.info('🚀 Try opening: bun://localhost:3002/dashboard');
     
     // Start performing real searches
     this.startRealSearches();
@@ -137,7 +137,7 @@ export class RealZenBunDashboard {
    * Perform a REAL search and record results
    */
   private async performRealSearch(query: string): Promise<any> {
-    console.log(`🔍 Performing REAL search: "${query}"`);
+    console.info(`🔍 Performing REAL search: "${query}"`);
     
     try {
       const startTime = performance.now();
@@ -165,7 +165,7 @@ export class RealZenBunDashboard {
       this.updateSystemHealth();
       this.metrics.lastUpdate = new Date().toISOString();
 
-      console.log(`✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms (${realSearch.memory.toFixed(2)}MB)`);
+      console.info(`✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms (${realSearch.memory.toFixed(2)}MB)`);
       
       return {
         success: true,
@@ -423,7 +423,7 @@ export class RealZenBunDashboard {
                     document.getElementById('searchHistory').innerHTML = historyHtml;
                 }
                 
-                console.log('✅ Real data refreshed!');
+                console.info('✅ Real data refreshed!');
                 
             } catch (error) {
                 console.error('❌ Failed to refresh real data:', error);
@@ -435,12 +435,12 @@ export class RealZenBunDashboard {
             const randomQuery = queries[Math.floor(Math.random() * queries.length)];
             
             try {
-                console.log(\`🔍 Performing real search: \${randomQuery}\`);
+                console.info(\`🔍 Performing real search: \${randomQuery}\`);
                 const response = await fetch(\`/api/search?query=\${randomQuery}\`);
                 const result = await response.json();
                 
                 if (result.success) {
-                    console.log(\`✅ Real search completed: \${result.matches} matches in \${result.time.toFixed(2)}ms\`);
+                    console.info(\`✅ Real search completed: \${result.matches} matches in \${result.time.toFixed(2)}ms\`);
                     // Refresh data after search
                     setTimeout(refreshRealData, 1000);
                 } else {
@@ -455,9 +455,9 @@ export class RealZenBunDashboard {
         // Auto-refresh real data every 10 seconds
         setInterval(refreshRealData, 10000);
         
-        console.log('🎯 REAL Zen Dashboard loaded!');
-        console.log('🔗 Bun File Protocol: bun://localhost:3002/dashboard');
-        console.log('📊 Showing 100% REAL search data - no simulations!');
+        console.info('🎯 REAL Zen Dashboard loaded!');
+        console.info('🔗 Bun File Protocol: bun://localhost:3002/dashboard');
+        console.info('📊 Showing 100% REAL search data - no simulations!');
     </script>
 </body>
 </html>`;
@@ -473,8 +473,8 @@ export class RealZenBunDashboard {
     const staticFile = (Bun as any).file('real-zen-dashboard-bun.html', { type: 'text/html' });
     await Bun.write(staticFile, new TextEncoder().encode(html));
     
-    console.log('📄 Static REAL dashboard saved: real-zen-dashboard-bun.html');
-    console.log('🎯 Open with: open real-zen-dashboard-bun.html');
+    console.info('📄 Static REAL dashboard saved: real-zen-dashboard-bun.html');
+    console.info('🎯 Open with: open real-zen-dashboard-bun.html');
   }
 
   /**
@@ -489,7 +489,7 @@ export class RealZenBunDashboard {
       this.server.stop();
       this.server = null;
     }
-    console.log('👋 REAL Zen Dashboard stopped.');
+    console.info('👋 REAL Zen Dashboard stopped.');
   }
 }
 
@@ -501,7 +501,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   
   // Handle graceful shutdown
   process.on('SIGINT', () => {
-    console.log('\n👋 Shutting down REAL Zen Dashboard...');
+    console.info('\n👋 Shutting down REAL Zen Dashboard...');
     realDashboard.stopDashboard();
     process.exit(0);
   });

@@ -195,7 +195,7 @@ export class LatticeWebSocketManager {
     this.reconnectAttempts++;
 
     setTimeout(() => {
-      console.log(`Reconnecting (attempt ${this.reconnectAttempts})...`);
+      console.info(`Reconnecting (attempt ${this.reconnectAttempts})...`);
       this.connect();
     }, delay);
   }
@@ -582,7 +582,7 @@ function generateAdvancedDashboardHTML(view: keyof typeof VIEWS = "overview"): s
       ws = new WebSocket('ws://localhost:8080/ws');
 
       ws.onopen = function() {
-        console.log('WebSocket connected');
+        console.info('WebSocket connected');
         document.querySelector('.status-active').textContent = 'WebSocket: CONNECTED';
         reconnectAttempts = 0;
       };
@@ -713,7 +713,7 @@ async function startAdvancedDashboard(runtimeConfig: any = {}): Promise<void> {
             // In production, use Redis pub/sub
           },
           (status) => {
-            console.log('WebSocket status:', status);
+            console.info('WebSocket status:', status);
           }
         );
 
@@ -831,20 +831,20 @@ async function startAdvancedDashboard(runtimeConfig: any = {}): Promise<void> {
     websocket: {
       message(ws, message) {
         // Handle WebSocket messages
-        console.log('WebSocket message received');
+        console.info('WebSocket message received');
       },
 
       open(ws) {
-        console.log('WebSocket connection opened');
+        console.info('WebSocket connection opened');
       },
 
       close(ws) {
-        console.log('WebSocket connection closed');
+        console.info('WebSocket connection closed');
       }
     }
   });
 
-  console.log(`
+  console.info(`
 ╔════════════════════════════════════════════════════════════╗
 ║  🚀 T3-Lattice Registry v3.3 - ENTERPRISE EDITION        ║
 ║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║

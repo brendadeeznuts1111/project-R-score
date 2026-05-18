@@ -19,9 +19,9 @@ export class EnhancedFrontMatterOrganizer {
             const result = Schema.safeParse(frontMatter);
 
             if (!result.success || strict) {
-                console.log(`⚠️  Front matter validation failed for ${filePath} (strict mode: ${strict})`);
+                console.info(`⚠️  Front matter validation failed for ${filePath} (strict mode: ${strict})`);
                 if (!result.success) {
-                    console.log(`   Errors: ${result.error.issues.map(i => i.path.join('.')).join(', ')}`);
+                    console.info(`   Errors: ${result.error.issues.map(i => i.path.join('.')).join(', ')}`);
                 }
 
                 // **Auto-fix** missing fields
@@ -32,9 +32,9 @@ export class EnhancedFrontMatterOrganizer {
                 const newContent = this.serializeFrontMatter(validated, body);
                 writeFileSync(filePath, newContent);
 
-                console.log(`✅ Organized: ${filePath}`);
+                console.info(`✅ Organized: ${filePath}`);
             } else {
-                console.log(`✅ Already valid: ${filePath}`);
+                console.info(`✅ Already valid: ${filePath}`);
             }
         } catch (error) {
             console.error(`❌ Error processing ${filePath}:`, error);
@@ -142,10 +142,10 @@ export class EnhancedFrontMatterOrganizer {
 
     static async organizeVault(strict = false): Promise<void> {
         const mode = strict ? 'strict' : 'enhanced';
-        console.log(`🔍 Organizing vault at: ${this.VAULT_PATH} (${mode} mode)`);
+        console.info(`🔍 Organizing vault at: ${this.VAULT_PATH} (${mode} mode)`);
 
         const files = await this.findMarkdownFiles(this.VAULT_PATH);
-        console.log(`📁 Found ${files.length} markdown files`);
+        console.info(`📁 Found ${files.length} markdown files`);
 
         let processed = 0;
         let fixed = 0;
@@ -163,7 +163,7 @@ export class EnhancedFrontMatterOrganizer {
             processed++;
 
             if (processed % 10 === 0) {
-                console.log(`📊 Progress: ${processed}/${files.length} files processed`);
+                console.info(`📊 Progress: ${processed}/${files.length} files processed`);
             }
         }
 
@@ -174,11 +174,11 @@ export class EnhancedFrontMatterOrganizer {
             mode,
         });
 
-        console.log(`✅ Vault organization complete!`);
-        console.log(`   Total files: ${files.length}`);
-        console.log(`   Files fixed: ${fixed}`);
-        console.log(`   Files already valid: ${processed - fixed}`);
-        console.log(`   Mode: ${mode}`);
+        console.info(`✅ Vault organization complete!`);
+        console.info(`   Total files: ${files.length}`);
+        console.info(`   Files fixed: ${fixed}`);
+        console.info(`   Files already valid: ${processed - fixed}`);
+        console.info(`   Mode: ${mode}`);
     }
 
     static async findMarkdownFiles(dir: string): Promise<string[]> {
@@ -216,16 +216,16 @@ if (import.meta.main) {
         const Schema = strict ? StrictConsciousnessFrontMatter : EnhancedFrontMatter;
         const result = Schema.safeParse(frontMatter);
 
-        console.log(`${result.success ? '✅' : '❌'} ${file} is ${result.success ? 'valid' : 'invalid'}`);
+        console.info(`${result.success ? '✅' : '❌'} ${file} is ${result.success ? 'valid' : 'invalid'}`);
         if (!result.success) {
-            console.log(`   Errors: ${result.error.issues.map(i => i.path.join('.')).join(', ')}`);
+            console.info(`   Errors: ${result.error.issues.map(i => i.path.join('.')).join(', ')}`);
         }
     } else if (command === 'organize' && file) {
         await EnhancedFrontMatterOrganizer.organizeFile(file, strict);
     } else if (command === 'vault') {
         await EnhancedFrontMatterOrganizer.organizeVault(strict);
     } else {
-        console.log(`
+        console.info(`
 Usage:
   bun run src/cli/organize-enhanced.ts <command> [file] [options]
 

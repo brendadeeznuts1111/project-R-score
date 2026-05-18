@@ -240,24 +240,24 @@ const main = async () => {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log('🔍 DuoPlus Changelog Parser');
-    console.log('');
-    console.log('Usage: bun changelog-parser.ts [options]');
-    console.log('');
-    console.log('Options:');
-    console.log('  --input <file>     Input changelog file');
-    console.log('  --output <file>    Output matrix file (default: docs/changelogs/DUOPLUS_MATRIX.md)');
-    console.log('  --no-use-cases     Skip use cases column');
-    console.log('  --no-impact        Skip impact column');
-    console.log('  --no-bun-tiein     Skip Bun tie-in column');
-    console.log('  --stats-only       Generate statistics only');
-    console.log('  --constants-only   Generate constants only');
-    console.log('  --help, -h         Show this help message');
-    console.log('');
-    console.log('Examples:');
-    console.log('  bun changelog-parser.ts');
-    console.log('  bun changelog-parser.ts --input CHANGELOG.md');
-    console.log('  bun changelog-parser.ts --stats-only');
+    console.info('🔍 DuoPlus Changelog Parser');
+    console.info('');
+    console.info('Usage: bun changelog-parser.ts [options]');
+    console.info('');
+    console.info('Options:');
+    console.info('  --input <file>     Input changelog file');
+    console.info('  --output <file>    Output matrix file (default: docs/changelogs/DUOPLUS_MATRIX.md)');
+    console.info('  --no-use-cases     Skip use cases column');
+    console.info('  --no-impact        Skip impact column');
+    console.info('  --no-bun-tiein     Skip Bun tie-in column');
+    console.info('  --stats-only       Generate statistics only');
+    console.info('  --constants-only   Generate constants only');
+    console.info('  --help, -h         Show this help message');
+    console.info('');
+    console.info('Examples:');
+    console.info('  bun changelog-parser.ts');
+    console.info('  bun changelog-parser.ts --input CHANGELOG.md');
+    console.info('  bun changelog-parser.ts --stats-only');
     process.exit(0);
   }
   
@@ -278,13 +278,13 @@ const main = async () => {
   if (inputFile) {
     try {
       LOG_TEXT = await Bun.file(inputFile).text();
-      console.log(`📖 Read changelog from: ${inputFile}`);
+      console.info(`📖 Read changelog from: ${inputFile}`);
     } catch (error) {
       console.error(`❌ Failed to read input file: ${error.message}`);
       process.exit(1);
     }
   } else {
-    console.log('📝 Paste your changelog text (Ctrl+D to finish):');
+    console.info('📝 Paste your changelog text (Ctrl+D to finish):');
     LOG_TEXT = await new Promise(resolve => {
       let text = '';
       process.stdin.setEncoding('utf8');
@@ -297,20 +297,20 @@ const main = async () => {
   const matrix = parseLog(LOG_TEXT, options);
   
   if (matrix.length === 0) {
-    console.log('⚠️ No items found in changelog');
+    console.info('⚠️ No items found in changelog');
     process.exit(1);
   }
   
-  console.log(`✅ Parsed ${matrix.length} items from changelog`);
+  console.info(`✅ Parsed ${matrix.length} items from changelog`);
   
   // Generate output based on options
   if (args.includes('--stats-only')) {
-    console.log(generateStats(matrix));
+    console.info(generateStats(matrix));
     return;
   }
   
   if (args.includes('--constants-only')) {
-    console.log(extractConstants(matrix));
+    console.info(extractConstants(matrix));
     return;
   }
   
@@ -323,10 +323,10 @@ const main = async () => {
   // Write output
   try {
     await Bun.write(options.outputFile!, output);
-    console.log(`💾 Matrix saved to: ${options.outputFile}`);
+    console.info(`💾 Matrix saved to: ${options.outputFile}`);
     
     // Show preview
-    console.log('\n📊 Preview (first 5 items):');
+    console.info('\n📊 Preview (first 5 items):');
     console.table(matrix.slice(0, 5));
     
   } catch (error) {
@@ -334,8 +334,8 @@ const main = async () => {
     process.exit(1);
   }
   
-  console.log('\n🎉 Changelog parsing complete!');
-  console.log(`📈 Generated ${matrix.length} items with full analysis`);
+  console.info('\n🎉 Changelog parsing complete!');
+  console.info(`📈 Generated ${matrix.length} items with full analysis`);
 };
 
 // Run the parser

@@ -47,11 +47,11 @@ class ResponseTrackingSystem {
    * 📊 Monitor all team lead responses
    */
   async monitorResponses(): Promise<void> {
-    console.log('📊 FIRE22 TEAM LEAD RESPONSE TRACKING');
-    console.log('!==!==!==!==!==!=====');
-    console.log(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
-    console.log(`⏰ Time: ${new Date().toLocaleTimeString()}`);
-    console.log(`🎯 Operation: SECURE-COMM-22\n`);
+    console.info('📊 FIRE22 TEAM LEAD RESPONSE TRACKING');
+    console.info('!==!==!==!==!==!=====');
+    console.info(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
+    console.info(`⏰ Time: ${new Date().toLocaleTimeString()}`);
+    console.info(`🎯 Operation: SECURE-COMM-22\n`);
 
     // Update response statuses
     await this.updateResponseStatuses();
@@ -68,16 +68,16 @@ class ResponseTrackingSystem {
     // Save tracking data
     await this.saveTrackingData();
 
-    console.log('\n📊 Response monitoring completed');
-    console.log('📋 Dashboard and alerts generated');
-    console.log('🚨 Escalation procedures activated where needed');
+    console.info('\n📊 Response monitoring completed');
+    console.info('📋 Dashboard and alerts generated');
+    console.info('🚨 Escalation procedures activated where needed');
   }
 
   /**
    * 🔄 Update response statuses based on time elapsed
    */
   private async updateResponseStatuses(): Promise<void> {
-    console.log('🔄 Updating response statuses...');
+    console.info('🔄 Updating response statuses...');
 
     const now = new Date();
     const notificationTime = new Date('2024-08-28T16:47:56'); // When notifications were sent
@@ -122,14 +122,14 @@ class ResponseTrackingSystem {
       response.lastContact = now.toISOString();
     }
 
-    console.log('  ✅ Response statuses updated');
+    console.info('  ✅ Response statuses updated');
   }
 
   /**
    * 📋 Generate response dashboard
    */
   private async generateResponseDashboard(): Promise<void> {
-    console.log('📋 Generating response dashboard...');
+    console.info('📋 Generating response dashboard...');
 
     const stats = this.calculateResponseStats();
 
@@ -280,14 +280,14 @@ ${this.getDepartmentReadiness('TIER_3_MEDIUM')}
     const dashboardPath = join(this.trackingDir, 'response-dashboard.md');
     writeFileSync(dashboardPath, dashboard);
 
-    console.log('  ✅ Response dashboard generated');
+    console.info('  ✅ Response dashboard generated');
   }
 
   /**
    * 🚨 Generate escalation alerts
    */
   private async generateEscalationAlerts(): Promise<void> {
-    console.log('🚨 Generating escalation alerts...');
+    console.info('🚨 Generating escalation alerts...');
 
     const overdueResponses = this.responses.filter(r => r.responseStatus === 'OVERDUE');
     const criticalResponses = this.responses.filter(r => r.priority === 'CRITICAL');
@@ -364,9 +364,9 @@ ${
       const alertPath = join(this.trackingDir, 'escalation-alert.md');
       writeFileSync(alertPath, alert);
 
-      console.log(`  🚨 Escalation alert generated: ${overdueResponses.length} overdue responses`);
+      console.info(`  🚨 Escalation alert generated: ${overdueResponses.length} overdue responses`);
     } else {
-      console.log('  ✅ No escalation alerts required');
+      console.info('  ✅ No escalation alerts required');
     }
   }
 
@@ -374,7 +374,7 @@ ${
    * 🔍 Identify required actions
    */
   private async identifyRequiredActions(): Promise<void> {
-    console.log('🔍 Identifying required actions...');
+    console.info('🔍 Identifying required actions...');
 
     const actions = [];
 
@@ -397,7 +397,7 @@ ${
       actions.push(`Schedule security briefings for ${acknowledgedResponses.length} departments`);
     }
 
-    console.log(`  📋 Identified ${actions.length} required actions`);
+    console.info(`  📋 Identified ${actions.length} required actions`);
   }
 
   // Helper methods
@@ -669,12 +669,12 @@ async function main() {
     const tracker = new ResponseTrackingSystem();
     await tracker.monitorResponses();
 
-    console.log('\n📊 RESPONSE TRACKING COMPLETE!');
-    console.log('!==!==!==!==!=====');
-    console.log('✅ Response dashboard generated');
-    console.log('✅ Escalation alerts configured');
-    console.log('✅ Action items identified');
-    console.log('✅ Monitoring system active');
+    console.info('\n📊 RESPONSE TRACKING COMPLETE!');
+    console.info('!==!==!==!==!=====');
+    console.info('✅ Response dashboard generated');
+    console.info('✅ Escalation alerts configured');
+    console.info('✅ Action items identified');
+    console.info('✅ Monitoring system active');
   } catch (error) {
     console.error('❌ Response tracking failed:', error);
     process.exit(1);

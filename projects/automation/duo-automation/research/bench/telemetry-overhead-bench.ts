@@ -5,7 +5,7 @@
 import { telemetry } from "../src/core/telemetry/telemetry-engine";
 
 async function runBenchmark() {
-  console.log("🚀 Starting Telemetry Overhead Benchmark...");
+  console.info("🚀 Starting Telemetry Overhead Benchmark...");
   const iterations = 10000;
   
   // Scenario 1: No listeners (Zero-allocation path)
@@ -16,7 +16,7 @@ async function runBenchmark() {
   let end = Bun.nanoseconds();
   let avgSilent = (end - start) / iterations / 1000; // to μs
   
-  console.log(`📊 Silent Broadcast (No Listeners): ${avgSilent.toFixed(3)}μs avg`);
+  console.info(`📊 Silent Broadcast (No Listeners): ${avgSilent.toFixed(3)}μs avg`);
 
   // Scenario 2: Active listener
   let received = 0;
@@ -32,7 +32,7 @@ async function runBenchmark() {
   unsub();
   
   let avgActive = (end - start) / iterations / 1000; // to μs
-  console.log(`📊 Active Broadcast (1 Listener): ${avgActive.toFixed(3)}μs avg`);
+  console.info(`📊 Active Broadcast (1 Listener): ${avgActive.toFixed(3)}μs avg`);
 
   // Scenario 3: Large payload
   const largePayload = {
@@ -48,14 +48,14 @@ async function runBenchmark() {
   end = Bun.nanoseconds();
   let avgLarge = (end - start) / iterations / 1000; 
 
-  console.log(`📊 Large Payload (No Listeners): ${avgLarge.toFixed(3)}μs avg`);
+  console.info(`📊 Large Payload (No Listeners): ${avgLarge.toFixed(3)}μs avg`);
 
-  console.log("\n✅ Benchmark Complete");
+  console.info("\n✅ Benchmark Complete");
   const targetUs = 100;
   if (avgActive < targetUs) {
-    console.log(`🏆 SUCCESS: Instrumentation overhead (${avgActive.toFixed(3)}μs) is well below the 100μs target.`);
+    console.info(`🏆 SUCCESS: Instrumentation overhead (${avgActive.toFixed(3)}μs) is well below the 100μs target.`);
   } else {
-    console.log(`❌ FAILURE: Instrumentation overhead exceeded 100μs target.`);
+    console.info(`❌ FAILURE: Instrumentation overhead exceeded 100μs target.`);
   }
 }
 

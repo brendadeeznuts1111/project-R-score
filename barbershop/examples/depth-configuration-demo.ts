@@ -109,8 +109,8 @@ sampleData.complex.circular = sampleData.complex;
 
 // Demo functions
 async function demonstrateDepthRecommendation() {
-  console.log('\n🎯 Depth Recommendation Demo');
-  console.log('='.repeat(50));
+  console.info('\n🎯 Depth Recommendation Demo');
+  console.info('='.repeat(50));
   
   const contexts: BenchmarkContext[] = [
     { mode: 'development', environment: 'development' },
@@ -120,27 +120,27 @@ async function demonstrateDepthRecommendation() {
   ];
   
   for (const [dataName, data] of Object.entries(sampleData)) {
-    console.log(`\n📊 Analyzing ${dataName} data structure:`);
+    console.info(`\n📊 Analyzing ${dataName} data structure:`);
     
     for (const context of contexts) {
       const recommendation = DepthOptimizer.recommendDepth(data, context);
       
-      console.log(`   ${context.mode} (${context.environment}):`);
-      console.log(`     Suggested depth: ${recommendation.suggestedDepth}`);
-      console.log(`     Reasoning: ${recommendation.reasoning}`);
+      console.info(`   ${context.mode} (${context.environment}):`);
+      console.info(`     Suggested depth: ${recommendation.suggestedDepth}`);
+      console.info(`     Reasoning: ${recommendation.reasoning}`);
       
       if (recommendation.warnings.length > 0) {
-        console.log(`     Warnings: ${recommendation.warnings.join(', ')}`);
+        console.info(`     Warnings: ${recommendation.warnings.join(', ')}`);
       }
       
-      console.log(`     Auto-apply: ${recommendation.autoApply ? '✅' : '❌'}`);
+      console.info(`     Auto-apply: ${recommendation.autoApply ? '✅' : '❌'}`);
     }
   }
 }
 
 async function demonstrateAdaptiveDepth() {
-  console.log('\n🔄 Adaptive Depth Manager Demo');
-  console.log('='.repeat(50));
+  console.info('\n🔄 Adaptive Depth Manager Demo');
+  console.info('='.repeat(50));
   
   const manager = new AdaptiveDepthManager({
     enableAutoEscalation: true,
@@ -185,11 +185,11 @@ async function demonstrateAdaptiveDepth() {
   ];
   
   for (const operation of operations) {
-    console.log(`\n🔧 Running: ${operation.name}`);
+    console.info(`\n🔧 Running: ${operation.name}`);
     
     try {
       const result = await manager.runWithAdaptiveDepth(operation.fn);
-      console.log(`   ✅ Success: ${JSON.stringify(result).substring(0, 100)}...`);
+      console.info(`   ✅ Success: ${JSON.stringify(result).substring(0, 100)}...`);
       
       // Check if depth should escalate based on data complexity
       if (operation.data) {
@@ -205,25 +205,25 @@ async function demonstrateAdaptiveDepth() {
       }
     }
     
-    console.log(`   Current depth: ${manager.getCurrentDepth()}`);
+    console.info(`   Current depth: ${manager.getCurrentDepth()}`);
   }
   
-  console.log('\n📈 Depth History:');
+  console.info('\n📈 Depth History:');
   manager.getDepthHistory().forEach((entry, index) => {
-    console.log(`   ${index + 1}. Depth ${entry.depth}: ${entry.reason} (${entry.timestamp.toLocaleTimeString()})`);
+    console.info(`   ${index + 1}. Depth ${entry.depth}: ${entry.reason} (${entry.timestamp.toLocaleTimeString()})`);
   });
 }
 
 async function demonstratePerformanceAnalysis() {
-  console.log('\n⚡ Performance Analysis Demo');
-  console.log('='.repeat(50));
+  console.info('\n⚡ Performance Analysis Demo');
+  console.info('='.repeat(50));
   
   const depths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const dataSizes = [1000, 10000, 100000, 1000000]; // 1KB, 10KB, 100KB, 1MB
   
-  console.log('\n📊 Performance Impact by Depth and Data Size:');
-  console.log('Depth | 1KB    | 10KB   | 100KB  | 1MB    | Recommendation');
-  console.log('------|--------|--------|--------|--------|----------------');
+  console.info('\n📊 Performance Impact by Depth and Data Size:');
+  console.info('Depth | 1KB    | 10KB   | 100KB  | 1MB    | Recommendation');
+  console.info('------|--------|--------|--------|--------|----------------');
   
   for (const depth of depths) {
     const row = [`${depth}`.padEnd(5)];
@@ -238,10 +238,10 @@ async function demonstratePerformanceAnalysis() {
     const analysis = DepthPerformanceAnalyzer.analyzeTradeoffs(depth, 100000);
     row.push(analysis.recommendation);
     
-    console.log(row.join(' | '));
+    console.info(row.join(' | '));
   }
   
-  console.log('\n🎯 Optimal Depth for Different Scenarios:');
+  console.info('\n🎯 Optimal Depth for Different Scenarios:');
   
   const scenarios = [
     { name: 'Quick debugging (max 50ms)', maxSize: 10000, maxTime: 50 },
@@ -263,76 +263,76 @@ async function demonstratePerformanceAnalysis() {
     }
     
     const analysis = DepthPerformanceAnalyzer.analyzeTradeoffs(optimalDepth, scenario.maxSize);
-    console.log(`   ${scenario.name}:`);
-    console.log(`     Optimal depth: ${optimalDepth}`);
-    console.log(`     Estimated time: ${analysis.estimatedTimeMs.toFixed(1)}ms`);
-    console.log(`     Memory usage: ${analysis.estimatedMemoryMB.toFixed(1)}MB`);
+    console.info(`   ${scenario.name}:`);
+    console.info(`     Optimal depth: ${optimalDepth}`);
+    console.info(`     Estimated time: ${analysis.estimatedTimeMs.toFixed(1)}ms`);
+    console.info(`     Memory usage: ${analysis.estimatedMemoryMB.toFixed(1)}MB`);
   }
 }
 
 async function demonstrateEnvironmentConfiguration() {
-  console.log('\n🌍 Environment Configuration Demo');
-  console.log('='.repeat(50));
+  console.info('\n🌍 Environment Configuration Demo');
+  console.info('='.repeat(50));
   
   const environments = ['development', 'test', 'staging', 'production', 'profiling'];
   
-  console.log('\n📋 Environment-Specific Configurations:');
+  console.info('\n📋 Environment-Specific Configurations:');
   
   for (const env of environments) {
     const config = EnvironmentDepthConfig.getOptimalDepth(env);
     
-    console.log(`\n🔧 ${env.toUpperCase()}:`);
-    console.log(`   Default depth: ${config.defaultDepth}`);
-    console.log(`   Max depth: ${config.maxDepth}`);
-    console.log(`   Error depth: ${config.onErrorDepth}`);
-    console.log(`   Log level: ${config.logLevel}`);
+    console.info(`\n🔧 ${env.toUpperCase()}:`);
+    console.info(`   Default depth: ${config.defaultDepth}`);
+    console.info(`   Max depth: ${config.maxDepth}`);
+    console.info(`   Error depth: ${config.onErrorDepth}`);
+    console.info(`   Log level: ${config.logLevel}`);
   }
   
-  console.log('\n🚀 Environment Script Generation:');
+  console.info('\n🚀 Environment Script Generation:');
   
   for (const env of environments) {
-    console.log(`\n--- ${env.toUpperCase()} Environment Script ---`);
+    console.info(`\n--- ${env.toUpperCase()} Environment Script ---`);
     const script = EnvironmentDepthConfig.generateEnvScript(env);
-    console.log(script);
+    console.info(script);
   }
   
-  console.log('\n🔍 Current Environment Detection:');
+  console.info('\n🔍 Current Environment Detection:');
   const detectedEnv = EnvironmentDepthConfig.detectEnvironment();
   const currentConfig = EnvironmentDepthConfig.getCurrentConfig();
   
-  console.log(`   Detected environment: ${detectedEnv}`);
-  console.log(`   Current config: depth=${currentConfig.defaultDepth}, max=${currentConfig.maxDepth}`);
+  console.info(`   Detected environment: ${detectedEnv}`);
+  console.info(`   Current config: depth=${currentConfig.defaultDepth}, max=${currentConfig.maxDepth}`);
   
-  console.log('\n✅ Applying Environment Configuration:');
+  console.info('\n✅ Applying Environment Configuration:');
   EnvironmentDepthConfig.applyEnvironmentConfig();
 }
 
 async function demonstrateInteractiveExplorer() {
-  console.log('\n🎮 Interactive Explorer Demo');
-  console.log('='.repeat(50));
+  console.info('\n🎮 Interactive Explorer Demo');
+  console.info('='.repeat(50));
   
-  console.log('🔍 Preview of different depth levels:');
+  console.info('🔍 Preview of different depth levels:');
   
   for (let depth = 1; depth <= 5; depth++) {
-    console.log(`\n--- Depth ${depth} Preview ---`);
+    console.info(`\n--- Depth ${depth} Preview ---`);
     
     const preview = DepthExplorer.previewAtDepth(sampleData.moderate, depth);
     
-    console.log('Visible content:');
-    console.log(preview.preview.substring(0, 300) + (preview.preview.length > 300 ? '...' : ''));
+    console.info('Visible content:');
+    console.info(preview.preview.substring(0, 300) + (preview.preview.length > 300 ? '...' : ''));
     
-    console.log(`\nStatistics:`);
-    console.log(`   Visible levels: ${preview.visibleLevels}/${preview.totalLevels}`);
-    console.log(`   Hidden items: ${preview.hiddenCount}`);
+    console.info(`\nStatistics:`);
+    console.info(`   Visible levels: ${preview.visibleLevels}/${preview.totalLevels}`);
+    console.info(`   Hidden items: ${preview.hiddenCount}`);
   }
 }
 
 async function demonstrateRealWorldUsage() {
-  console.log('\n🌟 Real-World Usage Examples');
-  console.log('='.repeat(50));
+  console.info('\n🌟 Real-World Usage Examples');
+  console.info('='.repeat(50));
   
   // Example 1: API Response Debugging
-  console.log('\n📡 Example 1: API Response Debugging');
+  console.info('\n📡 Example 1: API Response Debugging');
   const apiResponse = {
     status: 'success',
     data: {
@@ -374,11 +374,11 @@ async function demonstrateRealWorldUsage() {
   };
   
   const apiRecommendation = DepthOptimizer.recommendDepth(apiResponse, apiContext);
-  console.log(`   Recommended depth: ${apiRecommendation.suggestedDepth}`);
-  console.log(`   Reasoning: ${apiRecommendation.reasoning}`);
+  console.info(`   Recommended depth: ${apiRecommendation.suggestedDepth}`);
+  console.info(`   Reasoning: ${apiRecommendation.reasoning}`);
   
   // Example 2: Performance Benchmarking
-  console.log('\n⚡ Example 2: Performance Benchmarking');
+  console.info('\n⚡ Example 2: Performance Benchmarking');
   const benchmarkData = {
     iterations: 1000,
     results: Array.from({ length: 1000 }, (_, i) => ({
@@ -401,11 +401,11 @@ async function demonstrateRealWorldUsage() {
   };
   
   const benchmarkRecommendation = DepthOptimizer.recommendDepth(benchmarkData, benchmarkContext);
-  console.log(`   Recommended depth: ${benchmarkRecommendation.suggestedDepth}`);
-  console.log(`   Reasoning: ${benchmarkRecommendation.reasoning}`);
+  console.info(`   Recommended depth: ${benchmarkRecommendation.suggestedDepth}`);
+  console.info(`   Reasoning: ${benchmarkRecommendation.reasoning}`);
   
   // Example 3: Error Investigation
-  console.log('\n🐛 Example 3: Error Investigation');
+  console.info('\n🐛 Example 3: Error Investigation');
   const errorData = {
     error: {
       name: 'ValidationError',
@@ -447,18 +447,18 @@ async function demonstrateRealWorldUsage() {
   };
   
   const errorRecommendation = DepthOptimizer.recommendDepth(errorData, errorContext);
-  console.log(`   Recommended depth: ${errorRecommendation.suggestedDepth}`);
-  console.log(`   Reasoning: ${errorRecommendation.reasoning}`);
+  console.info(`   Recommended depth: ${errorRecommendation.suggestedDepth}`);
+  console.info(`   Reasoning: ${errorRecommendation.reasoning}`);
   if (errorRecommendation.warnings.length > 0) {
-    console.log(`   Warnings: ${errorRecommendation.warnings.join(', ')}`);
+    console.info(`   Warnings: ${errorRecommendation.warnings.join(', ')}`);
   }
 }
 
 // Main demo execution
 async function runDemo() {
-  console.log('🎯 Enhanced Depth Configuration Demo');
-  console.log('🚀 Intelligent Console Depth Management for Bun');
-  console.log('='.repeat(60));
+  console.info('🎯 Enhanced Depth Configuration Demo');
+  console.info('🚀 Intelligent Console Depth Management for Bun');
+  console.info('='.repeat(60));
   
   try {
     await demonstrateDepthRecommendation();
@@ -468,12 +468,12 @@ async function runDemo() {
     await demonstrateInteractiveExplorer();
     await demonstrateRealWorldUsage();
     
-    console.log('\n✅ Demo completed successfully!');
-    console.log('\n📚 Next Steps:');
-    console.log('   1. Try the CLI tool: bun run scripts/benchmarking/depth-cli.ts --help');
-    console.log('   2. Use the shell script: ./scripts/benchmarking/depth-optimizer.sh --help');
-    console.log('   3. Integrate hooks: import { useDepthManager } from "./src/benchmarking/depth-hooks"');
-    console.log('   4. Configure presets: edit config/depth-presets.yml');
+    console.info('\n✅ Demo completed successfully!');
+    console.info('\n📚 Next Steps:');
+    console.info('   1. Try the CLI tool: bun run scripts/benchmarking/depth-cli.ts --help');
+    console.info('   2. Use the shell script: ./scripts/benchmarking/depth-optimizer.sh --help');
+    console.info('   3. Integrate hooks: import { useDepthManager } from "./src/benchmarking/depth-hooks"');
+    console.info('   4. Configure presets: edit config/depth-presets.yml');
     
   } catch (error) {
     console.error('\n❌ Demo failed:', error instanceof Error ? error.message : String(error));

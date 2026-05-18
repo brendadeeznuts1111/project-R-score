@@ -63,7 +63,7 @@ export class BatchConfigManager {
    * Create device configurations for batch deployment
    */
   async createDeviceConfigs(identities: BundleIdentity[], phoneAssignments?: NumberAssignment[]): Promise<DeviceConfig[]> {
-    console.log(`🔧 Creating device configurations for ${identities.length} devices...`);
+    console.info(`🔧 Creating device configurations for ${identities.length} devices...`);
 
     const configs: DeviceConfig[] = [];
 
@@ -85,7 +85,7 @@ export class BatchConfigManager {
       configs.push(config);
     }
 
-    console.log(`✅ Created ${configs.length} device configurations`);
+    console.info(`✅ Created ${configs.length} device configurations`);
     return configs;
   }
 
@@ -155,7 +155,7 @@ export class BatchConfigManager {
    * Create configuration files for deployment
    */
   createConfigFiles(deviceConfigs: DeviceConfig[]): ConfigFile[] {
-    console.log(`📄 Creating configuration files for ${deviceConfigs.length} devices...`);
+    console.info(`📄 Creating configuration files for ${deviceConfigs.length} devices...`);
 
     const files: ConfigFile[] = [];
 
@@ -236,7 +236,7 @@ export class BatchConfigManager {
       priority: 6
     });
 
-    console.log(`✅ Created ${files.length} configuration files`);
+    console.info(`✅ Created ${files.length} configuration files`);
     return files;
   }
 
@@ -366,7 +366,7 @@ export default automationConfig;
    * Execute batch push to devices
    */
   async executeBatchPush(config: BatchPushConfig): Promise<BatchPushResult> {
-    console.log(`📦 Executing batch push to ${config.devices.length} devices...`);
+    console.info(`📦 Executing batch push to ${config.devices.length} devices...`);
 
     // Validate device limit
     if (config.devices.length > this.maxDevices) {
@@ -388,17 +388,17 @@ export default automationConfig;
     const result = await this.duo.batchPush(batchRequest);
 
     // Log results
-    console.log(`✅ Batch push completed:`);
-    console.log(`   • Successful: ${result.successCount}`);
-    console.log(`   • Failed: ${result.failureCount}`);
-    console.log(`   • Success Rate: ${((result.successCount / config.devices.length) * 100).toFixed(1)}%`);
+    console.info(`✅ Batch push completed:`);
+    console.info(`   • Successful: ${result.successCount}`);
+    console.info(`   • Failed: ${result.failureCount}`);
+    console.info(`   • Success Rate: ${((result.successCount / config.devices.length) * 100).toFixed(1)}%`);
 
     // Log errors if any
     if (result.failureCount > 0) {
-      console.log(`❌ Failed devices:`);
+      console.info(`❌ Failed devices:`);
       result.results
         .filter(r => !r.success)
-        .forEach(r => console.log(`   • ${r.deviceId}: ${r.error}`));
+        .forEach(r => console.info(`   • ${r.deviceId}: ${r.error}`));
     }
 
     return result;
@@ -408,13 +408,13 @@ export default automationConfig;
    * Push configurations to all available devices
    */
   async pushToAllDevices(configFiles: ConfigFile[], parallelLimit = 50): Promise<BatchPushResult> {
-    console.log(`🚀 Pushing configurations to all available devices...`);
+    console.info(`🚀 Pushing configurations to all available devices...`);
 
     // Get all available devices
     const devices = await this.duo.getDevices();
     const onlineDevices = devices.filter(d => d.status === 'online');
 
-    console.log(`📱 Found ${devices.length} total devices, ${onlineDevices.length} online`);
+    console.info(`📱 Found ${devices.length} total devices, ${onlineDevices.length} online`);
 
     if (onlineDevices.length === 0) {
       throw new Error('No online devices available');
@@ -428,13 +428,13 @@ export default automationConfig;
       results: []
     };
 
-    console.log(`📦 Processing ${batches.length} batches of up to ${parallelLimit} devices each...`);
+    console.info(`📦 Processing ${batches.length} batches of up to ${parallelLimit} devices each...`);
 
     for (let i = 0; i < batches.length; i++) {
       const batch = batches[i];
       if (!batch) continue;
 
-      console.log(`📦 Processing batch ${i + 1}/${batches.length} (${batch.length} devices)...`);
+      console.info(`📦 Processing batch ${i + 1}/${batches.length} (${batch.length} devices)...`);
 
       const batchConfig: BatchPushConfig = {
         strategy: 'bulk_same_config',
@@ -456,7 +456,7 @@ export default automationConfig;
       }
     }
 
-    console.log(`✅ All batches completed. Total: ${totalResult.successCount} successful, ${totalResult.failureCount} failed`);
+    console.info(`✅ All batches completed. Total: ${totalResult.successCount} successful, ${totalResult.failureCount} failed`);
     return totalResult;
   }
 
@@ -464,7 +464,7 @@ export default automationConfig;
    * Create device-specific configurations (one config per device)
    */
   async pushDeviceSpecificConfigs(deviceConfigs: DeviceConfig[]): Promise<BatchPushResult> {
-    console.log(`🎯 Creating device-specific configurations for ${deviceConfigs.length} devices...`);
+    console.info(`🎯 Creating device-specific configurations for ${deviceConfigs.length} devices...`);
 
     let totalResult: BatchPushResult = {
       successCount: 0,
@@ -477,7 +477,7 @@ export default automationConfig;
       const config = deviceConfigs[i];
       if (!config) continue;
 
-      console.log(`📱 Processing device ${i + 1}/${deviceConfigs.length}: ${config.deviceId}`);
+      console.info(`📱 Processing device ${i + 1}/${deviceConfigs.length}: ${config.deviceId}`);
 
       // Create device-specific files
       const configFiles = this.createConfigFiles([config]);
@@ -509,7 +509,7 @@ export default automationConfig;
       }
     }
 
-    console.log(`✅ Device-specific push completed: ${totalResult.successCount} successful, ${totalResult.failureCount} failed`);
+    console.info(`✅ Device-specific push completed: ${totalResult.successCount} successful, ${totalResult.failureCount} failed`);
     return totalResult;
   }
 
@@ -590,7 +590,7 @@ export default automationConfig;
    */
   clearDeviceConfigs(): void {
     this.deviceConfigs.clear();
-    console.log('🧹 Cleared all device configurations');
+    console.info('🧹 Cleared all device configurations');
   }
 }
 

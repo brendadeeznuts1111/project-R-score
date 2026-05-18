@@ -851,7 +851,7 @@ function parseCliArgs(): CliOptions {
 }
 
 function showHelp(): void {
-	console.log(`
+	console.info(`
 🔗 Profile-RSS Bridge CLI
 
 USAGE:
@@ -896,27 +896,27 @@ async function main(): Promise<void> {
 
 	// Setup graceful shutdown
 	process.on("SIGINT", async () => {
-		console.log("\n🛑 Shutting down gracefully...");
+		console.info("\n🛑 Shutting down gracefully...");
 		await bridge.shutdown();
 		process.exit(0);
 	});
 
 	process.on("SIGTERM", async () => {
-		console.log("\n🛑 Shutting down gracefully...");
+		console.info("\n🛑 Shutting down gracefully...");
 		await bridge.shutdown();
 		process.exit(0);
 	});
 
 	// Keep the process running
-	console.log("🔗 Profile-RSS Bridge is running. Press Ctrl+C to stop.");
+	console.info("🔗 Profile-RSS Bridge is running. Press Ctrl+C to stop.");
 
 	// Demo: fetch a feed
 	try {
 		const feeds = bridge.getConfig().rss.feeds.entry;
 		if (feeds.length > 0) {
-			console.log(`📡 Fetching demo feed: ${feeds[0].name}`);
+			console.info(`📡 Fetching demo feed: ${feeds[0].name}`);
 			await bridge.fetchRssFeed(feeds[0].name);
-			console.log("✅ Demo fetch completed");
+			console.info("✅ Demo fetch completed");
 		}
 	} catch (error) {
 		console.error("❌ Demo fetch failed:", error);

@@ -1,7 +1,7 @@
 // src/routes/paymentRoutes.ts
 import { LightningService } from "../services/lightningService.js";
 
-console.log(`
+console.info(`
 📱 **MOBILE PAYMENT ROUTES v3.5**
 ═══════════════════════════════════════════════════════════════════
 
@@ -22,7 +22,7 @@ export async function handleQuestPaymentRequest(req: Request): Promise<Response>
   const userId = url.searchParams.get("userId");
   const amount = parseFloat(url.searchParams.get("amount") || "0");
 
-  console.log(`📱 Processing payment request: Quest ${questId}, User ${userId}, Amount $${amount}`);
+  console.info(`📱 Processing payment request: Quest ${questId}, User ${userId}, Amount $${amount}`);
 
   if (!questId || !userId || amount <= 0) {
     return new Response(JSON.stringify({
@@ -38,8 +38,8 @@ export async function handleQuestPaymentRequest(req: Request): Promise<Response>
   const userAgent = req.headers.get("user-agent") || "";
   const hasLightningWallet = detectLightningWallet(userAgent);
   
-  console.log(`📱 User-Agent: ${userAgent.substring(0, 50)}...`);
-  console.log(`⚡ Lightning wallet detected: ${hasLightningWallet}`);
+  console.info(`📱 User-Agent: ${userAgent.substring(0, 50)}...`);
+  console.info(`⚡ Lightning wallet detected: ${hasLightningWallet}`);
 
   if (hasLightningWallet) {
     // Generate Lightning invoice
@@ -56,7 +56,7 @@ export async function handleQuestPaymentRequest(req: Request): Promise<Response>
       const qrUri = `lightning:${invoice}`;
       const qrSvg = generateQRCodeSVG(qrUri);
 
-      console.log(`✅ Lightning QR code generated for ${invoice.substring(0, 50)}...`);
+      console.info(`✅ Lightning QR code generated for ${invoice.substring(0, 50)}...`);
 
       return new Response(qrSvg, {
         headers: {
@@ -81,7 +81,7 @@ export async function handleQuestPaymentRequest(req: Request): Promise<Response>
     
   } else {
     // Fallback to Venmo/Cash App
-    console.log(`💳 Using fallback payment method for non-Lightning user`);
+    console.info(`💳 Using fallback payment method for non-Lightning user`);
     return handleFallbackPayment(url);
   }
 }
@@ -239,7 +239,7 @@ export async function handlePaymentStatus(req: Request): Promise<Response> {
   const questId = url.searchParams.get("questId");
   const paymentHash = url.searchParams.get("paymentHash");
   
-  console.log(`📊 Checking payment status: Quest ${questId}, Hash ${paymentHash}`);
+  console.info(`📊 Checking payment status: Quest ${questId}, Hash ${paymentHash}`);
   
   // Mock payment status check
   await new Promise(resolve => setTimeout(resolve, 100));
@@ -265,11 +265,11 @@ export async function handlePaymentStatus(req: Request): Promise<Response> {
 // ============================================================================
 
 export async function handleLightningWebhook(req: Request): Promise<Response> {
-  console.log(`📡 Processing Lightning webhook...`);
+  console.info(`📡 Processing Lightning webhook...`);
   
   try {
     const webhookData = await req.json();
-    console.log(`📨 Webhook data:`, webhookData);
+    console.info(`📨 Webhook data:`, webhookData);
     
     // Process the webhook
     const lightning = LightningService.getInstance();
@@ -299,7 +299,7 @@ export async function handleLightningWebhook(req: Request): Promise<Response> {
 // ============================================================================
 
 async function demonstrateMobilePayment() {
-  console.log(`
+  console.info(`
 📱 **MOBILE PAYMENT DEMONSTRATION**
 ═══════════════════════════════════════════════════════════════════
 
@@ -311,8 +311,8 @@ async function demonstrateMobilePayment() {
 `);
   
   try {
-    console.log("\n📱 Step 1: Test Lightning Wallet Detection");
-    console.log("────────────────────────────────────");
+    console.info("\n📱 Step 1: Test Lightning Wallet Detection");
+    console.info("────────────────────────────────────");
     
     const testUserAgents = [
       "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1 Phoenix/1.6.0",
@@ -323,11 +323,11 @@ async function demonstrateMobilePayment() {
     
     testUserAgents.forEach((ua, index) => {
       const hasWallet = detectLightningWallet(ua);
-      console.log(`📱 Test ${index + 1}: ${hasWallet ? '⚡ Lightning wallet detected' : '💳 Fallback payment'}`);
+      console.info(`📱 Test ${index + 1}: ${hasWallet ? '⚡ Lightning wallet detected' : '💳 Fallback payment'}`);
     });
     
-    console.log("\n📋 Step 2: Generate Lightning QR Code");
-    console.log("────────────────────────────────────");
+    console.info("\n📋 Step 2: Generate Lightning QR Code");
+    console.info("────────────────────────────────────");
     
     // Simulate Lightning invoice request
     const mockRequest = new Request("http://localhost:3000/payment?questId=demo-123&userId=user-456&amount=50");
@@ -335,24 +335,24 @@ async function demonstrateMobilePayment() {
     const response = await handleQuestPaymentRequest(mockRequest);
     
     if (response.headers.get("X-Payment-Method") === "lightning") {
-      console.log("✅ Lightning QR code generated successfully");
-      console.log(`📊 Invoice: ${response.headers.get("X-Invoice")?.substring(0, 50)}...`);
+      console.info("✅ Lightning QR code generated successfully");
+      console.info(`📊 Invoice: ${response.headers.get("X-Invoice")?.substring(0, 50)}...`);
     } else {
-      console.log("💳 Fallback payment HTML generated");
+      console.info("💳 Fallback payment HTML generated");
     }
     
-    console.log("\n📊 Step 3: Test Payment Status");
-    console.log("────────────────────────────────────");
+    console.info("\n📊 Step 3: Test Payment Status");
+    console.info("────────────────────────────────────");
     
     const statusResponse = await handlePaymentStatus(
       new Request("http://localhost:3000/status?questId=demo-123&paymentHash=test_hash")
     );
     
     const status = await statusResponse.json();
-    console.log(`📊 Payment status: ${status.status} for $${status.amountUsd}`);
+    console.info(`📊 Payment status: ${status.status} for $${status.amountUsd}`);
     
-    console.log("\n📡 Step 4: Test Webhook Processing");
-    console.log("────────────────────────────────────");
+    console.info("\n📡 Step 4: Test Webhook Processing");
+    console.info("────────────────────────────────────");
     
     const webhookData = {
       state: "SETTLED",
@@ -370,9 +370,9 @@ async function demonstrateMobilePayment() {
     );
     
     const webhookResult = await webhookResponse.json();
-    console.log(`✅ Webhook processed: ${webhookResult.status}`);
+    console.info(`✅ Webhook processed: ${webhookResult.status}`);
     
-    console.log(`
+    console.info(`
 🎉 **MOBILE PAYMENT DEMO COMPLETED!**
 ═══════════════════════════════════════════════════════════════════
 

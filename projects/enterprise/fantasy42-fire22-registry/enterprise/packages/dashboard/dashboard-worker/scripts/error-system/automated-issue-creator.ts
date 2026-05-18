@@ -149,7 +149,7 @@ class AutomatedIssueCreator {
           this.providers.set(provider.id, provider);
         });
 
-        console.log(
+        console.info(
           `✅ Loaded ${this.templates.size} templates, ${this.rules.size} rules, ${this.providers.size} providers`
         );
       } catch (error) {
@@ -177,7 +177,7 @@ class AutomatedIssueCreator {
           });
         });
 
-        console.log(`✅ Loaded ${this.createdIssues.size} created issues`);
+        console.info(`✅ Loaded ${this.createdIssues.size} created issues`);
       } catch (error) {
         console.warn(`⚠️ Failed to load created issues: ${error.message}`);
       }
@@ -510,7 +510,7 @@ If this issue persists for more than 30 minutes, escalate to:
     defaultRules.forEach(r => this.rules.set(r.id, r));
     defaultProviders.forEach(p => this.providers.set(p.id, p));
 
-    console.log(
+    console.info(
       `✅ Created default configuration with ${defaultTemplates.length} templates and ${defaultRules.length} rules`
     );
   }
@@ -676,10 +676,10 @@ If this issue persists for more than 30 minutes, escalate to:
       this.createdIssues.set(createdIssue.id, createdIssue);
       this.saveCreatedIssues();
 
-      console.log(color('#10b981', 'css') + `✅ Issue created: ${createdIssue.title}`);
-      console.log(`   URL: ${createdIssue.url}`);
-      console.log(`   Provider: ${createdIssue.provider}`);
-      console.log(`   Priority: ${createdIssue.priority}`);
+      console.info(color('#10b981', 'css') + `✅ Issue created: ${createdIssue.title}`);
+      console.info(`   URL: ${createdIssue.url}`);
+      console.info(`   Provider: ${createdIssue.provider}`);
+      console.info(`   Priority: ${createdIssue.priority}`);
 
       return createdIssue;
     } catch (error) {
@@ -806,10 +806,10 @@ If this issue persists for more than 30 minutes, escalate to:
     const issueId = `issue-${Date.now()}`;
 
     // Mock external API call
-    console.log(color('#0088cc', 'css') + `🔗 Creating issue with ${provider.type} provider...`);
-    console.log(`   Title: ${issueData.title}`);
-    console.log(`   Labels: ${issueData.labels.join(', ')}`);
-    console.log(`   Assignees: ${issueData.assignees.join(', ')}`);
+    console.info(color('#0088cc', 'css') + `🔗 Creating issue with ${provider.type} provider...`);
+    console.info(`   Title: ${issueData.title}`);
+    console.info(`   Labels: ${issueData.labels.join(', ')}`);
+    console.info(`   Assignees: ${issueData.assignees.join(', ')}`);
 
     // In production, implement actual API calls:
     // - GitHub: POST to /repos/{owner}/{repo}/issues
@@ -912,24 +912,24 @@ If this issue persists for more than 30 minutes, escalate to:
   displayDashboard(): void {
     const stats = this.getStatistics();
 
-    console.log('\n🎫 AUTOMATED ISSUE CREATION DASHBOARD');
-    console.log('='.repeat(80));
+    console.info('\n🎫 AUTOMATED ISSUE CREATION DASHBOARD');
+    console.info('='.repeat(80));
 
-    console.log('\n📊 Overview:');
-    console.log(`   Total Issues Created: ${stats.totalIssues}`);
-    console.log(`   Open Issues: ${stats.openIssues}`);
-    console.log(`   Issue Creation Rules: ${this.rules.size}`);
-    console.log(`   Issue Templates: ${this.templates.size}`);
+    console.info('\n📊 Overview:');
+    console.info(`   Total Issues Created: ${stats.totalIssues}`);
+    console.info(`   Open Issues: ${stats.openIssues}`);
+    console.info(`   Issue Creation Rules: ${this.rules.size}`);
+    console.info(`   Issue Templates: ${this.templates.size}`);
 
     if (Object.keys(stats.issuesByProvider).length > 0) {
-      console.log('\n🔧 Issues by Provider:');
+      console.info('\n🔧 Issues by Provider:');
       Object.entries(stats.issuesByProvider).forEach(([provider, count]) => {
-        console.log(`   ${provider}: ${count}`);
+        console.info(`   ${provider}: ${count}`);
       });
     }
 
     if (Object.keys(stats.issuesByPriority).length > 0) {
-      console.log('\n⚠️ Issues by Priority:');
+      console.info('\n⚠️ Issues by Priority:');
       Object.entries(stats.issuesByPriority).forEach(([priority, count]) => {
         const priorityColor =
           priority === 'critical'
@@ -939,18 +939,18 @@ If this issue persists for more than 30 minutes, escalate to:
               : priority === 'medium'
                 ? color('#f59e0b', 'css')
                 : color('#10b981', 'css');
-        console.log(`   ${priorityColor}${priority}${color('#ffffff', 'css')}: ${count}`);
+        console.info(`   ${priorityColor}${priority}${color('#ffffff', 'css')}: ${count}`);
       });
     }
 
     if (Object.keys(stats.issuesByErrorCode).length > 0) {
-      console.log('\n🔥 Issues by Error Code:');
+      console.info('\n🔥 Issues by Error Code:');
       Object.entries(stats.issuesByErrorCode).forEach(([errorCode, count]) => {
-        console.log(`   ${errorCode}: ${count} issues`);
+        console.info(`   ${errorCode}: ${count} issues`);
       });
     }
 
-    console.log('\n' + '='.repeat(80));
+    console.info('\n' + '='.repeat(80));
   }
 }
 
@@ -958,7 +958,7 @@ If this issue persists for more than 30 minutes, escalate to:
 if (import.meta.main) {
   const issueCreator = new AutomatedIssueCreator();
 
-  console.log('🎫 DEMO: Simulating automated issue creation...\n');
+  console.info('🎫 DEMO: Simulating automated issue creation...\n');
 
   // Test critical error issue creation
   const criticalRules = issueCreator.evaluateIssueCreation('E1001', 2, '5m', {

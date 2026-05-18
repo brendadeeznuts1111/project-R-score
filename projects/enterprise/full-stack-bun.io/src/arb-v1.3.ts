@@ -106,8 +106,8 @@ function detectOpportunities(markets: Array<{ market: string; bookie: string; od
 
 // ==================== MAIN ENGINE ====================
 async function main() {
-	console.log('🚀 Arbitrage Engine v1.3 - Standalone Build');
-	console.log(`📊 Database: ${dbPath}`);
+	console.info('🚀 Arbitrage Engine v1.3 - Standalone Build');
+	console.info(`📊 Database: ${dbPath}`);
 	
 	// Example: Process sample markets
 	const sampleMarkets = [
@@ -119,13 +119,13 @@ async function main() {
 	
 	const opportunities = detectOpportunities(sampleMarkets);
 	
-	console.log(`\n✅ Found ${opportunities.length} arbitrage opportunities:`);
+	console.info(`\n✅ Found ${opportunities.length} arbitrage opportunities:`);
 	
 	for (const opp of opportunities) {
-		console.log(`\n💰 ${opp.market}`);
-		console.log(`   ${opp.bookie1}: ${opp.odds1.toFixed(2)}`);
-		console.log(`   ${opp.bookie2}: ${opp.odds2.toFixed(2)}`);
-		console.log(`   Profit: ${opp.profit.toFixed(2)}%`);
+		console.info(`\n💰 ${opp.market}`);
+		console.info(`   ${opp.bookie1}: ${opp.odds1.toFixed(2)}`);
+		console.info(`   ${opp.bookie2}: ${opp.odds2.toFixed(2)}`);
+		console.info(`   Profit: ${opp.profit.toFixed(2)}%`);
 		
 		// Store in database
 		db.prepare(`
@@ -142,8 +142,8 @@ async function main() {
 		);
 	}
 	
-	console.log('\n✅ Standalone arbitrage engine ready!');
-	console.log('📦 Build with: bun build --compile --no-autoload-* src/arb-v1.3.ts --outfile arb-v1.3');
+	console.info('\n✅ Standalone arbitrage engine ready!');
+	console.info('📦 Build with: bun build --compile --no-autoload-* src/arb-v1.3.ts --outfile arb-v1.3');
 }
 
 if (import.meta.main) {

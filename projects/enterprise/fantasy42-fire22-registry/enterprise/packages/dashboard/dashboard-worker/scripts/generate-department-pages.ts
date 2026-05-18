@@ -78,8 +78,8 @@ class DepartmentPagesGenerator {
   }
 
   public async generate(): Promise<void> {
-    console.log('📊 Generating Department Pages');
-    console.log('!==!==!==!==!==!==');
+    console.info('📊 Generating Department Pages');
+    console.info('!==!==!==!==!==!==');
 
     // Create output directory
     if (!existsSync(this.distDir)) {
@@ -97,7 +97,7 @@ class DepartmentPagesGenerator {
     // Generate department matrix page
     await this.generateMatrixPage();
 
-    console.log(`✅ Generated ${this.departments.length} department pages`);
+    console.info(`✅ Generated ${this.departments.length} department pages`);
   }
 
   private async generateIndexPage(): Promise<void> {
@@ -161,7 +161,7 @@ class DepartmentPagesGenerator {
 </html>`;
 
     writeFileSync(join(this.distDir, 'index.html'), html);
-    console.log('✅ Generated departments index page');
+    console.info('✅ Generated departments index page');
   }
 
   private async generateDepartmentPage(department: Department): Promise<void> {
@@ -253,7 +253,7 @@ class DepartmentPagesGenerator {
 </html>`;
 
     writeFileSync(join(this.distDir, `${department.id}.html`), html);
-    console.log(`✅ Generated page for ${department.name}`);
+    console.info(`✅ Generated page for ${department.name}`);
   }
 
   private async generateMatrixPage(): Promise<void> {
@@ -343,7 +343,7 @@ class DepartmentPagesGenerator {
 </html>`;
 
     writeFileSync(join(this.distDir, 'matrix.html'), html);
-    console.log('✅ Generated department matrix page');
+    console.info('✅ Generated department matrix page');
   }
 }
 

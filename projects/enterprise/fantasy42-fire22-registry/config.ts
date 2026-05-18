@@ -173,7 +173,7 @@ export const getConfigSummary = () => ({
 
 // Log configuration on startup (development only)
 if (isDevelopment) {
-  console.log('🔧 Configuration loaded:', getConfigSummary());
+  console.info('🔧 Configuration loaded:', getConfigSummary());
 }
 
 // Validate configuration - defer error handling to caller

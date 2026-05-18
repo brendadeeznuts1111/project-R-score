@@ -24,7 +24,7 @@ interface DashboardState {
 const DB_PATH = `${process.env.HOME}/.matrix/commit-history.db`;
 
 function clearScreen(): void {
-	console.log("\x1b[2J\x1b[0f");
+	console.info("\x1b[2J\x1b[0f");
 }
 
 function renderBox(title: string, content: string[], width = 60): string[] {
@@ -116,7 +116,7 @@ async function renderDashboard(config: DashboardConfig): Promise<void> {
 	const state = getState();
 	const now = new Date().toISOString();
 
-	console.log();
+	console.info();
 
 	// Header
 	const headerLines = renderBox(
@@ -127,8 +127,8 @@ async function renderDashboard(config: DashboardConfig): Promise<void> {
 		],
 		70,
 	);
-	console.log(headerLines.join("\n"));
-	console.log();
+	console.info(headerLines.join("\n"));
+	console.info();
 
 	// Metrics
 	const metricLines = renderBox(
@@ -144,8 +144,8 @@ async function renderDashboard(config: DashboardConfig): Promise<void> {
 		],
 		70,
 	);
-	console.log(metricLines.join("\n"));
-	console.log();
+	console.info(metricLines.join("\n"));
+	console.info();
 
 	// Recent activity
 	const activityLines = renderBox(
@@ -153,8 +153,8 @@ async function renderDashboard(config: DashboardConfig): Promise<void> {
 		[`Last: ${state.lastCommit}`, "", `Failed Check Runs: ${state.failedChecks}`],
 		70,
 	);
-	console.log(activityLines.join("\n"));
-	console.log();
+	console.info(activityLines.join("\n"));
+	console.info();
 
 	// Trend
 	if (config.showTrends && state.trend.length > 0) {
@@ -167,12 +167,12 @@ async function renderDashboard(config: DashboardConfig): Promise<void> {
 		trendContent.push("");
 
 		const trendLines = renderBox("7-Day Compliance Trend", trendContent, 70);
-		console.log(trendLines.join("\n"));
-		console.log();
+		console.info(trendLines.join("\n"));
+		console.info();
 	}
 
 	// Quick actions
-	console.log("Commands: [r]efresh [s]ync [q]uit");
+	console.info("Commands: [r]efresh [s]ync [q]uit");
 }
 
 async function runInteractiveDashboard(config: DashboardConfig): Promise<void> {
@@ -188,14 +188,14 @@ async function runInteractiveDashboard(config: DashboardConfig): Promise<void> {
 		switch (key) {
 			case "q":
 			case "\u0003": // Ctrl+C
-				console.log("\n👋 Dashboard closed");
+				console.info("\n👋 Dashboard closed");
 				process.exit(0);
 				break;
 			case "r":
 				await renderDashboard(config);
 				break;
 			case "s":
-				console.log("\n🔄 Syncing from git...");
+				console.info("\n🔄 Syncing from git...");
 				await $`bun ${import.meta.dir}/commit-history.ts sync`.quiet();
 				await renderDashboard(config);
 				break;
@@ -222,7 +222,7 @@ if (import.meta.main) {
 	if (once) {
 		await renderDashboard(config);
 	} else {
-		console.log("Starting dashboard... Press 'q' to quit");
+		console.info("Starting dashboard... Press 'q' to quit");
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 		await runInteractiveDashboard(config);
 	}

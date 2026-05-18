@@ -5,7 +5,7 @@ if (import.meta.main) {
   // Only run when executed directly
   main().catch(console.error);
 } else {
-  console.log('ℹ️  Script was imported, not executed directly');
+  console.info('ℹ️  Script was imported, not executed directly');
 }
 
 import { OptimizedFetch, DNSOptimizer } from '../http/port-management-system';
@@ -19,16 +19,16 @@ class ImplementationDetailsUpdater {
    * Apply Bun v1.3.6 implementation improvements
    */
   static applyBun136Updates(): void {
-    console.log('🔧 APPLYING BUN V1.3.6 IMPLEMENTATION UPDATES');
-    console.log('='.repeat(60));
+    console.info('🔧 APPLYING BUN V1.3.6 IMPLEMENTATION UPDATES');
+    console.info('='.repeat(60));
 
-    console.log('\n📋 Key Implementation Details from Bun v1.3.6:');
-    console.log('   ✅ Memory leak fixes for ReadableStream in fetch()');
-    console.log('   ✅ Null byte injection prevention (CWE-158)');
-    console.log('   ✅ Large file handling improvements for Bun.write()');
-    console.log('   ✅ Connection pooling and proxy improvements');
-    console.log('   ✅ WebSocket decompression bomb protection (128MB limit)');
-    console.log('   ✅ Stricter wildcard certificate matching (RFC 6125)');
+    console.info('\n📋 Key Implementation Details from Bun v1.3.6:');
+    console.info('   ✅ Memory leak fixes for ReadableStream in fetch()');
+    console.info('   ✅ Null byte injection prevention (CWE-158)');
+    console.info('   ✅ Large file handling improvements for Bun.write()');
+    console.info('   ✅ Connection pooling and proxy improvements');
+    console.info('   ✅ WebSocket decompression bomb protection (128MB limit)');
+    console.info('   ✅ Stricter wildcard certificate matching (RFC 6125)');
 
     this.applyMemoryLeakFixes();
     this.applySecurityImprovements();
@@ -40,57 +40,57 @@ class ImplementationDetailsUpdater {
    * Apply memory leak fixes for ReadableStream
    */
   static applyMemoryLeakFixes(): void {
-    console.log('\n🧠 MEMORY LEAK FIXES:');
-    console.log('   • Fixed: Edgecase in fetch() with ReadableStream body');
-    console.log('   • Streams now properly released after request completion');
-    console.log('   • Prevents memory leaks in streaming responses');
+    console.info('\n🧠 MEMORY LEAK FIXES:');
+    console.info('   • Fixed: Edgecase in fetch() with ReadableStream body');
+    console.info('   • Streams now properly released after request completion');
+    console.info('   • Prevents memory leaks in streaming responses');
 
     // Our implementation already handles this properly
-    console.log('   ✅ OptimizedFetch handles ReadableStream correctly');
-    console.log('   ✅ Response buffering prevents stream leaks');
+    console.info('   ✅ OptimizedFetch handles ReadableStream correctly');
+    console.info('   ✅ Response buffering prevents stream leaks');
   }
 
   /**
    * Apply security improvements (CWE-158 prevention)
    */
   static applySecurityImprovements(): void {
-    console.log('\n🔒 SECURITY IMPROVEMENTS (CWE-158):');
-    console.log('   • Fixed: Null byte injection attacks');
-    console.log('   • Bun rejects null bytes in spawn arguments');
-    console.log('   • Environment variables sanitized');
-    console.log('   • Shell template literals protected');
+    console.info('\n🔒 SECURITY IMPROVEMENTS (CWE-158):');
+    console.info('   • Fixed: Null byte injection attacks');
+    console.info('   • Bun rejects null bytes in spawn arguments');
+    console.info('   • Environment variables sanitized');
+    console.info('   • Shell template literals protected');
 
     // Our validation system already handles this
-    console.log('   ✅ Port management validates against null bytes');
-    console.log('   ✅ Input validation prevents injection attacks');
-    console.log('   ✅ Environment variable validation implemented');
+    console.info('   ✅ Port management validates against null bytes');
+    console.info('   ✅ Input validation prevents injection attacks');
+    console.info('   ✅ Environment variable validation implemented');
   }
 
   /**
    * Apply large file handling improvements
    */
   static applyLargeFileImprovements(): void {
-    console.log('\n📁 LARGE FILE IMPROVEMENTS:');
-    console.log('   • Fixed: Data corruption in Bun.write() for files > 2GB');
-    console.log('   • Improved: mode option respect when copying files');
-    console.log('   • Enhanced: Large file streaming capabilities');
+    console.info('\n📁 LARGE FILE IMPROVEMENTS:');
+    console.info('   • Fixed: Data corruption in Bun.write() for files > 2GB');
+    console.info('   • Improved: mode option respect when copying files');
+    console.info('   • Enhanced: Large file streaming capabilities');
 
-    console.log('   ✅ Our fetchAndBuffer() handles large files correctly');
-    console.log('   ✅ Response buffering optimized for all file sizes');
+    console.info('   ✅ Our fetchAndBuffer() handles large files correctly');
+    console.info('   ✅ Response buffering optimized for all file sizes');
   }
 
   /**
    * Apply connection pooling improvements
    */
   static applyConnectionImprovements(): void {
-    console.log('\n🔗 CONNECTION IMPROVEMENTS:');
-    console.log('   • Fixed: HTTP client requests hanging on proxy auth failures');
-    console.log('   • Fixed: Memory leak in streaming responses through Bun.serve()');
-    console.log('   • Improved: Connection pooling reliability');
+    console.info('\n🔗 CONNECTION IMPROVEMENTS:');
+    console.info('   • Fixed: HTTP client requests hanging on proxy auth failures');
+    console.info('   • Fixed: Memory leak in streaming responses through Bun.serve()');
+    console.info('   • Improved: Connection pooling reliability');
 
-    console.log('   ✅ OptimizedFetch has robust connection pooling');
-    console.log('   ✅ DNS prefetching prevents connection delays');
-    console.log('   ✅ Proper connection cleanup implemented');
+    console.info('   ✅ OptimizedFetch has robust connection pooling');
+    console.info('   ✅ DNS prefetching prevents connection delays');
+    console.info('   ✅ Proper connection cleanup implemented');
   }
 }
 
@@ -156,7 +156,7 @@ class EnhancedOptimizedFetch {
       // Use Bun.write with improved large file handling
       if (typeof Bun !== 'undefined' && Bun.write) {
         await Bun.write(outputPath, response);
-        console.log(`📄 Enhanced file buffering completed: ${outputPath}`);
+        console.info(`📄 Enhanced file buffering completed: ${outputPath}`);
       } else {
         // Fallback for non-Bun environments
         const text = await response.text();
@@ -216,37 +216,37 @@ class ImplementationDetailsTests {
    * Test Bun v1.3.6 security improvements
    */
   static async testSecurityImprovements(): Promise<void> {
-    console.log('\n🔒 TESTING BUN V1.3.6 SECURITY IMPROVEMENTS');
-    console.log('='.repeat(60));
+    console.info('\n🔒 TESTING BUN V1.3.6 SECURITY IMPROVEMENTS');
+    console.info('='.repeat(60));
 
     // Test null byte prevention (CWE-158)
     try {
-      console.log('Testing null byte injection prevention...');
+      console.info('Testing null byte injection prevention...');
 
       // This should throw an error
       await EnhancedOptimizedFetch.enhancedFetch('https://httpbin.org/json\0');
-      console.log('❌ Null byte injection prevention failed');
+      console.info('❌ Null byte injection prevention failed');
     } catch (error) {
       if (error.message.includes('null bytes')) {
-        console.log('✅ Null byte injection prevention working (CWE-158)');
+        console.info('✅ Null byte injection prevention working (CWE-158)');
       } else {
-        console.log('⚠️  Different error caught:', error.message);
+        console.info('⚠️  Different error caught:', error.message);
       }
     }
 
     // Test header validation
     try {
-      console.log('Testing header null byte prevention...');
+      console.info('Testing header null byte prevention...');
 
       await EnhancedOptimizedFetch.enhancedFetch('https://httpbin.org/json', {
         headers: { 'X-Test': 'value\0' },
       });
-      console.log('❌ Header null byte prevention failed');
+      console.info('❌ Header null byte prevention failed');
     } catch (error) {
       if (error.message.includes('null bytes')) {
-        console.log('✅ Header null byte prevention working');
+        console.info('✅ Header null byte prevention working');
       } else {
-        console.log('⚠️  Different error caught:', error.message);
+        console.info('⚠️  Different error caught:', error.message);
       }
     }
   }
@@ -255,11 +255,11 @@ class ImplementationDetailsTests {
    * Test memory leak fixes
    */
   static async testMemoryLeakFixes(): Promise<void> {
-    console.log('\n🧠 TESTING MEMORY LEAK FIXES');
-    console.log('='.repeat(40));
+    console.info('\n🧠 TESTING MEMORY LEAK FIXES');
+    console.info('='.repeat(40));
 
     try {
-      console.log('Testing ReadableStream cleanup...');
+      console.info('Testing ReadableStream cleanup...');
 
       // Test streaming with proper cleanup
       const stream = EnhancedOptimizedFetch.streamResponse('https://httpbin.org/bytes/1024');
@@ -269,10 +269,10 @@ class ImplementationDetailsTests {
         totalBytes += chunk.length;
       }
 
-      console.log(`✅ Streamed ${totalBytes} bytes with proper cleanup`);
-      console.log('✅ ReadableStream memory leak fixes working');
+      console.info(`✅ Streamed ${totalBytes} bytes with proper cleanup`);
+      console.info('✅ ReadableStream memory leak fixes working');
     } catch (error) {
-      console.log('❌ Memory leak test failed:', error.message);
+      console.info('❌ Memory leak test failed:', error.message);
     }
   }
 
@@ -280,11 +280,11 @@ class ImplementationDetailsTests {
    * Test large file handling
    */
   static async testLargeFileHandling(): Promise<void> {
-    console.log('\n📁 TESTING LARGE FILE HANDLING');
-    console.log('='.repeat(40));
+    console.info('\n📁 TESTING LARGE FILE HANDLING');
+    console.info('='.repeat(40));
 
     try {
-      console.log('Testing enhanced file buffering...');
+      console.info('Testing enhanced file buffering...');
 
       const outputPath = '/tmp/enhanced-large-file-test.txt';
       await EnhancedOptimizedFetch.enhancedFetchAndBuffer(
@@ -297,21 +297,21 @@ class ImplementationDetailsTests {
 
       if (exists) {
         const size = await file.size;
-        console.log(`✅ Enhanced file buffering: ${size} bytes written`);
+        console.info(`✅ Enhanced file buffering: ${size} bytes written`);
 
         if (size === 10240) {
-          console.log('✅ Large file handling working correctly');
+          console.info('✅ Large file handling working correctly');
         } else {
-          console.log(`⚠️  Expected 10240 bytes, got ${size}`);
+          console.info(`⚠️  Expected 10240 bytes, got ${size}`);
         }
 
         // Cleanup
         await Bun.write(outputPath, '');
       } else {
-        console.log('❌ Large file test failed - file not created');
+        console.info('❌ Large file test failed - file not created');
       }
     } catch (error) {
-      console.log('❌ Large file test failed:', error.message);
+      console.info('❌ Large file test failed:', error.message);
     }
   }
 }
@@ -322,9 +322,9 @@ class ImplementationDetailsTests {
 
 class ImplementationDetailsTestRunner {
   static async runAllTests(): Promise<void> {
-    console.log('🧪 BUN IMPLEMENTATION DETAILS TEST SUITE');
-    console.log('='.repeat(70));
-    console.log('Testing Bun v1.3.6 implementation details and improvements\n');
+    console.info('🧪 BUN IMPLEMENTATION DETAILS TEST SUITE');
+    console.info('='.repeat(70));
+    console.info('Testing Bun v1.3.6 implementation details and improvements\n');
 
     try {
       // Apply implementation updates
@@ -335,20 +335,20 @@ class ImplementationDetailsTestRunner {
       await ImplementationDetailsTests.testMemoryLeakFixes();
       await ImplementationDetailsTests.testLargeFileHandling();
 
-      console.log('\n✅ ALL IMPLEMENTATION DETAILS TESTS COMPLETED!');
-      console.log('\n🎯 Bun v1.3.6 Features Verified:');
-      console.log('   ✅ Memory leak fixes for ReadableStream in fetch()');
-      console.log('   ✅ Null byte injection prevention (CWE-158)');
-      console.log('   ✅ Large file handling improvements for Bun.write()');
-      console.log('   ✅ Connection pooling and proxy improvements');
-      console.log('   ✅ Enhanced security validation');
-      console.log('   ✅ Proper stream cleanup and memory management');
+      console.info('\n✅ ALL IMPLEMENTATION DETAILS TESTS COMPLETED!');
+      console.info('\n🎯 Bun v1.3.6 Features Verified:');
+      console.info('   ✅ Memory leak fixes for ReadableStream in fetch()');
+      console.info('   ✅ Null byte injection prevention (CWE-158)');
+      console.info('   ✅ Large file handling improvements for Bun.write()');
+      console.info('   ✅ Connection pooling and proxy improvements');
+      console.info('   ✅ Enhanced security validation');
+      console.info('   ✅ Proper stream cleanup and memory management');
 
-      console.log('\n🚀 Implementation Status:');
-      console.log('   • OptimizedFetch aligned with Bun v1.3.6 improvements');
-      console.log('   • Security hardening against CWE-158 vulnerabilities');
-      console.log('   • Memory-safe streaming and response handling');
-      console.log('   • Production-ready with latest Bun optimizations');
+      console.info('\n🚀 Implementation Status:');
+      console.info('   • OptimizedFetch aligned with Bun v1.3.6 improvements');
+      console.info('   • Security hardening against CWE-158 vulnerabilities');
+      console.info('   • Memory-safe streaming and response handling');
+      console.info('   • Production-ready with latest Bun optimizations');
     } catch (error) {
       console.error('\n❌ Test suite failed:', error);
       process.exit(1);

@@ -17,14 +17,14 @@ function getLuminance(hex: string): number {
   return 0.2126 * rL + 0.7152 * gL + 0.0722 * bL;
 }
 
-console.log("Color Contrast Validation\n" + "=".repeat(40));
+console.info("Color Contrast Validation\n" + "=".repeat(40));
 
 let allValid = true;
 for (const [layer, colors] of Object.entries(Palette)) {
   const ratio = getContrastRatio(colors.primary, "#ffffff");
   const valid = ratio >= 4.5;
-  console.log(`${layer}: ${ratio.toFixed(2)}:1 ${valid ? "✓ PASS" : "✗ FAIL"} (WCAG AA: 4.5:1)`);
+  console.info(`${layer}: ${ratio.toFixed(2)}:1 ${valid ? "✓ PASS" : "✗ FAIL"} (WCAG AA: 4.5:1)`);
   if (!valid) allValid = false;
 }
 
-console.log("\n" + (allValid ? "All colors pass WCAG AA contrast requirements!" : "Some colors fail contrast requirements."));
+console.info("\n" + (allValid ? "All colors pass WCAG AA contrast requirements!" : "Some colors fail contrast requirements."));

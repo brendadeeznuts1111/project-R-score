@@ -308,28 +308,28 @@ class VaultCache<K, V> implements Cache<K, V> {
 // =============================================================================
 
 async function demonstrateFactoryAndUtilityTypes(): Promise<void> {
-    console.log(chalk.blue.bold('🏭 Factory & Utility Types Demonstration'));
-    console.log(chalk.gray('='.repeat(55)));
+    console.info(chalk.blue.bold('🏭 Factory & Utility Types Demonstration'));
+    console.info(chalk.gray('='.repeat(55)));
 
     const timer = createTimer();
 
     // Factory Pattern Demo
-    console.log(chalk.blue.bold('\n🏭 Factory Pattern Examples:'));
+    console.info(chalk.blue.bold('\n🏭 Factory Pattern Examples:'));
 
     const vaultFileFactory = createVaultFile();
     const newFile = vaultFileFactory();
 
-    console.log(chalk.yellow('✅ Synchronous Factory:'));
-    console.log(chalk.gray(`Created file: ${newFile.name} (${newFile.path})`));
+    console.info(chalk.yellow('✅ Synchronous Factory:'));
+    console.info(chalk.gray(`Created file: ${newFile.name} (${newFile.path})`));
 
     const asyncVaultFileFactory = createVaultFileAsync();
     const asyncFile = await asyncVaultFileFactory();
 
-    console.log(chalk.yellow('✅ Asynchronous Factory:'));
-    console.log(chalk.gray(`Async created file: ${asyncFile.name} (${asyncFile.path})`));
+    console.info(chalk.yellow('✅ Asynchronous Factory:'));
+    console.info(chalk.gray(`Async created file: ${asyncFile.name} (${asyncFile.path})`));
 
     // Builder Pattern Demo
-    console.log(chalk.blue.bold('\n🔨 Builder Pattern Examples:'));
+    console.info(chalk.blue.bold('\n🔨 Builder Pattern Examples:'));
 
     const builder = new VaultFileBuilder()
         .set('path', '/docs/example.md')
@@ -340,25 +340,25 @@ async function demonstrateFactoryAndUtilityTypes(): Promise<void> {
 
     const builtFile = builder.build();
 
-    console.log(chalk.yellow('✅ Built File:'));
-    console.log(chalk.gray(`Path: ${builtFile.path}`));
-    console.log(chalk.gray(`Tags: ${builtFile.tags.join(', ')}`));
-    console.log(chalk.gray(`Content: ${builtFile.content.substring(0, 30)}...`));
+    console.info(chalk.yellow('✅ Built File:'));
+    console.info(chalk.gray(`Path: ${builtFile.path}`));
+    console.info(chalk.gray(`Tags: ${builtFile.tags.join(', ')}`));
+    console.info(chalk.gray(`Content: ${builtFile.content.substring(0, 30)}...`));
 
     // Repository Pattern Demo
-    console.log(chalk.blue.bold('\n📚 Repository Pattern Examples:'));
+    console.info(chalk.blue.bold('\n📚 Repository Pattern Examples:'));
 
     const repository = new VaultFileRepository();
     await repository.save(builtFile);
     const foundFile = await repository.findById(builtFile.path);
     const allFiles = await repository.findAll();
 
-    console.log(chalk.yellow('✅ Repository Operations:'));
-    console.log(chalk.gray(`Found file: ${foundFile?.name || 'null'}`));
-    console.log(chalk.gray(`Total files: ${allFiles.length}`));
+    console.info(chalk.yellow('✅ Repository Operations:'));
+    console.info(chalk.gray(`Found file: ${foundFile?.name || 'null'}`));
+    console.info(chalk.gray(`Total files: ${allFiles.length}`));
 
     // Service Container Demo
-    console.log(chalk.blue.bold('\n🏢 Service Container Examples:'));
+    console.info(chalk.blue.bold('\n🏢 Service Container Examples:'));
 
     const container = new VaultServiceContainer();
     container.register('vaultFile', createVaultFile);
@@ -367,37 +367,37 @@ async function demonstrateFactoryAndUtilityTypes(): Promise<void> {
     const serviceFile = container.get<VaultFile>('vaultFile');
     const serviceRepo = container.get<VaultFileRepository>('repository');
 
-    console.log(chalk.yellow('✅ Service Container:'));
-    console.log(chalk.gray(`Service file created: ${serviceFile.name}`));
-    console.log(chalk.gray(`Service repo type: ${serviceRepo.constructor.name}`));
+    console.info(chalk.yellow('✅ Service Container:'));
+    console.info(chalk.gray(`Service file created: ${serviceFile.name}`));
+    console.info(chalk.gray(`Service repo type: ${serviceRepo.constructor.name}`));
 
     // Event System Demo
-    console.log(chalk.blue.bold('\n📡 Event System Examples:'));
+    console.info(chalk.blue.bold('\n📡 Event System Examples:'));
 
     const emitter = new VaultEventEmitter();
 
     emitter.on('file:created', (file: VaultFile) => {
-        console.log(chalk.green(`📝 File created event: ${file.name}`));
+        console.info(chalk.green(`📝 File created event: ${file.name}`));
     });
 
     emitter.emit('file:created', builtFile);
 
-    console.log(chalk.yellow('✅ Event System:'));
-    console.log(chalk.gray('Event emitted and handled successfully'));
+    console.info(chalk.yellow('✅ Event System:'));
+    console.info(chalk.gray('Event emitted and handled successfully'));
 
     // Cache Demo
-    console.log(chalk.blue.bold('\n💾 Cache System Examples:'));
+    console.info(chalk.blue.bold('\n💾 Cache System Examples:'));
 
     const cache = new VaultCache<string, VaultFile>();
     cache.set(builtFile.path, builtFile);
     const cachedFile = cache.get(builtFile.path);
 
-    console.log(chalk.yellow('✅ Cache Operations:'));
-    console.log(chalk.gray(`Cached file: ${cachedFile?.name || 'null'}`));
-    console.log(chalk.gray(`Cache size: ${cache.size}`));
+    console.info(chalk.yellow('✅ Cache Operations:'));
+    console.info(chalk.gray(`Cached file: ${cachedFile?.name || 'null'}`));
+    console.info(chalk.gray(`Cache size: ${cache.size}`));
 
     // Utility Types Demo
-    console.log(chalk.blue.bold('\n🛠️  Utility Types Examples:'));
+    console.info(chalk.blue.bold('\n🛠️  Utility Types Examples:'));
 
     // DeepPartial example
     const partialFile: DeepPartial<VaultFile> = {
@@ -411,16 +411,16 @@ async function demonstrateFactoryAndUtilityTypes(): Promise<void> {
     // RequiredBy example
     type RequiredFile = RequiredBy<Partial<VaultFile>, 'path' | 'name'>;
 
-    console.log(chalk.yellow('✅ Utility Types:'));
-    console.log(chalk.gray(`DeepPartial file: ${partialFile.name || 'undefined'}`));
-    console.log(chalk.gray(`Optional type created successfully`));
-    console.log(chalk.gray(`RequiredBy type created successfully`));
+    console.info(chalk.yellow('✅ Utility Types:'));
+    console.info(chalk.gray(`DeepPartial file: ${partialFile.name || 'undefined'}`));
+    console.info(chalk.gray(`Optional type created successfully`));
+    console.info(chalk.gray(`RequiredBy type created successfully`));
 
     timer.stop();
-    console.log(chalk.gray(`\n⏱️  Factory & Utility demo completed in: ${timer.formattedDuration}`));
+    console.info(chalk.gray(`\n⏱️  Factory & Utility demo completed in: ${timer.formattedDuration}`));
 
     // Performance Comparison
-    console.log(chalk.blue.bold('\n📊 Pattern Performance Analysis:'));
+    console.info(chalk.blue.bold('\n📊 Pattern Performance Analysis:'));
 
     const performanceData = [
         {
@@ -467,55 +467,55 @@ async function demonstrateFactoryAndUtilityTypes(): Promise<void> {
         }
     ];
 
-    console.log(formatTable(performanceData, ['Pattern', 'Use Case', 'Flexibility', 'Testability', 'Complexity'], { colors: true }));
+    console.info(formatTable(performanceData, ['Pattern', 'Use Case', 'Flexibility', 'Testability', 'Complexity'], { colors: true }));
 
     // Type Safety Benefits
-    console.log(chalk.blue.bold('\n🔒 Type Safety Benefits:'));
-    console.log(chalk.white('✅ Compile-time type checking for all patterns'));
-    console.log(chalk.white('✅ Generic type parameters ensure flexibility'));
-    console.log(chalk.white('✅ Interface contracts prevent runtime errors'));
-    console.log(chalk.white('✅ Utility types enable precise type manipulation'));
-    console.log(chalk.white('✅ Event type safety prevents invalid data'));
-    console.log(chalk.white('✅ Repository type safety ensures data consistency'));
+    console.info(chalk.blue.bold('\n🔒 Type Safety Benefits:'));
+    console.info(chalk.white('✅ Compile-time type checking for all patterns'));
+    console.info(chalk.white('✅ Generic type parameters ensure flexibility'));
+    console.info(chalk.white('✅ Interface contracts prevent runtime errors'));
+    console.info(chalk.white('✅ Utility types enable precise type manipulation'));
+    console.info(chalk.white('✅ Event type safety prevents invalid data'));
+    console.info(chalk.white('✅ Repository type safety ensures data consistency'));
 
     // Integration Examples
-    console.log(chalk.blue.bold('\n🔗 Integration Examples:'));
-    console.log(chalk.gray('```typescript'));
-    console.log(chalk.gray('// Factory + Repository + Cache'));
-    console.log(chalk.gray('const factory = createVaultFile();'));
-    console.log(chalk.gray('const file = factory();'));
-    console.log(chalk.gray('await repository.save(file);'));
-    console.log(chalk.gray('cache.set(file.path, file);'));
-    console.log(chalk.gray(''));
-    console.log(chalk.gray('// Builder + Event System'));
-    console.log(chalk.gray('const built = builder.set("name", "test.md").build();'));
-    console.log(chalk.gray('emitter.emit("file:created", built);'));
-    console.log(chalk.gray(''));
-    console.log(chalk.gray('// Service Container + All Patterns'));
-    console.log(chalk.gray('container.register("factory", createVaultFile);'));
-    console.log(chalk.gray('container.register("repository", () => new VaultFileRepository());'));
-    console.log(chalk.gray('container.register("cache", () => new VaultCache());'));
-    console.log(chalk.gray('```'));
+    console.info(chalk.blue.bold('\n🔗 Integration Examples:'));
+    console.info(chalk.gray('```typescript'));
+    console.info(chalk.gray('// Factory + Repository + Cache'));
+    console.info(chalk.gray('const factory = createVaultFile();'));
+    console.info(chalk.gray('const file = factory();'));
+    console.info(chalk.gray('await repository.save(file);'));
+    console.info(chalk.gray('cache.set(file.path, file);'));
+    console.info(chalk.gray(''));
+    console.info(chalk.gray('// Builder + Event System'));
+    console.info(chalk.gray('const built = builder.set("name", "test.md").build();'));
+    console.info(chalk.gray('emitter.emit("file:created", built);'));
+    console.info(chalk.gray(''));
+    console.info(chalk.gray('// Service Container + All Patterns'));
+    console.info(chalk.gray('container.register("factory", createVaultFile);'));
+    console.info(chalk.gray('container.register("repository", () => new VaultFileRepository());'));
+    console.info(chalk.gray('container.register("cache", () => new VaultCache());'));
+    console.info(chalk.gray('```'));
 }
 
 async function main(): Promise<void> {
-    console.log(chalk.magenta.bold('🎪 Factory & Utility Types Showcase for Odds Protocol Vault'));
-    console.log(chalk.magenta('Demonstrating advanced TypeScript patterns and architectural designs'));
-    console.log('');
+    console.info(chalk.magenta.bold('🎪 Factory & Utility Types Showcase for Odds Protocol Vault'));
+    console.info(chalk.magenta('Demonstrating advanced TypeScript patterns and architectural designs'));
+    console.info('');
 
     try {
         await demonstrateFactoryAndUtilityTypes();
 
-        console.log(chalk.green.bold('\n🎉 Factory & Utility Types demonstration completed!'));
-        console.log(chalk.blue('Patterns demonstrated:'));
-        console.log(chalk.white('• Factory Pattern - Synchronous & asynchronous object creation'));
-        console.log(chalk.white('• Builder Pattern - Complex object construction'));
-        console.log(chalk.white('• Repository Pattern - Data access abstraction'));
-        console.log(chalk.white('• Service Container - Dependency injection'));
-        console.log(chalk.white('• Event System - Loose coupling & communication'));
-        console.log(chalk.white('• Cache System - Performance optimization'));
-        console.log(chalk.white('• Utility Types - Type manipulation & safety'));
-        console.log(chalk.white('• Middleware Pattern - Request processing pipeline'));
+        console.info(chalk.green.bold('\n🎉 Factory & Utility Types demonstration completed!'));
+        console.info(chalk.blue('Patterns demonstrated:'));
+        console.info(chalk.white('• Factory Pattern - Synchronous & asynchronous object creation'));
+        console.info(chalk.white('• Builder Pattern - Complex object construction'));
+        console.info(chalk.white('• Repository Pattern - Data access abstraction'));
+        console.info(chalk.white('• Service Container - Dependency injection'));
+        console.info(chalk.white('• Event System - Loose coupling & communication'));
+        console.info(chalk.white('• Cache System - Performance optimization'));
+        console.info(chalk.white('• Utility Types - Type manipulation & safety'));
+        console.info(chalk.white('• Middleware Pattern - Request processing pipeline'));
 
     } catch (error) {
         console.error(chalk.red('❌ Demonstration failed:'), error);

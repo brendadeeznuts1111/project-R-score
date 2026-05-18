@@ -11,7 +11,7 @@ class URLPatternExamples {
 
   // Demonstrate routing capabilities
   async demonstrateRouting(): Promise<void> {
-    console.log("🚀 URLPattern Routing Examples\n");
+    console.info("🚀 URLPattern Routing Examples\n");
 
     // Test various routes
     const testCases = [
@@ -28,36 +28,36 @@ class URLPatternExamples {
     ];
 
     for (const testCase of testCases) {
-      console.log(`📍 ${testCase.method} ${testCase.url}`);
+      console.info(`📍 ${testCase.method} ${testCase.url}`);
 
       try {
         const request = new Request(testCase.url, { method: testCase.method });
         const response = await this.router.handle(request);
 
-        console.log(`   Status: ${response.status}`);
+        console.info(`   Status: ${response.status}`);
 
         if (
           response.headers.get("Content-Type")?.includes("application/json")
         ) {
           const json = await response.clone().json();
-          console.log(
+          console.info(
             `   Content: ${JSON.stringify(json).substring(0, 100)}...`
           );
         } else {
           const text = await response.clone().text();
-          console.log(`   Content: ${text.substring(0, 50)}...`);
+          console.info(`   Content: ${text.substring(0, 50)}...`);
         }
       } catch (error) {
-        console.log(`   Error: ${(error as Error).message}`);
+        console.info(`   Error: ${(error as Error).message}`);
       }
 
-      console.log("");
+      console.info("");
     }
   }
 
   // Advanced pattern matching examples
   demonstrateAdvancedPatterns(): void {
-    console.log("🔧 Advanced URLPattern Examples\n");
+    console.info("🔧 Advanced URLPattern Examples\n");
 
     // 1. API versioning patterns
     const apiPatterns = [
@@ -72,13 +72,13 @@ class URLPatternExamples {
       },
     ];
 
-    console.log("📋 API Versioning Patterns:");
+    console.info("📋 API Versioning Patterns:");
     apiPatterns.forEach(({ pattern, description }) => {
       const urlPattern = new URLPattern({ pathname: pattern });
-      console.log(`   ${pattern}`);
-      console.log(`   ${description}`);
-      console.log(`   Has regex groups: ${urlPattern.hasRegExpGroups}`);
-      console.log("");
+      console.info(`   ${pattern}`);
+      console.info(`   ${description}`);
+      console.info(`   Has regex groups: ${urlPattern.hasRegExpGroups}`);
+      console.info("");
     });
 
     // 2. File and resource patterns
@@ -92,38 +92,38 @@ class URLPatternExamples {
       { pattern: "/docs/:lang/*", test: "/docs/en/getting-started" },
     ];
 
-    console.log("📁 Resource Patterns:");
+    console.info("📁 Resource Patterns:");
     resourcePatterns.forEach(({ pattern, test }) => {
       const urlPattern = new URLPattern({ pathname: pattern });
       const match = urlPattern.exec(`https://example.com${test}`);
 
-      console.log(`   Pattern: ${pattern}`);
-      console.log(`   Test: ${test}`);
-      console.log(`   Match: ${urlPattern.test(`https://example.com${test}`)}`);
-      console.log(`   Groups: ${JSON.stringify(match?.pathname.groups)}`);
-      console.log("");
+      console.info(`   Pattern: ${pattern}`);
+      console.info(`   Test: ${test}`);
+      console.info(`   Match: ${urlPattern.test(`https://example.com${test}`)}`);
+      console.info(`   Groups: ${JSON.stringify(match?.pathname.groups)}`);
+      console.info("");
     });
 
     // 3. Complex routing scenarios
-    console.log("🌐 Complex Routing Scenarios:");
+    console.info("🌐 Complex Routing Scenarios:");
 
     // Blog routing with date and slug
     const blogPattern = new URLPattern({
       pathname: "/blog/:year(\\d{4})/:month(\\d{2})/:slug([\\w-]+)",
     });
 
-    console.log(
+    console.info(
       "   Blog pattern: /blog/:year(\\d{4})/:month(\\d{2})/:slug([\\w-]+)"
     );
-    console.log(`   Has regex groups: ${blogPattern.hasRegExpGroups}`);
+    console.info(`   Has regex groups: ${blogPattern.hasRegExpGroups}`);
 
     const blogMatch = blogPattern.exec(
       "https://example.com/blog/2024/01/urlpattern-features"
     );
-    console.log(
+    console.info(
       `   Blog match groups: ${JSON.stringify(blogMatch?.pathname.groups)}`
     );
-    console.log("");
+    console.info("");
 
     // Multi-tenant application
     const tenantPattern = new URLPattern({
@@ -132,18 +132,18 @@ class URLPatternExamples {
       pathname: "/*",
     });
 
-    console.log("   Multi-tenant pattern: :tenant.example.com/*");
+    console.info("   Multi-tenant pattern: :tenant.example.com/*");
     const tenantMatch = tenantPattern.exec(
       "https://acme.example.com/dashboard"
     );
-    console.log(`   Tenant: ${tenantMatch?.hostname.groups.tenant}`);
-    console.log(`   Path: ${tenantMatch?.pathname.groups[0]}`);
-    console.log("");
+    console.info(`   Tenant: ${tenantMatch?.hostname.groups.tenant}`);
+    console.info(`   Path: ${tenantMatch?.pathname.groups[0]}`);
+    console.info("");
   }
 
   // Performance and optimization examples
   demonstratePerformance(): void {
-    console.log("⚡ URLPattern Performance Examples\n");
+    console.info("⚡ URLPattern Performance Examples\n");
 
     // Pattern compilation performance
     const patterns = [
@@ -154,7 +154,7 @@ class URLPatternExamples {
       "/admin/:section/:subsection/*",
     ];
 
-    console.log("🏃‍♂️ Pattern Compilation Performance:");
+    console.info("🏃‍♂️ Pattern Compilation Performance:");
     const startTime = performance.now();
 
     const compiledPatterns = patterns.map((pattern) => {
@@ -168,17 +168,17 @@ class URLPatternExamples {
     const totalTime = performance.now() - startTime;
 
     compiledPatterns.forEach(({ pattern, compileTime }) => {
-      console.log(`   ${pattern}: ${compileTime.toFixed(3)}ms`);
+      console.info(`   ${pattern}: ${compileTime.toFixed(3)}ms`);
     });
 
-    console.log(`   Total compilation time: ${totalTime.toFixed(3)}ms`);
-    console.log(
+    console.info(`   Total compilation time: ${totalTime.toFixed(3)}ms`);
+    console.info(
       `   Average per pattern: ${(totalTime / patterns.length).toFixed(3)}ms`
     );
-    console.log("");
+    console.info("");
 
     // Matching performance
-    console.log("🎯 Pattern Matching Performance:");
+    console.info("🎯 Pattern Matching Performance:");
     const testUrl = "https://example.com/users/12345";
     const iterations = 10000;
 
@@ -188,19 +188,19 @@ class URLPatternExamples {
     }
     const matchTime = performance.now() - matchStart;
 
-    console.log(`   ${iterations} matches in ${matchTime.toFixed(3)}ms`);
-    console.log(
+    console.info(`   ${iterations} matches in ${matchTime.toFixed(3)}ms`);
+    console.info(
       `   Average per match: ${(matchTime / iterations).toFixed(6)}ms`
     );
-    console.log(
+    console.info(
       `   Matches per second: ${(iterations / (matchTime / 1000)).toLocaleString()}`
     );
-    console.log("");
+    console.info("");
   }
 
   // Integration with dashboard features
   demonstrateDashboardIntegration(): void {
-    console.log("🖥️ Dashboard Integration Examples\n");
+    console.info("🖥️ Dashboard Integration Examples\n");
 
     // Upload routing with provider selection
     const uploadPatterns = [
@@ -221,22 +221,22 @@ class URLPatternExamples {
       },
     ];
 
-    console.log("📤 Upload Routing:");
+    console.info("📤 Upload Routing:");
     uploadPatterns.forEach(({ pattern, description, examples }) => {
-      console.log(`   ${pattern}`);
-      console.log(`   ${description}`);
+      console.info(`   ${pattern}`);
+      console.info(`   ${description}`);
       examples.forEach((example) => {
         const urlPattern = new URLPattern({ pathname: pattern });
         const match = urlPattern.exec(`https://example.com${example}`);
-        console.log(
+        console.info(
           `   ${example} → ${JSON.stringify(match?.pathname.groups)}`
         );
       });
-      console.log("");
+      console.info("");
     });
 
     // Feature-flag based routing
-    console.log("🚩 Feature-Flag Routing:");
+    console.info("🚩 Feature-Flag Routing:");
 
     const featureRoutes = [
       { pattern: "/premium/analytics", feature: "PREMIUM" },
@@ -249,16 +249,16 @@ class URLPatternExamples {
       const urlPattern = new URLPattern({ pathname: pattern });
       const hasFeature = globalThis.__FEATURES__?.has(feature) || false;
 
-      console.log(`   ${pattern}`);
-      console.log(`   Required feature: ${feature}`);
-      console.log(`   Available: ${hasFeature ? "✅" : "❌"}`);
-      console.log("");
+      console.info(`   ${pattern}`);
+      console.info(`   Required feature: ${feature}`);
+      console.info(`   Available: ${hasFeature ? "✅" : "❌"}`);
+      console.info("");
     });
   }
 
   // Error handling and validation
   demonstrateErrorHandling(): void {
-    console.log("🛡️ Error Handling and Validation\n");
+    console.info("🛡️ Error Handling and Validation\n");
 
     // Invalid patterns
     const invalidPatterns = [
@@ -267,19 +267,19 @@ class URLPatternExamples {
       "", // Empty pattern
     ];
 
-    console.log("❌ Invalid Pattern Handling:");
+    console.info("❌ Invalid Pattern Handling:");
     invalidPatterns.forEach((pattern) => {
       try {
         const urlPattern = new URLPattern({ pathname: pattern });
-        console.log(`   ${pattern}: Unexpectedly valid`);
+        console.info(`   ${pattern}: Unexpectedly valid`);
       } catch (error) {
-        console.log(`   ${pattern}: ${(error as Error).message}`);
+        console.info(`   ${pattern}: ${(error as Error).message}`);
       }
     });
-    console.log("");
+    console.info("");
 
     // Edge cases
-    console.log("🔍 Edge Cases:");
+    console.info("🔍 Edge Cases:");
 
     const edgeCases = [
       { pattern: "/", url: "https://example.com/", description: "Root path" },
@@ -306,49 +306,49 @@ class URLPatternExamples {
         const match = urlPattern.test(url);
         const exec = urlPattern.exec(url);
 
-        console.log(`   ${description}`);
-        console.log(`   Pattern: ${pattern}`);
-        console.log(`   URL: ${url}`);
-        console.log(`   Match: ${match}`);
-        console.log(`   Groups: ${JSON.stringify(exec?.pathname.groups)}`);
-        console.log("");
+        console.info(`   ${description}`);
+        console.info(`   Pattern: ${pattern}`);
+        console.info(`   URL: ${url}`);
+        console.info(`   Match: ${match}`);
+        console.info(`   Groups: ${JSON.stringify(exec?.pathname.groups)}`);
+        console.info("");
       } catch (error) {
-        console.log(`   ${description}: Error - ${(error as Error).message}`);
-        console.log("");
+        console.info(`   ${description}: Error - ${(error as Error).message}`);
+        console.info("");
       }
     });
   }
 
   // Run all demonstrations
   async runAll(): Promise<void> {
-    console.log("🎯 URLPattern Comprehensive Examples\n");
-    console.log("=".repeat(60));
+    console.info("🎯 URLPattern Comprehensive Examples\n");
+    console.info("=".repeat(60));
 
     // Basic demo
     URLPatternDemo.basicDemo();
-    console.log("\n" + "=".repeat(60));
+    console.info("\n" + "=".repeat(60));
 
     // Routing demonstrations
     await this.demonstrateRouting();
-    console.log("=".repeat(60));
+    console.info("=".repeat(60));
 
     // Advanced patterns
     this.demonstrateAdvancedPatterns();
-    console.log("=".repeat(60));
+    console.info("=".repeat(60));
 
     // Performance
     this.demonstratePerformance();
-    console.log("=".repeat(60));
+    console.info("=".repeat(60));
 
     // Dashboard integration
     this.demonstrateDashboardIntegration();
-    console.log("=".repeat(60));
+    console.info("=".repeat(60));
 
     // Error handling
     this.demonstrateErrorHandling();
-    console.log("=".repeat(60));
+    console.info("=".repeat(60));
 
-    console.log("✅ All URLPattern examples completed!");
+    console.info("✅ All URLPattern examples completed!");
   }
 }
 

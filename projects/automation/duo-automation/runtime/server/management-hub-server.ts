@@ -11,7 +11,7 @@ import { serve, file, zstdCompressSync } from 'bun';
 const PORT = parseInt(process.env.HUB_PORT || '3005');
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-console.log(`🚀 Starting Management Hub on port ${PORT}...`);
+console.info(`🚀 Starting Management Hub on port ${PORT}...`);
 
 const server = serve({
   port: PORT,
@@ -112,4 +112,4 @@ const server = serve({
   }
 });
 
-console.log(`✅ Management Hub Server running at http://localhost:${PORT}`);
+console.info(`✅ Management Hub Server running at http://localhost:${PORT}`);

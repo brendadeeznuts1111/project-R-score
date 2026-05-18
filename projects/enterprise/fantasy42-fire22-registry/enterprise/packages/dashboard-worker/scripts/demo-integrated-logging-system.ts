@@ -24,7 +24,7 @@ import {
  * Main integrated demo
  */
 async function runIntegratedDemo(): Promise<void> {
-  console.log('\n🔥🔥🔥 FIRE22 INTEGRATED LOGGING & L-KEY SYSTEM DEMO 🔥🔥🔥\n');
+  console.info('\n🔥🔥🔥 FIRE22 INTEGRATED LOGGING & L-KEY SYSTEM DEMO 🔥🔥🔥\n');
 
   // Initialize enhanced logger
   const logger = createFire22Logger({
@@ -58,14 +58,14 @@ async function runIntegratedDemo(): Promise<void> {
   // Cleanup
   await logger.flush();
 
-  console.log('\n✅ Integrated Demo Complete! Check logs/demo-integrated.log for detailed logs.\n');
+  console.info('\n✅ Integrated Demo Complete! Check logs/demo-integrated.log for detailed logs.\n');
 }
 
 /**
  * Demo 1: Transaction Processing with Enhanced Logging
  */
 async function demonstrateTransactionProcessing(logger: any): Promise<void> {
-  console.log('💳 === DEMO 1: TRANSACTION PROCESSING WITH L-KEY LOGGING ===\n');
+  console.info('💳 === DEMO 1: TRANSACTION PROCESSING WITH L-KEY LOGGING ===\n');
 
   const processor = EnhancedTransactionProcessor.getInstance();
 
@@ -89,11 +89,11 @@ async function demonstrateTransactionProcessing(logger: any): Promise<void> {
     description: 'High-value VIP P2P transfer with full L-Key tracking',
   };
 
-  console.log('🔄 Processing VIP Transaction with Enhanced Logging:');
-  console.log(`   From: ${vipTransaction.fromUsername} (${vipTransaction.fromCustomerType})`);
-  console.log(`   To: ${vipTransaction.toUsername} (${vipTransaction.toCustomerType})`);
-  console.log(`   Amount: $${vipTransaction.amount.toLocaleString()}`);
-  console.log(`   Service Tier: ${vipTransaction.serviceTier}`);
+  console.info('🔄 Processing VIP Transaction with Enhanced Logging:');
+  console.info(`   From: ${vipTransaction.fromUsername} (${vipTransaction.fromCustomerType})`);
+  console.info(`   To: ${vipTransaction.toUsername} (${vipTransaction.toCustomerType})`);
+  console.info(`   Amount: $${vipTransaction.amount.toLocaleString()}`);
+  console.info(`   Service Tier: ${vipTransaction.serviceTier}`);
 
   try {
     const startTimer = logger.time(
@@ -121,11 +121,11 @@ async function demonstrateTransactionProcessing(logger: any): Promise<void> {
       flowSequence: result.flowSequence,
     });
 
-    console.log(`\n✅ Transaction Completed Successfully!`);
-    console.log(`   Status: ${result.status}`);
-    console.log(`   Total Fee: $${result.fees.totalFee.toFixed(2)}`);
-    console.log(`   VIP Savings: $${result.fees.tierDiscount.toFixed(2)}`);
-    console.log(`   Flow: ${result.flowSequence.slice(0, 5).join(' → ')}...`);
+    console.info(`\n✅ Transaction Completed Successfully!`);
+    console.info(`   Status: ${result.status}`);
+    console.info(`   Total Fee: $${result.fees.totalFee.toFixed(2)}`);
+    console.info(`   VIP Savings: $${result.fees.tierDiscount.toFixed(2)}`);
+    console.info(`   Flow: ${result.flowSequence.slice(0, 5).join(' → ')}...`);
   } catch (error: any) {
     logger.error(
       'Transaction processing failed',
@@ -136,17 +136,17 @@ async function demonstrateTransactionProcessing(logger: any): Promise<void> {
       { error: error.message }
     );
 
-    console.log(`❌ Transaction Failed: ${error.message}`);
+    console.info(`❌ Transaction Failed: ${error.message}`);
   }
 
-  console.log('\n');
+  console.info('\n');
 }
 
 /**
  * Demo 2: OTC Trading with Audit Trails
  */
 async function demonstrateOTCTradingWithLogging(logger: any): Promise<void> {
-  console.log('🏛️ === DEMO 2: OTC TRADING WITH ENHANCED LOGGING ===\n');
+  console.info('🏛️ === DEMO 2: OTC TRADING WITH ENHANCED LOGGING ===\n');
 
   const otcEngine = new OTCMatchingEngine();
 
@@ -169,12 +169,12 @@ async function demonstrateOTCTradingWithLogging(logger: any): Promise<void> {
     isIceberg: false,
   };
 
-  console.log('📈 Placing Institutional OTC Block Order:');
-  console.log(`   Trader: ${blockOrder.telegramUsername} (${blockOrder.customerType})`);
-  console.log(
+  console.info('📈 Placing Institutional OTC Block Order:');
+  console.info(`   Trader: ${blockOrder.telegramUsername} (${blockOrder.customerType})`);
+  console.info(
     `   Order: ${blockOrder.side} $${blockOrder.amount.toLocaleString()} of ${blockOrder.asset}`
   );
-  console.log(`   Target: $${blockOrder.targetPrice?.toLocaleString()}`);
+  console.info(`   Target: $${blockOrder.targetPrice?.toLocaleString()}`);
 
   try {
     const orderTimer = logger.time(
@@ -202,12 +202,12 @@ async function demonstrateOTCTradingWithLogging(logger: any): Promise<void> {
       auditTrail: placedOrder.auditTrail,
     });
 
-    console.log(`\n✅ OTC Block Order Placed Successfully!`);
-    console.log(`   Order ID: ${placedOrder.id}`);
-    console.log(`   L-Key: ${placedOrder.orderLKey}`);
-    console.log(`   Priority: ${placedOrder.priority}`);
-    console.log(`   Commission: ${(placedOrder.commissionRate * 100).toFixed(3)}%`);
-    console.log(`   Audit Trail: ${placedOrder.auditTrail.join(', ')}`);
+    console.info(`\n✅ OTC Block Order Placed Successfully!`);
+    console.info(`   Order ID: ${placedOrder.id}`);
+    console.info(`   L-Key: ${placedOrder.orderLKey}`);
+    console.info(`   Priority: ${placedOrder.priority}`);
+    console.info(`   Commission: ${(placedOrder.commissionRate * 100).toFixed(3)}%`);
+    console.info(`   Audit Trail: ${placedOrder.auditTrail.join(', ')}`);
   } catch (error: any) {
     logger.error(
       'OTC order placement failed',
@@ -217,17 +217,17 @@ async function demonstrateOTCTradingWithLogging(logger: any): Promise<void> {
       { error: error.message }
     );
 
-    console.log(`❌ OTC Order Failed: ${error.message}`);
+    console.info(`❌ OTC Order Failed: ${error.message}`);
   }
 
-  console.log('\n');
+  console.info('\n');
 }
 
 /**
  * Demo 3: Security Events and Risk Monitoring
  */
 async function demonstrateSecurityLogging(logger: any): Promise<void> {
-  console.log('🛡️ === DEMO 3: SECURITY LOGGING & RISK MONITORING ===\n');
+  console.info('🛡️ === DEMO 3: SECURITY LOGGING & RISK MONITORING ===\n');
 
   // Simulate various security events
   const securityEvents = [
@@ -273,27 +273,27 @@ async function demonstrateSecurityLogging(logger: any): Promise<void> {
     },
   ];
 
-  console.log('🚨 Processing Security Events:');
+  console.info('🚨 Processing Security Events:');
 
   for (const event of securityEvents) {
     logger.logSecurity(event.event, event.severity, event.lKey, event.entityId, event.details);
 
-    console.log(`   ${event.severity}: ${event.event} (${event.lKey})`);
-    console.log(`     Entity: ${event.entityId}`);
-    console.log(`     Risk Score: ${event.details.riskScore}/100`);
-    console.log(`     Blocked: ${event.details.blocked ? '🚫 YES' : '✅ NO'}`);
-    console.log(`     Reason: ${event.details.reason}`);
-    console.log('');
+    console.info(`   ${event.severity}: ${event.event} (${event.lKey})`);
+    console.info(`     Entity: ${event.entityId}`);
+    console.info(`     Risk Score: ${event.details.riskScore}/100`);
+    console.info(`     Blocked: ${event.details.blocked ? '🚫 YES' : '✅ NO'}`);
+    console.info(`     Reason: ${event.details.reason}`);
+    console.info('');
   }
 
-  console.log('\n');
+  console.info('\n');
 }
 
 /**
  * Demo 4: Performance Monitoring
  */
 async function demonstratePerformanceLogging(logger: any): Promise<void> {
-  console.log('⚡ === DEMO 4: PERFORMANCE MONITORING ===\n');
+  console.info('⚡ === DEMO 4: PERFORMANCE MONITORING ===\n');
 
   // Simulate various performance scenarios
   const performanceTests = [
@@ -336,7 +336,7 @@ async function demonstratePerformanceLogging(logger: any): Promise<void> {
     },
   ];
 
-  console.log('📊 Running Performance Tests:');
+  console.info('📊 Running Performance Tests:');
 
   for (const test of performanceTests) {
     // Simulate the operation
@@ -350,60 +350,60 @@ async function demonstratePerformanceLogging(logger: any): Promise<void> {
     // Log detailed performance metrics
     logger.logPerformance(test.operation, test.duration, test.lKey, test.entityId, test.details);
 
-    console.log(`   ${test.operation}: ${test.duration}ms`);
-    console.log(`     CPU: ${test.details.cpuUsage}%`);
-    console.log(`     Memory: ${test.details.memoryUsage}MB`);
-    console.log(`     Throughput: ${test.details.throughput} ops/sec`);
+    console.info(`   ${test.operation}: ${test.duration}ms`);
+    console.info(`     CPU: ${test.details.cpuUsage}%`);
+    console.info(`     Memory: ${test.details.memoryUsage}MB`);
+    console.info(`     Throughput: ${test.details.throughput} ops/sec`);
 
     if (test.duration > 1000) {
-      console.log(`     ⚠️  Slow operation detected!`);
+      console.info(`     ⚠️  Slow operation detected!`);
     }
 
-    console.log('');
+    console.info('');
   }
 
-  console.log('\n');
+  console.info('\n');
 }
 
 /**
  * Demo 5: Comprehensive Reporting
  */
 async function demonstrateReporting(logger: any): Promise<void> {
-  console.log('📋 === DEMO 5: COMPREHENSIVE REPORTING ===\n');
+  console.info('📋 === DEMO 5: COMPREHENSIVE REPORTING ===\n');
 
   // Generate audit report
   const auditReport = logger.generateAuditReport();
 
-  console.log('📈 System Audit Report:');
-  console.log(`   Total Log Entries: ${auditReport.totalEntries}`);
-  console.log(`   Security Events: ${auditReport.securityEvents}`);
+  console.info('📈 System Audit Report:');
+  console.info(`   Total Log Entries: ${auditReport.totalEntries}`);
+  console.info(`   Security Events: ${auditReport.securityEvents}`);
 
-  console.log('\n   📊 Logs by Level:');
+  console.info('\n   📊 Logs by Level:');
   for (const [level, count] of Object.entries(auditReport.byLevel)) {
-    console.log(`     ${level}: ${count}`);
+    console.info(`     ${level}: ${count}`);
   }
 
-  console.log('\n   🔑 Top L-Keys Used:');
+  console.info('\n   🔑 Top L-Keys Used:');
   const topLKeys = Object.entries(auditReport.byLKey)
     .sort(([, a], [, b]) => (b as number) - (a as number))
     .slice(0, 5);
 
   for (const [lKey, count] of topLKeys) {
-    console.log(`     ${lKey}: ${count} times`);
+    console.info(`     ${lKey}: ${count} times`);
   }
 
-  console.log('\n   ⚡ Performance Metrics:');
-  console.log(
+  console.info('\n   ⚡ Performance Metrics:');
+  console.info(
     `     Average Response Time: ${auditReport.performanceMetrics.averageResponseTime.toFixed(2)}ms`
   );
-  console.log(`     Error Rate: ${(auditReport.performanceMetrics.errorRate * 100).toFixed(2)}%`);
-  console.log(`     Throughput: ${auditReport.performanceMetrics.throughput.toFixed(2)} ops/hour`);
+  console.info(`     Error Rate: ${(auditReport.performanceMetrics.errorRate * 100).toFixed(2)}%`);
+  console.info(`     Throughput: ${auditReport.performanceMetrics.throughput.toFixed(2)} ops/hour`);
 
-  console.log('\n   🔒 Compliance Metrics:');
-  console.log(`     Total Transactions: ${auditReport.complianceMetrics.totalTransactions}`);
-  console.log(`     High Risk: ${auditReport.complianceMetrics.highRiskTransactions}`);
-  console.log(`     Blocked: ${auditReport.complianceMetrics.blockedTransactions}`);
-  console.log(
+  console.info('\n   🔒 Compliance Metrics:');
+  console.info(`     Total Transactions: ${auditReport.complianceMetrics.totalTransactions}`);
+  console.info(`     High Risk: ${auditReport.complianceMetrics.highRiskTransactions}`);
+  console.info(`     Blocked: ${auditReport.complianceMetrics.blockedTransactions}`);
+  console.info(
     `     Average Risk Score: ${auditReport.complianceMetrics.averageRiskScore.toFixed(1)}/100`
   );
 
@@ -414,9 +414,9 @@ async function demonstrateReporting(logger: any): Promise<void> {
     0
   );
 
-  console.log('\n   📈 L-Key Usage Statistics:');
-  console.log(`     Total L-Key Operations: ${totalUsage}`);
-  console.log(`     Unique L-Keys Used: ${Object.keys(lKeyStats).length}`);
+  console.info('\n   📈 L-Key Usage Statistics:');
+  console.info(`     Total L-Key Operations: ${totalUsage}`);
+  console.info(`     Unique L-Keys Used: ${Object.keys(lKeyStats).length}`);
 
   const topUsedLKeys = Object.entries(lKeyStats)
     .sort(([, a], [, b]) => (b as any).usage - (a as any).usage)
@@ -424,23 +424,23 @@ async function demonstrateReporting(logger: any): Promise<void> {
 
   for (const [lKey, stats] of topUsedLKeys) {
     const s = stats as any;
-    console.log(`     ${lKey} (${s.category}): ${s.usage} uses`);
+    console.info(`     ${lKey} (${s.category}): ${s.usage} uses`);
   }
 
   // Get logger metrics
   const metrics = logger.getMetrics();
-  console.log('\n   📊 Logger Metrics:');
-  console.log(`     Total Logs Generated: ${metrics.totalLogs}`);
-  console.log(`     Average Log Rate: ${metrics.logsPerSecond.toFixed(2)} logs/sec`);
-  console.log(`     Error Rate: ${(metrics.errorRate * 100).toFixed(2)}%`);
-  console.log(`     Audit Entries: ${logger.getAuditEntryCount()}`);
+  console.info('\n   📊 Logger Metrics:');
+  console.info(`     Total Logs Generated: ${metrics.totalLogs}`);
+  console.info(`     Average Log Rate: ${metrics.logsPerSecond.toFixed(2)} logs/sec`);
+  console.info(`     Error Rate: ${(metrics.errorRate * 100).toFixed(2)}%`);
+  console.info(`     Audit Entries: ${logger.getAuditEntryCount()}`);
 
-  console.log('\n   💾 Export Options Available:');
-  console.log('     - JSON: logger.exportAuditEntries()');
-  console.log('     - CSV: logger.exportAuditEntries(startDate, endDate, "csv")');
-  console.log('     - Filtered: logger.generateAuditReport(startDate, endDate)');
+  console.info('\n   💾 Export Options Available:');
+  console.info('     - JSON: logger.exportAuditEntries()');
+  console.info('     - CSV: logger.exportAuditEntries(startDate, endDate, "csv")');
+  console.info('     - Filtered: logger.generateAuditReport(startDate, endDate)');
 
-  console.log('\n');
+  console.info('\n');
 }
 
 /**

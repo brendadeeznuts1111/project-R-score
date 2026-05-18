@@ -69,7 +69,7 @@ function loadRules(agentName: string): string[] {
 }
 
 async function executeCoder(params: any, rules: string[]) {
-  console.log(`🤖 Executing coder agent with rules:`, rules.length);
+  console.info(`🤖 Executing coder agent with rules:`, rules.length);
 
   // Apply coder-specific logic
   const { task, context } = params;
@@ -84,11 +84,11 @@ async function executeCoder(params: any, rules: string[]) {
     timestamp: new Date().toISOString()
   };
 
-  console.log(JSON.stringify(result, null, 2));
+  console.info(JSON.stringify(result, null, 2));
 }
 
 async function executeReviewer(params: any, rules: string[]) {
-  console.log(`🔍 Executing reviewer agent with rules:`, rules.length);
+  console.info(`🔍 Executing reviewer agent with rules:`, rules.length);
 
   // Apply reviewer-specific logic
   const { code, criteria } = params;
@@ -107,11 +107,11 @@ async function executeReviewer(params: any, rules: string[]) {
     timestamp: new Date().toISOString()
   };
 
-  console.log(JSON.stringify(result, null, 2));
+  console.info(JSON.stringify(result, null, 2));
 }
 
 async function executeInstaller(params: any, rules: string[]) {
-  console.log(`📦 Executing installer agent with rules:`, rules.length);
+  console.info(`📦 Executing installer agent with rules:`, rules.length);
 
   // Apply installer-specific logic
   const { packageName, options } = params;
@@ -132,7 +132,7 @@ async function executeInstaller(params: any, rules: string[]) {
     timestamp: new Date().toISOString()
   };
 
-  console.log(JSON.stringify(result, null, 2));
+  console.info(JSON.stringify(result, null, 2));
 }
 
 main();

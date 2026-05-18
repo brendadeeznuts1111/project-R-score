@@ -305,7 +305,7 @@ export class RealTimeAlertingSystem {
     // Check for correlation with existing alerts
     this.correlateAlerts(alert);
 
-    console.log(`🚨 ALERT CREATED: ${alert.severity} - ${alert.title}`, {
+    console.info(`🚨 ALERT CREATED: ${alert.severity} - ${alert.title}`, {
       id: alert.id,
       metric: alert.metric,
       impact: alert.impact,
@@ -448,7 +448,7 @@ export class RealTimeAlertingSystem {
     alert.acknowledgedBy = acknowledgedBy;
     alert.acknowledgedAt = new Date();
 
-    console.log(`✓ Alert acknowledged: ${alertId} by ${acknowledgedBy}`);
+    console.info(`✓ Alert acknowledged: ${alertId} by ${acknowledgedBy}`);
     return true;
   }
 
@@ -468,7 +468,7 @@ export class RealTimeAlertingSystem {
       this.activeAlerts.delete(alertId);
     }, 60000); // 1 minute delay
 
-    console.log(`✅ Alert resolved: ${alertId}`);
+    console.info(`✅ Alert resolved: ${alertId}`);
     return true;
   }
 
@@ -914,7 +914,7 @@ export class RealTimeAlertingSystem {
       notification.status = 'SENT';
       notification.sentAt = new Date();
 
-      console.log(`📢 Notification sent via ${notification.channel}: ${alert.title}`);
+      console.info(`📢 Notification sent via ${notification.channel}: ${alert.title}`);
     });
   }
 
@@ -1070,7 +1070,7 @@ export class RealTimeAlertingSystem {
       const deviation = Math.abs(recentAvg - avg) / avg;
       if (deviation > 0.5) {
         // 50% deviation
-        console.log(
+        console.info(
           `🔍 Anomaly detected: Recent response time trend deviates by ${(deviation * 100).toFixed(1)}%`
         );
       }

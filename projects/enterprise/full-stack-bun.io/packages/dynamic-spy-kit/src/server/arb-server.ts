@@ -732,21 +732,21 @@ const server = Bun.serve({
 
 // Entry point check using Bun.main
 if (isMainEntry) {
-	console.log(`🚀 Arbitrage Server v9.0 running on port ${server.port}`);
+	console.info(`🚀 Arbitrage Server v9.0 running on port ${server.port}`);
 	if (cliOptions.compress) {
-		console.log(`🗜️  Compression: Enabled (gzip/deflate)`);
+		console.info(`🗜️  Compression: Enabled (gzip/deflate)`);
 	}
 	if (cliOptions.debug) {
-		console.log(`🐛 Debug mode: Enabled`);
+		console.info(`🐛 Debug mode: Enabled`);
 	}
 } else {
-	console.log(`📦 Arbitrage Server loaded as module`);
+	console.info(`📦 Arbitrage Server loaded as module`);
 }
 
-console.log(`🚀 Arbitrage Server v9.0 running on port ${server.port}`);
-console.log(`🔥 Hot Reload: Enabled (reloaded ${globalThis.reloadCount} times)`);
-console.log(`📊 Dashboard: http://localhost:${server.port}/dashboard`);
-console.log(`🔍 Backwork: POST http://localhost:${server.port}/backwork`);
-console.log(`🔄 Route Reload: POST http://localhost:${server.port}/reload`);
-console.log(`💚 Health: http://localhost:${server.port}/health`);
+console.info(`🚀 Arbitrage Server v9.0 running on port ${server.port}`);
+console.info(`🔥 Hot Reload: Enabled (reloaded ${globalThis.reloadCount} times)`);
+console.info(`📊 Dashboard: http://localhost:${server.port}/dashboard`);
+console.info(`🔍 Backwork: POST http://localhost:${server.port}/backwork`);
+console.info(`🔄 Route Reload: POST http://localhost:${server.port}/reload`);
+console.info(`💚 Health: http://localhost:${server.port}/health`);
 

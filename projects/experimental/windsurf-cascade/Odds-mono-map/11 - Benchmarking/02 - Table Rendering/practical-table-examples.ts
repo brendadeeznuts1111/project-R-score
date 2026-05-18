@@ -7,9 +7,9 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.bold.magenta('🎯 Practical Bun.inspect.table() Examples'));
-console.log(chalk.gray('Odds Protocol Vault - Real Data Implementation'));
-console.log(chalk.gray('='.repeat(80)));
+console.info(chalk.bold.magenta('🎯 Practical Bun.inspect.table() Examples'));
+console.info(chalk.gray('Odds Protocol Vault - Real Data Implementation'));
+console.info(chalk.gray('='.repeat(80)));
 
 // =============================================================================
 // SAMPLE VAULT DATA (Based on your structures)
@@ -206,8 +206,8 @@ const rawTaskStatuses = [
 // DATA MAPPING AND FORMATTING
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📁 1. Vault Files Table'));
-console.log(chalk.gray('Mapping raw file data to display format...'));
+console.info(chalk.bold.cyan('\n📁 1. Vault Files Table'));
+console.info(chalk.gray('Mapping raw file data to display format...'));
 
 // Map vault files for optimal display
 const mappedFiles = rawVaultFiles.map(file => ({
@@ -223,14 +223,14 @@ const mappedFiles = rawVaultFiles.map(file => ({
     hasFrontmatter: file.hasFrontmatter ? chalk.green('✅') : chalk.red('❌')
 }));
 
-console.log(chalk.green('\n📋 Displaying mapped files:'));
+console.info(chalk.green('\n📋 Displaying mapped files:'));
 Bun.inspect.table(
     mappedFiles,
     ['fileName', 'directory', 'sizeKB', 'modified', 'tags', 'hasFrontmatter']
 );
 
-console.log(chalk.bold.cyan('\n⚠️  2. Validation Issues Table'));
-console.log(chalk.gray('Mapping validation issues with severity indicators...'));
+console.info(chalk.bold.cyan('\n⚠️  2. Validation Issues Table'));
+console.info(chalk.gray('Mapping validation issues with severity indicators...'));
 
 // Map validation issues with color coding
 const mappedIssues = rawValidationIssues.map(issue => ({
@@ -246,7 +246,7 @@ const mappedIssues = rawValidationIssues.map(issue => ({
     suggestion: chalk.gray(issue.suggestion)
 }));
 
-console.log(chalk.green('\n📋 Displaying mapped issues:'));
+console.info(chalk.green('\n📋 Displaying mapped issues:'));
 Bun.inspect.table(
     mappedIssues,
     ['type', 'ruleCategory', 'file', 'line', 'message', 'suggestion'],
@@ -256,8 +256,8 @@ Bun.inspect.table(
     }
 );
 
-console.log(chalk.bold.cyan('\n✅ 3. Task Statuses Table'));
-console.log(chalk.gray('Mapping task statuses with visual indicators...'));
+console.info(chalk.bold.cyan('\n✅ 3. Task Statuses Table'));
+console.info(chalk.gray('Mapping task statuses with visual indicators...'));
 
 // Map task statuses with visual formatting
 const taskStatuses = rawTaskStatuses.map(status => ({
@@ -273,7 +273,7 @@ const taskStatuses = rawTaskStatuses.map(status => ({
                 chalk.gray(status.type)
 }));
 
-console.log(chalk.green('\n📋 Displaying task statuses:'));
+console.info(chalk.green('\n📋 Displaying task statuses:'));
 Bun.inspect.table(
     taskStatuses,
     ['symbol', 'name', 'nextStatusSymbol', 'type']
@@ -283,10 +283,10 @@ Bun.inspect.table(
 // ADVANCED EXAMPLES WITH DIFFERENT OPTIONS
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🎯 4. Advanced Formatting Examples'));
+console.info(chalk.bold.cyan('\n🎯 4. Advanced Formatting Examples'));
 
 // Compact file listing for space-constrained environments
-console.log(chalk.yellow('\n📐 Compact File Listing:'));
+console.info(chalk.yellow('\n📐 Compact File Listing:'));
 const compactFiles = rawVaultFiles.map(file => ({
     name: file.name,
     size: (file.size / 1024).toFixed(1) + 'KB',
@@ -301,7 +301,7 @@ Bun.inspect.table(
 );
 
 // Summary statistics table
-console.log(chalk.yellow('\n📊 Vault Summary Statistics:'));
+console.info(chalk.yellow('\n📊 Vault Summary Statistics:'));
 const totalFiles = rawVaultFiles.length;
 const totalSize = rawVaultFiles.reduce((sum, file) => sum + file.size, 0);
 const filesWithFrontmatter = rawVaultFiles.filter(f => f.hasFrontmatter).length;
@@ -342,7 +342,7 @@ Bun.inspect.table(
 );
 
 // Large dataset demonstration with maxLines
-console.log(chalk.yellow('\n📈 Top 3 Largest Files (maxLines example):'));
+console.info(chalk.yellow('\n📈 Top 3 Largest Files (maxLines example):'));
 const sortedBySize = rawVaultFiles
     .sort((a, b) => b.size - a.size)
     .slice(0, 3)
@@ -363,10 +363,10 @@ Bun.inspect.table(
 // REAL-WORLD WORKFLOW EXAMPLES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔄 5. Real-World Workflow Examples'));
+console.info(chalk.bold.cyan('\n🔄 5. Real-World Workflow Examples'));
 
 // Validation report for CI/CD
-console.log(chalk.yellow('\n🚀 CI/CD Validation Report:'));
+console.info(chalk.yellow('\n🚀 CI/CD Validation Report:'));
 const criticalIssues = rawValidationIssues.filter(i => i.type === 'error');
 if (criticalIssues.length > 0) {
     const ciReport = criticalIssues.map(issue => ({
@@ -376,18 +376,18 @@ if (criticalIssues.length > 0) {
         fixable: issue.autoFixable ? chalk.green('Yes') : chalk.red('No')
     }));
 
-    console.log(chalk.red('\n❌ Critical Issues Found:'));
+    console.info(chalk.red('\n❌ Critical Issues Found:'));
     Bun.inspect.table(
         ciReport,
         ['file', 'line', 'issue', 'fixable'],
         { maxEntryWidth: 30 }
     );
 } else {
-    console.log(chalk.green('\n✅ No critical issues found!'));
+    console.info(chalk.green('\n✅ No critical issues found!'));
 }
 
 // Performance metrics dashboard
-console.log(chalk.yellow('\n📊 Performance Metrics Dashboard:'));
+console.info(chalk.yellow('\n📊 Performance Metrics Dashboard:'));
 const performanceData = [
     { operation: 'File Validation', duration: 2.3, status: 'success', efficiency: 107 },
     { operation: 'Template Processing', duration: 5.7, status: 'success', efficiency: 146 },
@@ -419,26 +419,26 @@ Bun.inspect.table(
 // QUICK REFERENCE
 // =============================================================================
 
-console.log(chalk.bold.magenta('\n🎯 Quick Reference Summary'));
-console.log(chalk.gray('='.repeat(50)));
+console.info(chalk.bold.magenta('\n🎯 Quick Reference Summary'));
+console.info(chalk.gray('='.repeat(50)));
 
-console.log(chalk.bold.cyan('\n📋 Your Data Structures:'));
-console.log(chalk.gray('• mappedFiles: fileName, directory, sizeKB, modified, tags, hasFrontmatter'));
-console.log(chalk.gray('• mappedIssues: type, ruleCategory, file, line, message, suggestion'));
-console.log(chalk.gray('• taskStatuses: symbol, name, nextStatusSymbol, type'));
+console.info(chalk.bold.cyan('\n📋 Your Data Structures:'));
+console.info(chalk.gray('• mappedFiles: fileName, directory, sizeKB, modified, tags, hasFrontmatter'));
+console.info(chalk.gray('• mappedIssues: type, ruleCategory, file, line, message, suggestion'));
+console.info(chalk.gray('• taskStatuses: symbol, name, nextStatusSymbol, type'));
 
-console.log(chalk.bold.cyan('\n🔧 Best Practices Used:'));
-console.log(chalk.gray('• Data pre-processing with chalk for colors'));
-console.log(chalk.gray('• maxEntryWidth for text truncation'));
-console.log(chalk.gray('• compact option for space optimization'));
-console.log(chalk.gray('• maxLines for large dataset limiting'));
-console.log(chalk.gray('• Consistent property ordering'));
-console.log(chalk.gray('• Status indicators with emojis'));
+console.info(chalk.bold.cyan('\n🔧 Best Practices Used:'));
+console.info(chalk.gray('• Data pre-processing with chalk for colors'));
+console.info(chalk.gray('• maxEntryWidth for text truncation'));
+console.info(chalk.gray('• compact option for space optimization'));
+console.info(chalk.gray('• maxLines for large dataset limiting'));
+console.info(chalk.gray('• Consistent property ordering'));
+console.info(chalk.gray('• Status indicators with emojis'));
 
-console.log(chalk.bold.cyan('\n✅ Available Commands:'));
-console.log(chalk.gray('bun run benchmark:table     # Advanced demonstration'));
-console.log(chalk.gray('bun run benchmark:reference # Complete reference'));
+console.info(chalk.bold.cyan('\n✅ Available Commands:'));
+console.info(chalk.gray('bun run benchmark:table     # Advanced demonstration'));
+console.info(chalk.gray('bun run benchmark:reference # Complete reference'));
 
-console.log(chalk.bold.green('\n🎉 Practical Examples Complete!'));
+console.info(chalk.bold.green('\n🎉 Practical Examples Complete!'));
 
 export { mappedFiles, mappedIssues, taskStatuses };

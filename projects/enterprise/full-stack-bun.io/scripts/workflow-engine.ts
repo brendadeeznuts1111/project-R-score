@@ -55,7 +55,7 @@ class WorkflowEngine {
 
   // Execute workflow with given parameters
   async executeWorkflow(name: string, params: any = {}, rules: string[] = []): Promise<any> {
-    console.log(`🔄 Executing workflow: ${name}`);
+    console.info(`🔄 Executing workflow: ${name}`);
 
     const workflow = this.loadWorkflow(name);
     const context = {
@@ -73,7 +73,7 @@ class WorkflowEngine {
     }
 
     const duration = Date.now() - context.startTime;
-    console.log(`✅ Workflow ${name} completed in ${duration}ms`);
+    console.info(`✅ Workflow ${name} completed in ${duration}ms`);
 
     return {
       workflow: name,
@@ -85,7 +85,7 @@ class WorkflowEngine {
   }
 
   private async executeStep(step: WorkflowStep, context: any, rules: string[]): Promise<void> {
-    console.log(`▶️  Executing step: ${step.name} (${step.type})`);
+    console.info(`▶️  Executing step: ${step.name} (${step.type})`);
 
     const startTime = Date.now();
 
@@ -111,13 +111,13 @@ class WorkflowEngine {
       }
 
       const duration = Date.now() - startTime;
-      console.log(`✅ Step ${step.name} completed in ${duration}ms`);
+      console.info(`✅ Step ${step.name} completed in ${duration}ms`);
 
     } catch (error) {
       console.error(`❌ Step ${step.name} failed:`, error.message);
 
       if (step.onFailure) {
-        console.log(`🔄 Executing failure handler: ${step.onFailure}`);
+        console.info(`🔄 Executing failure handler: ${step.onFailure}`);
         // Could implement failure recovery logic here
       }
 
@@ -274,7 +274,7 @@ async function main() {
   const [workflowName, paramsJson, rulesJson] = process.argv.slice(2);
 
   if (!workflowName) {
-    console.log(`
+    console.info(`
 YAML Workflow Engine v1.0.0 - WORKFLOW.*.YAML
 
 Usage:
@@ -300,7 +300,7 @@ Examples:
 
   try {
     const result = await engine.executeWorkflow(workflowName, params, rules);
-    console.log(JSON.stringify(result, null, 2));
+    console.info(JSON.stringify(result, null, 2));
   } catch (error) {
     console.error(`Workflow execution failed:`, error.message);
     process.exit(1);

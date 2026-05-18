@@ -16,7 +16,7 @@ export class SecurityVault {
   }
 
   static async rotateMtls() {
-    console.log("= Sovereign Security Vault: Rotating Certificates...");
+    console.info("= Sovereign Security Vault: Rotating Certificates...");
     // Local workspace-relative cert generation would happen here
     return true;
   }

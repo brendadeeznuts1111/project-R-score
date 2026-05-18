@@ -65,11 +65,11 @@ export class CashAppResolver {
     // Check cache first
     const cached = await this.cache.get<CashAppProfile>(cacheKey);
     if (cached) {
-      console.log(`Cache hit for ${sanitized.e164}`);
+      console.info(`Cache hit for ${sanitized.e164}`);
       return cached;
     }
 
-    console.log(`Cache miss for ${sanitized.e164}, calling API`);
+    console.info(`Cache miss for ${sanitized.e164}, calling API`);
 
     try {
       // Generate secure request signature
@@ -145,7 +145,7 @@ export class CashAppResolver {
       if (error.name === 'AbortError') {
         const stale = await this.cache.get<CashAppProfile>(`stale:${cacheKey}`);
         if (stale) {
-          console.log(`Returning stale data for ${sanitized.e164}`);
+          console.info(`Returning stale data for ${sanitized.e164}`);
           return stale;
         }
       }

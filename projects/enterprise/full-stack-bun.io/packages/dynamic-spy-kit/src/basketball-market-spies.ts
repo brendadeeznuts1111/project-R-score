@@ -81,9 +81,9 @@ export class BasketballMarketSpies {
 		const initTime = performance.now() - startTime;
 		this.initialized = true;
 
-		console.log(`✅ ${this.spies.size.toLocaleString()} basketball market spies initialized!`);
-		console.log(`⚡ Initialization time: ${initTime.toFixed(2)}ms`);
-		console.log(`📊 Throughput: ${((this.spies.size / initTime) * 1000).toFixed(0)} spies/sec`);
+		console.info(`✅ ${this.spies.size.toLocaleString()} basketball market spies initialized!`);
+		console.info(`⚡ Initialization time: ${initTime.toFixed(2)}ms`);
+		console.info(`📊 Throughput: ${((this.spies.size / initTime) * 1000).toFixed(0)} spies/sec`);
 	}
 
 	/**
@@ -116,9 +116,9 @@ export class BasketballMarketSpies {
 			});
 
 			if (found) {
-				console.log(`✅ Expected: ${expected} → Spy #${index} verified!`);
+				console.info(`✅ Expected: ${expected} → Spy #${index} verified!`);
 			} else {
-				console.log(`✅ Spy #${index} called (${calls.length} times) → Market: ${this.markets[index]}`);
+				console.info(`✅ Spy #${index} called (${calls.length} times) → Market: ${this.markets[index]}`);
 			}
 		} else {
 			console.warn(`⚠️  Spy #${index} not called yet. Market: ${this.markets[index]}`);
@@ -151,7 +151,7 @@ export class BasketballMarketSpies {
 		
 		// Log spy activation if this is first call
 		if (callCount === 1 && gameIndex < 5) {
-			console.log(`[SPY] ${newOdds} → Market #${gameIndex} updated`);
+			console.info(`[SPY] ${newOdds} → Market #${gameIndex} updated`);
 		}
 		
 		return callCount;
@@ -207,7 +207,7 @@ export class BasketballMarketSpies {
 	 */
 	resetAll(): void {
 		this.spies.forEach(spy => spy?.mockReset());
-		console.log(`🔄 Reset ${this.spies.size} spies`);
+		console.info(`🔄 Reset ${this.spies.size} spies`);
 	}
 
 	/**
@@ -217,7 +217,7 @@ export class BasketballMarketSpies {
 		this.spies.forEach(spy => spy?.mockRestore());
 		this.spies.clear();
 		this.initialized = false;
-		console.log(`🔄 Restored all spies`);
+		console.info(`🔄 Restored all spies`);
 	}
 }
 

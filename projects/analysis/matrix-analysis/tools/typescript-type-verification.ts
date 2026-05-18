@@ -14,7 +14,7 @@ import { Database } from "bun:sqlite";
 // These options are now properly typed and recognized
 
 async function demonstrateBunBuildFix() {
-	console.log("1. Bun.build() autoload options fix:");
+	console.info("1. Bun.build() autoload options fix:");
 
 	// This compiles without TypeScript errors - FIXED
 	const buildOptions = {
@@ -28,13 +28,13 @@ async function demonstrateBunBuildFix() {
 
 	try {
 		const result = await Bun.build(buildOptions);
-		console.log("   ✓ autoloadTsconfig option accepted");
-		console.log("   ✓ autoloadPackageJson option accepted");
+		console.info("   ✓ autoloadTsconfig option accepted");
+		console.info("   ✓ autoloadPackageJson option accepted");
 	} catch (error: any) {
 		if (error.message.includes("ModuleNotFound")) {
-			console.log("   ✓ Types accepted (file doesn't exist but types work)");
+			console.info("   ✓ Types accepted (file doesn't exist but types work)");
 		} else {
-			console.log("   ✓ Options compile without TypeScript errors");
+			console.info("   ✓ Options compile without TypeScript errors");
 		}
 	}
 }
@@ -43,7 +43,7 @@ async function demonstrateBunBuildFix() {
 // Now correctly returns Changes object with proper typing
 
 function demonstrateSqliteFix() {
-	console.log("\n2. bun:sqlite .run() return type fix:");
+	console.info("\n2. bun:sqlite .run() return type fix:");
 
 	// Create database
 	const db = new Database(":memory:");
@@ -55,9 +55,9 @@ function demonstrateSqliteFix() {
 	const result = db.run("INSERT INTO users (name) VALUES (?)", ["Alice"]);
 
 	// These properties are now properly typed - FIXED
-	console.log(`   ✓ Changes object returned:`);
-	console.log(`     - changes: ${Number(result.changes)} (type: number)`);
-	console.log(
+	console.info(`   ✓ Changes object returned:`);
+	console.info(`     - changes: ${Number(result.changes)} (type: number)`);
+	console.info(
 		`     - lastInsertRowid: ${Number(result.lastInsertRowid)} (type: number)`,
 	);
 
@@ -65,7 +65,7 @@ function demonstrateSqliteFix() {
 	const changesCount: number = Number(result.changes);
 	const insertId: number = Number(result.lastInsertRowid);
 
-	console.log(`   ✓ TypeScript correctly types both properties as number`);
+	console.info(`   ✓ TypeScript correctly types both properties as number`);
 
 	db.close();
 }
@@ -74,7 +74,7 @@ function demonstrateSqliteFix() {
 // Now correctly includes Promise<number> for async writes
 
 async function demonstrateFileSinkFix() {
-	console.log("\n3. FileSink.write() return type fix:");
+	console.info("\n3. FileSink.write() return type fix:");
 
 	// Create test file
 	const file = Bun.file("./test-types.txt");
@@ -87,15 +87,15 @@ async function demonstrateFileSinkFix() {
 	let bytesWritten: number;
 	if (result instanceof Promise) {
 		bytesWritten = await result;
-		console.log(`   ✓ Async write returned Promise<number>: ${bytesWritten} bytes`);
+		console.info(`   ✓ Async write returned Promise<number>: ${bytesWritten} bytes`);
 	} else {
 		bytesWritten = result;
-		console.log(`   ✓ Sync write returned number: ${bytesWritten} bytes`);
+		console.info(`   ✓ Sync write returned number: ${bytesWritten} bytes`);
 	}
 
 	// The type is now correctly inferred as number | Promise<number>
 	const typedResult: number | Promise<number> = writer.write("Another line");
-	console.log(`   ✓ TypeScript correctly types return as number | Promise<number>`);
+	console.info(`   ✓ TypeScript correctly types return as number | Promise<number>`);
 
 	writer.end();
 
@@ -126,20 +126,20 @@ type FileSinkWriteResult = number | Promise<number>; // ✅ Now correct
 
 // Demonstrate all fixes
 async function main() {
-	console.log("TypeScript Type Fixes Verification - Bun v1.3.6");
-	console.log("================================================\n");
+	console.info("TypeScript Type Fixes Verification - Bun v1.3.6");
+	console.info("================================================\n");
 
-	console.log("Verifying the following fixes:");
-	console.log("• autoloadTsconfig and autoloadPackageJson options in Bun.build()");
-	console.log("• bun:sqlite .run() method returns Changes object");
-	console.log("• FileSink.write() return type includes Promise<number>\n");
+	console.info("Verifying the following fixes:");
+	console.info("• autoloadTsconfig and autoloadPackageJson options in Bun.build()");
+	console.info("• bun:sqlite .run() method returns Changes object");
+	console.info("• FileSink.write() return type includes Promise<number>\n");
 
 	await demonstrateBunBuildFix();
 	demonstrateSqliteFix();
 	await demonstrateFileSinkFix();
 
-	console.log("\n✅ All TypeScript type fixes verified successfully!");
-	console.log("   The code compiles without type errors.");
+	console.info("\n✅ All TypeScript type fixes verified successfully!");
+	console.info("   The code compiles without type errors.");
 }
 
 // Run if this file is executed directly

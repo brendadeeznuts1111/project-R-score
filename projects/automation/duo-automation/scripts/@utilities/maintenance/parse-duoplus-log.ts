@@ -47,7 +47,7 @@ export function generateStats(entries: LogEntry[]): string {
 
 async function main() {
   const url = process.argv[2] || 'https://api.duoplus.com/changelog';
-  console.log(`🔍 Fetching DuoPlus log from ${url}...`);
+  console.info(`🔍 Fetching DuoPlus log from ${url}...`);
   
   try {
     // Mock fetch for demonstration
@@ -62,9 +62,9 @@ async function main() {
     const matrix = generateMatrix(entries);
     const stats = generateStats(entries);
     
-    console.log('✅ Auto-parsing complete');
-    console.log(matrix);
-    console.log(stats);
+    console.info('✅ Auto-parsing complete');
+    console.info(matrix);
+    console.info(stats);
   } catch (error: any) {
     console.error(`❌ Failed to fetch log from ${url}:`, error.message);
   }

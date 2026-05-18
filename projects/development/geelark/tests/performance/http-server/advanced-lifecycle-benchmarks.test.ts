@@ -57,10 +57,10 @@ describe("🔧 Bun Advanced Server Lifecycle Benchmarks", () => {
         return shutdownTime;
       }, "Force server shutdown");
 
-      console.log(`📊 Shutdown performance:`);
-      console.log(`  Graceful: ${gracefulShutdownTime.toFixed(2)}ms`);
-      console.log(`  Force: ${forceShutdownTime.toFixed(2)}ms`);
-      console.log(`  Speedup: ${(gracefulShutdownTime / forceShutdownTime).toFixed(2)}x faster`);
+      console.info(`📊 Shutdown performance:`);
+      console.info(`  Graceful: ${gracefulShutdownTime.toFixed(2)}ms`);
+      console.info(`  Force: ${forceShutdownTime.toFixed(2)}ms`);
+      console.info(`  Speedup: ${(gracefulShutdownTime / forceShutdownTime).toFixed(2)}x faster`);
 
       expect(gracefulShutdownTime).toBeGreaterThan(forceShutdownTime);
       expect(forceShutdownTime).toBeLessThan(10); // Should be very fast
@@ -314,11 +314,11 @@ describe("🔧 Bun Advanced Server Lifecycle Benchmarks", () => {
         };
       }, "Real-time monitoring performance");
 
-      console.log(`📈 Real-time monitoring results:`);
-      console.log(`  Samples collected: ${monitoringResult.sampleCount}`);
-      console.log(`  Average pending requests: ${monitoringResult.averagePendingRequests.toFixed(1)}`);
-      console.log(`  Peak memory usage: ${(monitoringResult.peakMemoryUsage / 1024 / 1024).toFixed(2)}MB`);
-      console.log(`  Average CPU usage: ${monitoringResult.averageCpuUsage.toFixed(1)}%`);
+      console.info(`📈 Real-time monitoring results:`);
+      console.info(`  Samples collected: ${monitoringResult.sampleCount}`);
+      console.info(`  Average pending requests: ${monitoringResult.averagePendingRequests.toFixed(1)}`);
+      console.info(`  Peak memory usage: ${(monitoringResult.peakMemoryUsage / 1024 / 1024).toFixed(2)}MB`);
+      console.info(`  Average CPU usage: ${monitoringResult.averageCpuUsage.toFixed(1)}%`);
 
       expect(monitoringResult.samples).toHaveLength(sampleCount);
       expect(monitoringResult.duration).toBe(monitoringDuration);
@@ -371,10 +371,10 @@ describe("🔧 Bun Advanced Server Lifecycle Benchmarks", () => {
 
       const speedup = bunPerformance.requestsPerSecond / nodePerformance.requestsPerSecond;
 
-      console.log(`🏁 Performance comparison results:`);
-      console.log(`  Bun: ${bunPerformance.requestsPerSecond.toLocaleString()} req/s`);
-      console.log(`  Node.js: ${nodePerformance.requestsPerSecond.toLocaleString()} req/s`);
-      console.log(`  Speedup: ${speedup.toFixed(2)}x faster`);
+      console.info(`🏁 Performance comparison results:`);
+      console.info(`  Bun: ${bunPerformance.requestsPerSecond.toLocaleString()} req/s`);
+      console.info(`  Node.js: ${nodePerformance.requestsPerSecond.toLocaleString()} req/s`);
+      console.info(`  Speedup: ${speedup.toFixed(2)}x faster`);
 
       expect(bunPerformance.requestsPerSecond).toBeGreaterThan(nodePerformance.requestsPerSecond);
       expect(speedup).toBeGreaterThan(2); // Bun should be at least 2x faster
@@ -432,10 +432,10 @@ describe("🔧 Bun Advanced Server Lifecycle Benchmarks", () => {
         };
       }, "Memory efficiency comparison");
 
-      console.log(`💾 Memory efficiency results:`);
-      console.log(`  Average efficiency ratio: ${result.averageEfficiencyRatio.toFixed(2)}x`);
-      console.log(`  Total memory savings: ${result.totalMemorySavings}MB`);
-      console.log(`  Average percent savings: ${result.averagePercentSavings.toFixed(1)}%`);
+      console.info(`💾 Memory efficiency results:`);
+      console.info(`  Average efficiency ratio: ${result.averageEfficiencyRatio.toFixed(2)}x`);
+      console.info(`  Total memory savings: ${result.totalMemorySavings}MB`);
+      console.info(`  Average percent savings: ${result.averagePercentSavings.toFixed(1)}%`);
 
       expect(result.scenarios).toHaveLength(4);
       expect(result.averageEfficiencyRatio).toBeGreaterThan(2); // Bun should be at least 2x more memory efficient

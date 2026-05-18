@@ -14,8 +14,8 @@ interface Team {
 }
 
 async function deployTier1380CloudEmpire() {
-  console.log('🚀 DEPLOYING TIER-1380 CLOUD EMPIRE');
-  console.log('='.repeat(60));
+  console.info('🚀 DEPLOYING TIER-1380 CLOUD EMPIRE');
+  console.info('='.repeat(60));
   
   const r2Storage = new R2QuantumStorage();
   const domainManager = new DomainManager();
@@ -31,7 +31,7 @@ async function deployTier1380CloudEmpire() {
   ];
   
   // 1. Initialize R2 buckets for each team
-  console.log('\n☁️  INITIALIZING R2 BUCKETS...');
+  console.info('\n☁️  INITIALIZING R2 BUCKETS...');
   for (const team of teams) {
     await r2Storage.initializeBucket(
       `team-${team.id}-artifacts`,
@@ -40,30 +40,30 @@ async function deployTier1380CloudEmpire() {
         quantumSeal: true
       }
     );
-    console.log(`   ✅ ${team.name}: R2 bucket initialized`);
+    console.info(`   ✅ ${team.name}: R2 bucket initialized`);
   }
   
   // Initialize global buckets
   const globalBuckets = ['tier1380-global-artifacts', 'tier1380-rss-feeds', 'tier1380-audit-logs'];
   for (const bucket of globalBuckets) {
     await r2Storage.initializeBucket(bucket, { quantumSeal: true });
-    console.log(`   ✅ Global: ${bucket} initialized`);
+    console.info(`   ✅ Global: ${bucket} initialized`);
   }
   
   // 2. Register domains for teams
-  console.log('\n🌐 REGISTERING TEAM DOMAINS...');
+  console.info('\n🌐 REGISTERING TEAM DOMAINS...');
   for (const team of teams) {
     // Registry domain
     await domainManager.createRegistryDomain(team.id, team.name.toLowerCase());
-    console.log(`   ✅ ${team.name}: Registry domain created`);
+    console.info(`   ✅ ${team.name}: Registry domain created`);
     
     // CDN domain
     await domainManager.createPackageCDNDomain(team.id, '*');
-    console.log(`   ✅ ${team.name}: CDN domain created`);
+    console.info(`   ✅ ${team.name}: CDN domain created`);
   }
   
   // 3. Initialize RSS feeds
-  console.log('\n📡 INITIALIZING RSS FEEDS...');
+  console.info('\n📡 INITIALIZING RSS FEEDS...');
   const feedTypes = [
     { id: 'package-publishes', name: 'Package Publish Feed' },
     { id: 'security-alerts', name: 'Security Alert Feed' },
@@ -74,11 +74,11 @@ async function deployTier1380CloudEmpire() {
   
   for (const feed of feedTypes) {
     const feedUrl = await rssFeeds.getFeedUrl(feed.id);
-    console.log(`   ✅ ${feed.name}: ${feedUrl}`);
+    console.info(`   ✅ ${feed.name}: ${feedUrl}`);
   }
   
   // 4. Configure global domains
-  console.log('\n🌍 CONFIGURING GLOBAL DOMAINS...');
+  console.info('\n🌍 CONFIGURING GLOBAL DOMAINS...');
   const globalDomains = [
     { name: 'registry.tier1380.com', type: 'registry' },
     { name: 'rss.tier1380.com', type: 'r2-bucket' },
@@ -92,11 +92,11 @@ async function deployTier1380CloudEmpire() {
       targetType: domain.type as any,
       ssl: true
     });
-    console.log(`   ✅ ${domain.name}: Configured`);
+    console.info(`   ✅ ${domain.name}: Configured`);
   }
   
   // 5. Generate deployment artifacts
-  console.log('\n📊 GENERATING DEPLOYMENT ARTIFACTS...');
+  console.info('\n📊 GENERATING DEPLOYMENT ARTIFACTS...');
   const deploymentArtifacts = {
     deploymentId: `deploy-${Date.now()}`,
     timestamp: new Date().toISOString(),
@@ -139,45 +139,45 @@ async function deployTier1380CloudEmpire() {
   });
   
   // 7. Generate deployment matrix
-  console.log('\n📊 GENERATING DEPLOYMENT MATRIX...');
+  console.info('\n📊 GENERATING DEPLOYMENT MATRIX...');
   const matrix = generateDeploymentMatrix(teams, deploymentArtifacts);
   
-  console.log('\n✅ TIER-1380 CLOUD EMPIRE DEPLOYMENT COMPLETE');
-  console.log('\n📋 CLOUD EMPIRE SUMMARY:');
-  console.log(`   • Teams: ${teams.length}`);
-  console.log(`   • R2 Buckets: ${deploymentArtifacts.components.buckets.total}`);
-  console.log(`   • Domains: ${deploymentArtifacts.components.domains.total}`);
-  console.log(`   • RSS Feeds: ${deploymentArtifacts.components.feeds}`);
-  console.log(`   • SSL Certificates: ${deploymentArtifacts.components.sslCertificates}`);
-  console.log(`   • CDN: Global Cloudflare CDN`);
+  console.info('\n✅ TIER-1380 CLOUD EMPIRE DEPLOYMENT COMPLETE');
+  console.info('\n📋 CLOUD EMPIRE SUMMARY:');
+  console.info(`   • Teams: ${teams.length}`);
+  console.info(`   • R2 Buckets: ${deploymentArtifacts.components.buckets.total}`);
+  console.info(`   • Domains: ${deploymentArtifacts.components.domains.total}`);
+  console.info(`   • RSS Feeds: ${deploymentArtifacts.components.feeds}`);
+  console.info(`   • SSL Certificates: ${deploymentArtifacts.components.sslCertificates}`);
+  console.info(`   • CDN: Global Cloudflare CDN`);
   
-  console.log('\n🔗 ACCESS POINTS:');
-  console.log('   • Global Registry: https://registry.tier1380.com');
-  console.log('   • RSS Hub: https://rss.tier1380.com');
-  console.log('   • Artifacts: https://artifacts.tier1380.com');
-  console.log('   • API: https://api.tier1380.com');
-  console.log('   • CDN: https://cdn.tier1380.com');
+  console.info('\n🔗 ACCESS POINTS:');
+  console.info('   • Global Registry: https://registry.tier1380.com');
+  console.info('   • RSS Hub: https://rss.tier1380.com');
+  console.info('   • Artifacts: https://artifacts.tier1380.com');
+  console.info('   • API: https://api.tier1380.com');
+  console.info('   • CDN: https://cdn.tier1380.com');
   
-  console.log('\n📦 TEAM ENDPOINTS:');
+  console.info('\n📦 TEAM ENDPOINTS:');
   for (const team of teams) {
-    console.log(`   • ${team.name}:`);
-    console.log(`     - Registry: https://${team.id}.registry.tier1380.com`);
-    console.log(`     - CDN: https://${team.id}.cdn.tier1380.com`);
-    console.log(`     - Artifacts: https://${team.id}.artifacts.tier1380.com`);
+    console.info(`   • ${team.name}:`);
+    console.info(`     - Registry: https://${team.id}.registry.tier1380.com`);
+    console.info(`     - CDN: https://${team.id}.cdn.tier1380.com`);
+    console.info(`     - Artifacts: https://${team.id}.artifacts.tier1380.com`);
   }
   
-  console.log('\n📡 RSS FEED ENDPOINTS:');
+  console.info('\n📡 RSS FEED ENDPOINTS:');
   for (const feed of feedTypes) {
     const feedUrl = await rssFeeds.getFeedUrl(feed.id);
-    console.log(`   • ${feed.name}: ${feedUrl}`);
+    console.info(`   • ${feed.name}: ${feedUrl}`);
   }
   
-  console.log('\n' + matrix);
+  console.info('\n' + matrix);
   
   // 8. Generate deployment verification script
   const verificationScript = generateVerificationScript(deploymentArtifacts);
   await Bun.write('./verify-tier1380-deployment.ts', verificationScript);
-  console.log('\n📝 Verification script created: verify-tier1380-deployment.ts');
+  console.info('\n📝 Verification script created: verify-tier1380-deployment.ts');
   
   return deploymentArtifacts;
 }
@@ -225,8 +225,8 @@ import { DomainManager } from './domains/domain-manager';
 import { Tier1380RSSFeeds } from './feeds/rss-manager';
 
 async function verifyDeployment() {
-  console.log('🔍 VERIFYING TIER-1380 CLOUD EMPIRE DEPLOYMENT');
-  console.log('='.repeat(60));
+  console.info('🔍 VERIFYING TIER-1380 CLOUD EMPIRE DEPLOYMENT');
+  console.info('='.repeat(60));
   
   const r2Storage = new R2QuantumStorage();
   const domainManager = new DomainManager();
@@ -260,20 +260,20 @@ async function verifyDeployment() {
     }}
   ];
   
-  console.log('\\nRunning verification checks...');
+  console.info('\\nRunning verification checks...');
   
   for (const { name, check } of checks) {
     try {
       const result = await check();
-      console.log(\`   \${result}\`);
+      console.info(\`   \${result}\`);
     } catch (error) {
-      console.log(\`   ❌ \${name}: \${error}\`);
+      console.info(\`   ❌ \${name}: \${error}\`);
     }
   }
   
-  console.log('\\n===============================================');
-  console.log('🔍 TIER-1380 CLOUD EMPIRE VERIFICATION COMPLETE');
-  console.log('===============================================');
+  console.info('\\n===============================================');
+  console.info('🔍 TIER-1380 CLOUD EMPIRE VERIFICATION COMPLETE');
+  console.info('===============================================');
 }
 
 verifyDeployment().catch(console.error);
@@ -284,7 +284,7 @@ verifyDeployment().catch(console.error);
 if (import.meta.main) {
   deployTier1380CloudEmpire()
     .then(result => {
-      console.log('\n🎉 Cloud Empire deployment completed successfully!');
+      console.info('\n🎉 Cloud Empire deployment completed successfully!');
       process.exit(0);
     })
     .catch(error => {

@@ -4,55 +4,55 @@
  * Demonstrating the power of the @ff/ path alias
  */
 
-console.log('🚀 @ff/ Alias Showcase - Fire22 Project');
-console.log('='.repeat(60));
+console.info('🚀 @ff/ Alias Showcase - Fire22 Project');
+console.info('='.repeat(60));
 
 // ============================================================================
 // @FF/ ALIAS CONFIGURATION OVERVIEW
 // ============================================================================
-console.log('\n📋 @ff/ Alias Configuration:');
-console.log("   🛣️  bunfig.toml: '@ff/*' = './*' (project root)");
-console.log("   🔧 tsconfig.json: '@ff/*': ['./*'] (TypeScript paths)");
-console.log('   🎯 Purpose: Clean imports from project root');
+console.info('\n📋 @ff/ Alias Configuration:');
+console.info("   🛣️  bunfig.toml: '@ff/*' = './*' (project root)");
+console.info("   🔧 tsconfig.json: '@ff/*': ['./*'] (TypeScript paths)");
+console.info('   🎯 Purpose: Clean imports from project root');
 
 // ============================================================================
 // IMPORTING CONFIGURATION FILES
 // ============================================================================
-console.log('\n📁 Importing Configuration Files:');
+console.info('\n📁 Importing Configuration Files:');
 
 // Import TOML configuration
 import fire22Config from '@ff/fire22-config.toml';
-console.log('   ✅ TOML Config:', fire22Config.name);
+console.info('   ✅ TOML Config:', fire22Config.name);
 
 // Import YAML configuration
 import fire22Yaml from '@ff/fire22-runtime-config.yaml';
-console.log('   ✅ YAML Config:', fire22Yaml.name);
+console.info('   ✅ YAML Config:', fire22Yaml.name);
 
 // Import package.json
 import packageJson from '@ff/package.json';
-console.log('   ✅ Package.json:', packageJson.name);
+console.info('   ✅ Package.json:', packageJson.name);
 
 // Import bunfig.toml
 import bunfig from '@ff/bunfig.toml';
-console.log('   ✅ Bunfig.toml:', bunfig.logLevel);
+console.info('   ✅ Bunfig.toml:', bunfig.logLevel);
 
 // ============================================================================
 // IMPORTING SCRIPTS AND UTILITIES
 // ============================================================================
-console.log('\n🛠️  Importing Scripts and Utilities:');
+console.info('\n🛠️  Importing Scripts and Utilities:');
 
 // Import TOML import demo
 import { fire22Config as tomlDemoConfig } from '@ff/scripts/toml-import-demo';
-console.log('   ✅ TOML Demo:', tomlDemoConfig.name);
+console.info('   ✅ TOML Demo:', tomlDemoConfig.name);
 
 // Import test setup
 // Note: This would work but the export format might vary
-console.log('   ✅ Test Setup: Available at @ff/test-setup');
+console.info('   ✅ Test Setup: Available at @ff/test-setup');
 
 // ============================================================================
 // PRACTICAL @FF/ USAGE EXAMPLES
 // ============================================================================
-console.log('\n🎯 Practical @ff/ Usage Examples:');
+console.info('\n🎯 Practical @ff/ Usage Examples:');
 
 const ffExamples = [
   {
@@ -83,15 +83,15 @@ const ffExamples = [
 ];
 
 ffExamples.forEach((example, index) => {
-  console.log(`   ${index + 1}. ${example.description}`);
-  console.log(`      💻 ${example.code}`);
-  console.log(`      ✅ Result: ${example.result}`);
+  console.info(`   ${index + 1}. ${example.description}`);
+  console.info(`      💻 ${example.code}`);
+  console.info(`      ✅ Result: ${example.result}`);
 });
 
 // ============================================================================
 // @FF/ VS RELATIVE PATHS COMPARISON
 // ============================================================================
-console.log('\n🔄 @ff/ vs Relative Paths Comparison:');
+console.info('\n🔄 @ff/ vs Relative Paths Comparison:');
 
 const pathComparison = [
   {
@@ -121,16 +121,16 @@ const pathComparison = [
 ];
 
 pathComparison.forEach((comparison, index) => {
-  console.log(`\n   ${index + 1}. ${comparison.description}:`);
-  console.log(`      📂 Traditional: ${comparison.traditional}`);
-  console.log(`      🎯 @ff/ Alias:  ${comparison.ffAlias}`);
-  console.log(`      ✅ Advantage:  ${comparison.advantage}`);
+  console.info(`\n   ${index + 1}. ${comparison.description}:`);
+  console.info(`      📂 Traditional: ${comparison.traditional}`);
+  console.info(`      🎯 @ff/ Alias:  ${comparison.ffAlias}`);
+  console.info(`      ✅ Advantage:  ${comparison.advantage}`);
 });
 
 // ============================================================================
 // @FF/ ALIAS BENEFITS FOR FIRE22
 // ============================================================================
-console.log('\n🚀 @ff/ Alias Benefits for Fire22:');
+console.info('\n🚀 @ff/ Alias Benefits for Fire22:');
 
 const benefits = [
   '🏗️  Clean Architecture: Semantic imports from project root',
@@ -144,30 +144,30 @@ const benefits = [
 ];
 
 benefits.forEach((benefit, index) => {
-  console.log(`   ${index + 1}. ${benefit}`);
+  console.info(`   ${index + 1}. ${benefit}`);
 });
 
 // ============================================================================
 // @FF/ ALIAS IN ACTION - REAL FIRE22 SCENARIO
 // ============================================================================
-console.log('\n🎭 Real Fire22 Scenario with @ff/:');
+console.info('\n🎭 Real Fire22 Scenario with @ff/:');
 
-console.log('   📋 Fire22 Enterprise Workflow:');
-console.log('   1. 🔧 Load enterprise configuration');
-console.log("      import enterpriseConfig from '@ff/fire22-config.toml';");
-console.log('   2. 📊 Access package information');
-console.log("      import packageInfo from '@ff/package.json';");
-console.log('   3. 🧪 Import test utilities');
-console.log("      import testSetup from '@ff/test-setup';");
-console.log('   4. 📄 Load documentation');
-console.log("      import readme from '@ff/README.md';");
-console.log('   5. ⚙️  Access build scripts');
-console.log("      import buildScript from '@ff/scripts/build.ts';");
+console.info('   📋 Fire22 Enterprise Workflow:');
+console.info('   1. 🔧 Load enterprise configuration');
+console.info("      import enterpriseConfig from '@ff/fire22-config.toml';");
+console.info('   2. 📊 Access package information');
+console.info("      import packageInfo from '@ff/package.json';");
+console.info('   3. 🧪 Import test utilities');
+console.info("      import testSetup from '@ff/test-setup';");
+console.info('   4. 📄 Load documentation');
+console.info("      import readme from '@ff/README.md';");
+console.info('   5. ⚙️  Access build scripts');
+console.info("      import buildScript from '@ff/scripts/build.ts';");
 
 // ============================================================================
 // @FF/ ALIAS COMPATIBILITY
 // ============================================================================
-console.log('\n🔧 @ff/ Alias Compatibility:');
+console.info('\n🔧 @ff/ Alias Compatibility:');
 
 const compatibility = [
   { feature: 'Bun Runtime', status: '✅ Native support', note: 'Built-in module resolution' },
@@ -181,13 +181,13 @@ const compatibility = [
 ];
 
 compatibility.forEach(({ feature, status, note }) => {
-  console.log(`   ${status} ${feature}: ${note}`);
+  console.info(`   ${status} ${feature}: ${note}`);
 });
 
 // ============================================================================
 // @FF/ ALIAS BEST PRACTICES
 // ============================================================================
-console.log('\n📚 @ff/ Alias Best Practices:');
+console.info('\n📚 @ff/ Alias Best Practices:');
 
 const bestPractices = [
   'Use @ff/ for project-root files and configs',
@@ -201,13 +201,13 @@ const bestPractices = [
 ];
 
 bestPractices.forEach((practice, index) => {
-  console.log(`   ${index + 1}. ${practice}`);
+  console.info(`   ${index + 1}. ${practice}`);
 });
 
 // ============================================================================
 // @FF/ ALIAS CONFIGURATION VERIFICATION
 // ============================================================================
-console.log('\n✅ @ff/ Alias Configuration Verification:');
+console.info('\n✅ @ff/ Alias Configuration Verification:');
 
 const configChecks = [
   { check: 'bunfig.toml alias configured', status: true },
@@ -221,12 +221,12 @@ const configChecks = [
 
 configChecks.forEach(({ check, status }) => {
   const icon = status ? '✅' : '❌';
-  console.log(`   ${icon} ${check}`);
+  console.info(`   ${icon} ${check}`);
 });
 
-console.log('\n🎉 @ff/ Alias Showcase Complete!');
-console.log('   Your Fire22 project now has professional-grade import management!');
-console.log('   @ff/ provides clean, semantic access to all project files!');
+console.info('\n🎉 @ff/ Alias Showcase Complete!');
+console.info('   Your Fire22 project now has professional-grade import management!');
+console.info('   @ff/ provides clean, semantic access to all project files!');
 
 // ============================================================================
 // EXPORT FOR USE IN OTHER MODULES

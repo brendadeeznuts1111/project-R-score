@@ -23,7 +23,7 @@ export class SportsTradingAPI {
 
   // Start the trading API server
   public async start(): Promise<void> {
-    console.log(`🚀 Starting Sports Trading API on port ${this.port}`);
+    console.info(`🚀 Starting Sports Trading API on port ${this.port}`);
     
     // Create a simple HTTP server using Bun
     const server = Bun.serve({
@@ -35,16 +35,16 @@ export class SportsTradingAPI {
     });
 
     this.server = server;
-    console.log(`📡 Sports Trading API running at http://localhost:${this.port}`);
-    console.log(`📊 Available endpoints:`);
-    console.log(`   GET  /trading/config - Get trading configuration`);
-    console.log(`   POST /trading/config - Update trading configuration`);
-    console.log(`   POST /trading/market-data - Submit market data`);
-    console.log(`   GET  /trading/signals - Get trading signals`);
-    console.log(`   POST /trading/execute - Execute trading signal`);
-    console.log(`   GET  /trading/positions - Get current positions`);
-    console.log(`   GET  /trading/performance - Get performance metrics`);
-    console.log(`   POST /trading/features/{feature} - Toggle trading features`);
+    console.info(`📡 Sports Trading API running at http://localhost:${this.port}`);
+    console.info(`📊 Available endpoints:`);
+    console.info(`   GET  /trading/config - Get trading configuration`);
+    console.info(`   POST /trading/config - Update trading configuration`);
+    console.info(`   POST /trading/market-data - Submit market data`);
+    console.info(`   GET  /trading/signals - Get trading signals`);
+    console.info(`   POST /trading/execute - Execute trading signal`);
+    console.info(`   GET  /trading/positions - Get current positions`);
+    console.info(`   GET  /trading/performance - Get performance metrics`);
+    console.info(`   POST /trading/features/{feature} - Toggle trading features`);
   }
 
   // Handle incoming requests
@@ -329,7 +329,7 @@ export class SportsTradingAPI {
   public stop(): void {
     if (this.server) {
       this.server.stop();
-      console.log('🛑 Sports Trading API stopped');
+      console.info('🛑 Sports Trading API stopped');
     }
   }
 }

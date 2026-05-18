@@ -35,7 +35,7 @@ export const createLSPHttpServer = (port: number) => {
       // LSP Initialization
       if (url.pathname === '/initialize' && req.method === 'POST') {
         const params = await req.json();
-        console.log('[LSP Server] Initialize:', params.rootUri);
+        console.info('[LSP Server] Initialize:', params.rootUri);
 
         return new Response(JSON.stringify({
           jsonrpc: '2.0',
@@ -48,7 +48,7 @@ export const createLSPHttpServer = (port: number) => {
 
       // LSP Initialized notification
       if (url.pathname === '/initialized' && req.method === 'POST') {
-        console.log('[LSP Server] Client initialized');
+        console.info('[LSP Server] Client initialized');
         return new Response(null, { status: 204 });
       }
 
@@ -56,7 +56,7 @@ export const createLSPHttpServer = (port: number) => {
       if (url.pathname === '/textDocument/didOpen' && req.method === 'POST') {
         const params = await req.json();
         lspState.documents.set(params.textDocument.uri, params.textDocument.text);
-        console.log('[LSP Server] Document opened:', params.textDocument.uri);
+        console.info('[LSP Server] Document opened:', params.textDocument.uri);
 
         // Return diagnostics
         return new Response(JSON.stringify({
@@ -74,7 +74,7 @@ export const createLSPHttpServer = (port: number) => {
       // Completion
       if (url.pathname === '/textDocument/completion' && req.method === 'POST') {
         const params = await req.json();
-        console.log('[LSP Server] Completion request at', params.position);
+        console.info('[LSP Server] Completion request at', params.position);
 
         return new Response(JSON.stringify({
           jsonrpc: '2.0',
@@ -107,12 +107,12 @@ export const createLSPHttpServer = (port: number) => {
 if (import.meta.main) {
   const port = parseInt(process.argv[2] || '50045');
   const server = createLSPHttpServer(port);
-  console.log(`[LSP Server] HTTP server listening on http://localhost:${server.port}`);
-  console.log('[LSP Server] Endpoints: /health, /initialize, /initialized, /textDocument/*');
+  console.info(`[LSP Server] HTTP server listening on http://localhost:${server.port}`);
+  console.info('[LSP Server] Endpoints: /health, /initialize, /initialized, /textDocument/*');
 
   // Graceful shutdown
   process.on('SIGINT', () => {
-    console.log('\n[LSP Server] Shutting down gracefully...');
+    console.info('\n[LSP Server] Shutting down gracefully...');
     server.stop();
     process.exit(0);
   });

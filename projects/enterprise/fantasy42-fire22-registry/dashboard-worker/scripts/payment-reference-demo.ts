@@ -208,17 +208,17 @@ class PaymentReferenceSystem {
   }
 
   private async sendTelegramNotification(payment: PaymentReference): Promise<void> {
-    console.log(`📱 Telegram notification sent to @${payment.telegramUsername}:`);
-    console.log(`💰 New payment created: ${payment.reference}`);
-    console.log(`💵 Amount: ${payment.currency} ${payment.amount}`);
-    console.log(`📝 Notes: ${payment.notes}`);
-    console.log(`⏰ Created: ${payment.createdAt.toLocaleString()}`);
+    console.info(`📱 Telegram notification sent to @${payment.telegramUsername}:`);
+    console.info(`💰 New payment created: ${payment.reference}`);
+    console.info(`💵 Amount: ${payment.currency} ${payment.amount}`);
+    console.info(`📝 Notes: ${payment.notes}`);
+    console.info(`⏰ Created: ${payment.createdAt.toLocaleString()}`);
   }
 
   private async sendTelegramStatusNotification(payment: PaymentReference): Promise<void> {
-    console.log(`📱 Telegram status update sent to @${payment.telegramUsername}:`);
-    console.log(`🔄 Payment ${payment.reference} status changed to: ${payment.status}`);
-    console.log(`⏰ Updated: ${payment.updatedAt.toLocaleString()}`);
+    console.info(`📱 Telegram status update sent to @${payment.telegramUsername}:`);
+    console.info(`🔄 Payment ${payment.reference} status changed to: ${payment.status}`);
+    console.info(`⏰ Updated: ${payment.updatedAt.toLocaleString()}`);
   }
 
   getSystemStats(): {
@@ -259,8 +259,8 @@ class PaymentReferenceDemo {
   }
 
   async runCompleteDemo(): Promise<void> {
-    console.log('🚀 Payment Reference System - Complete Demo');
-    console.log('='.repeat(50));
+    console.info('🚀 Payment Reference System - Complete Demo');
+    console.info('='.repeat(50));
 
     await this.showConfiguration();
     await this.showExistingPayments();
@@ -273,31 +273,31 @@ class PaymentReferenceDemo {
   }
 
   private async showConfiguration(): Promise<void> {
-    console.log('\n⚙️ System Configuration:');
+    console.info('\n⚙️ System Configuration:');
     const config = this.paymentSystem.getConfiguration();
-    console.log(`- Enabled: ${config.enabled}`);
-    console.log(`- Reference Format: ${config.referenceFormat}`);
-    console.log(`- Auto Generation: ${config.autoGeneration}`);
-    console.log(`- Min Amount: ${config.validation.minAmount}`);
-    console.log(`- Max Amount: ${config.validation.maxAmount}`);
-    console.log(`- Supported Currencies: ${config.currencies.join(', ')}`);
-    console.log(`- Payment Statuses: ${config.statuses.join(', ')}`);
-    console.log(`- Telegram Commands: ${config.telegram.commands.join(', ')}`);
+    console.info(`- Enabled: ${config.enabled}`);
+    console.info(`- Reference Format: ${config.referenceFormat}`);
+    console.info(`- Auto Generation: ${config.autoGeneration}`);
+    console.info(`- Min Amount: ${config.validation.minAmount}`);
+    console.info(`- Max Amount: ${config.validation.maxAmount}`);
+    console.info(`- Supported Currencies: ${config.currencies.join(', ')}`);
+    console.info(`- Payment Statuses: ${config.statuses.join(', ')}`);
+    console.info(`- Telegram Commands: ${config.telegram.commands.join(', ')}`);
   }
 
   private async showExistingPayments(): Promise<void> {
-    console.log('\n📋 Existing Payments:');
+    console.info('\n📋 Existing Payments:');
     const payments = await this.paymentSystem.getAllPayments();
     payments.forEach(payment => {
-      console.log(
+      console.info(
         `- ${payment.reference}: ${payment.currency} ${payment.amount} (${payment.status})`
       );
-      console.log(`  User: ${payment.telegramUsername || 'N/A'} | Notes: ${payment.notes}`);
+      console.info(`  User: ${payment.telegramUsername || 'N/A'} | Notes: ${payment.notes}`);
     });
   }
 
   private async createNewPayment(): Promise<void> {
-    console.log('\n➕ Creating New Payment:');
+    console.info('\n➕ Creating New Payment:');
     try {
       const newPayment = await this.paymentSystem.createPayment({
         userId: 'user004',
@@ -306,93 +306,93 @@ class PaymentReferenceDemo {
         currency: 'USD',
         notes: 'Demo payment for testing',
       });
-      console.log(`✅ Payment created: ${newPayment.reference}`);
-      console.log(`💰 Amount: ${newPayment.currency} ${newPayment.amount}`);
-      console.log(`📱 Telegram notification sent to @${newPayment.telegramUsername}`);
+      console.info(`✅ Payment created: ${newPayment.reference}`);
+      console.info(`💰 Amount: ${newPayment.currency} ${newPayment.amount}`);
+      console.info(`📱 Telegram notification sent to @${newPayment.telegramUsername}`);
     } catch (error) {
       console.error(`❌ Payment creation failed: ${error}`);
     }
   }
 
   private async checkPaymentStatus(): Promise<void> {
-    console.log('\n🔍 Checking Payment Status:');
+    console.info('\n🔍 Checking Payment Status:');
     const reference = 'PAY-20241219-001-A1B2C3';
     const payment = await this.paymentSystem.getPaymentByReference(reference);
 
     if (payment) {
-      console.log(`✅ Payment found: ${payment.reference}`);
-      console.log(`💰 Amount: ${payment.currency} ${payment.amount}`);
-      console.log(`📊 Status: ${payment.status}`);
-      console.log(`📅 Created: ${payment.createdAt.toLocaleString()}`);
+      console.info(`✅ Payment found: ${payment.reference}`);
+      console.info(`💰 Amount: ${payment.currency} ${payment.amount}`);
+      console.info(`📊 Status: ${payment.status}`);
+      console.info(`📅 Created: ${payment.createdAt.toLocaleString()}`);
     } else {
-      console.log(`❌ Payment not found: ${reference}`);
+      console.info(`❌ Payment not found: ${reference}`);
     }
   }
 
   private async updatePaymentStatus(): Promise<void> {
-    console.log('\n🔄 Updating Payment Status:');
+    console.info('\n🔄 Updating Payment Status:');
     const reference = 'PAY-20241219-002-C4D5E6';
     const updatedPayment = await this.paymentSystem.updatePaymentStatus(reference, 'completed');
 
     if (updatedPayment) {
-      console.log(`✅ Payment status updated: ${updatedPayment.reference}`);
-      console.log(`📊 New Status: ${updatedPayment.status}`);
-      console.log(`📱 Telegram notification sent to @${updatedPayment.telegramUsername}`);
+      console.info(`✅ Payment status updated: ${updatedPayment.reference}`);
+      console.info(`📊 New Status: ${updatedPayment.status}`);
+      console.info(`📱 Telegram notification sent to @${updatedPayment.telegramUsername}`);
     } else {
-      console.log(`❌ Payment not found: ${reference}`);
+      console.info(`❌ Payment not found: ${reference}`);
     }
   }
 
   private async showPaymentHistory(): Promise<void> {
-    console.log('\n📚 Payment History for User:');
+    console.info('\n📚 Payment History for User:');
     const userId = 'user001';
     const history = await this.paymentSystem.getPaymentHistory(userId);
 
-    console.log(`User ${userId} has ${history.length} payments:`);
+    console.info(`User ${userId} has ${history.length} payments:`);
     history.forEach(payment => {
-      console.log(
+      console.info(
         `- ${payment.reference}: ${payment.currency} ${payment.amount} (${payment.status})`
       );
-      console.log(`  Date: ${payment.createdAt.toLocaleDateString()}`);
+      console.info(`  Date: ${payment.createdAt.toLocaleDateString()}`);
     });
   }
 
   private async showSystemStats(): Promise<void> {
-    console.log('\n📊 System Statistics:');
+    console.info('\n📊 System Statistics:');
     const stats = this.paymentSystem.getSystemStats();
 
-    console.log(`- Total Payments: ${stats.totalPayments}`);
-    console.log(`- Total Amount: $${stats.totalAmount.toFixed(2)}`);
-    console.log(`- Status Breakdown:`);
+    console.info(`- Total Payments: ${stats.totalPayments}`);
+    console.info(`- Total Amount: $${stats.totalAmount.toFixed(2)}`);
+    console.info(`- Status Breakdown:`);
     Object.entries(stats.statusBreakdown).forEach(([status, count]) => {
-      console.log(`  ${status}: ${count}`);
+      console.info(`  ${status}: ${count}`);
     });
-    console.log(`- Currency Breakdown:`);
+    console.info(`- Currency Breakdown:`);
     Object.entries(stats.currencyBreakdown).forEach(([currency, count]) => {
-      console.log(`  ${currency}: ${count}`);
+      console.info(`  ${currency}: ${count}`);
     });
   }
 
   private async showTelegramIntegration(): Promise<void> {
-    console.log('\n🤖 Telegram Bot Integration:');
+    console.info('\n🤖 Telegram Bot Integration:');
     const config = this.paymentSystem.getConfiguration();
 
-    console.log('Available Commands:');
+    console.info('Available Commands:');
     config.telegram.commands.forEach(command => {
-      console.log(`- ${command}`);
+      console.info(`- ${command}`);
     });
 
-    console.log('\nExample Usage:');
-    console.log('/payment - Show payment management menu');
-    console.log('/payment-status PAY-20241219-001-A1B2C3 - Check specific payment');
-    console.log("/create-payment 50.00 'Test payment' - Create new payment");
-    console.log('/payment-history - View your payment history');
+    console.info('\nExample Usage:');
+    console.info('/payment - Show payment management menu');
+    console.info('/payment-status PAY-20241219-001-A1B2C3 - Check specific payment');
+    console.info("/create-payment 50.00 'Test payment' - Create new payment");
+    console.info('/payment-history - View your payment history');
 
-    console.log('\n📱 Notifications:');
-    console.log(
+    console.info('\n📱 Notifications:');
+    console.info(
       `- Payment Creation: ${config.telegram.notifications ? '✅ Enabled' : '❌ Disabled'}`
     );
-    console.log(
+    console.info(
       `- Status Updates: ${config.telegram.notifications ? '✅ Enabled' : '❌ Disabled'}`
     );
   }
@@ -415,8 +415,8 @@ class PaymentReferenceDemo {
         await this.runCompleteDemo();
         break;
       default:
-        console.log('Available demo types: create, status, history, telegram, test');
-        console.log('Usage: bun run payment:demo [type]');
+        console.info('Available demo types: create, status, history, telegram, test');
+        console.info('Usage: bun run payment:demo [type]');
     }
   }
 }
@@ -428,7 +428,7 @@ async function main(): Promise<void> {
   if (args.length > 0) {
     await demo.runSpecificDemo(args[0]);
   } else {
-    console.log('🚀 Running complete payment reference demo...');
+    console.info('🚀 Running complete payment reference demo...');
     await demo.runCompleteDemo();
   }
 }

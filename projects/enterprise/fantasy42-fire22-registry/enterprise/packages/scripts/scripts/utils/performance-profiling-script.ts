@@ -46,8 +46,8 @@ class PerformanceProfiler {
   async run(args: string[]): Promise<void> {
     const command = args[0];
 
-    console.log('🎯 Fire22 Performance Profiler');
-    console.log('!==!==!==!==!==!==\n');
+    console.info('🎯 Fire22 Performance Profiler');
+    console.info('!==!==!==!==!==!==\n');
 
     switch (command) {
       case '--module':
@@ -74,8 +74,8 @@ class PerformanceProfiler {
    * Profile a specific module and its functions
    */
   private async profileModule(moduleName: string): Promise<void> {
-    console.log(`🔍 Profiling module: ${moduleName}`);
-    console.log('----------------------------------\n');
+    console.info(`🔍 Profiling module: ${moduleName}`);
+    console.info('----------------------------------\n');
 
     const modulePath = join(this.basePath, moduleName);
 
@@ -84,7 +84,7 @@ class PerformanceProfiler {
       const files = this.getModuleFiles(modulePath);
 
       for (const file of files) {
-        console.log(`📁 Analyzing: ${relative(this.basePath, file)}`);
+        console.info(`📁 Analyzing: ${relative(this.basePath, file)}`);
         await this.profileFile(file);
       }
 
@@ -98,8 +98,8 @@ class PerformanceProfiler {
    * Profile a specific function across all modules
    */
   private async profileFunction(functionName: string): Promise<void> {
-    console.log(`🔍 Profiling function: ${functionName}`);
-    console.log('-------------------------------------\n');
+    console.info(`🔍 Profiling function: ${functionName}`);
+    console.info('-------------------------------------\n');
 
     const allFiles = this.getAllSourceFiles();
 
@@ -111,7 +111,7 @@ class PerformanceProfiler {
         content.includes(`${functionName}(`) ||
         content.includes(`${functionName} =`)
       ) {
-        console.log(`📍 Found in: ${relative(this.basePath, file)}`);
+        console.info(`📍 Found in: ${relative(this.basePath, file)}`);
         await this.profileSpecificFunction(file, functionName);
       }
     }
@@ -123,8 +123,8 @@ class PerformanceProfiler {
    * Find performance hotspots across the entire codebase
    */
   private async findHotspots(): Promise<void> {
-    console.log('🔥 Finding Performance Hotspots');
-    console.log('!==!==!==!==!==!===\n');
+    console.info('🔥 Finding Performance Hotspots');
+    console.info('!==!==!==!==!==!===\n');
 
     await this.analyzeModules();
 
@@ -133,17 +133,17 @@ class PerformanceProfiler {
       .sort(([, a], [, b]) => a.performanceScore - b.performanceScore)
       .slice(0, 10);
 
-    console.log('🏆 Top Performance Hotspots:');
-    console.log('------------------------------');
+    console.info('🏆 Top Performance Hotspots:');
+    console.info('------------------------------');
 
     hotspots.forEach(([moduleName, metrics], index) => {
       const risk = this.getRiskLevel(metrics.performanceScore);
-      console.log(`${index + 1}. ${moduleName}`);
-      console.log(`   📏 Lines: ${metrics.lineCount}`);
-      console.log(`   🔄 Complexity: ${metrics.complexity}`);
-      console.log(`   📊 Score: ${metrics.performanceScore.toFixed(2)} (${risk})`);
-      console.log(`   🔗 Dependencies: ${metrics.dependencies.length}`);
-      console.log('');
+      console.info(`${index + 1}. ${moduleName}`);
+      console.info(`   📏 Lines: ${metrics.lineCount}`);
+      console.info(`   🔄 Complexity: ${metrics.complexity}`);
+      console.info(`   📊 Score: ${metrics.performanceScore.toFixed(2)} (${risk})`);
+      console.info(`   🔗 Dependencies: ${metrics.dependencies.length}`);
+      console.info('');
     });
   }
 
@@ -151,8 +151,8 @@ class PerformanceProfiler {
    * Run comprehensive benchmark suite
    */
   private async runBenchmark(): Promise<void> {
-    console.log('⚡ Running Performance Benchmark');
-    console.log('!==!==!==!==!==!===\n');
+    console.info('⚡ Running Performance Benchmark');
+    console.info('!==!==!==!==!==!===\n');
 
     const benchmarkResults = {
       moduleAnalysis: 0,
@@ -178,19 +178,19 @@ class PerformanceProfiler {
 
     benchmarkResults.totalTime = performance.now() - startTime;
 
-    console.log('📊 Benchmark Results:');
-    console.log('---------------------');
-    console.log(`🔍 Module Analysis: ${benchmarkResults.moduleAnalysis.toFixed(2)}ms`);
-    console.log(`📁 File Profiling: ${benchmarkResults.fileProfiling.toFixed(2)}ms`);
-    console.log(`⏱️  Total Time: ${benchmarkResults.totalTime.toFixed(2)}ms`);
-    console.log(`📈 Performance Score: ${((benchmarkResults.totalTime / 1000) * 1000).toFixed(0)}`);
+    console.info('📊 Benchmark Results:');
+    console.info('---------------------');
+    console.info(`🔍 Module Analysis: ${benchmarkResults.moduleAnalysis.toFixed(2)}ms`);
+    console.info(`📁 File Profiling: ${benchmarkResults.fileProfiling.toFixed(2)}ms`);
+    console.info(`⏱️  Total Time: ${benchmarkResults.totalTime.toFixed(2)}ms`);
+    console.info(`📈 Performance Score: ${((benchmarkResults.totalTime / 1000) * 1000).toFixed(0)}`);
   }
 
   /**
    * Analyze all modules for performance metrics
    */
   private async analyzeModules(): Promise<void> {
-    console.log('📊 Analyzing Module Performance...');
+    console.info('📊 Analyzing Module Performance...');
 
     const modules = [
       'api/controllers/settlement',
@@ -214,7 +214,7 @@ class PerformanceProfiler {
       }
     }
 
-    console.log(`✅ Analyzed ${this.moduleMetrics.size} modules\n`);
+    console.info(`✅ Analyzed ${this.moduleMetrics.size} modules\n`);
   }
 
   /**
@@ -447,23 +447,23 @@ class PerformanceProfiler {
    */
   private displayResults(): void {
     if (this.results.length === 0) {
-      console.log('❌ No profiling results found');
+      console.info('❌ No profiling results found');
       return;
     }
 
-    console.log('\n📊 Profiling Results:');
-    console.log('!==!==!==!==');
+    console.info('\n📊 Profiling Results:');
+    console.info('!==!==!==!==');
 
     this.results.forEach((result, index) => {
-      console.log(`${index + 1}. ${result.module}::${result.function}`);
-      console.log(`   ⏱️  Execution Time: ${result.executionTime.toFixed(2)}ms`);
-      console.log(`   🔄 Call Count: ${result.callCount}`);
-      console.log(`   📈 Average Time: ${result.averageTime.toFixed(2)}ms`);
+      console.info(`${index + 1}. ${result.module}::${result.function}`);
+      console.info(`   ⏱️  Execution Time: ${result.executionTime.toFixed(2)}ms`);
+      console.info(`   🔄 Call Count: ${result.callCount}`);
+      console.info(`   📈 Average Time: ${result.averageTime.toFixed(2)}ms`);
 
       if (result.hotspots.length > 0) {
-        console.log(`   🔥 Hotspots: ${result.hotspots.join(', ')}`);
+        console.info(`   🔥 Hotspots: ${result.hotspots.join(', ')}`);
       }
-      console.log('');
+      console.info('');
     });
   }
 
@@ -471,26 +471,26 @@ class PerformanceProfiler {
    * Show usage information
    */
   private showUsage(): void {
-    console.log('🔍 Fire22 Performance Profiler Usage:');
-    console.log('!==!==!==!==!==!==!==');
-    console.log('');
-    console.log('Commands:');
-    console.log('  --module <name>     Profile a specific module');
-    console.log('  --function <name>   Profile a specific function');
-    console.log('  --hotspots          Find performance hotspots');
-    console.log('  --benchmark         Run performance benchmark');
-    console.log('  --analyze           Analyze all modules');
-    console.log('');
-    console.log('Examples:');
-    console.log('  bun run performance-profiling-script.ts --module controllers/settlement');
-    console.log('  bun run performance-profiling-script.ts --function validateSettlement');
-    console.log('  bun run performance-profiling-script.ts --hotspots');
-    console.log('');
-    console.log('Benefits of Modular Architecture:');
-    console.log('• 🔍 Granular profiling instead of file-level hotspots');
-    console.log('• 🎯 Precise function identification');
-    console.log('• ⚡ Rapid optimization targeting');
-    console.log('• 📊 Measurable performance improvements');
+    console.info('🔍 Fire22 Performance Profiler Usage:');
+    console.info('!==!==!==!==!==!==!==');
+    console.info('');
+    console.info('Commands:');
+    console.info('  --module <name>     Profile a specific module');
+    console.info('  --function <name>   Profile a specific function');
+    console.info('  --hotspots          Find performance hotspots');
+    console.info('  --benchmark         Run performance benchmark');
+    console.info('  --analyze           Analyze all modules');
+    console.info('');
+    console.info('Examples:');
+    console.info('  bun run performance-profiling-script.ts --module controllers/settlement');
+    console.info('  bun run performance-profiling-script.ts --function validateSettlement');
+    console.info('  bun run performance-profiling-script.ts --hotspots');
+    console.info('');
+    console.info('Benefits of Modular Architecture:');
+    console.info('• 🔍 Granular profiling instead of file-level hotspots');
+    console.info('• 🎯 Precise function identification');
+    console.info('• ⚡ Rapid optimization targeting');
+    console.info('• 📊 Measurable performance improvements');
   }
 }
 

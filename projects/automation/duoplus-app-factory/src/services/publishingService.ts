@@ -79,7 +79,7 @@ export class PublishingService {
     };
     
     this.published.set(id, published);
-    console.log(`📝 Published content: ${config.title} (${slug})`);
+    console.info(`📝 Published content: ${config.title} (${slug})`);
     
     return published;
   }
@@ -97,7 +97,7 @@ export class PublishingService {
       scheduleBuffer
     );
     
-    console.log(`⏰ Scheduled publishing: ${config.title} for ${new Date(scheduledFor).toISOString()}`);
+    console.info(`⏰ Scheduled publishing: ${config.title} for ${new Date(scheduledFor).toISOString()}`);
     return url;
   }
 

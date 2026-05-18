@@ -78,11 +78,11 @@ class BackupManager {
       const excludeArgs = this.config.excludePatterns.flatMap(pattern => ['--exclude', pattern]);
       const includeArgs = this.config.includePaths;
 
-      console.log(`📦 Creating backup archive: ${archiveName}`);
+      console.info(`📦 Creating backup archive: ${archiveName}`);
 
       await Bun.$`tar -czf ${archivePath} ${excludeArgs} ${includeArgs}`.quiet();
 
-      console.log(`✅ Archive created: ${archivePath}`);
+      console.info(`✅ Archive created: ${archivePath}`);
 
       return {
         success: true,
@@ -103,12 +103,12 @@ class BackupManager {
       const filename = archivePath.split('/').pop()!;
       const s3Key = `${this.config.s3Prefix}${filename}`;
 
-      console.log(`☁️  Uploading to S3: s3://${this.config.s3Bucket}/${s3Key}`);
+      console.info(`☁️  Uploading to S3: s3://${this.config.s3Bucket}/${s3Key}`);
 
       // Use AWS CLI to upload (assuming it's configured)
       await Bun.$`aws s3 cp ${archivePath} s3://${this.config.s3Bucket}/${s3Key}`.quiet();
 
-      console.log(`✅ Upload complete`);
+      console.info(`✅ Upload complete`);
 
       return {
         success: true,
@@ -125,7 +125,7 @@ class BackupManager {
 
   async syncGit(): Promise<{ success: boolean; message: string }> {
     try {
-      console.log(`🔄 Syncing with git...`);
+      console.info(`🔄 Syncing with git...`);
 
       // Add all changes
       await Bun.$`git add .`.quiet();
@@ -142,7 +142,7 @@ class BackupManager {
       // Push to remote
       await Bun.$`git push origin master`.quiet();
 
-      console.log(`✅ Git sync complete`);
+      console.info(`✅ Git sync complete`);
 
       return {
         success: true,
@@ -158,7 +158,7 @@ class BackupManager {
   }
 
   async fullBackup(): Promise<{ success: boolean; message: string }> {
-    console.log(`🚀 Starting full backup process...`);
+    console.info(`🚀 Starting full backup process...`);
 
     // 1. Create backup archive
     const backupResult = await this.createBackup();
@@ -193,7 +193,7 @@ class BackupManager {
 
   async listBackups(): Promise<{ success: boolean; message: string; backups?: string[] }> {
     try {
-      console.log(`📋 Listing S3 backups...`);
+      console.info(`📋 Listing S3 backups...`);
 
       const result = await Bun.$`aws s3 ls s3://${this.config.s3Bucket}/${this.config.s3Prefix}`.quiet();
       const backups = result.stdout.toString()
@@ -265,7 +265,7 @@ class BackupManager {
         };
       }
 
-      console.log(`🧹 Cleaning up ${toDelete.length} old backups...`);
+      console.info(`🧹 Cleaning up ${toDelete.length} old backups...`);
 
       for (const backup of toDelete) {
         const s3Key = `${this.config.s3Prefix}${backup}`;
@@ -292,7 +292,7 @@ async function main() {
   const manager = new BackupManager();
 
   if (args.length === 0) {
-    console.log(`🚀 Backup Manager v1.0
+    console.info(`🚀 Backup Manager v1.0
 
 USAGE:
   bun backup:s3              # Full backup (archive + S3 + git)
@@ -324,7 +324,7 @@ SCHEDULE:
       case 's3':
         const result = await manager.fullBackup();
         if (result.success) {
-          console.log(`✅ ${result.message}`);
+          console.info(`✅ ${result.message}`);
         } else {
           console.error(`❌ ${result.message}`);
           process.exit(1);
@@ -334,8 +334,8 @@ SCHEDULE:
       case 'create':
         const createResult = await manager.createBackup();
         if (createResult.success) {
-          console.log(`✅ ${createResult.message}`);
-          console.log(`📦 Archive: ${createResult.archivePath}`);
+          console.info(`✅ ${createResult.message}`);
+          console.info(`📦 Archive: ${createResult.archivePath}`);
         } else {
           console.error(`❌ ${createResult.message}`);
           process.exit(1);
@@ -353,7 +353,7 @@ SCHEDULE:
         const latestArchive = join('tmp', archives.sort().pop()!);
         const uploadResult = await manager.uploadToS3(latestArchive);
         if (uploadResult.success) {
-          console.log(`✅ ${uploadResult.message}`);
+          console.info(`✅ ${uploadResult.message}`);
         } else {
           console.error(`❌ ${uploadResult.message}`);
           process.exit(1);
@@ -363,7 +363,7 @@ SCHEDULE:
       case 'git':
         const gitResult = await manager.syncGit();
         if (gitResult.success) {
-          console.log(`✅ ${gitResult.message}`);
+          console.info(`✅ ${gitResult.message}`);
         } else {
           console.error(`❌ ${gitResult.message}`);
           process.exit(1);
@@ -373,10 +373,10 @@ SCHEDULE:
       case 'list':
         const listResult = await manager.listBackups();
         if (listResult.success) {
-          console.log(`✅ ${listResult.message}`);
+          console.info(`✅ ${listResult.message}`);
           if (listResult.backups && listResult.backups.length > 0) {
-            console.log('\n📦 Backups:');
-            listResult.backups.forEach(backup => console.log(`   ${backup}`));
+            console.info('\n📦 Backups:');
+            listResult.backups.forEach(backup => console.info(`   ${backup}`));
           }
         } else {
           console.error(`❌ ${listResult.message}`);
@@ -387,7 +387,7 @@ SCHEDULE:
       case 'cleanup':
         const cleanupResult = await manager.cleanupOldBackups();
         if (cleanupResult.success) {
-          console.log(`✅ ${cleanupResult.message}`);
+          console.info(`✅ ${cleanupResult.message}`);
         } else {
           console.error(`❌ ${cleanupResult.message}`);
           process.exit(1);
@@ -396,7 +396,7 @@ SCHEDULE:
 
       default:
         console.error(`Unknown command: ${command}`);
-        console.log('Use: bun backup:s3 --help');
+        console.info('Use: bun backup:s3 --help');
         process.exit(1);
     }
   } catch (error) {

@@ -128,7 +128,7 @@ class BettingWorkflowAPIClient {
 
     // Handle file download
     if (format !== 'json') {
-      console.log('Export completed, file ready for download');
+      console.info('Export completed, file ready for download');
       return response;
     }
 
@@ -190,18 +190,18 @@ async function contentPublishingExample(client: BettingWorkflowAPIClient) {
       }
     });
 
-    console.log('✅ Content workflow created:', workflow.data.data.id);
+    console.info('✅ Content workflow created:', workflow.data.data.id);
 
     // Step 2: Monitor status
     const status = await client.getWorkflowStatus(workflow.data.data.id);
-    console.log('📊 Current status:', status.data.data.status);
+    console.info('📊 Current status:', status.data.data.status);
 
     // Step 3: Get all active workflows
     const activeWorkflows = await client.getActiveBettingWorkflows({
       contentType: 'featured_bets',
       status: 'in_progress'
     });
-    console.log(`📋 Found ${activeWorkflows.data.data.total} active content workflows`);
+    console.info(`📋 Found ${activeWorkflows.data.data.total} active content workflows`);
 
     return workflow.data.data;
 
@@ -226,9 +226,9 @@ async function lineChangeExample(client: BettingWorkflowAPIClient) {
       league: 'Premier League'
     });
 
-    console.log('✅ Line change workflow created:', workflow.data.data.id);
-    console.log('💰 Financial impact:', workflow.data.metadata?.financialImpact);
-    console.log('⚠️ Risk level:', workflow.data.metadata?.riskLevel);
+    console.info('✅ Line change workflow created:', workflow.data.data.id);
+    console.info('💰 Financial impact:', workflow.data.metadata?.financialImpact);
+    console.info('⚠️ Risk level:', workflow.data.metadata?.riskLevel);
 
     return workflow.data.data;
 
@@ -252,7 +252,7 @@ async function bulkOperationsExample(client: BettingWorkflowAPIClient) {
     if (workflowIds.length > 0) {
       // Bulk approve
       const result = await client.bulkApprove(workflowIds, 'Bulk approved for weekend matches');
-      console.log(`✅ Bulk approval completed: ${result.data.data.successful} successful, ${result.data.data.failed} failed`);
+      console.info(`✅ Bulk approval completed: ${result.data.data.successful} successful, ${result.data.data.failed} failed`);
 
       // Export workflows for reporting
       await client.exportWorkflows('csv', {
@@ -260,7 +260,7 @@ async function bulkOperationsExample(client: BettingWorkflowAPIClient) {
         startDate: '2024-01-01',
         endDate: '2024-01-31'
       });
-      console.log('📊 Workflows exported successfully');
+      console.info('📊 Workflows exported successfully');
     }
 
   } catch (error: any) {
@@ -278,7 +278,7 @@ async function advancedOperationsExample(client: BettingWorkflowAPIClient, workf
       'Urgent line change requires immediate attention',
       'critical'
     );
-    console.log('🚨 Workflow escalated successfully');
+    console.info('🚨 Workflow escalated successfully');
 
     // Delegate workflow to another user
     await client.delegateWorkflow(
@@ -286,7 +286,7 @@ async function advancedOperationsExample(client: BettingWorkflowAPIClient, workf
       'senior-trader@example.com',
       'Delegating for specialized review'
     );
-    console.log('👤 Workflow delegated successfully');
+    console.info('👤 Workflow delegated successfully');
 
   } catch (error: any) {
     console.error('❌ Advanced operations failed:', error.message);
@@ -297,7 +297,7 @@ async function advancedOperationsExample(client: BettingWorkflowAPIClient, workf
 // ===== MAIN EXECUTION =====
 
 async function runAllExamples() {
-  console.log('🚀 Starting API examples...\n');
+  console.info('🚀 Starting API examples...\n');
 
   // Initialize client
   const client = new BettingWorkflowAPIClient();
@@ -307,22 +307,22 @@ async function runAllExamples() {
   try {
     // Run content publishing example
     const contentWorkflow = await contentPublishingExample(client);
-    console.log('\n' + '='.repeat(50) + '\n');
+    console.info('\n' + '='.repeat(50) + '\n');
 
     // Run line change example
     const lineWorkflow = await lineChangeExample(client);
-    console.log('\n' + '='.repeat(50) + '\n');
+    console.info('\n' + '='.repeat(50) + '\n');
 
     // Run bulk operations example
     await bulkOperationsExample(client);
-    console.log('\n' + '='.repeat(50) + '\n');
+    console.info('\n' + '='.repeat(50) + '\n');
 
     // Run advanced operations on one of the created workflows
     if (contentWorkflow?.id) {
       await advancedOperationsExample(client, contentWorkflow.id);
     }
 
-    console.log('\n✅ All examples completed successfully!');
+    console.info('\n✅ All examples completed successfully!');
 
   } catch (error) {
     console.error('\n❌ Examples failed:', error);

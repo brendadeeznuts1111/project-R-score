@@ -167,19 +167,19 @@ class ANSIProcessor {
     // 🖱️ CURSOR MOVEMENT (Excluded from width)
     switch (final) {
       case 64: // '@' - ICH - Insert Characters
-        console.log(`CSI Insert: [${params.join(';')}]@`);
+        console.info(`CSI Insert: [${params.join(';')}]@`);
         break;
       case 72: // 'H' - CUP - Cursor Position
-        console.log(`CSI Cursor Home: [${params.join(';')}]H`);
+        console.info(`CSI Cursor Home: [${params.join(';')}]H`);
         break;
       case 74: // 'J' - ED - Erase Display
-        console.log(`CSI Erase: [${params.join(';')}]J`);
+        console.info(`CSI Erase: [${params.join(';')}]J`);
         break;
       case 75: // 'K' - EL - Erase Line
-        console.log(`CSI Erase Line: [${params.join(';')}]K`);
+        console.info(`CSI Erase Line: [${params.join(';')}]K`);
         break;
       case 108: // 'l' - RM - Reset Mode
-        console.log(`CSI Reset Mode: [${params.join(';')}]l`);
+        console.info(`CSI Reset Mode: [${params.join(';')}]l`);
         break;
       case 109: // 'm' - SGR - Select Graphic Rendition (Colors)
         const colors = params.map(p => {
@@ -196,16 +196,16 @@ class ANSIProcessor {
             default: return `SGR${p}`;
           }
         });
-        console.log(`CSI Colors: [${colors.join(',')}]m`);
+        console.info(`CSI Colors: [${colors.join(',')}]m`);
         break;
       case 115: // 's' - SCPRC - Save Cursor
-        console.log(`CSI Save Cursor`);
+        console.info(`CSI Save Cursor`);
         break;
       case 117: // 'u' - RCPRC - Restore Cursor
-        console.log(`CSI Restore Cursor`);
+        console.info(`CSI Restore Cursor`);
         break;
       default:
-        console.log(`CSI Unknown: [${params.join(';')}]${finalChar}`);
+        console.info(`CSI Unknown: [${params.join(';')}]${finalChar}`);
     }
   }
 
@@ -215,18 +215,18 @@ class ANSIProcessor {
       const parts = data.split(';');
       const id = parts[1] || "";
       const uri = parts[2] || "";
-      console.log(`🔗 Hyperlink: ID=${id}, URI=${uri}`);
+      console.info(`🔗 Hyperlink: ID=${id}, URI=${uri}`);
     }
 
     // 📺 OSC 0 - Window Title
     if (data.startsWith("0;")) {
       const title = data.substring(2);
-      console.log(`📺 Window Title: ${title}`);
+      console.info(`📺 Window Title: ${title}`);
     }
 
     // 🖼️ OSC 1337 - File/Clipboard
     if (data.startsWith("1337;")) {
-      console.log(`📋 File/Clipboard: ${data}`);
+      console.info(`📋 File/Clipboard: ${data}`);
     }
   }
 
@@ -264,7 +264,7 @@ class PTYSessionManager {
         data: (_terminal: any, data: Uint8Array) => {
           // Process ANSI sequences
           const result = processor.process(data);
-          console.log(`🖥️ PTY ${sessionId}: ${result.text.length} chars, ${result.width} width`);
+          console.info(`🖥️ PTY ${sessionId}: ${result.text.length} chars, ${result.width} width`);
 
           // Broadcast to WebSocket clients
           bridge.onData(result.text);
@@ -293,7 +293,7 @@ class PTYSessionManager {
         rows
       });
 
-      console.log(`🖥️ PTY session created: ${sessionId} (${cols}x${rows})`);
+      console.info(`🖥️ PTY session created: ${sessionId} (${cols}x${rows})`);
       return true;
     } catch (error) {
       console.error('Failed to create PTY session:', error);
@@ -311,7 +311,7 @@ class PTYSessionManager {
     if (session) {
       session.process.kill();
       this.sessions.delete(sessionId);
-      console.log(`🖥️ PTY session closed: ${sessionId}`);
+      console.info(`🖥️ PTY session closed: ${sessionId}`);
     }
   }
 
@@ -320,7 +320,7 @@ class PTYSessionManager {
     if (session) {
       session.cols = cols;
       session.rows = rows;
-      console.log(`🖥️ PTY session resized: ${sessionId} (${cols}x${rows})`);
+      console.info(`🖥️ PTY session resized: ${sessionId} (${cols}x${rows})`);
       return true;
     }
     return false;
@@ -1281,7 +1281,7 @@ $
             try {
                 const response = await fetch('/api/metrics');
                 const metrics = await response.json();
-                console.log('🌈 v4.4 ANSI Metrics updated:', metrics);
+                console.info('🌈 v4.4 ANSI Metrics updated:', metrics);
                 loadDashboards();
             } catch (error) {
                 console.error('Failed to refresh metrics:', error);
@@ -1295,7 +1295,7 @@ $
             setInterval(updateUptime, 1000);
             setInterval(() => {
                 fetch('/api/metrics').then(r => r.json()).then(metrics => {
-                    console.log('🌈 v4.4 ANSI Metrics updated:', metrics);
+                    console.info('🌈 v4.4 ANSI Metrics updated:', metrics);
                 });
             }, 30000);
         });
@@ -1314,14 +1314,14 @@ $
   // 🔥 Hot Reload Method
   public hotReload(newRoutes?: any): void {
     if (this.server && this.hotReloadEnabled) {
-      console.log("🔥 Performing hot reload...");
+      console.info("🔥 Performing hot reload...");
 
       if (newRoutes) {
-        console.log("🔄 Routes reloaded with new patterns");
+        console.info("🔄 Routes reloaded with new patterns");
       }
 
       this.updateMetrics();
-      console.log("✅ Hot reload completed - serving v4.4 ANSI patterns");
+      console.info("✅ Hot reload completed - serving v4.4 ANSI patterns");
     }
   }
 
@@ -1476,30 +1476,30 @@ $
     // Override with Unix socket if provided
     if (unixSocket) {
       serverConfig.unix = unixSocket;
-      console.log(`📡 Starting Unix socket server: ${unixSocket}`);
+      console.info(`📡 Starting Unix socket server: ${unixSocket}`);
     }
 
-    console.log(`🚀 DuoPlus Dashboard Server v4.4 starting...`);
-    console.log(`🌈 ANSI Escape + CSI/OSC Deep Dive`);
-    console.log(`🌐 Port: ${this.port} | Hostname: 0.0.0.0`);
-    console.log(`🔥 Hot Reload: ${this.hotReloadEnabled ? 'Enabled' : 'Disabled'}`);
-    console.log(`🖥️ PTY Terminal: ${this.metrics.ptyTerminal ? 'Enabled' : 'Disabled'}`);
-    console.log(`🌈 ANSI Processor: ${this.metrics.ansiProcessor ? 'Enabled' : 'Disabled'}`);
-    console.log(`🔗 OSC Hyperlinks: ${this.metrics.oscHyperlinks ? 'Enabled' : 'Disabled'}`);
-    console.log(`🏳️ Feature Flags: ${this.metrics.featureFlags.join(', ')}`);
-    console.log(`📊 Dashboards: ${this.dashboards.length} | Bundle: 1.57MB`);
+    console.info(`🚀 DuoPlus Dashboard Server v4.4 starting...`);
+    console.info(`🌈 ANSI Escape + CSI/OSC Deep Dive`);
+    console.info(`🌐 Port: ${this.port} | Hostname: 0.0.0.0`);
+    console.info(`🔥 Hot Reload: ${this.hotReloadEnabled ? 'Enabled' : 'Disabled'}`);
+    console.info(`🖥️ PTY Terminal: ${this.metrics.ptyTerminal ? 'Enabled' : 'Disabled'}`);
+    console.info(`🌈 ANSI Processor: ${this.metrics.ansiProcessor ? 'Enabled' : 'Disabled'}`);
+    console.info(`🔗 OSC Hyperlinks: ${this.metrics.oscHyperlinks ? 'Enabled' : 'Disabled'}`);
+    console.info(`🏳️ Feature Flags: ${this.metrics.featureFlags.join(', ')}`);
+    console.info(`📊 Dashboards: ${this.dashboards.length} | Bundle: 1.57MB`);
 
     this.server = serve(serverConfig);
 
     // Keep process alive for main server
     this.server.ref();
 
-    console.log(`✅ DuoPlus Dashboard Server v4.4 is running!`);
-    console.log(`🔗 Dashboard: http://localhost:${this.port}/`);
-    console.log(`🏥 Health: http://localhost:${this.port}/health`);
-    console.log(`📊 Metrics: http://localhost:${this.port}/api/metrics`);
-    console.log(`🌈 ANSI Test: http://localhost:${this.port}/api/ansi/test`);
-    console.log(`🖥️ PTY Demo: http://localhost:${this.port}/demos/@web/cli-security-demo.html`);
+    console.info(`✅ DuoPlus Dashboard Server v4.4 is running!`);
+    console.info(`🔗 Dashboard: http://localhost:${this.port}/`);
+    console.info(`🏥 Health: http://localhost:${this.port}/health`);
+    console.info(`📊 Metrics: http://localhost:${this.port}/api/metrics`);
+    console.info(`🌈 ANSI Test: http://localhost:${this.port}/api/ansi/test`);
+    console.info(`🖥️ PTY Demo: http://localhost:${this.port}/demos/@web/cli-security-demo.html`);
 
     // Start metrics logging
     setInterval(async () => {
@@ -1515,10 +1515,10 @@ $
     }
 
     if (this.server) {
-      console.log(`🛑 Stopping DuoPlus Dashboard Server v4.4 (force: ${force})...`);
+      console.info(`🛑 Stopping DuoPlus Dashboard Server v4.4 (force: ${force})...`);
       this.server.stop(force);
       this.server = null;
-      console.log('✅ Server stopped successfully');
+      console.info('✅ Server stopped successfully');
     }
   }
 
@@ -1535,7 +1535,7 @@ $
   // Enable/disable hot reload
   public setHotReload(enabled: boolean): void {
     this.hotReloadEnabled = enabled;
-    console.log(`🔥 Hot Reload ${enabled ? 'enabled' : 'disabled'}`);
+    console.info(`🔥 Hot Reload ${enabled ? 'enabled' : 'disabled'}`);
   }
 }
 
@@ -1544,13 +1544,13 @@ const server = new DashboardServerV44();
 
 // Handle graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('\n🛑 Received SIGINT, shutting down gracefully...');
+  console.info('\n🛑 Received SIGINT, shutting down gracefully...');
   await server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-  console.log('\n🛑 Received SIGTERM, shutting down gracefully...');
+  console.info('\n🛑 Received SIGTERM, shutting down gracefully...');
   await server.stop();
   process.exit(0);
 });

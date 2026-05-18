@@ -497,7 +497,7 @@ export function printTable<T>(
 ): void {
   // Check if first argument is the options object
   if (!Array.isArray(optionsOrData) && 'columns' in optionsOrData && 'rows' in optionsOrData) {
-    console.log(generateTable(optionsOrData as TableOptions));
+    console.info(generateTable(optionsOrData as TableOptions));
     return;
   }
 
@@ -521,7 +521,7 @@ export function printTable<T>(
     return row;
   });
 
-  console.log(
+  console.info(
     generateTable({
       columns,
       rows,
@@ -635,7 +635,7 @@ export function demoTable(): void {
     { name: '📦 Cache Layer', status: 'ok', requests: 98765, latency: 2.1, memory: 268435456 },
   ];
 
-  console.log('\n' + ANSI.bold + 'Terminal Format:' + ANSI.reset);
+  console.info('\n' + ANSI.bold + 'Terminal Format:' + ANSI.reset);
   printTable({
     title: '🏰 FactoryWager Service Status',
     columns,
@@ -644,8 +644,8 @@ export function demoTable(): void {
     headerStyle: 'bold',
   });
 
-  console.log('\n' + ANSI.bold + 'Markdown Format:' + ANSI.reset);
-  console.log(
+  console.info('\n' + ANSI.bold + 'Markdown Format:' + ANSI.reset);
+  console.info(
     generateTable({
       title: 'Service Status Report',
       columns,

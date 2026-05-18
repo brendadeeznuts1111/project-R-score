@@ -59,7 +59,7 @@ export class AtomicIntegrityLog {
     }
 
     // Log to console for demonstration
-    console.log(
+    console.info(
       `[AUDIT] ${entry.component} -> ${entry.endpoint} (${entry.path})`
     );
   }
@@ -221,7 +221,7 @@ export class AtomicIntegrityLog {
 
   clearAuditLog(): void {
     this.auditEntries = [];
-    console.log("[AUDIT] Audit log cleared");
+    console.info("[AUDIT] Audit log cleared");
   }
 
   getAuditStats(): object {

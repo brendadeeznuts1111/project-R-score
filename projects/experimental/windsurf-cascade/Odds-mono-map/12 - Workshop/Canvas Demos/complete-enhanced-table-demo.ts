@@ -653,8 +653,8 @@ class EnhancedTableDemo {
         ];
 
         // 1. Enhanced colors with gradients
-        console.log("🎨 Enhanced Colors:");
-        console.log(Bun.inspect.table(sampleData, {
+        console.info("🎨 Enhanced Colors:");
+        console.info(Bun.inspect.table(sampleData, {
             colors: {
                 header: (index: number) => ["\x1b[38;5;196m", "\x1b[38;5;214m", "\x1b[38;5;226m"][index % 3],
                 border: "\x1b[38;5;240m",
@@ -663,8 +663,8 @@ class EnhancedTableDemo {
         }));
 
         // 2. Smart formatting with nested objects
-        console.log("\n🛠️ Smart Formatting:");
-        console.log(AdvancedFormatting.createFormattedTable(sampleData, [
+        console.info("\n🛠️ Smart Formatting:");
+        console.info(AdvancedFormatting.createFormattedTable(sampleData, [
             {
                 condition: 'column',
                 target: 'metrics.score',
@@ -680,12 +680,12 @@ class EnhancedTableDemo {
         ]));
 
         // 3. Responsive table generation
-        console.log("\n📱 Responsive Tables:");
-        console.log(DynamicTableGenerator.createResponsiveTable(sampleData, { colors: true }));
+        console.info("\n📱 Responsive Tables:");
+        console.info(DynamicTableGenerator.createResponsiveTable(sampleData, { colors: true }));
 
         // 4. Advanced pagination
-        console.log("\n📄 Advanced Pagination:");
-        console.log(AdvancedPagination.createPaginatedTable(sampleData, {
+        console.info("\n📄 Advanced Pagination:");
+        console.info(AdvancedPagination.createPaginatedTable(sampleData, {
             pageSize: 2,
             currentPage: 1,
             showNavigation: true,
@@ -693,25 +693,25 @@ class EnhancedTableDemo {
         }));
 
         // 5. Smart table manager
-        console.log("\n🧠 Smart Table Manager:");
+        console.info("\n🧠 Smart Table Manager:");
         const smartManager = new SmartTableManager(sampleData, {
             autoResize: true,
             colorScheme: 'default',
             maxColumns: 4
         });
-        console.log(smartManager.generateTable());
+        console.info(smartManager.generateTable());
 
         // 6. Custom inspection integration
         const customObj = new EnhancedCustomInspection(sampleData);
-        console.log("\n🔍 Custom Inspection:");
-        console.log(customObj[Bun.inspect.custom](2, { compact: false, stylize: (text: string, type: string) => text }, () => { }));
+        console.info("\n🔍 Custom Inspection:");
+        console.info(customObj[Bun.inspect.custom](2, { compact: false, stylize: (text: string, type: string) => text }, () => { }));
 
         // 7. Performance comparison
-        console.log("\n⚡ Performance Comparison:");
+        console.info("\n⚡ Performance Comparison:");
         this.demonstratePerformance();
 
         // 8. Feature summary
-        console.log("\n📊 Feature Summary:");
+        console.info("\n📊 Feature Summary:");
         this.displayFeatureSummary();
     }
 
@@ -747,7 +747,7 @@ class EnhancedTableDemo {
             }
         ];
 
-        console.log(Bun.inspect.table(performanceData, ["method", "time", "features"], {
+        console.info(Bun.inspect.table(performanceData, ["method", "time", "features"], {
             colors: true,
             compact: false,
             minWidth: 10,
@@ -811,7 +811,7 @@ class EnhancedTableDemo {
             }
         ];
 
-        console.log(Bun.inspect.table(featureData, ["feature", "implemented", "flexibility", "performance"], {
+        console.info(Bun.inspect.table(featureData, ["feature", "implemented", "flexibility", "performance"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",

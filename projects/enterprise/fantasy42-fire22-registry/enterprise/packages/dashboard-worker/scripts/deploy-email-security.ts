@@ -45,13 +45,13 @@ class EmailSecurityDeployer {
    * 🚀 Execute Special Ops deployment
    */
   async deploy(): Promise<DeploymentResult> {
-    console.log('🚀 FIRE22 SPECIAL OPS TEAM - EMAIL SECURITY DEPLOYMENT');
-    console.log('!==!==!==!==!==!==!==!==!==!==');
-    console.log(`🎯 OPERATION: SECURE-COMM-22`);
-    console.log(`🔒 CLASSIFICATION: CONFIDENTIAL - FIRE22 INTERNAL`);
-    console.log(`🌍 ENVIRONMENT: ${this.config.environment.toUpperCase()}`);
-    console.log(`🛡️ SECURITY LEVEL: ${this.config.securityLevel}`);
-    console.log(`📅 DEPLOYMENT TIME: ${new Date().toISOString()}\n`);
+    console.info('🚀 FIRE22 SPECIAL OPS TEAM - EMAIL SECURITY DEPLOYMENT');
+    console.info('!==!==!==!==!==!==!==!==!==!==');
+    console.info(`🎯 OPERATION: SECURE-COMM-22`);
+    console.info(`🔒 CLASSIFICATION: CONFIDENTIAL - FIRE22 INTERNAL`);
+    console.info(`🌍 ENVIRONMENT: ${this.config.environment.toUpperCase()}`);
+    console.info(`🛡️ SECURITY LEVEL: ${this.config.securityLevel}`);
+    console.info(`📅 DEPLOYMENT TIME: ${new Date().toISOString()}\n`);
 
     try {
       // Pre-deployment security checks
@@ -75,9 +75,9 @@ class EmailSecurityDeployer {
       // Generate deployment report
       const result = await this.generateDeploymentReport();
 
-      console.log('\n✅ SPECIAL OPS DEPLOYMENT COMPLETED SUCCESSFULLY!');
-      console.log('🔒 Email security infrastructure is now operational');
-      console.log('📊 All departments secured with Durable Objects');
+      console.info('\n✅ SPECIAL OPS DEPLOYMENT COMPLETED SUCCESSFULLY!');
+      console.info('🔒 Email security infrastructure is now operational');
+      console.info('📊 All departments secured with Durable Objects');
 
       return result;
     } catch (error) {
@@ -90,7 +90,7 @@ class EmailSecurityDeployer {
    * 🔍 Pre-deployment security checks
    */
   private async performSecurityChecks(): Promise<void> {
-    console.log('🔍 Performing pre-deployment security checks...');
+    console.info('🔍 Performing pre-deployment security checks...');
 
     // Check Cloudflare CLI authentication
     await this.checkCloudflareAuth();
@@ -104,14 +104,14 @@ class EmailSecurityDeployer {
     // Verify compliance requirements
     await this.verifyComplianceRequirements();
 
-    console.log('  ✅ All security checks passed');
+    console.info('  ✅ All security checks passed');
   }
 
   /**
    * 🏗️ Deploy Durable Objects for email security
    */
   private async deployDurableObjects(): Promise<void> {
-    console.log('🏗️ Deploying Durable Objects for email security...');
+    console.info('🏗️ Deploying Durable Objects for email security...');
 
     try {
       // Deploy main email security worker
@@ -125,14 +125,14 @@ class EmailSecurityDeployer {
         '2024-08-28',
       ]);
 
-      console.log('  ✅ Main email security worker deployed');
+      console.info('  ✅ Main email security worker deployed');
 
       // Deploy department-specific configurations
       for (const department of this.config.departments) {
         await this.deployDepartmentDurableObject(department);
       }
 
-      console.log(`  ✅ ${this.config.departments.length} department Durable Objects deployed`);
+      console.info(`  ✅ ${this.config.departments.length} department Durable Objects deployed`);
     } catch (error) {
       throw new Error(`Durable Objects deployment failed: ${error}`);
     }
@@ -142,7 +142,7 @@ class EmailSecurityDeployer {
    * 🏢 Deploy department-specific Durable Object
    */
   private async deployDepartmentDurableObject(department: string): Promise<void> {
-    console.log(`  🏢 Deploying ${department} email security...`);
+    console.info(`  🏢 Deploying ${department} email security...`);
 
     // Create department-specific namespace
     const namespaceId = await this.createDurableObjectNamespace(department);
@@ -150,14 +150,14 @@ class EmailSecurityDeployer {
     // Configure department security settings
     await this.configureDepartmentSecurity(department);
 
-    console.log(`    ✅ ${department} email security deployed (${namespaceId})`);
+    console.info(`    ✅ ${department} email security deployed (${namespaceId})`);
   }
 
   /**
    * 🔐 Configure security settings
    */
   private async configureSecuritySettings(): Promise<void> {
-    console.log('🔐 Configuring security settings...');
+    console.info('🔐 Configuring security settings...');
 
     // Set encryption keys
     await this.setEncryptionKeys();
@@ -171,14 +171,14 @@ class EmailSecurityDeployer {
     // Configure backup policies
     await this.configureBackupPolicies();
 
-    console.log('  ✅ Security settings configured');
+    console.info('  ✅ Security settings configured');
   }
 
   /**
    * 🏢 Setup department-specific configurations
    */
   private async setupDepartmentConfigurations(): Promise<void> {
-    console.log('🏢 Setting up department configurations...');
+    console.info('🏢 Setting up department configurations...');
 
     const departmentConfigs = {
       // Tier 1 - Maximum Security
@@ -250,7 +250,7 @@ class EmailSecurityDeployer {
 
     for (const [department, config] of Object.entries(departmentConfigs)) {
       await this.setDepartmentConfig(department, config);
-      console.log(`  ✅ ${department} configuration applied`);
+      console.info(`  ✅ ${department} configuration applied`);
     }
   }
 
@@ -258,7 +258,7 @@ class EmailSecurityDeployer {
    * 📊 Deploy monitoring and alerting
    */
   private async deployMonitoring(): Promise<void> {
-    console.log('📊 Deploying monitoring and alerting...');
+    console.info('📊 Deploying monitoring and alerting...');
 
     // Setup Analytics Engine
     await this.setupAnalyticsEngine();
@@ -272,14 +272,14 @@ class EmailSecurityDeployer {
     // Setup compliance monitoring
     await this.setupComplianceMonitoring();
 
-    console.log('  ✅ Monitoring and alerting deployed');
+    console.info('  ✅ Monitoring and alerting deployed');
   }
 
   /**
    * ✅ Validate deployment
    */
   private async validateDeployment(): Promise<void> {
-    console.log('✅ Validating deployment...');
+    console.info('✅ Validating deployment...');
 
     // Test Durable Objects connectivity
     await this.testDurableObjectsConnectivity();
@@ -293,7 +293,7 @@ class EmailSecurityDeployer {
     // Verify backup functionality
     await this.verifyBackupFunctionality();
 
-    console.log('  ✅ Deployment validation completed');
+    console.info('  ✅ Deployment validation completed');
   }
 
   /**
@@ -324,7 +324,7 @@ class EmailSecurityDeployer {
 
     writeFileSync(reportPath, JSON.stringify(result, null, 2));
 
-    console.log(`📋 Deployment report saved: ${reportPath}`);
+    console.info(`📋 Deployment report saved: ${reportPath}`);
 
     return result;
   }
@@ -404,22 +404,22 @@ class EmailSecurityDeployer {
 
   // Placeholder implementations for security operations
   private async checkCloudflareAuth(): Promise<void> {
-    console.log('  🔑 Checking Cloudflare authentication...');
+    console.info('  🔑 Checking Cloudflare authentication...');
     // Implementation would verify wrangler auth
   }
 
   private async validateSecurityConfig(): Promise<void> {
-    console.log('  🔒 Validating security configuration...');
+    console.info('  🔒 Validating security configuration...');
     // Implementation would validate security settings
   }
 
   private async checkEncryptionKeys(): Promise<void> {
-    console.log('  🔐 Checking encryption keys...');
+    console.info('  🔐 Checking encryption keys...');
     // Implementation would verify encryption key availability
   }
 
   private async verifyComplianceRequirements(): Promise<void> {
-    console.log('  ⚖️ Verifying compliance requirements...');
+    console.info('  ⚖️ Verifying compliance requirements...');
     // Implementation would check compliance settings
   }
 
@@ -433,22 +433,22 @@ class EmailSecurityDeployer {
   }
 
   private async setEncryptionKeys(): Promise<void> {
-    console.log('  🔐 Setting encryption keys...');
+    console.info('  🔐 Setting encryption keys...');
     // Implementation would set encryption keys via wrangler secret
   }
 
   private async configureAuditLogging(): Promise<void> {
-    console.log('  📝 Configuring audit logging...');
+    console.info('  📝 Configuring audit logging...');
     // Implementation would setup audit logging
   }
 
   private async setupAccessControls(): Promise<void> {
-    console.log('  🚪 Setting up access controls...');
+    console.info('  🚪 Setting up access controls...');
     // Implementation would configure access controls
   }
 
   private async configureBackupPolicies(): Promise<void> {
-    console.log('  💾 Configuring backup policies...');
+    console.info('  💾 Configuring backup policies...');
     // Implementation would setup backup policies
   }
 
@@ -457,42 +457,42 @@ class EmailSecurityDeployer {
   }
 
   private async setupAnalyticsEngine(): Promise<void> {
-    console.log('  📊 Setting up Analytics Engine...');
+    console.info('  📊 Setting up Analytics Engine...');
     // Implementation would configure analytics
   }
 
   private async configureSecurityAlerts(): Promise<void> {
-    console.log('  🚨 Configuring security alerts...');
+    console.info('  🚨 Configuring security alerts...');
     // Implementation would setup alerting
   }
 
   private async deployHealthChecks(): Promise<void> {
-    console.log('  🏥 Deploying health checks...');
+    console.info('  🏥 Deploying health checks...');
     // Implementation would deploy health check endpoints
   }
 
   private async setupComplianceMonitoring(): Promise<void> {
-    console.log('  ⚖️ Setting up compliance monitoring...');
+    console.info('  ⚖️ Setting up compliance monitoring...');
     // Implementation would configure compliance monitoring
   }
 
   private async testDurableObjectsConnectivity(): Promise<void> {
-    console.log('  🔌 Testing Durable Objects connectivity...');
+    console.info('  🔌 Testing Durable Objects connectivity...');
     // Implementation would test DO connectivity
   }
 
   private async validateSecurityFeatures(): Promise<void> {
-    console.log('  🛡️ Validating security features...');
+    console.info('  🛡️ Validating security features...');
     // Implementation would validate security features
   }
 
   private async testDepartmentAccess(): Promise<void> {
-    console.log('  🏢 Testing department access...');
+    console.info('  🏢 Testing department access...');
     // Implementation would test department access
   }
 
   private async verifyBackupFunctionality(): Promise<void> {
-    console.log('  💾 Verifying backup functionality...');
+    console.info('  💾 Verifying backup functionality...');
     // Implementation would verify backup functionality
   }
 }
@@ -511,16 +511,16 @@ async function main() {
     const deployer = new EmailSecurityDeployer(environment);
     const result = await deployer.deploy();
 
-    console.log('\n🎉 SPECIAL OPS MISSION ACCOMPLISHED!');
-    console.log('!==!==!==!==!==!=====');
-    console.log(`✅ Environment: ${result.environment}`);
-    console.log(`✅ Durable Objects: ${result.durableObjects.length}`);
-    console.log(`✅ Security Features: ${result.securityFeatures.length}`);
-    console.log(`✅ Deployed At: ${result.deployedAt}`);
+    console.info('\n🎉 SPECIAL OPS MISSION ACCOMPLISHED!');
+    console.info('!==!==!==!==!==!=====');
+    console.info(`✅ Environment: ${result.environment}`);
+    console.info(`✅ Durable Objects: ${result.durableObjects.length}`);
+    console.info(`✅ Security Features: ${result.securityFeatures.length}`);
+    console.info(`✅ Deployed At: ${result.deployedAt}`);
 
-    console.log('\n🔒 Fire22 email infrastructure is now secured with Cloudflare Durable Objects!');
-    console.log('📧 All 10 departments have enterprise-grade email security.');
-    console.log('🛡️ AES-256 encryption, audit logging, and compliance monitoring active.');
+    console.info('\n🔒 Fire22 email infrastructure is now secured with Cloudflare Durable Objects!');
+    console.info('📧 All 10 departments have enterprise-grade email security.');
+    console.info('🛡️ AES-256 encryption, audit logging, and compliance monitoring active.');
   } catch (error) {
     console.error('\n💥 SPECIAL OPS MISSION FAILED:', error);
     process.exit(1);

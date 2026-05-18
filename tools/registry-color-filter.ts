@@ -17,7 +17,7 @@ const {values: flags} = parseArgs({
 });
 
 function usage(): void {
-	console.log(`
+	console.info(`
   bun registry-color-filter.ts --filter-risk={high|medium|low|all} [--file <path>]
 
   Filters registry-color-channel.toml and prints TOML to stdout.
@@ -138,12 +138,12 @@ function tomlValue(v: unknown): string {
 
 function printTable(name: string, rows: Array<Record<string, unknown>>, order: string[]): void {
 	for (const row of rows) {
-		console.log(`[[${name}]]`);
+		console.info(`[[${name}]]`);
 		for (const key of order) {
 			if (row[key] === undefined) continue;
-			console.log(`${key} = ${tomlValue(row[key])}`);
+			console.info(`${key} = ${tomlValue(row[key])}`);
 		}
-		console.log();
+		console.info();
 	}
 }
 

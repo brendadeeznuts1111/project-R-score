@@ -50,8 +50,8 @@ class VenmoFamilyDemo {
    * 🚀 Run complete demo
    */
   async runDemo(): Promise<void> {
-    console.log('🎯 Venmo Family Account System - Complete Demo');
-    console.log('═'.repeat(60));
+    console.info('🎯 Venmo Family Account System - Complete Demo');
+    console.info('═'.repeat(60));
     
     try {
       await this.initializeSDKs();
@@ -63,7 +63,7 @@ class VenmoFamilyDemo {
       await this.showTransactionHistory();
       await this.demonstrateWebSDK();
       
-      console.log('\n🎉 Complete demo finished successfully!');
+      console.info('\n🎉 Complete demo finished successfully!');
       
     } catch (error) {
       console.error('❌ Demo failed:', error);
@@ -76,12 +76,12 @@ class VenmoFamilyDemo {
    * 🌐 Start backend server
    */
   private async startBackend(): Promise<void> {
-    console.log('\n🌐 Starting Backend Server...');
+    console.info('\n🌐 Starting Backend Server...');
     
     try {
       await this.backendServer.start();
-      console.log('✅ Backend server started on port 3000');
-      console.log('📡 API available at: http://localhost:3000');
+      console.info('✅ Backend server started on port 3000');
+      console.info('📡 API available at: http://localhost:3000');
       
       // Wait a moment for server to be ready
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -95,7 +95,7 @@ class VenmoFamilyDemo {
    * 🏠 Create family account
    */
   private async createFamilyAccount(): Promise<void> {
-    console.log('\n🏠 Creating Family Account...');
+    console.info('\n🏠 Creating Family Account...');
     
     try {
       const familyAccount = await this.familySystem.createFamilyAccount(
@@ -125,14 +125,14 @@ class VenmoFamilyDemo {
         }
       );
 
-      console.log(`✅ Family account created: ${familyAccount.familyId}`);
-      console.log(`👨‍👩‍👧‍👦 Family members: ${familyAccount.children.length}`);
+      console.info(`✅ Family account created: ${familyAccount.familyId}`);
+      console.info(`👨‍👩‍👧‍👦 Family members: ${familyAccount.children.length}`);
       
       // Display family members
       familyAccount.children.forEach((member, index) => {
-        console.log(`   ${index + 1}. ${member.name} (${member.role}) - ${member.status}`);
+        console.info(`   ${index + 1}. ${member.name} (${member.role}) - ${member.status}`);
         if (member.spendingLimit) {
-          console.log(`      Spending limit: $${member.spendingLimit}`);
+          console.info(`      Spending limit: $${member.spendingLimit}`);
         }
       });
       
@@ -145,7 +145,7 @@ class VenmoFamilyDemo {
    * 📱 Demonstrate QR payments
    */
   private async demonstrateQRPayments(): Promise<void> {
-    console.log('\n📱 Demonstrating QR Payments...');
+    console.info('\n📱 Demonstrating QR Payments...');
     
     try {
       // Generate QR code for payment
@@ -157,25 +157,25 @@ class VenmoFamilyDemo {
         30 // expires in 30 minutes
       );
 
-      console.log(`✅ QR code generated for $${qrResult.amount}`);
-      console.log(`📱 Recipient: ${qrResult.recipient}`);
-      console.log(`⏰ Expires at: ${qrResult.expiresAt}`);
-      console.log(`🔗 QR data: ${qrResult.qrCodeData.substring(0, 50)}...`);
+      console.info(`✅ QR code generated for $${qrResult.amount}`);
+      console.info(`📱 Recipient: ${qrResult.recipient}`);
+      console.info(`⏰ Expires at: ${qrResult.expiresAt}`);
+      console.info(`🔗 QR data: ${qrResult.qrCodeData.substring(0, 50)}...`);
 
       // Simulate scanning the QR code
-      console.log('\n📷 Simulating QR code scan...');
+      console.info('\n📷 Simulating QR code scan...');
       const transaction = await this.familySystem.processQRPayment(
         qrResult.qrCodeData,
         'john.doe@duoplus.com',
         'John Doe'
       );
 
-      console.log(`✅ Payment processed: ${transaction.transactionId}`);
-      console.log(`💰 Amount: $${transaction.amount}`);
-      console.log(`📊 Status: ${transaction.status}`);
+      console.info(`✅ Payment processed: ${transaction.transactionId}`);
+      console.info(`💰 Amount: $${transaction.amount}`);
+      console.info(`📊 Status: ${transaction.status}`);
       
       if (transaction.requiresApproval) {
-        console.log(`⏳ Requires parental approval`);
+        console.info(`⏳ Requires parental approval`);
         
         // Approve the transaction
         const approvedTransaction = await this.familySystem.approveTransaction(
@@ -183,7 +183,7 @@ class VenmoFamilyDemo {
           'john.doe@duoplus.com'
         );
         
-        console.log(`✅ Transaction approved: ${approvedTransaction.status}`);
+        console.info(`✅ Transaction approved: ${approvedTransaction.status}`);
       }
       
     } catch (error) {
@@ -195,7 +195,7 @@ class VenmoFamilyDemo {
    * 🔄 Demonstrate split payments
    */
   private async demonstrateSplitPayments(): Promise<void> {
-    console.log('\n🔄 Demonstrating Split Payments...');
+    console.info('\n🔄 Demonstrating Split Payments...');
     
     try {
       // Create split payment for family dinner
@@ -207,14 +207,14 @@ class VenmoFamilyDemo {
         'member-1' // Initiated by parent
       );
 
-      console.log(`✅ Split payment created: ${splitResult.splitPayment.transactionId}`);
-      console.log(`💰 Total amount: $${splitResult.splitPayment.amount}`);
-      console.log(`👥 Participants: ${splitResult.individualPayments.length}`);
-      console.log(`💸 Individual share: $${splitResult.individualPayments[0]?.amount || 0}`);
+      console.info(`✅ Split payment created: ${splitResult.splitPayment.transactionId}`);
+      console.info(`💰 Total amount: $${splitResult.splitPayment.amount}`);
+      console.info(`👥 Participants: ${splitResult.individualPayments.length}`);
+      console.info(`💸 Individual share: $${splitResult.individualPayments[0]?.amount || 0}`);
 
       // Display individual payments
       splitResult.individualPayments.forEach((payment, index) => {
-        console.log(`   ${index + 1}. Payment ${payment.transactionId}: $${payment.amount} (${payment.status})`);
+        console.info(`   ${index + 1}. Payment ${payment.transactionId}: $${payment.amount} (${payment.status})`);
       });
       
     } catch (error) {
@@ -226,63 +226,63 @@ class VenmoFamilyDemo {
    * 📱 Demonstrate Android integration
    */
   private async demonstrateAndroidIntegration(): Promise<void> {
-    console.log('\n📱 Demonstrating Android Integration...');
+    console.info('\n📱 Demonstrating Android Integration...');
     
     try {
       // Connect to DuoPlus SDK
-      console.log('🔌 Connecting to DuoPlus SDK...');
+      console.info('🔌 Connecting to DuoPlus SDK...');
       const connected = await this.duoPlusSDK.connect();
       
       if (connected) {
-        console.log('✅ Connected to Android virtual device');
+        console.info('✅ Connected to Android virtual device');
         
         const status = this.duoPlusSDK.getConnectionStatus();
-        console.log(`📱 Device: ${status.deviceType}`);
-        console.log(`🆔 Device ID: ${status.deviceId}`);
-        console.log(`📦 SDK Version: ${status.sdkVersion}`);
+        console.info(`📱 Device: ${status.deviceType}`);
+        console.info(`🆔 Device ID: ${status.deviceId}`);
+        console.info(`📦 SDK Version: ${status.sdkVersion}`);
         
         // Send payment command to Android
-        console.log('\n💳 Sending payment command to Android...');
+        console.info('\n💳 Sending payment command to Android...');
         const paymentResponse = await this.duoPlusSDK.sendPaymentCommand({
           toMemberId: 'member-3',
           amount: 15.00,
           note: 'Lunch money from Android'
         });
         
-        console.log(`✅ Payment command sent: ${paymentResponse.success ? 'Success' : 'Failed'}`);
+        console.info(`✅ Payment command sent: ${paymentResponse.success ? 'Success' : 'Failed'}`);
         
         // Send QR scan command to Android
-        console.log('\n📷 Sending QR scan command to Android...');
+        console.info('\n📷 Sending QR scan command to Android...');
         const qrResponse = await this.duoPlusSDK.sendQRScanCommand();
         
-        console.log(`✅ QR scan command sent: ${qrResponse.success ? 'Success' : 'Failed'}`);
+        console.info(`✅ QR scan command sent: ${qrResponse.success ? 'Success' : 'Failed'}`);
         
         // Send notification to Android
-        console.log('\n🔔 Sending notification to Android...');
+        console.info('\n🔔 Sending notification to Android...');
         const notificationResponse = await this.duoPlusSDK.sendNotificationCommand({
           title: 'Payment Received',
           message: 'You received $15.00 from John Doe',
           type: 'payment'
         });
         
-        console.log(`✅ Notification sent: ${notificationResponse.success ? 'Success' : 'Failed'}`);
+        console.info(`✅ Notification sent: ${notificationResponse.success ? 'Success' : 'Failed'}`);
         
         // Subscribe to events
-        console.log('\n📢 Subscribing to Android events...');
+        console.info('\n📢 Subscribing to Android events...');
         this.duoPlusSDK.subscribeToEvents((event) => {
-          console.log(`📢 Event received: ${event.type} from ${event.source}`);
+          console.info(`📢 Event received: ${event.type} from ${event.source}`);
         });
         
         // Disconnect
         await this.duoPlusSDK.disconnect();
-        console.log('🔌 Disconnected from Android device');
+        console.info('🔌 Disconnected from Android device');
         
       } else {
-        console.log('❌ Failed to connect to Android device');
+        console.info('❌ Failed to connect to Android device');
       }
       
     } catch (error) {
-      console.log(`⚠️ Android integration demo (simulated): ${error instanceof Error ? error.message : String(error)}`);
+      console.info(`⚠️ Android integration demo (simulated): ${error instanceof Error ? error.message : String(error)}`);
       }
   }
 
@@ -290,26 +290,26 @@ class VenmoFamilyDemo {
    * 📊 Show transaction history
    */
   private async showTransactionHistory(): Promise<void> {
-    console.log('\n📊 Transaction History...');
+    console.info('\n📊 Transaction History...');
     
     try {
       const transactions = await this.familySystem.getFamilyTransactions('family-123');
       
-      console.log(`📋 Found ${transactions.length} transactions:`);
+      console.info(`📋 Found ${transactions.length} transactions:`);
       
       transactions.forEach((transaction, index) => {
-        console.log(`\n${index + 1}. ${transaction.transactionId}`);
-        console.log(`   Type: ${transaction.type}`);
-        console.log(`   Amount: $${transaction.amount}`);
-        console.log(`   Status: ${transaction.status}`);
-        console.log(`   Created: ${new Date(transaction.createdAt).toLocaleString()}`);
+        console.info(`\n${index + 1}. ${transaction.transactionId}`);
+        console.info(`   Type: ${transaction.type}`);
+        console.info(`   Amount: $${transaction.amount}`);
+        console.info(`   Status: ${transaction.status}`);
+        console.info(`   Created: ${new Date(transaction.createdAt).toLocaleString()}`);
         
         if (transaction.note) {
-          console.log(`   Note: ${transaction.note}`);
+          console.info(`   Note: ${transaction.note}`);
         }
         
         if (transaction.requiresApproval) {
-          console.log(`   ⏳ Requires approval: ${transaction.approvedBy || 'Pending'}`);
+          console.info(`   ⏳ Requires approval: ${transaction.approvedBy || 'Pending'}`);
         }
       });
       
@@ -322,42 +322,42 @@ class VenmoFamilyDemo {
    * 🌐 Demonstrate Web SDK
    */
   private async demonstrateWebSDK(): Promise<void> {
-    console.log('\n🌐 Demonstrating Web SDK...');
+    console.info('\n🌐 Demonstrating Web SDK...');
     
     try {
       // Initialize Web SDK
-      console.log('🔌 Initializing Web SDK...');
+      console.info('🔌 Initializing Web SDK...');
       await this.webSDK.initialize();
       
       // Set up event listeners
       this.webSDK.on('connected', (status) => {
-        console.log('✅ Web SDK connected');
+        console.info('✅ Web SDK connected');
       });
       
       this.webSDK.on('paymentSent', (response) => {
-        console.log('💰 Payment sent via Web SDK');
+        console.info('💰 Payment sent via Web SDK');
       });
       
       this.webSDK.on('familyDataUpdated', (data) => {
-        console.log('👨‍👩‍👧‍👦 Family data updated via Web SDK');
+        console.info('👨‍👩‍👧‍👦 Family data updated via Web SDK');
       });
       
       // Send payment via Web SDK
-      console.log('\n💳 Sending payment via Web SDK...');
+      console.info('\n💳 Sending payment via Web SDK...');
       await this.webSDK.sendPayment('member-2', 20.00, 'Grocery money');
       
       // Start QR scanner via Web SDK
-      console.log('\n📷 Starting QR scanner via Web SDK...');
+      console.info('\n📷 Starting QR scanner via Web SDK...');
       await this.webSDK.startQRScanner();
       
       // Get family data via Web SDK
-      console.log('\n👨‍👩‍👧‍👦 Getting family data via Web SDK...');
+      console.info('\n👨‍👩‍👧‍👦 Getting family data via Web SDK...');
       const familyData = await this.webSDK.getFamilyData();
       
-      console.log(`✅ Family data retrieved: ${familyData.members.length} members`);
+      console.info(`✅ Family data retrieved: ${familyData.members.length} members`);
       
       // Send notification via Web SDK
-      console.log('\n🔔 Sending notification via Web SDK...');
+      console.info('\n🔔 Sending notification via Web SDK...');
       await this.webSDK.sendNotification(
         'Welcome to DuoPlus Family!',
         'Your family account is ready to use.',
@@ -366,14 +366,14 @@ class VenmoFamilyDemo {
       
       // Get connection status
       const status = this.webSDK.getConnectionStatus();
-      console.log(`📊 Connection status: ${status.connected ? 'Connected' : 'Disconnected'}`);
+      console.info(`📊 Connection status: ${status.connected ? 'Connected' : 'Disconnected'}`);
       
       // Disconnect Web SDK
       await this.webSDK.disconnect();
-      console.log('🔌 Web SDK disconnected');
+      console.info('🔌 Web SDK disconnected');
       
     } catch (error) {
-      console.log(`⚠️ Web SDK demo (simulated): ${error instanceof Error ? error.message : String(error)}`);
+      console.info(`⚠️ Web SDK demo (simulated): ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -381,7 +381,7 @@ class VenmoFamilyDemo {
    * 🧹 Cleanup resources
    */
   private async cleanup(): Promise<void> {
-    console.log('\n🧹 Cleaning up resources...');
+    console.info('\n🧹 Cleaning up resources...');
     
     try {
       if (this.duoPlusSDK && typeof this.duoPlusSDK.disconnect === 'function') {
@@ -392,7 +392,7 @@ class VenmoFamilyDemo {
         await this.webSDK.disconnect();
       }
       
-      console.log('✅ Cleanup completed');
+      console.info('✅ Cleanup completed');
       
     } catch (error) {
       console.error('❌ Cleanup failed:', error);
@@ -405,11 +405,11 @@ class VenmoFamilyDemo {
   showSystemStats(): void {
     const stats = this.familySystem.getSystemStats();
     
-    console.log('\n📊 System Statistics:');
-    console.log(`   Total Families: ${stats.totalFamilies}`);
-    console.log(`   Total Members: ${stats.totalMembers}`);
-    console.log(`   Total Transactions: ${stats.totalTransactions}`);
-    console.log(`   Active QR Codes: ${stats.activeQRcodes}`);
+    console.info('\n📊 System Statistics:');
+    console.info(`   Total Families: ${stats.totalFamilies}`);
+    console.info(`   Total Members: ${stats.totalMembers}`);
+    console.info(`   Total Transactions: ${stats.totalTransactions}`);
+    console.info(`   Active QR Codes: ${stats.activeQRcodes}`);
   }
 }
 
@@ -417,7 +417,7 @@ class VenmoFamilyDemo {
  * 🎯 Main execution function
  */
 async function main(): Promise<void> {
-  console.log('🎯 Starting Venmo Family Account System Demo...\n');
+  console.info('🎯 Starting Venmo Family Account System Demo...\n');
   
   const demo = new VenmoFamilyDemo();
   
@@ -425,27 +425,27 @@ async function main(): Promise<void> {
     await demo.runDemo();
     demo.showSystemStats();
     
-    console.log('\n🎉 Venmo Family System demo completed successfully!');
-    console.log('\n📚 What was demonstrated:');
-    console.log('   ✅ Family account creation with parents and children');
-    console.log('   ✅ QR code generation and scanning');
-    console.log('   ✅ Payment processing with approval workflow');
-    console.log('   ✅ Split payments among family members');
-    console.log('   ✅ Android virtual device integration');
-    console.log('   ✅ Web SDK for browser-based applications');
-    console.log('   ✅ Real-time transaction history');
-    console.log('   ✅ Notification system');
+    console.info('\n🎉 Venmo Family System demo completed successfully!');
+    console.info('\n📚 What was demonstrated:');
+    console.info('   ✅ Family account creation with parents and children');
+    console.info('   ✅ QR code generation and scanning');
+    console.info('   ✅ Payment processing with approval workflow');
+    console.info('   ✅ Split payments among family members');
+    console.info('   ✅ Android virtual device integration');
+    console.info('   ✅ Web SDK for browser-based applications');
+    console.info('   ✅ Real-time transaction history');
+    console.info('   ✅ Notification system');
     
-    console.log('\n🌐 Open the family dashboard in your browser:');
-    console.log('   file:///Users/nolarose/tmp/clones/duo/duo-automation/demos/venmo/family-dashboard.html');
+    console.info('\n🌐 Open the family dashboard in your browser:');
+    console.info('   file:///Users/nolarose/tmp/clones/duo/duo-automation/demos/venmo/family-dashboard.html');
     
-    console.log('\n📱 Features available in the dashboard:');
-    console.log('   • Family member management');
-    console.log('   • QR code generation for payments');
-    console.log('   • Transaction history and analytics');
-    console.log('   • Real-time balance updates');
-    console.log('   • Android device connection status');
-    console.log('   • Quick payment actions');
+    console.info('\n📱 Features available in the dashboard:');
+    console.info('   • Family member management');
+    console.info('   • QR code generation for payments');
+    console.info('   • Transaction history and analytics');
+    console.info('   • Real-time balance updates');
+    console.info('   • Android device connection status');
+    console.info('   • Quick payment actions');
     
   } catch (error) {
     console.error('❌ Demo failed:', error);

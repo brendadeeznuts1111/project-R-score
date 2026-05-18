@@ -54,7 +54,7 @@ export class BenchmarkFormatter {
    */
   formatTable(data: BenchmarkTableData[], title?: string): string {
     if (title) {
-      console.log(this.formatTitle(title));
+      console.info(this.formatTitle(title));
     }
 
     // Use Bun.inspect.table for cleaner output
@@ -69,7 +69,7 @@ export class BenchmarkFormatter {
     }));
 
     // Use Bun's native table formatting
-    console.log(Bun.inspect.table(tableData));
+    console.info(Bun.inspect.table(tableData));
 
     return ''; // Console output handled by Bun.inspect.table
   }
@@ -435,18 +435,18 @@ export class BenchmarkFormatter {
 
     // Display each category
     for (const [category, items] of Object.entries(grouped)) {
-      console.log('\n' + this.createBox(this.formatTree(items), `📊 ${category}`, 'rounded'));
+      console.info('\n' + this.createBox(this.formatTree(items), `📊 ${category}`, 'rounded'));
 
       // Create sparkline for values
       const values = items.map(i => i.value);
       if (values.length > 1) {
-        console.log('\n  Trend: ' + this.formatSparkline(values, 30));
+        console.info('\n  Trend: ' + this.formatSparkline(values, 30));
       }
     }
 
     // Display summary table using Bun.inspect.table
-    console.log('\n' + this.formatTitle('Summary'));
-    console.log(
+    console.info('\n' + this.formatTitle('Summary'));
+    console.info(
       Bun.inspect.table(
         results.map(r => ({
           Test: r.test,
@@ -463,7 +463,7 @@ export class BenchmarkFormatter {
 if (import.meta.main) {
   const formatter = new BenchmarkFormatter();
 
-  console.log('\n🎨 Benchmark Formatter Demo\n');
+  console.info('\n🎨 Benchmark Formatter Demo\n');
 
   // Demo 1: Formatted table
   const benchData: BenchmarkTableData[] = [
@@ -502,27 +502,27 @@ if (import.meta.main) {
   formatter.formatTable(benchData, 'Performance Benchmarks');
 
   // Demo 2: Progress bars
-  console.log('\n📊 Progress Examples:\n');
-  console.log('Low:    ' + formatter.formatProgressBar(25));
-  console.log('Medium: ' + formatter.formatProgressBar(50));
-  console.log('High:   ' + formatter.formatProgressBar(75));
-  console.log('Done:   ' + formatter.formatProgressBar(100));
+  console.info('\n📊 Progress Examples:\n');
+  console.info('Low:    ' + formatter.formatProgressBar(25));
+  console.info('Medium: ' + formatter.formatProgressBar(50));
+  console.info('High:   ' + formatter.formatProgressBar(75));
+  console.info('Done:   ' + formatter.formatProgressBar(100));
 
   // Demo 3: Comparisons
-  console.log('\n⚔️  Comparison Examples:\n');
-  console.log('Response Time: ' + formatter.formatComparison(100, 85, 'ms'));
-  console.log('Throughput:    ' + formatter.formatComparison(1000, 1200, 'req/s'));
-  console.log('Memory:        ' + formatter.formatComparison(50, 45, 'MB'));
+  console.info('\n⚔️  Comparison Examples:\n');
+  console.info('Response Time: ' + formatter.formatComparison(100, 85, 'ms'));
+  console.info('Throughput:    ' + formatter.formatComparison(1000, 1200, 'req/s'));
+  console.info('Memory:        ' + formatter.formatComparison(50, 45, 'MB'));
 
   // Demo 4: Sparklines
-  console.log('\n📈 Sparkline Examples:\n');
+  console.info('\n📈 Sparkline Examples:\n');
   const trend1 = [10, 12, 8, 15, 20, 18, 25, 22, 30, 28];
   const trend2 = [100, 95, 90, 85, 80, 75, 70, 65, 60, 55];
-  console.log('Improving: ' + formatter.formatSparkline(trend1));
-  console.log('Degrading: ' + formatter.formatSparkline(trend2));
+  console.info('Improving: ' + formatter.formatSparkline(trend1));
+  console.info('Degrading: ' + formatter.formatSparkline(trend2));
 
   // Demo 5: Tree structure
-  console.log('\n🌳 Tree Structure:\n');
+  console.info('\n🌳 Tree Structure:\n');
   const treeData = {
     'Core Benchmarks': {
       'JSON Operations': {
@@ -539,10 +539,10 @@ if (import.meta.main) {
       Latency: '15ms',
     },
   };
-  console.log(formatter.formatTree(treeData));
+  console.info(formatter.formatTree(treeData));
 
   // Demo 6: Boxed content
-  console.log(
+  console.info(
     '\n' +
       formatter.createBox(
         'Benchmarking Complete!\n' + 'All tests passed ✅\n' + 'No regressions detected',
@@ -565,7 +565,7 @@ if (import.meta.main) {
     { name: 'Cleanup', time: 2_000_000, memory: 5_242_880, status: '✅' },
   ];
 
-  console.log('\n' + formatter.createAlignedTable(columns, tableData));
+  console.info('\n' + formatter.createAlignedTable(columns, tableData));
 }
 
 export default BenchmarkFormatter;

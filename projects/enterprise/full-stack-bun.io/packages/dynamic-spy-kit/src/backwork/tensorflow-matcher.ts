@@ -34,7 +34,7 @@ export class TensorFlowMatcher {
 		// In production, would load TensorFlow.js model
 		// const tf = await import('@tensorflow/tfjs-node');
 		// this.model = await tf.loadLayersModel(this.config.modelPath);
-		console.log('TensorFlow.js model loaded');
+		console.info('TensorFlow.js model loaded');
 	}
 
 	/**

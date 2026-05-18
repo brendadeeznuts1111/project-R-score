@@ -3,10 +3,10 @@
  * ARM64-Optimized • Bun-Native • Chromatically Complete
  */
 
-console.log('🎉 FACTORYWAGER SYSTEM DIAGNOSTIC v4.3 - FINAL STATUS')
-console.log('=' .repeat(80))
+console.info('🎉 FACTORYWAGER SYSTEM DIAGNOSTIC v4.3 - FINAL STATUS')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 🏆 ARM64 OPTIMIZATION COMPLETE!
 
 📊 SYSTEM PROFILE RESULTS:
@@ -136,7 +136,7 @@ console.log(`
 🎨 Terminal chromatics unleashed at maximum performance!
 `)
 
-console.log('✨🏆 FACTORYWAGER SYSTEM DIAGNOSTIC v4.3 - ABSOLUTELY PERFECT! 🏆✨')
-console.log('🚀 ARM64 optimization complete - Maximum performance achieved! 🚀')
-console.log('💎 Chromatic tabular dominion - Production ready! 💎')
-console.log('🎨 HSL precision + Unicode safety + Guaranteed defaults! 🎨')
+console.info('✨🏆 FACTORYWAGER SYSTEM DIAGNOSTIC v4.3 - ABSOLUTELY PERFECT! 🏆✨')
+console.info('🚀 ARM64 optimization complete - Maximum performance achieved! 🚀')
+console.info('💎 Chromatic tabular dominion - Production ready! 💎')
+console.info('🎨 HSL precision + Unicode safety + Guaranteed defaults! 🎨')

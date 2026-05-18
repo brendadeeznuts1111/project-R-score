@@ -63,7 +63,7 @@ export async function initializeNetwork(): Promise<{
   failed: string[];
 }> {
   const startTime = performance.now();
-  console.log("🚀 Warming Network Matrix...");
+  console.info("🚀 Warming Network Matrix...");
 
   const failed: string[] = [];
   let preconnected = 0;
@@ -75,9 +75,9 @@ export async function initializeNetwork(): Promise<{
     try {
       await Bun.dns.lookup(host);
       prefetched++;
-      console.log(`📡 DNS prefetched: ${host}`);
+      console.info(`📡 DNS prefetched: ${host}`);
     } catch {
-      console.log(`⚠️  DNS prefetch failed: ${host}`);
+      console.info(`⚠️  DNS prefetch failed: ${host}`);
     }
   }
 
@@ -97,7 +97,7 @@ export async function initializeNetwork(): Promise<{
         await fetch.preconnect(url);
         connectionStatus.set(host.id, "connected");
         preconnected++;
-        console.log(`🔗 Preconnected: ${host.label} → ${url}`);
+        console.info(`🔗 Preconnected: ${host.label} → ${url}`);
       } else {
         // Fallback: HEAD request to establish connection
         await fetch(url, {
@@ -106,12 +106,12 @@ export async function initializeNetwork(): Promise<{
         });
         connectionStatus.set(host.id, "connected");
         preconnected++;
-        console.log(`🔗 Connected (HEAD): ${host.label} → ${url}`);
+        console.info(`🔗 Connected (HEAD): ${host.label} → ${url}`);
       }
     } catch (err) {
       connectionStatus.set(host.id, "failed");
       failed.push(host.id);
-      console.log(`❌ Failed: ${host.label} - ${err instanceof Error ? err.message : "Unknown"}`);
+      console.info(`❌ Failed: ${host.label} - ${err instanceof Error ? err.message : "Unknown"}`);
     }
   }
 
@@ -119,10 +119,10 @@ export async function initializeNetwork(): Promise<{
   const integrity = getMatrixIntegrity();
   const elapsed = (performance.now() - startTime).toFixed(2);
 
-  console.log(`\n✅ Network Matrix Initialized [${elapsed}ms]`);
-  console.log(`   Integrity: ${integrity}`);
-  console.log(`   Preconnected: ${preconnected}/${hostEntries.length}`);
-  console.log(`   DNS Prefetched: ${prefetched}/${dns_prefetch.default_hosts.length}`);
+  console.info(`\n✅ Network Matrix Initialized [${elapsed}ms]`);
+  console.info(`   Integrity: ${integrity}`);
+  console.info(`   Preconnected: ${preconnected}/${hostEntries.length}`);
+  console.info(`   DNS Prefetched: ${prefetched}/${dns_prefetch.default_hosts.length}`);
 
   return { integrity, preconnected, prefetched, failed };
 }
@@ -199,8 +199,8 @@ export function printNetworkTable(): void {
     Status: connectionStatus.get(h.id) ?? "unconfigured",
   }));
 
-  console.log("\n📊 Network Matrix:");
-  console.log(Bun.inspect.table(hosts, { colors: true }));
+  console.info("\n📊 Network Matrix:");
+  console.info(Bun.inspect.table(hosts, { colors: true }));
 }
 
 // Export matrix for direct access

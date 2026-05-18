@@ -64,7 +64,7 @@ async function compareBenchmarks(
   }
 
   // Report results
-  console.log("📊 Benchmark Comparison\n");
+  console.info("📊 Benchmark Comparison\n");
 
   if (regressions.length > 0) {
     console.error("🚨 Performance regressions detected:\n");
@@ -78,18 +78,18 @@ async function compareBenchmarks(
   }
 
   if (improvements.length > 0) {
-    console.log("✅ Performance improvements:\n");
+    console.info("✅ Performance improvements:\n");
     improvements.forEach(({ key, baseline, pr, diff }) => {
-      console.log(`  ${key}:`);
-      console.log(`    Baseline: ${baseline}ns`);
-      console.log(`    PR:       ${pr}ns`);
-      console.log(`    Change:   -${diff}ns\n`);
+      console.info(`  ${key}:`);
+      console.info(`    Baseline: ${baseline}ns`);
+      console.info(`    PR:       ${pr}ns`);
+      console.info(`    Change:   -${diff}ns\n`);
     });
   }
 
   if (regressions.length === 0 && improvements.length === 0) {
-    console.log("✅ No significant changes detected (within tolerance)\n");
-    console.log("Tolerance:", toleranceNs, "ns");
+    console.info("✅ No significant changes detected (within tolerance)\n");
+    console.info("Tolerance:", toleranceNs, "ns");
   }
 }
 

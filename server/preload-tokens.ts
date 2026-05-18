@@ -11,4 +11,4 @@ await redis.send('HMSET', [
   'plaid', 'plaid_public_token'
 ]);
 
-console.log('✅ Tokens stored!');
+console.info('✅ Tokens stored!');

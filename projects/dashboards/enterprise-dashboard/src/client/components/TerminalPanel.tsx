@@ -132,7 +132,7 @@ export function TerminalPanel({
             break;
 
           default:
-            console.log("[Terminal] Unknown message:", msg);
+            console.info("[Terminal] Unknown message:", msg);
         }
       } catch (err) {
         console.error("[Terminal] Parse error:", err);

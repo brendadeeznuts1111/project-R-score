@@ -37,7 +37,7 @@ export class Tier1380SQLite {
         // if (stmt && typeof stmt.finalize === 'function') {
         //   stmt.finalize()
         // }
-        console.log(`Cache evicted: ${key}`)
+        console.info(`Cache evicted: ${key}`)
       }
     })
 
@@ -250,7 +250,7 @@ export class Tier1380SQLite {
 
   private recordMetric(metric: string, value: number): void {
     // Simple metrics tracking - would use proper metrics in production
-    console.log(`Metric: ${metric} = ${value}`)
+    console.info(`Metric: ${metric} = ${value}`)
   }
 
   private updateQueryMetrics(sql: string, duration: number, rowCount: number): void {

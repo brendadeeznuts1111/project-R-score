@@ -37,7 +37,7 @@ export async function profileCreate(
 			console.error("Use --force to overwrite");
 			process.exit(EXIT_CODES.CONFLICT_ERROR);
 		}
-		console.log(`\x1b[33m⚠ Overwriting existing profile "${name}"\x1b[0m`);
+		console.info(`\x1b[33m⚠ Overwriting existing profile "${name}"\x1b[0m`);
 	}
 
 	let profile: Profile;
@@ -78,14 +78,14 @@ export async function profileCreate(
 	// Save profile
 	await saveProfile(name, profile);
 
-	console.log(`\x1b[32m✓ Created profile "${name}"\x1b[0m`);
-	console.log(`  Path: ${profilePath}`);
-	console.log(`  Variables: ${Object.keys(profile.env).length}`);
+	console.info(`\x1b[32m✓ Created profile "${name}"\x1b[0m`);
+	console.info(`  Path: ${profilePath}`);
+	console.info(`  Variables: ${Object.keys(profile.env).length}`);
 
 	if (options.from) {
-		console.log(`  Based on: ${options.from}`);
+		console.info(`  Based on: ${options.from}`);
 	}
 
-	console.log(`\nTo edit: \x1b[90m$EDITOR ${profilePath}\x1b[0m`);
-	console.log(`To use:  \x1b[90meval $(bun run matrix:profile:use ${name})\x1b[0m`);
+	console.info(`\nTo edit: \x1b[90m$EDITOR ${profilePath}\x1b[0m`);
+	console.info(`To use:  \x1b[90meval $(bun run matrix:profile:use ${name})\x1b[0m`);
 }

@@ -57,7 +57,7 @@ class PerformanceMonitor {
    * Monitor file I/O performance using Bun.file()
    */
   async monitorFileOperations(): Promise<FileOperationResult[]> {
-    console.log('📊 Monitoring File I/O Performance...\n');
+    console.info('📊 Monitoring File I/O Performance...\n');
 
     const filesToTest = ['package.json', 'bun.config.ts', '.env.example', 'tsconfig.json'];
 
@@ -133,18 +133,18 @@ class PerformanceMonitor {
     const status = result.success ? '✅' : '❌';
     const sizeKB = (result.size / 1024).toFixed(2);
 
-    console.log(`${status} ${result.file}`);
-    console.log(`   Size: ${sizeKB} KB`);
-    console.log(`   Read Time: ${result.readTime.toFixed(2)}ms`);
+    console.info(`${status} ${result.file}`);
+    console.info(`   Size: ${sizeKB} KB`);
+    console.info(`   Read Time: ${result.readTime.toFixed(2)}ms`);
     if (result.parseTime > 0) {
-      console.log(`   Parse Time: ${result.parseTime.toFixed(2)}ms`);
+      console.info(`   Parse Time: ${result.parseTime.toFixed(2)}ms`);
     }
-    console.log(`   Total Time: ${result.totalTime.toFixed(2)}ms`);
+    console.info(`   Total Time: ${result.totalTime.toFixed(2)}ms`);
 
     if (result.error) {
-      console.log(`   Error: ${result.error}`);
+      console.info(`   Error: ${result.error}`);
     }
-    console.log('');
+    console.info('');
   }
 
   /**
@@ -170,7 +170,7 @@ class PerformanceMonitor {
    * Monitor system performance metrics
    */
   async monitorSystemPerformance(): Promise<void> {
-    console.log('🖥️  Monitoring System Performance...\n');
+    console.info('🖥️  Monitoring System Performance...\n');
 
     // Memory usage
     const memUsage = process.memoryUsage();
@@ -190,30 +190,30 @@ class PerformanceMonitor {
     this.metrics.bun.arch = process.arch;
 
     // Display system metrics
-    console.log('💾 Memory Usage:');
-    console.log(`   Used: ${this.metrics.memory.used} MB`);
-    console.log(`   Total: ${this.metrics.memory.total} MB`);
-    console.log(`   Usage: ${this.metrics.memory.percentage}%`);
-    console.log('');
+    console.info('💾 Memory Usage:');
+    console.info(`   Used: ${this.metrics.memory.used} MB`);
+    console.info(`   Total: ${this.metrics.memory.total} MB`);
+    console.info(`   Usage: ${this.metrics.memory.percentage}%`);
+    console.info('');
 
-    console.log('⚡ CPU & System:');
-    console.log(`   Uptime: ${this.metrics.cpu.uptime.toFixed(1)}s`);
-    console.log(`   CPU Load: ${this.metrics.cpu.load.toFixed(2)}s`);
-    console.log('');
+    console.info('⚡ CPU & System:');
+    console.info(`   Uptime: ${this.metrics.cpu.uptime.toFixed(1)}s`);
+    console.info(`   CPU Load: ${this.metrics.cpu.load.toFixed(2)}s`);
+    console.info('');
 
-    console.log('🚀 Bun Runtime:');
-    console.log(`   Version: ${this.metrics.bun.version}`);
-    console.log(`   Platform: ${this.metrics.bun.platform}`);
-    console.log(`   Architecture: ${this.metrics.bun.arch}`);
-    console.log('');
+    console.info('🚀 Bun Runtime:');
+    console.info(`   Version: ${this.metrics.bun.version}`);
+    console.info(`   Platform: ${this.metrics.bun.platform}`);
+    console.info(`   Architecture: ${this.metrics.bun.arch}`);
+    console.info('');
   }
 
   /**
    * Run comprehensive performance test
    */
   async runComprehensiveTest(): Promise<void> {
-    console.log('🎯 Fire22 Dashboard Performance Monitor');
-    console.log('!==!==!==!==!==!==!====\n');
+    console.info('🎯 Fire22 Dashboard Performance Monitor');
+    console.info('!==!==!==!==!==!==!====\n');
 
     // Monitor file operations
     await this.monitorFileOperations();
@@ -229,33 +229,33 @@ class PerformanceMonitor {
    * Display performance summary
    */
   private displaySummary(): void {
-    console.log('📊 Performance Summary');
-    console.log('!==!==!==!===\n');
+    console.info('📊 Performance Summary');
+    console.info('!==!==!==!===\n');
 
-    console.log('📁 File Operations:');
-    console.log(`   Total Files Tested: ${this.metrics.fileOperations.totalFiles}`);
-    console.log(`   Package Files: ${this.metrics.fileOperations.packageJson}`);
-    console.log(`   Config Files: ${this.metrics.fileOperations.configFiles}`);
-    console.log(`   Average Read Time: ${this.metrics.fileOperations.averageTime.toFixed(2)}ms`);
-    console.log('');
+    console.info('📁 File Operations:');
+    console.info(`   Total Files Tested: ${this.metrics.fileOperations.totalFiles}`);
+    console.info(`   Package Files: ${this.metrics.fileOperations.packageJson}`);
+    console.info(`   Config Files: ${this.metrics.fileOperations.configFiles}`);
+    console.info(`   Average Read Time: ${this.metrics.fileOperations.averageTime.toFixed(2)}ms`);
+    console.info('');
 
-    console.log('🎯 Recommendations:');
+    console.info('🎯 Recommendations:');
     if (this.metrics.fileOperations.averageTime > 10) {
-      console.log('   ⚠️  File read times are high - consider caching');
+      console.info('   ⚠️  File read times are high - consider caching');
     } else {
-      console.log('   ✅ File read performance is excellent');
+      console.info('   ✅ File read performance is excellent');
     }
 
     if (this.metrics.memory.percentage > 80) {
-      console.log('   ⚠️  High memory usage - consider optimization');
+      console.info('   ⚠️  High memory usage - consider optimization');
     } else {
-      console.log('   ✅ Memory usage is healthy');
+      console.info('   ✅ Memory usage is healthy');
     }
 
     if (this.metrics.cpu.load > 100) {
-      console.log('   ⚠️  High CPU load detected');
+      console.info('   ⚠️  High CPU load detected');
     } else {
-      console.log('   ✅ CPU load is normal');
+      console.info('   ✅ CPU load is normal');
     }
   }
 
@@ -279,7 +279,7 @@ class PerformanceMonitor {
     const exportPath = 'performance-report.json';
     await Bun.write(exportPath, JSON.stringify(exportData, null, 2));
 
-    console.log(`📤 Performance data exported to: ${exportPath}`);
+    console.info(`📤 Performance data exported to: ${exportPath}`);
   }
 }
 

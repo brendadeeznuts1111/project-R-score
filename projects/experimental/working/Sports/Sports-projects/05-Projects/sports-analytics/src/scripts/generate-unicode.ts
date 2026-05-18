@@ -67,7 +67,7 @@ const ${table} = struct {
 }
 
 async function main() {
-  console.log("🧬 Generating Unicode identifier tables...");
+  console.info("🧬 Generating Unicode identifier tables...");
   
   const functions = [
     {
@@ -112,7 +112,7 @@ async function main() {
 ${results.join("\n\n")}`;
 
   await Bun.write(import.meta.dir + "/unicode-identifiers.zig", output);
-  console.log(`✅ Unicode tables generated and saved to ${import.meta.dir}/unicode-identifiers.zig`);
+  console.info(`✅ Unicode tables generated and saved to ${import.meta.dir}/unicode-identifiers.zig`);
 }
 
 main().catch(console.error);

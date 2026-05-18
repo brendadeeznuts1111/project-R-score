@@ -1,51 +1,51 @@
 // bun-stdout-demo.ts - Complete stdout writing demonstration
 
-console.log("🎯 Bun stdout Writing Demo");
-console.log("========================");
+console.info("🎯 Bun stdout Writing Demo");
+console.info("========================");
 
 // 1. Basic console.log usage
-console.log("\n📋 1. Basic console.log() Usage:");
-console.log("Hello, World!");
-console.log("This automatically adds a line break");
-console.log("Multiple", "arguments", "work", "too");
+console.info("\n📋 1. Basic console.info() Usage:");
+console.info("Hello, World!");
+console.info("This automatically adds a line break");
+console.info("Multiple", "arguments", "work", "too");
 
 // 2. console.log with different data types
-console.log("\n🎨 2. console.log() with Different Data Types:");
-console.log("String: Hello World");
-console.log("Number:", 42);
-console.log("Boolean:", true);
-console.log("Array:", [1, 2, 3, 4, 5]);
-console.log("Object:", { name: "test", value: 42 });
-console.log("Date:", new Date());
-console.log("RegExp:", /test/gi);
-console.log("Function:", function () {
+console.info("\n🎨 2. console.info() with Different Data Types:");
+console.info("String: Hello World");
+console.info("Number:", 42);
+console.info("Boolean:", true);
+console.info("Array:", [1, 2, 3, 4, 5]);
+console.info("Object:", { name: "test", value: 42 });
+console.info("Date:", new Date());
+console.info("RegExp:", /test/gi);
+console.info("Function:", function () {
   return "test";
 });
-console.log("Symbol:", Symbol("test"));
-console.log("null:", null);
-console.log("undefined:", undefined);
+console.info("Symbol:", Symbol("test"));
+console.info("null:", null);
+console.info("undefined:", undefined);
 
 // 3. console.log with formatting
-console.log("\n🎯 3. console.log() with Formatting:");
+console.info("\n🎯 3. console.info() with Formatting:");
 const name = "Alice";
 const age = 30;
 const score = 95.5;
 
-console.log(`User ${name} is ${age} years old with score ${score}`);
-console.log("User %s is %d years old with score %.1f", name, age, score);
+console.info(`User ${name} is ${age} years old with score ${score}`);
+console.info("User %s is %d years old with score %.1f", name, age, score);
 
 // 4. Bun.stdout property demonstration
-console.log("\n📝 4. Bun.stdout Property:");
-console.log("Bun.stdout type:", typeof Bun.stdout);
-console.log("Bun.stdout is a BunFile:", Bun.stdout instanceof Bun.File);
+console.info("\n📝 4. Bun.stdout Property:");
+console.info("Bun.stdout type:", typeof Bun.stdout);
+console.info("Bun.stdout is a BunFile:", Bun.stdout instanceof Bun.File);
 
 // 5. Basic Bun.write to stdout
-console.log("\n✍️ 5. Basic Bun.write() to stdout:");
+console.info("\n✍️ 5. Basic Bun.write() to stdout:");
 await Bun.write(Bun.stdout, "Hello from Bun.write!\n");
 await Bun.write(Bun.stdout, "This is written directly to stdout\n");
 
 // 6. Bun.write with different data types
-console.log("\n🎨 6. Bun.write() with Different Data Types:");
+console.info("\n🎨 6. Bun.write() with Different Data Types:");
 await Bun.write(Bun.stdout, "String: Hello World\n");
 await Bun.write(Bun.stdout, `Number: ${42}\n`);
 await Bun.write(Bun.stdout, `Boolean: ${true}\n`);
@@ -56,24 +56,24 @@ await Bun.write(
 );
 
 // 7. Bun.write with Buffer
-console.log("\n🔧 7. Bun.write() with Buffer:");
+console.info("\n🔧 7. Bun.write() with Buffer:");
 const buffer = Buffer.from("Hello from Buffer!\n");
 await Bun.write(Bun.stdout, buffer);
 
 // 8. Bun.write with Uint8Array
-console.log("\n📦 8. Bun.write() with Uint8Array:");
+console.info("\n📦 8. Bun.write() with Uint8Array:");
 const uint8Array = new TextEncoder().encode("Hello from Uint8Array!\n");
 await Bun.write(Bun.stdout, uint8Array);
 
 // 9. Performance comparison
-console.log("\n⚡ 9. Performance Comparison:");
+console.info("\n⚡ 9. Performance Comparison:");
 const testData =
   "Hello, World! This is a test string for performance comparison.\n";
 
 // console.log performance
 console.time("console.log");
 for (let i = 0; i < 1000; i++) {
-  console.log(testData);
+  console.info(testData);
 }
 console.timeEnd("console.log");
 
@@ -85,35 +85,35 @@ for (let i = 0; i < 1000; i++) {
 console.timeEnd("Bun.write");
 
 // 10. Async vs Sync behavior
-console.log("\n🔄 10. Async vs Sync Behavior:");
-console.log("console.log is synchronous:");
-console.log("Line 1");
-console.log("Line 2");
-console.log("Line 3");
+console.info("\n🔄 10. Async vs Sync Behavior:");
+console.info("console.log is synchronous:");
+console.info("Line 1");
+console.info("Line 2");
+console.info("Line 3");
 
-console.log("\nBun.write is asynchronous:");
+console.info("\nBun.write is asynchronous:");
 await Bun.write(Bun.stdout, "Async Line 1\n");
 await Bun.write(Bun.stdout, "Async Line 2\n");
 await Bun.write(Bun.stdout, "Async Line 3\n");
 
 // 11. Error handling
-console.log("\n❌ 11. Error Handling:");
+console.info("\n❌ 11. Error Handling:");
 try {
   await Bun.write(Bun.stdout, "This should work\n");
-  console.log("✅ Write successful");
+  console.info("✅ Write successful");
 } catch (error) {
-  console.log("❌ Write failed:", error.message);
+  console.info("❌ Write failed:", error.message);
 }
 
 // 12. Large data writing
-console.log("\n📊 12. Large Data Writing:");
+console.info("\n📊 12. Large Data Writing:");
 const largeData = "x".repeat(1000) + "\n";
-console.log("Writing 1000 characters...");
+console.info("Writing 1000 characters...");
 await Bun.write(Bun.stdout, largeData);
-console.log("✅ Large data written successfully");
+console.info("✅ Large data written successfully");
 
 // 13. Streaming data
-console.log("\n🌊 13. Streaming Data:");
+console.info("\n🌊 13. Streaming Data:");
 const streamData = [
   "Chunk 1: First part of data\n",
   "Chunk 2: Second part of data\n",
@@ -129,12 +129,12 @@ for (const chunk of streamData) {
 }
 
 // 14. Binary data
-console.log("\n🔢 14. Binary Data:");
+console.info("\n🔢 14. Binary Data:");
 const binaryData = new Uint8Array([0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x0a]); // "Hello\n"
 await Bun.write(Bun.stdout, binaryData);
 
 // 15. JSON data
-console.log("\n📋 15. JSON Data:");
+console.info("\n📋 15. JSON Data:");
 const jsonData = {
   message: "Hello from JSON",
   timestamp: new Date().toISOString(),
@@ -143,7 +143,7 @@ const jsonData = {
 await Bun.write(Bun.stdout, JSON.stringify(jsonData, null, 2) + "\n");
 
 // 16. Formatted output
-console.log("\n🎨 16. Formatted Output:");
+console.info("\n🎨 16. Formatted Output:");
 const user = { name: "Alice", age: 30, score: 95.5 };
 const formatted = `
 User Profile:
@@ -156,7 +156,7 @@ Timestamp: ${new Date().toISOString()}
 await Bun.write(Bun.stdout, formatted);
 
 // 17. Progress indicator
-console.log("\n📈 17. Progress Indicator:");
+console.info("\n📈 17. Progress Indicator:");
 const totalSteps = 10;
 for (let i = 1; i <= totalSteps; i++) {
   await Bun.write(
@@ -168,7 +168,7 @@ for (let i = 1; i <= totalSteps; i++) {
 await Bun.write(Bun.stdout, "\n");
 
 // 18. Table output
-console.log("\n📊 18. Table Output:");
+console.info("\n📊 18. Table Output:");
 const tableData = [
   ["Name", "Age", "Score"],
   ["Alice", "30", "95.5"],
@@ -184,7 +184,7 @@ const tableString =
 await Bun.write(Bun.stdout, tableString);
 
 // 19. Color output
-console.log("\n🎨 19. Color Output:");
+console.info("\n🎨 19. Color Output:");
 const colors = {
   reset: "\x1b[0m",
   red: "\x1b[31m",
@@ -203,7 +203,7 @@ await Bun.write(Bun.stdout, `${colors.magenta}Magenta text${colors.reset}\n`);
 await Bun.write(Bun.stdout, `${colors.cyan}Cyan text${colors.reset}\n`);
 
 // 20. Real-time logging
-console.log("\n📝 20. Real-time Logging:");
+console.info("\n📝 20. Real-time Logging:");
 const logLevels = {
   INFO: "🔵",
   WARN: "🟡",
@@ -224,36 +224,36 @@ await log("ERROR", "Connection failed");
 await log("INFO", "Application finished");
 
 // 21. File-like operations
-console.log("\n📁 21. File-like Operations:");
-console.log("Bun.stdout supports file operations:");
-console.log("- Bun.write(Bun.stdout, data)");
-console.log("- Bun.stdout is a BunFile instance");
-console.log("- Can be used as destination for streams");
+console.info("\n📁 21. File-like Operations:");
+console.info("Bun.stdout supports file operations:");
+console.info("- Bun.write(Bun.stdout, data)");
+console.info("- Bun.stdout is a BunFile instance");
+console.info("- Can be used as destination for streams");
 
 // 22. Comparison summary
-console.log("\n📊 22. Comparison Summary:");
-console.log("console.log():");
-console.log("  ✅ Synchronous");
-console.log("  ✅ Automatic line breaks");
-console.log("  ✅ Multiple arguments");
-console.log("  ✅ Built-in formatting");
-console.log("  ✅ Type inspection");
+console.info("\n📊 22. Comparison Summary:");
+console.info("console.info():");
+console.info("  ✅ Synchronous");
+console.info("  ✅ Automatic line breaks");
+console.info("  ✅ Multiple arguments");
+console.info("  ✅ Built-in formatting");
+console.info("  ✅ Type inspection");
 
-console.log("\nBun.write(Bun.stdout):");
-console.log("  ✅ Asynchronous");
-console.log("  ✅ Manual line breaks");
-console.log("  ✅ Single data argument");
-console.log("  ✅ Raw data writing");
-console.log("  ✅ Better for large data");
-console.log("  ✅ Supports binary data");
+console.info("\nBun.write(Bun.stdout):");
+console.info("  ✅ Asynchronous");
+console.info("  ✅ Manual line breaks");
+console.info("  ✅ Single data argument");
+console.info("  ✅ Raw data writing");
+console.info("  ✅ Better for large data");
+console.info("  ✅ Supports binary data");
 
-console.log("\n✅ stdout writing demo completed!");
-console.log("\n📋 Use Cases:");
-console.log("   • console.log() - General debugging, development output");
-console.log(
+console.info("\n✅ stdout writing demo completed!");
+console.info("\n📋 Use Cases:");
+console.info("   • console.info() - General debugging, development output");
+console.info(
   "   • Bun.write() - Performance-critical output, large data, streaming"
 );
-console.log("   • Both support strings, buffers, and binary data");
-console.log(
+console.info("   • Both support strings, buffers, and binary data");
+console.info(
   "   • Choose based on sync/async needs and performance requirements"
 );

@@ -38,9 +38,9 @@ const testSuites: TestSuite[] = [
 ];
 
 async function runTestSuite(suite: TestSuite): Promise<TestResult> {
-  console.log(`\n🧪 Running ${suite.name} Tests`);
-  console.log(`📝 ${suite.description}`);
-  console.log('─'.repeat(60));
+  console.info(`\n🧪 Running ${suite.name} Tests`);
+  console.info(`📝 ${suite.description}`);
+  console.info('─'.repeat(60));
   
   const startTime = Date.now();
   
@@ -156,54 +156,54 @@ async function createTestReports(results: TestResult[]): Promise<void> {
   
   await writeFile(join(reportDir, `v2.01.05-test-summary-${timestamp}.json`), JSON.stringify(summary, null, 2));
   
-  console.log(`\n📋 Test reports saved to: ${reportDir}/`);
-  console.log(`   📄 Detailed report: v2.01.05-test-report-${timestamp}.md`);
-  console.log(`   📊 JSON summary: v2.01.05-test-summary-${timestamp}.json`);
+  console.info(`\n📋 Test reports saved to: ${reportDir}/`);
+  console.info(`   📄 Detailed report: v2.01.05-test-report-${timestamp}.md`);
+  console.info(`   📊 JSON summary: v2.01.05-test-summary-${timestamp}.json`);
 }
 
 async function runQuickHealthCheck(): Promise<boolean> {
-  console.log('\n🏥 Running Quick Health Check...');
+  console.info('\n🏥 Running Quick Health Check...');
   
   try {
     // Test basic self-heal functionality
     const result = await $`bun run scripts/self-heal.ts --help`.text();
     if (!result.includes('System Hygiene v2.01.05')) {
-      console.log('❌ Self-heal script not responding correctly');
+      console.info('❌ Self-heal script not responding correctly');
       return false;
     }
     
     // Test CLI integration
     const cacheResult = await $`bun run cli/commands/cache.ts --help`.text();
     if (!cacheResult.includes('cache')) {
-      console.log('❌ Cache CLI not responding correctly');
+      console.info('❌ Cache CLI not responding correctly');
       return false;
     }
     
     // Test empire CLI
     const empireResult = await $`bun run cli/bin/empire.ts --help`.text();
     if (!empireResult.includes('empire')) {
-      console.log('❌ Empire CLI not responding correctly');
+      console.info('❌ Empire CLI not responding correctly');
       return false;
     }
     
-    console.log('✅ All components responding correctly');
+    console.info('✅ All components responding correctly');
     return true;
     
   } catch (error) {
-    console.log('❌ Health check failed:', error instanceof Error ? error.message : String(error));
+    console.info('❌ Health check failed:', error instanceof Error ? error.message : String(error));
     return false;
   }
 }
 
 async function main() {
-  console.log('🚀 Duo Automation v2.01.05 Test Runner');
-  console.log('=====================================');
-  console.log('Running comprehensive tests for enhanced self-heal system...\n');
+  console.info('🚀 Duo Automation v2.01.05 Test Runner');
+  console.info('=====================================');
+  console.info('Running comprehensive tests for enhanced self-heal system...\n');
   
   // Quick health check first
   const healthCheck = await runQuickHealthCheck();
   if (!healthCheck) {
-    console.log('\n❌ Health check failed. Please check your installation.');
+    console.info('\n❌ Health check failed. Please check your installation.');
     process.exit(1);
   }
   
@@ -216,9 +216,9 @@ async function main() {
     results.push(result);
     
     if (result.success) {
-      console.log(`✅ ${suite.name} completed in ${formatDuration(result.duration)}`);
+      console.info(`✅ ${suite.name} completed in ${formatDuration(result.duration)}`);
     } else {
-      console.log(`❌ ${suite.name} failed in ${formatDuration(result.duration)}`);
+      console.info(`❌ ${suite.name} failed in ${formatDuration(result.duration)}`);
     }
   }
   
@@ -226,12 +226,12 @@ async function main() {
   
   // Generate and display report
   const report = generateReport(results);
-  console.log(report);
+  console.info(report);
   
   // Save detailed reports
   await createTestReports(results);
   
-  console.log(`\n⏱️  Total test execution time: ${formatDuration(totalDuration)}`);
+  console.info(`\n⏱️  Total test execution time: ${formatDuration(totalDuration)}`);
   
   // Exit with appropriate code
   const allPassed = results.every(r => r.success);
@@ -242,7 +242,7 @@ async function main() {
 const args = process.argv.slice(2);
 
 if (args.includes('--help') || args.includes('-h')) {
-  console.log(`
+  console.info(`
 🧪 Duo Automation v2.01.05 Test Runner
 
 Usage: bun run scripts/run-v2.01.05-tests.ts [options]
@@ -275,13 +275,13 @@ if (args.includes('--quick')) {
   const suite = testSuites.find(s => s.name.toLowerCase().includes(suiteName.toLowerCase()));
   
   if (!suite) {
-    console.log(`❌ Test suite '${suiteName}' not found`);
-    console.log('Available suites:', testSuites.map(s => s.name).join(', '));
+    console.info(`❌ Test suite '${suiteName}' not found`);
+    console.info('Available suites:', testSuites.map(s => s.name).join(', '));
     process.exit(1);
   }
   
   runTestSuite(suite).then(result => {
-    console.log(`\n${result.success ? '✅' : '❌'} ${suite.name}: ${result.passed + result.failed} tests, ${formatDuration(result.duration)}`);
+    console.info(`\n${result.success ? '✅' : '❌'} ${suite.name}: ${result.passed + result.failed} tests, ${formatDuration(result.duration)}`);
     process.exit(result.success ? 0 : 1);
   });
 } else {

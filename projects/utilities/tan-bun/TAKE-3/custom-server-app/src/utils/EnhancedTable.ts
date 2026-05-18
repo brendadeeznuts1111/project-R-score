@@ -186,7 +186,7 @@ export class EnhancedTable {
       column: 1,
     });
 
-    console.log(`🔍 Table data opened in editor: ${tempFile}`);
+    console.info(`🔍 Table data opened in editor: ${tempFile}`);
   }
 
   /**
@@ -310,28 +310,28 @@ export class EnhancedTable {
       { id: 3, name: 'Charlie', age: 35, city: 'Chicago' }, // Added
     ];
 
-    console.log('=== TABLE COMPARISON ===');
-    console.log(
+    console.info('=== TABLE COMPARISON ===');
+    console.info(
       this.compareTables(table1, table2, 'id', { showOnlyDiffs: true })
     );
 
     // HTML table example
-    console.log('\n=== HTML TABLE ===');
+    console.info('\n=== HTML TABLE ===');
     const htmlResult = this.htmlTable(table1, ['id', 'name', 'age']);
-    console.log('Terminal:', htmlResult.terminal);
-    console.log('HTML:', htmlResult.html);
+    console.info('Terminal:', htmlResult.terminal);
+    console.info('HTML:', htmlResult.html);
 
     // Validation example
-    console.log('\n=== VALIDATION ===');
+    console.info('\n=== VALIDATION ===');
     const schema = {
       age: (v: any) => typeof v === 'number' && v > 0,
       name: (v: any) => typeof v === 'string' && v.length > 0,
     };
     const validation = this.validateTable(table1, schema);
-    console.log(validation.summary);
+    console.info(validation.summary);
 
     // Phone profile example
-    console.log('\n=== PHONE PROFILES ===');
+    console.info('\n=== PHONE PROFILES ===');
     const profiles = [
       {
         id: 'abc123def456',
@@ -343,6 +343,6 @@ export class EnhancedTable {
         lastSync: new Date(),
       },
     ];
-    console.log(this.phoneProfileTable(profiles));
+    console.info(this.phoneProfileTable(profiles));
   }
 }

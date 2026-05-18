@@ -348,16 +348,16 @@ if (import.meta.main) {
     timestamp: new Date(),
   };
 
-  console.log('🌊 Water Status Box Demo\n');
+  console.info('🌊 Water Status Box Demo\n');
 
   // Terminal style
-  console.log('Unicode Style:');
-  console.log(waterStatusUtils.terminal(exampleMetrics));
+  console.info('Unicode Style:');
+  console.info(waterStatusUtils.terminal(exampleMetrics));
 
-  console.log('\nASCII Style:');
-  console.log(WaterStatusBox.generateBox(exampleMetrics, { style: 'ascii' }));
+  console.info('\nASCII Style:');
+  console.info(WaterStatusBox.generateBox(exampleMetrics, { style: 'ascii' }));
 
   // HTML style
-  console.log('\nHTML Version:');
-  console.log(waterStatusUtils.html(exampleMetrics));
+  console.info('\nHTML Version:');
+  console.info(waterStatusUtils.html(exampleMetrics));
 }

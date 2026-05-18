@@ -154,7 +154,7 @@ class TomlHotReload {
 					this.globalStats.lastReload = Date.now();
 
 					if (mergedOptions.enableLogging) {
-						console.log(
+						console.info(
 							`🔄 Reloaded ${filePath} (${eventType}) in ${reloadTime}ms`,
 						);
 					}
@@ -228,7 +228,7 @@ class TomlHotReload {
 		}
 
 		if (mergedOptions.enableLogging) {
-			console.log(`👁️  Started watching: ${path}`);
+			console.info(`👁️  Started watching: ${path}`);
 		}
 
 		return handle;

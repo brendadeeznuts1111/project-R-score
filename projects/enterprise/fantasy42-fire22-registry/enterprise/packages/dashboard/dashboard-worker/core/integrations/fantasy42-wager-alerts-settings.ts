@@ -227,7 +227,7 @@ export class Fantasy42WagerAlertSettings {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🚨 Initializing Fantasy42 Wager Alert Settings System...');
+      console.info('🚨 Initializing Fantasy42 Wager Alert Settings System...');
 
       // Detect wager alert settings modal
       await this.detectAlertSettingsModal();
@@ -250,7 +250,7 @@ export class Fantasy42WagerAlertSettings {
       }
 
       this.isInitialized = true;
-      console.log('✅ Fantasy42 Wager Alert Settings System initialized');
+      console.info('✅ Fantasy42 Wager Alert Settings System initialized');
 
       return true;
     } catch (error) {
@@ -413,7 +413,7 @@ export class Fantasy42WagerAlertSettings {
           element.textContent?.toLowerCase().includes('alert')
         ) {
           modalTitle = element;
-          console.log('✅ Found wager alert settings modal:', selector);
+          console.info('✅ Found wager alert settings modal:', selector);
           this.setupAlertSettingsModal(modalTitle as HTMLHeadingElement);
           break;
         }
@@ -422,7 +422,7 @@ export class Fantasy42WagerAlertSettings {
     }
 
     if (!modalTitle) {
-      console.log('⚠️ Wager alert settings modal not found, system will initialize on demand');
+      console.info('⚠️ Wager alert settings modal not found, system will initialize on demand');
     }
   }
 
@@ -452,7 +452,7 @@ export class Fantasy42WagerAlertSettings {
     // Initialize modal content
     this.initializeModalContent(modal as HTMLElement);
 
-    console.log('✅ Wager alert settings modal setup complete');
+    console.info('✅ Wager alert settings modal setup complete');
   }
 
   /**
@@ -791,7 +791,7 @@ export class Fantasy42WagerAlertSettings {
     // Setup form event listeners
     this.setupFormEventListeners(modal);
 
-    console.log('✅ Modal content initialized');
+    console.info('✅ Modal content initialized');
   }
 
   /**
@@ -1245,7 +1245,7 @@ export class Fantasy42WagerAlertSettings {
     // Load settings from configuration
     this.populateFormFields(modal);
 
-    console.log('✅ Current settings loaded');
+    console.info('✅ Current settings loaded');
   }
 
   /**
@@ -1285,7 +1285,7 @@ export class Fantasy42WagerAlertSettings {
     const emailEnabled = modal.querySelector('#email-enabled') as HTMLInputElement;
     if (emailEnabled) emailEnabled.checked = config.channelConfigurations.email.enabled;
 
-    console.log('✅ Form fields populated');
+    console.info('✅ Form fields populated');
   }
 
   /**
@@ -1304,7 +1304,7 @@ export class Fantasy42WagerAlertSettings {
     // Save settings listener
     this.setupSaveSettings(modal);
 
-    console.log('✅ Form event listeners setup');
+    console.info('✅ Form event listeners setup');
   }
 
   /**
@@ -1411,7 +1411,7 @@ export class Fantasy42WagerAlertSettings {
     // Refresh settings when modal opens
     this.loadCurrentSettings(modal);
 
-    console.log('🚨 Wager alert settings modal opened');
+    console.info('🚨 Wager alert settings modal opened');
   }
 
   /**
@@ -1438,7 +1438,7 @@ export class Fantasy42WagerAlertSettings {
       settingsCount: Object.keys(settings).length,
     });
 
-    console.log('✅ Settings saved successfully');
+    console.info('✅ Settings saved successfully');
   }
 
   /**
@@ -1611,7 +1611,7 @@ export class Fantasy42WagerAlertSettings {
       this.alertConfiguration.alertTemplates.systemAlert = settings.templates.systemAlert;
     }
 
-    console.log('⚙️ Configuration updated');
+    console.info('⚙️ Configuration updated');
   }
 
   /**
@@ -1693,7 +1693,7 @@ export class Fantasy42WagerAlertSettings {
     // Display results
     this.displayTestResults(resultsDiv, results);
 
-    console.log('🧪 All channels tested');
+    console.info('🧪 All channels tested');
   }
 
   /**
@@ -1708,7 +1708,7 @@ export class Fantasy42WagerAlertSettings {
     const result = await this.testChannel(channel);
     this.displayTestResults(resultsDiv, [{ channel, ...result }]);
 
-    console.log(`🧪 ${channel} channel tested`);
+    console.info(`🧪 ${channel} channel tested`);
   }
 
   /**
@@ -1763,7 +1763,7 @@ export class Fantasy42WagerAlertSettings {
    */
   private async initializeAlertConfiguration(): Promise<void> {
     // Setup alert configuration management
-    console.log('⚙️ Alert configuration initialized');
+    console.info('⚙️ Alert configuration initialized');
   }
 
   /**
@@ -1773,7 +1773,7 @@ export class Fantasy42WagerAlertSettings {
     // Setup alert processing system
     this.startAlertProcessing();
 
-    console.log('⚙️ Alert processing initialized');
+    console.info('⚙️ Alert processing initialized');
   }
 
   /**
@@ -1781,7 +1781,7 @@ export class Fantasy42WagerAlertSettings {
    */
   private async initializeChannelManagement(): Promise<void> {
     // Setup channel management
-    console.log('📱 Channel management initialized');
+    console.info('📱 Channel management initialized');
   }
 
   /**
@@ -1789,7 +1789,7 @@ export class Fantasy42WagerAlertSettings {
    */
   private async initializeThresholdManagement(): Promise<void> {
     // Setup threshold management
-    console.log('📊 Threshold management initialized');
+    console.info('📊 Threshold management initialized');
   }
 
   /**
@@ -1797,7 +1797,7 @@ export class Fantasy42WagerAlertSettings {
    */
   private async initializeAnalyticsReporting(): Promise<void> {
     // Setup analytics reporting
-    console.log('📈 Analytics reporting initialized');
+    console.info('📈 Analytics reporting initialized');
   }
 
   /**
@@ -1826,14 +1826,14 @@ export class Fantasy42WagerAlertSettings {
    */
   private async sendAlert(alert: any): Promise<void> {
     // Send alert through configured channels
-    console.log('📤 Sending alert:', alert);
+    console.info('📤 Sending alert:', alert);
   }
 
   /**
    * Track analytics
    */
   private trackAnalytics(event: string, data: any): void {
-    console.log('📊 Analytics tracked:', event, data);
+    console.info('📊 Analytics tracked:', event, data);
   }
 
   /**
@@ -1916,7 +1916,7 @@ export class Fantasy42WagerAlertSettings {
    */
   updateConfiguration(newConfig: Partial<AlertConfiguration>): void {
     this.alertConfiguration = { ...this.alertConfiguration, ...newConfig };
-    console.log('⚙️ Alert configuration updated');
+    console.info('⚙️ Alert configuration updated');
   }
 
   /**
@@ -1924,7 +1924,7 @@ export class Fantasy42WagerAlertSettings {
    */
   queueAlert(alert: any): void {
     this.alertQueue.push(alert);
-    console.log('📋 Alert queued:', alert);
+    console.info('📋 Alert queued:', alert);
   }
 
   /**
@@ -1966,7 +1966,7 @@ export class Fantasy42WagerAlertSettings {
     this.eventListeners.clear();
 
     this.isInitialized = false;
-    console.log('🧹 Wager alert settings system cleaned up');
+    console.info('🧹 Wager alert settings system cleaned up');
   }
 
   // Private properties

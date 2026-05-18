@@ -70,7 +70,7 @@ export class CascadeOrchestrator {
     // Discover and register adaptive hooks
     await this.hooks.discoverAndRegisterHooks();
     
-    console.log('🎯 Cascade Orchestrator initialized with context-rich components');
+    console.info('🎯 Cascade Orchestrator initialized with context-rich components');
   }
   
   private setupIntegrations(): void {
@@ -82,7 +82,7 @@ export class CascadeOrchestrator {
     // Setup discovery integration
     this.setupDiscoveryIntegration();
     
-    console.log('🔗 Component integrations established');
+    console.info('🔗 Component integrations established');
   }
   
   /**
@@ -170,7 +170,7 @@ export class CascadeOrchestrator {
         }
       };
       
-      console.log(`✅ Executed ${operation} in ${Date.now() - startTime}ms`);
+      console.info(`✅ Executed ${operation} in ${Date.now() - startTime}ms`);
       
       return executionResult;
       
@@ -241,11 +241,11 @@ export class CascadeOrchestrator {
    * Handle configuration changes
    */
   private handleConfigChange(event: any): void {
-    console.log('⚙️ Configuration changed:', event.source);
+    console.info('⚙️ Configuration changed:', event.source);
     
     // Re-initialize components if needed
     if (event.changes.engine) {
-      console.log('🔄 Engine configuration updated, reinitializing...');
+      console.info('🔄 Engine configuration updated, reinitializing...');
       // Component reinitialization logic here
     }
   }
@@ -344,9 +344,9 @@ export async function initializeCascade(): Promise<void> {
   const orchestrator = CascadeOrchestrator.getInstance();
   const status = orchestrator.getStatus();
   
-  console.log('🎯 Cascade Framework Initialized');
-  console.log(`📊 Status: ${status.hooks.registered} hooks, ${status.deepWiki.cacheStats.size} cached knowledge items`);
-  console.log('🔗 Follow-up readiness: ENABLED');
-  console.log('🔮 Veiled discovery: ACTIVE');
-  console.log('🧠 DeepWiki integration: CONNECTED');
+  console.info('🎯 Cascade Framework Initialized');
+  console.info(`📊 Status: ${status.hooks.registered} hooks, ${status.deepWiki.cacheStats.size} cached knowledge items`);
+  console.info('🔗 Follow-up readiness: ENABLED');
+  console.info('🔮 Veiled discovery: ACTIVE');
+  console.info('🧠 DeepWiki integration: CONNECTED');
 }

@@ -218,7 +218,7 @@ export class KalmanInfrastructureIntegration {
     const msgWidth = this.measureDashboardWidth(message);
     const padding = 20 - catWidth; // Fixed width column
 
-    console.log(
+    console.info(
       `${category.padEnd(padding, " ")} | ${message.padEnd(msgWidth + 5, " ")}`
     );
   }
@@ -294,22 +294,22 @@ export const createSecureContext = true
   : () => ({ console: { log: console.log } }) as MicrostructuralContext;
 export const logMessage = true
   ? KalmanInfrastructureIntegration.logAligned
-  : (cat: string, msg: string) => console.log(`${cat}: ${msg}`);
+  : (cat: string, msg: string) => console.info(`${cat}: ${msg}`);
 
 // Demonstration function
 export function demonstrateKalmanIntegration(): void {
-  console.log("🚀 Kalman Infrastructure Integration: v2.4.2");
-  console.log("==============================================");
+  console.info("🚀 Kalman Infrastructure Integration: v2.4.2");
+  console.info("==============================================");
 
   // Test Unicode width measurement
   const testText = "📊 Performance Dashboard";
   const width = measureWidth(testText);
-  console.log(`📏 Unicode width: "${testText}" → ${width} cells`);
+  console.info(`📏 Unicode width: "${testText}" → ${width} cells`);
 
   // Test V8 type checking
   const testState = { price: 100.5, timestamp: Date.now() };
   const isValid = validateState(testState);
-  console.log(`🔍 State validation: ${isValid ? "✅" : "❌"}`);
+  console.info(`🔍 State validation: ${isValid ? "✅" : "❌"}`);
 
   // Test YAML parsing
   const yamlConfig = `
@@ -323,8 +323,8 @@ alertThreshold: 200
 
   try {
     const config = parseConfig(yamlConfig);
-    console.log("📝 YAML parsed successfully");
-    console.log(JSON.stringify(config, null, 2));
+    console.info("📝 YAML parsed successfully");
+    console.info(JSON.stringify(config, null, 2));
   } catch (error: unknown) {
     console.error(
       `❌ YAML parsing failed: ${error instanceof Error ? error.message : String(error)}`
@@ -333,7 +333,7 @@ alertThreshold: 200
 
   // Test security hardening
   const secureContext = createSecureContext();
-  console.log(
+  console.info(
     `🔒 Secure context created with ${Object.keys(secureContext).length} safe globals`
   );
 
@@ -342,7 +342,7 @@ alertThreshold: 200
     provider: "sportradar://api.odds.com/v3",
     maxDivergence: 0.03,
   });
-  console.log(
+  console.info(
     `🛡️  Pattern hardening: ${hardeningResult.hardened ? "✅" : "❌"}`
   );
 
@@ -351,7 +351,7 @@ alertThreshold: 200
   logMessage("SECURITY", "🔒 CVE-2024 mitigated");
   logMessage("INFRASTRUCTURE", "⚡ Zero-cost abstractions active");
 
-  console.log("\n✅ Kalman Integration Complete");
+  console.info("\n✅ Kalman Integration Complete");
 }
 
 // Run demonstration if called directly

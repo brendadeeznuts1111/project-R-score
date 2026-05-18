@@ -3,7 +3,7 @@
 // Script to discover plive.sportswidgets.pro API endpoints
 
 async function discoverAPI() {
-  console.log('🔍 Discovering plive.sportswidgets.pro API endpoints...\n');
+  console.info('🔍 Discovering plive.sportswidgets.pro API endpoints...\n');
 
   const baseUrl = 'https://plive.sportswidgets.pro';
   const commonPaths = [
@@ -19,7 +19,7 @@ async function discoverAPI() {
     '/v1/api'
   ];
 
-  console.log('Testing common API paths...\n');
+  console.info('Testing common API paths...\n');
 
   for (const path of commonPaths) {
     try {
@@ -33,11 +33,11 @@ async function discoverAPI() {
       });
 
       if (response.ok) {
-        console.log(`✅ ${response.status} ${path}`);
+        console.info(`✅ ${response.status} ${path}`);
       } else if (response.status === 401 || response.status === 403) {
-        console.log(`🔒 ${response.status} ${path} (Requires auth)`);
+        console.info(`🔒 ${response.status} ${path} (Requires auth)`);
       } else if (response.status !== 404) {
-        console.log(`⚠️  ${response.status} ${path}`);
+        console.info(`⚠️  ${response.status} ${path}`);
       }
 
     } catch (error) {
@@ -47,10 +47,10 @@ async function discoverAPI() {
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
-  console.log('\n💡 To get real API endpoints, you need to:');
-  console.log('1. Contact plive support for API documentation');
-  console.log('2. Use browser dev tools when accessing their web interface');
-  console.log('3. Check for authentication requirements');
+  console.info('\n💡 To get real API endpoints, you need to:');
+  console.info('1. Contact plive support for API documentation');
+  console.info('2. Use browser dev tools when accessing their web interface');
+  console.info('3. Check for authentication requirements');
 }
 
 // Run discovery

@@ -130,7 +130,7 @@ class BunSecretsService {
       BUN_SECRETS_GOOGLE_CLIENT_SECRET: Bun.env.BUN_SECRETS_GOOGLE_CLIENT_SECRET || 'GOCSPX-1234567890abcdef'
     };
     
-    console.log(`🔐 Loaded ${Object.keys(this.secrets).length} secrets following Bun API Secrets pattern`);
+    console.info(`🔐 Loaded ${Object.keys(this.secrets).length} secrets following Bun API Secrets pattern`);
   }
   
   private initializeConfiguration() {
@@ -872,31 +872,31 @@ function getServiceHTML(): string {
 </html>`;
 }
 
-console.log(`🔐 Bun Secrets Service`);
-console.log(`======================`);
-console.log(`🌐 Service: http://localhost:3002`);
-console.log(`🔧 API: http://localhost:3002/api`);
-console.log(`🔑 Secrets: Following Bun API Secrets pattern`);
-console.log(`⏰ Started at ${new Date().toLocaleString()}`);
-console.log(``);
-console.log(`🎯 Features:`);
-console.log(`   • TOML configuration generation with secret references`);
-console.log(`   • Bun API Secrets aligned naming convention`);
-console.log(`   • Security validation and audit trail`);
-console.log(`   • Interactive web interface`);
-console.log(`   • Template-based configuration management`);
-console.log(``);
-console.log(`🔥 Open your browser and navigate to: http://localhost:3002`);
+console.info(`🔐 Bun Secrets Service`);
+console.info(`======================`);
+console.info(`🌐 Service: http://localhost:3002`);
+console.info(`🔧 API: http://localhost:3002/api`);
+console.info(`🔑 Secrets: Following Bun API Secrets pattern`);
+console.info(`⏰ Started at ${new Date().toLocaleString()}`);
+console.info(``);
+console.info(`🎯 Features:`);
+console.info(`   • TOML configuration generation with secret references`);
+console.info(`   • Bun API Secrets aligned naming convention`);
+console.info(`   • Security validation and audit trail`);
+console.info(`   • Interactive web interface`);
+console.info(`   • Template-based configuration management`);
+console.info(``);
+console.info(`🔥 Open your browser and navigate to: http://localhost:3002`);
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\\n🛑 Shutting down Bun Secrets service...');
+  console.info('\\n🛑 Shutting down Bun Secrets service...');
   server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\\n🛑 Shutting down Bun Secrets service...');
+  console.info('\\n🛑 Shutting down Bun Secrets service...');
   server.stop();
   process.exit(0);
 });

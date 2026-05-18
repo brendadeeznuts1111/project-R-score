@@ -50,7 +50,7 @@ const testScenarios = [
 
 // Rate limiting test
 async function testRateLimiting(limiter: any) {
-  console.log("\n🧪 Testing Rate Limiting...");
+  console.info("\n🧪 Testing Rate Limiting...");
 
   const results = [];
   const testRequests = Array.from({ length: 15 }, (_, i) => ({
@@ -72,12 +72,12 @@ async function testRateLimiting(limiter: any) {
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
-  console.log(Bun.inspect.table(results, { colors: true }));
+  console.info(Bun.inspect.table(results, { colors: true }));
 
   // Show rate limiter statistics
   const stats = limiter.getStats();
-  console.log("\n📊 Rate Limiter Statistics:");
-  console.log(Bun.inspect.table([{
+  console.info("\n📊 Rate Limiter Statistics:");
+  console.info(Bun.inspect.table([{
     'Algorithm': limiter.getConfig().algorithm,
     'Total Requests': stats.totalRequests,
     'Allowed': stats.allowedRequests,
@@ -89,7 +89,7 @@ async function testRateLimiting(limiter: any) {
 
 // Circuit breaker test
 async function testCircuitBreaker(breaker: any) {
-  console.log("\n🔴 Testing Circuit Breaker...");
+  console.info("\n🔴 Testing Circuit Breaker...");
 
   const results = [];
   const testRequests = [
@@ -127,12 +127,12 @@ async function testCircuitBreaker(breaker: any) {
     }
   }
 
-  console.log(Bun.inspect.table(results, { colors: true }));
+  console.info(Bun.inspect.table(results, { colors: true }));
 
   // Show circuit breaker statistics
   const stats = breaker.getStats();
-  console.log("\n📊 Circuit Breaker Statistics:");
-  console.log(Bun.inspect.table([{
+  console.info("\n📊 Circuit Breaker Statistics:");
+  console.info(Bun.inspect.table([{
     'State': stats.state.toUpperCase(),
     'Requests': stats.requests,
     'Successes': stats.successes,
@@ -142,21 +142,21 @@ async function testCircuitBreaker(breaker: any) {
   }], { colors: true }));
 
   // Wait for circuit breaker recovery
-  console.log("\n⏳ Waiting for circuit breaker recovery...");
+  console.info("\n⏳ Waiting for circuit breaker recovery...");
   await new Promise(resolve => setTimeout(resolve, 12000));
 
   // Test recovery
   try {
     const result = await breaker.execute(async () => 'Recovery test');
-    console.log(`🔄 Circuit breaker recovered: ${result}`);
+    console.info(`🔄 Circuit breaker recovered: ${result}`);
   } catch (error) {
-    console.log(`❌ Circuit breaker still open: ${error.message}`);
+    console.info(`❌ Circuit breaker still open: ${error.message}`);
   }
 }
 
 // HTTP Proxy test
 async function testHTTPProxy(proxy: any) {
-  console.log("\n🌐 Testing HTTP Proxy...");
+  console.info("\n🌐 Testing HTTP Proxy...");
 
   const results = [];
 
@@ -190,12 +190,12 @@ async function testHTTPProxy(proxy: any) {
     await new Promise(resolve => setTimeout(resolve, 200));
   }
 
-  console.log(Bun.inspect.table(results, { colors: true }));
+  console.info(Bun.inspect.table(results, { colors: true }));
 
   // Show proxy server statistics
   const status = proxy.getStatus();
-  console.log("\n📊 HTTP Proxy Statistics:");
-  console.log(Bun.inspect.table([{
+  console.info("\n📊 HTTP Proxy Statistics:");
+  console.info(Bun.inspect.table([{
     'Running': status.isRunning ? '✅' : '❌',
     'Protocol': status.config.protocol?.toUpperCase(),
     'Host': status.config.host,
@@ -211,13 +211,13 @@ async function testHTTPProxy(proxy: any) {
 
 // WebSocket proxy test (simplified for demo)
 async function testWebSocketProxy(proxy: any) {
-  console.log("\n🔌 Testing WebSocket Proxy...");
+  console.info("\n🔌 Testing WebSocket Proxy...");
 
   // For demo purposes, we'll just show the proxy is configured
   const wsConnections = proxy.getWebSocketConnections();
 
-  console.log("WebSocket proxy configured and ready:");
-  console.log(Bun.inspect.table([{
+  console.info("WebSocket proxy configured and ready:");
+  console.info(Bun.inspect.table([{
     'Protocol': 'WebSocket',
     'Host': proxy.config.host,
     'Port': proxy.config.port,
@@ -226,13 +226,13 @@ async function testWebSocketProxy(proxy: any) {
     'Active Connections': wsConnections.length
   }], { colors: true }));
 
-  console.log("\n💡 WebSocket proxy would handle real-time bidirectional communication");
-  console.log("   with message forwarding, heartbeat monitoring, and connection management");
+  console.info("\n💡 WebSocket proxy would handle real-time bidirectional communication");
+  console.info("   with message forwarding, heartbeat monitoring, and connection management");
 }
 
 // Component status overview
 function displayComponentStatus(components: any) {
-  console.log("\n🏗️ Component Status Overview:");
+  console.info("\n🏗️ Component Status Overview:");
 
   const statusTable = [
     {
@@ -261,12 +261,12 @@ function displayComponentStatus(components: any) {
     }
   ];
 
-  console.log(Bun.inspect.table(statusTable, { colors: true }));
+  console.info(Bun.inspect.table(statusTable, { colors: true }));
 }
 
 // Performance comparison
 function displayPerformanceComparison() {
-  console.log("\n⚡ Performance Comparison:");
+  console.info("\n⚡ Performance Comparison:");
 
   const comparisonData = [
     {
@@ -299,13 +299,13 @@ function displayPerformanceComparison() {
     }
   ];
 
-  console.log(Bun.inspect.table(comparisonData, { colors: true }));
+  console.info(Bun.inspect.table(comparisonData, { colors: true }));
 }
 
 // Main demo execution
 async function runCompleteDemo() {
-  console.log("🚀 Complete Bun Proxy API Ecosystem Demo");
-  console.log("=========================================\n");
+  console.info("🚀 Complete Bun Proxy API Ecosystem Demo");
+  console.info("=========================================\n");
 
   const components = {
     httpProxy: null,
@@ -316,7 +316,7 @@ async function runCompleteDemo() {
 
   try {
     // Initialize components
-    console.log("🔧 Initializing Components...");
+    console.info("🔧 Initializing Components...");
 
     // Create HTTP proxy
     components.httpProxy = createHTTPProxy(demoConfig.httpProxy);
@@ -332,7 +332,7 @@ async function runCompleteDemo() {
     // Create rate limiter
     components.limiter = createRateLimiter(demoConfig.rateLimiter);
 
-    console.log("✅ All components initialized successfully!\n");
+    console.info("✅ All components initialized successfully!\n");
 
     // Display component status
     displayComponentStatus(components);
@@ -347,7 +347,7 @@ async function runCompleteDemo() {
     displayPerformanceComparison();
 
     // Cleanup
-    console.log("\n🧹 Cleaning up...");
+    console.info("\n🧹 Cleaning up...");
 
     if (components.httpProxy) {
       await components.httpProxy.stop();
@@ -357,9 +357,9 @@ async function runCompleteDemo() {
       await components.wsProxy.stop();
     }
 
-    console.log("\n✨ Complete Bun Proxy API Demo finished successfully!");
-    console.log("💡 Demonstrated: HTTP Proxy, WebSocket Proxy, Circuit Breaker, Rate Limiter");
-    console.log("📊 All components working together with rich table displays");
+    console.info("\n✨ Complete Bun Proxy API Demo finished successfully!");
+    console.info("💡 Demonstrated: HTTP Proxy, WebSocket Proxy, Circuit Breaker, Rate Limiter");
+    console.info("📊 All components working together with rich table displays");
 
   } catch (error) {
     console.error("💥 Demo failed:", error);

@@ -23,7 +23,7 @@ function createServer() {
       // Reload endpoint
       if (pathname === '/reload') {
         routeVersion = '2.0.0';
-        console.log(`🔄 Routes reloaded! Version: ${routeVersion}`);
+        console.info(`🔄 Routes reloaded! Version: ${routeVersion}`);
         return Response.json({ 
           reloaded: true, 
           version: routeVersion,
@@ -75,17 +75,17 @@ Version: ${routeVersion}
 
 // Start server
 server = createServer();
-console.log(`✅ Server listening on Unix socket: ${socketPath}`);
-console.log(`📝 Version: ${routeVersion}`);
-console.log(`⏱️  Idle timeout: 10 seconds`);
-console.log(`\n🧪 Test with:\n`);
-console.log(`  curl --unix-socket ${socketPath} http://localhost/api/version`);
-console.log(`  curl --unix-socket ${socketPath} http://localhost/reload`);
-console.log(`  curl --unix-socket ${socketPath} http://localhost/health\n`);
+console.info(`✅ Server listening on Unix socket: ${socketPath}`);
+console.info(`📝 Version: ${routeVersion}`);
+console.info(`⏱️  Idle timeout: 10 seconds`);
+console.info(`\n🧪 Test with:\n`);
+console.info(`  curl --unix-socket ${socketPath} http://localhost/api/version`);
+console.info(`  curl --unix-socket ${socketPath} http://localhost/reload`);
+console.info(`  curl --unix-socket ${socketPath} http://localhost/health\n`);
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down...');
+  console.info('\n🛑 Shutting down...');
   if (server) {
     server.stop();
   }

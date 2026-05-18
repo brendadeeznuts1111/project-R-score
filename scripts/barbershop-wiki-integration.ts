@@ -65,7 +65,7 @@ export class BarbershopWikiIntegration {
    */
   async initialize(): Promise<void> {
     try {
-      console.log('🏗️ Connecting to Barbershop system...');
+      console.info('🏗️ Connecting to Barbershop system...');
       
       // Test connection
       const healthCheck = await this.testConnection();
@@ -73,7 +73,7 @@ export class BarbershopWikiIntegration {
       if (healthCheck) {
         this.isConnected = true;
         this.connectionHealth = 'healthy';
-        console.log('✅ Barbershop integration initialized successfully');
+        console.info('✅ Barbershop integration initialized successfully');
       } else {
         this.connectionHealth = 'degraded';
         console.warn('⚠️ Barbershop integration initialized in degraded mode');
@@ -115,7 +115,7 @@ export class BarbershopWikiIntegration {
       console.warn('Barbershop integration not connected - running in demo mode');
     }
 
-    console.log('🔄 Processing wiki result for Barbershop integration...');
+    console.info('🔄 Processing wiki result for Barbershop integration...');
 
     const integration: WikiBarbershopIntegration = {
       dashboardWidgets: [],

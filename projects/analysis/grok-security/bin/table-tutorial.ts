@@ -105,22 +105,22 @@ Next steps:
       question: "Ready to start enforcing compliance? (yes)",
       validate: (userInput: string) => userInput.toLowerCase().trim() === "yes",
       onComplete: () => {
-        console.log("\n🎓 Thank you for completing the tutorial!");
-        console.log("📚 Resources:");
-        console.log("  • Docs: docs/TABLE_ENFORCEMENT.md");
-        console.log("  • Slack: #table-enforcement");
-        console.log("  • Issues: Report via /reportbug");
+        console.info("\n🎓 Thank you for completing the tutorial!");
+        console.info("📚 Resources:");
+        console.info("  • Docs: docs/TABLE_ENFORCEMENT.md");
+        console.info("  • Slack: #table-enforcement");
+        console.info("  • Issues: Report via /reportbug");
       },
     },
   ];
 
   async start(): Promise<void> {
     console.clear();
-    console.log("╔══════════════════════════════════════════════════════════╗");
-    console.log("║     🎓 Bun Table Enforcement Tutorial                    ║");
-    console.log("║        Master table compliance in 5 minutes              ║");
-    console.log("╚══════════════════════════════════════════════════════════╝");
-    console.log("");
+    console.info("╔══════════════════════════════════════════════════════════╗");
+    console.info("║     🎓 Bun Table Enforcement Tutorial                    ║");
+    console.info("║        Master table compliance in 5 minutes              ║");
+    console.info("╚══════════════════════════════════════════════════════════╝");
+    console.info("");
 
     await this.runStep();
   }
@@ -133,25 +133,25 @@ Next steps:
 
     const step = this.steps[this.currentStep];
 
-    console.log(
+    console.info(
       `\n📚 Step ${this.currentStep + 1}/${this.steps.length}: ${step.title}`
     );
-    console.log("═".repeat(50));
-    console.log(step.content);
+    console.info("═".repeat(50));
+    console.info(step.content);
 
     if (step.example) {
-      console.log("\n💡 Example:");
-      console.log(step.example);
+      console.info("\n💡 Example:");
+      console.info(step.example);
     }
 
     if (step.practice) {
-      console.log("\n🎯 Practice: Complete the exercise above");
+      console.info("\n🎯 Practice: Complete the exercise above");
     }
 
     const userAnswer = await this.askQuestion(`\n${step.question} `);
 
     if (step.validate(userAnswer)) {
-      console.log("✅ Correct!");
+      console.info("✅ Correct!");
       this.score++;
 
       if (step.onComplete) {
@@ -161,12 +161,12 @@ Next steps:
       this.currentStep++;
       await this.runStep();
     } else {
-      console.log("❌ Not quite right.");
-      console.log(`💡 Hint: ${step.hint}`);
+      console.info("❌ Not quite right.");
+      console.info(`💡 Hint: ${step.hint}`);
 
       const retryAnswer = await this.askQuestion("Try again? (yes/no) ");
       if (retryAnswer.toLowerCase().trim() !== "yes") {
-        console.log("Moving to next step...");
+        console.info("Moving to next step...");
         this.currentStep++;
         await this.runStep();
       }
@@ -180,10 +180,10 @@ Next steps:
   }
 
   private async complete(): Promise<void> {
-    console.log("\n" + "🎉".repeat(20));
-    console.log(`\n📊 Tutorial Complete!`);
-    console.log(`   Score: ${this.score}/${this.steps.length - 1}`);
-    console.log("   Status: 🎓 Certified Table Enforcer");
+    console.info("\n" + "🎉".repeat(20));
+    console.info(`\n📊 Tutorial Complete!`);
+    console.info(`   Score: ${this.score}/${this.steps.length - 1}`);
+    console.info("   Status: 🎓 Certified Table Enforcer");
 
     rl.close();
   }

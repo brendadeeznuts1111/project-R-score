@@ -59,7 +59,7 @@ const BUILD_TARGETS: BuildTarget[] = [
 ];
 
 function printUsage(): void {
-	console.log(`
+	console.info(`
 ${fmt.bold("🔨 Unified Build Command")}
 
 ${fmt.bold("Usage:")} bun tools/unified-build.ts <target> [options]
@@ -111,7 +111,7 @@ async function main(): Promise<void> {
 			case "files": {
 				if (!operation) {
 					console.error(fmt.fail("Operation required for files target"));
-					console.log("Operations: types, practical");
+					console.info("Operations: types, practical");
 					process.exit(EXIT_CODES.USAGE_ERROR);
 				}
 				const fileCommands: Record<string, string> = {
@@ -121,10 +121,10 @@ async function main(): Promise<void> {
 				const command = fileCommands[operation];
 				if (!command) {
 					console.error(fmt.fail(`Unknown operation: ${operation}`));
-					console.log(`Available: ${Object.keys(fileCommands).join(", ")}`);
+					console.info(`Available: ${Object.keys(fileCommands).join(", ")}`);
 					process.exit(EXIT_CODES.USAGE_ERROR);
 				}
-				console.log(`${fmt.info("Running")}: ${command}`);
+				console.info(`${fmt.info("Running")}: ${command}`);
 				const result = Bun.spawnSync({
 					cmd: command,
 					args: options,
@@ -135,7 +135,7 @@ async function main(): Promise<void> {
 
 			case "bundle": {
 				// For now, just show what would be run
-				console.log(`${fmt.info("Bundle configuration")}:`);
+				console.info(`${fmt.info("Bundle configuration")}:`);
 				const opts: Record<string, string> = {};
 				for (const opt of options) {
 					if (opt.startsWith("--")) {
@@ -144,15 +144,15 @@ async function main(): Promise<void> {
 					}
 				}
 
-				if (opts.outdir) console.log(`  Output dir: ${opts.outdir}`);
-				if (opts.publicpath) console.log(`  Public path: ${opts.publicpath}`);
-				if (opts.naming) console.log(`  Naming pattern: ${opts.naming}`);
-				if (opts.env) console.log(`  Environment prefix: ${opts.env}`);
+				if (opts.outdir) console.info(`  Output dir: ${opts.outdir}`);
+				if (opts.publicpath) console.info(`  Public path: ${opts.publicpath}`);
+				if (opts.naming) console.info(`  Naming pattern: ${opts.naming}`);
+				if (opts.env) console.info(`  Environment prefix: ${opts.env}`);
 
-				console.log(
+				console.info(
 					`${fmt.warn("Note")}: This would run bun build with the specified options`,
 				);
-				console.log(
+				console.info(
 					`${fmt.dim("Would execute")}: bun build <entry> ${options.map((o) => (o.startsWith("--") ? o : `"${o}"`)).join(" ")}`,
 				);
 				// In a real implementation, this would actually build
@@ -160,28 +160,28 @@ async function main(): Promise<void> {
 			}
 
 			case "optimize": {
-				console.log(`${fmt.info("Optimization")}:`);
+				console.info(`${fmt.info("Optimization")}:`);
 				const hasSourcemap = options.includes("--sourcemap");
 				const hasMinify = options.includes("--minify");
 				const memoryOpt = options.find((o) => o.startsWith("--memory"));
 
-				if (hasSourcemap) console.log(`  ✓ Source maps`);
-				if (hasMinify) console.log(`  ✓ Minification`);
+				if (hasSourcemap) console.info(`  ✓ Source maps`);
+				if (hasMinify) console.info(`  ✓ Minification`);
 				if (memoryOpt)
-					console.log(
+					console.info(
 						`  ✓ Memory profiling${memoryOpt === "--memory:simple" ? " (simple)" : ""}`,
 					);
 
 				if (!hasSourcemap && !hasMinify && !memoryOpt) {
-					console.log(`${fmt.warn("No optimization flags specified")}`);
-					console.log(`Available: --sourcemap, --minify, --memory[=simple]`);
+					console.info(`${fmt.warn("No optimization flags specified")}`);
+					console.info(`Available: --sourcemap, --minify, --memory[=simple]`);
 				}
 				break;
 			}
 
 			case "preview": {
 				const command = "bun run build:cwd-root";
-				console.log(`${fmt.info("Running preview")}: ${command}`);
+				console.info(`${fmt.info("Running preview")}: ${command}`);
 				const result = Bun.spawnSync({
 					cmd: command,
 					stdio: "inherit",
@@ -192,7 +192,7 @@ async function main(): Promise<void> {
 			case "demo": {
 				if (!operation) {
 					console.error(fmt.fail("Demo name required"));
-					console.log(`Demos: ${["bunx-demo", "bun-update-demo"].join(", ")}`);
+					console.info(`Demos: ${["bunx-demo", "bun-update-demo"].join(", ")}`);
 					process.exit(EXIT_CODES.USAGE_ERROR);
 				}
 				const demoCommands: Record<string, string> = {
@@ -202,10 +202,10 @@ async function main(): Promise<void> {
 				const command = demoCommands[operation];
 				if (!command) {
 					console.error(fmt.fail(`Unknown demo: ${operation}`));
-					console.log(`Available: ${Object.keys(demoCommands).join(", ")}`);
+					console.info(`Available: ${Object.keys(demoCommands).join(", ")}`);
 					process.exit(EXIT_CODES.USAGE_ERROR);
 				}
-				console.log(`${fmt.info("Running demo")}: ${command}`);
+				console.info(`${fmt.info("Running demo")}: ${command}`);
 				const result = Bun.spawnSync({
 					cmd: command,
 					stdio: "inherit",

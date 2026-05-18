@@ -296,9 +296,9 @@ function generateMarketData(): MarketData[] {
 // =============================================================================
 
 function demoTimeZones() {
-	console.log("=".repeat(70));
-	console.log("1. 🌏 GLOBAL MARKET SESSIONS - Time Zone Overview");
-	console.log("=".repeat(70));
+	console.info("=".repeat(70));
+	console.info("1. 🌏 GLOBAL MARKET SESSIONS - Time Zone Overview");
+	console.info("=".repeat(70));
 	
 	const now = Date.now();
 	
@@ -316,28 +316,28 @@ function demoTimeZones() {
 		"window": `${s.start}h to ${s.end}h`
 	}));
 	
-	console.log(`\n📅 Current Time: ${new Date(now).toISOString()}`);
-	console.log(Bun.inspect.table(sessionTable));
+	console.info(`\n📅 Current Time: ${new Date(now).toISOString()}`);
+	console.info(Bun.inspect.table(sessionTable));
 	
 	// Asia overnight impact
-	console.log(`\n🌙 Asia Overnight Session (Before US Wakes):`);
-	console.log(`   Hong Kong: ${formatTimeZone(now - 14 * 3600000, "Asia/Hong_Kong")} - ${formatTimeZone(now - 6 * 3600000, "Asia/Hong_Kong")}`);
-	console.log(`   → Sharp Asian syndicates move lines early`);
-	console.log(`   → Look for 3%+ moves before US opens`);
+	console.info(`\n🌙 Asia Overnight Session (Before US Wakes):`);
+	console.info(`   Hong Kong: ${formatTimeZone(now - 14 * 3600000, "Asia/Hong_Kong")} - ${formatTimeZone(now - 6 * 3600000, "Asia/Hong_Kong")}`);
+	console.info(`   → Sharp Asian syndicates move lines early`);
+	console.info(`   → Look for 3%+ moves before US opens`);
 }
 
 function demoPhaseAnalysis(markets: MarketData[]) {
-	console.log("\n" + "=".repeat(70));
-	console.log("2. 📈 PHASE-BY-PHASE MOVEMENT ANALYSIS");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("2. 📈 PHASE-BY-PHASE MOVEMENT ANALYSIS");
+	console.info("=".repeat(70));
 	
-	console.log(`\n   Index = 100 × (Prob_FIRST - Prob_LAST) / ((Prob_FIRST + Prob_LAST) / 2)`);
+	console.info(`\n   Index = 100 × (Prob_FIRST - Prob_LAST) / ((Prob_FIRST + Prob_LAST) / 2)`);
 	
 	for (const market of markets) {
 		const phases = market.phases;
 		
-		console.log(`\n🏀 ${market.game} | ${market.market} | ${market.bookie}`);
-		console.log(`   Tip-off in: ${timeAgo(market.tipoff - Date.now())}`);
+		console.info(`\n🏀 ${market.game} | ${market.market} | ${market.bookie}`);
+		console.info(`   Tip-off in: ${timeAgo(market.tipoff - Date.now())}`);
 		
 		const phaseTable = [
 			{
@@ -378,14 +378,14 @@ function demoPhaseAnalysis(markets: MarketData[]) {
 			}
 		];
 		
-		console.log(Bun.inspect.table(phaseTable));
+		console.info(Bun.inspect.table(phaseTable));
 	}
 }
 
 function demoLineupImpact(markets: MarketData[]) {
-	console.log("\n" + "=".repeat(70));
-	console.log("3. 📋 LINEUP ANNOUNCEMENT IMPACT");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("3. 📋 LINEUP ANNOUNCEMENT IMPACT");
+	console.info("=".repeat(70));
 	
 	const allEvents: any[] = [];
 	
@@ -410,23 +410,23 @@ function demoLineupImpact(markets: MarketData[]) {
 		}
 	}
 	
-	console.log(`\n📋 Lineup News Impact on Odds:`);
-	console.log(Bun.inspect.table(allEvents));
+	console.info(`\n📋 Lineup News Impact on Odds:`);
+	console.info(Bun.inspect.table(allEvents));
 	
 	// Impact interpretation
-	console.log(`\n📊 Impact Guide:`);
-	console.log(`   🔴 HIGH   = Star player (>15 PPG or All-Star)`);
-	console.log(`   🟡 MEDIUM = Key rotation player`);
-	console.log(`   🟢 LOW    = Bench player`);
-	console.log(`\n   SHARP signal = |Index| > 3 within 30 mins of announcement`);
+	console.info(`\n📊 Impact Guide:`);
+	console.info(`   🔴 HIGH   = Star player (>15 PPG or All-Star)`);
+	console.info(`   🟡 MEDIUM = Key rotation player`);
+	console.info(`   🟢 LOW    = Bench player`);
+	console.info(`\n   SHARP signal = |Index| > 3 within 30 mins of announcement`);
 }
 
 function demoCorrelationMatrix(markets: MarketData[]) {
-	console.log("\n" + "=".repeat(70));
-	console.log("4. 🔗 CROSS-PHASE CORRELATION ANALYSIS");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("4. 🔗 CROSS-PHASE CORRELATION ANALYSIS");
+	console.info("=".repeat(70));
 	
-	console.log(`\n📊 Do Asia moves predict US moves? Does lineup news correlate with last hour?`);
+	console.info(`\n📊 Do Asia moves predict US moves? Does lineup news correlate with last hour?`);
 	
 	for (const market of markets) {
 		const phases = market.phases;
@@ -437,7 +437,7 @@ function demoCorrelationMatrix(markets: MarketData[]) {
 		const lineupToLastHr = calcCorrelation(phases.lineupAnnounced, phases.lastHour);
 		const asiaToLastHr = calcCorrelation(phases.asiaOpen, phases.lastHour);
 		
-		console.log(`\n🏀 ${market.game} | ${market.market}`);
+		console.info(`\n🏀 ${market.game} | ${market.market}`);
 		
 		const corrTable = [
 			{ comparison: "Asia → US Open", correlation: asiaToUs.toFixed(2), signal: asiaToUs > 0.5 ? "✅ ALIGNED" : asiaToUs < -0.5 ? "⚠️ REVERSED" : "➖ WEAK" },
@@ -446,14 +446,14 @@ function demoCorrelationMatrix(markets: MarketData[]) {
 			{ comparison: "Asia → Last Hour", correlation: asiaToLastHr.toFixed(2), signal: asiaToLastHr > 0.5 ? "✅ ALIGNED" : asiaToLastHr < -0.5 ? "⚠️ REVERSED" : "➖ WEAK" }
 		];
 		
-		console.log(Bun.inspect.table(corrTable));
+		console.info(Bun.inspect.table(corrTable));
 	}
 }
 
 function demoLastHourToTip(markets: MarketData[]) {
-	console.log("\n" + "=".repeat(70));
-	console.log("5. ⏰ LAST HOUR TO TIP-OFF - Sharp Money Detection");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("5. ⏰ LAST HOUR TO TIP-OFF - Sharp Money Detection");
+	console.info("=".repeat(70));
 	
 	const lastHourData = markets.map(m => {
 		const lh = m.phases.lastHour;
@@ -477,26 +477,26 @@ function demoLastHourToTip(markets: MarketData[]) {
 		};
 	});
 	
-	console.log(`\n📊 Last Hour Movement Analysis:`);
-	console.log(Bun.inspect.table(lastHourData));
+	console.info(`\n📊 Last Hour Movement Analysis:`);
+	console.info(Bun.inspect.table(lastHourData));
 	
 	// Steam move detection
 	const steamMoves = lastHourData.filter(d => d.alert === "🚨 STEAM");
 	if (steamMoves.length > 0) {
-		console.log(`\n🚨 STEAM MOVE DETECTED!`);
+		console.info(`\n🚨 STEAM MOVE DETECTED!`);
 		steamMoves.forEach(m => {
-			console.log(`   ${m.game} ${m.market}: Index ${m.index} (${m.changes} changes in last hour)`);
+			console.info(`   ${m.game} ${m.market}: Index ${m.index} (${m.changes} changes in last hour)`);
 		});
 	}
 }
 
 function demoAsiaOvernight(markets: MarketData[]) {
-	console.log("\n" + "=".repeat(70));
-	console.log("6. 🌙 ASIA OVERNIGHT SESSION - Pre-US Analysis");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("6. 🌙 ASIA OVERNIGHT SESSION - Pre-US Analysis");
+	console.info("=".repeat(70));
 	
-	console.log(`\n🌏 Asian syndicates often move lines 6-14 hours before US opening.`);
-	console.log(`   Key insight: Track odds from HK/Manila open to US pre-market.`);
+	console.info(`\n🌏 Asian syndicates often move lines 6-14 hours before US opening.`);
+	console.info(`   Key insight: Track odds from HK/Manila open to US pre-market.`);
 	
 	const asiaData = markets.map(m => {
 		const asia = m.phases.asiaOpen;
@@ -519,19 +519,19 @@ function demoAsiaOvernight(markets: MarketData[]) {
 		};
 	});
 	
-	console.log(Bun.inspect.table(asiaData));
+	console.info(Bun.inspect.table(asiaData));
 	
-	console.log(`\n💡 Strategy:`);
-	console.log(`   • Asia Index > +5: Sharp money backing underdog overnight`);
-	console.log(`   • Asia Index < -5: Sharp money backing favorite overnight`);
-	console.log(`   • CONTINUED = US market agrees with Asia → Higher confidence`);
-	console.log(`   • REVERSED = US market disagrees → Potential value on reversal`);
+	console.info(`\n💡 Strategy:`);
+	console.info(`   • Asia Index > +5: Sharp money backing underdog overnight`);
+	console.info(`   • Asia Index < -5: Sharp money backing favorite overnight`);
+	console.info(`   • CONTINUED = US market agrees with Asia → Higher confidence`);
+	console.info(`   • REVERSED = US market disagrees → Potential value on reversal`);
 }
 
 function demoComprehensiveSummary(markets: MarketData[]) {
-	console.log("\n" + "=".repeat(70));
-	console.log("7. 📊 COMPREHENSIVE MARKET SUMMARY");
-	console.log("=".repeat(70));
+	console.info("\n" + "=".repeat(70));
+	console.info("7. 📊 COMPREHENSIVE MARKET SUMMARY");
+	console.info("=".repeat(70));
 	
 	const summary = markets.map(m => {
 		const phases = m.phases;
@@ -556,17 +556,17 @@ function demoComprehensiveSummary(markets: MarketData[]) {
 		};
 	});
 	
-	console.log(`\n📊 Full Game Summary:`);
-	console.log(Bun.inspect.table(summary));
+	console.info(`\n📊 Full Game Summary:`);
+	console.info(Bun.inspect.table(summary));
 	
 	// Betting signals
-	console.log(`\n🎯 BETTING SIGNALS:`);
+	console.info(`\n🎯 BETTING SIGNALS:`);
 	for (const s of summary) {
 		const totalIdx = parseFloat(s.totalIdx);
 		if (Math.abs(totalIdx) > 5) {
 			const direction = totalIdx > 0 ? "📉 DRIFT (value on current side)" : "📈 STEAM (sharp backing this side)";
-			console.log(`   ${s.game} ${s.market}: ${direction}`);
-			console.log(`      Opening: ${s.openOdds} → Current: ${s.currOdds} (Index: ${s.totalIdx})`);
+			console.info(`   ${s.game} ${s.market}: ${direction}`);
+			console.info(`      Opening: ${s.openOdds} → Current: ${s.currOdds} (Index: ${s.totalIdx})`);
 		}
 	}
 }
@@ -575,9 +575,9 @@ function demoComprehensiveSummary(markets: MarketData[]) {
 // Main
 // =============================================================================
 async function main() {
-	console.log("\n⚡ @dynamic-spy/kit v9.0 - MARKET CORRELATION ANALYTICS 📊\n");
-	console.log(`Bun version: ${Bun.version}`);
-	console.log(`Analysis time: ${new Date().toISOString()}`);
+	console.info("\n⚡ @dynamic-spy/kit v9.0 - MARKET CORRELATION ANALYTICS 📊\n");
+	console.info(`Bun version: ${Bun.version}`);
+	console.info(`Analysis time: ${new Date().toISOString()}`);
 	
 	const markets = generateMarketData();
 	
@@ -589,10 +589,10 @@ async function main() {
 	demoAsiaOvernight(markets);
 	demoComprehensiveSummary(markets);
 	
-	console.log("\n" + "=".repeat(70));
-	console.log("✅ CORRELATION ANALYSIS COMPLETE");
-	console.log("=".repeat(70));
-	console.log(`
+	console.info("\n" + "=".repeat(70));
+	console.info("✅ CORRELATION ANALYSIS COMPLETE");
+	console.info("=".repeat(70));
+	console.info(`
 📐 Index Formula:
    Index = 100 × (Prob_FIRST - Prob_LAST) / ((Prob_FIRST + Prob_LAST) / 2)
 

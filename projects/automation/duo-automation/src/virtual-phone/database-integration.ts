@@ -87,13 +87,13 @@ export class DatabaseIntegration {
   async connect(): Promise<boolean> {
     try {
       // Simulate database connection
-      console.log(`🔌 Connecting to database ${this.config.host}:${this.config.port}/${this.config.database}`);
+      console.info(`🔌 Connecting to database ${this.config.host}:${this.config.port}/${this.config.database}`);
       
       // Simulate connection setup
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       this.isConnected = true;
-      console.log('✅ Database connection established');
+      console.info('✅ Database connection established');
       
       return true;
     } catch (error) {
@@ -107,7 +107,7 @@ export class DatabaseIntegration {
    */
   async disconnect(): Promise<void> {
     this.isConnected = false;
-    console.log('🔌 Database connection closed');
+    console.info('🔌 Database connection closed');
   }
 
   /**
@@ -121,8 +121,8 @@ export class DatabaseIntegration {
         throw new Error('Database not connected');
       }
 
-      console.log(`🔍 Executing query: ${query}`);
-      console.log(`📋 Parameters:`, params);
+      console.info(`🔍 Executing query: ${query}`);
+      console.info(`📋 Parameters:`, params);
 
       // Simulate query execution
       await new Promise(resolve => setTimeout(resolve, 50 + Math.random() * 200));
@@ -148,7 +148,7 @@ export class DatabaseIntegration {
         rowCount = 1;
       }
 
-      console.log(`✅ Query executed successfully in ${executionTime}ms`);
+      console.info(`✅ Query executed successfully in ${executionTime}ms`);
       
       return {
         success: true,

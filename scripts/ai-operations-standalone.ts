@@ -48,8 +48,8 @@ export interface OptimizationResult {
 
 // Mock logger and cache for standalone operation
 const logger = {
-  info: (msg: string, data?: any, tags?: string[]) => console.log(`[INFO] ${msg}`),
-  error: (msg: string, error?: Error, data?: any, tags?: string[]) => console.log(`[ERROR] ${msg}`)
+  info: (msg: string, data?: any, tags?: string[]) => console.info(`[INFO] ${msg}`),
+  error: (msg: string, error?: Error, data?: any, tags?: string[]) => console.info(`[ERROR] ${msg}`)
 };
 
 const globalCaches = {

@@ -50,13 +50,13 @@ class BunTemplateEnhancer {
 
     async enhanceAllTemplates(): Promise<void> {
         const files = await this.getTemplateFiles();
-        console.log(`🦊 Enhancing ${files.length} templates with Bun conventions...`);
+        console.info(`🦊 Enhancing ${files.length} templates with Bun conventions...`);
 
         for (const file of files) {
             await this.enhanceTemplateFile(file);
         }
 
-        console.log('✅ All templates enhanced with Bun standards!');
+        console.info('✅ All templates enhanced with Bun standards!');
     }
 
     private async getTemplateFiles(): Promise<string[]> {
@@ -75,7 +75,7 @@ class BunTemplateEnhancer {
             if (enhancedContent !== content) {
                 await writeFile(filePath, enhancedContent, 'utf-8');
                 const fileName = filePath.split('/').pop();
-                console.log(`  🦊 Enhanced: ${fileName}`);
+                console.info(`  🦊 Enhanced: ${fileName}`);
             }
         } catch (error) {
             console.error(`  ❌ Error enhancing ${filePath}:`, error);
@@ -365,14 +365,14 @@ async function main(): Promise<void> {
     const templatesPath = process.argv[2] || join(process.cwd(), '06 - Templates');
 
     if (process.argv.includes('--help') || process.argv.includes('-h')) {
-        console.log('🦊 Bun Template Enhancer');
-        console.log('Usage: bun enhance-bun-templates.ts [templates-path]');
-        console.log('');
-        console.log('Enhances templates with:');
-        console.log('  - Bun-specific runtime configuration');
-        console.log('  - Performance optimization tags');
-        console.log('  - Bun API integration details');
-        console.log('  - Enhanced naming conventions');
+        console.info('🦊 Bun Template Enhancer');
+        console.info('Usage: bun enhance-bun-templates.ts [templates-path]');
+        console.info('');
+        console.info('Enhances templates with:');
+        console.info('  - Bun-specific runtime configuration');
+        console.info('  - Performance optimization tags');
+        console.info('  - Bun API integration details');
+        console.info('  - Enhanced naming conventions');
         process.exit(0);
     }
 
@@ -380,13 +380,13 @@ async function main(): Promise<void> {
         const enhancer = new BunTemplateEnhancer(templatesPath);
         await enhancer.enhanceAllTemplates();
 
-        console.log('');
-        console.log('🚀 Bun Enhancement Complete!');
-        console.log('All templates now include:');
-        console.log('  ✅ Bun runtime configuration');
-        console.log('  ✅ Performance specifications');
-        console.log('  ✅ API and plugin integration');
-        console.log('  ✅ Enhanced naming conventions');
+        console.info('');
+        console.info('🚀 Bun Enhancement Complete!');
+        console.info('All templates now include:');
+        console.info('  ✅ Bun runtime configuration');
+        console.info('  ✅ Performance specifications');
+        console.info('  ✅ API and plugin integration');
+        console.info('  ✅ Enhanced naming conventions');
 
     } catch (error) {
         console.error('❌ Bun enhancement failed:', error);

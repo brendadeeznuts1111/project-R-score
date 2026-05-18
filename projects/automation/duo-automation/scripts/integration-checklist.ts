@@ -96,8 +96,8 @@ class IntegrationChecklist {
    * Run all integration tasks
    */
   async runAllIntegrations(): Promise<IntegrationReport> {
-    console.log('🎯 Running Complete Integration Checklist');
-    console.log('==========================================\n');
+    console.info('🎯 Running Complete Integration Checklist');
+    console.info('==========================================\n');
     
     this.startTime = performance.now();
     
@@ -128,8 +128,8 @@ class IntegrationChecklist {
     const task = this.tasks.find(t => t.name === 'Evidence Service')!;
     task.status = 'running';
     
-    console.log('🔍 [1/7] Evidence Service Integration');
-    console.log('   Adding CRC32 field to evidence_metadata table...\n');
+    console.info('🔍 [1/7] Evidence Service Integration');
+    console.info('   Adding CRC32 field to evidence_metadata table...\n');
     
     try {
       const startTime = performance.now();
@@ -143,13 +143,13 @@ class IntegrationChecklist {
       task.status = 'completed';
       task.result = report;
       
-      console.log(`   ✅ Evidence service integration complete in ${task.duration.toFixed(2)}ms`);
-      console.log(`   📊 Processed ${report.quantumHashed} evidence with quantum hashing\n`);
+      console.info(`   ✅ Evidence service integration complete in ${task.duration.toFixed(2)}ms`);
+      console.info(`   📊 Processed ${report.quantumHashed} evidence with quantum hashing\n`);
       
     } catch (error) {
       task.status = 'failed';
       task.error = error.message;
-      console.log(`   ❌ Evidence service integration failed: ${error.message}\n`);
+      console.info(`   ❌ Evidence service integration failed: ${error.message}\n`);
     }
   }
 
@@ -160,8 +160,8 @@ class IntegrationChecklist {
     const task = this.tasks.find(t => t.name === 'Dashboard Cache')!;
     task.status = 'running';
     
-    console.log('💾 [2/7] Dashboard Cache Integration');
-    console.log('   Replacing Redis with ContentCache<MerchantDashboard>...\n');
+    console.info('💾 [2/7] Dashboard Cache Integration');
+    console.info('   Replacing Redis with ContentCache<MerchantDashboard>...\n');
     
     try {
       const startTime = performance.now();
@@ -174,13 +174,13 @@ class IntegrationChecklist {
       task.status = 'completed';
       task.result = report;
       
-      console.log(`   ✅ Dashboard cache integration complete in ${task.duration.toFixed(2)}ms`);
-      console.log(`   📊 Cache hit ratio: ${(report.stats.hitRatio * 100).toFixed(1)}%\n`);
+      console.info(`   ✅ Dashboard cache integration complete in ${task.duration.toFixed(2)}ms`);
+      console.info(`   📊 Cache hit ratio: ${(report.stats.hitRatio * 100).toFixed(1)}%\n`);
       
     } catch (error) {
       task.status = 'failed';
       task.error = error.message;
-      console.log(`   ❌ Dashboard cache integration failed: ${error.message}\n`);
+      console.info(`   ❌ Dashboard cache integration failed: ${error.message}\n`);
     }
   }
 
@@ -191,8 +191,8 @@ class IntegrationChecklist {
     const task = this.tasks.find(t => t.name === 'Batch Processor')!;
     task.status = 'running';
     
-    console.log('📦 [3/7] Batch Processor Integration');
-    console.log('   Integrating DisputeBatchProcessor into cron job...\n');
+    console.info('📦 [3/7] Batch Processor Integration');
+    console.info('   Integrating DisputeBatchProcessor into cron job...\n');
     
     try {
       const startTime = performance.now();
@@ -205,13 +205,13 @@ class IntegrationChecklist {
       task.status = 'completed';
       task.result = { result, stats };
       
-      console.log(`   ✅ Batch processor integration complete in ${task.duration.toFixed(2)}ms`);
-      console.log(`   📊 Processed ${result.processed} disputes with ${result.quantumHashed} quantum hashed\n`);
+      console.info(`   ✅ Batch processor integration complete in ${task.duration.toFixed(2)}ms`);
+      console.info(`   📊 Processed ${result.processed} disputes with ${result.quantumHashed} quantum hashed\n`);
       
     } catch (error) {
       task.status = 'failed';
       task.error = error.message;
-      console.log(`   ❌ Batch processor integration failed: ${error.message}\n`);
+      console.info(`   ❌ Batch processor integration failed: ${error.message}\n`);
     }
   }
 
@@ -222,8 +222,8 @@ class IntegrationChecklist {
     const task = this.tasks.find(t => t.name === 'Performance Panel')!;
     task.status = 'running';
     
-    console.log('📊 [4/7] Performance Panel Integration');
-    console.log('   Adding HashPerformancePanel to admin dashboard...\n');
+    console.info('📊 [4/7] Performance Panel Integration');
+    console.info('   Adding HashPerformancePanel to admin dashboard...\n');
     
     try {
       const startTime = performance.now();
@@ -236,13 +236,13 @@ class IntegrationChecklist {
       task.status = 'completed';
       task.result = report;
       
-      console.log(`   ✅ Performance panel integration complete in ${task.duration.toFixed(2)}ms`);
-      console.log(`   📊 Current throughput: ${report.summary.throughput.toFixed(0)} KB/s\n`);
+      console.info(`   ✅ Performance panel integration complete in ${task.duration.toFixed(2)}ms`);
+      console.info(`   📊 Current throughput: ${report.summary.throughput.toFixed(0)} KB/s\n`);
       
     } catch (error) {
       task.status = 'failed';
       task.error = error.message;
-      console.log(`   ❌ Performance panel integration failed: ${error.message}\n`);
+      console.info(`   ❌ Performance panel integration failed: ${error.message}\n`);
     }
   }
 
@@ -253,8 +253,8 @@ class IntegrationChecklist {
     const task = this.tasks.find(t => t.name === 'Monitoring')!;
     task.status = 'running';
     
-    console.log('🚨 [5/7] Monitoring Integration');
-    console.log('   Setting up alerts for CRC32 verification failures...\n');
+    console.info('🚨 [5/7] Monitoring Integration');
+    console.info('   Setting up alerts for CRC32 verification failures...\n');
     
     try {
       const startTime = performance.now();
@@ -266,13 +266,13 @@ class IntegrationChecklist {
       task.status = 'completed';
       task.result = { dashboard: monitoringSystem.getMonitoringDashboard() };
       
-      console.log(`   ✅ Monitoring integration complete in ${task.duration.toFixed(2)}ms`);
-      console.log(`   📊 Active alerts: 0, System health: 🟢 HEALTHY\n`);
+      console.info(`   ✅ Monitoring integration complete in ${task.duration.toFixed(2)}ms`);
+      console.info(`   📊 Active alerts: 0, System health: 🟢 HEALTHY\n`);
       
     } catch (error) {
       task.status = 'failed';
       task.error = error.message;
-      console.log(`   ❌ Monitoring integration failed: ${error.message}\n`);
+      console.info(`   ❌ Monitoring integration failed: ${error.message}\n`);
     }
   }
 
@@ -283,8 +283,8 @@ class IntegrationChecklist {
     const task = this.tasks.find(t => t.name === 'Deployment')!;
     task.status = 'running';
     
-    console.log('🚀 [6/7] Deployment Integration');
-    console.log('   Switching to oven/bun:1.0 base image...\n');
+    console.info('🚀 [6/7] Deployment Integration');
+    console.info('   Switching to oven/bun:1.0 base image...\n');
     
     try {
       const startTime = performance.now();
@@ -297,13 +297,13 @@ class IntegrationChecklist {
       task.status = 'completed';
       task.result = benchmark;
       
-      console.log(`   ✅ Deployment integration complete in ${task.duration.toFixed(2)}ms`);
-      console.log(`   📊 Base image: ${benchmark.image}, Quantum throughput: ${benchmark.quantumPerformance.throughput.toFixed(0)} KB/s\n`);
+      console.info(`   ✅ Deployment integration complete in ${task.duration.toFixed(2)}ms`);
+      console.info(`   📊 Base image: ${benchmark.image}, Quantum throughput: ${benchmark.quantumPerformance.throughput.toFixed(0)} KB/s\n`);
       
     } catch (error) {
       task.status = 'failed';
       task.error = error.message;
-      console.log(`   ❌ Deployment integration failed: ${error.message}\n`);
+      console.info(`   ❌ Deployment integration failed: ${error.message}\n`);
     }
   }
 
@@ -314,8 +314,8 @@ class IntegrationChecklist {
     const task = this.tasks.find(t => t.name === 'Benchmarks')!;
     task.status = 'running';
     
-    console.log('🏃 [7/7] Benchmarks Integration');
-    console.log('   Running pre-deploy benchmarks...\n');
+    console.info('🏃 [7/7] Benchmarks Integration');
+    console.info('   Running pre-deploy benchmarks...\n');
     
     try {
       const startTime = performance.now();
@@ -328,16 +328,16 @@ class IntegrationChecklist {
       task.result = { passed };
       
       if (passed) {
-        console.log(`   ✅ Benchmarks integration complete in ${task.duration.toFixed(2)}ms`);
-        console.log(`   📊 All critical tests passed - Ready for deployment!\n`);
+        console.info(`   ✅ Benchmarks integration complete in ${task.duration.toFixed(2)}ms`);
+        console.info(`   📊 All critical tests passed - Ready for deployment!\n`);
       } else {
-        console.log(`   ❌ Benchmarks integration failed - Some tests did not pass\n`);
+        console.info(`   ❌ Benchmarks integration failed - Some tests did not pass\n`);
       }
       
     } catch (error) {
       task.status = 'failed';
       task.error = error.message;
-      console.log(`   ❌ Benchmarks integration failed: ${error.message}\n`);
+      console.info(`   ❌ Benchmarks integration failed: ${error.message}\n`);
     }
   }
 
@@ -391,43 +391,43 @@ class IntegrationChecklist {
    * Display final summary
    */
   private displayFinalSummary(report: IntegrationReport): void {
-    console.log('🎯 INTEGRATION CHECKLIST - FINAL SUMMARY');
-    console.log('='.repeat(60));
+    console.info('🎯 INTEGRATION CHECKLIST - FINAL SUMMARY');
+    console.info('='.repeat(60));
     
-    console.log(`\n📊 Overall Results:`);
-    console.log(`   Total Tasks: ${report.totalTasks}`);
-    console.log(`   Completed: ${report.completedTasks} ✅`);
-    console.log(`   Failed: ${report.failedTasks} ${report.failedTasks > 0 ? '❌' : '✅'}`);
-    console.log(`   Duration: ${report.totalDuration.toFixed(2)}ms`);
+    console.info(`\n📊 Overall Results:`);
+    console.info(`   Total Tasks: ${report.totalTasks}`);
+    console.info(`   Completed: ${report.completedTasks} ✅`);
+    console.info(`   Failed: ${report.failedTasks} ${report.failedTasks > 0 ? '❌' : '✅'}`);
+    console.info(`   Duration: ${report.totalDuration.toFixed(2)}ms`);
     
-    console.log(`\n📋 Task Status:`);
+    console.info(`\n📋 Task Status:`);
     this.tasks.forEach((task, index) => {
       const status = task.status === 'completed' ? '✅' : 
                     task.status === 'failed' ? '❌' : 
                     task.status === 'running' ? '🔄' : '⏳';
-      console.log(`   ${index + 1}. ${task.name}: ${status}`);
+      console.info(`   ${index + 1}. ${task.name}: ${status}`);
       if (task.duration) {
-        console.log(`      Duration: ${task.duration.toFixed(2)}ms`);
+        console.info(`      Duration: ${task.duration.toFixed(2)}ms`);
       }
       if (task.error) {
-        console.log(`      Error: ${task.error}`);
+        console.info(`      Error: ${task.error}`);
       }
     });
     
-    console.log(`\n💡 Recommendations:`);
+    console.info(`\n💡 Recommendations:`);
     report.recommendations.forEach(rec => {
-      console.log(`   • ${rec}`);
+      console.info(`   • ${rec}`);
     });
     
     const allComplete = report.completedTasks === report.totalTasks;
-    console.log(`\n🎉 Integration Status: ${allComplete ? '✅ COMPLETE' : '⚠️  INCOMPLETE'}`);
+    console.info(`\n🎉 Integration Status: ${allComplete ? '✅ COMPLETE' : '⚠️  INCOMPLETE'}`);
     
     if (allComplete) {
-      console.log(`\n🚀 Ready for production deployment with quantum hash system!`);
-      console.log(`   • 21.3x faster CRC32 hashing`);
-      console.log(`   • Complete monitoring and alerting`);
-      console.log(`   • Optimized deployment with oven/bun:1.0`);
-      console.log(`   • Comprehensive benchmark validation`);
+      console.info(`\n🚀 Ready for production deployment with quantum hash system!`);
+      console.info(`   • 21.3x faster CRC32 hashing`);
+      console.info(`   • Complete monitoring and alerting`);
+      console.info(`   • Optimized deployment with oven/bun:1.0`);
+      console.info(`   • Comprehensive benchmark validation`);
     }
   }
 
@@ -458,16 +458,16 @@ ${this.tasks.map(task => {
 if (import.meta.main) {
   const checklist = new IntegrationChecklist();
   
-  console.log('🎯 Integration Checklist - Quantum Hash System');
-  console.log('===============================================\n');
+  console.info('🎯 Integration Checklist - Quantum Hash System');
+  console.info('===============================================\n');
   
   checklist.runAllIntegrations()
     .then((report) => {
       if (report.completedTasks === report.totalTasks) {
-        console.log('\n🎉 All integrations completed successfully!');
+        console.info('\n🎉 All integrations completed successfully!');
         process.exit(0);
       } else {
-        console.log('\n⚠️  Some integrations failed - Check logs for details');
+        console.info('\n⚠️  Some integrations failed - Check logs for details');
         process.exit(1);
       }
     })

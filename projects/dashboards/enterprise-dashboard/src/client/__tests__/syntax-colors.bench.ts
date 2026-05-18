@@ -62,11 +62,11 @@ const results: BenchmarkResult[] = [];
 const languages = getAvailableLanguages();
 const testLang = "typescript";
 
-console.log("\n🎨 Syntax Colors Benchmark Suite\n");
-console.log(`Languages: ${languages.length}`);
-console.log(`Iterations: ${ITERATIONS.toLocaleString()}`);
-console.log(`Warmup: ${WARMUP}`);
-console.log("-".repeat(70));
+console.info("\n🎨 Syntax Colors Benchmark Suite\n");
+console.info(`Languages: ${languages.length}`);
+console.info(`Iterations: ${ITERATIONS.toLocaleString()}`);
+console.info(`Warmup: ${WARMUP}`);
+console.info("-".repeat(70));
 
 // Benchmark: getSyntaxColorInfo (single language)
 results.push(benchmark("getSyntaxColorInfo (single)", () => {
@@ -162,7 +162,7 @@ results.push(benchmark("Full render cycle", () => {
 // Output Results
 // ============================================
 
-console.log("\n📊 Results:\n");
+console.info("\n📊 Results:\n");
 
 // Sort by ops/sec descending
 results.sort((a, b) => b.opsPerSec - a.opsPerSec);
@@ -177,41 +177,41 @@ const tableData = results.map((r, i) => ({
   "Ops/sec": r.opsPerSec.toLocaleString(),
 }));
 
-console.log(Bun.inspect.table(tableData, { colors: true }));
+console.info(Bun.inspect.table(tableData, { colors: true }));
 
 // Summary stats
 const fastestOps = Math.max(...results.map(r => r.opsPerSec));
 const slowestOps = Math.min(...results.map(r => r.opsPerSec));
 const avgOps = Math.floor(results.reduce((sum, r) => sum + r.opsPerSec, 0) / results.length);
 
-console.log("\n📈 Summary:");
-console.log(`  Fastest:  ${fastestOps.toLocaleString()} ops/sec`);
-console.log(`  Slowest:  ${slowestOps.toLocaleString()} ops/sec`);
-console.log(`  Average:  ${avgOps.toLocaleString()} ops/sec`);
+console.info("\n📈 Summary:");
+console.info(`  Fastest:  ${fastestOps.toLocaleString()} ops/sec`);
+console.info(`  Slowest:  ${slowestOps.toLocaleString()} ops/sec`);
+console.info(`  Average:  ${avgOps.toLocaleString()} ops/sec`);
 
 // Performance assertions
-console.log("\n✅ Performance Assertions:");
+console.info("\n✅ Performance Assertions:");
 
 const renderCycle = results.find(r => r.name === "Full render cycle");
 if (renderCycle && renderCycle.avgNs < 1000) {
-  console.log(`  ✓ Full render cycle: ${renderCycle.avgNs.toFixed(0)}ns < 1000ns`);
+  console.info(`  ✓ Full render cycle: ${renderCycle.avgNs.toFixed(0)}ns < 1000ns`);
 } else {
-  console.log(`  ✗ Full render cycle too slow: ${renderCycle?.avgNs.toFixed(0)}ns`);
+  console.info(`  ✗ Full render cycle too slow: ${renderCycle?.avgNs.toFixed(0)}ns`);
 }
 
 const colorInfo = results.find(r => r.name === "getSyntaxColorInfo (single)");
 if (colorInfo && colorInfo.opsPerSec > 1_000_000) {
-  console.log(`  ✓ getSyntaxColorInfo: ${colorInfo.opsPerSec.toLocaleString()} ops/sec > 1M`);
+  console.info(`  ✓ getSyntaxColorInfo: ${colorInfo.opsPerSec.toLocaleString()} ops/sec > 1M`);
 } else {
-  console.log(`  ✗ getSyntaxColorInfo too slow: ${colorInfo?.opsPerSec.toLocaleString()} ops/sec`);
+  console.info(`  ✗ getSyntaxColorInfo too slow: ${colorInfo?.opsPerSec.toLocaleString()} ops/sec`);
 }
 
 const hasColor = results.find(r => r.name === "hasLanguageColor (hit)");
 if (hasColor && hasColor.opsPerSec > 10_000_000) {
-  console.log(`  ✓ hasLanguageColor: ${hasColor.opsPerSec.toLocaleString()} ops/sec > 10M`);
+  console.info(`  ✓ hasLanguageColor: ${hasColor.opsPerSec.toLocaleString()} ops/sec > 10M`);
 } else {
-  console.log(`  ✗ hasLanguageColor too slow: ${hasColor?.opsPerSec.toLocaleString()} ops/sec`);
+  console.info(`  ✗ hasLanguageColor too slow: ${hasColor?.opsPerSec.toLocaleString()} ops/sec`);
 }
 
-console.log("\n" + "=".repeat(70));
-console.log("Benchmark complete.\n");
+console.info("\n" + "=".repeat(70));
+console.info("Benchmark complete.\n");

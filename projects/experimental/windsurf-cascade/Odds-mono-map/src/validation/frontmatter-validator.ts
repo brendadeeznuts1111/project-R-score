@@ -504,52 +504,52 @@ class ProjectValidator {
      * Prints validation results
      */
     static printResults(result: ProjectValidationResult): void {
-        console.log('\n' + '='.repeat(80));
-        console.log('📋 PROJECT VALIDATION RESULTS');
-        console.log('='.repeat(80));
+        console.info('\n' + '='.repeat(80));
+        console.info('📋 PROJECT VALIDATION RESULTS');
+        console.info('='.repeat(80));
 
-        console.log(`\n📊 Overall Statistics:`);
-        console.log(`   Total Files: ${result.totalFiles}`);
-        console.log(`   Compliant Files: ${result.compliantFiles}`);
-        console.log(`   Non-Compliant Files: ${result.nonCompliantFiles}`);
-        console.log(`   Overall Compliance: ${result.overallCompliance.toFixed(1)}%`);
+        console.info(`\n📊 Overall Statistics:`);
+        console.info(`   Total Files: ${result.totalFiles}`);
+        console.info(`   Compliant Files: ${result.compliantFiles}`);
+        console.info(`   Non-Compliant Files: ${result.nonCompliantFiles}`);
+        console.info(`   Overall Compliance: ${result.overallCompliance.toFixed(1)}%`);
 
-        console.log(`\n🎯 Compliance Breakdown:`);
-        console.log(`   Frontmatter Compliance: ${result.summary.frontmatterCompliance.toFixed(1)}%`);
-        console.log(`   Code Block Compliance: ${result.summary.codeBlockCompliance.toFixed(1)}%`);
+        console.info(`\n🎯 Compliance Breakdown:`);
+        console.info(`   Frontmatter Compliance: ${result.summary.frontmatterCompliance.toFixed(1)}%`);
+        console.info(`   Code Block Compliance: ${result.summary.codeBlockCompliance.toFixed(1)}%`);
 
         if (result.summary.commonIssues.length > 0) {
-            console.log(`\n🚨 Most Common Issues:`);
+            console.info(`\n🚨 Most Common Issues:`);
             for (const { issue, count } of result.summary.commonIssues.slice(0, 5)) {
-                console.log(`   ${count}× ${issue}`);
+                console.info(`   ${count}× ${issue}`);
             }
         }
 
         // Show non-compliant files
         const nonCompliantFiles = result.results.filter(r => r.overallCompliance < 90);
         if (nonCompliantFiles.length > 0) {
-            console.log(`\n❌ Non-Compliant Files (${nonCompliantFiles.length}):`);
+            console.info(`\n❌ Non-Compliant Files (${nonCompliantFiles.length}):`);
             for (const file of nonCompliantFiles) {
                 const relativePath = file.filePath.replace(process.cwd() + '/', '');
-                console.log(`   ${relativePath} (${file.overallCompliance.toFixed(1)}%)`);
+                console.info(`   ${relativePath} (${file.overallCompliance.toFixed(1)}%)`);
 
                 // Show top issues for this file
                 const allIssues = [...file.frontmatter.errors, ...file.codeBlocks.errors].slice(0, 3);
                 for (const issue of allIssues) {
-                    console.log(`     - Line ${issue.line}: ${issue.message}`);
+                    console.info(`     - Line ${issue.line}: ${issue.message}`);
                 }
             }
         }
 
-        console.log('\n' + '='.repeat(80));
+        console.info('\n' + '='.repeat(80));
 
         // Exit with appropriate code
         if (result.overallCompliance >= 90) {
-            console.log('🎉 EXCELLENT: Project meets documentation standards!');
+            console.info('🎉 EXCELLENT: Project meets documentation standards!');
         } else if (result.overallCompliance >= 70) {
-            console.log('⚠️  GOOD: Project mostly meets standards, some improvements needed.');
+            console.info('⚠️  GOOD: Project mostly meets standards, some improvements needed.');
         } else {
-            console.log('🚨 NEEDS WORK: Project requires significant improvements to meet standards.');
+            console.info('🚨 NEEDS WORK: Project requires significant improvements to meet standards.');
         }
     }
 }
@@ -565,14 +565,14 @@ async function main() {
     const projectPath = cleanArgs[0] || process.cwd();
     const pattern = cleanArgs[1] || '**/*.md';
 
-    console.log(`🔍 Validating project: ${projectPath}`);
-    console.log(`📁 Pattern: ${pattern}`);
-    console.log(`🔧 Mode: ${isDryRun ? 'DRY RUN (analysis only)' : 'FULL VALIDATION'}`);
-    console.log('');
+    console.info(`🔍 Validating project: ${projectPath}`);
+    console.info(`📁 Pattern: ${pattern}`);
+    console.info(`🔧 Mode: ${isDryRun ? 'DRY RUN (analysis only)' : 'FULL VALIDATION'}`);
+    console.info('');
 
     if (isDryRun) {
-        console.log('📋 DRY RUN MODE - Analyzing what would be validated...');
-        console.log('📁 Files that would be checked:');
+        console.info('📋 DRY RUN MODE - Analyzing what would be validated...');
+        console.info('📁 Files that would be checked:');
 
         // Show files that would be validated
         const markdownFiles = await glob(pattern, {
@@ -580,23 +580,23 @@ async function main() {
             absolute: true
         });
 
-        console.log(`   Found ${markdownFiles.length} markdown files`);
+        console.info(`   Found ${markdownFiles.length} markdown files`);
 
         // Show first 10 files as example
         const sampleFiles = markdownFiles.slice(0, 10);
         for (const file of sampleFiles) {
             const relativePath = file.replace(projectPath + '/', '');
-            console.log(`   - ${relativePath}`);
+            console.info(`   - ${relativePath}`);
         }
 
         if (markdownFiles.length > 10) {
-            console.log(`   ... and ${markdownFiles.length - 10} more files`);
+            console.info(`   ... and ${markdownFiles.length - 10} more files`);
         }
 
-        console.log('');
-        console.log('🎯 To run full validation, remove --dry-run flag');
-        console.log('💡 Command: bun run src/validation/frontmatter-validator.ts . "*.md"');
-        console.log('');
+        console.info('');
+        console.info('🎯 To run full validation, remove --dry-run flag');
+        console.info('💡 Command: bun run src/validation/frontmatter-validator.ts . "*.md"');
+        console.info('');
 
         return; // Exit early for dry run
     }

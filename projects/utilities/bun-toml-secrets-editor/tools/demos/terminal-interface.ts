@@ -26,10 +26,10 @@ class TerminalInterface {
 
 	// Start interactive terminal
 	async startTerminal() {
-		console.log("🖥️  Starting Advanced Terminal Interface");
-		console.log(`📐 Terminal size: ${this.cols}x${this.rows}`);
-		console.log(`🐚 Shell: ${this.prompt}`);
-		console.log('Type "help" for available commands or "exit" to quit\n');
+		console.info("🖥️  Starting Advanced Terminal Interface");
+		console.info(`📐 Terminal size: ${this.cols}x${this.rows}`);
+		console.info(`🐚 Shell: ${this.prompt}`);
+		console.info('Type "help" for available commands or "exit" to quit\n');
 
 		this.isRunning = true;
 
@@ -143,7 +143,7 @@ class TerminalInterface {
 			case "exit":
 			case "quit":
 			case "q":
-				console.log("👋 Goodbye!");
+				console.info("👋 Goodbye!");
 				this.isRunning = false;
 				break;
 
@@ -178,7 +178,7 @@ class TerminalInterface {
 	}
 
 	showHelp() {
-		console.log(`
+		console.info(`
 🔧 Profiling Terminal Commands:
 
 📊 Profiling:
@@ -214,30 +214,30 @@ Examples:
 	}
 
 	showHistory() {
-		console.log("\n📋 Command History:");
+		console.info("\n📋 Command History:");
 		this.history.slice(-10).forEach((cmd, index) => {
-			console.log(`   ${this.history.length - 10 + index + 1}. ${cmd}`);
+			console.info(`   ${this.history.length - 10 + index + 1}. ${cmd}`);
 		});
 	}
 
 	manageAliases(args) {
 		if (args.length === 0) {
-			console.log("\n🔧 Current Aliases:");
+			console.info("\n🔧 Current Aliases:");
 			for (const [name, command] of this.aliases) {
-				console.log(`   ${name} = ${command}`);
+				console.info(`   ${name} = ${command}`);
 			}
 		} else if (args[0].includes("=")) {
 			// Set alias
 			const [name, command] = args[0].split("=", 2);
 			this.aliases.set(name, command);
-			console.log(`✅ Alias set: ${name} = ${command}`);
+			console.info(`✅ Alias set: ${name} = ${command}`);
 		} else {
 			// Show specific alias
 			const command = this.aliases.get(args[0]);
 			if (command) {
-				console.log(`${args[0]} = ${command}`);
+				console.info(`${args[0]} = ${command}`);
 			} else {
-				console.log(`❌ Alias not found: ${args[0]}`);
+				console.info(`❌ Alias not found: ${args[0]}`);
 			}
 		}
 	}
@@ -245,7 +245,7 @@ Examples:
 	async runProfilingCommand(args) {
 		const type = args[0] || "cpu";
 
-		console.log(`🚀 Starting ${type} profiling...`);
+		console.info(`🚀 Starting ${type} profiling...`);
 
 		try {
 			const profileCommand = `bun run profile:${type}`;
@@ -258,8 +258,8 @@ Examples:
 	async startMonitoring(args) {
 		const interval = parseInt(args[0], 10) || 1000;
 
-		console.log(`📊 Starting system monitoring (interval: ${interval}ms)`);
-		console.log("Press Ctrl+C to stop monitoring\n");
+		console.info(`📊 Starting system monitoring (interval: ${interval}ms)`);
+		console.info("Press Ctrl+C to stop monitoring\n");
 
 		const monitor = setInterval(async () => {
 			const metrics = this.getSystemMetrics();
@@ -274,7 +274,7 @@ Examples:
 			clearInterval(monitor);
 			process.stdin.setRawMode(false);
 			process.stdin.pause();
-			console.log("\n⏹️  Monitoring stopped");
+			console.info("\n⏹️  Monitoring stopped");
 		};
 
 		process.stdin.on("data", (key) => {
@@ -330,7 +330,7 @@ Examples:
 		const program = args[0] || this.shell;
 		const programArgs = args.slice(1);
 
-		console.log(`🖥️  Spawning terminal: ${program} ${programArgs.join(" ")}`);
+		console.info(`🖥️  Spawning terminal: ${program} ${programArgs.join(" ")}`);
 
 		try {
 			const proc = spawn([program, ...programArgs], {
@@ -356,7 +356,7 @@ Examples:
 			proc.terminal.close();
 			this.currentProcess = null;
 
-			console.log(`\n✅ Terminal session ended`);
+			console.info(`\n✅ Terminal session ended`);
 		} catch (error) {
 			console.error("❌ Failed to spawn terminal:", error.message);
 		}
@@ -380,7 +380,7 @@ Examples:
 	}
 
 	async executeCommand(command) {
-		console.log(`💻 Executing: ${command}`);
+		console.info(`💻 Executing: ${command}`);
 
 		try {
 			const proc = spawn(["bash", "-c", command], {
@@ -415,7 +415,7 @@ Examples:
 		if (this.currentProcess) {
 			this.currentProcess.kill();
 			this.currentProcess = null;
-			console.log("⏹️  Process stopped");
+			console.info("⏹️  Process stopped");
 		}
 	}
 
@@ -443,8 +443,8 @@ if (import.meta.main) {
 		prompt: "profiler🔍> ",
 	});
 
-	console.log("🖥️  Advanced Terminal Interface Demo");
-	console.log("==================================");
+	console.info("🖥️  Advanced Terminal Interface Demo");
+	console.info("==================================");
 
 	try {
 		await terminal.startTerminal();

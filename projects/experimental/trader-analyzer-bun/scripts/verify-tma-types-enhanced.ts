@@ -328,66 +328,66 @@ function generateRecommendations(results: VerificationResult[]): string[] {
 }
 
 function displayResults(results: VerificationResult[]) {
-  console.log("\n" + "═".repeat(80));
-  console.log(colors.bold("  Enhanced TMA Types Verification Results"));
-  console.log("═".repeat(80) + "\n");
+  console.info("\n" + "═".repeat(80));
+  console.info(colors.bold("  Enhanced TMA Types Verification Results"));
+  console.info("═".repeat(80) + "\n");
 
   for (const result of results) {
     const statusIcon = result.status === 'pass' ? colors.green('✅') :
                       result.status === 'fail' ? colors.red('❌') :
                       colors.yellow('⚠️');
 
-    console.log(`${statusIcon} ${colors.bold(result.type)} (${result.version})`);
+    console.info(`${statusIcon} ${colors.bold(result.type)} (${result.version})`);
 
     if (result.fileCoverage.found < result.fileCoverage.total) {
-      console.log(`   ${colors.dim('Files:')} ${result.fileCoverage.found}/${result.fileCoverage.total}`);
+      console.info(`   ${colors.dim('Files:')} ${result.fileCoverage.found}/${result.fileCoverage.total}`);
       if (result.fileCoverage.missing.length > 0) {
-        console.log(`   ${colors.red('Missing:')} ${result.fileCoverage.missing.join(', ')}`);
+        console.info(`   ${colors.red('Missing:')} ${result.fileCoverage.missing.join(', ')}`);
       }
     }
 
     if (result.propertyCoverage.verified < result.propertyCoverage.total) {
-      console.log(`   ${colors.dim('Properties:')} ${result.propertyCoverage.verified}/${result.propertyCoverage.total}`);
+      console.info(`   ${colors.dim('Properties:')} ${result.propertyCoverage.verified}/${result.propertyCoverage.total}`);
       if (result.propertyCoverage.missing.length > 0) {
-        console.log(`   ${colors.red('Missing props:')} ${result.propertyCoverage.missing.join(', ')}`);
+        console.info(`   ${colors.red('Missing props:')} ${result.propertyCoverage.missing.join(', ')}`);
       }
     }
 
     for (const error of result.errors) {
-      console.log(`   ${colors.red('•')} ${error}`);
+      console.info(`   ${colors.red('•')} ${error}`);
     }
 
     for (const warning of result.warnings) {
-      console.log(`   ${colors.yellow('•')} ${warning}`);
+      console.info(`   ${colors.yellow('•')} ${warning}`);
     }
 
-    console.log('');
+    console.info('');
   }
 }
 
 function displaySummary(report: VerificationReport) {
-  console.log("═".repeat(80));
-  console.log(colors.bold("  Verification Summary"));
-  console.log("═".repeat(80));
+  console.info("═".repeat(80));
+  console.info(colors.bold("  Verification Summary"));
+  console.info("═".repeat(80));
 
-  console.log(`\n${colors.bold('Coverage:')} ${report.summary.coverage.toFixed(1)}%`);
-  console.log(`${colors.bold('Total Types:')} ${report.totalTypes}`);
-  console.log(`${colors.green('Passed:')} ${report.passed}`);
-  console.log(`${colors.red('Failed:')} ${report.failed}`);
-  console.log(`${colors.yellow('Warnings:')} ${report.warnings}`);
+  console.info(`\n${colors.bold('Coverage:')} ${report.summary.coverage.toFixed(1)}%`);
+  console.info(`${colors.bold('Total Types:')} ${report.totalTypes}`);
+  console.info(`${colors.green('Passed:')} ${report.passed}`);
+  console.info(`${colors.red('Failed:')} ${report.failed}`);
+  console.info(`${colors.yellow('Warnings:')} ${report.warnings}`);
 
   if (report.summary.criticalErrors > 0) {
-    console.log(`\n${colors.red('Critical Errors:')} ${report.summary.criticalErrors}`);
+    console.info(`\n${colors.red('Critical Errors:')} ${report.summary.criticalErrors}`);
   }
 
   if (report.summary.recommendations.length > 0) {
-    console.log(`\n${colors.bold('Recommendations:')}`);
+    console.info(`\n${colors.bold('Recommendations:')}`);
     for (const rec of report.summary.recommendations) {
-      console.log(`   ${colors.cyan('•')} ${rec}`);
+      console.info(`   ${colors.cyan('•')} ${rec}`);
     }
   }
 
-  console.log("\n" + "═".repeat(80) + "\n");
+  console.info("\n" + "═".repeat(80) + "\n");
 }
 
 async function main() {
@@ -397,7 +397,7 @@ async function main() {
   const showHelp = args.includes('--help') || args.includes('-h');
 
   if (showHelp) {
-    console.log(`
+    console.info(`
 ${colors.bold('Enhanced TMA Types Verification Script')}
 ${colors.dim('Version: 9.1.1.11.2.0.0.0')}
 
@@ -428,8 +428,8 @@ ${colors.bold('Exit Codes:')}
   }
 
   if (!jsonOnly) {
-    console.log(colors.bold("🔍 Enhanced TMA Types Verification"));
-    console.log(colors.dim("Running comprehensive ripgrep analysis...\n"));
+    console.info(colors.bold("🔍 Enhanced TMA Types Verification"));
+    console.info(colors.dim("Running comprehensive ripgrep analysis...\n"));
   }
 
   const results: VerificationResult[] = [];
@@ -437,7 +437,7 @@ ${colors.bold('Exit Codes:')}
   // Verify each type
   for (const typeDef of TMA_TYPES) {
     if (!jsonOnly) {
-      console.log(`Verifying ${typeDef.name}...`);
+      console.info(`Verifying ${typeDef.name}...`);
     }
     const result = await verifyTypeDefinition(typeDef, TMA_TYPES);
     results.push(result);
@@ -464,22 +464,22 @@ ${colors.bold('Exit Codes:')}
 
   if (jsonOnly) {
     // Output only JSON to stdout
-    console.log(JSON.stringify(report, null, 2));
+    console.info(JSON.stringify(report, null, 2));
   } else {
     // Display human-readable results
     displayResults(results);
     displaySummary(report);
-    console.log(`JSON report saved to: ${jsonPath}\n`);
+    console.info(`JSON report saved to: ${jsonPath}\n`);
 
     // Exit with appropriate code
     if (report.failed > 0 || report.summary.criticalErrors > 0) {
-      console.log(colors.red("❌ Verification failed - check errors above"));
+      console.info(colors.red("❌ Verification failed - check errors above"));
       process.exit(1);
     } else if (report.warnings > 0) {
-      console.log(colors.yellow("⚠️  Verification passed with warnings"));
+      console.info(colors.yellow("⚠️  Verification passed with warnings"));
       process.exit(0);
     } else {
-      console.log(colors.green("✅ All verifications passed!"));
+      console.info(colors.green("✅ All verifications passed!"));
       process.exit(0);
     }
   }

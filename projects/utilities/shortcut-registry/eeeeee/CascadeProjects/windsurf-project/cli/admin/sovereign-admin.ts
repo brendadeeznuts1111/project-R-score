@@ -20,7 +20,7 @@ export class SovereignAdminCLI {
    * Initialize mock worker portfolios for demonstration
    */
   private initializeWorkerPools(): void {
-    console.log(`🚀 Initializing Sovereign Unit [01] - Trace: ${this.traceId}`);
+    console.info(`🚀 Initializing Sovereign Unit [01] - Trace: ${this.traceId}`);
     
     // Add Venmo Warming family pools (35 Sarahs)
     for (let i = 1; i <= 35; i++) {
@@ -47,19 +47,19 @@ export class SovereignAdminCLI {
     // Handle any name collisions
     this.leaderboard.handlePoolNameCollisions();
     
-    console.log("✅ Worker pools initialized successfully");
+    console.info("✅ Worker pools initialized successfully");
   }
 
   /**
    * Enhanced status display with Sovereign architecture
    */
   public showSovereignStatus(): void {
-    console.log("\n" + "=".repeat(60));
-    console.log("🏛️  SOVEREIGN UNIT [01] - FINANCIAL WARMING DASHBOARD");
-    console.log("=".repeat(60));
-    console.log(`🕐 Trace ID: ${this.traceId}`);
-    console.log(`🔥 Warming Status: ACTIVE`);
-    console.log("");
+    console.info("\n" + "=".repeat(60));
+    console.info("🏛️  SOVEREIGN UNIT [01] - FINANCIAL WARMING DASHBOARD");
+    console.info("=".repeat(60));
+    console.info(`🕐 Trace ID: ${this.traceId}`);
+    console.info(`🔥 Warming Status: ACTIVE`);
+    console.info("");
 
     // Display leaderboard
     this.leaderboard.render();
@@ -75,23 +75,23 @@ export class SovereignAdminCLI {
    * Display family statistics
    */
   private showFamilyStats(): void {
-    console.log("\n👥 Family Statistics:");
+    console.info("\n👥 Family Statistics:");
     
     const venmoFamily = this.leaderboard.getFamilyStats(ANALYTICS_TOKENS.familyHash("venmo-warming"));
     const cashappFamily = this.leaderboard.getFamilyStats(ANALYTICS_TOKENS.familyHash("cashapp-circle"));
 
     if (venmoFamily) {
-      console.log(`  💳 Venmo Warming:`);
-      console.log(`     • Workers: ${venmoFamily.workerCount}`);
-      console.log(`     • Total Yield: $${venmoFamily.totalYield.toLocaleString()}`);
-      console.log(`     • Platform: ${venmoFamily.platform.toUpperCase()}`);
+      console.info(`  💳 Venmo Warming:`);
+      console.info(`     • Workers: ${venmoFamily.workerCount}`);
+      console.info(`     • Total Yield: $${venmoFamily.totalYield.toLocaleString()}`);
+      console.info(`     • Platform: ${venmoFamily.platform.toUpperCase()}`);
     }
 
     if (cashappFamily) {
-      console.log(`  💰 CashApp Circle:`);
-      console.log(`     • Workers: ${cashappFamily.workerCount}`);
-      console.log(`     • Total Yield: $${cashappFamily.totalYield.toLocaleString()}`);
-      console.log(`     • Platform: ${cashappFamily.platform.toUpperCase()}`);
+      console.info(`  💰 CashApp Circle:`);
+      console.info(`     • Workers: ${cashappFamily.workerCount}`);
+      console.info(`     • Total Yield: $${cashappFamily.totalYield.toLocaleString()}`);
+      console.info(`     • Platform: ${cashappFamily.platform.toUpperCase()}`);
     }
   }
 
@@ -99,19 +99,19 @@ export class SovereignAdminCLI {
    * Demonstrate search functionality
    */
   private showSearchDemo(): void {
-    console.log("\n🔍 Search Demo:");
+    console.info("\n🔍 Search Demo:");
     
     // Search for Sarah pools
     const sarahPools = this.leaderboard.searchPools("Sarah");
-    console.log(`Found ${sarahPools.length} Sarah pools:`);
+    console.info(`Found ${sarahPools.length} Sarah pools:`);
     
     sarahPools.slice(0, 3).forEach((pool, index) => {
-      console.log(`  ${index + 1}. ${pool.poolName} - APY: ${pool.apy.toFixed(2)}% - Trust: ${pool.trustScore}/100`);
+      console.info(`  ${index + 1}. ${pool.poolName} - APY: ${pool.apy.toFixed(2)}% - Trust: ${pool.trustScore}/100`);
     });
 
     // Search by family
     const venmoPools = this.leaderboard.searchPools("venmo-warming");
-    console.log(`\nFound ${venmoPools.length} Venmo warming pools`);
+    console.info(`\nFound ${venmoPools.length} Venmo warming pools`);
 
     // Get detailed pool information
     if (sarahPools.length > 0 && sarahPools[0]) {
@@ -119,15 +119,15 @@ export class SovereignAdminCLI {
       const details = this.leaderboard.getPoolDetails(topPool.poolId);
       
       if (details) {
-        console.log(`\n📊 Top Pool Details:`);
-        console.log(`  • Pool ID: ${details.poolId}`);
-        console.log(`  • Name: ${details.poolName}`);
-        console.log(`  • Family: ${details.familyId}`);
-        console.log(`  • APY: ${details.apy.toFixed(2)}%`);
-        console.log(`  • Trust Score: ${details.trustScore}/100`);
-        console.log(`  • Workers: ${details.workerCount}`);
-        console.log(`  • Uptime: ${details.uptime.toFixed(1)}%`);
-        console.log(`  • Last Activity: ${details.lastActivity.toLocaleString()}`);
+        console.info(`\n📊 Top Pool Details:`);
+        console.info(`  • Pool ID: ${details.poolId}`);
+        console.info(`  • Name: ${details.poolName}`);
+        console.info(`  • Family: ${details.familyId}`);
+        console.info(`  • APY: ${details.apy.toFixed(2)}%`);
+        console.info(`  • Trust Score: ${details.trustScore}/100`);
+        console.info(`  • Workers: ${details.workerCount}`);
+        console.info(`  • Uptime: ${details.uptime.toFixed(1)}%`);
+        console.info(`  • Last Activity: ${details.lastActivity.toLocaleString()}`);
       }
     }
   }
@@ -138,35 +138,35 @@ export class SovereignAdminCLI {
   public exportForGenesis(): void {
     const genesisData = this.leaderboard.exportForGenesis();
     
-    console.log("\n📤 Worker [01] Genesis Export:");
-    console.log(`  • Version: ${genesisData.version}`);
-    console.log(`  • Timestamp: ${genesisData.timestamp}`);
-    console.log(`  • Total Pools: ${genesisData.analytics.totalPools}`);
-    console.log(`  • Average Trust: ${genesisData.analytics.avgTrustScore.toFixed(1)}/100`);
-    console.log(`  • Total Workers: ${genesisData.analytics.totalWorkers}`);
+    console.info("\n📤 Worker [01] Genesis Export:");
+    console.info(`  • Version: ${genesisData.version}`);
+    console.info(`  • Timestamp: ${genesisData.timestamp}`);
+    console.info(`  • Total Pools: ${genesisData.analytics.totalPools}`);
+    console.info(`  • Average Trust: ${genesisData.analytics.avgTrustScore.toFixed(1)}/100`);
+    console.info(`  • Total Workers: ${genesisData.analytics.totalWorkers}`);
     
     // In a real implementation, this would be saved to a file or sent to an API
-    console.log("\n💾 Data exported for Genesis integration");
+    console.info("\n💾 Data exported for Genesis integration");
   }
 
   /**
    * Demonstrate CRC32 Integrity Shield
    */
   public demonstrateIntegrityShield(): void {
-    console.log("\n🛡️  CRC32 Integrity Shield Demo:");
+    console.info("\n🛡️  CRC32 Integrity Shield Demo:");
     
     // Get a valid pool
     const pools = this.leaderboard.searchPools("Sarah");
     if (pools.length > 0 && pools[0]) {
       const originalPool = pools[0];
-      console.log(`✅ Original Pool: ${originalPool.poolName} (${originalPool.poolId})`);
+      console.info(`✅ Original Pool: ${originalPool.poolName} (${originalPool.poolId})`);
       
       // Try to get details with valid integrity
       const validDetails = this.leaderboard.getPoolDetails(originalPool.poolId);
-      console.log(`✅ Integrity Check: ${validDetails ? 'PASSED' : 'FAILED'}`);
+      console.info(`✅ Integrity Check: ${validDetails ? 'PASSED' : 'FAILED'}`);
       
       // Simulate tampered data (in real scenario, this would be detected)
-      console.log("🔍 Simulating integrity check on all pools...");
+      console.info("🔍 Simulating integrity check on all pools...");
       
       let validCount = 0;
       let invalidCount = 0;
@@ -177,7 +177,7 @@ export class SovereignAdminCLI {
         else invalidCount++;
       });
       
-      console.log(`📊 Integrity Results: ${validCount} valid, ${invalidCount} invalid`);
+      console.info(`📊 Integrity Results: ${validCount} valid, ${invalidCount} invalid`);
     }
   }
 
@@ -185,15 +185,15 @@ export class SovereignAdminCLI {
    * Demonstrate localization capabilities
    */
   public demonstrateLocalization(): void {
-    console.log("\n🌍 Localization Demo:");
+    console.info("\n🌍 Localization Demo:");
     
     // This would show how pool names change based on locale
-    console.log("🇺🇸 English (en-US): Sarah-Ring-01");
-    console.log("🇪🇸 Spanish (es-ES): Sarah-Círculo-01");
-    console.log("🇫🇷 French (fr-FR): Sarah-Anneau-01");
-    console.log("🇯🇵 Japanese (ja-JP): サラ-リング-01");
+    console.info("🇺🇸 English (en-US): Sarah-Ring-01");
+    console.info("🇪🇸 Spanish (es-ES): Sarah-Círculo-01");
+    console.info("🇫🇷 French (fr-FR): Sarah-Anneau-01");
+    console.info("🇯🇵 Japanese (ja-JP): サラ-リング-01");
     
-    console.log("\n💡 Localization loaded at 0.2ms via locales.toml");
+    console.info("\n💡 Localization loaded at 0.2ms via locales.toml");
   }
 }
 
@@ -213,7 +213,7 @@ export function runSovereignAdminCLI(): void {
   // Export for Genesis
   cli.exportForGenesis();
   
-  console.log("\n🎯 Sovereign Unit [01] Financial Warming - Ready for Genesis Integration");
+  console.info("\n🎯 Sovereign Unit [01] Financial Warming - Ready for Genesis Integration");
 }
 
 // Export for use in other modules

@@ -122,10 +122,10 @@ function safeWrite(filePath: string, newContent: string) {
 
   if (existingContent.trim() !== newContent.trim()) {
     writeFileSync(filePath, newContent, 'utf8');
-    console.log(`✅ Updated ${filePath} (${uniqueFeatures.length} features)`);
+    console.info(`✅ Updated ${filePath} (${uniqueFeatures.length} features)`);
     return true;
   } else {
-    console.log(`ℹ️  ${filePath} unchanged`);
+    console.info(`ℹ️  ${filePath} unchanged`);
     return false;
   }
 }
@@ -136,16 +136,16 @@ function main() {
     const outputPath = './env.d.ts';
     const changed = safeWrite(outputPath, content);
 
-    console.log(`\nGenerated ${uniqueFeatures.length} feature flags:`);
-    console.log('  Base Features:', BASE_FEATURES.length);
-    console.log('  Domain Features:', domainFeatures.length);
-    console.log('  Scope Features:', scopeFeatures.size);
+    console.info(`\nGenerated ${uniqueFeatures.length} feature flags:`);
+    console.info('  Base Features:', BASE_FEATURES.length);
+    console.info('  Domain Features:', domainFeatures.length);
+    console.info('  Scope Features:', scopeFeatures.size);
 
     if (changed) {
-      console.log('\nFeature list:');
-      console.log(uniqueFeatures.map((f) => `  • ${f}`).join('\n'));
-      console.log(`\nUpdate TypeScript for type checking:`);
-      console.log(`  bunx tsc --noEmit`);
+      console.info('\nFeature list:');
+      console.info(uniqueFeatures.map((f) => `  • ${f}`).join('\n'));
+      console.info(`\nUpdate TypeScript for type checking:`);
+      console.info(`  bunx tsc --noEmit`);
     }
 
     process.exit?.(0) ?? Bun.exit(0);

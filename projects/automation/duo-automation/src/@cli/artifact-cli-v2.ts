@@ -95,13 +95,13 @@ class ArtifactCLI {
   }
 
   private async handleDiscoverCommand(query: string, options: any): Promise<void> {
-    console.log('🔍 AI-Powered Artifact Discovery');
-    console.log('==================================\n');
+    console.info('🔍 AI-Powered Artifact Discovery');
+    console.info('==================================\n');
     
-    console.log(`🔎 Searching for: "${query}"`);
-    if (options.related) console.log('🔗 Including related artifacts');
-    if (options.aiInsights) console.log('🤖 Including AI insights');
-    console.log(`📊 Relationship depth: ${options.depth}\n`);
+    console.info(`🔎 Searching for: "${query}"`);
+    if (options.related) console.info('🔗 Including related artifacts');
+    if (options.aiInsights) console.info('🤖 Including AI insights');
+    console.info(`📊 Relationship depth: ${options.depth}\n`);
     
     try {
       await this.artifactSystem.initialize();
@@ -113,56 +113,56 @@ class ArtifactCLI {
       });
       
       // Display artifacts
-      console.log('📦 Discovered Artifacts:');
-      console.log('========================');
+      console.info('📦 Discovered Artifacts:');
+      console.info('========================');
       
       if (discovery.artifacts.length === 0) {
-        console.log('❌ No artifacts found matching your query');
+        console.info('❌ No artifacts found matching your query');
         return;
       }
       
       discovery.artifacts.forEach((artifact, index) => {
-        console.log(`${index + 1}. ${artifact.title}`);
-        console.log(`   📁 ${artifact.path}`);
-        console.log(`   🏷️  ${artifact.tags.join(', ')}`);
-        console.log(`   📊 Popularity: ${artifact.metadata.metrics.popularity}/100`);
-        console.log(`   🛡️  Security: ${artifact.metadata.metrics.securityScore}/100`);
+        console.info(`${index + 1}. ${artifact.title}`);
+        console.info(`   📁 ${artifact.path}`);
+        console.info(`   🏷️  ${artifact.tags.join(', ')}`);
+        console.info(`   📊 Popularity: ${artifact.metadata.metrics.popularity}/100`);
+        console.info(`   🛡️  Security: ${artifact.metadata.metrics.securityScore}/100`);
         
         if (options.verbose) {
-          console.log(`   📝 ${artifact.description}`);
-          console.log(`   🔧 Tech: ${artifact.tech.join(', ')}`);
-          console.log(`   📈 Status: ${artifact.status}`);
+          console.info(`   📝 ${artifact.description}`);
+          console.info(`   🔧 Tech: ${artifact.tech.join(', ')}`);
+          console.info(`   📈 Status: ${artifact.status}`);
         }
-        console.log();
+        console.info();
       });
       
       // Display AI insights
       if (options.aiInsights && discovery.insights.length > 0) {
-        console.log('🤖 AI Insights:');
-        console.log('===============');
+        console.info('🤖 AI Insights:');
+        console.info('===============');
         discovery.insights.forEach((insight, index) => {
           const icon = insight.type === 'warning' ? '⚠️' : 
                      insight.type === 'recommendation' ? '💡' : 
                      insight.type === 'opportunity' ? '🎯' : '📋';
-          console.log(`${icon} ${insight.message}`);
-          console.log(`   Confidence: ${Math.round(insight.confidence * 100)}%`);
-          console.log(`   Actions: ${insight.actions.join(', ')}`);
-          console.log();
+          console.info(`${icon} ${insight.message}`);
+          console.info(`   Confidence: ${Math.round(insight.confidence * 100)}%`);
+          console.info(`   Actions: ${insight.actions.join(', ')}`);
+          console.info();
         });
       }
       
       // Display relationships summary
       if (options.related) {
-        console.log('🔗 Relationship Summary:');
-        console.log('=======================');
-        console.log(`Total relationship nodes: ${discovery.relationships.size}`);
+        console.info('🔗 Relationship Summary:');
+        console.info('=======================');
+        console.info(`Total relationship nodes: ${discovery.relationships.size}`);
         
         let totalRelationships = 0;
         for (const relationships of discovery.relationships.values()) {
           totalRelationships += relationships.length;
         }
-        console.log(`Total relationships: ${totalRelationships}`);
-        console.log();
+        console.info(`Total relationships: ${totalRelationships}`);
+        console.info();
       }
       
     } catch (error) {
@@ -171,47 +171,47 @@ class ArtifactCLI {
   }
 
   private async handleAnalyticsCommand(options: any): Promise<void> {
-    console.log('📊 Artifact Analytics Dashboard');
-    console.log('===============================\n');
+    console.info('📊 Artifact Analytics Dashboard');
+    console.info('===============================\n');
     
     try {
       await this.artifactSystem.initialize();
       const analytics = await this.artifactSystem.generateAnalytics();
       
       // Overview
-      console.log('📈 System Overview:');
-      console.log('==================');
-      console.log(`Total artifacts: ${analytics.overview.totalArtifacts}`);
-      console.log(`Active artifacts: ${analytics.overview.activeArtifacts}`);
-      console.log(`Deprecated artifacts: ${analytics.overview.deprecatedArtifacts}`);
-      console.log(`Domains: ${analytics.overview.domains.join(', ')}`);
-      console.log(`Technologies: ${analytics.overview.technologies.join(', ')}\n`);
+      console.info('📈 System Overview:');
+      console.info('==================');
+      console.info(`Total artifacts: ${analytics.overview.totalArtifacts}`);
+      console.info(`Active artifacts: ${analytics.overview.activeArtifacts}`);
+      console.info(`Deprecated artifacts: ${analytics.overview.deprecatedArtifacts}`);
+      console.info(`Domains: ${analytics.overview.domains.join(', ')}`);
+      console.info(`Technologies: ${analytics.overview.technologies.join(', ')}\n`);
       
       // Trends
-      console.log('📊 Trends Analysis:');
-      console.log('==================');
+      console.info('📊 Trends Analysis:');
+      console.info('==================');
       
-      console.log('🔥 Popular Artifacts:');
+      console.info('🔥 Popular Artifacts:');
       analytics.trends.popularityTrend.slice(0, 5).forEach((item, index) => {
-        console.log(`  ${index + 1}. ${item.artifact} (${item.popularity}% popularity)`);
+        console.info(`  ${index + 1}. ${item.artifact} (${item.popularity}% popularity)`);
       });
       
-      console.log('\n💻 Technology Adoption:');
+      console.info('\n💻 Technology Adoption:');
       analytics.trends.technologyAdoption.slice(0, 5).forEach((item, index) => {
-        console.log(`  ${index + 1}. ${item.tech} (${item.usage} artifacts)`);
+        console.info(`  ${index + 1}. ${item.tech} (${item.usage} artifacts)`);
       });
       
-      console.log('\n🤖 AI Insights:');
+      console.info('\n🤖 AI Insights:');
       analytics.insights.forEach((insight, index) => {
         const icon = insight.type === 'warning' ? '⚠️' : 
                    insight.type === 'recommendation' ? '💡' : 
                    insight.type === 'opportunity' ? '🎯' : '📋';
-        console.log(`  ${icon} ${insight.message}`);
+        console.info(`  ${icon} ${insight.message}`);
       });
       
-      console.log('\n💡 Recommendations:');
+      console.info('\n💡 Recommendations:');
       analytics.recommendations.forEach((rec, index) => {
-        console.log(`  ${index + 1}. ${rec}`);
+        console.info(`  ${index + 1}. ${rec}`);
       });
       
     } catch (error) {
@@ -220,56 +220,56 @@ class ArtifactCLI {
   }
 
   private async handleRecommendCommand(artifactId: string, options: any): Promise<void> {
-    console.log('🎯 Intelligent Artifact Recommendations');
-    console.log('=======================================\n');
+    console.info('🎯 Intelligent Artifact Recommendations');
+    console.info('=======================================\n');
     
-    console.log(`🔍 Analyzing artifact: ${artifactId}\n`);
+    console.info(`🔍 Analyzing artifact: ${artifactId}\n`);
     
     try {
       await this.artifactSystem.initialize();
       const recommendations = await this.artifactSystem.getRecommendations(artifactId);
       
-      console.log('🔄 Alternatives (replacements):');
+      console.info('🔄 Alternatives (replacements):');
       if (recommendations.alternatives.length === 0) {
-        console.log('  No alternatives found');
+        console.info('  No alternatives found');
       } else {
         recommendations.alternatives.forEach((alt, index) => {
-          console.log(`  ${index + 1}. ${alt.title}`);
-          console.log(`     📁 ${alt.path}`);
-          console.log(`     📊 Popularity: ${alt.metadata.metrics.popularity}/100`);
+          console.info(`  ${index + 1}. ${alt.title}`);
+          console.info(`     📁 ${alt.path}`);
+          console.info(`     📊 Popularity: ${alt.metadata.metrics.popularity}/100`);
         });
       }
       
-      console.log('\n🚀 Enhancements (extensions):');
+      console.info('\n🚀 Enhancements (extensions):');
       if (recommendations.enhancements.length === 0) {
-        console.log('  No enhancements found');
+        console.info('  No enhancements found');
       } else {
         recommendations.enhancements.forEach((enh, index) => {
-          console.log(`  ${index + 1}. ${enh.title}`);
-          console.log(`     📁 ${enh.path}`);
-          console.log(`     📊 Popularity: ${enh.metadata.metrics.popularity}/100`);
+          console.info(`  ${index + 1}. ${enh.title}`);
+          console.info(`     📁 ${enh.path}`);
+          console.info(`     📊 Popularity: ${enh.metadata.metrics.popularity}/100`);
         });
       }
       
-      console.log('\n🔗 Dependencies:');
+      console.info('\n🔗 Dependencies:');
       if (recommendations.dependencies.length === 0) {
-        console.log('  No dependencies found');
+        console.info('  No dependencies found');
       } else {
         recommendations.dependencies.forEach((dep, index) => {
-          console.log(`  ${index + 1}. ${dep.title}`);
-          console.log(`     📁 ${dep.path}`);
-          console.log(`     📊 Popularity: ${dep.metadata.metrics.popularity}/100`);
+          console.info(`  ${index + 1}. ${dep.title}`);
+          console.info(`     📁 ${dep.path}`);
+          console.info(`     📊 Popularity: ${dep.metadata.metrics.popularity}/100`);
         });
       }
       
-      console.log('\n⚠️  Conflicts:');
+      console.info('\n⚠️  Conflicts:');
       if (recommendations.conflicts.length === 0) {
-        console.log('  No conflicts found');
+        console.info('  No conflicts found');
       } else {
         recommendations.conflicts.forEach((conf, index) => {
-          console.log(`  ${index + 1}. ${conf.title}`);
-          console.log(`     📁 ${conf.path}`);
-          console.log(`     ⚠️  May conflict with current artifact`);
+          console.info(`  ${index + 1}. ${conf.title}`);
+          console.info(`     📁 ${conf.path}`);
+          console.info(`     ⚠️  May conflict with current artifact`);
         });
       }
       
@@ -279,44 +279,44 @@ class ArtifactCLI {
   }
 
   private async handleGovernanceCommand(options: any): Promise<void> {
-    console.log('🛡️ Artifact Governance & Management');
-    console.log('===================================\n');
+    console.info('🛡️ Artifact Governance & Management');
+    console.info('===================================\n');
     
     try {
       await this.artifactSystem.initialize();
       const management = await this.artifactSystem.manageArtifacts();
       
       if (options.healthCheck || !options.cleanup && !options.optimize) {
-        console.log('🏥 System Health Check:');
-        console.log('=======================');
-        console.log(`Status: ${management.healthCheck.status}`);
+        console.info('🏥 System Health Check:');
+        console.info('=======================');
+        console.info(`Status: ${management.healthCheck.status}`);
         
         if (management.healthCheck.issues.length > 0) {
-          console.log('\n⚠️  Issues Found:');
+          console.info('\n⚠️  Issues Found:');
           management.healthCheck.issues.forEach(issue => {
-            console.log(`  • ${issue}`);
+            console.info(`  • ${issue}`);
           });
         } else {
-          console.log('✅ No issues detected');
+          console.info('✅ No issues detected');
         }
-        console.log();
+        console.info();
       }
       
       if (options.cleanup) {
-        console.log('🧹 Cleanup Opportunities:');
-        console.log('=========================');
-        console.log(`Artifacts to archive: ${management.cleanup.archived}`);
-        console.log(`Artifacts to remove: ${management.cleanup.removed}`);
-        console.log();
+        console.info('🧹 Cleanup Opportunities:');
+        console.info('=========================');
+        console.info(`Artifacts to archive: ${management.cleanup.archived}`);
+        console.info(`Artifacts to remove: ${management.cleanup.removed}`);
+        console.info();
       }
       
       if (options.optimize) {
-        console.log('⚡ Optimization Opportunities:');
-        console.log('===============================');
+        console.info('⚡ Optimization Opportunities:');
+        console.info('===============================');
         management.optimization.opportunities.forEach((opp, index) => {
-          console.log(`${index + 1}. ${opp}`);
+          console.info(`${index + 1}. ${opp}`);
         });
-        console.log(`Estimated savings: ${management.optimization.savings} MB\n`);
+        console.info(`Estimated savings: ${management.optimization.savings} MB\n`);
       }
       
     } catch (error) {
@@ -325,9 +325,9 @@ class ArtifactCLI {
   }
 
   private async startInteractiveMode(options: any): Promise<void> {
-    console.log('🎮 Interactive Artifact Management Mode');
-    console.log('======================================\n');
-    console.log('Available commands: discover, analytics, recommend, governance, exit');
+    console.info('🎮 Interactive Artifact Management Mode');
+    console.info('======================================\n');
+    console.info('Available commands: discover, analytics, recommend, governance, exit');
     
     const readline = await import('readline');
     const rl = readline.createInterface({
@@ -341,9 +341,9 @@ class ArtifactCLI {
       });
     };
 
-    console.log('\n🚀 Initializing Enhanced Artifact System v2.0...');
+    console.info('\n🚀 Initializing Enhanced Artifact System v2.0...');
     await this.artifactSystem.initialize();
-    console.log('✅ Ready for interactive commands\n');
+    console.info('✅ Ready for interactive commands\n');
 
     while (true) {
       try {
@@ -357,7 +357,7 @@ class ArtifactCLI {
         switch (command) {
           case 'discover':
             if (args.length === 0) {
-              console.log('Usage: discover <query> [--related] [--ai-insights]');
+              console.info('Usage: discover <query> [--related] [--ai-insights]');
               continue;
             }
             await this.handleDiscoverCommand(args.join(' '), { 
@@ -373,7 +373,7 @@ class ArtifactCLI {
             
           case 'recommend':
             if (args.length === 0) {
-              console.log('Usage: recommend <artifact-id>');
+              console.info('Usage: recommend <artifact-id>');
               continue;
             }
             await this.handleRecommendCommand(args[0], { verbose: options.verbose });
@@ -387,17 +387,17 @@ class ArtifactCLI {
             break;
             
           default:
-            console.log('Unknown command. Available: discover, analytics, recommend, governance, exit');
+            console.info('Unknown command. Available: discover, analytics, recommend, governance, exit');
         }
         
-        console.log('\n---\n');
+        console.info('\n---\n');
       } catch (error) {
         console.error(`Error: ${error}`);
       }
     }
 
     rl.close();
-    console.log('\n👋 Goodbye!');
+    console.info('\n👋 Goodbye!');
   }
 }
 

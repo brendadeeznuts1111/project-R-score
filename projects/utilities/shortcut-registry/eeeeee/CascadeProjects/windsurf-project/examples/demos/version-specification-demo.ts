@@ -4,15 +4,15 @@
 import { z } from 'zod';
 
 async function runDemo() {
-console.log('🏷️ Version Specification Demo');
-console.log('============================');
+console.info('🏷️ Version Specification Demo');
+console.info('============================');
 
 // Check Zod version
 try {
   // Zod doesn't expose version directly, so we'll show it's working
-  console.log('✅ Zod beta version: Working correctly');
+  console.info('✅ Zod beta version: Working correctly');
 } catch (error) {
-  console.log('❌ Error checking Zod version:', error instanceof Error ? error.message : String(error));
+  console.info('❌ Error checking Zod version:', error instanceof Error ? error.message : String(error));
 }
 
 // Test Zod functionality with beta version
@@ -25,19 +25,19 @@ const UserSchema = z.object({
 try {
   const testUser = { name: 'John', email: 'john@example.com', age: 25 };
   const validated = UserSchema.parse(testUser);
-  console.log('✅ Beta Zod validation working:', validated);
+  console.info('✅ Beta Zod validation working:', validated);
 } catch (error) {
-  console.log('❌ Beta Zod validation failed:', error instanceof Error ? error.message : String(error));
+  console.info('❌ Beta Zod validation failed:', error instanceof Error ? error.message : String(error));
 }
 
-console.log('\n📦 Package Version Patterns:');
-console.log('============================');
+console.info('\n📦 Package Version Patterns:');
+console.info('============================');
 
 // Read package.json to show different version patterns
 const packageJsonText = await Bun.file('./package.json').text();
 const packageJson = JSON.parse(packageJsonText);
 
-console.log('Different version specification patterns:');
+console.info('Different version specification patterns:');
 Object.entries(packageJson.dependencies).forEach(([name, version]) => {
   let type = 'Unknown';
   if (typeof version === 'string') {
@@ -53,33 +53,33 @@ Object.entries(packageJson.dependencies).forEach(([name, version]) => {
       type = 'Specific - Exact version specified';
     }
   }
-  console.log(`   ${name}: ${version} (${type})`);
+  console.info(`   ${name}: ${version} (${type})`);
 });
 
-console.log('\n🎯 Version Specification Examples:');
-console.log('===================================');
-console.log('bun add package@latest          # Latest stable version');
-console.log('bun add package@next            # Next/preview version');
-console.log('bun add package@beta            # Beta version');
-console.log('bun add package@1.2.3           # Exact version');
-console.log('bun add package@1.2.x           # Range with wildcard');
-console.log('bun add package --exact         # Pin to exact version');
-console.log('bun add package -D               # Development dependency');
+console.info('\n🎯 Version Specification Examples:');
+console.info('===================================');
+console.info('bun add package@latest          # Latest stable version');
+console.info('bun add package@next            # Next/preview version');
+console.info('bun add package@beta            # Beta version');
+console.info('bun add package@1.2.3           # Exact version');
+console.info('bun add package@1.2.x           # Range with wildcard');
+console.info('bun add package --exact         # Pin to exact version');
+console.info('bun add package -D               # Development dependency');
 
-console.log('\n⚡ Installation Performance:');
-console.log('==========================');
-console.log('zod@3.0.0:     225ms (specific version)');
-console.log('zod@next:       342ms (beta version)');
-console.log('react@latest:   337ms (latest version)');
-console.log('react@beta:     382ms (beta version)');
+console.info('\n⚡ Installation Performance:');
+console.info('==========================');
+console.info('zod@3.0.0:     225ms (specific version)');
+console.info('zod@next:       342ms (beta version)');
+console.info('react@latest:   337ms (latest version)');
+console.info('react@beta:     382ms (beta version)');
 
-console.log('\n🔍 What We Learned:');
-console.log('==================');
-console.log('✅ Exact versions: "3.0.0" - No automatic updates');
-console.log('✅ Tag versions: "@next" -> "^3.25.0-beta.*" - Beta with range');
-console.log('✅ Latest tag: "@latest" -> "19.2.3" - Latest stable');
-console.log('✅ Beta tag: "@beta" -> "^19.0.0-beta-*" - Pre-release');
-console.log('✅ Range specifier (^) added automatically for tags');
+console.info('\n🔍 What We Learned:');
+console.info('==================');
+console.info('✅ Exact versions: "3.0.0" - No automatic updates');
+console.info('✅ Tag versions: "@next" -> "^3.25.0-beta.*" - Beta with range');
+console.info('✅ Latest tag: "@latest" -> "19.2.3" - Latest stable');
+console.info('✅ Beta tag: "@beta" -> "^19.0.0-beta-*" - Pre-release');
+console.info('✅ Range specifier (^) added automatically for tags');
 }
 
 // Run the demo

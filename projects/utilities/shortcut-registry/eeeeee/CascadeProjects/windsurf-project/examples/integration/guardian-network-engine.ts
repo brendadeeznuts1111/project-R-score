@@ -95,7 +95,7 @@ export class GuardianNetworkEngine {
     };
 
     this.networks.set(teenId, network);
-    console.log(`🕸️ Initialized guardian network for teen ${teenId} with primary guardian ${primaryGuardian.name}`);
+    console.info(`🕸️ Initialized guardian network for teen ${teenId} with primary guardian ${primaryGuardian.name}`);
     
     return network;
   }
@@ -165,7 +165,7 @@ export class GuardianNetworkEngine {
       actionRequired: false
     });
 
-    console.log(`🔗 Cross-family link added: ${newGuardian.name} (${newGuardian.household}) → teen ${teenId}`);
+    console.info(`🔗 Cross-family link added: ${newGuardian.name} (${newGuardian.household}) → teen ${teenId}`);
   }
 
   // Propagate tension across the network
@@ -261,7 +261,7 @@ export class GuardianNetworkEngine {
       actionRequired: true
     });
 
-    console.log(`🛡️ Distributed failover activated for teen ${teenId}: ${backupGuardians.length} backup guardians`);
+    console.info(`🛡️ Distributed failover activated for teen ${teenId}: ${backupGuardians.length} backup guardians`);
     return backupGuardians;
   }
 
@@ -349,7 +349,7 @@ export class GuardianNetworkEngine {
   }
 
   private async triggerVPCFlow(guardian: GuardianNode): Promise<void> {
-    console.log(`🔐 Triggering VPC flow for guardian ${guardian.name}`);
+    console.info(`🔐 Triggering VPC flow for guardian ${guardian.name}`);
     // In production: initiate age verification process
     await new Promise(resolve => setTimeout(resolve, 1000));
   }
@@ -360,7 +360,7 @@ export class GuardianNetworkEngine {
   }
 
   private async updateSharedDashboard(teenId: string): Promise<void> {
-    console.log(`📊 Updating shared dashboard for teen ${teenId}`);
+    console.info(`📊 Updating shared dashboard for teen ${teenId}`);
     // In production: update real-time dashboard for all connected guardians
   }
 
@@ -377,7 +377,7 @@ export class GuardianNetworkEngine {
     }
     this.networkAlerts.get(teenId)!.push(alert);
 
-    console.log(`🚨 Network alert broadcasted: ${alert.message}`);
+    console.info(`🚨 Network alert broadcasted: ${alert.message}`);
     // In production: send WebSocket notifications to all guardians
   }
 
@@ -405,7 +405,7 @@ export class GuardianNetworkEngine {
       vpcVerified: !!newGuardian.vpcVerified
     };
 
-    console.log(`🔗 CROSS_FAMILY_LINK: ${JSON.stringify(logEntry)}`);
+    console.info(`🔗 CROSS_FAMILY_LINK: ${JSON.stringify(logEntry)}`);
     // In production: write to immutable audit log
   }
 
@@ -529,8 +529,8 @@ export class NetworkVisualizationHelper {
 // Export singleton instance
 export const guardianNetwork = GuardianNetworkEngine.getInstance();
 
-console.log('🕸️ Cross-Family Guardian Network Engine Initialized');
-console.log('🔗 Graph-Based Sponsorship Webs: ACTIVE');
-console.log('🛡️ Distributed Failover: ENABLED');
-console.log('📊 Shared Visibility: CONSOLIDATED');
-console.log('🚨 Tension Diffusion: REAL-TIME');
+console.info('🕸️ Cross-Family Guardian Network Engine Initialized');
+console.info('🔗 Graph-Based Sponsorship Webs: ACTIVE');
+console.info('🛡️ Distributed Failover: ENABLED');
+console.info('📊 Shared Visibility: CONSOLIDATED');
+console.info('🚨 Tension Diffusion: REAL-TIME');

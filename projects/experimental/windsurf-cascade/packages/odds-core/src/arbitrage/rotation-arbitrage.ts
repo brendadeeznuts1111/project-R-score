@@ -496,9 +496,9 @@ export class RotationArbitrageDetector {
         try {
             // Here you would implement the actual execution logic
             // This is a placeholder that simulates execution
-            console.log(`Executing arbitrage opportunity ${opportunity.id}`);
-            console.log(`Expected return: ${opportunity.expectedReturn.percent.toFixed(2)}%`);
-            console.log(`Sportsbooks: ${opportunity.sportsbooks.join(', ')}`);
+            console.info(`Executing arbitrage opportunity ${opportunity.id}`);
+            console.info(`Expected return: ${opportunity.expectedReturn.percent.toFixed(2)}%`);
+            console.info(`Sportsbooks: ${opportunity.sportsbooks.join(', ')}`);
 
             // Emit execution event
             this.emitEvent('opportunity_executed', {

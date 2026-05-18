@@ -877,7 +877,7 @@ export class CascadeSkillsManager {
     // Adjust skill level if thresholds met
     if (this.shouldLevelUpSkill(skill)) {
       skill.level = this.getNextLevel(skill.level);
-      console.log(`🎓 Skill ${skill.name} leveled up to ${skill.level}`);
+      console.info(`🎓 Skill ${skill.name} leveled up to ${skill.level}`);
     }
   }
   

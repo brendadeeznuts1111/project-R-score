@@ -343,7 +343,7 @@ if (feature("DUOPLUS_RPA")) {
       });
 
       // Execute workflow (implementation depends on RPA engine)
-      console.log(`Workflow created: ${workflow.id}`);
+      console.info(`Workflow created: ${workflow.id}`);
     }
 
     /**
@@ -372,7 +372,7 @@ if (feature("DUOPLUS_RPA")) {
 
       // Execute with Cloud Number isolation
       await this.applyProxyAndGPS([cloudId], 'safe_proxy');
-      console.log(`Guardian RPA workflow: ${workflow.id}`);
+      console.info(`Guardian RPA workflow: ${workflow.id}`);
     }
 
     /**
@@ -405,7 +405,7 @@ if (feature("DUOPLUS_RPA")) {
         ],
       });
 
-      console.log(`Batch sync workflow: ${workflow.id}`);
+      console.info(`Batch sync workflow: ${workflow.id}`);
     }
 
     /**
@@ -436,7 +436,7 @@ if (feature("DUOPLUS_RPA")) {
           ],
         });
 
-        console.log(`Tension field workflow: ${workflow.id}`);
+        console.info(`Tension field workflow: ${workflow.id}`);
       }
     }
 
@@ -574,5 +574,5 @@ Status: PRODUCTION READY 🚀
   export default DuoPlusRPAService;
 } else {
   // Compile-time elimination for non-premium tiers
-  console.log("DUOPLUS_RPA features not available in free/beta/debug tiers");
+  console.info("DUOPLUS_RPA features not available in free/beta/debug tiers");
 }

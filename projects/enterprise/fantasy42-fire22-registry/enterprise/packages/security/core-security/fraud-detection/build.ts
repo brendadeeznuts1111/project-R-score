@@ -121,8 +121,8 @@ const targetPlatforms = [
  * Build all environments for all platforms
  */
 async function buildAll(): Promise<void> {
-  console.log('🚀 Building Fantasy42 Fraud Detection for all environments and platforms...');
-  console.log('='.repeat(80));
+  console.info('🚀 Building Fantasy42 Fraud Detection for all environments and platforms...');
+  console.info('='.repeat(80));
 
   const results = {
     total: 0,
@@ -131,8 +131,8 @@ async function buildAll(): Promise<void> {
   };
 
   for (const [envName, envConfig] of Object.entries(buildEnvironments)) {
-    console.log(`\n🏗️ Building ${envConfig.name} Environment`);
-    console.log('-'.repeat(50));
+    console.info(`\n🏗️ Building ${envConfig.name} Environment`);
+    console.info('-'.repeat(50));
 
     for (const platform of targetPlatforms) {
       results.total++;
@@ -140,29 +140,29 @@ async function buildAll(): Promise<void> {
       try {
         await buildForPlatform(envName, envConfig, platform);
         results.successful++;
-        console.log(`  ✅ ${platform}: Success`);
+        console.info(`  ✅ ${platform}: Success`);
       } catch (error) {
         results.failed++;
-        console.log(`  ❌ ${platform}: Failed - ${error}`);
+        console.info(`  ❌ ${platform}: Failed - ${error}`);
       }
     }
 
-    console.log(`  📦 ${envConfig.name} builds completed`);
+    console.info(`  📦 ${envConfig.name} builds completed`);
   }
 
   // Print summary
-  console.log('\n📊 Build Summary');
-  console.log('='.repeat(50));
-  console.log(`Total builds: ${results.total}`);
-  console.log(`Successful: ${results.successful}`);
-  console.log(`Failed: ${results.failed}`);
-  console.log(`Success rate: ${((results.successful / results.total) * 100).toFixed(1)}%`);
+  console.info('\n📊 Build Summary');
+  console.info('='.repeat(50));
+  console.info(`Total builds: ${results.total}`);
+  console.info(`Successful: ${results.successful}`);
+  console.info(`Failed: ${results.failed}`);
+  console.info(`Success rate: ${((results.successful / results.total) * 100).toFixed(1)}%`);
 
   if (results.failed > 0) {
-    console.log('\n❌ Some builds failed. Check the output above for details.');
+    console.info('\n❌ Some builds failed. Check the output above for details.');
     process.exit(1);
   } else {
-    console.log('\n🎉 All builds completed successfully!');
+    console.info('\n🎉 All builds completed successfully!');
   }
 }
 
@@ -216,7 +216,7 @@ async function buildForPlatform(
   // Generate build manifest
   await generateBuildManifest(outputFile, buildConfig, envConfig, platform);
 
-  console.log(`    📦 ${outputFile} (${platformUserAgent})`);
+  console.info(`    📦 ${outputFile} (${platformUserAgent})`);
 }
 
 /**
@@ -275,27 +275,27 @@ async function buildEnvironment(environment: string): Promise<void> {
     throw new Error(`Unknown environment: ${environment}`);
   }
 
-  console.log(`🏗️ Building Fantasy42 Fraud Detection (${envConfig.name})`);
-  console.log('='.repeat(60));
+  console.info(`🏗️ Building Fantasy42 Fraud Detection (${envConfig.name})`);
+  console.info('='.repeat(60));
 
   for (const platform of targetPlatforms) {
     try {
       await buildForPlatform(environment, envConfig, platform);
-      console.log(`✅ ${platform}: Built successfully`);
+      console.info(`✅ ${platform}: Built successfully`);
     } catch (error) {
       console.error(`❌ ${platform}: Build failed - ${error}`);
       throw error;
     }
   }
 
-  console.log(`\n🎉 ${envConfig.name} builds completed!`);
+  console.info(`\n🎉 ${envConfig.name} builds completed!`);
 }
 
 /**
  * Clean build artifacts
  */
 async function cleanBuilds(): Promise<void> {
-  console.log('🧹 Cleaning build artifacts...');
+  console.info('🧹 Cleaning build artifacts...');
 
   const { readdirSync, statSync, rmSync } = await import('fs');
   const { join } = await import('path');
@@ -305,12 +305,12 @@ async function cleanBuilds(): Promise<void> {
   try {
     if (readdirSync(distDir).length > 0) {
       rmSync(distDir, { recursive: true, force: true });
-      console.log('✅ Build artifacts cleaned');
+      console.info('✅ Build artifacts cleaned');
     } else {
-      console.log('ℹ️ No build artifacts to clean');
+      console.info('ℹ️ No build artifacts to clean');
     }
   } catch (error) {
-    console.log('ℹ️ No dist directory found');
+    console.info('ℹ️ No dist directory found');
   }
 }
 
@@ -318,24 +318,24 @@ async function cleanBuilds(): Promise<void> {
  * Show build information
  */
 function showBuildInfo(): void {
-  console.log('📋 Fantasy42 Fraud Detection Build Information');
-  console.log('='.repeat(50));
-  console.log(`Bun Version: ${Bun.version}`);
-  console.log(`Platform: ${process.platform}`);
-  console.log(`Architecture: ${process.arch}`);
-  console.log(`Build Version: ${process.env.BUILD_VERSION || '3.1.0'}`);
-  console.log(`Geo Region: ${process.env.GEO_REGION || 'global'}`);
-  console.log('');
+  console.info('📋 Fantasy42 Fraud Detection Build Information');
+  console.info('='.repeat(50));
+  console.info(`Bun Version: ${Bun.version}`);
+  console.info(`Platform: ${process.platform}`);
+  console.info(`Architecture: ${process.arch}`);
+  console.info(`Build Version: ${process.env.BUILD_VERSION || '3.1.0'}`);
+  console.info(`Geo Region: ${process.env.GEO_REGION || 'global'}`);
+  console.info('');
 
-  console.log('🏗️ Available Environments:');
+  console.info('🏗️ Available Environments:');
   for (const [name, config] of Object.entries(buildEnvironments)) {
-    console.log(`  ${name}: ${config.userAgent}`);
+    console.info(`  ${name}: ${config.userAgent}`);
   }
 
-  console.log('');
-  console.log('🎯 Available Platforms:');
+  console.info('');
+  console.info('🎯 Available Platforms:');
   targetPlatforms.forEach(platform => {
-    console.log(`  • ${platform}`);
+    console.info(`  • ${platform}`);
   });
 }
 
@@ -375,7 +375,7 @@ if (import.meta.main) {
         break;
 
       default:
-        console.log(`
+        console.info(`
 🏗️ Fantasy42 Fraud Detection Build System
 
 Usage:

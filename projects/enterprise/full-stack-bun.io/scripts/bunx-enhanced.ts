@@ -64,7 +64,7 @@ async function patchShebangIfNeeded(packageName: string, binPath: string): Promi
       await Bun.write(patchedPath, patchedContent);
       await Bun.file(patchedPath).chmod(0o755);
 
-      console.log(`SHEBANG.BUN - Auto-patched shebang for ${packageName}: ${binPath} → ${patchedPath}`);
+      console.info(`SHEBANG.BUN - Auto-patched shebang for ${packageName}: ${binPath} → ${patchedPath}`);
       return patchedPath;
     }
 
@@ -85,15 +85,15 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`CLI.BUNX.AGE - Executing ${parsed.package}`);
+  console.info(`CLI.BUNX.AGE - Executing ${parsed.package}`);
   if (parsed.minimumReleaseAge) {
-    console.log(`Minimum release age: ${parsed.minimumReleaseAge}s (${Math.floor(parsed.minimumReleaseAge / 86400)} days)`);
+    console.info(`Minimum release age: ${parsed.minimumReleaseAge}s (${Math.floor(parsed.minimumReleaseAge / 86400)} days)`);
   }
 
   try {
     // First, install the package with minimum release age if specified
     if (parsed.minimumReleaseAge) {
-      console.log(`Installing ${parsed.package} with minimum release age...`);
+      console.info(`Installing ${parsed.package} with minimum release age...`);
       const installArgs = ['add', parsed.package];
 
       // Pass minimum release age to bun install
@@ -136,7 +136,7 @@ async function main() {
 
     if (!binPath) {
       // Fallback: try to run with npx/bunx
-      console.log(`CLI.BUNX.AGE - Running with bunx: ${parsed.package}`);
+      console.info(`CLI.BUNX.AGE - Running with bunx: ${parsed.package}`);
       const proc = spawn({
         cmd: ['bun', 'x', parsed.package, ...parsed.packageArgs],
         stdout: 'inherit',
@@ -150,7 +150,7 @@ async function main() {
     const patchedBinPath = await patchShebangIfNeeded(parsed.package, binPath);
 
     // Execute the patched binary
-    console.log(`SHEBANG.BUN - Executing: ${patchedBinPath}`);
+    console.info(`SHEBANG.BUN - Executing: ${patchedBinPath}`);
     const proc = spawn({
       cmd: [bunPath, patchedBinPath, ...parsed.packageArgs],
       stdout: 'inherit',

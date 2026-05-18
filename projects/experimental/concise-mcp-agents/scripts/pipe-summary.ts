@@ -5,7 +5,7 @@
 const cookie = await Bun.secrets.get({ service: "plive", name: "cookie" });
 if (!cookie) throw "Run auth-plive first - cookie expired";
 
-console.log("📡 Connecting to plive summary report...");
+console.info("📡 Connecting to plive summary report...");
 
 const response = await fetch('https://plive.sportswidgets.pro/manager-tools/ajax.php?action=getSummaryReport', {
   method: 'POST',
@@ -28,11 +28,11 @@ if (!response.ok) {
   process.exit(1);
 }
 
-console.log("✅ Connected to summary report");
+console.info("✅ Connected to summary report");
 
 // Get the raw JSON response
 const rawData = await response.text();
-console.log(`📦 Received ${rawData.length} bytes of data`);
+console.info(`📦 Received ${rawData.length} bytes of data`);
 
 // Parse and check structure
 let data;
@@ -49,7 +49,7 @@ if (data.r && Array.isArray(data.r)) {
     item.profit && typeof item.profit === 'number' && item.profit > 100
   );
 
-  console.log(`💰 Found ${profitableBets.length} profitable bets (> $100)`);
+  console.info(`💰 Found ${profitableBets.length} profitable bets (> $100)`);
 
   // Convert to YAML format
   const yamlContent = profitableBets.map(bet => `- agent: "${bet.agent || 'Unknown'}"
@@ -62,10 +62,10 @@ if (data.r && Array.isArray(data.r)) {
   logTime: "${bet.logTime || new Date().toISOString()}"`).join('\n');
 
   await Bun.write("data/summary.yaml", yamlContent);
-  console.log("✅ Summary report piped");
-  console.log("📊 Run: tail -f data/summary.yaml");
+  console.info("✅ Summary report piped");
+  console.info("📊 Run: tail -f data/summary.yaml");
 } else {
-  console.log("⚠️ Unexpected response structure");
-  console.log("Available keys:", Object.keys(data));
-  console.log("Sample response:", JSON.stringify(data).substring(0, 500));
+  console.info("⚠️ Unexpected response structure");
+  console.info("Available keys:", Object.keys(data));
+  console.info("Sample response:", JSON.stringify(data).substring(0, 500));
 }

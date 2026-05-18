@@ -239,7 +239,7 @@ export class RegulatoryComplianceEngine {
     trade: ProposedTrade,
     traderIdentity: TraderIdentity
   ): Promise<ComplianceResult> {
-    console.log(
+    console.info(
       `🔍 Validating compliance for trade ${trade.id} in ${traderIdentity.jurisdiction}`
     );
 
@@ -285,7 +285,7 @@ export class RegulatoryComplianceEngine {
       // Store in compliance history
       this.complianceHistory.push(result);
 
-      console.log(
+      console.info(
         `✅ Compliance validation completed. Approved: ${
           result.approved
         }, Risk Score: ${riskScore.toFixed(3)}`
@@ -673,7 +673,7 @@ export class RegulatoryComplianceEngine {
 
     try {
       // Simulate API call to regulator
-      console.log(`📤 Reporting to ${trader.jurisdiction} regulator:`, report);
+      console.info(`📤 Reporting to ${trader.jurisdiction} regulator:`, report);
 
       // In production, this would be an actual HTTP request
       await new Promise((resolve) => setTimeout(resolve, 100));
@@ -825,7 +825,7 @@ export class RegulatoryComplianceEngine {
     const certificate = this.activeCertificates.get(certificateId);
 
     if (certificate) {
-      console.log(`🔒 Revoking certificate ${certificateId}: ${reason}`);
+      console.info(`🔒 Revoking certificate ${certificateId}: ${reason}`);
       this.activeCertificates.delete(certificateId);
 
       // Report revocation to regulators
@@ -841,7 +841,7 @@ export class RegulatoryComplianceEngine {
     reason: string
   ): Promise<void> {
     // Simulate reporting to all relevant regulators
-    console.log(
+    console.info(
       `📤 Reporting certificate revocation: ${certificate.certificateId}, Reason: ${reason}`
     );
   }
@@ -851,7 +851,7 @@ export class RegulatoryComplianceEngine {
    */
   updateComplianceRules(jurisdiction: string, rules: ComplianceRule[]): void {
     this.jurisdictions.set(jurisdiction, rules);
-    console.log(
+    console.info(
       `📝 Updated compliance rules for jurisdiction: ${jurisdiction}`
     );
   }

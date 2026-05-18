@@ -1,14 +1,14 @@
 import { EnhancedPhoneIntelligenceSystem } from './src/patterns/deep-app-integration.js';
 
 async function verifyEnhancedSystem() {
-  console.log('🚀 Starting Empire Pro Enhanced System Validation');
-  console.log('─'.repeat(50));
+  console.info('🚀 Starting Empire Pro Enhanced System Validation');
+  console.info('─'.repeat(50));
 
   const system = new EnhancedPhoneIntelligenceSystem();
   const testPhone = '+15550199999';
 
   // Test Case 1: Dry Run (Simulated Success)
-  console.log('🧪 TEST CASE 1: Dry Run (Simulation)');
+  console.info('🧪 TEST CASE 1: Dry Run (Simulation)');
   try {
     const result = await system.processEnhanced(testPhone, { dryRun: true });
     displayResult(result);
@@ -16,35 +16,35 @@ async function verifyEnhancedSystem() {
     console.error('❌ Dry Run Failed:', error);
   }
 
-  console.log('\n' + '─'.repeat(50) + '\n');
+  console.info('\n' + '─'.repeat(50) + '\n');
 
   // Test Case 2: Production SDK Path (Fail-Fast)
-  console.log('📡 TEST CASE 2: Production SDK Path');
+  console.info('📡 TEST CASE 2: Production SDK Path');
   try {
     // We expect this to either work or fail-fast with a clear error
     const result = await system.processEnhanced(testPhone, { dryRun: false });
     displayResult(result);
   } catch (error: any) {
-    console.log(`✅ Fail-Fast Caught: ${error.message}`);
+    console.info(`✅ Fail-Fast Caught: ${error.message}`);
   }
 }
 
 function displayResult(result: any) {
-  console.log('✅ System Processing Complete');
-  console.log(`📱 Phone: ${result.e164}`);
-  console.log(`📈 Trust Score: ${result.trustScore}/100`);
-  console.log(`🧬 Fingerprint: ${result.autonomicState?.fingerprint}`);
-  console.log(`🛡️  Mitigation Actions: ${result.autonomicState?.actions.join(', ') || 'None'}`);
-  console.log(`🔄 Healing Cycles: ${result.autonomicState?.healingCycles}`);
+  console.info('✅ System Processing Complete');
+  console.info(`📱 Phone: ${result.e164}`);
+  console.info(`📈 Trust Score: ${result.trustScore}/100`);
+  console.info(`🧬 Fingerprint: ${result.autonomicState?.fingerprint}`);
+  console.info(`🛡️  Mitigation Actions: ${result.autonomicState?.actions.join(', ') || 'None'}`);
+  console.info(`🔄 Healing Cycles: ${result.autonomicState?.healingCycles}`);
   
-  console.log('📊 Identity Graph Analysis:');
-  console.log(`   - Synthetic Score: ${(result.identityGraph.syntheticScore * 100).toFixed(2)}%`);
-  console.log(`   - Cross-Validation Consistency: ${result.multiApp.crossValidation.consistency * 100}%`);
+  console.info('📊 Identity Graph Analysis:');
+  console.info(`   - Synthetic Score: ${(result.identityGraph.syntheticScore * 100).toFixed(2)}%`);
+  console.info(`   - Cross-Validation Consistency: ${result.multiApp.crossValidation.consistency * 100}%`);
   
   if (result.autonomicState?.mitigated) {
-    console.log('⚠️  AUTONOMIC MITIGATION TRIGGERED');
+    console.info('⚠️  AUTONOMIC MITIGATION TRIGGERED');
   } else {
-    console.log('✨ System Stabilized');
+    console.info('✨ System Stabilized');
   }
 }
 

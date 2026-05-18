@@ -51,12 +51,12 @@ export class LiveExecutionEngineIntegration {
     this.ingestion_service = new PatternIngestionService(this.live_engine);
     this.ingestion_api = new PatternIngestionAPI(this.ingestion_service);
 
-    console.log('[LIVE-INTEGRATION] Live Execution Engine initialized');
+    console.info('[LIVE-INTEGRATION] Live Execution Engine initialized');
   }
 
   /// Start the live execution engine
   async start(): Promise<void> {
-    console.log('[LIVE-INTEGRATION] Starting Live Execution Engine...');
+    console.info('[LIVE-INTEGRATION] Starting Live Execution Engine...');
 
     // Start HTTP server
     await this.startHttpServer();
@@ -67,14 +67,14 @@ export class LiveExecutionEngineIntegration {
     // Register shutdown handlers
     this.registerShutdownHandlers();
 
-    console.log(`[LIVE-INTEGRATION] Live Execution Engine started on port ${LIVE_ENGINE_CONFIG.PORT}`);
-    console.log(`[LIVE-INTEGRATION] Health check: http://${LIVE_ENGINE_CONFIG.HOST}:${LIVE_ENGINE_CONFIG.PORT}/health`);
-    console.log(`[LIVE-INTEGRATION] Metrics: http://${LIVE_ENGINE_CONFIG.HOST}:${LIVE_ENGINE_CONFIG.PORT}/metrics`);
+    console.info(`[LIVE-INTEGRATION] Live Execution Engine started on port ${LIVE_ENGINE_CONFIG.PORT}`);
+    console.info(`[LIVE-INTEGRATION] Health check: http://${LIVE_ENGINE_CONFIG.HOST}:${LIVE_ENGINE_CONFIG.PORT}/health`);
+    console.info(`[LIVE-INTEGRATION] Metrics: http://${LIVE_ENGINE_CONFIG.HOST}:${LIVE_ENGINE_CONFIG.PORT}/metrics`);
   }
 
   /// Stop the live execution engine
   async stop(): Promise<void> {
-    console.log('[LIVE-INTEGRATION] Stopping Live Execution Engine...');
+    console.info('[LIVE-INTEGRATION] Stopping Live Execution Engine...');
 
     this.is_shutting_down = true;
 
@@ -89,7 +89,7 @@ export class LiveExecutionEngineIntegration {
     // Close ingestion service connections
     // (Ingestion service handles its own cleanup)
 
-    console.log('[LIVE-INTEGRATION] Live Execution Engine stopped');
+    console.info('[LIVE-INTEGRATION] Live Execution Engine stopped');
   }
 
   /// Start HTTP server with API endpoints
@@ -258,7 +258,7 @@ export class LiveExecutionEngineIntegration {
 
   /// Shutdown endpoint
   private async handleShutdown(): Promise<Response> {
-    console.log('[HTTP] Shutdown requested via API');
+    console.info('[HTTP] Shutdown requested via API');
 
     // Start graceful shutdown
     setTimeout(async () => {
@@ -276,7 +276,7 @@ export class LiveExecutionEngineIntegration {
     // This would reset internal state for testing
     // In production, this might not be exposed or have additional auth
 
-    console.log('[HTTP] Reset requested - clearing execution results');
+    console.info('[HTTP] Reset requested - clearing execution results');
 
     // Note: In production, this would need proper authorization
     // For now, just return success
@@ -317,13 +317,13 @@ export class LiveExecutionEngineIntegration {
   private registerShutdownHandlers(): void {
     // Handle process termination signals
     process.on('SIGTERM', async () => {
-      console.log('[SHUTDOWN] Received SIGTERM');
+      console.info('[SHUTDOWN] Received SIGTERM');
       await this.stop();
       process.exit(0);
     });
 
     process.on('SIGINT', async () => {
-      console.log('[SHUTDOWN] Received SIGINT');
+      console.info('[SHUTDOWN] Received SIGINT');
       await this.stop();
       process.exit(0);
     });
@@ -386,12 +386,12 @@ export class LiveExecutionCLI {
 
   /// Start command
   private async startCommand(): Promise<void> {
-    console.log('🚀 Starting Live Execution Engine...');
+    console.info('🚀 Starting Live Execution Engine...');
     await this.integration.start();
 
     // Keep the process running
     process.on('SIGINT', () => {
-      console.log('\n👋 Shutting down gracefully...');
+      console.info('\n👋 Shutting down gracefully...');
       this.integration.stop().then(() => {
         process.exit(0);
       });
@@ -406,8 +406,8 @@ export class LiveExecutionCLI {
     try {
       const response = await fetch(`http://${LIVE_ENGINE_CONFIG.HOST}:${LIVE_ENGINE_CONFIG.PORT}/status`);
       const status = await response.json();
-      console.log('📊 Live Execution Engine Status:');
-      console.log(JSON.stringify(status, null, 2));
+      console.info('📊 Live Execution Engine Status:');
+      console.info(JSON.stringify(status, null, 2));
     } catch (error) {
       console.error('❌ Failed to get status:', error.message);
       process.exit(1);
@@ -421,12 +421,12 @@ export class LiveExecutionCLI {
       const health = await response.json();
 
       if (health.status === 'healthy') {
-        console.log('✅ Live Execution Engine is healthy');
-        console.log(`   Uptime: ${health.uptime_seconds.toFixed(0)}s`);
-        console.log(`   Executions: ${health.components.live_engine.executions}`);
-        console.log(`   Active streams: ${health.components.ingestion_service.active_streams}`);
+        console.info('✅ Live Execution Engine is healthy');
+        console.info(`   Uptime: ${health.uptime_seconds.toFixed(0)}s`);
+        console.info(`   Executions: ${health.components.live_engine.executions}`);
+        console.info(`   Active streams: ${health.components.ingestion_service.active_streams}`);
       } else {
-        console.log('❌ Live Execution Engine is unhealthy');
+        console.info('❌ Live Execution Engine is unhealthy');
         process.exit(1);
       }
     } catch (error) {
@@ -437,7 +437,7 @@ export class LiveExecutionCLI {
 
   /// Test command
   private async testCommand(): Promise<void> {
-    console.log('🧪 Running basic connectivity test...');
+    console.info('🧪 Running basic connectivity test...');
 
     try {
       // Test health endpoint
@@ -452,7 +452,7 @@ export class LiveExecutionCLI {
         throw new Error(`Metrics check failed: ${metricsResponse.status}`);
       }
 
-      console.log('✅ All connectivity tests passed');
+      console.info('✅ All connectivity tests passed');
     } catch (error) {
       console.error('❌ Connectivity test failed:', error.message);
       process.exit(1);
@@ -461,7 +461,7 @@ export class LiveExecutionCLI {
 
   /// Show help
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🤖 Live Execution Engine CLI
 
 Usage: live-execution-engine <command>

@@ -561,7 +561,7 @@ export class RealtimeFinancialDashboard {
     }
 
     // Send initial notifications
-    console.log(`Sending ${alert.severity} alert notifications: ${alert.title}`);
+    console.info(`Sending ${alert.severity} alert notifications: ${alert.title}`);
   }
 
   private initializeWidgets(): void {

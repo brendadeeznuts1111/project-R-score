@@ -41,15 +41,15 @@ class Fire22FeedBuildSystem {
   async buildFeeds(options: FeedOptions = {}): Promise<void> {
     const startTime = Bun.nanoseconds();
 
-    console.log('📡 Fire22 RSS Feed Build System');
-    console.log('!==!==!==!==!==!==');
+    console.info('📡 Fire22 RSS Feed Build System');
+    console.info('!==!==!==!==!==!==');
 
     const env = options.environment || 'development';
-    console.log(`\n🎯 Environment: ${env}`);
-    console.log(`🏢 Department: ${options.department || 'ALL'}`);
+    console.info(`\n🎯 Environment: ${env}`);
+    console.info(`🏢 Department: ${options.department || 'ALL'}`);
 
     if (options.dryRun) {
-      console.log('🔍 DRY RUN MODE - No files will be written');
+      console.info('🔍 DRY RUN MODE - No files will be written');
     }
 
     try {
@@ -74,7 +74,7 @@ class Fire22FeedBuildSystem {
       }
 
       const buildTime = (Bun.nanoseconds() - startTime) / 1_000_000;
-      console.log(`\n✅ Feed build completed in ${buildTime.toFixed(2)}ms`);
+      console.info(`\n✅ Feed build completed in ${buildTime.toFixed(2)}ms`);
     } catch (error) {
       console.error('❌ Feed build failed:', error);
       process.exit(1);
@@ -85,7 +85,7 @@ class Fire22FeedBuildSystem {
    * 📁 Setup feed build environment
    */
   private async setupFeedEnvironment(options: FeedOptions): Promise<void> {
-    console.log('\n📁 Setting up feed environment...');
+    console.info('\n📁 Setting up feed environment...');
 
     if (!options.dryRun) {
       if (!existsSync(this.distDir)) {
@@ -93,14 +93,14 @@ class Fire22FeedBuildSystem {
       }
     }
 
-    console.log('  ✅ Feed directory ready');
+    console.info('  ✅ Feed directory ready');
   }
 
   /**
    * 📋 Load error codes from JSON
    */
   private async loadErrorCodes(): Promise<ErrorCode[]> {
-    console.log('\n📋 Loading error codes...');
+    console.info('\n📋 Loading error codes...');
 
     if (!existsSync(this.errorCodesPath)) {
       throw new Error(`Error codes file not found: ${this.errorCodesPath}`);
@@ -120,7 +120,7 @@ class Fire22FeedBuildSystem {
       }
     }
 
-    console.log(`  ✅ Loaded ${errorCodes.length} error codes`);
+    console.info(`  ✅ Loaded ${errorCodes.length} error codes`);
     return errorCodes;
   }
 
@@ -147,7 +147,7 @@ class Fire22FeedBuildSystem {
    * 📡 Build RSS 2.0 feed
    */
   private async buildRSSFeed(errorCodes: ErrorCode[], options: FeedOptions): Promise<void> {
-    console.log('\n📡 Building RSS 2.0 feed...');
+    console.info('\n📡 Building RSS 2.0 feed...');
 
     const baseUrl = this.getBaseUrl(options.environment);
     const buildDate = new Date().toUTCString();
@@ -234,14 +234,14 @@ class Fire22FeedBuildSystem {
       writeFileSync(join(this.distDir, 'error-codes-rss.xml'), rssContent);
     }
 
-    console.log(`  ✅ RSS feed generated (${filteredCodes.length} items)`);
+    console.info(`  ✅ RSS feed generated (${filteredCodes.length} items)`);
   }
 
   /**
    * ⚛️ Build Atom 1.0 feed
    */
   private async buildAtomFeed(errorCodes: ErrorCode[], options: FeedOptions): Promise<void> {
-    console.log('\n⚛️ Building Atom 1.0 feed...');
+    console.info('\n⚛️ Building Atom 1.0 feed...');
 
     const baseUrl = this.getBaseUrl(options.environment);
     const buildDate = new Date().toISOString();
@@ -325,14 +325,14 @@ class Fire22FeedBuildSystem {
       writeFileSync(join(this.distDir, 'error-codes-atom.xml'), atomContent);
     }
 
-    console.log(`  ✅ Atom feed generated (${filteredCodes.length} entries)`);
+    console.info(`  ✅ Atom feed generated (${filteredCodes.length} entries)`);
   }
 
   /**
    * 📋 Build feed index page
    */
   private async buildFeedIndex(options: FeedOptions): Promise<void> {
-    console.log('\n📋 Building feed index...');
+    console.info('\n📋 Building feed index...');
 
     // Copy the existing feed index from src/feeds/index.html
     const srcIndexPath = join(this.srcDir, 'feeds', 'index.html');
@@ -353,14 +353,14 @@ class Fire22FeedBuildSystem {
       writeFileSync(destIndexPath, indexContent);
     }
 
-    console.log('  ✅ Feed index page generated');
+    console.info('  ✅ Feed index page generated');
   }
 
   /**
    * ✅ Validate generated feeds
    */
   private async validateFeeds(options: FeedOptions): Promise<void> {
-    console.log('\n✅ Validating feeds...');
+    console.info('\n✅ Validating feeds...');
 
     const feedFiles = [
       { file: 'error-codes-rss.xml', type: 'RSS 2.0' },
@@ -388,9 +388,9 @@ class Fire22FeedBuildSystem {
           }
         }
 
-        console.log(`  ✅ ${feed.file} (${feed.type}) - Valid`);
+        console.info(`  ✅ ${feed.file} (${feed.type}) - Valid`);
       } else {
-        console.log(`  ❌ ${feed.file} - Missing`);
+        console.info(`  ❌ ${feed.file} - Missing`);
       }
     }
   }
@@ -461,7 +461,7 @@ async function main() {
         options.dryRun = true;
         break;
       case '--help':
-        console.log(`
+        console.info(`
 Fire22 RSS Feed Build System
 
 Usage:

@@ -293,7 +293,7 @@ describe("R2 Storage Integration", () => {
 
 			// Should be under 5ms per operation on average
 			expect(avgTime).toBeLessThan(5);
-			console.log(`Average secret access time: ${avgTime.toFixed(3)}ms`);
+			console.info(`Average secret access time: ${avgTime.toFixed(3)}ms`);
 		});
 
 		test("should handle bulk key generation efficiently", () => {
@@ -312,7 +312,7 @@ describe("R2 Storage Integration", () => {
 
 			// Should be under 1ms per key generation
 			expect(avgTime).toBeLessThan(1);
-			console.log(`Average key generation time: ${avgTime.toFixed(3)}ms`);
+			console.info(`Average key generation time: ${avgTime.toFixed(3)}ms`);
 		});
 
 		test("should handle signature generation efficiently", () => {
@@ -332,7 +332,7 @@ describe("R2 Storage Integration", () => {
 
 			// Should be under 10ms per signature generation
 			expect(avgTime).toBeLessThan(10);
-			console.log(`Average signature generation time: ${avgTime.toFixed(3)}ms`);
+			console.info(`Average signature generation time: ${avgTime.toFixed(3)}ms`);
 		});
 	});
 

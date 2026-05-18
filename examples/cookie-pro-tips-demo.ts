@@ -19,12 +19,12 @@ import {
 import { SecureCookiePro } from '../lib/telemetry/bun-cookie-inspector-v3';
 import { Cookie } from '../lib/telemetry/bun-cookies-complete-v2';
 
-console.log('🚀 Cookie Pro-Tips Demo - Production Patterns');
-console.log('='.repeat(60));
+console.info('🚀 Cookie Pro-Tips Demo - Production Patterns');
+console.info('='.repeat(60));
 
 // 🎯 DEMO 1: Production Cookie Manager
-console.log('\n🏗️ DEMO 1: Production Cookie Manager');
-console.log('-'.repeat(50));
+console.info('\n🏗️ DEMO 1: Production Cookie Manager');
+console.info('-'.repeat(50));
 
 const manager = new ProductionCookieManager();
 
@@ -35,26 +35,26 @@ const mockRequest = new Request('https://example.com/api/user', {
   }
 });
 
-console.log('🔄 Processing production request...');
+console.info('🔄 Processing production request...');
 const result = await manager.processRequest(mockRequest);
 
-console.log(`📊 Request Results:`);
-console.log(`   Cookies parsed: ${result.cookies.size}`);
-console.log(`   Session ID: ${result.session.id}`);
-console.log(`   Guest user: ${result.session.isGuest}`);
-console.log(`   Response cookies: ${result.responseCookies.length}`);
-console.log(`   Alerts generated: ${result.alerts.length}`);
+console.info(`📊 Request Results:`);
+console.info(`   Cookies parsed: ${result.cookies.size}`);
+console.info(`   Session ID: ${result.session.id}`);
+console.info(`   Guest user: ${result.session.isGuest}`);
+console.info(`   Response cookies: ${result.responseCookies.length}`);
+console.info(`   Alerts generated: ${result.alerts.length}`);
 
 if (result.alerts.length > 0) {
-  console.log('\n🚨 Alerts:');
+  console.info('\n🚨 Alerts:');
   result.alerts.forEach(alert => {
-    console.log(`   ${alert.level.toUpperCase()}: ${alert.message}`);
+    console.info(`   ${alert.level.toUpperCase()}: ${alert.message}`);
   });
 }
 
 // 🎯 DEMO 2: Layered Cookie Architecture
-console.log('\n🍪 DEMO 2: Layered Cookie Architecture');
-console.log('-'.repeat(50));
+console.info('\n🍪 DEMO 2: Layered Cookie Architecture');
+console.info('-'.repeat(50));
 
 const mockUser = {
   id: 'user-123',
@@ -70,23 +70,23 @@ const mockConsents = {
 
 const layeredCookies = manager.createLayeredCookies(mockUser, mockConsents);
 
-console.log('📂 Layered Cookie Architecture:');
+console.info('📂 Layered Cookie Architecture:');
 layeredCookies.forEach((cookie, index) => {
-  console.log(`\n${index + 1}. ${cookie.name}:`);
-  console.log(`   Purpose: ${getCookiePurpose(cookie.name)}`);
-  console.log(`   Secure: ${cookie.secure}`);
-  console.log(`   HttpOnly: ${cookie.httpOnly}`);
-  console.log(`   SameSite: ${cookie.sameSite}`);
-  console.log(`   MaxAge: ${formatDuration(cookie.maxAge || 0)}`);
-  console.log(`   Path: ${cookie.path}`);
-  if (cookie.domain) console.log(`   Domain: ${cookie.domain}`);
+  console.info(`\n${index + 1}. ${cookie.name}:`);
+  console.info(`   Purpose: ${getCookiePurpose(cookie.name)}`);
+  console.info(`   Secure: ${cookie.secure}`);
+  console.info(`   HttpOnly: ${cookie.httpOnly}`);
+  console.info(`   SameSite: ${cookie.sameSite}`);
+  console.info(`   MaxAge: ${formatDuration(cookie.maxAge || 0)}`);
+  console.info(`   Path: ${cookie.path}`);
+  if (cookie.domain) console.info(`   Domain: ${cookie.domain}`);
 });
 
 // 🎯 DEMO 3: Performance Optimizations
-console.log('\n⚡ DEMO 3: Performance Optimizations');
-console.log('-'.repeat(50));
+console.info('\n⚡ DEMO 3: Performance Optimizations');
+console.info('-'.repeat(50));
 
-console.log('🚀 Cookie-Free Zone Detection:');
+console.info('🚀 Cookie-Free Zone Detection:');
 const testPaths = [
   '/health',
   '/api/user',
@@ -98,24 +98,24 @@ const testPaths = [
 
 testPaths.forEach(path => {
   const shouldSkip = manager.shouldSkipCookieCheck(path);
-  console.log(`   ${path}: ${shouldSkip ? '⚡ SKIP' : '🍪 PROCESS'}`);
+  console.info(`   ${path}: ${shouldSkip ? '⚡ SKIP' : '🍪 PROCESS'}`);
 });
 
-console.log('\n📊 Cookie Size Optimization:');
+console.info('\n📊 Cookie Size Optimization:');
 const largeCookie = layeredCookies[0]; // Session cookie
 const originalSize = largeCookie.name.length + largeCookie.value.length;
-console.log(`   Original cookie size: ${originalSize} bytes`);
-console.log(`   Optimized: ${originalSize < 4096 ? '✅ Optimal' : '⚠️ Needs compression'}`);
+console.info(`   Original cookie size: ${originalSize} bytes`);
+console.info(`   Optimized: ${originalSize < 4096 ? '✅ Optimal' : '⚠️ Needs compression'}`);
 
 // 🎯 DEMO 4: Cookie + DataView Bridge
-console.log('\n🔗 DEMO 4: Cookie + DataView Bridge');
-console.log('-'.repeat(50));
+console.info('\n🔗 DEMO 4: Cookie + DataView Bridge');
+console.info('-'.repeat(50));
 
 const telemetryCookie = manager.createTelemetryCookie('telemetry', 'test-data');
-console.log('📊 Telemetry Cookie Created:');
-console.log(`   Cookie name: ${telemetryCookie.cookie.name}`);
-console.log(`   Cookie value: ${telemetryCookie.cookie.value}`);
-console.log(`   Metadata size: ${telemetryCookie.metadata.byteLength} bytes`);
+console.info('📊 Telemetry Cookie Created:');
+console.info(`   Cookie name: ${telemetryCookie.cookie.name}`);
+console.info(`   Cookie value: ${telemetryCookie.cookie.value}`);
+console.info(`   Metadata size: ${telemetryCookie.metadata.byteLength} bytes`);
 
 // Read telemetry data
 const timestamp = Number(telemetryCookie.metadata.getBigUint64(0, true));
@@ -123,14 +123,14 @@ const isSecure = telemetryCookie.metadata.getUint8(8) === 1;
 const isHttpOnly = telemetryCookie.metadata.getUint8(9) === 1;
 const cookieSize = telemetryCookie.metadata.getUint16(10, true);
 
-console.log(`   Timestamp: ${new Date(timestamp).toISOString()}`);
-console.log(`   Secure flag: ${isSecure}`);
-console.log(`   HttpOnly flag: ${isHttpOnly}`);
-console.log(`   Recorded size: ${cookieSize} bytes`);
+console.info(`   Timestamp: ${new Date(timestamp).toISOString()}`);
+console.info(`   Secure flag: ${isSecure}`);
+console.info(`   HttpOnly flag: ${isHttpOnly}`);
+console.info(`   Recorded size: ${cookieSize} bytes`);
 
 // 🎯 DEMO 5: Security Monitoring & Alerting
-console.log('\n🚨 DEMO 5: Security Monitoring & Alerting');
-console.log('-'.repeat(50));
+console.info('\n🚨 DEMO 5: Security Monitoring & Alerting');
+console.info('-'.repeat(50));
 
 const monitor = new CookieMonitor();
 
@@ -141,9 +141,9 @@ const secureCookies = [
   SecureCookiePro.createCSRFToken()
 ];
 
-console.log('✅ Testing secure cookies:');
+console.info('✅ Testing secure cookies:');
 const secureAlerts = monitor.checkForAnomalies(secureCookies);
-console.log(`   Alerts: ${secureAlerts.length}`);
+console.info(`   Alerts: ${secureAlerts.length}`);
 
 // Test with insecure cookies
 const insecureCookies = [
@@ -152,20 +152,20 @@ const insecureCookies = [
   new Cookie('analytics', 'data', { secure: false, maxAge: 31536000 }) // Long-lived, insecure
 ];
 
-console.log('\n❌ Testing insecure cookies:');
+console.info('\n❌ Testing insecure cookies:');
 const insecureAlerts = monitor.checkForAnomalies(insecureCookies);
-console.log(`   Alerts: ${insecureAlerts.length}`);
+console.info(`   Alerts: ${insecureAlerts.length}`);
 
 if (insecureAlerts.length > 0) {
-  console.log('\n🚨 Security Alerts:');
+  console.info('\n🚨 Security Alerts:');
   insecureAlerts.forEach(alert => {
-    console.log(`   ${alert.level.toUpperCase()}: ${alert.message} (${alert.code})`);
+    console.info(`   ${alert.level.toUpperCase()}: ${alert.message} (${alert.code})`);
   });
 }
 
 // 🎯 DEMO 6: Production Metrics
-console.log('\n📊 DEMO 6: Production Metrics');
-console.log('-'.substring(50));
+console.info('\n📊 DEMO 6: Production Metrics');
+console.info('-'.substring(50));
 
 const metrics = new CookieMetrics();
 
@@ -176,85 +176,85 @@ metrics.recordRequest(3.2, 5, 3);
 metrics.recordValidationFailure(['Missing secure flag', 'Invalid domain']);
 metrics.recordSessionValidationFailure();
 
-console.log('📈 Production Metrics:');
+console.info('📈 Production Metrics:');
 const currentMetrics = metrics.getMetrics();
-console.log(`   Total requests: ${currentMetrics.totalRequests}`);
-console.log(`   Total cookie sets: ${currentMetrics.totalCookieSets}`);
-console.log(`   Total cookie gets: ${currentMetrics.totalCookieGets}`);
-console.log(`   Validation failures: ${currentMetrics.validationFailures}`);
-console.log(`   Session validation failures: ${currentMetrics.sessionValidationFailures}`);
-console.log(`   Average processing time: ${currentMetrics.averageProcessingTime.toFixed(2)}ms`);
+console.info(`   Total requests: ${currentMetrics.totalRequests}`);
+console.info(`   Total cookie sets: ${currentMetrics.totalCookieSets}`);
+console.info(`   Total cookie gets: ${currentMetrics.totalCookieGets}`);
+console.info(`   Validation failures: ${currentMetrics.validationFailures}`);
+console.info(`   Session validation failures: ${currentMetrics.sessionValidationFailures}`);
+console.info(`   Average processing time: ${currentMetrics.averageProcessingTime.toFixed(2)}ms`);
 
-console.log('\n📊 Prometheus Metrics Export:');
-console.log(metrics.exportMetrics());
+console.info('\n📊 Prometheus Metrics Export:');
+console.info(metrics.exportMetrics());
 
 // 🎯 DEMO 7: Production Testing Suite
-console.log('\n🧪 DEMO 7: Production Testing Suite');
-console.log('-'.repeat(50));
+console.info('\n🧪 DEMO 7: Production Testing Suite');
+console.info('-'.repeat(50));
 
-console.log('🔒 Running Security Tests...');
+console.info('🔒 Running Security Tests...');
 const securityTests = ProductionCookieTestSuite.runSecurityTests();
 
-console.log('\n📋 Security Test Results:');
+console.info('\n📋 Security Test Results:');
 securityTests.forEach((test, index) => {
   const status = test.passed ? '✅ PASS' : '❌ FAIL';
-  console.log(`\n${index + 1}. ${test.name}: ${status}`);
+  console.info(`\n${index + 1}. ${test.name}: ${status}`);
   
   if (test.issues.length > 0) {
-    console.log('   Issues:');
-    test.issues.forEach(issue => console.log(`     - ${issue}`));
+    console.info('   Issues:');
+    test.issues.forEach(issue => console.info(`     - ${issue}`));
   }
   
   if (test.recommendations.length > 0) {
-    console.log('   Recommendations:');
-    test.recommendations.slice(0, 2).forEach(rec => console.log(`     - ${rec}`));
+    console.info('   Recommendations:');
+    test.recommendations.slice(0, 2).forEach(rec => console.info(`     - ${rec}`));
   }
 });
 
 const passedTests = securityTests.filter(t => t.passed).length;
-console.log(`\n📊 Test Summary: ${passedTests}/${securityTests.length} tests passed`);
+console.info(`\n📊 Test Summary: ${passedTests}/${securityTests.length} tests passed`);
 
 // 🎯 DEMO 8: Production Checklist
-console.log('\n📋 DEMO 8: Production Checklist');
-console.log('-'.repeat(50));
+console.info('\n📋 DEMO 8: Production Checklist');
+console.info('-'.repeat(50));
 
-console.log('🔍 Security Checklist:');
+console.info('🔍 Security Checklist:');
 PRODUCTION_CHECKLIST.security.forEach(item => {
-  console.log(`   ${item}`);
+  console.info(`   ${item}`);
 });
 
-console.log('\n⚡ Performance Checklist:');
+console.info('\n⚡ Performance Checklist:');
 PRODUCTION_CHECKLIST.performance.forEach(item => {
-  console.log(`   ${item}`);
+  console.info(`   ${item}`);
 });
 
-console.log('\n⚖️ Compliance Checklist:');
+console.info('\n⚖️ Compliance Checklist:');
 PRODUCTION_CHECKLIST.compliance.forEach(item => {
-  console.log(`   ${item}`);
+  console.info(`   ${item}`);
 });
 
-console.log('\n📊 Monitoring Checklist:');
+console.info('\n📊 Monitoring Checklist:');
 PRODUCTION_CHECKLIST.monitoring.forEach(item => {
-  console.log(`   ${item}`);
+  console.info(`   ${item}`);
 });
 
 // 🎯 DEMO 9: Performance Benchmarks
-console.log('\n📈 DEMO 9: Performance Benchmarks');
-console.log('-'.repeat(50));
+console.info('\n📈 DEMO 9: Performance Benchmarks');
+console.info('-'.repeat(50));
 
-console.log('🎯 Performance Benchmarks:');
+console.info('🎯 Performance Benchmarks:');
 Object.entries(PERFORMANCE_BENCHMARKS).forEach(([metric, thresholds]) => {
-  console.log(`\n${metric}:`);
-  console.log(`   ✅ Good: < ${thresholds.good}`);
-  console.log(`   ⚠️ Warning: ${thresholds.good} - ${thresholds.warning}`);
-  console.log(`   🚨 Critical: > ${thresholds.critical}`);
+  console.info(`\n${metric}:`);
+  console.info(`   ✅ Good: < ${thresholds.good}`);
+  console.info(`   ⚠️ Warning: ${thresholds.good} - ${thresholds.warning}`);
+  console.info(`   🚨 Critical: > ${thresholds.critical}`);
 });
 
 // 🎯 DEMO 10: Quick Start Template
-console.log('\n🚀 DEMO 10: Quick Start Template');
-console.log('-'.repeat(50));
+console.info('\n🚀 DEMO 10: Quick Start Template');
+console.info('-'.repeat(50));
 
-console.log('🍪 Quick Start Cookie Templates:');
+console.info('🍪 Quick Start Cookie Templates:');
 
 // Create cookies using the quick start templates
 const sessionCookie = QuickStartCookieService.SESSION('session-123');
@@ -263,30 +263,30 @@ const analyticsCookie = QuickStartCookieService.ANALYTICS('ga-123');
 
 [sessionCookie, preferenceCookie, analyticsCookie].forEach((cookie, index) => {
   const types = ['Session', 'Preference', 'Analytics'];
-  console.log(`\n${index + 1}. ${types[index]} Cookie:`);
-  console.log(`   Name: ${cookie.name}`);
-  console.log(`   Value: ${cookie.value.substring(0, 20)}...`);
-  console.log(`   Secure: ${cookie.secure}`);
-  console.log(`   HttpOnly: ${cookie.httpOnly}`);
-  console.log(`   SameSite: ${cookie.sameSite}`);
-  console.log(`   MaxAge: ${formatDuration(cookie.maxAge || 0)}`);
+  console.info(`\n${index + 1}. ${types[index]} Cookie:`);
+  console.info(`   Name: ${cookie.name}`);
+  console.info(`   Value: ${cookie.value.substring(0, 20)}...`);
+  console.info(`   Secure: ${cookie.secure}`);
+  console.info(`   HttpOnly: ${cookie.httpOnly}`);
+  console.info(`   SameSite: ${cookie.sameSite}`);
+  console.info(`   MaxAge: ${formatDuration(cookie.maxAge || 0)}`);
 });
 
 // 🎯 SUMMARY
-console.log('\n🎉 Cookie Pro-Tips Demo Complete!');
-console.log('='.repeat(60));
-console.log('✅ Production cookie management demonstrated');
-console.log('✅ Layered architecture with security best practices');
-console.log('✅ Performance optimizations and monitoring');
-console.log('✅ Cookie + DataView integration');
-console.log('✅ Security monitoring and alerting');
-console.log('✅ Production metrics and Prometheus export');
-console.log('✅ Comprehensive testing suite');
-console.log('✅ Production checklist validation');
-console.log('✅ Performance benchmarks defined');
-console.log('✅ Quick start templates provided');
+console.info('\n🎉 Cookie Pro-Tips Demo Complete!');
+console.info('='.repeat(60));
+console.info('✅ Production cookie management demonstrated');
+console.info('✅ Layered architecture with security best practices');
+console.info('✅ Performance optimizations and monitoring');
+console.info('✅ Cookie + DataView integration');
+console.info('✅ Security monitoring and alerting');
+console.info('✅ Production metrics and Prometheus export');
+console.info('✅ Comprehensive testing suite');
+console.info('✅ Production checklist validation');
+console.info('✅ Performance benchmarks defined');
+console.info('✅ Quick start templates provided');
 
-console.log('\n🚀 Ready for enterprise production deployment!');
+console.info('\n🚀 Ready for enterprise production deployment!');
 
 // Helper functions
 function getCookiePurpose(name: string): string {

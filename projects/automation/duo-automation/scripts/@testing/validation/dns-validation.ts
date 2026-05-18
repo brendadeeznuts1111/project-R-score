@@ -159,11 +159,11 @@ class DNSValidator {
   }
 
   async runFullValidation(): Promise<void> {
-    console.log('🌍 EMPIRE PRO PRODUCTION DNS VALIDATION');
-    console.log('═'.repeat(70));
+    console.info('🌍 EMPIRE PRO PRODUCTION DNS VALIDATION');
+    console.info('═'.repeat(70));
     
     // Validate DNS endpoints
-    console.log('\n📡 DNS ENDPOINT VALIDATION:');
+    console.info('\n📡 DNS ENDPOINT VALIDATION:');
     const endpointResults = await Promise.all(
       this.endpoints.map(endpoint => this.validateEndpoint(endpoint))
     );
@@ -174,16 +174,16 @@ class DNSValidator {
       const cdn = result.cdnStatus || 'N/A';
       const edge = result.edgeLocation || 'N/A';
       
-      console.log(`  ${status} ${result.name.padEnd(10)} (${(result.pattern || '').padEnd(12)})`);
-      console.log(`     HTTP: ${result.httpStatus || 'N/A'} | CDN: ${cdn} | Edge: ${edge} | Latency: ${latency}`);
+      console.info(`  ${status} ${result.name.padEnd(10)} (${(result.pattern || '').padEnd(12)})`);
+      console.info(`     HTTP: ${result.httpStatus || 'N/A'} | CDN: ${cdn} | Edge: ${edge} | Latency: ${latency}`);
       
       if (result.error) {
-        console.log(`     Error: ${result.error}`);
+        console.info(`     Error: ${result.error}`);
       }
     });
 
     // Validate API functionality
-    console.log('\n🔌 API FUNCTIONALITY TESTS:');
+    console.info('\n🔌 API FUNCTIONALITY TESTS:');
     const apiResults = await Promise.all([
       this.validatePhoneIntelligenceAPI(),
       this.validateBulkAPI(),
@@ -194,10 +194,10 @@ class DNSValidator {
       const status = result.status === '✅' ? '✅' : '❌';
       const latency = result.latency ? `${result.latency}ms` : 'N/A';
       
-      console.log(`  ${status} ${result.name.padEnd(12)} | Latency: ${latency}`);
+      console.info(`  ${status} ${result.name.padEnd(12)} | Latency: ${latency}`);
       
       if (result.error) {
-        console.log(`     Error: ${result.error}`);
+        console.info(`     Error: ${result.error}`);
       }
     });
 
@@ -206,23 +206,23 @@ class DNSValidator {
     const successCount = allResults.filter(r => r.status === '✅').length;
     const totalCount = allResults.length;
     
-    console.log('\n📊 VALIDATION SUMMARY:');
-    console.log(`   Overall: ${successCount}/${totalCount} tests passed`);
-    console.log(`   Success Rate: ${Math.round((successCount / totalCount) * 100)}%`);
+    console.info('\n📊 VALIDATION SUMMARY:');
+    console.info(`   Overall: ${successCount}/${totalCount} tests passed`);
+    console.info(`   Success Rate: ${Math.round((successCount / totalCount) * 100)}%`);
     
     if (successCount === totalCount) {
-      console.log('\n🚀 EMPIRE PRO PRODUCTION: FULLY OPERATIONAL');
-      console.log('   ✅ All DNS records correctly configured');
-      console.log('   ✅ CDN integration active');
-      console.log('   ✅ R2 storage accessible');
-      console.log('   ✅ Phone Intelligence API functional');
-      console.log('   ✅ Bulk processing meets performance targets');
+      console.info('\n🚀 EMPIRE PRO PRODUCTION: FULLY OPERATIONAL');
+      console.info('   ✅ All DNS records correctly configured');
+      console.info('   ✅ CDN integration active');
+      console.info('   ✅ R2 storage accessible');
+      console.info('   ✅ Phone Intelligence API functional');
+      console.info('   ✅ Bulk processing meets performance targets');
     } else {
-      console.log('\n⚠️  EMPIRE PRO PRODUCTION: NEEDS ATTENTION');
-      console.log(`   ❌ ${totalCount - successCount} systems require investigation`);
+      console.info('\n⚠️  EMPIRE PRO PRODUCTION: NEEDS ATTENTION');
+      console.info(`   ❌ ${totalCount - successCount} systems require investigation`);
     }
     
-    console.log('═'.repeat(70));
+    console.info('═'.repeat(70));
   }
 }
 
@@ -231,7 +231,7 @@ async function main() {
   const validator = new DNSValidator();
   
   if (process.argv.includes('--quick')) {
-    console.log('⚡ Quick DNS validation...');
+    console.info('⚡ Quick DNS validation...');
     // Just test the main endpoints
     const results = await Promise.all([
       validator.validateEndpoint({ name: 'API', url: 'https://api.apple', pattern: '§API:120', expectedStatus: 200 }),
@@ -239,7 +239,7 @@ async function main() {
     ]);
     
     results.forEach(result => {
-      console.log(`${result.status} ${result.name}: ${result.error || 'OK'}`);
+      console.info(`${result.status} ${result.name}: ${result.error || 'OK'}`);
     });
   } else {
     await validator.runFullValidation();

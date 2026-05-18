@@ -2,7 +2,7 @@
 const ITERATIONS = 100;
 
 async function benchSpawn() {
-  console.log("Bun v1.3.6 Spawn Benchmark\n");
+  console.info("Bun v1.3.6 Spawn Benchmark\n");
 
   // Warmup
   for (let i = 0; i < 5; i++) {
@@ -45,9 +45,9 @@ async function benchSpawn() {
     },
   ];
 
-  console.log(Bun.inspect.table(results, { colors: true }));
-  console.log(`\nIterations: ${ITERATIONS}`);
-  console.log(`posix_spawn optimization: ~5.1x faster than v1.3.5`);
+  console.info(Bun.inspect.table(results, { colors: true }));
+  console.info(`\nIterations: ${ITERATIONS}`);
+  console.info(`posix_spawn optimization: ~5.1x faster than v1.3.5`);
 }
 
 benchSpawn();

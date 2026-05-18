@@ -176,7 +176,7 @@ if (import.meta.main) {
       includeTestData,
       userId
     });
-    console.log('\n✓ Seeding completed successfully');
+    console.info('\n✓ Seeding completed successfully');
   } catch (error) {
     console.error('\n✗ Seeding failed:', error);
     process.exit(1);

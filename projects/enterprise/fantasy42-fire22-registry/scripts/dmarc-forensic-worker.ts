@@ -76,19 +76,19 @@ interface SecurityAlert {
 export default {
   async email(message: any, env: any) {
     try {
-      console.log('🔍 Processing DMARC Forensic Report');
+      console.info('🔍 Processing DMARC Forensic Report');
 
       // Extract the forensic report from email
       const reportContent = await extractReportContent(message);
       if (!reportContent) {
-        console.log('⚠️ No forensic report content found');
+        console.info('⚠️ No forensic report content found');
         return;
       }
 
       // Parse XML report
       const forensicReport = await parseForensicReport(reportContent);
       if (!forensicReport) {
-        console.log('⚠️ Failed to parse forensic report');
+        console.info('⚠️ Failed to parse forensic report');
         return;
       }
 
@@ -101,7 +101,7 @@ export default {
       // Generate forensic summary
       await generateForensicSummary(forensicReport, securityAlerts, env);
 
-      console.log(`✅ Processed forensic report with ${securityAlerts.length} security alerts`);
+      console.info(`✅ Processed forensic report with ${securityAlerts.length} security alerts`);
     } catch (error) {
       console.error('❌ Error processing DMARC forensic report:', error);
 
@@ -160,7 +160,7 @@ async function parseForensicReport(xmlContent: string): Promise<DMARCForensicRep
 
     // Validate it's a DMARC forensic report
     if (!parsed.feedback || !parsed.feedback.record) {
-      console.log('Invalid DMARC forensic report format');
+      console.info('Invalid DMARC forensic report format');
       return null;
     }
 
@@ -298,7 +298,7 @@ async function processSecurityAlerts(alerts: SecurityAlert[], env: any) {
 }
 
 async function handleCriticalAlert(alert: SecurityAlert, env: any) {
-  console.log(`🚨 CRITICAL ALERT: ${alert.details}`);
+  console.info(`🚨 CRITICAL ALERT: ${alert.details}`);
 
   // Send immediate security alert
   await sendSecurityAlert(
@@ -318,7 +318,7 @@ async function handleCriticalAlert(alert: SecurityAlert, env: any) {
 }
 
 async function handleHighAlert(alert: SecurityAlert, env: any) {
-  console.log(`⚠️ HIGH ALERT: ${alert.details}`);
+  console.info(`⚠️ HIGH ALERT: ${alert.details}`);
 
   // Send security alert
   await sendSecurityAlert(
@@ -335,7 +335,7 @@ async function handleHighAlert(alert: SecurityAlert, env: any) {
 }
 
 async function logMediumAlert(alert: SecurityAlert, env: any) {
-  console.log(`ℹ️ MEDIUM ALERT: ${alert.details}`);
+  console.info(`ℹ️ MEDIUM ALERT: ${alert.details}`);
 
   // Log to security database
   await logToSecurityDatabase(alert, 'medium', env);
@@ -344,12 +344,12 @@ async function logMediumAlert(alert: SecurityAlert, env: any) {
 async function sendSecurityAlert(alert: any, env: any) {
   // Implementation would integrate with your alerting system
   // This could be email, Slack, PagerDuty, etc.
-  console.log(`📧 Sending security alert for ${alert.type}`);
+  console.info(`📧 Sending security alert for ${alert.type}`);
 }
 
 async function logToSecurityDatabase(alert: SecurityAlert, severity: string, env: any) {
   // Implementation would store in your security database
-  console.log(`📊 Logging ${severity} alert to security database`);
+  console.info(`📊 Logging ${severity} alert to security database`);
 }
 
 async function triggerAutomatedResponse(alert: SecurityAlert, env: any) {
@@ -358,7 +358,7 @@ async function triggerAutomatedResponse(alert: SecurityAlert, env: any) {
   // - Rate limiting
   // - Additional authentication requirements
   // - Automated incident response
-  console.log(`🤖 Triggering automated response for ${alert.type}`);
+  console.info(`🤖 Triggering automated response for ${alert.type}`);
 }
 
 async function generateForensicSummary(
@@ -387,7 +387,7 @@ async function generateForensicSummary(
     })),
   };
 
-  console.log('📋 Forensic Report Summary:', JSON.stringify(summary, null, 2));
+  console.info('📋 Forensic Report Summary:', JSON.stringify(summary, null, 2));
 
   // Store summary for reporting
   await storeForensicSummary(summary, env);
@@ -395,12 +395,12 @@ async function generateForensicSummary(
 
 async function storeForensicSummary(summary: any, env: any) {
   // Implementation would store in your reporting database
-  console.log('💾 Storing forensic summary');
+  console.info('💾 Storing forensic summary');
 }
 
 async function alertSecurityTeam(alertType: string, details: any, env: any) {
   // Implementation would alert your security team
-  console.log(`🚨 Alerting security team: ${alertType}`);
+  console.info(`🚨 Alerting security team: ${alertType}`);
 }
 
 // Export for use as Cloudflare Worker

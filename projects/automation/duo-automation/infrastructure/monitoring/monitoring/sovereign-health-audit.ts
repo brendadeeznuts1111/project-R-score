@@ -9,7 +9,7 @@ import { RegistryGateway } from "@duoplus/registry-gateway";
 
 export class SovereignHealthAudit {
   static async auditFleet(agentBatch: string[]) {
-    console.log(`📊 [SOVEREIGN CIH] Starting health audit for batch of ${agentBatch.length} agents...`);
+    console.info(`📊 [SOVEREIGN CIH] Starting health audit for batch of ${agentBatch.length} agents...`);
     
     const results = await Promise.all(agentBatch.map(async id => {
       // Simulate telemetry pulse
@@ -25,12 +25,12 @@ export class SovereignHealthAudit {
     }));
     
     const healthyCount = results.filter(r => r.success).length;
-    console.log(`✅ Audit complete: ${healthyCount}/${agentBatch.length} agents reporting healthy.`);
+    console.info(`✅ Audit complete: ${healthyCount}/${agentBatch.length} agents reporting healthy.`);
     
     // Check registry connectivity
-    console.log(`🛰️ Verifying Registry Gateway via @duoplus/registry-gateway...`);
+    console.info(`🛰️ Verifying Registry Gateway via @duoplus/registry-gateway...`);
     const endpoint = RegistryGateway.getEndpoint("Windsurf");
-    console.log(`🔗 Primary Endpoint: ${endpoint}`);
+    console.info(`🔗 Primary Endpoint: ${endpoint}`);
   }
 }
 

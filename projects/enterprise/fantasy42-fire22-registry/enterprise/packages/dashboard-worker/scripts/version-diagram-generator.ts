@@ -331,7 +331,7 @@ class VersionDiagramGenerator {
    * 🎨 Generate All Diagrams
    */
   async generateAllDiagrams(): Promise<void> {
-    console.log('🎨 Generating all Fire22 diagrams...\n');
+    console.info('🎨 Generating all Fire22 diagrams...\n');
 
     await this.generateVersionFlow();
     await new Promise(resolve => setTimeout(resolve, 3000));
@@ -347,7 +347,7 @@ class VersionDiagramGenerator {
 
     await this.generateCommandMatrix();
 
-    console.log('🎉 All diagrams generated successfully!');
+    console.info('🎉 All diagrams generated successfully!');
   }
 
   private getDefaultConfig(): DiagramConfig {

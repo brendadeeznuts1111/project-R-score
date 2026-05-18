@@ -103,7 +103,7 @@ function generateSampleScanData(): SecurityScanData {
 
 // Generate multiple scan files for different dates
 async function generateScanHistory(): Promise<void> {
-  console.log('🔍 Generating security scan history...');
+  console.info('🔍 Generating security scan history...');
 
   const today = new Date();
   const scanFiles = [];
@@ -122,15 +122,15 @@ async function generateScanHistory(): Promise<void> {
     await Bun.write(filepath, JSON.stringify(scanData, null, 2));
     scanFiles.push(filepath);
 
-    console.log(`   ✅ Generated: ${filename}`);
+    console.info(`   ✅ Generated: ${filename}`);
   }
 
-  console.log(`\n📊 Generated ${scanFiles.length} security scan files in ${logDir}`);
+  console.info(`\n📊 Generated ${scanFiles.length} security scan files in ${logDir}`);
 }
 
 // Run the security scan generation
 if (import.meta.main) {
   await generateScanHistory();
-  console.log('\n🎉 Security scan data generation complete!');
-  console.log('   You can now run: bun run security-report');
+  console.info('\n🎉 Security scan data generation complete!');
+  console.info('   You can now run: bun run security-report');
 }

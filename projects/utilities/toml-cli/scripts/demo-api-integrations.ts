@@ -50,11 +50,11 @@ class APIIntegrationsDemo {
 
   async runDemo(): Promise<void> {
     console.clear();
-    console.log('🚀 API INTEGRATIONS DEMO - CashApp, SMS & Email');
-    console.log('='.repeat(80));
-    console.log('⚠️  Note: Using demo credentials - replace with real ones for production');
-    console.log('='.repeat(80));
-    console.log();
+    console.info('🚀 API INTEGRATIONS DEMO - CashApp, SMS & Email');
+    console.info('='.repeat(80));
+    console.info('⚠️  Note: Using demo credentials - replace with real ones for production');
+    console.info('='.repeat(80));
+    console.info();
 
     try {
       // 1. CashApp Demo
@@ -66,185 +66,185 @@ class APIIntegrationsDemo {
       // 3. Email Demo
       await this.demoEmail();
 
-      console.log('\n' + '='.repeat(80));
-      console.log('✅ ALL API DEMOS COMPLETED');
-      console.log('💡 Next steps:');
-      console.log('   • Set up real API credentials in environment variables');
-      console.log('   • Configure webhooks for status callbacks');
-      console.log('   • Implement error handling and retries');
-      console.log('   • Add rate limiting and monitoring');
+      console.info('\n' + '='.repeat(80));
+      console.info('✅ ALL API DEMOS COMPLETED');
+      console.info('💡 Next steps:');
+      console.info('   • Set up real API credentials in environment variables');
+      console.info('   • Configure webhooks for status callbacks');
+      console.info('   • Implement error handling and retries');
+      console.info('   • Add rate limiting and monitoring');
       process.exit(0);
 
     } catch (error: any) {
       console.error('❌ Demo failed:', error.message);
-      console.log('\n🔧 To fix:');
-      console.log('   1. Set environment variables with real API credentials');
-      console.log('   2. Ensure API services are enabled and accessible');
-      console.log('   3. Check network connectivity');
+      console.info('\n🔧 To fix:');
+      console.info('   1. Set environment variables with real API credentials');
+      console.info('   2. Ensure API services are enabled and accessible');
+      console.info('   3. Check network connectivity');
       process.exit(1);
     }
   }
 
   private async demoCashApp(): Promise<void> {
-    console.log('💳 CASHAPP API DEMO');
-    console.log('─'.repeat(30));
+    console.info('💳 CASHAPP API DEMO');
+    console.info('─'.repeat(30));
 
     try {
       // Show OAuth URL (would normally redirect user)
       const authUrl = this.cashApp.getAuthorizationUrl();
-      console.log('🔗 OAuth URL:', authUrl);
-      console.log('   (In production, redirect user to this URL)');
-      console.log();
+      console.info('🔗 OAuth URL:', authUrl);
+      console.info('   (In production, redirect user to this URL)');
+      console.info();
 
       // Simulate OAuth flow with demo token
-      console.log('🔐 Simulating OAuth token exchange...');
+      console.info('🔐 Simulating OAuth token exchange...');
       // Note: This would fail with demo credentials, but shows the flow
 
-      console.log('💰 CashApp features available:');
-      console.log('   ✅ Send payments');
-      console.log('   ✅ Request payments');
-      console.log('   ✅ Check balance');
-      console.log('   ✅ Transaction history');
-      console.log('   ✅ Profile management');
+      console.info('💰 CashApp features available:');
+      console.info('   ✅ Send payments');
+      console.info('   ✅ Request payments');
+      console.info('   ✅ Check balance');
+      console.info('   ✅ Transaction history');
+      console.info('   ✅ Profile management');
 
-      console.log('\n📊 Example usage:');
-      console.log(`   await cashApp.sendPayment(25.00, '$cashtag', 'Lunch payment');`);
-      console.log(`   await cashApp.getBalance();`);
-      console.log(`   await cashApp.getTransactions({ limit: 10 });`);
+      console.info('\n📊 Example usage:');
+      console.info(`   await cashApp.sendPayment(25.00, '$cashtag', 'Lunch payment');`);
+      console.info(`   await cashApp.getBalance();`);
+      console.info(`   await cashApp.getTransactions({ limit: 10 });`);
 
     } catch (error: any) {
-      console.log('⚠️  CashApp demo skipped (requires real credentials):', error.message);
+      console.info('⚠️  CashApp demo skipped (requires real credentials):', error.message);
     }
 
-    console.log();
+    console.info();
   }
 
   private async demoSMS(): Promise<void> {
-    console.log('📱 SMS GATEWAY DEMO (Twilio)');
-    console.log('─'.repeat(30));
+    console.info('📱 SMS GATEWAY DEMO (Twilio)');
+    console.info('─'.repeat(30));
 
     try {
       // Validate phone number
       const testNumber = '+15551234567';
       const isValid = this.sms.validatePhoneNumber(testNumber);
-      console.log(`📞 Phone validation: ${testNumber} → ${isValid ? '✅ Valid' : '❌ Invalid'}`);
+      console.info(`📞 Phone validation: ${testNumber} → ${isValid ? '✅ Valid' : '❌ Invalid'}`);
 
       // Show SMS features
-      console.log('\n📤 SMS features available:');
-      console.log('   ✅ Send single SMS');
-      console.log('   ✅ Send bulk SMS with rate limiting');
-      console.log('   ✅ Message status tracking');
-      console.log('   ✅ Delivery confirmations');
-      console.log('   ✅ Message history');
+      console.info('\n📤 SMS features available:');
+      console.info('   ✅ Send single SMS');
+      console.info('   ✅ Send bulk SMS with rate limiting');
+      console.info('   ✅ Message status tracking');
+      console.info('   ✅ Delivery confirmations');
+      console.info('   ✅ Message history');
 
-      console.log('\n📊 Example usage:');
-      console.log(`   await sms.sendSMS('+15551234567', 'Hello from DuoPlus!');`);
-      console.log(`   await sms.sendBulkSMS(['+15551234567', '+15559876543'], 'Bulk message');`);
-      console.log(`   await sms.getMessages({ limit: 10 });`);
+      console.info('\n📊 Example usage:');
+      console.info(`   await sms.sendSMS('+15551234567', 'Hello from DuoPlus!');`);
+      console.info(`   await sms.sendBulkSMS(['+15551234567', '+15559876543'], 'Bulk message');`);
+      console.info(`   await sms.getMessages({ limit: 10 });`);
 
       // Try to get account info (will fail with demo credentials)
       try {
-        console.log('\n🔍 Attempting to get account info...');
+        console.info('\n🔍 Attempting to get account info...');
         const accountInfo = await this.sms.getAccountInfo();
-        console.log('📊 Account Balance:', accountInfo.balance, 'USD');
+        console.info('📊 Account Balance:', accountInfo.balance, 'USD');
       } catch (error) {
-        console.log('⚠️  Account info requires real Twilio credentials');
+        console.info('⚠️  Account info requires real Twilio credentials');
       }
 
     } catch (error: any) {
-      console.log('⚠️  SMS demo error:', error.message);
+      console.info('⚠️  SMS demo error:', error.message);
     }
 
-    console.log();
+    console.info();
   }
 
   private async demoEmail(): Promise<void> {
-    console.log('📧 EMAIL SERVICE DEMO');
-    console.log('─'.repeat(30));
+    console.info('📧 EMAIL SERVICE DEMO');
+    console.info('─'.repeat(30));
 
     try {
-      console.log('📮 Supported providers: Gmail, Outlook, SMTP, SendGrid, Mailgun');
+      console.info('📮 Supported providers: Gmail, Outlook, SMTP, SendGrid, Mailgun');
 
-      console.log('\n📤 Email features available:');
-      console.log('   ✅ Send emails with attachments');
-      console.log('   ✅ HTML and text content');
-      console.log('   ✅ CC/BCC support');
-      console.log('   ✅ Inbox retrieval (Gmail/Outlook)');
-      console.log('   ✅ Mark as read/unread');
-      console.log('   ✅ Message management');
+      console.info('\n📤 Email features available:');
+      console.info('   ✅ Send emails with attachments');
+      console.info('   ✅ HTML and text content');
+      console.info('   ✅ CC/BCC support');
+      console.info('   ✅ Inbox retrieval (Gmail/Outlook)');
+      console.info('   ✅ Mark as read/unread');
+      console.info('   ✅ Message management');
 
-      console.log('\n📊 Example usage:');
-      console.log(`   await email.sendEmail({`);
-      console.log(`     to: 'recipient@example.com',`);
-      console.log(`     subject: 'Hello from DuoPlus',`);
-      console.log(`     html: '<h1>Hello!</h1>'`);
-      console.log(`   });`);
+      console.info('\n📊 Example usage:');
+      console.info(`   await email.sendEmail({`);
+      console.info(`     to: 'recipient@example.com',`);
+      console.info(`     subject: 'Hello from DuoPlus',`);
+      console.info(`     html: '<h1>Hello!</h1>'`);
+      console.info(`   });`);
 
-      console.log(`   const emails = await email.getEmails({ maxResults: 10 });`);
-      console.log(`   await email.markAsRead(emailId, true);`);
+      console.info(`   const emails = await email.getEmails({ maxResults: 10 });`);
+      console.info(`   await email.markAsRead(emailId, true);`);
 
       // Try to send a test email (will fail with demo credentials)
       try {
-        console.log('\n📨 Attempting to send test email...');
+        console.info('\n📨 Attempting to send test email...');
         const messageId = await this.email.sendEmail({
           to: 'test@example.com',
           subject: 'DuoPlus API Integration Test',
           text: 'This is a test email from the DuoPlus API integration demo.',
           html: '<h1>DuoPlus API Test</h1><p>This is a test email.</p>'
         });
-        console.log('✅ Email sent with ID:', messageId);
+        console.info('✅ Email sent with ID:', messageId);
       } catch (error) {
-        console.log('⚠️  Email send requires real provider credentials');
+        console.info('⚠️  Email send requires real provider credentials');
       }
 
     } catch (error: any) {
-      console.log('⚠️  Email demo error:', error.message);
+      console.info('⚠️  Email demo error:', error.message);
     }
 
-    console.log();
+    console.info();
   }
 
   async showConfiguration(): Promise<void> {
     console.clear();
-    console.log('🔧 API INTEGRATIONS CONFIGURATION');
-    console.log('='.repeat(80));
+    console.info('🔧 API INTEGRATIONS CONFIGURATION');
+    console.info('='.repeat(80));
 
-    console.log('\n💳 CASHAPP CONFIGURATION:');
-    console.log('   Environment variables needed:');
-    console.log('   • CASHAPP_CLIENT_ID');
-    console.log('   • CASHAPP_CLIENT_SECRET');
-    console.log('   • CASHAPP_REDIRECT_URI (optional)');
-    console.log('   📖 Setup: https://developers.cash.app/docs/api/oauth');
+    console.info('\n💳 CASHAPP CONFIGURATION:');
+    console.info('   Environment variables needed:');
+    console.info('   • CASHAPP_CLIENT_ID');
+    console.info('   • CASHAPP_CLIENT_SECRET');
+    console.info('   • CASHAPP_REDIRECT_URI (optional)');
+    console.info('   📖 Setup: https://developers.cash.app/docs/api/oauth');
 
-    console.log('\n📱 TWILIO SMS CONFIGURATION:');
-    console.log('   Environment variables needed:');
-    console.log('   • TWILIO_ACCOUNT_SID');
-    console.log('   • TWILIO_AUTH_TOKEN');
-    console.log('   • TWILIO_FROM_NUMBER');
-    console.log('   📖 Setup: https://www.twilio.com/docs/sms');
+    console.info('\n📱 TWILIO SMS CONFIGURATION:');
+    console.info('   Environment variables needed:');
+    console.info('   • TWILIO_ACCOUNT_SID');
+    console.info('   • TWILIO_AUTH_TOKEN');
+    console.info('   • TWILIO_FROM_NUMBER');
+    console.info('   📖 Setup: https://www.twilio.com/docs/sms');
 
-    console.log('\n📧 EMAIL CONFIGURATION (Gmail Example):');
-    console.log('   Environment variables needed:');
-    console.log('   • GMAIL_CLIENT_ID');
-    console.log('   • GMAIL_CLIENT_SECRET');
-    console.log('   • GMAIL_REFRESH_TOKEN');
-    console.log('   📖 Setup: https://developers.google.com/gmail/api');
+    console.info('\n📧 EMAIL CONFIGURATION (Gmail Example):');
+    console.info('   Environment variables needed:');
+    console.info('   • GMAIL_CLIENT_ID');
+    console.info('   • GMAIL_CLIENT_SECRET');
+    console.info('   • GMAIL_REFRESH_TOKEN');
+    console.info('   📖 Setup: https://developers.google.com/gmail/api');
 
-    console.log('\n🔐 OAUTH SETUP STEPS:');
-    console.log('   1. Create app in provider console');
-    console.log('   2. Configure OAuth redirect URIs');
-    console.log('   3. Obtain client credentials');
-    console.log('   4. Complete OAuth flow to get refresh token');
-    console.log('   5. Store credentials securely');
+    console.info('\n🔐 OAUTH SETUP STEPS:');
+    console.info('   1. Create app in provider console');
+    console.info('   2. Configure OAuth redirect URIs');
+    console.info('   3. Obtain client credentials');
+    console.info('   4. Complete OAuth flow to get refresh token');
+    console.info('   5. Store credentials securely');
 
-    console.log('\n🛡️ SECURITY NOTES:');
-    console.log('   • Never commit API keys to version control');
-    console.log('   • Use environment variables or secure vaults');
-    console.log('   • Rotate credentials regularly');
-    console.log('   • Implement rate limiting');
-    console.log('   • Monitor API usage and costs');
+    console.info('\n🛡️ SECURITY NOTES:');
+    console.info('   • Never commit API keys to version control');
+    console.info('   • Use environment variables or secure vaults');
+    console.info('   • Rotate credentials regularly');
+    console.info('   • Implement rate limiting');
+    console.info('   • Monitor API usage and costs');
 
-    console.log('\n' + '='.repeat(80));
+    console.info('\n' + '='.repeat(80));
     process.exit(0);
   }
 }

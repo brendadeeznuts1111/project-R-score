@@ -336,13 +336,13 @@ export const AuthConfigs = {
 
 // CLI test
 if (import.meta.main) {
-  console.log(styled('🔐 Registry Auth Test', 'accent'));
-  console.log(styled('=====================', 'accent'));
+  console.info(styled('🔐 Registry Auth Test', 'accent'));
+  console.info(styled('=====================', 'accent'));
 
   // Test no auth
   const noAuth = new RegistryAuth(AuthConfigs.none());
   const ctx1 = await noAuth.authenticate(new Request('http://localhost'));
-  console.log(styled(`\nNo Auth: ${ctx1.authenticated ? '✅' : '❌'}`, ctx1.authenticated ? 'success' : 'error'));
+  console.info(styled(`\nNo Auth: ${ctx1.authenticated ? '✅' : '❌'}`, ctx1.authenticated ? 'success' : 'error'));
 
   // Test basic auth
   const basicAuth = new RegistryAuth(AuthConfigs.basic('testpass'));
@@ -352,7 +352,7 @@ if (import.meta.main) {
     },
   });
   const ctx2 = await basicAuth.authenticate(req);
-  console.log(styled(`Basic Auth: ${ctx2.authenticated ? '✅' : '❌'}`, ctx2.authenticated ? 'success' : 'error'));
+  console.info(styled(`Basic Auth: ${ctx2.authenticated ? '✅' : '❌'}`, ctx2.authenticated ? 'success' : 'error'));
 
   // Test JWT
   const jwtAuth = new RegistryAuth(AuthConfigs.jwt('test-secret'));
@@ -363,5 +363,5 @@ if (import.meta.main) {
     },
   });
   const ctx3 = await jwtAuth.authenticate(jwtReq);
-  console.log(styled(`JWT Auth: ${ctx3.authenticated ? '✅' : '❌'}`, ctx3.authenticated ? 'success' : 'error'));
+  console.info(styled(`JWT Auth: ${ctx3.authenticated ? '✅' : '❌'}`, ctx3.authenticated ? 'success' : 'error'));
 }

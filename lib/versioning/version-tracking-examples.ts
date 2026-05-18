@@ -28,15 +28,15 @@ async function basicVersionRegistration() {
     tags: ['feature', 'user-management', 'api'],
   });
 
-  console.log(`Version registered with ID: ${versionId}`);
+  console.info(`Version registered with ID: ${versionId}`);
 
   // Get current version
   const currentVersion = tracker.getCurrentVersion('/api/users/v1');
-  console.log('Current version:', currentVersion);
+  console.info('Current version:', currentVersion);
 
   // Get version history
   const history = tracker.getVersionHistory('/api/users/v1');
-  console.log('Version history:', history);
+  console.info('Version history:', history);
 }
 
 /**
@@ -71,7 +71,7 @@ async function manualRollbackExample() {
     'manual'
   );
 
-  console.log('Rollback result:', rollbackResult);
+  console.info('Rollback result:', rollbackResult);
 }
 
 /**
@@ -112,7 +112,7 @@ async function endpointManagementExample() {
     'auto-scaler@company.com'
   );
 
-  console.log('Endpoint rollback result:', endpointRollback);
+  console.info('Endpoint rollback result:', endpointRollback);
 }
 
 // ============================================================================
@@ -143,7 +143,7 @@ async function healthMonitoringExample() {
   });
 
   // Simulate health degradation
-  console.log('Simulating health issues...');
+  console.info('Simulating health issues...');
 
   // Update health metrics (this would typically come from monitoring systems)
   await tracker.updateHealthMetrics('/api/payment/v2', {
@@ -155,7 +155,7 @@ async function healthMonitoringExample() {
   // The system should automatically trigger a rollback
   // You can check the rollback history
   const rollbackReport = tracker.generateRollbackReport('/api/payment/v2');
-  console.log('Rollback report:', rollbackReport);
+  console.info('Rollback report:', rollbackReport);
 }
 
 /**
@@ -191,7 +191,7 @@ async function auditExample() {
     startDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // Last 24 hours
   });
 
-  console.log('Audit log for security component:', auditLog);
+  console.info('Audit log for security component:', auditLog);
 
   // Generate compliance report
   const complianceReport = {
@@ -201,7 +201,7 @@ async function auditExample() {
     components: auditLog.map(entry => entry.componentUri),
   };
 
-  console.log('Compliance report:', complianceReport);
+  console.info('Compliance report:', complianceReport);
 }
 
 /**
@@ -270,12 +270,12 @@ async function multiComponentDeploymentExample() {
     }
   }
 
-  console.log('Deployment results:', deploymentResults);
+  console.info('Deployment results:', deploymentResults);
 
   // If any deployment failed, rollback all components
   const failedDeployments = deploymentResults.filter(r => !r.success);
   if (failedDeployments.length > 0) {
-    console.log('Deployment failures detected, initiating rollback...');
+    console.info('Deployment failures detected, initiating rollback...');
 
     for (const { component } of deployment) {
       const history = tracker.getVersionHistory(component);
@@ -344,10 +344,10 @@ class MonitoringDashboard {
   }
 
   private sendAlert(component: string, status: any, errorRate: number) {
-    console.log(`🚨 ALERT: Component ${component} is unhealthy!`);
-    console.log(`   Error rate: ${errorRate.toFixed(2)}%`);
-    console.log(`   Health status: ${status.healthStatus}`);
-    console.log(`   Uptime: ${status.uptimePercentage.toFixed(2)}%`);
+    console.info(`🚨 ALERT: Component ${component} is unhealthy!`);
+    console.info(`   Error rate: ${errorRate.toFixed(2)}%`);
+    console.info(`   Health status: ${status.healthStatus}`);
+    console.info(`   Uptime: ${status.uptimePercentage.toFixed(2)}%`);
 
     // In real implementation, this would send to Slack, PagerDuty, etc.
   }
@@ -408,7 +408,7 @@ async function monitoringDashboardExample() {
   // Let it run for a bit
   setTimeout(() => {
     const dashboardData = dashboard.getDashboardData();
-    console.log('Dashboard Data:', JSON.stringify(dashboardData, null, 2));
+    console.info('Dashboard Data:', JSON.stringify(dashboardData, null, 2));
 
     dashboard.stopMonitoring();
   }, 20000); // Run for 20 seconds
@@ -507,12 +507,12 @@ export {
 
 // Run examples if this file is executed directly
 if (import.meta.main) {
-  console.log('🚀 Running Version Tracking Examples...\n');
+  console.info('🚀 Running Version Tracking Examples...\n');
 
   // Run basic example
   basicVersionRegistration()
     .then(() => {
-      console.log('\n✅ Basic example completed');
+      console.info('\n✅ Basic example completed');
     })
     .catch(console.error);
 }

@@ -37,42 +37,42 @@ class ComponentPublisher {
   }
   
   async publishAll() {
-    console.log('🚀 Publishing DuoPlus Enterprise Components...\n');
+    console.info('🚀 Publishing DuoPlus Enterprise Components...\n');
     
     // Set registry
     process.env.NPM_CONFIG_REGISTRY = this.config.registry;
     process.env.NPM_CONFIG_AUTH_TOKEN = this.config.token;
     
     // Validate all packages first
-    console.log('📋 Validating packages...');
+    console.info('📋 Validating packages...');
     for (const pkg of this.config.packages) {
       await this.validatePackage(pkg);
     }
     
     // Build all packages
-    console.log('\n🔨 Building packages...');
+    console.info('\n🔨 Building packages...');
     for (const pkg of this.config.packages) {
       await this.buildPackage(pkg);
     }
     
     // Test all packages
-    console.log('\n🧪 Testing packages...');
+    console.info('\n🧪 Testing packages...');
     for (const pkg of this.config.packages) {
       await this.testPackage(pkg);
     }
     
     // Publish packages in dependency order
-    console.log('\n📦 Publishing packages...');
+    console.info('\n📦 Publishing packages...');
     for (const pkg of this.config.packages) {
       await this.publishPackage(pkg);
     }
     
-    console.log('\n✅ All packages published successfully!');
+    console.info('\n✅ All packages published successfully!');
     this.generateReport();
   }
   
   private async validatePackage(pkg: PackageConfig) {
-    console.log(`  ✓ Validating ${pkg.name}...`);
+    console.info(`  ✓ Validating ${pkg.name}...`);
     
     // Check package.json exists
     const packageJsonPath = join(pkg.path, 'package.json');
@@ -104,42 +104,42 @@ class ComponentPublisher {
   }
   
   private async buildPackage(pkg: PackageConfig) {
-    console.log(`  🔨 Building ${pkg.name}...`);
+    console.info(`  🔨 Building ${pkg.name}...`);
     
     try {
       await $`cd ${pkg.path} && bun run build`.quiet();
-      console.log(`    ✅ Build complete`);
+      console.info(`    ✅ Build complete`);
     } catch (error) {
       throw new Error(`Build failed for ${pkg.name}: ${error.message}`);
     }
   }
   
   private async testPackage(pkg: PackageConfig) {
-    console.log(`  🧪 Testing ${pkg.name}...`);
+    console.info(`  🧪 Testing ${pkg.name}...`);
     
     try {
       await $`cd ${pkg.path} && bun test`.quiet();
-      console.log(`    ✅ Tests passed`);
+      console.info(`    ✅ Tests passed`);
     } catch (error) {
       throw new Error(`Tests failed for ${pkg.name}: ${error.message}`);
     }
   }
   
   private async publishPackage(pkg: PackageConfig) {
-    console.log(`  📦 Publishing ${pkg.name}@${pkg.version}...`);
+    console.info(`  📦 Publishing ${pkg.name}@${pkg.version}...`);
     
     try {
       // Check if already published
       const checkResult = await $`npm view ${pkg.name}@${pkg.version} --registry=${this.config.registry}`.quiet().nothrow();
       
       if (checkResult.exitCode === 0) {
-        console.log(`    ⚠️  Already published, skipping...`);
+        console.info(`    ⚠️  Already published, skipping...`);
         return;
       }
       
       // Publish the package
       await $`cd ${pkg.path} && bun publish --registry=${this.config.registry}`.quiet();
-      console.log(`    ✅ Published successfully`);
+      console.info(`    ✅ Published successfully`);
       
     } catch (error) {
       throw new Error(`Publish failed for ${pkg.name}: ${error.message}`);
@@ -160,7 +160,7 @@ class ComponentPublisher {
     const reportPath = join(process.cwd(), 'publish-report.json');
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
     
-    console.log(`\n📊 Report generated: ${reportPath}`);
+    console.info(`\n📊 Report generated: ${reportPath}`);
   }
 }
 
@@ -172,27 +172,27 @@ if (import.meta.main) {
   
   switch (command) {
     case 'validate':
-      console.log('📋 Validating all packages...');
+      console.info('📋 Validating all packages...');
       for (const pkg of publisher.config.packages) {
         await publisher.validatePackage(pkg);
       }
-      console.log('✅ All packages validated!');
+      console.info('✅ All packages validated!');
       break;
       
     case 'build':
-      console.log('🔨 Building all packages...');
+      console.info('🔨 Building all packages...');
       for (const pkg of publisher.config.packages) {
         await publisher.buildPackage(pkg);
       }
-      console.log('✅ All packages built!');
+      console.info('✅ All packages built!');
       break;
       
     case 'test':
-      console.log('🧪 Testing all packages...');
+      console.info('🧪 Testing all packages...');
       for (const pkg of publisher.config.packages) {
         await publisher.testPackage(pkg);
       }
-      console.log('✅ All packages tested!');
+      console.info('✅ All packages tested!');
       break;
       
     case 'publish':
@@ -200,7 +200,7 @@ if (import.meta.main) {
       break;
       
     default:
-      console.log(`
+      console.info(`
 Usage: bun run tools/publish-all.ts [command]
 
 Commands:

@@ -5,14 +5,14 @@
 
 export class Messaging {
   async publish(topic: string, message: any) {
-    console.log('Message published to:', topic, message);
+    console.info('Message published to:', topic, message);
   }
 
   async subscribe(topic: string, handler: Function) {
-    console.log('Subscribed to:', topic);
+    console.info('Subscribed to:', topic);
   }
 
   async send(queue: string, message: any) {
-    console.log('Message sent to queue:', queue, message);
+    console.info('Message sent to queue:', queue, message);
   }
 }

@@ -11,8 +11,8 @@ async function buildWithFeatures(features: string[], outputName: string) {
   const featureFlags = features.map(f => `--feature=${f}`).join(' ');
   const command = `bun build dashboard/src/index.tsx --outdir dist --target browser --minify ${featureFlags}`;
 
-  console.log(`🔨 Building ${outputName}...`);
-  console.log(`   Command: ${command}`);
+  console.info(`🔨 Building ${outputName}...`);
+  console.info(`   Command: ${command}`);
 
   try {
     const startTime = Date.now();
@@ -23,19 +23,19 @@ async function buildWithFeatures(features: string[], outputName: string) {
     const { size } = await Bun.file(`dist/index.js`).stat();
     const sizeMB = (size / 1024 / 1024).toFixed(2);
 
-    console.log(`   ✅ Built in ${duration}ms - Bundle: ${sizeMB}MB`);
-    console.log(`   📦 Output: dist/index.js`);
+    console.info(`   ✅ Built in ${duration}ms - Bundle: ${sizeMB}MB`);
+    console.info(`   📦 Output: dist/index.js`);
 
     return { success: true, size: parseFloat(sizeMB), duration };
   } catch (error) {
-    console.log(`   ❌ Build failed: ${error}`);
+    console.info(`   ❌ Build failed: ${error}`);
     return { success: false, error };
   }
 }
 
 async function demonstrateDeadCodeElimination() {
-  console.log('🗑️  Bun v1.3.5 Dead-Code Elimination Demonstration\n');
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+  console.info('🗑️  Bun v1.3.5 Dead-Code Elimination Demonstration\n');
+  console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
   // Create dist directory
   await $`mkdir -p dist`;
@@ -67,8 +67,8 @@ async function demonstrateDeadCodeElimination() {
   const results: any[] = [];
 
   for (const config of buildConfigs) {
-    console.log(`📦 ${config.name}`);
-    console.log(`   ${config.description}`);
+    console.info(`📦 ${config.name}`);
+    console.info(`   ${config.description}`);
 
     const result = await buildWithFeatures(config.features, config.name);
 
@@ -86,13 +86,13 @@ async function demonstrateDeadCodeElimination() {
       });
     }
 
-    console.log();
+    console.info();
   }
 
   // Analyze results
   if (results.length > 0) {
-    console.log('📊 Dead-Code Elimination Analysis:');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.info('📊 Dead-Code Elimination Analysis:');
+    console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
     const minSize = Math.min(...results.map(r => r.size));
     const maxSize = Math.max(...results.map(r => r.size));
@@ -100,29 +100,29 @@ async function demonstrateDeadCodeElimination() {
 
     results.forEach(result => {
       const sizeDiff = ((result.size - minSize) / minSize * 100).toFixed(1);
-      console.log(`   ${result.name}: ${result.size}MB (+${sizeDiff}%) - ${result.features} features`);
+      console.info(`   ${result.name}: ${result.size}MB (+${sizeDiff}%) - ${result.features} features`);
     });
 
-    console.log();
-    console.log(`🎯 Results:`);
-    console.log(`   • Bundle size range: ${minSize}MB - ${maxSize}MB`);
-    console.log(`   • Maximum size reduction: ${sizeReduction}%`);
-    console.log(`   • Dead-code elimination: ACTIVE ✅`);
+    console.info();
+    console.info(`🎯 Results:`);
+    console.info(`   • Bundle size range: ${minSize}MB - ${maxSize}MB`);
+    console.info(`   • Maximum size reduction: ${sizeReduction}%`);
+    console.info(`   • Dead-code elimination: ACTIVE ✅`);
 
     // Show file sizes
-    console.log(`\n📁 Generated Files:`);
+    console.info(`\n📁 Generated Files:`);
     for (const result of results) {
-      console.log(`   • ${result.file} (${result.size}MB)`);
+      console.info(`   • ${result.file} (${result.size}MB)`);
     }
 
-    console.log(`\n💡 Key Benefits:`);
-    console.log(`   • Smaller bundles = faster downloads`);
-    console.log(`   • Unused code completely removed at build time`);
-    console.log(`   • Feature-gated security and functionality`);
-    console.log(`   • Environment-specific optimizations`);
+    console.info(`\n💡 Key Benefits:`);
+    console.info(`   • Smaller bundles = faster downloads`);
+    console.info(`   • Unused code completely removed at build time`);
+    console.info(`   • Feature-gated security and functionality`);
+    console.info(`   • Environment-specific optimizations`);
   }
 
-  console.log(`\n✅ Dead-code elimination demonstration complete!`);
+  console.info(`\n✅ Dead-code elimination demonstration complete!`);
 }
 
 // Run the demonstration

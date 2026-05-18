@@ -32,11 +32,11 @@ class PaymentServerManager {
     // Check if already running
     const existingStatus = this.getStatus();
     if (existingStatus.running) {
-      console.log(`✓ Payment server already running (PID: ${existingStatus.pid})`);
+      console.info(`✓ Payment server already running (PID: ${existingStatus.pid})`);
       return;
     }
 
-    console.log('🚀 Starting payment routing server...');
+    console.info('🚀 Starting payment routing server...');
 
     return new Promise((resolve, reject) => {
       this.startTime = Date.now();
@@ -64,7 +64,7 @@ class PaymentServerManager {
       // Handle output
       this.process.stdout?.on('data', (data) => {
         const output = data.toString();
-        console.log(output.trim());
+        console.info(output.trim());
       });
 
       this.process.stderr?.on('data', (data) => {
@@ -89,10 +89,10 @@ class PaymentServerManager {
             clearInterval(checkReady);
             this.restartAttempts = 0;
             this.startHealthChecks();
-            console.log('✅ Payment server started successfully');
-            console.log(`   Port: ${process.env.PAYMENT_PORT || 3001}`);
-            console.log(`   PID: ${this.process?.pid}`);
-            console.log(`   Logs: ${LOG_FILE}`);
+            console.info('✅ Payment server started successfully');
+            console.info(`   Port: ${process.env.PAYMENT_PORT || 3001}`);
+            console.info(`   PID: ${this.process?.pid}`);
+            console.info(`   Logs: ${LOG_FILE}`);
             resolve();
           }
         } catch {
@@ -111,7 +111,7 @@ class PaymentServerManager {
   }
 
   stop(): void {
-    console.log('🛑 Stopping payment server...');
+    console.info('🛑 Stopping payment server...');
     
     if (this.healthCheckTimer) {
       clearInterval(this.healthCheckTimer);
@@ -131,11 +131,11 @@ class PaymentServerManager {
       unlinkSync(PID_FILE);
     }
 
-    console.log('✓ Payment server stopped');
+    console.info('✓ Payment server stopped');
   }
 
   restart(): void {
-    console.log('🔄 Restarting payment server...');
+    console.info('🔄 Restarting payment server...');
     this.stop();
     setTimeout(() => this.start(), 1000);
   }
@@ -195,7 +195,7 @@ class PaymentServerManager {
     }
 
     this.restartAttempts++;
-    console.log(`🔄 Restarting server (attempt ${this.restartAttempts}/${MAX_RESTART_ATTEMPTS})...`);
+    console.info(`🔄 Restarting server (attempt ${this.restartAttempts}/${MAX_RESTART_ATTEMPTS})...`);
     
     setTimeout(() => {
       this.start().catch((err) => {
@@ -229,28 +229,28 @@ switch (command) {
   case 'status':
     const status = manager.getStatus();
     if (status.running) {
-      console.log('✅ Payment server is running');
-      console.log(`   PID: ${status.pid}`);
-      console.log(`   Port: ${status.port}`);
+      console.info('✅ Payment server is running');
+      console.info(`   PID: ${status.pid}`);
+      console.info(`   Port: ${status.port}`);
     } else {
-      console.log('❌ Payment server is not running');
+      console.info('❌ Payment server is not running');
     }
     break;
 
   case 'health':
     manager.checkHealth().then((healthy) => {
       if (healthy) {
-        console.log('✅ Server is healthy');
+        console.info('✅ Server is healthy');
         process.exit(0);
       } else {
-        console.log('❌ Server is unhealthy');
+        console.info('❌ Server is unhealthy');
         process.exit(1);
       }
     });
     break;
 
   default:
-    console.log(`
+    console.info(`
 Usage: bun run scripts/start-payment-server.ts [command]
 
 Commands:

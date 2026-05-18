@@ -52,7 +52,7 @@ export class CustomerInterfaceCore extends EventEmitter {
   async initialize(): Promise<void> {
     if (this.isInitialized) return;
 
-    console.log('👥 Initializing Customer Interface Core...');
+    console.info('👥 Initializing Customer Interface Core...');
 
     try {
       // Initialize dependencies
@@ -73,7 +73,7 @@ export class CustomerInterfaceCore extends EventEmitter {
       }
 
       this.isInitialized = true;
-      console.log('✅ Customer Interface Core initialized successfully');
+      console.info('✅ Customer Interface Core initialized successfully');
 
       this.emit('initialized', this.state);
     } catch (error) {
@@ -134,7 +134,7 @@ export class CustomerInterfaceCore extends EventEmitter {
    * Dispatch action
    */
   dispatchAction(action: CustomerAction): void {
-    console.log(`🎯 Dispatching action: ${action.type}`, action.payload);
+    console.info(`🎯 Dispatching action: ${action.type}`, action.payload);
 
     // Log the action
     this.logEvent({
@@ -177,7 +177,7 @@ export class CustomerInterfaceCore extends EventEmitter {
    * Refresh current data
    */
   async refresh(): Promise<void> {
-    console.log('🔄 Refreshing customer interface...');
+    console.info('🔄 Refreshing customer interface...');
 
     this.setLoading(true);
     try {
@@ -269,19 +269,19 @@ export class CustomerInterfaceCore extends EventEmitter {
       this.handleTransactionCompleted(transaction);
     });
 
-    console.log('👂 Event listeners setup completed');
+    console.info('👂 Event listeners setup completed');
   }
 
   private async initializeForms(): Promise<void> {
     // Initialize form configurations
     await this.formService.initializeCustomerForms();
-    console.log('📝 Forms initialized');
+    console.info('📝 Forms initialized');
   }
 
   private async loadInitialData(): Promise<void> {
     try {
       // Load initial customer data if needed
-      console.log('📊 Initial data loaded');
+      console.info('📊 Initial data loaded');
     } catch (error) {
       console.error('❌ Failed to load initial data:', error);
       throw error;
@@ -290,11 +290,11 @@ export class CustomerInterfaceCore extends EventEmitter {
 
   private setupRealTimeUpdates(): void {
     // Setup real-time update mechanisms
-    console.log('🔄 Real-time updates enabled');
+    console.info('🔄 Real-time updates enabled');
   }
 
   private handleCustomerCreated(customer: CustomerProfile): void {
-    console.log(`👤 Customer created: ${customer.firstName} ${customer.lastName}`);
+    console.info(`👤 Customer created: ${customer.firstName} ${customer.lastName}`);
     this.logEvent({
       type: 'customer-updated',
       data: { action: 'created', customer },
@@ -304,7 +304,7 @@ export class CustomerInterfaceCore extends EventEmitter {
   }
 
   private handleCustomerUpdated(customer: CustomerProfile): void {
-    console.log(`📝 Customer updated: ${customer.firstName} ${customer.lastName}`);
+    console.info(`📝 Customer updated: ${customer.firstName} ${customer.lastName}`);
     this.logEvent({
       type: 'customer-updated',
       data: { action: 'updated', customer },
@@ -314,7 +314,7 @@ export class CustomerInterfaceCore extends EventEmitter {
   }
 
   private handleCustomerUpdatedRealtime(customer: CustomerProfile): void {
-    console.log(`🔄 Customer updated (real-time): ${customer.firstName} ${customer.lastName}`);
+    console.info(`🔄 Customer updated (real-time): ${customer.firstName} ${customer.lastName}`);
     this.emit('customer-updated-realtime', customer);
   }
 
@@ -329,7 +329,7 @@ export class CustomerInterfaceCore extends EventEmitter {
   }
 
   private handleTransactionCompleted(transaction: any): void {
-    console.log('💰 Transaction completed:', transaction);
+    console.info('💰 Transaction completed:', transaction);
     this.emit('transaction-completed', transaction);
   }
 

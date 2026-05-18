@@ -148,7 +148,7 @@ export class UltraFastEvolveRouter {
     this.patterns.set(id, pattern);
     this.priorities.set(id, priority);
 
-    console.log(`🧬 Added evolved pattern: ${id} (gen ${generation}, prio ${priority})`);
+    console.info(`🧬 Added evolved pattern: ${id} (gen ${generation}, prio ${priority})`);
   }
 
   /**
@@ -222,16 +222,16 @@ export async function testUltraFastRouter() {
   const router = UltraFastEvolveRouter.getInstance();
   const testUrl = "https://ai-factory.live/evolve/47/0.9998/ai_evolve_pattern_xyz";
 
-  console.log("🧪 Testing UltraFast URLPattern Router...");
+  console.info("🧪 Testing UltraFast URLPattern Router...");
 
   const result = router.match(testUrl);
   if (result) {
-    console.log(`✅ Match found: ${result.patternId} (priority ${result.priority})`);
-    console.log(`📊 Processing time: ${result.processingTime}`);
-    console.log(`🎯 Groups:`, result.groups);
-    console.log(`⚡ Matches/sec: ${result.matchesPerSec}`);
+    console.info(`✅ Match found: ${result.patternId} (priority ${result.priority})`);
+    console.info(`📊 Processing time: ${result.processingTime}`);
+    console.info(`🎯 Groups:`, result.groups);
+    console.info(`⚡ Matches/sec: ${result.matchesPerSec}`);
   } else {
-    console.log("❌ No match found");
+    console.info("❌ No match found");
   }
 
   return result;

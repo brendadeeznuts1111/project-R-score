@@ -4,11 +4,11 @@
  */
 
 async function simulateScaling() {
-  console.log("🚀 Starting Enterprise Scaling Simulation...");
+  console.info("🚀 Starting Enterprise Scaling Simulation...");
   const targetAccounts = 1000;
   let CurrentAccounts = 0;
 
-  console.log(`Target: ${targetAccounts} managed accounts`);
+  console.info(`Target: ${targetAccounts} managed accounts`);
 
   const scalingInterval = setInterval(() => {
     const batch = Math.floor(Math.random() * 50) + 10;
@@ -17,7 +17,7 @@ async function simulateScaling() {
     if (CurrentAccounts >= targetAccounts) {
       CurrentAccounts = targetAccounts;
       clearInterval(scalingInterval);
-      console.log(`\n✅ Scaling Target Reached: ${CurrentAccounts} accounts active.`);
+      console.info(`\n✅ Scaling Target Reached: ${CurrentAccounts} accounts active.`);
       process.exit(0);
     }
 

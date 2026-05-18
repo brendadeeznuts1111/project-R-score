@@ -223,7 +223,7 @@ class CICDRulesSystem {
   ];
 
   constructor() {
-    console.log('🔧 Initializing CI/CD Rules System...\n');
+    console.info('🔧 Initializing CI/CD Rules System...\n');
   }
 
   public validateQualityGates(metrics: Record<string, number>): {
@@ -582,27 +582,27 @@ if (import.meta.main) {
     case 'validate':
       // Example validation
       const branchResult = ciSystem.validateBranch('feature/new-feature');
-      console.log('Branch validation:', branchResult);
+      console.info('Branch validation:', branchResult);
 
       const commitResult = ciSystem.validateCommit('feat: add new dashboard component');
-      console.log('Commit validation:', commitResult);
+      console.info('Commit validation:', commitResult);
 
       const qualityResult = ciSystem.validateQualityGates({
         test_coverage: 85,
         bundle_size: 1024 * 1024, // 1MB
         security_score: 95,
       });
-      console.log('Quality gates:', qualityResult);
+      console.info('Quality gates:', qualityResult);
       break;
 
     case 'pipeline':
       const pipeline = ciSystem.generateCICDPipeline();
-      console.log(pipeline);
+      console.info(pipeline);
       break;
 
     case 'workflow':
       const workflow = ciSystem.createGitHubActionsWorkflow();
-      console.log(workflow);
+      console.info(workflow);
       break;
 
     case 'scan':
@@ -617,14 +617,14 @@ if (import.meta.main) {
           .slice(0, 10),
       ];
       const scanResult = ciSystem.scanForSecurityIssues(files);
-      console.log(`Security scan found ${scanResult.violations.length} violations`);
+      console.info(`Security scan found ${scanResult.violations.length} violations`);
       for (const violation of scanResult.violations.slice(0, 5)) {
-        console.log(`  ${violation.file}: ${violation.rule.name}`);
+        console.info(`  ${violation.file}: ${violation.rule.name}`);
       }
       break;
 
     default:
-      console.log(
+      console.info(
         'Usage: bun run .github/workflows/ci-cd-rules.bun.ts [validate|pipeline|workflow|scan]'
       );
       break;

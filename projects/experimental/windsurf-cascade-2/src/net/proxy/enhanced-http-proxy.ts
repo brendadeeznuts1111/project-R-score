@@ -7,7 +7,7 @@ import { validationMetrics } from "./validator.js";
 
 // Logging functions
 const logInfo = (domain: string, message: string, data?: any) => {
-  console.log(`ℹ️ [${domain}] ${message}`, data || '');
+  console.info(`ℹ️ [${domain}] ${message}`, data || '');
 };
 
 const logDebug = (domain: string, message: string, data?: any) => {
@@ -18,8 +18,8 @@ const logDebug = (domain: string, message: string, data?: any) => {
 
 // Create enhanced proxy server with full validation
 export function createEnhancedProxyServer(port: number = 8082) {
-  console.log(`🚀 Starting Enhanced HTTP Proxy on port ${port}`);
-  console.log(`📊 Features: Strict header validation, DNS cache, performance metrics`);
+  console.info(`🚀 Starting Enhanced HTTP Proxy on port ${port}`);
+  console.info(`📊 Features: Strict header validation, DNS cache, performance metrics`);
   
   // Warm up DNS cache on startup
   warmupDNSCache().then(() => {
@@ -200,45 +200,45 @@ export function startEnhancedProxyDemo() {
   const server = createEnhancedProxyServer(8082);
   const bunServer = Bun.serve(server);
   
-  console.log('🎯 Enhanced HTTP Proxy Demo Started!');
-  console.log('');
-  console.log('📊 Available Endpoints:');
-  console.log(`   🌐 Proxy: http://localhost:8082/proxy`);
-  console.log(`   📈 Status: http://localhost:8082/proxy-status`);
-  console.log(`   ❤️  Health: http://localhost:8082/health`);
-  console.log(`   📊 Metrics: http://localhost:8082/metrics`);
-  console.log(`   🧪 Test: http://localhost:8082/validate-test`);
-  console.log('');
-  console.log('🔍 Validation Features:');
-  console.log('   ✅ Strict header format validation');
-  console.log('   ✅ Range and checksum verification');
-  console.log('   ✅ JWT token validation');
-  console.log('   ✅ DNS cache integration');
-  console.log('   ✅ Performance metrics');
-  console.log('   ✅ Health monitoring');
-  console.log('');
-  console.log('📋 Test Commands:');
-  console.log('   # Check proxy status');
-  console.log('   curl http://localhost:8082/proxy-status');
-  console.log('');
-  console.log('   # Test validation with valid headers');
-  console.log('   curl -X POST http://localhost:8082/validate-test \\');
-  console.log('        -H "Content-Type: application/json" \\');
-  console.log('        -d \'{"headers": {');
-  console.log('          "X-Bun-Config-Version": "1",');
-  console.log('          "X-Bun-Registry-Hash": "0x12345678",');
-  console.log('          "X-Bun-Feature-Flags": "0x00000007",');
-  console.log('          "X-Bun-Proxy-Token": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJkb21haW4iOiJAZG9tYWluMSIsImV4cCI6MTczNjQ0MjQzMH0.YzJkNjY1ZjQ1ZjE2YjE2NjE2NjE2Ng"');
-  console.log('        }}\'');
-  console.log('');
-  console.log('   # Test validation with invalid headers');
-  console.log('   curl -X POST http://localhost:8082/validate-test \\');
-  console.log('        -H "Content-Type: application/json" \\');
-  console.log('        -d \'{"headers": {');
-  console.log('          "X-Bun-Config-Version": "256",');
-  console.log('          "X-Bun-Registry-Hash": "0xinvalid",');
-  console.log('          "X-Bun-Feature-Flags": "0xFFFFFFFF"');
-  console.log('        }}\'');
+  console.info('🎯 Enhanced HTTP Proxy Demo Started!');
+  console.info('');
+  console.info('📊 Available Endpoints:');
+  console.info(`   🌐 Proxy: http://localhost:8082/proxy`);
+  console.info(`   📈 Status: http://localhost:8082/proxy-status`);
+  console.info(`   ❤️  Health: http://localhost:8082/health`);
+  console.info(`   📊 Metrics: http://localhost:8082/metrics`);
+  console.info(`   🧪 Test: http://localhost:8082/validate-test`);
+  console.info('');
+  console.info('🔍 Validation Features:');
+  console.info('   ✅ Strict header format validation');
+  console.info('   ✅ Range and checksum verification');
+  console.info('   ✅ JWT token validation');
+  console.info('   ✅ DNS cache integration');
+  console.info('   ✅ Performance metrics');
+  console.info('   ✅ Health monitoring');
+  console.info('');
+  console.info('📋 Test Commands:');
+  console.info('   # Check proxy status');
+  console.info('   curl http://localhost:8082/proxy-status');
+  console.info('');
+  console.info('   # Test validation with valid headers');
+  console.info('   curl -X POST http://localhost:8082/validate-test \\');
+  console.info('        -H "Content-Type: application/json" \\');
+  console.info('        -d \'{"headers": {');
+  console.info('          "X-Bun-Config-Version": "1",');
+  console.info('          "X-Bun-Registry-Hash": "0x12345678",');
+  console.info('          "X-Bun-Feature-Flags": "0x00000007",');
+  console.info('          "X-Bun-Proxy-Token": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJkb21haW4iOiJAZG9tYWluMSIsImV4cCI6MTczNjQ0MjQzMH0.YzJkNjY1ZjQ1ZjE2YjE2NjE2NjE2Ng"');
+  console.info('        }}\'');
+  console.info('');
+  console.info('   # Test validation with invalid headers');
+  console.info('   curl -X POST http://localhost:8082/validate-test \\');
+  console.info('        -H "Content-Type: application/json" \\');
+  console.info('        -d \'{"headers": {');
+  console.info('          "X-Bun-Config-Version": "256",');
+  console.info('          "X-Bun-Registry-Hash": "0xinvalid",');
+  console.info('          "X-Bun-Feature-Flags": "0xFFFFFFFF"');
+  console.info('        }}\'');
   
   return bunServer;
 }

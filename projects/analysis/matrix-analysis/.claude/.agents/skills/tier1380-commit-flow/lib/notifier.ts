@@ -31,7 +31,7 @@ async function sendNotification(options: NotificationOptions): Promise<void> {
 	}
 
 	// Console fallback
-	console.log(`${icon} ${options.title}: ${options.message}`);
+	console.info(`${icon} ${options.title}: ${options.message}`);
 }
 
 async function notifyCommitSuccess(hash: string): Promise<void> {

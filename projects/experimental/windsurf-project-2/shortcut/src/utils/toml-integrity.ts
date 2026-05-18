@@ -110,8 +110,8 @@ export async function batchVerifyIntegrity(
   const totalTime = performance.now() - startTime;
   const validCount = results.filter(r => r.isValid).length;
   
-  console.log(`Verified ${results.length} files in ${totalTime.toFixed(2)}ms`);
-  console.log(`Valid: ${validCount}/${results.length}`);
+  console.info(`Verified ${results.length} files in ${totalTime.toFixed(2)}ms`);
+  console.info(`Valid: ${validCount}/${results.length}`);
   
   return results;
 }
@@ -136,14 +136,14 @@ export function generateIntegrityManifest(configDir: string): Record<string, str
       if (existsSync(filePath)) {
         const hash = calculateConfigHash(filePath);
         manifest[file] = hash;
-        console.log(`${file}: ${hash}`);
+        console.info(`${file}: ${hash}`);
       }
     }
     
     // Save manifest
     const manifestPath = `${configDir}/integrity.json`;
     writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
-    console.log(`Integrity manifest saved to ${manifestPath}`);
+    console.info(`Integrity manifest saved to ${manifestPath}`);
     
   } catch (error) {
     console.error(`Failed to generate integrity manifest: ${error}`);
@@ -247,7 +247,7 @@ export async function benchmarkConfigOperations(
   totalTime: number;
   throughput: number;
 }> {
-  console.log(`Benchmarking ${iterations} operations on ${filePath}...`);
+  console.info(`Benchmarking ${iterations} operations on ${filePath}...`);
   
   const hashTimes: number[] = [];
   const loadTimes: number[] = [];
@@ -282,12 +282,12 @@ export async function benchmarkConfigOperations(
     throughput
   };
   
-  console.log(`Benchmark Results:`);
-  console.log(`  Average hash time: ${averageHashTime.toFixed(3)}ms`);
-  console.log(`  Average load time: ${averageLoadTime.toFixed(3)}ms`);
-  console.log(`  Total operations: ${totalOperations}`);
-  console.log(`  Total time: ${totalTime.toFixed(2)}ms`);
-  console.log(`  Throughput: ${throughput.toFixed(2)} ops/sec`);
+  console.info(`Benchmark Results:`);
+  console.info(`  Average hash time: ${averageHashTime.toFixed(3)}ms`);
+  console.info(`  Average load time: ${averageLoadTime.toFixed(3)}ms`);
+  console.info(`  Total operations: ${totalOperations}`);
+  console.info(`  Total time: ${totalTime.toFixed(2)}ms`);
+  console.info(`  Throughput: ${throughput.toFixed(2)} ops/sec`);
   
   return results;
 }
@@ -308,7 +308,7 @@ export class ConfigMonitor {
     const initialHash = calculateConfigHash(filePath);
     this.watchers.set(filePath, { hash: initialHash, callback });
     
-    console.log(`Started monitoring ${filePath} (hash: ${initialHash})`);
+    console.info(`Started monitoring ${filePath} (hash: ${initialHash})`);
   }
   
   /**
@@ -316,7 +316,7 @@ export class ConfigMonitor {
    */
   unwatch(filePath: string): void {
     this.watchers.delete(filePath);
-    console.log(`Stopped monitoring ${filePath}`);
+    console.info(`Stopped monitoring ${filePath}`);
   }
   
   /**
@@ -329,7 +329,7 @@ export class ConfigMonitor {
       this.checkAllFiles();
     }, this.checkInterval);
     
-    console.log(`Config monitor started (interval: ${this.checkInterval}ms)`);
+    console.info(`Config monitor started (interval: ${this.checkInterval}ms)`);
   }
   
   /**
@@ -339,7 +339,7 @@ export class ConfigMonitor {
     if (this.interval) {
       clearInterval(this.interval);
       this.interval = null;
-      console.log("Config monitor stopped");
+      console.info("Config monitor stopped");
     }
   }
   

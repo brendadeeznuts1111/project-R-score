@@ -102,14 +102,14 @@ export class VirtualDeviceTracker {
    * 🔧 Initialize tracker components
    */
   private initializeComponents(): void {
-    console.log('📱 Initializing Virtual Device Tracker...');
+    console.info('📱 Initializing Virtual Device Tracker...');
     
     // Initialize performance metrics
     this.performanceMetrics.set('taskExecutionTime', 0);
     this.performanceMetrics.set('subscriptionProcessingTime', 0);
     this.performanceMetrics.set('cashAppTransactionTime', 0);
     
-    console.log('✅ Virtual Device Tracker initialized');
+    console.info('✅ Virtual Device Tracker initialized');
   }
 
   /**
@@ -121,7 +121,7 @@ export class VirtualDeviceTracker {
       await this.processDueSubscriptions();
     }, 60_000);
     
-    console.log('🔁 Subscription scheduler started (checking every minute)');
+    console.info('🔁 Subscription scheduler started (checking every minute)');
   }
 
   /**
@@ -139,7 +139,7 @@ export class VirtualDeviceTracker {
     };
 
     this.tasks.set(taskId, task);
-    console.log(`📋 Created task: ${taskId} (${task.taskType})`);
+    console.info(`📋 Created task: ${taskId} (${task.taskType})`);
     
     // Execute task immediately if status is pending
     if (task.status === 'pending') {
@@ -159,7 +159,7 @@ export class VirtualDeviceTracker {
     task.updatedAt = new Date().toISOString();
 
     try {
-      console.log(`⚡ Executing task: ${task.taskId}`);
+      console.info(`⚡ Executing task: ${task.taskId}`);
 
       switch (task.taskType) {
         case 'transaction':
@@ -179,7 +179,7 @@ export class VirtualDeviceTracker {
       task.endTime = new Date().toISOString();
       task.duration = Date.now() - startTime;
       
-      console.log(`✅ Task completed: ${task.taskId} (${task.duration}ms)`);
+      console.info(`✅ Task completed: ${task.taskId} (${task.duration}ms)`);
       
     } catch (error: any) {
       task.status = 'failed';
@@ -210,7 +210,7 @@ export class VirtualDeviceTracker {
       throw new Error('Transaction details not provided');
     }
 
-    console.log(`💳 Processing CashApp transaction: $${transaction.amount} to ${transaction.recipient}`);
+    console.info(`💳 Processing CashApp transaction: $${transaction.amount} to ${transaction.recipient}`);
     
     // Simulate CashApp processing
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -218,7 +218,7 @@ export class VirtualDeviceTracker {
     transaction.status = 'completed';
     task.details.transaction = transaction;
     
-    console.log(`✅ CashApp transaction completed: ${task.taskId}`);
+    console.info(`✅ CashApp transaction completed: ${task.taskId}`);
   }
 
   /**
@@ -230,7 +230,7 @@ export class VirtualDeviceTracker {
       throw new Error('Monitoring details not provided');
     }
 
-    console.log(`📊 Monitoring ${monitoring.metric} (threshold: ${monitoring.threshold})`);
+    console.info(`📊 Monitoring ${monitoring.metric} (threshold: ${monitoring.threshold})`);
     
     // Simulate monitoring check
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -239,7 +239,7 @@ export class VirtualDeviceTracker {
     const currentValue = Math.random() * 100;
     
     if (currentValue > monitoring.threshold) {
-      console.log(`🚨 Alert: ${monitoring.metric} = ${currentValue.toFixed(2)} (threshold: ${monitoring.threshold})`);
+      console.info(`🚨 Alert: ${monitoring.metric} = ${currentValue.toFixed(2)} (threshold: ${monitoring.threshold})`);
       task.metadata.alert = true;
       task.metadata.currentValue = currentValue;
     }
@@ -249,25 +249,25 @@ export class VirtualDeviceTracker {
    * 🔧 Execute automation task
    */
   private async executeAutomationTask(task: VirtualDeviceTask): Promise<void> {
-    console.log(`🔧 Executing automation task: ${task.taskId}`);
+    console.info(`🔧 Executing automation task: ${task.taskId}`);
     
     // Simulate automation work
     await new Promise(resolve => setTimeout(resolve, 800));
     
     task.metadata.automationResult = 'success';
-    console.log(`✅ Automation task completed: ${task.taskId}`);
+    console.info(`✅ Automation task completed: ${task.taskId}`);
   }
 
   /**
    * ⚙️ Execute generic task
    */
   private async executeGenericTask(task: VirtualDeviceTask): Promise<void> {
-    console.log(`⚙️ Executing generic task: ${task.taskId}`);
+    console.info(`⚙️ Executing generic task: ${task.taskId}`);
     
     // Simulate generic work
     await new Promise(resolve => setTimeout(resolve, 300));
     
-    console.log(`✅ Generic task completed: ${task.taskId}`);
+    console.info(`✅ Generic task completed: ${task.taskId}`);
   }
 
   /**
@@ -282,7 +282,7 @@ export class VirtualDeviceTracker {
 
       const nextRun = new Date(sub.recurrence.nextRunAt);
       if (nextRun <= now) {
-        console.log(`🔁 Executing subscription task: ${sub.subscriptionId}`);
+        console.info(`🔁 Executing subscription task: ${sub.subscriptionId}`);
         try {
           // Clone task template
           const taskData = { ...sub.taskTemplate };
@@ -321,7 +321,7 @@ export class VirtualDeviceTracker {
           // Handle completion limit
           if (sub.recurrence.count && sub.recurrence.executed >= sub.recurrence.count) {
             sub.status = 'expired';
-            console.log(`🔚 Subscription ${sub.subscriptionId} completed all cycles`);
+            console.info(`🔚 Subscription ${sub.subscriptionId} completed all cycles`);
           }
 
           // Log success
@@ -396,7 +396,7 @@ export class VirtualDeviceTracker {
     };
 
     this.subscriptions.set(id, subscription);
-    console.log(`✅ Created subscription ${id} (${recurrence.interval})`);
+    console.info(`✅ Created subscription ${id} (${recurrence.interval})`);
 
     return subscription;
   }
@@ -468,7 +468,7 @@ export class VirtualDeviceTracker {
    */
   private logSubscriptionEvent(subId: string, event: string, details: any): void {
     // Could integrate with audit log or time-series aggregator
-    console.log(`📝 Subscription ${subId}: ${event}`, details);
+    console.info(`📝 Subscription ${subId}: ${event}`, details);
   }
 
   /**
@@ -476,7 +476,7 @@ export class VirtualDeviceTracker {
    */
   addCashAppIntegration(id: string, integration: CashAppTrackerIntegration): void {
     this.cashAppIntegrations.set(id, integration);
-    console.log(`💳 Added CashApp integration: ${id}`);
+    console.info(`💳 Added CashApp integration: ${id}`);
   }
 
   /**
@@ -493,7 +493,7 @@ export class VirtualDeviceTracker {
     if (this.subscriptionScheduler) {
       clearInterval(this.subscriptionScheduler);
       this.subscriptionScheduler = null;
-      console.log('🛑 Subscription scheduler stopped');
+      console.info('🛑 Subscription scheduler stopped');
     }
   }
 

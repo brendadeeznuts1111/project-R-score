@@ -301,7 +301,7 @@ export class ConfigBenchmark {
   }
 
   async runFullBenchmark(config: ClaudeCodeConfig, profileName: string): Promise<ConfigProfile> {
-    console.log(`  Running benchmark for: ${profileName}`);
+    console.info(`  Running benchmark for: ${profileName}`);
 
     const latencyResults = await this.benchmarkLatency(config);
     const tokenResults = this.benchmarkTokenEfficiency(config);
@@ -613,7 +613,7 @@ export class BenchmarkReport {
 // ============================================
 
 async function main() {
-  console.log(`
+  console.info(`
 ╔════════════════════════════════════════════════════════════╗
 ║     📊 Claude Code Configuration Benchmark Suite         ║
 ╠════════════════════════════════════════════════════════════╣
@@ -628,35 +628,35 @@ async function main() {
   const profiles: ConfigProfile[] = [];
 
   for (const [name, preset] of Object.entries(PRESETS)) {
-    console.log(`\n🔄 Benchmarking: ${preset.name}`);
+    console.info(`\n🔄 Benchmarking: ${preset.name}`);
     const profile = await benchmark.runFullBenchmark(preset.config, preset.name);
     profiles.push(profile);
-    console.log(`✅ Completed: ${profile.benchmarks.length} metrics`);
+    console.info(`✅ Completed: ${profile.benchmarks.length} metrics`);
   }
 
   // Generate reports
-  console.log(`\n📄 Generating reports...`);
+  console.info(`\n📄 Generating reports...`);
 
   for (const profile of profiles) {
     const html = await report.generateReport(profile);
     const filename = `benchmarks/benchmark-${profile.name.toLowerCase().replace(/\s+/g, "-")}.html`;
     await Bun.write(filename, html);
-    console.log(`✅ Saved: ${filename}`);
+    console.info(`✅ Saved: ${filename}`);
   }
 
   // Find optimal
-  console.log(`\n🎯 Finding optimal configuration...`);
+  console.info(`\n🎯 Finding optimal configuration...`);
   const optimal = await optimizer.findOptimal({
     maxLatency: 150,
     maxMemory: 100,
     minEfficiency: 40,
   });
 
-  console.log(`\n📊 Optimal Configuration:`);
-  console.log(JSON.stringify(optimal, null, 2));
+  console.info(`\n📊 Optimal Configuration:`);
+  console.info(JSON.stringify(optimal, null, 2));
 
   // Summary
-  console.log(`
+  console.info(`
 ╔════════════════════════════════════════════════════════════╗
 ║                    BENCHMARK COMPLETE                    ║
 ╠════════════════════════════════════════════════════════════╣

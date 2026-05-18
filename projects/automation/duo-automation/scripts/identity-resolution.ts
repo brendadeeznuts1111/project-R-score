@@ -33,71 +33,71 @@ class IdentityResolutionCLI {
   }
 
   async resolve(options: IdentityResolveOptions) {
-    console.log('🔍 Identity Resolution Analysis');
-    console.log('================================');
-    console.log(`🎯 Target: ${options.target}`);
-    console.log(`📊 Confidence Threshold: ${options.confidenceThreshold}%`);
-    console.log('');
+    console.info('🔍 Identity Resolution Analysis');
+    console.info('================================');
+    console.info(`🎯 Target: ${options.target}`);
+    console.info(`📊 Confidence Threshold: ${options.confidenceThreshold}%`);
+    console.info('');
 
     try {
       // Simulate identity resolution process
       const result = await this.identityEngine.resolveIdentity(options.target);
       
-      console.log('🆔 Identity Resolution Results:');
-      console.log('----------------------------');
-      console.log(`📊 Overall Confidence: ${result.confidence.toFixed(2)}%`);
-      console.log(`🔍 Verification Status: ${result.verificationStatus.toUpperCase()}`);
-      console.log(`🔐 Integrity Hash: ${result.integrityHash}`);
-      console.log(`⏰ Last Analysis: ${result.lastAnalysis.toISOString()}`);
-      console.log('');
+      console.info('🆔 Identity Resolution Results:');
+      console.info('----------------------------');
+      console.info(`📊 Overall Confidence: ${result.confidence.toFixed(2)}%`);
+      console.info(`🔍 Verification Status: ${result.verificationStatus.toUpperCase()}`);
+      console.info(`🔐 Integrity Hash: ${result.integrityHash}`);
+      console.info(`⏰ Last Analysis: ${result.lastAnalysis.toISOString()}`);
+      console.info('');
 
-      console.log('🌐 Platform Analysis:');
-      console.log('---------------------');
+      console.info('🌐 Platform Analysis:');
+      console.info('---------------------');
       
       result.platforms.forEach(platform => {
         const status = platform.isActive ? '✅ ACTIVE' : '❌ INACTIVE';
         const confidence = platform.confidence >= options.confidenceThreshold ? '✅' : '⚠️';
         
-        console.log(`${confidence} ${platform.platform.toUpperCase()}: ${platform.handle}`);
-        console.log(`   Confidence: ${platform.confidence.toFixed(1)}%`);
-        console.log(`   Verification: ${platform.verificationSource}`);
-        console.log(`   Integrity: ${platform.integrityHash}`);
-        console.log(`   Status: ${status}`);
-        console.log('');
+        console.info(`${confidence} ${platform.platform.toUpperCase()}: ${platform.handle}`);
+        console.info(`   Confidence: ${platform.confidence.toFixed(1)}%`);
+        console.info(`   Verification: ${platform.verificationSource}`);
+        console.info(`   Integrity: ${platform.integrityHash}`);
+        console.info(`   Status: ${status}`);
+        console.info('');
       });
 
       // Cross-Platform Linkage Analysis
-      console.log('🔗 Cross-Platform Linkage:');
-      console.log('------------------------');
-      console.log('├── Identity Binding: $johnsmith (CashApp Anchor Identity)');
-      console.log('├── Handle Correlation: @johnsmith across Telegram/WhatsApp');
-      console.log('├── Social Footprint: WhatsApp ACTIVE confirms PoL');
-      console.log('└── Verification Hierarchy: Authoritative → Signal → Surface');
-      console.log('');
+      console.info('🔗 Cross-Platform Linkage:');
+      console.info('------------------------');
+      console.info('├── Identity Binding: $johnsmith (CashApp Anchor Identity)');
+      console.info('├── Handle Correlation: @johnsmith across Telegram/WhatsApp');
+      console.info('├── Social Footprint: WhatsApp ACTIVE confirms PoL');
+      console.info('└── Verification Hierarchy: Authoritative → Signal → Surface');
+      console.info('');
 
       // Identity Confidence Matrix
-      console.log('📊 Identity Confidence Matrix:');
-      console.log('------------------------------');
-      console.log('├── CashApp: 99.2% Confidence (Banking/KYC) | d4393397:SEC');
-      console.log('├── WhatsApp: 65.0% Confidence (SIM-based OTP) | d4393397:MSG');
-      console.log('├── Telegram: 15.0% Confidence (User-defined) | d4393397:SOC');
-      console.log(`└── Overall: ${result.confidence.toFixed(2)}% Confidence (Weighted Calculation)`);
-      console.log('');
+      console.info('📊 Identity Confidence Matrix:');
+      console.info('------------------------------');
+      console.info('├── CashApp: 99.2% Confidence (Banking/KYC) | d4393397:SEC');
+      console.info('├── WhatsApp: 65.0% Confidence (SIM-based OTP) | d4393397:MSG');
+      console.info('├── Telegram: 15.0% Confidence (User-defined) | d4393397:SOC');
+      console.info(`└── Overall: ${result.confidence.toFixed(2)}% Confidence (Weighted Calculation)`);
+      console.info('');
 
       // Threshold Analysis
       const meetsThreshold = result.confidence >= options.confidenceThreshold;
-      console.log('🎯 Threshold Analysis:');
-      console.log('---------------------');
-      console.log(`Required: ${options.confidenceThreshold}%`);
-      console.log(`Achieved: ${result.confidence.toFixed(2)}%`);
-      console.log(`Result: ${meetsThreshold ? '✅ PASSES' : '❌ FAILS'} threshold requirement`);
+      console.info('🎯 Threshold Analysis:');
+      console.info('---------------------');
+      console.info(`Required: ${options.confidenceThreshold}%`);
+      console.info(`Achieved: ${result.confidence.toFixed(2)}%`);
+      console.info(`Result: ${meetsThreshold ? '✅ PASSES' : '❌ FAILS'} threshold requirement`);
       
       if (!meetsThreshold) {
-        console.log('');
-        console.log('⚠️ Recommendations:');
-        console.log('• Additional verification sources needed');
-        console.log('• Consider secondary identity verification');
-        console.log('• Review platform activity patterns');
+        console.info('');
+        console.info('⚠️ Recommendations:');
+        console.info('• Additional verification sources needed');
+        console.info('• Consider secondary identity verification');
+        console.info('• Review platform activity patterns');
       }
 
       return result;
@@ -108,11 +108,11 @@ class IdentityResolutionCLI {
   }
 
   async matrix(options: IdentityMatrixOptions) {
-    console.log('📊 Identity Confidence Matrix');
-    console.log('============================');
-    console.log(`📤 Export Format: ${options.export.toUpperCase()}`);
-    console.log(`🔐 Include Hashes: ${options.includeHashes ? 'Yes' : 'No'}`);
-    console.log('');
+    console.info('📊 Identity Confidence Matrix');
+    console.info('============================');
+    console.info(`📤 Export Format: ${options.export.toUpperCase()}`);
+    console.info(`🔐 Include Hashes: ${options.includeHashes ? 'Yes' : 'No'}`);
+    console.info('');
 
     try {
       // Generate comprehensive identity matrix
@@ -159,31 +159,31 @@ class IdentityResolutionCLI {
 
       // Export in requested format
       if (options.export === 'json') {
-        console.log(JSON.stringify(matrix, null, 2));
+        console.info(JSON.stringify(matrix, null, 2));
       } else if (options.export === 'csv') {
-        console.log('Platform,Confidence,Verification Source,Integrity Hash,Active,Weight');
+        console.info('Platform,Confidence,Verification Source,Integrity Hash,Active,Weight');
         Object.entries(matrix.platforms).forEach(([platform, data]) => {
-          console.log(`${platform},${data.confidence},${data.verificationSource},${data.integrityHash},${data.isActive},${data.weight}`);
+          console.info(`${platform},${data.confidence},${data.verificationSource},${data.integrityHash},${data.isActive},${data.weight}`);
         });
       } else if (options.export === 'xml') {
-        console.log('<?xml version="1.0" encoding="UTF-8"?>');
-        console.log('<identityMatrix>');
-        console.log(`  <timestamp>${matrix.timestamp}</timestamp>`);
-        console.log(`  <overallConfidence>${matrix.overall.confidence}</overallConfidence>`);
-        console.log('  <platforms>');
+        console.info('<?xml version="1.0" encoding="UTF-8"?>');
+        console.info('<identityMatrix>');
+        console.info(`  <timestamp>${matrix.timestamp}</timestamp>`);
+        console.info(`  <overallConfidence>${matrix.overall.confidence}</overallConfidence>`);
+        console.info('  <platforms>');
         Object.entries(matrix.platforms).forEach(([platform, data]) => {
-          console.log(`    <platform name="${platform}">`);
-          console.log(`      <confidence>${data.confidence}</confidence>`);
-          console.log(`      <verificationSource>${data.verificationSource}</verificationSource>`);
+          console.info(`    <platform name="${platform}">`);
+          console.info(`      <confidence>${data.confidence}</confidence>`);
+          console.info(`      <verificationSource>${data.verificationSource}</verificationSource>`);
           if (options.includeHashes) {
-            console.log(`      <integrityHash>${data.integrityHash}</integrityHash>`);
+            console.info(`      <integrityHash>${data.integrityHash}</integrityHash>`);
           }
-          console.log(`      <active>${data.isActive}</active>`);
-          console.log(`      <weight>${data.weight}</weight>`);
-          console.log('    </platform>');
+          console.info(`      <active>${data.isActive}</active>`);
+          console.info(`      <weight>${data.weight}</weight>`);
+          console.info('    </platform>');
         });
-        console.log('  </platforms>');
-        console.log('</identityMatrix>');
+        console.info('  </platforms>');
+        console.info('</identityMatrix>');
       }
 
       return matrix;
@@ -194,17 +194,17 @@ class IdentityResolutionCLI {
   }
 
   async correlate(options: IdentityCorrelateOptions) {
-    console.log('🔗 Cross-Platform Identity Correlation');
-    console.log('=====================================');
-    console.log(`🌐 Platforms: ${options.platforms}`);
-    console.log('');
+    console.info('🔗 Cross-Platform Identity Correlation');
+    console.info('=====================================');
+    console.info(`🌐 Platforms: ${options.platforms}`);
+    console.info('');
 
     try {
       const platforms = options.platforms.split(',');
       const correlationResults = [];
 
       for (const platform of platforms) {
-        console.log(`🔍 Analyzing ${platform.trim()}...`);
+        console.info(`🔍 Analyzing ${platform.trim()}...`);
         
         // Simulate correlation analysis
         const correlation = {
@@ -227,27 +227,27 @@ class IdentityResolutionCLI {
 
         correlationResults.push(correlation);
         
-        console.log(`   Handle: ${correlation.handle}`);
-        console.log(`   Confidence: ${correlation.confidence}%`);
-        console.log(`   Correlation: ${correlation.correlationStrength}`);
-        console.log(`   Data Points: ${correlation.dataPoints}`);
-        console.log(`   Last Active: ${correlation.lastActive}`);
-        console.log(`   Risk Score: ${correlation.riskScore}`);
-        console.log('');
+        console.info(`   Handle: ${correlation.handle}`);
+        console.info(`   Confidence: ${correlation.confidence}%`);
+        console.info(`   Correlation: ${correlation.correlationStrength}`);
+        console.info(`   Data Points: ${correlation.dataPoints}`);
+        console.info(`   Last Active: ${correlation.lastActive}`);
+        console.info(`   Risk Score: ${correlation.riskScore}`);
+        console.info('');
       }
 
       // Correlation Summary
-      console.log('📊 Correlation Summary:');
-      console.log('----------------------');
+      console.info('📊 Correlation Summary:');
+      console.info('----------------------');
       const avgConfidence = correlationResults.reduce((sum, r) => sum + r.confidence, 0) / correlationResults.length;
       const totalDataPoints = correlationResults.reduce((sum, r) => sum + r.dataPoints, 0);
       const avgRiskScore = correlationResults.reduce((sum, r) => sum + r.riskScore, 0) / correlationResults.length;
 
-      console.log(`Platforms Analyzed: ${correlationResults.length}`);
-      console.log(`Average Confidence: ${avgConfidence.toFixed(2)}%`);
-      console.log(`Total Data Points: ${totalDataPoints.toLocaleString()}`);
-      console.log(`Average Risk Score: ${avgRiskScore.toFixed(1)}`);
-      console.log(`Overall Assessment: ${avgConfidence >= 80 ? 'STRONG IDENTITY' : avgConfidence >= 60 ? 'MODERATE IDENTITY' : 'WEAK IDENTITY'}`);
+      console.info(`Platforms Analyzed: ${correlationResults.length}`);
+      console.info(`Average Confidence: ${avgConfidence.toFixed(2)}%`);
+      console.info(`Total Data Points: ${totalDataPoints.toLocaleString()}`);
+      console.info(`Average Risk Score: ${avgRiskScore.toFixed(1)}`);
+      console.info(`Overall Assessment: ${avgConfidence >= 80 ? 'STRONG IDENTITY' : avgConfidence >= 60 ? 'MODERATE IDENTITY' : 'WEAK IDENTITY'}`);
 
       return correlationResults;
     } catch (error) {
@@ -257,11 +257,11 @@ class IdentityResolutionCLI {
   }
 
   async verify(options: IdentityVerifyOptions) {
-    console.log('🔐 Identity Verification');
-    console.log('======================');
-    console.log(`🏦 KYC Integration: ${options.kycIntegration ? 'Enabled' : 'Disabled'}`);
-    console.log(`📋 Compliance: ${options.compliance.toUpperCase()}`);
-    console.log('');
+    console.info('🔐 Identity Verification');
+    console.info('======================');
+    console.info(`🏦 KYC Integration: ${options.kycIntegration ? 'Enabled' : 'Disabled'}`);
+    console.info(`📋 Compliance: ${options.compliance.toUpperCase()}`);
+    console.info('');
 
     try {
       const verification = {
@@ -292,47 +292,47 @@ class IdentityResolutionCLI {
         }
       };
 
-      console.log('🆔 Identity Verification Results:');
-      console.log('--------------------------------');
-      console.log(`Status: ${verification.identityVerification.status}`);
-      console.log(`Confidence: ${verification.identityVerification.confidence}%`);
-      console.log(`Methods: ${verification.identityVerification.methods.join(', ')}`);
-      console.log(`Last Verified: ${verification.identityVerification.lastVerified}`);
-      console.log(`Expires: ${verification.identityVerification.expires}`);
-      console.log('');
+      console.info('🆔 Identity Verification Results:');
+      console.info('--------------------------------');
+      console.info(`Status: ${verification.identityVerification.status}`);
+      console.info(`Confidence: ${verification.identityVerification.confidence}%`);
+      console.info(`Methods: ${verification.identityVerification.methods.join(', ')}`);
+      console.info(`Last Verified: ${verification.identityVerification.lastVerified}`);
+      console.info(`Expires: ${verification.identityVerification.expires}`);
+      console.info('');
 
       if (verification.kycIntegration) {
-        console.log('🏦 KYC Integration Results:');
-        console.log('--------------------------');
-        console.log(`Status: ${verification.kycIntegration.status}`);
-        console.log(`Level: ${verification.kycIntegration.level}`);
-        console.log(`Documents: ${verification.kycIntegration.documents.join(', ')}`);
-        console.log(`Screening: ${verification.kycIntegration.screening.join(', ')}`);
-        console.log(`Risk Rating: ${verification.kycIntegration.riskRating}`);
-        console.log('');
+        console.info('🏦 KYC Integration Results:');
+        console.info('--------------------------');
+        console.info(`Status: ${verification.kycIntegration.status}`);
+        console.info(`Level: ${verification.kycIntegration.level}`);
+        console.info(`Documents: ${verification.kycIntegration.documents.join(', ')}`);
+        console.info(`Screening: ${verification.kycIntegration.screening.join(', ')}`);
+        console.info(`Risk Rating: ${verification.kycIntegration.riskRating}`);
+        console.info('');
       }
 
-      console.log('📋 Compliance Status:');
-      console.log('--------------------');
-      console.log(`Standards: ${verification.compliance.standards.join(', ')}`);
-      console.log(`Audit Trail: ${verification.compliance.auditTrail ? 'Enabled' : 'Disabled'}`);
-      console.log(`Data Protection: ${verification.compliance.dataProtection}`);
-      console.log(`Retention: ${verification.compliance.retention}`);
-      console.log('');
+      console.info('📋 Compliance Status:');
+      console.info('--------------------');
+      console.info(`Standards: ${verification.compliance.standards.join(', ')}`);
+      console.info(`Audit Trail: ${verification.compliance.auditTrail ? 'Enabled' : 'Disabled'}`);
+      console.info(`Data Protection: ${verification.compliance.dataProtection}`);
+      console.info(`Retention: ${verification.compliance.retention}`);
+      console.info('');
 
-      console.log('🔍 Verification Hierarchy:');
-      console.log('-------------------------');
-      console.log('Authoritative Sources:');
+      console.info('🔍 Verification Hierarchy:');
+      console.info('-------------------------');
+      console.info('Authoritative Sources:');
       verification.verificationHierarchy.authoritative.forEach(source => {
-        console.log(`  • ${source}`);
+        console.info(`  • ${source}`);
       });
-      console.log('Signal Sources:');
+      console.info('Signal Sources:');
       verification.verificationHierarchy.signal.forEach(source => {
-        console.log(`  • ${source}`);
+        console.info(`  • ${source}`);
       });
-      console.log('Surface Sources:');
+      console.info('Surface Sources:');
       verification.verificationHierarchy.surface.forEach(source => {
-        console.log(`  • ${source}`);
+        console.info(`  • ${source}`);
       });
 
       return verification;
@@ -343,10 +343,10 @@ class IdentityResolutionCLI {
   }
 
   async init(options: IdentityInitOptions) {
-    console.log('🚀 Identity Resolution Initialization');
-    console.log('===================================');
-    console.log(`📊 Confidence Threshold: ${options.confidenceThreshold}%`);
-    console.log('');
+    console.info('🚀 Identity Resolution Initialization');
+    console.info('===================================');
+    console.info(`📊 Confidence Threshold: ${options.confidenceThreshold}%`);
+    console.info('');
 
     try {
       const initialization = {
@@ -374,43 +374,43 @@ class IdentityResolutionCLI {
         }
       };
 
-      console.log('✅ Identity Resolution System Initialized');
-      console.log('--------------------------------------');
-      console.log(`Version: ${initialization.version}`);
-      console.log(`Timestamp: ${initialization.timestamp}`);
-      console.log('');
+      console.info('✅ Identity Resolution System Initialized');
+      console.info('--------------------------------------');
+      console.info(`Version: ${initialization.version}`);
+      console.info(`Timestamp: ${initialization.timestamp}`);
+      console.info('');
 
-      console.log('⚙️ Configuration:');
-      console.log('-----------------');
-      console.log(`Confidence Threshold: ${initialization.configuration.confidenceThreshold}%`);
-      console.log(`Platforms: ${initialization.configuration.platforms.join(', ')}`);
-      console.log(`Algorithms: ${initialization.configuration.algorithms.join(', ')}`);
-      console.log(`Compliance: ${initialization.configuration.compliance.join(', ')}`);
-      console.log('');
+      console.info('⚙️ Configuration:');
+      console.info('-----------------');
+      console.info(`Confidence Threshold: ${initialization.configuration.confidenceThreshold}%`);
+      console.info(`Platforms: ${initialization.configuration.platforms.join(', ')}`);
+      console.info(`Algorithms: ${initialization.configuration.algorithms.join(', ')}`);
+      console.info(`Compliance: ${initialization.configuration.compliance.join(', ')}`);
+      console.info('');
 
-      console.log('🔧 System Status:');
-      console.log('-----------------');
+      console.info('🔧 System Status:');
+      console.info('-----------------');
       Object.entries(initialization.systemStatus).forEach(([component, status]) => {
         const icon = status === 'ACTIVE' || status === 'CONNECTED' || status === 'READY' || status === 'ONLINE' ? '✅' : '❌';
-        console.log(`${icon} ${component}: ${status}`);
+        console.info(`${icon} ${component}: ${status}`);
       });
-      console.log('');
+      console.info('');
 
-      console.log('🚀 Capabilities:');
-      console.log('----------------');
+      console.info('🚀 Capabilities:');
+      console.info('----------------');
       Object.entries(initialization.capabilities).forEach(([capability, enabled]) => {
         const icon = enabled ? '✅' : '❌';
-        console.log(`${icon} ${capability.replace(/([A-Z])/g, ' $1').trim()}: ${enabled ? 'Enabled' : 'Disabled'}`);
+        console.info(`${icon} ${capability.replace(/([A-Z])/g, ' $1').trim()}: ${enabled ? 'Enabled' : 'Disabled'}`);
       });
 
-      console.log('');
-      console.log('🎯 Identity Resolution System Ready!');
-      console.log('====================================');
-      console.log('Use the following commands to get started:');
-      console.log('• bun run identity:resolve --target="$johnsmith" --confidence-threshold=85');
-      console.log('• bun run identity:matrix --export=json --include-hashes=true');
-      console.log('• bun run identity:correlate --platforms="cashapp,whatsapp,telegram"');
-      console.log('• bun run identity:verify --kyc-integration --compliance=aml5');
+      console.info('');
+      console.info('🎯 Identity Resolution System Ready!');
+      console.info('====================================');
+      console.info('Use the following commands to get started:');
+      console.info('• bun run identity:resolve --target="$johnsmith" --confidence-threshold=85');
+      console.info('• bun run identity:matrix --export=json --include-hashes=true');
+      console.info('• bun run identity:correlate --platforms="cashapp,whatsapp,telegram"');
+      console.info('• bun run identity:verify --kyc-integration --compliance=aml5');
 
       return initialization;
     } catch (error) {
@@ -462,22 +462,22 @@ async function main() {
         break;
 
       default:
-        console.log('Identity Resolution CLI');
-        console.log('======================');
-        console.log('');
-        console.log('Available commands:');
-        console.log('  resolve     - Resolve identity for target');
-        console.log('  matrix      - Generate confidence matrix');
-        console.log('  correlate   - Correlate across platforms');
-        console.log('  verify      - Verify identity with KYC');
-        console.log('  init        - Initialize system');
-        console.log('');
-        console.log('Examples:');
-        console.log('  bun run scripts/identity-resolution.ts resolve --target="$johnsmith" --confidence-threshold=85');
-        console.log('  bun run scripts/identity-resolution.ts matrix --export=json --include-hashes=true');
-        console.log('  bun run scripts/identity-resolution.ts correlate --platforms="cashapp,whatsapp,telegram"');
-        console.log('  bun run scripts/identity-resolution.ts verify --kyc-integration --compliance=aml5');
-        console.log('  bun run scripts/identity-resolution.ts init --confidence-threshold=85');
+        console.info('Identity Resolution CLI');
+        console.info('======================');
+        console.info('');
+        console.info('Available commands:');
+        console.info('  resolve     - Resolve identity for target');
+        console.info('  matrix      - Generate confidence matrix');
+        console.info('  correlate   - Correlate across platforms');
+        console.info('  verify      - Verify identity with KYC');
+        console.info('  init        - Initialize system');
+        console.info('');
+        console.info('Examples:');
+        console.info('  bun run scripts/identity-resolution.ts resolve --target="$johnsmith" --confidence-threshold=85');
+        console.info('  bun run scripts/identity-resolution.ts matrix --export=json --include-hashes=true');
+        console.info('  bun run scripts/identity-resolution.ts correlate --platforms="cashapp,whatsapp,telegram"');
+        console.info('  bun run scripts/identity-resolution.ts verify --kyc-integration --compliance=aml5');
+        console.info('  bun run scripts/identity-resolution.ts init --confidence-threshold=85');
     }
   } catch (error) {
     console.error('❌ Command failed:', error);

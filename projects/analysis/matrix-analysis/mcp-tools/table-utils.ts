@@ -144,8 +144,8 @@ export function createDashboardSummary(data: {
 
 // Demo usage
 if (import.meta.main) {
-  console.log("🧪 Table Utilities Demo for Multi-Tenant Dashboard");
-  console.log("=" .repeat(60));
+  console.info("🧪 Table Utilities Demo for Multi-Tenant Dashboard");
+  console.info("=" .repeat(60));
   
   // Sample data for demonstration
   const violations = [
@@ -166,19 +166,19 @@ if (import.meta.main) {
     { endpoint: "/api/recent-violations", avgTime: 32, requests: 234, successRate: 99.1 }
   ];
   
-  console.log("\n📊 Tenant Violations:");
-  console.log(displayTenantViolations(violations));
+  console.info("\n📊 Tenant Violations:");
+  console.info(displayTenantViolations(violations));
   
-  console.log("\n🎯 Critical Violations Summary:");
-  console.log(displayTenantSummary(violations, ["tenant", "critical"]));
+  console.info("\n🎯 Critical Violations Summary:");
+  console.info(displayTenantSummary(violations, ["tenant", "critical"]));
   
-  console.log("\n📸 Snapshot Information:");
-  console.log(displaySnapshotTable(snapshots));
+  console.info("\n📸 Snapshot Information:");
+  console.info(displaySnapshotTable(snapshots));
   
-  console.log("\n⚡ API Performance:");
-  console.log(displayApiMetrics(apiMetrics));
+  console.info("\n⚡ API Performance:");
+  console.info(displayApiMetrics(apiMetrics));
   
-  console.log("\n📋 Dashboard Summary:");
+  console.info("\n📋 Dashboard Summary:");
   const summary = createDashboardSummary({
     totalTenants: 5,
     activeTenants: 3,
@@ -187,14 +187,14 @@ if (import.meta.main) {
     snapshotsCreated: 12,
     apiUptime: "2h 15m"
   });
-  console.log(summary);
+  console.info(summary);
   
-  console.log("\n💡 Integration Benefits:");
-  console.log("  • Beautiful table formatting for CLI output");
-  console.log("  • Selective column display for focused views");
-  console.log("  • Color support for enhanced readability");
-  console.log("  • Perfect for admin dashboards and reports");
-  console.log("  • Built-in to Bun (no dependencies required)");
+  console.info("\n💡 Integration Benefits:");
+  console.info("  • Beautiful table formatting for CLI output");
+  console.info("  • Selective column display for focused views");
+  console.info("  • Color support for enhanced readability");
+  console.info("  • Perfect for admin dashboards and reports");
+  console.info("  • Built-in to Bun (no dependencies required)");
 }
 
 export { Bun };

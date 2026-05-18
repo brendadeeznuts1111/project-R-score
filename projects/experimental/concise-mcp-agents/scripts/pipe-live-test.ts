@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 // Test version with mock data to validate script structure
-console.log("🧪 Testing pipe-live script structure...");
+console.info("🧪 Testing pipe-live script structure...");
 
 // Simulate mock profitable bets data
 const mockData = [
@@ -19,6 +19,6 @@ const yamlContent = profitableBets.map(bet => `- agent: "${bet.agent}"\n  profit
 // Write to file
 await Bun.write("data/live.yaml", yamlContent);
 
-console.log(`✅ Mock data processed: ${profitableBets.length} profitable bets`);
-console.log("📁 Data written to: data/live.yaml");
-console.log("🎯 Script structure validated!");
+console.info(`✅ Mock data processed: ${profitableBets.length} profitable bets`);
+console.info("📁 Data written to: data/live.yaml");
+console.info("🎯 Script structure validated!");

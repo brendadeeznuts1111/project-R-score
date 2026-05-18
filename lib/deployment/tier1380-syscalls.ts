@@ -134,16 +134,16 @@ export class Tier1380SyscallProfiler {
    * 20-Column Syscall Matrix
    */
   renderSyscallMatrix(metrics: SyscallMetrics[]): void {
-    console.log(
+    console.info(
       `\n\x1b[36m▵⟂⥂══════════════════════════════════════════════════════════════════════════════════════▵⟂⥂\x1b[0m`
     );
-    console.log(
+    console.info(
       `\x1b[36m  🔧  PLATFORM SYSCALL MATRIX — ${this.platform.toUpperCase()} Optimized\x1b[0m`
     );
-    console.log(
+    console.info(
       `\x1b[36m▵⟂⥂══════════════════════════════════════════════════════════════════════════════════════▵⟂⥸\x1b[0m\n`
     );
-    console.log(`\x1b[90mSource: bun.com/docs/runtime/file-io\x1b[0m\n`);
+    console.info(`\x1b[90mSource: bun.com/docs/runtime/file-io\x1b[0m\n`);
 
     const table = metrics.map(m => ({
       Syscall: m.syscall.slice(0, 15),
@@ -155,10 +155,10 @@ export class Tier1380SyscallProfiler {
       Speedup: `${m.speedupVsCat}x`,
     }));
 
-    console.log(Bun.inspect.table(table, { colors: true }));
+    console.info(Bun.inspect.table(table, { colors: true }));
 
     const fastest = metrics.reduce((a, b) => (a.latencyNs < b.latencyNs ? a : b));
-    console.log(
+    console.info(
       `\n\x1b[36m◉ Fastest Syscall:\x1b[0m ${fastest.syscall} │ \x1b[36m${(fastest.latencyNs / 1e3).toFixed(2)}µs\x1b[0m │ \x1b[36m${fastest.speedupVsCat}x faster than GNU cat\x1b[0m`
     );
   }

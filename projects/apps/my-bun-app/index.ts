@@ -9,7 +9,7 @@ if (import.meta.path !== Bun.main) {
   process.exit(0);
 }
 
-console.log(`
+console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  My Bun App Starting                                     ║
 ║  Entrypoint: ${Bun.main}${' '.repeat(Math.max(0, 80 - Bun.main.length))}║
@@ -17,8 +17,8 @@ console.log(`
 `);
 
 // Example: Use the shared server.ts in parent directory
-console.log(`Project Home: ${process.env.PROJECT_HOME || 'Not set'}`);
-console.log(`BUN_PLATFORM_HOME: ${process.env.BUN_PLATFORM_HOME || 'Not set'}`);
+console.info(`Project Home: ${process.env.PROJECT_HOME || 'Not set'}`);
+console.info(`BUN_PLATFORM_HOME: ${process.env.BUN_PLATFORM_HOME || 'Not set'}`);
 
 // Simple web server
 const port = parseInt(process.env.PORT || '3000', 10);
@@ -67,4 +67,4 @@ Bun.serve({
   }
 });
 
-console.log(`Server running at http://${SERVER_HOST}:${port}`);
+console.info(`Server running at http://${SERVER_HOST}:${port}`);

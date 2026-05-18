@@ -152,71 +152,71 @@ function warmup(): void {
  * Run benchmarks and display results
  */
 function runBenchmarks(): void {
-	console.log("🔥 Error Normalization Performance Benchmark\n");
-	console.log(`Configuration:`);
-	console.log(`  Iterations: ${ITERATIONS.toLocaleString()}`);
-	console.log(`  Warmup: ${WARMUP_ITERATIONS.toLocaleString()}\n`);
+	console.info("🔥 Error Normalization Performance Benchmark\n");
+	console.info(`Configuration:`);
+	console.info(`  Iterations: ${ITERATIONS.toLocaleString()}`);
+	console.info(`  Warmup: ${WARMUP_ITERATIONS.toLocaleString()}\n`);
 
 	// Warmup
-	console.log("⏳ Warming up...");
+	console.info("⏳ Warming up...");
 	warmup();
-	console.log("✅ Warmup complete\n");
+	console.info("✅ Warmup complete\n");
 
 	// Run benchmarks
-	console.log("📊 Running benchmarks...\n");
+	console.info("📊 Running benchmarks...\n");
 
 	const normalizeTime = benchmarkNormalizeError();
 	const getMessageTime = benchmarkGetErrorMessage();
 	const logTime = benchmarkLogError();
 
 	// Display results
-	console.log("Results:\n");
-	console.log(`  normalizeError():   ${normalizeTime.toFixed(4)}ms per call`);
-	console.log(`  getErrorMessage():  ${getMessageTime.toFixed(4)}ms per call`);
-	console.log(`  logError():         ${logTime.toFixed(4)}ms per call (includes JSON serialization)\n`);
+	console.info("Results:\n");
+	console.info(`  normalizeError():   ${normalizeTime.toFixed(4)}ms per call`);
+	console.info(`  getErrorMessage():  ${getMessageTime.toFixed(4)}ms per call`);
+	console.info(`  logError():         ${logTime.toFixed(4)}ms per call (includes JSON serialization)\n`);
 
 	// Performance summary
-	console.log("Performance Summary:\n");
-	console.log(`  normalizeError():   ~${normalizeTime.toFixed(3)}ms per call`);
-	console.log(`  getErrorMessage():  ~${getMessageTime.toFixed(3)}ms per call`);
-	console.log(`  logError():         ~${logTime.toFixed(3)}ms per call\n`);
+	console.info("Performance Summary:\n");
+	console.info(`  normalizeError():   ~${normalizeTime.toFixed(3)}ms per call`);
+	console.info(`  getErrorMessage():  ~${getMessageTime.toFixed(3)}ms per call`);
+	console.info(`  logError():         ~${logTime.toFixed(3)}ms per call\n`);
 
 	// Expected performance targets
-	console.log("Expected Performance:\n");
-	console.log(`  normalizeError():   ~0.02ms per call`);
-	console.log(`  getErrorMessage():  ~0.01ms per call`);
-	console.log(`  logError():         ~0.05ms per call\n`);
+	console.info("Expected Performance:\n");
+	console.info(`  normalizeError():   ~0.02ms per call`);
+	console.info(`  getErrorMessage():  ~0.01ms per call`);
+	console.info(`  logError():         ~0.05ms per call\n`);
 
 	// Performance comparison
 	const normalizeDiff = ((normalizeTime - 0.02) / 0.02) * 100;
 	const getMessageDiff = ((getMessageTime - 0.01) / 0.01) * 100;
 	const logDiff = ((logTime - 0.05) / 0.05) * 100;
 
-	console.log("Performance Comparison:\n");
-	console.log(
+	console.info("Performance Comparison:\n");
+	console.info(
 		`  normalizeError():   ${normalizeDiff >= 0 ? "+" : ""}${normalizeDiff.toFixed(1)}% ${Math.abs(normalizeDiff) <= 50 ? "✅" : "⚠️"}`,
 	);
-	console.log(
+	console.info(
 		`  getErrorMessage():  ${getMessageDiff >= 0 ? "+" : ""}${getMessageDiff.toFixed(1)}% ${Math.abs(getMessageDiff) <= 50 ? "✅" : "⚠️"}`,
 	);
-	console.log(
+	console.info(
 		`  logError():         ${logDiff >= 0 ? "+" : ""}${logDiff.toFixed(1)}% ${Math.abs(logDiff) <= 50 ? "✅" : "⚠️"}\n`,
 	);
 
 	// Trade-off analysis
-	console.log("Performance Trade-off:\n");
-	console.log("  +0.05ms per error vs never crashing on malformed errors = massive reliability win\n");
+	console.info("Performance Trade-off:\n");
+	console.info("  +0.05ms per error vs never crashing on malformed errors = massive reliability win\n");
 
 	// Conclusion
 	if (normalizeTime <= 0.03 && getMessageTime <= 0.015 && logTime <= 0.06) {
-		console.log("✅ All benchmarks meet performance targets!\n");
-		console.log("✅ Error wrapper adds minimal overhead while providing massive reliability improvements.\n");
+		console.info("✅ All benchmarks meet performance targets!\n");
+		console.info("✅ Error wrapper adds minimal overhead while providing massive reliability improvements.\n");
 	} else if (normalizeTime < 0.02 && getMessageTime < 0.01 && logTime < 0.05) {
-		console.log("🚀 Performance exceeds expectations! Functions are highly optimized.\n");
-		console.log("✅ Even better: minimal overhead with maximum reliability.\n");
+		console.info("🚀 Performance exceeds expectations! Functions are highly optimized.\n");
+		console.info("✅ Even better: minimal overhead with maximum reliability.\n");
 	} else {
-		console.log("⚠️  Some benchmarks exceed expected performance thresholds\n");
-		console.log("✅ Trade-off still favorable: reliability > micro-optimization\n");
+		console.info("⚠️  Some benchmarks exceed expected performance thresholds\n");
+		console.info("✅ Trade-off still favorable: reliability > micro-optimization\n");
 	}
 }
 

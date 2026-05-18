@@ -62,7 +62,7 @@ const users: User[] = [
  * ✅ COMPLIANT: Explicit properties with 6+ meaningful columns
  */
 export function example1_ExplicitProperties() {
-  console.log("\n=== Example 1: Explicit Properties ===\n");
+  console.info("\n=== Example 1: Explicit Properties ===\n");
 
   const properties = [
     "name",
@@ -74,7 +74,7 @@ export function example1_ExplicitProperties() {
   ];
 
   const result = table(users, properties);
-  console.log(result);
+  console.info(result);
 }
 
 // ============================================================================
@@ -85,14 +85,14 @@ export function example1_ExplicitProperties() {
  * ✅ COMPLIANT: Using intelligent column recommendations
  */
 export function example2_RecommendedColumns() {
-  console.log("\n=== Example 2: Recommended Columns ===\n");
+  console.info("\n=== Example 2: Recommended Columns ===\n");
 
   // Analyze data and get recommendations
   const recommended = getRecommendedColumns(users, 6);
-  console.log("Recommended columns:", recommended);
+  console.info("Recommended columns:", recommended);
 
   const result = table(users, recommended);
-  console.log(result);
+  console.info(result);
 }
 
 // ============================================================================
@@ -103,20 +103,20 @@ export function example2_RecommendedColumns() {
  * ✅ COMPLIANT: Analyzing data structure before display
  */
 export function example3_DataAnalysis() {
-  console.log("\n=== Example 3: Data Analysis ===\n");
+  console.info("\n=== Example 3: Data Analysis ===\n");
 
   const analysis = analyzeTableData(users);
 
-  console.log("Total columns:", analysis.totalColumns);
-  console.log("Column names:", analysis.columnNames);
-  console.log("High cardinality:", analysis.highCardinalityColumns);
-  console.log("Low cardinality:", analysis.lowCardinalityColumns);
-  console.log("Data richness score:", analysis.dataRichnessScore);
+  console.info("Total columns:", analysis.totalColumns);
+  console.info("Column names:", analysis.columnNames);
+  console.info("High cardinality:", analysis.highCardinalityColumns);
+  console.info("Low cardinality:", analysis.lowCardinalityColumns);
+  console.info("Data richness score:", analysis.dataRichnessScore);
 
   // Use high-cardinality columns for display
   const properties = analysis.highCardinalityColumns.slice(0, 6);
   const result = table(users, properties);
-  console.log(result);
+  console.info(result);
 }
 
 // ============================================================================
@@ -127,19 +127,19 @@ export function example3_DataAnalysis() {
  * ✅ COMPLIANT: Explicit validation with suggestions
  */
 export function example4_ValidationWithFeedback() {
-  console.log("\n=== Example 4: Validation with Feedback ===\n");
+  console.info("\n=== Example 4: Validation with Feedback ===\n");
 
   const properties = ["name", "email", "role", "status", "joinDate", "department"];
   const validation = validateTableColumns(properties, users);
 
-  console.log("Valid:", validation.isValid);
-  console.log("Meaningful columns:", validation.meaningfulColumns);
-  console.log("Generic columns:", validation.genericColumns);
-  console.log("Message:", validation.message);
+  console.info("Valid:", validation.isValid);
+  console.info("Meaningful columns:", validation.meaningfulColumns);
+  console.info("Generic columns:", validation.genericColumns);
+  console.info("Message:", validation.message);
 
   if (validation.isValid) {
     const result = table(users, properties);
-    console.log(result);
+    console.info(result);
   }
 }
 
@@ -151,7 +151,7 @@ export function example4_ValidationWithFeedback() {
  * ✅ COMPLIANT: Markdown table with validation
  */
 export function example5_MarkdownFormat() {
-  console.log("\n=== Example 5: Markdown Format ===\n");
+  console.info("\n=== Example 5: Markdown Format ===\n");
 
   const properties = [
     "name",
@@ -163,7 +163,7 @@ export function example5_MarkdownFormat() {
   ];
 
   const result = tableMarkdown(users, properties);
-  console.log(result);
+  console.info(result);
 }
 
 // ============================================================================
@@ -174,7 +174,7 @@ export function example5_MarkdownFormat() {
  * ✅ COMPLIANT: CSV table with validation
  */
 export function example6_CsvFormat() {
-  console.log("\n=== Example 6: CSV Format ===\n");
+  console.info("\n=== Example 6: CSV Format ===\n");
 
   const properties = [
     "name",
@@ -186,7 +186,7 @@ export function example6_CsvFormat() {
   ];
 
   const result = tableCsv(users, properties);
-  console.log(result);
+  console.info(result);
 }
 
 // ============================================================================
@@ -198,14 +198,14 @@ export function example6_CsvFormat() {
  * Use only when you have a good reason!
  */
 export function example7_SkipValidation() {
-  console.log("\n=== Example 7: Skip Validation ===\n");
+  console.info("\n=== Example 7: Skip Validation ===\n");
 
   // Sometimes you need to display minimal data
   const properties = ["id", "name"];
 
   const result = table(users, properties, { skipValidation: true });
-  console.log(result);
-  console.log("⚠️  Validation was skipped for this table");
+  console.info(result);
+  console.info("⚠️  Validation was skipped for this table");
 }
 
 // ============================================================================
@@ -216,7 +216,7 @@ export function example7_SkipValidation() {
  * ✅ COMPLIANT: Dynamic column selection based on context
  */
 export function example8_DynamicColumns() {
-  console.log("\n=== Example 8: Dynamic Column Selection ===\n");
+  console.info("\n=== Example 8: Dynamic Column Selection ===\n");
 
   // Different views for different contexts
   const adminView = [
@@ -229,11 +229,11 @@ export function example8_DynamicColumns() {
   ];
   const userView = ["name", "email", "role", "status", "joinDate", "department"];
 
-  console.log("Admin view:");
-  console.log(table(users, adminView));
+  console.info("Admin view:");
+  console.info(table(users, adminView));
 
-  console.log("\nUser view:");
-  console.log(table(users, userView));
+  console.info("\nUser view:");
+  console.info(table(users, userView));
 }
 
 // ============================================================================
@@ -244,15 +244,15 @@ export function example8_DynamicColumns() {
  * ✅ COMPLIANT: Proper error handling
  */
 export function example9_ErrorHandling() {
-  console.log("\n=== Example 9: Error Handling ===\n");
+  console.info("\n=== Example 9: Error Handling ===\n");
 
   try {
     // This will fail validation in test environment
     const result = table(users, ["id", "name"]);
-    console.log(result);
+    console.info(result);
   } catch (error) {
     console.error("Validation error:", (error as Error).message);
-    console.log("💡 Add more meaningful columns to fix this");
+    console.info("💡 Add more meaningful columns to fix this");
   }
 }
 
@@ -264,7 +264,7 @@ export function example9_ErrorHandling() {
  * ✅ COMPLIANT: Production-ready pattern
  */
 export async function example10_ProductionPattern() {
-  console.log("\n=== Example 10: Production Pattern ===\n");
+  console.info("\n=== Example 10: Production Pattern ===\n");
 
   // 1. Analyze data
   const analysis = analyzeTableData(users);
@@ -278,7 +278,7 @@ export async function example10_ProductionPattern() {
   // 4. Display
   if (validation.isValid) {
     const result = table(users, recommended);
-    console.log(result);
+    console.info(result);
   } else {
     console.error("Cannot display table:", validation.message);
   }

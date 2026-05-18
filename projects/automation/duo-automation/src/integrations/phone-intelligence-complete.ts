@@ -206,10 +206,10 @@ export function integratePhoneIntelligencePatterns() {
     section: '§Workflow:96'
   }, 'workflow-96');
   
-  console.log('🧠 Phone Intelligence patterns integrated into matrix');
-  console.log('📊 Performance: 2.1ms (73× faster than 154ms)');
-  console.log('💰 ROI: 3310% cumulative');
-  console.log('✅ All patterns operational');
+  console.info('🧠 Phone Intelligence patterns integrated into matrix');
+  console.info('📊 Performance: 2.1ms (73× faster than 154ms)');
+  console.info('💰 ROI: 3310% cumulative');
+  console.info('✅ All patterns operational');
 }
 
 // CLI Integration
@@ -217,30 +217,30 @@ export class PhoneIntelligenceCLI {
   private workflow = new PhoneIntelligenceWorkflow();
   
   async qualify(phone: string, options: any = {}): Promise<void> {
-    console.log(`🔍 Qualifying phone: ${phone}`);
+    console.info(`🔍 Qualifying phone: ${phone}`);
     
     const result = await this.workflow.exec(phone);
     
     if (result.error) {
-      console.log(`❌ Error: ${result.error}`);
+      console.info(`❌ Error: ${result.error}`);
       return;
     }
     
-    console.log(`✅ Sanitized: ${result.e164} (0.08ms)`);
-    console.log(`✅ Qualified: trustScore=${result.trustScore} (0.02ms)`);
-    console.log(`✅ Cached: IPQS data (0.20ms)`);
-    console.log(`✅ Routed: ${result.provider}@$${result.cost} (0.30ms)`);
-    console.log(`✅ Compliant: ${result.regulations?.join('+')} (45ms)`);
-    console.log(`✅ Stored: r2://intelligence/${result.e164}.json (0.80ms)`);
-    console.log('');
-    console.log('📊 Intelligence Report:');
-    console.log(JSON.stringify(result, null, 2));
-    console.log('');
-    console.log(`🚀 Total: ${result.executionTime} (73× faster than original)`);
+    console.info(`✅ Sanitized: ${result.e164} (0.08ms)`);
+    console.info(`✅ Qualified: trustScore=${result.trustScore} (0.02ms)`);
+    console.info(`✅ Cached: IPQS data (0.20ms)`);
+    console.info(`✅ Routed: ${result.provider}@$${result.cost} (0.30ms)`);
+    console.info(`✅ Compliant: ${result.regulations?.join('+')} (45ms)`);
+    console.info(`✅ Stored: r2://intelligence/${result.e164}.json (0.80ms)`);
+    console.info('');
+    console.info('📊 Intelligence Report:');
+    console.info(JSON.stringify(result, null, 2));
+    console.info('');
+    console.info(`🚀 Total: ${result.executionTime} (73× faster than original)`);
   }
   
   async bulk(phones: string[], options: any = {}): Promise<void> {
-    console.log(`🏃 Processing ${phones.length} phones in bulk...`);
+    console.info(`🏃 Processing ${phones.length} phones in bulk...`);
     
     const startTime = Date.now();
     const results = await Promise.all(
@@ -251,10 +251,10 @@ export class PhoneIntelligenceCLI {
     const successCount = results.filter(r => !r.error).length;
     const throughput = Math.round(phones.length / (duration / 1000));
     
-    console.log(`✅ Processed: ${successCount}/${phones.length} phones`);
-    console.log(`⏱️ Duration: ${duration}ms`);
-    console.log(`🚀 Throughput: ${throughput.toLocaleString()} phones/sec`);
-    console.log(`📊 Success Rate: ${((successCount / phones.length) * 100).toFixed(1)}%`);
+    console.info(`✅ Processed: ${successCount}/${phones.length} phones`);
+    console.info(`⏱️ Duration: ${duration}ms`);
+    console.info(`🚀 Throughput: ${throughput.toLocaleString()} phones/sec`);
+    console.info(`📊 Success Rate: ${((successCount / phones.length) * 100).toFixed(1)}%`);
   }
 }
 

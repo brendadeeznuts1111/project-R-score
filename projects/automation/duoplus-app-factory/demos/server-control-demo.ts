@@ -72,7 +72,7 @@ const server = Bun.serve({
         },
       });
 
-      console.log(`🔄 Server reloaded! Version: ${state.version}`);
+      console.info(`🔄 Server reloaded! Version: ${state.version}`);
       return Response.json({
         reloaded: true,
         version: state.version,
@@ -83,7 +83,7 @@ const server = Bun.serve({
     // POST /api/unref
     if (pathname === '/api/unref' && req.method === 'POST') {
       server.unref();
-      console.log('⏸️  Server unref() called');
+      console.info('⏸️  Server unref() called');
       return Response.json({
         message: 'Server unref() called - process will exit when no other tasks remain',
       });
@@ -92,7 +92,7 @@ const server = Bun.serve({
     // POST /api/ref
     if (pathname === '/api/ref' && req.method === 'POST') {
       server.ref();
-      console.log('▶️  Server ref() called');
+      console.info('▶️  Server ref() called');
       return Response.json({
         message: 'Server ref() called - process will stay alive',
       });
@@ -124,13 +124,13 @@ Test with:
   },
 });
 
-console.log('✅ Server Control Demo started on http://0.0.0.0:3001');
-console.log('📝 Features:');
-console.log('   • server.ref() - Keep process alive');
-console.log('   • server.unref() - Allow process to exit');
-console.log('   • server.reload() - Hot reload handlers');
-console.log('\n🧪 Test endpoints:');
-console.log('   curl http://localhost:3001/api/version');
-console.log('   curl -X POST http://localhost:3001/api/reload');
-console.log('   curl -X POST http://localhost:3001/api/unref\n');
+console.info('✅ Server Control Demo started on http://0.0.0.0:3001');
+console.info('📝 Features:');
+console.info('   • server.ref() - Keep process alive');
+console.info('   • server.unref() - Allow process to exit');
+console.info('   • server.reload() - Hot reload handlers');
+console.info('\n🧪 Test endpoints:');
+console.info('   curl http://localhost:3001/api/version');
+console.info('   curl -X POST http://localhost:3001/api/reload');
+console.info('   curl -X POST http://localhost:3001/api/unref\n');
 

@@ -152,9 +152,9 @@ const testCases: UnicodeTestCase[] = [
 ];
 
 async function runUnicodeSmokeTest(): Promise<void> {
-  console.log("🔍 Unicode Smoke Test v4.4 - Multi-Language + CJK + Emoji + ZWJ");
-  console.log("FactoryWager Governance v4.4 Pre-commit Validation");
-  console.log("=" .repeat(60));
+  console.info("🔍 Unicode Smoke Test v4.4 - Multi-Language + CJK + Emoji + ZWJ");
+  console.info("FactoryWager Governance v4.4 Pre-commit Validation");
+  console.info("=" .repeat(60));
 
   let failures = 0;
   let passed = 0;
@@ -166,7 +166,7 @@ async function runUnicodeSmokeTest(): Promise<void> {
     description: string;
   }> = [];
 
-  console.log("Running Unicode width verification tests...\n");
+  console.info("Running Unicode width verification tests...\n");
 
   for (const { str, expectedWidth, description } of testCases) {
     const actualWidth = Bun.stringWidth(str);
@@ -181,26 +181,26 @@ async function runUnicodeSmokeTest(): Promise<void> {
     });
 
     if (status === 'PASS') {
-      console.log(`✅ PASS: "${str}"`);
-      console.log(`   Width: ${actualWidth} (${description})`);
+      console.info(`✅ PASS: "${str}"`);
+      console.info(`   Width: ${actualWidth} (${description})`);
       passed++;
     } else {
       console.error(`❌ FAIL: "${str}"`);
       console.error(`   Actual: ${actualWidth}, Expected: ${expectedWidth} (${description})`);
       failures++;
     }
-    console.log("");
+    console.info("");
   }
 
   // Summary
-  console.log("=" .repeat(60));
-  console.log(`📊 Test Results Summary:`);
-  console.log(`   ✅ Passed: ${passed}`);
-  console.log(`   ❌ Failed: ${failures}`);
-  console.log(`   📈 Success Rate: ${((passed / (passed + failures)) * 100).toFixed(1)}%`);
+  console.info("=" .repeat(60));
+  console.info(`📊 Test Results Summary:`);
+  console.info(`   ✅ Passed: ${passed}`);
+  console.info(`   ❌ Failed: ${failures}`);
+  console.info(`   📈 Success Rate: ${((passed / (passed + failures)) * 100).toFixed(1)}%`);
 
   if (failures > 0) {
-    console.log("\n🚨 Unicode Smoke Test FAILED!");
+    console.info("\n🚨 Unicode Smoke Test FAILED!");
     console.error("Please check Unicode rendering implementation before committing.");
     console.error("\nFailed test cases:");
     results
@@ -211,12 +211,12 @@ async function runUnicodeSmokeTest(): Promise<void> {
     process.exit(1);
   }
 
-  console.log("\n✅ Unicode Smoke Test PASSED!");
-  console.log("🛡️ CJK + emoji + ZWJ alignment verified");
-  console.log("🚀 Pre-commit validation successful - commit approved");
+  console.info("\n✅ Unicode Smoke Test PASSED!");
+  console.info("🛡️ CJK + emoji + ZWJ alignment verified");
+  console.info("🚀 Pre-commit validation successful - commit approved");
 
   // Additional governance checks
-  console.log("\n🔍 Additional Governance Checks:");
+  console.info("\n🔍 Additional Governance Checks:");
 
   // Check if bun.yaml exists and has Unicode governance config
   try {
@@ -224,33 +224,33 @@ async function runUnicodeSmokeTest(): Promise<void> {
     const hasColumnOverride = configContent.includes("column-width-override");
     const hasUnicodePolicy = configContent.includes("unicode-rendering-policy");
 
-    console.log(`   📋 bun.yaml exists: ✅`);
-    console.log(`   🎛️ Column width override: ${hasColumnOverride ? '✅' : '⚠️  Not found'}`);
-    console.log(`   🌍 Unicode rendering policy: ${hasUnicodePolicy ? '✅' : '⚠️  Not found'}`);
+    console.info(`   📋 bun.yaml exists: ✅`);
+    console.info(`   🎛️ Column width override: ${hasColumnOverride ? '✅' : '⚠️  Not found'}`);
+    console.info(`   🌍 Unicode rendering policy: ${hasUnicodePolicy ? '✅' : '⚠️  Not found'}`);
 
     if (!hasColumnOverride && !hasUnicodePolicy) {
-      console.log("   ⚠️  Warning: No Unicode governance configuration found in bun.yaml");
+      console.info("   ⚠️  Warning: No Unicode governance configuration found in bun.yaml");
     }
   } catch (error) {
-    console.log(`   ⚠️  bun.yaml not found or unreadable: ${error}`);
+    console.info(`   ⚠️  bun.yaml not found or unreadable: ${error}`);
   }
 
   // Check if Unicode table renderer exists
   try {
     await Bun.file("./.factory-wager/tabular/unicode-table-v43.ts").text();
-    console.log(`   📊 Unicode table renderer v4.3: ✅`);
+    console.info(`   📊 Unicode table renderer v4.3: ✅`);
   } catch (error) {
-    console.log(`   ⚠️  Unicode table renderer v4.3 not found: ${error}`);
+    console.info(`   ⚠️  Unicode table renderer v4.3 not found: ${error}`);
   }
 
-  console.log("\n🎯 All governance checks completed successfully!");
+  console.info("\n🎯 All governance checks completed successfully!");
   process.exit(0);
 }
 
 // Performance benchmark
 function runPerformanceBenchmark(): void {
-  console.log("⚡ Unicode Performance Benchmark");
-  console.log("=" .repeat(40));
+  console.info("⚡ Unicode Performance Benchmark");
+  console.info("=" .repeat(40));
 
   const testString = "中文测试🇺🇸🔥‍🔥‍FactoryWager v1.3.8";
   const iterations = 10000;
@@ -264,11 +264,11 @@ function runPerformanceBenchmark(): void {
   const duration = performance.now() - start;
   const opsPerSec = (iterations / duration * 1000).toFixed(0);
 
-  console.log(`📏 Test string: "${testString}"`);
-  console.log(`📏 Width: ${Bun.stringWidth(testString)} cells`);
-  console.log(`⚡ ${iterations} iterations in ${duration.toFixed(2)}ms`);
-  console.log(`🚀 Performance: ${opsPerSec} ops/sec`);
-  console.log(`✅ Performance benchmark completed`);
+  console.info(`📏 Test string: "${testString}"`);
+  console.info(`📏 Width: ${Bun.stringWidth(testString)} cells`);
+  console.info(`⚡ ${iterations} iterations in ${duration.toFixed(2)}ms`);
+  console.info(`🚀 Performance: ${opsPerSec} ops/sec`);
+  console.info(`✅ Performance benchmark completed`);
 }
 
 // CLI execution
@@ -278,7 +278,7 @@ if (import.meta.main) {
   if (args.includes('--benchmark') || args.includes('-b')) {
     runPerformanceBenchmark();
   } else if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 Unicode Smoke Test - FactoryWager Governance v4.3
 
 USAGE:

@@ -271,7 +271,7 @@ export async function initializePipelineIntegration(): Promise<Result<void>> {
 			const deribitProvider = deribitPipelineProvider.getProvider();
 			const deribitDataSource = deribitPipelineProvider.getDataSource();
 			service.registerProvider(deribitProvider, deribitDataSource);
-			console.log("✅ Registered Deribit provider");
+			console.info("✅ Registered Deribit provider");
 		} catch (error) {
 			console.warn("⚠️ Failed to register Deribit provider:", error);
 		}
@@ -282,7 +282,7 @@ export async function initializePipelineIntegration(): Promise<Result<void>> {
 			const polymarketProvider = polymarketPipelineProvider.getProvider();
 			const polymarketDataSource = polymarketPipelineProvider.getDataSource();
 			service.registerProvider(polymarketProvider, polymarketDataSource);
-			console.log("✅ Registered Polymarket provider");
+			console.info("✅ Registered Polymarket provider");
 		} catch (error) {
 			console.warn("⚠️ Failed to register Polymarket provider:", error);
 		}
@@ -293,7 +293,7 @@ export async function initializePipelineIntegration(): Promise<Result<void>> {
 			const kalshiProvider = kalshiPipelineProvider.getProvider();
 			const kalshiDataSource = kalshiPipelineProvider.getDataSource();
 			service.registerProvider(kalshiProvider, kalshiDataSource);
-			console.log("✅ Registered Kalshi provider");
+			console.info("✅ Registered Kalshi provider");
 		} catch (error) {
 			console.warn("⚠️ Failed to register Kalshi provider:", error);
 		}
@@ -310,7 +310,7 @@ export async function initializePipelineIntegration(): Promise<Result<void>> {
 				featureFlag: "orca-integration",
 			};
 			service.registerProvider(orcaProvider, orcaDataSource);
-			console.log("✅ Registered ORCA provider");
+			console.info("✅ Registered ORCA provider");
 		} catch (error) {
 			console.warn("⚠️ Failed to register ORCA provider:", error);
 		}
@@ -319,7 +319,7 @@ export async function initializePipelineIntegration(): Promise<Result<void>> {
 		// They can be registered dynamically when users provide credentials
 
 		const registeredProviders = service.getRegisteredProviders();
-		console.log(
+		console.info(
 			`Pipeline integration initialized with ${registeredProviders.length} providers:`,
 			registeredProviders.map(p => p.dataSource.name),
 		);

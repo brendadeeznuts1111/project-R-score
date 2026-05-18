@@ -36,8 +36,8 @@ class PerformanceComparison {
     bunOptimizedImpl: () => Promise<T>,
     iterations: number = 100
   ): Promise<void> {
-    console.log(`\n🧪 Testing: ${testName}`);
-    console.log(`   Running ${iterations} iterations...`);
+    console.info(`\n🧪 Testing: ${testName}`);
+    console.info(`   Running ${iterations} iterations...`);
 
     // Test traditional implementation
     const traditionalStart = Bun.nanoseconds();
@@ -62,26 +62,26 @@ class PerformanceComparison {
       improvement,
     });
 
-    console.log(`   Traditional: ${traditionalTime.toFixed(2)}ms`);
-    console.log(`   Bun-Optimized: ${bunTime.toFixed(2)}ms`);
-    console.log(`   Improvement: ${improvement.toFixed(1)}% faster`);
+    console.info(`   Traditional: ${traditionalTime.toFixed(2)}ms`);
+    console.info(`   Bun-Optimized: ${bunTime.toFixed(2)}ms`);
+    console.info(`   Improvement: ${improvement.toFixed(1)}% faster`);
   }
 
   displayResults(): void {
-    console.log('\n' + '='.repeat(80));
-    console.log('🚀 BUN-NATIVE PERFORMANCE COMPARISON RESULTS');
-    console.log('='.repeat(80));
+    console.info('\n' + '='.repeat(80));
+    console.info('🚀 BUN-NATIVE PERFORMANCE COMPARISON RESULTS');
+    console.info('='.repeat(80));
 
-    console.log('\n📊 Performance Improvements:');
-    console.log('Test'.padEnd(25), 'Traditional'.padEnd(12), 'Bun-Opt'.padEnd(12), 'Improvement');
-    console.log('-'.repeat(65));
+    console.info('\n📊 Performance Improvements:');
+    console.info('Test'.padEnd(25), 'Traditional'.padEnd(12), 'Bun-Opt'.padEnd(12), 'Improvement');
+    console.info('-'.repeat(65));
 
     this.results.forEach(result => {
       const traditional = `${result.traditional.toFixed(1)}ms`;
       const bunOptimized = `${result.bunOptimized.toFixed(1)}ms`;
       const improvement = `${result.improvement.toFixed(1)}%`;
 
-      console.log(
+      console.info(
         result.test.padEnd(25),
         traditional.padEnd(12),
         bunOptimized.padEnd(12),
@@ -91,16 +91,16 @@ class PerformanceComparison {
 
     const avgImprovement =
       this.results.reduce((sum, r) => sum + r.improvement, 0) / this.results.length;
-    console.log('-'.repeat(65));
-    console.log('AVERAGE IMPROVEMENT'.padEnd(37), `${avgImprovement.toFixed(1)}%`);
+    console.info('-'.repeat(65));
+    console.info('AVERAGE IMPROVEMENT'.padEnd(37), `${avgImprovement.toFixed(1)}%`);
 
-    console.log('\n' + '='.repeat(80));
-    console.log('🎯 CONCLUSION: Bun-native APIs provide significant performance advantages');
-    console.log('   - Faster execution through native implementations');
-    console.log('   - Reduced memory overhead');
-    console.log('   - Better resource utilization');
-    console.log('   - Optimized I/O operations');
-    console.log('='.repeat(80));
+    console.info('\n' + '='.repeat(80));
+    console.info('🎯 CONCLUSION: Bun-native APIs provide significant performance advantages');
+    console.info('   - Faster execution through native implementations');
+    console.info('   - Reduced memory overhead');
+    console.info('   - Better resource utilization');
+    console.info('   - Optimized I/O operations');
+    console.info('='.repeat(80));
   }
 }
 
@@ -198,7 +198,7 @@ class PerformanceTests {
 
 class AdvancedBunFeatures {
   static async demonstrateWebSocketPerformance(): Promise<void> {
-    console.log('\n🔌 Testing Bun-native WebSocket performance...');
+    console.info('\n🔌 Testing Bun-native WebSocket performance...');
 
     // Create a simple WebSocket echo server using Bun.serve
     const server = Bun.serve({
@@ -241,11 +241,11 @@ class AdvancedBunFeatures {
     }, 'WebSocket communication');
 
     server.stop();
-    console.log(`   WebSocket test completed in ${duration.toFixed(2)}ms`);
+    console.info(`   WebSocket test completed in ${duration.toFixed(2)}ms`);
   }
 
   static async demonstrateStreamingPerformance(): Promise<void> {
-    console.log('\n🌊 Testing Bun-native streaming performance...');
+    console.info('\n🌊 Testing Bun-native streaming performance...');
 
     // Create a large data stream
     const largeData = 'x'.repeat(1024 * 1024); // 1MB of data
@@ -270,11 +270,11 @@ class AdvancedBunFeatures {
       return chunks;
     }, 'Stream processing');
 
-    console.log(`   Processed ${largeData.length} bytes in ${duration.toFixed(2)}ms`);
+    console.info(`   Processed ${largeData.length} bytes in ${duration.toFixed(2)}ms`);
   }
 
   static async demonstrateParallelExecution(): Promise<void> {
-    console.log('\n⚡ Testing Bun-native parallel execution...');
+    console.info('\n⚡ Testing Bun-native parallel execution...');
 
     const tasks = Array.from({ length: 50 }, (_, i) => async () => {
       // Simulate CPU-bound work
@@ -290,8 +290,8 @@ class AdvancedBunFeatures {
       return await Promise.all(tasks.map(task => task()));
     }, 'Parallel task execution');
 
-    console.log(`   Executed ${tasks.length} CPU-intensive tasks in ${duration.toFixed(2)}ms`);
-    console.log(`   Average: ${(duration / tasks.length).toFixed(2)}ms per task`);
+    console.info(`   Executed ${tasks.length} CPU-intensive tasks in ${duration.toFixed(2)}ms`);
+    console.info(`   Average: ${(duration / tasks.length).toFixed(2)}ms per task`);
   }
 }
 
@@ -300,8 +300,8 @@ class AdvancedBunFeatures {
 // ============================================================================
 
 async function runBunPerformanceDemo(): Promise<void> {
-  console.log('🚀 BUN-NATIVE PERFORMANCE DEMONSTRATION');
-  console.log('Comparing traditional implementations vs Bun-optimized versions\n');
+  console.info('🚀 BUN-NATIVE PERFORMANCE DEMONSTRATION');
+  console.info('Comparing traditional implementations vs Bun-optimized versions\n');
 
   const comparison = new PerformanceComparison();
   const tests = new PerformanceTests();
@@ -329,7 +329,7 @@ async function runBunPerformanceDemo(): Promise<void> {
   comparison.displayResults();
 
   // Demonstrate advanced Bun features
-  console.log('\n🎯 ADVANCED BUN FEATURES DEMONSTRATION');
+  console.info('\n🎯 ADVANCED BUN FEATURES DEMONSTRATION');
 
   await AdvancedBunFeatures.demonstrateWebSocketPerformance();
   await AdvancedBunFeatures.demonstrateStreamingPerformance();
@@ -339,20 +339,20 @@ async function runBunPerformanceDemo(): Promise<void> {
   await demonstrateBunOptimization();
 
   // Final performance summary
-  console.log('\n' + '='.repeat(80));
-  console.log('🎊 FINAL PERFORMANCE SUMMARY');
-  console.log('='.repeat(80));
-  console.log('✅ File I/O: 2-3x faster with Bun.file');
-  console.log('✅ Hashing: 2-5x faster with Bun.CryptoHasher');
-  console.log('✅ HTTP Server: 2-10x faster with Bun.serve');
-  console.log('✅ Database: 2-4x faster with optimized connections');
-  console.log('✅ WebSockets: Native implementation, no overhead');
-  console.log('✅ Compression: Hardware-accelerated with Bun.zstd');
-  console.log('✅ Child Processes: Faster spawning with Bun.spawn');
-  console.log('✅ Memory Usage: 30-50% less overhead');
-  console.log('='.repeat(80));
-  console.log('🚀 TOTAL SYSTEM PERFORMANCE: 3-5x improvement over Node.js');
-  console.log('='.repeat(80));
+  console.info('\n' + '='.repeat(80));
+  console.info('🎊 FINAL PERFORMANCE SUMMARY');
+  console.info('='.repeat(80));
+  console.info('✅ File I/O: 2-3x faster with Bun.file');
+  console.info('✅ Hashing: 2-5x faster with Bun.CryptoHasher');
+  console.info('✅ HTTP Server: 2-10x faster with Bun.serve');
+  console.info('✅ Database: 2-4x faster with optimized connections');
+  console.info('✅ WebSockets: Native implementation, no overhead');
+  console.info('✅ Compression: Hardware-accelerated with Bun.zstd');
+  console.info('✅ Child Processes: Faster spawning with Bun.spawn');
+  console.info('✅ Memory Usage: 30-50% less overhead');
+  console.info('='.repeat(80));
+  console.info('🚀 TOTAL SYSTEM PERFORMANCE: 3-5x improvement over Node.js');
+  console.info('='.repeat(80));
 }
 
 // ============================================================================

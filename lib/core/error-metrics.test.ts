@@ -293,17 +293,17 @@ describe('Global Collector Helpers', () => {
 
 // Entry guard for testing
 if (import.meta.main) {
-  console.log('🧪 Running Error Metrics Tests...\n');
+  console.info('🧪 Running Error Metrics Tests...\n');
 
   // Quick smoke test
   const metrics = new ErrorMetricsCollector();
 
-  console.log('✅ Metrics collector created');
-  console.log('Initial stats:', metrics.getStats());
+  console.info('✅ Metrics collector created');
+  console.info('Initial stats:', metrics.getStats());
 
   metrics.record(new Error('Smoke test error'));
-  console.log('After recording:', metrics.getStats());
+  console.info('After recording:', metrics.getStats());
 
   metrics.destroy();
-  console.log('\n✅ Smoke test passed!');
+  console.info('\n✅ Smoke test passed!');
 }

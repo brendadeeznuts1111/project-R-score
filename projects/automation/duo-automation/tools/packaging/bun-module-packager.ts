@@ -143,7 +143,7 @@ export class BunModulePackager {
     const pkg = await this.packModule(nodeId);
     const key = `packages/${pkg.name}/${pkg.version}/${pkg.tarball}`;
 
-    console.log(`Publishing ${pkg.name}@${pkg.version} to R2 bucket...`);
+    console.info(`Publishing ${pkg.name}@${pkg.version} to R2 bucket...`);
     
     // In a real scenario, we would read the actual tarball file
     // For this simulation, we'll upload a buffer representing the package
@@ -162,7 +162,7 @@ export class BunModulePackager {
     });
 
     if (result.success) {
-      console.log(`Successfully published to ${key}`);
+      console.info(`Successfully published to ${key}`);
     } else {
       throw new Error(`Failed to publish ${pkg.name} to R2`);
     }

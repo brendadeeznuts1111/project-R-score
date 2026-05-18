@@ -27,14 +27,14 @@ function getMemoryUsage() {
 function logMemoryUsage(label: string) {
   const mem = getMemoryUsage();
   if (mem) {
-    console.log(`${label}:`);
-    console.log(
+    console.info(`${label}:`);
+    console.info(
       `  📊 Used: ${mem.usedMB}MB (${Math.round((mem.used / mem.limit) * 100)}% of limit)`
     );
-    console.log(`  🔄 Total: ${mem.totalMB}MB`);
-    console.log(`  🎯 Limit: ${mem.limitMB}MB`);
+    console.info(`  🔄 Total: ${mem.totalMB}MB`);
+    console.info(`  🎯 Limit: ${mem.limitMB}MB`);
   } else {
-    console.log(`${label}: Memory monitoring not available`);
+    console.info(`${label}: Memory monitoring not available`);
   }
 }
 
@@ -43,7 +43,7 @@ function logMemoryUsage(label: string) {
 // ============================================================================
 
 async function testDatabasePerformance() {
-  console.log('🗄️  Testing database performance with Bun 1.1.x improvements...');
+  console.info('🗄️  Testing database performance with Bun 1.1.x improvements...');
 
   logMemoryUsage('🧠 Memory before DB operations');
 
@@ -60,7 +60,7 @@ async function testDatabasePerformance() {
     )
   `);
 
-  console.log('✅ Database initialized');
+  console.info('✅ Database initialized');
 
   // Insert test data
   const insertStart = performance.now();
@@ -71,7 +71,7 @@ async function testDatabasePerformance() {
   }
 
   const insertTime = performance.now() - insertStart;
-  console.log(`⚡ Inserted 10,000 records in ${insertTime.toFixed(2)}ms`);
+  console.info(`⚡ Inserted 10,000 records in ${insertTime.toFixed(2)}ms`);
 
   logMemoryUsage('🧠 Memory after insertions');
 
@@ -82,8 +82,8 @@ async function testDatabasePerformance() {
     .get();
   const queryTime = performance.now() - queryStart;
 
-  console.log(`🔍 Query completed in ${queryTime.toFixed(2)}ms`);
-  console.log(
+  console.info(`🔍 Query completed in ${queryTime.toFixed(2)}ms`);
+  console.info(
     `📊 Results: ${results.count} records, average value: ${Math.round(results.avg_value * 100) / 100}`
   );
 
@@ -91,7 +91,7 @@ async function testDatabasePerformance() {
 
   // Clean up
   db.close();
-  console.log('🧹 Database cleanup completed');
+  console.info('🧹 Database cleanup completed');
 
   logMemoryUsage('🧠 Memory after cleanup');
 
@@ -108,7 +108,7 @@ async function testDatabasePerformance() {
 // ============================================================================
 
 function testLargeObjectProcessing() {
-  console.log('📦 Testing large object processing...');
+  console.info('📦 Testing large object processing...');
 
   logMemoryUsage('🧠 Memory before large object creation');
 
@@ -117,7 +117,7 @@ function testLargeObjectProcessing() {
   const largeObject = createNestedObject(8, 10); // 8 levels deep, 10 items each
   const createTime = performance.now() - createStart;
 
-  console.log(`🏗️  Created large nested object in ${createTime.toFixed(2)}ms`);
+  console.info(`🏗️  Created large nested object in ${createTime.toFixed(2)}ms`);
 
   logMemoryUsage('🧠 Memory after large object creation');
 
@@ -126,8 +126,8 @@ function testLargeObjectProcessing() {
   const result = processNestedObject(largeObject);
   const processTime = performance.now() - processStart;
 
-  console.log(`⚙️  Processed object in ${processTime.toFixed(2)}ms`);
-  console.log(`📈 Result: ${result}`);
+  console.info(`⚙️  Processed object in ${processTime.toFixed(2)}ms`);
+  console.info(`📈 Result: ${result}`);
 
   logMemoryUsage('🧠 Memory after processing');
 
@@ -180,7 +180,7 @@ function processNestedObject(obj: any): number {
 // ============================================================================
 
 async function runPerformanceComparison() {
-  console.log('⚡ Running performance comparison with Bun 1.1.x improvements...');
+  console.info('⚡ Running performance comparison with Bun 1.1.x improvements...');
 
   const results = {
     database: await testDatabasePerformance(),
@@ -194,26 +194,26 @@ async function runPerformanceComparison() {
   results.overall.memoryEnd = getMemoryUsage();
   results.overall.duration = Date.now() - results.overall.startTime;
 
-  console.log('\n📊 Performance Summary:');
-  console.log('═'.repeat(50));
-  console.log(
+  console.info('\n📊 Performance Summary:');
+  console.info('═'.repeat(50));
+  console.info(
     `🗄️  Database: ${results.database.insertTime.toFixed(2)}ms insert, ${results.database.queryTime.toFixed(2)}ms query`
   );
-  console.log(
+  console.info(
     `📦 Objects: ${results.largeObjects.createTime.toFixed(2)}ms create, ${results.largeObjects.processTime.toFixed(2)}ms process`
   );
-  console.log(`⏱️  Total: ${results.overall.duration}ms`);
+  console.info(`⏱️  Total: ${results.overall.duration}ms`);
 
   if (results.overall.memoryStart && results.overall.memoryEnd) {
     const memDelta = results.overall.memoryEnd.usedMB - results.overall.memoryStart.usedMB;
-    console.log(`💾 Memory: ${memDelta > 0 ? '+' : ''}${memDelta.toFixed(2)}MB change`);
+    console.info(`💾 Memory: ${memDelta > 0 ? '+' : ''}${memDelta.toFixed(2)}MB change`);
   }
 
-  console.log('\n✨ Bun 1.1.x improvements demonstrated:');
-  console.log('  • Faster startup time (~1ms improvement)');
-  console.log('  • Reduced memory usage (~3MB less RAM)');
-  console.log('  • Enhanced database operations');
-  console.log('  • Improved large object processing');
+  console.info('\n✨ Bun 1.1.x improvements demonstrated:');
+  console.info('  • Faster startup time (~1ms improvement)');
+  console.info('  • Reduced memory usage (~3MB less RAM)');
+  console.info('  • Enhanced database operations');
+  console.info('  • Improved large object processing');
 
   return results;
 }
@@ -223,8 +223,8 @@ async function runPerformanceComparison() {
 // ============================================================================
 
 async function main() {
-  console.log('🧠 Memory Profiling Demo - Bun 1.1.x Performance Improvements');
-  console.log('═'.repeat(70));
+  console.info('🧠 Memory Profiling Demo - Bun 1.1.x Performance Improvements');
+  console.info('═'.repeat(70));
 
   const args = process.argv.slice(2);
   const operation = args[0];
@@ -240,15 +240,15 @@ async function main() {
       await runPerformanceComparison();
       break;
     default:
-      console.log('📋 Available operations:');
-      console.log('  database   - Test database performance');
-      console.log('  objects    - Test large object processing');
-      console.log('  comparison - Run full performance comparison');
-      console.log('  all        - Run all operations');
-      console.log('\n💡 Usage: bun run scripts/memory-profile.bun.ts <operation>');
+      console.info('📋 Available operations:');
+      console.info('  database   - Test database performance');
+      console.info('  objects    - Test large object processing');
+      console.info('  comparison - Run full performance comparison');
+      console.info('  all        - Run all operations');
+      console.info('\n💡 Usage: bun run scripts/memory-profile.bun.ts <operation>');
 
       if (args.length === 0 || operation === 'all') {
-        console.log('\n🚀 Running full performance comparison...');
+        console.info('\n🚀 Running full performance comparison...');
         await runPerformanceComparison();
       }
       break;

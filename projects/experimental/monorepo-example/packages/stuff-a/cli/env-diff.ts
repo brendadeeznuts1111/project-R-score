@@ -17,7 +17,7 @@ const environments = {
 };
 
 function diffEnvs(current: EnvConfig, target: EnvConfig, targetName: string) {
-  console.log(`\n📊 Environment Diff: Current → ${targetName}\n`);
+  console.info(`\n📊 Environment Diff: Current → ${targetName}\n`);
 
   const allKeys = new Set([...Object.keys(current), ...Object.keys(target)]);
   let changes = 0;
@@ -28,20 +28,20 @@ function diffEnvs(current: EnvConfig, target: EnvConfig, targetName: string) {
 
     if (curr !== targ) {
       changes++;
-      console.log(`\x1b[33m${key}\x1b[0m:`);
-      console.log(`  Current: ${curr ?? '(unset)'}`);
-      console.log(`  Target:  ${targ ?? '(unset)'}`);
+      console.info(`\x1b[33m${key}\x1b[0m:`);
+      console.info(`  Current: ${curr ?? '(unset)'}`);
+      console.info(`  Target:  ${targ ?? '(unset)'}`);
 
       if (!curr && targ) {
-        console.log(`  ⚠️  Missing in current environment`);
+        console.info(`  ⚠️  Missing in current environment`);
       }
     }
   }
 
   if (changes === 0) {
-    console.log('✅ No differences found');
+    console.info('✅ No differences found');
   } else {
-    console.log(`\n⚠️  ${changes} differences detected`);
+    console.info(`\n⚠️  ${changes} differences detected`);
   }
 }
 

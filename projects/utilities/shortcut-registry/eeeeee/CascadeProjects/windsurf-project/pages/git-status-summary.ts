@@ -11,22 +11,22 @@ const lines = statusOutput.trim().split('\n').filter(l => l);
 const modified = lines.filter(l => l.startsWith(' M')).map(l => l.substring(3));
 const untracked = lines.filter(l => l.startsWith('??')).map(l => l.substring(3));
 
-console.log("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
-console.log("║                              GIT STATUS SUMMARY                                       ║");
-console.log("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
+console.info("\n╔════════════════════════════════════════════════════════════════════════════════════════╗");
+console.info("║                              GIT STATUS SUMMARY                                       ║");
+console.info("╚════════════════════════════════════════════════════════════════════════════════════════╝\n");
 
 if (modified.length > 0) {
-    console.log("📝 Modified Files:\n");
+    console.info("📝 Modified Files:\n");
     const modifiedTable = modified.map((file, idx) => ({
         "#": idx + 1,
         "File": file,
         "Status": "Modified"
     }));
-    console.log(Bun.inspect.table(modifiedTable, undefined, { colors: true }));
+    console.info(Bun.inspect.table(modifiedTable, undefined, { colors: true }));
 }
 
 if (untracked.length > 0) {
-    console.log("\n\n📁 Untracked Files:\n");
+    console.info("\n\n📁 Untracked Files:\n");
     
     // Group by directory
     const grouped: Record<string, string[]> = {};
@@ -42,14 +42,14 @@ if (untracked.length > 0) {
         "Status": "Untracked"
     }));
     
-    console.log(Bun.inspect.table(untrackedTable, undefined, { colors: true }));
+    console.info(Bun.inspect.table(untrackedTable, undefined, { colors: true }));
     
     if (untracked.length > 50) {
-        console.log(`\n... and ${untracked.length - 50} more files\n`);
+        console.info(`\n... and ${untracked.length - 50} more files\n`);
     }
 }
 
-console.log("\n📊 Summary:\n");
+console.info("\n📊 Summary:\n");
 const summary = [
     {
         "Category": "Modified Files",
@@ -68,10 +68,10 @@ const summary = [
     }
 ];
 
-console.log(Bun.inspect.table(summary, undefined, { colors: true }));
+console.info(Bun.inspect.table(summary, undefined, { colors: true }));
 
 // Show key files related to today's work
-console.log("\n🎯 Key Files from Today's Work:\n");
+console.info("\n🎯 Key Files from Today's Work:\n");
 const keyFiles = [
     {
         "File": "pages/dashboard.html",
@@ -95,10 +95,10 @@ const keyFiles = [
     }
 ];
 
-console.log(Bun.inspect.table(keyFiles, undefined, { colors: true }));
+console.info(Bun.inspect.table(keyFiles, undefined, { colors: true }));
 
-console.log("\n💡 Next Steps:\n");
-console.log("  1. Review changes: git diff");
-console.log("  2. Stage files: git add <files>");
-console.log("  3. Commit: git commit -m 'refactor(css): semantic BEM-style naming'");
-console.log("  4. Push: git push\n");
+console.info("\n💡 Next Steps:\n");
+console.info("  1. Review changes: git diff");
+console.info("  2. Stage files: git add <files>");
+console.info("  3. Commit: git commit -m 'refactor(css): semantic BEM-style naming'");
+console.info("  4. Push: git push\n");

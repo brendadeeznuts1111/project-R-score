@@ -29,8 +29,8 @@ class ArchiveLeakAnalyzer {
 
   constructor() {
     this.testDir = mkdtempSync(join(tmpdir(), "archive-leak-analysis-"));
-    console.log(`🔍 Archive Leak Analyzer Initialized`);
-    console.log(`📁 Test directory: ${this.testDir}`);
+    console.info(`🔍 Archive Leak Analyzer Initialized`);
+    console.info(`📁 Test directory: ${this.testDir}`);
   }
 
   private formatMB(bytes: number): string {
@@ -58,13 +58,13 @@ class ArchiveLeakAnalyzer {
   }
 
   private async runTest(testName: string, testFunction: () => Promise<void>): Promise<TestResults> {
-    console.log(`\n🧪 Running test: ${testName}`);
-    console.log("─".repeat(50));
+    console.info(`\n🧪 Running test: ${testName}`);
+    console.info("─".repeat(50));
 
     const startTime = Date.now();
     const initialMemory = this.getMemoryUsage();
     
-    console.log(`📊 Initial memory: ${this.formatMemoryUsage(initialMemory)}`);
+    console.info(`📊 Initial memory: ${this.formatMemoryUsage(initialMemory)}`);
 
     // Run the test
     await testFunction();
@@ -81,10 +81,10 @@ class ArchiveLeakAnalyzer {
     const memoryGrowth = finalMemory.rss - initialMemory.rss;
     const fileCount = this.countFiles(this.testDir);
 
-    console.log(`📊 Final memory: ${this.formatMemoryUsage(finalMemory)}`);
-    console.log(`📈 Memory growth: ${this.formatMB(memoryGrowth)}`);
-    console.log(`📁 Files created: ${fileCount}`);
-    console.log(`⏱️  Duration: ${duration}ms`);
+    console.info(`📊 Final memory: ${this.formatMemoryUsage(finalMemory)}`);
+    console.info(`📈 Memory growth: ${this.formatMB(memoryGrowth)}`);
+    console.info(`📁 Files created: ${fileCount}`);
+    console.info(`⏱️  Duration: ${duration}ms`);
 
     const result: TestResults = {
       testName,
@@ -189,7 +189,7 @@ class ArchiveLeakAnalyzer {
         
         // Recreate archive every 10 iterations
         if (i % 10 === 0) {
-          console.log(`  🔄 Archive recreation at iteration ${i}`);
+          console.info(`  🔄 Archive recreation at iteration ${i}`);
         }
       }
     });
@@ -278,9 +278,9 @@ class ArchiveLeakAnalyzer {
   }
 
   printSummary(): void {
-    console.log("\n" + "=".repeat(60));
-    console.log("📊 MEMORY LEAK ANALYSIS SUMMARY");
-    console.log("=".repeat(60));
+    console.info("\n" + "=".repeat(60));
+    console.info("📊 MEMORY LEAK ANALYSIS SUMMARY");
+    console.info("=".repeat(60));
 
     let totalLeakDetected = 0;
     let totalMemoryGrowth = 0;
@@ -289,11 +289,11 @@ class ArchiveLeakAnalyzer {
       const status = result.leakDetected ? "🚨 LEAK DETECTED" : "✅ No Leak";
       const growth = this.formatMB(result.memoryGrowth);
       
-      console.log(`\n🧪 ${result.testName}`);
-      console.log(`   Status: ${status}`);
-      console.log(`   Memory Growth: ${growth}`);
-      console.log(`   Duration: ${result.duration}ms`);
-      console.log(`   Files: ${result.fileCount}`);
+      console.info(`\n🧪 ${result.testName}`);
+      console.info(`   Status: ${status}`);
+      console.info(`   Memory Growth: ${growth}`);
+      console.info(`   Duration: ${result.duration}ms`);
+      console.info(`   Files: ${result.fileCount}`);
 
       if (result.leakDetected) {
         totalLeakDetected++;
@@ -301,46 +301,46 @@ class ArchiveLeakAnalyzer {
       totalMemoryGrowth += result.memoryGrowth;
     }
 
-    console.log("\n" + "─".repeat(60));
-    console.log("📈 OVERALL RESULTS:");
-    console.log(`   Tests with leaks: ${totalLeakDetected}/${this.results.length}`);
-    console.log(`   Total memory growth: ${this.formatMB(totalMemoryGrowth)}`);
-    console.log(`   Average growth per test: ${this.formatMB(totalMemoryGrowth / this.results.length)}`);
+    console.info("\n" + "─".repeat(60));
+    console.info("📈 OVERALL RESULTS:");
+    console.info(`   Tests with leaks: ${totalLeakDetected}/${this.results.length}`);
+    console.info(`   Total memory growth: ${this.formatMB(totalMemoryGrowth)}`);
+    console.info(`   Average growth per test: ${this.formatMB(totalMemoryGrowth / this.results.length)}`);
 
     if (totalLeakDetected > 0) {
-      console.log("\n🚨 MEMORY LEAK CONFIRMED!");
-      console.log("   The Bun.Archive.extract() method has a confirmed memory leak.");
-      console.log("   See BUN-ARCHIVE-LEAK-ANALYSIS.md for detailed analysis and solutions.");
+      console.info("\n🚨 MEMORY LEAK CONFIRMED!");
+      console.info("   The Bun.Archive.extract() method has a confirmed memory leak.");
+      console.info("   See BUN-ARCHIVE-LEAK-ANALYSIS.md for detailed analysis and solutions.");
     } else {
-      console.log("\n✅ NO MEMORY LEAK DETECTED!");
-      console.log("   All tests passed without significant memory growth.");
+      console.info("\n✅ NO MEMORY LEAK DETECTED!");
+      console.info("   All tests passed without significant memory growth.");
     }
 
-    console.log("\n💡 RECOMMENDATIONS:");
+    console.info("\n💡 RECOMMENDATIONS:");
     if (totalLeakDetected > 0) {
-      console.log("   1. Use archive recreation workaround for production");
-      console.log("   2. Implement memory monitoring in long-running processes");
-      console.log("   3. Consider process restart strategies for critical applications");
-      console.log("   4. Monitor the Bun GitHub issue for official fixes");
+      console.info("   1. Use archive recreation workaround for production");
+      console.info("   2. Implement memory monitoring in long-running processes");
+      console.info("   3. Consider process restart strategies for critical applications");
+      console.info("   4. Monitor the Bun GitHub issue for official fixes");
     } else {
-      console.log("   1. Archive.extract() appears to be memory-safe");
-      console.log("   2. Continue monitoring in production environments");
-      console.log("   3. Test with larger datasets for comprehensive validation");
+      console.info("   1. Archive.extract() appears to be memory-safe");
+      console.info("   2. Continue monitoring in production environments");
+      console.info("   3. Test with larger datasets for comprehensive validation");
     }
   }
 
   async cleanup(): Promise<void> {
     try {
       rmSync(this.testDir, { recursive: true });
-      console.log(`\n🧹 Cleaned up test directory: ${this.testDir}`);
+      console.info(`\n🧹 Cleaned up test directory: ${this.testDir}`);
     } catch (error) {
-      console.log(`⚠️  Warning: Could not clean up test directory: ${error}`);
+      console.info(`⚠️  Warning: Could not clean up test directory: ${error}`);
     }
   }
 
   async runAllTests(): Promise<void> {
-    console.log("🔍 Starting Comprehensive Archive Memory Leak Analysis");
-    console.log("=====================================================");
+    console.info("🔍 Starting Comprehensive Archive Memory Leak Analysis");
+    console.info("=====================================================");
 
     try {
       // Run all test cases
@@ -368,10 +368,10 @@ class ArchiveLeakAnalyzer {
 
 // Main execution
 async function main() {
-  console.log("🚀 Bun Archive Memory Leak Analysis Tool");
-  console.log("==========================================");
-  console.log("This tool tests for memory leaks in Bun.Archive.extract()");
-  console.log("Run with: bun run DEMO-ARCHIVE-LEAK-TEST.ts\n");
+  console.info("🚀 Bun Archive Memory Leak Analysis Tool");
+  console.info("==========================================");
+  console.info("This tool tests for memory leaks in Bun.Archive.extract()");
+  console.info("Run with: bun run DEMO-ARCHIVE-LEAK-TEST.ts\n");
 
   const analyzer = new ArchiveLeakAnalyzer();
   await analyzer.runAllTests();

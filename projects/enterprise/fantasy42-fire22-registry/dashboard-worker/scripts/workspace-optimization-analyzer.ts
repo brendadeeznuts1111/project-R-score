@@ -123,7 +123,7 @@ export class WorkspaceOptimizationAnalyzer {
    * 🔬 Perform comprehensive optimization analysis
    */
   async analyzeWorkspace(): Promise<OptimizationReport> {
-    console.log('🔬 Starting comprehensive workspace optimization analysis...');
+    console.info('🔬 Starting comprehensive workspace optimization analysis...');
 
     const startTime = Bun.nanoseconds();
     const startMemory = process.memoryUsage();
@@ -201,8 +201,8 @@ export class WorkspaceOptimizationAnalyzer {
     const analysisTime = (Bun.nanoseconds() - startTime) / 1_000_000;
     const endMemory = process.memoryUsage();
 
-    console.log(`✅ Analysis completed in ${analysisTime.toFixed(2)}ms`);
-    console.log(`📊 Memory impact: ${(endMemory.heapUsed - startMemory.heapUsed) / 1024 / 1024}MB`);
+    console.info(`✅ Analysis completed in ${analysisTime.toFixed(2)}ms`);
+    console.info(`📊 Memory impact: ${(endMemory.heapUsed - startMemory.heapUsed) / 1024 / 1024}MB`);
 
     return report;
   }
@@ -647,40 +647,40 @@ export class WorkspaceOptimizationAnalyzer {
 
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
-    console.log('\n📊 Workspace Optimization Report:');
-    console.log('='.repeat(50));
-    console.log(`Overall Score: ${report.overall.score}/100`);
-    console.log(`\n💾 Memory Analysis:`);
-    console.log(
+    console.info('\n📊 Workspace Optimization Report:');
+    console.info('='.repeat(50));
+    console.info(`Overall Score: ${report.overall.score}/100`);
+    console.info(`\n💾 Memory Analysis:`);
+    console.info(
       `  Current heap usage: ${(report.memory.currentUsage.heapUsed / 1024 / 1024).toFixed(2)}MB`
     );
-    console.log(`  Recommendations: ${report.memory.recommendations.length}`);
-    console.log(`\n📦 Bundle Analysis:`);
-    console.log(`  --smol optimizations: ${report.bundleSize.smolOptimizations.length}`);
-    console.log(
+    console.info(`  Recommendations: ${report.memory.recommendations.length}`);
+    console.info(`\n📦 Bundle Analysis:`);
+    console.info(`  --smol optimizations: ${report.bundleSize.smolOptimizations.length}`);
+    console.info(
       `  Tree-shaking opportunities: ${report.bundleSize.treeshakingOpportunities.length}`
     );
-    console.log(`\n🔍 Code Quality:`);
-    console.log(
+    console.info(`\n🔍 Code Quality:`);
+    console.info(
       `  Duplication score: ${report.codeQuality.duplicationAnalysis.totalDuplicationScore}/100`
     );
-    console.log(
+    console.info(
       `  Error handling score: ${report.codeQuality.errorHandlingStandardization.standardizationScore}/100`
     );
-    console.log(`\n⚡ Performance:`);
-    console.log(`  Bottlenecks identified: ${report.performance.bottlenecks.length}`);
-    console.log(
+    console.info(`\n⚡ Performance:`);
+    console.info(`  Bottlenecks identified: ${report.performance.bottlenecks.length}`);
+    console.info(
       `  Optimization opportunities: ${report.performance.optimizationOpportunities.length}`
     );
-    console.log(`\n🎯 Top Priorities:`);
+    console.info(`\n🎯 Top Priorities:`);
     report.overall.priority.slice(0, 3).forEach((item, index) => {
-      console.log(`  ${index + 1}. ${item.task} (${item.impact} impact, ${item.effort} effort)`);
+      console.info(`  ${index + 1}. ${item.task} (${item.impact} impact, ${item.effort} effort)`);
     });
-    console.log(`\n💰 Estimated Savings:`);
-    console.log(`  Memory: ${report.overall.estimatedSavings.memoryReduction}`);
-    console.log(`  Bundle size: ${report.overall.estimatedSavings.bundleSizeReduction}`);
-    console.log(`  Performance: ${report.overall.estimatedSavings.performanceImprovement}`);
-    console.log(`\n📄 Full report saved to: ${reportPath}`);
+    console.info(`\n💰 Estimated Savings:`);
+    console.info(`  Memory: ${report.overall.estimatedSavings.memoryReduction}`);
+    console.info(`  Bundle size: ${report.overall.estimatedSavings.bundleSizeReduction}`);
+    console.info(`  Performance: ${report.overall.estimatedSavings.performanceImprovement}`);
+    console.info(`\n📄 Full report saved to: ${reportPath}`);
   }
 }
 

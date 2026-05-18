@@ -5,7 +5,7 @@ export class S3Manager {
    * Mock upload for snapshots
    */
   static async uploadSnapshot(filename: string, data: Buffer) {
-    console.log(`[S3] Uploading snapshot: ${filename} (${data.byteLength} bytes)`);
+    console.info(`[S3] Uploading snapshot: ${filename} (${data.byteLength} bytes)`);
     // In a real system, we'd use s3.write or an SDK
     // For now, we'll simulation the successful upload
     return true;
@@ -15,7 +15,7 @@ export class S3Manager {
    * Generic file upload to R2/S3
    */
   static async uploadFile(path: string, data: any, contentType: string) {
-    console.log(`[S3] Uploading ${path} [${contentType}]`);
+    console.info(`[S3] Uploading ${path} [${contentType}]`);
     return true;
   }
 }

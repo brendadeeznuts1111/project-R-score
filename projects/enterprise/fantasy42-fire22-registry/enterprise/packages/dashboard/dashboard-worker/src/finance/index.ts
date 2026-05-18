@@ -26,11 +26,11 @@ export class FinanceSystem {
    * Initialize the finance system
    */
   private async initializeSystem(): Promise<void> {
-    console.log('💰 Initializing Finance System...');
+    console.info('💰 Initializing Finance System...');
 
     // Any additional initialization logic would go here
 
-    console.log('✅ Finance System initialized successfully');
+    console.info('✅ Finance System initialized successfully');
   }
 
   // Balance Validation Methods
@@ -383,7 +383,7 @@ export class FinanceSystem {
         }
       }
 
-      console.log(
+      console.info(
         `✅ Balance change completed: ${customerId} | ${changeType} | $${changeAmount} | New: $${newBalance}`
       );
 

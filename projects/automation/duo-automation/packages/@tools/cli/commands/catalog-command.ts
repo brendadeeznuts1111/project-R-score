@@ -26,7 +26,7 @@ export function createCatalogCommand(): Command {
         const viewer = new CatalogViewer();
         
         if (options.report) {
-          console.log(viewer.generateReport());
+          console.info(viewer.generateReport());
           return;
         }
 
@@ -42,30 +42,30 @@ export function createCatalogCommand(): Command {
         const results = viewer.search(query);
 
         if (options.json) {
-          console.log(JSON.stringify(results, null, 2));
+          console.info(JSON.stringify(results, null, 2));
           return;
         }
 
         // Display results
         if (results.length === 0) {
-          console.log('📭 No items found matching your search criteria.');
+          console.info('📭 No items found matching your search criteria.');
           return;
         }
 
-        console.log(`\n🗂️ Catalog Search Results (${results.length} items)\n`);
-        console.log('─'.repeat(80));
+        console.info(`\n🗂️ Catalog Search Results (${results.length} items)\n`);
+        console.info('─'.repeat(80));
 
         results.forEach((item, index) => {
-          console.log(`\n${index + 1}. ${formatRegistryItem(item, {
+          console.info(`\n${index + 1}. ${formatRegistryItem(item, {
             includeDetails: options.details,
             includeDependencies: options.dependencies,
             colorize: true
           })}`);
         });
 
-        console.log('\n' + '─'.repeat(80));
-        console.log(`\n💡 Use 'empire catalog --help' for more options`);
-        console.log(`🔍 Try 'empire catalog --search performance --details' for detailed view`);
+        console.info('\n' + '─'.repeat(80));
+        console.info(`\n💡 Use 'empire catalog --help' for more options`);
+        console.info(`🔍 Try 'empire catalog --search performance --details' for detailed view`);
 
       } catch (error) {
         console.error(`❌ Catalog command failed: ${error instanceof Error ? error.message : String(error)}`);
@@ -98,8 +98,8 @@ function createCatalogInfoCommand(): Command {
         const item = viewer.getItem(id);
 
         if (!item) {
-          console.log(`❌ Item '${id}' not found in catalog.`);
-          console.log(`💡 Use 'empire catalog --search ${id}' to search for similar items.`);
+          console.info(`❌ Item '${id}' not found in catalog.`);
+          console.info(`💡 Use 'empire catalog --search ${id}' to search for similar items.`);
           return;
         }
 
@@ -114,14 +114,14 @@ function createCatalogInfoCommand(): Command {
             result.dependents = viewer.getDependents(id);
           }
           
-          console.log(JSON.stringify(result, null, 2));
+          console.info(JSON.stringify(result, null, 2));
           return;
         }
 
-        console.log(`\n📋 Item Information: ${item.name}\n`);
-        console.log('─'.repeat(80));
+        console.info(`\n📋 Item Information: ${item.name}\n`);
+        console.info('─'.repeat(80));
         
-        console.log(formatRegistryItem(item, {
+        console.info(formatRegistryItem(item, {
           includeDetails: true,
           includeDependencies: true,
           colorize: true
@@ -130,9 +130,9 @@ function createCatalogInfoCommand(): Command {
         if (options.dependencies) {
           const dependencies = viewer.getDependencies(id);
           if (dependencies.length > 0) {
-            console.log(`\n🔗 Dependencies (${dependencies.length}):\n`);
+            console.info(`\n🔗 Dependencies (${dependencies.length}):\n`);
             dependencies.forEach((dep, index) => {
-              console.log(`  ${index + 1}. ${dep.name} v${dep.version} (${dep.category})`);
+              console.info(`  ${index + 1}. ${dep.name} v${dep.version} (${dep.category})`);
             });
           }
         }
@@ -140,14 +140,14 @@ function createCatalogInfoCommand(): Command {
         if (options.dependents) {
           const dependents = viewer.getDependents(id);
           if (dependents.length > 0) {
-            console.log(`\n🔗 Dependents (${dependents.length}):\n`);
+            console.info(`\n🔗 Dependents (${dependents.length}):\n`);
             dependents.forEach((dep, index) => {
-              console.log(`  ${index + 1}. ${dep.name} v${dep.version} (${dep.category})`);
+              console.info(`  ${index + 1}. ${dep.name} v${dep.version} (${dep.category})`);
             });
           }
         }
 
-        console.log('\n' + '─'.repeat(80));
+        console.info('\n' + '─'.repeat(80));
 
       } catch (error) {
         console.error(`❌ Info command failed: ${error instanceof Error ? error.message : String(error)}`);
@@ -185,30 +185,30 @@ function createCatalogListCommand(): Command {
         const results = viewer.search(query);
 
         if (results.length === 0) {
-          console.log(`📭 No items found for category: ${category}`);
+          console.info(`📭 No items found for category: ${category}`);
           return;
         }
 
-        console.log(`\n📦 ${category === 'all' ? 'All Items' : category.charAt(0).toUpperCase() + category.slice(1)} (${results.length} items)\n`);
-        console.log('─'.repeat(80));
+        console.info(`\n📦 ${category === 'all' ? 'All Items' : category.charAt(0).toUpperCase() + category.slice(1)} (${results.length} items)\n`);
+        console.info('─'.repeat(80));
 
         if (options.compact) {
           results.forEach((item, index) => {
             const status = item.status === 'active' ? '✅' : 
                           item.status === 'deprecated' ? '⚠️' : 
                           item.status === 'experimental' ? '🧪' : '📦';
-            console.log(`  ${index + 1:2}. ${status} ${item.name.padEnd(25)} v${item.version.padEnd(8)} ${item.type}`);
+            console.info(`  ${index + 1:2}. ${status} ${item.name.padEnd(25)} v${item.version.padEnd(8)} ${item.type}`);
           });
         } else {
           results.forEach((item, index) => {
-            console.log(`\n${index + 1}. ${formatRegistryItem(item, {
+            console.info(`\n${index + 1}. ${formatRegistryItem(item, {
               includeDetails: false,
               colorize: true
             })}`);
           });
         }
 
-        console.log('\n' + '─'.repeat(80));
+        console.info('\n' + '─'.repeat(80));
 
       } catch (error) {
         console.error(`❌ List command failed: ${error instanceof Error ? error.message : String(error)}`);
@@ -282,22 +282,22 @@ function createCatalogSearchCommand(): Command {
         }
 
         if (results.length === 0) {
-          console.log(`📭 No items found for search: '${query}'`);
+          console.info(`📭 No items found for search: '${query}'`);
           return;
         }
 
-        console.log(`\n🔍 Search Results for '${query}' (${results.length} items)\n`);
-        console.log('─'.repeat(80));
+        console.info(`\n🔍 Search Results for '${query}' (${results.length} items)\n`);
+        console.info('─'.repeat(80));
 
         results.forEach((item, index) => {
-          console.log(`\n${index + 1}. ${formatRegistryItem(item, {
+          console.info(`\n${index + 1}. ${formatRegistryItem(item, {
             includeDetails: false,
             colorize: true
           })}`);
         });
 
-        console.log('\n' + '─'.repeat(80));
-        console.log(`\n💡 Use 'empire catalog info <id>' for detailed information about any item`);
+        console.info('\n' + '─'.repeat(80));
+        console.info(`\n💡 Use 'empire catalog info <id>' for detailed information about any item`);
 
       } catch (error) {
         console.error(`❌ Search command failed: ${error instanceof Error ? error.message : String(error)}`);
@@ -319,19 +319,19 @@ function createCatalogStatsCommand(): Command {
         const stats = viewer.getStats();
 
         if (options.format === 'json') {
-          console.log(JSON.stringify(stats, null, 2));
+          console.info(JSON.stringify(stats, null, 2));
           return;
         }
 
-        console.log('\n📊 Empire Pro Catalog Statistics\n');
-        console.log('─'.repeat(50));
+        console.info('\n📊 Empire Pro Catalog Statistics\n');
+        console.info('─'.repeat(50));
         
-        console.log(`\n📦 Overview:`);
-        console.log(`  Total Items: ${stats.total}`);
-        console.log(`  Categories: ${Object.keys(stats.categories).length}`);
-        console.log(`  Top Tags: ${stats.topTags.length}`);
+        console.info(`\n📦 Overview:`);
+        console.info(`  Total Items: ${stats.total}`);
+        console.info(`  Categories: ${Object.keys(stats.categories).length}`);
+        console.info(`  Top Tags: ${stats.topTags.length}`);
 
-        console.log(`\n📂 By Category:`);
+        console.info(`\n📂 By Category:`);
         Object.entries(stats.categories).forEach(([category, count]) => {
           const icons = {
             component: '🧩',
@@ -340,15 +340,15 @@ function createCatalogStatsCommand(): Command {
             package: '📦',
             tool: '🔧'
           };
-          console.log(`  ${icons[category as keyof typeof icons] || '📦'} ${category.charAt(0).toUpperCase() + category.slice(1)}: ${count}`);
+          console.info(`  ${icons[category as keyof typeof icons] || '📦'} ${category.charAt(0).toUpperCase() + category.slice(1)}: ${count}`);
         });
 
-        console.log(`\n🏷️ Top Tags:`);
+        console.info(`\n🏷️ Top Tags:`);
         stats.topTags.slice(0, 5).forEach(({ tag, count }) => {
-          console.log(`  #${tag}: ${count}`);
+          console.info(`  #${tag}: ${count}`);
         });
 
-        console.log(`\n📈 Status Distribution:`);
+        console.info(`\n📈 Status Distribution:`);
         Object.entries(stats.statuses).forEach(([status, count]) => {
           const icons = {
             active: '✅',
@@ -356,20 +356,20 @@ function createCatalogStatsCommand(): Command {
             experimental: '🧪',
             archived: '📦'
           };
-          console.log(`  ${icons[status as keyof typeof icons] || '📦'} ${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`);
+          console.info(`  ${icons[status as keyof typeof icons] || '📦'} ${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`);
         });
 
-        console.log(`\n🌐 Visibility:`);
+        console.info(`\n🌐 Visibility:`);
         Object.entries(stats.visibility).forEach(([visibility, count]) => {
           const icons = {
             public: '🌍',
             private: '🔒',
             internal: '🏢'
           };
-          console.log(`  ${icons[visibility as keyof typeof icons] || '📦'} ${visibility.charAt(0).toUpperCase() + visibility.slice(1)}: ${count}`);
+          console.info(`  ${icons[visibility as keyof typeof icons] || '📦'} ${visibility.charAt(0).toUpperCase() + visibility.slice(1)}: ${count}`);
         });
 
-        console.log('\n' + '─'.repeat(50));
+        console.info('\n' + '─'.repeat(50));
 
       } catch (error) {
         console.error(`❌ Stats command failed: ${error instanceof Error ? error.message : String(error)}`);

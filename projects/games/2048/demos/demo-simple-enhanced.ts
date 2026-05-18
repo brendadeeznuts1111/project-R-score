@@ -25,8 +25,8 @@ function calculateCRC32(data: ArrayBuffer): number {
 const db = new Database("crc32-enhanced-simple.db");
 
 async function initializeSystem(): Promise<void> {
-  console.log("🚀 Initializing Enhanced CRC32 System");
-  console.log("=".repeat(50));
+  console.info("🚀 Initializing Enhanced CRC32 System");
+  console.info("=".repeat(50));
 
   // Create tables
   db.exec(`
@@ -84,12 +84,12 @@ async function initializeSystem(): Promise<void> {
       ('anomaly_detection_threshold', '3.0');
   `);
 
-  console.log("✅ Database initialized successfully");
+  console.info("✅ Database initialized successfully");
 }
 
 async function demonstrateBasicAudit(): Promise<void> {
-  console.log("\n📊 Demonstrating Basic Audit Trail");
-  console.log("=".repeat(40));
+  console.info("\n📊 Demonstrating Basic Audit Trail");
+  console.info("=".repeat(40));
 
   const testData = [
     { type: "document", id: "doc-1", data: "Sample document content" },
@@ -128,7 +128,7 @@ async function demonstrateBasicAudit(): Promise<void> {
       throughput
     );
 
-    console.log(
+    console.info(
       `✅ Processed ${item.type}:${item.id} - CRC32: ${crc32
         .toString(16)
         .padStart(8, "0")}`
@@ -148,16 +148,16 @@ async function demonstrateBasicAudit(): Promise<void> {
     )
     .get() as any;
 
-  console.log("\n📈 Audit Statistics:");
-  console.log(`Total Operations: ${stats.total_operations}`);
-  console.log(`Avg Throughput: ${stats.avg_throughput?.toFixed(2) || 0} MB/s`);
-  console.log(`Avg Latency: ${stats.avg_latency?.toFixed(2) || 0} ms`);
-  console.log(`Success Rate: ${stats.success_rate?.toFixed(1) || 0}%`);
+  console.info("\n📈 Audit Statistics:");
+  console.info(`Total Operations: ${stats.total_operations}`);
+  console.info(`Avg Throughput: ${stats.avg_throughput?.toFixed(2) || 0} MB/s`);
+  console.info(`Avg Latency: ${stats.avg_latency?.toFixed(2) || 0} ms`);
+  console.info(`Success Rate: ${stats.success_rate?.toFixed(1) || 0}%`);
 }
 
 async function demonstrateBatchProcessing(): Promise<void> {
-  console.log("\n📦 Demonstrating Batch Processing");
-  console.log("=".repeat(40));
+  console.info("\n📦 Demonstrating Batch Processing");
+  console.info("=".repeat(40));
 
   const batchId = `batch-${Date.now()}`;
   const batchSize = 100;
@@ -170,7 +170,7 @@ async function demonstrateBatchProcessing(): Promise<void> {
   `
   ).run(batchId, batchSize, "processing");
 
-  console.log(`🚀 Processing batch of ${batchSize} items...`);
+  console.info(`🚀 Processing batch of ${batchSize} items...`);
 
   let successful = 0;
   let totalBytes = 0;
@@ -222,23 +222,23 @@ async function demonstrateBatchProcessing(): Promise<void> {
   `
   ).run(batchSize, successful, "completed", avgThroughput, batchId);
 
-  console.log(`✅ Batch completed in ${duration.toFixed(2)}ms`);
-  console.log(
+  console.info(`✅ Batch completed in ${duration.toFixed(2)}ms`);
+  console.info(
     `Successful: ${successful}/${batchSize} (${(
       (successful / batchSize) *
       100
     ).toFixed(1)}%)`
   );
-  console.log(`Avg Throughput: ${avgThroughput.toFixed(2)} MB/s`);
-  console.log(`Total Processed: ${(totalBytes / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`Avg Throughput: ${avgThroughput.toFixed(2)} MB/s`);
+  console.info(`Total Processed: ${(totalBytes / 1024 / 1024).toFixed(2)} MB`);
 }
 
 async function demonstrateSelfHealing(): Promise<void> {
-  console.log("\n🔧 Demonstrating Self-Healing System");
-  console.log("=".repeat(40));
+  console.info("\n🔧 Demonstrating Self-Healing System");
+  console.info("=".repeat(40));
 
   // Simulate some issues
-  console.log("🌪️  Simulating performance issues...");
+  console.info("🌪️  Simulating performance issues...");
 
   // Insert some problematic data
   for (let i = 0; i < 10; i++) {
@@ -279,13 +279,13 @@ async function demonstrateSelfHealing(): Promise<void> {
     )
     .get() as any;
 
-  console.log(`🔍 Detected ${issues.total_issues} issues`);
-  console.log(`Error Rate: ${(issues.error_rate * 100).toFixed(1)}%`);
-  console.log(`Avg Latency: ${issues.avg_latency?.toFixed(1) || 0}ms`);
-  console.log(`Avg Throughput: ${issues.avg_throughput?.toFixed(2) || 0} MB/s`);
+  console.info(`🔍 Detected ${issues.total_issues} issues`);
+  console.info(`Error Rate: ${(issues.error_rate * 100).toFixed(1)}%`);
+  console.info(`Avg Latency: ${issues.avg_latency?.toFixed(1) || 0}ms`);
+  console.info(`Avg Throughput: ${issues.avg_throughput?.toFixed(2) || 0} MB/s`);
 
   // Apply healing corrections
-  console.log("🛠️  Applying self-healing corrections...");
+  console.info("🛠️  Applying self-healing corrections...");
 
   const corrections = [
     "Enabled hardware acceleration",
@@ -310,17 +310,17 @@ async function demonstrateSelfHealing(): Promise<void> {
     corrections.join("; ")
   );
 
-  console.log(`✅ Resolved ${resolved}/${issues.total_issues} issues`);
-  console.log(
+  console.info(`✅ Resolved ${resolved}/${issues.total_issues} issues`);
+  console.info(
     `Success Rate: ${((resolved / issues.total_issues) * 100).toFixed(1)}%`
   );
-  console.log("Corrections Applied:");
-  corrections.forEach((c) => console.log(`  • ${c}`));
+  console.info("Corrections Applied:");
+  corrections.forEach((c) => console.info(`  • ${c}`));
 }
 
 async function demonstrateAnalytics(): Promise<void> {
-  console.log("\n🧠 Demonstrating Analytics & Monitoring");
-  console.log("=".repeat(40));
+  console.info("\n🧠 Demonstrating Analytics & Monitoring");
+  console.info("=".repeat(40));
 
   // Generate analytics data
   const analytics = db
@@ -341,15 +341,15 @@ async function demonstrateAnalytics(): Promise<void> {
     )
     .all() as any[];
 
-  console.log("📊 Performance Analytics by Entity Type:");
-  console.log("-".repeat(70));
-  console.log(
+  console.info("📊 Performance Analytics by Entity Type:");
+  console.info("-".repeat(70));
+  console.info(
     "Entity Type | Operations | Throughput | Latency | Success | Confidence | Bytes"
   );
-  console.log("-".repeat(70));
+  console.info("-".repeat(70));
 
   for (const row of analytics) {
-    console.log(
+    console.info(
       `${row.entity_type.padEnd(11)} | ${row.total_operations
         .toString()
         .padEnd(10)} | ` +
@@ -376,15 +376,15 @@ async function demonstrateAnalytics(): Promise<void> {
     )
     .get() as any;
 
-  console.log("\n🏥 System Health Overview:");
-  console.log(`Recent Operations: ${health.recent_operations || 0}`);
-  console.log(
+  console.info("\n🏥 System Health Overview:");
+  console.info(`Recent Operations: ${health.recent_operations || 0}`);
+  console.info(
     `Current Throughput: ${(health.current_throughput || 0).toFixed(2)} MB/s`
   );
-  console.log(
+  console.info(
     `Current Latency: ${(health.current_latency || 0).toFixed(1)} ms`
   );
-  console.log(`Integrity Rate: ${(health.integrity_rate || 0).toFixed(1)}%`);
+  console.info(`Integrity Rate: ${(health.integrity_rate || 0).toFixed(1)}%`);
 
   // Healing effectiveness
   const healing = db
@@ -400,24 +400,24 @@ async function demonstrateAnalytics(): Promise<void> {
     .get() as any;
 
   if (healing.healing_attempts > 0) {
-    console.log("\n🔧 Self-Healing Effectiveness:");
-    console.log(`Healing Attempts: ${healing.healing_attempts}`);
-    console.log(
+    console.info("\n🔧 Self-Healing Effectiveness:");
+    console.info(`Healing Attempts: ${healing.healing_attempts}`);
+    console.info(
       `Avg Success Rate: ${((healing.avg_success_rate || 0) * 100).toFixed(1)}%`
     );
-    console.log(`Last Healing: ${healing.last_healing}`);
+    console.info(`Last Healing: ${healing.last_healing}`);
   }
 }
 
 async function runCompleteDemo(): Promise<void> {
-  console.log("🚀 Enhanced CRC32 Audit Trail System - Simple Demo");
-  console.log("=".repeat(60));
-  console.log("Demonstrating core enhanced features:");
-  console.log("• Audit trail with CRC32 validation");
-  console.log("• Batch processing with performance tracking");
-  console.log("• Self-healing system with issue detection");
-  console.log("• Analytics and monitoring capabilities");
-  console.log("=".repeat(60));
+  console.info("🚀 Enhanced CRC32 Audit Trail System - Simple Demo");
+  console.info("=".repeat(60));
+  console.info("Demonstrating core enhanced features:");
+  console.info("• Audit trail with CRC32 validation");
+  console.info("• Batch processing with performance tracking");
+  console.info("• Self-healing system with issue detection");
+  console.info("• Analytics and monitoring capabilities");
+  console.info("=".repeat(60));
 
   try {
     await initializeSystem();
@@ -426,8 +426,8 @@ async function runCompleteDemo(): Promise<void> {
     await demonstrateSelfHealing();
     await demonstrateAnalytics();
 
-    console.log("\n🎉 Demo Completed Successfully!");
-    console.log("=".repeat(40));
+    console.info("\n🎉 Demo Completed Successfully!");
+    console.info("=".repeat(40));
 
     // Final summary
     const summary = db
@@ -444,18 +444,18 @@ async function runCompleteDemo(): Promise<void> {
       )
       .get() as any;
 
-    console.log("\n📊 Final Summary:");
-    console.log(`Total Audits: ${summary.total_audits}`);
-    console.log(`Entity Types: ${summary.entity_types}`);
-    console.log(`Batches Processed: ${summary.batches_processed}`);
-    console.log(
+    console.info("\n📊 Final Summary:");
+    console.info(`Total Audits: ${summary.total_audits}`);
+    console.info(`Entity Types: ${summary.entity_types}`);
+    console.info(`Batches Processed: ${summary.batches_processed}`);
+    console.info(
       `Overall Throughput: ${(summary.overall_throughput || 0).toFixed(2)} MB/s`
     );
-    console.log(
+    console.info(
       `Overall Success Rate: ${(summary.overall_success_rate || 0).toFixed(1)}%`
     );
 
-    console.log("\n✅ Enhanced CRC32 system is fully operational!");
+    console.info("\n✅ Enhanced CRC32 system is fully operational!");
   } catch (error) {
     console.error("❌ Demo failed:", error);
     process.exit(1);

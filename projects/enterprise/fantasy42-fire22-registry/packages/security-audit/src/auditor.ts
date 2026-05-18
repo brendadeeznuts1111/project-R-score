@@ -60,7 +60,7 @@ export class EnhancedFantasy42SecurityAuditor {
       const packagesToAudit = options.packages || (await this.discoverPackages());
       this.logTimeline('discovery_complete', `Discovered ${packagesToAudit.length} packages`);
 
-      console.log(
+      console.info(
         `🔍 Auditing ${packagesToAudit.length} packages with enterprise security standards...\n`
       );
 
@@ -70,7 +70,7 @@ export class EnhancedFantasy42SecurityAuditor {
         const packageDuration = Date.now() - packageStart;
 
         if (options.verbose) {
-          console.log(`   ⏱️  Package audit completed in ${packageDuration}ms`);
+          console.info(`   ⏱️  Package audit completed in ${packageDuration}ms`);
         }
       }
 
@@ -157,7 +157,7 @@ export class EnhancedFantasy42SecurityAuditor {
     const packageJsonPath = join(packagePath, 'package.json');
 
     if (!existsSync(packageJsonPath)) {
-      console.log(`⚠️  Skipping ${packagePath} - no package.json`);
+      console.info(`⚠️  Skipping ${packagePath} - no package.json`);
       return;
     }
 
@@ -166,7 +166,7 @@ export class EnhancedFantasy42SecurityAuditor {
       const packageName = packageJson.name || 'unknown';
       const packageVersion = packageJson.version || '0.0.0';
 
-      console.log(`🔍 Auditing: ${packageName}@${packageVersion}`);
+      console.info(`🔍 Auditing: ${packageName}@${packageVersion}`);
 
       const issues: SecurityIssue[] = [];
 
@@ -206,7 +206,7 @@ export class EnhancedFantasy42SecurityAuditor {
         this.auditResults.summary.vulnerablePackages++;
       }
 
-      console.log(`   📊 Score: ${score}/100 (${issues.length} issues found)`);
+      console.info(`   📊 Score: ${score}/100 (${issues.length} issues found)`);
     } catch (error) {
       console.error(`❌ Failed to audit package ${packagePath}:`, error);
     }
@@ -437,14 +437,14 @@ export class EnhancedFantasy42SecurityAuditor {
   }
 
   private async runDeepSecurityChecks(options: AuditOptions): Promise<void> {
-    console.log('🔬 Running deep security analysis...');
+    console.info('🔬 Running deep security analysis...');
 
     // Check infrastructure security
     const infraIssues = await this.checkInfrastructureSecurity();
     this.auditResults.issues.push(...infraIssues);
 
     // Additional deep analysis could go here
-    console.log('✅ Deep security analysis completed');
+    console.info('✅ Deep security analysis completed');
   }
 
   private async checkInfrastructureSecurity(): Promise<SecurityIssue[]> {

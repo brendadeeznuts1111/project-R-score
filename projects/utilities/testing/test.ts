@@ -1,1 +1,1 @@
-if (feature("DEBUG")) console.log("DEBUG_MODE"); else console.log("PROD");
+if (feature("DEBUG")) console.info("DEBUG_MODE"); else console.info("PROD");

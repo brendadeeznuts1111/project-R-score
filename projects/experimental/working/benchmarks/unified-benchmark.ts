@@ -2,7 +2,7 @@
 import { UnifiedQuantumSystem, MarketGame } from '../unified-system';
 
 async function runUnifiedBenchmarks() {
-  console.log('\n🏆 T3-Lattice v4.0 Comprehensive Performance Benchmark\n');
+  console.info('\n🏆 T3-Lattice v4.0 Comprehensive Performance Benchmark\n');
 
   const system = new UnifiedQuantumSystem();
   const iterations = 100;
@@ -126,10 +126,10 @@ async function runUnifiedBenchmarks() {
     });
   }
 
-  console.log(Bun.inspect.table(results));
+  console.info(Bun.inspect.table(results));
 
   // Comprehensive v4.0 Health Check
-  console.log('\n🔍 T3-Lattice v4.0 System Health Check\n');
+  console.info('\n🔍 T3-Lattice v4.0 System Health Check\n');
 
   const healthCheck = await system.comprehensiveHealthCheck();
 
@@ -146,11 +146,11 @@ async function runUnifiedBenchmarks() {
     { Component: 'Federated Model', Status: `Accuracy: ${(healthCheck.federatedLearning.globalModelAccuracy * 100).toFixed(1)}%` }
   ];
 
-  console.log(Bun.inspect.table(healthTable));
+  console.info(Bun.inspect.table(healthTable));
 
-  console.log(`\n📊 Overall System Status: ${healthCheck.overallStatus}`);
-  console.log(`📅 Last Disaster Recovery Backup: ${healthCheck.disasterRecovery.lastBackup.toISOString()}`);
-  console.log(`⏰ Health Check Timestamp: ${new Date(healthCheck.timestamp).toISOString()}`);
+  console.info(`\n📊 Overall System Status: ${healthCheck.overallStatus}`);
+  console.info(`📅 Last Disaster Recovery Backup: ${healthCheck.disasterRecovery.lastBackup.toISOString()}`);
+  console.info(`⏰ Health Check Timestamp: ${new Date(healthCheck.timestamp).toISOString()}`);
 }
 
 runUnifiedBenchmarks();

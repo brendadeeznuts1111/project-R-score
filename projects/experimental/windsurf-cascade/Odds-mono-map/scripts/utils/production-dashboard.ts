@@ -68,9 +68,9 @@ class ProductionDashboard {
      */
     async startDashboard(): Promise<void> {
         console.clear();
-        console.log(chalk.blue.bold('🏭 Real-World Production Dashboard'));
-        console.log(chalk.gray('Powered by Bun.inspect.table() + Bun.stringWidth() + Progress Bars'));
-        console.log(chalk.gray('═'.repeat(120)));
+        console.info(chalk.blue.bold('🏭 Real-World Production Dashboard'));
+        console.info(chalk.gray('Powered by Bun.inspect.table() + Bun.stringWidth() + Progress Bars'));
+        console.info(chalk.gray('═'.repeat(120)));
 
         // Start real-time updates
         this.startRealTimeUpdates();
@@ -118,16 +118,16 @@ class ProductionDashboard {
         const timestamp = this.metrics.timestamp.toLocaleString();
         const headerText = `🏭 Production Dashboard - ${timestamp}`;
 
-        console.log(chalk.blue.bold(headerText));
-        console.log(chalk.gray('═'.repeat(120)));
+        console.info(chalk.blue.bold(headerText));
+        console.info(chalk.gray('═'.repeat(120)));
     }
 
     /**
      * Display system overview with progress bars
      */
     private displaySystemOverview(): void {
-        console.log(chalk.cyan.bold('\n📊 System Overview'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.cyan.bold('\n📊 System Overview'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         const systemData = [
             {
@@ -171,7 +171,7 @@ class ProductionDashboard {
             'Status': item.status
         }));
 
-        console.log(Bun.inspect.table(systemMetrics, {}, {
+        console.info(Bun.inspect.table(systemMetrics, {}, {
             colors: true,
             maxStringLength: 20,
             compact: false
@@ -182,8 +182,8 @@ class ProductionDashboard {
      * Display template processing metrics
      */
     private displayTemplateMetrics(): void {
-        console.log(chalk.cyan.bold('\n📋 Template Processing'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.cyan.bold('\n📋 Template Processing'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         const templateData = [
             {
@@ -213,7 +213,7 @@ class ProductionDashboard {
             'Progress': `[${this.colorBar(item.progress, parseFloat(item.successRate))}]`
         }));
 
-        console.log(Bun.inspect.table(templateMetrics, {}, {
+        console.info(Bun.inspect.table(templateMetrics, {}, {
             colors: true,
             maxStringLength: 18,
             compact: false
@@ -224,8 +224,8 @@ class ProductionDashboard {
      * Display performance metrics
      */
     private displayPerformanceMetrics(): void {
-        console.log(chalk.cyan.bold('\n⚡ Performance Metrics'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.cyan.bold('\n⚡ Performance Metrics'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         const performanceData = [
             {
@@ -271,7 +271,7 @@ class ProductionDashboard {
             'Performance': `[${this.colorBar(item.bar, this.getPerformancePercentage(item.metric, item.value))}]`
         }));
 
-        console.log(Bun.inspect.table(performanceMetrics, {}, {
+        console.info(Bun.inspect.table(performanceMetrics, {}, {
             colors: true,
             maxStringLength: 16,
             compact: false
@@ -282,8 +282,8 @@ class ProductionDashboard {
      * Display alert summary
      */
     private displayAlertSummary(): void {
-        console.log(chalk.cyan.bold('\n🚨 Alert Summary'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.cyan.bold('\n🚨 Alert Summary'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         const alertData = [
             {
@@ -314,7 +314,7 @@ class ProductionDashboard {
             'Priority': item.count > 0 ? '🔴 Active' : '🟢 Clear'
         }));
 
-        console.log(Bun.inspect.table(alertMetrics, {}, {
+        console.info(Bun.inspect.table(alertMetrics, {}, {
             colors: true,
             maxStringLength: 20,
             compact: false
@@ -322,15 +322,15 @@ class ProductionDashboard {
 
         // Alert status bar
         const alertBar = this.createAlertBar();
-        console.log(chalk.gray(`\nAlert Status: ${alertBar}`));
+        console.info(chalk.gray(`\nAlert Status: ${alertBar}`));
     }
 
     /**
      * Display activity log
      */
     private displayActivityLog(): void {
-        console.log(chalk.cyan.bold('\n📝 Recent Activity'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.cyan.bold('\n📝 Recent Activity'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         const activities = this.generateRecentActivities();
 
@@ -341,7 +341,7 @@ class ProductionDashboard {
             'Details': activity.details
         }));
 
-        console.log(Bun.inspect.table(activityMetrics, {}, {
+        console.info(Bun.inspect.table(activityMetrics, {}, {
             colors: true,
             maxStringLength: 25,
             compact: false
@@ -352,9 +352,9 @@ class ProductionDashboard {
      * Display footer with controls
      */
     private displayFooter(): void {
-        console.log(chalk.gray('─'.repeat(120)));
-        console.log(chalk.blue('Controls: [Ctrl+C] Exit | [Space] Refresh | [R] Reset Metrics'));
-        console.log(chalk.gray(`Last Update: ${new Date().toLocaleTimeString()} | Next Update: 5s`));
+        console.info(chalk.gray('─'.repeat(120)));
+        console.info(chalk.blue('Controls: [Ctrl+C] Exit | [Space] Refresh | [R] Reset Metrics'));
+        console.info(chalk.gray(`Last Update: ${new Date().toLocaleTimeString()} | Next Update: 5s`));
     }
 
     /**
@@ -492,8 +492,8 @@ class ProductionDashboard {
         if (this.updateInterval) {
             clearInterval(this.updateInterval);
         }
-        console.log(chalk.yellow('\n👋 Production Dashboard shutting down...'));
-        console.log(chalk.green('✅ All services stopped gracefully'));
+        console.info(chalk.yellow('\n👋 Production Dashboard shutting down...'));
+        console.info(chalk.green('✅ All services stopped gracefully'));
         process.exit(0);
     }
 }
@@ -506,12 +506,12 @@ async function main(): Promise<void> {
     const args = process.argv.slice(2);
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('🏭 Real-World Production Dashboard'));
-        console.log(chalk.gray('Usage: bun production-dashboard.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
-        console.log(chalk.gray('  --demo       Run demo mode (single refresh)'));
-        console.log(chalk.gray('\nFeatures: Real-time monitoring, progress bars, table formatting'));
+        console.info(chalk.blue.bold('🏭 Real-World Production Dashboard'));
+        console.info(chalk.gray('Usage: bun production-dashboard.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.gray('  --demo       Run demo mode (single refresh)'));
+        console.info(chalk.gray('\nFeatures: Real-time monitoring, progress bars, table formatting'));
         process.exit(0);
     }
 

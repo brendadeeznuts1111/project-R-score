@@ -59,14 +59,14 @@ class TagValidator {
    * Validate all artifacts in the repository
    */
   async validate(options: ValidationOptions = {}): Promise<ValidationResult[]> {
-    console.log('🔍 Validating artifact tags...');
+    console.info('🔍 Validating artifact tags...');
     const startTime = Date.now();
 
     await this.scanArtifacts('./');
     this.analyzeResults();
 
     const elapsed = Date.now() - startTime;
-    console.log(`✅ Validated ${this.results.length} artifacts in ${elapsed}ms`);
+    console.info(`✅ Validated ${this.results.length} artifacts in ${elapsed}ms`);
 
     this.outputResults(options.output || 'table');
 
@@ -118,7 +118,7 @@ class TagValidator {
    * Fix common tag issues automatically
    */
   async fixIssues(): Promise<void> {
-    console.log('🔧 Fixing common tag issues...');
+    console.info('🔧 Fixing common tag issues...');
     
     let fixedCount = 0;
     for (const result of this.results) {
@@ -130,7 +130,7 @@ class TagValidator {
       }
     }
 
-    console.log(`✅ Fixed issues in ${fixedCount} artifacts`);
+    console.info(`✅ Fixed issues in ${fixedCount} artifacts`);
   }
 
   /**
@@ -408,12 +408,12 @@ class TagValidator {
     // Additional analysis can be added here
     const stats = this.getStats();
     
-    console.log(`\n📊 Validation Summary:`);
-    console.log(`  Total artifacts: ${stats.total}`);
-    console.log(`  Valid: ${stats.valid} (${stats.complianceRate}%)`);
-    console.log(`  Invalid: ${stats.invalid}`);
-    console.log(`  Errors: ${stats.errorCount}`);
-    console.log(`  Warnings: ${stats.warningCount}`);
+    console.info(`\n📊 Validation Summary:`);
+    console.info(`  Total artifacts: ${stats.total}`);
+    console.info(`  Valid: ${stats.valid} (${stats.complianceRate}%)`);
+    console.info(`  Invalid: ${stats.invalid}`);
+    console.info(`  Errors: ${stats.errorCount}`);
+    console.info(`  Warnings: ${stats.warningCount}`);
   }
 
   /**
@@ -422,7 +422,7 @@ class TagValidator {
   private outputResults(format: string): void {
     switch (format) {
       case 'json':
-        console.log(JSON.stringify(this.results, null, 2));
+        console.info(JSON.stringify(this.results, null, 2));
         break;
       case 'summary':
         this.outputSummary();
@@ -441,30 +441,30 @@ class TagValidator {
     const invalidResults = this.results.filter(r => !r.valid);
     
     if (invalidResults.length === 0) {
-      console.log('\n✅ All artifacts passed validation!');
+      console.info('\n✅ All artifacts passed validation!');
       return;
     }
 
-    console.log('\n❌ Validation Issues Found:');
-    console.log('─'.repeat(120));
+    console.info('\n❌ Validation Issues Found:');
+    console.info('─'.repeat(120));
 
     invalidResults.forEach((result, index) => {
-      console.log(`\n${index + 1}. ${result.path}`);
+      console.info(`\n${index + 1}. ${result.path}`);
       
       if (result.errors.length > 0) {
-        console.log('   Errors:');
-        result.errors.forEach(error => console.log(`     ❌ ${error}`));
+        console.info('   Errors:');
+        result.errors.forEach(error => console.info(`     ❌ ${error}`));
       }
       
       if (result.warnings.length > 0) {
-        console.log('   Warnings:');
-        result.warnings.forEach(warning => console.log(`     ⚠️  ${warning}`));
+        console.info('   Warnings:');
+        result.warnings.forEach(warning => console.info(`     ⚠️  ${warning}`));
       }
       
-      console.log(`   Tags: ${result.tags.join(', ') || 'None'}`);
+      console.info(`   Tags: ${result.tags.join(', ') || 'None'}`);
     });
 
-    console.log(`\nFound ${invalidResults.length} artifacts with issues`);
+    console.info(`\nFound ${invalidResults.length} artifacts with issues`);
   }
 
   /**
@@ -473,18 +473,18 @@ class TagValidator {
   private outputSummary(): void {
     const stats = this.getStats();
     
-    console.log('\n📊 Validation Summary:');
-    console.log(`  Total artifacts: ${stats.total}`);
-    console.log(`  Valid: ${stats.valid} (${stats.complianceRate}%)`);
-    console.log(`  Invalid: ${stats.invalid}`);
-    console.log(`  Errors: ${stats.errorCount}`);
-    console.log(`  Warnings: ${stats.warningCount}`);
+    console.info('\n📊 Validation Summary:');
+    console.info(`  Total artifacts: ${stats.total}`);
+    console.info(`  Valid: ${stats.valid} (${stats.complianceRate}%)`);
+    console.info(`  Invalid: ${stats.invalid}`);
+    console.info(`  Errors: ${stats.errorCount}`);
+    console.info(`  Warnings: ${stats.warningCount}`);
     
-    console.log('\n🏷️  Top Tags:');
+    console.info('\n🏷️  Top Tags:');
     Object.entries(stats.tagStats)
       .sort(([,a], [,b]) => b - a)
       .slice(0, 10)
-      .forEach(([tag, count]) => console.log(`  ${tag}: ${count}`));
+      .forEach(([tag, count]) => console.info(`  ${tag}: ${count}`));
   }
 
   /**
@@ -533,7 +533,7 @@ async function main() {
         break;
       case '--help':
       case '-h':
-        console.log(`
+        console.info(`
 🔍 Tag Validation CLI
 
 Usage: bun run scripts/validate-tags.ts [options]

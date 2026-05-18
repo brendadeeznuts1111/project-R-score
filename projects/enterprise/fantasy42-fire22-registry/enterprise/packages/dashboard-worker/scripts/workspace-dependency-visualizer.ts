@@ -39,8 +39,8 @@ class WorkspaceDependencyVisualizer {
    * 🚀 Generate all visualizations
    */
   async generateVisualizations(): Promise<void> {
-    console.log('🎨 Fire22 Workspace Dependency Visualizer');
-    console.log('='.repeat(60));
+    console.info('🎨 Fire22 Workspace Dependency Visualizer');
+    console.info('='.repeat(60));
 
     // Load workspace data
     await this.loadWorkspaceData();
@@ -51,7 +51,7 @@ class WorkspaceDependencyVisualizer {
     this.generateDependencyMatrix();
     await this.generateHTMLVisualization();
 
-    console.log('\n✅ Visualizations generated successfully!');
+    console.info('\n✅ Visualizations generated successfully!');
   }
 
   /**
@@ -153,8 +153,8 @@ class WorkspaceDependencyVisualizer {
    * 🌳 Generate ASCII dependency tree
    */
   private generateASCIITree(): void {
-    console.log('\n🌳 ASCII Dependency Tree');
-    console.log('-'.repeat(60));
+    console.info('\n🌳 ASCII Dependency Tree');
+    console.info('-'.repeat(60));
 
     const printed = new Set<string>();
 
@@ -164,11 +164,11 @@ class WorkspaceDependencyVisualizer {
 
       const connector = isLast ? '└── ' : '├── ';
       const sizeStr = node.size ? ` (${node.size}KB)` : '';
-      console.log(`${prefix}${connector}${node.displayName} v${node.version}${sizeStr}`);
+      console.info(`${prefix}${connector}${node.displayName} v${node.version}${sizeStr}`);
 
       if (printed.has(name)) {
         if (node.dependencies.length > 0) {
-          console.log(`${prefix}${isLast ? '    ' : '│   '}└── [circular reference]`);
+          console.info(`${prefix}${isLast ? '    ' : '│   '}└── [circular reference]`);
         }
         return;
       }
@@ -203,8 +203,8 @@ class WorkspaceDependencyVisualizer {
    * 📊 Generate Mermaid diagram
    */
   private generateMermaidDiagram(): void {
-    console.log('\n📊 Mermaid Diagram');
-    console.log('-'.repeat(60));
+    console.info('\n📊 Mermaid Diagram');
+    console.info('-'.repeat(60));
 
     const mermaid = ['graph TD'];
 
@@ -230,27 +230,27 @@ class WorkspaceDependencyVisualizer {
     }
 
     const mermaidContent = mermaid.join('\n');
-    console.log(mermaidContent);
+    console.info(mermaidContent);
 
     // Save to file
     const mermaidPath = join(process.cwd(), 'docs', 'workspace-dependencies.mmd');
     writeFileSync(mermaidPath, mermaidContent);
-    console.log(`\n💾 Mermaid diagram saved to: ${mermaidPath}`);
+    console.info(`\n💾 Mermaid diagram saved to: ${mermaidPath}`);
   }
 
   /**
    * 📊 Generate dependency matrix
    */
   private generateDependencyMatrix(): void {
-    console.log('\n📊 Dependency Matrix');
-    console.log('-'.repeat(60));
+    console.info('\n📊 Dependency Matrix');
+    console.info('-'.repeat(60));
 
     const names = Array.from(this.workspaces.keys());
     const shortNames = names.map(n => n.replace('@fire22/', ''));
 
     // Print header
-    console.log('         ', shortNames.map(n => n.substring(0, 8).padEnd(9)).join(''));
-    console.log('         ', shortNames.map(() => '---------').join(''));
+    console.info('         ', shortNames.map(n => n.substring(0, 8).padEnd(9)).join(''));
+    console.info('         ', shortNames.map(() => '---------').join(''));
 
     // Print matrix
     for (let i = 0; i < names.length; i++) {
@@ -269,10 +269,10 @@ class WorkspaceDependencyVisualizer {
         }
       }
 
-      console.log(shortNames[i].substring(0, 8).padEnd(9), row.join(''));
+      console.info(shortNames[i].substring(0, 8).padEnd(9), row.join(''));
     }
 
-    console.log('\nLegend: → depends on, ← depended by, • self');
+    console.info('\nLegend: → depends on, ← depended by, • self');
   }
 
   /**
@@ -538,7 +538,7 @@ class WorkspaceDependencyVisualizer {
 
     const htmlPath = join(process.cwd(), 'docs', 'workspace-dependencies.html');
     await Bun.write(htmlPath, html);
-    console.log(`\n🌐 HTML visualization saved to: ${htmlPath}`);
+    console.info(`\n🌐 HTML visualization saved to: ${htmlPath}`);
   }
 
   /**

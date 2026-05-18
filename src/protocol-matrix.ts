@@ -76,6 +76,7 @@ export const PROTOCOL_MATRIX: Record<Protocol, ProtocolConfig> = {
 export interface ExecuteRequest {
   data: unknown;
   size?: number;
+  key?: string;
   options?: {
     localOnly?: boolean;
     maxCost?: number;
@@ -97,10 +98,49 @@ const CACHE_TTL = 30_000;
 const MAX_CACHE_SIZE = 1_000;
 const MAX_CONCURRENT = 50;
 
+function fastHash(data: unknown): string {
+  const str = typeof data === "string" ? data : JSON.stringify(data);
+  if (str.length <= 64) return str;
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) + hash) ^ str.charCodeAt(i);
+  }
+  return `h${hash >>> 0}`;
+}
+
+class Semaphore {
+  private permits: number;
+  private waitQueue: Array<() => void> = [];
+
+  constructor(permits: number) {
+    this.permits = permits;
+  }
+
+  async acquire(): Promise<void> {
+    if (this.permits > 0) {
+      this.permits--;
+      return;
+    }
+    return new Promise((resolve) => {
+      this.waitQueue.push(resolve);
+    });
+  }
+
+  release(): void {
+    if (this.waitQueue.length > 0) {
+      const next = this.waitQueue.shift();
+      next?.();
+    } else {
+      this.permits++;
+    }
+  }
+}
+
+const semaphore = new Semaphore(MAX_CONCURRENT);
+
 export class ProtocolOrchestrator {
   private static cache = new Map<string, CacheEntry>();
   private static metrics = new Map<Protocol, number>();
-  private static activeConcurrent = 0;
   private static circuitBreaker: ProtocolCircuitBreaker | null = null;
 
   static setCircuitBreaker(cb: ProtocolCircuitBreaker): void {
@@ -127,10 +167,9 @@ export class ProtocolOrchestrator {
   }
 
   static async execute(request: ExecuteRequest): Promise<ExecuteResult> {
-    const cacheKey = JSON.stringify(request.data);
+    const cacheKey = request.key ?? fastHash(request.data);
     const useCache = request.options?.cache !== false;
 
-    // Check cache
     if (useCache) {
       const cached = this.cache.get(cacheKey);
       if (cached && cached.expires > Date.now()) {
@@ -138,13 +177,9 @@ export class ProtocolOrchestrator {
       }
     }
 
-    // Concurrency gate
-    while (this.activeConcurrent >= MAX_CONCURRENT) {
-      await Bun.sleep(1);
-    }
-    this.activeConcurrent++;
+    await semaphore.acquire();
 
-    const size = request.size ?? cacheKey.length;
+    const size = request.size ?? (typeof request.data === "string" ? request.data.length : JSON.stringify(request.data).length);
     const selected = request.options?.protocol
       ? { primary: request.options.protocol }
       : this.selectProtocol(size, request.options);
@@ -181,7 +216,6 @@ export class ProtocolOrchestrator {
         }
       }
 
-      // All protocols in chain failed
       const latency = performance.now() - start;
       return {
         success: false,
@@ -190,7 +224,7 @@ export class ProtocolOrchestrator {
         metadata: { latency, cacheHit: false },
       };
     } finally {
-      this.activeConcurrent--;
+      semaphore.release();
     }
   }
 
@@ -239,7 +273,6 @@ export class ProtocolOrchestrator {
   static reset(): void {
     this.cache.clear();
     this.metrics.clear();
-    this.activeConcurrent = 0;
     this.circuitBreaker?.resetAll();
   }
 

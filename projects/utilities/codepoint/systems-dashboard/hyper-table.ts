@@ -153,11 +153,11 @@ const sample = [
   { name: "Deno", speed: 1.2, memory: 65, rating: "🔥" },
 ];
 
-console.log("🎯 Hyper-Optimized Bun.inspect.table() Enhancement Demo");
-console.log("=====================================================");
+console.info("🎯 Hyper-Optimized Bun.inspect.table() Enhancement Demo");
+console.info("=====================================================");
 
-console.log("\n📊 Enhanced Table with Double Borders:");
-console.log(
+console.info("\n📊 Enhanced Table with Double Borders:");
+console.info(
   HyperTable.table(sample, {
     style: "d",
     color: "m",
@@ -167,20 +167,20 @@ console.log(
   })
 );
 
-console.log("\n📈 Matrix Format with Metrics:");
-console.log(HyperTable.matrix(sample, ["speed", "memory"]));
+console.info("\n📈 Matrix Format with Metrics:");
+console.info(HyperTable.matrix(sample, ["speed", "memory"]));
 
-console.log("\n🌳 Tree Structure:");
+console.info("\n🌳 Tree Structure:");
 const treeData = [
   { name: "src" },
   { name: "components" },
   { name: "utils" },
   { name: "styles" },
 ];
-console.log(HyperTable.tree(treeData));
+console.info(HyperTable.tree(treeData));
 
-console.log("\n🔍 Enhanced Bun.inspect:");
-console.log(HyperTable.inspect(sample, 3));
+console.info("\n🔍 Enhanced Bun.inspect:");
+console.info(HyperTable.inspect(sample, 3));
 
 // Custom Bun.inspect integration
 Object.defineProperty(Object.prototype, "toTable", {
@@ -191,8 +191,8 @@ Object.defineProperty(Object.prototype, "toTable", {
   configurable: true,
 });
 
-console.log("\n🎨 Custom toTable() Method:");
-console.log(sample.toTable({ style: "r", header: "By" }));
+console.info("\n🎨 Custom toTable() Method:");
+console.info(sample.toTable({ style: "r", header: "By" }));
 
 // Export for module use
 export { HyperTable };

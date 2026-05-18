@@ -104,38 +104,38 @@ class ProjectIntegration {
 	listProjects(): void {
 		if (!this.config) return;
 
-		console.log(`\n${COLORS.bold}📁 Projects${COLORS.reset}\n`);
+		console.info(`\n${COLORS.bold}📁 Projects${COLORS.reset}\n`);
 
 		for (const [name, project] of Object.entries(this.config.projects)) {
 			const isCurrent = name === this.currentProject;
 			const marker = isCurrent ? `${COLORS.yellow} ⭐${COLORS.reset}` : "";
 
-			console.log(`  ${COLORS.bold}${name}${COLORS.reset}${marker}`);
-			console.log(`     ${COLORS.gray}Path:${COLORS.reset} ${project.path}`);
+			console.info(`  ${COLORS.bold}${name}${COLORS.reset}${marker}`);
+			console.info(`     ${COLORS.gray}Path:${COLORS.reset} ${project.path}`);
 			if (project.repo) {
-				console.log(`     ${COLORS.gray}Repo:${COLORS.reset} ${project.repo}`);
+				console.info(`     ${COLORS.gray}Repo:${COLORS.reset} ${project.repo}`);
 			}
-			console.log(
+			console.info(
 				`     ${COLORS.gray}Default Topic:${COLORS.reset} ${project.default_topic}`,
 			);
-			console.log();
+			console.info();
 		}
 	}
 
 	listGroups(): void {
 		if (!this.config) return;
 
-		console.log(`\n${COLORS.bold}👥 Project Groups${COLORS.reset}\n`);
+		console.info(`\n${COLORS.bold}👥 Project Groups${COLORS.reset}\n`);
 
 		for (const [key, group] of Object.entries(this.config.groups)) {
-			console.log(`  ${COLORS.bold}${group.name}${COLORS.reset} (${key})`);
-			console.log(
+			console.info(`  ${COLORS.bold}${group.name}${COLORS.reset} (${key})`);
+			console.info(
 				`     ${COLORS.gray}Projects:${COLORS.reset} ${group.projects.join(", ")}`,
 			);
-			console.log(
+			console.info(
 				`     ${COLORS.gray}Topics:${COLORS.reset} ${group.topics.join(", ")}`,
 			);
-			console.log();
+			console.info();
 		}
 	}
 
@@ -154,17 +154,17 @@ class ProjectIntegration {
 			return;
 		}
 
-		console.log(`\n${COLORS.bold}📁 ${projectName}${COLORS.reset}\n`);
-		console.log(`  ${COLORS.gray}Path:${COLORS.reset} ${project.path}`);
-		console.log(
+		console.info(`\n${COLORS.bold}📁 ${projectName}${COLORS.reset}\n`);
+		console.info(`  ${COLORS.gray}Path:${COLORS.reset} ${project.path}`);
+		console.info(
 			`  ${COLORS.gray}Default Topic:${COLORS.reset} ${project.default_topic}`,
 		);
 
 		if (project.repo) {
-			console.log(`  ${COLORS.gray}Repository:${COLORS.reset} ${project.repo}`);
+			console.info(`  ${COLORS.gray}Repository:${COLORS.reset} ${project.repo}`);
 		}
 
-		console.log(`\n  ${COLORS.bold}Topic Mappings:${COLORS.reset}`);
+		console.info(`\n  ${COLORS.bold}Topic Mappings:${COLORS.reset}`);
 		const topicNames: Record<number, string> = {
 			1: "📢 General",
 			2: "🚨 Alerts",
@@ -175,22 +175,22 @@ class ProjectIntegration {
 		for (const [topicId, patterns] of Object.entries(project.topics)) {
 			const id = parseInt(topicId);
 			const name = topicNames[id] || `Topic ${id}`;
-			console.log(`    ${name}: ${patterns.join(", ")}`);
+			console.info(`    ${name}: ${patterns.join(", ")}`);
 		}
 
 		if (project.channels) {
-			console.log(`\n  ${COLORS.bold}Channels:${COLORS.reset}`);
+			console.info(`\n  ${COLORS.bold}Channels:${COLORS.reset}`);
 			for (const [channelName, channel] of Object.entries(project.channels)) {
-				console.log(`    ${channelName}: Topic ${channel.topic}`);
-				console.log(`      Patterns: ${channel.patterns.join(", ")}`);
+				console.info(`    ${channelName}: Topic ${channel.topic}`);
+				console.info(`      Patterns: ${channel.patterns.join(", ")}`);
 			}
 		}
 
-		console.log(`\n  ${COLORS.bold}Notifications:${COLORS.reset}`);
+		console.info(`\n  ${COLORS.bold}Notifications:${COLORS.reset}`);
 		for (const [type, enabled] of Object.entries(project.notifications)) {
 			const icon = enabled ? "✓" : "✗";
 			const color = enabled ? COLORS.green : COLORS.gray;
-			console.log(`    ${color}${icon}${COLORS.reset} ${type}`);
+			console.info(`    ${color}${icon}${COLORS.reset} ${type}`);
 		}
 	}
 
@@ -239,7 +239,7 @@ class ProjectIntegration {
 		// Check if notification is enabled
 		const notificationKey = `on_${event}`;
 		if (!project.notifications[notificationKey] && !project.notifications[event]) {
-			console.log(
+			console.info(
 				`${COLORS.gray}Notification disabled for ${event} in ${projectName}${COLORS.reset}`,
 			);
 			return;
@@ -258,10 +258,10 @@ class ProjectIntegration {
 
 			const topicId = webhook.topic || project.default_topic;
 
-			console.log(`\n${COLORS.bold}🔔 Notification for ${projectName}:${COLORS.reset}`);
-			console.log(`  Event: ${event}`);
-			console.log(`  Topic: ${topicId}`);
-			console.log(`  Message: ${message}`);
+			console.info(`\n${COLORS.bold}🔔 Notification for ${projectName}:${COLORS.reset}`);
+			console.info(`  Event: ${event}`);
+			console.info(`  Topic: ${topicId}`);
+			console.info(`  Message: ${message}`);
 		}
 	}
 
@@ -269,14 +269,14 @@ class ProjectIntegration {
 		const result = this.routeForProject(projectName, message, fileType);
 
 		if (result) {
-			console.log(`\n${COLORS.bold}Route Test:${COLORS.reset}`);
-			console.log(`  Project: ${projectName}`);
-			console.log(`  Message: ${message}`);
+			console.info(`\n${COLORS.bold}Route Test:${COLORS.reset}`);
+			console.info(`  Project: ${projectName}`);
+			console.info(`  Message: ${message}`);
 			if (fileType) {
-				console.log(`  File: ${fileType}`);
+				console.info(`  File: ${fileType}`);
 			}
-			console.log(`  → Topic ${result.topic}`);
-			console.log(`  Reason: ${result.reason}`);
+			console.info(`  → Topic ${result.topic}`);
+			console.info(`  Reason: ${result.reason}`);
 		} else {
 			console.error(`Could not route message for project: ${projectName}`);
 		}
@@ -312,10 +312,10 @@ async function main() {
 		case "current": {
 			const current = integration.getCurrentProject();
 			if (current) {
-				console.log(`${COLORS.green}Current project:${COLORS.reset} ${current}`);
+				console.info(`${COLORS.green}Current project:${COLORS.reset} ${current}`);
 				integration.showProject(current);
 			} else {
-				console.log(
+				console.info(
 					`${COLORS.yellow}No project detected for current directory${COLORS.reset}`,
 				);
 			}
@@ -357,15 +357,15 @@ async function main() {
 		}
 
 		default:
-			console.log(`${COLORS.bold}🔗 Project-Topic Integration${COLORS.reset}\n`);
-			console.log("Usage:");
-			console.log("  project-integration.ts list              List all projects");
-			console.log("  project-integration.ts groups            List project groups");
-			console.log("  project-integration.ts show [project]    Show project details");
-			console.log("  project-integration.ts current           Show current project");
-			console.log("  project-integration.ts route <p> <msg>   Test message routing");
-			console.log("  project-integration.ts notify <p> <e>    Send test notification");
-			console.log("\nProjects are automatically detected from current directory.");
+			console.info(`${COLORS.bold}🔗 Project-Topic Integration${COLORS.reset}\n`);
+			console.info("Usage:");
+			console.info("  project-integration.ts list              List all projects");
+			console.info("  project-integration.ts groups            List project groups");
+			console.info("  project-integration.ts show [project]    Show project details");
+			console.info("  project-integration.ts current           Show current project");
+			console.info("  project-integration.ts route <p> <msg>   Test message routing");
+			console.info("  project-integration.ts notify <p> <e>    Send test notification");
+			console.info("\nProjects are automatically detected from current directory.");
 	}
 }
 

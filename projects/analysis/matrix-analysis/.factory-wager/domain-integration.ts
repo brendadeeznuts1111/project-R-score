@@ -77,7 +77,7 @@ class FactoryWagerDomainIntegration {
   // ═══════════════════════════════════════════════════════════════════════════════
 
   async authenticateWithDomainAPI(endpoint: string, payload: any): Promise<Response> {
-    console.log(`🔐 Authenticating with ${this.config.domain} API...`);
+    console.info(`🔐 Authenticating with ${this.config.domain} API...`);
     
     // v1.3.8: Header case preserved exactly for domain compatibility
     const response = await fetch(`https://api.${this.config.domain}${endpoint}`, {
@@ -105,7 +105,7 @@ class FactoryWagerDomainIntegration {
       throw new Error(`Domain API authentication failed: ${response.status} ${response.statusText}`);
     }
 
-    console.log(`✅ Domain authentication successful for ${this.config.domain}`);
+    console.info(`✅ Domain authentication successful for ${this.config.domain}`);
     return response;
   }
 
@@ -114,7 +114,7 @@ class FactoryWagerDomainIntegration {
   // ═══════════════════════════════════════════════════════════════════════════════
 
   generateDashboardReport(data: any): string {
-    console.log(`📊 Generating dashboard report with v1.3.8 Bun.wrapAnsi()...`);
+    console.info(`📊 Generating dashboard report with v1.3.8 Bun.wrapAnsi()...`);
     
     const sections = [
       `🏭 FactoryWager Dashboard Report`,
@@ -155,7 +155,7 @@ class FactoryWagerDomainIntegration {
   // ═══════════════════════════════════════════════════════════════════════════════
 
   async generateAndStoreProfile(operation: string, configPath?: string): Promise<void> {
-    console.log(`📊 Generating v1.3.8 markdown profile for ${operation}...`);
+    console.info(`📊 Generating v1.3.8 markdown profile for ${operation}...`);
     
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const profileName = `${operation}-${this.config.environment}-${timestamp}`;
@@ -170,7 +170,7 @@ class FactoryWagerDomainIntegration {
       "--dry-run"
     ];
 
-    console.log(`🔬 Profile command: bun ${profileArgs.join(" ")}`);
+    console.info(`🔬 Profile command: bun ${profileArgs.join(" ")}`);
     
     // Simulate profile generation (in production, would execute actual profiling)
     const cpuProfile = this.generateCPUProfileMarkdown(profileName);
@@ -183,7 +183,7 @@ class FactoryWagerDomainIntegration {
     // Update dashboard with profile links
     await this.updateDashboardWithProfile(profileName);
     
-    console.log(`✅ Profile stored in bucket: ${this.config.buckets.metrics}`);
+    console.info(`✅ Profile stored in bucket: ${this.config.buckets.metrics}`);
   }
 
   private generateCPUProfileMarkdown(profileName: string): string {
@@ -238,7 +238,7 @@ Domain: ${this.config.domain}`;
 
   async storeProfileInBucket(bucketType: keyof typeof this.config.buckets, key: string, content: string): Promise<void> {
     const bucketName = this.config.buckets[bucketType];
-    console.log(`📦 Storing ${key} in bucket: ${bucketName}`);
+    console.info(`📦 Storing ${key} in bucket: ${bucketName}`);
     
     // Simulate R2 bucket storage (in production, would use actual R2 API)
     const storageData = {
@@ -267,7 +267,7 @@ Domain: ${this.config.domain}`;
     });
 
     if (response.ok) {
-      console.log(`✅ Successfully stored ${key} in ${bucketName}`);
+      console.info(`✅ Successfully stored ${key} in ${bucketName}`);
     } else {
       console.error(`❌ Failed to store ${key} in ${bucketName}: ${response.status}`);
     }
@@ -278,7 +278,7 @@ Domain: ${this.config.domain}`;
   // ═══════════════════════════════════════════════════════════════════════════════
 
   async updateDashboardWithProfile(profileName: string): Promise<void> {
-    console.log(`📊 Updating dashboard with profile: ${profileName}`);
+    console.info(`📊 Updating dashboard with profile: ${profileName}`);
     
     const dashboardData = {
       domain: this.config.domain,
@@ -306,15 +306,15 @@ Domain: ${this.config.domain}`;
     });
 
     if (response.ok) {
-      console.log(`✅ Dashboard updated with profile: ${profileName}`);
-      console.log(`📊 View at: ${this.config.dashboard.url}/profiles/${profileName}`);
+      console.info(`✅ Dashboard updated with profile: ${profileName}`);
+      console.info(`📊 View at: ${this.config.dashboard.url}/profiles/${profileName}`);
     } else {
       console.error(`❌ Failed to update dashboard: ${response.status}`);
     }
   }
 
   async getDashboardStatus(): Promise<any> {
-    console.log(`📊 Fetching dashboard status for ${this.config.domain}...`);
+    console.info(`📊 Fetching dashboard status for ${this.config.domain}...`);
     
     // v1.3.8: Header case preservation for dashboard status API
     const response = await fetch(`${this.config.dashboard}/api/status`, {
@@ -329,7 +329,7 @@ Domain: ${this.config.domain}`;
 
     if (response.ok) {
       const status = await response.json();
-      console.log(`✅ Dashboard status retrieved`);
+      console.info(`✅ Dashboard status retrieved`);
       return status;
     } else {
       throw new Error(`Failed to get dashboard status: ${response.status}`);
@@ -341,27 +341,27 @@ Domain: ${this.config.domain}`;
   // ═══════════════════════════════════════════════════════════════════════════════
 
   async demonstrateFullIntegration(): Promise<void> {
-    console.log(`🚀 FactoryWager v1.3.8 Domain Integration Demo`);
-    console.log(`==========================================`);
-    console.log(`Domain: ${this.config.domain}`);
-    console.log(`Environment: ${this.config.environment}`);
-    console.log(`Region: ${this.config.region}`);
-    console.log(`v1.3.8 Features: ${Object.values(this.config.features).filter(Boolean).length}/4 active`);
-    console.log("");
+    console.info(`🚀 FactoryWager v1.3.8 Domain Integration Demo`);
+    console.info(`==========================================`);
+    console.info(`Domain: ${this.config.domain}`);
+    console.info(`Environment: ${this.config.environment}`);
+    console.info(`Region: ${this.config.region}`);
+    console.info(`v1.3.8 Features: ${Object.values(this.config.features).filter(Boolean).length}/4 active`);
+    console.info("");
 
     // Strike 1: Header case preservation with domain API
-    console.log(`🔐 Strike 1: Domain API Authentication`);
+    console.info(`🔐 Strike 1: Domain API Authentication`);
     try {
       await this.authenticateWithDomainAPI("/auth/validate", {
         clientVersion: "CLI-v5.3",
         features: this.config.features
       });
     } catch (error) {
-      console.log(`⚠️  Domain API demo: ${(error as Error).message}`);
+      console.info(`⚠️  Domain API demo: ${(error as Error).message}`);
     }
 
     // Strike 2: ANSI wrapping for dashboard reports
-    console.log(`\n⚡ Strike 2: Dashboard Report Generation`);
+    console.info(`\n⚡ Strike 2: Dashboard Report Generation`);
     const reportData = {
       sections: [
         {
@@ -386,27 +386,27 @@ Domain: ${this.config.domain}`;
     };
 
     const dashboardReport = this.generateDashboardReport(reportData);
-    console.log(dashboardReport);
+    console.info(dashboardReport);
 
     // Strike 3: Markdown profiling with bucket storage
-    console.log(`📊 Strike 3: Profile Generation and Storage`);
+    console.info(`📊 Strike 3: Profile Generation and Storage`);
     await this.generateAndStoreProfile("domain-integration", "config.yaml");
 
     // Dashboard status
-    console.log(`\n📊 Dashboard Status:`);
+    console.info(`\n📊 Dashboard Status:`);
     try {
       const status = await this.getDashboardStatus();
-      console.log(`  Status: ${status.status || "Active"}`);
-      console.log(`  Profiles: ${status.profiles?.length || 0}`);
-      console.log(`  Last Update: ${status.lastUpdate || "Unknown"}`);
+      console.info(`  Status: ${status.status || "Active"}`);
+      console.info(`  Profiles: ${status.profiles?.length || 0}`);
+      console.info(`  Last Update: ${status.lastUpdate || "Unknown"}`);
     } catch (error) {
-      console.log(`  Status: Demo mode - ${this.config.dashboard.url}`);
+      console.info(`  Status: Demo mode - ${this.config.dashboard.url}`);
     }
 
-    console.log(`\n🎉 FactoryWager v1.3.8 Domain Integration Complete!`);
-    console.log(`🔗 All v1.3.8 features integrated with domain infrastructure`);
-    console.log(`📦 Profiles stored in R2 buckets with markdown format`);
-    console.log(`📊 Dashboard updated with real-time metrics`);
+    console.info(`\n🎉 FactoryWager v1.3.8 Domain Integration Complete!`);
+    console.info(`🔗 All v1.3.8 features integrated with domain infrastructure`);
+    console.info(`📦 Profiles stored in R2 buckets with markdown format`);
+    console.info(`📊 Dashboard updated with real-time metrics`);
   }
 }
 
@@ -419,7 +419,7 @@ async function main(): Promise<void> {
   const command = args[0];
   
   if (args.includes("--help") || args.includes("-h")) {
-    console.log(`
+    console.info(`
 🚀 FactoryWager v1.3.8 Domain Integration
 
 Usage:
@@ -462,14 +462,14 @@ v1.3.8 Features:
           items: ["Generated with v1.3.8 Bun.wrapAnsi()"]
         }]
       };
-      console.log(integration.generateDashboardReport(reportData));
+      console.info(integration.generateDashboardReport(reportData));
       break;
     case "profile":
       await integration.generateAndStoreProfile("manual-profile", args[1]);
       break;
     case "status":
       const status = await integration.getDashboardStatus();
-      console.log(JSON.stringify(status, null, 2));
+      console.info(JSON.stringify(status, null, 2));
       break;
     default:
       console.error("❌ Unknown command. Use --help for usage information.");

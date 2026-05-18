@@ -413,7 +413,7 @@ async function sendPTYNotification(
 ): Promise<void> {
   // This would integrate with Component #13 (PTY Terminal)
   // For now, simulate the notification
-  console.log(`📟 PTY Notification sent: ${JSON.stringify(message, null, 2)}`);
+  console.info(`📟 PTY Notification sent: ${JSON.stringify(message, null, 2)}`);
 }
 
 async function createQuantumAuditLog(
@@ -423,7 +423,7 @@ async function createQuantumAuditLog(
 
   // This would integrate with Component #24 (Versioning)
   // For now, simulate the audit logging
-  console.log(`🔐 Quantum Audit: ${entryId} - ${data.type}`);
+  console.info(`🔐 Quantum Audit: ${entryId} - ${data.type}`);
 
   return entryId;
 }

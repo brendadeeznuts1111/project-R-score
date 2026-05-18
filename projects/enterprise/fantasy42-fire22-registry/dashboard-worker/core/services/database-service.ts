@@ -31,7 +31,7 @@ export class DatabaseService extends BaseService {
     }
 
     await this.db.connect();
-    console.log('Database service initialized successfully');
+    console.info('Database service initialized successfully');
   }
 
   async cleanup(): Promise<void> {

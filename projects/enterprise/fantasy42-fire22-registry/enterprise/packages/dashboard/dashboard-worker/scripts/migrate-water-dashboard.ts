@@ -77,8 +77,8 @@ class Fire22WaterDashboardMigration {
   }
 
   async migrate(): Promise<MigrationResult> {
-    console.log(`🔥 Fire22 Water Dashboard Migration - ${this.config.environment.toUpperCase()}`);
-    console.log('='.repeat(80));
+    console.info(`🔥 Fire22 Water Dashboard Migration - ${this.config.environment.toUpperCase()}`);
+    console.info('='.repeat(80));
 
     try {
       this.result.timing.start = new Date();
@@ -94,7 +94,7 @@ class Fire22WaterDashboardMigration {
       await this.updateMetadata();
 
       this.result.success = true;
-      console.log('\n✅ Water Dashboard Migration Complete!');
+      console.info('\n✅ Water Dashboard Migration Complete!');
     } catch (error) {
       this.result.success = false;
       this.result.errors.push(error.toString());
@@ -419,7 +419,7 @@ class Fire22WaterDashboardMigration {
   }
 
   private async rollbackOnFailure(): Promise<void> {
-    console.log('\n🔄 Attempting rollback...');
+    console.info('\n🔄 Attempting rollback...');
 
     try {
       // Look for the most recent backup
@@ -431,15 +431,15 @@ class Fire22WaterDashboardMigration {
         .reverse();
 
       if (backupFiles.length === 0) {
-        console.log('⚠️  No backup found for rollback');
+        console.info('⚠️  No backup found for rollback');
         return;
       }
 
       const latestBackup = join(backupDir, backupFiles[0]);
-      console.log(`🔄 Rolling back to: ${latestBackup}`);
+      console.info(`🔄 Rolling back to: ${latestBackup}`);
 
       await $`wrangler d1 execute ${this.dbName} --file=${latestBackup}`;
-      console.log('✅ Rollback completed');
+      console.info('✅ Rollback completed');
     } catch (error) {
       console.error('❌ Rollback failed:', error);
     }
@@ -465,28 +465,28 @@ class Fire22WaterDashboardMigration {
     }
 
     // Print summary
-    console.log('\n📊 Migration Summary:');
-    console.log('='.repeat(50));
-    console.log(`Environment: ${this.config.environment}`);
-    console.log(`Database: ${this.dbName}`);
-    console.log(`Duration: ${this.result.timing.duration}ms`);
-    console.log(`Success: ${this.result.success ? '✅' : '❌'}`);
-    console.log(`Tables Created: ${this.result.statistics.tablesCreated}`);
-    console.log(`Indexes Created: ${this.result.statistics.indexesCreated}`);
-    console.log(`L-key Mappings: ${this.result.statistics.lKeyMappings}`);
-    console.log(`Sample Data Rows: ${this.result.statistics.sampleDataRows}`);
+    console.info('\n📊 Migration Summary:');
+    console.info('='.repeat(50));
+    console.info(`Environment: ${this.config.environment}`);
+    console.info(`Database: ${this.dbName}`);
+    console.info(`Duration: ${this.result.timing.duration}ms`);
+    console.info(`Success: ${this.result.success ? '✅' : '❌'}`);
+    console.info(`Tables Created: ${this.result.statistics.tablesCreated}`);
+    console.info(`Indexes Created: ${this.result.statistics.indexesCreated}`);
+    console.info(`L-key Mappings: ${this.result.statistics.lKeyMappings}`);
+    console.info(`Sample Data Rows: ${this.result.statistics.sampleDataRows}`);
 
     if (this.result.errors.length > 0) {
-      console.log(`\n❌ Errors (${this.result.errors.length}):`);
+      console.info(`\n❌ Errors (${this.result.errors.length}):`);
       this.result.errors.forEach((error, index) => {
-        console.log(`  ${index + 1}. ${error}`);
+        console.info(`  ${index + 1}. ${error}`);
       });
     }
   }
 
   private logOperation(message: string): void {
     if (this.config.verbose) {
-      console.log(message);
+      console.info(message);
     }
     this.result.operations.push(message);
   }
@@ -508,7 +508,7 @@ async function main() {
   };
 
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🔥 Fire22 Water Dashboard Migration Tool
 
 Usage: bun run migrate-water-dashboard.ts [environment] [options]
@@ -535,13 +535,13 @@ Examples:
     return;
   }
 
-  console.log(`🔥 Starting Water Dashboard Migration`);
-  console.log(`Environment: ${config.environment}`);
-  console.log(`Mode: ${config.dryRun ? 'DRY RUN' : 'LIVE MIGRATION'}`);
+  console.info(`🔥 Starting Water Dashboard Migration`);
+  console.info(`Environment: ${config.environment}`);
+  console.info(`Mode: ${config.dryRun ? 'DRY RUN' : 'LIVE MIGRATION'}`);
 
   if (config.forceRecreate && !config.dryRun) {
-    console.log('⚠️  WARNING: --force-recreate will destroy all data!');
-    console.log('Press Ctrl+C to cancel, or wait 5 seconds to continue...');
+    console.info('⚠️  WARNING: --force-recreate will destroy all data!');
+    console.info('Press Ctrl+C to cancel, or wait 5 seconds to continue...');
     await new Promise(resolve => setTimeout(resolve, 5000));
   }
 

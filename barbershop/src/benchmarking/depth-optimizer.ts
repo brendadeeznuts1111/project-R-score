@@ -307,7 +307,7 @@ export class AdaptiveDepthManager {
       });
       
       this.currentDepth = newDepth;
-      console.log(`🔧 Depth changed to ${newDepth}: ${reason}`);
+      console.info(`🔧 Depth changed to ${newDepth}: ${reason}`);
     }
   }
 
@@ -336,24 +336,24 @@ export class AdaptiveDepthManager {
  */
 export class DepthExplorer {
   static async interactive(): Promise<void> {
-    console.log('🎮 Interactive Depth Explorer');
-    console.log('='.repeat(50));
+    console.info('🎮 Interactive Depth Explorer');
+    console.info('='.repeat(50));
     
     const sampleData = this.generateSampleData();
     
     for (let depth = 1; depth <= 10; depth++) {
-      console.log(`\n🔍 Depth ${depth}:`);
-      console.log('-'.repeat(30));
+      console.info(`\n🔍 Depth ${depth}:`);
+      console.info('-'.repeat(30));
       
       // Show what this depth reveals
       const revealed = this.previewAtDepth(sampleData, depth);
-      console.log(revealed.preview);
+      console.info(revealed.preview);
       
-      console.log(`Visible levels: ${revealed.visibleLevels}/${revealed.totalLevels}`);
-      console.log(`Hidden: ${revealed.hiddenCount} items`);
+      console.info(`Visible levels: ${revealed.visibleLevels}/${revealed.totalLevels}`);
+      console.info(`Hidden: ${revealed.hiddenCount} items`);
       
       // Wait for user input (in real implementation)
-      console.log('Press Enter to continue...');
+      console.info('Press Enter to continue...');
       // await this.promptContinue();
     }
   }
@@ -526,10 +526,10 @@ echo "   On-error depth: ${config.onErrorDepth}"
     process.env.BENCHMARK_LOG_LEVEL = config.logLevel;
     process.env.BENCHMARK_ON_ERROR_DEPTH = config.onErrorDepth.toString();
     
-    console.log(`🔧 Applied ${this.detectEnvironment()} environment configuration:`);
-    console.log(`   Default depth: ${config.defaultDepth}`);
-    console.log(`   Max depth: ${config.maxDepth}`);
-    console.log(`   Log level: ${config.logLevel}`);
+    console.info(`🔧 Applied ${this.detectEnvironment()} environment configuration:`);
+    console.info(`   Default depth: ${config.defaultDepth}`);
+    console.info(`   Max depth: ${config.maxDepth}`);
+    console.info(`   Log level: ${config.logLevel}`);
   }
 }
 

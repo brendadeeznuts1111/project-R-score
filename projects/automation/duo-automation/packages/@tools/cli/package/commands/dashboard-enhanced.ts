@@ -23,8 +23,8 @@ dashboardCommand
     const startTime = Date.now();
     const timeout = parseInt(options.timeout || '5000');
     
-    console.log('🚀 Enhanced Dashboard Deploy');
-    console.log('═'.repeat(40));
+    console.info('🚀 Enhanced Dashboard Deploy');
+    console.info('═'.repeat(40));
     
     try {
       // Quick validation with timeout
@@ -34,33 +34,33 @@ dashboardCommand
         validation.errors.forEach(error => console.error(`  - ${error}`));
         
         if (process.env.NODE_ENV === 'test') {
-          console.log('🧪 Test mode: Continuing with mock deployment...');
+          console.info('🧪 Test mode: Continuing with mock deployment...');
         } else {
           process.exit(1);
         }
       }
       
-      console.log(`✅ Configuration valid for ${options.scope} scope`);
+      console.info(`✅ Configuration valid for ${options.scope} scope`);
       
       if (options.dryRun) {
-        console.log('🔍 Dry run mode - no actual deployment');
-        console.log('📁 Would deploy: ./demos/dashboard.html');
-        console.log('🎯 Target: R2 storage bucket');
-        console.log('⏱️ Estimated time: <2 seconds');
+        console.info('🔍 Dry run mode - no actual deployment');
+        console.info('📁 Would deploy: ./demos/dashboard.html');
+        console.info('🎯 Target: R2 storage bucket');
+        console.info('⏱️ Estimated time: <2 seconds');
         return;
       }
       
       // Mock deployment for testing
       if (process.env.NODE_ENV === 'test' || options.mock) {
-        console.log('🧪 Mock deployment mode');
+        console.info('🧪 Mock deployment mode');
         await mockDeployment();
       } else {
-        console.log('🌐 Real deployment mode');
+        console.info('🌐 Real deployment mode');
         await realDeployment(options);
       }
       
       const duration = Date.now() - startTime;
-      console.log(`⏱️ Completed in ${duration}ms`);
+      console.info(`⏱️ Completed in ${duration}ms`);
       
     } catch (error) {
       if (error instanceof Error && error.message.includes('timed out')) {
@@ -82,21 +82,21 @@ dashboardCommand
   .option('--port <port>', 'Port to serve on', '3000')
   .option('--mock', 'Use mock data')
   .action(async (options) => {
-    console.log(`🌐 Starting dashboard server on port ${options.port}`);
+    console.info(`🌐 Starting dashboard server on port ${options.port}`);
     
     if (options.mock) {
-      console.log('🧪 Mock data mode enabled');
+      console.info('🧪 Mock data mode enabled');
     }
     
     try {
       // Simple static server simulation
-      console.log('✅ Dashboard server ready');
-      console.log(`📱 Access at: http://localhost:${options.port}`);
-      console.log('🛑 Press Ctrl+C to stop');
+      console.info('✅ Dashboard server ready');
+      console.info(`📱 Access at: http://localhost:${options.port}`);
+      console.info('🛑 Press Ctrl+C to stop');
       
       // In real implementation, this would start a web server
       if (process.env.NODE_ENV !== 'test') {
-        console.log('🔄 Server running (mock mode - would start real server)');
+        console.info('🔄 Server running (mock mode - would start real server)');
       }
       
     } catch (error) {
@@ -110,8 +110,8 @@ dashboardCommand
   .command('health')
   .description('Check dashboard health and status')
   .action(async () => {
-    console.log('🏥 Dashboard Health Check');
-    console.log('═'.repeat(30));
+    console.info('🏥 Dashboard Health Check');
+    console.info('═'.repeat(30));
     
     const checks = [
       { name: 'Configuration', check: checkConfig },
@@ -124,17 +124,17 @@ dashboardCommand
       try {
         const result = await withTimeout(check(), 2000);
         if (result) {
-          console.log(`✅ ${name}: OK`);
+          console.info(`✅ ${name}: OK`);
           passed++;
         } else {
-          console.log(`❌ ${name}: FAILED`);
+          console.info(`❌ ${name}: FAILED`);
         }
       } catch (error) {
-        console.log(`⏰ ${name}: TIMEOUT`);
+        console.info(`⏰ ${name}: TIMEOUT`);
       }
     }
     
-    console.log(`📊 Health Score: ${passed}/${checks.length} (${Math.round(passed/checks.length * 100)}%)`);
+    console.info(`📊 Health Score: ${passed}/${checks.length} (${Math.round(passed/checks.length * 100)}%)`);
   });
 
 // Helper functions
@@ -152,17 +152,17 @@ async function validateConfiguration() {
 }
 
 async function mockDeployment() {
-  console.log('📦 Simulating deployment...');
+  console.info('📦 Simulating deployment...');
   await new Promise(resolve => setTimeout(resolve, 100)); // Simulate work
-  console.log('✅ Mock deployment successful');
-  console.log('📊 Assets deployed: dashboard.html, analytics.js, styles.css');
-  console.log('🎯 URL: https://dashboard.example.com');
+  console.info('✅ Mock deployment successful');
+  console.info('📊 Assets deployed: dashboard.html, analytics.js, styles.css');
+  console.info('🎯 URL: https://dashboard.example.com');
 }
 
 async function realDeployment(options: any) {
-  console.log('🔄 Starting real deployment...');
+  console.info('🔄 Starting real deployment...');
   // In real implementation, this would deploy to R2
-  console.log('✅ Real deployment successful');
+  console.info('✅ Real deployment successful');
 }
 
 async function checkConfig(): Promise<boolean> {

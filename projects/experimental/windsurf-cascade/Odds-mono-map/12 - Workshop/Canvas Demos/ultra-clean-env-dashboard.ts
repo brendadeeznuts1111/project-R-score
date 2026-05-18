@@ -67,7 +67,7 @@ class UltraCleanEnvDashboard {
             { key: "🆔 Project ID", value: this.env.PROJECT_ID || "Not set" }
         ];
 
-        console.log(Bun.inspect.table(configData, {
+        console.info(Bun.inspect.table(configData, {
             colors: true,
             compact: true,
             maxColumnWidth: 30,
@@ -89,7 +89,7 @@ class UltraCleanEnvDashboard {
             { key: "⏱️ Timeout", value: `${this.env.DB_TIMEOUT || "30000"}ms` }
         ];
 
-        console.log(Bun.inspect.table(dbData, {
+        console.info(Bun.inspect.table(dbData, {
             colors: true,
             compact: true,
             maxColumnWidth: 25,
@@ -125,7 +125,7 @@ class UltraCleanEnvDashboard {
             { key: "📝 Log Level", value: this.env.API_LOG_LEVEL || "info" }
         ];
 
-        console.log(Bun.inspect.table(apiData, {
+        console.info(Bun.inspect.table(apiData, {
             colors: true,
             compact: true,
             maxColumnWidth: 20,
@@ -145,7 +145,7 @@ class UltraCleanEnvDashboard {
             { key: "🐛 Dev Tools", value: this.getFeatureFlag('DEV_TOOLS') }
         ];
 
-        console.log(Bun.inspect.table(featureData, {
+        console.info(Bun.inspect.table(featureData, {
             colors: true,
             compact: true,
             maxColumnWidth: 20,
@@ -165,7 +165,7 @@ class UltraCleanEnvDashboard {
             { key: "📦 Package Manager", value: "bun" }
         ];
 
-        console.log(Bun.inspect.table(bunData, {
+        console.info(Bun.inspect.table(bunData, {
             colors: true,
             compact: true,
             maxColumnWidth: 20,
@@ -185,7 +185,7 @@ class UltraCleanEnvDashboard {
             { key: "🛡️ Security Headers", value: this.env.SECURITY_HEADERS === "true" ? "🟢 Enabled" : "🔴 Disabled" }
         ];
 
-        console.log(Bun.inspect.table(securityData, {
+        console.info(Bun.inspect.table(securityData, {
             colors: true,
             compact: true,
             maxColumnWidth: 20,
@@ -216,7 +216,7 @@ class UltraCleanEnvDashboard {
             { code: 'const required = Bun.env.REQUIRED_VAR!;', description: 'non-null assertion' }
         ];
 
-        console.log(Bun.inspect.table(examples, {
+        console.info(Bun.inspect.table(examples, {
             colors: true,
             compact: true,
             maxColumnWidth: 50,
@@ -224,7 +224,7 @@ class UltraCleanEnvDashboard {
         }));
 
         // Interface example
-        console.log('\n📝 Type-Safe Interface:');
+        console.info('\n📝 Type-Safe Interface:');
         const interfaceExample = `
 interface EnvConfig {
   PROJECT_NAME: string;
@@ -239,7 +239,7 @@ const config: EnvConfig = {
   API_TIMEOUT: parseInt(Bun.env.API_TIMEOUT || "5000"),
   DB_URL: Bun.env.DB_URL || "postgres://localhost:5432/default"
 };`;
-        console.log(interfaceExample);
+        console.info(interfaceExample);
     }
 
     private displayUsagePatterns(): void {
@@ -253,7 +253,7 @@ const config: EnvConfig = {
             { pattern: 'Required Vars', example: 'const required = ["DB_URL", "API_KEY"].filter(key => !Bun.env[key])' }
         ];
 
-        console.log(Bun.inspect.table(patterns, {
+        console.info(Bun.inspect.table(patterns, {
             colors: true,
             compact: true,
             maxColumnWidth: 25,
@@ -275,7 +275,7 @@ const config: EnvConfig = {
             { key: "💡 Recommendations", value: validation.recommendations.length.toString() }
         ];
 
-        console.log(Bun.inspect.table(validationData, {
+        console.info(Bun.inspect.table(validationData, {
             colors: true,
             compact: true,
             maxColumnWidth: 20,
@@ -283,14 +283,14 @@ const config: EnvConfig = {
         }));
 
         if (validation.missingVars.length > 0) {
-            console.log('\n❌ Missing Required Variables:');
+            console.info('\n❌ Missing Required Variables:');
             const missingData = validation.missingVars.map((varName, index) => ({
                 '#': (index + 1).toString(),
                 'Variable': varName,
                 'Type': 'Required'
             }));
 
-            console.log(Bun.inspect.table(missingData, {
+            console.info(Bun.inspect.table(missingData, {
                 colors: true,
                 compact: true,
                 maxColumnWidth: 15,
@@ -299,13 +299,13 @@ const config: EnvConfig = {
         }
 
         if (validation.warnings.length > 0) {
-            console.log('\n⚠️ Configuration Warnings:');
+            console.info('\n⚠️ Configuration Warnings:');
             const warningData = validation.warnings.map((warning, index) => ({
                 '#': (index + 1).toString(),
                 'Warning': warning
             }));
 
-            console.log(Bun.inspect.table(warningData, {
+            console.info(Bun.inspect.table(warningData, {
                 colors: true,
                 compact: true,
                 maxColumnWidth: 50,
@@ -314,13 +314,13 @@ const config: EnvConfig = {
         }
 
         if (validation.recommendations.length > 0) {
-            console.log('\n💡 Recommendations:');
+            console.info('\n💡 Recommendations:');
             const recommendationData = validation.recommendations.map((rec, index) => ({
                 '#': (index + 1).toString(),
                 'Recommendation': rec
             }));
 
-            console.log(Bun.inspect.table(recommendationData, {
+            console.info(Bun.inspect.table(recommendationData, {
                 colors: true,
                 compact: true,
                 maxColumnWidth: 50,
@@ -346,7 +346,7 @@ const config: EnvConfig = {
             { key: "💻 Platform", value: process.platform }
         ];
 
-        console.log(Bun.inspect.table(metricsData, {
+        console.info(Bun.inspect.table(metricsData, {
             colors: true,
             compact: true,
             maxColumnWidth: 20,
@@ -355,13 +355,13 @@ const config: EnvConfig = {
 
         const nextSteps = this.getNextSteps();
         if (nextSteps.length > 0) {
-            console.log('\n🎯 Next Steps:');
+            console.info('\n🎯 Next Steps:');
             const stepsData = nextSteps.map((step, index) => ({
                 '#': (index + 1).toString(),
                 'Action': step
             }));
 
-            console.log(Bun.inspect.table(stepsData, {
+            console.info(Bun.inspect.table(stepsData, {
                 colors: true,
                 compact: true,
                 maxColumnWidth: 50,
@@ -524,8 +524,8 @@ class UltraCleanEnvManager {
                 'Required': 'Yes'
             }));
 
-            console.log('❌ Environment validation failed:');
-            console.log(Bun.inspect.table(missingData, {
+            console.info('❌ Environment validation failed:');
+            console.info(Bun.inspect.table(missingData, {
                 colors: true,
                 compact: true,
                 maxColumnWidth: 20,
@@ -546,7 +546,7 @@ class UltraCleanEnvManager {
             { key: "🚀 Feature Flags", value: this.getArray('FEATURE_FLAGS').join(', ') || 'None' }
         ];
 
-        console.log(Bun.inspect.table(usageData, {
+        console.info(Bun.inspect.table(usageData, {
             colors: true,
             compact: true,
             maxColumnWidth: 20,

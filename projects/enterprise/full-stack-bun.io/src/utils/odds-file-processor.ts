@@ -46,7 +46,7 @@ export async function processOddsFile(
 					await mlgs.buildFullGraph(odds.league);
 					
 					arbs++;
-					console.log('%j', {
+					console.info('%j', {
 						arb_found: true,
 						league: odds.league,
 						market: odds.market,
@@ -197,7 +197,7 @@ export async function watchOddsFile(
 
 	// Cleanup on abort
 	if (signal?.aborted) {
-		console.log('%j', {
+		console.info('%j', {
 			watch_stopped: true,
 			file_path: filePath,
 			reason: 'AbortSignal received'

@@ -124,7 +124,7 @@ export class IstioControlPlaneManager {
   }
 
   public async deployControlPlane(config: ServiceMeshConfiguration): Promise<DeploymentResult> {
-    console.log(`🚀 Deploying Istio Control Plane v${this._istioVersion}`);
+    console.info(`🚀 Deploying Istio Control Plane v${this._istioVersion}`);
 
     if (this._coordinator) {
       this._coordinator.registerComponent('service-mesh', {
@@ -189,7 +189,7 @@ export class IstioControlPlaneManager {
   }
 
   private async _validatePrerequisites(): Promise<void> {
-    console.log('  📋 Validating prerequisites...');
+    console.info('  📋 Validating prerequisites...');
 
     // Check Kubernetes cluster connectivity using Bun-native shell execution
     const clusterResult = await BunShellExecutor.kubectl('cluster-info');
@@ -203,11 +203,11 @@ export class IstioControlPlaneManager {
     // Check resource availability
     this._validateResourceAvailability();
 
-    console.log('  ✅ Prerequisites validated');
+    console.info('  ✅ Prerequisites validated');
   }
 
   private async _deployIstioOperator(): Promise<void> {
-    console.log('  📦 Deploying Istio operator...');
+    console.info('  📦 Deploying Istio operator...');
 
     const operatorYaml = this._generateOperatorYaml();
     const applyResult = await BunShellExecutor.kubectl(`apply -f - <<EOF
@@ -222,7 +222,7 @@ EOF`);
   }
 
   private async _deployIstioControlPlane(config: ServiceMeshConfiguration): Promise<void> {
-    console.log('  ⚙️ Deploying Istio control plane...');
+    console.info('  ⚙️ Deploying Istio control plane...');
 
     const controlPlaneYaml = this._configurationManager.generateControlPlaneConfig(config);
     const applyResult = await BunShellExecutor.kubectl(`apply -f - <<EOF
@@ -237,7 +237,7 @@ EOF`);
   }
 
   private async _configurePrometheusIntegration(): Promise<void> {
-    console.log('  📊 Configuring Prometheus integration...');
+    console.info('  📊 Configuring Prometheus integration...');
 
     const prometheusConfig = `
 apiVersion: install.istio.io/v1alpha1
@@ -270,7 +270,7 @@ EOF`);
   }
 
   private async _configureJaegerIntegration(): Promise<void> {
-    console.log('  🔍 Configuring Jaeger tracing...');
+    console.info('  🔍 Configuring Jaeger tracing...');
 
     const jaegerConfig = `
 apiVersion: telemetry.istio.io/v1alpha1
@@ -304,12 +304,12 @@ EOF`);
     ];
 
     // Implementation would validate actual permissions
-    console.log('  🔐 Cluster permissions validated');
+    console.info('  🔐 Cluster permissions validated');
   }
 
   private _validateResourceAvailability(): void {
     // Check CPU and memory availability
-    console.log('  💾 Resource availability validated');
+    console.info('  💾 Resource availability validated');
   }
 
   private _generateOperatorYaml(): string {
@@ -336,7 +336,7 @@ spec:
       if (result.success) {
         const readyReplicas = parseInt(result.output.trim());
         if (readyReplicas > 0) {
-          console.log(`  ✅ Deployment ${deploymentName} ready`);
+          console.info(`  ✅ Deployment ${deploymentName} ready`);
           return;
         }
       }
@@ -368,7 +368,7 @@ export class ServiceMeshInterfaceManager {
   }
 
   public async applyTrafficPolicy(policy: TrafficPolicy): Promise<PolicyApplicationResult> {
-    console.log(`🚦 Applying SMI traffic policy: ${policy.policyName}`);
+    console.info(`🚦 Applying SMI traffic policy: ${policy.policyName}`);
 
     try {
       // Generate SMI traffic split resource
@@ -401,7 +401,7 @@ EOF`);
   }
 
   public async configureServiceIdentity(endpoint: MeshEndpoint): Promise<IdentityConfigurationResult> {
-    console.log(`🆔 Configuring SMI service identity: ${endpoint.serviceName}`);
+    console.info(`🆔 Configuring SMI service identity: ${endpoint.serviceName}`);
 
     const identityConfig = await this._serviceIdentityManager.configure(endpoint);
 

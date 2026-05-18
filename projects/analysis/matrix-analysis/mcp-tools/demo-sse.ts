@@ -4,15 +4,15 @@
 import { createSSEAlertServer, broadcastViolation } from './sse-alerts.js';
 import { exec } from 'child_process';
 
-console.log('🚀 Tier-1380 SSE Live Violation Alerts - Complete Demo');
-console.log('=' .repeat(60));
+console.info('🚀 Tier-1380 SSE Live Violation Alerts - Complete Demo');
+console.info('=' .repeat(60));
 
 // Start the SSE server
 const server = createSSEAlertServer();
 
 // Wait a moment for server to start
 setTimeout(async () => {
-  console.log('\n📡 Demo: Simulating violations...\n');
+  console.info('\n📡 Demo: Simulating violations...\n');
   
   // Simulate various violations
   const violations = [
@@ -64,26 +64,26 @@ setTimeout(async () => {
     await new Promise(resolve => setTimeout(resolve, 1500));
   }
 
-  console.log('\n✅ Demo completed! Check:');
-  console.log('   📊 Dashboard: http://localhost:1381/dashboard.html');
-  console.log('   🔌 SSE Stream: http://localhost:1381/mcp/alerts/stream');
-  console.log('   🧪 Test Endpoint: http://localhost:1381/mcp/alerts/test');
-  console.log('   📱 CLI Monitor: bun run monitor-violations.ts');
+  console.info('\n✅ Demo completed! Check:');
+  console.info('   📊 Dashboard: http://localhost:1381/dashboard.html');
+  console.info('   🔌 SSE Stream: http://localhost:1381/mcp/alerts/stream');
+  console.info('   🧪 Test Endpoint: http://localhost:1381/mcp/alerts/test');
+  console.info('   📱 CLI Monitor: bun run monitor-violations.ts');
   
-  console.log('\n🎯 Next Steps:');
-  console.log('   1. Open dashboard.html in your browser');
-  console.log('   2. Run CLI monitor in another terminal');
-  console.log('   3. Trigger test violations via dashboard');
-  console.log('   4. Watch real-time updates across all clients');
+  console.info('\n🎯 Next Steps:');
+  console.info('   1. Open dashboard.html in your browser');
+  console.info('   2. Run CLI monitor in another terminal');
+  console.info('   3. Trigger test violations via dashboard');
+  console.info('   4. Watch real-time updates across all clients');
 
 }, 2000);
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n👋 Shutting down SSE demo server...');
+  console.info('\n👋 Shutting down SSE demo server...');
   server.stop();
   process.exit(0);
 });
 
 // Keep the process alive
-console.log('⏳ Server starting...');
+console.info('⏳ Server starting...');

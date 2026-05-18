@@ -30,7 +30,7 @@ const c = {
 };
 
 function printBanner() {
-  console.log(c.gold(`
+  console.info(c.gold(`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                                                              ║
 ║   ███████╗██╗     ██╗████████╗███████╗    ██╗   ██╗    ██╗    ███████╗       ║
@@ -51,21 +51,21 @@ function printBanner() {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function showcaseAdvancedBunApis() {
-  console.log(c.bold(c.cyan('\n┌─ 1. ADVANCED BUN APIS ──────────────────────────────────────────────────┐\n')));
+  console.info(c.bold(c.cyan('\n┌─ 1. ADVANCED BUN APIS ──────────────────────────────────────────────────┐\n')));
   
   // Bun.main
-  console.log(c.yellow('  📍 Bun.main Module Detection'));
-  console.log(`     Is main: ${c.green(import.meta.main.toString())}`);
-  console.log(`     File path: ${c.green(import.meta.file)}`);
-  console.log(`     Directory: ${c.green(import.meta.dir)}`);
+  console.info(c.yellow('  📍 Bun.main Module Detection'));
+  console.info(`     Is main: ${c.green(import.meta.main.toString())}`);
+  console.info(`     File path: ${c.green(import.meta.file)}`);
+  console.info(`     Directory: ${c.green(import.meta.dir)}`);
   
   // Bun.version
-  console.log(c.yellow('\n  📦 Bun.version Information'));
-  console.log(`     Bun version: ${c.green(Bun.version)}`);
-  console.log(`     Revision: ${c.green(Bun.revision.slice(0, 16))}...`);
+  console.info(c.yellow('\n  📦 Bun.version Information'));
+  console.info(`     Bun version: ${c.green(Bun.version)}`);
+  console.info(`     Revision: ${c.green(Bun.revision.slice(0, 16))}...`);
   
   // Memory usage
-  console.log(c.yellow('\n  💾 Bun.gc() Memory Management'));
+  console.info(c.yellow('\n  💾 Bun.gc() Memory Management'));
   const memBefore = process.memoryUsage();
   
   // Create some garbage
@@ -83,33 +83,33 @@ async function showcaseAdvancedBunApis() {
   
   const memAfter = process.memoryUsage();
   
-  console.log(`     Heap before: ${c.green(formatBytes(memBefore.heapUsed))}`);
-  console.log(`     Heap during: ${c.yellow(formatBytes(memDuring.heapUsed))}`);
-  console.log(`     Heap after:  ${c.green(formatBytes(memAfter.heapUsed))}`);
+  console.info(`     Heap before: ${c.green(formatBytes(memBefore.heapUsed))}`);
+  console.info(`     Heap during: ${c.yellow(formatBytes(memDuring.heapUsed))}`);
+  console.info(`     Heap after:  ${c.green(formatBytes(memAfter.heapUsed))}`);
   
   // Deep clone
-  console.log(c.yellow('\n  📋 Structured Clone Deep Copying'));
+  console.info(c.yellow('\n  📋 Structured Clone Deep Copying'));
   const original = { nested: { array: [1, 2, 3], date: new Date() } };
   const cloned = structuredClone(original);
   cloned.nested.array.push(4);
   
-  console.log(`     Original array length: ${c.green(original.nested.array.length.toString())}`);
-  console.log(`     Cloned array length:   ${c.green(cloned.nested.array.length.toString())}`);
+  console.info(`     Original array length: ${c.green(original.nested.array.length.toString())}`);
+  console.info(`     Cloned array length:   ${c.green(cloned.nested.array.length.toString())}`);
   
   // String width
-  console.log(c.yellow('\n  📏 Bun.stringWidth Unicode Support'));
+  console.info(c.yellow('\n  📏 Bun.stringWidth Unicode Support'));
   const strings = ['Hello', '日本語', '🎉 Party', '✂️ Barber'];
   for (const str of strings) {
     const width = Bun.stringWidth(str);
-    console.log(`     "${str}" width: ${c.green(width.toString())}`);
+    console.info(`     "${str}" width: ${c.green(width.toString())}`);
   }
   
   // S3Client detection
-  console.log(c.yellow('\n  ☁️  Bun.S3Client Cloud Storage'));
+  console.info(c.yellow('\n  ☁️  Bun.S3Client Cloud Storage'));
   const hasS3 = typeof Bun.S3Client === 'function';
-  console.log(`     S3Client available: ${hasS3 ? c.green('YES ✓') : c.red('NO ✗')}`);
+  console.info(`     S3Client available: ${hasS3 ? c.green('YES ✓') : c.red('NO ✗')}`);
   
-  console.log();
+  console.info();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -117,13 +117,13 @@ async function showcaseAdvancedBunApis() {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function showcaseWasmEngine() {
-  console.log(c.bold(c.cyan('┌─ 2. WEBASSEMBLY COMPUTE ENGINE ─────────────────────────────────────────┐\n')));
+  console.info(c.bold(c.cyan('┌─ 2. WEBASSEMBLY COMPUTE ENGINE ─────────────────────────────────────────┐\n')));
   
-  console.log(c.yellow('  🚀 Initializing WASM Engine...'));
+  console.info(c.yellow('  🚀 Initializing WASM Engine...'));
   
   // Generate large dataset
   const dataSize = 5_000_000;
-  console.log(`     Generating ${c.green(dataSize.toLocaleString())} data points...`);
+  console.info(`     Generating ${c.green(dataSize.toLocaleString())} data points...`);
   
   const data = new Float64Array(dataSize);
   for (let i = 0; i < data.length; i++) {
@@ -131,23 +131,23 @@ async function showcaseWasmEngine() {
   }
   
   // SIMD-optimized statistics
-  console.log(c.yellow('\n  ⚡ SIMD-Optimized Statistics'));
+  console.info(c.yellow('\n  ⚡ SIMD-Optimized Statistics'));
   const startNs = nanoseconds();
   const stats = wasmEngine.fastStats(data);
   const elapsedNs = nanoseconds() - startNs;
   
-  console.log(`     Computed in: ${c.green((elapsedNs / 1e6).toFixed(2))}ms`);
-  console.log(`     Throughput:  ${c.green((dataSize / (elapsedNs / 1e9)).toFixed(0))} ops/sec`);
-  console.log();
-  console.log(`     Mean:   ${c.cyan(stats.mean.toFixed(4))}`);
-  console.log(`     StdDev: ${c.cyan(stats.stdDev.toFixed(4))}`);
-  console.log(`     Min:    ${c.cyan(stats.min.toFixed(4))}`);
-  console.log(`     Max:    ${c.cyan(stats.max.toFixed(4))}`);
-  console.log(`     P95:    ${c.cyan(stats.p95.toFixed(4))}`);
-  console.log(`     P99:    ${c.cyan(stats.p99.toFixed(4))}`);
+  console.info(`     Computed in: ${c.green((elapsedNs / 1e6).toFixed(2))}ms`);
+  console.info(`     Throughput:  ${c.green((dataSize / (elapsedNs / 1e9)).toFixed(0))} ops/sec`);
+  console.info();
+  console.info(`     Mean:   ${c.cyan(stats.mean.toFixed(4))}`);
+  console.info(`     StdDev: ${c.cyan(stats.stdDev.toFixed(4))}`);
+  console.info(`     Min:    ${c.cyan(stats.min.toFixed(4))}`);
+  console.info(`     Max:    ${c.cyan(stats.max.toFixed(4))}`);
+  console.info(`     P95:    ${c.cyan(stats.p95.toFixed(4))}`);
+  console.info(`     P99:    ${c.cyan(stats.p99.toFixed(4))}`);
   
   // Parallel batch processing
-  console.log(c.yellow('\n  🔄 Parallel Batch Processing'));
+  console.info(c.yellow('\n  🔄 Parallel Batch Processing'));
   const items = Array.from({ length: 50000 }, (_, i) => i);
   
   const batchStartNs = nanoseconds();
@@ -158,11 +158,11 @@ async function showcaseWasmEngine() {
   );
   const batchElapsedNs = nanoseconds() - batchStartNs;
   
-  console.log(`     Processed ${c.green(results.length.toLocaleString())} items`);
-  console.log(`     Time: ${c.green((batchElapsedNs / 1e6).toFixed(2))}ms`);
-  console.log(`     Rate: ${c.green((results.length / (batchElapsedNs / 1e9)).toFixed(0))} ops/sec`);
+  console.info(`     Processed ${c.green(results.length.toLocaleString())} items`);
+  console.info(`     Time: ${c.green((batchElapsedNs / 1e6).toFixed(2))}ms`);
+  console.info(`     Rate: ${c.green((results.length / (batchElapsedNs / 1e9)).toFixed(0))} ops/sec`);
   
-  console.log();
+  console.info();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -170,12 +170,12 @@ async function showcaseWasmEngine() {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function showcaseStreamingPipeline() {
-  console.log(c.bold(c.cyan('┌─ 3. ELITE STREAMING PIPELINE ───────────────────────────────────────────┐\n')));
+  console.info(c.bold(c.cyan('┌─ 3. ELITE STREAMING PIPELINE ───────────────────────────────────────────┐\n')));
   
   const pipeline = new EliteStreamingPipeline();
   
   // JSON Lines streaming
-  console.log(c.yellow('  📡 JSON Lines Streaming'));
+  console.info(c.yellow('  📡 JSON Lines Streaming'));
   
   const events = [
     { type: 'ticket_created', id: 1, amount: 45.00, timestamp: Date.now() },
@@ -198,11 +198,11 @@ async function showcaseStreamingPipeline() {
   let count = 0;
   for await (const event of pipeline.streamJSONLines<typeof events[0]>(jsonStream)) {
     count++;
-    console.log(`     [${count}] ${c.green(event.type)}:`, JSON.stringify(event).slice(0, 60));
+    console.info(`     [${count}] ${c.green(event.type)}:`, JSON.stringify(event).slice(0, 60));
   }
   
   // Compression streaming
-  console.log(c.yellow('\n  🗜️  Compression Streaming'));
+  console.info(c.yellow('\n  🗜️  Compression Streaming'));
   
   const testData = JSON.stringify({ 
     barbers: Array.from({ length: 1000 }, (_, i) => ({
@@ -232,18 +232,18 @@ async function showcaseStreamingPipeline() {
   const originalSize = testData.length;
   const ratio = ((compressedSize / originalSize) * 100).toFixed(1);
   
-  console.log(`     Original:  ${c.cyan(formatBytes(originalSize))}`);
-  console.log(`     Compressed: ${c.cyan(formatBytes(compressedSize))}`);
-  console.log(`     Ratio:      ${c.green(ratio + '%')}`);
+  console.info(`     Original:  ${c.cyan(formatBytes(originalSize))}`);
+  console.info(`     Compressed: ${c.cyan(formatBytes(compressedSize))}`);
+  console.info(`     Ratio:      ${c.green(ratio + '%')}`);
   
   // Pipeline metrics
-  console.log(c.yellow('\n  📊 Pipeline Metrics'));
+  console.info(c.yellow('\n  📊 Pipeline Metrics'));
   const metrics = pipeline.getMetrics();
-  console.log(`     Chunks processed: ${c.green(metrics.chunksProcessed.toString())}`);
-  console.log(`     Bytes read:       ${c.green(formatBytes(metrics.bytesRead))}`);
-  console.log(`     Backpressure:     ${c.green(metrics.backpressureEvents.toString())} events`);
+  console.info(`     Chunks processed: ${c.green(metrics.chunksProcessed.toString())}`);
+  console.info(`     Bytes read:       ${c.green(formatBytes(metrics.bytesRead))}`);
+  console.info(`     Backpressure:     ${c.green(metrics.backpressureEvents.toString())} events`);
   
-  console.log();
+  console.info();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -251,11 +251,11 @@ async function showcaseStreamingPipeline() {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function showcaseEdgeDeployment() {
-  console.log(c.bold(c.cyan('┌─ 4. EDGE DEPLOYMENT ────────────────────────────────────────────────────┐\n')));
+  console.info(c.bold(c.cyan('┌─ 4. EDGE DEPLOYMENT ────────────────────────────────────────────────────┐\n')));
   
   const edge = createEdgeHandler();
   
-  console.log(c.yellow('  🌍 Geographic Load Balancing'));
+  console.info(c.yellow('  🌍 Geographic Load Balancing'));
   
   // Simulate requests from different regions
   const regions = ['us-east', 'us-west', 'eu-west', 'asia'];
@@ -281,7 +281,7 @@ async function showcaseEdgeDeployment() {
     borderColor: '#00AAFF',
   });
   
-  console.log(lbTable.render(
+  console.info(lbTable.render(
     Array.from(distribution.entries()).map(([endpoint, count]) => ({
       endpoint: endpoint.replace('https://', ''),
       requests: count.toLocaleString(),
@@ -291,7 +291,7 @@ async function showcaseEdgeDeployment() {
   ));
   
   // Edge routing
-  console.log(c.yellow('\n  🔀 Edge Routing'));
+  console.info(c.yellow('\n  🔀 Edge Routing'));
   
   const testRequests = [
     { path: '/edge/health', region: 'US', country: 'US' },
@@ -317,13 +317,13 @@ async function showcaseEdgeDeployment() {
     
     const latency = response.headers.get('x-edge-latency') || `${(elapsedNs / 1e6).toFixed(2)}ms`;
     
-    console.log(`     ${c.cyan(test.path)}:`);
-    console.log(`       Status:  ${response.status === 200 ? c.green('200') : c.yellow(response.status.toString())}`);
-    console.log(`       Latency: ${c.green(latency)}`);
-    console.log(`       Region:  ${c.cyan(test.region)}`);
+    console.info(`     ${c.cyan(test.path)}:`);
+    console.info(`       Status:  ${response.status === 200 ? c.green('200') : c.yellow(response.status.toString())}`);
+    console.info(`       Latency: ${c.green(latency)}`);
+    console.info(`       Region:  ${c.cyan(test.region)}`);
   }
   
-  console.log();
+  console.info();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -331,7 +331,7 @@ async function showcaseEdgeDeployment() {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function showEliteFeatureMatrix() {
-  console.log(c.bold(c.cyan('┌─ 5. ELITE FEATURE MATRIX v4.1 ──────────────────────────────────────────┐\n')));
+  console.info(c.bold(c.cyan('┌─ 5. ELITE FEATURE MATRIX v4.1 ──────────────────────────────────────────┐\n')));
   
   const featureTable = createTier1380Table({
     title: '🏆 ELITE v4.1 "QUANTUM LEAP" FEATURES',
@@ -345,7 +345,7 @@ function showEliteFeatureMatrix() {
     borderColor: '#D4AF37',
   });
   
-  console.log(featureTable.render([
+  console.info(featureTable.render([
     { category: 'Core Bun APIs', feature: 'Nanosecond Timing', tech: 'Bun.nanoseconds()', status: 'active' },
     { category: 'Core Bun APIs', feature: 'Promise Peek', tech: 'Bun.peek()', status: 'active' },
     { category: 'Core Bun APIs', feature: 'Fast Hashing', tech: 'Bun.hash()', status: 'active' },
@@ -367,7 +367,7 @@ function showEliteFeatureMatrix() {
     { category: 'Dashboard', feature: 'Unicode Tables', tech: 'Tier-1380 Engine', status: 'active' },
   ]));
   
-  console.log(c.bold(c.gold(`
+  console.info(c.bold(c.gold(`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                                                              ║
 ║   🚀 BARBERSHOP ELITE v4.1 "QUANTUM LEAP" IS PRODUCTION READY                 ║

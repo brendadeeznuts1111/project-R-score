@@ -3,10 +3,10 @@
  * Fixed Bun.color() null handling for robust chromatic rendering
  */
 
-console.log('🎨 RENDERER COLOR FIX v4.5 - CRITICAL UPDATE COMPLETE!')
-console.log('=' .repeat(80))
+console.info('🎨 RENDERER COLOR FIX v4.5 - CRITICAL UPDATE COMPLETE!')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 ✅ CRITICAL RENDERER COLOR ISSUE RESOLVED!
 
 📋 ISSUE DETAILS:
@@ -130,8 +130,8 @@ The renderer is now bulletproof and ready for production deployment with stunnin
 🎨✅ RENDERER COLOR FIX v4.5 - CRITICAL UPDATE COMPLETE! ✅🎨
 `)
 
-console.log('🎨✅ RENDERER COLOR FIX v4.5 - CRITICAL UPDATE COMPLETE!')
-console.log('🛡️ Runtime safety achieved - Null handling implemented!')
-console.log('🎨 Beautiful chromatic rendering - Professional quality!')
-console.log('🚀 Production ready - Robust error handling!')
-console.log('💎 FactoryWager v4.5 - Visual perfection complete!')
+console.info('🎨✅ RENDERER COLOR FIX v4.5 - CRITICAL UPDATE COMPLETE!')
+console.info('🛡️ Runtime safety achieved - Null handling implemented!')
+console.info('🎨 Beautiful chromatic rendering - Professional quality!')
+console.info('🚀 Production ready - Robust error handling!')
+console.info('💎 FactoryWager v4.5 - Visual perfection complete!')

@@ -68,7 +68,7 @@ export class SuspensionRiskEngine {
     
     try {
       // Mock model loading - in production would load ONNX/XGBoost models
-      console.log('🧠 Loading AI Risk Models...');
+      console.info('🧠 Loading AI Risk Models...');
       
       // Simulate model loading
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -92,7 +92,7 @@ export class SuspensionRiskEngine {
       });
       
       this.modelLoaded = true;
-      console.log('✅ AI Risk Models Loaded Successfully');
+      console.info('✅ AI Risk Models Loaded Successfully');
     } catch (error) {
       console.error('❌ Failed to load AI Risk Models:', error);
       throw error;
@@ -234,10 +234,10 @@ export class SuspensionRiskEngine {
     try {
       const riskProfile = await this.predictGuardianRisk(guardianId);
       
-      console.log(`🔍 Guardian Risk Analysis: ${guardianId}`);
-      console.log(`   Risk Score: ${(riskProfile.riskScore * 100).toFixed(1)}%`);
-      console.log(`   Risk Level: ${riskProfile.riskLevel.toUpperCase()}`);
-      console.log(`   Top Features: ${riskProfile.topFeatures.join(', ')}`);
+      console.info(`🔍 Guardian Risk Analysis: ${guardianId}`);
+      console.info(`   Risk Score: ${(riskProfile.riskScore * 100).toFixed(1)}%`);
+      console.info(`   Risk Level: ${riskProfile.riskLevel.toUpperCase()}`);
+      console.info(`   Top Features: ${riskProfile.topFeatures.join(', ')}`);
       
       // Trigger preventive actions based on risk level
       if (riskProfile.riskScore > 0.75) {
@@ -279,7 +279,7 @@ export class SuspensionRiskEngine {
             break;
         }
         
-        console.log(`✅ Preventive action triggered: ${action} for guardian ${guardianId}`);
+        console.info(`✅ Preventive action triggered: ${action} for guardian ${guardianId}`);
       } catch (error) {
         console.error(`Failed to trigger preventive action ${action}:`, error);
       }
@@ -353,27 +353,27 @@ export class SuspensionRiskEngine {
 
   // Preventive action implementations
   private async promptSecondarySponsor(guardianId: string): Promise<void> {
-    console.log(`📧 Prompting secondary sponsor for guardian ${guardianId}`);
+    console.info(`📧 Prompting secondary sponsor for guardian ${guardianId}`);
     // In production: Send email/push notification to nominate backup sponsor
   }
 
   private async allocateBufferSeats(guardianId: string): Promise<void> {
-    console.log(`🪑 Allocating buffer seats for guardian ${guardianId}`);
+    console.info(`🪑 Allocating buffer seats for guardian ${guardianId}`);
     // In production: Reserve additional team seats to prevent service interruption
   }
 
   private async queueAdminReview(guardianId: string, riskProfile: GuardianRiskProfile): Promise<void> {
-    console.log(`👮 Queuing admin review for guardian ${guardianId}`);
+    console.info(`👮 Queuing admin review for guardian ${guardianId}`);
     // In production: Add to admin review queue with full risk profile
   }
 
   private async temporarilyPausePayments(guardianId: string): Promise<void> {
-    console.log(`⏸️ Temporarily pausing payments for guardian ${guardianId}`);
+    console.info(`⏸️ Temporarily pausing payments for guardian ${guardianId}`);
     // In production: Pause new payments while maintaining existing services
   }
 
   private async publishTensionAlert(alertType: string, data: any): Promise<void> {
-    console.log(`🚨 Publishing tension alert: ${alertType}`, data);
+    console.info(`🚨 Publishing tension alert: ${alertType}`, data);
     // In production: Send WebSocket alert to guardian dashboard and admin panels
   }
 
@@ -388,7 +388,7 @@ export class SuspensionRiskEngine {
       predictions: riskProfile.predictions
     };
     
-    console.log(`📊 SUSP_RISK_SCORE: ${JSON.stringify(logEntry)}`);
+    console.info(`📊 SUSP_RISK_SCORE: ${JSON.stringify(logEntry)}`);
     // In production: Write to immutable audit log
   }
 }
@@ -404,7 +404,7 @@ export class RiskMonitoringService {
   }
 
   async startMonitoring(): Promise<void> {
-    console.log('🔍 Starting AI Risk Monitoring Service...');
+    console.info('🔍 Starting AI Risk Monitoring Service...');
     
     // Initialize models
     await this.engine.initializeModels();
@@ -414,7 +414,7 @@ export class RiskMonitoringService {
       await this.monitorActiveGuardians();
     }, 5 * 60 * 1000);
     
-    console.log('✅ AI Risk Monitoring Service Started');
+    console.info('✅ AI Risk Monitoring Service Started');
   }
 
   stopMonitoring(): void {
@@ -422,17 +422,17 @@ export class RiskMonitoringService {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
     }
-    console.log('⏹️ AI Risk Monitoring Service Stopped');
+    console.info('⏹️ AI Risk Monitoring Service Stopped');
   }
 
   addGuardianToMonitoring(guardianId: string): void {
     this.activeGuardians.add(guardianId);
-    console.log(`➕ Added guardian ${guardianId} to risk monitoring`);
+    console.info(`➕ Added guardian ${guardianId} to risk monitoring`);
   }
 
   removeGuardianFromMonitoring(guardianId: string): void {
     this.activeGuardians.delete(guardianId);
-    console.log(`➖ Removed guardian ${guardianId} from risk monitoring`);
+    console.info(`➖ Removed guardian ${guardianId} from risk monitoring`);
   }
 
   private async monitorActiveGuardians(): Promise<void> {
@@ -448,6 +448,6 @@ export class RiskMonitoringService {
 export const riskEngine = SuspensionRiskEngine.getInstance();
 export const riskMonitoring = new RiskMonitoringService();
 
-console.log('🧠 AI Suspension Risk Engine Initialized');
-console.log('📊 Risk Models: XGBoost + Tension Field Integration');
-console.log('🚨 Real-time Prevention: 85-95% Cascade Avoidance');
+console.info('🧠 AI Suspension Risk Engine Initialized');
+console.info('📊 Risk Models: XGBoost + Tension Field Integration');
+console.info('🚨 Real-time Prevention: 85-95% Cascade Avoidance');

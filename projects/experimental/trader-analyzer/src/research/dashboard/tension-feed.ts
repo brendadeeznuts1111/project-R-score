@@ -68,7 +68,7 @@ export class TensionFeedServer {
 			websocket: {
 				open: (ws) => {
 					this.clients.add(ws);
-					console.log("📡 Research dashboard connected");
+					console.info("📡 Research dashboard connected");
 				},
 				message: (ws, message) => {
 					try {
@@ -82,7 +82,7 @@ export class TensionFeedServer {
 				},
 				close: (ws) => {
 					this.clients.delete(ws);
-					console.log("📡 Research dashboard disconnected");
+					console.info("📡 Research dashboard disconnected");
 				},
 			},
 			fetch: (req, server) => {
@@ -101,7 +101,7 @@ export class TensionFeedServer {
 			},
 		});
 
-		console.log(`🔬 Tension feed server started on port ${port}`);
+		console.info(`🔬 Tension feed server started on port ${port}`);
 	}
 
 	/**
@@ -159,7 +159,7 @@ export class TensionFeedServer {
 		if (this.server) {
 			this.server.stop();
 			this.server = null;
-			console.log("🔬 Tension feed server stopped");
+			console.info("🔬 Tension feed server stopped");
 		}
 	}
 }

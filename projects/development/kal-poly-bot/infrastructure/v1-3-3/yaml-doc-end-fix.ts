@@ -476,15 +476,15 @@ export class YAMLDocEndFix {
       'key: "normal value"\n...\nother: data',
     ];
 
-    console.log("[YAML-DOC-END-FIX] Testing quoted doc end scenarios:");
+    console.info("[YAML-DOC-END-FIX] Testing quoted doc end scenarios:");
     testCases.forEach((test, i) => {
       try {
         const result = this.parseYAML(test);
-        console.log(`  Test ${i + 1}: ✅ Parsed successfully`);
-        console.log(`    Input: ${test.replace(/\n/g, "\\n")}`);
-        console.log(`    Result:`, result);
+        console.info(`  Test ${i + 1}: ✅ Parsed successfully`);
+        console.info(`    Input: ${test.replace(/\n/g, "\\n")}`);
+        console.info(`    Result:`, result);
       } catch (error: unknown) {
-        console.log(
+        console.info(
           `  Test ${i + 1}: ❌ Failed - ${error instanceof Error ? error.message : String(error)}`
         );
       }

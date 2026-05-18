@@ -9,12 +9,12 @@
  * Uses process.execPath to ensure we're spawning another Bun process (required for IPC).
  */
 
-console.log("🚀 IPC Parent Process Example\n");
+console.info("🚀 IPC Parent Process Example\n");
 
 const child = Bun.spawn([process.execPath, "child.ts"], {
   ipc(message, childProc) {
     try {
-      console.log(`📨 Received from child:`, message);
+      console.info(`📨 Received from child:`, message);
 
       // Handle potential serialization issues in response
       childProc.send({
@@ -33,7 +33,7 @@ const child = Bun.spawn([process.execPath, "child.ts"], {
 
 // Handle CTRL+C
 process.on("SIGINT", () => {
-  console.log("Ctrl-C was pressed");
+  console.info("Ctrl-C was pressed");
   child.kill("SIGTERM"); // Gracefully terminate child
   process.exit();
 });
@@ -43,4 +43,4 @@ child.send("Hello from parent! I am your father");
 
 // Wait for the child process to exit
 await child.exited;
-console.log(`\n✅ Child process exited with code: ${child.exitCode}`);
+console.info(`\n✅ Child process exited with code: ${child.exitCode}`);

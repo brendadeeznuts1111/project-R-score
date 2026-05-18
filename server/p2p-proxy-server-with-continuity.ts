@@ -13,17 +13,18 @@ import Redis from 'ioredis';
 import { BusinessContinuity } from '@fw/p2p';
 import { CustomerNotifier } from '@fw/p2p';
 import { executeBusinessMigration, handlePaymentAccountLoss } from '@fw/p2p';
+import { REDIS_URL } from '../config/ports.ts';
 
 // ============================================================================
 // Redis Setup
 // ============================================================================
 
-const redis = new Redis(Bun.env.REDIS_URL ?? 'redis://localhost:6379', {
+const redis = new Redis(REDIS_URL, {
   retryStrategy: (times) => Math.min(times * 50, 2000),
   maxRetriesPerRequest: 3,
 });
 
-redis.on('connect', () => console.log('✅ Redis connected'));
+redis.on('connect', () => console.info('✅ Redis connected'));
 
 // ============================================================================
 // Business-Aware P2P Proxy
@@ -118,7 +119,7 @@ class BusinessAwareProxy {
     const secret = Bun.env[`${provider.toUpperCase()}_WEBHOOK_SECRET`];
     
     if (!secret) {
-      console.log(`⚠️  ${provider} secret not set - accepting (dev mode)`);
+      console.info(`⚠️  ${provider} secret not set - accepting (dev mode)`);
       return true;
     }
     
@@ -171,7 +172,7 @@ class BusinessAwareProxy {
       // Check if forwarding is active
       const forwarding = await BusinessContinuity.getForwardingInfo(receivedAlias);
       if (!businessInfo.isActive && forwarding.isActive && forwarding.to) {
-        console.log(`↪️ Forwarding payment from ${receivedAlias} to ${forwarding.to}`);
+        console.info(`↪️ Forwarding payment from ${receivedAlias} to ${forwarding.to}`);
         actualAlias = forwarding.to;
         businessInfo = await BusinessContinuity.getCurrentPaymentHandles(forwarding.to);
         
@@ -500,21 +501,30 @@ function generatePaymentPage(amount: number, description: string, config: any): 
 // ============================================================================
 
 const PORT = Number(Bun.env.P2P_PROXY_PORT ?? 3002);
-const ADMIN_SECRET = Bun.env.ADMIN_SECRET ?? 'admin-secret-change-in-production';
+const ADMIN_SECRET = process.env.ADMIN_SECRET;
+if (!ADMIN_SECRET) {
+  console.error('ADMIN_SECRET env var not set — admin endpoints disabled');
+}
 
 const server = Bun.serve({
   port: PORT,
-  hostname: '0.0.0.0',
+  hostname: process.env.SERVER_HOST || 'localhost',
   
   async fetch(req) {
     const url = new URL(req.url);
     const body = await req.text();
     const headers = req.headers;
     
+    const origin = req.headers.get('Origin') || '';
+    const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
+    const corsOrigin = allowedOrigins.length > 0 && allowedOrigins.includes(origin)
+      ? origin
+      : (allowedOrigins.length > 0 ? 'null' : '*');
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Vary': 'Origin',
     };
     
     if (req.method === 'OPTIONS') {
@@ -655,7 +665,7 @@ const server = Bun.serve({
           businessAlias
         );
         
-        console.log(`✅ ${provider.toUpperCase()}: $${result.amount} → $${result.credited} (${result.tier}) [${result.businessAlias}]`);
+        console.info(`✅ ${provider.toUpperCase()}: $${result.amount} → $${result.credited} (${result.tier}) [${result.businessAlias}]`);
         
         return new Response(JSON.stringify({ success: true, ...result }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -774,20 +784,20 @@ const server = Bun.serve({
   },
 });
 
-console.log('');
-console.log('╔════════════════════════════════════════════════════════════╗');
-console.log(`║  💈 P2P Proxy v3 - Business Continuity                    ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log(`║  URL:     http://localhost:${PORT}                        ║`);
-console.log(`║  Pay:     http://localhost:${PORT}/pay?amount=25          ║`);
-console.log(`║  Admin:   http://localhost:${PORT}/admin/businesses        ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log('║  Features:                                                 ║');
-console.log('║    • Business alias support                                 ║');
-console.log('║    • Payment forwarding                                     ║');
-console.log('║    • Customer notifications                                  ║');
-console.log('║    • Admin dashboard                                        ║');
-console.log('╚════════════════════════════════════════════════════════════╝');
-console.log('');
+console.info('');
+console.info('╔════════════════════════════════════════════════════════════╗');
+console.info(`║  💈 P2P Proxy v3 - Business Continuity                    ║`);
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info(`║  URL:     http://localhost:${PORT}                        ║`);
+console.info(`║  Pay:     http://localhost:${PORT}/pay?amount=25          ║`);
+console.info(`║  Admin:   http://localhost:${PORT}/admin/businesses        ║`);
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info('║  Features:                                                 ║');
+console.info('║    • Business alias support                                 ║');
+console.info('║    • Payment forwarding                                     ║');
+console.info('║    • Customer notifications                                  ║');
+console.info('║    • Admin dashboard                                        ║');
+console.info('╚════════════════════════════════════════════════════════════╝');
+console.info('');
 
 export default server;

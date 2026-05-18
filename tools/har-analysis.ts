@@ -417,37 +417,37 @@ const priorityColor: Record<Priority, string> = {
 export function printAnalysis(result: AnalysisResult, url: string) {
   const m = result.bunSpecific;
 
-  console.log(`\n\x1b[1m  Performance Analysis with Documentation Context\x1b[0m`);
-  console.log("  " + "=".repeat(49));
-  console.log();
-  console.log(`  Provider: \x1b[32m${result.provider.toUpperCase()}\x1b[0m`);
-  console.log(`  Category: ${result.category.toUpperCase()} (${result.urlType})`);
-  console.log(`  Type: ${result.urlType.toUpperCase()}`);
+  console.info(`\n\x1b[1m  Performance Analysis with Documentation Context\x1b[0m`);
+  console.info("  " + "=".repeat(49));
+  console.info();
+  console.info(`  Provider: \x1b[32m${result.provider.toUpperCase()}\x1b[0m`);
+  console.info(`  Category: ${result.category.toUpperCase()} (${result.urlType})`);
+  console.info(`  Type: ${result.urlType.toUpperCase()}`);
 
   // Critical Performance Issues
   if (result.issues.length > 0) {
-    console.log(`\n  \x1b[1mCritical Performance Issues:\x1b[0m`);
+    console.info(`\n  \x1b[1mCritical Performance Issues:\x1b[0m`);
     for (let i = 0; i < result.issues.length; i++) {
       const issue = result.issues[i];
       const prefix = i < result.issues.length - 1 ? "\u251C\u2500\u2500" : "\u2514\u2500\u2500";
-      console.log(`  ${prefix} ${issue.type}: ${issue.details} ${priorityIcon[issue.severity]}`);
+      console.info(`  ${prefix} ${issue.type}: ${issue.details} ${priorityIcon[issue.severity]}`);
     }
   }
 
   // Documentation Gaps
   if (result.documentationGaps.length > 0) {
-    console.log(`\n  \x1b[1mDocumentation Gaps Identified:\x1b[0m`);
+    console.info(`\n  \x1b[1mDocumentation Gaps Identified:\x1b[0m`);
     for (let i = 0; i < result.documentationGaps.length; i++) {
       const gap = result.documentationGaps[i];
-      console.log(`  ${i + 1}. ${gap.category}: ${gap.gap}`);
+      console.info(`  ${i + 1}. ${gap.category}: ${gap.gap}`);
     }
   }
 
   // Recommended Documentation Updates
   if (result.recommendations.length > 0) {
-    console.log(`\n  \x1b[1mRecommended Documentation Updates:\x1b[0m`);
+    console.info(`\n  \x1b[1mRecommended Documentation Updates:\x1b[0m`);
     for (const rec of result.recommendations) {
-      console.log(`  - [${rec.category.toUpperCase()}] ${rec.title}`);
+      console.info(`  - [${rec.category.toUpperCase()}] ${rec.title}`);
     }
   }
 
@@ -459,26 +459,26 @@ export function printAnalysis(result: AnalysisResult, url: string) {
   if (m.ttfb > 500) quickWins.push(`Add edge caching (potential: <200ms TTFB)`);
 
   if (quickWins.length > 0) {
-    console.log(`\n  \x1b[1mQuick Wins:\x1b[0m`);
+    console.info(`\n  \x1b[1mQuick Wins:\x1b[0m`);
     for (let i = 0; i < quickWins.length; i++) {
-      console.log(`  ${i + 1}. ${quickWins[i]}`);
+      console.info(`  ${i + 1}. ${quickWins[i]}`);
     }
   }
 
   // Actions
   if (result.actions.length > 0) {
-    console.log(`\n  \x1b[1mActions:\x1b[0m`);
+    console.info(`\n  \x1b[1mActions:\x1b[0m`);
     for (const action of result.actions) {
-      console.log(`  \x1b[90m-\x1b[0m ${action}`);
+      console.info(`  \x1b[90m-\x1b[0m ${action}`);
     }
   }
 
   // Metrics summary
-  console.log(`\n  \x1b[1mMetrics:\x1b[0m`);
-  console.log(`  TTFB: ${fmtMs(m.ttfb)}  Transfer: ${fmtBytes(m.totalTransfer)}  Size: ${fmtBytes(m.totalSize)}`);
-  console.log(`  Compression: ${(m.compressionRatio * 100).toFixed(0)}%  Cache hits: ${(m.cacheHitRate * 100).toFixed(0)}%  Slow: ${m.slowRequests}/${m.totalRequests}  Domains: ${m.domains}`);
+  console.info(`\n  \x1b[1mMetrics:\x1b[0m`);
+  console.info(`  TTFB: ${fmtMs(m.ttfb)}  Transfer: ${fmtBytes(m.totalTransfer)}  Size: ${fmtBytes(m.totalSize)}`);
+  console.info(`  Compression: ${(m.compressionRatio * 100).toFixed(0)}%  Cache hits: ${(m.cacheHitRate * 100).toFixed(0)}%  Slow: ${m.slowRequests}/${m.totalRequests}  Domains: ${m.domains}`);
 
-  console.log();
+  console.info();
 }
 
 // --- CLI ---

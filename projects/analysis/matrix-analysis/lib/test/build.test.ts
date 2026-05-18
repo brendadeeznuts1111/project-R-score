@@ -162,7 +162,7 @@ describe("build", () => {
       const result = await build({
         entrypoints: ["./main.ts"],
         files: {
-          "./main.ts": 'import { x } from "./dep.ts"; console.log(x);',
+          "./main.ts": 'import { x } from "./dep.ts"; console.info(x);',
           "./dep.ts": "export const x = 42;",
         },
       });
@@ -209,7 +209,7 @@ describe("build", () => {
 
     it("should build with drop option", async () => {
       const tmpFile = "/tmp/test-build-drop.ts";
-      await Bun.write(tmpFile, 'console.log("debug");\nexport const val = 1;\n');
+      await Bun.write(tmpFile, 'console.info("debug");\nexport const val = 1;\n');
       const result = await build({
         entrypoints: [tmpFile],
         drop: ["console"],

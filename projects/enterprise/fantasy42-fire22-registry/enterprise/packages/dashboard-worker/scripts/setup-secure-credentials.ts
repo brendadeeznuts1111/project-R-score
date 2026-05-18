@@ -63,7 +63,7 @@ const CREDENTIALS: Credential[] = [
 ];
 
 async function setupCredentials() {
-  console.log(`
+  console.info(`
 ╔════════════════════════════════════════════════════════╗
 ║        Fire22 Secure Credentials Setup                ║
 ║                                                        ║
@@ -95,7 +95,7 @@ async function setupCredentials() {
 }
 
 async function setupNewCredentials() {
-  console.log('\n📝 Setting up new credentials...\n');
+  console.info('\n📝 Setting up new credentials...\n');
 
   for (const cred of CREDENTIALS) {
     const existing = await secrets.get({
@@ -127,18 +127,18 @@ async function setupNewCredentials() {
           name: cred.name,
           value: value,
         });
-        console.log(`✅ ${cred.name} stored securely`);
+        console.info(`✅ ${cred.name} stored securely`);
       } catch (error) {
         console.error(`❌ Failed to store ${cred.name}:`, error);
       }
     }
   }
 
-  console.log('\n✨ Credentials setup complete!');
+  console.info('\n✨ Credentials setup complete!');
 }
 
 async function viewExistingCredentials() {
-  console.log('\n📋 Checking existing credentials...\n');
+  console.info('\n📋 Checking existing credentials...\n');
 
   for (const cred of CREDENTIALS) {
     try {
@@ -153,21 +153,21 @@ async function viewExistingCredentials() {
           value.length > 8
             ? `${value.substring(0, 4)}...${value.substring(value.length - 4)}`
             : '****';
-        console.log(`✅ ${cred.name}: ${masked}`);
+        console.info(`✅ ${cred.name}: ${masked}`);
       } else {
-        console.log(`⚠️  ${cred.name}: Not set`);
+        console.info(`⚠️  ${cred.name}: Not set`);
       }
     } catch (error) {
-      console.log(`❌ ${cred.name}: Error reading`);
+      console.info(`❌ ${cred.name}: Error reading`);
     }
   }
 }
 
 async function updateSpecificCredential() {
-  console.log('\n🔄 Update specific credential\n');
+  console.info('\n🔄 Update specific credential\n');
 
   CREDENTIALS.forEach((cred, index) => {
-    console.log(`${index + 1}. ${cred.name} - ${cred.description}`);
+    console.info(`${index + 1}. ${cred.name} - ${cred.description}`);
   });
 
   const choice = await prompt('\nSelect credential to update (number): ');
@@ -184,7 +184,7 @@ async function updateSpecificCredential() {
           name: cred.name,
           value: value,
         });
-        console.log(`✅ ${cred.name} updated successfully`);
+        console.info(`✅ ${cred.name} updated successfully`);
       } catch (error) {
         console.error(`❌ Failed to update ${cred.name}:`, error);
       }
@@ -206,14 +206,14 @@ async function deleteAllCredentials() {
           service: SERVICE_NAME,
           name: cred.name,
         });
-        console.log(`🗑️  Deleted ${cred.name}`);
+        console.info(`🗑️  Deleted ${cred.name}`);
       } catch (error) {
-        console.log(`⚠️  Could not delete ${cred.name} (may not exist)`);
+        console.info(`⚠️  Could not delete ${cred.name} (may not exist)`);
       }
     }
-    console.log('\n✨ All credentials deleted');
+    console.info('\n✨ All credentials deleted');
   } else {
-    console.log('Deletion cancelled');
+    console.info('Deletion cancelled');
   }
 }
 

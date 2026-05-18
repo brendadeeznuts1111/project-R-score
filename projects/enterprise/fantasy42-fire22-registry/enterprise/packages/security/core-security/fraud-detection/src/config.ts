@@ -239,7 +239,7 @@ export class Fantasy42FraudDetectionClient extends Fantasy42SecureClient {
 
     // Clean and log (remove ANSI codes and sensitive data)
     const cleanLog = JSON.stringify(complianceLog).replace(/\x1b\[[0-9;]*m/g, '');
-    console.log(cleanLog);
+    console.info(cleanLog);
   }
 }
 

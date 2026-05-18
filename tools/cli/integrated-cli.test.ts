@@ -41,9 +41,9 @@ describe('IntegratedCLI', () => {
         }
         return size.toFixed(2) + ' ' + units[unitIndex];
       }
-      console.log(formatBytes(0));
-      console.log(formatBytes(1024));
-      console.log(formatBytes(1048576));
+      console.info(formatBytes(0));
+      console.info(formatBytes(1024));
+      console.info(formatBytes(1048576));
     `], { stdout: 'pipe', stderr: 'pipe' });
     const text = await new Response(proc.stdout).text();
     await proc.exited;
@@ -63,7 +63,7 @@ describe('IntegratedCLI', () => {
         return '<html><head><title>' + packageInfo.name + ' - Documentation</title></head></html>';
       }
       const html = await generatePackagePage({ name: 'my-pkg', version: '1.0.0', description: 'test' });
-      console.log(html);
+      console.info(html);
     `], { stdout: 'pipe', stderr: 'pipe' });
     const html = await new Response(proc.stdout).text();
     await proc.exited;
@@ -81,7 +81,7 @@ describe('IntegratedCLI', () => {
         items: [{ title: 'Item 1', link: 'https://test.com/1', description: 'D', pubDate: '2026-01-01', guid: 'g1' }],
         lastBuildDate: '2026-01-01', ttl: 60,
       });
-      console.log(xml);
+      console.info(xml);
     `], { stdout: 'pipe', stderr: 'pipe' });
     const xml = await new Response(proc.stdout).text();
     await proc.exited;
@@ -103,7 +103,7 @@ describe('IntegratedCLI', () => {
         }
         return size.toFixed(2) + ' ' + units[unitIndex];
       }
-      console.log(formatBytes(0));
+      console.info(formatBytes(0));
     `], { stdout: 'pipe', stderr: 'pipe' });
     const text = (await new Response(proc.stdout).text()).trim();
     await proc.exited;
@@ -122,7 +122,7 @@ describe('IntegratedCLI', () => {
         }
         return size.toFixed(2) + ' ' + units[unitIndex];
       }
-      console.log(formatBytes(2 * 1024 * 1024 * 1024));
+      console.info(formatBytes(2 * 1024 * 1024 * 1024));
     `], { stdout: 'pipe', stderr: 'pipe' });
     const text = (await new Response(proc.stdout).text()).trim();
     await proc.exited;
@@ -152,7 +152,7 @@ describe('IntegratedCLI', () => {
         ],
         lastBuildDate: '', ttl: 60,
       });
-      console.log(xml);
+      console.info(xml);
     `], { stdout: 'pipe', stderr: 'pipe' });
     const xml = await new Response(proc.stdout).text();
     await proc.exited;

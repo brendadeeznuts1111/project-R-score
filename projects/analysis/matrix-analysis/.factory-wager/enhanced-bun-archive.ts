@@ -146,7 +146,7 @@ class EnhancedBunArchiveManager {
       }
 
       const totalTime = (Bun.nanoseconds() - startTime) / 1_000_000; // Convert to ms
-      console.log(`📊 Enhanced audit archiving completed in ${totalTime}ms`);
+      console.info(`📊 Enhanced audit archiving completed in ${totalTime}ms`);
 
     } catch (error) {
       console.error('Enhanced audit archiving failed:', error);
@@ -338,14 +338,14 @@ class EnhancedBunArchiveManager {
    */
   private async uploadToR2Enhanced(key: string, data: ArrayBuffer | string, metadata: EnhancedArchiveMetadata): Promise<void> {
     // Simulate enhanced R2 upload with Bun optimizations
-    console.log(`📤 Enhanced R2 Upload: ${key}`);
-    console.log(`   Size: ${typeof data === 'string' ? data.length : data.byteLength} bytes`);
-    console.log(`   Type: ${metadata.type}`);
-    console.log(`   Compression Ratio: ${(metadata.compressionRatio * 100).toFixed(1)}%`);
+    console.info(`📤 Enhanced R2 Upload: ${key}`);
+    console.info(`   Size: ${typeof data === 'string' ? data.length : data.byteLength} bytes`);
+    console.info(`   Type: ${metadata.type}`);
+    console.info(`   Compression Ratio: ${(metadata.compressionRatio * 100).toFixed(1)}%`);
 
     // Simulate upload with streaming if enabled
     if (this.config.bun.enableStreaming) {
-      console.log(`   🌊 Using streaming upload`);
+      console.info(`   🌊 Using streaming upload`);
     }
 
     // Simulate upload delay
@@ -444,8 +444,8 @@ class EnhancedBunArchiveManager {
       const cleanupTime = (Bun.nanoseconds() - startTime) / 1_000_000;
       const cleanedEntries = lines.length - recentLines.length;
 
-      console.log(`🧹 Enhanced cleanup completed in ${cleanupTime}ms`);
-      console.log(`   Removed ${cleanedEntries} old entries`);
+      console.info(`🧹 Enhanced cleanup completed in ${cleanupTime}ms`);
+      console.info(`   Removed ${cleanedEntries} old entries`);
 
     } catch (error) {
       console.error('Enhanced cleanup failed:', error);
@@ -513,10 +513,10 @@ class EnhancedBunArchiveManager {
 
 // CLI interface with enhanced features
 if (import.meta.main) {
-  console.log('🚀 Enhanced Bun.Archive Manager for FactoryWager');
-  console.log('================================================');
-  console.log(`🔧 Bun Version: ${Bun.version}`);
-  console.log();
+  console.info('🚀 Enhanced Bun.Archive Manager for FactoryWager');
+  console.info('================================================');
+  console.info(`🔧 Bun Version: ${Bun.version}`);
+  console.info();
 
   // Enhanced configuration
   const config: EnhancedArchiveConfig = {
@@ -554,13 +554,13 @@ if (import.meta.main) {
     .then(results => {
       const report = archiver.generateEnhancedArchiveReport(results);
 
-      console.log('📊 Enhanced Archive Report:');
-      console.log(report);
+      console.info('📊 Enhanced Archive Report:');
+      console.info(report);
 
       // Save enhanced report
       const reportPath = `.factory-wager/enhanced-archive-report-${Date.now()}.json`;
       writeFileSync(reportPath, report, 'utf-8');
-      console.log(`\n📄 Enhanced report saved: ${reportPath}`);
+      console.info(`\n📄 Enhanced report saved: ${reportPath}`);
 
     })
     .catch((error: unknown) => {

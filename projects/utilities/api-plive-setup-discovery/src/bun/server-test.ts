@@ -65,7 +65,7 @@ const server = Bun.serve({
   }
 });
 
-console.log(`🚀 Bun 1.3 Production Test Server running on ${server.hostname}:${server.port}`);
-console.log(`❤️ Health: http://localhost:${server.port}/health`);
-console.log(`📊 Bun version: ${Bun.version}`);
-console.log(`🔧 Environment: ${Bun.env.NODE_ENV || 'production'}`);
+console.info(`🚀 Bun 1.3 Production Test Server running on ${server.hostname}:${server.port}`);
+console.info(`❤️ Health: http://localhost:${server.port}/health`);
+console.info(`📊 Bun version: ${Bun.version}`);
+console.info(`🔧 Environment: ${Bun.env.NODE_ENV || 'production'}`);

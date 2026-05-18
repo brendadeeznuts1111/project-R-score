@@ -174,7 +174,7 @@ function generateJWT(payload: any, type: 'access' | 'refresh' = 'access'): strin
  */
 function logSecurityAudit(auditLog: SecurityAuditLog): void {
   // Log to console in development
-  console.log('🔒 Security Audit:', JSON.stringify(auditLog, null, 2));
+  console.info('🔒 Security Audit:', JSON.stringify(auditLog, null, 2));
 
   // In production, send to security monitoring service
   // This could be sent to a KV store, external API, or Cloudflare Analytics

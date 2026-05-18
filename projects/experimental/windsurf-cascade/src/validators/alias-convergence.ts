@@ -363,10 +363,10 @@ async function main() {
     const allowPartial = args.includes('--allow-partial');
     const caseSensitive = args.includes('--case-sensitive');
 
-    console.log('🏷️ Alias Convergence Validator');
-    console.log(`📁 Vault: ${vaultPath}`);
-    console.log(`🔍 Partial matches: ${allowPartial}`);
-    console.log(`🔤 Case sensitive: ${caseSensitive}`);
+    console.info('🏷️ Alias Convergence Validator');
+    console.info(`📁 Vault: ${vaultPath}`);
+    console.info(`🔍 Partial matches: ${allowPartial}`);
+    console.info(`🔤 Case sensitive: ${caseSensitive}`);
 
     const validator = new AliasConvergenceValidator(allowPartial, caseSensitive);
 
@@ -401,30 +401,30 @@ async function main() {
         ]
     };
 
-    console.log('\n📊 Alias Convergence Results:');
-    console.log(`📊 Total aliases: ${mockAnalysis.totalAliases}`);
-    console.log(`🔤 Unique aliases: ${mockAnalysis.uniqueAliases}`);
-    console.log(`📈 Duplicate rate: ${mockAnalysis.duplicateRate.toFixed(1)}%`);
-    console.log(`🎯 Convergence score: ${mockAnalysis.convergenceScore.toFixed(1)}%`);
+    console.info('\n📊 Alias Convergence Results:');
+    console.info(`📊 Total aliases: ${mockAnalysis.totalAliases}`);
+    console.info(`🔤 Unique aliases: ${mockAnalysis.uniqueAliases}`);
+    console.info(`📈 Duplicate rate: ${mockAnalysis.duplicateRate.toFixed(1)}%`);
+    console.info(`🎯 Convergence score: ${mockAnalysis.convergenceScore.toFixed(1)}%`);
 
     if (mockAnalysis.conflicts.length > 0) {
-        console.log('\n🚨 Alias Conflicts:');
+        console.info('\n🚨 Alias Conflicts:');
         mockAnalysis.conflicts.forEach((conflict, index) => {
             const severity = conflict.severity === 'error' ? '🔴' : conflict.severity === 'warning' ? '🟡' : '🟢';
-            console.log(`${index + 1}. ${severity} "${conflict.alias}"`);
-            console.log(`   Used by: ${conflict.conflictingNodes.map(f => `[[${f}]]`).join(', ')}`);
-            console.log(`   ${conflict.suggestion}`);
+            console.info(`${index + 1}. ${severity} "${conflict.alias}"`);
+            console.info(`   Used by: ${conflict.conflictingNodes.map(f => `[[${f}]]`).join(', ')}`);
+            console.info(`   ${conflict.suggestion}`);
             if (conflict.autoFixable) {
-                console.log(`   ✅ Auto-fixable`);
+                console.info(`   ✅ Auto-fixable`);
             }
         });
     }
 
-    console.log('\n💡 Recommendations:');
-    console.log('• Make aliases more specific to avoid conflicts');
-    console.log('• Add cross-references between related content');
-    console.log('• Use consistent naming conventions for aliases');
-    console.log('• Consider creating disambiguation pages for common terms');
+    console.info('\n💡 Recommendations:');
+    console.info('• Make aliases more specific to avoid conflicts');
+    console.info('• Add cross-references between related content');
+    console.info('• Use consistent naming conventions for aliases');
+    console.info('• Consider creating disambiguation pages for common terms');
 }
 
 // Run main function if this file is executed directly

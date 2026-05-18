@@ -249,7 +249,7 @@ tags = ["worker", "experimental"]
 `;
 
     await Bun.write(path, config);
-    console.log(`✅ Created ${path} (${Bun.file(path).size} bytes)`);
+    console.info(`✅ Created ${path} (${Bun.file(path).size} bytes)`);
   }
 
   validate(config: Config): { valid: boolean; errors: string[] } {
@@ -347,7 +347,7 @@ tags = ["worker", "experimental"]
 // ============================================================================
 
 const printHelp = (): void => {
-  console.log(`
+  console.info(`
 Empire Pro Config Manager v${VERSION}
 
 USAGE:
@@ -396,9 +396,9 @@ EXAMPLES:
 };
 
 const printVersion = (): void => {
-  console.log(`Empire Pro Config Manager v${VERSION}`);
-  console.log(`Bun version: ${Bun.version}`);
-  console.log(`Platform: ${process.platform} ${process.arch}`);
+  console.info(`Empire Pro Config Manager v${VERSION}`);
+  console.info(`Bun version: ${Bun.version}`);
+  console.info(`Platform: ${process.platform} ${process.arch}`);
 };
 
 // ============================================================================
@@ -455,7 +455,7 @@ const main = async (): Promise<void> => {
       publicUrl,
     };
     if (options.verbose) {
-      console.log("🔑 R2 credentials detected and initialized");
+      console.info("🔑 R2 credentials detected and initialized");
     }
   } else if (["upload", "download", "list", "sync"].includes(command)) {
     console.error("❌ Error: R2 credentials not configured");
@@ -478,10 +478,10 @@ const main = async (): Promise<void> => {
         const config = await manager.YAML.parse(options.file);
         const result = manager.validate(config);
         if (result.valid) {
-          console.log("✅ Configuration is valid");
+          console.info("✅ Configuration is valid");
         } else {
-          console.log("❌ Validation failed:");
-          result.errors.forEach(err => console.log(`   • ${err}`));
+          console.info("❌ Validation failed:");
+          result.errors.forEach(err => console.info(`   • ${err}`));
           process.exit(1);
         }
         break;
@@ -499,9 +499,9 @@ const main = async (): Promise<void> => {
           env: options.env,
           version: config.version,
         });
-        console.log(`✅ Uploaded to R2: ${key} (${result?.size} bytes)`);
+        console.info(`✅ Uploaded to R2: ${key} (${result?.size} bytes)`);
         if (r2Config?.publicUrl) {
-          console.log(`   Public URL: ${new R2Storage(r2Config).getPublicUrl(key)}`);
+          console.info(`   Public URL: ${new R2Storage(r2Config).getPublicUrl(key)}`);
         }
         break;
       }
@@ -515,9 +515,9 @@ const main = async (): Promise<void> => {
         const r2 = new R2Storage(r2Config!);
         const result = await r2.download(key);
         await Bun.write(options.file!, result.data);
-        console.log(`✅ Downloaded from R2: ${key} -> ${options.file}`);
+        console.info(`✅ Downloaded from R2: ${key} -> ${options.file}`);
         if (result.metadata) {
-          console.log(`   Metadata: ${JSON.stringify(result.metadata, null, 2)}`);
+          console.info(`   Metadata: ${JSON.stringify(result.metadata, null, 2)}`);
         }
         break;
       }
@@ -525,9 +525,9 @@ const main = async (): Promise<void> => {
       case "list": {
         const r2 = new R2Storage(r2Config!);
         const files = await r2.list("configs/");
-        console.log(`📦 Found ${files.length} config files:`);
+        console.info(`📦 Found ${files.length} config files:`);
         files.forEach(f => {
-          console.log(`   ${f.key} (${f.size} bytes, modified: ${f.lastModified.toLocaleString()})`);
+          console.info(`   ${f.key} (${f.size} bytes, modified: ${f.lastModified.toLocaleString()})`);
         });
         break;
       }
@@ -549,30 +549,30 @@ const main = async (): Promise<void> => {
           const remoteHash = Bun.hash(remote.data);
           
           if (localHash === remoteHash) {
-            console.log("✅ Configs are in sync");
+            console.info("✅ Configs are in sync");
           } else {
-            console.log("🔄 Syncing local -> R2...");
+            console.info("🔄 Syncing local -> R2...");
             const config = await manager.YAML.parse(options.file!);
             await r2.upload(key, JSON.stringify(config, null, 2), {
               synced_at: new Date().toISOString(),
               env: options.env,
               version: config.version,
             });
-            console.log(`✅ Synced to R2: ${key}`);
+            console.info(`✅ Synced to R2: ${key}`);
           }
         } catch (error) {
-          if (options.verbose) console.log("🔄 No remote config found, uploading...");
+          if (options.verbose) console.info("🔄 No remote config found, uploading...");
           const config = await manager.YAML.parse(options.file!);
           await r2.upload(key, JSON.stringify(config, null, 2), {
             synced_at: new Date().toISOString(),
             env: options.env,
             version: config.version,
           });
-          console.log(`✅ Uploaded initial config to R2: ${key}`);
+          console.info(`✅ Uploaded initial config to R2: ${key}`);
         }
 
         if (options.watch) {
-          console.log(`👀 Watching ${options.file} for changes...`);
+          console.info(`👀 Watching ${options.file} for changes...`);
           const watcher = Bun.file(options.file!);
           // In a real app, use fs.watch or similar
           // This is a simplified example
@@ -583,9 +583,9 @@ const main = async (): Promise<void> => {
       case "clean": {
         if (existsSync(options.file!)) {
           await Bun.$`rm -f ${options.file!}`;
-          console.log(`✅ Removed ${options.file}`);
+          console.info(`✅ Removed ${options.file}`);
         } else {
-          console.log(`ℹ️  ${options.file} not found`);
+          console.info(`ℹ️  ${options.file} not found`);
         }
         break;
       }

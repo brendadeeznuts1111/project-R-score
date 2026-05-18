@@ -55,7 +55,7 @@ try {
   }
 
   // Output processed result
-  console.log(JSON.stringify(processed));
+  console.info(JSON.stringify(processed));
 
 } catch (error) {
   console.error('Error processing batch:', error);

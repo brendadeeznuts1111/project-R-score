@@ -48,7 +48,7 @@ export function initializeTickStatsTriggers(db: Database): void {
 		END;
 	`);
 
-	console.log('%s | TRIGGER_INIT | %j', new Date().toISOString(), {
+	console.info('%s | TRIGGER_INIT | %j', new Date().toISOString(), {
 		trigger: 'tick_stats_insert',
 		status: 'created',
 		description: 'Real-time materialized view refresh for tick_stats_1m'

@@ -178,7 +178,7 @@ class AdvancedMonitoringDashboard {
         rule.lastTriggered = new Date();
 
         // In a real system, this would send notifications
-        console.log(`🚨 ALERT [${rule.severity.toUpperCase()}]: ${rule.message}`);
+        console.info(`🚨 ALERT [${rule.severity.toUpperCase()}]: ${rule.message}`);
       }
     }
   }
@@ -465,8 +465,8 @@ ${
 
 // Demonstration of Advanced Monitoring
 async function demonstrateAdvancedMonitoring() {
-  console.log('📊 Advanced Monitoring Dashboard Demonstration');
-  console.log('=============================================\n');
+  console.info('📊 Advanced Monitoring Dashboard Demonstration');
+  console.info('=============================================\n');
 
   const monitor = new AdvancedMonitoringDashboard();
 
@@ -534,7 +534,7 @@ async function demonstrateAdvancedMonitoring() {
     },
   ];
 
-  console.log('📡 Recording monitoring data...\n');
+  console.info('📡 Recording monitoring data...\n');
 
   // Record sample data
   for (const data of sampleData) {
@@ -545,52 +545,52 @@ async function demonstrateAdvancedMonitoring() {
   // Get dashboard data
   const dashboard = monitor.getRealtimeDashboard();
 
-  console.log('🏥 System Health:');
-  console.log(
+  console.info('🏥 System Health:');
+  console.info(
     `   Overall Score: ${dashboard.health.overall}/100 (${dashboard.health.status.toUpperCase()})`
   );
-  console.log(`   Performance: ${dashboard.health.components.performance}/100`);
-  console.log(`   Reliability: ${dashboard.health.components.reliability}/100`);
-  console.log(`   Security: ${dashboard.health.components.security}/100`);
-  console.log(`   User Experience: ${dashboard.health.components.userExperience}/100\n`);
+  console.info(`   Performance: ${dashboard.health.components.performance}/100`);
+  console.info(`   Reliability: ${dashboard.health.components.reliability}/100`);
+  console.info(`   Security: ${dashboard.health.components.security}/100`);
+  console.info(`   User Experience: ${dashboard.health.components.userExperience}/100\n`);
 
-  console.log('🚨 Active Alerts:');
+  console.info('🚨 Active Alerts:');
   if (dashboard.alerts.length > 0) {
     dashboard.alerts.forEach((alert, index) => {
-      console.log(`   ${index + 1}. ${alert.rule.name} (${alert.rule.severity.toUpperCase()})`);
-      console.log(`      ${alert.message}`);
+      console.info(`   ${index + 1}. ${alert.rule.name} (${alert.rule.severity.toUpperCase()})`);
+      console.info(`      ${alert.message}`);
     });
   } else {
-    console.log('   ✅ No active alerts');
+    console.info('   ✅ No active alerts');
   }
-  console.log('');
+  console.info('');
 
-  console.log('📈 Performance Insights:');
+  console.info('📈 Performance Insights:');
   dashboard.performance.trends.forEach(trend => {
     const icon = trend.trend === 'improving' ? '📈' : trend.trend === 'degrading' ? '📉' : '📊';
-    console.log(
+    console.info(
       `   ${icon} ${trend.metric}: ${trend.change > 0 ? '+' : ''}${trend.change}% (${trend.trend})`
     );
   });
 
   if (dashboard.performance.anomalies.length > 0) {
-    console.log('\n⚠️  Anomalies Detected:');
+    console.info('\n⚠️  Anomalies Detected:');
     dashboard.performance.anomalies.forEach(anomaly => {
-      console.log(`   🚨 ${anomaly.metric}: ${anomaly.value} (Threshold: ${anomaly.threshold})`);
+      console.info(`   🚨 ${anomaly.metric}: ${anomaly.value} (Threshold: ${anomaly.threshold})`);
     });
   }
 
-  console.log('\n💡 Recommendations:');
+  console.info('\n💡 Recommendations:');
   dashboard.performance.recommendations.forEach(rec => {
-    console.log(`   • ${rec}`);
+    console.info(`   • ${rec}`);
   });
 
   // Generate comprehensive report
   const report = await monitor.generateMonitoringReport();
   await Bun.write('./advanced-monitoring-report.md', report);
 
-  console.log('\n📄 Generated Monitoring Report: ./advanced-monitoring-report.md');
-  console.log('\n✨ Advanced monitoring demonstration complete!');
+  console.info('\n📄 Generated Monitoring Report: ./advanced-monitoring-report.md');
+  console.info('\n✨ Advanced monitoring demonstration complete!');
 }
 
 // Run demonstration if called directly

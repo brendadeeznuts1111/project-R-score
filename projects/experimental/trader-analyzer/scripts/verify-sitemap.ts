@@ -208,7 +208,7 @@ async function verifyHierarchicalNumbering(): Promise<VerificationResult> {
  * Main verification function
  */
 async function verifySitemap(): Promise<void> {
-	console.log('🔍 Verifying Component Sitemap...\n');
+	console.info('🔍 Verifying Component Sitemap...\n');
 
 	const checks = [
 		{ name: 'CSS Class Count', fn: verifyCSSCount },
@@ -225,22 +225,22 @@ async function verifySitemap(): Promise<void> {
 		results.push({ ...result, name: check.name });
 
 		const icon = result.passed ? '✅' : '❌';
-		console.log(`${icon} ${check.name}: ${result.message}`);
+		console.info(`${icon} ${check.name}: ${result.message}`);
 		if (result.details && !result.passed) {
-			console.log(`   Details:`, result.details);
+			console.info(`   Details:`, result.details);
 		}
 	}
 
 	const passed = results.filter((r) => r.passed).length;
 	const total = results.length;
 
-	console.log(`\n📊 Results: ${passed}/${total} checks passed`);
+	console.info(`\n📊 Results: ${passed}/${total} checks passed`);
 
 	if (passed < total) {
-		console.log('\n⚠️  Some checks failed. Review details above.');
+		console.info('\n⚠️  Some checks failed. Review details above.');
 		process.exit(1);
 	} else {
-		console.log('\n✅ All checks passed!');
+		console.info('\n✅ All checks passed!');
 		process.exit(0);
 	}
 }

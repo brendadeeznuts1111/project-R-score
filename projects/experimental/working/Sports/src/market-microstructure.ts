@@ -824,8 +824,8 @@ export class MarketMicrostructureAnalyzer {
 // ============================================================================
 
 export async function runMicrostructureBenchmarks(): Promise<void> {
-  console.log("\n📊 Market Microstructure Benchmarks\n");
-  console.log("═".repeat(60));
+  console.info("\n📊 Market Microstructure Benchmarks\n");
+  console.info("═".repeat(60));
   
   const analyzer = new MarketMicrostructureAnalyzer();
   const iterations = 100;
@@ -846,47 +846,47 @@ export async function runMicrostructureBenchmarks(): Promise<void> {
   }
   
   // Benchmark 1: Full analysis
-  console.log("\n1. Full Microstructure Analysis (1000 ticks)");
+  console.info("\n1. Full Microstructure Analysis (1000 ticks)");
   const fullStart = Bun.nanoseconds();
   for (let i = 0; i < iterations; i++) {
     await analyzer.analyzeMarketMicrostructure(`TEST@MARKET-${i}`, testTicks);
   }
   const fullMs = (Number(Bun.nanoseconds()) - Number(fullStart)) / 1_000_000;
-  console.log(`   Total: ${fullMs.toFixed(2)}ms`);
-  console.log(`   Per analysis: ${(fullMs / iterations).toFixed(2)}ms`);
+  console.info(`   Total: ${fullMs.toFixed(2)}ms`);
+  console.info(`   Per analysis: ${(fullMs / iterations).toFixed(2)}ms`);
   
   // Benchmark 2: Order flow imbalance
-  console.log("\n2. Order Flow Imbalance Calculation");
+  console.info("\n2. Order Flow Imbalance Calculation");
   const flowStart = Bun.nanoseconds();
   for (let i = 0; i < iterations * 10; i++) {
     analyzer["calculateOrderFlowImbalance"](testTicks);
   }
   const flowMs = (Number(Bun.nanoseconds()) - Number(flowStart)) / 1_000_000;
-  console.log(`   Total: ${flowMs.toFixed(2)}ms`);
-  console.log(`   Per call: ${(flowMs / (iterations * 10) * 1000).toFixed(4)}ms`);
+  console.info(`   Total: ${flowMs.toFixed(2)}ms`);
+  console.info(`   Per call: ${(flowMs / (iterations * 10) * 1000).toFixed(4)}ms`);
   
   // Benchmark 3: VPIN calculation
-  console.log("\n3. VPIN Calculation (20 buckets)");
+  console.info("\n3. VPIN Calculation (20 buckets)");
   const vpinStart = Bun.nanoseconds();
   for (let i = 0; i < iterations * 5; i++) {
     analyzer["calculateVPIN"](testTicks);
   }
   const vpinMs = (Number(Bun.nanoseconds()) - Number(vpinStart)) / 1_000_000;
-  console.log(`   Total: ${vpinMs.toFixed(2)}ms`);
-  console.log(`   Per call: ${(vpinMs / (iterations * 5) * 1000).toFixed(4)}ms`);
+  console.info(`   Total: ${vpinMs.toFixed(2)}ms`);
+  console.info(`   Per call: ${(vpinMs / (iterations * 5) * 1000).toFixed(4)}ms`);
   
   // Benchmark 4: Whale detection
-  console.log("\n4. Whale Activity Tracking");
+  console.info("\n4. Whale Activity Tracking");
   const whaleStart = Bun.nanoseconds();
   for (let i = 0; i < iterations * 10; i++) {
     await analyzer["trackWhaleActivity"](`WHALE@TEST-${i}`, testTicks);
   }
   const whaleMs = (Number(Bun.nanoseconds()) - Number(whaleStart)) / 1_000_000;
-  console.log(`   Total: ${whaleMs.toFixed(2)}ms`);
-  console.log(`   Per call: ${(whaleMs / (iterations * 10) * 1000).toFixed(4)}ms`);
+  console.info(`   Total: ${whaleMs.toFixed(2)}ms`);
+  console.info(`   Per call: ${(whaleMs / (iterations * 10) * 1000).toFixed(4)}ms`);
   
   // Benchmark 5: Slippage prediction
-  console.log("\n5. Slippage Prediction");
+  console.info("\n5. Slippage Prediction");
   const slippageStart = Bun.nanoseconds();
   for (let i = 0; i < iterations * 10; i++) {
     analyzer["predictSlippage"](0.3, {
@@ -898,26 +898,26 @@ export async function runMicrostructureBenchmarks(): Promise<void> {
     }, testTicks);
   }
   const slippageMs = (Number(Bun.nanoseconds()) - Number(slippageStart)) / 1_000_000;
-  console.log(`   Total: ${slippageMs.toFixed(2)}ms`);
-  console.log(`   Per call: ${(slippageMs / (iterations * 10) * 1000).toFixed(4)}ms`);
+  console.info(`   Total: ${slippageMs.toFixed(2)}ms`);
+  console.info(`   Per call: ${(slippageMs / (iterations * 10) * 1000).toFixed(4)}ms`);
   
   // Cache performance
-  console.log("\n6. Cache Performance");
+  console.info("\n6. Cache Performance");
   await analyzer.analyzeMarketMicrostructure("CACHE@TEST", testTicks);
   const cacheStats = analyzer.getCacheStats();
-  console.log(`   Cache size: ${cacheStats.size}`);
-  console.log(`   Hit rate: ${(cacheStats.hitRate * 100).toFixed(1)}%`);
+  console.info(`   Cache size: ${cacheStats.size}`);
+  console.info(`   Hit rate: ${(cacheStats.hitRate * 100).toFixed(1)}%`);
   
   // Summary
-  console.log("\n" + "═".repeat(60));
-  console.log("📈 MICROSTRUCTURE BENCHMARK SUMMARY");
-  console.log("═".repeat(60));
-  console.log("   Component           Latency    Target    Status");
-  console.log("   ──────────────────  ────────   ───────   ──────");
-  console.log(`   Full Analysis       ${(fullMs / iterations).toFixed(2)}ms     <50ms      ✓`);
-  console.log(`   Order Flow          ${(flowMs / (iterations * 10) * 1000).toFixed(4)}ms     <5ms       ✓`);
-  console.log(`   VPIN                ${(vpinMs / (iterations * 5) * 1000).toFixed(4)}ms     <10ms      ✓`);
-  console.log(`   Whale Tracking      ${(whaleMs / (iterations * 10) * 1000).toFixed(4)}ms     <2ms       ✓`);
-  console.log(`   Slippage Predict    ${(slippageMs / (iterations * 10) * 1000).toFixed(4)}ms     <4ms       ✓`);
-  console.log("═".repeat(60));
+  console.info("\n" + "═".repeat(60));
+  console.info("📈 MICROSTRUCTURE BENCHMARK SUMMARY");
+  console.info("═".repeat(60));
+  console.info("   Component           Latency    Target    Status");
+  console.info("   ──────────────────  ────────   ───────   ──────");
+  console.info(`   Full Analysis       ${(fullMs / iterations).toFixed(2)}ms     <50ms      ✓`);
+  console.info(`   Order Flow          ${(flowMs / (iterations * 10) * 1000).toFixed(4)}ms     <5ms       ✓`);
+  console.info(`   VPIN                ${(vpinMs / (iterations * 5) * 1000).toFixed(4)}ms     <10ms      ✓`);
+  console.info(`   Whale Tracking      ${(whaleMs / (iterations * 10) * 1000).toFixed(4)}ms     <2ms       ✓`);
+  console.info(`   Slippage Predict    ${(slippageMs / (iterations * 10) * 1000).toFixed(4)}ms     <4ms       ✓`);
+  console.info("═".repeat(60));
 }

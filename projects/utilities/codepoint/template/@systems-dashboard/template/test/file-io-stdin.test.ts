@@ -209,7 +209,7 @@ describe("Enhanced Template - File I/O", () => {
       expect(writeTime).toBeLessThan(100); // Should be fast
       expect(readTime).toBeLessThan(100); // Should be fast
 
-      console.log(
+      console.info(
         `Large file write: ${writeTime.toFixed(2)}ms, read: ${readTime.toFixed(2)}ms`
       );
     });
@@ -225,7 +225,7 @@ describe("Enhanced Template - Stdin Processing", () => {
       import { Bun } from "bun";
       const stdin = Bun.stdin;
       const content = await stdin.text();
-      console.log("STDIN_RECEIVED:" + content);
+      console.info("STDIN_RECEIVED:" + content);
     `;
 
     await Bun.write("test-stdin.ts", script);
@@ -248,9 +248,9 @@ describe("Enhanced Template - Stdin Processing", () => {
       const content = await stdin.text();
       try {
         const parsed = JSON.parse(content);
-        console.log("JSON_VALID:" + JSON.stringify(parsed));
+        console.info("JSON_VALID:" + JSON.stringify(parsed));
       } catch (e) {
-        console.log("JSON_INVALID:" + content);
+        console.info("JSON_INVALID:" + content);
       }
     `;
 
@@ -272,7 +272,7 @@ describe("Enhanced Template - Stdin Processing", () => {
       import { Bun } from "bun";
       const stdin = Bun.stdin;
       const content = await stdin.text();
-      console.log("TS_CODE:" + content);
+      console.info("TS_CODE:" + content);
     `;
 
     await Bun.write("test-ts-stdin.ts", script);
@@ -298,7 +298,7 @@ describe("Enhanced Template - Stdin Processing", () => {
         totalLength += value.length;
       }
 
-      console.log("STREAM_LENGTH:" + totalLength);
+      console.info("STREAM_LENGTH:" + totalLength);
     `;
 
     await Bun.write("test-stream-stdin.ts", script);
@@ -319,7 +319,7 @@ describe("Enhanced Template - CLI Integration", () => {
     // For now, we'll test the argument parsing logic
     const testScript = `
       const port = process.argv.find(arg => arg.startsWith("--port="))?.split("=")[1] || "3000";
-      console.log("PORT:" + port);
+      console.info("PORT:" + port);
     `;
 
     await Bun.write("test-port.ts", testScript);
@@ -337,9 +337,9 @@ describe("Enhanced Template - CLI Integration", () => {
       const obj = { a: { b: { c: { d: "deep" } } } };
 
       if (depth >= 4) {
-        console.log("DEEP_OBJECT:" + JSON.stringify(obj));
+        console.info("DEEP_OBJECT:" + JSON.stringify(obj));
       } else {
-        console.log("SHALLOW_OBJECT:" + JSON.stringify({ a: { b: "[Object]" } }));
+        console.info("SHALLOW_OBJECT:" + JSON.stringify({ a: { b: "[Object]" } }));
       }
     `;
 
@@ -356,7 +356,7 @@ describe("Enhanced Template - CLI Integration", () => {
   test("should handle --smol argument", async () => {
     const testScript = `
       const isSmol = process.argv.includes("--smol");
-      console.log("SMOL_MODE:" + isSmol);
+      console.info("SMOL_MODE:" + isSmol);
     `;
 
     await Bun.write("test-smol.ts", testScript);
@@ -371,7 +371,7 @@ describe("Enhanced Template - CLI Integration", () => {
   test("should handle --define argument", async () => {
     const testScript = `
       const define = process.argv.find(arg => arg.startsWith("--define="))?.split("=")[1];
-      console.log("DEFINE:" + (define || "none"));
+      console.info("DEFINE:" + (define || "none"));
     `;
 
     await Bun.write("test-define.ts", testScript);
@@ -420,7 +420,7 @@ describe("Enhanced Template - Performance Tests", () => {
       expect(writeTime).toBeLessThan(1000); // Should complete within 1 second
       expect(readTime).toBeLessThan(1000); // Should complete within 1 second
 
-      console.log(
+      console.info(
         `File I/O performance: Write ${writeTime.toFixed(2)}ms, Read ${readTime.toFixed(2)}ms`
       );
     } finally {
@@ -445,7 +445,7 @@ describe("Enhanced Template - Performance Tests", () => {
 
       const afterGC = process.memoryUsage();
 
-      console.log("MEMORY_TEST:" + JSON.stringify({
+      console.info("MEMORY_TEST:" + JSON.stringify({
         smol: isSmol,
         initial: initialMemory.heapUsed,
         afterAllocation: afterAllocation.heapUsed,
@@ -465,9 +465,9 @@ describe("Enhanced Template - Performance Tests", () => {
     expect(normalMemory.smol).toBe(false);
     expect(smolMemory.smol).toBe(true);
 
-    console.log("Memory usage comparison:");
-    console.log("Normal mode:", normalMemory.afterGC / 1024 / 1024, "MB");
-    console.log("Smol mode:", smolMemory.afterGC / 1024 / 1024, "MB");
+    console.info("Memory usage comparison:");
+    console.info("Normal mode:", normalMemory.afterGC / 1024 / 1024, "MB");
+    console.info("Smol mode:", smolMemory.afterGC / 1024 / 1024, "MB");
 
     await $`rm -f test-memory.ts`;
   });
@@ -493,10 +493,10 @@ describe("Enhanced Template - Integration Tests", () => {
       if (configFile) {
         const file = Bun.file(configFile);
         const config = await file.json();
-        console.log("CONFIG_LOADED:" + JSON.stringify(config));
-        console.log("FINAL_PORT:" + (config.port || port));
+        console.info("CONFIG_LOADED:" + JSON.stringify(config));
+        console.info("FINAL_PORT:" + (config.port || port));
       } else {
-        console.log("NO_CONFIG:" + port);
+        console.info("NO_CONFIG:" + port);
       }
     `;
 
@@ -529,8 +529,8 @@ describe("Enhanced Template - Integration Tests", () => {
       const file = Bun.file(data.filename);
       const readContent = await file.text();
 
-      console.log("FILE_WRITTEN:" + data.filename);
-      console.log("CONTENT_MATCH:" + (readContent === data.content));
+      console.info("FILE_WRITTEN:" + data.filename);
+      console.info("CONTENT_MATCH:" + (readContent === data.content));
     `;
 
     await Bun.write("test-stdin-file.ts", script);

@@ -243,7 +243,7 @@ class MonitoringAlertingSystem {
 		if (this.isMonitoring) return;
 
 		this.isMonitoring = true;
-		console.log("📊 Starting monitoring and alerting system...");
+		console.info("📊 Starting monitoring and alerting system...");
 
 		// Main monitoring loop
 		setInterval(async () => {
@@ -520,7 +520,7 @@ class MonitoringAlertingSystem {
 	private updateDashboardMetrics(metrics: SystemMetrics): void {
 		// Update real-time dashboard metrics
 		// In real implementation, would push to dashboard service
-		console.log(
+		console.info(
 			`📊 Metrics Updated - CPU: ${metrics.cpu.usage.toFixed(1)}%, Memory: ${metrics.memory.percentage.toFixed(1)}%, Latency: ${metrics.network.averageLatency.toFixed(1)}ms`,
 		);
 	}
@@ -559,9 +559,9 @@ class MonitoringAlertingSystem {
 		// Send to alert channels
 		await this.sendAlertToChannels(alert);
 
-		console.log(`🚨 ALERT: [${alert.type.toUpperCase()}] ${alert.title}`);
-		console.log(`   ${alert.message}`);
-		console.log(`   Severity: ${alert.severity}/10 | Source: ${alert.source}`);
+		console.info(`🚨 ALERT: [${alert.type.toUpperCase()}] ${alert.title}`);
+		console.info(`   ${alert.message}`);
+		console.info(`   Severity: ${alert.severity}/10 | Source: ${alert.source}`);
 	}
 
 	private async sendAlertToChannels(alert: Alert): Promise<void> {
@@ -583,25 +583,25 @@ class MonitoringAlertingSystem {
 	): Promise<void> {
 		switch (channel.type) {
 			case "console":
-				console.log(
+				console.info(
 					`📢 [${channelId.toUpperCase()}] ${alert.title}: ${alert.message}`,
 				);
 				break;
 
 			case "email":
-				console.log(`📧 Email alert sent to ${channel.recipients.join(", ")}`);
+				console.info(`📧 Email alert sent to ${channel.recipients.join(", ")}`);
 				break;
 
 			case "slack":
-				console.log(`💬 Slack alert sent to #${channel.channel}`);
+				console.info(`💬 Slack alert sent to #${channel.channel}`);
 				break;
 
 			case "webhook":
-				console.log(`🌐 Webhook alert sent to ${channel.url}`);
+				console.info(`🌐 Webhook alert sent to ${channel.url}`);
 				break;
 
 			default:
-				console.log(`❓ Unknown channel type: ${channel.type}`);
+				console.info(`❓ Unknown channel type: ${channel.type}`);
 		}
 	}
 
@@ -647,7 +647,7 @@ class MonitoringAlertingSystem {
 		const alert = this.alerts.find((a) => a.id === alertId);
 		if (alert) {
 			alert.acknowledged = true;
-			console.log(`✅ Alert ${alertId} acknowledged`);
+			console.info(`✅ Alert ${alertId} acknowledged`);
 			return true;
 		}
 		return false;
@@ -657,7 +657,7 @@ class MonitoringAlertingSystem {
 		const alert = this.alerts.find((a) => a.id === alertId);
 		if (alert) {
 			alert.resolved = true;
-			console.log(`✅ Alert ${alertId} resolved`);
+			console.info(`✅ Alert ${alertId} resolved`);
 			return true;
 		}
 		return false;
@@ -671,7 +671,7 @@ class MonitoringAlertingSystem {
 		const rule = this.rules.get(ruleId);
 		if (rule) {
 			Object.assign(rule, updates);
-			console.log(`✅ Rule ${ruleId} updated`);
+			console.info(`✅ Rule ${ruleId} updated`);
 			return true;
 		}
 		return false;
@@ -681,7 +681,7 @@ class MonitoringAlertingSystem {
 		const rule = this.rules.get(ruleId);
 		if (rule) {
 			rule.enabled = enabled;
-			console.log(`✅ Rule ${ruleId} ${enabled ? "enabled" : "disabled"}`);
+			console.info(`✅ Rule ${ruleId} ${enabled ? "enabled" : "disabled"}`);
 			return true;
 		}
 		return false;
@@ -735,7 +735,7 @@ class MonitoringAlertingSystem {
 	public configureAlertChannel(channelId: string, config: any): boolean {
 		if (this.alertChannels.has(channelId)) {
 			Object.assign(this.alertChannels.get(channelId)!, config);
-			console.log(`✅ Alert channel ${channelId} configured`);
+			console.info(`✅ Alert channel ${channelId} configured`);
 			return true;
 		}
 		return false;
@@ -745,7 +745,7 @@ class MonitoringAlertingSystem {
 		const channel = this.alertChannels.get(channelId);
 		if (channel) {
 			channel.enabled = enabled;
-			console.log(
+			console.info(
 				`✅ Alert channel ${channelId} ${enabled ? "enabled" : "disabled"}`,
 			);
 			return true;
@@ -777,13 +777,13 @@ class MonitoringAlertingSystem {
 
 	public stopMonitoring(): void {
 		this.isMonitoring = false;
-		console.log("⏹️  Monitoring and alerting system stopped");
+		console.info("⏹️  Monitoring and alerting system stopped");
 	}
 
 	public startMonitoringSystem(): void {
 		if (!this.isMonitoring) {
 			this.isMonitoring = true;
-			console.log("▶️  Monitoring and alerting system started");
+			console.info("▶️  Monitoring and alerting system started");
 		}
 	}
 
@@ -794,12 +794,12 @@ class MonitoringAlertingSystem {
 
 	public clearAlerts(): void {
 		this.alerts = [];
-		console.log("🗑️  All alerts cleared");
+		console.info("🗑️  All alerts cleared");
 	}
 
 	public clearMetrics(): void {
 		this.metrics = [];
-		console.log("🗑️  All metrics cleared");
+		console.info("🗑️  All metrics cleared");
 	}
 }
 

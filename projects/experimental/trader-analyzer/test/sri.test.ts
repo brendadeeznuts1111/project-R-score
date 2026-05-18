@@ -11,7 +11,7 @@ describe('SRIGenerator', () => {
   describe('generateHash', () => {
     test('generates sha384 hash by default', async () => {
       await using dir = await tempDir('sri-hash', {
-        'test.js': 'console.log("test");',
+        'test.js': 'console.info("test");',
       });
 
       const generator = new SRIGenerator({ files: [] });

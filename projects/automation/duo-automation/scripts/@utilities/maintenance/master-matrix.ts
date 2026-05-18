@@ -56,5 +56,5 @@ uniqueMaster.forEach(row => {
 md += `\n**Total: ${uniqueMaster.length}**\n`;
 
 await Bun.write('docs/MASTER_MATRIX.md', md);
-console.log(`✨ MASTER_MATRIX.md → ${uniqueMaster.length} entries!`);
-console.log(uniqueMaster.slice(0, 5));
+console.info(`✨ MASTER_MATRIX.md → ${uniqueMaster.length} entries!`);
+console.info(uniqueMaster.slice(0, 5));

@@ -122,9 +122,9 @@ describe("🌐 Networking Performance Benchmarks", () => {
         expect(results[1].size).toBe(1000);
         expect(results[2].size).toBe(10000);
 
-        console.log("📊 Response size performance:");
+        console.info("📊 Response size performance:");
         results.forEach(r => {
-          console.log(`  ${r.size} bytes: ${r.time.toFixed(2)}ms`);
+          console.info(`  ${r.size} bytes: ${r.time.toFixed(2)}ms`);
         });
 
       } finally {
@@ -299,10 +299,10 @@ describe("🌐 Networking Performance Benchmarks", () => {
       expect(duringMemory.heapSize).toBeGreaterThan(beforeMemory.heapSize);
       expect(afterMemory.heapSize).toBeLessThanOrEqual(duringMemory.heapSize);
 
-      console.log(`🧠 Memory usage during server operations:`);
-      console.log(`  Before: ${(beforeMemory.heapSize / 1024).toFixed(2)}KB`);
-      console.log(`  During: ${(duringMemory.heapSize / 1024).toFixed(2)}KB`);
-      console.log(`  After: ${(afterMemory.heapSize / 1024).toFixed(2)}KB`);
+      console.info(`🧠 Memory usage during server operations:`);
+      console.info(`  Before: ${(beforeMemory.heapSize / 1024).toFixed(2)}KB`);
+      console.info(`  During: ${(duringMemory.heapSize / 1024).toFixed(2)}KB`);
+      console.info(`  After: ${(afterMemory.heapSize / 1024).toFixed(2)}KB`);
     });
 
     it("should benchmark large response handling", async () => {
@@ -382,10 +382,10 @@ describe("🌐 Networking Performance Benchmarks", () => {
       expect(result.totalLength).toBeGreaterThan(200);
       expect(result.withDirectives).toBeGreaterThan(5);
 
-      console.log("📊 Security header processing:");
-      console.log(`  Total headers: ${result.totalHeaders}`);
-      console.log(`  Total length: ${result.totalLength} chars`);
-      console.log(`  Headers with directives: ${result.withDirectives}`);
+      console.info("📊 Security header processing:");
+      console.info(`  Total headers: ${result.totalHeaders}`);
+      console.info(`  Total length: ${result.totalLength} chars`);
+      console.info(`  Headers with directives: ${result.withDirectives}`);
     });
   });
 });

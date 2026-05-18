@@ -6,23 +6,23 @@ describe("Package Management System", () => {
 
   // Suite-level setup
   beforeAll(() => {
-    console.log("📦 Setting up package management test suite...");
+    console.info("📦 Setting up package management test suite...");
     testPackage = createTestPackage("fantasy42-test", "1.0.0");
   });
 
   // Suite-level teardown
   afterAll(() => {
-    console.log("📦 Cleaning up package management test suite...");
+    console.info("📦 Cleaning up package management test suite...");
   });
 
   // Test-level setup
   beforeEach(() => {
-    console.log("📦 Preparing individual package test...");
+    console.info("📦 Preparing individual package test...");
   });
 
   // Test-level teardown
   afterEach(() => {
-    console.log("📦 Cleaning up after package test...");
+    console.info("📦 Cleaning up after package test...");
   });
 
   test("should create package with correct structure", () => {

@@ -151,7 +151,7 @@ export class VisualRegressionSuite {
       // No golden snapshot exists
       if (this.config.autoUpdateSnapshots) {
         await Bun.write(snapshotPath, currentOutput);
-        console.log(`✅ Created golden snapshot: ${snapshotPath}`);
+        console.info(`✅ Created golden snapshot: ${snapshotPath}`);
         return {
           passed: true,
           diffPercentage: 0,
@@ -161,7 +161,7 @@ export class VisualRegressionSuite {
         };
       } else {
         console.warn(`⚠️ No golden snapshot found: ${snapshotPath}`);
-        console.log(`💡 Run with --update-snapshots to create it`);
+        console.info(`💡 Run with --update-snapshots to create it`);
         return {
           passed: false,
           diffPercentage: 100,
@@ -190,8 +190,8 @@ export class VisualRegressionSuite {
         }
       }
     } else {
-      console.log(`✅ Visual regression passed for "${testName}"`);
-      console.log(`📊 Difference: ${diffPercentage.toFixed(2)}%`);
+      console.info(`✅ Visual regression passed for "${testName}"`);
+      console.info(`📊 Difference: ${diffPercentage.toFixed(2)}%`);
     }
 
     return {
@@ -217,7 +217,7 @@ export class VisualRegressionSuite {
     const currentOutput = this.renderTableToANSI(data, columns);
 
     await Bun.write(snapshotPath, currentOutput);
-    console.log(`✅ Updated golden snapshot: ${snapshotPath}`);
+    console.info(`✅ Updated golden snapshot: ${snapshotPath}`);
   }
 
   /**
@@ -228,15 +228,15 @@ export class VisualRegressionSuite {
     data: TableData[];
     columns: ColumnDef[];
   }>): Promise<{ passed: number; failed: number; results: RegressionResult[] }> {
-    console.log('🔍 Visual Regression Suite v4.4');
-    console.log('================================');
+    console.info('🔍 Visual Regression Suite v4.4');
+    console.info('================================');
 
     let passed = 0;
     let failed = 0;
     const results: RegressionResult[] = [];
 
     for (const test of tests) {
-      console.log(`\n📋 Testing: ${test.name}`);
+      console.info(`\n📋 Testing: ${test.name}`);
       const result = await this.runRegressionTest(test.name, test.data, test.columns);
       results.push(result);
 
@@ -247,15 +247,15 @@ export class VisualRegressionSuite {
       }
     }
 
-    console.log('\n================================');
-    console.log(`📊 Results: ${passed} passed, ${failed} failed`);
+    console.info('\n================================');
+    console.info(`📊 Results: ${passed} passed, ${failed} failed`);
 
     if (failed > 0) {
       console.error('🚨 Visual regression tests FAILED!');
       process.exit(1);
     }
 
-    console.log('✅ All visual regression tests PASSED!');
+    console.info('✅ All visual regression tests PASSED!');
     return { passed, failed, results };
   }
 }

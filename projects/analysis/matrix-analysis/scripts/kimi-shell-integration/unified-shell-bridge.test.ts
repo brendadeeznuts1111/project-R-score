@@ -83,7 +83,7 @@ describe("Unified Shell Bridge", () => {
       // Create a test process that handles signals
       const testScript = `
         process.on('SIGINT', () => {
-          console.log('SIGINT received');
+          console.info('SIGINT received');
           process.exit(130);
         });
         setInterval(() => {}, 1000);
@@ -113,7 +113,7 @@ describe("Unified Shell Bridge", () => {
     test("should handle SIGTERM gracefully", async () => {
       const testScript = `
         process.on('SIGTERM', () => {
-          console.log('SIGTERM received');
+          console.info('SIGTERM received');
           process.exit(143);
         });
         setInterval(() => {}, 1000);
@@ -397,7 +397,7 @@ describe("Unified Shell Bridge", () => {
         
         process.on('SIGTERM', () => {
           cleanedUp = true;
-          console.log('cleanup:', cleanedUp);
+          console.info('cleanup:', cleanedUp);
           process.exit(0);
         });
         
@@ -498,10 +498,10 @@ describe("Benchmarks", () => {
     const max = Math.max(...times);
     const min = Math.min(...times);
     
-    console.log(`\n  Command Execution Stats (${iterations} runs):`);
-    console.log(`    Average: ${avg.toFixed(2)}ms`);
-    console.log(`    Min: ${min.toFixed(2)}ms`);
-    console.log(`    Max: ${max.toFixed(2)}ms`);
+    console.info(`\n  Command Execution Stats (${iterations} runs):`);
+    console.info(`    Average: ${avg.toFixed(2)}ms`);
+    console.info(`    Min: ${min.toFixed(2)}ms`);
+    console.info(`    Max: ${max.toFixed(2)}ms`);
     
     // Should complete reasonably fast
     expect(avg).toBeLessThan(100); // Average under 100ms
@@ -519,13 +519,13 @@ describe("Benchmarks", () => {
     const duration = performance.now() - start;
     const perOp = duration / iterations;
     
-    console.log(`\n  Signal Handler Check (${iterations} runs):`);
-    console.log(`    Total: ${duration.toFixed(2)}ms`);
-    console.log(`    Per operation: ${perOp.toFixed(4)}ms`);
+    console.info(`\n  Signal Handler Check (${iterations} runs):`);
+    console.info(`    Total: ${duration.toFixed(2)}ms`);
+    console.info(`    Per operation: ${perOp.toFixed(4)}ms`);
     
     expect(perOp).toBeLessThan(0.1); // Less than 0.1ms per check
   });
 });
 
-console.log("🧪 Unified Shell Bridge Test Suite");
-console.log("===================================\n");
+console.info("🧪 Unified Shell Bridge Test Suite");
+console.info("===================================\n");

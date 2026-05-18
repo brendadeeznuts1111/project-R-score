@@ -70,10 +70,10 @@ const smallManifest = generateTestManifest("small");
 const mediumManifest = generateTestManifest("medium");
 const largeManifest = generateTestManifest("large");
 
-console.log(`✅ Generated test manifests:`);
-console.log(`   Small: ${JSON.stringify(smallManifest).length} bytes`);
-console.log(`   Medium: ${JSON.stringify(mediumManifest).length} bytes`);
-console.log(`   Large: ${JSON.stringify(largeManifest).length} bytes`);
+console.info(`✅ Generated test manifests:`);
+console.info(`   Small: ${JSON.stringify(smallManifest).length} bytes`);
+console.info(`   Medium: ${JSON.stringify(mediumManifest).length} bytes`);
+console.info(`   Large: ${JSON.stringify(largeManifest).length} bytes`);
 
 // ============ DATABASE SETUP ============
 
@@ -126,7 +126,7 @@ await db`
   CREATE INDEX idx_manifest_created ON manifest_metadata(created_at);
 `;
 
-console.log("✅ Database initialized");
+console.info("✅ Database initialized");
 
 // ============ BENCHMARK GROUPS ============
 
@@ -458,4 +458,4 @@ if (existsSync(dbPath)) {
 	if (existsSync(dbPath + "-shm")) unlinkSync(dbPath + "-shm");
 }
 
-console.log("✅ Benchmarks complete, database cleaned up");
+console.info("✅ Benchmarks complete, database cleaned up");

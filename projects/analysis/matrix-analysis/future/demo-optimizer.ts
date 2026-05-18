@@ -60,74 +60,74 @@ async function processImage(imageData: Uint8Array) {
 
 // Demo function
 async function runOptimizerDemo() {
-  console.log('🔮 Predictive Optimizer Demo\n');
+  console.info('🔮 Predictive Optimizer Demo\n');
   
   const optimizer = new PredictiveOptimizer();
   const advancedOptimizer = new AdvancedPredictiveOptimizer();
   
   for (const [name, code] of Object.entries(sampleCode)) {
-    console.log(`📊 Analyzing: ${name}`);
-    console.log('='.repeat(50));
+    console.info(`📊 Analyzing: ${name}`);
+    console.info('='.repeat(50));
     
     // Basic analysis
     const basicReport = optimizer.analyze(code);
-    console.log(`Future Compatibility Score: ${basicReport.futureScore}/100`);
+    console.info(`Future Compatibility Score: ${basicReport.futureScore}/100`);
     
     // Advanced analysis
     const advancedReport = advancedOptimizer.analyzeBunPatterns(code);
-    console.log(`Bun Optimization Score: ${advancedReport.bunScore}/100`);
+    console.info(`Bun Optimization Score: ${advancedReport.bunScore}/100`);
     
     // Show recommendations
     if (basicReport.recommendations.length > 0) {
-      console.log('\n💡 Recommendations:');
+      console.info('\n💡 Recommendations:');
       basicReport.recommendations.forEach(rec => {
-        console.log(`  • ${rec}`);
+        console.info(`  • ${rec}`);
       });
     }
     
     if (advancedReport.bunRecommendations.length > 0) {
-      console.log('\n🚀 Bun-Specific Recommendations:');
+      console.info('\n🚀 Bun-Specific Recommendations:');
       advancedReport.bunRecommendations.forEach(rec => {
-        console.log(`  • ${rec}`);
+        console.info(`  • ${rec}`);
       });
     }
     
     // Optimize the code
-    console.log('\n⚡ Optimized Code:');
+    console.info('\n⚡ Optimized Code:');
     const optimized = advancedOptimizer.optimizeForBunFuture(code);
-    console.log(optimized.trim());
+    console.info(optimized.trim());
     
-    console.log('\n' + '='.repeat(80) + '\n');
+    console.info('\n' + '='.repeat(80) + '\n');
   }
   
   // Test utility functions
-  console.log('🛠️  Utility Functions Demo');
-  console.log('='.repeat(50));
+  console.info('🛠️  Utility Functions Demo');
+  console.info('='.repeat(50));
   
   const testCode = sampleCode.bunOptimized;
   const report = advancedOptimizer.analyzeBunPatterns(testCode);
   
-  console.log(OptimizerUtils.createSummary(report));
+  console.info(OptimizerUtils.createSummary(report));
   
   const suggestions = OptimizerUtils.generateSuggestions(report);
   if (suggestions.length > 0) {
-    console.log('\n📝 Additional Suggestions:');
+    console.info('\n📝 Additional Suggestions:');
     suggestions.forEach(suggestion => {
-      console.log(`  • ${suggestion}`);
+      console.info(`  • ${suggestion}`);
     });
   }
 }
 
 // Performance benchmark
 async function benchmarkOptimizer() {
-  console.log('\n⏱️  Performance Benchmark');
-  console.log('='.repeat(50));
+  console.info('\n⏱️  Performance Benchmark');
+  console.info('='.repeat(50));
   
   const optimizer = new PredictiveOptimizer();
   const testCode = sampleCode.bunOptimized;
   const iterations = 1000;
   
-  console.log(`Running ${iterations} optimizations...`);
+  console.info(`Running ${iterations} optimizations...`);
   
   const start = performance.now();
   
@@ -139,9 +139,9 @@ async function benchmarkOptimizer() {
   const end = performance.now();
   const duration = end - start;
   
-  console.log(`✅ Completed in ${duration.toFixed(2)}ms`);
-  console.log(`📈 Average: ${(duration / iterations).toFixed(4)}ms per operation`);
-  console.log(`🚀 Throughput: ${(iterations / duration * 1000).toFixed(0)} operations/second`);
+  console.info(`✅ Completed in ${duration.toFixed(2)}ms`);
+  console.info(`📈 Average: ${(duration / iterations).toFixed(4)}ms per operation`);
+  console.info(`🚀 Throughput: ${(iterations / duration * 1000).toFixed(0)} operations/second`);
 }
 
 // Run the demo

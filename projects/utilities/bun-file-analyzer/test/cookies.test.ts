@@ -6,7 +6,7 @@ describe("Bun Native Cookie Integration", () => {
 
   if (!isBunServeAvailable) {
     it("Bun.serve not available, skipping cookie integration tests", () => {
-      console.log("Bun.serve not available, skipping cookie integration tests");
+      console.info("Bun.serve not available, skipping cookie integration tests");
     });
   } else {
     let server: any;

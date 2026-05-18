@@ -16,7 +16,7 @@ interface ValidationTest {
 	description?: string;
 }
 
-console.log("🔍 Running post-migration validation...\n");
+console.info("🔍 Running post-migration validation...\n");
 
 const validations: ValidationTest[] = [
 	// Basic structure validation
@@ -219,16 +219,16 @@ async function runValidations() {
 	const results: Array<{ name: string; passed: boolean; error?: string }> = [];
 
 	for (const validation of validations) {
-		console.log(`🧪 Testing: ${validation.name}`);
+		console.info(`🧪 Testing: ${validation.name}`);
 
 		try {
 			const result = await validation.check();
 			if (result) {
-				console.log(`✅ ${validation.name}`);
+				console.info(`✅ ${validation.name}`);
 				passed++;
 				results.push({ name: validation.name, passed: true });
 			} else {
-				console.log(`❌ ${validation.name}`);
+				console.info(`❌ ${validation.name}`);
 				if (validation.required) {
 					failed++;
 				}
@@ -239,7 +239,7 @@ async function runValidations() {
 				});
 			}
 		} catch (error) {
-			console.log(`❌ ${validation.name} - Error: ${error}`);
+			console.info(`❌ ${validation.name} - Error: ${error}`);
 			if (validation.required) {
 				failed++;
 			}
@@ -251,44 +251,44 @@ async function runValidations() {
 		}
 
 		if (validation.description) {
-			console.log(`   ${validation.description}`);
+			console.info(`   ${validation.description}`);
 		}
-		console.log("");
+		console.info("");
 	}
 
 	// Summary
-	console.log("📊 Validation Summary:");
-	console.log(`✅ Passed: ${passed}`);
-	console.log(`❌ Failed: ${failed}`);
-	console.log(
+	console.info("📊 Validation Summary:");
+	console.info(`✅ Passed: ${passed}`);
+	console.info(`❌ Failed: ${failed}`);
+	console.info(
 		`📈 Success Rate: ${((passed / (passed + failed)) * 100).toFixed(1)}%`,
 	);
 
 	if (failed > 0) {
-		console.log("\n⚠️  Failed validations:");
+		console.info("\n⚠️  Failed validations:");
 		results
 			.filter((r) => !r.passed)
 			.forEach((r) => {
-				console.log(`   ❌ ${r.name}${r.error ? ` - ${r.error}` : ""}`);
+				console.info(`   ❌ ${r.name}${r.error ? ` - ${r.error}` : ""}`);
 			});
 
-		console.log("\n🔧 Recommended fixes:");
-		console.log("1. Review failed validations and fix issues");
-		console.log("2. Run 'bun install' to ensure dependencies are correct");
-		console.log("3. Check import paths in affected packages");
-		console.log("4. Verify package.json configurations");
+		console.info("\n🔧 Recommended fixes:");
+		console.info("1. Review failed validations and fix issues");
+		console.info("2. Run 'bun install' to ensure dependencies are correct");
+		console.info("3. Check import paths in affected packages");
+		console.info("4. Verify package.json configurations");
 
 		process.exit(1);
 	} else {
-		console.log(
+		console.info(
 			"\n🎉 All validations passed! Migration is complete and ready for use.",
 		);
 
-		console.log("\n📋 Next steps:");
-		console.log("1. Commit the migration changes");
-		console.log("2. Push to remote repository");
-		console.log("3. Update CI/CD pipelines for workspace structure");
-		console.log("4. Update documentation for new package structure");
+		console.info("\n📋 Next steps:");
+		console.info("1. Commit the migration changes");
+		console.info("2. Push to remote repository");
+		console.info("3. Update CI/CD pipelines for workspace structure");
+		console.info("4. Update documentation for new package structure");
 	}
 
 	// Generate validation report
@@ -311,7 +311,7 @@ function validatePackageStructure(
 	for (const item of expectedItems) {
 		const itemPath = join(srcPath, item);
 		if (!existsSync(itemPath)) {
-			console.log(`   Missing: ${itemPath}`);
+			console.info(`   Missing: ${itemPath}`);
 			return false;
 		}
 	}
@@ -332,7 +332,7 @@ function validateImports(packagePath: string): boolean {
 		if (packageJson.dependencies) {
 			for (const [name, version] of Object.entries(packageJson.dependencies)) {
 				if (name.startsWith("@bun-toml/") && version !== "workspace:*") {
-					console.log(
+					console.info(
 						`   Invalid dependency version: ${name}@${version} (should be workspace:*)`,
 					);
 					return false;
@@ -363,7 +363,7 @@ function validateNoDuplicateExports(): boolean {
 			try {
 				JSON.parse(readFileSync(packageJsonPath, "utf8"));
 			} catch {
-				console.log(`   Invalid package.json in ${pkg}`);
+				console.info(`   Invalid package.json in ${pkg}`);
 				return false;
 			}
 		}
@@ -409,7 +409,7 @@ function generateReport(
 
 	const reportPath = "migration-validation-report.json";
 	writeFileSync(reportPath, JSON.stringify(report, null, 2));
-	console.log(`\n📄 Detailed report saved to: ${reportPath}`);
+	console.info(`\n📄 Detailed report saved to: ${reportPath}`);
 }
 
 // Run the validations

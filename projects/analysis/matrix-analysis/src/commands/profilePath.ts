@@ -43,7 +43,7 @@ export async function profilePathAdd(
 			console.error(fmt.fail(`"${path}" already exists in ${variable} ${position}`));
 			process.exit(EXIT_CODES.CONFLICT_ERROR);
 		}
-		console.log(
+		console.info(
 			`\x1b[33m⚠ "${path}" already in ${variable} ${position}, skipping\x1b[0m`,
 		);
 		return;
@@ -54,8 +54,8 @@ export async function profilePathAdd(
 	await saveProfile(profileName, profile);
 
 	const hint = PATH_LIKE_VARS.includes(variable) ? "" : " (custom variable)";
-	console.log(`\x1b[32m✓ Added to ${variable}${hint}\x1b[0m`);
-	console.log(`  ${position}: ${path}`);
+	console.info(`\x1b[32m✓ Added to ${variable}${hint}\x1b[0m`);
+	console.info(`  ${position}: ${path}`);
 }
 
 export async function profilePathRemove(
@@ -114,8 +114,8 @@ export async function profilePathRemove(
 
 	await saveProfile(profileName, profile);
 
-	console.log(`\x1b[32m✓ Removed from ${variable}\x1b[0m`);
-	console.log(`  path: ${path}`);
+	console.info(`\x1b[32m✓ Removed from ${variable}\x1b[0m`);
+	console.info(`  path: ${path}`);
 }
 
 export async function profilePathList(
@@ -129,7 +129,7 @@ export async function profilePathList(
 	}
 
 	if (!profile.paths || Object.keys(profile.paths).length === 0) {
-		console.log(`No path variables configured in "${profileName}"`);
+		console.info(`No path variables configured in "${profileName}"`);
 		return;
 	}
 
@@ -138,52 +138,52 @@ export async function profilePathList(
 		: profile.paths;
 
 	if (options.variable && !profile.paths[options.variable]) {
-		console.log(`No paths configured for ${options.variable} in "${profileName}"`);
+		console.info(`No paths configured for ${options.variable} in "${profileName}"`);
 		return;
 	}
 
 	const env: Record<string, string | undefined> = { ...Bun.env, ...profile.env };
 
-	console.log(fmt.bold(`Path variables in "${profileName}":\n`));
+	console.info(fmt.bold(`Path variables in "${profileName}":\n`));
 
 	for (const [variable, config] of Object.entries(variables)) {
 		if (!config) continue;
 
 		const hint = PATH_LIKE_VARS.includes(variable) ? "" : " (custom)";
-		console.log(`  ${fmt.bold(variable)}${hint}`);
+		console.info(`  ${fmt.bold(variable)}${hint}`);
 
 		if (config.prepend && config.prepend.length > 0) {
-			console.log("    prepend:");
+			console.info("    prepend:");
 			for (const dir of config.prepend) {
 				if (options.resolved) {
 					const expanded = expandPathVars(dir, env);
 					const exists = checkPathExists(expanded);
 					const mark = exists ? "\x1b[32m✓\x1b[0m" : "\x1b[31m✗\x1b[0m";
-					console.log(
+					console.info(
 						`      ${mark} ${expanded}${expanded !== dir ? ` (from ${dir})` : ""}`,
 					);
 				} else {
-					console.log(`      ${dir}`);
+					console.info(`      ${dir}`);
 				}
 			}
 		}
 
 		if (config.append && config.append.length > 0) {
-			console.log("    append:");
+			console.info("    append:");
 			for (const dir of config.append) {
 				if (options.resolved) {
 					const expanded = expandPathVars(dir, env);
 					const exists = checkPathExists(expanded);
 					const mark = exists ? "\x1b[32m✓\x1b[0m" : "\x1b[31m✗\x1b[0m";
-					console.log(
+					console.info(
 						`      ${mark} ${expanded}${expanded !== dir ? ` (from ${dir})` : ""}`,
 					);
 				} else {
-					console.log(`      ${dir}`);
+					console.info(`      ${dir}`);
 				}
 			}
 		}
 
-		console.log();
+		console.info();
 	}
 }

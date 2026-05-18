@@ -16,7 +16,7 @@ interface HealthCheckResult {
 }
 
 async function runHealthChecks(): Promise<HealthCheckResult[]> {
-  console.log('🏥 Running comprehensive health checks...');
+  console.info('🏥 Running comprehensive health checks...');
 
   const results: HealthCheckResult[] = [];
 
@@ -279,8 +279,8 @@ async function checkExternalServicesHealth(): Promise<HealthCheckResult> {
 }
 
 function displayHealthResults(results: HealthCheckResult[]): void {
-  console.log('\n🏥 Health Check Results');
-  console.log('======================');
+  console.info('\n🏥 Health Check Results');
+  console.info('======================');
 
   const statusCounts = {
     healthy: 0,
@@ -294,33 +294,33 @@ function displayHealthResults(results: HealthCheckResult[]): void {
     const statusIcon =
       result.status === 'healthy' ? '✅' : result.status === 'degraded' ? '⚠️' : '❌';
 
-    console.log(`${statusIcon} ${result.service}: ${result.message}`);
-    console.log(`   Response time: ${result.responseTime}ms`);
+    console.info(`${statusIcon} ${result.service}: ${result.message}`);
+    console.info(`   Response time: ${result.responseTime}ms`);
 
     if (result.details) {
-      console.log(`   Details: ${JSON.stringify(result.details, null, 2)}`);
+      console.info(`   Details: ${JSON.stringify(result.details, null, 2)}`);
     }
-    console.log('');
+    console.info('');
   });
 
   // Summary
   const totalServices = results.length;
   const healthyPercent = Math.round((statusCounts.healthy / totalServices) * 100);
 
-  console.log('📊 Summary');
-  console.log('=========');
-  console.log(`Total services: ${totalServices}`);
-  console.log(`Healthy: ${statusCounts.healthy}`);
-  console.log(`Degraded: ${statusCounts.degraded}`);
-  console.log(`Unhealthy: ${statusCounts.unhealthy}`);
-  console.log(`Overall health: ${healthyPercent}%`);
+  console.info('📊 Summary');
+  console.info('=========');
+  console.info(`Total services: ${totalServices}`);
+  console.info(`Healthy: ${statusCounts.healthy}`);
+  console.info(`Degraded: ${statusCounts.degraded}`);
+  console.info(`Unhealthy: ${statusCounts.unhealthy}`);
+  console.info(`Overall health: ${healthyPercent}%`);
 
   if (healthyPercent === 100) {
-    console.log('🎉 All systems are healthy!');
+    console.info('🎉 All systems are healthy!');
   } else if (healthyPercent >= 80) {
-    console.log('⚠️ System is mostly healthy with minor issues');
+    console.info('⚠️ System is mostly healthy with minor issues');
   } else {
-    console.log('❌ System has significant health issues');
+    console.info('❌ System has significant health issues');
   }
 }
 
@@ -333,7 +333,7 @@ if (import.meta.main) {
     // Output JSON for monitoring systems
     runHealthChecks()
       .then(results => {
-        console.log(
+        console.info(
           JSON.stringify(
             {
               timestamp: new Date().toISOString(),

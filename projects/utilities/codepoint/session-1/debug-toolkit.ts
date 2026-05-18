@@ -7,7 +7,7 @@ import { CustomProxyServer } from "./hmr-event-tracker";
 class HMRDebugToolkit {
   // 1. INSTANT SERVER STATUS (PRO TIP: Use for quick debugging)
   static instantServerStatus(servers: CustomProxyServer[]) {
-    console.log("⚡ Instant Server Status:");
+    console.info("⚡ Instant Server Status:");
     const statusTable = servers.map((s) => ({
       Name: s.name,
       Connections: s.connections,
@@ -29,7 +29,7 @@ class HMRDebugToolkit {
     );
 
     if (recentEvents.length === 0) {
-      console.log(
+      console.info(
         `🔥 HMR Flow: No recent activity (last ${timeWindowMs / 1000}s)`
       );
       return;
@@ -45,12 +45,12 @@ class HMRDebugToolkit {
       })
       .join(" → ");
 
-    console.log(`🔥 HMR Flow (${timeWindowMs / 1000}s window): ${eventFlow}`);
+    console.info(`🔥 HMR Flow (${timeWindowMs / 1000}s window): ${eventFlow}`);
 
     // Add quick stats
     const errorCount = recentEvents.filter((e) => e.name === "error").length;
     if (errorCount > 0) {
-      console.log(`⚠️  ${errorCount} error(s) in recent activity`);
+      console.info(`⚠️  ${errorCount} error(s) in recent activity`);
     }
   }
 
@@ -59,10 +59,10 @@ class HMRDebugToolkit {
     servers: CustomProxyServer[],
     intervalMs: number = 5000
   ) {
-    console.log(
+    console.info(
       `📈 Starting live connection trend (updates every ${intervalMs / 1000}s)`
     );
-    console.log("Press Ctrl+C to stop monitoring\n");
+    console.info("Press Ctrl+C to stop monitoring\n");
 
     const trendInterval = setInterval(() => {
       const timestamp = new Date().toLocaleTimeString();
@@ -76,13 +76,13 @@ class HMRDebugToolkit {
         })
         .join(" | ");
 
-      console.log(`📈 ${timestamp} | ${serverStatuses}`);
+      console.info(`📈 ${timestamp} | ${serverStatuses}`);
     }, intervalMs);
 
     // Handle cleanup
     process.on("SIGINT", () => {
       clearInterval(trendInterval);
-      console.log("\n🛑 Connection trend monitoring stopped");
+      console.info("\n🛑 Connection trend monitoring stopped");
     });
 
     return trendInterval;
@@ -135,7 +135,7 @@ class HMRDebugToolkit {
     });
 
     const jsonString = JSON.stringify(diagnostics, null, compact ? 0 : 2);
-    console.log(compact ? jsonString : `\n🔍 JSON Diagnostics:\n${jsonString}`);
+    console.info(compact ? jsonString : `\n🔍 JSON Diagnostics:\n${jsonString}`);
 
     return diagnostics;
   }
@@ -146,7 +146,7 @@ class HMRDebugToolkit {
     const eventsWithDuration = events.filter((e) => e.duration !== undefined);
 
     if (eventsWithDuration.length === 0) {
-      console.log(`⚡ ${server.name}: No duration data available`);
+      console.info(`⚡ ${server.name}: No duration data available`);
       return;
     }
 
@@ -160,13 +160,13 @@ class HMRDebugToolkit {
       (e) => (e.duration || 0) > avgDuration * 2
     );
 
-    console.log(`⚡ ${server.name} Performance:`);
-    console.log(`   Avg Duration: ${Math.round(avgDuration)}ms`);
-    console.log(`   Max Duration: ${maxDuration}ms`);
-    console.log(`   Slow Events: ${slowEvents.length} (>2x avg)`);
+    console.info(`⚡ ${server.name} Performance:`);
+    console.info(`   Avg Duration: ${Math.round(avgDuration)}ms`);
+    console.info(`   Max Duration: ${maxDuration}ms`);
+    console.info(`   Slow Events: ${slowEvents.length} (>2x avg)`);
 
     if (slowEvents.length > 0) {
-      console.log(
+      console.info(
         `   Slowest: ${slowEvents
           .map((e) => `${e.name}(${e.duration}ms)`)
           .join(", ")}`
@@ -193,11 +193,11 @@ class HMRDebugToolkit {
     });
 
     if (allErrors.length === 0) {
-      console.log("🎉 No errors found across all servers!");
+      console.info("🎉 No errors found across all servers!");
       return;
     }
 
-    console.log(
+    console.info(
       `🚨 Error Pattern Analysis (${allErrors.length} total errors):`
     );
 
@@ -208,12 +208,12 @@ class HMRDebugToolkit {
       errorsByModule[module] = (errorsByModule[module] || 0) + 1;
     });
 
-    console.log("   By Module:");
+    console.info("   By Module:");
     Object.entries(errorsByModule)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .forEach(([module, count]) => {
-        console.log(`     ${module}: ${count} errors`);
+        console.info(`     ${module}: ${count} errors`);
       });
 
     // Group by hour
@@ -222,11 +222,11 @@ class HMRDebugToolkit {
       errorsByHour[error.hour] = (errorsByHour[error.hour] || 0) + 1;
     });
 
-    console.log("   By Hour:");
+    console.info("   By Hour:");
     Object.entries(errorsByHour)
       .sort(([a], [b]) => parseInt(a) - parseInt(b))
       .forEach(([hour, count]) => {
-        console.log(`     ${hour}:00 - ${count} errors`);
+        console.info(`     ${hour}:00 - ${count} errors`);
       });
   }
 
@@ -258,7 +258,7 @@ class HMRDebugToolkit {
   }
 
   static healthReport(servers: CustomProxyServer[]) {
-    console.log("🏥 HMR Health Report:");
+    console.info("🏥 HMR Health Report:");
     servers.forEach((server) => {
       const score = this.calculateHMRHealthScore(server);
       const grade =
@@ -269,7 +269,7 @@ class HMRDebugToolkit {
           : score >= 70
           ? "🟠 C"
           : "🔴 D";
-      console.log(`   ${server.name}: ${score}/100 ${grade}`);
+      console.info(`   ${server.name}: ${score}/100 ${grade}`);
     });
   }
 
@@ -278,8 +278,8 @@ class HMRDebugToolkit {
     server: CustomProxyServer,
     maxEvents: number = 10
   ) {
-    console.log(`👁️  Compact Event Monitor for ${server.name}`);
-    console.log("   Showing last events in real-time\n");
+    console.info(`👁️  Compact Event Monitor for ${server.name}`);
+    console.info("   Showing last events in real-time\n");
 
     let lastEventCount = server.hmrEvents.length;
 
@@ -293,7 +293,7 @@ class HMRDebugToolkit {
           const time = event.timestamp.toLocaleTimeString();
           const module = event.module ? `:${event.module}` : "";
           const duration = event.duration ? ` ${event.duration}ms` : "";
-          console.log(`   ${time} ${icon}${event.name}${module}${duration}`);
+          console.info(`   ${time} ${icon}${event.name}${module}${duration}`);
         });
         lastEventCount = currentEvents.length;
       }
@@ -302,7 +302,7 @@ class HMRDebugToolkit {
     // Handle cleanup
     process.on("SIGINT", () => {
       clearInterval(monitorInterval);
-      console.log("\n🛑 Event monitoring stopped");
+      console.info("\n🛑 Event monitoring stopped");
     });
 
     return monitorInterval;
@@ -313,7 +313,7 @@ class HMRDebugToolkit {
     servers: CustomProxyServer[],
     durationMs: number = 10000
   ) {
-    console.log(`🏃 Quick Benchmark (${durationMs / 1000}s)...\n`);
+    console.info(`🏃 Quick Benchmark (${durationMs / 1000}s)...\n`);
 
     const startTime = Date.now();
     const startStats = servers.map((s) => ({
@@ -330,7 +330,7 @@ class HMRDebugToolkit {
         connections: s.connections,
       }));
 
-      console.log("📊 Benchmark Results:");
+      console.info("📊 Benchmark Results:");
       servers.forEach((server, i) => {
         const eventsDelta = endStats[i].events - startStats[i].events;
         const connDelta = endStats[i].connections - startStats[i].connections;
@@ -339,12 +339,12 @@ class HMRDebugToolkit {
             ? (eventsDelta / (durationMs / 1000)).toFixed(2)
             : "0.00";
 
-        console.log(
+        console.info(
           `   ${server.name}: +${eventsDelta} events (${eventsPerSec}/s), +${connDelta} connections`
         );
       });
 
-      console.log(`⏱️  Duration: ${(endTime - startTime) / 1000}s`);
+      console.info(`⏱️  Duration: ${(endTime - startTime) / 1000}s`);
     }, durationMs);
   }
 
@@ -353,16 +353,16 @@ class HMRDebugToolkit {
     const memUsage = process.memoryUsage();
     const totalEvents = servers.reduce((sum, s) => sum + s.hmrEvents.length, 0);
 
-    console.log("💾 Memory Usage Snapshot:");
-    console.log(`   RSS: ${Math.round(memUsage.rss / 1024 / 1024)}MB`);
-    console.log(
+    console.info("💾 Memory Usage Snapshot:");
+    console.info(`   RSS: ${Math.round(memUsage.rss / 1024 / 1024)}MB`);
+    console.info(
       `   Heap Used: ${Math.round(memUsage.heapUsed / 1024 / 1024)}MB`
     );
-    console.log(
+    console.info(
       `   Heap Total: ${Math.round(memUsage.heapTotal / 1024 / 1024)}MB`
     );
-    console.log(`   Total HMR Events: ${totalEvents}`);
-    console.log(
+    console.info(`   Total HMR Events: ${totalEvents}`);
+    console.info(
       `   Events per MB: ${
         totalEvents > 0
           ? Math.round(totalEvents / (memUsage.heapUsed / 1024 / 1024))
@@ -411,8 +411,8 @@ class HMRDebugToolkit {
 }
 
 // Demo setup and execution
-console.log("🛠️  HMR Debugging Toolkit Demo");
-console.log("============================\n");
+console.info("🛠️  HMR Debugging Toolkit Demo");
+console.info("============================\n");
 
 // Create test servers
 const servers = [
@@ -454,41 +454,41 @@ if (stagingServer) {
 }
 
 // Demonstrate all debugging tools
-console.log("1. INSTANT SERVER STATUS:");
+console.info("1. INSTANT SERVER STATUS:");
 HMRDebugToolkit.instantServerStatus(servers);
 
-console.log("\n2. QUICK HMR EVENT SNIFF:");
+console.info("\n2. QUICK HMR EVENT SNIFF:");
 HMRDebugToolkit.quickHMRSniff(prodServer!, 60000);
 
-console.log("\n3. JSON DIAGNOSTICS PIPE:");
+console.info("\n3. JSON DIAGNOSTICS PIPE:");
 HMRDebugToolkit.jsonDiagnosticsPipe(servers, {
   includeEvents: true,
   compact: false,
 });
 
-console.log("\n4. PERFORMANCE QUICK CHECK:");
+console.info("\n4. PERFORMANCE QUICK CHECK:");
 HMRDebugToolkit.performanceQuickCheck(prodServer!);
 
-console.log("\n5. ERROR PATTERN ANALYSIS:");
+console.info("\n5. ERROR PATTERN ANALYSIS:");
 HMRDebugToolkit.errorPatternAnalysis(servers);
 
-console.log("\n6. HMR HEALTH SCORE:");
+console.info("\n6. HMR HEALTH SCORE:");
 HMRDebugToolkit.healthReport(servers);
 
-console.log("\n7. MEMORY USAGE SNAPSHOT:");
+console.info("\n7. MEMORY USAGE SNAPSHOT:");
 HMRDebugToolkit.memorySnapshot(servers);
 
-console.log("\n8. QUICK BENCHMARK (5s):");
+console.info("\n8. QUICK BENCHMARK (5s):");
 HMRDebugToolkit.quickBenchmark(servers, 5000);
 
 // Start live monitoring (commented out for demo)
-// console.log("\n9. Starting live monitoring (run for demo)...");
+// console.info("\n9. Starting live monitoring (run for demo)...");
 // HMRDebugToolkit.startLiveConnectionTrend(servers, 3000);
 
-// console.log("\n10. Starting compact event monitor (run for demo)...");
+// console.info("\n10. Starting compact event monitor (run for demo)...");
 // HMRDebugToolkit.startCompactEventMonitor(prodServer!, 5);
 
-console.log("\n✨ Debugging Toolkit Demo Complete!");
-console.log(
+console.info("\n✨ Debugging Toolkit Demo Complete!");
+console.info(
   "💡 Uncomment the live monitoring sections to see real-time updates"
 );

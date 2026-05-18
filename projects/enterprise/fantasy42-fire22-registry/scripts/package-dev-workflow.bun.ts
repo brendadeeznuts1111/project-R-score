@@ -36,7 +36,7 @@ class PackageDevWorkflow {
 
     // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file existence check
     if (!(await Bun.file(enterpriseDir).exists())) {
-      console.log('⚠️ Enterprise packages directory not found');
+      console.info('⚠️ Enterprise packages directory not found');
       return;
     }
 
@@ -54,7 +54,7 @@ class PackageDevWorkflow {
       }
     }
 
-    console.log(`📦 Discovered ${this.packages.size} enterprise packages`);
+    console.info(`📦 Discovered ${this.packages.size} enterprise packages`);
   }
 
   private async loadPackageInfo(pkgPath: string): Promise<void> {
@@ -71,13 +71,13 @@ class PackageDevWorkflow {
         devDependencies: pkgJson.devDependencies || {},
       });
     } catch (error) {
-      console.log(`⚠️ Failed to load package info from ${pkgPath}`);
+      console.info(`⚠️ Failed to load package info from ${pkgPath}`);
     }
   }
 
   async linkPackage(packageName: string): Promise<boolean> {
     if (!this.packages.has(packageName)) {
-      console.log(`❌ Package ${packageName} not found`);
+      console.info(`❌ Package ${packageName} not found`);
       return false;
     }
 
@@ -95,17 +95,17 @@ class PackageDevWorkflow {
       execSync(`bun link ${packageName}`, { stdio: 'inherit' });
 
       this.linkedPackages.add(packageName);
-      console.log(`✅ Package ${packageName} linked successfully`);
+      console.info(`✅ Package ${packageName} linked successfully`);
       return true;
     } catch (error) {
-      console.log(`❌ Failed to link package ${packageName}:`, error);
+      console.info(`❌ Failed to link package ${packageName}:`, error);
       return false;
     }
   }
 
   async unlinkPackage(packageName: string): Promise<boolean> {
     if (!this.packages.has(packageName)) {
-      console.log(`❌ Package ${packageName} not found`);
+      console.info(`❌ Package ${packageName} not found`);
       return false;
     }
 
@@ -122,17 +122,17 @@ class PackageDevWorkflow {
       process.chdir(join(__dirname, '..', '..'));
 
       this.linkedPackages.delete(packageName);
-      console.log(`✅ Package ${packageName} unlinked successfully`);
+      console.info(`✅ Package ${packageName} unlinked successfully`);
       return true;
     } catch (error) {
-      console.log(`❌ Failed to unlink package ${packageName}:`, error);
+      console.info(`❌ Failed to unlink package ${packageName}:`, error);
       return false;
     }
   }
 
   async buildPackage(packageName: string): Promise<boolean> {
     if (!this.packages.has(packageName)) {
-      console.log(`❌ Package ${packageName} not found`);
+      console.info(`❌ Package ${packageName} not found`);
       return false;
     }
 
@@ -155,10 +155,10 @@ class PackageDevWorkflow {
       }
 
       process.chdir(join(__dirname, '..', '..'));
-      console.log(`✅ Package ${packageName} built successfully`);
+      console.info(`✅ Package ${packageName} built successfully`);
       return true;
     } catch (error) {
-      console.log(`❌ Failed to build package ${packageName}:`, error);
+      console.info(`❌ Failed to build package ${packageName}:`, error);
       process.chdir(join(__dirname, '..', '..'));
       return false;
     }
@@ -166,89 +166,89 @@ class PackageDevWorkflow {
 
   async watchPackage(packageName: string): Promise<void> {
     if (!this.packages.has(packageName)) {
-      console.log(`❌ Package ${packageName} not found`);
+      console.info(`❌ Package ${packageName} not found`);
       return;
     }
 
     const pkg = this.packages.get(packageName)!;
 
-    console.log(`👀 Watching package ${packageName} for changes...`);
-    console.log(`📁 Path: ${relative(process.cwd(), pkg.path)}`);
-    console.log(`🔗 Status: ${this.linkedPackages.has(packageName) ? 'Linked' : 'Not linked'}`);
+    console.info(`👀 Watching package ${packageName} for changes...`);
+    console.info(`📁 Path: ${relative(process.cwd(), pkg.path)}`);
+    console.info(`🔗 Status: ${this.linkedPackages.has(packageName) ? 'Linked' : 'Not linked'}`);
 
     // This would implement file watching for rebuilds
     // For now, just show instructions
-    console.log('\n💡 To watch for changes:');
-    console.log(`1. Open terminal in: ${pkg.path}`);
-    console.log(`2. Run: bun run build --watch`);
-    console.log(`3. The package will rebuild on file changes`);
+    console.info('\n💡 To watch for changes:');
+    console.info(`1. Open terminal in: ${pkg.path}`);
+    console.info(`2. Run: bun run build --watch`);
+    console.info(`3. The package will rebuild on file changes`);
   }
 
   listPackages(): void {
-    console.log('\n📦 Enterprise Packages:\n');
+    console.info('\n📦 Enterprise Packages:\n');
 
     for (const [name, pkg] of this.packages) {
       const status = this.linkedPackages.has(name) ? '🔗 Linked' : '📦 Available';
       const relativePath = relative(process.cwd(), pkg.path);
 
-      console.log(`${status} ${name}@${pkg.version}`);
-      console.log(`   📁 ${relativePath}`);
+      console.info(`${status} ${name}@${pkg.version}`);
+      console.info(`   📁 ${relativePath}`);
 
       // Show dependencies on other enterprise packages
       const enterpriseDeps = Object.keys(pkg.dependencies).filter(dep => this.packages.has(dep));
 
       if (enterpriseDeps.length > 0) {
-        console.log(`   🔗 Depends on: ${enterpriseDeps.join(', ')}`);
+        console.info(`   🔗 Depends on: ${enterpriseDeps.join(', ')}`);
       }
 
-      console.log('');
+      console.info('');
     }
   }
 
   showPackageDetails(packageName: string): void {
     if (!this.packages.has(packageName)) {
-      console.log(`❌ Package ${packageName} not found`);
+      console.info(`❌ Package ${packageName} not found`);
       return;
     }
 
     const pkg = this.packages.get(packageName)!;
 
-    console.log(`\n📦 Package Details: ${packageName}\n`);
-    console.log(`📁 Path: ${relative(process.cwd(), pkg.path)}`);
-    console.log(`🏷️ Version: ${pkg.version}`);
-    console.log(`🔗 Status: ${this.linkedPackages.has(packageName) ? 'Linked' : 'Not linked'}`);
+    console.info(`\n📦 Package Details: ${packageName}\n`);
+    console.info(`📁 Path: ${relative(process.cwd(), pkg.path)}`);
+    console.info(`🏷️ Version: ${pkg.version}`);
+    console.info(`🔗 Status: ${this.linkedPackages.has(packageName) ? 'Linked' : 'Not linked'}`);
 
-    console.log('\n📋 Dependencies:');
+    console.info('\n📋 Dependencies:');
     const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
 
     if (Object.keys(allDeps).length === 0) {
-      console.log('   (none)');
+      console.info('   (none)');
     } else {
       for (const [dep, version] of Object.entries(allDeps)) {
         const isEnterprise = this.packages.has(dep);
         const marker = isEnterprise ? '🔗' : '📦';
-        console.log(`   ${marker} ${dep}@${version}`);
+        console.info(`   ${marker} ${dep}@${version}`);
       }
     }
 
-    console.log('\n🛠️ Available Scripts:');
+    console.info('\n🛠️ Available Scripts:');
     try {
       // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file reading
       const pkgJson = await Bun.file(join(pkg.path, 'package.json')).json();
       if (pkgJson.scripts) {
         for (const [script, command] of Object.entries(pkgJson.scripts)) {
-          console.log(`   ▶️ ${script}: ${command}`);
+          console.info(`   ▶️ ${script}: ${command}`);
         }
       } else {
-        console.log('   (none defined)');
+        console.info('   (none defined)');
       }
     } catch (error) {
-      console.log('   ⚠️ Could not read package.json');
+      console.info('   ⚠️ Could not read package.json');
     }
   }
 
   async setupWorkspaceLinks(): Promise<void> {
-    console.log('🔗 Setting up workspace package links...');
+    console.info('🔗 Setting up workspace package links...');
 
     let successCount = 0;
     let failCount = 0;
@@ -261,18 +261,18 @@ class PackageDevWorkflow {
 
         this.linkedPackages.add(name);
         successCount++;
-        console.log(`✅ Linked ${name}`);
+        console.info(`✅ Linked ${name}`);
       } catch (error) {
         failCount++;
-        console.log(`❌ Failed to link ${name}`);
+        console.info(`❌ Failed to link ${name}`);
       }
     }
 
-    console.log(`\n📊 Link Summary: ${successCount} successful, ${failCount} failed`);
+    console.info(`\n📊 Link Summary: ${successCount} successful, ${failCount} failed`);
 
     if (successCount > 0) {
-      console.log('\n💡 To use linked packages in the main project:');
-      console.log('   bun link <package-name>');
+      console.info('\n💡 To use linked packages in the main project:');
+      console.info('   bun link <package-name>');
     }
   }
 }
@@ -294,7 +294,7 @@ if (import.meta.main) {
 
     case 'link':
       if (!packageName) {
-        console.log('Usage: bun run scripts/package-dev-workflow.bun.ts link <package-name>');
+        console.info('Usage: bun run scripts/package-dev-workflow.bun.ts link <package-name>');
         break;
       }
       await workflow.linkPackage(packageName);
@@ -302,7 +302,7 @@ if (import.meta.main) {
 
     case 'unlink':
       if (!packageName) {
-        console.log('Usage: bun run scripts/package-dev-workflow.bun.ts unlink <package-name>');
+        console.info('Usage: bun run scripts/package-dev-workflow.bun.ts unlink <package-name>');
         break;
       }
       await workflow.unlinkPackage(packageName);
@@ -310,7 +310,7 @@ if (import.meta.main) {
 
     case 'build':
       if (!packageName) {
-        console.log('Usage: bun run scripts/package-dev-workflow.bun.ts build <package-name>');
+        console.info('Usage: bun run scripts/package-dev-workflow.bun.ts build <package-name>');
         break;
       }
       await workflow.buildPackage(packageName);
@@ -318,7 +318,7 @@ if (import.meta.main) {
 
     case 'watch':
       if (!packageName) {
-        console.log('Usage: bun run scripts/package-dev-workflow.bun.ts watch <package-name>');
+        console.info('Usage: bun run scripts/package-dev-workflow.bun.ts watch <package-name>');
         break;
       }
       await workflow.watchPackage(packageName);
@@ -326,7 +326,7 @@ if (import.meta.main) {
 
     case 'info':
       if (!packageName) {
-        console.log('Usage: bun run scripts/package-dev-workflow.bun.ts info <package-name>');
+        console.info('Usage: bun run scripts/package-dev-workflow.bun.ts info <package-name>');
         break;
       }
       workflow.showPackageDetails(packageName);
@@ -337,22 +337,22 @@ if (import.meta.main) {
       break;
 
     default:
-      console.log('🔧 Package Development Workflow\n');
-      console.log('Commands:');
-      console.log('  list                 - List all enterprise packages');
-      console.log('  link <package>       - Link package for development');
-      console.log('  unlink <package>     - Unlink package');
-      console.log('  build <package>      - Build specific package');
-      console.log('  watch <package>      - Watch package for changes');
-      console.log('  info <package>       - Show package details');
-      console.log('  setup-links          - Setup all workspace links');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun run scripts/package-dev-workflow.bun.ts list');
-      console.log(
+      console.info('🔧 Package Development Workflow\n');
+      console.info('Commands:');
+      console.info('  list                 - List all enterprise packages');
+      console.info('  link <package>       - Link package for development');
+      console.info('  unlink <package>     - Unlink package');
+      console.info('  build <package>      - Build specific package');
+      console.info('  watch <package>      - Watch package for changes');
+      console.info('  info <package>       - Show package details');
+      console.info('  setup-links          - Setup all workspace links');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun run scripts/package-dev-workflow.bun.ts list');
+      console.info(
         '  bun run scripts/package-dev-workflow.bun.ts link @fire22-registry/betting-engine'
       );
-      console.log(
+      console.info(
         '  bun run scripts/package-dev-workflow.bun.ts build @fire22-registry/analytics-dashboard'
       );
       break;

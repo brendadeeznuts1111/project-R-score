@@ -120,7 +120,7 @@ describe("Bun API Improvements - SQL Drivers", () => {
 // v1.3.6: MySQL driver returns Buffer for binary data
 const result = db.query("SELECT binary_data FROM files");
 const binaryData = result[0].binary_data;
-console.log(binaryData instanceof Buffer); // true (v1.3.6 fix)
+console.info(binaryData instanceof Buffer); // true (v1.3.6 fix)
     `;
 
     expect(mysqlExample).toContain("Buffer");
@@ -133,7 +133,7 @@ console.log(binaryData instanceof Buffer); // true (v1.3.6 fix)
     const pgArrayExample = `
 // v1.3.6: PostgreSQL arrays > 16KB now work
 const largeArray = db.query("SELECT ARRAY[...] as large_array");
-console.log(largeArray[0].large_array.length); // Correct length
+console.info(largeArray[0].large_array.length); // Correct length
     `;
 
     expect(pgArrayExample).toContain("ARRAY");
@@ -146,7 +146,7 @@ console.log(largeArray[0].large_array.length); // Correct length
     const pgEmptyExample = `
 // v1.3.6: Empty PostgreSQL arrays now work
 const emptyArrays = db.query("SELECT '{}'::INTEGER[] as empty_int_array");
-console.log(emptyArrays[0].empty_int_array); // []
+console.info(emptyArrays[0].empty_int_array); // []
     `;
 
     expect(pgEmptyExample).toContain("'{}'");
@@ -161,7 +161,7 @@ console.log(emptyArrays[0].empty_int_array); // []
 try {
   JSON.parse("{ invalid json }");
 } catch (error) {
-  console.log(error instanceof SyntaxError); // true (v1.3.6)
+  console.info(error instanceof SyntaxError); // true (v1.3.6)
 }
     `;
 
@@ -274,5 +274,5 @@ describe("Bun API Improvements - Real-world Scenarios", () => {
   });
 });
 
-console.log("🧪 Bun API Improvements Tests Loaded!");
-console.log("   Run with: bun test --grep 'Bun API Improvements'");
+console.info("🧪 Bun API Improvements Tests Loaded!");
+console.info("   Run with: bun test --grep 'Bun API Improvements'");

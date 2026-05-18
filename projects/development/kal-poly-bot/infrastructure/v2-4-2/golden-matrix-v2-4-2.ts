@@ -236,7 +236,7 @@ export class GoldenMatrixManager {
     const component = this.getComponent(id);
     if (component && component.featureFlag) {
       this.componentStatus.set(id, true);
-      console.log(`✅ Component #${id} (${component.name}) enabled`);
+      console.info(`✅ Component #${id} (${component.name}) enabled`);
     }
   }
 
@@ -244,7 +244,7 @@ export class GoldenMatrixManager {
     const component = this.getComponent(id);
     if (component) {
       this.componentStatus.set(id, false);
-      console.log(`❌ Component #${id} (${component.name}) disabled`);
+      console.info(`❌ Component #${id} (${component.name}) disabled`);
     }
   }
 
@@ -296,11 +296,11 @@ export class GoldenMatrixManager {
   // Component-specific operations
   async testUnicodeEngine(): Promise<void> {
     if (!this.isFeatureEnabled("STRING_WIDTH_OPT")) {
-      console.log("⚠️  Unicode StringWidth Engine is disabled");
+      console.info("⚠️  Unicode StringWidth Engine is disabled");
       return;
     }
 
-    console.log("🧪 Testing Unicode StringWidth Engine");
+    console.info("🧪 Testing Unicode StringWidth Engine");
     const testCases = [
       "Hello World",
       "🇺🇸 Flag Emoji",
@@ -311,17 +311,17 @@ export class GoldenMatrixManager {
 
     for (const testCase of testCases) {
       const width = UnicodeStringWidthEngine.calculateWidth(testCase);
-      console.log(`   "${testCase}" → ${width} cells`);
+      console.info(`   "${testCase}" → ${width} cells`);
     }
   }
 
   async testV8Bridge(): Promise<void> {
     if (!this.isFeatureEnabled("NATIVE_ADDONS")) {
-      console.log("⚠️  V8 Type Checking Bridge is disabled");
+      console.info("⚠️  V8 Type Checking Bridge is disabled");
       return;
     }
 
-    console.log("🧪 Testing V8 Type Checking Bridge");
+    console.info("🧪 Testing V8 Type Checking Bridge");
     V8TypeCheckingBridge.registerTypeChecks("test-addon");
 
     const testValues = [
@@ -337,7 +337,7 @@ export class GoldenMatrixManager {
       const isInt32 = V8TypeCheckingBridge.isInt32(value);
       const isBigInt = V8TypeCheckingBridge.isBigInt(value);
 
-      console.log(
+      console.info(
         `   ${name}: Map=${isMap}, Array=${isArray}, Int32=${isInt32}, BigInt=${isBigInt}`
       );
     }
@@ -345,11 +345,11 @@ export class GoldenMatrixManager {
 
   async testYAMLParser(): Promise<void> {
     if (!this.isFeatureEnabled("YAML12_STRICT")) {
-      console.log("⚠️  YAML 1.2 Strict Parser is disabled");
+      console.info("⚠️  YAML 1.2 Strict Parser is disabled");
       return;
     }
 
-    console.log("🧪 Testing YAML 1.2 Strict Parser");
+    console.info("🧪 Testing YAML 1.2 Strict Parser");
     const sampleConfig = `
 trustedDependencies = ["yes", "on", "file:test"]
 debugMode = "on"
@@ -360,18 +360,18 @@ enableFeature = no
     const result = YAML12StrictParser.parseConfig(sampleConfig);
     const warnings = YAML12StrictParser.validateYAMLContent(sampleConfig);
 
-    console.log("   Parsed config:", JSON.stringify(result, null, 2));
-    console.log("   Security warnings:", warnings.length);
-    warnings.forEach((w) => console.log(`     ${w}`));
+    console.info("   Parsed config:", JSON.stringify(result, null, 2));
+    console.info("   Security warnings:", warnings.length);
+    warnings.forEach((w) => console.info(`     ${w}`));
   }
 
   async testSecurityLayer(): Promise<void> {
     if (!this.isFeatureEnabled("SECURITY_HARDENING")) {
-      console.log("⚠️  Security Hardening Layer is disabled");
+      console.info("⚠️  Security Hardening Layer is disabled");
       return;
     }
 
-    console.log("🧪 Testing Security Hardening Layer");
+    console.info("🧪 Testing Security Hardening Layer");
 
     const testCases = [
       { pkg: "react", source: "npm" },
@@ -384,37 +384,37 @@ enableFeature = no
         pkg,
         source
       );
-      console.log(`   ${pkg} from ${source}: ${isValid ? "✅" : "❌"}`);
+      console.info(`   ${pkg} from ${source}: ${isValid ? "✅" : "❌"}`);
     }
 
     const context = SecurityHardeningLayer.createIsolatedContext();
-    console.log(
+    console.info(
       `   Isolated context created: ${Object.keys(context).length} safe globals`
     );
   }
 
   // Comprehensive system test
   async runSystemTest(): Promise<void> {
-    console.log("🚀 Golden Matrix v2.4.2 System Test");
-    console.log("=====================================");
+    console.info("🚀 Golden Matrix v2.4.2 System Test");
+    console.info("=====================================");
 
     const status = this.getSystemStatus();
-    console.log("📊 System Status:", JSON.stringify(status, null, 2));
+    console.info("📊 System Status:", JSON.stringify(status, null, 2));
 
-    console.log("\n🧪 Component Tests:");
+    console.info("\n🧪 Component Tests:");
     await this.testUnicodeEngine();
     await this.testV8Bridge();
     await this.testYAMLParser();
     await this.testSecurityLayer();
 
-    console.log("\n🔍 Parity Lock Verification:");
+    console.info("\n🔍 Parity Lock Verification:");
     for (const component of COMPONENT_REGISTRY.slice(-4)) {
       // Test new components
       const isValid = this.verifyParityLock(component.id);
-      console.log(`   Component #${component.id}: ${isValid ? "✅" : "❌"}`);
+      console.info(`   Component #${component.id}: ${isValid ? "✅" : "❌"}`);
     }
 
-    console.log("\n✅ System test completed");
+    console.info("\n✅ System test completed");
   }
 }
 
@@ -423,25 +423,25 @@ export const goldenMatrix = GoldenMatrixManager.getInstance();
 
 // Demonstration function
 export function demonstrateGoldenMatrix(): void {
-  console.log("🌟 Golden Matrix v2.4.2: Complete Infrastructure");
-  console.log("===============================================");
+  console.info("🌟 Golden Matrix v2.4.2: Complete Infrastructure");
+  console.info("===============================================");
 
   const manager = GoldenMatrixManager.getInstance();
 
-  console.log("\n📋 Infrastructure Overview:");
-  console.log(`   Version: ${INFRASTRUCTURE_MATRIX.version}`);
-  console.log(`   Total Components: ${INFRASTRUCTURE_MATRIX.totalComponents}`);
-  console.log(
+  console.info("\n📋 Infrastructure Overview:");
+  console.info(`   Version: ${INFRASTRUCTURE_MATRIX.version}`);
+  console.info(`   Total Components: ${INFRASTRUCTURE_MATRIX.totalComponents}`);
+  console.info(
     `   Zero-Cost Components: ${INFRASTRUCTURE_MATRIX.zeroCostComponents}`
   );
-  console.log(
+  console.info(
     `   Security Hardened: ${INFRASTRUCTURE_MATRIX.securityHardened ? "✅" : "❌"}`
   );
-  console.log(
+  console.info(
     `   Quantum Ready: ${INFRASTRUCTURE_MATRIX.quantumReady ? "✅" : "❌"}`
   );
 
-  console.log("\n🏗️  Component Tiers:");
+  console.info("\n🏗️  Component Tiers:");
   const tiers = [
     "Level 0: Kernel",
     "Level 0: Bridge",
@@ -451,10 +451,10 @@ export function demonstrateGoldenMatrix(): void {
   ];
   for (const tier of tiers) {
     const components = manager.getComponentsByTier(tier);
-    console.log(`   ${tier}: ${components.map((c) => `#${c.id}`).join(", ")}`);
+    console.info(`   ${tier}: ${components.map((c) => `#${c.id}`).join(", ")}`);
   }
 
-  console.log("\n🚀 Feature Flags:");
+  console.info("\n🚀 Feature Flags:");
   const features = [
     "STRING_WIDTH_OPT",
     "NATIVE_ADDONS",
@@ -466,17 +466,17 @@ export function demonstrateGoldenMatrix(): void {
   ];
   for (const feature of features) {
     const enabled = manager.isFeatureEnabled(feature);
-    console.log(`   ${feature}: ${enabled ? "✅" : "❌"}`);
+    console.info(`   ${feature}: ${enabled ? "✅" : "❌"}`);
   }
 
-  console.log("\n🎯 Key Achievements:");
-  console.log(`   ✅ 45-component infrastructure matrix`);
-  console.log(`   ✅ Zero-cost abstractions (95% dead code elimination)`);
-  console.log(`   ✅ Security hardening (CVE-2024 mitigated)`);
-  console.log(`   ✅ Unicode 15.1 compliance`);
-  console.log(`   ✅ YAML 1.2 strict parsing`);
-  console.log(`   ✅ V8 native addon compatibility`);
-  console.log(`   ✅ MCP 3.0 protocol support`);
+  console.info("\n🎯 Key Achievements:");
+  console.info(`   ✅ 45-component infrastructure matrix`);
+  console.info(`   ✅ Zero-cost abstractions (95% dead code elimination)`);
+  console.info(`   ✅ Security hardening (CVE-2024 mitigated)`);
+  console.info(`   ✅ Unicode 15.1 compliance`);
+  console.info(`   ✅ YAML 1.2 strict parsing`);
+  console.info(`   ✅ V8 native addon compatibility`);
+  console.info(`   ✅ MCP 3.0 protocol support`);
 
   // Run system test
   manager.runSystemTest().catch(console.error);

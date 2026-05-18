@@ -107,10 +107,10 @@ export function registerBuiltInEasterEggs(): void {
     trigger: "konami",
     name: "Konami Code",
     action: async () => {
-      console.log();
-      console.log(colors.highlight("  ↑ ↑ ↓ ↓ ← → ← → B A  "));
-      console.log(colors.success("  +30 lives unlocked!   "));
-      console.log();
+      console.info();
+      console.info(colors.highlight("  ↑ ↑ ↓ ↓ ← → ← → B A  "));
+      console.info(colors.success("  +30 lives unlocked!   "));
+      console.info();
     },
   });
 
@@ -119,9 +119,9 @@ export function registerBuiltInEasterEggs(): void {
     trigger: "bun",
     name: "Bun Power",
     action: async () => {
-      console.log();
-      console.log("  🥟 " + colors.highlight("Bun is blazingly fast!") + " 🥟");
-      console.log();
+      console.info();
+      console.info("  🥟 " + colors.highlight("Bun is blazingly fast!") + " 🥟");
+      console.info();
     },
   });
 
@@ -130,10 +130,10 @@ export function registerBuiltInEasterEggs(): void {
     trigger: "power",
     name: "Power Mode",
     action: async () => {
-      console.log();
-      console.log(colors.bold("  ⚡ POWER MODE ACTIVATED ⚡"));
-      console.log(colors.dim("  Hidden shortcuts unlocked..."));
-      console.log();
+      console.info();
+      console.info(colors.bold("  ⚡ POWER MODE ACTIVATED ⚡"));
+      console.info(colors.dim("  Hidden shortcuts unlocked..."));
+      console.info();
     },
   });
 
@@ -142,11 +142,11 @@ export function registerBuiltInEasterEggs(): void {
     trigger: "coffee",
     name: "Coffee Break",
     action: async () => {
-      console.log();
-      console.log("  ☕ " + colors.dim("Time for a break..."));
+      console.info();
+      console.info("  ☕ " + colors.dim("Time for a break..."));
       await Runtime.sleep(1000);
-      console.log("  ☕ " + colors.info("Coffee is ready!"));
-      console.log();
+      console.info("  ☕ " + colors.info("Coffee is ready!"));
+      console.info();
     },
   });
 
@@ -155,9 +155,9 @@ export function registerBuiltInEasterEggs(): void {
     trigger: /matrix|neo|morpheus/i,
     name: "The Matrix",
     action: async () => {
-      console.log();
-      console.log(colors.success("  There is no spoon..."));
-      console.log();
+      console.info();
+      console.info(colors.success("  There is no spoon..."));
+      console.info();
     },
   });
 
@@ -166,9 +166,9 @@ export function registerBuiltInEasterEggs(): void {
     trigger: "hello world",
     name: "Classic Greeting",
     action: async () => {
-      console.log();
-      console.log(colors.info("  Hello, developer! 👋"));
-      console.log();
+      console.info();
+      console.info(colors.info("  Hello, developer! 👋"));
+      console.info();
     },
   });
 
@@ -177,9 +177,9 @@ export function registerBuiltInEasterEggs(): void {
     trigger: "42",
     name: "The Answer",
     action: async () => {
-      console.log();
-      console.log(colors.dim("  The answer to life, the universe, and everything."));
-      console.log();
+      console.info();
+      console.info(colors.dim("  The answer to life, the universe, and everything."));
+      console.info();
     },
   });
 }

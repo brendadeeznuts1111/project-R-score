@@ -66,7 +66,7 @@ export class LoadingSpinner {
       this.timer = setInterval(() => this.render(), this.interval);
     } else {
       // Non-TTY: print once
-      console.log(`◌ ${this.text}...`);
+      console.info(`◌ ${this.text}...`);
     }
 
     return this;
@@ -92,7 +92,7 @@ export class LoadingSpinner {
     this.stop();
     const elapsed = this.getElapsed();
     const message = text ?? this.text;
-    console.log(`${colors.success("✓")} ${message} ${colors.dim(`(${elapsed})`)}`);
+    console.info(`${colors.success("✓")} ${message} ${colors.dim(`(${elapsed})`)}`);
     return this;
   }
 
@@ -100,7 +100,7 @@ export class LoadingSpinner {
     this.stop();
     const elapsed = this.getElapsed();
     const message = text ?? this.text;
-    console.log(`${colors.error("✗")} ${message} ${colors.dim(`(${elapsed})`)}`);
+    console.info(`${colors.error("✗")} ${message} ${colors.dim(`(${elapsed})`)}`);
     return this;
   }
 
@@ -108,21 +108,21 @@ export class LoadingSpinner {
     this.stop();
     const elapsed = this.getElapsed();
     const message = text ?? this.text;
-    console.log(`${colors.warning("⚠")} ${message} ${colors.dim(`(${elapsed})`)}`);
+    console.info(`${colors.warning("⚠")} ${message} ${colors.dim(`(${elapsed})`)}`);
     return this;
   }
 
   info(text?: string): this {
     this.stop();
     const message = text ?? this.text;
-    console.log(`${colors.info("ℹ")} ${message}`);
+    console.info(`${colors.info("ℹ")} ${message}`);
     return this;
   }
 
   update(text: string): this {
     this.text = text;
     if (!Runtime.supportsTTY && this.isSpinning) {
-      console.log(`  ${text}`);
+      console.info(`  ${text}`);
     }
     return this;
   }

@@ -221,7 +221,7 @@ export class TelegramNotificationService {
     this.notificationQueue.push(notification);
     this.stats.totalQueued++;
 
-    console.log(`📋 Notification queued: ${notification.id} (${notification.type})`);
+    console.info(`📋 Notification queued: ${notification.id} (${notification.type})`);
 
     return notification.id;
   }
@@ -306,7 +306,7 @@ export class TelegramNotificationService {
         createdAt: new Date(),
       };
 
-      console.log(
+      console.info(
         `🔄 Processing batch ${this.processingBatch.id} with ${activeMessages.length} messages`
       );
 
@@ -317,7 +317,7 @@ export class TelegramNotificationService {
       this.processingBatch.status = 'completed';
       this.processingBatch.processedAt = new Date();
 
-      console.log(`✅ Batch ${this.processingBatch.id} completed`);
+      console.info(`✅ Batch ${this.processingBatch.id} completed`);
     } catch (error) {
       console.error('❌ Error processing queue:', error);
 
@@ -360,7 +360,7 @@ export class TelegramNotificationService {
         this.stats.totalSent++;
         notification.status = 'sent';
 
-        console.log(`✅ Notification ${notification.id} sent successfully`);
+        console.info(`✅ Notification ${notification.id} sent successfully`);
       } catch (error) {
         await this.handleSendError(notification, error);
       }
@@ -416,7 +416,7 @@ export class TelegramNotificationService {
         this.notificationQueue.push(notification);
       }, this.config.retryDelay * notification.metadata.retryCount); // Exponential backoff
 
-      console.log(`🔄 Re-queuing notification ${notification.id} for retry`);
+      console.info(`🔄 Re-queuing notification ${notification.id} for retry`);
     } else {
       // Mark as failed
       notification.status = 'failed';

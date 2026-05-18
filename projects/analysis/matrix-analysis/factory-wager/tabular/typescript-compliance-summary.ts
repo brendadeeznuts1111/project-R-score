@@ -3,10 +3,10 @@
  * Documents all fixes applied to resolve TypeScript errors
  */
 
-console.log('📋 FactoryWager Tabular v4.2.1 - TypeScript Compliance Summary');
-console.log('=' .repeat(70));
+console.info('📋 FactoryWager Tabular v4.2.1 - TypeScript Compliance Summary');
+console.info('=' .repeat(70));
 
-console.log(`
+console.info(`
 🔧 TypeScript Errors Fixed:
 
 1️⃣ NULL SAFETY ISSUES
@@ -72,5 +72,5 @@ console.log(`
 ✨ Every cell guaranteed to have a value - no nulls, no undefined, no "—" dashes!
 `);
 
-console.log('🎉 FactoryWager Tabular v4.2.1 - FULLY TYPESCRIPT COMPLIANT!');
-console.log('🚀 Ready for production deployment!');
+console.info('🎉 FactoryWager Tabular v4.2.1 - FULLY TYPESCRIPT COMPLIANT!');
+console.info('🚀 Ready for production deployment!');

@@ -23,8 +23,8 @@ const table = (d, o = {}) => {
 };
 
 // Usage examples
-console.log("🎯 30-Line Nano Table Formatter");
-console.log("===============================");
+console.info("🎯 30-Line Nano Table Formatter");
+console.info("===============================");
 
 const sample = [
   { name: "Alice", score: 95, role: "Developer" },
@@ -32,11 +32,11 @@ const sample = [
   { name: "Charlie", score: 92, role: "Manager" },
 ];
 
-console.log("\n📊 Single Border Style:");
-console.log(table(sample, { s: "s" }));
+console.info("\n📊 Single Border Style:");
+console.info(table(sample, { s: "s" }));
 
-console.log("\n📈 Double Border Style:");
-console.log(table(sample, { s: "d" }));
+console.info("\n📈 Double Border Style:");
+console.info(table(sample, { s: "d" }));
 
-console.log("\n🎨 Rounded Border Style:");
-console.log(table(sample, { s: "r" }));
+console.info("\n🎨 Rounded Border Style:");
+console.info(table(sample, { s: "r" }));

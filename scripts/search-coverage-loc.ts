@@ -168,8 +168,8 @@ async function main(): Promise<void> {
 
   await Bun.write('reports/search-coverage-loc-latest.json', `${JSON.stringify(payload, null, 2)}\n`);
   await Bun.write('reports/search-coverage-loc-latest.md', `${md}\n`);
-  console.log('[search:coverage:loc] wrote reports/search-coverage-loc-latest.json');
-  console.log('[search:coverage:loc] wrote reports/search-coverage-loc-latest.md');
+  console.info('[search:coverage:loc] wrote reports/search-coverage-loc-latest.json');
+  console.info('[search:coverage:loc] wrote reports/search-coverage-loc-latest.md');
 }
 
 await main();

@@ -9,7 +9,7 @@
  * In Bun v1.3.6+, these functions return '' instead of throwing
  */
 async function testUrlDomainValidation() {
-	console.log("🧪 Testing URL Domain Validation (Bun v1.3.6+)\n");
+	console.info("🧪 Testing URL Domain Validation (Bun v1.3.6+)\n");
 
 	// Try to import URL functions (may not be available in all Bun versions)
 	let domainToASCII: ((domain: string) => string) | null = null;
@@ -41,7 +41,7 @@ async function testUrlDomainValidation() {
 	}
 
 	if (!domainToASCII || !domainToUnicode) {
-		console.log("⚠️  URL domain functions not available, using fallback\n");
+		console.info("⚠️  URL domain functions not available, using fallback\n");
 		domainToASCII = (domain: string) => {
 			try {
 				new URL(`https://${domain}`);
@@ -62,29 +62,29 @@ async function testUrlDomainValidation() {
 
 	// Test 1: Invalid domains return empty string (not throw)
 	// Note: In Bun v1.3.6+, domainToASCII returns '' for invalid domains
-	console.log("1. Invalid Domain Handling:");
+	console.info("1. Invalid Domain Handling:");
 	try {
 		const result1 = domainToASCII("invalid..domain");
-		console.log(`   domainToASCII('invalid..domain'): "${result1}"`);
+		console.info(`   domainToASCII('invalid..domain'): "${result1}"`);
 		// In Bun v1.3.6+, this should return '' for invalid domains
 		// If it doesn't throw, that's the improvement
 		const isImproved = !result1 || result1 === "";
-		console.log(
+		console.info(
 			`   ${isImproved ? "✅" : "⚠️"} Returns empty string instead of throwing: ${isImproved}\n`,
 		);
 	} catch (error) {
-		console.log(`   ❌ Still throws error (pre-v1.3.6 behavior): ${error}`);
-		console.log(`   💡 In Bun v1.3.6+, this should return '' instead\n`);
+		console.info(`   ❌ Still throws error (pre-v1.3.6 behavior): ${error}`);
+		console.info(`   💡 In Bun v1.3.6+, this should return '' instead\n`);
 	}
 
 	// Test 2: Valid domains work correctly
-	console.log("2. Valid Domain Handling:");
+	console.info("2. Valid Domain Handling:");
 	const result2 = domainToASCII("example.com");
-	console.log(`   domainToASCII('example.com'): "${result2}"`);
-	console.log(`   ✅ Valid domain preserved: ${result2 === "example.com"}\n`);
+	console.info(`   domainToASCII('example.com'): "${result2}"`);
+	console.info(`   ✅ Valid domain preserved: ${result2 === "example.com"}\n`);
 
 	// Test 3: S3 bucket endpoint validation
-	console.log("3. S3 Bucket Endpoint Validation:");
+	console.info("3. S3 Bucket Endpoint Validation:");
 	const s3Endpoints = [
 		"my-bucket.s3.amazonaws.com",
 		"invalid..bucket.s3.amazonaws.com",
@@ -94,12 +94,12 @@ async function testUrlDomainValidation() {
 	s3Endpoints.forEach((endpoint) => {
 		const ascii = domainToASCII(endpoint);
 		const isValid = ascii !== "";
-		console.log(`   ${endpoint}: ${isValid ? "✅ Valid" : "❌ Invalid"}`);
+		console.info(`   ${endpoint}: ${isValid ? "✅ Valid" : "❌ Invalid"}`);
 	});
-	console.log();
+	console.info();
 
 	// Test 4: URL pattern validation for registry manager
-	console.log("4. Registry Manager URL Pattern Validation:");
+	console.info("4. Registry Manager URL Pattern Validation:");
 	const urlPatterns = [
 		"https://api.example.com",
 		"https://invalid..domain.com",
@@ -112,19 +112,19 @@ async function testUrlDomainValidation() {
 			const url = new URL(pattern);
 			const ascii = domainToASCII(url.hostname);
 			const isValid = ascii !== "";
-			console.log(`   ${pattern}: ${isValid ? "✅ Valid" : "❌ Invalid"}`);
+			console.info(`   ${pattern}: ${isValid ? "✅ Valid" : "❌ Invalid"}`);
 		} catch {
-			console.log(`   ${pattern}: ❌ Invalid URL format`);
+			console.info(`   ${pattern}: ❌ Invalid URL format`);
 		}
 	});
-	console.log();
+	console.info();
 
-	console.log("✅ All URL domain validation tests passed!");
-	console.log("\n💡 Benefits:");
-	console.log("   • No try/catch needed for invalid domains");
-	console.log("   • Simpler validation logic");
-	console.log("   • Node.js-compliant behavior");
-	console.log("   • Better S3 endpoint validation");
+	console.info("✅ All URL domain validation tests passed!");
+	console.info("\n💡 Benefits:");
+	console.info("   • No try/catch needed for invalid domains");
+	console.info("   • Simpler validation logic");
+	console.info("   • Node.js-compliant behavior");
+	console.info("   • Better S3 endpoint validation");
 }
 
 // Run if executed directly

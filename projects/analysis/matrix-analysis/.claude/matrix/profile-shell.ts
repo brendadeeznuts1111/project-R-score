@@ -55,9 +55,9 @@ async function benchmark(
 ): Promise<BenchmarkResult> {
 	const times: number[] = [];
 
-	console.log(`${colors.cyan}Profiling: ${name}${colors.reset}`);
-	console.log(`  Command: bun ${CLI} ${args}`);
-	console.log(`  Iterations: ${iterations}`);
+	console.info(`${colors.cyan}Profiling: ${name}${colors.reset}`);
+	console.info(`  Command: bun ${CLI} ${args}`);
+	console.info(`  Iterations: ${iterations}`);
 
 	// Warmup
 	for (let i = 0; i < 3; i++) {
@@ -70,7 +70,7 @@ async function benchmark(
 		times.push(duration);
 		process.stdout.write(".");
 	}
-	console.log(" Done!");
+	console.info(" Done!");
 
 	// Statistics
 	const avg = times.reduce((a, b) => a + b, 0) / times.length;
@@ -91,68 +91,68 @@ function formatTime(ms: number): string {
 }
 
 function printResult(result: BenchmarkResult) {
-	console.log(`  ${colors.bold}Results:${colors.reset}`);
-	console.log(`    Average: ${formatTime(result.avg)}`);
-	console.log(`    Min/Max: ${formatTime(result.min)} / ${formatTime(result.max)}`);
-	console.log(`    P95:     ${formatTime(result.p95)}`);
-	console.log(`    StdDev:  ${formatTime(result.stdDev)}`);
-	console.log();
+	console.info(`  ${colors.bold}Results:${colors.reset}`);
+	console.info(`    Average: ${formatTime(result.avg)}`);
+	console.info(`    Min/Max: ${formatTime(result.min)} / ${formatTime(result.max)}`);
+	console.info(`    P95:     ${formatTime(result.p95)}`);
+	console.info(`    StdDev:  ${formatTime(result.stdDev)}`);
+	console.info();
 }
 
 function analyzeBottlenecks(results: BenchmarkResult[]) {
-	console.log(
+	console.info(
 		`${colors.orange}═══════════════════════════════════════════════════${colors.reset}`,
 	);
-	console.log(`${colors.bold}${colors.orange}BOTTLENECK ANALYSIS${colors.reset}`);
-	console.log(
+	console.info(`${colors.bold}${colors.orange}BOTTLENECK ANALYSIS${colors.reset}`);
+	console.info(
 		`${colors.orange}═══════════════════════════════════════════════════${colors.reset}`,
 	);
-	console.log();
+	console.info();
 
 	// Sort by average time
 	const sorted = [...results].sort((a, b) => b.avg - a.avg);
 
-	console.log(`${colors.bold}Ranked by Average Latency:${colors.reset}`);
+	console.info(`${colors.bold}Ranked by Average Latency:${colors.reset}`);
 	sorted.forEach((r, i) => {
 		const icon = i === 0 ? "🔴" : i < 3 ? "🟠" : "🟢";
-		console.log(`  ${icon} ${r.name.padEnd(30)} ${formatTime(r.avg)}`);
+		console.info(`  ${icon} ${r.name.padEnd(30)} ${formatTime(r.avg)}`);
 	});
-	console.log();
+	console.info();
 
 	// Identify patterns
 	const slow = sorted.filter((r) => r.avg > 20);
 	const variable = sorted.filter((r) => r.stdDev / r.avg > 0.3);
 
 	if (slow.length > 0) {
-		console.log(`${colors.red}Slow Operations (>20ms):${colors.reset}`);
-		slow.forEach((r) => console.log(`  • ${r.name}: ${formatTime(r.avg)}`));
-		console.log();
+		console.info(`${colors.red}Slow Operations (>20ms):${colors.reset}`);
+		slow.forEach((r) => console.info(`  • ${r.name}: ${formatTime(r.avg)}`));
+		console.info();
 	}
 
 	if (variable.length > 0) {
-		console.log(`${colors.yellow}Variable Operations (CV>30%):${colors.reset}`);
-		variable.forEach((r) => console.log(`  • ${r.name}: σ=${formatTime(r.stdDev)}`));
-		console.log();
+		console.info(`${colors.yellow}Variable Operations (CV>30%):${colors.reset}`);
+		variable.forEach((r) => console.info(`  • ${r.name}: σ=${formatTime(r.stdDev)}`));
+		console.info();
 	}
 
 	// Recommendations
-	console.log(`${colors.green}Recommendations:${colors.reset}`);
-	console.log("  1. Cache column lists to avoid repeated 'pipe names' calls");
-	console.log("  2. Use --no-color for scripts (faster than stripping ANSI)");
-	console.log("  3. Batch multiple operations instead of individual calls");
-	console.log("  4. Consider using --json only when necessary");
-	console.log();
+	console.info(`${colors.green}Recommendations:${colors.reset}`);
+	console.info("  1. Cache column lists to avoid repeated 'pipe names' calls");
+	console.info("  2. Use --no-color for scripts (faster than stripping ANSI)");
+	console.info("  3. Batch multiple operations instead of individual calls");
+	console.info("  4. Consider using --json only when necessary");
+	console.info();
 }
 
 async function profileMemory() {
-	console.log(
+	console.info(
 		`${colors.orange}═══════════════════════════════════════════════════${colors.reset}`,
 	);
-	console.log(`${colors.bold}${colors.orange}MEMORY PROFILE${colors.reset}`);
-	console.log(
+	console.info(`${colors.bold}${colors.orange}MEMORY PROFILE${colors.reset}`);
+	console.info(
 		`${colors.orange}═══════════════════════════════════════════════════${colors.reset}`,
 	);
-	console.log();
+	console.info();
 
 	const initialMemory = process.memoryUsage();
 
@@ -166,34 +166,34 @@ async function profileMemory() {
 	const names = cols.map((c) => c.name);
 	const afterAccess = process.memoryUsage();
 
-	console.log("Memory Usage:");
-	console.log(
+	console.info("Memory Usage:");
+	console.info(
 		`  Initial:        ${(initialMemory.heapUsed / 1024 / 1024).toFixed(2)} MB`,
 	);
-	console.log(
+	console.info(
 		`  After import:   ${(afterLoad.heapUsed / 1024 / 1024).toFixed(2)} MB (+${((afterLoad.heapUsed - initialMemory.heapUsed) / 1024).toFixed(2)} KB)`,
 	);
-	console.log(
+	console.info(
 		`  After access:   ${(afterAccess.heapUsed / 1024 / 1024).toFixed(2)} MB (+${((afterAccess.heapUsed - afterLoad.heapUsed) / 1024).toFixed(2)} KB)`,
 	);
-	console.log();
+	console.info();
 
-	console.log(`Column definitions loaded: ${cols.length}`);
-	console.log(
+	console.info(`Column definitions loaded: ${cols.length}`);
+	console.info(
 		`Estimated per-column overhead: ${((afterAccess.heapUsed - afterLoad.heapUsed) / cols.length).toFixed(0)} bytes`,
 	);
-	console.log();
+	console.info();
 }
 
 async function profileStartup() {
-	console.log(
+	console.info(
 		`${colors.orange}═══════════════════════════════════════════════════${colors.reset}`,
 	);
-	console.log(`${colors.bold}${colors.orange}STARTUP TIME PROFILE${colors.reset}`);
-	console.log(
+	console.info(`${colors.bold}${colors.orange}STARTUP TIME PROFILE${colors.reset}`);
+	console.info(
 		`${colors.orange}═══════════════════════════════════════════════════${colors.reset}`,
 	);
-	console.log();
+	console.info();
 
 	// Measure cold start
 	const coldStart = performance.now();
@@ -204,7 +204,7 @@ async function profileStartup() {
 	await proc.exited;
 	const coldDuration = performance.now() - coldStart;
 
-	console.log(`Cold start (--help): ${formatTime(coldDuration)}`);
+	console.info(`Cold start (--help): ${formatTime(coldDuration)}`);
 
 	// Measure warm start (Bun runtime already loaded)
 	const times: number[] = [];
@@ -216,57 +216,57 @@ async function profileStartup() {
 	}
 
 	const avgWarm = times.reduce((a, b) => a + b, 0) / times.length;
-	console.log(`Warm start (--version): ${formatTime(avgWarm)}`);
-	console.log();
+	console.info(`Warm start (--version): ${formatTime(avgWarm)}`);
+	console.info();
 
-	console.log(`${colors.bold}Breakdown:${colors.reset}`);
-	console.log(`  Bun runtime startup: ~${formatTime(coldDuration - avgWarm)}`);
-	console.log(`  CLI module load: ~${formatTime(avgWarm)}`);
-	console.log();
+	console.info(`${colors.bold}Breakdown:${colors.reset}`);
+	console.info(`  Bun runtime startup: ~${formatTime(coldDuration - avgWarm)}`);
+	console.info(`  CLI module load: ~${formatTime(avgWarm)}`);
+	console.info();
 }
 
 async function parallelBenchmark() {
-	console.log(
+	console.info(
 		`${colors.orange}═══════════════════════════════════════════════════${colors.reset}`,
 	);
-	console.log(`${colors.bold}${colors.orange}PARALLEL EXECUTION TEST${colors.reset}`);
-	console.log(
+	console.info(`${colors.bold}${colors.orange}PARALLEL EXECUTION TEST${colors.reset}`);
+	console.info(
 		`${colors.orange}═══════════════════════════════════════════════════${colors.reset}`,
 	);
-	console.log();
+	console.info();
 
 	const cols = ["45", "31", "21", "71"];
 
 	// Sequential
-	console.log("Sequential execution:");
+	console.info("Sequential execution:");
 	const seqStart = performance.now();
 	for (const col of cols) {
 		await runCommand(`get ${col}`);
 	}
 	const seqDuration = performance.now() - seqStart;
-	console.log(`  Total: ${formatTime(seqDuration)}`);
-	console.log(`  Per call: ${formatTime(seqDuration / cols.length)}`);
-	console.log();
+	console.info(`  Total: ${formatTime(seqDuration)}`);
+	console.info(`  Per call: ${formatTime(seqDuration / cols.length)}`);
+	console.info();
 
 	// Parallel
-	console.log("Parallel execution (Promise.all):");
+	console.info("Parallel execution (Promise.all):");
 	const parStart = performance.now();
 	await Promise.all(cols.map((col) => runCommand(`get ${col}`)));
 	const parDuration = performance.now() - parStart;
-	console.log(`  Total: ${formatTime(parDuration)}`);
-	console.log(`  Speedup: ${(seqDuration / parDuration).toFixed(2)}x`);
-	console.log();
+	console.info(`  Total: ${formatTime(parDuration)}`);
+	console.info(`  Speedup: ${(seqDuration / parDuration).toFixed(2)}x`);
+	console.info();
 }
 
 // Main
 async function main() {
-	console.log(`${colors.bold}${colors.orange}`);
-	console.log("╔════════════════════════════════════════════════════╗");
-	console.log("║  🔥 Tier-1380 OMEGA: Performance Profiler 🔥      ║");
-	console.log("║                                                    ║");
-	console.log("║  Bun-native profiling with detailed analytics      ║");
-	console.log("╚════════════════════════════════════════════════════╝");
-	console.log(`${colors.reset}\n`);
+	console.info(`${colors.bold}${colors.orange}`);
+	console.info("╔════════════════════════════════════════════════════╗");
+	console.info("║  🔥 Tier-1380 OMEGA: Performance Profiler 🔥      ║");
+	console.info("║                                                    ║");
+	console.info("║  Bun-native profiling with detailed analytics      ║");
+	console.info("╚════════════════════════════════════════════════════╝");
+	console.info(`${colors.reset}\n`);
 
 	const results: BenchmarkResult[] = [];
 
@@ -277,14 +277,14 @@ async function main() {
 	await profileMemory();
 
 	// Run benchmarks
-	console.log(
+	console.info(
 		`${colors.orange}═══════════════════════════════════════════════════${colors.reset}`,
 	);
-	console.log(`${colors.bold}${colors.orange}COMMAND LATENCY BENCHMARKS${colors.reset}`);
-	console.log(
+	console.info(`${colors.bold}${colors.orange}COMMAND LATENCY BENCHMARKS${colors.reset}`);
+	console.info(
 		`${colors.orange}═══════════════════════════════════════════════════${colors.reset}`,
 	);
-	console.log();
+	console.info();
 
 	results.push(await benchmark("get 45", "get 45", 15));
 	printResult(results[results.length - 1]);
@@ -316,7 +316,7 @@ async function main() {
 	// Analysis
 	analyzeBottlenecks(results);
 
-	console.log(`${colors.green}✅ Profiling complete!${colors.reset}\n`);
+	console.info(`${colors.green}✅ Profiling complete!${colors.reset}\n`);
 }
 
 main().catch(console.error);

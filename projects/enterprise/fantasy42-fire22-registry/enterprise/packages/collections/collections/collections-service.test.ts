@@ -451,5 +451,5 @@ describe('CollectionsService Performance', () => {
   });
 });
 
-console.log('✅ Collections Domain Tests Loaded');
-console.log('Run tests with: bun test collections-service.test.ts');
+console.info('✅ Collections Domain Tests Loaded');
+console.info('Run tests with: bun test collections-service.test.ts');

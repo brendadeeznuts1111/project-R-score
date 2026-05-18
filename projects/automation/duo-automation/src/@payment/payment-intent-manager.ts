@@ -111,7 +111,7 @@ class PaymentIntentManager {
     };
 
     await this.saveIntent(intent);
-    console.log(`💰 Created payment intent: ${intentId} for $${params.amount}`);
+    console.info(`💰 Created payment intent: ${intentId} for $${params.amount}`);
 
     return intent;
   }
@@ -150,7 +150,7 @@ class PaymentIntentManager {
     });
 
     await this.saveIntent(intent);
-    console.log(`🔄 Updated payment intent: ${intentId}`);
+    console.info(`🔄 Updated payment intent: ${intentId}`);
 
     return intent;
   }
@@ -203,7 +203,7 @@ class PaymentIntentManager {
     });
 
     await this.saveIntent(intent);
-    console.log(`✅ Completed payment intent: ${intentId} via ${methodType}`);
+    console.info(`✅ Completed payment intent: ${intentId} via ${methodType}`);
 
     // Trigger post-completion workflows
     await this.handleCompletion(intent);
@@ -244,7 +244,7 @@ class PaymentIntentManager {
     });
 
     await this.saveIntent(intent);
-    console.log(`❌ Cancelled payment intent: ${intentId}${reason ? ` - ${reason}` : ''}`);
+    console.info(`❌ Cancelled payment intent: ${intentId}${reason ? ` - ${reason}` : ''}`);
 
     return intent;
   }
@@ -278,7 +278,7 @@ class PaymentIntentManager {
     });
 
     await this.saveIntent(intent);
-    console.log(`💥 Failed payment intent: ${intentId} - ${error}`);
+    console.info(`💥 Failed payment intent: ${intentId} - ${error}`);
 
     return intent;
   }
@@ -405,7 +405,7 @@ class PaymentIntentManager {
 
     if (cleaned > 0) {
       await this.saveAllIntents(intents);
-      console.log(`🧹 Cleaned up ${cleaned} expired payment intents`);
+      console.info(`🧹 Cleaned up ${cleaned} expired payment intents`);
     }
 
     return cleaned;
@@ -459,7 +459,7 @@ class PaymentIntentManager {
    * Handle payment completion workflows
    */
   private static async handleCompletion(intent: PaymentIntent): Promise<void> {
-    console.log(`🎉 Processing completion for intent: ${intent.id}`);
+    console.info(`🎉 Processing completion for intent: ${intent.id}`);
     
     // Trigger notifications
     await this.sendNotifications(intent);
@@ -475,7 +475,7 @@ class PaymentIntentManager {
    * Send completion notifications
    */
   private static async sendNotifications(intent: PaymentIntent): Promise<void> {
-    console.log(`📧 Sending notifications for: ${intent.id}`);
+    console.info(`📧 Sending notifications for: ${intent.id}`);
     // Integration with notification system
   }
 
@@ -483,7 +483,7 @@ class PaymentIntentManager {
    * Update accounting records
    */
   private static async updateAccounting(intent: PaymentIntent): Promise<void> {
-    console.log(`💰 Updating accounting for: ${intent.id}`);
+    console.info(`💰 Updating accounting for: ${intent.id}`);
     // Integration with accounting system
   }
 
@@ -491,7 +491,7 @@ class PaymentIntentManager {
    * Update family balance
    */
   private static async updateFamilyBalance(intent: PaymentIntent): Promise<void> {
-    console.log(`👨‍👩‍👧‍👦 Updating family balance for: ${intent.familyId}`);
+    console.info(`👨‍👩‍👧‍👦 Updating family balance for: ${intent.familyId}`);
     // Integration with family balance system
   }
 
@@ -593,9 +593,9 @@ if (import.meta.main) {
         recipientId: 'alice',
         recipientName: 'Alice'
       }).then(intent => {
-        console.log('✅ Created intent:', intent.id);
-        console.log(`Amount: $${intent.amount}`);
-        console.log(`Expires: ${intent.expiresAt.toISOString()}`);
+        console.info('✅ Created intent:', intent.id);
+        console.info(`Amount: $${intent.amount}`);
+        console.info(`Expires: ${intent.expiresAt.toISOString()}`);
       }).catch(error => console.error('❌ Error:', error.message));
       break;
 
@@ -603,15 +603,15 @@ if (import.meta.main) {
       if (intentId) {
         PaymentIntentManager.getIntent(intentId).then(intent => {
           if (intent) {
-            console.log('📋 Intent Details:');
-            console.log(`ID: ${intent.id}`);
-            console.log(`Status: ${intent.status}`);
-            console.log(`Amount: $${intent.amount}`);
-            console.log(`Recipient: ${intent.recipientName}`);
-            console.log(`Created: ${intent.createdAt.toISOString()}`);
-            console.log(`Expires: ${intent.expiresAt.toISOString()}`);
+            console.info('📋 Intent Details:');
+            console.info(`ID: ${intent.id}`);
+            console.info(`Status: ${intent.status}`);
+            console.info(`Amount: $${intent.amount}`);
+            console.info(`Recipient: ${intent.recipientName}`);
+            console.info(`Created: ${intent.createdAt.toISOString()}`);
+            console.info(`Expires: ${intent.expiresAt.toISOString()}`);
           } else {
-            console.log('❌ Intent not found');
+            console.info('❌ Intent not found');
           }
         }).catch(error => console.error('❌ Error:', error.message));
       }
@@ -620,9 +620,9 @@ if (import.meta.main) {
     case 'validate':
       if (intentId) {
         PaymentIntentManager.validateIntent(intentId).then(result => {
-          console.log(`Valid: ${result.valid}`);
+          console.info(`Valid: ${result.valid}`);
           if (!result.valid) {
-            console.log('Errors:', result.errors.join(', '));
+            console.info('Errors:', result.errors.join(', '));
           }
         }).catch(error => console.error('❌ Error:', error.message));
       }
@@ -630,24 +630,24 @@ if (import.meta.main) {
 
     case 'stats':
       PaymentIntentManager.getStatistics().then(stats => {
-        console.log('📊 Payment Intent Statistics:');
-        console.log(`Total: ${stats.total}`);
-        console.log(`Completed: ${stats.byStatus.completed}`);
-        console.log(`Pending: ${stats.byStatus.pending}`);
-        console.log(`Expired: ${stats.byStatus.expired}`);
-        console.log(`Total Amount: $${stats.totalAmount.toFixed(2)}`);
-        console.log(`Expiration Rate: ${stats.expirationRate.toFixed(1)}%`);
+        console.info('📊 Payment Intent Statistics:');
+        console.info(`Total: ${stats.total}`);
+        console.info(`Completed: ${stats.byStatus.completed}`);
+        console.info(`Pending: ${stats.byStatus.pending}`);
+        console.info(`Expired: ${stats.byStatus.expired}`);
+        console.info(`Total Amount: $${stats.totalAmount.toFixed(2)}`);
+        console.info(`Expiration Rate: ${stats.expirationRate.toFixed(1)}%`);
       }).catch(error => console.error('❌ Error:', error.message));
       break;
 
     case 'cleanup':
       PaymentIntentManager.cleanupExpiredIntents().then(cleaned => {
-        console.log(`🧹 Cleaned ${cleaned} expired intents`);
+        console.info(`🧹 Cleaned ${cleaned} expired intents`);
       }).catch(error => console.error('❌ Error:', error.message));
       break;
 
     default:
-      console.log(`
+      console.info(`
 💰 Payment Intent Management System
 
 Usage:

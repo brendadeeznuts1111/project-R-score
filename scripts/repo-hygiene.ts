@@ -154,12 +154,12 @@ async function main() {
   }
 
   if (violations.length === 0) {
-    console.log('✅ Repo hygiene: clean');
+    console.info('✅ Repo hygiene: clean');
     process.exit(0);
   }
 
-  console.log(`❌ Repo hygiene: ${violations.length} violation(s)\n`);
-  console.log(
+  console.info(`❌ Repo hygiene: ${violations.length} violation(s)\n`);
+  console.info(
     Bun.inspect.table(
       violations.map(v => ({ file: v.file, rule: v.rule })),
       ['file', 'rule'],

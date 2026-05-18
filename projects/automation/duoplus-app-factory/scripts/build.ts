@@ -1,7 +1,7 @@
 import { mkdir } from "fs/promises";
 import { NEBULA_VERSION, getVersionString } from "../src/utils/version";
 
-console.log(`🚀 Building ${getVersionString()}...`);
+console.info(`🚀 Building ${getVersionString()}...`);
 
 await Bun.build({
   entrypoints: ["./src/main.ts"],
@@ -18,7 +18,7 @@ await Bun.build({
   },
 });
 
-console.log("✅ Build complete! Files in ./dist");
+console.info("✅ Build complete! Files in ./dist");
 
 // Create a simple main entry point if it doesn't exist
 const mainExists = await Bun.file("./src/main.ts").exists();
@@ -106,17 +106,17 @@ Bun.serve({
   },
 });
 
-console.log(\`⚡ ${getVersionString()} running on http://localhost:\${PORT}\`);
-console.log("📋 Available endpoints:");
-console.log("  GET  /health");
-console.log("  GET  /api/node/balance");
-console.log("  POST /api/invoice/generate");
-console.log("  GET  /api/payment/quest?questId=...&userId=...&amount=...");
-console.log("  POST /webhook/settlement");
-console.log("  GET  /api/payment/status?questId=...");
+console.info(\`⚡ ${getVersionString()} running on http://localhost:\${PORT}\`);
+console.info("📋 Available endpoints:");
+console.info("  GET  /health");
+console.info("  GET  /api/node/balance");
+console.info("  POST /api/invoice/generate");
+console.info("  GET  /api/payment/quest?questId=...&userId=...&amount=...");
+console.info("  POST /webhook/settlement");
+console.info("  GET  /api/payment/status?questId=...");
 `
   );
-  console.log("✅ Created src/main.ts");
+  console.info("✅ Created src/main.ts");
 }
 
 // Create database module
@@ -247,7 +247,7 @@ export const db = {
 getDb();
 `
   );
-  console.log("✅ Created src/database/db.js");
+  console.info("✅ Created src/database/db.js");
 }
 
 // Create ecosystem directory
@@ -292,16 +292,16 @@ export class ControlledConnectionPool {
 }
 `
   );
-  console.log("✅ Created src/ecosystem/connection-system.js");
+  console.info("✅ Created src/ecosystem/connection-system.js");
 }
 
 // Create logs directory
 await mkdir("./logs", { recursive: true });
-console.log("✅ Created logs directory");
+console.info("✅ Created logs directory");
 
-console.log("\n🎉 Build complete! Next steps:");
-console.log("1. Copy .env.example to .env and fill in your credentials");
-console.log("2. Run: bun install");
-console.log("3. Start LND node: bun run setup-lnd");
-console.log("4. Start server: bun run start");
-console.log("5. Or use dashboard: bun run dashboard");
+console.info("\n🎉 Build complete! Next steps:");
+console.info("1. Copy .env.example to .env and fill in your credentials");
+console.info("2. Run: bun install");
+console.info("3. Start LND node: bun run setup-lnd");
+console.info("4. Start server: bun run start");
+console.info("5. Or use dashboard: bun run dashboard");

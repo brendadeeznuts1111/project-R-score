@@ -613,7 +613,7 @@ export class DocLinkGenerator {
 		}));
 
 		// @ts-expect-error
-		console.log(Bun.inspect.table(rows, ['API', 'Since', 'Related', 'Keywords', 'Doc URL'], {colors: true}));
+		console.info(Bun.inspect.table(rows, ['API', 'Since', 'Related', 'Keywords', 'Doc URL'], {colors: true}));
 	}
 }
 

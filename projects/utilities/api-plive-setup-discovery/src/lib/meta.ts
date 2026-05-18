@@ -144,7 +144,7 @@ export async function cleanupOrphanedEntries(index: IndexFile, mapsDir: string):
 
   for (const entry of entries) {
     if (!(await Bun.file(entry.storedPath).exists())) {
-      console.log(`🧹 Removing orphaned entry: ${entry.originalFilename} (${entry.hash})`);
+      console.info(`🧹 Removing orphaned entry: ${entry.originalFilename} (${entry.hash})`);
       removeEntry(index, entry.originalUrl);
       removedCount++;
     }

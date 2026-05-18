@@ -7,7 +7,7 @@ const server = Bun.serve({
     const url = new URL(req.url);
     const path = url.pathname;
     
-    console.log(`🍪 ${req.method} ${path}`);
+    console.info(`🍪 ${req.method} ${path}`);
     
     // Reading cookies (per Bun docs)
     if (path === "/profile") {
@@ -131,20 +131,20 @@ const server = Bun.serve({
   },
 });
 
-console.log(`🍪 Bun Cookie API Demo server starting on http://localhost:${server.port}`);
-console.log(`📖 Based on: https://bun.com/docs/runtime/http/cookies`);
-console.log("");
-console.log("Available endpoints:");
-console.log("  GET  /profile          - Read cookies");
-console.log("  POST /login           - Set cookies");
-console.log("  POST /logout          - Delete cookies");
-console.log("  GET  /cookie-demo      - Cookie management demo");
-console.log("  GET  /cookie-map-demo  - CookieMap features");
-console.log("");
+console.info(`🍪 Bun Cookie API Demo server starting on http://localhost:${server.port}`);
+console.info(`📖 Based on: https://bun.com/docs/runtime/http/cookies`);
+console.info("");
+console.info("Available endpoints:");
+console.info("  GET  /profile          - Read cookies");
+console.info("  POST /login           - Set cookies");
+console.info("  POST /logout          - Delete cookies");
+console.info("  GET  /cookie-demo      - Cookie management demo");
+console.info("  GET  /cookie-map-demo  - CookieMap features");
+console.info("");
 
 // Handle graceful shutdown
 process.on("SIGINT", () => {
-  console.log("\n🛑 Shutting down Cookie Demo server...");
+  console.info("\n🛑 Shutting down Cookie Demo server...");
   server.stop();
   process.exit(0);
 });

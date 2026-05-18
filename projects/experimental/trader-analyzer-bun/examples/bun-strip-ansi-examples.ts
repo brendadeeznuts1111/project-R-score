@@ -11,7 +11,7 @@ import { stripANSI } from "bun";
  * Cleaning ANSI escape codes from server logs
  */
 export function logProcessingExamples() {
-  console.log("=== Log File Processing ===\n");
+  console.info("=== Log File Processing ===\n");
 
   // Simulate server logs with ANSI colors
   const rawLogs = [
@@ -22,29 +22,29 @@ export function logProcessingExamples() {
     "[\\x1b[35mTRACE\\x1b[0m] \\x1b[36m2024-01-01 12:04:00\\x1b[0m Function execution time: 150ms",
   ];
 
-  console.log("Raw logs with ANSI colors:");
+  console.info("Raw logs with ANSI colors:");
   for (const log of rawLogs) {
-    console.log("  " + log);
+    console.info("  " + log);
   }
 
-  console.log("\nClean logs (ANSI removed):");
+  console.info("\nClean logs (ANSI removed):");
   for (const log of rawLogs) {
-    console.log("  " + stripANSI(log));
+    console.info("  " + stripANSI(log));
   }
 
   // Performance test with large log files
   const largeLogSet = rawLogs.join("\n").repeat(1000); // ~50KB of logs
-  console.log(`\nProcessing ${(largeLogSet.length / 1024).toFixed(1)}KB of logs...`);
+  console.info(`\nProcessing ${(largeLogSet.length / 1024).toFixed(1)}KB of logs...`);
 
   const start = performance.now();
   const cleanLogs = stripANSI(largeLogSet);
   const end = performance.now();
 
-  console.log(`Cleaned size: ${(cleanLogs.length / 1024).toFixed(1)}KB`);
-  console.log(`Processing time: ${(end - start).toFixed(3)}ms`);
-  console.log(`Reduction: ${(((largeLogSet.length - cleanLogs.length) / largeLogSet.length) * 100).toFixed(1)}% size reduction`);
+  console.info(`Cleaned size: ${(cleanLogs.length / 1024).toFixed(1)}KB`);
+  console.info(`Processing time: ${(end - start).toFixed(3)}ms`);
+  console.info(`Reduction: ${(((largeLogSet.length - cleanLogs.length) / largeLogSet.length) * 100).toFixed(1)}% size reduction`);
 
-  console.log("✅ Efficient log processing\n");
+  console.info("✅ Efficient log processing\n");
 }
 
 /**
@@ -52,7 +52,7 @@ export function logProcessingExamples() {
  * Removing colors from command-line tool output
  */
 export function cliOutputExamples() {
-  console.log("=== CLI Output Sanitization ===\n");
+  console.info("=== CLI Output Sanitization ===\n");
 
   // Simulate CLI tool output with colors and formatting
   const cliOutputs = [
@@ -63,23 +63,23 @@ export function cliOutputExamples() {
     "\\x1b[35m→\\x1b[0m \\x1b[1mHint:\\x1b[0m Consider using --optimize flag",
   ];
 
-  console.log("CLI output with colors and symbols:");
+  console.info("CLI output with colors and symbols:");
   for (const output of cliOutputs) {
-    console.log("  " + output);
+    console.info("  " + output);
   }
 
-  console.log("\nSanitized CLI output (plain text):");
+  console.info("\nSanitized CLI output (plain text):");
   for (const output of cliOutputs) {
-    console.log("  " + stripANSI(output));
+    console.info("  " + stripANSI(output));
   }
 
   // Test with complex ANSI sequences
   const complexOutput = "\\x1b]0;My App - Development\\x1b\\\\x1b[1;32m▶\\x1b[0m \\x1b[1mStarting...\\x1b[0m \\x1b[2m(press Ctrl+C to stop)\\x1b[0m";
-  console.log(`\nComplex ANSI (XTerm title + formatting):`);
-  console.log(`  Raw: ${JSON.stringify(complexOutput)}`);
-  console.log(`  Clean: "${stripANSI(complexOutput)}"`);
+  console.info(`\nComplex ANSI (XTerm title + formatting):`);
+  console.info(`  Raw: ${JSON.stringify(complexOutput)}`);
+  console.info(`  Clean: "${stripANSI(complexOutput)}"`);
 
-  console.log("✅ CLI output sanitization\n");
+  console.info("✅ CLI output sanitization\n");
 }
 
 /**
@@ -87,7 +87,7 @@ export function cliOutputExamples() {
  * Processing terminal session recordings
  */
 export function terminalRecordingExamples() {
-  console.log("=== Terminal Recording Cleanup ===\n");
+  console.info("=== Terminal Recording Cleanup ===\n");
 
   // Simulate terminal recording with cursor movements and colors
   const terminalRecording = [
@@ -102,21 +102,21 @@ export function terminalRecordingExamples() {
     "\\x1b[?25h", // Show cursor
   ].join("\n");
 
-  console.log("Terminal recording (raw):");
-  console.log(JSON.stringify(terminalRecording));
+  console.info("Terminal recording (raw):");
+  console.info(JSON.stringify(terminalRecording));
 
   const cleanRecording = stripANSI(terminalRecording);
-  console.log("\nClean terminal recording:");
-  console.log(JSON.stringify(cleanRecording));
+  console.info("\nClean terminal recording:");
+  console.info(JSON.stringify(cleanRecording));
 
-  console.log("\nFormatted clean output:");
+  console.info("\nFormatted clean output:");
   for (const line of cleanRecording.split("\n")) {
     if (line.trim()) {
-      console.log("  " + line);
+      console.info("  " + line);
     }
   }
 
-  console.log("✅ Terminal recording cleanup\n");
+  console.info("✅ Terminal recording cleanup\n");
 }
 
 /**
@@ -124,7 +124,7 @@ export function terminalRecordingExamples() {
  * Comparing Bun.stripANSI with traditional approaches
  */
 export function performanceBenchmarking() {
-  console.log("=== Performance Benchmarking ===\n");
+  console.info("=== Performance Benchmarking ===\n");
 
   // Create test data with various ANSI sequences
   const testCases = [
@@ -146,9 +146,9 @@ export function performanceBenchmarking() {
     },
   ];
 
-  console.log("Benchmarking Bun.stripANSI vs Traditional Regex:");
-  console.log("Test Case                    | Size    | Bun.stripANSI | Traditional | Speedup");
-  console.log("-".repeat(80));
+  console.info("Benchmarking Bun.stripANSI vs Traditional Regex:");
+  console.info("Test Case                    | Size    | Bun.stripANSI | Traditional | Speedup");
+  console.info("-".repeat(80));
 
   for (const testCase of testCases) {
     const size = (testCase.data.length / 1024).toFixed(1) + "KB";
@@ -174,10 +174,10 @@ export function performanceBenchmarking() {
     const bunMs = bunTime.toFixed(2) + "ms";
     const traditionalMs = traditionalTime.toFixed(2) + "ms";
 
-    console.log(`${testCase.name.padEnd(25)} | ${size.padEnd(7)} | ${bunMs.padEnd(12)} | ${traditionalMs.padEnd(11)} | ${speedup}`);
+    console.info(`${testCase.name.padEnd(25)} | ${size.padEnd(7)} | ${bunMs.padEnd(12)} | ${traditionalMs.padEnd(11)} | ${speedup}`);
   }
 
-  console.log("✅ High-performance ANSI processing\n");
+  console.info("✅ High-performance ANSI processing\n");
 }
 
 /**
@@ -185,7 +185,7 @@ export function performanceBenchmarking() {
  * Reading, cleaning, and writing log files
  */
 export function fileProcessingExamples() {
-  console.log("=== File Processing Integration ===\n");
+  console.info("=== File Processing Integration ===\n");
 
   // Simulate reading a colored log file
   const coloredLogContent = [
@@ -196,37 +196,37 @@ export function fileProcessingExamples() {
     "\\x1b[32m[INFO]\\x1b[0m \\x1b[36m2024-01-01 10:20:00\\x1b[0m Batch processing completed",
   ].join("\n");
 
-  console.log("Simulating file processing workflow:");
-  console.log("1. Read colored log file");
-  console.log("2. Strip ANSI escape codes");
-  console.log("3. Write clean log file");
-  console.log("4. Generate processing report\n");
+  console.info("Simulating file processing workflow:");
+  console.info("1. Read colored log file");
+  console.info("2. Strip ANSI escape codes");
+  console.info("3. Write clean log file");
+  console.info("4. Generate processing report\n");
 
   // Simulate the processing workflow
-  console.log("Original file content:");
-  console.log(coloredLogContent);
+  console.info("Original file content:");
+  console.info(coloredLogContent);
 
   const cleanContent = stripANSI(coloredLogContent);
-  console.log("\nCleaned file content:");
-  console.log(cleanContent);
+  console.info("\nCleaned file content:");
+  console.info(cleanContent);
 
   // Generate processing statistics
   const originalSize = coloredLogContent.length;
   const cleanSize = cleanContent.length;
   const reduction = ((originalSize - cleanSize) / originalSize * 100).toFixed(1);
 
-  console.log(`\nProcessing Statistics:`);
-  console.log(`  Original size: ${originalSize} characters`);
-  console.log(`  Clean size: ${cleanSize} characters`);
-  console.log(`  Size reduction: ${reduction}%`);
-  console.log(`  ANSI sequences removed: ${originalSize - cleanSize} characters`);
+  console.info(`\nProcessing Statistics:`);
+  console.info(`  Original size: ${originalSize} characters`);
+  console.info(`  Clean size: ${cleanSize} characters`);
+  console.info(`  Size reduction: ${reduction}%`);
+  console.info(`  ANSI sequences removed: ${originalSize - cleanSize} characters`);
 
-  console.log("✅ File processing integration\n");
+  console.info("✅ File processing integration\n");
 }
 
 // Run all examples
 export function runAllStripANSIExamples() {
-  console.log("🚀 Bun 1.3 stripANSI - Practical Examples\n");
+  console.info("🚀 Bun 1.3 stripANSI - Practical Examples\n");
 
   logProcessingExamples();
   cliOutputExamples();
@@ -234,11 +234,11 @@ export function runAllStripANSIExamples() {
   performanceBenchmarking();
   fileProcessingExamples();
 
-  console.log("🎯 Bun.stripANSI delivers enterprise-grade ANSI processing!");
-  console.log("   • 6-57x faster than traditional regex");
-  console.log("   • Handles complex XTerm sequences");
-  console.log("   • SIMD-accelerated performance");
-  console.log("   • Zero external dependencies");
+  console.info("🎯 Bun.stripANSI delivers enterprise-grade ANSI processing!");
+  console.info("   • 6-57x faster than traditional regex");
+  console.info("   • Handles complex XTerm sequences");
+  console.info("   • SIMD-accelerated performance");
+  console.info("   • Zero external dependencies");
 }
 
 // Allow running as standalone script

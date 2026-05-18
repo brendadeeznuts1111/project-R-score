@@ -88,10 +88,10 @@ async function runP2PBenchmarks(args: string[]) {
     if (includeFull && !operations.includes('full')) operations.push('full');
   }
 
-  console.log(`🚀 Running P2P Gateway Benchmarks`);
-  console.log(`   Gateways: ${gateways.join(', ')}`);
-  console.log(`   Operations: ${operations.join(', ')}`);
-  console.log(`   Iterations: ${iterations}\n`);
+  console.info(`🚀 Running P2P Gateway Benchmarks`);
+  console.info(`   Gateways: ${gateways.join(', ')}`);
+  console.info(`   Operations: ${operations.join(', ')}`);
+  console.info(`   Iterations: ${iterations}\n`);
 
   const benchmark = new P2PGatewayBenchmark({
     gateways,
@@ -108,35 +108,35 @@ async function runP2PBenchmarks(args: string[]) {
     const output = JSON.stringify({ results, summary }, null, 2);
     if (options.output) {
       await Bun.write(options.output, output);
-      console.log(`\n💾 Results saved to ${options.output}`);
+      console.info(`\n💾 Results saved to ${options.output}`);
     } else {
-      console.log(output);
+      console.info(output);
     }
   } else if (options.compare) {
     benchmark.printResults();
   } else {
-    console.log('\n🎯 P2P Benchmark Complete!');
-    console.log('='.repeat(50));
-    console.log(`Total operations: ${results.length}`);
-    console.log(`Gateways tested: ${gateways.length}`);
-    console.log(`Operations tested: ${operations.length}`);
-    console.log(`Overall success rate: ${summary.successRate.toFixed(1)}%`);
+    console.info('\n🎯 P2P Benchmark Complete!');
+    console.info('='.repeat(50));
+    console.info(`Total operations: ${results.length}`);
+    console.info(`Gateways tested: ${gateways.length}`);
+    console.info(`Operations tested: ${operations.length}`);
+    console.info(`Overall success rate: ${summary.successRate.toFixed(1)}%`);
 
     const fastestGateway = Object.entries(summary.gateways)
       .sort(([, a], [, b]) => a.avgDuration - b.avgDuration)[0];
 
     if (fastestGateway) {
-      console.log(`🏆 Fastest gateway: ${fastestGateway[0]} (${fastestGateway[1].avgDuration.toFixed(2)}ms)`);
+      console.info(`🏆 Fastest gateway: ${fastestGateway[0]} (${fastestGateway[1].avgDuration.toFixed(2)}ms)`);
     }
 
     if (options.summary) {
-      console.log('\n📊 Summary:');
-      console.log(JSON.stringify(summary, null, 2));
+      console.info('\n📊 Summary:');
+      console.info(JSON.stringify(summary, null, 2));
     }
 
     if (options.output) {
       await Bun.write(options.output, JSON.stringify({ results, summary }, null, 2));
-      console.log(`\n💾 Results saved to ${options.output}`);
+      console.info(`\n💾 Results saved to ${options.output}`);
     }
   }
 
@@ -144,7 +144,7 @@ async function runP2PBenchmarks(args: string[]) {
 }
 
 async function runProfileBenchmarks(args: string[]) {
-  console.log('📊 Running Profile Engine Benchmarks');
+  console.info('📊 Running Profile Engine Benchmarks');
   
   const operations: ProfileOperation[] = [];
   let iterations = 50;
@@ -188,17 +188,17 @@ async function runProfileBenchmarks(args: string[]) {
     operations.push('xgboost_personalize', 'redis_hll_add', 'r2_snapshot');
   }
 
-  console.log(`   Operations: ${operations.join(', ')}`);
-  console.log(`   Iterations: ${iterations}\n`);
+  console.info(`   Operations: ${operations.join(', ')}`);
+  console.info(`   Iterations: ${iterations}\n`);
 
   // Note: Profile benchmarks require the full dashboard context (config, database, etc.)
   // For CLI usage, we recommend using the API endpoint instead
-  console.log('⚠️  Profile benchmarks require dashboard server context');
-  console.log('   Starting dashboard server or use API endpoint:');
-  console.log('   POST http://localhost:3008/api/profile/benchmark');
-  console.log('\n   Alternatively, start the dashboard server:');
-  console.log('   bun src/enhanced-dashboard.ts');
-  console.log('   Then use the API endpoints.\n');
+  console.info('⚠️  Profile benchmarks require dashboard server context');
+  console.info('   Starting dashboard server or use API endpoint:');
+  console.info('   POST http://localhost:3008/api/profile/benchmark');
+  console.info('\n   Alternatively, start the dashboard server:');
+  console.info('   bun src/enhanced-dashboard.ts');
+  console.info('   Then use the API endpoints.\n');
   
   // For now, return empty results
   // In the future, we could start a minimal server instance or extract the benchmark logic
@@ -215,26 +215,26 @@ async function runProfileBenchmarks(args: string[]) {
     const output = JSON.stringify({ results, summary }, null, 2);
     if (options.output) {
       await Bun.write(options.output, output);
-      console.log(`💾 Empty results template saved to ${options.output}`);
+      console.info(`💾 Empty results template saved to ${options.output}`);
     } else {
-      console.log(output);
+      console.info(output);
     }
   } else {
-    console.log('📊 Profile Benchmark Results (empty - use API endpoint)');
-    console.log('='.repeat(50));
-    console.log(`Total operations: 0`);
-    console.log(`Operations requested: ${operations.join(', ')}`);
-    console.log(`\n💡 Tip: Use the API endpoint for actual profile benchmarks:`);
-    console.log(`   curl -X POST "http://localhost:3008/api/profile/benchmark" \\`);
-    console.log(`     -H "Content-Type: application/json" \\`);
-    console.log(`     -d '{"operations": [${operations.map(o => `"${o}"`).join(', ')}], "iterations": ${iterations}}'`);
+    console.info('📊 Profile Benchmark Results (empty - use API endpoint)');
+    console.info('='.repeat(50));
+    console.info(`Total operations: 0`);
+    console.info(`Operations requested: ${operations.join(', ')}`);
+    console.info(`\n💡 Tip: Use the API endpoint for actual profile benchmarks:`);
+    console.info(`   curl -X POST "http://localhost:3008/api/profile/benchmark" \\`);
+    console.info(`     -H "Content-Type: application/json" \\`);
+    console.info(`     -d '{"operations": [${operations.map(o => `"${o}"`).join(', ')}], "iterations": ${iterations}}'`);
   }
 
   return { results, summary };
 }
 
 async function runCombinedBenchmarks(args: string[]) {
-  console.log('🔄 Running Combined Benchmarks\n');
+  console.info('🔄 Running Combined Benchmarks\n');
   
   const options: CLIOptions = {};
   let outputFile: string | undefined;
@@ -262,10 +262,10 @@ async function runCombinedBenchmarks(args: string[]) {
   const p2pArgs = ['--gateways', 'venmo,cashapp,paypal', '--operations', 'create,query,switch', '--iterations', '100'];
   const profileArgs = ['--operations', 'xgboost_personalize,redis_hll_add,r2_snapshot', '--iterations', '50'];
 
-  console.log('1️⃣  Running P2P benchmarks...\n');
+  console.info('1️⃣  Running P2P benchmarks...\n');
   const p2pResults = await runP2PBenchmarks(p2pArgs);
 
-  console.log('\n2️⃣  Running Profile benchmarks...\n');
+  console.info('\n2️⃣  Running Profile benchmarks...\n');
   const profileResults = await runProfileBenchmarks(profileArgs);
 
   // Combine results
@@ -277,20 +277,20 @@ async function runCombinedBenchmarks(args: string[]) {
 
   if (outputFile) {
     await Bun.write(outputFile, JSON.stringify(combined, null, 2));
-    console.log(`\n💾 Combined results saved to ${outputFile}`);
+    console.info(`\n💾 Combined results saved to ${outputFile}`);
   } else if (options.json) {
-    console.log(JSON.stringify(combined, null, 2));
+    console.info(JSON.stringify(combined, null, 2));
   } else {
-    console.log('\n✅ Combined benchmarks complete!');
-    console.log(`   P2P operations: ${p2pResults.results.length}`);
-    console.log(`   Profile operations: ${profileResults.results.length}`);
+    console.info('\n✅ Combined benchmarks complete!');
+    console.info(`   P2P operations: ${p2pResults.results.length}`);
+    console.info(`   Profile operations: ${profileResults.results.length}`);
   }
 
   return combined;
 }
 
 function printHelp() {
-  console.log(`
+  console.info(`
 Dev Dashboard CLI
 ──────────────────
 
@@ -367,7 +367,7 @@ async function main() {
         break;
       default:
         console.error(`❌ Unknown command: ${command}`);
-        console.log('\nRun "bun cli.ts help" for usage information.');
+        console.info('\nRun "bun cli.ts help" for usage information.');
         process.exit(1);
     }
   } catch (error) {

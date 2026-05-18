@@ -76,8 +76,8 @@ export class HardenedInfrastructureDashboard {
     // Start heartbeat and cleanup intervals
     this.startMaintenanceTasks();
     
-    console.log(`🔒 Hardened Infrastructure Dashboard started on port ${port}`);
-    console.log(`🛡️  Rate limits: ${this.rateLimitConfig.maxConnectionsPerScope} connections per scope`);
+    console.info(`🔒 Hardened Infrastructure Dashboard started on port ${port}`);
+    console.info(`🛡️  Rate limits: ${this.rateLimitConfig.maxConnectionsPerScope} connections per scope`);
     
     // 📢 Initialize IPC Reporting
     this.setupIPCReporting();
@@ -90,7 +90,7 @@ export class HardenedInfrastructureDashboard {
    */
   private setupIPCReporting() {
     if (process.send) {
-      console.log('📢 IPC detected. Enabling status and metric reporting to parent.');
+      console.info('📢 IPC detected. Enabling status and metric reporting to parent.');
       
       // 1. Initial Status
       process.send({
@@ -130,7 +130,7 @@ export class HardenedInfrastructureDashboard {
    */
   private handleIPCCommand(message: any) {
     if (message.type === 'command') {
-      console.log(`📢 Received IPC Command: ${message.command}`, message.payload);
+      console.info(`📢 Received IPC Command: ${message.command}`, message.payload);
       
       switch (message.command) {
         case 'self-heal':
@@ -138,10 +138,10 @@ export class HardenedInfrastructureDashboard {
           // In a real scenario, this would trigger diagnostic and recovery routines
           break;
         case 'refresh-config':
-          console.log('🔄 Refreshing configuration via IPC...');
+          console.info('🔄 Refreshing configuration via IPC...');
           break;
         default:
-          console.log(`❓ Unknown logic for command: ${message.command}`);
+          console.info(`❓ Unknown logic for command: ${message.command}`);
       }
     }
   }
@@ -199,7 +199,7 @@ export class HardenedInfrastructureDashboard {
         rbacToken: token
       };
       
-      console.log(`✅ WebSocket connection approved: scope=${scope}, token=${token.substring(0, 8)}...`);
+      console.info(`✅ WebSocket connection approved: scope=${scope}, token=${token.substring(0, 8)}...`);
       return client;
       
     } catch (error) {
@@ -292,7 +292,7 @@ export class HardenedInfrastructureDashboard {
    * 🔒 Start scoped metrics stream for client
    */
   private startScopedMetricsStream(client: WebSocketClient) {
-    console.log(`📊 Starting metrics stream for scope: ${client.scope}`);
+    console.info(`📊 Starting metrics stream for scope: ${client.scope}`);
     
     // Send initial metrics
     this.sendMetricsToClient(client);
@@ -357,7 +357,7 @@ export class HardenedInfrastructureDashboard {
       this.activeConnections.set(client.scope, scopeConnections);
     }
     
-    console.log(`📊 WebSocket disconnected: scope=${client.scope}, code=${code}, reason=${reason}`);
+    console.info(`📊 WebSocket disconnected: scope=${client.scope}, code=${code}, reason=${reason}`);
     
     // Log disconnection
     this.perfTracker.addMetric({
@@ -472,7 +472,7 @@ export class HardenedInfrastructureDashboard {
       for (const [scope, connections] of this.activeConnections.entries()) {
         const activeConnections = connections.filter(client => {
           if (now - client.lastActivity > this.rateLimitConfig.connectionTimeoutMs) {
-            console.log(`🧹 Cleaning up inactive connection in scope ${scope}`);
+            console.info(`🧹 Cleaning up inactive connection in scope ${scope}`);
             client.socket.close(4000, 'Connection timeout');
             return false;
           }
@@ -578,6 +578,6 @@ if (import.meta.main) {
     }
   });
   
-  console.log('🚀 Hardened Infrastructure Dashboard started!');
-  console.log(`📊 Server stats:`, server.getServerStats());
+  console.info('🚀 Hardened Infrastructure Dashboard started!');
+  console.info(`📊 Server stats:`, server.getServerStats());
 }

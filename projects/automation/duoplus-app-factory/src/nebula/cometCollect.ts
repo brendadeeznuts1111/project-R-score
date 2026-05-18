@@ -56,14 +56,14 @@ export class CometCollect {
    * Sweep funds through the nebula back to collection point
    */
   async sweepFunds(params: SweepParams): Promise<CollectionResult> {
-    console.log(`☄️ Comet-Collect™: Starting sweep for flow ${params.flowId}`);
+    console.info(`☄️ Comet-Collect™: Starting sweep for flow ${params.flowId}`);
     
     const startTime = Date.now();
     
     // Check if Event Horizon™ has passed
     const eventHorizonPassed = Date.now() > params.eventHorizon.getTime();
     if (eventHorizonPassed) {
-      console.log(`⚠️ Event Horizon™ passed - increasing collection speed`);
+      console.info(`⚠️ Event Horizon™ passed - increasing collection speed`);
     }
     
     // Calculate optimal collection paths
@@ -86,8 +86,8 @@ export class CometCollect {
     const collectionTime = Date.now() - startTime;
     const cometSpeed = totalCollected / (collectionTime / 1000); // per second
     
-    console.log(`💫 Collection complete: $${totalCollected.toFixed(2)} in ${(collectionTime / 1000).toFixed(1)}s`);
-    console.log(`🌠 Net yield: $${netYield.toFixed(2)} | Speed: $${cometSpeed.toFixed(2)}/s`);
+    console.info(`💫 Collection complete: $${totalCollected.toFixed(2)} in ${(collectionTime / 1000).toFixed(1)}s`);
+    console.info(`🌠 Net yield: $${netYield.toFixed(2)} | Speed: $${cometSpeed.toFixed(2)}/s`);
     
     return {
       collectionComplete: successfulCollections.length > 0,
@@ -133,7 +133,7 @@ export class CometCollect {
     fees: number;
     success: boolean;
   }> {
-    console.log(`🌠 Executing path ${path.pathId} via ${path.route[0]}`);
+    console.info(`🌠 Executing path ${path.pathId} via ${path.route[0]}`);
     
     // Simulate collection delay
     await new Promise(resolve => setTimeout(resolve, path.estimatedTime * 60 * 1000));
@@ -149,7 +149,7 @@ export class CometCollect {
       const amount = 1000 + Math.random() * 9000; // $1,000 - $10,000
       const fees = amount * path.feeRate;
       
-      console.log(`✅ Path ${path.pathId} successful: $${amount.toFixed(2)} collected`);
+      console.info(`✅ Path ${path.pathId} successful: $${amount.toFixed(2)} collected`);
       
       return {
         pathId: path.pathId,
@@ -158,7 +158,7 @@ export class CometCollect {
         success: true
       };
     } else {
-      console.log(`❌ Path ${path.pathId} failed - captured by black hole`);
+      console.info(`❌ Path ${path.pathId} failed - captured by black hole`);
       
       return {
         pathId: path.pathId,

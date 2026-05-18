@@ -379,7 +379,7 @@ export class NativeAuditor {
 if (import.meta.main) {
   const auditor = new NativeAuditor();
   const result = await auditor.auditDirectory(process.argv[2] || './.factory-wager');
-  console.log(auditor.generateReport(result));
+  console.info(auditor.generateReport(result));
 
   process.exit(result.polyfills > 0 ? 1 : 0);
 }

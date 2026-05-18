@@ -398,7 +398,7 @@ describe('Global Registry Helpers', () => {
 
 // Entry guard for testing
 if (import.meta.main) {
-  console.log('🧪 Running Circuit Breaker Tests...\n');
+  console.info('🧪 Running Circuit Breaker Tests...\n');
   
   // Quick smoke test
   const breaker = new CircuitBreaker('smoke-test', {
@@ -407,10 +407,10 @@ if (import.meta.main) {
     successThreshold: 2,
   });
 
-  console.log('✅ Circuit breaker created');
-  console.log('Initial state:', breaker.getState());
-  console.log('Initial stats:', breaker.getStats());
+  console.info('✅ Circuit breaker created');
+  console.info('Initial state:', breaker.getState());
+  console.info('Initial stats:', breaker.getStats());
 
   breaker.destroy();
-  console.log('\n✅ Smoke test passed!');
+  console.info('\n✅ Smoke test passed!');
 }

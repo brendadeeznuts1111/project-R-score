@@ -122,7 +122,7 @@ interface CanvasFile {
  * Migrates legacy colors to HEX with semantic enhancement
  */
 function migrateCanvasColors(canvas: CanvasFile): CanvasFile {
-    console.log('🎨 Migrating canvas colors to HEX system...');
+    console.info('🎨 Migrating canvas colors to HEX system...');
 
     const migratedCanvas = JSON.parse(JSON.stringify(canvas)); // Deep copy
 
@@ -135,13 +135,13 @@ function migrateCanvasColors(canvas: CanvasFile): CanvasFile {
             // Convert legacy colors
             if (LEGACY_TO_HEX_MAP[oldColor]) {
                 newColor = LEGACY_TO_HEX_MAP[oldColor];
-                console.log(`  🔄 ${node.id}: ${oldColor} → ${newColor} (legacy conversion)`);
+                console.info(`  🔄 ${node.id}: ${oldColor} → ${newColor} (legacy conversion)`);
             }
 
             // Apply semantic enhancement based on node ID and metadata
             const semanticColor = getSemanticColor(node);
             if (semanticColor !== newColor) {
-                console.log(`  🎯 ${node.id}: ${newColor} → ${semanticColor} (semantic enhancement)`);
+                console.info(`  🎯 ${node.id}: ${newColor} → ${semanticColor} (semantic enhancement)`);
                 newColor = semanticColor;
             }
 
@@ -150,7 +150,7 @@ function migrateCanvasColors(canvas: CanvasFile): CanvasFile {
             // Assign color based on semantic analysis
             const semanticColor = getSemanticColor(node);
             node.color = semanticColor;
-            console.log(`  ✨ ${node.id}: no color → ${semanticColor} (semantic assignment)`);
+            console.info(`  ✨ ${node.id}: no color → ${semanticColor} (semantic assignment)`);
         }
     });
 
@@ -162,13 +162,13 @@ function migrateCanvasColors(canvas: CanvasFile): CanvasFile {
 
             if (LEGACY_TO_HEX_MAP[oldColor]) {
                 newColor = LEGACY_TO_HEX_MAP[oldColor];
-                console.log(`  🔗 ${edge.id}: ${oldColor} → ${newColor} (edge legacy conversion)`);
+                console.info(`  🔗 ${edge.id}: ${oldColor} → ${newColor} (edge legacy conversion)`);
                 edge.color = newColor;
             }
         } else {
             // Assign edge color based on relationship type
             edge.color = ODDS_PROTOCOL_COLORS.brand.secondary;
-            console.log(`  ✨ ${edge.id}: no color → ${edge.color} (edge semantic assignment)`);
+            console.info(`  ✨ ${edge.id}: no color → ${edge.color} (edge semantic assignment)`);
         }
     });
 
@@ -249,7 +249,7 @@ function getSemanticColor(node: CanvasNode): string {
  * Enhances metadata with additional semantic information
  */
 function enhanceMetadata(canvas: CanvasFile): CanvasFile {
-    console.log('📊 Enhancing canvas metadata...');
+    console.info('📊 Enhancing canvas metadata...');
 
     const enhancedCanvas = JSON.parse(JSON.stringify(canvas));
 
@@ -389,8 +389,8 @@ function getColorCategory(color: string): string {
  * Main integration function
  */
 async function integrateOddsMonoMap(): Promise<void> {
-    console.log('🚀 Starting Odds-Mono-Map HEX Color Integration');
-    console.log('='.repeat(60));
+    console.info('🚀 Starting Odds-Mono-Map HEX Color Integration');
+    console.info('='.repeat(60));
 
     const vaultPath = '/Users/nolarose/CascadeProjects/windsurf-project/Odds-mono-map';
     const canvasFiles = [
@@ -401,20 +401,20 @@ async function integrateOddsMonoMap(): Promise<void> {
         'Untitled.canvas'
     ];
 
-    console.log(`\n📁 Found ${canvasFiles.length} canvas files to process`);
+    console.info(`\n📁 Found ${canvasFiles.length} canvas files to process`);
 
     for (const relativePath of canvasFiles) {
         const fullPath = join(vaultPath, relativePath);
 
         try {
-            console.log(`\n📄 Processing: ${relativePath}`);
-            console.log('─'.repeat(40));
+            console.info(`\n📄 Processing: ${relativePath}`);
+            console.info('─'.repeat(40));
 
             // Read existing canvas
             const content = await readFile(fullPath, 'utf8');
             const canvas: CanvasFile = JSON.parse(content);
 
-            console.log(`📊 Original canvas: ${canvas.nodes.length} nodes, ${canvas.edges.length} edges`);
+            console.info(`📊 Original canvas: ${canvas.nodes.length} nodes, ${canvas.edges.length} edges`);
 
             // Migrate colors
             const migratedCanvas = migrateCanvasColors(canvas);
@@ -437,8 +437,8 @@ async function integrateOddsMonoMap(): Promise<void> {
             // Write enhanced canvas
             await writeFile(fullPath, JSON.stringify(enhancedCanvas, null, 2));
 
-            console.log(`✅ Successfully processed: ${relativePath}`);
-            console.log(`📊 Enhanced canvas: ${enhancedCanvas.nodes.length} nodes, ${enhancedCanvas.edges.length} edges`);
+            console.info(`✅ Successfully processed: ${relativePath}`);
+            console.info(`📊 Enhanced canvas: ${enhancedCanvas.nodes.length} nodes, ${enhancedCanvas.edges.length} edges`);
 
             // Show color distribution
             const colorDistribution: Record<string, number> = {};
@@ -448,10 +448,10 @@ async function integrateOddsMonoMap(): Promise<void> {
                 }
             });
 
-            console.log('🎨 Color distribution:');
+            console.info('🎨 Color distribution:');
             Object.entries(colorDistribution).forEach(([color, count]) => {
                 const category = getColorCategory(color);
-                console.log(`  ${color}: ${count} nodes (${category})`);
+                console.info(`  ${color}: ${count} nodes (${category})`);
             });
 
         } catch (error: any) {
@@ -459,41 +459,41 @@ async function integrateOddsMonoMap(): Promise<void> {
         }
     }
 
-    console.log('\n🎊 Odds-Mono-Map Integration Complete!');
-    console.log('='.repeat(60));
+    console.info('\n🎊 Odds-Mono-Map Integration Complete!');
+    console.info('='.repeat(60));
 
-    console.log('\n🏆 Integration Achievements:');
-    console.log('  ✅ Legacy colors migrated to HEX');
-    console.log('  ✅ Semantic color assignment applied');
-    console.log('  ✅ Metadata enhanced with semantic analysis');
-    console.log('  ✅ Health scores calculated for all nodes');
-    console.log('  ✅ Color categorization system implemented');
-    console.log('  ✅ Vault-specific domain colors applied');
+    console.info('\n🏆 Integration Achievements:');
+    console.info('  ✅ Legacy colors migrated to HEX');
+    console.info('  ✅ Semantic color assignment applied');
+    console.info('  ✅ Metadata enhanced with semantic analysis');
+    console.info('  ✅ Health scores calculated for all nodes');
+    console.info('  ✅ Color categorization system implemented');
+    console.info('  ✅ Vault-specific domain colors applied');
 
-    console.log('\n🎨 Color System Features:');
-    console.log('  🌟 Domain-specific colors (integration, service, core, ui, etc.)');
-    console.log('  📊 Document type colors (documentation, api, project, tutorial)');
-    console.log('  🎯 Priority colors (low, medium, high, critical)');
-    console.log('  ✅ Status colors (active, beta, deprecated, experimental)');
-    console.log('  🏥 Health-based color indicators');
-    console.log('  🔍 Semantic color analysis');
+    console.info('\n🎨 Color System Features:');
+    console.info('  🌟 Domain-specific colors (integration, service, core, ui, etc.)');
+    console.info('  📊 Document type colors (documentation, api, project, tutorial)');
+    console.info('  🎯 Priority colors (low, medium, high, critical)');
+    console.info('  ✅ Status colors (active, beta, deprecated, experimental)');
+    console.info('  🏥 Health-based color indicators');
+    console.info('  🔍 Semantic color analysis');
 
-    console.log('\n🚀 Production Benefits:');
-    console.log('  📈 Better visual organization through semantic colors');
-    console.log('  🎯 Instant understanding of node types and purposes');
-    console.log('  📊 Health monitoring through color indicators');
-    console.log('  🔍 Improved navigation and discovery');
-    console.log('  🛡️ Consistent color scheme across all canvases');
+    console.info('\n🚀 Production Benefits:');
+    console.info('  📈 Better visual organization through semantic colors');
+    console.info('  🎯 Instant understanding of node types and purposes');
+    console.info('  📊 Health monitoring through color indicators');
+    console.info('  🔍 Improved navigation and discovery');
+    console.info('  🛡️ Consistent color scheme across all canvases');
 
-    console.log('\n💡 Next Steps:');
-    console.log('  1. Review migrated canvases in Obsidian');
-    console.log('  2. Customize color scheme for your preferences');
-    console.log('  3. Add custom domain colors as needed');
-    console.log('  4. Set up automated color validation');
-    console.log('  5. Monitor color usage analytics');
+    console.info('\n💡 Next Steps:');
+    console.info('  1. Review migrated canvases in Obsidian');
+    console.info('  2. Customize color scheme for your preferences');
+    console.info('  3. Add custom domain colors as needed');
+    console.info('  4. Set up automated color validation');
+    console.info('  5. Monitor color usage analytics');
 
-    console.log('\n🎯 Your Odds-Mono-Map vault now features advanced HEX color');
-    console.log('   integration with semantic intelligence! 🎨🚀✨');
+    console.info('\n🎯 Your Odds-Mono-Map vault now features advanced HEX color');
+    console.info('   integration with semantic intelligence! 🎨🚀✨');
 }
 
 // =============================================================================

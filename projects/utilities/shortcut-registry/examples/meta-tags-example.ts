@@ -19,18 +19,18 @@ export const PAGE_META = meta;
 export const OPEN_GRAPH_TAGS = ogTags;
 
 export function displayMetaInfo() {
-  console.log('=== Page Meta Tags ===');
-  console.log(`Title: ${PAGE_META.title}`);
+  console.info('=== Page Meta Tags ===');
+  console.info(`Title: ${PAGE_META.title}`);
   if (PAGE_META.description) {
-    console.log(`Description: ${PAGE_META.description}`);
+    console.info(`Description: ${PAGE_META.description}`);
   }
   if (PAGE_META.viewport) {
-    console.log(`Viewport: ${PAGE_META.viewport}`);
+    console.info(`Viewport: ${PAGE_META.viewport}`);
   }
   
-  console.log('\n=== Open Graph Tags ===');
+  console.info('\n=== Open Graph Tags ===');
   Object.entries(OPEN_GRAPH_TAGS).forEach(([key, value]) => {
-    console.log(`${key}: ${value}`);
+    console.info(`${key}: ${value}`);
   });
 }
 

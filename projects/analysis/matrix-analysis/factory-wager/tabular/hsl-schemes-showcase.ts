@@ -5,8 +5,8 @@
 
 export {}; // Make this file a module
 
-console.log('🎨 FACTORYWAGER TABULAR v4.3 - HSL SEMANTIC SCHEMES SHOWCASE')
-console.log('=' .repeat(80))
+console.info('🎨 FACTORYWAGER TABULAR v4.3 - HSL SEMANTIC SCHEMES SHOWCASE')
+console.info('=' .repeat(80))
 
 const RESET = "\x1b[0m";
 
@@ -64,26 +64,26 @@ const hslSchemes = [
   }
 ];
 
-console.log('\n📊 HSL Semantic Schemes Reference')
-console.log('-' .repeat(50))
+console.info('\n📊 HSL Semantic Schemes Reference')
+console.info('-' .repeat(50))
 
 hslSchemes.forEach((scheme, index) => {
   const color = Bun.color(scheme.hsl, "ansi-16m");
   const hex = Bun.color(scheme.hsl, "hex");
   const rgb = Bun.color(scheme.hsl, "[rgb]");
 
-  console.log(`\n${index + 1}. ${scheme.context.padEnd(20)} ${color}${scheme.hsl}${RESET}`);
-  console.log(`   Visual: ${color}■■■■■■■■■■${RESET} ${hex}`);
-  console.log(`   RGB: [${rgb?.join(', ')}]`);
-  console.log(`   Use: ${scheme.use}`);
-  console.log(`   Desc: ${scheme.description}`);
+  console.info(`\n${index + 1}. ${scheme.context.padEnd(20)} ${color}${scheme.hsl}${RESET}`);
+  console.info(`   Visual: ${color}■■■■■■■■■■${RESET} ${hex}`);
+  console.info(`   RGB: [${rgb?.join(', ')}]`);
+  console.info(`   Use: ${scheme.use}`);
+  console.info(`   Desc: ${scheme.description}`);
 });
 
 // ═══════════════════════════════════════════════════════════════
 // CHROMATIC DEMONSTRATION
 // ═══════════════════════════════════════════════════════════════
-console.log('\n\n🎭 CHROMATIC DEMONSTRATION')
-console.log('-' .repeat(50))
+console.info('\n\n🎭 CHROMATIC DEMONSTRATION')
+console.info('-' .repeat(50))
 
 const demoData = [
   {
@@ -135,8 +135,8 @@ await renderFactoryTabular(demoData);
 // ═══════════════════════════════════════════════════════════════
 // COLOR MATHEMATICS SHOWCASE
 // ═══════════════════════════════════════════════════════════════
-console.log('\n\n🔬 COLOR MATHEMATICS SHOWCASE')
-console.log('-' .repeat(50))
+console.info('\n\n🔬 COLOR MATHEMATICS SHOWCASE')
+console.info('-' .repeat(50))
 
 function analyzeHSL(hslString: string) {
   const match = hslString.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
@@ -166,14 +166,14 @@ colorAnalysis.forEach(hslString => {
   const analysis = analyzeHSL(hslString);
   if (analysis) {
     const { hsl, rgb, hex, ansi16m } = analysis;
-    console.log(`\n${ansi16m}HSL(${hsl.h}, ${hsl.s}%, ${hsl.l}%)${RESET}`);
-    console.log(`  → RGB(${rgb?.r}, ${rgb?.g}, ${rgb?.b})`);
-    console.log(`  → ${hex}`);
-    console.log(`  → Brightness: ${(rgb!.r * 299 + rgb!.g * 587 + rgb!.b * 114) / 1000 | 0}`);
+    console.info(`\n${ansi16m}HSL(${hsl.h}, ${hsl.s}%, ${hsl.l}%)${RESET}`);
+    console.info(`  → RGB(${rgb?.r}, ${rgb?.g}, ${rgb?.b})`);
+    console.info(`  → ${hex}`);
+    console.info(`  → Brightness: ${(rgb!.r * 299 + rgb!.g * 587 + rgb!.b * 114) / 1000 | 0}`);
   }
 });
 
-console.log('\n🏆 FACTORYWAGER TABULAR v4.3 - HSL SEMANTIC PERFECTION!')
-console.log('🚀 Computational aesthetic dominance achieved!')
-console.log('💎 Every hue mathematically precise, every pixel intentional!')
-console.log('🎨 Next vector: v4.4 gradient interpolation? Your chromatic command awaits!')
+console.info('\n🏆 FACTORYWAGER TABULAR v4.3 - HSL SEMANTIC PERFECTION!')
+console.info('🚀 Computational aesthetic dominance achieved!')
+console.info('💎 Every hue mathematically precise, every pixel intentional!')
+console.info('🎨 Next vector: v4.4 gradient interpolation? Your chromatic command awaits!')

@@ -1103,7 +1103,7 @@ async function runEnterpriseIntegration(): Promise<void> {
 
     // Generate comprehensive report
     const report = integrator.generateComprehensiveReport();
-    console.log('\n' + report);
+    console.info('\n' + report);
 
     // Save report to file
     const reportPath = join(vaultPath, '11 - Workshop/Canvas Demos', 'enterprise-integration-report.md');

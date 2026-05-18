@@ -321,7 +321,7 @@ if (import.meta.main) {
 	const command = Bun.argv[2];
 	const arg = Bun.argv[3];
 
-	console.log("📚 Tier-1380 OMEGA: Bun API Reference\n");
+	console.info("📚 Tier-1380 OMEGA: Bun API Reference\n");
 
 	switch (command) {
 		case "list": {
@@ -332,25 +332,25 @@ if (import.meta.main) {
 				Kind: api.kind,
 				Areas: api.matrixArea.join(", "),
 			}));
-			console.log(Bun.inspect.table(data));
+			console.info(Bun.inspect.table(data));
 			break;
 		}
 
 		case "search": {
 			if (!arg) {
-				console.log("Usage: bun bun-api-reference.ts search <query>");
+				console.info("Usage: bun bun-api-reference.ts search <query>");
 				break;
 			}
 			const results = searchApis(arg);
 			if (results.length === 0) {
-				console.log(`No APIs found matching "${arg}"`);
+				console.info(`No APIs found matching "${arg}"`);
 			} else {
-				console.log(`Found ${results.length} APIs:\n`);
+				console.info(`Found ${results.length} APIs:\n`);
 				for (const api of results) {
-					console.log(`  ${api.id}. ${api.api}`);
-					console.log(`     ${api.signature}`);
-					console.log(`     Areas: ${api.matrixArea.join(", ")}`);
-					console.log(`     Notes: ${api.notes}\n`);
+					console.info(`  ${api.id}. ${api.api}`);
+					console.info(`     ${api.signature}`);
+					console.info(`     Areas: ${api.matrixArea.join(", ")}`);
+					console.info(`     Notes: ${api.notes}\n`);
 				}
 			}
 			break;
@@ -358,77 +358,77 @@ if (import.meta.main) {
 
 		case "kind": {
 			if (!arg) {
-				console.log(
+				console.info(
 					"Usage: bun bun-api-reference.ts kind <function|method|class|object|string>",
 				);
 				break;
 			}
 			const results = getApisByKind(arg as ApiKind);
-			console.log(`${results.length} ${arg} APIs:\n`);
+			console.info(`${results.length} ${arg} APIs:\n`);
 			for (const api of results) {
-				console.log(`  ${api.id}. ${api.api}`);
+				console.info(`  ${api.id}. ${api.api}`);
 			}
 			break;
 		}
 
 		case "area": {
 			if (!arg) {
-				console.log("Usage: bun bun-api-reference.ts area <area>");
+				console.info("Usage: bun bun-api-reference.ts area <area>");
 				break;
 			}
 			const results = getApisByArea(arg);
-			console.log(`${results.length} APIs in "${arg}":\n`);
+			console.info(`${results.length} APIs in "${arg}":\n`);
 			for (const api of results) {
-				console.log(`  ${api.id}. ${api.api} - ${api.notes}`);
+				console.info(`  ${api.id}. ${api.api} - ${api.notes}`);
 			}
 			break;
 		}
 
 		case "coverage": {
 			const dir = arg || "scripts/matrix";
-			console.log(`Checking API coverage in ${dir}...\n`);
+			console.info(`Checking API coverage in ${dir}...\n`);
 
 			const coverage = await checkApiCoverage(dir);
 			const used = coverage.filter((c) => c.used);
 			const unused = coverage.filter((c) => !c.used);
 
-			console.log(`Coverage: ${used.length}/${coverage.length} APIs used\n`);
+			console.info(`Coverage: ${used.length}/${coverage.length} APIs used\n`);
 
-			console.log("Used APIs:");
+			console.info("Used APIs:");
 			for (const c of used) {
 				const colorCode = getCoverageColor(c.files.length);
-				console.log(`  ${colorCode}●\x1b[0m ${c.api} (${c.files.length} files)`);
+				console.info(`  ${colorCode}●\x1b[0m ${c.api} (${c.files.length} files)`);
 			}
 
 			if (unused.length > 0) {
-				console.log("\nUnused APIs:");
+				console.info("\nUnused APIs:");
 				for (const c of unused) {
-					console.log(`  \x1b[90m○\x1b[0m ${c.api}`);
+					console.info(`  \x1b[90m○\x1b[0m ${c.api}`);
 				}
 			}
 			break;
 		}
 
 		case "signatures": {
-			console.log("API Signatures:\n");
+			console.info("API Signatures:\n");
 			for (const api of BUN_API_CATALOG) {
-				console.log(`${api.id}. ${api.api}`);
-				console.log(`   ${api.signature.replace(/\n/g, "\n   ")}\n`);
+				console.info(`${api.id}. ${api.api}`);
+				console.info(`   ${api.signature.replace(/\n/g, "\n   ")}\n`);
 			}
 			break;
 		}
 
 		default: {
-			console.log("Usage: bun matrix/bun-api-reference.ts <command> [arg]\n");
-			console.log("Commands:");
-			console.log("  list                List all 20 core APIs");
-			console.log("  search <query>      Search APIs by name/notes");
-			console.log(
+			console.info("Usage: bun matrix/bun-api-reference.ts <command> [arg]\n");
+			console.info("Commands:");
+			console.info("  list                List all 20 core APIs");
+			console.info("  search <query>      Search APIs by name/notes");
+			console.info(
 				"  kind <type>         Filter by kind (function/method/class/object/string)",
 			);
-			console.log("  area <area>         Find APIs by matrix area");
-			console.log("  coverage [dir]      Check API usage in directory");
-			console.log("  signatures          Show all API signatures");
+			console.info("  area <area>         Find APIs by matrix area");
+			console.info("  coverage [dir]      Check API usage in directory");
+			console.info("  signatures          Show all API signatures");
 		}
 	}
 }

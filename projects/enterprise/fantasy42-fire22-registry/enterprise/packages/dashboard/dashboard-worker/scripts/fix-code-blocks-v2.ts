@@ -43,17 +43,17 @@ const keyFiles = [
   'wiki/Home.md',
 ];
 
-console.log('🔧 Fixing code blocks to start at even line numbers...\n');
+console.info('🔧 Fixing code blocks to start at even line numbers...\n');
 
 let filesFixed = 0;
 
 keyFiles.forEach(file => {
   if (fixCodeBlocks(file)) {
-    console.log(`✅ Fixed: ${file}`);
+    console.info(`✅ Fixed: ${file}`);
     filesFixed++;
   } else {
-    console.log(`⏭️  No changes needed: ${file}`);
+    console.info(`⏭️  No changes needed: ${file}`);
   }
 });
 
-console.log(`\n🎉 Fixed ${filesFixed} files`);
+console.info(`\n🎉 Fixed ${filesFixed} files`);

@@ -12,12 +12,12 @@ import {
 } from '../src/patterns/identity-resolver.js';
 
 function demonstrateDataValidation() {
-  console.log('🔍 Data Validation for platformAnalysis Demo');
-  console.log('===========================================\n');
+  console.info('🔍 Data Validation for platformAnalysis Demo');
+  console.info('===========================================\n');
 
   // Example 1: Valid Data That Passes Validation
-  console.log('1. VALID DATA - Passes All Validation Checks');
-  console.log('--------------------------------------------');
+  console.info('1. VALID DATA - Passes All Validation Checks');
+  console.info('--------------------------------------------');
   const validData: SyntheticIdentityResult = {
     phone: '+15551234567',
     syntheticScore: 0.15,
@@ -47,17 +47,17 @@ function demonstrateDataValidation() {
     crossPlatformPatterns: [] // No patterns - data is clean
   };
 
-  console.log('✅ Validation Results:');
-  console.log(`   Verification Status: ${validData.platformAnalysis?.cashApp?.verificationStatus || 'N/A'} (Valid)`);
-  console.log(`   Transaction Volume: $${validData.platformAnalysis?.cashApp?.transactionVolume30d?.toLocaleString() || '0'} (Within limits)`);
-  console.log(`   Account Age: ${validData.platformAnalysis?.cashApp?.accountAgeDays || 0} days (Realistic)`);
-  console.log(`   Cashtag: ${validData.platformAnalysis?.cashApp?.cashtag || 'N/A'} (Valid format)`);
-  console.log(`   Data Source: ${validData.provenanceSources?.[0]?.status || 'N/A'} (${(validData.provenanceSources?.[0]?.confidence || 0) * 100}% confidence)`);
-  console.log(`   Risk Patterns: ${validData.crossPlatformPatterns?.length || 0} detected`);
+  console.info('✅ Validation Results:');
+  console.info(`   Verification Status: ${validData.platformAnalysis?.cashApp?.verificationStatus || 'N/A'} (Valid)`);
+  console.info(`   Transaction Volume: $${validData.platformAnalysis?.cashApp?.transactionVolume30d?.toLocaleString() || '0'} (Within limits)`);
+  console.info(`   Account Age: ${validData.platformAnalysis?.cashApp?.accountAgeDays || 0} days (Realistic)`);
+  console.info(`   Cashtag: ${validData.platformAnalysis?.cashApp?.cashtag || 'N/A'} (Valid format)`);
+  console.info(`   Data Source: ${validData.provenanceSources?.[0]?.status || 'N/A'} (${(validData.provenanceSources?.[0]?.confidence || 0) * 100}% confidence)`);
+  console.info(`   Risk Patterns: ${validData.crossPlatformPatterns?.length || 0} detected`);
 
   // Example 2: Invalid Data That Fails Validation
-  console.log('\n\n2. INVALID DATA - Fails Multiple Validation Checks');
-  console.log('----------------------------------------------------');
+  console.info('\n\n2. INVALID DATA - Fails Multiple Validation Checks');
+  console.info('----------------------------------------------------');
   const invalidData: SyntheticIdentityResult = {
     phone: '+15559876543',
     syntheticScore: 0.85, // High risk due to validation failures
@@ -95,15 +95,15 @@ function demonstrateDataValidation() {
     ]
   };
 
-  console.log('❌ Validation Failures:');
-  console.log(`   Status: ${invalidData.provenanceSources?.[0]?.status || 'N/A'}`);
-  console.log(`   Error: ${invalidData.provenanceSources?.[0]?.errorDetails || 'No error details'}`);
-  console.log(`   Severity: ${invalidData.crossPlatformPatterns?.[0]?.severity || 'unknown'} 🔴`);
-  console.log(`   Impact: Synthetic score increased to ${(invalidData.syntheticScore * 100).toFixed(1)}%`);
+  console.info('❌ Validation Failures:');
+  console.info(`   Status: ${invalidData.provenanceSources?.[0]?.status || 'N/A'}`);
+  console.info(`   Error: ${invalidData.provenanceSources?.[0]?.errorDetails || 'No error details'}`);
+  console.info(`   Severity: ${invalidData.crossPlatformPatterns?.[0]?.severity || 'unknown'} 🔴`);
+  console.info(`   Impact: Synthetic score increased to ${(invalidData.syntheticScore * 100).toFixed(1)}%`);
 
   // Example 3: Edge Case - Partial Validation Failure
-  console.log('\n\n3. EDGE CASE - Partial Validation with Warnings');
-  console.log('-----------------------------------------------');
+  console.info('\n\n3. EDGE CASE - Partial Validation with Warnings');
+  console.info('-----------------------------------------------');
   const partialData: SyntheticIdentityResult = {
     phone: '+15551112222',
     syntheticScore: 0.45,
@@ -149,47 +149,47 @@ function demonstrateDataValidation() {
     ]
   };
 
-  console.log('⚠️ Partial Validation Results:');
-  console.log(`   Account Status: ${partialData.platformAnalysis?.cashApp?.verificationStatus || 'N/A'}`);
-  console.log(`   Risk Flag: ${partialData.platformAnalysis?.cashApp?.fraudFlags?.join(', ') || 'None'}`);
-  console.log(`   Velocity Warning: $${partialData.platformAnalysis?.cashApp?.transactionVolume30d?.toLocaleString() || '0'} in ${partialData.platformAnalysis?.cashApp?.accountAgeDays || 0} days`);
-  console.log(`   Pattern Detected: ${partialData.crossPlatformPatterns?.[0]?.severity || 'unknown'} 🟠`);
+  console.info('⚠️ Partial Validation Results:');
+  console.info(`   Account Status: ${partialData.platformAnalysis?.cashApp?.verificationStatus || 'N/A'}`);
+  console.info(`   Risk Flag: ${partialData.platformAnalysis?.cashApp?.fraudFlags?.join(', ') || 'None'}`);
+  console.info(`   Velocity Warning: $${partialData.platformAnalysis?.cashApp?.transactionVolume30d?.toLocaleString() || '0'} in ${partialData.platformAnalysis?.cashApp?.accountAgeDays || 0} days`);
+  console.info(`   Pattern Detected: ${partialData.crossPlatformPatterns?.[0]?.severity || 'unknown'} 🟠`);
 
-  console.log('\n🛡️ Validation Layers Summary:');
-  console.log('=============================');
-  console.log('1. **Structure Validation**: Ensures data is proper object format');
-  console.log('2. **Type Validation**: Validates data types (number, string, array)');
-  console.log('3. **Range Validation**: Checks realistic limits (age, volume, etc.)');
-  console.log('4. **Format Validation**: Validates formats (cashtag, statuses)');
-  console.log('5. **Consistency Validation**: Cross-field validation (velocity checks)');
-  console.log('6. **Freshness Validation**: Ensures data is recent enough');
-  console.log('7. **Enum Validation**: Validates against allowed values');
-  console.log('8. **Pattern Validation**: Regex format checking');
+  console.info('\n🛡️ Validation Layers Summary:');
+  console.info('=============================');
+  console.info('1. **Structure Validation**: Ensures data is proper object format');
+  console.info('2. **Type Validation**: Validates data types (number, string, array)');
+  console.info('3. **Range Validation**: Checks realistic limits (age, volume, etc.)');
+  console.info('4. **Format Validation**: Validates formats (cashtag, statuses)');
+  console.info('5. **Consistency Validation**: Cross-field validation (velocity checks)');
+  console.info('6. **Freshness Validation**: Ensures data is recent enough');
+  console.info('7. **Enum Validation**: Validates against allowed values');
+  console.info('8. **Pattern Validation**: Regex format checking');
 
-  console.log('\n🎯 Validation Impact on Fraud Detection:');
-  console.log('=======================================');
-  console.log('✅ **Valid Data**: Low risk scores, high confidence');
-  console.log('⚠️ **Warnings**: Medium risk, reduced confidence');
-  console.log('❌ **Invalid Data**: High risk, critical patterns triggered');
-  console.log('🔴 **Validation Failures**: Treated as fraud indicators');
+  console.info('\n🎯 Validation Impact on Fraud Detection:');
+  console.info('=======================================');
+  console.info('✅ **Valid Data**: Low risk scores, high confidence');
+  console.info('⚠️ **Warnings**: Medium risk, reduced confidence');
+  console.info('❌ **Invalid Data**: High risk, critical patterns triggered');
+  console.info('🔴 **Validation Failures**: Treated as fraud indicators');
 
-  console.log('\n📊 Business Rules Applied:');
-  console.log('=========================');
-  console.log('• Transaction volume > $1M: Automatic rejection');
-  console.log('• Account age > 100 years: Automatic rejection');
-  console.log('• Daily average > $10K: Velocity warning');
-  console.log('• Data older than 24 hours: Freshness warning');
-  console.log('• Invalid cashtag format: Format error');
-  console.log('• Unknown verification status: Status error');
+  console.info('\n📊 Business Rules Applied:');
+  console.info('=========================');
+  console.info('• Transaction volume > $1M: Automatic rejection');
+  console.info('• Account age > 100 years: Automatic rejection');
+  console.info('• Daily average > $10K: Velocity warning');
+  console.info('• Data older than 24 hours: Freshness warning');
+  console.info('• Invalid cashtag format: Format error');
+  console.info('• Unknown verification status: Status error');
 
-  console.log('\n🚀 Production Benefits:');
-  console.log('=======================');
-  console.log('🛡️ **Prevents False Positives**: Bad data doesn\'t trigger legitimate fraud alerts');
-  console.log('🎯 **Improves Accuracy**: Only validated data influences fraud scores');
-  console.log('📈 **Builds Trust**: System reliability through data quality gates');
-  console.log('🔍 **Enhanced Detection**: Validation failures become fraud signals');
-  console.log('⚡ **Performance**: Fails fast on invalid data');
-  console.log('🔍 **Audit Trail**: Complete validation error tracking');
+  console.info('\n🚀 Production Benefits:');
+  console.info('=======================');
+  console.info('🛡️ **Prevents False Positives**: Bad data doesn\'t trigger legitimate fraud alerts');
+  console.info('🎯 **Improves Accuracy**: Only validated data influences fraud scores');
+  console.info('📈 **Builds Trust**: System reliability through data quality gates');
+  console.info('🔍 **Enhanced Detection**: Validation failures become fraud signals');
+  console.info('⚡ **Performance**: Fails fast on invalid data');
+  console.info('🔍 **Audit Trail**: Complete validation error tracking');
 }
 
 // Run the demonstration

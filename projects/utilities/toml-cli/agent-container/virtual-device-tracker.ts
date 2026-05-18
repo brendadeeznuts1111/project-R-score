@@ -397,7 +397,7 @@ export class VirtualDeviceTracker {
   }
   
   private async initializeVirtualDeviceMonitoring(): Promise<void> {
-    console.log('📱 Initializing virtual device monitoring...');
+    console.info('📱 Initializing virtual device monitoring...');
     
     // Start periodic device discovery
     setInterval(async () => {
@@ -578,7 +578,7 @@ export class VirtualDeviceTracker {
         }
       });
       
-      console.log(`📱 Discovered ${mockDevices.length} virtual devices`);
+      console.info(`📱 Discovered ${mockDevices.length} virtual devices`);
       
       // Discover integrations for each device
       await this.discoverIntegrations();
@@ -778,7 +778,7 @@ export class VirtualDeviceTracker {
       this.emailIntegrations.set(integration.integrationId, integration);
     });
     
-    console.log(`🔗 Discovered integrations: ${cashAppIntegrations.length} CashApp, ${messageIntegrations.length} Messaging, ${emailIntegrations.length} Email`);
+    console.info(`🔗 Discovered integrations: ${cashAppIntegrations.length} CashApp, ${messageIntegrations.length} Messaging, ${emailIntegrations.length} Email`);
   }
   
   /**
@@ -822,7 +822,7 @@ export class VirtualDeviceTracker {
         return priorityOrder[a.priority] - priorityOrder[b.priority];
       });
       
-      console.log(`📝 Task ${taskId} queued for device ${deviceId} (priority: ${task.priority})`);
+      console.info(`📝 Task ${taskId} queued for device ${deviceId} (priority: ${task.priority})`);
       
       // Start processing if device is idle
       this.processTaskQueue(deviceId);
@@ -881,7 +881,7 @@ export class VirtualDeviceTracker {
       task.status = 'running';
       device.activeTasks.push(task.taskId);
       
-      console.log(`⚡ Processing task ${task.taskId} on device ${deviceId}`);
+      console.info(`⚡ Processing task ${task.taskId} on device ${deviceId}`);
       
       // Execute task based on type
       const result = await this.executeTask(task, device);
@@ -926,7 +926,7 @@ export class VirtualDeviceTracker {
       }
       
       // Log task completion
-      console.log(`✅ Task ${task.taskId} ${task.status} in ${task.duration}ms`);
+      console.info(`✅ Task ${task.taskId} ${task.status} in ${task.duration}ms`);
       
       // Check for anomalies
       await this.checkTaskAnomalies(task);
@@ -1286,7 +1286,7 @@ export class VirtualDeviceTracker {
     }
     
     if (severity) {
-      console.log(`🚨 Task anomaly detected: ${task.taskType} duration ${task.duration}ms (${severity})`);
+      console.info(`🚨 Task anomaly detected: ${task.taskType} duration ${task.duration}ms (${severity})`);
     }
   }
   
@@ -1301,7 +1301,7 @@ export class VirtualDeviceTracker {
       
       // Check queue size
       if (queue.length > this.ALERT_THRESHOLDS.queueSize.critical) {
-        console.log(`🚨 Critical queue size for device ${deviceId}: ${queue.length} tasks`);
+        console.info(`🚨 Critical queue size for device ${deviceId}: ${queue.length} tasks`);
       }
       
       // Check for stale tasks (pending for too long)
@@ -1312,7 +1312,7 @@ export class VirtualDeviceTracker {
       });
       
       if (staleTasks.length > 0) {
-        console.log(`⚠️ ${staleTasks.length} stale tasks in queue for device ${deviceId}`);
+        console.info(`⚠️ ${staleTasks.length} stale tasks in queue for device ${deviceId}`);
       }
     }
   }
@@ -1357,9 +1357,9 @@ export class VirtualDeviceTracker {
       const errorRate = stats.failures / stats.count;
       
       if (errorRate > this.ALERT_THRESHOLDS.errorRate.critical) {
-        console.log(`🚨 Critical error rate for ${taskType}: ${(errorRate * 100).toFixed(1)}%`);
+        console.info(`🚨 Critical error rate for ${taskType}: ${(errorRate * 100).toFixed(1)}%`);
       } else if (errorRate > this.ALERT_THRESHOLDS.errorRate.high) {
-        console.log(`⚠️ High error rate for ${taskType}: ${(errorRate * 100).toFixed(1)}%`);
+        console.info(`⚠️ High error rate for ${taskType}: ${(errorRate * 100).toFixed(1)}%`);
       }
     }
     

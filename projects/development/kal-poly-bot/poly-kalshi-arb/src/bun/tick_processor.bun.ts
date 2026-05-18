@@ -141,7 +141,7 @@ export class MicrostructuralTickProcessor {
         tick.timestamp.toString()
       );
 
-      console.log(
+      console.info(
         `Pattern 75 SIGNAL: ${tick.bookId} target=${opportunity.predictedPrice.toFixed(2)} edge=${opportunity.edge.toFixed(2)}`
       );
     }
@@ -155,7 +155,7 @@ export class MicrostructuralTickProcessor {
   private async handlePattern51(tick: MarketTick): Promise<void> {
     // Implementation would use HTInferenceKF
     // For now, log the tick for debugging
-    console.log(
+    console.info(
       `Pattern 51 tick: HT delta=${tick.ht_delta}, FT delta=${tick.ft_delta}`
     );
   }
@@ -191,7 +191,7 @@ export class MicrostructuralTickProcessor {
    */
   private async handlePattern68(tick: MarketTick): Promise<void> {
     // Implementation would use PropagationPathKF
-    console.log(`Pattern 68 tick: ${tick.bookId} price=${tick.price}`);
+    console.info(`Pattern 68 tick: ${tick.bookId} price=${tick.price}`);
   }
 
   /**
@@ -231,7 +231,7 @@ export class MicrostructuralTickProcessor {
       tick.timestamp.toString()
     );
 
-    console.log(`Pattern 56 ARBITRAGE: ${bookId} suspension detected`);
+    console.info(`Pattern 56 ARBITRAGE: ${bookId} suspension detected`);
   }
 
   /**

@@ -32,12 +32,12 @@ describe('MCP Tool Test Suite', () => {
   const originalConsole = { ...console };
 
   beforeAll(() => {
-    console.log('🔧 Initializing MCP Tool Test Suite');
+    console.info('🔧 Initializing MCP Tool Test Suite');
   });
 
   beforeEach(() => {
     // Mock console methods to reduce noise during testing
-    spyOn(console, 'log').mockImplementation(() => {});
+    spyOn(console, 'info').mockImplementation(() => {});
     spyOn(console, 'error').mockImplementation(() => {});
     spyOn(console, 'warn').mockImplementation(() => {});
   });
@@ -49,7 +49,7 @@ describe('MCP Tool Test Suite', () => {
 
   afterAll(() => {
     Object.assign(console, originalConsole);
-    console.log('✅ MCP Tool Test Suite Complete');
+    console.info('✅ MCP Tool Test Suite Complete');
   });
 
 // =============================================================================

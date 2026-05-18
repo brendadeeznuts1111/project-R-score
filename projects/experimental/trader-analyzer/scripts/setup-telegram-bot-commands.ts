@@ -73,8 +73,8 @@ async function setupBotCommands() {
 		process.exit(1);
 	}
 
-	console.log('🔧 Setting up Telegram Bot Commands...');
-	console.log(`📱 Mini-App Base URL: ${MINI_APP_BASE_URL}\n`);
+	console.info('🔧 Setting up Telegram Bot Commands...');
+	console.info(`📱 Mini-App Base URL: ${MINI_APP_BASE_URL}\n`);
 
 	// Set bot commands globally
 	const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setMyCommands`, {
@@ -84,8 +84,8 @@ async function setupBotCommands() {
 	});
 
 	if (response.ok) {
-		console.log('✅ Bot commands configured globally');
-		console.log(`   Total commands: ${commands.length}\n`);
+		console.info('✅ Bot commands configured globally');
+		console.info(`   Total commands: ${commands.length}\n`);
 	} else {
 		const error = await response.text();
 		console.error('❌ Failed to configure bot commands:', error);
@@ -93,16 +93,16 @@ async function setupBotCommands() {
 	}
 
 	// Display configured commands
-	console.log('📋 Configured Commands:');
+	console.info('📋 Configured Commands:');
 	commands.forEach((cmd, index) => {
-		console.log(`   ${index + 1}. /${cmd.command} - ${cmd.description}`);
+		console.info(`   ${index + 1}. /${cmd.command} - ${cmd.description}`);
 	});
 
-	console.log('\n✅ Telegram Bot Commands setup complete!');
-	console.log('\n💡 Usage:');
-	console.log('   - Users can type /help in Telegram to see all commands');
-	console.log('   - Commands are available globally for all users');
-	console.log('   - Mini-apps can be opened via commands or menu buttons');
+	console.info('\n✅ Telegram Bot Commands setup complete!');
+	console.info('\n💡 Usage:');
+	console.info('   - Users can type /help in Telegram to see all commands');
+	console.info('   - Commands are available globally for all users');
+	console.info('   - Mini-apps can be opened via commands or menu buttons');
 }
 
 if (import.meta.main) {

@@ -163,8 +163,8 @@ export function performanceTest(): void {
     ['longstringwithlotsoftext', 'longstringwithlotsoftext2']
   ];
   
-  console.log('🧪 Einstein Similarity Performance Test');
-  console.log('==========================================');
+  console.info('🧪 Einstein Similarity Performance Test');
+  console.info('==========================================');
   
   testCases.forEach(([s1, s2]) => {
     const start = performance.now();
@@ -172,8 +172,8 @@ export function performanceTest(): void {
     const fast = fastSimilarity(s1, s2);
     const end = performance.now();
     
-    console.log(`"${s1}" vs "${s2}"`);
-    console.log(`  Einstein: ${einstein.toFixed(1)}% | Fast: ${fast.toFixed(3)} | Time: ${(end - start).toFixed(3)}ms`);
+    console.info(`"${s1}" vs "${s2}"`);
+    console.info(`  Einstein: ${einstein.toFixed(1)}% | Fast: ${fast.toFixed(3)} | Time: ${(end - start).toFixed(3)}ms`);
   });
 }
 
@@ -182,12 +182,12 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
   
   if (args.length === 0 || (args.length < 2 && args[0] !== '--test')) {
-    console.log('🚀 Einstein Similarity - Empire Pro Duplicate Hunter');
-    console.log('Usage:');
-    console.log('  bunx tsx einstein-similarity.ts "string1" "string2"');
-    console.log('  bunx tsx einstein-similarity.ts --code "func()" "func2()"');
-    console.log('  bunx tsx einstein-similarity.ts --name "John Doe" "Jon Doh"');
-    console.log('  bunx tsx einstein-similarity.ts --test');
+    console.info('🚀 Einstein Similarity - Empire Pro Duplicate Hunter');
+    console.info('Usage:');
+    console.info('  bunx tsx einstein-similarity.ts "string1" "string2"');
+    console.info('  bunx tsx einstein-similarity.ts --code "func()" "func2()"');
+    console.info('  bunx tsx einstein-similarity.ts --name "John Doe" "Jon Doh"');
+    console.info('  bunx tsx einstein-similarity.ts --test');
     process.exit(0);
   }
   
@@ -195,17 +195,17 @@ if (import.meta.main) {
     performanceTest();
   } else if (args[0] === '--code' && args.length >= 3) {
     const similarity = codeSimilarity(args[1], args[2]);
-    console.log(`Code Similarity: ${similarity.toFixed(1)}%`);
+    console.info(`Code Similarity: ${similarity.toFixed(1)}%`);
   } else if (args[0] === '--name' && args.length >= 3) {
     const similarity = nameSimilarity(args[1], args[2]);
-    console.log(`Name Similarity: ${similarity.toFixed(1)}%`);
+    console.info(`Name Similarity: ${similarity.toFixed(1)}%`);
   } else {
     const s1 = args[0];
     const s2 = args[1];
     const einstein = einsteinSimilarity(s1, s2);
     const fast = fastSimilarity(s1, s2);
-    console.log(`Einstein Similarity: ${einstein.toFixed(1)}%`);
-    console.log(`Fast Similarity: ${fast.toFixed(3)}`);
+    console.info(`Einstein Similarity: ${einstein.toFixed(1)}%`);
+    console.info(`Fast Similarity: ${fast.toFixed(3)}`);
   }
 }
 

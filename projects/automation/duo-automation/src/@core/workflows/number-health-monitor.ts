@@ -93,7 +93,7 @@ export class NumberHealthMonitor extends Pattern {
 
   async startMonitoring(phone: string): Promise<Watcher> {
     return this.monitor.watch(phone, ['REACHABILITY_CHANGE', 'SPAM_SCORE_CHANGE'], (changes) => {
-      console.log(`[HealthMonitor] Alert: ${phone} changed`, changes);
+      console.info(`[HealthMonitor] Alert: ${phone} changed`, changes);
     });
   }
 }

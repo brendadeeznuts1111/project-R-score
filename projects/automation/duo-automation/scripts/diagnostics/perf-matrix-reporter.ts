@@ -119,8 +119,8 @@ export class PerfMatrixReporter {
    * Start real-time reporting
    */
   startRealTimeReporting(): void {
-    console.log('🚀 Starting real-time performance matrix reporting...');
-    console.log(`📡 Update interval: ${this.autoUpdateMs}ms`);
+    console.info('🚀 Starting real-time performance matrix reporting...');
+    console.info(`📡 Update interval: ${this.autoUpdateMs}ms`);
     
     this.updateInterval = setInterval(async () => {
       // Clear console for real-time updates (optional)
@@ -132,8 +132,8 @@ export class PerfMatrixReporter {
       this.reportCurrentMatrix();
       
       // Show last update time
-      console.log(`\n🔄 Last updated: ${new Date().toISOString()}`);
-      console.log(`📊 Total metrics tracked: ${this.metrics.length}`);
+      console.info(`\n🔄 Last updated: ${new Date().toISOString()}`);
+      console.info(`📊 Total metrics tracked: ${this.metrics.length}`);
       
     }, this.autoUpdateMs);
   }
@@ -145,7 +145,7 @@ export class PerfMatrixReporter {
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
       this.updateInterval = null;
-      console.log('🛑 Stopped real-time performance reporting');
+      console.info('🛑 Stopped real-time performance reporting');
     }
   }
 
@@ -154,10 +154,10 @@ export class PerfMatrixReporter {
    */
   reportCurrentMatrix(): void {
     const table = this.formatter.generateTable(this.metrics.slice(-20)); // Last 20 metrics
-    console.log(table);
+    console.info(table);
     
     const summary = this.formatter.generateSummary(this.metrics);
-    console.log(summary);
+    console.info(summary);
   }
 
   /**
@@ -196,7 +196,7 @@ export class PerfMatrixReporter {
    * Watch for file changes and update metrics
    */
   watchFileChanges(): void {
-    console.log('👀 Watching for file changes...');
+    console.info('👀 Watching for file changes...');
     
     Bun.watch('.', {
       recursive: true,
@@ -230,7 +230,7 @@ if (import.meta.main) {
     
     case 'help':
     default:
-      console.log(`
+      console.info(`
 🚀 PerfMatrix Reporter v3.7
 ==========================
 Commands:

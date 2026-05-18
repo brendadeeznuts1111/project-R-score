@@ -9,8 +9,8 @@ export {};
 
 import { performance } from "perf_hooks";
 
-console.log("⚡ SIMD vs Non-SIMD Benchmark Comparison");
-console.log("========================================\n");
+console.info("⚡ SIMD vs Non-SIMD Benchmark Comparison");
+console.info("========================================\n");
 
 // Simulated non-SIMD implementation (for comparison)
 function slowIncludes(buffer: Buffer, pattern: string | Buffer): boolean {
@@ -42,27 +42,27 @@ const benchmarkConfigs = [
 
 // Run comprehensive benchmark
 async function runComprehensiveBenchmark() {
-  console.log("🔧 Test Configuration:");
-  console.log(`   Buffer sizes: ${benchmarkConfigs.map(c => c.name).join(', ')}`);
-  console.log(`   Pattern: "needle" (6 bytes)`);
-  console.log(`   Position: End of buffer`);
-  console.log("");
+  console.info("🔧 Test Configuration:");
+  console.info(`   Buffer sizes: ${benchmarkConfigs.map(c => c.name).join(', ')}`);
+  console.info(`   Pattern: "needle" (6 bytes)`);
+  console.info(`   Position: End of buffer`);
+  console.info("");
 
   const results: any[] = [];
 
   for (const config of benchmarkConfigs) {
-    console.log(`\n📊 Benchmarking ${config.name} Buffer`);
-    console.log("─".repeat(40));
+    console.info(`\n📊 Benchmarking ${config.name} Buffer`);
+    console.info("─".repeat(40));
 
     // Create test buffer
     const buffer = Buffer.from("a".repeat(config.size - 6) + "needle");
     const pattern = "needle";
     
-    console.log(`Buffer: ${config.size.toLocaleString()} bytes`);
-    console.log(`Iterations: ${config.iterations}`);
+    console.info(`Buffer: ${config.size.toLocaleString()} bytes`);
+    console.info(`Iterations: ${config.iterations}`);
 
     // SIMD (native) benchmark
-    console.log("\n   SIMD (Native):");
+    console.info("\n   SIMD (Native):");
     
     const simdStart = performance.now();
     for (let i = 0; i < config.iterations; i++) {
@@ -71,12 +71,12 @@ async function runComprehensiveBenchmark() {
     const simdEnd = performance.now();
     const simdTime = simdEnd - simdStart;
     
-    console.log(`      Time: ${simdTime.toFixed(2)}ms`);
-    console.log(`      Avg: ${(simdTime / config.iterations).toFixed(4)}ms per op`);
-    console.log(`      Throughput: ${((config.size * config.iterations) / 1024 / 1024 / (simdTime / 1000)).toFixed(1)} MB/s`);
+    console.info(`      Time: ${simdTime.toFixed(2)}ms`);
+    console.info(`      Avg: ${(simdTime / config.iterations).toFixed(4)}ms per op`);
+    console.info(`      Throughput: ${((config.size * config.iterations) / 1024 / 1024 / (simdTime / 1000)).toFixed(1)} MB/s`);
 
     // Non-SIMD (simulated) benchmark
-    console.log("\n   Non-SIMD (Simulated):");
+    console.info("\n   Non-SIMD (Simulated):");
     
     const slowStart = performance.now();
     for (let i = 0; i < config.iterations; i++) {
@@ -85,17 +85,17 @@ async function runComprehensiveBenchmark() {
     const slowEnd = performance.now();
     const slowTime = slowEnd - slowStart;
     
-    console.log(`      Time: ${slowTime.toFixed(2)}ms`);
-    console.log(`      Avg: ${(slowTime / config.iterations).toFixed(4)}ms per op`);
-    console.log(`      Throughput: ${((config.size * config.iterations) / 1024 / 1024 / (slowTime / 1000)).toFixed(1)} MB/s`);
+    console.info(`      Time: ${slowTime.toFixed(2)}ms`);
+    console.info(`      Avg: ${(slowTime / config.iterations).toFixed(4)}ms per op`);
+    console.info(`      Throughput: ${((config.size * config.iterations) / 1024 / 1024 / (slowTime / 1000)).toFixed(1)} MB/s`);
 
     // Calculate improvement
     const improvement = slowTime / simdTime;
     const speedupPercent = ((slowTime - simdTime) / slowTime * 100);
     
-    console.log(`\n   📈 Improvement:`);
-    console.log(`      Speedup: ${improvement.toFixed(2)}x faster`);
-    console.log(`      Time saved: ${speedupPercent.toFixed(1)}%`);
+    console.info(`\n   📈 Improvement:`);
+    console.info(`      Speedup: ${improvement.toFixed(2)}x faster`);
+    console.info(`      Time saved: ${speedupPercent.toFixed(1)}%`);
     
     results.push({
       size: config.name,
@@ -109,44 +109,44 @@ async function runComprehensiveBenchmark() {
   }
 
   // Summary table
-  console.log("\n\n📋 Comprehensive Results Summary");
-  console.log("=================================");
+  console.info("\n\n📋 Comprehensive Results Summary");
+  console.info("=================================");
   
-  console.log("┌─────────────┬──────────┬──────────┬─────────────┬─────────────┐");
-  console.log("│ Buffer Size │ SIMD (ms)│ Non-SIMD │ Improvement │ Time Saved  │");
-  console.log("├─────────────┼──────────┼──────────┼─────────────┼─────────────┤");
+  console.info("┌─────────────┬──────────┬──────────┬─────────────┬─────────────┐");
+  console.info("│ Buffer Size │ SIMD (ms)│ Non-SIMD │ Improvement │ Time Saved  │");
+  console.info("├─────────────┼──────────┼──────────┼─────────────┼─────────────┤");
   
   results.forEach(result => {
-    console.log(
+    console.info(
       `│ ${result.size.padEnd(11)} │ ${result.simd.toFixed(2).padEnd(8)} │ ${result.nonSIMD.toFixed(2).padEnd(8)} │ ${result.improvement.toFixed(2)}x`.padEnd(11) + " │ " + 
       `${result.timeSaved.toFixed(1)}%`.padEnd(11) + " │"
     );
   });
   
-  console.log("└─────────────┴──────────┴──────────┴─────────────┴─────────────┘");
+  console.info("└─────────────┴──────────┴──────────┴─────────────┴─────────────┘");
 
   // Performance analysis
-  console.log("\n🔍 Performance Analysis");
-  console.log("======================");
+  console.info("\n🔍 Performance Analysis");
+  console.info("======================");
   
   const avgImprovement = results.reduce((sum, r) => sum + r.improvement, 0) / results.length;
   const maxImprovement = Math.max(...results.map(r => r.improvement));
   const minImprovement = Math.min(...results.map(r => r.improvement));
   
-  console.log(`Average improvement: ${avgImprovement.toFixed(2)}x`);
-  console.log(`Best improvement: ${maxImprovement.toFixed(2)}x`);
-  console.log(`Minimum improvement: ${minImprovement.toFixed(2)}x`);
+  console.info(`Average improvement: ${avgImprovement.toFixed(2)}x`);
+  console.info(`Best improvement: ${maxImprovement.toFixed(2)}x`);
+  console.info(`Minimum improvement: ${minImprovement.toFixed(2)}x`);
   
   // Find optimal buffer size for SIMD
   const optimal = results.reduce((best, current) => 
     current.improvement > best.improvement ? current : best
   );
   
-  console.log(`\nOptimal buffer size for SIMD: ${optimal.size} (${optimal.improvement.toFixed(2)}x faster)`);
+  console.info(`\nOptimal buffer size for SIMD: ${optimal.size} (${optimal.improvement.toFixed(2)}x faster)`);
 
   // Pattern length impact
-  console.log("\n🎯 Pattern Length Impact");
-  console.log("========================");
+  console.info("\n🎯 Pattern Length Impact");
+  console.info("========================");
   
   const testBuffer = Buffer.from("x".repeat(1_000_000));
   const patterns = [
@@ -158,8 +158,8 @@ async function runComprehensiveBenchmark() {
     { name: "32 bytes", value: "testingpatternlonger" }
   ];
   
-  console.log("Pattern Length | SIMD Time | Non-SIMD Time | Improvement");
-  console.log("--------------|-----------|--------------|------------");
+  console.info("Pattern Length | SIMD Time | Non-SIMD Time | Improvement");
+  console.info("--------------|-----------|--------------|------------");
   
   for (const pattern of patterns) {
     const iterations = 1000;
@@ -180,37 +180,37 @@ async function runComprehensiveBenchmark() {
     
     const improvement = slowTime / simdTime;
     
-    console.log(
+    console.info(
       `${pattern.name.padEnd(13)} │ ${simdTime.toFixed(2).padEnd(9)} │ ${slowTime.toFixed(2).padEnd(12)} │ ${improvement.toFixed(2)}x`
     );
   }
 
   // Recommendations based on results
-  console.log("\n💡 Performance Recommendations");
-  console.log("==============================");
-  console.log("1. Use SIMD-optimized methods for buffers > 10KB");
-  console.log("2. Biggest gains with patterns 4-16 bytes long");
-  console.log("3. Consider algorithm complexity alongside buffer size");
-  console.log("4. Test with your actual data patterns for best results");
-  console.log("5. SIMD provides consistent 2-3x improvement in most cases");
+  console.info("\n💡 Performance Recommendations");
+  console.info("==============================");
+  console.info("1. Use SIMD-optimized methods for buffers > 10KB");
+  console.info("2. Biggest gains with patterns 4-16 bytes long");
+  console.info("3. Consider algorithm complexity alongside buffer size");
+  console.info("4. Test with your actual data patterns for best results");
+  console.info("5. SIMD provides consistent 2-3x improvement in most cases");
 
   // Visual representation
-  console.log("\n📊 Visual Speedup Comparison");
-  console.log("============================");
+  console.info("\n📊 Visual Speedup Comparison");
+  console.info("============================");
   
   results.forEach(result => {
     const barLength = Math.min(Math.round(result.improvement * 10), 50);
     const bar = "🚀".repeat(Math.round(barLength / 10)) + "⚡".repeat(barLength % 10) + "░".repeat(50 - barLength);
-    console.log(`${result.size.padEnd(11)} │${bar}│ ${result.improvement.toFixed(2)}x`);
+    console.info(`${result.size.padEnd(11)} │${bar}│ ${result.improvement.toFixed(2)}x`);
   });
 
-  console.log("\n✨ Benchmark complete! SIMD provides significant performance gains! 🚀");
+  console.info("\n✨ Benchmark complete! SIMD provides significant performance gains! 🚀");
 }
 
 // Additional stress test
 async function runStressTest() {
-  console.log("\n\n💪 Stress Test - Extreme Conditions");
-  console.log("===================================");
+  console.info("\n\n💪 Stress Test - Extreme Conditions");
+  console.info("===================================");
   
   const extremeConfigs = [
     { size: 100_000_000, name: "100MB", iterations: 1 },
@@ -219,7 +219,7 @@ async function runStressTest() {
   ];
   
   for (const config of extremeConfigs) {
-    console.log(`\nTesting ${config.name} (${config.iterations} iterations):`);
+    console.info(`\nTesting ${config.name} (${config.iterations} iterations):`);
     
     const buffer = Buffer.from("a".repeat(config.size - 6) + "needle");
     
@@ -240,9 +240,9 @@ async function runStressTest() {
     
     const improvement = slowTime / simdTime;
     
-    console.log(`  SIMD: ${simdTime.toFixed(2)}ms`);
-    console.log(`  Non-SIMD (est): ${slowTime.toFixed(2)}ms`);
-    console.log(`  Improvement: ${improvement.toFixed(2)}x`);
+    console.info(`  SIMD: ${simdTime.toFixed(2)}ms`);
+    console.info(`  Non-SIMD (est): ${slowTime.toFixed(2)}ms`);
+    console.info(`  Improvement: ${improvement.toFixed(2)}x`);
   }
 }
 

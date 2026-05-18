@@ -24,7 +24,7 @@ import { profileUse } from "./commands/profileUse";
 import { DEFAULT_HOST, OPENCLAW_GATEWAY_PORT } from "./constants";
 
 function printUsage(): void {
-	console.log(`
+	console.info(`
 ${fmt.bold("📊 Matrix CLI - Environment Profile & Infrastructure Management")}
 
 ${fmt.bold("Usage:")} bun run matrix:<command> [options]

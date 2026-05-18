@@ -40,7 +40,7 @@ export class AutoRemediator {
   }
 
   private async triggerAction(anomaly: Anomaly): Promise<string | null> {
-    console.log(`[Remediator] Analyzing anomaly: ${anomaly.type} (${anomaly.severity})`);
+    console.info(`[Remediator] Analyzing anomaly: ${anomaly.type} (${anomaly.severity})`);
 
     switch (anomaly.type) {
       case "Latency Violation":
@@ -48,13 +48,13 @@ export class AutoRemediator {
         return `[SCALING] Triggered auto-scaling due to ${anomaly.type}`;
 
       case "Proxy Instability":
-        console.log("[Remediator] Executing proxy pool refresh...");
+        console.info("[Remediator] Executing proxy pool refresh...");
         // In a real system, this would call a proxy service
         process.env.PROXY_FAIL_RATE = "0.05"; // Resetting for simulation
         return `[MAINTENANCE] Refreshed proxy pool after ${anomaly.type}`;
 
       case "Throughput Throttling":
-        console.log("[Remediator] Distributing load across more accounts...");
+        console.info("[Remediator] Distributing load across more accounts...");
         return `[LOAD_BALANCING] Increased account distribution for ${anomaly.type}`;
 
       default:

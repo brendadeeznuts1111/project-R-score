@@ -5,13 +5,13 @@
 import { spawn } from "bun";
 
 // Get fresh creds from browser session
-console.log("🔑 Paste your current plive session credentials:");
-console.log("1. Open https://plive.sportswidgets.pro/manager-tools/");
-console.log("2. Open DevTools (F12) → Network tab");
-console.log("3. Refresh page, find the live/data request");
-console.log("4. Copy the 'cookie' header value");
-console.log("5. Copy any 'x0header' or custom headers");
-console.log("");
+console.info("🔑 Paste your current plive session credentials:");
+console.info("1. Open https://plive.sportswidgets.pro/manager-tools/");
+console.info("2. Open DevTools (F12) → Network tab");
+console.info("3. Refresh page, find the live/data request");
+console.info("4. Copy the 'cookie' header value");
+console.info("5. Copy any 'x0header' or custom headers");
+console.info("");
 
 // Try to get stored credentials first, then fall back to prompts
 let cookie = process.env.PLIVE_COOKIE;
@@ -23,12 +23,12 @@ if (!cookie) {
     cookie = await Bun.secrets.get({ service: "plive", name: "cookie" });
   } catch (error) {
     // Fall back to manual input
-    console.log("🔑 No stored credentials found. Please provide:");
-    console.log("1. Open https://plive.sportswidgets.pro/manager-tools/");
-    console.log("2. Open DevTools (F12) → Network tab");
-    console.log("3. Refresh page, find the live/data request");
-    console.log("4. Copy the 'cookie' header value");
-    console.log("");
+    console.info("🔑 No stored credentials found. Please provide:");
+    console.info("1. Open https://plive.sportswidgets.pro/manager-tools/");
+    console.info("2. Open DevTools (F12) → Network tab");
+    console.info("3. Refresh page, find the live/data request");
+    console.info("4. Copy the 'cookie' header value");
+    console.info("");
 
     // Use readline for input since Bun.prompt isn't available
     const readline = require('readline');
@@ -51,7 +51,7 @@ if (!cookie) {
   process.exit(1);
 }
 
-console.log("📡 Connecting to live plive data stream...");
+console.info("📡 Connecting to live plive data stream...");
 
 // Fetch live data with real auth
 const response = await fetch('https://plive.sportswidgets.pro/live/data?countries=true&leagues=true&sports=true', {
@@ -72,20 +72,20 @@ if (!response.ok) {
   process.exit(1);
 }
 
-console.log("✅ Connected to live data stream");
+console.info("✅ Connected to live data stream");
 
 // Get the raw JSON response
 const rawData = await response.text();
-console.log(`📦 Received ${rawData.length} bytes of data`);
+console.info(`📦 Received ${rawData.length} bytes of data`);
 
 // Parse JSON and filter for profitable bets
 let data;
 try {
   data = JSON.parse(rawData);
-  console.log(`📊 Parsed ${Array.isArray(data) ? data.length : 'non-array'} records`);
+  console.info(`📊 Parsed ${Array.isArray(data) ? data.length : 'non-array'} records`);
 } catch (error) {
   console.error("❌ Failed to parse JSON response:", error.message);
-  console.log("Raw response preview:", rawData.substring(0, 200));
+  console.info("Raw response preview:", rawData.substring(0, 200));
   process.exit(1);
 }
 
@@ -94,7 +94,7 @@ const profitableBets = Array.isArray(data)
   ? data.filter(item => item.profit && typeof item.profit === 'number' && item.profit > 100)
   : [];
 
-console.log(`💰 Found ${profitableBets.length} profitable bets (> $100)`);
+console.info(`💰 Found ${profitableBets.length} profitable bets (> $100)`);
 
 // Convert to YAML format
 const yamlContent = profitableBets.map(bet => `- agent: "${bet.agent || 'Unknown'}"
@@ -109,8 +109,8 @@ const yamlContent = profitableBets.map(bet => `- agent: "${bet.agent || 'Unknown
 // Write to file
 await Bun.write("data/live.yaml", yamlContent);
 
-console.log("✅ Live profitable bets (>100) filtered and stored");
-console.log("📊 Run: tail -f data/live.yaml");
+console.info("✅ Live profitable bets (>100) filtered and stored");
+console.info("📊 Run: tail -f data/live.yaml");
 
 // Optional: Publish to Redis/WebSocket for live dashboard updates
 try {
@@ -120,9 +120,9 @@ try {
   await client.connect();
   await client.publish("etl:live", "new-data");
   await client.quit();
-  console.log("📡 Published update to dashboard");
+  console.info("📡 Published update to dashboard");
 } catch (error) {
   // Redis not available, skip
 }
 
-console.log("🎯 Live data pipeline active!");
+console.info("🎯 Live data pipeline active!");

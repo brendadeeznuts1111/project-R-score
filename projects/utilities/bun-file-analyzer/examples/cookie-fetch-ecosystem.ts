@@ -12,7 +12,7 @@ declare const Bun: any | undefined;
 
 // ====== 1. Bun.CookieMap - Manual Cookie Management ======
 
-console.log("🍪 1. Bun.CookieMap - Manual Cookie Management");
+console.info("🍪 1. Bun.CookieMap - Manual Cookie Management");
 
 // Create a CookieMap instance for manual cookie management
 let cookieJar: any;
@@ -21,7 +21,7 @@ if (typeof Bun !== 'undefined' && Bun.CookieMap) {
 } else {
   // Fallback for environments without Bun
   cookieJar = new Map();
-  console.log("⚠️  Bun not available, using Map fallback");
+  console.info("⚠️  Bun not available, using Map fallback");
 }
 
 // Manual cookie operations
@@ -58,7 +58,7 @@ if (typeof Bun !== 'undefined' && Bun.CookieMap && cookieJar.set) {
   }));
 }
 
-console.log("📊 Manual cookies set:", Object.fromEntries(cookieJar.entries()));
+console.info("📊 Manual cookies set:", Object.fromEntries(cookieJar.entries()));
 
 // Manual cookie retrieval
 let sessionId: string | undefined;
@@ -73,12 +73,12 @@ if (typeof Bun !== 'undefined' && Bun.CookieMap && cookieJar.get) {
   preferences = JSON.parse((cookieJar as Map<string, string>).get("preferences") || "{}");
 }
 
-console.log("🔍 Retrieved session:", sessionId);
-console.log("🎨 Retrieved preferences:", preferences);
+console.info("🔍 Retrieved session:", sessionId);
+console.info("🎨 Retrieved preferences:", preferences);
 
 // ====== 2. createCookieClient - Automatic Cookie Management ======
 
-console.log("\n🌐 2. createCookieClient - Automatic Cookie Management");
+console.info("\n🌐 2. createCookieClient - Automatic Cookie Management");
 
 /**
  * Enhanced cookie client that integrates with Bun.CookieMap
@@ -97,7 +97,7 @@ function createCookieClient(cookieMap: any) {
       const headers = new Headers(options.headers);
       if (cookieHeader) {
         headers.set("Cookie", cookieHeader);
-        console.log("🍪 Sending cookies:", cookieHeader);
+        console.info("🍪 Sending cookies:", cookieHeader);
       }
 
       // Add security headers
@@ -138,7 +138,7 @@ function createCookieClient(cookieMap: any) {
               // Map fallback
               (cookieJar as Map<string, string>).set(cookie.name, cookie.value);
             }
-            console.log("✅ Stored cookie:", cookie.name, "=", cookie.value);
+            console.info("✅ Stored cookie:", cookie.name, "=", cookie.value);
           }
         }
 
@@ -153,7 +153,7 @@ function createCookieClient(cookieMap: any) {
     // Manual cookie management methods
     setCookie(name: string, value: string, options?: any) {
       cookieMap.set(name, value, options);
-      console.log("🔧 Manual cookie set:", name, "=", value);
+      console.info("🔧 Manual cookie set:", name, "=", value);
     },
 
     getCookies() {
@@ -162,14 +162,14 @@ function createCookieClient(cookieMap: any) {
 
     clearCookies() {
       cookieMap.clear();
-      console.log("🧹 All cookies cleared");
+      console.info("🧹 All cookies cleared");
     },
 
     // Cookie inspection
     inspectCookies() {
-      console.log("🔍 Current cookie jar:");
+      console.info("🔍 Current cookie jar:");
       for (const [name, value] of cookieMap.entries()) {
-        console.log(`  ${name}: ${value}`);
+        console.info(`  ${name}: ${value}`);
       }
     }
   };
@@ -180,7 +180,7 @@ const cookieClient = createCookieClient(cookieJar);
 
 // ====== 3. Bun.serve - Server Implementation ======
 
-console.log("\n🚀 3. Bun.serve - Server Implementation");
+console.info("\n🚀 3. Bun.serve - Server Implementation");
 
 // Server that works with our cookie client
 let server: any;
@@ -193,7 +193,7 @@ if (typeof Bun !== 'undefined' && Bun.serve) {
       const url = new URL(req.url);
       const method = req.method;
       
-      console.log(`\n📡 ${method} ${url.pathname}`);
+      console.info(`\n📡 ${method} ${url.pathname}`);
       
       // CORS headers for development
       const corsHeaders = {
@@ -274,7 +274,7 @@ if (typeof Bun !== 'undefined' && Bun.serve) {
     }
   });
 } else {
-  console.log("⚠️  Bun.serve not available, skipping server creation");
+  console.info("⚠️  Bun.serve not available, skipping server creation");
 }
 
 // Server route handlers
@@ -303,7 +303,7 @@ function handleLogin(req: Request, corsHeaders: Record<string, string>): Respons
     "preferences={\"theme\":\"light\",\"notifications\":true}; Path=/; Max-Age=2592000"
   );
   
-  console.log("🔐 Login successful - session cookies set");
+  console.info("🔐 Login successful - session cookies set");
   return response;
 }
 
@@ -439,23 +439,23 @@ function handleLogout(req: Request, corsHeaders: Record<string, string>): Respon
 
 // ====== 4. Demonstration Functions ======
 
-console.log("\n🎯 4. Running Ecosystem Demo");
+console.info("\n🎯 4. Running Ecosystem Demo");
 
 async function demonstrateEcosystem() {
   const baseUrl = "http://localhost:3008";
   
-  console.log(`🌐 Server running at ${baseUrl}`);
-  console.log("🍪 Cookie jar initialized with manual cookies");
+  console.info(`🌐 Server running at ${baseUrl}`);
+  console.info("🍪 Cookie jar initialized with manual cookies");
   
   try {
     // Step 1: Health check
-    console.log("\n📋 Step 1: Health Check");
+    console.info("\n📋 Step 1: Health Check");
     const healthResponse = await cookieClient.fetch(`${baseUrl}/api/health`);
     const health = await healthResponse.json();
-    console.log("✅ Health check:", health);
+    console.info("✅ Health check:", health);
     
     // Step 2: Login (will receive new cookies from server)
-    console.log("\n🔐 Step 2: Login");
+    console.info("\n🔐 Step 2: Login");
     const loginResponse = await cookieClient.fetch(`${baseUrl}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -464,32 +464,32 @@ async function demonstrateEcosystem() {
     
     if (loginResponse.ok) {
       const loginData = await loginResponse.json();
-      console.log("✅ Login successful:", loginData);
+      console.info("✅ Login successful:", loginData);
       cookieClient.inspectCookies();
     }
     
     // Step 3: Access protected profile (uses cookies automatically)
-    console.log("\n👤 Step 3: Access Protected Profile");
+    console.info("\n👤 Step 3: Access Protected Profile");
     const profileResponse = await cookieClient.fetch(`${baseUrl}/api/user/profile`);
     
     if (profileResponse.ok) {
       const profile = await profileResponse.json();
-      console.log("✅ Profile retrieved:", profile);
+      console.info("✅ Profile retrieved:", profile);
     } else {
-      console.log("❌ Profile access failed:", await profileResponse.json());
+      console.info("❌ Profile access failed:", await profileResponse.json());
     }
     
     // Step 4: Get preferences (uses cookies automatically)
-    console.log("\n⚙️ Step 4: Get User Preferences");
+    console.info("\n⚙️ Step 4: Get User Preferences");
     const prefsResponse = await cookieClient.fetch(`${baseUrl}/api/user/preferences`);
     
     if (prefsResponse.ok) {
       const prefs = await prefsResponse.json();
-      console.log("✅ Preferences retrieved:", prefs);
+      console.info("✅ Preferences retrieved:", prefs);
     }
     
     // Step 5: Update preferences
-    console.log("\n🔧 Step 5: Update Preferences");
+    console.info("\n🔧 Step 5: Update Preferences");
     const updateResponse = await cookieClient.fetch(`${baseUrl}/api/user/preferences`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -502,29 +502,29 @@ async function demonstrateEcosystem() {
     
     if (updateResponse.ok) {
       const updatedPrefs = await updateResponse.json();
-      console.log("✅ Preferences updated:", updatedPrefs);
+      console.info("✅ Preferences updated:", updatedPrefs);
       cookieClient.inspectCookies();
     }
     
     // Step 6: Logout (clears cookies)
-    console.log("\n🚪 Step 6: Logout");
+    console.info("\n🚪 Step 6: Logout");
     const logoutResponse = await cookieClient.fetch(`${baseUrl}/api/auth/logout`, {
       method: "POST"
     });
     
     if (logoutResponse.ok) {
       const logoutData = await logoutResponse.json();
-      console.log("✅ Logout successful:", logoutData);
+      console.info("✅ Logout successful:", logoutData);
       cookieClient.inspectCookies();
     }
     
     // Step 7: Try to access profile after logout (should fail)
-    console.log("\n🚫 Step 7: Access Profile After Logout (Should Fail)");
+    console.info("\n🚫 Step 7: Access Profile After Logout (Should Fail)");
     const postLogoutProfile = await cookieClient.fetch(`${baseUrl}/api/user/profile`);
     
     if (!postLogoutProfile.ok) {
       const error = await postLogoutProfile.json();
-      console.log("✅ Correctly denied access:", error);
+      console.info("✅ Correctly denied access:", error);
     }
     
   } catch (error) {
@@ -534,16 +534,16 @@ async function demonstrateEcosystem() {
 
 // ====== 5. Start Demo ======
 
-console.log("\n🚀 Starting Cookie-Fetch Ecosystem Demo");
-console.log("=" .repeat(60));
+console.info("\n🚀 Starting Cookie-Fetch Ecosystem Demo");
+console.info("=" .repeat(60));
 
 // Start the demonstration
 demonstrateEcosystem().then(() => {
-  console.log("\n✅ Demo completed successfully!");
+  console.info("\n✅ Demo completed successfully!");
 }).catch((error) => {
   console.error("\n❌ Demo failed:", error);
 }).finally(() => {
-  console.log("\n🛑 Shutting down server...");
+  console.info("\n🛑 Shutting down server...");
   if (server && typeof server.stop === "function") {
     server.stop();
   }

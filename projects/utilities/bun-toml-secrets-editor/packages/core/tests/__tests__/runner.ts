@@ -30,26 +30,26 @@ export function runTestsByCategory(category: keyof typeof TEST_CATEGORIES) {
 		throw new Error(`Unknown test category: ${category}`);
 	}
 
-	console.log(`🧪 Running ${category} tests...`);
+	console.info(`🧪 Running ${category} tests...`);
 
 	return Bun.$`bun test --preload ./tests/setup.ts ${config.pattern} ${config.parallel ? "" : "--no-parallel"}`;
 }
 
 // Run all tests in order
 export async function runAllTests() {
-	console.log("🚀 Running all tests in organized order...");
+	console.info("🚀 Running all tests in organized order...");
 
 	for (const category of TEST_CATEGORIES) {
 		try {
 			await runTestsByCategory(category.name as keyof typeof TEST_CATEGORIES);
-			console.log(`✅ ${category.name} tests passed`);
+			console.info(`✅ ${category.name} tests passed`);
 		} catch (error) {
 			console.error(`❌ ${category.name} tests failed:`, error);
 			process.exit(1);
 		}
 	}
 
-	console.log("🎉 All tests passed!");
+	console.info("🎉 All tests passed!");
 }
 
 // CLI interface

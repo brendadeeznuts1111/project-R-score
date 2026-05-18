@@ -23,7 +23,7 @@ export class R2NativeArtifactUploader {
   static async uploadArtifact(reportId: string, data: any): Promise<boolean> {
     if (!this.manager) this.initialize();
     
-    console.log(`📦 Archiving compliance artifact: ${reportId}`);
+    console.info(`📦 Archiving compliance artifact: ${reportId}`);
     
     const result = await this.manager.upload({
       key: `compliance/reports/${new Date().toISOString().split('T')[0]}/${reportId}.json`,
@@ -37,7 +37,7 @@ export class R2NativeArtifactUploader {
     });
 
     if (result.success) {
-      console.log(`✅ Artifact ${reportId} successfully preserved in cold storage.`);
+      console.info(`✅ Artifact ${reportId} successfully preserved in cold storage.`);
     }
     
     return result.success;

@@ -13,7 +13,7 @@ export const logger = {
    */
   info: (...args: unknown[]): void => {
     if (isDev) {
-      console.log(...args);
+      console.info(...args);
     }
   },
 

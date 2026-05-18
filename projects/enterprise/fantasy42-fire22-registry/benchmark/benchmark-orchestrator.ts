@@ -71,12 +71,12 @@ class RegistryBenchmarkOrchestrator {
   }
 
   async run(command: string = 'all'): Promise<void> {
-    console.log('🚀 Fantasy42-Fire22 Registry Benchmark Orchestrator');
-    console.log('==================================================');
-    console.log(`📍 Registry Root: ${this.registryRoot}`);
-    console.log(`📊 Benchmark Dir: ${this.benchmarkDir}`);
-    console.log(`📋 Command: ${command}`);
-    console.log('');
+    console.info('🚀 Fantasy42-Fire22 Registry Benchmark Orchestrator');
+    console.info('==================================================');
+    console.info(`📍 Registry Root: ${this.registryRoot}`);
+    console.info(`📊 Benchmark Dir: ${this.benchmarkDir}`);
+    console.info(`📋 Command: ${command}`);
+    console.info('');
 
     try {
       switch (command) {
@@ -98,7 +98,7 @@ class RegistryBenchmarkOrchestrator {
           break;
       }
 
-      console.log('\n✅ Benchmark orchestration completed successfully!');
+      console.info('\n✅ Benchmark orchestration completed successfully!');
     } catch (error) {
       console.error('❌ Benchmark orchestration failed:', error);
       process.exit(1);
@@ -106,7 +106,7 @@ class RegistryBenchmarkOrchestrator {
   }
 
   private async runAll(): Promise<void> {
-    console.log('🔄 Running complete benchmark suite...\n');
+    console.info('🔄 Running complete benchmark suite...\n');
 
     await this.analyzePackages();
     await this.runBenchmarks();
@@ -115,7 +115,7 @@ class RegistryBenchmarkOrchestrator {
   }
 
   private async analyzePackages(): Promise<void> {
-    console.log('🔍 Analyzing registry packages...\n');
+    console.info('🔍 Analyzing registry packages...\n');
 
     const packagesDir = join(this.registryRoot, 'packages');
 
@@ -141,7 +141,7 @@ class RegistryBenchmarkOrchestrator {
       const packageJsonPath = join(packagePath, 'package.json');
 
       if (!existsSync(packageJsonPath)) {
-        console.log(`⚠️  Skipping ${dir} - no package.json found`);
+        console.info(`⚠️  Skipping ${dir} - no package.json found`);
         continue;
       }
 
@@ -159,24 +159,24 @@ class RegistryBenchmarkOrchestrator {
         };
 
         this.packages.push(packageInfo);
-        console.log(`📦 Found package: ${packageInfo.name}@${packageInfo.version}`);
+        console.info(`📦 Found package: ${packageInfo.name}@${packageInfo.version}`);
       } catch (error) {
-        console.log(`⚠️  Failed to parse ${packageJsonPath}:`, error);
+        console.info(`⚠️  Failed to parse ${packageJsonPath}:`, error);
       }
     }
 
-    console.log(`\n✅ Analyzed ${this.packages.length} packages`);
+    console.info(`\n✅ Analyzed ${this.packages.length} packages`);
   }
 
   private async runBenchmarks(): Promise<void> {
-    console.log('⚡ Running performance benchmarks...\n');
+    console.info('⚡ Running performance benchmarks...\n');
 
     if (this.packages.length === 0) {
       await this.analyzePackages();
     }
 
     for (const pkg of this.packages) {
-      console.log(`🏃 Benchmarking ${pkg.name}...`);
+      console.info(`🏃 Benchmarking ${pkg.name}...`);
 
       const result: BenchmarkResult = {
         package: pkg.name,
@@ -203,9 +203,9 @@ class RegistryBenchmarkOrchestrator {
         result.metrics.buildTime = buildTime;
 
         if (buildResult.exitCode === 0) {
-          console.log(`   ✅ Build successful (${buildTime}ms)`);
+          console.info(`   ✅ Build successful (${buildTime}ms)`);
         } else {
-          console.log(`   ⚠️  Build completed with warnings (${buildTime}ms)`);
+          console.info(`   ⚠️  Build completed with warnings (${buildTime}ms)`);
         }
 
         // Analyze bundle size (if dist exists)
@@ -215,7 +215,7 @@ class RegistryBenchmarkOrchestrator {
           if (sizeResult.exitCode === 0) {
             const size = parseInt(sizeResult.stdout.toString().split('\t')[0]);
             result.metrics.bundleSize = size;
-            console.log(`   📦 Bundle size: ${(size / 1024).toFixed(2)} KB`);
+            console.info(`   📦 Bundle size: ${(size / 1024).toFixed(2)} KB`);
           }
         }
 
@@ -224,9 +224,9 @@ class RegistryBenchmarkOrchestrator {
         if (testResult.exitCode === 0) {
           // Parse coverage from output (simplified)
           result.metrics.testCoverage = 85; // Placeholder
-          console.log(`   🧪 Tests passed with ${result.metrics.testCoverage}% coverage`);
+          console.info(`   🧪 Tests passed with ${result.metrics.testCoverage}% coverage`);
         } else {
-          console.log(`   ⚠️  Tests completed with issues`);
+          console.info(`   ⚠️  Tests completed with issues`);
         }
 
         // Calculate dependency metrics
@@ -253,18 +253,18 @@ class RegistryBenchmarkOrchestrator {
             (buildTime < 5000 ? 100 : 50) + (result.metrics.bundleSize < 1024 * 1024 ? 100 : 50) // < 1MB
           ) / 2;
       } catch (error) {
-        console.log(`   ❌ Benchmark failed for ${pkg.name}:`, error);
+        console.info(`   ❌ Benchmark failed for ${pkg.name}:`, error);
       }
 
       this.results.push(result);
-      console.log(
+      console.info(
         `   📊 Security: ${result.metrics.securityScore}/100, Performance: ${result.metrics.performanceScore}/100\n`
       );
     }
   }
 
   private async generateDependencyMatrix(): Promise<void> {
-    console.log('📋 Generating dependency matrix with [EXACT] versions...\n');
+    console.info('📋 Generating dependency matrix with [EXACT] versions...\n');
 
     if (this.packages.length === 0) {
       await this.analyzePackages();
@@ -306,32 +306,32 @@ class RegistryBenchmarkOrchestrator {
         },
       };
 
-      console.log(`📦 ${pkg.name}@${pkg.version}`);
-      console.log(`   Dependencies: ${Object.keys(allDeps).length} total`);
-      console.log(`   [EXACT] versions: ${Object.keys(exactDeps).length}`);
-      console.log(`   Range versions: ${Object.keys(rangeDeps).length}`);
+      console.info(`📦 ${pkg.name}@${pkg.version}`);
+      console.info(`   Dependencies: ${Object.keys(allDeps).length} total`);
+      console.info(`   [EXACT] versions: ${Object.keys(exactDeps).length}`);
+      console.info(`   Range versions: ${Object.keys(rangeDeps).length}`);
 
       if (Object.keys(exactDeps).length > 0) {
-        console.log(`   ✅ Exact dependencies:`);
+        console.info(`   ✅ Exact dependencies:`);
         for (const [dep, version] of Object.entries(exactDeps)) {
-          console.log(`      ${dep}: ${version}`);
+          console.info(`      ${dep}: ${version}`);
         }
       }
 
       if (Object.keys(rangeDeps).length > 0) {
-        console.log(`   📊 Range dependencies:`);
+        console.info(`   📊 Range dependencies:`);
         for (const [dep, version] of Object.entries(rangeDeps)) {
-          console.log(`      ${dep}: ${version}`);
+          console.info(`      ${dep}: ${version}`);
         }
       }
-      console.log('');
+      console.info('');
     }
 
     // Save matrix to file
     const matrixPath = join(this.matrixDir, `dependency-matrix-${Date.now()}.json`);
     await Bun.write(matrixPath, JSON.stringify(matrix, null, 2));
 
-    console.log(`💾 Dependency matrix saved to: ${matrixPath}`);
+    console.info(`💾 Dependency matrix saved to: ${matrixPath}`);
 
     // Generate markdown report
     const markdownPath = join(this.matrixDir, `dependency-matrix-${Date.now()}.md`);
@@ -371,11 +371,11 @@ class RegistryBenchmarkOrchestrator {
     }
 
     await Bun.write(markdownPath, markdown);
-    console.log(`📝 Markdown matrix saved to: ${markdownPath}`);
+    console.info(`📝 Markdown matrix saved to: ${markdownPath}`);
   }
 
   private async generateReports(): Promise<void> {
-    console.log('📊 Generating comprehensive benchmark reports...\n');
+    console.info('📊 Generating comprehensive benchmark reports...\n');
 
     if (this.results.length === 0) {
       await this.runBenchmarks();
@@ -407,7 +407,7 @@ class RegistryBenchmarkOrchestrator {
     };
 
     await Bun.write(reportPath, JSON.stringify(jsonReport, null, 2));
-    console.log(`💾 JSON report saved to: ${reportPath}`);
+    console.info(`💾 JSON report saved to: ${reportPath}`);
 
     // Markdown Report
     let markdown = `# Fantasy42-Fire22 Registry Benchmark Report\n\n`;
@@ -482,19 +482,19 @@ class RegistryBenchmarkOrchestrator {
     markdown += `\n---\n*Report generated by Fantasy42-Fire22 Registry Benchmark Orchestrator*`;
 
     await Bun.write(markdownPath, markdown);
-    console.log(`📝 Markdown report saved to: ${markdownPath}`);
+    console.info(`📝 Markdown report saved to: ${markdownPath}`);
 
     // Print summary to console
-    console.log('\n🎉 Benchmark Report Summary:');
-    console.log(`   📦 Packages analyzed: ${jsonReport.summary.totalPackages}`);
-    console.log(
+    console.info('\n🎉 Benchmark Report Summary:');
+    console.info(`   📦 Packages analyzed: ${jsonReport.summary.totalPackages}`);
+    console.info(
       `   🔒 Average security score: ${jsonReport.summary.averageSecurityScore.toFixed(1)}/100`
     );
-    console.log(
+    console.info(
       `   ⚡ Average performance score: ${jsonReport.summary.averagePerformanceScore.toFixed(1)}/100`
     );
-    console.log(`   📋 Total dependencies: ${jsonReport.summary.totalDependencies}`);
-    console.log(`   ✅ [EXACT] versions: ${jsonReport.summary.totalExactVersions}`);
+    console.info(`   📋 Total dependencies: ${jsonReport.summary.totalDependencies}`);
+    console.info(`   ✅ [EXACT] versions: ${jsonReport.summary.totalExactVersions}`);
   }
 
   private categorizeDependencies(packageName: string): PackageInfo {

@@ -82,7 +82,7 @@ async function verifyBotPermissions(
 	chatId: string,
 	botToken: string,
 ): Promise<void> {
-	console.log("🔍 Verifying bot permissions...\n");
+	console.info("🔍 Verifying bot permissions...\n");
 
 	try {
 		// Get bot info from token (extract bot ID from token)
@@ -96,12 +96,12 @@ async function verifyBotPermissions(
 			const member = data.result;
 			const required = GOLDEN_SUPERGROUP_CONFIG.botPermissions;
 
-			console.log("  Bot Status:", member.status);
-			console.log("  Permissions:");
-			console.log(`    Can Send Messages: ${member.can_send_messages ? "✅" : "❌"} (Required: ${required.canSendMessages})`);
-			console.log(`    Can Pin Messages: ${member.can_pin_messages ? "✅" : "❌"} (Required: ${required.canPinMessages})`);
-			console.log(`    Can Manage Topics: ${member.can_manage_topics ? "✅" : "❌"} (Required: ${required.canManageTopics})`);
-			console.log(`    Can Delete Messages: ${member.can_delete_messages ? "✅" : "❌"} (Required: ${required.canDeleteMessages})`);
+			console.info("  Bot Status:", member.status);
+			console.info("  Permissions:");
+			console.info(`    Can Send Messages: ${member.can_send_messages ? "✅" : "❌"} (Required: ${required.canSendMessages})`);
+			console.info(`    Can Pin Messages: ${member.can_pin_messages ? "✅" : "❌"} (Required: ${required.canPinMessages})`);
+			console.info(`    Can Manage Topics: ${member.can_manage_topics ? "✅" : "❌"} (Required: ${required.canManageTopics})`);
+			console.info(`    Can Delete Messages: ${member.can_delete_messages ? "✅" : "❌"} (Required: ${required.canDeleteMessages})`);
 
 			if (
 				!member.can_send_messages ||
@@ -109,14 +109,14 @@ async function verifyBotPermissions(
 				!member.can_manage_topics ||
 				!member.can_delete_messages
 			) {
-				console.log("\n⚠️  Bot is missing required permissions!");
-				console.log("   Please make the bot an admin with these permissions.\n");
+				console.info("\n⚠️  Bot is missing required permissions!");
+				console.info("   Please make the bot an admin with these permissions.\n");
 			} else {
-				console.log("\n✅ All required permissions granted!\n");
+				console.info("\n✅ All required permissions granted!\n");
 			}
 		}
 	} catch (error) {
-		console.log(`❌ Error checking permissions: ${(error as Error).message}\n`);
+		console.info(`❌ Error checking permissions: ${(error as Error).message}\n`);
 	}
 }
 
@@ -127,12 +127,12 @@ async function setupTopics(
 	api: TelegramBotApi,
 	chatId: string,
 ): Promise<Map<number, number>> {
-	console.log("📋 Setting up topics from Golden Supergroup config...\n");
+	console.info("📋 Setting up topics from Golden Supergroup config...\n");
 
 	const topicMapping = new Map<number, number>(); // logical ID -> actual thread ID
 
 	for (const topic of GOLDEN_SUPERGROUP_CONFIG.topics) {
-		console.log(`  Creating topic: ${topic.name} (Logical ID: ${topic.threadId})`);
+		console.info(`  Creating topic: ${topic.name} (Logical ID: ${topic.threadId})`);
 
 		try {
 			const result = await api.createForumTopic(
@@ -145,7 +145,7 @@ async function setupTopics(
 			if (result.ok && result.result) {
 				const actualThreadId = result.result.message_thread_id;
 				topicMapping.set(topic.threadId, actualThreadId);
-				console.log(`    ✅ Created (Thread ID: ${actualThreadId})`);
+				console.info(`    ✅ Created (Thread ID: ${actualThreadId})`);
 
 				// Send description if provided
 				if (topic.description) {
@@ -156,24 +156,24 @@ async function setupTopics(
 					);
 				}
 			} else {
-				console.log(`    ⚠️  ${result.description || "Unknown error"}`);
-				console.log(`    (Topic might already exist - use 'verify' to check)`);
+				console.info(`    ⚠️  ${result.description || "Unknown error"}`);
+				console.info(`    (Topic might already exist - use 'verify' to check)`);
 			}
 		} catch (error) {
-			console.log(`    ❌ Error: ${(error as Error).message}`);
+			console.info(`    ❌ Error: ${(error as Error).message}`);
 		}
 
 		// Rate limiting - wait 500ms between topic creations
 		await Bun.sleep(500);
 	}
 
-	console.log(`\n✅ Topic setup complete!\n`);
-	console.log("📊 Topic Mapping (Logical ID → Actual Thread ID):");
+	console.info(`\n✅ Topic setup complete!\n`);
+	console.info("📊 Topic Mapping (Logical ID → Actual Thread ID):");
 	for (const [logicalId, threadId] of topicMapping) {
 		const topic = GOLDEN_SUPERGROUP_CONFIG.topics.find(t => t.threadId === logicalId);
-		console.log(`  ${logicalId} → ${threadId} (${topic?.name || "Unknown"})`);
+		console.info(`  ${logicalId} → ${threadId} (${topic?.name || "Unknown"})`);
 	}
-	console.log();
+	console.info();
 
 	return topicMapping;
 }
@@ -186,7 +186,7 @@ async function sendWelcomeMessage(
 	chatId: string,
 	threadId?: number,
 ): Promise<void> {
-	console.log("📨 Sending welcome message...\n");
+	console.info("📨 Sending welcome message...\n");
 
 	const deepLinkGen = new DeepLinkGenerator();
 	
@@ -224,12 +224,12 @@ Ready to receive alerts! 🚀`;
 	try {
 		const result = await api.sendMessage(chatId, welcomeMessage, threadId);
 		if (result.ok) {
-			console.log("✅ Welcome message sent!\n");
+			console.info("✅ Welcome message sent!\n");
 		} else {
-			console.log(`⚠️  Failed to send: ${result.description}\n`);
+			console.info(`⚠️  Failed to send: ${result.description}\n`);
 		}
 	} catch (error) {
-		console.log(`❌ Error: ${(error as Error).message}\n`);
+		console.info(`❌ Error: ${(error as Error).message}\n`);
 	}
 }
 
@@ -241,7 +241,7 @@ async function sendExampleAlert(
 	chatId: string,
 	threadId?: number,
 ): Promise<void> {
-	console.log("📨 Sending example alert message...\n");
+	console.info("📨 Sending example alert message...\n");
 
 	const deepLinkGen = new DeepLinkGenerator();
 	
@@ -269,14 +269,14 @@ This is an example alert demonstrating RFC 001 deep-link formatting.`;
 	try {
 		const result = await api.sendMessage(chatId, alertMessage, threadId);
 		if (result.ok) {
-			console.log("✅ Example alert sent!\n");
-			console.log(`   Message ID: ${result.result?.message_id}`);
-			console.log(`   Deep-Link: ${deepLink}\n`);
+			console.info("✅ Example alert sent!\n");
+			console.info(`   Message ID: ${result.result?.message_id}`);
+			console.info(`   Deep-Link: ${deepLink}\n`);
 		} else {
-			console.log(`⚠️  Failed to send: ${result.description}\n`);
+			console.info(`⚠️  Failed to send: ${result.description}\n`);
 		}
 	} catch (error) {
-		console.log(`❌ Error: ${(error as Error).message}\n`);
+		console.info(`❌ Error: ${(error as Error).message}\n`);
 	}
 }
 
@@ -287,7 +287,7 @@ async function verifyTopics(
 	api: TelegramBotApi,
 	chatId: string,
 ): Promise<void> {
-	console.log("🔍 Verifying existing topics...\n");
+	console.info("🔍 Verifying existing topics...\n");
 
 	try {
 		const result = await api.getForumTopics(chatId);
@@ -295,29 +295,29 @@ async function verifyTopics(
 		if (result.ok && result.result) {
 			const topics = result.result.topics || [];
 			
-			console.log(`Found ${topics.length} topics:\n`);
+			console.info(`Found ${topics.length} topics:\n`);
 			
 			for (const topic of topics) {
 				const configTopic = GOLDEN_SUPERGROUP_CONFIG.topics.find(
 					t => t.name === topic.name
 				);
 				
-				console.log(`  📌 ${topic.name}`);
-				console.log(`     Thread ID: ${topic.message_thread_id}`);
-				console.log(`     Icon Color: ${topic.icon_color ?? "N/A"}`);
-				console.log(`     Icon Emoji: ${topic.icon_custom_emoji_id ?? "N/A"}`);
+				console.info(`  📌 ${topic.name}`);
+				console.info(`     Thread ID: ${topic.message_thread_id}`);
+				console.info(`     Icon Color: ${topic.icon_color ?? "N/A"}`);
+				console.info(`     Icon Emoji: ${topic.icon_custom_emoji_id ?? "N/A"}`);
 				if (configTopic) {
-					console.log(`     ✅ Matches Golden Config (Logical ID: ${configTopic.threadId})`);
+					console.info(`     ✅ Matches Golden Config (Logical ID: ${configTopic.threadId})`);
 				} else {
-					console.log(`     ⚠️  Not in Golden Config`);
+					console.info(`     ⚠️  Not in Golden Config`);
 				}
-				console.log();
+				console.info();
 			}
 		} else {
-			console.log(`⚠️  ${result.description || "Failed to get topics"}\n`);
+			console.info(`⚠️  ${result.description || "Failed to get topics"}\n`);
 		}
 	} catch (error) {
-		console.log(`❌ Error: ${(error as Error).message}\n`);
+		console.info(`❌ Error: ${(error as Error).message}\n`);
 	}
 }
 
@@ -329,9 +329,9 @@ async function cmdSetup(): Promise<void> {
 	const { botToken, chatId } = await loadConfig();
 	const api = new TelegramBotApi(botToken);
 
-	console.log("🏗️  Setting up Golden Supergroup\n");
-	console.log(`   Chat ID: ${chatId}`);
-	console.log(`   Topics to create: ${GOLDEN_SUPERGROUP_CONFIG.topics.length}\n`);
+	console.info("🏗️  Setting up Golden Supergroup\n");
+	console.info(`   Chat ID: ${chatId}`);
+	console.info(`   Topics to create: ${GOLDEN_SUPERGROUP_CONFIG.topics.length}\n`);
 
 	// Verify permissions first
 	await verifyBotPermissions(api, chatId, botToken);
@@ -347,19 +347,19 @@ async function cmdSetup(): Promise<void> {
 		await sendWelcomeMessage(api, chatId);
 	}
 
-	console.log("🎉 Golden supergroup setup complete!\n");
-	console.log("💡 Next steps:");
-	console.log("   1. Update topic-mapping.ts with actual thread IDs");
-	console.log("   2. Test sending messages: bun run examples/telegram-golden-setup.ts example-message");
-	console.log("   3. Verify topics: bun run examples/telegram-golden-setup.ts verify\n");
+	console.info("🎉 Golden supergroup setup complete!\n");
+	console.info("💡 Next steps:");
+	console.info("   1. Update topic-mapping.ts with actual thread IDs");
+	console.info("   2. Test sending messages: bun run examples/telegram-golden-setup.ts example-message");
+	console.info("   3. Verify topics: bun run examples/telegram-golden-setup.ts verify\n");
 }
 
 async function cmdVerify(): Promise<void> {
 	const { botToken, chatId } = await loadConfig();
 	const api = new TelegramBotApi(botToken);
 
-	console.log("🔍 Verifying Golden Supergroup Configuration\n");
-	console.log(`   Chat ID: ${chatId}\n`);
+	console.info("🔍 Verifying Golden Supergroup Configuration\n");
+	console.info(`   Chat ID: ${chatId}\n`);
 
 	await verifyBotPermissions(api, chatId, botToken);
 	await verifyTopics(api, chatId);
@@ -373,13 +373,13 @@ async function cmdExampleMessage(): Promise<void> {
 	const threadIdArg = args.find(arg => arg.startsWith("--thread-id="));
 	const threadId = threadIdArg ? parseInt(threadIdArg.split("=")[1]) : undefined;
 
-	console.log("📨 Sending example alert message\n");
+	console.info("📨 Sending example alert message\n");
 	
 	if (threadId) {
-		console.log(`   Thread ID: ${threadId}\n`);
+		console.info(`   Thread ID: ${threadId}\n`);
 		await sendExampleAlert(api, chatId, threadId);
 	} else {
-		console.log("   (Sending to general chat - use --thread-id=N to send to specific topic)\n");
+		console.info("   (Sending to general chat - use --thread-id=N to send to specific topic)\n");
 		await sendExampleAlert(api, chatId);
 	}
 }
@@ -404,7 +404,7 @@ if (import.meta.main) {
 			break;
 		case "help":
 		default:
-			console.log(`
+			console.info(`
 📋 Golden Supergroup Setup Example
 
 Usage:

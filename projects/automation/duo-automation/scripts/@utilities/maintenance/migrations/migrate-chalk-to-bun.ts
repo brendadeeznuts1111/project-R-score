@@ -45,19 +45,19 @@ const migrationPatterns = [
   // Template literal replacements
   {
     pattern: /console\.log\(chalk\.green\(`([^`]+)`\)\);?/g,
-    replacement: "console.log(`${empire.success}$1${colors.reset}`);"
+    replacement: "console.info(`${empire.success}$1${colors.reset}`);"
   },
   {
     pattern: /console\.log\(chalk\.red\(`([^`]+)`\)\);?/g,
-    replacement: "console.log(`${empire.error}$1${colors.reset}`);"
+    replacement: "console.info(`${empire.error}$1${colors.reset}`);"
   },
   {
     pattern: /console\.log\(chalk\.yellow\(`([^`]+)`\)\);?/g,
-    replacement: "console.log(`${empire.warning}$1${colors.reset}`);"
+    replacement: "console.info(`${empire.warning}$1${colors.reset}`);"
   },
   {
     pattern: /console\.log\(chalk\.blue\(`([^`]+)`\)\);?/g,
-    replacement: "console.log(`${empire.info}$1${colors.reset}`);"
+    replacement: "console.info(`${empire.info}$1${colors.reset}`);"
   },
   
   // Error handling
@@ -81,8 +81,8 @@ let migrationStats = {
   errors: 0
 };
 
-console.log('🎯 Empire Pro Chalk to Bun Console Colors Migration');
-console.log('=' .repeat(55));
+console.info('🎯 Empire Pro Chalk to Bun Console Colors Migration');
+console.info('=' .repeat(55));
 
 // Process each file
 for (const filePath of filesToMigrate) {
@@ -109,15 +109,15 @@ for (const filePath of filesToMigrate) {
       // Write back if modified
       if (modifiedContent !== content) {
         writeFileSync(fullPath, modifiedContent, 'utf8');
-        console.log(`✅ Migrated: ${filePath} (${replacementsInFile} replacements)`);
+        console.info(`✅ Migrated: ${filePath} (${replacementsInFile} replacements)`);
       } else {
-        console.log(`ℹ️  No changes needed: ${filePath}`);
+        console.info(`ℹ️  No changes needed: ${filePath}`);
       }
       
       migrationStats.filesProcessed++;
       
     } catch (error) {
-      console.log(`⚠️  File not found: ${filePath}`);
+      console.info(`⚠️  File not found: ${filePath}`);
       migrationStats.errors++;
     }
     
@@ -135,7 +135,7 @@ try {
   if (packageJson.dependencies && packageJson.dependencies.chalk) {
     delete packageJson.dependencies.chalk;
     writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8');
-    console.log('✅ Removed chalk from package.json dependencies');
+    console.info('✅ Removed chalk from package.json dependencies');
   }
   
 } catch (error) {
@@ -144,22 +144,22 @@ try {
 }
 
 // Migration summary
-console.log('\n📊 Migration Summary:');
-console.log(`   Files processed: ${migrationStats.filesProcessed}`);
-console.log(`   Patterns replaced: ${migrationStats.patternsReplaced}`);
-console.log(`   Errors: ${migrationStats.errors}`);
+console.info('\n📊 Migration Summary:');
+console.info(`   Files processed: ${migrationStats.filesProcessed}`);
+console.info(`   Patterns replaced: ${migrationStats.patternsReplaced}`);
+console.info(`   Errors: ${migrationStats.errors}`);
 
 if (migrationStats.errors === 0) {
-  console.log('\n🎉 Migration completed successfully!');
-  console.log('💾 Bundle size reduced by ~5.6KB (chalk dependency removed)');
-  console.log('⚡ Console output now uses native Bun performance');
-  console.log('🎨 Empire Pro themed logging with enhanced readability');
+  console.info('\n🎉 Migration completed successfully!');
+  console.info('💾 Bundle size reduced by ~5.6KB (chalk dependency removed)');
+  console.info('⚡ Console output now uses native Bun performance');
+  console.info('🎨 Empire Pro themed logging with enhanced readability');
 } else {
-  console.log('\n⚠️  Migration completed with errors. Please review the logs above.');
+  console.info('\n⚠️  Migration completed with errors. Please review the logs above.');
 }
 
-console.log('\n📋 Next Steps:');
-console.log('   1. Test the migrated CLI files');
-console.log('   2. Run: bun run src/cli/empire-pro-cli-v4.ts --help');
-console.log('   3. Verify console output colors and formatting');
-console.log('   4. Commit changes if everything works correctly');
+console.info('\n📋 Next Steps:');
+console.info('   1. Test the migrated CLI files');
+console.info('   2. Run: bun run src/cli/empire-pro-cli-v4.ts --help');
+console.info('   3. Verify console output colors and formatting');
+console.info('   4. Commit changes if everything works correctly');

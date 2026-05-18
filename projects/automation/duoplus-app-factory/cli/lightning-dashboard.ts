@@ -17,7 +17,7 @@ interface TerminalMetrics {
 
 export async function startLightningDashboard() {
   console.clear();
-  console.log(chalk.hex("#FF6B35").bold(`
+  console.info(chalk.hex("#FF6B35").bold(`
 ╔════════════════════════════════════════╗
 ║  ⚡ DuoPlus Lightning Dashboard v1.0  ║
 ║    ACME Systems - Production Ready     ║
@@ -29,10 +29,10 @@ export async function startLightningDashboard() {
   const missingEnvVars = requiredEnvVars.filter(env => !process.env[env]);
   
   if (missingEnvVars.length > 0) {
-    console.log(chalk.yellow("⚠️  Missing LND environment variables:"));
-    missingEnvVars.forEach(env => console.log(`   - ${env}`));
-    console.log("\n💡 Lightning features will be disabled, but DuoPlus Device Manager will work.");
-    console.log("   Add LND vars to .env to enable full dashboard.\n");
+    console.info(chalk.yellow("⚠️  Missing LND environment variables:"));
+    missingEnvVars.forEach(env => console.info(`   - ${env}`));
+    console.info("\n💡 Lightning features will be disabled, but DuoPlus Device Manager will work.");
+    console.info("   Add LND vars to .env to enable full dashboard.\n");
   }
 
   let lightning: LightningService | null = null;
@@ -88,12 +88,12 @@ export async function startLightningDashboard() {
   Auto-monitor: ${metricsInterval ? "ACTIVE" : "PAUSED"}
 `);
         } catch (error: any) {
-          console.log(chalk.red("❌ Lightning metrics error:"), error.message);
+          console.info(chalk.red("❌ Lightning metrics error:"), error.message);
         }
       }, 5000);
     } catch (error: any) {
-      console.log(chalk.red("❌ LightningService init failed:"), error.message);
-      console.log("   DuoPlus Device Manager will work, but Lightning features disabled.\n");
+      console.info(chalk.red("❌ LightningService init failed:"), error.message);
+      console.info("   DuoPlus Device Manager will work, but Lightning features disabled.\n");
     }
   }
 
@@ -115,20 +115,20 @@ let configMode = false;
 async function configPane() {
   configMode = true;
   console.clear();
-  console.log(chalk.hex("#00FFAB").bold("\n⚙️  Dashboard Configuration"));
-  console.log(chalk.gray("   Enter values or press Enter to keep current setting\n"));
+  console.info(chalk.hex("#00FFAB").bold("\n⚙️  Dashboard Configuration"));
+  console.info(chalk.gray("   Enter values or press Enter to keep current setting\n"));
   
-  console.log("┌─────────────────────────────────────────────────────────────┐");
-  console.log("│ Setting              │ Current Value                       │");
-  console.log("├─────────────────────────────────────────────────────────────┤");
-  console.log(`│ LND REST URL         │ ${(process.env.LND_REST_URL || "not set").padEnd(53)}│`);
-  console.log(`│ LND Macaroon Path    │ ${(process.env.LND_MACAROON_PATH || "not set").padEnd(53)}│`);
-  console.log(`│ LND TLS Cert Path    │ ${(process.env.LND_TLS_CERT_PATH || "not set").padEnd(53)}│`);
-  console.log(`│ BTC Price            │ $${(process.env.BTC_PRICE || "45000").padEnd(52)}│`);
-  console.log(`│ DuoPlus API Key      │ ${(DUOPLUS_TOKEN ? DUOPLUS_TOKEN.substring(0, 8) + "..." : "not set").padEnd(53)}│`);
-  console.log("└─────────────────────────────────────────────────────────────┘");
+  console.info("┌─────────────────────────────────────────────────────────────┐");
+  console.info("│ Setting              │ Current Value                       │");
+  console.info("├─────────────────────────────────────────────────────────────┤");
+  console.info(`│ LND REST URL         │ ${(process.env.LND_REST_URL || "not set").padEnd(53)}│`);
+  console.info(`│ LND Macaroon Path    │ ${(process.env.LND_MACAROON_PATH || "not set").padEnd(53)}│`);
+  console.info(`│ LND TLS Cert Path    │ ${(process.env.LND_TLS_CERT_PATH || "not set").padEnd(53)}│`);
+  console.info(`│ BTC Price            │ $${(process.env.BTC_PRICE || "45000").padEnd(52)}│`);
+  console.info(`│ DuoPlus API Key      │ ${(DUOPLUS_TOKEN ? DUOPLUS_TOKEN.substring(0, 8) + "..." : "not set").padEnd(53)}│`);
+  console.info("└─────────────────────────────────────────────────────────────┘");
   
-  console.log(`
+  console.info(`
 Keys: 1=Set LND URL  2=Set Macaroon  3=Set TLS Cert  4=Set BTC Price
       5=Set DuoPlus Key  s=save & exit  q=cancel
 `);
@@ -144,7 +144,7 @@ function setupConfigInputHandler() {
   
   stdin.on('data', async (key: string) => {
     if (key === '\u0003') {
-      console.log("\n👋 Exiting...");
+      console.info("\n👋 Exiting...");
       process.exit(0);
       return;
     }
@@ -156,14 +156,14 @@ function setupConfigInputHandler() {
     }
     
     if (key === 's' || key === 'S') {
-      console.log(chalk.green("\n✅ Configuration saved!"));
+      console.info(chalk.green("\n✅ Configuration saved!"));
       configMode = false;
       return;
     }
     
     // Placeholder for config input
     if (['1', '2', '3', '4', '5'].includes(key)) {
-      console.log(chalk.yellow(`\n⚠️  Config input for option ${key} - edit .env file for now`));
+      console.info(chalk.yellow(`\n⚠️  Config input for option ${key} - edit .env file for now`));
     }
   });
 }
@@ -335,56 +335,56 @@ async function lightningPane() {
     updateTrendData(balance, channels.length, 0);
     
     console.clear();
-    console.log(chalk.hex("#FF6B35").bold("\n⚡ Lightning Network Manager (MOCK)"));
-    console.log(chalk.gray(`   Node: ${info.alias} | Block: ${info.block_height} | ${info.version}`));
+    console.info(chalk.hex("#FF6B35").bold("\n⚡ Lightning Network Manager (MOCK)"));
+    console.info(chalk.gray(`   Node: ${info.alias} | Block: ${info.block_height} | ${info.version}`));
     
     // Balance section with chart
     const totalBalance = balance.local + balance.remote;
     const localPct = totalBalance > 0 ? (balance.local / totalBalance) * 100 : 0;
     const remotePct = totalBalance > 0 ? (balance.remote / totalBalance) * 100 : 0;
     
-    console.log(`
+    console.info(`
 ╔════════════════════════════════════════════════╗
 ║  💰 BALANCE                                    ║
 ╠════════════════════════════════════════════════╣
 ║  Local:     ${(balance.local / 1000000).toFixed(3)} MSAT  ($${((balance.local / 100000000) * 45000).toFixed(2)})`);
-    console.log(`║  ${generateBarChart(localPct, 100, 40)} ${localPct.toFixed(1)}%`);
-    console.log(`║  Remote:    ${(balance.remote / 1000000).toFixed(3)} MSAT  ($${((balance.remote / 100000000) * 45000).toFixed(2)})`);
-    console.log(`║  ${generateBarChart(remotePct, 100, 40)} ${remotePct.toFixed(1)}%`);
-    console.log(`║  Pending:   ${(balance.pending / 1000000).toFixed(3)} MSAT                           ║`);
-    console.log(`║  Capacity:  ${(balance.total_capacity / 1000000).toFixed(3)} MSAT                           ║`);
-    console.log(`╚════════════════════════════════════════════════════════╝`);
+    console.info(`║  ${generateBarChart(localPct, 100, 40)} ${localPct.toFixed(1)}%`);
+    console.info(`║  Remote:    ${(balance.remote / 1000000).toFixed(3)} MSAT  ($${((balance.remote / 100000000) * 45000).toFixed(2)})`);
+    console.info(`║  ${generateBarChart(remotePct, 100, 40)} ${remotePct.toFixed(1)}%`);
+    console.info(`║  Pending:   ${(balance.pending / 1000000).toFixed(3)} MSAT                           ║`);
+    console.info(`║  Capacity:  ${(balance.total_capacity / 1000000).toFixed(3)} MSAT                           ║`);
+    console.info(`╚════════════════════════════════════════════════════════╝`);
     
     // Channels section with balance visualization
-    console.log("\n📊 CHANNEL DISTRIBUTION");
-    console.log("┌────┬──────────────────┬────────────────────────────┬────────┬────────┐");
-    console.log("│ #  │ Channel          │ Balance Distribution      │ Cap    │ Active │");
-    console.log("├────┼──────────────────┼────────────────────────────┼────────┼────────┤");
+    console.info("\n📊 CHANNEL DISTRIBUTION");
+    console.info("┌────┬──────────────────┬────────────────────────────┬────────┬────────┐");
+    console.info("│ #  │ Channel          │ Balance Distribution      │ Cap    │ Active │");
+    console.info("├────┼──────────────────┼────────────────────────────┼────────┼────────┤");
     
     channels.forEach((ch, i) => {
       const mark = i === lnSelected ? ">" : " ";
       const channelBar = generateChannelChart(ch.local_balance, ch.remote_balance, ch.capacity);
       const capStr = (ch.capacity / 1000).toFixed(1) + "K";
       const activeStr = ch.active ? "✅" : "❌";
-      console.log(`│${mark}${i.toString().padEnd(2)}│ ${ch.chan_id.padEnd(16)} │ ${channelBar.padEnd(24)} │ ${capStr.padEnd(6)} │ ${activeStr.padEnd(6)} │`);
+      console.info(`│${mark}${i.toString().padEnd(2)}│ ${ch.chan_id.padEnd(16)} │ ${channelBar.padEnd(24)} │ ${capStr.padEnd(6)} │ ${activeStr.padEnd(6)} │`);
     });
     
-    console.log("└────┴──────────────────┴────────────────────────────┴────────┴────────┘");
+    console.info("└────┴──────────────────┴────────────────────────────┴────────┴────────┘");
     
     // Trend charts
     if (trendData.balance.length > 1) {
-      console.log(drawTrendChart(trendData.balance.map(b => b / 1000), "Balance", "K-sats", 3));
+      console.info(drawTrendChart(trendData.balance.map(b => b / 1000), "Balance", "K-sats", 3));
     }
     
     // Channel performance
     const performanceMetrics = analyzeChannelPerformance(channels);
-    console.log(drawChannelPerformance(performanceMetrics));
+    console.info(drawChannelPerformance(performanceMetrics));
     
     // Network visualization
-    console.log("\n🌐 NETWORK GRAPH (simplified)");
-    console.log(chalk.gray(`   ${generateNetworkGraph(network.num_nodes, network.num_channels)}`));
-    console.log(chalk.gray(`   Nodes: ${network.num_nodes.toLocaleString()} | Channels: ${network.num_channels.toLocaleString()}`));
-    console.log(`   Avg Channel: ${(network.avg_channel_size / 1000000).toFixed(2)} MSAT | Total: ${(network.total_network_capacity / 1000000000).toFixed(0)} BTC`);
+    console.info("\n🌐 NETWORK GRAPH (simplified)");
+    console.info(chalk.gray(`   ${generateNetworkGraph(network.num_nodes, network.num_channels)}`));
+    console.info(chalk.gray(`   Nodes: ${network.num_nodes.toLocaleString()} | Channels: ${network.num_channels.toLocaleString()}`));
+    console.info(`   Avg Channel: ${(network.avg_channel_size / 1000000).toFixed(2)} MSAT | Total: ${(network.total_network_capacity / 1000000000).toFixed(0)} BTC`);
     
     // Channel health summary
     const activeChannels = channels.filter(ch => ch.active).length;
@@ -392,11 +392,11 @@ async function lightningPane() {
       ? channels.reduce((sum, ch) => sum + (ch.local_balance / ch.capacity) * 100, 0) / channels.length 
       : 0;
     
-    console.log("\n📈 HEALTH SUMMARY");
-    console.log(`   Active: ${activeChannels}/${channels.length} | Avg Local: ${avgLocalPct.toFixed(1)}%`);
-    console.log(`   ${generateBarChart(avgLocalPct, 100, 50)}`);
+    console.info("\n📈 HEALTH SUMMARY");
+    console.info(`   Active: ${activeChannels}/${channels.length} | Avg Local: ${avgLocalPct.toFixed(1)}%`);
+    console.info(`   ${generateBarChart(avgLocalPct, 100, 50)}`);
     
-    console.log(`
+    console.info(`
 Keys: p=pay r=receive o=open f=performance t=trends n=peers q=back
       ↑/↓=select`);
     
@@ -471,7 +471,7 @@ async function restartDevice(imageId: string) {
 // Execute ADB command
 async function execAdb(imageId: string, command: string) {
   const res = await dp<{output:string}>("/api/v1/cloudPhone/executeAdb", { image_id: imageId, command });
-  console.log(res.output);
+  console.info(res.output);
   return res.output;
 }
 
@@ -485,32 +485,32 @@ async function showAtlasInventory() {
   const inventory = AtlasSchema.getInventory();
 
   console.clear();
-  console.log(chalk.hex("#FF6B35").bold(`
+  console.info(chalk.hex("#FF6B35").bold(`
 ╔══════════════════════════════════════════════╗
 ║         📊 NEBULA ATLAS INVENTORY            ║
 ║        Device Lifecycle Management           ║
 ╚══════════════════════════════════════════════╝
 `));
 
-  console.log("┌──────────┬──────┬─────────┬──────────┬──────────┐");
-  console.log("│ Age days │ Count│ Active  │ Vol $k   │ Snaps    │");
-  console.log("├──────────┼──────┼─────────┼──────────┼──────────┤");
+  console.info("┌──────────┬──────┬─────────┬──────────┬──────────┐");
+  console.info("│ Age days │ Count│ Active  │ Vol $k   │ Snaps    │");
+  console.info("├──────────┼──────┼─────────┼──────────┼──────────┤");
 
   inventory.ageGroups.forEach(group => {
-    console.log(`│ ${group.range.padEnd(8)} │ ${group.count.toString().padStart(4)} │ ${group.active.toString().padStart(7)} │ ${(group.volume/1000).toFixed(1).padStart(8)} │ ${group.snaps.toString().padStart(8)} │`);
+    console.info(`│ ${group.range.padEnd(8)} │ ${group.count.toString().padStart(4)} │ ${group.active.toString().padStart(7)} │ ${(group.volume/1000).toFixed(1).padStart(8)} │ ${group.snaps.toString().padStart(8)} │`);
   });
 
-  console.log("└──────────┴──────┴─────────┴──────────┴──────────┘");
+  console.info("└──────────┴──────┴─────────┴──────────┴──────────┘");
 
   const lastExport = inventory.total.lastExport ?
     `${Math.floor((Date.now() - inventory.total.lastExport) / 60000)} min ago` : "never";
 
-  console.log("");
-  console.log(`Total Starlight-IDs: ${inventory.total.count.toLocaleString()}`);
-  console.log(`Total cold tarballs: ${inventory.total.coldExports.toLocaleString()} (encrypted)`);
-  console.log(`Last export: ${lastExport}`);
-  console.log("");
-  console.log(chalk.gray("Press any key to return to Device Commander..."));
+  console.info("");
+  console.info(`Total Starlight-IDs: ${inventory.total.count.toLocaleString()}`);
+  console.info(`Total cold tarballs: ${inventory.total.coldExports.toLocaleString()} (encrypted)`);
+  console.info(`Last export: ${lastExport}`);
+  console.info("");
+  console.info(chalk.gray("Press any key to return to Device Commander..."));
 
   // Wait for any key
   process.stdin.once('data', () => devicePane());
@@ -519,20 +519,20 @@ async function showAtlasInventory() {
 
 // ------- UI loop -------
 async function devicePane() {
-  if(!DUOPLUS_TOKEN) return console.log("⚠️  DUOPLUS_API_KEY missing");
+  if(!DUOPLUS_TOKEN) return console.info("⚠️  DUOPLUS_API_KEY missing");
   await listDevices();
   console.clear();
-  console.log(chalk.hex("#00FFAB").bold("\n🧬 Nebula Device Commander"));
-  console.log("┌────┬─────────────────────┬────────┬──────────────┐");
-  console.log("│Slot│ Name                │ Status │ IP           │");
-  console.log("├────┼─────────────────────┼────────┼──────────────┤");
+  console.info(chalk.hex("#00FFAB").bold("\n🧬 Nebula Device Commander"));
+  console.info("┌────┬─────────────────────┬────────┬──────────────┐");
+  console.info("│Slot│ Name                │ Status │ IP           │");
+  console.info("├────┼─────────────────────┼────────┼──────────────┤");
   devices.forEach((d,i)=>{
     const mark = i===selected ? ">" : " ";
-    console.log(`│${mark}${i.toString().padEnd(2)}│ ${d.name.padEnd(19)} │ ${d.status.padEnd(6)} │ ${d.ip.padEnd(12)} │`);
+    console.info(`│${mark}${i.toString().padEnd(2)}│ ${d.name.padEnd(19)} │ ${d.status.padEnd(6)} │ ${d.ip.padEnd(12)} │`);
   });
-  console.log("└────┴─────────────────────┴────────┴──────────────┘");
-  console.log("Keys: d=list c=clone s=snap x=destroy p=push-env r=run l=logcat m=mass-flash(120) a=atlas-inventory q=back");
-  if(massJobs>0) console.log(chalk.yellow(`Mass-flash running… ${massJobs} left`));
+  console.info("└────┴─────────────────────┴────────┴──────────────┘");
+  console.info("Keys: d=list c=clone s=snap x=destroy p=push-env r=run l=logcat m=mass-flash(120) a=atlas-inventory q=back");
+  if(massJobs>0) console.info(chalk.yellow(`Mass-flash running… ${massJobs} left`));
 }
 
 // Input handling with proper raw mode
@@ -546,7 +546,7 @@ function setupInputHandler() {
   stdin.on('data', async (key: string) => {
     // Handle Ctrl+C
     if (key === '\u0003') {
-      console.log("\n👋 Shutting down dashboard...");
+      console.info("\n👋 Shutting down dashboard...");
       if (metricsInterval) clearInterval(metricsInterval);
       process.exit(0);
       return;
@@ -583,7 +583,7 @@ function setupInputHandler() {
         case 'p':
           if (devices[selected]) {
             await pushEnv(devices[selected].id);
-            console.log("✅ pushed");
+            console.info("✅ pushed");
             devicePane();
           }
           break;
@@ -602,7 +602,7 @@ function setupInputHandler() {
           break;
         case 'q':
           deviceManagerActive = false;
-          console.log(chalk.hex("#FF6B35").bold("\n⚡ Returned to Lightning Dashboard"));
+          console.info(chalk.hex("#FF6B35").bold("\n⚡ Returned to Lightning Dashboard"));
           break;
         case '\u001b[A': // Up arrow
           selected = Math.max(0, selected - 1);
@@ -639,7 +639,7 @@ function setupInputHandler() {
           await configPane();
           break;
         case 'q':
-          console.log("\n👋 Shutting down dashboard...");
+          console.info("\n👋 Shutting down dashboard...");
           if (metricsInterval) clearInterval(metricsInterval);
           process.exit(0);
           break;
@@ -649,7 +649,7 @@ function setupInputHandler() {
 }
 
 function showHelp() {
-  console.log(`
+  console.info(`
 \n  🎮 Keyboard Shortcuts
   ─────────────────────────────────────
   d - DuoPlus Device Manager (new pane)
@@ -671,7 +671,7 @@ async function cleanup() {
   if (cleanupPerformed) return;
   cleanupPerformed = true;
   
-  console.log("\n🧹 Cleaning up resources...");
+  console.info("\n🧹 Cleaning up resources...");
   
   // Close all WebSocket connections
   for (const ws of activeWebSockets) {
@@ -687,21 +687,21 @@ async function cleanup() {
     metricsInterval = null;
   }
   
-  console.log("✅ Cleanup complete. Goodbye!");
+  console.info("✅ Cleanup complete. Goodbye!");
 }
 
 // Signal handlers for graceful shutdown
 function setupSignalHandlers() {
   // Handle Ctrl+C
   process.on("SIGINT", async () => {
-    console.log("\n👋 Received SIGINT (Ctrl+C)");
+    console.info("\n👋 Received SIGINT (Ctrl+C)");
     await cleanup();
     process.exit(0);
   });
   
   // Handle termination signals
   process.on("SIGTERM", async () => {
-    console.log("\n👋 Received SIGTERM");
+    console.info("\n👋 Received SIGTERM");
     await cleanup();
     process.exit(0);
   });
@@ -724,9 +724,9 @@ function setupSignalHandlers() {
 setTimeout(() => {
   setupSignalHandlers();
   setupInputHandler();
-  console.log(chalk.hex("#00FFAB").bold("\n🧬 Nebula Device Commander ready - Press 'd' to activate"));
-  console.log("Keys: d=devices l=lightning k=config r=rebalance c=consolidate s=stats h=help q=quit");
-  console.log("💡 Press Ctrl+C to exit gracefully");
+  console.info(chalk.hex("#00FFAB").bold("\n🧬 Nebula Device Commander ready - Press 'd' to activate"));
+  console.info("Keys: d=devices l=lightning k=config r=rebalance c=consolidate s=stats h=help q=quit");
+  console.info("💡 Press Ctrl+C to exit gracefully");
 }, 1000);
 
 /**
@@ -775,14 +775,14 @@ export async function rebalanceChannels(): Promise<void> {
   const lightning = LightningService.getInstance();
   try {
     const balance = await lightning.getNodeBalance();
-    console.log("🔄 Rebalancing channels...");
+    console.info("🔄 Rebalancing channels...");
     
     // Use proper type guard instead of any
     if (typeof (lightning as any).rebalanceChannels === 'function') {
       await (lightning as any).rebalanceChannels(balance);
-      console.log("✅ Rebalance initiated");
+      console.info("✅ Rebalance initiated");
     } else {
-      console.log("⚠️  Rebalancing not implemented in LightningService");
+      console.info("⚠️  Rebalancing not implemented in LightningService");
     }
   } catch (error) {
     console.error("❌ Rebalance failed:", error);
@@ -796,13 +796,13 @@ export async function consolidateFunds(): Promise<void> {
   const lightning = LightningService.getInstance();
   try {
     const balance = await lightning.getNodeBalance();
-    console.log("💰 Consolidating funds...");
+    console.info("💰 Consolidating funds...");
     
     if (typeof (lightning as any).consolidateToSavings === 'function') {
       await (lightning as any).consolidateToSavings(balance.local);
-      console.log("✅ Consolidation completed");
+      console.info("✅ Consolidation completed");
     } else {
-      console.log("⚠️  Consolidation not implemented in LightningService");
+      console.info("⚠️  Consolidation not implemented in LightningService");
     }
   } catch (error) {
     console.error("❌ Consolidation failed:", error);
@@ -820,7 +820,7 @@ export async function showStats(): Promise<void> {
     const balance = await lightning.getNodeBalance();
     const yieldData = await optimizer.getDailyYield();
     
-    console.log(`
+    console.info(`
 📊 Lightning Node Statistics
 ─────────────────────────────────────
 Channel Balance:

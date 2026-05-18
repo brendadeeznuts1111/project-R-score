@@ -164,9 +164,9 @@ async function scanDirectory(dirPath: string, options: LinkCheckOptions = {}): P
     }
   }
 
-  console.log(`🔍 Scanning directory: ${dirPath}`);
+  console.info(`🔍 Scanning directory: ${dirPath}`);
   scanRecursive(dirPath);
-  console.log(`📋 Found ${results.length} URLs to check`);
+  console.info(`📋 Found ${results.length} URLs to check`);
 
   return results;
 }
@@ -175,14 +175,14 @@ async function checkLinks(results: LinkResult[], options: LinkCheckOptions = {})
   const { timeout = 10000 } = options;
   const updatedResults: LinkResult[] = [];
 
-  console.log(`\n🌐 Checking ${results.length} links (timeout: ${timeout}ms)...`);
+  console.info(`\n🌐 Checking ${results.length} links (timeout: ${timeout}ms)...`);
 
   // Process in batches to avoid overwhelming
   const batchSize = 5;
   for (let i = 0; i < results.length; i += batchSize) {
     const batch = results.slice(i, i + batchSize);
     const batchPromises = batch.map(async (result) => {
-      console.log(`  Checking: ${result.url} (${result.file}:${result.line})`);
+      console.info(`  Checking: ${result.url} (${result.file}:${result.line})`);
       const checkResult = await checkUrl(result.url, options);
       return { ...result, ...checkResult };
     });
@@ -205,48 +205,48 @@ function printResults(results: LinkResult[]): void {
   const errors = results.filter(r => r.status === 'error');
   const valid = results.filter(r => r.status === 'valid');
 
-  console.log('\n📊 Link Check Results:');
-  console.log('='.repeat(50));
-  console.log(`✅ Valid links: ${valid.length}`);
-  console.log(`❌ Broken links: ${broken.length}`);
-  console.log(`⏱️  Timeouts: ${timeouts.length}`);
-  console.log(`💥 Errors: ${errors.length}`);
-  console.log(`📋 Total checked: ${results.length}`);
+  console.info('\n📊 Link Check Results:');
+  console.info('='.repeat(50));
+  console.info(`✅ Valid links: ${valid.length}`);
+  console.info(`❌ Broken links: ${broken.length}`);
+  console.info(`⏱️  Timeouts: ${timeouts.length}`);
+  console.info(`💥 Errors: ${errors.length}`);
+  console.info(`📋 Total checked: ${results.length}`);
 
   if (broken.length > 0) {
-    console.log('\n❌ BROKEN LINKS:');
-    console.log('-'.repeat(30));
+    console.info('\n❌ BROKEN LINKS:');
+    console.info('-'.repeat(30));
     broken.forEach(result => {
-      console.log(`  ${result.url}`);
-      console.log(`    File: ${result.file}:${result.line}`);
-      console.log(`    Status: ${result.statusCode || 'Unknown'}`);
-      console.log('');
+      console.info(`  ${result.url}`);
+      console.info(`    File: ${result.file}:${result.line}`);
+      console.info(`    Status: ${result.statusCode || 'Unknown'}`);
+      console.info('');
     });
   }
 
   if (timeouts.length > 0) {
-    console.log('\n⏱️  TIMEOUTS:');
-    console.log('-'.repeat(30));
+    console.info('\n⏱️  TIMEOUTS:');
+    console.info('-'.repeat(30));
     timeouts.forEach(result => {
-      console.log(`  ${result.url}`);
-      console.log(`    File: ${result.file}:${result.line}`);
-      console.log('');
+      console.info(`  ${result.url}`);
+      console.info(`    File: ${result.file}:${result.line}`);
+      console.info('');
     });
   }
 
   if (errors.length > 0) {
-    console.log('\n💥 ERRORS:');
-    console.log('-'.repeat(30));
+    console.info('\n💥 ERRORS:');
+    console.info('-'.repeat(30));
     errors.forEach(result => {
-      console.log(`  ${result.url}`);
-      console.log(`    File: ${result.file}:${result.line}`);
-      console.log(`    Error: ${result.error}`);
-      console.log('');
+      console.info(`  ${result.url}`);
+      console.info(`    File: ${result.file}:${result.line}`);
+      console.info(`    Error: ${result.error}`);
+      console.info('');
     });
   }
 
   if (valid.length > 0 && broken.length === 0) {
-    console.log('\n🎉 All checked links are valid!');
+    console.info('\n🎉 All checked links are valid!');
   }
 }
 
@@ -267,17 +267,17 @@ async function main() {
         options.includeLocalhost = true;
         break;
       case '--help':
-        console.log('Usage: bun run link-checker.ts [options]');
-        console.log('');
-        console.log('Options:');
-        console.log('  --timeout <ms>       Request timeout (default: 10000)');
-        console.log('  --include-localhost  Include localhost URLs in check');
-        console.log('  --help               Show this help');
-        console.log('');
-        console.log('Excludes by default:');
-        console.log('  - Localhost/private IPs');
-        console.log('  - Example.com domains');
-        console.log('  - Wildcard patterns');
+        console.info('Usage: bun run link-checker.ts [options]');
+        console.info('');
+        console.info('Options:');
+        console.info('  --timeout <ms>       Request timeout (default: 10000)');
+        console.info('  --include-localhost  Include localhost URLs in check');
+        console.info('  --help               Show this help');
+        console.info('');
+        console.info('Excludes by default:');
+        console.info('  - Localhost/private IPs');
+        console.info('  - Example.com domains');
+        console.info('  - Wildcard patterns');
         return;
     }
   }

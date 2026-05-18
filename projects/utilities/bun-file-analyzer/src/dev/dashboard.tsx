@@ -24,12 +24,12 @@ export const DevDashboard = () => {
     refresh();
     
     // Log colorful dev info (browser compatible)
-    console.log("%c=== Bun Dev Dashboard ===", "color: #e67e22; font-size: 16px");
-    console.log(
+    console.info("%c=== Bun Dev Dashboard ===", "color: #e67e22; font-size: 16px");
+    console.info(
       `%cBun v${stats.bunVersion}`, 
       "color: #3b82f6" 
     );
-    console.log(
+    console.info(
       `%cHMR: ${import.meta.hot ? "enabled" : "disabled"}`,
       `color: ${import.meta.hot ? "#22c55e" : "#ef4444"}` 
     );

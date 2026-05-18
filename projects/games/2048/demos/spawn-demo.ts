@@ -3,12 +3,12 @@
 // Demonstrate Bun.spawn with stderr capture and postMessage
 import { colourKit } from "./quantum-toolkit-patch.ts";
 
-console.log("🚀 Bun.spawn() + postMessage Demo");
-console.log("=".repeat(40));
+console.info("🚀 Bun.spawn() + postMessage Demo");
+console.info("=".repeat(40));
 
 // Example 1: Spawn with stderr capture
 async function spawnWithStderr() {
-  console.log("\n📡 Spawning process with stderr capture...");
+  console.info("\n📡 Spawning process with stderr capture...");
 
   const proc = Bun.spawn(["ls", "/nonexistent"], {
     stderr: "pipe",
@@ -19,16 +19,16 @@ async function spawnWithStderr() {
   const stderr = await proc.stderr.text();
   const exitCode = await proc.exited;
 
-  console.log(`Exit code: ${exitCode}`);
-  if (stdout) console.log(`stdout: ${stdout}`);
-  if (stderr) console.log(`stderr: ${colourKit(0.8).ansi}${stderr}\x1b[0m`);
+  console.info(`Exit code: ${exitCode}`);
+  if (stdout) console.info(`stdout: ${stdout}`);
+  if (stderr) console.info(`stderr: ${colourKit(0.8).ansi}${stderr}\x1b[0m`);
 
   return { exitCode, stdout, stderr };
 }
 
 // Example 2: Spawn performance test with error handling
 async function spawnPerfTest() {
-  console.log("\n⚡ Performance test with stderr monitoring...");
+  console.info("\n⚡ Performance test with stderr monitoring...");
 
   const results = [];
   const testCount = 50;
@@ -47,7 +47,7 @@ async function spawnPerfTest() {
     results.push({ duration, exitCode, stderr });
 
     if (stderr) {
-      console.log(`⚠️ Unexpected stderr on iteration ${i}: ${stderr}`);
+      console.info(`⚠️ Unexpected stderr on iteration ${i}: ${stderr}`);
     }
   }
 
@@ -55,9 +55,9 @@ async function spawnPerfTest() {
     results.reduce((sum, r) => sum + r.duration, 0) / results.length;
   const maxDuration = Math.max(...results.map((r) => r.duration));
 
-  console.log(`Average spawn time: ${avgDuration.toFixed(3)}ms`);
-  console.log(`Max spawn time: ${maxDuration.toFixed(3)}ms`);
-  console.log(
+  console.info(`Average spawn time: ${avgDuration.toFixed(3)}ms`);
+  console.info(`Max spawn time: ${maxDuration.toFixed(3)}ms`);
+  console.info(
     `Success rate: ${
       results.filter((r) => r.exitCode === 0).length
     }/${testCount}`
@@ -68,7 +68,7 @@ async function spawnPerfTest() {
 
 // Example 3: postMessage between workers
 async function postMessageDemo() {
-  console.log("\n📨 postMessage demo...");
+  console.info("\n📨 postMessage demo...");
 
   // Create a simple worker script as a string
   const workerCode = `
@@ -105,22 +105,22 @@ async function postMessageDemo() {
   const message2 = { type: "calculate", data: { numbers: [1, 2, 3, 4, 5] } };
 
   // For demo purposes, we'll simulate the response
-  console.log(`Sent: ${JSON.stringify(message1)}`);
-  console.log(`Sent: ${JSON.stringify(message2)}`);
+  console.info(`Sent: ${JSON.stringify(message1)}`);
+  console.info(`Sent: ${JSON.stringify(message2)}`);
 
   const stderr = await worker.stderr.text();
   if (stderr) {
-    console.log(`Worker stderr: ${stderr}`);
+    console.info(`Worker stderr: ${stderr}`);
   }
 
   // Clean up
   await worker.exited;
-  console.log("✅ Worker demo completed");
+  console.info("✅ Worker demo completed");
 }
 
 // Example 4: Bun.file operations with error handling
 async function bunFileDemo() {
-  console.log("\n📁 Bun.file operations demo...");
+  console.info("\n📁 Bun.file operations demo...");
 
   try {
     // Read current file
@@ -128,8 +128,8 @@ async function bunFileDemo() {
     const content = await currentFile.text();
     const size = await currentFile.size;
 
-    console.log(`Current file size: ${size} bytes`);
-    console.log(`Line count: ${content.split("\n").length}`);
+    console.info(`Current file size: ${size} bytes`);
+    console.info(`Line count: ${content.split("\n").length}`);
 
     // Write to new file with error handling
     const newContent = `// Generated at ${new Date().toISOString()}\n${content.slice(
@@ -138,9 +138,9 @@ async function bunFileDemo() {
     )}...`;
     await Bun.write("./spawn-demo-backup.ts", newContent);
 
-    console.log("✅ File operations completed");
+    console.info("✅ File operations completed");
   } catch (error) {
-    console.log(`❌ File error: ${error.message}`);
+    console.info(`❌ File error: ${error.message}`);
   }
 }
 
@@ -152,9 +152,9 @@ async function runDemos() {
     await postMessageDemo();
     await bunFileDemo();
 
-    console.log("\n🎉 All demos completed successfully!");
+    console.info("\n🎉 All demos completed successfully!");
   } catch (error) {
-    console.log(`❌ Demo error: ${error.message}`);
+    console.info(`❌ Demo error: ${error.message}`);
   }
 }
 

@@ -187,14 +187,14 @@ export const renderSecretMatrix = async (profile: string): Promise<void> => {
   const config = getProjectConfig(profile);
 
   // Header with dynamic HSL coloring
-  console.log(`${c.cyan}${c.bold}🔐 Secret Status Matrix${c.reset}`);
-  console.log(`${c.dim}Profile: ${c.reset}${c.bold}${profile}${c.reset}`);
-  console.log(`${c.dim}Namespace: ${c.reset}${BUN_PROFILES_DEFAULT_NAMESPACE}`);
+  console.info(`${c.cyan}${c.bold}🔐 Secret Status Matrix${c.reset}`);
+  console.info(`${c.dim}Profile: ${c.reset}${c.bold}${profile}${c.reset}`);
+  console.info(`${c.dim}Namespace: ${c.reset}${BUN_PROFILES_DEFAULT_NAMESPACE}`);
   
   // PERFORMANCE FIX: Pre-compute static strings
   const HSL_PREFIX = "HSL: hue+";
   const HSL_SUFFIX = `, sat×${config.saturationMod}, light×${config.lightnessMod}`;
-  console.log(`${applyHsl(180 + config.hueShift, config.saturationMod * 100, config.lightnessMod * 50)}${HSL_PREFIX}${config.hueShift}${HSL_SUFFIX}${c.reset}\n`);
+  console.info(`${applyHsl(180 + config.hueShift, config.saturationMod * 100, config.lightnessMod * 50)}${HSL_PREFIX}${config.hueShift}${HSL_SUFFIX}${c.reset}\n`);
 
   // Table data
   const tableData = statuses.map(s => ({
@@ -213,7 +213,7 @@ export const renderSecretMatrix = async (profile: string): Promise<void> => {
   });
 
   // Render table with color and width-aware alignment
-  console.log(Bun.inspect.table(tableData, BUN_SECRET_STATUS_COLUMNS, { colors: true }));
+  console.info(Bun.inspect.table(tableData, BUN_SECRET_STATUS_COLUMNS, { colors: true }));
 
   // Summary
   const found = statuses.filter(s => s.overall === "success").length;
@@ -222,14 +222,14 @@ export const renderSecretMatrix = async (profile: string): Promise<void> => {
   const total = statuses.length;
 
   const elapsed = (nanoseconds() - start) / 1e6;
-  console.log(`\n${c.cyan}Summary: ${c.green}${found} found${c.reset}, ${c.yellow}${warning} in-env-only${c.reset}, ${c.red}${error} missing${c.reset} (${c.dim}${elapsed.toFixed(2)}ms${c.reset})`);
+  console.info(`\n${c.cyan}Summary: ${c.green}${found} found${c.reset}, ${c.yellow}${warning} in-env-only${c.reset}, ${c.red}${error} missing${c.reset} (${c.dim}${elapsed.toFixed(2)}ms${c.reset})`);
 
   if (warning > 0) {
-    console.log(`\n${c.yellow}⚠️ Run 'bun run profiles.ts keychain-migrate ${profile}' to migrate env secrets to keychain${c.reset}`);
+    console.info(`\n${c.yellow}⚠️ Run 'bun run profiles.ts keychain-migrate ${profile}' to migrate env secrets to keychain${c.reset}`);
   }
 
   if (error > 0) {
-    console.log(`${c.red}Critical: Missing secrets detected${c.reset}`);
+    console.info(`${c.red}Critical: Missing secrets detected${c.reset}`);
     // SAFE FIX: Use static line number instead of unreliable stack parsing
     const editorLine = 216; // Static line number for error location
     Bun.openInEditor(import.meta.url, { line: editorLine });
@@ -248,7 +248,7 @@ export const renderSecretMatrix = async (profile: string): Promise<void> => {
     try {
       const html = `<h1>Secret Status Report</h1><table border="1"><tr>${BUN_SECRET_STATUS_COLUMNS.map(c => `<th>${escapeHTML(c)}</th>`).join('')}</tr>${tableData.map(row => `<tr>${Object.values(row).map(v => `<td>${escapeHTML(v)}</td>`).join('')}</tr>`).join('')}</table>`;
       await AtomicFileOperations.writeSafe("secrets-report.html", html);
-      console.log("Exported HTML report: secrets-report.html");
+      console.info("Exported HTML report: secrets-report.html");
     } catch (error) {
       console.error(`${c.red}Failed to export HTML report: ${error instanceof Error ? error.message : 'Unknown error'}${c.reset}`);
     }
@@ -259,7 +259,7 @@ export const renderSecretMatrix = async (profile: string): Promise<void> => {
     try {
       const plain = stripANSI(Bun.inspect.table(tableData, BUN_SECRET_STATUS_COLUMNS).toString());
       await AtomicFileOperations.writeSafe("secrets-plain.txt", plain);
-      console.log("Exported plain text: secrets-plain.txt");
+      console.info("Exported plain text: secrets-plain.txt");
     } catch (error) {
       console.error(`${c.red}Failed to export plain text report: ${error instanceof Error ? error.message : 'Unknown error'}${c.reset}`);
     }
@@ -268,7 +268,7 @@ export const renderSecretMatrix = async (profile: string): Promise<void> => {
   // Project-Specific: Scan & validate bunfig.toml configs
   try {
     const projectConfigs = await scanProjectConfigs(".");
-    console.log(`\n${c.cyan}Scanned ${projectConfigs.length} project configs${c.reset}`);
+    console.info(`\n${c.cyan}Scanned ${projectConfigs.length} project configs${c.reset}`);
     if (projectConfigs.length > 0) {
       const baselineConfig = {}; // Load baseline
       // CRITICAL FIX 2: Correct function name
@@ -286,7 +286,7 @@ export const renderSecretMatrix = async (profile: string): Promise<void> => {
     const exampleProjectDir = "./projects/my-app";
     const resolved = resolveProjectModule(exampleProjectDir, "zod");
     if (resolved) {
-      console.log(`\n${c.cyan}Resolved module in project:${c.reset} ${resolved}`);
+      console.info(`\n${c.cyan}Resolved module in project:${c.reset} ${resolved}`);
     }
   } catch (error) {
     console.warn(`${c.yellow}Failed to resolve project module: ${error.message}${c.reset}`);
@@ -343,6 +343,6 @@ if (import.meta.main) {
       process.exit(1);
     }
   } else {
-    console.log("Usage: bun run service-color-secrets.ts [matrix] --profile=<name>");
+    console.info("Usage: bun run service-color-secrets.ts [matrix] --profile=<name>");
   }
 }

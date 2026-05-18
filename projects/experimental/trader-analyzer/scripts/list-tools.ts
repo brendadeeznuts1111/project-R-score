@@ -64,8 +64,8 @@ async function listTools(): Promise<void> {
 
 	const tools = server.listTools();
 
-	console.log(colors.brightCyan("╔═══ NEXUS MCP TOOLS ═══╗\n"));
-	console.log(`${colors.green("Total Tools:")} ${colors.brightWhite(tools.length.toString())}\n`);
+	console.info(colors.brightCyan("╔═══ NEXUS MCP TOOLS ═══╗\n"));
+	console.info(`${colors.green("Total Tools:")} ${colors.brightWhite(tools.length.toString())}\n`);
 
 	// Group tools by category
 	const categories = new Map<string, typeof tools>();
@@ -90,22 +90,22 @@ async function listTools(): Promise<void> {
 
 	// Display by category
 	for (const [category, categoryTools] of categories.entries()) {
-		console.log(colors.brightYellow(`\n${category} (${categoryTools.length})`));
-		console.log(colors.gray("─".repeat(60)));
+		console.info(colors.brightYellow(`\n${category} (${categoryTools.length})`));
+		console.info(colors.gray("─".repeat(60)));
 
 		for (const tool of categoryTools) {
-			console.log(`\n${colors.brightGreen(tool.name)}`);
-			console.log(`  ${colors.gray(tool.description)}`);
-			console.log(`  ${colors.cyan("Parameters:")}`);
-			console.log(formatSchema(tool.inputSchema));
+			console.info(`\n${colors.brightGreen(tool.name)}`);
+			console.info(`  ${colors.gray(tool.description)}`);
+			console.info(`  ${colors.cyan("Parameters:")}`);
+			console.info(formatSchema(tool.inputSchema));
 		}
 	}
 
-	console.log(`\n${colors.gray("─".repeat(60))}`);
-	console.log(`\n${colors.yellow("Usage:")}`);
-	console.log(`  ${colors.gray("bun run mcp-server")} - Start MCP server`);
-	console.log(`  ${colors.gray("bun run list-tools")} - List all tools`);
-	console.log(`  ${colors.gray("bun run dashboard")} - View tools in dashboard\n`);
+	console.info(`\n${colors.gray("─".repeat(60))}`);
+	console.info(`\n${colors.yellow("Usage:")}`);
+	console.info(`  ${colors.gray("bun run mcp-server")} - Start MCP server`);
+	console.info(`  ${colors.gray("bun run list-tools")} - List all tools`);
+	console.info(`  ${colors.gray("bun run dashboard")} - View tools in dashboard\n`);
 }
 
 // Run if executed directly

@@ -20,10 +20,10 @@ export class IdentityShadowKernel {
   public static async inject(): Promise<ShadowIdentity> {
     const identity = this.generateRandomIdentity();
     
-    console.log("🧬  IdentityShadowKernel: Injecting randomized hardware identifiers...");
-    console.log(`📱  IMEI: ${identity.imei}`);
-    console.log(`📡  Baseband: ${identity.baseband}`);
-    console.log(`🐧  Kernel: ${identity.kernelVersion}`);
+    console.info("🧬  IdentityShadowKernel: Injecting randomized hardware identifiers...");
+    console.info(`📱  IMEI: ${identity.imei}`);
+    console.info(`📡  Baseband: ${identity.baseband}`);
+    console.info(`🐧  Kernel: ${identity.kernelVersion}`);
 
     // In a production agent startup, this would write to the appropriate DuoPlus
     // native bridge or environment variables used by the sub-processes.

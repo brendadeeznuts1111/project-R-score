@@ -610,16 +610,16 @@ class UltimateEnhancedTableDemoWithWidth {
             }
         ];
 
-        console.log('🎯 Ultimate Enhanced Table with StringWidth Integration');
-        console.log('='.repeat(80));
+        console.info('🎯 Ultimate Enhanced Table with StringWidth Integration');
+        console.info('='.repeat(80));
 
         // 1. String Width Analysis
-        console.log('\n📏 String Width Analysis:');
+        console.info('\n📏 String Width Analysis:');
         this.demonstrateStringWidthAnalysis(sampleData);
 
         // 2. Enhanced Colors with Width Optimization
-        console.log('\n🎨 Enhanced Colors with Width Optimization:');
-        console.log(Bun.inspect.table(sampleData, {
+        console.info('\n🎨 Enhanced Colors with Width Optimization:');
+        console.info(Bun.inspect.table(sampleData, {
             colors: {
                 header: (index: number) => ["\x1b[38;5;196m", "\x1b[38;5;214m", "\x1b[38;5;226m"][index % 3],
                 border: "\x1b[38;5;240m",
@@ -635,8 +635,8 @@ class UltimateEnhancedTableDemoWithWidth {
         }));
 
         // 3. Smart Formatting with String Width
-        console.log('\n🛠️ Smart Formatting with String Width:');
-        console.log(AdvancedFormattingWithWidth.createWidthOptimizedTable(sampleData, [
+        console.info('\n🛠️ Smart Formatting with String Width:');
+        console.info(AdvancedFormattingWithWidth.createWidthOptimizedTable(sampleData, [
             {
                 condition: 'column',
                 target: 'metrics.score',
@@ -657,29 +657,29 @@ class UltimateEnhancedTableDemoWithWidth {
         }));
 
         // 4. Width-Aware Responsive Tables
-        console.log('\n📱 Width-Aware Responsive Tables:');
-        console.log(ResponsiveTableGeneratorWithWidth.createWidthAwareTable(sampleData, { colors: true }));
+        console.info('\n📱 Width-Aware Responsive Tables:');
+        console.info(ResponsiveTableGeneratorWithWidth.createWidthAwareTable(sampleData, { colors: true }));
 
         // 5. Smart Table Manager with String Width
-        console.log('\n🧠 Smart Table Manager with String Width:');
+        console.info('\n🧠 Smart Table Manager with String Width:');
         const smartManager = new SmartTableManagerWithWidth(sampleData, {
             autoResize: true,
             enableStringWidth: true,
             colorScheme: 'default',
             maxColumns: 4
         });
-        console.log(smartManager.generateTable());
+        console.info(smartManager.generateTable());
 
         // 6. Width Optimization Analysis
-        console.log('\n📊 Width Optimization Analysis:');
+        console.info('\n📊 Width Optimization Analysis:');
         this.demonstrateWidthOptimization(smartManager);
 
         // 7. Performance with String Width
-        console.log('\n⚡ Performance with String Width:');
+        console.info('\n⚡ Performance with String Width:');
         this.demonstratePerformanceWithWidth();
 
         // 8. Feature Summary
-        console.log('\n📈 Ultimate Feature Summary:');
+        console.info('\n📈 Ultimate Feature Summary:');
         this.displayUltimateFeatureSummary();
     }
 
@@ -687,8 +687,8 @@ class UltimateEnhancedTableDemoWithWidth {
         const columns = Object.keys(data[0]);
         const analysis = StringWidthAnalyzer.analyzeWidths(data, columns);
 
-        console.log(`Terminal Width: ${process.stdout.columns || 80}`);
-        console.log(`Total Content Width: ${analysis.totalWidth}`);
+        console.info(`Terminal Width: ${process.stdout.columns || 80}`);
+        console.info(`Total Content Width: ${analysis.totalWidth}`);
 
         const widthData = Object.entries(analysis.displayWidths).map(([col, width]) => ({
             column: col,
@@ -697,7 +697,7 @@ class UltimateEnhancedTableDemoWithWidth {
             efficiency: width > 20 ? 'Wide' : width < 8 ? 'Narrow' : 'Optimal'
         }));
 
-        console.log(Bun.inspect.table(widthData, ["column", "displayWidth", "contentWidth", "efficiency"], {
+        console.info(Bun.inspect.table(widthData, ["column", "displayWidth", "contentWidth", "efficiency"], {
             colors: true,
             compact: true,
             minWidth: 8,
@@ -717,8 +717,8 @@ class UltimateEnhancedTableDemoWithWidth {
         }));
 
         if (analysis.recommendations.length > 0) {
-            console.log('\n💡 Width Recommendations:');
-            analysis.recommendations.forEach(rec => console.log(`   • ${rec}`));
+            console.info('\n💡 Width Recommendations:');
+            analysis.recommendations.forEach(rec => console.info(`   • ${rec}`));
         }
     }
 
@@ -738,7 +738,7 @@ class UltimateEnhancedTableDemoWithWidth {
             savingsPercent: Math.round(((original - (optimized[col] || original)) / original) * 100)
         }));
 
-        console.log(Bun.inspect.table(optimizationData, ["column", "originalWidth", "optimizedWidth", "savings", "savingsPercent"], {
+        console.info(Bun.inspect.table(optimizationData, ["column", "originalWidth", "optimizedWidth", "savings", "savingsPercent"], {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -796,7 +796,7 @@ class UltimateEnhancedTableDemoWithWidth {
             }
         ];
 
-        console.log(Bun.inspect.table(performanceData, ["method", "time", "features", "widthOptimized"], {
+        console.info(Bun.inspect.table(performanceData, ["method", "time", "features", "widthOptimized"], {
             colors: true,
             compact: false,
             minWidth: 10,
@@ -857,7 +857,7 @@ class UltimateEnhancedTableDemoWithWidth {
             }
         ];
 
-        console.log(Bun.inspect.table(featureData, ["feature", "implemented", "performance", "widthOptimized"], {
+        console.info(Bun.inspect.table(featureData, ["feature", "implemented", "performance", "widthOptimized"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",

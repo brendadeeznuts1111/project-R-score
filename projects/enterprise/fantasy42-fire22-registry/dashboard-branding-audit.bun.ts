@@ -414,13 +414,13 @@ ${auditResults
 ];
 
 async function uploadDashboards() {
-  console.log('🚀 Starting Fire22 Registry Upload...');
-  console.log('📊 Dashboard Compliance Summary:');
-  console.log('=====================================');
+  console.info('🚀 Starting Fire22 Registry Upload...');
+  console.info('📊 Dashboard Compliance Summary:');
+  console.info('=====================================');
 
-${auditResults.map(result => `  console.log('📄 ${result.file}: ${result.summary.score}% (${result.summary.critical} critical, ${result.summary.major} major, ${result.summary.minor} minor)');`).join('\n')}
+${auditResults.map(result => `  console.info('📄 ${result.file}: ${result.summary.score}% (${result.summary.critical} critical, ${result.summary.major} major, ${result.summary.minor} minor)');`).join('\n')}
 
-  console.log('\\n📤 Uploading dashboards to R2...');
+  console.info('\\n📤 Uploading dashboards to R2...');
 
   for (const dashboard of DASHBOARDS_TO_UPLOAD) {
     try {
@@ -432,17 +432,17 @@ ${auditResults.map(result => `  console.log('📄 ${result.file}: ${result.summa
       });
 
       if (uploadResult.ok) {
-        console.log('✅ Uploaded:', dashboard.key);
+        console.info('✅ Uploaded:', dashboard.key);
       } else {
-        console.log('❌ Failed to upload:', dashboard.key);
+        console.info('❌ Failed to upload:', dashboard.key);
       }
     } catch (error) {
       console.error('❌ Upload error for', dashboard.key, ':', error.message);
     }
   }
 
-  console.log('\\n🎉 Registry upload complete!');
-  console.log('🔗 Access your dashboards at: https://registry.fire22.dev/dashboards/');
+  console.info('\\n🎉 Registry upload complete!');
+  console.info('🔗 Access your dashboards at: https://registry.fire22.dev/dashboards/');
 }
 
 uploadDashboards().catch(console.error);
@@ -453,8 +453,8 @@ uploadDashboards().catch(console.error);
 
 // Main Execution
 async function main() {
-  console.log('🎨 Fire22 Dashboard Branding Audit');
-  console.log('===================================\n');
+  console.info('🎨 Fire22 Dashboard Branding Audit');
+  console.info('===================================\n');
 
   // Find all HTML dashboards
   const dashboardFiles = await Array.fromAsync(
@@ -464,36 +464,36 @@ async function main() {
     })
   );
 
-  console.log(`📁 Found ${dashboardFiles.length} HTML files to audit\n`);
+  console.info(`📁 Found ${dashboardFiles.length} HTML files to audit\n`);
 
   // Audit each dashboard
   const auditResults: Array<Awaited<ReturnType<typeof auditDashboard>>> = [];
 
   for (const file of dashboardFiles.slice(0, 10)) {
     // Limit for demo
-    console.log(`🔍 Auditing: ${file}`);
+    console.info(`🔍 Auditing: ${file}`);
     try {
       const result = await auditDashboard(file);
       auditResults.push(result);
 
-      console.log(
+      console.info(
         `   📊 Score: ${result.summary.score}% (${result.summary.passed}/${result.summary.totalRules} rules passed)`
       );
       if (result.summary.critical > 0) {
-        console.log(`   🚨 Critical Issues: ${result.summary.critical}`);
+        console.info(`   🚨 Critical Issues: ${result.summary.critical}`);
       }
       if (result.summary.major > 0) {
-        console.log(`   ⚠️  Major Issues: ${result.summary.major}`);
+        console.info(`   ⚠️  Major Issues: ${result.summary.major}`);
       }
-      console.log('');
+      console.info('');
     } catch (error) {
       console.error(`❌ Failed to audit ${file}:`, error.message);
     }
   }
 
   // Generate comprehensive report
-  console.log('📋 Audit Summary Report');
-  console.log('=======================\n');
+  console.info('📋 Audit Summary Report');
+  console.info('=======================\n');
 
   const totalFiles = auditResults.length;
   const avgScore = Math.round(
@@ -503,15 +503,15 @@ async function main() {
   const totalMajor = auditResults.reduce((sum, r) => sum + r.summary.major, 0);
   const compliantFiles = auditResults.filter(r => r.summary.critical === 0).length;
 
-  console.log(`📊 Overall Statistics:`);
-  console.log(`   Total Files Audited: ${totalFiles}`);
-  console.log(`   Average Compliance Score: ${avgScore}%`);
-  console.log(`   Fully Compliant Files: ${compliantFiles}/${totalFiles}`);
-  console.log(`   Total Critical Issues: ${totalCritical}`);
-  console.log(`   Total Major Issues: ${totalMajor}\n`);
+  console.info(`📊 Overall Statistics:`);
+  console.info(`   Total Files Audited: ${totalFiles}`);
+  console.info(`   Average Compliance Score: ${avgScore}%`);
+  console.info(`   Fully Compliant Files: ${compliantFiles}/${totalFiles}`);
+  console.info(`   Total Critical Issues: ${totalCritical}`);
+  console.info(`   Total Major Issues: ${totalMajor}\n`);
 
   // Top issues
-  console.log(`🚨 Top Issues Found:`);
+  console.info(`🚨 Top Issues Found:`);
   const allIssues: Array<{ file: string; rule: string; severity: string; message: string }> = [];
 
   auditResults.forEach(result => {
@@ -533,25 +533,25 @@ async function main() {
 
   allIssues.slice(0, 10).forEach((issue, index) => {
     const icon = issue.severity === 'critical' ? '🚨' : issue.severity === 'major' ? '⚠️' : 'ℹ️';
-    console.log(`   ${index + 1}. ${icon} ${issue.file}: ${issue.rule} (${issue.severity})`);
-    console.log(`      ${issue.message}`);
+    console.info(`   ${index + 1}. ${icon} ${issue.file}: ${issue.rule} (${issue.severity})`);
+    console.info(`      ${issue.message}`);
   });
 
-  console.log('\n🎯 Recommendations:');
-  console.log('   1. Address all critical accessibility issues immediately');
-  console.log('   2. Standardize color usage across all dashboards');
-  console.log('   3. Implement consistent typography using brand fonts');
-  console.log('   4. Add responsive design improvements');
-  console.log('   5. Optimize performance with asset minification');
+  console.info('\n🎯 Recommendations:');
+  console.info('   1. Address all critical accessibility issues immediately');
+  console.info('   2. Standardize color usage across all dashboards');
+  console.info('   3. Implement consistent typography using brand fonts');
+  console.info('   4. Add responsive design improvements');
+  console.info('   5. Optimize performance with asset minification');
 
   // Generate R2 upload script
   const uploadScript = generateRegistryUploadScript(auditResults);
   await Bun.write('./registry-upload.bun.ts', uploadScript);
 
-  console.log('\n📤 Generated R2 Registry Upload Script: ./registry-upload.bun.ts');
-  console.log('   Run with: bun run registry-upload.bun.ts');
+  console.info('\n📤 Generated R2 Registry Upload Script: ./registry-upload.bun.ts');
+  console.info('   Run with: bun run registry-upload.bun.ts');
 
-  console.log('\n✅ Branding audit complete!');
+  console.info('\n✅ Branding audit complete!');
 
   return {
     auditResults,

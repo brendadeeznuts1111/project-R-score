@@ -82,17 +82,17 @@ if (feature("PREMIUM")) {
     }
   });
 
-  console.log(`🚀 Cash App Priority API Server running on port ${PORT}`);
-  console.log('📊 Available endpoints:');
-  console.log('  POST /api/cashapp/qr - Generate Cash App QR code');
-  console.log('  POST /api/cashapp/sessions - Create Cash App payment session');
-  console.log('  GET  /api/cashapp/sessions/:id - Verify Cash App payment');
-  console.log('  POST /api/family/sponsor - Create family sponsorship');
-  console.log('  GET  /api/family/sponsor/:id - Get sponsorship status');
-  console.log('  POST /api/family/sponsor/:id/approve - Approve sponsorship');
-  console.log('  POST /api/venmo/business/payment - Create Venmo payment');
-  console.log('  POST /api/business/create - Create business account');
-  console.log('  POST /api/business/:id/verify - Verify business account');
+  console.info(`🚀 Cash App Priority API Server running on port ${PORT}`);
+  console.info('📊 Available endpoints:');
+  console.info('  POST /api/cashapp/qr - Generate Cash App QR code');
+  console.info('  POST /api/cashapp/sessions - Create Cash App payment session');
+  console.info('  GET  /api/cashapp/sessions/:id - Verify Cash App payment');
+  console.info('  POST /api/family/sponsor - Create family sponsorship');
+  console.info('  GET  /api/family/sponsor/:id - Get sponsorship status');
+  console.info('  POST /api/family/sponsor/:id/approve - Approve sponsorship');
+  console.info('  POST /api/venmo/business/payment - Create Venmo payment');
+  console.info('  POST /api/business/create - Create business account');
+  console.info('  POST /api/business/:id/verify - Verify business account');
 }
 
 // Cash App QR Code Generation
@@ -198,7 +198,7 @@ async function handleFamilySponsorship(req: Request): Promise<Response> {
     sponsorships.set(sponsorshipId, sponsorship);
     
     // Simulate sending approval email to guardian
-    console.log(`📧 Approval email sent to ${body.guardianEmail} for sponsorship ${sponsorshipId}`);
+    console.info(`📧 Approval email sent to ${body.guardianEmail} for sponsorship ${sponsorshipId}`);
     
     return Response.json({
       sponsorshipId,
@@ -247,7 +247,7 @@ async function handleFamilyApproval(sponsorshipId: string): Promise<Response> {
     
     sponsorships.set(sponsorshipId, sponsorship);
     
-    console.log(`✅ Family sponsorship ${sponsorshipId} approved by guardian`);
+    console.info(`✅ Family sponsorship ${sponsorshipId} approved by guardian`);
     
     return Response.json({
       status: 'active',

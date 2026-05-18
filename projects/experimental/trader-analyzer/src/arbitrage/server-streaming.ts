@@ -107,10 +107,10 @@ const server = Bun.serve({
 	},
 });
 
-console.log(
+console.info(
 	`[STREAMING][ZSTD][${oddsStream["bookies"].length}-BOOKIES][STATUS:LIVE]`,
 );
-console.log(`Server running on http://localhost:${server.port}`);
+console.info(`Server running on http://localhost:${server.port}`);
 
 // Start continuous streaming
 oddsStream.start(100); // 100ms cycles

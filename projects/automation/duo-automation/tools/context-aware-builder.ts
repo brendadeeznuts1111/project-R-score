@@ -47,10 +47,10 @@ class ContextAwareBuilder {
    */
   async build(config: BuildConfig): Promise<BuildResult> {
     const startTime = Date.now();
-    console.log(`🚀 Starting context-aware build...`);
-    console.log(`📁 Tokens: ${config.tokens.join(', ')}`);
-    console.log(`🎯 Context: ${config.context}`);
-    console.log(`⚡ Optimization: ${config.optimization}`);
+    console.info(`🚀 Starting context-aware build...`);
+    console.info(`📁 Tokens: ${config.tokens.join(', ')}`);
+    console.info(`🎯 Context: ${config.context}`);
+    console.info(`⚡ Optimization: ${config.optimization}`);
 
     try {
       // Analyze context and dependencies
@@ -77,9 +77,9 @@ class ContextAwareBuilder {
         warnings: optimizedResult.warnings
       };
 
-      console.log(`✅ Build completed in ${duration}ms`);
-      console.log(`📊 Built ${result.files.length} files`);
-      console.log(`🔧 Applied ${result.optimizations.length} optimizations`);
+      console.info(`✅ Build completed in ${duration}ms`);
+      console.info(`📊 Built ${result.files.length} files`);
+      console.info(`🔧 Applied ${result.optimizations.length} optimizations`);
 
       return result;
 
@@ -103,7 +103,7 @@ class ContextAwareBuilder {
    * Analyze project context for build optimization
    */
   private async analyzeContext(config: BuildConfig): Promise<any> {
-    console.log(`🔍 Analyzing context...`);
+    console.info(`🔍 Analyzing context...`);
 
     // Query context engine for relevant files
     const contextQuery = {
@@ -115,8 +115,8 @@ class ContextAwareBuilder {
 
     const contextResult = await this.contextEngine.queryContext(contextQuery);
     
-    console.log(`📋 Found ${contextResult.files.length} relevant files`);
-    console.log(`🎯 Context coverage: ${contextResult.metadata.coverage.join(', ')}`);
+    console.info(`📋 Found ${contextResult.files.length} relevant files`);
+    console.info(`🎯 Context coverage: ${contextResult.metadata.coverage.join(', ')}`);
 
     return contextResult;
   }
@@ -250,7 +250,7 @@ class ContextAwareBuilder {
    * Execute build process
    */
   private async executeBuild(targets: string[], config: BuildConfig): Promise<any> {
-    console.log(`🔨 Building ${targets.length} files...`);
+    console.info(`🔨 Building ${targets.length} files...`);
 
     const result: any = {
       files: [],
@@ -411,7 +411,7 @@ class ContextAwareBuilder {
    * Apply additional optimizations
    */
   private async applyOptimizations(buildResult: any, config: BuildConfig): Promise<any> {
-    console.log(`🔧 Applying final optimizations...`);
+    console.info(`🔧 Applying final optimizations...`);
 
     // Bundle optimization
     if (config.optimization === 'ai-driven') {
@@ -484,28 +484,28 @@ if (import.meta.main) {
       };
 
       builder.build(config).then(result => {
-        console.log('\n📊 Build Summary:');
-        console.log(`Status: ${result.success ? '✅ Success' : '❌ Failed'}`);
-        console.log(`Duration: ${result.duration}ms`);
-        console.log(`Files: ${result.files.length}`);
-        console.log(`Optimizations: ${result.optimizations.join(', ')}`);
+        console.info('\n📊 Build Summary:');
+        console.info(`Status: ${result.success ? '✅ Success' : '❌ Failed'}`);
+        console.info(`Duration: ${result.duration}ms`);
+        console.info(`Files: ${result.files.length}`);
+        console.info(`Optimizations: ${result.optimizations.join(', ')}`);
         
         if (result.errors.length > 0) {
-          console.log('\n❌ Errors:');
-          result.errors.forEach(error => console.log(`  - ${error}`));
+          console.info('\n❌ Errors:');
+          result.errors.forEach(error => console.info(`  - ${error}`));
         }
       });
       break;
 
     case 'stats':
       builder.getBuildStats().then(stats => {
-        console.log('📊 Build Statistics:');
-        console.log(JSON.stringify(stats, null, 2));
+        console.info('📊 Build Statistics:');
+        console.info(JSON.stringify(stats, null, 2));
       });
       break;
 
     default:
-      console.log(`
+      console.info(`
 Context-Aware Build System
 
 Usage:

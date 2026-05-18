@@ -267,7 +267,7 @@ class QuickWinsScanner {
       const trimmed = line.trim();
       
       // Check for console.log in production
-      if (trimmed.includes('console.log(') || trimmed.includes('console.debug(')) {
+      if (trimmed.includes('console.info(') || trimmed.includes('console.debug(')) {
         issues.push({
           file: filePath,
           line: lineNum,
@@ -277,7 +277,7 @@ class QuickWinsScanner {
           description: 'Console statements should be removed or conditional',
           suggestion: 'Use proper logging library or conditional logging',
           estimatedImpact: 'Cleaner production builds',
-          implementation: `// Replace:\nconsole.log(data);\n// With:\nif (process.env.NODE_ENV === 'development') {\n  console.log(data);\n}`
+          implementation: `// Replace:\nconsole.log(data);\n// With:\nif (process.env.NODE_ENV === 'development') {\n  console.info(data);\n}`
         });
       }
       
@@ -303,7 +303,7 @@ class QuickWinsScanner {
   async runBenchmarks(): Promise<BenchmarkResult[]> {
     const benchmarks: BenchmarkResult[] = [];
     
-    console.log('🏃 Running performance benchmarks...');
+    console.info('🏃 Running performance benchmarks...');
     
     // Benchmark 1: File operations
     const testFile = 'benchmark-test.txt';
@@ -375,7 +375,7 @@ async function main() {
   };
   
   if (!options.scan) {
-    console.log(`
+    console.info(`
 🚀 Quick Wins AB Test - Codebase Optimization Scanner
 
 Usage:
@@ -396,7 +396,7 @@ Options:
   const scanner = new QuickWinsScanner();
   const startTime = performance.now();
   
-  console.log('🔍 Scanning codebase for optimization opportunities...');
+  console.info('🔍 Scanning codebase for optimization opportunities...');
   
   const issues = await scanner.scanDirectory(process.cwd(), options);
   const benchmarks = options.test ? await scanner.runBenchmarks() : undefined;
@@ -422,52 +422,52 @@ Options:
   
   if (options.json) {
     await writeFile('quick-wins-report.json', JSON.stringify(report, null, 2));
-    console.log('📄 Report saved to quick-wins-report.json');
+    console.info('📄 Report saved to quick-wins-report.json');
   }
   
   // Display results
-  console.log(`\n📊 Scan completed in ${scanTime.toFixed(2)}ms\n`);
+  console.info(`\n📊 Scan completed in ${scanTime.toFixed(2)}ms\n`);
   
-  console.log('📈 Summary:');
-  console.log(`   Files scanned: ${report.summary.totalFiles}`);
-  console.log(`   Total issues: ${report.summary.totalIssues}`);
-  console.log(`   Critical: ${report.summary.criticalIssues} 🔴`);
-  console.log(`   High: ${report.summary.highIssues} 🟠`);
-  console.log(`   Medium: ${report.summary.mediumIssues} 🟡`);
-  console.log(`   Low: ${report.summary.lowIssues} 🟢`);
-  console.log(`   Estimated savings: ${report.summary.estimatedSavings}`);
+  console.info('📈 Summary:');
+  console.info(`   Files scanned: ${report.summary.totalFiles}`);
+  console.info(`   Total issues: ${report.summary.totalIssues}`);
+  console.info(`   Critical: ${report.summary.criticalIssues} 🔴`);
+  console.info(`   High: ${report.summary.highIssues} 🟠`);
+  console.info(`   Medium: ${report.summary.mediumIssues} 🟡`);
+  console.info(`   Low: ${report.summary.lowIssues} 🟢`);
+  console.info(`   Estimated savings: ${report.summary.estimatedSavings}`);
   
   if (issues.length > 0) {
-    console.log('\n🎯 Top Issues:');
+    console.info('\n🎯 Top Issues:');
     issues.slice(0, 5).forEach((issue, index) => {
       const severityIcon = issue.severity === 'critical' ? '🔴' : 
                           issue.severity === 'high' ? '🟠' : 
                           issue.severity === 'medium' ? '🟡' : '🟢';
-      console.log(`   ${index + 1}. ${severityIcon} ${issue.title}`);
-      console.log(`      📁 ${issue.file}:${issue.line}`);
-      console.log(`      💡 ${issue.suggestion}`);
-      console.log(`      📈 ${issue.estimatedImpact}`);
+      console.info(`   ${index + 1}. ${severityIcon} ${issue.title}`);
+      console.info(`      📁 ${issue.file}:${issue.line}`);
+      console.info(`      💡 ${issue.suggestion}`);
+      console.info(`      📈 ${issue.estimatedImpact}`);
     });
     
     if (issues.length > 5) {
-      console.log(`   ... and ${issues.length - 5} more issues`);
+      console.info(`   ... and ${issues.length - 5} more issues`);
     }
   }
   
   if (benchmarks && benchmarks.length > 0) {
-    console.log('\n🏃 Benchmark Results:');
+    console.info('\n🏃 Benchmark Results:');
     benchmarks.forEach(benchmark => {
       const improvementIcon = parseFloat(benchmark.improvementPercent) > 0 ? '📈' : '📉';
-      console.log(`   ${improvementIcon} ${benchmark.optimization}`);
-      console.log(`      Before: ${benchmark.before.toFixed(2)}${benchmark.unit}`);
-      console.log(`      After: ${benchmark.after.toFixed(2)}${benchmark.unit}`);
-      console.log(`      Improvement: ${benchmark.improvementPercent}`);
+      console.info(`   ${improvementIcon} ${benchmark.optimization}`);
+      console.info(`      Before: ${benchmark.before.toFixed(2)}${benchmark.unit}`);
+      console.info(`      After: ${benchmark.after.toFixed(2)}${benchmark.unit}`);
+      console.info(`      Improvement: ${benchmark.improvementPercent}`);
     });
   }
   
-  console.log('\n💡 Recommendations:');
+  console.info('\n💡 Recommendations:');
   recommendations.forEach((rec, index) => {
-    console.log(`   ${index + 1}. ${rec}`);
+    console.info(`   ${index + 1}. ${rec}`);
   });
   
   // Exit with error code if critical issues found

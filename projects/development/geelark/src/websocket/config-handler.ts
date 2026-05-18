@@ -113,8 +113,8 @@ export function createConfigAwareServer(options: {
   // Start heartbeat interval
   startHeartbeat();
 
-  console.log(`🔌 WebSocket server listening on ws://${options.hostname || "0.0.0.0"}:${options.port}`);
-  console.log(`   Subprotocol: ${SUBPROTOCOL}`);
+  console.info(`🔌 WebSocket server listening on ws://${options.hostname || "0.0.0.0"}:${options.port}`);
+  console.info(`   Subprotocol: ${SUBPROTOCOL}`);
 
   return server;
 }
@@ -139,7 +139,7 @@ function handleWebSocketUpgrade(req: Request, server: Server): Response | undefi
   const config = extractConfigFromHeaders(req.headers);
   const requestId = req.headers.get(HEADERS.REQUEST_ID);
 
-  console.log(`[${requestId}] WebSocket upgrade request with config:`, config);
+  console.info(`[${requestId}] WebSocket upgrade request with config:`, config);
 
   // Upgrade connection
   const success = server.upgrade(req, {
@@ -164,7 +164,7 @@ function handleWebSocketUpgrade(req: Request, server: Server): Response | undefi
  */
 function handleWebSocketOpen(ws: WebSocket): void {
   const data = ws.data as WebSocketData;
-  console.log(`[${data.id}] WebSocket connected (total clients: ${clients.size + 1})`);
+  console.info(`[${data.id}] WebSocket connected (total clients: ${clients.size + 1})`);
 
   // Store client data
   clients.set(ws, data);
@@ -206,7 +206,7 @@ function handleWebSocketOpen(ws: WebSocket): void {
       },
     });
 
-    console.log(`[${data.id}] Terminal spawned with PTY (12ns attach)`);
+    console.info(`[${data.id}] Terminal spawned with PTY (12ns attach)`);
   }
 }
 
@@ -286,7 +286,7 @@ function handleConfigUpdate(ws: WebSocket, frame: Uint8Array): void {
   const data = ws.data as WebSocketData;
   const { field, value } = decodeConfigUpdate(frame);
 
-  console.log(`[${data.id}] Config update: ${field} = 0x${value.toString(16)}`);
+  console.info(`[${data.id}] Config update: ${field} = 0x${value.toString(16)}`);
 
   // Update local config
   updateConfigState({ [field]: value });
@@ -315,7 +315,7 @@ function handleFeatureToggle(ws: WebSocket, frame: Uint8Array): void {
   const flagIndex = (value >> 1) & 0x1FFFFFFF;
   const enabled = (value & 1) === 1;
 
-  console.log(`[${data.id}] Feature toggle: flag ${flagIndex} = ${enabled ? "ON" : "OFF"}`);
+  console.info(`[${data.id}] Feature toggle: flag ${flagIndex} = ${enabled ? "ON" : "OFF"}`);
 
   // Update feature flags
   const currentConfig = getConfigState();
@@ -343,7 +343,7 @@ function handleTerminalResize(ws: WebSocket, frame: Uint8Array): void {
   const rows = (value >> 16) & 0xFF;
   const cols = value & 0xFF;
 
-  console.log(`[${data.id}] Terminal resize: ${cols}x${rows}`);
+  console.info(`[${data.id}] Terminal resize: ${cols}x${rows}`);
 
   // Update config
   updateConfigState({ rows, cols });
@@ -407,7 +407,7 @@ function handleBulkUpdate(ws: WebSocket, frame: Uint8Array): void {
     offset += 13;
   }
 
-  console.log(`[${data.id}] Bulk update: ${updates.length} fields`);
+  console.info(`[${data.id}] Bulk update: ${updates.length} fields`);
 
   // Apply updates
   const configState: Partial<ConfigState> = {};
@@ -428,7 +428,7 @@ function handleBulkUpdate(ws: WebSocket, frame: Uint8Array): void {
  */
 function handleWebSocketClose(ws: WebSocket, code: number, reason: string): void {
   const data = ws.data as WebSocketData;
-  console.log(`[${data.id}] WebSocket disconnected: ${code} ${reason}`);
+  console.info(`[${data.id}] WebSocket disconnected: ${code} ${reason}`);
 
   // Cleanup terminal
   if (data.terminal) {
@@ -491,7 +491,7 @@ function startHeartbeat(): void {
     for (const [ws, data] of clients) {
       // Check for timeout
       if (now - data.lastHeartbeat > timeout) {
-        console.log(`[${data.id}] Client timeout, closing`);
+        console.info(`[${data.id}] Client timeout, closing`);
         ws.close(1000, "Timeout");
         continue;
       }

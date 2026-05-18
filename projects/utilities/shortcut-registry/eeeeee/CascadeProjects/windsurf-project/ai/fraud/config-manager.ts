@@ -125,8 +125,8 @@ export class FeatureWeightManager {
 		// Save to storage
 		this.saveWeights();
 
-		console.log(`⚖️ Feature weights updated by ${updatedBy}`);
-		console.log(`   New weights:`, this.formatWeights(this.currentWeights));
+		console.info(`⚖️ Feature weights updated by ${updatedBy}`);
+		console.info(`   New weights:`, this.formatWeights(this.currentWeights));
 
 		if (validation.warnings.length > 0) {
 			console.warn(`   Warnings:`, validation.warnings);
@@ -208,7 +208,7 @@ export class FeatureWeightManager {
 			predictedScore: number;
 		}>,
 	): Promise<WeightOptimizationResult> {
-		console.log(
+		console.info(
 			`🧠 Optimizing weights based on ${performanceData.length} data points`,
 		);
 
@@ -238,11 +238,11 @@ export class FeatureWeightManager {
 			),
 		};
 
-		console.log(`🎯 Weight optimization complete`);
-		console.log(
+		console.info(`🎯 Weight optimization complete`);
+		console.info(
 			`   Expected accuracy improvement: ${(improvement.accuracy * 100).toFixed(2)}%`,
 		);
-		console.log(
+		console.info(
 			`   Expected FP rate reduction: ${(improvement.falsePositiveRate * 100).toFixed(2)}%`,
 		);
 
@@ -607,8 +607,8 @@ export class FeatureWeightManager {
 
 		this.abTestResults.set(testId, testConfig);
 
-		console.log(`🧪 A/B test started: ${testId}`);
-		console.log(
+		console.info(`🧪 A/B test started: ${testId}`);
+		console.info(
 			`   Traffic split: ${(trafficSplit * 100).toFixed(1)}% test, ${((1 - trafficSplit) * 100).toFixed(1)}% control`,
 		);
 
@@ -656,15 +656,15 @@ export class FeatureWeightManager {
 		const testAccuracy = test.results.testGroup.accuracy;
 		const controlAccuracy = test.results.controlGroup.accuracy;
 
-		console.log(`📊 A/B test ${testId} completed:`);
-		console.log(`   Test group accuracy: ${(testAccuracy * 100).toFixed(2)}%`);
-		console.log(
+		console.info(`📊 A/B test ${testId} completed:`);
+		console.info(`   Test group accuracy: ${(testAccuracy * 100).toFixed(2)}%`);
+		console.info(
 			`   Control group accuracy: ${(controlAccuracy * 100).toFixed(2)}%`,
 		);
 
 		// Apply winning weights
 		if (testAccuracy > controlAccuracy) {
-			console.log(`   ✅ Test group wins! Applying new weights.`);
+			console.info(`   ✅ Test group wins! Applying new weights.`);
 			this.updateWeights(
 				test.testWeights,
 				"ab_test",
@@ -673,7 +673,7 @@ export class FeatureWeightManager {
 			this.abTestResults.delete(testId);
 			return test.testWeights;
 		} else {
-			console.log(`   ❌ Control group wins. Keeping current weights.`);
+			console.info(`   ❌ Control group wins. Keeping current weights.`);
 			this.abTestResults.delete(testId);
 			return null;
 		}
@@ -714,7 +714,7 @@ export class FeatureWeightManager {
 				this.weightHistory = [...this.weightHistory, ...config.history];
 			}
 
-			console.log(`📥 Weights configuration imported successfully`);
+			console.info(`📥 Weights configuration imported successfully`);
 		} catch (error) {
 			console.error(`❌ Failed to import weights configuration:`, error);
 			throw error;
@@ -740,12 +740,12 @@ export class FeatureWeightManager {
 
 	private saveWeights(): void {
 		// In production, this would save to persistent storage
-		console.log(`💾 Weights saved to storage`);
+		console.info(`💾 Weights saved to storage`);
 	}
 
 	private loadWeightHistory(): void {
 		// In production, this would load from persistent storage
-		console.log(`📂 Weight history loaded`);
+		console.info(`📂 Weight history loaded`);
 	}
 }
 

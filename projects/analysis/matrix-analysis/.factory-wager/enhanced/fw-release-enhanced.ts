@@ -241,16 +241,16 @@ class EnhancedReleaseOrchestrator {
   async execute(): Promise<EnhancedReleaseResult> {
     const startTime = Date.now();
 
-    console.log(`🚀 FactoryWager Enhanced Release Orchestrator v2.0`);
-    console.log(`===================================================`);
-    console.log(`Release ID: ${this.releaseId}`);
-    console.log(`Version: ${this.config.version}`);
-    console.log(`Environment: ${this.config.environment.toUpperCase()}`);
-    console.log(`Strategy: ${this.config.strategy}`);
-    console.log(`AI Analysis: ${this.config.enableAI ? 'ENABLED' : 'DISABLED'}`);
-    console.log(`Predictive Analytics: ${this.config.enablePredictiveAnalytics ? 'ENABLED' : 'DISABLED'}`);
-    console.log(`Automated Optimization: ${this.config.enableAutomatedOptimization ? 'ENABLED' : 'DISABLED'}`);
-    console.log('');
+    console.info(`🚀 FactoryWager Enhanced Release Orchestrator v2.0`);
+    console.info(`===================================================`);
+    console.info(`Release ID: ${this.releaseId}`);
+    console.info(`Version: ${this.config.version}`);
+    console.info(`Environment: ${this.config.environment.toUpperCase()}`);
+    console.info(`Strategy: ${this.config.strategy}`);
+    console.info(`AI Analysis: ${this.config.enableAI ? 'ENABLED' : 'DISABLED'}`);
+    console.info(`Predictive Analytics: ${this.config.enablePredictiveAnalytics ? 'ENABLED' : 'DISABLED'}`);
+    console.info(`Automated Optimization: ${this.config.enableAutomatedOptimization ? 'ENABLED' : 'DISABLED'}`);
+    console.info('');
 
     await this.addAuditEntry('release', 'start', 'Enhanced release initiated', {
       releaseId: this.releaseId,
@@ -308,8 +308,8 @@ class EnhancedReleaseOrchestrator {
     const phase = this.createPhase('Pre-Release AI Analysis');
 
     try {
-      console.log(`📍 Phase 1: Pre-Release AI Analysis`);
-      console.log(`====================================`);
+      console.info(`📍 Phase 1: Pre-Release AI Analysis`);
+      console.info(`====================================`);
 
       if (this.config.enableAI) {
         // Run enhanced analysis with AI insights
@@ -350,10 +350,10 @@ class EnhancedReleaseOrchestrator {
           `enhanced-analysis-${Date.now()}.html`
         ];
 
-        console.log(`✅ AI Analysis completed - Risk: ${analysisResult.riskScore}/100, Predictive: ${analysisResult.predictiveRisk}/100`);
+        console.info(`✅ AI Analysis completed - Risk: ${analysisResult.riskScore}/100, Predictive: ${analysisResult.predictiveRisk}/100`);
       } else {
         phase.status = 'skipped';
-        console.log(`⏭️ AI Analysis skipped (disabled)`);
+        console.info(`⏭️ AI Analysis skipped (disabled)`);
       }
 
       phase.status = 'completed';
@@ -373,8 +373,8 @@ class EnhancedReleaseOrchestrator {
     const phase = this.createPhase('Enhanced Validation');
 
     try {
-      console.log(`📍 Phase 2: Enhanced Validation`);
-      console.log(`===============================`);
+      console.info(`📍 Phase 2: Enhanced Validation`);
+      console.info(`===============================`);
 
       // Run enhanced validation with ML insights
       const validator = new EnhancedFactoryWagerValidator(
@@ -389,9 +389,9 @@ class EnhancedReleaseOrchestrator {
       if (this.config.enableAutoFix && !validationResult.passed) {
         const autoFixableViolations = validationResult.violations.filter(v => v.autoFixable);
         if (autoFixableViolations.length > 0) {
-          console.log(`🔧 Applying auto-fix for ${autoFixableViolations.length} violations...`);
+          console.info(`🔧 Applying auto-fix for ${autoFixableViolations.length} violations...`);
           // In a real implementation, this would apply the fixes
-          console.log(`✅ Auto-fix applied successfully`);
+          console.info(`✅ Auto-fix applied successfully`);
 
           // Re-run validation after fixes
           validationResult = await validator.execute();
@@ -428,21 +428,21 @@ class EnhancedReleaseOrchestrator {
           throw new Error(`Enhanced validation failed with ${criticalNonFixableViolations.length} critical violations: ${criticalNonFixableViolations.map(v => v.message).join(', ')}`);
         } else if (autoFixableViolations.length > 0) {
           // Continue with warnings for auto-fixable violations (even if critical)
-          console.log(`⚠️ Validation completed with ${autoFixableViolations.length} auto-fixable violations`);
+          console.info(`⚠️ Validation completed with ${autoFixableViolations.length} auto-fixable violations`);
           if (this.config.enableAutoFix) {
-            console.log(`✅ Auto-fix applied for all auto-fixable violations`);
+            console.info(`✅ Auto-fix applied for all auto-fixable violations`);
           } else {
-            console.log(`   These can be resolved with: --auto-fix flag`);
+            console.info(`   These can be resolved with: --auto-fix flag`);
           }
           phase.status = 'completed'; // Mark as completed with warnings
         } else {
           // Non-critical violations, continue with warnings
-          console.log(`⚠️ Validation completed with ${validationResult.violations.length} non-critical violations`);
+          console.info(`⚠️ Validation completed with ${validationResult.violations.length} non-critical violations`);
           phase.status = 'completed'; // Mark as completed with warnings
         }
       }
 
-      console.log(`✅ Enhanced validation passed - ${validationResult.violations.length} recommendations generated`);
+      console.info(`✅ Enhanced validation passed - ${validationResult.violations.length} recommendations generated`);
 
       phase.status = 'completed';
       phase.endTime = Date.now();
@@ -461,8 +461,8 @@ class EnhancedReleaseOrchestrator {
     const phase = this.createPhase('Risk Assessment & Approval');
 
     try {
-      console.log(`📍 Phase 3: Risk Assessment & Approval`);
-      console.log(`======================================`);
+      console.info(`📍 Phase 3: Risk Assessment & Approval`);
+      console.info(`======================================`);
 
       const riskAssessment = await this.performRiskAssessment();
       phase.result = riskAssessment;
@@ -496,7 +496,7 @@ class EnhancedReleaseOrchestrator {
 
       // Auto-approval logic
       if (this.config.enableAutoApproval && compositeRisk < this.config.riskThreshold) {
-        console.log(`🤖 Auto-approval: Risk score ${compositeRisk} below threshold ${this.config.riskThreshold}`);
+        console.info(`🤖 Auto-approval: Risk score ${compositeRisk} below threshold ${this.config.riskThreshold}`);
         phase.recommendations.push('Auto-approved based on low risk score');
       } else {
         const approval = await this.requestHumanApproval(compositeRisk);
@@ -511,7 +511,7 @@ class EnhancedReleaseOrchestrator {
       phase.duration = phase.endTime - phase.startTime;
       phase.metrics.successRate = 100;
 
-      console.log(`✅ Risk assessment completed - Composite risk: ${compositeRisk}/100`);
+      console.info(`✅ Risk assessment completed - Composite risk: ${compositeRisk}/100`);
 
     } catch (error) {
       phase.status = 'failed';
@@ -526,8 +526,8 @@ class EnhancedReleaseOrchestrator {
     const phase = this.createPhase('AI-Enhanced Deployment');
 
     try {
-      console.log(`📍 Phase 4: AI-Enhanced Deployment`);
-      console.log(`================================`);
+      console.info(`📍 Phase 4: AI-Enhanced Deployment`);
+      console.info(`================================`);
 
       // Configure enhanced deployment
       const deploymentConfig: EnhancedDeploymentConfig = {
@@ -583,7 +583,7 @@ class EnhancedReleaseOrchestrator {
       phase.endTime = Date.now();
       phase.duration = phase.endTime - phase.startTime;
 
-      console.log(`✅ AI-enhanced deployment completed - Health: ${deploymentResult.finalHealthScore}/100`);
+      console.info(`✅ AI-enhanced deployment completed - Health: ${deploymentResult.finalHealthScore}/100`);
 
     } catch (error) {
       phase.status = 'failed';
@@ -598,8 +598,8 @@ class EnhancedReleaseOrchestrator {
     const phase = this.createPhase('Predictive Monitoring');
 
     try {
-      console.log(`📍 Phase 5: Predictive Monitoring`);
-      console.log(`===============================`);
+      console.info(`📍 Phase 5: Predictive Monitoring`);
+      console.info(`===============================`);
 
       if (this.config.enablePredictiveAnalytics) {
         const monitoringResults = await this.performPredictiveMonitoring();
@@ -622,10 +622,10 @@ class EnhancedReleaseOrchestrator {
         phase.recommendations = monitoringResults.recommendations;
         phase.artifacts = [`predictive-monitoring-${Date.now()}.json`];
 
-        console.log(`✅ Predictive monitoring completed - Anomalies: ${monitoringResults.anomalyDetection.anomalies.length}`);
+        console.info(`✅ Predictive monitoring completed - Anomalies: ${monitoringResults.anomalyDetection.anomalies.length}`);
       } else {
         phase.status = 'skipped';
-        console.log(`⏭️ Predictive monitoring skipped (disabled)`);
+        console.info(`⏭️ Predictive monitoring skipped (disabled)`);
       }
 
       phase.status = phase.status === 'skipped' ? 'skipped' : 'completed';
@@ -645,8 +645,8 @@ class EnhancedReleaseOrchestrator {
     const phase = this.createPhase('Business Impact Analysis');
 
     try {
-      console.log(`📍 Phase 6: Business Impact Analysis`);
-      console.log(`====================================`);
+      console.info(`📍 Phase 6: Business Impact Analysis`);
+      console.info(`====================================`);
 
       const businessImpact = await this.analyzeBusinessImpact();
       phase.result = businessImpact;
@@ -673,7 +673,7 @@ class EnhancedReleaseOrchestrator {
       phase.endTime = Date.now();
       phase.duration = phase.endTime - phase.startTime;
 
-      console.log(`✅ Business impact analysis completed - ROI: ${businessImpact.expectedROI}%`);
+      console.info(`✅ Business impact analysis completed - ROI: ${businessImpact.expectedROI}%`);
 
     } catch (error) {
       phase.status = 'failed';
@@ -688,8 +688,8 @@ class EnhancedReleaseOrchestrator {
     const phase = this.createPhase('Post-Release Optimization');
 
     try {
-      console.log(`📍 Phase 7: Post-Release Optimization`);
-      console.log(`====================================`);
+      console.info(`📍 Phase 7: Post-Release Optimization`);
+      console.info(`====================================`);
 
       if (this.config.enableAutomatedOptimization) {
         const optimizationResults = await this.performPostReleaseOptimization();
@@ -712,10 +712,10 @@ class EnhancedReleaseOrchestrator {
         phase.recommendations = optimizationResults.recommendations;
         phase.artifacts = [`post-release-optimization-${Date.now()}.json`];
 
-        console.log(`✅ Post-release optimization completed - ${optimizationResults.optimizationsApplied} optimizations applied`);
+        console.info(`✅ Post-release optimization completed - ${optimizationResults.optimizationsApplied} optimizations applied`);
       } else {
         phase.status = 'skipped';
-        console.log(`⏭️ Post-release optimization skipped (disabled)`);
+        console.info(`⏭️ Post-release optimization skipped (disabled)`);
       }
 
       phase.status = phase.status === 'skipped' ? 'skipped' : 'completed';
@@ -930,8 +930,8 @@ class EnhancedReleaseOrchestrator {
   }
 
   private async requestHumanApproval(riskScore: number): Promise<boolean> {
-    console.log(`🤝 Requesting human approval for risk score: ${riskScore}/100`);
-    console.log(`   Type "APPROVE" to continue: ___________________________________`);
+    console.info(`🤝 Requesting human approval for risk score: ${riskScore}/100`);
+    console.info(`   Type "APPROVE" to continue: ___________________________________`);
 
     // In a real implementation, this would wait for actual input
     // For demo purposes, we'll auto-approve if risk is reasonable
@@ -988,9 +988,9 @@ class EnhancedReleaseOrchestrator {
     const htmlPath = `.factory-wager/releases/enhanced-release-${this.releaseId}.html`;
     writeFileSync(htmlPath, htmlReport);
 
-    console.log(`📄 Enhanced release reports generated:`);
-    console.log(`   JSON: ${reportPath}`);
-    console.log(`   HTML: ${htmlPath}`);
+    console.info(`📄 Enhanced release reports generated:`);
+    console.info(`   JSON: ${reportPath}`);
+    console.info(`   HTML: ${htmlPath}`);
   }
 
   private generateHTMLReleaseDashboard(result: EnhancedReleaseResult): string {
@@ -1108,63 +1108,63 @@ class EnhancedReleaseOrchestrator {
       this.stakeholderNotifications.push(`Slack notification posted to #releases`);
       this.stakeholderNotifications.push(`Dashboard updated with release results`);
 
-      console.log(`📧 Stakeholder notifications sent (${this.stakeholderNotifications.length})`);
+      console.info(`📧 Stakeholder notifications sent (${this.stakeholderNotifications.length})`);
     }
   }
 
   private printReleaseResults(result: EnhancedReleaseResult): void {
-    console.log(`\n🎉 Enhanced Release Results:`);
-    console.log(`============================`);
+    console.info(`\n🎉 Enhanced Release Results:`);
+    console.info(`============================`);
 
-    console.log(`Release ID: ${result.releaseId}`);
-    console.log(`Version: ${result.config.version}`);
-    console.log(`Overall Status: ${result.overallStatus.toUpperCase()}`);
-    console.log(`Total Duration: ${(result.totalDuration / 1000 / 60).toFixed(2)} minutes`);
-    console.log(`Final Risk Score: ${result.finalRiskScore}/100`);
+    console.info(`Release ID: ${result.releaseId}`);
+    console.info(`Version: ${result.config.version}`);
+    console.info(`Overall Status: ${result.overallStatus.toUpperCase()}`);
+    console.info(`Total Duration: ${(result.totalDuration / 1000 / 60).toFixed(2)} minutes`);
+    console.info(`Final Risk Score: ${result.finalRiskScore}/100`);
 
-    console.log(`\n📊 Phase Summary:`);
+    console.info(`\n📊 Phase Summary:`);
     result.phases.forEach(phase => {
       const status = phase.status === 'completed' ? '✅' : phase.status === 'failed' ? '❌' : phase.status === 'skipped' ? '⏭️' : '⏳';
-      console.log(`   ${status} ${phase.name}: ${phase.duration ? `${phase.duration}ms` : 'N/A'} (Risk: ${phase.metrics.riskScore}/100)`);
+      console.info(`   ${status} ${phase.name}: ${phase.duration ? `${phase.duration}ms` : 'N/A'} (Risk: ${phase.metrics.riskScore}/100)`);
     });
 
-    console.log(`\n🤖 AI Analysis Summary:`);
-    console.log(`   Success Probability: ${100 - result.aiAnalysis.riskPrediction.overallRisk}%`);
-    console.log(`   Performance Gain: ${result.aiAnalysis.performancePrediction.expectedPerformanceGain}%`);
-    console.log(`   Rollback Probability: ${result.aiAnalysis.rollbackPrediction.rollbackProbability}%`);
-    console.log(`   Optimization Opportunities: ${result.aiAnalysis.optimizationOpportunities.length}`);
+    console.info(`\n🤖 AI Analysis Summary:`);
+    console.info(`   Success Probability: ${100 - result.aiAnalysis.riskPrediction.overallRisk}%`);
+    console.info(`   Performance Gain: ${result.aiAnalysis.performancePrediction.expectedPerformanceGain}%`);
+    console.info(`   Rollback Probability: ${result.aiAnalysis.rollbackPrediction.rollbackProbability}%`);
+    console.info(`   Optimization Opportunities: ${result.aiAnalysis.optimizationOpportunities.length}`);
 
-    console.log(`\n💼 Business Impact:`);
-    console.log(`   Expected ROI: ${result.businessMetrics.expectedROI}%`);
-    console.log(`   Cost Savings: $${result.businessMetrics.costSavings.toLocaleString()}`);
-    console.log(`   Performance Improvement: ${result.businessMetrics.performanceImprovement}%`);
-    console.log(`   Risk Reduction: ${result.businessMetrics.riskReduction}%`);
+    console.info(`\n💼 Business Impact:`);
+    console.info(`   Expected ROI: ${result.businessMetrics.expectedROI}%`);
+    console.info(`   Cost Savings: $${result.businessMetrics.costSavings.toLocaleString()}`);
+    console.info(`   Performance Improvement: ${result.businessMetrics.performanceImprovement}%`);
+    console.info(`   Risk Reduction: ${result.businessMetrics.riskReduction}%`);
 
-    console.log(`\n🛡️ Compliance Status:`);
-    console.log(`   Overall Score: ${result.complianceReport.overallScore}/100`);
-    console.log(`   Audit Ready: ${result.complianceReport.auditReadiness ? 'Yes' : 'No'}`);
-    console.log(`   Violations: ${result.complianceReport.violations.length}`);
+    console.info(`\n🛡️ Compliance Status:`);
+    console.info(`   Overall Score: ${result.complianceReport.overallScore}/100`);
+    console.info(`   Audit Ready: ${result.complianceReport.auditReadiness ? 'Yes' : 'No'}`);
+    console.info(`   Violations: ${result.complianceReport.violations.length}`);
 
-    console.log(`\n👥 Stakeholder Impact:`);
-    console.log(`   Users Affected: ${result.stakeholderImpact.usersAffected.toLocaleString()}`);
-    console.log(`   Business Impact: ${result.stakeholderImpact.businessImpact}`);
-    console.log(`   Revenue Impact: $${result.stakeholderImpact.revenueImpact.toLocaleString()}`);
+    console.info(`\n👥 Stakeholder Impact:`);
+    console.info(`   Users Affected: ${result.stakeholderImpact.usersAffected.toLocaleString()}`);
+    console.info(`   Business Impact: ${result.stakeholderImpact.businessImpact}`);
+    console.info(`   Revenue Impact: $${result.stakeholderImpact.revenueImpact.toLocaleString()}`);
 
     if (result.recommendations.length > 0) {
-      console.log(`\n💡 Top Recommendations:`);
+      console.info(`\n💡 Top Recommendations:`);
       result.recommendations.slice(0, 3).forEach((rec, index) => {
-        console.log(`   ${index + 1}. [${rec.priority.toUpperCase()}] ${rec.title}`);
-        console.log(`      ${rec.description}`);
+        console.info(`   ${index + 1}. [${rec.priority.toUpperCase()}] ${rec.title}`);
+        console.info(`      ${rec.description}`);
       });
     }
 
-    console.log(`\n📦 Generated Artifacts: ${result.artifacts.length}`);
+    console.info(`\n📦 Generated Artifacts: ${result.artifacts.length}`);
     result.artifacts.forEach(artifact => {
-      console.log(`   📄 ${artifact.name} (${artifact.type})`);
+      console.info(`   📄 ${artifact.name} (${artifact.type})`);
     });
 
-    console.log(`\n📋 Audit Trail: ${result.auditTrail.length} entries logged`);
-    console.log(`📧 Notifications: ${this.stakeholderNotifications.length} sent`);
+    console.info(`\n📋 Audit Trail: ${result.auditTrail.length} entries logged`);
+    console.info(`📧 Notifications: ${this.stakeholderNotifications.length} sent`);
   }
 
   private async handleReleaseError(error: Error, startTime: number): Promise<void> {

@@ -45,11 +45,11 @@ async function runInteractiveDemo(input: string[]): Promise<{ stdout: string; st
 
 describe('Interactive Demo Tests', () => {
     beforeAll(() => {
-        console.log('🎮 Starting Interactive Demo Tests...');
+        console.info('🎮 Starting Interactive Demo Tests...');
     });
 
     afterAll(() => {
-        console.log('✅ Interactive demo tests completed');
+        console.info('✅ Interactive demo tests completed');
     });
 
     describe('Demo Functions', () => {

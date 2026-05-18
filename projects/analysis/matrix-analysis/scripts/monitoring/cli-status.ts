@@ -304,7 +304,7 @@ async function main() {
   }
   
   // Watch mode (default)
-  console.log(Colors.dim + "Starting status monitor... (press 'q' to quit)" + Colors.reset);
+  console.info(Colors.dim + "Starting status monitor... (press 'q' to quit)" + Colors.reset);
   await new Promise(r => setTimeout(r, 1000));
   
   let running = true;
@@ -317,7 +317,7 @@ async function main() {
     if (char === "q" || char === "\u0003") { // q or Ctrl+C
       running = false;
       clearScreen();
-      console.log(Colors.green + "Status monitor stopped." + Colors.reset);
+      console.info(Colors.green + "Status monitor stopped." + Colors.reset);
       process.exit(0);
     } else if (char === "r") {
       // Force refresh

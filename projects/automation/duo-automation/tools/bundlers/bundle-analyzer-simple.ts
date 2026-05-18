@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // 📦 DuoPlus Bundle Matrix Analyzer - Simple Version
 
-console.log(`
+console.info(`
 📦 DuoPlus Bundle Matrix Analyzer
 ====================================
 
@@ -31,7 +31,7 @@ Press Ctrl+C to stop
 
 // Simple demo of bundle analysis
 async function demoBundleAnalysis() {
-  console.log('\n🧪 Running bundle analysis demo...\n');
+  console.info('\n🧪 Running bundle analysis demo...\n');
   
   const testFiles = {
     '/main.ts': `
@@ -39,8 +39,8 @@ async function demoBundleAnalysis() {
       import { config } from './config.ts';
       
       export function main() {
-        console.log(greet('Bundle Analyzer'));
-        console.log('Config:', config);
+        console.info(greet('Bundle Analyzer'));
+        console.info('Config:', config);
       }
     `,
     '/utils.ts': `
@@ -75,44 +75,44 @@ async function demoBundleAnalysis() {
       return;
     }
     
-    console.log('✅ Build successful!');
-    console.log('📊 Bundle Analysis Results:');
-    console.log('===========================');
+    console.info('✅ Build successful!');
+    console.info('📊 Bundle Analysis Results:');
+    console.info('===========================');
     
     // Analyze the metafile
     const metafile = result.metafile;
     const inputs = Object.entries(metafile.inputs);
     const outputs = Object.entries(metafile.outputs);
     
-    console.log(`📁 Total Input Files: ${inputs.length}`);
-    console.log(`📦 Total Output Files: ${outputs.length}`);
+    console.info(`📁 Total Input Files: ${inputs.length}`);
+    console.info(`📦 Total Output Files: ${outputs.length}`);
     
     let totalBytes = 0;
     outputs.forEach(([path, output]: [string, any]) => {
       totalBytes += output.bytes;
-      console.log(`📄 ${path}: ${formatBytes(output.bytes)}`);
+      console.info(`📄 ${path}: ${formatBytes(output.bytes)}`);
     });
     
-    console.log(`💾 Total Bundle Size: ${formatBytes(totalBytes)}`);
+    console.info(`💾 Total Bundle Size: ${formatBytes(totalBytes)}`);
     
     // Analyze dependencies
-    console.log('\n🔗 Dependency Analysis:');
+    console.info('\n🔗 Dependency Analysis:');
     inputs.forEach(([path, input]: [string, any]) => {
-      console.log(`📁 ${path}:`);
-      console.log(`   Size: ${formatBytes(input.bytes)}`);
-      console.log(`   Imports: ${input.imports?.length || 0}`);
-      console.log(`   Exports: ${input.exports?.length || 0}`);
+      console.info(`📁 ${path}:`);
+      console.info(`   Size: ${formatBytes(input.bytes)}`);
+      console.info(`   Imports: ${input.imports?.length || 0}`);
+      console.info(`   Exports: ${input.exports?.length || 0}`);
     });
     
     // Tension analysis
-    console.log('\n🎯 Tension Analysis:');
+    console.info('\n🎯 Tension Analysis:');
     inputs.forEach(([path, input]: [string, any]) => {
       const tension = calculateTension(input);
       const health = getHealthForTension(tension);
-      console.log(`📁 ${path}: ${tension}% tension (${health})`);
+      console.info(`📁 ${path}: ${tension}% tension (${health})`);
     });
     
-    console.log('\n🎉 Bundle analysis completed!');
+    console.info('\n🎉 Bundle analysis completed!');
     
   } catch (error) {
     console.error('❌ Analysis failed:', error);

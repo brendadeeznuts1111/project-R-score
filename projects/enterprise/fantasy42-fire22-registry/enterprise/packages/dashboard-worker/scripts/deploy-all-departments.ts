@@ -54,18 +54,18 @@ class Fire22BulkDeployment {
   async deployAll(options: BulkDeployOptions = {}): Promise<void> {
     const startTime = Bun.nanoseconds();
 
-    console.log('🌐 Fire22 Bulk Department Deployment System');
-    console.log('!==!==!==!==!==!==!==!==');
+    console.info('🌐 Fire22 Bulk Department Deployment System');
+    console.info('!==!==!==!==!==!==!==!==');
 
     const env = options.environment || 'development';
     const parallelCount = options.parallel || 3;
 
-    console.log(`\n🎯 Environment: ${env}`);
-    console.log(`⚡ Parallel Deployments: ${parallelCount}`);
-    console.log(`🏢 Departments: ${this.getDepartments().length}`);
+    console.info(`\n🎯 Environment: ${env}`);
+    console.info(`⚡ Parallel Deployments: ${parallelCount}`);
+    console.info(`🏢 Departments: ${this.getDepartments().length}`);
 
     if (options.dryRun) {
-      console.log('🔍 DRY RUN MODE - No actual deployments');
+      console.info('🔍 DRY RUN MODE - No actual deployments');
     }
 
     try {
@@ -90,12 +90,12 @@ class Fire22BulkDeployment {
       this.showDeploymentSummary(results, options);
 
       const totalTime = (Bun.nanoseconds() - startTime) / 1_000_000;
-      console.log(`\n✅ Bulk deployment completed in ${(totalTime / 1000).toFixed(2)}s`);
+      console.info(`\n✅ Bulk deployment completed in ${(totalTime / 1000).toFixed(2)}s`);
     } catch (error) {
       console.error('❌ Bulk deployment failed:', error);
 
       if (options.rollback) {
-        console.log('\n🔄 Initiating rollback...');
+        console.info('\n🔄 Initiating rollback...');
         await this.performRollback(options);
       }
 
@@ -107,12 +107,12 @@ class Fire22BulkDeployment {
    * ✅ Verify bulk deployment prerequisites
    */
   private async verifyBulkPrerequisites(options: BulkDeployOptions): Promise<void> {
-    console.log('\n✅ Verifying bulk deployment prerequisites...');
+    console.info('\n✅ Verifying bulk deployment prerequisites...');
 
     // Check Wrangler
     try {
       await $`wrangler --version`.quiet();
-      console.log('  ✅ Wrangler CLI available');
+      console.info('  ✅ Wrangler CLI available');
     } catch (error) {
       throw new Error('Wrangler CLI not found. Install: npm install -g wrangler');
     }
@@ -120,40 +120,40 @@ class Fire22BulkDeployment {
     // Check Cloudflare auth
     try {
       await $`wrangler whoami`.quiet();
-      console.log('  ✅ Cloudflare authentication verified');
+      console.info('  ✅ Cloudflare authentication verified');
     } catch (error) {
       throw new Error('Not authenticated with Cloudflare. Run: wrangler login');
     }
 
     // Check build directory
     if (!existsSync(this.distDir)) {
-      console.log('  ⚠️ Build directory missing, will build automatically');
+      console.info('  ⚠️ Build directory missing, will build automatically');
     } else {
-      console.log('  ✅ Build directory exists');
+      console.info('  ✅ Build directory exists');
     }
 
     // Check department configurations
     const departments = this.getDepartments();
-    console.log(`  ✅ ${departments.length} departments configured`);
+    console.info(`  ✅ ${departments.length} departments configured`);
 
     // Create logs directory
     const logsDir = join(process.cwd(), 'logs');
     if (!existsSync(logsDir) && !options.dryRun) {
       await $`mkdir -p ${logsDir}`;
     }
-    console.log('  ✅ Logging system ready');
+    console.info('  ✅ Logging system ready');
   }
 
   /**
    * 🏗️ Ensure bulk build is ready
    */
   private async ensureBulkBuild(options: BulkDeployOptions): Promise<void> {
-    console.log('\n🏗️ Ensuring bulk build is ready...');
+    console.info('\n🏗️ Ensuring bulk build is ready...');
 
     const manifestPath = join(this.distDir, 'manifest.json');
 
     if (!existsSync(manifestPath)) {
-      console.log('  🔨 Build not found, building all pages...');
+      console.info('  🔨 Build not found, building all pages...');
 
       if (!options.dryRun) {
         const buildArgs = ['--env', options.environment || 'development'];
@@ -165,9 +165,9 @@ class Fire22BulkDeployment {
         await $`bun run scripts/build-pages.ts ${buildArgs}`;
       }
 
-      console.log('  ✅ Bulk build completed');
+      console.info('  ✅ Bulk build completed');
     } else {
-      console.log('  ✅ Build already exists');
+      console.info('  ✅ Build already exists');
     }
   }
 
@@ -177,7 +177,7 @@ class Fire22BulkDeployment {
   private async executeParallelDeployments(
     options: BulkDeployOptions
   ): Promise<DeploymentResult[]> {
-    console.log('\n⚡ Executing parallel deployments...');
+    console.info('\n⚡ Executing parallel deployments...');
 
     const departments = this.getDepartments();
     const results: DeploymentResult[] = [];
@@ -188,7 +188,7 @@ class Fire22BulkDeployment {
 
     for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
       const batch = batches[batchIndex];
-      console.log(`\n📦 Batch ${batchIndex + 1}/${batches.length} (${batch.length} departments)`);
+      console.info(`\n📦 Batch ${batchIndex + 1}/${batches.length} (${batch.length} departments)`);
 
       // Deploy batch in parallel
       const batchPromises = batch.map(dept => this.deploySingleDepartment(dept, options));
@@ -200,7 +200,7 @@ class Fire22BulkDeployment {
 
         if (result.status === 'fulfilled') {
           results.push(result.value);
-          console.log(`  ✅ ${dept.name}: Deployed successfully`);
+          console.info(`  ✅ ${dept.name}: Deployed successfully`);
         } else {
           const failedResult: DeploymentResult = {
             department: dept.id,
@@ -210,13 +210,13 @@ class Fire22BulkDeployment {
             timestamp: new Date().toISOString(),
           };
           results.push(failedResult);
-          console.log(`  ❌ ${dept.name}: ${result.reason?.message || 'Deployment failed'}`);
+          console.info(`  ❌ ${dept.name}: ${result.reason?.message || 'Deployment failed'}`);
         }
       });
 
       // Brief pause between batches to avoid overwhelming the API
       if (batchIndex < batches.length - 1 && !options.dryRun) {
-        console.log('  ⏳ Waiting 5s before next batch...');
+        console.info('  ⏳ Waiting 5s before next batch...');
         await new Promise(resolve => setTimeout(resolve, 5000));
       }
     }
@@ -300,16 +300,16 @@ class Fire22BulkDeployment {
     results: DeploymentResult[],
     options: BulkDeployOptions
   ): Promise<void> {
-    console.log('\n🏥 Performing health checks...');
+    console.info('\n🏥 Performing health checks...');
 
     const successfulDeployments = results.filter(r => r.status === 'success' && r.url);
 
     if (successfulDeployments.length === 0) {
-      console.log('  ⚠️ No successful deployments to health check');
+      console.info('  ⚠️ No successful deployments to health check');
       return;
     }
 
-    console.log(`  🔍 Checking ${successfulDeployments.length} deployed services...`);
+    console.info(`  🔍 Checking ${successfulDeployments.length} deployed services...`);
 
     for (const deployment of successfulDeployments) {
       if (!deployment.url || options.dryRun) continue;
@@ -321,12 +321,12 @@ class Fire22BulkDeployment {
         });
 
         if (response.ok) {
-          console.log(`  ✅ ${deployment.department}: Health check passed (${response.status})`);
+          console.info(`  ✅ ${deployment.department}: Health check passed (${response.status})`);
         } else {
-          console.log(`  ⚠️ ${deployment.department}: Health check warning (${response.status})`);
+          console.info(`  ⚠️ ${deployment.department}: Health check warning (${response.status})`);
         }
       } catch (error) {
-        console.log(
+        console.info(
           `  ❌ ${deployment.department}: Health check failed - ${error instanceof Error ? error.message : 'Unknown error'}`
         );
       }
@@ -340,7 +340,7 @@ class Fire22BulkDeployment {
     results: DeploymentResult[],
     options: BulkDeployOptions
   ): Promise<void> {
-    console.log('\n📊 Generating deployment report...');
+    console.info('\n📊 Generating deployment report...');
 
     const report = {
       timestamp: new Date().toISOString(),
@@ -362,52 +362,52 @@ class Fire22BulkDeployment {
       writeFileSync(this.deploymentLog, JSON.stringify(report, null, 2));
     }
 
-    console.log(`  📋 Report saved to: ${this.deploymentLog}`);
+    console.info(`  📋 Report saved to: ${this.deploymentLog}`);
   }
 
   /**
    * 📈 Show deployment summary
    */
   private showDeploymentSummary(results: DeploymentResult[], options: BulkDeployOptions): void {
-    console.log('\n📈 Deployment Summary:');
-    console.log('!==!==!==!==');
+    console.info('\n📈 Deployment Summary:');
+    console.info('!==!==!==!==');
 
     const successful = results.filter(r => r.status === 'success');
     const failed = results.filter(r => r.status === 'failed');
     const skipped = results.filter(r => r.status === 'skipped');
 
-    console.log(`✅ Successful: ${successful.length}`);
-    console.log(`❌ Failed: ${failed.length}`);
-    console.log(`⏭️ Skipped: ${skipped.length}`);
+    console.info(`✅ Successful: ${successful.length}`);
+    console.info(`❌ Failed: ${failed.length}`);
+    console.info(`⏭️ Skipped: ${skipped.length}`);
 
     if (successful.length > 0) {
-      console.log('\n🎉 Successfully Deployed:');
+      console.info('\n🎉 Successfully Deployed:');
       successful.forEach(r => {
         const duration = `${r.duration.toFixed(0)}ms`;
-        console.log(`  • ${r.department}: ${r.url} (${duration})`);
+        console.info(`  • ${r.department}: ${r.url} (${duration})`);
       });
     }
 
     if (failed.length > 0) {
-      console.log('\n💥 Failed Deployments:');
+      console.info('\n💥 Failed Deployments:');
       failed.forEach(r => {
-        console.log(`  • ${r.department}: ${r.error}`);
+        console.info(`  • ${r.department}: ${r.error}`);
       });
 
-      console.log('\n🔧 Suggested Actions:');
-      console.log('  1. Check individual department builds');
-      console.log('  2. Verify Cloudflare configuration');
-      console.log('  3. Run: bun run dept:deploy <department> --verbose');
-      console.log('  4. Consider rollback: --rollback flag');
+      console.info('\n🔧 Suggested Actions:');
+      console.info('  1. Check individual department builds');
+      console.info('  2. Verify Cloudflare configuration');
+      console.info('  3. Run: bun run dept:deploy <department> --verbose');
+      console.info('  4. Consider rollback: --rollback flag');
     }
 
     const avgDuration = results.reduce((sum, r) => sum + r.duration, 0) / results.length;
-    console.log(`\n⏱️ Average deployment time: ${avgDuration.toFixed(0)}ms`);
+    console.info(`\n⏱️ Average deployment time: ${avgDuration.toFixed(0)}ms`);
 
     if (options.environment === 'production') {
-      console.log('\n🌐 Production URLs:');
+      console.info('\n🌐 Production URLs:');
       successful.forEach(r => {
-        if (r.url) console.log(`  🔗 https://${r.department}.dashboard.fire22.ag`);
+        if (r.url) console.info(`  🔗 https://${r.department}.dashboard.fire22.ag`);
       });
     }
   }
@@ -416,17 +416,17 @@ class Fire22BulkDeployment {
    * 🔄 Perform rollback
    */
   private async performRollback(options: BulkDeployOptions): Promise<void> {
-    console.log('\n🔄 Performing deployment rollback...');
+    console.info('\n🔄 Performing deployment rollback...');
 
     // This would implement rollback logic
     // For now, just show what would be done
-    console.log('  📋 Rollback strategy:');
-    console.log('    1. Identify previous successful deployment');
-    console.log('    2. Restore previous build artifacts');
-    console.log('    3. Redeploy stable version');
-    console.log('    4. Verify rollback health');
+    console.info('  📋 Rollback strategy:');
+    console.info('    1. Identify previous successful deployment');
+    console.info('    2. Restore previous build artifacts');
+    console.info('    3. Redeploy stable version');
+    console.info('    4. Verify rollback health');
 
-    console.log('  💡 Manual rollback: bun run dept:rollback --to-previous');
+    console.info('  💡 Manual rollback: bun run dept:rollback --to-previous');
   }
 
   /**
@@ -468,31 +468,31 @@ class Fire22BulkDeployment {
    * 📜 Show deployment history
    */
   async showDeploymentHistory(): Promise<void> {
-    console.log('\n📜 Deployment History:');
-    console.log('!==!==!==!==');
+    console.info('\n📜 Deployment History:');
+    console.info('!==!==!==!==');
 
     if (!existsSync(this.deploymentLog)) {
-      console.log('  📭 No deployment history found');
+      console.info('  📭 No deployment history found');
       return;
     }
 
     try {
       const history = JSON.parse(readFileSync(this.deploymentLog, 'utf-8'));
 
-      console.log(`📅 Last Deployment: ${new Date(history.timestamp).toLocaleString()}`);
-      console.log(`🎯 Environment: ${history.environment}`);
-      console.log(
+      console.info(`📅 Last Deployment: ${new Date(history.timestamp).toLocaleString()}`);
+      console.info(`🎯 Environment: ${history.environment}`);
+      console.info(
         `📊 Success Rate: ${history.successful}/${history.totalDepartments} (${((history.successful / history.totalDepartments) * 100).toFixed(1)}%)`
       );
-      console.log(`⏱️ Average Duration: ${history.averageDuration.toFixed(0)}ms`);
+      console.info(`⏱️ Average Duration: ${history.averageDuration.toFixed(0)}ms`);
 
       if (history.failed > 0) {
-        console.log('\n❌ Last Failed Deployments:');
+        console.info('\n❌ Last Failed Deployments:');
         const failedResults = history.results.filter(
           (r: DeploymentResult) => r.status === 'failed'
         );
         failedResults.forEach((r: DeploymentResult) => {
-          console.log(`  • ${r.department}: ${r.error}`);
+          console.info(`  • ${r.department}: ${r.error}`);
         });
       }
     } catch (error) {
@@ -554,7 +554,7 @@ async function main() {
       break;
 
     default:
-      console.log(`
+      console.info(`
 🌐 Fire22 Bulk Department Deployment System
 
 Usage:

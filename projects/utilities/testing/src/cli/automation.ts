@@ -5,7 +5,7 @@
  */
 
 export async function automateShell(commands: string[]) {
-  console.log("🚀 Starting automated shell session...");
+  console.info("🚀 Starting automated shell session...");
 
   const proc = Bun.spawn(["bash", "-i"], { // Interactive mode
     terminal: {
@@ -17,7 +17,7 @@ export async function automateShell(commands: string[]) {
         if (output.includes("$ ") || output.includes("# ")) {
           const cmd = commands.shift();
           if (cmd) {
-            console.log(`\n\x1b[34m[AUTOMATION] Sending command: ${cmd}\x1b[0m`);
+            console.info(`\n\x1b[34m[AUTOMATION] Sending command: ${cmd}\x1b[0m`);
             setTimeout(() => term.write(cmd + "\n"), 100);
           } else {
             // No more commands, but let the user take over or exit
@@ -35,12 +35,12 @@ export async function automateShell(commands: string[]) {
   
   // Handle Ctrl+C
   process.on("SIGINT", () => {
-    console.log("\n\x1b[31m[AUTOMATION] Interrupted\x1b[0m");
+    console.info("\n\x1b[31m[AUTOMATION] Interrupted\x1b[0m");
     proc.terminal.write("\x03");
   });
   
   await proc.exited;
-  console.log("✅ Automation session complete.");
+  console.info("✅ Automation session complete.");
 }
 
 if (import.meta.main) {

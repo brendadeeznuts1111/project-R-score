@@ -12,12 +12,12 @@ const testCases = [
   { label: "Thai Combining Marks", val: "กำ" }
 ];
 
-console.log("📊 Bun.stringWidth Accuracy Verification");
-console.log("=========================================");
+console.info("📊 Bun.stringWidth Accuracy Verification");
+console.info("=========================================");
 
 testCases.forEach(({ label, val }) => {
   const width = Bun.stringWidth(val);
-  console.log(`${label.padEnd(25)} | Value: ${val.padEnd(5)} | Width: ${width}`);
+  console.info(`${label.padEnd(25)} | Value: ${val.padEnd(5)} | Width: ${width}`);
 });
 
-console.log("\n✅ Verification complete. Bun v1.3.5 handles complex Unicode correctly.");
+console.info("\n✅ Verification complete. Bun v1.3.5 handles complex Unicode correctly.");

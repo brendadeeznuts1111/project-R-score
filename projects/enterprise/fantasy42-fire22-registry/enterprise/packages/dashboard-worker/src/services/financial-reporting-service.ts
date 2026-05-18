@@ -152,13 +152,13 @@ export class FinancialReportingService extends EventEmitter {
   async initialize(): Promise<void> {
     if (this.isInitialized) return;
 
-    console.log('💰 Initializing Financial Reporting Service...');
+    console.info('💰 Initializing Financial Reporting Service...');
 
     // Load sample data for demonstration
     await this.loadSampleData();
 
     this.isInitialized = true;
-    console.log('✅ Financial Reporting Service initialized');
+    console.info('✅ Financial Reporting Service initialized');
   }
 
   /**
@@ -257,7 +257,7 @@ export class FinancialReportingService extends EventEmitter {
       this.transactions.set(txn.id, txn);
     });
 
-    console.log(`📊 Loaded ${sampleTransactions.length} sample transactions`);
+    console.info(`📊 Loaded ${sampleTransactions.length} sample transactions`);
   }
 
   /**
@@ -704,7 +704,7 @@ export class FinancialReportingService extends EventEmitter {
       },
     });
 
-    console.log('✅ Financial report exported successfully');
+    console.info('✅ Financial report exported successfully');
   }
 
   /**
@@ -785,7 +785,7 @@ export class FinancialReportingService extends EventEmitter {
   cleanup(): void {
     this.transactions.clear();
     this.removeAllListeners();
-    console.log('🧹 Financial Reporting Service cleaned up');
+    console.info('🧹 Financial Reporting Service cleaned up');
   }
 }
 

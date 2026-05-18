@@ -1546,11 +1546,11 @@ async function generateHTML(summary: TestSummary, previousRun?: { file: string; 
         
         // Listen for KYC shortcuts in test report
         document.addEventListener('kyc:validate:requested', () => {
-            console.log('KYC validation requested - navigate to KYC tab');
+            console.info('KYC validation requested - navigate to KYC tab');
         });
         
         document.addEventListener('kyc:review:requested', () => {
-            console.log('KYC review requested - showing review queue');
+            console.info('KYC review requested - showing review queue');
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
@@ -1616,7 +1616,7 @@ async function loadTestHistory(): Promise<Array<{ file: string; timestamp: strin
 }
 
 async function main() {
-  console.log("🧪 Running KYC tests and generating HTML report...\n");
+  console.info("🧪 Running KYC tests and generating HTML report...\n");
 
   try {
     const { output, coverage } = await runTests();
@@ -1624,7 +1624,7 @@ async function main() {
     
     // Save test history
     const historyFile = await saveTestHistory(summary);
-    console.log(`📝 Test history saved: ${historyFile}`);
+    console.info(`📝 Test history saved: ${historyFile}`);
     
     // Load previous history for comparison
     const history = await loadTestHistory();
@@ -1635,24 +1635,24 @@ async function main() {
     const outputPath = join(process.cwd(), "src/server/kyc/__tests__/test-report.html");
     await Bun.write(outputPath, html);
 
-    console.log(`✅ HTML report generated: ${outputPath}`);
-    console.log(`\n📊 Summary:`);
-    console.log(`   Total: ${summary.total}`);
-    console.log(`   Passed: ${summary.passed} ✅`);
-    console.log(`   Failed: ${summary.failed} ${summary.failed > 0 ? '❌' : '✅'}`);
-    console.log(`   Duration: ${summary.duration.toFixed(2)}s`);
+    console.info(`✅ HTML report generated: ${outputPath}`);
+    console.info(`\n📊 Summary:`);
+    console.info(`   Total: ${summary.total}`);
+    console.info(`   Passed: ${summary.passed} ✅`);
+    console.info(`   Failed: ${summary.failed} ${summary.failed > 0 ? '❌' : '✅'}`);
+    console.info(`   Duration: ${summary.duration.toFixed(2)}s`);
     
     if (previousRun) {
       const totalDiff = summary.total - previousRun.summary.total;
       const passedDiff = summary.passed - previousRun.summary.passed;
       const failedDiff = summary.failed - previousRun.summary.failed;
-      console.log(`\n📈 Comparison with previous run:`);
-      console.log(`   Total: ${totalDiff >= 0 ? '+' : ''}${totalDiff}`);
-      console.log(`   Passed: ${passedDiff >= 0 ? '+' : ''}${passedDiff}`);
-      console.log(`   Failed: ${failedDiff >= 0 ? '+' : ''}${failedDiff}`);
+      console.info(`\n📈 Comparison with previous run:`);
+      console.info(`   Total: ${totalDiff >= 0 ? '+' : ''}${totalDiff}`);
+      console.info(`   Passed: ${passedDiff >= 0 ? '+' : ''}${passedDiff}`);
+      console.info(`   Failed: ${failedDiff >= 0 ? '+' : ''}${failedDiff}`);
     }
     
-    console.log(`\n📄 Open ${outputPath} in your browser to view the report.`);
+    console.info(`\n📄 Open ${outputPath} in your browser to view the report.`);
   } catch (error) {
     console.error("❌ Error generating report:", error);
     process.exit(1);

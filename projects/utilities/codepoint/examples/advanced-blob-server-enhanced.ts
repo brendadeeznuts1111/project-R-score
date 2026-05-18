@@ -1055,52 +1055,52 @@ and served directly as a Response object.
   },
 });
 
-console.log(
+console.info(
   "🚀 Enhanced Advanced Blob API Server started on http://localhost:3000"
 );
-console.log("📊 Available endpoints:");
-console.log(
+console.info("📊 Available endpoints:");
+console.info(
   "   GET /api/response-methods/blob/advanced - Comprehensive blob documentation"
 );
-console.log(
+console.info(
   "   GET /api/response-methods/blob/image - SVG image blob (257 bytes)"
 );
-console.log("   GET /api/response-methods/blob/file - File download blob");
-console.log(
+console.info("   GET /api/response-methods/blob/file - File download blob");
+console.info(
   "   GET /api/response-methods/blob/slice - Interactive slice demo (2000 bytes)"
 );
-console.log(
+console.info(
   "   GET /api/response-methods/blob/compressed - Compressed blob with encoding"
 );
-console.log(
+console.info(
   "   GET /api/response-methods/blob/transformed - Transformed image blob"
 );
-console.log(
+console.info(
   "   GET /api/response-methods/blob/streaming - Streaming blob with chunks"
 );
-console.log("   GET /api/response-methods/blob - Basic blob demonstration");
-console.log("   GET /health - Health check and endpoint list");
-console.log("");
-console.log("🔥 Enhanced Features:");
-console.log("   ✅ Compression (gzip/deflate)");
-console.log("   ✅ ETag support for caching");
-console.log("   ✅ Range requests");
-console.log("   ✅ Conditional requests");
-console.log("   ✅ Streaming support");
-console.log("   ✅ Image transformations");
-console.log("   ✅ Performance monitoring");
-console.log("   ✅ CORS support");
-console.log("");
-console.log("📝 Example usage:");
-console.log(
+console.info("   GET /api/response-methods/blob - Basic blob demonstration");
+console.info("   GET /health - Health check and endpoint list");
+console.info("");
+console.info("🔥 Enhanced Features:");
+console.info("   ✅ Compression (gzip/deflate)");
+console.info("   ✅ ETag support for caching");
+console.info("   ✅ Range requests");
+console.info("   ✅ Conditional requests");
+console.info("   ✅ Streaming support");
+console.info("   ✅ Image transformations");
+console.info("   ✅ Performance monitoring");
+console.info("   ✅ CORS support");
+console.info("");
+console.info("📝 Example usage:");
+console.info(
   "   curl http://localhost:3000/api/response-methods/blob/advanced | jq ."
 );
-console.log(
+console.info(
   '   curl -H "Accept-Encoding: gzip" http://localhost:3000/api/response-methods/blob/compressed'
 );
-console.log(
+console.info(
   '   curl -H "If-None-Match: \\"etag\\"" http://localhost:3000/api/response-methods/blob/image'
 );
-console.log(
+console.info(
   '   curl -H "Range: bytes=0-99" http://localhost:3000/api/response-methods/blob/slice'
 );

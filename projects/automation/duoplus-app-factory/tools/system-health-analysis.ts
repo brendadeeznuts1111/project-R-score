@@ -24,8 +24,8 @@ class SystemHealthAnalyzer {
   }
 
   analyze(): void {
-    console.log('🩺 Nebula-Flow™ System Health Analysis');
-    console.log('=====================================\n');
+    console.info('🩺 Nebula-Flow™ System Health Analysis');
+    console.info('=====================================\n');
 
     this.analyzeUptime();
     this.analyzeDeviceCount();
@@ -39,56 +39,56 @@ class SystemHealthAnalyzer {
     const minutes = Math.floor((uptime % 3600) / 60);
     const seconds = uptime % 60;
 
-    console.log('⏱️  SYSTEM UPTIME ANALYSIS');
-    console.log('-------------------------');
-    console.log(`Current Uptime: ${hours}h ${minutes}m ${seconds}s`);
-    console.log(`Total Seconds: ${uptime}`);
+    console.info('⏱️  SYSTEM UPTIME ANALYSIS');
+    console.info('-------------------------');
+    console.info(`Current Uptime: ${hours}h ${minutes}m ${seconds}s`);
+    console.info(`Total Seconds: ${uptime}`);
 
     // Uptime assessment
     if (uptime < 300) { // 5 minutes
-      console.log('⚠️  Assessment: System recently started or restarted');
+      console.info('⚠️  Assessment: System recently started or restarted');
     } else if (uptime < 3600) { // 1 hour
-      console.log('📈 Assessment: System in initial operation phase');
+      console.info('📈 Assessment: System in initial operation phase');
     } else if (uptime < 86400) { // 24 hours
-      console.log('✅ Assessment: System operating normally');
+      console.info('✅ Assessment: System operating normally');
     } else {
-      console.log('🏆 Assessment: System demonstrating excellent stability');
+      console.info('🏆 Assessment: System demonstrating excellent stability');
     }
-    console.log('');
+    console.info('');
   }
 
   private analyzeDeviceCount(): void {
     const count = this.data.deviceCount;
 
-    console.log('📱 DEVICE FLEET ANALYSIS');
-    console.log('-----------------------');
-    console.log(`Active Devices: ${count}`);
+    console.info('📱 DEVICE FLEET ANALYSIS');
+    console.info('-----------------------');
+    console.info(`Active Devices: ${count}`);
 
     // Fleet assessment
     if (count === 0) {
-      console.log('⚠️  Assessment: No devices currently active');
-      console.log('💡 Suggestion: Check device connections or start device initialization');
+      console.info('⚠️  Assessment: No devices currently active');
+      console.info('💡 Suggestion: Check device connections or start device initialization');
     } else if (count < 10) {
-      console.log('📈 Assessment: Small fleet operating');
-      console.log('💡 Status: Suitable for development/testing');
+      console.info('📈 Assessment: Small fleet operating');
+      console.info('💡 Status: Suitable for development/testing');
     } else if (count < 100) {
-      console.log('✅ Assessment: Medium fleet operational');
-      console.log('💡 Status: Production-ready scale');
+      console.info('✅ Assessment: Medium fleet operational');
+      console.info('💡 Status: Production-ready scale');
     } else if (count < 1000) {
-      console.log('🚀 Assessment: Large fleet active');
-      console.log('💡 Status: High-capacity operations');
+      console.info('🚀 Assessment: Large fleet active');
+      console.info('💡 Status: High-capacity operations');
     } else {
-      console.log('🏆 Assessment: Massive fleet deployed');
-      console.log('💡 Status: Enterprise-scale operations');
+      console.info('🏆 Assessment: Massive fleet deployed');
+      console.info('💡 Status: Enterprise-scale operations');
     }
-    console.log('');
+    console.info('');
   }
 
   private analyzeSystemHealth(): void {
     const health = this.data.systemHealth;
 
-    console.log('🖥️  SYSTEM HEALTH METRICS');
-    console.log('------------------------');
+    console.info('🖥️  SYSTEM HEALTH METRICS');
+    console.info('------------------------');
 
     // Individual metric analysis
     this.analyzeMetric('CPU', health.cpu, 'Processing capacity utilization');
@@ -98,35 +98,35 @@ class SystemHealthAnalyzer {
 
     // Overall health score
     const healthScore = this.calculateHealthScore(health);
-    console.log(`\n🏥 OVERALL HEALTH SCORE: ${healthScore}/100`);
+    console.info(`\n🏥 OVERALL HEALTH SCORE: ${healthScore}/100`);
 
     if (healthScore >= 90) {
-      console.log('🟢 Status: EXCELLENT - System operating optimally');
+      console.info('🟢 Status: EXCELLENT - System operating optimally');
     } else if (healthScore >= 75) {
-      console.log('🟡 Status: GOOD - Minor optimization opportunities');
+      console.info('🟡 Status: GOOD - Minor optimization opportunities');
     } else if (healthScore >= 50) {
-      console.log('🟠 Status: FAIR - Performance monitoring recommended');
+      console.info('🟠 Status: FAIR - Performance monitoring recommended');
     } else {
-      console.log('🔴 Status: POOR - Immediate attention required');
+      console.info('🔴 Status: POOR - Immediate attention required');
     }
-    console.log('');
+    console.info('');
   }
 
   private analyzeMetric(name: string, value: number, description: string): void {
     const bar = this.createProgressBar(value);
     const status = this.getMetricStatus(name, value);
 
-    console.log(`${name.toUpperCase().padEnd(7)}: ${value.toString().padStart(3)}% ${bar} ${status}`);
-    console.log(`         ${description}`);
+    console.info(`${name.toUpperCase().padEnd(7)}: ${value.toString().padStart(3)}% ${bar} ${status}`);
+    console.info(`         ${description}`);
 
     if (value > 90) {
-      console.log(`         ⚠️  HIGH UTILIZATION - Monitor closely`);
+      console.info(`         ⚠️  HIGH UTILIZATION - Monitor closely`);
     } else if (value > 75) {
-      console.log(`         📊 ELEVATED USAGE - Consider optimization`);
+      console.info(`         📊 ELEVATED USAGE - Consider optimization`);
     } else if (value < 5) {
-      console.log(`         💤 VERY LOW ACTIVITY - Confirm normal operation`);
+      console.info(`         💤 VERY LOW ACTIVITY - Confirm normal operation`);
     }
-    console.log('');
+    console.info('');
   }
 
   private createProgressBar(percentage: number, width: number = 20): string {
@@ -172,8 +172,8 @@ class SystemHealthAnalyzer {
   }
 
   private provideRecommendations(): void {
-    console.log('💡 SYSTEM RECOMMENDATIONS');
-    console.log('=========================');
+    console.info('💡 SYSTEM RECOMMENDATIONS');
+    console.info('=========================');
 
     const recommendations = [];
     const health = this.data.systemHealth;
@@ -215,19 +215,19 @@ class SystemHealthAnalyzer {
     }
 
     if (recommendations.length === 0) {
-      console.log('✅ All systems operating within normal parameters');
-      console.log('🎉 Nebula-Flow™ ecosystem health is excellent!');
+      console.info('✅ All systems operating within normal parameters');
+      console.info('🎉 Nebula-Flow™ ecosystem health is excellent!');
     } else {
-      recommendations.forEach(rec => console.log(rec));
+      recommendations.forEach(rec => console.info(rec));
     }
 
-    console.log('');
-    console.log('📊 ANALYSIS SUMMARY');
-    console.log('==================');
-    console.log(`System Uptime: ${Math.floor(this.data.uptime / 60)} minutes`);
-    console.log(`Active Devices: ${this.data.deviceCount}`);
-    console.log(`Health Score: ${this.calculateHealthScore(health)}/100`);
-    console.log(`Resource Status: ${allIdle ? 'IDLE' : 'ACTIVE'}`);
+    console.info('');
+    console.info('📊 ANALYSIS SUMMARY');
+    console.info('==================');
+    console.info(`System Uptime: ${Math.floor(this.data.uptime / 60)} minutes`);
+    console.info(`Active Devices: ${this.data.deviceCount}`);
+    console.info(`Health Score: ${this.calculateHealthScore(health)}/100`);
+    console.info(`Resource Status: ${allIdle ? 'IDLE' : 'ACTIVE'}`);
   }
 }
 

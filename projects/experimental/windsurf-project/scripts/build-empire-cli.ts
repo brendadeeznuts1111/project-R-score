@@ -2,7 +2,7 @@
 // scripts/build-empire-cli.ts - Bundle Farm CLI (Minify + Env + Sourcemaps)
 export {};
 
-console.log('🏗️ Building Empire CLI (Bun 1.3.6 Optimized)...');
+console.info('🏗️ Building Empire CLI (Bun 1.3.6 Optimized)...');
 
 const result = await Bun.build({
   entrypoints: ['./scripts/e2e-apple-reg.ts'],
@@ -29,7 +29,7 @@ if (!result.success) {
   process.exit(1);
 }
 
-console.log('🏰 Empire CLI Bundled: dist/e2e-apple-reg.js');
+console.info('🏰 Empire CLI Bundled: dist/e2e-apple-reg.js');
 const file = Bun.file('./dist/e2e-apple-reg.js');
-console.log(`📦 Final Size: ${(file.size / 1024).toFixed(1)}KB (95% reduction)`);
-console.log('🚀 Run: bun dist/e2e-apple-reg.js --scale 100');
+console.info(`📦 Final Size: ${(file.size / 1024).toFixed(1)}KB (95% reduction)`);
+console.info('🚀 Run: bun dist/e2e-apple-reg.js --scale 100');

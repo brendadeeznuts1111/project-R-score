@@ -57,7 +57,7 @@ if (isNodeRuntime) {
 
 // CLI help output
 function printHelp() {
-  console.log(`
+  console.info(`
 CRC32 Worker CLI Reference
 ===========================
 
@@ -86,14 +86,14 @@ Examples:
 
 // Run benchmark locally
 async function runBenchmark() {
-  console.log("=".repeat(60));
-  console.log(" CRC32 Benchmark v1.7.4");
-  console.log("=".repeat(60));
-  console.log(`\n Configuration:`);
-  console.log(`   Rows: ${flags.limit.toLocaleString()}`);
-  console.log(`   Target Throughput: ${flags.throughput} MB/s`);
-  console.log(`   Output: ${flags.json ? "JSON" : "Text"}`);
-  console.log(`   Archive: ${flags.archive ? "Yes" : "No"}`);
+  console.info("=".repeat(60));
+  console.info(" CRC32 Benchmark v1.7.4");
+  console.info("=".repeat(60));
+  console.info(`\n Configuration:`);
+  console.info(`   Rows: ${flags.limit.toLocaleString()}`);
+  console.info(`   Target Throughput: ${flags.throughput} MB/s`);
+  console.info(`   Output: ${flags.json ? "JSON" : "Text"}`);
+  console.info(`   Archive: ${flags.archive ? "Yes" : "No"}`);
 
   const startTime = Date.now();
   let totalBytes = 0;
@@ -113,7 +113,7 @@ async function runBenchmark() {
     }
     if (flags.verbose) {
       const progress = ((b / batches) * 100).toFixed(1);
-      console.log(`   Progress: ${progress}% (${b * batchSize} rows)`);
+      console.info(`   Progress: ${progress}% (${b * batchSize} rows)`);
     }
   }
 
@@ -136,23 +136,23 @@ async function runBenchmark() {
   };
 
   if (flags.json) {
-    console.log("\n JSON Output:");
-    console.log(JSON.stringify(result, null, 2));
+    console.info("\n JSON Output:");
+    console.info(JSON.stringify(result, null, 2));
   } else {
-    console.log("\n Results:");
-    console.log(`   Rows Processed: ${flags.limit.toLocaleString()}`);
-    console.log(`   Total Bytes: ${(totalBytes / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`   Total Time: ${totalTimeMs.toFixed(2)} ms`);
-    console.log(`   Throughput: ${throughputMBps.toFixed(2)} MB/s`);
-    console.log(`   Avg Latency: ${avgLatencyUs.toFixed(2)} µs/row`);
-    console.log(`   Checksums: ${checksums.length} generated`);
+    console.info("\n Results:");
+    console.info(`   Rows Processed: ${flags.limit.toLocaleString()}`);
+    console.info(`   Total Bytes: ${(totalBytes / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`   Total Time: ${totalTimeMs.toFixed(2)} ms`);
+    console.info(`   Throughput: ${throughputMBps.toFixed(2)} MB/s`);
+    console.info(`   Avg Latency: ${avgLatencyUs.toFixed(2)} µs/row`);
+    console.info(`   Checksums: ${checksums.length} generated`);
   }
 
   if (flags.archive) {
-    console.log("\n Archive created: crc32-benchmark-v1.7.4.tar.gz");
+    console.info("\n Archive created: crc32-benchmark-v1.7.4.tar.gz");
   }
 
-  console.log("\n Benchmark Complete");
+  console.info("\n Benchmark Complete");
   process.exit(0);
 }
 

@@ -59,7 +59,7 @@ class ProcessController {
       afterGC,
     };
 
-    console.log(
+    console.info(
       `🧹 GC #${stats.collections}: ${stats.duration.toFixed(2)}ms, freed ${(stats.beforeGC - stats.afterGC).toLocaleString()} bytes`
     );
 
@@ -103,13 +103,13 @@ class ProcessController {
   // Setup process event handlers
   private setupProcessHandlers() {
     process.on("SIGINT", () => {
-      console.log("\n🛑 Received SIGINT, performing cleanup...");
+      console.info("\n🛑 Received SIGINT, performing cleanup...");
       this.performGC(true);
       process.exit(0);
     });
 
     process.on("SIGTERM", () => {
-      console.log("\n🛑 Received SIGTERM, performing cleanup...");
+      console.info("\n🛑 Received SIGTERM, performing cleanup...");
       this.performGC(true);
       process.exit(0);
     });
@@ -130,19 +130,19 @@ class ProcessController {
 class BufferManager {
   // Demonstrate Buffer.allocUnsafe (performance-focused)
   static createFastBuffer(size: number): Buffer {
-    console.log(`📊 Creating fast buffer of ${size} bytes using allocUnsafe`);
+    console.info(`📊 Creating fast buffer of ${size} bytes using allocUnsafe`);
     return Buffer.allocUnsafe(size);
   }
 
   // Safe buffer creation
   static createSafeBuffer(size: number): Buffer {
-    console.log(`📊 Creating safe buffer of ${size} bytes using alloc`);
+    console.info(`📊 Creating safe buffer of ${size} bytes using alloc`);
     return Buffer.alloc(size);
   }
 
   // Buffer performance comparison
   static async compareBufferPerformance(size = 1024 * 1024): Promise<void> {
-    console.log(`🏁 Comparing buffer performance (${size} bytes)...`);
+    console.info(`🏁 Comparing buffer performance (${size} bytes)...`);
 
     // Test allocUnsafe
     const unsafeStart = performance.now();
@@ -156,9 +156,9 @@ class BufferManager {
     safeBuffer.fill("B");
     const safeEnd = performance.now();
 
-    console.log(`⚡ allocUnsafe: ${(unsafeEnd - unsafeStart).toFixed(2)}ms`);
-    console.log(`🛡️  alloc: ${(safeEnd - safeStart).toFixed(2)}ms`);
-    console.log(
+    console.info(`⚡ allocUnsafe: ${(unsafeEnd - unsafeStart).toFixed(2)}ms`);
+    console.info(`🛡️  alloc: ${(safeEnd - safeStart).toFixed(2)}ms`);
+    console.info(
       `📈 Performance improvement: ${((safeEnd - safeStart) / (unsafeEnd - unsafeStart)).toFixed(2)}x`
     );
   }
@@ -168,12 +168,12 @@ class BufferManager {
 class FFIDemonstration {
   static async demonstrateFFI(): Promise<void> {
     try {
-      console.log("🔗 Demonstrating Bun FFI capabilities...");
+      console.info("🔗 Demonstrating Bun FFI capabilities...");
 
       // This would work with a native library
       // For demo purposes, we'll show the structure
       const libPath = `./native-lib.${suffix}`;
-      console.log(`📁 Would load library from: ${libPath}`);
+      console.info(`📁 Would load library from: ${libPath}`);
 
       // Example of how to use FFI (commented out as we don't have a native lib)
       /*
@@ -185,15 +185,15 @@ class FFIDemonstration {
       });
 
       const result = nativeFunction(ptr, 42);
-      console.log(`🔗 Native function result: ${result}`);
+      console.info(`🔗 Native function result: ${result}`);
       lib.close();
       */
 
-      console.log(
+      console.info(
         "✅ FFI structure demonstrated (requires native library to execute)"
       );
     } catch (error) {
-      console.log(
+      console.info(
         "⚠️  FFI demo requires native library (structure shown above)"
       );
     }
@@ -390,10 +390,10 @@ async function getHomePage(): Promise<string> {
 }
 
 // 6. Background Tasks and Monitoring
-console.log("🚀 Starting Advanced Bun Process Control Server...");
-console.log(`📊 Process ID: ${process.pid}`);
-console.log(`🔧 Bun Version: ${Bun.version}`);
-console.log(`💻 Platform: ${process.platform}-${process.arch}`);
+console.info("🚀 Starting Advanced Bun Process Control Server...");
+console.info(`📊 Process ID: ${process.pid}`);
+console.info(`🔧 Bun Version: ${Bun.version}`);
+console.info(`💻 Platform: ${process.platform}-${process.arch}`);
 
 // Start periodic monitoring
 setInterval(() => {
@@ -402,24 +402,24 @@ setInterval(() => {
   // Auto-GC if memory usage is high
   if (metrics.memory.heapUsed > 100 * 1024 * 1024) {
     // 100MB
-    console.log("⚠️  High memory usage detected, running auto-GC...");
+    console.info("⚠️  High memory usage detected, running auto-GC...");
     processController.performGC();
   }
 }, 10000); // Every 10 seconds
 
 // Performance demonstration
 setTimeout(async () => {
-  console.log("🎯 Running performance demonstrations...");
+  console.info("🎯 Running performance demonstrations...");
   await BufferManager.compareBufferPerformance(512 * 1024); // 512KB
   await FFIDemonstration.demonstrateFFI();
 }, 2000);
 
-console.log(`✅ Server running at http://localhost:3000`);
-console.log("🎛️  Process Control Features:");
-console.log("  • Manual garbage collection with Bun.gc()");
-console.log("  • Advanced memory monitoring");
-console.log("  • Buffer performance comparison");
-console.log("  • FFI capabilities demonstration");
-console.log("  • Process event handling");
-console.log("  • System information gathering");
-console.log("  • Background task monitoring");
+console.info(`✅ Server running at http://localhost:3000`);
+console.info("🎛️  Process Control Features:");
+console.info("  • Manual garbage collection with Bun.gc()");
+console.info("  • Advanced memory monitoring");
+console.info("  • Buffer performance comparison");
+console.info("  • FFI capabilities demonstration");
+console.info("  • Process event handling");
+console.info("  • System information gathering");
+console.info("  • Background task monitoring");

@@ -255,8 +255,8 @@ export function executeSkillBinary(
 // ═══════════════════════════════════════════════════════════════════════════
 
 export function displaySecurityCheck() {
-  console.log("\n🔒 Security Configuration");
-  console.log("─".repeat(50));
+  console.info("\n🔒 Security Configuration");
+  console.info("─".repeat(50));
 
   const checks = [
     {
@@ -281,7 +281,7 @@ export function displaySecurityCheck() {
     },
   ];
 
-  console.log(Bun.inspect.table(checks, { colors: true }));
+  console.info(Bun.inspect.table(checks, { colors: true }));
 }
 
 export default {

@@ -1,20 +1,20 @@
 // bun-inspect-table-demo.ts - Comprehensive Bun.inspect.table demonstration
 
-console.log("🎯 Bun.inspect.table() Comprehensive Demo");
-console.log("=====================================");
+console.info("🎯 Bun.inspect.table() Comprehensive Demo");
+console.info("=====================================");
 
 // 1. Basic table with simple array
-console.log("\n📊 Basic Array Table:");
+console.info("\n📊 Basic Array Table:");
 const basicArray = [
   { name: "Alice", age: 30, city: "New York" },
   { name: "Bob", age: 25, city: "San Francisco" },
   { name: "Charlie", age: 35, city: "Chicago" },
 ];
 
-console.log(Bun.inspect.table(basicArray));
+console.info(Bun.inspect.table(basicArray));
 
 // 2. Table with custom properties
-console.log("\n🔧 Custom Properties Table:");
+console.info("\n🔧 Custom Properties Table:");
 const customData = [
   {
     id: 1,
@@ -39,10 +39,10 @@ const customData = [
   },
 ];
 
-console.log(Bun.inspect.table(customData, ["product", "price", "inStock"]));
+console.info(Bun.inspect.table(customData, ["product", "price", "inStock"]));
 
 // 3. Table with nested objects
-console.log("\n📦 Nested Objects Table:");
+console.info("\n📦 Nested Objects Table:");
 const nestedData = [
   {
     user: { name: "John", email: "john@example.com" },
@@ -56,10 +56,10 @@ const nestedData = [
   },
 ];
 
-console.log(Bun.inspect.table(nestedData));
+console.info(Bun.inspect.table(nestedData));
 
 // 4. Table with arrays as values
-console.log("\n📋 Arrays as Values Table:");
+console.info("\n📋 Arrays as Values Table:");
 const arrayData = [
   {
     project: "Website Redesign",
@@ -75,10 +75,10 @@ const arrayData = [
   },
 ];
 
-console.log(Bun.inspect.table(arrayData));
+console.info(Bun.inspect.table(arrayData));
 
 // 5. Table with mixed data types
-console.log("\n🎨 Mixed Data Types Table:");
+console.info("\n🎨 Mixed Data Types Table:");
 const mixedData = [
   {
     string: "Hello World",
@@ -104,21 +104,21 @@ const mixedData = [
   },
 ];
 
-console.log(Bun.inspect.table(mixedData));
+console.info(Bun.inspect.table(mixedData));
 
 // 6. Table with options - custom headers
-console.log("\n🏷️ Custom Headers Table:");
+console.info("\n🏷️ Custom Headers Table:");
 const headerData = [
   { first_name: "John", last_name: "Doe", email: "john.doe@example.com" },
   { first_name: "Jane", last_name: "Smith", email: "jane.smith@example.com" },
 ];
 
-console.log(
+console.info(
   Bun.inspect.table(headerData, ["first_name", "last_name", "email"])
 );
 
 // 7. Table with large dataset
-console.log("\n📈 Large Dataset Table:");
+console.info("\n📈 Large Dataset Table:");
 const largeData = Array.from({ length: 10 }, (_, i) => ({
   id: i + 1,
   name: `User ${i + 1}`,
@@ -128,10 +128,10 @@ const largeData = Array.from({ length: 10 }, (_, i) => ({
   salary: 50000 + i * 5000,
 }));
 
-console.log(Bun.inspect.table(largeData));
+console.info(Bun.inspect.table(largeData));
 
 // 8. Table with special characters and Unicode
-console.log("\n🌍 Unicode and Special Characters Table:");
+console.info("\n🌍 Unicode and Special Characters Table:");
 const unicodeData = [
   {
     emoji: "🚀 🎯 🏆",
@@ -149,10 +149,10 @@ const unicodeData = [
   },
 ];
 
-console.log(Bun.inspect.table(unicodeData));
+console.info(Bun.inspect.table(unicodeData));
 
 // 9. Table with performance metrics
-console.log("\n⚡ Performance Metrics Table:");
+console.info("\n⚡ Performance Metrics Table:");
 const performanceData = [
   {
     operation: "Database Query",
@@ -184,21 +184,21 @@ const performanceData = [
   },
 ];
 
-console.log(Bun.inspect.table(performanceData));
+console.info(Bun.inspect.table(performanceData));
 
 // 10. Empty and edge cases
-console.log("\n🔍 Edge Cases Table:");
-console.log("Empty array:");
-console.log(Bun.inspect.table([]));
+console.info("\n🔍 Edge Cases Table:");
+console.info("Empty array:");
+console.info(Bun.inspect.table([]));
 
-console.log("\nSingle object:");
-console.log(Bun.inspect.table([{ only: "field", value: 42 }]));
+console.info("\nSingle object:");
+console.info(Bun.inspect.table([{ only: "field", value: 42 }]));
 
-console.log("\nObject with no properties:");
-console.log(Bun.inspect.table([{}, {}]));
+console.info("\nObject with no properties:");
+console.info(Bun.inspect.table([{}, {}]));
 
 // 11. Table with function results
-console.log("\n🔧 Function Results Table:");
+console.info("\n🔧 Function Results Table:");
 const functionData = [
   {
     name: "Math.sqrt",
@@ -220,10 +220,10 @@ const functionData = [
   },
 ];
 
-console.log(Bun.inspect.table(functionData));
+console.info(Bun.inspect.table(functionData));
 
 // 12. Table with error objects
-console.log("\n❌ Error Objects Table:");
+console.info("\n❌ Error Objects Table:");
 const errorData = [
   {
     type: "ReferenceError",
@@ -239,19 +239,19 @@ const errorData = [
   },
 ];
 
-console.log(Bun.inspect.table(errorData));
+console.info(Bun.inspect.table(errorData));
 
-console.log("\n✅ Bun.inspect.table() demo completed!");
-console.log("\n📋 Summary of demonstrated features:");
-console.log("   • Basic array tabulation");
-console.log("   • Custom property selection");
-console.log("   • Nested object handling");
-console.log("   • Array values display");
-console.log("   • Mixed data types");
-console.log("   • Custom headers");
-console.log("   • Large datasets");
-console.log("   • Unicode support");
-console.log("   • Performance metrics");
-console.log("   • Edge cases");
-console.log("   • Function results");
-console.log("   • Error objects");
+console.info("\n✅ Bun.inspect.table() demo completed!");
+console.info("\n📋 Summary of demonstrated features:");
+console.info("   • Basic array tabulation");
+console.info("   • Custom property selection");
+console.info("   • Nested object handling");
+console.info("   • Array values display");
+console.info("   • Mixed data types");
+console.info("   • Custom headers");
+console.info("   • Large datasets");
+console.info("   • Unicode support");
+console.info("   • Performance metrics");
+console.info("   • Edge cases");
+console.info("   • Function results");
+console.info("   • Error objects");

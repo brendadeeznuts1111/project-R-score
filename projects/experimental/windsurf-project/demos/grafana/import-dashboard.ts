@@ -118,38 +118,38 @@ const phoneIntelligenceDashboard: DashboardConfig = {
 };
 
 async function importDashboard(dashboardName: string) {
-  console.log(`📈 Importing Grafana dashboard: ${dashboardName}...`);
+  console.info(`📈 Importing Grafana dashboard: ${dashboardName}...`);
   
   // Simulate dashboard import
   const dashboard = phoneIntelligenceDashboard;
   
-  console.log('🔍 Dashboard configuration:');
-  console.log(`   Title: ${dashboard.title}`);
-  console.log(`   UID: ${dashboard.uid}`);
-  console.log(`   Panels: ${dashboard.panels.length}`);
-  console.log(`   Variables: ${Object.keys(dashboard.variables).length}`);
+  console.info('🔍 Dashboard configuration:');
+  console.info(`   Title: ${dashboard.title}`);
+  console.info(`   UID: ${dashboard.uid}`);
+  console.info(`   Panels: ${dashboard.panels.length}`);
+  console.info(`   Variables: ${Object.keys(dashboard.variables).length}`);
   
   // Simulate import process
-  console.log('\n📤 Importing dashboard...');
+  console.info('\n📤 Importing dashboard...');
   await new Promise(resolve => setTimeout(resolve, 2000));
   
-  console.log('✅ Dashboard imported successfully');
-  console.log(`   Dashboard ID: ${dashboard.uid}`);
-  console.log(`   URL: https://grafana.empire-pro.com/d/${dashboard.uid}`);
-  console.log('   Folder: Phone Intelligence');
-  console.log('   Permissions: Read-only for viewers');
+  console.info('✅ Dashboard imported successfully');
+  console.info(`   Dashboard ID: ${dashboard.uid}`);
+  console.info(`   URL: https://grafana.empire-pro.com/d/${dashboard.uid}`);
+  console.info('   Folder: Phone Intelligence');
+  console.info('   Permissions: Read-only for viewers');
   
   // Display panel summary
-  console.log('\n📊 Panels imported:');
+  console.info('\n📊 Panels imported:');
   dashboard.panels.forEach(panel => {
-    console.log(`   ${panel.id}. ${panel.title} (${panel.type})`);
+    console.info(`   ${panel.id}. ${panel.title} (${panel.type})`);
   });
   
   return dashboard.uid;
 }
 
 async function configureDatasource(type: string) {
-  console.log(`⚙️  Configuring Grafana data source: ${type}...`);
+  console.info(`⚙️  Configuring Grafana data source: ${type}...`);
   
   const datasourceConfigs = {
     'empire-pro': {
@@ -178,25 +178,25 @@ async function configureDatasource(type: string) {
   const config = datasourceConfigs[type as keyof typeof datasourceConfigs];
   if (!config) {
     console.error(`❌ Unknown datasource type: ${type}`);
-    console.log('Available types: empire-pro, prometheus, loki');
+    console.info('Available types: empire-pro, prometheus, loki');
     process.exit(1);
   }
   
-  console.log('🔍 Data source configuration:');
-  console.log(`   Name: ${config.name}`);
-  console.log(`   Type: ${config.type}`);
-  console.log(`   URL: ${config.url}`);
-  console.log(`   Access: ${config.access}`);
-  console.log(`   Default: ${config.isDefault ? 'Yes' : 'No'}`);
+  console.info('🔍 Data source configuration:');
+  console.info(`   Name: ${config.name}`);
+  console.info(`   Type: ${config.type}`);
+  console.info(`   URL: ${config.url}`);
+  console.info(`   Access: ${config.access}`);
+  console.info(`   Default: ${config.isDefault ? 'Yes' : 'No'}`);
   
   // Simulate configuration
-  console.log('\n⚙️  Configuring data source...');
+  console.info('\n⚙️  Configuring data source...');
   await new Promise(resolve => setTimeout(resolve, 1500));
   
-  console.log('✅ Data source configured successfully');
-  console.log(`   Data Source ID: ds_${type}_${Date.now()}`);
-  console.log('   Health: PASS');
-  console.log('   Last Test: Just now');
+  console.info('✅ Data source configured successfully');
+  console.info(`   Data Source ID: ds_${type}_${Date.now()}`);
+  console.info('   Health: PASS');
+  console.info('   Last Test: Just now');
   
   return config.name;
 }
@@ -209,8 +209,8 @@ program
   .action(async (options) => {
     try {
       const dashboardId = await importDashboard(options.dashboard);
-      console.log(`\n🎉 Dashboard import complete!`);
-      console.log(`🔗 Open dashboard: https://grafana.empire-pro.com/d/${dashboardId}`);
+      console.info(`\n🎉 Dashboard import complete!`);
+      console.info(`🔗 Open dashboard: https://grafana.empire-pro.com/d/${dashboardId}`);
     } catch (error) {
       console.error('❌ Dashboard import failed:', error);
       process.exit(1);
@@ -224,8 +224,8 @@ program
   .action(async (options) => {
     try {
       const datasourceName = await configureDatasource(options.type);
-      console.log(`\n🎉 Data source configuration complete!`);
-      console.log(`🔗 Manage datasources: https://grafana.empire-pro.com/datasources`);
+      console.info(`\n🎉 Data source configuration complete!`);
+      console.info(`🔗 Manage datasources: https://grafana.empire-pro.com/datasources`);
     } catch (error) {
       console.error('❌ Data source configuration failed:', error);
       process.exit(1);
@@ -236,30 +236,30 @@ program
   .command('setup')
   .description('Complete Grafana setup for Phone Intelligence')
   .action(async () => {
-    console.log('🚀 Setting up Grafana for Phone Intelligence System...');
+    console.info('🚀 Setting up Grafana for Phone Intelligence System...');
     
     try {
       // Configure data source
-      console.log('\n1️⃣  Configuring data source...');
+      console.info('\n1️⃣  Configuring data source...');
       await configureDatasource('empire-pro');
       
       // Import dashboard
-      console.log('\n2️⃣  Importing dashboard...');
+      console.info('\n2️⃣  Importing dashboard...');
       const dashboardId = await importDashboard('phone-intelligence');
       
       // Setup alerts
-      console.log('\n3️⃣  Setting up alerts...');
+      console.info('\n3️⃣  Setting up alerts...');
       await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('✅ Alert rules configured');
-      console.log('   - High latency alert: >5ms');
-      console.log('   - Low trust score alert: <50');
-      console.log('   - High error rate alert: >1%');
-      console.log('   - Cache hit rate alert: <80%');
+      console.info('✅ Alert rules configured');
+      console.info('   - High latency alert: >5ms');
+      console.info('   - Low trust score alert: <50');
+      console.info('   - High error rate alert: >1%');
+      console.info('   - Cache hit rate alert: <80%');
       
-      console.log('\n🎉 Grafana setup complete!');
-      console.log('🔗 Dashboard: https://grafana.empire-pro.com/d/phone-intelligence');
-      console.log('🔗 Alerts: https://grafana.empire-pro.com/alerting');
-      console.log('🔗 Data Sources: https://grafana.empire-pro.com/datasources');
+      console.info('\n🎉 Grafana setup complete!');
+      console.info('🔗 Dashboard: https://grafana.empire-pro.com/d/phone-intelligence');
+      console.info('🔗 Alerts: https://grafana.empire-pro.com/alerting');
+      console.info('🔗 Data Sources: https://grafana.empire-pro.com/datasources');
       
     } catch (error) {
       console.error('❌ Grafana setup failed:', error);

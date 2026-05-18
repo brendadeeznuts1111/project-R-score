@@ -9,7 +9,7 @@
  * import { getDefaultShortcuts } from './macros/getDefaultShortcuts.ts' with { type: 'macro' };
  * 
  * const shortcuts = getDefaultShortcuts();
- * console.log(`Loaded ${shortcuts.length} default shortcuts`);
+ * console.info(`Loaded ${shortcuts.length} default shortcuts`);
  * ```
  */
 

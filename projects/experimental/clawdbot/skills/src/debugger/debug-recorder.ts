@@ -90,7 +90,7 @@ export class DebugRecorder {
     this.recording = [];
     this.isRecording = true;
 
-    console.log(`Recording started: ${this.sessionId}`);
+    console.info(`Recording started: ${this.sessionId}`);
 
     // Record initial marker
     this.record({
@@ -211,7 +211,7 @@ export class DebugRecorder {
       },
     };
 
-    console.log(
+    console.info(
       `Recording stopped: ${session.duration}ms, ${session.events.length} events`
     );
 
@@ -262,7 +262,7 @@ export class DebugRecorder {
         await storage.putObject(key, new TextEncoder().encode(data), {
           contentType: "application/json",
         });
-        console.log(`Session saved to R2: ${key}`);
+        console.info(`Session saved to R2: ${key}`);
         return key;
       }
     }
@@ -270,7 +270,7 @@ export class DebugRecorder {
     // Save locally
     const localPath = `${this.options.localPath}/${filename}`;
     await Bun.write(localPath, data);
-    console.log(`Session saved locally: ${localPath}`);
+    console.info(`Session saved locally: ${localPath}`);
     return localPath;
   }
 
@@ -352,12 +352,12 @@ export class DebugRecorder {
       onEvent,
     } = options;
 
-    console.log(`Replaying session: ${session.sessionId}`);
-    console.log(`Duration: ${session.duration}ms, Events: ${session.events.length}`);
-    console.log(`Speed: ${speed}x\n`);
+    console.info(`Replaying session: ${session.sessionId}`);
+    console.info(`Duration: ${session.duration}ms, Events: ${session.events.length}`);
+    console.info(`Speed: ${speed}x\n`);
 
     if (session.events.length === 0) {
-      console.log("No events to replay");
+      console.info("No events to replay");
       return;
     }
 
@@ -409,14 +409,14 @@ export class DebugRecorder {
 
         case "marker":
           if (event.data.event === "session_start") {
-            console.log(`\n--- Session Start ---\n`);
+            console.info(`\n--- Session Start ---\n`);
           } else if (event.data.event === "session_end") {
-            console.log(`\n--- Session End ---\n`);
+            console.info(`\n--- Session End ---\n`);
           }
           break;
 
         case "signal":
-          console.log(`[Signal: ${event.data}]`);
+          console.info(`[Signal: ${event.data}]`);
           break;
       }
 
@@ -428,7 +428,7 @@ export class DebugRecorder {
       lastTimestamp = event.timestamp;
     }
 
-    console.log(`\nReplay complete`);
+    console.info(`\nReplay complete`);
   }
 
   /**

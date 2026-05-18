@@ -182,7 +182,7 @@ async function main() {
   await Bun.write(snapshotPath, `${JSON.stringify(snapshot, null, 2)}\n`);
   await Bun.write(LATEST_PATH, `${JSON.stringify(snapshot, null, 2)}\n`);
 
-  console.log(JSON.stringify({ ...snapshot, paths: { latest: LATEST_PATH, snapshot: snapshotPath } }, null, 2));
+  console.info(JSON.stringify({ ...snapshot, paths: { latest: LATEST_PATH, snapshot: snapshotPath } }, null, 2));
   if (fail > 0 || (compareLast && !gate.pass)) process.exit(1);
 }
 

@@ -156,16 +156,16 @@ const CLI = {
 };
 
 if (CLI.health) {
-  console.log(VISUAL_LANGUAGE);
+  console.info(VISUAL_LANGUAGE);
   const health = await healthCheck();
-  console.log("🏥 Health Check:");
-  console.log(JSON.stringify(health, null, 2));
+  console.info("🏥 Health Check:");
+  console.info(JSON.stringify(health, null, 2));
   process.exit(0);
 }
 
 if (CLI.help) {
-  console.log(VISUAL_LANGUAGE);
-  console.log(`
+  console.info(VISUAL_LANGUAGE);
+  console.info(`
 🧮 T3-Lattice MVP v3.1 CLI Options:
   --port=<n>         Proxy server port (default: ${CLI.port})
   --dashboard-port=<n>  Dashboard port (default: ${CLI.dashboardPort})
@@ -188,8 +188,8 @@ if (CLI.help) {
 }
 
 if (CLI.verbose) {
-  console.log("🔧 CLI Options:", JSON.stringify(CLI, null, 2));
-  console.log("🌍 Environment:", JSON.stringify(ENV, null, 2));
+  console.info("🔧 CLI Options:", JSON.stringify(CLI, null, 2));
+  console.info("🌍 Environment:", JSON.stringify(ENV, null, 2));
 }
 
 // --- 1. TOML CONFIG ---
@@ -199,30 +199,30 @@ const ampFactor = config.lattice.amp_factor?.value || 2.5;
 
 // --- DRY RUN MODE ---
 if (CLI.dryRun) {
-  console.log("🧪 DRY RUN MODE - No servers will start");
-  console.log("\n📋 Would execute:");
-  console.log("   1. Load TOML config from lattice.toml");
-  console.log("   2. DNS prefetch api.example.com, s3.amazonaws.com");
-  console.log("   3. Initialize CookieMap with mvp_session");
-  console.log("   4. Calculate amplified vectors (amp_factor=" + ampFactor + ")");
-  console.log("   5. Persist " + Object.keys(vectors).length + " rows to SQLite (WAL mode)");
-  console.log("   6. Render table with depth=" + CLI.depth);
-  console.log("   7. Start proxy server on port " + CLI.port);
-  if (!CLI.noDash) console.log("   8. Start dashboard server on port " + CLI.dashboardPort);
-  console.log("   9. Run PTY terminal demo");
-  console.log("   A. Register FakeTimers test");
-  console.log("\n✅ Dry run complete. Re-run without --dryrun to start servers.");
+  console.info("🧪 DRY RUN MODE - No servers will start");
+  console.info("\n📋 Would execute:");
+  console.info("   1. Load TOML config from lattice.toml");
+  console.info("   2. DNS prefetch api.example.com, s3.amazonaws.com");
+  console.info("   3. Initialize CookieMap with mvp_session");
+  console.info("   4. Calculate amplified vectors (amp_factor=" + ampFactor + ")");
+  console.info("   5. Persist " + Object.keys(vectors).length + " rows to SQLite (WAL mode)");
+  console.info("   6. Render table with depth=" + CLI.depth);
+  console.info("   7. Start proxy server on port " + CLI.port);
+  if (!CLI.noDash) console.info("   8. Start dashboard server on port " + CLI.dashboardPort);
+  console.info("   9. Run PTY terminal demo");
+  console.info("   A. Register FakeTimers test");
+  console.info("\n✅ Dry run complete. Re-run without --dryrun to start servers.");
   process.exit(0);
 }
 
 // --- 2. DNS OPERATIONS (Bun v1.3.4+ APIs) ---
-console.log("1️⃣ TOMLConfig: Loaded", JSON.stringify(config.lattice.vectors));
+console.info("1️⃣ TOMLConfig: Loaded", JSON.stringify(config.lattice.vectors));
 
 // 2.1 DNS Prefetch - Pre-resolve hostnames
 Bun.dns.prefetch("api.example.com");
 Bun.dns.prefetch("s3.amazonaws.com");
 Bun.dns.prefetch("registry.t3-lattice.local");
-console.log("2️⃣ DNS Prefetch: api.example.com, s3.amazonaws.com, registry.t3-lattice.local");
+console.info("2️⃣ DNS Prefetch: api.example.com, s3.amazonaws.com, registry.t3-lattice.local");
 
 // 2.2 DNS Cache - Cache management (Bun.dns.cache)
 const dnsCache = {
@@ -233,7 +233,7 @@ const dnsCache = {
   clear: () => Bun.dns.cache?.clear?.(),
   size: () => (typeof Bun !== 'undefined' && Bun.dns?.cache?.size) ? Bun.dns.cache.size : 0,
 };
-console.log("2️⃣ DNS Cache: Initialized, entries=" + dnsCache.size());
+console.info("2️⃣ DNS Cache: Initialized, entries=" + dnsCache.size());
 
 // 2.4 DNS Resolve - Resolve hostname to IPs
 async function resolveHost(hostname: string): Promise<string[]> {
@@ -268,12 +268,12 @@ async function reverseLookup(ip: string): Promise<string | null> {
 // Execute DNS operations
 const resolvedApi = await resolveHost("api.example.com");
 const lookupResult = await lookupHost("api.example.com");
-console.log("2️⃣ DNS Resolve: api.example.com → " + JSON.stringify(resolvedApi));
-console.log("2️⃣ DNS Lookup: api.example.com → " + JSON.stringify(lookupResult));
+console.info("2️⃣ DNS Resolve: api.example.com → " + JSON.stringify(resolvedApi));
+console.info("2️⃣ DNS Lookup: api.example.com → " + JSON.stringify(lookupResult));
 
 // Show DNS cache info
 if (CLI.verbose) {
-  console.log("2️⃣ DNS Cache Size:", dnsCache.size());
+  console.info("2️⃣ DNS Cache Size:", dnsCache.size());
 }
 
 // --- 3. SECRETS/COOKIEMAP ---
@@ -281,16 +281,16 @@ const token = await Bun.secrets.get({service:"t3-lattice",name:"registry_token"}
 const cm = new CookieMap();
 cm.set("mvp_session", "inline-sess-v3.1", {domain:"localhost",secure:false,path:"/",httpOnly:false});
 cm.set("api_token", token, {domain:"api.example.com",secure:true,httpOnly:true});
-console.log("3️⃣ Secrets/CookieMap: OK (mvp_session=", cm.get("mvp_session"), ")");
+console.info("3️⃣ Secrets/CookieMap: OK (mvp_session=", cm.get("mvp_session"), ")");
 
 // --- 4. SECURE FETCH/ETAG (Mock) ---
 const etagCache = new Map<string,string>();
 async function fetchSecure(url: string): Promise<any> {
   const headers = new Headers(Object.fromEntries(cm.toHeaders({ url })));
-  if (CLI.verbose) console.log("4️⃣ Fetch Headers:", Array.from(headers.keys()));
+  if (CLI.verbose) console.info("4️⃣ Fetch Headers:", Array.from(headers.keys()));
   return { data: { fd: 2.3, regime: "Chaotic" }, etag: `"${randomUUIDv7()}"` };
 }
-console.log("4️⃣ SecureFetch: Ready");
+console.info("4️⃣ SecureFetch: Ready");
 
 // --- 5. VECTOR AMP + CHANNELS ---
 const glyphs = config.lattice.glyphs || { chaotic: "🔴⭕" };
@@ -318,7 +318,7 @@ const data = Object.entries(vectors).map(([key, vec]) => {
     hex: color(colorHex, "HEX")
   };
 });
-console.log("5️⃣ Vectors/Amplified:", data.map(d => d.regime + "=" + d.amplified));
+console.info("5️⃣ Vectors/Amplified:", data.map(d => d.regime + "=" + d.amplified));
 
 // --- 6. SQLITE PERSIST ---
 const db = new Database("lattice_mvp.db");
@@ -327,24 +327,24 @@ for (const row of data) {
   db.run("INSERT OR REPLACE INTO regimes VALUES (?,?,?,?,?)", 
     [randomUUIDv7(), row.regime, JSON.stringify(row.amplified), new Uint8Array(row.rgba), Date.now()]);
 }
-console.log("6️⃣ SQLite: WAL Persisted", data.length, "rows");
+console.info("6️⃣ SQLite: WAL Persisted", data.length, "rows");
 
 // --- 7. %j LOGGING ---
-console.log("7️⃣ %j Logging:", "%j", data[0]);
-console.log("%j %s → %j", data[0].regime, "Regime", data[0].rgba);
+console.info("7️⃣ %j Logging:", "%j", data[0]);
+console.info("%j %s → %j", data[0].regime, "Regime", data[0].rgba);
 
 // --- 8. TABLE RENDER (with CLI depth) ---
 const tableOptions = { colors: true, depth: CLI.depth, showHidden: false, compact: false };
 const tableStr = inspect.table(data, tableOptions);
-console.log("8️⃣ Table Render (depth=" + CLI.depth + "):");
-console.log(tableStr);
+console.info("8️⃣ Table Render (depth=" + CLI.depth + "):");
+console.info(tableStr);
 await Bun.write("logs/mvp_table.txt", inspect.table(data, { ...tableOptions, colors: false }));
 
 // --- 9. S3 STREAM UPLOAD (Mock) ---
 const s3Stream = new ReadableStream({
   start(c) { c.enqueue(JSON.stringify(data)); c.close(); }
 });
-console.log("9️⃣ S3 Stream: Ready (set AWS_KEY for real upload)");
+console.info("9️⃣ S3 Stream: Ready (set AWS_KEY for real upload)");
 
 // --- 10. PROXY SERVER ---
 let server: ReturnType<typeof serve> | null = null;
@@ -418,8 +418,8 @@ try {
       return new Response("Not Found", { status: 404 });
     }
   });
-  console.log("🔟 Proxy: " + getBaseUrl() + "/s3/:key | /api/:path");
-  console.log("   Host: " + ENV_HOST + ":" + CLI.port + " | SNI: " + ENV_SNI_HOSTNAME);
+  console.info("🔟 Proxy: " + getBaseUrl() + "/s3/:key | /api/:path");
+  console.info("   Host: " + ENV_HOST + ":" + CLI.port + " | SNI: " + ENV_SNI_HOSTNAME);
 } catch (err) {
   console.error("❌ Proxy server error:", err);
   process.exit(1);
@@ -486,7 +486,7 @@ if (!CLI.noDash) {
         return new Response("Not Found", { status: 404 });
       }
     });
-    console.log("1️⃣1️⃣ Dashboard: http://localhost:" + CLI.dashboardPort + "/dashboard (Feature Flags visible!)");
+    console.info("1️⃣1️⃣ Dashboard: http://localhost:" + CLI.dashboardPort + "/dashboard (Feature Flags visible!)");
   } catch (err) {
     console.error("❌ Dashboard server error:", err);
   }
@@ -496,7 +496,7 @@ if (!CLI.noDash) {
 
 // --- 13. PTY TERMINAL ---
 async function demoPTY() {
-  console.log("1️⃣3️⃣ PTY Terminal: Starting interactive demo...");
+  console.info("1️⃣3️⃣ PTY Terminal: Starting interactive demo...");
   
   try {
     await using terminal = new Bun.Terminal({
@@ -513,54 +513,54 @@ async function demoPTY() {
     const proc2 = Bun.spawn(["echo", `🔧 Feature flags: PREMIUM=${isPremium}`], { terminal });
     await proc2.exited;
     
-    console.log("1️⃣3️⃣ PTY Demo Complete");
+    console.info("1️⃣3️⃣ PTY Demo Complete");
   } catch (e) {
-    console.log("1️⃣3️⃣ PTY: Skipped (not available on Windows/non-POSIX)");
+    console.info("1️⃣3️⃣ PTY: Skipped (not available on Windows/non-POSIX)");
   }
 }
 demoPTY();
 
 // --- 14. FEATURE FLAGS (DCE) ---
-console.log("1️⃣4️⃣ Feature Flags:");
-console.log("   - PREMIUM:", isPremium, "(DCE removes code if false)");
-console.log("   - DEBUG:", isDebug, "(DCE removes logs if false)");
+console.info("1️⃣4️⃣ Feature Flags:");
+console.info("   - PREMIUM:", isPremium, "(DCE removes code if false)");
+console.info("   - DEBUG:", isDebug, "(DCE removes logs if false)");
 
 if (isPremium) {
-  console.log("   ✅ PREMIUM features active (advanced FD algos)");
+  console.info("   ✅ PREMIUM features active (advanced FD algos)");
 }
 
 if (isDebug) {
-  console.log("   📝 DEBUG mode: Verbose logging enabled");
+  console.info("   📝 DEBUG mode: Verbose logging enabled");
 }
 
 // --- 15. HTTP.AGENT POOL ---
 const agent = new http.Agent({ keepAlive: true });
-console.log("1️⃣5️⃣ HTTP.Agent Pool: keepAlive=true (Fixed in v1.3.4)");
+console.info("1️⃣5️⃣ HTTP.Agent Pool: keepAlive=true (Fixed in v1.3.4)");
 
 // --- 16. COMPILE AUTOLOAD ---
-console.log("1️⃣6️⃣ Compile Autoload Options:");
-console.log("   - --compile-autoload-tsconfig: Load tsconfig.json at runtime");
-console.log("   - --compile-autoload-package-json: Load package.json at runtime");
+console.info("1️⃣6️⃣ Compile Autoload Options:");
+console.info("   - --compile-autoload-tsconfig: Load tsconfig.json at runtime");
+console.info("   - --compile-autoload-package-json: Load package.json at runtime");
 
 // --- 17. FAKE TIMERS TEST ---
 // Note: Tests should be run separately with: bun test mvp.test.ts
 // The test code has been moved to mvp.test.ts
-console.log("1️⃣7️⃣ FakeTimers Test: Available (run 'bun test mvp.test.ts')");
+console.info("1️⃣7️⃣ FakeTimers Test: Available (run 'bun test mvp.test.ts')");
 
 // --- 18. RANDOM UUIDv7 ---
 const uuidHex = randomUUIDv7();
 const uuidBuf = randomUUIDv7("buffer") as Uint8Array;
-console.log("1️⃣8️⃣ RandomUUIDv7:");
-console.log("   - Hex:", uuidHex);
-console.log("   - Buffer:", uuidBuf.length, "bytes");
+console.info("1️⃣8️⃣ RandomUUIDv7:");
+console.info("   - Hex:", uuidHex);
+console.info("   - Buffer:", uuidBuf.length, "bytes");
 
 // --- GRACEFUL SHUTDOWN ---
 function shutdown(signal: string) {
-  console.log("\n🛑 Received " + signal + ", shutting down gracefully...");
+  console.info("\n🛑 Received " + signal + ", shutting down gracefully...");
   if (server) server.stop();
   if (dashboardServer) dashboardServer.stop();
   db.close();
-  console.log("✅ Cleanup complete");
+  console.info("✅ Cleanup complete");
   process.exit(0);
 }
 
@@ -568,14 +568,14 @@ process.on("SIGINT", () => shutdown("SIGINT"));
 process.on("SIGTERM", () => shutdown("SIGTERM"));
 
 // --- SUMMARY ---
-console.log("\n" + "=".repeat(60));
-console.log("✅ T3-Lattice MVP v3.1 COMPLETE (Bun v1.3.4)!");
-console.log("=".repeat(60));
-console.log("📡 Proxy Server:      http://localhost:" + CLI.port);
-if (!CLI.noDash) console.log("🌐 Dashboard:         http://localhost:" + CLI.dashboardPort + "/dashboard");
-console.log("💻 PTY Terminal:      Interactive (see above)");
-console.log("🗄️ SQLite DB:         lattice_mvp.db");
-console.log("📝 Logs:              logs/mvp_table.txt");
-console.log("\n🔧 Build: bun build --compile --feature=PREMIUM ./mvp.ts");
-console.log("🧪 Test: bun test mvp.ts");
-console.log("💡 CLI: bun run mvp.ts --help");
+console.info("\n" + "=".repeat(60));
+console.info("✅ T3-Lattice MVP v3.1 COMPLETE (Bun v1.3.4)!");
+console.info("=".repeat(60));
+console.info("📡 Proxy Server:      http://localhost:" + CLI.port);
+if (!CLI.noDash) console.info("🌐 Dashboard:         http://localhost:" + CLI.dashboardPort + "/dashboard");
+console.info("💻 PTY Terminal:      Interactive (see above)");
+console.info("🗄️ SQLite DB:         lattice_mvp.db");
+console.info("📝 Logs:              logs/mvp_table.txt");
+console.info("\n🔧 Build: bun build --compile --feature=PREMIUM ./mvp.ts");
+console.info("🧪 Test: bun test mvp.ts");
+console.info("💡 CLI: bun run mvp.ts --help");

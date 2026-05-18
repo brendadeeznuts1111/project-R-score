@@ -59,20 +59,20 @@ async function main() {
   const startTime = performance.now();
   const results: Result[] = [];
 
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
-  console.log("║  🚀 STARTUP OPTIMIZATION ENGINE                            ║");
-  console.log("║  Bun v" + Bun.version.padEnd(10) + " │ Network Matrix v" + networkMatrix.meta.version.padEnd(10) + "║");
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.info("\n╔════════════════════════════════════════════════════════════╗");
+  console.info("║  🚀 STARTUP OPTIMIZATION ENGINE                            ║");
+  console.info("║  Bun v" + Bun.version.padEnd(10) + " │ Network Matrix v" + networkMatrix.meta.version.padEnd(10) + "║");
+  console.info("╚════════════════════════════════════════════════════════════╝\n");
 
   if (DRY_RUN) {
-    console.log("⚠️  DRY RUN MODE - No connections will be made\n");
+    console.info("⚠️  DRY RUN MODE - No connections will be made\n");
   }
 
   // ────────────────────────────────────────────
   // Phase 1: DNS Prefetch
   // ────────────────────────────────────────────
-  console.log("📡 Phase 1: DNS Prefetch");
-  console.log("─".repeat(60));
+  console.info("📡 Phase 1: DNS Prefetch");
+  console.info("─".repeat(60));
 
   for (const host of networkMatrix.dns_prefetch.default_hosts) {
     const start = performance.now();
@@ -88,7 +88,7 @@ async function main() {
           URL: records[0]?.address ?? "N/A",
         });
         if (VERBOSE) {
-          console.log(`  ✓ ${host} → ${records[0]?.address} (${elapsed}ms)`);
+          console.info(`  ✓ ${host} → ${records[0]?.address} (${elapsed}ms)`);
         }
       } else {
         results.push({
@@ -109,7 +109,7 @@ async function main() {
         URL: err instanceof Error ? err.message : "Unknown",
       });
       if (VERBOSE) {
-        console.log(`  ✗ ${host} - ${err instanceof Error ? err.message : "Failed"}`);
+        console.info(`  ✗ ${host} - ${err instanceof Error ? err.message : "Failed"}`);
       }
     }
   }
@@ -117,8 +117,8 @@ async function main() {
   // ────────────────────────────────────────────
   // Phase 2: TCP+TLS Preconnect
   // ────────────────────────────────────────────
-  console.log("\n🔗 Phase 2: TCP+TLS Preconnect");
-  console.log("─".repeat(60));
+  console.info("\n🔗 Phase 2: TCP+TLS Preconnect");
+  console.info("─".repeat(60));
 
   const hosts = Object.values(networkMatrix.hosts);
   for (const host of hosts) {
@@ -133,7 +133,7 @@ async function main() {
         URL: `\$${host.env}`,
       });
       if (VERBOSE) {
-        console.log(`  ○ ${host.label} - ${host.env} not set`);
+        console.info(`  ○ ${host.label} - ${host.env} not set`);
       }
       continue;
     }
@@ -160,7 +160,7 @@ async function main() {
           URL: new URL(url).hostname,
         });
         if (VERBOSE) {
-          console.log(`  ✓ ${host.label} → ${new URL(url).hostname} (${elapsed}ms)`);
+          console.info(`  ✓ ${host.label} → ${new URL(url).hostname} (${elapsed}ms)`);
         }
       } else {
         results.push({
@@ -181,7 +181,7 @@ async function main() {
         URL: err instanceof Error ? err.message.slice(0, 30) : "Unknown",
       });
       if (VERBOSE) {
-        console.log(`  ✗ ${host.label} - ${err instanceof Error ? err.message : "Failed"}`);
+        console.info(`  ✗ ${host.label} - ${err instanceof Error ? err.message : "Failed"}`);
       }
     }
   }
@@ -189,14 +189,14 @@ async function main() {
   // ────────────────────────────────────────────
   // Phase 3: Integrity Verification
   // ────────────────────────────────────────────
-  console.log("\n🔐 Phase 3: Integrity Verification");
-  console.log("─".repeat(60));
+  console.info("\n🔐 Phase 3: Integrity Verification");
+  console.info("─".repeat(60));
 
   const matrixCrc = Bun.hash.crc32(JSON.stringify(networkMatrix)).toString(16).padStart(8, "0");
   const preconnectCrc = Bun.hash.crc32(JSON.stringify(preconnectConfig)).toString(16).padStart(8, "0");
 
-  console.log(`  Network Matrix CRC32: ${matrixCrc}`);
-  console.log(`  Preconnect Config CRC32: ${preconnectCrc}`);
+  console.info(`  Network Matrix CRC32: ${matrixCrc}`);
+  console.info(`  Preconnect Config CRC32: ${preconnectCrc}`);
 
   // ────────────────────────────────────────────
   // Summary Table
@@ -206,18 +206,18 @@ async function main() {
   const failed = results.filter((r) => r.Status.includes("✗")).length;
   const skipped = results.filter((r) => r.Status.includes("○")).length;
 
-  console.log("\n📊 Results Summary");
-  console.log("─".repeat(60));
-  console.log(Bun.inspect.table(results, ["Host", "Type", "Status", "Latency"], { colors: true }));
+  console.info("\n📊 Results Summary");
+  console.info("─".repeat(60));
+  console.info(Bun.inspect.table(results, ["Host", "Type", "Status", "Latency"], { colors: true }));
 
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
-  console.log(`║  ✓ Succeeded: ${String(succeeded).padEnd(4)} │ ✗ Failed: ${String(failed).padEnd(4)} │ ○ Skipped: ${String(skipped).padEnd(4)}  ║`);
-  console.log(`║  Total Time: ${elapsed.padEnd(8)}ms │ Ceiling: ${String(preconnectConfig.ceiling?.default_limit ?? 256).padEnd(5)} connections   ║`);
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.info("\n╔════════════════════════════════════════════════════════════╗");
+  console.info(`║  ✓ Succeeded: ${String(succeeded).padEnd(4)} │ ✗ Failed: ${String(failed).padEnd(4)} │ ○ Skipped: ${String(skipped).padEnd(4)}  ║`);
+  console.info(`║  Total Time: ${elapsed.padEnd(8)}ms │ Ceiling: ${String(preconnectConfig.ceiling?.default_limit ?? 256).padEnd(5)} connections   ║`);
+  console.info("╚════════════════════════════════════════════════════════════╝\n");
 
   // Exit with error if any critical connections failed
   if (failed > 0 && !DRY_RUN) {
-    console.log("⚠️  Some connections failed. Check environment variables.\n");
+    console.info("⚠️  Some connections failed. Check environment variables.\n");
     process.exit(1);
   }
 }

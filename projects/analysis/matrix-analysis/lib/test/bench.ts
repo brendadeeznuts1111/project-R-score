@@ -216,8 +216,8 @@ const add = (module: string, fn: string, avgMs: number) => {
 }
 
 // ─── Print Results ───────────────────────────────────────────────────
-console.log("\n=== Bun-Native Lib Benchmark Suite ===\n");
-console.log(Bun.inspect.table(
+console.info("\n=== Bun-Native Lib Benchmark Suite ===\n");
+console.info(Bun.inspect.table(
   results.map((r) => ({
     Module: r.module,
     Function: r.fn,
@@ -229,5 +229,5 @@ console.log(Bun.inspect.table(
 
 const totalBenched = results.length;
 const subMicro = results.filter((r) => r.avgMs < 0.001).length;
-console.log(`\n${totalBenched} benchmarks | ${subMicro} sub-microsecond`);
-console.log(`Bun ${Bun.version} (${Bun.revision.slice(0, 8)})`);
+console.info(`\n${totalBenched} benchmarks | ${subMicro} sub-microsecond`);
+console.info(`Bun ${Bun.version} (${Bun.revision.slice(0, 8)})`);

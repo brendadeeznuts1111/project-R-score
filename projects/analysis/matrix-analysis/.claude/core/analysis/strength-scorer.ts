@@ -408,16 +408,16 @@ const GRADE_COLORS: Record<string, (s: string) => string> = {
  * Display strength report
  */
 export function displayStrengthReport(report: StrengthReport): void {
-	console.log("\n💪 Code Strength Analysis\n");
+	console.info("\n💪 Code Strength Analysis\n");
 
 	// Overall score with big grade
 	const gradeColor = GRADE_COLORS[report.grade] || style.gray;
-	console.log(
+	console.info(
 		`  Overall Score: ${style.bold(report.overallScore.toString())}/100  Grade: ${gradeColor(style.bold(report.grade))}\n`,
 	);
 
 	// Score breakdown
-	console.log(
+	console.info(
 		Bun.inspect.table(
 			[
 				{
@@ -451,15 +451,15 @@ export function displayStrengthReport(report: StrengthReport): void {
 
 	// Recommendations
 	if (report.recommendations.length > 0) {
-		console.log("\n💡 Recommendations\n");
+		console.info("\n💡 Recommendations\n");
 		for (const rec of report.recommendations) {
-			console.log(`  • ${rec}`);
+			console.info(`  • ${rec}`);
 		}
-		console.log();
+		console.info();
 	}
 
 	// Summary
-	console.log(
+	console.info(
 		`📊 Summary: ${report.summary.filesAnalyzed} files analyzed, ${report.summary.totalIssues} issues found\n`,
 	);
 }
@@ -489,7 +489,7 @@ if (import.meta.main) {
 
 	const scorer = new StrengthScorer();
 
-	console.log(`Analyzing code strength in ${path}...`);
+	console.info(`Analyzing code strength in ${path}...`);
 
 	scorer
 		.analyzeDirectory(path)

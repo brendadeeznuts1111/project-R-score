@@ -42,7 +42,7 @@ export const shellExecHandler: StepHandler = async (inputs, context) => {
     throw new Error('shell.exec requires a command input');
   }
 
-  console.log(`🔧 Executing: ${command}`);
+  console.info(`🔧 Executing: ${command}`);
 
   const proc = Bun.spawn(['sh', '-c', command], {
     cwd,
@@ -111,7 +111,7 @@ export const httpRequestHandler: StepHandler = async (inputs) => {
     throw new Error('http.request requires a url input');
   }
 
-  console.log(`🌐 ${method} ${url}`);
+  console.info(`🌐 ${method} ${url}`);
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -178,7 +178,7 @@ export const fileReadHandler: StepHandler = async (inputs) => {
     throw new Error('file.read requires a path input');
   }
 
-  console.log(`📄 Reading: ${path}`);
+  console.info(`📄 Reading: ${path}`);
 
   const file = Bun.file(path);
   const exists = await file.exists();
@@ -226,7 +226,7 @@ export const fileWriteHandler: StepHandler = async (inputs) => {
     throw new Error('file.write requires a content input');
   }
 
-  console.log(`📝 Writing: ${path}`);
+  console.info(`📝 Writing: ${path}`);
 
   let finalContent = content;
 
@@ -262,7 +262,7 @@ export const gitCheckoutHandler: StepHandler = async (inputs) => {
   const ref = (inputs.ref as string) ?? 'HEAD';
   const cwd = (inputs.cwd as string) ?? process.cwd();
 
-  console.log(`🔄 Git checkout: ${ref}`);
+  console.info(`🔄 Git checkout: ${ref}`);
 
   // Checkout ref
   const checkoutProc = Bun.spawn(['git', 'checkout', ref], {
@@ -314,7 +314,7 @@ export const gitPullHandler: StepHandler = async (inputs) => {
     args.push(branch);
   }
 
-  console.log(`⬇️  Git pull: ${args.join(' ')}`);
+  console.info(`⬇️  Git pull: ${args.join(' ')}`);
 
   const proc = Bun.spawn(args, {
     cwd,
@@ -359,7 +359,7 @@ export const delayHandler: StepHandler = async (inputs) => {
     throw new Error('delay requires a positive duration input');
   }
 
-  console.log(`⏳ Sleeping for ${duration}ms`);
+  console.info(`⏳ Sleeping for ${duration}ms`);
 
   const start = performance.now();
   await Bun.sleep(duration);
@@ -400,7 +400,7 @@ export const logHandler: StepHandler = async (inputs) => {
       console.debug(`🔍 ${message}`);
       break;
     default:
-      console.log(`ℹ️  ${message}`);
+      console.info(`ℹ️  ${message}`);
   }
 
   return {
@@ -496,7 +496,7 @@ export const parallelHandler: StepHandler = async (inputs) => {
     throw new Error('parallel requires a tasks array input');
   }
 
-  console.log(`🔀 Running ${tasks.length} tasks in parallel`);
+  console.info(`🔀 Running ${tasks.length} tasks in parallel`);
 
   const results = await Promise.allSettled(
     tasks.map(async (task) => {

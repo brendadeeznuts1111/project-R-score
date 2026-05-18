@@ -19,8 +19,8 @@ function timeOperation(name: string, fn: () => void, iterations: number = 1): nu
   const duration = end - start;
   const avgTime = duration / iterations;
   
-  console.log(`⏱️  ${name}`);
-  console.log(`   Total: ${duration.toFixed(2)}ms | Avg: ${avgTime.toFixed(4)}ms | Iterations: ${iterations}`);
+  console.info(`⏱️  ${name}`);
+  console.info(`   Total: ${duration.toFixed(2)}ms | Avg: ${avgTime.toFixed(4)}ms | Iterations: ${iterations}`);
   
   return duration;
 }
@@ -38,8 +38,8 @@ async function timeAsyncOperation(
   const duration = end - start;
   const avgTime = duration / iterations;
   
-  console.log(`⏱️  ${name}`);
-  console.log(`   Total: ${duration.toFixed(2)}ms | Avg: ${avgTime.toFixed(4)}ms | Iterations: ${iterations}`);
+  console.info(`⏱️  ${name}`);
+  console.info(`   Total: ${duration.toFixed(2)}ms | Avg: ${avgTime.toFixed(4)}ms | Iterations: ${iterations}`);
   
   return duration;
 }
@@ -49,9 +49,9 @@ async function timeAsyncOperation(
 // ============================================================================
 
 async function runBenchmarks() {
-  console.log("🚀 Empire Pro Config Manager - Benchmark Suite");
-  console.log("=".repeat(60));
-  console.log();
+  console.info("🚀 Empire Pro Config Manager - Benchmark Suite");
+  console.info("=".repeat(60));
+  console.info();
 
   const manager = new ConfigManager();
 
@@ -59,8 +59,8 @@ async function runBenchmarks() {
   // Config Creation Benchmark
   // ========================================================================
   
-  console.log("📋 Config Creation Benchmarks");
-  console.log("-".repeat(60));
+  console.info("📋 Config Creation Benchmarks");
+  console.info("-".repeat(60));
   
   await timeAsyncOperation(
     "Config file creation (single)",
@@ -71,14 +71,14 @@ async function runBenchmarks() {
     100
   );
   
-  console.log();
+  console.info();
 
   // ========================================================================
   // Config Loading Benchmark
   // ========================================================================
   
-  console.log("📖 Config Loading Benchmarks");
-  console.log("-".repeat(60));
+  console.info("📖 Config Loading Benchmarks");
+  console.info("-".repeat(60));
   
   // Create test file
   await manager.createExample(TEST_FILE);
@@ -91,14 +91,14 @@ async function runBenchmarks() {
     500
   );
   
-  console.log();
+  console.info();
 
   // ========================================================================
   // Validation Benchmark
   // ========================================================================
   
-  console.log("✔️  Validation Benchmarks");
-  console.log("-".repeat(60));
+  console.info("✔️  Validation Benchmarks");
+  console.info("-".repeat(60));
   
   const config = await manager.YAML.parse(TEST_FILE);
   
@@ -110,14 +110,14 @@ async function runBenchmarks() {
     10000
   );
   
-  console.log();
+  console.info();
 
   // ========================================================================
   // Saving Benchmark
   // ========================================================================
   
-  console.log("💾 Config Saving Benchmarks");
-  console.log("-".repeat(60));
+  console.info("💾 Config Saving Benchmarks");
+  console.info("-".repeat(60));
   
   let fileCounter = 0;
   await timeAsyncOperation(
@@ -130,14 +130,14 @@ async function runBenchmarks() {
     100
   );
   
-  console.log();
+  console.info();
 
   // ========================================================================
   // R2Storage Initialization Benchmark
   // ========================================================================
   
-  console.log("🌐 R2Storage Benchmarks");
-  console.log("-".repeat(60));
+  console.info("🌐 R2Storage Benchmarks");
+  console.info("-".repeat(60));
   
   timeOperation(
     "R2Storage initialization",
@@ -153,7 +153,7 @@ async function runBenchmarks() {
     5000
   );
   
-  console.log();
+  console.info();
   
   const r2 = new R2Storage({
     accountId: "test-account-id",
@@ -171,32 +171,32 @@ async function runBenchmarks() {
     10000
   );
   
-  console.log();
+  console.info();
 
   // ========================================================================
   // Memory and File Size Benchmarks
   // ========================================================================
   
-  console.log("📊 File Size & Memory Analysis");
-  console.log("-".repeat(60));
+  console.info("📊 File Size & Memory Analysis");
+  console.info("-".repeat(60));
   
   const file = Bun.file(TEST_FILE);
   const stats = await file.stat();
   
-  console.log(`📁 Config file size: ${(stats.size / 1024).toFixed(2)} KB`);
-  console.log(`   Size in bytes: ${stats.size}`);
+  console.info(`📁 Config file size: ${(stats.size / 1024).toFixed(2)} KB`);
+  console.info(`   Size in bytes: ${stats.size}`);
   
   const content = await file.text();
-  console.log(`📄 Lines in config: ${content.split('\n').length}`);
+  console.info(`📄 Lines in config: ${content.split('\n').length}`);
   
-  console.log();
+  console.info();
 
   // ========================================================================
   // Full Workflow Benchmark
   // ========================================================================
   
-  console.log("🔄 Full Workflow Benchmark");
-  console.log("-".repeat(60));
+  console.info("🔄 Full Workflow Benchmark");
+  console.info("-".repeat(60));
   
   let workflowCounter = 0;
   await timeAsyncOperation(
@@ -216,16 +216,16 @@ async function runBenchmarks() {
     50
   );
   
-  console.log();
+  console.info();
 
   // ========================================================================
   // Comparative Analysis
   // ========================================================================
   
-  console.log("📈 Performance Summary");
-  console.log("-".repeat(60));
+  console.info("📈 Performance Summary");
+  console.info("-".repeat(60));
   
-  console.log(`
+  console.info(`
 Operations per second:
   • Config validation: ~10,000 ops/sec
   • R2Storage init: ~5,000 ops/sec
@@ -243,7 +243,7 @@ Throughput (single operations):
   • Save: ~10ms
   `);
   
-  console.log();
+  console.info();
 
   // ========================================================================
   // Cleanup
@@ -251,8 +251,8 @@ Throughput (single operations):
   
   rmSync(TEST_FILE);
   
-  console.log("✅ Benchmark suite completed!");
-  console.log("=".repeat(60));
+  console.info("✅ Benchmark suite completed!");
+  console.info("=".repeat(60));
 }
 
 // Run benchmarks

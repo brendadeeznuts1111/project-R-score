@@ -11,7 +11,7 @@ import { fetchData, parseBets } from "./datapipe.ts";
 
 async function datapipeETL() {
   try {
-    console.log("🔄 Running datapipe ETL pipeline...");
+    console.info("🔄 Running datapipe ETL pipeline...");
 
     // Fetch data
     const rawData = await fetchData();
@@ -29,9 +29,9 @@ async function datapipeETL() {
     })).join('\n') + '\n';
 
     // Pipe to stdout (can be piped to jq or other tools)
-    console.log(jsonLines);
+    console.info(jsonLines);
 
-    console.log(`📊 Exported ${bets.length} bets to stdout`);
+    console.info(`📊 Exported ${bets.length} bets to stdout`);
 
   } catch (error) {
     console.error(`❌ Datapipe ETL failed: ${error.message}`);

@@ -233,7 +233,7 @@ export function benchmarkVisualization(): BenchmarkResult[] {
  * Run comprehensive performance benchmark
  */
 export async function runComprehensiveBenchmark(): Promise<PerformanceMetrics> {
-  console.log("🚀 Starting comprehensive performance benchmark...\n");
+  console.info("🚀 Starting comprehensive performance benchmark...\n");
   
   const metrics: PerformanceMetrics = {
     colorMapping: [],
@@ -246,16 +246,16 @@ export async function runComprehensiveBenchmark(): Promise<PerformanceMetrics> {
   const overallStart = Bun.nanoseconds();
 
   // Run all benchmarks
-  console.log("📊 Benchmarking color operations...");
+  console.info("📊 Benchmarking color operations...");
   metrics.colorMapping = benchmarkColorOperations();
   
-  console.log("🧮 Benchmarking FD computation...");
+  console.info("🧮 Benchmarking FD computation...");
   metrics.fdComputation = benchmarkFDComputation();
   
-  console.log("🔄 Benchmarking stream processing...");
+  console.info("🔄 Benchmarking stream processing...");
   metrics.streamProcessing = await benchmarkStreamProcessing();
   
-  console.log("🎨 Benchmarking visualization...");
+  console.info("🎨 Benchmarking visualization...");
   metrics.visualization = benchmarkVisualization();
 
   const overallDuration = (Bun.nanoseconds() - overallStart) / 1e6;
@@ -288,78 +288,78 @@ export async function runComprehensiveBenchmark(): Promise<PerformanceMetrics> {
  * Print formatted benchmark results
  */
 export function printBenchmarkResults(metrics: PerformanceMetrics): void {
-  console.log("\n" + "=".repeat(80));
-  console.log("🏁 BUN.COLOR INTEGRATION PERFORMANCE BENCHMARK RESULTS");
-  console.log("=".repeat(80) + "\n");
+  console.info("\n" + "=".repeat(80));
+  console.info("🏁 BUN.COLOR INTEGRATION PERFORMANCE BENCHMARK RESULTS");
+  console.info("=".repeat(80) + "\n");
 
   // Color Operations
-  console.log("🎨 COLOR OPERATIONS:");
+  console.info("🎨 COLOR OPERATIONS:");
   metrics.colorMapping.forEach(result => {
-    console.log(`  ${result.name.padEnd(35)} | ${result.throughput.toFixed(0).padStart(8)} ops/sec | ${result.duration.toFixed(2)}ms`);
+    console.info(`  ${result.name.padEnd(35)} | ${result.throughput.toFixed(0).padStart(8)} ops/sec | ${result.duration.toFixed(2)}ms`);
   });
 
   // FD Computation
-  console.log("\n🧮 FRACTAL DIMENSION COMPUTATION:");
+  console.info("\n🧮 FRACTAL DIMENSION COMPUTATION:");
   metrics.fdComputation.forEach(result => {
-    console.log(`  ${result.name.padEnd(35)} | ${result.throughput.toFixed(0).padStart(8)} ops/sec | ${result.duration.toFixed(2)}ms`);
+    console.info(`  ${result.name.padEnd(35)} | ${result.throughput.toFixed(0).padStart(8)} ops/sec | ${result.duration.toFixed(2)}ms`);
   });
 
   // Stream Processing
-  console.log("\n🔄 STREAM PROCESSING:");
+  console.info("\n🔄 STREAM PROCESSING:");
   metrics.streamProcessing.forEach(result => {
-    console.log(`  ${result.name.padEnd(35)} | ${result.throughput.toFixed(0).padStart(8)} ops/sec | ${result.duration.toFixed(2)}ms`);
+    console.info(`  ${result.name.padEnd(35)} | ${result.throughput.toFixed(0).padStart(8)} ops/sec | ${result.duration.toFixed(2)}ms`);
   });
 
   // Visualization
-  console.log("\n🎨 VISUALIZATION:");
+  console.info("\n🎨 VISUALIZATION:");
   metrics.visualization.forEach(result => {
-    console.log(`  ${result.name.padEnd(35)} | ${result.throughput.toFixed(0).padStart(8)} ops/sec | ${result.duration.toFixed(2)}ms`);
+    console.info(`  ${result.name.padEnd(35)} | ${result.throughput.toFixed(0).padStart(8)} ops/sec | ${result.duration.toFixed(2)}ms`);
   });
 
   // Overall
-  console.log("\n" + "─".repeat(80));
-  console.log("📊 OVERALL PERFORMANCE:");
-  console.log(`  Total Duration: ${metrics.overall.duration.toFixed(2)}ms`);
-  console.log(`  Combined Throughput: ${metrics.overall.throughput.toFixed(0)} ops/sec`);
+  console.info("\n" + "─".repeat(80));
+  console.info("📊 OVERALL PERFORMANCE:");
+  console.info(`  Total Duration: ${metrics.overall.duration.toFixed(2)}ms`);
+  console.info(`  Combined Throughput: ${metrics.overall.throughput.toFixed(0)} ops/sec`);
   
   if (metrics.overall.details) {
     const details = metrics.overall.details as Record<string, number>;
-    console.log(`  - Color Operations: ${details.colorOps.toFixed(0)} ops/sec`);
-    console.log(`  - FD Computation: ${details.fdOps.toFixed(0)} ops/sec`);
-    console.log(`  - Stream Processing: ${details.streamOps.toFixed(0)} ops/sec`);
-    console.log(`  - Visualization: ${details.vizOps.toFixed(0)} ops/sec`);
+    console.info(`  - Color Operations: ${details.colorOps.toFixed(0)} ops/sec`);
+    console.info(`  - FD Computation: ${details.fdOps.toFixed(0)} ops/sec`);
+    console.info(`  - Stream Processing: ${details.streamOps.toFixed(0)} ops/sec`);
+    console.info(`  - Visualization: ${details.vizOps.toFixed(0)} ops/sec`);
   }
 
   // Performance Assessment
-  console.log("\n💡 PERFORMANCE ASSESSMENT:");
+  console.info("\n💡 PERFORMANCE ASSESSMENT:");
   
   const colorThroughput = metrics.colorMapping.reduce((sum, r) => sum + r.throughput, 0);
   const fdThroughput = metrics.fdComputation.reduce((sum, r) => sum + r.throughput, 0);
   
   if (colorThroughput > 50000) {
-    console.log("  ✅ Color operations: EXCELLENT (>50K ops/sec)");
+    console.info("  ✅ Color operations: EXCELLENT (>50K ops/sec)");
   } else if (colorThroughput > 20000) {
-    console.log("  ✅ Color operations: GOOD (>20K ops/sec)");
+    console.info("  ✅ Color operations: GOOD (>20K ops/sec)");
   } else {
-    console.log("  ⚠️  Color operations: NEEDS OPTIMIZATION");
+    console.info("  ⚠️  Color operations: NEEDS OPTIMIZATION");
   }
 
   if (fdThroughput > 1000) {
-    console.log("  ✅ FD computation: EXCELLENT (>1K ops/sec)");
+    console.info("  ✅ FD computation: EXCELLENT (>1K ops/sec)");
   } else if (fdThroughput > 500) {
-    console.log("  ✅ FD computation: GOOD (>500 ops/sec)");
+    console.info("  ✅ FD computation: GOOD (>500 ops/sec)");
   } else {
-    console.log("  ⚠️  FD computation: CONSIDER OPTIMIZATION");
+    console.info("  ⚠️  FD computation: CONSIDER OPTIMIZATION");
   }
 
   const streamThroughput = metrics.streamProcessing.reduce((sum, r) => sum + r.throughput, 0);
   if (streamThroughput > 100) {
-    console.log("  ✅ Stream processing: REAL-TIME READY (>100 batches/sec)");
+    console.info("  ✅ Stream processing: REAL-TIME READY (>100 batches/sec)");
   } else {
-    console.log("  ⚠️  Stream processing: LATENCY CONCERNS");
+    console.info("  ⚠️  Stream processing: LATENCY CONCERNS");
   }
 
-  console.log("\n" + "=".repeat(80) + "\n");
+  console.info("\n" + "=".repeat(80) + "\n");
 }
 
 /**

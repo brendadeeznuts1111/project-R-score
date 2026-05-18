@@ -112,7 +112,7 @@ if (uploadR2) {
     if (requireR2) {
       throw new Error(message);
     }
-    console.log(message);
+    console.info(message);
   } else {
     const baseKey = `${r2.prefix.replace(/\/+$/g, '')}/profiles/sampling/${stamp}`;
     const archiveKey = `${baseKey}/sampling-profile.tar.gz`;
@@ -138,15 +138,15 @@ if (uploadR2) {
   }
 }
 
-console.log(`[sampling-profile] target=${target}`);
-console.log(
+console.info(`[sampling-profile] target=${target}`);
+console.info(
   `[sampling-profile] iterations=${iterations} sampleIntervalUs=${sampleIntervalUs} durationMs=${durationMs}`
 );
-console.log(`[sampling-profile] output=${runDir}`);
-console.log(`[sampling-profile] archive=${runDir}/sampling-profile.tar.gz`);
+console.info(`[sampling-profile] output=${runDir}`);
+console.info(`[sampling-profile] archive=${runDir}/sampling-profile.tar.gz`);
 if (uploadedArchiveKey) {
-  console.log(`[sampling-profile] r2ArchiveKey=${uploadedArchiveKey}`);
+  console.info(`[sampling-profile] r2ArchiveKey=${uploadedArchiveKey}`);
 }
 if (uploadedSummaryKey) {
-  console.log(`[sampling-profile] r2SummaryKey=${uploadedSummaryKey}`);
+  console.info(`[sampling-profile] r2SummaryKey=${uploadedSummaryKey}`);
 }

@@ -231,56 +231,56 @@ class BundleAnalyzer {
   }
 
   public printAnalysis(result: AnalysisResult): void {
-    console.log('\n📊 Bundle Analysis Report');
-    console.log('='.repeat(50));
+    console.info('\n📊 Bundle Analysis Report');
+    console.info('='.repeat(50));
 
     // Summary
-    console.log(`\n📦 Total Bundle Size: ${result.totalSizeFormatted}`);
-    console.log(`📚 Number of Bundles: ${result.bundles.length}`);
+    console.info(`\n📦 Total Bundle Size: ${result.totalSizeFormatted}`);
+    console.info(`📚 Number of Bundles: ${result.bundles.length}`);
 
     // Individual bundles
-    console.log('\n📋 Individual Bundles:');
+    console.info('\n📋 Individual Bundles:');
     for (const bundle of result.bundles) {
       const status = bundle.size > this.WARNING_THRESHOLD ? '🚨' :
                     bundle.size > this.OPTIMAL_THRESHOLD ? '⚠️' : '✅';
 
-      console.log(`\n${status} ${bundle.name}`);
-      console.log(`   Size: ${bundle.sizeFormatted}`);
-      console.log(`   Modules: ${bundle.modules}`);
-      console.log(`   Features: ${bundle.features.length}`);
-      console.log(`   Optimizations: ${bundle.optimizations.length}`);
+      console.info(`\n${status} ${bundle.name}`);
+      console.info(`   Size: ${bundle.sizeFormatted}`);
+      console.info(`   Modules: ${bundle.modules}`);
+      console.info(`   Features: ${bundle.features.length}`);
+      console.info(`   Optimizations: ${bundle.optimizations.length}`);
 
       if (bundle.features.length > 0) {
-        console.log(`   Active Features: ${bundle.features.slice(0, 5).join(', ')}${bundle.features.length > 5 ? '...' : ''}`);
+        console.info(`   Active Features: ${bundle.features.slice(0, 5).join(', ')}${bundle.features.length > 5 ? '...' : ''}`);
       }
     }
 
     // Warnings
     if (result.warnings.length > 0) {
-      console.log('\n⚠️  Warnings:');
-      result.warnings.forEach(w => console.log(`   ${w}`));
+      console.info('\n⚠️  Warnings:');
+      result.warnings.forEach(w => console.info(`   ${w}`));
     }
 
     // Optimizations
     if (result.optimizations.length > 0) {
-      console.log('\n✅ Applied Optimizations:');
-      result.optimizations.forEach(o => console.log(`   ${o}`));
+      console.info('\n✅ Applied Optimizations:');
+      result.optimizations.forEach(o => console.info(`   ${o}`));
     }
 
     // Recommendations
     if (result.recommendations.length > 0) {
-      console.log('\n💡 Recommendations:');
-      result.recommendations.forEach(r => console.log(`   ${r}`));
+      console.info('\n💡 Recommendations:');
+      result.recommendations.forEach(r => console.info(`   ${r}`));
     }
 
     // Overall assessment
-    console.log('\n🎯 Overall Assessment:');
+    console.info('\n🎯 Overall Assessment:');
     if (result.warnings.length === 0) {
-      console.log('   ✅ Excellent: No issues detected');
+      console.info('   ✅ Excellent: No issues detected');
     } else if (result.warnings.length <= 2) {
-      console.log('   🟡 Good: Minor issues to address');
+      console.info('   🟡 Good: Minor issues to address');
     } else {
-      console.log('   🔴 Needs Attention: Multiple issues detected');
+      console.info('   🔴 Needs Attention: Multiple issues detected');
     }
   }
 }

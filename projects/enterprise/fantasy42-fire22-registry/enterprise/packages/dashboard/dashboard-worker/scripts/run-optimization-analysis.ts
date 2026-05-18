@@ -16,8 +16,8 @@ async function main() {
   // Set up logging
   Logger.setLevel(LogLevel.INFO);
 
-  console.log('🚀 Fire22 Workspace Optimization Analysis');
-  console.log('='.repeat(50));
+  console.info('🚀 Fire22 Workspace Optimization Analysis');
+  console.info('='.repeat(50));
 
   try {
     const analyzer = new WorkspaceOptimizationAnalyzer();

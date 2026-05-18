@@ -40,7 +40,7 @@ async function generateIndex(): Promise<void> {
     file: ".rotgrid.index",
   });
   
-  console.log(`✅ Generated index with ${indexLines.length} entries`);
+  console.info(`✅ Generated index with ${indexLines.length} entries`);
 }
 
 async function searchIndex(pattern: string): Promise<void> {
@@ -53,14 +53,14 @@ async function searchIndex(pattern: string): Promise<void> {
     const matches = lines.filter((line) => line.includes(pattern));
 
     if (matches.length === 0) {
-      console.log(`No matches found for "${pattern}"`);
+      console.info(`No matches found for "${pattern}"`);
       return;
     }
 
-    console.log(`Found ${matches.length} matches:`);
+    console.info(`Found ${matches.length} matches:`);
     matches.forEach((match) => {
       const [rot, rotNum, heat, fp] = match.split("\t");
-      console.log(`  ${rot} | ROT:${rotNum} | ${heat} | FP:${fp}`);
+      console.info(`  ${rot} | ROT:${rotNum} | ${heat} | FP:${fp}`);
     });
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") {
@@ -108,7 +108,7 @@ async function exportGrid(format: "png" | "json" | "csv"): Promise<void> {
         return;
       }
 
-      console.log(
+      console.info(
         `📖 Reading from index file (${dataToExport.length} entries)`
       );
     } catch (error) {
@@ -136,7 +136,7 @@ async function exportGrid(format: "png" | "json" | "csv"): Promise<void> {
   if (format === "json") {
     writeFileSync("grid-export.json", JSON.stringify(dataToExport, null, 2));
     logger.info("Grid exported as JSON", { count: dataToExport.length });
-    console.log(
+    console.info(
       `✅ Exported ${dataToExport.length} entries to grid-export.json`
     );
   } else if (format === "csv") {
@@ -149,7 +149,7 @@ async function exportGrid(format: "png" | "json" | "csv"): Promise<void> {
     );
     writeFileSync("grid-export.csv", csvLines.join("\n"));
     logger.info("Grid exported as CSV", { count: csvLines.length - 1 });
-    console.log(
+    console.info(
       `✅ Exported ${csvLines.length - 1} entries to grid-export.csv`
     );
   } else {
@@ -176,19 +176,19 @@ async function main(): Promise<void> {
     const format = (values.format as "png" | "json" | "csv") || "json";
     await exportGrid(format);
   } else {
-    console.log("Rotation Grid Index CLI");
-    console.log("");
-    console.log("Usage:");
-    console.log("  bun run scripts/grid-index.ts --generate");
-    console.log("  bun run scripts/grid-index.ts --search <pattern>");
-    console.log(
+    console.info("Rotation Grid Index CLI");
+    console.info("");
+    console.info("Usage:");
+    console.info("  bun run scripts/grid-index.ts --generate");
+    console.info("  bun run scripts/grid-index.ts --search <pattern>");
+    console.info(
       "  bun run scripts/grid-index.ts --export [--format json|csv|png]"
     );
-    console.log("");
-    console.log("Examples:");
-    console.log('  bun run grid:index');
-    console.log('  bun run grid:search "NBA-20251103"');
-    console.log('  bun run grid:export --format json');
+    console.info("");
+    console.info("Examples:");
+    console.info('  bun run grid:index');
+    console.info('  bun run grid:search "NBA-20251103"');
+    console.info('  bun run grid:export --format json');
   }
 }
 

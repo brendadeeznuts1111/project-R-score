@@ -12,32 +12,32 @@ import { $, write } from "bun";
 async function setupR2Bucket() {
   const bucketName = "dev-hq-assets";
   
-  console.log("🌐 Setting up Cloudflare R2 Bucket...");
-  console.log("═".repeat(50));
+  console.info("🌐 Setting up Cloudflare R2 Bucket...");
+  console.info("═".repeat(50));
   
   // Check if wrangler is installed
-  console.log("\n📦 Checking for wrangler...");
+  console.info("\n📦 Checking for wrangler...");
   try {
     await $`bunx wrangler --version`.quiet();
-    console.log("✅ Wrangler is installed");
+    console.info("✅ Wrangler is installed");
   } catch {
-    console.log("📥 Installing wrangler...");
+    console.info("📥 Installing wrangler...");
     await $`npm install -g wrangler`.quiet();
   }
   
   // Create R2 bucket (requires C2 or WAF paid plan)
-  console.log("\n🪣 Creating R2 bucket...");
-  console.log(`   Bucket name: ${bucketName}`);
+  console.info("\n🪣 Creating R2 bucket...");
+  console.info(`   Bucket name: ${bucketName}`);
   
   // Note: R2 bucket creation is done through the Cloudflare dashboard
   // or via API. Wrangler doesn't support bucket creation directly.
   // This script generates the configuration and commands.
   
-  console.log("\n📝 To create the bucket:");
-  console.log("   1. Go to Cloudflare Dashboard > R2");
-  console.log("   2. Click 'Create bucket'");
-  console.log("   3. Enter bucket name: " + bucketName);
-  console.log("   4. Click 'Create bucket'");
+  console.info("\n📝 To create the bucket:");
+  console.info("   1. Go to Cloudflare Dashboard > R2");
+  console.info("   2. Click 'Create bucket'");
+  console.info("   3. Enter bucket name: " + bucketName);
+  console.info("   4. Click 'Create bucket'");
   
   // Generate wrangler commands
   const commands = `
@@ -54,11 +54,11 @@ curl -X POST "https://api.cloudflare.com/client/v4/accounts/<ACCOUNT_ID>/r2/buck
 # https://dash.cloudflare.com/?to=/:account/r2/default
 `;
   
-  console.log("\n🔧 Commands for manual setup:");
-  console.log(commands);
+  console.info("\n🔧 Commands for manual setup:");
+  console.info(commands);
   
   // Update wrangler.toml with R2 configuration
-  console.log("\n📄 Updating wrangler.toml...");
+  console.info("\n📄 Updating wrangler.toml...");
   const wranglerConfig = `# 🌤️ Cloudflare Workers + R2 Configuration for Dev HQ
 # Generated for deployment with: bunx wrangler
 
@@ -109,10 +109,10 @@ renderer = "bun"
 `;
   
   await write("wrangler.toml", wranglerConfig);
-  console.log("✅ wrangler.toml updated with R2 configuration");
+  console.info("✅ wrangler.toml updated with R2 configuration");
   
   // Generate TypeScript R2 client utility
-  console.log("\n📝 Generating R2 client utility...");
+  console.info("\n📝 Generating R2 client utility...");
   const r2Client = `/**
  * ☁️ R2 Storage Client for Dev HQ
  * Uses Cloudflare R2 for object storage
@@ -258,14 +258,14 @@ export function createR2Client(): R2Client {
 `;
   
   await write("utils/r2-client.ts", r2Client);
-  console.log("✅ Created utils/r2-client.ts");
+  console.info("✅ Created utils/r2-client.ts");
   
-  console.log("\n═".repeat(50));
-  console.log("✅ R2 bucket setup guide complete!");
-  console.log("\n📋 Next steps:");
-  console.log("   1. Create bucket in Cloudflare Dashboard");
-  console.log("   2. Set R2_* environment variables");
-  console.log("   3. Deploy: bunx wrangler deploy");
+  console.info("\n═".repeat(50));
+  console.info("✅ R2 bucket setup guide complete!");
+  console.info("\n📋 Next steps:");
+  console.info("   1. Create bucket in Cloudflare Dashboard");
+  console.info("   2. Set R2_* environment variables");
+  console.info("   3. Deploy: bunx wrangler deploy");
 }
 
 setupR2Bucket().catch(console.error);

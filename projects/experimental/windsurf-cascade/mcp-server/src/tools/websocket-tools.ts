@@ -115,7 +115,7 @@ const server = serve({
   websocket: {
     // Handle new connections
     open(ws) {
-      console.log(\`🔌 WebSocket client connected\`);
+      console.info(\`🔌 WebSocket client connected\`);
       ws.send(JSON.stringify({
         type: 'connection',
         message: 'Connected to Bun WebSocket server',
@@ -127,7 +127,7 @@ const server = serve({
     message(ws, message) {
       try {
         const data = JSON.parse(message.toString());
-        console.log('📨 Received:', data);
+        console.info('📨 Received:', data);
         
         // Echo message back with timestamp
         ws.send(JSON.stringify({
@@ -147,7 +147,7 @@ const server = serve({
 
     // Handle connection close
     close(ws, code, reason) {
-      console.log(\`🔌 WebSocket client disconnected (code: \${code})\`);
+      console.info(\`🔌 WebSocket client disconnected (code: \${code})\`);
     },
 
     // Handle errors
@@ -189,13 +189,13 @@ const server = serve({
   },
 });
 
-console.log(\`🚀 Bun WebSocket Server running on ws://${config.hostname}:${config.port}\`);
-console.log(\`📊 Max connections: ${config.maxConnections}\`);
-console.log(\`⏰ Heartbeat interval: ${config.heartbeatInterval}ms\`);
+console.info(\`🚀 Bun WebSocket Server running on ws://${config.hostname}:${config.port}\`);
+console.info(\`📊 Max connections: ${config.maxConnections}\`);
+console.info(\`⏰ Heartbeat interval: ${config.heartbeatInterval}ms\`);
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\\n🛑 Shutting down WebSocket server...');
+  console.info('\\n🛑 Shutting down WebSocket server...');
   server.stop();
   process.exit(0);
 });`;
@@ -322,7 +322,7 @@ const server = serve({
       }
       
       connectionCount++;
-      console.log(\`🔌 [Worker \${workerId}] Client connected. Active: \${connectionCount}\`);
+      console.info(\`🔌 [Worker \${workerId}] Client connected. Active: \${connectionCount}\`);
       
       ws.send(JSON.stringify({
         type: 'cluster_info',
@@ -336,7 +336,7 @@ const server = serve({
     message(ws, message) {
       try {
         const data = JSON.parse(message.toString());
-        console.log(\`📨 [Worker \${workerId}] Received: \${data.type || 'message'}\`);
+        console.info(\`📨 [Worker \${workerId}] Received: \${data.type || 'message'}\`);
         
         // Add cluster metadata
         ws.send(JSON.stringify({
@@ -358,7 +358,7 @@ const server = serve({
 
     close(ws, code, reason) {
       connectionCount--;
-      console.log(\`🔌 [Worker \${workerId}] Client disconnected. Active: \${connectionCount}\`);
+      console.info(\`🔌 [Worker \${workerId}] Client disconnected. Active: \${connectionCount}\`);
     }
   },
 
@@ -374,7 +374,7 @@ const server = serve({
   }
 });
 
-console.log(\`🚀 [Worker \${workerId}] WebSocket server running on ws://${config.hostname}:\${port}\`);`;
+console.info(\`🚀 [Worker \${workerId}] WebSocket server running on ws://${config.hostname}:\${port}\`);`;
   }
 
   private static generateLoadBalancerConfig(config: any): string {
@@ -442,8 +442,8 @@ async function monitorServers() {
   const interval = ${validated.interval};
   const threshold = ${validated.alertThreshold};
   
-  console.log('🔍 Starting WebSocket monitoring...');
-  console.log('📊 Monitoring ' + servers.length + ' servers every ' + interval + 'ms');
+  console.info('🔍 Starting WebSocket monitoring...');
+  console.info('📊 Monitoring ' + servers.length + ' servers every ' + interval + 'ms');
   
   setInterval(async () => {
     const results = [];
@@ -475,20 +475,20 @@ async function monitorServers() {
     }
     
     // Output results
-    console.log('\\n📊 ' + new Date().toLocaleTimeString() + ' Status Report:');
+    console.info('\\n📊 ' + new Date().toLocaleTimeString() + ' Status Report:');
     results.forEach(result => {
       const status = result.status === 'online' ? '✅' : 
                     result.status === 'offline' ? '❌' : '⏱️';
-      console.log(\`  \${status} \${result.server.host}:\${result.server.port} - \${result.status}\`);
+      console.info(\`  \${status} \${result.server.host}:\${result.server.port} - \${result.status}\`);
       if (result.responseTime) {
-        console.log(\`     Response time: \${result.responseTime}ms\`);
+        console.info(\`     Response time: \${result.responseTime}ms\`);
       }
     });
     
     // Check for alerts
     const offlineServers = results.filter(r => r.status !== 'online');
     if (offlineServers.length > 0) {
-      console.log('⚠️  ALERT: ' + offlineServers.length + ' servers are offline!');
+      console.info('⚠️  ALERT: ' + offlineServers.length + ' servers are offline!');
     }
     
   }, interval);
@@ -652,55 +652,55 @@ bun run ${rollbackFile}
   private static generateMigrationScript(config: any): string {
     return `#!/usr/bin/env bun
 
-console.log('🔄 Starting WebSocket server migration...');
-console.log('📦 From version ' + '${config.sourceVersion}' + ' to ' + '${config.targetVersion}');
+console.info('🔄 Starting WebSocket server migration...');
+console.info('📦 From version ' + '${config.sourceVersion}' + ' to ' + '${config.targetVersion}');
 
 // Step 1: Pre-flight checks
-console.log('✅ Running pre-flight checks...');
+console.info('✅ Running pre-flight checks...');
 
 // Step 2: Backup current configuration
-console.log('💾 Creating backup...');
+console.info('💾 Creating backup...');
 
 // Step 3: Stop existing server (gracefully)
-console.log('🛑 Stopping current server...');
+console.info('🛑 Stopping current server...');
 
 // Step 4: Apply version updates
-console.log('⬆️ Upgrading to version ${config.targetVersion}...');
+console.info('⬆️ Upgrading to version ${config.targetVersion}...');
 
 // Step 5: Update configuration
-console.log('⚙️ Updating configuration...');
+console.info('⚙️ Updating configuration...');
 
 // Step 6: Validation tests
-console.log('🧪 Running validation tests...');
+console.info('🧪 Running validation tests...');
 
 // Step 7: Start new server
-console.log('🚀 Starting migrated server...');
+console.info('🚀 Starting migrated server...');
 
-console.log('✅ Migration completed successfully!');`;
+console.info('✅ Migration completed successfully!');`;
   }
 
   private static generateRollbackScript(config: any): string {
     return `#!/usr/bin/env bun
 
-console.log('🔄 Starting WebSocket server rollback...');
-console.log('📦 Reverting to version ${config.sourceVersion}');
+console.info('🔄 Starting WebSocket server rollback...');
+console.info('📦 Reverting to version ${config.sourceVersion}');
 
 // Step 1: Stop current server
-console.log('🛑 Stopping current server...');
+console.info('🛑 Stopping current server...');
 
 // Step 2: Restore backup
-console.log('📁 Restoring from backup...');
+console.info('📁 Restoring from backup...');
 
 // Step 3: Apply rollback
-console.log('⬇️ Rolling back to version ${config.sourceVersion}...');
+console.info('⬇️ Rolling back to version ${config.sourceVersion}...');
 
 // Step 4: Validate rollback
-console.log('🧪 Validating rollback...');
+console.info('🧪 Validating rollback...');
 
 // Step 5: Start restored server
-console.log('🚀 Starting rolled-back server...');
+console.info('🚀 Starting rolled-back server...');
 
-console.log('✅ Rollback completed successfully!');`;
+console.info('✅ Rollback completed successfully!');`;
   }
 }
 

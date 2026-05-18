@@ -215,7 +215,7 @@ export class DataProcessingDemo {
   }
 
   private async setupDemo(): Promise<void> {
-    console.log('🚀 Setting up Data Processing Demo...');
+    console.info('🚀 Setting up Data Processing Demo...');
 
     // Register schemas
     this.validationService.registerSchema(DEMO_SCHEMAS.userData);
@@ -234,7 +234,7 @@ export class DataProcessingDemo {
     await this.integrationManager.enableValidation('user-service');
     await this.integrationManager.enableValidation('order-service');
 
-    console.log('✅ Demo setup complete');
+    console.info('✅ Demo setup complete');
   }
 
   // ============================================================================
@@ -245,7 +245,7 @@ export class DataProcessingDemo {
    * Demo 1: Basic data validation and processing
    */
   async demoBasicValidation(): Promise<void> {
-    console.log('\n📋 Demo 1: Basic Data Validation');
+    console.info('\n📋 Demo 1: Basic Data Validation');
 
     const testUser = {
       id: 'user123',
@@ -257,16 +257,16 @@ export class DataProcessingDemo {
     try {
       const validationResult = await this.validationService.validateData(testUser, 'user-data');
 
-      console.log('✅ Validation Result:');
-      console.log(`   Valid: ${validationResult.isValid}`);
-      console.log(`   Score: ${validationResult.score}/100`);
-      console.log(`   Errors: ${validationResult.errors.length}`);
-      console.log(`   Warnings: ${validationResult.warnings.length}`);
+      console.info('✅ Validation Result:');
+      console.info(`   Valid: ${validationResult.isValid}`);
+      console.info(`   Score: ${validationResult.score}/100`);
+      console.info(`   Errors: ${validationResult.errors.length}`);
+      console.info(`   Warnings: ${validationResult.warnings.length}`);
 
       if (validationResult.errors.length > 0) {
-        console.log('   Error Details:');
+        console.info('   Error Details:');
         validationResult.errors.forEach(error => {
-          console.log(`     - ${error.message}`);
+          console.info(`     - ${error.message}`);
         });
       }
 
@@ -279,7 +279,7 @@ export class DataProcessingDemo {
    * Demo 2: Data processing pipeline
    */
   async demoDataProcessing(): Promise<void> {
-    console.log('\n🔄 Demo 2: Data Processing Pipeline');
+    console.info('\n🔄 Demo 2: Data Processing Pipeline');
 
     const userData = {
       id: 'user456',
@@ -299,15 +299,15 @@ export class DataProcessingDemo {
         }
       );
 
-      console.log('✅ Processing Result:');
-      console.log(`   Success: ${result.success}`);
-      console.log(`   Duration: ${result.duration}ms`);
-      console.log(`   Records Processed: ${result.metrics.recordsProcessed}`);
+      console.info('✅ Processing Result:');
+      console.info(`   Success: ${result.success}`);
+      console.info(`   Duration: ${result.duration}ms`);
+      console.info(`   Records Processed: ${result.metrics.recordsProcessed}`);
 
       if (result.success) {
-        console.log('   Processed Data:', result.data);
+        console.info('   Processed Data:', result.data);
       } else {
-        console.log('   Error:', result.error?.message);
+        console.info('   Error:', result.error?.message);
       }
 
     } catch (error) {
@@ -319,7 +319,7 @@ export class DataProcessingDemo {
    * Demo 3: Error context management
    */
   async demoErrorContext(): Promise<void> {
-    console.log('\n🚨 Demo 3: Enhanced Error Context');
+    console.info('\n🚨 Demo 3: Enhanced Error Context');
 
     const errorContext = this.errorManager.createContext(
       'demo-error-handling',
@@ -371,12 +371,12 @@ export class DataProcessingDemo {
           }
         );
 
-        console.log('✅ Error Context Created:');
-        console.log(`   Context ID: ${errorContext.id}`);
-        console.log(`   Errors Found: ${validationResult.errors.length}`);
+        console.info('✅ Error Context Created:');
+        console.info(`   Context ID: ${errorContext.id}`);
+        console.info(`   Errors Found: ${validationResult.errors.length}`);
 
         validationResult.errors.forEach((error, index) => {
-          console.log(`   ${index + 1}. ${error.message} (${error.severity})`);
+          console.info(`   ${index + 1}. ${error.message} (${error.severity})`);
         });
       }
 
@@ -391,7 +391,7 @@ export class DataProcessingDemo {
    * Demo 4: Orchestrated processing
    */
   async demoOrchestration(): Promise<void> {
-    console.log('\n🎯 Demo 4: Pipeline Orchestration');
+    console.info('\n🎯 Demo 4: Pipeline Orchestration');
 
     const orderData = {
       orderId: 'order789',
@@ -419,14 +419,14 @@ export class DataProcessingDemo {
         }
       );
 
-      console.log('✅ Orchestration Result:');
-      console.log(`   Execution ID: ${execution.id}`);
-      console.log(`   Status: ${execution.status}`);
-      console.log(`   Duration: ${execution.duration}ms`);
-      console.log(`   Steps Completed: ${execution.results.length}`);
+      console.info('✅ Orchestration Result:');
+      console.info(`   Execution ID: ${execution.id}`);
+      console.info(`   Status: ${execution.status}`);
+      console.info(`   Duration: ${execution.duration}ms`);
+      console.info(`   Steps Completed: ${execution.results.length}`);
 
       execution.results.forEach((result, index) => {
-        console.log(`   Step ${index + 1}: ${result.stepId} - ${result.status}`);
+        console.info(`   Step ${index + 1}: ${result.stepId} - ${result.status}`);
       });
 
     } catch (error) {
@@ -438,7 +438,7 @@ export class DataProcessingDemo {
    * Demo 5: Service integration
    */
   async demoServiceIntegration(): Promise<void> {
-    console.log('\n🔗 Demo 5: Service Integration');
+    console.info('\n🔗 Demo 5: Service Integration');
 
     const userService = this.integrationManager.getServiceWrapper('user-service');
 
@@ -459,15 +459,15 @@ export class DataProcessingDemo {
         }
       );
 
-      console.log('✅ Service Integration Result:');
-      console.log('   Processed User:', result);
+      console.info('✅ Service Integration Result:');
+      console.info('   Processed User:', result);
 
       // Check integration status
       const integrations = this.integrationManager.getIntegrationStatus();
-      console.log('   Active Integrations:', integrations.length);
+      console.info('   Active Integrations:', integrations.length);
 
       integrations.forEach(integration => {
-        console.log(`     - ${integration.serviceName}: ${integration.migrationStatus}`);
+        console.info(`     - ${integration.serviceName}: ${integration.migrationStatus}`);
       });
 
     } catch (error) {
@@ -479,25 +479,25 @@ export class DataProcessingDemo {
    * Demo 6: Metrics and monitoring
    */
   async demoMetricsMonitoring(): Promise<void> {
-    console.log('\n📊 Demo 6: Metrics and Monitoring');
+    console.info('\n📊 Demo 6: Metrics and Monitoring');
 
     // Get current system metrics
     const systemMetrics = this.metricsMonitor.getSystemMetrics();
 
-    console.log('✅ System Metrics:');
-    console.log(`   Overall Health: ${systemMetrics.overallHealth.toFixed(1)}%`);
-    console.log(`   Active Pipelines: ${systemMetrics.activePipelines}`);
-    console.log(`   Total Throughput: ${systemMetrics.totalThroughput.toFixed(2)} req/s`);
-    console.log(`   Error Rate: ${systemMetrics.errorRate.toFixed(2)}%`);
-    console.log(`   Active Alerts: ${systemMetrics.alerts.length}`);
+    console.info('✅ System Metrics:');
+    console.info(`   Overall Health: ${systemMetrics.overallHealth.toFixed(1)}%`);
+    console.info(`   Active Pipelines: ${systemMetrics.activePipelines}`);
+    console.info(`   Total Throughput: ${systemMetrics.totalThroughput.toFixed(2)} req/s`);
+    console.info(`   Error Rate: ${systemMetrics.errorRate.toFixed(2)}%`);
+    console.info(`   Active Alerts: ${systemMetrics.alerts.length}`);
 
     // Get performance recommendations
     const recommendations = this.metricsMonitor.getPerformanceRecommendations();
 
     if (recommendations.length > 0) {
-      console.log('💡 Performance Recommendations:');
+      console.info('💡 Performance Recommendations:');
       recommendations.forEach((rec, index) => {
-        console.log(`   ${index + 1}. ${rec}`);
+        console.info(`   ${index + 1}. ${rec}`);
       });
     }
 
@@ -505,9 +505,9 @@ export class DataProcessingDemo {
     const recentErrors = await this.errorManager.getRecentErrors(5);
 
     if (recentErrors.length > 0) {
-      console.log('🚨 Recent Errors:');
+      console.info('🚨 Recent Errors:');
       recentErrors.forEach((error, index) => {
-        console.log(`   ${index + 1}. ${error.message} (${error.severity})`);
+        console.info(`   ${index + 1}. ${error.message} (${error.severity})`);
       });
     }
   }
@@ -516,7 +516,7 @@ export class DataProcessingDemo {
    * Demo 7: Batch processing
    */
   async demoBatchProcessing(): Promise<void> {
-    console.log('\n📦 Demo 7: Batch Processing');
+    console.info('\n📦 Demo 7: Batch Processing');
 
     const batchData = [
       {
@@ -536,13 +536,13 @@ export class DataProcessingDemo {
     try {
       const batchResults = await this.orchestrator.executeBatch(batchData);
 
-      console.log('✅ Batch Processing Result:');
-      console.log(`   Total Items: ${batchData.length}`);
-      console.log(`   Successful: ${batchResults.filter(r => r.success).length}`);
-      console.log(`   Failed: ${batchResults.filter(r => !r.success).length}`);
+      console.info('✅ Batch Processing Result:');
+      console.info(`   Total Items: ${batchData.length}`);
+      console.info(`   Successful: ${batchResults.filter(r => r.success).length}`);
+      console.info(`   Failed: ${batchResults.filter(r => !r.success).length}`);
 
       batchResults.forEach((result, index) => {
-        console.log(`   Item ${index + 1}: ${result.success ? '✅' : '❌'} (${result.duration}ms)`);
+        console.info(`   Item ${index + 1}: ${result.success ? '✅' : '❌'} (${result.duration}ms)`);
       });
 
     } catch (error) {
@@ -555,8 +555,8 @@ export class DataProcessingDemo {
   // ============================================================================
 
   async runAllDemos(): Promise<void> {
-    console.log('🎬 Starting Data Processing System Demo');
-    console.log('=' .repeat(50));
+    console.info('🎬 Starting Data Processing System Demo');
+    console.info('=' .repeat(50));
 
     try {
       await this.demoBasicValidation();
@@ -567,8 +567,8 @@ export class DataProcessingDemo {
       await this.demoMetricsMonitoring();
       await this.demoBatchProcessing();
 
-      console.log('\n🎉 All demos completed successfully!');
-      console.log('=' .repeat(50));
+      console.info('\n🎉 All demos completed successfully!');
+      console.info('=' .repeat(50));
 
       this.printSummary();
 
@@ -578,14 +578,14 @@ export class DataProcessingDemo {
   }
 
   private printSummary(): void {
-    console.log('\n📈 Demo Summary:');
-    console.log('✅ Advanced Data Processing Service - Implemented');
-    console.log('✅ Enhanced Error Context Manager - Implemented');
-    console.log('✅ Data Validation and Transformation Layer - Implemented');
-    console.log('✅ Processing Metrics and Monitoring - Implemented');
-    console.log('✅ Data Pipeline Orchestrator - Implemented');
-    console.log('✅ Service Integration Layer - Implemented');
-    console.log('\n🚀 Ready for production deployment!');
+    console.info('\n📈 Demo Summary:');
+    console.info('✅ Advanced Data Processing Service - Implemented');
+    console.info('✅ Enhanced Error Context Manager - Implemented');
+    console.info('✅ Data Validation and Transformation Layer - Implemented');
+    console.info('✅ Processing Metrics and Monitoring - Implemented');
+    console.info('✅ Data Pipeline Orchestrator - Implemented');
+    console.info('✅ Service Integration Layer - Implemented');
+    console.info('\n🚀 Ready for production deployment!');
   }
 
   // ============================================================================
@@ -593,12 +593,12 @@ export class DataProcessingDemo {
   // ============================================================================
 
   async cleanup(): Promise<void> {
-    console.log('\n🧹 Cleaning up demo resources...');
+    console.info('\n🧹 Cleaning up demo resources...');
 
     this.metricsMonitor.stop();
     this.db.close();
 
-    console.log('✅ Cleanup complete');
+    console.info('✅ Cleanup complete');
   }
 }
 
@@ -611,7 +611,7 @@ async function main() {
 
   // Handle graceful shutdown
   process.on('SIGINT', async () => {
-    console.log('\n🛑 Received SIGINT, shutting down...');
+    console.info('\n🛑 Received SIGINT, shutting down...');
     await demo.cleanup();
     process.exit(0);
   });

@@ -32,11 +32,11 @@ function spark(nums: number[]): string {
 const history: number[] = [];
 
 console.clear();
-console.log("\n🧬 ═══════════════════════════════════════════════════════════════════════════════");
-console.log("   Nebula-Flow™ DNS Cache Live Monitor");
-console.log("   Real-time DNS performance tracking for Lightning Network integration");
-console.log("═══════════════════════════════════════════════════════════════════════════════\n");
-console.log("   TTL:", TTL, "seconds  |  Polling: every 1 second  |  Press Ctrl-C to quit\n");
+console.info("\n🧬 ═══════════════════════════════════════════════════════════════════════════════");
+console.info("   Nebula-Flow™ DNS Cache Live Monitor");
+console.info("   Real-time DNS performance tracking for Lightning Network integration");
+console.info("═══════════════════════════════════════════════════════════════════════════════\n");
+console.info("   TTL:", TTL, "seconds  |  Polling: every 1 second  |  Press Ctrl-C to quit\n");
 
 setInterval(() => {
   const s = dns.getCacheStats();
@@ -44,9 +44,9 @@ setInterval(() => {
   const hitRatio = ((s.cacheHitsCompleted + s.cacheHitsInflight) / total) * 100;
 
   console.clear();
-  console.log("\n🧬 ═══════════════════════════════════════════════════════════════════════════════");
-  console.log("   Nebula-Flow™ DNS Cache Live Monitor");
-  console.log("═══════════════════════════════════════════════════════════════════════════════\n");
+  console.info("\n🧬 ═══════════════════════════════════════════════════════════════════════════════");
+  console.info("   Nebula-Flow™ DNS Cache Live Monitor");
+  console.info("═══════════════════════════════════════════════════════════════════════════════\n");
 
   // Color-coded hit ratio
   let hitRatioColor = "";
@@ -62,48 +62,48 @@ setInterval(() => {
     status = "NEEDS IMPROVEMENT";
   }
 
-  console.log("   Hit Ratio:", hitRatioColor, hitRatio.toFixed(1).padStart(5) + "%", "[", status, "]");
-  console.log("   " + bar(hitRatio) + "\n");
+  console.info("   Hit Ratio:", hitRatioColor, hitRatio.toFixed(1).padStart(5) + "%", "[", status, "]");
+  console.info("   " + bar(hitRatio) + "\n");
 
-  console.log("   📊 Cache Statistics:");
-  console.log("      Hits (completed)  :", fmt(s.cacheHitsCompleted));
-  console.log("      Hits (in-flight)  :", fmt(s.cacheHitsInflight));
-  console.log("      Misses            :", fmt(s.cacheMisses));
-  console.log("      Errors            :", fmt(s.errors));
-  console.log("      Cache Size        :", fmt(s.size) + " / 255 entries\n");
+  console.info("   📊 Cache Statistics:");
+  console.info("      Hits (completed)  :", fmt(s.cacheHitsCompleted));
+  console.info("      Hits (in-flight)  :", fmt(s.cacheHitsInflight));
+  console.info("      Misses            :", fmt(s.cacheMisses));
+  console.info("      Errors            :", fmt(s.errors));
+  console.info("      Cache Size        :", fmt(s.size) + " / 255 entries\n");
 
   // Warnings
   if (s.size > 200) {
-    console.log("   ⚠️  WARNING: Cache approaching limit (" + s.size + "/255)");
+    console.info("   ⚠️  WARNING: Cache approaching limit (" + s.size + "/255)");
   }
   if (s.errors > 10) {
-    console.log("   ⚠️  WARNING: High error count - investigate failed hosts");
+    console.info("   ⚠️  WARNING: High error count - investigate failed hosts");
   }
   if (hitRatio < 70 && total > 50) {
-    console.log("   ⚠️  WARNING: Low hit ratio - consider DNS prefetch optimization");
+    console.info("   ⚠️  WARNING: Low hit ratio - consider DNS prefetch optimization");
   }
 
   // Trend
   history.push(hitRatio);
   if (history.length > 60) history.shift();
-  console.log("\n   📈 Hit Ratio Trend (60 seconds, ► = now):");
-  console.log("      " + spark(history.map(r => Math.round(r))) + " ►\n");
+  console.info("\n   📈 Hit Ratio Trend (60 seconds, ► = now):");
+  console.info("      " + spark(history.map(r => Math.round(r))) + " ►\n");
 
   // Recommendations
-  console.log("   💡 Recommendations:");
+  console.info("   💡 Recommendations:");
   if (hitRatio >= 90) {
-    console.log("      ✅ DNS prefetch/preconnect strategy is working well");
+    console.info("      ✅ DNS prefetch/preconnect strategy is working well");
   } else if (hitRatio >= 70) {
-    console.log("      ℹ️  Consider adding more DNS prefetch hints for critical domains");
+    console.info("      ℹ️  Consider adding more DNS prefetch hints for critical domains");
   } else {
-    console.log("      🔧 Add DNS prefetch for all external API endpoints");
+    console.info("      🔧 Add DNS prefetch for all external API endpoints");
   }
 
   if (s.size < 50) {
-    console.log("      ℹ️  Cache has plenty of room for more entries");
+    console.info("      ℹ️  Cache has plenty of room for more entries");
   } else if (s.size > 200) {
-    console.log("      🔧 Consider lowering TTL or reducing unique domains");
+    console.info("      🔧 Consider lowering TTL or reducing unique domains");
   }
 
-  console.log("\n═══════════════════════════════════════════════════════════════════════════════\n");
+  console.info("\n═══════════════════════════════════════════════════════════════════════════════\n");
 }, 1_000);

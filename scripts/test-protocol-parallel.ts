@@ -226,7 +226,7 @@ function printSummary(allResults: ProtocolResult[], aggregates: ProtocolAggregat
     iteration: result.iteration,
   }));
 
-  console.log(
+  console.info(
     Bun.inspect.table(tableRows, ["group", "protocol", "status", "latency", "exitCode", "iteration"], { colors: true })
   );
 
@@ -234,19 +234,19 @@ function printSummary(allResults: ProtocolResult[], aggregates: ProtocolAggregat
     ...row,
     flaky: row.flaky ? "YES" : "NO",
   }));
-  console.log(
+  console.info(
     Bun.inspect.table(aggRows, ["protocol", "runs", "pass", "fail", "flaky", "p50ms", "p95ms", "maxMs"], { colors: true })
   );
 
   if (options.quiet) return;
 
   for (const result of latest) {
-    console.log(`[${result.group}:${result.protocol}] ${result.status} ${result.latency} | script=${result.script}`);
+    console.info(`[${result.group}:${result.protocol}] ${result.status} ${result.latency} | script=${result.script}`);
     if (result.output) {
-      for (const line of trimScriptNoise(result.output, 4)) console.log(`  ${line}`);
+      for (const line of trimScriptNoise(result.output, 4)) console.info(`  ${line}`);
     }
     if (result.error) {
-      for (const line of trimScriptNoise(result.error, 3)) console.log(`  ERR ${line}`);
+      for (const line of trimScriptNoise(result.error, 3)) console.info(`  ERR ${line}`);
     }
   }
 }
@@ -301,7 +301,7 @@ async function main() {
   }
 
   for (const [group] of selectedGroups) {
-    if (!options.quiet) console.log(`\n[${group}] Scheduled`);
+    if (!options.quiet) console.info(`\n[${group}] Scheduled`);
   }
 
   const tasks: Array<() => Promise<ProtocolResult>> = [];
@@ -374,37 +374,37 @@ async function main() {
     ((options.maxP95RegressionMs === null || p95RegressionViolations.length === 0) &&
       (options.maxFailureRegression === null || failureRegressionViolations.length === 0));
 
-  console.log(
+  console.info(
     `\nProtocol grouped run: ${totalPassed}/${allResults.length} passed | failed=${totalFailed} | flaky=${flakyProtocols.size}`
   );
   if (options.maxP95Ms > 0 || options.maxFailures > 0) {
-    console.log(
+    console.info(
       `Threshold gate: failures<=${options.maxFailures} (${failuresGateOk ? "OK" : "FAIL"}) | ` +
         `p95<=${options.maxP95Ms || "off"}ms (${p95GateOk ? "OK" : "FAIL"})`
     );
     if (p95Violations.length > 0) {
-      console.log(
+      console.info(
         `P95 violations: ${p95Violations.map((v) => `${v.protocol}:${v.p95}ms`).join(", ")}`
       );
     }
   }
   if (options.baselineJson) {
     if (!baselineAggregates) {
-      console.log(`Baseline gate: baseline not loaded from ${options.baselineJson}`);
+      console.info(`Baseline gate: baseline not loaded from ${options.baselineJson}`);
     } else {
-      console.log(
+      console.info(
         `Baseline gate: p95-regression<=${options.maxP95RegressionMs === null ? "off" : options.maxP95RegressionMs}ms (${p95RegressionViolations.length === 0 ? "OK" : "FAIL"}) | ` +
           `failure-regression<=${options.maxFailureRegression === null ? "off" : options.maxFailureRegression} (${failureRegressionViolations.length === 0 ? "OK" : "FAIL"})`
       );
       if (p95RegressionViolations.length > 0) {
-        console.log(
+        console.info(
           `P95 regression violations: ${p95RegressionViolations
             .map((v) => `${v.protocol}:+${v.p95RegressionMs}ms`)
             .join(", ")}`
         );
       }
       if (failureRegressionViolations.length > 0) {
-        console.log(
+        console.info(
           `Failure regression violations: ${failureRegressionViolations
             .map((v) => `${v.protocol}:+${v.failureRegression}`)
             .join(", ")}`
@@ -448,7 +448,7 @@ async function main() {
       results: allResults,
     };
     await Bun.write(options.jsonOut, JSON.stringify(payload, null, 2));
-    console.log(`Wrote JSON report: ${options.jsonOut}`);
+    console.info(`Wrote JSON report: ${options.jsonOut}`);
   }
 
   if (options.bail > 0 && totalFailed >= options.bail) {

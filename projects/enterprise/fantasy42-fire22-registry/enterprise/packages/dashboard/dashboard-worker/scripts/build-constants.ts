@@ -250,19 +250,19 @@ export function generateBuildCommand(options: {
 // Export for use in other scripts
 if (import.meta.main) {
   const constants = generateBuildConstants();
-  console.log('🏗️ Fire22 Build Constants');
-  console.log('='.repeat(50));
-  console.log(JSON.stringify(constants, null, 2));
+  console.info('🏗️ Fire22 Build Constants');
+  console.info('='.repeat(50));
+  console.info(JSON.stringify(constants, null, 2));
 
-  console.log('\n📋 Generated Define Flags:');
-  console.log('='.repeat(50));
+  console.info('\n📋 Generated Define Flags:');
+  console.info('='.repeat(50));
   const flags = formatDefineFlags(constants);
   for (let i = 0; i < flags.length; i += 2) {
-    console.log(`${flags[i]} ${flags[i + 1]}`);
+    console.info(`${flags[i]} ${flags[i + 1]}`);
   }
 
-  console.log('\n🚀 Sample Build Command:');
-  console.log('='.repeat(50));
+  console.info('\n🚀 Sample Build Command:');
+  console.info('='.repeat(50));
   const sampleCommand = generateBuildCommand({
     entrypoint: './src/index.ts',
     outputPath: './dist/fire22-dashboard',
@@ -272,5 +272,5 @@ if (import.meta.main) {
     bytecode: true,
     execArgs: ['--env=production', '--port=8080'],
   });
-  console.log(sampleCommand);
+  console.info(sampleCommand);
 }

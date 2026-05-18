@@ -231,7 +231,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
   try {
     // Perform periodic health check and log results
     const health = await statusEndpoint.getHealthCheck();
-    console.log('Scheduled health check:', health);
+    console.info('Scheduled health check:', health);
     
     // Could trigger alerts or notifications here if needed
     if (health.status !== 'healthy') {

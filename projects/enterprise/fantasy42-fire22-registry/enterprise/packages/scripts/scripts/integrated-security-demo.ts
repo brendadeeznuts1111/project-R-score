@@ -8,29 +8,29 @@
 // INTEGRATED SECURITY SCANNER DEMONSTRATION
 // ============================================================================
 
-console.log('🔒 Integrated Security Scanner Demo');
-console.log('='.repeat(60));
+console.info('🔒 Integrated Security Scanner Demo');
+console.info('='.repeat(60));
 
-console.log('🔗 This demo shows how the Fire22 Security Scanner integrates with:');
-console.log("   • Bun's Security Scanner API");
-console.log('   • bunfig.toml configuration');
-console.log('   • Package installation workflow');
-console.log('   • Enterprise security policies');
+console.info('🔗 This demo shows how the Fire22 Security Scanner integrates with:');
+console.info("   • Bun's Security Scanner API");
+console.info('   • bunfig.toml configuration');
+console.info('   • Package installation workflow');
+console.info('   • Enterprise security policies');
 
 // ============================================================================
 // CURRENT CONFIGURATION STATUS
 // ============================================================================
 
-console.log('\n⚙️  Current Security Configuration:');
+console.info('\n⚙️  Current Security Configuration:');
 
 // Read and display current bunfig.toml security section
 const bunfigPath = './bunfig.toml';
 const bunfigContent = await Bun.file(bunfigPath).text();
 
-console.log('   📄 bunfig.toml [install.security]:');
+console.info('   📄 bunfig.toml [install.security]:');
 if (bunfigContent.includes('[install.security]')) {
   const securitySection = bunfigContent.split('[install.security]')[1]?.split('[')[0] || '';
-  console.log(
+  console.info(
     '   ' +
       securitySection
         .split('\n')
@@ -38,23 +38,23 @@ if (bunfigContent.includes('[install.security]')) {
         .join('\n   ')
   );
 } else {
-  console.log('   ❌ Security section not found');
+  console.info('   ❌ Security section not found');
 }
 
 // ============================================================================
 // SIMULATING PACKAGE INSTALLATION WITH SECURITY SCANNING
 // ============================================================================
 
-console.log('\n📦 Simulating Package Installation with Security Scanning:');
+console.info('\n📦 Simulating Package Installation with Security Scanning:');
 
-console.log('   🔧 Command: bun add axios@0.20.0 lodash@4.17.10');
-console.log('   📊 Process:');
-console.log('   1. 📦 Package resolution');
-console.log('   2. 🔍 Security scanner activation');
-console.log('   3. 🛡️  Vulnerability analysis');
-console.log('   4. 📋 License compliance check');
-console.log('   5. 🔒 Registry validation');
-console.log('   6. 🚫 Installation blocked (if issues found)');
+console.info('   🔧 Command: bun add axios@0.20.0 lodash@4.17.10');
+console.info('   📊 Process:');
+console.info('   1. 📦 Package resolution');
+console.info('   2. 🔍 Security scanner activation');
+console.info('   3. 🛡️  Vulnerability analysis');
+console.info('   4. 📋 License compliance check');
+console.info('   5. 🔒 Registry validation');
+console.info('   6. 🚫 Installation blocked (if issues found)');
 
 // Simulate the process
 const simulatedPackages = [
@@ -63,10 +63,10 @@ const simulatedPackages = [
   { name: 'react', version: '18.2.0', status: 'safe' },
 ];
 
-console.log('\n   📋 Simulated Package Analysis:');
+console.info('\n   📋 Simulated Package Analysis:');
 simulatedPackages.forEach((pkg, index) => {
   const statusIcon = pkg.status === 'safe' ? '✅' : '🚨';
-  console.log(
+  console.info(
     `   ${index + 1}. ${statusIcon} ${pkg.name}@${pkg.version} - ${pkg.status.toUpperCase()}`
   );
 });
@@ -75,7 +75,7 @@ simulatedPackages.forEach((pkg, index) => {
 // SECURITY SCANNER INTEGRATION POINTS
 // ============================================================================
 
-console.log('\n🔗 Security Scanner Integration Points:');
+console.info('\n🔗 Security Scanner Integration Points:');
 
 const integrationPoints = [
   {
@@ -106,44 +106,44 @@ const integrationPoints = [
 ];
 
 integrationPoints.forEach((point, index) => {
-  console.log(`\n   ${index + 1}. 🎯 ${point.trigger}`);
-  console.log(`      🔍 ${point.action}`);
-  console.log(`      ✅ ${point.benefit}`);
+  console.info(`\n   ${index + 1}. 🎯 ${point.trigger}`);
+  console.info(`      🔍 ${point.action}`);
+  console.info(`      ✅ ${point.benefit}`);
 });
 
 // ============================================================================
 // ENTERPRISE WORKFLOW INTEGRATION
 // ============================================================================
 
-console.log('\n🏢 Enterprise Workflow Integration:');
+console.info('\n🏢 Enterprise Workflow Integration:');
 
-console.log('   🔄 Development Workflow:');
-console.log('   1. 💻 Developer runs: bun add new-package');
-console.log('   2. 🔍 Security scanner automatically activated');
-console.log('   3. 🛡️  Package analyzed for vulnerabilities');
-console.log('   4. ✅ Safe packages: Installation proceeds');
-console.log('   5. 🚫 Unsafe packages: Installation blocked with details');
-console.log('   6. 📋 Developer reviews issues and chooses alternatives');
+console.info('   🔄 Development Workflow:');
+console.info('   1. 💻 Developer runs: bun add new-package');
+console.info('   2. 🔍 Security scanner automatically activated');
+console.info('   3. 🛡️  Package analyzed for vulnerabilities');
+console.info('   4. ✅ Safe packages: Installation proceeds');
+console.info('   5. 🚫 Unsafe packages: Installation blocked with details');
+console.info('   6. 📋 Developer reviews issues and chooses alternatives');
 
-console.log('\n   🔬 CI/CD Pipeline:');
-console.log('   1. 🤖 Pipeline runs: bun install --frozen-lockfile');
-console.log('   2. 🔍 Security scanner validates all packages');
-console.log('   3. 📊 Results reported to security dashboard');
-console.log('   4. ✅ Clean scan: Deployment proceeds');
-console.log('   5. 🚫 Issues found: Deployment blocked, team notified');
-console.log('   6. 🔧 Security team reviews and approves remediation');
+console.info('\n   🔬 CI/CD Pipeline:');
+console.info('   1. 🤖 Pipeline runs: bun install --frozen-lockfile');
+console.info('   2. 🔍 Security scanner validates all packages');
+console.info('   3. 📊 Results reported to security dashboard');
+console.info('   4. ✅ Clean scan: Deployment proceeds');
+console.info('   5. 🚫 Issues found: Deployment blocked, team notified');
+console.info('   6. 🔧 Security team reviews and approves remediation');
 
-console.log('\n   📈 Production Deployment:');
-console.log('   1. 🚀 Deployment runs: bun install --production');
-console.log('   2. 🔍 Final security validation');
-console.log('   3. 📋 Audit trail generated');
-console.log('   4. ✅ Successful deployment with security sign-off');
+console.info('\n   📈 Production Deployment:');
+console.info('   1. 🚀 Deployment runs: bun install --production');
+console.info('   2. 🔍 Final security validation');
+console.info('   3. 📋 Audit trail generated');
+console.info('   4. ✅ Successful deployment with security sign-off');
 
 // ============================================================================
 // CONFIGURATION MANAGEMENT
 // ============================================================================
 
-console.log('\n⚙️  Configuration Management:');
+console.info('\n⚙️  Configuration Management:');
 
 const configManagement = [
   {
@@ -173,42 +173,42 @@ const configManagement = [
 ];
 
 configManagement.forEach((config, index) => {
-  console.log(`\n   ${index + 1}. 🔧 ${config.method}`);
-  console.log(`      🎯 ${config.purpose}`);
-  console.log(`      💻 ${config.example}`);
-  console.log(`      👥 ${config.scope}`);
+  console.info(`\n   ${index + 1}. 🔧 ${config.method}`);
+  console.info(`      🎯 ${config.purpose}`);
+  console.info(`      💻 ${config.example}`);
+  console.info(`      👥 ${config.scope}`);
 });
 
 // ============================================================================
 // MONITORING AND COMPLIANCE
 // ============================================================================
 
-console.log('\n📊 Monitoring and Compliance:');
+console.info('\n📊 Monitoring and Compliance:');
 
-console.log('   📈 Security Metrics:');
-console.log('   • Total packages scanned');
-console.log('   • Vulnerabilities detected and blocked');
-console.log('   • License compliance rate');
-console.log('   • Scan performance and timing');
-console.log('   • False positive/negative rates');
+console.info('   📈 Security Metrics:');
+console.info('   • Total packages scanned');
+console.info('   • Vulnerabilities detected and blocked');
+console.info('   • License compliance rate');
+console.info('   • Scan performance and timing');
+console.info('   • False positive/negative rates');
 
-console.log('\n   📋 Compliance Reporting:');
-console.log('   • Regulatory compliance status');
-console.log('   • Security audit trails');
-console.log('   • Risk assessment reports');
-console.log('   • Remediation tracking');
+console.info('\n   📋 Compliance Reporting:');
+console.info('   • Regulatory compliance status');
+console.info('   • Security audit trails');
+console.info('   • Risk assessment reports');
+console.info('   • Remediation tracking');
 
-console.log('\n   🚨 Alert Integration:');
-console.log('   • Real-time security alerts');
-console.log('   • Slack/Teams notifications');
-console.log('   • Security dashboard updates');
-console.log('   • Executive reporting');
+console.info('\n   🚨 Alert Integration:');
+console.info('   • Real-time security alerts');
+console.info('   • Slack/Teams notifications');
+console.info('   • Security dashboard updates');
+console.info('   • Executive reporting');
 
 // ============================================================================
 // PERFORMANCE OPTIMIZATION
 // ============================================================================
 
-console.log('\n⚡ Performance Optimization:');
+console.info('\n⚡ Performance Optimization:');
 
 const optimizations = [
   '🔄 Caching scan results for unchanged packages',
@@ -220,14 +220,14 @@ const optimizations = [
 ];
 
 optimizations.forEach(optimization => {
-  console.log(`   ${optimization}`);
+  console.info(`   ${optimization}`);
 });
 
 // ============================================================================
 // TROUBLESHOOTING INTEGRATION ISSUES
 // ============================================================================
 
-console.log('\n🔧 Troubleshooting Integration Issues:');
+console.info('\n🔧 Troubleshooting Integration Issues:');
 
 const troubleshooting = [
   {
@@ -258,16 +258,16 @@ const troubleshooting = [
 ];
 
 troubleshooting.forEach((item, index) => {
-  console.log(`\n   ${index + 1}. ${item.issue}`);
-  console.log(`      🔍 Check: ${item.check}`);
-  console.log(`      🔧 Fix: ${item.fix}`);
+  console.info(`\n   ${index + 1}. ${item.issue}`);
+  console.info(`      🔍 Check: ${item.check}`);
+  console.info(`      🔧 Fix: ${item.fix}`);
 });
 
 // ============================================================================
 // FUTURE ENHANCEMENTS
 // ============================================================================
 
-console.log('\n🚀 Future Enhancements:');
+console.info('\n🚀 Future Enhancements:');
 
 const enhancements = [
   '🤖 AI-powered threat detection',
@@ -281,14 +281,14 @@ const enhancements = [
 ];
 
 enhancements.forEach(enhancement => {
-  console.log(`   ${enhancement}`);
+  console.info(`   ${enhancement}`);
 });
 
 // ============================================================================
 // SUCCESS METRICS
 // ============================================================================
 
-console.log('\n📈 Success Metrics:');
+console.info('\n📈 Success Metrics:');
 
 const metrics = [
   '🛡️ Zero security incidents from package vulnerabilities',
@@ -302,14 +302,14 @@ const metrics = [
 ];
 
 metrics.forEach(metric => {
-  console.log(`   ${metric}`);
+  console.info(`   ${metric}`);
 });
 
 // ============================================================================
 // FINAL VERIFICATION
 // ============================================================================
 
-console.log('\n✅ Integration Verification:');
+console.info('\n✅ Integration Verification:');
 
 const verificationChecks = [
   { check: 'Security scanner properly configured', status: true },
@@ -324,10 +324,10 @@ const verificationChecks = [
 
 verificationChecks.forEach(({ check, status }) => {
   const icon = status ? '✅' : '❌';
-  console.log(`   ${icon} ${check}`);
+  console.info(`   ${icon} ${check}`);
 });
 
-console.log('\n🎉 Integrated Security Scanner Demo Complete!');
-console.log('   🔒 Your Fire22 project now has comprehensive security scanning!');
-console.log('   🛡️  All package installations are protected by enterprise security!');
-console.log('   🚀 Ready for secure, compliant software development!');
+console.info('\n🎉 Integrated Security Scanner Demo Complete!');
+console.info('   🔒 Your Fire22 project now has comprehensive security scanning!');
+console.info('   🛡️  All package installations are protected by enterprise security!');
+console.info('   🚀 Ready for secure, compliant software development!');

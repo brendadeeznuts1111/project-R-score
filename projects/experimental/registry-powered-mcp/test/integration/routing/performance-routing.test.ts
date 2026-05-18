@@ -35,7 +35,7 @@ function getLoadMultiplier(): number {
     if (normalizedLoad > 0.3) {
       // Allow up to 10x multiplier for heavily loaded systems
       const multiplier = Math.min(10.0, 1.0 + (normalizedLoad * 3));
-      console.log(`⚠️  System load: ${loadAvg.toFixed(2)}, CPUs: ${cpuCount}, target multiplier: ${multiplier.toFixed(1)}x`);
+      console.info(`⚠️  System load: ${loadAvg.toFixed(2)}, CPUs: ${cpuCount}, target multiplier: ${multiplier.toFixed(1)}x`);
       return multiplier;
     }
     return 1.0;
@@ -66,7 +66,7 @@ describe("Router Performance Integration", () => {
 
       // Use relaxed target for integration tests
       expect(benchmark.p99).toBeLessThan(INTEGRATION_DISPATCH_TARGET);
-      console.log(formatStats(benchmark, "Static route dispatch"));
+      console.info(formatStats(benchmark, "Static route dispatch"));
     });
 
     test("parameterized route dispatch meets SLA", () => {
@@ -77,7 +77,7 @@ describe("Router Performance Integration", () => {
 
       // Use relaxed integration target (system load affects timing)
       expect(benchmark.mean).toBeLessThan(INTEGRATION_DISPATCH_TARGET);
-      console.log(formatStats(benchmark, "Parameterized route dispatch"));
+      console.info(formatStats(benchmark, "Parameterized route dispatch"));
     });
 
     test("wildcard route dispatch meets SLA", () => {
@@ -88,7 +88,7 @@ describe("Router Performance Integration", () => {
 
       // Mean is the SLA gate
       expect(benchmark.mean).toBeLessThan(ADJUSTED_SLA_DISPATCH);
-      console.log(formatStats(benchmark, "Wildcard route dispatch"));
+      console.info(formatStats(benchmark, "Wildcard route dispatch"));
     });
 
     test("404 (no match) dispatch is fast", () => {
@@ -99,7 +99,7 @@ describe("Router Performance Integration", () => {
 
       // 404s must meet SLA - mean is the gate
       expect(benchmark.mean).toBeLessThan(ADJUSTED_SLA_DISPATCH);
-      console.log(formatStats(benchmark, "404 dispatch"));
+      console.info(formatStats(benchmark, "404 dispatch"));
     });
   });
 
@@ -112,7 +112,7 @@ describe("Router Performance Integration", () => {
 
       // Use relaxed integration target for micro-benchmarks
       expect(stats.mean).toBeLessThan(INTEGRATION_DISPATCH_TARGET);
-      console.log(formatStats(stats, "Single parameter extraction"));
+      console.info(formatStats(stats, "Single parameter extraction"));
     });
 
     test("multiple parameter extraction", () => {
@@ -123,7 +123,7 @@ describe("Router Performance Integration", () => {
 
       // Mean is the SLA gate for micro-benchmarks
       assertMeanSLA(stats, SLA_TARGETS.DISPATCH_MS, "Multi param");
-      console.log(formatStats(stats, "Multiple parameter extraction"));
+      console.info(formatStats(stats, "Multiple parameter extraction"));
     });
 
     test("complex path parameter extraction", () => {
@@ -135,7 +135,7 @@ describe("Router Performance Integration", () => {
 
       // Mean should be under dispatch SLA
       expect(stats.mean).toBeLessThan(ADJUSTED_SLA_DISPATCH);
-      console.log(formatStats(stats, "Complex parameter extraction"));
+      console.info(formatStats(stats, "Complex parameter extraction"));
     });
   });
 
@@ -163,9 +163,9 @@ describe("Router Performance Integration", () => {
       }
 
       // Log results for visibility
-      console.log("Method performance (mean/P99):");
+      console.info("Method performance (mean/P99):");
       for (const [method, { mean, p99 }] of Object.entries(results)) {
-        console.log(`  ${method}: ${(mean * 1000).toFixed(2)}μs / ${(p99 * 1000).toFixed(2)}μs`);
+        console.info(`  ${method}: ${(mean * 1000).toFixed(2)}μs / ${(p99 * 1000).toFixed(2)}μs`);
       }
     });
   });
@@ -189,7 +189,7 @@ describe("Router Performance Integration", () => {
 
       // Mean is the SLA gate
       assertMeanSLA(stats, SLA_TARGETS.HEALTH_CHECK_MS, "Health check");
-      console.log(formatStats(stats, "Health check"));
+      console.info(formatStats(stats, "Health check"));
     });
 
     test("stats retrieval is fast", () => {
@@ -197,7 +197,7 @@ describe("Router Performance Integration", () => {
 
       // Mean should be fast
       expect(stats.mean).toBeLessThan(0.5); // Under 0.5ms
-      console.log(formatStats(stats, "Stats retrieval"));
+      console.info(formatStats(stats, "Stats retrieval"));
     });
   });
 
@@ -218,7 +218,7 @@ describe("Router Performance Integration", () => {
       // Use relaxed integration target for burst tests (system noise affects timing)
       expect(perMatch).toBeLessThan(INTEGRATION_DISPATCH_TARGET);
 
-      console.log(`1000 route matches: ${result.durationMs.toFixed(2)}ms (${perMatch.toFixed(4)}ms each)`);
+      console.info(`1000 route matches: ${result.durationMs.toFixed(2)}ms (${perMatch.toFixed(4)}ms each)`);
     });
 
     test("mixed route types in sequence", () => {
@@ -240,7 +240,7 @@ describe("Router Performance Integration", () => {
       const perRoute = stats.mean / 5;
       expect(perRoute).toBeLessThan(INTEGRATION_DISPATCH_TARGET);
 
-      console.log(formatStats(stats, "Mixed routes (5 per iteration)"));
+      console.info(formatStats(stats, "Mixed routes (5 per iteration)"));
     });
   });
 
@@ -257,7 +257,7 @@ describe("Router Performance Integration", () => {
       // Allow up to 1MB for 1000 matches (1KB per match)
       expect(memory.heapDeltaKB).toBeLessThan(1024);
 
-      console.log(`Memory for 1000 matches: ${memory.heapDeltaKB.toFixed(2)}KB`);
+      console.info(`Memory for 1000 matches: ${memory.heapDeltaKB.toFixed(2)}KB`);
     });
 
     test("router initialization memory is bounded", () => {
@@ -317,12 +317,12 @@ describe("Router Performance Integration", () => {
       expect(stats.mean).toBeLessThan(ADJUSTED_SLA_DISPATCH);
 
       // Log variance metrics for visibility (not hard gates due to system noise)
-      console.log(formatStats(stats, "5000 iteration stability test"));
+      console.info(formatStats(stats, "5000 iteration stability test"));
       if (stats.cv > 200) {
-        console.log(`  ⚠ High CV (${stats.cv.toFixed(1)}%) - common in micro-benchmarks`);
+        console.info(`  ⚠ High CV (${stats.cv.toFixed(1)}%) - common in micro-benchmarks`);
       }
       if (stats.p99 / stats.p50 > 5) {
-        console.log(`  ⚠ P99/P50 ratio: ${(stats.p99 / stats.p50).toFixed(1)}x`);
+        console.info(`  ⚠ P99/P50 ratio: ${(stats.p99 / stats.p50).toFixed(1)}x`);
       }
     });
 
@@ -353,11 +353,11 @@ describe("Router Performance Integration", () => {
 
       // Log degradation for visibility (informational, not a gate)
       const degradation = (secondBatch.mean - firstBatch.mean) / firstBatch.mean;
-      console.log(`First batch mean: ${firstBatch.mean.toFixed(4)}ms`);
-      console.log(`Second batch mean: ${secondBatch.mean.toFixed(4)}ms`);
-      console.log(`Degradation: ${(degradation * 100).toFixed(1)}%`);
+      console.info(`First batch mean: ${firstBatch.mean.toFixed(4)}ms`);
+      console.info(`Second batch mean: ${secondBatch.mean.toFixed(4)}ms`);
+      console.info(`Degradation: ${(degradation * 100).toFixed(1)}%`);
       if (degradation > 1.0) {
-        console.log(`  ⚠ High variance detected - common in micro-benchmarks`);
+        console.info(`  ⚠ High variance detected - common in micro-benchmarks`);
       }
     });
   });

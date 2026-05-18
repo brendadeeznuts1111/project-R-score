@@ -10,10 +10,10 @@ export class SovereignHeartbeat {
   private static readonly BEAT_INTERVAL = 5000; // 5 seconds for simulation
 
   static async startPulse() {
-    console.log("🏰 [SOVEREIGN HEARTBEAT] Pulse Active. Monitoring fleet autonomy...");
+    console.info("🏰 [SOVEREIGN HEARTBEAT] Pulse Active. Monitoring fleet autonomy...");
     
     setInterval(async () => {
-      console.log(`\n💓 Heartbeat Pulse: ${new Date().toLocaleTimeString()}`);
+      console.info(`\n💓 Heartbeat Pulse: ${new Date().toLocaleTimeString()}`);
       
       const mockAgents = Array.from({ length: 10 }, (_, i) => `sov-agent-${i.toString().padStart(3, '0')}`);
       
@@ -23,7 +23,7 @@ export class SovereignHeartbeat {
       // 2. Correct Drift
       await SovereignDriftCorrector.eliminateEntropy(mockAgents);
       
-      console.log("💎 Pulse Cycle Complete. Fleet state: Sovereign.");
+      console.info("💎 Pulse Cycle Complete. Fleet state: Sovereign.");
     }, this.BEAT_INTERVAL);
   }
 }

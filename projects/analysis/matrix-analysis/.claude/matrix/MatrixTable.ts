@@ -244,7 +244,7 @@ if (import.meta.main) {
 
 	switch (command) {
 		case "grid": {
-			console.log(renderMatrixGrid());
+			console.info(renderMatrixGrid());
 			break;
 		}
 
@@ -254,47 +254,47 @@ if (import.meta.main) {
 				console.error(`Unknown team: ${team}`);
 				process.exit(1);
 			}
-			console.log(renderMatrixGrid({ team }));
+			console.info(renderMatrixGrid({ team }));
 			break;
 		}
 
 		case "table": {
-			console.log(renderColumnTable());
+			console.info(renderColumnTable());
 			break;
 		}
 
 		case "stats": {
-			console.log(renderTeamStats());
+			console.info(renderTeamStats());
 			break;
 		}
 
 		case "query": {
 			const team = Bun.argv[3] as TeamId;
 			const result = queryMatrix({ team });
-			console.log(`Query results for team=${team || "all"}:`);
-			console.log(`  Found: ${result.count} columns`);
+			console.info(`Query results for team=${team || "all"}:`);
+			console.info(`  Found: ${result.count} columns`);
 			for (const col of result.columns) {
-				console.log(`    ${col.index}: ${col.id}`);
+				console.info(`    ${col.index}: ${col.id}`);
 			}
 			break;
 		}
 
 		case "demo": {
-			console.log(renderMatrixGrid());
-			console.log("\n");
-			console.log(renderTeamStats());
+			console.info(renderMatrixGrid());
+			console.info("\n");
+			console.info(renderTeamStats());
 			break;
 		}
 
 		default: {
-			console.log("Tier-1380 OMEGA Matrix Table\n");
-			console.log("Commands:");
-			console.log("  grid         Show colored matrix grid");
-			console.log("  team <name>  Show grid for specific team");
-			console.log("  table        Show detailed column table");
-			console.log("  stats        Show team statistics");
-			console.log("  query <team> Query columns by team");
-			console.log("  demo         Full demonstration");
+			console.info("Tier-1380 OMEGA Matrix Table\n");
+			console.info("Commands:");
+			console.info("  grid         Show colored matrix grid");
+			console.info("  team <name>  Show grid for specific team");
+			console.info("  table        Show detailed column table");
+			console.info("  stats        Show team statistics");
+			console.info("  query <team> Query columns by team");
+			console.info("  demo         Full demonstration");
 		}
 	}
 }

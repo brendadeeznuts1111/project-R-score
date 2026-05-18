@@ -221,7 +221,7 @@ function startMemoryMonitoring(): void {
       });
     }
     if (memory.heapUsed > MEMORY_THRESHOLD) {
-      console.log(`${c.yellow}High memory usage detected, requesting GC${c.reset}`);
+      console.info(`${c.yellow}High memory usage detected, requesting GC${c.reset}`);
       Bun.gc(true); // Request garbage collection
     }
   }, MEMORY_CHECK_INTERVAL);
@@ -279,9 +279,9 @@ async function drawAnalyticsView() {
   // TLS badge
   const tlsBadgeStr = createTLSBadge(config);
 
-  console.log(`${c.cyan}  ╔════ ANALYTICS & MONITORING ${"═".repeat(getBoxWidth() - 32)}╗${c.reset}`);
-  console.log(`${c.cyan}  ║${c.reset} 🖥️  ${c.bold}${metrics.hostname.slice(0, 16)}${c.reset} │ ${exceptionBadge} │ ${tlsBadgeStr} │ 🚀 Bun v${Bun.version}${" ".repeat(Math.max(0, getBoxWidth() - 70 - Math.min(16, metrics.hostname.length)))}${c.cyan}║${c.reset}`);
-  console.log(`${c.cyan}  ╠${"═".repeat(getBoxWidth())}╣${c.reset}`);
+  console.info(`${c.cyan}  ╔════ ANALYTICS & MONITORING ${"═".repeat(getBoxWidth() - 32)}╗${c.reset}`);
+  console.info(`${c.cyan}  ║${c.reset} 🖥️  ${c.bold}${metrics.hostname.slice(0, 16)}${c.reset} │ ${exceptionBadge} │ ${tlsBadgeStr} │ 🚀 Bun v${Bun.version}${" ".repeat(Math.max(0, getBoxWidth() - 70 - Math.min(16, metrics.hostname.length)))}${c.cyan}║${c.reset}`);
+  console.info(`${c.cyan}  ╠${"═".repeat(getBoxWidth())}╣${c.reset}`);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // CPU & MEMORY BARS
@@ -294,7 +294,7 @@ async function drawAnalyticsView() {
   const cpuLine = `CPU: ${cpuBar} ${getThermalColor(metrics.cpu.usage)}${metrics.cpu.usage}%${c.reset}`;
   const memLine = `MEM: ${memBar} ${getThermalColor(metrics.memory.usagePercent)}${metrics.memory.usagePercent}%${c.reset} (${memUsedGB}/${memTotalGB}GB)`;
 
-  console.log(`${c.cyan}  ║${c.reset} ${cpuLine}  │ ${memLine}${" ".repeat(Math.max(0, getBoxWidth() - 75))}${c.cyan}║${c.reset}`);
+  console.info(`${c.cyan}  ║${c.reset} ${cpuLine}  │ ${memLine}${" ".repeat(Math.max(0, getBoxWidth() - 75))}${c.cyan}║${c.reset}`);
 
   // Heap and Load
   const heapUsedMB = (metrics.memory.heapUsed / 1024 / 1024).toFixed(1);
@@ -305,7 +305,7 @@ async function drawAnalyticsView() {
   const heapLine = `HEAP: ${heapUsedMB} MB / ${heapTotalMB} MB (RSS: ${rssMB} MB)`;
   const loadLine = `LOAD: ${loadAvg}`;
 
-  console.log(`${c.cyan}  ║${c.reset} ${c.dim}${heapLine}${c.reset}    │ ${c.dim}${loadLine}${c.reset}${" ".repeat(Math.max(0, getBoxWidth() - heapLine.length - loadLine.length - 10))}${c.cyan}║${c.reset}`);
+  console.info(`${c.cyan}  ║${c.reset} ${c.dim}${heapLine}${c.reset}    │ ${c.dim}${loadLine}${c.reset}${" ".repeat(Math.max(0, getBoxWidth() - heapLine.length - loadLine.length - 10))}${c.cyan}║${c.reset}`);
 
   // Enhanced memory metrics
   const pressureColor = enhanced.pressure === "critical" ? c.err :
@@ -315,19 +315,19 @@ async function drawAnalyticsView() {
                        enhanced.pressure === "high" ? "🟠" :
                        enhanced.pressure === "medium" ? "🟡" : "🟢";
 
-  console.log(`${c.cyan}  ║${c.reset} ${pressureIcon} Pressure: ${pressureColor}${c.bold}${enhanced.pressure.toUpperCase()}${c.reset} │ Efficiency: ${enhanced.efficiency}% │ Overhead: ${formatBytes(enhanced.overhead)}${" ".repeat(Math.max(0, getBoxWidth() - 65))}${c.cyan}║${c.reset}`);
+  console.info(`${c.cyan}  ║${c.reset} ${pressureIcon} Pressure: ${pressureColor}${c.bold}${enhanced.pressure.toUpperCase()}${c.reset} │ Efficiency: ${enhanced.efficiency}% │ Overhead: ${formatBytes(enhanced.overhead)}${" ".repeat(Math.max(0, getBoxWidth() - 65))}${c.cyan}║${c.reset}`);
 
   // Queue stats
   const queueBadge = createQueueBadge(queue);
-  console.log(`${c.cyan}  ║${c.reset} ${queueBadge}${" ".repeat(Math.max(0, getBoxWidth() - stringWidth(queueBadge) + 10))}${c.cyan}║${c.reset}`);
+  console.info(`${c.cyan}  ║${c.reset} ${queueBadge}${" ".repeat(Math.max(0, getBoxWidth() - stringWidth(queueBadge) + 10))}${c.cyan}║${c.reset}`);
 
-  console.log(`${c.cyan}  ╚${"═".repeat(getBoxWidth())}╝${c.reset}`);
+  console.info(`${c.cyan}  ╚${"═".repeat(getBoxWidth())}╝${c.reset}`);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // LIVE TRAFFIC MONITOR (Native Bun Server Metrics)
   // ═══════════════════════════════════════════════════════════════════════════
-  console.log("");
-  console.log(`${c.dim}  ┌─ LIVE TRAFFIC MONITOR ${"─".repeat(getBoxWidth() - 25)}┐${c.reset}`);
+  console.info("");
+  console.info(`${c.dim}  ┌─ LIVE TRAFFIC MONITOR ${"─".repeat(getBoxWidth() - 25)}┐${c.reset}`);
 
   if (serverMetrics) {
     // Request bar (scale: 0-100 active)
@@ -340,29 +340,29 @@ async function drawAnalyticsView() {
     const wsBar = renderProgressBar(wsPct, 9, false);
     const wsColor = serverMetrics.pendingWebSockets > 50 ? c.err : serverMetrics.pendingWebSockets > 10 ? c.warn : c.ok;
 
-    console.log(`${c.dim}  │${c.reset}  📥 REQUESTS: ${reqBar} ${reqColor}${serverMetrics.pendingRequests.toString().padEnd(3)}${c.reset} Active  │  🔄 WEBSOCKETS: ${wsBar} ${wsColor}${serverMetrics.pendingWebSockets.toString().padEnd(3)}${c.reset} Open${" ".repeat(Math.max(0, getBoxWidth() - 75))}${c.dim}│${c.reset}`);
+    console.info(`${c.dim}  │${c.reset}  📥 REQUESTS: ${reqBar} ${reqColor}${serverMetrics.pendingRequests.toString().padEnd(3)}${c.reset} Active  │  🔄 WEBSOCKETS: ${wsBar} ${wsColor}${serverMetrics.pendingWebSockets.toString().padEnd(3)}${c.reset} Open${" ".repeat(Math.max(0, getBoxWidth() - 75))}${c.dim}│${c.reset}`);
 
     // Subscribers and throughput
     const stats = getStats();
     const reqPerSec = stats.uptime > 0 ? Math.round(stats.totalRequests / stats.uptime) : 0;
     const latencyColor = stats.avgLatency < 10 ? c.ok : stats.avgLatency < 50 ? c.warn : c.err;
 
-    console.log(`${c.dim}  │${c.reset}  📡 TOPIC: ${c.cyan}"dashboard-updates"${c.reset}       │  👥 SUBSCRIBERS: ${c.bold}${serverMetrics.dashboardSubscribers}${c.reset}${" ".repeat(Math.max(0, getBoxWidth() - 60))}${c.dim}│${c.reset}`);
-    console.log(`${c.dim}  ├${"─".repeat(getBoxWidth())}┤${c.reset}`);
-    console.log(`${c.dim}  │${c.reset}  Requests/Sec: ${c.bold}${reqPerSec}${c.reset} req/s      │  Avg Latency: ${latencyColor}⚡ ${stats.avgLatency}ms${c.reset}       │  Total: ${c.dim}${stats.totalRequests}${c.reset}${" ".repeat(Math.max(0, getBoxWidth() - 72))}${c.dim}│${c.reset}`);
+    console.info(`${c.dim}  │${c.reset}  📡 TOPIC: ${c.cyan}"dashboard-updates"${c.reset}       │  👥 SUBSCRIBERS: ${c.bold}${serverMetrics.dashboardSubscribers}${c.reset}${" ".repeat(Math.max(0, getBoxWidth() - 60))}${c.dim}│${c.reset}`);
+    console.info(`${c.dim}  ├${"─".repeat(getBoxWidth())}┤${c.reset}`);
+    console.info(`${c.dim}  │${c.reset}  Requests/Sec: ${c.bold}${reqPerSec}${c.reset} req/s      │  Avg Latency: ${latencyColor}⚡ ${stats.avgLatency}ms${c.reset}       │  Total: ${c.dim}${stats.totalRequests}${c.reset}${" ".repeat(Math.max(0, getBoxWidth() - 72))}${c.dim}│${c.reset}`);
   } else {
-    console.log(`${c.dim}  │${c.reset}  ${c.yellow}Server metrics not yet available...${c.reset}${" ".repeat(Math.max(0, getBoxWidth() - 40))}${c.dim}│${c.reset}`);
+    console.info(`${c.dim}  │${c.reset}  ${c.yellow}Server metrics not yet available...${c.reset}${" ".repeat(Math.max(0, getBoxWidth() - 40))}${c.dim}│${c.reset}`);
   }
 
-  console.log(`${c.dim}  └${"─".repeat(getBoxWidth())}┘${c.reset}`);
+  console.info(`${c.dim}  └${"─".repeat(getBoxWidth())}┘${c.reset}`);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // TOP PROCESSES TABLE
   // ═══════════════════════════════════════════════════════════════════════════
-  console.log("");
-  console.log(`${c.dim}  ┌─ TOP PROCESSES ${"─".repeat(getBoxWidth() - 18)}┐${c.reset}`);
-  console.log(`${c.dim}  │${c.reset} ${c.bold}PID${c.reset}     │ ${c.bold}PROCESS${c.reset}                     │ ${c.bold}CPU %${c.reset}   │ ${c.bold}MEMORY${c.reset}      │ ${c.bold}STATUS${c.reset}         ${c.dim}│${c.reset}`);
-  console.log(`${c.dim}  ├───────┼─────────────────────────────┼─────────┼─────────────┼────────────────┤${c.reset}`);
+  console.info("");
+  console.info(`${c.dim}  ┌─ TOP PROCESSES ${"─".repeat(getBoxWidth() - 18)}┐${c.reset}`);
+  console.info(`${c.dim}  │${c.reset} ${c.bold}PID${c.reset}     │ ${c.bold}PROCESS${c.reset}                     │ ${c.bold}CPU %${c.reset}   │ ${c.bold}MEMORY${c.reset}      │ ${c.bold}STATUS${c.reset}         ${c.dim}│${c.reset}`);
+  console.info(`${c.dim}  ├───────┼─────────────────────────────┼─────────┼─────────────┼────────────────┤${c.reset}`);
 
   for (const proc of metrics.processes.slice(0, 6)) {
     const pidStr = proc.pid.toString().padEnd(5);
@@ -375,10 +375,10 @@ async function drawAnalyticsView() {
     // Color CPU based on usage
     const cpuColor = proc.cpu > 80 ? c.err : proc.cpu > 50 ? c.warn : c.ok;
 
-    console.log(`${c.dim}  │${c.reset} ${pidStr} ${c.dim}│${c.reset} ${nameStr} ${c.dim}│${c.reset} ${cpuColor}${cpuStr}${c.reset}  ${c.dim}│${c.reset} ${memStr}  ${c.dim}│${c.reset} ${statusStr.padEnd(14)} ${c.dim}│${c.reset}`);
+    console.info(`${c.dim}  │${c.reset} ${pidStr} ${c.dim}│${c.reset} ${nameStr} ${c.dim}│${c.reset} ${cpuColor}${cpuStr}${c.reset}  ${c.dim}│${c.reset} ${memStr}  ${c.dim}│${c.reset} ${statusStr.padEnd(14)} ${c.dim}│${c.reset}`);
   }
 
-  console.log(`${c.dim}  └───────┴─────────────────────────────┴─────────┴─────────────┴────────────────┘${c.reset}`);
+  console.info(`${c.dim}  └───────┴─────────────────────────────┴─────────┴─────────────┴────────────────┘${c.reset}`);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // PROJECT HEALTH DISTRIBUTION
@@ -393,23 +393,23 @@ async function drawAnalyticsView() {
   const warningBar = "█".repeat(Math.round((warning / total) * maxBarWidth));
   const criticalBar = "█".repeat(Math.round((critical / total) * maxBarWidth));
 
-  console.log("");
-  console.log(`${c.dim}  ┌─ PROJECT HEALTH DISTRIBUTION ${"─".repeat(getBoxWidth() - 33)}┐${c.reset}`);
-  console.log(`${c.dim}  │${c.reset} ${c.ok}◆${c.reset} HEALTHY (80-100%) : ${c.ok}[ ${healthyBar.padEnd(maxBarWidth)} ]${c.reset} ${healthy.toString().padStart(3)}${" ".repeat(Math.max(0, getBoxWidth() - 60))}${c.dim}│${c.reset}`);
-  console.log(`${c.dim}  │${c.reset} ${c.warn}▲${c.reset} WARNING (60-79%)  : ${c.warn}[ ${warningBar.padEnd(maxBarWidth)} ]${c.reset} ${warning.toString().padStart(3)}${" ".repeat(Math.max(0, getBoxWidth() - 60))}${c.dim}│${c.reset}`);
-  console.log(`${c.dim}  │${c.reset} ${c.err}✖${c.reset} CRITICAL (<60%)   : ${c.err}[ ${criticalBar.padEnd(maxBarWidth)} ]${c.reset} ${critical.toString().padStart(3)}${" ".repeat(Math.max(0, getBoxWidth() - 60))}${c.dim}│${c.reset}`);
-  console.log(`${c.dim}  └${"─".repeat(getBoxWidth())}┘${c.reset}`);
+  console.info("");
+  console.info(`${c.dim}  ┌─ PROJECT HEALTH DISTRIBUTION ${"─".repeat(getBoxWidth() - 33)}┐${c.reset}`);
+  console.info(`${c.dim}  │${c.reset} ${c.ok}◆${c.reset} HEALTHY (80-100%) : ${c.ok}[ ${healthyBar.padEnd(maxBarWidth)} ]${c.reset} ${healthy.toString().padStart(3)}${" ".repeat(Math.max(0, getBoxWidth() - 60))}${c.dim}│${c.reset}`);
+  console.info(`${c.dim}  │${c.reset} ${c.warn}▲${c.reset} WARNING (60-79%)  : ${c.warn}[ ${warningBar.padEnd(maxBarWidth)} ]${c.reset} ${warning.toString().padStart(3)}${" ".repeat(Math.max(0, getBoxWidth() - 60))}${c.dim}│${c.reset}`);
+  console.info(`${c.dim}  │${c.reset} ${c.err}✖${c.reset} CRITICAL (<60%)   : ${c.err}[ ${criticalBar.padEnd(maxBarWidth)} ]${c.reset} ${critical.toString().padStart(3)}${" ".repeat(Math.max(0, getBoxWidth() - 60))}${c.dim}│${c.reset}`);
+  console.info(`${c.dim}  └${"─".repeat(getBoxWidth())}┘${c.reset}`);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // SYSTEM LOGS (Exception Tracking)
   // ═══════════════════════════════════════════════════════════════════════════
-  console.log("");
-  console.log(`${c.dim}  ┌─ SYSTEM LOGS ${"─".repeat(getBoxWidth() - 16)}┐${c.reset}`);
+  console.info("");
+  console.info(`${c.dim}  ┌─ SYSTEM LOGS ${"─".repeat(getBoxWidth() - 16)}┐${c.reset}`);
 
   // Show recent exceptions or "no errors" message
   const recentExceptions = exceptionLog.slice(0, 4);
   if (recentExceptions.length === 0) {
-    console.log(`${c.dim}  │${c.reset}  ${c.ok}✓ No exceptions detected${c.reset}${" ".repeat(Math.max(0, getBoxWidth() - 28))}${c.dim}│${c.reset}`);
+    console.info(`${c.dim}  │${c.reset}  ${c.ok}✓ No exceptions detected${c.reset}${" ".repeat(Math.max(0, getBoxWidth() - 28))}${c.dim}│${c.reset}`);
   } else {
     for (const exc of recentExceptions) {
       const time = exc.timestamp.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
@@ -420,7 +420,7 @@ async function drawAnalyticsView() {
       const msgTruncated = exc.message.length > 45 ? exc.message.slice(0, 42) + "..." : exc.message.padEnd(45);
       const pathStr = exc.path ? `${c.dim}${exc.path}${c.reset}` : "";
 
-      console.log(`${c.dim}  │${c.reset}  ${severityIcon} ${c.dim}${time}${c.reset} [${severityLabel}] ${msgTruncated} ${c.dim}│${c.reset}`);
+      console.info(`${c.dim}  │${c.reset}  ${severityIcon} ${c.dim}${time}${c.reset} [${severityLabel}] ${msgTruncated} ${c.dim}│${c.reset}`);
     }
   }
 
@@ -431,17 +431,17 @@ async function drawAnalyticsView() {
     if (exceptions.errors > 0) summaryParts.push(`${c.yellow}${exceptions.errors} errors${c.reset}`);
     if (exceptions.warnings > 0) summaryParts.push(`${c.blue}${exceptions.warnings} warnings${c.reset}`);
     const summary = summaryParts.join(", ") || "none recent";
-    console.log(`${c.dim}  ├${"─".repeat(getBoxWidth())}┤${c.reset}`);
-    console.log(`${c.dim}  │${c.reset}  ${c.dim}Total: ${exceptions.total} exceptions${c.reset} │ ${c.dim}Last hour:${c.reset} ${summary}${" ".repeat(Math.max(0, getBoxWidth() - 50 - summary.length))}${c.dim}│${c.reset}`);
+    console.info(`${c.dim}  ├${"─".repeat(getBoxWidth())}┤${c.reset}`);
+    console.info(`${c.dim}  │${c.reset}  ${c.dim}Total: ${exceptions.total} exceptions${c.reset} │ ${c.dim}Last hour:${c.reset} ${summary}${" ".repeat(Math.max(0, getBoxWidth() - 50 - summary.length))}${c.dim}│${c.reset}`);
   }
 
-  console.log(`${c.dim}  └${"─".repeat(getBoxWidth())}┘${c.reset}`);
+  console.info(`${c.dim}  └${"─".repeat(getBoxWidth())}┘${c.reset}`);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // COMMAND BAR
   // ═══════════════════════════════════════════════════════════════════════════
-  console.log("");
-  console.log(`  ${c.dim}[g]${c.reset} Flush GC  ${c.dim}[r]${c.reset} Refresh  ${c.dim}[p]${c.reset} Projects  ${c.dim}[m]${c.reset} Main View  ${c.dim}[q]${c.reset} Quit`);
+  console.info("");
+  console.info(`  ${c.dim}[g]${c.reset} Flush GC  ${c.dim}[r]${c.reset} Refresh  ${c.dim}[p]${c.reset} Projects  ${c.dim}[m]${c.reset} Main View  ${c.dim}[q]${c.reset} Quit`);
 }
 
 // Check if a port is in use (for detecting running dev servers)
@@ -561,7 +561,7 @@ async function gracefulShutdown(signal: string): Promise<void> {
   if (isShuttingDown) return;
   isShuttingDown = true;
 
-  console.log(`\n${c.cyan}Received ${signal}, shutting down gracefully...${c.reset}`);
+  console.info(`\n${c.cyan}Received ${signal}, shutting down gracefully...${c.reset}`);
 
   // Save current state (guard against early shutdown before vars are initialized)
   try {
@@ -600,7 +600,7 @@ async function gracefulShutdown(signal: string): Promise<void> {
     // Server not yet initialized
   }
 
-  console.log(`${c.ok}Cleanup complete. Goodbye!${c.reset}`);
+  console.info(`${c.ok}Cleanup complete. Goodbye!${c.reset}`);
   process.exit(0);
 }
 
@@ -794,9 +794,9 @@ function debug(label: string, data?: unknown): void {
   if (feature("DEBUG")) {
     if (data !== undefined) {
       // Use %j for SIMD FastStringifier path (3x speed boost)
-      console.log(`${c.dim}[DEBUG]${c.reset} ${label}: %j`, data);
+      console.info(`${c.dim}[DEBUG]${c.reset} ${label}: %j`, data);
     } else {
-      console.log(`${c.dim}[DEBUG]${c.reset} ${label}`);
+      console.info(`${c.dim}[DEBUG]${c.reset} ${label}`);
     }
   }
 }
@@ -943,7 +943,7 @@ const { values: cliArgs } = parseArgs({
 
 // Show help and exit
 if (cliArgs.help) {
-  console.log(`
+  console.info(`
 Enterprise Dashboard Server
 
 Usage: bun run src/server/index.ts [options]
@@ -985,18 +985,18 @@ if (cliArgs.log) {
 
   function renderLogViewer() {
     console.write("\x1b[2J\x1b[H"); // Clear screen
-    console.log(`\x1b[36m╔══════════════════════════════════════════════════════════════════════════════╗\x1b[0m`);
-    console.log(`\x1b[36m║\x1b[0m  \x1b[1m\x1b[37mSTREAMING LOG VIEWER\x1b[0m                                                       \x1b[36m║\x1b[0m`);
-    console.log(`\x1b[36m╠══════════════════════════════════════════════════════════════════════════════╣\x1b[0m`);
+    console.info(`\x1b[36m╔══════════════════════════════════════════════════════════════════════════════╗\x1b[0m`);
+    console.info(`\x1b[36m║\x1b[0m  \x1b[1m\x1b[37mSTREAMING LOG VIEWER\x1b[0m                                                       \x1b[36m║\x1b[0m`);
+    console.info(`\x1b[36m╠══════════════════════════════════════════════════════════════════════════════╣\x1b[0m`);
     const status = streamEnded ? "\x1b[33mEOF\x1b[0m" : "\x1b[32mLIVE\x1b[0m";
-    console.log(`\x1b[36m║\x1b[0m  Lines: \x1b[32m${logs.length.toString().padEnd(8)}\x1b[0m | Offset: \x1b[33m${scrollOffset.toString().padEnd(8)}\x1b[0m | ${status}              \x1b[36m║\x1b[0m`);
-    console.log(`\x1b[36m╚══════════════════════════════════════════════════════════════════════════════╝\x1b[0m`);
+    console.info(`\x1b[36m║\x1b[0m  Lines: \x1b[32m${logs.length.toString().padEnd(8)}\x1b[0m | Offset: \x1b[33m${scrollOffset.toString().padEnd(8)}\x1b[0m | ${status}              \x1b[36m║\x1b[0m`);
+    console.info(`\x1b[36m╚══════════════════════════════════════════════════════════════════════════════╝\x1b[0m`);
 
     const visible = logs.slice(scrollOffset, scrollOffset + LOG_PAGE_SIZE);
     if (visible.length === 0) {
-      console.log(`\n  \x1b[2mWaiting for input... (pipe data to stdin)\x1b[0m`);
+      console.info(`\n  \x1b[2mWaiting for input... (pipe data to stdin)\x1b[0m`);
     } else {
-      console.log("");
+      console.info("");
       visible.forEach((line, i) => {
         const lineNum = (scrollOffset + i + 1).toString().padStart(5);
         const truncated = line.substring(0, 68);
@@ -1007,14 +1007,14 @@ if (cliArgs.log) {
         else if (line.toLowerCase().includes("info")) color = "\x1b[34m";
         else if (line.toLowerCase().includes("success") || line.toLowerCase().includes("ok")) color = "\x1b[32m";
 
-        console.log(`  \x1b[2m${lineNum}\x1b[0m │ ${color}${truncated}\x1b[0m`);
+        console.info(`  \x1b[2m${lineNum}\x1b[0m │ ${color}${truncated}\x1b[0m`);
       });
     }
 
     if (streamEnded) {
-      console.log(`\n\x1b[2mStream ended. Total: ${logs.length} lines. Press Ctrl+C to exit.\x1b[0m`);
+      console.info(`\n\x1b[2mStream ended. Total: ${logs.length} lines. Press Ctrl+C to exit.\x1b[0m`);
     } else {
-      console.log(`\n\x1b[2mAuto-scrolling... (Ctrl+C to exit)\x1b[0m`);
+      console.info(`\n\x1b[2mAuto-scrolling... (Ctrl+C to exit)\x1b[0m`);
     }
   }
 
@@ -1228,14 +1228,14 @@ await loadSecrets();
 // Use --fetch-preconnect CLI flag instead (via restart-server script)
 const preconnectHosts = getPreconnectHosts();
 if (preconnectHosts.length > 0 && config.DEVELOPMENT) {
-  console.log(`${c.dim}◆ Preconnect hosts:${c.reset} ${preconnectHosts.length} (via CLI flag)`);
+  console.info(`${c.dim}◆ Preconnect hosts:${c.reset} ${preconnectHosts.length} (via CLI flag)`);
 }
 
 // Initial scan (skip in log viewer mode)
 if (!cliArgs.log) {
-  console.log("Scanning git repositories...");
+  console.info("Scanning git repositories...");
   projects = await scanAllRepos();
-  console.log(`Found ${projects.length} repositories`);
+  console.info(`Found ${projects.length} repositories`);
 }
 
 function getStats(): DashboardStats {
@@ -1504,9 +1504,9 @@ async function drawDashboard() {
   // Line 1: Title + Identity Badges
   const titleLine = `🖥️  ${c.bold}${c.white}ENTERPRISE-DASH${c.reset}  ${c.dim}[v1.3.6]${c.reset} ──╼  ${onlinePill}  ( ${bunPill} )  ${securePill}`;
 
-  console.log(`${c.cyan}╔${"═".repeat(getBoxWidth())}╗${c.reset}`);
-  console.log(formatBoxLine(titleLine, getBoxWidth() - 2));
-  console.log(`${c.cyan}╠${"═".repeat(getBoxWidth())}╣${c.reset}`);
+  console.info(`${c.cyan}╔${"═".repeat(getBoxWidth())}╗${c.reset}`);
+  console.info(formatBoxLine(titleLine, getBoxWidth() - 2));
+  console.info(`${c.cyan}╠${"═".repeat(getBoxWidth())}╣${c.reset}`);
 
   // Line 2: Metrics Badges
   const projBadge = createBadge("📂", `PROJ: ${projects.length}`);
@@ -1516,8 +1516,8 @@ async function drawDashboard() {
 
   const metricsLine = `${projBadge}   ${clientBadge}   ${modePill}   ${successBadge}   ${uptimeBadge}`;
 
-  console.log(formatBoxLine(metricsLine, getBoxWidth() - 2));
-  console.log(`${c.cyan}╚${"═".repeat(getBoxWidth())}╝${c.reset}`);
+  console.info(formatBoxLine(metricsLine, getBoxWidth() - 2));
+  console.info(`${c.cyan}╚${"═".repeat(getBoxWidth())}╝${c.reset}`);
 
   // View mode indicator
   const modeLabel = viewMode === "problems"
@@ -1528,7 +1528,7 @@ async function drawDashboard() {
   const filterLabel = searchFilter ? `${c.magenta}Filter: "${searchFilter}"${c.reset}` : "";
 
   if (modeLabel || filterLabel) {
-    console.log(`  ${modeLabel} ${filterLabel}`);
+    console.info(`  ${modeLabel} ${filterLabel}`);
   }
 
   if (viewMode === "compact") {
@@ -1543,7 +1543,7 @@ async function drawDashboard() {
   );
 
   if (problems.length > 0 && viewMode !== "problems") {
-    console.log(`\n${c.yellow}⚠ ${problems.length} project${problems.length > 1 ? "s" : ""} need${problems.length === 1 ? "s" : ""} attention${c.reset}`);
+    console.info(`\n${c.yellow}⚠ ${problems.length} project${problems.length > 1 ? "s" : ""} need${problems.length === 1 ? "s" : ""} attention${c.reset}`);
   }
 
   // Error log panel
@@ -1554,7 +1554,7 @@ async function drawDashboard() {
   if (isChecking) statusParts.push(`${c.yellow}Checking...${c.reset}`);
   if (autoRefresh) statusParts.push(`${c.ok}Auto-refresh ON${c.reset}`);
   if (statusParts.length > 0) {
-    console.log(`  ${statusParts.join("  ")}`);
+    console.info(`  ${statusParts.join("  ")}`);
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1570,42 +1570,42 @@ async function drawDashboard() {
 
   const footerLine = `${httpBadge}  ┃  ${yamlBadge}  ┃  ${sqliteBadge}  ┃  ${s3Badge}`;
 
-  console.log(`\n${c.cyan}╔${"═".repeat(getBoxWidth())}╗${c.reset}`);
-  console.log(formatBoxLine(footerLine, getBoxWidth() - 2));
-  console.log(`${c.cyan}╚${"═".repeat(getBoxWidth())}╝${c.reset}`);
+  console.info(`\n${c.cyan}╔${"═".repeat(getBoxWidth())}╗${c.reset}`);
+  console.info(formatBoxLine(footerLine, getBoxWidth() - 2));
+  console.info(`${c.cyan}╚${"═".repeat(getBoxWidth())}╝${c.reset}`);
 
   // Command bar
-  console.log(`  ${c.dim}[r]${c.reset} Refresh  ${c.dim}[s]${c.reset} Short  ${c.dim}[p]${c.reset} Problems  ${c.dim}[m]${c.reset} Metrics  ${c.dim}[g]${c.reset} GC  ${c.dim}[↑↓]${c.reset} Select  ${c.dim}[q]${c.reset} Quit`);
+  console.info(`  ${c.dim}[r]${c.reset} Refresh  ${c.dim}[s]${c.reset} Short  ${c.dim}[p]${c.reset} Problems  ${c.dim}[m]${c.reset} Metrics  ${c.dim}[g]${c.reset} GC  ${c.dim}[↑↓]${c.reset} Select  ${c.dim}[q]${c.reset} Quit`);
 }
 
 // Draw error log panel
 function drawErrorLog() {
-  console.log(`\n  ${c.dim}┌─ PROCESS ERRORS (stderr) ──────────────────────────────────────────────────┐${c.reset}`);
+  console.info(`\n  ${c.dim}┌─ PROCESS ERRORS (stderr) ──────────────────────────────────────────────────┐${c.reset}`);
 
   if (errorLog.length === 0) {
-    console.log(`  ${c.dim}│${c.reset}  ${c.ok}No errors detected${c.reset}                                                       ${c.dim}│${c.reset}`);
+    console.info(`  ${c.dim}│${c.reset}  ${c.ok}No errors detected${c.reset}                                                       ${c.dim}│${c.reset}`);
   } else {
     for (const entry of errorLog) {
       const time = entry.timestamp.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
       const msg = `[${entry.project}] ${entry.message}`.substring(0, 65).padEnd(65);
-      console.log(`  ${c.dim}│${c.reset}  ${c.err}⚠${c.reset} ${c.dim}${time}${c.reset} ${msg} ${c.dim}│${c.reset}`);
+      console.info(`  ${c.dim}│${c.reset}  ${c.err}⚠${c.reset} ${c.dim}${time}${c.reset} ${msg} ${c.dim}│${c.reset}`);
     }
   }
 
-  console.log(`  ${c.dim}└──────────────────────────────────────────────────────────────────────────────┘${c.reset}`);
+  console.info(`  ${c.dim}└──────────────────────────────────────────────────────────────────────────────┘${c.reset}`);
 }
 
 // Draw full table view
 function drawFullTable(filtered: Project[]) {
   if (filtered.length === 0) {
-    console.log(`\n  ${c.dim}No projects found${searchFilter ? ` matching "${searchFilter}"` : ""}${c.reset}`);
+    console.info(`\n  ${c.dim}No projects found${searchFilter ? ` matching "${searchFilter}"` : ""}${c.reset}`);
     return;
   }
 
   const view = filtered.slice(cursor, cursor + pageSize);
   const showingEnd = Math.min(cursor + pageSize, filtered.length);
 
-  console.log(`\n  ${c.dim}Showing ${cursor + 1}-${showingEnd} of ${filtered.length}${c.reset}`);
+  console.info(`\n  ${c.dim}Showing ${cursor + 1}-${showingEnd} of ${filtered.length}${c.reset}`);
 
   const formatted = view.map((p, viewIndex) => {
     const globalIndex = cursor + viewIndex;
@@ -1635,17 +1635,17 @@ function drawFullTable(filtered: Project[]) {
     };
   });
 
-  console.log(Bun.inspect.table(formatted, { colors: true }));
+  console.info(Bun.inspect.table(formatted, { colors: true }));
 }
 
 // Draw compact view
 function drawCompactView(filtered: Project[]) {
   if (filtered.length === 0) {
-    console.log(`\n  ${c.dim}No projects found${c.reset}`);
+    console.info(`\n  ${c.dim}No projects found${c.reset}`);
     return;
   }
 
-  console.log("");
+  console.info("");
   filtered.slice(0, 20).forEach((p, i) => {
     const isSelected = i === selectedRow;
     const marker = isSelected ? `${c.cyan}▸${c.reset}` : " ";
@@ -1656,11 +1656,11 @@ function drawCompactView(filtered: Project[]) {
                    p.remote === "ahead" ? `${c.blue}↑${p.aheadBy}${c.reset}` :
                    p.remote === "diverged" ? `${c.err}↕${c.reset}` : "";
 
-    console.log(`${marker} ${status} ${p.name.padEnd(28)} ${p.branch.slice(0, 15).padEnd(15)} ${remote}`);
+    console.info(`${marker} ${status} ${p.name.padEnd(28)} ${p.branch.slice(0, 15).padEnd(15)} ${remote}`);
   });
 
   if (filtered.length > 20) {
-    console.log(`  ${c.dim}... and ${filtered.length - 20} more${c.reset}`);
+    console.info(`  ${c.dim}... and ${filtered.length - 20} more${c.reset}`);
   }
 }
 
@@ -1809,9 +1809,9 @@ async function bootstrapAdminKey(): Promise<void> {
     // Key exists - ensure it has all permissions
     if (!existingKey.permissions.includes("admin")) {
       updatePermissions(existingKey.id, ALL_PERMISSIONS);
-      console.log(`\x1b[32m[RBAC] Admin key updated: ${existingKey.keyPrefix}****\x1b[0m`);
+      console.info(`\x1b[32m[RBAC] Admin key updated: ${existingKey.keyPrefix}****\x1b[0m`);
     } else {
-      console.log(`\x1b[32m[RBAC] Admin key ready: ${existingKey.keyPrefix}****\x1b[0m`);
+      console.info(`\x1b[32m[RBAC] Admin key ready: ${existingKey.keyPrefix}****\x1b[0m`);
     }
   } else {
     // Create new admin key from env var value
@@ -1820,7 +1820,7 @@ async function bootstrapAdminKey(): Promise<void> {
       permissions: ALL_PERMISSIONS,
       metadata: { source: "ADMIN_API_KEY env var", createdAt: new Date().toISOString() },
     });
-    console.log(`\x1b[32m[RBAC] Admin key created: ${result.prefix}****\x1b[0m`);
+    console.info(`\x1b[32m[RBAC] Admin key created: ${result.prefix}****\x1b[0m`);
   }
 }
 
@@ -5559,25 +5559,25 @@ const protocol = tlsConfig ? "https" : "http";
 const wsProtocol = tlsConfig ? "wss" : "ws";
 const tlsBadge = createTLSBadge(config);
 
-console.log(`Server running at ${protocol}://${config.HOST}:${server.port}`);
-console.log(`WebSocket endpoint: ${wsProtocol}://${config.HOST}:${server.port}/dashboard`);
-console.log(`Security: ${tlsBadge}`);
+console.info(`Server running at ${protocol}://${config.HOST}:${server.port}`);
+console.info(`WebSocket endpoint: ${wsProtocol}://${config.HOST}:${server.port}/dashboard`);
+console.info(`Security: ${tlsBadge}`);
 if (tlsConfig) {
   const tls = getTLSInfo(config);
-  if (tls.serverName) console.log(`  Server Name: ${tls.serverName}`);
+  if (tls.serverName) console.info(`  Server Name: ${tls.serverName}`);
   if (tls.certExpiry) {
     const daysLeft = Math.floor((tls.certExpiry.getTime() - Date.now()) / 86400000);
     const expiryColor = daysLeft < 30 ? c.err : daysLeft < 90 ? c.warn : c.ok;
-    console.log(`  Certificate Expires: ${expiryColor}${daysLeft} days${c.reset}`);
+    console.info(`  Certificate Expires: ${expiryColor}${daysLeft} days${c.reset}`);
   }
 }
 if (config.DEVELOPMENT) {
-  console.log("Development mode: HMR enabled");
+  console.info("Development mode: HMR enabled");
 }
 
 // Warm the URLPattern peek cache for sync access
 warmPatternCache().then((result) => {
-  console.log(`${c.ok}✅ Peek Cache:${c.reset} ${result.warmed} patterns warmed in ${result.totalTimeMs.toFixed(1)}ms`);
+  console.info(`${c.ok}✅ Peek Cache:${c.reset} ${result.warmed} patterns warmed in ${result.totalTimeMs.toFixed(1)}ms`);
   if (result.errors > 0) {
     console.warn(`${c.warn}⚠️  ${result.errors} pattern compile errors${c.reset}`);
   }
@@ -5591,7 +5591,7 @@ warmPatternCache().then((result) => {
     const processor = new ReviewQueueProcessor();
     processor.startCron();
     setKYCWebSocketClients(clients);
-    console.log(`${c.ok}✅ KYC Review Queue Processor:${c.reset} Started (15min interval)`);
+    console.info(`${c.ok}✅ KYC Review Queue Processor:${c.reset} Started (15min interval)`);
   } catch (error) {
     console.warn(`${c.warn}⚠️  KYC Review Queue Processor:${c.reset} Failed to start: ${error instanceof Error ? error.message : String(error)}`);
   }
@@ -5675,14 +5675,14 @@ const KEYS = {
 async function startConsoleInput() {
   // Guard against HMR re-initialization (stdin stream can only be read once)
   if ((globalThis as any)._stdinLocked) {
-    console.log("Stdin already locked (HMR reload detected)");
+    console.info("Stdin already locked (HMR reload detected)");
     return;
   }
   (globalThis as any)._stdinLocked = true;
 
   // Handle pipe mode (non-interactive)
   if (isPipeMode) {
-    console.log(JSON.stringify({
+    console.info(JSON.stringify({
       projects: projects.length,
       stats: getStats(),
       mode: "pipe",
@@ -5693,7 +5693,7 @@ async function startConsoleInput() {
       for await (const chunk of Bun.stdin.stream() as unknown as AsyncIterable<Uint8Array>) {
         const text = Buffer.from(chunk).toString().trim();
         if (text === "status") {
-          console.log(JSON.stringify({ projects: projects.length, stats: getStats() }));
+          console.info(JSON.stringify({ projects: projects.length, stats: getStats() }));
         } else if (text === "quit") {
           process.exit(0);
         }
@@ -5701,7 +5701,7 @@ async function startConsoleInput() {
     } catch (err) {
       // ReadableStream lock error during HMR - safe to ignore
       if (err instanceof TypeError && String(err).includes("locked")) {
-        console.log("Stdin stream locked (HMR detected)");
+        console.info("Stdin stream locked (HMR detected)");
       } else {
         throw err;
       }
@@ -5764,7 +5764,7 @@ async function startConsoleInput() {
       }
     } else if (key === "r") {
       // Refresh
-      console.log(`${c.cyan}Refreshing...${c.reset}`);
+      console.info(`${c.cyan}Refreshing...${c.reset}`);
       await rescanRepos();
       cursor = 0;
       selectedRow = 0;
@@ -5793,7 +5793,7 @@ async function startConsoleInput() {
       const freedMB = ((before.heapUsed - after.heapUsed) / 1024 / 1024).toFixed(2);
       // Flash a message then redraw
       console.write("\x1b[2J\x1b[H");
-      console.log(`\n  ${c.ok}✓ GC Complete${c.reset} - Freed ${freedMB} MB heap memory\n`);
+      console.info(`\n  ${c.ok}✓ GC Complete${c.reset} - Freed ${freedMB} MB heap memory\n`);
       await Bun.sleep(800); // Brief pause to show message
     } else if (key === "k") {
       // Run health checks
@@ -5815,7 +5815,7 @@ async function startConsoleInput() {
     } else if (key === "h" || key === "?") {
       // Show help
       process.stdout.write("\x1b[2J\x1b[H"); // Clear screen
-      console.log(`
+      console.info(`
 ${c.bold}${c.cyan}Enterprise Dashboard - Keyboard Controls${c.reset}
 
 ${c.bold}Navigation:${c.reset}
@@ -5845,7 +5845,7 @@ ${c.dim}Press any key to continue...${c.reset}`);
     } else if (key === "q" || key === KEYS.CTRL_C || key === KEYS.CTRL_D) {
       // Quit
       process.stdin.setRawMode(false);
-      console.log(`\n${c.cyan}Goodbye!${c.reset}`);
+      console.info(`\n${c.cyan}Goodbye!${c.reset}`);
       server.stop();
       process.exit(0);
     }
@@ -5855,7 +5855,7 @@ ${c.dim}Press any key to continue...${c.reset}`);
   } catch (err) {
     // ReadableStream lock error during HMR - safe to ignore
     if (err instanceof TypeError && String(err).includes("locked")) {
-      console.log("Interactive stdin locked (HMR detected)");
+      console.info("Interactive stdin locked (HMR detected)");
     } else {
       throw err;
     }

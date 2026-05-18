@@ -230,8 +230,8 @@ export class IdentityBenchmark {
     };
     results: typeof this.results;
   }> {
-    console.log("\n🚀 SOVEREIGN IDENTITY BENCHMARK SUITE");
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+    console.info("\n🚀 SOVEREIGN IDENTITY BENCHMARK SUITE");
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
 
     await this.benchmarkTOMLLoading();
     await this.benchmarkIdentityGeneration();
@@ -249,24 +249,24 @@ export class IdentityBenchmark {
     const fastest = Math.min(...this.results.map(r => r.duration));
     const slowest = Math.max(...this.results.map(r => r.duration));
 
-    console.log("\n📊 BENCHMARK RESULTS");
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.info("\n📊 BENCHMARK RESULTS");
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     
     this.results.forEach((result, index) => {
       const bar = "█".repeat(Math.min(20, Math.floor(result.duration / result.target * 20)));
-      console.log(`${index + 1}. ${result.operation}`);
-      console.log(`   ${result.duration.toFixed(2)}ms / ${result.target}ms ${result.status}`);
-      console.log(`   [${bar}]`);
+      console.info(`${index + 1}. ${result.operation}`);
+      console.info(`   ${result.duration.toFixed(2)}ms / ${result.target}ms ${result.status}`);
+      console.info(`   [${bar}]`);
       if (result.details) {
-        console.log(`   Details: ${JSON.stringify(result.details).slice(0, 60)}...`);
+        console.info(`   Details: ${JSON.stringify(result.details).slice(0, 60)}...`);
       }
-      console.log("");
+      console.info("");
     });
 
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    console.log(`Total: ${this.results.length} | Passed: ${passed} | Failed: ${failed}`);
-    console.log(`Average: ${average.toFixed(2)}ms | Fastest: ${fastest.toFixed(2)}ms | Slowest: ${slowest.toFixed(2)}ms`);
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.info(`Total: ${this.results.length} | Passed: ${passed} | Failed: ${failed}`);
+    console.info(`Average: ${average.toFixed(2)}ms | Fastest: ${fastest.toFixed(2)}ms | Slowest: ${slowest.toFixed(2)}ms`);
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
 
     return {
       summary: {
@@ -334,5 +334,5 @@ if (import.meta.main) {
   const report = benchmark.generateReport();
   await Bun.write("./exports/reports/identity-benchmark.json", report);
   
-  console.log("📄 Report saved: exports/reports/identity-benchmark.json");
+  console.info("📄 Report saved: exports/reports/identity-benchmark.json");
 }

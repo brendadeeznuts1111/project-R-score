@@ -107,10 +107,10 @@ async function getFeatures(variant: string, availableVariants: Record<string, st
 const startTime = performance.now();
 
 async function buildDashboard(): Promise<void> {
-  console.log("=".repeat(60));
-  console.log("Enterprise Dashboard Build System");
-  console.log("Bun 1.3.6 + Feature Flags");
-  console.log("=".repeat(60));
+  console.info("=".repeat(60));
+  console.info("Enterprise Dashboard Build System");
+  console.info("Bun 1.3.6 + Feature Flags");
+  console.info("=".repeat(60));
 
   const args = parseArgs();
   const { variants } = await loadFeaturesConfig();
@@ -118,12 +118,12 @@ async function buildDashboard(): Promise<void> {
   const variant = args.variant ?? "free";
   const features = await getFeatures(variant, variants);
 
-  console.log(`\nBuild Configuration:`);
-  console.log(`  Variant: ${variant}`);
-  console.log(`  Target: ${args.target}`);
-  console.log(`  Minify: ${args.minify}`);
-  console.log(`  Compile: ${args.compile}`);
-  console.log(`  Features: ${features.join(", ")}`);
+  console.info(`\nBuild Configuration:`);
+  console.info(`  Variant: ${variant}`);
+  console.info(`  Target: ${args.target}`);
+  console.info(`  Minify: ${args.minify}`);
+  console.info(`  Compile: ${args.compile}`);
+  console.info(`  Features: ${features.join(", ")}`);
 
   const gitCommit = await $`git rev-parse --short HEAD 2>/dev/null || echo "unknown"`.text().then((s) => s.trim());
   const gitBranch = await $`git branch --show-current 2>/dev/null || echo "main"`.text().then((s) => s.trim());
@@ -139,12 +139,12 @@ async function buildDashboard(): Promise<void> {
     process.exit(1);
   }
 
-  console.log(`\nBuilding to: ${outdir}`);
+  console.info(`\nBuilding to: ${outdir}`);
 
   const envFeatures = features.map((f) => `FEATURE_${f}=1`).join(",");
 
   try {
-    console.log("\n--- Config validation ---");
+    console.info("\n--- Config validation ---");
     const themeErrors = validateThemes();
     const shortcutErrors = validateShortcuts();
     const crcErrors = validateCRC32();
@@ -154,13 +154,13 @@ async function buildDashboard(): Promise<void> {
       console.table(allErrors.map((e) => ({ Error: e })));
       process.exit(1);
     }
-    console.log("  ✓ Themes, shortcuts, CRC32 OK");
+    console.info("  ✓ Themes, shortcuts, CRC32 OK");
 
-    console.log("\n--- Generating theme CSS ---");
+    console.info("\n--- Generating theme CSS ---");
     await generateThemeCSS(DEFAULT_OUT_PATH);
-    console.log(`  ✓ ${resolve(DEFAULT_OUT_PATH)}`);
+    console.info(`  ✓ ${resolve(DEFAULT_OUT_PATH)}`);
 
-    console.log("\n--- Building Server ---");
+    console.info("\n--- Building Server ---");
     const result = await Bun.build({
       entrypoints: [serverEntry],
       outdir,
@@ -200,11 +200,11 @@ export const ENABLED_FEATURES = ${JSON.stringify(features)};
       for (const output of result.outputs) {
         const sizeKB = (output.size / 1024).toFixed(2);
         totalServerBytes += output.size;
-        console.log(`  ${basename(output.path)}: ${sizeKB} KB`);
+        console.info(`  ${basename(output.path)}: ${sizeKB} KB`);
       }
     }
 
-    console.log("\n--- Building Client ---");
+    console.info("\n--- Building Client ---");
     const clientResult = await Bun.build({
       entrypoints: [clientEntry],
       outdir: `${outdir}/public`,
@@ -234,11 +234,11 @@ export const ENABLED_FEATURES = ${JSON.stringify(features)};
       for (const output of clientResult.outputs) {
         const sizeKB = (output.size / 1024).toFixed(2);
         totalClientBytes += output.size;
-        console.log(`  public/${basename(output.path)}: ${sizeKB} KB`);
+        console.info(`  public/${basename(output.path)}: ${sizeKB} KB`);
       }
     }
 
-    console.log("\n--- Building CSS ---");
+    console.info("\n--- Building CSS ---");
     const cssResult = Bun.spawnSync([
       "./node_modules/.bin/tailwindcss",
       "-i",
@@ -253,7 +253,7 @@ export const ENABLED_FEATURES = ${JSON.stringify(features)};
       if (await cssFile.exists()) {
         const cssBytes = await cssFile.arrayBuffer();
         const cssChecksum = Bun.hash.crc32(new Uint8Array(cssBytes));
-        console.log(
+        console.info(
           `  public/styles.css: ${(cssBytes.byteLength / 1024).toFixed(2)} KB (CRC32: ${cssChecksum
             .toString(16)
             .padStart(8, "0")})`
@@ -263,7 +263,7 @@ export const ENABLED_FEATURES = ${JSON.stringify(features)};
       console.error("  CSS build failed:", cssResult.stderr.toString());
     }
 
-    console.log("\n--- Generating Manifest ---");
+    console.info("\n--- Generating Manifest ---");
     const manifest = {
       buildId: crypto.randomUUID(),
       timestamp: Date.now(),
@@ -280,12 +280,12 @@ export const ENABLED_FEATURES = ${JSON.stringify(features)};
     };
 
     await Bun.write(`${outdir}/manifest.json`, JSON.stringify(manifest, null, 2));
-    console.log(`  Generated manifest.json`);
+    console.info(`  Generated manifest.json`);
 
     const buildTime = ((performance.now() - startTime) / 1000).toFixed(2);
-    console.log(`\nBuild complete in ${buildTime}s`);
+    console.info(`\nBuild complete in ${buildTime}s`);
 
-    console.log("\nFinal Stats: %j", {
+    console.info("\nFinal Stats: %j", {
       variant,
       features: features.length,
       serverSize: (totalServerBytes / 1024).toFixed(2) + " KB",
@@ -301,28 +301,28 @@ export const ENABLED_FEATURES = ${JSON.stringify(features)};
       Mock: features.filter((f) => f.startsWith("MOCK")),
     };
 
-    console.log("\nFeature Breakdown:");
+    console.info("\nFeature Breakdown:");
     for (const [group, items] of Object.entries(featureGroups)) {
       if (items.length > 0) {
-        console.log(`  ${group}: ${items.join(", ")}`);
+        console.info(`  ${group}: ${items.join(", ")}`);
       }
     }
 
-    console.log("\n" + "=".repeat(60));
-    console.log(`✓ ${variant.toUpperCase()} bundle ready at dist/${variant}/`);
-    console.log("=".repeat(60));
+    console.info("\n" + "=".repeat(60));
+    console.info(`✓ ${variant.toUpperCase()} bundle ready at dist/${variant}/`);
+    console.info("=".repeat(60));
 
-    console.log("\nTo run the production build:");
-    console.log(`  bun ./dist/${variant}/index.js`);
-    console.log("\nBuild variants:");
-    console.log(`  bun run build:free     → CORE + PERFORMANCE_POLISH`);
-    console.log(`  bun run build:premium  → CORE + PREMIUM features`);
-    console.log(`  bun run build:debug    → CORE + DEBUG features`);
-    console.log(`  bun run build:beta     → CORE + BETA features`);
-    console.log(`  bun run build:mock     → CORE + MOCK features`);
+    console.info("\nTo run the production build:");
+    console.info(`  bun ./dist/${variant}/index.js`);
+    console.info("\nBuild variants:");
+    console.info(`  bun run build:free     → CORE + PERFORMANCE_POLISH`);
+    console.info(`  bun run build:premium  → CORE + PREMIUM features`);
+    console.info(`  bun run build:debug    → CORE + DEBUG features`);
+    console.info(`  bun run build:beta     → CORE + BETA features`);
+    console.info(`  bun run build:mock     → CORE + MOCK features`);
 
     if (args.compile && variant !== "debug") {
-      console.log("\n--- Compiling Standalone Binary ---");
+      console.info("\n--- Compiling Standalone Binary ---");
       const compileResult = await Bun.build({
         entrypoints: [serverEntry],
         outdir: `./dist/${variant}-binary`,
@@ -336,7 +336,7 @@ export const ENABLED_FEATURES = ${JSON.stringify(features)};
       });
 
       if (compileResult.success) {
-        console.log("Binary compilation complete");
+        console.info("Binary compilation complete");
       }
     }
   } catch (error) {

@@ -92,7 +92,7 @@ export class ScoreDashboard {
    * Display score in a formatted table
    */
   private displayScore(score: number, metadata: any): void {
-    console.log(
+    console.info(
       Bun.inspect.table([{
         Metric: 'Overall Score',
         Value: score.toFixed(3),
@@ -108,7 +108,7 @@ export class ScoreDashboard {
    */
   displayMetrics(): void {
     if (this.scores.size === 0) {
-      console.log('📊 No metrics available');
+      console.info('📊 No metrics available');
       return;
     }
 
@@ -118,9 +118,9 @@ export class ScoreDashboard {
       Status: this.getMetricStatus(value)
     }));
 
-    console.log('📊 Current Metrics:');
-    console.log(Bun.inspect.table(metricsTable));
-    console.log(`🎯 Overall Score: ${this.getOverallScore().toFixed(3)}`);
+    console.info('📊 Current Metrics:');
+    console.info(Bun.inspect.table(metricsTable));
+    console.info(`🎯 Overall Score: ${this.getOverallScore().toFixed(3)}`);
   }
 
   /**
@@ -154,7 +154,7 @@ export class ScoreDashboard {
     this.scores.clear();
     delete this.config.lastCalculatedScore;
     delete this.config.scoreCalculationCount;
-    console.log('📊 Score dashboard reset');
+    console.info('📊 Score dashboard reset');
   }
 
   /**
@@ -185,7 +185,7 @@ export class ScoreDashboard {
     });
     this.config = data.config;
     this.updateOverallScore();
-    console.log('📊 Score dashboard imported');
+    console.info('📊 Score dashboard imported');
   }
 }
 

@@ -128,5 +128,5 @@ const server = Bun.serve({
   }
 });
 
-console.log(`📊 Prometheus metrics server running on http://localhost:${PORT}${METRICS_PATH}`);
-console.log(`   Health check: http://localhost:${PORT}/health`);
+console.info(`📊 Prometheus metrics server running on http://localhost:${PORT}${METRICS_PATH}`);
+console.info(`   Health check: http://localhost:${PORT}/health`);

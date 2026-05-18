@@ -309,10 +309,10 @@ export class YAML12StrictParser {
 
   // Performance testing utilities
   static benchmark(yamlContent: string, iterations: number = 10000): void {
-    console.log("🧪 YAML 1.2 Strict Parser Benchmark");
-    console.log("=====================================");
-    console.log(`Content length: ${yamlContent.length} characters`);
-    console.log(`Iterations: ${iterations}`);
+    console.info("🧪 YAML 1.2 Strict Parser Benchmark");
+    console.info("=====================================");
+    console.info(`Content length: ${yamlContent.length} characters`);
+    console.info(`Iterations: ${iterations}`);
 
     // Test YAML 1.2 strict parsing
     const startStrict = performance.now();
@@ -331,19 +331,19 @@ export class YAML12StrictParser {
     const strictResult = this.parseYAML12Strict(yamlContent);
     const legacyResult = this.parseBasicYAML(yamlContent);
 
-    console.log(`\n📊 Results:`);
-    console.log(`   YAML 1.2 Strict: ${strictTime.toFixed(2)}ms`);
-    console.log(`   Legacy Parser:  ${legacyTime.toFixed(2)}ms`);
-    console.log(`   Speedup:        ${(legacyTime / strictTime).toFixed(2)}x`);
-    console.log(
+    console.info(`\n📊 Results:`);
+    console.info(`   YAML 1.2 Strict: ${strictTime.toFixed(2)}ms`);
+    console.info(`   Legacy Parser:  ${legacyTime.toFixed(2)}ms`);
+    console.info(`   Speedup:        ${(legacyTime / strictTime).toFixed(2)}x`);
+    console.info(
       `   Compatibility:  ${JSON.stringify(strictResult) === JSON.stringify(legacyResult) ? "✅" : "⚠️"}`
     );
   }
 
   // Demonstration of security improvements
   static demonstrateSecurity(): void {
-    console.log("🔒 YAML 1.2 Security Demonstration");
-    console.log("=====================================");
+    console.info("🔒 YAML 1.2 Security Demonstration");
+    console.info("=====================================");
 
     const maliciousYAML = `
 # Configuration with potential security issues
@@ -353,21 +353,21 @@ logLevel = yes
 enableFeature = no
 `;
 
-    console.log("\n⚠️  YAML 1.1 Legacy Parsing (Dangerous):");
+    console.info("\n⚠️  YAML 1.1 Legacy Parsing (Dangerous):");
     const legacyResult = this.parseBasicYAML(maliciousYAML);
-    console.log(JSON.stringify(legacyResult, null, 2));
+    console.info(JSON.stringify(legacyResult, null, 2));
 
-    console.log("\n✅ YAML 1.2 Strict Parsing (Safe):");
+    console.info("\n✅ YAML 1.2 Strict Parsing (Safe):");
     const strictResult = this.parseYAML12Strict(maliciousYAML);
-    console.log(JSON.stringify(strictResult, null, 2));
+    console.info(JSON.stringify(strictResult, null, 2));
 
-    console.log("\n🚨 Security Warnings:");
+    console.info("\n🚨 Security Warnings:");
     const warnings = this.validateYAMLContent(maliciousYAML);
-    warnings.forEach((warning) => console.log(`   ${warning}`));
+    warnings.forEach((warning) => console.info(`   ${warning}`));
 
-    console.log("\n🔄 Migration to YAML 1.2:");
+    console.info("\n🔄 Migration to YAML 1.2:");
     const migrated = this.migrateToYAML12(maliciousYAML);
-    console.log(migrated);
+    console.info(migrated);
   }
 }
 
@@ -389,8 +389,8 @@ export const {
 
 // Demonstration function
 export function demonstrateYAML12Parser(): void {
-  console.log("🚀 Component #44: YAML 1.2 Strict Parser");
-  console.log("=======================================");
+  console.info("🚀 Component #44: YAML 1.2 Strict Parser");
+  console.info("=======================================");
 
   const sampleConfig = `
 # Sample bunfig.toml configuration
@@ -407,43 +407,43 @@ packages = ["react", "vue"]
 allowFile = "yes"
 `;
 
-  console.log("\n📝 Sample Configuration:");
-  console.log(sampleConfig);
+  console.info("\n📝 Sample Configuration:");
+  console.info(sampleConfig);
 
-  console.log("\n🔧 YAML 1.2 Strict Parsing:");
+  console.info("\n🔧 YAML 1.2 Strict Parsing:");
   const result = YAML12StrictParser.parseYAML12Strict(sampleConfig);
-  console.log(JSON.stringify(result, null, 2));
+  console.info(JSON.stringify(result, null, 2));
 
-  console.log("\n🔍 Boolean Parsing Examples:");
+  console.info("\n🔍 Boolean Parsing Examples:");
   const booleanTests = ["true", "false", "yes", "no", "on", "off", "maybe"];
   for (const test of booleanTests) {
     const parsed = YAML12StrictParser.parseBoolean(test);
-    console.log(
+    console.info(
       `   "${test}" → ${typeof parsed === "boolean" ? parsed : `"${parsed}"`}`
     );
   }
 
-  console.log("\n🚨 Security Validation:");
+  console.info("\n🚨 Security Validation:");
   const warnings = YAML12StrictParser.validateYAMLContent(sampleConfig);
   if (warnings.length === 0) {
-    console.log("   ✅ No security issues detected");
+    console.info("   ✅ No security issues detected");
   } else {
-    warnings.forEach((warning) => console.log(`   ⚠️  ${warning}`));
+    warnings.forEach((warning) => console.info(`   ⚠️  ${warning}`));
   }
 
-  console.log("\n🧪 Performance Benchmark:");
+  console.info("\n🧪 Performance Benchmark:");
   YAML12StrictParser.benchmark(sampleConfig, 5000);
 
-  console.log("\n🔒 Security Demonstration:");
+  console.info("\n🔒 Security Demonstration:");
   YAML12StrictParser.demonstrateSecurity();
 
-  console.log("\n🎯 Key Features:");
-  console.log(`   ✅ YAML 1.2 spec compliance`);
-  console.log(`   ✅ Boolean injection prevention`);
-  console.log(`   ✅ Strict type parsing`);
-  console.log(`   ✅ Security validation`);
-  console.log(`   ✅ Migration utilities`);
-  console.log(`   ✅ Zero-cost abstraction`);
+  console.info("\n🎯 Key Features:");
+  console.info(`   ✅ YAML 1.2 spec compliance`);
+  console.info(`   ✅ Boolean injection prevention`);
+  console.info(`   ✅ Strict type parsing`);
+  console.info(`   ✅ Security validation`);
+  console.info(`   ✅ Migration utilities`);
+  console.info(`   ✅ Zero-cost abstraction`);
 }
 
 // Run demonstration if called directly

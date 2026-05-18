@@ -15,8 +15,8 @@ import { readdirSync, statSync, existsSync, readFileSync, writeFileSync } from '
 import { join, resolve } from 'path';
 import { MetadataVersionManager } from './metadata-version-manager';
 
-console.log('🏗️ Fantasy42 Registry Builder');
-console.log('=============================');
+console.info('🏗️ Fantasy42 Registry Builder');
+console.info('=============================');
 
 // ============================================================================
 // CONFIGURATION
@@ -87,8 +87,8 @@ class Fantasy42Builder {
       clean?: boolean;
     } = {}
   ): Promise<void> {
-    console.log(`🔨 Building Fantasy42 Registry (${options.mode || 'development'})`);
-    console.log('='.repeat(60));
+    console.info(`🔨 Building Fantasy42 Registry (${options.mode || 'development'})`);
+    console.info('='.repeat(60));
 
     try {
       // Load workspace metadata
@@ -103,7 +103,7 @@ class Fantasy42Builder {
       const packagesToBuild = await this.discoverPackages();
       this.buildStats.totalPackages = packagesToBuild.length;
 
-      console.log(`📦 Found ${packagesToBuild.length} packages to build`);
+      console.info(`📦 Found ${packagesToBuild.length} packages to build`);
 
       // Build each package
       for (const packagePath of packagesToBuild) {
@@ -120,12 +120,12 @@ class Fantasy42Builder {
 
       this.buildStats.endTime = Date.now();
 
-      console.log('\n🎉 Build Complete!');
-      console.log('==================');
-      console.log(`✅ Built: ${this.buildStats.built}`);
-      console.log(`⏭️  Skipped: ${this.buildStats.skipped}`);
-      console.log(`❌ Failed: ${this.buildStats.failed}`);
-      console.log(
+      console.info('\n🎉 Build Complete!');
+      console.info('==================');
+      console.info(`✅ Built: ${this.buildStats.built}`);
+      console.info(`⏭️  Skipped: ${this.buildStats.skipped}`);
+      console.info(`❌ Failed: ${this.buildStats.failed}`);
+      console.info(
         `⏱️  Duration: ${((this.buildStats.endTime - this.buildStats.startTime) / 1000).toFixed(2)}s`
       );
     } catch (error) {
@@ -139,7 +139,7 @@ class Fantasy42Builder {
     const packagesDir = join(process.cwd(), 'packages');
 
     if (!existsSync(packagesDir)) {
-      console.log('⚠️ No packages directory found');
+      console.info('⚠️ No packages directory found');
       return packages;
     }
 
@@ -169,7 +169,7 @@ class Fantasy42Builder {
 
   private async buildPackage(packagePath: string, options: any): Promise<void> {
     const packageName = packagePath.split('/').pop() || 'unknown';
-    console.log(`📦 Building ${packageName}...`);
+    console.info(`📦 Building ${packageName}...`);
 
     try {
       const packageJson = JSON.parse(readFileSync(join(packagePath, 'package.json'), 'utf-8'));
@@ -199,7 +199,7 @@ class Fantasy42Builder {
       await this.generatePackageManifest(packagePath, packageJson, buildConfig);
 
       this.buildStats.built++;
-      console.log(`✅ Built ${packageName}@${version}`);
+      console.info(`✅ Built ${packageName}@${version}`);
     } catch (error) {
       console.error(`❌ Failed to build ${packageName}:`, error);
       this.buildStats.failed++;
@@ -241,7 +241,7 @@ class Fantasy42Builder {
       });
 
       if (options.verbose) {
-        console.log(`  ✅ ${target}: ${outputName}.exe`);
+        console.info(`  ✅ ${target}: ${outputName}.exe`);
       }
     } catch (error) {
       console.error(`  ❌ ${target} build failed:`, error);
@@ -354,7 +354,7 @@ class Fantasy42Builder {
         minify: false,
       });
 
-      console.log('  📊 Generated source maps');
+      console.info('  📊 Generated source maps');
     } catch (error) {
       console.warn('  ⚠️ Source map generation failed:', error);
     }
@@ -390,7 +390,7 @@ class Fantasy42Builder {
 
     writeFileSync(join(packagePath, 'dist', 'manifest.json'), JSON.stringify(manifest, null, 2));
 
-    console.log('  📋 Generated package manifest');
+    console.info('  📋 Generated package manifest');
   }
 
   private getComplianceInfo(packageName: string): any {
@@ -424,7 +424,7 @@ class Fantasy42Builder {
   }
 
   private async cleanBuildArtifacts(): Promise<void> {
-    console.log('🧹 Cleaning previous build artifacts...');
+    console.info('🧹 Cleaning previous build artifacts...');
 
     const packages = await this.discoverPackages();
 
@@ -435,7 +435,7 @@ class Fantasy42Builder {
         // Simple recursive delete (in production, use a more robust solution)
         const { rm } = require('fs/promises');
         await rm(distDir, { recursive: true, force: true });
-        console.log(`  🗑️ Cleaned ${packagePath}`);
+        console.info(`  🗑️ Cleaned ${packagePath}`);
       }
     }
   }
@@ -457,11 +457,11 @@ class Fantasy42Builder {
 
     writeFileSync(join(process.cwd(), 'build-report.json'), JSON.stringify(report, null, 2));
 
-    console.log('📊 Generated build report');
+    console.info('📊 Generated build report');
   }
 
   private async updateBuildMetadata(options: any): Promise<void> {
-    console.log('📝 Updating build metadata...');
+    console.info('📝 Updating build metadata...');
 
     // Update version manager with build information
     const workspace = await this.versionManager.loadWorkspaceMetadata();
@@ -480,7 +480,7 @@ class Fantasy42Builder {
       JSON.stringify(workspace.buildConstants, null, 2)
     );
 
-    console.log('✅ Updated build metadata');
+    console.info('✅ Updated build metadata');
   }
 }
 
@@ -489,7 +489,7 @@ class Fantasy42Builder {
 // ============================================================================
 
 async function runCommand(command: string, description: string): Promise<boolean> {
-  console.log(`🔧 ${description}...`);
+  console.info(`🔧 ${description}...`);
 
   try {
     const process = Bun.spawn(command.split(' '), {
@@ -528,22 +528,22 @@ async function main() {
       clean,
     });
 
-    console.log('\n🚀 Fantasy42 Registry Build Complete!');
-    console.log('=====================================');
-    console.log('');
-    console.log('📦 Build artifacts available in:');
-    console.log('   packages/*/dist/');
-    console.log('');
-    console.log('📊 Build report: build-report.json');
-    console.log('🏷️  Build constants: build-constants.json');
-    console.log('');
-    console.log('🧪 Test your build:');
-    console.log(
+    console.info('\n🚀 Fantasy42 Registry Build Complete!');
+    console.info('=====================================');
+    console.info('');
+    console.info('📦 Build artifacts available in:');
+    console.info('   packages/*/dist/');
+    console.info('');
+    console.info('📊 Build report: build-report.json');
+    console.info('🏷️  Build constants: build-constants.json');
+    console.info('');
+    console.info('🧪 Test your build:');
+    console.info(
       '   ./packages/core-security/fantasy42-security/dist/fantasy42-security-linux-x64.exe'
     );
-    console.log('');
-    console.log('🚀 Deploy when ready:');
-    console.log('   bunx wrangler deploy --env enterprise');
+    console.info('');
+    console.info('🚀 Deploy when ready:');
+    console.info('   bunx wrangler deploy --env enterprise');
   } catch (error) {
     console.error('❌ Build failed:', error);
     process.exit(1);
@@ -564,24 +564,24 @@ if (import.meta.main) {
       break;
 
     case 'clean':
-      console.log('🧹 Cleaning build artifacts...');
+      console.info('🧹 Cleaning build artifacts...');
       const builder = new Fantasy42Builder();
       // Note: This would need to be implemented as a public method
-      console.log('✅ Clean completed');
+      console.info('✅ Clean completed');
       break;
 
     case 'report':
       const reportPath = join(process.cwd(), 'build-report.json');
       if (existsSync(reportPath)) {
         const report = JSON.parse(readFileSync(reportPath, 'utf-8'));
-        console.log(JSON.stringify(report, null, 2));
+        console.info(JSON.stringify(report, null, 2));
       } else {
-        console.log('❌ No build report found');
+        console.info('❌ No build report found');
       }
       break;
 
     default:
-      console.log(`
+      console.info(`
 🏗️ Fantasy42 Registry Builder
 
 Usage:

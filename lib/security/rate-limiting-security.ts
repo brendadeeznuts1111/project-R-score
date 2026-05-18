@@ -197,7 +197,7 @@ export class RateLimiter {
     }
 
     if (cleaned > 0) {
-      console.log(`🧹 Rate limiter cleanup: removed ${cleaned} expired entries`);
+      console.info(`🧹 Rate limiter cleanup: removed ${cleaned} expired entries`);
     }
   }
 
@@ -244,7 +244,7 @@ export class RateLimiter {
       this.cleanupInterval = undefined;
     }
     this.clients.clear();
-    console.log('🗑️ Rate limiter destroyed');
+    console.info('🗑️ Rate limiter destroyed');
   }
 }
 

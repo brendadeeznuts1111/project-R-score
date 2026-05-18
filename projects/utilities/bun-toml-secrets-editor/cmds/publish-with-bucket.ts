@@ -24,7 +24,7 @@ const args = process.argv.slice(2);
 const shouldBuild = !args.includes('--no-build') && !args.includes('--skip-build');
 
 if (shouldBuild) {
-  console.log('🔨 Building all platform binaries...');
+  console.info('🔨 Building all platform binaries...');
   const buildProc = Bun.spawn(['bun', 'run', 'build:all'], {
     stdout: 'inherit',
     stderr: 'inherit',
@@ -37,7 +37,7 @@ if (shouldBuild) {
     process.exit(1);
   }
   
-  console.log('✅ All binaries built successfully\n');
+  console.info('✅ All binaries built successfully\n');
 }
 
 // Publish to npm
@@ -45,7 +45,7 @@ const publishArgs = args.filter(arg => arg !== '--no-build' && arg !== '--skip-b
 const isDryRun = publishArgs.includes('--dry-run');
 
 if (!isDryRun) {
-  console.log('📦 Publishing to npm...');
+  console.info('📦 Publishing to npm...');
   const publishProc = Bun.spawn(['bun', 'publish', ...publishArgs], {
     stdout: 'inherit',
     stderr: 'inherit',
@@ -59,9 +59,9 @@ if (!isDryRun) {
     process.exit(publishProc.exitCode || 1);
   }
 
-  console.log('\n✅ Published to npm successfully!\n');
+  console.info('\n✅ Published to npm successfully!\n');
 } else {
-  console.log('🔍 Dry run mode - skipping npm publish\n');
+  console.info('🔍 Dry run mode - skipping npm publish\n');
 }
 
 // Upload to bucket
@@ -77,7 +77,7 @@ if (!bucketType || !bucketName) {
   return;
 }
 
-console.log(`📤 Uploading binaries to ${bucketType}://${bucketName}...`);
+console.info(`📤 Uploading binaries to ${bucketType}://${bucketName}...`);
 const uploadProc = Bun.spawn(['bun', 'scripts/upload-to-bucket.ts'], {
   stdout: 'inherit',
   stderr: 'inherit',
@@ -94,4 +94,4 @@ if (uploadProc.exitCode !== 0) {
   process.exit(uploadProc.exitCode || 1);
 }
 
-console.log('\n✅ All binaries uploaded to bucket successfully!');
+console.info('\n✅ All binaries uploaded to bucket successfully!');

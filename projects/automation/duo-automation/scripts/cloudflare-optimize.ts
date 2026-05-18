@@ -26,11 +26,11 @@ export class CloudflareOptimizer {
   }
 
   async optimizeAll(): Promise<OptimizationResult> {
-    console.log('⚡ CLOUDFLARE PRODUCTION OPTIMIZATION');
-    console.log('=======================================');
-    console.log(`🌐 Domain: ${this.domain}`);
-    console.log(`📍 Zone ID: ${this.zoneId}`);
-    console.log('');
+    console.info('⚡ CLOUDFLARE PRODUCTION OPTIMIZATION');
+    console.info('=======================================');
+    console.info(`🌐 Domain: ${this.domain}`);
+    console.info(`📍 Zone ID: ${this.zoneId}`);
+    console.info('');
 
     const result: OptimizationResult = {
       imageResizing: false,
@@ -46,44 +46,44 @@ export class CloudflareOptimizer {
 
     try {
       // 1. Enable Image Optimization
-      console.log('🖼️ 1. ENABLING IMAGE OPTIMIZATION');
-      console.log('----------------------------------');
+      console.info('🖼️ 1. ENABLING IMAGE OPTIMIZATION');
+      console.info('----------------------------------');
       result.imageResizing = await this.enableImageOptimization();
       
       // 2. Configure Advanced Cache Rules
-      console.log('');
-      console.log('💾 2. CONFIGURING ADVANCED CACHE RULES');
-      console.log('-------------------------------------');
+      console.info('');
+      console.info('💾 2. CONFIGURING ADVANCED CACHE RULES');
+      console.info('-------------------------------------');
       result.cacheRules = await this.configureCacheRules();
       
       // 3. Enable Security Features
-      console.log('');
-      console.log('🛡️ 3. ENABLING SECURITY FEATURES');
-      console.log('------------------------------');
+      console.info('');
+      console.info('🛡️ 3. ENABLING SECURITY FEATURES');
+      console.info('------------------------------');
       result.security = await this.enableSecurity();
       
       // 4. Setup Analytics Monitoring
-      console.log('');
-      console.log('📊 4. SETUP ANALYTICS MONITORING');
-      console.log('------------------------------');
+      console.info('');
+      console.info('📊 4. SETUP ANALYTICS MONITORING');
+      console.info('------------------------------');
       result.analytics = await this.setupAnalytics();
       
       // 5. Calculate Performance Improvement
       result.performance.after = 85; // Target cache hit rate
       result.performance.improvement = result.performance.after - result.performance.before;
       
-      console.log('');
-      console.log('📈 OPTIMIZATION SUMMARY');
-      console.log('=======================');
-      console.log(`✅ Image Optimization: ${result.imageResizing ? 'ENABLED' : 'FAILED'}`);
-      console.log(`✅ Cache Rules: ${result.cacheRules ? 'CONFIGURED' : 'FAILED'}`);
-      console.log(`✅ Security: ${result.security ? 'ENABLED' : 'FAILED'}`);
-      console.log(`✅ Analytics: ${result.analytics ? 'ACTIVE' : 'FAILED'}`);
-      console.log('');
-      console.log(`🚀 Performance Improvement:`);
-      console.log(`   Cache Hit Rate: ${result.performance.before}% → ${result.performance.after}%`);
-      console.log(`   Improvement: +${result.performance.improvement}%`);
-      console.log(`   Speed Boost: ~28x faster content delivery`);
+      console.info('');
+      console.info('📈 OPTIMIZATION SUMMARY');
+      console.info('=======================');
+      console.info(`✅ Image Optimization: ${result.imageResizing ? 'ENABLED' : 'FAILED'}`);
+      console.info(`✅ Cache Rules: ${result.cacheRules ? 'CONFIGURED' : 'FAILED'}`);
+      console.info(`✅ Security: ${result.security ? 'ENABLED' : 'FAILED'}`);
+      console.info(`✅ Analytics: ${result.analytics ? 'ACTIVE' : 'FAILED'}`);
+      console.info('');
+      console.info(`🚀 Performance Improvement:`);
+      console.info(`   Cache Hit Rate: ${result.performance.before}% → ${result.performance.after}%`);
+      console.info(`   Improvement: +${result.performance.improvement}%`);
+      console.info(`   Speed Boost: ~28x faster content delivery`);
       
       return result;
     } catch (error) {
@@ -93,64 +93,64 @@ export class CloudflareOptimizer {
   }
 
   private async enableImageOptimization(): Promise<boolean> {
-    console.log('   🔄 Enabling automatic image resizing...');
+    console.info('   🔄 Enabling automatic image resizing...');
     await new Promise(resolve => setTimeout(resolve, 800));
     
-    console.log('   🔄 Configuring WebP conversion...');
+    console.info('   🔄 Configuring WebP conversion...');
     await new Promise(resolve => setTimeout(resolve, 600));
     
-    console.log('   🔄 Enabling lossless compression...');
+    console.info('   🔄 Enabling lossless compression...');
     await new Promise(resolve => setTimeout(resolve, 400));
     
-    console.log('   ✅ Image optimization enabled');
-    console.log('   📊 Expected bandwidth savings: 35%');
-    console.log('   ⚡ Load time improvement: 40% faster');
+    console.info('   ✅ Image optimization enabled');
+    console.info('   📊 Expected bandwidth savings: 35%');
+    console.info('   ⚡ Load time improvement: 40% faster');
     
     return true;
   }
 
   private async configureCacheRules(): Promise<boolean> {
-    console.log('   🔄 Configuring SDK documentation cache (90 days)...');
+    console.info('   🔄 Configuring SDK documentation cache (90 days)...');
     await new Promise(resolve => setTimeout(resolve, 500));
     
-    console.log('   🔄 Setting API endpoint cache (5 minutes)...');
+    console.info('   🔄 Setting API endpoint cache (5 minutes)...');
     await new Promise(resolve => setTimeout(resolve, 400));
     
-    console.log('   🔄 Configuring static asset cache (30 days)...');
+    console.info('   🔄 Configuring static asset cache (30 days)...');
     await new Promise(resolve => setTimeout(resolve, 300));
     
-    console.log('   🔄 Enabling edge cache for dashboard...');
+    console.info('   🔄 Enabling edge cache for dashboard...');
     await new Promise(resolve => setTimeout(resolve, 600));
     
-    console.log('   ✅ Cache rules configured');
-    console.log('   📋 Cache Rules Applied:');
-    console.log('      • developers.duoplus.com/sdk/*: 90 days');
-    console.log('      • api.duoplus.com/*: 5 minutes');
-    console.log('      • dashboard.duoplus.com/*: 30 days');
-    console.log('      • Static assets: 30 days');
+    console.info('   ✅ Cache rules configured');
+    console.info('   📋 Cache Rules Applied:');
+    console.info('      • developers.duoplus.com/sdk/*: 90 days');
+    console.info('      • api.duoplus.com/*: 5 minutes');
+    console.info('      • dashboard.duoplus.com/*: 30 days');
+    console.info('      • Static assets: 30 days');
     
     return true;
   }
 
   private async enableSecurity(): Promise<boolean> {
-    console.log('   🔄 Blocking AI training bots...');
+    console.info('   🔄 Blocking AI training bots...');
     await new Promise(resolve => setTimeout(resolve, 700));
     
-    console.log('   🔄 Configuring WAF rules for API protection...');
+    console.info('   🔄 Configuring WAF rules for API protection...');
     await new Promise(resolve => setTimeout(resolve, 500));
     
-    console.log('   🔄 Enabling DDoS protection...');
+    console.info('   🔄 Enabling DDoS protection...');
     await new Promise(resolve => setTimeout(resolve, 400));
     
-    console.log('   🔄 Setting up rate limiting...');
+    console.info('   🔄 Setting up rate limiting...');
     await new Promise(resolve => setTimeout(resolve, 300));
     
-    console.log('   ✅ Security features enabled');
-    console.log('   🛡️ Protections Active:');
-    console.log('      • AI crawler blocking');
-    console.log('      • WAF rules for APIs');
-    console.log('      • DDoS mitigation');
-    console.log('      • Rate limiting (1000 req/min)');
+    console.info('   ✅ Security features enabled');
+    console.info('   🛡️ Protections Active:');
+    console.info('      • AI crawler blocking');
+    console.info('      • WAF rules for APIs');
+    console.info('      • DDoS mitigation');
+    console.info('      • Rate limiting (1000 req/min)');
     
     return true;
   }
@@ -163,32 +163,32 @@ export class CloudflareOptimizer {
       'docs.duoplus.com'
     ];
     
-    console.log('   🔄 Adding endpoints to analytics...');
+    console.info('   🔄 Adding endpoints to analytics...');
     
     for (const endpoint of endpoints) {
-      console.log(`      • ${endpoint}`);
+      console.info(`      • ${endpoint}`);
       await new Promise(resolve => setTimeout(resolve, 200));
     }
     
-    console.log('   🔄 Configuring real-time metrics...');
+    console.info('   🔄 Configuring real-time metrics...');
     await new Promise(resolve => setTimeout(resolve, 400));
     
-    console.log('   🔄 Setting up revenue tracking...');
+    console.info('   🔄 Setting up revenue tracking...');
     await new Promise(resolve => setTimeout(resolve, 300));
     
-    console.log('   ✅ Analytics monitoring active');
-    console.log('   📊 Tracking Enabled:');
-    console.log('      • Real-time visitor analytics');
-    console.log('      • API usage metrics');
-    console.log('      • Revenue correlation');
-    console.log('      • Performance monitoring');
+    console.info('   ✅ Analytics monitoring active');
+    console.info('   📊 Tracking Enabled:');
+    console.info('      • Real-time visitor analytics');
+    console.info('      • API usage metrics');
+    console.info('      • Revenue correlation');
+    console.info('      • Performance monitoring');
     
     return true;
   }
 
   async generateOptimizationReport(): Promise<any> {
-    console.log('📋 GENERATING OPTIMIZATION REPORT');
-    console.log('=================================');
+    console.info('📋 GENERATING OPTIMIZATION REPORT');
+    console.info('=================================');
     
     const report = {
       timestamp: new Date().toISOString(),
@@ -254,28 +254,28 @@ export class CloudflareOptimizer {
       }
     };
     
-    console.log('✅ Optimization report generated');
+    console.info('✅ Optimization report generated');
     return report;
   }
 
   async enableEnterpriseFeatures(): Promise<void> {
-    console.log('🏢 ENABLING ENTERPRISE FEATURES');
-    console.log('===============================');
+    console.info('🏢 ENABLING ENTERPRISE FEATURES');
+    console.info('===============================');
     
-    console.log('🔄 Enabling advanced image resizing...');
+    console.info('🔄 Enabling advanced image resizing...');
     await this.enableImageOptimization();
     
-    console.log('🔄 Enabling AI protection...');
+    console.info('🔄 Enabling AI protection...');
     await this.enableSecurity();
     
-    console.log('🔄 Enabling advanced analytics...');
+    console.info('🔄 Enabling advanced analytics...');
     await this.setupAnalytics();
     
-    console.log('🔄 Configuring enterprise cache rules...');
+    console.info('🔄 Configuring enterprise cache rules...');
     await this.configureCacheRules();
     
-    console.log('✅ Enterprise features enabled');
-    console.log('🚀 Production optimization complete');
+    console.info('✅ Enterprise features enabled');
+    console.info('🚀 Production optimization complete');
   }
 }
 
@@ -290,33 +290,33 @@ async function main() {
     switch (command) {
       case 'optimize:all':
         const result = await optimizer.optimizeAll();
-        console.log('\n✅ Cloudflare optimization complete!');
+        console.info('\n✅ Cloudflare optimization complete!');
         break;
         
       case 'optimize:report':
         const report = await optimizer.generateOptimizationReport();
-        console.log('\n📊 Optimization Report:');
-        console.log(JSON.stringify(report, null, 2));
+        console.info('\n📊 Optimization Report:');
+        console.info(JSON.stringify(report, null, 2));
         break;
         
       case 'optimize:enterprise':
         await optimizer.enableEnterpriseFeatures();
-        console.log('\n✅ Enterprise features enabled!');
+        console.info('\n✅ Enterprise features enabled!');
         break;
         
       default:
-        console.log('⚡ Cloudflare Optimization CLI');
-        console.log('===============================');
-        console.log('');
-        console.log('Available commands:');
-        console.log('  optimize:all          Optimize all Cloudflare settings');
-        console.log('  optimize:report       Generate optimization report');
-        console.log('  optimize:enterprise   Enable enterprise features');
-        console.log('');
-        console.log('Examples:');
-        console.log('  bun run scripts/cloudflare-optimize.ts optimize:all');
-        console.log('  bun run scripts/cloudflare-optimize.ts optimize:report');
-        console.log('  bun run scripts/cloudflare-optimize.ts optimize:enterprise');
+        console.info('⚡ Cloudflare Optimization CLI');
+        console.info('===============================');
+        console.info('');
+        console.info('Available commands:');
+        console.info('  optimize:all          Optimize all Cloudflare settings');
+        console.info('  optimize:report       Generate optimization report');
+        console.info('  optimize:enterprise   Enable enterprise features');
+        console.info('');
+        console.info('Examples:');
+        console.info('  bun run scripts/cloudflare-optimize.ts optimize:all');
+        console.info('  bun run scripts/cloudflare-optimize.ts optimize:report');
+        console.info('  bun run scripts/cloudflare-optimize.ts optimize:enterprise');
     }
   } catch (error) {
     console.error('❌ Cloudflare optimization failed:', error);

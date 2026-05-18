@@ -60,7 +60,7 @@ async function uploadToS3(
 		// await s3.send(new PutObjectCommand({ Bucket: bucketName, Key: key, Body: fileContent }));
 
 		const url = `https://${bucketName}.s3.${region}.amazonaws.com/${key}`;
-		console.log(
+		console.info(
 			`  ✅ Uploaded: ${basename(filePath)} -> s3://${bucketName}/${key}`,
 		);
 
@@ -101,7 +101,7 @@ async function uploadToGCS(
 		// await bucket.file(key).save(fileContent);
 
 		const url = `https://storage.googleapis.com/${bucketName}/${key}`;
-		console.log(
+		console.info(
 			`  ✅ Uploaded: ${basename(filePath)} -> gs://${bucketName}/${key}`,
 		);
 
@@ -165,10 +165,10 @@ async function main() {
 		process.exit(1);
 	}
 
-	console.log(
+	console.info(
 		`📦 Uploading ${files.length} binaries to ${bucketType}://${bucketName}`,
 	);
-	console.log(`   Version: ${version}\n`);
+	console.info(`   Version: ${version}\n`);
 
 	const results: UploadResult[] = [];
 
@@ -177,36 +177,36 @@ async function main() {
 		// Create key with version: v1.0.0/secrets-guard-linux-x64
 		const key = `v${version}/${fileName}`;
 
-		console.log(`📤 Uploading ${fileName}...`);
+		console.info(`📤 Uploading ${fileName}...`);
 		const result = await uploadFile(filePath, key);
 		results.push(result);
 	}
 
 	// Summary
-	console.log(`\n${"=".repeat(60)}`);
-	console.log("📊 Upload Summary");
-	console.log("=".repeat(60));
+	console.info(`\n${"=".repeat(60)}`);
+	console.info("📊 Upload Summary");
+	console.info("=".repeat(60));
 
 	const successful = results.filter((r) => r.success);
 	const failed = results.filter((r) => !r.success);
 
-	console.log(`✅ Successful: ${successful.length}/${results.length}`);
+	console.info(`✅ Successful: ${successful.length}/${results.length}`);
 	if (successful.length > 0) {
-		console.log("\nUploaded files:");
+		console.info("\nUploaded files:");
 		successful.forEach((r) => {
-			console.log(`  • ${r.file}${r.url ? ` -> ${r.url}` : ""}`);
+			console.info(`  • ${r.file}${r.url ? ` -> ${r.url}` : ""}`);
 		});
 	}
 
 	if (failed.length > 0) {
-		console.log(`\n❌ Failed: ${failed.length}/${results.length}`);
+		console.info(`\n❌ Failed: ${failed.length}/${results.length}`);
 		failed.forEach((r) => {
-			console.log(`  • ${r.file}: ${r.error}`);
+			console.info(`  • ${r.file}: ${r.error}`);
 		});
 		process.exit(1);
 	}
 
-	console.log(
+	console.info(
 		`\n✅ All binaries uploaded successfully to ${bucketType}://${bucketName}/v${version}/`,
 	);
 }

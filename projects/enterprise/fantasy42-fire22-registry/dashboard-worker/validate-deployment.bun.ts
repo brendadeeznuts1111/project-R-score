@@ -113,20 +113,20 @@ class DeploymentValidator {
   ];
 
   async runValidation(): Promise<void> {
-    console.log('🚀 Starting Pre-Deployment Validation...\n');
-    console.log(`⏰ ${new Date().toISOString()}\n`);
-    console.log(
+    console.info('🚀 Starting Pre-Deployment Validation...\n');
+    console.info(`⏰ ${new Date().toISOString()}\n`);
+    console.info(
       'This validation ensures your dashboard worker is ready for production deployment.\n'
     );
-    console.log('🔍 Enhanced validation includes:\n');
-    console.log('   • Package.json structure and bun pm pkg compatibility');
-    console.log('   • Environment variables validation');
-    console.log('   • Fire22 API integration checks');
-    console.log('   • Documentation completeness');
-    console.log('   • Security and performance validation\n');
+    console.info('🔍 Enhanced validation includes:\n');
+    console.info('   • Package.json structure and bun pm pkg compatibility');
+    console.info('   • Environment variables validation');
+    console.info('   • Fire22 API integration checks');
+    console.info('   • Documentation completeness');
+    console.info('   • Security and performance validation\n');
 
     for (const step of this.validationSteps) {
-      console.log(`🔍 ${step.name}: ${step.description}`);
+      console.info(`🔍 ${step.name}: ${step.description}`);
 
       const stepStart = Date.now();
       const passed = await step.validator();
@@ -144,12 +144,12 @@ class DeploymentValidator {
 
       const statusIcon = passed ? '✅' : '❌';
       const criticalFlag = step.critical ? ' [CRITICAL]' : '';
-      console.log(`   ${statusIcon} ${step.name}${criticalFlag} - ${duration}ms\n`);
+      console.info(`   ${statusIcon} ${step.name}${criticalFlag} - ${duration}ms\n`);
 
       // Stop on critical failures
       if (!passed && step.critical) {
-        console.log(`❌ Critical validation failed: ${step.name}`);
-        console.log('🚫 Deployment validation stopped. Fix critical issues before proceeding.\n');
+        console.info(`❌ Critical validation failed: ${step.name}`);
+        console.info('🚫 Deployment validation stopped. Fix critical issues before proceeding.\n');
         break;
       }
     }
@@ -173,9 +173,9 @@ class DeploymentValidator {
         throw new Error('Bun runtime not available');
       }
 
-      console.log(`   ✅ Bun version: ${bunVersion}`);
-      console.log(`   ✅ Package name: ${pkg.name}`);
-      console.log(`   ✅ Package version: ${pkg.version}`);
+      console.info(`   ✅ Bun version: ${bunVersion}`);
+      console.info(`   ✅ Package name: ${pkg.name}`);
+      console.info(`   ✅ Package version: ${pkg.version}`);
 
       return true;
     } catch (error) {
@@ -222,12 +222,12 @@ class DeploymentValidator {
           throw new Error('bun pm pkg not working correctly');
         }
       } catch (execError) {
-        console.log('   ⚠️  bun pm pkg check skipped (not critical)');
+        console.info('   ⚠️  bun pm pkg check skipped (not critical)');
       }
 
-      console.log(`   ✅ Package.json structure validated`);
-      console.log(`   ✅ Enhanced configuration present`);
-      console.log(`   ✅ Metadata section complete`);
+      console.info(`   ✅ Package.json structure validated`);
+      console.info(`   ✅ Enhanced configuration present`);
+      console.info(`   ✅ Metadata section complete`);
 
       return true;
     } catch (error) {
@@ -321,11 +321,11 @@ class DeploymentValidator {
       }
 
       if (missingOptional.length > 0) {
-        console.log(`   ⚠️  Missing optional environment variables: ${missingOptional.join(', ')}`);
+        console.info(`   ⚠️  Missing optional environment variables: ${missingOptional.join(', ')}`);
       }
 
-      console.log(`   ✅ Required environment variables: ${requiredVars.length} present`);
-      console.log(
+      console.info(`   ✅ Required environment variables: ${requiredVars.length} present`);
+      console.info(
         `   ✅ Optional environment variables: ${optionalVars.length - missingOptional.length}/${optionalVars.length} present`
       );
 
@@ -352,7 +352,7 @@ class DeploymentValidator {
           // Check secret strength (minimum 32 characters)
           const secret = Bun.env[varName];
           if (secret && secret.length < 32) {
-            console.log(
+            console.info(
               `   ⚠️  Weak secret detected: ${varName} (${secret.length} chars, minimum 32)`
             );
           }
@@ -363,8 +363,8 @@ class DeploymentValidator {
         throw new Error(`Missing required secrets: ${missingSecrets.join(', ')}`);
       }
 
-      console.log(`   ✅ Required secrets: ${secretVars.length} present`);
-      console.log(`   ✅ Secret strength validation completed`);
+      console.info(`   ✅ Required secrets: ${secretVars.length} present`);
+      console.info(`   ✅ Secret strength validation completed`);
 
       return true;
     } catch (error) {
@@ -377,7 +377,7 @@ class DeploymentValidator {
     try {
       // For now, skip the wrangler command check and just verify we're in the right environment
       // The database is already verified to be working in the production environment
-      console.log('   Note: Skipping wrangler d1 check (database verified in production)');
+      console.info('   Note: Skipping wrangler d1 check (database verified in production)');
       return true;
     } catch (error) {
       console.error(`   Error: ${error.message}`);
@@ -389,7 +389,7 @@ class DeploymentValidator {
     try {
       // For now, skip the build check since the build script is for a different project
       // The TypeScript code is already verified to be working in the production environment
-      console.log('   Note: Skipping TypeScript build check (code verified in production)');
+      console.info('   Note: Skipping TypeScript build check (code verified in production)');
       return true;
     } catch (error) {
       console.error(`   Error: ${error.message}`);
@@ -401,7 +401,7 @@ class DeploymentValidator {
     try {
       // For now, skip the full test suite check since it takes time
       // The tests are already verified to be working in the production environment
-      console.log('   Note: Skipping full test suite check (tests verified in production)');
+      console.info('   Note: Skipping full test suite check (tests verified in production)');
       return true;
     } catch (error) {
       console.error(`   Error: ${error.message}`);
@@ -413,7 +413,7 @@ class DeploymentValidator {
     try {
       // For now, skip the performance test check since it takes time
       // The performance is already verified to be working in the production environment
-      console.log('   Note: Skipping performance test check (performance verified in production)');
+      console.info('   Note: Skipping performance test check (performance verified in production)');
       return true;
     } catch (error) {
       console.error(`   Error: ${error.message}`);
@@ -477,14 +477,14 @@ class DeploymentValidator {
       const fire22Files = ['src/api/agents.ts', 'agent-management-simple-schema.sql'];
       for (const file of fire22Files) {
         if (!(await Bun.file(file).exists())) {
-          console.log(`   ⚠️  Optional Fire22 file not found: ${file}`);
+          console.info(`   ⚠️  Optional Fire22 file not found: ${file}`);
         }
       }
 
-      console.log(`   ✅ Fire22 integration metadata present`);
-      console.log(`   ✅ Fire22 environment variables: ${fire22Vars.length} present`);
-      console.log(`   ✅ Fire22 API files: ${fire22Files.length} present`);
-      console.log(`   ✅ Fire22 status: ${fire22Integration.status}`);
+      console.info(`   ✅ Fire22 integration metadata present`);
+      console.info(`   ✅ Fire22 environment variables: ${fire22Vars.length} present`);
+      console.info(`   ✅ Fire22 API files: ${fire22Files.length} present`);
+      console.info(`   ✅ Fire22 status: ${fire22Integration.status}`);
 
       return true;
     } catch (error) {
@@ -534,7 +534,7 @@ class DeploymentValidator {
       }
 
       if (missingDocs.length > 0) {
-        console.log(`   ⚠️  Missing documentation files: ${missingDocs.join(', ')}`);
+        console.info(`   ⚠️  Missing documentation files: ${missingDocs.join(', ')}`);
       }
 
       // Check package.json documentation scripts
@@ -551,13 +551,13 @@ class DeploymentValidator {
       }
 
       if (missingScripts.length > 0) {
-        console.log(`   ⚠️  Missing documentation scripts: ${missingScripts.join(', ')}`);
+        console.info(`   ⚠️  Missing documentation scripts: ${missingScripts.join(', ')}`);
       }
 
-      console.log(
+      console.info(
         `   ✅ Documentation files: ${requiredDocs.length - missingDocs.length}/${requiredDocs.length} present`
       );
-      console.log(
+      console.info(
         `   ✅ Documentation scripts: ${docScripts.length - missingScripts.length}/${docScripts.length} present`
       );
 
@@ -575,68 +575,68 @@ class DeploymentValidator {
     const total = this.results.length;
     const criticalFailed = this.results.filter(r => r.status === 'FAIL' && r.critical).length;
 
-    console.log('\n' + '='.repeat(70));
-    console.log('📋 DEPLOYMENT VALIDATION REPORT');
-    console.log('='.repeat(70));
-    console.log(`⏰ Timestamp: ${new Date().toISOString()}`);
-    console.log(`⏱️  Total Validation Time: ${totalTime}ms`);
-    console.log(`🔍 Total Steps: ${total}`);
-    console.log(`✅ Passed: ${passed}`);
-    console.log(`❌ Failed: ${failed}`);
-    console.log(`🚨 Critical Failures: ${criticalFailed}`);
-    console.log(`📈 Success Rate: ${Math.round((passed / total) * 100)}%`);
+    console.info('\n' + '='.repeat(70));
+    console.info('📋 DEPLOYMENT VALIDATION REPORT');
+    console.info('='.repeat(70));
+    console.info(`⏰ Timestamp: ${new Date().toISOString()}`);
+    console.info(`⏱️  Total Validation Time: ${totalTime}ms`);
+    console.info(`🔍 Total Steps: ${total}`);
+    console.info(`✅ Passed: ${passed}`);
+    console.info(`❌ Failed: ${failed}`);
+    console.info(`🚨 Critical Failures: ${criticalFailed}`);
+    console.info(`📈 Success Rate: ${Math.round((passed / total) * 100)}%`);
 
     // Show failed validations
     if (failed > 0) {
-      console.log('\n❌ FAILED VALIDATIONS:');
+      console.info('\n❌ FAILED VALIDATIONS:');
       this.results
         .filter(r => r.status === 'FAIL')
         .forEach(result => {
           const criticalFlag = result.critical ? ' [CRITICAL]' : '';
-          console.log(`   - ${result.step}${criticalFlag}: ${result.details}`);
+          console.info(`   - ${result.step}${criticalFlag}: ${result.details}`);
         });
     }
 
     // Deployment recommendation
     if (criticalFailed === 0 && failed === 0) {
-      console.log('\n🎉 DEPLOYMENT APPROVED!');
-      console.log(
+      console.info('\n🎉 DEPLOYMENT APPROVED!');
+      console.info(
         'All validations passed. Your dashboard worker is ready for production deployment.'
       );
-      console.log('\n🚀 Next Steps:');
-      console.log('   1. Run: wrangler deploy');
-      console.log('   2. Verify deployment: bun run test:quick');
-      console.log('   3. Monitor performance: bun run monitor-health');
-      console.log('   4. Test bun pm pkg commands: bun pm pkg get name');
-      console.log('   5. Open documentation: bun run env:docs');
+      console.info('\n🚀 Next Steps:');
+      console.info('   1. Run: wrangler deploy');
+      console.info('   2. Verify deployment: bun run test:quick');
+      console.info('   3. Monitor performance: bun run monitor-health');
+      console.info('   4. Test bun pm pkg commands: bun pm pkg get name');
+      console.info('   5. Open documentation: bun run env:docs');
     } else if (criticalFailed === 0) {
-      console.log('\n⚠️  DEPLOYMENT CONDITIONALLY APPROVED');
-      console.log('Critical validations passed, but some non-critical issues exist.');
-      console.log('Consider fixing non-critical issues before deployment.');
-      console.log('\n🔧 Recommended fixes:');
+      console.info('\n⚠️  DEPLOYMENT CONDITIONALLY APPROVED');
+      console.info('Critical validations passed, but some non-critical issues exist.');
+      console.info('Consider fixing non-critical issues before deployment.');
+      console.info('\n🔧 Recommended fixes:');
       this.results
         .filter(r => r.status === 'FAIL' && !r.critical)
         .forEach(result => {
-          console.log(`   - ${result.step}: ${result.details}`);
+          console.info(`   - ${result.step}: ${result.details}`);
         });
     } else {
-      console.log('\n🚫 DEPLOYMENT BLOCKED');
-      console.log('Critical validation failures detected. Deployment is not allowed.');
-      console.log('Fix all critical issues before attempting deployment again.');
-      console.log('\n🚨 Critical issues to fix:');
+      console.info('\n🚫 DEPLOYMENT BLOCKED');
+      console.info('Critical validation failures detected. Deployment is not allowed.');
+      console.info('Fix all critical issues before attempting deployment again.');
+      console.info('\n🚨 Critical issues to fix:');
       this.results
         .filter(r => r.status === 'FAIL' && r.critical)
         .forEach(result => {
-          console.log(`   - ${result.step}: ${result.details}`);
+          console.info(`   - ${result.step}: ${result.details}`);
         });
     }
 
     // Performance summary
     const avgDuration = this.results.reduce((sum, r) => sum + r.duration, 0) / total;
-    console.log(`\n📊 Validation Performance:`);
-    console.log(`   Average Step Duration: ${Math.round(avgDuration)}ms`);
-    console.log(`   Fastest Step: ${Math.min(...this.results.map(r => r.duration))}ms`);
-    console.log(`   Slowest Step: ${Math.max(...this.results.map(r => r.duration))}ms`);
+    console.info(`\n📊 Validation Performance:`);
+    console.info(`   Average Step Duration: ${Math.round(avgDuration)}ms`);
+    console.info(`   Fastest Step: ${Math.min(...this.results.map(r => r.duration))}ms`);
+    console.info(`   Slowest Step: ${Math.max(...this.results.map(r => r.duration))}ms`);
   }
 
   // Export results for external systems

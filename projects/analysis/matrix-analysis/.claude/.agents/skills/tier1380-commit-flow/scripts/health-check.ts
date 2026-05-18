@@ -149,9 +149,9 @@ async function runHealthCheck(): Promise<HealthResult[]> {
 }
 
 function renderResults(results: HealthResult[]): void {
-	console.log();
-	console.log("Health Check Results:");
-	console.log("═══════════════════════════════════════════════════\n");
+	console.info();
+	console.info("Health Check Results:");
+	console.info("═══════════════════════════════════════════════════\n");
 
 	let ok = 0;
 	let warning = 0;
@@ -160,28 +160,28 @@ function renderResults(results: HealthResult[]): void {
 	for (const result of results) {
 		const icon =
 			result.status === "ok" ? "✅" : result.status === "warning" ? "⚠️" : "❌";
-		console.log(`${icon} ${result.component.padEnd(20)} ${result.message}`);
+		console.info(`${icon} ${result.component.padEnd(20)} ${result.message}`);
 
 		if (result.status === "ok") ok++;
 		else if (result.status === "warning") warning++;
 		else error++;
 	}
 
-	console.log();
-	console.log(`Summary: ${ok} OK, ${warning} warnings, ${error} errors`);
+	console.info();
+	console.info(`Summary: ${ok} OK, ${warning} warnings, ${error} errors`);
 
 	if (error > 0) {
-		console.log();
-		console.log("Fix errors with:");
-		console.log("  bun ~/.kimi/skills/tier1380-commit-flow/setup.ts");
+		console.info();
+		console.info("Fix errors with:");
+		console.info("  bun ~/.kimi/skills/tier1380-commit-flow/setup.ts");
 	}
 }
 
 // Main
 if (import.meta.main) {
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Health Check                       ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Health Check                       ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
 
 	const results = await runHealthCheck();
 	renderResults(results);

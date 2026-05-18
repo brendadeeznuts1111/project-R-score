@@ -25,12 +25,12 @@ const BIN_SCRIPTS = [
 ] as const;
 
 async function setupBinDirectory() {
-	console.log("🔧 Setting up workspace bin directory...\n");
+	console.info("🔧 Setting up workspace bin directory...\n");
 
 	// Create bin directory if it doesn't exist
 	if (!existsSync(BIN_DIR)) {
 		await mkdir(BIN_DIR, { recursive: true });
-		console.log(`✅ Created ${BIN_DIR}`);
+		console.info(`✅ Created ${BIN_DIR}`);
 	}
 
 	// Create symlinks for each script
@@ -52,7 +52,7 @@ async function setupBinDirectory() {
 			// Create relative symlink
 			const relativePath = join("..", "..", "scripts", script);
 			await symlink(relativePath, binPath);
-			console.log(`✅ Linked ${script} → ${binPath}`);
+			console.info(`✅ Linked ${script} → ${binPath}`);
 		} catch (error: any) {
 			if (error.code !== "EEXIST") {
 				console.error(`❌ Failed to link ${script}: ${error.message}`);
@@ -60,10 +60,10 @@ async function setupBinDirectory() {
 		}
 	}
 
-	console.log("\n✅ Workspace bin directory setup complete!");
-	console.log(`\n📦 Bin directory: ${BIN_DIR}`);
-	console.log(`💡 Run scripts with: bun run <script-name>`);
-	console.log(`💡 Or directly: ${BIN_DIR}/<script-name>`);
+	console.info("\n✅ Workspace bin directory setup complete!");
+	console.info(`\n📦 Bin directory: ${BIN_DIR}`);
+	console.info(`💡 Run scripts with: bun run <script-name>`);
+	console.info(`💡 Or directly: ${BIN_DIR}/<script-name>`);
 }
 
 // Run setup

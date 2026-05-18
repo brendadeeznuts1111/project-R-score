@@ -19,23 +19,23 @@ interface DeploymentResult {
 }
 
 async function deployTier1380TestConfig(): Promise<void> {
-  console.log('🚀 DEPLOYING TIER-1380 TEST CONFIGURATION EMPIRE');
-  console.log('='.repeat(60));
+  console.info('🚀 DEPLOYING TIER-1380 TEST CONFIGURATION EMPIRE');
+  console.info('='.repeat(60));
 
   // 1. Verify zero-trust alignment
-  console.log('\n🔍 Step 1: Verifying Zero-Trust Alignment...');
+  console.info('\n🔍 Step 1: Verifying Zero-Trust Alignment...');
   const verifier = new ZeroTrustTestVerifier();
 
   try {
     await verifier.verifyTestEnvironment();
-    console.log('✅ Zero-trust alignment verified');
+    console.info('✅ Zero-trust alignment verified');
   } catch (error) {
     console.error('❌ Zero-trust verification failed:', error);
     process.exit(1);
   }
 
   // 2. Deploy to all regions
-  console.log('\n🌍 Step 2: Deploying to 5 Regions...');
+  console.info('\n🌍 Step 2: Deploying to 5 Regions...');
   const deployments = await Promise.allSettled(
     regions.map(async (region) => {
       const startTime = Date.now();
@@ -72,20 +72,20 @@ async function deployTier1380TestConfig(): Promise<void> {
   );
 
   // 3. Generate deployment report
-  console.log('\n📊 Step 3: Generating Deployment Report...');
+  console.info('\n📊 Step 3: Generating Deployment Report...');
   await generateDeploymentReport(deployments);
 
   // 4. Seal deployment with quantum-resistant hash
-  console.log('\n🔒 Step 4: Sealing Deployment...');
+  console.info('\n🔒 Step 4: Sealing Deployment...');
   await sealDeployment(deployments);
 
   // 5. Start performance dashboard
-  console.log('\n📈 Step 5: Starting Performance Dashboard...');
-  console.log('Dashboard will be available at: http://localhost:3002');
+  console.info('\n📈 Step 5: Starting Performance Dashboard...');
+  console.info('Dashboard will be available at: http://localhost:3002');
 
-  console.log('\n🔒 TIER-1380 TEST CONFIGURATION DEPLOYMENT SEALED');
-  console.log('📊 View dashboard: http://localhost:3002');
-  console.log('🌍 Active regions:', regions.join(', '));
+  console.info('\n🔒 TIER-1380 TEST CONFIGURATION DEPLOYMENT SEALED');
+  console.info('📊 View dashboard: http://localhost:3002');
+  console.info('🌍 Active regions:', regions.join(', '));
 }
 
 async function generateDeploymentReport(deployments: PromiseSettledResult<DeploymentResult>[]): Promise<void> {
@@ -110,21 +110,21 @@ async function generateDeploymentReport(deployments: PromiseSettledResult<Deploy
   );
 
   // Display summary
-  console.log(`\n📊 Deployment Summary:`);
-  console.log(`  Total regions: ${report.summary.total}`);
-  console.log(`  Successful: ${report.summary.successful}`);
-  console.log(`  Failed: ${report.summary.failed}`);
-  console.log(`  Total duration: ${report.summary.totalDuration}ms`);
+  console.info(`\n📊 Deployment Summary:`);
+  console.info(`  Total regions: ${report.summary.total}`);
+  console.info(`  Successful: ${report.summary.successful}`);
+  console.info(`  Failed: ${report.summary.failed}`);
+  console.info(`  Total duration: ${report.summary.totalDuration}ms`);
 
   // Display individual results
   results.forEach(result => {
     const status = result.success ? '✅' : '❌';
     const duration = `${result.duration}ms`;
     const seal = result.sealId ? result.sealId.substring(0, 20) + '...' : 'N/A';
-    console.log(`  ${status} ${result.region}: ${duration} (seal: ${seal})`);
+    console.info(`  ${status} ${result.region}: ${duration} (seal: ${seal})`);
 
     if (!result.success && result.error) {
-      console.log(`    Error: ${result.error}`);
+      console.info(`    Error: ${result.error}`);
     }
   });
 }
@@ -156,8 +156,8 @@ async function sealDeployment(deployments: PromiseSettledResult<DeploymentResult
     JSON.stringify(sealData, null, 2)
   );
 
-  console.log(`  Seal: ${seal.substring(0, 32)}...`);
-  console.log(`  Algorithm: SHA-512 (quantum-resistant)`);
+  console.info(`  Seal: ${seal.substring(0, 32)}...`);
+  console.info(`  Algorithm: SHA-512 (quantum-resistant)`);
 }
 
 // Handle CLI arguments
@@ -166,8 +166,8 @@ const command = process.argv[2];
 if (command === 'deploy') {
   deployTier1380TestConfig().catch(console.error);
 } else if (command === 'verify') {
-  console.log('🔍 VERIFYING TIER-1380 TEST CONFIGURATION SEAL');
-  console.log('='.repeat(60));
+  console.info('🔍 VERIFYING TIER-1380 TEST CONFIGURATION SEAL');
+  console.info('='.repeat(60));
 
   const checks = [
     {
@@ -196,29 +196,29 @@ if (command === 'deploy') {
         const duration = Date.now() - startTime;
 
         if (result === 0) {
-          console.log(`✅ ${check.name}: ${duration}ms`);
+          console.info(`✅ ${check.name}: ${duration}ms`);
         } else {
-          console.log(`❌ ${check.name}: FAILED (exit code: ${result})`);
+          console.info(`❌ ${check.name}: FAILED (exit code: ${result})`);
         }
 
       } catch (error) {
-        console.log(`❌ ${check.name}: FAILED`);
+        console.info(`❌ ${check.name}: FAILED`);
         console.error((error as Error).message);
       }
     }
 
-    console.log('\n🔒 TIER-1380 VERIFICATION COMPLETE');
+    console.info('\n🔒 TIER-1380 VERIFICATION COMPLETE');
   })();
 } else if (command === 'dashboard') {
-  console.log('🚀 Starting Tier-1380 Performance Dashboard...');
-  console.log('📊 Dashboard: http://localhost:3002');
+  console.info('🚀 Starting Tier-1380 Performance Dashboard...');
+  console.info('📊 Dashboard: http://localhost:3002');
 
   // Import and start dashboard
   import('./dashboard/regional-monitor.ts').then(() => {
-    console.log('✅ Dashboard started');
+    console.info('✅ Dashboard started');
   }).catch(console.error);
 } else {
-  console.log(`
+  console.info(`
 Tier-1380 Test Configuration Deployment Commands:
 
   bun run deploy-test-config.ts deploy     - Deploy to all 5 regions

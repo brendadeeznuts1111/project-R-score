@@ -112,7 +112,7 @@ export class SocketMonitor {
 			// Handle disconnect
 			const connInfo = this.connections.get(sock);
 			if (connInfo) {
-				console.log(`🔌 Socket disconnected: ${formatSocketInfo(connInfo)}`);
+				console.info(`🔌 Socket disconnected: ${formatSocketInfo(connInfo)}`);
 				this.connections.delete(sock);
 			}
 		});
@@ -121,7 +121,7 @@ export class SocketMonitor {
 		this.connections.set(socket, info);
 		
 		// Log connection
-		console.log(`🔌 Socket connected: ${formatSocketInfo(info)}`);
+		console.info(`🔌 Socket connected: ${formatSocketInfo(info)}`);
 		
 		return socket;
 	}

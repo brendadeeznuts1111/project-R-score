@@ -13,7 +13,7 @@ class LocalhostToExampleConverter {
   private readonly fileExtensions = ['.ts', '.js', '.md', '.json'];
   
   convertAll(): void {
-    console.log('🔄 Converting example.com URLs to example.com...\n');
+    console.info('🔄 Converting example.com URLs to example.com...\n');
     
     let totalFiles = 0;
     let totalReplacements = 0;
@@ -29,18 +29,18 @@ class LocalhostToExampleConverter {
       }
     }
     
-    console.log(`\n🎯 Conversion Summary:`);
-    console.log(`   Files processed: ${totalFiles}`);
-    console.log(`   Replacements made: ${totalReplacements}`);
+    console.info(`\n🎯 Conversion Summary:`);
+    console.info(`   Files processed: ${totalFiles}`);
+    console.info(`   Replacements made: ${totalReplacements}`);
     
     if (totalReplacements > 0) {
-      console.log('\n✅ Successfully converted example.com URLs to example.com');
-      console.log('💡 Next steps:');
-      console.log('1. Run "bun run url:check" to verify changes');
-      console.log('2. Test the updated files');
-      console.log('3. Commit the changes');
+      console.info('\n✅ Successfully converted example.com URLs to example.com');
+      console.info('💡 Next steps:');
+      console.info('1. Run "bun run url:check" to verify changes');
+      console.info('2. Test the updated files');
+      console.info('3. Commit the changes');
     } else {
-      console.log('\nℹ️  No example.com URLs found to convert');
+      console.info('\nℹ️  No example.com URLs found to convert');
     }
   }
   
@@ -61,7 +61,7 @@ class LocalhostToExampleConverter {
           if (this.fileExtensions.includes(ext)) {
             const fileReplacements = this.convertFile(fullPath);
             if (fileReplacements > 0) {
-              console.log(`  ✅ ${fullPath}: ${fileReplacements} replacements`);
+              console.info(`  ✅ ${fullPath}: ${fileReplacements} replacements`);
               replacements += fileReplacements;
             }
             fileCount++;
@@ -146,14 +146,14 @@ async function main(): Promise<void> {
   switch (command) {
     case 'convert':
     case '':
-      console.log('🔄 Localhost to Example.com Converter\n');
+      console.info('🔄 Localhost to Example.com Converter\n');
       converter.convertAll();
       break;
       
     case 'help':
     case '--help':
     case '-h':
-      console.log(`
+      console.info(`
 🔄 Localhost to Example.com Converter
 
 USAGE:

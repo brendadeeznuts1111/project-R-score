@@ -252,7 +252,7 @@ export class ArbTracker {
     this.arbs.push(arb);
 
     // JSON log (SIEM-ready)
-    console.log("%j", {
+    console.info("%j", {
       arbId: arb.id,
       game: arb.game,
       edge: arb.edge,
@@ -298,7 +298,7 @@ export class ArbTracker {
       .filter(Boolean)
       .join(" ");
 
-    console.log(line);
+    console.info(line);
   }
 
   getArbs(): ArbOpportunity[] {
@@ -385,7 +385,7 @@ export class BasketballUtilsFactory {
     const latencyNs = this.timing.elapsed(startNs);
     const latencyMs = Number(latencyNs) / 1e6;
 
-    console.log("%j", {
+    console.info("%j", {
       bookie,
       latency: `${latencyMs.toFixed(1)}ms`,
       nsPrecision: latencyNs.toString(),
@@ -533,43 +533,43 @@ export function createUtilsServer(factory: BasketballUtilsFactory, port = 3000) 
 export async function runDemo() {
   const factory = new BasketballUtilsFactory();
 
-  console.log("\n" + "═".repeat(60));
-  console.log(BRIGHT.CYAN.ansi + STYLE.BOLD + "  @dynamic-spy/kit v9.0 - BUN UTILS INDUSTRIALIZED" + RESET);
-  console.log("═".repeat(60) + "\n");
+  console.info("\n" + "═".repeat(60));
+  console.info(BRIGHT.CYAN.ansi + STYLE.BOLD + "  @dynamic-spy/kit v9.0 - BUN UTILS INDUSTRIALIZED" + RESET);
+  console.info("═".repeat(60) + "\n");
 
   // Bun info
-  console.log(BRIGHT.WHITE.ansi + "1. BUN RUNTIME" + RESET);
-  console.log("─".repeat(40));
+  console.info(BRIGHT.WHITE.ansi + "1. BUN RUNTIME" + RESET);
+  console.info("─".repeat(40));
   const info = factory.getBunInfo();
-  console.log(`   Version:  ${BRIGHT.CYAN.ansi}${info.version}${RESET}`);
-  console.log(`   Revision: ${GRAYS.GRAY_12.ansi}${info.revision.slice(0, 12)}${RESET}`);
-  console.log(`   Main:     ${GRAYS.GRAY_14.ansi}${info.main}${RESET}`);
-  console.log(`   Direct:   ${factory.isMain() ? GREENS.BRIGHT.ansi + "YES" : GRAYS.GRAY_10.ansi + "NO"}${RESET}`);
+  console.info(`   Version:  ${BRIGHT.CYAN.ansi}${info.version}${RESET}`);
+  console.info(`   Revision: ${GRAYS.GRAY_12.ansi}${info.revision.slice(0, 12)}${RESET}`);
+  console.info(`   Main:     ${GRAYS.GRAY_14.ansi}${info.main}${RESET}`);
+  console.info(`   Direct:   ${factory.isMain() ? GREENS.BRIGHT.ansi + "YES" : GRAYS.GRAY_10.ansi + "NO"}${RESET}`);
 
   // Tool discovery
-  console.log("\n" + BRIGHT.WHITE.ansi + "2. TOOL DISCOVERY" + RESET);
-  console.log("─".repeat(40));
+  console.info("\n" + BRIGHT.WHITE.ansi + "2. TOOL DISCOVERY" + RESET);
+  console.info("─".repeat(40));
   const tools = factory.tools.discoverAll();
   for (const tool of tools) {
     const status = tool.found
       ? GREENS.BRIGHT.ansi + "✓" + RESET + " " + GRAYS.GRAY_12.ansi + tool.path + RESET
       : REDS.BRIGHT.ansi + "✗" + RESET + " not found";
-    console.log(`   ${tool.name.padEnd(12)} ${status}`);
+    console.info(`   ${tool.name.padEnd(12)} ${status}`);
   }
-  console.log(`   ${GRAYS.GRAY_10.ansi}Found: ${factory.tools.getFound()}/${factory.tools.getTotal()}${RESET}`);
+  console.info(`   ${GRAYS.GRAY_10.ansi}Found: ${factory.tools.getFound()}/${factory.tools.getTotal()}${RESET}`);
 
   // UUID generation
-  console.log("\n" + BRIGHT.WHITE.ansi + "3. UUID GENERATION" + RESET);
-  console.log("─".repeat(40));
+  console.info("\n" + BRIGHT.WHITE.ansi + "3. UUID GENERATION" + RESET);
+  console.info("─".repeat(40));
   const batch = factory.generateUUIDBatch(25000);
-  console.log(`   Generated: ${BRIGHT.GREEN.ansi}${batch.uuids.length.toLocaleString()}${RESET} UUIDs`);
-  console.log(`   Time:      ${YELLOWS.GOLD.ansi}${batch.timeMs.toFixed(2)}ms${RESET}`);
-  console.log(`   Rate:      ${BRIGHT.CYAN.ansi}${batch.rate.toLocaleString()}${RESET} UUIDs/sec`);
-  console.log(`   Monotonic: ${batch.monotonic ? GREENS.BRIGHT.ansi + "✓ YES" : REDS.BRIGHT.ansi + "✗ NO"}${RESET}`);
+  console.info(`   Generated: ${BRIGHT.GREEN.ansi}${batch.uuids.length.toLocaleString()}${RESET} UUIDs`);
+  console.info(`   Time:      ${YELLOWS.GOLD.ansi}${batch.timeMs.toFixed(2)}ms${RESET}`);
+  console.info(`   Rate:      ${BRIGHT.CYAN.ansi}${batch.rate.toLocaleString()}${RESET} UUIDs/sec`);
+  console.info(`   Monotonic: ${batch.monotonic ? GREENS.BRIGHT.ansi + "✓ YES" : REDS.BRIGHT.ansi + "✗ NO"}${RESET}`);
 
   // Arb tracking
-  console.log("\n" + BRIGHT.WHITE.ansi + "4. ARB TRACKING" + RESET);
-  console.log("─".repeat(40));
+  console.info("\n" + BRIGHT.WHITE.ansi + "4. ARB TRACKING" + RESET);
+  console.info("─".repeat(40));
 
   const testArbs = [
     { game: "LAL@GSW", bookA: { name: "PIN", odds: 1.95, type: "sharp" as const }, bookB: { name: "DK", odds: 2.08, type: "square" as const }, edge: 0.0312, profit: 847, steam: true, live: true },
@@ -584,19 +584,19 @@ export async function runDemo() {
   }
 
   // Metrics
-  console.log("\n" + BRIGHT.WHITE.ansi + "5. METRICS" + RESET);
-  console.log("─".repeat(40));
+  console.info("\n" + BRIGHT.WHITE.ansi + "5. METRICS" + RESET);
+  console.info("─".repeat(40));
   const metrics = factory.getMetrics();
-  console.log(`   Sleep calls:     ${metrics.utils.sleepCalls}`);
-  console.log(`   UUIDs generated: ${metrics.utils.uuidsGenerated.toLocaleString()}`);
-  console.log(`   Which calls:     ${metrics.utils.whichCalls}`);
-  console.log(`   Nanoseconds:     ${metrics.utils.nanosecondsCalls}`);
-  console.log(`   Arbs detected:   ${metrics.arbitrage.arbsDetected}`);
-  console.log(`   Total profit:    ${formatMoney(metrics.arbitrage.totalProfit)}`);
+  console.info(`   Sleep calls:     ${metrics.utils.sleepCalls}`);
+  console.info(`   UUIDs generated: ${metrics.utils.uuidsGenerated.toLocaleString()}`);
+  console.info(`   Which calls:     ${metrics.utils.whichCalls}`);
+  console.info(`   Nanoseconds:     ${metrics.utils.nanosecondsCalls}`);
+  console.info(`   Arbs detected:   ${metrics.arbitrage.arbsDetected}`);
+  console.info(`   Total profit:    ${formatMoney(metrics.arbitrage.totalProfit)}`);
 
-  console.log("\n" + "═".repeat(60));
-  console.log(GRAYS.GRAY_12.ansi + "  Bun Utils = Microsecond arbitrage timing → Industrial precision!" + RESET);
-  console.log("═".repeat(60) + "\n");
+  console.info("\n" + "═".repeat(60));
+  console.info(GRAYS.GRAY_12.ansi + "  Bun Utils = Microsecond arbitrage timing → Industrial precision!" + RESET);
+  console.info("═".repeat(60) + "\n");
 
   return factory;
 }
@@ -612,11 +612,11 @@ if (import.meta.path === Bun.main) {
   if (serverMode) {
     const port = 3000;
     createUtilsServer(factory, port);
-    console.log(`\n🚀 Utils server running on http://localhost:${port}`);
-    console.log(`   /utils-factory  - Full metrics`);
-    console.log(`   /uuid           - Generate UUID`);
-    console.log(`   /tools          - Tool discovery`);
-    console.log(`   /timing         - Timing benchmark`);
-    console.log(`   /arb            - Simulate arb\n`);
+    console.info(`\n🚀 Utils server running on http://localhost:${port}`);
+    console.info(`   /utils-factory  - Full metrics`);
+    console.info(`   /uuid           - Generate UUID`);
+    console.info(`   /tools          - Tool discovery`);
+    console.info(`   /timing         - Timing benchmark`);
+    console.info(`   /arb            - Simulate arb\n`);
   }
 }

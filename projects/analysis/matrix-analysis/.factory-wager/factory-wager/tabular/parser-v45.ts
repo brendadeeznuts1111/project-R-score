@@ -222,12 +222,12 @@ class TabularParser {
   }
 
   generateChromaticTable(rows: AnalysisRow[]): void {
-    console.log('\n📊 FactoryWager Configuration Analysis');
-    console.log('═'.repeat(120));
+    console.info('\n📊 FactoryWager Configuration Analysis');
+    console.info('═'.repeat(120));
 
     // Table header
-    console.log('│ Doc │ Key'.padEnd(30) + '│ Value'.padEnd(25) + '│ Type'.padEnd(12) + '│ Status'.padEnd(10) + '│ Risk │');
-    console.log('├─────┼'.padEnd(33, '─') + '┼'.padEnd(28, '─') + '┼'.padEnd(15, '─') + '┼'.padEnd(13, '─') + '┼──────┤');
+    console.info('│ Doc │ Key'.padEnd(30) + '│ Value'.padEnd(25) + '│ Type'.padEnd(12) + '│ Status'.padEnd(10) + '│ Risk │');
+    console.info('├─────┼'.padEnd(33, '─') + '┼'.padEnd(28, '─') + '┼'.padEnd(15, '─') + '┼'.padEnd(13, '─') + '┼──────┤');
 
     // Table rows
     rows.forEach(row => {
@@ -239,10 +239,10 @@ class TabularParser {
       const status = this.colorizeStatus(row.status).padEnd(10);
       const risk = this.colorizeRisk(row.riskScore).padEnd(4);
 
-      console.log(`│ ${doc} │ ${keyCol}│ ${value}│ ${type}│ ${status}│ ${risk} │`);
+      console.info(`│ ${doc} │ ${keyCol}│ ${value}│ ${type}│ ${status}│ ${risk} │`);
     });
 
-    console.log('═'.repeat(120));
+    console.info('═'.repeat(120));
   }
 
   private colorizeType(type: string): string {
@@ -281,17 +281,17 @@ async function main() {
     if (!jsonOnly) {
       parser.generateChromaticTable(result.rows);
 
-      console.log(`\n📈 Analysis Summary:`);
-      console.log(`   Documents: ${result.stats.docs}`);
-      console.log(`   Anchors: ${result.stats.anchors}`);
-      console.log(`   Aliases: ${result.stats.aliases}`);
-      console.log(`   Interpolations: ${result.stats.interpolations}`);
-      console.log(`   Risk Score: ${result.riskScore}/100`);
+      console.info(`\n📈 Analysis Summary:`);
+      console.info(`   Documents: ${result.stats.docs}`);
+      console.info(`   Anchors: ${result.stats.anchors}`);
+      console.info(`   Aliases: ${result.stats.aliases}`);
+      console.info(`   Interpolations: ${result.stats.interpolations}`);
+      console.info(`   Risk Score: ${result.riskScore}/100`);
 
       if (result.inheritance.length > 0) {
-        console.log(`\n🔗 Inheritance Chains:`);
+        console.info(`\n🔗 Inheritance Chains:`);
         result.inheritance.forEach(chain => {
-          console.log(`   ${chain.base} → depth ${chain.depth}`);
+          console.info(`   ${chain.base} → depth ${chain.depth}`);
         });
       }
     }
@@ -301,14 +301,14 @@ async function main() {
     const jsonPath = `./.factory-wager/reports/fw-analyze-${timestamp}.json`;
 
     await Bun.write(Bun.file(jsonPath), JSON.stringify(result, null, 2));
-    console.log(`\n📄 JSON report: ${jsonPath}`);
+    console.info(`\n📄 JSON report: ${jsonPath}`);
 
     // Generate HTML report if requested
     if (html) {
       const htmlPath = `./.factory-wager/reports/fw-analyze-${timestamp}.html`;
       const htmlContent = generateHTMLReport(result);
       await Bun.write(Bun.file(htmlPath), htmlContent);
-      console.log(`🌐 HTML report: ${htmlPath}`);
+      console.info(`🌐 HTML report: ${htmlPath}`);
     }
 
     // Audit logging

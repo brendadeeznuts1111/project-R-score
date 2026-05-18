@@ -25,8 +25,8 @@ async function* readStdin(): AsyncGenerator<string, void, unknown> {
         }
     } catch (error) {
         if (error.message.includes('locked')) {
-            console.log('⚠️ Stdin is already being read by another process');
-            console.log('💡 Each process can only read from stdin once');
+            console.info('⚠️ Stdin is already being read by another process');
+            console.info('💡 Each process can only read from stdin once');
             return;
         }
         throw error;
@@ -51,22 +51,22 @@ async function* simulateInput(inputs: string[]): AsyncGenerator<string, void, un
  * Basic stdin reading - echoes each line back to the user
  */
 async function basicEcho() {
-    console.log('📖 Basic Echo - Type lines and press Enter (Ctrl+C to exit):');
+    console.info('📖 Basic Echo - Type lines and press Enter (Ctrl+C to exit):');
     console.write('> ');
 
     try {
         for await (const line of readStdin()) {
             if (line.trim() === 'exit') {
-                console.log('👋 Goodbye!');
+                console.info('👋 Goodbye!');
                 break;
             }
 
-            console.log(`📝 You typed: ${line}`);
+            console.info(`📝 You typed: ${line}`);
             console.write('> ');
         }
     } catch (error) {
-        console.log(`❌ Error reading stdin: ${error.message}`);
-        console.log('💡 This might happen if stdin is already in use');
+        console.info(`❌ Error reading stdin: ${error.message}`);
+        console.info('💡 This might happen if stdin is already in use');
     }
 }
 
@@ -74,21 +74,21 @@ async function basicEcho() {
  * Demonstration with simulated input
  */
 async function basicEchoDemo() {
-    console.log('📖 Basic Echo Demo (Simulated Input):');
-    console.log('This demonstrates how the echo function works with simulated input');
-    console.log('');
+    console.info('📖 Basic Echo Demo (Simulated Input):');
+    console.info('This demonstrates how the echo function works with simulated input');
+    console.info('');
 
     const simulatedInputs = ['Hello World', 'This is a test', 'Bun is awesome!', 'exit'];
 
     for await (const line of simulateInput(simulatedInputs)) {
-        console.log(`> ${line}`);
+        console.info(`> ${line}`);
 
         if (line.trim() === 'exit') {
-            console.log('👋 Goodbye!');
+            console.info('👋 Goodbye!');
             break;
         }
 
-        console.log(`📝 You typed: ${line}`);
+        console.info(`📝 You typed: ${line}`);
     }
 }
 
@@ -96,9 +96,9 @@ async function basicEchoDemo() {
  * Simple addition calculator that reads numbers from stdin
  */
 async function additionCalculator() {
-    console.log('🧮 Addition Calculator');
-    console.log('Enter numbers to add them to the running total');
-    console.log('Type "reset" to clear total, "exit" to quit');
+    console.info('🧮 Addition Calculator');
+    console.info('Enter numbers to add them to the running total');
+    console.info('Type "reset" to clear total, "exit" to quit');
     console.write('Total: 0\n> ');
 
     let total = 0;
@@ -108,13 +108,13 @@ async function additionCalculator() {
             const input = line.trim().toLowerCase();
 
             if (input === 'exit') {
-                console.log(`👋 Final total: ${total}`);
+                console.info(`👋 Final total: ${total}`);
                 break;
             }
 
             if (input === 'reset') {
                 total = 0;
-                console.log('🔄 Total reset to 0');
+                console.info('🔄 Total reset to 0');
                 console.write('Total: 0\n> ');
                 continue;
             }
@@ -122,15 +122,15 @@ async function additionCalculator() {
             const number = parseFloat(line);
             if (!isNaN(number)) {
                 total += number;
-                console.log(`➕ Added ${number}. New total: ${total}`);
+                console.info(`➕ Added ${number}. New total: ${total}`);
             } else {
-                console.log(`❌ Invalid number: "${line}"`);
+                console.info(`❌ Invalid number: "${line}"`);
             }
 
             console.write(`Total: ${total}\n> `);
         }
     } catch (error) {
-        console.log(`❌ Error reading stdin: ${error.message}`);
+        console.info(`❌ Error reading stdin: ${error.message}`);
     }
 }
 
@@ -138,41 +138,41 @@ async function additionCalculator() {
  * Addition calculator demonstration with simulated input
  */
 async function additionCalculatorDemo() {
-    console.log('🧮 Addition Calculator Demo (Simulated Input):');
-    console.log('This demonstrates how the calculator works with simulated input');
-    console.log('');
+    console.info('🧮 Addition Calculator Demo (Simulated Input):');
+    console.info('This demonstrates how the calculator works with simulated input');
+    console.info('');
 
     const simulatedInputs = ['10', '25', '15.5', 'reset', '5', '10', 'exit'];
     let total = 0;
 
-    console.log('Total: 0');
+    console.info('Total: 0');
 
     for await (const line of simulateInput(simulatedInputs)) {
-        console.log(`> ${line}`);
+        console.info(`> ${line}`);
 
         const input = line.trim().toLowerCase();
 
         if (input === 'exit') {
-            console.log(`👋 Final total: ${total}`);
+            console.info(`👋 Final total: ${total}`);
             break;
         }
 
         if (input === 'reset') {
             total = 0;
-            console.log('🔄 Total reset to 0');
-            console.log('Total: 0');
+            console.info('🔄 Total reset to 0');
+            console.info('Total: 0');
             continue;
         }
 
         const number = parseFloat(line);
         if (!isNaN(number)) {
             total += number;
-            console.log(`➕ Added ${number}. New total: ${total}`);
+            console.info(`➕ Added ${number}. New total: ${total}`);
         } else {
-            console.log(`❌ Invalid number: "${line}"`);
+            console.info(`❌ Invalid number: "${line}"`);
         }
 
-        console.log(`Total: ${total}`);
+        console.info(`Total: ${total}`);
     }
 }
 
@@ -193,14 +193,14 @@ export {
 // Run demo if executed directly
 if (import.meta.main) {
     // Run demo mode automatically
-    console.log('🎯 Bun Console Stdin Reading Examples');
-    console.log('='.repeat(50));
+    console.info('🎯 Bun Console Stdin Reading Examples');
+    console.info('='.repeat(50));
 
     // Run all demos
     await basicEchoDemo();
-    console.log('\n' + '-'.repeat(50));
+    console.info('\n' + '-'.repeat(50));
     await additionCalculatorDemo();
 
-    console.log('\n🎉 All demo examples completed!');
-    console.log('💡 To run interactive examples, use individual functions');
+    console.info('\n🎉 All demo examples completed!');
+    console.info('💡 To run interactive examples, use individual functions');
 }

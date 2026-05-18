@@ -9,7 +9,7 @@ import index from "./index.html";
 
 const RESET = "\x1b[0m";
 
-console.log(`${Bun.color(STATUS_COLORS.info, "ansi")}Starting Bun.serve...${RESET}`);
+console.info(`${Bun.color(STATUS_COLORS.info, "ansi")}Starting Bun.serve...${RESET}`);
 const server = Bun.serve({
   port: 9999,
   static: {
@@ -36,7 +36,7 @@ const server = Bun.serve({
           scope: config.SCOPE,
           domain: config.DOMAIN,
         };
-        console.log(`${Bun.color(STATUS_COLORS.success, "ansi")}Health check accessed${RESET}`);
+        console.info(`${Bun.color(STATUS_COLORS.success, "ansi")}Health check accessed${RESET}`);
         return Response.json(healthData);
       }
 
@@ -53,7 +53,7 @@ const server = Bun.serve({
   },
   websocket: {
     open: (ws) => {
-      console.log('WebSocket connection opened');
+      console.info('WebSocket connection opened');
     },
     message: (ws, message) => {
       ws.send(JSON.stringify({ type: 'echo', data: message.toString() }));
@@ -69,7 +69,7 @@ const server = Bun.serve({
   development: true,
 });
 
-console.log(`🚀 Venmo Dispute API Server running on http://localhost:${server.port}`);
+console.info(`🚀 Venmo Dispute API Server running on http://localhost:${server.port}`);
 
 // API route handler
 async function handleApiRoutes(method: string, path: string, url: URL, req: Request): Promise<Response> {
@@ -121,7 +121,7 @@ async function handleApiRoutes(method: string, path: string, url: URL, req: Requ
   } finally {
     const duration = Date.now() - startTime;
     const perfColor = getPerformanceColor(duration, 'latency');
-    console.log(`${Bun.color(perfColor, "ansi")}${method} ${path} - ${duration}ms${RESET}`);
+    console.info(`${Bun.color(perfColor, "ansi")}${method} ${path} - ${duration}ms${RESET}`);
   }
 }
 
@@ -169,7 +169,7 @@ async function handleSystemStatus(): Promise<Response> {
         timestamp: new Date().toISOString()
       };
       
-      console.log(`${Bun.color(CATEGORY_COLORS.Isolation, "ansi")}ROI metrics calculated${RESET}`);
+      console.info(`${Bun.color(CATEGORY_COLORS.Isolation, "ansi")}ROI metrics calculated${RESET}`);
       return Response.json(metrics);
     } catch (error: any) {
       return Response.json({ error: error.message }, { status: 500 });
@@ -220,7 +220,7 @@ async function handleCreateDispute(req: Request): Promise<Response> {
 
     // Run AI analysis asynchronously
     aiEngine.analyzeEvidence(dispute).then(async (analysis) => {
-      console.log(`${Bun.color(STATUS_COLORS.info, "ansi")}AI Analysis result for ${dispute.id}: ${analysis.recommendation}${RESET}`);
+      console.info(`${Bun.color(STATUS_COLORS.info, "ansi")}AI Analysis result for ${dispute.id}: ${analysis.recommendation}${RESET}`);
       // Update dispute with AI recommendation if needed
       if (analysis.recommendation === 'REJECT') {
         await db.updateDispute({ 
@@ -238,7 +238,7 @@ async function handleCreateDispute(req: Request): Promise<Response> {
       console.error("AI Analysis Failed:", err);
     });
     
-    console.log(`${Bun.color(STATUS_COLORS.success, "ansi")}Dispute created in DB: ${dispute.id}${RESET}`);
+    console.info(`${Bun.color(STATUS_COLORS.success, "ansi")}Dispute created in DB: ${dispute.id}${RESET}`);
     return Response.json({ success: true, dispute }, { status: 201 });
   } catch (error: any) {
     console.error("Error creating dispute:", error);
@@ -263,7 +263,7 @@ async function handleGetDispute(disputeId: string): Promise<Response> {
 async function handleListDisputes(params: URLSearchParams): Promise<Response> {
   try {
     const customerId = params.get('customerId');
-    console.log(`Listing disputes for customerId: ${customerId || 'all'}`);
+    console.info(`Listing disputes for customerId: ${customerId || 'all'}`);
     
     if (customerId) {
       const disputes = await db.getCustomerDisputes(customerId);
@@ -273,10 +273,10 @@ async function handleListDisputes(params: URLSearchParams): Promise<Response> {
     // Return all disputes if no filter
     // Note: getCustomerDisputes with empty ID should be handled in database.ts
     const disputes = await db.getCustomerDisputes("", 100); 
-    console.log(`Found ${disputes.length} disputes in DB`);
+    console.info(`Found ${disputes.length} disputes in DB`);
     
     if (disputes.length === 0) {
-      console.log("No disputes found, returning mock data");
+      console.info("No disputes found, returning mock data");
       const mockDisputes = [
         { id: 'disp_1', status: 'SUBMITTED', customerId: 'cust_1', reason: 'Item not received', createdAt: new Date().toISOString() },
         { id: 'disp_2', status: 'RESOLVED', customerId: 'cust_2', reason: 'Wrong item', createdAt: new Date().toISOString() },
@@ -296,7 +296,7 @@ async function handleUpdateDispute(disputeId: string, req: Request): Promise<Res
   try {
     const updates = await req.json();
     await db.updateDispute({ id: disputeId, ...updates });
-    console.log(`${Bun.color(STATUS_COLORS.warning)}Dispute updated in DB: ${disputeId}${RESET}`);
+    console.info(`${Bun.color(STATUS_COLORS.warning)}Dispute updated in DB: ${disputeId}${RESET}`);
     return Response.json({ success: true, disputeId });
   } catch (error: any) {
     return Response.json({ error: error.message || "Failed to update dispute" }, { status: 500 });
@@ -313,7 +313,7 @@ async function handleMerchantDecision(req: Request): Promise<Response> {
       return Response.json({ error: "Invalid merchant decision" }, { status: 400 });
     }
     
-    console.log(`${Bun.color(CATEGORY_COLORS.SECURITY)}Merchant decision recorded${RESET}`);
+    console.info(`${Bun.color(CATEGORY_COLORS.SECURITY)}Merchant decision recorded${RESET}`);
     return Response.json({ success: true, decision });
   } catch (error: any) {
     return Response.json({ error: error.message }, { status: 500 });

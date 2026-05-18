@@ -19,11 +19,11 @@ export const chalk = {
 };
 
 export const empireLog = {
-  info: (message: string) => console.log(`${chalk.cyan('ℹ')} ${message}`),
-  success: (message: string) => console.log(`${chalk.green('✓')} ${message}`),
-  error: (message: string) => console.log(`${chalk.red('✗')} ${message}`),
-  warn: (message: string) => console.log(`${chalk.yellow('⚠')} ${message}`),
-  debug: (message: string) => console.log(`${chalk.gray('🐛')} ${message}`),
+  info: (message: string) => console.info(`${chalk.cyan('ℹ')} ${message}`),
+  success: (message: string) => console.info(`${chalk.green('✓')} ${message}`),
+  error: (message: string) => console.info(`${chalk.red('✗')} ${message}`),
+  warn: (message: string) => console.info(`${chalk.yellow('⚠')} ${message}`),
+  debug: (message: string) => console.info(`${chalk.gray('🐛')} ${message}`),
 };
 
 export function formatDuration(ms: number): string {

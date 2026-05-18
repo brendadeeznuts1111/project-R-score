@@ -4,7 +4,7 @@ import { file, nanoseconds } from "bun";
 const lockfile = "bun.lockb";
 const POLL_INTERVAL_MS = 100; // Poll every 100ms
 
-console.log("🔍 Monitoring bun.lockb for changes... (Ctrl+C to exit)\n");
+console.info("🔍 Monitoring bun.lockb for changes... (Ctrl+C to exit)\n");
 
 // Track last state for diff
 let lastState: {
@@ -20,7 +20,7 @@ async function readConfig() {
   try {
     const lockfileFile = file(lockfile);
     if (!(await lockfileFile.exists())) {
-      console.log(`⚠️  ${lockfile} does not exist yet`);
+      console.info(`⚠️  ${lockfile} does not exist yet`);
       return null;
     }
 
@@ -88,18 +88,18 @@ function formatTerminalMode(mode: number): string {
 async function displayConfig(state: NonNullable<Awaited<ReturnType<typeof readConfig>>>) {
   const timestamp = new Date().toISOString();
 
-  console.log(`\n[${timestamp}] Lockfile changed:`);
-  console.log(`  Version: ${state.version} (0x${state.version.toString(16)})`);
-  console.log(`  Registry: 0x${state.registryHash.toString(16).padStart(8, "0")}`);
-  console.log(
+  console.info(`\n[${timestamp}] Lockfile changed:`);
+  console.info(`  Version: ${state.version} (0x${state.version.toString(16)})`);
+  console.info(`  Registry: 0x${state.registryHash.toString(16).padStart(8, "0")}`);
+  console.info(
     `  Features: 0x${state.featureFlags.toString(16).padStart(8, "0")} (${formatFeatureFlags(state.featureFlags)})`
   );
-  console.log(
+  console.info(
     `  Terminal: ${formatTerminalMode(state.terminalMode)} (mode=0x${state.terminalMode.toString(2).padStart(8, "0")})`
   );
-  console.log(`  Dimensions: ${state.rows} rows × ${state.cols} cols`);
-  console.log(`  Lockfile: ${lockfile}`);
-  console.log(`  Read cost: ${state.readCost}ns`);
+  console.info(`  Dimensions: ${state.rows} rows × ${state.cols} cols`);
+  console.info(`  Lockfile: ${lockfile}`);
+  console.info(`  Read cost: ${state.readCost}ns`);
 
   // Show diff if we have previous state
   if (lastState) {
@@ -120,9 +120,9 @@ async function displayConfig(state: NonNullable<Awaited<ReturnType<typeof readCo
       );
 
     if (changes.length > 0) {
-      console.log(`  📝 Changes: ${changes.join(", ")}`);
+      console.info(`  📝 Changes: ${changes.join(", ")}`);
     } else {
-      console.log(`  ✅ No changes detected`);
+      console.info(`  ✅ No changes detected`);
     }
   }
 
@@ -164,7 +164,7 @@ async function watchConfig() {
         }
       } else if (lastModified !== null) {
         // File was deleted
-        console.log(`\n⚠️  ${lockfile} was deleted`);
+        console.info(`\n⚠️  ${lockfile} was deleted`);
         lastModified = null;
       }
       
@@ -181,7 +181,7 @@ watchConfig();
 
 // Keep process alive
 process.on("SIGINT", () => {
-  console.log("\n\n👋 Stopping monitor...");
+  console.info("\n\n👋 Stopping monitor...");
   process.exit(0);
 });
 

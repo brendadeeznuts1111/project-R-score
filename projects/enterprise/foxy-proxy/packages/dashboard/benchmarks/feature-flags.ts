@@ -42,7 +42,7 @@ function benchmark(name: string, fn: () => void, iterations: number = 10000): Be
 }
 
 function printResult(result: BenchmarkResult): void {
-  console.log(`
+  console.info(`
 ${result.name}:
   Iterations: ${result.iterations.toLocaleString()}
   Total Time: ${result.totalTime.toFixed(2)}ms
@@ -51,8 +51,8 @@ ${result.name}:
   `);
 }
 
-console.log("🚀 Feature Flags Performance Benchmark\n");
-console.log("=".repeat(60));
+console.info("🚀 Feature Flags Performance Benchmark\n");
+console.info("=".repeat(60));
 
 // Benchmark 1: Direct compile-time feature access
 const result1 = benchmark("Direct Compile-Time Feature Access", () => {
@@ -122,12 +122,12 @@ const result10 = benchmark("isPerformanceProfilingEnabled() Check", () => {
 });
 printResult(result10);
 
-console.log("=".repeat(60));
-console.log("\n📊 Summary:");
-console.log(
+console.info("=".repeat(60));
+console.info("\n📊 Summary:");
+console.info(
   `  Fastest: ${[result1, result2, result3, result4, result5, result6, result7, result8, result9, result10].reduce((a, b) => (a.avgTime < b.avgTime ? a : b)).name}`
 );
-console.log(
+console.info(
   `  Slowest: ${[result1, result2, result3, result4, result5, result6, result7, result8, result9, result10].reduce((a, b) => (a.avgTime > b.avgTime ? a : b)).name}`
 );
 
@@ -144,5 +144,5 @@ const avgTime =
     result9,
     result10
   ].reduce((sum, r) => sum + r.avgTime, 0) / 10;
-console.log(`  Average operation time: ${avgTime.toFixed(4)}ms`);
-console.log("\n✅ Benchmark complete!");
+console.info(`  Average operation time: ${avgTime.toFixed(4)}ms`);
+console.info("\n✅ Benchmark complete!");

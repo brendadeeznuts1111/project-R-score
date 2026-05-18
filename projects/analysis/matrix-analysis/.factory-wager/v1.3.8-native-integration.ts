@@ -160,7 +160,7 @@ class FactoryWagerChromaticRenderer {
 
 class FactoryWagerProfiler {
   static async profileReleaseOperation(configPath: string, version: string): Promise<void> {
-    console.log(`🔬 Starting FactoryWager release profiling...`);
+    console.info(`🔬 Starting FactoryWager release profiling...`);
 
     // v1.3.8: Markdown-formatted profiles ready for LLM autopsy!
     const profileArgs = [
@@ -173,7 +173,7 @@ class FactoryWagerProfiler {
       "--dry-run"
     ];
 
-    console.log(`📊 Profile command: bun ${profileArgs.join(" ")}`);
+    console.info(`📊 Profile command: bun ${profileArgs.join(" ")}`);
 
     // In production, this would spawn the actual profile
     // For demo, we'll show the expected markdown output format
@@ -181,14 +181,14 @@ class FactoryWagerProfiler {
   }
 
   static analyzeProfileMarkdown(cpuProfilePath: string, heapProfilePath: string): void {
-    console.log(`🧠 Analyzing FactoryWager performance profiles...`);
+    console.info(`🧠 Analyzing FactoryWager performance profiles...`);
 
     // v1.3.8: Grep hot spots instantly from markdown profiles
-    console.log(`\n🔥 CPU Hot Spots:`);
-    console.log(`cat ${cpuProfilePath} | grep -A 5 "Self time %"`);
+    console.info(`\n🔥 CPU Hot Spots:`);
+    console.info(`cat ${cpuProfilePath} | grep -A 5 "Self time %"`);
 
-    console.log(`\n💾 Memory Analysis:`);
-    console.log(`cat ${heapProfilePath} | grep -i "retained size" | sort -nr | head -10`);
+    console.info(`\n💾 Memory Analysis:`);
+    console.info(`cat ${heapProfilePath} | grep -i "retained size" | sort -nr | head -10`);
 
     // Sample markdown output analysis
     this.analyzeSampleMarkdown();
@@ -229,18 +229,18 @@ class FactoryWagerProfiler {
 - Weak references: 12
 - Potential leaks: 3 (ReportConfig instances)`;
 
-    console.log(`\n📄 Sample CPU Profile (Markdown):`);
-    console.log(cpuProfile);
+    console.info(`\n📄 Sample CPU Profile (Markdown):`);
+    console.info(cpuProfile);
 
-    console.log(`\n📄 Sample Heap Profile (Markdown):`);
-    console.log(heapProfile);
+    console.info(`\n📄 Sample Heap Profile (Markdown):`);
+    console.info(heapProfile);
   }
 
   private static analyzeSampleMarkdown(): void {
-    console.log(`\n🎯 LLM-Ready Analysis Results:`);
-    console.log(`✅ Top CPU bottleneck: parseConfig() at 23.4% self time`);
-    console.log(`⚠️  Memory leak candidate: ReportConfig retaining 2.0MB`);
-    console.log(`🔧 Recommendation: Optimize config parsing and implement ReportConfig pooling`);
+    console.info(`\n🎯 LLM-Ready Analysis Results:`);
+    console.info(`✅ Top CPU bottleneck: parseConfig() at 23.4% self time`);
+    console.info(`⚠️  Memory leak candidate: ReportConfig retaining 2.0MB`);
+    console.info(`🔧 Recommendation: Optimize config parsing and implement ReportConfig pooling`);
   }
 }
 
@@ -250,8 +250,8 @@ class FactoryWagerProfiler {
 
 class FactoryWagerBenchmarks {
   static async benchmarkAnsiWrapping(): Promise<void> {
-    console.log(`⚡ ANSI Wrapping Performance Benchmark`);
-    console.log(`=======================================`);
+    console.info(`⚡ ANSI Wrapping Performance Benchmark`);
+    console.info(`=======================================`);
 
     const testString = "🏭 FactoryWager ".repeat(50) + "\x1b[31mRed text\x1b[0m " + "🚀 performance ".repeat(25);
     const iterations = 1000;
@@ -264,19 +264,19 @@ class FactoryWagerBenchmarks {
     const nativeEnd = performance.now();
     const nativeTime = nativeEnd - nativeStart;
 
-    console.log(`🥇 Bun.wrapAnsi() (v1.3.8): ${nativeTime.toFixed(2)}ms`);
-    console.log(`📊 Average per iteration: ${(nativeTime / iterations).toFixed(4)}ms`);
-    console.log(`🚀 Speed: ${(iterations / nativeTime * 1000).toFixed(0)} ops/sec`);
+    console.info(`🥇 Bun.wrapAnsi() (v1.3.8): ${nativeTime.toFixed(2)}ms`);
+    console.info(`📊 Average per iteration: ${(nativeTime / iterations).toFixed(4)}ms`);
+    console.info(`🚀 Speed: ${(iterations / nativeTime * 1000).toFixed(0)} ops/sec`);
 
     // Theoretical wrap-ansi comparison (would be ~50× slower)
     const estimatedLegacyTime = nativeTime * 50;
-    console.log(`📈 Estimated legacy wrap-ansi: ${estimatedLegacyTime.toFixed(2)}ms`);
-    console.log(`⚡ Performance improvement: ~50× faster`);
+    console.info(`📈 Estimated legacy wrap-ansi: ${estimatedLegacyTime.toFixed(2)}ms`);
+    console.info(`⚡ Performance improvement: ~50× faster`);
   }
 
   static benchmarkHeaderPreservation(): Promise<void> {
-    console.log(`\n🔐 Header Case Preservation Test`);
-    console.log(`===============================`);
+    console.info(`\n🔐 Header Case Preservation Test`);
+    console.info(`===============================`);
 
     const testHeaders = {
       "Authorization": "Bearer token123",
@@ -287,14 +287,14 @@ class FactoryWagerBenchmarks {
       "User-Agent": "FactoryWager/CLI"
     };
 
-    console.log(`📤 Original headers:`);
+    console.info(`📤 Original headers:`);
     Object.entries(testHeaders).forEach(([key, value]) => {
-      console.log(`   ${key}: ${value}`);
+      console.info(`   ${key}: ${value}`);
     });
 
     // In v1.3.8, these would be preserved exactly
-    console.log(`\n✅ v1.3.8 Result: Headers preserved exactly`);
-    console.log(`🎯 Zero API compatibility issues`);
+    console.info(`\n✅ v1.3.8 Result: Headers preserved exactly`);
+    console.info(`🎯 Zero API compatibility issues`);
 
     return Promise.resolve();
   }
@@ -305,24 +305,24 @@ class FactoryWagerBenchmarks {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function demonstrateV138Features(): Promise<void> {
-  console.log(`🚀 FactoryWager v1.3.8 Native Integration Demo`);
-  console.log(`============================================\n`);
+  console.info(`🚀 FactoryWager v1.3.8 Native Integration Demo`);
+  console.info(`============================================\n`);
 
   // Strike 1: Header Case Preservation
-  console.log(`🔐 STRIKE 1: Header Case Preservation`);
+  console.info(`🔐 STRIKE 1: Header Case Preservation`);
   await FactoryWagerBenchmarks.benchmarkHeaderPreservation();
 
   // Strike 2: Bun.wrapAnsi() Performance
-  console.log(`\n⚡ STRIKE 2: Bun.wrapAnsi() Performance`);
+  console.info(`\n⚡ STRIKE 2: Bun.wrapAnsi() Performance`);
   await FactoryWagerBenchmarks.benchmarkAnsiWrapping();
 
   // Strike 3: Markdown Profiles
-  console.log(`\n📊 STRIKE 3: Markdown CPU/Heap Profiles`);
+  console.info(`\n📊 STRIKE 3: Markdown CPU/Heap Profiles`);
   await FactoryWagerProfiler.profileReleaseOperation("./config/release.yaml", "1.3.8");
   FactoryWagerProfiler.analyzeProfileMarkdown("cpu-profile.md", "heap-profile.md");
 
   // Chromatic Rendering Demo
-  console.log(`\n🎨 Chromatic Rendering Demo:`);
+  console.info(`\n🎨 Chromatic Rendering Demo:`);
   const sampleData = [
     { name: "🏭 Enterprise Tier", type: "enterprise" },
     { name: "✅ Success Module", type: "success" },
@@ -331,12 +331,12 @@ async function demonstrateV138Features(): Promise<void> {
   ];
 
   const renderedTable = FactoryWagerChromaticRenderer.renderInheritanceTable(sampleData, 60);
-  console.log(renderedTable);
+  console.info(renderedTable);
 
-  console.log(`\n🎉 FactoryWager v1.3.8 Triple Strike Complete!`);
-  console.log(`📈 Performance: 50-88× faster on text operations`);
-  console.log(`🔒 Security: Zero header case issues`);
-  console.log(`🧠 Debugging: LLM-ready markdown profiles`);
+  console.info(`\n🎉 FactoryWager v1.3.8 Triple Strike Complete!`);
+  console.info(`📈 Performance: 50-88× faster on text operations`);
+  console.info(`🔒 Security: Zero header case issues`);
+  console.info(`🧠 Debugging: LLM-ready markdown profiles`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -361,10 +361,10 @@ if (import.meta.main) {
       break;
     case "auth":
       const auth = new FactoryWagerAuthLayer("demo-token", "CLI-v5.3");
-      console.log(`🔐 Auth layer initialized with v1.3.8 header preservation`);
+      console.info(`🔐 Auth layer initialized with v1.3.8 header preservation`);
       break;
     default:
-      console.log(`
+      console.info(`
 🚀 FactoryWager v1.3.8 Native Integration
 
 Usage:

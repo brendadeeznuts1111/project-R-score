@@ -412,7 +412,7 @@ export class DataIntegrityService {
     const now = new Date();
     const periodStart = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // Last 30 days
 
-    console.log('🔍 Running scheduled integrity checks...');
+    console.info('🔍 Running scheduled integrity checks...');
 
     const [reconciliation, ledgerIntegrity, transactionQuality] = await Promise.all([
       this.runReconciliation(periodStart, now),

@@ -90,10 +90,10 @@ export async function uploadCol89Report(
 	// Generate presigned URL for retrieval
 	const url = await bucket.presign(key, 86400); // 24 hours
 
-	console.log(`📤 Uploaded Col-89 audit report:`);
-	console.log(`   Key:  ${key}`);
-	console.log(`   ID:   ${report.id}`);
-	console.log(`   Violations: ${entries.length}`);
+	console.info(`📤 Uploaded Col-89 audit report:`);
+	console.info(`   Key:  ${key}`);
+	console.info(`   ID:   ${report.id}`);
+	console.info(`   Violations: ${entries.length}`);
 
 	return { key: result.key, url };
 }
@@ -145,10 +145,10 @@ export async function uploadVersionReport(
 
 	const url = await bucket.presign(key, 86400);
 
-	console.log(`📤 Uploaded version check report:`);
-	console.log(`   Key:  ${key}`);
-	console.log(`   ID:   ${report.id}`);
-	console.log(`   Status: ${report.passed ? "✅ PASS" : "❌ FAIL"}`);
+	console.info(`📤 Uploaded version check report:`);
+	console.info(`   Key:  ${key}`);
+	console.info(`   ID:   ${report.id}`);
+	console.info(`   Status: ${report.passed ? "✅ PASS" : "❌ FAIL"}`);
 
 	return { key: result.key, url };
 }
@@ -273,7 +273,7 @@ if (import.meta.main) {
 				tier: "1380",
 				commit: "abc123",
 			});
-			console.log(`\n🔗 Presigned URL (24h): ${result.url}`);
+			console.info(`\n🔗 Presigned URL (24h): ${result.url}`);
 			break;
 		}
 
@@ -288,29 +288,29 @@ if (import.meta.main) {
 				},
 				{ tier: "1380" },
 			);
-			console.log(`\n🔗 Presigned URL (24h): ${result.url}`);
+			console.info(`\n🔗 Presigned URL (24h): ${result.url}`);
 			break;
 		}
 
 		case "list": {
 			const reports = await listAuditReports();
-			console.log("📋 Stored Audit Reports:");
-			console.log(Bun.inspect.table(reports, ["id", "type", "date", "size"]));
+			console.info("📋 Stored Audit Reports:");
+			console.info(Bun.inspect.table(reports, ["id", "type", "date", "size"]));
 			break;
 		}
 
 		case "summary": {
 			const days = Number.parseInt(Bun.argv[3] || "7", 10);
 			const summary = await generateAuditSummary(days);
-			console.log(`📊 Audit Summary (last ${days} days):`);
-			console.log(
+			console.info(`📊 Audit Summary (last ${days} days):`);
+			console.info(
 				Bun.inspect.table(
 					[summary],
 					["total_reports", "col89_violations", "version_failures"],
 				),
 			);
-			console.log("\nBy Date:");
-			console.log(
+			console.info("\nBy Date:");
+			console.info(
 				Bun.inspect.table(
 					Object.entries(summary.by_date).map(([date, count]) => ({
 						date,
@@ -323,18 +323,18 @@ if (import.meta.main) {
 		}
 
 		default:
-			console.log("Tier-1380 OMEGA Agent R2 Integration");
-			console.log("");
-			console.log("Commands:");
-			console.log("  upload-col89    Upload sample Col-89 audit report");
-			console.log("  upload-version  Upload version check report");
-			console.log("  list            List stored audit reports");
-			console.log("  summary [days]  Generate audit summary (default: 7 days)");
-			console.log("  help            Show this help");
-			console.log("");
-			console.log("Examples:");
-			console.log("  bun agent-r2-integration.ts upload-col89");
-			console.log("  bun agent-r2-integration.ts summary 30");
+			console.info("Tier-1380 OMEGA Agent R2 Integration");
+			console.info("");
+			console.info("Commands:");
+			console.info("  upload-col89    Upload sample Col-89 audit report");
+			console.info("  upload-version  Upload version check report");
+			console.info("  list            List stored audit reports");
+			console.info("  summary [days]  Generate audit summary (default: 7 days)");
+			console.info("  help            Show this help");
+			console.info("");
+			console.info("Examples:");
+			console.info("  bun agent-r2-integration.ts upload-col89");
+			console.info("  bun agent-r2-integration.ts summary 30");
 			break;
 	}
 }

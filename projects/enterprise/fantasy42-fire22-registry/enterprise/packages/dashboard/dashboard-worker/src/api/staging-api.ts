@@ -90,7 +90,7 @@ export class StagingApi {
 
     packageStatuses.set(packageName, packageStatus);
 
-    console.log(`✅ ${packageName} approved by ${reviewer || 'system'}`);
+    console.info(`✅ ${packageName} approved by ${reviewer || 'system'}`);
 
     return {
       success: true,
@@ -129,7 +129,7 @@ export class StagingApi {
 
     packageStatuses.set(packageName, packageStatus);
 
-    console.log(`❌ ${packageName} rejected by ${reviewer || 'system'}: ${reason}`);
+    console.info(`❌ ${packageName} rejected by ${reviewer || 'system'}: ${reason}`);
 
     return {
       success: true,

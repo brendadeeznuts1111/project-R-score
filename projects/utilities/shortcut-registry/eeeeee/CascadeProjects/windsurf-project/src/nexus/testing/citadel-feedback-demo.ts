@@ -99,7 +99,7 @@ export class CitadelFeedbackDemo {
 
       }
       
-      console.log(); // spacing
+      console.info(); // spacing
     }
 
     // Show audit directory status

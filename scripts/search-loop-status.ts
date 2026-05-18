@@ -327,8 +327,8 @@ async function main(): Promise<void> {
 
   await writeFile(outJson, `${JSON.stringify(output, null, 2)}\n`);
   await writeFile(outMd, buildMarkdown(output));
-  console.log(`[search:loop:status] wrote ${outJson}`);
-  console.log(`[search:loop:status] wrote ${outMd}`);
+  console.info(`[search:loop:status] wrote ${outJson}`);
+  console.info(`[search:loop:status] wrote ${outMd}`);
 }
 
 await main();

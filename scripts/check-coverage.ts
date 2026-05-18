@@ -22,7 +22,7 @@ const coverage = await parseLcovFiles(files);
 const components = groupByComponent(coverage.files, excludePatterns);
 const failing = components.filter((c) => c.coverage < min);
 
-console.log(
+console.info(
   JSON.stringify(
     {
       generatedAt: new Date().toISOString(),

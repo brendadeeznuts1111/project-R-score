@@ -25,8 +25,8 @@ class DataViewIntegrationTests {
   private results: TestResult[] = [];
   
   async runAllTests(): Promise<void> {
-    console.log(`🧪 DataView Integration Test Suite v3.20`);
-    console.log(`========================================`);
+    console.info(`🧪 DataView Integration Test Suite v3.20`);
+    console.info(`========================================`);
     
     const startTime = performance.now();
     
@@ -707,36 +707,36 @@ class DataViewIntegrationTests {
   }
   
   private printResults(totalDuration: number): void {
-    console.log(`\n📊 Test Results Summary`);
-    console.log(`====================`);
+    console.info(`\n📊 Test Results Summary`);
+    console.info(`====================`);
     
     const passed = this.results.filter(r => r.passed).length;
     const failed = this.results.filter(r => !r.passed).length;
     
-    console.log(`\n🎯 Overall: ${passed} passed, ${failed} failed`);
-    console.log(`⏱️  Total Duration: ${totalDuration.toFixed(2)}ms`);
-    console.log(`✅ Success Rate: ${((passed / this.results.length) * 100).toFixed(1)}%`);
+    console.info(`\n🎯 Overall: ${passed} passed, ${failed} failed`);
+    console.info(`⏱️  Total Duration: ${totalDuration.toFixed(2)}ms`);
+    console.info(`✅ Success Rate: ${((passed / this.results.length) * 100).toFixed(1)}%`);
     
-    console.log(`\n📋 Detailed Results:`);
+    console.info(`\n📋 Detailed Results:`);
     this.results.forEach((result, i) => {
       const status = result.passed ? '✅' : '❌';
       const duration = result.duration.toFixed(2);
-      console.log(`   ${i + 1}. ${status} ${result.name} (${duration}ms)`);
+      console.info(`   ${i + 1}. ${status} ${result.name} (${duration}ms)`);
       
       if (result.error) {
-        console.log(`      Error: ${result.error}`);
+        console.info(`      Error: ${result.error}`);
       } else if (result.details) {
         Object.entries(result.details).forEach(([key, value]) => {
-          console.log(`      ${key}: ${value}`);
+          console.info(`      ${key}: ${value}`);
         });
       }
     });
     
     if (failed > 0) {
-      console.log(`\n❌ ${failed} test(s) failed. Please review the errors above.`);
+      console.info(`\n❌ ${failed} test(s) failed. Please review the errors above.`);
       process.exit(1);
     } else {
-      console.log(`\n🎉 All tests passed! DataView integration is working correctly.`);
+      console.info(`\n🎉 All tests passed! DataView integration is working correctly.`);
     }
   }
 }

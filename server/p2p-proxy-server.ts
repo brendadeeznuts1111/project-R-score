@@ -21,8 +21,10 @@ import { getHabits, storeHabits, classifyHabits, calculateBonus, type HabitsData
 // Configuration
 // ============================================================================
 
-const PORT = Number(Bun.env.P2P_PROXY_PORT ?? 3002);
-const REDIS_URL = Bun.env.REDIS_URL ?? 'redis://localhost:6379';
+import { PORTS, REDIS_URL as CFG_REDIS_URL } from '../config/ports.ts';
+
+const PORT = PORTS.P2P_PROXY;
+const REDIS_URL = CFG_REDIS_URL;
 
 // Your branded proxy handles (configure these!)
 const PROXY_HANDLES = {
@@ -48,7 +50,7 @@ const redis = new Redis(REDIS_URL, {
 });
 
 redis.on('error', (err) => console.error('Redis error:', err.message));
-redis.on('connect', () => console.log('✅ Redis connected'));
+redis.on('connect', () => console.info('✅ Redis connected'));
 
 // ============================================================================
 // Crypto Helpers
@@ -58,16 +60,15 @@ function hmacSha256Hex(secret: string, payload: string): string {
   return crypto.createHmac('sha256', secret).update(payload).digest('hex');
 }
 
-async function verifyWebhookSignature(
-  body: string, 
-  signature: string | null, 
+function verifyWebhookSignature(
+  body: string,
+  signature: string | null,
   secret: string,
   prefix: string = ''
-): Promise<boolean> {
+): boolean {
   if (!signature || !secret) {
-    // Dev mode: accept if secret not configured
-    console.log('⚠️  Webhook verification skipped (dev mode)');
-    return true;
+    console.error('Webhook verification rejected: missing signature or secret');
+    return false;
   }
   
   const expected = hmacSha256Hex(secret, body);
@@ -418,10 +419,16 @@ const server = Bun.serve({
     const url = new URL(req.url);
     const path = url.pathname;
     
+    const origin = req.headers.get('Origin') || '';
+    const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
+    const corsOrigin = allowedOrigins.length > 0 && allowedOrigins.includes(origin)
+      ? origin
+      : (allowedOrigins.length > 0 ? 'null' : '*');
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      'Vary': 'Origin',
     };
     
     if (req.method === 'OPTIONS') {
@@ -455,7 +462,7 @@ const server = Bun.serve({
         if (!payment) payment = await parseCashAppWebhook(body, headers);
         
         if (!payment) {
-          console.log('⚠️  Unknown webhook format');
+          console.info('⚠️  Unknown webhook format');
           return new Response(JSON.stringify({ received: true, processed: false }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           });
@@ -463,7 +470,7 @@ const server = Bun.serve({
         
         // Process the payment
         const result = await processP2PPayment(payment);
-        console.log(result.message);
+        console.info(result.message);
         
         return new Response(JSON.stringify({
           received: true,
@@ -560,24 +567,24 @@ const server = Bun.serve({
   },
 });
 
-console.log('');
-console.log('╔════════════════════════════════════════════════════════════╗');
-console.log('║  💈 P2P Proxy Server - Unified Payment Bridge              ║');
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log(`║  URL:     http://localhost:${PORT}                        ║`);
-console.log(`║  QR Page: http://localhost:${PORT}/qr?amount=20           ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log('║  Proxy Handles:                                            ║');
-console.log(`║    • CashApp: ${PROXY_HANDLES.cashapp.padEnd(25)}           ║`);
-console.log(`║    • Venmo:   ${PROXY_HANDLES.venmo.padEnd(25)}             ║`);
-console.log(`║    • PayPal:  ${PROXY_HANDLES.paypal.padEnd(25)}            ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log('║  Features:                                                 ║');
-console.log('║    • Unified /webhook/proxy (all providers)                ║');
-console.log('║    • Auto habits classification + bonus                    ║');
-console.log('║    • Stealth anonymous IDs                                 ║');
-console.log('║    • Branded QR payment page                               ║');
-console.log('╚════════════════════════════════════════════════════════════╝');
-console.log('');
+console.info('');
+console.info('╔════════════════════════════════════════════════════════════╗');
+console.info('║  💈 P2P Proxy Server - Unified Payment Bridge              ║');
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info(`║  URL:     http://localhost:${PORT}                        ║`);
+console.info(`║  QR Page: http://localhost:${PORT}/qr?amount=20           ║`);
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info('║  Proxy Handles:                                            ║');
+console.info(`║    • CashApp: ${PROXY_HANDLES.cashapp.padEnd(25)}           ║`);
+console.info(`║    • Venmo:   ${PROXY_HANDLES.venmo.padEnd(25)}             ║`);
+console.info(`║    • PayPal:  ${PROXY_HANDLES.paypal.padEnd(25)}            ║`);
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info('║  Features:                                                 ║');
+console.info('║    • Unified /webhook/proxy (all providers)                ║');
+console.info('║    • Auto habits classification + bonus                    ║');
+console.info('║    • Stealth anonymous IDs                                 ║');
+console.info('║    • Branded QR payment page                               ║');
+console.info('╚════════════════════════════════════════════════════════════╝');
+console.info('');
 
 export default server;

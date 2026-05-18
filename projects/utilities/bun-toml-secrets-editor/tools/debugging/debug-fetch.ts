@@ -12,8 +12,8 @@ async function main() {
 	const url = process.argv[2] || "https://news.ycombinator.com/rss";
 
 	if (DEBUG) {
-		console.log(`🔍 Debugging fetch for: ${url}`);
-		console.log("Initial stats:", fetcher.getStats());
+		console.info(`🔍 Debugging fetch for: ${url}`);
+		console.info("Initial stats:", fetcher.getStats());
 	}
 
 	try {
@@ -22,24 +22,24 @@ async function main() {
 		const result = fetchResult.result || fetchResult;
 
 		if (DEBUG) {
-			console.log("\n✅ Fetch successful!");
-			console.log("DNS prefetches:", fetcher.getStats().dnsPrefetches);
-			console.log("Total requests:", fetcher.getStats().totalRequests);
-			console.log("Cache hits:", fetcher.getStats().cacheHits);
-			console.log("\nFeed info:");
-			console.log(
+			console.info("\n✅ Fetch successful!");
+			console.info("DNS prefetches:", fetcher.getStats().dnsPrefetches);
+			console.info("Total requests:", fetcher.getStats().totalRequests);
+			console.info("Cache hits:", fetcher.getStats().cacheHits);
+			console.info("\nFeed info:");
+			console.info(
 				"  Title:",
 				result.rss?.channel?.title || result.feed?.title || "Unknown",
 			);
-			console.log(
+			console.info(
 				"  Items:",
 				result.rss?.channel?.item?.length || result.feed?.entry?.length || 0,
 			);
-			console.log("  Fetch time:", result.meta?.fetchTime);
-			console.log("  Parse time:", result.meta?.parseTime);
-			console.log("  Headers preserved:", result.meta?.headersPreserved);
+			console.info("  Fetch time:", result.meta?.fetchTime);
+			console.info("  Parse time:", result.meta?.parseTime);
+			console.info("  Headers preserved:", result.meta?.headersPreserved);
 		} else {
-			console.log("Result:", JSON.stringify(result, null, 2));
+			console.info("Result:", JSON.stringify(result, null, 2));
 		}
 	} catch (error: any) {
 		console.error("❌ Fetch failed:", error.message);

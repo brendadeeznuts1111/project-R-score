@@ -19,7 +19,7 @@ export function createDatabaseConnection(): DatabaseConnection {
   const isDev = process.env.NODE_ENV !== 'production';
   const isTest = process.env.NODE_ENV === 'test';
 
-  console.log(`📊 Initializing database connection: ${dbPath}`);
+  console.info(`📊 Initializing database connection: ${dbPath}`);
 
   const db = new Database(dbPath);
 
@@ -40,7 +40,7 @@ export function createDatabaseConnection(): DatabaseConnection {
       // Load core schema asynchronously
       const schemaPath = join(process.cwd(), 'schema.sql');
       if (existsSync(schemaPath)) {
-        console.log('📋 Loading database schema...');
+        console.info('📋 Loading database schema...');
         const schema = Bun.file(schemaPath);
         const schemaSQL = await schema.text();
         db.exec(schemaSQL);
@@ -50,7 +50,7 @@ export function createDatabaseConnection(): DatabaseConnection {
       if (isDev && !isTest) {
         const seedPath = join(process.cwd(), 'seed.sql');
         if (existsSync(seedPath)) {
-          console.log('🌱 Loading seed data...');
+          console.info('🌱 Loading seed data...');
           const seed = Bun.file(seedPath);
           const seedSQL = await seed.text();
           db.exec(seedSQL);
@@ -65,7 +65,7 @@ export function createDatabaseConnection(): DatabaseConnection {
         CREATE INDEX IF NOT EXISTS idx_audit_log_action ON audit_log(action);
       `);
 
-      console.log('✅ Database initialized successfully');
+      console.info('✅ Database initialized successfully');
     } catch (error) {
       console.error('❌ Database initialization failed:', error);
       throw error;
@@ -73,7 +73,7 @@ export function createDatabaseConnection(): DatabaseConnection {
   };
 
   const close = (): void => {
-    console.log('🔒 Closing database connection...');
+    console.info('🔒 Closing database connection...');
     db.close();
   };
 
@@ -88,7 +88,7 @@ export function createDatabaseConnection(): DatabaseConnection {
   };
 
   const optimize = (): void => {
-    console.log('⚡ Optimizing database...');
+    console.info('⚡ Optimizing database...');
     try {
       // Run optimization queries
       db.exec(`
@@ -96,7 +96,7 @@ export function createDatabaseConnection(): DatabaseConnection {
         PRAGMA wal_checkpoint(TRUNCATE);
         VACUUM;
       `);
-      console.log('✅ Database optimization completed');
+      console.info('✅ Database optimization completed');
     } catch (error) {
       console.error('❌ Database optimization failed:', error);
     }
@@ -278,7 +278,7 @@ export class DatabaseUtils {
 
   // Backup database
   async backup(backupPath: string): Promise<void> {
-    console.log(`💾 Creating database backup: ${backupPath}`);
+    console.info(`💾 Creating database backup: ${backupPath}`);
 
     try {
       // Bun SQLite doesn't have backup API, use file copy instead
@@ -292,7 +292,7 @@ export class DatabaseUtils {
       const sourceFile = Bun.file(dbFile);
       await Bun.write(backupPath, sourceFile);
 
-      console.log('✅ Database backup completed');
+      console.info('✅ Database backup completed');
     } catch (error) {
       console.error('❌ Database backup failed:', error);
       throw error;

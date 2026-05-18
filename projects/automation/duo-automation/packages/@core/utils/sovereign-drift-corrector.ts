@@ -12,7 +12,7 @@ export class SovereignDriftCorrector {
    * 🛡️ Detect and correct sync drift across the fleet
    */
   static async eliminateEntropy(agentIds: string[]) {
-    console.log("🌀 [SOVEREIGN DRIFT] Analyzing fleet sync state...");
+    console.info("🌀 [SOVEREIGN DRIFT] Analyzing fleet sync state...");
     
     // Simulate remote version check
     const remoteVersion = "4.0.1-sovereign";
@@ -20,14 +20,14 @@ export class SovereignDriftCorrector {
     
     if (remoteVersion !== localVersion) {
       console.warn(`⚠️ Drift Detected! Remote: ${remoteVersion} | Local: ${localVersion}`);
-      console.log("🔄 Triggering Autonomous Drift Correction...");
+      console.info("🔄 Triggering Autonomous Drift Correction...");
       
       // Parallel atomic update across fleet
       await BunConcurrencyOrchestrator.parallelDeploy(agentIds, ["bun", "pkg", "set", `version=${remoteVersion}`]);
       
-      console.log("✅ Drift Corrected. Fleet synchronized to remote state.");
+      console.info("✅ Drift Corrected. Fleet synchronized to remote state.");
     } else {
-      console.log("💎 Fleet is in perfect synchronization. Entropy: 0.0%");
+      console.info("💎 Fleet is in perfect synchronization. Entropy: 0.0%");
     }
   }
 }

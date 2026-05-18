@@ -399,7 +399,7 @@ const server = serve({
     // 6. 🕵️ Audit Trigger (Deterministic)
     if (url.pathname === '/api/infra/audit' && req.method === 'POST') {
       const auditData = await req.json().catch(() => ({}));
-      console.log(`🕵️ Audit triggered:`, auditData);
+      console.info(`🕵️ Audit triggered:`, auditData);
       
       // In a real scenario, this would trigger the UnifiedAuditor
       const response = { 
@@ -415,7 +415,7 @@ const server = serve({
     // 7. 🎛️ Admin Control (Enhanced v4.0)
     if (url.pathname === '/api/infra/control' && req.method === 'POST') {
       const { feature, enabled, value } = await req.json().catch(() => ({}));
-      console.log(`🎛️ Admin Control: ${feature} => ${enabled ? 'ON' : 'OFF'}${value ? ` (value: ${value})` : ''}`);
+      console.info(`🎛️ Admin Control: ${feature} => ${enabled ? 'ON' : 'OFF'}${value ? ` (value: ${value})` : ''}`);
       
       const result: any = { feature, status: enabled, timestamp: new Date().toISOString() };
       
@@ -614,7 +614,7 @@ const server = serve({
       const scope = (ws as any).data?.scope || 'global';
       ws.subscribe(`metrics:${scope}`);
       ws.subscribe(`commands:${scope}`);
-      console.log(`🔌 Client connected to scoped metrics stream [${scope}]`);
+      console.info(`🔌 Client connected to scoped metrics stream [${scope}]`);
     },
     async message(ws, message) {
       try {
@@ -623,7 +623,7 @@ const server = serve({
         // Handle Global Command Hub (Ticket 13.3)
         if (payload.type === 'global_command') {
           const { command, target } = payload;
-          console.log(`📡 Global Command Hub: Executing [${command}] on [${target}]`);
+          console.info(`📡 Global Command Hub: Executing [${command}] on [${target}]`);
           
           let result = 'Command acknowledged.';
           if (command === 'status:all') {
@@ -661,7 +661,7 @@ const server = serve({
         // Handle real-time metrics subscription
         if (payload.type === 'subscribe_metrics') {
           const { interval = 1000 } = payload;
-          console.log(`📊 Client subscribed to real-time metrics with ${interval}ms interval`);
+          console.info(`📊 Client subscribed to real-time metrics with ${interval}ms interval`);
           
           // Send immediate metrics
           const health = getHealthStatus();
@@ -720,7 +720,7 @@ const server = serve({
       const currentCount = activeConnections.get(scope) || 0;
       activeConnections.set(scope, currentCount - 1);
       
-      console.log(`🔌 Client disconnected from scoped metrics stream [${scope}]`);
+      console.info(`🔌 Client disconnected from scoped metrics stream [${scope}]`);
     }
   }
 });
@@ -825,25 +825,25 @@ setInterval(async () => {
 
 // 🛡️ Graceful shutdown handling
 process.on('SIGINT', () => {
-  console.log('\n🛑 Received SIGINT, shutting down gracefully...');
-  console.log(`📊 Final stats: ${totalRequests} requests, ${errorCount} errors`);
+  console.info('\n🛑 Received SIGINT, shutting down gracefully...');
+  console.info(`📊 Final stats: ${totalRequests} requests, ${errorCount} errors`);
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n🛑 Received SIGTERM, shutting down gracefully...');
-  console.log(`📊 Final stats: ${totalRequests} requests, ${errorCount} errors`);
+  console.info('\n🛑 Received SIGTERM, shutting down gracefully...');
+  console.info(`📊 Final stats: ${totalRequests} requests, ${errorCount} errors`);
   process.exit(0);
 });
 
 // 🚀 Server startup
-console.log(`🚀 Infrastructure Dashboard Server v4.0 running on http://localhost:${PORT}`);
-console.log(`📊 Scope: ${ScopeDetector.getScopeConfig().scope}`);
-console.log(`🌍 Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`);
-console.log(`🔧 Environment: ${NODE_ENV}`);
-console.log(`📈 Metrics interval: ${METRICS_INTERVAL}ms`);
-console.log(`🗜️ Compression level: ${COMPRESSION_LEVEL}`);
-console.log(`🔌 Max connections per scope: ${MAX_CONNECTIONS_PER_SCOPE}`);
+console.info(`🚀 Infrastructure Dashboard Server v4.0 running on http://localhost:${PORT}`);
+console.info(`📊 Scope: ${ScopeDetector.getScopeConfig().scope}`);
+console.info(`🌍 Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`);
+console.info(`🔧 Environment: ${NODE_ENV}`);
+console.info(`📈 Metrics interval: ${METRICS_INTERVAL}ms`);
+console.info(`🗜️ Compression level: ${COMPRESSION_LEVEL}`);
+console.info(`🔌 Max connections per scope: ${MAX_CONNECTIONS_PER_SCOPE}`);
 
 // 📡 Send initial status via IPC if available
 if (process.env.ENABLE_IPC === 'true') {

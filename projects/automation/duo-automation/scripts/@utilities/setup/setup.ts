@@ -8,7 +8,7 @@ import { beforeAll, afterAll, beforeEach, afterEach } from 'bun:test';
 
 // Global test configuration
 beforeAll(async () => {
-  console.log('🧪 Setting up enhanced test environment...');
+  console.info('🧪 Setting up enhanced test environment...');
   
   // Set test environment
   process.env.NODE_ENV = 'test';
@@ -75,7 +75,7 @@ beforeAll(async () => {
     })
   };
   
-  console.log('✅ Test environment ready');
+  console.info('✅ Test environment ready');
 });
 
 beforeEach(async () => {
@@ -89,7 +89,7 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
-  console.log('🧹 Cleaning up test environment...');
+  console.info('🧹 Cleaning up test environment...');
   
   // Restore original console
   if (!process.env.VERBOSE_TESTS) {
@@ -103,7 +103,7 @@ afterAll(async () => {
     console.warn('Warning: Could not clean up test files:', error);
   }
   
-  console.log('✅ Test cleanup complete');
+  console.info('✅ Test cleanup complete');
 });
 
 // Helper function to clean up test files

@@ -13,15 +13,15 @@
  * Example 1: Basic file streaming
  */
 async function example1_BasicStreaming() {
-  console.log('=== Example 1: Basic File Streaming ===\n');
+  console.info('=== Example 1: Basic File Streaming ===\n');
 
   const path = './package.json';
   const file = Bun.file(path);
   const stream = file.stream();
 
-  console.log(`Streaming: ${path}`);
-  console.log(`  File size: ${file.size} bytes`);
-  console.log(`  Stream type: ${stream.constructor.name}`);
+  console.info(`Streaming: ${path}`);
+  console.info(`  File size: ${file.size} bytes`);
+  console.info(`  Stream type: ${stream.constructor.name}`);
 
   // Consume stream as async iterable
   let totalBytes = 0;
@@ -30,20 +30,20 @@ async function example1_BasicStreaming() {
   for await (const chunk of stream) {
     chunkCount++;
     totalBytes += chunk.length;
-    console.log(`  Chunk ${chunkCount}: ${chunk.length} bytes`);
+    console.info(`  Chunk ${chunkCount}: ${chunk.length} bytes`);
   }
 
-  console.log(`  Total chunks: ${chunkCount}`);
-  console.log(`  Total bytes: ${totalBytes}`);
-  console.log(`  Matches file size: ${totalBytes === file.size ? '✅' : '❌'}`);
-  console.log();
+  console.info(`  Total chunks: ${chunkCount}`);
+  console.info(`  Total bytes: ${totalBytes}`);
+  console.info(`  Matches file size: ${totalBytes === file.size ? '✅' : '❌'}`);
+  console.info();
 }
 
 /**
  * Example 2: Processing stream chunks
  */
 async function example2_ProcessingChunks() {
-  console.log('=== Example 2: Processing Stream Chunks ===\n');
+  console.info('=== Example 2: Processing Stream Chunks ===\n');
 
   const path = './package.json';
   const file = Bun.file(path);
@@ -63,16 +63,16 @@ async function example2_ProcessingChunks() {
   const final = decoder.decode();
   content += final;
 
-  console.log(`File content length: ${content.length} characters`);
-  console.log(`First 100 chars: ${content.substring(0, 100)}...`);
-  console.log();
+  console.info(`File content length: ${content.length} characters`);
+  console.info(`First 100 chars: ${content.substring(0, 100)}...`);
+  console.info();
 }
 
 /**
  * Example 3: Large file streaming (memory efficient)
  */
 async function example3_LargeFileStreaming() {
-  console.log('=== Example 3: Large File Streaming ===\n');
+  console.info('=== Example 3: Large File Streaming ===\n');
 
   // Create a large file
   const largePath = '/tmp/large-file.txt';
@@ -82,7 +82,7 @@ async function example3_LargeFileStreaming() {
   const file = Bun.file(largePath);
   const stream = file.stream();
 
-  console.log(`File size: ${(file.size / 1024).toFixed(2)} KB`);
+  console.info(`File size: ${(file.size / 1024).toFixed(2)} KB`);
 
   // Stream processing - memory efficient
   let lineCount = 0;
@@ -101,16 +101,16 @@ async function example3_LargeFileStreaming() {
   // Process remaining buffer
   if (buffer) lineCount++;
 
-  console.log(`Lines processed: ${lineCount}`);
-  console.log(`Memory efficient: ✅ (streamed in chunks)`);
-  console.log();
+  console.info(`Lines processed: ${lineCount}`);
+  console.info(`Memory efficient: ✅ (streamed in chunks)`);
+  console.info();
 }
 
 /**
  * Example 4: Binary file streaming
  */
 async function example4_BinaryStreaming() {
-  console.log('=== Example 4: Binary File Streaming ===\n');
+  console.info('=== Example 4: Binary File Streaming ===\n');
 
   // Create binary file
   const binaryPath = '/tmp/binary-data.bin';
@@ -134,18 +134,18 @@ async function example4_BinaryStreaming() {
   // Verify all chunks
   const allMatch = chunks.every(chunk => chunk.every(byte => byte === 0x42));
 
-  console.log(`File size: ${file.size} bytes`);
-  console.log(`Chunks received: ${chunks.length}`);
-  console.log(`Total bytes: ${totalBytes}`);
-  console.log(`All bytes are 0x42: ${allMatch ? '✅' : '❌'}`);
-  console.log();
+  console.info(`File size: ${file.size} bytes`);
+  console.info(`Chunks received: ${chunks.length}`);
+  console.info(`Total bytes: ${totalBytes}`);
+  console.info(`All bytes are 0x42: ${allMatch ? '✅' : '❌'}`);
+  console.info();
 }
 
 /**
  * Example 5: Using stream.getReader() instead of for await
  */
 async function example5_StreamReader() {
-  console.log('=== Example 5: Using stream.getReader() ===\n');
+  console.info('=== Example 5: Using stream.getReader() ===\n');
 
   const path = './package.json';
   const file = Bun.file(path);
@@ -166,17 +166,17 @@ async function example5_StreamReader() {
     reader.releaseLock();
   }
 
-  console.log(`Total bytes read: ${totalBytes}`);
-  console.log(`File size: ${file.size} bytes`);
-  console.log(`Match: ${totalBytes === file.size ? '✅' : '❌'}`);
-  console.log();
+  console.info(`Total bytes read: ${totalBytes}`);
+  console.info(`File size: ${file.size} bytes`);
+  console.info(`Match: ${totalBytes === file.size ? '✅' : '❌'}`);
+  console.info();
 }
 
 /**
  * Example 6: Stream transformation
  */
 async function example6_StreamTransformation() {
-  console.log('=== Example 6: Stream Transformation ===\n');
+  console.info('=== Example 6: Stream Transformation ===\n');
 
   const path = './package.json';
   const file = Bun.file(path);
@@ -204,16 +204,16 @@ async function example6_StreamTransformation() {
     transformedLength += chunk.length;
   }
 
-  console.log(`Original file size: ${file.size} bytes`);
-  console.log(`Transformed stream length: ${transformedLength} bytes`);
-  console.log();
+  console.info(`Original file size: ${file.size} bytes`);
+  console.info(`Transformed stream length: ${transformedLength} bytes`);
+  console.info();
 }
 
 /**
  * Example 7: Stream with progress tracking
  */
 async function example7_StreamWithProgress() {
-  console.log('=== Example 7: Stream with Progress Tracking ===\n');
+  console.info('=== Example 7: Stream with Progress Tracking ===\n');
 
   const path = './package.json';
   const file = Bun.file(path);
@@ -228,18 +228,18 @@ async function example7_StreamWithProgress() {
     chunkCount++;
 
     const progress = ((bytesRead / totalSize) * 100).toFixed(1);
-    console.log(`  Progress: ${progress}% (${bytesRead}/${totalSize} bytes, ${chunkCount} chunks)`);
+    console.info(`  Progress: ${progress}% (${bytesRead}/${totalSize} bytes, ${chunkCount} chunks)`);
   }
 
-  console.log(`\n  ✅ Complete: ${bytesRead} bytes in ${chunkCount} chunks`);
-  console.log();
+  console.info(`\n  ✅ Complete: ${bytesRead} bytes in ${chunkCount} chunks`);
+  console.info();
 }
 
 /**
  * Example 8: Multiple file streaming (parallel)
  */
 async function example8_ParallelStreaming() {
-  console.log('=== Example 8: Parallel File Streaming ===\n');
+  console.info('=== Example 8: Parallel File Streaming ===\n');
 
   const files = ['./package.json', './README.md', './tsconfig.json'];
 
@@ -261,18 +261,18 @@ async function example8_ParallelStreaming() {
   // Stream all files in parallel
   const results = await Promise.all(files.map(streamFile));
 
-  console.log('Parallel streaming results:');
+  console.info('Parallel streaming results:');
   for (const result of results) {
-    console.log(`  ${result.path}: ${result.bytes} bytes, ${result.chunks} chunks`);
+    console.info(`  ${result.path}: ${result.bytes} bytes, ${result.chunks} chunks`);
   }
-  console.log();
+  console.info();
 }
 
 /**
  * Example 9: Stream to HTTP Response
  */
 async function example9_StreamToResponse() {
-  console.log('=== Example 9: Stream to HTTP Response ===\n');
+  console.info('=== Example 9: Stream to HTTP Response ===\n');
 
   const path = './package.json';
   const file = Bun.file(path);
@@ -286,18 +286,18 @@ async function example9_StreamToResponse() {
     },
   });
 
-  console.log('HTTP Response created:');
-  console.log(`  Content-Type: ${response.headers.get('Content-Type')}`);
-  console.log(`  Content-Length: ${response.headers.get('Content-Length')}`);
-  console.log(`  Body: ReadableStream`);
-  console.log();
+  console.info('HTTP Response created:');
+  console.info(`  Content-Type: ${response.headers.get('Content-Type')}`);
+  console.info(`  Content-Length: ${response.headers.get('Content-Length')}`);
+  console.info(`  Body: ReadableStream`);
+  console.info();
 }
 
 /**
  * Example 10: Error handling in streams
  */
 async function example10_StreamErrorHandling() {
-  console.log('=== Example 10: Stream Error Handling ===\n');
+  console.info('=== Example 10: Stream Error Handling ===\n');
 
   // Try to stream a non-existent file
   const nonexistent = Bun.file('./nonexistent-file-12345.txt');
@@ -310,18 +310,18 @@ async function example10_StreamErrorHandling() {
     try {
       for await (const chunk of stream) {
         // This will not execute if file doesn't exist
-        console.log(`  Chunk: ${chunk.length} bytes`);
+        console.info(`  Chunk: ${chunk.length} bytes`);
       }
     } catch (error) {
       hasError = true;
-      console.log(`  Error reading stream: ${error instanceof Error ? error.message : String(error)}`);
+      console.info(`  Error reading stream: ${error instanceof Error ? error.message : String(error)}`);
     }
 
     if (!hasError) {
-      console.log(`  Stream created but may be empty (file doesn't exist)`);
+      console.info(`  Stream created but may be empty (file doesn't exist)`);
     }
   } catch (error) {
-    console.log(`  Error creating stream: ${error instanceof Error ? error.message : String(error)}`);
+    console.info(`  Error creating stream: ${error instanceof Error ? error.message : String(error)}`);
   }
 
   // Safe streaming with existence check
@@ -336,10 +336,10 @@ async function example10_StreamErrorHandling() {
       safeBytes += chunk.length;
     }
 
-    console.log(`\n  Safe streaming: ${safeBytes} bytes read`);
+    console.info(`\n  Safe streaming: ${safeBytes} bytes read`);
   }
 
-  console.log();
+  console.info();
 }
 
 // Run all examples
@@ -356,14 +356,14 @@ async function main() {
     await example9_StreamToResponse();
     await example10_StreamErrorHandling();
 
-    console.log('✅ All examples completed!');
-    console.log('\n💡 Key Points:');
-    console.log('  • file.stream() returns a ReadableStream<Uint8Array>');
-    console.log('  • Use for await (const chunk of stream) to iterate');
-    console.log('  • Each chunk is a Uint8Array');
-    console.log('  • Memory-efficient for large files');
-    console.log('  • Can be used directly in HTTP Response');
-    console.log('  • Always check file.exists() before streaming when needed');
+    console.info('✅ All examples completed!');
+    console.info('\n💡 Key Points:');
+    console.info('  • file.stream() returns a ReadableStream<Uint8Array>');
+    console.info('  • Use for await (const chunk of stream) to iterate');
+    console.info('  • Each chunk is a Uint8Array');
+    console.info('  • Memory-efficient for large files');
+    console.info('  • Can be used directly in HTTP Response');
+    console.info('  • Always check file.exists() before streaming when needed');
   } catch (error) {
     console.error('❌ Error:', error instanceof Error ? error.message : String(error));
     process.exit(1);

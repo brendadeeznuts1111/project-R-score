@@ -255,7 +255,7 @@ system_health_score 95.2 ${timestamp}
       }
 
       // Process webhook event
-      console.log('Webhook received:', payload.event, payload.payload);
+      console.info('Webhook received:', payload.event, payload.payload);
       
       return new Response(JSON.stringify({
         success: true,
@@ -980,7 +980,7 @@ bun_heap_size_bytes 104857600 ${Date.now()}`;
  */
 export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
   try {
-    console.log('Enhanced status system health check completed at:', new Date().toISOString());
+    console.info('Enhanced status system health check completed at:', new Date().toISOString());
   } catch (error) {
     console.error('Scheduled health check failed:', error);
   }

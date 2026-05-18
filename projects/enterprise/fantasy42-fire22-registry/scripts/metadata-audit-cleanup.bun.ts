@@ -145,7 +145,7 @@ class MetadataAuditCleanup {
   };
 
   constructor() {
-    console.log('🔍 Starting Hidden Metadata Audit & Cleanup...\n');
+    console.info('🔍 Starting Hidden Metadata Audit & Cleanup...\n');
   }
 
   private async auditFile(filePath: string): Promise<void> {
@@ -340,7 +340,7 @@ class MetadataAuditCleanup {
   }
 
   public async auditDirectory(rootPath: string = '.'): Promise<void> {
-    console.log(`🔍 Scanning directory: ${rootPath}`);
+    console.info(`🔍 Scanning directory: ${rootPath}`);
 
     const scanDirectory = async (dirPath: string): Promise<void> => {
       try {
@@ -396,7 +396,7 @@ class MetadataAuditCleanup {
   }
 
   public async auditGitHistory(): Promise<void> {
-    console.log('🔍 Auditing Git History...');
+    console.info('🔍 Auditing Git History...');
 
     try {
       // Check for sensitive data in git history
@@ -496,7 +496,7 @@ class MetadataAuditCleanup {
   }
 
   public async performCleanup(): Promise<string[]> {
-    console.log('🧹 Performing automatic cleanup...');
+    console.info('🧹 Performing automatic cleanup...');
 
     const cleanupActions: string[] = [];
 
@@ -590,7 +590,7 @@ class MetadataAuditCleanup {
     await this.auditGitHistory();
 
     const totalTime = Date.now() - startTime;
-    console.log(`\n⏱️  Audit completed in ${Math.round(totalTime / 1000)}s`);
+    console.info(`\n⏱️  Audit completed in ${Math.round(totalTime / 1000)}s`);
 
     const result = this.generateReport();
     this.displayReport(result);
@@ -599,9 +599,9 @@ class MetadataAuditCleanup {
   }
 
   private displayReport(result: AuditResult): void {
-    console.log('\n' + '='.repeat(80));
-    console.log('🔒 HIDDEN METADATA AUDIT REPORT');
-    console.log('='.repeat(80));
+    console.info('\n' + '='.repeat(80));
+    console.info('🔒 HIDDEN METADATA AUDIT REPORT');
+    console.info('='.repeat(80));
 
     const critical = result.findings.filter(f => f.type === 'CRITICAL').length;
     const high = result.findings.filter(f => f.type === 'HIGH').length;
@@ -609,21 +609,21 @@ class MetadataAuditCleanup {
     const low = result.findings.filter(f => f.type === 'LOW').length;
     const info = result.findings.filter(f => f.type === 'INFO').length;
 
-    console.log(`\n📊 Audit Summary:`);
-    console.log(`   📁 Files Scanned: ${result.totalFiles}`);
-    console.log(`   🔍 Findings: ${result.findings.length}`);
-    console.log(`   📊 Risk Score: ${result.riskScore}/100`);
+    console.info(`\n📊 Audit Summary:`);
+    console.info(`   📁 Files Scanned: ${result.totalFiles}`);
+    console.info(`   🔍 Findings: ${result.findings.length}`);
+    console.info(`   📊 Risk Score: ${result.riskScore}/100`);
 
-    console.log(`\n🚨 Severity Breakdown:`);
-    console.log(`   🔴 Critical: ${critical}`);
-    console.log(`   🟠 High: ${high}`);
-    console.log(`   🟡 Medium: ${medium}`);
-    console.log(`   🔵 Low: ${low}`);
-    console.log(`   ℹ️  Info: ${info}`);
+    console.info(`\n🚨 Severity Breakdown:`);
+    console.info(`   🔴 Critical: ${critical}`);
+    console.info(`   🟠 High: ${high}`);
+    console.info(`   🟡 Medium: ${medium}`);
+    console.info(`   🔵 Low: ${low}`);
+    console.info(`   ℹ️  Info: ${info}`);
 
     // Show top findings
     if (result.findings.length > 0) {
-      console.log(`\n🔍 Top Findings:`);
+      console.info(`\n🔍 Top Findings:`);
 
       // Group by category
       const categories = result.findings.reduce(
@@ -638,38 +638,38 @@ class MetadataAuditCleanup {
         .sort(([, a], [, b]) => b - a)
         .slice(0, 5)
         .forEach(([category, count]) => {
-          console.log(`   • ${category}: ${count} findings`);
+          console.info(`   • ${category}: ${count} findings`);
         });
 
       // Show critical findings
       const criticalFindings = result.findings.filter(f => f.type === 'CRITICAL');
       if (criticalFindings.length > 0) {
-        console.log(`\n🚨 Critical Issues:`);
+        console.info(`\n🚨 Critical Issues:`);
         criticalFindings.slice(0, 3).forEach(finding => {
-          console.log(`   • ${finding.file}: ${finding.description}`);
+          console.info(`   • ${finding.file}: ${finding.description}`);
         });
       }
     }
 
-    console.log('\n💡 Security Assessment:');
+    console.info('\n💡 Security Assessment:');
     if (result.riskScore >= 90) {
-      console.log('   🟢 EXCELLENT: No significant security risks detected');
+      console.info('   🟢 EXCELLENT: No significant security risks detected');
     } else if (result.riskScore >= 70) {
-      console.log('   🟡 GOOD: Minor security issues found, address as needed');
+      console.info('   🟡 GOOD: Minor security issues found, address as needed');
     } else if (result.riskScore >= 50) {
-      console.log('   🟠 MODERATE: Security issues require attention');
+      console.info('   🟠 MODERATE: Security issues require attention');
     } else {
-      console.log('   🔴 CRITICAL: Immediate security review required');
+      console.info('   🔴 CRITICAL: Immediate security review required');
     }
 
-    console.log('\n🔧 Recommended Actions:');
-    console.log('   1. Review all CRITICAL and HIGH severity findings');
-    console.log('   2. Remove or secure any sensitive data found');
-    console.log('   3. Update .gitignore to prevent future leaks');
-    console.log('   4. Consider using git-secrets or similar tools');
-    console.log('   5. Implement automated security scanning in CI/CD');
+    console.info('\n🔧 Recommended Actions:');
+    console.info('   1. Review all CRITICAL and HIGH severity findings');
+    console.info('   2. Remove or secure any sensitive data found');
+    console.info('   3. Update .gitignore to prevent future leaks');
+    console.info('   4. Consider using git-secrets or similar tools');
+    console.info('   5. Implement automated security scanning in CI/CD');
 
-    console.log('='.repeat(80));
+    console.info('='.repeat(80));
   }
 }
 
@@ -691,9 +691,9 @@ if (import.meta.main) {
     case 'cleanup':
       const result = await auditor.runFullAudit();
       const cleanupActions = await auditor.performCleanup();
-      console.log(`\n🧹 Cleanup Summary:`);
-      cleanupActions.forEach(action => console.log(`   ✅ ${action}`));
-      console.log(`\n📊 ${cleanupActions.length} automatic cleanup actions performed`);
+      console.info(`\n🧹 Cleanup Summary:`);
+      cleanupActions.forEach(action => console.info(`   ✅ ${action}`));
+      console.info(`\n📊 ${cleanupActions.length} automatic cleanup actions performed`);
       break;
 
     case 'report':
@@ -701,20 +701,20 @@ if (import.meta.main) {
       const report = JSON.stringify(auditResult, null, 2);
       const filename = `metadata-audit-${new Date().toISOString().split('T')[0]}.json`;
       await Bun.write(filename, report);
-      console.log(`📄 Detailed report saved to: ${filename}`);
+      console.info(`📄 Detailed report saved to: ${filename}`);
       break;
 
     default:
-      console.log('Usage: bun run scripts/metadata-audit-cleanup.bun.ts [audit|cleanup|report]');
-      console.log('');
-      console.log('Commands:');
-      console.log('  audit     - Run comprehensive metadata audit');
-      console.log('  cleanup   - Run audit and perform automatic cleanup');
-      console.log('  report    - Run audit and generate detailed JSON report');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun run scripts/metadata-audit-cleanup.bun.ts audit');
-      console.log('  bun run scripts/metadata-audit-cleanup.bun.ts cleanup');
+      console.info('Usage: bun run scripts/metadata-audit-cleanup.bun.ts [audit|cleanup|report]');
+      console.info('');
+      console.info('Commands:');
+      console.info('  audit     - Run comprehensive metadata audit');
+      console.info('  cleanup   - Run audit and perform automatic cleanup');
+      console.info('  report    - Run audit and generate detailed JSON report');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun run scripts/metadata-audit-cleanup.bun.ts audit');
+      console.info('  bun run scripts/metadata-audit-cleanup.bun.ts cleanup');
       break;
   }
 }

@@ -4,7 +4,7 @@
 
 // Example 1: Development build with React Fast Refresh
 async function buildDevelopment() {
-  console.log("🔥 Building for development with React Fast Refresh...");
+  console.info("🔥 Building for development with React Fast Refresh...");
   
   const result = await Bun.build({
     entrypoints: ["./src/index.tsx"],
@@ -24,13 +24,13 @@ async function buildDevelopment() {
     },
   });
 
-  console.log(`✅ Development build completed!`);
-  console.log(`📁 Output directory: ./public/dev`);
-  console.log(`📦 Generated ${result.outputs.length} files`);
+  console.info(`✅ Development build completed!`);
+  console.info(`📁 Output directory: ./public/dev`);
+  console.info(`📦 Generated ${result.outputs.length} files`);
   
   // Show what was generated
   result.outputs.forEach((output, index) => {
-    console.log(`   ${index + 1}. ${output.path} (${output.size} bytes)`);
+    console.info(`   ${index + 1}. ${output.path} (${output.size} bytes)`);
   });
 
   return result;
@@ -38,7 +38,7 @@ async function buildDevelopment() {
 
 // Example 2: Production build without React Fast Refresh
 async function buildProduction() {
-  console.log("🏭 Building for production (no React Fast Refresh)...");
+  console.info("🏭 Building for production (no React Fast Refresh)...");
   
   const result = await Bun.build({
     entrypoints: ["./src/index.tsx"],
@@ -62,13 +62,13 @@ async function buildProduction() {
     },
   });
 
-  console.log(`✅ Production build completed!`);
-  console.log(`📁 Output directory: ./public/prod`);
-  console.log(`📦 Generated ${result.outputs.length} files`);
+  console.info(`✅ Production build completed!`);
+  console.info(`📁 Output directory: ./public/prod`);
+  console.info(`📦 Generated ${result.outputs.length} files`);
   
   // Show what was generated
   result.outputs.forEach((output, index) => {
-    console.log(`   ${index + 1}. ${output.path} (${output.size} bytes)`);
+    console.info(`   ${index + 1}. ${output.path} (${output.size} bytes)`);
   });
 
   return result;
@@ -76,7 +76,7 @@ async function buildProduction() {
 
 // Example 3: Compare builds with and without React Fast Refresh
 async function compareBuilds() {
-  console.log("🔍 Comparing builds with/without React Fast Refresh...");
+  console.info("🔍 Comparing builds with/without React Fast Refresh...");
   
   // Build with React Fast Refresh
   const withRefresh = await Bun.build({
@@ -98,10 +98,10 @@ async function compareBuilds() {
     minify: false,
   });
   
-  console.log("\n📊 Build Comparison:");
-  console.log(`With React Fast Refresh: ${withRefresh.outputs[0]?.size} bytes`);
-  console.log(`Without React Fast Refresh: ${withoutRefresh.outputs[0]?.size} bytes`);
-  console.log(`Difference: ${Math.abs((withRefresh.outputs[0]?.size || 0) - (withoutRefresh.outputs[0]?.size || 0))} bytes`);
+  console.info("\n📊 Build Comparison:");
+  console.info(`With React Fast Refresh: ${withRefresh.outputs[0]?.size} bytes`);
+  console.info(`Without React Fast Refresh: ${withoutRefresh.outputs[0]?.size} bytes`);
+  console.info(`Difference: ${Math.abs((withRefresh.outputs[0]?.size || 0) - (withoutRefresh.outputs[0]?.size || 0))} bytes`);
   
   // Show the injected code difference
   const withRefreshContent = await Bun.file(withRefresh.outputs[0]!.path).text();
@@ -110,16 +110,16 @@ async function compareBuilds() {
   const hasRefreshSig = withRefreshContent.includes("$RefreshSig$");
   const hasRefreshReg = withRefreshContent.includes("$RefreshReg$");
   
-  console.log(`\n🔍 React Fast Refresh Code Injection:`);
-  console.log(`$RefreshSig$ injected: ${hasRefreshSig ? "✅" : "❌"}`);
-  console.log(`$RefreshReg$ injected: ${hasRefreshReg ? "✅" : "❌"}`);
+  console.info(`\n🔍 React Fast Refresh Code Injection:`);
+  console.info(`$RefreshSig$ injected: ${hasRefreshSig ? "✅" : "❌"}`);
+  console.info(`$RefreshReg$ injected: ${hasRefreshReg ? "✅" : "❌"}`);
   
   // Show sample of injected code
   if (hasRefreshSig) {
     const sigMatch = withRefreshContent.match(/(\$RefreshSig\$\([^)]+\))/);
     if (sigMatch) {
-      console.log(`\n💡 Sample injected code:`);
-      console.log(sigMatch[0]);
+      console.info(`\n💡 Sample injected code:`);
+      console.info(sigMatch[0]);
     }
   }
   
@@ -128,18 +128,18 @@ async function compareBuilds() {
 
 // Run all examples
 async function runAllExamples() {
-  console.log("🚀 Bun.build reactFastRefresh Examples\n");
+  console.info("🚀 Bun.build reactFastRefresh Examples\n");
   
   try {
     await buildDevelopment();
-    console.log("\n" + "=".repeat(50) + "\n");
+    console.info("\n" + "=".repeat(50) + "\n");
     
     await buildProduction();
-    console.log("\n" + "=".repeat(50) + "\n");
+    console.info("\n" + "=".repeat(50) + "\n");
     
     await compareBuilds();
     
-    console.log("\n✅ All examples completed successfully!");
+    console.info("\n✅ All examples completed successfully!");
     
   } catch (error) {
     console.error("❌ Build error:", error);

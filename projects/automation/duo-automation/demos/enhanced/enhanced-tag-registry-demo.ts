@@ -45,92 +45,92 @@ interface TagDefinition {
 }
 
 async function demonstrateEnhancedTagRegistry() {
-  console.log('🏷️  Enhanced Tag Registry Demonstration');
-  console.log('='.repeat(80));
+  console.info('🏷️  Enhanced Tag Registry Demonstration');
+  console.info('='.repeat(80));
   
   try {
     // Load the tag registry
-    console.log('\n📚 Loading Comprehensive Tag Registry...');
+    console.info('\n📚 Loading Comprehensive Tag Registry...');
     const registryContent = readFileSync('./docs/TAG_REGISTRY.json', 'utf-8');
     const registry: TagRegistry = JSON.parse(registryContent);
     
-    console.log(`✅ Registry loaded with ${Object.keys(registry.tags).length} tags`);
+    console.info(`✅ Registry loaded with ${Object.keys(registry.tags).length} tags`);
     
     // Demonstrate tag definitions
-    console.log('\n📋 Tag Definitions & Examples:');
-    console.log('-'.repeat(50));
+    console.info('\n📋 Tag Definitions & Examples:');
+    console.info('-'.repeat(50));
     
     const exampleTags = ['#devops', '#ready', '#typescript', '#security', '#critical'];
     
     exampleTags.forEach(tag => {
       const tagDef = registry.tags[tag];
       if (tagDef) {
-        console.log(`\n🏷️  ${tag}`);
-        console.log(`   Category: ${tagDef.category}`);
-        console.log(`   Definition: ${tagDef.definition}`);
-        console.log(`   Usage: ${tagDef.usage}`);
-        console.log(`   Examples: ${tagDef.examples.slice(0, 2).join(', ')}`);
-        console.log(`   Related: ${tagDef.related.slice(0, 3).join(', ')}`);
+        console.info(`\n🏷️  ${tag}`);
+        console.info(`   Category: ${tagDef.category}`);
+        console.info(`   Definition: ${tagDef.definition}`);
+        console.info(`   Usage: ${tagDef.usage}`);
+        console.info(`   Examples: ${tagDef.examples.slice(0, 2).join(', ')}`);
+        console.info(`   Related: ${tagDef.related.slice(0, 3).join(', ')}`);
         
         if (tagDef.aliases.length > 0) {
-          console.log(`   Aliases: ${tagDef.aliases.join(', ')}`);
+          console.info(`   Aliases: ${tagDef.aliases.join(', ')}`);
         }
         
         if (tagDef.requirements) {
-          console.log(`   Requirements: ${tagDef.requirements.slice(0, 2).join(', ')}`);
+          console.info(`   Requirements: ${tagDef.requirements.slice(0, 2).join(', ')}`);
         }
         
         if (tagDef.governance) {
-          console.log(`   Governance: ${tagDef.governance.maintainer} | Review: ${tagDef.governance.reviewFrequency}`);
+          console.info(`   Governance: ${tagDef.governance.maintainer} | Review: ${tagDef.governance.reviewFrequency}`);
         }
       }
     });
     
     // Demonstrate tag relationships
-    console.log('\n🔗 Tag Relationships & Combinations:');
-    console.log('-'.repeat(50));
+    console.info('\n🔗 Tag Relationships & Combinations:');
+    console.info('-'.repeat(50));
     
-    console.log('\n📊 Tag Groups:');
+    console.info('\n📊 Tag Groups:');
     Object.entries(registry.relationships.tagGroups).forEach(([group, tags]) => {
-      console.log(`  ${group}: ${tags.join(', ')}`);
+      console.info(`  ${group}: ${tags.join(', ')}`);
     });
     
-    console.log('\n🎯 Common Combinations:');
+    console.info('\n🎯 Common Combinations:');
     registry.relationships.commonCombinations.slice(0, 3).forEach((combo, index) => {
-      console.log(`  ${index + 1}. ${combo.combination.join(' + ')}`);
-      console.log(`     Use Case: ${combo.useCase}`);
-      console.log(`     Description: ${combo.description}`);
+      console.info(`  ${index + 1}. ${combo.combination.join(' + ')}`);
+      console.info(`     Use Case: ${combo.useCase}`);
+      console.info(`     Description: ${combo.description}`);
     });
     
-    console.log('\n🔄 Workflow Patterns:');
+    console.info('\n🔄 Workflow Patterns:');
     Object.entries(registry.relationships.workflows).forEach(([workflow, tags]) => {
-      console.log(`  ${workflow}: ${tags.join(' → ')}`);
+      console.info(`  ${workflow}: ${tags.join(' → ')}`);
     });
     
     // Demonstrate governance features
-    console.log('\n🛡️ Governance Framework:');
-    console.log('-'.repeat(50));
+    console.info('\n🛡️ Governance Framework:');
+    console.info('-'.repeat(50));
     
-    console.log('\n📏 Quality Standards:');
+    console.info('\n📏 Quality Standards:');
     const quality = registry.governance.quality;
-    console.log(`  Minimum tags per artifact: ${quality.minTagUsage}`);
-    console.log(`  Maximum tags per artifact: ${quality.maxTagsPerArtifact}`);
-    console.log(`  Required categories: ${quality.requiredCategories.join(', ')}`);
-    console.log(`  Maximum tag usage: ${quality.maxTagUsage}`);
+    console.info(`  Minimum tags per artifact: ${quality.minTagUsage}`);
+    console.info(`  Maximum tags per artifact: ${quality.maxTagsPerArtifact}`);
+    console.info(`  Required categories: ${quality.requiredCategories.join(', ')}`);
+    console.info(`  Maximum tag usage: ${quality.maxTagUsage}`);
     
-    console.log('\n📋 Tag Categories Distribution:');
+    console.info('\n📋 Tag Categories Distribution:');
     const categoryStats: Record<string, number> = {};
     Object.values(registry.tags).forEach(tagDef => {
       categoryStats[tagDef.category] = (categoryStats[tagDef.category] || 0) + 1;
     });
     
     Object.entries(categoryStats).forEach(([category, count]) => {
-      console.log(`  ${category}: ${count} tags`);
+      console.info(`  ${category}: ${count} tags`);
     });
     
     // Demonstrate enhanced validation
-    console.log('\n🔍 Enhanced Validation with Registry:');
-    console.log('-'.repeat(50));
+    console.info('\n🔍 Enhanced Validation with Registry:');
+    console.info('-'.repeat(50));
     
     const validator = new EnhancedTagValidator();
     const validationResults = await validator.validate({ 
@@ -141,15 +141,15 @@ async function demonstrateEnhancedTagRegistry() {
     
     const stats = validator.getEnhancedStats();
     
-    console.log('\n📈 Enhanced Validation Statistics:');
-    console.log(`  Total artifacts: ${stats.total}`);
-    console.log(`  Valid artifacts: ${stats.valid} (${stats.complianceRate}%)`);
-    console.log(`  Relationship score: ${stats.relationshipScore}%`);
-    console.log(`  Suggestions generated: ${stats.suggestionCount}`);
+    console.info('\n📈 Enhanced Validation Statistics:');
+    console.info(`  Total artifacts: ${stats.total}`);
+    console.info(`  Valid artifacts: ${stats.valid} (${stats.complianceRate}%)`);
+    console.info(`  Relationship score: ${stats.relationshipScore}%`);
+    console.info(`  Suggestions generated: ${stats.suggestionCount}`);
     
     // Show validation examples
-    console.log('\n🎯 Validation Examples:');
-    console.log('-'.repeat(50));
+    console.info('\n🎯 Validation Examples:');
+    console.info('-'.repeat(50));
     
     const exampleArtifacts = [
       {
@@ -170,9 +170,9 @@ async function demonstrateEnhancedTagRegistry() {
     ];
     
     exampleArtifacts.forEach(artifact => {
-      console.log(`\n📄 ${artifact.path}`);
-      console.log(`   Tags: ${artifact.tags.join(', ')}`);
-      console.log(`   Description: ${artifact.description}`);
+      console.info(`\n📄 ${artifact.path}`);
+      console.info(`   Tags: ${artifact.tags.join(', ')}`);
+      console.info(`   Description: ${artifact.description}`);
       
       // Analyze the tags
       const categories = artifact.tags.map(tag => {
@@ -180,7 +180,7 @@ async function demonstrateEnhancedTagRegistry() {
         return tagDef ? tagDef.category : 'unknown';
       });
       
-      console.log(`   Categories: ${[...new Set(categories)].join(', ')}`);
+      console.info(`   Categories: ${[...new Set(categories)].join(', ')}`);
       
       // Check for common combinations
       const matchingCombos = registry.relationships.commonCombinations.filter(combo =>
@@ -188,7 +188,7 @@ async function demonstrateEnhancedTagRegistry() {
       );
       
       if (matchingCombos.length > 0) {
-        console.log(`   ✅ Matches common combination: ${matchingCombos[0].useCase}`);
+        console.info(`   ✅ Matches common combination: ${matchingCombos[0].useCase}`);
       }
       
       // Generate suggestions
@@ -207,15 +207,15 @@ async function demonstrateEnhancedTagRegistry() {
       });
       
       if (suggestions.length > 0) {
-        console.log(`   💡 Suggestions: ${suggestions.slice(0, 2).join('; ')}`);
+        console.info(`   💡 Suggestions: ${suggestions.slice(0, 2).join('; ')}`);
       }
     });
     
     // Demonstrate tag search and discovery
-    console.log('\n🔍 Tag Search & Discovery:');
-    console.log('-'.repeat(50));
+    console.info('\n🔍 Tag Search & Discovery:');
+    console.info('-'.repeat(50));
     
-    console.log('\n🎯 Find tags by category:');
+    console.info('\n🎯 Find tags by category:');
     const categories = ['status', 'domain', 'technology', 'audience'];
     
     categories.forEach(category => {
@@ -223,20 +223,20 @@ async function demonstrateEnhancedTagRegistry() {
         .filter(([, def]) => def.category === category)
         .map(([tag]) => tag);
       
-      console.log(`  ${category}: ${categoryTags.slice(0, 5).join(', ')}${categoryTags.length > 5 ? '...' : ''}`);
+      console.info(`  ${category}: ${categoryTags.slice(0, 5).join(', ')}${categoryTags.length > 5 ? '...' : ''}`);
     });
     
-    console.log('\n🔗 Find related tags:');
+    console.info('\n🔗 Find related tags:');
     const searchTags = ['#security', '#typescript', '#devops'];
     
     searchTags.forEach(tag => {
       const tagDef = registry.tags[tag];
       if (tagDef) {
-        console.log(`  ${tag} → ${tagDef.related.slice(0, 3).join(', ')}`);
+        console.info(`  ${tag} → ${tagDef.related.slice(0, 3).join(', ')}`);
       }
     });
     
-    console.log('\n🎨 Find tags by use case:');
+    console.info('\n🎨 Find tags by use case:');
     const useCases = [
       { name: 'API Development', tags: ['#api', '#typescript', '#security'] },
       { name: 'DevOps Automation', tags: ['#devops', '#cli', '#automation'] },
@@ -245,21 +245,21 @@ async function demonstrateEnhancedTagRegistry() {
     ];
     
     useCases.forEach(useCase => {
-      console.log(`  ${useCase.name}: ${useCase.tags.join(' + ')}`);
+      console.info(`  ${useCase.name}: ${useCase.tags.join(' + ')}`);
     });
     
     // Demonstrate governance in action
-    console.log('\n🛡️ Governance in Action:');
-    console.log('-'.repeat(50));
+    console.info('\n🛡️ Governance in Action:');
+    console.info('-'.repeat(50));
     
-    console.log('\n📋 Approval Requirements:');
+    console.info('\n📋 Approval Requirements:');
     const approvalRequired = Object.entries(registry.tags)
       .filter(([, def]) => def.governance?.approvalRequired)
       .map(([tag]) => tag);
     
-    console.log(`  Tags requiring approval: ${approvalRequired.join(', ')}`);
+    console.info(`  Tags requiring approval: ${approvalRequired.join(', ')}`);
     
-    console.log('\n👥 Maintainer Assignment:');
+    console.info('\n👥 Maintainer Assignment:');
     const maintainers: Record<string, string[]> = {};
     
     Object.entries(registry.tags).forEach(([tag, def]) => {
@@ -273,10 +273,10 @@ async function demonstrateEnhancedTagRegistry() {
     });
     
     Object.entries(maintainers).forEach(([maintainer, tags]) => {
-      console.log(`  ${maintainer}: ${tags.slice(0, 3).join(', ')}${tags.length > 3 ? '...' : ''}`);
+      console.info(`  ${maintainer}: ${tags.slice(0, 3).join(', ')}${tags.length > 3 ? '...' : ''}`);
     });
     
-    console.log('\n📅 Review Schedule:');
+    console.info('\n📅 Review Schedule:');
     const reviewSchedule: Record<string, string[]> = {};
     
     Object.entries(registry.tags).forEach(([tag, def]) => {
@@ -290,40 +290,40 @@ async function demonstrateEnhancedTagRegistry() {
     });
     
     Object.entries(reviewSchedule).forEach(([frequency, tags]) => {
-      console.log(`  ${frequency}: ${tags.length} tag groups`);
+      console.info(`  ${frequency}: ${tags.length} tag groups`);
     });
     
     // Show system benefits
-    console.log('\n🌟 Enhanced Registry Benefits:');
-    console.log('-'.repeat(50));
+    console.info('\n🌟 Enhanced Registry Benefits:');
+    console.info('-'.repeat(50));
     
-    console.log('\n✅ Improved Discoverability:');
-    console.log('  • Rich tag definitions with usage examples');
-    console.log('  • Relationship mapping for related tags');
-    console.log('  • Common combinations for quick tagging');
-    console.log('  • Category-based organization');
+    console.info('\n✅ Improved Discoverability:');
+    console.info('  • Rich tag definitions with usage examples');
+    console.info('  • Relationship mapping for related tags');
+    console.info('  • Common combinations for quick tagging');
+    console.info('  • Category-based organization');
     
-    console.log('\n✅ Enhanced Validation:');
-    console.log('  • Registry-based tag validation');
-    console.log('  • Relationship consistency checking');
-    console.log('  • Automated suggestion generation');
-    console.log('  • Governance rule enforcement');
+    console.info('\n✅ Enhanced Validation:');
+    console.info('  • Registry-based tag validation');
+    console.info('  • Relationship consistency checking');
+    console.info('  • Automated suggestion generation');
+    console.info('  • Governance rule enforcement');
     
-    console.log('\n✅ Better Governance:');
-    console.log('  • Clear approval workflows');
-    console.log('  • Maintainer assignment');
-    console.log('  • Review scheduling');
-    console.log('  • Quality standards enforcement');
+    console.info('\n✅ Better Governance:');
+    console.info('  • Clear approval workflows');
+    console.info('  • Maintainer assignment');
+    console.info('  • Review scheduling');
+    console.info('  • Quality standards enforcement');
     
-    console.log('\n✅ Developer Experience:');
-    console.log('  • Contextual tag suggestions');
-    console.log('  • Usage examples and guidelines');
-    console.log('  • Relationship awareness');
-    console.log('  • Workflow-based tagging');
+    console.info('\n✅ Developer Experience:');
+    console.info('  • Contextual tag suggestions');
+    console.info('  • Usage examples and guidelines');
+    console.info('  • Relationship awareness');
+    console.info('  • Workflow-based tagging');
     
     // Performance metrics
-    console.log('\n⚡ Performance Metrics:');
-    console.log('-'.repeat(50));
+    console.info('\n⚡ Performance Metrics:');
+    console.info('-'.repeat(50));
     
     const perfStartTime = Date.now();
     
@@ -344,25 +344,25 @@ async function demonstrateEnhancedTagRegistry() {
     );
     const searchTime = Date.now() - searchStart;
     
-    console.log(`  Registry size: ${(registrySize / 1024).toFixed(1)}KB`);
-    console.log(`  Load time: ${loadTime}ms`);
-    console.log(`  Validation time: ${validationTime}ms`);
-    console.log(`  Search time: ${searchTime}ms (${searchResults.length} results)`);
-    console.log(`  Total demo time: ${Date.now() - perfStartTime}ms`);
+    console.info(`  Registry size: ${(registrySize / 1024).toFixed(1)}KB`);
+    console.info(`  Load time: ${loadTime}ms`);
+    console.info(`  Validation time: ${validationTime}ms`);
+    console.info(`  Search time: ${searchTime}ms (${searchResults.length} results)`);
+    console.info(`  Total demo time: ${Date.now() - perfStartTime}ms`);
     
-    console.log('\n🎉 Enhanced Tag Registry Demo Complete!');
-    console.log('\n💡 Next Steps:');
-    console.log('  1. Integrate with IDE extensions for auto-completion');
-    console.log('  2. Add visual tag relationship explorer');
-    console.log('  3. Implement automated tag suggestions');
-    console.log('  4. Create tag usage analytics dashboard');
-    console.log('  5. Extend with custom domain-specific tags');
+    console.info('\n🎉 Enhanced Tag Registry Demo Complete!');
+    console.info('\n💡 Next Steps:');
+    console.info('  1. Integrate with IDE extensions for auto-completion');
+    console.info('  2. Add visual tag relationship explorer');
+    console.info('  3. Implement automated tag suggestions');
+    console.info('  4. Create tag usage analytics dashboard');
+    console.info('  5. Extend with custom domain-specific tags');
     
-    console.log('\n📚 Registry Files:');
-    console.log('  • docs/TAG_REGISTRY.json - Comprehensive tag definitions');
-    console.log('  • scripts/enhanced-validate-tags.ts - Registry-aware validation');
-    console.log('  • docs/METADATA_SCHEMA.json - Metadata validation schema');
-    console.log('  • docs/TAG_GOVERNANCE.md - Governance framework');
+    console.info('\n📚 Registry Files:');
+    console.info('  • docs/TAG_REGISTRY.json - Comprehensive tag definitions');
+    console.info('  • scripts/enhanced-validate-tags.ts - Registry-aware validation');
+    console.info('  • docs/METADATA_SCHEMA.json - Metadata validation schema');
+    console.info('  • docs/TAG_GOVERNANCE.md - Governance framework');
     
   } catch (error) {
     console.error('❌ Demo failed:', error.message);
@@ -373,13 +373,13 @@ async function demonstrateEnhancedTagRegistry() {
 // Additional demonstration functions
 
 async function demonstrateTagRelationships() {
-  console.log('\n🔗 Advanced Tag Relationships:');
-  console.log('-'.repeat(50));
+  console.info('\n🔗 Advanced Tag Relationships:');
+  console.info('-'.repeat(50));
   
   const registryContent = readFileSync('./docs/TAG_REGISTRY.json', 'utf-8');
   const registry: TagRegistry = JSON.parse(registryContent);
   
-  console.log('\n🎯 Relationship Analysis:');
+  console.info('\n🎯 Relationship Analysis:');
   
   // Find most connected tags
   const connectionCounts: Record<string, number> = {};
@@ -392,13 +392,13 @@ async function demonstrateTagRelationships() {
     .sort(([,a], [,b]) => b - a)
     .slice(0, 5);
   
-  console.log('  Most Connected Tags:');
+  console.info('  Most Connected Tags:');
   mostConnected.forEach(([tag, count]) => {
-    console.log(`    ${tag}: ${count} relationships`);
+    console.info(`    ${tag}: ${count} relationships`);
   });
   
   // Find relationship clusters
-  console.log('\n🕸️  Relationship Clusters:');
+  console.info('\n🕸️  Relationship Clusters:');
   const clusters = [
     { name: 'Security', tags: ['#security', '#authentication', '#authorization', '#encryption'] },
     { name: 'Development', tags: ['#typescript', '#api', '#testing', '#documentation'] },
@@ -411,30 +411,30 @@ async function demonstrateTagRelationships() {
     ).flat();
     
     const uniqueConnections = [...new Set(clusterConnections)];
-    console.log(`    ${cluster.name}: ${cluster.tags.join(' ↔ ')} → ${uniqueConnections.length} related tags`);
+    console.info(`    ${cluster.name}: ${cluster.tags.join(' ↔ ')} → ${uniqueConnections.length} related tags`);
   });
 }
 
 async function demonstrateGovernanceWorkflows() {
-  console.log('\n🛡️ Governance Workflows:');
-  console.log('-'.repeat(50));
+  console.info('\n🛡️ Governance Workflows:');
+  console.info('-'.repeat(50));
   
-  console.log('\n📋 Tag Lifecycle Management:');
-  console.log('  1. Proposal → Review → Approval → Implementation');
-  console.log('  2. Usage Monitoring → Performance Analysis → Optimization');
-  console.log('  3. Deprecation Detection → Grace Period → Removal');
+  console.info('\n📋 Tag Lifecycle Management:');
+  console.info('  1. Proposal → Review → Approval → Implementation');
+  console.info('  2. Usage Monitoring → Performance Analysis → Optimization');
+  console.info('  3. Deprecation Detection → Grace Period → Removal');
   
-  console.log('\n🔄 Quality Assurance Process:');
-  console.log('  • Pre-commit validation');
-  console.log('  • CI/CD pipeline checks');
-  console.log('  • Daily compliance audits');
-  console.log('  • Quarterly governance reviews');
+  console.info('\n🔄 Quality Assurance Process:');
+  console.info('  • Pre-commit validation');
+  console.info('  • CI/CD pipeline checks');
+  console.info('  • Daily compliance audits');
+  console.info('  • Quarterly governance reviews');
   
-  console.log('\n📊 Continuous Improvement:');
-  console.log('  • Usage pattern analysis');
-  console.log('  • Relationship optimization');
-  console.log('  • Category refinement');
-  console.log('  • Governance process enhancement');
+  console.info('\n📊 Continuous Improvement:');
+  console.info('  • Usage pattern analysis');
+  console.info('  • Relationship optimization');
+  console.info('  • Category refinement');
+  console.info('  • Governance process enhancement');
 }
 
 // Run the complete demonstration

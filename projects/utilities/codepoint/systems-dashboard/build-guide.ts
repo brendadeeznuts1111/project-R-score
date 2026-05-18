@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 // build-guide.ts - Comprehensive build configuration guide
 
-console.log("📚 Bun Build Configuration Guide");
-console.log("=".repeat(50));
+console.info("📚 Bun Build Configuration Guide");
+console.info("=".repeat(50));
 
 interface BuildConfig {
   name: string;
@@ -144,16 +144,16 @@ export DB_PASSWORD=production-password`;
 }
 
 function main() {
-  console.log("🏗️ Build Configuration Matrix\n");
+  console.info("🏗️ Build Configuration Matrix\n");
 
   // Display configuration matrix
-  console.log(
+  console.info(
     "┌─────────────┬─────────┬─────────┬───────────┬─────────┬──────────┐"
   );
-  console.log(
+  console.info(
     "│ Configuration│ Security│ Performance│ Bundle Size│ Target  │ Use Case │"
   );
-  console.log(
+  console.info(
     "├─────────────┼─────────┼─────────┼───────────┼─────────┼──────────┤"
   );
 
@@ -179,90 +179,90 @@ function main() {
     const target = config.target === "bun" ? "🟦" : "🌐";
     const useCase = config.useCase[0];
 
-    console.log(
+    console.info(
       `│ ${config.name.padEnd(11)} │ ${security} ${config.security.padEnd(7)} │ ${performance} ${config.performance.padEnd(8)} │ ${size} ${config.bundleSize.padEnd(9)} │ ${target} ${config.target.padEnd(6)} │ ${useCase.padEnd(8)} │`
     );
   });
 
-  console.log(
+  console.info(
     "└─────────────┴─────────┴─────────┴───────────┴─────────┴──────────┘"
   );
-  console.log("");
+  console.info("");
 
   // Detailed configuration examples
   buildConfigs.forEach((config, index) => {
-    console.log(`${index + 1}. ${config.name} Configuration`);
-    console.log("─".repeat(30));
-    console.log(`📝 Description: ${config.description}`);
-    console.log(`🎯 Use Cases: ${config.useCase.join(", ")}`);
-    console.log("");
+    console.info(`${index + 1}. ${config.name} Configuration`);
+    console.info("─".repeat(30));
+    console.info(`📝 Description: ${config.description}`);
+    console.info(`🎯 Use Cases: ${config.useCase.join(", ")}`);
+    console.info("");
 
-    console.log("🔧 Build Command:");
-    console.log(`   ${generateBuildCommand(config)}`);
-    console.log("");
+    console.info("🔧 Build Command:");
+    console.info(`   ${generateBuildCommand(config)}`);
+    console.info("");
 
-    console.log("🔒 Security Analysis:");
+    console.info("🔒 Security Analysis:");
     analyzeSecurity(config).forEach((risk) => {
-      console.log(`   ${risk}`);
+      console.info(`   ${risk}`);
     });
-    console.log("");
+    console.info("");
 
-    console.log("🌍 Environment Setup:");
-    console.log(generateEnvironmentSetup(config));
-    console.log("");
+    console.info("🌍 Environment Setup:");
+    console.info(generateEnvironmentSetup(config));
+    console.info("");
 
-    console.log("📋 Configuration File (bunfig.toml):");
-    console.log(`   [build.${config.name.toLowerCase()}]`);
-    console.log(`   env = ${config.env ? `"${config.env}"` : "false"}`);
-    console.log(`   minify = ${config.minify}`);
-    console.log(`   sourcemap = "${config.sourcemap}"`);
-    console.log(`   target = "${config.target}"`);
-    console.log("");
+    console.info("📋 Configuration File (bunfig.toml):");
+    console.info(`   [build.${config.name.toLowerCase()}]`);
+    console.info(`   env = ${config.env ? `"${config.env}"` : "false"}`);
+    console.info(`   minify = ${config.minify}`);
+    console.info(`   sourcemap = "${config.sourcemap}"`);
+    console.info(`   target = "${config.target}"`);
+    console.info("");
 
     if (index < buildConfigs.length - 1) {
-      console.log("─".repeat(50));
-      console.log("");
+      console.info("─".repeat(50));
+      console.info("");
     }
   });
 
   // Best practices section
-  console.log("🎯 BEST PRACTICES");
-  console.log("=".repeat(50));
+  console.info("🎯 BEST PRACTICES");
+  console.info("=".repeat(50));
 
-  console.log("\n🔒 Security Best Practices:");
-  console.log("   ✅ Always use PUBLIC_* prefix for client-side variables");
-  console.log("   ✅ Keep secrets (API keys, passwords) runtime-only");
-  console.log("   ✅ Use different configs per environment");
-  console.log("   ✅ Validate environment variables at startup");
-  console.log("   ❌ Never use inline mode in production");
-  console.log("   ❌ Don't commit .env files to version control");
+  console.info("\n🔒 Security Best Practices:");
+  console.info("   ✅ Always use PUBLIC_* prefix for client-side variables");
+  console.info("   ✅ Keep secrets (API keys, passwords) runtime-only");
+  console.info("   ✅ Use different configs per environment");
+  console.info("   ✅ Validate environment variables at startup");
+  console.info("   ❌ Never use inline mode in production");
+  console.info("   ❌ Don't commit .env files to version control");
 
-  console.log("\n⚡ Performance Best Practices:");
-  console.log("   ✅ Enable minification for production");
-  console.log("   ✅ Use external source maps for debugging");
-  console.log("   ✅ Target specific environments (browser vs bun)");
-  console.log("   ✅ Consider code splitting for large apps");
-  console.log("   ✅ Use tree shaking to remove dead code");
+  console.info("\n⚡ Performance Best Practices:");
+  console.info("   ✅ Enable minification for production");
+  console.info("   ✅ Use external source maps for debugging");
+  console.info("   ✅ Target specific environments (browser vs bun)");
+  console.info("   ✅ Consider code splitting for large apps");
+  console.info("   ✅ Use tree shaking to remove dead code");
 
-  console.log("\n📦 Bundle Size Optimization:");
-  console.log("   ✅ Minification reduces size by 20-40%");
-  console.log("   ✅ Tree shaking removes unused code");
-  console.log("   ✅ Code splitting improves load times");
-  console.log("   ✅ Compression on CDN/serve level");
-  console.log("   ✅ Image and asset optimization");
+  console.info("\n📦 Bundle Size Optimization:");
+  console.info("   ✅ Minification reduces size by 20-40%");
+  console.info("   ✅ Tree shaking removes unused code");
+  console.info("   ✅ Code splitting improves load times");
+  console.info("   ✅ Compression on CDN/serve level");
+  console.info("   ✅ Image and asset optimization");
 
-  console.log("\n🔧 Development Workflow:");
-  console.log("   🧪 Development: Use inline env vars for debugging");
-  console.log("   🚀 Staging: Use PUBLIC_* for realistic testing");
-  console.log("   🏭 Production: Use optimized secure builds");
-  console.log("   🤖 CI/CD: Use disabled env vars for security");
-  console.log("   🧪 Testing: Use fast builds without sourcemaps");
+  console.info("\n🔧 Development Workflow:");
+  console.info("   🧪 Development: Use inline env vars for debugging");
+  console.info("   🚀 Staging: Use PUBLIC_* for realistic testing");
+  console.info("   🏭 Production: Use optimized secure builds");
+  console.info("   🤖 CI/CD: Use disabled env vars for security");
+  console.info("   🧪 Testing: Use fast builds without sourcemaps");
 
-  console.log("\n✅ Build Configuration Guide Complete!");
-  console.log("\n📚 Additional Resources:");
-  console.log("   📖 Bun Docs: https://bun.sh/docs/bundler");
-  console.log("   🔧 Environment Variables: https://bun.sh/docs/runtime/env");
-  console.log("   🏗️ Build API: https://bun.sh/docs/bundler/api");
+  console.info("\n✅ Build Configuration Guide Complete!");
+  console.info("\n📚 Additional Resources:");
+  console.info("   📖 Bun Docs: https://bun.sh/docs/bundler");
+  console.info("   🔧 Environment Variables: https://bun.sh/docs/runtime/env");
+  console.info("   🏗️ Build API: https://bun.sh/docs/bundler/api");
 }
 
 main();

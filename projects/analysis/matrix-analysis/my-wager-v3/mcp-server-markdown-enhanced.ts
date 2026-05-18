@@ -145,9 +145,9 @@ function generateRecommendations(status: any, errors: any[]): string {
 }
 
 // Example usage in MCP server
-console.log('Example MCP API call:');
-console.log('POST /call');
-console.log(JSON.stringify({
+console.info('Example MCP API call:');
+console.info('POST /call');
+console.info(JSON.stringify({
   tool: 'generate_report',
   arguments: {
     format: 'html',
@@ -156,4 +156,4 @@ console.log(JSON.stringify({
   }
 }, null, 2));
 
-console.log('\nWould return HTML report ready for dashboard display\n');
+console.info('\nWould return HTML report ready for dashboard display\n');

@@ -1,7 +1,7 @@
 // unicode-demo.ts - Simple Unicode Inspector Demo
 
-console.log("🎯 Unicode Inspector Demo");
-console.log("========================");
+console.info("🎯 Unicode Inspector Demo");
+console.info("========================");
 
 // Simple Unicode box drawing
 function createBox(width: number, height: number, title: string): string {
@@ -99,19 +99,19 @@ function createProgressBar(
 }
 
 // Demo the Unicode components
-console.log("\n📦 Unicode Box:");
-console.log(createBox(30, 3, "BUN SCORING SYSTEM"));
+console.info("\n📦 Unicode Box:");
+console.info(createBox(30, 3, "BUN SCORING SYSTEM"));
 
-console.log("📊 Status Panel:");
+console.info("📊 Status Panel:");
 const statusItems = [
   { label: "Service", value: "OPERATIONAL", status: "✅" },
   { label: "Cache", value: "47 entries", status: "📦" },
   { label: "Hit Rate", value: "89.1%", status: "🎯" },
   { label: "Errors", value: "0", status: "✅" },
 ];
-console.log(createStatusPanel("System Status", statusItems));
+console.info(createStatusPanel("System Status", statusItems));
 
-console.log("📋 Matrix Table:");
+console.info("📋 Matrix Table:");
 const matrix = createMatrixTable(
   ["Operation", "Time", "Status"],
   [
@@ -120,9 +120,9 @@ const matrix = createMatrixTable(
     ["WebSocket", "500 μs", "⚡"],
   ]
 );
-console.log(matrix);
+console.info(matrix);
 
-console.log("🌳 Tree Structure:");
+console.info("🌳 Tree Structure:");
 const tree = createTree([
   {
     name: "ScoringSystem",
@@ -141,17 +141,17 @@ const tree = createTree([
     ],
   },
 ]);
-console.log(tree);
+console.info(tree);
 
-console.log("📈 Progress Bar:");
-console.log(createProgressBar(75, 100));
+console.info("📈 Progress Bar:");
+console.info(createProgressBar(75, 100));
 
-console.log("\n✅ Unicode Inspector demo completed!");
-console.log("\n🎯 Key Features Demonstrated:");
-console.log("   • Perfect Unicode box drawing (┌─┐, ╔═╗)");
-console.log("   • Aligned status panels with status indicators");
-console.log("   • Matrix tables with proper column alignment");
-console.log("   • Tree structures with Unicode connectors");
-console.log("   • Progress bars with block characters");
-console.log("   • HSL color support (when ColorCoder is available)");
-console.log("   • Bun.stringWidth integration for accurate sizing");
+console.info("\n✅ Unicode Inspector demo completed!");
+console.info("\n🎯 Key Features Demonstrated:");
+console.info("   • Perfect Unicode box drawing (┌─┐, ╔═╗)");
+console.info("   • Aligned status panels with status indicators");
+console.info("   • Matrix tables with proper column alignment");
+console.info("   • Tree structures with Unicode connectors");
+console.info("   • Progress bars with block characters");
+console.info("   • HSL color support (when ColorCoder is available)");
+console.info("   • Bun.stringWidth integration for accurate sizing");

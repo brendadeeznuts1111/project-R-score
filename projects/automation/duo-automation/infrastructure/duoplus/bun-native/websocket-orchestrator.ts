@@ -52,7 +52,7 @@ export class BunSocketOrchestrator {
       }
     });
 
-    console.log(`🚀 WebSocket Orchestrator started on port ${this.port}`);
+    console.info(`🚀 WebSocket Orchestrator started on port ${this.port}`);
   }
 
   async stop(): Promise<void> {
@@ -113,7 +113,7 @@ export class BunSocketOrchestrator {
       }
     });
 
-    console.log(`📡 Client connected: ${clientId}`);
+    console.info(`📡 Client connected: ${clientId}`);
   }
 
   private handleWebSocketMessage(ws: WebSocket, message: string | Buffer) {
@@ -157,7 +157,7 @@ export class BunSocketOrchestrator {
     const client = this.findClientByWs(ws);
     if (client) {
       this.clients.delete(client.id);
-      console.log(`📡 Client disconnected: ${client.id}`);
+      console.info(`📡 Client disconnected: ${client.id}`);
     }
   }
 

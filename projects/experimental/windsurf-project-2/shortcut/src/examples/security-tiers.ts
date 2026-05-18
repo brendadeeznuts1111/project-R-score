@@ -84,9 +84,9 @@ export const auditFeatures = feature("AUDIT_LOG") ? {
 export function debugPattern(pattern: string) {
   if (!feature("DEBUG")) return;
   
-  console.log(`[DEBUG] Analyzing ${pattern}`);
-  console.log(`[DEBUG] Pattern length: ${pattern.length}`);
-  console.log(`[DEBUG] Hash: ${Bun.hash.crc32(pattern).toString(16)}`);
+  console.info(`[DEBUG] Analyzing ${pattern}`);
+  console.info(`[DEBUG] Pattern length: ${pattern.length}`);
+  console.info(`[DEBUG] Hash: ${Bun.hash.crc32(pattern).toString(16)}`);
   // Verbose logging, stack traces
   // This code disappears in production builds
 }
@@ -122,10 +122,10 @@ export async function startInteractiveEditor() {
     process.exit(1);
   }
 
-  console.log('🖥️  Starting interactive pattern editor...');
-  console.log('✅ PTY terminal initialized');
-  console.log('✅ Live validation enabled');
-  console.log('✅ Real-time feedback active');
+  console.info('🖥️  Starting interactive pattern editor...');
+  console.info('✅ PTY terminal initialized');
+  console.info('✅ Live validation enabled');
+  console.info('✅ Real-time feedback active');
   
   // Would launch the PTY editor here
   return true;
@@ -146,10 +146,10 @@ export function createSecurityGuard() {
     .filter(([_, value]) => value !== null)
     .map(([name, value]) => ({ name, value }));
 
-  console.log(`🚀 Security Guard initialized with ${activeFeatures.length} feature sets:`);
+  console.info(`🚀 Security Guard initialized with ${activeFeatures.length} feature sets:`);
   activeFeatures.forEach(({ name, value }) => {
     if (value) {
-      console.log(`   ✅ ${name}: ${Object.keys(value).length} features`);
+      console.info(`   ✅ ${name}: ${Object.keys(value).length} features`);
     }
   });
 
@@ -215,7 +215,7 @@ async function runFuzzing(pattern: string): Promise<any[]> {
 
 async function sendTelemetry(event: string, data: any): Promise<void> {
   // Send telemetry data
-  console.log(`[TELEMETRY] ${event}:`, data);
+  console.info(`[TELEMETRY] ${event}:`, data);
 }
 
 // CLI interface for testing different feature combinations
@@ -240,7 +240,7 @@ async function main() {
   }
 
   if (args.includes('--help')) {
-    console.log(`
+    console.info(`
 Security Tiers - Feature-Flagged Security
 
 Usage:
@@ -265,25 +265,25 @@ Examples:
     globalThis.__BUN_FEATURES__ = ['PREMIUM', 'DEBUG', 'INTERACTIVE', 'TELEMETRY', 'AUDIT_LOG'];
   }
 
-  console.log('🔒 Security Tiers Demonstration');
-  console.log('===============================');
+  console.info('🔒 Security Tiers Demonstration');
+  console.info('===============================');
   
   const guard = createSecurityGuard();
   
   // Test pattern analysis
   const testPattern = 'https://localhost:3000/admin/*';
-  console.log(`\n🧪 Testing pattern: ${testPattern}`);
+  console.info(`\n🧪 Testing pattern: ${testPattern}`);
   
   const result = await guard.analyze(testPattern);
-  console.log('📊 Analysis result:', result);
+  console.info('📊 Analysis result:', result);
   
   // Test interactive mode if available
   if (guard.interactive) {
-    console.log('\n🖥️  Interactive mode available');
+    console.info('\n🖥️  Interactive mode available');
     // await guard.interactive();
   }
   
-  console.log('\n✅ Security tiers demo complete');
+  console.info('\n✅ Security tiers demo complete');
 }
 
 // Run if called directly

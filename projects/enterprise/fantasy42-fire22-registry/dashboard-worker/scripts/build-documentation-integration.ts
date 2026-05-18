@@ -362,24 +362,24 @@ if (import.meta.main) {
 
   switch (command) {
     case 'build':
-      console.log('🔥 Building Fire22 Documentation Integration...\n');
+      console.info('🔥 Building Fire22 Documentation Integration...\n');
 
       builder
         .buildDocumentation()
         .then(metrics => {
-          console.log('\n📊 Build Results:');
-          console.log(`✅ Processed: ${metrics.processedFiles}/${metrics.totalFiles} files`);
-          console.log(`🔗 Linked: ${metrics.linkedFiles} files`);
-          console.log(`📈 Coverage: ${metrics.coverage.toFixed(1)}%`);
-          console.log(`⏱️ Build Time: ${metrics.buildTime}ms`);
+          console.info('\n📊 Build Results:');
+          console.info(`✅ Processed: ${metrics.processedFiles}/${metrics.totalFiles} files`);
+          console.info(`🔗 Linked: ${metrics.linkedFiles} files`);
+          console.info(`📈 Coverage: ${metrics.coverage.toFixed(1)}%`);
+          console.info(`⏱️ Build Time: ${metrics.buildTime}ms`);
 
           if (metrics.errors.length > 0) {
-            console.log('\n❌ Errors:');
-            metrics.errors.forEach(error => console.log(`  - ${error}`));
+            console.info('\n❌ Errors:');
+            metrics.errors.forEach(error => console.info(`  - ${error}`));
           }
 
-          console.log('\n🎉 Documentation build completed!');
-          console.log('📚 Access documentation at: http://localhost:3001/docs');
+          console.info('\n🎉 Documentation build completed!');
+          console.info('📚 Access documentation at: http://localhost:3001/docs');
 
           process.exit(metrics.errors.length > 0 ? 1 : 0);
         })
@@ -390,13 +390,13 @@ if (import.meta.main) {
       break;
 
     case 'status':
-      console.log('📊 Documentation Integration Status');
-      console.log('Package: fire22-dashboard-worker@4.0.0-staging');
-      console.log('Build System: Active');
-      console.log('Documentation Hub: http://localhost:3001/docs');
+      console.info('📊 Documentation Integration Status');
+      console.info('Package: fire22-dashboard-worker@4.0.0-staging');
+      console.info('Build System: Active');
+      console.info('Documentation Hub: http://localhost:3001/docs');
       break;
 
     default:
-      console.log('Usage: bun run scripts/build-documentation-integration.ts [build|status]');
+      console.info('Usage: bun run scripts/build-documentation-integration.ts [build|status]');
   }
 }

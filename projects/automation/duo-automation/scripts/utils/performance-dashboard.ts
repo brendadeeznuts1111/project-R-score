@@ -24,8 +24,8 @@ class PerformanceDashboard {
    */
   async startDashboard(): Promise<void> {
     console.clear();
-    console.log('🎯 Empire Pro CLI Performance Dashboard');
-    console.log('═'.repeat(60));
+    console.info('🎯 Empire Pro CLI Performance Dashboard');
+    console.info('═'.repeat(60));
     
     // Subscribe to real-time updates
     this.tracker.subscribeToDomainBreakdown((domainBreakdown) => {
@@ -50,15 +50,15 @@ class PerformanceDashboard {
     const summary = this.tracker.getSummaryStatistics();
     
     // Header
-    console.log('🎯 Empire Pro CLI Performance Dashboard');
-    console.log('═'.repeat(60));
-    console.log(`⏱️  Uptime: ${(uptime / 1000).toFixed(1)}s | 📊 APIs: ${summary.totalAPIs} | ⚡ Calls: ${summary.totalCalls}`);
-    console.log(`🔥 Native Rate: ${summary.nativeImplementationRate.toFixed(1)}% | 📈 Avg Response: ${summary.averageResponseTime.toFixed(2)}ms`);
-    console.log('─'.repeat(60));
+    console.info('🎯 Empire Pro CLI Performance Dashboard');
+    console.info('═'.repeat(60));
+    console.info(`⏱️  Uptime: ${(uptime / 1000).toFixed(1)}s | 📊 APIs: ${summary.totalAPIs} | ⚡ Calls: ${summary.totalCalls}`);
+    console.info(`🔥 Native Rate: ${summary.nativeImplementationRate.toFixed(1)}% | 📈 Avg Response: ${summary.averageResponseTime.toFixed(2)}ms`);
+    console.info('─'.repeat(60));
 
     // Domain breakdown with performance indicators
-    console.log('📊 Domain Performance Breakdown:');
-    console.log('─'.repeat(60));
+    console.info('📊 Domain Performance Breakdown:');
+    console.info('─'.repeat(60));
     
     const domains = ['filesystem', 'networking', 'crypto', 'system', 'runtime'];
     domains.forEach(domain => {
@@ -71,20 +71,20 @@ class PerformanceDashboard {
       const performance = this.getPerformanceIndicator(avgTime);
       const activity = this.getActivityIndicator(totalCalls);
       
-      console.log(`${performance} ${domain.padEnd(12)} │ ${activity} ${totalCalls.toString().padStart(4)} calls │ ⏱️  ${avgTime.toFixed(2).padStart(6)}ms`);
+      console.info(`${performance} ${domain.padEnd(12)} │ ${activity} ${totalCalls.toString().padStart(4)} calls │ ⏱️  ${avgTime.toFixed(2).padStart(6)}ms`);
     });
 
-    console.log('─'.repeat(60));
+    console.info('─'.repeat(60));
     
     // Performance metrics
-    console.log('📈 Performance Metrics:');
-    console.log(`🏆 Fastest API: ${this.getFastestApi(domainBreakdown)}`);
-    console.log(`🐌 Slowest API: ${this.getSlowestApi(domainBreakdown)}`);
-    console.log(`🔥 Most Active: ${this.getMostActiveApi(domainBreakdown)}`);
-    console.log(`💾 Memory Usage: ${(health.memoryUsage.heapUsed / 1024 / 1024).toFixed(1)}MB`);
+    console.info('📈 Performance Metrics:');
+    console.info(`🏆 Fastest API: ${this.getFastestApi(domainBreakdown)}`);
+    console.info(`🐌 Slowest API: ${this.getSlowestApi(domainBreakdown)}`);
+    console.info(`🔥 Most Active: ${this.getMostActiveApi(domainBreakdown)}`);
+    console.info(`💾 Memory Usage: ${(health.memoryUsage.heapUsed / 1024 / 1024).toFixed(1)}MB`);
     
-    console.log('─'.repeat(60));
-    console.log('🔄 Real-time updates every 1s | Press Ctrl+C to exit');
+    console.info('─'.repeat(60));
+    console.info('🔄 Real-time updates every 1s | Press Ctrl+C to exit');
   }
 
   /**
@@ -198,7 +198,7 @@ class PerformanceDashboard {
     return new Promise((resolve) => {
       // Handle graceful shutdown
       process.on('SIGINT', () => {
-        console.log('\n🛑 Shutting down performance dashboard...');
+        console.info('\n🛑 Shutting down performance dashboard...');
         this.tracker.shutdown();
         resolve();
       });

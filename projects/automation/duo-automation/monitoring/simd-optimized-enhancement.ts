@@ -416,8 +416,8 @@ export class SIMDArtifactSearch {
  * Demonstration of SIMD-optimized performance
  */
 async function demonstrateSIMDOptimization() {
-  console.log('⚡ SIMD-Optimized Performance Enhancement Demo');
-  console.log('='.repeat(60));
+  console.info('⚡ SIMD-Optimized Performance Enhancement Demo');
+  console.info('='.repeat(60));
   
   const simdSearch = new SIMDOptimizedSearch();
   const artifactSearch = new SIMDArtifactSearch();
@@ -427,33 +427,33 @@ async function demonstrateSIMDOptimization() {
   const patterns = ['needle', 'test', 'pattern', 'search'];
   
   // Demonstrate SIMD optimization
-  console.log('\n🚀 SIMD Optimization Demonstration:');
+  console.info('\n🚀 SIMD Optimization Demonstration:');
   
   // Single search
-  console.log('\n📝 Single Pattern Search:');
+  console.info('\n📝 Single Pattern Search:');
   const singleResult = await simdSearch.optimizedSearch(largeContent, 'needle');
-  console.log(`   Found: ${singleResult.found} at position ${singleResult.position}`);
-  console.log(`   Search time: ${singleResult.metrics.searchTime.toFixed(2)}ms`);
-  console.log(`   Throughput: ${singleResult.metrics.throughput.toFixed(2)} MB/s`);
-  console.log(`   SIMD accelerated: ${singleResult.metrics.simdAccelerated ? '✅' : '❌'}`);
+  console.info(`   Found: ${singleResult.found} at position ${singleResult.position}`);
+  console.info(`   Search time: ${singleResult.metrics.searchTime.toFixed(2)}ms`);
+  console.info(`   Throughput: ${singleResult.metrics.throughput.toFixed(2)} MB/s`);
+  console.info(`   SIMD accelerated: ${singleResult.metrics.simdAccelerated ? '✅' : '❌'}`);
   
   // Batch search
-  console.log('\n📊 Batch Pattern Search:');
+  console.info('\n📊 Batch Pattern Search:');
   const batchResult = await simdSearch.batchSearch(largeContent, patterns);
-  console.log(`   Patterns searched: ${patterns.length}`);
-  console.log(`   Matches found: ${batchResult.results.filter(r => r.found).length}`);
-  console.log(`   Search time: ${batchResult.metrics.searchTime.toFixed(2)}ms`);
-  console.log(`   Throughput: ${batchResult.metrics.throughput.toFixed(2)} MB/s`);
+  console.info(`   Patterns searched: ${patterns.length}`);
+  console.info(`   Matches found: ${batchResult.results.filter(r => r.found).length}`);
+  console.info(`   Search time: ${batchResult.metrics.searchTime.toFixed(2)}ms`);
+  console.info(`   Throughput: ${batchResult.metrics.throughput.toFixed(2)} MB/s`);
   
   // Benchmark SIMD vs non-SIMD
-  console.log('\n⚡ Performance Benchmark:');
+  console.info('\n⚡ Performance Benchmark:');
   const benchmark = await simdSearch.benchmark(largeContent, 'needle');
-  console.log(`   SIMD search time: ${benchmark.simd.searchTime.toFixed(2)}ms`);
-  console.log(`   Non-SIMD search time: ${benchmark.nonSIMD.searchTime.toFixed(2)}ms`);
-  console.log(`   Performance improvement: ${benchmark.improvement.toFixed(2)}x faster`);
+  console.info(`   SIMD search time: ${benchmark.simd.searchTime.toFixed(2)}ms`);
+  console.info(`   Non-SIMD search time: ${benchmark.nonSIMD.searchTime.toFixed(2)}ms`);
+  console.info(`   Performance improvement: ${benchmark.improvement.toFixed(2)}x faster`);
   
   // Artifact search demonstration
-  console.log('\n🔍 Artifact Search with SIMD:');
+  console.info('\n🔍 Artifact Search with SIMD:');
   const artifacts = [
     {
       path: 'src/api/auth.ts',
@@ -479,30 +479,30 @@ async function demonstrateSIMDOptimization() {
   ];
   
   const artifactResult = await artifactSearch.searchArtifacts(artifacts, 'security');
-  console.log(`   Artifacts searched: ${artifacts.length}`);
-  console.log(`   Matches found: ${artifactResult.results.length}`);
-  console.log(`   Search time: ${artifactResult.metrics.searchTime.toFixed(2)}ms`);
-  console.log(`   Throughput: ${artifactResult.metrics.throughput.toFixed(2)} MB/s`);
+  console.info(`   Artifacts searched: ${artifacts.length}`);
+  console.info(`   Matches found: ${artifactResult.results.length}`);
+  console.info(`   Search time: ${artifactResult.metrics.searchTime.toFixed(2)}ms`);
+  console.info(`   Throughput: ${artifactResult.metrics.throughput.toFixed(2)} MB/s`);
   
   artifactResult.results.forEach((result, index) => {
-    console.log(`   ${index + 1}. ${result.path} (relevance: ${result.relevanceScore})`);
+    console.info(`   ${index + 1}. ${result.path} (relevance: ${result.relevanceScore})`);
   });
   
   // Performance statistics
-  console.log('\n📈 Performance Statistics:');
+  console.info('\n📈 Performance Statistics:');
   const stats = simdSearch.getPerformanceStats();
-  console.log(`   Average search time: ${stats.averageSearchTime.toFixed(2)}ms`);
-  console.log(`   Average throughput: ${stats.averageThroughput.toFixed(2)} MB/s`);
-  console.log(`   Total bytes processed: ${(stats.totalBytesProcessed / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`   SIMD acceleration rate: ${stats.simdAccelerationRate.toFixed(1)}%`);
+  console.info(`   Average search time: ${stats.averageSearchTime.toFixed(2)}ms`);
+  console.info(`   Average throughput: ${stats.averageThroughput.toFixed(2)} MB/s`);
+  console.info(`   Total bytes processed: ${(stats.totalBytesProcessed / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`   SIMD acceleration rate: ${stats.simdAccelerationRate.toFixed(1)}%`);
   
-  console.log('\n🎉 SIMD Optimization Demo Complete!');
-  console.log('\n💡 Benefits Achieved:');
-  console.log('   ⚡ Up to 2x faster search with SIMD optimization');
-  console.log('   🚀 High-throughput processing of large buffers');
-  console.log('   📊 Optimized for large file searches');
-  console.log('   🔍 Enhanced artifact search performance');
-  console.log('   📈 Real-time performance monitoring');
+  console.info('\n🎉 SIMD Optimization Demo Complete!');
+  console.info('\n💡 Benefits Achieved:');
+  console.info('   ⚡ Up to 2x faster search with SIMD optimization');
+  console.info('   🚀 High-throughput processing of large buffers');
+  console.info('   📊 Optimized for large file searches');
+  console.info('   🔍 Enhanced artifact search performance');
+  console.info('   📈 Real-time performance monitoring');
 }
 
 // Run demonstration

@@ -166,5 +166,5 @@ bench("String.length", () => {
 // Run benchmarks
 run().then(() => {
 	cleanup();
-	console.log("\n✅ Benchmarks complete, cleaned up test directory");
+	console.info("\n✅ Benchmarks complete, cleaned up test directory");
 });

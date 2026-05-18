@@ -130,7 +130,7 @@ async function main() {
   const verbose = args.includes("--verbose") || args.includes("-v");
   const showWarnings = !args.includes("--no-warnings");
 
-  console.log(`${BOLD}${CYAN}🎨 Syntax Colors TOML Linter${RESET}\n`);
+  console.info(`${BOLD}${CYAN}🎨 Syntax Colors TOML Linter${RESET}\n`);
 
   const startTime = performance.now();
   const glob = new Glob("**/*colors*.toml");
@@ -147,11 +147,11 @@ async function main() {
   }
 
   if (files.length === 0) {
-    console.log(`${YELLOW}⚠ No *colors*.toml files found${RESET}`);
+    console.info(`${YELLOW}⚠ No *colors*.toml files found${RESET}`);
     process.exit(0);
   }
 
-  console.log(`Found ${files.length} TOML file(s) to validate:\n`);
+  console.info(`Found ${files.length} TOML file(s) to validate:\n`);
 
   let totalErrors = 0;
   let totalWarnings = 0;
@@ -164,36 +164,36 @@ async function main() {
     const relativePath = file.replace(process.cwd() + "/", "");
 
     if (result.valid && result.warnings.length === 0) {
-      console.log(`${GREEN}✓${RESET} ${relativePath}`);
+      console.info(`${GREEN}✓${RESET} ${relativePath}`);
     } else if (result.valid && result.warnings.length > 0) {
-      console.log(`${YELLOW}⚠${RESET} ${relativePath} (${result.warnings.length} warning(s))`);
+      console.info(`${YELLOW}⚠${RESET} ${relativePath} (${result.warnings.length} warning(s))`);
       if (showWarnings) {
         for (const warning of result.warnings) {
-          console.log(`  ${YELLOW}→${RESET} ${warning}`);
+          console.info(`  ${YELLOW}→${RESET} ${warning}`);
         }
       }
       totalWarnings += result.warnings.length;
     } else {
-      console.log(`${RED}✗${RESET} ${relativePath}`);
+      console.info(`${RED}✗${RESET} ${relativePath}`);
       for (const error of result.errors) {
-        console.log(`  ${RED}→${RESET} ${error}`);
+        console.info(`  ${RED}→${RESET} ${error}`);
       }
       totalErrors += result.errors.length;
     }
   }
 
   const elapsed = (performance.now() - startTime).toFixed(2);
-  console.log(`\n${BOLD}Summary:${RESET}`);
-  console.log(`  Files:    ${files.length}`);
-  console.log(`  Errors:   ${totalErrors > 0 ? RED : GREEN}${totalErrors}${RESET}`);
-  console.log(`  Warnings: ${totalWarnings > 0 ? YELLOW : GREEN}${totalWarnings}${RESET}`);
-  console.log(`  Time:     ${elapsed}ms`);
+  console.info(`\n${BOLD}Summary:${RESET}`);
+  console.info(`  Files:    ${files.length}`);
+  console.info(`  Errors:   ${totalErrors > 0 ? RED : GREEN}${totalErrors}${RESET}`);
+  console.info(`  Warnings: ${totalWarnings > 0 ? YELLOW : GREEN}${totalWarnings}${RESET}`);
+  console.info(`  Time:     ${elapsed}ms`);
 
   if (totalErrors > 0) {
-    console.log(`\n${RED}${BOLD}✗ Validation failed${RESET}`);
+    console.info(`\n${RED}${BOLD}✗ Validation failed${RESET}`);
     process.exit(1);
   } else {
-    console.log(`\n${GREEN}${BOLD}✓ All files valid${RESET}`);
+    console.info(`\n${GREEN}${BOLD}✓ All files valid${RESET}`);
     process.exit(0);
   }
 }

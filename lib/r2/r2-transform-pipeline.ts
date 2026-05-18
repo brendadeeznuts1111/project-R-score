@@ -87,7 +87,7 @@ export class R2TransformPipeline {
    * Initialize pipeline manager
    */
   async initialize(): Promise<void> {
-    console.log(styled('🔄 Initializing R2 Transform Pipeline', 'accent'));
+    console.info(styled('🔄 Initializing R2 Transform Pipeline', 'accent'));
 
     // Load default validators
     this.loadDefaultValidators();
@@ -95,7 +95,7 @@ export class R2TransformPipeline {
     // Load example pipelines
     this.loadExamplePipelines();
 
-    console.log(styled('✅ Pipeline manager initialized', 'success'));
+    console.info(styled('✅ Pipeline manager initialized', 'success'));
   }
 
   /**
@@ -213,7 +213,7 @@ export class R2TransformPipeline {
     };
 
     this.pipelines.set(pipeline.id, pipeline);
-    console.log(styled(`📋 Created pipeline: ${pipeline.name} (${pipeline.id})`, 'success'));
+    console.info(styled(`📋 Created pipeline: ${pipeline.name} (${pipeline.id})`, 'success'));
     return pipeline;
   }
 
@@ -248,7 +248,7 @@ export class R2TransformPipeline {
     this.activeRuns.add(runId);
     pipeline.lastRun = run.startedAt;
 
-    console.log(styled(`🚀 Starting pipeline: ${pipeline.name}`, 'info'));
+    console.info(styled(`🚀 Starting pipeline: ${pipeline.name}`, 'info'));
     const startTime = Date.now();
 
     try {
@@ -294,7 +294,7 @@ export class R2TransformPipeline {
         },
       });
 
-      console.log(
+      console.info(
         styled(`✅ Pipeline completed: ${run.outputObjects}/${run.inputObjects} objects`, 'success')
       );
     } catch (error) {
@@ -549,7 +549,7 @@ export class R2TransformPipeline {
    */
   private async writeObject(bucket: string, key: string, data: any): Promise<void> {
     // In production, would write to R2
-    console.log(styled(`  💾 Writing: ${bucket}/${key}`, 'muted'));
+    console.info(styled(`  💾 Writing: ${bucket}/${key}`, 'muted'));
   }
 
   /**
@@ -557,7 +557,7 @@ export class R2TransformPipeline {
    */
   private async quarantineObject(pipeline: Pipeline, key: string, reason: string): Promise<void> {
     const quarantineKey = `quarantine/${pipeline.id}/${Date.now()}_${key.split('/').pop()}`;
-    console.log(styled(`  🚫 Quarantined: ${key} → ${quarantineKey}`, 'warning'));
+    console.info(styled(`  🚫 Quarantined: ${key} → ${quarantineKey}`, 'warning'));
   }
 
   /**
@@ -626,15 +626,15 @@ export class R2TransformPipeline {
    * Display pipeline status
    */
   displayStatus(): void {
-    console.log(styled('\n🔄 R2 Transform Pipeline Status', 'accent'));
-    console.log(styled('================================', 'accent'));
+    console.info(styled('\n🔄 R2 Transform Pipeline Status', 'accent'));
+    console.info(styled('================================', 'accent'));
 
-    console.log(styled('\n📋 Pipelines:', 'info'));
+    console.info(styled('\n📋 Pipelines:', 'info'));
     for (const pipeline of this.pipelines.values()) {
       const statusIcon =
         pipeline.status === 'active' ? '✅' : pipeline.status === 'paused' ? '⏸️' : '❌';
-      console.log(styled(`  ${statusIcon} ${pipeline.name} (${pipeline.id})`, 'muted'));
-      console.log(
+      console.info(styled(`  ${statusIcon} ${pipeline.name} (${pipeline.id})`, 'muted'));
+      console.info(
         styled(
           `     Steps: ${pipeline.steps.length} | Last Run: ${pipeline.lastRun || 'Never'}`,
           'muted'
@@ -642,26 +642,26 @@ export class R2TransformPipeline {
       );
     }
 
-    console.log(styled('\n▶️ Active Runs:', 'info'));
+    console.info(styled('\n▶️ Active Runs:', 'info'));
     const active = this.getRuns().filter(r => r.status === 'running');
     if (active.length === 0) {
-      console.log(styled('  No active runs', 'muted'));
+      console.info(styled('  No active runs', 'muted'));
     } else {
       for (const run of active) {
         const pipeline = this.pipelines.get(run.pipelineId);
-        console.log(styled(`  ${run.id}: ${pipeline?.name || run.pipelineId}`, 'muted'));
-        console.log(styled(`     Progress: ${run.outputObjects}/${run.inputObjects}`, 'muted'));
+        console.info(styled(`  ${run.id}: ${pipeline?.name || run.pipelineId}`, 'muted'));
+        console.info(styled(`     Progress: ${run.outputObjects}/${run.inputObjects}`, 'muted'));
       }
     }
 
-    console.log(styled('\n✅ Recent Completed Runs:', 'info'));
+    console.info(styled('\n✅ Recent Completed Runs:', 'info'));
     const recent = this.getRuns()
       .filter(r => r.status !== 'running')
       .slice(0, 5);
     for (const run of recent) {
       const pipeline = this.pipelines.get(run.pipelineId);
       const icon = run.status === 'completed' ? '✅' : '❌';
-      console.log(
+      console.info(
         styled(
           `  ${icon} ${pipeline?.name || run.pipelineId}: ${run.outputObjects} objects (${run.metrics.processingTime}ms)`,
           'muted'
@@ -679,8 +679,8 @@ if (import.meta.main) {
   const pipeline = r2TransformPipeline;
   await pipeline.initialize();
 
-  console.log(styled('\n🔄 R2 Transform Pipeline Demo', 'accent'));
-  console.log(styled('=============================', 'accent'));
+  console.info(styled('\n🔄 R2 Transform Pipeline Demo', 'accent'));
+  console.info(styled('=============================', 'accent'));
 
   // Display pipelines
   pipeline.displayStatus();
@@ -688,14 +688,14 @@ if (import.meta.main) {
   // Execute a pipeline
   const pipelines = pipeline.getAllPipelines();
   if (pipelines.length > 0) {
-    console.log(styled(`\n🚀 Executing pipeline: ${pipelines[0].name}`, 'info'));
+    console.info(styled(`\n🚀 Executing pipeline: ${pipelines[0].name}`, 'info'));
     const run = await pipeline.executePipeline(pipelines[0].id);
-    console.log(styled(`\n✅ Run completed:`, 'success'));
-    console.log(styled(`  Input: ${run.inputObjects} objects`, 'muted'));
-    console.log(styled(`  Output: ${run.outputObjects} objects`, 'muted'));
-    console.log(styled(`  Time: ${run.metrics.processingTime}ms`, 'muted'));
+    console.info(styled(`\n✅ Run completed:`, 'success'));
+    console.info(styled(`  Input: ${run.inputObjects} objects`, 'muted'));
+    console.info(styled(`  Output: ${run.outputObjects} objects`, 'muted'));
+    console.info(styled(`  Time: ${run.metrics.processingTime}ms`, 'muted'));
     if (run.errors.length > 0) {
-      console.log(styled(`  Errors: ${run.errors.length}`, 'error'));
+      console.info(styled(`  Errors: ${run.errors.length}`, 'error'));
     }
   }
 }

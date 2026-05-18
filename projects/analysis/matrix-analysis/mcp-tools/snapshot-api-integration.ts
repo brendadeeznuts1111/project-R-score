@@ -20,7 +20,7 @@ const snapshotRoutes = {
   // POST /api/snapshots/bulk - Create snapshots for all tenants
   'POST /api/snapshots/bulk': async (req: Request) => {
     try {
-      console.log('🚀 Starting bulk snapshot creation...');
+      console.info('🚀 Starting bulk snapshot creation...');
       const result = await snapshotAllTenants();
       
       return new Response(JSON.stringify({
@@ -45,7 +45,7 @@ const snapshotRoutes = {
   'POST /api/snapshots/:tenant': async (req: Request, params: { tenant: string }) => {
     try {
       const { tenant } = params;
-      console.log(`📸 Creating snapshot for tenant: ${tenant}`);
+      console.info(`📸 Creating snapshot for tenant: ${tenant}`);
       
       const result = await snapshotTenantAudit(tenant);
       
@@ -157,50 +157,50 @@ const snapshotRoutes = {
 };
 
 // Demo usage
-console.log("🔗 Snapshot API Integration for Dashboard");
-console.log("=" .repeat(45));
+console.info("🔗 Snapshot API Integration for Dashboard");
+console.info("=" .repeat(45));
 
-console.log("\n📋 Available API Endpoints:");
+console.info("\n📋 Available API Endpoints:");
 Object.entries(snapshotRoutes).forEach(([route, handler]) => {
   const [method, path] = route.split(' ');
-  console.log(`  ${method.padEnd(4)} ${path}`);
+  console.info(`  ${method.padEnd(4)} ${path}`);
 });
 
-console.log("\n🎯 Dashboard Integration Examples:");
-console.log("");
+console.info("\n🎯 Dashboard Integration Examples:");
+console.info("");
 
-console.log("// 1. Trigger bulk snapshots from dashboard");
-console.log("fetch('/api/snapshots/bulk', { method: 'POST' })");
-console.log("  .then(res => res.json())");
-console.log("  .then(data => console.log(data.message));");
-console.log("");
+console.info("// 1. Trigger bulk snapshots from dashboard");
+console.info("fetch('/api/snapshots/bulk', { method: 'POST' })");
+console.info("  .then(res => res.json())");
+console.info("  .then(data => console.info(data.message));");
+console.info("");
 
-console.log("// 2. Get snapshot status for UI");
-console.log("fetch('/api/snapshots/status')");
-console.log("  .then(res => res.json())");
-console.log("  .then(data => {");
-console.log("    updateSnapshotUI(data.data);");
-console.log("  });");
-console.log("");
+console.info("// 2. Get snapshot status for UI");
+console.info("fetch('/api/snapshots/status')");
+console.info("  .then(res => res.json())");
+console.info("  .then(data => {");
+console.info("    updateSnapshotUI(data.data);");
+console.info("  });");
+console.info("");
 
-console.log("// 3. Download specific snapshot");
-console.log("const downloadSnapshot = (tenant, filename) => {");
-console.log("  window.open(`/api/snapshots/${tenant}/download/${filename}`);");
-console.log("};");
-console.log("");
+console.info("// 3. Download specific snapshot");
+console.info("const downloadSnapshot = (tenant, filename) => {");
+console.info("  window.open(`/api/snapshots/${tenant}/download/${filename}`);");
+console.info("};");
+console.info("");
 
-console.log("// 4. Real-time progress with WebSocket");
-console.log("const ws = new WebSocket('ws://localhost:3333/snapshots');");
-console.log("ws.onmessage = (event) => {");
-console.log("  const progress = JSON.parse(event.data);");
-console.log("  updateProgressBar(progress);");
-console.log("};");
+console.info("// 4. Real-time progress with WebSocket");
+console.info("const ws = new WebSocket('ws://localhost:3333/snapshots');");
+console.info("ws.onmessage = (event) => {");
+console.info("  const progress = JSON.parse(event.data);");
+console.info("  updateProgressBar(progress);");
+console.info("};");
 
-console.log("\n🚀 Frontend Integration Benefits:");
-console.log("  • Real-time snapshot progress");
-console.log("  • Download links for each snapshot");
-console.log("  • Tenant-specific snapshot history");
-console.log("  • Bulk operations with progress tracking");
-console.log("  • Error handling and retry mechanisms");
+console.info("\n🚀 Frontend Integration Benefits:");
+console.info("  • Real-time snapshot progress");
+console.info("  • Download links for each snapshot");
+console.info("  • Tenant-specific snapshot history");
+console.info("  • Bulk operations with progress tracking");
+console.info("  • Error handling and retry mechanisms");
 
 export { snapshotRoutes };

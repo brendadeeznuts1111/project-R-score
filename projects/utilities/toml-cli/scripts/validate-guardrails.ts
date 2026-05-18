@@ -361,8 +361,8 @@ async function checkProductionReadiness(): Promise<{ passed: boolean; message: s
  * Run all guardrail tests
  */
 async function main() {
-  console.log('🛡️  GUARDRAIL VALIDATION SYSTEM\n');
-  console.log('=' .repeat(60));
+  console.info('🛡️  GUARDRAIL VALIDATION SYSTEM\n');
+  console.info('=' .repeat(60));
   
   const tests: GuardrailTest[] = [
     {
@@ -414,19 +414,19 @@ async function main() {
   for (const test of tests) {
     process.stdout.write(`  🧪 ${test.name}...`);
     const result = await test.check();
-    console.log(` ${result.passed ? '✅' : '❌'}`);
+    console.info(` ${result.passed ? '✅' : '❌'}`);
     results.push({ name: test.name, result, severity: test.severity });
   }
   
-  console.log('\n' + '='.repeat(60));
-  console.log('\n📊 RESULTS:\n');
+  console.info('\n' + '='.repeat(60));
+  console.info('\n📊 RESULTS:\n');
   
   let criticalFailures = 0;
   let highFailures = 0;
   
   for (const { name, result, severity } of results) {
-    console.log(`  ${result.passed ? '✅' : '❌'} ${name}`);
-    console.log(`     ${result.message}`);
+    console.info(`  ${result.passed ? '✅' : '❌'} ${name}`);
+    console.info(`     ${result.message}`);
     
     if (!result.passed) {
       if (severity === 'critical') criticalFailures++;
@@ -434,22 +434,22 @@ async function main() {
     }
   }
   
-  console.log('\n' + '='.repeat(60));
-  console.log(`\n📈 Summary:`);
-  console.log(`   Total: ${results.length}`);
-  console.log(`   Passed: ${results.filter(r => r.result.passed).length}`);
-  console.log(`   Failed: ${results.filter(r => !r.result.passed).length}`);
-  console.log(`   Critical Issues: ${criticalFailures}`);
-  console.log(`   High Issues: ${highFailures}\n`);
+  console.info('\n' + '='.repeat(60));
+  console.info(`\n📈 Summary:`);
+  console.info(`   Total: ${results.length}`);
+  console.info(`   Passed: ${results.filter(r => r.result.passed).length}`);
+  console.info(`   Failed: ${results.filter(r => !r.result.passed).length}`);
+  console.info(`   Critical Issues: ${criticalFailures}`);
+  console.info(`   High Issues: ${highFailures}\n`);
   
   if (criticalFailures > 0) {
-    console.log('❌ CRITICAL ISSUES BLOCKING DEPLOYMENT\n');
+    console.info('❌ CRITICAL ISSUES BLOCKING DEPLOYMENT\n');
     process.exit(1);
   } else if (highFailures > 0) {
-    console.log('⚠️  HIGH PRIORITY ISSUES DETECTED\n');
+    console.info('⚠️  HIGH PRIORITY ISSUES DETECTED\n');
     process.exit(0); // Warning but allow to continue
   } else {
-    console.log('✅ ALL GUARDRAILS PASSING - PRODUCTION READY\n');
+    console.info('✅ ALL GUARDRAILS PASSING - PRODUCTION READY\n');
     process.exit(0);
   }
 }

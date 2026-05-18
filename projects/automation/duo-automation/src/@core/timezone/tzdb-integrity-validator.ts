@@ -256,53 +256,53 @@ export { TzdbIntegrityValidator, TzdbValidationResult, TzdbIntegrityReport };
 
 // CLI Integration
 async function runTzdbValidation() {
-  console.log('🕐 Timezone Database Integrity Validation');
-  console.log('==========================================\n');
+  console.info('🕐 Timezone Database Integrity Validation');
+  console.info('==========================================\n');
   
   const validator = new TzdbIntegrityValidator();
   
-  console.log('📅 Running monthly validation check...');
-  console.log(`💡 Pro Tip: ${validator.getMonthlyValidationCommand()}\n`);
+  console.info('📅 Running monthly validation check...');
+  console.info(`💡 Pro Tip: ${validator.getMonthlyValidationCommand()}\n`);
   
   // Validate critical zones
   const report = await validator.validateCriticalZones();
   
   // Display results
-  console.log('📊 Validation Results:');
-  console.log(`Total Zones Checked: ${report.totalZones}`);
-  console.log(`Valid Zones: ${report.validZones}`);
-  console.log(`Invalid Zones: ${report.invalidZones}`);
-  console.log(`Canonical Zones: ${report.canonicalZoneCount}`);
-  console.log(`Link Zones: ${report.linkZoneCount}`);
-  console.log(`Integrity Status: ${report.integrityStatus}\n`);
+  console.info('📊 Validation Results:');
+  console.info(`Total Zones Checked: ${report.totalZones}`);
+  console.info(`Valid Zones: ${report.validZones}`);
+  console.info(`Invalid Zones: ${report.invalidZones}`);
+  console.info(`Canonical Zones: ${report.canonicalZoneCount}`);
+  console.info(`Link Zones: ${report.linkZoneCount}`);
+  console.info(`Integrity Status: ${report.integrityStatus}\n`);
   
   // Show detailed results
   if (report.validationResults.length > 0) {
-    console.log('🔍 Detailed Results:');
+    console.info('🔍 Detailed Results:');
     report.validationResults.forEach(result => {
       const status = result.isValid ? '✅' : '❌';
       const server = result.server ? ` (${result.server})` : '';
-      console.log(`${status} ${result.zone}${server} - ${result.integrityCheck}`);
+      console.info(`${status} ${result.zone}${server} - ${result.integrityCheck}`);
       
       if (!result.isValid) {
-        console.log(`   Error: ${(result as any).error}`);
+        console.info(`   Error: ${(result as any).error}`);
       }
     });
-    console.log();
+    console.info();
   }
   
   // Show recommendations
   if (report.recommendations.length > 0) {
-    console.log('💡 Recommendations:');
+    console.info('💡 Recommendations:');
     report.recommendations.forEach(rec => {
-      console.log(`• ${rec}`);
+      console.info(`• ${rec}`);
     });
-    console.log();
+    console.info();
   }
   
   // Generate validation script
-  console.log('📜 Monthly Validation Script:');
-  console.log(validator.getValidationScript());
+  console.info('📜 Monthly Validation Script:');
+  console.info(validator.getValidationScript());
   
   return report;
 }

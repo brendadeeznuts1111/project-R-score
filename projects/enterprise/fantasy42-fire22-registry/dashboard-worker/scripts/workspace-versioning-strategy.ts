@@ -69,11 +69,11 @@ class WorkspaceVersioningStrategy {
    * 🚀 Main versioning command
    */
   async execute(bumpType: BumpType, options: any = {}): Promise<void> {
-    console.log('🔢 Fire22 Workspace Versioning Strategy');
-    console.log('='.repeat(60));
-    console.log(`📊 Strategy: ${this.config.strategy}`);
-    console.log(`📈 Bump Type: ${bumpType}`);
-    console.log('');
+    console.info('🔢 Fire22 Workspace Versioning Strategy');
+    console.info('='.repeat(60));
+    console.info(`📊 Strategy: ${this.config.strategy}`);
+    console.info(`📈 Bump Type: ${bumpType}`);
+    console.info('');
 
     // Get current versions
     const currentVersions = await this.getCurrentVersions();
@@ -88,7 +88,7 @@ class WorkspaceVersioningStrategy {
     if (!options.force) {
       const confirmed = await this.confirmChanges();
       if (!confirmed) {
-        console.log('❌ Version bump cancelled');
+        console.info('❌ Version bump cancelled');
         return;
       }
     }
@@ -111,7 +111,7 @@ class WorkspaceVersioningStrategy {
       await this.publishPackages(versionChanges);
     }
 
-    console.log('\n✅ Version bump completed successfully!');
+    console.info('\n✅ Version bump completed successfully!');
   }
 
   /**
@@ -250,21 +250,21 @@ class WorkspaceVersioningStrategy {
    * 📊 Display version changes
    */
   private displayVersionChanges(changes: VersionChange[]): void {
-    console.log('📊 Version Changes');
-    console.log('-'.repeat(60));
+    console.info('📊 Version Changes');
+    console.info('-'.repeat(60));
 
     for (const change of changes) {
       const arrow = change.oldVersion === change.newVersion ? '=' : '→';
-      console.log(`${change.workspace}:`);
-      console.log(`  ${change.oldVersion} ${arrow} ${change.newVersion}`);
+      console.info(`${change.workspace}:`);
+      console.info(`  ${change.oldVersion} ${arrow} ${change.newVersion}`);
 
       if (change.changes.length > 0) {
-        console.log(`  Changes (${change.changes.length}):`);
+        console.info(`  Changes (${change.changes.length}):`);
         change.changes.slice(0, 3).forEach(c => {
-          console.log(`    • ${c}`);
+          console.info(`    • ${c}`);
         });
         if (change.changes.length > 3) {
-          console.log(`    ... and ${change.changes.length - 3} more`);
+          console.info(`    ... and ${change.changes.length - 3} more`);
         }
       }
     }
@@ -274,17 +274,17 @@ class WorkspaceVersioningStrategy {
    * ✅ Confirm changes
    */
   private async confirmChanges(): Promise<boolean> {
-    console.log('\n⚠️  This will update all package.json files');
-    console.log('Continue? (y/N): ');
+    console.info('\n⚠️  This will update all package.json files');
+    console.info('Continue? (y/N): ');
 
     // For automated environments, auto-confirm
     if (process.env.CI || process.env.GITHUB_ACTIONS) {
-      console.log('Auto-confirming in CI environment');
+      console.info('Auto-confirming in CI environment');
       return true;
     }
 
     // In interactive mode, we'll auto-confirm for now
-    console.log('Auto-confirming for demonstration');
+    console.info('Auto-confirming for demonstration');
     return true;
   }
 
@@ -292,7 +292,7 @@ class WorkspaceVersioningStrategy {
    * 📝 Apply version changes
    */
   private async applyVersionChanges(changes: VersionChange[]): Promise<void> {
-    console.log('\n📝 Applying version changes...');
+    console.info('\n📝 Applying version changes...');
 
     for (const change of changes) {
       const packageJsonPath = join(this.workspacesPath, change.workspace, 'package.json');
@@ -315,7 +315,7 @@ class WorkspaceVersioningStrategy {
         }
 
         writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-        console.log(`  ✅ ${change.workspace}: ${change.newVersion}`);
+        console.info(`  ✅ ${change.workspace}: ${change.newVersion}`);
       }
     }
 
@@ -333,7 +333,7 @@ class WorkspaceVersioningStrategy {
 
       rootPackageJson.version = maxVersion;
       writeFileSync(rootPackageJsonPath, JSON.stringify(rootPackageJson, null, 2));
-      console.log(`  ✅ Root package.json: ${maxVersion}`);
+      console.info(`  ✅ Root package.json: ${maxVersion}`);
     }
   }
 
@@ -341,7 +341,7 @@ class WorkspaceVersioningStrategy {
    * 📝 Generate changelog
    */
   private async generateChangelog(changes: VersionChange[]): Promise<void> {
-    console.log('\n📝 Generating changelog...');
+    console.info('\n📝 Generating changelog...');
 
     const date = new Date().toISOString().split('T')[0];
     const version = changes[0].newVersion;
@@ -383,7 +383,7 @@ class WorkspaceVersioningStrategy {
     }
 
     writeFileSync(changelogPath, changelog);
-    console.log('  ✅ CHANGELOG.md updated');
+    console.info('  ✅ CHANGELOG.md updated');
   }
 
   /**
@@ -392,38 +392,38 @@ class WorkspaceVersioningStrategy {
   private async performGitOperations(changes: VersionChange[]): Promise<void> {
     if (!this.config.git) return;
 
-    console.log('\n🔀 Git operations...');
+    console.info('\n🔀 Git operations...');
 
     const version = changes[0].newVersion;
     const message = `chore: release v${version}`;
 
     // Add changed files
     await $`git add .`;
-    console.log('  ✅ Files staged');
+    console.info('  ✅ Files staged');
 
     // Commit
     try {
       await $`git commit -m ${message}`;
-      console.log('  ✅ Changes committed');
+      console.info('  ✅ Changes committed');
     } catch {
-      console.log('  ⚠️  No changes to commit');
+      console.info('  ⚠️  No changes to commit');
     }
 
     // Tag
     if (this.config.tag) {
       const tagName = `v${version}`;
       await $`git tag -a ${tagName} -m ${message}`;
-      console.log(`  ✅ Tagged as ${tagName}`);
+      console.info(`  ✅ Tagged as ${tagName}`);
     }
 
     // Push
     if (this.config.push) {
       await $`git push origin HEAD`;
-      console.log('  ✅ Pushed to origin');
+      console.info('  ✅ Pushed to origin');
 
       if (this.config.tag) {
         await $`git push origin --tags`;
-        console.log('  ✅ Tags pushed');
+        console.info('  ✅ Tags pushed');
       }
     }
   }
@@ -434,15 +434,15 @@ class WorkspaceVersioningStrategy {
   private async publishPackages(changes: VersionChange[]): Promise<void> {
     if (!this.config.publish) return;
 
-    console.log('\n📦 Publishing packages...');
+    console.info('\n📦 Publishing packages...');
 
     for (const change of changes) {
       const workspacePath = join(this.workspacesPath, change.workspace);
       try {
         await $`cd ${workspacePath} && bun publish --access public`;
-        console.log(`  ✅ ${change.workspace} published`);
+        console.info(`  ✅ ${change.workspace} published`);
       } catch (error) {
-        console.log(`  ❌ Failed to publish ${change.workspace}:`, error);
+        console.info(`  ❌ Failed to publish ${change.workspace}:`, error);
       }
     }
   }
@@ -470,22 +470,22 @@ if (import.meta.main) {
       force: args.includes('--force'),
     });
   } else {
-    console.log('Usage: bun workspace-versioning-strategy.ts [command] [options]');
-    console.log('');
-    console.log('Commands:');
-    console.log('  major       - Bump major version (breaking changes)');
-    console.log('  minor       - Bump minor version (new features)');
-    console.log('  patch       - Bump patch version (bug fixes)');
-    console.log('  prerelease  - Create prerelease version');
-    console.log('');
-    console.log('Options:');
-    console.log('  --independent    - Version workspaces independently');
-    console.log('  --no-changelog   - Skip changelog generation');
-    console.log('  --no-git        - Skip git operations');
-    console.log('  --no-tag        - Skip git tagging');
-    console.log('  --push          - Push to remote');
-    console.log('  --publish       - Publish to npm');
-    console.log('  --force         - Skip confirmation');
+    console.info('Usage: bun workspace-versioning-strategy.ts [command] [options]');
+    console.info('');
+    console.info('Commands:');
+    console.info('  major       - Bump major version (breaking changes)');
+    console.info('  minor       - Bump minor version (new features)');
+    console.info('  patch       - Bump patch version (bug fixes)');
+    console.info('  prerelease  - Create prerelease version');
+    console.info('');
+    console.info('Options:');
+    console.info('  --independent    - Version workspaces independently');
+    console.info('  --no-changelog   - Skip changelog generation');
+    console.info('  --no-git        - Skip git operations');
+    console.info('  --no-tag        - Skip git tagging');
+    console.info('  --push          - Push to remote');
+    console.info('  --publish       - Publish to npm');
+    console.info('  --force         - Skip confirmation');
   }
 }
 

@@ -49,7 +49,7 @@ export class ExecutionBridge {
       this.rust_process_pool.set(process_id, handle);
     }
 
-    console.log(`[EXEC-BRIDGE] Initialized ${this.rust_process_pool.size} Rust execution processes`);
+    console.info(`[EXEC-BRIDGE] Initialized ${this.rust_process_pool.size} Rust execution processes`);
   }
 
   /// Spawn a Rust execution process
@@ -264,7 +264,7 @@ export class ExecutionBridge {
 
   /// Shutdown bridge and cleanup processes
   async shutdown(): Promise<void> {
-    console.log('[EXEC-BRIDGE] Shutting down execution bridge...');
+    console.info('[EXEC-BRIDGE] Shutting down execution bridge...');
 
     // Wait for active executions to complete
     await Promise.allSettled(Array.from(this.active_executions.values()));
@@ -275,7 +275,7 @@ export class ExecutionBridge {
     }
 
     this.rust_process_pool.clear();
-    console.log('[EXEC-BRIDGE] Execution bridge shutdown complete');
+    console.info('[EXEC-BRIDGE] Execution bridge shutdown complete');
   }
 }
 

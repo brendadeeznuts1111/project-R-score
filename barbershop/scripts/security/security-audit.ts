@@ -94,23 +94,23 @@ function parseArgs(): AuditOptions {
 }
 
 function showHelp() {
-  console.log('🔍 Security Audit with Version Context');
-  console.log('=====================================');
-  console.log();
-  console.log('Run comprehensive security audit with version tracking.');
-  console.log();
-  console.log('Options:');
-  console.log('  --include-versions   Include version history in audit');
-  console.log('  --days <number>      Audit period in days (default: 90)');
-  console.log('  --output <format>    Output format: html, json, csv');
-  console.log('  --severity <level>   Filter by severity: all, high, critical');
-  console.log('  --compliance         Include compliance checks');
-  console.log('  --help, -h           Show this help');
-  console.log();
-  console.log('Examples:');
-  console.log('  bun security-audit.ts --include-versions --days 90 --output html');
-  console.log('  bun security-audit.ts --severity critical --output json');
-  console.log('  bun security-audit.ts --compliance --output csv');
+  console.info('🔍 Security Audit with Version Context');
+  console.info('=====================================');
+  console.info();
+  console.info('Run comprehensive security audit with version tracking.');
+  console.info();
+  console.info('Options:');
+  console.info('  --include-versions   Include version history in audit');
+  console.info('  --days <number>      Audit period in days (default: 90)');
+  console.info('  --output <format>    Output format: html, json, csv');
+  console.info('  --severity <level>   Filter by severity: all, high, critical');
+  console.info('  --compliance         Include compliance checks');
+  console.info('  --help, -h           Show this help');
+  console.info();
+  console.info('Examples:');
+  console.info('  bun security-audit.ts --include-versions --days 90 --output html');
+  console.info('  bun security-audit.ts --severity critical --output json');
+  console.info('  bun security-audit.ts --compliance --output csv');
 }
 
 function styled(
@@ -133,40 +133,40 @@ function styled(
 async function main() {
   const options = parseArgs();
 
-  console.log(styled('🔍 Security Audit', 'primary'));
-  console.log(styled('================', 'muted'));
-  console.log();
+  console.info(styled('🔍 Security Audit', 'primary'));
+  console.info(styled('================', 'muted'));
+  console.info();
 
   try {
     // Step 1: Initialize audit
-    console.log(styled('📋 Step 1: Initializing audit...', 'info'));
+    console.info(styled('📋 Step 1: Initializing audit...', 'info'));
 
     const auditStart = new Date();
     const auditEnd = new Date(auditStart.getTime() - options.days * 24 * 60 * 60 * 1000);
 
-    console.log(
+    console.info(
       styled(
         `   Period: ${auditEnd.toISOString().split('T')[0]} to ${auditStart.toISOString().split('T')[0]}`,
         'muted'
       )
     );
-    console.log(styled(`   Include versions: ${options.includeVersions}`, 'muted'));
-    console.log(styled(`   Compliance checks: ${options.compliance}`, 'muted'));
-    console.log();
+    console.info(styled(`   Include versions: ${options.includeVersions}`, 'muted'));
+    console.info(styled(`   Compliance checks: ${options.compliance}`, 'muted'));
+    console.info();
 
     // Step 2: Discover secrets
-    console.log(styled('🔍 Step 2: Discovering secrets...', 'info'));
+    console.info(styled('🔍 Step 2: Discovering secrets...', 'info'));
 
     const secrets = await discoverSecretsForAudit();
-    console.log(styled(`   Found ${secrets.length} secrets to audit`, 'success'));
+    console.info(styled(`   Found ${secrets.length} secrets to audit`, 'success'));
 
     secrets.forEach(secret => {
-      console.log(styled(`   • ${secret.key}`, 'muted'));
+      console.info(styled(`   • ${secret.key}`, 'muted'));
     });
-    console.log();
+    console.info();
 
     // Step 3: Analyze each secret
-    console.log(styled('🔬 Step 3: Analyzing secrets...', 'info'));
+    console.info(styled('🔬 Step 3: Analyzing secrets...', 'info'));
 
     const report: AuditReport = {
       metadata: {
@@ -190,7 +190,7 @@ async function main() {
     };
 
     for (const secret of secrets) {
-      console.log(styled(`   🔍 Analyzing: ${secret.key}`, 'primary'));
+      console.info(styled(`   🔍 Analyzing: ${secret.key}`, 'primary'));
 
       const secretAnalysis = await analyzeSecret(secret.key, options);
       report.secrets.push(secretAnalysis);
@@ -210,31 +210,31 @@ async function main() {
       if (issueCount > 0) {
         const criticalCount = secretAnalysis.issues.filter(i => i.severity === 'CRITICAL').length;
         const highCount = secretAnalysis.issues.filter(i => i.severity === 'HIGH').length;
-        console.log(
+        console.info(
           styled(
             `      ⚠️  ${issueCount} issues (${criticalCount} critical, ${highCount} high)`,
             'warning'
           )
         );
       } else {
-        console.log(styled('      ✅ No issues found', 'success'));
+        console.info(styled('      ✅ No issues found', 'success'));
       }
     }
 
-    console.log();
+    console.info();
 
     // Step 4: Generate recommendations
-    console.log(styled('💡 Step 4: Generating recommendations...', 'info'));
+    console.info(styled('💡 Step 4: Generating recommendations...', 'info'));
 
     report.recommendations = generateRecommendations(report);
-    console.log(styled(`   Generated ${report.recommendations.length} recommendations`, 'success'));
-    console.log();
+    console.info(styled(`   Generated ${report.recommendations.length} recommendations`, 'success'));
+    console.info();
 
     // Step 5: Calculate compliance score
-    console.log(styled('📊 Step 5: Calculating compliance score...', 'info'));
+    console.info(styled('📊 Step 5: Calculating compliance score...', 'info'));
 
     report.summary.complianceScore = calculateComplianceScore(report);
-    console.log(
+    console.info(
       styled(
         `   Compliance score: ${report.summary.complianceScore}%`,
         report.summary.complianceScore >= 90
@@ -244,49 +244,49 @@ async function main() {
             : 'error'
       )
     );
-    console.log();
+    console.info();
 
     // Step 6: Generate timeline
     if (options.includeVersions) {
-      console.log(styled('📅 Step 6: Generating activity timeline...', 'info'));
+      console.info(styled('📅 Step 6: Generating activity timeline...', 'info'));
 
       report.timeline = await generateAuditTimeline(secrets, auditEnd, auditStart);
-      console.log(
+      console.info(
         styled(`   Generated timeline with ${report.timeline.length} data points`, 'success')
       );
-      console.log();
+      console.info();
     }
 
     // Step 7: Generate output
-    console.log(styled('📄 Step 7: Generating audit report...', 'info'));
+    console.info(styled('📄 Step 7: Generating audit report...', 'info'));
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const filename = `security-audit-${timestamp}.${options.output}`;
 
     await generateAuditReport(report, filename, options.output);
 
-    console.log(styled(`   ✅ Report saved: ${filename}`, 'success'));
-    console.log();
+    console.info(styled(`   ✅ Report saved: ${filename}`, 'success'));
+    console.info();
 
     // Step 8: Show summary
-    console.log(styled('📊 Audit Summary:', 'primary'));
-    console.log(styled(`   Total secrets: ${report.summary.totalSecrets}`, 'info'));
-    console.log(styled(`   Total versions: ${report.summary.totalVersions}`, 'info'));
-    console.log(
+    console.info(styled('📊 Audit Summary:', 'primary'));
+    console.info(styled(`   Total secrets: ${report.summary.totalSecrets}`, 'info'));
+    console.info(styled(`   Total versions: ${report.summary.totalVersions}`, 'info'));
+    console.info(
       styled(
         `   Critical issues: ${report.summary.criticalIssues}`,
         report.summary.criticalIssues > 0 ? 'error' : 'success'
       )
     );
-    console.log(
+    console.info(
       styled(
         `   High issues: ${report.summary.highIssues}`,
         report.summary.highIssues > 0 ? 'warning' : 'success'
       )
     );
-    console.log(styled(`   Medium issues: ${report.summary.mediumIssues}`, 'muted'));
-    console.log(styled(`   Low issues: ${report.summary.lowIssues}`, 'muted'));
-    console.log(
+    console.info(styled(`   Medium issues: ${report.summary.mediumIssues}`, 'muted'));
+    console.info(styled(`   Low issues: ${report.summary.lowIssues}`, 'muted'));
+    console.info(
       styled(
         `   Compliance score: ${report.summary.complianceScore}%`,
         report.summary.complianceScore >= 90
@@ -298,13 +298,13 @@ async function main() {
     );
 
     if (report.summary.criticalIssues > 0) {
-      console.log();
-      console.log(styled('🚨 CRITICAL ISSUES FOUND!', 'error'));
-      console.log(styled('   Immediate action required for critical security issues', 'warning'));
+      console.info();
+      console.info(styled('🚨 CRITICAL ISSUES FOUND!', 'error'));
+      console.info(styled('   Immediate action required for critical security issues', 'warning'));
     }
 
-    console.log();
-    console.log(styled('🎉 Security audit completed!', 'success'));
+    console.info();
+    console.info(styled('🎉 Security audit completed!', 'success'));
   } catch (error) {
     console.error(styled(`❌ Audit failed: ${error.message}`, 'error'));
     process.exit(1);

@@ -22,11 +22,11 @@ const setupConfiguration = (
     environment: "development",
   }
 ) => {
-  console.log("🔧 Setting up Surgical Precision Platform configuration...");
-  console.log(`📋 Project: ${config.projectName}`);
-  console.log(`👥 Team Size: ${config.teamSize}`);
-  console.log(`🎯 Deployment: ${config.deploymentTarget}`);
-  console.log(`🌍 Environment: ${config.environment}`);
+  console.info("🔧 Setting up Surgical Precision Platform configuration...");
+  console.info(`📋 Project: ${config.projectName}`);
+  console.info(`👥 Team Size: ${config.teamSize}`);
+  console.info(`🎯 Deployment: ${config.deploymentTarget}`);
+  console.info(`🌍 Environment: ${config.environment}`);
 
   // Ensure config directories exist
   mkdirSync("configs/team", { recursive: true });
@@ -37,25 +37,25 @@ const setupConfiguration = (
   const envConfig = generateEnvConfig(config);
   writeFileSync(".env", envConfig);
   writeFileSync(".env.template", envConfig);
-  console.log("✅ Environment configuration created");
+  console.info("✅ Environment configuration created");
 
   // Create team configurations
   createTeamConfigs(config.teamSize);
-  console.log("✅ Team configurations created");
+  console.info("✅ Team configurations created");
 
   // Create deployment configurations
   createDeploymentConfigs(config.deploymentTarget);
-  console.log("✅ Deployment configurations created");
+  console.info("✅ Deployment configurations created");
 
   // Create development configuration
   createDevConfig(config);
-  console.log("✅ Development configuration created");
+  console.info("✅ Development configuration created");
 
   // Create bunfig.toml
   createBunfig(config);
-  console.log("✅ Bun configuration created");
+  console.info("✅ Bun configuration created");
 
-  console.log("🎉 Configuration setup completed!");
+  console.info("🎉 Configuration setup completed!");
 };
 
 const generateEnvConfig = (config: SetupConfig): string => {

@@ -42,7 +42,7 @@ async function log(type: string, payload: any) {
 // Check if already born
 const born = await db.get(`SELECT value FROM local_state WHERE key = 'born'`);
 if (!born) {
-  console.log("🍼 Birth sequence starting...");
+  console.info("🍼 Birth sequence starting...");
 
   // 1. Generate birth certificate
   const wallet = ethers.Wallet.createRandom();
@@ -80,7 +80,7 @@ if (!born) {
   await db.run(`INSERT INTO local_state (key, value) VALUES ('born', 'true')`);
 
   await log("birth", birth);
-  console.log("✅ Birth certificate registered");
+  console.info("✅ Birth certificate registered");
 }
 
 // 2. Daily snapshot cron (14:00 UTC)
@@ -114,14 +114,14 @@ async function createSnapshot() {
 
   await AtlasSchema.recordSnapshot(DEVICE_ID, snapId, snapId);
   await log("snapshot", { snapId });
-  console.log(`📸 Snapshot created: ${snapId}`);
+  console.info(`📸 Snapshot created: ${snapId}`);
 }
 
 async function thinSnapshots() {
   const result = await AtlasSchema.thinSnapshots(DEVICE_ID);
   if (result.deleted > 0) {
     await log("thin", result);
-    console.log(`🗑️  Thinned ${result.deleted} old snapshots`);
+    console.info(`🗑️  Thinned ${result.deleted} old snapshots`);
   }
 }
 
@@ -173,7 +173,7 @@ async function exportAtlasTar() {
     await AtlasSchema.recordColdExport(DEVICE_ID, filename, encrypted.byteLength, checksum);
     await log("cold-export", { filename, size: encrypted.byteLength, checksum });
 
-    console.log(`🗂️  Cold export completed: ${filename}`);
+    console.info(`🗂️  Cold export completed: ${filename}`);
   } catch (error) {
     await log("export-error", { error: error.message });
     console.error(`❌ Export failed: ${error.message}`);
@@ -191,9 +191,9 @@ setInterval(async () => {
   }
 }, 300_000); // Every 5 minutes
 
-console.log("🌌 Atlas-Agent active - monitoring device lifecycle");
-console.log(`📍 Device ID: ${DEVICE_ID}`);
-console.log(`📅 Birth key: ${BIRTH_KEY.substring(0, 8)}...`);
+console.info("🌌 Atlas-Agent active - monitoring device lifecycle");
+console.info(`📍 Device ID: ${DEVICE_ID}`);
+console.info(`📅 Birth key: ${BIRTH_KEY.substring(0, 8)}...`);
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {

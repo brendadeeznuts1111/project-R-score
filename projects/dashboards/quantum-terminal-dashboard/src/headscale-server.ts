@@ -273,8 +273,8 @@ export async function startHeadscaleServer(config: HeadscaleConfig) {
     },
   });
 
-  console.log(`✅ Headscale server running on port ${config.port}`);
-  console.log(`📊 Metrics available on port ${config.metricsPort}`);
+  console.info(`✅ Headscale server running on port ${config.port}`);
+  console.info(`📊 Metrics available on port ${config.metricsPort}`);
 
   return { mainServer, server };
 }

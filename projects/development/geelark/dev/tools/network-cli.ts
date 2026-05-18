@@ -29,7 +29,7 @@ import {
 function showConfig(): void {
   const config = getConfigState();
 
-  console.log(`
+  console.info(`
 ╔═══════════════════════════════════════════════════════════════════════════╗
 ║                      13-Byte Configuration State                            ║
 ╠═══════════════════════════════════════════════════════════════════════════╣
@@ -51,21 +51,21 @@ function showConfig(): void {
  * Install package with config headers
  */
 async function installPackage(packageName: string): Promise<void> {
-  console.log(`📦 Installing ${packageName} with config headers...\n`);
+  console.info(`📦 Installing ${packageName} with config headers...\n`);
 
   const config = getConfigState();
   const headers = injectConfigHeaders({ method: "GET" });
 
-  console.log("Headers being sent:");
+  console.info("Headers being sent:");
   const headersObj = new Headers(headers.headers);
   for (const [key, value] of Object.entries(HEADERS)) {
     const val = headersObj.get(key);
     if (val) {
-      console.log(`  ${key}: ${val}`);
+      console.info(`  ${key}: ${val}`);
     }
   }
 
-  console.log(`\nFetching from registry (hash: 0x${config.registryHash.toString(16)})...\n`);
+  console.info(`\nFetching from registry (hash: 0x${config.registryHash.toString(16)})...\n`);
 
   // Simulate install with config-aware fetch
   try {
@@ -76,9 +76,9 @@ async function installPackage(packageName: string): Promise<void> {
       process.exit(1);
     }
 
-    console.log(`✅ Successfully installed ${packageName}`);
-    console.log(`   Config version: ${config.version}`);
-    console.log(`   Registry hash: 0x${config.registryHash.toString(16)}`);
+    console.info(`✅ Successfully installed ${packageName}`);
+    console.info(`   Config version: ${config.version}`);
+    console.info(`   Registry hash: 0x${config.registryHash.toString(16)}`);
 
   } catch (error) {
     console.error(`❌ Installation failed: ${error}`);
@@ -90,7 +90,7 @@ async function installPackage(packageName: string): Promise<void> {
  * Publish package with config headers
  */
 async function publishPackage(): Promise<void> {
-  console.log("📤 Publishing package with config headers...\n");
+  console.info("📤 Publishing package with config headers...\n");
 
   const config = getConfigState();
   const headers = injectConfigHeaders({
@@ -100,16 +100,16 @@ async function publishPackage(): Promise<void> {
     },
   });
 
-  console.log("Headers being sent:");
+  console.info("Headers being sent:");
   const headersObj = new Headers(headers.headers);
   for (const [key, value] of Object.entries(HEADERS)) {
     const val = headersObj.get(key);
     if (val) {
-      console.log(`  ${key}: ${val}`);
+      console.info(`  ${key}: ${val}`);
     }
   }
 
-  console.log(`\nPublishing to registry (hash: 0x${config.registryHash.toString(16)})...\n`);
+  console.info(`\nPublishing to registry (hash: 0x${config.registryHash.toString(16)})...\n`);
 
   try {
     const response = await fetch("https://registry.example.com/publish", {
@@ -125,9 +125,9 @@ async function publishPackage(): Promise<void> {
       process.exit(1);
     }
 
-    console.log("✅ Successfully published package");
-    console.log(`   Config version: ${config.version}`);
-    console.log(`   Registry hash: 0x${config.registryHash.toString(16)}`);
+    console.info("✅ Successfully published package");
+    console.info(`   Config version: ${config.version}`);
+    console.info(`   Registry hash: 0x${config.registryHash.toString(16)}`);
 
   } catch (error) {
     console.error(`❌ Publish failed: ${error}`);
@@ -139,11 +139,11 @@ async function publishPackage(): Promise<void> {
  * Start proxy server
  */
 async function startProxy(): Promise<void> {
-  console.log("🔒 Starting config-aware proxy...\n");
+  console.info("🔒 Starting config-aware proxy...\n");
 
   const config = getConfigState();
 
-  console.log(`
+  console.info(`
 ╔═══════════════════════════════════════════════════════════════════════════╗
 ║                    Config-Aware Proxy Server                               ║
 ╠═══════════════════════════════════════════════════════════════════════════╣
@@ -205,8 +205,8 @@ function updateConfigField(field: string, value: string): void {
 
   updateConfigState({ [field]: numValue });
 
-  console.log(`✅ Updated ${field} to ${numValue}`);
-  console.log(`   New config dump: ${configToHex(getConfigState())}`);
+  console.info(`✅ Updated ${field} to ${numValue}`);
+  console.info(`   New config dump: ${configToHex(getConfigState())}`);
 }
 
 /**
@@ -216,7 +216,7 @@ async function main(): Promise<void> {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log(`
+    console.info(`
 ╔═══════════════════════════════════════════════════════════════════════════╗
 ║                    Network-Aware CLI Tool                                   ║
 ╠═══════════════════════════════════════════════════════════════════════════╣

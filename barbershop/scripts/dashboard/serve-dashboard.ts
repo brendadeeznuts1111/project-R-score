@@ -45,26 +45,26 @@ function parseArgs(): DashboardOptions {
 }
 
 function showHelp() {
-  console.log('🌐 Visual Dashboard Server');
-  console.log('==========================');
-  console.log();
-  console.log('Serve a web dashboard for secrets management.');
-  console.log();
-  console.log('Options:');
-  console.log('  --port <number>       Server port (default: 8080)');
-  console.log('  --live-updates        Enable live updates (default)');
-  console.log('  --no-live-updates     Disable live updates');
-  console.log('  --refresh-interval <ms>  Update interval (default: 5000)');
-  console.log('  --theme <theme>       Theme: light, dark, auto (default: auto)');
-  console.log('  --help, -h            Show this help');
-  console.log();
-  console.log('Environment Variables:');
-  console.log('  R2_BUCKET             R2 bucket name for storage');
-  console.log();
-  console.log('Examples:');
-  console.log('  R2_BUCKET=secrets-dashboard bun serve-dashboard.ts --port 8080 --live-updates');
-  console.log('  bun serve-dashboard.ts --port 3000 --theme dark');
-  console.log('  bun serve-dashboard.ts --no-live-updates --refresh-interval 10000');
+  console.info('🌐 Visual Dashboard Server');
+  console.info('==========================');
+  console.info();
+  console.info('Serve a web dashboard for secrets management.');
+  console.info();
+  console.info('Options:');
+  console.info('  --port <number>       Server port (default: 8080)');
+  console.info('  --live-updates        Enable live updates (default)');
+  console.info('  --no-live-updates     Disable live updates');
+  console.info('  --refresh-interval <ms>  Update interval (default: 5000)');
+  console.info('  --theme <theme>       Theme: light, dark, auto (default: auto)');
+  console.info('  --help, -h            Show this help');
+  console.info();
+  console.info('Environment Variables:');
+  console.info('  R2_BUCKET             R2 bucket name for storage');
+  console.info();
+  console.info('Examples:');
+  console.info('  R2_BUCKET=secrets-dashboard bun serve-dashboard.ts --port 8080 --live-updates');
+  console.info('  bun serve-dashboard.ts --port 3000 --theme dark');
+  console.info('  bun serve-dashboard.ts --no-live-updates --refresh-interval 10000');
 }
 
 function styled(
@@ -94,19 +94,19 @@ class SecretsDashboard {
   }
 
   async start(): Promise<void> {
-    console.log(styled('🌐 Starting Secrets Dashboard', 'primary'));
-    console.log(styled('============================', 'muted'));
-    console.log();
+    console.info(styled('🌐 Starting Secrets Dashboard', 'primary'));
+    console.info(styled('============================', 'muted'));
+    console.info();
 
-    console.log(styled('Configuration:', 'info'));
-    console.log(styled(`   Port: ${this.options.port}`, 'muted'));
-    console.log(
+    console.info(styled('Configuration:', 'info'));
+    console.info(styled(`   Port: ${this.options.port}`, 'muted'));
+    console.info(
       styled(`   Live updates: ${this.options.liveUpdates ? 'enabled' : 'disabled'}`, 'muted')
     );
-    console.log(styled(`   Refresh interval: ${this.options.refreshInterval}ms`, 'muted'));
-    console.log(styled(`   Theme: ${this.options.theme}`, 'muted'));
-    console.log(styled(`   R2 bucket: ${this.r2Bucket}`, 'muted'));
-    console.log();
+    console.info(styled(`   Refresh interval: ${this.options.refreshInterval}ms`, 'muted'));
+    console.info(styled(`   Theme: ${this.options.theme}`, 'muted'));
+    console.info(styled(`   R2 bucket: ${this.r2Bucket}`, 'muted'));
+    console.info();
 
     // Create server
     const server = Bun.serve({
@@ -118,29 +118,29 @@ class SecretsDashboard {
       },
     });
 
-    console.log(styled('🚀 Dashboard server started!', 'success'));
-    console.log(styled(`   URL: http://localhost:${this.options.port}`, 'primary'));
-    console.log(styled('   Press Ctrl+C to stop the server', 'muted'));
-    console.log();
+    console.info(styled('🚀 Dashboard server started!', 'success'));
+    console.info(styled(`   URL: http://localhost:${this.options.port}`, 'primary'));
+    console.info(styled('   Press Ctrl+C to stop the server', 'muted'));
+    console.info();
 
     if (this.options.liveUpdates) {
-      console.log(styled('🔄 Live updates enabled', 'info'));
-      console.log(styled(`   Refreshing every ${this.options.refreshInterval}ms`, 'muted'));
+      console.info(styled('🔄 Live updates enabled', 'info'));
+      console.info(styled(`   Refreshing every ${this.options.refreshInterval}ms`, 'muted'));
     }
 
-    console.log(styled('📊 Available endpoints:', 'accent'));
-    console.log(styled('   GET  /                    - Dashboard home', 'muted'));
-    console.log(styled('   GET  /api/status          - System status', 'muted'));
-    console.log(styled('   GET  /api/secrets         - Secrets list', 'muted'));
-    console.log(styled('   GET  /api/secrets/:key    - Secret details', 'muted'));
-    console.log(styled('   GET  /api/graphs/:key     - Version graphs', 'muted'));
-    console.log(styled('   GET  /api/expirations     - Expiration monitoring', 'muted'));
-    console.log(styled('   GET  /api/audit           - Audit data', 'muted'));
-    console.log();
+    console.info(styled('📊 Available endpoints:', 'accent'));
+    console.info(styled('   GET  /                    - Dashboard home', 'muted'));
+    console.info(styled('   GET  /api/status          - System status', 'muted'));
+    console.info(styled('   GET  /api/secrets         - Secrets list', 'muted'));
+    console.info(styled('   GET  /api/secrets/:key    - Secret details', 'muted'));
+    console.info(styled('   GET  /api/graphs/:key     - Version graphs', 'muted'));
+    console.info(styled('   GET  /api/expirations     - Expiration monitoring', 'muted'));
+    console.info(styled('   GET  /api/audit           - Audit data', 'muted'));
+    console.info();
 
     // Handle graceful shutdown
     process.on('SIGINT', () => {
-      console.log(styled('\n🛑 Shutting down dashboard...', 'warning'));
+      console.info(styled('\n🛑 Shutting down dashboard...', 'warning'));
       server.stop();
       process.exit(0);
     });

@@ -99,42 +99,42 @@ class CIMatrixFilter {
    * Generate build report
    */
   generateBuildReport(filterOptions: CIFilterOptions): void {
-    console.log(`🔍 Build Report for ${filterOptions.targetEnv} (${filterOptions.targetPlatform})`);
-    console.log('='.repeat(60));
+    console.info(`🔍 Build Report for ${filterOptions.targetEnv} (${filterOptions.targetPlatform})`);
+    console.info('='.repeat(60));
 
     const result = this.filterForBuild(filterOptions);
 
     if (result.errors.length > 0) {
-      console.log('\n❌ ERRORS:');
-      result.errors.forEach(error => console.log(`  - ${error}`));
+      console.info('\n❌ ERRORS:');
+      result.errors.forEach(error => console.info(`  - ${error}`));
     }
 
     if (result.warnings.length > 0) {
-      console.log('\n⚠️  WARNINGS:');
-      result.warnings.forEach(warning => console.log(`  - ${warning}`));
+      console.info('\n⚠️  WARNINGS:');
+      result.warnings.forEach(warning => console.info(`  - ${warning}`));
     }
 
-    console.log(`\n✅ Included APIs (${result.entries.length}):`);
+    console.info(`\n✅ Included APIs (${result.entries.length}):`);
     result.entries.forEach(entry => {
       const status = entry.stability === 'experimental' ? '🔬' :
                      entry.stability === 'deprecated' ? '⚠️' : '✅';
       const security = entry.security.classification === 'high' ? '🔒' :
                        entry.security.classification === 'medium' ? '🔐' : '🔓';
 
-      console.log(`  ${status} ${security} ${entry.term} (v${entry.bunMinVersion}+)`);
+      console.info(`  ${status} ${security} ${entry.term} (v${entry.bunMinVersion}+)`);
 
       if (entry.requiredFlags?.length) {
-        console.log(`      Flags: ${entry.requiredFlags.join(', ')}`);
+        console.info(`      Flags: ${entry.requiredFlags.join(', ')}`);
       }
     });
 
     // Performance summary
     const perfEntries = result.entries.filter(e => e.perfProfile);
     if (perfEntries.length > 0) {
-      console.log('\n📊 Performance Summary:');
+      console.info('\n📊 Performance Summary:');
       perfEntries.forEach(entry => {
         const perf = entry.perfProfile!;
-        console.log(`  ${entry.term}: ${perf.opsSec.toLocaleString()} ops/sec (${perf.baseline})`);
+        console.info(`  ${entry.term}: ${perf.opsSec.toLocaleString()} ops/sec (${perf.baseline})`);
       });
     }
   }
@@ -153,8 +153,8 @@ class CIMatrixFilter {
 }
 
 // Demo: Production build for Linux
-console.log('🏭 Production Build Filter Demo');
-console.log('===============================\n');
+console.info('🏭 Production Build Filter Demo');
+console.info('===============================\n');
 
 const filter = new CIMatrixFilter();
 
@@ -167,11 +167,11 @@ filter.generateBuildReport({
   securityLevel: 'medium'
 });
 
-console.log('\n' + '='.repeat(60) + '\n');
+console.info('\n' + '='.repeat(60) + '\n');
 
 // Development build with experimental features
-console.log('🔬 Development Build Filter Demo');
-console.log('=================================\n');
+console.info('🔬 Development Build Filter Demo');
+console.info('=================================\n');
 
 filter.generateBuildReport({
   targetEnv: 'development',
@@ -181,11 +181,11 @@ filter.generateBuildReport({
   securityLevel: 'all'
 });
 
-console.log('\n' + '='.repeat(60) + '\n');
+console.info('\n' + '='.repeat(60) + '\n');
 
 // Windows build (showing platform limitations)
-console.log('🪟 Windows Build Filter Demo');
-console.log('==============================\n');
+console.info('🪟 Windows Build Filter Demo');
+console.info('==============================\n');
 
 filter.generateBuildReport({
   targetEnv: 'production',

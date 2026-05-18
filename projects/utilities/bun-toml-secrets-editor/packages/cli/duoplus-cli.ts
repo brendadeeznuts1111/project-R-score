@@ -161,7 +161,7 @@ export class DuoplusCLI {
 			process.on("SIGINT", () => {
 				if (!this.isShuttingDown) {
 					this.isShuttingDown = true;
-					console.log(
+					console.info(
 						"\n🛑 SIGINT (Ctrl+C) detected - Gracefully shutting down Duoplus CLI...",
 					);
 					this.performCleanup("SIGINT");
@@ -172,7 +172,7 @@ export class DuoplusCLI {
 			process.on("SIGTERM", () => {
 				if (!this.isShuttingDown) {
 					this.isShuttingDown = true;
-					console.log(
+					console.info(
 						"\n🛑 SIGTERM detected - Gracefully shutting down Duoplus CLI...",
 					);
 					this.performCleanup("SIGTERM");
@@ -181,7 +181,7 @@ export class DuoplusCLI {
 
 			// Handle beforeExit event - Event loop is empty, last chance for async cleanup
 			process.on("beforeExit", (code) => {
-				console.log(
+				console.info(
 					`\n📋 Event loop is empty with code ${code} - Final CLI cleanup...`,
 				);
 				this.performCleanup("beforeExit");
@@ -189,7 +189,7 @@ export class DuoplusCLI {
 
 			// Handle exit event - Process is exiting (synchronous only)
 			process.on("exit", (code) => {
-				console.log(`📤 Duoplus CLI exiting with code ${code}`);
+				console.info(`📤 Duoplus CLI exiting with code ${code}`);
 			});
 
 			// Handle uncaught exceptions - Critical errors
@@ -214,34 +214,34 @@ export class DuoplusCLI {
 	 * Perform CLI-specific cleanup operations
 	 */
 	private performCleanup(signal: string): void {
-		console.log(`🧹 Cleaning up Duoplus CLI resources... (signal: ${signal})`);
+		console.info(`🧹 Cleaning up Duoplus CLI resources... (signal: ${signal})`);
 
 		// Stop any active monitoring
 		if (this.schedulerService) {
-			console.log("   ⏹️  Stopping scheduled tasks...");
+			console.info("   ⏹️  Stopping scheduled tasks...");
 			// Stop any scheduled tasks
 		}
 
 		// Close database connections
-		console.log("   💾 Closing database connections...");
+		console.info("   💾 Closing database connections...");
 		// Close any database connections
 
 		// Cancel pending operations
-		console.log("   ❌ Canceling pending operations...");
+		console.info("   ❌ Canceling pending operations...");
 		// Cancel any pending API calls or operations
 
 		// Cleanup integrations
 		if (this.notificationService) {
-			console.log("   🔔 Cleaning up notification service...");
+			console.info("   🔔 Cleaning up notification service...");
 			// Cleanup notification service
 		}
 
 		if (this.analyticsService) {
-			console.log("   📊 Cleaning up analytics service...");
+			console.info("   📊 Cleaning up analytics service...");
 			// Cleanup analytics service
 		}
 
-		console.log("✅ Duoplus CLI cleanup completed");
+		console.info("✅ Duoplus CLI cleanup completed");
 	}
 
 	private log(
@@ -252,7 +252,7 @@ export class DuoplusCLI {
 		const prefix = level === "error" ? "❌" : level === "warn" ? "⚠️" : "ℹ️";
 
 		if (this.verbose || level === "error") {
-			console.log(`${prefix} [${timestamp}] ${message}`);
+			console.info(`${prefix} [${timestamp}] ${message}`);
 		}
 	}
 
@@ -373,7 +373,7 @@ export class DuoplusCLI {
 				);
 				deviceList.forEach((line) => {
 					const [deviceId, status] = line.split("\t");
-					console.log(`   - ${deviceId} (${status})`);
+					console.info(`   - ${deviceId} (${status})`);
 				});
 				return false;
 			}
@@ -412,19 +412,19 @@ export class DuoplusCLI {
 			];
 
 			if (allErrors.length > 0) {
-				console.log("❌ Validation errors:");
-				allErrors.forEach((error) => console.log(`   - ${error}`));
+				console.info("❌ Validation errors:");
+				allErrors.forEach((error) => console.info(`   - ${error}`));
 
 				// Show suggestions for command errors
 				const suggestions = commandValidationErrors.filter(
 					(err) => err.suggestion,
 				);
 				if (suggestions.length > 0) {
-					console.log("\n💡 Suggestions:");
-					suggestions.forEach((err) => console.log(`   ${err.suggestion}`));
+					console.info("\n💡 Suggestions:");
+					suggestions.forEach((err) => console.info(`   ${err.suggestion}`));
 				}
 
-				console.log(
+				console.info(
 					"\n💡 Use --help for usage information or --search <term> to find commands",
 				);
 				process.exit(1);
@@ -494,7 +494,7 @@ export class DuoplusCLI {
 			if (deviceRequired) {
 				const connected = await this.handleDeviceConnection();
 				if (!connected) {
-					console.log(
+					console.info(
 						"❌ Device connection failed. Please check device status and try again.",
 					);
 					process.exit(1);
@@ -510,8 +510,8 @@ export class DuoplusCLI {
 			);
 
 			if (this.verbose) {
-				console.log("\n🔍 Stack trace:");
-				console.log(
+				console.info("\n🔍 Stack trace:");
+				console.info(
 					error instanceof Error ? error.stack : "No stack trace available",
 				);
 			}
@@ -776,8 +776,8 @@ export class DuoplusCLI {
 	}
 
 	private async listDevices(): Promise<void> {
-		console.log("📱 Duoplus Cloud Phone List");
-		console.log("================================");
+		console.info("📱 Duoplus Cloud Phone List");
+		console.info("================================");
 
 		// Show progress for API call
 		const progress = ProgressUtils.indeterminate("Fetching device list");
@@ -795,11 +795,11 @@ export class DuoplusCLI {
 				const devices = result.data.list;
 
 				if (devices.length === 0) {
-					console.log("ℹ️  No devices found");
+					console.info("ℹ️  No devices found");
 					return;
 				}
 
-				console.log(`Found ${devices.length} device(s):\n`);
+				console.info(`Found ${devices.length} device(s):\n`);
 
 				// Prepare data for table formatting
 				const tableData = devices.map((device, _index) => ({
@@ -851,15 +851,15 @@ export class DuoplusCLI {
 				const onlineCount = devices.filter((d) => d.status === 1).length;
 				const offlineCount = devices.length - onlineCount;
 
-				console.log("");
-				console.log("📊 Summary:");
-				console.log(`   \x1b[32m● Online:\x1b[0m ${onlineCount}`);
-				console.log(`   \x1b[31m● Offline:\x1b[0m ${offlineCount}`);
-				console.log(`   📱 Total: ${devices.length}`);
+				console.info("");
+				console.info("📊 Summary:");
+				console.info(`   \x1b[32m● Online:\x1b[0m ${onlineCount}`);
+				console.info(`   \x1b[31m● Offline:\x1b[0m ${offlineCount}`);
+				console.info(`   📱 Total: ${devices.length}`);
 			} else {
-				console.log("❌ Failed to retrieve device list");
+				console.info("❌ Failed to retrieve device list");
 				if (result.message) {
-					console.log(`   Error: ${result.message}`);
+					console.info(`   Error: ${result.message}`);
 				}
 			}
 		} catch (error) {
@@ -872,8 +872,8 @@ export class DuoplusCLI {
 	}
 
 	private async showStatus(): Promise<void> {
-		console.log("🔍 Device Status");
-		console.log("==================");
+		console.info("🔍 Device Status");
+		console.info("==================");
 
 		const result = await this.adb.getCloudPhoneStatus([this.deviceId]);
 
@@ -882,25 +882,25 @@ export class DuoplusCLI {
 			const status = device.status === 1 ? "🟢 Online" : "🔴 Offline";
 			const powered = device.status === 1 ? "🟢 Powered On" : "🔴 Powered Off";
 
-			console.log(`Device: ${device.name} (${this.deviceId})`);
-			console.log(`Status: ${status}`);
-			console.log(`Power: ${powered}`);
-			console.log(`Model: Available via --details`);
-			console.log(`Android: Available via --details`);
-			console.log(`IP: Available via --details`);
-			console.log(`Location: Available via --details`);
+			console.info(`Device: ${device.name} (${this.deviceId})`);
+			console.info(`Status: ${status}`);
+			console.info(`Power: ${powered}`);
+			console.info(`Model: Available via --details`);
+			console.info(`Android: Available via --details`);
+			console.info(`IP: Available via --details`);
+			console.info(`Location: Available via --details`);
 		} else {
-			console.log(`❌ Device ${this.deviceId} not found`);
+			console.info(`❌ Device ${this.deviceId} not found`);
 		}
 	}
 
 	private async showCloudPhoneStatus(): Promise<void> {
-		console.log("☁️  Cloud Phone Status (Official API)");
-		console.log("====================================");
+		console.info("☁️  Cloud Phone Status (Official API)");
+		console.info("====================================");
 
 		// Check if shutting down
 		if (this.isShuttingDown) {
-			console.log("❌ CLI is shutting down - cannot start new operations");
+			console.info("❌ CLI is shutting down - cannot start new operations");
 			return;
 		}
 
@@ -925,7 +925,7 @@ export class DuoplusCLI {
 
 			if (this.verbose) {
 				// In verbose mode, use shell with timing and timezone information
-				console.log("🔍 Raw API Response with shell timing:");
+				console.info("🔍 Raw API Response with shell timing:");
 				const result = await ProcessUtils.executeWithTimezone(curlCommand, {
 					trackTiming: true,
 					useShell: true,
@@ -934,19 +934,19 @@ export class DuoplusCLI {
 				output = (result as any).stdout;
 
 				// Additional timing details in verbose mode
-				console.log(`📊 API Call Details (Shell):`);
-				console.log(
+				console.info(`📊 API Call Details (Shell):`);
+				console.info(
 					`   Duration: ${ProcessUtils.formatDuration((result as any).duration)}`,
 				);
-				console.log(
+				console.info(
 					`   Started: ${new Date((result as any).startTime).toISOString()}`,
 				);
-				console.log(
+				console.info(
 					`   Ended: ${new Date((result as any).endTime).toISOString()}`,
 				);
-				console.log(`   Exit Code: ${(result as any).exitCode ?? "unknown"}`);
-				console.log(`   Success: ${(result as any).success}`);
-				console.log(`   Timezone: ${ProcessUtils.getCurrentTimezone()}`);
+				console.info(`   Exit Code: ${(result as any).exitCode ?? "unknown"}`);
+				console.info(`   Success: ${(result as any).success}`);
+				console.info(`   Timezone: ${ProcessUtils.getCurrentTimezone()}`);
 			} else {
 				// Normal mode - use shell with minimal timing
 				const result = await ProcessUtils.executeWithTimezone(curlCommand, {
@@ -957,7 +957,7 @@ export class DuoplusCLI {
 				output = (result as any).stdout;
 
 				if (this.verbose) {
-					console.log(
+					console.info(
 						`⏱️  API request completed in ${ProcessUtils.formatDuration((result as any).duration)}`,
 					);
 				}
@@ -977,10 +977,10 @@ export class DuoplusCLI {
 			}
 
 			if (result.code === 200 && result.data && result.data.list) {
-				console.log(`✅ Successfully retrieved cloud phone status!\n`);
+				console.info(`✅ Successfully retrieved cloud phone status!\n`);
 
 				result.data.list.forEach((phone: any, index: number) => {
-					console.log(
+					console.info(
 						`${index + 1}. 📱 ${phone.name || "Unknown Device"} (${phone.id})`,
 					);
 
@@ -998,39 +998,39 @@ export class DuoplusCLI {
 
 					const statusText =
 						statusMap[phone.status] || `❓ Unknown status (${phone.status})`;
-					console.log(`   Status: ${statusText}`);
+					console.info(`   Status: ${statusText}`);
 
 					if (phone.status === 1) {
-						console.log(`   ✅ Device is ready for use`);
+						console.info(`   ✅ Device is ready for use`);
 					} else if (phone.status === 2) {
-						console.log(`   💡 Use --power on to start the device`);
+						console.info(`   💡 Use --power on to start the device`);
 					} else if (phone.status === 3) {
-						console.log(`   ⚠️  Device subscription has expired`);
+						console.info(`   ⚠️  Device subscription has expired`);
 					} else if (phone.status === 4) {
-						console.log(`   💰 Device needs renewal`);
+						console.info(`   💰 Device needs renewal`);
 					} else if (phone.status === 10) {
-						console.log(`   ⏳ Device is currently starting...`);
+						console.info(`   ⏳ Device is currently starting...`);
 					} else if (phone.status === 11) {
-						console.log(`   🔧 Device is being configured...`);
+						console.info(`   🔧 Device is being configured...`);
 					} else if (phone.status === 12) {
-						console.log(`   ❌ Device configuration failed - check logs`);
+						console.info(`   ❌ Device configuration failed - check logs`);
 					}
 
-					console.log("");
+					console.info("");
 				});
 
 				if (result.data.list.length === 0) {
-					console.log(`ℹ️  No cloud phones found for the specified device IDs`);
+					console.info(`ℹ️  No cloud phones found for the specified device IDs`);
 				}
 			} else {
-				console.log(`❌ API Error: ${result.message || "Unknown error"}`);
+				console.info(`❌ API Error: ${result.message || "Unknown error"}`);
 				if (result.code) {
-					console.log(`   Error Code: ${result.code}`);
+					console.info(`   Error Code: ${result.code}`);
 				}
 			}
 		} catch (error) {
 			if (this.isShuttingDown) {
-				console.log("⚠️  Operation cancelled due to shutdown");
+				console.info("⚠️  Operation cancelled due to shutdown");
 				return;
 			}
 
@@ -1041,16 +1041,16 @@ export class DuoplusCLI {
 
 			if (this.verbose) {
 				const config = this.configManager.getApiConfig();
-				console.log("\n🔍 Debug Information:");
-				console.log(`API URL: ${config.baseUrl}/api/v1/cloudPhone/status`);
-				console.log(`Device ID: ${this.deviceId}`);
-				console.log(
+				console.info("\n🔍 Debug Information:");
+				console.info(`API URL: ${config.baseUrl}/api/v1/cloudPhone/status`);
+				console.info(`Device ID: ${this.deviceId}`);
+				console.info(
 					`Process Uptime: ${ProcessUtils.getProcessUptimeFormatted()}`,
 				);
-				console.log(
+				console.info(
 					`Request Body: ${JSON.stringify({ image_ids: [this.deviceId] }, null, 2)}`,
 				);
-				console.log(
+				console.info(
 					"💡 Make sure curl is installed and API credentials are configured",
 				);
 			}
@@ -1058,47 +1058,47 @@ export class DuoplusCLI {
 	}
 
 	private async showDetails(): Promise<void> {
-		console.log("📋 Device Details");
-		console.log("==================");
+		console.info("📋 Device Details");
+		console.info("==================");
 
 		const result = await this.adb.getCloudPhoneDetails(this.deviceId);
 
 		if (result.code === 200) {
 			const details = result.data;
 
-			console.log(
+			console.info(
 				`📱 Device: ${details.device.manufacturer} ${details.device.brand} ${details.device.model}`,
 			);
-			console.log(`🔧 OS: ${details.os}`);
-			console.log(
+			console.info(`🔧 OS: ${details.os}`);
+			console.info(
 				`🌐 Network: ${details.proxy.ip} (${details.proxy.city}, ${details.proxy.region})`,
 			);
-			console.log(`📍 GPS: ${details.gps.latitude}, ${details.gps.longitude}`);
-			console.log(`🕐 Timezone: ${details.locale.timezone}`);
-			console.log(`📞 SIM: ${details.sim.operator} (${details.sim.msisdn})`);
-			console.log(`📶 WiFi: ${details.wifi.name} (${details.wifi.mac})`);
-			console.log(
+			console.info(`📍 GPS: ${details.gps.latitude}, ${details.gps.longitude}`);
+			console.info(`🕐 Timezone: ${details.locale.timezone}`);
+			console.info(`📞 SIM: ${details.sim.operator} (${details.sim.msisdn})`);
+			console.info(`📶 WiFi: ${details.wifi.name} (${details.wifi.mac})`);
+			console.info(
 				`🔊 Bluetooth: ${details.bluetooth.name} (${details.bluetooth.address})`,
 			);
-			console.log(`🔍 Device IDs:`);
-			console.log(`   IMEI: ${details.device.imei}`);
-			console.log(`   Serial: ${details.device.serialno}`);
-			console.log(`   Android ID: ${details.device.android_id}`);
+			console.info(`🔍 Device IDs:`);
+			console.info(`   IMEI: ${details.device.imei}`);
+			console.info(`   Serial: ${details.device.serialno}`);
+			console.info(`   Android ID: ${details.device.android_id}`);
 		} else {
-			console.log(`❌ Failed to get device details`);
+			console.info(`❌ Failed to get device details`);
 		}
 	}
 
 	private async factoryReset(): Promise<void> {
-		console.log("🔄 Factory Reset Device");
-		console.log("========================");
-		console.log("⚠️  WARNING: This will reset the device to factory settings!");
-		console.log("   All installed apps will be removed");
-		console.log("   All data will be wiped");
-		console.log("");
+		console.info("🔄 Factory Reset Device");
+		console.info("========================");
+		console.info("⚠️  WARNING: This will reset the device to factory settings!");
+		console.info("   All installed apps will be removed");
+		console.info("   All data will be wiped");
+		console.info("");
 
 		// Simulate user confirmation (in real implementation, you'd ask for confirmation)
-		console.log("🔧 Proceeding with factory reset...");
+		console.info("🔧 Proceeding with factory reset...");
 
 		const result = await this.adb.factoryReset(this.deviceId, {
 			// Optional parameters can be added here
@@ -1108,97 +1108,97 @@ export class DuoplusCLI {
 		});
 
 		if (result.code === 200) {
-			console.log("✅ Factory reset successful!");
-			console.log(`📊 Status: ${result.data.message}`);
-			console.log("");
-			console.log("🔄 Device has been reset to factory settings");
-			console.log("💡 All installed apps have been removed");
-			console.log("💡 Device is ready for fresh setup");
-			console.log("💡 System has been reinstalled");
-			console.log("💡 Google Play has been preserved");
+			console.info("✅ Factory reset successful!");
+			console.info(`📊 Status: ${result.data.message}`);
+			console.info("");
+			console.info("🔄 Device has been reset to factory settings");
+			console.info("💡 All installed apps have been removed");
+			console.info("💡 Device is ready for fresh setup");
+			console.info("💡 System has been reinstalled");
+			console.info("💡 Google Play has been preserved");
 		} else {
-			console.log("❌ Failed to factory reset device");
-			console.log(`Error: ${result.data.message}`);
+			console.info("❌ Failed to factory reset device");
+			console.info(`Error: ${result.data.message}`);
 		}
 	}
 
 	private async resetDevice(): Promise<void> {
-		console.log("🔄 Resetting Device...");
-		console.log("====================");
+		console.info("🔄 Resetting Device...");
+		console.info("====================");
 
 		const result = await this.adb.resetAndRegenerateDevice(this.deviceId);
 
 		if (result.code === 200) {
-			console.log("✅ Device reset successfully!");
-			console.log(
+			console.info("✅ Device reset successfully!");
+			console.info(
 				"Device has been restored to factory settings with new identity.",
 			);
 		} else {
-			console.log(`❌ Reset failed: ${result.message}`);
+			console.info(`❌ Reset failed: ${result.message}`);
 		}
 	}
 
 	private async enableADB(): Promise<void> {
-		console.log("🔧 Enabling ADB...");
-		console.log("==================");
+		console.info("🔧 Enabling ADB...");
+		console.info("==================");
 
 		const result = await this.adb.batchEnableADB([this.deviceId]);
 
 		if (result.code === 200) {
 			if (result.data.success.includes(this.deviceId)) {
-				console.log("✅ ADB enabled successfully!");
-				console.log(`Device ${this.deviceId} is ready for ADB commands.`);
+				console.info("✅ ADB enabled successfully!");
+				console.info(`Device ${this.deviceId} is ready for ADB commands.`);
 			} else {
-				console.log("❌ Failed to enable ADB");
+				console.info("❌ Failed to enable ADB");
 				if (result.data.fail.length > 0) {
-					console.log(`Reason: ${result.data.fail_reason[this.deviceId]}`);
+					console.info(`Reason: ${result.data.fail_reason[this.deviceId]}`);
 				}
 			}
 		} else {
-			console.log("❌ ADB enable failed");
+			console.info("❌ ADB enable failed");
 		}
 	}
 
 	private async powerDevice(action: string): Promise<void> {
-		console.log(`⚡ Power ${action} Device...`);
-		console.log("========================");
+		console.info(`⚡ Power ${action} Device...`);
+		console.info("========================");
 
 		if (action === "on") {
 			const result = await this.adb.batchPowerControl([this.deviceId], "on");
 			if (result.code === 200) {
 				if (result.data.success.includes(this.deviceId)) {
-					console.log("✅ Device powered on successfully!");
+					console.info("✅ Device powered on successfully!");
 				} else {
-					console.log("❌ Failed to power on device");
+					console.info("❌ Failed to power on device");
 					if (result.data.fail.length > 0) {
-						console.log(`Reason: ${result.data.fail_reason[this.deviceId]}`);
+						console.info(`Reason: ${result.data.fail_reason[this.deviceId]}`);
 					}
 				}
 			} else {
-				console.log("❌ Power on failed");
+				console.info("❌ Power on failed");
 			}
 		} else if (action === "off") {
 			const result = await this.adb.batchPowerControl([this.deviceId], "off");
 			if (result.code === 200) {
 				if (result.data.success.includes(this.deviceId)) {
-					console.log("✅ Device powered off successfully!");
+					console.info("✅ Device powered off successfully!");
 				} else {
-					console.log("❌ Failed to power off device");
+					console.info("❌ Failed to power off device");
 					if (result.data.fail.length > 0) {
-						console.log(`Reason: ${result.data.fail_reason[this.deviceId]}`);
+						console.info(`Reason: ${result.data.fail_reason[this.deviceId]}`);
 					}
 				}
 			} else {
-				console.log("❌ Power off failed");
+				console.info("❌ Power off failed");
 			}
 		} else {
-			console.log('❌ Invalid power action. Use "on" or "off"');
+			console.info('❌ Invalid power action. Use "on" or "off"');
 		}
 	}
 
 	private async takeScreenshot(): Promise<void> {
-		console.log("📸 Taking Screenshot...");
-		console.log("=======================");
+		console.info("📸 Taking Screenshot...");
+		console.info("=======================");
 
 		// Show progress for screenshot capture
 		const progress = ProgressUtils.timed("Capturing screenshot", 10);
@@ -1222,22 +1222,22 @@ export class DuoplusCLI {
 						"Download URL": screenshot.url,
 					};
 
-					console.log("✅ Screenshot captured successfully!");
+					console.info("✅ Screenshot captured successfully!");
 					TableUtils.printSimpleTable(screenshotInfo, "Screenshot Details");
 
-					console.log("");
-					console.log("💡 Download with ADB:");
-					console.log(`   adb pull ${screenshot.path}`);
+					console.info("");
+					console.info("💡 Download with ADB:");
+					console.info(`   adb pull ${screenshot.path}`);
 				} else {
-					console.log("❌ Failed to capture screenshot");
+					console.info("❌ Failed to capture screenshot");
 					if (result.data.fail.length > 0) {
-						console.log(`Reason: ${result.data.fail_reason[this.deviceId]}`);
+						console.info(`Reason: ${result.data.fail_reason[this.deviceId]}`);
 					}
 				}
 			} else {
-				console.log("❌ Screenshot API failed");
+				console.info("❌ Screenshot API failed");
 				if (result.message) {
-					console.log(`Error: ${result.message}`);
+					console.info(`Error: ${result.message}`);
 				}
 			}
 		} catch (error) {
@@ -1250,8 +1250,8 @@ export class DuoplusCLI {
 	}
 
 	private async uploadFile(filePath: string): Promise<void> {
-		console.log(`📤 Uploading File: ${filePath}`);
-		console.log("============================");
+		console.info(`📤 Uploading File: ${filePath}`);
+		console.info("============================");
 
 		// Extract filename from path
 		const filename = filePath.split("/").pop() || filePath;
@@ -1266,28 +1266,28 @@ export class DuoplusCLI {
 		if (result.code === 200) {
 			if (result.data.success.includes(this.deviceId)) {
 				const upload = result.data.uploads[this.deviceId];
-				console.log("✅ File uploaded successfully!");
-				console.log(`📁 Filename: ${upload.filename}`);
-				console.log(`📂 Path: ${upload.path}`);
-				console.log(`📏 Size: ${(upload.size / 1024).toFixed(1)} KB`);
-				console.log(`🕐 Timestamp: ${upload.timestamp}`);
-				console.log(`🔗 Download URL: ${upload.url}`);
-				console.log("");
-				console.log(`💡 Use ADB to download: adb pull ${upload.path}`);
+				console.info("✅ File uploaded successfully!");
+				console.info(`📁 Filename: ${upload.filename}`);
+				console.info(`📂 Path: ${upload.path}`);
+				console.info(`📏 Size: ${(upload.size / 1024).toFixed(1)} KB`);
+				console.info(`🕐 Timestamp: ${upload.timestamp}`);
+				console.info(`🔗 Download URL: ${upload.url}`);
+				console.info("");
+				console.info(`💡 Use ADB to download: adb pull ${upload.path}`);
 			} else {
-				console.log("❌ Failed to upload file");
+				console.info("❌ Failed to upload file");
 				if (result.data.fail.length > 0) {
-					console.log(`Reason: ${result.data.fail_reason[this.deviceId]}`);
+					console.info(`Reason: ${result.data.fail_reason[this.deviceId]}`);
 				}
 			}
 		} else {
-			console.log("❌ File upload API failed");
+			console.info("❌ File upload API failed");
 		}
 	}
 
 	private async installApp(packageName: string): Promise<void> {
-		console.log(`📱 Installing App: ${packageName}`);
-		console.log("===========================");
+		console.info(`📱 Installing App: ${packageName}`);
+		console.info("===========================");
 
 		const result = await this.adb.batchInstallApp([this.deviceId], {
 			package_name: packageName,
@@ -1297,33 +1297,33 @@ export class DuoplusCLI {
 		if (result.code === 200) {
 			if (result.data.success.includes(this.deviceId)) {
 				const installation = result.data.installations[this.deviceId];
-				console.log("✅ App installation successful!");
-				console.log(`📦 Package: ${installation.package_name}`);
-				console.log(`📋 Version: ${installation.version}`);
-				console.log(`🕐 Install Time: ${installation.install_time}`);
-				console.log(`📊 Status: ${installation.status}`);
+				console.info("✅ App installation successful!");
+				console.info(`📦 Package: ${installation.package_name}`);
+				console.info(`📋 Version: ${installation.version}`);
+				console.info(`🕐 Install Time: ${installation.install_time}`);
+				console.info(`📊 Status: ${installation.status}`);
 				if (installation.path) {
-					console.log(`📂 Path: ${installation.path}`);
+					console.info(`📂 Path: ${installation.path}`);
 				}
 
 				if (installation.status === "already_installed") {
-					console.log("");
-					console.log("ℹ️  App was already installed on the device");
+					console.info("");
+					console.info("ℹ️  App was already installed on the device");
 				}
 			} else {
-				console.log("❌ Failed to install app");
+				console.info("❌ Failed to install app");
 				if (result.data.fail.length > 0) {
-					console.log(`Reason: ${result.data.fail_reason[this.deviceId]}`);
+					console.info(`Reason: ${result.data.fail_reason[this.deviceId]}`);
 				}
 			}
 		} else {
-			console.log("❌ App installation API failed");
+			console.info("❌ App installation API failed");
 		}
 	}
 
 	private async listApps(): Promise<void> {
-		console.log("📱 Installed Applications");
-		console.log("========================");
+		console.info("📱 Installed Applications");
+		console.info("========================");
 
 		const result = await this.adb.listApps(this.deviceId, {
 			type: "all",
@@ -1331,60 +1331,60 @@ export class DuoplusCLI {
 		});
 
 		if (result.code === 200) {
-			console.log(`Found ${result.data.total} apps:\n`);
+			console.info(`Found ${result.data.total} apps:\n`);
 			result.data.apps.forEach((app, index) => {
 				const typeIcon = app.type === "system" ? "⚙️" : "📱";
-				console.log(
+				console.info(
 					`${index + 1}. ${typeIcon} ${app.app_name} (${app.package_name})`,
 				);
-				console.log(
+				console.info(
 					`   Version: ${app.version} | Size: ${(app.size / 1024 / 1024).toFixed(1)}MB | Type: ${app.type}`,
 				);
-				console.log(`   Installed: ${app.install_time}`);
-				console.log("");
+				console.info(`   Installed: ${app.install_time}`);
+				console.info("");
 			});
 
 			if (result.data.total > 20) {
-				console.log(`... and ${result.data.total - 20} more apps`);
+				console.info(`... and ${result.data.total - 20} more apps`);
 			}
 		} else {
-			console.log("❌ Failed to list applications");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to list applications");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async uninstallApp(packageName: string): Promise<void> {
-		console.log(`🗑️  Uninstalling App: ${packageName}`);
-		console.log("===============================");
+		console.info(`🗑️  Uninstalling App: ${packageName}`);
+		console.info("===============================");
 
 		const result = await this.adb.uninstallApp(this.deviceId, packageName);
 
 		if (result.code === 200) {
 			if (result.data.success.includes(this.deviceId)) {
 				const uninstallation = result.data.uninstallations[this.deviceId];
-				console.log("✅ App uninstalled successfully!");
-				console.log(`📦 Package: ${uninstallation.package_name}`);
-				console.log(`🕐 Uninstall Time: ${uninstallation.uninstall_time}`);
-				console.log(`📊 Status: ${uninstallation.status}`);
+				console.info("✅ App uninstalled successfully!");
+				console.info(`📦 Package: ${uninstallation.package_name}`);
+				console.info(`🕐 Uninstall Time: ${uninstallation.uninstall_time}`);
+				console.info(`📊 Status: ${uninstallation.status}`);
 
 				if (uninstallation.status === "not_found") {
-					console.log("");
-					console.log("ℹ️  App was not found on the device");
+					console.info("");
+					console.info("ℹ️  App was not found on the device");
 				}
 			} else {
-				console.log("❌ Failed to uninstall app");
+				console.info("❌ Failed to uninstall app");
 				if (result.data.fail.length > 0) {
-					console.log(`Reason: ${result.data.fail_reason[this.deviceId]}`);
+					console.info(`Reason: ${result.data.fail_reason[this.deviceId]}`);
 				}
 			}
 		} else {
-			console.log("❌ App uninstallation API failed");
+			console.info("❌ App uninstallation API failed");
 		}
 	}
 
 	private async batchAppOperations(): Promise<void> {
-		console.log("🔄 Batch App Operations");
-		console.log("========================");
+		console.info("🔄 Batch App Operations");
+		console.info("========================");
 
 		// Simulate batch operations
 		const operations = [
@@ -1396,92 +1396,92 @@ export class DuoplusCLI {
 		const result = await this.adb.batchAppOperations(this.deviceId, operations);
 
 		if (result.code === 200) {
-			console.log(`✅ Batch operations completed!`);
-			console.log(
+			console.info(`✅ Batch operations completed!`);
+			console.info(
 				`📊 Results: ${result.data.results.successful} successful, ${result.data.results.failed} failed`,
 			);
-			console.log(`📈 Total: ${result.data.results.total} operations`);
-			console.log("");
+			console.info(`📈 Total: ${result.data.results.total} operations`);
+			console.info("");
 
 			result.data.operations.forEach((op, index) => {
 				const status = op.status === "success" ? "✅" : "❌";
-				console.log(
+				console.info(
 					`${status} ${index + 1}. ${op.type.toUpperCase()} ${op.package_name}`,
 				);
 				if (op.status === "failed") {
-					console.log(`   Error: ${op.message}`);
+					console.info(`   Error: ${op.message}`);
 				}
 			});
 		} else {
-			console.log("❌ Batch operations failed");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Batch operations failed");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async listPreinstalledApps(): Promise<void> {
-		console.log("📱 Preinstalled Applications");
-		console.log("=============================");
+		console.info("📱 Preinstalled Applications");
+		console.info("=============================");
 
 		const result = await this.adb.listPreinstalledApps(this.deviceId);
 
 		if (result.code === 200) {
-			console.log(`Found ${result.data.total} preinstalled apps:\n`);
+			console.info(`Found ${result.data.total} preinstalled apps:\n`);
 			result.data.preinstalled.forEach((app, index) => {
-				console.log(`${index + 1}. ${app.app_name} (${app.package_name})`);
-				console.log(
+				console.info(`${index + 1}. ${app.app_name} (${app.package_name})`);
+				console.info(
 					`   Version: ${app.version} | Size: ${(app.size / 1024 / 1024).toFixed(1)}MB`,
 				);
-				console.log(`   Category: ${app.category}`);
-				console.log("");
+				console.info(`   Category: ${app.category}`);
+				console.info("");
 			});
 		} else {
-			console.log("❌ Failed to list preinstalled applications");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to list preinstalled applications");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	// Team Management Methods
 
 	private async listTeams(): Promise<void> {
-		console.log("👥 Team Management");
-		console.log("==================");
+		console.info("👥 Team Management");
+		console.info("==================");
 
 		const result = await this.adb.listTeams({
 			limit: 20,
 		});
 
 		if (result.code === 200) {
-			console.log(`Found ${result.data.total} teams:\n`);
+			console.info(`Found ${result.data.total} teams:\n`);
 			result.data.teams.forEach((team, index) => {
 				const statusIcon = team.status === "active" ? "✅" : "⏸️";
-				console.log(`${index + 1}. ${statusIcon} ${team.name} (${team.id})`);
-				console.log(`   Description: ${team.description}`);
-				console.log(
+				console.info(`${index + 1}. ${statusIcon} ${team.name} (${team.id})`);
+				console.info(`   Description: ${team.description}`);
+				console.info(
 					`   Members: ${team.member_count} | Devices: ${team.device_count}`,
 				);
-				console.log(`   Created: ${team.created_at}`);
-				console.log("");
+				console.info(`   Created: ${team.created_at}`);
+				console.info("");
 			});
 
 			if (result.data.total > 20) {
-				console.log(`... and ${result.data.total - 20} more teams`);
+				console.info(`... and ${result.data.total - 20} more teams`);
 			}
 		} else {
-			console.log("❌ Failed to list teams");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to list teams");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async listTeamMembers(): Promise<void> {
-		console.log("👥 Team Members");
-		console.log("===============");
+		console.info("👥 Team Members");
+		console.info("===============");
 
 		const result = await this.adb.listTeamMembers(undefined, {
 			limit: 20,
 		});
 
 		if (result.code === 200) {
-			console.log(`Found ${result.data.total} members:\n`);
+			console.info(`Found ${result.data.total} members:\n`);
 			result.data.members.forEach((member, index) => {
 				const statusIcon = member.status === "active" ? "🟢" : "⚪";
 				const roleIcon =
@@ -1490,57 +1490,57 @@ export class DuoplusCLI {
 						: member.role === "member"
 							? "👤"
 							: "👁️";
-				console.log(
+				console.info(
 					`${index + 1}. ${statusIcon} ${roleIcon} ${member.name} (${member.email})`,
 				);
-				console.log(`   Role: ${member.role} | ID: ${member.id}`);
-				console.log(`   Joined: ${member.joined_at}`);
-				console.log(`   Last Active: ${member.last_active}`);
-				console.log("");
+				console.info(`   Role: ${member.role} | ID: ${member.id}`);
+				console.info(`   Joined: ${member.joined_at}`);
+				console.info(`   Last Active: ${member.last_active}`);
+				console.info("");
 			});
 
 			if (result.data.total > 20) {
-				console.log(`... and ${result.data.total - 20} more members`);
+				console.info(`... and ${result.data.total - 20} more members`);
 			}
 		} else {
-			console.log("❌ Failed to list team members");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to list team members");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async listGroups(): Promise<void> {
-		console.log("📁 Team Groups");
-		console.log("===============");
+		console.info("📁 Team Groups");
+		console.info("===============");
 
 		const result = await this.adb.listTeamGroups(undefined, {
 			limit: 20,
 		});
 
 		if (result.code === 200) {
-			console.log(`Found ${result.data.total} groups:\n`);
+			console.info(`Found ${result.data.total} groups:\n`);
 			result.data.groups.forEach((group: any, index: number) => {
 				const statusIcon = group.status === "active" ? "✅" : "⏸️";
-				console.log(`${index + 1}. ${statusIcon} ${group.name} (${group.id})`);
-				console.log(`   Description: ${group.description || "No description"}`);
-				console.log(
+				console.info(`${index + 1}. ${statusIcon} ${group.name} (${group.id})`);
+				console.info(`   Description: ${group.description || "No description"}`);
+				console.info(
 					`   Members: ${group.member_count} | Devices: ${group.device_count}`,
 				);
-				console.log(`   Created: ${group.created_at}`);
-				console.log("");
+				console.info(`   Created: ${group.created_at}`);
+				console.info("");
 			});
 
 			if (result.data.total > 20) {
-				console.log(`... and ${result.data.total - 20} more groups`);
+				console.info(`... and ${result.data.total - 20} more groups`);
 			}
 		} else {
-			console.log("❌ Failed to list groups");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to list groups");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async inviteTeamMember(email: string): Promise<void> {
-		console.log(`📧 Inviting Team Member: ${email}`);
-		console.log("===============================");
+		console.info(`📧 Inviting Team Member: ${email}`);
+		console.info("===============================");
 
 		const result = await this.adb.inviteTeamMembers([
 			{
@@ -1551,59 +1551,59 @@ export class DuoplusCLI {
 		]);
 
 		if (result.code === 200) {
-			console.log(`✅ Invitation process completed!`);
-			console.log(
+			console.info(`✅ Invitation process completed!`);
+			console.info(
 				`📊 Results: ${result.data.successful.length} successful, ${result.data.failed.length} failed`,
 			);
-			console.log("");
+			console.info("");
 
 			result.data.invitations.forEach((invitation, index) => {
 				const statusIcon = invitation.status === "sent" ? "✅" : "❌";
-				console.log(`${statusIcon} ${index + 1}. ${invitation.email}`);
+				console.info(`${statusIcon} ${index + 1}. ${invitation.email}`);
 				if (invitation.status === "sent") {
-					console.log(`   Invitation ID: ${invitation.invitation_id}`);
-					console.log(`   Role: ${invitation.role}`);
+					console.info(`   Invitation ID: ${invitation.invitation_id}`);
+					console.info(`   Role: ${invitation.role}`);
 				} else {
-					console.log(`   Error: ${invitation.error}`);
+					console.info(`   Error: ${invitation.error}`);
 				}
 			});
 		} else {
-			console.log("❌ Failed to send invitations");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to send invitations");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async listTeamGroups(): Promise<void> {
-		console.log("🏷️  Team Groups");
-		console.log("================");
+		console.info("🏷️  Team Groups");
+		console.info("================");
 
 		const result = await this.adb.listTeamGroups(undefined, {
 			limit: 20,
 		});
 
 		if (result.code === 200) {
-			console.log(`Found ${result.data.total} groups:\n`);
+			console.info(`Found ${result.data.total} groups:\n`);
 			result.data.groups.forEach((group, index) => {
-				console.log(`${index + 1}. 🏷️  ${group.name} (${group.id})`);
-				console.log(`   Description: ${group.description}`);
-				console.log(`   Members: ${group.member_count}`);
-				console.log(`   Permissions: ${group.permissions.join(", ")}`);
-				console.log(`   Created: ${group.created_at}`);
-				console.log("");
+				console.info(`${index + 1}. 🏷️  ${group.name} (${group.id})`);
+				console.info(`   Description: ${group.description}`);
+				console.info(`   Members: ${group.member_count}`);
+				console.info(`   Permissions: ${group.permissions.join(", ")}`);
+				console.info(`   Created: ${group.created_at}`);
+				console.info("");
 			});
 
 			if (result.data.total > 20) {
-				console.log(`... and ${result.data.total - 20} more groups`);
+				console.info(`... and ${result.data.total - 20} more groups`);
 			}
 		} else {
-			console.log("❌ Failed to list team groups");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to list team groups");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async shareResource(resourceId: string): Promise<void> {
-		console.log(`🔗 Sharing Resource: ${resourceId}`);
-		console.log("===============================");
+		console.info(`🔗 Sharing Resource: ${resourceId}`);
+		console.info("===============================");
 
 		const result = await this.adb.shareResources({
 			type: "device",
@@ -1616,25 +1616,25 @@ export class DuoplusCLI {
 
 		if (result.code === 200) {
 			const share = result.data.shares[0];
-			console.log("✅ Resource shared successfully!");
-			console.log(`📋 Share ID: ${share.id}`);
-			console.log(`🔗 Share URL: ${share.share_url}`);
-			console.log(`📱 Resource: ${share.type} (${share.resource_id})`);
-			console.log(`👥 Shared with: ${share.shared_with.join(", ")}`);
-			console.log(`🔐 Permissions: ${share.permissions.join(", ")}`);
-			console.log(`🕐 Created: ${share.created_at}`);
-			console.log(`⏰ Expires: ${share.expires_at || "Never"}`);
+			console.info("✅ Resource shared successfully!");
+			console.info(`📋 Share ID: ${share.id}`);
+			console.info(`🔗 Share URL: ${share.share_url}`);
+			console.info(`📱 Resource: ${share.type} (${share.resource_id})`);
+			console.info(`👥 Shared with: ${share.shared_with.join(", ")}`);
+			console.info(`🔐 Permissions: ${share.permissions.join(", ")}`);
+			console.info(`🕐 Created: ${share.created_at}`);
+			console.info(`⏰ Expires: ${share.expires_at || "Never"}`);
 		} else {
-			console.log("❌ Failed to share resource");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to share resource");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	// Device Operations Methods
 
 	private async restartDevice(): Promise<void> {
-		console.log("🔄 Restarting Device");
-		console.log("====================");
+		console.info("🔄 Restarting Device");
+		console.info("====================");
 
 		const result = await this.adb.restartDevice(this.deviceId, {
 			force: false,
@@ -1644,27 +1644,27 @@ export class DuoplusCLI {
 		if (result.code === 200) {
 			if (result.data.success.includes(this.deviceId)) {
 				const restart = result.data.restarts[this.deviceId];
-				console.log("✅ Device restarted successfully!");
-				console.log(`📱 Device ID: ${this.deviceId}`);
-				console.log(`🕐 Restart Time: ${restart.restart_time}`);
-				console.log(`📊 Previous Status: ${restart.previous_status}`);
-				console.log(`📊 New Status: ${restart.new_status}`);
-				console.log(`✅ Success: ${restart.success}`);
+				console.info("✅ Device restarted successfully!");
+				console.info(`📱 Device ID: ${this.deviceId}`);
+				console.info(`🕐 Restart Time: ${restart.restart_time}`);
+				console.info(`📊 Previous Status: ${restart.previous_status}`);
+				console.info(`📊 New Status: ${restart.new_status}`);
+				console.info(`✅ Success: ${restart.success}`);
 			} else {
-				console.log("❌ Failed to restart device");
+				console.info("❌ Failed to restart device");
 				if (result.data.fail.length > 0) {
-					console.log(`Reason: ${result.data.fail_reason[this.deviceId]}`);
+					console.info(`Reason: ${result.data.fail_reason[this.deviceId]}`);
 				}
 			}
 		} else {
-			console.log("❌ Device restart API failed");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Device restart API failed");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async transferDevice(targetUser: string): Promise<void> {
-		console.log(`🔄 Transferring Device to: ${targetUser}`);
-		console.log("========================================");
+		console.info(`🔄 Transferring Device to: ${targetUser}`);
+		console.info("========================================");
 
 		const result = await this.adb.transferDevice(this.deviceId, targetUser, {
 			message: "Device transferred for project collaboration",
@@ -1674,32 +1674,32 @@ export class DuoplusCLI {
 		if (result.code === 200) {
 			if (result.data.success.includes(this.deviceId)) {
 				const transfer = result.data.transfers[this.deviceId];
-				console.log("✅ Device transferred successfully!");
-				console.log(`📱 Device ID: ${this.deviceId}`);
-				console.log(`🔄 Transfer ID: ${transfer.transfer_id}`);
-				console.log(`👤 From User: ${transfer.from_user}`);
-				console.log(`👤 To User: ${transfer.to_user}`);
-				console.log(`🕐 Transfer Time: ${transfer.transfer_time}`);
-				console.log(`✅ Success: ${transfer.success}`);
+				console.info("✅ Device transferred successfully!");
+				console.info(`📱 Device ID: ${this.deviceId}`);
+				console.info(`🔄 Transfer ID: ${transfer.transfer_id}`);
+				console.info(`👤 From User: ${transfer.from_user}`);
+				console.info(`👤 To User: ${transfer.to_user}`);
+				console.info(`🕐 Transfer Time: ${transfer.transfer_time}`);
+				console.info(`✅ Success: ${transfer.success}`);
 			} else {
-				console.log("❌ Failed to transfer device");
+				console.info("❌ Failed to transfer device");
 				if (result.data.fail.length > 0) {
-					console.log(`Reason: ${result.data.fail_reason[this.deviceId]}`);
+					console.info(`Reason: ${result.data.fail_reason[this.deviceId]}`);
 				}
 			}
 		} else {
-			console.log("❌ Device transfer API failed");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Device transfer API failed");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async setFocusMode(mode: string): Promise<void> {
-		console.log(`🎯 Setting Focus Mode: ${mode}`);
-		console.log("===============================");
+		console.info(`🎯 Setting Focus Mode: ${mode}`);
+		console.info("===============================");
 
 		const validModes = ["none", "work", "gaming", "reading"];
 		if (!validModes.includes(mode)) {
-			console.log(
+			console.info(
 				"❌ Invalid focus mode. Valid options: none, work, gaming, reading",
 			);
 			return;
@@ -1713,28 +1713,28 @@ export class DuoplusCLI {
 
 		if (result.code === 200) {
 			const settings = result.data.focus_settings;
-			console.log("✅ Focus mode set successfully!");
-			console.log(`🎯 Mode: ${settings.mode}`);
-			console.log(`🔔 Enabled: ${settings.enabled}`);
-			console.log(`📵 Block Notifications: ${settings.block_notifications}`);
-			console.log(`📞 Block Calls: ${settings.block_calls}`);
-			console.log(
+			console.info("✅ Focus mode set successfully!");
+			console.info(`🎯 Mode: ${settings.mode}`);
+			console.info(`🔔 Enabled: ${settings.enabled}`);
+			console.info(`📵 Block Notifications: ${settings.block_notifications}`);
+			console.info(`📞 Block Calls: ${settings.block_calls}`);
+			console.info(
 				`📱 Whitelist Apps: ${settings.whitelist_apps.join(", ") || "None"}`,
 			);
-			console.log(`🕐 Activated: ${settings.activated_time}`);
+			console.info(`🕐 Activated: ${settings.activated_time}`);
 		} else {
-			console.log("❌ Failed to set focus mode");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to set focus mode");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async manage2FA(action: string): Promise<void> {
-		console.log(`🔐 Managing 2FA: ${action}`);
-		console.log("===========================");
+		console.info(`🔐 Managing 2FA: ${action}`);
+		console.info("===========================");
 
 		const validActions = ["enable", "disable", "generate-backup-codes"];
 		if (!validActions.includes(action)) {
-			console.log(
+			console.info(
 				"❌ Invalid 2FA action. Valid options: enable, disable, generate-backup-codes",
 			);
 			return;
@@ -1744,30 +1744,30 @@ export class DuoplusCLI {
 
 		if (result.code === 200) {
 			const twoFactor = result.data.two_factor;
-			console.log("✅ 2FA operation completed successfully!");
-			console.log(`🔐 Enabled: ${twoFactor.enabled}`);
+			console.info("✅ 2FA operation completed successfully!");
+			console.info(`🔐 Enabled: ${twoFactor.enabled}`);
 
 			if (action === "enable") {
-				console.log(`🔑 Secret: ${twoFactor.secret}`);
-				console.log(`📱 QR Code: ${twoFactor.qr_code}`);
-				console.log(`🕐 Setup Time: ${twoFactor.setup_time}`);
+				console.info(`🔑 Secret: ${twoFactor.secret}`);
+				console.info(`📱 QR Code: ${twoFactor.qr_code}`);
+				console.info(`🕐 Setup Time: ${twoFactor.setup_time}`);
 			} else if (action === "generate-backup-codes") {
-				console.log(`🔢 Backup Codes (${twoFactor.backup_codes.length}):`);
+				console.info(`🔢 Backup Codes (${twoFactor.backup_codes.length}):`);
 				twoFactor.backup_codes.forEach((code, index) => {
-					console.log(`   ${index + 1}. ${code}`);
+					console.info(`   ${index + 1}. ${code}`);
 				});
 			}
 		} else {
-			console.log("❌ Failed to manage 2FA");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to manage 2FA");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	// Additional Device Operations Methods
 
 	private async cleanDevice(): Promise<void> {
-		console.log("🧹 Cleaning Device");
-		console.log("==================");
+		console.info("🧹 Cleaning Device");
+		console.info("==================");
 
 		const result = await this.adb.cleanDevice(this.deviceId, {
 			clean_cache: true,
@@ -1779,31 +1779,31 @@ export class DuoplusCLI {
 		if (result.code === 200) {
 			if (result.data.success.includes(this.deviceId)) {
 				const clean = result.data.clean_results[this.deviceId];
-				console.log("✅ Device cleaned successfully!");
-				console.log(`📱 Device ID: ${this.deviceId}`);
-				console.log(`🕐 Clean Time: ${clean.clean_time}`);
-				console.log(`🗑️  Cache Cleared: ${clean.cache_cleared}`);
-				console.log(`📋 Logs Cleared: ${clean.logs_cleared}`);
-				console.log(`📁 Temp Files Cleared: ${clean.temp_cleared}`);
-				console.log(
+				console.info("✅ Device cleaned successfully!");
+				console.info(`📱 Device ID: ${this.deviceId}`);
+				console.info(`🕐 Clean Time: ${clean.clean_time}`);
+				console.info(`🗑️  Cache Cleared: ${clean.cache_cleared}`);
+				console.info(`📋 Logs Cleared: ${clean.logs_cleared}`);
+				console.info(`📁 Temp Files Cleared: ${clean.temp_cleared}`);
+				console.info(
 					`💾 Space Freed: ${(clean.space_freed / 1024 / 1024).toFixed(1)}MB`,
 				);
-				console.log(`✅ Success: ${clean.success}`);
+				console.info(`✅ Success: ${clean.success}`);
 			} else {
-				console.log("❌ Failed to clean device");
+				console.info("❌ Failed to clean device");
 				if (result.data.fail.length > 0) {
-					console.log(`Reason: ${result.data.fail_reason[this.deviceId]}`);
+					console.info(`Reason: ${result.data.fail_reason[this.deviceId]}`);
 				}
 			}
 		} else {
-			console.log("❌ Device cleaning API failed");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Device cleaning API failed");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async backupDevice(): Promise<void> {
-		console.log("💾 Backing Up Device");
-		console.log("====================");
+		console.info("💾 Backing Up Device");
+		console.info("====================");
 
 		const result = await this.adb.backupDevice(this.deviceId, {
 			include_apps: true,
@@ -1814,33 +1814,33 @@ export class DuoplusCLI {
 
 		if (result.code === 200) {
 			const backup = result.data.backup_results[this.deviceId];
-			console.log("✅ Device backed up successfully!");
-			console.log(`📱 Device ID: ${this.deviceId}`);
-			console.log(`💾 Backup ID: ${backup.backup_id}`);
-			console.log(`🕐 Backup Time: ${backup.backup_time}`);
-			console.log(
+			console.info("✅ Device backed up successfully!");
+			console.info(`📱 Device ID: ${this.deviceId}`);
+			console.info(`💾 Backup ID: ${backup.backup_id}`);
+			console.info(`🕐 Backup Time: ${backup.backup_time}`);
+			console.info(
 				`📊 Backup Size: ${(backup.backup_size / 1024 / 1024 / 1024).toFixed(2)}GB`,
 			);
-			console.log(`📁 Backup Location: ${backup.backup_location}`);
-			console.log(`📱 Apps Included: ${backup.included_apps}`);
-			console.log(`💾 Data Included: ${backup.included_data}`);
-			console.log(`⚙️  Settings Included: ${backup.included_settings}`);
-			console.log(`✅ Success: ${backup.success}`);
+			console.info(`📁 Backup Location: ${backup.backup_location}`);
+			console.info(`📱 Apps Included: ${backup.included_apps}`);
+			console.info(`💾 Data Included: ${backup.included_data}`);
+			console.info(`⚙️  Settings Included: ${backup.included_settings}`);
+			console.info(`✅ Success: ${backup.success}`);
 		} else {
-			console.log("❌ Device backup API failed");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Device backup API failed");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	// Advanced Functions Methods
 
 	private async manageRootAccess(action: string): Promise<void> {
-		console.log(`🔑 Managing Root Access: ${action}`);
-		console.log("===================================");
+		console.info(`🔑 Managing Root Access: ${action}`);
+		console.info("===================================");
 
 		const validActions = ["enable", "disable", "status"];
 		if (!validActions.includes(action)) {
-			console.log(
+			console.info(
 				"❌ Invalid root action. Valid options: enable, disable, status",
 			);
 			return;
@@ -1857,23 +1857,23 @@ export class DuoplusCLI {
 
 		if (result.code === 200) {
 			const rootStatus = result.data.root_status[this.deviceId];
-			console.log("✅ Root access operation completed successfully!");
-			console.log(`🔑 Action: ${rootStatus.action}`);
-			console.log(`🔓 Root Enabled: ${rootStatus.root_enabled}`);
+			console.info("✅ Root access operation completed successfully!");
+			console.info(`🔑 Action: ${rootStatus.action}`);
+			console.info(`🔓 Root Enabled: ${rootStatus.root_enabled}`);
 			if (rootStatus.method) {
-				console.log(`🛠️  Method: ${rootStatus.method}`);
+				console.info(`🛠️  Method: ${rootStatus.method}`);
 			}
-			console.log(`🕐 Access Time: ${rootStatus.access_time}`);
-			console.log(`✅ Success: ${rootStatus.success}`);
+			console.info(`🕐 Access Time: ${rootStatus.access_time}`);
+			console.info(`✅ Success: ${rootStatus.success}`);
 		} else {
-			console.log("❌ Failed to manage root access");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to manage root access");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async scanQRCode(): Promise<void> {
-		console.log("📷 Scanning QR Code");
-		console.log("====================");
+		console.info("📷 Scanning QR Code");
+		console.info("====================");
 
 		const result = await this.adb.scanQRCode(this.deviceId, {
 			scan_type: "camera",
@@ -1882,22 +1882,22 @@ export class DuoplusCLI {
 
 		if (result.code === 200) {
 			const scanResult = result.data.scan_results[this.deviceId];
-			console.log("✅ QR code scanned successfully!");
-			console.log(`📱 Device ID: ${this.deviceId}`);
-			console.log(`📊 QR Data: ${scanResult.qr_data}`);
-			console.log(`🕐 Scan Time: ${scanResult.scan_time}`);
-			console.log(`📋 Format: ${scanResult.format}`);
-			console.log(`🎯 Confidence: ${scanResult.confidence}%`);
-			console.log(`✅ Success: ${scanResult.success}`);
+			console.info("✅ QR code scanned successfully!");
+			console.info(`📱 Device ID: ${this.deviceId}`);
+			console.info(`📊 QR Data: ${scanResult.qr_data}`);
+			console.info(`🕐 Scan Time: ${scanResult.scan_time}`);
+			console.info(`📋 Format: ${scanResult.format}`);
+			console.info(`🎯 Confidence: ${scanResult.confidence}%`);
+			console.info(`✅ Success: ${scanResult.success}`);
 		} else {
-			console.log("❌ Failed to scan QR code");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to scan QR code");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async changeResolution(resolution: string): Promise<void> {
-		console.log(`🖥️  Changing Resolution: ${resolution}`);
-		console.log("===============================");
+		console.info(`🖥️  Changing Resolution: ${resolution}`);
+		console.info("===============================");
 
 		const result = await this.adb.changeResolution(this.deviceId, resolution, {
 			refresh_rate: 60,
@@ -1906,25 +1906,25 @@ export class DuoplusCLI {
 
 		if (result.code === 200) {
 			const resolutionResult = result.data.resolution_results[this.deviceId];
-			console.log("✅ Resolution changed successfully!");
-			console.log(`📱 Device ID: ${this.deviceId}`);
-			console.log(
+			console.info("✅ Resolution changed successfully!");
+			console.info(`📱 Device ID: ${this.deviceId}`);
+			console.info(
 				`📊 Current Resolution: ${resolutionResult.current_resolution}`,
 			);
-			console.log(`🖥️  New Resolution: ${resolutionResult.new_resolution}`);
-			console.log(`🔄 Refresh Rate: ${resolutionResult.refresh_rate}Hz`);
-			console.log(`📏 Density: ${resolutionResult.density}dpi`);
-			console.log(`🕐 Change Time: ${resolutionResult.change_time}`);
-			console.log(`✅ Success: ${resolutionResult.success}`);
+			console.info(`🖥️  New Resolution: ${resolutionResult.new_resolution}`);
+			console.info(`🔄 Refresh Rate: ${resolutionResult.refresh_rate}Hz`);
+			console.info(`📏 Density: ${resolutionResult.density}dpi`);
+			console.info(`🕐 Change Time: ${resolutionResult.change_time}`);
+			console.info(`✅ Success: ${resolutionResult.success}`);
 		} else {
-			console.log("❌ Failed to change resolution");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to change resolution");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async startStreaming(): Promise<void> {
-		console.log("📺 Starting Live Streaming");
-		console.log("===========================");
+		console.info("📺 Starting Live Streaming");
+		console.info("===========================");
 
 		const result = await this.adb.startStreaming(this.deviceId, {
 			quality: "high",
@@ -1935,29 +1935,29 @@ export class DuoplusCLI {
 
 		if (result.code === 200) {
 			const streamingStatus = result.data.streaming_status[this.deviceId];
-			console.log("✅ Streaming started successfully!");
-			console.log(`📱 Device ID: ${this.deviceId}`);
-			console.log(`🔗 Stream URL: ${streamingStatus.stream_url}`);
-			console.log(`🎥 Quality: ${streamingStatus.quality}`);
-			console.log(`🎬 FPS: ${streamingStatus.fps}`);
-			console.log(`📊 Bitrate: ${streamingStatus.bitrate}kbps`);
-			console.log(`🔊 Audio Enabled: ${streamingStatus.audio_enabled}`);
-			console.log(`🕐 Start Time: ${streamingStatus.start_time}`);
-			console.log(`👥 Viewers: ${streamingStatus.viewers}`);
-			console.log(`✅ Success: ${streamingStatus.success}`);
+			console.info("✅ Streaming started successfully!");
+			console.info(`📱 Device ID: ${this.deviceId}`);
+			console.info(`🔗 Stream URL: ${streamingStatus.stream_url}`);
+			console.info(`🎥 Quality: ${streamingStatus.quality}`);
+			console.info(`🎬 FPS: ${streamingStatus.fps}`);
+			console.info(`📊 Bitrate: ${streamingStatus.bitrate}kbps`);
+			console.info(`🔊 Audio Enabled: ${streamingStatus.audio_enabled}`);
+			console.info(`🕐 Start Time: ${streamingStatus.start_time}`);
+			console.info(`👥 Viewers: ${streamingStatus.viewers}`);
+			console.info(`✅ Success: ${streamingStatus.success}`);
 		} else {
-			console.log("❌ Failed to start streaming");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to start streaming");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async adjustQuality(quality: string): Promise<void> {
-		console.log(`⚙️  Adjusting Quality: ${quality}`);
-		console.log("===============================");
+		console.info(`⚙️  Adjusting Quality: ${quality}`);
+		console.info("===============================");
 
 		const validQualities = ["low", "medium", "high", "ultra", "auto"];
 		if (!validQualities.includes(quality)) {
-			console.log(
+			console.info(
 				"❌ Invalid quality. Valid options: low, medium, high, ultra, auto",
 			);
 			return;
@@ -1970,27 +1970,27 @@ export class DuoplusCLI {
 
 		if (result.code === 200) {
 			const qualitySettings = result.data.quality_settings[this.deviceId];
-			console.log("✅ Quality adjusted successfully!");
-			console.log(`📱 Device ID: ${this.deviceId}`);
-			console.log(`📊 Current Quality: ${qualitySettings.current_quality}`);
-			console.log(`⚙️  New Quality: ${qualitySettings.new_quality}`);
-			console.log(`🔄 Adaptive Enabled: ${qualitySettings.adaptive_enabled}`);
-			console.log(`🔋 Power Saving: ${qualitySettings.power_saving}`);
-			console.log(`🕐 Adjustment Time: ${qualitySettings.adjustment_time}`);
-			console.log(`✅ Adjusted: ${qualitySettings.adjusted}`);
+			console.info("✅ Quality adjusted successfully!");
+			console.info(`📱 Device ID: ${this.deviceId}`);
+			console.info(`📊 Current Quality: ${qualitySettings.current_quality}`);
+			console.info(`⚙️  New Quality: ${qualitySettings.new_quality}`);
+			console.info(`🔄 Adaptive Enabled: ${qualitySettings.adaptive_enabled}`);
+			console.info(`🔋 Power Saving: ${qualitySettings.power_saving}`);
+			console.info(`🕐 Adjustment Time: ${qualitySettings.adjustment_time}`);
+			console.info(`✅ Adjusted: ${qualitySettings.adjusted}`);
 		} else {
-			console.log("❌ Failed to adjust quality");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to adjust quality");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	private async selectRoute(route: string): Promise<void> {
-		console.log(`🛣️  Selecting Route: ${route}`);
-		console.log("============================");
+		console.info(`🛣️  Selecting Route: ${route}`);
+		console.info("============================");
 
 		const validRoutes = ["direct", "optimized", "secure", "balanced"];
 		if (!validRoutes.includes(route)) {
-			console.log(
+			console.info(
 				"❌ Invalid route. Valid options: direct, optimized, secure, balanced",
 			);
 			return;
@@ -2003,26 +2003,26 @@ export class DuoplusCLI {
 
 		if (result.code === 200) {
 			const routeSettings = result.data.route_settings[this.deviceId];
-			console.log("✅ Route selected successfully!");
-			console.log(`📱 Device ID: ${this.deviceId}`);
-			console.log(`🛣️  Current Route: ${routeSettings.current_route}`);
-			console.log(`🎯 New Route: ${routeSettings.new_route}`);
-			console.log(`⚡ Latency: ${routeSettings.latency_ms}ms`);
-			console.log(`📶 Bandwidth: ${routeSettings.bandwidth_mbps}Mbps`);
-			console.log(`🔒 Secure: ${routeSettings.secure}`);
-			console.log(`🕐 Selection Time: ${routeSettings.selection_time}`);
-			console.log(`⚡ Optimized: ${routeSettings.optimized}`);
+			console.info("✅ Route selected successfully!");
+			console.info(`📱 Device ID: ${this.deviceId}`);
+			console.info(`🛣️  Current Route: ${routeSettings.current_route}`);
+			console.info(`🎯 New Route: ${routeSettings.new_route}`);
+			console.info(`⚡ Latency: ${routeSettings.latency_ms}ms`);
+			console.info(`📶 Bandwidth: ${routeSettings.bandwidth_mbps}Mbps`);
+			console.info(`🔒 Secure: ${routeSettings.secure}`);
+			console.info(`🕐 Selection Time: ${routeSettings.selection_time}`);
+			console.info(`⚡ Optimized: ${routeSettings.optimized}`);
 		} else {
-			console.log("❌ Failed to select route");
-			console.log(`Error: ${result.message}`);
+			console.info("❌ Failed to select route");
+			console.info(`Error: ${result.message}`);
 		}
 	}
 
 	// Enhanced Features Methods
 
 	private async executeBatch(configFile: string): Promise<void> {
-		console.log(`🔄 Executing Batch Operations: ${configFile}`);
-		console.log("==========================================");
+		console.info(`🔄 Executing Batch Operations: ${configFile}`);
+		console.info("==========================================");
 
 		try {
 			// Simulate batch configuration file reading
@@ -2033,16 +2033,16 @@ export class DuoplusCLI {
 				{ command: "apps", description: "List installed apps" },
 			];
 
-			console.log(`📋 Found ${batchOperations.length} batch operations:`);
+			console.info(`📋 Found ${batchOperations.length} batch operations:`);
 			batchOperations.forEach((op, index) => {
-				console.log(`   ${index + 1}. ${op.command} - ${op.description}`);
+				console.info(`   ${index + 1}. ${op.command} - ${op.description}`);
 			});
 
-			console.log("\n🚀 Executing batch operations...");
+			console.info("\n🚀 Executing batch operations...");
 
 			for (let i = 0; i < batchOperations.length; i++) {
 				const op = batchOperations[i];
-				console.log(`\n[${i + 1}/${batchOperations.length}] ${op.description}`);
+				console.info(`\n[${i + 1}/${batchOperations.length}] ${op.description}`);
 
 				// Simulate execution based on command type
 				switch (op.command) {
@@ -2064,21 +2064,21 @@ export class DuoplusCLI {
 				await new Promise((resolve) => setTimeout(resolve, 500));
 			}
 
-			console.log("\n✅ Batch operations completed successfully!");
+			console.info("\n✅ Batch operations completed successfully!");
 		} catch (error) {
-			console.log("❌ Batch execution failed");
-			console.log(
+			console.info("❌ Batch execution failed");
+			console.info(
 				`Error: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
 
 	private async startAutomation(): Promise<void> {
-		console.log("🤖 Starting Device Automation");
-		console.log("==============================");
+		console.info("🤖 Starting Device Automation");
+		console.info("==============================");
 
 		try {
-			console.log("🔧 Configuring automation settings...");
+			console.info("🔧 Configuring automation settings...");
 
 			// Simulate automation configuration
 			const automationTasks = [
@@ -2088,41 +2088,41 @@ export class DuoplusCLI {
 				{ name: "Security Scan", interval: 1800, enabled: true },
 			];
 
-			console.log("✅ Automation configured with the following tasks:");
+			console.info("✅ Automation configured with the following tasks:");
 			automationTasks.forEach((task) => {
 				const status = task.enabled ? "✅" : "❌";
 				const interval =
 					task.interval < 60 ? `${task.interval}s` : `${task.interval / 60}m`;
-				console.log(`   ${status} ${task.name} (every ${interval})`);
+				console.info(`   ${status} ${task.name} (every ${interval})`);
 			});
 
-			console.log("\n🚀 Starting automation services...");
+			console.info("\n🚀 Starting automation services...");
 
 			// Simulate starting automation services
 			for (const task of automationTasks) {
 				if (task.enabled) {
-					console.log(`   ▶️  Starting ${task.name} service...`);
+					console.info(`   ▶️  Starting ${task.name} service...`);
 					await new Promise((resolve) => setTimeout(resolve, 200));
-					console.log(`   ✅ ${task.name} service started`);
+					console.info(`   ✅ ${task.name} service started`);
 				}
 			}
 
-			console.log("\n🤖 Device automation is now active!");
-			console.log("💡 Use --monitor to view real-time status");
+			console.info("\n🤖 Device automation is now active!");
+			console.info("💡 Use --monitor to view real-time status");
 		} catch (error) {
-			console.log("❌ Failed to start automation");
-			console.log(
+			console.info("❌ Failed to start automation");
+			console.info(
 				`Error: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
 
 	private async startMonitoring(): Promise<void> {
-		console.log("📊 Starting Real-time Monitoring");
-		console.log("===============================");
+		console.info("📊 Starting Real-time Monitoring");
+		console.info("===============================");
 
 		try {
-			console.log("🔌 Connecting to device monitoring services...");
+			console.info("🔌 Connecting to device monitoring services...");
 
 			// Simulate monitoring dashboard
 			const metrics = {
@@ -2133,16 +2133,16 @@ export class DuoplusCLI {
 				network: Math.floor(Math.random() * 20) + 80,
 			};
 
-			console.log("✅ Connected to monitoring services");
-			console.log("\n📊 Real-time Device Metrics:");
-			console.log(`   💻 CPU Usage: ${metrics.cpu}%`);
-			console.log(`   🧠 Memory Usage: ${metrics.memory}%`);
-			console.log(`   🔋 Battery: ${metrics.battery}%`);
-			console.log(`   🌡️  Temperature: ${metrics.temperature}°C`);
-			console.log(`   📶 Network Quality: ${metrics.network}%`);
+			console.info("✅ Connected to monitoring services");
+			console.info("\n📊 Real-time Device Metrics:");
+			console.info(`   💻 CPU Usage: ${metrics.cpu}%`);
+			console.info(`   🧠 Memory Usage: ${metrics.memory}%`);
+			console.info(`   🔋 Battery: ${metrics.battery}%`);
+			console.info(`   🌡️  Temperature: ${metrics.temperature}°C`);
+			console.info(`   📶 Network Quality: ${metrics.network}%`);
 
-			console.log("\n🔄 Monitoring active (updates every 5 seconds)");
-			console.log("💡 Press Ctrl+C to stop monitoring");
+			console.info("\n🔄 Monitoring active (updates every 5 seconds)");
+			console.info("💡 Press Ctrl+C to stop monitoring");
 
 			// Record metrics to analytics service
 			const deviceMetrics: DeviceMetrics = {
@@ -2195,10 +2195,10 @@ export class DuoplusCLI {
 				);
 			}
 
-			console.log("\n\n✅ Monitoring session completed");
+			console.info("\n\n✅ Monitoring session completed");
 		} catch (error) {
-			console.log("❌ Failed to start monitoring");
-			console.log(
+			console.info("❌ Failed to start monitoring");
+			console.info(
 				`Error: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
@@ -2207,8 +2207,8 @@ export class DuoplusCLI {
 	// Configuration and Integration Methods
 
 	private async showConfig(action: string): Promise<void> {
-		console.log(`⚙️  Configuration Management: ${action}`);
-		console.log("===================================");
+		console.info(`⚙️  Configuration Management: ${action}`);
+		console.info("===================================");
 
 		switch (action) {
 			case "show":
@@ -2228,7 +2228,7 @@ export class DuoplusCLI {
 				break;
 
 			default:
-				console.log(
+				console.info(
 					"❌ Invalid config action. Use: show, summary, validate, reset",
 				);
 		}
@@ -2237,127 +2237,127 @@ export class DuoplusCLI {
 	// Pattern Management Methods
 
 	private async listPatterns(): Promise<void> {
-		console.log("📚 Available Configuration Patterns");
-		console.log("===================================");
+		console.info("📚 Available Configuration Patterns");
+		console.info("===================================");
 		this.configManager.listAvailablePatterns();
 	}
 
 	private async applyPattern(patternName: string): Promise<void> {
-		console.log(`🎯 Applying Configuration Pattern: ${patternName}`);
-		console.log("==========================================");
+		console.info(`🎯 Applying Configuration Pattern: ${patternName}`);
+		console.info("==========================================");
 
 		try {
 			this.configManager.applyPattern(patternName);
-			console.log(`✅ Pattern '${patternName}' applied successfully!`);
-			console.log("💡 Use --config summary to see the updated configuration");
+			console.info(`✅ Pattern '${patternName}' applied successfully!`);
+			console.info("💡 Use --config summary to see the updated configuration");
 		} catch (error) {
-			console.log("❌ Failed to apply pattern");
-			console.log(
+			console.info("❌ Failed to apply pattern");
+			console.info(
 				`Error: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
-			console.log("💡 Use --patterns to see available patterns");
+			console.info("💡 Use --patterns to see available patterns");
 		}
 	}
 
 	private async applyMultiplePatterns(patternNames: string): Promise<void> {
-		console.log(`🎯 Applying Multiple Patterns: ${patternNames}`);
-		console.log("==========================================");
+		console.info(`🎯 Applying Multiple Patterns: ${patternNames}`);
+		console.info("==========================================");
 
 		try {
 			const patterns = patternNames.split(",").map((p) => p.trim());
 			this.configManager.applyPatterns(patterns);
-			console.log(`✅ Patterns applied successfully: ${patterns.join(", ")}`);
-			console.log("💡 Use --config summary to see the updated configuration");
+			console.info(`✅ Patterns applied successfully: ${patterns.join(", ")}`);
+			console.info("💡 Use --config summary to see the updated configuration");
 		} catch (error) {
-			console.log("❌ Failed to apply patterns");
-			console.log(
+			console.info("❌ Failed to apply patterns");
+			console.info(
 				`Error: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
-			console.log("💡 Use --patterns to see available patterns");
+			console.info("💡 Use --patterns to see available patterns");
 		}
 	}
 
 	private async resetConfiguration(): Promise<void> {
-		console.log("🔄 Resetting Configuration");
-		console.log("==========================");
+		console.info("🔄 Resetting Configuration");
+		console.info("==========================");
 
 		try {
 			this.configManager.resetToDefaults();
-			console.log("✅ Configuration reset to defaults successfully!");
+			console.info("✅ Configuration reset to defaults successfully!");
 		} catch (error) {
-			console.log("❌ Failed to reset configuration");
-			console.log(
+			console.info("❌ Failed to reset configuration");
+			console.info(
 				`Error: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
 
 	private async exportConfiguration(filePath?: string): Promise<void> {
-		console.log("📤 Exporting Configuration");
-		console.log("==========================");
+		console.info("📤 Exporting Configuration");
+		console.info("==========================");
 
 		try {
 			this.configManager.exportConfig(filePath);
-			console.log("✅ Configuration exported successfully!");
+			console.info("✅ Configuration exported successfully!");
 		} catch (error) {
-			console.log("❌ Failed to export configuration");
-			console.log(
+			console.info("❌ Failed to export configuration");
+			console.info(
 				`Error: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
 
 	private async importConfiguration(filePath: string): Promise<void> {
-		console.log(`📥 Importing Configuration: ${filePath}`);
-		console.log("===================================");
+		console.info(`📥 Importing Configuration: ${filePath}`);
+		console.info("===================================");
 
 		try {
 			this.configManager.importConfig(filePath);
-			console.log("✅ Configuration imported successfully!");
-			console.log("💡 Use --config summary to see the imported configuration");
+			console.info("✅ Configuration imported successfully!");
+			console.info("💡 Use --config summary to see the imported configuration");
 		} catch (error) {
-			console.log("❌ Failed to import configuration");
-			console.log(
+			console.info("❌ Failed to import configuration");
+			console.info(
 				`Error: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
 
 	private async validateConfiguration(): Promise<void> {
-		console.log("✅ Validating Configuration");
-		console.log("============================");
+		console.info("✅ Validating Configuration");
+		console.info("============================");
 
 		try {
 			const validation = this.configManager.validateConfig();
 
 			if (validation.valid) {
-				console.log("✅ Configuration is valid!");
+				console.info("✅ Configuration is valid!");
 			} else {
-				console.log("❌ Configuration validation failed:");
+				console.info("❌ Configuration validation failed:");
 				validation.errors.forEach((error) => {
-					console.log(`   - ${error}`);
+					console.info(`   - ${error}`);
 				});
 			}
 		} catch (error) {
-			console.log("❌ Failed to validate configuration");
-			console.log(
+			console.info("❌ Failed to validate configuration");
+			console.info(
 				`Error: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
 
 	private async showIntegrations(): Promise<void> {
-		console.log("🔗 Integration Status");
-		console.log("====================");
+		console.info("🔗 Integration Status");
+		console.info("====================");
 
 		const integrations = this.configManager.getIntegrations();
 
-		console.log("📊 Configured Integrations:");
+		console.info("📊 Configured Integrations:");
 
 		Object.entries(integrations).forEach(([name, integration]) => {
 			const status = integration?.enabled ? "✅" : "❌";
 			const displayName = name.charAt(0).toUpperCase() + name.slice(1);
-			console.log(`   ${status} ${displayName}`);
+			console.info(`   ${status} ${displayName}`);
 
 			if (integration?.enabled) {
 				if (
@@ -2365,114 +2365,114 @@ export class DuoplusCLI {
 					"channel" in integration &&
 					integration.channel
 				) {
-					console.log(`      Channel: ${integration.channel}`);
+					console.info(`      Channel: ${integration.channel}`);
 				} else if (
 					name === "teams" &&
 					"channel" in integration &&
 					integration.channel
 				) {
-					console.log(`      Channel: ${integration.channel}`);
+					console.info(`      Channel: ${integration.channel}`);
 				} else if (
 					name === "email" &&
 					"recipients" in integration &&
 					integration.recipients &&
 					integration.recipients.length > 0
 				) {
-					console.log(`      Recipients: ${integration.recipients.length}`);
+					console.info(`      Recipients: ${integration.recipients.length}`);
 				} else if (
 					name === "webhook" &&
 					"url" in integration &&
 					integration.url
 				) {
-					console.log(`      URL: ${integration.url}`);
+					console.info(`      URL: ${integration.url}`);
 				}
 			}
 		});
 
-		console.log("\n💡 Use --config to manage integration settings");
+		console.info("\n💡 Use --config to manage integration settings");
 	}
 
 	private async showAnalytics(): Promise<void> {
-		console.log("📊 Analytics Dashboard");
-		console.log("=======================");
+		console.info("📊 Analytics Dashboard");
+		console.info("=======================");
 
 		const summary = this.analyticsService.getDeviceSummary(this.deviceId);
 
 		if (!summary) {
-			console.log("❌ No analytics data available for this device");
+			console.info("❌ No analytics data available for this device");
 			return;
 		}
 
-		console.log(`📱 Device: ${summary.deviceId}`);
-		console.log(`📊 Data Points: ${summary.dataPoints}`);
-		console.log(`🕐 Last Updated: ${summary.lastUpdated}`);
+		console.info(`📱 Device: ${summary.deviceId}`);
+		console.info(`📊 Data Points: ${summary.dataPoints}`);
+		console.info(`🕐 Last Updated: ${summary.lastUpdated}`);
 
-		console.log("\n📈 Current Metrics:");
-		console.log(`   💻 CPU: ${summary.currentMetrics.cpu}%`);
-		console.log(`   🧠 Memory: ${summary.currentMetrics.memory}%`);
-		console.log(`   🔋 Battery: ${summary.currentMetrics.battery}%`);
-		console.log(`   🌡️  Temperature: ${summary.currentMetrics.temperature}°C`);
-		console.log(`   📶 Network: ${summary.currentMetrics.network}%`);
+		console.info("\n📈 Current Metrics:");
+		console.info(`   💻 CPU: ${summary.currentMetrics.cpu}%`);
+		console.info(`   🧠 Memory: ${summary.currentMetrics.memory}%`);
+		console.info(`   🔋 Battery: ${summary.currentMetrics.battery}%`);
+		console.info(`   🌡️  Temperature: ${summary.currentMetrics.temperature}°C`);
+		console.info(`   📶 Network: ${summary.currentMetrics.network}%`);
 
-		console.log("\n📊 Average Metrics:");
-		console.log(`   💻 CPU: ${summary.averageMetrics.cpu}%`);
-		console.log(`   🧠 Memory: ${summary.averageMetrics.memory}%`);
-		console.log(`   🔋 Battery: ${summary.averageMetrics.battery}%`);
-		console.log(`   🌡️  Temperature: ${summary.averageMetrics.temperature}°C`);
-		console.log(`   📶 Network: ${summary.averageMetrics.network}%`);
+		console.info("\n📊 Average Metrics:");
+		console.info(`   💻 CPU: ${summary.averageMetrics.cpu}%`);
+		console.info(`   🧠 Memory: ${summary.averageMetrics.memory}%`);
+		console.info(`   🔋 Battery: ${summary.averageMetrics.battery}%`);
+		console.info(`   🌡️  Temperature: ${summary.averageMetrics.temperature}°C`);
+		console.info(`   📶 Network: ${summary.averageMetrics.network}%`);
 
-		console.log("\n📈 Trends:");
+		console.info("\n📈 Trends:");
 		Object.entries(summary.trends).forEach(([metric, trend]) => {
 			const icon = trend === "up" ? "📈" : trend === "down" ? "📉" : "➡️";
 			const displayName = metric.charAt(0).toUpperCase() + metric.slice(1);
-			console.log(`   ${icon} ${displayName}: ${trend}`);
+			console.info(`   ${icon} ${displayName}: ${trend}`);
 		});
 
 		// Show alert rules
 		const alertRules = this.analyticsService.getAlertRules();
-		console.log(`\n🚨 Alert Rules: ${alertRules.length} configured`);
+		console.info(`\n🚨 Alert Rules: ${alertRules.length} configured`);
 		alertRules.forEach((rule) => {
 			const status = rule.enabled ? "✅" : "❌";
-			console.log(
+			console.info(
 				`   ${status} ${rule.name} (${rule.metric} ${rule.operator} ${rule.threshold})`,
 			);
 		});
 	}
 
 	private async showScheduler(): Promise<void> {
-		console.log("⏰ Task Scheduler");
-		console.log("=================");
+		console.info("⏰ Task Scheduler");
+		console.info("=================");
 
 		const status = this.schedulerService.getStatus();
 		const tasks = this.schedulerService.getTasks();
 
-		console.log(`🔄 Status: ${status.running ? "✅ Running" : "❌ Stopped"}`);
-		console.log(`📋 Total Tasks: ${status.totalTasks}`);
-		console.log(`▶️  Active Tasks: ${status.enabledTasks}`);
-		console.log(`🏃 Running: ${status.runningExecutions}`);
-		console.log(`📊 Success Rate: ${status.successRate}%`);
+		console.info(`🔄 Status: ${status.running ? "✅ Running" : "❌ Stopped"}`);
+		console.info(`📋 Total Tasks: ${status.totalTasks}`);
+		console.info(`▶️  Active Tasks: ${status.enabledTasks}`);
+		console.info(`🏃 Running: ${status.runningExecutions}`);
+		console.info(`📊 Success Rate: ${status.successRate}%`);
 
-		console.log("\n📋 Scheduled Tasks:");
+		console.info("\n📋 Scheduled Tasks:");
 		tasks.forEach((task) => {
 			const status = task.enabled ? "✅" : "❌";
-			console.log(`   ${status} ${task.name}`);
-			console.log(`      Schedule: ${task.schedule}`);
-			console.log(
+			console.info(`   ${status} ${task.name}`);
+			console.info(`      Schedule: ${task.schedule}`);
+			console.info(
 				`      Runs: ${task.runCount} (✅ ${task.successCount} | ❌ ${task.failureCount})`,
 			);
 			if (task.nextRun) {
-				console.log(
+				console.info(
 					`      Next Run: ${new Date(task.nextRun).toLocaleString()}`,
 				);
 			}
 		});
 
-		console.log("\n💡 Use --config to manage scheduler settings");
+		console.info("\n💡 Use --config to manage scheduler settings");
 	}
 
 	private async sendNotification(message: string): Promise<void> {
-		console.log("📬 Sending Test Notification");
-		console.log("=============================");
+		console.info("📬 Sending Test Notification");
+		console.info("=============================");
 
 		const notification: NotificationMessage = {
 			title: "Duoplus Test Notification",
@@ -2488,39 +2488,39 @@ export class DuoplusCLI {
 
 		try {
 			await this.notificationService.sendNotification(notification);
-			console.log("✅ Test notification sent successfully!");
-			console.log(`📝 Message: ${message}`);
-			console.log(`📱 Device: ${this.deviceId}`);
-			console.log(`🕐 Time: ${notification.timestamp}`);
+			console.info("✅ Test notification sent successfully!");
+			console.info(`📝 Message: ${message}`);
+			console.info(`📱 Device: ${this.deviceId}`);
+			console.info(`🕐 Time: ${notification.timestamp}`);
 		} catch (error) {
-			console.log("❌ Failed to send notification");
-			console.log(
+			console.info("❌ Failed to send notification");
+			console.info(
 				`Error: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
 
 	private async executeCommand(command: string): Promise<void> {
-		console.log(`🔧 Executing: ${command}`);
-		console.log("========================");
+		console.info(`🔧 Executing: ${command}`);
+		console.info("========================");
 
 		const result = await this.adb.executeADBCommand(this.deviceId, command);
 
 		if (result.code === 200 && result.data.success) {
-			console.log("✅ Command executed successfully");
+			console.info("✅ Command executed successfully");
 			if (result.data.content.trim()) {
-				console.log("Output:");
-				console.log(result.data.content);
+				console.info("Output:");
+				console.info(result.data.content);
 			}
 		} else {
-			console.log(`❌ Command failed: ${result.data.message}`);
+			console.info(`❌ Command failed: ${result.data.message}`);
 		}
 	}
 
 	private showHelp(category?: string, searchTerm?: string): void {
-		console.log("📱 Duoplus Cloud Phone CLI");
-		console.log("============================");
-		console.log("");
+		console.info("📱 Duoplus Cloud Phone CLI");
+		console.info("============================");
+		console.info("");
 
 		if (category) {
 			this.showCategoryHelp(category);
@@ -2532,36 +2532,36 @@ export class DuoplusCLI {
 			return;
 		}
 
-		console.log("USAGE:");
-		console.log("  duoplus-cli [options]");
-		console.log(
+		console.info("USAGE:");
+		console.info("  duoplus-cli [options]");
+		console.info(
 			"  duoplus-cli --help <category>  # Show help for specific category",
 		);
-		console.log("  duoplus-cli --search <term>     # Search commands");
-		console.log("");
-		console.log("CATEGORIES:");
-		console.log("  device        - Device listing and status commands");
-		console.log("  control       - Device control and power management");
-		console.log("  apps          - Application management");
-		console.log("  team          - Team collaboration features");
-		console.log("  advanced      - Advanced device operations");
-		console.log("  config        - Configuration and patterns");
-		console.log("  monitoring    - Analytics and monitoring");
-		console.log("");
-		console.log("QUICK START:");
-		console.log("  duoplus-cli --list              # List all devices");
-		console.log("  duoplus-cli --status            # Show device status");
-		console.log("  duoplus-cli --cloud-status      # Show cloud status");
-		console.log("  duoplus-cli --screenshot        # Take screenshot");
-		console.log("  duoplus-cli --help device       # Device commands help");
-		console.log("");
-		console.log("OTHER:");
-		console.log("  --help             Show this help message");
-		console.log("  --help <category>  Show category-specific help");
-		console.log("  --search <term>    Search for commands");
-		console.log("  --verbose          Enable verbose output");
-		console.log("");
-		console.log(
+		console.info("  duoplus-cli --search <term>     # Search commands");
+		console.info("");
+		console.info("CATEGORIES:");
+		console.info("  device        - Device listing and status commands");
+		console.info("  control       - Device control and power management");
+		console.info("  apps          - Application management");
+		console.info("  team          - Team collaboration features");
+		console.info("  advanced      - Advanced device operations");
+		console.info("  config        - Configuration and patterns");
+		console.info("  monitoring    - Analytics and monitoring");
+		console.info("");
+		console.info("QUICK START:");
+		console.info("  duoplus-cli --list              # List all devices");
+		console.info("  duoplus-cli --status            # Show device status");
+		console.info("  duoplus-cli --cloud-status      # Show cloud status");
+		console.info("  duoplus-cli --screenshot        # Take screenshot");
+		console.info("  duoplus-cli --help device       # Device commands help");
+		console.info("");
+		console.info("OTHER:");
+		console.info("  --help             Show this help message");
+		console.info("  --help <category>  Show category-specific help");
+		console.info("  --search <term>    Search for commands");
+		console.info("  --verbose          Enable verbose output");
+		console.info("");
+		console.info(
 			"💡 Examples: duoplus-cli --help device | duoplus-cli --search screenshot",
 		);
 	}
@@ -2681,32 +2681,32 @@ export class DuoplusCLI {
 
 		const cat = categories[category as keyof typeof categories];
 		if (!cat) {
-			console.log(`❌ Unknown category: ${category}`);
-			console.log(
+			console.info(`❌ Unknown category: ${category}`);
+			console.info(
 				"Available categories: device, control, apps, team, advanced, config, monitoring",
 			);
 			return;
 		}
 
-		console.log(`📱 ${cat.title}`);
-		console.log("=".repeat(cat.title.length + 4));
-		console.log("");
+		console.info(`📱 ${cat.title}`);
+		console.info("=".repeat(cat.title.length + 4));
+		console.info("");
 
 		cat.commands.forEach((cmd) => {
 			const padding = 25 - cmd.flag.length;
 			const spaces = " ".repeat(Math.max(0, padding));
-			console.log(`  ${cmd.flag}${spaces}${cmd.desc}`);
+			console.info(`  ${cmd.flag}${spaces}${cmd.desc}`);
 		});
 
-		console.log("");
-		console.log(
+		console.info("");
+		console.info(
 			"💡 Use --help to see all categories or --search <term> to find commands",
 		);
 	}
 
 	private searchHelp(searchTerm: string): void {
-		console.log(`🔍 Searching for "${searchTerm}"...`);
-		console.log("");
+		console.info(`🔍 Searching for "${searchTerm}"...`);
+		console.info("");
 
 		const allCommands = [
 			{ category: "device", flag: "--device", desc: "Specify device ID" },
@@ -2816,15 +2816,15 @@ export class DuoplusCLI {
 		);
 
 		if (matches.length === 0) {
-			console.log(`❌ No commands found for "${searchTerm}"`);
-			console.log(
+			console.info(`❌ No commands found for "${searchTerm}"`);
+			console.info(
 				"💡 Try: --search device | --search screenshot | --search config",
 			);
 			return;
 		}
 
-		console.log(`Found ${matches.length} command(s):`);
-		console.log("");
+		console.info(`Found ${matches.length} command(s):`);
+		console.info("");
 
 		matches.forEach((cmd, index) => {
 			const categoryIcon =
@@ -2838,10 +2838,10 @@ export class DuoplusCLI {
 					monitoring: "📊",
 				}[cmd.category] || "📋";
 
-			console.log(`${index + 1}. ${categoryIcon} ${cmd.flag}`);
-			console.log(`   ${cmd.desc}`);
-			console.log(`   Category: ${cmd.category}`);
-			console.log("");
+			console.info(`${index + 1}. ${categoryIcon} ${cmd.flag}`);
+			console.info(`   ${cmd.desc}`);
+			console.info(`   Category: ${cmd.category}`);
+			console.info("");
 		});
 	}
 

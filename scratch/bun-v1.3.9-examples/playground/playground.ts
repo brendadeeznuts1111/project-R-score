@@ -62,44 +62,44 @@ const DEMOS: Demo[] = [
 ];
 
 function printHeader() {
-  console.log("\n" + "=".repeat(70));
-  console.log("🚀 Bun v1.3.9 Interactive Playground");
-  console.log("=".repeat(70));
-  console.log(`Bun version: ${Bun.version}`);
-  console.log(`Platform: ${process.platform} ${process.arch}`);
-  console.log("=".repeat(70) + "\n");
+  console.info("\n" + "=".repeat(70));
+  console.info("🚀 Bun v1.3.9 Interactive Playground");
+  console.info("=".repeat(70));
+  console.info(`Bun version: ${Bun.version}`);
+  console.info(`Platform: ${process.platform} ${process.arch}`);
+  console.info("=".repeat(70) + "\n");
 }
 
 function printMenu() {
-  console.log("Available Demos:\n");
+  console.info("Available Demos:\n");
   
   const categories = [...new Set(DEMOS.map(d => d.category))];
   
   for (const category of categories) {
-    console.log(`📁 ${category}`);
+    console.info(`📁 ${category}`);
     const categoryDemos = DEMOS.filter(d => d.category === category);
     categoryDemos.forEach((demo, index) => {
       const num = DEMOS.indexOf(demo) + 1;
-      console.log(`   ${num.toString().padStart(2)}. ${demo.name}`);
-      console.log(`      ${demo.description}`);
+      console.info(`   ${num.toString().padStart(2)}. ${demo.name}`);
+      console.info(`      ${demo.description}`);
     });
-    console.log("");
+    console.info("");
   }
   
-  console.log("Commands:");
-  console.log("  • Enter a number (1-7) to run a demo");
-  console.log("  • Type 'all' to run all demos");
-  console.log("  • Type 'menu' to show this menu again");
-  console.log("  • Type 'exit' or 'quit' to exit");
-  console.log("");
+  console.info("Commands:");
+  console.info("  • Enter a number (1-7) to run a demo");
+  console.info("  • Type 'all' to run all demos");
+  console.info("  • Type 'menu' to show this menu again");
+  console.info("  • Type 'exit' or 'quit' to exit");
+  console.info("");
 }
 
 async function runDemo(demo: Demo) {
-  console.log("\n" + "=".repeat(70));
-  console.log(`🎯 Running: ${demo.name}`);
-  console.log("=".repeat(70));
-  console.log(`Description: ${demo.description}`);
-  console.log("=".repeat(70) + "\n");
+  console.info("\n" + "=".repeat(70));
+  console.info(`🎯 Running: ${demo.name}`);
+  console.info("=".repeat(70));
+  console.info(`Description: ${demo.description}`);
+  console.info("=".repeat(70) + "\n");
   
   const demoPath = join(DEMOS_DIR, demo.file);
   
@@ -113,19 +113,19 @@ async function runDemo(demo: Demo) {
     await proc.exited;
     
     if (proc.exitCode !== 0) {
-      console.log(`\n⚠️  Demo exited with code ${proc.exitCode}`);
+      console.info(`\n⚠️  Demo exited with code ${proc.exitCode}`);
     } else {
-      console.log(`\n✅ Demo completed successfully`);
+      console.info(`\n✅ Demo completed successfully`);
     }
   } catch (error) {
     console.error(`\n❌ Error running demo:`, error);
   }
   
-  console.log("\n" + "-".repeat(70) + "\n");
+  console.info("\n" + "-".repeat(70) + "\n");
 }
 
 async function runAllDemos() {
-  console.log("\n🚀 Running all demos...\n");
+  console.info("\n🚀 Running all demos...\n");
   
   for (const demo of DEMOS) {
     await runDemo(demo);
@@ -133,7 +133,7 @@ async function runAllDemos() {
     await new Promise(resolve => setTimeout(resolve, 1000));
   }
   
-  console.log("✅ All demos completed!\n");
+  console.info("✅ All demos completed!\n");
 }
 
 async function interactive() {
@@ -156,17 +156,17 @@ async function interactive() {
       return;
     }
     
-    console.log(`❌ Invalid choice: ${choice}`);
+    console.info(`❌ Invalid choice: ${choice}`);
     printMenu();
     return;
   }
   
   // Simple prompt-based interface
-  console.log("💡 Tip: Run with argument to skip menu:");
-  console.log("   bun start 1    # Run demo 1");
-  console.log("   bun start all  # Run all demos");
-  console.log("\nFor interactive mode, use: bun start <number>");
-  console.log("\nRunning all demos by default...\n");
+  console.info("💡 Tip: Run with argument to skip menu:");
+  console.info("   bun start 1    # Run demo 1");
+  console.info("   bun start all  # Run all demos");
+  console.info("\nFor interactive mode, use: bun start <number>");
+  console.info("\nRunning all demos by default...\n");
   
   await runAllDemos();
 }
@@ -190,8 +190,8 @@ if (args.length > 0) {
     process.exit(0);
   }
   
-  console.log(`❌ Invalid demo number: ${arg}`);
-  console.log(`   Valid numbers: 1-${DEMOS.length}, or 'all'`);
+  console.info(`❌ Invalid demo number: ${arg}`);
+  console.info(`   Valid numbers: 1-${DEMOS.length}, or 'all'`);
   process.exit(1);
 }
 

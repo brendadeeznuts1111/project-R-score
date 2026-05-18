@@ -338,7 +338,7 @@ export class QuantumStandaloneBuilder {
   }
 
   private async signBinary(binaryPath: string): Promise<string> {
-    console.log(`🔐 Signing binary with ML-DSA...`);
+    console.info(`🔐 Signing binary with ML-DSA...`);
 
     // Read binary content
     const binaryContent = await Bun.file(binaryPath).arrayBuffer();
@@ -359,7 +359,7 @@ export class QuantumStandaloneBuilder {
     const signaturePath = `${binaryPath}.ml-dsa.sig`;
     await Bun.write(signaturePath, signature);
 
-    console.log(`📝 Signature written to: ${signaturePath}`);
+    console.info(`📝 Signature written to: ${signaturePath}`);
 
     return signature;
   }
@@ -376,7 +376,7 @@ export class QuantumStandaloneBuilder {
       throw new Error("No quantum key pairs available for signing");
     }
 
-    console.log(
+    console.info(
       `✅ Quantum readiness verified: ${stats.quantumResistantItems} key pairs available`
     );
   }

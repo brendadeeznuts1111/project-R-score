@@ -12,11 +12,11 @@ function spwarn(message: string): void {
 }
 
 function spinfo(message: string): void {
-  console.log(`ℹ️ ${message}`);
+  console.info(`ℹ️ ${message}`);
 }
 
 function spsuccess(message: string): void {
-  console.log(`✅ ${message}`);
+  console.info(`✅ ${message}`);
 }
 
 // ============================================
@@ -710,13 +710,13 @@ async function buildWithEnvInlining(
     const size = output.size;
     const path = output.path;
     
-    console.log(`  📦 ${path} (${(size / 1024).toFixed(2)} KB)`);
+    console.info(`  📦 ${path} (${(size / 1024).toFixed(2)} KB)`);
     
     if (sourcemap !== "none") {
       const mapPath = path.replace(/\.(js|ts|jsx|tsx)$/, ".map");
       const mapFile = bfile(mapPath);
       if (await mapFile.exists()) {
-        console.log(`    └─ 🗺️  ${mapPath}`);
+        console.info(`    └─ 🗺️  ${mapPath}`);
       }
     }
   }
@@ -909,7 +909,7 @@ function generateProTips(): ProTip[] {
     {
       category: "🔧 Spawn & Process",
       tip: "Spawn with PTY",
-      oneliner: "new Bun.Terminal({ data: (t, d) => console.log(d) })",
+      oneliner: "new Bun.Terminal({ data: (t, d) => console.info(d) })",
       description: "Interactive terminal sessions with PTY support"
     },
     {
@@ -1134,7 +1134,7 @@ export type UrlpatternRegistryEntry = typeof urlpatternRegistry[number];
     spwarn("Shell aliases generated");
   }
 
-  console.log(`✅ Registered ${entries.length} URLPattern examples`);
+  console.info(`✅ Registered ${entries.length} URLPattern examples`);
 
   if (build) {
     spinfo(`Building with env: "${envInlining}" and sourcemap: "${sourcemap}"`);
@@ -1242,11 +1242,11 @@ if (command === "add") {
 } else if (command === "protips") {
   const proTips = generateProTips();
   const asciiTable = formatProTipsAscii(proTips);
-  console.log(asciiTable);
+  console.info(asciiTable);
 } else if (command === "list") {
   const registryFile = bfile("data/registry/urlpattern-registry.ts");
   if (await registryFile.exists()) {
-    console.log(await registryFile.text());
+    console.info(await registryFile.text());
   } else {
     spwarn("Registry file not found. Run 'add' first.");
   }
@@ -1256,13 +1256,13 @@ if (command === "add") {
     const filePath = `${config.directory}/${entry.file}`;
     const content = await bfile(filePath).text();
     const hash = hashContent(content);
-    console.log(`${entry.id}: ${hash}`);
+    console.info(`${entry.id}: ${hash}`);
   }
 } else if (command === "stats") {
   const entries = await processDirectory(config.directory);
   const totalLines = entries.reduce((sum, e) => sum + e.lines, 0);
   const avgLines = Math.round(totalLines / entries.length);
-  console.log(`
+  console.info(`
 📊 Registry Statistics
 ═══════════════════════════
 Total Examples: ${entries.length}

@@ -6,11 +6,11 @@ import { CascadeSkillsManager, type SkillContext, type RequestContext, type User
 async function demonstrateCascadeSkills() {
   const skillsManager = new CascadeSkillsManager();
   
-  console.log('🚀 Cascade Skills Manager Demo');
-  console.log('================================');
+  console.info('🚀 Cascade Skills Manager Demo');
+  console.info('================================');
   
   // Example 1: QR Generation Skill
-  console.log('\n📱 QR Generation Skill');
+  console.info('\n📱 QR Generation Skill');
   const qrContext: SkillContext = {
     merchantId: "factory-wager",
     deviceType: "MOBILE",
@@ -41,49 +41,49 @@ async function demonstrateCascadeSkills() {
   
   try {
     const qrResult = await skillsManager.executeSkill("skill-qr-generation", qrContext);
-    console.log('✅ QR Generation Result:', qrResult);
+    console.info('✅ QR Generation Result:', qrResult);
   } catch (error) {
     console.error('❌ QR Generation Error:', error);
   }
   
   // Example 2: Device Health Prediction
-  console.log('\n🔍 Device Health Prediction');
+  console.info('\n🔍 Device Health Prediction');
   try {
     const healthResult = await skillsManager.executeSkill("skill-device-health-prediction", qrContext);
-    console.log('✅ Health Prediction Result:', healthResult);
+    console.info('✅ Health Prediction Result:', healthResult);
   } catch (error) {
     console.error('❌ Health Prediction Error:', error);
   }
   
   // Example 3: Configuration Optimization
-  console.log('\n⚙️ Configuration Optimization');
+  console.info('\n⚙️ Configuration Optimization');
   try {
     const configResult = await skillsManager.executeSkill("skill-configuration-optimization", qrContext);
-    console.log('✅ Configuration Result:', configResult);
+    console.info('✅ Configuration Result:', configResult);
   } catch (error) {
     console.error('❌ Configuration Error:', error);
   }
   
   // Example 4: ROI Prediction
-  console.log('\n💰 ROI Prediction');
+  console.info('\n💰 ROI Prediction');
   try {
     const roiResult = await skillsManager.executeSkill("skill-roi-prediction", qrContext);
-    console.log('✅ ROI Prediction Result:', roiResult);
+    console.info('✅ ROI Prediction Result:', roiResult);
   } catch (error) {
     console.error('❌ ROI Prediction Error:', error);
   }
   
   // Example 5: Color Optimization
-  console.log('\n🎨 Color Optimization');
+  console.info('\n🎨 Color Optimization');
   try {
     const colorResult = await skillsManager.executeSkill("skill-color-optimization", qrContext);
-    console.log('✅ Color Optimization Result:', colorResult);
+    console.info('✅ Color Optimization Result:', colorResult);
   } catch (error) {
     console.error('❌ Color Optimization Error:', error);
   }
   
   // Example 6: Adaptive Skill Selection
-  console.log('\n🧠 Adaptive Skill Selection');
+  console.info('\n🧠 Adaptive Skill Selection');
   const requestContext: RequestContext = {
     merchantId: "factory-wager",
     deviceType: "MOBILE",
@@ -95,13 +95,13 @@ async function demonstrateCascadeSkills() {
   
   try {
     const selectedSkills = await skillsManager.selectSkillsForContext(requestContext);
-    console.log('✅ Selected Skills:', selectedSkills.map(s => s.name));
+    console.info('✅ Selected Skills:', selectedSkills.map(s => s.name));
   } catch (error) {
     console.error('❌ Skill Selection Error:', error);
   }
   
   // Example 7: Learning from Interaction
-  console.log('\n📚 Learning from Interaction');
+  console.info('\n📚 Learning from Interaction');
   const interaction: UserInteraction = {
     userId: "user-123",
     merchantId: "factory-wager",
@@ -114,13 +114,13 @@ async function demonstrateCascadeSkills() {
   
   try {
     await skillsManager.learnFromInteraction(interaction);
-    console.log('✅ Learning completed');
+    console.info('✅ Learning completed');
   } catch (error) {
     console.error('❌ Learning Error:', error);
   }
   
   // Example 8: Performance Tracking
-  console.log('\n📊 Performance Tracking');
+  console.info('\n📊 Performance Tracking');
   try {
     await skillsManager.trackSkillPerformance("skill-qr-generation", {
       executionTime: 150,
@@ -128,26 +128,26 @@ async function demonstrateCascadeSkills() {
       accuracy: 0.95,
       userSatisfaction: 4.8
     });
-    console.log('✅ Performance tracked');
+    console.info('✅ Performance tracked');
   } catch (error) {
     console.error('❌ Performance Tracking Error:', error);
   }
   
   // Display final state
-  console.log('\n📈 Final Skills State');
+  console.info('\n📈 Final Skills State');
   const allSkills = skillsManager.getAllSkills();
   allSkills.forEach(skill => {
-    console.log(`🔹 ${skill.name} (${skill.level}) - Usage: ${skill.metrics.usageCount || 0}`);
+    console.info(`🔹 ${skill.name} (${skill.level}) - Usage: ${skill.metrics.usageCount || 0}`);
   });
   
   const learnedPatterns = skillsManager.getLearnedPatterns();
-  console.log(`🧠 Learned Patterns: ${learnedPatterns.length}`);
+  console.info(`🧠 Learned Patterns: ${learnedPatterns.length}`);
 }
 
 // Enterprise Dashboard Integration Example
 async function demonstrateEnterpriseIntegration() {
-  console.log('\n\n🏢 Enterprise Dashboard Integration');
-  console.log('=======================================');
+  console.info('\n\n🏢 Enterprise Dashboard Integration');
+  console.info('=======================================');
   
   const skillsManager = new CascadeSkillsManager();
   
@@ -190,8 +190,8 @@ async function demonstrateEnterpriseIntegration() {
       skillsManager.executeSkill("skill-color-optimization", enterpriseContext)
     ]);
     
-    console.log('✅ Enterprise Onboarding Complete');
-    console.log('📊 Combined Results:', {
+    console.info('✅ Enterprise Onboarding Complete');
+    console.info('📊 Combined Results:', {
       qrOptimized: results[0].learningApplied,
       healthIssues: results[1].predictedIssues.length,
       configProfiles: results[2].profiles.length,
@@ -201,8 +201,8 @@ async function demonstrateEnterpriseIntegration() {
     
     // Track 28-second rule compliance
     const totalTime = results.reduce((sum, result) => sum + (result.estimatedTime || 0), 0);
-    console.log(`⏱️ Total Processing Time: ${totalTime}s (Target: 28s)`);
-    console.log(`🎯 28-Second Rule: ${totalTime <= 28 ? '✅ COMPLIANT' : '⚠️ NEEDS OPTIMIZATION'}`);
+    console.info(`⏱️ Total Processing Time: ${totalTime}s (Target: 28s)`);
+    console.info(`🎯 28-Second Rule: ${totalTime <= 28 ? '✅ COMPLIANT' : '⚠️ NEEDS OPTIMIZATION'}`);
     
   } catch (error) {
     console.error('❌ Enterprise Integration Error:', error);
@@ -221,7 +221,7 @@ if (isMainModule) {
   demonstrateCascadeSkills()
     .then(() => demonstrateEnterpriseIntegration())
     .then(() => {
-      console.log('\n🎉 All demonstrations completed successfully!');
+      console.info('\n🎉 All demonstrations completed successfully!');
       // Exit process for non-browser environments
       if (globalProcess && globalProcess.exit) {
         globalProcess.exit(0);

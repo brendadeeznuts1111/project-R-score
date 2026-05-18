@@ -49,7 +49,7 @@ class RegistryAuthManager {
         name: `${registryName}-token`,
         value: token,
       });
-      console.log(`✅ Securely stored token for ${registryName}`);
+      console.info(`✅ Securely stored token for ${registryName}`);
     } catch (error) {
       console.error(`❌ Failed to store token for ${registryName}:`, error);
       throw error;
@@ -81,7 +81,7 @@ class RegistryAuthManager {
         service: this.serviceName,
         name: `${registryName}-token`,
       });
-      console.log(`🗑️ Deleted token for ${registryName}`);
+      console.info(`🗑️ Deleted token for ${registryName}`);
     } catch (error) {
       console.warn(`⚠️ Could not delete token for ${registryName}:`, error);
     }
@@ -141,7 +141,7 @@ class RegistryAuthManager {
     }
 
     writeFileSync(npmrcPath, lines.join('\n') + '\n');
-    console.log(
+    console.info(
       `✅ Updated .npmrc with ${fire22Token ? 'authenticated' : 'unauthenticated'} configuration`
     );
   }
@@ -231,37 +231,37 @@ plugins = []
 `;
 
     writeFileSync(bunfigPath, configContent);
-    console.log('✅ Updated bunfig.toml with security scanner and scoped registry configuration');
+    console.info('✅ Updated bunfig.toml with security scanner and scoped registry configuration');
   }
 
   /**
    * Test registry connectivity and authentication
    */
   async testRegistryAccess(): Promise<void> {
-    console.log('🔍 Testing registry access...');
+    console.info('🔍 Testing registry access...');
 
     for (const registry of REGISTRIES) {
       try {
-        console.log(`\n📡 Testing ${registry.name} (${registry.url})...`);
+        console.info(`\n📡 Testing ${registry.name} (${registry.url})...`);
 
         const response = await fetch(registry.url);
         if (response.ok) {
-          console.log(`  ✅ ${registry.name}: Connection successful (${response.status})`);
+          console.info(`  ✅ ${registry.name}: Connection successful (${response.status})`);
         } else {
-          console.log(`  ⚠️ ${registry.name}: HTTP ${response.status}`);
+          console.info(`  ⚠️ ${registry.name}: HTTP ${response.status}`);
         }
 
         // Test authentication for private registries
         if (registry.scope) {
           const token = await this.getToken(registry.name);
           if (token) {
-            console.log(`  🔐 ${registry.name}: Authentication token available`);
+            console.info(`  🔐 ${registry.name}: Authentication token available`);
           } else {
-            console.log(`  ❌ ${registry.name}: No authentication token`);
+            console.info(`  ❌ ${registry.name}: No authentication token`);
           }
         }
       } catch (error) {
-        console.log(`  ❌ ${registry.name}: Connection failed -`, error);
+        console.info(`  ❌ ${registry.name}: Connection failed -`, error);
       }
     }
   }
@@ -270,31 +270,31 @@ plugins = []
    * Interactive setup for registry authentication
    */
   async interactiveSetup(): Promise<void> {
-    console.log('🔐 Fire22 Registry Authentication Setup');
-    console.log('!==!==!==!==!==!==!==\n');
+    console.info('🔐 Fire22 Registry Authentication Setup');
+    console.info('!==!==!==!==!==!==!==\n');
 
-    console.log('This setup will configure secure authentication for Fire22 private registry.');
-    console.log("Tokens will be stored securely using your operating system's credential manager:");
-    console.log('  • macOS: Keychain Services');
-    console.log('  • Linux: libsecret (GNOME Keyring/KWallet)');
-    console.log('  • Windows: Credential Manager\n');
+    console.info('This setup will configure secure authentication for Fire22 private registry.');
+    console.info("Tokens will be stored securely using your operating system's credential manager:");
+    console.info('  • macOS: Keychain Services');
+    console.info('  • Linux: libsecret (GNOME Keyring/KWallet)');
+    console.info('  • Windows: Credential Manager\n');
 
     // Setup Fire22 registry
-    console.log('📦 Setting up Fire22 Registry Authentication');
-    console.log('URL: https://fire22.workers.dev/registry/');
-    console.log('Scopes: @fire22/*, @ff/*, @brendadeeznuts/*');
+    console.info('📦 Setting up Fire22 Registry Authentication');
+    console.info('URL: https://fire22.workers.dev/registry/');
+    console.info('Scopes: @fire22/*, @ff/*, @brendadeeznuts/*');
 
     const hasExistingToken = await this.getToken('fire22-registry');
     if (hasExistingToken) {
-      console.log('✅ Existing authentication token found');
+      console.info('✅ Existing authentication token found');
     } else {
-      console.log('\n❌ No authentication token found');
-      console.log('To configure authentication:');
-      console.log(
+      console.info('\n❌ No authentication token found');
+      console.info('To configure authentication:');
+      console.info(
         '1. Deploy the Fire22 registry worker: cd workspaces/@fire22-security-registry && wrangler deploy'
       );
-      console.log('2. Obtain an API token from the deployed registry');
-      console.log('3. Run: bun run registry:auth:setup --token=<your-token>');
+      console.info('2. Obtain an API token from the deployed registry');
+      console.info('3. Run: bun run registry:auth:setup --token=<your-token>');
     }
 
     await this.configureNpmrc();
@@ -305,14 +305,14 @@ plugins = []
    * Setup authentication with provided token
    */
   async setupWithToken(token: string): Promise<void> {
-    console.log('🔐 Configuring Fire22 registry authentication...');
+    console.info('🔐 Configuring Fire22 registry authentication...');
 
     await this.storeToken('fire22-registry', token);
     await this.configureNpmrc();
     await this.configureBunfig();
 
-    console.log('✅ Fire22 registry authentication configured successfully');
-    console.log('🧪 Testing registry access...');
+    console.info('✅ Fire22 registry authentication configured successfully');
+    console.info('🧪 Testing registry access...');
     await this.testRegistryAccess();
   }
 
@@ -329,48 +329,48 @@ plugins = []
    * Setup demo authentication for development
    */
   async setupDemo(): Promise<void> {
-    console.log('🧪 Setting up demo authentication for development...');
+    console.info('🧪 Setting up demo authentication for development...');
 
     const demoToken = this.generateDemoToken();
     await this.storeToken('fire22-registry', demoToken);
     await this.configureNpmrc();
     await this.configureBunfig();
 
-    console.log('✅ Demo authentication configured');
-    console.log(`🔑 Demo token: ${demoToken}`);
-    console.log('⚠️ This is a demo token. Deploy the registry worker for production use.');
+    console.info('✅ Demo authentication configured');
+    console.info(`🔑 Demo token: ${demoToken}`);
+    console.info('⚠️ This is a demo token. Deploy the registry worker for production use.');
   }
 
   /**
    * Get authentication status for all registries
    */
   async getStatus(): Promise<void> {
-    console.log('🔐 Registry Authentication Status');
-    console.log('!==!==!==!==!==!==\n');
+    console.info('🔐 Registry Authentication Status');
+    console.info('!==!==!==!==!==!==\n');
 
     for (const registry of REGISTRIES) {
-      console.log(`📦 ${registry.name}`);
-      console.log(`   URL: ${registry.url}`);
+      console.info(`📦 ${registry.name}`);
+      console.info(`   URL: ${registry.url}`);
       if (registry.scope) {
-        console.log(`   Scope: ${registry.scope}/*`);
+        console.info(`   Scope: ${registry.scope}/*`);
       }
-      console.log(`   Description: ${registry.description}`);
+      console.info(`   Description: ${registry.description}`);
 
       if (registry.scope) {
         const token = await this.getToken(registry.name);
-        console.log(`   Authentication: ${token ? '✅ Configured' : '❌ Not configured'}`);
+        console.info(`   Authentication: ${token ? '✅ Configured' : '❌ Not configured'}`);
         if (token) {
-          console.log(`   Token: ${token.substring(0, 20)}...`);
+          console.info(`   Token: ${token.substring(0, 20)}...`);
         }
       } else {
-        console.log(`   Authentication: ➖ Public registry`);
+        console.info(`   Authentication: ➖ Public registry`);
       }
-      console.log('');
+      console.info('');
     }
 
-    console.log('🛡️ Security Scanner Status');
-    console.log('bunfig.toml: ✅ Configured with @fire22/security-scanner');
-    console.log('Audit Level: 🔴 High (production setting)');
+    console.info('🛡️ Security Scanner Status');
+    console.info('bunfig.toml: ✅ Configured with @fire22/security-scanner');
+    console.info('Audit Level: 🔴 High (production setting)');
   }
 }
 
@@ -400,7 +400,7 @@ async function main() {
       break;
 
     case 'fix':
-      console.log('🔧 Fixing registry configuration...');
+      console.info('🔧 Fixing registry configuration...');
       await manager.configureNpmrc();
       await manager.configureBunfig();
       await manager.testRegistryAccess();
@@ -417,19 +417,19 @@ async function main() {
       break;
 
     default:
-      console.log('🔐 Fire22 Registry Authentication Manager (Bun.secrets)');
-      console.log('Usage:');
-      console.log('  bun run registry:auth:setup [--token=<token>]  # Setup authentication');
-      console.log('  bun run registry:auth:demo                     # Setup demo token');
-      console.log('  bun run registry:auth:test                     # Test registry access');
-      console.log('  bun run registry:auth:fix                      # Fix configuration');
-      console.log('  bun run registry:auth:status                   # Show status');
-      console.log('  bun run registry:auth:delete [registry]        # Delete stored token');
-      console.log('');
-      console.log('🔒 Credentials stored securely using OS-native storage:');
-      console.log('  • macOS: Keychain Services');
-      console.log('  • Linux: libsecret (GNOME Keyring/KWallet)');
-      console.log('  • Windows: Credential Manager');
+      console.info('🔐 Fire22 Registry Authentication Manager (Bun.secrets)');
+      console.info('Usage:');
+      console.info('  bun run registry:auth:setup [--token=<token>]  # Setup authentication');
+      console.info('  bun run registry:auth:demo                     # Setup demo token');
+      console.info('  bun run registry:auth:test                     # Test registry access');
+      console.info('  bun run registry:auth:fix                      # Fix configuration');
+      console.info('  bun run registry:auth:status                   # Show status');
+      console.info('  bun run registry:auth:delete [registry]        # Delete stored token');
+      console.info('');
+      console.info('🔒 Credentials stored securely using OS-native storage:');
+      console.info('  • macOS: Keychain Services');
+      console.info('  • Linux: libsecret (GNOME Keyring/KWallet)');
+      console.info('  • Windows: Credential Manager');
       break;
   }
 }

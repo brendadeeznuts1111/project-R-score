@@ -55,7 +55,7 @@ export class PhoneIntelligenceSystem {
   private startTime: number = Date.now();
 
   constructor() {
-    console.log('🚀 PhoneIntelligenceSystem initialized with 8 patterns');
+    console.info('🚀 PhoneIntelligenceSystem initialized with 8 patterns');
   }
 
   /**

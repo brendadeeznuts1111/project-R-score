@@ -3,7 +3,7 @@
 
 import { matrix, ROWS, COLUMNS } from './src/client/utils/matrix-utility.ts';
 
-console.log('🧪 Matrix Performance Benchmark\n');
+console.info('🧪 Matrix Performance Benchmark\n');
 
 // Test 1: Sequential access (column-major order)
 console.time('Sequential Column Access');
@@ -15,7 +15,7 @@ for (let c = 0; c < COLUMNS; c++) {
   }
 }
 console.timeEnd('Sequential Column Access');
-console.log(`📊 Sequential total: ${total.toLocaleString()}\n`);
+console.info(`📊 Sequential total: ${total.toLocaleString()}\n`);
 
 // Test 2: Random access patterns
 console.time('Random Access (10k samples)');
@@ -26,7 +26,7 @@ for (let i = 0; i < 10000; i++) {
   total += matrix[`col${c}`][r];
 }
 console.timeEnd('Random Access (10k samples)');
-console.log(`🎲 Random sample total: ${total.toLocaleString()}\n`);
+console.info(`🎲 Random sample total: ${total.toLocaleString()}\n`);
 
 // Test 3: Boolean filtering performance
 console.time('Boolean Filter Query');
@@ -37,7 +37,7 @@ for (let r = 0; r < ROWS; r++) {
   }
 }
 console.timeEnd('Boolean Filter Query');
-console.log(`🔍 Found ${activeRows.length.toLocaleString()} active rows\n`);
+console.info(`🔍 Found ${activeRows.length.toLocaleString()} active rows\n`);
 
 // Test 4: SIMD-ready operations (addition)
 console.time('SIMD-Style Column Addition');
@@ -47,16 +47,16 @@ for (let r = 0; r < ROWS; r++) {
 }
 const sum = result.reduce((a, b) => a + b, 0);
 console.timeEnd('SIMD-Style Column Addition');
-console.log(`⚡ Column addition result: ${sum.toLocaleString()}\n`);
+console.info(`⚡ Column addition result: ${sum.toLocaleString()}\n`);
 
 // Memory efficiency comparison
-console.log('💾 Memory Efficiency Analysis:');
+console.info('💾 Memory Efficiency Analysis:');
 const typedArrayBytes = COLUMNS * ROWS * 4 + ROWS * 1; // Float32 + Uint8
 const regularArrayBytes = COLUMNS * ROWS * 8 + ROWS * 1; // Number + boolean (est.)
 const savings = ((regularArrayBytes - typedArrayBytes) / regularArrayBytes * 100).toFixed(1);
 
-console.log(`   Typed Arrays: ${(typedArrayBytes / 1024 / 1024).toFixed(2)} MB`);
-console.log(`   Regular Arrays: ~${(regularArrayBytes / 1024 / 1024).toFixed(2)} MB`);
-console.log(`   Memory Saved: ${savings}% 🚀\n`);
+console.info(`   Typed Arrays: ${(typedArrayBytes / 1024 / 1024).toFixed(2)} MB`);
+console.info(`   Regular Arrays: ~${(regularArrayBytes / 1024 / 1024).toFixed(2)} MB`);
+console.info(`   Memory Saved: ${savings}% 🚀\n`);
 
-console.log('✅ All performance tests completed successfully!');
+console.info('✅ All performance tests completed successfully!');

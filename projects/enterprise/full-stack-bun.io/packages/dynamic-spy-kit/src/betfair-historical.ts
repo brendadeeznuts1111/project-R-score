@@ -38,7 +38,7 @@ class BetfairHistoricalScraper {
 	 * @returns Array of historical prices
 	 */
 	async fetchHistorical(market: string, months: number): Promise<BetfairPrice[]> {
-		console.log(`📊 Fetching ${months} months of Betfair data for ${market}...`);
+		console.info(`📊 Fetching ${months} months of Betfair data for ${market}...`);
 
 		const endDate = new Date();
 		const startDate = new Date();
@@ -62,7 +62,7 @@ class BetfairHistoricalScraper {
 			await Bun.sleep(100);
 		}
 
-		console.log(`✅ Fetched ${prices.length} Betfair prices`);
+		console.info(`✅ Fetched ${prices.length} Betfair prices`);
 		return prices;
 	}
 
@@ -158,7 +158,7 @@ for (let i = 0; i < args.length; i++) {
 // Validate required options
 if (!options.market) {
 	console.error('Error: --market is required');
-	console.log('Usage: bunx betfair-historical --market=MANUTD-VS-LIV --months=6');
+	console.info('Usage: bunx betfair-historical --market=MANUTD-VS-LIV --months=6');
 	process.exit(1);
 }
 
@@ -177,7 +177,7 @@ scraper.fetchHistorical(options.market, options.months).then(async (prices) => {
 		await writeFile(options.output!, JSON.stringify(prices, null, 2));
 	}
 
-	console.log(`✅ Written ${prices.length} records to ${options.output}`);
+	console.info(`✅ Written ${prices.length} records to ${options.output}`);
 }).catch(error => {
 	console.error('Scraper failed:', error);
 	process.exit(1);

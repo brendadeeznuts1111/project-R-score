@@ -408,7 +408,7 @@ export class EmailIntelligenceEngine {
         throw new Error(`Slack API error: ${response.status}`);
       }
 
-      console.log('📤 Slack alert sent successfully');
+      console.info('📤 Slack alert sent successfully');
 
     } catch (error) {
       console.error('Failed to send Slack alert:', error);

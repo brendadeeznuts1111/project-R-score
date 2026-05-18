@@ -110,16 +110,16 @@ export class SkillPublisher {
       totalTime: 0,
     };
 
-    console.log(`Publishing ${results.skillId} v${results.version}...\n`);
+    console.info(`Publishing ${results.skillId} v${results.version}...\n`);
 
     // Phase 1: Build and upload executables to R2
     if (this.builder) {
       try {
-        console.log("Phase 1: Uploading executables to R2...");
+        console.info("Phase 1: Uploading executables to R2...");
         results.r2 = await this.publishToR2(results.version);
 
         if (results.r2.success) {
-          console.log(`R2 upload complete: ${results.r2.platforms} platforms\n`);
+          console.info(`R2 upload complete: ${results.r2.platforms} platforms\n`);
         } else {
           results.warnings.push("R2 upload had errors but continuing...");
         }
@@ -137,15 +137,15 @@ export class SkillPublisher {
 
     // Phase 2: Prepare package with R2 metadata and publish to npm
     try {
-      console.log("Phase 2: Publishing to npm registry...");
+      console.info("Phase 2: Publishing to npm registry...");
       results.npm = await this.publishToNpm(results.version, results.r2);
-      console.log("npm publish complete\n");
+      console.info("npm publish complete\n");
     } catch (error: any) {
       results.errors.push(`npm publish failed: ${error.message}`);
       console.error("npm publish failed:", error.message);
 
       if (this.config.dryRun) {
-        console.log("This was a dry run, so errors are expected");
+        console.info("This was a dry run, so errors are expected");
       }
     }
 
@@ -169,7 +169,7 @@ export class SkillPublisher {
 
     const platforms = this.config.platforms || await this.detectPlatforms();
 
-    console.log(`   Building for ${platforms.join(", ")}...`);
+    console.info(`   Building for ${platforms.join(", ")}...`);
 
     const buildResult = await this.builder.buildAndUpload(
       this.config.skillId,
@@ -367,7 +367,7 @@ const R2_MANIFEST_URL = '${r2Result.latestUrl}';
 const INSTALL_DIR = join(process.env.HOME || process.env.USERPROFILE || '.', '.bun-skills', SKILL_ID);
 
 async function main() {
-  console.log(\`Installing \${SKILL_ID} executable...\`);
+  console.info(\`Installing \${SKILL_ID} executable...\`);
 
   try {
     // Fetch manifest
@@ -388,7 +388,7 @@ async function main() {
 
     if (!platformInfo) {
       console.warn(\`No executable available for \${platform}\`);
-      console.log('   Available platforms:', versionInfo.platforms.map(p => \`\${p.platform}-\${p.arch}\`).join(', '));
+      console.info('   Available platforms:', versionInfo.platforms.map(p => \`\${p.platform}-\${p.arch}\`).join(', '));
       return;
     }
 
@@ -397,7 +397,7 @@ async function main() {
 
     // Download executable
     const targetPath = join(INSTALL_DIR, SKILL_ID);
-    console.log('   Downloading from R2...');
+    console.info('   Downloading from R2...');
 
     const response = await fetch(platformInfo.downloadUrl);
     if (!response.ok) throw new Error(\`Download failed: \${response.status}\`);
@@ -424,7 +424,7 @@ async function main() {
     const linkProc = Bun.spawn(['ln', '-s', targetPath, symlinkPath]);
     await linkProc.exited;
 
-    console.log(\`Installed \${SKILL_ID} v\${latestVersion} to \${targetPath}\`);
+    console.info(\`Installed \${SKILL_ID} v\${latestVersion} to \${targetPath}\`);
 
   } catch (error) {
     console.error('Installation failed:', error.message);
@@ -525,79 +525,79 @@ main();
   }
 
   private async generatePostPublishActions(results: PublishResult): Promise<void> {
-    console.log("\nNext Steps:");
-    console.log("=".repeat(80));
+    console.info("\nNext Steps:");
+    console.info("=".repeat(80));
 
     if (results.npm?.success) {
-      console.log(`npm install ${results.npm.packageName}`);
-      console.log(`   # Install the skill package`);
+      console.info(`npm install ${results.npm.packageName}`);
+      console.info(`   # Install the skill package`);
 
       if (results.r2?.success) {
-        console.log(`\nOr install executable directly:`);
-        console.log(`   curl -fsSL ${results.r2.latestUrl} | bun -`);
+        console.info(`\nOr install executable directly:`);
+        console.info(`   curl -fsSL ${results.r2.latestUrl} | bun -`);
       }
     }
 
     if (results.r2?.workerUrl) {
-      console.log(`\nAccess via CDN:`);
-      console.log(`   ${results.r2.workerUrl}/${results.skillId}`);
+      console.info(`\nAccess via CDN:`);
+      console.info(`   ${results.r2.workerUrl}/${results.skillId}`);
     }
 
-    console.log("\nDocumentation:");
-    console.log(`   ${results.npm?.registry}/${results.npm?.packageName}`);
+    console.info("\nDocumentation:");
+    console.info(`   ${results.npm?.registry}/${results.npm?.packageName}`);
 
     // Save report to file
     const reportPath = join(this.packageDir, "publish-report.json");
     await Bun.write(reportPath, JSON.stringify(results, null, 2));
-    console.log(`\nFull report saved to: ${reportPath}`);
+    console.info(`\nFull report saved to: ${reportPath}`);
   }
 
   private printReport(results: PublishResult): void {
-    console.log("\n" + "=".repeat(80));
-    console.log("PUBLISH REPORT");
-    console.log("=".repeat(80));
+    console.info("\n" + "=".repeat(80));
+    console.info("PUBLISH REPORT");
+    console.info("=".repeat(80));
 
     // R2 Section
     if (results.r2) {
-      console.log("\nR2 Distribution:");
-      console.log(`   Status: ${results.r2.success ? "Success" : "Failed"}`);
-      console.log(`   Platforms: ${results.r2.platforms}`);
-      console.log(`   Total Size: ${this.formatBytes(results.r2.totalSize)}`);
-      console.log(`   Manifest: ${results.r2.manifestUrl}`);
-      console.log(`   Latest: ${results.r2.latestUrl}`);
+      console.info("\nR2 Distribution:");
+      console.info(`   Status: ${results.r2.success ? "Success" : "Failed"}`);
+      console.info(`   Platforms: ${results.r2.platforms}`);
+      console.info(`   Total Size: ${this.formatBytes(results.r2.totalSize)}`);
+      console.info(`   Manifest: ${results.r2.manifestUrl}`);
+      console.info(`   Latest: ${results.r2.latestUrl}`);
 
       if (results.r2.errors.length > 0) {
-        console.log(`   Errors: ${results.r2.errors.length}`);
-        results.r2.errors.forEach((e) => console.log(`     - ${e}`));
+        console.info(`   Errors: ${results.r2.errors.length}`);
+        results.r2.errors.forEach((e) => console.info(`     - ${e}`));
       }
     }
 
     // npm Section
     if (results.npm) {
-      console.log("\nnpm Registry:");
-      console.log(`   Status: ${results.npm.success ? "Published" : "Failed"}`);
-      console.log(`   Package: ${results.npm.packageName}@${results.npm.version}`);
-      console.log(`   Registry: ${results.npm.registry}`);
-      console.log(`   Tag: ${this.config.tag || "latest"}`);
+      console.info("\nnpm Registry:");
+      console.info(`   Status: ${results.npm.success ? "Published" : "Failed"}`);
+      console.info(`   Package: ${results.npm.packageName}@${results.npm.version}`);
+      console.info(`   Registry: ${results.npm.registry}`);
+      console.info(`   Tag: ${this.config.tag || "latest"}`);
 
       if (this.config.dryRun) {
-        console.log(`   Mode: DRY RUN (no actual publish)`);
+        console.info(`   Mode: DRY RUN (no actual publish)`);
       }
     }
 
     // Errors & Warnings
     if (results.warnings.length > 0) {
-      console.log("\nWarnings:");
-      results.warnings.forEach((w) => console.log(`   - ${w}`));
+      console.info("\nWarnings:");
+      results.warnings.forEach((w) => console.info(`   - ${w}`));
     }
 
     if (results.errors.length > 0) {
-      console.log("\nErrors:");
-      results.errors.forEach((e) => console.log(`   - ${e}`));
+      console.info("\nErrors:");
+      results.errors.forEach((e) => console.info(`   - ${e}`));
     }
 
-    console.log(`\nTotal Time: ${(results.totalTime / 1000).toFixed(2)}s`);
-    console.log("=".repeat(80));
+    console.info(`\nTotal Time: ${(results.totalTime / 1000).toFixed(2)}s`);
+    console.info("=".repeat(80));
   }
 
   private formatBytes(bytes: number): string {

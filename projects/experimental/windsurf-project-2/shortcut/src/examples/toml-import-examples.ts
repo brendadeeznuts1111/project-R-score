@@ -171,19 +171,19 @@ export class EnvironmentConfigLoader {
 
 // Example 1: Initialize application with TOML config
 export async function initializeApp() {
-  console.log('🚀 Initializing application with TOML configuration...');
+  console.info('🚀 Initializing application with TOML configuration...');
   
   // Load main configuration
   const config = await loadBasicConfig();
-  console.log(`📦 Loaded config: ${config.app.name} v${config.app.version}`);
+  console.info(`📦 Loaded config: ${config.app.name} v${config.app.version}`);
   
   // Load environment-specific configuration
   const envLoader = new EnvironmentConfigLoader();
   const env = import.meta.env?.NODE_ENV || 'development';
   const envConfig = await envLoader.loadForEnvironment(env as 'development' | 'production' | 'testing');
   
-  console.log(`🔧 Environment: ${env}`);
-  console.log(`🌐 Unicode enabled: ${envConfig.unicode?.grapheme_clustering?.use_intl_segmenter}`);
+  console.info(`🔧 Environment: ${env}`);
+  console.info(`🌐 Unicode enabled: ${envConfig.unicode?.grapheme_clustering?.use_intl_segmenter}`);
   
   return { config, envConfig };
 }
@@ -200,7 +200,7 @@ export function validateConfiguration(config: any): boolean {
     }
   }
   
-  console.log('✅ Configuration validation passed');
+  console.info('✅ Configuration validation passed');
   return true;
 }
 
@@ -223,7 +223,7 @@ export class HotConfigReloader {
     const newConfig = await loadBasicConfig();
     
     if (JSON.stringify(this.config) !== JSON.stringify(newConfig)) {
-      console.log('🔄 Configuration changed, reloading...');
+      console.info('🔄 Configuration changed, reloading...');
       this.config = newConfig;
       this.notifyWatchers();
     }
@@ -240,7 +240,7 @@ export class HotConfigReloader {
 
   private notifyWatchers(): void {
     // Notify all watchers about config change
-    console.log(`📢 Notified ${this.watchers.size} config watchers`);
+    console.info(`📢 Notified ${this.watchers.size} config watchers`);
   }
 
   getCurrentConfig(): any {
@@ -268,7 +268,7 @@ export async function mergeConfigurations() {
     ...userOverrides
   };
   
-  console.log('🔀 Configuration merged successfully');
+  console.info('🔀 Configuration merged successfully');
   return mergedConfig;
 }
 
@@ -278,53 +278,53 @@ export async function mergeConfigurations() {
 
 // Demo 1: Static vs Dynamic imports
 export async function demoStaticVsDynamic() {
-  console.log('\n📊 Static vs Dynamic TOML Imports Demo');
-  console.log('=' .repeat(50));
+  console.info('\n📊 Static vs Dynamic TOML Imports Demo');
+  console.info('=' .repeat(50));
   
   // Static import (available immediately)
-  console.log('🔹 Static import:');
-  console.log(`   App: ${basicConfig.app.name}`);
-  console.log(`   Version: ${basicConfig.app.version}`);
+  console.info('🔹 Static import:');
+  console.info(`   App: ${basicConfig.app.name}`);
+  console.info(`   Version: ${basicConfig.app.version}`);
   
   // Dynamic import (async)
-  console.log('\n🔸 Dynamic import:');
+  console.info('\n🔸 Dynamic import:');
   const dynamicConfig = await loadBasicConfig();
-  console.log(`   App: ${dynamicConfig.app.name}`);
-  console.log(`   Version: ${dynamicConfig.app.version}`);
+  console.info(`   App: ${dynamicConfig.app.name}`);
+  console.info(`   Version: ${dynamicConfig.app.version}`);
   
   // They should be the same
-  console.log('\n✅ Both methods loaded the same configuration');
+  console.info('\n✅ Both methods loaded the same configuration');
 }
 
 // Demo 2: Error handling
 export async function demoErrorHandling() {
-  console.log('\n🛠️ Error Handling Demo');
-  console.log('=' .repeat(30));
+  console.info('\n🛠️ Error Handling Demo');
+  console.info('=' .repeat(30));
   
   // Try to load non-existent config
   const result = await loadConfigWithErrorHandling("../non-existent.toml");
   
   if (result.success) {
-    console.log('✅ Config loaded successfully');
+    console.info('✅ Config loaded successfully');
   } else {
-    console.log('❌ Config failed to load (expected)');
-    console.log(`   Error: ${result.error.message}`);
+    console.info('❌ Config failed to load (expected)');
+    console.info(`   Error: ${result.error.message}`);
   }
 }
 
 // Demo 3: Environment-specific configs
 export async function demoEnvironmentConfigs() {
-  console.log('\n🌍 Environment-Specific Configs Demo');
-  console.log('=' .repeat(45));
+  console.info('\n🌍 Environment-Specific Configs Demo');
+  console.info('=' .repeat(45));
   
   const loader = new EnvironmentConfigLoader();
   
   for (const env of ['development', 'production', 'testing'] as const) {
     try {
       const config = await loader.loadForEnvironment(env);
-      console.log(`✅ ${env}: ${config.app?.name || 'Unknown'}`);
+      console.info(`✅ ${env}: ${config.app?.name || 'Unknown'}`);
     } catch {
-      console.log(`❌ ${env}: Failed to load`);
+      console.info(`❌ ${env}: Failed to load`);
     }
   }
 }

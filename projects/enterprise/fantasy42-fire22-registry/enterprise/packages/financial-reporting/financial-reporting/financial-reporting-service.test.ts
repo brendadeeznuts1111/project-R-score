@@ -816,5 +816,5 @@ describe('FinancialReportingService', () => {
   });
 });
 
-console.log('✅ Financial Reporting Domain Tests Loaded');
-console.log('Run tests with: bun test financial-reporting-service.test.ts');
+console.info('✅ Financial Reporting Domain Tests Loaded');
+console.info('Run tests with: bun test financial-reporting-service.test.ts');

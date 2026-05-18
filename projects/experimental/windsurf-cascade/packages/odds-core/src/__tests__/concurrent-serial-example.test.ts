@@ -8,12 +8,12 @@ describe.concurrent("Concurrent Test Suite with Sequential Tests", () => {
   let sharedState: Map<string, any> = new Map();
 
   beforeAll(() => {
-    console.log("Setting up shared state...");
+    console.info("Setting up shared state...");
     sharedState.clear();
   });
 
   afterAll(() => {
-    console.log("Cleaning up shared state...");
+    console.info("Cleaning up shared state...");
     sharedState.clear();
   });
 
@@ -192,7 +192,7 @@ describe.concurrent("Real-world Scenarios for test.serial", () => {
 
   test("operation order validation", () => {
     // This test runs after all others and validates the execution order
-    console.log("Operation order:", operationOrder);
+    console.info("Operation order:", operationOrder);
     
     // Sequential operations should maintain order
     const fileStartIndex = operationOrder.indexOf("file-start");
@@ -242,7 +242,7 @@ describe.concurrent("Mixed Execution Patterns", () => {
   });
 
   test("validate execution pattern", () => {
-    console.log("Execution log:", executionLog);
+    console.info("Execution log:", executionLog);
     
     // Serial tests (3 and 5) should execute in order
     const index3 = executionLog.indexOf(3);

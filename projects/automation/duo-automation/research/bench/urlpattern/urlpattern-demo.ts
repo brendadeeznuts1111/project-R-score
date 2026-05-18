@@ -82,8 +82,8 @@ class R2URLPatternManager {
    * Test URLPattern matching
    */
   testURLPatterns() {
-    console.log('🔍 Testing URLPattern API...');
-    console.log('');
+    console.info('🔍 Testing URLPattern API...');
+    console.info('');
 
     // Test cases
     const testUrls = [
@@ -96,7 +96,7 @@ class R2URLPatternManager {
     ];
 
     testUrls.forEach(url => {
-      console.log(`📄 Testing: ${url}`);
+      console.info(`📄 Testing: ${url}`);
       let foundMatch = false;
       
       // Test each pattern
@@ -106,38 +106,38 @@ class R2URLPatternManager {
         if (matches) {
           foundMatch = true;
           const exec = pattern.exec({ pathname: url });
-          console.log(`  ✅ ${name}: ${JSON.stringify(exec?.pathname.groups)}`);
+          console.info(`  ✅ ${name}: ${JSON.stringify(exec?.pathname.groups)}`);
         }
       });
       
       if (!foundMatch) {
-        console.log(`  ❌ No pattern match`);
+        console.info(`  ❌ No pattern match`);
       }
       
-      console.log('');
+      console.info('');
     });
 
     // Test pattern properties
-    console.log('🏗️ Pattern Properties:');
+    console.info('🏗️ Pattern Properties:');
     const appleIdPattern = this.patterns.appleId;
-    console.log(`  Protocol: ${appleIdPattern.protocol}`);
-    console.log(`  Username: ${appleIdPattern.username}`);
-    console.log(`  Password: ${appleIdPattern.password}`);
-    console.log(`  Hostname: ${appleIdPattern.hostname}`);
-    console.log(`  Port: ${appleIdPattern.port}`);
-    console.log(`  Pathname: ${appleIdPattern.pathname}`);
-    console.log(`  Search: ${appleIdPattern.search}`);
-    console.log(`  Hash: ${appleIdPattern.hash}`);
-    console.log(`  Has RegExp Groups: ${appleIdPattern.hasRegExpGroups}`);
-    console.log('');
+    console.info(`  Protocol: ${appleIdPattern.protocol}`);
+    console.info(`  Username: ${appleIdPattern.username}`);
+    console.info(`  Password: ${appleIdPattern.password}`);
+    console.info(`  Hostname: ${appleIdPattern.hostname}`);
+    console.info(`  Port: ${appleIdPattern.port}`);
+    console.info(`  Pathname: ${appleIdPattern.pathname}`);
+    console.info(`  Search: ${appleIdPattern.search}`);
+    console.info(`  Hash: ${appleIdPattern.hash}`);
+    console.info(`  Has RegExp Groups: ${appleIdPattern.hasRegExpGroups}`);
+    console.info('');
   }
 
   /**
    * Use URLPattern for R2 operations
    */
   async demonstrateR2Integration() {
-    console.log('🚀 URLPattern + R2 Integration Demo');
-    console.log('');
+    console.info('🚀 URLPattern + R2 Integration Demo');
+    console.info('');
 
     // Create test data for different patterns
     const testData = [
@@ -160,20 +160,20 @@ class R2URLPatternManager {
       }
 
       if (matchedPattern && extracted) {
-        console.log(`📤 Uploading to ${matchedPattern}:`);
-        console.log(`  URL: ${url}`);
-        console.log(`  Groups: ${JSON.stringify(extracted.pathname.groups)}`);
+        console.info(`📤 Uploading to ${matchedPattern}:`);
+        console.info(`  URL: ${url}`);
+        console.info(`  Groups: ${JSON.stringify(extracted.pathname.groups)}`);
         
         try {
           const result = await this.manager.uploadAppleID(data, url);
           if (result.success) {
-            console.log(`  ✅ Success: ${result.size} bytes (${result.savings.toFixed(1)}% compressed)`);
-            console.log(`  🔗 Public: https://pub-dc0e1ef5dd2245be81d6670a9b7b1550.r2.dev/${url}`);
+            console.info(`  ✅ Success: ${result.size} bytes (${result.savings.toFixed(1)}% compressed)`);
+            console.info(`  🔗 Public: https://pub-dc0e1ef5dd2245be81d6670a9b7b1550.r2.dev/${url}`);
           }
         } catch (error: any) {
-          console.log(`  ❌ Failed: ${error.message}`);
+          console.info(`  ❌ Failed: ${error.message}`);
         }
-        console.log('');
+        console.info('');
       }
     }
   }
@@ -182,12 +182,12 @@ class R2URLPatternManager {
    * Demonstrate pattern-based file retrieval
    */
   async demonstratePatternRetrieval() {
-    console.log('📥 Pattern-based File Retrieval');
-    console.log('');
+    console.info('📥 Pattern-based File Retrieval');
+    console.info('');
 
     // Find all Apple ID files using pattern
     const appleIdPattern = this.patterns.appleId;
-    console.log('🔍 Searching for Apple ID files...');
+    console.info('🔍 Searching for Apple ID files...');
     
     // Simulate pattern-based search (would use list operations in real implementation)
     const sampleFiles = [
@@ -199,15 +199,15 @@ class R2URLPatternManager {
     sampleFiles.forEach(async (file) => {
       if (appleIdPattern.test({ pathname: file })) {
         const result = appleIdPattern.exec({ pathname: file });
-        console.log(`  📄 Found Apple ID: ${result?.pathname.groups.id}`);
+        console.info(`  📄 Found Apple ID: ${result?.pathname.groups.id}`);
         
         try {
           const content = await this.manager.readAsText(file);
           const parsed = JSON.parse(content);
-          console.log(`    👤 User: ${parsed.user || 'N/A'}`);
-          console.log(`    ⏰ Time: ${parsed.timestamp || 'N/A'}`);
+          console.info(`    👤 User: ${parsed.user || 'N/A'}`);
+          console.info(`    ⏰ Time: ${parsed.timestamp || 'N/A'}`);
         } catch {
-          console.log(`    ❌ Could not read file`);
+          console.info(`    ❌ Could not read file`);
         }
       }
     });
@@ -226,7 +226,7 @@ async function runURLPatternDemo() {
   // Show pattern-based retrieval
   await urlPatternManager.demonstratePatternRetrieval();
   
-  console.log('🎉 URLPattern + R2 Demo Complete!');
+  console.info('🎉 URLPattern + R2 Demo Complete!');
 }
 
 // Run the demo

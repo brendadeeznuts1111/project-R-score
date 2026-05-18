@@ -78,28 +78,28 @@ class PerformanceCLI {
       description: 'Run complete performance analysis pipeline',
       usage: 'bun run tools/performance-cli.ts full-analysis',
       handler: async () => {
-        console.log('🚀 Running Full Performance Analysis Pipeline');
-        console.log('='.repeat(50));
+        console.info('🚀 Running Full Performance Analysis Pipeline');
+        console.info('='.repeat(50));
 
         // 1. Analyze profiles
-        console.log('\n📊 Step 1: Analyzing CPU Profiles...');
+        console.info('\n📊 Step 1: Analyzing CPU Profiles...');
         const analyzer = new ProfileAnalyzer();
         const profiles = await analyzer.analyzeAllProfiles();
         analyzer.printAnalysis(profiles);
 
         // 2. Analyze code
-        console.log('\n🔍 Step 2: Analyzing Codebase...');
+        console.info('\n🔍 Step 2: Analyzing Codebase...');
         const recommender = new OptimizationRecommender();
         const report = await recommender.analyzeCodebase();
         recommender.printReport(report);
 
         // 3. Run tests
-        console.log('\n🧪 Step 3: Running Performance Tests...');
+        console.info('\n🧪 Step 3: Running Performance Tests...');
         const tester = new PerformanceTester();
         const results = await tester.runTests();
         tester.printResults(results);
 
-        console.log('\n✅ Full Analysis Complete!');
+        console.info('\n✅ Full Analysis Complete!');
       }
     });
 
@@ -124,7 +124,7 @@ class PerformanceCLI {
         const fs = require('fs');
         const path = require('path');
 
-        console.log('📄 Generating Performance Report...');
+        console.info('📄 Generating Performance Report...');
         
         // Collect data from all tools
         const analyzer = new ProfileAnalyzer();
@@ -182,7 +182,7 @@ ${report.recommendations.filter(r => r.severity === 'medium').slice(0, 10).map(r
 
         const reportPath = path.join(process.cwd(), 'performance-report.md');
         fs.writeFileSync(reportPath, markdown);
-        console.log(`✅ Report saved to: ${reportPath}`);
+        console.info(`✅ Report saved to: ${reportPath}`);
       }
     });
 
@@ -198,25 +198,25 @@ ${report.recommendations.filter(r => r.severity === 'medium').slice(0, 10).map(r
   }
 
   private showHelp() {
-    console.log('🚀 Performance Analysis CLI');
-    console.log('='.repeat(50));
-    console.log('\nAvailable Commands:\n');
+    console.info('🚀 Performance Analysis CLI');
+    console.info('='.repeat(50));
+    console.info('\nAvailable Commands:\n');
 
     for (const [name, cmd] of this.commands) {
-      console.log(`  ${name}`);
-      console.log(`    ${cmd.description}`);
-      console.log(`    Usage: ${cmd.usage}`);
-      console.log('');
+      console.info(`  ${name}`);
+      console.info(`    ${cmd.description}`);
+      console.info(`    Usage: ${cmd.usage}`);
+      console.info('');
     }
 
-    console.log('Examples:');
-    console.log('  bun run tools/performance-cli.ts analyze-profiles');
-    console.log('  bun run tools/performance-cli.ts analyze-code ./src');
-    console.log('  bun run tools/performance-cli.ts test');
-    console.log('  bun run tools/performance-cli.ts dashboard 3001');
-    console.log('  bun run tools/performance-cli.ts full-analysis');
-    console.log('  bun run tools/performance-cli.ts monitor 60');
-    console.log('  bun run tools/performance-cli.ts report');
+    console.info('Examples:');
+    console.info('  bun run tools/performance-cli.ts analyze-profiles');
+    console.info('  bun run tools/performance-cli.ts analyze-code ./src');
+    console.info('  bun run tools/performance-cli.ts test');
+    console.info('  bun run tools/performance-cli.ts dashboard 3001');
+    console.info('  bun run tools/performance-cli.ts full-analysis');
+    console.info('  bun run tools/performance-cli.ts monitor 60');
+    console.info('  bun run tools/performance-cli.ts report');
   }
 
   async run(args: string[]) {
@@ -224,7 +224,7 @@ ${report.recommendations.filter(r => r.severity === 'medium').slice(0, 10).map(r
 
     if (!this.commands.has(command)) {
       console.error(`❌ Unknown command: ${command}`);
-      console.log('\nUse "help" to see available commands');
+      console.info('\nUse "help" to see available commands');
       process.exit(1);
     }
 

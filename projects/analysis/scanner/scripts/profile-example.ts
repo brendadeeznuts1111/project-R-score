@@ -35,45 +35,45 @@ function createLargeObject(size: number): Record<string, number> {
 }
 
 async function main(): Promise<void> {
-	console.log('🚀 Starting profiling example...\n');
+	console.info('🚀 Starting profiling example...\n');
 
 	// CPU-intensive operations
-	console.log('📊 Performing CPU-intensive work...');
+	console.info('📊 Performing CPU-intensive work...');
 	const start1 = Bun.nanoseconds();
 	cpuIntensiveWork(1_000_000);
 	const time1 = (Bun.nanoseconds() - start1) / 1_000_000;
-	console.log(`  Completed in ${time1.toFixed(2)}ms`);
+	console.info(`  Completed in ${time1.toFixed(2)}ms`);
 
-	console.log('📊 More CPU work...');
+	console.info('📊 More CPU work...');
 	const start2 = Bun.nanoseconds();
 	cpuIntensiveWork(5_000_000);
 	const time2 = (Bun.nanoseconds() - start2) / 1_000_000;
-	console.log(`  Completed in ${time2.toFixed(2)}ms`);
+	console.info(`  Completed in ${time2.toFixed(2)}ms`);
 
 	// Memory-intensive operations
-	console.log('\n💾 Creating large objects...');
+	console.info('\n💾 Creating large objects...');
 	const objects: Record<string, number>[] = [];
 	for (let i = 0; i < 100; i++) {
 		objects.push(createLargeObject(1000));
 	}
-	console.log(`  Created ${objects.length} objects`);
+	console.info(`  Created ${objects.length} objects`);
 
 	// Async operations
-	console.log('\n⏱️  Performing async operations...');
+	console.info('\n⏱️  Performing async operations...');
 	await Promise.all([Bun.sleep(10), Bun.sleep(20), Bun.sleep(30)]);
-	console.log('  Async operations completed');
+	console.info('  Async operations completed');
 
 	// More CPU work
-	console.log('\n📊 Final CPU work...');
+	console.info('\n📊 Final CPU work...');
 	const start3 = Bun.nanoseconds();
 	cpuIntensiveWork(2_000_000);
 	const time3 = (Bun.nanoseconds() - start3) / 1_000_000;
-	console.log(`  Completed in ${time3.toFixed(2)}ms`);
+	console.info(`  Completed in ${time3.toFixed(2)}ms`);
 
-	console.log('\n✅ Profiling example complete!');
-	console.log('\n📝 Profile files generated:');
-	console.log('  • CPU profile: Check current directory for .cpuprofile or .md files');
-	console.log('  • Heap profile: Check current directory for .heapsnapshot or .md files');
+	console.info('\n✅ Profiling example complete!');
+	console.info('\n📝 Profile files generated:');
+	console.info('  • CPU profile: Check current directory for .cpuprofile or .md files');
+	console.info('  • Heap profile: Check current directory for .heapsnapshot or .md files');
 }
 
 if (import.meta.main) {

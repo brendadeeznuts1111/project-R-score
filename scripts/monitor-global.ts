@@ -19,10 +19,10 @@ function snapshot() {
   ].join(" ");
 
   if (showDashboard) {
-    console.log("=== Global Deployment Monitor ===");
-    console.log(line);
+    console.info("=== Global Deployment Monitor ===");
+    console.info(line);
   } else {
-    console.log(line);
+    console.info(line);
   }
 
   if (showAlerts) {
@@ -30,9 +30,9 @@ function snapshot() {
     if (dep.summary.betaStagingCount > 0) alerts.push("beta components pending");
     if (dep.summary.overallReadiness < 90) alerts.push("overall readiness below 90");
     if (alerts.length > 0) {
-      console.log(`alerts=${alerts.join(", ")}`);
+      console.info(`alerts=${alerts.join(", ")}`);
     } else {
-      console.log("alerts=none");
+      console.info("alerts=none");
     }
   }
 }

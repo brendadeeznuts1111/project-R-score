@@ -1,15 +1,15 @@
 // utils/pattern-matrix-update.ts (Final auto-update)
 // After dashboard implementation
 
-console.log('🔄 Regenerating MASTER_MATRIX.md...');
+console.info('🔄 Regenerating MASTER_MATRIX.md...');
 
 // Mock pattern matrix updates
 const matrix = {
   addRow: (id: number, type: string, name: string, data: any) => {
-    console.log(`  ✅ Added ${id}: ${type} - ${name}`);
+    console.info(`  ✅ Added ${id}: ${type} - ${name}`);
   },
   regenerate: () => {
-    console.log('  ✅ Matrix regenerated');
+    console.info('  ✅ Matrix regenerated');
   }
 };
 
@@ -64,5 +64,5 @@ matrix.addRow(121, 'Build', 'DashboardBuild', {
 });
 
 matrix.regenerate();
-console.log('✅ MASTER_MATRIX.md updated (503 → 508 lines)');
-console.log('✅ Setup Score: 62/64 (96.9%)');
+console.info('✅ MASTER_MATRIX.md updated (503 → 508 lines)');
+console.info('✅ Setup Score: 62/64 (96.9%)');

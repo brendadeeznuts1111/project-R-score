@@ -44,4 +44,4 @@ serve({
   },
 });
 
-console.log(`🚀 Dashboard server running on http://localhost:${port}`);
+console.info(`🚀 Dashboard server running on http://localhost:${port}`);

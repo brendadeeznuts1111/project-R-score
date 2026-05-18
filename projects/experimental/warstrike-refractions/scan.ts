@@ -35,9 +35,9 @@ try {
       "Content-Type": "application/json", // sent as "Content-Type"
     },
   });
-  console.log("Fetch successful");
+  console.info("Fetch successful");
 } catch (error) {
-  console.log("Fetch failed (expected for demo):", error.message);
+  console.info("Fetch failed (expected for demo):", error.message);
 }
 
 // Bun.wrapAnsi() - ANSI-aware text wrapping

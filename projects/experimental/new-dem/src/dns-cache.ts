@@ -145,7 +145,7 @@ export class DNSCacheManager {
       r.status === 'fulfilled' && r.value.success
     ).length;
 
-    console.log(`DNS warmup: ${successful}/${results.length} connections established`);
+    console.info(`DNS warmup: ${successful}/${results.length} connections established`);
   }
 
   // Get cache statistics

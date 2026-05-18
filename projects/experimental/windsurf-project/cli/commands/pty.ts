@@ -45,12 +45,12 @@ async function launchShell(type: 'sniff' | 'health' | 'trace' | 'audit') {
   }
 
   const bridge = TerminalBridge.getInstance();
-  console.log(`🚀 Spawning Specialized Shell [${type.toUpperCase()}]...`);
+  console.info(`🚀 Spawning Specialized Shell [${type.toUpperCase()}]...`);
   
   const result = await bridge.spawnSpecializedShell(type);
   const { terminalId, pid } = result.result;
   
-  console.log(`📡 PTY Session [ID: ${terminalId}, PID: ${pid}] active.\n`);
+  console.info(`📡 PTY Session [ID: ${terminalId}, PID: ${pid}] active.\n`);
   
   bridge.streamOutput(terminalId, (data) => {
     process.stdout.write(data);
@@ -58,7 +58,7 @@ async function launchShell(type: 'sniff' | 'health' | 'trace' | 'audit') {
 
   // Handle termination
   process.on('SIGINT', () => {
-    console.log(`\nStopping ${type} session...`);
+    console.info(`\nStopping ${type} session...`);
     process.exit(0);
   });
 }

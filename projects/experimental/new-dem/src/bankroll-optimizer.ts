@@ -148,7 +148,7 @@ export class BankrollOptimizer {
       this.currentBankroll = currentBankroll;
     }
 
-    console.log(
+    console.info(
       `💰 Optimizing allocation for ${
         opportunities.length
       } opportunities with $${this.currentBankroll.toLocaleString()} bankroll`
@@ -211,7 +211,7 @@ export class BankrollOptimizer {
       // 7. Store allocation in history
       this.allocationHistory.push(optimizedAllocation);
 
-      console.log(
+      console.info(
         `✅ Allocation optimized. Expected return: ${(
           optimizedAllocation.totalExpectedReturn * 100
         ).toFixed(2)}%, Sharpe: ${optimizedAllocation.sharpeRatio.toFixed(3)}`

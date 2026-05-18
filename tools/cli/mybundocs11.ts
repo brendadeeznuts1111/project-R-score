@@ -48,15 +48,15 @@ class MYBUNDOCS11 {
   }
   
   private async createApp(args: string[]) {
-    console.log('🔧 Creating MYBUNDOCS11 Chrome App...')
+    console.info('🔧 Creating MYBUNDOCS11 Chrome App...')
     
     const domain = args.includes('--sh') ? 'sh' : 'com'
     const result = await this.manager.createApp(domain)
     
     if (result.success) {
-      console.log('✅', result.message)
-      console.log('\n🎉 MYBUNDOCS11 Chrome app created successfully!')
-      console.log('💡 Use "bun run mybundocs11 launch" to start the app')
+      console.info('✅', result.message)
+      console.info('\n🎉 MYBUNDOCS11 Chrome app created successfully!')
+      console.info('💡 Use "bun run mybundocs11 launch" to start the app')
     } else {
       console.error('❌', result.message)
     }
@@ -65,7 +65,7 @@ class MYBUNDOCS11 {
   private async launch(args: string[]) {
     const domain = args.includes('--sh') ? 'sh' : 'com'
     
-    console.log('🚀 Launching MYBUNDOCS11...')
+    console.info('🚀 Launching MYBUNDOCS11...')
     await this.manager.launchMYBUNDOCS11(domain)
   }
   
@@ -74,33 +74,33 @@ class MYBUNDOCS11 {
     const domain = args.includes('--sh') ? 'sh' : 'com'
     
     if (!query) {
-      console.log('❌ Please specify a search query')
-      console.log('💡 Example: bun run mybundocs11 open semver')
+      console.info('❌ Please specify a search query')
+      console.info('💡 Example: bun run mybundocs11 open semver')
       return
     }
     
-    console.log(`📖 Opening "${query}" in MYBUNDOCS11...`)
+    console.info(`📖 Opening "${query}" in MYBUNDOCS11...`)
     await this.manager.openDocsInMYBUNDOCS11(query, domain)
   }
   
   private showInfo() {
     const info = this.manager.getAppInfo()
     
-    console.log('📱 MYBUNDOCS11 App Information')
-    console.log('=' .repeat(40))
-    console.log(`Name: ${info.name}`)
-    console.log(`URL: ${info.url}`)
-    console.log(`Platform: ${info.platform}`)
-    console.log(`Window Size: ${info.windowSize?.width}x${info.windowSize?.height}`)
-    console.log(`Position: ${info.position?.x},${info.position?.y}`)
-    console.log('\n🔧 Features:')
+    console.info('📱 MYBUNDOCS11 App Information')
+    console.info('=' .repeat(40))
+    console.info(`Name: ${info.name}`)
+    console.info(`URL: ${info.url}`)
+    console.info(`Platform: ${info.platform}`)
+    console.info(`Window Size: ${info.windowSize?.width}x${info.windowSize?.height}`)
+    console.info(`Position: ${info.position?.x},${info.position?.y}`)
+    console.info('\n🔧 Features:')
     Object.entries(info.features).forEach(([key, value]) => {
-      console.log(`  ${key}: ${value ? '✅' : '❌'}`)
+      console.info(`  ${key}: ${value ? '✅' : '❌'}`)
     })
   }
   
   private showHelp() {
-    console.log(`
+    console.info(`
 🦌 MYBUNDOCS11 - Bun Documentation Chrome App
 Usage: bun run mybundocs11 <command> [options]
 

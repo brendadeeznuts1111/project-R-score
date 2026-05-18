@@ -3,10 +3,10 @@
  * Revolutionary merge key visualization with inheritance tracking and enhanced status
  */
 
-console.log('🎯 ENHANCED MERGE KEY VISUALIZATION v4.5 - ADVANCED INHERITANCE DISPLAY!')
-console.log('=' .repeat(80))
+console.info('🎯 ENHANCED MERGE KEY VISUALIZATION v4.5 - ADVANCED INHERITANCE DISPLAY!')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 🚀 REVOLUTIONARY MERGE KEY VISUALIZATION ENHANCEMENT DEPLOYED!
 
 ✅ ADVANCED VISUALIZATION FEATURES IMPLEMENTED:
@@ -180,9 +180,9 @@ The enhanced merge key visualization system provides unprecedented insight into 
 🎯✅ ENHANCED MERGE KEY VISUALIZATION v4.5 - ADVANCED INHERITANCE DISPLAY COMPLETE! ✅🎯
 `)
 
-console.log('🎯✅ ENHANCED MERGE KEY VISUALIZATION v4.5 - ADVANCED INHERITANCE DISPLAY!')
-console.log('🎨 16-column table - Inheritance display implemented!')
-console.log('🔧 Smart formatting - Override detection working!')
-console.log('🌈 Purple theme - Unified merge visualization!')
-console.log('📊 Maximum density - Professional information display!')
-console.log('💎 FactoryWager v4.5 - Visualization excellence complete!')
+console.info('🎯✅ ENHANCED MERGE KEY VISUALIZATION v4.5 - ADVANCED INHERITANCE DISPLAY!')
+console.info('🎨 16-column table - Inheritance display implemented!')
+console.info('🔧 Smart formatting - Override detection working!')
+console.info('🌈 Purple theme - Unified merge visualization!')
+console.info('📊 Maximum density - Professional information display!')
+console.info('💎 FactoryWager v4.5 - Visualization excellence complete!')

@@ -270,10 +270,10 @@ export class AdvancedUriInspector {
    * Run comprehensive URI inspection demonstration
    */
   async runInspectionDemo(): Promise<void> {
-    console.log("🔍 DuoPlus CLI v3.0+ - Advanced URI Inspection System");
-    console.log("=".repeat(80));
-    console.log("Enhanced with Bun's improved stringWidth and Unicode awareness");
-    console.log("");
+    console.info("🔍 DuoPlus CLI v3.0+ - Advanced URI Inspection System");
+    console.info("=".repeat(80));
+    console.info("Enhanced with Bun's improved stringWidth and Unicode awareness");
+    console.info("");
     
     // Create test cases with various Unicode and encoding scenarios
     const testCases: UriInspectionRow[] = [
@@ -380,40 +380,40 @@ export class AdvancedUriInspector {
     ];
     
     // Display inspection results
-    console.log("🧪 URI Inspection Results:");
-    console.log("");
+    console.info("🧪 URI Inspection Results:");
+    console.info("");
     
-    console.log(Bun.inspect.table(testCases, {
+    console.info(Bun.inspect.table(testCases, {
       colors: true,
       indent: 2
     }));
     
     // Display detailed analysis
-    console.log("");
-    console.log("📊 Detailed Analysis:");
-    console.log("");
+    console.info("");
+    console.info("📊 Detailed Analysis:");
+    console.info("");
     
     testCases.forEach((row, index) => {
       const startTime = performance.now();
       
-      console.log(`${index + 1}. ${row.longName}`);
-      console.log(`   Status: ${row.status}`);
-      console.log(`   Category: ${row.category}`);
-      console.log(`   Raw URI: ${row.rawUriEncoded}`);
-      console.log(`   Decoded URI: ${row.decodedUri || "N/A"}`);
-      console.log(`   Display Width: ${row.displayWidth} characters`);
+      console.info(`${index + 1}. ${row.longName}`);
+      console.info(`   Status: ${row.status}`);
+      console.info(`   Category: ${row.category}`);
+      console.info(`   Raw URI: ${row.rawUriEncoded}`);
+      console.info(`   Decoded URI: ${row.decodedUri || "N/A"}`);
+      console.info(`   Display Width: ${row.displayWidth} characters`);
       
       if (row.zeroWidthCount > 0) {
-        console.log(`   Zero-Width Characters: ${row.zeroWidthCount} detected Ⓩ`);
+        console.info(`   Zero-Width Characters: ${row.zeroWidthCount} detected Ⓩ`);
       }
       
       if (row.encodingAnomalies.length > 0) {
-        console.log(`   Encoding Anomalies: ${row.encodingAnomalies.join(", ")} ⚠️`);
+        console.info(`   Encoding Anomalies: ${row.encodingAnomalies.join(", ")} ⚠️`);
       }
       
       const processingTime = performance.now() - startTime;
-      console.log(`   Processing Time: ${processingTime.toFixed(2)}ms`);
-      console.log("");
+      console.info(`   Processing Time: ${processingTime.toFixed(2)}ms`);
+      console.info("");
       
       // Update metrics
       this.updateMetrics(row, processingTime);
@@ -428,7 +428,7 @@ export class AdvancedUriInspector {
     // Display width demonstration
     this.demonstrateWidthCapabilities();
     
-    console.log("🎉 Advanced URI Inspection Demo Complete!");
+    console.info("🎉 Advanced URI Inspection Demo Complete!");
   }
   
   /**
@@ -498,22 +498,22 @@ export class AdvancedUriInspector {
    * Display inspection metrics
    */
   private displayMetrics(): void {
-    console.log("📈 Inspection Metrics:");
-    console.log("");
-    console.log(`   Total Inspections: ${this.metrics.totalInspections}`);
-    console.log(`   Security Issues: ${this.metrics.securityIssues}`);
-    console.log(`   Encoding Anomalies: ${this.metrics.encodingAnomalies}`);
-    console.log(`   Zero-Width Detections: ${this.metrics.zeroWidthDetections}`);
-    console.log(`   Average Processing Time: ${this.metrics.averageProcessingTime.toFixed(2)}ms`);
-    console.log("");
+    console.info("📈 Inspection Metrics:");
+    console.info("");
+    console.info(`   Total Inspections: ${this.metrics.totalInspections}`);
+    console.info(`   Security Issues: ${this.metrics.securityIssues}`);
+    console.info(`   Encoding Anomalies: ${this.metrics.encodingAnomalies}`);
+    console.info(`   Zero-Width Detections: ${this.metrics.zeroWidthDetections}`);
+    console.info(`   Average Processing Time: ${this.metrics.averageProcessingTime.toFixed(2)}ms`);
+    console.info("");
   }
   
   /**
    * Demonstrate width capabilities
    */
   private demonstrateWidthCapabilities(): void {
-    console.log("📏 Unicode Width Demonstration:");
-    console.log("");
+    console.info("📏 Unicode Width Demonstration:");
+    console.info("");
     
     const testStrings = [
       "👨‍👩‍👧‍👦", // Family emoji (width: 2)
@@ -530,13 +530,13 @@ export class AdvancedUriInspector {
       const hasZW = this.hasZeroWidthChars(str);
       const display = hasZW.has ? `${str}Ⓩ` : str;
       
-      console.log(`${index + 1}. "${display}"`);
-      console.log(`   Display Width: ${width} characters`);
-      console.log(`   Raw Length: ${str.length} characters`);
+      console.info(`${index + 1}. "${display}"`);
+      console.info(`   Display Width: ${width} characters`);
+      console.info(`   Raw Length: ${str.length} characters`);
       if (hasZW.has) {
-        console.log(`   Zero-Width: ${hasZW.count} characters at positions ${hasZW.positions.join(", ")}`);
+        console.info(`   Zero-Width: ${hasZW.count} characters at positions ${hasZW.positions.join(", ")}`);
       }
-      console.log("");
+      console.info("");
     });
   }
   
@@ -568,10 +568,10 @@ async function main() {
   
   // Display final statistics
   const stats = inspector.getInspectionStatistics();
-  console.log("📊 Final Statistics:");
-  console.log(`   Total Inspections: ${stats.totalInspections}`);
-  console.log(`   Security Events: ${stats.securityEvents}`);
-  console.log(`   Average Processing Time: ${stats.metrics.averageProcessingTime.toFixed(2)}ms`);
+  console.info("📊 Final Statistics:");
+  console.info(`   Total Inspections: ${stats.totalInspections}`);
+  console.info(`   Security Events: ${stats.securityEvents}`);
+  console.info(`   Average Processing Time: ${stats.metrics.averageProcessingTime.toFixed(2)}ms`);
 }
 
 // Execute if run directly

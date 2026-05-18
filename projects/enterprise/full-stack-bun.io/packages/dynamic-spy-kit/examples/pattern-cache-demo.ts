@@ -19,9 +19,9 @@ import { hash } from "bun";
 // 1. Pattern Storage Demo
 // =============================================================================
 function demoPatternStorage() {
-	console.log("=".repeat(60));
-	console.log("1. Pattern Storage (Bun.sqlite)");
-	console.log("=".repeat(60));
+	console.info("=".repeat(60));
+	console.info("1. Pattern Storage (Bun.sqlite)");
+	console.info("=".repeat(60));
 
 	// Store patterns
 	const patterns = [
@@ -32,7 +32,7 @@ function demoPatternStorage() {
 		{ id: "AI_FEED_3", pathname: "/ml/:provider/:sport/*", hostname: "*.ai-odds.stream", priority: 1220 },
 	];
 
-	console.log(`\n📦 Storing ${patterns.length} patterns...`);
+	console.info(`\n📦 Storing ${patterns.length} patterns...`);
 
 	const startStore = performance.now();
 	patternCache.storePatterns(patterns.map(p => ({
@@ -41,17 +41,17 @@ function demoPatternStorage() {
 	})));
 	const storeTime = performance.now() - startStore;
 
-	console.log(`✅ Stored in ${storeTime.toFixed(2)}ms`);
+	console.info(`✅ Stored in ${storeTime.toFixed(2)}ms`);
 
 	// Retrieve patterns
-	console.log(`\n📋 Retrieving patterns:`);
+	console.info(`\n📋 Retrieving patterns:`);
 	for (const p of patterns) {
 		const startGet = performance.now();
 		const cached = patternCache.getPattern(p.id);
 		const getTime = performance.now() - startGet;
 
 		if (cached) {
-			console.log(`   ${p.id}: priority=${cached.priority}, time=${getTime.toFixed(4)}ms`);
+			console.info(`   ${p.id}: priority=${cached.priority}, time=${getTime.toFixed(4)}ms`);
 		}
 	}
 }
@@ -60,9 +60,9 @@ function demoPatternStorage() {
 // 2. Route Caching Demo
 // =============================================================================
 function demoRouteCaching() {
-	console.log("\n" + "=".repeat(60));
-	console.log("2. Route Caching (In-Memory + SQLite)");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("2. Route Caching (In-Memory + SQLite)");
+	console.info("=".repeat(60));
 
 	// Sample URLs and their matched patterns
 	const routeMatches = [
@@ -83,25 +83,25 @@ function demoRouteCaching() {
 		}
 	];
 
-	console.log(`\n📦 Caching ${routeMatches.length} route matches...`);
+	console.info(`\n📦 Caching ${routeMatches.length} route matches...`);
 
 	// Cache routes
 	for (const match of routeMatches) {
 		routeCache.set(match.url, match.patternId, match.groups);
 	}
 
-	console.log(`✅ Cached ${routeCache.size} routes`);
+	console.info(`✅ Cached ${routeCache.size} routes`);
 
 	// Retrieve cached routes (simulating hot path)
-	console.log(`\n📋 Cache lookups (hot path):`);
+	console.info(`\n📋 Cache lookups (hot path):`);
 	for (const match of routeMatches) {
 		const startGet = performance.now();
 		const cached = routeCache.get(match.url);
 		const getTime = performance.now() - startGet;
 
 		if (cached) {
-			console.log(`   ${match.patternId}: ${getTime.toFixed(4)}ms`);
-			console.log(`     Groups: ${JSON.stringify(cached.groups)}`);
+			console.info(`   ${match.patternId}: ${getTime.toFixed(4)}ms`);
+			console.info(`     Groups: ${JSON.stringify(cached.groups)}`);
 		}
 	}
 
@@ -110,22 +110,22 @@ function demoRouteCaching() {
 	const startMiss = performance.now();
 	const missed = routeCache.get(missUrl);
 	const missTime = performance.now() - startMiss;
-	console.log(`\n❌ Cache miss for unknown URL: ${missTime.toFixed(4)}ms`);
+	console.info(`\n❌ Cache miss for unknown URL: ${missTime.toFixed(4)}ms`);
 }
 
 // =============================================================================
 // 3. Performance Benchmark
 // =============================================================================
 function demoBenchmark() {
-	console.log("\n" + "=".repeat(60));
-	console.log("3. Performance Benchmark");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("3. Performance Benchmark");
+	console.info("=".repeat(60));
 
 	const localRouteCache = new RouteCache();
 	const iterations = 100_000;
 
 	// Populate cache
-	console.log(`\n📦 Populating cache with ${iterations.toLocaleString()} routes...`);
+	console.info(`\n📦 Populating cache with ${iterations.toLocaleString()} routes...`);
 	const populateStart = performance.now();
 	for (let i = 0; i < iterations; i++) {
 		localRouteCache.set(
@@ -135,11 +135,11 @@ function demoBenchmark() {
 		);
 	}
 	const populateTime = performance.now() - populateStart;
-	console.log(`✅ Populated in ${populateTime.toFixed(2)}ms`);
-	console.log(`   Rate: ${((iterations / populateTime) * 1000).toFixed(0)} inserts/sec`);
+	console.info(`✅ Populated in ${populateTime.toFixed(2)}ms`);
+	console.info(`   Rate: ${((iterations / populateTime) * 1000).toFixed(0)} inserts/sec`);
 
 	// Benchmark lookups
-	console.log(`\n🔍 Benchmarking ${iterations.toLocaleString()} lookups...`);
+	console.info(`\n🔍 Benchmarking ${iterations.toLocaleString()} lookups...`);
 	const lookupStart = performance.now();
 	let hits = 0;
 	for (let i = 0; i < iterations; i++) {
@@ -147,36 +147,36 @@ function demoBenchmark() {
 		if (result) hits++;
 	}
 	const lookupTime = performance.now() - lookupStart;
-	console.log(`✅ Lookups in ${lookupTime.toFixed(2)}ms`);
-	console.log(`   Rate: ${((iterations / lookupTime) * 1000).toFixed(0)} lookups/sec`);
-	console.log(`   Hit rate: ${((hits / iterations) * 100).toFixed(1)}%`);
+	console.info(`✅ Lookups in ${lookupTime.toFixed(2)}ms`);
+	console.info(`   Rate: ${((iterations / lookupTime) * 1000).toFixed(0)} lookups/sec`);
+	console.info(`   Hit rate: ${((hits / iterations) * 100).toFixed(1)}%`);
 }
 
 // =============================================================================
 // 4. Cache Statistics
 // =============================================================================
 function demoCacheStats() {
-	console.log("\n" + "=".repeat(60));
-	console.log("4. Cache Statistics");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("4. Cache Statistics");
+	console.info("=".repeat(60));
 
 	const stats = patternCache.getStats();
 
-	console.log(`\n📊 Pattern Cache Stats:`);
-	console.log(`   Patterns in DB: ${stats.patternCount}`);
-	console.log(`   Routes in DB: ${stats.routeCacheCount}`);
-	console.log(`   In-memory patterns: ${stats.inMemoryPatterns}`);
-	console.log(`   In-memory routes: ${stats.inMemoryRoutes}`);
-	console.log(`   DB size: ${(stats.dbSizeBytes / 1024).toFixed(2)} KB`);
+	console.info(`\n📊 Pattern Cache Stats:`);
+	console.info(`   Patterns in DB: ${stats.patternCount}`);
+	console.info(`   Routes in DB: ${stats.routeCacheCount}`);
+	console.info(`   In-memory patterns: ${stats.inMemoryPatterns}`);
+	console.info(`   In-memory routes: ${stats.inMemoryRoutes}`);
+	console.info(`   DB size: ${(stats.dbSizeBytes / 1024).toFixed(2)} KB`);
 }
 
 // =============================================================================
 // 5. URL Hashing Demo
 // =============================================================================
 function demoUrlHashing() {
-	console.log("\n" + "=".repeat(60));
-	console.log("5. URL Hashing with Bun.hash.rapidhash()");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("5. URL Hashing with Bun.hash.rapidhash()");
+	console.info("=".repeat(60));
 
 	const urls = [
 		"https://feed.arbitrage.live/feed/pinnacle/nba/lakers-celtics/moneyline",
@@ -184,28 +184,28 @@ function demoUrlHashing() {
 		"https://ai-odds.stream/predict/xgb-v3/game-123"
 	];
 
-	console.log(`\n📋 URL hashes:`);
+	console.info(`\n📋 URL hashes:`);
 	for (const url of urls) {
 		const h = hash.rapidhash(url);
-		console.log(`   ${url.substring(0, 50)}...`);
-		console.log(`     Hash: ${h.toString()}`);
+		console.info(`   ${url.substring(0, 50)}...`);
+		console.info(`     Hash: ${h.toString()}`);
 	}
 
 	// Collision test
-	console.log(`\n🔬 Collision test (10K unique URLs):`);
+	console.info(`\n🔬 Collision test (10K unique URLs):`);
 	const hashes = new Set<bigint>();
 	for (let i = 0; i < 10000; i++) {
 		hashes.add(hash.rapidhash(`https://example.com/api/route/${i}`));
 	}
-	console.log(`   Unique hashes: ${hashes.size}/10000`);
-	console.log(`   Collision rate: ${((10000 - hashes.size) / 10000 * 100).toFixed(4)}%`);
+	console.info(`   Unique hashes: ${hashes.size}/10000`);
+	console.info(`   Collision rate: ${((10000 - hashes.size) / 10000 * 100).toFixed(4)}%`);
 }
 
 // =============================================================================
 // Main
 // =============================================================================
 async function main() {
-	console.log("\n⚡ Pattern Cache Demo - Bun.sqlite + Bun.peek()\n");
+	console.info("\n⚡ Pattern Cache Demo - Bun.sqlite + Bun.peek()\n");
 
 	demoPatternStorage();
 	demoRouteCaching();
@@ -213,9 +213,9 @@ async function main() {
 	demoCacheStats();
 	demoUrlHashing();
 
-	console.log("\n" + "=".repeat(60));
-	console.log("✅ Demo Complete!");
-	console.log("=".repeat(60) + "\n");
+	console.info("\n" + "=".repeat(60));
+	console.info("✅ Demo Complete!");
+	console.info("=".repeat(60) + "\n");
 }
 
 if (import.meta.main) {

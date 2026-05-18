@@ -92,7 +92,7 @@ export class EliteCircuitBreaker {
       if (Date.now() < this.nextAttempt) {
         // Circuit open, use fallback or throw
         if (fallback) {
-          console.log(`[CIRCUIT ${this.name}] OPEN - using fallback`);
+          console.info(`[CIRCUIT ${this.name}] OPEN - using fallback`);
           return fallback();
         }
         throw new CircuitBreakerError(`Circuit ${this.name} is OPEN`);
@@ -177,7 +177,7 @@ export class EliteCircuitBreaker {
   private transitionTo(newState: CircuitState): void {
     if (this.state === newState) return;
     
-    console.log(`[CIRCUIT ${this.name}] ${this.state} -> ${newState}`);
+    console.info(`[CIRCUIT ${this.name}] ${this.state} -> ${newState}`);
     
     this.state = newState;
     this.metrics.stateChanges++;
@@ -191,7 +191,7 @@ export class EliteCircuitBreaker {
         this.config.maxResetTimeoutMs
       );
       this.nextAttempt = Date.now() + backoff;
-      console.log(`[CIRCUIT ${this.name}] Will retry in ${backoff}ms`);
+      console.info(`[CIRCUIT ${this.name}] Will retry in ${backoff}ms`);
     } else if (newState === 'CLOSED') {
       this.metrics.consecutiveFailures = 0;
       this.metrics.consecutiveSuccesses = 0;
@@ -204,7 +204,7 @@ export class EliteCircuitBreaker {
   private startHealthChecks(): void {
     this.healthCheckTimer = setInterval(() => {
       if (this.state === 'OPEN' && Date.now() >= this.nextAttempt) {
-        console.log(`[CIRCUIT ${this.name}] Health check: attempting HALF_OPEN`);
+        console.info(`[CIRCUIT ${this.name}] Health check: attempting HALF_OPEN`);
       }
     }, this.config.healthCheckIntervalMs);
   }
@@ -357,7 +357,7 @@ export const circuitBreakers = new CircuitBreakerManager();
 // ═══════════════════════════════════════════════════════════════════════════════
 
 if (import.meta.main) {
-  console.log(`
+  console.info(`
 ╔══════════════════════════════════════════════════════════════════╗
 ║  ⚡ ELITE CIRCUIT BREAKER                                       ║
 ╠══════════════════════════════════════════════════════════════════╣
@@ -373,21 +373,21 @@ if (import.meta.main) {
   });
   
   // Simulate successful calls
-  console.log('1. Simulating successful calls...\n');
+  console.info('1. Simulating successful calls...\n');
   
   for (let i = 0; i < 5; i++) {
     try {
       const result = await breaker.execute(async () => {
         return { status: 'success', data: `payment-${i}` };
       });
-      console.log(`   ✓ Call ${i + 1}:`, result);
+      console.info(`   ✓ Call ${i + 1}:`, result);
     } catch (e) {
-      console.log(`   ✗ Call ${i + 1}:`, (e as Error).message);
+      console.info(`   ✗ Call ${i + 1}:`, (e as Error).message);
     }
   }
   
   // Simulate failures to trip circuit
-  console.log('\n2. Simulating failures (circuit will open)...\n');
+  console.info('\n2. Simulating failures (circuit will open)...\n');
   
   for (let i = 0; i < 5; i++) {
     try {
@@ -395,59 +395,59 @@ if (import.meta.main) {
         throw new Error('Service unavailable');
       });
     } catch (e) {
-      console.log(`   ✗ Call ${i + 1}:`, (e as Error).message);
+      console.info(`   ✗ Call ${i + 1}:`, (e as Error).message);
     }
   }
   
-  console.log(`\n   Circuit state: ${breaker.getState()}`);
-  console.log(`   Next attempt: ${breaker.getMetrics().nextAttempt - Date.now()}ms`);
+  console.info(`\n   Circuit state: ${breaker.getState()}`);
+  console.info(`   Next attempt: ${breaker.getMetrics().nextAttempt - Date.now()}ms`);
   
   // Try with fallback
-  console.log('\n3. Using fallback while circuit is open...\n');
+  console.info('\n3. Using fallback while circuit is open...\n');
   
   const fallbackResult = await breaker.execute(
     async () => ({ status: 'live' }),
     () => ({ status: 'cached', data: 'fallback-data' })
   );
   
-  console.log('   Fallback result:', fallbackResult);
+  console.info('   Fallback result:', fallbackResult);
   
   // Wait and recover
-  console.log('\n4. Waiting for circuit to half-open...\n');
+  console.info('\n4. Waiting for circuit to half-open...\n');
   
   await Bun.sleep(3000);
   
   // Successful recovery
-  console.log('5. Recovery (successful calls)...\n');
+  console.info('5. Recovery (successful calls)...\n');
   
   for (let i = 0; i < 5; i++) {
     try {
       const result = await breaker.execute(async () => {
         return { status: 'success', data: `recovery-${i}` };
       });
-      console.log(`   ✓ Call ${i + 1}:`, result);
+      console.info(`   ✓ Call ${i + 1}:`, result);
     } catch (e) {
-      console.log(`   ✗ Call ${i + 1}:`, (e as Error).message);
+      console.info(`   ✗ Call ${i + 1}:`, (e as Error).message);
     }
   }
   
-  console.log(`\n   Circuit state: ${breaker.getState()}`);
+  console.info(`\n   Circuit state: ${breaker.getState()}`);
   
   // Show Prometheus metrics
-  console.log('\n6. Prometheus Metrics:\n');
-  console.log(breaker.toPrometheus());
+  console.info('\n6. Prometheus Metrics:\n');
+  console.info(breaker.toPrometheus());
   
   // Final metrics
   const m = breaker.getMetrics();
-  console.log('Final Stats:');
-  console.log(`   Total calls: ${m.totalCalls}`);
-  console.log(`   Successes: ${m.successes}`);
-  console.log(`   Failures: ${m.failures}`);
-  console.log(`   State changes: ${m.stateChanges}`);
+  console.info('Final Stats:');
+  console.info(`   Total calls: ${m.totalCalls}`);
+  console.info(`   Successes: ${m.successes}`);
+  console.info(`   Failures: ${m.failures}`);
+  console.info(`   State changes: ${m.stateChanges}`);
   
   breaker.destroy();
   
-  console.log('\n✅ Circuit Breaker demo complete!');
+  console.info('\n✅ Circuit Breaker demo complete!');
 }
 
 export default EliteCircuitBreaker;

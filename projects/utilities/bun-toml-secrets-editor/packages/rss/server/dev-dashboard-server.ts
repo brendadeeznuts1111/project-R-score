@@ -630,10 +630,10 @@ class DevDashboardServer {
 			fetch: (req, server) => this.handleHttpRequest(req, server),
 		});
 
-		console.log(`\n🚀 Dev Dashboard running at: http://localhost:${this.port}`);
-		console.log(`📊 Real-time network monitoring active`);
-		console.log(`🤖 Kimi chat ready`);
-		console.log(`\nPress Ctrl+C to stop\n`);
+		console.info(`\n🚀 Dev Dashboard running at: http://localhost:${this.port}`);
+		console.info(`📊 Real-time network monitoring active`);
+		console.info(`🤖 Kimi chat ready`);
+		console.info(`\nPress Ctrl+C to stop\n`);
 
 		// Graceful shutdown
 		process.on("SIGINT", () => this.shutdown());
@@ -818,11 +818,11 @@ class DevDashboardServer {
 				: level === "warning"
 					? "\x1b[33m"
 					: "\x1b[36m";
-		console.log(`${color}[${time}] ${message}\x1b[0m`);
+		console.info(`${color}[${time}] ${message}\x1b[0m`);
 	}
 
 	private shutdown(): void {
-		console.log("\n\n🛑 Shutting down dev dashboard...");
+		console.info("\n\n🛑 Shutting down dev dashboard...");
 
 		if (this.monitorInterval) {
 			clearInterval(this.monitorInterval);
@@ -835,7 +835,7 @@ class DevDashboardServer {
 			client.ws.close();
 		}
 
-		console.log("✅ Dev dashboard stopped");
+		console.info("✅ Dev dashboard stopped");
 		process.exit(0);
 	}
 }

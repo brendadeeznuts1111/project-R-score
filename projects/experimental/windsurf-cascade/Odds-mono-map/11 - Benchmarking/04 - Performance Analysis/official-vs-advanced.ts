@@ -7,20 +7,20 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.bold.magenta('🎯 Official Examples vs Our Advanced Implementation'));
-console.log(chalk.gray('Bun.inspect.table() - From Basic Documentation to Production-Ready Solutions'));
-console.log(chalk.gray('='.repeat(80)));
+console.info(chalk.bold.magenta('🎯 Official Examples vs Our Advanced Implementation'));
+console.info(chalk.gray('Bun.inspect.table() - From Basic Documentation to Production-Ready Solutions'));
+console.info(chalk.gray('='.repeat(80)));
 
 // =============================================================================
 // OFFICIAL BASIC EXAMPLES (from bun.com/docs/runtime/utils)
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📋 Official Basic Examples'));
+console.info(chalk.bold.cyan('\n📋 Official Basic Examples'));
 
-console.log(chalk.yellow('\n🔸 Example 1: Basic Array of Objects'));
-console.log(chalk.gray('From official documentation:'));
-console.log(chalk.white(`
-console.log(
+console.info(chalk.yellow('\n🔸 Example 1: Basic Array of Objects'));
+console.info(chalk.gray('From official documentation:'));
+console.info(chalk.white(`
+console.info(
   Bun.inspect.table(
     [
       { a: 1, b: 2, c: 3 },
@@ -31,8 +31,8 @@ console.log(
 );
 `));
 
-console.log(chalk.green('Output:'));
-console.log(chalk.gray(`
+console.info(chalk.green('Output:'));
+console.info(chalk.gray(`
 ┌───┬───┬───┐
 │   │ a │ b │ c │
 ├───┼───┼───┤
@@ -42,10 +42,10 @@ console.log(chalk.gray(`
 └───┴───┴───┘
 `));
 
-console.log(chalk.yellow('\n🔸 Example 2: Properties Filter'));
-console.log(chalk.gray('From official documentation:'));
-console.log(chalk.white(`
-console.log(
+console.info(chalk.yellow('\n🔸 Example 2: Properties Filter'));
+console.info(chalk.gray('From official documentation:'));
+console.info(chalk.white(`
+console.info(
   Bun.inspect.table(
     [
       { a: 1, b: 2, c: 3 },
@@ -56,8 +56,8 @@ console.log(
 );
 `));
 
-console.log(chalk.green('Output:'));
-console.log(chalk.gray(`
+console.info(chalk.green('Output:'));
+console.info(chalk.gray(`
 ┌───┬───┬───┐
 │   │ a │ c │
 ├───┼───┼───┤
@@ -66,10 +66,10 @@ console.log(chalk.gray(`
 └───┴───┴───┘
 `));
 
-console.log(chalk.yellow('\n🔸 Example 3: Colors Option'));
-console.log(chalk.gray('From official documentation:'));
-console.log(chalk.white(`
-console.log(
+console.info(chalk.yellow('\n🔸 Example 3: Colors Option'));
+console.info(chalk.gray('From official documentation:'));
+console.info(chalk.white(`
+console.info(
   Bun.inspect.table(
     [
       { a: 1, b: 2, c: 3 },
@@ -86,11 +86,11 @@ console.log(
 // OUR ADVANCED VAULT-SPECIFIC IMPLEMENTATIONS
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🏗️  Our Advanced Vault-Specific Implementations'));
+console.info(chalk.bold.cyan('\n🏗️  Our Advanced Vault-Specific Implementations'));
 
-console.log(chalk.yellow('\n🔸 Example 1: Vault Files with Color Coding'));
-console.log(chalk.gray('Our production-ready vault file table:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Example 1: Vault Files with Color Coding'));
+console.info(chalk.gray('Our production-ready vault file table:'));
+console.info(chalk.white(`
 const mappedFiles = rawVaultFiles.map(file => ({
   fileName: chalk.cyan(file.name),
   directory: chalk.gray(file.path.split('/').slice(0, -1).join('/')),
@@ -108,8 +108,8 @@ Bun.inspect.table(
 );
 `));
 
-console.log(chalk.green('Output:'));
-console.log(chalk.gray(`
+console.info(chalk.green('Output:'));
+console.info(chalk.gray(`
 ┌───┬──────────────┬─────────────────────────────────┬────────┬─────────────┬───────────────────────────┬─────────────────┐
 │   │ fileName     │ directory                      │ sizeKB │ modified    │ tags                      │ hasFrontmatter  │
 ├───┼──────────────┼─────────────────────────────────┼────────┼─────────────┼───────────────────────────┼─────────────────┤
@@ -119,9 +119,9 @@ console.log(chalk.gray(`
 └───┴──────────────┴─────────────────────────────────┴────────┴─────────────┴───────────────────────────┴─────────────────┘
 `));
 
-console.log(chalk.yellow('\n🔸 Example 2: Validation Issues with Advanced Options'));
-console.log(chalk.gray('Our validation issues table with width management:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Example 2: Validation Issues with Advanced Options'));
+console.info(chalk.gray('Our validation issues table with width management:'));
+console.info(chalk.white(`
 const mappedIssues = rawValidationIssues.map(issue => ({
   type: issue.type === 'error' ?
     chalk.bgRed(' ERROR ') :
@@ -145,8 +145,8 @@ Bun.inspect.table(
 );
 `));
 
-console.log(chalk.green('Output:'));
-console.log(chalk.gray(`
+console.info(chalk.green('Output:'));
+console.info(chalk.gray(`
 ┌───┬─────────┬──────────────┬─────────────┬──────┬─────────────────────────┬──────────────────────────┐
 │   │ type    │ ruleCategory │ file        │ line │ message                 │ suggestion               │
 ├───┼─────────┼──────────────┼─────────────┼──────┼─────────────────────────┼──────────────────────────┤
@@ -156,9 +156,9 @@ console.log(chalk.gray(`
 └───┴─────────┴──────────────┴─────────────┼──────┴─────────────────────────┴──────────────────────────┘
 `));
 
-console.log(chalk.yellow('\n🔸 Example 3: Task Statuses with Visual Indicators'));
-console.log(chalk.gray('Our task management workflow table:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Example 3: Task Statuses with Visual Indicators'));
+console.info(chalk.gray('Our task management workflow table:'));
+console.info(chalk.white(`
 const taskStatuses = rawTaskStatuses.map(status => ({
   symbol: chalk.bold(status.symbol),
   name: chalk.white(status.name),
@@ -178,8 +178,8 @@ Bun.inspect.table(
 );
 `));
 
-console.log(chalk.green('Output:'));
-console.log(chalk.gray(`
+console.info(chalk.green('Output:'));
+console.info(chalk.gray(`
 ┌───┬────────┬─────────────────┬─────────────────┬───────────┐
 │   │ symbol │ name            │ nextStatusSymbol│ type      │
 ├───┼────────┼─────────────────┼─────────────────┼───────────┤
@@ -194,7 +194,7 @@ console.log(chalk.gray(`
 // COMPARISON: BASIC vs ADVANCED FEATURES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🆚 Comparison: Basic vs Advanced Features'));
+console.info(chalk.bold.cyan('\n🆚 Comparison: Basic vs Advanced Features'));
 
 const featureComparison = [
     {
@@ -234,41 +234,41 @@ const featureComparison = [
     }
 ];
 
-console.log(chalk.yellow('\n📊 Feature Evolution:'));
+console.info(chalk.yellow('\n📊 Feature Evolution:'));
 featureComparison.forEach((feature, index) => {
-    console.log(chalk.bold(`\n${index + 1}. ${feature.basicFeature} → ${feature.advancedFeature}`));
-    console.log(chalk.gray(`   Basic:    ${feature.basicExample}`));
-    console.log(chalk.cyan(`   Advanced: ${feature.advancedExample}`));
-    console.log(chalk.green(`   Impact:   ${feature.improvement}`));
+    console.info(chalk.bold(`\n${index + 1}. ${feature.basicFeature} → ${feature.advancedFeature}`));
+    console.info(chalk.gray(`   Basic:    ${feature.basicExample}`));
+    console.info(chalk.cyan(`   Advanced: ${feature.advancedExample}`));
+    console.info(chalk.green(`   Impact:   ${feature.improvement}`));
 });
 
 // =============================================================================
 // PRACTICAL BENEFITS COMPARISON
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🚀 Practical Benefits Comparison'));
+console.info(chalk.bold.cyan('\n🚀 Practical Benefits Comparison'));
 
-console.log(chalk.yellow('\n📈 Official Examples - Good for:'));
-console.log(chalk.gray('• Learning basic syntax'));
-console.log(chalk.gray('• Simple data visualization'));
-console.log(chalk.gray('• Quick prototyping'));
-console.log(chalk.gray('• Understanding function signature'));
+console.info(chalk.yellow('\n📈 Official Examples - Good for:'));
+console.info(chalk.gray('• Learning basic syntax'));
+console.info(chalk.gray('• Simple data visualization'));
+console.info(chalk.gray('• Quick prototyping'));
+console.info(chalk.gray('• Understanding function signature'));
 
-console.log(chalk.yellow('\n🏆 Our Implementation - Essential for:'));
-console.log(chalk.green('• Production applications'));
-console.log(chalk.green('• Complex data structures'));
-console.log(chalk.green('• User experience optimization'));
-console.log(chalk.green('• Enterprise-grade reporting'));
-console.log(chalk.green('• Domain-specific solutions'));
+console.info(chalk.yellow('\n🏆 Our Implementation - Essential for:'));
+console.info(chalk.green('• Production applications'));
+console.info(chalk.green('• Complex data structures'));
+console.info(chalk.green('• User experience optimization'));
+console.info(chalk.green('• Enterprise-grade reporting'));
+console.info(chalk.green('• Domain-specific solutions'));
 
 // =============================================================================
 // CODE COMPLEXITY COMPARISON
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📝 Code Complexity Comparison'));
+console.info(chalk.bold.cyan('\n📝 Code Complexity Comparison'));
 
-console.log(chalk.yellow('\n🔸 Official Approach (Simple):'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Official Approach (Simple):'));
+console.info(chalk.white(`
 // 3 lines of code
 Bun.inspect.table([
   { a: 1, b: 2, c: 3 },
@@ -276,8 +276,8 @@ Bun.inspect.table([
 ], ["a", "c"]);
 `));
 
-console.log(chalk.yellow('\n🔸 Our Approach (Production-Ready):'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Our Approach (Production-Ready):'));
+console.info(chalk.white(`
 // 15+ lines with pre-processing, formatting, and error handling
 const mappedFiles = rawVaultFiles.map(file => ({
   fileName: chalk.cyan(file.name),
@@ -297,29 +297,29 @@ Bun.inspect.table(
 );
 `));
 
-console.log(chalk.green('\n✅ Trade-off: More code for significantly better results'));
+console.info(chalk.green('\n✅ Trade-off: More code for significantly better results'));
 
 // =============================================================================
 // REAL-WORLD APPLICATION EXAMPLES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🌍 Real-World Application Examples'));
+console.info(chalk.bold.cyan('\n🌍 Real-World Application Examples'));
 
-console.log(chalk.yellow('\n🔸 Official Example Use Case:'));
-console.log(chalk.gray('• Debug console output'));
-console.log(chalk.gray('• Simple data inspection'));
-console.log(chalk.gray('• Learning and teaching'));
+console.info(chalk.yellow('\n🔸 Official Example Use Case:'));
+console.info(chalk.gray('• Debug console output'));
+console.info(chalk.gray('• Simple data inspection'));
+console.info(chalk.gray('• Learning and teaching'));
 
-console.log(chalk.yellow('\n🔸 Our Implementation Use Cases:'));
-console.log(chalk.green('• Vault file management dashboards'));
-console.log(chalk.green('• CI/CD validation reports'));
-console.log(chalk.green('• Task workflow tracking'));
-console.log(chalk.green('• Performance metrics visualization'));
-console.log(chalk.green('• Error reporting systems'));
-console.log(chalk.green('• User interface components'));
+console.info(chalk.yellow('\n🔸 Our Implementation Use Cases:'));
+console.info(chalk.green('• Vault file management dashboards'));
+console.info(chalk.green('• CI/CD validation reports'));
+console.info(chalk.green('• Task workflow tracking'));
+console.info(chalk.green('• Performance metrics visualization'));
+console.info(chalk.green('• Error reporting systems'));
+console.info(chalk.green('• User interface components'));
 
-console.log(chalk.bold.magenta('\n🎯 Summary: From Documentation to Production'));
-console.log(chalk.gray('Official examples provide the foundation - our implementation builds production-ready solutions.'));
-console.log(chalk.gray('Both approaches are valuable: official for learning, ours for real applications.'));
+console.info(chalk.bold.magenta('\n🎯 Summary: From Documentation to Production'));
+console.info(chalk.gray('Official examples provide the foundation - our implementation builds production-ready solutions.'));
+console.info(chalk.gray('Both approaches are valuable: official for learning, ours for real applications.'));
 
-console.log(chalk.bold.green('\n🎉 Comparison Complete!'));
+console.info(chalk.bold.green('\n🎉 Comparison Complete!'));

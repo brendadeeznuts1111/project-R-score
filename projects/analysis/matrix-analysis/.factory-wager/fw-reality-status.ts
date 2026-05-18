@@ -88,8 +88,8 @@ class RealityDashboard {
   };
 
   async generateStatusReport(): Promise<void> {
-    console.log("🔍 FactoryWager Reality Status Dashboard");
-    console.log("=" .repeat(50));
+    console.info("🔍 FactoryWager Reality Status Dashboard");
+    console.info("=" .repeat(50));
 
     const status = await RealityCheck.overall.getRealityStatus();
 
@@ -114,7 +114,7 @@ class RealityDashboard {
     const bunSecretsWorking = status.secrets.real > 0;
     rows.push(this.statusRow("Bun.secrets API", bunSecretsWorking));
 
-    console.log(this.formatTable(rows));
+    console.info(this.formatTable(rows));
 
     // Overall Status
     const overallConfig = {
@@ -124,67 +124,67 @@ class RealityDashboard {
     };
 
     const overall = overallConfig[status.overall];
-    console.log(`\n${overall.icon} Overall Mode: ${overall.color}${status.overall}${this.colors.reset}`);
-    console.log(`   ${overall.description}`);
+    console.info(`\n${overall.icon} Overall Mode: ${overall.color}${status.overall}${this.colors.reset}`);
+    console.info(`   ${overall.description}`);
 
     // Warnings
     const warnings = rows.filter(r => r.warning).map(r => r.warning);
     if (warnings.length > 0) {
-      console.log("\n⚠️ Warnings:");
-      warnings.forEach(warning => console.log(`   • ${warning}`));
+      console.info("\n⚠️ Warnings:");
+      warnings.forEach(warning => console.info(`   • ${warning}`));
     }
 
     // Detailed Component Breakdown
-    console.log("\n📊 Detailed Component Status:");
+    console.info("\n📊 Detailed Component Status:");
 
     // R2 Details
-    console.log(`\n🌐 R2 Storage (${status.r2.mode}):`);
+    console.info(`\n🌐 R2 Storage (${status.r2.mode}):`);
     if (status.r2.connected) {
-      console.log(`   ✅ API connection successful`);
+      console.info(`   ✅ API connection successful`);
     } else {
-      console.log(`   ❌ ${status.r2.error || "No connection"}`);
+      console.info(`   ❌ ${status.r2.error || "No connection"}`);
     }
 
     // MCP Details
-    console.log(`\n🔄 MCP Servers (${status.mcp.installed}/${status.mcp.total}):`);
+    console.info(`\n🔄 MCP Servers (${status.mcp.installed}/${status.mcp.total}):`);
     status.mcp.servers.forEach(server => {
       const statusIcon = server.installed ? "✅" : "❌";
       const latencyInfo = server.latency ? ` (${server.latency}ms)` : "";
-      console.log(`   ${statusIcon} ${server.server}${latencyInfo}`);
+      console.info(`   ${statusIcon} ${server.server}${latencyInfo}`);
     });
 
     // Secrets Details
-    console.log(`\n🔐 Secrets Audit:`);
-    console.log(`   Real secrets: ${status.secrets.real}/${status.secrets.total}`);
-    console.log(`   Missing: ${status.secrets.missing}`);
+    console.info(`\n🔐 Secrets Audit:`);
+    console.info(`   Real secrets: ${status.secrets.real}/${status.secrets.total}`);
+    console.info(`   Missing: ${status.secrets.missing}`);
 
     // Security Assessment
-    console.log("\n🔒 Security Assessment:");
+    console.info("\n🔒 Security Assessment:");
     if (status.overall === "MIXED") {
-      console.log("   ⚠️ MIXED REALITY - Potential security risk");
-      console.log("   💡 Configure all components with real credentials");
+      console.info("   ⚠️ MIXED REALITY - Potential security risk");
+      console.info("   💡 Configure all components with real credentials");
     } else if (status.overall === "SIMULATED") {
-      console.log("   ✅ SECURE - All operations local");
-      console.log("   💡 Ready for production credential setup");
+      console.info("   ✅ SECURE - All operations local");
+      console.info("   💡 Ready for production credential setup");
     } else {
-      console.log("   🔐 PRODUCTION - All systems live");
-      console.log("   💡 Monitor for credential rotation");
+      console.info("   🔐 PRODUCTION - All systems live");
+      console.info("   💡 Monitor for credential rotation");
     }
 
     // Recommendations
-    console.log("\n💡 Recommendations:");
+    console.info("\n💡 Recommendations:");
     if (status.overall === "SIMULATED") {
-      console.log("   1. Set up real R2 credentials for cloud storage");
-      console.log("   2. Install missing MCP servers: " + status.mcp.servers.filter(s => !s.installed).map(s => s.server).join(", "));
-      console.log("   3. Configure real secrets for production use");
+      console.info("   1. Set up real R2 credentials for cloud storage");
+      console.info("   2. Install missing MCP servers: " + status.mcp.servers.filter(s => !s.installed).map(s => s.server).join(", "));
+      console.info("   3. Configure real secrets for production use");
     } else if (status.overall === "MIXED") {
-      console.log("   1. Complete missing MCP server installation");
-      console.log("   2. Verify all cloud credentials are properly configured");
-      console.log("   3. Test end-to-end connectivity");
+      console.info("   1. Complete missing MCP server installation");
+      console.info("   2. Verify all cloud credentials are properly configured");
+      console.info("   3. Test end-to-end connectivity");
     } else {
-      console.log("   1. Set up automated credential rotation");
-      console.log("   2. Configure monitoring and alerting");
-      console.log("   3. Document disaster recovery procedures");
+      console.info("   1. Set up automated credential rotation");
+      console.info("   2. Configure monitoring and alerting");
+      console.info("   3. Document disaster recovery procedures");
     }
   }
 }

@@ -20,9 +20,9 @@ interface PatternResult {
   extracted: Record<string, string | undefined>;
 }
 
-console.log(`🚀 Starting URLPattern Showcase Server...`);
-console.log(`📁 Serving from: ${path.join(import.meta.dir, 'urlpattern-showcase.html')}`);
-console.log(`🌐 Server will be available at: http://${HOST}:${PORT}`);
+console.info(`🚀 Starting URLPattern Showcase Server...`);
+console.info(`📁 Serving from: ${path.join(import.meta.dir, 'urlpattern-showcase.html')}`);
+console.info(`🌐 Server will be available at: http://${HOST}:${PORT}`);
 
 // Serve the HTML file
 serve({
@@ -144,7 +144,7 @@ serve({
   development: process.env.NODE_ENV !== 'production'
 });
 
-console.log(`✅ Server started successfully!`);
-console.log(`🎯 Open your browser and navigate to: http://${HOST}:${PORT}`);
-console.log(`📊 Interactive URLPattern testing is now available!`);
-console.log(`🛡️ Test fraud detection patterns and security analysis!`);
+console.info(`✅ Server started successfully!`);
+console.info(`🎯 Open your browser and navigate to: http://${HOST}:${PORT}`);
+console.info(`📊 Interactive URLPattern testing is now available!`);
+console.info(`🛡️ Test fraud detection patterns and security analysis!`);

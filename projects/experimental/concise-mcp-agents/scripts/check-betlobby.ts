@@ -9,7 +9,7 @@ if (!cookie) {
   process.exit(1);
 }
 
-console.log("🔍 Fetching from betLobbyV2 endpoint...");
+console.info("🔍 Fetching from betLobbyV2 endpoint...");
 
 const response = await fetch('https://plive.sportswidgets.pro/betLobbyV2/logic/', {
   headers: {
@@ -27,11 +27,11 @@ if (!response.ok) {
 }
 
 const data = await response.text();
-console.log(`📦 Response: ${data.length} bytes`);
-console.log("📄 Content:", data);
+console.info(`📦 Response: ${data.length} bytes`);
+console.info("📄 Content:", data);
 
 if (data.includes('profit') || data.includes('agent') || data.includes('bet')) {
-  console.log("🎯 Contains betting-related data!");
+  console.info("🎯 Contains betting-related data!");
 } else {
-  console.log("📋 Metadata/configuration data");
+  console.info("📋 Metadata/configuration data");
 }

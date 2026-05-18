@@ -188,7 +188,7 @@ class MetaSyncManager {
   }
 
   async syncMetaInfo(): Promise<void> {
-    console.log('🔄 Synchronizing meta information...');
+    console.info('🔄 Synchronizing meta information...');
 
     // Sync main package.json
     await this.syncPackageJson(this.mainPackagePath, 'main');
@@ -196,7 +196,7 @@ class MetaSyncManager {
     // Sync dashboard-worker package.json
     await this.syncPackageJson(this.dashboardWorkerPath, 'dashboard-worker');
 
-    console.log('✅ Meta information synchronization complete!');
+    console.info('✅ Meta information synchronization complete!');
   }
 
   private async syncPackageJson(pkgPath: string, name: string): Promise<void> {
@@ -241,7 +241,7 @@ class MetaSyncManager {
       }
 
       writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
-      console.log(`✅ Updated ${name} package.json`);
+      console.info(`✅ Updated ${name} package.json`);
     } catch (error) {
       console.error(`❌ Failed to update ${name} package.json:`, error);
     }
@@ -250,21 +250,21 @@ class MetaSyncManager {
   async generateReport(): Promise<void> {
     const report = await this.auditMetaInfo();
 
-    console.log('\n📊 Meta Information Audit Report');
-    console.log('==================================');
+    console.info('\n📊 Meta Information Audit Report');
+    console.info('==================================');
 
     for (const [name, data] of Object.entries(report)) {
-      console.log(`\n📦 ${name}:`);
-      console.log(`   Status: ${data.hasIssues ? '❌ Issues Found' : '✅ OK'}`);
+      console.info(`\n📦 ${name}:`);
+      console.info(`   Status: ${data.hasIssues ? '❌ Issues Found' : '✅ OK'}`);
 
       if (data.issues.length > 0) {
-        console.log('   Issues:');
-        data.issues.forEach((issue: string) => console.log(`     • ${issue}`));
+        console.info('   Issues:');
+        data.issues.forEach((issue: string) => console.info(`     • ${issue}`));
       }
 
       if (data.recommendations.length > 0) {
-        console.log('   Recommendations:');
-        data.recommendations.forEach((rec: string) => console.log(`     • ${rec}`));
+        console.info('   Recommendations:');
+        data.recommendations.forEach((rec: string) => console.info(`     • ${rec}`));
       }
     }
 
@@ -272,7 +272,7 @@ class MetaSyncManager {
       (sum, data) => sum + (data.hasIssues ? 1 : 0),
       0
     );
-    console.log(
+    console.info(
       `\n📈 Summary: ${totalIssues} packages with issues out of ${Object.keys(report).length} total`
     );
   }
@@ -296,9 +296,9 @@ async function main() {
       break;
 
     default:
-      console.log('Usage:');
-      console.log('  bun run scripts/meta-sync.ts report  # Show meta info report');
-      console.log('  bun run scripts/meta-sync.ts sync    # Sync meta info across packages');
+      console.info('Usage:');
+      console.info('  bun run scripts/meta-sync.ts report  # Show meta info report');
+      console.info('  bun run scripts/meta-sync.ts sync    # Sync meta info across packages');
       break;
   }
 }

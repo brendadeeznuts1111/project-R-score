@@ -121,59 +121,59 @@ const formatBytes = (bytes: number): string => {
 };
 
 const main = async () => {
-  console.log('🐛 Smart Progressive Debug');
-  console.log('='.repeat(40));
+  console.info('🐛 Smart Progressive Debug');
+  console.info('='.repeat(40));
 
   const results: PhaseResult[] = [];
 
   for (const phase of phases) {
-    console.log(`\n🔍 Phase: ${phase.name} (depth=${phase.depth})`);
+    console.info(`\n🔍 Phase: ${phase.name} (depth=${phase.depth})`);
     
     const result = await runWithDepth(phase.depth, phase.name, phase.timeout);
     results.push(result);
 
-    console.log(`   Duration: ${result.duration}ms`);
-    console.log(`   Output Size: ${formatBytes(result.output.length)}`);
-    console.log(`   Exit Code: ${result.exitCode ?? 'timeout'}`);
+    console.info(`   Duration: ${result.duration}ms`);
+    console.info(`   Output Size: ${formatBytes(result.output.length)}`);
+    console.info(`   Exit Code: ${result.exitCode ?? 'timeout'}`);
     
     if (result.truncated) {
-      console.log(`   ⚠️  Output appears truncated`);
+      console.info(`   ⚠️  Output appears truncated`);
     }
     
     if (result.error && !result.output) {
-      console.log(`   Error: ${result.error}`);
+      console.info(`   Error: ${result.error}`);
     }
 
     if (result.exitCode === 0 && !result.truncated) {
-      console.log(`   ✅ ${phase.name} completed successfully`);
-      console.log(`\n🎯 Optimal depth found: ${phase.depth}`);
+      console.info(`   ✅ ${phase.name} completed successfully`);
+      console.info(`\n🎯 Optimal depth found: ${phase.depth}`);
       break;
     } else if (shouldContinue(result)) {
-      console.log(`   ⚠️  Issues detected, continuing to next phase...`);
+      console.info(`   ⚠️  Issues detected, continuing to next phase...`);
       continue;
     } else {
-      console.log(`   ✅ ${phase.name} completed with acceptable results`);
+      console.info(`   ✅ ${phase.name} completed with acceptable results`);
       break;
     }
   }
 
   // Summary
-  console.log('\n📊 Debug Session Summary:');
-  console.log('='.repeat(40));
+  console.info('\n📊 Debug Session Summary:');
+  console.info('='.repeat(40));
   
   results.forEach((result, index) => {
     const status = result.exitCode === 0 && !result.truncated ? '✅' : 
                   result.exitCode === null ? '⏰' : '❌';
-    console.log(`${status} ${result.name.padEnd(15)} depth=${result.depth} (${result.duration}ms)`);
+    console.info(`${status} ${result.name.padEnd(15)} depth=${result.depth} (${result.duration}ms)`);
   });
 
   const finalResult = results[results.length - 1];
   if (finalResult.exitCode === 0) {
-    console.log(`\n🎉 Debugging completed successfully!`);
-    console.log(`   Final depth: ${finalResult.depth}`);
-    console.log(`   Total duration: ${results.reduce((sum, r) => sum + r.duration, 0)}ms`);
+    console.info(`\n🎉 Debugging completed successfully!`);
+    console.info(`   Final depth: ${finalResult.depth}`);
+    console.info(`   Total duration: ${results.reduce((sum, r) => sum + r.duration, 0)}ms`);
   } else {
-    console.log(`\n❌ All phases failed. Last error: ${finalResult.error}`);
+    console.info(`\n❌ All phases failed. Last error: ${finalResult.error}`);
   }
 };
 

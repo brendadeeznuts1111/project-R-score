@@ -32,9 +32,9 @@ async function main() {
     criticalOnly: args.includes('--critical-only')
   };
 
-  console.log(styled('🔒 FactoryWager Security Audit v5.1', 'accent'));
-  console.log(styled('===================================', 'muted'));
-  console.log('');
+  console.info(styled('🔒 FactoryWager Security Audit v5.1', 'accent'));
+  console.info(styled('===================================', 'muted'));
+  console.info('');
 
   try {
     const auditResults = await performSecurityAudit(options);
@@ -57,19 +57,19 @@ async function main() {
     const warnings = auditResults.filter(r => r.severity === 'WARNING').length;
     const info = auditResults.filter(r => r.severity === 'INFO').length;
 
-    console.log('');
-    console.log(styled('📊 Audit Summary:', 'accent'));
-    console.log(styled(`   Critical: ${critical}`, critical > 0 ? 'error' : 'success'));
-    console.log(styled(`   Warnings: ${warnings}`, warnings > 0 ? 'warning' : 'muted'));
-    console.log(styled(`   Info: ${info}`, 'muted'));
-    console.log(styled(`   Total: ${auditResults.length}`, 'primary'));
+    console.info('');
+    console.info(styled('📊 Audit Summary:', 'accent'));
+    console.info(styled(`   Critical: ${critical}`, critical > 0 ? 'error' : 'success'));
+    console.info(styled(`   Warnings: ${warnings}`, warnings > 0 ? 'warning' : 'muted'));
+    console.info(styled(`   Info: ${info}`, 'muted'));
+    console.info(styled(`   Total: ${auditResults.length}`, 'primary'));
 
     if (critical > 0) {
-      console.log('');
-      console.log(styled('🚨 CRITICAL ISSUES FOUND - Immediate attention required!', 'error'));
+      console.info('');
+      console.info(styled('🚨 CRITICAL ISSUES FOUND - Immediate attention required!', 'error'));
     } else {
-      console.log('');
-      console.log(styled('✅ Audit passed - No critical security issues', 'success'));
+      console.info('');
+      console.info(styled('✅ Audit passed - No critical security issues', 'success'));
     }
 
   } catch (error) {
@@ -153,22 +153,22 @@ async function performSecurityAudit(options: AuditOptions): Promise<AuditResult[
 
 function outputConsoleReport(results: AuditResult[]) {
   if (results.length === 0) {
-    console.log(styled('✅ No security issues found', 'success'));
+    console.info(styled('✅ No security issues found', 'success'));
     return;
   }
 
-  console.log(styled('🚨 Security Issues Found:', 'error'));
-  console.log('');
+  console.info(styled('🚨 Security Issues Found:', 'error'));
+  console.info('');
 
   for (const result of results) {
     const color = result.severity === 'CRITICAL' ? 'error' :
                   result.severity === 'WARNING' ? 'warning' : 'muted';
 
-    console.log(styled(`${result.severity}: ${result.key}`, color));
-    console.log(styled(`   Issue: ${result.issue}`, 'muted'));
-    console.log(styled(`   Description: ${result.description}`, 'muted'));
-    console.log(styled(`   Recommendation: ${result.recommendation}`, 'primary'));
-    console.log('');
+    console.info(styled(`${result.severity}: ${result.key}`, color));
+    console.info(styled(`   Issue: ${result.issue}`, 'muted'));
+    console.info(styled(`   Description: ${result.description}`, 'muted'));
+    console.info(styled(`   Recommendation: ${result.recommendation}`, 'primary'));
+    console.info('');
   }
 }
 
@@ -225,7 +225,7 @@ async function outputHTMLReport(results: AuditResult[]) {
   const filename = `.audit/security-audit-${Date.now()}.html`;
   await Bun.write(filename, html);
 
-  console.log(styled(`📄 HTML report: ${filename}`, 'success'));
+  console.info(styled(`📄 HTML report: ${filename}`, 'success'));
 }
 
 async function outputJSONReport(results: AuditResult[]) {
@@ -242,7 +242,7 @@ async function outputJSONReport(results: AuditResult[]) {
   const filename = `.audit/security-audit-${Date.now()}.json`;
   await Bun.write(filename, JSON.stringify(report, null, 2));
 
-  console.log(styled(`📄 JSON report: ${filename}`, 'success'));
+  console.info(styled(`📄 JSON report: ${filename}`, 'success'));
 }
 
 // Mock function - replace with actual implementation

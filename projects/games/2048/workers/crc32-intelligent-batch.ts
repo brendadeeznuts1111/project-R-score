@@ -108,17 +108,17 @@ export class IntelligentBatchProcessor {
     const batchId = options.batchId || crypto.randomUUID();
     const startTime = performance.now();
 
-    console.log(
+    console.info(
       `🚀 Starting intelligent batch processing: ${items.length} items`
     );
-    console.log(`📦 Batch ID: ${batchId}`);
+    console.info(`📦 Batch ID: ${batchId}`);
 
     // Pre-process with hardware detection and optimization
     const capabilities = await this.detectOptimalSettings(items);
-    console.log(
+    console.info(
       `🔧 Hardware capabilities: SIMD=${capabilities.simdSupported}, Hardware=${capabilities.hardwareAvailable}`
     );
-    console.log(
+    console.info(
       `📊 Optimal settings: chunk_size=${capabilities.optimalChunkSize}, concurrency=${capabilities.optimalConcurrency}`
     );
 
@@ -139,7 +139,7 @@ export class IntelligentBatchProcessor {
 
     // Process in optimal chunks with parallel execution
     const chunks = this.createOptimalChunks(items, capabilities);
-    console.log(`📋 Created ${chunks.length} chunks for processing`);
+    console.info(`📋 Created ${chunks.length} chunks for processing`);
 
     const results: ProcessedItem[] = [];
     const chunkPromises: Promise<ChunkResult>[] = [];
@@ -171,7 +171,7 @@ export class IntelligentBatchProcessor {
 
       // Update batch progress
       await this.updateBatchProgress(batchId, results.length, items.length);
-      console.log(
+      console.info(
         `📈 Progress: ${results.length}/${items.length} items processed`
       );
     }
@@ -196,8 +196,8 @@ export class IntelligentBatchProcessor {
       WHERE id = ${batchId}
     `;
 
-    console.log(`✅ Batch processing complete in ${duration.toFixed(2)}ms`);
-    console.log(
+    console.info(`✅ Batch processing complete in ${duration.toFixed(2)}ms`);
+    console.info(
       `📊 Summary: ${summary.successful}/${
         summary.total
       } successful, ${summary.avgThroughput.toFixed(1)} MB/s avg throughput`
@@ -377,7 +377,7 @@ export class IntelligentBatchProcessor {
     const startTime = performance.now();
     const results: ProcessedItem[] = [];
 
-    console.log(
+    console.info(
       `🔄 Processing chunk ${options.chunkIndex} with ${chunk.items.length} items`
     );
 
@@ -422,7 +422,7 @@ export class IntelligentBatchProcessor {
     }
 
     const duration = performance.now() - startTime;
-    console.log(
+    console.info(
       `✅ Chunk ${options.chunkIndex} complete in ${duration.toFixed(2)}ms`
     );
 
@@ -639,8 +639,8 @@ export async function runIntelligentBatch(
 ): Promise<void> {
   const processor = new IntelligentBatchProcessor(sql);
 
-  console.log("🚀 CRC32 Intelligent Batch Processor");
-  console.log("===================================");
+  console.info("🚀 CRC32 Intelligent Batch Processor");
+  console.info("===================================");
 
   // Generate test data
   const testItems: BatchItem[] = Array.from({ length: itemCount }, (_, i) => ({
@@ -651,32 +651,32 @@ export async function runIntelligentBatch(
     priority: i % 10 === 0 ? "high" : i % 5 === 0 ? "normal" : "low",
   }));
 
-  console.log(`📊 Generated ${testItems.length} test items`);
+  console.info(`📊 Generated ${testItems.length} test items`);
 
   const result = await processor.processIntelligentBatch(testItems, {
     auditTrail: true,
   });
 
-  console.log("\n📊 Batch Processing Results:");
-  console.log(`Batch ID: ${result.batchId}`);
-  console.log(`Duration: ${result.duration.toFixed(2)}ms`);
-  console.log(
+  console.info("\n📊 Batch Processing Results:");
+  console.info(`Batch ID: ${result.batchId}`);
+  console.info(`Duration: ${result.duration.toFixed(2)}ms`);
+  console.info(
     `Success Rate: ${(
       (result.summary.successful / result.summary.total) *
       100
     ).toFixed(1)}%`
   );
-  console.log(
+  console.info(
     `Avg Throughput: ${result.summary.avgThroughput.toFixed(1)} MB/s`
   );
-  console.log(
+  console.info(
     `Hardware Utilization: ${(
       result.summary.hardwareUtilizationRate * 100
     ).toFixed(1)}%`
   );
-  console.log(
+  console.info(
     `Avg Confidence: ${(result.summary.avgConfidence * 100).toFixed(1)}%`
   );
 
-  console.log("\n✅ Intelligent batch processing complete!");
+  console.info("\n✅ Intelligent batch processing complete!");
 }

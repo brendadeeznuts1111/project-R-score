@@ -30,7 +30,7 @@ export class PatternGenerator extends Pattern {
   }
 
   async exec(requirement: string, options: GenerateOptions = {}): Promise<GeneratedPattern> {
-    console.log(`🧠 Generating pattern from requirement: "${requirement}"`);
+    console.info(`🧠 Generating pattern from requirement: "${requirement}"`);
 
     // Step 1: Parse requirement with LLM
     const parsed = await this.parseRequirement(requirement);
@@ -237,13 +237,13 @@ Use Markdown format with proper sections and code blocks.
       writeFile(files.docsPath, content.documentation)
     ]);
 
-    console.log(`✅ Generated pattern files in ${patternDir}`);
+    console.info(`✅ Generated pattern files in ${patternDir}`);
     return files;
   }
 
   private async runBenchmarks(benchmarkPath: string): Promise<BenchmarkResults> {
     try {
-      console.log(`🏃 Running benchmarks for ${benchmarkPath}`);
+      console.info(`🏃 Running benchmarks for ${benchmarkPath}`);
       const { stdout } = await execAsync(`bun run ${benchmarkPath}`);
       
       // Parse benchmark results
@@ -292,16 +292,16 @@ Use Markdown format with proper sections and code blocks.
     // Update the master matrix with new pattern
     const matrixPath = join(process.cwd(), 'src', 'utils', 'pattern-matrix.ts');
     
-    console.log(`📊 Updating master matrix with ${parsed.id}`);
+    console.info(`📊 Updating master matrix with ${parsed.id}`);
     
     // This would update the MASTER_MATRIX with the new pattern
     // For demo purposes, we'll just log it
-    console.log(`✅ Added to MASTER_MATRIX: ${parsed.id} - ${parsed.performance} - ${parsed.roi}`);
+    console.info(`✅ Added to MASTER_MATRIX: ${parsed.id} - ${parsed.performance} - ${parsed.roi}`);
   }
 
   private async callLLM(prompt: string): Promise<string> {
     // Simulate LLM call (in real implementation, this would call OpenAI/Claude/etc.)
-    console.log(`🤖 Calling LLM for code generation...`);
+    console.info(`🤖 Calling LLM for code generation...`);
     
     // Simulate processing time
     await new Promise(resolve => setTimeout(resolve, 1000));

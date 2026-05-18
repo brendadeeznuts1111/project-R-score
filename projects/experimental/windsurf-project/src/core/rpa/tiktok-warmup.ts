@@ -8,7 +8,7 @@ async function warmer(phoneID: string) {
     process.exit(1);
   }
   
-  console.log(`🚀 Starting TikTok warmer for ${phoneID}...`);
+  console.info(`🚀 Starting TikTok warmer for ${phoneID}...`);
   
   while (!ac.signal.aborted) {
     await Bun.sleep(TIMER_1S * 30);  // 30s cycle
@@ -20,7 +20,7 @@ async function warmer(phoneID: string) {
       //   method: 'POST',
       //   body: Bun.zstdCompressSync(new TextEncoder().encode('auto-comment'))
       // });
-      console.log(`Warm cycle for ${phoneID}: ${(Bun.nanoseconds() - nsStart)/1e6}ms`);
+      console.info(`Warm cycle for ${phoneID}: ${(Bun.nanoseconds() - nsStart)/1e6}ms`);
     } catch (e) {
       console.error(`Error in warm cycle:`, e);
     }
@@ -38,7 +38,7 @@ if (import.meta.main) {
   }
   
   process.on('SIGINT', () => {
-    console.log('\n🛑 Stopping warmer...');
+    console.info('\n🛑 Stopping warmer...');
     ac.abort();
     process.exit(0);
   });

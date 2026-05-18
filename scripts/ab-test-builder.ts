@@ -369,7 +369,7 @@ async function main(): Promise<void> {
     deployments = await builder.deployTestVariants(created);
   }
 
-  console.log(
+  console.info(
     JSON.stringify(
       {
         status: 'ok',

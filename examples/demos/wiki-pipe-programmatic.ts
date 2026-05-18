@@ -88,21 +88,21 @@ class WikiMatrixClient {
   async exportToCSV(filename: string): Promise<void> {
     const csv = await this.executeCommand('matrix', undefined, 'csv');
     await Bun.write(filename, csv);
-    console.log(`✅ Exported matrix to ${filename}`);
+    console.info(`✅ Exported matrix to ${filename}`);
   }
 
   async generateReport(): Promise<void> {
-    console.log('🎯 FactoryWager Wiki Matrix Report');
-    console.log('==================================');
-    console.log('');
+    console.info('🎯 FactoryWager Wiki Matrix Report');
+    console.info('==================================');
+    console.info('');
 
     // Get statistics
     const stats = await this.getStatistics('json');
-    console.log('📊 Statistics:');
-    console.log(`   Total Templates: ${stats.total}`);
-    console.log(`   With Examples: ${stats.withExamples}/${stats.total}`);
-    console.log(`   Formats: ${Object.keys(stats.formats).join(', ')}`);
-    console.log('');
+    console.info('📊 Statistics:');
+    console.info(`   Total Templates: ${stats.total}`);
+    console.info(`   With Examples: ${stats.withExamples}/${stats.total}`);
+    console.info(`   Formats: ${Object.keys(stats.formats).join(', ')}`);
+    console.info('');
 
     // Get templates by format
     const templates = await this.getTemplates('json');
@@ -111,27 +111,27 @@ class WikiMatrixClient {
       formatCounts[template.format] = (formatCounts[template.format] || 0) + 1;
     });
 
-    console.log('📄 Format Distribution:');
+    console.info('📄 Format Distribution:');
     Object.entries(formatCounts).forEach(([format, count]) => {
       const percentage = Math.round((count / stats.total) * 100);
-      console.log(`   ${format}: ${count} (${percentage}%)`);
+      console.info(`   ${format}: ${count} (${percentage}%)`);
     });
-    console.log('');
+    console.info('');
 
     // Search examples
-    console.log('🔍 Search Examples:');
+    console.info('🔍 Search Examples:');
     
     const confluenceTemplates = await this.searchTemplates('Confluence');
     if (confluenceTemplates.length > 0) {
-      console.log(`   Confluence templates: ${confluenceTemplates.length}`);
+      console.info(`   Confluence templates: ${confluenceTemplates.length}`);
       confluenceTemplates.forEach((template: any) => {
-        console.log(`     - ${template.name}`);
+        console.info(`     - ${template.name}`);
       });
     }
 
     const markdownTemplates = await this.getTemplatesByFormat('markdown');
-    console.log(`   Markdown templates: ${markdownTemplates.length}`);
-    console.log('');
+    console.info(`   Markdown templates: ${markdownTemplates.length}`);
+    console.info('');
   }
 }
 
@@ -140,47 +140,47 @@ async function demonstrateProgrammaticUsage() {
   const client = new WikiMatrixClient();
 
   try {
-    console.log('🎯 Demonstrating Programmatic Wiki Matrix Usage');
-    console.log('===============================================');
-    console.log('');
+    console.info('🎯 Demonstrating Programmatic Wiki Matrix Usage');
+    console.info('===============================================');
+    console.info('');
 
     // 1. Get matrix as JSON
-    console.log('1️⃣  Getting matrix as JSON...');
+    console.info('1️⃣  Getting matrix as JSON...');
     const matrix = await client.getMatrix('json');
-    console.log(`   Retrieved ${matrix.length} templates`);
-    console.log('');
+    console.info(`   Retrieved ${matrix.length} templates`);
+    console.info('');
 
     // 2. Get template details
-    console.log('2️⃣  Getting template details...');
+    console.info('2️⃣  Getting template details...');
     const details = await client.getTemplateDetails(1, 'json');
-    console.log(`   Template: ${details.name}`);
-    console.log(`   Format: ${details.format}`);
-    console.log(`   Use Case: ${details.useCase}`);
-    console.log('');
+    console.info(`   Template: ${details.name}`);
+    console.info(`   Format: ${details.format}`);
+    console.info(`   Use Case: ${details.useCase}`);
+    console.info('');
 
     // 3. Search for specific templates
-    console.log('3️⃣  Searching for templates...');
+    console.info('3️⃣  Searching for templates...');
     const confluenceResults = await client.searchTemplates('Confluence');
-    console.log(`   Found ${confluenceResults.length} Confluence templates`);
+    console.info(`   Found ${confluenceResults.length} Confluence templates`);
     confluenceResults.forEach((template: any) => {
-      console.log(`     - ${template.name}`);
+      console.info(`     - ${template.name}`);
     });
-    console.log('');
+    console.info('');
 
     // 4. Get statistics
-    console.log('4️⃣  Getting statistics...');
+    console.info('4️⃣  Getting statistics...');
     const stats = await client.getStatistics('json');
-    console.log(`   Total: ${stats.total}`);
-    console.log(`   Formats: ${Object.keys(stats.formats).join(', ')}`);
-    console.log('');
+    console.info(`   Total: ${stats.total}`);
+    console.info(`   Formats: ${Object.keys(stats.formats).join(', ')}`);
+    console.info('');
 
     // 5. Export to CSV
-    console.log('5️⃣  Exporting to CSV...');
+    console.info('5️⃣  Exporting to CSV...');
     await client.exportToCSV('wiki-matrix-export.csv');
-    console.log('');
+    console.info('');
 
     // 6. Generate report
-    console.log('6️⃣  Generating report...');
+    console.info('6️⃣  Generating report...');
     await client.generateReport();
 
   } catch (error) {
@@ -192,36 +192,36 @@ async function demonstrateProgrammaticUsage() {
 async function advancedExamples() {
   const client = new WikiMatrixClient();
 
-  console.log('🚀 Advanced Usage Examples');
-  console.log('==========================');
-  console.log('');
+  console.info('🚀 Advanced Usage Examples');
+  console.info('==========================');
+  console.info('');
 
   // Pipeline example: Get templates → filter → process
-  console.log('📋 Pipeline: Get markdown templates → process names');
+  console.info('📋 Pipeline: Get markdown templates → process names');
   const markdownTemplates = await client.getTemplatesByFormat('markdown');
   const templateNames = markdownTemplates.map((t: any) => t.name);
-  console.log('   Markdown template names:', templateNames);
-  console.log('');
+  console.info('   Markdown template names:', templateNames);
+  console.info('');
 
   // Batch processing
-  console.log('🔄 Batch processing: Get details for all templates');
+  console.info('🔄 Batch processing: Get details for all templates');
   const allTemplates = await client.getTemplates('json');
   const detailsPromises = allTemplates.map((_, index) => 
     client.getTemplateDetails(index + 1, 'json')
   );
   const allDetails = await Promise.all(detailsPromises);
-  console.log(`   Retrieved details for ${allDetails.length} templates`);
-  console.log('');
+  console.info(`   Retrieved details for ${allDetails.length} templates`);
+  console.info('');
 
   // Custom analysis
-  console.log('📊 Custom analysis: Complexity distribution');
+  console.info('📊 Custom analysis: Complexity distribution');
   const complexities = allDetails.map((detail: any) => detail.complexity);
   const complexityCount: Record<string, number> = {};
   complexities.forEach(complexity => {
     complexityCount[complexity] = (complexityCount[complexity] || 0) + 1;
   });
-  console.log('   Complexity distribution:', complexityCount);
-  console.log('');
+  console.info('   Complexity distribution:', complexityCount);
+  console.info('');
 }
 
 // CLI execution
@@ -237,17 +237,17 @@ if (import.meta.main) {
       break;
     case 'help':
     default:
-      console.log('🎯 Wiki Matrix Programmatic Usage');
-      console.log('=================================');
-      console.log('');
-      console.log('Commands:');
-      console.log('  demo     - Basic programmatic usage examples');
-      console.log('  advanced - Advanced usage examples');
-      console.log('  help     - Show this help');
-      console.log('');
-      console.log('Usage:');
-      console.log('  bun run examples/wiki-pipe-programmatic.ts demo');
-      console.log('  bun run examples/wiki-pipe-programmatic.ts advanced');
+      console.info('🎯 Wiki Matrix Programmatic Usage');
+      console.info('=================================');
+      console.info('');
+      console.info('Commands:');
+      console.info('  demo     - Basic programmatic usage examples');
+      console.info('  advanced - Advanced usage examples');
+      console.info('  help     - Show this help');
+      console.info('');
+      console.info('Usage:');
+      console.info('  bun run examples/wiki-pipe-programmatic.ts demo');
+      console.info('  bun run examples/wiki-pipe-programmatic.ts advanced');
       break;
   }
 }

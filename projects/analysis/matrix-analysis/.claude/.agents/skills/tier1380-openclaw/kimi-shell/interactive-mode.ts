@@ -94,16 +94,16 @@ function printPrompt(): void {
 }
 
 function printWelcome(): void {
-	console.log(`${COLORS.bold}${COLORS.cyan}`);
-	console.log("╔══════════════════════════════════════════════════════════════════╗");
-	console.log("║           🐚 Kimi Shell Interactive Mode v2.0                     ║");
-	console.log("║           Tier-1380 OMEGA | Variables | Chaining | Jobs           ║");
-	console.log("╚══════════════════════════════════════════════════════════════════╝");
-	console.log(`${COLORS.reset}`);
+	console.info(`${COLORS.bold}${COLORS.cyan}`);
+	console.info("╔══════════════════════════════════════════════════════════════════╗");
+	console.info("║           🐚 Kimi Shell Interactive Mode v2.0                     ║");
+	console.info("║           Tier-1380 OMEGA | Variables | Chaining | Jobs           ║");
+	console.info("╚══════════════════════════════════════════════════════════════════╝");
+	console.info(`${COLORS.reset}`);
 }
 
 function printHelp(): void {
-	console.log(`
+	console.info(`
 ${COLORS.bold}Available Commands:${COLORS.reset}
   metrics [collect|dashboard|record]  - Metrics operations
   shell [status|exec|switch]          - Shell management
@@ -149,7 +149,7 @@ async function executeChain(input: string, operator: "&&" | "||"): Promise<void>
 
 	for (let i = 0; i < commands.length; i++) {
 		const cmd = commands[i];
-		console.log(`${COLORS.gray}[${i + 1}/${commands.length}]${COLORS.reset} ${cmd}`);
+		console.info(`${COLORS.gray}[${i + 1}/${commands.length}]${COLORS.reset} ${cmd}`);
 
 		const args = cmd.split(/\s+/);
 		const { $ } = await import("bun");
@@ -160,18 +160,18 @@ async function executeChain(input: string, operator: "&&" | "||"): Promise<void>
 			const success = result.exitCode === 0;
 
 			if (operator === "&&" && !success) {
-				console.log(
+				console.info(
 					`${COLORS.red}✗ Chain broken (exit ${result.exitCode})${COLORS.reset}`,
 				);
 				return;
 			}
 
 			if (operator === "||" && success) {
-				console.log(`${COLORS.green}✓ Chain succeeded${COLORS.reset}`);
+				console.info(`${COLORS.green}✓ Chain succeeded${COLORS.reset}`);
 				return;
 			}
 
-			if (result.stdout) console.log(result.stdout.toString());
+			if (result.stdout) console.info(result.stdout.toString());
 			if (result.stderr) console.error(result.stderr.toString());
 		} catch (error) {
 			if (operator === "&&") {
@@ -182,7 +182,7 @@ async function executeChain(input: string, operator: "&&" | "||"): Promise<void>
 	}
 
 	if (operator === "&&") {
-		console.log(`${COLORS.green}✓ Chain completed${COLORS.reset}`);
+		console.info(`${COLORS.green}✓ Chain completed${COLORS.reset}`);
 	}
 }
 
@@ -198,7 +198,7 @@ async function executeCommand(input: string): Promise<void> {
 		// Expand variables in value
 		const expanded = expandVariables(value);
 		variables.set(varName, expanded);
-		console.log(`${COLORS.gray}${varName} = ${expanded}${COLORS.reset}`);
+		console.info(`${COLORS.gray}${varName} = ${expanded}${COLORS.reset}`);
 		return;
 	}
 
@@ -225,7 +225,7 @@ async function executeCommand(input: string): Promise<void> {
 			return;
 		case "exit":
 		case "quit":
-			console.log(`${COLORS.green}Goodbye! 👋${COLORS.reset}`);
+			console.info(`${COLORS.green}Goodbye! 👋${COLORS.reset}`);
 			process.exit(0);
 			break;
 		case "clear":
@@ -234,7 +234,7 @@ async function executeCommand(input: string): Promise<void> {
 		case "history": {
 			const history = loadHistory();
 			history.commands.forEach((cmd, i) => {
-				console.log(
+				console.info(
 					`  ${COLORS.gray}${String(i + 1).padStart(3)}${COLORS.reset}  ${cmd}`,
 				);
 			});
@@ -242,12 +242,12 @@ async function executeCommand(input: string): Promise<void> {
 		}
 		case "vars":
 		case "variables": {
-			console.log(`${COLORS.bold}Variables:${COLORS.reset}`);
+			console.info(`${COLORS.bold}Variables:${COLORS.reset}`);
 			if (variables.size === 0) {
-				console.log(`  ${COLORS.gray}No variables set${COLORS.reset}`);
+				console.info(`  ${COLORS.gray}No variables set${COLORS.reset}`);
 			} else {
 				for (const [name, value] of variables) {
-					console.log(`  ${COLORS.cyan}${name}${COLORS.reset} = ${value}`);
+					console.info(`  ${COLORS.cyan}${name}${COLORS.reset} = ${value}`);
 				}
 			}
 			return;
@@ -260,7 +260,7 @@ async function executeCommand(input: string): Promise<void> {
 
 	try {
 		const result = await $`bun ${scriptPath} ${args}`.nothrow();
-		if (result.stdout) console.log(result.stdout.toString());
+		if (result.stdout) console.info(result.stdout.toString());
 		if (result.stderr) console.error(result.stderr.toString());
 	} catch (error) {
 		console.error(`${COLORS.red}Error: ${error}${COLORS.reset}`);
@@ -288,7 +288,7 @@ async function readLine(): Promise<string> {
 					input = completions[0];
 					process.stdout.write(`\r${COLORS.cyan}🐚 kimi>${COLORS.reset} ${input}`);
 				} else if (completions.length > 1) {
-					console.log(`\n${COLORS.gray}${completions.join("  ")}${COLORS.reset}`);
+					console.info(`\n${COLORS.gray}${completions.join("  ")}${COLORS.reset}`);
 					printPrompt();
 					process.stdout.write(input);
 				}

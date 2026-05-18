@@ -44,7 +44,7 @@ class RegistryFixer {
   private readonly CONFIG_FILES = ['.npmrc', 'bunfig.toml', '.yarnrc'];
 
   async diagnose(): Promise<void> {
-    console.log('🔍 Diagnosing registry configuration issues...\n');
+    console.info('🔍 Diagnosing registry configuration issues...\n');
 
     // Check current registry settings
     await this.checkRegistryConfig();
@@ -57,27 +57,27 @@ class RegistryFixer {
   }
 
   async checkRegistryConfig(): Promise<void> {
-    console.log('📋 Checking configuration files:');
+    console.info('📋 Checking configuration files:');
 
     for (const file of this.CONFIG_FILES) {
       if (await exists(file)) {
-        console.log(`  ✓ Found ${file}`);
+        console.info(`  ✓ Found ${file}`);
         const content = await readFile(file, 'utf-8');
 
         // Check for problematic registries
         if (content.includes('packages.apexodds.net')) {
-          console.log(`    ⚠️  Found problematic registry: packages.apexodds.net`);
+          console.info(`    ⚠️  Found problematic registry: packages.apexodds.net`);
         }
         if (content.includes('fire22.workers.dev/registry')) {
-          console.log(`    ⚠️  Found custom registry: fire22.workers.dev/registry`);
+          console.info(`    ⚠️  Found custom registry: fire22.workers.dev/registry`);
         }
       }
     }
-    console.log();
+    console.info();
   }
 
   async testRegistryConnectivity(): Promise<void> {
-    console.log('🌐 Testing registry connectivity:');
+    console.info('🌐 Testing registry connectivity:');
 
     const registries = [
       { name: 'NPM Official', url: 'https://registry.npmjs.org/' },
@@ -93,21 +93,21 @@ class RegistryFixer {
         });
 
         if (response.ok || response.status === 404) {
-          console.log(
+          console.info(
             `  ✓ ${registry.name}: ${response.status === 404 ? 'Accessible but returns 404' : 'OK'}`
           );
         } else {
-          console.log(`  ✗ ${registry.name}: HTTP ${response.status}`);
+          console.info(`  ✗ ${registry.name}: HTTP ${response.status}`);
         }
       } catch (error) {
-        console.log(`  ✗ ${registry.name}: Connection failed`);
+        console.info(`  ✗ ${registry.name}: Connection failed`);
       }
     }
-    console.log();
+    console.info();
   }
 
   async fix(): Promise<void> {
-    console.log('🔧 Fixing registry configuration...\n');
+    console.info('🔧 Fixing registry configuration...\n');
 
     // 1. Fix .npmrc
     await this.fixNpmrc();
@@ -121,11 +121,11 @@ class RegistryFixer {
     // 4. Clean cache
     await this.cleanCache();
 
-    console.log('✅ Registry configuration fixed!\n');
+    console.info('✅ Registry configuration fixed!\n');
   }
 
   async fixNpmrc(): Promise<void> {
-    console.log('📝 Fixing .npmrc...');
+    console.info('📝 Fixing .npmrc...');
 
     const npmrcContent = `# NPM Configuration for Fire22 Dashboard Worker
 # Fixed by fix-registry-config.ts
@@ -160,11 +160,11 @@ workspaces-update=false
 `;
 
     await writeFile('.npmrc', npmrcContent);
-    console.log('  ✓ .npmrc updated');
+    console.info('  ✓ .npmrc updated');
   }
 
   async fixBunfig(): Promise<void> {
-    console.log('📝 Fixing bunfig.toml...');
+    console.info('📝 Fixing bunfig.toml...');
 
     const bunfigContent = `# Fire22 Dashboard - Bun Configuration
 # Fixed by fix-registry-config.ts
@@ -219,11 +219,11 @@ plugins = []
 `;
 
     await writeFile('bunfig.toml', bunfigContent);
-    console.log('  ✓ bunfig.toml updated');
+    console.info('  ✓ bunfig.toml updated');
   }
 
   async createEnvOverrides(): Promise<void> {
-    console.log('📝 Creating registry overrides...');
+    console.info('📝 Creating registry overrides...');
 
     const envContent = `# Registry Overrides for Bun
 BUN_CONFIG_REGISTRY=https://registry.npmjs.org/
@@ -239,22 +239,22 @@ BUN_CONFIG_INSTALL_CACHE_DIR=.bun/install-cache
 `;
 
     await writeFile('.env.registry', envContent);
-    console.log('  ✓ .env.registry created');
+    console.info('  ✓ .env.registry created');
   }
 
   async cleanCache(): Promise<void> {
-    console.log('🗑️  Cleaning cache...');
+    console.info('🗑️  Cleaning cache...');
 
     try {
       await $`rm -rf node_modules .bun bun.lockb package-lock.json yarn.lock`.quiet();
-      console.log('  ✓ Cache cleaned');
+      console.info('  ✓ Cache cleaned');
     } catch (error) {
-      console.log('  ⚠️  Some cache files not found (this is OK)');
+      console.info('  ⚠️  Some cache files not found (this is OK)');
     }
   }
 
   async documentErrors(): Promise<void> {
-    console.log('📚 Creating error documentation...');
+    console.info('📚 Creating error documentation...');
 
     const errorDocs = `# Registry Error Documentation
 
@@ -316,11 +316,11 @@ Set these in your shell or .env file:
 `;
 
     await writeFile('docs/REGISTRY-ERRORS.md', errorDocs);
-    console.log('  ✓ Error documentation created at docs/REGISTRY-ERRORS.md');
+    console.info('  ✓ Error documentation created at docs/REGISTRY-ERRORS.md');
   }
 
   async createDependencyProcess(): Promise<void> {
-    console.log('🔧 Creating dependency management process...');
+    console.info('🔧 Creating dependency management process...');
 
     const processDoc = `# Dependency Management Process
 
@@ -347,7 +347,7 @@ BUN_CONFIG_REGISTRY=https://registry.npmjs.org/ bun add <package-name>
 bun pm ls | grep <package-name>
 
 # Test import
-bun run -e "import '<package-name>'; console.log('✓ Import works')"
+bun run -e "import '<package-name>'; console.info('✓ Import works')"
 \`\`\`
 
 ### Step 4: Update Documentation
@@ -404,7 +404,7 @@ bun audit fix
 `;
 
     await writeFile('docs/DEPENDENCY-PROCESS.md', processDoc);
-    console.log('  ✓ Dependency process documentation created');
+    console.info('  ✓ Dependency process documentation created');
   }
 }
 
@@ -422,11 +422,11 @@ async function main() {
   } else {
     // Default: diagnose, then fix
     await fixer.diagnose();
-    console.log('🔄 Applying fixes...\n');
+    console.info('🔄 Applying fixes...\n');
     await fixer.fix();
     await fixer.createDependencyProcess();
 
-    console.log(`
+    console.info(`
 ✅ Registry configuration has been fixed!
 
 Next steps:

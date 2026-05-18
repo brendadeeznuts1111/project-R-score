@@ -29,7 +29,7 @@ export class SecureCookieManager {
 
 export async function executeTool(toolName: string, args: any): Promise<any> {
   // Mock tool execution - in production this would call actual tool implementations
-  console.log(`🔧 Executing ${toolName} with args:`, args);
+  console.info(`🔧 Executing ${toolName} with args:`, args);
 
   switch (toolName) {
     case 'rss/query':

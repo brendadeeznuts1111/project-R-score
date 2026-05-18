@@ -10,12 +10,12 @@ async function processFiles(files: string[], search: RegExp, replace: string) {
       const content = await Bun.file(file).text();
       if (search.test(content)) {
         if (DRY_RUN) {
-          console.log(`  🔍 [DRY RUN] Would fix: ${file}`);
+          console.info(`  🔍 [DRY RUN] Would fix: ${file}`);
           continue;
         }
         const newContent = content.replace(search, replace);
         await Bun.write(file, newContent);
-        console.log(`  ✅ Fixed: ${file}`);
+        console.info(`  ✅ Fixed: ${file}`);
       }
     } catch (e: any) {
       console.error(`  ❌ Error processing ${file}:`, e.message);
@@ -29,8 +29,8 @@ function getFiles(pattern: string) {
 }
 
 async function fixAll() {
-  console.log('🚀 Empire I/O Optimizer: Canonicalizing to native Bun APIs...');
-  if (DRY_RUN) console.log('🧪 Mode: DRY RUN - No changes will be persisted.');
+  console.info('🚀 Empire I/O Optimizer: Canonicalizing to native Bun APIs...');
+  if (DRY_RUN) console.info('🧪 Mode: DRY RUN - No changes will be persisted.');
 
   // 0. Canonicalize shell commands to Bun.$ where appropriate
   // Replace execSync(`command`) with await Bun.$`command`.text()
@@ -104,10 +104,10 @@ async function fixAll() {
 
       if (modified) {
         if (DRY_RUN) {
-          console.log(`  🔍 [DRY RUN] Would clean TS keywords: ${file}`);
+          console.info(`  🔍 [DRY RUN] Would clean TS keywords: ${file}`);
         } else {
           await Bun.write(file, content);
-          console.log(`  ✅ Cleaned TS keywords: ${file}`);
+          console.info(`  ✅ Cleaned TS keywords: ${file}`);
         }
       }
     } catch (e: any) {
@@ -115,7 +115,7 @@ async function fixAll() {
     }
   }
 
-  console.log('\n🎉 Canonicalization Complete!');
+  console.info('\n🎉 Canonicalization Complete!');
 }
 
 fixAll().catch(console.error);

@@ -3,8 +3,8 @@
 import { BunR2AppleManager, reportPerfMatrix } from './src/storage/r2-apple-manager.ts';
 import { PerfMetric, enhancePerfMetric } from './types/perf-metric.ts';
 
-console.log('🚀 MASTER_PERF v3.7 Custom Inspector Demo');
-console.log('==========================================\n');
+console.info('🚀 MASTER_PERF v3.7 Custom Inspector Demo');
+console.info('==========================================\n');
 
 async function demonstrateV37() {
   // Initialize R2 Manager
@@ -96,45 +96,45 @@ async function demonstrateV37() {
     r2Manager.addPerformanceMetric(metric);
   });
 
-  console.log('📊 Enhanced MASTER_PERF Matrix (v3.7 Custom Inspector):');
-  console.log('========================================================');
+  console.info('📊 Enhanced MASTER_PERF Matrix (v3.7 Custom Inspector):');
+  console.info('========================================================');
   
   // Use the new custom inspector format
   r2Manager.printMasterPerfMatrix();
 
-  console.log('\n\n🎨 Comparison: Legacy vs Custom Inspector');
-  console.log('==========================================');
+  console.info('\n\n🎨 Comparison: Legacy vs Custom Inspector');
+  console.info('==========================================');
   
-  console.log('\n--- Legacy Format (Manual String Manipulation) ---');
+  console.info('\n--- Legacy Format (Manual String Manipulation) ---');
   const legacyMetrics = r2Manager.getMasterPerfMetrics();
-  console.log(r2Manager.getMasterPerfMatrixString());
+  console.info(r2Manager.getMasterPerfMatrixString());
 
-  console.log('\n--- v3.7 Custom Inspector (Bun.inspect.table) ---');
+  console.info('\n--- v3.7 Custom Inspector (Bun.inspect.table) ---');
   reportPerfMatrix(legacyMetrics);
 
-  console.log('\n\n🔍 Direct Bun.inspect.table with Custom Inspector:');
-  console.log('==================================================');
+  console.info('\n\n🔍 Direct Bun.inspect.table with Custom Inspector:');
+  console.info('==================================================');
   
   // Show the raw power of custom inspector
   const enhanced = legacyMetrics.map(m => enhancePerfMetric(m));
-  console.log(
+  console.info(
     Bun.inspect.table(enhanced, {
       colors: true,
       compact: false
     })
   );
 
-  console.log('\n\n✅ v3.7 Custom Inspector Benefits:');
-  console.log('===================================');
-  console.log('• Zero string manipulation in business logic');
-  console.log('• Automatic property truncation for table display');
-  console.log('• Full color support and formatting');
-  console.log('• Backward compatible with existing code');
-  console.log('• Type-safe with TypeScript support');
-  console.log('• Configurable truncation length');
+  console.info('\n\n✅ v3.7 Custom Inspector Benefits:');
+  console.info('===================================');
+  console.info('• Zero string manipulation in business logic');
+  console.info('• Automatic property truncation for table display');
+  console.info('• Full color support and formatting');
+  console.info('• Backward compatible with existing code');
+  console.info('• Type-safe with TypeScript support');
+  console.info('• Configurable truncation length');
 
-  console.log('\n🚀 Integration Complete!');
-  console.log('The MASTER_PERF system now uses Bun.inspect.custom for perfect formatting.');
+  console.info('\n🚀 Integration Complete!');
+  console.info('The MASTER_PERF system now uses Bun.inspect.custom for perfect formatting.');
 }
 
 // Run demonstration

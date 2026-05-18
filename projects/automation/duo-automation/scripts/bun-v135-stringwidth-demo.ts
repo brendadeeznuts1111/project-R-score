@@ -2,10 +2,10 @@
 // scripts/bun-v135-stringwidth-demo.ts
 // Focused demo of Bun v1.3.5 stringWidth improvements from the blog post
 
-console.log('🚀 Bun v1.3.5 stringWidth Improvements - Empire Pro v3.7 Demo\n');
+console.info('🚀 Bun v1.3.5 stringWidth Improvements - Empire Pro v3.7 Demo\n');
 
-console.log('📊 Exact Blog Post Examples:');
-console.log('='.repeat(50));
+console.info('📊 Exact Blog Post Examples:');
+console.info('='.repeat(50));
 
 const blogExamples = [
   { 
@@ -43,13 +43,13 @@ blogExamples.forEach(test => {
   const status = actual === test.newWidth ? '✅' : '❌';
   const arrow = actual === test.newWidth ? '→' : '≠';
   
-  console.log(`${status} ${test.description}:`);
-  console.log(`   ${test.example} width: ${test.oldWidth} ${arrow} ${actual} (${test.improvement})`);
-  console.log();
+  console.info(`${status} ${test.description}:`);
+  console.info(`   ${test.example} width: ${test.oldWidth} ${arrow} ${actual} (${test.improvement})`);
+  console.info();
 });
 
-console.log('🎯 Empire Pro v3.7 Applications:');
-console.log('='.repeat(50));
+console.info('🎯 Empire Pro v3.7 Applications:');
+console.info('='.repeat(50));
 
 // Show practical applications
 const applications = [
@@ -74,21 +74,21 @@ const applications = [
 ];
 
 applications.forEach(app => {
-  console.log(`📋 ${app.title}:`);
-  console.log(`   ${app.example}`);
-  console.log(`   Width: ${app.width} chars`);
-  console.log(`   Benefit: ${app.benefit}`);
-  console.log();
+  console.info(`📋 ${app.title}:`);
+  console.info(`   ${app.example}`);
+  console.info(`   Width: ${app.width} chars`);
+  console.info(`   Benefit: ${app.benefit}`);
+  console.info();
 });
 
-console.log('🔍 Technical Details:');
-console.log('='.repeat(50));
+console.info('🔍 Technical Details:');
+console.info('='.repeat(50));
 
-console.log('✅ Zero-width characters: U+00AD, U+200B-U+200D, U+2060-U+2064');
-console.log('✅ ANSI escape sequences: CSI (0x40-0x7E), OSC with BEL/ST');
-console.log('✅ Grapheme clustering: Flags, ZWJ sequences, skin tones');
-console.log('✅ Script support: Arabic, Indic, Thai, Lao combining marks');
-console.log('✅ Tag characters: U+E0000-U+E007F properly handled');
+console.info('✅ Zero-width characters: U+00AD, U+200B-U+200D, U+2060-U+2064');
+console.info('✅ ANSI escape sequences: CSI (0x40-0x7E), OSC with BEL/ST');
+console.info('✅ Grapheme clustering: Flags, ZWJ sequences, skin tones');
+console.info('✅ Script support: Arabic, Indic, Thai, Lao combining marks');
+console.info('✅ Tag characters: U+E0000-U+E007F properly handled');
 
-console.log('\n🎉 Empire Pro v3.7 is fully leveraging Bun v1.3.5 improvements!');
-console.log('🚀 Production-ready Unicode & ANSI terminal visualization!');
+console.info('\n🎉 Empire Pro v3.7 is fully leveraging Bun v1.3.5 improvements!');
+console.info('🚀 Production-ready Unicode & ANSI terminal visualization!');

@@ -52,7 +52,7 @@ async function storeAuditSnapshot(tenantId: string, data: any) {
     cacheControl: strategy.cacheControl
   });
 
-  console.log(`✅ Stored audit snapshot for ${tenantId} with ${strategy.description}`);
+  console.info(`✅ Stored audit snapshot for ${tenantId} with ${strategy.description}`);
 }
 
 async function storeRecentViolations(tenantId: string, violations: any[]) {
@@ -63,64 +63,64 @@ async function storeRecentViolations(tenantId: string, violations: any[]) {
     cacheControl: strategy.cacheControl
   });
 
-  console.log(`✅ Stored recent violations for ${tenantId} with ${strategy.description}`);
+  console.info(`✅ Stored recent violations for ${tenantId} with ${strategy.description}`);
 }
 */
 
 // Demo usage
-console.log("🗄️  S3 Cache Control Demo for Multi-Tenant Dashboard");
-console.log("=" .repeat(55));
+console.info("🗄️  S3 Cache Control Demo for Multi-Tenant Dashboard");
+console.info("=" .repeat(55));
 
-console.log("\n📋 Available Cache Strategies:");
+console.info("\n📋 Available Cache Strategies:");
 Object.entries(CACHE_STRATEGIES).forEach(([key, strategy]) => {
-  console.log(`  ${key}: ${strategy.cacheControl}`);
-  console.log(`    → ${strategy.description}`);
+  console.info(`  ${key}: ${strategy.cacheControl}`);
+  console.info(`    → ${strategy.description}`);
 });
 
-console.log("\n🚀 Example Usage:");
-console.log("// S3 client setup (requires AWS credentials)");
-console.log("const s3 = new Bun.S3({");
-console.log("  accessKeyId: process.env.AWS_ACCESS_KEY_ID,");
-console.log("  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,");
-console.log("  bucket: 'tier1380-audit-logs',");
-console.log("  region: 'us-east-1'");
-console.log("});");
-console.log("");
+console.info("\n🚀 Example Usage:");
+console.info("// S3 client setup (requires AWS credentials)");
+console.info("const s3 = new Bun.S3({");
+console.info("  accessKeyId: process.env.AWS_ACCESS_KEY_ID,");
+console.info("  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,");
+console.info("  bucket: 'tier1380-audit-logs',");
+console.info("  region: 'us-east-1'");
+console.info("});");
+console.info("");
 
-console.log("// Store audit snapshot (immutable, 1 year cache)");
-console.log(`await s3.write("tenants/tenant-a/audit-2026-01-01.jsonl", data, {`);
-console.log(`  cacheControl: "${CACHE_STRATEGIES.auditSnapshot.cacheControl}"`);
-console.log(`});`);
-console.log("");
+console.info("// Store audit snapshot (immutable, 1 year cache)");
+console.info(`await s3.write("tenants/tenant-a/audit-2026-01-01.jsonl", data, {`);
+console.info(`  cacheControl: "${CACHE_STRATEGIES.auditSnapshot.cacheControl}"`);
+console.info(`});`);
+console.info("");
 
-console.log("// Store recent violations (1 hour cache)");
-console.log(`await s3.write("tenants/tenant-b/violations.json", violations, {`);
-console.log(`  cacheControl: "${CACHE_STRATEGIES.recentViolations.cacheControl}"`);
-console.log(`});`);
-console.log("");
+console.info("// Store recent violations (1 hour cache)");
+console.info(`await s3.write("tenants/tenant-b/violations.json", violations, {`);
+console.info(`  cacheControl: "${CACHE_STRATEGIES.recentViolations.cacheControl}"`);
+console.info(`});`);
+console.info("");
 
-console.log("// Store compliance report (24 hours cache)");
-console.log(`await s3.write("tenants/tenant-c/report-2026-01-01.json", report, {`);
-console.log(`  cacheControl: "${CACHE_STRATEGIES.complianceReport.cacheControl}"`);
-console.log(`});`);
-console.log("");
+console.info("// Store compliance report (24 hours cache)");
+console.info(`await s3.write("tenants/tenant-c/report-2026-01-01.json", report, {`);
+console.info(`  cacheControl: "${CACHE_STRATEGIES.complianceReport.cacheControl}"`);
+console.info(`});`);
+console.info("");
 
-console.log("// Export tenant data (1 week cache)");
-console.log(`await s3.write("tenants/tenant-a/export-2026-01-01T12-00-00.json", data, {`);
-console.log(`  cacheControl: "${CACHE_STRATEGIES.tenantExport.cacheControl}"`);
-console.log(`});`);
-console.log("");
+console.info("// Export tenant data (1 week cache)");
+console.info(`await s3.write("tenants/tenant-a/export-2026-01-01T12-00-00.json", data, {`);
+console.info(`  cacheControl: "${CACHE_STRATEGIES.tenantExport.cacheControl}"`);
+console.info(`});`);
+console.info("");
 
-console.log("// Create temporary export with expires header");
-console.log(`await s3.write("temp/export-1234567890.json", data, {`);
-console.log(`  cacheControl: "${CACHE_STRATEGIES.tempExport.cacheControl}",`);
-console.log(`  expires: "${CACHE_STRATEGIES.tempExport.expires()}"`);
-console.log(`});`);
+console.info("// Create temporary export with expires header");
+console.info(`await s3.write("temp/export-1234567890.json", data, {`);
+console.info(`  cacheControl: "${CACHE_STRATEGIES.tempExport.cacheControl}",`);
+console.info(`  expires: "${CACHE_STRATEGIES.tempExport.expires()}"`);
+console.info(`});`);
 
-console.log("\n💡 Benefits for Multi-Tenant Dashboard:");
-console.log("  • Reduced S3 costs with intelligent caching");
-console.log("  • Faster load times for cached audit data");
-console.log("  • Better CDN performance for exported reports");
-console.log("  • Immutable snapshots for historical data");
+console.info("\n💡 Benefits for Multi-Tenant Dashboard:");
+console.info("  • Reduced S3 costs with intelligent caching");
+console.info("  • Faster load times for cached audit data");
+console.info("  • Better CDN performance for exported reports");
+console.info("  • Immutable snapshots for historical data");
 
 export { CACHE_STRATEGIES };

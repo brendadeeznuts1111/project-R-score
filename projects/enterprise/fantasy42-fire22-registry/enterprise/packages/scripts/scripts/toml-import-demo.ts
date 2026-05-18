@@ -49,51 +49,51 @@ interface Fire22Config {
   }>;
 }
 
-console.log('🔧 Fire22 TOML Import Demo');
-console.log('='.repeat(50));
+console.info('🔧 Fire22 TOML Import Demo');
+console.info('='.repeat(50));
 
 // Access TOML data directly
-console.log(`📦 Project: ${config.name}`);
-console.log(`🏷️  Version: ${config.version}`);
-console.log(`📝 Description: ${config.description}`);
-console.log(`👤 Author: ${config.author.name} (${config.author.email})`);
-console.log(`🏢 Organization: ${config.author.organization}`);
+console.info(`📦 Project: ${config.name}`);
+console.info(`🏷️  Version: ${config.version}`);
+console.info(`📝 Description: ${config.description}`);
+console.info(`👤 Author: ${config.author.name} (${config.author.email})`);
+console.info(`🏢 Organization: ${config.author.organization}`);
 
-console.log('\n🏗️  Architecture:');
-console.log(`   Framework: ${config.project.framework}`);
-console.log(`   Runtime: ${config.project.runtime}`);
-console.log(`   Style: ${config.project.architecture}`);
+console.info('\n🏗️  Architecture:');
+console.info(`   Framework: ${config.project.framework}`);
+console.info(`   Runtime: ${config.project.runtime}`);
+console.info(`   Style: ${config.project.architecture}`);
 
-console.log('\n🌍 Environment:');
-console.log(`   Production: ${config.environment.production}`);
-console.log(`   Debug: ${config.environment.debug}`);
-console.log(`   Log Level: ${config.environment.log_level}`);
-console.log(`   Timezone: ${config.environment.timezone}`);
+console.info('\n🌍 Environment:');
+console.info(`   Production: ${config.environment.production}`);
+console.info(`   Debug: ${config.environment.debug}`);
+console.info(`   Log Level: ${config.environment.log_level}`);
+console.info(`   Timezone: ${config.environment.timezone}`);
 
-console.log('\n✨ Features:');
+console.info('\n✨ Features:');
 Object.entries(config.features).forEach(([feature, enabled]) => {
-  console.log(`   ${enabled ? '✅' : '❌'} ${feature.replace('_', ' ')}`);
+  console.info(`   ${enabled ? '✅' : '❌'} ${feature.replace('_', ' ')}`);
 });
 
-console.log('\n📋 Dependencies:');
+console.info('\n📋 Dependencies:');
 Object.entries(config.dependencies).forEach(([dep, version]) => {
-  console.log(`   ${dep}: ${version}`);
+  console.info(`   ${dep}: ${version}`);
 });
 
-console.log('\n🔍 Domains:');
+console.info('\n🔍 Domains:');
 config.domains.forEach((domain, index) => {
-  console.log(`   ${index + 1}. ${domain.name} v${domain.version}`);
-  console.log(`      ${domain.description}`);
+  console.info(`   ${index + 1}. ${domain.name} v${domain.version}`);
+  console.info(`      ${domain.description}`);
 });
 
-console.log('\n🎯 Project Domains Array:');
-console.log(config.project.domains);
+console.info('\n🎯 Project Domains Array:');
+console.info(config.project.domains);
 
 // Demonstrate type safety with TypeScript
 const typedConfig = config as Fire22Config;
-console.log('\n🔒 Type-safe access:');
-console.log(`Security Scanner: ${typedConfig.features.security_scanner}`);
-console.log(`First Domain: ${typedConfig.domains[0].name}`);
+console.info('\n🔒 Type-safe access:');
+console.info(`Security Scanner: ${typedConfig.features.security_scanner}`);
+console.info(`First Domain: ${typedConfig.domains[0].name}`);
 
 export { config as fire22Config };
 export type { Fire22Config };

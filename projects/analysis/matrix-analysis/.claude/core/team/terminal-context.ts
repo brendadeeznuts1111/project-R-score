@@ -284,7 +284,7 @@ export function getSessionStats(): {
 // ═══════════════════════════════════════════════════════════════════════════
 
 async function cleanupSessions(signal: string) {
-	console.log(`🛑 ${signal}: Closing ${activeSessions.size} terminal sessions...`);
+	console.info(`🛑 ${signal}: Closing ${activeSessions.size} terminal sessions...`);
 	for (const [id, session] of activeSessions) {
 		try {
 			await session.proc.kill();

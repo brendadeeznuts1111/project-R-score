@@ -148,7 +148,7 @@ async function main() {
   const jwt = new JWTAuthSystem();
 
   if (args.length === 0) {
-    console.log(`🔑 JWT Authentication System v2.11
+    console.info(`🔑 JWT Authentication System v2.11
 
 USAGE:
   bun jwt:generate <user-id> [ip]       # Generate JWT token
@@ -188,8 +188,8 @@ EXAMPLES:
         }
 
         const token = await jwt.generateToken(user, ip);
-        console.log(`✅ JWT Token generated for ${userId}:`);
-        console.log(token);
+        console.info(`✅ JWT Token generated for ${userId}:`);
+        console.info(token);
         break;
 
       case 'verify':
@@ -202,9 +202,9 @@ EXAMPLES:
 
         const verification = await jwt.verifyToken(verifyToken, requiredRole);
         if (verification.valid) {
-          console.log(`✅ Token valid for user: ${verification.user?.username} (${verification.user?.role})`);
+          console.info(`✅ Token valid for user: ${verification.user?.username} (${verification.user?.role})`);
         } else {
-          console.log(`❌ Token invalid: ${verification.reason}`);
+          console.info(`❌ Token invalid: ${verification.reason}`);
           process.exit(1);
         }
         break;
@@ -216,7 +216,7 @@ EXAMPLES:
         }
         const revokeToken = args[1];
         await jwt.revokeToken(revokeToken);
-        console.log(`✅ Token revoked`);
+        console.info(`✅ Token revoked`);
         break;
 
       case 'refresh':
@@ -229,17 +229,17 @@ EXAMPLES:
 
         const refreshResult = await jwt.refreshToken(oldToken, newIp);
         if (refreshResult.token) {
-          console.log(`✅ Token refreshed:`);
-          console.log(refreshResult.token);
+          console.info(`✅ Token refreshed:`);
+          console.info(refreshResult.token);
         } else {
-          console.log(`❌ Token refresh failed: ${refreshResult.reason}`);
+          console.info(`❌ Token refresh failed: ${refreshResult.reason}`);
           process.exit(1);
         }
         break;
 
       default:
         console.error(`Unknown command: ${command}`);
-        console.log('Use: bun jwt --help');
+        console.info('Use: bun jwt --help');
         process.exit(1);
     }
   } catch (error) {

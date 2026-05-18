@@ -247,29 +247,29 @@ const server = serve({
   },
 });
 
-console.log(`🌐 URLPattern-based API Router Started:`);
-console.log(`   📱 Main Server: http://${HOST}:${API_PORTS.landing}`);
-console.log(`   🔄 API Routes: /api/* with dynamic port routing`);
-console.log(`   📊 Service Discovery: /api/system-status`);
-console.log(`   💰 Revenue Data: /api/revenue`);
-console.log(`   📈 Metrics: /api/metrics`);
-console.log(`   🛡️ CORS Enabled: Cross-origin requests supported`);
-console.log(`   ⚡ URLPattern Routing: Fast pattern matching`);
-console.log(`   🔄 Service Proxy: Automatic request forwarding`);
-console.log(``);
-console.log(`🔧 Configured Services:`);
+console.info(`🌐 URLPattern-based API Router Started:`);
+console.info(`   📱 Main Server: http://${HOST}:${API_PORTS.landing}`);
+console.info(`   🔄 API Routes: /api/* with dynamic port routing`);
+console.info(`   📊 Service Discovery: /api/system-status`);
+console.info(`   💰 Revenue Data: /api/revenue`);
+console.info(`   📈 Metrics: /api/metrics`);
+console.info(`   🛡️ CORS Enabled: Cross-origin requests supported`);
+console.info(`   ⚡ URLPattern Routing: Fast pattern matching`);
+console.info(`   🔄 Service Proxy: Automatic request forwarding`);
+console.info(``);
+console.info(`🔧 Configured Services:`);
 Object.entries(API_PORTS).forEach(([name, port]) => {
-  console.log(`   ${name}: http://${HOST}:${port}`);
+  console.info(`   ${name}: http://${HOST}:${port}`);
 });
-console.log(``);
-console.log(`🎆 Empire Status: Dynamic URLPattern Routing Active!`);
+console.info(``);
+console.info(`🎆 Empire Status: Dynamic URLPattern Routing Active!`);
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down URLPattern router...');
+  console.info('\n🛑 Shutting down URLPattern router...');
   server.stop();
-  console.log('✅ Router stopped gracefully');
+  console.info('✅ Router stopped gracefully');
   process.exit(0);
 });
 
-console.log('\n🔄 URLPattern router is running. Press Ctrl+C to stop.');
+console.info('\n🔄 URLPattern router is running. Press Ctrl+C to stop.');

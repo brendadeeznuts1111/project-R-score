@@ -125,7 +125,7 @@ function log(level: 'info' | 'warn' | 'error' | 'debug', message: string, data?:
       }
       break;
     case 'info':
-      console.log(`${prefix} ${message}`, data || '');
+      console.info(`${prefix} ${message}`, data || '');
       break;
     case 'warn':
       console.warn(`${prefix} ⚠️  ${message}`, data || '');
@@ -668,7 +668,7 @@ if (import.meta.main) {
   
   // Show help
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🧹 System Hygiene v2.01.05 - Advanced Cleaning Tool
 
 Usage: bun run scripts/self-heal.ts [options]

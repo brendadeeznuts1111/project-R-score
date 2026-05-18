@@ -86,7 +86,7 @@ if (import.meta.main) {
 	const commitSource = Bun.argv[3]; // message, template, merge, squash, commit
 
 	if (!commitMsgFile) {
-		console.log("Usage: prepare-commit-msg.ts <commit-msg-file> [commit-source]");
+		console.info("Usage: prepare-commit-msg.ts <commit-msg-file> [commit-source]");
 		process.exit(1);
 	}
 

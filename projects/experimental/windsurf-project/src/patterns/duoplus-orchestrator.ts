@@ -141,7 +141,7 @@ export class DuoPlusIntegration {
 
   private async executeDuoPlusCommand(args: string[]): Promise<any> {
     // Simulate DuoPlus CLI execution for testing
-    console.log(`🚀 Executing DuoPlus: ${this.duoplusPath} ${args.join(' ')}`);
+    console.info(`🚀 Executing DuoPlus: ${this.duoplusPath} ${args.join(' ')}`);
     
     // Simulate command execution time
     await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 200));
@@ -188,7 +188,7 @@ export class DuoPlusIntegration {
   private async cacheDeviceInfo(device: DuoPlusDevice): Promise<void> {
     try {
       // Simulate R2 caching
-      console.log(`📁 Caching device info for ${device.deviceId} to R2`);
+      console.info(`📁 Caching device info for ${device.deviceId} to R2`);
     } catch (error) {
       console.error('Failed to cache device info:', error);
     }
@@ -197,7 +197,7 @@ export class DuoPlusIntegration {
   private async storeToR2(key: string, data: ArrayBuffer): Promise<void> {
     try {
       // Simulate R2 storage
-      console.log(`📁 Storing screenshot to ${key} (${data.byteLength} bytes)`);
+      console.info(`📁 Storing screenshot to ${key} (${data.byteLength} bytes)`);
     } catch (error) {
       console.error('Failed to store to R2:', error);
     }

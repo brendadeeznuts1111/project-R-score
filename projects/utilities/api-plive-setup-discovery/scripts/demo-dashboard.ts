@@ -8,27 +8,27 @@ import { EnhancedDashboard } from "../src/bun/dashboard-enhanced";
 import { performanceMonitor } from "../src/bun/dashboard-performance";
 
 async function demo() {
-  console.log("🚀 Bun 1.3 Enhanced Dashboard Demo");
-  console.log("===================================\n");
+  console.info("🚀 Bun 1.3 Enhanced Dashboard Demo");
+  console.info("===================================\n");
 
   const dashboard = new EnhancedDashboard();
 
   try {
     // 1. Test dashboard configuration
-    console.log("📝 1. Testing Dashboard Configuration...");
+    console.info("📝 1. Testing Dashboard Configuration...");
     const config = dashboard.exportConfig('json');
-    console.log("✅ Dashboard config loaded successfully");
-    console.log(`   Config size: ${config.length} characters\n`);
+    console.info("✅ Dashboard config loaded successfully");
+    console.info(`   Config size: ${config.length} characters\n`);
 
     // 2. Test dashboard data retrieval
-    console.log("📊 2. Testing Dashboard Data Retrieval...");
+    console.info("📊 2. Testing Dashboard Data Retrieval...");
     const overviewData = await dashboard.getDashboardData("overview");
-    console.log("✅ Overview dashboard data retrieved");
-    console.log(`   Active workflows: ${overviewData.widgets?.[0]?.value || 'N/A'}`);
-    console.log(`   System health: ${overviewData.systemHealth?.status || 'unknown'}\n`);
+    console.info("✅ Overview dashboard data retrieved");
+    console.info(`   Active workflows: ${overviewData.widgets?.[0]?.value || 'N/A'}`);
+    console.info(`   System health: ${overviewData.systemHealth?.status || 'unknown'}\n`);
 
     // 3. Test performance monitoring
-    console.log("⚡ 3. Testing Performance Monitoring...");
+    console.info("⚡ 3. Testing Performance Monitoring...");
 
     // Record some sample metrics
     performanceMonitor.recordMetric("dashboard_load_time", 45.2);
@@ -43,59 +43,59 @@ async function demo() {
     );
 
     const perfReport = performanceMonitor.getPerformanceReport();
-    console.log("✅ Performance metrics recorded");
-    console.log(`   Metrics tracked: ${Object.keys(perfReport.metrics).length}`);
-    console.log(`   Active alerts: ${performanceMonitor.getActiveAlerts().length}\n`);
+    console.info("✅ Performance metrics recorded");
+    console.info(`   Metrics tracked: ${Object.keys(perfReport.metrics).length}`);
+    console.info(`   Active alerts: ${performanceMonitor.getActiveAlerts().length}\n`);
 
     // 4. Test dashboard export
-    console.log("📤 4. Testing Dashboard Export...");
+    console.info("📤 4. Testing Dashboard Export...");
     const yamlExport = dashboard.exportConfig('yaml');
-    console.log("✅ Dashboard configuration exported");
-    console.log(`   YAML export size: ${yamlExport.length} characters\n`);
+    console.info("✅ Dashboard configuration exported");
+    console.info(`   YAML export size: ${yamlExport.length} characters\n`);
 
     // 5. Test Prometheus metrics
-    console.log("📈 5. Testing Prometheus Metrics...");
+    console.info("📈 5. Testing Prometheus Metrics...");
     const prometheusMetrics = await dashboard.getPrometheusMetrics();
-    console.log("✅ Prometheus metrics generated");
-    console.log(`   Metrics lines: ${prometheusMetrics.split('\n').length}\n`);
+    console.info("✅ Prometheus metrics generated");
+    console.info(`   Metrics lines: ${prometheusMetrics.split('\n').length}\n`);
 
     // 6. Display dashboard capabilities
-    console.log("🎯 Dashboard Capabilities Demonstrated:");
-    console.log("   ✅ Real-time data updates");
-    console.log("   ✅ Performance monitoring");
-    console.log("   ✅ Alert management");
-    console.log("   ✅ Multi-format export (JSON/YAML/CSV)");
-    console.log("   ✅ Prometheus metrics integration");
-    console.log("   ✅ Hot-reload configuration");
-    console.log("   ✅ Trend analysis and forecasting");
-    console.log("   ✅ System health monitoring");
-    console.log("");
+    console.info("🎯 Dashboard Capabilities Demonstrated:");
+    console.info("   ✅ Real-time data updates");
+    console.info("   ✅ Performance monitoring");
+    console.info("   ✅ Alert management");
+    console.info("   ✅ Multi-format export (JSON/YAML/CSV)");
+    console.info("   ✅ Prometheus metrics integration");
+    console.info("   ✅ Hot-reload configuration");
+    console.info("   ✅ Trend analysis and forecasting");
+    console.info("   ✅ System health monitoring");
+    console.info("");
 
     // 7. Performance summary
-    console.log("⚡ Bun 1.3 Performance Benefits:");
-    console.log("   • Native YAML parsing (4x faster)");
-    console.log("   • Zero-copy SQL execution");
-    console.log("   • Real-time WebSocket compression");
-    console.log("   • Hot-reload configuration");
-    console.log("   • Built-in performance monitoring");
-    console.log("");
+    console.info("⚡ Bun 1.3 Performance Benefits:");
+    console.info("   • Native YAML parsing (4x faster)");
+    console.info("   • Zero-copy SQL execution");
+    console.info("   • Real-time WebSocket compression");
+    console.info("   • Hot-reload configuration");
+    console.info("   • Built-in performance monitoring");
+    console.info("");
 
     // 8. API endpoints summary
-    console.log("🔗 Available Dashboard Endpoints:");
-    console.log("   GET  /dashboard/health           - Dashboard health check");
-    console.log("   GET  /dashboard/config           - Get dashboard configuration");
-    console.log("   GET  /dashboard/data/:type       - Get dashboard data (overview/performance/workflows/betting)");
-    console.log("   GET  /dashboard/stats/:metric    - Get specific metrics");
-    console.log("   GET  /dashboard/metrics          - Prometheus metrics");
-    console.log("   POST /dashboard/export           - Export dashboard data");
-    console.log("   GET  /dashboard/alerts           - Active alerts");
-    console.log("   GET  /dashboard/themes           - Available themes");
-    console.log("   GET  /dashboard/layouts          - Available layouts");
-    console.log("   GET  /dashboard/ws               - WebSocket endpoint info");
-    console.log("");
+    console.info("🔗 Available Dashboard Endpoints:");
+    console.info("   GET  /dashboard/health           - Dashboard health check");
+    console.info("   GET  /dashboard/config           - Get dashboard configuration");
+    console.info("   GET  /dashboard/data/:type       - Get dashboard data (overview/performance/workflows/betting)");
+    console.info("   GET  /dashboard/stats/:metric    - Get specific metrics");
+    console.info("   GET  /dashboard/metrics          - Prometheus metrics");
+    console.info("   POST /dashboard/export           - Export dashboard data");
+    console.info("   GET  /dashboard/alerts           - Active alerts");
+    console.info("   GET  /dashboard/themes           - Available themes");
+    console.info("   GET  /dashboard/layouts          - Available layouts");
+    console.info("   GET  /dashboard/ws               - WebSocket endpoint info");
+    console.info("");
 
-    console.log("🎉 Bun 1.3 Enhanced Dashboard Demo Completed!");
-    console.log("   Ready for production deployment! 🚀");
+    console.info("🎉 Bun 1.3 Enhanced Dashboard Demo Completed!");
+    console.info("   Ready for production deployment! 🚀");
 
   } catch (error) {
     console.error("❌ Dashboard demo failed:", error);

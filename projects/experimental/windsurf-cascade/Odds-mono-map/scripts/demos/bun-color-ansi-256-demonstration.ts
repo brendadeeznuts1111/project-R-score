@@ -23,8 +23,8 @@ import {
     CANVAS_BRAND_COLORS
 } from '../../src/types/canvas-color';
 
-console.log('🎨 256 ANSI Colors (ansi-256) Format Demonstration');
-console.log('===================================================\n');
+console.info('🎨 256 ANSI Colors (ansi-256) Format Demonstration');
+console.info('===================================================\n');
 
 // Test colors from official documentation
 const officialExamples = [
@@ -34,29 +34,29 @@ const officialExamples = [
     "#ff0000"
 ];
 
-console.log('🎯 Testing Official ansi-256 Examples\n');
+console.info('🎯 Testing Official ansi-256 Examples\n');
 
 // 1. Official Examples Validation
-console.log('📋 1. Official Examples Validation');
-console.log('─'.repeat(50));
+console.info('📋 1. Official Examples Validation');
+console.info('─'.repeat(50));
 
 officialExamples.forEach((color, index) => {
     const ansi256 = Bun.color(color, "ansi-256");
     const expected = "\\u001b[38;5;196m"; // Red should map to color 196
 
-    console.log(`${index + 1}. Input: ${JSON.stringify(color).padEnd(15)} → ${JSON.stringify(ansi256)}`);
+    console.info(`${index + 1}. Input: ${JSON.stringify(color).padEnd(15)} → ${JSON.stringify(ansi256)}`);
 
     // Verify it's the correct ANSI-256 format
     if (typeof ansi256 === 'string' && ansi256.includes('[38;5;')) {
         const colorCode = ansi256.match(/\[38;5;(\d+)m/)?.[1];
-        console.log(`    └─ ANSI-256 Code: ${colorCode} (Red palette index) ✅`);
+        console.info(`    └─ ANSI-256 Code: ${colorCode} (Red palette index) ✅`);
     }
-    console.log('');
+    console.info('');
 });
 
 // 2. Canvas Brand Colors in ANSI-256
-console.log('🎨 2. Canvas Brand Colors in ANSI-256');
-console.log('─'.repeat(50));
+console.info('🎨 2. Canvas Brand Colors in ANSI-256');
+console.info('─'.repeat(50));
 
 const canvasBrandColors = [
     { name: "Primary", color: CANVAS_BRAND_COLORS.primary },
@@ -68,25 +68,25 @@ const canvasBrandColors = [
     { name: "Experimental", color: CANVAS_BRAND_COLORS.status.experimental }
 ];
 
-console.log('Canvas brand colors mapped to 256-color ANSI palette:');
+console.info('Canvas brand colors mapped to 256-color ANSI palette:');
 canvasBrandColors.forEach((item, index) => {
     const ansi256 = Bun.color(item.color, "ansi-256");
     const ansi16m = Bun.color(item.color, "ansi-16m"); // For comparison
 
-    console.log(`${index + 1}. ${item.name.padEnd(12)}: ${item.color}`);
-    console.log(`    ANSI-256: ${JSON.stringify(ansi256)}`);
-    console.log(`    ANSI-16m: ${JSON.stringify(ansi16m)} (24-bit reference)`);
+    console.info(`${index + 1}. ${item.name.padEnd(12)}: ${item.color}`);
+    console.info(`    ANSI-256: ${JSON.stringify(ansi256)}`);
+    console.info(`    ANSI-16m: ${JSON.stringify(ansi16m)} (24-bit reference)`);
 
     if (typeof ansi256 === 'string') {
         const colorCode = ansi256.match(/\[38;5;(\d+)m/)?.[1];
-        console.log(`    └─ Palette Index: ${colorCode}`);
+        console.info(`    └─ Palette Index: ${colorCode}`);
     }
-    console.log('');
+    console.info('');
 });
 
 // 3. 256-Color Palette Analysis
-console.log('📊 3. 256-Color Palette Analysis');
-console.log('─'.repeat(50));
+console.info('📊 3. 256-Color Palette Analysis');
+console.info('─'.repeat(50));
 
 // Test various colors to see palette mapping
 const testColors = [
@@ -108,19 +108,19 @@ const testColors = [
     "#A855F7"  // Purple
 ];
 
-console.log('Color mapping to 256-color ANSI palette:');
+console.info('Color mapping to 256-color ANSI palette:');
 testColors.forEach((color, index) => {
     const ansi256 = Bun.color(color, "ansi-256");
 
     if (typeof ansi256 === 'string') {
         const colorCode = ansi256.match(/\[38;5;(\d+)m/)?.[1];
-        console.log(`${index + 1}. ${color.padEnd(10)} → Palette ${(colorCode || 'N/A').padEnd(3)} ${JSON.stringify(ansi256)}`);
+        console.info(`${index + 1}. ${color.padEnd(10)} → Palette ${(colorCode || 'N/A').padEnd(3)} ${JSON.stringify(ansi256)}`);
     }
 });
 
 // 4. Canvas Terminal Dashboard with ANSI-256
-console.log('\n🖥️ 4. Canvas Terminal Dashboard with ANSI-256');
-console.log('─'.repeat(50));
+console.info('\n🖥️ 4. Canvas Terminal Dashboard with ANSI-256');
+console.info('─'.repeat(50));
 
 // Simulate a canvas status dashboard using ANSI-256 colors
 const canvasServices = [
@@ -134,8 +134,8 @@ const canvasServices = [
     { name: "Monitor Service", status: "active", color: "#06B6D4" }
 ];
 
-console.log('🎨 Canvas System Status Dashboard (256-color ANSI)');
-console.log(''.padEnd(60, '═'));
+console.info('🎨 Canvas System Status Dashboard (256-color ANSI)');
+console.info(''.padEnd(60, '═'));
 
 canvasServices.forEach((service, index) => {
     const statusColor = Bun.color(service.color, "ansi-256");
@@ -146,40 +146,40 @@ canvasServices.forEach((service, index) => {
 
     // Format status line
     const statusLine = `${index + 1}. ${indicator} ${service.name.padEnd(20)} ${service.status.padEnd(12)} ${service.color}`;
-    console.log(statusLine);
+    console.info(statusLine);
 });
 
-console.log(''.padEnd(60, '═'));
+console.info(''.padEnd(60, '═'));
 
 // 5. ANSI-256 vs Other Formats Comparison
-console.log('\n🔍 5. ANSI-256 vs Other Formats Comparison');
-console.log('─'.repeat(50));
+console.info('\n🔍 5. ANSI-256 vs Other Formats Comparison');
+console.info('─'.repeat(50));
 
 const comparisonColors = ["#10B981", "#EAB308", "#EF4444", "#8B5CF6"];
 
-console.log('Format comparison for canvas colors:');
+console.info('Format comparison for canvas colors:');
 comparisonColors.forEach((color, index) => {
     const ansi = Bun.color(color, "ansi");
     const ansi16m = Bun.color(color, "ansi-16m");
     const ansi256 = Bun.color(color, "ansi-256");
     const ansi16 = Bun.color(color, "ansi-16");
 
-    console.log(`${index + 1}. ${color}:`);
-    console.log(`    ANSI (24-bit):   ${JSON.stringify(ansi)}`);
-    console.log(`    ANSI-16m (24-bit): ${JSON.stringify(ansi16m)}`);
-    console.log(`    ANSI-256 (256):   ${JSON.stringify(ansi256)}`);
-    console.log(`    ANSI-16 (16):     ${JSON.stringify(ansi16)}`);
-    console.log('');
+    console.info(`${index + 1}. ${color}:`);
+    console.info(`    ANSI (24-bit):   ${JSON.stringify(ansi)}`);
+    console.info(`    ANSI-16m (24-bit): ${JSON.stringify(ansi16m)}`);
+    console.info(`    ANSI-256 (256):   ${JSON.stringify(ansi256)}`);
+    console.info(`    ANSI-16 (16):     ${JSON.stringify(ansi16)}`);
+    console.info('');
 });
 
 // 6. Performance Test
-console.log('⚡ 6. ANSI-256 Performance Test');
-console.log('─'.repeat(50));
+console.info('⚡ 6. ANSI-256 Performance Test');
+console.info('─'.repeat(50));
 
 const iterations = 50000;
 const testColor = "#10B981";
 
-console.log(`Testing ANSI-256 format performance (${iterations} conversions):`);
+console.info(`Testing ANSI-256 format performance (${iterations} conversions):`);
 
 const formats = [
     { name: "ANSI-256", format: "ansi-256" },
@@ -197,14 +197,14 @@ formats.forEach(format => {
     const duration = performance.now() - start;
     const opsPerSecond = Math.round(iterations / duration * 1000);
 
-    console.log(`${format.name.padEnd(15)}: ${duration.toFixed(2)}ms (${opsPerSecond.toLocaleString()} ops/sec)`);
+    console.info(`${format.name.padEnd(15)}: ${duration.toFixed(2)}ms (${opsPerSecond.toLocaleString()} ops/sec)`);
 });
 
 // 7. Terminal Compatibility Analysis
-console.log('\n💻 7. Terminal Compatibility Analysis');
-console.log('─'.repeat(50));
+console.info('\n💻 7. Terminal Compatibility Analysis');
+console.info('─'.repeat(50));
 
-console.log('ANSI-256 format compatibility across different terminal types:');
+console.info('ANSI-256 format compatibility across different terminal types:');
 
 const terminalTypes = [
     { name: "Modern Terminal", support: "Full 256-color support", recommendation: "Use ANSI-256 for optimal colors" },
@@ -217,47 +217,47 @@ terminalTypes.forEach((terminal, index) => {
     const indicator = terminal.support.includes("256") ? "✅" :
         terminal.support.includes("16") ? "⚠️" : "❌";
 
-    console.log(`${index + 1}. ${indicator} ${terminal.name.padEnd(20)} ${terminal.support.padEnd(25)}`);
-    console.log(`    └─ Recommendation: ${terminal.recommendation}`);
-    console.log('');
+    console.info(`${index + 1}. ${indicator} ${terminal.name.padEnd(20)} ${terminal.support.padEnd(25)}`);
+    console.info(`    └─ Recommendation: ${terminal.recommendation}`);
+    console.info('');
 });
 
 // 8. Canvas Integration Best Practices
-console.log('🎯 8. Canvas Integration Best Practices');
-console.log('─'.repeat(50));
+console.info('🎯 8. Canvas Integration Best Practices');
+console.info('─'.repeat(50));
 
-console.log('📋 Best practices for using ANSI-256 in canvas applications:');
-console.log('');
+console.info('📋 Best practices for using ANSI-256 in canvas applications:');
+console.info('');
 
-console.log('✅ 1. Progressive Enhancement');
-console.log('   • Try ANSI-16m first (24-bit true color)');
-console.log('   • Fallback to ANSI-256 for standard terminals');
-console.log('   • Final fallback to ANSI-16 for legacy systems');
-console.log('');
+console.info('✅ 1. Progressive Enhancement');
+console.info('   • Try ANSI-16m first (24-bit true color)');
+console.info('   • Fallback to ANSI-256 for standard terminals');
+console.info('   • Final fallback to ANSI-16 for legacy systems');
+console.info('');
 
-console.log('✅ 2. Color Selection Strategy');
-console.log('   • Choose colors that map well to 256-color palette');
-console.log('   • Test important colors in ANSI-256 format');
-console.log('   • Avoid colors that lose distinction in 256-color mode');
-console.log('');
+console.info('✅ 2. Color Selection Strategy');
+console.info('   • Choose colors that map well to 256-color palette');
+console.info('   • Test important colors in ANSI-256 format');
+console.info('   • Avoid colors that lose distinction in 256-color mode');
+console.info('');
 
-console.log('✅ 3. Performance Considerations');
-console.log('   • ANSI-256 is fast and efficient');
-console.log('   • Cache color conversions for repeated use');
-console.log('   • Use format detection for optimal performance');
-console.log('');
+console.info('✅ 3. Performance Considerations');
+console.info('   • ANSI-256 is fast and efficient');
+console.info('   • Cache color conversions for repeated use');
+console.info('   • Use format detection for optimal performance');
+console.info('');
 
-console.log('✅ 4. User Experience');
-console.log('   • Provide color options for different terminals');
-console.log('   • Document terminal requirements');
-console.log('   • Include color-blind friendly palettes');
-console.log('');
+console.info('✅ 4. User Experience');
+console.info('   • Provide color options for different terminals');
+console.info('   • Document terminal requirements');
+console.info('   • Include color-blind friendly palettes');
+console.info('');
 
 // 9. Color Palette Mapping Reference
-console.log('📚 9. Color Palette Mapping Reference');
-console.log('─'.repeat(50));
+console.info('📚 9. Color Palette Mapping Reference');
+console.info('─'.repeat(50));
 
-console.log('Common color mappings in ANSI-256 palette:');
+console.info('Common color mappings in ANSI-256 palette:');
 
 const colorMappings = [
     { hex: "#000000", name: "Black", code: 16 },
@@ -283,8 +283,8 @@ colorMappings.forEach((mapping, index) => {
     const actualCode = actualAnsi256?.match(/\[38;5;(\d+)m/)?.[1];
     const matches = actualCode === mapping.code.toString();
 
-    console.log(`${index + 1}. ${mapping.name.padEnd(10)} ${mapping.hex.padEnd(8)} → Code ${mapping.code.toString().padEnd(3)} ${matches ? '✅' : '❌'} (actual: ${actualCode})`);
+    console.info(`${index + 1}. ${mapping.name.padEnd(10)} ${mapping.hex.padEnd(8)} → Code ${mapping.code.toString().padEnd(3)} ${matches ? '✅' : '❌'} (actual: ${actualCode})`);
 });
 
-console.log('\n🎉 ANSI-256 Format Demonstration Complete!');
-console.log('🚀 Your canvas system perfectly leverages 256-color ANSI terminal capabilities!');
+console.info('\n🎉 ANSI-256 Format Demonstration Complete!');
+console.info('🚀 Your canvas system perfectly leverages 256-color ANSI terminal capabilities!');

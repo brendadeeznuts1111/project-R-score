@@ -37,28 +37,28 @@ const processPackages = (packages: string[]): PackageInfo[] => {
   }));
 };
 
-console.log('🚀 Bun Run Demo - TypeScript');
-console.log('='.repeat(40));
+console.info('🚀 Bun Run Demo - TypeScript');
+console.info('='.repeat(40));
 
 const startTime = performance.now();
 
 // Type-safe configuration
 const config: RegistryConfig = createRegistryConfig();
-console.log('Registry Configuration:');
-console.log(JSON.stringify(config, null, 2));
+console.info('Registry Configuration:');
+console.info(JSON.stringify(config, null, 2));
 
 // Type-safe package processing
 const packages = ['core-security', 'analytics-dashboard', 'compliance-core'];
 const processedPackages: PackageInfo[] = processPackages(packages);
 
-console.log('\nProcessed Packages:');
+console.info('\nProcessed Packages:');
 processedPackages.forEach(pkg => {
-  console.log(`📦 ${pkg.name}: ${pkg.status} (${pkg.dependencies} deps)`);
+  console.info(`📦 ${pkg.name}: ${pkg.status} (${pkg.dependencies} deps)`);
 });
 
 // Advanced TypeScript features
 const asyncTypeScriptDemo = async (): Promise<void> => {
-  console.log('\n🔄 TypeScript Async Demo:');
+  console.info('\n🔄 TypeScript Async Demo:');
 
   // Promise-based operations
   const results = await Promise.all([
@@ -67,14 +67,14 @@ const asyncTypeScriptDemo = async (): Promise<void> => {
     Bun.sleep(15).then(() => 'Task 3 complete'),
   ]);
 
-  results.forEach(result => console.log(`✅ ${result}`));
+  results.forEach(result => console.info(`✅ ${result}`));
 
   // Type-safe file operations (if needed)
-  console.log('📁 File operations available with Bun.file()');
+  console.info('📁 File operations available with Bun.file()');
 };
 
 asyncTypeScriptDemo();
 
 const endTime = performance.now();
-console.log(`\n⚡ TypeScript execution time: ${(endTime - startTime).toFixed(2)}ms`);
-console.log('🎉 TypeScript execution complete!');
+console.info(`\n⚡ TypeScript execution time: ${(endTime - startTime).toFixed(2)}ms`);
+console.info('🎉 TypeScript execution complete!');

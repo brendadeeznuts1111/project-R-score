@@ -44,7 +44,7 @@ export class MerchantDeploymentMonitor {
   }
 
   async getMerchantDeploymentStatus(merchantId: string): Promise<MerchantDeploymentStatus> {
-    console.log(`🔍 Fetching deployment status for merchant: ${merchantId}`);
+    console.info(`🔍 Fetching deployment status for merchant: ${merchantId}`);
     
     // Simulate database queries for deployment metrics
     const [tests, mobile, partners, sdk] = await Promise.all([
@@ -72,7 +72,7 @@ export class MerchantDeploymentMonitor {
     partners: DeploymentPartnerMetrics;
     sdk: DeploymentSDKMetrics;
   }> {
-    console.log('📊 Fetching detailed deployment metrics...');
+    console.info('📊 Fetching detailed deployment metrics...');
 
     return {
       tests: await this.getDeploymentTestMetrics(),
@@ -208,7 +208,7 @@ export class MerchantDeploymentMonitor {
     health: 'healthy' | 'warning' | 'critical';
     score: number;
   }[]> {
-    console.log(`📈 Fetching health trend for ${merchantId} over ${days} days`);
+    console.info(`📈 Fetching health trend for ${merchantId} over ${days} days`);
     
     // Simulate health trend data
     const trend = [];
@@ -233,7 +233,7 @@ export class MerchantDeploymentMonitor {
     deploymentId: string;
     estimatedTime: number;
   }> {
-    console.log(`🚀 Triggering deployment for component: ${component}`);
+    console.info(`🚀 Triggering deployment for component: ${component}`);
     
     // Simulate deployment trigger
     const deploymentId = `deploy-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -241,7 +241,7 @@ export class MerchantDeploymentMonitor {
     
     // Simulate async deployment start
     setTimeout(() => {
-      console.log(`✅ Deployment ${deploymentId} started for ${component}`);
+      console.info(`✅ Deployment ${deploymentId} started for ${component}`);
     }, 100);
     
     return {
@@ -268,7 +268,7 @@ export class MerchantDeploymentMonitor {
     status: string;
     progress: number;
   }> {
-    console.log(`📋 Fetching deployment logs for: ${deploymentId}`);
+    console.info(`📋 Fetching deployment logs for: ${deploymentId}`);
     
     // Simulate deployment logs
     const logs = [

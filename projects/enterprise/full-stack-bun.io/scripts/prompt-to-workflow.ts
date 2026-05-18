@@ -449,7 +449,7 @@ async function main() {
   const [command, ...args] = process.argv.slice(2);
 
   if (!command) {
-    console.log(`
+    console.info(`
 Prompt-to-Workflow Converter v1.0.0 - WORKFLOW.PROMPT.CONVERT
 
 Usage:
@@ -479,7 +479,7 @@ Examples:
           throw new Error('Usage: convert <prompt>');
         }
         const yaml = await converter.convertPrompt(prompt);
-        console.log(yaml);
+        console.info(yaml);
         break;
 
       case 'template':
@@ -489,18 +489,18 @@ Examples:
         }
         const template = converter.getTemplate(templateName);
         if (!template) {
-          console.log(`Template not found: ${templateName}`);
-          console.log('Available templates:', converter.listTemplates().join(', '));
+          console.info(`Template not found: ${templateName}`);
+          console.info('Available templates:', converter.listTemplates().join(', '));
         } else {
-          console.log(converter.templateToYAML(template));
+          console.info(converter.templateToYAML(template));
         }
         break;
 
       case 'list':
-        console.log('Available templates:');
+        console.info('Available templates:');
         converter.listTemplates().forEach(name => {
           const template = converter.getTemplate(name);
-          console.log(`  ${name}: ${template?.description}`);
+          console.info(`  ${name}: ${template?.description}`);
         });
         break;
 
@@ -512,7 +512,7 @@ Examples:
         }
         const workflowYaml = await converter.convertPrompt(savePrompt);
         const filepath = await converter.saveWorkflow(saveName, workflowYaml);
-        console.log(`✅ Workflow saved: ${filepath}`);
+        console.info(`✅ Workflow saved: ${filepath}`);
         break;
 
       default:

@@ -243,62 +243,62 @@ export const {
 
 // Demo function
 export async function demoOmegaUtilities(): Promise<void> {
-  console.log('🚀 Omega Phase 3.25 Utilities Demo');
-  console.log('===================================\n');
+  console.info('🚀 Omega Phase 3.25 Utilities Demo');
+  console.info('===================================\n');
 
   // 1. Tool validation
-  console.log('1. Tool Validation');
-  console.log('-----------------');
+  console.info('1. Tool Validation');
+  console.info('-----------------');
   const tools = ['bun', 'git', 'node', 'npm'];
   const validation = await omegaUtils.validateTools(tools);
-  console.log(validation.report);
+  console.info(validation.report);
 
   // 2. Session creation
-  console.log('\n2. Session Management');
-  console.log('--------------------');
+  console.info('\n2. Session Management');
+  console.info('--------------------');
   const session = omegaUtils.createSession('demo');
-  console.log(`Session ID: ${session.id}`);
-  console.log(`Created: ${session.timestamp}`);
+  console.info(`Session ID: ${session.id}`);
+  console.info(`Created: ${session.timestamp}`);
 
   // 3. Async monitoring
-  console.log('\n3. Async Operation Monitoring');
-  console.log('-----------------------------');
+  console.info('\n3. Async Operation Monitoring');
+  console.info('-----------------------------');
   const operation = new Promise(resolve =>
     setTimeout(() => resolve({ data: 'success' }), 100)
   );
   const monitored = await omegaUtils.monitorOperation(operation, 'test-op');
-  console.log(`Status: ${monitored.status}, Duration: ${monitored.duration}ms`);
+  console.info(`Status: ${monitored.status}, Duration: ${monitored.duration}ms`);
 
   // 4. HTML sanitization
-  console.log('\n4. HTML Sanitization');
-  console.log('-------------------');
+  console.info('\n4. HTML Sanitization');
+  console.info('-------------------');
   const unsafe = '<script>alert("xss")</script>';
   const safe = omegaUtils.sanitizeForHTML(unsafe);
-  console.log(`Unsafe: ${unsafe}`);
-  console.log(`Safe: ${safe}`);
+  console.info(`Unsafe: ${unsafe}`);
+  console.info(`Safe: ${safe}`);
 
   // 5. Path normalization
-  console.log('\n5. Path Normalization');
-  console.log('---------------------');
+  console.info('\n5. Path Normalization');
+  console.info('---------------------');
   const paths = ['./package.json', '/tmp/../tmp/file'];
   paths.forEach(p => {
-    console.log(`${p} -> ${omegaUtils.normalizePath(p)}`);
+    console.info(`${p} -> ${omegaUtils.normalizePath(p)}`);
   });
 
   // 6. Metrics
-  console.log('\n6. Metrics');
-  console.log('--------');
+  console.info('\n6. Metrics');
+  console.info('--------');
   const metrics = omegaUtils.getMetrics();
-  console.log(`Uptime: ${metrics.uptime}ms`);
-  console.log(`Cache size: ${metrics.cacheSize}`);
+  console.info(`Uptime: ${metrics.uptime}ms`);
+  console.info(`Cache size: ${metrics.cacheSize}`);
 
   // 7. Export
-  console.log('\n7. Data Export (JSON)');
-  console.log('---------------------');
+  console.info('\n7. Data Export (JSON)');
+  console.info('---------------------');
   const exported = omegaUtils.exportData('json');
-  console.log(exported.substring(0, 200) + '...');
+  console.info(exported.substring(0, 200) + '...');
 
-  console.log('\n✅ Demo complete!');
+  console.info('\n✅ Demo complete!');
 }
 
 // Run demo if executed directly

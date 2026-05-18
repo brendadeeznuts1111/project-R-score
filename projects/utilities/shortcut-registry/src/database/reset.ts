@@ -49,7 +49,7 @@ if (import.meta.main) {
 
   try {
     await resetDatabase();
-    console.log('\n✓ Database reset completed');
+    console.info('\n✓ Database reset completed');
   } catch (error) {
     console.error('\n✗ Database reset failed:', error);
     process.exit(1);

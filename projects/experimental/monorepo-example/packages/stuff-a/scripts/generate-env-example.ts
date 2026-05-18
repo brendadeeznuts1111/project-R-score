@@ -22,5 +22,5 @@ ${AUTH.API_TOKEN_ENV}=
 
 const dest = import.meta.dir + '/../../.env.example';
 await Bun.write(dest, output);
-console.log(`Wrote ${dest}`);
-console.log(output);
+console.info(`Wrote ${dest}`);
+console.info(output);

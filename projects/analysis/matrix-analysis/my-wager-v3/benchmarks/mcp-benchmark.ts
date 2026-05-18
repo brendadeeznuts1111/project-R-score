@@ -25,7 +25,7 @@ class MCPBenchmark {
   async runBenchmark(name: string, fn: () => Promise<any>, iterations: number = 100): Promise<BenchmarkResult> {
     const times: number[] = [];
 
-    console.log(`\n🏃 Running ${name} (${iterations} iterations)...`);
+    console.info(`\n🏃 Running ${name} (${iterations} iterations)...`);
 
     for (let i = 0; i < iterations; i++) {
       const start = performance.now();
@@ -57,18 +57,18 @@ class MCPBenchmark {
   }
 
   private printResult(result: BenchmarkResult): void {
-    console.log(`   Average: ${result.avgTime.toFixed(2)}ms`);
-    console.log(`   Min: ${result.minTime.toFixed(2)}ms`);
-    console.log(`   Max: ${result.maxTime.toFixed(2)}ms`);
-    console.log(`   Throughput: ${result.throughput.toFixed(2)} req/s`);
+    console.info(`   Average: ${result.avgTime.toFixed(2)}ms`);
+    console.info(`   Min: ${result.minTime.toFixed(2)}ms`);
+    console.info(`   Max: ${result.maxTime.toFixed(2)}ms`);
+    console.info(`   Throughput: ${result.throughput.toFixed(2)} req/s`);
   }
 
   async runAllBenchmarks(): Promise<void> {
-    console.log('🚀 MCP Server Benchmark Suite');
-    console.log('===============================\n');
+    console.info('🚀 MCP Server Benchmark Suite');
+    console.info('===============================\n');
 
     // Warm up
-    console.log('🔥 Warming up...');
+    console.info('🔥 Warming up...');
     for (let i = 0; i < 10; i++) {
       await this.client.callTool('get_system_status');
     }
@@ -138,8 +138,8 @@ class MCPBenchmark {
   }
 
   private printSummary(): void {
-    console.log('\n📊 Benchmark Summary');
-    console.log('====================\n');
+    console.info('\n📊 Benchmark Summary');
+    console.info('====================\n');
 
     console.table(this.results.map(r => ({
       'Test': r.name,
@@ -150,38 +150,38 @@ class MCPBenchmark {
     })));
 
     // Performance analysis
-    console.log('\n🎯 Performance Analysis:');
-    console.log('========================\n');
+    console.info('\n🎯 Performance Analysis:');
+    console.info('========================\n');
 
     const fastest = this.results.reduce((prev, curr) =>
       prev.avgTime < curr.avgTime ? prev : curr
     );
-    console.log(`Fastest operation: ${fastest.name} (${fastest.avgTime.toFixed(2)}ms)`);
+    console.info(`Fastest operation: ${fastest.name} (${fastest.avgTime.toFixed(2)}ms)`);
 
     const slowest = this.results.reduce((prev, curr) =>
       prev.avgTime > curr.avgTime ? prev : curr
     );
-    console.log(`Slowest operation: ${slowest.name} (${slowest.avgTime.toFixed(2)}ms)`);
+    console.info(`Slowest operation: ${slowest.name} (${slowest.avgTime.toFixed(2)}ms)`);
 
     const highestThroughput = this.results.reduce((prev, curr) =>
       prev.throughput > curr.throughput ? prev : curr
     );
-    console.log(`Highest throughput: ${highestThroughput.name} (${highestThroughput.throughput.toFixed(2)} req/s)`);
+    console.info(`Highest throughput: ${highestThroughput.name} (${highestThroughput.throughput.toFixed(2)} req/s)`);
 
     // Performance recommendations
-    console.log('\n💡 Recommendations:');
-    console.log('==================\n');
+    console.info('\n💡 Recommendations:');
+    console.info('==================\n');
 
     if (fastest.avgTime < 10) {
-      console.log('✅ Excellent response times for basic operations');
+      console.info('✅ Excellent response times for basic operations');
     }
 
     if (highestThroughput.throughput > 100) {
-      console.log('✅ High throughput achieved');
+      console.info('✅ High throughput achieved');
     }
 
     if (slowest.avgTime > 100) {
-      console.log(`⚠️ Consider optimizing ${slowest.name} - currently averaging ${slowest.avgTime.toFixed(2)}ms`);
+      console.info(`⚠️ Consider optimizing ${slowest.name} - currently averaging ${slowest.avgTime.toFixed(2)}ms`);
     }
 
     // Save results
@@ -205,20 +205,20 @@ class MCPBenchmark {
     };
 
     Bun.write('./mcp-benchmark-results.json', JSON.stringify(report, null, 2));
-    console.log('\n📄 Results saved to: ./mcp-benchmark-results.json');
+    console.info('\n📄 Results saved to: ./mcp-benchmark-results.json');
   }
 }
 
 // Load Test
 async function loadTest(): Promise<void> {
-  console.log('\n⚡ Load Testing');
-  console.log('===============\n');
+  console.info('\n⚡ Load Testing');
+  console.info('===============\n');
 
   const client = new TensionMCPClient('localhost', 3005);
   const concurrentUsers = [1, 5, 10, 20, 50];
 
   for (const users of concurrentUsers) {
-    console.log(`\nTesting with ${users} concurrent users...`);
+    console.info(`\nTesting with ${users} concurrent users...`);
 
     const promises = Array(users).fill(null).map(async (_, i) => {
       const startTime = performance.now();
@@ -253,16 +253,16 @@ async function loadTest(): Promise<void> {
     const totalErrors = results.reduce((sum, r) => sum + r.errors, 0);
     const avgThroughput = results.reduce((sum, r) => sum + r.throughput, 0) / users;
 
-    console.log(`   Total requests: ${totalRequests}`);
-    console.log(`   Total errors: ${totalErrors}`);
-    console.log(`   Average throughput per user: ${avgThroughput.toFixed(2)} req/s`);
-    console.log(`   Combined throughput: ${(totalRequests / 5).toFixed(2)} req/s`);
+    console.info(`   Total requests: ${totalRequests}`);
+    console.info(`   Total errors: ${totalErrors}`);
+    console.info(`   Average throughput per user: ${avgThroughput.toFixed(2)} req/s`);
+    console.info(`   Combined throughput: ${(totalRequests / 5).toFixed(2)} req/s`);
   }
 }
 
 // Main execution
 async function main() {
-  console.log('Starting MCP Server Benchmark...');
+  console.info('Starting MCP Server Benchmark...');
 
   // Start server on dedicated port
   const serverProcess = Bun.spawn([process.execPath, 'mcp-server.ts'], {
@@ -280,7 +280,7 @@ async function main() {
     // Run load test
     await loadTest();
 
-    console.log('\n✅ All benchmarks completed successfully!');
+    console.info('\n✅ All benchmarks completed successfully!');
 
   } catch (error) {
     console.error('❌ Benchmark failed:', error);

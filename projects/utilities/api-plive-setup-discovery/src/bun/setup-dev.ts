@@ -22,7 +22,7 @@ globalThis.__devMode = true;
 globalThis.__bunVersion = Bun.version;
 
 // Log environment info
-console.log(`🔧 Development mode enabled`);
-console.log(`📊 Bun version: ${Bun.version}`);
-console.log(`🔄 Hot reload: active`);
-console.log(`👀 File watching: active`);
+console.info(`🔧 Development mode enabled`);
+console.info(`📊 Bun version: ${Bun.version}`);
+console.info(`🔄 Hot reload: active`);
+console.info(`👀 File watching: active`);

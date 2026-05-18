@@ -8,7 +8,7 @@
 import { createDynamicTruncator } from '../../shared/dynamic-truncator';
 
 async function benchmarkTruncator() {
-  console.log('🧪 Dynamic Truncator Performance Benchmark\n');
+  console.info('🧪 Dynamic Truncator Performance Benchmark\n');
 
   const truncator = createDynamicTruncator({});
   const testData = [
@@ -25,7 +25,7 @@ async function benchmarkTruncator() {
   const iterations = 1000;
   const latencies: number[] = [];
 
-  console.log(`📊 Running ${iterations} truncation operations...\n`);
+  console.info(`📊 Running ${iterations} truncation operations...\n`);
 
   const startTime = performance.now();
 
@@ -50,55 +50,55 @@ async function benchmarkTruncator() {
   const avg = latencies.reduce((sum, lat) => sum + lat, 0) / latencies.length;
   const throughput = iterations / (totalTime / 1000);
 
-  console.log('📈 Performance Results:');
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log(`Total Operations: ${iterations}`);
-  console.log(`Total Time: ${totalTime.toFixed(2)}ms`);
-  console.log(`Average Latency: ${avg.toFixed(3)}ms`);
-  console.log(`P50 Latency: ${p50.toFixed(3)}ms`);
-  console.log(`P95 Latency: ${p95.toFixed(3)}ms`);
-  console.log(`P99 Latency: ${p99.toFixed(3)}ms`);
-  console.log(`Throughput: ${throughput.toFixed(0)} ops/sec`);
-  console.log();
+  console.info('📈 Performance Results:');
+  console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.info(`Total Operations: ${iterations}`);
+  console.info(`Total Time: ${totalTime.toFixed(2)}ms`);
+  console.info(`Average Latency: ${avg.toFixed(3)}ms`);
+  console.info(`P50 Latency: ${p50.toFixed(3)}ms`);
+  console.info(`P95 Latency: ${p95.toFixed(3)}ms`);
+  console.info(`P99 Latency: ${p99.toFixed(3)}ms`);
+  console.info(`Throughput: ${throughput.toFixed(0)} ops/sec`);
+  console.info();
 
   // Check constraints
   const P99_TARGET = 50; // ms
   const THROUGHPUT_TARGET = 1000; // ops/sec
 
-  console.log('🎯 Constraint Validation:');
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.info('🎯 Constraint Validation:');
+  console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
   const p99Check = p99 <= P99_TARGET;
   const throughputCheck = throughput >= THROUGHPUT_TARGET;
 
-  console.log(`P99 Response Time (≤${P99_TARGET}ms): ${p99Check ? '✅ PASS' : '❌ FAIL'} (${p99.toFixed(3)}ms)`);
-  console.log(`Throughput (≥${THROUGHPUT_TARGET} ops/sec): ${throughputCheck ? '✅ PASS' : '❌ FAIL'} (${throughput.toFixed(0)} ops/sec)`);
+  console.info(`P99 Response Time (≤${P99_TARGET}ms): ${p99Check ? '✅ PASS' : '❌ FAIL'} (${p99.toFixed(3)}ms)`);
+  console.info(`Throughput (≥${THROUGHPUT_TARGET} ops/sec): ${throughputCheck ? '✅ PASS' : '❌ FAIL'} (${throughput.toFixed(0)} ops/sec)`);
 
   if (!p99Check || !throughputCheck) {
-    console.log('\n🚨 CRITICAL: Performance constraints not met!');
-    console.log('This will bottleneck WebSocket realtime streams.');
-    console.log('Consider enabling emergency throttling.');
+    console.info('\n🚨 CRITICAL: Performance constraints not met!');
+    console.info('This will bottleneck WebSocket realtime streams.');
+    console.info('Consider enabling emergency throttling.');
 
     // In a real implementation, you might call:
     // truncator.enableThrottling();
   } else {
-    console.log('\n✅ All performance constraints met!');
-    console.log('Safe for WebSocket realtime stream integration.');
+    console.info('\n✅ All performance constraints met!');
+    console.info('Safe for WebSocket realtime stream integration.');
   }
 
   // Show truncator stats
-  console.log('\n📊 Truncator Internal Stats:');
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.info('\n📊 Truncator Internal Stats:');
+  console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   const stats = truncator.getStats();
-  console.log(`Global Operations: ${stats.global.totalOperations}`);
-  console.log(`Global P99 Time: ${stats.global.p99ResponseTime.toFixed(3)}ms`);
-  console.log(`Active Sessions: ${stats.sessions.length}`);
-  console.log(`Total Cache Size: ${stats.sessions.reduce((sum: number, s: any) => sum + s.cacheSize, 0)}`);
+  console.info(`Global Operations: ${stats.global.totalOperations}`);
+  console.info(`Global P99 Time: ${stats.global.p99ResponseTime.toFixed(3)}ms`);
+  console.info(`Active Sessions: ${stats.sessions.length}`);
+  console.info(`Total Cache Size: ${stats.sessions.reduce((sum: number, s: any) => sum + s.cacheSize, 0)}`);
 
   if (stats.sessions.length > 0) {
-    console.log('\n📋 Session Breakdown:');
+    console.info('\n📋 Session Breakdown:');
     stats.sessions.slice(0, 5).forEach((session: any) => {
-      console.log(`  ${session.sessionId}: ${session.totalTruncations} ops, avg ${session.averageTime.toFixed(3)}ms`);
+      console.info(`  ${session.sessionId}: ${session.totalTruncations} ops, avg ${session.averageTime.toFixed(3)}ms`);
     });
   }
 }

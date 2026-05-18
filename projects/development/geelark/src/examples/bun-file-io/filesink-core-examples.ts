@@ -9,7 +9,7 @@
 
 // Example 1: Basic FileSink usage
 function basicFileSinkUsage() {
-  console.log('📝 Basic FileSink Usage');
+  console.info('📝 Basic FileSink Usage');
 
   const file = Bun.file('./output/basic-sink.txt');
   const writer = file.writer();
@@ -22,7 +22,7 @@ function basicFileSinkUsage() {
 
   // Flush to ensure data is written to disk
   writer.flush();
-  console.log('✅ Data flushed to disk');
+  console.info('✅ Data flushed to disk');
 
   // Continue writing more data
   writer.write("This is additional content.\n");
@@ -30,12 +30,12 @@ function basicFileSinkUsage() {
 
   // End the writer (auto-flushes and closes file)
   writer.end();
-  console.log('✅ Writer ended - file closed');
+  console.info('✅ Writer ended - file closed');
 }
 
 // Example 2: Writing different data types
 function writingDataTypes() {
-  console.log('\n🔄 Writing Different Data Types');
+  console.info('\n🔄 Writing Different Data Types');
 
   const file = Bun.file('./output/data-types.bin');
   const writer = file.writer();
@@ -55,35 +55,35 @@ function writingDataTypes() {
 
   writer.flush();
   writer.end();
-  console.log('✅ Multiple data types written');
+  console.info('✅ Multiple data types written');
 }
 
 // Example 3: Custom buffer size (highWaterMark)
 function customBufferSize() {
-  console.log('\n📊 Custom Buffer Size');
+  console.info('\n📊 Custom Buffer Size');
 
   // Create writer with 1MB buffer
   const file = Bun.file('./output/large-buffer.txt');
   const writer = file.writer({ highWaterMark: 1024 * 1024 });
 
-  console.log(`📏 Buffer size: ${1024 * 1024} bytes (1MB)`);
+  console.info(`📏 Buffer size: ${1024 * 1024} bytes (1MB)`);
 
   // Write data that will be buffered
   const largeChunk = 'x'.repeat(500 * 1024); // 500KB chunk
   writer.write(largeChunk);
-  console.log('📝 500KB written (still in buffer)');
+  console.info('📝 500KB written (still in buffer)');
 
   // Write another chunk - this will trigger auto-flush when buffer is full
   writer.write(largeChunk);
-  console.log('📝 Another 500KB written (buffer should auto-flush)');
+  console.info('📝 Another 500KB written (buffer should auto-flush)');
 
   writer.end();
-  console.log('✅ Custom buffer example completed');
+  console.info('✅ Custom buffer example completed');
 }
 
 // Example 4: Manual vs Auto flushing
 function flushingBehavior() {
-  console.log('\n💾 Manual vs Auto Flushing');
+  console.info('\n💾 Manual vs Auto Flushing');
 
   const file = Bun.file('./output/flushing-demo.txt');
   const writer = file.writer({ highWaterMark: 1024 }); // 1KB buffer for demo
@@ -93,11 +93,11 @@ function flushingBehavior() {
   writer.write("Small chunk 2\n");
   writer.write("Small chunk 3\n");
 
-  console.log('📝 Small chunks written (buffered, not flushed yet)');
+  console.info('📝 Small chunks written (buffered, not flushed yet)');
 
   // Manual flush
   writer.flush();
-  console.log('💾 Manually flushed buffer');
+  console.info('💾 Manually flushed buffer');
 
   // Write more data
   writer.write("After manual flush\n");
@@ -105,15 +105,15 @@ function flushingBehavior() {
   // Write enough to trigger auto-flush
   const largeChunk = 'x'.repeat(2048); // 2KB (exceeds 1KB buffer)
   writer.write(largeChunk);
-  console.log('📝 Large chunk written (should auto-flush)');
+  console.info('📝 Large chunk written (should auto-flush)');
 
   writer.end();
-  console.log('✅ Flushing behavior demo completed');
+  console.info('✅ Flushing behavior demo completed');
 }
 
 // Example 5: Error handling with FileSink
 function errorHandling() {
-  console.log('\n🛡️ Error Handling');
+  console.info('\n🛡️ Error Handling');
 
   const file = Bun.file('./output/error-demo.txt');
   const writer = file.writer();
@@ -130,7 +130,7 @@ function errorHandling() {
 
     writer.write("Operation completed successfully\n");
     writer.end();
-    console.log('✅ No errors occurred');
+    console.info('✅ No errors occurred');
 
   } catch (error) {
     console.error('❌ Error caught:', error.message);
@@ -138,7 +138,7 @@ function errorHandling() {
     // Ensure cleanup even on error
     try {
       writer.end();
-      console.log('✅ Writer properly closed after error');
+      console.info('✅ Writer properly closed after error');
     } catch (cleanupError) {
       console.error('❌ Error during cleanup:', cleanupError);
     }
@@ -147,7 +147,7 @@ function errorHandling() {
 
 // Example 6: Real-time logging simulation
 function realTimeLogging() {
-  console.log('\n📊 Real-time Logging Simulation');
+  console.info('\n📊 Real-time Logging Simulation');
 
   const file = Bun.file('./output/real-time.log');
   const writer = file.writer({ highWaterMark: 4096 }); // 4KB buffer
@@ -165,23 +165,23 @@ function realTimeLogging() {
   logMessages.forEach((log, index) => {
     const logLine = `[${log.level}] ${log.timestamp.toISOString()}: ${log.message}\n`;
     writer.write(logLine);
-    console.log(`📝 Logged: ${log.level} - ${log.message}`);
+    console.info(`📝 Logged: ${log.level} - ${log.message}`);
 
     // Flush every few log entries
     if ((index + 1) % 3 === 0) {
       writer.flush();
-      console.log('💾 Log buffer flushed');
+      console.info('💾 Log buffer flushed');
     }
   });
 
   writer.end();
-  console.log('✅ Real-time logging completed');
+  console.info('✅ Real-time logging completed');
 }
 
 // Main execution
 async function runCoreExamples() {
-  console.log('🚀 Bun FileSink API - Core Examples');
-  console.log('====================================\n');
+  console.info('🚀 Bun FileSink API - Core Examples');
+  console.info('====================================\n');
 
   try {
     // Ensure output directory exists
@@ -198,8 +198,8 @@ async function runCoreExamples() {
     errorHandling();
     realTimeLogging();
 
-    console.log('\n🎉 All core examples completed!');
-    console.log('📁 Check ./output/ directory for generated files');
+    console.info('\n🎉 All core examples completed!');
+    console.info('📁 Check ./output/ directory for generated files');
 
   } catch (error) {
     console.error('\n❌ Error:', error);

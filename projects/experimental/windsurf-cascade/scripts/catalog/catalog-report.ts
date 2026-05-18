@@ -454,23 +454,23 @@ async function main() {
                     join(process.cwd(), 'catalog-report.md');
   
   try {
-    console.log('📊 Generating comprehensive catalog report...\n');
+    console.info('📊 Generating comprehensive catalog report...\n');
     
     const reporter = new CatalogReporter();
     const markdown = reporter.generateMarkdownReport();
     
     writeFileSync(outputPath, markdown);
     
-    console.log(`✅ Report generated successfully!`);
-    console.log(`📄 Saved to: ${outputPath}`);
-    console.log('\n📊 Report Summary:');
+    console.info(`✅ Report generated successfully!`);
+    console.info(`📄 Saved to: ${outputPath}`);
+    console.info('\n📊 Report Summary:');
     
     const report = reporter.generateReport();
-    console.log(`   Total packages: ${report.summary.totalPackages}`);
-    console.log(`   Catalog coverage: ${report.summary.catalogCoverage}%`);
-    console.log(`   Catalog entries: ${report.summary.totalCatalogEntries}`);
-    console.log(`   Orphaned entries: ${report.summary.orphanedEntries}`);
-    console.log(`   Recommendations: ${report.recommendations.length}`);
+    console.info(`   Total packages: ${report.summary.totalPackages}`);
+    console.info(`   Catalog coverage: ${report.summary.catalogCoverage}%`);
+    console.info(`   Catalog entries: ${report.summary.totalCatalogEntries}`);
+    console.info(`   Orphaned entries: ${report.summary.orphanedEntries}`);
+    console.info(`   Recommendations: ${report.recommendations.length}`);
     
   } catch (error) {
     console.error('❌ Report generation failed:', error);

@@ -135,7 +135,7 @@ export class SQLitePerformanceBenchmark {
     };
 
     // Use Bun v1.3.6 fast JSON serialization
-    console.log("%j", { metadata: jsonData.metadata }); // 3x faster serialization
+    console.info("%j", { metadata: jsonData.metadata }); // 3x faster serialization
 
     const jsonString = JSON.stringify(jsonData);
     const insert = this.db.prepare(`
@@ -231,42 +231,42 @@ export class SQLitePerformanceBenchmark {
   }
 
   async runFullBenchmark(): Promise<BenchmarkResult[]> {
-    console.log("🚀 Running SQLite 3.51.2 Performance Benchmark");
+    console.info("🚀 Running SQLite 3.51.2 Performance Benchmark");
 
     const results: BenchmarkResult[] = [];
 
     // Test 1: DISTINCT and OFFSET improvements
-    console.log("📊 Testing DISTINCT + OFFSET performance...");
+    console.info("📊 Testing DISTINCT + OFFSET performance...");
     results.push(await this.benchmarkDistinctAndOffset());
 
     // Test 2: JSON operations with Bun serialization
-    console.log("📝 Testing JSON operations...");
+    console.info("📝 Testing JSON operations...");
     results.push(await this.benchmarkJSONOperations());
 
     // Test 3: Cursor renumbering improvements
-    console.log("🔄 Testing cursor renumbering...");
+    console.info("🔄 Testing cursor renumbering...");
     results.push(await this.benchmarkCursorRenumbering());
 
     return results;
   }
 
   printResults(results: BenchmarkResult[]): void {
-    console.log("\n✅ SQLite 3.51.2 Benchmark Results:");
-    console.log("=" * 60);
+    console.info("\n✅ SQLite 3.51.2 Benchmark Results:");
+    console.info("=" * 60);
 
     for (const result of results) {
-      console.log(`\n🔍 ${result.operation}`);
-      console.log(`   Duration: ${result.duration.toFixed(2)}ms`);
-      console.log(`   Throughput: ${result.throughput.toFixed(2)} MB/s`);
-      console.log(`   Rows Affected: ${result.rowsAffected}`);
-      console.log(`   Features: ${result.features.join(", ")}`);
+      console.info(`\n🔍 ${result.operation}`);
+      console.info(`   Duration: ${result.duration.toFixed(2)}ms`);
+      console.info(`   Throughput: ${result.throughput.toFixed(2)} MB/s`);
+      console.info(`   Rows Affected: ${result.rowsAffected}`);
+      console.info(`   Features: ${result.features.join(", ")}`);
     }
 
-    console.log("\n🎯 SQLite 3.51.2 Improvements Demonstrated:");
-    console.log("   • Enhanced DISTINCT and OFFSET clause handling");
-    console.log("   • Improved WAL mode locking behavior");
-    console.log("   • Optimized cursor renumbering");
-    console.log("   • Better integration with Bun v1.3.6 features");
+    console.info("\n🎯 SQLite 3.51.2 Improvements Demonstrated:");
+    console.info("   • Enhanced DISTINCT and OFFSET clause handling");
+    console.info("   • Improved WAL mode locking behavior");
+    console.info("   • Optimized cursor renumbering");
+    console.info("   • Better integration with Bun v1.3.6 features");
   }
 
   close(): void {

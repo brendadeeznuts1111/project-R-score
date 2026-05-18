@@ -73,4 +73,4 @@ function generateGoldenMatrixStatus() {
 }
 
 // Output the status
-console.log(JSON.stringify(generateGoldenMatrixStatus(), null, 2));
+console.info(JSON.stringify(generateGoldenMatrixStatus(), null, 2));

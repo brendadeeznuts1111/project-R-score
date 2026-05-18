@@ -27,11 +27,11 @@ const colors = {
 };
 
 async function printBanner() {
-  console.log(colors.cyan + colors.bright);
-  console.log('╔══════════════════════════════════════════════════════╗');
-  console.log('║         🚀 Fire22 Dashboard Session Init 🚀          ║');
-  console.log('╚══════════════════════════════════════════════════════╝');
-  console.log(colors.reset);
+  console.info(colors.cyan + colors.bright);
+  console.info('╔══════════════════════════════════════════════════════╗');
+  console.info('║         🚀 Fire22 Dashboard Session Init 🚀          ║');
+  console.info('╚══════════════════════════════════════════════════════╝');
+  console.info(colors.reset);
 }
 
 async function checkExistingSession(): Promise<boolean> {
@@ -41,7 +41,7 @@ async function checkExistingSession(): Promise<boolean> {
     const hoursSinceStart = (Date.now() - sessionTime.getTime()) / (1000 * 60 * 60);
 
     if (hoursSinceStart < 24) {
-      console.log(
+      console.info(
         colors.green +
           '✓' +
           colors.reset +
@@ -77,7 +77,7 @@ async function setupTokenFromEnv(): Promise<boolean> {
       name: TOKEN_NAME,
       value: process.env.FIRE22_REGISTRY_TOKEN,
     });
-    console.log(colors.green + '✓' + colors.reset + ' Token configured from environment');
+    console.info(colors.green + '✓' + colors.reset + ' Token configured from environment');
     return true;
   }
 
@@ -94,7 +94,7 @@ async function setupTokenFromEnv(): Promise<boolean> {
           name: TOKEN_NAME,
           value: match[1].trim(),
         });
-        console.log(colors.green + '✓' + colors.reset + ` Token configured from ${file}`);
+        console.info(colors.green + '✓' + colors.reset + ` Token configured from ${file}`);
         return true;
       }
     }
@@ -117,22 +117,22 @@ async function testRegistryConnection(token: string): Promise<boolean> {
 }
 
 async function promptForToken(): Promise<string | null> {
-  console.log(colors.yellow + '\n⚠️  No registry token found' + colors.reset);
-  console.log('\nOptions:');
-  console.log(
+  console.info(colors.yellow + '\n⚠️  No registry token found' + colors.reset);
+  console.info('\nOptions:');
+  console.info(
     '1. Set token via environment: ' +
       colors.cyan +
       'FIRE22_REGISTRY_TOKEN=xxx bun run dev' +
       colors.reset
   );
-  console.log(
+  console.info(
     '2. Add to .env file: ' +
       colors.cyan +
       "echo 'FIRE22_REGISTRY_TOKEN=xxx' >> .env" +
       colors.reset
   );
-  console.log('3. Continue without private registry (use npm only)');
-  console.log('');
+  console.info('3. Continue without private registry (use npm only)');
+  console.info('');
 
   // For now, return null to continue without token
   // In future, could add interactive prompt
@@ -146,19 +146,19 @@ async function initializeSession() {
   if (await checkExistingSession()) {
     const token = await getStoredToken();
     if (token && (await testRegistryConnection(token))) {
-      console.log(colors.green + '✓' + colors.reset + ' Registry authentication active');
-      console.log(colors.blue + '\n📦 Ready to install private packages!' + colors.reset);
+      console.info(colors.green + '✓' + colors.reset + ' Registry authentication active');
+      console.info(colors.blue + '\n📦 Ready to install private packages!' + colors.reset);
       return;
     }
   }
 
-  console.log(colors.blue + '🔄 Initializing new session...' + colors.reset);
+  console.info(colors.blue + '🔄 Initializing new session...' + colors.reset);
 
   // Try to get token from various sources
   let token = await getStoredToken();
 
   if (!token) {
-    console.log(
+    console.info(
       colors.yellow + '→' + colors.reset + ' No stored token found, checking environment...'
     );
     if (await setupTokenFromEnv()) {
@@ -170,7 +170,7 @@ async function initializeSession() {
   if (token) {
     process.stdout.write(colors.yellow + '→' + colors.reset + ' Testing registry connection... ');
     if (await testRegistryConnection(token)) {
-      console.log(colors.green + '✓ Success!' + colors.reset);
+      console.info(colors.green + '✓ Success!' + colors.reset);
 
       // Create session marker
       writeFileSync(SESSION_MARKER, new Date().toISOString());
@@ -178,26 +178,26 @@ async function initializeSession() {
       // Export for current session
       process.env.FIRE22_REGISTRY_TOKEN = token;
 
-      console.log(colors.green + '\n✅ Session initialized successfully!' + colors.reset);
-      console.log(
+      console.info(colors.green + '\n✅ Session initialized successfully!' + colors.reset);
+      console.info(
         colors.blue + '📦 Private registry: ' + colors.bright + REGISTRY_URL + colors.reset
       );
-      console.log(colors.blue + '🔐 Authentication: ' + colors.bright + 'Active' + colors.reset);
-      console.log(
+      console.info(colors.blue + '🔐 Authentication: ' + colors.bright + 'Active' + colors.reset);
+      console.info(
         colors.blue + '⏱️  Session duration: ' + colors.bright + '24 hours' + colors.reset
       );
     } else {
-      console.log(colors.red + '✗ Failed!' + colors.reset);
-      console.log(colors.yellow + '⚠️  Token appears to be invalid' + colors.reset);
+      console.info(colors.red + '✗ Failed!' + colors.reset);
+      console.info(colors.yellow + '⚠️  Token appears to be invalid' + colors.reset);
       await promptForToken();
     }
   } else {
     await promptForToken();
-    console.log(colors.yellow + '\n⚠️  Continuing without private registry access' + colors.reset);
-    console.log(colors.yellow + '   Only public npm packages will be available' + colors.reset);
+    console.info(colors.yellow + '\n⚠️  Continuing without private registry access' + colors.reset);
+    console.info(colors.yellow + '   Only public npm packages will be available' + colors.reset);
   }
 
-  console.log(
+  console.info(
     colors.cyan + '\n═══════════════════════════════════════════════════════' + colors.reset
   );
 }
@@ -208,21 +208,21 @@ async function showStatus() {
   const token = await getStoredToken();
   const isConnected = token ? await testRegistryConnection(token) : false;
 
-  console.log('\n' + colors.bright + 'Session Status:' + colors.reset);
-  console.log(
+  console.info('\n' + colors.bright + 'Session Status:' + colors.reset);
+  console.info(
     '├─ Session: ' + (hasSession ? colors.green + 'Active' : colors.red + 'Inactive') + colors.reset
   );
-  console.log(
+  console.info(
     '├─ Token: ' +
       (token ? colors.green + 'Configured' : colors.red + 'Not configured') +
       colors.reset
   );
-  console.log(
+  console.info(
     '├─ Registry: ' +
       (isConnected ? colors.green + 'Connected' : colors.red + 'Disconnected') +
       colors.reset
   );
-  console.log('└─ URL: ' + colors.blue + REGISTRY_URL + colors.reset);
+  console.info('└─ URL: ' + colors.blue + REGISTRY_URL + colors.reset);
 }
 
 // Handle commands
@@ -236,7 +236,7 @@ switch (command) {
   case 'reset':
     if (existsSync(SESSION_MARKER)) {
       require('fs').unlinkSync(SESSION_MARKER);
-      console.log(colors.green + '✓' + colors.reset + ' Session reset');
+      console.info(colors.green + '✓' + colors.reset + ' Session reset');
     }
     await initializeSession();
     break;
@@ -251,7 +251,7 @@ switch (command) {
         name: TOKEN_NAME,
       })
       .catch(() => {});
-    console.log(colors.green + '✓' + colors.reset + ' Session and credentials cleared');
+    console.info(colors.green + '✓' + colors.reset + ' Session and credentials cleared');
     break;
 
   default:

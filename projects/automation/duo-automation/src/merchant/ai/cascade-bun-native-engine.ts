@@ -31,18 +31,18 @@ interface MockBuffer {
 
 // Mock implementations for TypeScript compatibility
 const createBunDatabase = (path?: string): BunDatabase => ({
-  exec: (sql: string) => console.log(`[DB] ${sql}`),
+  exec: (sql: string) => console.info(`[DB] ${sql}`),
   query: (sql: string) => ({ get: () => ({}), all: () => [] }),
-  prepare: (sql: string) => ({ run: (...args: any[]) => console.log(`[Prepared] ${sql}`, args) })
+  prepare: (sql: string) => ({ run: (...args: any[]) => console.info(`[Prepared] ${sql}`, args) })
 });
 
 const createBunWorker = (script: string, options?: any): BunWorker => ({
-  postMessage: (message: any) => console.log(`[Worker] ${script}`, message),
-  on: (event: string, handler: Function) => console.log(`[Worker Event] ${event}`)
+  postMessage: (message: any) => console.info(`[Worker] ${script}`, message),
+  on: (event: string, handler: Function) => console.info(`[Worker Event] ${event}`)
 });
 
 const createBunTimer = (): BunTimer => (callback: Function, delay: number) => {
-  console.log(`[Timer] Scheduled in ${delay}ms`);
+  console.info(`[Timer] Scheduled in ${delay}ms`);
   setTimeout(callback, delay);
 };
 
@@ -69,11 +69,11 @@ const BunMock = {
   nanoseconds: (): number => performance.now() * 1000000,
   atomic: (callback: Function): void => callback(),
   gzipSync: (data: MockBuffer): MockBuffer => {
-    console.log(`[Gzip] Compressed ${data.length} bytes`);
+    console.info(`[Gzip] Compressed ${data.length} bytes`);
     return data; // Mock compression
   },
   gunzipSync: (data: MockBuffer): MockBuffer => {
-    console.log(`[Gunzip] Decompressed ${data.length} bytes`);
+    console.info(`[Gunzip] Decompressed ${data.length} bytes`);
     return data; // Mock decompression
   },
   timer: createBunTimer()
@@ -168,7 +168,7 @@ export class BunCascadeEngine {
       sharedArrayBuffer: new SharedArrayBuffer(1024 * 1024),
     });
     
-    console.log('🚀 Bun Cascade Engine initialized with hardware acceleration');
+    console.info('🚀 Bun Cascade Engine initialized with hardware acceleration');
   }
   
   private initializeDatabase(): void {
@@ -223,7 +223,7 @@ export class BunCascadeEngine {
     ).get(contextHash);
     
     if (cached) {
-      console.log(`⚡ Cache hit for context hash: ${contextHash.toString(16)}`);
+      console.info(`⚡ Cache hit for context hash: ${contextHash.toString(16)}`);
       return this.db.query(
         `SELECT * FROM cascade_rules WHERE rule_id = ?` 
       ).all(cached.rule_id);
@@ -247,7 +247,7 @@ export class BunCascadeEngine {
       ).run(contextHash, matches[0].rule_id, Date.now());
     }
     
-    console.log(`🎯 Found ${matches.length} matching rules in ${Date.now() - context.timestamp.getTime()}ms`);
+    console.info(`🎯 Found ${matches.length} matching rules in ${Date.now() - context.timestamp.getTime()}ms`);
     return matches;
   }
   
@@ -300,7 +300,7 @@ export class BunCascadeEngine {
       accessedAt: new Date(memory.accessed_at)
     }));
     
-    console.log(`🧠 Retrieved ${parsedMemories.length} relevant memories for merchant ${merchantId}`);
+    console.info(`🧠 Retrieved ${parsedMemories.length} relevant memories for merchant ${merchantId}`);
     return parsedMemories;
   }
   
@@ -382,7 +382,7 @@ export class BunCascadeEngine {
     
     // Track performance metrics
     const totalDuration = performance.now() - startTime;
-    console.log(`⚡ Executed ${skills.length} skills in ${totalDuration.toFixed(2)}ms`);
+    console.info(`⚡ Executed ${skills.length} skills in ${totalDuration.toFixed(2)}ms`);
     
     // Store performance data
     executionResults.forEach(result => {
@@ -510,7 +510,7 @@ export class BunCascadeEngine {
   
   // Continuous optimization loop
   startOptimizationLoop(): void {
-    console.log('🔄 Starting continuous optimization loop...');
+    console.info('🔄 Starting continuous optimization loop...');
     
     BunMock.timer(() => {
       this.optimizeMemories();
@@ -520,14 +520,14 @@ export class BunCascadeEngine {
   }
   
   private optimizeMemories(): void {
-    console.log('🧠 Optimizing memory storage...');
+    console.info('🧠 Optimizing memory storage...');
     // Remove stale memories and compress old ones
     const cutoff = Date.now() - (90 * 24 * 60 * 60 * 1000); // 90 days
     this.db.query(`DELETE FROM cascade_memories WHERE accessed_at < ?`).run(cutoff);
   }
   
   private retrainSkills(): void {
-    console.log('🎓 Retraining skill weights...');
+    console.info('🎓 Retraining skill weights...');
     // Adjust skill weights based on recent performance
     const recentPerformance = this.db.query(`
       SELECT skill_id, AVG(duration) as avg_duration, AVG(success) as success_rate
@@ -536,11 +536,11 @@ export class BunCascadeEngine {
       GROUP BY skill_id
     `).all(Date.now() - (7 * 24 * 60 * 60 * 1000)); // Last 7 days
     
-    console.log(`📊 Analyzed performance for ${recentPerformance.length} skills`);
+    console.info(`📊 Analyzed performance for ${recentPerformance.length} skills`);
   }
   
   private rebuildRuleCache(): void {
-    console.log('🗑️ Rebuilding rule cache...');
+    console.info('🗑️ Rebuilding rule cache...');
     // Clear stale cache entries
     const cutoff = Date.now() - (60 * 60 * 1000); // 1 hour
     this.db.query(`DELETE FROM rule_cache WHERE cached_at < ?`).run(cutoff);

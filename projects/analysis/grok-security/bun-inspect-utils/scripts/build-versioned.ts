@@ -42,7 +42,7 @@ async function generateVersionFiles(
   }
 
   const version = VersionManager.getFullVersion();
-  console.log(`📦 Building version: ${version}`);
+  console.info(`📦 Building version: ${version}`);
 
   // Create output directory
   await mkdir(outdir, { recursive: true });
@@ -50,16 +50,16 @@ async function generateVersionFiles(
   // Generate version.ts
   const versionTs = BuildVersionGenerator.generateConstant();
   await writeFile(join(outdir, "version.ts"), versionTs);
-  console.log(`✅ Generated: ${outdir}/version.ts`);
+  console.info(`✅ Generated: ${outdir}/version.ts`);
 
   // Generate version.json
   const versionJson = BuildVersionGenerator.generateJSON();
   await writeFile(join(outdir, "version.json"), versionJson);
-  console.log(`✅ Generated: ${outdir}/version.json`);
+  console.info(`✅ Generated: ${outdir}/version.json`);
 
   // Generate version header
   const header = BuildVersionGenerator.generateHeader();
-  console.log(header);
+  console.info(header);
 
   return version;
 }
@@ -68,7 +68,7 @@ async function generateVersionFiles(
  * [1.3.0.0] Run Bun build
  */
 async function runBuild(outdir: string): Promise<void> {
-  console.log("\n🔨 Running Bun build...");
+  console.info("\n🔨 Running Bun build...");
 
   const result = await Bun.build({
     entrypoints: ["./src/index.ts"],
@@ -86,9 +86,9 @@ async function runBuild(outdir: string): Promise<void> {
     process.exit(1);
   }
 
-  console.log("✅ Build completed successfully");
+  console.info("✅ Build completed successfully");
   for (const output of result.outputs) {
-    console.log(`   📄 ${output.path}`);
+    console.info(`   📄 ${output.path}`);
   }
 }
 
@@ -106,7 +106,7 @@ async function createArchive(
 
   await mkdir(archivePath, { recursive: true });
 
-  console.log(`\n📦 Creating archive: ${archivePath}`);
+  console.info(`\n📦 Creating archive: ${archivePath}`);
 
   // Copy dist files to archive
   const distFiles = await Bun.glob("**/*", { cwd: outdir });
@@ -133,8 +133,8 @@ async function createArchive(
     JSON.stringify(manifest, null, 2)
   );
 
-  console.log(`✅ Archive created: ${archivePath}`);
-  console.log(`   📊 Files: ${distFiles.length}`);
+  console.info(`✅ Archive created: ${archivePath}`);
+  console.info(`   📊 Files: ${distFiles.length}`);
 }
 
 /**
@@ -143,8 +143,8 @@ async function createArchive(
 async function main(): Promise<void> {
   const options = parseArgs();
 
-  console.log("🚀 Versioned Build System");
-  console.log("========================\n");
+  console.info("🚀 Versioned Build System");
+  console.info("========================\n");
 
   try {
     // Generate version files
@@ -158,9 +158,9 @@ async function main(): Promise<void> {
       await createArchive(options.outdir, version);
     }
 
-    console.log("\n✅ Build completed successfully!");
-    console.log(`   Version: ${version}`);
-    console.log(`   Output: ${options.outdir}`);
+    console.info("\n✅ Build completed successfully!");
+    console.info(`   Version: ${version}`);
+    console.info(`   Output: ${options.outdir}`);
   } catch (error) {
     console.error("❌ Build failed:", error);
     process.exit(1);

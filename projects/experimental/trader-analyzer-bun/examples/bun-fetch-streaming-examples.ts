@@ -25,15 +25,15 @@ export async function streamBasicExample(url: string): Promise<void> {
 		throw new Error("Response body is not streamable");
 	}
 
-	console.log("Starting to stream response...");
+	console.info("Starting to stream response...");
 
 	let totalBytes = 0;
 	for await (const chunk of response.body) {
 		totalBytes += chunk.length;
-		console.log(`Received chunk: ${chunk.length} bytes (total: ${totalBytes})`);
+		console.info(`Received chunk: ${chunk.length} bytes (total: ${totalBytes})`);
 	}
 
-	console.log(`Stream complete. Total bytes: ${totalBytes}`);
+	console.info(`Stream complete. Total bytes: ${totalBytes}`);
 }
 
 /**
@@ -185,7 +185,7 @@ export async function streamToFile(
 
 	// Bun optimizes this - uses sendfile when possible
 	await Bun.write(outputPath, response);
-	console.log(`File saved to: ${outputPath}`);
+	console.info(`File saved to: ${outputPath}`);
 }
 
 /**
@@ -217,7 +217,7 @@ export async function streamWithErrorHandling(
 			if (done) break;
 
 			const text = decoder.decode(value, { stream: true });
-			console.log("Chunk:", text.substring(0, 100)); // Log first 100 chars
+			console.info("Chunk:", text.substring(0, 100)); // Log first 100 chars
 		}
 	} catch (error: unknown) {
 		const errorMessage =
@@ -256,7 +256,7 @@ export async function streamCorrelationGraph(
 	const decoder = new TextDecoder();
 	let buffer = "";
 
-	console.log(`Streaming correlation graph for event: ${eventId}`);
+	console.info(`Streaming correlation graph for event: ${eventId}`);
 
 	for await (const chunk of response.body) {
 		buffer += decoder.decode(chunk, { stream: true });
@@ -264,7 +264,7 @@ export async function streamCorrelationGraph(
 		// Try to parse complete JSON objects as they arrive
 		try {
 			const data = JSON.parse(buffer);
-			console.log("Graph data received:", {
+			console.info("Graph data received:", {
 				eventId: data.eventId,
 				layers: data.layers?.length || 0,
 				nodes: data.nodes?.length || 0,
@@ -313,12 +313,12 @@ export async function streamLogs(
 					message?: string;
 					timestamp?: string;
 				};
-				console.log(
+				console.info(
 					`[${log.level || "INFO"}] ${log.timestamp || ""} ${log.message || line}`,
 				);
 			} catch {
 				// Not JSON, print as-is
-				console.log(line);
+				console.info(line);
 			}
 		}
 	}
@@ -333,7 +333,7 @@ export async function streamWithTimeout(
 	url: string,
 	timeoutMs: number,
 ): Promise<void> {
-	console.log(`Streaming ${url} with ${timeoutMs}ms timeout...`);
+	console.info(`Streaming ${url} with ${timeoutMs}ms timeout...`);
 
 	try {
 		const response = await fetch(url, {
@@ -354,10 +354,10 @@ export async function streamWithTimeout(
 		for await (const chunk of response.body) {
 			totalBytes += chunk.length;
 			const text = decoder.decode(chunk, { stream: true });
-			console.log(`Received: ${chunk.length} bytes (total: ${totalBytes})`);
+			console.info(`Received: ${chunk.length} bytes (total: ${totalBytes})`);
 		}
 
-		console.log(`Stream complete. Total: ${totalBytes} bytes`);
+		console.info(`Stream complete. Total: ${totalBytes} bytes`);
 	} catch (error: unknown) {
 		if (error instanceof Error && error.name === "AbortError") {
 			console.error(`❌ Request timed out after ${timeoutMs}ms`);
@@ -377,7 +377,7 @@ export async function streamWithTimeoutRetry(
 	timeoutMs: number,
 	maxRetries: number = 3,
 ): Promise<void> {
-	console.log(
+	console.info(
 		`Streaming ${url} with ${timeoutMs}ms timeout (max ${maxRetries} retries)...`,
 	);
 
@@ -385,7 +385,7 @@ export async function streamWithTimeoutRetry(
 		try {
 			if (attempt > 0) {
 				const backoffMs = 1000 * Math.pow(2, attempt - 1);
-				console.log(`Retry attempt ${attempt + 1}/${maxRetries} after ${backoffMs}ms...`);
+				console.info(`Retry attempt ${attempt + 1}/${maxRetries} after ${backoffMs}ms...`);
 				await new Promise((resolve) => setTimeout(resolve, backoffMs));
 			}
 
@@ -407,10 +407,10 @@ export async function streamWithTimeoutRetry(
 			for await (const chunk of response.body) {
 				totalBytes += chunk.length;
 				const text = decoder.decode(chunk, { stream: true });
-				console.log(`Received: ${chunk.length} bytes (total: ${totalBytes})`);
+				console.info(`Received: ${chunk.length} bytes (total: ${totalBytes})`);
 			}
 
-			console.log(`✅ Stream complete. Total: ${totalBytes} bytes`);
+			console.info(`✅ Stream complete. Total: ${totalBytes} bytes`);
 			return;
 		} catch (error: unknown) {
 			if (error instanceof Error && error.name === "AbortError") {
@@ -444,7 +444,7 @@ if (import.meta.main) {
 			for await (const item of streamJSONLines(
 				process.argv[3] || "https://example.com/ndjson",
 			)) {
-				console.log("Item:", item);
+				console.info("Item:", item);
 			}
 			break;
 
@@ -452,16 +452,16 @@ if (import.meta.main) {
 			for await (const row of streamCSV(
 				process.argv[3] || "https://example.com/data.csv",
 			)) {
-				console.log("Row:", row);
+				console.info("Row:", row);
 			}
 			break;
 
 		case "progress":
 			await streamWithProgress(process.argv[3] || "https://example.com", (progress) => {
 				if (progress.percent !== null) {
-					console.log(`Progress: ${progress.percent.toFixed(2)}%`);
+					console.info(`Progress: ${progress.percent.toFixed(2)}%`);
 				} else {
-					console.log(`Received: ${progress.received} bytes`);
+					console.info(`Received: ${progress.received} bytes`);
 				}
 			});
 			break;
@@ -497,7 +497,7 @@ if (import.meta.main) {
 			break;
 
 		default:
-			console.log(`
+			console.info(`
 Bun Fetch Streaming Examples
 
 Usage:

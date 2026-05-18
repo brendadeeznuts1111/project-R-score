@@ -343,7 +343,7 @@ export class MCPServer {
       if (!securityAnalysis.isValid) {
         // Structured security violation logging
         const securityKey = `sec-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
-        console.log("SECURITY_VIOLATION %j %s", {
+        console.info("SECURITY_VIOLATION %j %s", {
           key: securityKey,
           timestamp: new Date().toISOString(),
           runtime: typeof Bun !== 'undefined' ? 'bun' : 'node',
@@ -473,7 +473,7 @@ export class MCPServer {
       // Enhanced performance logging with structured JSON output
       if (requestDuration > 10) { // Log slow requests
         const logKey = `perf-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
-        console.log("SLOW_REQUEST %j %s", {
+        console.info("SLOW_REQUEST %j %s", {
           key: logKey,
           timestamp: new Date().toISOString(),
           runtime: typeof Bun !== 'undefined' ? 'bun' : 'node',
@@ -517,7 +517,7 @@ export class MCPServer {
 
       // Structured error logging with JSON
       const errorKey = `err-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
-      console.log("REQUEST_ERROR %j %s", {
+      console.info("REQUEST_ERROR %j %s", {
         key: errorKey,
         timestamp: new Date().toISOString(),
         runtime: typeof Bun !== 'undefined' ? 'bun' : 'node',

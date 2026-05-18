@@ -88,7 +88,7 @@ interface DashboardConfiguration {
 
 describe("System Dashboards - Comprehensive Test Suite", () => {
   beforeAll(() => {
-    console.log("🚀 Setting up System Dashboards test environment...");
+    console.info("🚀 Setting up System Dashboards test environment...");
 
     // Use real DOM with happy-dom
     mockDOM.body = document.body;
@@ -116,18 +116,18 @@ describe("System Dashboards - Comprehensive Test Suite", () => {
     mockDOM.container.appendChild(mockDOM.header);
     mockDOM.container.appendChild(mockDOM.dashboardsGrid);
 
-    console.log("✅ System Dashboards test environment ready");
+    console.info("✅ System Dashboards test environment ready");
   });
 
   afterAll(() => {
-    console.log("🧹 Cleaning up System Dashboards test environment...");
+    console.info("🧹 Cleaning up System Dashboards test environment...");
 
     // Clean up DOM
     if (mockDOM.body) {
       mockDOM.body.innerHTML = "";
     }
 
-    console.log("✅ System Dashboards test environment cleaned up");
+    console.info("✅ System Dashboards test environment cleaned up");
   });
 
   beforeEach(() => {
@@ -654,4 +654,4 @@ async function fetchDashboardData(dashboardId: string): Promise<Response> {
   });
 }
 
-console.log("✅ System Dashboards test suite completed!");
+console.info("✅ System Dashboards test suite completed!");

@@ -107,7 +107,7 @@ export class R2MCPIntegration {
       }
 
       this.initialized = true;
-      console.log(styled('✅ R2 integration initialized', 'success'));
+      console.info(styled('✅ R2 integration initialized', 'success'));
     } catch (error) {
       handleError(error, 'R2MCPIntegration.initialize', ErrorSeverity.CRITICAL);
       throw error;
@@ -286,7 +286,7 @@ export class R2MCPIntegration {
       }
 
       // Fetch from R2 (simulated - in production would use actual R2 client)
-      console.log(styled(`📥 Retrieving JSON: ${validatedKey}`, 'muted'));
+      console.info(styled(`📥 Retrieving JSON: ${validatedKey}`, 'muted'));
 
       // Simulate R2 fetch with error handling
       const data = await this.fetchFromR2<T>(validatedKey);
@@ -322,7 +322,7 @@ export class R2MCPIntegration {
       const validatedKey = keyValidation.data;
 
       // Store in R2 (simulated)
-      console.log(styled(`📤 Storing JSON: ${validatedKey}`, 'muted'));
+      console.info(styled(`📤 Storing JSON: ${validatedKey}`, 'muted'));
       await this.storeToR2(validatedKey, data);
 
       // Update cache
@@ -657,7 +657,7 @@ export class R2MCPIntegration {
       throw new R2ConnectionError('Simulated R2 store failure');
     }
 
-    console.log(styled(`✅ Stored: ${key}`, 'success'));
+    console.info(styled(`✅ Stored: ${key}`, 'success'));
   }
 }
 

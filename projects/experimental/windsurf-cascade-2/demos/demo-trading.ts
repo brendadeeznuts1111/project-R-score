@@ -28,11 +28,11 @@ class TradingDemo {
 
   // Run the complete demo
   public async run(): Promise<void> {
-    console.log('🏃‍♂️ High-Frequency Sports Trading Demo');
-    console.log('=====================================');
-    console.log('🚀 Powered by 13-byte configuration system');
-    console.log('⚡ Nanosecond trading decisions');
-    console.log('');
+    console.info('🏃‍♂️ High-Frequency Sports Trading Demo');
+    console.info('=====================================');
+    console.info('🚀 Powered by 13-byte configuration system');
+    console.info('⚡ Nanosecond trading decisions');
+    console.info('');
 
     try {
       // Step 1: Initialize trading configuration
@@ -57,7 +57,7 @@ class TradingDemo {
 
   // Initialize trading configuration
   private async initializeConfiguration(): Promise<void> {
-    console.log('🔧 Step 1: Initializing 13-byte trading configuration...');
+    console.info('🔧 Step 1: Initializing 13-byte trading configuration...');
     
     // Set up high-frequency trading configuration
     await updateTradingConfig({
@@ -78,56 +78,56 @@ class TradingDemo {
     await setTradingFeature('ENABLE_LIQUIDITY_MINING', true);
 
     const config = await getTradingConfig();
-    console.log('✅ Configuration initialized:');
-    console.log(`   Algorithm Version: ${config.algorithmVersion}`);
-    console.log(`   Exchange ID: 0x${config.exchangeId.toString(16).toUpperCase()}`);
-    console.log(`   Trading Flags: 0x${config.tradingFlags.toString(16).padStart(8, '0')}`);
-    console.log(`   Max Position Size: ${config.maxPositionSize}`);
-    console.log(`   Risk Limit: ${config.riskLimitPercent}%`);
-    console.log('');
+    console.info('✅ Configuration initialized:');
+    console.info(`   Algorithm Version: ${config.algorithmVersion}`);
+    console.info(`   Exchange ID: 0x${config.exchangeId.toString(16).toUpperCase()}`);
+    console.info(`   Trading Flags: 0x${config.tradingFlags.toString(16).padStart(8, '0')}`);
+    console.info(`   Max Position Size: ${config.maxPositionSize}`);
+    console.info(`   Risk Limit: ${config.riskLimitPercent}%`);
+    console.info('');
   }
 
   // Start trading engine
   private async startTradingEngine(): Promise<void> {
-    console.log('🚀 Step 2: Starting trading engine...');
+    console.info('🚀 Step 2: Starting trading engine...');
     
     // The engine is already initialized in the constructor
     const stats = sportsTradingEngine.getStatistics();
-    console.log('✅ Trading engine ready:');
-    console.log(`   Average execution time: ${stats.averageExecutionTime}ns`);
-    console.log(`   Status: Running`);
-    console.log('');
+    console.info('✅ Trading engine ready:');
+    console.info(`   Average execution time: ${stats.averageExecutionTime}ns`);
+    console.info(`   Status: Running`);
+    console.info('');
   }
 
   // Run performance benchmarks
   private async runBenchmarks(): Promise<void> {
-    console.log('⚡ Step 3: Running performance benchmarks...');
+    console.info('⚡ Step 3: Running performance benchmarks...');
     
     const metrics = await measureTradingPerformance();
     
-    console.log('📊 Performance Results:');
-    console.log('┌─────────────────────────────────────┐');
-    console.log('│ 13-Byte Config System Benchmarks      │');
-    console.log('├─────────────────────────────────────┤');
-    console.log(`│ Config Update:       ${metrics.configUpdateTime.toString().padEnd(8)}ns      │`);
-    console.log(`│ Feature Check:       ${metrics.featureCheckTime.toString().padEnd(8)}ns      │`);
-    console.log(`│ Risk Check:          ${metrics.riskCheckTime.toString().padEnd(8)}ns      │`);
-    console.log(`│ Total Latency:       ${(metrics.configUpdateTime + metrics.featureCheckTime + metrics.riskCheckTime).toString().padEnd(8)}ns      │`);
-    console.log('├─────────────────────────────────────┤');
-    console.log('│ Speed Comparison:                      │');
-    console.log(`│ vs Redis:    600,000x faster          │`);
-    console.log(`│ vs etcd:     419,473x faster          │`);
-    console.log(`│ vs Consul:   629,209x faster          │`);
-    console.log('└─────────────────────────────────────┘');
-    console.log('');
+    console.info('📊 Performance Results:');
+    console.info('┌─────────────────────────────────────┐');
+    console.info('│ 13-Byte Config System Benchmarks      │');
+    console.info('├─────────────────────────────────────┤');
+    console.info(`│ Config Update:       ${metrics.configUpdateTime.toString().padEnd(8)}ns      │`);
+    console.info(`│ Feature Check:       ${metrics.featureCheckTime.toString().padEnd(8)}ns      │`);
+    console.info(`│ Risk Check:          ${metrics.riskCheckTime.toString().padEnd(8)}ns      │`);
+    console.info(`│ Total Latency:       ${(metrics.configUpdateTime + metrics.featureCheckTime + metrics.riskCheckTime).toString().padEnd(8)}ns      │`);
+    console.info('├─────────────────────────────────────┤');
+    console.info('│ Speed Comparison:                      │');
+    console.info(`│ vs Redis:    600,000x faster          │`);
+    console.info(`│ vs etcd:     419,473x faster          │`);
+    console.info(`│ vs Consul:   629,209x faster          │`);
+    console.info('└─────────────────────────────────────┘');
+    console.info('');
   }
 
   // Start live trading simulation
   private async startLiveTrading(): Promise<void> {
-    console.log('📈 Step 4: Starting live trading simulation...');
-    console.log(`   Duration: ${DEMO_CONFIG.duration / 1000} seconds`);
-    console.log(`   Market data interval: ${DEMO_CONFIG.marketDataInterval}ms`);
-    console.log('');
+    console.info('📈 Step 4: Starting live trading simulation...');
+    console.info(`   Duration: ${DEMO_CONFIG.duration / 1000} seconds`);
+    console.info(`   Market data interval: ${DEMO_CONFIG.marketDataInterval}ms`);
+    console.info('');
     
     this.startTime = Date.now();
     
@@ -148,8 +148,8 @@ class TradingDemo {
     clearInterval(this.marketDataInterval);
     clearInterval(this.performanceInterval);
     
-    console.log('⏹️  Trading simulation completed');
-    console.log('');
+    console.info('⏹️  Trading simulation completed');
+    console.info('');
   }
 
   // Process market data
@@ -175,7 +175,7 @@ class TradingDemo {
       const progress = (elapsed / DEMO_CONFIG.duration) * 100;
       
       if (signals.length > 0) {
-        console.log(`📊 [${progress.toFixed(1)}%] Processed ${marketData.homeTeam} vs ${marketData.awayTeam}: ${signals.length} signals`);
+        console.info(`📊 [${progress.toFixed(1)}%] Processed ${marketData.homeTeam} vs ${marketData.awayTeam}: ${signals.length} signals`);
       }
       
     } catch (error) {
@@ -189,13 +189,13 @@ class TradingDemo {
       const stats = sportsTradingEngine.getStatistics();
       const pnl = sportsTradingEngine.calculatePnL();
       
-      console.log('📊 Performance Update:');
-      console.log(`   Events processed: ${stats.totalEvents}`);
-      console.log(`   Active positions: ${stats.activePositions}`);
-      console.log(`   Total signals: ${this.totalSignals}`);
-      console.log(`   Executed trades: ${this.totalExecuted}`);
-      console.log(`   P&L: ${(pnl.total * 100).toFixed(2)}%`);
-      console.log('');
+      console.info('📊 Performance Update:');
+      console.info(`   Events processed: ${stats.totalEvents}`);
+      console.info(`   Active positions: ${stats.activePositions}`);
+      console.info(`   Total signals: ${this.totalSignals}`);
+      console.info(`   Executed trades: ${this.totalExecuted}`);
+      console.info(`   P&L: ${(pnl.total * 100).toFixed(2)}%`);
+      console.info('');
     } catch (error) {
       console.error('Error checking performance:', error);
     }
@@ -203,46 +203,46 @@ class TradingDemo {
 
   // Display final results
   private async displayResults(): Promise<void> {
-    console.log('🏁 Step 5: Final Results');
-    console.log('====================');
+    console.info('🏁 Step 5: Final Results');
+    console.info('====================');
     
     const stats = sportsTradingEngine.getStatistics();
     const pnl = sportsTradingEngine.calculatePnL();
     const positions = sportsTradingEngine.getPositions();
     
-    console.log('📊 Trading Performance:');
-    console.log('┌─────────────────────────────────────┐');
-    console.log(`│ Total Events:        ${stats.totalEvents.toString().padEnd(15)} │`);
-    console.log(`│ Signals Generated:   ${this.totalSignals.toString().padEnd(15)} │`);
-    console.log(`│ Trades Executed:     ${this.totalExecuted.toString().padEnd(15)} │`);
-    console.log(`│ Active Positions:    ${stats.activePositions.toString().padEnd(15)} │`);
-    console.log(`│ Total P&L:            ${(pnl.total * 100).toFixed(2).padEnd(15)}% │`);
-    console.log('└─────────────────────────────────────┘');
+    console.info('📊 Trading Performance:');
+    console.info('┌─────────────────────────────────────┐');
+    console.info(`│ Total Events:        ${stats.totalEvents.toString().padEnd(15)} │`);
+    console.info(`│ Signals Generated:   ${this.totalSignals.toString().padEnd(15)} │`);
+    console.info(`│ Trades Executed:     ${this.totalExecuted.toString().padEnd(15)} │`);
+    console.info(`│ Active Positions:    ${stats.activePositions.toString().padEnd(15)} │`);
+    console.info(`│ Total P&L:            ${(pnl.total * 100).toFixed(2).padEnd(15)}% │`);
+    console.info('└─────────────────────────────────────┘');
     
-    console.log('\n💼 Open Positions:');
+    console.info('\n💼 Open Positions:');
     if (positions.length === 0) {
-      console.log('   No open positions');
+      console.info('   No open positions');
     } else {
       positions.forEach((pos, index) => {
-        console.log(`   ${index + 1}. ${pos.eventId} - ${pos.market} @ ${pos.odds.toFixed(2)} (${pos.stake}%)`);
+        console.info(`   ${index + 1}. ${pos.eventId} - ${pos.market} @ ${pos.odds.toFixed(2)} (${pos.stake}%)`);
       });
     }
     
-    console.log('\n🎯 Performance Metrics:');
+    console.info('\n🎯 Performance Metrics:');
     const executionRate = (this.totalExecuted / this.totalSignals) * 100;
-    console.log(`   Signal execution rate: ${executionRate.toFixed(1)}%`);
-    console.log(`   Average signals per event: ${(this.totalSignals / Math.max(stats.totalEvents, 1)).toFixed(2)}`);
-    console.log(`   Trading efficiency: ${this.totalExecuted > 0 ? 'HIGH' : 'MODERATE'}`);
+    console.info(`   Signal execution rate: ${executionRate.toFixed(1)}%`);
+    console.info(`   Average signals per event: ${(this.totalSignals / Math.max(stats.totalEvents, 1)).toFixed(2)}`);
+    console.info(`   Trading efficiency: ${this.totalExecuted > 0 ? 'HIGH' : 'MODERATE'}`);
     
-    console.log('\n🚀 13-Byte Config System Impact:');
-    console.log('   ✅ Nanosecond configuration updates');
-    console.log('   ✅ Real-time risk management');
-    console.log('   ✅ Zero-latency feature toggling');
-    console.log('   ✅ Atomic trading operations');
-    console.log('   ✅ Mathematical proof of correctness');
+    console.info('\n🚀 13-Byte Config System Impact:');
+    console.info('   ✅ Nanosecond configuration updates');
+    console.info('   ✅ Real-time risk management');
+    console.info('   ✅ Zero-latency feature toggling');
+    console.info('   ✅ Atomic trading operations');
+    console.info('   ✅ Mathematical proof of correctness');
     
-    console.log('\n🎓 Demo completed successfully!');
-    console.log('📱 Open trading-dashboard.html to explore the interactive interface');
+    console.info('\n🎓 Demo completed successfully!');
+    console.info('📱 Open trading-dashboard.html to explore the interactive interface');
   }
 }
 

@@ -37,7 +37,7 @@ export interface TunnelResult {
  *
  * @example
  * const tunnel = await startNgrokTunnel({ port: 3334, path: '/voice/webhook' });
- * console.log('Public URL:', tunnel.publicUrl);
+ * console.info('Public URL:', tunnel.publicUrl);
  * // Later: await tunnel.stop();
  */
 export async function startNgrokTunnel(config: {
@@ -105,7 +105,7 @@ export async function startNgrokTunnel(config: {
           // Add path to the public URL
           const fullUrl = publicUrl + config.path;
 
-          console.log(`[voice-call] ngrok tunnel active: ${fullUrl}`);
+          console.info(`[voice-call] ngrok tunnel active: ${fullUrl}`);
 
           resolve({
             publicUrl: fullUrl,
@@ -249,7 +249,7 @@ export async function startTailscaleTunnel(config: {
       clearTimeout(timeout);
       if (code === 0) {
         const publicUrl = `https://${dnsName}${path}`;
-        console.log(
+        console.info(
           `[voice-call] Tailscale ${config.mode} active: ${publicUrl}`,
         );
 

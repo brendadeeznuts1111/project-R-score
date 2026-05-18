@@ -67,10 +67,10 @@ class WorkspaceHealthMonitor {
    * 🔍 Run complete health check
    */
   async runHealthCheck(): Promise<void> {
-    console.log('🏥 Fire22 Workspace Health Monitor');
-    console.log('='.repeat(60));
-    console.log('⏰ Timestamp:', new Date().toISOString());
-    console.log('');
+    console.info('🏥 Fire22 Workspace Health Monitor');
+    console.info('='.repeat(60));
+    console.info('⏰ Timestamp:', new Date().toISOString());
+    console.info('');
 
     const healthResults: WorkspaceHealth[] = [];
 
@@ -255,37 +255,37 @@ class WorkspaceHealthMonitor {
       'not-found': '❓',
     }[health.status];
 
-    console.log(`\n${statusIcon} ${health.name}`);
-    console.log('  ' + '-'.repeat(40));
+    console.info(`\n${statusIcon} ${health.name}`);
+    console.info('  ' + '-'.repeat(40));
 
     // Print checks
-    console.log('  📋 Checks:');
-    console.log(`    package.json:  ${health.checks.packageJson ? '✅' : '❌'}`);
-    console.log(`    node_modules:  ${health.checks.nodeModules ? '✅' : '❌'}`);
-    console.log(`    source files:  ${health.checks.sourceFiles ? '✅' : '❌'}`);
-    console.log(`    build output:  ${health.checks.buildOutput ? '✅' : '⚪'}`);
-    console.log(`    tests:         ${health.checks.tests ? '✅' : '⚪'}`);
-    console.log(`    dependencies:  ${health.checks.dependencies ? '✅' : '❌'}`);
+    console.info('  📋 Checks:');
+    console.info(`    package.json:  ${health.checks.packageJson ? '✅' : '❌'}`);
+    console.info(`    node_modules:  ${health.checks.nodeModules ? '✅' : '❌'}`);
+    console.info(`    source files:  ${health.checks.sourceFiles ? '✅' : '❌'}`);
+    console.info(`    build output:  ${health.checks.buildOutput ? '✅' : '⚪'}`);
+    console.info(`    tests:         ${health.checks.tests ? '✅' : '⚪'}`);
+    console.info(`    dependencies:  ${health.checks.dependencies ? '✅' : '❌'}`);
 
     // Print metrics
-    console.log('  📊 Metrics:');
-    console.log(`    Size: ${health.metrics.size}`);
-    console.log(`    Files: ${health.metrics.files}`);
+    console.info('  📊 Metrics:');
+    console.info(`    Size: ${health.metrics.size}`);
+    console.info(`    Files: ${health.metrics.files}`);
 
     // Print dependencies
     if (health.dependencies.workspace.length > 0) {
-      console.log('  🔗 Workspace Dependencies:');
+      console.info('  🔗 Workspace Dependencies:');
       health.dependencies.workspace.forEach(dep => {
         const isMissing = health.dependencies.missing.includes(dep);
-        console.log(`    ${isMissing ? '❌' : '✅'} ${dep}`);
+        console.info(`    ${isMissing ? '❌' : '✅'} ${dep}`);
       });
     }
 
     // Print issues
     if (health.issues.length > 0) {
-      console.log('  ⚠️  Issues:');
+      console.info('  ⚠️  Issues:');
       health.issues.forEach(issue => {
-        console.log(`    • ${issue}`);
+        console.info(`    • ${issue}`);
       });
     }
   }
@@ -294,35 +294,35 @@ class WorkspaceHealthMonitor {
    * 📊 Print summary
    */
   private printSummary(healthResults: WorkspaceHealth[]): void {
-    console.log('\n' + '='.repeat(60));
-    console.log('📊 HEALTH SUMMARY');
-    console.log('='.repeat(60));
+    console.info('\n' + '='.repeat(60));
+    console.info('📊 HEALTH SUMMARY');
+    console.info('='.repeat(60));
 
     const healthy = healthResults.filter(h => h.status === 'healthy').length;
     const warning = healthResults.filter(h => h.status === 'warning').length;
     const error = healthResults.filter(h => h.status === 'error').length;
     const notFound = healthResults.filter(h => h.status === 'not-found').length;
 
-    console.log(`✅ Healthy:   ${healthy}/${this.workspaces.length}`);
-    console.log(`⚠️  Warning:   ${warning}/${this.workspaces.length}`);
-    console.log(`❌ Error:     ${error}/${this.workspaces.length}`);
-    console.log(`❓ Not Found: ${notFound}/${this.workspaces.length}`);
+    console.info(`✅ Healthy:   ${healthy}/${this.workspaces.length}`);
+    console.info(`⚠️  Warning:   ${warning}/${this.workspaces.length}`);
+    console.info(`❌ Error:     ${error}/${this.workspaces.length}`);
+    console.info(`❓ Not Found: ${notFound}/${this.workspaces.length}`);
 
     // Overall status
     let overallStatus = 'healthy';
     if (error > 0 || notFound > 0) overallStatus = 'critical';
     else if (warning > 0) overallStatus = 'degraded';
 
-    console.log(`\n🏥 Overall Status: ${overallStatus.toUpperCase()}`);
+    console.info(`\n🏥 Overall Status: ${overallStatus.toUpperCase()}`);
   }
 
   /**
    * 🔗 Check cross-workspace dependencies
    */
   private async checkCrossWorkspaceDependencies(healthResults: WorkspaceHealth[]): Promise<void> {
-    console.log('\n' + '='.repeat(60));
-    console.log('🔗 CROSS-WORKSPACE DEPENDENCIES');
-    console.log('='.repeat(60));
+    console.info('\n' + '='.repeat(60));
+    console.info('🔗 CROSS-WORKSPACE DEPENDENCIES');
+    console.info('='.repeat(60));
 
     const dependencyMap = new Map<string, string[]>();
 
@@ -337,20 +337,20 @@ class WorkspaceHealthMonitor {
     }
 
     // Print dependency graph
-    console.log('\n📊 Dependency Graph:');
+    console.info('\n📊 Dependency Graph:');
     for (const [dep, dependents] of dependencyMap) {
-      console.log(`  ${dep}:`);
-      dependents.forEach(d => console.log(`    ← ${d}`));
+      console.info(`  ${dep}:`);
+      dependents.forEach(d => console.info(`    ← ${d}`));
     }
 
     // Check for circular dependencies
-    console.log('\n🔄 Circular Dependency Check:');
+    console.info('\n🔄 Circular Dependency Check:');
     const circular = this.findCircularDependencies(healthResults);
     if (circular.length > 0) {
-      console.log('  ❌ Circular dependencies detected:');
-      circular.forEach(cycle => console.log(`    ${cycle.join(' → ')}`));
+      console.info('  ❌ Circular dependencies detected:');
+      circular.forEach(cycle => console.info(`    ${cycle.join(' → ')}`));
     } else {
-      console.log('  ✅ No circular dependencies found');
+      console.info('  ✅ No circular dependencies found');
     }
   }
 
@@ -421,7 +421,7 @@ class WorkspaceHealthMonitor {
     // Write report to file
     const reportPath = join(process.cwd(), 'workspace-health-report.json');
     await Bun.write(reportPath, JSON.stringify(report, null, 2));
-    console.log(`\n📄 Health report saved to: ${reportPath}`);
+    console.info(`\n📄 Health report saved to: ${reportPath}`);
   }
 }
 

@@ -12,7 +12,7 @@ const args = {
 
 // Display usage information
 function showUsage() {
-  console.log(`
+  console.info(`
 🔴 Tier-1380 Violation Monitor
 
 Usage:
@@ -47,14 +47,14 @@ if (process.argv.includes('--help') || process.argv.includes('-h')) {
 }
 
 // Start the monitor
-console.log(`🔴 Tier-1380 Live Violation Monitor`);
-console.log(`📊 Tenant: ${args.tenant} | Severity: ${args.severity}`);
-console.log(`🔌 Connecting to: http://localhost:1381/mcp/alerts/stream`);
-console.log("=".repeat(89));
+console.info(`🔴 Tier-1380 Live Violation Monitor`);
+console.info(`📊 Tenant: ${args.tenant} | Severity: ${args.severity}`);
+console.info(`🔌 Connecting to: http://localhost:1381/mcp/alerts/stream`);
+console.info("=".repeat(89));
 
 // Add column headers
-console.log(`\x1b[36m${"TENANT".padEnd(12)} │ ${"FILE:LINE".padStart(12)} │ ${"COLS".padStart(3)} │ PREVIEW\x1b[0m`);
-console.log("─".repeat(89));
+console.info(`\x1b[36m${"TENANT".padEnd(12)} │ ${"FILE:LINE".padStart(12)} │ ${"COLS".padStart(3)} │ PREVIEW\x1b[0m`);
+console.info("─".repeat(89));
 
 // Handle connection errors gracefully
 process.on('uncaughtException', (error) => {

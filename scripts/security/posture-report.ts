@@ -62,5 +62,5 @@ export function summarizeSecurityPosture() {
 }
 
 if (import.meta.main) {
-  console.log(JSON.stringify(summarizeSecurityPosture(), null, 2));
+  console.info(JSON.stringify(summarizeSecurityPosture(), null, 2));
 }

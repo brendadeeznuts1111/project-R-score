@@ -10,52 +10,52 @@
  * includes precise timing measurements using Bun.nanoseconds().
  */
 
-console.log("🔄 Signal Comparison Demo");
-console.log("This shows when to use specific signals vs catch-all lifecycle events\n");
+console.info("🔄 Signal Comparison Demo");
+console.info("This shows when to use specific signals vs catch-all lifecycle events\n");
 
 // Track start time for precise timing measurements
 const startTime = Bun.nanoseconds();
-console.log(`⏱️  Process start time: ${startTime} nanoseconds\n`);
+console.info(`⏱️  Process start time: ${startTime} nanoseconds\n`);
 
 let eventCount = 0;
 
-console.log("Adding signal handlers in order...\n");
+console.info("Adding signal handlers in order...\n");
 
 // 1. Specific signal handler
 process.on("SIGINT", () => {
   eventCount++;
-  console.log(`${eventCount}. 🛑 SIGINT: Ctrl-C was pressed!`);
-  console.log("   ↳ Specific OS signal handler");
-  console.log("   ↳ Use when you know EXACTLY which signal to expect");
-  console.log("   ↳ Process continues running unless you call process.exit()");
+  console.info(`${eventCount}. 🛑 SIGINT: Ctrl-C was pressed!`);
+  console.info("   ↳ Specific OS signal handler");
+  console.info("   ↳ Use when you know EXACTLY which signal to expect");
+  console.info("   ↳ Process continues running unless you call process.exit()");
 });
 
 // 2. Catch-all beforeExit handler
 process.on("beforeExit", (code) => {
   eventCount++;
-  console.log(`${eventCount}. 🔔 beforeExit: Event loop is empty! (code: ${code})`);
-  console.log("   ↳ Fires for ANY process termination scenario");
-  console.log("   ↳ Use when you DON'T know which signal/OS condition will cause exit");
-  console.log("   ↳ Good for cleanup that might happen for various reasons");
+  console.info(`${eventCount}. 🔔 beforeExit: Event loop is empty! (code: ${code})`);
+  console.info("   ↳ Fires for ANY process termination scenario");
+  console.info("   ↳ Use when you DON'T know which signal/OS condition will cause exit");
+  console.info("   ↳ Good for cleanup that might happen for various reasons");
 });
 
 // 3. Catch-all exit handler
 process.on("exit", (code) => {
   eventCount++;
-  console.log(`${eventCount}. 👋 exit: Process exiting with code ${code}`);
-  console.log("   ↳ Final event before process termination");
-  console.log("   ↳ Only synchronous operations allowed here");
+  console.info(`${eventCount}. 👋 exit: Process exiting with code ${code}`);
+  console.info("   ↳ Final event before process termination");
+  console.info("   ↳ Only synchronous operations allowed here");
 });
 
-console.log("Demonstrating scenarios:\n");
+console.info("Demonstrating scenarios:\n");
 
 // Scenario 1: SIGINT triggered
-console.log("Scenario 1: Pressing Ctrl+C (SIGINT)...");
-console.log("Expected order: SIGINT (if pressed) → beforeExit → exit\n");
+console.info("Scenario 1: Pressing Ctrl+C (SIGINT)...");
+console.info("Expected order: SIGINT (if pressed) → beforeExit → exit\n");
 
 // Scenario 2: Natural exit
 setTimeout(() => {
-  console.log("Scenario 2: Natural exit by clearing event loop...");
+  console.info("Scenario 2: Natural exit by clearing event loop...");
 }, 3000);
 
 // Keep event loop active initially, then clear it
@@ -66,12 +66,12 @@ const timers = [
 
 // Clear timers after 5 seconds to allow natural exit
 setTimeout(() => {
-  console.log("\n\nClearing all timers - natural exit will occur...");
+  console.info("\n\nClearing all timers - natural exit will occur...");
   timers.forEach(clearInterval);
-  console.log("Expected order: beforeExit → exit\n");
+  console.info("Expected order: beforeExit → exit\n");
 }, 5000);
 
-console.log("\n🎯 Key insight from documentation:");
-console.log("\"If you don't know which signal to listen for, you listen to the");
-console.log(" 'beforeExit' and 'exit' events.\"");
-console.log("\nThey catch process termination from ANY cause: signals, errors, explicit exit, etc.");
+console.info("\n🎯 Key insight from documentation:");
+console.info("\"If you don't know which signal to listen for, you listen to the");
+console.info(" 'beforeExit' and 'exit' events.\"");
+console.info("\nThey catch process termination from ANY cause: signals, errors, explicit exit, etc.");

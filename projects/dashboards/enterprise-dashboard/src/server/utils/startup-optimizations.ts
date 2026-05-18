@@ -145,17 +145,17 @@ export async function applyStartupOptimizations(): Promise<typeof _optimizationR
   // Initialize host matrix
   _optimizationResults.hostMatrix = buildHostMatrix();
 
-  console.log("Applying startup network optimizations...");
+  console.info("Applying startup network optimizations...");
 
   // Method 1: Check if CLI flag was used (Unix/macOS only)
   if (!isWindows && process.env.BUN_FETCH_PRECONNECT) {
-    console.log("Using CLI --fetch-preconnect flag");
+    console.info("Using CLI --fetch-preconnect flag");
     _optimizationResults.method = "cli";
     // CLI preconnect handles the actual preconnection, we just track what we would have done
     _optimizationResults.preconnectedHosts = preconnectHosts;
   } else if (preconnectHosts.length > 0) {
     // Method 2: Programmatic preconnect (Windows compatible)
-    console.log(`Using programmatic preconnect (${isWindows ? "Windows" : "cross-platform"})`);
+    console.info(`Using programmatic preconnect (${isWindows ? "Windows" : "cross-platform"})`);
     _optimizationResults.method = "programmatic";
 
     // Pre-connect in parallel
@@ -173,7 +173,7 @@ export async function applyStartupOptimizations(): Promise<typeof _optimizationR
           await fetch.preconnect(preconnectUrl);
           const savingsMs = (Bun.nanoseconds() - start) / 1_000_000;
           _optimizationResults.poolStats.preconnectSavingsMs += savingsMs;
-          console.log(`  Pre-connected to ${preconnectUrl} (${savingsMs.toFixed(1)}ms)`);
+          console.info(`  Pre-connected to ${preconnectUrl} (${savingsMs.toFixed(1)}ms)`);
 
           // Update host matrix status
           const matrixEntry = _optimizationResults.hostMatrix.find((h) => h.url === host);
@@ -188,7 +188,7 @@ export async function applyStartupOptimizations(): Promise<typeof _optimizationR
             const urlObj = new URL(host.startsWith("http") ? host : `https://${host}`);
             dns.prefetch(urlObj.hostname, 443);
             const savingsMs = (Bun.nanoseconds() - start) / 1_000_000;
-            console.log(`  DNS prefetched ${urlObj.hostname}:443 (${savingsMs.toFixed(1)}ms, preconnect: ${msg})`);
+            console.info(`  DNS prefetched ${urlObj.hostname}:443 (${savingsMs.toFixed(1)}ms, preconnect: ${msg})`);
 
             // Mark as prefetched instead of failed
             const matrixEntry = _optimizationResults.hostMatrix.find((h) => h.url === host);
@@ -214,12 +214,12 @@ export async function applyStartupOptimizations(): Promise<typeof _optimizationR
 
     const successful = results.filter((r) => r.status === "fulfilled" && r.value.success).length;
     const fallbacks = results.filter((r) => r.status === "fulfilled" && r.value.fallback).length;
-    console.log(`  Pre-connected: ${_optimizationResults.preconnectedHosts.length}, DNS fallback: ${fallbacks}, failed: ${preconnectHosts.length - successful}`);
+    console.info(`  Pre-connected: ${_optimizationResults.preconnectedHosts.length}, DNS fallback: ${fallbacks}, failed: ${preconnectHosts.length - successful}`);
   }
 
   // Method 3: DNS prefetch (always works, cross-platform)
   if (prefetchHosts.length > 0) {
-    console.log("Prefetching DNS for common hosts...");
+    console.info("Prefetching DNS for common hosts...");
 
     const prefetchResults = await Promise.allSettled(
       prefetchHosts.map(async (host) => {
@@ -240,13 +240,13 @@ export async function applyStartupOptimizations(): Promise<typeof _optimizationR
       .filter((r) => r.status === "fulfilled" && r.value.success)
       .map((r) => (r as PromiseFulfilledResult<{ host: string; success: boolean }>).value.host);
 
-    console.log(`  Prefetched DNS for ${_optimizationResults.prefetchedHosts.length}/${prefetchHosts.length} hosts`);
+    console.info(`  Prefetched DNS for ${_optimizationResults.prefetchedHosts.length}/${prefetchHosts.length} hosts`);
   }
 
   _optimizationResults.applied = true;
   _optimizationResults.timestamp = new Date().toISOString();
 
-  console.log("Startup optimizations complete");
+  console.info("Startup optimizations complete");
 
   return _optimizationResults;
 }

@@ -269,8 +269,8 @@ class Fire22DatabaseInfrastructureSetup {
   }
 
   async setup(): Promise<void> {
-    console.log(`🔥 Fire22 Dashboard Infrastructure Setup - ${this.environment.toUpperCase()}`);
-    console.log('='.repeat(70));
+    console.info(`🔥 Fire22 Dashboard Infrastructure Setup - ${this.environment.toUpperCase()}`);
+    console.info('='.repeat(70));
 
     try {
       await this.validatePrerequisites();
@@ -281,9 +281,9 @@ class Fire22DatabaseInfrastructureSetup {
       await this.setupSecrets();
       await this.validateSetup();
 
-      console.log('\n✅ Fire22 Database Infrastructure Setup Complete!');
-      console.log(`🌐 Environment: ${this.environment}`);
-      console.log('📊 Ready for Water Dashboard integration');
+      console.info('\n✅ Fire22 Database Infrastructure Setup Complete!');
+      console.info(`🌐 Environment: ${this.environment}`);
+      console.info('📊 Ready for Water Dashboard integration');
     } catch (error) {
       console.error('❌ Setup failed:', error);
       throw error;
@@ -291,42 +291,42 @@ class Fire22DatabaseInfrastructureSetup {
   }
 
   private async validatePrerequisites(): Promise<void> {
-    console.log('\n🔍 Validating Prerequisites...');
+    console.info('\n🔍 Validating Prerequisites...');
 
     // Check if wrangler is installed and authenticated
     try {
       await $`wrangler --version`;
-      console.log('✅ Wrangler CLI available');
+      console.info('✅ Wrangler CLI available');
     } catch (error) {
       throw new Error('Wrangler CLI not found. Run: npm install -g wrangler');
     }
 
     try {
       await $`wrangler whoami`;
-      console.log('✅ Cloudflare authentication valid');
+      console.info('✅ Cloudflare authentication valid');
     } catch (error) {
       throw new Error('Not authenticated with Cloudflare. Run: wrangler auth login');
     }
 
     // Check Fire22 L-key mappings
     const mappingCount = Object.keys(FIRE22_DATABASE_FIELD_MAPPINGS).length;
-    console.log(`✅ Fire22 L-key mappings loaded: ${mappingCount} keys`);
+    console.info(`✅ Fire22 L-key mappings loaded: ${mappingCount} keys`);
   }
 
   private async setupD1Databases(): Promise<void> {
-    console.log('\n📊 Setting up D1 Databases...');
+    console.info('\n📊 Setting up D1 Databases...');
 
     // Main dashboard database
     const mainDbName = this.config.d1Config.mainDatabase.name;
-    console.log(`Creating main database: ${mainDbName}`);
+    console.info(`Creating main database: ${mainDbName}`);
 
     try {
       // Create database if it doesn't exist
       await $`wrangler d1 create ${mainDbName}`;
-      console.log(`✅ Main database created: ${mainDbName}`);
+      console.info(`✅ Main database created: ${mainDbName}`);
     } catch (error) {
       if (error.toString().includes('already exists')) {
-        console.log(`ℹ️  Main database already exists: ${mainDbName}`);
+        console.info(`ℹ️  Main database already exists: ${mainDbName}`);
       } else {
         console.error(`❌ Failed to create main database: ${error}`);
       }
@@ -334,14 +334,14 @@ class Fire22DatabaseInfrastructureSetup {
 
     // Registry database
     const registryDbName = this.config.d1Config.registryDatabase.name;
-    console.log(`Creating registry database: ${registryDbName}`);
+    console.info(`Creating registry database: ${registryDbName}`);
 
     try {
       await $`wrangler d1 create ${registryDbName}`;
-      console.log(`✅ Registry database created: ${registryDbName}`);
+      console.info(`✅ Registry database created: ${registryDbName}`);
     } catch (error) {
       if (error.toString().includes('already exists')) {
-        console.log(`ℹ️  Registry database already exists: ${registryDbName}`);
+        console.info(`ℹ️  Registry database already exists: ${registryDbName}`);
       } else {
         console.error(`❌ Failed to create registry database: ${error}`);
       }
@@ -352,7 +352,7 @@ class Fire22DatabaseInfrastructureSetup {
   }
 
   private async initializeSchemas(): Promise<void> {
-    console.log('\n🗃️  Initializing Database Schemas...');
+    console.info('\n🗃️  Initializing Database Schemas...');
 
     const schemaFiles = [
       'data/schemas/web-logs-schema.sql',
@@ -364,7 +364,7 @@ class Fire22DatabaseInfrastructureSetup {
       try {
         const mainDbName = this.config.d1Config.mainDatabase.name;
         await $`wrangler d1 execute ${mainDbName} --file=${schemaFile}`;
-        console.log(`✅ Applied schema: ${schemaFile}`);
+        console.info(`✅ Applied schema: ${schemaFile}`);
       } catch (error) {
         console.error(`❌ Failed to apply schema ${schemaFile}:`, error);
       }
@@ -375,7 +375,7 @@ class Fire22DatabaseInfrastructureSetup {
   }
 
   private async applyLKeyMappings(): Promise<void> {
-    console.log('\n🔗 Applying Fire22 L-key Mappings...');
+    console.info('\n🔗 Applying Fire22 L-key Mappings...');
 
     // Create mapping table for L-key to database field relationships
     const mappingSQL = `
@@ -408,7 +408,7 @@ class Fire22DatabaseInfrastructureSetup {
       const mainDbName = this.config.d1Config.mainDatabase.name;
       await Bun.write('/tmp/lkey-mappings.sql', mappingSQL);
       await $`wrangler d1 execute ${mainDbName} --file=/tmp/lkey-mappings.sql`;
-      console.log(
+      console.info(
         `✅ Applied ${Object.keys(FIRE22_DATABASE_FIELD_MAPPINGS).length} L-key mappings`
       );
     } catch (error) {
@@ -417,17 +417,17 @@ class Fire22DatabaseInfrastructureSetup {
   }
 
   private async setupR2Storage(): Promise<void> {
-    console.log('\n🗂️  Setting up R2 Storage...');
+    console.info('\n🗂️  Setting up R2 Storage...');
 
     const bucketName = this.config.r2Config.bucket;
-    console.log(`Creating R2 bucket: ${bucketName}`);
+    console.info(`Creating R2 bucket: ${bucketName}`);
 
     try {
       await $`wrangler r2 bucket create ${bucketName}`;
-      console.log(`✅ R2 bucket created: ${bucketName}`);
+      console.info(`✅ R2 bucket created: ${bucketName}`);
     } catch (error) {
       if (error.toString().includes('already exists')) {
-        console.log(`ℹ️  R2 bucket already exists: ${bucketName}`);
+        console.info(`ℹ️  R2 bucket already exists: ${bucketName}`);
       } else {
         console.error(`❌ Failed to create R2 bucket: ${error}`);
       }
@@ -438,7 +438,7 @@ class Fire22DatabaseInfrastructureSetup {
   }
 
   private async setupArchiveStructure(): Promise<void> {
-    console.log('📁 Setting up archive directory structure...');
+    console.info('📁 Setting up archive directory structure...');
 
     const archiveMetadata = {
       structure: {
@@ -467,14 +467,14 @@ class Fire22DatabaseInfrastructureSetup {
     try {
       const bucketName = this.config.r2Config.bucket;
       await $`wrangler r2 object put ${bucketName}/metadata/structure.json --file=${metadataFile}`;
-      console.log('✅ Archive structure metadata uploaded');
+      console.info('✅ Archive structure metadata uploaded');
     } catch (error) {
       console.error('❌ Failed to upload archive metadata:', error);
     }
   }
 
   private async setupKVNamespaces(): Promise<void> {
-    console.log('\n🔧 Setting up KV Namespaces...');
+    console.info('\n🔧 Setting up KV Namespaces...');
 
     const kvNamespaces = [
       {
@@ -494,10 +494,10 @@ class Fire22DatabaseInfrastructureSetup {
     for (const namespace of kvNamespaces) {
       try {
         await $`wrangler kv:namespace create ${namespace.name}`;
-        console.log(`✅ KV namespace created: ${namespace.name}`);
+        console.info(`✅ KV namespace created: ${namespace.name}`);
       } catch (error) {
         if (error.toString().includes('already exists')) {
-          console.log(`ℹ️  KV namespace already exists: ${namespace.name}`);
+          console.info(`ℹ️  KV namespace already exists: ${namespace.name}`);
         } else {
           console.error(`❌ Failed to create KV namespace ${namespace.name}:`, error);
         }
@@ -506,7 +506,7 @@ class Fire22DatabaseInfrastructureSetup {
   }
 
   private async updateWranglerConfig(): Promise<void> {
-    console.log('\n⚙️  Updating Wrangler Configuration...');
+    console.info('\n⚙️  Updating Wrangler Configuration...');
 
     const wranglerConfigPath = 'wrangler.toml';
     let wranglerContent = await Bun.file(wranglerConfigPath).text();
@@ -518,9 +518,9 @@ class Fire22DatabaseInfrastructureSetup {
     if (!wranglerContent.includes(`[env.${this.environment}]`)) {
       wranglerContent += '\n' + envConfig;
       await Bun.write(wranglerConfigPath, wranglerContent);
-      console.log(`✅ Added ${this.environment} configuration to wrangler.toml`);
+      console.info(`✅ Added ${this.environment} configuration to wrangler.toml`);
     } else {
-      console.log(`ℹ️  ${this.environment} configuration already exists in wrangler.toml`);
+      console.info(`ℹ️  ${this.environment} configuration already exists in wrangler.toml`);
     }
   }
 
@@ -573,7 +573,7 @@ ARCHIVE_RETENTION_YEARS = "${config.r2Config.retention_years}"
   }
 
   private async setupSecrets(): Promise<void> {
-    console.log('\n🔐 Setting up Secrets...');
+    console.info('\n🔐 Setting up Secrets...');
 
     const requiredSecrets = [
       'FIRE22_TOKEN',
@@ -583,19 +583,19 @@ ARCHIVE_RETENTION_YEARS = "${config.r2Config.retention_years}"
       'CRON_SECRET',
     ];
 
-    console.log('Required secrets for this environment:');
+    console.info('Required secrets for this environment:');
     requiredSecrets.forEach(secret => {
-      console.log(
+      console.info(
         `  • ${secret} - Set via: wrangler secret put ${secret} --env ${this.environment}`
       );
     });
 
-    console.log('\nℹ️  Secrets must be set manually using wrangler CLI');
-    console.log(`Example: wrangler secret put FIRE22_TOKEN --env ${this.environment}`);
+    console.info('\nℹ️  Secrets must be set manually using wrangler CLI');
+    console.info(`Example: wrangler secret put FIRE22_TOKEN --env ${this.environment}`);
   }
 
   private async validateSetup(): Promise<void> {
-    console.log('\n✅ Validating Setup...');
+    console.info('\n✅ Validating Setup...');
 
     const validations = [
       this.validateD1Connection(),
@@ -606,7 +606,7 @@ ARCHIVE_RETENTION_YEARS = "${config.r2Config.retention_years}"
 
     try {
       await Promise.all(validations);
-      console.log('✅ All validations passed');
+      console.info('✅ All validations passed');
     } catch (error) {
       console.error('❌ Validation failed:', error);
       throw error;
@@ -617,7 +617,7 @@ ARCHIVE_RETENTION_YEARS = "${config.r2Config.retention_years}"
     try {
       const mainDbName = this.config.d1Config.mainDatabase.name;
       await $`wrangler d1 execute ${mainDbName} --command="SELECT 1"`;
-      console.log('✅ D1 database connection valid');
+      console.info('✅ D1 database connection valid');
     } catch (error) {
       throw new Error(`D1 validation failed: ${error}`);
     }
@@ -627,7 +627,7 @@ ARCHIVE_RETENTION_YEARS = "${config.r2Config.retention_years}"
     try {
       const bucketName = this.config.r2Config.bucket;
       await $`wrangler r2 object list ${bucketName} --limit=1`;
-      console.log('✅ R2 bucket access valid');
+      console.info('✅ R2 bucket access valid');
     } catch (error) {
       throw new Error(`R2 validation failed: ${error}`);
     }
@@ -636,7 +636,7 @@ ARCHIVE_RETENTION_YEARS = "${config.r2Config.retention_years}"
   private async validateKVAccess(): Promise<void> {
     // KV validation would require namespace IDs which are generated
     // This is a placeholder for when IDs are available
-    console.log('ℹ️  KV validation skipped (requires namespace IDs)');
+    console.info('ℹ️  KV validation skipped (requires namespace IDs)');
   }
 
   private async validateLKeyMappings(): Promise<void> {
@@ -644,7 +644,7 @@ ARCHIVE_RETENTION_YEARS = "${config.r2Config.retention_years}"
       const mainDbName = this.config.d1Config.mainDatabase.name;
       const result =
         await $`wrangler d1 execute ${mainDbName} --command="SELECT COUNT(*) as count FROM fire22_lkey_mappings"`;
-      console.log('✅ Fire22 L-key mappings validated');
+      console.info('✅ Fire22 L-key mappings validated');
     } catch (error) {
       throw new Error(`L-key mappings validation failed: ${error}`);
     }
@@ -653,17 +653,17 @@ ARCHIVE_RETENTION_YEARS = "${config.r2Config.retention_years}"
   // !==!== Utility Functions !==!==
 
   printConfiguration(): void {
-    console.log('\n📋 Configuration Summary:');
-    console.log('='.repeat(50));
-    console.log(JSON.stringify(this.config, null, 2));
+    console.info('\n📋 Configuration Summary:');
+    console.info('='.repeat(50));
+    console.info(JSON.stringify(this.config, null, 2));
   }
 
   printLKeyMappings(): void {
-    console.log('\n🔗 Fire22 L-Key Mappings:');
-    console.log('='.repeat(50));
+    console.info('\n🔗 Fire22 L-Key Mappings:');
+    console.info('='.repeat(50));
 
     Object.entries(FIRE22_DATABASE_FIELD_MAPPINGS).forEach(([lkey, field]) => {
-      console.log(`${lkey}: ${field}`);
+      console.info(`${lkey}: ${field}`);
     });
   }
 }
@@ -692,7 +692,7 @@ async function main() {
         await setup.validateSetup();
         break;
       default:
-        console.log(`
+        console.info(`
 🔥 Fire22 Database Infrastructure Setup
 
 Usage: bun run setup-database-infrastructure.ts [environment] [command]

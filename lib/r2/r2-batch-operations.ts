@@ -577,8 +577,8 @@ export const r2BatchOperations = new R2BatchOperations();
 if (import.meta.main) {
   const batch = r2BatchOperations;
 
-  console.log(styled('📦 R2 Batch Operations Demo', 'accent'));
-  console.log(styled('==========================', 'accent'));
+  console.info(styled('📦 R2 Batch Operations Demo', 'accent'));
+  console.info(styled('==========================', 'accent'));
 
   // Demo: Batch upload
   const uploadItems = [
@@ -587,17 +587,17 @@ if (import.meta.main) {
     { key: 'test/file3.json', data: { test: 3 } },
   ];
 
-  console.log(styled('\n🚀 Starting batch upload...', 'info'));
+  console.info(styled('\n🚀 Starting batch upload...', 'info'));
   const job = await batch.batchUpload('scanner-cookies', uploadItems, {
     concurrency: 2,
     retryAttempts: 2,
   });
 
-  console.log(styled(`\n📊 Job ID: ${job.id}`, 'muted'));
-  console.log(styled(`Status: ${job.status}`, 'info'));
+  console.info(styled(`\n📊 Job ID: ${job.id}`, 'muted'));
+  console.info(styled(`Status: ${job.status}`, 'info'));
 
   await batch.waitForJob(job.id);
   const completedJob = batch.getJob(job.id);
 
-  console.log(styled('\n' + batch.generateReport(job.id), 'success'));
+  console.info(styled('\n' + batch.generateReport(job.id), 'success'));
 }

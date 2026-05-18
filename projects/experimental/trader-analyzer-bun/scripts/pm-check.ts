@@ -28,7 +28,7 @@ interface CheckOptions {
  * Check outdated packages
  */
 async function checkOutdated(json: boolean, filters?: string[], excludes?: string[]): Promise<void> {
-	console.log("\n📦 Checking for outdated packages...\n");
+	console.info("\n📦 Checking for outdated packages...\n");
 	
 	try {
 		const args: string[] = ["outdated"];
@@ -50,14 +50,14 @@ async function checkOutdated(json: boolean, filters?: string[], excludes?: strin
 		
 		const result = await $`bun ${args}`.quiet();
 		if (result.stdout) {
-			console.log(result.stdout.toString());
+			console.info(result.stdout.toString());
 		}
 		if (result.stderr && !json) {
 			console.error(result.stderr.toString());
 		}
 	} catch (error: any) {
 		if (error.stdout) {
-			console.log(error.stdout.toString());
+			console.info(error.stdout.toString());
 		}
 		if (error.stderr) {
 			console.error(error.stderr.toString());
@@ -69,18 +69,18 @@ async function checkOutdated(json: boolean, filters?: string[], excludes?: strin
  * Run security audit
  */
 async function runAudit(json: boolean): Promise<void> {
-	console.log("\n🔒 Running security audit...\n");
+	console.info("\n🔒 Running security audit...\n");
 	
 	try {
 		if (json) {
 			const result = await $`bun audit --json`.quiet();
 			if (result.stdout) {
-				console.log(result.stdout.toString());
+				console.info(result.stdout.toString());
 			}
 		} else {
 			const result = await $`bun audit`.quiet();
 			if (result.stdout) {
-				console.log(result.stdout.toString());
+				console.info(result.stdout.toString());
 			}
 			if (result.stderr) {
 				console.error(result.stderr.toString());
@@ -88,7 +88,7 @@ async function runAudit(json: boolean): Promise<void> {
 		}
 	} catch (error: any) {
 		if (error.stdout) {
-			console.log(error.stdout.toString());
+			console.info(error.stdout.toString());
 		}
 		if (error.stderr) {
 			console.error(error.stderr.toString());
@@ -100,19 +100,19 @@ async function runAudit(json: boolean): Promise<void> {
  * Explain why package is installed
  */
 async function explainWhy(packageName: string, json: boolean): Promise<void> {
-	console.log(`\n🔍 Explaining why ${packageName} is installed...\n`);
+	console.info(`\n🔍 Explaining why ${packageName} is installed...\n`);
 	
 	try {
 		const result = await $`bun why ${packageName}`.quiet();
 		if (result.stdout) {
-			console.log(result.stdout.toString());
+			console.info(result.stdout.toString());
 		}
 		if (result.stderr) {
 			console.error(result.stderr.toString());
 		}
 	} catch (error: any) {
 		if (error.stdout) {
-			console.log(error.stdout.toString());
+			console.info(error.stdout.toString());
 		}
 		if (error.stderr) {
 			console.error(error.stderr.toString());
@@ -125,23 +125,23 @@ async function explainWhy(packageName: string, json: boolean): Promise<void> {
  * Get package information
  */
 async function getPackageInfo(packageName: string, json: boolean): Promise<void> {
-	console.log(`\n📋 Package information for ${packageName}...\n`);
+	console.info(`\n📋 Package information for ${packageName}...\n`);
 	
 	try {
 		if (json) {
 			const result = await $`bun info ${packageName} --json`.quiet();
 			if (result.stdout) {
-				console.log(result.stdout.toString());
+				console.info(result.stdout.toString());
 			}
 		} else {
 			const result = await $`bun info ${packageName}`.quiet();
 			if (result.stdout) {
-				console.log(result.stdout.toString());
+				console.info(result.stdout.toString());
 			}
 		}
 	} catch (error: any) {
 		if (error.stdout) {
-			console.log(error.stdout.toString());
+			console.info(error.stdout.toString());
 		}
 		if (error.stderr) {
 			console.error(error.stderr.toString());
@@ -154,8 +154,8 @@ async function getPackageInfo(packageName: string, json: boolean): Promise<void>
  * Main check function
  */
 async function runPackageManagerCheck(options: CheckOptions = {}): Promise<void> {
-	console.log("🔍 Package Manager Check\n");
-	console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+	console.info("🔍 Package Manager Check\n");
+	console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
 	
 	// Check outdated packages
 	if (!options.skipOutdated) {
@@ -173,8 +173,8 @@ async function runPackageManagerCheck(options: CheckOptions = {}): Promise<void>
 		await getPackageInfo(options.package, options.json || false);
 	}
 	
-	console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-	console.log("✅ Package manager check complete!\n");
+	console.info("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+	console.info("✅ Package manager check complete!\n");
 }
 
 // Parse command line arguments

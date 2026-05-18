@@ -7,8 +7,8 @@
 import { MatrixConnectionManager } from './src/@core/enhanced-matrix-system.ts';
 
 async function testAIFeatures() {
-  console.log('🤖 AI Features Test');
-  console.log('='.repeat(40));
+  console.info('🤖 AI Features Test');
+  console.info('='.repeat(40));
   
   const manager = new MatrixConnectionManager();
   
@@ -77,50 +77,50 @@ async function testAIFeatures() {
     // Initialize AI analytics
     manager['ecosystem'].initializeAI(mockEnterpriseScope);
     
-    console.log('✅ AI Analytics initialized');
+    console.info('✅ AI Analytics initialized');
     
     // Test AI prediction
-    console.log('\n🔮 Testing AI Prediction...');
+    console.info('\n🔮 Testing AI Prediction...');
     const prediction = await manager['ecosystem'].getAIPrediction('performance');
     
     if (prediction) {
-      console.log('🤖 AI Prediction Results:');
-      console.log(`  Model: ${prediction.model}`);
-      console.log(`  Type: ${prediction.predictionType}`);
-      console.log(`  Confidence: ${(prediction.confidence * 100).toFixed(1)}%`);
-      console.log(`  Risk Level: ${prediction.prediction.riskLevel}`);
-      console.log(`  Expected Response Time: ${prediction.prediction.expectedResponseTime.toFixed(2)}ms`);
-      console.log(`  Recommended Connections: ${prediction.prediction.recommendedConnections}`);
+      console.info('🤖 AI Prediction Results:');
+      console.info(`  Model: ${prediction.model}`);
+      console.info(`  Type: ${prediction.predictionType}`);
+      console.info(`  Confidence: ${(prediction.confidence * 100).toFixed(1)}%`);
+      console.info(`  Risk Level: ${prediction.prediction.riskLevel}`);
+      console.info(`  Expected Response Time: ${prediction.prediction.expectedResponseTime.toFixed(2)}ms`);
+      console.info(`  Recommended Connections: ${prediction.prediction.recommendedConnections}`);
     } else {
-      console.log('❌ No prediction available');
+      console.info('❌ No prediction available');
     }
     
     // Test anomaly detection
-    console.log('\n🚨 Testing Anomaly Detection...');
+    console.info('\n🚨 Testing Anomaly Detection...');
     const anomalies = await manager['ecosystem'].getAIAnomalies();
     
     if (anomalies.length > 0) {
-      console.log(`Found ${anomalies.length} anomalies:`);
+      console.info(`Found ${anomalies.length} anomalies:`);
       anomalies.forEach((alert, index) => {
-        console.log(`  ${index + 1}. [${alert.severity.toUpperCase()}] ${alert.type}: ${alert.message}`);
+        console.info(`  ${index + 1}. [${alert.severity.toUpperCase()}] ${alert.type}: ${alert.message}`);
       });
     } else {
-      console.log('✅ No anomalies detected');
+      console.info('✅ No anomalies detected');
     }
     
     // Test optimization
-    console.log('\n⚡ Testing Connection Optimization...');
+    console.info('\n⚡ Testing Connection Optimization...');
     const optimization = await manager['ecosystem'].getAIOptimizations(mockEnterpriseScope);
     
-    console.log('AI Optimization Recommendations:');
+    console.info('AI Optimization Recommendations:');
     optimization.recommendations.forEach(rec => {
-      console.log(`  • ${rec}`);
+      console.info(`  • ${rec}`);
     });
     
-    console.log('\nOptimized Configuration:');
-    console.log(JSON.stringify(optimization.optimizedConfig, null, 2));
+    console.info('\nOptimized Configuration:');
+    console.info(JSON.stringify(optimization.optimizedConfig, null, 2));
     
-    console.log('\n🎉 AI Features Test Complete!');
+    console.info('\n🎉 AI Features Test Complete!');
     
   } catch (error) {
     console.error('❌ Test failed:', error.message);

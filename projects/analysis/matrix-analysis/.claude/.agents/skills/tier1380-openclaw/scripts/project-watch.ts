@@ -86,11 +86,11 @@ async function sendBatchNotification(projectName: string) {
 	};
 
 	for (const [topicId, files] of topicFiles) {
-		console.log(`\n📁 ${projectName} → Topic ${topicId} (${topicNames[topicId]}):`);
-		console.log(`   ${files.length} file(s) changed`);
-		files.slice(0, 5).forEach((f) => console.log(`   • ${f}`));
+		console.info(`\n📁 ${projectName} → Topic ${topicId} (${topicNames[topicId]}):`);
+		console.info(`   ${files.length} file(s) changed`);
+		files.slice(0, 5).forEach((f) => console.info(`   • ${f}`));
 		if (files.length > 5) {
-			console.log(`   ... and ${files.length - 5} more`);
+			console.info(`   ... and ${files.length - 5} more`);
 		}
 
 		// Log to file
@@ -124,9 +124,9 @@ async function watchProject(projectName: string, project: ProjectConfig) {
 		".cache",
 	];
 
-	console.log(`👁️  Watching ${projectName} at ${project.path}`);
-	console.log(`   Directories: ${watchDirs.join(", ")}`);
-	console.log(`   Ignoring: ${ignorePatterns.join(", ")}`);
+	console.info(`👁️  Watching ${projectName} at ${project.path}`);
+	console.info(`   Directories: ${watchDirs.join(", ")}`);
+	console.info(`   Ignoring: ${ignorePatterns.join(", ")}`);
 
 	// Initialize batch queue
 	batchQueue.set(projectName, { count: 0, files: new Set(), lastUpdate: Date.now() });
@@ -174,8 +174,8 @@ async function watchProject(projectName: string, project: ProjectConfig) {
 async function watchAll() {
 	const config = await loadConfig();
 
-	console.log("🚀 Starting Project File Watcher");
-	console.log("=".repeat(60));
+	console.info("🚀 Starting Project File Watcher");
+	console.info("=".repeat(60));
 
 	const watchers = Object.entries(config.projects).map(([name, project]) =>
 		watchProject(name, project),
@@ -200,8 +200,8 @@ async function showStatus() {
 	const config = await loadConfig();
 	const logFile = `${import.meta.dir}/../logs/file-watch.jsonl`;
 
-	console.log("📊 File Watch Status");
-	console.log("=".repeat(60));
+	console.info("📊 File Watch Status");
+	console.info("=".repeat(60));
 
 	// Count recent events
 	const eventCounts: Record<string, number> = {};
@@ -228,11 +228,11 @@ async function showStatus() {
 
 	for (const [name, project] of Object.entries(config.projects)) {
 		const events = eventCounts[name] || 0;
-		console.log(`${name}:`);
-		console.log(`   Path: ${project.path}`);
-		console.log(`   Default Topic: ${project.default_topic}`);
-		console.log(`   Recent Events: ${events} (last hour)`);
-		console.log();
+		console.info(`${name}:`);
+		console.info(`   Path: ${project.path}`);
+		console.info(`   Default Topic: ${project.default_topic}`);
+		console.info(`   Recent Events: ${events} (last hour)`);
+		console.info();
 	}
 }
 
@@ -253,7 +253,7 @@ switch (command) {
 		break;
 
 	default:
-		console.log(`
+		console.info(`
 Project File Watcher
 
 Usage:

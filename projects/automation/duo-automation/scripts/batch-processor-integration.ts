@@ -55,7 +55,7 @@ class DisputeBatchProcessor {
    */
   async processDisputeBatch(): Promise<BatchProcessingResult> {
     const batchId = this.generateBatchId();
-    console.log(`🔄 Processing dispute batch: ${batchId}`);
+    console.info(`🔄 Processing dispute batch: ${batchId}`);
     
     const startTime = performance.now();
     let processed = 0;
@@ -66,13 +66,13 @@ class DisputeBatchProcessor {
     try {
       // Get pending disputes
       const pendingDisputes = await this.getPendingDisputes();
-      console.log(`📊 Found ${pendingDisputes.length} pending disputes`);
+      console.info(`📊 Found ${pendingDisputes.length} pending disputes`);
 
       // Process in batches with quantum speed
       for (let i = 0; i < pendingDisputes.length; i += this.batchSize) {
         const batch = pendingDisputes.slice(i, i + this.batchSize);
         
-        console.log(`🔄 Processing batch ${Math.floor(i / this.batchSize) + 1}/${Math.ceil(pendingDisputes.length / this.batchSize)}`);
+        console.info(`🔄 Processing batch ${Math.floor(i / this.batchSize) + 1}/${Math.ceil(pendingDisputes.length / this.batchSize)}`);
         
         // Process batch in parallel with quantum acceleration
         const batchPromises = batch.map(async (dispute) => {
@@ -93,18 +93,18 @@ class DisputeBatchProcessor {
         
         // Update progress
         const progress = Math.min(((i + this.batchSize) / pendingDisputes.length) * 100, 100);
-        console.log(`📈 Progress: ${progress.toFixed(1)}%`);
+        console.info(`📈 Progress: ${progress.toFixed(1)}%`);
       }
 
       const duration = performance.now() - startTime;
       const throughput = processed / (duration / 1000);
 
-      console.log(`✅ Batch processing complete:`);
-      console.log(`   📊 Processed: ${processed}`);
-      console.log(`   ❌ Failed: ${failed}`);
-      console.log(`   🔒 Quantum Hashed: ${quantumHashed}`);
-      console.log(`   ⏱️  Duration: ${duration.toFixed(2)}ms`);
-      console.log(`   🚀 Throughput: ${throughput.toFixed(2)} disputes/sec`);
+      console.info(`✅ Batch processing complete:`);
+      console.info(`   📊 Processed: ${processed}`);
+      console.info(`   ❌ Failed: ${failed}`);
+      console.info(`   🔒 Quantum Hashed: ${quantumHashed}`);
+      console.info(`   ⏱️  Duration: ${duration.toFixed(2)}ms`);
+      console.info(`   🚀 Throughput: ${throughput.toFixed(2)} disputes/sec`);
 
       return {
         batchId,
@@ -126,7 +126,7 @@ class DisputeBatchProcessor {
    * Process individual dispute with quantum hashing
    */
   private async processDispute(dispute: DisputeRecord, batchId: string): Promise<void> {
-    console.log(`   🔍 Processing dispute: ${dispute.id}`);
+    console.info(`   🔍 Processing dispute: ${dispute.id}`);
 
     try {
       // Generate quantum hash for dispute data
@@ -156,7 +156,7 @@ class DisputeBatchProcessor {
       // Save to database
       await this.saveDispute(dispute);
 
-      console.log(`   ✅ Dispute processed with quantum hash: ${crc32Hex}`);
+      console.info(`   ✅ Dispute processed with quantum hash: ${crc32Hex}`);
 
     } catch (error) {
       console.error(`   ❌ Failed to process dispute ${dispute.id}: ${error.message}`);
@@ -173,7 +173,7 @@ class DisputeBatchProcessor {
     for (const item of evidence) {
       try {
         // Simulate file download and hashing
-        console.log(`      🔒 Hashing evidence: ${item.type}`);
+        console.info(`      🔒 Hashing evidence: ${item.type}`);
         
         // In real implementation, download file from URL
         // const fileData = await this.downloadFile(item.url);
@@ -188,7 +188,7 @@ class DisputeBatchProcessor {
           hash: quantumHashHex
         });
 
-        console.log(`      ✅ Evidence hashed: ${quantumHashHex}`);
+        console.info(`      ✅ Evidence hashed: ${quantumHashHex}`);
 
       } catch (error) {
         console.error(`      ❌ Failed to hash evidence: ${error.message}`);
@@ -241,7 +241,7 @@ class DisputeBatchProcessor {
    */
   private async saveDispute(dispute: DisputeRecord): Promise<void> {
     // Simulate database save
-    console.log(`      💾 Saving dispute ${dispute.id} to database`);
+    console.info(`      💾 Saving dispute ${dispute.id} to database`);
     // await this.db.query(
     //   'UPDATE disputes SET status = ?, evidence = ?, quantum_hashed = ?, batch_id = ?, updated_at = ? WHERE id = ?',
     //   [dispute.status, JSON.stringify(dispute.evidence), dispute.quantumHashed, dispute.batchId, dispute.updatedAt, dispute.id]
@@ -252,18 +252,18 @@ class DisputeBatchProcessor {
    * Setup cron job for batch processing
    */
   setupCronJob(): void {
-    console.log('⏰ Setting up cron job for dispute batch processing...');
+    console.info('⏰ Setting up cron job for dispute batch processing...');
     
     // In production, use a proper cron scheduler
     const cronExpression = '*/1 * * * *'; // Every minute for demo
     
-    console.log(`   📅 Cron expression: ${cronExpression}`);
-    console.log(`   📊 Batch size: ${this.batchSize}`);
-    console.log(`   ⏱️  Processing interval: ${this.processingInterval}ms`);
+    console.info(`   📅 Cron expression: ${cronExpression}`);
+    console.info(`   📊 Batch size: ${this.batchSize}`);
+    console.info(`   ⏱️  Processing interval: ${this.processingInterval}ms`);
     
     // Simulate cron job
     const runBatchProcessor = async () => {
-      console.log('\n⏰ Cron job triggered - Running dispute batch processor...');
+      console.info('\n⏰ Cron job triggered - Running dispute batch processor...');
       
       try {
         const result = await this.processDisputeBatch();
@@ -285,8 +285,8 @@ class DisputeBatchProcessor {
     // Start cron job
     setInterval(runBatchProcessor, this.processingInterval);
     
-    console.log('✅ Cron job setup complete');
-    console.log('🔄 Batch processor will run every minute');
+    console.info('✅ Cron job setup complete');
+    console.info('🔄 Batch processor will run every minute');
     
     // Run immediately for demo
     runBatchProcessor();
@@ -296,7 +296,7 @@ class DisputeBatchProcessor {
    * Log batch results to monitoring system
    */
   private async logBatchResults(result: BatchProcessingResult): Promise<void> {
-    console.log('📊 Logging batch results to monitoring system...');
+    console.info('📊 Logging batch results to monitoring system...');
     
     const logData = {
       batchId: result.batchId,
@@ -310,7 +310,7 @@ class DisputeBatchProcessor {
     };
 
     // Send to monitoring system
-    console.log(`   📈 Batch ${result.batchId}: ${result.processed} processed, ${result.failed} failed, ${result.quantumHashed} quantum hashed`);
+    console.info(`   📈 Batch ${result.batchId}: ${result.processed} processed, ${result.failed} failed, ${result.quantumHashed} quantum hashed`);
     
     // Update metrics
     // await this.monitoringService.logMetrics('dispute_batch_processing', logData);
@@ -320,7 +320,7 @@ class DisputeBatchProcessor {
    * Send failure alert
    */
   private async sendFailureAlert(result: BatchProcessingResult): Promise<void> {
-    console.log(`🚨 Sending failure alert for batch ${result.batchId}`);
+    console.info(`🚨 Sending failure alert for batch ${result.batchId}`);
     
     const alert = {
       type: 'batch_processing_failure',
@@ -332,7 +332,7 @@ class DisputeBatchProcessor {
     };
 
     // Send alert
-    console.log(`   📧 Alert sent: ${alert.message}`);
+    console.info(`   📧 Alert sent: ${alert.message}`);
     // await this.alertService.sendAlert(alert);
   }
 
@@ -340,7 +340,7 @@ class DisputeBatchProcessor {
    * Send error alert
    */
   private async sendErrorAlert(error: Error): Promise<void> {
-    console.log(`🚨 Sending error alert: ${error.message}`);
+    console.info(`🚨 Sending error alert: ${error.message}`);
     
     const alert = {
       type: 'batch_processing_error',
@@ -351,7 +351,7 @@ class DisputeBatchProcessor {
     };
 
     // Send alert
-    console.log(`   📧 Error alert sent: ${alert.message}`);
+    console.info(`   📧 Error alert sent: ${alert.message}`);
     // await this.alertService.sendAlert(alert);
   }
 
@@ -372,7 +372,7 @@ class DisputeBatchProcessor {
     quantumHashed: number;
     averageThroughput: number;
   }> {
-    console.log('📊 Getting batch processing statistics...');
+    console.info('📊 Getting batch processing statistics...');
 
     // Simulate statistics
     const stats = {
@@ -383,12 +383,12 @@ class DisputeBatchProcessor {
       averageThroughput: 240.0
     };
 
-    console.log('📊 Batch Processing Statistics:');
-    console.log(`   Total Batches: ${stats.totalBatches}`);
-    console.log(`   Total Processed: ${stats.totalProcessed}`);
-    console.log(`   Total Failed: ${stats.totalFailed}`);
-    console.log(`   Quantum Hashed: ${stats.quantumHashed}`);
-    console.log(`   Average Throughput: ${stats.averageThroughput.toFixed(2)} disputes/sec`);
+    console.info('📊 Batch Processing Statistics:');
+    console.info(`   Total Batches: ${stats.totalBatches}`);
+    console.info(`   Total Processed: ${stats.totalProcessed}`);
+    console.info(`   Total Failed: ${stats.totalFailed}`);
+    console.info(`   Quantum Hashed: ${stats.quantumHashed}`);
+    console.info(`   Average Throughput: ${stats.averageThroughput.toFixed(2)} disputes/sec`);
 
     return stats;
   }
@@ -398,8 +398,8 @@ class DisputeBatchProcessor {
 if (import.meta.main) {
   const batchProcessor = new DisputeBatchProcessor();
   
-  console.log('🎯 Batch Processor Integration - Quantum Hash System');
-  console.log('=====================================================\n');
+  console.info('🎯 Batch Processor Integration - Quantum Hash System');
+  console.info('=====================================================\n');
   
   // Setup and start cron job
   batchProcessor.setupCronJob();
@@ -408,8 +408,8 @@ if (import.meta.main) {
   setTimeout(async () => {
     try {
       const stats = await batchProcessor.getBatchStatistics();
-      console.log('\n✅ Batch processor integration complete!');
-      console.log(`📊 Quantum hashed: ${stats.quantumHashed} disputes`);
+      console.info('\n✅ Batch processor integration complete!');
+      console.info(`📊 Quantum hashed: ${stats.quantumHashed} disputes`);
     } catch (error) {
       console.error('❌ Failed to get statistics:', error);
     }

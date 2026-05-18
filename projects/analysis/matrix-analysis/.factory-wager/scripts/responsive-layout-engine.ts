@@ -216,7 +216,7 @@ if (import.meta.main) {
   const engine = new ResponsiveLayoutEngine(testConfig);
   const result = engine.calculateLayout(testColumns);
   
-  console.log(engine.generateLayoutSummary(result));
+  console.info(engine.generateLayoutSummary(result));
 }
 
 export { ResponsiveConfig, ColumnDef, LayoutResult };

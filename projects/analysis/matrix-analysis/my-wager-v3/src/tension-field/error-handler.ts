@@ -215,13 +215,13 @@ export class TensionErrorHandler {
     const delay = Math.pow(2, error.retryCount || 0) * 1000; // Exponential backoff
     error.retryCount = (error.retryCount || 0) + 1;
 
-    console.log(`Attempting recovery for ${error.code} (attempt ${error.retryCount}/${error.maxRetries})`);
+    console.info(`Attempting recovery for ${error.code} (attempt ${error.retryCount}/${error.maxRetries})`);
 
     await Bun.sleep(delay);
 
     // Retry logic would be implemented by the specific service
     // This is a placeholder for the recovery mechanism
-    console.log(`Recovery attempt ${error.retryCount} completed`);
+    console.info(`Recovery attempt ${error.retryCount} completed`);
   }
 
   // Critical error notification system

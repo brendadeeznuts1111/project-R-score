@@ -59,7 +59,7 @@ async function executeWithContext(
   // Check cache first
   if (options.useCache && commandCache.has(cacheKey)) {
     const cached = commandCache.get(cacheKey)!;
-    console.log(c.blue(`📦 Cache hit for: ${commandParts.join(' ')}`));
+    console.info(c.blue(`📦 Cache hit for: ${commandParts.join(' ')}`));
     return { ...cached, id: sessionId };
   }
   
@@ -75,8 +75,8 @@ async function executeWithContext(
   contextSessions.set(sessionId, session);
   
   try {
-    console.log(c.cyan(`🚀 Context Run: ${commandParts.join(' ')}`));
-    console.log(c.gray(`   Options: ${JSON.stringify(options, null, 2)}`));
+    console.info(c.cyan(`🚀 Context Run: ${commandParts.join(' ')}`));
+    console.info(c.gray(`   Options: ${JSON.stringify(options, null, 2)}`));
     
     // Build CLI arguments with context flags
     const cliArgs = [...commandParts];
@@ -125,16 +125,16 @@ async function executeWithContext(
       }
     }
     
-    console.log(c.green(`✅ Context Run completed: ${session.command}`));
-    console.log(c.gray(`   Duration: ${session.durationMs}ms, Exit Code: ${session.exitCode}`));
+    console.info(c.green(`✅ Context Run completed: ${session.command}`));
+    console.info(c.gray(`   Duration: ${session.durationMs}ms, Exit Code: ${session.exitCode}`));
     
   } catch (error) {
     session.status = error.message.includes('timed out') ? 'timeout' : 'error';
     session.error = String(error);
     session.durationMs = Date.now() - session.startTime;
     
-    console.log(c.red(`❌ Context Run failed: ${session.command}`));
-    console.log(c.red(`   Error: ${session.error}`));
+    console.info(c.red(`❌ Context Run failed: ${session.command}`));
+    console.info(c.red(`   Error: ${session.error}`));
   }
   
   return session;
@@ -144,8 +144,8 @@ async function executeWithContext(
  * Start the context run server
  */
 function startContextRunServer(port: number = 3002): void {
-  console.log(c.bold('🌐 Context Run Server - Starting'));
-  console.log(c.gray(`Port: ${port} | Cache: Enabled | Timeout: 30s\n`));
+  console.info(c.bold('🌐 Context Run Server - Starting'));
+  console.info(c.gray(`Port: ${port} | Cache: Enabled | Timeout: 30s\n`));
   
   const server = serve({
     port,
@@ -269,9 +269,9 @@ function startContextRunServer(port: number = 3002): void {
     }
   });
   
-  console.log(c.green(`✅ Context Run Server running on http://localhost:${port}`));
-  console.log(c.cyan(`📊 Dashboard: http://localhost:${port}`));
-  console.log(c.yellow(`🔗 API: http://localhost:${port}/context-run?cmd=<command>&cwd=<dir>`));
+  console.info(c.green(`✅ Context Run Server running on http://localhost:${port}`));
+  console.info(c.cyan(`📊 Dashboard: http://localhost:${port}`));
+  console.info(c.yellow(`🔗 API: http://localhost:${port}/context-run?cmd=<command>&cwd=<dir>`));
 }
 
 /**

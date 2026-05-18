@@ -103,30 +103,30 @@ const server = serve({
   }
 });
 
-console.log(`🚀 URLPattern Observatory Dashboard`);
-console.log(`===================================`);
-console.log(`📊 Dashboard: http://${HOST}:${PORT}`);
-console.log(`🔗 API: http://${HOST}:${PORT}/api/security-data`);
-console.log(`⏰ Started at ${new Date().toLocaleString()}`);
-console.log(``);
-console.log(`🎯 Features:`);
-console.log(`   • Real-time security monitoring`);
-console.log(`   • TOML configuration analysis`);
-console.log(`   • Multi-tenant support`);
-console.log(`   • Performance metrics`);
-console.log(`   • Risk assessment dashboard`);
-console.log(``);
-console.log(`🔥 Open your browser and navigate to: http://${HOST}:${PORT}`);
+console.info(`🚀 URLPattern Observatory Dashboard`);
+console.info(`===================================`);
+console.info(`📊 Dashboard: http://${HOST}:${PORT}`);
+console.info(`🔗 API: http://${HOST}:${PORT}/api/security-data`);
+console.info(`⏰ Started at ${new Date().toLocaleString()}`);
+console.info(``);
+console.info(`🎯 Features:`);
+console.info(`   • Real-time security monitoring`);
+console.info(`   • TOML configuration analysis`);
+console.info(`   • Multi-tenant support`);
+console.info(`   • Performance metrics`);
+console.info(`   • Risk assessment dashboard`);
+console.info(``);
+console.info(`🔥 Open your browser and navigate to: http://${HOST}:${PORT}`);
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down dashboard server...');
+  console.info('\n🛑 Shutting down dashboard server...');
   server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n🛑 Shutting down dashboard server...');
+  console.info('\n🛑 Shutting down dashboard server...');
   server.stop();
   process.exit(0);
 });

@@ -153,7 +153,7 @@ Bun Version: ${Bun.version}
 	},
 });
 
-console.log(
+console.info(
 	`🚀 RSS Optimizer v${Bun.version} running on http://localhost:3000`,
 );
-console.log("✨ All v1.3.7 features enabled!");
+console.info("✨ All v1.3.7 features enabled!");

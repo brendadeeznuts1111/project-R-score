@@ -80,7 +80,7 @@ class TypeMatrixCLI {
 	 * Display help
 	 */
 	showHelp(): void {
-		console.log(`
+		console.info(`
 ${"=".repeat(80)}
 TYPE MATRIX CLI - Property Type Matrix Explorer
 ${"=".repeat(80)}
@@ -200,12 +200,12 @@ Examples:
 	 */
 	private showCategories(): void {
 		const categories = this.manager.getCategories();
-		console.log("\nProperty Categories:");
-		console.log("=".repeat(80));
+		console.info("\nProperty Categories:");
+		console.info("=".repeat(80));
 		categories.forEach((cat, index) => {
-			console.log(`${index + 1}. ${cat}`);
+			console.info(`${index + 1}. ${cat}`);
 		});
-		console.log("=".repeat(80));
+		console.info("=".repeat(80));
 	}
 
 	/**
@@ -213,25 +213,25 @@ Examples:
 	 */
 	private showStats(): void {
 		const stats = this.manager.getStats();
-		console.log("\n" + "=".repeat(80));
-		console.log("MATRIX STATISTICS");
-		console.log("=".repeat(80));
-		console.log(`Total Properties: ${stats.totalProperties}`);
-		console.log(`Total Namespaces: ${stats.totalNamespaces}`);
-		console.log(`Total Categories: ${stats.totalCategories}`);
-		console.log(`\nMost Used Properties:`);
+		console.info("\n" + "=".repeat(80));
+		console.info("MATRIX STATISTICS");
+		console.info("=".repeat(80));
+		console.info(`Total Properties: ${stats.totalProperties}`);
+		console.info(`Total Namespaces: ${stats.totalNamespaces}`);
+		console.info(`Total Categories: ${stats.totalCategories}`);
+		console.info(`\nMost Used Properties:`);
 		stats.mostUsed.forEach((entry, index) => {
-			console.log(
+			console.info(
 				`  ${index + 1}. ${entry.property.id} (${entry.usage.count} uses)`,
 			);
 		});
-		console.log(`\nLeast Used Properties:`);
+		console.info(`\nLeast Used Properties:`);
 		stats.leastUsed.forEach((entry, index) => {
-			console.log(
+			console.info(
 				`  ${index + 1}. ${entry.property.id} (${entry.usage.count} uses)`,
 			);
 		});
-		console.log("=".repeat(80));
+		console.info("=".repeat(80));
 	}
 
 	/**
@@ -262,7 +262,7 @@ Examples:
 		);
 
 		if (results.length === 0) {
-			console.log(`No properties found matching "${query}"`);
+			console.info(`No properties found matching "${query}"`);
 			return;
 		}
 
@@ -298,9 +298,9 @@ Examples:
 			format: "inspect",
 		});
 
-		console.log(`\n${"=".repeat(80)}`);
-		console.log(`PROPERTY INSPECTION: ${id}`);
-		console.log("=".repeat(80));
+		console.info(`\n${"=".repeat(80)}`);
+		console.info(`PROPERTY INSPECTION: ${id}`);
+		console.info("=".repeat(80));
 		this.manager.displayProperties({
 			...displayOptions,
 			format: "inspect",

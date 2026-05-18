@@ -9,7 +9,7 @@ if (import.meta.path !== Bun.main) {
   process.exit(0);
 }
 
-console.log(`
+console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  Edge Worker Deployer Starting                            ║
 ║  Entrypoint: ${Bun.main}${' '.repeat(Math.max(0, 80 - Bun.main.length))}║
@@ -18,10 +18,10 @@ console.log(`
 
 const mainDir = Bun.main.slice(0, Bun.main.lastIndexOf('/'));
 
-console.log(`Project Home: ${process.env.PROJECT_HOME || mainDir}`);
-console.log(`BUN_PLATFORM_HOME: ${process.env.BUN_PLATFORM_HOME || 'Not set'}`);
-console.log(`DEPLOY_TARGET: ${process.env.DEPLOY_TARGET || 'cloudflare'}`);
-console.log('');
+console.info(`Project Home: ${process.env.PROJECT_HOME || mainDir}`);
+console.info(`BUN_PLATFORM_HOME: ${process.env.BUN_PLATFORM_HOME || 'Not set'}`);
+console.info(`DEPLOY_TARGET: ${process.env.DEPLOY_TARGET || 'cloudflare'}`);
+console.info('');
 
 // Edge worker configuration
 interface DeployConfig {
@@ -48,16 +48,16 @@ function getConfig(): DeployConfig {
 
 // Simulate KV namespace creation
 async function createKVNamespace(config: DeployConfig): Promise<string> {
-  console.log(`Creating KV namespace for ${config.name}...`);
+  console.info(`Creating KV namespace for ${config.name}...`);
   await new Promise(resolve => setTimeout(resolve, 300));
   const kvName = `${config.name}-kv-${Date.now()}`;
-  console.log(`  ✓ KV namespace created: ${kvName}`);
+  console.info(`  ✓ KV namespace created: ${kvName}`);
   return kvName;
 }
 
 // Simulate worker build
 async function buildWorker(config: DeployConfig): Promise<string> {
-  console.log(`Building worker bundle...`);
+  console.info(`Building worker bundle...`);
   await new Promise(resolve => setTimeout(resolve, 500));
 
   // Simulate bundling
@@ -76,17 +76,17 @@ export default {
   `.trim();
 
   await Bun.write(bundlePath, bundleContent);
-  console.log(`  ✓ Bundle written to: ${bundlePath}`);
+  console.info(`  ✓ Bundle written to: ${bundlePath}`);
   return bundlePath;
 }
 
 // Simulate deployment
 async function deployWorker(config: DeployConfig, bundlePath: string, kvName: string): Promise<boolean> {
-  console.log(`Deploying to ${config.env.DEPLOY_TARGET}...`);
+  console.info(`Deploying to ${config.env.DEPLOY_TARGET}...`);
 
   await new Promise(resolve => setTimeout(resolve, 800));
 
-  console.log(`
+  console.info(`
 ═══════════════════════════════════════════════════════════
 ✅ Deployment Complete!
   Project: ${config.name}
@@ -110,12 +110,12 @@ async function deploy() {
   const config = getConfig();
 
   if (dryRun) {
-    console.log('Dry run mode - no actual deployment\n');
+    console.info('Dry run mode - no actual deployment\n');
   }
 
-  console.log(`Deploy target: ${config.env.DEPLOY_TARGET}`);
-  console.log(`Worker name: ${config.name}`);
-  console.log('');
+  console.info(`Deploy target: ${config.env.DEPLOY_TARGET}`);
+  console.info(`Worker name: ${config.name}`);
+  console.info('');
 
   // Step 1: Create KV namespace
   const kvName = await createKVNamespace(config);
@@ -129,25 +129,25 @@ async function deploy() {
   } else if (local) {
     const EDGE_WORKER_PORT = parseInt(process.env.EDGE_WORKER_PORT || '8788', 10);
     const EDGE_WORKER_HOST = process.env.EDGE_WORKER_HOST || process.env.SERVER_HOST || 'localhost';
-    console.log(`
+    console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  Local Development Mode                                  ║
 ║  Worker running at http://${EDGE_WORKER_HOST}:${EDGE_WORKER_PORT}                 ║
 ║  (simulated - not actually starting server)             ║
 ╚═══════════════════════════════════════════════════════════╝
     `);
-    console.log(`Bundle ready at: ${bundlePath}`);
-    console.log('KV namespace:', kvName);
+    console.info(`Bundle ready at: ${bundlePath}`);
+    console.info('KV namespace:', kvName);
   } else {
-    console.log(`\nDry run complete. Would deploy:`);
-    console.log(`  - KV: ${kvName}`);
-    console.log(`  - Bundle: ${bundlePath}`);
+    console.info(`\nDry run complete. Would deploy:`);
+    console.info(`  - KV: ${kvName}`);
+    console.info(`  - Bundle: ${bundlePath}`);
   }
 }
 
 // CLI parsing
 if (args.includes('--help') || args.includes('-h')) {
-  console.log(`
+  console.info(`
 Edge Worker Deployer - Deploy edge functions
 
 Usage:
@@ -173,7 +173,7 @@ Environment Variables:
 
 deploy()
   .then(() => {
-    console.log('\n✅ Edge worker operation completed successfully');
+    console.info('\n✅ Edge worker operation completed successfully');
     Bun.exit(0);
   })
   .catch(err => {

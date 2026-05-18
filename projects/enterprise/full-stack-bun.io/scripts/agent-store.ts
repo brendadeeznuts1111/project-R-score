@@ -225,7 +225,7 @@ class AgentStore {
     bundle.signature = await this.sign(tempBundlePath);
 
     // Upload source file to IPFS
-    console.log('📤 Uploading to IPFS...');
+    console.info('📤 Uploading to IPFS...');
     const ipfsResult = await this.ipfsClient.addFile(sourcePath);
 
     if (!ipfsResult.success) {
@@ -254,7 +254,7 @@ class AgentStore {
     await this.ipfsClient.pinCID(manifestResult.cid!);
 
     // Register on blockchain
-    console.log('⛓️  Registering on blockchain...');
+    console.info('⛓️  Registering on blockchain...');
     const registryResult = await this.blockchainRegistry.registerBundle({
       owner,
       name,
@@ -291,10 +291,10 @@ class AgentStore {
       await Bun.file(manifestPath).delete();
     } catch {}
 
-    console.log(`✅ Published decentralized agent bundle: ${bundleId}`);
-    console.log(`📦 IPFS Source: ${ipfsResult.url}`);
-    console.log(`📋 IPFS Manifest: ${manifestResult.url}`);
-    console.log(`⛓️  Blockchain TX: ${registryResult.txHash}`);
+    console.info(`✅ Published decentralized agent bundle: ${bundleId}`);
+    console.info(`📦 IPFS Source: ${ipfsResult.url}`);
+    console.info(`📋 IPFS Manifest: ${manifestResult.url}`);
+    console.info(`⛓️  Blockchain TX: ${registryResult.txHash}`);
 
     return bundleId;
   }
@@ -309,7 +309,7 @@ class AgentStore {
     }
 
     // Verify bundle registration on blockchain
-    console.log('⛓️  Verifying blockchain registration...');
+    console.info('⛓️  Verifying blockchain registration...');
     const verification = await this.blockchainRegistry.verifyBundle(owner, name, version);
 
     if (!verification.verified) {
@@ -319,7 +319,7 @@ class AgentStore {
     const registryEntry = verification.entry!;
 
     // Download manifest from IPFS
-    console.log('📥 Downloading manifest from IPFS...');
+    console.info('📥 Downloading manifest from IPFS...');
     const manifestResult = await this.ipfsClient.getFile(registryEntry.manifestCID);
 
     if (!manifestResult.success) {
@@ -354,7 +354,7 @@ class AgentStore {
 
     // Check capability permissions
     if (bundle.capabilities && bundle.capabilities.length > 0) {
-      console.log('🔐 Checking capability permissions...');
+      console.info('🔐 Checking capability permissions...');
       const permCheck = await this.checkCapabilityPermissions(bundle.capabilities);
 
       if (permCheck.denied.length > 0) {
@@ -362,13 +362,13 @@ class AgentStore {
       }
 
       if (permCheck.requiresApproval.length > 0) {
-        console.log(`⚠️  Capabilities requiring approval: ${permCheck.requiresApproval.join(', ')}`);
+        console.info(`⚠️  Capabilities requiring approval: ${permCheck.requiresApproval.join(', ')}`);
         // In a real implementation, this would prompt for approval
       }
     }
 
     // Download source file from IPFS
-    console.log('📥 Downloading source from IPFS...');
+    console.info('📥 Downloading source from IPFS...');
     const sourceCID = (bundle as any).sourceCID;
     if (!sourceCID) {
       throw new Error('Source CID not found in manifest');
@@ -387,16 +387,16 @@ class AgentStore {
     mkdirSync(dirname(targetPath), { recursive: true });
     writeFileSync(targetPath, sourceContent);
 
-    console.log(`📦 Installed: ${name}.ts → ${targetPath}`);
+    console.info(`📦 Installed: ${name}.ts → ${targetPath}`);
 
     // Save bundle metadata locally for quick access
     const localBundlePath = join(this.storePath, `${bundleId}.json`);
     mkdirSync(dirname(localBundlePath), { recursive: true });
     writeFileSync(localBundlePath, JSON.stringify(bundle, null, 2));
 
-    console.log(`✅ Successfully installed decentralized bundle: ${bundleId}`);
-    console.log(`🔗 IPFS Source: ${sourceResult.url}`);
-    console.log(`⛓️  Blockchain Verified: ${registryEntry.transactionHash}`);
+    console.info(`✅ Successfully installed decentralized bundle: ${bundleId}`);
+    console.info(`🔗 IPFS Source: ${sourceResult.url}`);
+    console.info(`⛓️  Blockchain Verified: ${registryEntry.transactionHash}`);
 
     return true;
   }
@@ -581,10 +581,10 @@ class AgentStore {
       return true;
     }
 
-    console.log(`Capability approval required for: ${capability}`);
-    console.log(`Risk level: ${capConfig.riskLevel}`);
-    console.log(`Approvers needed: ${workflow.approvers.join(', ')}`);
-    console.log(`Justification: ${justification}`);
+    console.info(`Capability approval required for: ${capability}`);
+    console.info(`Risk level: ${capConfig.riskLevel}`);
+    console.info(`Approvers needed: ${workflow.approvers.join(', ')}`);
+    console.info(`Justification: ${justification}`);
 
     return false; // Would require manual approval in real scenario
   }
@@ -655,7 +655,7 @@ async function main() {
   const [command, ...args] = process.argv.slice(2);
 
   if (!command) {
-    console.log(`
+    console.info(`
 Decentralized Agent Store v3.0.0 - AGENT.STORE.DECENTRALIZED
 
 Commands:
@@ -701,9 +701,9 @@ Examples:
 
       case 'list':
         const bundles = store.list();
-        console.log('Available Agent Bundles:');
+        console.info('Available Agent Bundles:');
         for (const bundle of bundles) {
-          console.log(`  @${bundle.owner}/${bundle.name}@${bundle.version} - ${bundle.description}`);
+          console.info(`  @${bundle.owner}/${bundle.name}@${bundle.version} - ${bundle.description}`);
         }
         break;
 
@@ -713,7 +713,7 @@ Examples:
           throw new Error('Usage: verify <bundle-id>');
         }
         // Verification is done during install, so we'll simulate it
-        console.log(`✅ Bundle ${verifyBundleId} signature verified`);
+        console.info(`✅ Bundle ${verifyBundleId} signature verified`);
         break;
 
       case 'capabilities':
@@ -726,19 +726,19 @@ Examples:
           throw new Error(`Bundle not found: ${capBundleId}`);
         }
         const bundle = JSON.parse(readFileSync(bundlePath, 'utf-8'));
-        console.log(`Capabilities for ${capBundleId}:`);
-        console.log(`- Required: ${bundle.capabilities.join(', ')}`);
-        console.log(`- Sandbox: ${JSON.stringify(bundle.sandbox, null, 2)}`);
+        console.info(`Capabilities for ${capBundleId}:`);
+        console.info(`- Required: ${bundle.capabilities.join(', ')}`);
+        console.info(`- Sandbox: ${JSON.stringify(bundle.sandbox, null, 2)}`);
         break;
 
       case 'check-perms':
         const capabilitiesStr = args.join(' ');
         const requestedCaps = capabilitiesStr.split(',').map(c => c.trim());
         const perms = await store.checkCapabilityPermissions(requestedCaps);
-        console.log('Capability Permission Check:');
-        console.log(`✅ Approved: ${perms.approved.join(', ') || 'none'}`);
-        console.log(`❌ Denied: ${perms.denied.join(', ') || 'none'}`);
-        console.log(`⏳ Requires Approval: ${perms.requiresApproval.join(', ') || 'none'}`);
+        console.info('Capability Permission Check:');
+        console.info(`✅ Approved: ${perms.approved.join(', ') || 'none'}`);
+        console.info(`❌ Denied: ${perms.denied.join(', ') || 'none'}`);
+        console.info(`⏳ Requires Approval: ${perms.requiresApproval.join(', ') || 'none'}`);
         break;
 
       case 'sandbox-exec':
@@ -748,8 +748,8 @@ Examples:
         }
         const input = JSON.parse(inputJson);
         const result = await store.executeInSandbox(execBundleId, input);
-        console.log('Sandbox execution result:');
-        console.log(JSON.stringify(result, null, 2));
+        console.info('Sandbox execution result:');
+        console.info(JSON.stringify(result, null, 2));
         break;
 
       case 'approve-cap':
@@ -758,7 +758,7 @@ Examples:
           throw new Error('Usage: approve-cap <capability> <justification>');
         }
         const capApproved = await store.requestCapabilityApproval(capability, justification);
-        console.log(capApproved ? `✅ Capability ${capability} approved` : `❌ Capability ${capability} requires manual approval`);
+        console.info(capApproved ? `✅ Capability ${capability} approved` : `❌ Capability ${capability} requires manual approval`);
         break;
 
       default:

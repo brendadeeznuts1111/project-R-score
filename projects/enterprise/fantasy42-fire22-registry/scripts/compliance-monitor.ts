@@ -201,20 +201,20 @@ class ComplianceMonitor {
   }
 
   async runComplianceCheck(): Promise<{ passed: number; failed: number; warnings: number; total: number }> {
-    console.log('🏛️ Running comprehensive compliance checks...\n');
+    console.info('🏛️ Running comprehensive compliance checks...\n');
 
     let passed = 0;
     let failed = 0;
     let warnings = 0;
 
     for (const rule of this.rules.filter(r => r.enabled)) {
-      console.log(`🔍 Checking: ${rule.name}`);
+      console.info(`🔍 Checking: ${rule.name}`);
       try {
         const result = await rule.check_function();
 
         if (result) {
           passed++;
-          console.log(`✅ PASSED: ${rule.description}`);
+          console.info(`✅ PASSED: ${rule.description}`);
           await this.logEvent({
             event_type: 'compliance',
             severity: rule.severity,
@@ -225,8 +225,8 @@ class ComplianceMonitor {
           });
         } else {
           failed++;
-          console.log(`❌ FAILED: ${rule.description}`);
-          console.log(`💡 Remediation: ${rule.remediation_steps.join(', ')}`);
+          console.info(`❌ FAILED: ${rule.description}`);
+          console.info(`💡 Remediation: ${rule.remediation_steps.join(', ')}`);
 
           await this.logEvent({
             event_type: 'compliance',
@@ -243,7 +243,7 @@ class ComplianceMonitor {
         }
       } catch (error) {
         warnings++;
-        console.log(`⚠️ WARNING: ${rule.name} - ${error.message}`);
+        console.info(`⚠️ WARNING: ${rule.name} - ${error.message}`);
 
         await this.logEvent({
           event_type: 'compliance',
@@ -258,15 +258,15 @@ class ComplianceMonitor {
           compliance_status: 'warning'
         });
       }
-      console.log('');
+      console.info('');
     }
 
     const total = passed + failed + warnings;
-    console.log(`📊 Compliance Check Summary:`);
-    console.log(`✅ Passed: ${passed}`);
-    console.log(`❌ Failed: ${failed}`);
-    console.log(`⚠️ Warnings: ${warnings}`);
-    console.log(`📈 Overall Score: ${total > 0 ? Math.round((passed / total) * 100) : 0}%`);
+    console.info(`📊 Compliance Check Summary:`);
+    console.info(`✅ Passed: ${passed}`);
+    console.info(`❌ Failed: ${failed}`);
+    console.info(`⚠️ Warnings: ${warnings}`);
+    console.info(`📈 Overall Score: ${total > 0 ? Math.round((passed / total) * 100) : 0}%`);
 
     return { passed, failed, warnings, total };
   }
@@ -477,12 +477,12 @@ if (import.meta.main) {
     case 'report':
       await monitor.runComplianceCheck();
       const report = monitor.generateComplianceReport();
-      console.log(report);
+      console.info(report);
 
       // Save report to file
       const filename = `compliance-monitor-report-${new Date().toISOString().slice(0, 10)}.md`;
       await Bun.write(filename, report);
-      console.log(`💾 Report saved: ${filename}`);
+      console.info(`💾 Report saved: ${filename}`);
       break;
 
     case 'audit':
@@ -496,16 +496,16 @@ if (import.meta.main) {
         details: { command: 'audit', timestamp: new Date().toISOString() },
         compliance_status: 'compliant'
       });
-      console.log('✅ Audit event logged');
+      console.info('✅ Audit event logged');
       break;
 
     default:
-      console.log('Usage: bun run scripts/compliance-monitor.ts [check|report|audit]');
-      console.log('');
-      console.log('Commands:');
-      console.log('  check     - Run compliance checks');
-      console.log('  report    - Generate compliance report');
-      console.log('  audit     - Log audit event');
+      console.info('Usage: bun run scripts/compliance-monitor.ts [check|report|audit]');
+      console.info('');
+      console.info('Commands:');
+      console.info('  check     - Run compliance checks');
+      console.info('  report    - Generate compliance report');
+      console.info('  audit     - Log audit event');
       break;
   }
 

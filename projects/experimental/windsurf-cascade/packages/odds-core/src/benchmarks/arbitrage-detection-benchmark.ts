@@ -13,12 +13,12 @@ export class ArbitrageDetectionBenchmark {
      * Benchmark 1: Synthetic arbitrage detection across different versions
      */
     static async benchmarkSyntheticArbitrageVersions(): Promise<void> {
-        console.log('🏀 Synthetic Arbitrage Detection - Version Comparison\n');
+        console.info('🏀 Synthetic Arbitrage Detection - Version Comparison\n');
 
         const testSizes = [100, 500, 1000, 2000];
 
-        console.log('Markets\tV1 Time(ms)\tV1 Opp\tV2 Time(ms)\tV2 Opp\tV3 Time(ms)\tV3 Opp');
-        console.log('-------\t-----------\t-------\t-----------\t-------\t-----------\t-------');
+        console.info('Markets\tV1 Time(ms)\tV1 Opp\tV2 Time(ms)\tV2 Opp\tV3 Time(ms)\tV3 Opp');
+        console.info('-------\t-----------\t-------\t-----------\t-------\t-----------\t-------');
 
         for (const size of testSizes) {
             // Generate test data for each version
@@ -50,7 +50,7 @@ export class ArbitrageDetectionBenchmark {
             const v3Opportunities = await v3Detector.detectOpportunities(v3Markets, { maxOpportunities: 50 });
             const v3Time = performance.now() - v3Start;
 
-            console.log(`${size}\t${v1Time.toFixed(1)}\t\t${v1Opportunities.length}\t${v2Time.toFixed(1)}\t\t${v2Opportunities.length}\t${v3Time.toFixed(1)}\t\t${v3Opportunities.length}`);
+            console.info(`${size}\t${v1Time.toFixed(1)}\t\t${v1Opportunities.length}\t${v2Time.toFixed(1)}\t\t${v2Opportunities.length}\t${v3Time.toFixed(1)}\t\t${v3Opportunities.length}`);
         }
     }
 
@@ -58,7 +58,7 @@ export class ArbitrageDetectionBenchmark {
      * Benchmark 2: Detection algorithm comparison
      */
     static async benchmarkDetectionAlgorithms(): Promise<void> {
-        console.log('\n🔍 Detection Algorithm Performance Comparison\n');
+        console.info('\n🔍 Detection Algorithm Performance Comparison\n');
 
         const testSize = 1000;
         const markets = [];
@@ -72,8 +72,8 @@ export class ArbitrageDetectionBenchmark {
             { name: 'HFT', factory: () => SyntheticArbitrageDetectorFactory.createHFTDetector() }
         ];
 
-        console.log('Algorithm\tTime(ms)\tOpportunities\tThroughput/sec\tAvg Confidence\tAvg Return(%)');
-        console.log('---------\t-------\t------------\t-----------\t---------------\t-------------');
+        console.info('Algorithm\tTime(ms)\tOpportunities\tThroughput/sec\tAvg Confidence\tAvg Return(%)');
+        console.info('---------\t-------\t------------\t-----------\t---------------\t-------------');
 
         for (const algorithm of algorithms) {
             const detector = algorithm.factory();
@@ -86,7 +86,7 @@ export class ArbitrageDetectionBenchmark {
             const avgConfidence = opportunities.reduce((sum, opp) => sum + opp.arbitrage.confidence.value, 0) / opportunities.length;
             const avgReturn = opportunities.reduce((sum, opp) => sum + opp.profitability.expectedReturn.percent, 0) / opportunities.length;
 
-            console.log(`${algorithm.name}\t${detectionTime.toFixed(1)}\t${opportunities.length}\t\t${throughput.toFixed(0)}\t\t${(avgConfidence * 100).toFixed(1)}%\t\t${avgReturn.toFixed(3)}`);
+            console.info(`${algorithm.name}\t${detectionTime.toFixed(1)}\t${opportunities.length}\t\t${throughput.toFixed(0)}\t\t${(avgConfidence * 100).toFixed(1)}%\t\t${avgReturn.toFixed(3)}`);
         }
     }
 
@@ -94,12 +94,12 @@ export class ArbitrageDetectionBenchmark {
      * Benchmark 3: Rotation arbitrage vs synthetic arbitrage
      */
     static async benchmarkArbitrageTypes(): Promise<void> {
-        console.log('\n⚖️ Arbitrage Type Performance Comparison\n');
+        console.info('\n⚖️ Arbitrage Type Performance Comparison\n');
 
         const testSizes = [100, 500, 1000, 2000];
 
-        console.log('Markets\tSynthetic Time(ms)\tSynthetic Opp\tRotation Time(ms)\tRotation Opp\tEfficiency Ratio');
-        console.log('-------\t----------------\t--------------\t----------------\t--------------\t----------------');
+        console.info('Markets\tSynthetic Time(ms)\tSynthetic Opp\tRotation Time(ms)\tRotation Opp\tEfficiency Ratio');
+        console.info('-------\t----------------\t--------------\t----------------\t--------------\t----------------');
 
         for (const size of testSizes) {
             // Generate synthetic arbitrage data
@@ -125,7 +125,7 @@ export class ArbitrageDetectionBenchmark {
 
             const efficiencyRatio = syntheticTime / rotationTime;
 
-            console.log(`${size}\t${syntheticTime.toFixed(1)}\t\t${syntheticOpportunities.length}\t\t${rotationTime.toFixed(1)}\t\t${rotationOpportunities.length}\t\t${efficiencyRatio.toFixed(2)}x`);
+            console.info(`${size}\t${syntheticTime.toFixed(1)}\t\t${syntheticOpportunities.length}\t\t${rotationTime.toFixed(1)}\t\t${rotationOpportunities.length}\t\t${efficiencyRatio.toFixed(2)}x`);
         }
     }
 
@@ -133,7 +133,7 @@ export class ArbitrageDetectionBenchmark {
      * Benchmark 4: Cache performance impact
      */
     static async benchmarkCachePerformance(): Promise<void> {
-        console.log('\n💾 Cache Performance Impact Analysis\n');
+        console.info('\n💾 Cache Performance Impact Analysis\n');
 
         const testSize = 1000;
         const markets = [];
@@ -146,8 +146,8 @@ export class ArbitrageDetectionBenchmark {
             { name: 'With Cache', useCache: true }
         ];
 
-        console.log('Cache Config\tFirst Run(ms)\tSecond Run(ms)\tImprovement\tThroughput/sec');
-        console.log('-----------\t-------------\t--------------\t-----------\t-----------');
+        console.info('Cache Config\tFirst Run(ms)\tSecond Run(ms)\tImprovement\tThroughput/sec');
+        console.info('-----------\t-------------\t--------------\t-----------\t-----------');
 
         for (const config of cacheConfigs) {
             const detector = SyntheticArbitrageDetectorFactory.createHFTDetector();
@@ -171,7 +171,7 @@ export class ArbitrageDetectionBenchmark {
             const improvement = ((firstTime - secondTime) / firstTime) * 100;
             const throughput = testSize / (secondTime / 1000);
 
-            console.log(`${config.name}\t${firstTime.toFixed(1)}\t\t${secondTime.toFixed(1)}\t\t${improvement.toFixed(1)}%\t\t${throughput.toFixed(0)}`);
+            console.info(`${config.name}\t${firstTime.toFixed(1)}\t\t${secondTime.toFixed(1)}\t\t${improvement.toFixed(1)}%\t\t${throughput.toFixed(0)}`);
         }
     }
 
@@ -179,7 +179,7 @@ export class ArbitrageDetectionBenchmark {
      * Benchmark 5: Opportunity quality vs detection speed
      */
     static async benchmarkOpportunityQuality(): Promise<void> {
-        console.log('\n🎯 Opportunity Quality vs Detection Speed\n');
+        console.info('\n🎯 Opportunity Quality vs Detection Speed\n');
 
         const returnThresholds = [0.001, 0.005, 0.01, 0.02, 0.05]; // 0.1% to 5%
         const testSize = 1000;
@@ -188,8 +188,8 @@ export class ArbitrageDetectionBenchmark {
             markets.push(...SyntheticArbitrageV1Factory.createNBAExample().markets.map(m => m.market));
         }
 
-        console.log('Min Return\tTime(ms)\tOpportunities\tAvg Return(%)\tAvg Confidence\tQuality Score');
-        console.log('-----------\t-------\t------------\t-------------\t---------------\t-------------');
+        console.info('Min Return\tTime(ms)\tOpportunities\tAvg Return(%)\tAvg Confidence\tQuality Score');
+        console.info('-----------\t-------\t------------\t-------------\t---------------\t-------------');
 
         for (const minReturn of returnThresholds) {
             const detector = SyntheticArbitrageDetectorFactory.createHFTDetector();
@@ -204,7 +204,7 @@ export class ArbitrageDetectionBenchmark {
             const avgConfidence = opportunities.reduce((sum, opp) => sum + opp.arbitrage.confidence.value, 0) / opportunities.length;
             const qualityScore = (avgReturn * avgConfidence * 100);
 
-            console.log(`${(minReturn * 100).toFixed(1)}%\t\t${detectionTime.toFixed(1)}\t${opportunities.length}\t\t${avgReturn.toFixed(3)}\t\t${(avgConfidence * 100).toFixed(1)}%\t\t${qualityScore.toFixed(2)}`);
+            console.info(`${(minReturn * 100).toFixed(1)}%\t\t${detectionTime.toFixed(1)}\t${opportunities.length}\t\t${avgReturn.toFixed(3)}\t\t${(avgConfidence * 100).toFixed(1)}%\t\t${qualityScore.toFixed(2)}`);
         }
     }
 
@@ -212,7 +212,7 @@ export class ArbitrageDetectionBenchmark {
      * Benchmark 6: Multi-sport detection performance
      */
     static async benchmarkMultiSportDetection(): Promise<void> {
-        console.log('\n🏈⚾🏀 Multi-Sport Detection Performance\n');
+        console.info('\n🏈⚾🏀 Multi-Sport Detection Performance\n');
 
         const sports = [
             { name: 'NBA', factory: () => new SyntheticArbitrageV1Factory() },
@@ -220,8 +220,8 @@ export class ArbitrageDetectionBenchmark {
             { name: 'MLB', factory: () => new SyntheticArbitrageV3Factory() }
         ];
 
-        console.log('Sport\tTime(ms)\tOpportunities\tThroughput/sec\tAvg Return(%)\tRisk Score');
-        console.log('-----\t-------\t------------\t-----------\t-------------\t-----------');
+        console.info('Sport\tTime(ms)\tOpportunities\tThroughput/sec\tAvg Return(%)\tRisk Score');
+        console.info('-----\t-------\t------------\t-----------\t-------------\t-----------');
 
         for (const sport of sports) {
             const factory = sport.factory();
@@ -240,7 +240,7 @@ export class ArbitrageDetectionBenchmark {
             const avgReturn = opportunities.reduce((sum, opp) => sum + opp.profitability.expectedReturn.percent, 0) / opportunities.length;
             const avgRiskScore = opportunities.reduce((sum, opp) => sum + (opp.execution.difficulty === 'easy' ? 0.2 : opp.execution.difficulty === 'medium' ? 0.5 : 0.8), 0) / opportunities.length;
 
-            console.log(`${sport.name}\t${detectionTime.toFixed(1)}\t${opportunities.length}\t\t${throughput.toFixed(0)}\t\t${avgReturn.toFixed(3)}\t\t${avgRiskScore.toFixed(2)}`);
+            console.info(`${sport.name}\t${detectionTime.toFixed(1)}\t${opportunities.length}\t\t${throughput.toFixed(0)}\t\t${avgReturn.toFixed(3)}\t\t${avgRiskScore.toFixed(2)}`);
         }
     }
 
@@ -248,14 +248,14 @@ export class ArbitrageDetectionBenchmark {
      * Benchmark 7: Real-time detection simulation
      */
     static async benchmarkRealTimeDetection(): Promise<void> {
-        console.log('\n⚡ Real-Time Detection Simulation\n');
+        console.info('\n⚡ Real-Time Detection Simulation\n');
 
         const detector = SyntheticArbitrageDetectorFactory.createHFTDetector();
         const updateIntervals = [100, 500, 1000, 2000]; // milliseconds
         const simulationDuration = 10000; // 10 seconds
 
-        console.log('Interval(ms)\tUpdates\tDetections/sec\tAvg Latency(ms)\tSuccess Rate');
-        console.log('-----------\t-------\t---------------\t---------------\t-----------');
+        console.info('Interval(ms)\tUpdates\tDetections/sec\tAvg Latency(ms)\tSuccess Rate');
+        console.info('-----------\t-------\t---------------\t---------------\t-----------');
 
         for (const interval of updateIntervals) {
             const expectedUpdates = simulationDuration / interval;
@@ -294,7 +294,7 @@ export class ArbitrageDetectionBenchmark {
             const avgLatency = totalLatency / actualUpdates;
             const successRate = (actualUpdates / expectedUpdates) * 100;
 
-            console.log(`${interval}\t\t${actualUpdates}\t${detectionsPerSecond.toFixed(1)}\t\t${avgLatency.toFixed(1)}\t\t${successRate.toFixed(1)}%`);
+            console.info(`${interval}\t\t${actualUpdates}\t${detectionsPerSecond.toFixed(1)}\t\t${avgLatency.toFixed(1)}\t\t${successRate.toFixed(1)}%`);
         }
     }
 
@@ -340,50 +340,50 @@ export class ArbitrageDetectionBenchmark {
      * Run all arbitrage detection benchmarks
      */
     static async runAllBenchmarks(): Promise<void> {
-        console.log('🎯 Arbitrage Detection Performance Benchmarks\n');
-        console.log('='.repeat(80));
+        console.info('🎯 Arbitrage Detection Performance Benchmarks\n');
+        console.info('='.repeat(80));
 
         // Version comparison
         await this.benchmarkSyntheticArbitrageVersions();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Algorithm comparison
         await this.benchmarkDetectionAlgorithms();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Arbitrage type comparison
         await this.benchmarkArbitrageTypes();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Cache performance
         await this.benchmarkCachePerformance();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Opportunity quality
         await this.benchmarkOpportunityQuality();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Multi-sport detection
         await this.benchmarkMultiSportDetection();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Real-time detection
         await this.benchmarkRealTimeDetection();
 
-        console.log('\n✅ All arbitrage detection benchmarks completed!');
-        console.log('\n🎯 Key Findings:');
-        console.log('   • V3 synthetic arbitrage provides best opportunity quality');
-        console.log('   • HFT detector achieves highest throughput');
-        console.log('   • Cache provides 20-40% performance improvement');
-        console.log('   • Rotation arbitrage complements synthetic arbitrage');
-        console.log('   • Real-time detection capable of 100+ updates/second');
-        console.log('   • Multi-sport detection maintains consistent performance');
+        console.info('\n✅ All arbitrage detection benchmarks completed!');
+        console.info('\n🎯 Key Findings:');
+        console.info('   • V3 synthetic arbitrage provides best opportunity quality');
+        console.info('   • HFT detector achieves highest throughput');
+        console.info('   • Cache provides 20-40% performance improvement');
+        console.info('   • Rotation arbitrage complements synthetic arbitrage');
+        console.info('   • Real-time detection capable of 100+ updates/second');
+        console.info('   • Multi-sport detection maintains consistent performance');
     }
 }
 

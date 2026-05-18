@@ -127,24 +127,24 @@ class EnhancedStatusWidget {
 	}
 
 	private async startWidget() {
-		console.log("🚀 Enhanced Status Widget v2.0");
-		console.log("===============================");
-		console.log("✨ Enhanced Features:");
-		console.log("   • Historical data tracking");
-		console.log("   • Performance analytics");
-		console.log("   • Smart notifications");
-		console.log("   • Configurable themes");
-		console.log("   • Advanced logging");
-		console.log("   • Memory/CPU monitoring");
-		console.log("   • Error tracking & recovery");
-		console.log("===============================");
+		console.info("🚀 Enhanced Status Widget v2.0");
+		console.info("===============================");
+		console.info("✨ Enhanced Features:");
+		console.info("   • Historical data tracking");
+		console.info("   • Performance analytics");
+		console.info("   • Smart notifications");
+		console.info("   • Configurable themes");
+		console.info("   • Advanced logging");
+		console.info("   • Memory/CPU monitoring");
+		console.info("   • Error tracking & recovery");
+		console.info("===============================");
 
 		this.setupGracefulShutdown();
 		await this.startMonitoring();
 	}
 
 	private async startMonitoring() {
-		console.log("⚡ Starting enhanced monitoring...");
+		console.info("⚡ Starting enhanced monitoring...");
 
 		while (this.isRunning) {
 			await this.checkStatusEnhanced();
@@ -322,46 +322,46 @@ class EnhancedStatusWidget {
 		const bucketIcon = this.getStatusIcon(this.status.bucket);
 		const perfIndicator = this.getPerformanceIndicator(avgResponse);
 
-		console.log(`${theme.header}🚀 Enhanced Status Widget v2.0${theme.reset}`);
-		console.log(
+		console.info(`${theme.header}🚀 Enhanced Status Widget v2.0${theme.reset}`);
+		console.info(
 			`${theme.divider}===============================${theme.reset}`,
 		);
-		console.log(
+		console.info(
 			`${theme.status}📊 Status: ${apiIcon} API  ${bucketIcon} R2 Bucket  📁 ${this.status.profiles} Profiles${theme.reset}`,
 		);
-		console.log(
+		console.info(
 			`${theme.performance}⚡ Performance: ${perfIndicator} ${avgResponse}ms avg | 🎯 ${successRate}% success${theme.reset}`,
 		);
-		console.log(
+		console.info(
 			`${theme.metrics}📈 Metrics: ${uptime} uptime | ${memoryMB}MB memory | ${this.status.errorCount} errors${theme.reset}`,
 		);
-		console.log("");
-		console.log(`${theme.services}🔗 Services:${theme.reset}`);
-		console.log(`   API:     ${this.getStatusText(this.status.api)}`);
-		console.log(`   R2:      ${this.getStatusText(this.status.bucket)}`);
-		console.log(`   Profiles: ${this.status.profiles} files organized`);
-		console.log("");
-		console.log(`${theme.actions}⚡ Enhanced Actions:${theme.reset}`);
-		console.log("   [1] Open Dashboard    http://localhost:3001");
-		console.log("   [2] Open API Docs     http://localhost:3001/api");
-		console.log(
+		console.info("");
+		console.info(`${theme.services}🔗 Services:${theme.reset}`);
+		console.info(`   API:     ${this.getStatusText(this.status.api)}`);
+		console.info(`   R2:      ${this.getStatusText(this.status.bucket)}`);
+		console.info(`   Profiles: ${this.status.profiles} files organized`);
+		console.info("");
+		console.info(`${theme.actions}⚡ Enhanced Actions:${theme.reset}`);
+		console.info("   [1] Open Dashboard    http://localhost:3001");
+		console.info("   [2] Open API Docs     http://localhost:3001/api");
+		console.info(
 			"   [3] Open R2 Bucket    https://pub-a471e86af24446498311933a2eca2454.r2.dev",
 		);
-		console.log("   [4] View Profiles     ./profiles/");
-		console.log("   [p] Performance Stats");
-		console.log("   [h] Historical Data");
-		console.log("   [c] Configuration");
-		console.log("   [l] View Logs");
-		console.log("   [a] Analytics Report");
-		console.log("   [t] Toggle Theme");
-		console.log("   [r] Reset Metrics");
-		console.log("   [q] Quit Widget");
-		console.log("");
-		console.log(
+		console.info("   [4] View Profiles     ./profiles/");
+		console.info("   [p] Performance Stats");
+		console.info("   [h] Historical Data");
+		console.info("   [c] Configuration");
+		console.info("   [l] View Logs");
+		console.info("   [a] Analytics Report");
+		console.info("   [t] Toggle Theme");
+		console.info("   [r] Reset Metrics");
+		console.info("   [q] Quit Widget");
+		console.info("");
+		console.info(
 			`${theme.info}🕐 Last Update: ${new Date(this.status.lastUpdate).toLocaleTimeString()} | Theme: ${this.config.theme}${theme.reset}`,
 		);
-		console.log(`${theme.footer}✨ Enhanced Features Active${theme.reset}`);
-		console.log(
+		console.info(`${theme.footer}✨ Enhanced Features Active${theme.reset}`);
+		console.info(
 			`${theme.divider}===============================${theme.reset}`,
 		);
 	}
@@ -464,7 +464,7 @@ class EnhancedStatusWidget {
 
 	private async sendNotification(title: string, message: string) {
 		const notification = `[${new Date().toLocaleTimeString()}] ${title}: ${message}`;
-		console.log(`\n🔔 ${notification}`);
+		console.info(`\n🔔 ${notification}`);
 
 		if (this.config.logging) {
 			await this.logEvent("NOTIFICATION", notification);
@@ -494,12 +494,12 @@ class EnhancedStatusWidget {
 	}
 
 	private setupGracefulShutdown() {
-		console.log(
+		console.info(
 			"💡 Enhanced Controls: p=Stats, h=History, c=Config, l=Logs, a=Analytics, t=Theme, r=Reset, q=Quit",
 		);
 
 		process.on("SIGINT", async () => {
-			console.log("\n👋 Shutting down enhanced widget...");
+			console.info("\n👋 Shutting down enhanced widget...");
 			await this.saveAnalytics();
 			this.isRunning = false;
 			process.exit(0);
@@ -549,97 +549,97 @@ class EnhancedStatusWidget {
 				break;
 			case "q":
 			case "\u0003":
-				console.log("\n👋 Shutting down enhanced widget...");
+				console.info("\n👋 Shutting down enhanced widget...");
 				this.isRunning = false;
 				process.exit(0);
 		}
 	}
 
 	private async showPerformanceStats() {
-		console.log("\n📊 Enhanced Performance Statistics");
-		console.log("=================================");
-		console.log(
+		console.info("\n📊 Enhanced Performance Statistics");
+		console.info("=================================");
+		console.info(
 			`⚡ Current Response: ${this.status.responseTime.toFixed(2)}ms`,
 		);
-		console.log(
+		console.info(
 			`📈 Average Response: ${this.getAverageResponseTime().toFixed(2)}ms`,
 		);
-		console.log(`🎯 Success Rate: ${this.status.successRate.toFixed(1)}%`);
-		console.log(`🕐 Uptime: ${this.formatUptime(this.status.uptime)}`);
-		console.log(
+		console.info(`🎯 Success Rate: ${this.status.successRate.toFixed(1)}%`);
+		console.info(`🕐 Uptime: ${this.formatUptime(this.status.uptime)}`);
+		console.info(
 			`💾 Memory Usage: ${Math.round(this.status.memoryUsage.heapUsed / 1024 / 1024)}MB`,
 		);
-		console.log(`🔧 Error Count: ${this.status.errorCount}`);
-		console.log(`📊 Data Points: ${this.status.historicalData.length}`);
-		console.log(
+		console.info(`🔧 Error Count: ${this.status.errorCount}`);
+		console.info(`📊 Data Points: ${this.status.historicalData.length}`);
+		console.info(
 			`🔄 Refresh Interval: ${(this.config.refreshInterval / 1000).toFixed(1)}s`,
 		);
-		console.log("=================================\n");
+		console.info("=================================\n");
 	}
 
 	private showHistoricalData() {
-		console.log("\n📈 Historical Data Summary");
-		console.log("==========================");
+		console.info("\n📈 Historical Data Summary");
+		console.info("==========================");
 
 		if (this.status.historicalData.length === 0) {
-			console.log("No historical data available yet.");
+			console.info("No historical data available yet.");
 			return;
 		}
 
 		const recent = this.status.historicalData.slice(-10);
-		console.log("Last 10 status checks:");
+		console.info("Last 10 status checks:");
 		recent.forEach((snapshot, index) => {
 			const time = new Date(snapshot.timestamp).toLocaleTimeString();
 			const apiIcon = this.getStatusIcon(snapshot.apiStatus);
 			const bucketIcon = this.getStatusIcon(snapshot.bucketStatus);
-			console.log(
+			console.info(
 				`  ${index + 1}. ${time} - ${apiIcon} API ${bucketIcon} R2 (${snapshot.responseTime.toFixed(0)}ms)`,
 			);
 		});
-		console.log("==========================\n");
+		console.info("==========================\n");
 	}
 
 	private async showConfiguration() {
-		console.log("\n⚙️ Configuration");
-		console.log("================");
-		console.log(`🎨 Theme: ${this.config.theme}`);
-		console.log(
+		console.info("\n⚙️ Configuration");
+		console.info("================");
+		console.info(`🎨 Theme: ${this.config.theme}`);
+		console.info(
 			`🔄 Refresh: ${(this.config.refreshInterval / 1000).toFixed(1)}s`,
 		);
-		console.log(`📊 History: ${this.config.maxHistorySize} entries`);
-		console.log(
+		console.info(`📊 History: ${this.config.maxHistorySize} entries`);
+		console.info(
 			`🔔 Notifications: ${this.config.notifications.enabled ? "Enabled" : "Disabled"}`,
 		);
-		console.log(
+		console.info(
 			`📈 Analytics: ${this.config.analytics ? "Enabled" : "Disabled"}`,
 		);
-		console.log(`📝 Logging: ${this.config.logging ? "Enabled" : "Disabled"}`);
-		console.log("================");
-		console.log("Press [t] to toggle theme, [r] to reset metrics");
-		console.log("================\n");
+		console.info(`📝 Logging: ${this.config.logging ? "Enabled" : "Disabled"}`);
+		console.info("================");
+		console.info("Press [t] to toggle theme, [r] to reset metrics");
+		console.info("================\n");
 	}
 
 	private async showLogs() {
 		try {
 			const logs = await readFile(this.logFile, "utf-8");
 			const logLines = logs.split("\n").slice(-20); // Last 20 lines
-			console.log("\n📝 Recent Logs");
-			console.log("===============");
+			console.info("\n📝 Recent Logs");
+			console.info("===============");
 			logLines.forEach((line) => {
-				if (line.trim()) console.log(line);
+				if (line.trim()) console.info(line);
 			});
-			console.log("===============\n");
+			console.info("===============\n");
 		} catch {
-			console.log("\n📝 No logs available yet.\n");
+			console.info("\n📝 No logs available yet.\n");
 		}
 	}
 
 	private async showAnalyticsReport() {
-		console.log("\n📊 Analytics Report");
-		console.log("==================");
+		console.info("\n📊 Analytics Report");
+		console.info("==================");
 
 		if (this.status.historicalData.length === 0) {
-			console.log("No data available for analytics.");
+			console.info("No data available for analytics.");
 			return;
 		}
 
@@ -656,20 +656,20 @@ class EnhancedStatusWidget {
 			(s) => s.bucketStatus === "connected",
 		).length;
 
-		console.log(
+		console.info(
 			`📈 Response Time - Avg: ${avgResponse.toFixed(2)}ms, Min: ${minResponse.toFixed(2)}ms, Max: ${maxResponse.toFixed(2)}ms`,
 		);
-		console.log(
+		console.info(
 			`🟢 API Uptime: ${((apiUptime / this.status.historicalData.length) * 100).toFixed(1)}%`,
 		);
-		console.log(
+		console.info(
 			`☁️  Bucket Uptime: ${((bucketUptime / this.status.historicalData.length) * 100).toFixed(1)}%`,
 		);
-		console.log(
+		console.info(
 			`🎯 Overall Success Rate: ${this.status.successRate.toFixed(1)}%`,
 		);
-		console.log(`📊 Total Samples: ${this.status.historicalData.length}`);
-		console.log("==================\n");
+		console.info(`📊 Total Samples: ${this.status.historicalData.length}`);
+		console.info("==================\n");
 	}
 
 	private async toggleTheme() {
@@ -677,7 +677,7 @@ class EnhancedStatusWidget {
 		const currentIndex = themes.indexOf(this.config.theme);
 		this.config.theme = themes[(currentIndex + 1) % themes.length];
 		await this.saveConfig();
-		console.log(`\n🎨 Theme changed to: ${this.config.theme}\n`);
+		console.info(`\n🎨 Theme changed to: ${this.config.theme}\n`);
 	}
 
 	private resetMetrics() {
@@ -685,7 +685,7 @@ class EnhancedStatusWidget {
 		this.status.errorCount = 0;
 		this.status.successRate = 0;
 		this.startTime = Date.now();
-		console.log("\n📊 Metrics reset successfully!\n");
+		console.info("\n📊 Metrics reset successfully!\n");
 	}
 
 	private openUrl(url: string) {
@@ -696,7 +696,7 @@ class EnhancedStatusWidget {
 					? "start"
 					: "xdg-open";
 		spawn(command, [url], { detached: true, stdio: "ignore" });
-		console.log(`🌐 Opening: ${url}`);
+		console.info(`🌐 Opening: ${url}`);
 	}
 
 	private sleep(ms: number): Promise<void> {

@@ -29,7 +29,7 @@ import { URL_PATTERNS, docs, validateDocUrl, buildDocsUrl } from '../lib/docs/re
  * Example usage with corrected domain
  */
 function demonstrateUrlPattern() {
-  console.log('=== URLPattern Examples ===');
+  console.info('=== URLPattern Examples ===');
   
   // Test URLs
   const testUrls = [
@@ -42,16 +42,16 @@ function demonstrateUrlPattern() {
   ];
   
   testUrls.forEach(url => {
-    console.log(`\nTesting: ${url}`);
+    console.info(`\nTesting: ${url}`);
     
     // Using manual pattern
     const match = docsPattern.exec(url);
     if (match) {
-      console.log('  ✅ Manual pattern matched:');
-      console.log('    Groups:', match.pathname.groups);
-      console.log('    Hash groups:', match.hash.groups);
+      console.info('  ✅ Manual pattern matched:');
+      console.info('    Groups:', match.pathname.groups);
+      console.info('    Hash groups:', match.hash.groups);
     } else {
-      console.log('  ❌ Manual pattern did not match');
+      console.info('  ❌ Manual pattern did not match');
     }
     
     // Using our reference system patterns
@@ -59,8 +59,8 @@ function demonstrateUrlPattern() {
     for (const [name, pattern] of Object.entries(URL_PATTERNS)) {
       const systemMatch = pattern.exec(url);
       if (systemMatch) {
-        console.log(`  ✅ System pattern "${name}" matched:`);
-        console.log('    Groups:', { 
+        console.info(`  ✅ System pattern "${name}" matched:`);
+        console.info('    Groups:', { 
           ...systemMatch.pathname.groups, 
           ...systemMatch.hash.groups 
         });
@@ -70,7 +70,7 @@ function demonstrateUrlPattern() {
     }
     
     if (!systemMatched) {
-      console.log('  ❌ No system patterns matched');
+      console.info('  ❌ No system patterns matched');
     }
   });
 }
@@ -79,21 +79,21 @@ function demonstrateUrlPattern() {
  * Advanced pattern matching with our reference system
  */
 function advancedPatternMatching() {
-  console.log('\n=== Advanced Pattern Matching ===');
+  console.info('\n=== Advanced Pattern Matching ===');
   
   const url = 'https://bun.sh/docs/runtime/binary-data#typedarray';
   
   // Parse with our reference system
   const parsed = docs.parseUrl(url);
   
-  console.log(`URL: ${url}`);
-  console.log('Parsed result:', parsed);
+  console.info(`URL: ${url}`);
+  console.info('Parsed result:', parsed);
   
   if (parsed.valid) {
-    console.log(`✅ Matched pattern: ${parsed.pattern}`);
-    console.log('Extracted groups:', parsed.groups);
+    console.info(`✅ Matched pattern: ${parsed.pattern}`);
+    console.info('Extracted groups:', parsed.groups);
   } else {
-    console.log('❌ URL did not match any known patterns');
+    console.info('❌ URL did not match any known patterns');
   }
 }
 
@@ -101,7 +101,7 @@ function advancedPatternMatching() {
  * Validation examples
  */
 function validationExamples() {
-  console.log('\n=== URL Validation Examples ===');
+  console.info('\n=== URL Validation Examples ===');
   
   const urls = [
     'https://bun.sh/docs/runtime/binary-data',
@@ -115,10 +115,10 @@ function validationExamples() {
     const isValid = validateDocUrl(url);
     const parsed = docs.parseUrl(url);
     
-    console.log(`${url}:`);
-    console.log(`  Valid: ${isValid ? '✅' : '❌'}`);
+    console.info(`${url}:`);
+    console.info(`  Valid: ${isValid ? '✅' : '❌'}`);
     if (parsed.valid) {
-      console.log(`  Pattern: ${parsed.pattern}`);
+      console.info(`  Pattern: ${parsed.pattern}`);
     }
   });
 }
@@ -127,23 +127,23 @@ function validationExamples() {
  * Build URLs from patterns
  */
 function buildFromPatterns() {
-  console.log('\n=== Building URLs from Patterns ===');
+  console.info('\n=== Building URLs from Patterns ===');
   
   // Build documentation URLs
   const runtimeUrl = buildDocsUrl('/docs/runtime/binary-data', 'typedarray');
   const apiUrl = buildDocsUrl('/docs/api/utils');
   const customUrl = buildDocsUrl('/docs/custom/section', 'subsection');
   
-  console.log('Built URLs:');
-  console.log('  Runtime:', runtimeUrl);
-  console.log('  API:', apiUrl);
-  console.log('  Custom:', customUrl);
+  console.info('Built URLs:');
+  console.info('  Runtime:', runtimeUrl);
+  console.info('  API:', apiUrl);
+  console.info('  Custom:', customUrl);
   
   // Verify they match patterns
-  console.log('\nVerification:');
+  console.info('\nVerification:');
   [runtimeUrl, apiUrl, customUrl].forEach(url => {
     const parsed = docs.parseUrl(url);
-    console.log(`  ${url}: ${parsed.valid ? '✅' : '❌'} ${parsed.pattern || ''}`);
+    console.info(`  ${url}: ${parsed.valid ? '✅' : '❌'} ${parsed.pattern || ''}`);
   });
 }
 

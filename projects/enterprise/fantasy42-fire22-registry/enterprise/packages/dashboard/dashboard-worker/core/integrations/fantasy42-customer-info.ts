@@ -75,7 +75,7 @@ export class Fantasy42CustomerInfo {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('👤 Initializing Fantasy42 Customer Information Integration...');
+      console.info('👤 Initializing Fantasy42 Customer Information Integration...');
 
       // Locate all customer info fields
       const fieldsLocated = await this.locateCustomerFields();
@@ -106,7 +106,7 @@ export class Fantasy42CustomerInfo {
       await this.loadInitialCustomerData();
 
       this.isInitialized = true;
-      console.log('✅ Fantasy42 Customer Information Integration initialized');
+      console.info('✅ Fantasy42 Customer Information Integration initialized');
 
       return true;
     } catch (error) {
@@ -134,7 +134,7 @@ export class Fantasy42CustomerInfo {
     for (const field of fields) {
       const element = this.xpathHandler.findElementByXPath(field.xpath);
       if (element) {
-        console.log(`✅ Found ${field.name} field:`, element.tagName);
+        console.info(`✅ Found ${field.name} field:`, element.tagName);
       } else {
         console.warn(`⚠️ ${field.name} field not found at: ${field.xpath}`);
         allFound = false;
@@ -164,7 +164,7 @@ export class Fantasy42CustomerInfo {
       }
     }
 
-    console.log('✅ Field watchers setup for real-time sync');
+    console.info('✅ Field watchers setup for real-time sync');
   }
 
   /**
@@ -214,7 +214,7 @@ export class Fantasy42CustomerInfo {
       value = element.value;
     }
 
-    console.log(`📝 ${fieldName} changed:`, value);
+    console.info(`📝 ${fieldName} changed:`, value);
 
     // Update current customer profile
     if (this.currentCustomer) {
@@ -290,7 +290,7 @@ export class Fantasy42CustomerInfo {
       thirdPartyElement.addEventListener('blur', () => this.validateThirdPartyId());
     }
 
-    console.log('✅ Field event listeners setup');
+    console.info('✅ Field event listeners setup');
   }
 
   /**
@@ -298,7 +298,7 @@ export class Fantasy42CustomerInfo {
    */
   private async initializeValidation(): Promise<void> {
     // Setup real-time validation for all fields
-    console.log('✅ Validation system initialized');
+    console.info('✅ Validation system initialized');
   }
 
   /**
@@ -306,7 +306,7 @@ export class Fantasy42CustomerInfo {
    */
   private async setupAutoSave(): Promise<void> {
     // Setup auto-save timer
-    console.log('✅ Auto-save system initialized');
+    console.info('✅ Auto-save system initialized');
   }
 
   /**
@@ -318,7 +318,7 @@ export class Fantasy42CustomerInfo {
       const customerId = await this.getCurrentCustomerId();
 
       if (customerId) {
-        console.log(`👤 Loading customer data for: ${customerId}`);
+        console.info(`👤 Loading customer data for: ${customerId}`);
 
         // Load customer profile from database
         const customerData = await this.customerDB.getCustomerById(customerId);
@@ -345,9 +345,9 @@ export class Fantasy42CustomerInfo {
           // Populate form fields
           await this.populateFormFields(this.currentCustomer);
 
-          console.log('✅ Customer data loaded and form populated');
+          console.info('✅ Customer data loaded and form populated');
         } else {
-          console.log('ℹ️ No existing customer data found');
+          console.info('ℹ️ No existing customer data found');
         }
       }
     } catch (error) {
@@ -402,7 +402,7 @@ export class Fantasy42CustomerInfo {
       data: customer.thirdPartyId,
     });
 
-    console.log('✅ Form fields populated with customer data');
+    console.info('✅ Form fields populated with customer data');
   }
 
   /**
@@ -597,7 +597,7 @@ export class Fantasy42CustomerInfo {
     if (!this.currentCustomer) return;
 
     try {
-      console.log('💾 Auto-saving customer data...');
+      console.info('💾 Auto-saving customer data...');
 
       // Validate all fields before saving
       const validationResults = await this.validateAllFields();
@@ -610,7 +610,7 @@ export class Fantasy42CustomerInfo {
         // Update Fantasy42 backend
         await this.fantasyClient.updateCustomerInfo(this.currentCustomer);
 
-        console.log('✅ Customer data auto-saved');
+        console.info('✅ Customer data auto-saved');
       } else {
         console.warn('⚠️ Auto-save skipped due to validation errors');
       }
@@ -646,7 +646,7 @@ export class Fantasy42CustomerInfo {
       // Check for immediate matches
       const matches = await this.p2pAutomation.findImmediateMatches(thirdPartyId);
       if (matches.length > 0) {
-        console.log(`🎯 Found ${matches.length} P2P matches for ${thirdPartyId}`);
+        console.info(`🎯 Found ${matches.length} P2P matches for ${thirdPartyId}`);
       }
     }
   }
@@ -708,7 +708,7 @@ export class Fantasy42CustomerInfo {
 
   private handleCitySuggestions(): void {
     // Could implement city autocomplete suggestions
-    console.log('🏙️ City suggestions could be implemented here');
+    console.info('🏙️ City suggestions could be implemented here');
   }
 
   private handleEmailValidation(): void {
@@ -741,7 +741,7 @@ export class Fantasy42CustomerInfo {
     const target = event.target as HTMLInputElement;
     const enabled = target.checked;
 
-    console.log(`🚨 Telegram alerts ${enabled ? 'enabled' : 'disabled'}`);
+    console.info(`🚨 Telegram alerts ${enabled ? 'enabled' : 'disabled'}`);
 
     if (this.currentCustomer) {
       this.currentCustomer.telegramAlerts = enabled;
@@ -756,7 +756,7 @@ export class Fantasy42CustomerInfo {
 
   private handleThirdPartyIdInput(): void {
     // Could provide real-time validation feedback
-    console.log('🔗 3rd party ID input detected');
+    console.info('🔗 3rd party ID input detected');
   }
 
   /**
@@ -836,7 +836,7 @@ export class Fantasy42CustomerInfo {
     // Disconnect field watchers
     this.fieldWatchers.forEach((observer, fieldName) => {
       observer.disconnect();
-      console.log(`Observer disconnected for: ${fieldName}`);
+      console.info(`Observer disconnected for: ${fieldName}`);
     });
     this.fieldWatchers.clear();
 
@@ -845,7 +845,7 @@ export class Fantasy42CustomerInfo {
       clearTimeout(this.autoSaveTimer);
     }
 
-    console.log('🧹 Fantasy42 Customer Info Integration cleaned up');
+    console.info('🧹 Fantasy42 Customer Info Integration cleaned up');
   }
 }
 

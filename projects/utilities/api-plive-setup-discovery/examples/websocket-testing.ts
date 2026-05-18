@@ -32,7 +32,7 @@ class WebSocketBettingWorkflowTester {
       warning: '⚠️ '
     }[type];
 
-    console.log(`${prefix}${message}`);
+    console.info(`${prefix}${message}`);
   }
 
   private recordResult(passed: boolean, error?: string): void {
@@ -389,34 +389,34 @@ class WebSocketBettingWorkflowTester {
   }
 
   private printResults(): void {
-    console.log('\n' + '='.repeat(60));
-    console.log('🧪 WEB SOCKET BETTING WORKFLOW TEST RESULTS');
-    console.log('='.repeat(60));
+    console.info('\n' + '='.repeat(60));
+    console.info('🧪 WEB SOCKET BETTING WORKFLOW TEST RESULTS');
+    console.info('='.repeat(60));
 
-    console.log(`📊 Total Tests: ${this.results.total}`);
-    console.log(`✅ Passed: ${this.results.passed}`);
-    console.log(`❌ Failed: ${this.results.failed}`);
-    console.log(`⏱️  Duration: ${(this.results.duration / 1000).toFixed(2)}s`);
+    console.info(`📊 Total Tests: ${this.results.total}`);
+    console.info(`✅ Passed: ${this.results.passed}`);
+    console.info(`❌ Failed: ${this.results.failed}`);
+    console.info(`⏱️  Duration: ${(this.results.duration / 1000).toFixed(2)}s`);
 
     const successRate = this.results.total > 0 ? (this.results.passed / this.results.total * 100).toFixed(1) : '0';
-    console.log(`📈 Success Rate: ${successRate}%`);
+    console.info(`📈 Success Rate: ${successRate}%`);
 
     if (this.results.errors.length > 0) {
-      console.log('\n🚨 ERRORS:');
+      console.info('\n🚨 ERRORS:');
       this.results.errors.forEach((error, index) => {
-        console.log(`   ${index + 1}. ${error}`);
+        console.info(`   ${index + 1}. ${error}`);
       });
     }
 
-    console.log('='.repeat(60));
+    console.info('='.repeat(60));
 
     if (this.results.failed === 0) {
-      console.log('🎉 ALL TESTS PASSED! WebSocket integration is working correctly.');
+      console.info('🎉 ALL TESTS PASSED! WebSocket integration is working correctly.');
     } else {
-      console.log('⚠️  SOME TESTS FAILED. Check the errors above and fix issues before production.');
+      console.info('⚠️  SOME TESTS FAILED. Check the errors above and fix issues before production.');
     }
 
-    console.log('='.repeat(60) + '\n');
+    console.info('='.repeat(60) + '\n');
   }
 }
 

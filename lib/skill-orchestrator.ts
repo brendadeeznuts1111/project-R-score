@@ -640,7 +640,7 @@ const DomainPerformanceMonitor = {
     const entry = { timestamp: new Date().toISOString(), type,
       ...(typeof data === 'object' ? data : { value: data }) };
     if (process.env.NODE_ENV !== 'test') {
-      console.log(`[perf:${type}]`, JSON.stringify(entry));
+      console.info(`[perf:${type}]`, JSON.stringify(entry));
     }
   },
 };

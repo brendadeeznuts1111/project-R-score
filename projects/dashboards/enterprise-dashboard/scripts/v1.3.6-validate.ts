@@ -47,16 +47,16 @@ async function validateV136() {
   }
 
   // Output results table
-  console.log("\nBun v1.3.6 Native Loader Validation\n");
-  console.log(Bun.inspect.table(results, { colors: true }));
+  console.info("\nBun v1.3.6 Native Loader Validation\n");
+  console.info(Bun.inspect.table(results, { colors: true }));
 
   if (errors.length) {
-    console.log("\nErrors:");
-    errors.forEach((e) => console.log(`  ${e}`));
+    console.info("\nErrors:");
+    errors.forEach((e) => console.info(`  ${e}`));
     process.exit(1);
   }
 
-  console.log(`\n${valid} files validated with native loaders + CRC32`);
+  console.info(`\n${valid} files validated with native loaders + CRC32`);
 }
 
 validateV136();

@@ -19,7 +19,7 @@ const SERVICE = "nexus";
  * Provision secrets for a specific environment
  */
 async function provisionSecrets(environment: string): Promise<void> {
-  console.log(`🔐 Provisioning secrets for environment: ${environment}\n`);
+  console.info(`🔐 Provisioning secrets for environment: ${environment}\n`);
 
   const requiredSecrets = [
     { name: "mcp.bun.apiKey", description: "Bun MCP API key" },
@@ -27,24 +27,24 @@ async function provisionSecrets(environment: string): Promise<void> {
     { name: "mcp.nexus.apiKey", description: "Nexus MCP API key" },
   ];
 
-  console.log("Required secrets:");
+  console.info("Required secrets:");
   for (const secret of requiredSecrets) {
     const exists = await secrets.get({ service: SERVICE, name: secret.name });
     if (exists) {
-      console.log(`  ✅ ${secret.name} - Already provisioned`);
+      console.info(`  ✅ ${secret.name} - Already provisioned`);
     } else {
-      console.log(`  ⚠️  ${secret.name} - Missing (${secret.description})`);
+      console.info(`  ⚠️  ${secret.name} - Missing (${secret.description})`);
     }
   }
 
-  console.log("\n💡 To set missing secrets:");
-  console.log("  bun run secrets:set --service=nexus --name=<secret-name> --value=<value>\n");
+  console.info("\n💡 To set missing secrets:");
+  console.info("  bun run secrets:set --service=nexus --name=<secret-name> --value=<value>\n");
 
   if (environment === "production") {
-    console.log("⚠️  PRODUCTION ENVIRONMENT:");
-    console.log("  - Ensure all secrets are set before deployment");
-    console.log("  - Verify access controls are configured");
-    console.log("  - Test rotation cron is scheduled\n");
+    console.info("⚠️  PRODUCTION ENVIRONMENT:");
+    console.info("  - Ensure all secrets are set before deployment");
+    console.info("  - Verify access controls are configured");
+    console.info("  - Test rotation cron is scheduled\n");
   }
 }
 
@@ -60,7 +60,7 @@ async function main() {
   });
 
   if (parsed.values.help) {
-    console.log(`
+    console.info(`
 🔐 Secrets Provisioning Script
 
 USAGE:

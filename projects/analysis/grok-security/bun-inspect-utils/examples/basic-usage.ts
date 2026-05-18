@@ -27,7 +27,7 @@ import {
 // 1. BASIC INSPECTION
 // ============================================================================
 
-console.log("=== BASIC INSPECTION ===\n");
+console.info("=== BASIC INSPECTION ===\n");
 
 const user = {
   id: 1,
@@ -40,20 +40,20 @@ const user = {
   },
 };
 
-console.log("inspect():");
-console.log(inspect(user));
+console.info("inspect():");
+console.info(inspect(user));
 
-console.log("\ninspectForLog():");
-console.log(inspectForLog(user));
+console.info("\ninspectForLog():");
+console.info(inspectForLog(user));
 
-console.log("\ninspectCompact():");
-console.log(inspectCompact(user));
+console.info("\ninspectCompact():");
+console.info(inspectCompact(user));
 
 // ============================================================================
 // 2. TABLE FORMATTING
 // ============================================================================
 
-console.log("\n=== TABLE FORMATTING ===\n");
+console.info("\n=== TABLE FORMATTING ===\n");
 
 const users = [
   { id: 1, name: "Alice", role: "admin", active: true },
@@ -61,78 +61,78 @@ const users = [
   { id: 3, name: "Charlie", role: "user", active: false },
 ];
 
-console.log("ASCII Table:");
-console.log(table(users));
+console.info("ASCII Table:");
+console.info(table(users));
 
-console.log("\nMarkdown Table:");
-console.log(tableMarkdown(users));
+console.info("\nMarkdown Table:");
+console.info(tableMarkdown(users));
 
-console.log("\nCSV Export:");
-console.log(tableCsv(users));
+console.info("\nCSV Export:");
+console.info(tableCsv(users));
 
 // ============================================================================
 // 3. DEEP COMPARISON
 // ============================================================================
 
-console.log("\n=== DEEP COMPARISON ===\n");
+console.info("\n=== DEEP COMPARISON ===\n");
 
 const obj1 = { a: 1, b: { c: 2 } };
 const obj2 = { a: 1, b: { c: 2 } };
 const obj3 = { a: 1, b: { c: 3 } };
 
-console.log("deepEquals(obj1, obj2):", deepEquals(obj1, obj2)); // true
-console.log("deepEquals(obj1, obj3):", deepEquals(obj1, obj3)); // false
+console.info("deepEquals(obj1, obj2):", deepEquals(obj1, obj2)); // true
+console.info("deepEquals(obj1, obj3):", deepEquals(obj1, obj3)); // false
 
 const diff = findDifferences(obj1, obj3);
-console.log("\nDifferences:");
-console.log(diff);
+console.info("\nDifferences:");
+console.info(diff);
 
 // ============================================================================
 // 4. STRING WIDTH & LAYOUT
 // ============================================================================
 
-console.log("\n=== STRING WIDTH & LAYOUT ===\n");
+console.info("\n=== STRING WIDTH & LAYOUT ===\n");
 
 const text1 = "Hello World";
 const text2 = "Hello 👋 World";
 const text3 = "\x1b[36mColored Text\x1b[0m";
 
-console.log(`Width of "${text1}":`, stringWidth(text1));
-console.log(`Width of "${text2}":`, stringWidth(text2));
-console.log(`Width of colored text:`, stringWidth(text3));
+console.info(`Width of "${text1}":`, stringWidth(text1));
+console.info(`Width of "${text2}":`, stringWidth(text2));
+console.info(`Width of colored text:`, stringWidth(text3));
 
-console.log("\nPadding:");
-console.log(`"${padToWidth("hi", 10)}"`);
-console.log(`"${padToWidth("hello", 10, "-")}"`);
+console.info("\nPadding:");
+console.info(`"${padToWidth("hi", 10)}"`);
+console.info(`"${padToWidth("hello", 10, "-")}"`);
 
-console.log("\nTruncation:");
-console.log(`"${truncateToWidth("Hello World", 8)}"`);
-console.log(`"${truncateToWidth("Hello World", 8, "...")}"`);
+console.info("\nTruncation:");
+console.info(`"${truncateToWidth("Hello World", 8)}"`);
+console.info(`"${truncateToWidth("Hello World", 8, "...")}"`);
 
 // ============================================================================
 // 5. PROMISE PEEKING
 // ============================================================================
 
-console.log("\n=== PROMISE PEEKING ===\n");
+console.info("\n=== PROMISE PEEKING ===\n");
 
 const promise1 = Promise.resolve({ data: "resolved" });
 const promise2 = new Promise((resolve) => setTimeout(() => resolve({ data: "delayed" }), 100));
 
-console.log("Peeking resolved promise:");
-console.log(peek(promise1));
+console.info("Peeking resolved promise:");
+console.info(peek(promise1));
 
-console.log("\nPeeking pending promise:");
-console.log(peek(promise2)); // undefined (still pending)
+console.info("\nPeeking pending promise:");
+console.info(peek(promise2)); // undefined (still pending)
 
-console.log("\nPeek with state:");
+console.info("\nPeek with state:");
 const state = peekWithState(promise1);
-console.log(state);
+console.info(state);
 
 // ============================================================================
 // 6. CUSTOM INSPECTION
 // ============================================================================
 
-console.log("\n=== CUSTOM INSPECTION ===\n");
+console.info("\n=== CUSTOM INSPECTION ===\n");
 
 class User {
   constructor(public name: string, public email: string) {}
@@ -144,14 +144,14 @@ class User {
 }
 
 const alice = new User("Alice", "alice@example.com");
-console.log("Custom inspect:");
-console.log(inspect(alice));
+console.info("Custom inspect:");
+console.info(inspect(alice));
 
 // ============================================================================
 // 7. SENSITIVE DATA MASKING
 // ============================================================================
 
-console.log("\n=== SENSITIVE DATA MASKING ===\n");
+console.info("\n=== SENSITIVE DATA MASKING ===\n");
 
 const credentials = {
   username: "alice",
@@ -160,23 +160,23 @@ const credentials = {
   email: "alice@example.com",
 };
 
-console.log("Original:");
-console.log(inspect(credentials));
+console.info("Original:");
+console.info(inspect(credentials));
 
-console.log("\nMasked:");
+console.info("\nMasked:");
 const masked = maskSensitive(credentials);
-console.log(inspect(masked));
+console.info(inspect(masked));
 
 // ============================================================================
 // 8. DARK-MODE FORMATTING
 // ============================================================================
 
-console.log("\n=== DARK-MODE FORMATTING ===\n");
+console.info("\n=== DARK-MODE FORMATTING ===\n");
 
-console.log(formatDarkMode("Cyan text", "cyan"));
-console.log(formatDarkMode("Magenta text", "magenta"));
-console.log(formatDarkMode("Green text", "green"));
-console.log(formatDarkMode("Red text", "red"));
+console.info(formatDarkMode("Cyan text", "cyan"));
+console.info(formatDarkMode("Magenta text", "magenta"));
+console.info(formatDarkMode("Green text", "green"));
+console.info(formatDarkMode("Red text", "red"));
 
-console.log("\n✅ All examples completed!");
+console.info("\n✅ All examples completed!");
 

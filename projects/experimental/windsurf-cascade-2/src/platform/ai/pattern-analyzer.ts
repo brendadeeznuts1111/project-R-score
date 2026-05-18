@@ -133,7 +133,7 @@ Provide insights on:
           {
             label: 'Investigate',
             description: 'Analyze the pattern in detail',
-            execute: () => console.log('Investigating anomaly...')
+            execute: () => console.info('Investigating anomaly...')
           }
         ]
       });
@@ -150,7 +150,7 @@ Provide insights on:
           {
             label: 'Optimize',
             description: 'Apply suggested optimizations',
-            execute: () => console.log('Applying optimizations...')
+            execute: () => console.info('Applying optimizations...')
           }
         ]
       });
@@ -181,12 +181,12 @@ Provide insights on:
             {
               label: 'Investigate Cause',
               description: 'Check for configuration conflicts',
-              execute: () => console.log('Investigating spike cause...')
+              execute: () => console.info('Investigating spike cause...')
             },
             {
               label: 'Set Alert',
               description: 'Create alert for future spikes',
-              execute: () => console.log('Setting up spike alert...')
+              execute: () => console.info('Setting up spike alert...')
             }
           ]
         });
@@ -203,7 +203,7 @@ Provide insights on:
             {
               label: 'Monitor Trend',
               description: 'Continue monitoring this trend',
-              execute: () => console.log('Monitoring gradual change...')
+              execute: () => console.info('Monitoring gradual change...')
             }
           ]
         });
@@ -220,7 +220,7 @@ Provide insights on:
             {
               label: 'Stabilize',
               description: 'Apply stabilization measures',
-              execute: () => console.log('Applying stabilization...')
+              execute: () => console.info('Applying stabilization...')
             }
           ]
         });
@@ -239,7 +239,7 @@ Provide insights on:
           {
             label: 'Optimize Updates',
             description: 'Reduce frequency of large changes',
-            execute: () => console.log('Optimizing update frequency...')
+            execute: () => console.info('Optimizing update frequency...')
           }
         ]
       });

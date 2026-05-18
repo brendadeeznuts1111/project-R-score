@@ -178,7 +178,7 @@ export class UploadProgressUI {
   // Animated loading spinner for premium users
   showSpinner(message: string, duration: number = 2000) {
     if (!this.activeFeatures.has("PREMIUM")) {
-      console.log(message);
+      console.info(message);
       return;
     }
 
@@ -190,7 +190,7 @@ export class UploadProgressUI {
       const elapsed = Date.now() - startTime;
       if (elapsed >= duration) {
         clearInterval(interval);
-        console.log(`\x1b[2K\r✓ ${message}`);
+        console.info(`\x1b[2K\r✓ ${message}`);
         return;
       }
 
@@ -204,14 +204,14 @@ export class UploadProgressUI {
   showFileDetails(file: UploadProgress) {
     if (!this.activeFeatures.has("PREMIUM")) return;
 
-    console.log(`\n📄 File Details: ${file.name}`);
-    console.log(`   Size: ${this.formatFileSize(file.size)}`);
-    console.log(`   Status: ${file.status}`);
-    console.log(`   Progress: ${Math.round(file.progress * 100)}%`);
+    console.info(`\n📄 File Details: ${file.name}`);
+    console.info(`   Size: ${this.formatFileSize(file.size)}`);
+    console.info(`   Status: ${file.status}`);
+    console.info(`   Progress: ${Math.round(file.progress * 100)}%`);
     if (file.speed)
-      console.log(`   Speed: ${(file.speed / 1024).toFixed(1)}KB/s`);
-    if (file.eta) console.log(`   ETA: ${Math.round(file.eta)}s`);
-    console.log("");
+      console.info(`   Speed: ${(file.speed / 1024).toFixed(1)}KB/s`);
+    if (file.eta) console.info(`   ETA: ${Math.round(file.eta)}s`);
+    console.info("");
   }
 }
 

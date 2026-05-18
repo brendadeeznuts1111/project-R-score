@@ -553,7 +553,7 @@ export class CryptoExchangeIntegration {
 
   private async submitCryptoWithdrawal(transaction: CryptoTransaction): Promise<void> {
     // In real implementation, would call exchange API
-    console.log(
+    console.info(
       `Submitting crypto withdrawal: ${transaction.amount} ${transaction.cryptoCurrency}`
     );
 
@@ -567,13 +567,13 @@ export class CryptoExchangeIntegration {
 
   private async submitExchangeOrder(transaction: CryptoTransaction): Promise<string> {
     // In real implementation, would call exchange API
-    console.log(`Submitting exchange order: ${transaction.amount} ${transaction.cryptoCurrency}`);
+    console.info(`Submitting exchange order: ${transaction.amount} ${transaction.cryptoCurrency}`);
     return `order_${Date.now()}`;
   }
 
   private async submitStakingTransaction(transaction: CryptoTransaction): Promise<void> {
     // In real implementation, would call exchange API
-    console.log(
+    console.info(
       `Submitting staking transaction: ${transaction.amount} ${transaction.cryptoCurrency}`
     );
 

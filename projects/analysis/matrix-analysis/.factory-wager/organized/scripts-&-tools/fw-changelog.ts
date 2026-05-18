@@ -48,11 +48,11 @@ class FactoryWagerChangelog {
   }
 
   async generateChangelog(): Promise<ChangelogResult> {
-    console.log(`📝 FactoryWager Configuration Changelog`);
-    console.log(`=======================================`);
-    console.log(`From: ${this.fromRef}`);
-    console.log(`To: ${this.toRef}`);
-    console.log('');
+    console.info(`📝 FactoryWager Configuration Changelog`);
+    console.info(`=======================================`);
+    console.info(`From: ${this.fromRef}`);
+    console.info(`To: ${this.toRef}`);
+    console.info('');
 
     try {
       // Load configurations
@@ -63,7 +63,7 @@ class FactoryWagerChangelog {
         throw new Error('Failed to load one or both configurations');
       }
 
-      console.log(`📊 Analyzing changes...`);
+      console.info(`📊 Analyzing changes...`);
       const result = await this.analyzeChanges(fromConfig, toConfig);
 
       // Render diff table
@@ -282,14 +282,14 @@ class FactoryWagerChangelog {
 
   private renderDiffTable(changes: ConfigDiff[]): void {
     if (changes.length === 0) {
-      console.log('✅ No changes detected');
+      console.info('✅ No changes detected');
       return;
     }
 
-    console.log(`\n📋 Configuration Changes:`);
-    console.log('─'.repeat(120));
-    console.log('Change │ Env       │ Key'.padEnd(30) + '│ Before'.padEnd(20) + '│ After'.padEnd(20) + '│ Type'.padEnd(10) + '│ Risk');
-    console.log('───────┼───────────┼'.padEnd(33, '─') + '┼'.padEnd(23, '─') + '┼'.padEnd(23, '─') + '┼'.padEnd(13, '─') + '┼──────');
+    console.info(`\n📋 Configuration Changes:`);
+    console.info('─'.repeat(120));
+    console.info('Change │ Env       │ Key'.padEnd(30) + '│ Before'.padEnd(20) + '│ After'.padEnd(20) + '│ Type'.padEnd(10) + '│ Risk');
+    console.info('───────┼───────────┼'.padEnd(33, '─') + '┼'.padEnd(23, '─') + '┼'.padEnd(23, '─') + '┼'.padEnd(13, '─') + '┼──────');
 
     changes.forEach(change => {
       const changeIcon = this.colorizeChange(change.change);
@@ -300,28 +300,28 @@ class FactoryWagerChangelog {
       const type = change.type.padEnd(10);
       const risk = this.colorizeRisk(change.risk).padEnd(4);
       
-      console.log(`${changeIcon} │ ${env}│ ${key}│ ${before}│ ${after}│ ${type}│ ${risk}`);
+      console.info(`${changeIcon} │ ${env}│ ${key}│ ${before}│ ${after}│ ${type}│ ${risk}`);
     });
     
-    console.log('─'.repeat(120));
+    console.info('─'.repeat(120));
   }
 
   private renderSummary(result: ChangelogResult): void {
-    console.log(`\n📊 Change Summary:`);
-    console.log(`   Total changes: ${result.summary.total}`);
-    console.log(`   Added: ${result.summary.added}`);
-    console.log(`   Modified: ${result.summary.modified}`);
-    console.log(`   Removed: ${result.summary.removed}`);
-    console.log(`   Interpolations: ${result.summary.interpolations}`);
+    console.info(`\n📊 Change Summary:`);
+    console.info(`   Total changes: ${result.summary.total}`);
+    console.info(`   Added: ${result.summary.added}`);
+    console.info(`   Modified: ${result.summary.modified}`);
+    console.info(`   Removed: ${result.summary.removed}`);
+    console.info(`   Interpolations: ${result.summary.interpolations}`);
 
-    console.log(`\n🔄 Inheritance Drift:`);
+    console.info(`\n🔄 Inheritance Drift:`);
     Object.entries(result.inheritanceDrift).forEach(([env, drift]) => {
       const status = drift === 0 ? 'unchanged' : `${drift}% modified`;
-      console.log(`   ${env.padEnd(11)}: ${drift}% (${status})`);
+      console.info(`   ${env.padEnd(11)}: ${drift}% (${status})`);
     });
 
-    console.log(`\n⚡ Risk Delta: ${result.riskDelta > 0 ? '+' : ''}${result.riskDelta} (${result.fromRisk} → ${result.toRisk})`);
-    console.log(`🛡️ Hardening Level: ${result.hardeningLevel} (maintained)`);
+    console.info(`\n⚡ Risk Delta: ${result.riskDelta > 0 ? '+' : ''}${result.riskDelta} (${result.fromRisk} → ${result.toRisk})`);
+    console.info(`🛡️ Hardening Level: ${result.hardeningLevel} (maintained)`);
   }
 
   private async securityScan(result: ChangelogResult): Promise<void> {
@@ -330,27 +330,27 @@ class FactoryWagerChangelog {
     );
 
     if (secretsAdded.length > 0 && !this.force) {
-      console.log(`\n🚨 SECURITY HALT:`);
-      console.log(`   ${secretsAdded.length} new secret(s) detected:`);
+      console.info(`\n🚨 SECURITY HALT:`);
+      console.info(`   ${secretsAdded.length} new secret(s) detected:`);
       secretsAdded.forEach(secret => {
-        console.log(`   • ${secret.key} (${secret.environment})`);
+        console.info(`   • ${secret.key} (${secret.environment})`);
       });
-      console.log(`\n   Use --force="I understand the risks" to proceed`);
+      console.info(`\n   Use --force="I understand the risks" to proceed`);
       process.exit(3);
     }
   }
 
   private async handleCommit(result: ChangelogResult): Promise<void> {
-    console.log(`\n📝 Generating commit message...`);
+    console.info(`\n📝 Generating commit message...`);
     
     const message = this.generateCommitMessage(result);
-    console.log(`\n${message}`);
+    console.info(`\n${message}`);
     
     // Ask for confirmation
     process.stdout.write(`\nCommit these changes? [y/N]: `);
     
     // For automation, we'll skip the interactive prompt and just show the message
-    console.log(`\n💡 Commit message generated (use --apply with confirmation to commit)`);
+    console.info(`\n💡 Commit message generated (use --apply with confirmation to commit)`);
   }
 
   private generateCommitMessage(result: ChangelogResult): string {

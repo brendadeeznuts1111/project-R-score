@@ -19,11 +19,11 @@ function shouldAcceptInbound(config: CallManagerContext["config"], from: string 
 
   switch (policy) {
     case "disabled":
-      console.log("[voice-call] Inbound call rejected: policy is disabled");
+      console.info("[voice-call] Inbound call rejected: policy is disabled");
       return false;
 
     case "open":
-      console.log("[voice-call] Inbound call accepted: policy is open");
+      console.info("[voice-call] Inbound call accepted: policy is open");
       return true;
 
     case "allowlist":
@@ -34,7 +34,7 @@ function shouldAcceptInbound(config: CallManagerContext["config"], from: string 
         return normalized.endsWith(normalizedAllow) || normalizedAllow.endsWith(normalized);
       });
       const status = allowed ? "accepted" : "rejected";
-      console.log(
+      console.info(
         `[voice-call] Inbound call ${status}: ${from} ${allowed ? "is in" : "not in"} allowlist`,
       );
       return allowed;
@@ -73,7 +73,7 @@ function createInboundCall(params: {
   params.ctx.providerCallIdMap.set(params.providerCallId, callId);
   persistCallRecord(params.ctx.storePath, callRecord);
 
-  console.log(`[voice-call] Created inbound call record: ${callId} from ${params.from}`);
+  console.info(`[voice-call] Created inbound call record: ${callId} from ${params.from}`);
   return callRecord;
 }
 

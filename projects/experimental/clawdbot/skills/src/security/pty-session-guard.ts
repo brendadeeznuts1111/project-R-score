@@ -223,7 +223,7 @@ export class PTYSessionGuard {
         eventsLogged,
       });
 
-      console.log(`Session destroyed: ${sessionId}`);
+      console.info(`Session destroyed: ${sessionId}`);
     };
 
     // Get stats function

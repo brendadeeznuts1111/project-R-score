@@ -4,10 +4,10 @@
 import { parseArgs } from "util";
 import { colourKit, pad, rgbaLattice, sse } from "./quantum-toolkit-patch.ts";
 
-console.log(
+console.info(
   colourKit(0.9).ansi + "🚀 Enhanced Bun System & Process Suite" + "\x1b[0m"
 );
-console.log("=".repeat(70));
+console.info("=".repeat(70));
 
 // Enhanced argument parsing
 const { values, positionals } = parseArgs({
@@ -33,7 +33,7 @@ class ProcessMonitor {
   private samples: Array<{ time: number; memory: number; cpu: number }> = [];
 
   start() {
-    console.log(
+    console.info(
       colourKit(0.6).ansi + "📊 Starting Advanced Process Monitor" + "\x1b[0m"
     );
     this.monitor();
@@ -67,7 +67,7 @@ class ProcessMonitor {
 
       // Check for memory warnings
       if (memUsage.heapUsed > 200 * 1024 * 1024) {
-        console.log(
+        console.info(
           colourKit(0.8).ansi +
             `\n⚠️ High memory usage: ${memoryMB}MB` +
             "\x1b[0m"
@@ -84,7 +84,7 @@ class ProcessMonitor {
   }
 
   private showSummary() {
-    console.log("\n\n📈 Monitoring Summary:");
+    console.info("\n\n📈 Monitoring Summary:");
     if (this.samples.length === 0) return;
 
     const memories = this.samples.map((s) => s.memory);
@@ -92,16 +92,16 @@ class ProcessMonitor {
     const maxMemory = Math.max(...memories);
     const minMemory = Math.min(...memories);
 
-    console.log(`Average memory: ${(avgMemory / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`Peak memory: ${(maxMemory / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`Min memory: ${(minMemory / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`Total samples: ${this.samples.length}`);
+    console.info(`Average memory: ${(avgMemory / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`Peak memory: ${(maxMemory / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`Min memory: ${(minMemory / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`Total samples: ${this.samples.length}`);
   }
 }
 
 // Enhanced spawn with detailed metrics
 async function enhancedSpawn(command: string) {
-  console.log(
+  console.info(
     colourKit(0.5).ansi + `\n🚀 Enhanced Spawn: ${command}` + "\x1b[0m"
   );
 
@@ -119,37 +119,37 @@ async function enhancedSpawn(command: string) {
   const duration = performance.now() - start;
 
   // Performance metrics
-  console.log("┌─────────────────┬──────────────────────────────┐");
-  console.log("│ Metric          │ Value                        │");
-  console.log("├─────────────────┼──────────────────────────────┤");
-  console.log(`│ ${pad("Exit Code", 15)} │ ${pad(exitCode.toString(), 28)} │`);
-  console.log(
+  console.info("┌─────────────────┬──────────────────────────────┐");
+  console.info("│ Metric          │ Value                        │");
+  console.info("├─────────────────┼──────────────────────────────┤");
+  console.info(`│ ${pad("Exit Code", 15)} │ ${pad(exitCode.toString(), 28)} │`);
+  console.info(
     `│ ${pad("Duration", 15)} │ ${pad(duration.toFixed(2) + "ms", 28)} │`
   );
-  console.log(
+  console.info(
     `│ ${pad("Stdout Size", 15)} │ ${pad(stdout.length + " bytes", 28)} │`
   );
-  console.log(
+  console.info(
     `│ ${pad("Stderr Size", 15)} │ ${pad(stderr.length + " bytes", 28)} │`
   );
-  console.log("└─────────────────┴──────────────────────────────┘");
+  console.info("└─────────────────┴──────────────────────────────┘");
 
   if (stdout) {
-    console.log("\n📤 Stdout:");
+    console.info("\n📤 Stdout:");
     stdout
       .trim()
       .split("\n")
       .slice(0, 5)
       .forEach((line, i) => {
-        console.log(`  ${i + 1}: ${line}`);
+        console.info(`  ${i + 1}: ${line}`);
       });
     if (stdout.split("\n").length > 5)
-      console.log(`  ... and ${stdout.split("\n").length - 5} more lines`);
+      console.info(`  ... and ${stdout.split("\n").length - 5} more lines`);
   }
 
   if (stderr) {
-    console.log("\n⚠️ Stderr:");
-    console.log(`  ${stderr.trim()}`);
+    console.info("\n⚠️ Stderr:");
+    console.info(`  ${stderr.trim()}`);
   }
 
   return { exitCode, duration, stdout, stderr };
@@ -157,12 +157,12 @@ async function enhancedSpawn(command: string) {
 
 // Parallel process execution
 async function runParallel(commands: string) {
-  console.log(
+  console.info(
     colourKit(0.7).ansi + "\n⚡ Parallel Process Execution" + "\x1b[0m"
   );
 
   const cmdList = commands.split(",").map((cmd) => cmd.trim());
-  console.log(`Running ${cmdList.length} commands in parallel...`);
+  console.info(`Running ${cmdList.length} commands in parallel...`);
 
   const start = performance.now();
   const promises = cmdList.map(async (cmd, i) => {
@@ -181,15 +181,15 @@ async function runParallel(commands: string) {
   const results = await Promise.all(promises);
   const duration = performance.now() - start;
 
-  console.log("\n📊 Parallel Results:");
-  console.log("┌─────┬─────────────────┬──────────┬──────────┐");
-  console.log("│ #   │ Command         │ Exit Code │ Duration │");
-  console.log("├─────┼─────────────────┼──────────┼──────────┤");
+  console.info("\n📊 Parallel Results:");
+  console.info("┌─────┬─────────────────┬──────────┬──────────┐");
+  console.info("│ #   │ Command         │ Exit Code │ Duration │");
+  console.info("├─────┼─────────────────┼──────────┼──────────┤");
 
   results.forEach((result) => {
     const color =
       result.exitCode === 0 ? colourKit(0.2).ansi : colourKit(0.8).ansi;
-    console.log(
+    console.info(
       `│ ${pad((result.index + 1).toString(), 3)} │ ${pad(
         result.cmd.slice(0, 15),
         15
@@ -200,13 +200,13 @@ async function runParallel(commands: string) {
     );
   });
 
-  console.log("└─────┴─────────────────┴──────────┴──────────┘");
-  console.log(`Total time: ${duration.toFixed(2)}ms`);
+  console.info("└─────┴─────────────────┴──────────┴──────────┘");
+  console.info(`Total time: ${duration.toFixed(2)}ms`);
 }
 
 // Stress testing
 async function stressTest() {
-  console.log(colourKit(0.8).ansi + "\n🔥 System Stress Test" + "\x1b[0m");
+  console.info(colourKit(0.8).ansi + "\n🔥 System Stress Test" + "\x1b[0m");
 
   const tests = [
     {
@@ -238,7 +238,7 @@ async function stressTest() {
     },
   ];
 
-  console.log("Running stress tests...");
+  console.info("Running stress tests...");
 
   for (const test of tests) {
     const start = performance.now();
@@ -250,7 +250,7 @@ async function stressTest() {
     const memAfter = process.memoryUsage().heapUsed;
     const memDelta = (memAfter - memBefore) / 1024 / 1024;
 
-    console.log(
+    console.info(
       `${test.name}: ${duration.toFixed(2)}ms, Memory: +${memDelta.toFixed(
         2
       )}MB, Result: ${result}`
@@ -260,7 +260,7 @@ async function stressTest() {
 
 // Advanced IPC with multiple workers
 async function advancedIPC() {
-  console.log(colourKit(0.6).ansi + "\n📨 Advanced IPC Demo" + "\x1b[0m");
+  console.info(colourKit(0.6).ansi + "\n📨 Advanced IPC Demo" + "\x1b[0m");
 
   const workerCode = `
     const id = process.argv[2];
@@ -307,7 +307,7 @@ async function advancedIPC() {
     workers.push(worker);
   }
 
-  console.log(`Created ${workerCount} workers`);
+  console.info(`Created ${workerCount} workers`);
 
   // Collect responses
   const responses = [];
@@ -331,23 +331,23 @@ async function advancedIPC() {
     await worker.exited;
   }
 
-  console.log("\n📥 Worker Responses:");
+  console.info("\n📥 Worker Responses:");
   responses.forEach((resp) => {
-    console.log(`  Worker ${resp.id}: ${resp.ready ? "Ready" : "Computing"}`);
+    console.info(`  Worker ${resp.id}: ${resp.ready ? "Ready" : "Computing"}`);
   });
 
   // Send compute tasks
-  console.log("\n🔢 Sending compute tasks...");
+  console.info("\n🔢 Sending compute tasks...");
   const tasks = [5, 10, 15, 20, 25];
 
   for (const task of tasks) {
-    console.log(`Task: ${task}² = ${task * task}`);
+    console.info(`Task: ${task}² = ${task * task}`);
   }
 }
 
 // Enhanced environment management
 function enhancedEnvironment(envVar?: string) {
-  console.log(
+  console.info(
     colourKit(0.4).ansi + "\n🌍 Enhanced Environment Management" + "\x1b[0m"
   );
 
@@ -371,17 +371,17 @@ function enhancedEnvironment(envVar?: string) {
   Object.assign(process.env, envVars);
 
   // Display with categorization
-  console.log("┌─────────────────┬──────────────────────────────┐");
-  console.log("│ Category        │ Variables                    │");
-  console.log("├─────────────────┼──────────────────────────────┤");
-  console.log(
+  console.info("┌─────────────────┬──────────────────────────────┐");
+  console.info("│ Category        │ Variables                    │");
+  console.info("├─────────────────┼──────────────────────────────┤");
+  console.info(
     `│ ${pad("Demo", 15)} │ ${pad(Object.keys(envVars).join(", "), 28)} │`
   );
-  console.log(`│ ${pad("System", 15)} │ ${pad("PATH, HOME, SHELL", 28)} │`);
-  console.log(
+  console.info(`│ ${pad("System", 15)} │ ${pad("PATH, HOME, SHELL", 28)} │`);
+  console.info(
     `│ ${pad("Runtime", 15)} │ ${pad("NODE_ENV, BUN_RUNTIME", 28)} │`
   );
-  console.log("└─────────────────┴──────────────────────────────┘");
+  console.info("└─────────────────┴──────────────────────────────┘");
 
   // Generate SSE for environment
   const envEvent = sse("environment", {
@@ -390,13 +390,13 @@ function enhancedEnvironment(envVar?: string) {
     timestamp: new Date().toISOString(),
   });
 
-  console.log("\n📡 Environment SSE Event:");
-  console.log(envEvent.trim());
+  console.info("\n📡 Environment SSE Event:");
+  console.info(envEvent.trim());
 }
 
 // System benchmark
 async function systemBenchmark() {
-  console.log(
+  console.info(
     colourKit(0.7).ansi + "\n⚡ System Performance Benchmark" + "\x1b[0m"
   );
 
@@ -444,10 +444,10 @@ async function systemBenchmark() {
     },
   ];
 
-  console.log("Running benchmarks...");
-  console.log("┌─────────────────┬──────────┬──────────┬──────────┐");
-  console.log("│ Benchmark       │ Avg (ms) │ Min (ms) │ Max (ms) │");
-  console.log("├─────────────────┼──────────┼──────────┼──────────┤");
+  console.info("Running benchmarks...");
+  console.info("┌─────────────────┬──────────┬──────────┬──────────┐");
+  console.info("│ Benchmark       │ Avg (ms) │ Min (ms) │ Max (ms) │");
+  console.info("├─────────────────┼──────────┼──────────┼──────────┤");
 
   for (const benchmark of benchmarks) {
     const times = [];
@@ -467,7 +467,7 @@ async function systemBenchmark() {
         : avg < 50
         ? colourKit(0.5).ansi
         : colourKit(0.8).ansi;
-    console.log(
+    console.info(
       `│ ${pad(benchmark.name, 15)} │ ${color}${pad(
         avg.toFixed(2),
         8
@@ -475,16 +475,16 @@ async function systemBenchmark() {
     );
   }
 
-  console.log("└─────────────────┴──────────┴──────────┴──────────┘");
+  console.info("└─────────────────┴──────────┴──────────┴──────────┘");
 }
 
 // Main enhanced execution
 async function main() {
   if (values.verbose) {
-    console.log("🎯 Enhanced Arguments:");
-    console.log("Values:", JSON.stringify(values, null, 2));
-    console.log("Positionals:", positionals);
-    console.log("Bun.argv:", Bun.argv);
+    console.info("🎯 Enhanced Arguments:");
+    console.info("Values:", JSON.stringify(values, null, 2));
+    console.info("Positionals:", positionals);
+    console.info("Bun.argv:", Bun.argv);
   }
 
   // Core demos
@@ -515,7 +515,7 @@ async function main() {
     return; // Keep running
   }
 
-  console.log(
+  console.info(
     "\n" +
       colourKit(0.2).ansi +
       "🎉 Enhanced System Demo Completed!" +
@@ -523,30 +523,30 @@ async function main() {
   );
 
   // Show quantum lattice as finale
-  console.log("\n🎨 System Status Visualization:");
+  console.info("\n🎨 System Status Visualization:");
   const tension = Math.min(process.uptime() / 60, 1); // 1 minute = full tension
-  console.log(rgbaLattice(tension * 10));
+  console.info(rgbaLattice(tension * 10));
 }
 
 // Enhanced signal handling
 process.on("SIGINT", () => {
-  console.log("\n\n👋 Enhanced System Demo - Graceful Shutdown!");
-  console.log(
+  console.info("\n\n👋 Enhanced System Demo - Graceful Shutdown!");
+  console.info(
     `📊 Final memory: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(
       2
     )}MB`
   );
-  console.log(`⏰ Final uptime: ${process.uptime().toFixed(2)}s`);
+  console.info(`⏰ Final uptime: ${process.uptime().toFixed(2)}s`);
   process.exit(0);
 });
 
 process.on("SIGUSR1", () => {
-  console.log("\n📊 Status Report:");
-  console.log(
+  console.info("\n📊 Status Report:");
+  console.info(
     `Memory: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB`
   );
-  console.log(`PID: ${process.pid}`);
-  console.log(`Platform: ${process.platform}`);
+  console.info(`PID: ${process.pid}`);
+  console.info(`Platform: ${process.platform}`);
 });
 
 // Start enhanced demo

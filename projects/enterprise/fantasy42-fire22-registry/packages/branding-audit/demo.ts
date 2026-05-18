@@ -26,23 +26,23 @@ const demoConfig = {
   checkConsistency: true,
 };
 
-console.log('🎨 Fire22 Branding Audit Toolkit - Enhanced Bun Demo');
-console.log('===================================================\n');
+console.info('🎨 Fire22 Branding Audit Toolkit - Enhanced Bun Demo');
+console.info('===================================================\n');
 
 // Create auditor instance
-console.log('🔧 Initializing Branding Auditor...');
+console.info('🔧 Initializing Branding Auditor...');
 const auditor = new BrandingAuditor(demoConfig);
 
 // Display brand colors
-console.log('\n🎨 Fire22 Brand Colors:');
-console.log('----------------------');
+console.info('\n🎨 Fire22 Brand Colors:');
+console.info('----------------------');
 auditor.getBrandColors().forEach(color => {
-  console.log(`${color.name}:`);
-  console.log(`  Hex: ${color.hex}`);
-  console.log(`  RGB: rgb(${color.rgb.join(', ')})`);
-  console.log(`  Usage: ${color.usage.join(', ')}`);
-  console.log(`  WCAG AA: ${color.accessibility.wcagAA ? '✅' : '❌'}`);
-  console.log(`  WCAG AAA: ${color.accessibility.wcagAAA ? '✅' : '❌'}\n`);
+  console.info(`${color.name}:`);
+  console.info(`  Hex: ${color.hex}`);
+  console.info(`  RGB: rgb(${color.rgb.join(', ')})`);
+  console.info(`  Usage: ${color.usage.join(', ')}`);
+  console.info(`  WCAG AA: ${color.accessibility.wcagAA ? '✅' : '❌'}`);
+  console.info(`  WCAG AAA: ${color.accessibility.wcagAAA ? '✅' : '❌'}\n`);
 });
 
 // Create sample CSS file for demonstration
@@ -130,8 +130,8 @@ const sampleHTML = `
 await Bun.write(`${demoDir}/sample.html`, sampleHTML);
 
 // Audit the demo files using Bun's glob
-console.log('🔍 Auditing demo files...');
-console.log('==========================\n');
+console.info('🔍 Auditing demo files...');
+console.info('==========================\n');
 
 const files = await Array.fromAsync(new Bun.Glob(`${demoDir}/**/*.{css,html}`).scan());
 
@@ -162,67 +162,67 @@ const results = await Promise.all(
   })
 );
 
-console.log(`📊 Audit Results:`);
-console.log(`================`);
+console.info(`📊 Audit Results:`);
+console.info(`================`);
 
 for (const result of results) {
-  console.log(`\n📁 File: ${result.file}`);
-  console.log(`   Colors found: ${result.colors.length}`);
-  console.log(`   Issues found: ${result.issues.length}`);
-  console.log(`   Compliance grade: ${result.compliance.grade}`);
-  console.log(`   Compliance score: ${result.compliance.score}%`);
+  console.info(`\n📁 File: ${result.file}`);
+  console.info(`   Colors found: ${result.colors.length}`);
+  console.info(`   Issues found: ${result.issues.length}`);
+  console.info(`   Compliance grade: ${result.compliance.grade}`);
+  console.info(`   Compliance score: ${result.compliance.score}%`);
 
   if (result.issues.length > 0) {
-    console.log(`   ⚠️  Issues:`);
+    console.info(`   ⚠️  Issues:`);
     result.issues.slice(0, 5).forEach((issue, index) => {
-      console.log(`      ${index + 1}. ${issue.code}: ${issue.message}`);
+      console.info(`      ${index + 1}. ${issue.code}: ${issue.message}`);
       if (issue.suggestion) {
-        console.log(`         💡 ${issue.suggestion}`);
+        console.info(`         💡 ${issue.suggestion}`);
       }
     });
   }
 
-  console.log(`   🎨 Colors used:`);
+  console.info(`   🎨 Colors used:`);
   result.colors.slice(0, 5).forEach(color => {
     const isBrandColor = auditor.findBrandColorMatch(color.hex);
     const status = isBrandColor ? '✅' : '❌';
-    console.log(`      ${status} ${color.hex} (${color.usage.join(', ')})`);
+    console.info(`      ${status} ${color.hex} (${color.usage.join(', ')})`);
   });
 }
 
 // Generate comprehensive report
-console.log('\n📋 Generating comprehensive report...');
-console.log('=====================================\n');
+console.info('\n📋 Generating comprehensive report...');
+console.info('=====================================\n');
 
 const report = await auditor.generateReport(results);
 
-console.log(`📊 Overall Summary:`);
-console.log(`==================`);
-console.log(`Total files audited: ${report.summary.totalFiles}`);
-console.log(`Total colors found: ${report.summary.totalColors}`);
-console.log(`Total issues: ${report.summary.totalIssues}`);
-console.log(`Overall grade: ${report.summary.grade}`);
-console.log(`Compliance score: ${report.summary.complianceScore}%`);
-console.log(`Audit time: ${report.summary.auditTime}ms`);
+console.info(`📊 Overall Summary:`);
+console.info(`==================`);
+console.info(`Total files audited: ${report.summary.totalFiles}`);
+console.info(`Total colors found: ${report.summary.totalColors}`);
+console.info(`Total issues: ${report.summary.totalIssues}`);
+console.info(`Overall grade: ${report.summary.grade}`);
+console.info(`Compliance score: ${report.summary.complianceScore}%`);
+console.info(`Audit time: ${report.summary.auditTime}ms`);
 
-console.log(`\n🎯 Brand Compliance:`);
-console.log(`===================`);
-console.log(`Colors used: ${report.brandCompliance.colorsUsed}`);
-console.log(`Brand compliant: ${report.brandCompliance.colorsCompliant}%`);
-console.log(`Accessibility score: ${report.brandCompliance.accessibilityScore}%`);
-console.log(`Consistency score: ${report.brandCompliance.consistencyScore}%`);
+console.info(`\n🎯 Brand Compliance:`);
+console.info(`===================`);
+console.info(`Colors used: ${report.brandCompliance.colorsUsed}`);
+console.info(`Brand compliant: ${report.brandCompliance.colorsCompliant}%`);
+console.info(`Accessibility score: ${report.brandCompliance.accessibilityScore}%`);
+console.info(`Consistency score: ${report.brandCompliance.consistencyScore}%`);
 
 if (report.recommendations.length > 0) {
-  console.log(`\n💡 Recommendations:`);
-  console.log(`==================`);
+  console.info(`\n💡 Recommendations:`);
+  console.info(`==================`);
   report.recommendations.forEach((rec, index) => {
-    console.log(`${index + 1}. ${rec}`);
+    console.info(`${index + 1}. ${rec}`);
   });
 }
 
 // Export reports using Bun's file API
-console.log('\n💾 Exporting reports...');
-console.log('=======================\n');
+console.info('\n💾 Exporting reports...');
+console.info('=======================\n');
 
 const jsonReport = await auditor.exportReport(report, 'json');
 const htmlReport = await auditor.exportReport(report, 'html');
@@ -232,28 +232,28 @@ await Bun.write(`${demoDir}/audit-report.json`, jsonReport);
 await Bun.write(`${demoDir}/audit-report.html`, htmlReport);
 await Bun.write(`${demoDir}/audit-report.md`, markdownReport);
 
-console.log('✅ Reports exported:');
-console.log(`   📄 JSON: ${demoDir}/audit-report.json`);
-console.log(`   🌐 HTML: ${demoDir}/audit-report.html`);
-console.log(`   📝 Markdown: ${demoDir}/audit-report.md`);
+console.info('✅ Reports exported:');
+console.info(`   📄 JSON: ${demoDir}/audit-report.json`);
+console.info(`   🌐 HTML: ${demoDir}/audit-report.html`);
+console.info(`   📝 Markdown: ${demoDir}/audit-report.md`);
 
 // Clean up demo files
-console.log('\n🧹 Cleaning up demo files...');
+console.info('\n🧹 Cleaning up demo files...');
 await Bun.spawn(['rm', '-rf', demoDir]);
 
-console.log('\n🎉 Demo completed successfully!');
-console.log('===============================');
-console.log('\nNext steps:');
-console.log('1. Review the generated reports');
-console.log('2. Open audit-report.html in your browser');
-console.log('3. Fix any identified issues');
-console.log('4. Integrate the audit toolkit into your CI/CD pipeline');
+console.info('\n🎉 Demo completed successfully!');
+console.info('===============================');
+console.info('\nNext steps:');
+console.info('1. Review the generated reports');
+console.info('2. Open audit-report.html in your browser');
+console.info('3. Fix any identified issues');
+console.info('4. Integrate the audit toolkit into your CI/CD pipeline');
 
-console.log('\n🚀 Bun Performance Features Used:');
-console.log('==================================');
-console.log('✅ Bun.file() - Native file I/O');
-console.log('✅ Bun.write() - Optimized file writing');
-console.log('✅ Bun.Glob - Fast file globbing');
-console.log('✅ Array.fromAsync() - Async iteration');
-console.log('✅ Promise.all() - Concurrent processing');
-console.log('✅ Native TypeScript support');
+console.info('\n🚀 Bun Performance Features Used:');
+console.info('==================================');
+console.info('✅ Bun.file() - Native file I/O');
+console.info('✅ Bun.write() - Optimized file writing');
+console.info('✅ Bun.Glob - Fast file globbing');
+console.info('✅ Array.fromAsync() - Async iteration');
+console.info('✅ Promise.all() - Concurrent processing');
+console.info('✅ Native TypeScript support');

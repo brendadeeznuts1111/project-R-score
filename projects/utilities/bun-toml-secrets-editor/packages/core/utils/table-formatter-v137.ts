@@ -310,7 +310,7 @@ export class TableFormatterV137 {
 	 * Print to console
 	 */
 	print(): void {
-		console.log(this.render());
+		console.info(this.render());
 	}
 
 	/**
@@ -372,10 +372,10 @@ export async function handleTableCommand(args: string[]): Promise<void> {
 
 	switch (command) {
 		case "demo": {
-			console.log("Wide Table Demo (20 columns, 5 rows):\n");
+			console.info("Wide Table Demo (20 columns, 5 rows):\n");
 			const table = createWideTable(20, 5);
 			table.print();
-			console.log(
+			console.info(
 				`\nColumns: ${table.getColumnCount()}, Rows: ${table.getRowCount()}`,
 			);
 			break;
@@ -384,7 +384,7 @@ export async function handleTableCommand(args: string[]): Promise<void> {
 		case "wide": {
 			const cols = parseInt(args[1], 10) || 50;
 			const rows = parseInt(args[2], 10) || 3;
-			console.log(`Wide Table (${cols} columns, ${rows} rows):\n`);
+			console.info(`Wide Table (${cols} columns, ${rows} rows):\n`);
 			const table = createWideTable(Math.min(cols, 100), rows);
 			table.print();
 			break;
@@ -392,7 +392,7 @@ export async function handleTableCommand(args: string[]): Promise<void> {
 
 		case "csv": {
 			const table = createWideTable(10, 5);
-			console.log(table.render());
+			console.info(table.render());
 			break;
 		}
 
@@ -403,7 +403,7 @@ export async function handleTableCommand(args: string[]): Promise<void> {
 		}
 
 		default:
-			console.log(`
+			console.info(`
 Table Formatter v1.3.7 - Enhanced Table Output
 
 Usage:

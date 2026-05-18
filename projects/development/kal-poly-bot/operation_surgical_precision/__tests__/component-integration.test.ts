@@ -415,7 +415,7 @@ describe('🧪 SURGICAL PRECISION - Component Integration Tests', () => {
       }
 
       const avgDuration = durations.reduce((sum, d) => sum + d, 0) / durations.length;
-      console.log(`Average component init time: ${(avgDuration)}ms`);
+      console.info(`Average component init time: ${(avgDuration)}ms`);
 
       // Coordinator initialization should be fast (< 100ms typically)
       expect(avgDuration).toBeLessThan(500); // Allow some margin for test environment
@@ -458,7 +458,7 @@ describe('🧪 SURGICAL PRECISION - Component Integration Tests', () => {
       const finalMemory = process.memoryUsage().heapUsed;
       const memoryIncrease = finalMemory - initialMemory;
 
-      console.log(`Memory increase for 100 components: ${memoryIncrease / 1024 / 1024}MB`);
+      console.info(`Memory increase for 100 components: ${memoryIncrease / 1024 / 1024}MB`);
 
       // Should handle 100 components efficiently (< 50MB increase typically)
       expect(memoryIncrease).toBeLessThan(100 * 1024 * 1024); // < 100MB
@@ -624,26 +624,26 @@ All integration tests have passed successfully. The Surgical Precision Platform 
 
 // Run integration tests when executed directly
 if (import.meta.main) {
-  console.log('🚀 Running Surgical Precision Integration Tests...');
-  console.log('═'.repeat(80));
+  console.info('🚀 Running Surgical Precision Integration Tests...');
+  console.info('═'.repeat(80));
 
   // Run individual test suites
-  console.log('Running component coordinator tests... ✓');
-  console.log('Running service mesh integration tests... ✓');
-  console.log('Running observability platform tests... ✓');
-  console.log('Running disaster recovery tests... ✓');
-  console.log('Running shell integration tests... ✓');
-  console.log('Running end-to-end integration tests... ✓');
-  console.log('Running performance baseline tests... ✓');
+  console.info('Running component coordinator tests... ✓');
+  console.info('Running service mesh integration tests... ✓');
+  console.info('Running observability platform tests... ✓');
+  console.info('Running disaster recovery tests... ✓');
+  console.info('Running shell integration tests... ✓');
+  console.info('Running end-to-end integration tests... ✓');
+  console.info('Running performance baseline tests... ✓');
 
-  console.log('═'.repeat(80));
-  console.log('✅ All integration tests passed - generating test report...');
+  console.info('═'.repeat(80));
+  console.info('✅ All integration tests passed - generating test report...');
 
   const report = generateIntegrationTestReport();
-  console.log('\n' + report);
+  console.info('\n' + report);
 
-  console.log('═'.repeat(80));
-  console.log('🎉 SURGICAL PRECISION - INTEGRATION TESTS COMPLETE');
-  console.log('✅ All 12 tests passed with 100% success rate');
-  console.log('═'.repeat(80));
+  console.info('═'.repeat(80));
+  console.info('🎉 SURGICAL PRECISION - INTEGRATION TESTS COMPLETE');
+  console.info('✅ All 12 tests passed with 100% success rate');
+  console.info('═'.repeat(80));
 }

@@ -44,7 +44,7 @@ class SurgicalPrecisionBenchmark {
         this.memoryObserver = new PerformanceObserver((list) => {
             const entries = list.getEntries();
             for (const entry of entries) {
-                console.log(`Memory: ${entry.name}: ${(entry as any).detail.usedJSHeapSize / 1024 / 1024} MB`);
+                console.info(`Memory: ${entry.name}: ${(entry as any).detail.usedJSHeapSize / 1024 / 1024} MB`);
             }
         });
 
@@ -66,17 +66,17 @@ class SurgicalPrecisionBenchmark {
         const duration = performance.now() - start;
         const result: BenchmarkResult = { name, duration, success, error };
 
-        console.log(`${success ? '✅' : '❌'} ${name}: ${duration.toFixed(3)}ms`);
+        console.info(`${success ? '✅' : '❌'} ${name}: ${duration.toFixed(3)}ms`);
         return result;
     }
 
     async benchmarkDNSResolution(): Promise<BenchmarkResult[]> {
-        console.log('\n🧬 DNS Resolution Benchmark - Testing Zero-Collateral Domain Resolution');
+        console.info('\n🧬 DNS Resolution Benchmark - Testing Zero-Collateral Domain Resolution');
 
         const results: BenchmarkResult[] = [];
 
         for (const domain of BENCH_CONFIG.dnsTargets) {
-            console.log(`\nResolving ${domain}...`);
+            console.info(`\nResolving ${domain}...`);
 
             for (let i = 0; i < BENCH_CONFIG.iterations; i++) {
                 const result = await this.measureOperation(
@@ -101,7 +101,7 @@ class SurgicalPrecisionBenchmark {
     }
 
     async benchmarkRipgrepSearch(): Promise<BenchmarkResult[]> {
-        console.log('\n🔍 Ripgrep Search Benchmark - Testing Ultra-Fast Text Operations');
+        console.info('\n🔍 Ripgrep Search Benchmark - Testing Ultra-Fast Text Operations');
 
         const results: BenchmarkResult[] = [];
 
@@ -143,7 +143,7 @@ class SurgicalPrecisionBenchmark {
                             return 'Search completed';
                         } catch (error) {
                             // Fallback to simulated search if ripgrep not available
-                            console.log('⚠️  Using simulated search (ripgrep not found)');
+                            console.info('⚠️  Using simulated search (ripgrep not found)');
                             await new Promise(resolve => setTimeout(resolve, Math.random() * 10 + 5));
                             return 'Simulated search completed';
                         }
@@ -157,7 +157,7 @@ class SurgicalPrecisionBenchmark {
     }
 
     async benchmarkCodeAnalysis(): Promise<BenchmarkResult[]> {
-        console.log('\n🧠 Code Analysis Benchmark - Testing LSP Intelligence');
+        console.info('\n🧠 Code Analysis Benchmark - Testing LSP Intelligence');
 
         const results: BenchmarkResult[] = [];
         const analysisCode = `
@@ -212,7 +212,7 @@ export { SurgicalTarget, PrecisionAnalyzer };
     }
 
     async benchmarkMemoryOperations(): Promise<BenchmarkResult[]> {
-        console.log('\n💾 Memory Operations Benchmark - Testing Zero-Collateral Resource Usage');
+        console.info('\n💾 Memory Operations Benchmark - Testing Zero-Collateral Resource Usage');
 
         const results: BenchmarkResult[] = [];
 
@@ -253,7 +253,7 @@ export { SurgicalTarget, PrecisionAnalyzer };
     }
 
     async benchmarkDashboardRendering(): Promise<BenchmarkResult[]> {
-        console.log('\n🎨 Dashboard Rendering Benchmark - Testing UI Performance');
+        console.info('\n🎨 Dashboard Rendering Benchmark - Testing UI Performance');
 
         const results: BenchmarkResult[] = [];
 
@@ -305,7 +305,7 @@ export { SurgicalTarget, PrecisionAnalyzer };
     }
 
     async benchmarkWebSocketConnections(): Promise<BenchmarkResult[]> {
-        console.log('\n🔌 WebSocket Connection Benchmark - Testing Real-Time Communication');
+        console.info('\n🔌 WebSocket Connection Benchmark - Testing Real-Time Communication');
 
         const results: BenchmarkResult[] = [];
 
@@ -349,7 +349,7 @@ export { SurgicalTarget, PrecisionAnalyzer };
     }
 
     async benchmarkPackageManagement(): Promise<BenchmarkResult[]> {
-        console.log('\n📦 Package Management Benchmark - Testing Bun Package Operations');
+        console.info('\n📦 Package Management Benchmark - Testing Bun Package Operations');
 
         const results: BenchmarkResult[] = [];
 
@@ -388,7 +388,7 @@ export { SurgicalTarget, PrecisionAnalyzer };
     }
 
     async benchmarkFileOperations(): Promise<BenchmarkResult[]> {
-        console.log('\n📁 File Operations Benchmark - Testing I/O Performance');
+        console.info('\n📁 File Operations Benchmark - Testing I/O Performance');
 
         const results: BenchmarkResult[] = [];
 
@@ -441,7 +441,7 @@ export { SurgicalTarget, PrecisionAnalyzer };
     }
 
     async benchmarkChartRendering(): Promise<BenchmarkResult[]> {
-        console.log('\n📊 Chart Rendering Benchmark - Testing Visualization Performance');
+        console.info('\n📊 Chart Rendering Benchmark - Testing Visualization Performance');
 
         const results: BenchmarkResult[] = [];
 
@@ -489,7 +489,7 @@ export { SurgicalTarget, PrecisionAnalyzer };
     }
 
     async benchmarkTeamCoordination(): Promise<BenchmarkResult[]> {
-        console.log('\n👥 Team Coordination Benchmark - Testing Real-Time Collaboration');
+        console.info('\n👥 Team Coordination Benchmark - Testing Real-Time Collaboration');
 
         const results: BenchmarkResult[] = [];
 
@@ -560,7 +560,7 @@ export { SurgicalTarget, PrecisionAnalyzer };
     }
 
     async benchmarkCLIExecution(): Promise<BenchmarkResult[]> {
-        console.log('\n💻 CLI Execution Benchmark - Testing Command Performance');
+        console.info('\n💻 CLI Execution Benchmark - Testing Command Performance');
 
         const results: BenchmarkResult[] = [];
 
@@ -624,7 +624,7 @@ export { SurgicalTarget, PrecisionAnalyzer };
     }
 
     async benchmarkAPIResponses(): Promise<BenchmarkResult[]> {
-        console.log('\n🌐 API Response Benchmark - Testing External Service Integration');
+        console.info('\n🌐 API Response Benchmark - Testing External Service Integration');
 
         const results: BenchmarkResult[] = [];
 
@@ -686,7 +686,7 @@ export { SurgicalTarget, PrecisionAnalyzer };
     }
 
     async benchmarkCompressionOperations(): Promise<BenchmarkResult[]> {
-        console.log('\n🗜️  Compression Benchmark - Testing Data Optimization');
+        console.info('\n🗜️  Compression Benchmark - Testing Data Optimization');
 
         const results: BenchmarkResult[] = [];
 
@@ -756,18 +756,18 @@ export { SurgicalTarget, PrecisionAnalyzer };
     }
 
     async runAllBenchmarks(): Promise<void> {
-        console.log('🏆 SURGICAL PRECISION DASHBOARD - PERFORMANCE BENCHMARK SUITE');
-        console.log('=' .repeat(70));
-        console.log(`Benchmark Configuration:`);
-        console.log(`  Iterations: ${BENCH_CONFIG.iterations}`);
-        console.log(`  Warmup Rounds: ${BENCH_CONFIG.warmupRounds}`);
-        console.log(`  DNS Targets: ${BENCH_CONFIG.dnsTargets.length}`);
-        console.log(`  Search Patterns: ${BENCH_CONFIG.searchPatterns.length}`);
-        console.log('=' .repeat(70));
+        console.info('🏆 SURGICAL PRECISION DASHBOARD - PERFORMANCE BENCHMARK SUITE');
+        console.info('=' .repeat(70));
+        console.info(`Benchmark Configuration:`);
+        console.info(`  Iterations: ${BENCH_CONFIG.iterations}`);
+        console.info(`  Warmup Rounds: ${BENCH_CONFIG.warmupRounds}`);
+        console.info(`  DNS Targets: ${BENCH_CONFIG.dnsTargets.length}`);
+        console.info(`  Search Patterns: ${BENCH_CONFIG.searchPatterns.length}`);
+        console.info('=' .repeat(70));
 
         try {
             // Run comprehensive benchmark suites
-            console.log('🌟 Initiating comprehensive surgical precision benchmarks...\n');
+            console.info('🌟 Initiating comprehensive surgical precision benchmarks...\n');
 
             const dnsResults = await this.benchmarkDNSResolution();
             const ripgrepResults = await this.benchmarkRipgrepSearch();
@@ -800,9 +800,9 @@ export { SurgicalTarget, PrecisionAnalyzer };
                 ...compressionResults
             ];
 
-            console.log(`\n📈 Benchmark Results Aggregation Complete`);
-            console.log(`Total benchmark categories: 13`);
-            console.log(`Total individual benchmarks: ${this.results.length}`);
+            console.info(`\n📈 Benchmark Results Aggregation Complete`);
+            console.info(`Total benchmark categories: 13`);
+            console.info(`Total individual benchmarks: ${this.results.length}`);
 
             this.generateSummaryReport();
 
@@ -815,8 +815,8 @@ export { SurgicalTarget, PrecisionAnalyzer };
     }
 
     private generateSummaryReport(): void {
-        console.log('\n📊 SURGICAL PRECISION BENCHMARK RESULTS');
-        console.log('=' .repeat(70));
+        console.info('\n📊 SURGICAL PRECISION BENCHMARK RESULTS');
+        console.info('=' .repeat(70));
 
         const categories = {
             'DNS Resolution': this.results.filter(r => r.name.startsWith('DNS-')),
@@ -846,31 +846,31 @@ export { SurgicalTarget, PrecisionAnalyzer };
             const minTime = successful.reduce((min, r) => Math.min(min, r.duration), Infinity);
             const maxTime = successful.reduce((max, r) => Math.max(max, r.duration), 0);
 
-            console.log(`\n${category}:`);
-            console.log(`  Tests Run: ${results.length}`);
-            console.log(`  Success Rate: ${(successful.length / results.length * 100).toFixed(1)}%`);
-            console.log(`  Average Time: ${avgTime.toFixed(3)}ms`);
-            console.log(`  Min Time: ${minTime.toFixed(3)}ms`);
-            console.log(`  Max Time: ${maxTime.toFixed(3)}ms`);
+            console.info(`\n${category}:`);
+            console.info(`  Tests Run: ${results.length}`);
+            console.info(`  Success Rate: ${(successful.length / results.length * 100).toFixed(1)}%`);
+            console.info(`  Average Time: ${avgTime.toFixed(3)}ms`);
+            console.info(`  Min Time: ${minTime.toFixed(3)}ms`);
+            console.info(`  Max Time: ${maxTime.toFixed(3)}ms`);
 
             totalTests += results.length;
             totalTime += successful.reduce((acc, r) => acc + r.duration, 0);
             successfulTests += successful.length;
         }
 
-        console.log('\n🏆 OVERALL PERFORMANCE SUMMARY');
-        console.log(`Total Tests: ${totalTests}`);
-        console.log(`Success Rate: ${(successfulTests / totalTests * 100).toFixed(1)}%`);
-        console.log(`Total Time: ${totalTime.toFixed(3)}ms`);
-        console.log(`Average per Test: ${(totalTime / totalTests).toFixed(3)}ms`);
+        console.info('\n🏆 OVERALL PERFORMANCE SUMMARY');
+        console.info(`Total Tests: ${totalTests}`);
+        console.info(`Success Rate: ${(successfulTests / totalTests * 100).toFixed(1)}%`);
+        console.info(`Total Time: ${totalTime.toFixed(3)}ms`);
+        console.info(`Average per Test: ${(totalTime / totalTests).toFixed(3)}ms`);
 
-        console.log('\n🎯 SURGICAL PRECISION ACHIEVEMENTS');
-        console.log('✅ Zero-collateral operations verified');
-        console.log('✅ Ultra-fast text search performance');
-        console.log('✅ Real-time network diagnostics');
-        console.log('✅ Intelligent code analysis');
-        console.log('✅ High-performance dashboard rendering');
-        console.log('\n🏆 ALL BENCHMARKS PASSED - SURGICAL PRECISION ACHIEVED!');
+        console.info('\n🎯 SURGICAL PRECISION ACHIEVEMENTS');
+        console.info('✅ Zero-collateral operations verified');
+        console.info('✅ Ultra-fast text search performance');
+        console.info('✅ Real-time network diagnostics');
+        console.info('✅ Intelligent code analysis');
+        console.info('✅ High-performance dashboard rendering');
+        console.info('\n🏆 ALL BENCHMARKS PASSED - SURGICAL PRECISION ACHIEVED!');
     }
 }
 
@@ -882,7 +882,7 @@ if (import.meta.main) {
     const benchmark = new SurgicalPrecisionBenchmark();
     benchmark.runAllBenchmarks()
         .then(() => {
-            console.log('\n🎉 Benchmark suite completed successfully!');
+            console.info('\n🎉 Benchmark suite completed successfully!');
             process.exit(0);
         })
         .catch((error) => {

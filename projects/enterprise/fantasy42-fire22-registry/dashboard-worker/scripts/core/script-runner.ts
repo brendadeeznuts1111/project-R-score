@@ -368,7 +368,7 @@ class ScriptRunner {
         console.debug(`${prefix} ${message}`);
         break;
       default:
-        console.log(`${prefix} ${message}`);
+        console.info(`${prefix} ${message}`);
     }
   }
 }

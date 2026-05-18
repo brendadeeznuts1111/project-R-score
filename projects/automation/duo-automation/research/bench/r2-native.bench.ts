@@ -53,7 +53,7 @@ async function runBenchmark() {
   const iterations = 500; // Increased for better histogram
   const smallPayload = new Uint8Array(1024); // 1KB
 
-  console.log(`🚀 Starting Enhanced Native R2 Benchmark (${iterations} iterations)...`);
+  console.info(`🚀 Starting Enhanced Native R2 Benchmark (${iterations} iterations)...`);
 
   const results = [];
   const startTotal = performance.now();
@@ -67,7 +67,7 @@ async function runBenchmark() {
     const end = performance.now();
     results.push(end - start);
     
-    if (i % 100 === 0) console.log(`  - Progress: ${(i / iterations * 100).toFixed(0)}%`);
+    if (i % 100 === 0) console.info(`  - Progress: ${(i / iterations * 100).toFixed(0)}%`);
   }
 
   const endTotal = performance.now();
@@ -85,14 +85,14 @@ async function runBenchmark() {
 
   const histogram = calculateHistogram(results, 20);
 
-  console.log('\n📊 Enhanced Benchmark Results (Local Mocked Storage):');
-  console.log(`- Average:   ${avg.toFixed(2)}ms`);
-  console.log(`- P50:       ${p50.toFixed(2)}ms`);
-  console.log(`- P90:       ${p90.toFixed(2)}ms`);
-  console.log(`- P99:       ${p99.toFixed(2)}ms`);
-  console.log(`- Min:       ${min.toFixed(2)}ms`);
-  console.log(`- Max:       ${max.toFixed(2)}ms`);
-  console.log(`- Throughput: ${(iterations / (totalDuration / 1000)).toFixed(2)} IDs/s`);
+  console.info('\n📊 Enhanced Benchmark Results (Local Mocked Storage):');
+  console.info(`- Average:   ${avg.toFixed(2)}ms`);
+  console.info(`- P50:       ${p50.toFixed(2)}ms`);
+  console.info(`- P90:       ${p90.toFixed(2)}ms`);
+  console.info(`- P99:       ${p99.toFixed(2)}ms`);
+  console.info(`- Min:       ${min.toFixed(2)}ms`);
+  console.info(`- Max:       ${max.toFixed(2)}ms`);
+  console.info(`- Throughput: ${(iterations / (totalDuration / 1000)).toFixed(2)} IDs/s`);
 
   // Export results
   const report = {

@@ -73,7 +73,7 @@ export class DashboardAIIntegration {
       await this.initializeWithSampleData();
 
       this.isInitialized = true;
-      console.log('🤖 AI Dashboard Integration initialized successfully');
+      console.info('🤖 AI Dashboard Integration initialized successfully');
 
     } catch (error) {
       console.error('Failed to initialize AI components:', error);
@@ -417,7 +417,7 @@ export class DashboardAIIntegration {
         features: ['action_sequence', 'temporal', 'contextual']
       });
 
-      console.log('🤖 AI model trained with sample data');
+      console.info('🤖 AI model trained with sample data');
     } catch (error) {
       console.error('Error training model:', error);
     }
@@ -594,7 +594,7 @@ export class DashboardAIIntegration {
    */
   private createDashboardAlert(type: 'success' | 'warning' | 'error', message: string): void {
     // This would integrate with the dashboard's alert system
-    console.log(`[${type.toUpperCase()}] ${message}`);
+    console.info(`[${type.toUpperCase()}] ${message}`);
 
     // In a real implementation, this would add to the dashboard alerts
     if (typeof window.dashboard !== 'undefined' && window.dashboard.addEvent) {
@@ -637,7 +637,7 @@ export class DashboardAIIntegration {
       // Update dashboard UI
       this.updateDashboardWithInsights(insights);
 
-      console.log('🔄 AI insights refreshed');
+      console.info('🔄 AI insights refreshed');
     } catch (error) {
       console.error('Error refreshing insights:', error);
     }
@@ -669,7 +669,7 @@ export class DashboardAIIntegration {
     }
 
     this.isInitialized = false;
-    console.log('🧹 AI Dashboard Integration cleaned up');
+    console.info('🧹 AI Dashboard Integration cleaned up');
   }
 }
 

@@ -273,7 +273,7 @@ class StructuredLogger {
       message += `\n${entry.error.stack || entry.error.message}`;
     }
 
-    console.log(message);
+    console.info(message);
   }
 
   /**
@@ -458,7 +458,7 @@ class StructuredLogger {
   private async cleanupOldLogs(): Promise<void> {
     // Implementation would list log directory and remove old files
     // This is a simplified version
-    console.log('Log cleanup completed');
+    console.info('Log cleanup completed');
   }
 }
 

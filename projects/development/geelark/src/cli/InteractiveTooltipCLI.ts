@@ -14,22 +14,22 @@ export class InteractiveTooltipCLI {
   // Start interactive tooltip mode
   static async startInteractiveMode(): Promise<void> {
     if (this.isRunning) {
-      console.log("❌ Interactive mode already running");
+      console.info("❌ Interactive mode already running");
       return;
     }
 
     this.isRunning = true;
-    console.log("🖱️  Interactive Tooltip Mode");
-    console.log("=" .repeat(40));
-    console.log("Commands:");
-    console.log("  • Type a feature name to see its tooltip");
-    console.log("  • 'list' - Show all available features");
-    console.log("  • 'search <keyword>' - Search features");
-    console.log("  • 'status' - Show current build status");
-    console.log("  • 'help' - Show this help");
-    console.log("  • 'quit' or 'exit' - Leave interactive mode");
-    console.log("");
-    console.log("💡 Try typing: FEAT_PREMIUM, ENV_PRODUCTION, or 'search encryption'");
+    console.info("🖱️  Interactive Tooltip Mode");
+    console.info("=" .repeat(40));
+    console.info("Commands:");
+    console.info("  • Type a feature name to see its tooltip");
+    console.info("  • 'list' - Show all available features");
+    console.info("  • 'search <keyword>' - Search features");
+    console.info("  • 'status' - Show current build status");
+    console.info("  • 'help' - Show this help");
+    console.info("  • 'quit' or 'exit' - Leave interactive mode");
+    console.info("");
+    console.info("💡 Try typing: FEAT_PREMIUM, ENV_PRODUCTION, or 'search encryption'");
 
     await this.commandLoop();
   }
@@ -64,7 +64,7 @@ export class InteractiveTooltipCLI {
 
     rl.close();
     this.isRunning = false;
-    console.log("\n👋 Goodbye!");
+    console.info("\n👋 Goodbye!");
   }
 
   // Handle user commands
@@ -90,28 +90,28 @@ export class InteractiveTooltipCLI {
 
   // Show help information
   private static showHelp(): void {
-    console.log("\n📖 Interactive Tooltip Help");
-    console.log("─".repeat(30));
-    console.log("Available Commands:");
-    console.log("");
-    console.log("🔍 FEATURE_NAME     - Show detailed tooltip for a feature");
-    console.log("📋 list             - List all available features");
-    console.log("🔎 search <keyword> - Search features by keyword");
-    console.log("📊 status           - Show current build status");
-    console.log("❓ help             - Show this help message");
-    console.log("🚪 quit/exit        - Exit interactive mode");
-    console.log("");
-    console.log("💡 Examples:");
-    console.log("  FEAT_PREMIUM");
-    console.log("  ENV_PRODUCTION");
-    console.log("  search encryption");
-    console.log("  search monitoring");
+    console.info("\n📖 Interactive Tooltip Help");
+    console.info("─".repeat(30));
+    console.info("Available Commands:");
+    console.info("");
+    console.info("🔍 FEATURE_NAME     - Show detailed tooltip for a feature");
+    console.info("📋 list             - List all available features");
+    console.info("🔎 search <keyword> - Search features by keyword");
+    console.info("📊 status           - Show current build status");
+    console.info("❓ help             - Show this help message");
+    console.info("🚪 quit/exit        - Exit interactive mode");
+    console.info("");
+    console.info("💡 Examples:");
+    console.info("  FEAT_PREMIUM");
+    console.info("  ENV_PRODUCTION");
+    console.info("  search encryption");
+    console.info("  search monitoring");
   }
 
   // Show feature list with summaries
   private static showFeatureList(): void {
-    console.log("\n📋 Available Feature Flags");
-    console.log("─".repeat(40));
+    console.info("\n📋 Available Feature Flags");
+    console.info("─".repeat(40));
 
     const summaries = TooltipUtils.list();
 
@@ -126,53 +126,53 @@ export class InteractiveTooltipCLI {
 
     for (const [category, features] of Object.entries(categories)) {
       if (features.length > 0) {
-        console.log(`\n${category}:`);
+        console.info(`\n${category}:`);
         features.forEach(feature => {
-          console.log(`  ${feature}`);
+          console.info(`  ${feature}`);
         });
       }
     }
 
-    console.log(`\n📈 Total: ${summaries.length} feature flags available`);
+    console.info(`\n📈 Total: ${summaries.length} feature flags available`);
   }
 
   // Show build status
   private static showBuildStatus(): void {
-    console.log("\n📊 Current Build Status");
-    console.log("─".repeat(30));
+    console.info("\n📊 Current Build Status");
+    console.info("─".repeat(30));
 
     if (feature("ENV_DEVELOPMENT")) {
-      console.log("🧪 Environment: Development");
-      console.log("🔧 Debug: Enabled");
-      console.log("🎭 Mock API: Enabled");
+      console.info("🧪 Environment: Development");
+      console.info("🔧 Debug: Enabled");
+      console.info("🎭 Mock API: Enabled");
     } else if (feature("ENV_PRODUCTION")) {
-      console.log("🚀 Environment: Production");
-      console.log("🔒 Security: Enabled");
-      console.log("📊 Monitoring: Active");
+      console.info("🚀 Environment: Production");
+      console.info("🔒 Security: Enabled");
+      console.info("📊 Monitoring: Active");
     } else {
-      console.log("❓ Environment: Unknown");
+      console.info("❓ Environment: Unknown");
     }
 
-    console.log(`💎 Premium: ${feature("FEAT_PREMIUM") ? "Enabled" : "Disabled"}`);
-    console.log(`🔐 Encryption: ${feature("FEAT_ENCRYPTION") ? "Enabled" : "Disabled"}`);
-    console.log(`📈 Advanced Monitoring: ${feature("FEAT_ADVANCED_MONITORING") ? "Enabled" : "Disabled"}`);
-    console.log(`🔄 Batch Processing: ${feature("FEAT_BATCH_PROCESSING") ? "Enabled" : "Disabled"}`);
+    console.info(`💎 Premium: ${feature("FEAT_PREMIUM") ? "Enabled" : "Disabled"}`);
+    console.info(`🔐 Encryption: ${feature("FEAT_ENCRYPTION") ? "Enabled" : "Disabled"}`);
+    console.info(`📈 Advanced Monitoring: ${feature("FEAT_ADVANCED_MONITORING") ? "Enabled" : "Disabled"}`);
+    console.info(`🔄 Batch Processing: ${feature("FEAT_BATCH_PROCESSING") ? "Enabled" : "Disabled"}`);
   }
 
   // Search features
   private static searchFeatures(keyword: string): void {
-    console.log(`\n🔎 Search Results for "${keyword}"`);
-    console.log("─".repeat(40));
+    console.info(`\n🔎 Search Results for "${keyword}"`);
+    console.info("─".repeat(40));
 
     const results = TooltipUtils.search(keyword);
 
     if (results.length === 0) {
-      console.log(`❌ No features found matching "${keyword}"`);
-      console.log("💡 Try searching for: encryption, monitoring, premium, android, analytics");
+      console.info(`❌ No features found matching "${keyword}"`);
+      console.info("💡 Try searching for: encryption, monitoring, premium, android, analytics");
     } else {
-      console.log(`✅ Found ${results.length} matching feature(s):`);
+      console.info(`✅ Found ${results.length} matching feature(s):`);
       results.forEach((result, index) => {
-        console.log(`  ${index + 1}. ${result}`);
+        console.info(`  ${index + 1}. ${result}`);
       });
     }
   }
@@ -182,16 +182,16 @@ export class InteractiveTooltipCLI {
     const tooltip = TooltipUtils.get(featureName);
 
     if (!tooltip) {
-      console.log(`\n❌ Feature "${featureName}" not found`);
-      console.log("💡 Type 'list' to see all available features");
-      console.log("💡 Try: FEAT_PREMIUM, ENV_PRODUCTION, PLATFORM_ANDROID");
+      console.info(`\n❌ Feature "${featureName}" not found`);
+      console.info("💡 Type 'list' to see all available features");
+      console.info("💡 Try: FEAT_PREMIUM, ENV_PRODUCTION, PLATFORM_ANDROID");
       return;
     }
 
-    console.log("\n" + "=".repeat(60));
+    console.info("\n" + "=".repeat(60));
     const formattedTooltip = TooltipUtils.format(featureName, 60);
-    formattedTooltip.forEach(line => console.log(line));
-    console.log("=".repeat(60));
+    formattedTooltip.forEach(line => console.info(line));
+    console.info("=".repeat(60));
 
     // Show related features
     this.showRelatedFeatures(featureName, tooltip);
@@ -199,23 +199,23 @@ export class InteractiveTooltipCLI {
 
   // Show related features
   private static showRelatedFeatures(featureName: string, tooltip: any): void {
-    console.log("\n🔗 Related Features:");
+    console.info("\n🔗 Related Features:");
 
     if (tooltip.dependencies && tooltip.dependencies.length > 0) {
-      console.log(`  Dependencies: ${tooltip.dependencies.join(", ")}`);
+      console.info(`  Dependencies: ${tooltip.dependencies.join(", ")}`);
     }
 
     if (tooltip.conflicts && tooltip.conflicts.length > 0) {
-      console.log(`  Conflicts: ${tooltip.conflicts.join(", ")}`);
+      console.info(`  Conflicts: ${tooltip.conflicts.join(", ")}`);
     }
 
     // Suggest related features
     const suggestions = this.getRelatedFeatureSuggestions(featureName);
     if (suggestions.length > 0) {
-      console.log(`  You might also like: ${suggestions.join(", ")}`);
+      console.info(`  You might also like: ${suggestions.join(", ")}`);
     }
 
-    console.log("\n💡 Type any feature name above to see its tooltip");
+    console.info("\n💡 Type any feature name above to see its tooltip");
   }
 
   // Get related feature suggestions
@@ -274,8 +274,8 @@ export class InteractiveTooltipCLI {
 
   // Show tooltip usage examples
   static showTooltipExamples(): void {
-    console.log("\n💡 Tooltip Usage Examples");
-    console.log("─".repeat(30));
+    console.info("\n💡 Tooltip Usage Examples");
+    console.info("─".repeat(30));
 
     const examples = [
       {
@@ -297,8 +297,8 @@ export class InteractiveTooltipCLI {
     ];
 
     examples.forEach((example, index) => {
-      console.log(`\n${index + 1}. ${example.description}`);
-      console.log(`   ${example.command}`);
+      console.info(`\n${index + 1}. ${example.description}`);
+      console.info(`   ${example.command}`);
     });
   }
 }
@@ -311,21 +311,21 @@ export const TooltipCLI = {
   // Show specific tooltip
   show: (feature: string) => {
     const tooltip = TooltipUtils.format(feature);
-    console.log(tooltip.join("\n"));
+    console.info(tooltip.join("\n"));
   },
 
   // Search features
   search: (keyword: string) => {
     const results = TooltipUtils.search(keyword);
-    console.log(`Found ${results.length} results:`);
-    results.forEach(result => console.log(`  ${result}`));
+    console.info(`Found ${results.length} results:`);
+    results.forEach(result => console.info(`  ${result}`));
   },
 
   // List all features
   list: () => {
     const features = TooltipUtils.list();
-    console.log(`Available features (${features.length}):`);
-    features.forEach(feature => console.log(`  ${feature}`));
+    console.info(`Available features (${features.length}):`);
+    features.forEach(feature => console.info(`  ${feature}`));
   },
 
   // Show examples

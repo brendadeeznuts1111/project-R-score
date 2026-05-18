@@ -19,7 +19,7 @@ export class FetchService {
     // Using the exact pattern from Bun docs: https://bun.sh/docs/runtime/networking/fetch
     const response = await fetch(`${BUN_DOCS.BASE}${endpoint}`);
     
-    console.log(`Fetch status: ${response.status}`);
+    console.info(`Fetch status: ${response.status}`);
     
     if (!response.ok) {
       throw new Error(`Failed to fetch: ${response.statusText}`);
@@ -46,14 +46,14 @@ export class FetchService {
       `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`;
     
     const response = await fetch(url);
-    console.log(`TypedArray docs fetch status: ${response.status}`);
+    console.info(`TypedArray docs fetch status: ${response.status}`);
     return await response.text();
   }
   
   // Fetch RSS feed using Bun's native fetch
   async fetchRSSFeed(feedUrl = RSS_URLS.BUN_BLOG): Promise<string> {
     const response = await fetch(feedUrl);
-    console.log(`RSS fetch status: ${response.status}`);
+    console.info(`RSS fetch status: ${response.status}`);
     
     if (!response.ok) {
       throw new Error(`Failed to fetch RSS: ${response.status}`);
@@ -73,7 +73,7 @@ export class FetchService {
       feedUrls.map(async ([name, url]) => {
         try {
           const response = await fetch(url);
-          console.log(`${name} fetch status: ${response.status}`);
+          console.info(`${name} fetch status: ${response.status}`);
           const text = await response.text();
           return [name, text] as const;
         } catch (error) {
@@ -92,11 +92,11 @@ const fetchService = new FetchService();
 
 // Fetch typed array docs
 const typedArrayDocs = await fetchService.fetchTypedArrayDocs();
-console.log(`Fetched ${typedArrayDocs.length} bytes of typed array docs`);
+console.info(`Fetched ${typedArrayDocs.length} bytes of typed array docs`);
 
 // Fetch RSS feeds
 const rssFeeds = await fetchService.fetchAllRSSFeeds();
-console.log(`Fetched ${Object.keys(rssFeeds).length} RSS feeds`);
+console.info(`Fetched ${Object.keys(rssFeeds).length} RSS feeds`);
 
 /**
  * 💡 Performance Tip: For better performance, consider:

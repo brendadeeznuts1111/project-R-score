@@ -11,7 +11,7 @@ export class DNSRuleAdapter {
   
   // Automatically generate rules based on DNS health
   async generateRulesFromHealthChecks(): Promise<CascadeRule[]> {
-    console.log('🌐 Generating rules from DNS health checks...');
+    console.info('🌐 Generating rules from DNS health checks...');
     
     const healthReport = await this.healthMonitor.runHealthChecks();
     
@@ -39,7 +39,7 @@ export class DNSRuleAdapter {
       }
     }));
     
-    console.log(`📋 Generated ${rules.length} DNS-based rules`);
+    console.info(`📋 Generated ${rules.length} DNS-based rules`);
     return rules;
   }
 }
@@ -73,7 +73,7 @@ export class CascadeTestAdapter {
   
   // Generate compliance rules from test results
   async updateRulesFromTestResults(results: TestResults): Promise<void> {
-    console.log('🧪 Updating rules based on test results...');
+    console.info('🧪 Updating rules based on test results...');
     
     if (results.compliance.gdpr.failed) {
       await this.rulesEngine.addRule({
@@ -91,7 +91,7 @@ export class CascadeTestAdapter {
         category: 'global'
       });
       
-      console.log('✅ Added GDPR compliance rule');
+      console.info('✅ Added GDPR compliance rule');
     }
     
     if (results.loadMetrics.p95Latency > 1000) {
@@ -110,7 +110,7 @@ export class CascadeTestAdapter {
         category: 'global'
       });
       
-      console.log('✅ Added performance optimization rule');
+      console.info('✅ Added performance optimization rule');
     }
     
     if (results.security.vulnerabilities.length > 0) {
@@ -129,7 +129,7 @@ export class CascadeTestAdapter {
         category: 'global'
       });
       
-      console.log('✅ Added security response rule');
+      console.info('✅ Added security response rule');
     }
   }
 }
@@ -146,7 +146,7 @@ export class MercurySkillAdapter {
   
   // Skill: Smart SMS sending based on merchant behavior
   async executeMercurySkill(context: SkillContext): Promise<SkillResult> {
-    console.log(`📱 Executing Mercury skill for merchant ${context.merchantId}`);
+    console.info(`📱 Executing Mercury skill for merchant ${context.merchantId}`);
     
     const memories = await this.getMerchantMemories(context.merchantId);
     
@@ -243,7 +243,7 @@ export class MercurySkillAdapter {
     const optimalTime = new Date();
     optimalTime.setHours(parseInt(bestHour), 0, 0, 0);
     
-    console.log(`📅 Calculated optimal send time: ${bestHour}:00`);
+    console.info(`📅 Calculated optimal send time: ${bestHour}:00`);
     return optimalTime;
   }
   
@@ -277,7 +277,7 @@ export class MercurySkillAdapter {
       }
     });
     
-    console.log(`📝 Selected optimal message format: ${bestFormat} (${(bestRate * 100).toFixed(1)}% response rate)`);
+    console.info(`📝 Selected optimal message format: ${bestFormat} (${(bestRate * 100).toFixed(1)}% response rate)`);
     return bestFormat;
   }
   
@@ -302,7 +302,7 @@ export class MercurySkillAdapter {
     
     const predictedLikelihood = responseRate * recencyFactor;
     
-    console.log(`🔮 Predicted response likelihood: ${(predictedLikelihood * 100).toFixed(1)}%`);
+    console.info(`🔮 Predicted response likelihood: ${(predictedLikelihood * 100).toFixed(1)}%`);
     return predictedLikelihood;
   }
   
@@ -342,7 +342,7 @@ export class MercurySkillAdapter {
 // Mock Mercury SMS Service
 class MercurySMS {
   async send(smsData: any): Promise<any> {
-    console.log(`📤 Sending SMS via Mercury:`, smsData);
+    console.info(`📤 Sending SMS via Mercury:`, smsData);
     
     // Simulate SMS sending
     await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 200));

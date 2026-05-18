@@ -67,7 +67,7 @@ class CRC32MonitoringSystem {
    * Initialize monitoring system
    */
   async initialize(): Promise<void> {
-    console.log('🎯 Initializing CRC32 Monitoring System...');
+    console.info('🎯 Initializing CRC32 Monitoring System...');
     
     try {
       // Setup alert channels
@@ -82,7 +82,7 @@ class CRC32MonitoringSystem {
       // Setup failure detection
       this.setupFailureDetection();
       
-      console.log('✅ CRC32 Monitoring System initialized successfully');
+      console.info('✅ CRC32 Monitoring System initialized successfully');
       
     } catch (error) {
       console.error(`❌ Failed to initialize monitoring system: ${error.message}`);
@@ -94,18 +94,18 @@ class CRC32MonitoringSystem {
    * Setup alert channels
    */
   private async setupAlertChannels(): Promise<void> {
-    console.log('📢 Setting up alert channels...');
+    console.info('📢 Setting up alert channels...');
     
     for (const channel of this.alertChannels) {
       if (channel.enabled) {
-        console.log(`   ✅ ${channel.name} (${channel.type}) enabled`);
+        console.info(`   ✅ ${channel.name} (${channel.type}) enabled`);
         await this.testAlertChannel(channel);
       } else {
-        console.log(`   ⏸️  ${channel.name} (${channel.type}) disabled`);
+        console.info(`   ⏸️  ${channel.name} (${channel.type}) disabled`);
       }
     }
     
-    console.log('✅ Alert channels configured');
+    console.info('✅ Alert channels configured');
   }
 
   /**
@@ -125,7 +125,7 @@ class CRC32MonitoringSystem {
       };
 
       await this.sendAlert(channel, testAlert);
-      console.log(`      ✅ ${channel.name} test successful`);
+      console.info(`      ✅ ${channel.name} test successful`);
     } catch (error) {
       console.error(`      ❌ ${channel.name} test failed: ${error.message}`);
       channel.enabled = false;
@@ -136,7 +136,7 @@ class CRC32MonitoringSystem {
    * Start continuous monitoring
    */
   private startMonitoring(): void {
-    console.log('📊 Starting continuous CRC32 monitoring...');
+    console.info('📊 Starting continuous CRC32 monitoring...');
     
     const monitor = () => {
       this.performHealthCheck();
@@ -147,14 +147,14 @@ class CRC32MonitoringSystem {
     // Run every 30 seconds
     this.monitoringInterval = setInterval(monitor, 30000);
     
-    console.log('✅ Continuous monitoring started (30-second intervals)');
+    console.info('✅ Continuous monitoring started (30-second intervals)');
   }
 
   /**
    * Start health checks
    */
   private startHealthChecks(): void {
-    console.log('🏥 Starting CRC32 health checks...');
+    console.info('🏥 Starting CRC32 health checks...');
     
     const healthCheck = async () => {
       try {
@@ -186,29 +186,29 @@ class CRC32MonitoringSystem {
     // Run every 60 seconds
     this.healthCheckInterval = setInterval(healthCheck, 60000);
     
-    console.log('✅ Health checks started (60-second intervals)');
+    console.info('✅ Health checks started (60-second intervals)');
   }
 
   /**
    * Setup failure detection
    */
   private setupFailureDetection(): void {
-    console.log('🚨 Setting up CRC32 failure detection...');
+    console.info('🚨 Setting up CRC32 failure detection...');
     
-    console.log(`   🔢 Failure threshold: ${this.failureThreshold} consecutive failures`);
-    console.log(`   📊 Max alerts per hour: ${this.maxAlertsPerHour}`);
-    console.log(`   ⏰ Monitoring interval: 30 seconds`);
+    console.info(`   🔢 Failure threshold: ${this.failureThreshold} consecutive failures`);
+    console.info(`   📊 Max alerts per hour: ${this.maxAlertsPerHour}`);
+    console.info(`   ⏰ Monitoring interval: 30 seconds`);
     
-    console.log('✅ Failure detection configured');
+    console.info('✅ Failure detection configured');
   }
 
   /**
    * Handle CRC32 verification failure
    */
   handleCRC32Failure(source: string, expectedHash: number, actualHash: number): void {
-    console.log(`🚨 CRC32 verification failure detected from: ${source}`);
-    console.log(`   Expected: ${expectedHash.toString(16)}`);
-    console.log(`   Actual: ${actualHash.toString(16)}`);
+    console.info(`🚨 CRC32 verification failure detected from: ${source}`);
+    console.info(`   Expected: ${expectedHash.toString(16)}`);
+    console.info(`   Actual: ${actualHash.toString(16)}`);
     
     this.metrics.crc32Failures++;
     this.metrics.consecutiveFailures++;
@@ -247,7 +247,7 @@ class CRC32MonitoringSystem {
    * Handle system error
    */
   private handleSystemError(source: string, error: Error): void {
-    console.log(`🚨 System error in ${source}: ${error.message}`);
+    console.info(`🚨 System error in ${source}: ${error.message}`);
     
     const alert: MonitoringAlert = {
       id: this.generateAlertId(),
@@ -270,7 +270,7 @@ class CRC32MonitoringSystem {
    * Create and send alert
    */
   private createAlert(alert: MonitoringAlert): void {
-    console.log(`🚨 ${alert.severity.toUpperCase()} ALERT: ${alert.message}`);
+    console.info(`🚨 ${alert.severity.toUpperCase()} ALERT: ${alert.message}`);
     
     this.alerts.push(alert);
     
@@ -297,7 +297,7 @@ class CRC32MonitoringSystem {
     
     // Rate limiting
     if (recentAlerts.length >= this.maxAlertsPerHour) {
-      console.log('⚠️  Alert rate limit reached - skipping channel notifications');
+      console.info('⚠️  Alert rate limit reached - skipping channel notifications');
       return;
     }
     
@@ -328,7 +328,7 @@ class CRC32MonitoringSystem {
         await this.sendSMSAlert(channel, alert);
         break;
       default:
-        console.log(`⚠️  Unknown alert channel type: ${channel.type}`);
+        console.info(`⚠️  Unknown alert channel type: ${channel.type}`);
     }
   }
 
@@ -336,7 +336,7 @@ class CRC32MonitoringSystem {
    * Send email alert
    */
   private async sendEmailAlert(channel: AlertChannel, alert: MonitoringAlert): Promise<void> {
-    console.log(`📧 Sending email alert to ${channel.config.recipients}`);
+    console.info(`📧 Sending email alert to ${channel.config.recipients}`);
     
     const emailContent = `
       CRC32 Monitoring Alert
@@ -352,7 +352,7 @@ class CRC32MonitoringSystem {
     `;
     
     // Simulate email sending
-    console.log(`   📧 Email sent successfully`);
+    console.info(`   📧 Email sent successfully`);
     // await this.emailService.send(channel.config.recipients, 'CRC32 Alert', emailContent);
   }
 
@@ -360,7 +360,7 @@ class CRC32MonitoringSystem {
    * Send Slack alert
    */
   private async sendSlackAlert(channel: AlertChannel, alert: MonitoringAlert): Promise<void> {
-    console.log(`💬 Sending Slack alert to #${channel.config.channel}`);
+    console.info(`💬 Sending Slack alert to #${channel.config.channel}`);
     
     const slackMessage = {
       text: `🚨 CRC32 ${alert.severity.toUpperCase()} Alert`,
@@ -377,7 +377,7 @@ class CRC32MonitoringSystem {
     };
     
     // Simulate Slack sending
-    console.log(`   💬 Slack message sent successfully`);
+    console.info(`   💬 Slack message sent successfully`);
     // await this.slackService.postMessage(channel.config.webhook, slackMessage);
   }
 
@@ -385,7 +385,7 @@ class CRC32MonitoringSystem {
    * Send webhook alert
    */
   private async sendWebhookAlert(channel: AlertChannel, alert: MonitoringAlert): Promise<void> {
-    console.log(`🪝 Sending webhook alert to ${channel.config.url}`);
+    console.info(`🪝 Sending webhook alert to ${channel.config.url}`);
     
     const webhookPayload = {
       alert,
@@ -394,7 +394,7 @@ class CRC32MonitoringSystem {
     };
     
     // Simulate webhook sending
-    console.log(`   🪝 Webhook sent successfully`);
+    console.info(`   🪝 Webhook sent successfully`);
     // await fetch(channel.config.url, {
     //   method: 'POST',
     //   headers: { 'Content-Type': 'application/json' },
@@ -406,12 +406,12 @@ class CRC32MonitoringSystem {
    * Send SMS alert
    */
   private async sendSMSAlert(channel: AlertChannel, alert: MonitoringAlert): Promise<void> {
-    console.log(`📱 Sending SMS alert to ${channel.config.phoneNumbers}`);
+    console.info(`📱 Sending SMS alert to ${channel.config.phoneNumbers}`);
     
     const smsMessage = `CRC32 ${alert.severity.toUpperCase()}: ${alert.message}`;
     
     // Simulate SMS sending
-    console.log(`   📱 SMS sent successfully`);
+    console.info(`   📱 SMS sent successfully`);
     // await this.smsService.send(channel.config.phoneNumbers, smsMessage);
   }
 
@@ -492,7 +492,7 @@ class CRC32MonitoringSystem {
     
     // Check for anomalies
     if (this.metrics.failureRate > 0.1) { // 10% failure rate
-      console.log(`⚠️  High failure rate detected: ${(this.metrics.failureRate * 100).toFixed(1)}%`);
+      console.info(`⚠️  High failure rate detected: ${(this.metrics.failureRate * 100).toFixed(1)}%`);
     }
   }
 
@@ -649,7 +649,7 @@ ${this.metrics.lastFailure ? `🚨 Last Failure: ${this.metrics.lastFailure.toLo
       this.healthCheckInterval = null;
     }
     
-    console.log('⏹️  CRC32 monitoring stopped');
+    console.info('⏹️  CRC32 monitoring stopped');
   }
 }
 
@@ -657,26 +657,26 @@ ${this.metrics.lastFailure ? `🚨 Last Failure: ${this.metrics.lastFailure.toLo
 if (import.meta.main) {
   const monitoringSystem = new CRC32MonitoringSystem();
   
-  console.log('🎯 Monitoring Integration - Quantum Hash System');
-  console.log('================================================\n');
+  console.info('🎯 Monitoring Integration - Quantum Hash System');
+  console.info('================================================\n');
   
   monitoringSystem.initialize()
     .then(() => {
-      console.log('\n✅ Monitoring integration complete!');
+      console.info('\n✅ Monitoring integration complete!');
       
       // Display dashboard every 15 seconds
       setInterval(() => {
         console.clear();
-        console.log(monitoringSystem.getMonitoringDashboard());
+        console.info(monitoringSystem.getMonitoringDashboard());
       }, 15000);
       
       // Show initial dashboard
-      console.log(monitoringSystem.getMonitoringDashboard());
+      console.info(monitoringSystem.getMonitoringDashboard());
       
       // Handle Ctrl+C
       process.on('SIGINT', () => {
         monitoringSystem.stopMonitoring();
-        console.log('\n👋 Monitoring system stopped');
+        console.info('\n👋 Monitoring system stopped');
         process.exit(0);
       });
     })

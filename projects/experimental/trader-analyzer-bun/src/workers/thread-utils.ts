@@ -91,9 +91,9 @@ export class ThreadUtils {
 		const duration = (endTime - startTime) / 1_000_000; // ms
 		const memoryDiff = endMemory.heapUsed - startMemory.heapUsed;
 		
-		console.log(`[Thread ${this.threadId}] ${label}:`);
-		console.log(`  Duration: ${duration.toFixed(2)}ms`);
-		console.log(`  Memory: ${(memoryDiff / 1024).toFixed(2)}KB`);
+		console.info(`[Thread ${this.threadId}] ${label}:`);
+		console.info(`  Duration: ${duration.toFixed(2)}ms`);
+		console.info(`  Memory: ${(memoryDiff / 1024).toFixed(2)}KB`);
 		
 		return result;
 	}

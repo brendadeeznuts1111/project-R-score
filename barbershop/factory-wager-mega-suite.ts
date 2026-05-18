@@ -32,34 +32,34 @@ const COLORS = {
 };
 
 function printHeader(title: string) {
-  console.log();
-  console.log(
+  console.info();
+  console.info(
     `${COLORS.blue}╔══════════════════════════════════════════════════════════════╗${COLORS.reset}`
   );
-  console.log(
+  console.info(
     `${COLORS.blue}║${COLORS.reset} ${COLORS.bright}${title.padEnd(60)}${COLORS.reset}${COLORS.blue} ║${COLORS.reset}`
   );
-  console.log(
+  console.info(
     `${COLORS.blue}╚══════════════════════════════════════════════════════════════╝${COLORS.reset}`
   );
 }
 
 function printSection(title: string) {
-  console.log();
-  console.log(`${COLORS.teal}▶ ${title}${COLORS.reset}`);
-  console.log(`${COLORS.teal}${'─'.repeat(62)}${COLORS.reset}`);
+  console.info();
+  console.info(`${COLORS.teal}▶ ${title}${COLORS.reset}`);
+  console.info(`${COLORS.teal}${'─'.repeat(62)}${COLORS.reset}`);
 }
 
 function printPass(message: string) {
-  console.log(`  ${COLORS.green}✓${COLORS.reset} ${message}`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} ${message}`);
 }
 
 function printFail(message: string) {
-  console.log(`  ${COLORS.red}✗${COLORS.reset} ${message}`);
+  console.info(`  ${COLORS.red}✗${COLORS.reset} ${message}`);
 }
 
 function printInfo(label: string, value: string) {
-  console.log(`  ${COLORS.dim}${label.padEnd(20)}${COLORS.reset} ${value}`);
+  console.info(`  ${COLORS.dim}${label.padEnd(20)}${COLORS.reset} ${value}`);
 }
 
 // ==================== TESTS ====================
@@ -83,7 +83,7 @@ async function main() {
   const suiteStart = performance.now();
 
   printHeader('🏰 FACTORYWAGER v3.8 MEGA SUITE');
-  console.log(`${COLORS.dim}  Started: ${new Date().toISOString()}${COLORS.reset}`);
+  console.info(`${COLORS.dim}  Started: ${new Date().toISOString()}${COLORS.reset}`);
 
   // ==================== THEME SYSTEM ====================
   printSection('Theme System');
@@ -244,25 +244,25 @@ async function main() {
   const suiteDuration = performance.now() - suiteStart;
 
   printHeader('SUITE COMPLETE');
-  console.log();
-  console.log(`  ${COLORS.green}✓ Passed:${COLORS.reset}  ${results.pass}`);
-  console.log(`  ${COLORS.red}✗ Failed:${COLORS.reset}  ${results.fail}`);
-  console.log(`  ${COLORS.orange}⊘ Skipped:${COLORS.reset} ${results.skipped}`);
-  console.log();
-  console.log(`  ${COLORS.dim}Duration: ${suiteDuration.toFixed(2)}ms${COLORS.reset}`);
-  console.log();
+  console.info();
+  console.info(`  ${COLORS.green}✓ Passed:${COLORS.reset}  ${results.pass}`);
+  console.info(`  ${COLORS.red}✗ Failed:${COLORS.reset}  ${results.fail}`);
+  console.info(`  ${COLORS.orange}⊘ Skipped:${COLORS.reset} ${results.skipped}`);
+  console.info();
+  console.info(`  ${COLORS.dim}Duration: ${suiteDuration.toFixed(2)}ms${COLORS.reset}`);
+  console.info();
 
   const total = results.pass + results.fail + results.skipped;
   const passRate = ((results.pass / total) * 100).toFixed(1);
 
   if (results.fail === 0) {
-    console.log(
+    console.info(
       `  ${COLORS.green}${COLORS.bright}✓ ALL TESTS PASSED (${passRate}%)${COLORS.reset}`
     );
   } else {
-    console.log(`  ${COLORS.red}${COLORS.bright}✗ SOME TESTS FAILED (${passRate}%)${COLORS.reset}`);
+    console.info(`  ${COLORS.red}${COLORS.bright}✗ SOME TESTS FAILED (${passRate}%)${COLORS.reset}`);
   }
-  console.log();
+  console.info();
 
   process.exit(results.fail > 0 ? 1 : 0);
 }

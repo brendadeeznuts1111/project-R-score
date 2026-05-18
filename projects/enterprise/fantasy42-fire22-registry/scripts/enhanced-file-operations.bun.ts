@@ -15,7 +15,7 @@ import vm from 'node:vm';
 // ============================================================================
 
 export async function findSourceFiles(extensions: string[] = ['ts', 'js', 'tsx', 'jsx']) {
-  console.log('🔍 Finding source files using enhanced Bun fs.glob...');
+  console.info('🔍 Finding source files using enhanced Bun fs.glob...');
 
   // Create patterns for multiple extensions
   const patterns = extensions.map(ext => `**/*.${ext}`);
@@ -30,9 +30,9 @@ export async function findSourceFiles(extensions: string[] = ['ts', 'js', 'tsx',
       })
     );
 
-    console.log(`✅ Found ${files.length} source files:`);
-    files.slice(0, 10).forEach(file => console.log(`  • ${file}`));
-    if (files.length > 10) console.log(`  ... and ${files.length - 10} more`);
+    console.info(`✅ Found ${files.length} source files:`);
+    files.slice(0, 10).forEach(file => console.info(`  • ${file}`));
+    if (files.length > 10) console.info(`  ... and ${files.length - 10} more`);
 
     return files;
   } catch (error) {
@@ -42,14 +42,14 @@ export async function findSourceFiles(extensions: string[] = ['ts', 'js', 'tsx',
 }
 
 export function findSourceFilesSync(extensions: string[] = ['ts', 'js', 'tsx', 'jsx']) {
-  console.log('🔍 Finding source files synchronously using Bun fs.glob...');
+  console.info('🔍 Finding source files synchronously using Bun fs.glob...');
 
   const patterns = extensions.map(ext => `**/*.${ext}`);
 
   try {
     // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's native fs.glob (sync not available, using async)
     // Note: Bun's fs.glob is async-only, so we'll use the async version
-    console.log('⚠️  Using async version (Bun fs.glob is async-only)');
+    console.info('⚠️  Using async version (Bun fs.glob is async-only)');
     return findSourceFiles(extensions);
   } catch (error) {
     console.error('❌ Error finding source files:', error);
@@ -62,7 +62,7 @@ export function findSourceFilesSync(extensions: string[] = ['ts', 'js', 'tsx', '
 // ============================================================================
 
 export async function analyzeSourceMaps() {
-  console.log('🗺️  Analyzing source maps...');
+  console.info('🗺️  Analyzing source maps...');
 
   try {
     // Find JavaScript files that might have source maps
@@ -71,11 +71,11 @@ export async function analyzeSourceMaps() {
       cwd: process.cwd(),
     });
 
-    console.log(`📊 Found ${jsFiles.length} JavaScript files to analyze`);
+    console.info(`📊 Found ${jsFiles.length} JavaScript files to analyze`);
 
     for (const jsFile of jsFiles.slice(0, 3)) {
       // Analyze first 3 files
-      console.log(`\n🔍 Analyzing ${jsFile}...`);
+      console.info(`\n🔍 Analyzing ${jsFile}...`);
 
       try {
         const fileContent = await Bun.file(jsFile).text();
@@ -84,7 +84,7 @@ export async function analyzeSourceMaps() {
         const sourceMapMatch = fileContent.match(/\/\/# sourceMappingURL=(.+)/);
         if (sourceMapMatch) {
           const sourceMapUrl = sourceMapMatch[1];
-          console.log(`  📍 Found source map: ${sourceMapUrl}`);
+          console.info(`  📍 Found source map: ${sourceMapUrl}`);
 
           // If it's a data URL, we could parse it
           if (sourceMapUrl.startsWith('data:application/json;base64,')) {
@@ -94,15 +94,15 @@ export async function analyzeSourceMaps() {
 
             // NEW: Use the SourceMap class
             const sourceMap = new SourceMap(sourceMapData);
-            console.log(`  🗺️  Source map version: ${sourceMap.payload.version}`);
-            console.log(`  📄 Source map file: ${sourceMap.payload.file}`);
-            console.log(`  📂 Sources: ${sourceMap.payload.sources?.length || 0}`);
+            console.info(`  🗺️  Source map version: ${sourceMap.payload.version}`);
+            console.info(`  📄 Source map file: ${sourceMap.payload.file}`);
+            console.info(`  📂 Sources: ${sourceMap.payload.sources?.length || 0}`);
           }
         } else {
-          console.log(`  ⚠️  No source map found`);
+          console.info(`  ⚠️  No source map found`);
         }
       } catch (error) {
-        console.log(`  ❌ Error analyzing ${jsFile}: ${error.message}`);
+        console.info(`  ❌ Error analyzing ${jsFile}: ${error.message}`);
       }
     }
   } catch (error) {
@@ -115,24 +115,24 @@ export async function analyzeSourceMaps() {
 // ============================================================================
 
 export function analyzeNetworkInterfaces() {
-  console.log('🌐 Analyzing network interfaces...');
+  console.info('🌐 Analyzing network interfaces...');
 
   try {
     const interfaces = networkInterfaces();
 
-    console.log('📋 Network interfaces:');
+    console.info('📋 Network interfaces:');
     for (const [name, nets] of Object.entries(interfaces)) {
-      console.log(`\n🔌 ${name}:`);
+      console.info(`\n🔌 ${name}:`);
       nets.forEach((net, index) => {
-        console.log(`  ${index + 1}. ${net.address} (${net.family})`);
-        console.log(`     MAC: ${net.mac || 'N/A'}`);
-        console.log(`     Internal: ${net.internal}`);
+        console.info(`  ${index + 1}. ${net.address} (${net.family})`);
+        console.info(`     MAC: ${net.mac || 'N/A'}`);
+        console.info(`     Internal: ${net.internal}`);
 
         // NEW: scopeid property for IPv6 interfaces
         if (net.family === 'IPv6') {
-          console.log(`     Scope ID: ${net.scopeid || 'N/A'}`);
+          console.info(`     Scope ID: ${net.scopeid || 'N/A'}`);
           // Note: scope_id is now deprecated in favor of scopeid
-          console.log(`     Legacy Scope ID: ${net.scope_id || 'N/A'}`);
+          console.info(`     Legacy Scope ID: ${net.scope_id || 'N/A'}`);
         }
       });
     }
@@ -146,24 +146,24 @@ export function analyzeNetworkInterfaces() {
 // ============================================================================
 
 export function demonstrateVMContextification() {
-  console.log('🔧 Demonstrating VM contextification improvements...');
+  console.info('🔧 Demonstrating VM contextification improvements...');
 
   try {
     // Standard contextified context
     const contextified = vm.createContext({});
-    console.log('📝 Standard contextified globalThis check:');
-    console.log(
+    console.info('📝 Standard contextified globalThis check:');
+    console.info(
       `  contextified.globalThis === contextified: ${vm.runInContext('globalThis', contextified) === contextified}`
     );
 
     // NEW: DONT_CONTEXTIFY option
     const notContextified = vm.createContext(vm.constants.DONT_CONTEXTIFY);
-    console.log('📝 Non-contextified globalThis check:');
-    console.log(
+    console.info('📝 Non-contextified globalThis check:');
+    console.info(
       `  notContextified.globalThis === notContextified: ${vm.runInContext('globalThis', notContextified) === notContextified}`
     );
 
-    console.log('✅ VM contextification demonstration completed');
+    console.info('✅ VM contextification demonstration completed');
   } catch (error) {
     console.error('❌ Error demonstrating VM contextification:', error);
   }
@@ -174,15 +174,15 @@ export function demonstrateVMContextification() {
 // ============================================================================
 
 export function checkProcessFeatures() {
-  console.log('🔍 Checking process.features...');
+  console.info('🔍 Checking process.features...');
 
   try {
-    console.log('📋 Process features:');
-    console.log(`  TypeScript: ${process.features.typescript}`);
-    console.log(`  Require Module: ${process.features.require_module}`);
-    console.log(`  BoringSSL: ${process.features.openssl_is_boringssl}`);
+    console.info('📋 Process features:');
+    console.info(`  TypeScript: ${process.features.typescript}`);
+    console.info(`  Require Module: ${process.features.require_module}`);
+    console.info(`  BoringSSL: ${process.features.openssl_is_boringssl}`);
 
-    console.log('✅ Process features check completed');
+    console.info('✅ Process features check completed');
   } catch (error) {
     console.error('❌ Error checking process features:', error);
   }
@@ -193,34 +193,34 @@ export function checkProcessFeatures() {
 // ============================================================================
 
 export async function runPerformanceDemo() {
-  console.log('🚀 Running performance demonstration...');
+  console.info('🚀 Running performance demonstration...');
 
   const startTime = performance.now();
 
   // Test enhanced fs.glob performance
-  console.log('\n📁 Testing fs.glob performance...');
+  console.info('\n📁 Testing fs.glob performance...');
   const globStart = performance.now();
   const files = await findSourceFiles(['ts', 'js']);
   const globTime = performance.now() - globStart;
-  console.log(`  ⏱️  fs.glob completed in ${globTime.toFixed(2)}ms`);
+  console.info(`  ⏱️  fs.glob completed in ${globTime.toFixed(2)}ms`);
 
   // Test network interface analysis
-  console.log('\n🌐 Testing network interface analysis...');
+  console.info('\n🌐 Testing network interface analysis...');
   const netStart = performance.now();
   analyzeNetworkInterfaces();
   const netTime = performance.now() - netStart;
-  console.log(`  ⏱️  Network analysis completed in ${netTime.toFixed(2)}ms`);
+  console.info(`  ⏱️  Network analysis completed in ${netTime.toFixed(2)}ms`);
 
   // Test VM operations
-  console.log('\n🔧 Testing VM operations...');
+  console.info('\n🔧 Testing VM operations...');
   const vmStart = performance.now();
   demonstrateVMContextification();
   const vmTime = performance.now() - vmStart;
-  console.log(`  ⏱️  VM operations completed in ${vmTime.toFixed(2)}ms`);
+  console.info(`  ⏱️  VM operations completed in ${vmTime.toFixed(2)}ms`);
 
   const totalTime = performance.now() - startTime;
-  console.log(`\n🏁 Performance demo completed in ${totalTime.toFixed(2)}ms`);
-  console.log(`📊 Files found: ${files.length}`);
+  console.info(`\n🏁 Performance demo completed in ${totalTime.toFixed(2)}ms`);
+  console.info(`📊 Files found: ${files.length}`);
 }
 
 // ============================================================================
@@ -228,8 +228,8 @@ export async function runPerformanceDemo() {
 // ============================================================================
 
 async function main() {
-  console.log('🎯 Enhanced File Operations Demo - Bun 1.1.x Features');
-  console.log('═'.repeat(60));
+  console.info('🎯 Enhanced File Operations Demo - Bun 1.1.x Features');
+  console.info('═'.repeat(60));
 
   // Check if specific operation is requested
   const args = process.argv.slice(2);
@@ -258,19 +258,19 @@ async function main() {
       await runPerformanceDemo();
       break;
     default:
-      console.log('📋 Available operations:');
-      console.log('  files      - Find source files using enhanced fs.glob');
-      console.log('  sync       - Find source files synchronously');
-      console.log('  sourcemaps - Analyze source maps');
-      console.log('  network    - Analyze network interfaces');
-      console.log('  vm         - Demonstrate VM contextification');
-      console.log('  features   - Check process.features');
-      console.log('  performance- Run performance demonstration');
-      console.log('  all        - Run all operations');
-      console.log('\n💡 Usage: bun run scripts/enhanced-file-operations.bun.ts <operation>');
+      console.info('📋 Available operations:');
+      console.info('  files      - Find source files using enhanced fs.glob');
+      console.info('  sync       - Find source files synchronously');
+      console.info('  sourcemaps - Analyze source maps');
+      console.info('  network    - Analyze network interfaces');
+      console.info('  vm         - Demonstrate VM contextification');
+      console.info('  features   - Check process.features');
+      console.info('  performance- Run performance demonstration');
+      console.info('  all        - Run all operations');
+      console.info('\n💡 Usage: bun run scripts/enhanced-file-operations.bun.ts <operation>');
 
       if (args.length === 0 || operation === 'all') {
-        console.log('\n🚀 Running all operations...');
+        console.info('\n🚀 Running all operations...');
         await findSourceFiles();
         findSourceFilesSync();
         await analyzeSourceMaps();

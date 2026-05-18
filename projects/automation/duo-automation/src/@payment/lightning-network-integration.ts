@@ -104,7 +104,7 @@ class LightningNetworkIntegration {
       if (response.ok) {
         const info = await response.json();
         this.isConnected = true;
-        console.log(`✅ Connected to Lightning node: ${info.alias} (${info.identity_pubkey})`);
+        console.info(`✅ Connected to Lightning node: ${info.alias} (${info.identity_pubkey})`);
       } else {
         throw new Error(`Failed to connect to Lightning node: ${response.statusText}`);
       }
@@ -326,7 +326,7 @@ class LightningNetworkIntegration {
       // Route to savings
       const result = await this.routeToSavings(targetAmount);
       
-      console.log(`💰 Consolidated ${balance.total} sats to savings: ${result.destination}`);
+      console.info(`💰 Consolidated ${balance.total} sats to savings: ${result.destination}`);
       
       return {
         consolidated: true,

@@ -102,7 +102,7 @@ sectionHeader('1. escapeXml', 'XML entity encoding: & < > " \'');
 	checkPass('round-trip identity', decodeXmlEntities(escaped) === input);
 	checkPass('entity encoding', escaped === expected, `${input.length} chars → ${escaped.length} chars`);
 	checkPass('no-op on clean text', escapeXml('clean text') === 'clean text');
-	console.log();
+	console.info();
 }
 
 {
@@ -128,7 +128,7 @@ sectionHeader('1. escapeXml', 'XML entity encoding: & < > " \'');
 		});
 	}
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(
+	console.info(
 		Bun.inspect.table(rows, ['Input', 'Chars', 'Mean', 'Min', 'Max', 'ops/s', 'Throughput'], {colors: useColor}),
 	);
 }
@@ -143,7 +143,7 @@ sectionHeader('2. decodeXmlEntities', 'XML entity decoding + CDATA unwrap');
 	checkPass('CDATA strip', decodeXmlEntities('<![CDATA[hello <world>]]>') === 'hello <world>');
 	checkPass('nested CDATA entity', decodeXmlEntities('<![CDATA[Use &amp; here]]>') === 'Use & here');
 	checkPass('no-op on clean text', decodeXmlEntities('clean text') === 'clean text');
-	console.log();
+	console.info();
 }
 
 {
@@ -169,7 +169,7 @@ sectionHeader('2. decodeXmlEntities', 'XML entity decoding + CDATA unwrap');
 		});
 	}
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(
+	console.info(
 		Bun.inspect.table(rows, ['Input', 'Chars', 'Mean', 'Min', 'Max', 'ops/s', 'Throughput'], {colors: useColor}),
 	);
 }
@@ -203,7 +203,7 @@ sectionHeader('3. escape/decode symmetry', 'Verifying round-trip identity across
 		});
 	}
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(
+	console.info(
 		Bun.inspect.table(rows, ['Input', 'Chars', 'Escape (mean)', 'Decode (mean)', 'Ratio (d/e)', 'Round-trip'], {
 			colors: useColor,
 		}),
@@ -229,7 +229,7 @@ sectionHeader('4. generateRssXml', 'RSS 2.0 XML generation via template literals
 	const idx0 = xml.indexOf('Item 0:');
 	const idx2 = xml.indexOf('Item 2:');
 	checkPass('newest-first sort', idx2 < idx0, 'Item 2 before Item 0');
-	console.log();
+	console.info();
 }
 
 {
@@ -259,7 +259,7 @@ sectionHeader('4. generateRssXml', 'RSS 2.0 XML generation via template literals
 		});
 	}
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(
+	console.info(
 		Bun.inspect.table(rows, ['Items', 'Bytes', 'Mean', 'Min', 'Max', 'ops/s', 'Throughput', 'Per item'], {
 			colors: useColor,
 		}),
@@ -280,7 +280,7 @@ sectionHeader('5. parseRssFeed — RSS 2.0', 'Regex-based <item> extraction');
 	checkPass('has description', items[0].description.length > 0);
 	checkPass('has pubDate', items[0].pubDate.length > 0);
 	checkPass('empty on garbage', parseRssFeed('not xml').length === 0);
-	console.log();
+	console.info();
 }
 
 {
@@ -309,7 +309,7 @@ sectionHeader('5. parseRssFeed — RSS 2.0', 'Regex-based <item> extraction');
 		});
 	}
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(
+	console.info(
 		Bun.inspect.table(rows, ['Items', 'Bytes', 'Mean', 'Min', 'Max', 'ops/s', 'Throughput', 'Per item'], {
 			colors: useColor,
 		}),
@@ -329,7 +329,7 @@ sectionHeader('6. parseRssFeed — Atom', 'Regex-based <entry> extraction with l
 	checkPass('href link', items[0].link.startsWith('https://'), items[0].link);
 	checkPass('summary as description', items[0].description.length > 0);
 	checkPass('published as pubDate', items[0].pubDate.includes('2025-01-'));
-	console.log();
+	console.info();
 }
 
 {
@@ -358,7 +358,7 @@ sectionHeader('6. parseRssFeed — Atom', 'Regex-based <entry> extraction with l
 		});
 	}
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(
+	console.info(
 		Bun.inspect.table(rows, ['Items', 'Bytes', 'Mean', 'Min', 'Max', 'ops/s', 'Throughput', 'Per item'], {
 			colors: useColor,
 		}),
@@ -392,7 +392,7 @@ sectionHeader('7. RSS 2.0 vs Atom — head-to-head', 'Same item count, comparing
 		});
 	}
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(Bun.inspect.table(rows, ['Items', 'RSS mean', 'Atom mean', 'Δ', 'Faster'], {colors: useColor}));
+	console.info(Bun.inspect.table(rows, ['Items', 'RSS mean', 'Atom mean', 'Δ', 'Faster'], {colors: useColor}));
 }
 
 // ── Bench 8: round-trip (generate → parse) ───────────────────────────
@@ -414,7 +414,7 @@ sectionHeader('8. round-trip: generateRssXml → parseRssFeed', 'Full cycle: gen
 	});
 	const sp = parseRssFeed(special);
 	checkPass('special chars survive', sp[0].title === 'A & B <"C">' && sp[0].description === "It's done");
-	console.log();
+	console.info();
 }
 
 {
@@ -447,7 +447,7 @@ sectionHeader('8. round-trip: generateRssXml → parseRssFeed', 'Full cycle: gen
 		});
 	}
 	// @ts-expect-error Bun.inspect.table accepts options as third arg
-	console.log(
+	console.info(
 		Bun.inspect.table(rows, ['Items', 'Bytes', 'Gen (mean)', 'Parse (mean)', 'Total (mean)', 'ops/s', 'Per item'], {
 			colors: useColor,
 		}),

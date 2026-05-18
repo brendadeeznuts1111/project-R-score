@@ -4,12 +4,12 @@
 
 import { serve } from "bun";
 
-console.log('🏛️ FACTORY WAGER EMPIRE - LANDING PAGE SERVER');
-console.log('==========================================');
-console.log('🌐 Serving complete system integration dashboard');
-console.log('📊 Features: Real-time metrics, system overview, quick actions');
-console.log('⚡ Engine: Bun v1.3.6 with high-performance serving');
-console.log('');
+console.info('🏛️ FACTORY WAGER EMPIRE - LANDING PAGE SERVER');
+console.info('==========================================');
+console.info('🌐 Serving complete system integration dashboard');
+console.info('📊 Features: Real-time metrics, system overview, quick actions');
+console.info('⚡ Engine: Bun v1.3.6 with high-performance serving');
+console.info('');
 
 const PORT = process.env.LANDING_PORT ? parseInt(process.env.LANDING_PORT) : 3222;
 const HOST = 'localhost';
@@ -147,10 +147,10 @@ const server = serve({
   websocket: {
     message(ws: any, message: any) {
       // Handle WebSocket messages for real-time updates
-      console.log("Received message:", message);
+      console.info("Received message:", message);
     },
     open(ws: any) {
-      console.log("WebSocket connection opened");
+      console.info("WebSocket connection opened");
       // Send initial data
       ws.send(JSON.stringify({
         type: 'initial',
@@ -161,28 +161,28 @@ const server = serve({
       }));
     },
     close(ws: any, code: number, message: string) {
-      console.log("WebSocket connection closed");
+      console.info("WebSocket connection closed");
     },
   },
 });
 
-console.log(`🌐 Landing Page Server Started:`);
-console.log(`   📱 Local:   http://${HOST}:${PORT}`);
-console.log(`   📊 Dashboard: http://${HOST}:${PORT}/landing`);
-console.log(`   🔗 API:     http://${HOST}:${PORT}/api/system-status`);
-console.log(`   ⚡ Performance: Bun v1.3.6 high-speed serving`);
-console.log(`   🛡️ Security: CORS enabled, no-cache headers`);
-console.log('');
-console.log(`🏛️ Empire Status: Complete System Dashboard Active!`);
-console.log(`📊 All systems integrated and ready for monitoring`);
-console.log(`🚀 Access the dashboard to view real-time metrics`);
+console.info(`🌐 Landing Page Server Started:`);
+console.info(`   📱 Local:   http://${HOST}:${PORT}`);
+console.info(`   📊 Dashboard: http://${HOST}:${PORT}/landing`);
+console.info(`   🔗 API:     http://${HOST}:${PORT}/api/system-status`);
+console.info(`   ⚡ Performance: Bun v1.3.6 high-speed serving`);
+console.info(`   🛡️ Security: CORS enabled, no-cache headers`);
+console.info('');
+console.info(`🏛️ Empire Status: Complete System Dashboard Active!`);
+console.info(`📊 All systems integrated and ready for monitoring`);
+console.info(`🚀 Access the dashboard to view real-time metrics`);
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down landing page server...');
+  console.info('\n🛑 Shutting down landing page server...');
   server.stop();
-  console.log('✅ Server stopped gracefully');
+  console.info('✅ Server stopped gracefully');
   process.exit(0);
 });
 
-console.log('\n🔄 Server is running. Press Ctrl+C to stop.');
+console.info('\n🔄 Server is running. Press Ctrl+C to stop.');

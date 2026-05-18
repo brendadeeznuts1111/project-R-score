@@ -52,8 +52,8 @@ class FeatureFlagDemo {
       performanceOptimizations: [],
     };
 
-    console.log("🚀 Advanced Bun Feature Flags Demo");
-    console.log("===================================");
+    console.info("🚀 Advanced Bun Feature Flags Demo");
+    console.info("===================================");
     this.demonstrateFeatureFlags();
     this.setupServer();
   }
@@ -73,13 +73,13 @@ class FeatureFlagDemo {
   }
 
   private demonstrateFeatureFlags(): void {
-    console.log("🎯 Feature Flags Analysis");
-    console.log("========================");
+    console.info("🎯 Feature Flags Analysis");
+    console.info("========================");
 
-    console.log(
+    console.info(
       `✅ Enabled features: ${this.metrics.enabledFeatures.join(", ")}`
     );
-    console.log(
+    console.info(
       `❌ Disabled features: ${this.getDisabledFeatures().join(", ")}`
     );
 
@@ -107,71 +107,71 @@ class FeatureFlagDemo {
   }
 
   private demonstrateDeadCodeElimination(): void {
-    console.log("\n💀 Dead-Code Elimination");
-    console.log("========================");
+    console.info("\n💀 Dead-Code Elimination");
+    console.info("========================");
 
     // This code will be completely eliminated if DEBUG is false
     if (feature("DEBUG")) {
-      console.log("🐛 Debug mode enabled - debug code included in bundle");
-      console.log("   - Debug logging functions");
-      console.log("   - Development tools");
-      console.log("   - Error stack traces");
+      console.info("🐛 Debug mode enabled - debug code included in bundle");
+      console.info("   - Debug logging functions");
+      console.info("   - Development tools");
+      console.info("   - Error stack traces");
       this.metrics.deadCodeEliminated.push("Debug code (included)");
     } else {
-      console.log("🚀 Debug mode disabled - debug code eliminated from bundle");
-      console.log("   - Zero debug overhead in production");
-      console.log("   - Smaller bundle size");
-      console.log("   - Better performance");
+      console.info("🚀 Debug mode disabled - debug code eliminated from bundle");
+      console.info("   - Zero debug overhead in production");
+      console.info("   - Smaller bundle size");
+      console.info("   - Better performance");
       this.metrics.deadCodeEliminated.push("Debug code (eliminated)");
     }
 
     // Premium features conditional compilation
     if (feature("PREMIUM")) {
-      console.log("💎 Premium features enabled");
-      console.log("   - Advanced analytics");
-      console.log("   - Premium UI components");
-      console.log("   - Enhanced security features");
+      console.info("💎 Premium features enabled");
+      console.info("   - Advanced analytics");
+      console.info("   - Premium UI components");
+      console.info("   - Enhanced security features");
       this.metrics.deadCodeEliminated.push("Premium features (included)");
     } else {
-      console.log("🆓 Free tier - premium features eliminated");
-      console.log("   - No premium overhead");
-      console.log("   - Smaller bundle size");
-      console.log("   - Faster load times");
+      console.info("🆓 Free tier - premium features eliminated");
+      console.info("   - No premium overhead");
+      console.info("   - Smaller bundle size");
+      console.info("   - Faster load times");
       this.metrics.deadCodeEliminated.push("Premium features (eliminated)");
     }
 
     // Beta features
     if (feature("BETA_FEATURES")) {
-      console.log("🧪 Beta features enabled");
-      console.log("   - Experimental functionality");
-      console.log("   - Cutting-edge features");
-      console.log("   - Early access capabilities");
+      console.info("🧪 Beta features enabled");
+      console.info("   - Experimental functionality");
+      console.info("   - Cutting-edge features");
+      console.info("   - Early access capabilities");
       this.metrics.deadCodeEliminated.push("Beta features (included)");
     } else {
-      console.log("🔒 Stable build - beta features eliminated");
-      console.log("   - Production-ready only");
-      console.log("   - Reduced complexity");
-      console.log("   - Higher reliability");
+      console.info("🔒 Stable build - beta features eliminated");
+      console.info("   - Production-ready only");
+      console.info("   - Reduced complexity");
+      console.info("   - Higher reliability");
       this.metrics.deadCodeEliminated.push("Beta features (eliminated)");
     }
   }
 
   private demonstrateConditionalCompilation(): void {
-    console.log("\n⚙️ Conditional Compilation");
-    console.log("===========================");
+    console.info("\n⚙️ Conditional Compilation");
+    console.info("===========================");
 
     // Compile-time constants using ternary operators
     const isProduction = feature("DEBUG") ? false : true;
     const hasAnalytics = feature("ANALYTICS") ? true : false;
     const isAdmin = feature("ADMIN") ? true : false;
 
-    console.log(`🏭 Production build: ${isProduction}`);
-    console.log(`📊 Analytics enabled: ${hasAnalytics}`);
-    console.log(`👑 Admin access: ${isAdmin}`);
+    console.info(`🏭 Production build: ${isProduction}`);
+    console.info(`📊 Analytics enabled: ${hasAnalytics}`);
+    console.info(`👑 Admin access: ${isAdmin}`);
 
     // Conditional function definitions
     const logLevel = feature("DEBUG") ? "verbose" : "minimal";
-    console.log(`📝 Log level: ${logLevel}`);
+    console.info(`📝 Log level: ${logLevel}`);
 
     // Feature-based configuration using ternary operators
     const config = {
@@ -183,62 +183,62 @@ class FeatureFlagDemo {
       performance: feature("PERFORMANCE") ? true : false,
     };
 
-    console.log("⚙️ Feature configuration:", config);
+    console.info("⚙️ Feature configuration:", config);
 
     // Demonstrate compile-time optimizations
     this.demonstrateCompileTimeOptimizations(config);
   }
 
   private demonstrateCompileTimeOptimizations(config: any): void {
-    console.log("\n⚡ Compile-Time Optimizations");
-    console.log("==============================");
+    console.info("\n⚡ Compile-Time Optimizations");
+    console.info("==============================");
 
     // Conditional imports based on features
     if (feature("PERFORMANCE")) {
-      console.log("🚀 Performance optimizations enabled:");
-      console.log("   - Advanced memory management");
-      console.log("   - Optimized algorithms");
-      console.log("   - Caching strategies");
+      console.info("🚀 Performance optimizations enabled:");
+      console.info("   - Advanced memory management");
+      console.info("   - Optimized algorithms");
+      console.info("   - Caching strategies");
       this.metrics.performanceOptimizations.push("Performance mode");
     }
 
     // Analytics conditional compilation
     if (feature("ANALYTICS")) {
-      console.log("📊 Analytics compilation:");
-      console.log("   - Tracking code included");
-      console.log("   - Metrics collection enabled");
-      console.log("   - Performance monitoring active");
+      console.info("📊 Analytics compilation:");
+      console.info("   - Tracking code included");
+      console.info("   - Metrics collection enabled");
+      console.info("   - Performance monitoring active");
       this.metrics.performanceOptimizations.push("Analytics tracking");
     } else {
-      console.log("🔒 Analytics eliminated:");
-      console.log("   - No tracking overhead");
-      console.log("   - Privacy-focused build");
-      console.log("   - Faster execution");
+      console.info("🔒 Analytics eliminated:");
+      console.info("   - No tracking overhead");
+      console.info("   - Privacy-focused build");
+      console.info("   - Faster execution");
       this.metrics.performanceOptimizations.push("No analytics overhead");
     }
 
     // Admin features
     if (feature("ADMIN")) {
-      console.log("👑 Admin features compiled:");
-      console.log("   - Admin dashboard code");
-      console.log("   - Management tools");
-      console.log("   - Advanced configuration");
+      console.info("👑 Admin features compiled:");
+      console.info("   - Admin dashboard code");
+      console.info("   - Management tools");
+      console.info("   - Advanced configuration");
       this.metrics.performanceOptimizations.push("Admin tools");
     }
   }
 
   private demonstratePerformanceOptimizations(): void {
-    console.log("\n🎯 Performance Impact Analysis");
-    console.log("==============================");
+    console.info("\n🎯 Performance Impact Analysis");
+    console.info("==============================");
 
     const bundleSizeEstimate = this.calculateBundleSize();
-    console.log(`📦 Estimated bundle size: ${bundleSizeEstimate}KB`);
+    console.info(`📦 Estimated bundle size: ${bundleSizeEstimate}KB`);
 
     const performanceScore = this.calculatePerformanceScore();
-    console.log(`⚡ Performance score: ${performanceScore}/100`);
+    console.info(`⚡ Performance score: ${performanceScore}/100`);
 
     const memoryUsage = process.memoryUsage();
-    console.log(
+    console.info(
       `💾 Memory usage: ${(memoryUsage.heapUsed / 1024 / 1024).toFixed(2)}MB`
     );
 
@@ -279,16 +279,16 @@ class FeatureFlagDemo {
       fetch: this.createRequestHandler(),
     });
 
-    console.log(
+    console.info(
       `\n🚀 Feature flags server running at http://localhost:${this.port}`
     );
-    console.log("📊 Available endpoints:");
-    console.log("  GET /api/features - Current feature flags");
-    console.log("  GET /api/metrics - Build metrics and analysis");
-    console.log("  GET /api/bundle - Bundle size estimation");
-    console.log("  GET /api/performance - Performance analysis");
-    console.log("  POST /api/analyze - Analyze feature combinations");
-    console.log("  GET /health - Health check with feature info");
+    console.info("📊 Available endpoints:");
+    console.info("  GET /api/features - Current feature flags");
+    console.info("  GET /api/metrics - Build metrics and analysis");
+    console.info("  GET /api/bundle - Bundle size estimation");
+    console.info("  GET /api/performance - Performance analysis");
+    console.info("  POST /api/analyze - Analyze feature combinations");
+    console.info("  GET /health - Health check with feature info");
   }
 
   private createRequestHandler() {
@@ -697,7 +697,7 @@ class FeatureFlagDemo {
             fetch('/api/bundle')
                 .then(r => r.json())
                 .then(data => {
-                    console.log('Bundle Info:', data);
+                    console.info('Bundle Info:', data);
                     alert('Bundle info logged to console');
                 });
         }
@@ -706,7 +706,7 @@ class FeatureFlagDemo {
             fetch('/api/performance')
                 .then(r => r.json())
                 .then(data => {
-                    console.log('Performance Info:', data);
+                    console.info('Performance Info:', data);
                     alert('Performance info logged to console');
                 });
         }
@@ -732,13 +732,13 @@ class FeatureFlagDemo {
 }
 
 // Start the feature flags demonstration
-console.log("🚀 Starting Advanced Bun Feature Flags Demo...");
-console.log("💡 Features demonstrated:");
-console.log("  • Compile-time feature flags with dead-code elimination");
-console.log("  • Type-safe feature registry with autocomplete");
-console.log("  • Bundle size optimization through conditional compilation");
-console.log("  • Performance analysis and recommendations");
-console.log("  • Interactive feature combination analysis");
+console.info("🚀 Starting Advanced Bun Feature Flags Demo...");
+console.info("💡 Features demonstrated:");
+console.info("  • Compile-time feature flags with dead-code elimination");
+console.info("  • Type-safe feature registry with autocomplete");
+console.info("  • Bundle size optimization through conditional compilation");
+console.info("  • Performance analysis and recommendations");
+console.info("  • Interactive feature combination analysis");
 
 const demo = new FeatureFlagDemo();
 
@@ -747,11 +747,11 @@ setInterval(() => {
   // Prevent process from exiting
 }, 1000000);
 
-console.log("✅ Feature flags demo initialized successfully!");
-console.log("🎯 Build command examples:");
-console.log(
+console.info("✅ Feature flags demo initialized successfully!");
+console.info("🎯 Build command examples:");
+console.info(
   "  bun build --feature=PREMIUM --feature=DEBUG ./app.ts --outdir ./out"
 );
-console.log("  bun run --feature=ANALYTICS ./app.ts");
-console.log("  bun test --feature=MOCK_API");
-console.log("🔍 Try different feature combinations via the web interface!");
+console.info("  bun run --feature=ANALYTICS ./app.ts");
+console.info("  bun test --feature=MOCK_API");
+console.info("🔍 Try different feature combinations via the web interface!");

@@ -84,7 +84,7 @@ export class CascadePerformanceOptimizer {
       throw new Error('Optimization already in progress');
     }
     
-    console.log('⚡ Starting Cascade optimization...');
+    console.info('⚡ Starting Cascade optimization...');
     this.isOptimizing = true;
     
     try {
@@ -134,7 +134,7 @@ export class CascadePerformanceOptimizer {
       // Store optimization record
       await this.storeOptimizationRecord(report);
       
-      console.log(`✅ Optimization complete: ${report.performanceImprovement.overall.toFixed(1)}% improvement`);
+      console.info(`✅ Optimization complete: ${report.performanceImprovement.overall.toFixed(1)}% improvement`);
       
       return report;
       
@@ -144,7 +144,7 @@ export class CascadePerformanceOptimizer {
   }
   
   private async measureBaselinePerformance(): Promise<PerformanceMetric[]> {
-    console.log('📊 Measuring baseline performance...');
+    console.info('📊 Measuring baseline performance...');
     
     const metrics: PerformanceMetric[] = [];
     
@@ -476,7 +476,7 @@ export class CascadePerformanceOptimizer {
   }
   
   private async applyOptimization(optimization: Optimization): Promise<OptimizationResult> {
-    console.log(`🔧 Applying optimization: ${optimization.name}`);
+    console.info(`🔧 Applying optimization: ${optimization.name}`);
     
     try {
       switch (optimization.type) {
@@ -653,7 +653,7 @@ export class CascadePerformanceOptimizer {
   
   // Continuous Learning Loop
   async startContinuousOptimization(): Promise<void> {
-    console.log('🔄 Starting continuous optimization loop...');
+    console.info('🔄 Starting continuous optimization loop...');
     
     while (true) {
       try {
@@ -681,7 +681,7 @@ export class CascadePerformanceOptimizer {
     
     // 3. If anomalies found, run optimization
     if (anomalies.length > 0) {
-      console.log(`🚨 Detected ${anomalies.length} performance anomalies`);
+      console.info(`🚨 Detected ${anomalies.length} performance anomalies`);
       await this.optimizeSystem();
     }
     
@@ -712,7 +712,7 @@ export class CascadePerformanceOptimizer {
   }
   
   private async storeCycleMetrics(metrics: any): Promise<void> {
-    console.log(`📊 Optimization cycle completed:`, metrics);
+    console.info(`📊 Optimization cycle completed:`, metrics);
   }
   
   // Public API methods

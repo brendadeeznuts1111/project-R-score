@@ -75,13 +75,13 @@ class BunOptimizedApiClient {
     if (expiry && now < expiry) {
       const cached = BunOptimizedApiClient.dnsCache.get(cacheKey);
       if (cached) {
-        console.log(`📍 DNS cache hit for ${hostname}: ${cached}`);
+        console.info(`📍 DNS cache hit for ${hostname}: ${cached}`);
         return cached;
       }
     }
 
     try {
-      console.log(`🔍 Resolving DNS for ${hostname}...`);
+      console.info(`🔍 Resolving DNS for ${hostname}...`);
       
       // Simulate DNS resolution - in production, use Bun.dns or external service
       // For now, return hostname as-is (normal DNS resolution will happen)
@@ -89,7 +89,7 @@ class BunOptimizedApiClient {
       BunOptimizedApiClient.dnsCache.set(cacheKey, ip);
       BunOptimizedApiClient.cacheExpiry.set(cacheKey, now + 5 * 60 * 1000); // 5 minutes
       
-      console.log(`✅ Using hostname ${hostname} (DNS resolution handled by system)`);
+      console.info(`✅ Using hostname ${hostname} (DNS resolution handled by system)`);
       return ip;
     } catch (error) {
       console.error(`❌ DNS resolution failed for ${hostname}:`, error);
@@ -122,7 +122,7 @@ class BunOptimizedApiClient {
         headers['Host'] = hostname;
       }
 
-      console.log(`📡 ${method} ${url.toString()}`);
+      console.info(`📡 ${method} ${url.toString()}`);
 
       // Prepare fetch options
       const fetchOptions: RequestInit = {
@@ -146,7 +146,7 @@ class BunOptimizedApiClient {
       const duration = performance.now() - startTime;
       this.recordMetric('request_duration', duration);
 
-      console.log(`✅ ${method} ${endpoint} - ${response.status} (${duration.toFixed(2)}ms)`);
+      console.info(`✅ ${method} ${endpoint} - ${response.status} (${duration.toFixed(2)}ms)`);
 
       return {
         success: response.status >= 200 && response.status < 300,
@@ -199,7 +199,7 @@ class BunOptimizedApiClient {
         
         if (attempt < this.config.retryAttempts - 1) {
           const delay = Math.pow(2, attempt) * 1000; // Exponential backoff
-          console.log(`🔄 Retry attempt ${attempt + 1} after ${delay}ms`);
+          console.info(`🔄 Retry attempt ${attempt + 1} after ${delay}ms`);
           await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
@@ -214,7 +214,7 @@ class BunOptimizedApiClient {
   async streamLargeResponse(endpoint: string): Promise<ReadableStream<Uint8Array>> {
     const url = `${this.config.baseUrl}${endpoint}`;
     
-    console.log(`🌊 Streaming large response from ${url}`);
+    console.info(`🌊 Streaming large response from ${url}`);
     
     const response = await fetch(url, {
       headers: {
@@ -238,7 +238,7 @@ class BunOptimizedApiClient {
         controller.enqueue(chunk);
       },
       flush() {
-        console.log('✅ Stream completed');
+        console.info('✅ Stream completed');
       }
     }));
   }
@@ -351,7 +351,7 @@ class BunOptimizedApiClient {
   static clearDnsCache(): void {
     BunOptimizedApiClient.dnsCache.clear();
     BunOptimizedApiClient.cacheExpiry.clear();
-    console.log('🗑️ DNS cache cleared');
+    console.info('🗑️ DNS cache cleared');
   }
 }
 

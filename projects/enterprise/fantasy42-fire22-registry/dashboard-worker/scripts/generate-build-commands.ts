@@ -100,8 +100,8 @@ const buildTargets: BuildTarget[] = [
 ];
 
 async function generateCommands() {
-  console.log('🛠️ Fire22 Build Command Generator');
-  console.log('='.repeat(50));
+  console.info('🛠️ Fire22 Build Command Generator');
+  console.info('='.repeat(50));
 
   const profile = getBuildProfile('production');
   const context = createBuildContext(profile, {
@@ -111,7 +111,7 @@ async function generateCommands() {
 
   const generator = new BuildCommandGenerator(context);
 
-  console.log('\n📋 **Generated Build Commands**\n');
+  console.info('\n📋 **Generated Build Commands**\n');
 
   // Pre-generate build constants context once for efficiency
   const sharedContext = createBuildContext(profile, {
@@ -121,8 +121,8 @@ async function generateCommands() {
   const sharedUtilities = new BuildUtilities(sharedContext);
 
   for (const target of buildTargets) {
-    console.log(`### ${target.name.charAt(0).toUpperCase() + target.name.slice(1)} Build`);
-    console.log('```bash');
+    console.info(`### ${target.name.charAt(0).toUpperCase() + target.name.slice(1)} Build`);
+    console.info('```bash');
 
     const outputFile =
       target.name === 'windows' ? './dist/Fire22-Dashboard.exe' : `./dist/fire22-${target.name}`;
@@ -166,14 +166,14 @@ async function generateCommands() {
 
     // Format command with line continuation
     const formattedCommand = command.join(' \\\n  ');
-    console.log(formattedCommand);
-    console.log('```\n');
+    console.info(formattedCommand);
+    console.info('```\n');
   }
 
   // Generate package.json script updates
-  console.log('### 📦 **Package.json Script Updates**');
-  console.log('```json');
-  console.log('"scripts": {');
+  console.info('### 📦 **Package.json Script Updates**');
+  console.info('```json');
+  console.info('"scripts": {');
 
   for (let i = 0; i < buildTargets.length; i++) {
     const target = buildTargets[i];
@@ -212,28 +212,28 @@ async function generateCommands() {
     }
 
     const comma = i < buildTargets.length - 1 ? ',' : '';
-    console.log(`  "${scriptName}": "${scriptCommand}"${comma}`);
+    console.info(`  "${scriptName}": "${scriptCommand}"${comma}`);
   }
 
-  console.log('}');
-  console.log('```\n');
+  console.info('}');
+  console.info('```\n');
 
-  console.log('### 🎯 **Usage Examples**');
-  console.log('```bash');
-  console.log('# Build development executable');
-  console.log('bun run build:executable:dev');
-  console.log('');
-  console.log('# Build production executable with all optimizations');
-  console.log('bun run build:executable:prod');
-  console.log('');
-  console.log('# Build Windows executable with metadata');
-  console.log('bun run build:executable:windows');
-  console.log('');
-  console.log('# Build all executables');
-  console.log('bun run build:executable:all');
-  console.log('```');
+  console.info('### 🎯 **Usage Examples**');
+  console.info('```bash');
+  console.info('# Build development executable');
+  console.info('bun run build:executable:dev');
+  console.info('');
+  console.info('# Build production executable with all optimizations');
+  console.info('bun run build:executable:prod');
+  console.info('');
+  console.info('# Build Windows executable with metadata');
+  console.info('bun run build:executable:windows');
+  console.info('');
+  console.info('# Build all executables');
+  console.info('bun run build:executable:all');
+  console.info('```');
 
-  console.log('\n✅ Build commands generated successfully!');
+  console.info('\n✅ Build commands generated successfully!');
 }
 
 function getLogLevel(environment: string): string {

@@ -14,19 +14,19 @@ class ProductionApp {
   private currentScope: any = null;
   
   async initialize() {
-    console.log('🚀 Initializing Production Application with Enhanced Matrix System');
+    console.info('🚀 Initializing Production Application with Enhanced Matrix System');
     
     // Auto-detect scope and apply configuration
     this.connectionManager = new MatrixConnectionManager();
     const scope = await this.connectionManager.detectScope();
     this.currentScope = scope;
     
-    console.log(`✅ App initialized for ${scope.detectedScope} scope`);
-    console.log(`🌐 Domain: ${scope.servingDomain}`);
-    console.log(`🖥️ Platform: ${scope.platform}`);
-    console.log(`📊 Max connections: ${scope.connectionConfig.maxConnections}`);
-    console.log(`🍪 Preloaded cookies: ${scope.preloadedCookies?.length || 0}`);
-    console.log(`🏷️ Feature flags: ${scope.featureFlags.join(', ')}`);
+    console.info(`✅ App initialized for ${scope.detectedScope} scope`);
+    console.info(`🌐 Domain: ${scope.servingDomain}`);
+    console.info(`🖥️ Platform: ${scope.platform}`);
+    console.info(`📊 Max connections: ${scope.connectionConfig.maxConnections}`);
+    console.info(`🍪 Preloaded cookies: ${scope.preloadedCookies?.length || 0}`);
+    console.info(`🏷️ Feature flags: ${scope.featureFlags.join(', ')}`);
     
     // Start monitoring if enabled
     if (scope.statsEnabled) {
@@ -35,7 +35,7 @@ class ProductionApp {
     
     // Preconnect to configured domains
     if (scope.connectionConfig.preconnectDomains.length > 0) {
-      console.log(`🔗 Preconnecting to ${scope.connectionConfig.preconnectDomains.length} domains`);
+      console.info(`🔗 Preconnecting to ${scope.connectionConfig.preconnectDomains.length} domains`);
     }
   }
   
@@ -53,7 +53,7 @@ class ProductionApp {
   }
   
   async batchProcess(urls: string[], concurrency: number = 3) {
-    console.log(`📦 Processing ${urls.length} URLs with concurrency ${concurrency}`);
+    console.info(`📦 Processing ${urls.length} URLs with concurrency ${concurrency}`);
     
     // Use the underlying ecosystem for batch processing
     const ecosystem = this.connectionManager['ecosystem'];
@@ -70,12 +70,12 @@ class ProductionApp {
     
     const results = await ecosystem.batchRequests(requests, concurrency);
     
-    console.log(`✅ Batch processing completed: ${results.length} responses`);
+    console.info(`✅ Batch processing completed: ${results.length} responses`);
     return results;
   }
   
   async privateRegistryAccess(packageName: string) {
-    console.log(`📦 Accessing private registry for package: ${packageName}`);
+    console.info(`📦 Accessing private registry for package: ${packageName}`);
     
     const response = await fetchWithScope(
       `https://npm.pkg.github.com/factory-wager/${packageName}`,
@@ -89,7 +89,7 @@ class ProductionApp {
     
     if (response.ok) {
       const packageData = await response.json();
-      console.log(`✅ Successfully fetched ${packageName}`);
+      console.info(`✅ Successfully fetched ${packageName}`);
       return packageData;
     } else {
       console.error(`❌ Failed to fetch ${packageName}: ${response.status}`);
@@ -103,7 +103,7 @@ class ProductionApp {
       throw new Error('R2_STORAGE feature flag not enabled in current scope');
     }
     
-    console.log(`☁️ Uploading to R2: ${key}`);
+    console.info(`☁️ Uploading to R2: ${key}`);
     
     try {
       // Use Bun's native S3 API
@@ -112,7 +112,7 @@ class ProductionApp {
         metadata
       });
       
-      console.log(`✅ Successfully uploaded to R2: ${key}`);
+      console.info(`✅ Successfully uploaded to R2: ${key}`);
       return result;
     } catch (error) {
       console.error(`❌ R2 upload failed:`, error);
@@ -121,20 +121,20 @@ class ProductionApp {
   }
   
   async demonstrateScopeFeatures() {
-    console.log('\n🎯 Demonstrating Enhanced Matrix Features');
-    console.log('='.repeat(50));
+    console.info('\n🎯 Demonstrating Enhanced Matrix Features');
+    console.info('='.repeat(50));
     
     // 1. Show current scope statistics
     const stats = this.connectionManager.getScopeStats();
-    console.log('\n📊 Current Scope Statistics:');
-    console.log(`Scope: ${stats.scope}`);
-    console.log(`Domain: ${stats.domain}`);
-    console.log(`Platform: ${stats.platform}`);
-    console.log(`Cookie Count: ${stats.cookieCount}`);
-    console.log(`Available CLI Commands: ${stats.availableCLI.join(', ')}`);
+    console.info('\n📊 Current Scope Statistics:');
+    console.info(`Scope: ${stats.scope}`);
+    console.info(`Domain: ${stats.domain}`);
+    console.info(`Platform: ${stats.platform}`);
+    console.info(`Cookie Count: ${stats.cookieCount}`);
+    console.info(`Available CLI Commands: ${stats.availableCLI.join(', ')}`);
     
     // 2. Demonstrate scoped request with headers
-    console.log('\n🌐 Making Scoped Request:');
+    console.info('\n🌐 Making Scoped Request:');
     try {
       const response = await this.fetchData('https://httpbin.org/headers', {
         customHeaders: {
@@ -144,15 +144,15 @@ class ProductionApp {
       
       if (response.ok) {
         const headers = await response.json();
-        console.log('✅ Scoped request successful');
-        console.log('Response headers include:', Object.keys(headers.headers).join(', '));
+        console.info('✅ Scoped request successful');
+        console.info('Response headers include:', Object.keys(headers.headers).join(', '));
       }
     } catch (error) {
-      console.log('⚠️ Demo request failed (expected in some environments)');
+      console.info('⚠️ Demo request failed (expected in some environments)');
     }
     
     // 3. Demonstrate batch processing
-    console.log('\n📦 Demonstrating Batch Processing:');
+    console.info('\n📦 Demonstrating Batch Processing:');
     const testUrls = [
       'https://httpbin.org/delay/1',
       'https://httpbin.org/delay/1',
@@ -161,26 +161,26 @@ class ProductionApp {
     
     try {
       const batchResults = await this.batchProcess(testUrls, 2);
-      console.log(`✅ Batch completed: ${batchResults.length} responses`);
+      console.info(`✅ Batch completed: ${batchResults.length} responses`);
     } catch (error) {
-      console.log('⚠️ Batch processing demo failed (expected in some environments)');
+      console.info('⚠️ Batch processing demo failed (expected in some environments)');
     }
     
     // 4. Show feature flag capabilities
-    console.log('\n🏷️ Feature Flag Capabilities:');
+    console.info('\n🏷️ Feature Flag Capabilities:');
     this.currentScope.featureFlags.forEach(flag => {
-      console.log(`  ✅ ${flag}`);
+      console.info(`  ✅ ${flag}`);
     });
     
     // 5. Show available CLI commands
-    console.log('\n💻 Available CLI Commands:');
+    console.info('\n💻 Available CLI Commands:');
     this.currentScope.cliCommands.forEach(cmd => {
-      console.log(`  💻 bun enhanced-matrix ${cmd}`);
+      console.info(`  💻 bun enhanced-matrix ${cmd}`);
     });
   }
   
   private startHealthChecks() {
-    console.log('🏥 Starting health check monitoring');
+    console.info('🏥 Starting health check monitoring');
     
     setInterval(async () => {
       try {
@@ -194,11 +194,11 @@ class ProductionApp {
   
   private async reportMetrics(stats: any) {
     // In production, this would send metrics to your monitoring system
-    console.log(`📈 Health Check - Scope: ${stats.scope}, Connections: ${stats.connectionStats.length}`);
+    console.info(`📈 Health Check - Scope: ${stats.scope}, Connections: ${stats.connectionStats.length}`);
   }
   
   async cleanup() {
-    console.log('🧹 Cleaning up application resources');
+    console.info('🧹 Cleaning up application resources');
     // Cleanup any resources if needed
   }
 }
@@ -222,7 +222,7 @@ async function demonstrateEnhancedMatrix() {
       try {
         await app.privateRegistryAccess('@factory-wager/core');
       } catch (error) {
-        console.log('ℹ️ Private registry demo skipped (no token or network issue)');
+        console.info('ℹ️ Private registry demo skipped (no token or network issue)');
       }
     }
     
@@ -236,11 +236,11 @@ async function demonstrateEnhancedMatrix() {
           contentType: 'application/json'
         });
       } catch (error) {
-        console.log('ℹ️ R2 upload demo skipped (feature not available or no credentials)');
+        console.info('ℹ️ R2 upload demo skipped (feature not available or no credentials)');
       }
     }
     
-    console.log('\n🎉 Enhanced Matrix System demonstration completed successfully!');
+    console.info('\n🎉 Enhanced Matrix System demonstration completed successfully!');
     
   } catch (error) {
     console.error('❌ Demonstration failed:', error);
@@ -298,14 +298,14 @@ if (import.meta.main) {
         }
       });
       
-      console.log(`🚀 Enhanced Matrix Demo Server running on http://localhost:${server.port}`);
-      console.log('Endpoints:');
-      console.log(`  GET /health - Show current scope and health`);
-      console.log(`  GET /matrix - Show scope documentation`);
+      console.info(`🚀 Enhanced Matrix Demo Server running on http://localhost:${server.port}`);
+      console.info('Endpoints:');
+      console.info(`  GET /health - Show current scope and health`);
+      console.info(`  GET /matrix - Show scope documentation`);
       break;
       
     default:
-      console.log(`
+      console.info(`
 🎯 Enhanced Matrix Production Demo
 
 Usage:

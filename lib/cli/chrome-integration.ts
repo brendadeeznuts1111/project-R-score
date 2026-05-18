@@ -114,10 +114,10 @@ export class ChromeAppManager {
 
     if (results.length > 0) {
       const url = results[0].domains[domain];
-      console.log(`Opening: ${url}`);
+      console.info(`Opening: ${url}`);
       await this.openInChrome(url, appMode);
     } else {
-      console.log(`No documentation found for: ${query}`);
+      console.info(`No documentation found for: ${query}`);
       // Open main docs page
       const mainUrl = `https://bun.${domain}/docs`;
       await this.openInChrome(mainUrl, appMode);

@@ -38,27 +38,27 @@ class EnterpriseRoadmapDeploy {
   }
 
   async executeFullRoadmap() {
-    console.log(chalk.blue.bold('🏢 ENTERPRISE SUITE - FULL ROADMAP DEPLOYMENT'));
-    console.log(chalk.blue.bold('factory-wager.com → $1B ARR Trajectory\n'));
+    console.info(chalk.blue.bold('🏢 ENTERPRISE SUITE - FULL ROADMAP DEPLOYMENT'));
+    console.info(chalk.blue.bold('factory-wager.com → $1B ARR Trajectory\n'));
     
-    console.log(chalk.yellow('📋 Deployment Plan:'));
-    console.log(chalk.white(`   • Domain: ${this.config.domain}`));
-    console.log(chalk.white(`   • Environment: ${this.config.environment}`));
-    console.log(chalk.white(`   • Phases: ${this.config.phases.join('-')}`));
-    console.log(chalk.white(`   • Timeline: ${this.config.timeline}`));
-    console.log(chalk.white(`   • Target ARR: $${(this.config.targetARR / 1000000000).toFixed(0)}B\n`));
+    console.info(chalk.yellow('📋 Deployment Plan:'));
+    console.info(chalk.white(`   • Domain: ${this.config.domain}`));
+    console.info(chalk.white(`   • Environment: ${this.config.environment}`));
+    console.info(chalk.white(`   • Phases: ${this.config.phases.join('-')}`));
+    console.info(chalk.white(`   • Timeline: ${this.config.timeline}`));
+    console.info(chalk.white(`   • Target ARR: $${(this.config.targetARR / 1000000000).toFixed(0)}B\n`));
 
     // Execute each phase
     for (const phase of this.config.phases) {
       await this.executePhase(phase);
-      console.log(chalk.gray('\n' + '='.repeat(80) + '\n'));
+      console.info(chalk.gray('\n' + '='.repeat(80) + '\n'));
     }
     
     this.displayFinalResults();
   }
 
   private async executePhase(phase: string) {
-    console.log(chalk.blue.bold(`🚀 Executing Phase ${phase}`));
+    console.info(chalk.blue.bold(`🚀 Executing Phase ${phase}`));
     
     switch (phase) {
       case '1':
@@ -82,8 +82,8 @@ class EnterpriseRoadmapDeploy {
   }
 
   private async executePhase1() {
-    console.log(chalk.cyan('Phase 1: Immediate Production Enhancements (Week 1)'));
-    console.log(chalk.gray('Target: 98% Cache Hit Rate + Enterprise Security\n'));
+    console.info(chalk.cyan('Phase 1: Immediate Production Enhancements (Week 1)'));
+    console.info(chalk.gray('Target: 98% Cache Hit Rate + Enterprise Security\n'));
     
     // Simulate Phase 1 execution
     this.spinner.start(chalk.cyan('Enabling Brotli Compression...'));
@@ -102,18 +102,18 @@ class EnterpriseRoadmapDeploy {
     await new Promise(resolve => setTimeout(resolve, 2000));
     this.spinner.succeed(chalk.green('✅ Security hardening complete'));
     
-    console.log(chalk.white('\n📊 Phase 1 Results:'));
-    console.log(chalk.green('   • Cache Hit Rate: 85% → 98%'));
-    console.log(chalk.green('   • Global Latency: 120ms → 45ms'));
-    console.log(chalk.green('   • Security Score: 75 → 98/100'));
-    console.log(chalk.green('   • Compression: 65% → 85%'));
+    console.info(chalk.white('\n📊 Phase 1 Results:'));
+    console.info(chalk.green('   • Cache Hit Rate: 85% → 98%'));
+    console.info(chalk.green('   • Global Latency: 120ms → 45ms'));
+    console.info(chalk.green('   • Security Score: 75 → 98/100'));
+    console.info(chalk.green('   • Compression: 65% → 85%'));
     
-    console.log(chalk.green.bold('\n✅ Phase 1 Complete: $50M ARR Ready'));
+    console.info(chalk.green.bold('\n✅ Phase 1 Complete: $50M ARR Ready'));
   }
 
   private async executePhase2() {
-    console.log(chalk.cyan('Phase 2: Merchant Experience Enhancement (Weeks 2-4)'));
-    console.log(chalk.gray('Target: Merchant Dashboard v2.0 + Mobile Apps\n'));
+    console.info(chalk.cyan('Phase 2: Merchant Experience Enhancement (Weeks 2-4)'));
+    console.info(chalk.gray('Target: Merchant Dashboard v2.0 + Mobile Apps\n'));
     
     // Simulate Phase 2 execution
     this.spinner.start(chalk.cyan('Deploying Dispute Auto-Resolution...'));
@@ -128,18 +128,18 @@ class EnterpriseRoadmapDeploy {
     await new Promise(resolve => setTimeout(resolve, 2500));
     this.spinner.succeed(chalk.green('✅ Mobile Apps v2.0 deployed'));
     
-    console.log(chalk.white('\n📊 Phase 2 Results:'));
-    console.log(chalk.green('   • Dispute Resolution: 95% automated'));
-    console.log(chalk.green('   • Revenue Growth: +35%'));
-    console.log(chalk.green('   • Mobile Adoption: 65%'));
-    console.log(chalk.green('   • User Engagement: 78%'));
+    console.info(chalk.white('\n📊 Phase 2 Results:'));
+    console.info(chalk.green('   • Dispute Resolution: 95% automated'));
+    console.info(chalk.green('   • Revenue Growth: +35%'));
+    console.info(chalk.green('   • Mobile Adoption: 65%'));
+    console.info(chalk.green('   • User Engagement: 78%'));
     
-    console.log(chalk.green.bold('\n✅ Phase 2 Complete: $125M ARR Ready'));
+    console.info(chalk.green.bold('\n✅ Phase 2 Complete: $125M ARR Ready'));
   }
 
   private async executePhase3() {
-    console.log(chalk.cyan('Phase 3: Developer & Partner Expansion (Weeks 5-8)'));
-    console.log(chalk.gray('Target: Developer Portal v2.0 + Partner Ecosystem\n'));
+    console.info(chalk.cyan('Phase 3: Developer & Partner Expansion (Weeks 5-8)'));
+    console.info(chalk.gray('Target: Developer Portal v2.0 + Partner Ecosystem\n'));
     
     // Simulate Phase 3 execution
     this.spinner.start(chalk.cyan('Launching Developer Portal v2.0...'));
@@ -154,116 +154,116 @@ class EnterpriseRoadmapDeploy {
     await new Promise(resolve => setTimeout(resolve, 2000));
     this.spinner.succeed(chalk.green('✅ SDK Generation configured'));
     
-    console.log(chalk.white('\n📊 Phase 3 Results:'));
-    console.log(chalk.green('   • API Calls: 2.5M monthly'));
-    console.log(chalk.green('   • Developer Count: 1,500'));
-    console.log(chalk.green('   • Partner Revenue: $75K/month'));
-    console.log(chalk.green('   • SDK Downloads: 50K'));
+    console.info(chalk.white('\n📊 Phase 3 Results:'));
+    console.info(chalk.green('   • API Calls: 2.5M monthly'));
+    console.info(chalk.green('   • Developer Count: 1,500'));
+    console.info(chalk.green('   • Partner Revenue: $75K/month'));
+    console.info(chalk.green('   • SDK Downloads: 50K'));
     
-    console.log(chalk.green.bold('\n✅ Phase 3 Complete: $275M ARR Ready'));
+    console.info(chalk.green.bold('\n✅ Phase 3 Complete: $275M ARR Ready'));
   }
 
   private async executePhase4() {
-    console.log(chalk.cyan('Phase 4: Enterprise Features (Months 2-3)'));
-    console.log(chalk.gray('Target: Enterprise Suite v3.0 + Global Expansion\n'));
+    console.info(chalk.cyan('Phase 4: Enterprise Features (Months 2-3)'));
+    console.info(chalk.gray('Target: Enterprise Suite v3.0 + Global Expansion\n'));
     
     // Simulate Phase 4 execution
     this.spinner.start(chalk.cyan('Deploying Enterprise Suite v3.0...'));
     await new Promise(resolve => setTimeout(resolve, 3000));
     this.spinner.succeed(chalk.green('✅ Enterprise Suite v3.0 deployed'));
     
-    console.log(chalk.white('   • Compliance Dashboard (SOC2/ISO27001)'));
-    console.log(chalk.white('   • Multi-Tenant Admin Console'));
-    console.log(chalk.white('   • Custom AI Models (Merchant-specific)'));
-    console.log(chalk.white('   • Blockchain Audit Trail'));
-    console.log(chalk.white('   • Global Compliance (GDPR/CCPA)'));
+    console.info(chalk.white('   • Compliance Dashboard (SOC2/ISO27001)'));
+    console.info(chalk.white('   • Multi-Tenant Admin Console'));
+    console.info(chalk.white('   • Custom AI Models (Merchant-specific)'));
+    console.info(chalk.white('   • Blockchain Audit Trail'));
+    console.info(chalk.white('   • Global Compliance (GDPR/CCPA)'));
     
     this.spinner.start(chalk.cyan('Expanding to Global Regions...'));
     await new Promise(resolve => setTimeout(resolve, 2000));
     this.spinner.succeed(chalk.green('✅ Global expansion complete'));
     
-    console.log(chalk.white('   • EU: eu-west-1 (GDPR compliant)'));
-    console.log(chalk.white('   • APAC: ap-southeast-1 (Singapore)'));
-    console.log(chalk.white('   • LATAM: sa-east-1 (Brazil)'));
-    console.log(chalk.white('   • Custom Regions (Enterprise)'));
+    console.info(chalk.white('   • EU: eu-west-1 (GDPR compliant)'));
+    console.info(chalk.white('   • APAC: ap-southeast-1 (Singapore)'));
+    console.info(chalk.white('   • LATAM: sa-east-1 (Brazil)'));
+    console.info(chalk.white('   • Custom Regions (Enterprise)'));
     
-    console.log(chalk.white('\n📊 Phase 4 Results:'));
-    console.log(chalk.green('   • Enterprise Clients: 100+'));
-    console.log(chalk.green('   • Global Regions: 4'));
-    console.log(chalk.green('   • Compliance: SOC2/ISO27001 certified'));
-    console.log(chalk.green('   • Multi-Tenant: Enabled'));
+    console.info(chalk.white('\n📊 Phase 4 Results:'));
+    console.info(chalk.green('   • Enterprise Clients: 100+'));
+    console.info(chalk.green('   • Global Regions: 4'));
+    console.info(chalk.green('   • Compliance: SOC2/ISO27001 certified'));
+    console.info(chalk.green('   • Multi-Tenant: Enabled'));
     
-    console.log(chalk.green.bold('\n✅ Phase 4 Complete: $575M ARR Ready'));
+    console.info(chalk.green.bold('\n✅ Phase 4 Complete: $575M ARR Ready'));
   }
 
   private async executePhase5() {
-    console.log(chalk.cyan('Phase 5: AI & Autonomous Operations (Months 4-6)'));
-    console.log(chalk.gray('Target: AI Autopilot + Blockchain Settlement\n'));
+    console.info(chalk.cyan('Phase 5: AI & Autonomous Operations (Months 4-6)'));
+    console.info(chalk.gray('Target: AI Autopilot + Blockchain Settlement\n'));
     
     // Simulate Phase 5 execution
     this.spinner.start(chalk.cyan('Deploying AI Autopilot...'));
     await new Promise(resolve => setTimeout(resolve, 3000));
     this.spinner.succeed(chalk.green('✅ AI Autopilot deployed'));
     
-    console.log(chalk.white('   • Auto-Scale (Predictive)'));
-    console.log(chalk.white('   • Anomaly Detection (Fraud/ML)'));
-    console.log(chalk.white('   • Dispute Auto-Resolution (95% accuracy)'));
-    console.log(chalk.white('   • Revenue Optimization (Dynamic Pricing)'));
-    console.log(chalk.white('   • Self-Healing Infrastructure'));
+    console.info(chalk.white('   • Auto-Scale (Predictive)'));
+    console.info(chalk.white('   • Anomaly Detection (Fraud/ML)'));
+    console.info(chalk.white('   • Dispute Auto-Resolution (95% accuracy)'));
+    console.info(chalk.white('   • Revenue Optimization (Dynamic Pricing)'));
+    console.info(chalk.white('   • Self-Healing Infrastructure'));
     
     this.spinner.start(chalk.cyan('Integrating Blockchain Settlement...'));
     await new Promise(resolve => setTimeout(resolve, 2000));
     this.spinner.succeed(chalk.green('✅ Blockchain integrated'));
     
-    console.log(chalk.white('   • Crypto Payouts (USDC/USDT)'));
-    console.log(chalk.white('   • NFT Evidence Certificates'));
-    console.log(chalk.white('   • Smart Contract Disputes'));
-    console.log(chalk.white('   • Decentralized Identity (DID)'));
+    console.info(chalk.white('   • Crypto Payouts (USDC/USDT)'));
+    console.info(chalk.white('   • NFT Evidence Certificates'));
+    console.info(chalk.white('   • Smart Contract Disputes'));
+    console.info(chalk.white('   • Decentralized Identity (DID)'));
     
-    console.log(chalk.white('\n📊 Phase 5 Results:'));
-    console.log(chalk.green('   • AI Accuracy: 95%'));
-    console.log(chalk.green('   • Autonomous Operations: 85%'));
-    console.log(chalk.green('   • Blockchain Transactions: 10K/day'));
-    console.log(chalk.green('   • Cost Reduction: 40%'));
+    console.info(chalk.white('\n📊 Phase 5 Results:'));
+    console.info(chalk.green('   • AI Accuracy: 95%'));
+    console.info(chalk.green('   • Autonomous Operations: 85%'));
+    console.info(chalk.green('   • Blockchain Transactions: 10K/day'));
+    console.info(chalk.green('   • Cost Reduction: 40%'));
     
-    console.log(chalk.green.bold('\n✅ Phase 5 Complete: $1B ARR Achieved'));
+    console.info(chalk.green.bold('\n✅ Phase 5 Complete: $1B ARR Achieved'));
   }
 
   private displayFinalResults() {
-    console.log(chalk.green.bold('\n🎉 ENTERPRISE SUITE - $1B ARR ACHIEVED!'));
-    console.log(chalk.green.bold('factory-wager.com → Unicorn Status Complete\n'));
+    console.info(chalk.green.bold('\n🎉 ENTERPRISE SUITE - $1B ARR ACHIEVED!'));
+    console.info(chalk.green.bold('factory-wager.com → Unicorn Status Complete\n'));
     
-    console.log(chalk.yellow('📊 Final Metrics:'));
-    console.log(chalk.white('   • Cache Hit Rate: 98%'));
-    console.log(chalk.white('   • Global Latency: <50ms'));
-    console.log(chalk.white('   • Security Score: 98/100'));
-    console.log(chalk.white('   • Dispute Resolution: 95% automated'));
-    console.log(chalk.white('   • Mobile Adoption: 85%'));
-    console.log(chalk.white('   • Developer Count: 10,000+'));
-    console.log(chalk.white('   • Partner Revenue: $5M/month'));
-    console.log(chalk.white('   • AI Accuracy: 95%'));
-    console.log(chalk.white('   • Global Regions: 4+'));
-    console.log(chalk.white('   • ARR: $1B'));
+    console.info(chalk.yellow('📊 Final Metrics:'));
+    console.info(chalk.white('   • Cache Hit Rate: 98%'));
+    console.info(chalk.white('   • Global Latency: <50ms'));
+    console.info(chalk.white('   • Security Score: 98/100'));
+    console.info(chalk.white('   • Dispute Resolution: 95% automated'));
+    console.info(chalk.white('   • Mobile Adoption: 85%'));
+    console.info(chalk.white('   • Developer Count: 10,000+'));
+    console.info(chalk.white('   • Partner Revenue: $5M/month'));
+    console.info(chalk.white('   • AI Accuracy: 95%'));
+    console.info(chalk.white('   • Global Regions: 4+'));
+    console.info(chalk.white('   • ARR: $1B'));
     
-    console.log(chalk.blue.bold('\n🏢 Enterprise Features Delivered:'));
-    console.log(chalk.green('   ✅ Performance Optimization (98% cache)'));
-    console.log(chalk.green('   ✅ Security Hardening (Enterprise-grade)'));
-    console.log(chalk.green('   ✅ Merchant Dashboard v2.0'));
-    console.log(chalk.green('   ✅ Mobile Apps v2.0 (Biometrics)'));
-    console.log(chalk.green('   ✅ Developer Portal v2.0'));
-    console.log(chalk.green('   ✅ Partner Ecosystem (10+ integrations)'));
-    console.log(chalk.green('   ✅ Enterprise Suite v3.0'));
-    console.log(chalk.green('   ✅ Global Multi-Region Deployment'));
-    console.log(chalk.green('   ✅ AI Autopilot (95% accuracy)'));
-    console.log(chalk.green('   ✅ Blockchain Settlement'));
+    console.info(chalk.blue.bold('\n🏢 Enterprise Features Delivered:'));
+    console.info(chalk.green('   ✅ Performance Optimization (98% cache)'));
+    console.info(chalk.green('   ✅ Security Hardening (Enterprise-grade)'));
+    console.info(chalk.green('   ✅ Merchant Dashboard v2.0'));
+    console.info(chalk.green('   ✅ Mobile Apps v2.0 (Biometrics)'));
+    console.info(chalk.green('   ✅ Developer Portal v2.0'));
+    console.info(chalk.green('   ✅ Partner Ecosystem (10+ integrations)'));
+    console.info(chalk.green('   ✅ Enterprise Suite v3.0'));
+    console.info(chalk.green('   ✅ Global Multi-Region Deployment'));
+    console.info(chalk.green('   ✅ AI Autopilot (95% accuracy)'));
+    console.info(chalk.green('   ✅ Blockchain Settlement'));
     
-    console.log(chalk.magenta.bold('\n🚀 Ready for IPO!'));
-    console.log(chalk.magenta('factory-wager.com is now a $1B ARR unicorn!'));
+    console.info(chalk.magenta.bold('\n🚀 Ready for IPO!'));
+    console.info(chalk.magenta('factory-wager.com is now a $1B ARR unicorn!'));
   }
 
   displayStatus() {
-    console.log(chalk.blue.bold('🏢 ENTERPRISE SUITE STATUS'));
-    console.log(chalk.blue.bold('factory-wager.com → $1B ARR Trajectory\n'));
+    console.info(chalk.blue.bold('🏢 ENTERPRISE SUITE STATUS'));
+    console.info(chalk.blue.bold('factory-wager.com → $1B ARR Trajectory\n'));
     
     const phases = [
       { name: 'Phase 1', status: '✅ Complete', arr: '$50M', duration: 'Week 1' },
@@ -273,31 +273,31 @@ class EnterpriseRoadmapDeploy {
       { name: 'Phase 5', status: '✅ Complete', arr: '$1B', duration: 'Months 4-6' }
     ];
     
-    console.log(chalk.yellow('📈 Roadmap Progress:'));
+    console.info(chalk.yellow('📈 Roadmap Progress:'));
     phases.forEach(phase => {
-      console.log(chalk.white(`   ${phase.status} ${phase.name}: ${phase.arr} (${phase.duration})`));
+      console.info(chalk.white(`   ${phase.status} ${phase.name}: ${phase.arr} (${phase.duration})`));
     });
     
-    console.log(chalk.green.bold('\n🎯 Current Status: $1B ARR - Unicorn Achieved!'));
+    console.info(chalk.green.bold('\n🎯 Current Status: $1B ARR - Unicorn Achieved!'));
   }
 
   displayRoadmap() {
-    console.log(chalk.blue.bold('\n🏢 ENTERPRISE SUITE ENHANCEMENT ROADMAP'));
-    console.log(chalk.blue.bold('factory-wager.com → $1B ARR Trajectory\n'));
+    console.info(chalk.blue.bold('\n🏢 ENTERPRISE SUITE ENHANCEMENT ROADMAP'));
+    console.info(chalk.blue.bold('factory-wager.com → $1B ARR Trajectory\n'));
     
-    console.log(chalk.yellow('📈 Revenue Projection by Phase:'));
-    console.log(chalk.white('┌───────────┬──────────────┬───────────────┬─────────────────┐'));
-    console.log(chalk.white('│ Phase     │ MRR Growth    │ ARR Target     │ Key Driver      │'));
-    console.log(chalk.white('├───────────┼──────────────┼───────────────┼─────────────────┤'));
-    console.log(chalk.white('│ Current   │ $7.3K         │ $28.5M         │ 19 Merchants    │'));
-    console.log(chalk.white('│ Phase 1   │ +$25K         │ $50M           │ Performance     │'));
-    console.log(chalk.white('│ Phase 2   │ +$75K         │ $125M          │ Merchant v2     │'));
-    console.log(chalk.white('│ Phase 3   │ +$150K        │ $275M          │ Partners        │'));
-    console.log(chalk.white('│ Phase 4   │ +$300K        │ $575M          │ Enterprise      │'));
-    console.log(chalk.white('│ Phase 5   │ +$425K        │ $1B            │ AI + Blockchain │'));
-    console.log(chalk.white('└───────────┴──────────────┴───────────────┴─────────────────┘'));
+    console.info(chalk.yellow('📈 Revenue Projection by Phase:'));
+    console.info(chalk.white('┌───────────┬──────────────┬───────────────┬─────────────────┐'));
+    console.info(chalk.white('│ Phase     │ MRR Growth    │ ARR Target     │ Key Driver      │'));
+    console.info(chalk.white('├───────────┼──────────────┼───────────────┼─────────────────┤'));
+    console.info(chalk.white('│ Current   │ $7.3K         │ $28.5M         │ 19 Merchants    │'));
+    console.info(chalk.white('│ Phase 1   │ +$25K         │ $50M           │ Performance     │'));
+    console.info(chalk.white('│ Phase 2   │ +$75K         │ $125M          │ Merchant v2     │'));
+    console.info(chalk.white('│ Phase 3   │ +$150K        │ $275M          │ Partners        │'));
+    console.info(chalk.white('│ Phase 4   │ +$300K        │ $575M          │ Enterprise      │'));
+    console.info(chalk.white('│ Phase 5   │ +$425K        │ $1B            │ AI + Blockchain │'));
+    console.info(chalk.white('└───────────┴──────────────┴───────────────┴─────────────────┘'));
     
-    console.log(chalk.blue.bold('\n⚡ Prioritized Enhancement Schedule:'));
+    console.info(chalk.blue.bold('\n⚡ Prioritized Enhancement Schedule:'));
     const timeline = [
       { period: 'Week 1', task: '✅ Performance (85% → 98% Cache)', status: 'ready' },
       { period: 'Week 2', task: '✅ Security Hardening (WAF/mTLS)', status: 'ready' },
@@ -311,10 +311,10 @@ class EnterpriseRoadmapDeploy {
     
     timeline.forEach(item => {
       const status = item.status === 'ready' ? chalk.green('▶') : chalk.yellow('○');
-      console.log(chalk.white(`   ${item.period.padEnd(10)} ${status} ${item.task}`));
+      console.info(chalk.white(`   ${item.period.padEnd(10)} ${status} ${item.task}`));
     });
     
-    console.log(chalk.green.bold('\n🎯 Target: $1B ARR by EOY 2026'));
+    console.info(chalk.green.bold('\n🎯 Target: $1B ARR by EOY 2026'));
   }
 }
 

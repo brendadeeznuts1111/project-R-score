@@ -48,18 +48,18 @@ class FactoryWagerSourceMapProfiler {
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const baseName = `fw-release-${version}-${timestamp}`;
     
-    console.log(`🔬 FactoryWager v1.4 Source Map Profiling`);
-    console.log(`======================================`);
-    console.log(`📁 Entry Point: ${entryPoint}`);
-    console.log(`⚙️  Config: ${configPath}`);
-    console.log(`🏷️  Version: ${version}`);
-    console.log(`📍 Profile: ${baseName}`);
-    console.log(`🗺️  Source Maps: Native integration enabled`);
-    console.log("");
+    console.info(`🔬 FactoryWager v1.4 Source Map Profiling`);
+    console.info(`======================================`);
+    console.info(`📁 Entry Point: ${entryPoint}`);
+    console.info(`⚙️  Config: ${configPath}`);
+    console.info(`🏷️  Version: ${version}`);
+    console.info(`📍 Profile: ${baseName}`);
+    console.info(`🗺️  Source Maps: Native integration enabled`);
+    console.info("");
 
     // Build source maps first
     if (options.verbose) {
-      console.log(`🔧 Building source maps...`);
+      console.info(`🔧 Building source maps...`);
     }
     await this.buildSourceMaps(entryPoint);
 
@@ -77,17 +77,17 @@ class FactoryWagerSourceMapProfiler {
     ].filter(Boolean);
 
     if (options.verbose) {
-      console.log(`📊 Profile command: bun ${profileArgs.join(" ")}`);
+      console.info(`📊 Profile command: bun ${profileArgs.join(" ")}`);
     }
 
     // Execute profiling with source maps
     const profileResult = await this.executeProfile(profileArgs, baseName);
     
     if (profileResult.success) {
-      console.log(`✅ Profile completed successfully`);
-      console.log(`📄 CPU Profile: ${this.profileDir}/${baseName}-cpu.md`);
-      console.log(`💾 Heap Profile: ${this.profileDir}/${baseName}-heap.md`);
-      console.log(`🗺️  Source Maps: ${this.sourceMapDir}/${baseName}.map`);
+      console.info(`✅ Profile completed successfully`);
+      console.info(`📄 CPU Profile: ${this.profileDir}/${baseName}-cpu.md`);
+      console.info(`💾 Heap Profile: ${this.profileDir}/${baseName}-heap.md`);
+      console.info(`🗺️  Source Maps: ${this.sourceMapDir}/${baseName}.map`);
       
       if (options.analyzeImmediately) {
         await this.analyzeWithSourceMaps(baseName);
@@ -144,7 +144,7 @@ class FactoryWagerSourceMapProfiler {
       const stderr = await new Response(profileProcess.stderr).text();
 
       if (stderr) {
-        console.log(`📝 Profile output: ${stderr}`);
+        console.info(`📝 Profile output: ${stderr}`);
       }
 
       // Wait for process completion
@@ -169,15 +169,15 @@ class FactoryWagerSourceMapProfiler {
   private async organizeProfileFiles(baseName: string): Promise<void> {
     // This would move and rename the generated profile files
     // In a real implementation, this would handle the actual file organization
-    console.log(`📁 Organizing profile files for ${baseName}...`);
+    console.info(`📁 Organizing profile files for ${baseName}...`);
   }
 
   /**
    * v1.4: Analyze profiles with source map integration
    */
   async analyzeWithSourceMaps(baseName: string): Promise<void> {
-    console.log(`\n🧠 Analyzing ${baseName} with Source Map Integration`);
-    console.log(`================================================`);
+    console.info(`\n🧠 Analyzing ${baseName} with Source Map Integration`);
+    console.info(`================================================`);
 
     // Analyze CPU profile with source maps
     await this.analyzeCPUProfileWithSourceMaps(baseName);
@@ -193,7 +193,7 @@ class FactoryWagerSourceMapProfiler {
    * CPU Profile analysis with source map context
    */
   private async analyzeCPUProfileWithSourceMaps(baseName: string): Promise<void> {
-    console.log(`\n🔥 CPU Hot Spots (with Source Map Context):`);
+    console.info(`\n🔥 CPU Hot Spots (with Source Map Context):`);
     
     // Simulate source-map-aware analysis
     const hotSpots = [
@@ -204,21 +204,21 @@ class FactoryWagerSourceMapProfiler {
     ];
 
     hotSpots.forEach((spot, index) => {
-      console.log(`  ${index + 1}. ${spot.function} (${spot.file}:${spot.line})`);
-      console.log(`     Self Time: ${spot.selfTime} | Source Map: ✅ ${spot.sourceMap}`);
+      console.info(`  ${index + 1}. ${spot.function} (${spot.file}:${spot.line})`);
+      console.info(`     Self Time: ${spot.selfTime} | Source Map: ✅ ${spot.sourceMap}`);
     });
 
-    console.log(`\n🎯 Source Map Insights:`);
-    console.log(`  • All hot spots have source map coverage`);
-    console.log(`  • Original TypeScript locations preserved`);
-    console.log(`  • Click-to-navigate available in IDE`);
+    console.info(`\n🎯 Source Map Insights:`);
+    console.info(`  • All hot spots have source map coverage`);
+    console.info(`  • Original TypeScript locations preserved`);
+    console.info(`  • Click-to-navigate available in IDE`);
   }
 
   /**
    * Heap Profile analysis with source map context
    */
   private async analyzeHeapProfileWithSourceMaps(baseName: string): Promise<void> {
-    console.log(`\n💾 Memory Analysis (with Source Map Context):`);
+    console.info(`\n💾 Memory Analysis (with Source Map Context):`);
     
     const memoryHotSpots = [
       { type: "ReportConfig", file: "config/types.ts:89", count: 247, retainedSize: "2.0MB", sourceMap: "available" },
@@ -227,21 +227,21 @@ class FactoryWagerSourceMapProfiler {
     ];
 
     memoryHotSpots.forEach((spot, index) => {
-      console.log(`  ${index + 1}. ${spot.type} (${spot.file}:${spot.count})`);
-      console.log(`     Retained: ${spot.retainedSize} | Count: ${spot.count} | Source Map: ✅`);
+      console.info(`  ${index + 1}. ${spot.type} (${spot.file}:${spot.count})`);
+      console.info(`     Retained: ${spot.retainedSize} | Count: ${spot.count} | Source Map: ✅`);
     });
 
-    console.log(`\n🔍 Memory Leak Detection:`);
-    console.log(`  • ReportConfig allocation site: config/types.ts:89`);
-    console.log(`  • Consider implementing object pooling at this location`);
-    console.log(`  • Source map shows exact TypeScript line for fix`);
+    console.info(`\n🔍 Memory Leak Detection:`);
+    console.info(`  • ReportConfig allocation site: config/types.ts:89`);
+    console.info(`  • Consider implementing object pooling at this location`);
+    console.info(`  • Source map shows exact TypeScript line for fix`);
   }
 
   /**
    * Generate source-map-aware optimization recommendations
    */
   private async generateSourceMapRecommendations(baseName: string): Promise<void> {
-    console.log(`\n🚀 v1.4 Source Map Recommendations:`);
+    console.info(`\n🚀 v1.4 Source Map Recommendations:`);
     
     const recommendations = [
       {
@@ -268,11 +268,11 @@ class FactoryWagerSourceMapProfiler {
     ];
 
     recommendations.forEach((rec, index) => {
-      console.log(`  ${index + 1}. [${rec.priority}] ${rec.issue}`);
-      console.log(`     Location: ${rec.location}`);
-      console.log(`     Action: ${rec.action}`);
-      console.log(`     Source Map Benefit: ${rec.sourceMapBenefit}`);
-      console.log(``);
+      console.info(`  ${index + 1}. [${rec.priority}] ${rec.issue}`);
+      console.info(`     Location: ${rec.location}`);
+      console.info(`     Action: ${rec.action}`);
+      console.info(`     Source Map Benefit: ${rec.sourceMapBenefit}`);
+      console.info(``);
     });
   }
 
@@ -327,7 +327,7 @@ Generated by FactoryWager v1.4 Source Map Profiler
 `;
 
     await Bun.write(reportPath, report);
-    console.log(`📄 Source map report generated: ${reportPath}`);
+    console.info(`📄 Source map report generated: ${reportPath}`);
   }
 }
 
@@ -339,7 +339,7 @@ async function main(): Promise<void> {
   const args = process.argv.slice(2);
   
   if (args.includes("--help") || args.includes("-h")) {
-    console.log(`
+    console.info(`
 🚀 FactoryWager v1.4 Dream - Native Source Map Profiling
 
 Usage:

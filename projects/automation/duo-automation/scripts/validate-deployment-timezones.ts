@@ -103,7 +103,7 @@ async function validateEnvFile(filePath: string): Promise<ValidationResult> {
 }
 
 async function main() {
-  console.log('🔍 Validating deployment timezone configurations...\n');
+  console.info('🔍 Validating deployment timezone configurations...\n');
 
   const envFiles = [
     '.env.enterprise',
@@ -120,13 +120,13 @@ async function main() {
     results.push(result);
     
     if (result.valid) {
-      console.log(`✅ ${file}: ${result.scope} → ${result.timezone}`);
+      console.info(`✅ ${file}: ${result.scope} → ${result.timezone}`);
     } else {
-      console.log(`❌ ${file}: ${result.error}`);
+      console.info(`❌ ${file}: ${result.error}`);
     }
   }
 
-  console.log('\n' + '='.repeat(60));
+  console.info('\n' + '='.repeat(60));
   
   const validCount = results.filter(r => r.valid).length;
   const invalidCount = results.length - validCount;
@@ -139,8 +139,8 @@ async function main() {
     });
     process.exit(1);
   } else {
-    console.log(`✅ All ${validCount} environment files validated successfully`);
-    console.log('🎯 All deployments have valid timezone configurations');
+    console.info(`✅ All ${validCount} environment files validated successfully`);
+    console.info('🎯 All deployments have valid timezone configurations');
   }
 }
 

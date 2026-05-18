@@ -178,7 +178,7 @@ export class BettingWorkflowAPIServer {
       if (config.environment === 'development') {
         try {
           await databaseService.runMigrations();
-          console.log('🗃️ Database migrations completed');
+          console.info('🗃️ Database migrations completed');
         } catch (error) {
           console.warn('⚠️ Migration warning (may already exist):', error instanceof Error ? error.message : String(error));
         }
@@ -186,10 +186,10 @@ export class BettingWorkflowAPIServer {
 
       return new Promise((resolve, reject) => {
         this.server = this.app.listen(config.port, config.host, () => {
-          console.log(`🚀 Betting Workflow API Server running on ${config.host}:${config.port}`);
-          console.log(`📚 API Documentation: http://${config.host}:${config.port}/api-docs`);
-          console.log(`❤️  Health Check: http://${config.host}:${config.port}/health`);
-          console.log(`📊 Admin Stats: http://${config.host}:${config.port}/admin/stats`);
+          console.info(`🚀 Betting Workflow API Server running on ${config.host}:${config.port}`);
+          console.info(`📚 API Documentation: http://${config.host}:${config.port}/api-docs`);
+          console.info(`❤️  Health Check: http://${config.host}:${config.port}/health`);
+          console.info(`📊 Admin Stats: http://${config.host}:${config.port}/admin/stats`);
           resolve();
         });
 

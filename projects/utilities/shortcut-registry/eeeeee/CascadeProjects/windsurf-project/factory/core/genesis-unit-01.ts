@@ -47,9 +47,9 @@ class GenesisUnit01 {
 
   // 🚀 Phase-01 Ignition
   async ignite(): Promise<GenesisFeedback> {
-    console.log(`🚀 GENESIS PHASE-01 IGNITION: ${this.config.traceId}`);
-    console.log(`📱 Target Gmail: ${this.config.unitGmail}`);
-    console.log(`🛡️ Proxy Floor: ${this.config.proxyFloor}`);
+    console.info(`🚀 GENESIS PHASE-01 IGNITION: ${this.config.traceId}`);
+    console.info(`📱 Target Gmail: ${this.config.unitGmail}`);
+    console.info(`🛡️ Proxy Floor: ${this.config.proxyFloor}`);
 
     try {
       // Ensure log directory exists
@@ -110,7 +110,7 @@ class GenesisUnit01 {
           attempts = this.extractAttempts(output);
         }
         
-        console.log(`📡 [${this.config.traceId}] ${output.trim()}`);
+        console.info(`📡 [${this.config.traceId}] ${output.trim()}`);
       });
 
       phase01.stderr?.on('data', (data) => {
@@ -185,7 +185,7 @@ class GenesisUnit01 {
     await mkdir('./factory/metrics/unit-01', { recursive: true });
     await writeFile(metricsPath, JSON.stringify(metrics, null, 2));
     
-    console.log(`📊 [${feedback.trace}] Metrics stored: ${metricsPath}`);
+    console.info(`📊 [${feedback.trace}] Metrics stored: ${metricsPath}`);
   }
 
   // 📏 Get compressed log size
@@ -206,7 +206,7 @@ class GenesisUnit01 {
 
   // 📢 Broadcast Feedback to Nexus
   private broadcastFeedback(feedback: GenesisFeedback): void {
-    console.log(`📡 [${feedback.trace}] Broadcasting Feedback:`, feedback);
+    console.info(`📡 [${feedback.trace}] Broadcasting Feedback:`, feedback);
     
     this.feedbackCallbacks.forEach(callback => {
       try {
@@ -230,7 +230,7 @@ class GenesisUnit01 {
         data: feedback
       };
       
-      console.log(`🌐 [${feedback.trace}] Nexus IPC:`, nexusData);
+      console.info(`🌐 [${feedback.trace}] Nexus IPC:`, nexusData);
       // Actual IPC implementation would go here
     }
   }
@@ -265,7 +265,7 @@ if (import.meta.main) {
   switch (command) {
     case 'ignite':
     case 'phase-01': {
-      console.log('🚀 GENESIS PHASE-01 IGNITION SEQUENCE');
+      console.info('🚀 GENESIS PHASE-01 IGNITION SEQUENCE');
       
       const unit = new GenesisUnit01({
         traceId,
@@ -275,12 +275,12 @@ if (import.meta.main) {
 
       // Register feedback handler
       unit.onFeedback((feedback) => {
-        console.log(`📡 FEEDBACK: ${feedback.status} | ${feedback.trace}`);
+        console.info(`📡 FEEDBACK: ${feedback.status} | ${feedback.trace}`);
         
         if (feedback.status === 'SUCCESS') {
-          console.log(`✅ Gmail Created: ${feedback.gmail}`);
-          console.log(`🔒 TOTP Seed: ${feedback.totp}...`);
-          console.log(`⏱️ Duration: ${feedback.duration}ms`);
+          console.info(`✅ Gmail Created: ${feedback.gmail}`);
+          console.info(`🔒 TOTP Seed: ${feedback.totp}...`);
+          console.info(`⏱️ Duration: ${feedback.duration}ms`);
         }
       });
 
@@ -288,23 +288,23 @@ if (import.meta.main) {
       const result = await unit.ignite();
       
       if (result.status === 'SUCCESS') {
-        console.log('🎆 GENESIS PHASE-01 COMPLETE - DOMINION ACHIEVED!');
+        console.info('🎆 GENESIS PHASE-01 COMPLETE - DOMINION ACHIEVED!');
         process.exit(0);
       } else {
-        console.log('💥 GENESIS PHASE-01 FAILED - RETRY REQUIRED');
+        console.info('💥 GENESIS PHASE-01 FAILED - RETRY REQUIRED');
         process.exit(1);
       }
       break;
     }
 
     case 'verify': {
-      console.log('🔍 GENESIS FEEDBACK VERIFICATION');
+      console.info('🔍 GENESIS FEEDBACK VERIFICATION');
       // Implementation for feedback verification
       break;
     }
 
     case 'log-decode': {
-      console.log('📂 ZSTD LOG DECODING');
+      console.info('📂 ZSTD LOG DECODING');
       const { spawn } = await import('child_process');
       
       const logFile = `./factory/logs/unit-01/${traceId}-gmail.zst`;
@@ -316,10 +316,10 @@ if (import.meta.main) {
     }
 
     default:
-      console.log('🎯 GENESIS PHASE-01 COMMANDS:');
-      console.log('  bun genesis-unit-01.ts phase-01 [traceId]  - Execute Gmail creation');
-      console.log('  bun genesis-unit-01.ts verify [traceId]    - Verify feedback status');
-      console.log('  bun genesis-unit-01.ts log-decode [traceId] - Decode ZSTD logs');
+      console.info('🎯 GENESIS PHASE-01 COMMANDS:');
+      console.info('  bun genesis-unit-01.ts phase-01 [traceId]  - Execute Gmail creation');
+      console.info('  bun genesis-unit-01.ts verify [traceId]    - Verify feedback status');
+      console.info('  bun genesis-unit-01.ts log-decode [traceId] - Decode ZSTD logs');
       break;
   }
 }

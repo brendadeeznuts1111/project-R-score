@@ -68,13 +68,13 @@ async function findTsFiles(dir: string): Promise<string[]> {
 }
 
 // Main validation
-console.log('🔍 Validating TENSION and GOV headers...');
+console.info('🔍 Validating TENSION and GOV headers...');
 
 const srcDir = './src';
 const files = await findTsFiles(srcDir);
 
 if (files.length === 0) {
-  console.log('⚠️  No TypeScript files found in src/');
+  console.info('⚠️  No TypeScript files found in src/');
   process.exit(EXIT_CODES.GENERIC_ERROR);
 }
 
@@ -85,23 +85,23 @@ for (const file of files) {
   const { errors, warnings } = await validateFile(file);
 
   if (errors.length > 0 || warnings.length > 0) {
-    console.log(`\n📄 ${file}`);
-    errors.forEach(err => console.log(`  ❌ ${err}`));
-    warnings.forEach(warn => console.log(`  ⚠️  ${warn}`));
+    console.info(`\n📄 ${file}`);
+    errors.forEach(err => console.info(`  ❌ ${err}`));
+    warnings.forEach(warn => console.info(`  ⚠️  ${warn}`));
   }
 
   totalErrors += errors.length;
   totalWarnings += warnings.length;
 }
 
-console.log(`\n📊 Validation Complete`);
-console.log(`Files checked: ${files.length}`);
-console.log(`Errors: ${totalErrors}`);
-console.log(`Warnings: ${totalWarnings}`);
+console.info(`\n📊 Validation Complete`);
+console.info(`Files checked: ${files.length}`);
+console.info(`Errors: ${totalErrors}`);
+console.info(`Warnings: ${totalWarnings}`);
 
 if (totalErrors > 0) {
-  console.log('\n❌ Validation FAILED');
+  console.info('\n❌ Validation FAILED');
   process.exit(EXIT_CODES.GENERIC_ERROR);
 } else {
-  console.log('\n✅ Validation PASSED');
+  console.info('\n✅ Validation PASSED');
 }

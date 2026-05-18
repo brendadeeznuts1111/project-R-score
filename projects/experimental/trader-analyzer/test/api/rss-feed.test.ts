@@ -117,7 +117,7 @@ describe("RSS Feed API", () => {
 
 			// Skip test if server is not running
 			if (!response.ok && response.status === 404) {
-				console.log("⚠️  Server not running, skipping RSS feed test");
+				console.info("⚠️  Server not running, skipping RSS feed test");
 				return;
 			}
 
@@ -129,7 +129,7 @@ describe("RSS Feed API", () => {
 			const response = await fetchRSSFeed(RSS_ENDPOINT_ALT);
 
 			if (!response.ok && response.status === 404) {
-				console.log("⚠️  Server not running, skipping RSS feed test");
+				console.info("⚠️  Server not running, skipping RSS feed test");
 				return;
 			}
 
@@ -140,7 +140,7 @@ describe("RSS Feed API", () => {
 			const response = await fetchRSSFeed();
 
 			if (!response.ok) {
-				console.log("⚠️  Server not running, skipping RSS feed test");
+				console.info("⚠️  Server not running, skipping RSS feed test");
 				return;
 			}
 
@@ -154,7 +154,7 @@ describe("RSS Feed API", () => {
 			const response = await fetchRSSFeed();
 
 			if (!response.ok) {
-				console.log("⚠️  Server not running, skipping RSS feed test");
+				console.info("⚠️  Server not running, skipping RSS feed test");
 				return;
 			}
 
@@ -169,7 +169,7 @@ describe("RSS Feed API", () => {
 			const response = await fetchRSSFeed();
 
 			if (!response.ok) {
-				console.log("⚠️  Server not running, skipping RSS feed test");
+				console.info("⚠️  Server not running, skipping RSS feed test");
 				return;
 			}
 
@@ -185,7 +185,7 @@ describe("RSS Feed API", () => {
 			const response = await fetchRSSFeed();
 
 			if (!response.ok) {
-				console.log("⚠️  Server not running, skipping RSS feed test");
+				console.info("⚠️  Server not running, skipping RSS feed test");
 				return;
 			}
 
@@ -199,7 +199,7 @@ describe("RSS Feed API", () => {
 			const response = await fetchRSSFeed();
 
 			if (!response.ok) {
-				console.log("⚠️  Server not running, skipping RSS feed test");
+				console.info("⚠️  Server not running, skipping RSS feed test");
 				return;
 			}
 
@@ -218,7 +218,7 @@ describe("RSS Feed API", () => {
 			const response = await fetchRSSFeed();
 
 			if (!response.ok) {
-				console.log("⚠️  Server not running, skipping RSS feed test");
+				console.info("⚠️  Server not running, skipping RSS feed test");
 				return;
 			}
 
@@ -240,7 +240,7 @@ describe("RSS Feed API", () => {
 			const response = await fetchRSSFeed();
 
 			if (!response.ok) {
-				console.log("⚠️  Server not running, skipping RSS feed test");
+				console.info("⚠️  Server not running, skipping RSS feed test");
 				return;
 			}
 
@@ -263,7 +263,7 @@ describe("RSS Feed API", () => {
 			const response = await fetchRSSFeed();
 
 			if (!response.ok) {
-				console.log("⚠️  Server not running, skipping RSS feed test");
+				console.info("⚠️  Server not running, skipping RSS feed test");
 				return;
 			}
 
@@ -284,7 +284,7 @@ describe("RSS Feed API", () => {
 			const response = await fetchRSSFeed();
 
 			if (!response.ok) {
-				console.log("⚠️  Server not running, skipping RSS feed test");
+				console.info("⚠️  Server not running, skipping RSS feed test");
 				return;
 			}
 

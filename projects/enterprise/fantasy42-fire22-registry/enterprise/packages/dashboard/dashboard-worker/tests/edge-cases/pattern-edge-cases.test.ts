@@ -24,7 +24,7 @@ describe('🛡️ Pattern System Edge Cases', () => {
     // Try to load the Pattern Weaver System
     try {
       patterns = await import('../../src/patterns/index');
-      console.log('🕸️ Pattern Weaver System loaded successfully');
+      console.info('🕸️ Pattern Weaver System loaded successfully');
     } catch (error) {
       console.warn('⚠️ Pattern Weaver System not available for testing:', error.message);
       patterns = null;
@@ -51,7 +51,7 @@ describe('🛡️ Pattern System Edge Cases', () => {
   describe('🔗 Pattern Connection Edge Cases', () => {
     it('🧪 should handle invalid pattern contexts gracefully', async () => {
       if (!patterns) {
-        console.log('⏭️ Skipping pattern tests - Pattern Weaver not available');
+        console.info('⏭️ Skipping pattern tests - Pattern Weaver not available');
         return;
       }
 
@@ -93,7 +93,7 @@ describe('🛡️ Pattern System Edge Cases', () => {
         expect(failure.error.length).toBeGreaterThan(0);
       }
 
-      console.log(
+      console.info(
         `🔍 Invalid context test: ${failures.length}/${results.length} failed as expected`
       );
     });
@@ -166,7 +166,7 @@ describe('🛡️ Pattern System Edge Cases', () => {
       const connectedRatio = allConnectedPatterns.size / patternNames.length;
       expect(connectedRatio).toBeGreaterThan(0.5); // At least 50% should be connected
 
-      console.log(
+      console.info(
         `🔍 Pattern registry validation: ${allConnectedPatterns.size}/${patternNames.length} patterns connected`
       );
     });
@@ -283,7 +283,7 @@ describe('🛡️ Pattern System Edge Cases', () => {
           // Force garbage collection if available
           if (global.gc) global.gc();
 
-          console.log(
+          console.info(
             `📊 Memory at iteration ${i + 1}: ${(currentMemory / 1024 / 1024).toFixed(1)}MB (+${(growth / 1024 / 1024).toFixed(1)}MB)`
           );
         }
@@ -299,10 +299,10 @@ describe('🛡️ Pattern System Edge Cases', () => {
       const totalGrowth = finalMemory - initialMemory;
       const growthPerIteration = totalGrowth / iterations;
 
-      console.log(
+      console.info(
         `📊 Memory leak test: ${iterations} iterations, ${(totalGrowth / 1024 / 1024).toFixed(1)}MB total growth`
       );
-      console.log(`📊 Average growth per iteration: ${(growthPerIteration / 1024).toFixed(1)}KB`);
+      console.info(`📊 Average growth per iteration: ${(growthPerIteration / 1024).toFixed(1)}KB`);
 
       // Should not have significant memory growth (< 10MB total)
       expect(totalGrowth).toBeLessThan(10 * 1024 * 1024);
@@ -350,7 +350,7 @@ describe('🛡️ Pattern System Edge Cases', () => {
         const memoryAfter = process.memoryUsage();
         const memoryUsed = memoryAfter.heapUsed - memoryBefore.heapUsed;
 
-        console.log(`📊 Large dataset processing: ${(memoryUsed / 1024 / 1024).toFixed(1)}MB used`);
+        console.info(`📊 Large dataset processing: ${(memoryUsed / 1024 / 1024).toFixed(1)}MB used`);
 
         // Should process efficiently without excessive memory usage
         expect(memoryUsed).toBeLessThan(128 * 1024 * 1024); // Less than 128MB
@@ -445,7 +445,7 @@ describe('🛡️ Pattern System Edge Cases', () => {
       expect(stressTestResult.success).toBe(true);
       expect(stressTestResult.results.length).toBeGreaterThan(10); // At least 80% success
 
-      console.log(`🔄 Concurrent pattern test: ${stressTestResult.results.length}/15 succeeded`);
+      console.info(`🔄 Concurrent pattern test: ${stressTestResult.results.length}/15 succeeded`);
     });
 
     it('🧪 should prevent pattern state corruption during concurrency', async () => {
@@ -510,10 +510,10 @@ describe('🛡️ Pattern System Edge Cases', () => {
       const successes = results.filter(r => r.status === 'fulfilled');
       const failures = results.filter(r => r.status === 'rejected');
 
-      console.log(
+      console.info(
         `🔄 State corruption test: ${successes.length} succeeded, ${failures.length} failed`
       );
-      console.log(`📊 Pattern usage:`, Object.fromEntries(sharedState.patternCalls));
+      console.info(`📊 Pattern usage:`, Object.fromEntries(sharedState.patternCalls));
 
       // Validate state consistency
       expect(sharedState.operations.length).toBe(successes.length + failures.length);
@@ -571,7 +571,7 @@ describe('🛡️ Pattern System Edge Cases', () => {
       const successes = results.filter(r => r.status === 'fulfilled');
       const failures = results.filter(r => r.status === 'rejected');
 
-      console.log(
+      console.info(
         `🔄 Resource contention: ${successes.length} succeeded, ${failures.length} failed, ${sharedResource.conflicts} conflicts`
       );
 

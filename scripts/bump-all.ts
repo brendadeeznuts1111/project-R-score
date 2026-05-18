@@ -64,9 +64,9 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  console.log(`📦 Bumping all workspace packages: ${type}\n`);
-  console.log(`   Registry: ${REGISTRY_URL}`);
-  console.log(`   R2 Store: ${R2_BUCKET_URL}\n`);
+  console.info(`📦 Bumping all workspace packages: ${type}\n`);
+  console.info(`   Registry: ${REGISTRY_URL}`);
+  console.info(`   R2 Store: ${R2_BUCKET_URL}\n`);
 
   const glob = new Glob("*/package.json");
   const packages = [...glob.scanSync({ cwd: "." }), "package.json"];
@@ -83,18 +83,18 @@ async function main(): Promise<void> {
 
       pkg.version = newVersion;
       await Bun.write(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
-      console.log(`  ✓ ${pkg.name}: ${currentVersion} → ${newVersion}`);
+      console.info(`  ✓ ${pkg.name}: ${currentVersion} → ${newVersion}`);
       bumpedCount++;
     } catch (error) {
       console.error(`  ✗ ${pkgPath}: ${error}`);
     }
   }
 
-  console.log(`\n✅ Bumped ${bumpedCount} packages`);
-  console.log(`\n🚀 Next steps:`);
-  console.log(`   1. Review changes: git diff`);
-  console.log(`   2. Publish: bun run pack:all`);
-  console.log(`   3. Deploy: bun run registry:publish`);
+  console.info(`\n✅ Bumped ${bumpedCount} packages`);
+  console.info(`\n🚀 Next steps:`);
+  console.info(`   1. Review changes: git diff`);
+  console.info(`   2. Publish: bun run pack:all`);
+  console.info(`   3. Deploy: bun run registry:publish`);
 }
 
 await main();

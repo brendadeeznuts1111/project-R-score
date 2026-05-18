@@ -33,7 +33,7 @@ console.error = (...args: any[]) => {
 import { validateProxyHeader, validateProxyHeaders, validationMetrics } from "../src/proxy/validator.js";
 import { HEADERS } from "../src/proxy/headers.js";
 
-console.log(`
+console.info(`
 ╔═══════════════════════════════════════════════════════════════════════════╗
 ║         Proxy Validation Performance Benchmark                              ║
 ╠═══════════════════════════════════════════════════════════════════════════╣
@@ -46,7 +46,7 @@ console.log(`
 // Benchmark 1: Single Header Validation
 // ============================================================================
 
-console.log("\n📊 Benchmark 1: Single Header Validation (10,000 iterations)\n");
+console.info("\n📊 Benchmark 1: Single Header Validation (10,000 iterations)\n");
 
 function benchmarkSingleHeader(name: string, value: string, iterations: number = 10000) {
   const start = performance.now();
@@ -63,53 +63,53 @@ function benchmarkSingleHeader(name: string, value: string, iterations: number =
 
 // Config Version
 const configVersionResult = benchmarkSingleHeader(HEADERS.CONFIG_VERSION, "1");
-console.log(`   X-Bun-Config-Version (format check):`);
-console.log(`     Average: ${configVersionResult.avgNs.toFixed(2)}ns`);
-console.log(`     Target: <500ns | Status: ${configVersionResult.avgNs < 500 ? "✅ PASS" : "❌ FAIL"}`);
+console.info(`   X-Bun-Config-Version (format check):`);
+console.info(`     Average: ${configVersionResult.avgNs.toFixed(2)}ns`);
+console.info(`     Target: <500ns | Status: ${configVersionResult.avgNs < 500 ? "✅ PASS" : "❌ FAIL"}`);
 
 // Registry Hash
 const registryHashResult = benchmarkSingleHeader(HEADERS.REGISTRY_HASH, "0xa1b2c3d4");
-console.log(`\n   X-Bun-Registry-Hash (format + parse):`);
-console.log(`     Average: ${registryHashResult.avgNs.toFixed(2)}ns`);
-console.log(`     Target: <500ns | Status: ${registryHashResult.avgNs < 500 ? "✅ PASS" : "❌ FAIL"}`);
+console.info(`\n   X-Bun-Registry-Hash (format + parse):`);
+console.info(`     Average: ${registryHashResult.avgNs.toFixed(2)}ns`);
+console.info(`     Target: <500ns | Status: ${registryHashResult.avgNs < 500 ? "✅ PASS" : "❌ FAIL"}`);
 
 // Feature Flags
 const featureFlagsResult = benchmarkSingleHeader(HEADERS.FEATURE_FLAGS, "0x00000007");
-console.log(`\n   X-Bun-Feature-Flags (format + range):`);
-console.log(`     Average: ${featureFlagsResult.avgNs.toFixed(2)}ns`);
-console.log(`     Target: <500ns | Status: ${featureFlagsResult.avgNs < 500 ? "✅ PASS" : "❌ FAIL"}`);
+console.info(`\n   X-Bun-Feature-Flags (format + range):`);
+console.info(`     Average: ${featureFlagsResult.avgNs.toFixed(2)}ns`);
+console.info(`     Target: <500ns | Status: ${featureFlagsResult.avgNs < 500 ? "✅ PASS" : "❌ FAIL"}`);
 
 // Terminal Mode
 const terminalModeResult = benchmarkSingleHeader(HEADERS.TERMINAL_MODE, "2");
-console.log(`\n   X-Bun-Terminal-Mode (format + range):`);
-console.log(`     Average: ${terminalModeResult.avgNs.toFixed(2)}ns`);
-console.log(`     Target: <500ns | Status: ${terminalModeResult.avgNs < 500 ? "✅ PASS" : "❌ FAIL"}`);
+console.info(`\n   X-Bun-Terminal-Mode (format + range):`);
+console.info(`     Average: ${terminalModeResult.avgNs.toFixed(2)}ns`);
+console.info(`     Target: <500ns | Status: ${terminalModeResult.avgNs < 500 ? "✅ PASS" : "❌ FAIL"}`);
 
 // Terminal Rows
 const terminalRowsResult = benchmarkSingleHeader(HEADERS.TERMINAL_ROWS, "24");
-console.log(`\n   X-Bun-Terminal-Rows (format + range):`);
-console.log(`     Average: ${terminalRowsResult.avgNs.toFixed(2)}ns`);
-console.log(`     Target: <500ns | Status: ${terminalRowsResult.avgNs < 500 ? "✅ PASS" : "❌ FAIL"}`);
+console.info(`\n   X-Bun-Terminal-Rows (format + range):`);
+console.info(`     Average: ${terminalRowsResult.avgNs.toFixed(2)}ns`);
+console.info(`     Target: <500ns | Status: ${terminalRowsResult.avgNs < 500 ? "✅ PASS" : "❌ FAIL"}`);
 
 // Terminal Cols
 const terminalColsResult = benchmarkSingleHeader(HEADERS.TERMINAL_COLS, "80");
-console.log(`\n   X-Bun-Terminal-Cols (format + range):`);
-console.log(`     Average: ${terminalColsResult.avgNs.toFixed(2)}ns`);
-console.log(`     Target: <500ns | Status: ${terminalColsResult.avgNs < 500 ? "✅ PASS" : "❌ FAIL"}`);
+console.info(`\n   X-Bun-Terminal-Cols (format + range):`);
+console.info(`     Average: ${terminalColsResult.avgNs.toFixed(2)}ns`);
+console.info(`     Target: <500ns | Status: ${terminalColsResult.avgNs < 500 ? "✅ PASS" : "❌ FAIL"}`);
 
 // Config Dump (with checksum)
 const configDump = "0x01a1b2c3d4000002070218504a"; // Valid checksum
 const configDumpResult = benchmarkSingleHeader(HEADERS.CONFIG_DUMP, configDump);
-console.log(`\n   X-Bun-Config-Dump (format + checksum):`);
-console.log(`     Average: ${configDumpResult.avgNs.toFixed(2)}ns`);
-console.log(`     Target: <1000ns | Status: ${configDumpResult.avgNs < 1000 ? "✅ PASS" : "❌ FAIL"}`);
+console.info(`\n   X-Bun-Config-Dump (format + checksum):`);
+console.info(`     Average: ${configDumpResult.avgNs.toFixed(2)}ns`);
+console.info(`     Target: <1000ns | Status: ${configDumpResult.avgNs < 1000 ? "✅ PASS" : "❌ FAIL"}`);
 
 // Proxy Token (JWT format only)
 const proxyToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 const proxyTokenResult = benchmarkSingleHeader(HEADERS.PROXY_TOKEN, proxyToken);
-console.log(`\n   X-Bun-Proxy-Token (JWT format check):`);
-console.log(`     Average: ${proxyTokenResult.avgNs.toFixed(2)}ns`);
-console.log(`     Target: <500ns | Status: ${proxyTokenResult.avgNs < 500 ? "✅ PASS" : "❌ FAIL"}`);
+console.info(`\n   X-Bun-Proxy-Token (JWT format check):`);
+console.info(`     Average: ${proxyTokenResult.avgNs.toFixed(2)}ns`);
+console.info(`     Target: <500ns | Status: ${proxyTokenResult.avgNs < 500 ? "✅ PASS" : "❌ FAIL"}`);
 
 // ============================================================================
 // Benchmark 2: Bulk Validation (All Headers)
@@ -117,7 +117,7 @@ console.log(`     Target: <500ns | Status: ${proxyTokenResult.avgNs < 500 ? "✅
 
 await Bun.sleep(100);
 
-console.log("\n\n📊 Benchmark 2: Bulk Validation (All Headers, 10,000 iterations)\n");
+console.info("\n\n📊 Benchmark 2: Bulk Validation (All Headers, 10,000 iterations)\n");
 
 function benchmarkBulkValidation(iterations: number = 10000) {
   const headers = new Headers({
@@ -143,11 +143,11 @@ function benchmarkBulkValidation(iterations: number = 10000) {
 }
 
 const bulkResult = benchmarkBulkValidation();
-console.log(`   All 7 headers validated together:`);
-console.log(`     Average: ${bulkResult.avgNs.toFixed(2)}ns`);
-console.log(`     Per-header average: ${(bulkResult.avgNs / 7).toFixed(2)}ns`);
-console.log(`     Throughput: ${(1_000_000_000 / bulkResult.avgNs).toFixed(0)} req/sec`);
-console.log(`     Target: <5000ns total | Status: ${bulkResult.avgNs < 5000 ? "✅ PASS" : "❌ FAIL"}`);
+console.info(`   All 7 headers validated together:`);
+console.info(`     Average: ${bulkResult.avgNs.toFixed(2)}ns`);
+console.info(`     Per-header average: ${(bulkResult.avgNs / 7).toFixed(2)}ns`);
+console.info(`     Throughput: ${(1_000_000_000 / bulkResult.avgNs).toFixed(0)} req/sec`);
+console.info(`     Target: <5000ns total | Status: ${bulkResult.avgNs < 5000 ? "✅ PASS" : "❌ FAIL"}`);
 
 // ============================================================================
 // Benchmark 3: DNS Cache Performance
@@ -155,7 +155,7 @@ console.log(`     Target: <5000ns total | Status: ${bulkResult.avgNs < 5000 ? "�
 
 await Bun.sleep(100);
 
-console.log("\n\n📊 Benchmark 3: DNS Cache Performance\n");
+console.info("\n\n📊 Benchmark 3: DNS Cache Performance\n");
 
 let dnsAvgNs = 0;
 let warmupDuration = 0;
@@ -167,13 +167,13 @@ try {
   // Import DNS modules dynamically
   const { resolveProxyUrl, warmupDNSCache, getDNSStats } = await import("../src/proxy/dns.js");
 
-  console.log("   Step 1: Warming up DNS cache...");
+  console.info("   Step 1: Warming up DNS cache...");
   const warmupStart = performance.now();
   await warmupDNSCache(0xa1b2c3d4);
   warmupDuration = performance.now() - warmupStart;
-  console.log(`     Warmup complete: ${warmupDuration.toFixed(2)}ms`);
+  console.info(`     Warmup complete: ${warmupDuration.toFixed(2)}ms`);
 
-  console.log("\n   Step 2: Benchmarking DNS cache hits (1,000 iterations)...");
+  console.info("\n   Step 2: Benchmarking DNS cache hits (1,000 iterations)...");
 
   const testHostname = "proxy.mycompany.com";
 
@@ -190,21 +190,21 @@ try {
   const dnsDuration = performance.now() - dnsStart;
   dnsAvgNs = (dnsDuration / dnsIterations) * 1_000_000;
 
-  console.log(`     Average: ${dnsAvgNs.toFixed(2)}ns`);
-  console.log(`     Target: <100ns | Status: ${dnsAvgNs < 100 ? "✅ PASS" : "❌ FAIL"}`);
+  console.info(`     Average: ${dnsAvgNs.toFixed(2)}ns`);
+  console.info(`     Target: <100ns | Status: ${dnsAvgNs < 100 ? "✅ PASS" : "❌ FAIL"}`);
 
   // DNS stats
   const dnsStats = getDNSStats();
   dnsHits = dnsStats.hits;
   dnsMisses = dnsStats.misses;
   dnsHitRate = dnsStats.hitRate;
-  console.log(`\n   DNS Statistics:`);
-  console.log(`     Cache hits: ${dnsHits}`);
-  console.log(`     Cache misses: ${dnsMisses}`);
-  console.log(`     Hit rate: ${(dnsHitRate * 100).toFixed(2)}%`);
+  console.info(`\n   DNS Statistics:`);
+  console.info(`     Cache hits: ${dnsHits}`);
+  console.info(`     Cache misses: ${dnsMisses}`);
+  console.info(`     Hit rate: ${(dnsHitRate * 100).toFixed(2)}%`);
 } catch (error) {
-  console.log(`     ⚠️  DNS benchmark skipped: ${error instanceof Error ? error.message : String(error)}`);
-  console.log(`     (DNS hostnames don't exist in development environment)`);
+  console.info(`     ⚠️  DNS benchmark skipped: ${error instanceof Error ? error.message : String(error)}`);
+  console.info(`     (DNS hostnames don't exist in development environment)`);
 }
 
 // ============================================================================
@@ -213,7 +213,7 @@ try {
 
 await Bun.sleep(100);
 
-console.log("\n\n📊 Benchmark 4: Validation Error Detection (10,000 iterations)\n");
+console.info("\n\n📊 Benchmark 4: Validation Error Detection (10,000 iterations)\n");
 
 function benchmarkErrorDetection(iterations: number = 10000) {
   const headers = new Headers({
@@ -236,9 +236,9 @@ function benchmarkErrorDetection(iterations: number = 10000) {
 }
 
 const errorResult = benchmarkErrorDetection();
-console.log(`   Detecting out-of-range error (256 > 255):`);
-console.log(`     Average: ${errorResult.avgNs.toFixed(2)}ns`);
-console.log(`     Target: <5000ns | Status: ${errorResult.avgNs < 5000 ? "✅ PASS" : "❌ FAIL"}`);
+console.info(`   Detecting out-of-range error (256 > 255):`);
+console.info(`     Average: ${errorResult.avgNs.toFixed(2)}ns`);
+console.info(`     Target: <5000ns | Status: ${errorResult.avgNs < 5000 ? "✅ PASS" : "❌ FAIL"}`);
 
 // ============================================================================
 // Benchmark 5: Checksum Validation
@@ -246,7 +246,7 @@ console.log(`     Target: <5000ns | Status: ${errorResult.avgNs < 5000 ? "✅ PA
 
 await Bun.sleep(100);
 
-console.log("\n\n📊 Benchmark 5: Checksum Validation (10,000 iterations)\n");
+console.info("\n\n📊 Benchmark 5: Checksum Validation (10,000 iterations)\n");
 
 function benchmarkChecksum(iterations: number = 10000) {
   // Use config dump with checksum
@@ -265,9 +265,9 @@ function benchmarkChecksum(iterations: number = 10000) {
 }
 
 const checksumResult = benchmarkChecksum();
-console.log(`   Config dump checksum verification (XOR of 12 bytes):`);
-console.log(`     Average: ${checksumResult.avgNs.toFixed(2)}ns`);
-console.log(`     Target: <1000ns | Status: ${checksumResult.avgNs < 1000 ? "✅ PASS" : "❌ FAIL"}`);
+console.info(`   Config dump checksum verification (XOR of 12 bytes):`);
+console.info(`     Average: ${checksumResult.avgNs.toFixed(2)}ns`);
+console.info(`     Target: <1000ns | Status: ${checksumResult.avgNs < 1000 ? "✅ PASS" : "❌ FAIL"}`);
 
 // ============================================================================
 // Summary
@@ -275,7 +275,7 @@ console.log(`     Target: <1000ns | Status: ${checksumResult.avgNs < 1000 ? "✅
 
 await Bun.sleep(100);
 
-console.log(`
+console.info(`
 ╔═══════════════════════════════════════════════════════════════════════════╗
 ║                         Benchmark Summary                                   ║
 ╠═══════════════════════════════════════════════════════════════════════════╣
@@ -308,7 +308,7 @@ console.log(`
 // Performance Grades
 // ============================================================================
 
-console.log("\n🎯 Performance Grades:\n");
+console.info("\n🎯 Performance Grades:\n");
 
 const allResults = [
   { name: "Config Version", ns: configVersionResult.avgNs, target: 500 },
@@ -341,9 +341,9 @@ for (const result of allResults) {
     grade = "D ❌";
   }
 
-  console.log(`   ${result.name.padEnd(20)} ${result.ns.toFixed(2).padStart(8)}ns / ${result.target}ns = ${grade}`);
+  console.info(`   ${result.name.padEnd(20)} ${result.ns.toFixed(2).padStart(8)}ns / ${result.target}ns = ${grade}`);
 }
 
-console.log("\n✅ Benchmark complete!\n");
+console.info("\n✅ Benchmark complete!\n");
 
 process.exit(0);

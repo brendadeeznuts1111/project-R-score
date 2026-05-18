@@ -48,9 +48,9 @@ function compareMetrics(
   before: Map<string, ProjectMetrics>,
   after: Map<string, ProjectMetrics>
 ): void {
-  console.log('\n📊 Comparison Results:\n');
-  console.log('| Project | Metric | Before | After | Change | Improvement |');
-  console.log('|---------|--------|--------|-------|--------|-------------|');
+  console.info('\n📊 Comparison Results:\n');
+  console.info('| Project | Metric | Before | After | Change | Improvement |');
+  console.info('|---------|--------|--------|-------|--------|-------------|');
   
   const allProjects = new Set([...before.keys(), ...after.keys()]);
   
@@ -59,7 +59,7 @@ function compareMetrics(
     const afterMetrics = after.get(project);
     
     if (!beforeMetrics && afterMetrics) {
-      console.log(`| ${project} | - | New project | - | - | - |`);
+      console.info(`| ${project} | - | New project | - | - | - |`);
       continue;
     }
     
@@ -75,7 +75,7 @@ function compareMetrics(
       ? ((funcChange / beforeMetrics.functions) * 100).toFixed(1)
       : '0.0';
     const funcImprovement = funcChange < 0 ? '✅' : funcChange > 0 ? '❌' : '➖';
-    console.log(`| ${project} | Functions | ${beforeMetrics.functions.toLocaleString()} | ${afterFuncs.toLocaleString()} | ${funcChange > 0 ? '+' : ''}${funcChange.toLocaleString()} | ${funcImprovement} ${funcPct}% |`);
+    console.info(`| ${project} | Functions | ${beforeMetrics.functions.toLocaleString()} | ${afterFuncs.toLocaleString()} | ${funcChange > 0 ? '+' : ''}${funcChange.toLocaleString()} | ${funcImprovement} ${funcPct}% |`);
     
     // Large Objects
     const largeChange = afterLarge - beforeMetrics.largeObjects;
@@ -83,7 +83,7 @@ function compareMetrics(
       ? ((largeChange / beforeMetrics.largeObjects) * 100).toFixed(1)
       : '0.0';
     const largeImprovement = largeChange < 0 ? '✅' : largeChange > 0 ? '❌' : '➖';
-    console.log(`| ${project} | Large Objects | ${beforeMetrics.largeObjects.toLocaleString()} | ${afterLarge.toLocaleString()} | ${largeChange > 0 ? '+' : ''}${largeChange.toLocaleString()} | ${largeImprovement} ${largePct}% |`);
+    console.info(`| ${project} | Large Objects | ${beforeMetrics.largeObjects.toLocaleString()} | ${afterLarge.toLocaleString()} | ${largeChange > 0 ? '+' : ''}${largeChange.toLocaleString()} | ${largeImprovement} ${largePct}% |`);
     
     // GC Roots
     const gcChange = afterGC - beforeMetrics.gcRoots;
@@ -91,17 +91,17 @@ function compareMetrics(
       ? ((gcChange / beforeMetrics.gcRoots) * 100).toFixed(1)
       : '0.0';
     const gcImprovement = gcChange < 0 ? '✅' : gcChange > 0 ? '❌' : '➖';
-    console.log(`| ${project} | GC Roots | ${beforeMetrics.gcRoots.toLocaleString()} | ${afterGC.toLocaleString()} | ${gcChange > 0 ? '+' : ''}${gcChange.toLocaleString()} | ${gcImprovement} ${gcPct}% |`);
+    console.info(`| ${project} | GC Roots | ${beforeMetrics.gcRoots.toLocaleString()} | ${afterGC.toLocaleString()} | ${gcChange > 0 ? '+' : ''}${gcChange.toLocaleString()} | ${gcImprovement} ${gcPct}% |`);
   }
   
-  console.log('');
+  console.info('');
 }
 
 /**
  * Main execution
  */
 async function main() {
-  console.log('🔍 Reading before/after reports...\n');
+  console.info('🔍 Reading before/after reports...\n');
   
   if (!existsSync(BEFORE_REPORT)) {
     console.error('❌ Before report not found. Run analyze-bottlenecks.ts first.');
@@ -109,13 +109,13 @@ async function main() {
   }
   
   if (!existsSync(AFTER_REPORT)) {
-    console.log('⚠️  After report not found. Generating new profiles...\n');
-    console.log('💡 Run the following commands:');
-    console.log('   1. bun run scripts/generate-all-profiles.ts');
-    console.log('   2. bun run scripts/analyze-bottlenecks.ts');
-    console.log('   3. mv BOTTLENECK_REPORT.md BOTTLENECK_REPORT_AFTER.md');
-    console.log('   4. mv BOTTLENECK_REPORT_BEFORE.md BOTTLENECK_REPORT.md');
-    console.log('   5. bun run scripts/test-optimizations.ts\n');
+    console.info('⚠️  After report not found. Generating new profiles...\n');
+    console.info('💡 Run the following commands:');
+    console.info('   1. bun run scripts/generate-all-profiles.ts');
+    console.info('   2. bun run scripts/analyze-bottlenecks.ts');
+    console.info('   3. mv BOTTLENECK_REPORT.md BOTTLENECK_REPORT_AFTER.md');
+    console.info('   4. mv BOTTLENECK_REPORT_BEFORE.md BOTTLENECK_REPORT.md');
+    console.info('   5. bun run scripts/test-optimizations.ts\n');
     process.exit(0);
   }
   
@@ -126,8 +126,8 @@ async function main() {
     const beforeMetrics = parseMetrics(beforeReport);
     const afterMetrics = parseMetrics(afterReport);
     
-    console.log(`Found ${beforeMetrics.size} projects in before report`);
-    console.log(`Found ${afterMetrics.size} projects in after report\n`);
+    console.info(`Found ${beforeMetrics.size} projects in before report`);
+    console.info(`Found ${afterMetrics.size} projects in after report\n`);
     
     compareMetrics(beforeMetrics, afterMetrics);
     
@@ -156,19 +156,19 @@ async function main() {
       }
     }
     
-    console.log('📈 Overall Summary:');
-    console.log(`   Functions: ${totalFuncBefore.toLocaleString()} → ${totalFuncAfter.toLocaleString()} (${totalFuncAfter - totalFuncBefore > 0 ? '+' : ''}${(totalFuncAfter - totalFuncBefore).toLocaleString()})`);
-    console.log(`   Large Objects: ${totalLargeBefore.toLocaleString()} → ${totalLargeAfter.toLocaleString()} (${totalLargeAfter - totalLargeBefore > 0 ? '+' : ''}${(totalLargeAfter - totalLargeBefore).toLocaleString()})`);
-    console.log(`   GC Roots: ${totalGCBefore.toLocaleString()} → ${totalGCAfter.toLocaleString()} (${totalGCAfter - totalGCBefore > 0 ? '+' : ''}${(totalGCAfter - totalGCBefore).toLocaleString()})`);
+    console.info('📈 Overall Summary:');
+    console.info(`   Functions: ${totalFuncBefore.toLocaleString()} → ${totalFuncAfter.toLocaleString()} (${totalFuncAfter - totalFuncBefore > 0 ? '+' : ''}${(totalFuncAfter - totalFuncBefore).toLocaleString()})`);
+    console.info(`   Large Objects: ${totalLargeBefore.toLocaleString()} → ${totalLargeAfter.toLocaleString()} (${totalLargeAfter - totalLargeBefore > 0 ? '+' : ''}${(totalLargeAfter - totalLargeBefore).toLocaleString()})`);
+    console.info(`   GC Roots: ${totalGCBefore.toLocaleString()} → ${totalGCAfter.toLocaleString()} (${totalGCAfter - totalGCBefore > 0 ? '+' : ''}${(totalGCAfter - totalGCBefore).toLocaleString()})`);
     
     const funcImprovement = ((totalFuncBefore - totalFuncAfter) / totalFuncBefore * 100).toFixed(1);
     const largeImprovement = totalLargeBefore > 0 ? ((totalLargeBefore - totalLargeAfter) / totalLargeBefore * 100).toFixed(1) : '0.0';
     const gcImprovement = ((totalGCBefore - totalGCAfter) / totalGCBefore * 100).toFixed(1);
     
-    console.log(`\n✅ Improvements:`);
-    console.log(`   Functions: ${funcImprovement}% reduction`);
-    console.log(`   Large Objects: ${largeImprovement}% reduction`);
-    console.log(`   GC Roots: ${gcImprovement}% reduction`);
+    console.info(`\n✅ Improvements:`);
+    console.info(`   Functions: ${funcImprovement}% reduction`);
+    console.info(`   Large Objects: ${largeImprovement}% reduction`);
+    console.info(`   GC Roots: ${gcImprovement}% reduction`);
     
   } catch (error) {
     console.error(`❌ Error comparing reports: ${error}`);

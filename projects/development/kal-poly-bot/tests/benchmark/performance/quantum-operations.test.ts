@@ -35,10 +35,10 @@ describe("Quantum Operations Performance Benchmarks", () => {
     }
 
     const stats = measurer.getStats("sbom-generation");
-    console.log(`🏗️ SBOM Generation Performance:`);
-    console.log(`   Average: ${stats!.average.toFixed(2)}ms`);
-    console.log(`   P95: ${stats!.p95.toFixed(2)}ms`);
-    console.log(`   Max: ${stats!.max.toFixed(2)}ms`);
+    console.info(`🏗️ SBOM Generation Performance:`);
+    console.info(`   Average: ${stats!.average.toFixed(2)}ms`);
+    console.info(`   P95: ${stats!.p95.toFixed(2)}ms`);
+    console.info(`   Max: ${stats!.max.toFixed(2)}ms`);
 
     TestAssertions.assertPerformance(
       stats!.average,
@@ -72,10 +72,10 @@ describe("Quantum Operations Performance Benchmarks", () => {
     }
 
     const stats = measurer.getStats("quantum-stats");
-    console.log(`🔐 Quantum Operations Performance:`);
-    console.log(`   Stats Retrieval: ${stats!.average.toFixed(2)}ms`);
-    console.log(`   P95: ${stats!.p95.toFixed(2)}ms`);
-    console.log(`   Max: ${stats!.max.toFixed(2)}ms`);
+    console.info(`🔐 Quantum Operations Performance:`);
+    console.info(`   Stats Retrieval: ${stats!.average.toFixed(2)}ms`);
+    console.info(`   P95: ${stats!.p95.toFixed(2)}ms`);
+    console.info(`   Max: ${stats!.max.toFixed(2)}ms`);
 
     TestAssertions.assertPerformance(
       stats!.average,
@@ -141,9 +141,9 @@ describe("Quantum Operations Performance Benchmarks", () => {
       expect(sbom.metadata.component?.signature).toBeDefined();
     }
 
-    console.log(`🌍 Multi-Region Quantum Performance:`);
+    console.info(`🌍 Multi-Region Quantum Performance:`);
     results.forEach((result) => {
-      console.log(
+      console.info(
         `   ${result.name} (${result.regionCount} regions): ${result.avgLatency.toFixed(
           2
         )}ms`
@@ -203,9 +203,9 @@ describe("Quantum Operations Performance Benchmarks", () => {
       expect(sbom.metadata.component?.signature).toBeDefined();
     }
 
-    console.log(`📋 Multi-Framework Quantum Performance:`);
+    console.info(`📋 Multi-Framework Quantum Performance:`);
     results.forEach((result) => {
-      console.log(
+      console.info(
         `   ${result.name} (${result.frameworkCount} frameworks): ${result.avgLatency.toFixed(2)}ms`
       );
     });
@@ -239,11 +239,11 @@ describe("Quantum Operations Performance Benchmarks", () => {
       const stats = await quantumBuilder.getQuantumBuildStats();
       const latency = endMeasurement();
 
-      console.log(`🔍 Quantum Readiness (${config.name}):`);
-      console.log(`   Latency: ${latency.toFixed(2)}ms`);
-      console.log(`   Quantum Ready: ${stats.quantumReadiness}`);
-      console.log(`   Total Builds: ${stats.totalBuilds}`);
-      console.log(`   Quantum Signed: ${stats.quantumSignedBuilds}`);
+      console.info(`🔍 Quantum Readiness (${config.name}):`);
+      console.info(`   Latency: ${latency.toFixed(2)}ms`);
+      console.info(`   Quantum Ready: ${stats.quantumReadiness}`);
+      console.info(`   Total Builds: ${stats.totalBuilds}`);
+      console.info(`   Quantum Signed: ${stats.quantumSignedBuilds}`);
 
       expect(stats.quantumReadiness).toBe(true);
       expect(latency).toBeLessThan(100);

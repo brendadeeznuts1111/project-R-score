@@ -20,7 +20,7 @@ export class V8TypeCheckingBridge {
     if (!isFeatureEnabled()) return;
 
     this.registeredAddons.add(addonName);
-    console.log(`✅ V8 Type Bridge: Registered ${addonName}`);
+    console.info(`✅ V8 Type Bridge: Registered ${addonName}`);
   }
 
   // Check if value is a Map (V8 IsMap equivalent)

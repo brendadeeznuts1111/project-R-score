@@ -5,8 +5,8 @@
  * Demonstrates that NO_PROXY is now always respected, even with explicit proxy settings
  */
 
-console.log("🌐 Bun v1.3.9: NO_PROXY Environment Variable Demo\n");
-console.log("=" .repeat(70));
+console.info("🌐 Bun v1.3.9: NO_PROXY Environment Variable Demo\n");
+console.info("=" .repeat(70));
 
 // Mock server for demonstration
 async function createMockServer(port: number): Promise<{ stop: () => void; url: string }> {
@@ -30,9 +30,9 @@ async function createMockServer(port: number): Promise<{ stop: () => void; url: 
 }
 
 function showBeforeAfter() {
-  console.log("\n📦 The Problem (Before v1.3.9)");
-  console.log("-".repeat(70));
-  console.log(`
+  console.info("\n📦 The Problem (Before v1.3.9)");
+  console.info("-".repeat(70));
+  console.info(`
 BEFORE v1.3.9:
 ──────────────
 // Environment: NO_PROXY=localhost
@@ -52,9 +52,9 @@ PROBLEM:
 • Some internal services couldn't be reached through proxy
 `);
 
-  console.log("\n📦 The Fix (v1.3.9+)");
-  console.log("-".repeat(70));
-  console.log(`
+  console.info("\n📦 The Fix (v1.3.9+)");
+  console.info("-".repeat(70));
+  console.info(`
 AFTER v1.3.9:
 ─────────────
 // Environment: NO_PROXY=localhost
@@ -76,10 +76,10 @@ FIX:
 }
 
 function showNO_PROXYFormats() {
-  console.log("\n" + "=".repeat(70));
-  console.log("📋 NO_PROXY Format Examples");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("📋 NO_PROXY Format Examples");
+  console.info("=".repeat(70));
+  console.info(`
 SYNTAX:
 ───────
 NO_PROXY is a comma-separated list of hostnames/domains
@@ -113,10 +113,10 @@ MATCHING BEHAVIOR:
 }
 
 function showUsageExamples() {
-  console.log("\n" + "=".repeat(70));
-  console.log("💻 Usage Examples");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("💻 Usage Examples");
+  console.info("=".repeat(70));
+  console.info(`
 COMMAND LINE:
 ─────────────
 # Run tests with NO_PROXY
@@ -160,10 +160,10 @@ const ws = new WebSocket("ws://localhost:3000/ws", {
 }
 
 function showTestingStrategies() {
-  console.log("\n" + "=".repeat(70));
-  console.log("🧪 Testing NO_PROXY Behavior");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("🧪 Testing NO_PROXY Behavior");
+  console.info("=".repeat(70));
+  console.info(`
 TEST SETUP:
 ───────────
 // no-proxy.test.ts
@@ -194,21 +194,21 @@ describe("NO_PROXY behavior", () => {
 DEBUGGING:
 ──────────
 // Check current proxy settings
-console.log("HTTP_PROXY:", process.env.HTTP_PROXY);
-console.log("HTTPS_PROXY:", process.env.HTTPS_PROXY);
-console.log("NO_PROXY:", process.env.NO_PROXY);
+console.info("HTTP_PROXY:", process.env.HTTP_PROXY);
+console.info("HTTPS_PROXY:", process.env.HTTPS_PROXY);
+console.info("NO_PROXY:", process.env.NO_PROXY);
 
 // Verify proxy behavior
 const resp = await fetch("http://localhost:3000/health");
-console.log("Response:", await resp.text());
+console.info("Response:", await resp.text());
 `);
 }
 
 function showCommonPitfalls() {
-  console.log("\n" + "=".repeat(70));
-  console.log("⚠️ Common Pitfalls");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("⚠️ Common Pitfalls");
+  console.info("=".repeat(70));
+  console.info(`
 PITFALL 1: Missing ports in NO_PROXY
 ────────────────────────────────────
 // ❌ This won't match localhost:3000
@@ -253,8 +253,8 @@ BEST PRACTICES:
 
 // Main
 async function main() {
-  console.log(`Bun version: ${Bun.version}`);
-  console.log(`Platform: ${process.platform} ${process.arch}\n`);
+  console.info(`Bun version: ${Bun.version}`);
+  console.info(`Platform: ${process.platform} ${process.arch}\n`);
 
   showBeforeAfter();
   showNO_PROXYFormats();
@@ -262,7 +262,7 @@ async function main() {
   showTestingStrategies();
   showCommonPitfalls();
 
-  console.log("\n✅ NO_PROXY demo complete!\n");
+  console.info("\n✅ NO_PROXY demo complete!\n");
 }
 
 if (import.meta.main) {

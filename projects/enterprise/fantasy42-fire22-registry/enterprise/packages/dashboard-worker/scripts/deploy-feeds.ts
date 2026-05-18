@@ -33,11 +33,11 @@ class FeedDeployer {
   }
 
   async deploy(): Promise<void> {
-    console.log('📡 Fire22 RSS Feed Deployment');
-    console.log('!==!==!==!==!====\n');
-    console.log(`🎯 Environment: ${this.config.environment}`);
-    console.log(`🔍 Dry Run: ${this.config.dryRun ? 'Yes' : 'No'}`);
-    console.log();
+    console.info('📡 Fire22 RSS Feed Deployment');
+    console.info('!==!==!==!==!====\n');
+    console.info(`🎯 Environment: ${this.config.environment}`);
+    console.info(`🔍 Dry Run: ${this.config.dryRun ? 'Yes' : 'No'}`);
+    console.info();
 
     try {
       // Step 1: Build feeds module
@@ -55,7 +55,7 @@ class FeedDeployer {
       if (!this.config.dryRun) {
         await this.deployToCloudflare();
       } else {
-        console.log('📝 Dry run - skipping actual deployment');
+        console.info('📝 Dry run - skipping actual deployment');
       }
 
       // Step 5: Verify deployment
@@ -63,7 +63,7 @@ class FeedDeployer {
         await this.verifyDeployment();
       }
 
-      console.log('\n✅ RSS Feed deployment completed successfully!');
+      console.info('\n✅ RSS Feed deployment completed successfully!');
     } catch (error) {
       console.error('\n❌ Deployment failed:', error);
       process.exit(1);
@@ -71,7 +71,7 @@ class FeedDeployer {
   }
 
   private async buildFeedsModule(): Promise<void> {
-    console.log('🔨 Building feeds module...');
+    console.info('🔨 Building feeds module...');
 
     const buildScript = join(process.cwd(), 'scripts', 'build-feeds-module.ts');
     if (!existsSync(buildScript)) {
@@ -81,18 +81,18 @@ class FeedDeployer {
     const { stdout, stderr } = await execAsync(`bun run ${buildScript}`);
 
     if (this.config.verbose) {
-      console.log(stdout);
+      console.info(stdout);
     }
 
     if (stderr) {
       console.error('Build warnings:', stderr);
     }
 
-    console.log('✅ Feeds module built successfully');
+    console.info('✅ Feeds module built successfully');
   }
 
   private async validateFeeds(): Promise<void> {
-    console.log('\n🔍 Validating RSS feeds...');
+    console.info('\n🔍 Validating RSS feeds...');
 
     const validateScript = join(process.cwd(), 'scripts', 'validate-feeds.ts');
     if (!existsSync(validateScript)) {
@@ -103,16 +103,16 @@ class FeedDeployer {
     try {
       const { stdout } = await execAsync(`bun run ${validateScript}`);
       if (this.config.verbose) {
-        console.log(stdout);
+        console.info(stdout);
       }
-      console.log('✅ Feed validation passed');
+      console.info('✅ Feed validation passed');
     } catch (error: any) {
       throw new Error(`Feed validation failed: ${error.message}`);
     }
   }
 
   private async runTests(): Promise<void> {
-    console.log('\n🧪 Running feed tests...');
+    console.info('\n🧪 Running feed tests...');
 
     const testFiles = ['src/feeds-handler.ts', 'scripts/build-feeds-module.ts'];
 
@@ -121,7 +121,7 @@ class FeedDeployer {
         try {
           const { stdout } = await execAsync(`bun test ${file}`);
           if (this.config.verbose) {
-            console.log(stdout);
+            console.info(stdout);
           }
         } catch (error) {
           console.warn(`⚠️  Test failed for ${file}`);
@@ -129,11 +129,11 @@ class FeedDeployer {
       }
     }
 
-    console.log('✅ Tests completed');
+    console.info('✅ Tests completed');
   }
 
   private async deployToCloudflare(): Promise<void> {
-    console.log('\n🚀 Deploying to Cloudflare Workers...');
+    console.info('\n🚀 Deploying to Cloudflare Workers...');
 
     const envFlag =
       this.config.environment === 'production' ? '--env=""' : `--env=${this.config.environment}`;
@@ -142,24 +142,24 @@ class FeedDeployer {
       const { stdout, stderr } = await execAsync(`wrangler deploy ${envFlag}`);
 
       if (this.config.verbose) {
-        console.log(stdout);
+        console.info(stdout);
       }
 
       // Extract deployment URL
       const urlMatch = stdout.match(/https:\/\/[\w\-\.]+\.workers\.dev/);
       if (urlMatch) {
-        console.log(`\n🌐 Deployed to: ${urlMatch[0]}`);
-        console.log(`📡 RSS Feeds available at: ${urlMatch[0]}/feeds/`);
+        console.info(`\n🌐 Deployed to: ${urlMatch[0]}`);
+        console.info(`📡 RSS Feeds available at: ${urlMatch[0]}/feeds/`);
       }
 
-      console.log('✅ Deployment successful');
+      console.info('✅ Deployment successful');
     } catch (error: any) {
       throw new Error(`Cloudflare deployment failed: ${error.message}`);
     }
   }
 
   private async verifyDeployment(): Promise<void> {
-    console.log('\n🔍 Verifying deployment...');
+    console.info('\n🔍 Verifying deployment...');
 
     // Get worker URL (you might need to adjust this based on your setup)
     const workerUrl = 'https://dashboard-worker.nolarose1968-806.workers.dev';
@@ -175,7 +175,7 @@ class FeedDeployer {
       try {
         const response = await fetch(url);
         if (response.ok) {
-          console.log(`✅ ${feed} - Status: ${response.status}`);
+          console.info(`✅ ${feed} - Status: ${response.status}`);
         } else {
           console.warn(`⚠️  ${feed} - Status: ${response.status}`);
         }
@@ -184,13 +184,13 @@ class FeedDeployer {
       }
     }
 
-    console.log('\n📡 RSS Feed URLs:');
-    console.log(`  - Main Index: ${workerUrl}/feeds/`);
-    console.log(`  - Error Codes RSS: ${workerUrl}/feeds/error-codes-rss.xml`);
-    console.log(`  - Error Codes Atom: ${workerUrl}/feeds/error-codes-atom.xml`);
-    console.log(`  - Team Announcements RSS: ${workerUrl}/feeds/team-announcements-rss.xml`);
-    console.log(`  - Team Announcements Atom: ${workerUrl}/feeds/team-announcements-atom.xml`);
-    console.log(`  - Critical Alerts: ${workerUrl}/feeds/critical-errors-alert.xml`);
+    console.info('\n📡 RSS Feed URLs:');
+    console.info(`  - Main Index: ${workerUrl}/feeds/`);
+    console.info(`  - Error Codes RSS: ${workerUrl}/feeds/error-codes-rss.xml`);
+    console.info(`  - Error Codes Atom: ${workerUrl}/feeds/error-codes-atom.xml`);
+    console.info(`  - Team Announcements RSS: ${workerUrl}/feeds/team-announcements-rss.xml`);
+    console.info(`  - Team Announcements Atom: ${workerUrl}/feeds/team-announcements-atom.xml`);
+    console.info(`  - Critical Alerts: ${workerUrl}/feeds/critical-errors-alert.xml`);
   }
 }
 

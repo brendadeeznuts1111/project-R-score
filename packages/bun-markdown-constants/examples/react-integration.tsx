@@ -101,7 +101,7 @@ const CustomStyledApp = () => {
   );
 };
 
-console.log('React Integration Example loaded.');
-console.log('Components available: MarkdownComponent, App, CustomStyledApp');
+console.info('React Integration Example loaded.');
+console.info('Components available: MarkdownComponent, App, CustomStyledApp');
 
 export { MarkdownComponent, App, CustomStyledApp, CustomComponents };

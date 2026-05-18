@@ -63,7 +63,7 @@ export class TaskEventService {
 
     return new ReadableStream({
       start: controller => {
-        console.log(`📡 New task event stream connection: ${connectionId}`);
+        console.info(`📡 New task event stream connection: ${connectionId}`);
 
         // Store connection
         this.activeConnections.set(connectionId, {
@@ -89,7 +89,7 @@ export class TaskEventService {
       },
 
       cancel: () => {
-        console.log(`🔌 Task event stream disconnected: ${connectionId}`);
+        console.info(`🔌 Task event stream disconnected: ${connectionId}`);
         this.activeConnections.delete(connectionId);
       },
     });
@@ -124,7 +124,7 @@ export class TaskEventService {
       this.activeConnections.delete(id);
     });
 
-    console.log(
+    console.info(
       `📤 Broadcasted ${event.type} event to ${this.activeConnections.size} active connections`
     );
   }
@@ -270,12 +270,12 @@ export class TaskEventService {
       }
 
       staleConnections.forEach(id => {
-        console.log(`🧹 Cleaning up stale connection: ${id}`);
+        console.info(`🧹 Cleaning up stale connection: ${id}`);
         this.activeConnections.delete(id);
       });
 
       if (staleConnections.length > 0) {
-        console.log(
+        console.info(
           `🧹 Cleaned up ${staleConnections.length} stale connections, ${this.activeConnections.size} remain active`
         );
       }

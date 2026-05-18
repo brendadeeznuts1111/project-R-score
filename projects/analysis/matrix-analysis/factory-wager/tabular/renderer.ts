@@ -10,9 +10,9 @@ export function renderYAMLTable(rows: YAMLNode[], columns: ColumnConfig[]) {
     return color + col.name.padEnd(col.w, ' ') + "\x1b[0m";
   }).join(" │ ");
 
-  console.log("\n" + "─".repeat(160));
-  console.log(header);
-  console.log("─".repeat(160));
+  console.info("\n" + "─".repeat(160));
+  console.info(header);
+  console.info("─".repeat(160));
 
   let currentDoc = -1;
 
@@ -20,9 +20,9 @@ export function renderYAMLTable(rows: YAMLNode[], columns: ColumnConfig[]) {
     // Document Separator
     if (row.docIndex !== currentDoc) {
       currentDoc = row.docIndex;
-      console.log("─".repeat(160));
-      console.log(`${(Bun.color("hsl(220, 60%, 70%)") ?? "").toString()}📄 Document ${row.docIndex}\x1b[0m`);
-      console.log("─".repeat(160));
+      console.info("─".repeat(160));
+      console.info(`${(Bun.color("hsl(220, 60%, 70%)") ?? "").toString()}📄 Document ${row.docIndex}\x1b[0m`);
+      console.info("─".repeat(160));
     }
 
     const cells = columns.map(col => {
@@ -60,10 +60,10 @@ export function renderYAMLTable(rows: YAMLNode[], columns: ColumnConfig[]) {
       return col.align === "right" ? str.padStart(col.w) : str.padEnd(col.w);
     });
 
-    console.log(cells.join(" │ "));
+    console.info(cells.join(" │ "));
   });
 
-  console.log("─".repeat(160) + "\n");
+  console.info("─".repeat(160) + "\n");
 }
 
 function getStatusColor(status: string): string {
@@ -92,7 +92,7 @@ export function renderSummary(rows: YAMLNode[]) {
   const aliasCount = rows.filter(r => r.alias).length;
   const interpolatedCount = rows.filter(r => r.interpolated).length;
 
-  console.log(`📊 Summary: ${docCount} documents, ${rows.length} total nodes`);
-  console.log(`🔗 ${anchorCount} anchors, ${aliasCount} aliases resolved`);
-  console.log(`⚡ ${interpolatedCount} interpolated values detected`);
+  console.info(`📊 Summary: ${docCount} documents, ${rows.length} total nodes`);
+  console.info(`🔗 ${anchorCount} anchors, ${aliasCount} aliases resolved`);
+  console.info(`⚡ ${interpolatedCount} interpolated values detected`);
 }

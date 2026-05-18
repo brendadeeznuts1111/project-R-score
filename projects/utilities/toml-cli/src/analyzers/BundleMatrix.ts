@@ -64,7 +64,7 @@ export class BundleMatrixAnalyzer {
       verbose = false
     } = options;
 
-    if (verbose) console.log("🔍 Starting bundle analysis...");
+    if (verbose) console.info("🔍 Starting bundle analysis...");
 
     // 1. Build with Bun
     const buildResult = await this.buildBundle(entryPoints, {
@@ -369,44 +369,44 @@ export class BundleMatrixAnalyzer {
    * Print formatted report
    */
   private static printReport(matrix: BundleMatrix): void {
-    console.log("\n" + "=".repeat(60));
-    console.log("📦 BUNDLE ANALYSIS REPORT");
-    console.log("=".repeat(60));
+    console.info("\n" + "=".repeat(60));
+    console.info("📦 BUNDLE ANALYSIS REPORT");
+    console.info("=".repeat(60));
 
-    console.log(`\n⏰ ${matrix.timestamp}`);
-    console.log(`🎯 Target: ${matrix.target}`);
+    console.info(`\n⏰ ${matrix.timestamp}`);
+    console.info(`🎯 Target: ${matrix.target}`);
 
-    console.log("\n📊 METRICS");
-    console.log("-".repeat(60));
-    console.log(`  Total Size:        ${this.formatBytes(matrix.summary.totalSize)}`);
-    console.log(`  Gzipped Size:      ${this.formatBytes(matrix.summary.gzippedSize)}`);
-    console.log(`  File Count:        ${matrix.summary.fileCount}`);
-    console.log(`  Avg File Size:     ${this.formatBytes(matrix.summary.avgFileSize)}`);
-    console.log(`  Bundle Health:     ${matrix.summary.bundleHealth}/100`);
+    console.info("\n📊 METRICS");
+    console.info("-".repeat(60));
+    console.info(`  Total Size:        ${this.formatBytes(matrix.summary.totalSize)}`);
+    console.info(`  Gzipped Size:      ${this.formatBytes(matrix.summary.gzippedSize)}`);
+    console.info(`  File Count:        ${matrix.summary.fileCount}`);
+    console.info(`  Avg File Size:     ${this.formatBytes(matrix.summary.avgFileSize)}`);
+    console.info(`  Bundle Health:     ${matrix.summary.bundleHealth}/100`);
 
-    console.log("\n🏆 TOP 5 LARGEST FILES");
-    console.log("-".repeat(60));
+    console.info("\n🏆 TOP 5 LARGEST FILES");
+    console.info("-".repeat(60));
     matrix.summary.largestFiles.forEach((file, i) => {
-      console.log(`  ${i + 1}. ${file.path}`);
-      console.log(`     Size: ${this.formatBytes(file.size)}`);
-      console.log(`     Imports: ${file.imports.length}`);
+      console.info(`  ${i + 1}. ${file.path}`);
+      console.info(`     Size: ${this.formatBytes(file.size)}`);
+      console.info(`     Imports: ${file.imports.length}`);
     });
 
-    console.log("\n✅ COMPLIANCE CHECKS");
-    console.log("-".repeat(60));
+    console.info("\n✅ COMPLIANCE CHECKS");
+    console.info("-".repeat(60));
     matrix.compliance.forEach(check => {
       const icon = check.passed ? "✓" : "✗";
-      console.log(`  ${icon} ${check.rule}`);
-      console.log(`    ${check.details}`);
+      console.info(`  ${icon} ${check.rule}`);
+      console.info(`    ${check.details}`);
     });
 
-    console.log("\n💡 RECOMMENDATIONS");
-    console.log("-".repeat(60));
+    console.info("\n💡 RECOMMENDATIONS");
+    console.info("-".repeat(60));
     matrix.recommendations.forEach(rec => {
-      console.log(`  • ${rec}`);
+      console.info(`  • ${rec}`);
     });
 
-    console.log("\n" + "=".repeat(60) + "\n");
+    console.info("\n" + "=".repeat(60) + "\n");
   }
 
   /**
@@ -450,7 +450,7 @@ export class BundleMatrixAnalyzer {
     filepath: string = "./bundle-metrics.json"
   ): Promise<void> {
     await Bun.write(filepath, JSON.stringify(matrix, null, 2));
-    console.log(`✓ Metrics exported to ${filepath}`);
+    console.info(`✓ Metrics exported to ${filepath}`);
   }
 
   /**

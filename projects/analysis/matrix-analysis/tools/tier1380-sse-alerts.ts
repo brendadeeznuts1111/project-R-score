@@ -249,7 +249,7 @@ class AlertStreamManager {
 
 	addClient(client: SSEClient) {
 		this.clients.set(client.id, client);
-		console.log(
+		console.info(
 			`${GLYPHS.CONNECT} Client ${client.id.slice(0, 8)} connected on port ${this.config.port} (${this.clients.size} total)`,
 		);
 		this.sendToClient(client.id, {
@@ -263,7 +263,7 @@ class AlertStreamManager {
 	removeClient(id: string) {
 		if (this.clients.has(id)) {
 			this.clients.delete(id);
-			console.log(
+			console.info(
 				`${GLYPHS.DISCONNECT} Client ${id.slice(0, 8)} disconnected (${this.clients.size} remaining)`,
 			);
 		}
@@ -305,7 +305,7 @@ class AlertStreamManager {
 	}
 
 	private async redisBroadcast(alert: ViolationAlert) {
-		console.log(
+		console.info(
 			`${GLYPHS.BROADCAST} Redis: tier1380:violations:live (${alert.tenant}, port ${this.config.port})`,
 		);
 	}
@@ -371,29 +371,29 @@ async function startSSEServer(config: Partial<SSEServerConfig> = {}) {
 	const mergedConfig: SSEServerConfig = { ...DEFAULT_CONFIG, ...config };
 	const { port } = mergedConfig;
 
-	console.log(`${GLYPHS.STREAM} Tier-1380 SSE Alert Server v2.0\n`);
-	console.log("-".repeat(70));
+	console.info(`${GLYPHS.STREAM} Tier-1380 SSE Alert Server v2.0\n`);
+	console.info("-".repeat(70));
 
 	// Type Properties Display
-	console.log(`${GLYPHS.TYPE} Type Properties:\n`);
-	console.log(
+	console.info(`${GLYPHS.TYPE} Type Properties:\n`);
+	console.info(
 		`  ViolationAlert:   { id, timestamp, tenant, file, line, width, preview, severity, meta? }`,
 	);
-	console.log(
+	console.info(
 		`  SSEClient:        { id, writer, tenant, connectedAt, filters?, sessionId? }`,
 	);
-	console.log(`  AlertFilters:     { minWidth?, severity?, filePattern? }`);
-	console.log(`  SSEServerConfig:  { port, socket?, development?, error? }`);
-	console.log();
+	console.info(`  AlertFilters:     { minWidth?, severity?, filePattern? }`);
+	console.info(`  SSEServerConfig:  { port, socket?, development?, error? }`);
+	console.info();
 
 	// Port Configuration Display
-	console.log(`${GLYPHS.PORT} Port Configuration:\n`);
-	console.log(`  Primary Port:     ${port} (HTTP/SSE)`);
-	console.log(
+	console.info(`${GLYPHS.PORT} Port Configuration:\n`);
+	console.info(`  Primary Port:     ${port} (HTTP/SSE)`);
+	console.info(
 		`  Socket Options:   reusePort=${mergedConfig.socket?.reusePort}, keepAlive=${mergedConfig.socket?.keepAlive}`,
 	);
-	console.log(`  Development:      ${mergedConfig.development}`);
-	console.log();
+	console.info(`  Development:      ${mergedConfig.development}`);
+	console.info();
 
 	const alertManager = new AlertStreamManager(mergedConfig);
 
@@ -583,27 +583,27 @@ async function startSSEServer(config: Partial<SSEServerConfig> = {}) {
 	});
 
 	// Display endpoints with cross-references
-	console.log(`${GLYPHS.API} API Endpoints with Cross-References:\n`);
+	console.info(`${GLYPHS.API} API Endpoints with Cross-References:\n`);
 	Object.entries(API_REGISTRY).forEach(([key, endpoint]) => {
-		console.log(`  ${endpoint.method} ${endpoint.path}`);
-		console.log(`    ${endpoint.description}`);
+		console.info(`  ${endpoint.method} ${endpoint.path}`);
+		console.info(`    ${endpoint.description}`);
 		if (endpoint.crossRef) {
-			console.log(`    ↳ Cross-ref: ${endpoint.crossRef.join(", ")}`);
+			console.info(`    ↳ Cross-ref: ${endpoint.crossRef.join(", ")}`);
 		}
-		console.log();
+		console.info();
 	});
 
-	console.log(`${GLYPHS.CONNECT} Server running on port ${port}:\n`);
-	console.log(`  http://127.0.0.1:${port}/dashboard    → Live dashboard`);
-	console.log(`  http://127.0.0.1:${port}/api/registry  → API documentation`);
-	console.log(`  http://127.0.0.1:${port}/health       → Health + stats`);
+	console.info(`${GLYPHS.CONNECT} Server running on port ${port}:\n`);
+	console.info(`  http://127.0.0.1:${port}/dashboard    → Live dashboard`);
+	console.info(`  http://127.0.0.1:${port}/api/registry  → API documentation`);
+	console.info(`  http://127.0.0.1:${port}/health       → Health + stats`);
 
 	// Background tasks
 	setInterval(() => alertManager.pollForNewViolations(), 5000);
 	setInterval(() => alertManager.sendHeartbeat(), 30000);
 
 	process.on("SIGINT", () => {
-		console.log(`\n${GLYPHS.DISCONNECT} Stopping server on port ${port}...`);
+		console.info(`\n${GLYPHS.DISCONNECT} Stopping server on port ${port}...`);
 		server.stop();
 		process.exit(0);
 	});
@@ -703,13 +703,13 @@ async function main() {
 				body: JSON.stringify(testAlert),
 			});
 
-			console.log(await res.json());
+			console.info(await res.json());
 			break;
 		}
 
 		case "help":
 		default:
-			console.log(`
+			console.info(`
 ${GLYPHS.STREAM} Tier-1380 SSE Alert Server v2.0
 
 Usage:

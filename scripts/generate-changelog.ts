@@ -103,9 +103,9 @@ function generateEntry(version: string, categories: CommitCategories): string {
  * Main changelog function
  */
 async function main(): Promise<void> {
-  console.log("📝 Generating changelog...\n");
-  console.log(`   Registry: ${REGISTRY_URL}`);
-  console.log(`   R2 Store: ${R2_BUCKET_URL}\n`);
+  console.info("📝 Generating changelog...\n");
+  console.info(`   Registry: ${REGISTRY_URL}`);
+  console.info(`   R2 Store: ${R2_BUCKET_URL}\n`);
 
   // Get package version
   const pkg = await Bun.file("package.json").json();
@@ -122,7 +122,7 @@ async function main(): Promise<void> {
   }
 
   if (commits.length === 0) {
-    console.log("⚠️  No new commits found");
+    console.info("⚠️  No new commits found");
     return;
   }
 
@@ -155,14 +155,14 @@ async function main(): Promise<void> {
   ].join("\n");
 
   await Bun.write(CHANGELOG_FILE, updatedChangelog);
-  console.log(`✅ Updated ${CHANGELOG_FILE} with v${version}`);
-  console.log(`\n📝 Changes by category:`);
-  console.log(`   Features: ${categories.feat.length}`);
-  console.log(`   Fixes: ${categories.fix.length}`);
-  console.log(`   Docs: ${categories.docs.length}`);
-  console.log(`   Refactors: ${categories.refactor.length}`);
-  console.log(`   Tests: ${categories.test.length}`);
-  console.log(`   Chores: ${categories.chore.length}`);
+  console.info(`✅ Updated ${CHANGELOG_FILE} with v${version}`);
+  console.info(`\n📝 Changes by category:`);
+  console.info(`   Features: ${categories.feat.length}`);
+  console.info(`   Fixes: ${categories.fix.length}`);
+  console.info(`   Docs: ${categories.docs.length}`);
+  console.info(`   Refactors: ${categories.refactor.length}`);
+  console.info(`   Tests: ${categories.test.length}`);
+  console.info(`   Chores: ${categories.chore.length}`);
 }
 
 await main();

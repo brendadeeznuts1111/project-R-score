@@ -201,7 +201,7 @@ export class RiskManagementSystem {
     // Check for alerts
     await this.checkForAlerts(account, pattern, result);
 
-    console.log(`[RISK] Updated account ${account_id}: sharp=${account.sharp_score.toFixed(3)}, positions=${account.position_count}, exposure=${account.total_exposure}¢`);
+    console.info(`[RISK] Updated account ${account_id}: sharp=${account.sharp_score.toFixed(3)}, positions=${account.position_count}, exposure=${account.total_exposure}¢`);
   }
 
   /// Check velocity limits
@@ -448,7 +448,7 @@ export class RiskManagementSystem {
       }
     }
 
-    console.log(`[RISK-${event.severity.toUpperCase()}] ${event.description}`);
+    console.info(`[RISK-${event.severity.toUpperCase()}] ${event.description}`);
   }
 
   /// Register alert callback

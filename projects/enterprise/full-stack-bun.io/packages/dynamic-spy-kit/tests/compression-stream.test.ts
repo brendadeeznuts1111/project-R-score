@@ -32,7 +32,7 @@ test("25K markets compression - zstd vs gzip", async () => {
 	const gzipSize = gzipBuffer.length;
 	const gzipRatio = (gzipSize / rawSize) * 100;
 	
-	console.log(`
+	console.info(`
 📊 25K NBA markets:
 Raw:     ${(rawSize / 1024 / 1024).toFixed(2)}MB
 zstd:    ${zstdRatio.toFixed(1)}% (${(zstdSize / 1024 / 1024).toFixed(2)}MB) ⚡
@@ -107,9 +107,9 @@ test("Benchmark all compression formats", async () => {
 	expect(results.some(r => r.format === "gzip")).toBe(true);
 	
 	// Log results
-	console.log("\n📊 Compression Benchmark:");
+	console.info("\n📊 Compression Benchmark:");
 	results.forEach(r => {
-		console.log(`  ${r.format}: ${r.compressionRatio.toFixed(1)}% (${(r.compressedSize / 1024 / 1024).toFixed(2)}MB)`);
+		console.info(`  ${r.format}: ${r.compressionRatio.toFixed(1)}% (${(r.compressedSize / 1024 / 1024).toFixed(2)}MB)`);
 	});
 	
 	// All should compress significantly

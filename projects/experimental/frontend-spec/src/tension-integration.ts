@@ -37,7 +37,7 @@ export class TensionIntegration {
       this.setupEventListeners();
       this.startTensionSync();
       
-      console.log('🔗 Tension Engine Integration Active');
+      console.info('🔗 Tension Engine Integration Active');
     } catch (error) {
       console.warn('⚠️ Tension Engine unavailable, using fallback mode');
       this.startFallbackMode();
@@ -50,7 +50,7 @@ export class TensionIntegration {
       this.wsConnection = new WebSocket(wsUrl);
       
       this.wsConnection.onopen = () => {
-        console.log('🔌 Connected to Tension Engine');
+        console.info('🔌 Connected to Tension Engine');
         this.isConnected = true;
         resolve();
       };
@@ -66,7 +66,7 @@ export class TensionIntegration {
       };
       
       this.wsConnection.onclose = () => {
-        console.log('🔌 Tension Engine connection closed');
+        console.info('🔌 Tension Engine connection closed');
         this.isConnected = false;
         setTimeout(() => this.connectToTensionEngine(), 5000);
       };
@@ -396,7 +396,7 @@ export class TensionIntegration {
     const effect = fuelEffects[fuelType];
     if (effect) {
       effect();
-      console.log(`⚡ Direct fuel injection: ${fuelType}`);
+      console.info(`⚡ Direct fuel injection: ${fuelType}`);
     }
   }
 
@@ -442,7 +442,7 @@ export class TensionIntegration {
   }
 
   private startFallbackMode() {
-    console.log('🔄 Starting fallback tension simulation');
+    console.info('🔄 Starting fallback tension simulation');
     
     setInterval(() => {
       const mockTension = 0.1 + Math.random() * 0.8;

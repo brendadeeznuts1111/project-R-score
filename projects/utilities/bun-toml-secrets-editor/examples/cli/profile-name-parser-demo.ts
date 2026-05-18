@@ -2,8 +2,8 @@
 import { MatrixCLICommands } from "../../src/cli/commands";
 
 async function demonstrateProfileNameParser() {
-	console.log("🔍 Enhanced Profile Name Parser Demo");
-	console.log("=".repeat(50));
+	console.info("🔍 Enhanced Profile Name Parser Demo");
+	console.info("=".repeat(50));
 
 	const commands = new MatrixCLICommands();
 
@@ -26,17 +26,17 @@ async function demonstrateProfileNameParser() {
 		"production_api_web", // underscore test
 	];
 
-	console.log("🎯 Individual Profile Analysis:");
-	console.log("");
+	console.info("🎯 Individual Profile Analysis:");
+	console.info("");
 
 	for (const profileName of testProfiles) {
-		console.log(`🔸 Analyzing: ${profileName}`);
+		console.info(`🔸 Analyzing: ${profileName}`);
 		commands.analyzeProfileName(profileName);
-		console.log(`\n${"-".repeat(60)}\n`);
+		console.info(`\n${"-".repeat(60)}\n`);
 	}
 
 	// Create some demo profile files for listing
-	console.log("📁 Creating demo profile files for listing test...");
+	console.info("📁 Creating demo profile files for listing test...");
 
 	const { writeFileSync, mkdirSync } = await import("node:fs");
 
@@ -78,10 +78,10 @@ async function demonstrateProfileNameParser() {
 			);
 		});
 
-		console.log("✅ Demo profile files created");
+		console.info("✅ Demo profile files created");
 
 		// Test the list functionality
-		console.log("\n📋 Profile List Analysis:");
+		console.info("\n📋 Profile List Analysis:");
 		await commands.listProfiles();
 	} catch (error) {
 		console.error(
@@ -90,40 +90,40 @@ async function demonstrateProfileNameParser() {
 		);
 	}
 
-	console.log("\n🎯 Profile Name Best Practices:");
-	console.log("");
-	console.log("✅ Recommended Format: <environment>-<project>-<purpose>");
-	console.log("");
-	console.log("📝 Examples:");
-	console.log("   • production-api-web");
-	console.log("   • staging-auth-service");
-	console.log("   • development-worker-queue");
-	console.log("   • testing-analytics-pipeline");
-	console.log("   • local-frontend-react");
-	console.log("");
-	console.log(
+	console.info("\n🎯 Profile Name Best Practices:");
+	console.info("");
+	console.info("✅ Recommended Format: <environment>-<project>-<purpose>");
+	console.info("");
+	console.info("📝 Examples:");
+	console.info("   • production-api-web");
+	console.info("   • staging-auth-service");
+	console.info("   • development-worker-queue");
+	console.info("   • testing-analytics-pipeline");
+	console.info("   • local-frontend-react");
+	console.info("");
+	console.info(
 		"🌍 Environments: production, prod, staging, stage, development, dev, testing, local",
 	);
-	console.log(
+	console.info(
 		"🏷️  Projects: descriptive project names (api, auth, payment, user, etc.)",
 	);
-	console.log(
+	console.info(
 		"🎯 Purposes: web, service, worker, queue, pipeline, react, etc.",
 	);
-	console.log("");
-	console.log("⚠️  Avoid:");
-	console.log("   • Uppercase letters: PRODUCTION-API-WEB ❌");
-	console.log("   • Underscores: production_api_web ❌");
-	console.log("   • Generic names: my-app, production ❌");
-	console.log(
+	console.info("");
+	console.info("⚠️  Avoid:");
+	console.info("   • Uppercase letters: PRODUCTION-API-WEB ❌");
+	console.info("   • Underscores: production_api_web ❌");
+	console.info("   • Generic names: my-app, production ❌");
+	console.info(
 		"   • Missing components: dev-auth ❌ (should be dev-auth-service)",
 	);
 
-	console.log("\n✅ Profile Name Parser Demo Completed!");
-	console.log("\n🎯 Available Commands:");
-	console.log("   bun run matrix:profile:analyze <profile-name>");
-	console.log("   bun run matrix:profile:list");
-	console.log("   bun run matrix:profile:use <profile-name> --validate-rules");
+	console.info("\n✅ Profile Name Parser Demo Completed!");
+	console.info("\n🎯 Available Commands:");
+	console.info("   bun run matrix:profile:analyze <profile-name>");
+	console.info("   bun run matrix:profile:list");
+	console.info("   bun run matrix:profile:use <profile-name> --validate-rules");
 }
 
 // Run the demo

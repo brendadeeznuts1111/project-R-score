@@ -27,7 +27,7 @@ interface EmailLog {
 
 export default {
   async email(message: EmailMessage, env: any) {
-    console.log(`📧 Logging email from: ${message.from} to: ${message.to}`);
+    console.info(`📧 Logging email from: ${message.from} to: ${message.to}`);
 
     try {
       const emailLog: EmailLog = {
@@ -55,7 +55,7 @@ export default {
       // Check for security threats
       await analyzeSecurityThreats(emailLog, env);
 
-      console.log(`✅ Email logged: ${emailLog.id}`);
+      console.info(`✅ Email logged: ${emailLog.id}`);
     } catch (error) {
       console.error(`❌ Error logging email:`, error);
 

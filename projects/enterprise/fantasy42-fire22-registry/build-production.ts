@@ -43,7 +43,7 @@ const PRODUCTION_CONFIG = {
 // ============================================================================
 
 async function buildProductionBundle(): Promise<void> {
-  console.log('🏗️ Building production bundle with Bun AOT...');
+  console.info('🏗️ Building production bundle with Bun AOT...');
 
   try {
     const result = await Bun.build(PRODUCTION_CONFIG);
@@ -56,13 +56,13 @@ async function buildProductionBundle(): Promise<void> {
       process.exit(1);
     }
 
-    console.log('✅ Production bundle built successfully!');
-    console.log(`📦 Bundle size: ${result.outputs.length} files`);
-    console.log(`📁 Output directory: ${PRODUCTION_CONFIG.outdir}`);
+    console.info('✅ Production bundle built successfully!');
+    console.info(`📦 Bundle size: ${result.outputs.length} files`);
+    console.info(`📁 Output directory: ${PRODUCTION_CONFIG.outdir}`);
 
     // Log bundle details
     for (const output of result.outputs) {
-      console.log(`   ${output.path} (${(output.size / 1024).toFixed(1)}KB)`);
+      console.info(`   ${output.path} (${(output.size / 1024).toFixed(1)}KB)`);
     }
   } catch (error) {
     console.error('❌ Build failed:', error);
@@ -89,9 +89,9 @@ class ProductionOptimizedServer {
   }
 
   async start(port: number = APPLICATION_CONSTANTS.DEFAULT_PORT): Promise<void> {
-    console.log('🚀 Starting Production-Optimized Server...');
-    console.log(`📊 Database: ${process.env.DATABASE_URL || './registry-production.db'}`);
-    console.log(`🌐 Port: ${port}`);
+    console.info('🚀 Starting Production-Optimized Server...');
+    console.info(`📊 Database: ${process.env.DATABASE_URL || './registry-production.db'}`);
+    console.info(`🌐 Port: ${port}`);
 
     // Pre-bundle critical assets
     await this.preBundleAssets();
@@ -128,14 +128,14 @@ class ProductionOptimizedServer {
           try {
             const data = JSON.parse(message.toString());
             // Handle real-time package updates with production optimizations
-            console.log('📡 WS:', data.type);
+            console.info('📡 WS:', data.type);
           } catch (error) {
             ws.send(JSON.stringify({ error: 'Invalid message format' }));
           }
         },
 
         open(ws) {
-          console.log('📡 WebSocket connected (production mode)');
+          console.info('📡 WebSocket connected (production mode)');
           ws.send(
             JSON.stringify({
               type: 'connected',
@@ -146,7 +146,7 @@ class ProductionOptimizedServer {
         },
 
         close(ws, code, reason) {
-          console.log('📡 WebSocket disconnected:', code);
+          console.info('📡 WebSocket disconnected:', code);
         },
       },
 
@@ -160,17 +160,17 @@ class ProductionOptimizedServer {
       },
     });
 
-    console.log(`✅ Production-Optimized Server running at http://localhost:${port}`);
-    console.log(`🎯 Production optimizations enabled:`);
-    console.log(`   • Runtime bundling with in-memory caching`);
-    console.log(`   • Cache-Control and ETag headers`);
-    console.log(`   • Minified JavaScript/TypeScript`);
-    console.log(`   • Hardware-accelerated HTTP parsing`);
-    console.log(`   • Optimized database connections`);
+    console.info(`✅ Production-Optimized Server running at http://localhost:${port}`);
+    console.info(`🎯 Production optimizations enabled:`);
+    console.info(`   • Runtime bundling with in-memory caching`);
+    console.info(`   • Cache-Control and ETag headers`);
+    console.info(`   • Minified JavaScript/TypeScript`);
+    console.info(`   • Hardware-accelerated HTTP parsing`);
+    console.info(`   • Optimized database connections`);
   }
 
   private async preBundleAssets(): Promise<void> {
-    console.log('📦 Pre-bundling critical assets...');
+    console.info('📦 Pre-bundling critical assets...');
 
     try {
       // Bundle the HTML interface
@@ -188,7 +188,7 @@ class ProductionOptimizedServer {
         },
       });
 
-      console.log('✅ Critical assets pre-bundled');
+      console.info('✅ Critical assets pre-bundled');
     } catch (error) {
       console.error('❌ Asset pre-bundling failed:', error);
     }
@@ -330,7 +330,7 @@ CMD ["bun", "run", "src/production-server.ts"]
 `;
 
   await Bun.write('./Dockerfile.production', dockerfile);
-  console.log('🐳 Production Dockerfile created');
+  console.info('🐳 Production Dockerfile created');
 }
 
 async function createNginxConfig(): Promise<void> {
@@ -424,7 +424,7 @@ server {
 `;
 
   await Bun.write('./nginx.production.conf', nginxConfig);
-  console.log('🌐 Production Nginx configuration created');
+  console.info('🌐 Production Nginx configuration created');
 }
 
 async function createDeploymentScripts(): Promise<void> {
@@ -478,7 +478,7 @@ fi
   await Bun.write('./health-check.sh', healthCheckScript);
   await Bun.spawn(['chmod', '+x', './health-check.sh']);
 
-  console.log('📜 Production deployment scripts created');
+  console.info('📜 Production deployment scripts created');
 }
 
 // ============================================================================
@@ -490,42 +490,42 @@ async function main(): Promise<void> {
 
   switch (command) {
     case 'build':
-      console.log('🏗️ Building production bundle...');
+      console.info('🏗️ Building production bundle...');
       await buildProductionBundle();
       break;
 
     case 'docker':
-      console.log('🐳 Creating production Docker setup...');
+      console.info('🐳 Creating production Docker setup...');
       await createDockerfile();
       break;
 
     case 'nginx':
-      console.log('🌐 Creating production Nginx configuration...');
+      console.info('🌐 Creating production Nginx configuration...');
       await createNginxConfig();
       break;
 
     case 'deploy':
-      console.log('📜 Creating deployment scripts...');
+      console.info('📜 Creating deployment scripts...');
       await createDeploymentScripts();
       break;
 
     case 'all':
-      console.log('🚀 Creating complete production setup...');
+      console.info('🚀 Creating complete production setup...');
       await buildProductionBundle();
       await createDockerfile();
       await createNginxConfig();
       await createDeploymentScripts();
-      console.log('✅ Complete production setup created!');
+      console.info('✅ Complete production setup created!');
       break;
 
     default:
-      console.log('Usage: bun run build-production.ts [command]');
-      console.log('Commands:');
-      console.log('  build   - Build production bundle');
-      console.log('  docker  - Create Docker configuration');
-      console.log('  nginx   - Create Nginx configuration');
-      console.log('  deploy  - Create deployment scripts');
-      console.log('  all     - Create complete production setup');
+      console.info('Usage: bun run build-production.ts [command]');
+      console.info('Commands:');
+      console.info('  build   - Build production bundle');
+      console.info('  docker  - Create Docker configuration');
+      console.info('  nginx   - Create Nginx configuration');
+      console.info('  deploy  - Create deployment scripts');
+      console.info('  all     - Create complete production setup');
       break;
   }
 }

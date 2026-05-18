@@ -633,7 +633,7 @@ export function useGlobalShortcuts(options: UseGlobalShortcutsOptions = {}) {
 
     const { result } = buildShortcutMap();
 
-    console.log(
+    console.info(
       `[useGlobalShortcuts] Bound ${result.bound}/${result.total} shortcuts in ${result.bindTimeMs}ms (${result.platform})`
     );
 

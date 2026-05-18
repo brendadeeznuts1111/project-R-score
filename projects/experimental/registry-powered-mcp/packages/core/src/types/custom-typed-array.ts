@@ -23,7 +23,7 @@
  * oddsBuffer[0] = 2.5;  // Store odds as 64-bit float
  *
  * // Depth-aware inspection works on all types
- * console.log(oddsBuffer);  // CustomFloat64Array(100) [ 2.5, 0, 0, ... ]
+ * console.info(oddsBuffer);  // CustomFloat64Array(100) [ 2.5, 0, 0, ... ]
  * ```
  *
  * @module types/custom-typed-array

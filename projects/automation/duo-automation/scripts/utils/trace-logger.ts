@@ -13,8 +13,8 @@ async function main() {
     process.exit(1);
   }
 
-  console.log("\x1b[36m[EMPIRE PRO] Live Trace Logger Active\x1b[0m");
-  console.log("--- Tail-style tracing of system events ---\n");
+  console.info("\x1b[36m[EMPIRE PRO] Live Trace Logger Active\x1b[0m");
+  console.info("--- Tail-style tracing of system events ---\n");
 
   const components = ['AUTH-FLOW', 'R2-UPLOAD', 'DOMAIN-RELOAD', 'SMS-GATEWAY', 'PTY-FACTORY'];
   const levels = [
@@ -29,11 +29,11 @@ async function main() {
     const lvl = levels[Math.floor(Math.random() * levels.length)];
     const requestId = Math.random().toString(36).substring(7).toUpperCase();
     
-    console.log(`${lvl.color}${lvl.label}\x1b[0m [${timestamp}] [${requestId}] ${component.padEnd(15)}: Integrated event propagation`);
+    console.info(`${lvl.color}${lvl.label}\x1b[0m [${timestamp}] [${requestId}] ${component.padEnd(15)}: Integrated event propagation`);
   }, 800);
 
   process.on('SIGINT', () => {
-    console.log("\n🛑 Logger stopping...");
+    console.info("\n🛑 Logger stopping...");
     process.exit(0);
   });
 }

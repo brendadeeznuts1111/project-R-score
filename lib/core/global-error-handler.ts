@@ -116,7 +116,7 @@ export class GlobalErrorHandler {
     process.on('SIGINT', () => this.handleSignal('SIGINT'));
     process.on('SIGTERM', () => this.handleSignal('SIGTERM'));
 
-    console.log('✅ Global error handling initialized');
+    console.info('✅ Global error handling initialized');
   }
 
   /**
@@ -226,7 +226,7 @@ export class GlobalErrorHandler {
    * Handle shutdown signals
    */
   private handleSignal(signal: string): void {
-    console.log(`\n📡 Received ${signal}, starting graceful shutdown...`);
+    console.info(`\n📡 Received ${signal}, starting graceful shutdown...`);
     this.gracefulShutdown(0);
   }
 
@@ -248,7 +248,7 @@ export class GlobalErrorHandler {
 
     try {
       // Run all shutdown handlers
-      console.log(`🔄 Running ${this.shutdownHandlers.length} shutdown handlers...`);
+      console.info(`🔄 Running ${this.shutdownHandlers.length} shutdown handlers...`);
       
       for (const handler of this.shutdownHandlers) {
         try {
@@ -258,7 +258,7 @@ export class GlobalErrorHandler {
         }
       }
 
-      console.log('✅ Graceful shutdown complete');
+      console.info('✅ Graceful shutdown complete');
     } catch (error) {
       console.error('Error during graceful shutdown:', error);
     } finally {
@@ -348,8 +348,8 @@ export function getGlobalErrorStatistics(): ReturnType<GlobalErrorHandler['getSt
 
 // Entry guard for testing
 if (import.meta.main) {
-  console.log('🧪 Global Error Handler Test Mode');
-  console.log('=================================\n');
+  console.info('🧪 Global Error Handler Test Mode');
+  console.info('=================================\n');
 
   initializeGlobalErrorHandling({
     exitOnUncaughtException: false,
@@ -359,12 +359,12 @@ if (import.meta.main) {
 
   // Register test shutdown handler
   onShutdown(async () => {
-    console.log('📝 Test shutdown handler executed');
+    console.info('📝 Test shutdown handler executed');
     await Bun.sleep(100);
   });
 
-  console.log('Global error handler initialized. Stats:');
-  console.log(getGlobalErrorStatistics());
+  console.info('Global error handler initialized. Stats:');
+  console.info(getGlobalErrorStatistics());
 
-  console.log('\nTest complete. Press Ctrl+C to test shutdown handlers.');
+  console.info('\nTest complete. Press Ctrl+C to test shutdown handlers.');
 }

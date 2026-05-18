@@ -166,7 +166,7 @@ interface Console {
      */
     info(...data: any[]): void;
     /**
-     * The **`console.log()`** static method outputs a message to the console.
+     * The **`console.info()`** static method outputs a message to the console.
      *
      * [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/log_static)
      */

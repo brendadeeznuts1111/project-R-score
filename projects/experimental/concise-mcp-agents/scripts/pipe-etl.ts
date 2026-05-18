@@ -13,10 +13,10 @@ const OUTPUT_FILE = process.argv[4] || "data/processed-bets.jsonl";
 
 async function pipeETL() {
   try {
-    console.log(`🔄 Starting ETL pipeline: ${API_URL} → jq '${JQ_FILTER}' → ${OUTPUT_FILE}`);
+    console.info(`🔄 Starting ETL pipeline: ${API_URL} → jq '${JQ_FILTER}' → ${OUTPUT_FILE}`);
 
     // Step 1: Fetch data stream
-    console.log(`📡 Fetching from: ${API_URL}`);
+    console.info(`📡 Fetching from: ${API_URL}`);
     const response = await fetch(API_URL);
 
     if (!response.ok) {
@@ -30,7 +30,7 @@ async function pipeETL() {
     }
 
     // Step 2: Pipe through jq for transformation
-    console.log(`🔧 Processing with jq: ${JQ_FILTER}`);
+    console.info(`🔧 Processing with jq: ${JQ_FILTER}`);
     const jqProcess = Bun.spawn(['jq', '-c', JQ_FILTER], {
       stdin: jsonStream,
       stdout: 'pipe',
@@ -38,7 +38,7 @@ async function pipeETL() {
     });
 
     // Step 3: Collect and append results
-    console.log(`💾 Appending to: ${OUTPUT_FILE}`);
+    console.info(`💾 Appending to: ${OUTPUT_FILE}`);
 
     // Ensure output directory exists
     await Bun.mkdir('data', { recursive: true });
@@ -97,8 +97,8 @@ async function pipeETL() {
       await Bun.write(OUTPUT_FILE, content);
     }
 
-    console.log(`✅ ETL complete: ${lineCount} records processed`);
-    console.log(`📊 Output: ${outputLines.length} lines appended to ${OUTPUT_FILE}`);
+    console.info(`✅ ETL complete: ${lineCount} records processed`);
+    console.info(`📊 Output: ${outputLines.length} lines appended to ${OUTPUT_FILE}`);
 
     return {
       processed: lineCount,

@@ -226,7 +226,7 @@ function checkAlerts() {
     )) {
       metrics.alerts.push(alert);
       if (process.env.DEBUG === '1') {
-        console.log(`🚨 ALERT [${alert.type.toUpperCase()}]: ${alert.message}`);
+        console.info(`🚨 ALERT [${alert.type.toUpperCase()}]: ${alert.message}`);
       }
     }
   });
@@ -421,22 +421,22 @@ setInterval(() => {
   metrics.satisfaction = metrics.satisfaction.filter(s => s.timestamp >= cutoff);
   
   if (process.env.DEBUG === '1') {
-    console.log(`📊 Metrics: ${metrics.requests.length} requests, ${metrics.errors.length} errors, ${metrics.alerts.length} alerts`);
+    console.info(`📊 Metrics: ${metrics.requests.length} requests, ${metrics.errors.length} errors, ${metrics.alerts.length} alerts`);
   }
 }, MONITORING_CONFIG.checkInterval);
 
 const MONITORING_SERVICE_HOST = process.env.MONITORING_SERVICE_HOST || process.env.SERVER_HOST || 'localhost';
-console.log(`📊 Monitoring Service running on http://${MONITORING_SERVICE_HOST}:${MONITORING_SERVICE_PORT}`);
-console.log('Endpoints:');
-console.log('  GET  /health - Health check');
-console.log('  GET  /metrics - Current metrics');
-console.log('  POST /track - Track request metrics');
-console.log('  POST /redirect - Track redirect metrics');
-console.log('  POST /satisfaction - Track user satisfaction');
-console.log('  POST /feature-flags - Update feature flags');
-console.log('  GET  /alerts - Get recent alerts');
-console.log('  GET  /dashboard - Dashboard data');
-console.log(`📈 Monitoring every ${MONITORING_CONFIG.checkInterval / 1000}s with ${MONITORING_CONFIG.metricsWindow / 1000}s window`);
+console.info(`📊 Monitoring Service running on http://${MONITORING_SERVICE_HOST}:${MONITORING_SERVICE_PORT}`);
+console.info('Endpoints:');
+console.info('  GET  /health - Health check');
+console.info('  GET  /metrics - Current metrics');
+console.info('  POST /track - Track request metrics');
+console.info('  POST /redirect - Track redirect metrics');
+console.info('  POST /satisfaction - Track user satisfaction');
+console.info('  POST /feature-flags - Update feature flags');
+console.info('  GET  /alerts - Get recent alerts');
+console.info('  GET  /dashboard - Dashboard data');
+console.info(`📈 Monitoring every ${MONITORING_CONFIG.checkInterval / 1000}s with ${MONITORING_CONFIG.metricsWindow / 1000}s window`);
 
 /**
  * 💡 Performance Tip: For better performance, consider:

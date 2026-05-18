@@ -28,10 +28,10 @@ class RSSFeedMonitor {
    * [1.1.0.0] Start monitoring
    */
   async start(): Promise<void> {
-    console.log(`\n📡 Starting RSS Monitor`);
-    console.log(`   URL: ${this.url}`);
-    console.log(`   Interval: ${this.interval}ms`);
-    console.log(`${"─".repeat(50)}\n`);
+    console.info(`\n📡 Starting RSS Monitor`);
+    console.info(`   URL: ${this.url}`);
+    console.info(`   Interval: ${this.interval}ms`);
+    console.info(`${"─".repeat(50)}\n`);
 
     // Initial fetch
     await this.checkFeed();
@@ -50,7 +50,7 @@ class RSSFeedMonitor {
       this.updateCount++;
 
       const timestamp = new Date().toLocaleTimeString();
-      console.log(`\n[${timestamp}] Check #${this.updateCount}`);
+      console.info(`\n[${timestamp}] Check #${this.updateCount}`);
 
       if (!this.previousFeed) {
         // First fetch
@@ -71,13 +71,13 @@ class RSSFeedMonitor {
    * @private
    */
   private reportNewFeed(feed: RSSFeed): void {
-    console.log(`✅ Feed loaded: ${feed.title}`);
-    console.log(`   Items: ${feed.items.length}`);
+    console.info(`✅ Feed loaded: ${feed.title}`);
+    console.info(`   Items: ${feed.items.length}`);
 
     // Show first 3 items
     for (let i = 0; i < Math.min(3, feed.items.length); i++) {
       const item = feed.items[i];
-      console.log(`   • ${item.title}`);
+      console.info(`   • ${item.title}`);
     }
   }
 
@@ -100,18 +100,18 @@ class RSSFeedMonitor {
     ).length;
 
     if (newItems.length > 0) {
-      console.log(`✨ New items: ${newItems.length}`);
+      console.info(`✨ New items: ${newItems.length}`);
       for (const item of newItems.slice(0, 3)) {
-        console.log(`   • ${item.title}`);
+        console.info(`   • ${item.title}`);
       }
     }
 
     if (removedCount > 0) {
-      console.log(`🗑️  Removed items: ${removedCount}`);
+      console.info(`🗑️  Removed items: ${removedCount}`);
     }
 
     if (newItems.length === 0 && removedCount === 0) {
-      console.log(`ℹ️  No changes`);
+      console.info(`ℹ️  No changes`);
     }
 
     // Analyze content changes
@@ -135,10 +135,10 @@ class RSSFeedMonitor {
 
     if (comparison.commonTokens.length > 0) {
       const topCommon = comparison.commonTokens.slice(0, 5);
-      console.log(`   Common keywords: ${topCommon.join(", ")}`);
+      console.info(`   Common keywords: ${topCommon.join(", ")}`);
     }
 
-    console.log(
+    console.info(
       `   Similarity: ${(comparison.jaccardSimilarity * 100).toFixed(1)}%`,
     );
   }
@@ -149,8 +149,8 @@ class RSSFeedMonitor {
  * Analyze multiple feeds simultaneously
  */
 async function batchAnalysis(): Promise<void> {
-  console.log("\n📊 [2.0.0.0] Batch Feed Analysis");
-  console.log("─".repeat(50));
+  console.info("\n📊 [2.0.0.0] Batch Feed Analysis");
+  console.info("─".repeat(50));
 
   const feeds = [
     "https://bun.com/rss.xml",
@@ -162,7 +162,7 @@ async function batchAnalysis(): Promise<void> {
 
   for (const feedUrl of feeds) {
     try {
-      console.log(`\n📡 Analyzing: ${feedUrl}`);
+      console.info(`\n📡 Analyzing: ${feedUrl}`);
 
       const feed = await scraper.fetch(feedUrl);
       const content = feed.items
@@ -175,9 +175,9 @@ async function batchAnalysis(): Promise<void> {
         5,
       );
 
-      console.log(`   Items: ${feed.items.length}`);
-      console.log(`   Unique Tokens: ${analysis.uniqueCount}`);
-      console.log(`   Top Patterns: ${patterns.join(", ")}`);
+      console.info(`   Items: ${feed.items.length}`);
+      console.info(`   Unique Tokens: ${analysis.uniqueCount}`);
+      console.info(`   Top Patterns: ${patterns.join(", ")}`);
     } catch (error) {
       console.error(`   ❌ Error: ${(error as Error).message}`);
     }
@@ -189,8 +189,8 @@ async function batchAnalysis(): Promise<void> {
  * Detect trending topics over time
  */
 async function trendDetection(): Promise<void> {
-  console.log("\n📈 [3.0.0.0] Trend Detection");
-  console.log("─".repeat(50));
+  console.info("\n📈 [3.0.0.0] Trend Detection");
+  console.info("─".repeat(50));
 
   const scraper = new RSSScraper({ maxItems: 20 });
   const matcher = new TokenMatcher();
@@ -211,12 +211,12 @@ async function trendDetection(): Promise<void> {
       itemsByDate.get(date)!.push(content);
     }
 
-    console.log(`✅ Trend Analysis:`);
+    console.info(`✅ Trend Analysis:`);
 
     for (const [date, contents] of itemsByDate) {
       const patterns = matcher.findPatterns(contents, 3);
-      console.log(`\n   ${date}:`);
-      console.log(`   Topics: ${patterns.join(", ")}`);
+      console.info(`\n   ${date}:`);
+      console.info(`   Topics: ${patterns.join(", ")}`);
     }
   } catch (error) {
     console.error(`❌ Error: ${(error as Error).message}`);

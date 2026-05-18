@@ -433,7 +433,7 @@ class EnhancedQuestRouter {
     // Send notification
     await this.sendSavingsNotification(familyId, amount, depositDate);
     
-    console.log(`Savings deposit processed: $${amount} for family ${familyId}`);
+    console.info(`Savings deposit processed: $${amount} for family ${familyId}`);
   }
 
   /**
@@ -492,7 +492,7 @@ class EnhancedQuestRouter {
    * Placeholder methods for database operations
    */
   private async saveQuest(quest: any): Promise<void> {
-    console.log(`Saving quest: ${quest.id}`);
+    console.info(`Saving quest: ${quest.id}`);
   }
 
   private async getQuestStatus(questId: string): Promise<any> {
@@ -514,31 +514,31 @@ class EnhancedQuestRouter {
   }
 
   private async updateFamilySavingsConfig(familyId: string, percentage: number): Promise<void> {
-    console.log(`Updated savings config for family ${familyId}: ${percentage * 100}%`);
+    console.info(`Updated savings config for family ${familyId}: ${percentage * 100}%`);
   }
 
   private async updateFamilySavings(familyId: string, amount: number): Promise<void> {
-    console.log(`Updated savings for family ${familyId}: +$${amount}`);
+    console.info(`Updated savings for family ${familyId}: +$${amount}`);
   }
 
   private async sendSavingsNotification(familyId: string, amount: number, date: string): Promise<void> {
-    console.log(`Sent savings notification to family ${familyId}: $${amount} on ${date}`);
+    console.info(`Sent savings notification to family ${familyId}: $${amount} on ${date}`);
   }
 
   private async processCashAppPayment(data: any): Promise<void> {
-    console.log(`Processed Cash App payment:`, data);
+    console.info(`Processed Cash App payment:`, data);
   }
 
   private async handleCashAppPaymentFailure(data: any): Promise<void> {
-    console.log(`Cash App payment failed:`, data);
+    console.info(`Cash App payment failed:`, data);
   }
 
   private async processVenmoPayment(data: any): Promise<void> {
-    console.log(`Processed Venmo payment:`, data);
+    console.info(`Processed Venmo payment:`, data);
   }
 
   private async handleVenmoPaymentFailure(data: any): Promise<void> {
-    console.log(`Venmo payment failed:`, data);
+    console.info(`Venmo payment failed:`, data);
   }
 
   private async generateQRCode(data: string): Promise<string> {
@@ -553,10 +553,10 @@ class EnhancedQuestRouter {
    * Start the enhanced quest router
    */
   async start(port: number = 3000) {
-    console.log(`🚀 Enhanced Quest Router starting on port ${port}`);
-    console.log(`🔒 Security features enabled`);
-    console.log(`💰 Cash App premium features enabled`);
-    console.log(`⚡ Lightning Network support enabled`);
+    console.info(`🚀 Enhanced Quest Router starting on port ${port}`);
+    console.info(`🔒 Security features enabled`);
+    console.info(`💰 Cash App premium features enabled`);
+    console.info(`⚡ Lightning Network support enabled`);
     
     await this.app.listen(port);
   }

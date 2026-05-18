@@ -26,13 +26,13 @@ function benchmark(name: string, fn: () => void, iterations: number = 1e6): numb
     const duration = end - start;
     const opsPerSec = (iterations / duration * 1000).toFixed(0);
     
-    console.log(`${name.padEnd(40)} ${duration.toFixed(2)}ms (${opsPerSec} ops/sec)`);
+    console.info(`${name.padEnd(40)} ${duration.toFixed(2)}ms (${opsPerSec} ops/sec)`);
     return duration;
 }
 
 function compareBenchmarks(name: string, oldFn: () => void, newFn: () => void, iterations: number = 1e6): void {
-    console.log(`\n📊 ${name}`);
-    console.log('-'.repeat(60));
+    console.info(`\n📊 ${name}`);
+    console.info('-'.repeat(60));
     
     const oldTime = benchmark('Old implementation:', oldFn, iterations);
     const newTime = benchmark('New implementation:', newFn, iterations);
@@ -40,7 +40,7 @@ function compareBenchmarks(name: string, oldFn: () => void, newFn: () => void, i
     const speedup = (oldTime / newTime).toFixed(2);
     const improvement = ((oldTime - newTime) / oldTime * 100).toFixed(1);
     
-    console.log(`${'Speedup:'.padEnd(40)} ${speedup}x (${improvement}% faster)`);
+    console.info(`${'Speedup:'.padEnd(40)} ${speedup}x (${improvement}% faster)`);
 }
 
 // ============================================================================
@@ -48,8 +48,8 @@ function compareBenchmarks(name: string, oldFn: () => void, newFn: () => void, i
 // ============================================================================
 
 function benchmarkBufferFrom(): void {
-    console.log('\n🔥 Buffer.from(array) Performance');
-    console.log('='.repeat(60));
+    console.info('\n🔥 Buffer.from(array) Performance');
+    console.info('='.repeat(60));
     
     const testData = Array(256).fill(0).map((_, i) => i % 256);
     
@@ -68,12 +68,12 @@ function benchmarkBufferFrom(): void {
         arr.length;
     }, 1e6);
     
-    console.log('\n💡 ARM64 systems see ~50% improvement in Buffer.from(array)');
+    console.info('\n💡 ARM64 systems see ~50% improvement in Buffer.from(array)');
 }
 
 function benchmarkArrayFlat(): void {
-    console.log('\n🚀 Array.flat() + Array.from(arguments)');
-    console.log('='.repeat(60));
+    console.info('\n🚀 Array.flat() + Array.from(arguments)');
+    console.info('='.repeat(60));
     
     // Test array.flat() performance
     const nestedArray = Array(100).fill(0).map((_, i) => [
@@ -106,7 +106,7 @@ function benchmarkArrayFlat(): void {
         testFromArgs(1, 2, 3, 4, 5);
     }, 1e6);
     
-    console.log('\n💡 ~3x faster array.flat() and Array.from(arguments)');
+    console.info('\n💡 ~3x faster array.flat() and Array.from(arguments)');
 }
 
 // ============================================================================
@@ -114,8 +114,8 @@ function benchmarkArrayFlat(): void {
 // ============================================================================
 
 function benchmarkStringPadding(): void {
-    console.log('\n⚡ String Padding Performance');
-    console.log('='.repeat(60));
+    console.info('\n⚡ String Padding Performance');
+    console.info('='.repeat(60));
     
     benchmark('padStart(20, "0")', () => {
         '2026'.padStart(20, '0');
@@ -133,12 +133,12 @@ function benchmarkStringPadding(): void {
         `ID-${Math.floor(Math.random() * 10000)}`.padStart(15, '0');
     }, 1e6);
     
-    console.log('\n💡 ~90% faster padStart/padEnd operations');
+    console.info('\n💡 ~90% faster padStart/padEnd operations');
 }
 
 function benchmarkStringWellFormed(): void {
-    console.log('\n✅ String.isWellFormed/toWellFormed');
-    console.log('='.repeat(60));
+    console.info('\n✅ String.isWellFormed/toWellFormed');
+    console.info('='.repeat(60));
     
     const validString = 'Hello, 世界! 🌍';
     const invalidString = 'Hello, \uD800World!'; // Invalid surrogate pair
@@ -159,7 +159,7 @@ function benchmarkStringWellFormed(): void {
         (invalidString as any).toWellFormed();
     }, 1e6);
     
-    console.log('\n💡 5.2-5.4x faster than previous implementation');
+    console.info('\n💡 5.2-5.4x faster than previous implementation');
 }
 
 // ============================================================================
@@ -167,8 +167,8 @@ function benchmarkStringWellFormed(): void {
 // ============================================================================
 
 async function benchmarkAsyncStreaming(): Promise<void> {
-    console.log('\n🔄 Async/Await Streaming Performance');
-    console.log('='.repeat(60));
+    console.info('\n🔄 Async/Await Streaming Performance');
+    console.info('='.repeat(60));
     
     // Generate test data
     const testData = Array(10000).fill(0).map((_, i) => ({
@@ -196,7 +196,7 @@ async function benchmarkAsyncStreaming(): Promise<void> {
     }
     const jsonlEnd = performance.now();
     
-    console.log(`JSONL streaming (${count} records)`.padEnd(40) + `${(jsonlEnd - jsonlStart).toFixed(2)}ms`);
+    console.info(`JSONL streaming (${count} records)`.padEnd(40) + `${(jsonlEnd - jsonlStart).toFixed(2)}ms`);
     
     // Test 2: Regular async iteration
     async function* regularGenerator() {
@@ -215,9 +215,9 @@ async function benchmarkAsyncStreaming(): Promise<void> {
     }
     const regularEnd = performance.now();
     
-    console.log(`Regular async iteration (${count} records)`.padEnd(40) + `${(regularEnd - regularStart).toFixed(2)}ms`);
+    console.info(`Regular async iteration (${count} records)`.padEnd(40) + `${(regularEnd - regularStart).toFixed(2)}ms`);
     
-    console.log('\n💡 ~35% faster async/await streaming operations');
+    console.info('\n💡 ~35% faster async/await streaming operations');
 }
 
 // ============================================================================
@@ -225,8 +225,8 @@ async function benchmarkAsyncStreaming(): Promise<void> {
 // ============================================================================
 
 function benchmarkWrapAnsi(): void {
-    console.log('\n🎨 Bun.wrapAnsi() Performance');
-    console.log('='.repeat(60));
+    console.info('\n🎨 Bun.wrapAnsi() Performance');
+    console.info('='.repeat(60));
     
     const coloredText = '\x1b[32m🚀 Bun v1.3.7 Performance Test\x1b[0m with \x1b[31mred highlights\x1b[0m and \x1b[34mblue text\x1b[0m';
     const longColoredText = coloredText.repeat(10);
@@ -247,7 +247,7 @@ function benchmarkWrapAnsi(): void {
         (Bun as any).wrapAnsi(`   ${coloredText}   `, { width: 40, trim: false });
     }, 1e5);
     
-    console.log('\n💡 33-88x faster than wrap-ansi npm package');
+    console.info('\n💡 33-88x faster than wrap-ansi npm package');
 }
 
 // ============================================================================
@@ -255,8 +255,8 @@ function benchmarkWrapAnsi(): void {
 // ============================================================================
 
 function benchmarkBufferSwapping(): void {
-    console.log('\n🔄 Buffer Byte Swapping Performance');
-    console.log('='.repeat(60));
+    console.info('\n🔄 Buffer Byte Swapping Performance');
+    console.info('='.repeat(60));
     
     // swap16 benchmark
     const buf16 = Buffer.from([0x48, 0x00, 0x65, 0x00, 0x6c, 0x00, 0x6c, 0x00]);
@@ -290,7 +290,7 @@ function benchmarkBufferSwapping(): void {
         }
     }, 1e6);
     
-    console.log('\n💡 swap16: 1.8x faster, swap64: 3.6x faster');
+    console.info('\n💡 swap16: 1.8x faster, swap64: 3.6x faster');
 }
 
 // ============================================================================
@@ -298,8 +298,8 @@ function benchmarkBufferSwapping(): void {
 // ============================================================================
 
 function benchmarkJSON5(): void {
-    console.log('\n📄 JSON5 Performance');
-    console.log('='.repeat(60));
+    console.info('\n📄 JSON5 Performance');
+    console.info('='.repeat(60));
     
     const simpleJSON5 = '{name:"app",version:"1.0.0",enabled:true,}';
     const complexJSON5 = `{
@@ -330,12 +330,12 @@ function benchmarkJSON5(): void {
         (Bun as any).JSON5.stringify(obj);
     }, 1e5);
     
-    console.log('\n💡 Native JSON5 parsing - no external dependencies needed');
+    console.info('\n💡 Native JSON5 parsing - no external dependencies needed');
 }
 
 function benchmarkJSONL(): void {
-    console.log('\n📋 JSONL Performance');
-    console.log('='.repeat(60));
+    console.info('\n📋 JSONL Performance');
+    console.info('='.repeat(60));
     
     const jsonlData = Array(1000).fill(0).map((_, i) => 
         JSON.stringify({ id: i, name: `item-${i}`, value: Math.random() })
@@ -352,7 +352,7 @@ function benchmarkJSONL(): void {
         (Bun as any).JSONL.parseChunk(chunk);
     }, 1e4);
     
-    console.log('\n💡 Streaming JSONL parsing for large datasets');
+    console.info('\n💡 Streaming JSONL parsing for large datasets');
 }
 
 // ============================================================================
@@ -360,13 +360,13 @@ function benchmarkJSONL(): void {
 // ============================================================================
 
 async function main(): Promise<void> {
-    console.log('\n' + '🏁'.repeat(30));
-    console.log('   Bun v1.3.7 Performance Benchmarks');
-    console.log('🏁'.repeat(30));
-    console.log(`Bun version: ${Bun.version}`);
-    console.log(`Node.js version: ${process.version}`);
-    console.log(`Platform: ${process.platform} ${process.arch}`);
-    console.log(`Date: ${new Date().toISOString()}`);
+    console.info('\n' + '🏁'.repeat(30));
+    console.info('   Bun v1.3.7 Performance Benchmarks');
+    console.info('🏁'.repeat(30));
+    console.info(`Bun version: ${Bun.version}`);
+    console.info(`Node.js version: ${process.version}`);
+    console.info(`Platform: ${process.platform} ${process.arch}`);
+    console.info(`Date: ${new Date().toISOString()}`);
     
     // Run all benchmarks
     benchmarkBufferFrom();
@@ -379,25 +379,25 @@ async function main(): Promise<void> {
     benchmarkJSON5();
     benchmarkJSONL();
     
-    console.log('\n' + '📊'.repeat(30));
-    console.log('   Benchmark Summary');
-    console.log('📊'.repeat(30));
+    console.info('\n' + '📊'.repeat(30));
+    console.info('   Benchmark Summary');
+    console.info('📊'.repeat(30));
     
-    console.log('\n🔥 Key Performance Improvements in Bun v1.3.7:');
-    console.log('  • Buffer.from(array): ~50% faster on ARM64');
-    console.log('  • array.flat(): ~3x faster');
-    console.log('  • Array.from(arguments): ~3x faster');
-    console.log('  • padStart/padEnd: ~90% faster');
-    console.log('  • async/await streaming: ~35% faster');
-    console.log('  • Bun.wrapAnsi(): 33-88x faster than wrap-ansi npm');
-    console.log('  • Buffer.swap16(): 1.8x faster');
-    console.log('  • Buffer.swap64(): 3.6x faster');
-    console.log('  • String.isWellFormed/toWellFormed: 5.2-5.4x faster');
+    console.info('\n🔥 Key Performance Improvements in Bun v1.3.7:');
+    console.info('  • Buffer.from(array): ~50% faster on ARM64');
+    console.info('  • array.flat(): ~3x faster');
+    console.info('  • Array.from(arguments): ~3x faster');
+    console.info('  • padStart/padEnd: ~90% faster');
+    console.info('  • async/await streaming: ~35% faster');
+    console.info('  • Bun.wrapAnsi(): 33-88x faster than wrap-ansi npm');
+    console.info('  • Buffer.swap16(): 1.8x faster');
+    console.info('  • Buffer.swap64(): 3.6x faster');
+    console.info('  • String.isWellFormed/toWellFormed: 5.2-5.4x faster');
     
-    console.log('\n💡 Run individual benchmarks:');
-    console.log('  bun examples/benchmarks/bun-v1.3.7-performance-bench.ts');
-    console.log('\n📈 Profile this script:');
-    console.log('  bun --cpu-prof-md examples/benchmarks/bun-v1.3.7-performance-bench.ts');
+    console.info('\n💡 Run individual benchmarks:');
+    console.info('  bun examples/benchmarks/bun-v1.3.7-performance-bench.ts');
+    console.info('\n📈 Profile this script:');
+    console.info('  bun --cpu-prof-md examples/benchmarks/bun-v1.3.7-performance-bench.ts');
 }
 
 if (import.meta.main) {

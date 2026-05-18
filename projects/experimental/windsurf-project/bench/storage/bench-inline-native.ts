@@ -4,7 +4,7 @@
 import { s3 } from 'bun';
 
 async function runBenchmark() {
-  console.log('🚀 **R2 Inline vs Attachment Performance Benchmark (Native Bun.s3)** 🚀\n');
+  console.info('🚀 **R2 Inline vs Attachment Performance Benchmark (Native Bun.s3)** 🚀\n');
 
   // Helper for micro-benchmarking
   async function benchmark(name: string, fn: () => Promise<any>, iterations = 50) {
@@ -42,15 +42,15 @@ async function runBenchmark() {
 
   const speedup = (attachBench.avg / inlineBench.avg).toFixed(1);
 
-  console.log('📊 **Benchmark Results**');
+  console.info('📊 **Benchmark Results**');
   const results = [
     { Type: 'Inline', Time: `${inlineBench.avg.toFixed(2)}ms`, Speed: `${speedup}x`, Status: '✅ Render Instant' },
     { Type: 'Attachment', Time: `${attachBench.avg.toFixed(2)}ms`, Speed: '1.0x', Status: '💾 Save to Disk' }
   ];
 
-  console.log(Bun.inspect.table(results, { colors: true }));
+  console.info(Bun.inspect.table(results, { colors: true }));
   
-  console.log(`\n🏆 **Winner: Inline Render is ${speedup}x faster** (Avg: ${inlineBench.avg.toFixed(0)}ms)`);
+  console.info(`\n🏆 **Winner: Inline Render is ${speedup}x faster** (Avg: ${inlineBench.avg.toFixed(0)}ms)`);
 }
 
 runBenchmark();

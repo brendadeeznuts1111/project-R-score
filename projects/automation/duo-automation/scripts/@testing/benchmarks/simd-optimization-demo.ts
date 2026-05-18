@@ -47,7 +47,7 @@ class BufferOptimizedConfigParser {
     }));
     
     const end = performance.now();
-    console.log(`📊 Batch processed ${keys.length} keys in ${(end - start).toFixed(3)}ms`);
+    console.info(`📊 Batch processed ${keys.length} keys in ${(end - start).toFixed(3)}ms`);
     
     return results;
   }
@@ -55,16 +55,16 @@ class BufferOptimizedConfigParser {
 
 // Performance comparison demo
 function demonstrateSimdOptimization() {
-  console.log('🚀 SIMD Buffer Optimization Demonstration');
-  console.log('=======================================');
-  console.log('Empire Pro Config Empire - 2x Performance Boost');
-  console.log('');
+  console.info('🚀 SIMD Buffer Optimization Demonstration');
+  console.info('=======================================');
+  console.info('Empire Pro Config Empire - 2x Performance Boost');
+  console.info('');
   
   // Create test data
   const sizes = [1000, 10000, 100000, 1000000]; // 1KB to 1MB
   
-  console.log('📊 Buffer.indexOf() Performance Test:');
-  console.log('');
+  console.info('📊 Buffer.indexOf() Performance Test:');
+  console.info('');
   
   sizes.forEach(size => {
     const testData = 'a'.repeat(size) + 'needle';
@@ -80,12 +80,12 @@ function demonstrateSimdOptimization() {
     const end = performance.now();
     const avgTime = (end - start) / iterations;
     
-    console.log(`${(size/1000).toFixed(0)}KB buffer: ${avgTime.toFixed(6)}ms avg | ${(1000/avgTime).toFixed(0)} ops/sec`);
+    console.info(`${(size/1000).toFixed(0)}KB buffer: ${avgTime.toFixed(6)}ms avg | ${(1000/avgTime).toFixed(0)} ops/sec`);
   });
   
-  console.log('');
-  console.log('📊 Buffer.includes() Performance Test:');
-  console.log('');
+  console.info('');
+  console.info('📊 Buffer.includes() Performance Test:');
+  console.info('');
   
   sizes.forEach(size => {
     const testData = 'a'.repeat(size) + 'needle';
@@ -101,21 +101,21 @@ function demonstrateSimdOptimization() {
     const end = performance.now();
     const avgTime = (end - start) / iterations;
     
-    console.log(`${(size/1000).toFixed(0)}KB buffer: ${avgTime.toFixed(6)}ms avg | ${(1000/avgTime).toFixed(0)} ops/sec`);
+    console.info(`${(size/1000).toFixed(0)}KB buffer: ${avgTime.toFixed(6)}ms avg | ${(1000/avgTime).toFixed(0)} ops/sec`);
   });
   
-  console.log('');
-  console.log('🎯 Performance Improvement:');
-  console.log('   Before SIMD: ~2x slower');
-  console.log('   After SIMD: Hardware-accelerated');
-  console.log('   Result: 2x faster buffer operations');
-  console.log('');
+  console.info('');
+  console.info('🎯 Performance Improvement:');
+  console.info('   Before SIMD: ~2x slower');
+  console.info('   After SIMD: Hardware-accelerated');
+  console.info('   Result: 2x faster buffer operations');
+  console.info('');
 }
 
 // Empire Pro configuration demo
 function demonstrateEmpireProConfig() {
-  console.log('🏰 Empire Pro Configuration Parser Demo');
-  console.log('=======================================');
+  console.info('🏰 Empire Pro Configuration Parser Demo');
+  console.info('=======================================');
   
   // Sample Empire Pro configuration
   const empireConfig = `
@@ -141,12 +141,12 @@ LOG_LEVEL=info
 
   const parser = new BufferOptimizedConfigParser(empireConfig);
   
-  console.log(`📄 Configuration size: ${empireConfig.length} bytes`);
-  console.log(`🔢 Buffer size: ${parser['configBuffer'].length} bytes`);
-  console.log('');
+  console.info(`📄 Configuration size: ${empireConfig.length} bytes`);
+  console.info(`🔢 Buffer size: ${parser['configBuffer'].length} bytes`);
+  console.info('');
   
   // Test individual key searches
-  console.log('🔍 Individual Key Searches:');
+  console.info('🔍 Individual Key Searches:');
   const testKeys = ['OPENAI_API_KEY', 'DATABASE_URL', 'R2_ENDPOINT', 'NOT_PRESENT'];
   
   testKeys.forEach(key => {
@@ -156,21 +156,21 @@ LOG_LEVEL=info
     const value = parser.extractConfigValue(key);
     const end = performance.now();
     
-    console.log(`🔑 ${key}:`);
-    console.log(`   ✅ Found: ${hasKey}`);
-    console.log(`   📍 Position: ${position}`);
+    console.info(`🔑 ${key}:`);
+    console.info(`   ✅ Found: ${hasKey}`);
+    console.info(`   📍 Position: ${position}`);
     if (value) {
       const displayValue = value.includes('KEY') || value.includes('SECRET') || value.includes('TOKEN')
         ? `${value.substring(0, 8)}...${value.substring(value.length - 4)}`
         : value;
-      console.log(`   💎 Value: ${displayValue}`);
+      console.info(`   💎 Value: ${displayValue}`);
     }
-    console.log(`   ⚡ Search time: ${(end - start).toFixed(3)}ms`);
-    console.log('');
+    console.info(`   ⚡ Search time: ${(end - start).toFixed(3)}ms`);
+    console.info('');
   });
   
   // Test batch processing
-  console.log('🔄 Batch Processing Test:');
+  console.info('🔄 Batch Processing Test:');
   const allKeys = [
     'OPENAI_API_KEY', 'STRIPE_SECRET_KEY', 'DATABASE_URL', 'REDIS_URL',
     'R2_ENDPOINT', 'R2_ACCESS_KEY_ID', 'JWT_SECRET', 'ENCRYPTION_KEY'
@@ -178,21 +178,21 @@ LOG_LEVEL=info
   
   const batchResults = parser.findMultipleKeys(allKeys);
   
-  console.log('📊 Batch Results:');
+  console.info('📊 Batch Results:');
   batchResults.forEach(result => {
     const status = result.found ? '✅' : '❌';
     const value = result.value && (result.value.includes('KEY') || result.value.includes('SECRET'))
       ? `${result.value.substring(0, 8)}...${result.value.substring(result.value.length - 4)}`
       : result.value || 'N/A';
-    console.log(`   ${status} ${result.key}: ${value}`);
+    console.info(`   ${status} ${result.key}: ${value}`);
   });
-  console.log('');
+  console.info('');
 }
 
 // Real-world performance scenario
 function demonstrateRealWorldScenario() {
-  console.log('💼 Real-World Performance Scenario');
-  console.log('===================================');
+  console.info('💼 Real-World Performance Scenario');
+  console.info('===================================');
   
   // Simulate large configuration file (like enterprise config)
   const largeConfig = `
@@ -214,13 +214,13 @@ ENCRYPTION_KEY=critical-encryption-key
 
   const parser = new BufferOptimizedConfigParser(largeConfig);
   
-  console.log(`📄 Large config size: ${(largeConfig.length/1024).toFixed(1)}KB`);
-  console.log('');
+  console.info(`📄 Large config size: ${(largeConfig.length/1024).toFixed(1)}KB`);
+  console.info('');
   
   // Search for critical keys in large config
   const criticalKeys = ['OPENAI_API_KEY', 'DATABASE_URL', 'R2_ENDPOINT', 'JWT_SECRET', 'ENCRYPTION_KEY'];
   
-  console.log('🔍 Critical Key Search in Large Config:');
+  console.info('🔍 Critical Key Search in Large Config:');
   const start = performance.now();
   
   criticalKeys.forEach(key => {
@@ -230,37 +230,37 @@ ENCRYPTION_KEY=critical-encryption-key
     const value = parser.extractConfigValue(key);
     const keyEnd = performance.now();
     
-    console.log(`   🔑 ${key}: ${found ? '✅' : '❌'} at pos ${position} (${(keyEnd - keyStart).toFixed(3)}ms)`);
+    console.info(`   🔑 ${key}: ${found ? '✅' : '❌'} at pos ${position} (${(keyEnd - keyStart).toFixed(3)}ms)`);
   });
   
   const end = performance.now();
-  console.log('');
-  console.log(`📊 Total search time for ${criticalKeys.length} keys: ${(end - start).toFixed(3)}ms`);
-  console.log(`🚀 Average per key: ${((end - start) / criticalKeys.length).toFixed(3)}ms`);
-  console.log('');
+  console.info('');
+  console.info(`📊 Total search time for ${criticalKeys.length} keys: ${(end - start).toFixed(3)}ms`);
+  console.info(`🚀 Average per key: ${((end - start) / criticalKeys.length).toFixed(3)}ms`);
+  console.info('');
   
   // Performance comparison
-  console.log('🎯 Performance Impact:');
-  console.log('   ✅ SIMD optimization: 2x faster buffer operations');
-  console.log('   ✅ Large config handling: Sub-millisecond key searches');
-  console.log('   ✅ Batch processing: Efficient multi-key searches');
-  console.log('   ✅ Memory efficiency: Zero-copy buffer operations');
-  console.log('   ✅ Enterprise ready: Handles large configuration files');
-  console.log('');
+  console.info('🎯 Performance Impact:');
+  console.info('   ✅ SIMD optimization: 2x faster buffer operations');
+  console.info('   ✅ Large config handling: Sub-millisecond key searches');
+  console.info('   ✅ Batch processing: Efficient multi-key searches');
+  console.info('   ✅ Memory efficiency: Zero-copy buffer operations');
+  console.info('   ✅ Enterprise ready: Handles large configuration files');
+  console.info('');
 }
 
 // Main demonstration
 async function runSimdOptimizationDemo() {
-  console.log('🎯 Empire Pro Config Empire - SIMD Buffer Optimization');
-  console.log('========================================================\n');
+  console.info('🎯 Empire Pro Config Empire - SIMD Buffer Optimization');
+  console.info('========================================================\n');
   
   demonstrateSimdOptimization();
   demonstrateEmpireProConfig();
   demonstrateRealWorldScenario();
   
-  console.log('✅ SIMD Buffer Optimization Demo Complete!');
-  console.log('🚀 Empire Pro Config Empire leveraging 2x performance boost!');
-  console.log('🎯 Hardware-accelerated configuration parsing achieved!');
+  console.info('✅ SIMD Buffer Optimization Demo Complete!');
+  console.info('🚀 Empire Pro Config Empire leveraging 2x performance boost!');
+  console.info('🎯 Hardware-accelerated configuration parsing achieved!');
 }
 
 // Run the demonstration

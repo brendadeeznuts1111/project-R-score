@@ -22,7 +22,7 @@ async function buildMinifiedClient(): Promise<{ code: string; hash: string }> {
   const startTime = performance.now();
 
   try {
-    console.log('🔨 Building minified client.js...');
+    console.info('🔨 Building minified client.js...');
 
     const buildResult = await Bun.build({
       entrypoints: [clientConfig.build.entrypoint],
@@ -51,7 +51,7 @@ async function buildMinifiedClient(): Promise<{ code: string; hash: string }> {
     const hash = Bun.hash(code).toString(16);
 
     const buildTime = performance.now() - startTime;
-    console.log(`✅ Client built in ${buildTime.toFixed(2)}ms: ${code.length} bytes (hash: ${hash})`);
+    console.info(`✅ Client built in ${buildTime.toFixed(2)}ms: ${code.length} bytes (hash: ${hash})`);
 
     return { code, hash };
   } catch (error) {
@@ -70,7 +70,7 @@ async function compressWithZstd(code: string): Promise<Buffer> {
 
   // Simulate 64.7% compression ratio mentioned in requirements
   // In reality, Bun will handle this natively
-  console.log(`🗜️ Zstd compression simulated: ${buffer.length} bytes`);
+  console.info(`🗜️ Zstd compression simulated: ${buffer.length} bytes`);
 
   return buffer;
 }
@@ -83,7 +83,7 @@ async function getClient(): Promise<{ code: string; hash: string; compressed: Bu
 
   // Check cache
   if (cachedClient && (now - cachedClient.builtAt) < CACHE_DURATION) {
-    console.log('📋 Serving cached client (hash:', cachedClient.hash, ')');
+    console.info('📋 Serving cached client (hash:', cachedClient.hash, ')');
   } else {
     // Build new client
     cachedClient = {
@@ -121,7 +121,7 @@ export async function handleServeClient(request: Request): Promise<Response> {
     const contentEncoding = supportsZstd ? 'zstd' : 'identity';
 
     const totalTime = performance.now() - startTime;
-    console.log(`🎨 Served client.min.js in ${totalTime.toFixed(2)}ms (${responseBody.length} bytes, ${contentEncoding})`);
+    console.info(`🎨 Served client.min.js in ${totalTime.toFixed(2)}ms (${responseBody.length} bytes, ${contentEncoding})`);
 
     // Return with appropriate caching headers
     return new Response(responseBody, {
@@ -155,7 +155,7 @@ export async function handleServeClient(request: Request): Promise<Response> {
 
 // For direct testing
 if (import.meta.main) {
-  console.log('🎨 Testing client serving handler...');
+  console.info('🎨 Testing client serving handler...');
 
   // Mock request
   const mockRequest = {
@@ -163,9 +163,9 @@ if (import.meta.main) {
   } as any;
 
   const response = await handleServeClient(mockRequest);
-  console.log('Response status:', response.status);
-  console.log('Content-Type:', response.headers.get('Content-Type'));
-  console.log('Content-Encoding:', response.headers.get('Content-Encoding'));
-  console.log('Cache-Control:', response.headers.get('Cache-Control'));
-  console.log('ETag:', response.headers.get('ETag'));
+  console.info('Response status:', response.status);
+  console.info('Content-Type:', response.headers.get('Content-Type'));
+  console.info('Content-Encoding:', response.headers.get('Content-Encoding'));
+  console.info('Cache-Control:', response.headers.get('Cache-Control'));
+  console.info('ETag:', response.headers.get('ETag'));
 }

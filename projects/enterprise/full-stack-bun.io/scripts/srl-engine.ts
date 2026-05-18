@@ -277,7 +277,7 @@ class SRLEngine {
       }
     }
 
-    console.log(`Loaded ${this.activeRules.size} SRL rules`);
+    console.info(`Loaded ${this.activeRules.size} SRL rules`);
   }
 
   // Execute rules against a context
@@ -369,7 +369,7 @@ class SRLEngine {
 
   private saveRuleState(rule: SRLRule): void {
     // In practice, this would save to a database or configuration file
-    console.log(`Rule ${rule.id} ${rule.enabled ? 'enabled' : 'disabled'} (v${rule.version})`);
+    console.info(`Rule ${rule.id} ${rule.enabled ? 'enabled' : 'disabled'} (v${rule.version})`);
   }
 
   // Get rules by category or pattern
@@ -421,7 +421,7 @@ async function main() {
   const [command, ...args] = process.argv.slice(2);
 
   if (!command) {
-    console.log(`
+    console.info(`
 SRL Engine - Semantic Rule Language v1.0.0
 
 Usage:
@@ -452,22 +452,22 @@ Examples:
       case 'list':
         const category = args[0];
         const rules = engine.getRules(category);
-        console.log(`SRL Rules ${category ? `(${category})` : ''}:`);
+        console.info(`SRL Rules ${category ? `(${category})` : ''}:`);
         rules.forEach(rule => {
-          console.log(`  ${rule.id} v${rule.version} - ${rule.name} [${rule.enabled ? 'ENABLED' : 'DISABLED'}]`);
+          console.info(`  ${rule.id} v${rule.version} - ${rule.name} [${rule.enabled ? 'ENABLED' : 'DISABLED'}]`);
         });
         break;
 
       case 'enable':
         const enableId = args[0];
         const enabled = await engine.enableRule(enableId);
-        console.log(enabled ? `✅ Rule ${enableId} enabled` : `❌ Rule ${enableId} not found`);
+        console.info(enabled ? `✅ Rule ${enableId} enabled` : `❌ Rule ${enableId} not found`);
         break;
 
       case 'disable':
         const disableId = args[0];
         const disabled = await engine.disableRule(disableId);
-        console.log(disabled ? `✅ Rule ${disableId} disabled` : `❌ Rule ${disableId} not found`);
+        console.info(disabled ? `✅ Rule ${disableId} disabled` : `❌ Rule ${disableId} not found`);
         break;
 
       case 'rollback':
@@ -478,17 +478,17 @@ Examples:
           process.exit(1);
         }
         const rolledBack = await engine.enableRule(rollbackId, version);
-        console.log(rolledBack ? `✅ Rule ${rollbackId} rolled back to v${version}` : `❌ Rule rollback failed`);
+        console.info(rolledBack ? `✅ Rule ${rollbackId} rolled back to v${version}` : `❌ Rule rollback failed`);
         break;
 
       case 'ab-test':
         const abTestId = args[0];
         const abEnabled = await engine.enableRule(abTestId, undefined, true);
-        console.log(abEnabled ? `✅ A/B testing enabled for ${abTestId}` : `❌ Rule not found or no A/B test configured`);
+        console.info(abEnabled ? `✅ A/B testing enabled for ${abTestId}` : `❌ Rule not found or no A/B test configured`);
         break;
 
       case 'audit':
-        console.log(engine.generateAuditReport());
+        console.info(engine.generateAuditReport());
         break;
 
       case 'execute':
@@ -499,9 +499,9 @@ Examples:
         }
         const context = JSON.parse(contextJson);
         const actions = await engine.executeRules(context);
-        console.log('Triggered Actions:');
+        console.info('Triggered Actions:');
         actions.forEach(action => {
-          console.log(`  ${action.action}:`, action.parameters || {});
+          console.info(`  ${action.action}:`, action.parameters || {});
         });
         break;
 

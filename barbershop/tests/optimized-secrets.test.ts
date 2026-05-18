@@ -54,7 +54,7 @@ describe('CLI Framework', () => {
         name: 'hello',
         description: 'Say hello',
         handler: ctx => {
-          console.log(`Hello, ${ctx.args.name || 'World'}!`);
+          console.info(`Hello, ${ctx.args.name || 'World'}!`);
         },
         arguments: [{ name: 'name', description: 'Name to greet' }],
       },
@@ -63,7 +63,7 @@ describe('CLI Framework', () => {
         description: 'Show version',
         aliases: ['v'],
         handler: () => {
-          console.log('v1.0.0');
+          console.info('v1.0.0');
         },
       },
     ],

@@ -71,9 +71,9 @@ export class BlogService {
           status: post.status,
         }
       );
-      console.log(`📝 Created blog post: ${post.title} (uploaded to R2)`);
+      console.info(`📝 Created blog post: ${post.title} (uploaded to R2)`);
     } catch (error) {
-      console.log(`📝 Created blog post: ${post.title} (local storage - R2 unavailable)`);
+      console.info(`📝 Created blog post: ${post.title} (local storage - R2 unavailable)`);
       // Save to local storage as fallback
       await this.savePostLocally(blogPost);
     }
@@ -95,9 +95,9 @@ export class BlogService {
         `blog/${post.slug}.json`,
         Buffer.from(JSON.stringify(post))
       );
-      console.log(`✅ Published blog post: ${post.title} (uploaded to R2)`);
+      console.info(`✅ Published blog post: ${post.title} (uploaded to R2)`);
     } catch (error) {
-      console.log(`✅ Published blog post: ${post.title} (local storage - R2 unavailable)`);
+      console.info(`✅ Published blog post: ${post.title} (local storage - R2 unavailable)`);
       // Save to local storage as fallback
       await this.savePostLocally(post);
     }

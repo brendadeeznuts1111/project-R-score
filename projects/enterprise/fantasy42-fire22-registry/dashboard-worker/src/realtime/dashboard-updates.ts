@@ -295,7 +295,7 @@ export class DashboardUpdateManager {
       }
     });
 
-    console.log(`📡 Broadcasted ${update.type} update to ${this.activeConnections.size} clients`);
+    console.info(`📡 Broadcasted ${update.type} update to ${this.activeConnections.size} clients`);
   }
 
   /**

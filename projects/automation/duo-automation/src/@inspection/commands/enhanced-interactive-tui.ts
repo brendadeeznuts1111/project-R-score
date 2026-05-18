@@ -200,14 +200,14 @@ export class EnhancedInteractiveTUI {
 
     process.stdin.on('keypress', (str, key) => {
       if (key.ctrl && key.name === 'c') {
-        console.log('\n👋 Exiting enhanced interactive mode.');
+        console.info('\n👋 Exiting enhanced interactive mode.');
         this.showSessionSummary();
         process.exit(0);
       }
       
       if (key.ctrl && key.name === 'r') {
         this.resetFilters();
-        console.log('\n🔄 Filters reset.');
+        console.info('\n🔄 Filters reset.');
         this.displayCurrent();
       }
       
@@ -218,7 +218,7 @@ export class EnhancedInteractiveTUI {
       
       if (key.ctrl && key.name === 's') {
         this.saveToFile('enhanced-output.json');
-        console.log('\n💾 Saved current state.');
+        console.info('\n💾 Saved current state.');
       }
       
       if (key.ctrl && key.name === 'p') {
@@ -267,7 +267,7 @@ export class EnhancedInteractiveTUI {
         const duration = Date.now() - startTime;
         
         if (duration > 1000) {
-          console.log(`⏱️  Command completed in ${(duration / 1000).toFixed(2)}s`);
+          console.info(`⏱️  Command completed in ${(duration / 1000).toFixed(2)}s`);
         }
       } catch (error: any) {
         console.error(`❌ ${error.message}`);
@@ -279,7 +279,7 @@ export class EnhancedInteractiveTUI {
 
     this.rl.on('close', () => {
       this.showSessionSummary();
-      console.log('👋 Goodbye!');
+      console.info('👋 Goodbye!');
       process.exit(0);
     });
 
@@ -444,12 +444,12 @@ export class EnhancedInteractiveTUI {
         break;
         
       case 'exit':
-        console.log('👋 Exiting...');
+        console.info('👋 Exiting...');
         process.exit(0);
         break;
         
       default:
-        console.log(`❓ Unknown command: ${command}. Type 'help' for commands.`);
+        console.info(`❓ Unknown command: ${command}. Type 'help' for commands.`);
     }
   }
 
@@ -458,7 +458,7 @@ export class EnhancedInteractiveTUI {
    */
   private navigatePath(path: string): void {
     if (!path) {
-      console.log('📝 Usage: cd <path>');
+      console.info('📝 Usage: cd <path>');
       return;
     }
     
@@ -472,7 +472,7 @@ export class EnhancedInteractiveTUI {
         this.sessionStats.pathsVisited++;
         this.displayCurrent();
       } else {
-        console.log(`❌ Path not found: ${path}`);
+        console.info(`❌ Path not found: ${path}`);
       }
     } catch (error: any) {
       console.error(`❌ Navigation error: ${error.message}`);
@@ -483,10 +483,10 @@ export class EnhancedInteractiveTUI {
    * Show current path
    */
   private showCurrentPath(): void {
-    console.log(`📍 Current path: ${this.currentPath}`);
+    console.info(`📍 Current path: ${this.currentPath}`);
     
     if (this.pathHistory.length > 1) {
-      console.log(`📜 Path history: ${this.pathHistory.slice(-5).join(' → ')}`);
+      console.info(`📜 Path history: ${this.pathHistory.slice(-5).join(' → ')}`);
     }
   }
 
@@ -495,35 +495,35 @@ export class EnhancedInteractiveTUI {
    */
   private listCurrent(): void {
     if (Array.isArray(this.currentObj)) {
-      console.log(`📁 Array [${this.currentObj.length} items]:`);
+      console.info(`📁 Array [${this.currentObj.length} items]:`);
       this.currentObj.slice(0, 10).forEach((item, i) => {
         const type = typeof item;
         const preview = type === 'object' ? 
           (Array.isArray(item) ? `Array[${item.length}]` : `Object{${Object.keys(item).length}}`) :
           String(item).slice(0, 50);
-        console.log(`  ${i}: ${type} - ${preview}`);
+        console.info(`  ${i}: ${type} - ${preview}`);
       });
       
       if (this.currentObj.length > 10) {
-        console.log(`  ... and ${this.currentObj.length - 10} more items`);
+        console.info(`  ... and ${this.currentObj.length - 10} more items`);
       }
     } else if (typeof this.currentObj === 'object' && this.currentObj !== null) {
       const keys = Object.keys(this.currentObj);
-      console.log(`📁 Object {${keys.length} properties}:`);
+      console.info(`📁 Object {${keys.length} properties}:`);
       keys.slice(0, 20).forEach(key => {
         const value = this.currentObj[key];
         const type = typeof value;
         const preview = type === 'object' ? 
           (Array.isArray(value) ? `Array[${value.length}]` : `Object{${Object.keys(value).length}}`) :
           String(value).slice(0, 30);
-        console.log(`  ${key}: ${type} - ${preview}`);
+        console.info(`  ${key}: ${type} - ${preview}`);
       });
       
       if (keys.length > 20) {
-        console.log(`  ... and ${keys.length - 20} more properties`);
+        console.info(`  ... and ${keys.length - 20} more properties`);
       }
     } else {
-      console.log(`📄 Value: ${this.currentObj} (${typeof this.currentObj})`);
+      console.info(`📄 Value: ${this.currentObj} (${typeof this.currentObj})`);
     }
   }
 
@@ -536,7 +536,7 @@ export class EnhancedInteractiveTUI {
       const previousPath = this.pathHistory[this.pathHistory.length - 1];
       this.navigatePath(previousPath);
     } else {
-      console.log('❌ Already at the beginning of history');
+      console.info('❌ Already at the beginning of history');
     }
   }
 
@@ -545,7 +545,7 @@ export class EnhancedInteractiveTUI {
    */
   private navigateUp(): void {
     if (this.currentPath === '$') {
-      console.log('❌ Already at root');
+      console.info('❌ Already at root');
       return;
     }
     
@@ -568,7 +568,7 @@ export class EnhancedInteractiveTUI {
    */
   private async copyCurrentPath(): Promise<void> {
     await Bun.$`echo ${this.currentPath} | pbcopy`;
-    console.log(`📋 Copied to clipboard: ${this.currentPath}`);
+    console.info(`📋 Copied to clipboard: ${this.currentPath}`);
   }
 
   /**
@@ -576,8 +576,8 @@ export class EnhancedInteractiveTUI {
    */
   private filterByType(type: string): void {
     if (!type) {
-      console.log('📝 Usage: only <type>');
-      console.log('Types: strings, numbers, booleans, objects, arrays, null');
+      console.info('📝 Usage: only <type>');
+      console.info('Types: strings, numbers, booleans, objects, arrays, null');
       return;
     }
     
@@ -603,7 +603,7 @@ export class EnhancedInteractiveTUI {
     if (Array.isArray(this.currentObj)) {
       this.currentObj = this.currentObj.filter(filterFn);
     } else {
-      console.log('❌ Type filtering only works on arrays');
+      console.info('❌ Type filtering only works on arrays');
       return;
     }
     
@@ -617,7 +617,7 @@ export class EnhancedInteractiveTUI {
    */
   private toggleRedaction(): void {
     this.redactionEnabled = !this.redactionEnabled;
-    console.log(`🛡️  Redaction ${this.redactionEnabled ? 'enabled' : 'disabled'}`);
+    console.info(`🛡️  Redaction ${this.redactionEnabled ? 'enabled' : 'disabled'}`);
     
     if (this.redactionEnabled) {
       this.applyRedaction();
@@ -647,8 +647,8 @@ export class EnhancedInteractiveTUI {
     this.currentObj = redaction.redacted;
     this.sessionStats.redactionsApplied++;
     
-    console.log(`🛡️  Applied redaction: ${redaction.summary.totalRedactions} items redacted`);
-    console.log(`   By category: ${Object.entries(redaction.summary.byCategory).map(([c, count]) => `${c}(${count})`).join(', ')}`);
+    console.info(`🛡️  Applied redaction: ${redaction.summary.totalRedactions} items redacted`);
+    console.info(`   By category: ${Object.entries(redaction.summary.byCategory).map(([c, count]) => `${c}(${count})`).join(', ')}`);
     
     this.displayCurrent();
   }
@@ -660,7 +660,7 @@ export class EnhancedInteractiveTUI {
     // Restore from original object at current path
     this.currentObj = EnhancedQueryEngine.applyJsonPath(this.originalObj, this.currentPath);
     this.redactionEnabled = false;
-    console.log('🛡️  Redaction removed');
+    console.info('🛡️  Redaction removed');
     this.displayCurrent();
   }
 
@@ -669,16 +669,16 @@ export class EnhancedInteractiveTUI {
    */
   private showRedactionPolicy(): void {
     if (!this.redactionPolicy) {
-      console.log('📋 No custom redaction policy set');
-      console.log('Available categories:');
+      console.info('📋 No custom redaction policy set');
+      console.info('Available categories:');
       SecurityRedactionEngine.getCategories().forEach(cat => {
-        console.log(`  ${cat.name}: ${cat.description} (${cat.severity})`);
+        console.info(`  ${cat.name}: ${cat.description} (${cat.severity})`);
       });
     } else {
-      console.log('📋 Current redaction policy:');
-      console.log(`  Categories: ${this.redactionPolicy.categories.join(', ')}`);
-      console.log(`  Severity: ${this.redactionPolicy.severity}`);
-      console.log(`  Environment: ${this.redactionPolicy.metadata.environment}`);
+      console.info('📋 Current redaction policy:');
+      console.info(`  Categories: ${this.redactionPolicy.categories.join(', ')}`);
+      console.info(`  Severity: ${this.redactionPolicy.severity}`);
+      console.info(`  Environment: ${this.redactionPolicy.metadata.environment}`);
     }
   }
 
@@ -689,14 +689,14 @@ export class EnhancedInteractiveTUI {
     const original = EnhancedQueryEngine.applyJsonPath(this.originalObj, this.currentPath);
     const validation = SecurityRedactionEngine.validateRedaction(original, this.currentObj);
     
-    console.log('🛡️  Redaction Validation:');
-    console.log(`  Effectiveness: ${validation.effectiveness}%`);
-    console.log(`  Status: ${validation.validation.toUpperCase()}`);
+    console.info('🛡️  Redaction Validation:');
+    console.info(`  Effectiveness: ${validation.effectiveness}%`);
+    console.info(`  Status: ${validation.validation.toUpperCase()}`);
     
     if (validation.remainingRisks.length > 0) {
-      console.log('  Remaining risks:');
+      console.info('  Remaining risks:');
       validation.remainingRisks.forEach(risk => {
-        console.log(`    ⚠️  ${risk}`);
+        console.info(`    ⚠️  ${risk}`);
       });
     }
   }
@@ -705,7 +705,7 @@ export class EnhancedInteractiveTUI {
    * Show enhanced welcome screen
    */
   private showWelcomeScreen(): void {
-    console.log(`
+    console.info(`
 🎯 Enhanced FactoryWager Interactive TUI
 ═════════════════════════════════════════
 🔍 Advanced navigation with path-based exploration
@@ -730,31 +730,31 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save
    */
   private displayCurrent(): void {
     console.clear();
-    console.log('🎯 Enhanced FactoryWager Interactive TUI');
-    console.log('═════════════════════════════════════════\n');
+    console.info('🎯 Enhanced FactoryWager Interactive TUI');
+    console.info('═════════════════════════════════════════\n');
     
-    console.log(`📍 Path: ${this.currentPath}`);
+    console.info(`📍 Path: ${this.currentPath}`);
     
     if (this.filters.length > 0) {
-      console.log('🔍 Active Filters:');
+      console.info('🔍 Active Filters:');
       this.filters.forEach((f, i) => {
-        console.log(`  ${i + 1}. ${f.type}: ${f.value}`);
+        console.info(`  ${i + 1}. ${f.type}: ${f.value}`);
       });
     }
     
     if (this.redactionEnabled) {
-      console.log('🛡️  Redaction: ENABLED');
+      console.info('🛡️  Redaction: ENABLED');
     }
     
-    console.log('\n📋 Current Data:');
-    console.log(inspect(this.currentObj, { 
+    console.info('\n📋 Current Data:');
+    console.info(inspect(this.currentObj, { 
       colors: true, 
       depth: 6, 
       maxArrayLength: 10,
       compact: false 
     }));
     
-    console.log('\n' + '─'.repeat(50));
+    console.info('\n' + '─'.repeat(50));
   }
 
   /**
@@ -848,7 +848,7 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save
   .[] | sort          Sort array
     `;
     
-    console.log(helpText);
+    console.info(helpText);
   }
 
   /**
@@ -857,7 +857,7 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save
   private showSessionSummary(): void {
     const duration = Math.floor((Date.now() - this.sessionStats.sessionStart.getTime()) / 1000);
     
-    console.log(`
+    console.info(`
 📊 Enhanced Session Summary
 ═══════════════════════════════
 ⏱️  Duration: ${duration}s
@@ -873,17 +873,17 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save
   // For brevity, I'm showing the key enhanced features
   
   private applyFilter(text: string): void {
-    console.log(`Filter: ${text}`);
+    console.info(`Filter: ${text}`);
     // Implementation...
   }
   
   private applyExclude(text: string): void {
-    console.log(`Exclude: ${text}`);
+    console.info(`Exclude: ${text}`);
     // Implementation...
   }
   
   private applyRegex(pattern: string): void {
-    console.log(`Regex: ${pattern}`);
+    console.info(`Regex: ${pattern}`);
     // Implementation...
   }
   
@@ -892,7 +892,7 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save
   }
   
   private applyJq(filter: string): void {
-    console.log(`JQ: ${filter}`);
+    console.info(`JQ: ${filter}`);
     // Implementation...
   }
   
@@ -907,57 +907,57 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save
   }
   
   private showPatterns(): void {
-    console.log('Patterns extraction...');
+    console.info('Patterns extraction...');
     // Implementation...
   }
   
   private showSecurityAnalysis(): void {
-    console.log('Security analysis...');
+    console.info('Security analysis...');
     // Implementation...
   }
   
   private showPerformanceAnalysis(): void {
-    console.log('Performance analysis...');
+    console.info('Performance analysis...');
     // Implementation...
   }
   
   private showAnalytics(): void {
-    console.log('Analytics dashboard...');
+    console.info('Analytics dashboard...');
     // Implementation...
   }
   
   private showStats(): void {
-    console.log('Statistics...');
+    console.info('Statistics...');
     // Implementation...
   }
   
   private showTypeInfo(): void {
-    console.log('Type information...');
+    console.info('Type information...');
     // Implementation...
   }
   
   private showKeys(): void {
-    console.log('Keys...');
+    console.info('Keys...');
     // Implementation...
   }
   
   private showValues(): void {
-    console.log('Values...');
+    console.info('Values...');
     // Implementation...
   }
   
   private sortCurrent(): void {
-    console.log('Sorting...');
+    console.info('Sorting...');
     // Implementation...
   }
   
   private uniqueCurrent(): void {
-    console.log('Removing duplicates...');
+    console.info('Removing duplicates...');
     // Implementation...
   }
   
   private reverseCurrent(): void {
-    console.log('Reversing...');
+    console.info('Reversing...');
     // Implementation...
   }
   
@@ -966,36 +966,36 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save
                    typeof this.currentObj === 'string' ? this.currentObj.length :
                    typeof this.currentObj === 'object' && this.currentObj !== null ? 
                    Object.keys(this.currentObj).length : 0;
-    console.log(`📏 Length: ${length}`);
+    console.info(`📏 Length: ${length}`);
   }
   
   private showTree(): void {
-    console.log('Tree view...');
+    console.info('Tree view...');
     // Implementation...
   }
   
   private showHistory(): void {
-    console.log('\nCommand History:');
+    console.info('\nCommand History:');
     this.history.slice(-10).forEach((cmd, i) => {
-      console.log(`  ${this.history.length - 10 + i + 1}. ${cmd}`);
+      console.info(`  ${this.history.length - 10 + i + 1}. ${cmd}`);
     });
   }
   
   private showPathHistory(): void {
-    console.log('\nPath History:');
+    console.info('\nPath History:');
     this.pathHistory.slice(-10).forEach((path, i) => {
-      console.log(`  ${i + 1}. ${path}`);
+      console.info(`  ${i + 1}. ${path}`);
     });
   }
   
   private async saveToFile(filename: string): Promise<void> {
     await Bun.write(filename, JSON.stringify(this.currentObj, null, 2));
-    console.log(`✅ Saved to ${filename}`);
+    console.info(`✅ Saved to ${filename}`);
   }
   
   private async exportToClipboard(): Promise<void> {
     await Bun.$`echo ${JSON.stringify(this.currentObj, null, 2)} | pbcopy`;
-    console.log('📋 Copied to clipboard!');
+    console.info('📋 Copied to clipboard!');
   }
 }
 

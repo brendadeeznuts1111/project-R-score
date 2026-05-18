@@ -1131,7 +1131,7 @@ async function mapWithConcurrency<T, R>(
 // ============================================================================
 
 function printUsage(): void {
-  console.log(`
+  console.info(`
 Smart Search (Optimized Phase 2)
 
 USAGE:
@@ -1180,22 +1180,22 @@ function printTable(
   options: SearchOptions,
   fusion?: { summary: DomainHealthSummary; readiness: ReturnType<typeof evaluateReadiness>; error?: string }
 ): void {
-  console.log(`Smart Search: "${plan.raw}"`);
-  console.log(`Roots: ${plan.roots.join(', ')}`);
-  console.log(`View/Task: ${options.view}/${options.task}`);
-  if (options.kind !== 'any') console.log(`Mode: kind=${options.kind}${options.targetSymbol ? ` of=${options.targetSymbol}` : ''}`);
-  if (options.groupLimit) console.log(`Group limit: ${options.groupLimit}`);
-  if (options.familyCap) console.log(`Family cap: ${options.familyCap}`);
-  console.log(`Cache: ${options.cacheEnabled ? 'enabled' : 'disabled'}`);
+  console.info(`Smart Search: "${plan.raw}"`);
+  console.info(`Roots: ${plan.roots.join(', ')}`);
+  console.info(`View/Task: ${options.view}/${options.task}`);
+  if (options.kind !== 'any') console.info(`Mode: kind=${options.kind}${options.targetSymbol ? ` of=${options.targetSymbol}` : ''}`);
+  if (options.groupLimit) console.info(`Group limit: ${options.groupLimit}`);
+  if (options.familyCap) console.info(`Family cap: ${options.familyCap}`);
+  console.info(`Cache: ${options.cacheEnabled ? 'enabled' : 'disabled'}`);
   if (fusion) {
-    console.log(`Fusion: domain=${fusion.summary.domain} readiness=${fusion.readiness.status}`);
+    console.info(`Fusion: domain=${fusion.summary.domain} readiness=${fusion.readiness.status}`);
   }
-  console.log(`Terms: ${plan.terms.slice(0, 10).join(', ')}${plan.terms.length > 10 ? '...' : ''}`);
-  console.log('');
+  console.info(`Terms: ${plan.terms.slice(0, 10).join(', ')}${plan.terms.length > 10 ? '...' : ''}`);
+  console.info('');
 
   if (hits.length === 0) {
-    console.log('No matches found.');
-    console.log(`Completed in ${elapsedMs.toFixed(2)}ms`);
+    console.info('No matches found.');
+    console.info(`Completed in ${elapsedMs.toFixed(2)}ms`);
     return;
   }
 
@@ -1206,7 +1206,7 @@ function printTable(
 
   for (const [title, groupHits] of Object.entries(groups)) {
     if (groupHits.length === 0) continue;
-    console.log(`${title}:`);
+    console.info(`${title}:`);
     for (let i = 0; i < groupHits.length; i++) {
       const hit = groupHits[i];
       const relPath = hit.file.replace(/^\.\//, '');
@@ -1214,13 +1214,13 @@ function printTable(
       const quality = hit.qualityTag ? ` quality=${hit.qualityTag}:${(hit.qualityScore || 0).toFixed(2)}` : '';
       const dup = hit.duplicateCount ? ` +${hit.duplicateCount} similar` : '';
       const mirrors = options.showMirrors && hit.mirrorCount ? ` +${hit.mirrorCount} mirrors` : '';
-      console.log(`${i + 1}. ${relPath}:${hit.line} score=${hit.score.toFixed(1)}${quality}${dup}${mirrors}`);
-      console.log(`   ${snippet}`);
+      console.info(`${i + 1}. ${relPath}:${hit.line} score=${hit.score.toFixed(1)}${quality}${dup}${mirrors}`);
+      console.info(`   ${snippet}`);
     }
-    console.log('');
+    console.info('');
   }
 
-  console.log(`\nCompleted in ${elapsedMs.toFixed(2)}ms`);
+  console.info(`\nCompleted in ${elapsedMs.toFixed(2)}ms`);
 }
 
 function readinessToStatusLevel(value: string | undefined): StatusLevel {
@@ -1322,7 +1322,7 @@ async function main(): Promise<void> {
         error: fusionReport?.error || null,
       } : { enabled: false },
     };
-    console.log(JSON.stringify(payload, null, 2));
+    console.info(JSON.stringify(payload, null, 2));
 
     if (options.fusionFailOnCritical) {
       const status = computeOverallStatus([readinessToStatusLevel(fusionReport?.readiness.status)]);
@@ -1331,7 +1331,7 @@ async function main(): Promise<void> {
   } else {
     printTable(plan, hits, elapsedMs, options, fusionReport);
     if (options.explainPolicy) {
-      console.log('\nPolicy:', {
+      console.info('\nPolicy:', {
         strictPreset: options.defaultsApplied.strictPreset,
         implicitScopeCode: options.defaultsApplied.implicitScopeCode,
         familyCap: options.familyCap ?? policies.familyCap,

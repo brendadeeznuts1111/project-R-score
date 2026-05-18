@@ -437,13 +437,13 @@ export class Logger {
 
   static debug(message: string, data?: any): void {
     if (this.level <= LogLevel.DEBUG) {
-      console.log(`🐛 [DEBUG] ${message}`, data ? JSON.stringify(data, null, 2) : '');
+      console.info(`🐛 [DEBUG] ${message}`, data ? JSON.stringify(data, null, 2) : '');
     }
   }
 
   static info(message: string, data?: any): void {
     if (this.level <= LogLevel.INFO) {
-      console.log(`ℹ️  [INFO] ${message}`, data ? JSON.stringify(data, null, 2) : '');
+      console.info(`ℹ️  [INFO] ${message}`, data ? JSON.stringify(data, null, 2) : '');
     }
   }
 
@@ -469,7 +469,7 @@ export class Logger {
   static performance(operation: string, timeMs: number, memoryMb?: number): void {
     if (this.level <= LogLevel.INFO) {
       const memoryInfo = memoryMb ? ` (${memoryMb.toFixed(2)}MB)` : '';
-      console.log(`⚡ [PERF] ${operation}: ${timeMs.toFixed(2)}ms${memoryInfo}`);
+      console.info(`⚡ [PERF] ${operation}: ${timeMs.toFixed(2)}ms${memoryInfo}`);
     }
   }
 }

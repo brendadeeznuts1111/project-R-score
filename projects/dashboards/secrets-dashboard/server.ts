@@ -919,7 +919,7 @@ const server = Bun.serve({
   },
 });
 
-console.log(`Bun Secrets Dashboard running on http://${DASHBOARD_HOST}:${PORT}`);
+console.info(`Bun Secrets Dashboard running on http://${DASHBOARD_HOST}:${PORT}`);
 logger.info(`Secrets dashboard server started`, {
   port: PORT,
   environment: process.env.NODE_ENV || 'development',

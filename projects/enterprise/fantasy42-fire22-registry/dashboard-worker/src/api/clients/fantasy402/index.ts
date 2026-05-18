@@ -46,7 +46,7 @@ export class Fantasy402Client {
       }
 
       this.initialized = true;
-      console.log('✅ Fantasy402Client initialized successfully');
+      console.info('✅ Fantasy402Client initialized successfully');
 
       return true;
     } catch (error) {
@@ -257,7 +257,7 @@ export class Fantasy402Client {
       this.ensureInitialized();
 
       // In a real implementation, this would send to logging service
-      console.log(`[${level.toUpperCase()}] ${message}`);
+      console.info(`[${level.toUpperCase()}] ${message}`);
     } catch (error) {
       console.error('❌ Failed to write log:', error);
     }
@@ -276,7 +276,7 @@ export class Fantasy402Client {
       this.agentManager.setAuthToken(this.authToken);
       this.financialOps.setAuthToken(this.authToken);
 
-      console.log('🔄 Token renewed successfully');
+      console.info('🔄 Token renewed successfully');
       return true;
     } catch (error) {
       console.error('❌ Failed to renew token:', error);
@@ -328,7 +328,7 @@ export class Fantasy402Client {
       const balanceResult = await this.getBalance();
       results.balance = balanceResult.success;
 
-      console.log('🧪 Manager endpoints test completed:', results);
+      console.info('🧪 Manager endpoints test completed:', results);
       return results;
     } catch (error) {
       console.error('❌ Failed to test manager endpoints:', error);

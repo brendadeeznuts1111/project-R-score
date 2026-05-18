@@ -71,9 +71,9 @@ export function resetMetrics(): void {
 
 /* ---------- TensionTCPServer wrapper (simulated) -------------------- */
 export async function startTensionServer(port: number = 9999): Promise<any> {
-  console.log('[TCP] TensionTCPServer CRC32 integrity layer initialized');
-  console.log('[TCP] CRC32 checksum verification enabled');
-  console.log(`[TCP] Ready to listen on :${port}`);
+  console.info('[TCP] TensionTCPServer CRC32 integrity layer initialized');
+  console.info('[TCP] CRC32 checksum verification enabled');
+  console.info(`[TCP] Ready to listen on :${port}`);
   
   return {
     port,
@@ -85,12 +85,12 @@ export async function startTensionServer(port: number = 9999): Promise<any> {
 // Main execution for testing
 if (import.meta.main) {
   async function test() {
-    console.log('🧪 Testing TensionTCPServer CRC32 Integrity Layer');
-    console.log('='.repeat(60));
+    console.info('🧪 Testing TensionTCPServer CRC32 Integrity Layer');
+    console.info('='.repeat(60));
     
     // Initialize server
     const server = await startTensionServer(9999);
-    console.log('');
+    console.info('');
     
     // Test CRC32 checksums
     const testBuffers = [
@@ -99,22 +99,22 @@ if (import.meta.main) {
       new Uint8Array([100, 200, 255, 128, 64]),
     ];
     
-    console.log('📊 CRC32 Checksum Tests:');
+    console.info('📊 CRC32 Checksum Tests:');
     for (let i = 0; i < testBuffers.length; i++) {
       const checksum = crc(testBuffers[i].buffer);
-      console.log(`   Buffer ${i + 1}: checksum=0x${checksum.toString(16).toUpperCase().padStart(8, '0')}`);
+      console.info(`   Buffer ${i + 1}: checksum=0x${checksum.toString(16).toUpperCase().padStart(8, '0')}`);
     }
-    console.log('');
+    console.info('');
     
     // Get metrics
     const integrityMetrics = getIntegrityMetrics();
-    console.log('📈 Integrity Metrics:');
-    console.log(`   Total: ${integrityMetrics.total}`);
-    console.log(`   Dropped: ${integrityMetrics.dropped}`);
-    console.log(`   Integrity Rate: ${(integrityMetrics.integrityRate * 100).toFixed(2)}%`);
-    console.log('');
+    console.info('📈 Integrity Metrics:');
+    console.info(`   Total: ${integrityMetrics.total}`);
+    console.info(`   Dropped: ${integrityMetrics.dropped}`);
+    console.info(`   Integrity Rate: ${(integrityMetrics.integrityRate * 100).toFixed(2)}%`);
+    console.info('');
     
-    console.log('✅ TensionTCPServer CRC32 Integrity Layer Test Complete');
+    console.info('✅ TensionTCPServer CRC32 Integrity Layer Test Complete');
   }
   
   test();

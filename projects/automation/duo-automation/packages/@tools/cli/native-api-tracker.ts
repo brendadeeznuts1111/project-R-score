@@ -591,27 +591,27 @@ export class NativeAPIStatusAPI {
    * Track some demo operations
    */
   async trackDemoOperations() {
-    console.log('🔍 TRACKING DEMO OPERATIONS:');
+    console.info('🔍 TRACKING DEMO OPERATIONS:');
     
     // Track cookie operations
-    console.log('  🍪 Cookie operations:');
+    console.info('  🍪 Cookie operations:');
     await this.cookieStore.set('demo-session', 'abc123', { httpOnly: true });
     const sessionValue = this.cookieStore.get('demo-session');
-    console.log(`    Cookie set/get: ${sessionValue}`);
+    console.info(`    Cookie set/get: ${sessionValue}`);
     
     // Track fetch operations
-    console.log('  🌐 Fetch operations:');
+    console.info('  🌐 Fetch operations:');
     try {
       await this.tracker.trackCallAsync('fetch', async () => {
         return fetch('https://example.com');
       }, 'native', { endpoint: 'example.com' });
-      console.log('    HTTP fetch: completed');
+      console.info('    HTTP fetch: completed');
     } catch (error) {
-      console.log(`    HTTP fetch: ${error.message}`);
+      console.info(`    HTTP fetch: ${error.message}`);
     }
     
     // Track file operations
-    console.log('  📁 File operations:');
+    console.info('  📁 File operations:');
     await this.tracker.trackCallAsync('Bun.write', async () => {
       return Bun.write('demo-tracking.json', JSON.stringify({
         timestamp: new Date().toISOString(),
@@ -624,7 +624,7 @@ export class NativeAPIStatusAPI {
       return file.text();
     }, 'native', { operation: 'read' });
     
-    console.log(`    File write/read: ${JSON.parse(fileContent).message}`);
+    console.info(`    File write/read: ${JSON.parse(fileContent).message}`);
   }
 }
 
@@ -636,8 +636,8 @@ export class NativeAPIStatusAPI {
  * Demonstrate the native API tracker with domain and implementation detection
  */
 export async function demonstrateNativeAPITracker(): Promise<void> {
-  console.log('🔍 NATIVE API TRACKER DEMONSTRATION');
-  console.log('============================================================');
+  console.info('🔍 NATIVE API TRACKER DEMONSTRATION');
+  console.info('============================================================');
   
   // Create status API with tracking
   const statusAPI = new NativeAPIStatusAPI();
@@ -646,82 +646,82 @@ export async function demonstrateNativeAPITracker(): Promise<void> {
   await statusAPI.trackDemoOperations();
   
   // Get comprehensive status
-  console.log('\n📈 COMPREHENSIVE STATUS WITH API TRACKING:');
+  console.info('\n📈 COMPREHENSIVE STATUS WITH API TRACKING:');
   const status = await statusAPI.getStatus();
   
-  console.log(`  Overall Status: ${status.status}`);
-  console.log(`  Uptime: ${Math.round(status.nativeAPIs.performance.uptime / 1000)}s`);
-  console.log(`  Total APIs Tracked: ${status.nativeAPIs.performance.totalTrackedAPIs}`);
-  console.log(`  Total Calls: ${status.nativeAPIs.performance.totalCalls}`);
-  console.log(`  Average Response Time: ${status.nativeAPIs.performance.averageResponseTime.toFixed(2)}ms`);
-  console.log(`  Error Rate: ${status.nativeAPIs.performance.errorRate.toFixed(1)}%`);
-  console.log(`  Native Implementation Rate: ${status.nativeAPIs.performance.nativeImplementationRate.toFixed(1)}%`);
+  console.info(`  Overall Status: ${status.status}`);
+  console.info(`  Uptime: ${Math.round(status.nativeAPIs.performance.uptime / 1000)}s`);
+  console.info(`  Total APIs Tracked: ${status.nativeAPIs.performance.totalTrackedAPIs}`);
+  console.info(`  Total Calls: ${status.nativeAPIs.performance.totalCalls}`);
+  console.info(`  Average Response Time: ${status.nativeAPIs.performance.averageResponseTime.toFixed(2)}ms`);
+  console.info(`  Error Rate: ${status.nativeAPIs.performance.errorRate.toFixed(1)}%`);
+  console.info(`  Native Implementation Rate: ${status.nativeAPIs.performance.nativeImplementationRate.toFixed(1)}%`);
   
-  console.log('\n🔝 TOP PERFORMING APIS:');
+  console.info('\n🔝 TOP PERFORMING APIS:');
   status.nativeAPIs.topAPIs.forEach((api, index) => {
-    console.log(`  ${index + 1}. ${api.name}: ${api.calls} calls, ${api.avgDuration}ms avg, ${api.successRate}% success`);
+    console.info(`  ${index + 1}. ${api.name}: ${api.calls} calls, ${api.avgDuration}ms avg, ${api.successRate}% success`);
   });
   
-  console.log('\n🏥 API HEALTH STATUS:');
+  console.info('\n🏥 API HEALTH STATUS:');
   const health = status.nativeAPIs.tracker.health;
-  console.log(`  Overall: ${health.overall}`);
-  console.log(`  Healthy: ${health.counts.healthy}`);
-  console.log(`  Degraded: ${health.counts.degraded}`);
-  console.log(`  Unhealthy: ${health.counts.unhealthy}`);
+  console.info(`  Overall: ${health.overall}`);
+  console.info(`  Healthy: ${health.counts.healthy}`);
+  console.info(`  Degraded: ${health.counts.degraded}`);
+  console.info(`  Unhealthy: ${health.counts.unhealthy}`);
   
-  console.log('\n✅ FEATURES STATUS:');
+  console.info('\n✅ FEATURES STATUS:');
   Object.entries(status.features).forEach(([feature, status]) => {
-    console.log(`  ${feature}: ${status}`);
+    console.info(`  ${feature}: ${status}`);
   });
   
   // NEW: Show domain analysis
-  console.log('\n🌐 DOMAIN ANALYSIS:');
+  console.info('\n🌐 DOMAIN ANALYSIS:');
   const tracker = statusAPI.getTracker();
   const domainPerformance = tracker.getDomainPerformance();
   Object.entries(domainPerformance).forEach(([domain, perf]) => {
     if (perf.totalAPIs > 0) {
-      console.log(`  ${domain}: ${perf.totalAPIs} APIs, ${perf.totalCalls} calls, ${perf.nativeRate.toFixed(1)}% native`);
-      console.log(`    Top performers: ${perf.topPerformers.join(', ')}`);
+      console.info(`  ${domain}: ${perf.totalAPIs} APIs, ${perf.totalCalls} calls, ${perf.nativeRate.toFixed(1)}% native`);
+      console.info(`    Top performers: ${perf.topPerformers.join(', ')}`);
     }
   });
   
   // NEW: Show implementation analysis
-  console.log('\n🔧 IMPLEMENTATION ANALYSIS:');
+  console.info('\n🔧 IMPLEMENTATION ANALYSIS:');
   const implAnalysis = tracker.getImplementationAnalysis();
   Object.entries(implAnalysis).forEach(([impl, data]: [string, any]) => {
-    console.log(`  ${impl}: ${data.count} APIs, ${data.totalCalls} calls, ${data.avgDuration.toFixed(2)}ms avg`);
-    console.log(`    Sources: ${data.sources.join(', ')}`);
+    console.info(`  ${impl}: ${data.count} APIs, ${data.totalCalls} calls, ${data.avgDuration.toFixed(2)}ms avg`);
+    console.info(`    Sources: ${data.sources.join(', ')}`);
   });
   
   // NEW: Show detailed API information
-  console.log('\n📊 DETAILED API METRICS:');
+  console.info('\n📊 DETAILED API METRICS:');
   const allMetrics = tracker.getAllMetrics();
   allMetrics.forEach((metric, index) => {
-    console.log(`  ${index + 1}. ${metric.apiName}`);
-    console.log(`     Domain: ${metric.domain}`);
-    console.log(`     Implementation: ${metric.implementation} (${metric.implementationSource.source})`);
-    console.log(`     Performance: ${metric.callCount} calls, ${metric.averageDuration.toFixed(2)}ms avg`);
-    console.log(`     Source: ${metric.implementationSource.source}, Tier: ${metric.implementationSource.performanceTier}`);
-    console.log(`     Memory: ${metric.implementationSource.memoryEfficiency}, Success: ${((metric.successCount / metric.callCount) * 100).toFixed(1)}%`);
+    console.info(`  ${index + 1}. ${metric.apiName}`);
+    console.info(`     Domain: ${metric.domain}`);
+    console.info(`     Implementation: ${metric.implementation} (${metric.implementationSource.source})`);
+    console.info(`     Performance: ${metric.callCount} calls, ${metric.averageDuration.toFixed(2)}ms avg`);
+    console.info(`     Source: ${metric.implementationSource.source}, Tier: ${metric.implementationSource.performanceTier}`);
+    console.info(`     Memory: ${metric.implementationSource.memoryEfficiency}, Success: ${((metric.successCount / metric.callCount) * 100).toFixed(1)}%`);
   });
   
   // Export tracking data
-  console.log('\n📤 EXPORTING TRACKING DATA:');
+  console.info('\n📤 EXPORTING TRACKING DATA:');
   const exportData = statusAPI.exportTrackingData();
-  console.log(`  Export timestamp: ${exportData.timestamp}`);
-  console.log(`  Metrics included: ${exportData.metrics.length} APIs`);
-  console.log(`  Summary: ${exportData.summary.totalCalls} total calls tracked`);
+  console.info(`  Export timestamp: ${exportData.timestamp}`);
+  console.info(`  Metrics included: ${exportData.metrics.length} APIs`);
+  console.info(`  Summary: ${exportData.summary.totalCalls} total calls tracked`);
   
-  console.log('\n🎯 NATIVE API TRACKER SUMMARY:');
-  console.log('  ✅ Real-time API usage monitoring');
-  console.log('  ✅ Performance metrics and timing');
-  console.log('  ✅ Success/failure rate tracking');
-  console.log('  ✅ Native vs fallback implementation detection');
-  console.log('  ✅ Domain-based classification');
-  console.log('  ✅ Implementation source analysis');
-  console.log('  ✅ Health status monitoring');
-  console.log('  ✅ Comprehensive metrics export');
-  console.log('  ✅ Integration with status API');
+  console.info('\n🎯 NATIVE API TRACKER SUMMARY:');
+  console.info('  ✅ Real-time API usage monitoring');
+  console.info('  ✅ Performance metrics and timing');
+  console.info('  ✅ Success/failure rate tracking');
+  console.info('  ✅ Native vs fallback implementation detection');
+  console.info('  ✅ Domain-based classification');
+  console.info('  ✅ Implementation source analysis');
+  console.info('  ✅ Health status monitoring');
+  console.info('  ✅ Comprehensive metrics export');
+  console.info('  ✅ Integration with status API');
   
   // Cleanup demo file
   await Bun.write('demo-tracking.json', JSON.stringify({

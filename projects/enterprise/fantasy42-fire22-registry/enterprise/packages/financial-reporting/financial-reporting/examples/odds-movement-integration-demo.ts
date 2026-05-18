@@ -50,25 +50,25 @@ class OddsMovementDemo {
    */
   private setupEventListeners(): void {
     this.events.subscribe('OddsMovementRecorded', event => {
-      console.log(
+      console.info(
         `📊 Odds Movement Recorded: ${event.eventId}/${event.marketId} - ${event.movementPercentage.toFixed(2)}%`
       );
     });
 
     this.events.subscribe('BetTimingAnalyzed', event => {
-      console.log(
+      console.info(
         `🎯 Bet Timing Analyzed: ${event.betId} - ${event.timingCategory} (${event.oddsPosition})`
       );
     });
 
     this.events.subscribe('OddsDataProcessed', event => {
-      console.log(
+      console.info(
         `🔄 Odds Data Processed: ${event.updatesCount} updates, ${event.movementsCreated} movements created`
       );
     });
 
     this.events.subscribe('DailyTransactionReportGenerated', event => {
-      console.log(
+      console.info(
         `📋 DTR Generated: ${event.transactionCount} transactions, $${event.totalAmount.toLocaleString()} total`
       );
     });
@@ -78,7 +78,7 @@ class OddsMovementDemo {
    * Initialize the demo database schema
    */
   async initializeDatabase(): Promise<void> {
-    console.log('🏗️ Initializing demo database schema...');
+    console.info('🏗️ Initializing demo database schema...');
 
     try {
       // For demo purposes, use direct SQLite connection to avoid configuration issues
@@ -103,7 +103,7 @@ class OddsMovementDemo {
       // Create basic schema manually for demo
       await this.createBasicSchema();
 
-      console.log('✅ Database schema and services initialized successfully');
+      console.info('✅ Database schema and services initialized successfully');
     } catch (error) {
       console.error('❌ Failed to initialize database schema:', error);
       throw error;
@@ -219,7 +219,7 @@ class OddsMovementDemo {
       ('customer_456', 'user456', 'user456@example.com', 'ACTIVE', 'USD')
     `;
 
-    console.log('✅ Basic schema created for demo');
+    console.info('✅ Basic schema created for demo');
   }
 
   /**
@@ -227,7 +227,7 @@ class OddsMovementDemo {
    */
   async runDemo(): Promise<void> {
     try {
-      console.log('🎲 Starting Odds Movement Integration Demo...\n');
+      console.info('🎲 Starting Odds Movement Integration Demo...\n');
 
       // Step 1: Generate and ingest sample odds data
       await this.step1_GenerateSampleData();
@@ -244,8 +244,8 @@ class OddsMovementDemo {
       // Step 5: Show enhanced financial reporting
       await this.step5_EnhancedFinancialReports();
 
-      console.log('\n🎉 Odds Movement Integration Demo completed successfully!');
-      console.log('💡 The system is now ready for production use with real odds data feeds.');
+      console.info('\n🎉 Odds Movement Integration Demo completed successfully!');
+      console.info('💡 The system is now ready for production use with real odds data feeds.');
     } catch (error) {
       console.error('❌ Demo failed:', error.message);
       throw error;
@@ -256,11 +256,11 @@ class OddsMovementDemo {
    * Step 1: Generate and ingest sample odds data
    */
   private async step1_GenerateSampleData(): Promise<void> {
-    console.log('📊 Step 1: Generating Sample Odds Data');
+    console.info('📊 Step 1: Generating Sample Odds Data');
 
     // Generate sample odds data
     const sampleData = await this.dataIngestionService.generateSampleOddsData(3, 5);
-    console.log(`   Generated ${sampleData.length} sample odds updates`);
+    console.info(`   Generated ${sampleData.length} sample odds updates`);
 
     // Register a sample data source
     this.dataIngestionService.registerDataSource({
@@ -272,15 +272,15 @@ class OddsMovementDemo {
 
     // Ingest the sample data manually
     const result = await this.dataIngestionService.ingestManualOddsData(sampleData);
-    console.log(`   ✅ Ingested data: ${result.movementsCreated} odds movements created`);
-    console.log(`   📈 Processing time: ${result.processingTime}ms\n`);
+    console.info(`   ✅ Ingested data: ${result.movementsCreated} odds movements created`);
+    console.info(`   📈 Processing time: ${result.processingTime}ms\n`);
   }
 
   /**
    * Step 2: Analyze bet timing patterns
    */
   private async step2_AnalyzeBetTiming(): Promise<void> {
-    console.log('🎯 Step 2: Analyzing Bet Timing Patterns');
+    console.info('🎯 Step 2: Analyzing Bet Timing Patterns');
 
     // First, create some sample bet data
     await this.createSampleBetData();
@@ -297,7 +297,7 @@ class OddsMovementDemo {
       betTimestamp: new Date(),
     };
 
-    console.log(
+    console.info(
       `   Analyzing bet: ${sampleBet.betId} (${sampleBet.betAmount} @ ${sampleBet.betOdds})`
     );
 
@@ -312,25 +312,25 @@ class OddsMovementDemo {
       sampleBet.betTimestamp
     );
 
-    console.log(`   📊 Timing Analysis Results:`);
-    console.log(`      • Timing Category: ${timingAnalysis.timingCategory}`);
-    console.log(`      • Odds Position: ${timingAnalysis.oddsPosition}`);
-    console.log(`      • Potential Savings: $${timingAnalysis.potentialSavings.toFixed(2)}`);
-    console.log(`      • Risk Assessment: ${timingAnalysis.riskAssessment}`);
-    console.log(`      • Historical Movements: ${timingAnalysis.oddsMovements.length}\n`);
+    console.info(`   📊 Timing Analysis Results:`);
+    console.info(`      • Timing Category: ${timingAnalysis.timingCategory}`);
+    console.info(`      • Odds Position: ${timingAnalysis.oddsPosition}`);
+    console.info(`      • Potential Savings: $${timingAnalysis.potentialSavings.toFixed(2)}`);
+    console.info(`      • Risk Assessment: ${timingAnalysis.riskAssessment}`);
+    console.info(`      • Historical Movements: ${timingAnalysis.oddsMovements.length}\n`);
   }
 
   /**
    * Step 3: Generate odds movement reports
    */
   private async step3_GenerateOddsReports(): Promise<void> {
-    console.log('📈 Step 3: Generating Odds Movement Reports');
+    console.info('📈 Step 3: Generating Odds Movement Reports');
 
     const endDate = new Date();
     const startDate = new Date(endDate);
     startDate.setDate(startDate.getDate() - 7);
 
-    console.log(
+    console.info(
       `   Generating odds movement report for period: ${startDate.toDateString()} to ${endDate.toDateString()}`
     );
 
@@ -340,47 +340,47 @@ class OddsMovementDemo {
       2.0 // 2% movement threshold
     );
 
-    console.log(`   📊 Odds Movement Report Summary:`);
-    console.log(`      • Total Movements: ${oddsReport.summary.totalMovements}`);
-    console.log(`      • Significant Movements: ${oddsReport.summary.significantMovements}`);
-    console.log(`      • Affected Bets: ${oddsReport.summary.affectedBets}`);
-    console.log(
+    console.info(`   📊 Odds Movement Report Summary:`);
+    console.info(`      • Total Movements: ${oddsReport.summary.totalMovements}`);
+    console.info(`      • Significant Movements: ${oddsReport.summary.significantMovements}`);
+    console.info(`      • Affected Bets: ${oddsReport.summary.affectedBets}`);
+    console.info(
       `      • Potential Revenue Impact: $${oddsReport.summary.potentialRevenueImpact.toLocaleString()}`
     );
 
-    console.log(`   📊 Movements by Type:`);
+    console.info(`   📊 Movements by Type:`);
     Object.entries(oddsReport.movementsByType).forEach(([type, count]) => {
-      console.log(`      • ${type}: ${count}`);
+      console.info(`      • ${type}: ${count}`);
     });
 
-    console.log(`   📊 Timing Analysis:`);
-    console.log(`      • Early Bets: ${oddsReport.timingAnalysis.earlyBets}`);
-    console.log(`      • Mid Bets: ${oddsReport.timingAnalysis.midBets}`);
-    console.log(`      • Late Bets: ${oddsReport.timingAnalysis.lateBets}`);
-    console.log(`      • Peak Bets: ${oddsReport.timingAnalysis.peakBets}`);
-    console.log(
+    console.info(`   📊 Timing Analysis:`);
+    console.info(`      • Early Bets: ${oddsReport.timingAnalysis.earlyBets}`);
+    console.info(`      • Mid Bets: ${oddsReport.timingAnalysis.midBets}`);
+    console.info(`      • Late Bets: ${oddsReport.timingAnalysis.lateBets}`);
+    console.info(`      • Peak Bets: ${oddsReport.timingAnalysis.peakBets}`);
+    console.info(
       `      • Average Timing Score: ${oddsReport.timingAnalysis.averageTimingScore.toFixed(2)}`
     );
 
-    console.log(`   💡 Recommendations:`);
+    console.info(`   💡 Recommendations:`);
     oddsReport.recommendations.forEach((rec, index) => {
-      console.log(`      ${index + 1}. ${rec}`);
+      console.info(`      ${index + 1}. ${rec}`);
     });
 
-    console.log('');
+    console.info('');
   }
 
   /**
    * Step 4: Demonstrate market impact analysis
    */
   private async step4_MarketImpactAnalysis(): Promise<void> {
-    console.log('🎪 Step 4: Market Impact Analysis');
+    console.info('🎪 Step 4: Market Impact Analysis');
 
     const endDate = new Date();
     const startDate = new Date(endDate);
     startDate.setDate(startDate.getDate() - 3);
 
-    console.log(`   Analyzing market impact for event_001/market_01`);
+    console.info(`   Analyzing market impact for event_001/market_01`);
 
     const marketImpact = await this.oddsAnalysisService.analyzeMarketImpact(
       'event_001',
@@ -389,33 +389,33 @@ class OddsMovementDemo {
       endDate
     );
 
-    console.log(`   📊 Market Impact Analysis:`);
-    console.log(
+    console.info(`   📊 Market Impact Analysis:`);
+    console.info(
       `      • Period: ${marketImpact.period.start.toDateString()} to ${marketImpact.period.end.toDateString()}`
     );
-    console.log(`      • Total Odds Movements: ${marketImpact.oddsMovements.length}`);
-    console.log(`      • Total Bet Volume: $${marketImpact.betVolume.total.toLocaleString()}`);
+    console.info(`      • Total Odds Movements: ${marketImpact.oddsMovements.length}`);
+    console.info(`      • Total Bet Volume: $${marketImpact.betVolume.total.toLocaleString()}`);
 
-    console.log(`   💰 Financial Impact:`);
-    console.log(
+    console.info(`   💰 Financial Impact:`);
+    console.info(
       `      • Potential Revenue: $${marketImpact.financialImpact.potentialRevenue.toLocaleString()}`
     );
-    console.log(
+    console.info(
       `      • Actual Revenue: $${marketImpact.financialImpact.actualRevenue.toLocaleString()}`
     );
-    console.log(
+    console.info(
       `      • Opportunity Cost: $${marketImpact.financialImpact.opportunityCost.toLocaleString()}`
     );
-    console.log(
+    console.info(
       `      • Risk-Adjusted Revenue: $${marketImpact.financialImpact.riskAdjustedRevenue.toLocaleString()}`
     );
 
-    console.log(`   📈 Market Efficiency:`);
-    console.log(`      • Efficiency Score: ${marketImpact.marketEfficiency.score}/100`);
-    console.log(
+    console.info(`   📈 Market Efficiency:`);
+    console.info(`      • Efficiency Score: ${marketImpact.marketEfficiency.score}/100`);
+    console.info(
       `      • Movement Frequency: ${marketImpact.marketEfficiency.factors.movementFrequency}`
     );
-    console.log(
+    console.info(
       `      • Odds Accuracy: ${marketImpact.marketEfficiency.factors.oddsAccuracy.toFixed(1)}%\n`
     );
   }
@@ -424,14 +424,14 @@ class OddsMovementDemo {
    * Step 5: Show enhanced financial reporting
    */
   private async step5_EnhancedFinancialReports(): Promise<void> {
-    console.log('💼 Step 5: Enhanced Financial Reporting');
+    console.info('💼 Step 5: Enhanced Financial Reporting');
 
     // Create sample transaction data
     await this.createSampleTransactionData();
 
     const reportDate = new Date();
 
-    console.log(`   Generating enhanced Daily Transaction Report for ${reportDate.toDateString()}`);
+    console.info(`   Generating enhanced Daily Transaction Report for ${reportDate.toDateString()}`);
 
     const dtr = await this.reportGenerator.generateDailyTransactionReport(
       reportDate,
@@ -439,42 +439,42 @@ class OddsMovementDemo {
       true // include odds analysis
     );
 
-    console.log(`   📋 Daily Transaction Report:`);
-    console.log(`      • Report Date: ${dtr.reportDate}`);
-    console.log(`      • Total Transactions: ${dtr.totalTransactions}`);
-    console.log(`      • Total Amount: $${dtr.totalAmount.toLocaleString()}`);
-    console.log(`      • Threshold: $${dtr.threshold}`);
+    console.info(`   📋 Daily Transaction Report:`);
+    console.info(`      • Report Date: ${dtr.reportDate}`);
+    console.info(`      • Total Transactions: ${dtr.totalTransactions}`);
+    console.info(`      • Total Amount: $${dtr.totalAmount.toLocaleString()}`);
+    console.info(`      • Threshold: $${dtr.threshold}`);
 
     if (dtr.oddsMovementInsights) {
-      console.log(`   📊 Odds Movement Insights:`);
-      console.log(`      • Total Movements: ${dtr.oddsMovementInsights.totalMovements}`);
-      console.log(
+      console.info(`   📊 Odds Movement Insights:`);
+      console.info(`      • Total Movements: ${dtr.oddsMovementInsights.totalMovements}`);
+      console.info(
         `      • Significant Movements: ${dtr.oddsMovementInsights.significantMovements}`
       );
-      console.log(
+      console.info(
         `      • Average Movement: ${dtr.oddsMovementInsights.avgMovementPercentage.toFixed(2)}%`
       );
-      console.log(
+      console.info(
         `      • Top Moving Markets: ${dtr.oddsMovementInsights.topMovingMarkets.length}`
       );
     }
 
     if (dtr.betTimingAnalysis) {
-      console.log(`   🎯 Bet Timing Analysis:`);
-      console.log(`      • Total Bets Analyzed: ${dtr.betTimingAnalysis.totalBets}`);
-      console.log(`      • Favorable Timing: ${dtr.betTimingAnalysis.favorableTiming}`);
-      console.log(`      • Unfavorable Timing: ${dtr.betTimingAnalysis.unfavorableTiming}`);
-      console.log(
+      console.info(`   🎯 Bet Timing Analysis:`);
+      console.info(`      • Total Bets Analyzed: ${dtr.betTimingAnalysis.totalBets}`);
+      console.info(`      • Favorable Timing: ${dtr.betTimingAnalysis.favorableTiming}`);
+      console.info(`      • Unfavorable Timing: ${dtr.betTimingAnalysis.unfavorableTiming}`);
+      console.info(
         `      • Potential Savings: $${dtr.betTimingAnalysis.potentialSavings.toFixed(2)}`
       );
 
-      console.log(`   ⚠️ Risk Distribution:`);
+      console.info(`   ⚠️ Risk Distribution:`);
       Object.entries(dtr.betTimingAnalysis.riskDistribution).forEach(([level, count]) => {
-        console.log(`      • ${level}: ${count} bets`);
+        console.info(`      • ${level}: ${count} bets`);
       });
     }
 
-    console.log('');
+    console.info('');
   }
 
   /**
@@ -626,12 +626,12 @@ class OddsMovementDemo {
    * Show system status and cleanup
    */
   async showStatusAndCleanup(): Promise<void> {
-    console.log('📊 System Status:');
+    console.info('📊 System Status:');
 
     const ingestionStatus = this.dataIngestionService.getStatus();
-    console.log(`   • Ingestion Service: ${ingestionStatus.isRunning ? 'Running' : 'Stopped'}`);
-    console.log(`   • Active Sources: ${ingestionStatus.activeSources.length}`);
-    console.log(`   • Total Sources: ${ingestionStatus.totalSources}`);
+    console.info(`   • Ingestion Service: ${ingestionStatus.isRunning ? 'Running' : 'Stopped'}`);
+    console.info(`   • Active Sources: ${ingestionStatus.activeSources.length}`);
+    console.info(`   • Total Sources: ${ingestionStatus.totalSources}`);
 
     // Get some stats from the database
     const movementStats = await this.db`
@@ -643,9 +643,9 @@ class OddsMovementDemo {
     `;
 
     if (movementStats) {
-      console.log(`   • Total Odds Movements: ${movementStats.total_movements}`);
-      console.log(`   • Average Movement: ${movementStats.avg_movement?.toFixed(2)}%`);
-      console.log(`   • Max Movement: ${movementStats.max_movement?.toFixed(2)}%`);
+      console.info(`   • Total Odds Movements: ${movementStats.total_movements}`);
+      console.info(`   • Average Movement: ${movementStats.avg_movement?.toFixed(2)}%`);
+      console.info(`   • Max Movement: ${movementStats.max_movement?.toFixed(2)}%`);
     }
 
     const betStats = await this.db`
@@ -656,15 +656,15 @@ class OddsMovementDemo {
     `;
 
     if (betStats) {
-      console.log(`   • Total Bets Analyzed: ${betStats.total_bets}`);
-      console.log(`   • Total Potential Savings: $${betStats.total_savings?.toFixed(2) || '0.00'}`);
+      console.info(`   • Total Bets Analyzed: ${betStats.total_bets}`);
+      console.info(`   • Total Potential Savings: $${betStats.total_savings?.toFixed(2) || '0.00'}`);
     }
 
-    console.log('\n🧹 Cleaning up demo resources...');
+    console.info('\n🧹 Cleaning up demo resources...');
     this.dataIngestionService.cleanup();
     // Close all database connections through the manager
     await databaseManager.close();
-    console.log('✅ Demo cleanup completed');
+    console.info('✅ Demo cleanup completed');
   }
 }
 
@@ -691,22 +691,22 @@ export { OddsMovementDemo, runOddsMovementDemo };
 
 // Run enhanced demo if this file is executed directly
 if (import.meta.main) {
-  console.log('🎲 Enhanced Odds Movement Integration Demo');
-  console.log('!==!==!==!==!==!==!==!===\n');
+  console.info('🎲 Enhanced Odds Movement Integration Demo');
+  console.info('!==!==!==!==!==!==!==!===\n');
 
-  console.log('New Features:');
-  console.log('• Multi-database support (SQLite/MySQL/PostgreSQL)');
-  console.log('• YAML configuration management');
-  console.log('• Enhanced regulatory compliance');
-  console.log('• Multi-format export (CSV/XML/JSON)');
-  console.log('• Transaction support and audit trails\n');
+  console.info('New Features:');
+  console.info('• Multi-database support (SQLite/MySQL/PostgreSQL)');
+  console.info('• YAML configuration management');
+  console.info('• Enhanced regulatory compliance');
+  console.info('• Multi-format export (CSV/XML/JSON)');
+  console.info('• Transaction support and audit trails\n');
 
   // Display current database configuration
-  console.log('📊 Current Configuration:');
+  console.info('📊 Current Configuration:');
   const config = databaseManager.getConfig();
-  console.log(`   • Adapter: ${config.main.adapter}`);
-  console.log(`   • Database: ${config.main.database}`);
-  console.log(`   • Environment: ${Bun.env.NODE_ENV || 'development'}\n`);
+  console.info(`   • Adapter: ${config.main.adapter}`);
+  console.info(`   • Database: ${config.main.database}`);
+  console.info(`   • Environment: ${Bun.env.NODE_ENV || 'development'}\n`);
 
   runOddsMovementDemo().catch(error => {
     console.error('Demo failed:', error);

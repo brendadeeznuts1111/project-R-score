@@ -43,9 +43,9 @@ export class BunBenchmark {
 
     const jsonString = JSON.stringify(sampleData);
 
-    console.log('\n📊 Compression Benchmark');
-    console.log('─'.repeat(60));
-    console.log(`Original size: ${jsonString.length} bytes`);
+    console.info('\n📊 Compression Benchmark');
+    console.info('─'.repeat(60));
+    console.info(`Original size: ${jsonString.length} bytes`);
 
     // Test different compression methods
     const tests = [
@@ -57,7 +57,7 @@ export class BunBenchmark {
     for (const test of tests) {
       const result = test.fn();
       const ratio = jsonString.length / result.length;
-      console.log(`${test.name.padEnd(8)}: ${result.length.toString().padStart(6)} bytes (${ratio.toFixed(2)}x compression)`);
+      console.info(`${test.name.padEnd(8)}: ${result.length.toString().padStart(6)} bytes (${ratio.toFixed(2)}x compression)`);
     }
   }
 }
@@ -75,17 +75,17 @@ interface BenchmarkResult {
 
 // Run benchmarks
 if (import.meta.main) {
-  console.log('🚀 Starting Bun Native Benchmarks...');
+  console.info('🚀 Starting Bun Native Benchmarks...');
   
   const uuidBench = await BunBenchmark.measure('UUID Generation', () => {
     return Bun.randomUUIDv7();
   }, 10000);
   
-  console.log(`\n💎 ${uuidBench.name}:`);
-  console.log(`  • Iterations: ${uuidBench.iterations}`);
-  console.log(`  • Average:    ${uuidBench.average.toFixed(4)}ms`);
-  console.log(`  • P95:        ${uuidBench.p95.toFixed(4)}ms`);
-  console.log(`  • Throughput: ${Math.round(uuidBench.opsPerSec).toLocaleString()} IDs/s`);
+  console.info(`\n💎 ${uuidBench.name}:`);
+  console.info(`  • Iterations: ${uuidBench.iterations}`);
+  console.info(`  • Average:    ${uuidBench.average.toFixed(4)}ms`);
+  console.info(`  • P95:        ${uuidBench.p95.toFixed(4)}ms`);
+  console.info(`  • Throughput: ${Math.round(uuidBench.opsPerSec).toLocaleString()} IDs/s`);
 
   BunBenchmark.compareCompression();
 }

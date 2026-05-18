@@ -23,8 +23,8 @@ export class PaymentBuilderDemo {
    * 💚 Demo Cash App Payment
    */
   static async demoCashAppPayment(): Promise<void> {
-    console.log('\n💚 Cash App Payment Demo');
-    console.log('========================');
+    console.info('\n💚 Cash App Payment Demo');
+    console.info('========================');
     
     try {
       const cashappBuilder = PaymentBuilderFactory.createBuilder('cashapp') as CashAppBuilder;
@@ -39,14 +39,14 @@ export class PaymentBuilderDemo {
         .addMetadata('category', 'food')
         .build();
       
-      console.log('✅ Cash App Payment Created:');
-      console.log(`   ID: ${payment.id}`);
-      console.log(`   Recipient: ${payment.recipient}`);
-      console.log(`   Amount: $${payment.amount}`);
-      console.log(`   Note: ${payment.note}`);
-      console.log(`   QR Code: ${payment.metadata.qrCode}`);
-      console.log(`   Deep Link: ${payment.metadata.deepLink}`);
-      console.log(`   Participants: ${payment.participants.join(', ')}`);
+      console.info('✅ Cash App Payment Created:');
+      console.info(`   ID: ${payment.id}`);
+      console.info(`   Recipient: ${payment.recipient}`);
+      console.info(`   Amount: $${payment.amount}`);
+      console.info(`   Note: ${payment.note}`);
+      console.info(`   QR Code: ${payment.metadata.qrCode}`);
+      console.info(`   Deep Link: ${payment.metadata.deepLink}`);
+      console.info(`   Participants: ${payment.participants.join(', ')}`);
       
     } catch (error) {
       console.error('❌ Cash App Payment Error:', error);
@@ -57,12 +57,12 @@ export class PaymentBuilderDemo {
    * 💙 Demo Venmo Payment (Manual and OAuth)
    */
   static async demoVenmoPayment(): Promise<void> {
-    console.log('\n💙 Venmo Payment Demo');
-    console.log('=======================');
+    console.info('\n💙 Venmo Payment Demo');
+    console.info('=======================');
     
     try {
       // Manual Venmo Payment
-      console.log('\n📱 Manual Venmo Payment:');
+      console.info('\n📱 Manual Venmo Payment:');
       const venmoManualBuilder = PaymentBuilderFactory.createBuilder('venmo') as VenmoBuilder;
       
       const manualPayment = venmoManualBuilder
@@ -73,19 +73,19 @@ export class PaymentBuilderDemo {
         .setSender('Mom')
         .build();
       
-      console.log('✅ Manual Venmo Payment Created:');
-      console.log(`   ID: ${manualPayment.id}`);
-      console.log(`   Status: Requires manual confirmation`);
-      console.log(`   QR Code: ${manualPayment.metadata.qrCode}`);
+      console.info('✅ Manual Venmo Payment Created:');
+      console.info(`   ID: ${manualPayment.id}`);
+      console.info(`   Status: Requires manual confirmation`);
+      console.info(`   QR Code: ${manualPayment.metadata.qrCode}`);
       
       // Execute manual payment
       const manualResult = await venmoManualBuilder.executePayment();
-      console.log('📋 Manual Payment Result:');
-      console.log(`   Status: ${manualResult.status}`);
-      console.log(`   Instructions: ${manualResult.instructions}`);
+      console.info('📋 Manual Payment Result:');
+      console.info(`   Status: ${manualResult.status}`);
+      console.info(`   Instructions: ${manualResult.instructions}`);
       
       // OAuth Venmo Payment
-      console.log('\n🔐 OAuth Venmo Payment:');
+      console.info('\n🔐 OAuth Venmo Payment:');
       const venmoOAuthBuilder = PaymentBuilderFactory.createBuilder('venmo') as VenmoBuilder;
       
       const oauthPayment = venmoOAuthBuilder
@@ -96,15 +96,15 @@ export class PaymentBuilderDemo {
         .setSender('Mom')
         .build();
       
-      console.log('✅ OAuth Venmo Payment Created:');
-      console.log(`   ID: ${oauthPayment.id}`);
-      console.log(`   OAuth Enabled: ${oauthPayment.metadata.venmoOAuth}`);
+      console.info('✅ OAuth Venmo Payment Created:');
+      console.info(`   ID: ${oauthPayment.id}`);
+      console.info(`   OAuth Enabled: ${oauthPayment.metadata.venmoOAuth}`);
       
       // Execute OAuth payment
       const oauthResult = await venmoOAuthBuilder.executePayment();
-      console.log('📋 OAuth Payment Result:');
-      console.log(`   Status: ${oauthResult.status}`);
-      console.log(`   Transaction ID: ${oauthResult.transactionId}`);
+      console.info('📋 OAuth Payment Result:');
+      console.info(`   Status: ${oauthResult.status}`);
+      console.info(`   Transaction ID: ${oauthResult.transactionId}`);
       
     } catch (error) {
       console.error('❌ Venmo Payment Error:', error);
@@ -115,16 +115,16 @@ export class PaymentBuilderDemo {
    * ⛓️ Demo Bitcoin Payment
    */
   static async demoBitcoinPayment(): Promise<void> {
-    console.log('\n⛓️ Bitcoin Payment Demo');
-    console.log('========================');
+    console.info('\n⛓️ Bitcoin Payment Demo');
+    console.info('========================');
     
     try {
       const btcBuilder = PaymentBuilderFactory.createBuilder('btc') as BitcoinBuilder;
       
       // Generate address first
-      console.log('🔑 Generating Bitcoin address...');
+      console.info('🔑 Generating Bitcoin address...');
       const address = await btcBuilder.generateAddress();
-      console.log(`   Generated Address: ${address}`);
+      console.info(`   Generated Address: ${address}`);
       
       const payment = await btcBuilder
         .setAmount(25.50)
@@ -135,14 +135,14 @@ export class PaymentBuilderDemo {
         .addMetadata('category', 'family')
         .build();
       
-      console.log('✅ Bitcoin Payment Created:');
-      console.log(`   ID: ${payment.id}`);
-      console.log(`   Amount: $${payment.amount} (${payment.metadata.btcAmount} BTC)`);
-      console.log(`   Address: ${payment.recipient}`);
-      console.log(`   Network: ${payment.metadata.btcNetwork}`);
-      console.log(`   QR Code: ${payment.metadata.qrCode}`);
-      console.log(`   Explorer: ${payment.metadata.blockchainExplorer}`);
-      console.log(`   Confirmations Required: ${payment.metadata.confirmationsRequired}`);
+      console.info('✅ Bitcoin Payment Created:');
+      console.info(`   ID: ${payment.id}`);
+      console.info(`   Amount: $${payment.amount} (${payment.metadata.btcAmount} BTC)`);
+      console.info(`   Address: ${payment.recipient}`);
+      console.info(`   Network: ${payment.metadata.btcNetwork}`);
+      console.info(`   QR Code: ${payment.metadata.qrCode}`);
+      console.info(`   Explorer: ${payment.metadata.blockchainExplorer}`);
+      console.info(`   Confirmations Required: ${payment.metadata.confirmationsRequired}`);
       
     } catch (error) {
       console.error('❌ Bitcoin Payment Error:', error);
@@ -153,12 +153,12 @@ export class PaymentBuilderDemo {
    * 🔷 Demo Ethereum Payment
    */
   static async demoEthereumPayment(): Promise<void> {
-    console.log('\n🔷 Ethereum Payment Demo');
-    console.log('=========================');
+    console.info('\n🔷 Ethereum Payment Demo');
+    console.info('=========================');
     
     try {
       // Native ETH Payment
-      console.log('💎 Native ETH Payment:');
+      console.info('💎 Native ETH Payment:');
       const ethBuilder = PaymentBuilderFactory.createBuilder('eth') as EthereumBuilder;
       
       const ethPayment = ethBuilder
@@ -170,15 +170,15 @@ export class PaymentBuilderDemo {
         .setSender('Mom')
         .build();
       
-      console.log('✅ ETH Payment Created:');
-      console.log(`   ID: ${ethPayment.id}`);
-      console.log(`   Amount: $${ethPayment.amount} (${ethPayment.metadata.ethAmount} ETH)`);
-      console.log(`   Wei Amount: ${ethPayment.metadata.weiAmount}`);
-      console.log(`   QR Code: ${ethPayment.metadata.qrCode}`);
-      console.log(`   Explorer: ${ethPayment.metadata.blockchainExplorer}`);
+      console.info('✅ ETH Payment Created:');
+      console.info(`   ID: ${ethPayment.id}`);
+      console.info(`   Amount: $${ethPayment.amount} (${ethPayment.metadata.ethAmount} ETH)`);
+      console.info(`   Wei Amount: ${ethPayment.metadata.weiAmount}`);
+      console.info(`   QR Code: ${ethPayment.metadata.qrCode}`);
+      console.info(`   Explorer: ${ethPayment.metadata.blockchainExplorer}`);
       
       // USDC Token Payment
-      console.log('\n💰 USDC Token Payment:');
+      console.info('\n💰 USDC Token Payment:');
       const usdcBuilder = PaymentBuilderFactory.createBuilder('usdc') as EthereumBuilder;
       
       const usdcPayment = usdcBuilder
@@ -190,11 +190,11 @@ export class PaymentBuilderDemo {
         .setSender('Mom')
         .build();
       
-      console.log('✅ USDC Payment Created:');
-      console.log(`   ID: ${usdcPayment.id}`);
-      console.log(`   Token: ${usdcPayment.metadata.tokenSymbol}`);
-      console.log(`   Token Address: ${usdcPayment.metadata.tokenAddress}`);
-      console.log(`   QR Code: ${usdcPayment.metadata.qrCode}`);
+      console.info('✅ USDC Payment Created:');
+      console.info(`   ID: ${usdcPayment.id}`);
+      console.info(`   Token: ${usdcPayment.metadata.tokenSymbol}`);
+      console.info(`   Token Address: ${usdcPayment.metadata.tokenAddress}`);
+      console.info(`   QR Code: ${usdcPayment.metadata.qrCode}`);
       
     } catch (error) {
       console.error('❌ Ethereum Payment Error:', error);
@@ -205,11 +205,11 @@ export class PaymentBuilderDemo {
    * 🎯 Demo Smart Payment Selection
    */
   static async demoSmartSelection(): Promise<void> {
-    console.log('\n🎯 Smart Payment Selection Demo');
-    console.log('===============================');
+    console.info('\n🎯 Smart Payment Selection Demo');
+    console.info('===============================');
     
     // Scenario 1: Family Payment
-    console.log('\n🏠 Scenario 1: Family Payment');
+    console.info('\n🏠 Scenario 1: Family Payment');
     const familyRequirements: PaymentRequirements = {
       amount: 50,
       recipientCountry: 'US',
@@ -224,17 +224,17 @@ export class PaymentBuilderDemo {
     };
     
     const familyRecommendations = SmartPaymentSelector.selectBestMethods(familyRequirements);
-    console.log('Top recommendations for family payment:');
+    console.info('Top recommendations for family payment:');
     familyRecommendations.forEach((rec, index) => {
-      console.log(`   ${index + 1}. ${rec.details.name} (Score: ${rec.score.toFixed(2)})`);
-      console.log(`      Reasons: ${rec.reasons.join(', ')}`);
+      console.info(`   ${index + 1}. ${rec.details.name} (Score: ${rec.score.toFixed(2)})`);
+      console.info(`      Reasons: ${rec.reasons.join(', ')}`);
       if (rec.warnings.length > 0) {
-        console.log(`      Warnings: ${rec.warnings.join(', ')}`);
+        console.info(`      Warnings: ${rec.warnings.join(', ')}`);
       }
     });
     
     // Scenario 2: International Transfer
-    console.log('\n🌍 Scenario 2: International Transfer');
+    console.info('\n🌍 Scenario 2: International Transfer');
     const internationalRequirements: PaymentRequirements = {
       amount: 500,
       recipientCountry: 'GB',
@@ -250,14 +250,14 @@ export class PaymentBuilderDemo {
     };
     
     const internationalRecommendations = SmartPaymentSelector.selectBestMethods(internationalRequirements);
-    console.log('Top recommendations for international transfer:');
+    console.info('Top recommendations for international transfer:');
     internationalRecommendations.forEach((rec, index) => {
-      console.log(`   ${index + 1}. ${rec.details.name} (Score: ${rec.score.toFixed(2)})`);
-      console.log(`      Processing: ${rec.details.processingTime}, Fees: ${rec.details.fees}`);
+      console.info(`   ${index + 1}. ${rec.details.name} (Score: ${rec.score.toFixed(2)})`);
+      console.info(`      Processing: ${rec.details.processingTime}, Fees: ${rec.details.fees}`);
     });
     
     // Scenario 3: Crypto Payment
-    console.log('\n⛓️ Scenario 3: Crypto Payment');
+    console.info('\n⛓️ Scenario 3: Crypto Payment');
     const cryptoRequirements: PaymentRequirements = {
       amount: 100,
       recipientCountry: 'US',
@@ -272,10 +272,10 @@ export class PaymentBuilderDemo {
     };
     
     const cryptoRecommendations = SmartPaymentSelector.selectBestMethods(cryptoRequirements);
-    console.log('Top recommendations for crypto payment:');
+    console.info('Top recommendations for crypto payment:');
     cryptoRecommendations.forEach((rec, index) => {
-      console.log(`   ${index + 1}. ${rec.details.name} (Score: ${rec.score.toFixed(2)})`);
-      console.log(`      Type: ${rec.details.type}, Network: ${rec.details.protocol}`);
+      console.info(`   ${index + 1}. ${rec.details.name} (Score: ${rec.score.toFixed(2)})`);
+      console.info(`      Type: ${rec.details.type}, Network: ${rec.details.protocol}`);
     });
   }
 
@@ -283,12 +283,12 @@ export class PaymentBuilderDemo {
    * 📊 Demo Method Comparison
    */
   static async demoMethodComparison(): Promise<void> {
-    console.log('\n📊 Method Comparison Demo');
-    console.log('========================');
+    console.info('\n📊 Method Comparison Demo');
+    console.info('========================');
     
     const comparison = SmartPaymentSelector.getMethodComparison(['cashapp', 'venmo', 'paypal', 'btc', 'eth']);
     
-    console.log('\nPayment Methods Comparison:');
+    console.info('\nPayment Methods Comparison:');
     console.table(comparison.map(item => ({
       Method: item.method,
       Name: item.details.name,
@@ -308,39 +308,39 @@ export class PaymentBuilderDemo {
    * 🏭 Demo Factory Usage
    */
   static async demoFactoryUsage(): Promise<void> {
-    console.log('\n🏭 Factory Usage Demo');
-    console.log('====================');
+    console.info('\n🏭 Factory Usage Demo');
+    console.info('====================');
     
     // Get all available methods
     const availableMethods = PaymentBuilderFactory.getAvailableMethods();
-    console.log(`\n📋 Available Payment Methods (${availableMethods.length}):`);
+    console.info(`\n📋 Available Payment Methods (${availableMethods.length}):`);
     availableMethods.forEach(method => {
       const details = PaymentBuilderFactory.getMethodDetails(method);
-      console.log(`   • ${method}: ${details?.name} (${details?.type})`);
+      console.info(`   • ${method}: ${details?.name} (${details?.type})`);
     });
     
     // Get methods by type
     const fiatMethods = PaymentBuilderFactory.getMethodsByType('fiat');
     const cryptoMethods = PaymentBuilderFactory.getMethodsByType('crypto');
     
-    console.log(`\n💳 Fiat Methods (${fiatMethods.length}):`);
+    console.info(`\n💳 Fiat Methods (${fiatMethods.length}):`);
     fiatMethods.forEach(method => {
       const details = PaymentBuilderFactory.getMethodDetails(method);
-      console.log(`   • ${method}: ${details?.name}`);
+      console.info(`   • ${method}: ${details?.name}`);
     });
     
-    console.log(`\n⛓️ Crypto Methods (${cryptoMethods.length}):`);
+    console.info(`\n⛓️ Crypto Methods (${cryptoMethods.length}):`);
     cryptoMethods.forEach(method => {
       const details = PaymentBuilderFactory.getMethodDetails(method);
-      console.log(`   • ${method}: ${details?.name}`);
+      console.info(`   • ${method}: ${details?.name}`);
     });
     
     // Get methods by availability
     const instantMethods = PaymentBuilderFactory.getMethodsByAvailability('instant');
-    console.log(`\n⚡ Instant Methods (${instantMethods.length}):`);
+    console.info(`\n⚡ Instant Methods (${instantMethods.length}):`);
     instantMethods.forEach(method => {
       const details = PaymentBuilderFactory.getMethodDetails(method);
-      console.log(`   • ${method}: ${details?.name}`);
+      console.info(`   • ${method}: ${details?.name}`);
     });
   }
 
@@ -348,8 +348,8 @@ export class PaymentBuilderDemo {
    * 🚀 Run complete demo
    */
   static async runCompleteDemo(): Promise<void> {
-    console.log('🚀 FactoryWager Payment Builder System - Complete Demo');
-    console.log('==================================================');
+    console.info('🚀 FactoryWager Payment Builder System - Complete Demo');
+    console.info('==================================================');
     
     try {
       await this.demoFactoryUsage();
@@ -360,7 +360,7 @@ export class PaymentBuilderDemo {
       await this.demoSmartSelection();
       await this.demoMethodComparison();
       
-      console.log('\n✅ Demo completed successfully!');
+      console.info('\n✅ Demo completed successfully!');
       
     } catch (error) {
       console.error('\n❌ Demo failed:', error);
@@ -398,7 +398,7 @@ const requirements: PaymentRequirements = {
 };
 
 const bestMethod = SmartPaymentSelector.getBestRecommendation(requirements);
-console.log('Best method:', bestMethod?.method);
+console.info('Best method:', bestMethod?.method);
 */
 
 // Example 3: Create Bitcoin payment with address generation

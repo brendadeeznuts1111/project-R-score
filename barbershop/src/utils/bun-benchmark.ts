@@ -216,11 +216,11 @@ async function benchmarkPasswordHashing(): Promise<BenchmarkResult> {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function runBenchmarks() {
-  console.log('\n╔════════════════════════════════════════════════════════════════════════════╗');
-  console.log('║                    🚀 BUN vs NODE PERFORMANCE BENCHMARK                    ║');
-  console.log('╚════════════════════════════════════════════════════════════════════════════╝\n');
+  console.info('\n╔════════════════════════════════════════════════════════════════════════════╗');
+  console.info('║                    🚀 BUN vs NODE PERFORMANCE BENCHMARK                    ║');
+  console.info('╚════════════════════════════════════════════════════════════════════════════╝\n');
 
-  console.log(`${ANSI.dim}Running benchmarks... This may take a minute.${ANSI.reset}\n`);
+  console.info(`${ANSI.dim}Running benchmarks... This may take a minute.${ANSI.reset}\n`);
 
   const results: BenchmarkResult[] = [];
 
@@ -230,14 +230,14 @@ async function runBenchmarks() {
   results.push(await benchmarkPasswordHashing());
 
   // Print results table
-  console.log(`${ANSI.bold}Results:${ANSI.reset}\n`);
-  console.log(
+  console.info(`${ANSI.bold}Results:${ANSI.reset}\n`);
+  console.info(
     '┌─────────────────────────────┬─────────────┬─────────────┬─────────┬──────────────────┐'
   );
-  console.log(
+  console.info(
     `│ ${ANSI.bold}Benchmark${ANSI.reset}                   │ ${ANSI.bold}Bun${ANSI.reset}         │ ${ANSI.bold}Node.js${ANSI.reset}     │ ${ANSI.bold}Speedup${ANSI.reset} │ ${ANSI.bold}Throughput${ANSI.reset}       │`
   );
-  console.log(
+  console.info(
     '├─────────────────────────────┼─────────────┼─────────────┼─────────┼──────────────────┤'
   );
 
@@ -250,21 +250,21 @@ async function runBenchmarks() {
 
     const speedupColor = r.speedup >= 5 ? ANSI.green : r.speedup >= 2 ? ANSI.yellow : ANSI.dim;
 
-    console.log(
+    console.info(
       `│ ${name} │ ${ANSI.cyan}${bunTime}${ANSI.reset} │ ${nodeTime} │ ${speedupColor}${speedup}${ANSI.reset} │ ${throughput} │`
     );
   }
 
-  console.log(
+  console.info(
     '└─────────────────────────────┴─────────────┴─────────────┴─────────┴──────────────────┘'
   );
 
   // Summary
   const avgSpeedup = results.reduce((a, r) => a + r.speedup, 0) / results.length;
-  console.log(
+  console.info(
     `\n${ANSI.bold}Average Speedup:${ANSI.reset} ${ANSI.green}${avgSpeedup.toFixed(1)}x${ANSI.reset}`
   );
-  console.log(`\n${ANSI.dim}Note: Benchmarks run on Bun ${process.version}${ANSI.reset}\n`);
+  console.info(`\n${ANSI.dim}Note: Benchmarks run on Bun ${process.version}${ANSI.reset}\n`);
 }
 
 if (import.meta.main) {

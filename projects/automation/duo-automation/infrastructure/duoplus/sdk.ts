@@ -262,7 +262,7 @@ export class DuoPlusSDK {
       const batchEnd = Math.min(i + batchSize, config.agentCount);
       const batchCount = batchEnd - i;
       
-      console.log(`📦 Deploying batch ${Math.floor(i / batchSize) + 1} (${i + 1}-${batchEnd})...`);
+      console.info(`📦 Deploying batch ${Math.floor(i / batchSize) + 1} (${i + 1}-${batchEnd})...`);
       
       // Create agents in parallel for this batch
       const batchPromises = Array.from({ length: batchCount }, async (_, index) => {

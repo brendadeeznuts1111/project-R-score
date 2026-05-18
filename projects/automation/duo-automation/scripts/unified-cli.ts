@@ -43,8 +43,8 @@ class UnifiedProductionSystem {
       return;
     }
 
-    console.log('🚀 Unified Production System CLI');
-    console.log('==================================\n');
+    console.info('🚀 Unified Production System CLI');
+    console.info('==================================\n');
 
     try {
       switch (command) {
@@ -73,7 +73,7 @@ class UnifiedProductionSystem {
           await this.syncCommand();
           break;
         default:
-          console.log(`❌ Unknown command: ${command}`);
+          console.info(`❌ Unknown command: ${command}`);
           this.showHelp();
       }
     } catch (error) {
@@ -85,43 +85,43 @@ class UnifiedProductionSystem {
    * Show system status
    */
   private async showSystemStatus(): Promise<void> {
-    console.log('📊 Unified System Status');
-    console.log('========================\n');
+    console.info('📊 Unified System Status');
+    console.info('========================\n');
 
     // Check hardware acceleration
-    console.log(`🚀 Hardware Acceleration: ${this.status.hardwareAcceleration ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info(`🚀 Hardware Acceleration: ${this.status.hardwareAcceleration ? '✅ Enabled' : '❌ Disabled'}`);
     
     // Check build artifacts
     const distExists = existsSync('./dist/index.js');
-    console.log(`📦 Build Artifacts: ${distExists ? '✅ Available' : '❌ Not found'}`);
+    console.info(`📦 Build Artifacts: ${distExists ? '✅ Available' : '❌ Not found'}`);
     
     if (distExists) {
       const stats = require('fs').statSync('./dist/index.js');
-      console.log(`   Size: ${(stats.size / 1024).toFixed(2)} KB`);
+      console.info(`   Size: ${(stats.size / 1024).toFixed(2)} KB`);
       
       // Hash the main artifact
       const data = readFileSync('./dist/index.js');
       const crc32Hash = hash.crc32(data).toString(16);
-      console.log(`   Hash: ${crc32Hash}`);
+      console.info(`   Hash: ${crc32Hash}`);
     }
     
     // Show component status
-    console.log('\n🏗️ Component Status:');
-    console.log(`   ✅ Hardware Hashing: Operational`);
-    console.log(`   ✅ Production Workflow: Operational`);
-    console.log(`   ✅ Deployment Dashboard: Operational`);
-    console.log(`   ✅ R2 Integration: Configured`);
-    console.log(`   ✅ CI/CD Pipeline: Operational`);
+    console.info('\n🏗️ Component Status:');
+    console.info(`   ✅ Hardware Hashing: Operational`);
+    console.info(`   ✅ Production Workflow: Operational`);
+    console.info(`   ✅ Deployment Dashboard: Operational`);
+    console.info(`   ✅ R2 Integration: Configured`);
+    console.info(`   ✅ CI/CD Pipeline: Operational`);
     
     // Show available commands
-    console.log('\n🎯 Available Commands:');
-    console.log('   • hash benchmark: Run hardware hashing benchmark');
-    console.log('   • hash file <path>: Hash single file');
-    console.log('   • r2 stats: Show R2 statistics');
-    console.log('   • deploy production: Deploy to production');
-    console.log('   • dashboard show: Show deployment dashboard');
-    console.log('   • monitor: Real-time system monitoring');
-    console.log('   • verify <file>: Verify file integrity');
+    console.info('\n🎯 Available Commands:');
+    console.info('   • hash benchmark: Run hardware hashing benchmark');
+    console.info('   • hash file <path>: Hash single file');
+    console.info('   • r2 stats: Show R2 statistics');
+    console.info('   • deploy production: Deploy to production');
+    console.info('   • dashboard show: Show deployment dashboard');
+    console.info('   • monitor: Real-time system monitoring');
+    console.info('   • verify <file>: Verify file integrity');
   }
 
   /**
@@ -136,7 +136,7 @@ class UnifiedProductionSystem {
         break;
       case 'file':
         if (!args[1]) {
-          console.log('Usage: hash file <filepath>');
+          console.info('Usage: hash file <filepath>');
           return;
         }
         await this.hashFile(args[1]);
@@ -147,13 +147,13 @@ class UnifiedProductionSystem {
         break;
       case 'verify':
         if (!args[1] || !args[2]) {
-          console.log('Usage: hash verify <filepath> <hash>');
+          console.info('Usage: hash verify <filepath> <hash>');
           return;
         }
         await this.verifyHash(args[1], args[2]);
         break;
       default:
-        console.log('Hash subcommands: benchmark, file, batch, verify');
+        console.info('Hash subcommands: benchmark, file, batch, verify');
     }
   }
 
@@ -173,20 +173,20 @@ class UnifiedProductionSystem {
         break;
       case 'upload':
         if (!args[1] || !args[2]) {
-          console.log('Usage: r2 upload <file> <key>');
+          console.info('Usage: r2 upload <file> <key>');
           return;
         }
         await this.uploadToR2(args[1], args[2]);
         break;
       case 'verify-integrity':
         if (!args[1]) {
-          console.log('Usage: r2 verify-integrity <key>');
+          console.info('Usage: r2 verify-integrity <key>');
           return;
         }
         await this.verifyR2Integrity(args[1]);
         break;
       default:
-        console.log('R2 subcommands: stats, list, upload, verify-integrity');
+        console.info('R2 subcommands: stats, list, upload, verify-integrity');
     }
   }
 
@@ -196,19 +196,19 @@ class UnifiedProductionSystem {
   private async deployCommand(args: string[]): Promise<void> {
     const environment = args[0] || 'production';
     
-    console.log(`🚀 Deploying to ${environment}...`);
+    console.info(`🚀 Deploying to ${environment}...`);
     
     // Simulate deployment process
-    console.log('📦 Building artifacts...');
+    console.info('📦 Building artifacts...');
     execSync('bun run build', { stdio: 'pipe' });
     
-    console.log('🔒 Hashing artifacts...');
+    console.info('🔒 Hashing artifacts...');
     const artifacts = await this.hashBatch('./dist');
     
-    console.log('✅ Deployment completed successfully!');
-    console.log(`📊 Environment: ${environment}`);
-    console.log(`📦 Artifacts: ${artifacts.length}`);
-    console.log(`🔒 All artifacts hashed with hardware acceleration`);
+    console.info('✅ Deployment completed successfully!');
+    console.info(`📊 Environment: ${environment}`);
+    console.info(`📦 Artifacts: ${artifacts.length}`);
+    console.info(`🔒 All artifacts hashed with hardware acceleration`);
   }
 
   /**
@@ -225,7 +225,7 @@ class UnifiedProductionSystem {
         await this.generateReport();
         break;
       default:
-        console.log('Dashboard subcommands: show, report');
+        console.info('Dashboard subcommands: show, report');
     }
   }
 
@@ -233,28 +233,28 @@ class UnifiedProductionSystem {
    * Monitor command
    */
   private async monitorCommand(): Promise<void> {
-    console.log('📊 Real-time System Monitor');
-    console.log('==========================\n');
+    console.info('📊 Real-time System Monitor');
+    console.info('==========================\n');
     
     const interval = setInterval(async () => {
       console.clear();
-      console.log('📊 Real-time System Monitor');
-      console.log('==========================\n');
+      console.info('📊 Real-time System Monitor');
+      console.info('==========================\n');
       
       const time = new Date().toLocaleTimeString();
       const memUsage = process.memoryUsage();
       
-      console.log(`🕐 Time: ${time}`);
-      console.log(`🚀 Hardware: ${this.status.hardwareAcceleration ? 'Enabled' : 'Disabled'}`);
-      console.log(`💾 Memory: ${(memUsage.heapUsed / 1024 / 1024).toFixed(1)} MB`);
-      console.log(`📦 Artifacts: ${this.status.totalArtifacts}`);
-      console.log(`🕐 Last Sync: ${this.status.lastSync.toLocaleTimeString()}`);
-      console.log('\nPress Ctrl+C to stop monitoring...');
+      console.info(`🕐 Time: ${time}`);
+      console.info(`🚀 Hardware: ${this.status.hardwareAcceleration ? 'Enabled' : 'Disabled'}`);
+      console.info(`💾 Memory: ${(memUsage.heapUsed / 1024 / 1024).toFixed(1)} MB`);
+      console.info(`📦 Artifacts: ${this.status.totalArtifacts}`);
+      console.info(`🕐 Last Sync: ${this.status.lastSync.toLocaleTimeString()}`);
+      console.info('\nPress Ctrl+C to stop monitoring...');
     }, 2000);
 
     process.on('SIGINT', () => {
       clearInterval(interval);
-      console.log('\n👋 Monitoring stopped');
+      console.info('\n👋 Monitoring stopped');
       process.exit(0);
     });
   }
@@ -266,12 +266,12 @@ class UnifiedProductionSystem {
     const filepath = args[0];
     
     if (!filepath) {
-      console.log('Usage: verify <filepath>');
+      console.info('Usage: verify <filepath>');
       return;
     }
     
     if (!existsSync(filepath)) {
-      console.log(`❌ File not found: ${filepath}`);
+      console.info(`❌ File not found: ${filepath}`);
       return;
     }
     
@@ -279,34 +279,34 @@ class UnifiedProductionSystem {
     const crc32Hash = hash.crc32(data).toString(16);
     const stats = require('fs').statSync(filepath);
     
-    console.log('🔍 File Verification:');
-    console.log(`  File: ${filepath}`);
-    console.log(`  Size: ${stats.size} bytes`);
-    console.log(`  CRC32: ${crc32Hash}`);
-    console.log(`  Verified: ✅`);
-    console.log(`  Hardware Accelerated: ✅`);
+    console.info('🔍 File Verification:');
+    console.info(`  File: ${filepath}`);
+    console.info(`  Size: ${stats.size} bytes`);
+    console.info(`  CRC32: ${crc32Hash}`);
+    console.info(`  Verified: ✅`);
+    console.info(`  Hardware Accelerated: ✅`);
   }
 
   /**
    * Sync command
    */
   private async syncCommand(): Promise<void> {
-    console.log('🔄 Syncing system...');
+    console.info('🔄 Syncing system...');
     
     // Update status
     this.status.lastSync = new Date();
     this.status.totalArtifacts = this.countArtifacts();
     
-    console.log('✅ Sync completed');
-    console.log(`📦 Artifacts: ${this.status.totalArtifacts}`);
-    console.log(`🕐 Sync time: ${this.status.lastSync.toLocaleString()}`);
+    console.info('✅ Sync completed');
+    console.info(`📦 Artifacts: ${this.status.totalArtifacts}`);
+    console.info(`🕐 Sync time: ${this.status.lastSync.toLocaleString()}`);
   }
 
   /**
    * Helper methods
    */
   private async runBenchmark(): Promise<void> {
-    console.log('🚀 Running hardware hashing benchmark...');
+    console.info('🚀 Running hardware hashing benchmark...');
     
     const iterations = 100;
     const bufferSize = 1024 * 1024; // 1MB
@@ -323,16 +323,16 @@ class UnifiedProductionSystem {
     const averageTime = totalTime / iterations;
     const throughput = (bufferSize * iterations) / (totalTime / 1000) / 1024 / 1024;
     
-    console.log('🚀 Hardware Acceleration Benchmark:');
-    console.log(`  Average time: ${averageTime.toFixed(2)}ms`);
-    console.log(`  Total time: ${totalTime.toFixed(2)}ms`);
-    console.log(`  Throughput: ${throughput.toFixed(2)} MB/s`);
-    console.log(`  Improvement: ${Math.round(2644 / averageTime)}x faster`);
+    console.info('🚀 Hardware Acceleration Benchmark:');
+    console.info(`  Average time: ${averageTime.toFixed(2)}ms`);
+    console.info(`  Total time: ${totalTime.toFixed(2)}ms`);
+    console.info(`  Throughput: ${throughput.toFixed(2)} MB/s`);
+    console.info(`  Improvement: ${Math.round(2644 / averageTime)}x faster`);
   }
 
   private async hashFile(filepath: string): Promise<void> {
     if (!existsSync(filepath)) {
-      console.log(`❌ File not found: ${filepath}`);
+      console.info(`❌ File not found: ${filepath}`);
       return;
     }
     
@@ -340,15 +340,15 @@ class UnifiedProductionSystem {
     const crc32Hash = hash.crc32(data).toString(16);
     const stats = require('fs').statSync(filepath);
     
-    console.log('🔒 Hash Result:');
-    console.log(`  File: ${filepath}`);
-    console.log(`  CRC32: ${crc32Hash}`);
-    console.log(`  Size: ${stats.size} bytes`);
-    console.log(`  Hardware Accelerated: ✅`);
+    console.info('🔒 Hash Result:');
+    console.info(`  File: ${filepath}`);
+    console.info(`  CRC32: ${crc32Hash}`);
+    console.info(`  Size: ${stats.size} bytes`);
+    console.info(`  Hardware Accelerated: ✅`);
   }
 
   private async hashBatch(directory: string): Promise<string[]> {
-    console.log(`📦 Batch hashing directory: ${directory}`);
+    console.info(`📦 Batch hashing directory: ${directory}`);
     
     try {
       const result = execSync(`find ${directory} -name "*.js" | head -5`, { encoding: 'utf8' });
@@ -364,97 +364,97 @@ class UnifiedProductionSystem {
       
       return artifacts;
     } catch (error) {
-      console.log(`❌ Batch processing failed: ${error.message}`);
+      console.info(`❌ Batch processing failed: ${error.message}`);
       return [];
     }
   }
 
   private async verifyHash(filepath: string, expectedHash: string): Promise<void> {
     if (!existsSync(filepath)) {
-      console.log(`❌ File not found: ${filepath}`);
+      console.info(`❌ File not found: ${filepath}`);
       return;
     }
     
     const data = readFileSync(filepath);
     const actualHash = hash.crc32(data).toString(16);
     
-    console.log('🔍 Integrity Check:');
-    console.log(`  File: ${filepath}`);
-    console.log(`  Valid: ${actualHash === expectedHash ? '✅' : '❌'}`);
-    console.log(`  Expected: ${expectedHash}`);
-    console.log(`  Actual: ${actualHash}`);
+    console.info('🔍 Integrity Check:');
+    console.info(`  File: ${filepath}`);
+    console.info(`  Valid: ${actualHash === expectedHash ? '✅' : '❌'}`);
+    console.info(`  Expected: ${expectedHash}`);
+    console.info(`  Actual: ${actualHash}`);
   }
 
   private async showR2Stats(): Promise<void> {
-    console.log('📊 R2 Storage Configuration:');
-    console.log(`  Bucket: ${process.env.R2_BUCKET_NAME || 'duoplus-artifacts'}`);
-    console.log(`  Domain: ${process.env.R2_CUSTOM_DOMAIN || 'artifacts.duoplus.dev'}`);
-    console.log(`  Region: auto`);
-    console.log(`  Status: Configured`);
+    console.info('📊 R2 Storage Configuration:');
+    console.info(`  Bucket: ${process.env.R2_BUCKET_NAME || 'duoplus-artifacts'}`);
+    console.info(`  Domain: ${process.env.R2_CUSTOM_DOMAIN || 'artifacts.duoplus.dev'}`);
+    console.info(`  Region: auto`);
+    console.info(`  Status: Configured`);
     
     if (process.env.R2_ACCOUNT_ID) {
-      console.log(`  Account: ${process.env.R2_ACCOUNT_ID.slice(0, 8)}...`);
+      console.info(`  Account: ${process.env.R2_ACCOUNT_ID.slice(0, 8)}...`);
     }
   }
 
   private async listR2Artifacts(prefix: string): Promise<void> {
-    console.log(`📦 R2 Artifacts (${prefix || 'all'}):`);
+    console.info(`📦 R2 Artifacts (${prefix || 'all'}):`);
     
     // List local artifacts as fallback
     try {
       const result = execSync(`find ./dist -name "*.js"`, { encoding: 'utf8' });
       const files = result.trim().split('\n').filter(Boolean);
       
-      console.log(`  Total: ${files.length}`);
+      console.info(`  Total: ${files.length}`);
       files.slice(0, 10).forEach(file => {
         const stats = require('fs').statSync(file);
-        console.log(`  • ${file} (${stats.size} bytes)`);
+        console.info(`  • ${file} (${stats.size} bytes)`);
       });
     } catch (error) {
-      console.log('  No artifacts found');
+      console.info('  No artifacts found');
     }
   }
 
   private async uploadToR2(filepath: string, key: string): Promise<void> {
     if (!existsSync(filepath)) {
-      console.log(`❌ File not found: ${filepath}`);
+      console.info(`❌ File not found: ${filepath}`);
       return;
     }
     
     const data = readFileSync(filepath);
     const crc32Hash = hash.crc32(data).toString(16);
     
-    console.log('🚀 Simulating R2 upload...');
-    console.log(`  File: ${filepath}`);
-    console.log(`  Key: ${key}`);
-    console.log(`  Size: ${data.length} bytes`);
-    console.log(`  Hash: ${crc32Hash}`);
-    console.log(`  Hardware Accelerated: ✅`);
-    console.log('✅ Upload completed (simulated)');
+    console.info('🚀 Simulating R2 upload...');
+    console.info(`  File: ${filepath}`);
+    console.info(`  Key: ${key}`);
+    console.info(`  Size: ${data.length} bytes`);
+    console.info(`  Hash: ${crc32Hash}`);
+    console.info(`  Hardware Accelerated: ✅`);
+    console.info('✅ Upload completed (simulated)');
   }
 
   private async verifyR2Integrity(key: string): Promise<void> {
-    console.log(`🔍 Verifying R2 artifact integrity: ${key}`);
-    console.log('🔒 Hardware-accelerated verification');
-    console.log('✅ Integrity verified (simulated)');
+    console.info(`🔍 Verifying R2 artifact integrity: ${key}`);
+    console.info('🔒 Hardware-accelerated verification');
+    console.info('✅ Integrity verified (simulated)');
   }
 
   private async showDashboard(): Promise<void> {
-    console.log('📊 Deployment Dashboard');
-    console.log('======================\n');
+    console.info('📊 Deployment Dashboard');
+    console.info('======================\n');
     
-    console.log('🌍 Environment: PRODUCTION');
-    console.log('📊 Status: ✅ SUCCESS');
-    console.log('🚀 Hardware Acceleration: ✅ Enabled');
-    console.log('📦 Artifacts: Ready');
-    console.log('🔒 Integrity: 100% verified');
-    console.log('🕐 Last Update: Real-time');
+    console.info('🌍 Environment: PRODUCTION');
+    console.info('📊 Status: ✅ SUCCESS');
+    console.info('🚀 Hardware Acceleration: ✅ Enabled');
+    console.info('📦 Artifacts: Ready');
+    console.info('🔒 Integrity: 100% verified');
+    console.info('🕐 Last Update: Real-time');
     
-    console.log('\n🎛️  Available Actions:');
-    console.log('   • Deploy artifacts');
-    console.log('   • Verify integrity');
-    console.log('   • Monitor performance');
-    console.log('   • Sync with R2');
+    console.info('\n🎛️  Available Actions:');
+    console.info('   • Deploy artifacts');
+    console.info('   • Verify integrity');
+    console.info('   • Monitor performance');
+    console.info('   • Sync with R2');
   }
 
   private async generateReport(): Promise<void> {
@@ -485,7 +485,7 @@ class UnifiedProductionSystem {
 - ✅ CI/CD Pipeline: Operational
 `;
     
-    console.log(report);
+    console.info(report);
   }
 
   private countArtifacts(): number {
@@ -498,7 +498,7 @@ class UnifiedProductionSystem {
   }
 
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🚀 Unified Production System CLI
 
 USAGE:

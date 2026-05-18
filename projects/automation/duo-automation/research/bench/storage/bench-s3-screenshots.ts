@@ -3,7 +3,7 @@ import { BunR2AppleManager } from '../../src/storage/r2-apple-manager.js';
 import { alignedTable } from '../../utils/super-table.js';
 
 async function main() {
-  console.log('📊 **Gig PNG Bench: S3 Screenshots (s3.write inline)**');
+  console.info('📊 **Gig PNG Bench: S3 Screenshots (s3.write inline)**');
   
   const manager = new BunR2AppleManager();
   await manager.initialize();
@@ -19,7 +19,7 @@ async function main() {
   
   for (let i = 0; i < iterations; i++) {
     const key = `bench/screenshots/bench-png-${i}.png`;
-    console.log(`   Uploading PNG ${i + 1}/${iterations} (10MB)...`);
+    console.info(`   Uploading PNG ${i + 1}/${iterations} (10MB)...`);
     const res = await manager.uploadScreenshot(data, key);
     results.push({
       id: i + 1,
@@ -35,14 +35,14 @@ async function main() {
   const avgThroughput = totalMB / (totalMs / 1000);
   const gbPerMin = (avgThroughput * 60) / 1024;
 
-  console.log('\n✅ **Throughput Results (stringWidth Aligned)**');
+  console.info('\n✅ **Throughput Results (stringWidth Aligned)**');
   alignedTable(results, ['id', 'time', 'speed', 'url']);
 
-  console.log(`\n🚀 **Stats:**`);
-  console.log(`- Total Data: ${totalMB.toFixed(0)}MB`);
-  console.log(`- Total Time: ${(totalMs / 1000).toFixed(2)}s`);
-  console.log(`- Avg Speed: ${avgThroughput.toFixed(1)}MB/s`);
-  console.log(`- Farm Rate: ${gbPerMin.toFixed(1)}GB/min 📈`);
+  console.info(`\n🚀 **Stats:**`);
+  console.info(`- Total Data: ${totalMB.toFixed(0)}MB`);
+  console.info(`- Total Time: ${(totalMs / 1000).toFixed(2)}s`);
+  console.info(`- Avg Speed: ${avgThroughput.toFixed(1)}MB/s`);
+  console.info(`- Farm Rate: ${gbPerMin.toFixed(1)}GB/min 📈`);
 }
 
 main().catch(console.error);

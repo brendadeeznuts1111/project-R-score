@@ -59,7 +59,7 @@ class InspectionBenchmarks {
    * 🚀 Run complete benchmark suite
    */
   async runCompleteSuite(): Promise<BenchmarkSuite> {
-    console.log('🚀 Running Enhanced Inspection System Benchmarks...\n');
+    console.info('🚀 Running Enhanced Inspection System Benchmarks...\n');
     
     const results: BenchmarkResult[] = [];
     
@@ -256,7 +256,7 @@ class InspectionBenchmarks {
    */
 
   private async benchmarkBaseline(): Promise<BenchmarkResult> {
-    console.log('1. Baseline (no filter)...');
+    console.info('1. Baseline (no filter)...');
     
     const iterations = 100;
     const times: number[] = [];
@@ -274,7 +274,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkKeywordFilter(): Promise<BenchmarkResult> {
-    console.log('2. Keyword filter...');
+    console.info('2. Keyword filter...');
     
     const iterations = 100;
     const times: number[] = [];
@@ -292,7 +292,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkRegexFilter(): Promise<BenchmarkResult> {
-    console.log('3. Regex filter...');
+    console.info('3. Regex filter...');
     
     const iterations = 100;
     const times: number[] = [];
@@ -310,7 +310,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkFieldFilter(): Promise<BenchmarkResult> {
-    console.log('4. Field filter...');
+    console.info('4. Field filter...');
     
     const iterations = 100;
     const times: number[] = [];
@@ -328,7 +328,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkTypeFilter(): Promise<BenchmarkResult> {
-    console.log('5. Type filter...');
+    console.info('5. Type filter...');
     
     const iterations = 100;
     const times: number[] = [];
@@ -346,7 +346,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkComplexFilter(): Promise<BenchmarkResult> {
-    console.log('6. Complex filter...');
+    console.info('6. Complex filter...');
     
     const iterations = 50;
     const times: number[] = [];
@@ -370,7 +370,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkExclusionFilter(): Promise<BenchmarkResult> {
-    console.log('7. Exclusion filter...');
+    console.info('7. Exclusion filter...');
     
     const iterations = 100;
     const times: number[] = [];
@@ -391,7 +391,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkMaxDepth(): Promise<BenchmarkResult> {
-    console.log('8. Max depth limit...');
+    console.info('8. Max depth limit...');
     
     const iterations = 100;
     const times: number[] = [];
@@ -409,7 +409,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkRedaction(): Promise<BenchmarkResult> {
-    console.log('9. Redaction...');
+    console.info('9. Redaction...');
     
     const iterations = 100;
     const times: number[] = [];
@@ -430,7 +430,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkPlugins(): Promise<BenchmarkResult> {
-    console.log('10. Plugin system...');
+    console.info('10. Plugin system...');
     
     const iterations = 50;
     const times: number[] = [];
@@ -454,7 +454,7 @@ class InspectionBenchmarks {
    */
 
   private async benchmarkSmallObject(): Promise<BenchmarkResult> {
-    console.log('11. Small object (1KB)...');
+    console.info('11. Small object (1KB)...');
     
     const iterations = 200;
     const times: number[] = [];
@@ -472,7 +472,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkMediumObject(): Promise<BenchmarkResult> {
-    console.log('12. Medium object (10KB)...');
+    console.info('12. Medium object (10KB)...');
     
     const iterations = 100;
     const times: number[] = [];
@@ -490,7 +490,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkLargeObject(): Promise<BenchmarkResult> {
-    console.log('13. Large object (100KB)...');
+    console.info('13. Large object (100KB)...');
     
     const iterations = 50;
     const times: number[] = [];
@@ -508,7 +508,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkHugeObject(): Promise<BenchmarkResult> {
-    console.log('14. Huge object (1MB)...');
+    console.info('14. Huge object (1MB)...');
     
     const iterations = 20;
     const times: number[] = [];
@@ -530,7 +530,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkDeepObject(): Promise<BenchmarkResult> {
-    console.log('15. Deep object (20 levels)...');
+    console.info('15. Deep object (20 levels)...');
     
     const iterations = 50;
     const times: number[] = [];
@@ -551,7 +551,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkWideObject(): Promise<BenchmarkResult> {
-    console.log('16. Wide object (1000 properties)...');
+    console.info('16. Wide object (1000 properties)...');
     
     const iterations = 50;
     const times: number[] = [];
@@ -576,7 +576,7 @@ class InspectionBenchmarks {
    */
 
   private async benchmarkSyncVsAsync(): Promise<BenchmarkResult> {
-    console.log('17. Sync vs Async processing...');
+    console.info('17. Sync vs Async processing...');
     
     const iterations = 50;
     const times: number[] = [];
@@ -598,7 +598,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkMemoryEfficiency(): Promise<BenchmarkResult> {
-    console.log('18. Memory efficiency...');
+    console.info('18. Memory efficiency...');
     
     const iterations = 100;
     const times: number[] = [];
@@ -625,7 +625,7 @@ class InspectionBenchmarks {
   }
 
   private async benchmarkConcurrentRequests(): Promise<BenchmarkResult> {
-    console.log('19. Concurrent requests...');
+    console.info('19. Concurrent requests...');
     
     const concurrency = 10;
     const iterations = 20;
@@ -796,7 +796,7 @@ class InspectionBenchmarks {
     const csv = this.generateCSV(suite);
     await Bun.write(`./benchmarks/inspection-benchmark-${timestamp}.csv`, csv);
     
-    console.log(`📁 Results saved to ${filename}`);
+    console.info(`📁 Results saved to ${filename}`);
   }
 
   /**
@@ -838,33 +838,33 @@ class InspectionBenchmarks {
    * 🖥️ Display benchmark results
    */
   private displayResults(suite: BenchmarkSuite): void {
-    console.log('\n📊 BENCHMARK RESULTS');
-    console.log('='.repeat(80));
+    console.info('\n📊 BENCHMARK RESULTS');
+    console.info('='.repeat(80));
     
     // System info
-    console.log('\n🖥️  System Information:');
-    console.log(`   Node.js: ${suite.systemInfo.nodeVersion}`);
-    console.log(`   Bun: ${suite.systemInfo.bunVersion}`);
-    console.log(`   Platform: ${suite.systemInfo.platform} (${suite.systemInfo.arch})`);
-    console.log(`   Memory: ${suite.systemInfo.memory}`);
+    console.info('\n🖥️  System Information:');
+    console.info(`   Node.js: ${suite.systemInfo.nodeVersion}`);
+    console.info(`   Bun: ${suite.systemInfo.bunVersion}`);
+    console.info(`   Platform: ${suite.systemInfo.platform} (${suite.systemInfo.arch})`);
+    console.info(`   Memory: ${suite.systemInfo.memory}`);
     
     // Results table
-    console.log('\n📈 Performance Results:');
+    console.info('\n📈 Performance Results:');
     console.table(suite.results);
     
     // Summary
-    console.log('\n📋 Summary:');
-    console.log(`   Total Tests: ${suite.summary.totalTests}`);
-    console.log(`   Fastest: ${suite.summary.fastestTest}`);
-    console.log(`   Slowest: ${suite.summary.slowestTest}`);
-    console.log(`   Average Throughput: ${suite.summary.averageThroughput}`);
-    console.log(`   Memory Efficiency: ${suite.summary.memoryEfficiency}`);
+    console.info('\n📋 Summary:');
+    console.info(`   Total Tests: ${suite.summary.totalTests}`);
+    console.info(`   Fastest: ${suite.summary.fastestTest}`);
+    console.info(`   Slowest: ${suite.summary.slowestTest}`);
+    console.info(`   Average Throughput: ${suite.summary.averageThroughput}`);
+    console.info(`   Memory Efficiency: ${suite.summary.memoryEfficiency}`);
     
     // Performance analysis
-    console.log('\n🔍 Performance Analysis:');
+    console.info('\n🔍 Performance Analysis:');
     this.analyzePerformance(suite.results);
     
-    console.log('\n✅ Benchmarks complete!');
+    console.info('\n✅ Benchmarks complete!');
   }
 
   /**
@@ -887,7 +887,7 @@ class InspectionBenchmarks {
         return resultTime < minTime ? result : min;
       });
       
-      console.log(`   🏆 Fastest Filter: ${fastestFilter.name} (${fastestFilter.average})`);
+      console.info(`   🏆 Fastest Filter: ${fastestFilter.name} (${fastestFilter.average})`);
     }
     
     if (scalabilityResults.length > 0) {
@@ -897,20 +897,20 @@ class InspectionBenchmarks {
         return resultMemory < minMemory ? result : min;
       });
       
-      console.log(`   💾 Most Memory Efficient: ${memoryEfficient.name} (${memoryEfficient.memoryUsage.heapUsed})`);
+      console.info(`   💾 Most Memory Efficient: ${memoryEfficient.name} (${memoryEfficient.memoryUsage.heapUsed})`);
     }
     
     // Performance recommendations
-    console.log('\n💡 Performance Recommendations:');
+    console.info('\n💡 Performance Recommendations:');
     
     const avgProcessingTime = results.reduce((sum, r) => sum + parseFloat(r.average), 0) / results.length;
     
     if (avgProcessingTime < 10) {
-      console.log('   ✅ Excellent performance - all operations under 10ms');
+      console.info('   ✅ Excellent performance - all operations under 10ms');
     } else if (avgProcessingTime < 50) {
-      console.log('   👍 Good performance - most operations under 50ms');
+      console.info('   👍 Good performance - most operations under 50ms');
     } else {
-      console.log('   ⚠️  Consider optimization for better performance');
+      console.info('   ⚠️  Consider optimization for better performance');
     }
     
     const highMemoryUsage = results.filter(r => 
@@ -918,7 +918,7 @@ class InspectionBenchmarks {
     );
     
     if (highMemoryUsage.length > 0) {
-      console.log('   🔍 Some operations use significant memory - consider async processing');
+      console.info('   🔍 Some operations use significant memory - consider async processing');
     }
   }
 }
@@ -942,13 +942,13 @@ if (import.meta.main) {
         quickBench.benchmarkLargeObject()
       ]);
       
-      console.log('\n📊 Quick Benchmark Results:');
+      console.info('\n📊 Quick Benchmark Results:');
       console.table(results);
       break;
     default:
-      console.log('Available commands:');
-      console.log('  run    - Run complete benchmark suite');
-      console.log('  quick  - Run quick benchmark (key tests only)');
+      console.info('Available commands:');
+      console.info('  run    - Run complete benchmark suite');
+      console.info('  quick  - Run quick benchmark (key tests only)');
       break;
   }
 }

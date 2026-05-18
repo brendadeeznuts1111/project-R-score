@@ -96,15 +96,15 @@ async function runBenchmarkTier(name: string, uploads: number, parallel: boolean
 
 async function main() {
   const bucket = process.env.S3_BUCKET || 'factory-wager-packages';
-  console.log(`\n🚀 LIVE R2 REAL-WORLD BENCHMARK`);
-  console.log(`Bucket: ${bucket}`);
-  console.log(`Zstd: ACTIVE | Concurrency: UP TO 500`);
-  console.log(`--------------------------------------------------\n`);
+  console.info(`\n🚀 LIVE R2 REAL-WORLD BENCHMARK`);
+  console.info(`Bucket: ${bucket}`);
+  console.info(`Zstd: ACTIVE | Concurrency: UP TO 500`);
+  console.info(`--------------------------------------------------\n`);
 
   const results: R2BenchResult[] = [];
 
   for (const uploads of R2_BENCH.UPLOADS) {
-    console.log(`📡 Starting tier: ${uploads} uploads...`);
+    console.info(`📡 Starting tier: ${uploads} uploads...`);
     const parallelRes = await runBenchmarkTier('Parallel', uploads, true, bucket);
     results.push(parallelRes);
 
@@ -119,10 +119,10 @@ async function main() {
   const presignStart = performance.now();
   await manager.getPresignedUrl('bench-test.json', 'PUT');
   const presignTime = performance.now() - presignStart;
-  console.log(`\n⚡ Presign Latency: ${presignTime.toFixed(2)}ms`);
+  console.info(`\n⚡ Presign Latency: ${presignTime.toFixed(2)}ms`);
 
   // Final results table
-  console.log(`\n📈 MASTER PERFORMANCE MATRIX:`);
+  console.info(`\n📈 MASTER PERFORMANCE MATRIX:`);
   console.table(results.map(r => ({
     Benchmark: r.name,
     'Time (avg)': `${r.avg.toFixed(0)}ms`,
@@ -135,7 +135,7 @@ async function main() {
 
   const maxTier = results.find(r => r.name.includes('500'));
   if (maxTier) {
-    console.log(`\n📊 R2 LIVE Summary: 500 parallel → ${maxTier.avg.toFixed(0)}ms (${maxTier.throughput.toLocaleString(undefined, { maximumFractionDigits: 1 })} IDs/s) 🚀`);
+    console.info(`\n📊 R2 LIVE Summary: 500 parallel → ${maxTier.avg.toFixed(0)}ms (${maxTier.throughput.toLocaleString(undefined, { maximumFractionDigits: 1 })} IDs/s) 🚀`);
   }
 }
 

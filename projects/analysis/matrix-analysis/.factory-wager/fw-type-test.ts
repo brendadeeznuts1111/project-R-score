@@ -89,12 +89,12 @@ const config = {
   }
 };
 
-console.log("✅ All FactoryWager TypeScript type checks passed!");
-console.log(`🔧 Mode: ${config.factoryWager.mode}`);
-console.log(`📝 Log Level: ${config.factoryWager.logLevel}`);
-console.log(`🔒 SSL Validation: ${config.security.sslEnabled ? "enabled" : "disabled"}`);
-console.log(`🌍 Environment: ${config.factoryWager.mode}`);
-console.log(`🐛 Debug: ${config.security.debugMode ? "enabled" : "disabled"}`);
+console.info("✅ All FactoryWager TypeScript type checks passed!");
+console.info(`🔧 Mode: ${config.factoryWager.mode}`);
+console.info(`📝 Log Level: ${config.factoryWager.logLevel}`);
+console.info(`🔒 SSL Validation: ${config.security.sslEnabled ? "enabled" : "disabled"}`);
+console.info(`🌍 Environment: ${config.factoryWager.mode}`);
+console.info(`🐛 Debug: ${config.security.debugMode ? "enabled" : "disabled"}`);
 
 // Export for external usage
 export type { FactoryWagerCLIOptions, BunRuntimeConfig };

@@ -26,11 +26,11 @@ class StandaloneRegistryApp {
   private db: UltraFastDatabase;
 
   constructor() {
-    console.log('🚀 Initializing Standalone Fantasy42-Fire22 Registry');
+    console.info('🚀 Initializing Standalone Fantasy42-Fire22 Registry');
 
     // Initialize embedded database
     const dbPath = ':memory:'; // Use in-memory database for standalone
-    console.log('💾 Using embedded in-memory database');
+    console.info('💾 Using embedded in-memory database');
 
     this.db = new UltraFastDatabase(dbPath);
     this.server = new UltraFastRegistryServer(this.db);
@@ -40,7 +40,7 @@ class StandaloneRegistryApp {
   }
 
   private async initializeSampleData(): Promise<void> {
-    console.log('📦 Initializing sample package data...');
+    console.info('📦 Initializing sample package data...');
 
     const samplePackages = [
       {
@@ -78,35 +78,35 @@ class StandaloneRegistryApp {
     for (const pkg of samplePackages) {
       try {
         await this.db.insertPackage(pkg);
-        console.log(`   ✅ Added ${pkg.name}@${pkg.version}`);
+        console.info(`   ✅ Added ${pkg.name}@${pkg.version}`);
       } catch (error) {
         console.error(`   ❌ Failed to add ${pkg.name}:`, error);
       }
     }
 
-    console.log('📦 Sample data initialization complete');
+    console.info('📦 Sample data initialization complete');
   }
 
   async start(port: number = APPLICATION_CONSTANTS.DEFAULT_PORT): Promise<void> {
-    console.log('🎯 Standalone Fantasy42-Fire22 Registry');
-    console.log('=====================================');
-    console.log(`📊 Bun Version: ${Bun.version}`);
-    console.log(`💾 Database: Embedded (in-memory)`);
-    console.log(`🌐 Port: ${port}`);
-    console.log(`🚀 Build: Standalone Executable`);
-    console.log(`⏰ Started: ${new Date().toISOString()}`);
-    console.log('=====================================');
+    console.info('🎯 Standalone Fantasy42-Fire22 Registry');
+    console.info('=====================================');
+    console.info(`📊 Bun Version: ${Bun.version}`);
+    console.info(`💾 Database: Embedded (in-memory)`);
+    console.info(`🌐 Port: ${port}`);
+    console.info(`🚀 Build: Standalone Executable`);
+    console.info(`⏰ Started: ${new Date().toISOString()}`);
+    console.info('=====================================');
 
     await this.server.start(port);
 
-    console.log('\n🎉 Standalone registry is running!');
-    console.log(`🌐 Open http://localhost:${port} in your browser`);
-    console.log('📖 API Documentation: http://localhost:' + port + '/');
-    console.log('\nPress Ctrl+C to stop the server');
+    console.info('\n🎉 Standalone registry is running!');
+    console.info(`🌐 Open http://localhost:${port} in your browser`);
+    console.info('📖 API Documentation: http://localhost:' + port + '/');
+    console.info('\nPress Ctrl+C to stop the server');
 
     // Graceful shutdown
     process.on('SIGINT', () => {
-      console.log('\n🛑 Shutting down standalone registry...');
+      console.info('\n🛑 Shutting down standalone registry...');
       process.exit(0);
     });
   }
@@ -117,7 +117,7 @@ class StandaloneRegistryApp {
 // ============================================================================
 
 async function compileStandaloneExecutable(): Promise<void> {
-  console.log('🔨 Compiling standalone executable...');
+  console.info('🔨 Compiling standalone executable...');
 
   // Compilation configuration for maximum compatibility
   const compileConfig = {
@@ -143,9 +143,9 @@ async function compileStandaloneExecutable(): Promise<void> {
       process.exit(1);
     }
 
-    console.log('✅ Standalone executable compiled successfully!');
-    console.log(`📁 Output: ./bin/standalone-executable.js`);
-    console.log(`📊 Bundle size: ${(result.outputs[0].size / 1024 / 1024).toFixed(2)}MB`);
+    console.info('✅ Standalone executable compiled successfully!');
+    console.info(`📁 Output: ./bin/standalone-executable.js`);
+    console.info(`📊 Bundle size: ${(result.outputs[0].size / 1024 / 1024).toFixed(2)}MB`);
 
     // Create executable script for easy running
     const executableScript = `#!/bin/bash
@@ -157,10 +157,10 @@ exec bun run ./bin/standalone-executable.js "$@"
     await Bun.write('./fantasy42-registry', executableScript);
     await Bun.spawn(['chmod', '+x', './fantasy42-registry']);
 
-    console.log('🎯 Executable created: ./fantasy42-registry');
-    console.log('\n🚀 Usage:');
-    console.log('   ./fantasy42-registry              # Start on default port');
-    console.log('   ./fantasy42-registry --port 8080  # Start on custom port');
+    console.info('🎯 Executable created: ./fantasy42-registry');
+    console.info('\n🚀 Usage:');
+    console.info('   ./fantasy42-registry              # Start on default port');
+    console.info('   ./fantasy42-registry --port 8080  # Start on custom port');
   } catch (error) {
     console.error('❌ Compilation failed:', error);
     process.exit(1);
@@ -174,10 +174,10 @@ exec bun run ./bin/standalone-executable.js "$@"
 async function compileCrossPlatform(): Promise<void> {
   const targets = ['linux-x64', 'darwin-x64', 'darwin-arm64', 'windows-x64'];
 
-  console.log('🌍 Compiling cross-platform executables...');
+  console.info('🌍 Compiling cross-platform executables...');
 
   for (const target of targets) {
-    console.log(`🔨 Building for ${target}...`);
+    console.info(`🔨 Building for ${target}...`);
 
     const result = await Bun.build({
       entrypoints: ['./src/standalone-executable.ts'],
@@ -188,13 +188,13 @@ async function compileCrossPlatform(): Promise<void> {
     });
 
     if (result.success) {
-      console.log(`   ✅ ${target}: ${(result.outputs[0].size / 1024 / 1024).toFixed(2)}MB`);
+      console.info(`   ✅ ${target}: ${(result.outputs[0].size / 1024 / 1024).toFixed(2)}MB`);
     } else {
-      console.log(`   ❌ ${target}: Failed`);
+      console.info(`   ❌ ${target}: Failed`);
     }
   }
 
-  console.log('\n📦 Cross-platform executables created in ./bin/');
+  console.info('\n📦 Cross-platform executables created in ./bin/');
 }
 
 // ============================================================================
@@ -202,7 +202,7 @@ async function compileCrossPlatform(): Promise<void> {
 // ============================================================================
 
 function runProductionChecks(): void {
-  console.log('🔍 Running production readiness checks...');
+  console.info('🔍 Running production readiness checks...');
 
   const checks = [
     {
@@ -230,16 +230,16 @@ function runProductionChecks(): void {
   for (const check of checks) {
     try {
       if (check.check()) {
-        console.log(`   ✅ ${check.name}: ${check.message}`);
+        console.info(`   ✅ ${check.name}: ${check.message}`);
       } else {
-        console.log(`   ⚠️  ${check.name}: May have compatibility issues`);
+        console.info(`   ⚠️  ${check.name}: May have compatibility issues`);
       }
     } catch (error) {
-      console.log(`   ❌ ${check.name}: Check failed`);
+      console.info(`   ❌ ${check.name}: Check failed`);
     }
   }
 
-  console.log('🔍 Production checks complete');
+  console.info('🔍 Production checks complete');
 }
 
 // ============================================================================
@@ -271,17 +271,17 @@ async function main(): Promise<void> {
       break;
 
     default:
-      console.log('Fantasy42-Fire22 Standalone Registry');
-      console.log('====================================');
-      console.log('Usage:');
-      console.log('  bun run standalone-executable.ts          # Start server');
-      console.log('  bun run standalone-executable.ts start    # Start server');
-      console.log('  bun run standalone-executable.ts compile  # Compile executable');
-      console.log('  bun run standalone-executable.ts check    # Run production checks');
-      console.log('  bun run standalone-executable.ts cross-compile  # Cross-platform build');
-      console.log('');
-      console.log('Options:');
-      console.log('  --port <port>    # Custom port (default: 3000)');
+      console.info('Fantasy42-Fire22 Standalone Registry');
+      console.info('====================================');
+      console.info('Usage:');
+      console.info('  bun run standalone-executable.ts          # Start server');
+      console.info('  bun run standalone-executable.ts start    # Start server');
+      console.info('  bun run standalone-executable.ts compile  # Compile executable');
+      console.info('  bun run standalone-executable.ts check    # Run production checks');
+      console.info('  bun run standalone-executable.ts cross-compile  # Cross-platform build');
+      console.info('');
+      console.info('Options:');
+      console.info('  --port <port>    # Custom port (default: 3000)');
       break;
   }
 }

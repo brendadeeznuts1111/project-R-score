@@ -149,7 +149,7 @@ export class EliteRateLimiter {
     
     const elapsedMs = Number(nanoseconds() - startNs) / 1e6;
     if (elapsedMs > 1) {
-      console.log(`[RATE LIMIT] Check took ${elapsedMs.toFixed(2)}ms`);
+      console.info(`[RATE LIMIT] Check took ${elapsedMs.toFixed(2)}ms`);
     }
     
     return result;
@@ -362,7 +362,7 @@ export class RateLimiter extends EliteRateLimiter {}
 // ═══════════════════════════════════════════════════════════════════════════════
 
 if (import.meta.main) {
-  console.log(`
+  console.info(`
 ╔══════════════════════════════════════════════════════════════════╗
 ║  🚦 ELITE RATE LIMITER                                           ║
 ╠══════════════════════════════════════════════════════════════════╣
@@ -371,7 +371,7 @@ if (import.meta.main) {
 `);
   
   // Token bucket demo
-  console.log('1. Token Bucket (10 req/min, burst of 3)\n');
+  console.info('1. Token Bucket (10 req/min, burst of 3)\n');
   
   const tokenLimiter = new EliteRateLimiter({
     strategy: 'token_bucket',
@@ -383,11 +383,11 @@ if (import.meta.main) {
   for (let i = 0; i < 8; i++) {
     const result = await tokenLimiter.check('user-1');
     const status = result.allowed ? '✓ ALLOWED' : '✗ BLOCKED';
-    console.log(`   Request ${i + 1}: ${status} (remaining: ${result.remaining})`);
+    console.info(`   Request ${i + 1}: ${status} (remaining: ${result.remaining})`);
   }
   
   // Sliding window demo
-  console.log('\n2. Sliding Window (5 req/sec)\n');
+  console.info('\n2. Sliding Window (5 req/sec)\n');
   
   const slidingLimiter = new EliteRateLimiter({
     strategy: 'sliding_window',
@@ -398,12 +398,12 @@ if (import.meta.main) {
   for (let i = 0; i < 8; i++) {
     const result = await slidingLimiter.check('user-2');
     const status = result.allowed ? '✓ ALLOWED' : '✗ BLOCKED';
-    console.log(`   Request ${i + 1}: ${status} (remaining: ${result.remaining})`);
+    console.info(`   Request ${i + 1}: ${status} (remaining: ${result.remaining})`);
     await Bun.sleep(100);
   }
   
   // Burst demo
-  console.log('\n3. Burst Handling (10 req/min, burst of 5)\n');
+  console.info('\n3. Burst Handling (10 req/min, burst of 5)\n');
   
   const burstLimiter = new EliteRateLimiter({
     strategy: 'token_bucket',
@@ -416,31 +416,31 @@ if (import.meta.main) {
   for (let i = 0; i < 7; i++) {
     const result = await burstLimiter.check('user-3');
     const status = result.allowed ? '✓ ALLOWED' : '✗ BLOCKED';
-    console.log(`   Burst ${i + 1}: ${status} (remaining: ${result.remaining})`);
+    console.info(`   Burst ${i + 1}: ${status} (remaining: ${result.remaining})`);
   }
   
   // Headers demo
-  console.log('\n4. Rate Limit Headers (RFC 6585)\n');
+  console.info('\n4. Rate Limit Headers (RFC 6585)\n');
   
   const result = await tokenLimiter.check('user-4');
   const headers = tokenLimiter.getHeaders(result);
   
-  console.log('   Headers:');
+  console.info('   Headers:');
   for (const [key, value] of Object.entries(headers)) {
-    console.log(`     ${key}: ${value}`);
+    console.info(`     ${key}: ${value}`);
   }
   
   // Prometheus metrics
-  console.log('\n5. Prometheus Metrics:\n');
-  console.log(`   # HELP rate_limit_requests_total Total rate limit checks`);
-  console.log(`   # TYPE rate_limit_requests_total counter`);
-  console.log(`   rate_limit_requests_total{strategy="token_bucket"} 15`);
-  console.log(`   rate_limit_requests_total{strategy="sliding_window"} 8`);
+  console.info('\n5. Prometheus Metrics:\n');
+  console.info(`   # HELP rate_limit_requests_total Total rate limit checks`);
+  console.info(`   # TYPE rate_limit_requests_total counter`);
+  console.info(`   rate_limit_requests_total{strategy="token_bucket"} 15`);
+  console.info(`   rate_limit_requests_total{strategy="sliding_window"} 8`);
   
-  console.log('\n✅ Rate Limiter demo complete!');
-  console.log('\nIntegration:');
-  console.log('   app.use(rateLimiter.middleware());');
-  console.log('   const result = await rateLimiter.check(userId);');
+  console.info('\n✅ Rate Limiter demo complete!');
+  console.info('\nIntegration:');
+  console.info('   app.use(rateLimiter.middleware());');
+  console.info('   const result = await rateLimiter.check(userId);');
 }
 
 export default EliteRateLimiter;

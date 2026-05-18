@@ -10,13 +10,13 @@ const JITTER_MAX_MS = 5000; // Max jitter to add
 const CIRCUIT_BREAKER_FILE = 'data/circuit-breaker.json';
 const SESSION_CHECK_INTERVAL = 5 * 60 * 1000; // Check session every 5 minutes
 
-console.log(`🚀 Starting production ETL watch loop (${INTERVAL_SECONDS}s base + jitter)`);
-console.log(`⏱️  Jitter: 0-${JITTER_MAX_MS/1000}s to avoid thundering herd`);
-console.log(`🔌 Circuit breaker: 5 failures → 5min cooldown`);
-console.log(`🔄 Session refresh: Every ${Math.round(SESSION_CHECK_INTERVAL/60000)}min`);
-console.log(`💰 Profit threshold: >$100`);
-console.log(`📏 YAML rotation: >1MB files auto-rotated`);
-console.log('');
+console.info(`🚀 Starting production ETL watch loop (${INTERVAL_SECONDS}s base + jitter)`);
+console.info(`⏱️  Jitter: 0-${JITTER_MAX_MS/1000}s to avoid thundering herd`);
+console.info(`🔌 Circuit breaker: 5 failures → 5min cooldown`);
+console.info(`🔄 Session refresh: Every ${Math.round(SESSION_CHECK_INTERVAL/60000)}min`);
+console.info(`💰 Profit threshold: >$100`);
+console.info(`📏 YAML rotation: >1MB files auto-rotated`);
+console.info('');
 
 let cycleCount = 0;
 let lastSuccess = new Date();
@@ -28,8 +28,8 @@ while (true) {
   cycleCount++;
   const cycleStart = new Date();
 
-  console.log(`\n🔄 Cycle #${cycleCount} - ${cycleStart.toISOString()}`);
-  console.log(`📊 Last success: ${lastSuccess.toISOString()} (${Math.round((Date.now() - lastSuccess.getTime()) / 1000)}s ago)`);
+  console.info(`\n🔄 Cycle #${cycleCount} - ${cycleStart.toISOString()}`);
+  console.info(`📊 Last success: ${lastSuccess.toISOString()} (${Math.round((Date.now() - lastSuccess.getTime()) / 1000)}s ago)`);
 
   // Check circuit breaker state
   let circuitBreakerActive = false;
@@ -38,11 +38,11 @@ while (true) {
       const cbState = await Bun.file(CIRCUIT_BREAKER_FILE).json();
       if (cbState.open && Date.now() < cbState.cooldownUntil) {
         const remaining = Math.round((cbState.cooldownUntil - Date.now()) / 1000);
-        console.log(`🔌 CIRCUIT BREAKER OPEN - ${remaining}s remaining`);
+        console.info(`🔌 CIRCUIT BREAKER OPEN - ${remaining}s remaining`);
         await new Promise(resolve => setTimeout(resolve, Math.min(30000, remaining * 1000)));
         continue;
       } else if (cbState.open) {
-        console.log(`🔌 CIRCUIT BREAKER RESET - Attempting recovery`);
+        console.info(`🔌 CIRCUIT BREAKER RESET - Attempting recovery`);
       }
       circuitBreakerActive = cbState.open;
     }
@@ -53,13 +53,13 @@ while (true) {
   // Periodic session refresh (every 5 minutes, unless circuit breaker active)
   const now = Date.now();
   if (now - lastSessionCheck > SESSION_CHECK_INTERVAL) {
-    console.log(`🔄 Performing periodic session refresh...`);
+    console.info(`🔄 Performing periodic session refresh...`);
     try {
       const freshHeaders = await smartSessionRefresh(lastSessionCheck, circuitBreakerActive);
       if (freshHeaders) {
-        console.log(`✅ Session tokens refreshed`);
+        console.info(`✅ Session tokens refreshed`);
       } else {
-        console.log(`✅ Session still valid`);
+        console.info(`✅ Session still valid`);
       }
       lastSessionCheck = now;
     } catch (error) {
@@ -78,7 +78,7 @@ while (true) {
   const exitCode = await proc.exited;
 
   if (exitCode === 0) {
-    console.log(`✅ Cycle #${cycleCount} SUCCESS`);
+    console.info(`✅ Cycle #${cycleCount} SUCCESS`);
     lastSuccess = new Date();
     consecutiveFailures = 0;
 
@@ -87,7 +87,7 @@ while (true) {
       if (await Bun.file('data/summary.yaml').exists()) {
         const yamlContent = await Bun.file('data/summary.yaml').text();
         const lineCount = yamlContent.split('\n').filter(line => line.trim()).length;
-        console.log(`📊 Current data: ${lineCount} records in summary.yaml`);
+        console.info(`📊 Current data: ${lineCount} records in summary.yaml`);
       }
     } catch (e) {
       // Ignore metric errors
@@ -122,7 +122,7 @@ while (true) {
   const totalDelay = baseDelay + jitter;
 
   const nextRun = new Date(Date.now() + totalDelay);
-  console.log(`⏰ Next run: ${nextRun.toISOString()} (in ${Math.round(totalDelay/1000)}s)`);
+  console.info(`⏰ Next run: ${nextRun.toISOString()} (in ${Math.round(totalDelay/1000)}s)`);
 
   // Sleep until next cycle
   await new Promise(resolve => setTimeout(resolve, totalDelay));

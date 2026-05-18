@@ -11,24 +11,24 @@ export async function createCompleteAgent(args: string[]): Promise<any> {
   const department = args.find(arg => arg.startsWith('--dept='))?.split('=')[1] || 'operations';
   const phoneType = args.find(arg => arg.startsWith('--phone-type='))?.split('=')[1] || 'virtual';
   
-  console.log(`🚀 Creating complete agent: ${agentId}`);
-  console.log(`Name: ${firstName} ${lastName} | Department: ${department}`);
+  console.info(`🚀 Creating complete agent: ${agentId}`);
+  console.info(`Name: ${firstName} ${lastName} | Department: ${department}`);
   
   // 1. Generate email with unified domain
   const email = UnifiedDomainManager.generateEmail(agentId, firstName, lastName, department);
-  console.log(`📧 Email: ${email}`);
+  console.info(`📧 Email: ${email}`);
   
   // 2. Generate phone
   const phone = PhoneProvisioningManager.generatePhone(agentId, phoneType as any);
-  console.log(`📱 Phone: ${phone.number} (${phone.carrier})`);
+  console.info(`📱 Phone: ${phone.number} (${phone.carrier})`);
   
   // 3. Generate payment profiles
   const payments = PaymentPlatformManager.generateCompletePaymentProfile(email, phone.number, agentId);
-  console.log(`💰 Payments: Venmo: ${payments.venmo ? '✅' : '❌'} | CashApp: ${payments.cashapp ? '✅' : '❌'} | PayPal: ✅`);
+  console.info(`💰 Payments: Venmo: ${payments.venmo ? '✅' : '❌'} | CashApp: ${payments.cashapp ? '✅' : '❌'} | PayPal: ✅`);
   
   // 4. Generate tips
   const tips = AgentTipsManager.generateTipsForAgent(department, true);
-  console.log(`💡 Tips: ${tips.length} recommendations generated`);
+  console.info(`💡 Tips: ${tips.length} recommendations generated`);
   
   // 5. Assess risk
   const riskAssessment = AgentTipsManager.assessNewAgentRisk({
@@ -69,15 +69,15 @@ export async function createCompleteAgent(args: string[]): Promise<any> {
   const filename = `${outputDir}/agent_${agentId}_${Date.now()}.json`;
   await Bun.write(filename, JSON.stringify(output, null, 2));
   
-  console.log(`\n✅ Agent ${agentId} created successfully!`);
-  console.log(`📁 Saved to: ${filename}`);
-  console.log(`\n🔑 Credentials:`);
-  console.log(`   Email: ${email}`);
-  console.log(`   Phone: ${phone.number}`);
-  console.log(`   Venmo: ${payments.venmo?.handle || 'N/A'}`);
-  console.log(`   CashApp: ${payments.cashapp?.cashtag || 'N/A'}`);
-  console.log(`\n⚠️  Risk Level: ${riskAssessment.riskLevel.toUpperCase()}`);
-  console.log(`💡 First tip: ${tips[0].tip}`);
+  console.info(`\n✅ Agent ${agentId} created successfully!`);
+  console.info(`📁 Saved to: ${filename}`);
+  console.info(`\n🔑 Credentials:`);
+  console.info(`   Email: ${email}`);
+  console.info(`   Phone: ${phone.number}`);
+  console.info(`   Venmo: ${payments.venmo?.handle || 'N/A'}`);
+  console.info(`   CashApp: ${payments.cashapp?.cashtag || 'N/A'}`);
+  console.info(`\n⚠️  Risk Level: ${riskAssessment.riskLevel.toUpperCase()}`);
+  console.info(`💡 First tip: ${tips[0].tip}`);
   
   return output;
 }
@@ -95,7 +95,7 @@ export async function handleAgentCommand(args: string[]): Promise<void> {
       const count = parseInt(args.find(arg => arg.startsWith('--count='))?.split('=')[1] || '5');
       const dept = args.find(arg => arg.startsWith('--dept='))?.split('=')[1] || 'operations';
       
-      console.log(`🚀 Creating ${count} agents for ${dept} department...`);
+      console.info(`🚀 Creating ${count} agents for ${dept} department...`);
       
       for (let i = 0; i < count; i++) {
         await createCompleteAgent([
@@ -110,13 +110,13 @@ export async function handleAgentCommand(args: string[]): Promise<void> {
     case 'assess-risk':
       // Risk assessment for existing agents
       const agentFiles = await Bun.Glob('agents/outputs/agent_*.json').toArray();
-      console.log('📊 Risk Assessment Summary:');
-      console.log(`Found ${agentFiles.length} agent files`);
+      console.info('📊 Risk Assessment Summary:');
+      console.info(`Found ${agentFiles.length} agent files`);
       // Implementation would parse existing agent files
       break;
     
     default:
-      console.log(`
+      console.info(`
 🤖 Agent Management Commands:
 
 create-agent --first=<name> --last=<name> --dept=<dept> --phone-type=<type>

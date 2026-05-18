@@ -154,6 +154,6 @@ function parseArgs(argv: string[]): ContractInput {
 if (import.meta.main) {
   const input = parseArgs(process.argv.slice(2));
   const result = await runSearchStatusContract(input);
-  console.log(JSON.stringify(result, null, 2));
+  console.info(JSON.stringify(result, null, 2));
   process.exit(result.ok ? 0 : 1);
 }

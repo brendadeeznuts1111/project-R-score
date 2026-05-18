@@ -172,7 +172,7 @@ export class WebGLErrorHandler {
   }
   
   private handleContextRestore(): void {
-    console.log('WebGL context restored');
+    console.info('WebGL context restored');
     this.isRecoveryMode = false;
     this.currentRetryCount = 0;
     
@@ -192,7 +192,7 @@ export class WebGLErrorHandler {
   }
   
   private attemptRecovery(error: WebGLError): void {
-    console.log(`Attempting recovery for ${error.type}`);
+    console.info(`Attempting recovery for ${error.type}`);
     
     switch (error.type) {
       case 'context_lost':

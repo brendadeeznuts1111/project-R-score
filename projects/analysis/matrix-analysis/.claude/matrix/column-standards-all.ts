@@ -98,7 +98,7 @@ function checkCommand(cmd: string): { exists: boolean; path: string | null } {
  */
 function displayTable(data: Record<string, unknown>[], columns?: string[]): void {
 	if (data.length === 0) {
-		console.log("No data to display");
+		console.info("No data to display");
 		return;
 	}
 
@@ -109,7 +109,7 @@ function displayTable(data: Record<string, unknown>[], columns?: string[]): void
 			}
 		: undefined;
 
-	console.log(Bun.inspect.table(data, tableConfig as any));
+	console.info(Bun.inspect.table(data, tableConfig as any));
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -262,7 +262,7 @@ if (args[0] === "--complete") {
 	} else {
 		suggests = emptyMeansAll(COMPLETION_COMMANDS);
 	}
-	console.log(suggests.join("\n"));
+	console.info(suggests.join("\n"));
 	process.exit(0);
 }
 
@@ -300,33 +300,33 @@ if (args[0] === "--install-complete") {
 	const scriptPath = `${import.meta.dir}/column-standards-all.ts`;
 	const alias = "matrix-cols"; // matches bun matrix:cols muscle memory
 
-	console.log(
+	console.info(
 		`\n🚀 Installing tab-completion for ${COLORS.cyan}${alias}${COLORS.reset}...\n`,
 	);
 
-	console.log(
+	console.info(
 		`${COLORS.bold}Add ONE of these lines to your shell config:${COLORS.reset}\n`,
 	);
 
-	console.log(
+	console.info(
 		`${COLORS.yellow}# ─── Bash / Zsh ───────────────────────────────────────${COLORS.reset}`,
 	);
-	console.log(
+	console.info(
 		`${COLORS.green}complete -C "bun run ${scriptPath}" ${alias}${COLORS.reset}`,
 	);
 
-	console.log(
+	console.info(
 		`\n${COLORS.yellow}# ─── Fish ─────────────────────────────────────────────${COLORS.reset}`,
 	);
-	console.log(
+	console.info(
 		`${COLORS.green}complete -c ${alias} -a "(bun run ${scriptPath} --complete (commandline -ct))"${COLORS.reset}`,
 	);
 
-	console.log(
+	console.info(
 		`\n${COLORS.dim}After adding, run: source ~/.zshrc  (or ~/.bashrc)${COLORS.reset}`,
 	);
-	console.log(`${COLORS.dim}Then enjoy: ${alias} g[TAB] → get${COLORS.reset}`);
-	console.log(
+	console.info(`${COLORS.dim}Then enjoy: ${alias} g[TAB] → get${COLORS.reset}`);
+	console.info(
 		`${COLORS.dim}         ${alias} get 4[TAB] → 41 42 45 ...${COLORS.reset}\n`,
 	);
 
@@ -334,25 +334,25 @@ if (args[0] === "--install-complete") {
 }
 
 function header(text: string): void {
-	console.log(
+	console.info(
 		`${COLORS.bold}${COLORS.orange}🔥 Tier-1380 OMEGA:${COLORS.reset} ${text}`,
 	);
 }
 
 function subheader(text: string): void {
-	console.log(`${COLORS.cyan}${text}${COLORS.reset}`);
+	console.info(`${COLORS.cyan}${text}${COLORS.reset}`);
 }
 
 function error(text: string): void {
-	console.log(`${COLORS.red}❌ ${text}${COLORS.reset}`);
+	console.info(`${COLORS.red}❌ ${text}${COLORS.reset}`);
 }
 
 function success(text: string): void {
-	console.log(`${COLORS.green}✅ ${text}${COLORS.reset}`);
+	console.info(`${COLORS.green}✅ ${text}${COLORS.reset}`);
 }
 
 function warning(text: string): void {
-	console.log(`${COLORS.yellow}⚠️  ${text}${COLORS.reset}`);
+	console.info(`${COLORS.yellow}⚠️  ${text}${COLORS.reset}`);
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -374,31 +374,31 @@ function printCol(id: string | number): void {
 
 	// If JSON mode, just output the JSON
 	if (JSON_MODE) {
-		console.log(JSON.stringify(col, null, 2));
+		console.info(JSON.stringify(col, null, 2));
 		return;
 	}
 
 	header(`Column ${colId}`);
-	console.log();
+	console.info();
 
 	// Main info box
-	console.log(
+	console.info(
 		`${COLORS.bold}${col.color} ┌────────────────────────────────────────${COLORS.reset}`,
 	);
-	console.log(`${col.color} │${COLORS.reset} ${COLORS.bold}${col.name}${COLORS.reset}`);
-	console.log(
+	console.info(`${col.color} │${COLORS.reset} ${COLORS.bold}${col.name}${COLORS.reset}`);
+	console.info(
 		`${col.color} │${COLORS.reset} ${COLORS.dim}Index:${COLORS.reset} ${col.index}  ${COLORS.dim}Zone:${COLORS.reset} ${col.zone}  ${COLORS.dim}Owner:${COLORS.reset} ${col.owner}`,
 	);
-	console.log(
+	console.info(
 		`${col.color} │${COLORS.reset} ${COLORS.dim}Type:${COLORS.reset} ${col.type}  ${COLORS.dim}Required:${COLORS.reset} ${col.required ? "✓ yes" : "○ no"}`,
 	);
-	console.log(`${col.color} └────────────────────────────────────────${COLORS.reset}`);
-	console.log();
+	console.info(`${col.color} └────────────────────────────────────────${COLORS.reset}`);
+	console.info();
 
 	if (col.description) {
 		subheader("Description:");
-		console.log(`  ${col.description}`);
-		console.log();
+		console.info(`  ${col.description}`);
+		console.info();
 	}
 
 	// Optional fields
@@ -425,29 +425,29 @@ function printCol(id: string | number): void {
 	if (definedFields.length > 0) {
 		subheader("Properties:");
 		for (const [key, val] of definedFields) {
-			console.log(`  ${COLORS.dim}${key.padEnd(12)}${COLORS.reset} ${val}`);
+			console.info(`  ${COLORS.dim}${key.padEnd(12)}${COLORS.reset} ${val}`);
 		}
-		console.log();
+		console.info();
 	}
 
 	// URI Pattern
 	if (col.uriPattern) {
 		subheader("URI Pattern:");
-		console.log(
+		console.info(
 			`  ${COLORS.cyan}${col.uriPattern.protocol || "https"}://${col.uriPattern.hostname || "..."}${col.uriPattern.pathname || ""}${COLORS.reset}`,
 		);
 		if (col.uriPattern.query) {
-			console.log(
+			console.info(
 				`  ${COLORS.dim}Query params:${COLORS.reset}`,
 				JSON.stringify(col.uriPattern.query),
 			);
 		}
-		console.log();
+		console.info();
 	}
 
 	// Full JSON for piping
 	subheader("Full Definition (JSON):");
-	console.log(JSON.stringify(col, null, 2));
+	console.info(JSON.stringify(col, null, 2));
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -473,7 +473,7 @@ function listAll(filter?: string): void {
 	}
 
 	header(`Column Standards (${filtered.length}/${allCols.length} total)`);
-	console.log();
+	console.info();
 
 	// Group by zone for better readability
 	const byZone = new Map<string, ColumnDefinition[]>();
@@ -503,7 +503,7 @@ function listAll(filter?: string): void {
 
 		const zoneMeta = ZONES[zone as keyof typeof ZONES];
 		const zoneEmoji = zoneMeta?.emoji || "•";
-		console.log(
+		console.info(
 			`${zoneEmoji} ${COLORS.bold}${zone.toUpperCase()}${COLORS.reset} (${zoneCols.length})`,
 		);
 
@@ -511,11 +511,11 @@ function listAll(filter?: string): void {
 			const profileIcon = col.profileLink ? " 🔗" : "";
 			const namePadded = col.name.padEnd(28);
 			const ownerPadded = col.owner.padEnd(10);
-			console.log(
+			console.info(
 				`  ${col.color}${String(col.index).padStart(2)}${COLORS.reset} ${namePadded} ${COLORS.dim}${ownerPadded}${COLORS.reset} ${col.type}${profileIcon}`,
 			);
 		}
-		console.log();
+		console.info();
 	}
 }
 
@@ -526,12 +526,12 @@ function listAll(filter?: string): void {
 function search(term: string): void {
 	if (!term) {
 		error("Search term required");
-		console.log("Usage: bun matrix/column-standards-all.ts search <term>");
+		console.info("Usage: bun matrix/column-standards-all.ts search <term>");
 		process.exit(1);
 	}
 
 	header(`Searching columns for "${term}"...`);
-	console.log();
+	console.info();
 
 	const searchable = Object.entries(columns).map(([id, def]) => ({
 		id,
@@ -552,12 +552,12 @@ function search(term: string): void {
 
 	if (hits.length === 0) {
 		warning("No matches found.");
-		console.log();
-		console.log(`${COLORS.dim}Try searching for:${COLORS.reset}`);
-		console.log(`  • Zone names: "tension", "cloudflare", "chrome"`);
-		console.log(`  • Types: "url", "float", "enum", "boolean"`);
-		console.log(`  • Owners: "runtime", "platform", "infra"`);
-		console.log(`  • Column names: "profile", "cookie", "anomaly"`);
+		console.info();
+		console.info(`${COLORS.dim}Try searching for:${COLORS.reset}`);
+		console.info(`  • Zone names: "tension", "cloudflare", "chrome"`);
+		console.info(`  • Types: "url", "float", "enum", "boolean"`);
+		console.info(`  • Owners: "runtime", "platform", "infra"`);
+		console.info(`  • Column names: "profile", "cookie", "anomaly"`);
 		return;
 	}
 
@@ -565,16 +565,16 @@ function search(term: string): void {
 	const top3 = hits.slice(0, 3);
 	subheader("Top 3 hits:");
 	for (const [id, def] of top3) {
-		console.log(`  ${def.color}${id}${COLORS.reset} ${def.name} (${def.zone})`);
+		console.info(`  ${def.color}${id}${COLORS.reset} ${def.name} (${def.zone})`);
 	}
-	console.log();
+	console.info();
 
 	success(`${hits.length} match${hits.length === 1 ? "" : "es"} found`);
-	console.log();
+	console.info();
 
 	for (const [id, def] of hits) {
-		console.log(`${def.color}┌── Column ${id}: ${def.name}${COLORS.reset}`);
-		console.log(
+		console.info(`${def.color}┌── Column ${id}: ${def.name}${COLORS.reset}`);
+		console.info(
 			`${def.color}│${COLORS.reset}  Owner: ${COLORS.cyan}${def.owner}${COLORS.reset}  Zone: ${def.zone}  Type: ${def.type}`,
 		);
 		if (def.description) {
@@ -582,17 +582,17 @@ function search(term: string): void {
 				def.description.length > 60
 					? `${def.description.slice(0, 57)}...`
 					: def.description;
-			console.log(
+			console.info(
 				`${def.color}│${COLORS.reset}  Desc:  ${COLORS.dim}${desc}${COLORS.reset}`,
 			);
 		}
 		if (def.uriPattern) {
 			const uri = `${def.uriPattern.protocol || "https"}://${def.uriPattern.hostname}${def.uriPattern.pathname || ""}`;
-			console.log(
+			console.info(
 				`${def.color}│${COLORS.reset}  URI:   ${COLORS.purple}${uri}${COLORS.reset}`,
 			);
 		}
-		console.log();
+		console.info();
 	}
 
 	appendSearchToHistory(term).catch(() => null);
@@ -617,7 +617,7 @@ async function promptExportTeaser(): Promise<void> {
 
 async function validate(): Promise<void> {
 	header("Validating column standards schema...");
-	console.log();
+	console.info();
 
 	let errors = 0;
 	let warnings = 0;
@@ -655,10 +655,10 @@ async function validate(): Promise<void> {
 	});
 
 	// Summary
-	console.log(`${COLORS.bold}Schema:${COLORS.reset}`);
-	console.log(`  Total columns: ${Object.keys(columns).length}`);
-	console.log(`  Zones: ${Object.keys(ZONES).length}`);
-	console.log();
+	console.info(`${COLORS.bold}Schema:${COLORS.reset}`);
+	console.info(`  Total columns: ${Object.keys(columns).length}`);
+	console.info(`  Zones: ${Object.keys(ZONES).length}`);
+	console.info();
 
 	if (errors === 0 && warnings === 0) {
 		success("All columns valid! 🎉");
@@ -667,22 +667,22 @@ async function validate(): Promise<void> {
 		if (errors > 0) {
 			error(`${errors} validation error${errors === 1 ? "" : "s"}`);
 			for (const err of errorList) {
-				console.log(`  ${COLORS.red}•${COLORS.reset} ${err}`);
+				console.info(`  ${COLORS.red}•${COLORS.reset} ${err}`);
 			}
 		}
 		if (warnings > 0) {
-			console.log();
+			console.info();
 			warning(`${warnings} warning${warnings === 1 ? "" : "s"}`);
 			for (const warn of warningList.slice(0, 10)) {
-				console.log(`  ${COLORS.yellow}•${COLORS.reset} ${warn}`);
+				console.info(`  ${COLORS.yellow}•${COLORS.reset} ${warn}`);
 			}
 			if (warningList.length > 10) {
-				console.log(
+				console.info(
 					`  ${COLORS.dim}... and ${warningList.length - 10} more${COLORS.reset}`,
 				);
 			}
 		}
-		console.log();
+		console.info();
 		process.exit(1);
 	}
 }
@@ -695,10 +695,10 @@ function listZone(zoneName: string): void {
 	const zone = ZONES[zoneName as keyof typeof ZONES];
 	if (!zone) {
 		error(`Unknown zone: ${zoneName}`);
-		console.log();
-		console.log("Available zones:");
+		console.info();
+		console.info("Available zones:");
 		for (const [name, meta] of Object.entries(ZONES)) {
-			console.log(`  ${meta.emoji} ${name.padEnd(13)} cols ${meta.start}-${meta.end}`);
+			console.info(`  ${meta.emoji} ${name.padEnd(13)} cols ${meta.start}-${meta.end}`);
 		}
 		process.exit(1);
 	}
@@ -706,18 +706,18 @@ function listZone(zoneName: string): void {
 	const zoneCols = Object.values(columns).filter((col) => col.zone === zoneName);
 
 	header(`${zone.emoji} ${zoneName.toUpperCase()} Zone (${zoneCols.length} columns)`);
-	console.log();
-	console.log(`${COLORS.dim}Team:${COLORS.reset} ${zone.team}`);
-	console.log(`${COLORS.dim}Range:${COLORS.reset} columns ${zone.start}-${zone.end}`);
+	console.info();
+	console.info(`${COLORS.dim}Team:${COLORS.reset} ${zone.team}`);
+	console.info(`${COLORS.dim}Range:${COLORS.reset} columns ${zone.start}-${zone.end}`);
 	if (zone.description) {
-		console.log(`${COLORS.dim}Desc:${COLORS.reset} ${zone.description}`);
+		console.info(`${COLORS.dim}Desc:${COLORS.reset} ${zone.description}`);
 	}
-	console.log();
+	console.info();
 
 	for (const col of zoneCols.sort((a, b) => a.index - b.index)) {
 		const profileIcon = col.profileLink ? " 🔗" : "";
 		const reqIcon = col.required ? " ✓" : "";
-		console.log(
+		console.info(
 			`  ${col.color}${String(col.index).padStart(2)}${COLORS.reset} ${col.name.padEnd(28)} ${col.type}${profileIcon}${reqIcon}`,
 		);
 		if (col.description) {
@@ -725,10 +725,10 @@ function listZone(zoneName: string): void {
 				col.description.length > 50
 					? `${col.description.slice(0, 47)}...`
 					: col.description;
-			console.log(`      ${COLORS.dim}${desc}${COLORS.reset}`);
+			console.info(`      ${COLORS.dim}${desc}${COLORS.reset}`);
 		}
 	}
-	console.log();
+	console.info();
 }
 
 function listChrome(): void {
@@ -738,24 +738,24 @@ function listChrome(): void {
 	);
 
 	header("🔷 Chrome State Columns (71-75)");
-	console.log();
-	console.log(`${COLORS.dim}Team:${COLORS.reset} platform`);
-	console.log(`${COLORS.dim}Purpose:${COLORS.reset} Chrome state & cookie management`);
-	console.log();
+	console.info();
+	console.info(`${COLORS.dim}Team:${COLORS.reset} platform`);
+	console.info(`${COLORS.dim}Purpose:${COLORS.reset} Chrome state & cookie management`);
+	console.info();
 
 	for (const col of chromeCols) {
-		console.log(
+		console.info(
 			`  ${col.color}${String(col.index).padStart(2)}${COLORS.reset} ${col.name.padEnd(24)} ${col.type}`,
 		);
 		if (col.description) {
-			console.log(`      ${COLORS.dim}${col.description}${COLORS.reset}`);
+			console.info(`      ${COLORS.dim}${col.description}${COLORS.reset}`);
 		}
 		if (col.uriPattern) {
 			const uri = `${col.uriPattern.protocol}://${col.uriPattern.hostname}${col.uriPattern.pathname}`;
-			console.log(`      ${COLORS.purple}→ ${uri}${COLORS.reset}`);
+			console.info(`      ${COLORS.purple}→ ${uri}${COLORS.reset}`);
 		}
 	}
-	console.log();
+	console.info();
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -782,7 +782,7 @@ function showStats(): void {
 			byType[col.type] = (byType[col.type] || 0) + 1;
 		}
 
-		console.log(
+		console.info(
 			JSON.stringify(
 				{
 					totalColumns: allCols.length,
@@ -800,50 +800,50 @@ function showStats(): void {
 	}
 
 	header("Matrix Column Statistics");
-	console.log();
+	console.info();
 
 	// By zone
-	console.log(`${COLORS.bold}By Zone:${COLORS.reset}`);
+	console.info(`${COLORS.bold}By Zone:${COLORS.reset}`);
 	for (const [name, meta] of Object.entries(ZONES)) {
 		const count = allCols.filter((c) => c.zone === name).length;
 		const bar = "█".repeat(Math.round(count / 2));
-		console.log(
+		console.info(
 			`  ${meta.emoji} ${name.padEnd(13)} ${String(count).padStart(2)} ${meta.color}${bar}${COLORS.reset}`,
 		);
 	}
-	console.log();
+	console.info();
 
 	// By owner/team
-	console.log(`${COLORS.bold}By Owner:${COLORS.reset}`);
+	console.info(`${COLORS.bold}By Owner:${COLORS.reset}`);
 	const byOwner = new Map<string, number>();
 	for (const col of allCols) {
 		byOwner.set(col.owner, (byOwner.get(col.owner) || 0) + 1);
 	}
 	for (const [owner, count] of [...byOwner.entries()].sort((a, b) => b[1] - a[1])) {
-		console.log(`  ${owner.padEnd(10)} ${String(count).padStart(2)}`);
+		console.info(`  ${owner.padEnd(10)} ${String(count).padStart(2)}`);
 	}
-	console.log();
+	console.info();
 
 	// By type
-	console.log(`${COLORS.bold}By Type:${COLORS.reset}`);
+	console.info(`${COLORS.bold}By Type:${COLORS.reset}`);
 	const byType = new Map<string, number>();
 	for (const col of allCols) {
 		byType.set(col.type, (byType.get(col.type) || 0) + 1);
 	}
 	for (const [type, count] of [...byType.entries()].sort((a, b) => b[1] - a[1])) {
-		console.log(`  ${type.padEnd(12)} ${String(count).padStart(2)}`);
+		console.info(`  ${type.padEnd(12)} ${String(count).padStart(2)}`);
 	}
-	console.log();
+	console.info();
 
 	// Profile links
 	const profileCols = allCols.filter((c) => c.profileLink);
-	console.log(
+	console.info(
 		`${COLORS.bold}Profile Link Columns:${COLORS.reset} ${profileCols.length}`,
 	);
 	for (const col of profileCols) {
-		console.log(`  ${col.color}${col.index}${COLORS.reset} ${col.name} (${col.zone})`);
+		console.info(`  ${col.color}${col.index}${COLORS.reset} ${col.name} (${col.zone})`);
 	}
-	console.log();
+	console.info();
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -852,122 +852,122 @@ function showStats(): void {
 
 function showHelp(): void {
 	header("Column Standards CLI - Phase 3.29");
-	console.log();
+	console.info();
 
-	console.log(`${COLORS.bold}Usage:${COLORS.reset}`);
-	console.log(
+	console.info(`${COLORS.bold}Usage:${COLORS.reset}`);
+	console.info(
 		`  ${COLORS.cyan}bun matrix/column-standards-all.ts${COLORS.reset} [command] [arg]`,
 	);
-	console.log();
+	console.info();
 
-	console.log(`${COLORS.bold}Commands:${COLORS.reset}`);
-	console.log(
+	console.info(`${COLORS.bold}Commands:${COLORS.reset}`);
+	console.info(
 		`  ${COLORS.yellow}list [filter]${COLORS.reset}      Show all columns (optionally filtered)`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}get <col>${COLORS.reset}          Show single column detail`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}search <term>${COLORS.reset}      Fuzzy search name/owner/desc/type`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}validate${COLORS.reset}           Check required fields schema`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}stats${COLORS.reset}              Show distribution statistics`,
 	);
-	console.log(`  ${COLORS.yellow}zones${COLORS.reset}              List all zones`);
-	console.log(
+	console.info(`  ${COLORS.yellow}zones${COLORS.reset}              List all zones`);
+	console.info(
 		`  ${COLORS.yellow}watch${COLORS.reset}              Watch for changes & auto-reload`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}export [path]${COLORS.reset}      Export to Markdown reference`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}preview <col>${COLORS.reset}      Preview hyperlinks for URI column`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}pipe <format>${COLORS.reset}      Export as tsv/csv/names/env/grep-tags`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}find <criteria>${COLORS.reset}    Advanced multi-criteria search`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}interactive${COLORS.reset}        Start interactive REPL mode`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}fav${COLORS.reset}                Show favorite columns`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}config${COLORS.reset}             Manage CLI configuration`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}doctor${COLORS.reset}             Check environment & dependencies`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}matrix${COLORS.reset}             Show full matrix grid view`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}shortcuts${COLORS.reset}          List all shortcuts & aliases`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}flags${COLORS.reset}              Show detailed flag documentation`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.dim}--complete [word] [prev]${COLORS.reset}  Tab-completion (suggestions for shell)`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.dim}--install-complete${COLORS.reset}   Print shell hook for Bash/Zsh/Fish`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.dim}--json${COLORS.reset}               Output as JSON (for any command)`,
 	);
-	console.log(`  ${COLORS.dim}--version, -v${COLORS.reset}        Show CLI version`);
-	console.log();
+	console.info(`  ${COLORS.dim}--version, -v${COLORS.reset}        Show CLI version`);
+	console.info();
 
-	console.log(`${COLORS.bold}Zone Shortcuts:${COLORS.reset}`);
-	console.log(
+	console.info(`${COLORS.bold}Zone Shortcuts:${COLORS.reset}`);
+	console.info(
 		`  ${COLORS.yellow}tension${COLORS.reset}            Show tension zone (31-45)`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}cloudflare${COLORS.reset}         Show Cloudflare zone (21-30)`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}chrome${COLORS.reset}             Show Chrome state columns (71-75)`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}core${COLORS.reset}               Show core zone (1-10)`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.yellow}validation${COLORS.reset}         Show validation zone (61-75)`,
 	);
-	console.log();
+	console.info();
 
-	console.log(`${COLORS.bold}Examples:${COLORS.reset}`);
-	console.log(`  bun matrix/column-standards-all.ts get 45`);
-	console.log(`  bun matrix/column-standards-all.ts search tension`);
-	console.log(`  bun matrix/column-standards-all.ts list url`);
-	console.log(`  bun matrix/column-standards-all.ts validate`);
-	console.log(`  bun matrix/column-standards-all.ts cloudflare`);
-	console.log(`  bun matrix/column-standards-all.ts watch`);
-	console.log(`  bun matrix/column-standards-all.ts watch tension --export-on-change`);
-	console.log(`  bun matrix/column-standards-all.ts export docs/cols.md`);
-	console.log(`  bun matrix/column-standards-all.ts preview 45`);
-	console.log(`  bun matrix/column-standards-all.ts pipe tsv > columns.tsv`);
-	console.log(`  bun matrix/column-standards-all.ts find zone=tension required=true`);
-	console.log(`  bun matrix/column-standards-all.ts stats --json | jq '.byZone'`);
-	console.log(`  bun matrix/column-standards-all.ts interactive`);
-	console.log(`  bun matrix/column-standards-all.ts fav add 45`);
-	console.log(`  bun matrix/column-standards-all.ts config set cli.colors false`);
-	console.log(`  bun matrix/column-standards-all.ts doctor`);
-	console.log(`  bun matrix/column-standards-all.ts matrix`);
-	console.log(`  bun matrix/column-standards-all.ts shortcuts`);
-	console.log(`  bun matrix/column-standards-all.ts flags`);
-	console.log();
+	console.info(`${COLORS.bold}Examples:${COLORS.reset}`);
+	console.info(`  bun matrix/column-standards-all.ts get 45`);
+	console.info(`  bun matrix/column-standards-all.ts search tension`);
+	console.info(`  bun matrix/column-standards-all.ts list url`);
+	console.info(`  bun matrix/column-standards-all.ts validate`);
+	console.info(`  bun matrix/column-standards-all.ts cloudflare`);
+	console.info(`  bun matrix/column-standards-all.ts watch`);
+	console.info(`  bun matrix/column-standards-all.ts watch tension --export-on-change`);
+	console.info(`  bun matrix/column-standards-all.ts export docs/cols.md`);
+	console.info(`  bun matrix/column-standards-all.ts preview 45`);
+	console.info(`  bun matrix/column-standards-all.ts pipe tsv > columns.tsv`);
+	console.info(`  bun matrix/column-standards-all.ts find zone=tension required=true`);
+	console.info(`  bun matrix/column-standards-all.ts stats --json | jq '.byZone'`);
+	console.info(`  bun matrix/column-standards-all.ts interactive`);
+	console.info(`  bun matrix/column-standards-all.ts fav add 45`);
+	console.info(`  bun matrix/column-standards-all.ts config set cli.colors false`);
+	console.info(`  bun matrix/column-standards-all.ts doctor`);
+	console.info(`  bun matrix/column-standards-all.ts matrix`);
+	console.info(`  bun matrix/column-standards-all.ts shortcuts`);
+	console.info(`  bun matrix/column-standards-all.ts flags`);
+	console.info();
 
-	console.log(`${COLORS.bold}Zones:${COLORS.reset}`);
+	console.info(`${COLORS.bold}Zones:${COLORS.reset}`);
 	for (const [name, meta] of Object.entries(ZONES)) {
-		console.log(
+		console.info(
 			`  ${meta.emoji} ${name.padEnd(13)} ${String(meta.start).padStart(2)}-${String(meta.end).padStart(2)} (${meta.end - meta.start + 1} cols) - ${meta.team}`,
 		);
 	}
@@ -985,7 +985,7 @@ function enableJsonMode(): void {
 
 function output(data: unknown): void {
 	if (JSON_MODE) {
-		console.log(JSON.stringify(data, null, 2));
+		console.info(JSON.stringify(data, null, 2));
 	}
 }
 
@@ -998,11 +998,11 @@ function pipeFormat(format: string): void {
 		case "tsv":
 		case "csv": {
 			const separator = format === "tsv" ? "\t" : ",";
-			console.log(
+			console.info(
 				["index", "name", "type", "owner", "zone", "required"].join(separator),
 			);
 			for (const col of Object.values(columns).sort((a, b) => a.index - b.index)) {
-				console.log(
+				console.info(
 					[col.index, col.name, col.type, col.owner, col.zone, col.required].join(
 						separator,
 					),
@@ -1012,19 +1012,19 @@ function pipeFormat(format: string): void {
 		}
 		case "names":
 			for (const col of Object.values(columns).sort((a, b) => a.index - b.index)) {
-				console.log(col.name);
+				console.info(col.name);
 			}
 			break;
 		case "ids":
 			for (let i = 0; i <= 96; i++) {
-				if (columns[i]) console.log(i);
+				if (columns[i]) console.info(i);
 			}
 			break;
 		case "grep-tags": {
 			// Generate grep-ready patterns
 			for (const col of Object.values(columns)) {
 				const tagName = col.name.toUpperCase().replace(/-/g, "_");
-				console.log(`[${tagName}:VALUE]`);
+				console.info(`[${tagName}:VALUE]`);
 			}
 			break;
 		}
@@ -1032,20 +1032,20 @@ function pipeFormat(format: string): void {
 			// Export as environment variable style
 			for (const col of Object.values(columns)) {
 				const envName = `MATRIX_COL_${col.index}_${col.name.toUpperCase().replace(/-/g, "_")}`;
-				console.log(`${envName}="${col.type}:${col.owner}:${col.zone}"`);
+				console.info(`${envName}="${col.type}:${col.owner}:${col.zone}"`);
 			}
 			break;
 		}
 		default:
 			error(`Unknown pipe format: ${format}`);
-			console.log();
-			console.log("Available formats:");
-			console.log("  tsv        Tab-separated values");
-			console.log("  csv        Comma-separated values");
-			console.log("  names      Just column names (one per line)");
-			console.log("  ids        Just column IDs (one per line)");
-			console.log("  grep-tags  Grep tag patterns for log searching");
-			console.log("  env        Environment variable style export");
+			console.info();
+			console.info("Available formats:");
+			console.info("  tsv        Tab-separated values");
+			console.info("  csv        Comma-separated values");
+			console.info("  names      Just column names (one per line)");
+			console.info("  ids        Just column IDs (one per line)");
+			console.info("  grep-tags  Grep tag patterns for log searching");
+			console.info("  env        Environment variable style export");
 			process.exit(1);
 	}
 }
@@ -1057,20 +1057,20 @@ function pipeFormat(format: string): void {
 function findColumns(criteria: string[]): void {
 	if (criteria.length === 0) {
 		error("Find requires at least one criteria");
-		console.log();
-		console.log("Usage: bun matrix:cols find <criteria>");
-		console.log();
-		console.log("Criteria formats:");
-		console.log("  zone=<zone>       Filter by zone (tension, cloudflare, etc.)");
-		console.log("  owner=<owner>     Filter by owner (runtime, platform, etc.)");
-		console.log("  type=<type>       Filter by type (url, float, enum, etc.)");
-		console.log("  required=true     Only required columns");
-		console.log("  has=uriPattern    Columns with specific property");
-		console.log();
-		console.log("Examples:");
-		console.log("  bun matrix:cols find zone=tension required=true");
-		console.log("  bun matrix:cols find owner=platform type=url");
-		console.log("  bun matrix:cols find has=profileLink");
+		console.info();
+		console.info("Usage: bun matrix:cols find <criteria>");
+		console.info();
+		console.info("Criteria formats:");
+		console.info("  zone=<zone>       Filter by zone (tension, cloudflare, etc.)");
+		console.info("  owner=<owner>     Filter by owner (runtime, platform, etc.)");
+		console.info("  type=<type>       Filter by type (url, float, enum, etc.)");
+		console.info("  required=true     Only required columns");
+		console.info("  has=uriPattern    Columns with specific property");
+		console.info();
+		console.info("Examples:");
+		console.info("  bun matrix:cols find zone=tension required=true");
+		console.info("  bun matrix:cols find owner=platform type=url");
+		console.info("  bun matrix:cols find has=profileLink");
 		process.exit(1);
 	}
 
@@ -1105,9 +1105,9 @@ function findColumns(criteria: string[]): void {
 	}
 
 	header(`Find Results (${results.length} matches)`);
-	console.log();
-	console.log(`${COLORS.dim}Criteria:${COLORS.reset} ${criteria.join(" + ")}`);
-	console.log();
+	console.info();
+	console.info(`${COLORS.dim}Criteria:${COLORS.reset} ${criteria.join(" + ")}`);
+	console.info();
 
 	if (JSON_MODE) {
 		output(results.sort((a, b) => a.index - b.index));
@@ -1115,11 +1115,11 @@ function findColumns(criteria: string[]): void {
 	}
 
 	for (const col of results.sort((a, b) => a.index - b.index)) {
-		console.log(
+		console.info(
 			`  ${col.color}${String(col.index).padStart(2)}${COLORS.reset} ${col.name.padEnd(28)} ${COLORS.dim}${col.zone}/${col.owner}${COLORS.reset} ${col.type}`,
 		);
 	}
-	console.log();
+	console.info();
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -1140,21 +1140,21 @@ async function watchMode(): Promise<void> {
 
 	console.clear();
 	header(`🔥 OMEGA Native Watch Mode – Live Standards Supremacy`);
-	console.log();
-	console.log(`${COLORS.dim}Native Bun.file().watch() activated${COLORS.reset}`);
-	console.log(`${COLORS.dim}Monitoring:${COLORS.reset}`);
-	console.log(`  • matrix/column-standards-index.ts`);
-	console.log(`  • matrix/standards/**/*.ts (recursive)`);
-	console.log();
-	console.log(
+	console.info();
+	console.info(`${COLORS.dim}Native Bun.file().watch() activated${COLORS.reset}`);
+	console.info(`${COLORS.dim}Monitoring:${COLORS.reset}`);
+	console.info(`  • matrix/column-standards-index.ts`);
+	console.info(`  • matrix/standards/**/*.ts (recursive)`);
+	console.info();
+	console.info(
 		`${COLORS.dim}Mode:${COLORS.reset} ${COLORS.cyan}${mode}${COLORS.reset}${target ? ` → ${target}` : ""}`,
 	);
-	console.log(
+	console.info(
 		`${COLORS.dim}Options:${COLORS.reset} ${exportOnChange ? "🟣 auto-export" : ""}${verbose ? " 🔊 verbose" : ""}`,
 	);
-	console.log();
-	console.log(`${COLORS.yellow}Press Ctrl+C to exit${COLORS.reset}`);
-	console.log();
+	console.info();
+	console.info(`${COLORS.yellow}Press Ctrl+C to exit${COLORS.reset}`);
+	console.info();
 
 	// Native file watcher - zero dependencies!
 	// Using fs.watch as Bun.file().watch() is not available in 1.3.7
@@ -1191,7 +1191,7 @@ async function watchMode(): Promise<void> {
 
 				const fullPath = path.join(watchPath, filename);
 				if (verbose) {
-					console.log(
+					console.info(
 						`${COLORS.dim}[${new Date().toLocaleTimeString()}]${COLORS.reset} ${COLORS.cyan}📝${COLORS.reset} Changed: ${fullPath}`,
 					);
 				}
@@ -1202,7 +1202,7 @@ async function watchMode(): Promise<void> {
 			// Single file watching
 			return fs.watch(watchPath, { persistent: true }, (eventType, filename) => {
 				if (verbose) {
-					console.log(
+					console.info(
 						`${COLORS.dim}[${new Date().toLocaleTimeString()}]${COLORS.reset} ${COLORS.cyan}📝${COLORS.reset} Changed: ${watchPath}`,
 					);
 				}
@@ -1218,7 +1218,7 @@ async function watchMode(): Promise<void> {
 		const currentIndexHash = await getFileHash("./matrix/column-standards-index.ts");
 		if (lastFileHash && lastFileHash === currentIndexHash) {
 			if (verbose)
-				console.log(
+				console.info(
 					`${COLORS.dim}No actual content change in index file${COLORS.reset}`,
 				);
 			return;
@@ -1231,7 +1231,7 @@ async function watchMode(): Promise<void> {
 			changeCount++;
 
 			if (verbose) {
-				console.log(
+				console.info(
 					`${COLORS.dim}[${new Date().toLocaleTimeString()}]${COLORS.reset} ${COLORS.yellow}🔄${COLORS.reset} Detected change — reloading...`,
 				);
 			}
@@ -1250,11 +1250,11 @@ async function watchMode(): Promise<void> {
 				// Clear and re-render
 				console.clear();
 				header(`🔥 OMEGA Native Watch – Standards Reloaded #${changeCount}`);
-				console.log();
-				console.log(
+				console.info();
+				console.info(
 					`${COLORS.green}✅ Standards hot-reloaded @ ${new Date().toLocaleTimeString()}${COLORS.reset}`,
 				);
-				console.log();
+				console.info();
 
 				// Re-render based on current mode
 				if (mode === "list" || mode === "all") {
@@ -1273,18 +1273,18 @@ async function watchMode(): Promise<void> {
 
 				// Auto-export if requested
 				if (exportOnChange) {
-					console.log();
+					console.info();
 					subheader("🟣 Auto-exporting...");
 					await exportToMarkdown("column-standards.md");
-					console.log(
+					console.info(
 						`${COLORS.green}   └─ Exported column-standards.md${COLORS.reset}`,
 					);
 				}
 
 				// Performance metrics with nanosecond precision
 				const renderTime = getNanoTime() - startTime;
-				console.log();
-				console.log(
+				console.info();
+				console.info(
 					`${COLORS.dim}   └─ Reloaded in ${formatNanoDuration(renderTime)} | ${Object.keys(columns).length} columns | Native fs.watch()${COLORS.reset}`,
 				);
 
@@ -1292,7 +1292,7 @@ async function watchMode(): Promise<void> {
 				if (changeCount % 10 === 0) {
 					Bun.gc("full");
 					if (verbose)
-						console.log(
+						console.info(
 							`${COLORS.dim}   └─ GC triggered (${changeCount} changes)${COLORS.reset}`,
 						);
 				}
@@ -1317,10 +1317,10 @@ async function watchMode(): Promise<void> {
 						);
 						await client.quit();
 						if (verbose)
-							console.log(`${COLORS.dim}   └─ Published to Redis${COLORS.reset}`);
+							console.info(`${COLORS.dim}   └─ Published to Redis${COLORS.reset}`);
 					} catch (e) {
 						if (verbose)
-							console.log(`${COLORS.dim}   └─ Redis not available${COLORS.reset}`);
+							console.info(`${COLORS.dim}   └─ Redis not available${COLORS.reset}`);
 					}
 				}
 
@@ -1339,14 +1339,14 @@ async function watchMode(): Promise<void> {
 								native: true,
 							}),
 						});
-						if (verbose) console.log(`${COLORS.dim}   └─ Webhook sent${COLORS.reset}`);
+						if (verbose) console.info(`${COLORS.dim}   └─ Webhook sent${COLORS.reset}`);
 					} catch (e) {
-						if (verbose) console.log(`${COLORS.dim}   └─ Webhook failed${COLORS.reset}`);
+						if (verbose) console.info(`${COLORS.dim}   └─ Webhook failed${COLORS.reset}`);
 					}
 				}
 			} catch (error) {
 				console.error(`${COLORS.red}❌ Reload failed:${COLORS.reset}`, error);
-				console.log(
+				console.info(
 					`${COLORS.yellow}⚠️ Continuing with previous state...${COLORS.reset}`,
 				);
 			}
@@ -1373,11 +1373,11 @@ async function watchMode(): Promise<void> {
 
 	// Graceful shutdown
 	process.on("SIGINT", () => {
-		console.log(`\n${COLORS.yellow}🛑 Native watch mode terminating...${COLORS.reset}`);
+		console.info(`\n${COLORS.yellow}🛑 Native watch mode terminating...${COLORS.reset}`);
 
 		// Final export if requested
 		if (exportOnChange) {
-			console.log(`${COLORS.dim}Final export...${COLORS.reset}`);
+			console.info(`${COLORS.dim}Final export...${COLORS.reset}`);
 			exportToMarkdown("column-standards.md").catch(() => {});
 		}
 
@@ -1387,7 +1387,7 @@ async function watchMode(): Promise<void> {
 		// Close all fs watchers
 		watchers.forEach((w) => w.close());
 
-		console.log(
+		console.info(
 			`${COLORS.green}✅ Native watch mode terminated. Total changes: ${changeCount}${COLORS.reset}`,
 		);
 		process.exit(0);
@@ -1479,11 +1479,11 @@ async function exportToMarkdown(outputPath?: string): Promise<void> {
 	await Bun.write(targetPath, md);
 
 	success(`Reference documentation exported to ${targetPath}`);
-	console.log();
-	console.log(
+	console.info();
+	console.info(
 		`${COLORS.dim}File size:${COLORS.reset} ${(md.length / 1024).toFixed(2)} KB`,
 	);
-	console.log(
+	console.info(
 		`${COLORS.dim}Columns documented:${COLORS.reset} ${Object.keys(columns).length}`,
 	);
 }
@@ -1506,22 +1506,22 @@ function hyperlinkPreview(id: string | number): void {
 	}
 
 	header(`Hyperlink Preview: Column ${colId}`);
-	console.log();
+	console.info();
 
 	// Standard column info
 	printCol(id);
-	console.log();
+	console.info();
 
 	// Hyperlink section
 	if (col.uriPattern || col.pattern) {
 		subheader("🔗 Clickable Links");
-		console.log();
+		console.info();
 
 		if (col.uriPattern) {
 			const url = `${col.uriPattern.protocol}://${col.uriPattern.hostname}${col.uriPattern.pathname}`;
 			// OSC 8 hyperlink format: \e]8;;URL\e\\TEXT\e]8;;\e\\
 			const hyperlink = `\x1b]8;;${url}\x1b\\${url}\x1b]8;;\x1b\\`;
-			console.log(`  ${COLORS.cyan}Canonical:${COLORS.reset} ${hyperlink}`);
+			console.info(`  ${COLORS.cyan}Canonical:${COLORS.reset} ${hyperlink}`);
 		}
 
 		if (col.pattern) {
@@ -1533,30 +1533,30 @@ function hyperlinkPreview(id: string | number): void {
 				.replace(/{env}/g, "prod");
 			const fullUrl = `${col.protocol || "https"}://${exampleUrl}`;
 			const hyperlink = `\x1b]8;;${fullUrl}\x1b\\${fullUrl}\x1b]8;;\x1b\\`;
-			console.log(`  ${COLORS.cyan}Example:${COLORS.reset}   ${hyperlink}`);
+			console.info(`  ${COLORS.cyan}Example:${COLORS.reset}   ${hyperlink}`);
 		}
 
-		console.log();
+		console.info();
 		subheader("📋 Copy-Paste Templates");
-		console.log();
+		console.info();
 
 		if (col.pattern) {
-			console.log(`${COLORS.dim}Bun fetch:${COLORS.reset}`);
-			console.log(
+			console.info(`${COLORS.dim}Bun fetch:${COLORS.reset}`);
+			console.info(
 				`    const res = await fetch("${col.protocol || "https"}://${col.pattern.split("/")[0]}...");`,
 			);
-			console.log();
+			console.info();
 
-			console.log(`${COLORS.dim}curl:${COLORS.reset}`);
-			console.log(
+			console.info(`${COLORS.dim}curl:${COLORS.reset}`);
+			console.info(
 				`    curl -s "${col.protocol || "https"}://${col.pattern}" | head -20`,
 			);
-			console.log();
+			console.info();
 		}
 	} else {
 		warning("No URI pattern defined for this column");
-		console.log();
-		console.log(
+		console.info();
+		console.info(
 			`${COLORS.dim}This column does not have clickable links.${COLORS.reset}`,
 		);
 	}
@@ -1568,36 +1568,36 @@ function hyperlinkPreview(id: string | number): void {
 
 async function interactiveMode(): Promise<void> {
 	header("Interactive Mode 🎮");
-	console.log();
-	console.log(`${COLORS.bold}Examples:${COLORS.reset}`);
-	console.log(
+	console.info();
+	console.info(`${COLORS.bold}Examples:${COLORS.reset}`);
+	console.info(
 		`  ${COLORS.cyan}bun matrix:cols list${COLORS.reset}                    List all columns`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}bun matrix:cols get 45${COLORS.reset}                   Show column 45`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}bun matrix:cols search profile${COLORS.reset}          Search columns`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}bun matrix:cols tension${COLORS.reset}                List tension zone`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}bun matrix:cols watch${COLORS.reset}                  Watch for changes`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}bun matrix:cols watch tension --export-on-change${COLORS.reset}  Watch tension + auto-export`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}bun matrix:cols validate${COLORS.reset}               Validate schema`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}bun matrix:cols export${COLORS.reset}                 Export to markdown`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}bun matrix:cols pipe tsv${COLORS.reset}                Output as TSV`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}bun matrix:cols --install-complete${COLORS.reset}     Install tab-completion`,
 	);
 
@@ -1614,13 +1614,13 @@ async function interactiveMode(): Promise<void> {
 		if (!input) continue;
 		if (input === "exit" || input === "quit") break;
 		if (input === "help") {
-			console.log();
-			console.log("Quick commands:");
-			console.log("  45           Show column 45");
-			console.log("  tension      Show tension zone");
-			console.log("  search url   Search for URL columns");
-			console.log("  find type=float  Find float columns");
-			console.log();
+			console.info();
+			console.info("Quick commands:");
+			console.info("  45           Show column 45");
+			console.info("  tension      Show tension zone");
+			console.info("  search url   Search for URL columns");
+			console.info("  find type=float  Find float columns");
+			console.info();
 			continue;
 		}
 
@@ -1628,7 +1628,7 @@ async function interactiveMode(): Promise<void> {
 		const colNum = Number.parseInt(input, 10);
 		if (!Number.isNaN(colNum) && columns[colNum]) {
 			printCol(colNum);
-			console.log();
+			console.info();
 			continue;
 		}
 
@@ -1636,7 +1636,7 @@ async function interactiveMode(): Promise<void> {
 		if (["tension", "cloudflare", "chrome", "core", "validation"].includes(input)) {
 			if (input === "chrome") listChrome();
 			else listZone(input);
-			console.log();
+			console.info();
 			continue;
 		}
 
@@ -1657,22 +1657,22 @@ async function interactiveMode(): Promise<void> {
 				showFavorites();
 				break;
 			case "zones":
-				console.log();
+				console.info();
 				for (const [name, meta] of Object.entries(ZONES)) {
-					console.log(`  ${meta.emoji} ${name}`);
+					console.info(`  ${meta.emoji} ${name}`);
 				}
 				break;
 			case "get":
 				if (arg) printCol(arg);
 				break;
 			default:
-				console.log(`${COLORS.red}Unknown command: ${cmd}${COLORS.reset}`);
-				console.log(`Type ${COLORS.cyan}help${COLORS.reset} for available commands`);
+				console.info(`${COLORS.red}Unknown command: ${cmd}${COLORS.reset}`);
+				console.info(`Type ${COLORS.cyan}help${COLORS.reset} for available commands`);
 		}
-		console.log();
+		console.info();
 	}
 
-	console.log();
+	console.info();
 	success("Goodbye! 👋");
 }
 
@@ -1682,24 +1682,24 @@ async function interactiveMode(): Promise<void> {
 
 async function showFavorites(): Promise<void> {
 	header("Favorite Columns ⭐");
-	console.log();
+	console.info();
 
 	await loadConfig();
 
 	if (config.favorites.length === 0) {
-		console.log("No favorites yet. Add with: fav add <col>");
+		console.info("No favorites yet. Add with: fav add <col>");
 		return;
 	}
 
 	for (const colId of config.favorites) {
 		const col = columns[colId];
 		if (col) {
-			console.log(
+			console.info(
 				`  ${col.color}${String(col.index).padStart(2)}${COLORS.reset} ${col.name.padEnd(28)} ${COLORS.dim}${col.zone}${COLORS.reset}`,
 			);
 		}
 	}
-	console.log();
+	console.info();
 }
 
 async function addFavorite(colId: string): Promise<void> {
@@ -1738,8 +1738,8 @@ async function removeFavorite(colId: string): Promise<void> {
 
 function showConfig(): void {
 	header("CLI Configuration ⚙️");
-	console.log();
-	console.log(JSON.stringify(config, null, 2));
+	console.info();
+	console.info(JSON.stringify(config, null, 2));
 }
 
 async function configCommand(subcmd: string, ...args: string[]): Promise<void> {
@@ -1791,15 +1791,15 @@ async function configCommand(subcmd: string, ...args: string[]): Promise<void> {
 					return;
 				}
 				// In real usage, you'd prompt for the value to verify
-				console.log(`${COLORS.dim}Secret '${name}' is stored${COLORS.reset}`);
+				console.info(`${COLORS.dim}Secret '${name}' is stored${COLORS.reset}`);
 			} else if (action === "list") {
 				// List all secret names (not values)
 				const names = Object.keys(config.secrets);
 				if (names.length === 0) {
-					console.log(`${COLORS.dim}No secrets stored${COLORS.reset}`);
+					console.info(`${COLORS.dim}No secrets stored${COLORS.reset}`);
 				} else {
-					console.log(`${COLORS.cyan}Stored secrets:${COLORS.reset}`);
-					names.forEach((name) => console.log(`  • ${name}`));
+					console.info(`${COLORS.cyan}Stored secrets:${COLORS.reset}`);
+					names.forEach((name) => console.info(`  • ${name}`));
 				}
 			} else {
 				error("Usage: config secret <set|get|list> <name> [value]");
@@ -1807,12 +1807,12 @@ async function configCommand(subcmd: string, ...args: string[]): Promise<void> {
 			break;
 		}
 		default:
-			console.log("Usage:");
-			console.log("  config show              Show current config");
-			console.log("  config set <key> <val>   Set config value");
-			console.log("  config reset             Reset to defaults");
-			console.log("  config secret set <name> <value>  Store secret securely");
-			console.log("  config secret list       List stored secrets");
+			console.info("Usage:");
+			console.info("  config show              Show current config");
+			console.info("  config set <key> <val>   Set config value");
+			console.info("  config reset             Reset to defaults");
+			console.info("  config secret set <name> <value>  Store secret securely");
+			console.info("  config secret list       List stored secrets");
 	}
 }
 
@@ -1822,16 +1822,16 @@ async function configCommand(subcmd: string, ...args: string[]): Promise<void> {
 
 async function doctor(): Promise<void> {
 	header("Environment Diagnostics 🩺");
-	console.log();
+	console.info();
 
 	// Check Bun version
-	console.log(`${COLORS.bold}Runtime:${COLORS.reset}`);
-	console.log(`  Bun: ${Bun.version}`);
-	console.log(`  TypeScript: ${Bun.version}`);
-	console.log();
+	console.info(`${COLORS.bold}Runtime:${COLORS.reset}`);
+	console.info(`  Bun: ${Bun.version}`);
+	console.info(`  TypeScript: ${Bun.version}`);
+	console.info();
 
 	// Check for optional dependencies using Bun.which()
-	console.log(`${COLORS.bold}Optional Dependencies:${COLORS.reset}`);
+	console.info(`${COLORS.bold}Optional Dependencies:${COLORS.reset}`);
 	const deps = [
 		{ cmd: "jq", desc: "JSON processing", used: "stats --json | jq" },
 		{ cmd: "rg", desc: "Fast grep", used: "pipe grep-tags | rg" },
@@ -1853,38 +1853,38 @@ async function doctor(): Promise<void> {
 
 	// Use Bun.inspect.table for nice formatting
 	displayTable(depStatuses);
-	console.log();
+	console.info();
 
 	// Check CLI installation
-	console.log(`${COLORS.bold}CLI Installation:${COLORS.reset}`);
+	console.info(`${COLORS.bold}CLI Installation:${COLORS.reset}`);
 	const cliPath = import.meta.path;
-	console.log(`  Script: ${cliPath}`);
-	console.log(`  Config: ${import.meta.dir}/column-standards-config.json`);
-	console.log(`  Columns: ${Object.keys(columns).length}`);
-	console.log(`  Zones: ${Object.keys(ZONES).length}`);
-	console.log();
+	console.info(`  Script: ${cliPath}`);
+	console.info(`  Config: ${import.meta.dir}/column-standards-config.json`);
+	console.info(`  Columns: ${Object.keys(columns).length}`);
+	console.info(`  Zones: ${Object.keys(ZONES).length}`);
+	console.info();
 
 	// Recommendations
-	console.log(`${COLORS.bold}Recommendations:${COLORS.reset}`);
+	console.info(`${COLORS.bold}Recommendations:${COLORS.reset}`);
 	const missingDeps = deps.filter((d) => !checkCommand(d.cmd).exists);
 	if (missingDeps.length > 0) {
-		console.log(`  Install for enhanced experience:`);
+		console.info(`  Install for enhanced experience:`);
 		for (const dep of missingDeps) {
-			console.log(`    ${COLORS.dim}• ${dep.cmd}${COLORS.reset} - ${dep.desc}`);
+			console.info(`    ${COLORS.dim}• ${dep.cmd}${COLORS.reset} - ${dep.desc}`);
 		}
 	} else {
 		success("All optional dependencies installed!");
 	}
-	console.log();
+	console.info();
 
 	// Shell integration check
-	console.log(`${COLORS.bold}Shell Integration:${COLORS.reset}`);
+	console.info(`${COLORS.bold}Shell Integration:${COLORS.reset}`);
 	const hasCompletion = await Bun.file(
 		`${import.meta.dir}/column-standards-completion.bash`,
 	).exists();
-	console.log(`  Completion script: ${hasCompletion ? "✅ found" : "❌ missing"}`);
-	console.log(`  Aliases defined: ${Object.keys(config.aliases).length}`);
-	console.log();
+	console.info(`  Completion script: ${hasCompletion ? "✅ found" : "❌ missing"}`);
+	console.info(`  Aliases defined: ${Object.keys(config.aliases).length}`);
+	console.info();
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -1893,7 +1893,7 @@ async function doctor(): Promise<void> {
 
 function showMatrix(): void {
 	header("Tier-1380 OMEGA: Full Matrix View 📊");
-	console.log();
+	console.info();
 
 	// Create matrix grid (10 columns x 10 rows)
 	const matrix: string[][] = [];
@@ -1917,17 +1917,17 @@ function showMatrix(): void {
 	}
 
 	// Display using Bun.inspect
-	console.log("Column index →");
+	console.info("Column index →");
 	const tableData = matrix.map((row, idx) => ({
 		Row: `${idx * 10}`,
 		...row.slice(1).reduce((acc, cell, i) => ({ ...acc, [`+${i}`]: cell }), {}),
 	}));
 
 	displayTable(tableData);
-	console.log();
+	console.info();
 
 	// Zone legend
-	console.log(`${COLORS.bold}Zone Legend:${COLORS.reset}`);
+	console.info(`${COLORS.bold}Zone Legend:${COLORS.reset}`);
 	const zoneData = Object.entries(ZONES).map(([name, meta]) => ({
 		Zone: `${meta.emoji} ${name}`,
 		Range: `${meta.start}-${meta.end}`,
@@ -1935,7 +1935,7 @@ function showMatrix(): void {
 		Description: meta.description || "",
 	}));
 	displayTable(zoneData, ["Zone", "Range", "Team", "Description"]);
-	console.log();
+	console.info();
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -1944,12 +1944,12 @@ function showMatrix(): void {
 
 async function showShortcuts(): Promise<void> {
 	header("Shortcuts & Quick Reference ⚡");
-	console.log();
+	console.info();
 
 	await loadConfig();
 
 	// Built-in zone shortcuts
-	console.log(`${COLORS.bold}Zone Shortcuts:${COLORS.reset}`);
+	console.info(`${COLORS.bold}Zone Shortcuts:${COLORS.reset}`);
 	const zoneShortcuts = [
 		{
 			Shortcut: "tension",
@@ -1974,10 +1974,10 @@ async function showShortcuts(): Promise<void> {
 		},
 	];
 	displayTable(zoneShortcuts);
-	console.log();
+	console.info();
 
 	// User-defined aliases
-	console.log(`${COLORS.bold}User Aliases:${COLORS.reset}`);
+	console.info(`${COLORS.bold}User Aliases:${COLORS.reset}`);
 	if (Object.keys(config.aliases).length > 0) {
 		const aliasData = Object.entries(config.aliases).map(([name, cmd]) => ({
 			Alias: name,
@@ -1985,12 +1985,12 @@ async function showShortcuts(): Promise<void> {
 		}));
 		displayTable(aliasData);
 	} else {
-		console.log("  No aliases defined. Add in column-standards-config.json");
+		console.info("  No aliases defined. Add in column-standards-config.json");
 	}
-	console.log();
+	console.info();
 
 	// Named shortcuts
-	console.log(`${COLORS.bold}Named Column Shortcuts:${COLORS.reset}`);
+	console.info(`${COLORS.bold}Named Column Shortcuts:${COLORS.reset}`);
 	const namedData = Object.entries(config.shortcuts).map(([name, idx]) => {
 		const col = columns[idx];
 		return {
@@ -2000,10 +2000,10 @@ async function showShortcuts(): Promise<void> {
 		};
 	});
 	displayTable(namedData);
-	console.log();
+	console.info();
 
 	// Flag reference
-	console.log(`${COLORS.bold}Global Flags:${COLORS.reset}`);
+	console.info(`${COLORS.bold}Global Flags:${COLORS.reset}`);
 	const flags = [
 		{ Flag: "--complete [word] [prev]", Description: "Tab-completion suggestions" },
 		{ Flag: "--install-complete", Description: "Print shell hook (Bash/Zsh/Fish)" },
@@ -2012,7 +2012,7 @@ async function showShortcuts(): Promise<void> {
 		{ Flag: "--version, -v", Description: "Show version" },
 	];
 	displayTable(flags);
-	console.log();
+	console.info();
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -2021,24 +2021,24 @@ async function showShortcuts(): Promise<void> {
 
 function showFlags(): void {
 	header("Command-Line Flags Reference 🚩");
-	console.log();
+	console.info();
 
 	// Global flags
-	console.log(`${COLORS.bold}Global Flags:${COLORS.reset}`);
-	console.log(
+	console.info(`${COLORS.bold}Global Flags:${COLORS.reset}`);
+	console.info(
 		`  ${COLORS.cyan}--complete [word] [prev]${COLORS.reset}  Tab-completion; output candidates (for shell complete -C)`,
 	);
-	console.log(
+	console.info(
 		`  ${COLORS.cyan}--install-complete${COLORS.reset}  Print Bash/Zsh/Fish hook for tab-completion`,
 	);
-	console.log(`  ${COLORS.cyan}--json${COLORS.reset}          Output results as JSON`);
-	console.log(`  ${COLORS.cyan}--help, -h${COLORS.reset}      Show help message`);
-	console.log(`  ${COLORS.cyan}--version, -v${COLORS.reset}   Show CLI version`);
-	console.log(`  ${COLORS.cyan}--no-color${COLORS.reset}      Disable colored output`);
-	console.log();
+	console.info(`  ${COLORS.cyan}--json${COLORS.reset}          Output results as JSON`);
+	console.info(`  ${COLORS.cyan}--help, -h${COLORS.reset}      Show help message`);
+	console.info(`  ${COLORS.cyan}--version, -v${COLORS.reset}   Show CLI version`);
+	console.info(`  ${COLORS.cyan}--no-color${COLORS.reset}      Disable colored output`);
+	console.info();
 
 	// Command-specific flags
-	console.log(`${COLORS.bold}Command-Specific Options:${COLORS.reset}`);
+	console.info(`${COLORS.bold}Command-Specific Options:${COLORS.reset}`);
 	const cmdFlags = [
 		{ Command: "list", Options: "[filter] - zone, type, or owner filter" },
 		{ Command: "get", Options: "<col> --json for raw output" },
@@ -2059,19 +2059,19 @@ function showFlags(): void {
 		{ Command: "config", Options: "show|set|reset|secret" },
 	];
 	displayTable(cmdFlags);
-	console.log();
+	console.info();
 
 	// Examples with flags
-	console.log(`${COLORS.bold}Usage Examples:${COLORS.reset}`);
-	console.log(`  ${COLORS.dim}# JSON output for scripting${COLORS.reset}`);
-	console.log(`  bun matrix:cols get 45 --json | jq '.name'`);
-	console.log();
-	console.log(`  ${COLORS.dim}# No colors for piping${COLORS.reset}`);
-	console.log(`  bun matrix:cols list --no-color | grep url`);
-	console.log();
-	console.log(`  ${COLORS.dim}# Multiple flags${COLORS.reset}`);
-	console.log(`  bun matrix:cols find zone=tension --json --no-color`);
-	console.log();
+	console.info(`${COLORS.bold}Usage Examples:${COLORS.reset}`);
+	console.info(`  ${COLORS.dim}# JSON output for scripting${COLORS.reset}`);
+	console.info(`  bun matrix:cols get 45 --json | jq '.name'`);
+	console.info();
+	console.info(`  ${COLORS.dim}# No colors for piping${COLORS.reset}`);
+	console.info(`  bun matrix:cols list --no-color | grep url`);
+	console.info();
+	console.info(`  ${COLORS.dim}# Multiple flags${COLORS.reset}`);
+	console.info(`  bun matrix:cols find zone=tension --json --no-color`);
+	console.info();
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -2111,19 +2111,19 @@ if (!cmd) {
 } else if (cmd === "stats") {
 	showStats();
 } else if (cmd === "zones") {
-	console.log();
+	console.info();
 	header("Available Zones");
-	console.log();
+	console.info();
 	for (const [name, meta] of Object.entries(ZONES)) {
 		const colCount = meta.end - meta.start + 1;
-		console.log(
+		console.info(
 			`  ${meta.emoji} ${COLORS.bold}${name.padEnd(13)}${COLORS.reset} ${String(meta.start).padStart(2)}-${String(meta.end).padStart(2)} (${colCount} cols)`,
 		);
-		console.log(`      Team: ${meta.team}`);
+		console.info(`      Team: ${meta.team}`);
 		if (meta.description) {
-			console.log(`      ${COLORS.dim}${meta.description}${COLORS.reset}`);
+			console.info(`      ${COLORS.dim}${meta.description}${COLORS.reset}`);
 		}
-		console.log();
+		console.info();
 	}
 } else if (cmd === "tension") {
 	listZone("tension");
@@ -2163,15 +2163,15 @@ if (!cmd) {
 } else if (cmd === "flags" || cmd === "options") {
 	showFlags();
 } else if (cmd === "version" || cmd === "--version" || cmd === "-v") {
-	console.log(`Tier-1380 OMEGA Column Standards CLI v${config.version}`);
+	console.info(`Tier-1380 OMEGA Column Standards CLI v${config.version}`);
 } else if (cmd === "help" || cmd === "--help" || cmd === "-h") {
 	showHelp();
 } else if (cmd === "watch") {
 	await watchMode();
 } else {
 	error(`Unknown command: ${cmd || "empty"}`);
-	console.log();
-	console.log(
+	console.info();
+	console.info(
 		`${COLORS.dim}Run 'bun matrix:cols help' for available commands${COLORS.reset}`,
 	);
 	process.exit(1);

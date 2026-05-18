@@ -27,9 +27,9 @@ export class TelegramLanguageIntegrationTest {
    * Run all Telegram language integration tests
    */
   async runAllTests(): Promise<void> {
-    console.log('🤖🧪 FIRE22 TELEGRAM LANGUAGE INTEGRATION TEST SUITE');
-    console.log('═'.repeat(75));
-    console.log('Testing multilingual Telegram bot integration with Fire22 language system\n');
+    console.info('🤖🧪 FIRE22 TELEGRAM LANGUAGE INTEGRATION TEST SUITE');
+    console.info('═'.repeat(75));
+    console.info('Testing multilingual Telegram bot integration with Fire22 language system\n');
 
     // Core Telegram Bot Tests
     await this.testMultilingualBot();
@@ -61,7 +61,7 @@ export class TelegramLanguageIntegrationTest {
    * Test core multilingual bot functionality
    */
   async testMultilingualBot(): Promise<void> {
-    console.log('🤖 Testing Core Multilingual Bot...');
+    console.info('🤖 Testing Core Multilingual Bot...');
 
     this.runTest('Multilingual Bot Initialization', () => {
       return this.telegramBot !== null;
@@ -85,14 +85,14 @@ export class TelegramLanguageIntegrationTest {
       return telegramCodes.length === 21; // L-1500 to L-1520
     });
 
-    console.log('✅ Core Multilingual Bot Tests Complete\n');
+    console.info('✅ Core Multilingual Bot Tests Complete\n');
   }
 
   /**
    * Test language detection functionality
    */
   async testLanguageDetection(): Promise<void> {
-    console.log('🔍 Testing Language Detection...');
+    console.info('🔍 Testing Language Detection...');
 
     const testUsers: TelegramUser[] = [
       { id: 1, first_name: 'John', language_code: 'en' },
@@ -133,14 +133,14 @@ export class TelegramLanguageIntegrationTest {
       return lang === 'en'; // Should fallback to English
     });
 
-    console.log('✅ Language Detection Tests Complete\n');
+    console.info('✅ Language Detection Tests Complete\n');
   }
 
   /**
    * Test language switching functionality
    */
   async testLanguageSwitching(): Promise<void> {
-    console.log('🔄 Testing Language Switching...');
+    console.info('🔄 Testing Language Switching...');
 
     const testUser: TelegramUser = { id: 999, first_name: 'TestUser', language_code: 'en' };
     const languages = ['en', 'es', 'pt', 'fr'];
@@ -172,14 +172,14 @@ export class TelegramLanguageIntegrationTest {
       return allValid;
     });
 
-    console.log('✅ Language Switching Tests Complete\n');
+    console.info('✅ Language Switching Tests Complete\n');
   }
 
   /**
    * Test welcome message generation
    */
   async testWelcomeMessages(): Promise<void> {
-    console.log('🎉 Testing Welcome Messages...');
+    console.info('🎉 Testing Welcome Messages...');
 
     const testUsers: TelegramUser[] = [
       { id: 1, first_name: 'John', last_name: 'Doe', username: 'johndoe', language_code: 'en' },
@@ -224,14 +224,14 @@ export class TelegramLanguageIntegrationTest {
       return linkMsg.text.includes('test@example.com') && linkMsg.keyboard;
     });
 
-    console.log('✅ Welcome Messages Tests Complete\n');
+    console.info('✅ Welcome Messages Tests Complete\n');
   }
 
   /**
    * Test transaction notification generation
    */
   async testTransactionNotifications(): Promise<void> {
-    console.log('💰 Testing Transaction Notifications...');
+    console.info('💰 Testing Transaction Notifications...');
 
     const testUser: TelegramUser = { id: 1, first_name: 'John', language_code: 'en' };
     const notificationData: NotificationData = {
@@ -297,14 +297,14 @@ export class TelegramLanguageIntegrationTest {
       return allValid;
     });
 
-    console.log('✅ Transaction Notifications Tests Complete\n');
+    console.info('✅ Transaction Notifications Tests Complete\n');
   }
 
   /**
    * Test P2P match notification generation
    */
   async testP2PMatchNotifications(): Promise<void> {
-    console.log('🎯 Testing P2P Match Notifications...');
+    console.info('🎯 Testing P2P Match Notifications...');
 
     const testUser: TelegramUser = { id: 1, first_name: 'John', language_code: 'en' };
     const matchData = {
@@ -354,14 +354,14 @@ export class TelegramLanguageIntegrationTest {
       return allValid;
     });
 
-    console.log('✅ P2P Match Notifications Tests Complete\n');
+    console.info('✅ P2P Match Notifications Tests Complete\n');
   }
 
   /**
    * Test support ticket notification generation
    */
   async testSupportTicketNotifications(): Promise<void> {
-    console.log('🎫 Testing Support Ticket Notifications...');
+    console.info('🎫 Testing Support Ticket Notifications...');
 
     const testUser: TelegramUser = { id: 1, first_name: 'John', language_code: 'en' };
     const ticketData = {
@@ -404,14 +404,14 @@ export class TelegramLanguageIntegrationTest {
       return allValid;
     });
 
-    console.log('✅ Support Ticket Notifications Tests Complete\n');
+    console.info('✅ Support Ticket Notifications Tests Complete\n');
   }
 
   /**
    * Test deposit notification generation
    */
   async testDepositNotifications(): Promise<void> {
-    console.log('💸 Testing Deposit Notifications...');
+    console.info('💸 Testing Deposit Notifications...');
 
     const testUser: TelegramUser = { id: 1, first_name: 'John', language_code: 'en' };
     const depositData = {
@@ -442,14 +442,14 @@ export class TelegramLanguageIntegrationTest {
       return keyboard && keyboard[0]?.length >= 2; // Approve and Reject buttons
     });
 
-    console.log('✅ Deposit Notifications Tests Complete\n');
+    console.info('✅ Deposit Notifications Tests Complete\n');
   }
 
   /**
    * Test error handling functionality
    */
   async testErrorHandling(): Promise<void> {
-    console.log('❌ Testing Error Handling...');
+    console.info('❌ Testing Error Handling...');
 
     const testUser: TelegramUser = { id: 1, first_name: 'John', language_code: 'en' };
     const errorTypes: ('registration' | 'linking' | 'general')[] = [
@@ -490,14 +490,14 @@ export class TelegramLanguageIntegrationTest {
       return allValid;
     });
 
-    console.log('✅ Error Handling Tests Complete\n');
+    console.info('✅ Error Handling Tests Complete\n');
   }
 
   /**
    * Test keyboard generation functionality
    */
   async testKeyboardGeneration(): Promise<void> {
-    console.log('⌨️ Testing Keyboard Generation...');
+    console.info('⌨️ Testing Keyboard Generation...');
 
     this.runTest('Language Selection Keyboard Generation', () => {
       const keyboard = this.telegramBot.generateLanguageSelectionKeyboard();
@@ -526,14 +526,14 @@ export class TelegramLanguageIntegrationTest {
       return allValid;
     });
 
-    console.log('✅ Keyboard Generation Tests Complete\n');
+    console.info('✅ Keyboard Generation Tests Complete\n');
   }
 
   /**
    * Test user language management
    */
   async testUserLanguageManagement(): Promise<void> {
-    console.log('👥 Testing User Language Management...');
+    console.info('👥 Testing User Language Management...');
 
     this.runTest('Multiple User Language Storage', () => {
       const user1: TelegramUser = { id: 1, first_name: 'John', language_code: 'en' };
@@ -560,14 +560,14 @@ export class TelegramLanguageIntegrationTest {
       return lang1 === 'fr' && lang2 === 'fr';
     });
 
-    console.log('✅ User Language Management Tests Complete\n');
+    console.info('✅ User Language Management Tests Complete\n');
   }
 
   /**
    * Test system integration
    */
   async testSystemIntegration(): Promise<void> {
-    console.log('🔧 Testing System Integration...');
+    console.info('🔧 Testing System Integration...');
 
     this.runTest('Language Manager Integration', () => {
       const stats = this.telegramBot.getLanguageSystemStats();
@@ -600,14 +600,14 @@ export class TelegramLanguageIntegrationTest {
       return allValid;
     });
 
-    console.log('✅ System Integration Tests Complete\n');
+    console.info('✅ System Integration Tests Complete\n');
   }
 
   /**
    * Test performance metrics
    */
   async testPerformanceMetrics(): Promise<void> {
-    console.log('⚡ Testing Performance...');
+    console.info('⚡ Testing Performance...');
 
     this.runTest('Language Detection Speed', () => {
       const startTime = performance.now();
@@ -656,14 +656,14 @@ export class TelegramLanguageIntegrationTest {
       return totalTime < 100; // Should complete in less than 100ms
     });
 
-    console.log('✅ Performance Tests Complete\n');
+    console.info('✅ Performance Tests Complete\n');
   }
 
   /**
    * Test translation completeness
    */
   async testTranslationCompleteness(): Promise<void> {
-    console.log('📊 Testing Translation Completeness...');
+    console.info('📊 Testing Translation Completeness...');
 
     this.runTest('All Telegram Codes Exist', () => {
       const allCodes = this.telegramBot.languageManager.getAllCodes();
@@ -708,7 +708,7 @@ export class TelegramLanguageIntegrationTest {
       return !telegramMissing || telegramMissing.length === 0;
     });
 
-    console.log('✅ Translation Completeness Tests Complete\n');
+    console.info('✅ Translation Completeness Tests Complete\n');
   }
 
   /**
@@ -723,13 +723,13 @@ export class TelegramLanguageIntegrationTest {
 
       if (passed) {
         this.passedTests++;
-        console.log(`  ✅ ${testName}`);
+        console.info(`  ✅ ${testName}`);
       } else {
-        console.log(`  ❌ ${testName}`);
+        console.info(`  ❌ ${testName}`);
       }
     } catch (error) {
       this.testResults.set(testName, false);
-      console.log(`  💥 ${testName} - Error: ${error}`);
+      console.info(`  💥 ${testName} - Error: ${error}`);
     }
   }
 
@@ -737,28 +737,28 @@ export class TelegramLanguageIntegrationTest {
    * Generate final test report
    */
   private generateFinalReport(): void {
-    console.log('═'.repeat(75));
-    console.log('🏆 FINAL TELEGRAM LANGUAGE INTEGRATION TEST REPORT');
-    console.log('═'.repeat(75));
+    console.info('═'.repeat(75));
+    console.info('🏆 FINAL TELEGRAM LANGUAGE INTEGRATION TEST REPORT');
+    console.info('═'.repeat(75));
 
     const passRate = ((this.passedTests / this.totalTests) * 100).toFixed(1);
 
-    console.log(`\n📊 Test Summary:`);
-    console.log(`   Total Tests: ${this.totalTests}`);
-    console.log(`   Passed: ${this.passedTests}`);
-    console.log(`   Failed: ${this.totalTests - this.passedTests}`);
-    console.log(`   Pass Rate: ${passRate}%`);
+    console.info(`\n📊 Test Summary:`);
+    console.info(`   Total Tests: ${this.totalTests}`);
+    console.info(`   Passed: ${this.passedTests}`);
+    console.info(`   Failed: ${this.totalTests - this.passedTests}`);
+    console.info(`   Pass Rate: ${passRate}%`);
 
     // System statistics
     const stats = this.telegramBot.getLanguageSystemStats();
-    console.log(`\n🤖 Telegram Language System Statistics:`);
-    console.log(`   Total Language Codes: ${stats.totalCodes}`);
-    console.log(`   Telegram-Specific Codes: ${stats.telegramCodes}`);
-    console.log(`   Supported Languages: ${stats.supportedLanguages.join(', ')}`);
-    console.log(`   Active Bot Users: ${stats.activeUsers}`);
+    console.info(`\n🤖 Telegram Language System Statistics:`);
+    console.info(`   Total Language Codes: ${stats.totalCodes}`);
+    console.info(`   Telegram-Specific Codes: ${stats.telegramCodes}`);
+    console.info(`   Supported Languages: ${stats.supportedLanguages.join(', ')}`);
+    console.info(`   Active Bot Users: ${stats.activeUsers}`);
 
     // Feature coverage
-    console.log(`\n🔧 Telegram Integration Feature Coverage:`);
+    console.info(`\n🔧 Telegram Integration Feature Coverage:`);
     const features = [
       '✅ Multilingual bot initialization and language detection',
       '✅ Real-time language switching with user persistence',
@@ -774,32 +774,32 @@ export class TelegramLanguageIntegrationTest {
       '✅ System integration with Fire22 language manager',
     ];
 
-    features.forEach(feature => console.log(`   ${feature}`));
+    features.forEach(feature => console.info(`   ${feature}`));
 
     // Final verdict
-    console.log(`\n🎯 Integration Status:`);
+    console.info(`\n🎯 Integration Status:`);
     if (passRate >= 95) {
-      console.log(
+      console.info(
         `   🎉 EXCELLENT - Fire22 Telegram multilingual integration is production-ready!`
       );
-      console.log(`   🚀 Complete support for 4 languages with real-time switching`);
-      console.log(`   🤖 All Telegram bot features are fully multilingual`);
+      console.info(`   🚀 Complete support for 4 languages with real-time switching`);
+      console.info(`   🤖 All Telegram bot features are fully multilingual`);
     } else if (passRate >= 85) {
-      console.log(`   ✅ GOOD - Telegram integration mostly functional`);
-      console.log(`   🔧 Minor issues to address before production deployment`);
+      console.info(`   ✅ GOOD - Telegram integration mostly functional`);
+      console.info(`   🔧 Minor issues to address before production deployment`);
     } else {
-      console.log(`   ⚠️  NEEDS WORK - Integration issues detected`);
-      console.log(`   🛠️  Review failed tests and improve implementation`);
+      console.info(`   ⚠️  NEEDS WORK - Integration issues detected`);
+      console.info(`   🛠️  Review failed tests and improve implementation`);
     }
 
-    console.log(`\n💡 Available Commands:`);
-    console.log(`   bun run scripts/telegram-language-demo.ts              # Interactive demo`);
-    console.log(
+    console.info(`\n💡 Available Commands:`);
+    console.info(`   bun run scripts/telegram-language-demo.ts              # Interactive demo`);
+    console.info(
       `   bun run scripts/telegram-language-demo.ts --interactive # Full interactive mode`
     );
-    console.log(`   bun run scripts/validate-language-codes.ts --telegram-only # Validate codes`);
+    console.info(`   bun run scripts/validate-language-codes.ts --telegram-only # Validate codes`);
 
-    console.log('\n' + '═'.repeat(75));
+    console.info('\n' + '═'.repeat(75));
 
     // Display any failed tests
     const failedTests = Array.from(this.testResults.entries())
@@ -807,25 +807,25 @@ export class TelegramLanguageIntegrationTest {
       .map(([name, _]) => name);
 
     if (failedTests.length > 0) {
-      console.log(`\n❌ Failed Tests:`);
-      failedTests.forEach(test => console.log(`   • ${test}`));
+      console.info(`\n❌ Failed Tests:`);
+      failedTests.forEach(test => console.info(`   • ${test}`));
     }
 
     // Show sample telegram codes for verification
-    console.log(`\n🔤 Sample Telegram Language Codes:`);
+    console.info(`\n🔤 Sample Telegram Language Codes:`);
     const sampleCodes = ['L-1500', 'L-1502', 'L-1510', 'L-1514', 'L-1520'];
 
     for (const code of sampleCodes) {
-      console.log(`\n   ${code}:`);
+      console.info(`\n   ${code}:`);
       stats.supportedLanguages.forEach(lang => {
         const text = this.telegramBot.languageManager.getText(code, lang);
-        console.log(`     ${lang.toUpperCase()}: ${text}`);
+        console.info(`     ${lang.toUpperCase()}: ${text}`);
       });
     }
 
-    console.log('\n' + '═'.repeat(75));
-    console.log('🤖🌐 Fire22 Telegram Integration is ready for global deployment!');
-    console.log('═'.repeat(75));
+    console.info('\n' + '═'.repeat(75));
+    console.info('🤖🌐 Fire22 Telegram Integration is ready for global deployment!');
+    console.info('═'.repeat(75));
   }
 }
 
@@ -833,9 +833,9 @@ export class TelegramLanguageIntegrationTest {
 if (import.meta.main) {
   const tester = new TelegramLanguageIntegrationTest();
 
-  console.log(`Starting Fire22 Telegram Language Integration Test Suite...`);
-  console.log(`Timestamp: ${new Date().toISOString()}`);
-  console.log(`Bun Version: ${process.versions.bun}\n`);
+  console.info(`Starting Fire22 Telegram Language Integration Test Suite...`);
+  console.info(`Timestamp: ${new Date().toISOString()}`);
+  console.info(`Bun Version: ${process.versions.bun}\n`);
 
   tester.runAllTests().catch(console.error);
 }

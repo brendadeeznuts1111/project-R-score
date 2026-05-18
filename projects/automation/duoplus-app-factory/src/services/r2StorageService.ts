@@ -50,7 +50,7 @@ export class R2Storage {
         accessKeyId: this.accessKeyId,
         secretAccessKey: this.accessKeySecret,
       };
-      console.log(`✅ R2 Storage initialized: ${this.bucketName}`);
+      console.info(`✅ R2 Storage initialized: ${this.bucketName}`);
     } catch (error) {
       console.warn(`⚠️ R2 Storage initialization warning: ${error}`);
     }
@@ -87,7 +87,7 @@ export class R2Storage {
       };
 
       this.fileCache.set(key, file);
-      console.log(`📤 Uploaded file to R2: ${key} (${body.length} bytes)`);
+      console.info(`📤 Uploaded file to R2: ${key} (${body.length} bytes)`);
 
       return url;
     } catch (error) {
@@ -101,7 +101,7 @@ export class R2Storage {
       // Check cache first
       const cached = this.fileCache.get(key);
       if (cached) {
-        console.log(`📥 Downloaded file from R2 (cached): ${key}`);
+        console.info(`📥 Downloaded file from R2 (cached): ${key}`);
         return Buffer.from(JSON.stringify(cached));
       }
 
@@ -117,7 +117,7 @@ export class R2Storage {
       }
 
       const buffer = await response.arrayBuffer();
-      console.log(`📥 Downloaded file from R2: ${key}`);
+      console.info(`📥 Downloaded file from R2: ${key}`);
 
       return Buffer.from(buffer);
     } catch (error) {
@@ -153,7 +153,7 @@ export class R2Storage {
 
       const deleted = this.fileCache.delete(key);
       if (deleted) {
-        console.log(`🗑️ Deleted file from R2: ${key}`);
+        console.info(`🗑️ Deleted file from R2: ${key}`);
       }
       return deleted;
     } catch (error) {
@@ -223,7 +223,7 @@ export class R2Storage {
       if (!sourceBuffer) return null;
 
       const destUrl = await this.uploadFile(destKey, sourceBuffer, sourceFile.metadata);
-      console.log(`📋 Copied file in R2: ${sourceKey} → ${destKey}`);
+      console.info(`📋 Copied file in R2: ${sourceKey} → ${destKey}`);
 
       return destUrl;
     } catch (error) {
@@ -294,7 +294,7 @@ export class R2Storage {
 
   clearCache(): void {
     this.fileCache.clear();
-    console.log(`🧹 R2 Storage cache cleared`);
+    console.info(`🧹 R2 Storage cache cleared`);
   }
 }
 

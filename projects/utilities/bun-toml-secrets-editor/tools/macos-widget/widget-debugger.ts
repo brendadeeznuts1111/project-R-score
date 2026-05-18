@@ -33,8 +33,8 @@ class WidgetDebugger {
 	private startTime = Date.now();
 
 	async runFullDiagnostics(): Promise<WidgetDiagnostics> {
-		console.log("🔧 Widget Debugger - Full Diagnostics");
-		console.log("=====================================\n");
+		console.info("🔧 Widget Debugger - Full Diagnostics");
+		console.info("=====================================\n");
 
 		// 1. Environment Check
 		await this.checkEnvironment();
@@ -66,7 +66,7 @@ class WidgetDebugger {
 	}
 
 	private async checkEnvironment(): Promise<void> {
-		console.log("🖥️  Checking Environment...");
+		console.info("🖥️  Checking Environment...");
 
 		try {
 			// Check Bun version
@@ -120,7 +120,7 @@ class WidgetDebugger {
 	}
 
 	private async checkNetworkConnectivity(): Promise<void> {
-		console.log("🌐 Checking Network Connectivity...");
+		console.info("🌐 Checking Network Connectivity...");
 
 		const testUrls = [
 			{ name: "Local API", url: "http://localhost:3001/health", timeout: 5000 },
@@ -165,7 +165,7 @@ class WidgetDebugger {
 	}
 
 	private async checkFileSystem(): Promise<void> {
-		console.log("📁 Checking File System...");
+		console.info("📁 Checking File System...");
 
 		try {
 			const fs = await import("fs");
@@ -231,7 +231,7 @@ class WidgetDebugger {
 	}
 
 	private async validateWidgetFiles(): Promise<void> {
-		console.log("✅ Validating Widget Files...");
+		console.info("✅ Validating Widget Files...");
 
 		try {
 			// Test TypeScript compilation - use correct relative paths from current directory
@@ -296,7 +296,7 @@ class WidgetDebugger {
 	}
 
 	private async runPerformanceTests(): Promise<void> {
-		console.log("⚡ Running Performance Tests...");
+		console.info("⚡ Running Performance Tests...");
 
 		// Test Buffer.from() performance
 		const bufferStart = Date.now();
@@ -346,7 +346,7 @@ class WidgetDebugger {
 	}
 
 	private async checkMemoryUsage(): Promise<void> {
-		console.log("🧠 Checking Memory Usage...");
+		console.info("🧠 Checking Memory Usage...");
 
 		try {
 			const memUsage = process.memoryUsage();
@@ -403,7 +403,7 @@ class WidgetDebugger {
 	}
 
 	private async testAPIEndpoints(): Promise<void> {
-		console.log("🔌 Testing API Endpoints...");
+		console.info("🔌 Testing API Endpoints...");
 
 		const endpoints = [
 			{
@@ -460,7 +460,7 @@ class WidgetDebugger {
 	}
 
 	private async checkSwiftWidget(): Promise<void> {
-		console.log("🍎 Checking Swift Widget (macOS)...");
+		console.info("🍎 Checking Swift Widget (macOS)...");
 
 		try {
 			const fs = await import("fs");
@@ -537,7 +537,7 @@ class WidgetDebugger {
 				: result.status === "warning"
 					? "⚠️"
 					: "❌";
-		console.log(`  ${icon} ${result.component}: ${result.message}`);
+		console.info(`  ${icon} ${result.component}: ${result.message}`);
 	}
 
 	private isBunVersionCompatible(version: string): boolean {
@@ -571,47 +571,47 @@ class WidgetDebugger {
 		};
 
 		// Print summary
-		console.log("\n📊 Diagnostics Summary");
-		console.log("======================");
-		console.log(`Total Tests: ${total}`);
-		console.log(`✅ Passed: ${passed}`);
-		console.log(`❌ Failed: ${failed}`);
-		console.log(`⚠️  Warnings: ${warnings}`);
-		console.log(`⏱️  Duration: ${Date.now() - this.startTime}ms`);
+		console.info("\n📊 Diagnostics Summary");
+		console.info("======================");
+		console.info(`Total Tests: ${total}`);
+		console.info(`✅ Passed: ${passed}`);
+		console.info(`❌ Failed: ${failed}`);
+		console.info(`⚠️  Warnings: ${warnings}`);
+		console.info(`⏱️  Duration: ${Date.now() - this.startTime}ms`);
 
 		if (failed > 0) {
-			console.log("\n🔧 Issues Found:");
+			console.info("\n🔧 Issues Found:");
 			this.results
 				.filter((r) => r.status === "fail")
-				.forEach((r) => console.log(`  ❌ ${r.component}: ${r.message}`));
+				.forEach((r) => console.info(`  ❌ ${r.component}: ${r.message}`));
 		}
 
 		if (warnings > 0) {
-			console.log("\n⚠️  Warnings:");
+			console.info("\n⚠️  Warnings:");
 			this.results
 				.filter((r) => r.status === "warning")
-				.forEach((r) => console.log(`  ⚠️  ${r.component}: ${r.message}`));
+				.forEach((r) => console.info(`  ⚠️  ${r.component}: ${r.message}`));
 		}
 
-		console.log("\n💡 Recommendations:");
+		console.info("\n💡 Recommendations:");
 		if (failed > 0) {
-			console.log("  - Fix failed tests before deploying widgets");
+			console.info("  - Fix failed tests before deploying widgets");
 		}
 		if (warnings > 0) {
-			console.log("  - Address warnings for optimal performance");
+			console.info("  - Address warnings for optimal performance");
 		}
 		if (passed === total) {
-			console.log("  - All tests passed! Widgets are ready for deployment");
+			console.info("  - All tests passed! Widgets are ready for deployment");
 		}
-		console.log("  - Run `bun run widget:dev` to test widgets manually");
-		console.log("  - Use `bun run widget:macos` for native macOS widget");
+		console.info("  - Run `bun run widget:dev` to test widgets manually");
+		console.info("  - Use `bun run widget:macos` for native macOS widget");
 
 		return report;
 	}
 
 	// Utility methods for specific debugging
 	async debugWidgetFile(filePath: string): Promise<DebugResult> {
-		console.log(`🔍 Debugging: ${filePath}`);
+		console.info(`🔍 Debugging: ${filePath}`);
 
 		try {
 			const startTime = Date.now();
@@ -636,7 +636,7 @@ class WidgetDebugger {
 	}
 
 	async testWidgetFunctionality(widgetType: string): Promise<DebugResult> {
-		console.log(`🧪 Testing Widget Functionality: ${widgetType}`);
+		console.info(`🧪 Testing Widget Functionality: ${widgetType}`);
 
 		try {
 			switch (widgetType) {
@@ -684,7 +684,7 @@ if (import.meta.main) {
 	switch (command) {
 		case "full":
 			widgetDebugger.runFullDiagnostics().then((report) => {
-				console.log("\n📄 Full report saved to memory");
+				console.info("\n📄 Full report saved to memory");
 				process.exit(report.summary.failed > 0 ? 1 : 0);
 			});
 			break;
@@ -698,7 +698,7 @@ if (import.meta.main) {
 				process.exit(1);
 			}
 			widgetDebugger.debugWidgetFile(filePath).then((result) => {
-				console.log(
+				console.info(
 					`\n${result.status === "pass" ? "✅" : "❌"} ${result.message}`,
 				);
 				process.exit(result.status === "fail" ? 1 : 0);
@@ -709,7 +709,7 @@ if (import.meta.main) {
 		case "test": {
 			const widgetType = args[1] || "status";
 			widgetDebugger.testWidgetFunctionality(widgetType).then((result) => {
-				console.log(
+				console.info(
 					`\n${result.status === "pass" ? "✅" : result.status === "warning" ? "⚠️" : "❌"} ${result.message}`,
 				);
 				process.exit(result.status === "fail" ? 1 : 0);
@@ -718,20 +718,20 @@ if (import.meta.main) {
 		}
 
 		default:
-			console.log("🔧 Widget Debugger");
-			console.log("==================");
-			console.log("Usage:");
-			console.log(
+			console.info("🔧 Widget Debugger");
+			console.info("==================");
+			console.info("Usage:");
+			console.info(
 				"  bun run widget-debugger.ts full              # Run full diagnostics",
 			);
-			console.log(
+			console.info(
 				"  bun run widget-debugger.ts file <path>       # Debug specific file",
 			);
-			console.log(
+			console.info(
 				"  bun run widget-debugger.ts test [type]       # Test widget functionality",
 			);
-			console.log("");
-			console.log("Running full diagnostics by default...");
+			console.info("");
+			console.info("Running full diagnostics by default...");
 
 			widgetDebugger.runFullDiagnostics().then((report) => {
 				process.exit(report.summary.failed > 0 ? 1 : 0);

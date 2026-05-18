@@ -130,7 +130,7 @@ class BunArchiveCLI {
     const options = this.parseArgs(args);
 
     if (options.version) {
-      console.log('bun-archive-cli v1.0.0');
+      console.info('bun-archive-cli v1.0.0');
       return;
     }
 
@@ -162,34 +162,34 @@ class BunArchiveCLI {
   }
 
   private async handleArchive(options: CLIOptions): Promise<void> {
-    console.log('🔧 Starting archive operation...');
-    console.log(`   Type: ${options.type}`);
-    console.log(`   Days: ${options.days}`);
-    console.log(`   Compression: ${options.compression}`);
-    console.log(`   Dry run: ${options.dryRun}`);
-    console.log(`   Verbose: ${options.verbose}`);
+    console.info('🔧 Starting archive operation...');
+    console.info(`   Type: ${options.type}`);
+    console.info(`   Days: ${options.days}`);
+    console.info(`   Compression: ${options.compression}`);
+    console.info(`   Dry run: ${options.dryRun}`);
+    console.info(`   Verbose: ${options.verbose}`);
 
     // Implementation would go here
-    console.log('✅ Archive operation complete');
+    console.info('✅ Archive operation complete');
   }
 
   private async handleStatus(): Promise<void> {
-    console.log('📊 Archive Status:');
-    console.log('   Service: Running');
-    console.log('   Storage: Connected');
-    console.log('   Last backup: 2024-01-01 12:00:00');
+    console.info('📊 Archive Status:');
+    console.info('   Service: Running');
+    console.info('   Storage: Connected');
+    console.info('   Last backup: 2024-01-01 12:00:00');
   }
 
   private async handleConfig(): Promise<void> {
-    console.log('⚙️ Archive Configuration:');
-    console.log('   R2 Bucket: factory-wager-archive');
-    console.log('   Compression Level: 7');
-    console.log('   Chunk Size: 10MB');
-    console.log('   Retention: 90 days');
+    console.info('⚙️ Archive Configuration:');
+    console.info('   R2 Bucket: factory-wager-archive');
+    console.info('   Compression Level: 7');
+    console.info('   Chunk Size: 10MB');
+    console.info('   Retention: 90 days');
   }
 
   private async handleBenchmark(): Promise<void> {
-    console.log('⚡ Performance Benchmark:');
+    console.info('⚡ Performance Benchmark:');
     const startTime = Bun.nanoseconds();
 
     // Simulate work
@@ -198,13 +198,13 @@ class BunArchiveCLI {
     const endTime = Bun.nanoseconds();
     const duration = (endTime - startTime) / 1_000_000;
 
-    console.log(`   Operation completed in ${duration.toFixed(2)}ms`);
-    console.log('   Throughput: 125 MB/s');
-    console.log('   Compression Ratio: 3.2x');
+    console.info(`   Operation completed in ${duration.toFixed(2)}ms`);
+    console.info('   Throughput: 125 MB/s');
+    console.info('   Compression Ratio: 3.2x');
   }
 
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🏭 Bun.Archive CLI for FactoryWager
 
 USAGE:

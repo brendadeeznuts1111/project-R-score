@@ -152,8 +152,8 @@ describe("Process Lifecycle Performance", () => {
     it("should benchmark stdout stream reading", async () => {
       const outputScript = join("/tmp", "bun-stream-bench.ts");
       writeFileSync(outputScript, `
-        console.log("Output line 1");
-        console.log("Output line 2");
+        console.info("Output line 1");
+        console.info("Output line 2");
         process.exit(0);
       `);
 

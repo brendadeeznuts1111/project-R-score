@@ -46,7 +46,7 @@ export class DataViewProfileSerializer {
       this.buffer = newBuffer;
       this.view = newView;
       
-      console.log(`📈 Resized buffer from ${currentCapacity} to ${newSize} bytes`);
+      console.info(`📈 Resized buffer from ${currentCapacity} to ${newSize} bytes`);
     }
   }
   

@@ -139,11 +139,11 @@ export class BucketClient {
 		// Simulate S3 upload (in real implementation, use AWS SDK or fetch)
 		const mockETag = `"${Math.random().toString(36).substring(2)}"`;
 
-		console.log(`📤 Uploading to bucket: ${this.config.bucket}/${key}`);
-		console.log(
+		console.info(`📤 Uploading to bucket: ${this.config.bucket}/${key}`);
+		console.info(
 			`   Content-Type: ${contentType || "application/octet-stream"}`,
 		);
-		console.log(
+		console.info(
 			`   Size: ${typeof content === "string" ? content.length : content.byteLength} bytes`,
 		);
 
@@ -158,10 +158,10 @@ export class BucketClient {
 		key: string,
 		expectedETag?: string,
 	): Promise<{ content: string; etag: string }> {
-		console.log(`📥 Downloading from bucket: ${this.config.bucket}/${key}`);
+		console.info(`📥 Downloading from bucket: ${this.config.bucket}/${key}`);
 
 		if (expectedETag) {
-			console.log(`   Expected ETag: ${expectedETag}`);
+			console.info(`   Expected ETag: ${expectedETag}`);
 		}
 
 		// Simulate S3 download - return valid JSON for .json/.json5 files
@@ -199,9 +199,9 @@ export class BucketClient {
 	): Promise<
 		Array<{ key: string; etag: string; size: number; lastModified: string }>
 	> {
-		console.log(`📋 Listing files in bucket: ${this.config.bucket}`);
+		console.info(`📋 Listing files in bucket: ${this.config.bucket}`);
 		if (prefix) {
-			console.log(`   Prefix: ${prefix}`);
+			console.info(`   Prefix: ${prefix}`);
 		}
 
 		// Simulate file listing
@@ -226,10 +226,10 @@ export class BucketClient {
 		key: string,
 		expectedETag?: string,
 	): Promise<{ deleted: boolean; key: string }> {
-		console.log(`🗑️  Deleting from bucket: ${this.config.bucket}/${key}`);
+		console.info(`🗑️  Deleting from bucket: ${this.config.bucket}/${key}`);
 
 		if (expectedETag) {
-			console.log(`   Expected ETag: ${expectedETag}`);
+			console.info(`   Expected ETag: ${expectedETag}`);
 		}
 
 		return {
@@ -263,7 +263,7 @@ export class EnhancedBucketClient extends BucketClient {
 
 		// Check cache first
 		if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
-			console.log(`📦 Cache hit for: ${key}`);
+			console.info(`📦 Cache hit for: ${key}`);
 			return cached;
 		}
 
@@ -297,19 +297,19 @@ export class EnhancedBucketClient extends BucketClient {
 
 	clearCache(): void {
 		this.cache.clear();
-		console.log(`🧹 Cache cleared for bucket: ${this.config.bucket}`);
+		console.info(`🧹 Cache cleared for bucket: ${this.config.bucket}`);
 	}
 }
 
 // Simple Profiling with @profile decorator
 export function startProfiling(name: string = "profile"): string {
 	const sessionId = `${name}_${Date.now()}`;
-	console.log(`🔍 Started profiling: ${sessionId}`);
+	console.info(`🔍 Started profiling: ${sessionId}`);
 	return sessionId;
 }
 
 export function stopProfiling(sessionId: string): void {
-	console.log(`⏹️  Stopped profiling: ${sessionId}`);
+	console.info(`⏹️  Stopped profiling: ${sessionId}`);
 	// In real usage, this would generate actual profiles
 }
 
@@ -331,14 +331,14 @@ export function profile<T extends (...args: any[]) => Promise<any>>(
 			try {
 				const result = await originalMethod.apply(this, args);
 				const duration = performance.now() - startTime;
-				console.log(
+				console.info(
 					`⏱️  ${target.constructor.name}.${String(propertyKey)}: ${duration.toFixed(2)}ms`,
 				);
 				stopProfiling(sessionId);
 				return result;
 			} catch (error) {
 				const duration = performance.now() - startTime;
-				console.log(
+				console.info(
 					`❌ ${target.constructor.name}.${String(propertyKey)}: ${duration.toFixed(2)}ms (failed)`,
 				);
 				stopProfiling(sessionId);
@@ -361,12 +361,12 @@ export function withProfile<T extends (...args: any[]) => any>(
 		try {
 			const result = await fn(...args);
 			const duration = performance.now() - startTime;
-			console.log(`⏱️  ${fnName}: ${duration.toFixed(2)}ms`);
+			console.info(`⏱️  ${fnName}: ${duration.toFixed(2)}ms`);
 			stopProfiling(sessionId);
 			return result;
 		} catch (error) {
 			const duration = performance.now() - startTime;
-			console.log(`❌ ${fnName}: ${duration.toFixed(2)}ms (failed)`);
+			console.info(`❌ ${fnName}: ${duration.toFixed(2)}ms (failed)`);
 			stopProfiling(sessionId);
 			throw error;
 		}
@@ -379,7 +379,7 @@ export const examples = {
 		const text =
 			"\x1b[32mGreen text\x1b[0m that needs wrapping for better CLI output";
 		const wrapped = wrapText(text, 50);
-		console.log(wrapped.join("\n"));
+		console.info(wrapped.join("\n"));
 	},
 
 	json5: () => {
@@ -389,7 +389,7 @@ export const examples = {
   version: "1.0.0",  // trailing comma
 		}`;
 		const parsed = loadJSON5(config);
-		console.log(parsed);
+		console.info(parsed);
 	},
 
 	http: async () => {
@@ -398,7 +398,7 @@ export const examples = {
 			"X-Custom": "Preserve-Case",
 		});
 		const response = await client.get("https://httpbin.org/headers");
-		console.log(await response.json());
+		console.info(await response.json());
 	},
 
 	etag: async () => {
@@ -406,12 +406,12 @@ export const examples = {
 			"User-Agent": "ETag-Demo/1.0",
 		});
 
-		console.log("🏷️  ETag Caching Demo:");
+		console.info("🏷️  ETag Caching Demo:");
 
 		// First request - gets ETag
 		const response1 = await client.get("https://httpbin.org/etag/abc123");
 		const etag = client.getETag(response1);
-		console.log(`   First request ETag: ${etag}`);
+		console.info(`   First request ETag: ${etag}`);
 
 		// Second request with ETag - might get 304
 		if (etag) {
@@ -419,8 +419,8 @@ export const examples = {
 				"https://httpbin.org/etag/abc123",
 				etag,
 			);
-			console.log(`   Second request status: ${response2.status}`);
-			console.log(`   Not modified? ${client.isNotModified(response2)}`);
+			console.info(`   Second request status: ${response2.status}`);
+			console.info(`   Not modified? ${client.isNotModified(response2)}`);
 		}
 	},
 
@@ -430,7 +430,7 @@ export const examples = {
 	},
 
 	decorator: () => {
-		console.log("🎯 @profile Decorator Demo:");
+		console.info("🎯 @profile Decorator Demo:");
 
 		// Example class with @profile decorator
 		class DataService {
@@ -457,12 +457,12 @@ export const examples = {
 				return service.processData(result);
 			})
 			.then(() => {
-				console.log("   ✅ Decorator profiling complete");
+				console.info("   ✅ Decorator profiling complete");
 			});
 	},
 
 	wrapper: () => {
-		console.log("📦 Profile Wrapper Demo:");
+		console.info("📦 Profile Wrapper Demo:");
 
 		// Example using function wrapper
 		const slowFunction = withProfile(async (items: number[]) => {
@@ -472,13 +472,13 @@ export const examples = {
 		}, "array-doubler");
 
 		slowFunction([1, 2, 3, 4, 5]).then((result) => {
-			console.log(`   Result: [${result.join(", ")}]`);
-			console.log("   ✅ Wrapper profiling complete");
+			console.info(`   Result: [${result.join(", ")}]`);
+			console.info("   ✅ Wrapper profiling complete");
 		});
 	},
 
 	bucket: async () => {
-		console.log("🗂️  Bucket Storage Demo:");
+		console.info("🗂️  Bucket Storage Demo:");
 
 		// Basic bucket client
 		const bucket = new BucketClient({
@@ -496,7 +496,7 @@ export const examples = {
 			"application/json",
 		);
 
-		console.log(
+		console.info(
 			`   Uploaded: ${uploadResult.key} (ETag: ${uploadResult.etag})`,
 		);
 
@@ -505,18 +505,18 @@ export const examples = {
 			"config.json",
 			uploadResult.etag,
 		);
-		console.log(`   Downloaded: ${downloadResult.content}`);
+		console.info(`   Downloaded: ${downloadResult.content}`);
 
 		// List files
 		const files = await bucket.listFiles();
-		console.log(`   Files in bucket: ${files.length}`);
+		console.info(`   Files in bucket: ${files.length}`);
 		files.forEach((file) => {
-			console.log(`     - ${file.key} (${file.size} bytes)`);
+			console.info(`     - ${file.key} (${file.size} bytes)`);
 		});
 	},
 
 	enhancedBucket: async () => {
-		console.log("🚀 Enhanced Bucket Client Demo:");
+		console.info("🚀 Enhanced Bucket Client Demo:");
 
 		// Enhanced bucket client with caching and profiling
 		const enhancedBucket = new EnhancedBucketClient({
@@ -532,12 +532,12 @@ export const examples = {
 
 		// Download with caching
 		const cached = await enhancedBucket.downloadWithCache("settings.json5");
-		console.log(`   Cached content: ${cached.content}`);
+		console.info(`   Cached content: ${cached.content}`);
 
 		// Download again (should hit cache)
 		const cachedAgain =
 			await enhancedBucket.downloadWithCache("settings.json5");
-		console.log(`   Cache hit: ${cached === cachedAgain ? "Yes" : "No"}`);
+		console.info(`   Cache hit: ${cached === cachedAgain ? "Yes" : "No"}`);
 
 		// Sync to bucket
 		await enhancedBucket.syncToBucket(

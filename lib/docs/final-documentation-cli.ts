@@ -80,11 +80,11 @@ export class FinalDocumentationCLI {
     // Pattern 2: ESM URL for absolute portability
     this.configRoot = new URL('../..', import.meta.url); // Monorepo root
     
-    console.log('🏁 Final Documentation CLI - Ultimate "Bun Zen" Architecture');
-    console.log('=' .repeat(70));
-    console.log(`📁 Config Root: ${this.configRoot.href}`);
-    console.log(`🔌 Telemetry FD: ${this.telemetryPipe.fd || 'N/A (not redirected)'}`);
-    console.log('=' .repeat(70));
+    console.info('🏁 Final Documentation CLI - Ultimate "Bun Zen" Architecture');
+    console.info('=' .repeat(70));
+    console.info(`📁 Config Root: ${this.configRoot.href}`);
+    console.info(`🔌 Telemetry FD: ${this.telemetryPipe.fd || 'N/A (not redirected)'}`);
+    console.info('=' .repeat(70));
   }
 
   /**
@@ -95,13 +95,13 @@ export class FinalDocumentationCLI {
     if (this.telemetryPipe.fd !== undefined) {
       try {
         await this.bun.write(this.telemetryPipe, JSON.stringify(data) + '\n');
-        console.log('📊 Telemetry logged to silent pipe (FD 3)');
+        console.info('📊 Telemetry logged to silent pipe (FD 3)');
       } catch (error) {
         console.warn('⚠️  Failed to write telemetry:', error.message);
       }
     } else {
       // Fallback: no telemetry pipe available
-      console.log('📊 Telemetry (no pipe):', JSON.stringify(data));
+      console.info('📊 Telemetry (no pipe):', JSON.stringify(data));
     }
   }
 
@@ -115,7 +115,7 @@ export class FinalDocumentationCLI {
       const configFile = this.bun.file(new URL('../../.env', this.configRoot));
       
       if (await configFile.exists()) {
-        console.log(`🔧 Loading shared config from: ${configFile.name}`);
+        console.info(`🔧 Loading shared config from: ${configFile.name}`);
         
         const configContent = await configFile.text();
         const config = this.parseConfig(configContent);
@@ -130,7 +130,7 @@ export class FinalDocumentationCLI {
         
         return config;
       } else {
-        console.log('⚠️  No shared config found, using defaults');
+        console.info('⚠️  No shared config found, using defaults');
         
         // Log telemetry about missing config
         await this.logTelemetry({
@@ -191,7 +191,7 @@ export class FinalDocumentationCLI {
   } = {}): Promise<any> {
     const startTime = performance.now();
     
-    console.log(`🔍 Performing Zen Search: "${query}"`);
+    console.info(`🔍 Performing Zen Search: "${query}"`);
     
     // Load config using ESM URL pattern
     const config = await this.loadSharedConfig();
@@ -214,7 +214,7 @@ export class FinalDocumentationCLI {
         priority: 'high',
         onProgress: (stats) => {
           if (stats.matchesFound % 50 === 0) {
-            console.log(`   📊 Progress: ${stats.matchesFound} matches at ${stats.throughput.toFixed(0)} matches/sec`);
+            console.info(`   📊 Progress: ${stats.matchesFound} matches at ${stats.throughput.toFixed(0)} matches/sec`);
             
             // Log progress telemetry
             if (options.useTelemetry) {
@@ -247,9 +247,9 @@ export class FinalDocumentationCLI {
         }
       };
       
-      console.log(`✅ Zen Search Complete: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`);
-      console.log(`   🚀 Throughput: ${results.throughput?.toFixed(0) || 'N/A'} matches/sec`);
-      console.log(`   💾 Cache Hit Rate: ${((results.cacheHitRate || 0) * 100).toFixed(1)}%`);
+      console.info(`✅ Zen Search Complete: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`);
+      console.info(`   🚀 Throughput: ${results.throughput?.toFixed(0) || 'N/A'} matches/sec`);
+      console.info(`   💾 Cache Hit Rate: ${((results.cacheHitRate || 0) * 100).toFixed(1)}%`);
       
       // Log completion telemetry
       if (options.useTelemetry) {
@@ -287,7 +287,7 @@ export class FinalDocumentationCLI {
    * Configuration Validation with ESM URL Pattern
    */
   async validateConfiguration(config: any): Promise<void> {
-    console.log('🔍 Validating Configuration...');
+    console.info('🔍 Validating Configuration...');
     
     const validations = [
       {
@@ -327,18 +327,18 @@ export class FinalDocumentationCLI {
       try {
         const result = await check();
         if (result) {
-          console.log(`   ✅ ${name}: VALID`);
+          console.info(`   ✅ ${name}: VALID`);
           passedValidations++;
         } else {
-          console.log(`   ❌ ${name}: INVALID`);
+          console.info(`   ❌ ${name}: INVALID`);
         }
       } catch (error) {
-        console.log(`   ⚠️  ${name}: ERROR - ${error.message}`);
+        console.info(`   ⚠️  ${name}: ERROR - ${error.message}`);
       }
     }
     
     const successRate = (passedValidations / validations.length) * 100;
-    console.log(`📊 Configuration Validation: ${passedValidations}/${validations.length} passed (${successRate.toFixed(1)}%)`);
+    console.info(`📊 Configuration Validation: ${passedValidations}/${validations.length} passed (${successRate.toFixed(1)}%)`);
     
     // Log validation telemetry
     await this.logTelemetry({
@@ -354,32 +354,32 @@ export class FinalDocumentationCLI {
    * Demonstrate both patterns working together
    */
   async demonstrateZenArchitecture(): Promise<void> {
-    console.log('🎯 Demonstrating Ultimate "Bun Zen" Architecture');
-    console.log('=' .repeat(70));
+    console.info('🎯 Demonstrating Ultimate "Bun Zen" Architecture');
+    console.info('=' .repeat(70));
     
     // Pattern 1: ESM URL Portability
-    console.log('\n📍 Pattern 1: ESM URL Portability');
-    console.log('-'.repeat(40));
+    console.info('\n📍 Pattern 1: ESM URL Portability');
+    console.info('-'.repeat(40));
     
     const currentFile = this.bun.file(new URL(import.meta.url));
-    console.log(`📁 Current File: ${currentFile.name}`);
-    console.log(`📏 Size: ${currentFile.size} bytes`);
-    console.log(`🗂️  Type: ${currentFile.type}`);
+    console.info(`📁 Current File: ${currentFile.name}`);
+    console.info(`📏 Size: ${currentFile.size} bytes`);
+    console.info(`🗂️  Type: ${currentFile.type}`);
     
     // Find monorepo root using ESM URL
     const monorepoRoot = this.bun.file(new URL('../../package.json', import.meta.url));
     if (await monorepoRoot.exists()) {
-      console.log(`📦 Monorepo Root: ${monorepoRoot.name}`);
-      console.log(`✅ ESM URL pattern working - config follows code!`);
+      console.info(`📦 Monorepo Root: ${monorepoRoot.name}`);
+      console.info(`✅ ESM URL pattern working - config follows code!`);
     }
     
     // Pattern 2: File Descriptor Telemetry
-    console.log('\n🔌 Pattern 2: File Descriptor Telemetry');
-    console.log('-'.repeat(40));
+    console.info('\n🔌 Pattern 2: File Descriptor Telemetry');
+    console.info('-'.repeat(40));
     
     if (this.telemetryPipe.fd !== undefined) {
-      console.log(`✅ FD 3 is open - Silent pipe available!`);
-      console.log(`💡 Run with: bun run script 3> telemetry.log`);
+      console.info(`✅ FD 3 is open - Silent pipe available!`);
+      console.info(`💡 Run with: bun run script 3> telemetry.log`);
       
       // Test telemetry
       await this.logTelemetry({
@@ -389,27 +389,27 @@ export class FinalDocumentationCLI {
         timestamp: new Date().toISOString()
       });
       
-      console.log('📊 Test telemetry sent to FD 3');
+      console.info('📊 Test telemetry sent to FD 3');
     } else {
-      console.log(`⚠️  FD 3 not open - Run with: bun run script 3> telemetry.log`);
-      console.log(`📊 Telemetry will appear in console instead`);
+      console.info(`⚠️  FD 3 not open - Run with: bun run script 3> telemetry.log`);
+      console.info(`📊 Telemetry will appear in console instead`);
     }
     
     // Combined demonstration
-    console.log('\n🚀 Combined: Zen Search with Both Patterns');
-    console.log('-'.repeat(40));
+    console.info('\n🚀 Combined: Zen Search with Both Patterns');
+    console.info('-'.repeat(40));
     
     const results = await this.performZenSearch('Bun.file', {
       useTelemetry: true,
       validateConfig: true
     });
     
-    console.log('\n🎉 Ultimate "Bun Zen" Architecture Demo Complete!');
-    console.log('=' .repeat(70));
-    console.log('✅ ESM URL Pattern: Config follows code, not shell');
-    console.log('✅ File Descriptor Pattern: Clean separation of data and UI');
-    console.log('✅ Combined: Robust, portable, high-performance CLI');
-    console.log('=' .repeat(70));
+    console.info('\n🎉 Ultimate "Bun Zen" Architecture Demo Complete!');
+    console.info('=' .repeat(70));
+    console.info('✅ ESM URL Pattern: Config follows code, not shell');
+    console.info('✅ File Descriptor Pattern: Clean separation of data and UI');
+    console.info('✅ Combined: Robust, portable, high-performance CLI');
+    console.info('=' .repeat(70));
   }
 
   /**
@@ -432,16 +432,16 @@ export class FinalDocumentationCLI {
         break;
         
       case 'doctor':
-        console.log('🏥 Running Documentation CLI Doctor...');
+        console.info('🏥 Running Documentation CLI Doctor...');
         await this.demonstrateZenArchitecture();
         break;
         
       default:
-        console.log('📖 Available Commands:');
-        console.log('  search [query]     - Perform zen search');
-        console.log('  validate           - Validate configuration');
-        console.log('  demo               - Demonstrate patterns');
-        console.log('  doctor             - Run full diagnostics');
+        console.info('📖 Available Commands:');
+        console.info('  search [query]     - Perform zen search');
+        console.info('  validate           - Validate configuration');
+        console.info('  demo               - Demonstrate patterns');
+        console.info('  doctor             - Run full diagnostics');
         break;
     }
   }

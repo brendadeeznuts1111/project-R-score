@@ -128,7 +128,7 @@ export class Fantasy42CloudflareIntegration {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('☁️ Initializing Fantasy42 Cloudflare Integration...');
+      console.info('☁️ Initializing Fantasy42 Cloudflare Integration...');
 
       // Check for existing Cloudflare challenge
       await this.detectExistingChallenge();
@@ -157,7 +157,7 @@ export class Fantasy42CloudflareIntegration {
       await this.setupErrorHandling();
 
       this.isInitialized = true;
-      console.log('✅ Fantasy42 Cloudflare Integration initialized');
+      console.info('✅ Fantasy42 Cloudflare Integration initialized');
 
       return true;
     } catch (error) {
@@ -265,10 +265,10 @@ export class Fantasy42CloudflareIntegration {
     const hasChallenge = challengeIndicators.some(indicator => !!indicator);
 
     if (hasChallenge) {
-      console.log('🚨 Cloudflare challenge detected');
+      console.info('🚨 Cloudflare challenge detected');
       await this.handleExistingChallenge();
     } else {
-      console.log('✅ No active Cloudflare challenge detected');
+      console.info('✅ No active Cloudflare challenge detected');
     }
   }
 
@@ -305,7 +305,7 @@ export class Fantasy42CloudflareIntegration {
     // Setup timeout handling
     this.setupChallengeTimeout(challengeId);
 
-    console.log(`🎯 Handling Cloudflare challenge: ${challengeId}`);
+    console.info(`🎯 Handling Cloudflare challenge: ${challengeId}`);
   }
 
   /**
@@ -323,7 +323,7 @@ export class Fantasy42CloudflareIntegration {
                 element.tagName === 'SCRIPT' &&
                 element.getAttribute('src')?.includes('challenge-platform')
               ) {
-                console.log('🚨 New Cloudflare challenge script detected');
+                console.info('🚨 New Cloudflare challenge script detected');
                 this.handleNewChallenge(element as HTMLScriptElement);
               }
             }
@@ -350,7 +350,7 @@ export class Fantasy42CloudflareIntegration {
                 element.tagName === 'IFRAME' &&
                 element.getAttribute('src')?.includes('challenge-platform')
               ) {
-                console.log('🚨 New Cloudflare challenge iframe detected');
+                console.info('🚨 New Cloudflare challenge iframe detected');
                 this.handleNewChallenge(element as HTMLIFrameElement);
               }
             }
@@ -369,7 +369,7 @@ export class Fantasy42CloudflareIntegration {
     // Monitor for challenge parameters
     const paramsObserver = new MutationObserver(() => {
       if (window.__CF$cv$params && !this.challengeState.isActive) {
-        console.log('🚨 Cloudflare challenge parameters detected');
+        console.info('🚨 Cloudflare challenge parameters detected');
         this.handleChallengeParameters(window.__CF$cv$params);
       }
     });
@@ -377,7 +377,7 @@ export class Fantasy42CloudflareIntegration {
     // Observe window object changes (limited support)
     this.observers.set('params-observer', paramsObserver);
 
-    console.log('👁️ Cloudflare challenge detection setup');
+    console.info('👁️ Cloudflare challenge detection setup');
   }
 
   /**
@@ -385,7 +385,7 @@ export class Fantasy42CloudflareIntegration {
    */
   private async handleNewChallenge(element: HTMLScriptElement | HTMLIFrameElement): Promise<void> {
     if (this.challengeState.isActive) {
-      console.log('⚠️ Challenge already active, ignoring new challenge');
+      console.info('⚠️ Challenge already active, ignoring new challenge');
       return;
     }
 
@@ -417,7 +417,7 @@ export class Fantasy42CloudflareIntegration {
     await this.setupChallengeMonitoring(challengeId);
     this.setupChallengeTimeout(challengeId);
 
-    console.log(`🎯 New challenge initiated: ${challengeId}`);
+    console.info(`🎯 New challenge initiated: ${challengeId}`);
   }
 
   /**
@@ -425,7 +425,7 @@ export class Fantasy42CloudflareIntegration {
    */
   private async handleChallengeParameters(params: any): Promise<void> {
     if (this.challengeState.isActive) {
-      console.log('⚠️ Challenge already active, updating parameters');
+      console.info('⚠️ Challenge already active, updating parameters');
       return;
     }
 
@@ -457,7 +457,7 @@ export class Fantasy42CloudflareIntegration {
     await this.setupChallengeMonitoring(challengeId);
     this.setupChallengeTimeout(challengeId);
 
-    console.log(`🎯 Challenge parameters handled: ${challengeId}`);
+    console.info(`🎯 Challenge parameters handled: ${challengeId}`);
   }
 
   /**
@@ -500,7 +500,7 @@ export class Fantasy42CloudflareIntegration {
 
     this.timers.set(`error-checker-${challengeId}`, errorChecker);
 
-    console.log(`📊 Challenge monitoring setup: ${challengeId}`);
+    console.info(`📊 Challenge monitoring setup: ${challengeId}`);
   }
 
   /**
@@ -515,7 +515,7 @@ export class Fantasy42CloudflareIntegration {
 
     this.timers.set(`timeout-${challengeId}`, timeoutTimer);
 
-    console.log(`⏰ Challenge timeout setup: ${challengeId} (${this.config.challengeTimeout}ms)`);
+    console.info(`⏰ Challenge timeout setup: ${challengeId} (${this.config.challengeTimeout}ms)`);
   }
 
   /**
@@ -604,7 +604,7 @@ export class Fantasy42CloudflareIntegration {
     // Trigger completion callback
     this.triggerChallengeCallback('completed', { challengeId, duration });
 
-    console.log(`✅ Challenge completed: ${challengeId} (${duration}ms)`);
+    console.info(`✅ Challenge completed: ${challengeId} (${duration}ms)`);
   }
 
   /**
@@ -635,12 +635,12 @@ export class Fantasy42CloudflareIntegration {
 
     // Handle retry logic
     if (this.challengeState.attempts < this.config.challengeRetryAttempts) {
-      console.log(
+      console.info(
         `🔄 Retrying challenge: ${challengeId} (attempt ${this.challengeState.attempts + 1})`
       );
       await this.retryChallenge(challengeId);
     } else {
-      console.log(`❌ Challenge failed permanently: ${challengeId}`);
+      console.info(`❌ Challenge failed permanently: ${challengeId}`);
       await this.handleChallengeFailure(challengeId, error);
     }
   }
@@ -693,7 +693,7 @@ export class Fantasy42CloudflareIntegration {
     await this.setupChallengeMonitoring(challengeId);
     this.setupChallengeTimeout(challengeId);
 
-    console.log(
+    console.info(
       `🔄 Challenge retry initiated: ${challengeId} (attempt ${this.challengeState.attempts})`
     );
   }
@@ -718,7 +718,7 @@ export class Fantasy42CloudflareIntegration {
     // Trigger failure callback
     this.triggerChallengeCallback('failed', { challengeId, error });
 
-    console.log(`❌ Challenge failed: ${challengeId} - ${error}`);
+    console.info(`❌ Challenge failed: ${challengeId} - ${error}`);
   }
 
   /**
@@ -727,24 +727,24 @@ export class Fantasy42CloudflareIntegration {
   private async executeFallbackStrategy(error: string): Promise<void> {
     switch (this.config.fallbackStrategy) {
       case 'retry':
-        console.log('🔄 Executing retry fallback strategy');
+        console.info('🔄 Executing retry fallback strategy');
         // Additional retry logic can be implemented here
         break;
 
       case 'bypass':
-        console.log('🚧 Executing bypass fallback strategy');
+        console.info('🚧 Executing bypass fallback strategy');
         // Attempt to bypass challenge
         await this.attemptChallengeBypass();
         break;
 
       case 'redirect':
-        console.log('🔀 Executing redirect fallback strategy');
+        console.info('🔀 Executing redirect fallback strategy');
         // Redirect to alternative endpoint
         await this.redirectToAlternativeEndpoint();
         break;
 
       default:
-        console.log('⚠️ No fallback strategy specified');
+        console.info('⚠️ No fallback strategy specified');
     }
   }
 
@@ -770,7 +770,7 @@ export class Fantasy42CloudflareIntegration {
 
     document.head.appendChild(script);
 
-    console.log('🔄 Challenge script reloaded');
+    console.info('🔄 Challenge script reloaded');
   }
 
   /**
@@ -793,9 +793,9 @@ export class Fantasy42CloudflareIntegration {
         const html = await response.text();
         // Replace current page content
         document.documentElement.innerHTML = html;
-        console.log('🚧 Challenge bypass successful');
+        console.info('🚧 Challenge bypass successful');
       } else {
-        console.log('🚧 Challenge bypass failed');
+        console.info('🚧 Challenge bypass failed');
       }
     } catch (error) {
       console.error('🚧 Challenge bypass error:', error);
@@ -810,9 +810,9 @@ export class Fantasy42CloudflareIntegration {
     const alternativeUrl = this.getAlternativeEndpoint();
     if (alternativeUrl) {
       window.location.href = alternativeUrl;
-      console.log('🔀 Redirected to alternative endpoint');
+      console.info('🔀 Redirected to alternative endpoint');
     } else {
-      console.log('⚠️ No alternative endpoint available');
+      console.info('⚠️ No alternative endpoint available');
     }
   }
 
@@ -861,7 +861,7 @@ export class Fantasy42CloudflareIntegration {
       this.sendToAnalytics(event);
     }
 
-    console.log(`📝 Challenge event logged: ${event.type} - ${event.challengeId}`);
+    console.info(`📝 Challenge event logged: ${event.type} - ${event.challengeId}`);
   }
 
   /**
@@ -870,7 +870,7 @@ export class Fantasy42CloudflareIntegration {
   private sendToAnalytics(event: ChallengeEvent): void {
     // Send to analytics service
     // This could integrate with Google Analytics, Mixpanel, etc.
-    console.log('📊 Event sent to analytics:', event);
+    console.info('📊 Event sent to analytics:', event);
   }
 
   /**
@@ -929,7 +929,7 @@ export class Fantasy42CloudflareIntegration {
       document.head.appendChild(meta);
     });
 
-    console.log('🔒 Security headers initialized');
+    console.info('🔒 Security headers initialized');
   }
 
   /**
@@ -946,7 +946,7 @@ export class Fantasy42CloudflareIntegration {
 
     await this.setupCachingStrategy();
 
-    console.log('⚡ Performance optimization initialized');
+    console.info('⚡ Performance optimization initialized');
   }
 
   /**
@@ -967,7 +967,7 @@ export class Fantasy42CloudflareIntegration {
       this.observers.set('performance-observer', perfObserver);
     }
 
-    console.log('📊 Monitoring initialized');
+    console.info('📊 Monitoring initialized');
   }
 
   /**
@@ -1023,7 +1023,7 @@ export class Fantasy42CloudflareIntegration {
     window.addEventListener('unhandledrejection', rejectionHandler);
     this.eventListeners.set('rejection-handler', rejectionHandler);
 
-    console.log('🚨 Error handling setup');
+    console.info('🚨 Error handling setup');
   }
 
   /**
@@ -1042,7 +1042,7 @@ export class Fantasy42CloudflareIntegration {
       }
     });
 
-    console.log('🖼️ Image optimization setup');
+    console.info('🖼️ Image optimization setup');
   }
 
   /**
@@ -1061,7 +1061,7 @@ export class Fantasy42CloudflareIntegration {
       });
     };
 
-    console.log('🗜️ Compression setup');
+    console.info('🗜️ Compression setup');
   }
 
   /**
@@ -1081,7 +1081,7 @@ export class Fantasy42CloudflareIntegration {
     meta.content = cacheHeaders[this.config.performance.cachingStrategy];
     document.head.appendChild(meta);
 
-    console.log('💾 Caching strategy setup');
+    console.info('💾 Caching strategy setup');
   }
 
   /**
@@ -1117,7 +1117,7 @@ export class Fantasy42CloudflareIntegration {
    */
   async forceChallengeRetry(): Promise<void> {
     if (this.challengeState.challengeId) {
-      console.log('🔄 Forcing challenge retry');
+      console.info('🔄 Forcing challenge retry');
       await this.retryChallenge(this.challengeState.challengeId);
     }
   }
@@ -1126,7 +1126,7 @@ export class Fantasy42CloudflareIntegration {
    * Bypass challenge (emergency)
    */
   async bypassChallenge(): Promise<void> {
-    console.log('🚧 Attempting emergency challenge bypass');
+    console.info('🚧 Attempting emergency challenge bypass');
     await this.attemptChallengeBypass();
   }
 
@@ -1136,7 +1136,7 @@ export class Fantasy42CloudflareIntegration {
   clearChallengeState(): void {
     this.challengeState = this.initializeChallengeState();
     this.challengeEvents = [];
-    console.log('🧹 Challenge state cleared');
+    console.info('🧹 Challenge state cleared');
   }
 
   /**
@@ -1151,7 +1151,7 @@ export class Fantasy42CloudflareIntegration {
    */
   updateConfiguration(newConfig: Partial<CloudflareConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    console.log('⚙️ Configuration updated');
+    console.info('⚙️ Configuration updated');
   }
 
   /**
@@ -1179,7 +1179,7 @@ export class Fantasy42CloudflareIntegration {
     this.clearChallengeState();
 
     this.isInitialized = false;
-    console.log('🧹 Cloudflare integration cleaned up');
+    console.info('🧹 Cloudflare integration cleaned up');
   }
 }
 

@@ -5,4 +5,4 @@ interface User {
 }
 
 const user: User = { name: "Alice", age: 30 };
-console.log(`Hello, ${user.name}!`);
+console.info(`Hello, ${user.name}!`);

@@ -24,7 +24,7 @@ export class ConfigWebSocketClient {
       this.ws.binaryType = "arraybuffer"; // Receive binary frames
 
       this.ws.addEventListener("open", () => {
-        console.log("WebSocket connected with subprotocol:", SUBPROTOCOL);
+        console.info("WebSocket connected with subprotocol:", SUBPROTOCOL);
         this.startHeartbeat();
       });
 
@@ -50,7 +50,7 @@ export class ConfigWebSocketClient {
               case WS_MSG.TERMINAL_RESIZE: {
                 // Terminal resize event
                 if (decoded.cols && decoded.rows) {
-                  console.log(`Terminal resized: ${decoded.cols}x${decoded.rows}`);
+                  console.info(`Terminal resized: ${decoded.cols}x${decoded.rows}`);
                 }
                 break;
               }
@@ -77,7 +77,7 @@ export class ConfigWebSocketClient {
       });
 
       this.ws.addEventListener("close", () => {
-        console.log("WebSocket closed, reconnecting...");
+        console.info("WebSocket closed, reconnecting...");
         this.stopHeartbeat();
         this.scheduleReconnect();
       });

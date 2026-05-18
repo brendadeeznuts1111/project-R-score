@@ -27,8 +27,8 @@ interface DemoResults {
 }
 
 async function runCompleteDemo(): Promise<DemoResults> {
-  console.log('🚀 Integrated Healing System v2.01.05 - Complete Demo');
-  console.log('==================================================');
+  console.info('🚀 Integrated Healing System v2.01.05 - Complete Demo');
+  console.info('==================================================');
   
   const startTime = Date.now();
   const results: DemoResults = {
@@ -55,7 +55,7 @@ async function runCompleteDemo(): Promise<DemoResults> {
 
   try {
     // Step 1: Create diverse test files
-    console.log('\\n📁 Step 1: Creating diverse test files...');
+    console.info('\\n📁 Step 1: Creating diverse test files...');
     const testDir = './demo-heal-temp';
     
     // Create files with different patterns and ages
@@ -68,10 +68,10 @@ async function runCompleteDemo(): Promise<DemoResults> {
     // Wait for some files to age
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    console.log('   ✅ Created 5 test files with different patterns');
+    console.info('   ✅ Created 5 test files with different patterns');
     
     // Step 2: Run advanced filesystem healing
-    console.log('\\n🧹 Step 2: Running advanced filesystem healing...');
+    console.info('\\n🧹 Step 2: Running advanced filesystem healing...');
     
     const healOptions = {
       targetDir: testDir,
@@ -96,13 +96,13 @@ async function runCompleteDemo(): Promise<DemoResults> {
     results.filesystem.riskScore = totalRisk > 0 ? 
       (metrics.riskAssessment.highRisk * 100 + metrics.riskAssessment.mediumRisk * 50 + metrics.riskAssessment.lowRisk * 10) / totalRisk : 0;
     
-    console.log(`   ✅ Processed ${metrics.filesFound} files`);
-    console.log(`   ✅ Cleaned ${metrics.filesDeleted} files`);
-    console.log(`   ✅ Backed up ${metrics.filesBackedUp} files`);
-    console.log(`   ✅ Generated ${metrics.hashesGenerated} hashes`);
+    console.info(`   ✅ Processed ${metrics.filesFound} files`);
+    console.info(`   ✅ Cleaned ${metrics.filesDeleted} files`);
+    console.info(`   ✅ Backed up ${metrics.filesBackedUp} files`);
+    console.info(`   ✅ Generated ${metrics.hashesGenerated} hashes`);
     
     // Step 3: Collect comprehensive metrics
-    console.log('\\n📊 Step 3: Collecting comprehensive metrics...');
+    console.info('\\n📊 Step 3: Collecting comprehensive metrics...');
     
     // Performance metrics
     results.metrics.performance = {
@@ -129,12 +129,12 @@ async function runCompleteDemo(): Promise<DemoResults> {
       results.metrics.trends = trends.data.performance;
     }
     
-    console.log(`   ✅ Performance: ${results.metrics.performance.filesPerSecond.toFixed(2)} files/sec`);
-    console.log(`   ✅ Patterns detected: ${results.metrics.patterns.totalPatterns}`);
-    console.log(`   ✅ Risk analysis complete`);
+    console.info(`   ✅ Performance: ${results.metrics.performance.filesPerSecond.toFixed(2)} files/sec`);
+    console.info(`   ✅ Patterns detected: ${results.metrics.patterns.totalPatterns}`);
+    console.info(`   ✅ Risk analysis complete`);
     
     // Step 4: Calculate integration metrics
-    console.log('\\n🔗 Step 4: Calculating integration metrics...');
+    console.info('\\n🔗 Step 4: Calculating integration metrics...');
     
     // Unified health score (0-100)
     const filesystemHealth = metrics.errors.length === 0 ? 100 : Math.max(0, 100 - (metrics.errors.length * 10));
@@ -173,12 +173,12 @@ async function runCompleteDemo(): Promise<DemoResults> {
       results.integration.status = 'POOR';
     }
     
-    console.log(`   ✅ Unified health score: ${results.integration.unifiedHealthScore.toFixed(1)}%`);
-    console.log(`   ✅ Status: ${results.integration.status}`);
-    console.log(`   ✅ Generated ${results.integration.recommendations.length} recommendations`);
+    console.info(`   ✅ Unified health score: ${results.integration.unifiedHealthScore.toFixed(1)}%`);
+    console.info(`   ✅ Status: ${results.integration.status}`);
+    console.info(`   ✅ Generated ${results.integration.recommendations.length} recommendations`);
     
     // Step 5: Export comprehensive report
-    console.log('\\n📋 Step 5: Generating comprehensive report...');
+    console.info('\\n📋 Step 5: Generating comprehensive report...');
     
     const report = {
       timestamp: results.timestamp,
@@ -202,11 +202,11 @@ async function runCompleteDemo(): Promise<DemoResults> {
     };
     
     await Bun.write('./demo-results-v2.01.05.json', JSON.stringify(report, null, 2));
-    console.log('   ✅ Report saved to demo-results-v2.01.05.json');
+    console.info('   ✅ Report saved to demo-results-v2.01.05.json');
     
     // Cleanup
     await Bun.remove(testDir);
-    console.log('   ✅ Cleanup completed');
+    console.info('   ✅ Cleanup completed');
     
   } catch (error) {
     console.error('❌ Demo failed:', error);
@@ -217,80 +217,80 @@ async function runCompleteDemo(): Promise<DemoResults> {
 }
 
 async function displayResults(results: DemoResults): Promise<void> {
-  console.log('\\n🎯 FINAL RESULTS - Integrated Healing System v2.01.05');
-  console.log('====================================================');
+  console.info('\\n🎯 FINAL RESULTS - Integrated Healing System v2.01.05');
+  console.info('====================================================');
   
   // Summary
-  console.log('\\n📊 SUMMARY:');
-  console.log(`   • Version: v2.01.05`);
-  console.log(`   • Status: ${results.integration.status}`);
-  console.log(`   • Health Score: ${results.integration.unifiedHealthScore.toFixed(1)}%`);
-  console.log(`   • Duration: ${Date.now() - results.timestamp}ms`);
+  console.info('\\n📊 SUMMARY:');
+  console.info(`   • Version: v2.01.05`);
+  console.info(`   • Status: ${results.integration.status}`);
+  console.info(`   • Health Score: ${results.integration.unifiedHealthScore.toFixed(1)}%`);
+  console.info(`   • Duration: ${Date.now() - results.timestamp}ms`);
   
   // Filesystem Results
-  console.log('\\n📁 FILESYSTEM HEALING:');
-  console.log(`   • Total Files Found: ${results.filesystem.totalFiles}`);
-  console.log(`   • Files Cleaned: ${results.filesystem.cleanedFiles}`);
-  console.log(`   • Files Backed Up: ${results.filesystem.backedUpFiles}`);
-  console.log(`   • Patterns Detected: ${results.filesystem.patterns.length}`);
-  console.log(`   • Risk Score: ${results.filesystem.riskScore.toFixed(1)}`);
+  console.info('\\n📁 FILESYSTEM HEALING:');
+  console.info(`   • Total Files Found: ${results.filesystem.totalFiles}`);
+  console.info(`   • Files Cleaned: ${results.filesystem.cleanedFiles}`);
+  console.info(`   • Files Backed Up: ${results.filesystem.backedUpFiles}`);
+  console.info(`   • Patterns Detected: ${results.filesystem.patterns.length}`);
+  console.info(`   • Risk Score: ${results.filesystem.riskScore.toFixed(1)}`);
   
   if (results.filesystem.patterns.length > 0) {
-    console.log('   • Patterns:', results.filesystem.patterns.join(', '));
+    console.info('   • Patterns:', results.filesystem.patterns.join(', '));
   }
   
   // Performance Metrics
-  console.log('\\n⚡ PERFORMANCE METRICS:');
-  console.log(`   • Processing Speed: ${results.metrics.performance.filesPerSecond.toFixed(2)} files/sec`);
-  console.log(`   • Throughput: ${results.metrics.performance.bytesPerSecond.toFixed(0)} bytes/sec`);
-  console.log(`   • Parallel Operations: ${results.metrics.performance.parallelOperations}`);
-  console.log(`   • Error Rate: ${(results.metrics.performance.errorRate * 100).toFixed(2)}%`);
+  console.info('\\n⚡ PERFORMANCE METRICS:');
+  console.info(`   • Processing Speed: ${results.metrics.performance.filesPerSecond.toFixed(2)} files/sec`);
+  console.info(`   • Throughput: ${results.metrics.performance.bytesPerSecond.toFixed(0)} bytes/sec`);
+  console.info(`   • Parallel Operations: ${results.metrics.performance.parallelOperations}`);
+  console.info(`   • Error Rate: ${(results.metrics.performance.errorRate * 100).toFixed(2)}%`);
   
   // Pattern Analysis
-  console.log('\\n🔍 PATTERN ANALYSIS:');
-  console.log(`   • Total Patterns: ${results.metrics.patterns.totalPatterns}`);
-  console.log(`   • High Risk Patterns: ${results.metrics.patterns.highRiskPatterns}`);
-  console.log(`   • Most Active: ${results.metrics.patterns.mostActivePattern}`);
-  console.log(`   • Largest Pattern: ${results.metrics.patterns.largestPattern}`);
+  console.info('\\n🔍 PATTERN ANALYSIS:');
+  console.info(`   • Total Patterns: ${results.metrics.patterns.totalPatterns}`);
+  console.info(`   • High Risk Patterns: ${results.metrics.patterns.highRiskPatterns}`);
+  console.info(`   • Most Active: ${results.metrics.patterns.mostActivePattern}`);
+  console.info(`   • Largest Pattern: ${results.metrics.patterns.largestPattern}`);
   
   // Risk Assessment
   if (results.metrics.risk.overall !== undefined) {
-    console.log('\\n⚠️  RISK ASSESSMENT:');
-    console.log(`   • Overall Risk: ${results.metrics.risk.overall.toFixed(1)}%`);
-    console.log(`   • Risk Level: ${results.metrics.risk.overall > 70 ? 'HIGH' : results.metrics.risk.overall > 40 ? 'MEDIUM' : 'LOW'}`);
-    console.log(`   • Patterns Analyzed: ${results.metrics.risk.patterns?.length || 0}`);
+    console.info('\\n⚠️  RISK ASSESSMENT:');
+    console.info(`   • Overall Risk: ${results.metrics.risk.overall.toFixed(1)}%`);
+    console.info(`   • Risk Level: ${results.metrics.risk.overall > 70 ? 'HIGH' : results.metrics.risk.overall > 40 ? 'MEDIUM' : 'LOW'}`);
+    console.info(`   • Patterns Analyzed: ${results.metrics.risk.patterns?.length || 0}`);
   }
   
   // Trends
-  console.log('\\n📈 TREND ANALYSIS:');
-  console.log(`   • Size Trend: ${results.metrics.trends.sizeTrend || 'STABLE'}`);
-  console.log(`   • Frequency Trend: ${results.metrics.trends.frequencyTrend || 'STABLE'}`);
-  console.log(`   • Performance: ${results.metrics.trends.filesPerSecond?.toFixed(2) || '0.00'} ops/sec`);
+  console.info('\\n📈 TREND ANALYSIS:');
+  console.info(`   • Size Trend: ${results.metrics.trends.sizeTrend || 'STABLE'}`);
+  console.info(`   • Frequency Trend: ${results.metrics.trends.frequencyTrend || 'STABLE'}`);
+  console.info(`   • Performance: ${results.metrics.trends.filesPerSecond?.toFixed(2) || '0.00'} ops/sec`);
   
   // Integration Status
-  console.log('\\n🔗 INTEGRATION STATUS:');
-  console.log(`   • Unified Health Score: ${results.integration.unifiedHealthScore.toFixed(1)}%`);
-  console.log(`   • System Status: ${results.integration.status}`);
-  console.log(`   • Recommendations: ${results.integration.recommendations.length}`);
+  console.info('\\n🔗 INTEGRATION STATUS:');
+  console.info(`   • Unified Health Score: ${results.integration.unifiedHealthScore.toFixed(1)}%`);
+  console.info(`   • System Status: ${results.integration.status}`);
+  console.info(`   • Recommendations: ${results.integration.recommendations.length}`);
   
   if (results.integration.recommendations.length > 0) {
-    console.log('\\n💡 RECOMMENDATIONS:');
+    console.info('\\n💡 RECOMMENDATIONS:');
     results.integration.recommendations.forEach((rec, index) => {
-      console.log(`   ${index + 1}. ${rec}`);
+      console.info(`   ${index + 1}. ${rec}`);
     });
   }
   
   // Feature Status
-  console.log('\\n✅ FEATURE STATUS:');
-  console.log('   • ✅ Parallel Processing: ENABLED');
-  console.log('   • ✅ Pattern Analysis: ACTIVE');
-  console.log('   • ✅ Risk Assessment: OPERATIONAL');
-  console.log('   • ✅ Backup Integrity: VERIFIED');
-  console.log('   • ✅ Comprehensive Metrics: COLLECTING');
-  console.log('   • ✅ Unified Monitoring: RUNNING');
+  console.info('\\n✅ FEATURE STATUS:');
+  console.info('   • ✅ Parallel Processing: ENABLED');
+  console.info('   • ✅ Pattern Analysis: ACTIVE');
+  console.info('   • ✅ Risk Assessment: OPERATIONAL');
+  console.info('   • ✅ Backup Integrity: VERIFIED');
+  console.info('   • ✅ Comprehensive Metrics: COLLECTING');
+  console.info('   • ✅ Unified Monitoring: RUNNING');
   
-  console.log('\\n🎉 INTEGRATED HEALING SYSTEM v2.01.05 - DEMO COMPLETE');
-  console.log('====================================================');
+  console.info('\\n🎉 INTEGRATED HEALING SYSTEM v2.01.05 - DEMO COMPLETE');
+  console.info('====================================================');
 }
 
 async function main(): Promise<void> {
@@ -298,8 +298,8 @@ async function main(): Promise<void> {
     const results = await runCompleteDemo();
     await displayResults(results);
     
-    console.log('\\n📄 Detailed report saved to: demo-results-v2.01.05.json');
-    console.log('\\n🚀 The integrated healing system is ready for production deployment!');
+    console.info('\\n📄 Detailed report saved to: demo-results-v2.01.05.json');
+    console.info('\\n🚀 The integrated healing system is ready for production deployment!');
     
   } catch (error) {
     console.error('❌ Demo execution failed:', error);

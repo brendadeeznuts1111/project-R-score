@@ -572,19 +572,19 @@ const employees: EmployeeData[] = [
  * Seed employee data into KV namespace
  */
 export async function seedEmployeeData(env: any) {
-  console.log(`🌱 Seeding data for ${employees.length} employees...`);
+  console.info(`🌱 Seeding data for ${employees.length} employees...`);
 
   for (const employee of employees) {
     const key = `employee:${employee.id}`;
     try {
       await env.EMPLOYEE_DATA.put(key, JSON.stringify(employee));
-      console.log(`✅ Seeded data for ${employee.name} (${employee.id})`);
+      console.info(`✅ Seeded data for ${employee.name} (${employee.id})`);
     } catch (error) {
       console.error(`❌ Failed to seed data for ${employee.name}:`, error);
     }
   }
 
-  console.log('🎉 Employee data seeding complete!');
+  console.info('🎉 Employee data seeding complete!');
 }
 
 /**

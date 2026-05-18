@@ -53,13 +53,13 @@ async function runIteration(iteration: number): Promise<BenchResult> {
   };
 }
 
-console.log(`Parallel Fetch Stress Test`);
-console.log(`Target: ${TARGET_HOST}`);
-console.log(`Concurrency: ${CONCURRENCY}`);
-console.log(`Iterations: ${ITERATIONS}`);
-console.log(`Max HTTP Requests: ${process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || "256 (default)"}`);
-console.log(`Preconnect: ${process.env.BUN_FETCH_PRECONNECT ? "CLI flag" : "none"}`);
-console.log("");
+console.info(`Parallel Fetch Stress Test`);
+console.info(`Target: ${TARGET_HOST}`);
+console.info(`Concurrency: ${CONCURRENCY}`);
+console.info(`Iterations: ${ITERATIONS}`);
+console.info(`Max HTTP Requests: ${process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || "256 (default)"}`);
+console.info(`Preconnect: ${process.env.BUN_FETCH_PRECONNECT ? "CLI flag" : "none"}`);
+console.info("");
 
 // Warm up DNS
 dns.prefetch(new URL(TARGET_HOST).hostname, 443);
@@ -70,12 +70,12 @@ const results: BenchResult[] = [];
 for (let i = 1; i <= ITERATIONS; i++) {
   const result = await runIteration(i);
   results.push(result);
-  console.log(`Iteration ${i}: ${result.totalMs.toFixed(0)}ms total, ${result.avgMs.toFixed(1)}ms avg, ${result.errors} errors`);
+  console.info(`Iteration ${i}: ${result.totalMs.toFixed(0)}ms total, ${result.avgMs.toFixed(1)}ms avg, ${result.errors} errors`);
   await Bun.sleep(500); // Brief pause between iterations
 }
 
-console.log("");
-console.log(Bun.inspect.table(results.map(r => ({
+console.info("");
+console.info(Bun.inspect.table(results.map(r => ({
   "#": r.iteration,
   "Total (ms)": r.totalMs.toFixed(0),
   "Avg (ms)": r.avgMs.toFixed(1),
@@ -87,5 +87,5 @@ console.log(Bun.inspect.table(results.map(r => ({
 // Summary
 const avgTotal = results.reduce((sum, r) => sum + r.totalMs, 0) / results.length;
 const avgLatency = results.reduce((sum, r) => sum + r.avgMs, 0) / results.length;
-console.log("");
-console.log(`Summary: ${avgTotal.toFixed(0)}ms avg total, ${avgLatency.toFixed(1)}ms avg latency`);
+console.info("");
+console.info(`Summary: ${avgTotal.toFixed(0)}ms avg total, ${avgLatency.toFixed(1)}ms avg latency`);

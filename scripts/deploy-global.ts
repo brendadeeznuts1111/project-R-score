@@ -33,7 +33,7 @@ if (import.meta.main) {
 
   const orchestrator = new DeploymentOrchestrator();
   const result = await orchestrator.deployAll();
-  console.log(
+  console.info(
     JSON.stringify(
       {
         requestedRegions: regions,

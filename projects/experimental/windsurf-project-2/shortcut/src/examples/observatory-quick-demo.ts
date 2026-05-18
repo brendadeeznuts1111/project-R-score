@@ -6,8 +6,8 @@
  * Demonstrates the key features without policy file dependencies
  */
 
-console.log('🚀 URLPattern Observatory v1.3.6 - Quick Demo');
-console.log('============================================');
+console.info('🚀 URLPattern Observatory v1.3.6 - Quick Demo');
+console.info('============================================');
 
 // v1.3.6: 20× faster CRC32 for pattern hashing
 function generatePatternHash(pattern: string): string {
@@ -100,8 +100,8 @@ function createAPIResponse(data: any, status: number = 200) {
 
 // Main demonstration
 async function runDemo() {
-  console.log('\n🔍 1. Pattern Analysis with 20× Faster CRC32');
-  console.log('===============================================');
+  console.info('\n🔍 1. Pattern Analysis with 20× Faster CRC32');
+  console.info('===============================================');
   
   const testPatterns = [
     'https://localhost:3000/admin/*',      // Critical
@@ -115,7 +115,7 @@ async function runDemo() {
   let totalGuardBytes = 0;
   
   for (const pattern of testPatterns) {
-    console.log(`\n📊 Analyzing: ${pattern}`);
+    console.info(`\n📊 Analyzing: ${pattern}`);
     const analysis = analyzePattern(pattern);
     
     const riskEmoji = {
@@ -125,9 +125,9 @@ async function runDemo() {
       low: '✅'
     };
     
-    console.log(`   ${riskEmoji[analysis.risk]} Risk: ${analysis.risk.toUpperCase()}`);
-    console.log(`   🔐 Hash: ${analysis.hash}`);
-    console.log(`   📝 Issues: ${analysis.issues.length > 0 ? analysis.issues.join(', ') : 'None'}`);
+    console.info(`   ${riskEmoji[analysis.risk]} Risk: ${analysis.risk.toUpperCase()}`);
+    console.info(`   🔐 Hash: ${analysis.hash}`);
+    console.info(`   📝 Issues: ${analysis.issues.length > 0 ? analysis.issues.join(', ') : 'None'}`);
     
     // Generate virtual guard
     if (analysis.risk !== 'low') {
@@ -135,17 +135,17 @@ async function runDemo() {
       const guardPath = `./guards/${analysis.hash}.ts`;
       virtualFiles[guardPath] = guardCode;
       totalGuardBytes += guardCode.length;
-      console.log(`   🛡️  Guard: ${guardPath} (${guardCode.length} bytes)`);
+      console.info(`   🛡️  Guard: ${guardPath} (${guardCode.length} bytes)`);
     }
   }
   
-  console.log('\n🔨 2. Virtual Guard Injection');
-  console.log('===========================');
-  console.log(`✅ Generated ${Object.keys(virtualFiles).length} virtual guards`);
-  console.log(`📦 Total guard bytes: ${totalGuardBytes}`);
+  console.info('\n🔨 2. Virtual Guard Injection');
+  console.info('===========================');
+  console.info(`✅ Generated ${Object.keys(virtualFiles).length} virtual guards`);
+  console.info(`📦 Total guard bytes: ${totalGuardBytes}`);
   
-  console.log('\n📡 3. Fast API Response (3.5× faster)');
-  console.log('===================================');
+  console.info('\n📡 3. Fast API Response (3.5× faster)');
+  console.info('===================================');
   
   const apiResponse = createAPIResponse({
     patterns: testPatterns.length,
@@ -158,12 +158,12 @@ async function runDemo() {
     }
   });
   
-  console.log('✅ API Response created with Response.json()');
-  console.log(`📊 Status: ${apiResponse.status}`);
-  console.log(`📏 Size: ${apiResponse.headers.get('content-length')} bytes`);
+  console.info('✅ API Response created with Response.json()');
+  console.info(`📊 Status: ${apiResponse.status}`);
+  console.info(`📏 Size: ${apiResponse.headers.get('content-length')} bytes`);
   
-  console.log('\n💾 4. Archive Demo (Bun.Archive)');
-  console.log('===============================');
+  console.info('\n💾 4. Archive Demo (Bun.Archive)');
+  console.info('===============================');
   
   // v1.3.6: Bun.Archive demo
   try {
@@ -187,16 +187,16 @@ async function runDemo() {
     const archiveBytes = await archiveBlob.arrayBuffer();
     const integrityHash = Bun.hash.crc32(archiveBytes).toString(36);
     
-    console.log(`✅ Archive created successfully`);
-    console.log(`📏 Size: ${archiveBytes.byteLength} bytes`);
-    console.log(`🔐 Integrity: ${integrityHash}`);
+    console.info(`✅ Archive created successfully`);
+    console.info(`📏 Size: ${archiveBytes.byteLength} bytes`);
+    console.info(`🔐 Integrity: ${integrityHash}`);
     
   } catch (error) {
-    console.log(`⚠️  Archive demo skipped: ${error instanceof Error ? error.message : String(error)}`);
+    console.info(`⚠️  Archive demo skipped: ${error instanceof Error ? error.message : String(error)}`);
   }
   
-  console.log('\n📚 5. JSONC Policy Demo');
-  console.log('=======================');
+  console.info('\n📚 5. JSONC Policy Demo');
+  console.info('=======================');
   
   // v1.3.6: Bun.JSONC demo
   const jsoncContent = `{
@@ -224,17 +224,17 @@ async function runDemo() {
   
   try {
     const parsedPolicy = Bun.JSONC.parse(jsoncContent) as any;
-    console.log('✅ JSONC policy parsed successfully');
-    console.log(`📝 Critical risks: ${parsedPolicy.riskLevels?.critical?.length || 0}`);
-    console.log(`📝 High risks: ${parsedPolicy.riskLevels?.high?.length || 0}`);
-    console.log('✅ Comments and trailing commas handled!');
+    console.info('✅ JSONC policy parsed successfully');
+    console.info(`📝 Critical risks: ${parsedPolicy.riskLevels?.critical?.length || 0}`);
+    console.info(`📝 High risks: ${parsedPolicy.riskLevels?.high?.length || 0}`);
+    console.info('✅ Comments and trailing commas handled!');
     
   } catch (error) {
-    console.log(`❌ JSONC parsing failed: ${error instanceof Error ? error.message : String(error)}`);
+    console.info(`❌ JSONC parsing failed: ${error instanceof Error ? error.message : String(error)}`);
   }
   
-  console.log('\n🚀 6. Performance Summary');
-  console.log('=========================');
+  console.info('\n🚀 6. Performance Summary');
+  console.info('=========================');
   
   const startTime = performance.now();
   
@@ -246,40 +246,40 @@ async function runDemo() {
   const endTime = performance.now();
   const avgTime = (endTime - startTime) / (testPatterns.length * 1000);
   
-  console.log('⚡ Performance Metrics:');
-  console.log(`   • Pattern analysis: ${avgTime.toFixed(4)}ms per pattern`);
-  console.log(`   • CRC32 hashing: 20× faster than SHA1`);
-  console.log(`   • Response.json(): 3.5× faster`);
-  console.log(`   • Virtual guard injection: ${totalGuardBytes} bytes`);
+  console.info('⚡ Performance Metrics:');
+  console.info(`   • Pattern analysis: ${avgTime.toFixed(4)}ms per pattern`);
+  console.info(`   • CRC32 hashing: 20× faster than SHA1`);
+  console.info(`   • Response.json(): 3.5× faster`);
+  console.info(`   • Virtual guard injection: ${totalGuardBytes} bytes`);
   
-  console.log('\n🎯 7. Bun v1.3.6 Feature Alignment');
-  console.log('=================================');
+  console.info('\n🎯 7. Bun v1.3.6 Feature Alignment');
+  console.info('=================================');
   
-  console.log('✅ Perfect Alignment with Bun v1.3.6:');
-  console.log('   ✅ Bun.Archive for backups');
-  console.log('   ✅ Bun.JSONC for policies');
-  console.log('   ✅ 20× faster CRC32');
-  console.log('   ✅ 3.5× faster Response.json()');
-  console.log('   ✅ Virtual files for guards');
-  console.log('   ✅ SQLite 3.51.2 WAL optimization');
-  console.log('   ✅ WebSocket proxy support');
-  console.log('   ✅ Standalone compilation');
+  console.info('✅ Perfect Alignment with Bun v1.3.6:');
+  console.info('   ✅ Bun.Archive for backups');
+  console.info('   ✅ Bun.JSONC for policies');
+  console.info('   ✅ 20× faster CRC32');
+  console.info('   ✅ 3.5× faster Response.json()');
+  console.info('   ✅ Virtual files for guards');
+  console.info('   ✅ SQLite 3.51.2 WAL optimization');
+  console.info('   ✅ WebSocket proxy support');
+  console.info('   ✅ Standalone compilation');
   
-  console.log('\n🎉 URLPattern Observatory v1.3.6 Demo Complete!');
-  console.log('================================================');
+  console.info('\n🎉 URLPattern Observatory v1.3.6 Demo Complete!');
+  console.info('================================================');
   
-  console.log('\n🚀 This demonstrates the most Bun-native security control plane!');
-  console.log('📊 Every v1.3.6 feature weaponized for URLPattern governance');
-  console.log('🔥 Enterprise-bulletproof with zero external dependencies');
+  console.info('\n🚀 This demonstrates the most Bun-native security control plane!');
+  console.info('📊 Every v1.3.6 feature weaponized for URLPattern governance');
+  console.info('🔥 Enterprise-bulletproof with zero external dependencies');
   
-  console.log('\n📝 Key Achievements:');
-  console.log('   ✅ Sub-millisecond pattern analysis');
-  console.log('   ✅ Virtual guard injection');
-  console.log('   ✅ Archive-based backups');
-  console.log('   ✅ JSONC policy management');
-  console.log('   ✅ Performance optimization');
+  console.info('\n📝 Key Achievements:');
+  console.info('   ✅ Sub-millisecond pattern analysis');
+  console.info('   ✅ Virtual guard injection');
+  console.info('   ✅ Archive-based backups');
+  console.info('   ✅ JSONC policy management');
+  console.info('   ✅ Performance optimization');
   
-  console.log('\n🔥 Ready for production deployment!');
+  console.info('\n🔥 Ready for production deployment!');
 }
 
 // Run the demo

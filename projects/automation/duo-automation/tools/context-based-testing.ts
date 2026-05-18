@@ -80,7 +80,7 @@ class ContextBasedTestingFramework {
    * Initialize test suites based on context tokens
    */
   private initializeTestSuites(): void {
-    console.log('🧪 Initializing context-based test suites...');
+    console.info('🧪 Initializing context-based test suites...');
 
     // Core token test suite
     this.createTestSuite('@core', {
@@ -127,7 +127,7 @@ class ContextBasedTestingFramework {
       complexity: 'high'
     });
 
-    console.log(`📋 Created ${this.testSuites.size} test suites`);
+    console.info(`📋 Created ${this.testSuites.size} test suites`);
   }
 
   /**
@@ -402,8 +402,8 @@ class ContextBasedTestingFramework {
       throw new Error(`Test suite not found for token: ${token}`);
     }
 
-    console.log(`🧪 Running ${suite.name}...`);
-    console.log(`📋 Found ${suite.tests.length} tests`);
+    console.info(`🧪 Running ${suite.name}...`);
+    console.info(`📋 Found ${suite.tests.length} tests`);
 
     const startTime = Date.now();
     const results: TestResult[] = [];
@@ -442,8 +442,8 @@ class ContextBasedTestingFramework {
       }
     };
 
-    console.log(`✅ Completed ${suite.name} in ${duration}ms`);
-    console.log(`📊 Results: ${summary.passed}/${summary.total} passed`);
+    console.info(`✅ Completed ${suite.name} in ${duration}ms`);
+    console.info(`📊 Results: ${summary.passed}/${summary.total} passed`);
 
     return runResult;
   }
@@ -452,7 +452,7 @@ class ContextBasedTestingFramework {
    * Run setup scripts
    */
   private async runSetupScripts(scripts: string[]): Promise<void> {
-    console.log('⚙️ Running setup scripts...');
+    console.info('⚙️ Running setup scripts...');
     
     for (const script of scripts) {
       try {
@@ -467,7 +467,7 @@ class ContextBasedTestingFramework {
    * Run teardown scripts
    */
   private async runTeardownScripts(scripts: string[]): Promise<void> {
-    console.log('🧹 Running teardown scripts...');
+    console.info('🧹 Running teardown scripts...');
     
     for (const script of scripts) {
       try {
@@ -591,7 +591,7 @@ class ContextBasedTestingFramework {
    * Run tests for multiple contexts
    */
   public async runMultipleContextTests(tokens: string[], options: any = {}): Promise<TestRunResult[]> {
-    console.log(`🧪 Running tests for ${tokens.length} contexts...`);
+    console.info(`🧪 Running tests for ${tokens.length} contexts...`);
     
     const results: TestRunResult[] = [];
     
@@ -691,15 +691,15 @@ if (import.meta.main) {
     case 'run':
       if (target) {
         framework.runContextTests(target).then(result => {
-          console.log('\n📊 Test Results:');
-          console.log(`Passed: ${result.summary.passed}/${result.summary.total}`);
-          console.log(`Coverage: ${result.summary.coverage}%`);
-          console.log(`Duration: ${result.summary.duration}ms`);
+          console.info('\n📊 Test Results:');
+          console.info(`Passed: ${result.summary.passed}/${result.summary.total}`);
+          console.info(`Coverage: ${result.summary.coverage}%`);
+          console.info(`Duration: ${result.summary.duration}ms`);
           
           if (result.summary.failed > 0) {
-            console.log('\n❌ Failed Tests:');
+            console.info('\n❌ Failed Tests:');
             result.tests.filter(t => t.status === 'failed').forEach(test => {
-              console.log(`  - ${test.name}: ${test.errors.join(', ')}`);
+              console.info(`  - ${test.name}: ${test.errors.join(', ')}`);
             });
           }
         });
@@ -711,20 +711,20 @@ if (import.meta.main) {
         const tokens = target.split(',');
         framework.runMultipleContextTests(tokens).then(results => {
           const report = framework.generateTestReport(results);
-          console.log(report);
+          console.info(report);
         });
       }
       break;
 
     case 'list':
-      console.log('📋 Available Test Suites:');
+      console.info('📋 Available Test Suites:');
       for (const [token, suite] of framework.getTestSuites()) {
-        console.log(`  ${token}: ${suite.tests.length} tests`);
+        console.info(`  ${token}: ${suite.tests.length} tests`);
       }
       break;
 
     default:
-      console.log(`
+      console.info(`
 Context-Based Testing Framework
 
 Usage:

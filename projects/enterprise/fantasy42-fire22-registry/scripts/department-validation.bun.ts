@@ -19,8 +19,8 @@ import { $ } from 'bun';
 import * as fs from 'fs';
 import * as path from 'path';
 
-console.log('🏛️ Fire22 Department Validation Workflow');
-console.log('======================================');
+console.info('🏛️ Fire22 Department Validation Workflow');
+console.info('======================================');
 
 // Department validation configuration
 const departmentConfig = {
@@ -182,18 +182,18 @@ async function runDepartmentValidation(departmentId: string, packageName?: strin
   const dept = departmentConfig[departmentId];
   if (!dept) {
     console.error(`❌ Unknown department: ${departmentId}`);
-    console.log('Available departments:');
+    console.info('Available departments:');
     Object.keys(departmentConfig).forEach(id => {
-      console.log(`  - ${id}: ${departmentConfig[id].name}`);
+      console.info(`  - ${id}: ${departmentConfig[id].name}`);
     });
     return;
   }
 
-  console.log(`\n🏛️ ${dept.name} Department Validation`);
-  console.log(`📋 Department Head: ${dept.head}`);
-  console.log(`👥 Validators: ${dept.validators.join(', ')}`);
-  console.log(`📦 Primary Packages: ${dept.primaryPackages.join(', ') || 'None'}`);
-  console.log(`🔒 Compliance Framework: ${dept.compliance.join(', ')}`);
+  console.info(`\n🏛️ ${dept.name} Department Validation`);
+  console.info(`📋 Department Head: ${dept.head}`);
+  console.info(`👥 Validators: ${dept.validators.join(', ')}`);
+  console.info(`📦 Primary Packages: ${dept.primaryPackages.join(', ') || 'None'}`);
+  console.info(`🔒 Compliance Framework: ${dept.compliance.join(', ')}`);
 
   // Get packages to validate
   const packagesToValidate = packageName
@@ -202,7 +202,7 @@ async function runDepartmentValidation(departmentId: string, packageName?: strin
       ? dept.primaryPackages
       : ['packages/branding-audit', 'packages/benchmark-orchestrator', 'packages/compliance-checker', 'packages/security-audit'];
 
-  console.log(`\n📦 Validating packages: ${packagesToValidate.join(', ')}`);
+  console.info(`\n📦 Validating packages: ${packagesToValidate.join(', ')}`);
 
   const results: ValidationResult[] = [];
 
@@ -216,20 +216,20 @@ async function runDepartmentValidation(departmentId: string, packageName?: strin
 
   // Determine overall status
   const overallStatus = determineOverallStatus(results);
-  console.log(`\n🎯 Overall Validation Status: ${overallStatus}`);
+  console.info(`\n🎯 Overall Validation Status: ${overallStatus}`);
 
   if (overallStatus === 'PASSED') {
-    console.log('✅ Department validation completed successfully!');
-    console.log('📋 Validation report generated: department-validation-report.json');
+    console.info('✅ Department validation completed successfully!');
+    console.info('📋 Validation report generated: department-validation-report.json');
   } else {
-    console.log('⚠️ Department validation completed with issues');
-    console.log('📋 Review validation report for details: department-validation-report.json');
+    console.info('⚠️ Department validation completed with issues');
+    console.info('📋 Review validation report for details: department-validation-report.json');
   }
 }
 
 // Validate package for specific department
 async function validatePackageForDepartment(pkg: string, dept: any): Promise<ValidationResult> {
-  console.log(`\n🔍 Validating ${pkg} for ${dept.name}...`);
+  console.info(`\n🔍 Validating ${pkg} for ${dept.name}...`);
 
   const result: ValidationResult = {
     department: dept.name,
@@ -288,7 +288,7 @@ async function validatePackageForDepartment(pkg: string, dept: any): Promise<Val
       result.recommendations.push('Package validation successful - ready for release');
     }
 
-    console.log(`✅ ${pkg} validation completed: ${result.status}`);
+    console.info(`✅ ${pkg} validation completed: ${result.status}`);
 
   } catch (error) {
     result.status = 'FAILED';
@@ -312,7 +312,7 @@ async function validatePackageForDepartment(pkg: string, dept: any): Promise<Val
 
 // Run individual validation step
 async function runValidationStep(step: string, pkg: string, dept: any) {
-  console.log(`   🔍 Running ${step} check...`);
+  console.info(`   🔍 Running ${step} check...`);
 
   try {
     switch (step) {
@@ -520,7 +520,7 @@ async function generateValidationReport(dept: any, results: ValidationResult[]) 
   };
 
   await Bun.write('department-validation-report.json', JSON.stringify(report, null, 2));
-  console.log('📋 Validation report generated: department-validation-report.json');
+  console.info('📋 Validation report generated: department-validation-report.json');
 }
 
 // Determine overall validation status
@@ -542,15 +542,15 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log('Usage: bun run scripts/department-validation.bun.ts <department> [package]');
-    console.log('\nAvailable departments:');
+    console.info('Usage: bun run scripts/department-validation.bun.ts <department> [package]');
+    console.info('\nAvailable departments:');
     Object.keys(departmentConfig).forEach(id => {
       const dept = departmentConfig[id];
-      console.log(`  ${id}: ${dept.name} (${dept.head})`);
+      console.info(`  ${id}: ${dept.name} (${dept.head})`);
     });
-    console.log('\nExamples:');
-    console.log('  bun run scripts/department-validation.bun.ts security-compliance');
-    console.log('  bun run scripts/department-validation.bun.ts design packages/branding-audit');
+    console.info('\nExamples:');
+    console.info('  bun run scripts/department-validation.bun.ts security-compliance');
+    console.info('  bun run scripts/department-validation.bun.ts design packages/branding-audit');
     return;
   }
 

@@ -7,7 +7,7 @@ import {
 import { inspect } from 'bun';
 
 // Demo 1: Enhanced Interactive Viewer with Real-time Features
-console.log("=== Demo 1: Enhanced Interactive Table Viewer ===");
+console.info("=== Demo 1: Enhanced Interactive Table Viewer ===");
 
 // Enhanced data with more realistic service statuses and metrics
 const enhancedData: TableData = {
@@ -293,9 +293,9 @@ const enhancedViewer = new InteractiveTableViewer(enhancedData, {
 let updateInterval: any = null;
 
 function simulateRealTimeUpdates() {
-  console.log("\n🔄 Starting real-time data simulation...");
-  console.log("💡 Services will update automatically every 3 seconds");
-  console.log("⏹️  Press Ctrl+C to stop simulation\n");
+  console.info("\n🔄 Starting real-time data simulation...");
+  console.info("💡 Services will update automatically every 3 seconds");
+  console.info("⏹️  Press Ctrl+C to stop simulation\n");
 
   updateInterval = setInterval(() => {
     // Randomly update some service metrics
@@ -324,7 +324,7 @@ function simulateRealTimeUpdates() {
       const newStatus = statuses[Math.floor(Math.random() * statuses.length)];
       if (newStatus !== currentStatus) {
         service.status = newStatus;
-        console.log(`🔄 Status changed for ${service.name}: ${currentStatus} → ${newStatus}`);
+        console.info(`🔄 Status changed for ${service.name}: ${currentStatus} → ${newStatus}`);
       }
     }
 
@@ -335,9 +335,9 @@ function simulateRealTimeUpdates() {
 
 // Enhanced interactive demo
 function runInteractiveDemo() {
-  console.log("🎯 Welcome to the Enhanced Interactive Table Viewer Demo!");
-  console.log("📊 This demo showcases real-time service monitoring with interactive controls");
-  console.log("🎮 Use keyboard controls to navigate and interact with the data\n");
+  console.info("🎯 Welcome to the Enhanced Interactive Table Viewer Demo!");
+  console.info("📊 This demo showcases real-time service monitoring with interactive controls");
+  console.info("🎮 Use keyboard controls to navigate and interact with the data\n");
 
   // Show initial view
   enhancedViewer.render();
@@ -355,7 +355,7 @@ function runInteractiveDemo() {
           clearInterval(updateInterval);
           updateInterval = null;
         }
-        console.log("\n\n👋 Demo stopped. Thanks for trying the Enhanced Interactive Table Viewer!");
+        console.info("\n\n👋 Demo stopped. Thanks for trying the Enhanced Interactive Table Viewer!");
         if (typeof globalThis !== 'undefined' && (globalThis as any).process) {
           (globalThis as any).process.exit(0);
         }
@@ -367,22 +367,22 @@ function runInteractiveDemo() {
 
   // Demonstrate different features automatically
   setTimeout(() => {
-    console.log("\n🔍 Auto-filtering to show only 'healthy' services...");
+    console.info("\n🔍 Auto-filtering to show only 'healthy' services...");
     enhancedViewer.setFilter('healthy');
   }, 8000);
 
   setTimeout(() => {
-    console.log("\n📊 Auto-sorting by CPU usage (descending)...");
+    console.info("\n📊 Auto-sorting by CPU usage (descending)...");
     enhancedViewer.setSortColumn('cpu');
   }, 15000);
 
   setTimeout(() => {
-    console.log("\n🔄 Clearing filter to show all services...");
+    console.info("\n🔄 Clearing filter to show all services...");
     enhancedViewer.setFilter('');
   }, 22000);
 
   setTimeout(() => {
-    console.log("\n📈 Auto-sorting by connections (descending)...");
+    console.info("\n📈 Auto-sorting by connections (descending)...");
     enhancedViewer.setSortColumn('connections');
   }, 29000);
 }
@@ -390,7 +390,7 @@ function runInteractiveDemo() {
 // Run the enhanced demo
 runInteractiveDemo();
 
-console.log("\n=== Demo 2: Factory Methods ===");
+console.info("\n=== Demo 2: Factory Methods ===");
 
 // Demo using factory methods
 const proxyServers = [
@@ -425,7 +425,7 @@ const proxyViewer = InteractiveTableViewer.forProxyServers(proxyServers, {
   pageSize: 5
 });
 
-console.log("Proxy Servers Viewer:");
+console.info("Proxy Servers Viewer:");
 proxyViewer.render();
 
 const metrics = [
@@ -478,7 +478,7 @@ const metricsViewer = InteractiveTableViewer.forMetrics(metrics, {
   pageSize: 4
 });
 
-console.log("\nMetrics Viewer:");
+console.info("\nMetrics Viewer:");
 metricsViewer.render();
 
 const config = [
@@ -524,10 +524,10 @@ const configViewer = InteractiveTableViewer.forConfiguration(config, {
   pageSize: 3
 });
 
-console.log("\nConfiguration Viewer:");
+console.info("\nConfiguration Viewer:");
 configViewer.render();
 
-console.log("\n=== Demo 3: Advanced Features ===");
+console.info("\n=== Demo 3: Advanced Features ===");
 
 // Demo with custom formatting
 const advancedData: TableData = {
@@ -600,47 +600,47 @@ const advancedViewer = new InteractiveTableViewer(advancedData, {
 // Apply custom formatting
 advancedViewer.render();
 
-console.log("\n=== Demo 4: Sorting and Filtering Simulation ===");
+console.info("\n=== Demo 4: Sorting and Filtering Simulation ===");
 
 // Simulate sorting by different columns
-console.log("Sorting by 'name' (asc):");
+console.info("Sorting by 'name' (asc):");
 enhancedViewer.setSortColumn('name');
 enhancedViewer.render();
 
-console.log("\nSorting by 'connections' (desc):");
+console.info("\nSorting by 'connections' (desc):");
 enhancedViewer.setSortColumn('connections');
 enhancedViewer.render();
 
-console.log("\nFiltering by 'active':");
+console.info("\nFiltering by 'active':");
 enhancedViewer.setFilter('active');
 enhancedViewer.render();
 
-console.log("\n=== Demo 5: Pagination Navigation ===");
+console.info("\n=== Demo 5: Pagination Navigation ===");
 
 // Navigate through pages
 enhancedViewer.setFilter(''); // Clear filter
 enhancedViewer.goToPage(1);
-console.log("Page 1:");
+console.info("Page 1:");
 enhancedViewer.render();
 
 enhancedViewer.nextPage();
-console.log("\nPage 2:");
+console.info("\nPage 2:");
 enhancedViewer.render();
 
 enhancedViewer.nextPage();
-console.log("\nPage 3:");
+console.info("\nPage 3:");
 enhancedViewer.render();
 
-console.log("\n=== Interactive Table Viewer Demo Complete ===");
-console.log("The InteractiveTableViewer provides:");
-console.log("✅ Real-time sorting and filtering");
-console.log("✅ Pagination with customizable page sizes");
-console.log("✅ Interactive command interface");
-console.log("✅ Factory methods for common use cases");
-console.log("✅ Custom formatting and styling");
-console.log("✅ Responsive table rendering");
-console.log("✅ Keyboard navigation support");
-console.log("✅ Status indicators and badges");
-console.log("✅ Multiple export formats");
-console.log("✅ Theme support (dark/light)");
-console.log("✅ Progress bars and visual indicators");
+console.info("\n=== Interactive Table Viewer Demo Complete ===");
+console.info("The InteractiveTableViewer provides:");
+console.info("✅ Real-time sorting and filtering");
+console.info("✅ Pagination with customizable page sizes");
+console.info("✅ Interactive command interface");
+console.info("✅ Factory methods for common use cases");
+console.info("✅ Custom formatting and styling");
+console.info("✅ Responsive table rendering");
+console.info("✅ Keyboard navigation support");
+console.info("✅ Status indicators and badges");
+console.info("✅ Multiple export formats");
+console.info("✅ Theme support (dark/light)");
+console.info("✅ Progress bars and visual indicators");

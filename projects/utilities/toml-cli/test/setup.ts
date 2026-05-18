@@ -131,7 +131,7 @@ export const performanceTestUtils = {
     const duration = performance.now() - start;
 
     if (label) {
-      console.log(`⏱️ ${label}: ${duration.toFixed(2)}ms`);
+      console.info(`⏱️ ${label}: ${duration.toFixed(2)}ms`);
     }
 
     return { result, duration };
@@ -156,11 +156,11 @@ export const performanceTestUtils = {
     const min = Math.min(...times);
     const max = Math.max(...times);
 
-    console.log(`📊 Benchmark: ${name}`);
-    console.log(`   Iterations: ${iterations}`);
-    console.log(`   Average: ${avg.toFixed(2)}ms`);
-    console.log(`   Min: ${min.toFixed(2)}ms`);
-    console.log(`   Max: ${max.toFixed(2)}ms`);
+    console.info(`📊 Benchmark: ${name}`);
+    console.info(`   Iterations: ${iterations}`);
+    console.info(`   Average: ${avg.toFixed(2)}ms`);
+    console.info(`   Min: ${min.toFixed(2)}ms`);
+    console.info(`   Max: ${max.toFixed(2)}ms`);
 
     return { avg, min, max, times };
   },
@@ -206,7 +206,7 @@ export const memoryTestUtils = {
     const memoryDelta = after.heapUsed - before.heapUsed;
 
     if (label) {
-      console.log(`🧠 ${label} memory: ${memoryDelta > 0 ? '+' : ''}${memoryDelta} bytes`);
+      console.info(`🧠 ${label} memory: ${memoryDelta > 0 ? '+' : ''}${memoryDelta} bytes`);
     }
 
     return { result, memoryDelta, peakMemory };

@@ -311,19 +311,19 @@ if (import.meta.main) {
   const uploader = new ProfileSessionUploader(config);
   const identity = uploader.getTerminalIdentity();
 
-  console.log(`Terminal Session: ${identity.sessionId}`);
-  console.log(`User: ${identity.user}@${identity.hostname} (PID ${identity.pid})`);
-  console.log(`Scanning: ${resolve(config.profilesDir || './profiles')}`);
-  console.log('');
+  console.info(`Terminal Session: ${identity.sessionId}`);
+  console.info(`User: ${identity.user}@${identity.hostname} (PID ${identity.pid})`);
+  console.info(`Scanning: ${resolve(config.profilesDir || './profiles')}`);
+  console.info('');
 
   const entries = await uploader.scanAndUpload();
 
   if (entries.length === 0) {
-    console.log('No new profile files found.');
+    console.info('No new profile files found.');
   } else {
-    console.log(`Uploaded ${entries.length} profile(s):`);
+    console.info(`Uploaded ${entries.length} profile(s):`);
     for (const entry of entries) {
-      console.log(
+      console.info(
         `  ${entry.type.toUpperCase()} ${entry.filename} -> ${entry.r2Key} (${(entry.sizeBytes / 1024).toFixed(1)} KB)`
       );
     }

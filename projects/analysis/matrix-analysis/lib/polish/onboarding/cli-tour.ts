@@ -25,7 +25,7 @@ export class CLITour extends BaseTour {
 
     // Clear previous output
     if (Runtime.supportsTTY) {
-      console.log();
+      console.info();
     }
 
     // Show progress indicator
@@ -48,7 +48,7 @@ export class CLITour extends BaseTour {
     const progress = `[${currentIndex + 1}/${total}]`;
     const bar = this.createProgressBar(currentIndex, total);
 
-    console.log(colors.dim(`${progress} ${bar}`));
+    console.info(colors.dim(`${progress} ${bar}`));
   }
 
   private createProgressBar(current: number, total: number): string {
@@ -67,28 +67,28 @@ export class CLITour extends BaseTour {
     const titleWidth = Math.min(Runtime.getTerminalWidth() - 4, 60);
     const titlePadding = Math.floor((titleWidth - step.title.length - 2) / 2);
 
-    console.log(colors.info("╭" + "─".repeat(titleWidth) + "╮"));
-    console.log(
+    console.info(colors.info("╭" + "─".repeat(titleWidth) + "╮"));
+    console.info(
       colors.info("│") +
       " ".repeat(titlePadding) +
       colors.bold(step.title) +
       " ".repeat(titleWidth - titlePadding - step.title.length) +
       colors.info("│")
     );
-    console.log(colors.info("├" + "─".repeat(titleWidth) + "┤"));
+    console.info(colors.info("├" + "─".repeat(titleWidth) + "┤"));
 
     // Content with word wrap
     const contentLines = this.wrapText(step.content, titleWidth - 2);
     for (const line of contentLines) {
-      console.log(colors.info("│") + " " + line.padEnd(titleWidth - 1) + colors.info("│"));
+      console.info(colors.info("│") + " " + line.padEnd(titleWidth - 1) + colors.info("│"));
     }
 
-    console.log(colors.info("╰" + "─".repeat(titleWidth) + "╯"));
+    console.info(colors.info("╰" + "─".repeat(titleWidth) + "╯"));
 
     // Show target hint if present
     if (step.target) {
-      console.log();
-      console.log(colors.dim(`  📍 Try: ${step.target}`));
+      console.info();
+      console.info(colors.dim(`  📍 Try: ${step.target}`));
     }
   }
 
@@ -111,7 +111,7 @@ export class CLITour extends BaseTour {
   }
 
   private showNavigationHint(currentIndex: number): void {
-    console.log();
+    console.info();
 
     const hints: string[] = [];
 
@@ -129,12 +129,12 @@ export class CLITour extends BaseTour {
       hints.push(colors.dim("[s] Skip tour"));
     }
 
-    console.log("  " + hints.join("  "));
+    console.info("  " + hints.join("  "));
   }
 
   protected async onComplete(): Promise<void> {
-    console.log();
-    console.log(colors.success("✓ Tour completed!"));
+    console.info();
+    console.info(colors.success("✓ Tour completed!"));
 
     // Celebration animation
     if (Runtime.supportsTTY) {

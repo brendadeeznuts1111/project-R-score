@@ -46,44 +46,44 @@ type ProcessInfo = {
 };
 
 async function demonstrateCliSecurity(): Promise<void> {
-  console.log('🔐 DuoPlus CLI Security Demo');
-  console.log('=============================');
-  console.log('This demo shows the security features of the DuoPlus CLI system');
-  console.log('Using the inspection CLI which is fully functional\n');
+  console.info('🔐 DuoPlus CLI Security Demo');
+  console.info('=============================');
+  console.info('This demo shows the security features of the DuoPlus CLI system');
+  console.info('Using the inspection CLI which is fully functional\n');
 
   try {
     // 1. Show CLI help to demonstrate available commands
-    console.log('1. 📋 Available CLI Commands:');
+    console.info('1. 📋 Available CLI Commands:');
     const helpResult = await spawnCommand(['bun', 'run', 'src/@inspection/cli.ts', 'help']);
-    console.log(helpResult);
+    console.info(helpResult);
 
     // 2. Show system metrics (demonstrates CLI data access)
-    console.log('2. 📊 System Metrics (CLI Data Access):');
+    console.info('2. 📊 System Metrics (CLI Data Access):');
     const metricsResult = await spawnCommand(['bun', 'run', 'src/@inspection/cli.ts', 'metrics']);
-    console.log(metricsResult);
+    console.info(metricsResult);
 
     // 3. Show tree structure (demonstrates CLI system inspection)
-    console.log('3. 🌳 System Tree Structure (CLI Inspection):');
+    console.info('3. 🌳 System Tree Structure (CLI Inspection):');
     const treeResult = await spawnCommand(['bun', 'run', 'src/@inspection/cli.ts', 'tree']);
-    console.log(treeResult);
+    console.info(treeResult);
 
     // 4. Demonstrate CLI security features
-    console.log('4. 🔒 CLI Security Features:');
-    console.log('   ✅ Type-safe execution with TypeScript');
-    console.log('   ✅ Sandboxed command execution');
-    console.log('   ✅ Error handling and validation');
-    console.log('   ✅ No external dependencies (pure Bun)');
-    console.log('   ✅ Memory-efficient operations');
+    console.info('4. 🔒 CLI Security Features:');
+    console.info('   ✅ Type-safe execution with TypeScript');
+    console.info('   ✅ Sandboxed command execution');
+    console.info('   ✅ Error handling and validation');
+    console.info('   ✅ No external dependencies (pure Bun)');
+    console.info('   ✅ Memory-efficient operations');
 
     // 5. Show Bun's native security features
-    console.log('\n5. 🛡️ Bun Native Security:');
-    console.log('   ✅ Secure module loading');
-    console.log('   ✅ Sandboxed runtime');
-    console.log('   ✅ Memory safety');
-    console.log('   ✅ Type safety with TypeScript');
+    console.info('\n5. 🛡️ Bun Native Security:');
+    console.info('   ✅ Secure module loading');
+    console.info('   ✅ Sandboxed runtime');
+    console.info('   ✅ Memory safety');
+    console.info('   ✅ Type safety with TypeScript');
 
     // 6. Demonstrate secure environment handling
-    console.log('\n6. 🔐 Environment Security:');
+    console.info('\n6. 🔐 Environment Security:');
     const envCheck: Record<string, string | number | boolean> = {
       NODE_ENV: (process as any).env.NODE_ENV || 'development',
       BUN_VERSION: (process as any).versions.bun,
@@ -93,17 +93,17 @@ async function demonstrateCliSecurity(): Promise<void> {
       TYPE_SAFE: true
     };
     
-    console.log('   Environment Variables (Sanitized):');
+    console.info('   Environment Variables (Sanitized):');
     Object.entries(envCheck).forEach(([key, value]) => {
       if (key.includes('KEY') || key.includes('SECRET') || key.includes('TOKEN')) {
-        console.log(`   ${key}: ***REDACTED***`);
+        console.info(`   ${key}: ***REDACTED***`);
       } else {
-        console.log(`   ${key}: ${value}`);
+        console.info(`   ${key}: ${value}`);
       }
     });
 
     // 7. Show CLI process security
-    console.log('\n7. ⚡ Process Security:');
+    console.info('\n7. ⚡ Process Security:');
     const processInfo: ProcessInfo = {
       pid: (process as any).pid,
       ppid: (process as any).ppid,
@@ -113,23 +113,23 @@ async function demonstrateCliSecurity(): Promise<void> {
       title: (process as any).title
     };
     
-    console.log('   Process Information:');
+    console.info('   Process Information:');
     Object.entries(processInfo).forEach(([key, value]) => {
       if (typeof value === 'object') {
-        console.log(`   ${key}: ${JSON.stringify(value, null, 6)}`);
+        console.info(`   ${key}: ${JSON.stringify(value, null, 6)}`);
       } else {
-        console.log(`   ${key}: ${value}`);
+        console.info(`   ${key}: ${value}`);
       }
     });
 
-    console.log('\n✅ CLI Security Demo Completed Successfully!');
-    console.log('\n🎯 Key Security Features Demonstrated:');
-    console.log('   • Type-safe command execution');
-    console.log('   • Secure environment handling');
-    console.log('   • Memory-efficient operations');
-    console.log('   • Sandboxed runtime environment');
-    console.log('   • Error handling and validation');
-    console.log('   • No external security dependencies');
+    console.info('\n✅ CLI Security Demo Completed Successfully!');
+    console.info('\n🎯 Key Security Features Demonstrated:');
+    console.info('   • Type-safe command execution');
+    console.info('   • Secure environment handling');
+    console.info('   • Memory-efficient operations');
+    console.info('   • Sandboxed runtime environment');
+    console.info('   • Error handling and validation');
+    console.info('   • No external security dependencies');
 
   } catch (error: any) {
     console.error('❌ Demo failed:', error);

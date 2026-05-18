@@ -179,7 +179,7 @@ export function createBenchmarkSuite(name: string, iterations: number = 1000) {
     iterations,
     run: (testName: string, fn: () => void) => {
       const result = benchmark(testName, fn, iterations);
-      console.log(formatBenchmarkResult(result));
+      console.info(formatBenchmarkResult(result));
       return result;
     },
   };

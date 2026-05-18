@@ -70,18 +70,18 @@ async function startDevServer() {
 	const port = parseInt(Bun.env.PORT || process.env.PORT || args[1] || String(DEFAULT_PORT));
 	const host = Bun.env.HOST || process.env.HOST || args[2] || DEFAULT_HOST;
 
-	console.log("🚀 Starting Dashboard Development Server...\n");
+	console.info("🚀 Starting Dashboard Development Server...\n");
 
 	// Check if dev-server.ts exists
 	const devServerPath = join(DASHBOARD_DIR, "dev-server.ts");
 	const devServerExists = await Bun.file(devServerPath).exists();
 
 	if (devServerExists) {
-		console.log(`📡 Starting server on http://${host}:${port}`);
-		console.log(
+		console.info(`📡 Starting server on http://${host}:${port}`);
+		console.info(
 			`📊 Dashboard: http://${host}:${port}/dashboard.html?demo=ai-risk-analysis\n`,
 		);
-		console.log("💡 Press Ctrl+C to stop\n");
+		console.info("💡 Press Ctrl+C to stop\n");
 
 		// Run the dev server
 		await $`cd ${DASHBOARD_DIR} && bun dev-server.ts`.env({
@@ -90,8 +90,8 @@ async function startDevServer() {
 		});
 	} else {
 		// Fallback: Use Bun's built-in server
-		console.log(`📡 Starting Bun server on http://${host}:${port}`);
-		console.log(
+		console.info(`📡 Starting Bun server on http://${host}:${port}`);
+		console.info(
 			`📊 Dashboard: http://${host}:${port}/dashboard.html?demo=ai-risk-analysis\n`,
 		);
 
@@ -116,13 +116,13 @@ async function startDevServer() {
 			},
 		});
 
-		console.log("💡 Press Ctrl+C to stop\n");
+		console.info("💡 Press Ctrl+C to stop\n");
 	}
 }
 
 // Run performance benchmarks
 async function runBenchmarks() {
-	console.log("📊 Running Performance Benchmarks...\n");
+	console.info("📊 Running Performance Benchmarks...\n");
 
 	// Check if running from project root or pages directory
 	const benchPath = join(DASHBOARD_DIR, "..", "bench", "fraud-detection-bench.ts");
@@ -150,7 +150,7 @@ async function runBenchmarks() {
 
 // Validate optimizations
 async function validateOptimizations() {
-	console.log("✅ Validating Optimizations...\n");
+	console.info("✅ Validating Optimizations...\n");
 
 	const checks = [
 		{
@@ -205,15 +205,15 @@ async function validateOptimizations() {
 	for (const { name, check } of checks) {
 		const passed = await check();
 		const icon = passed ? "✅" : "❌";
-		console.log(`${icon} ${name}: ${passed ? "Active" : "Missing"}`);
+		console.info(`${icon} ${name}: ${passed ? "Active" : "Missing"}`);
 		if (!passed) allPassed = false;
 	}
 
-	console.log("\n" + "=".repeat(50));
+	console.info("\n" + "=".repeat(50));
 	if (allPassed) {
-		console.log("✅ All optimizations validated!");
+		console.info("✅ All optimizations validated!");
 	} else {
-		console.log("❌ Some optimizations are missing");
+		console.info("❌ Some optimizations are missing");
 		process.exit(1);
 	}
 }
@@ -223,14 +223,14 @@ async function buildDashboard() {
 	const isProduction = Bun.env.NODE_ENV === "production" || process.env.NODE_ENV === "production";
 	const env = isProduction ? "production" : "development";
 	
-	console.log(`🔨 Building Dashboard for ${env.toUpperCase()}...\n`);
+	console.info(`🔨 Building Dashboard for ${env.toUpperCase()}...\n`);
 
 	// Build TypeScript heatmap with --define for dead code elimination
 	const heatmapSrc = join(DASHBOARD_DIR, "risk-heatmap.ts");
 	const heatmapDest = join(DASHBOARD_DIR, "assets/js/risk-heatmap.js");
 
-	console.log("📦 Compiling risk-heatmap.ts...");
-	console.log(`   Using --define process.env.NODE_ENV="${env}"`);
+	console.info("📦 Compiling risk-heatmap.ts...");
+	console.info(`   Using --define process.env.NODE_ENV="${env}"`);
 	
 	// Use --define to statically replace NODE_ENV for dead code elimination
 	// Bun.$ needs command and args separated, not a single string
@@ -251,30 +251,30 @@ async function buildDashboard() {
 	
 	await $`bun ${buildArgs}`;
 
-	console.log("✅ Build complete!");
-	console.log(`   Output: ${heatmapDest}`);
-	console.log(`   Environment: ${env}`);
+	console.info("✅ Build complete!");
+	console.info(`   Output: ${heatmapDest}`);
+	console.info(`   Environment: ${env}`);
 	if (isProduction) {
-		console.log("   ⚡ Dead code elimination enabled (production-only code removed)");
+		console.info("   ⚡ Dead code elimination enabled (production-only code removed)");
 	}
 }
 
 // Show help message
 function showHelp() {
-	console.log("🎯 Dashboard CLI - Fraud Detection Dashboard Manager\n");
-	console.log("Usage: bun cli/dashboard/dashboard-cli.ts <command> [options]\n");
-	console.log("Commands:\n");
+	console.info("🎯 Dashboard CLI - Fraud Detection Dashboard Manager\n");
+	console.info("Usage: bun cli/dashboard/dashboard-cli.ts <command> [options]\n");
+	console.info("Commands:\n");
 
 	for (const [cmd, desc] of Object.entries(commands)) {
-		console.log(`  ${cmd.padEnd(12)} ${desc}`);
+		console.info(`  ${cmd.padEnd(12)} ${desc}`);
 	}
 
-	console.log("\nExamples:");
-	console.log("  bun cli/dashboard/dashboard-cli.ts serve          # Start dev server");
-	console.log("  bun cli/dashboard/dashboard-cli.ts serve 3000    # Start on port 3000");
-	console.log("  bun cli/dashboard/dashboard-cli.ts bench          # Run benchmarks");
-	console.log("  bun cli/dashboard/dashboard-cli.ts validate      # Validate optimizations");
-	console.log("  bun cli/dashboard/dashboard-cli.ts build         # Build for production");
+	console.info("\nExamples:");
+	console.info("  bun cli/dashboard/dashboard-cli.ts serve          # Start dev server");
+	console.info("  bun cli/dashboard/dashboard-cli.ts serve 3000    # Start on port 3000");
+	console.info("  bun cli/dashboard/dashboard-cli.ts bench          # Run benchmarks");
+	console.info("  bun cli/dashboard/dashboard-cli.ts validate      # Validate optimizations");
+	console.info("  bun cli/dashboard/dashboard-cli.ts build         # Build for production");
 }
 
 // Get content type from file path

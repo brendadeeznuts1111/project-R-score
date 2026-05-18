@@ -4,7 +4,7 @@ export async function profileList(): Promise<void> {
 	const profiles = await listProfiles();
 
 	if (profiles.length === 0) {
-		console.log(`No profiles found in ${getProfilesDir()}`);
+		console.info(`No profiles found in ${getProfilesDir()}`);
 		return;
 	}
 
@@ -22,5 +22,5 @@ export async function profileList(): Promise<void> {
 		}
 	}
 
-	console.log(Bun.inspect.table(rows, undefined, { colors: !process.env.NO_COLOR }));
+	console.info(Bun.inspect.table(rows, undefined, { colors: !process.env.NO_COLOR }));
 }

@@ -228,7 +228,7 @@ async function saveModelMetadata(
 if (require.main === module) {
   trainAnomalyModel()
     .then((result) => {
-      console.log("Training result:", JSON.stringify(result, null, 2));
+      console.info("Training result:", JSON.stringify(result, null, 2));
       process.exit(result.success ? 0 : 1);
     })
     .catch((error) => {

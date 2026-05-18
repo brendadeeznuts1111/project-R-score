@@ -971,7 +971,7 @@ export async function migrateExistingServices(integrationManager: ServiceIntegra
 
   for (const service of services) {
     try {
-      console.log(`🚀 Migrating service: ${service}`);
+      console.info(`🚀 Migrating service: ${service}`);
 
       // Register service
       integrationManager.registerService(service, '1.0.0');
@@ -979,7 +979,7 @@ export async function migrateExistingServices(integrationManager: ServiceIntegra
       // Migrate to new system
       await integrationManager.migrateService(service);
 
-      console.log(`✅ Successfully migrated: ${service}`);
+      console.info(`✅ Successfully migrated: ${service}`);
 
     } catch (error) {
       console.error(`❌ Failed to migrate ${service}:`, error);

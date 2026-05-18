@@ -16,7 +16,7 @@ function sendToParent(type: string, data: any) {
 function handleStatusRequest(message: ParentMessage) {
   const { metrics } = message;
   
-  console.log(`📊 Gathering system metrics...`);
+  console.info(`📊 Gathering system metrics...`);
   
   // Update metrics with some randomness
   systemMetrics.cpu = Math.random() * 30 + 20;
@@ -48,7 +48,7 @@ function handleStatusRequest(message: ParentMessage) {
 function handleTrainingCommand(message: ParentMessage) {
   const { command, targetAccuracy } = message;
   
-  console.log(`🧠 Training command: ${command} (target: ${targetAccuracy}%)`);
+  console.info(`🧠 Training command: ${command} (target: ${targetAccuracy}%)`);
   
   if (command === 'deploy_model') {
     sendToParent('model_deployed', {

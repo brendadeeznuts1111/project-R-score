@@ -177,7 +177,7 @@ export class XPathElementHandler {
         maxLength: action === 'write' ? 5000 : undefined,
       },
       onSuccess: (element, result) => {
-        console.log(`✅ Successfully handled Fantasy402 element:`, {
+        console.info(`✅ Successfully handled Fantasy402 element:`, {
           xpath,
           action,
           elementType: element.tagName,
@@ -334,7 +334,7 @@ export class XPathElementHandler {
 
     const observer = new MutationObserver(mutations => {
       mutations.forEach(mutation => {
-        console.log(`Element changed at ${xpath}:`, mutation.type);
+        console.info(`Element changed at ${xpath}:`, mutation.type);
       });
     });
 
@@ -369,7 +369,7 @@ export class XPathElementHandler {
     }
 
     // Log success for audit trail
-    console.log(`Fantasy402 ${action} success:`, {
+    console.info(`Fantasy402 ${action} success:`, {
       element: element.tagName,
       id: element.id,
       className: element.className,
@@ -410,7 +410,7 @@ export class XPathElementHandler {
     }
 
     // Could trigger auto-save or real-time updates
-    console.log('Fantasy402 update triggered for element:', element.id || element.className);
+    console.info('Fantasy402 update triggered for element:', element.id || element.className);
   }
 
   /**
@@ -418,7 +418,7 @@ export class XPathElementHandler {
    */
   private handleFantasy402Click(element: Element): void {
     // Could trigger modal opening, form submission, or other actions
-    console.log('Fantasy402 click handled for element:', element.id || element.className);
+    console.info('Fantasy402 click handled for element:', element.id || element.className);
   }
 
   /**
@@ -426,7 +426,7 @@ export class XPathElementHandler {
    */
   private handleFantasy402Submit(element: Element, data: any): void {
     // Could trigger API calls, validation, or processing
-    console.log('Fantasy402 submit handled for element:', element.id || element.className);
+    console.info('Fantasy402 submit handled for element:', element.id || element.className);
   }
 
   /**
@@ -464,7 +464,7 @@ export class XPathElementHandler {
     // Could retry failed operations
     // Could reset form state
     // Could provide alternative actions
-    console.log('Fantasy402 recovery attempted for:', {
+    console.info('Fantasy402 recovery attempted for:', {
       element: element?.id || element?.className,
       error,
       action,
@@ -478,14 +478,14 @@ export class XPathElementHandler {
     // Disconnect all observers
     this.observers.forEach((observer, xpath) => {
       observer.disconnect();
-      console.log(`Observer disconnected for: ${xpath}`);
+      console.info(`Observer disconnected for: ${xpath}`);
     });
     this.observers.clear();
 
     // Clear cache
     this.xpathCache.clear();
 
-    console.log('XPathElementHandler cleaned up');
+    console.info('XPathElementHandler cleaned up');
   }
 }
 

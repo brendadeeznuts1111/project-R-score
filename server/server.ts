@@ -71,12 +71,12 @@ async function handleBinaryData(url: URL): Promise<Response> {
     // This endpoint demonstrates the exact pattern from Bun docs
     const exampleCode = `// Example from Bun docs: https://bun.sh/docs/runtime/networking/fetch
 const response = await fetch("${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}");
-console.log(response.status); // => 200
+console.info(response.status); // => 200
 const text = await response.text(); // or response.json(), response.arrayBuffer(), etc.
 
 // Our typed array base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}
 const typedArrayResponse = await fetch("${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}");
-console.log(\`TypedArray docs status: \${typedArrayResponse.status}\`);
+console.info(\`TypedArray docs status: \${typedArrayResponse.status}\`);
 `;
     
     return new Response(exampleCode, {
@@ -235,9 +235,9 @@ console.log(\`TypedArray docs status: \${typedArrayResponse.status}\`);
       <h2>Try the Fetch Pattern</h2>
       <pre><code>// Using Bun's native fetch pattern:
 const response = await fetch("/api/typedarray/urls");
-console.log(response.status); // => 200
+console.info(response.status); // => 200
 const data = await response.json();
-console.log(data.base); // => "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}"</code></pre>
+console.info(data.base); // => "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}"</code></pre>
       
       <button onclick="testFetch()">Test Fetch</button>
       <div id="result"></div>
@@ -273,8 +273,8 @@ console.log(data.base); // => "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}"</code><
   },
 };
 
-console.log(`🚀 Starting Bun TypedArray Documentation Server on port ${SERVER_PORT}...`);
-console.log(`📚 Base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`);
-console.log(`🌐 Visit: http://${SERVER_HOST}:${SERVER_PORT}`);
+console.info(`🚀 Starting Bun TypedArray Documentation Server on port ${SERVER_PORT}...`);
+console.info(`📚 Base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`);
+console.info(`🌐 Visit: http://${SERVER_HOST}:${SERVER_PORT}`);
 
 export default server;

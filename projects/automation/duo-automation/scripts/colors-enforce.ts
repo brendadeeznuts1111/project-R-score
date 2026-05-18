@@ -23,7 +23,7 @@ class ColorEnforcement {
   }
 
   async installEnforcementHooks() {
-    console.log('🔧 Installing Color Enforcement Hooks...');
+    console.info('🔧 Installing Color Enforcement Hooks...');
     
     if (this.config.hooks) {
       await this.installGitHooks();
@@ -35,11 +35,11 @@ class ColorEnforcement {
     
     await this.setupColorValidation();
     
-    console.log('✅ Color enforcement hooks installed successfully!');
+    console.info('✅ Color enforcement hooks installed successfully!');
   }
 
   private async installGitHooks() {
-    console.log('🎣 Setting up Git hooks for color enforcement...');
+    console.info('🎣 Setting up Git hooks for color enforcement...');
     
     const hooksDir = join(process.cwd(), '.git', 'hooks');
     const preCommitHook = `#!/bin/bash
@@ -57,11 +57,11 @@ echo "✅ Color system validation passed."
     writeFileSync(join(hooksDir, 'pre-commit'), preCommitHook);
     execSync('chmod +x .git/hooks/pre-commit');
     
-    console.log('✅ Pre-commit color validation hook installed.');
+    console.info('✅ Pre-commit color validation hook installed.');
   }
 
   private async setupRepoWideEnforcement() {
-    console.log('🌐 Setting up repository-wide color enforcement...');
+    console.info('🌐 Setting up repository-wide color enforcement...');
     
     const colorConfig = {
       enforcedColors: {
@@ -80,11 +80,11 @@ echo "✅ Color system validation passed."
     };
     
     writeFileSync('color-enforcement.json', JSON.stringify(colorConfig, null, 2));
-    console.log('✅ Repository-wide color configuration created.');
+    console.info('✅ Repository-wide color configuration created.');
   }
 
   private async setupColorValidation() {
-    console.log('🔍 Setting up color validation system...');
+    console.info('🔍 Setting up color validation system...');
     
     const validateScript = `#!/usr/bin/env bun
 /**
@@ -130,7 +130,7 @@ function scanDirectory(dir) {
     if (file.endsWith('.css') || file.endsWith('.scss') || file.endsWith('.ts') || file.endsWith('.js')) {
       const violations = validateColors(join(dir, file));
       if (violations.length > 0) {
-        console.log(\`❌ Color violations in \${file}:\`, violations);
+        console.info(\`❌ Color violations in \${file}:\`, violations);
         totalViolations += violations.length;
       }
     }
@@ -141,10 +141,10 @@ function scanDirectory(dir) {
 
 const violations = scanDirectory('.');
 if (violations > 0) {
-  console.log(\`❌ Found \${violations} color system violations.\`);
+  console.info(\`❌ Found \${violations} color system violations.\`);
   process.exit(1);
 } else {
-  console.log('✅ All colors comply with the enforced system.');
+  console.info('✅ All colors comply with the enforced system.');
 }
 `;
 
@@ -161,7 +161,7 @@ if (violations > 0) {
     };
     writeFileSync('package.json', JSON.stringify(packageJson, null, 2));
     
-    console.log('✅ Color validation system configured.');
+    console.info('✅ Color validation system configured.');
   }
 }
 

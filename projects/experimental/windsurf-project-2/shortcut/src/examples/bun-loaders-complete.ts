@@ -25,13 +25,13 @@
 
 import { Database } from 'bun:sqlite';
 
-console.log('🚀 Complete Bun Loaders Showcase');
-console.log('==================================');
-console.log('Demonstrating all 18 built-in loaders...\n');
+console.info('🚀 Complete Bun Loaders Showcase');
+console.info('==================================');
+console.info('Demonstrating all 18 built-in loaders...\n');
 
 // Helper to create sample files
 async function createSampleFiles() {
-  console.log('📁 Creating sample files for all loaders...');
+  console.info('📁 Creating sample files for all loaders...');
   
   // 1. JS file with dead code
   await Bun.write('./sample.js', `
@@ -45,7 +45,7 @@ export function deadFunction() {
 }
 
 // This will be kept
-console.log("Hello from JS loader!");
+console.info("Hello from JS loader!");
 `);
 
   // 2. JSX file
@@ -299,57 +299,57 @@ echo "✅ Shell script completed!"
   
   db.close();
 
-  console.log('✅ Sample files created successfully!\n');
+  console.info('✅ Sample files created successfully!\n');
 }
 
 // Main demonstration function
 async function demonstrateLoaders() {
   await createSampleFiles();
 
-  console.log('🔄 All 18 Bun loaders are supported natively!');
-  console.log('===============================================');
+  console.info('🔄 All 18 Bun loaders are supported natively!');
+  console.info('===============================================');
   
-  console.log('\n📋 Loader Categories:');
-  console.log('   📄 Configuration: js, jsx, ts, tsx, json, jsonc, toml, yaml');
-  console.log('   🎨 Content: text, html, css');
-  console.log('   🔧 System: napi, sqlite, sh, file');
+  console.info('\n📋 Loader Categories:');
+  console.info('   📄 Configuration: js, jsx, ts, tsx, json, jsonc, toml, yaml');
+  console.info('   🎨 Content: text, html, css');
+  console.info('   🔧 System: napi, sqlite, sh, file');
   
-  console.log('\n🚀 Key Advantages:');
-  console.log('   ✅ Zero configuration needed');
-  console.log('   ✅ Runtime + Bundler parity');
-  console.log('   ✅ Native parsers (no npm dependencies)');
-  console.log('   ✅ Performance optimized');
-  console.log('   ✅ TypeScript support built-in');
+  console.info('\n🚀 Key Advantages:');
+  console.info('   ✅ Zero configuration needed');
+  console.info('   ✅ Runtime + Bundler parity');
+  console.info('   ✅ Native parsers (no npm dependencies)');
+  console.info('   ✅ Performance optimized');
+  console.info('   ✅ TypeScript support built-in');
   
-  console.log('\n📁 Sample files created for testing:');
-  console.log('   • sample.js - JavaScript with dead-code elimination');
-  console.log('   • sample.jsx - JSX component');
-  console.log('   • sample.ts - TypeScript (syntax stripped)');
-  console.log('   • sample.tsx - TypeScript + JSX');
-  console.log('   • sample.json - JSON configuration');
-  console.log('   • sample.jsonc - JSON with comments');
-  console.log('   • sample.toml - TOML configuration');
-  console.log('   • sample.yaml - YAML configuration');
-  console.log('   • sample.txt - Plain text content');
-  console.log('   • sample.html - HTML with asset bundling');
-  console.log('   • sample.css - CSS with @import and url()');
-  console.log('   • sample.sh - Bun Shell script');
-  console.log('   • logo.svg - File loader demo');
-  console.log('   • sample.db - SQLite database');
+  console.info('\n📁 Sample files created for testing:');
+  console.info('   • sample.js - JavaScript with dead-code elimination');
+  console.info('   • sample.jsx - JSX component');
+  console.info('   • sample.ts - TypeScript (syntax stripped)');
+  console.info('   • sample.tsx - TypeScript + JSX');
+  console.info('   • sample.json - JSON configuration');
+  console.info('   • sample.jsonc - JSON with comments');
+  console.info('   • sample.toml - TOML configuration');
+  console.info('   • sample.yaml - YAML configuration');
+  console.info('   • sample.txt - Plain text content');
+  console.info('   • sample.html - HTML with asset bundling');
+  console.info('   • sample.css - CSS with @import and url()');
+  console.info('   • sample.sh - Bun Shell script');
+  console.info('   • logo.svg - File loader demo');
+  console.info('   • sample.db - SQLite database');
   
-  console.log('\n🎯 Usage Examples:');
-  console.log('   import config from "./app.toml";        // TOML loader');
-  console.log('   import styles from "./styles.css";       // CSS loader');
-  console.log('   import db from "./data.db" with { type: "sqlite" }; // SQLite loader');
-  console.log('   import html from "./index.html";         // HTML loader');
+  console.info('\n🎯 Usage Examples:');
+  console.info('   import config from "./app.toml";        // TOML loader');
+  console.info('   import styles from "./styles.css";       // CSS loader');
+  console.info('   import db from "./data.db" with { type: "sqlite" }; // SQLite loader');
+  console.info('   import html from "./index.html";         // HTML loader');
   
-  console.log('\n🔥 This demonstrates Bun\'s comprehensive loader system!');
-  console.log('   No webpack, no babel, no postcss - just Bun! 🚀');
+  console.info('\n🔥 This demonstrates Bun\'s comprehensive loader system!');
+  console.info('   No webpack, no babel, no postcss - just Bun! 🚀');
 }
 
 // Cleanup function
 async function cleanup() {
-  console.log('\n🧹 Cleaning up sample files...');
+  console.info('\n🧹 Cleaning up sample files...');
   const files = [
     './sample.js', './sample.jsx', './sample.ts', './sample.tsx',
     './sample.json', './sample.jsonc', './sample.toml', './sample.yaml',
@@ -365,7 +365,7 @@ async function cleanup() {
     }
   }
   
-  console.log('✅ Cleanup completed!');
+  console.info('✅ Cleanup completed!');
 }
 
 // Run the demonstration

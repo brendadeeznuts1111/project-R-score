@@ -255,12 +255,12 @@ const server = serve({
   }
 });
 
-console.log(`🚀 Tier-1380 MCP Server running on http://${MCP_SERVER.host}:${MCP_SERVER.port}`);
-console.log(`📋 Manifest: http://${MCP_SERVER.host}:${MCP_SERVER.port}/manifest.json`);
-console.log(`🔧 Available tools: ${Object.keys(MCP_HANDLERS).join(', ')}`);
+console.info(`🚀 Tier-1380 MCP Server running on http://${MCP_SERVER.host}:${MCP_SERVER.port}`);
+console.info(`📋 Manifest: http://${MCP_SERVER.host}:${MCP_SERVER.port}/manifest.json`);
+console.info(`🔧 Available tools: ${Object.keys(MCP_HANDLERS).join(', ')}`);
 
 // Example usage:
-console.log(`
+console.info(`
 Example MCP Commands:
   curl -X POST http://localhost:3003/mcp/test/config \\
     -H "Content-Type: application/json" \\

@@ -69,8 +69,8 @@ class TemplateCreationWizard {
      * Run the interactive template creation wizard
      */
     async runWizard(): Promise<void> {
-        console.log(chalk.blue.bold('🧙‍♂️ Template Creation Wizard'));
-        console.log(chalk.gray('Create consistent, standards-compliant templates\n'));
+        console.info(chalk.blue.bold('🧙‍♂️ Template Creation Wizard'));
+        console.info(chalk.gray('Create consistent, standards-compliant templates\n'));
 
         try {
             await this.collectUserInput();
@@ -78,8 +78,8 @@ class TemplateCreationWizard {
             const template = await this.generateTemplate();
             await this.saveTemplate(template);
 
-            console.log(chalk.green.bold('\n🎉 Template created successfully!'));
-            console.log(chalk.cyan(`📍 Location: ${this.getTemplatePath()}`));
+            console.info(chalk.green.bold('\n🎉 Template created successfully!'));
+            console.info(chalk.cyan(`📍 Location: ${this.getTemplatePath()}`));
 
         } catch (error) {
             console.error(chalk.red(`❌ Error: ${error.message}`));
@@ -450,7 +450,7 @@ Content for ${sectionName} section.`;
     // =============================================================================
 
     private async promptInput(message: string): Promise<string> {
-        console.log(chalk.cyan(message));
+        console.info(chalk.cyan(message));
         process.stdout.write('> ');
 
         return new Promise((resolve) => {
@@ -461,9 +461,9 @@ Content for ${sectionName} section.`;
     }
 
     private async promptSelect(message: string, options: string[]): Promise<number> {
-        console.log(chalk.cyan(message));
+        console.info(chalk.cyan(message));
         options.forEach((option, index) => {
-            console.log(chalk.gray(`  ${index + 1}. ${option}`));
+            console.info(chalk.gray(`  ${index + 1}. ${option}`));
         });
 
         process.stdout.write('> ');
@@ -477,7 +477,7 @@ Content for ${sectionName} section.`;
     }
 
     private async promptConfirm(message: string): Promise<boolean> {
-        console.log(chalk.cyan(`${message} (y/n)`));
+        console.info(chalk.cyan(`${message} (y/n)`));
         process.stdout.write('> ');
 
         return new Promise((resolve) => {
@@ -489,9 +489,9 @@ Content for ${sectionName} section.`;
     }
 
     private async promptMultiSelect(message: string, options: string[]): Promise<string[]> {
-        console.log(chalk.cyan(`${message} (comma-separated numbers)`));
+        console.info(chalk.cyan(`${message} (comma-separated numbers)`));
         options.forEach((option, index) => {
-            console.log(chalk.gray(`  ${index + 1}. ${option}`));
+            console.info(chalk.gray(`  ${index + 1}. ${option}`));
         });
 
         process.stdout.write('> ');
@@ -519,11 +519,11 @@ async function main(): Promise<void> {
     const vaultPath = process.cwd();
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('🧙‍♂️ Template Creation Wizard'));
-        console.log(chalk.gray('Usage: bun template-wizard.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
-        console.log(chalk.gray('\nInteractive wizard for creating standards-compliant templates'));
+        console.info(chalk.blue.bold('🧙‍♂️ Template Creation Wizard'));
+        console.info(chalk.gray('Usage: bun template-wizard.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.gray('\nInteractive wizard for creating standards-compliant templates'));
         process.exit(0);
     }
 

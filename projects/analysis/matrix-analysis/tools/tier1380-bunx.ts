@@ -12,45 +12,45 @@ const GLYPH = { pass: "✅", fail: "❌", warn: "⚠️", info: "ℹ️" };
 
 // ─── bunx Integration Demo ─────────────────────────
 async function demonstrateBunx() {
-	console.log("🚀 bunx Integration Demo:");
+	console.info("🚀 bunx Integration Demo:");
 
 	// Example 1: Code formatting with prettier
-	console.log("\n📝 Code Formatting:");
+	console.info("\n📝 Code Formatting:");
 	try {
 		const process = Bun.spawn(["bunx", "prettier", "--version"], {
 			stdout: "pipe",
 			stderr: "pipe",
 		});
 		const output = await new Response(process.stdout).text();
-		console.log(`   • Prettier version: ${output.trim()}`);
+		console.info(`   • Prettier version: ${output.trim()}`);
 	} catch (e) {
 		const errorMsg =
 			e && typeof e === "object" && "message" in e ? e.message : String(e);
-		console.log(`   • Prettier: ${GLYPH.fail} ${errorMsg}`);
+		console.info(`   • Prettier: ${GLYPH.fail} ${errorMsg}`);
 	}
 
 	// Example 2: TypeScript checking
-	console.log("\n🔍 TypeScript Checking:");
+	console.info("\n🔍 TypeScript Checking:");
 	try {
 		const process = Bun.spawn(["bunx", "-p", "typescript", "tsc", "--version"], {
 			stdout: "pipe",
 			stderr: "pipe",
 		});
 		const output = await new Response(process.stdout).text();
-		console.log(`   • TypeScript version: ${output.trim()}`);
+		console.info(`   • TypeScript version: ${output.trim()}`);
 	} catch (e) {
 		const errorMsg =
 			e && typeof e === "object" && "message" in e ? e.message : String(e);
-		console.log(`   • TypeScript: ${GLYPH.fail} ${errorMsg}`);
+		console.info(`   • TypeScript: ${GLYPH.fail} ${errorMsg}`);
 	}
 
 	// Example 3: Package execution info
-	console.log("\n📦 Package Execution:");
-	console.log(`   • bunx = bun x (alias)`);
-	console.log(`   • Auto-installs packages to global cache`);
-	console.log(`   • Supports version pinning: package@version`);
-	console.log(`   • --bun flag forces Bun runtime`);
-	console.log(`   • -p flag for package/binary name differences`);
+	console.info("\n📦 Package Execution:");
+	console.info(`   • bunx = bun x (alias)`);
+	console.info(`   • Auto-installs packages to global cache`);
+	console.info(`   • Supports version pinning: package@version`);
+	console.info(`   • --bun flag forces Bun runtime`);
+	console.info(`   • -p flag for package/binary name differences`);
 }
 
 // ─── Col-89 Scanner (Self-Compliant) ──────────────
@@ -76,7 +76,7 @@ async function scanCol89(file) {
 		if (w > COL_LIMIT) {
 			violations++;
 			const preview = Bun.escapeHTML(Bun.stripANSI(lines[i]).slice(0, 60)) + "…";
-			console.log(`${GLYPH.fail} Line ${i + 1}: ${w} cols → ${preview}`);
+			console.info(`${GLYPH.fail} Line ${i + 1}: ${w} cols → ${preview}`);
 		}
 	}
 
@@ -121,11 +121,11 @@ function initDB() {
 
 // ─── Main Execution ───────────────────────────────
 async function main() {
-	console.log("🎯 Tier-1380 Performance Suite v2.4 (bunx Integration)\n");
+	console.info("🎯 Tier-1380 Performance Suite v2.4 (bunx Integration)\n");
 
 	// Demonstrate bunx capabilities
 	await demonstrateBunx();
-	console.log("\n" + "=".repeat(60));
+	console.info("\n" + "=".repeat(60));
 
 	const db = initDB();
 	const target = process.argv[3] || "src/index.ts";
@@ -145,36 +145,36 @@ async function main() {
 	stmt.run(target, col89.violations, col89.maxWidth, bunxInfo);
 
 	// ─── Report (All lines < 89 cols) ───────────────
-	console.log(`\n📊 Results for: ${target}`);
-	console.log(`${"=".repeat(60)}`);
+	console.info(`\n📊 Results for: ${target}`);
+	console.info(`${"=".repeat(60)}`);
 
 	// Col-89 status
 	const colStatus = col89.violations === 0 ? GLYPH.pass : GLYPH.fail;
-	console.log(
+	console.info(
 		`${colStatus} Col-89: ${col89.violations} violations ` +
 			`(max ${col89.maxWidth}, avg ${col89.avgWidth})`,
 	);
 
 	// Hardware
-	console.log(
+	console.info(
 		`${GLYPH.info} Hardware: ${Math.round(hardware.throughput).toLocaleString()} ` +
 			`${hardware.unit} (${hardware.duration.toFixed(2)}ms)`,
 	);
 
 	// bunx integration info
-	console.log(`${GLYPH.info} bunx: Package executor integrated`);
+	console.info(`${GLYPH.info} bunx: Package executor integrated`);
 
 	// Health score
 	const score = Math.max(0, 100 - col89.violations * 2);
 	const color = score >= 80 ? "32" : score >= 60 ? "33" : "31";
-	console.log(`\n\x1b[${color}m🏥 Health Score: ${score}%\x1b[0m`);
+	console.info(`\n\x1b[${color}m🏥 Health Score: ${score}%\x1b[0m`);
 
 	// bunx usage examples
-	console.log(`\n📦 bunx Usage Examples:`);
-	console.log(`   • bunx prettier --write file.js`);
-	console.log(`   • bunx -p typescript tsc --noEmit`);
-	console.log(`   • bunx uglify-js@3.14.0 app.js -c -m`);
-	console.log(`   • bunx --bun vite dev`);
+	console.info(`\n📦 bunx Usage Examples:`);
+	console.info(`   • bunx prettier --write file.js`);
+	console.info(`   • bunx -p typescript tsc --noEmit`);
+	console.info(`   • bunx uglify-js@3.14.0 app.js -c -m`);
+	console.info(`   • bunx --bun vite dev`);
 
 	db.close();
 }

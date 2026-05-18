@@ -292,7 +292,7 @@ export class UnicodeSecurityDashboard {
       setInterval(async () => {
         await this.updateMetrics();
         console.clear();
-        console.log(this.generateDashboard());
+        console.info(this.generateDashboard());
       }, 5000);
     }
   }

@@ -16,18 +16,18 @@ const nested = {
 	rootValue: "Root level value",
 };
 
-console.log("=== Console Depth Demonstration ===");
-console.log("\n📊 Default depth (2):");
-console.log(nested);
+console.info("=== Console Depth Demonstration ===");
+console.info("\n📊 Default depth (2):");
+console.info(nested);
 
-console.log("\n📊 Depth 1 (shallow):");
-console.log(JSON.stringify(nested, null, 2));
+console.info("\n📊 Depth 1 (shallow):");
+console.info(JSON.stringify(nested, null, 2));
 
-console.log("\n📊 Depth 3 (medium):");
-console.log(JSON.stringify(nested, null, 2));
+console.info("\n📊 Depth 3 (medium):");
+console.info(JSON.stringify(nested, null, 2));
 
-console.log("\n📊 Depth 5 (deep):");
-console.log(JSON.stringify(nested, null, 2));
+console.info("\n📊 Depth 5 (deep):");
+console.info(JSON.stringify(nested, null, 2));
 
 // Table demonstration
 const features = [
@@ -63,7 +63,7 @@ const features = [
 	},
 ];
 
-console.log("\n📋 Feature Configuration Table:");
+console.info("\n📋 Feature Configuration Table:");
 console.table(
 	features.map((f) => ({
 		Feature: f.name,
@@ -75,4 +75,4 @@ console.table(
 	})),
 );
 
-console.log("\n✅ Console depth demonstration complete!");
+console.info("\n✅ Console depth demonstration complete!");

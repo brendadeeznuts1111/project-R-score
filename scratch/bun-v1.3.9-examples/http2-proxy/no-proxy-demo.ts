@@ -10,22 +10,22 @@
 
 // Simulate a fetch with proxy configuration
 async function testProxyBypass() {
-  console.log("=".repeat(60));
-  console.log("Bun v1.3.9 NO_PROXY Demo");
-  console.log("=".repeat(60));
-  console.log(`Bun version: ${Bun.version}`);
-  console.log("");
+  console.info("=".repeat(60));
+  console.info("Bun v1.3.9 NO_PROXY Demo");
+  console.info("=".repeat(60));
+  console.info(`Bun version: ${Bun.version}`);
+  console.info("");
   
   // Show current environment
   const noProxy = process.env.NO_PROXY || "";
   const httpProxy = process.env.HTTP_PROXY || process.env.http_proxy || "";
   const httpsProxy = process.env.HTTPS_PROXY || process.env.https_proxy || "";
   
-  console.log("Environment:");
-  console.log(`  NO_PROXY=${noProxy || "(not set)"}`);
-  console.log(`  HTTP_PROXY=${httpProxy || "(not set)"}`);
-  console.log(`  HTTPS_PROXY=${httpsProxy || "(not set)"}`);
-  console.log("");
+  console.info("Environment:");
+  console.info(`  NO_PROXY=${noProxy || "(not set)"}`);
+  console.info(`  HTTP_PROXY=${httpProxy || "(not set)"}`);
+  console.info(`  HTTPS_PROXY=${httpsProxy || "(not set)"}`);
+  console.info("");
   
   // Test URLs
   const testUrls = [
@@ -39,11 +39,11 @@ async function testProxyBypass() {
   // If NO_PROXY is set, check if URLs should bypass
   if (noProxy) {
     const noProxyList = noProxy.split(",").map(s => s.trim());
-    console.log(`NO_PROXY list: ${JSON.stringify(noProxyList)}`);
-    console.log("");
+    console.info(`NO_PROXY list: ${JSON.stringify(noProxyList)}`);
+    console.info("");
     
-    console.log("URL Bypass Analysis:");
-    console.log("-".repeat(60));
+    console.info("URL Bypass Analysis:");
+    console.info("-".repeat(60));
     
     for (const { url, expectedBypass } of testUrls) {
       const urlObj = new URL(url);
@@ -59,15 +59,15 @@ async function testProxyBypass() {
       });
       
       const status = shouldBypass === expectedBypass ? "✓" : "✗";
-      console.log(`${status} ${url.padEnd(35)} | Bypass: ${shouldBypass ? "YES" : "NO "} | Expected: ${expectedBypass ? "YES" : "NO "}`);
+      console.info(`${status} ${url.padEnd(35)} | Bypass: ${shouldBypass ? "YES" : "NO "} | Expected: ${expectedBypass ? "YES" : "NO "}`);
     }
   }
   
-  console.log("");
-  console.log("-".repeat(60));
-  console.log("Code Example:");
-  console.log("-".repeat(60));
-  console.log(`
+  console.info("");
+  console.info("-".repeat(60));
+  console.info("Code Example:");
+  console.info("-".repeat(60));
+  console.info(`
 // Previously, setting NO_PROXY only worked when the proxy was
 // auto-detected from http_proxy/HTTP_PROXY environment variables.
 // If you explicitly passed a proxy option to fetch() or new WebSocket(),
@@ -88,16 +88,16 @@ const ws = new WebSocket("ws://localhost:3000/ws", {
 });
 `);
   
-  console.log("");
-  console.log("✓ NO_PROXY is now ALWAYS respected in v1.3.9+");
-  console.log("  (even with explicit proxy configuration)");
+  console.info("");
+  console.info("✓ NO_PROXY is now ALWAYS respected in v1.3.9+");
+  console.info("  (even with explicit proxy configuration)");
 }
 
 // Test actual fetch behavior (requires running servers)
 async function testActualFetch() {
-  console.log("\n" + "=".repeat(60));
-  console.log("Live Fetch Test (requires HTTP server on :3000)");
-  console.log("=".repeat(60));
+  console.info("\n" + "=".repeat(60));
+  console.info("Live Fetch Test (requires HTTP server on :3000)");
+  console.info("=".repeat(60));
   
   try {
     // Try to fetch from localhost
@@ -106,10 +106,10 @@ async function testActualFetch() {
       // proxy: "http://some-proxy:8080"
       // But NO_PROXY=localhost would bypass it
     });
-    console.log(`✓ Localhost fetch succeeded: ${response.status}`);
+    console.info(`✓ Localhost fetch succeeded: ${response.status}`);
   } catch (err: any) {
     if (err.code === "ECONNREFUSED") {
-      console.log("ℹ No server on localhost:3000 (expected for demo)");
+      console.info("ℹ No server on localhost:3000 (expected for demo)");
     } else {
       console.error(`✗ Fetch error: ${err.message}`);
     }

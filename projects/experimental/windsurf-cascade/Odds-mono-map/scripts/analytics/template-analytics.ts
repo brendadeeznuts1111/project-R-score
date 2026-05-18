@@ -67,11 +67,11 @@ class TemplateUsageAnalytics {
      * Run comprehensive template usage analytics
      */
     async runAnalytics(): Promise<AnalyticsReport> {
-        console.log(chalk.blue.bold('📊 Running Template Usage Analytics...'));
+        console.info(chalk.blue.bold('📊 Running Template Usage Analytics...'));
 
         try {
             const files = await this.getAllTemplateFiles();
-            console.log(chalk.cyan(`Analyzing ${files.length} templates for usage patterns...`));
+            console.info(chalk.cyan(`Analyzing ${files.length} templates for usage patterns...`));
 
             for (const filePath of files) {
                 await this.analyzeTemplate(filePath);
@@ -394,46 +394,46 @@ class TemplateUsageAnalytics {
      * Display the analytics report
      */
     private displayReport(report: AnalyticsReport): void {
-        console.log(chalk.blue.bold('\n📊 Template Usage Analytics Report'));
-        console.log(chalk.gray('='.repeat(70)));
-        console.log(chalk.cyan(`Generated: ${report.timestamp.toISOString()}`));
+        console.info(chalk.blue.bold('\n📊 Template Usage Analytics Report'));
+        console.info(chalk.gray('='.repeat(70)));
+        console.info(chalk.cyan(`Generated: ${report.timestamp.toISOString()}`));
 
-        console.log(chalk.blue.bold('\n📈 Overview:'));
-        console.log(chalk.gray(`Total templates: ${report.totalTemplates}`));
-        console.log(chalk.gray(`Average usage score: ${report.averageUsageScore.toFixed(1)}/100`));
+        console.info(chalk.blue.bold('\n📈 Overview:'));
+        console.info(chalk.gray(`Total templates: ${report.totalTemplates}`));
+        console.info(chalk.gray(`Average usage score: ${report.averageUsageScore.toFixed(1)}/100`));
 
         // Most used templates
-        console.log(chalk.green.bold('\n🏆 Most Used Templates:'));
+        console.info(chalk.green.bold('\n🏆 Most Used Templates:'));
         for (const template of report.mostUsedTemplates) {
-            console.log(chalk.gray(`   ${template.name}: ${template.usageScore}/100 (${template.backlinks} backlinks)`));
+            console.info(chalk.gray(`   ${template.name}: ${template.usageScore}/100 (${template.backlinks} backlinks)`));
         }
 
         // Least used templates
-        console.log(chalk.red.bold('\n📉 Least Used Templates:'));
+        console.info(chalk.red.bold('\n📉 Least Used Templates:'));
         for (const template of report.leastUsedTemplates) {
-            console.log(chalk.gray(`   ${template.name}: ${template.usageScore}/100 (${template.backlinks} backlinks)`));
+            console.info(chalk.gray(`   ${template.name}: ${template.usageScore}/100 (${template.backlinks} backlinks)`));
         }
 
         // Recommendations by category
-        console.log(chalk.yellow.bold('\n💡 Recommendations by Category:'));
+        console.info(chalk.yellow.bold('\n💡 Recommendations by Category:'));
         for (const [category, recommendations] of Object.entries(report.recommendationsByCategory)) {
             if (recommendations.length > 0) {
-                console.log(chalk.cyan(`\n📂 ${category} (${recommendations.length} recommendations):`));
+                console.info(chalk.cyan(`\n📂 ${category} (${recommendations.length} recommendations):`));
                 const uniqueRecommendations = [...new Set(recommendations)].slice(0, 3);
                 for (const rec of uniqueRecommendations) {
-                    console.log(chalk.gray(`   ${rec}`));
+                    console.info(chalk.gray(`   ${rec}`));
                 }
             }
         }
 
         // Optimization opportunities
-        console.log(chalk.blue.bold('\n🎯 Optimization Opportunities:'));
+        console.info(chalk.blue.bold('\n🎯 Optimization Opportunities:'));
         for (const opportunity of report.optimizationOpportunities) {
-            console.log(chalk.gray(`   ${opportunity}`));
+            console.info(chalk.gray(`   ${opportunity}`));
         }
 
         // Usage distribution
-        console.log(chalk.blue.bold('\n📊 Usage Score Distribution:'));
+        console.info(chalk.blue.bold('\n📊 Usage Score Distribution:'));
         const distribution = {
             '80-100': this.metrics.filter(m => m.usageScore >= 80).length,
             '60-79': this.metrics.filter(m => m.usageScore >= 60 && m.usageScore < 80).length,
@@ -445,7 +445,7 @@ class TemplateUsageAnalytics {
         for (const [range, count] of Object.entries(distribution)) {
             const percentage = ((count / this.metrics.length) * 100).toFixed(1);
             const bar = '█'.repeat(Math.ceil(percentage / 5));
-            console.log(chalk.gray(`   ${range}: ${count} templates (${percentage}%) ${bar}`));
+            console.info(chalk.gray(`   ${range}: ${count} templates (${percentage}%) ${bar}`));
         }
     }
 }
@@ -459,11 +459,11 @@ async function main(): Promise<void> {
     const vaultPath = process.cwd();
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('📊 Template Usage Analytics'));
-        console.log(chalk.gray('Usage: bun template-analytics.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
-        console.log(chalk.gray('\nAnalyzes template usage patterns and provides recommendations'));
+        console.info(chalk.blue.bold('📊 Template Usage Analytics'));
+        console.info(chalk.gray('Usage: bun template-analytics.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.gray('\nAnalyzes template usage patterns and provides recommendations'));
         process.exit(0);
     }
 

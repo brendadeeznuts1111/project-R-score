@@ -7,13 +7,13 @@
 // Make this file a module to allow top-level await
 export {};
 
-console.log("🔬 Bun.spawnSync() Performance Test");
-console.log("==================================\n");
+console.info("🔬 Bun.spawnSync() Performance Test");
+console.info("==================================\n");
 
 // Test the exact example from the docs
 const SPAWN_COUNT = 100;
 
-console.log(`Running ${SPAWN_COUNT} spawnSync operations...`);
+console.info(`Running ${SPAWN_COUNT} spawnSync operations...`);
 
 // Before fix: ~13ms per spawn
 // After fix: ~0.4ms per spawn
@@ -30,17 +30,17 @@ Bun.spawnSync(["true"]);
 const spawnEnd = performance.now();
 const avgTime = (spawnEnd - spawnStart) * 1000; // Convert to ms
 
-console.log(`\nAverage time per spawn: ${avgTime.toFixed(3)} ms`);
-console.log(`Expected after fix: ~0.4ms per spawn`);
-console.log(`Expected before fix: ~13ms per spawn`);
+console.info(`\nAverage time per spawn: ${avgTime.toFixed(3)} ms`);
+console.info(`Expected after fix: ~0.4ms per spawn`);
+console.info(`Expected before fix: ~13ms per spawn`);
 
 if (avgTime < 1) {
-  console.log("✅ Performance looks optimized!");
+  console.info("✅ Performance looks optimized!");
 } else {
-  console.log("⚠️  Might be using the slow fallback");
+  console.info("⚠️  Might be using the slow fallback");
 }
 
-console.log("\n💡 Fix details:");
-console.log("- Uses close_range() syscall efficiently");
-console.log("- Eliminates 65K file descriptor iteration");
-console.log("- ~30x faster on Linux ARM64");
+console.info("\n💡 Fix details:");
+console.info("- Uses close_range() syscall efficiently");
+console.info("- Eliminates 65K file descriptor iteration");
+console.info("- ~30x faster on Linux ARM64");

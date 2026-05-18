@@ -44,9 +44,9 @@ async function watchRegistry(registryId: string) {
 	
 	if (!metadata) {
 		console.error(`${c.red}Registry not found: ${registryId}${c.reset}`);
-		console.log(`\n${c.yellow}Available registries:${c.reset}`);
+		console.info(`\n${c.yellow}Available registries:${c.reset}`);
 		Object.keys(NEXUS_REGISTRY_OF_REGISTRIES).forEach(id => {
-			console.log(`  - ${id}`);
+			console.info(`  - ${id}`);
 		});
 		process.exit(1);
 	}
@@ -55,9 +55,9 @@ async function watchRegistry(registryId: string) {
 		console.warn(`${c.yellow}Warning: Registry ${registryId} is not real-time enabled${c.reset}`);
 	}
 
-	console.log(`${c.cyan}[17.14.0] Watching ${metadata.name} (${metadata.id})${c.reset}`);
-	console.log(`${c.dim}Radiance Channel: ${metadata.radianceChannel}${c.reset}`);
-	console.log(`${c.dim}Severity: ${metadata.radianceSeverity}${c.reset}\n`);
+	console.info(`${c.cyan}[17.14.0] Watching ${metadata.name} (${metadata.id})${c.reset}`);
+	console.info(`${c.dim}Radiance Channel: ${metadata.radianceChannel}${c.reset}`);
+	console.info(`${c.dim}Severity: ${metadata.radianceSeverity}${c.reset}\n`);
 
 	const protocol = process.env.PROTOCOL === 'https' ? 'wss:' : 'ws:';
 	const host = process.env.HOST || 'localhost:3001';
@@ -67,10 +67,10 @@ async function watchRegistry(registryId: string) {
 		const ws = new WebSocket(wsUrl);
 
 		ws.onopen = () => {
-			console.log(`${c.green}✓ Connected to Radiance${c.reset}`);
+			console.info(`${c.green}✓ Connected to Radiance${c.reset}`);
 			ws.send(JSON.stringify({ type: 'SUBSCRIBE', channel: metadata.radianceChannel }));
 			ws.send(JSON.stringify({ type: 'SUBSCRIBE', channel: 'radiance-registry' }));
-			console.log(`${c.cyan}Subscribed to: ${metadata.radianceChannel}, radiance-registry${c.reset}\n`);
+			console.info(`${c.cyan}Subscribed to: ${metadata.radianceChannel}, radiance-registry${c.reset}\n`);
 		};
 
 		ws.onmessage = (e) => {
@@ -86,7 +86,7 @@ async function watchRegistry(registryId: string) {
 							event.severity === 'warn' ? c.yellow :
 							c.blue;
 
-						console.log(
+						console.info(
 							`${c.dim}[${time}]${c.reset} ` +
 							`${severityColor}${event.type}${c.reset} ` +
 							`${c.magenta}${event.registry}${c.reset} ` +
@@ -104,13 +104,13 @@ async function watchRegistry(registryId: string) {
 		};
 
 		ws.onclose = () => {
-			console.log(`\n${c.yellow}Connection closed. Reconnecting...${c.reset}`);
+			console.info(`\n${c.yellow}Connection closed. Reconnecting...${c.reset}`);
 			setTimeout(() => watchRegistry(registryId), 3000);
 		};
 
 		// Keep process alive
 		process.on('SIGINT', () => {
-			console.log(`\n${c.yellow}Disconnecting...${c.reset}`);
+			console.info(`\n${c.yellow}Disconnecting...${c.reset}`);
 			ws.close();
 			process.exit(0);
 		});
@@ -121,7 +121,7 @@ async function watchRegistry(registryId: string) {
 }
 
 async function listRegistries() {
-	console.log(`${c.bold}NEXUS Registry System - All Registries${c.reset}\n`);
+	console.info(`${c.bold}NEXUS Registry System - All Registries${c.reset}\n`);
 	
 	const byCategory: Record<string, typeof NEXUS_REGISTRY_OF_REGISTRIES[string][]> = {};
 	Object.values(NEXUS_REGISTRY_OF_REGISTRIES).forEach(reg => {
@@ -132,15 +132,15 @@ async function listRegistries() {
 	});
 
 	Object.entries(byCategory).forEach(([category, registries]) => {
-		console.log(`${c.cyan}${category.toUpperCase()}${c.reset} (${registries.length})`);
+		console.info(`${c.cyan}${category.toUpperCase()}${c.reset} (${registries.length})`);
 		registries.forEach(reg => {
 			const realtimeBadge = reg.realtime ? `${c.green}●${c.reset}` : `${c.dim}○${c.reset}`;
-			console.log(
+			console.info(
 				`  ${realtimeBadge} ${c.bold}${reg.id}${c.reset} - ${reg.name}`
 			);
-			console.log(`    ${c.dim}${reg.radianceChannel} (${reg.radianceSeverity})${c.reset}`);
+			console.info(`    ${c.dim}${reg.radianceChannel} (${reg.radianceSeverity})${c.reset}`);
 		});
-		console.log();
+		console.info();
 	});
 }
 
@@ -158,12 +158,12 @@ async function getHealth(registryId?: string) {
 			const response = await fetch(`${protocol}//${host}${RSS_API_PATHS.REGISTRY}/${registryId}/health`);
 			const health = await response.json();
 
-			console.log(`${c.bold}${metadata.name} Health Status${c.reset}\n`);
-			console.log(`Status: ${health.status === 'healthy' ? c.green : c.yellow}${health.status}${c.reset}`);
-			console.log(`Healthy: ${health.healthy ? c.green + 'Yes' : c.red + 'No'}${c.reset}`);
-			console.log(`Last Checked: ${health.lastChecked ? new Date(health.lastChecked).toLocaleString() : 'Never'}`);
-			console.log(`Radiance Channel: ${c.magenta}${health.radianceChannel}${c.reset}`);
-			console.log(`Severity: ${health.radianceSeverity}`);
+			console.info(`${c.bold}${metadata.name} Health Status${c.reset}\n`);
+			console.info(`Status: ${health.status === 'healthy' ? c.green : c.yellow}${health.status}${c.reset}`);
+			console.info(`Healthy: ${health.healthy ? c.green + 'Yes' : c.red + 'No'}${c.reset}`);
+			console.info(`Last Checked: ${health.lastChecked ? new Date(health.lastChecked).toLocaleString() : 'Never'}`);
+			console.info(`Radiance Channel: ${c.magenta}${health.radianceChannel}${c.reset}`);
+			console.info(`Severity: ${health.radianceSeverity}`);
 		} catch (error) {
 			console.error(`${c.red}Failed to get health:${c.reset}`, error);
 			process.exit(1);
@@ -175,15 +175,15 @@ async function getHealth(registryId?: string) {
 			const response = await fetch(`${protocol}//${host}${RSS_API_PATHS.REGISTRY}`);
 			const data = await response.json();
 
-			console.log(`${c.bold}NEXUS Registry System Health Overview${c.reset}\n`);
-			console.log(`Total: ${data.total}`);
-			console.log(`Real-time: ${data.radiance?.channels.length || 0}`);
-			console.log(`Healthy: ${data.registries.filter((r: any) => r.status === 'healthy').length}/${data.total}\n`);
+			console.info(`${c.bold}NEXUS Registry System Health Overview${c.reset}\n`);
+			console.info(`Total: ${data.total}`);
+			console.info(`Real-time: ${data.radiance?.channels.length || 0}`);
+			console.info(`Healthy: ${data.registries.filter((r: any) => r.status === 'healthy').length}/${data.total}\n`);
 
 			data.registries.forEach((reg: any) => {
 				const statusColor = reg.status === 'healthy' ? c.green : c.yellow;
 				const realtimeBadge = reg.realtime ? `${c.green}●${c.reset}` : `${c.dim}○${c.reset}`;
-				console.log(
+				console.info(
 					`${realtimeBadge} ${statusColor}${reg.status.padEnd(8)}${c.reset} ${reg.id}`
 				);
 			});
@@ -195,7 +195,7 @@ async function getHealth(registryId?: string) {
 }
 
 function listChannels() {
-	console.log(`${c.bold}Radiance Channels${c.reset}\n`);
+	console.info(`${c.bold}Radiance Channels${c.reset}\n`);
 	
 	const channels = new Set<string>();
 	Object.values(NEXUS_REGISTRY_OF_REGISTRIES).forEach(reg => {
@@ -207,11 +207,11 @@ function listChannels() {
 	channels.forEach(channel => {
 		const registries = Object.values(NEXUS_REGISTRY_OF_REGISTRIES)
 			.filter(r => r.radianceChannel === channel);
-		console.log(`${c.magenta}${channel}${c.reset}`);
+		console.info(`${c.magenta}${channel}${c.reset}`);
 		registries.forEach(reg => {
-			console.log(`  - ${reg.id} (${reg.radianceSeverity})`);
+			console.info(`  - ${reg.id} (${reg.radianceSeverity})`);
 		});
-		console.log();
+		console.info();
 	});
 }
 
@@ -220,7 +220,7 @@ async function main() {
 	const cmd = args[0];
 
 	if (!cmd || cmd === 'help' || cmd === '--help' || cmd === '-h') {
-		console.log(HELP);
+		console.info(HELP);
 		process.exit(0);
 	}
 
@@ -229,7 +229,7 @@ async function main() {
 			case 'watch':
 				if (!args[1]) {
 					console.error(`${c.red}Error: Registry ID required${c.reset}`);
-					console.log(`\n${c.yellow}Usage: bun nexus watch <registry-id>${c.reset}`);
+					console.info(`\n${c.yellow}Usage: bun nexus watch <registry-id>${c.reset}`);
 					process.exit(1);
 				}
 				await watchRegistry(args[1]);
@@ -249,7 +249,7 @@ async function main() {
 
 			default:
 				console.error(`${c.red}Unknown command: ${cmd}${c.reset}`);
-				console.log(HELP);
+				console.info(HELP);
 				process.exit(1);
 		}
 	} catch (error) {

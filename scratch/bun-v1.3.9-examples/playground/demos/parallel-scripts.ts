@@ -7,8 +7,8 @@
 
 import { join } from "node:path";
 
-console.log("🚀 Bun v1.3.9: Parallel & Sequential Script Execution\n");
-console.log("=".repeat(70));
+console.info("🚀 Bun v1.3.9: Parallel & Sequential Script Execution\n");
+console.info("=".repeat(70));
 
 // Create a temporary package.json for demonstration
 const demoDir = import.meta.dir;
@@ -28,9 +28,9 @@ const packageJson = {
 const packageJsonPath = join(demoDir, "package.json");
 await Bun.write(packageJsonPath, JSON.stringify(packageJson, null, 2));
 
-console.log("\n📦 Example 1: Parallel Execution");
-console.log("Command: bun run --parallel build test lint");
-console.log("-".repeat(70));
+console.info("\n📦 Example 1: Parallel Execution");
+console.info("Command: bun run --parallel build test lint");
+console.info("-".repeat(70));
 
 const parallelProc = Bun.spawn({
   cmd: ["bun", "run", "--parallel", "build", "test", "lint"],
@@ -42,9 +42,9 @@ const parallelProc = Bun.spawn({
 
 await parallelProc.exited;
 
-console.log("\n📦 Example 2: Sequential Execution");
-console.log("Command: bun run --sequential build test lint");
-console.log("-".repeat(70));
+console.info("\n📦 Example 2: Sequential Execution");
+console.info("Command: bun run --sequential build test lint");
+console.info("-".repeat(70));
 
 const sequentialProc = Bun.spawn({
   cmd: ["bun", "run", "--sequential", "build", "test", "lint"],
@@ -56,10 +56,10 @@ const sequentialProc = Bun.spawn({
 
 await sequentialProc.exited;
 
-console.log("\n📦 Example 3: Pre/Post Script Grouping");
-console.log("Command: bun run --parallel build test");
-console.log("Notice: prebuild → build → postbuild runs as a group");
-console.log("-".repeat(70));
+console.info("\n📦 Example 3: Pre/Post Script Grouping");
+console.info("Command: bun run --parallel build test");
+console.info("Notice: prebuild → build → postbuild runs as a group");
+console.info("-".repeat(70));
 
 const groupedProc = Bun.spawn({
   cmd: ["bun", "run", "--parallel", "build", "test"],
@@ -71,12 +71,12 @@ const groupedProc = Bun.spawn({
 
 await groupedProc.exited;
 
-console.log("\n✅ Demo complete!");
-console.log("\nKey Features:");
-console.log("  • --parallel: Starts all scripts immediately, interleaved output");
-console.log("  • --sequential: Runs scripts one at a time, sequential output");
-console.log("  • Pre/post scripts: Automatically grouped with main script");
-console.log("  • Output format: 'script-name | output'");
+console.info("\n✅ Demo complete!");
+console.info("\nKey Features:");
+console.info("  • --parallel: Starts all scripts immediately, interleaved output");
+console.info("  • --sequential: Runs scripts one at a time, sequential output");
+console.info("  • Pre/post scripts: Automatically grouped with main script");
+console.info("  • Output format: 'script-name | output'");
 
 // Cleanup
 try {

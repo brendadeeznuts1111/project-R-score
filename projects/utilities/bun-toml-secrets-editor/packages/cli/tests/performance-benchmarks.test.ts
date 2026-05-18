@@ -47,13 +47,13 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
     }
 
     beforeAll(() => {
-        console.log('\n🏁 Starting Bun v1.3.7 Performance Benchmarks...');
-        console.log(`Bun version: ${Bun.version}`);
-        console.log(`Platform: ${process.platform} ${process.arch}`);
+        console.info('\n🏁 Starting Bun v1.3.7 Performance Benchmarks...');
+        console.info(`Bun version: ${Bun.version}`);
+        console.info(`Platform: ${process.platform} ${process.arch}`);
     });
 
     afterAll(() => {
-        console.log('\n🏁 Performance benchmarks completed');
+        console.info('\n🏁 Performance benchmarks completed');
     });
 
     describe('Buffer Performance', () => {
@@ -69,7 +69,7 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
                 BENCHMARK_ITERATIONS.buffer
             );
             
-            console.log(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
+            console.info(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
             
             expect(result.opsPerSecond).toBeGreaterThan(1000); // Should be fast
             expect(result.time).toBeLessThan(10000); // Should complete in reasonable time
@@ -85,7 +85,7 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
                 BENCHMARK_ITERATIONS.buffer
             );
             
-            console.log(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
+            console.info(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
             expect(result.opsPerSecond).toBeGreaterThan(10000);
         });
 
@@ -101,7 +101,7 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
                 BENCHMARK_ITERATIONS.swap16
             );
             
-            console.log(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
+            console.info(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
             expect(result.opsPerSecond).toBeGreaterThan(100000);
         });
 
@@ -118,7 +118,7 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
                 BENCHMARK_ITERATIONS.swap64
             );
             
-            console.log(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
+            console.info(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
             expect(result.opsPerSecond).toBeGreaterThan(50000);
         });
     });
@@ -133,7 +133,7 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
                 BENCHMARK_ITERATIONS.string
             );
             
-            console.log(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
+            console.info(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
             expect(result.opsPerSecond).toBeGreaterThan(100000);
         });
 
@@ -146,7 +146,7 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
                 BENCHMARK_ITERATIONS.string
             );
             
-            console.log(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
+            console.info(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
             expect(result.opsPerSecond).toBeGreaterThan(100000);
         });
 
@@ -164,7 +164,7 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
                     BENCHMARK_ITERATIONS.string
                 );
                 
-                console.log(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
+                console.info(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
                 expect(result.opsPerSecond).toBeGreaterThan(100000);
             }
         });
@@ -187,7 +187,7 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
                 BENCHMARK_ITERATIONS.array
             );
             
-            console.log(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
+            console.info(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
             expect(result.opsPerSecond).toBeGreaterThan(1000);
         });
 
@@ -204,7 +204,7 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
                 BENCHMARK_ITERATIONS.array
             );
             
-            console.log(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
+            console.info(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
             expect(result.opsPerSecond).toBeGreaterThan(10000);
         });
     });
@@ -222,10 +222,10 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
                     BENCHMARK_ITERATIONS.json5
                 );
                 
-                console.log(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
+                console.info(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
                 expect(result.opsPerSecond).toBeGreaterThan(1000);
             } else {
-                console.log('⚠️  JSON5 not available - skipping benchmark');
+                console.info('⚠️  JSON5 not available - skipping benchmark');
             }
         });
 
@@ -243,10 +243,10 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
                     BENCHMARK_ITERATIONS.jsonl
                 );
                 
-                console.log(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
+                console.info(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
                 expect(result.opsPerSecond).toBeGreaterThan(10);
             } else {
-                console.log('⚠️  JSONL not available - skipping benchmark');
+                console.info('⚠️  JSONL not available - skipping benchmark');
             }
         });
 
@@ -262,10 +262,10 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
                     BENCHMARK_ITERATIONS.wrapAnsi
                 );
                 
-                console.log(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
+                console.info(`📊 ${result.name}: ${result.time.toFixed(2)}ms (${result.opsPerSecond.toLocaleString()} ops/sec)`);
                 expect(result.opsPerSecond).toBeGreaterThan(1000);
             } else {
-                console.log('⚠️  wrapAnsi not available - skipping benchmark');
+                console.info('⚠️  wrapAnsi not available - skipping benchmark');
             }
         });
     });
@@ -297,7 +297,7 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
             const end = performance.now();
             const time = end - start;
             
-            console.log(`📊 Async streaming (100 items): ${time.toFixed(2)}ms`);
+            console.info(`📊 Async streaming (100 items): ${time.toFixed(2)}ms`);
             expect(count).toBe(100);
             expect(time).toBeLessThan(1000); // Should complete quickly
         });
@@ -325,10 +325,10 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
             
             const finalMemory = process.memoryUsage();
             
-            console.log(`📊 Memory usage:`);
-            console.log(`   Initial: ${(initialMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-            console.log(`   After buffers: ${(afterBuffersMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-            console.log(`   Final: ${(finalMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+            console.info(`📊 Memory usage:`);
+            console.info(`   Initial: ${(initialMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+            console.info(`   After buffers: ${(afterBuffersMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+            console.info(`   Final: ${(finalMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
             
             // Memory should not grow excessively
             const memoryGrowth = afterBuffersMemory.heapUsed - initialMemory.heapUsed;
@@ -372,7 +372,7 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
                 const threshold = thresholds[result.name as keyof typeof thresholds];
                 if (threshold) {
                     expect(result.opsPerSecond).toBeGreaterThan(threshold);
-                    console.log(`✅ ${result.name}: ${result.opsPerSecond.toLocaleString()} ops/sec (threshold: ${threshold.toLocaleString()})`);
+                    console.info(`✅ ${result.name}: ${result.opsPerSecond.toLocaleString()} ops/sec (threshold: ${threshold.toLocaleString()})`);
                 }
             }
         });
@@ -383,18 +383,18 @@ describe('Bun v1.3.7 Performance Benchmarks', () => {
             const isARM64 = process.arch === 'arm64';
             
             if (isARM64) {
-                console.log('🚀 ARM64 platform detected - expecting Buffer performance gains');
+                console.info('🚀 ARM64 platform detected - expecting Buffer performance gains');
                 
                 const result = benchmark('ARM64 Buffer.from', () => {
                     Buffer.from(Array(256).fill(0).map((_, i) => i % 256));
                 }, 10000);
                 
-                console.log(`📊 ARM64 Buffer performance: ${result.opsPerSecond.toLocaleString()} ops/sec`);
+                console.info(`📊 ARM64 Buffer performance: ${result.opsPerSecond.toLocaleString()} ops/sec`);
                 
                 // ARM64 should show better performance
                 expect(result.opsPerSecond).toBeGreaterThan(5000);
             } else {
-                console.log('💻 Non-ARM64 platform - running standard benchmarks');
+                console.info('💻 Non-ARM64 platform - running standard benchmarks');
             }
         });
     });

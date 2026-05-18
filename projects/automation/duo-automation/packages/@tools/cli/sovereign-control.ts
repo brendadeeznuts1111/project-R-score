@@ -22,13 +22,13 @@ export async function autoHeal() {
  * 🛰️ Atomic Global Deploy (mTLS)
  */
 export async function globalDeploy() {
-  console.log("🛰️ Initializing Global Sovereign Deployment...");
+  console.info("🛰️ Initializing Global Sovereign Deployment...");
   await autoHeal();
   
   const NPM_TOKEN = process.env.NPM_TOKEN || "factory-wager-2024-production-key";
   
   // Parallel fetch of latest R2 packages via mTLS Gateway
-  console.log("📦 Fetching latest packages via mTLS Gateway...");
+  console.info("📦 Fetching latest packages via mTLS Gateway...");
   
   // Simulation of mTLS-authorized fetch
   // In v4.0, this would use the mTLS certificates linked in utils/mtls-registry-handshake.ts
@@ -41,10 +41,10 @@ export async function globalDeploy() {
  * 🔐 mTLS Certificate Rotation
  */
 export async function rotateCerts() {
-  console.log("🔐 Rotating Sovereign mTLS Certificates...");
+  console.info("🔐 Rotating Sovereign mTLS Certificates...");
   // Simulate rotation logic - using workspace-relative path
   await $`mkdir -p .certs`.quiet();
-  console.log("✅ Certificates Rotated & Distributed locally in .certs/");
+  console.info("✅ Certificates Rotated & Distributed locally in .certs/");
 }
 
 const args = process.argv.slice(2);
@@ -54,10 +54,10 @@ if (command === "--init") {
   if (args.includes("--rotate-mtls")) {
     await rotateCerts();
   }
-  console.log("💎 Sovereign Initialization Complete.");
+  console.info("💎 Sovereign Initialization Complete.");
 } else if (command === "--heal" || command === "--report") {
   await autoHeal();
-  console.log("📊 [SOVEREIGN REPORT] System Footprint: 18MB RSS | Capacity: 50,000+ | Entropy: 0.0%");
+  console.info("📊 [SOVEREIGN REPORT] System Footprint: 18MB RSS | Capacity: 50,000+ | Entropy: 0.0%");
 } else if (command === "--deploy" || command === "deploy:v4.0") {
   await globalDeploy();
 } else if (command === "--rotate-mtls") {
@@ -90,7 +90,7 @@ if (command === "--init") {
     await RegistryInfoKernel.pkgFix();
   }
 } else {
-  console.log(`
+  console.info(`
 🏰 Empire Pro v4.0 Sovereign Control
 =========================================
 Usage:

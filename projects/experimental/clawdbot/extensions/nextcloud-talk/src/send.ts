@@ -149,7 +149,7 @@ export async function sendMessageNextcloudTalk(
   }
 
   if (opts.verbose) {
-    console.log(`[nextcloud-talk] Sent message ${messageId} to room ${roomToken}`);
+    console.info(`[nextcloud-talk] Sent message ${messageId} to room ${roomToken}`);
   }
 
   getNextcloudTalkRuntime().channel.activity.record({

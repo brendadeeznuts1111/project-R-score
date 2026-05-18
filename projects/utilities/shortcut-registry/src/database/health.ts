@@ -129,35 +129,35 @@ export function checkDatabaseHealth(): HealthCheckResult {
  * Print health check results
  */
 export function printHealthCheck(result: HealthCheckResult): void {
-  console.log('\n📊 Database Health Check\n');
-  console.log(`Status: ${result.healthy ? '✅ Healthy' : '❌ Unhealthy'}\n`);
+  console.info('\n📊 Database Health Check\n');
+  console.info(`Status: ${result.healthy ? '✅ Healthy' : '❌ Unhealthy'}\n`);
 
-  console.log('Checks:');
-  console.log(`  File Exists:        ${result.checks.fileExists ? '✅' : '❌'}`);
-  console.log(`  Can Connect:        ${result.checks.canConnect ? '✅' : '❌'}`);
-  console.log(`  Tables Exist:       ${result.checks.tablesExist ? '✅' : '❌'}`);
-  console.log(`  Migrations Updated: ${result.checks.migrationsUpToDate ? '✅' : '❌'}`);
-  console.log(`  Integrity:         ${result.checks.integrity ? '✅' : '❌'}`);
+  console.info('Checks:');
+  console.info(`  File Exists:        ${result.checks.fileExists ? '✅' : '❌'}`);
+  console.info(`  Can Connect:        ${result.checks.canConnect ? '✅' : '❌'}`);
+  console.info(`  Tables Exist:       ${result.checks.tablesExist ? '✅' : '❌'}`);
+  console.info(`  Migrations Updated: ${result.checks.migrationsUpToDate ? '✅' : '❌'}`);
+  console.info(`  Integrity:         ${result.checks.integrity ? '✅' : '❌'}`);
 
   if (result.details.fileSize) {
-    console.log(`\nDetails:`);
-    console.log(`  File Size: ${(result.details.fileSize / 1024).toFixed(2)} KB`);
+    console.info(`\nDetails:`);
+    console.info(`  File Size: ${(result.details.fileSize / 1024).toFixed(2)} KB`);
     if (result.details.tableCount) {
-      console.log(`  Tables: ${result.details.tableCount}`);
+      console.info(`  Tables: ${result.details.tableCount}`);
     }
     if (result.details.migrationVersion !== undefined) {
-      console.log(`  Migration Version: ${result.details.migrationVersion}`);
+      console.info(`  Migration Version: ${result.details.migrationVersion}`);
     }
   }
 
   if (result.errors.length > 0) {
-    console.log(`\nErrors:`);
+    console.info(`\nErrors:`);
     result.errors.forEach(error => {
-      console.log(`  ❌ ${error}`);
+      console.info(`  ❌ ${error}`);
     });
   }
 
-  console.log('');
+  console.info('');
 }
 
 // Run health check if this file is executed directly

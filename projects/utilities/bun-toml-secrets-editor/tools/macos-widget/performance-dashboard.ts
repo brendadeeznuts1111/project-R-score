@@ -46,23 +46,23 @@ class PerformanceDashboard {
 			...config,
 		};
 
-		console.log("📊 Performance Monitoring Dashboard");
-		console.log("==================================");
-		console.log(`🔄 Refresh Interval: ${this.config.refreshInterval}ms`);
-		console.log(`📈 History Size: ${this.config.historySize} entries`);
-		console.log(`⚠️  Alert Thresholds Configured`);
-		console.log("");
+		console.info("📊 Performance Monitoring Dashboard");
+		console.info("==================================");
+		console.info(`🔄 Refresh Interval: ${this.config.refreshInterval}ms`);
+		console.info(`📈 History Size: ${this.config.historySize} entries`);
+		console.info(`⚠️  Alert Thresholds Configured`);
+		console.info("");
 	}
 
 	async startMonitoring(): Promise<void> {
 		if (this.isRunning) {
-			console.log("⚠️  Dashboard is already running");
+			console.info("⚠️  Dashboard is already running");
 			return;
 		}
 
 		this.isRunning = true;
-		console.log("🚀 Starting performance monitoring dashboard...");
-		console.log("");
+		console.info("🚀 Starting performance monitoring dashboard...");
+		console.info("");
 
 		// Start the monitoring loop
 		this.monitoringLoop();
@@ -133,61 +133,61 @@ class PerformanceDashboard {
 		const bufferOps = latest.performance.bufferOps.toFixed(2);
 
 		// Header
-		console.log("📊 Performance Monitoring Dashboard");
-		console.log("==================================");
-		console.log(
+		console.info("📊 Performance Monitoring Dashboard");
+		console.info("==================================");
+		console.info(
 			`🕐 ${new Date().toLocaleString()} | ⏱️ Uptime: ${uptime} | 🖥️  ${latest.system.platform} (${latest.system.arch})`,
 		);
-		console.log("");
+		console.info("");
 
 		// System Status
-		console.log("🖥️  System Status");
-		console.log("----------------");
-		console.log(`   Memory Usage: ${memoryUsage}MB / ${memoryTotal}MB`);
-		console.log(
+		console.info("🖥️  System Status");
+		console.info("----------------");
+		console.info(`   Memory Usage: ${memoryUsage}MB / ${memoryTotal}MB`);
+		console.info(
 			`   RSS Memory: ${(latest.memory.rss / 1024 / 1024).toFixed(1)}MB`,
 		);
-		console.log(
+		console.info(
 			`   External Memory: ${(latest.memory.external / 1024 / 1024).toFixed(1)}MB`,
 		);
-		console.log("");
+		console.info("");
 
 		// Performance Metrics
-		console.log("⚡ Performance Metrics");
-		console.log("----------------------");
-		console.log(
+		console.info("⚡ Performance Metrics");
+		console.info("----------------------");
+		console.info(
 			`   Latency: ${latency}ms ${this.getLatencyIndicator(parseFloat(latency))}`,
 		);
-		console.log(
+		console.info(
 			`   Error Rate: ${errorRate}% ${this.getErrorRateIndicator(parseFloat(errorRate))}`,
 		);
-		console.log(
+		console.info(
 			`   Buffer Ops: ${bufferOps}ms ${this.getBufferOpsIndicator(parseFloat(bufferOps))}`,
 		);
-		console.log(`   Async Ops: ${latest.performance.asyncOps.toFixed(1)}ms`);
-		console.log("");
+		console.info(`   Async Ops: ${latest.performance.asyncOps.toFixed(1)}ms`);
+		console.info("");
 
 		// Recent Alerts
 		if (this.alerts.length > 0) {
-			console.log("🚨 Recent Alerts");
-			console.log("---------------");
+			console.info("🚨 Recent Alerts");
+			console.info("---------------");
 			const recentAlerts = this.alerts.slice(-5).reverse();
 			recentAlerts.forEach((alert) => {
 				const icon = this.getAlertIcon(alert.type);
 				const time = new Date(alert.timestamp).toLocaleTimeString();
-				console.log(`   ${icon} ${time} - ${alert.message}`);
+				console.info(`   ${icon} ${time} - ${alert.message}`);
 			});
-			console.log("");
+			console.info("");
 		}
 
 		// Performance Trends
 		if (this.history.length > 1) {
-			console.log("📈 Performance Trends (Last 10 samples)");
-			console.log("---------------------------------------");
+			console.info("📈 Performance Trends (Last 10 samples)");
+			console.info("---------------------------------------");
 			const recentHistory = this.history.slice(-10);
 
-			console.log("   Time       | Memory | Latency | Errors | Buffer");
-			console.log("   ---------- | ------ | ------- | ------ | ------");
+			console.info("   Time       | Memory | Latency | Errors | Buffer");
+			console.info("   ---------- | ------ | ------- | ------ | ------");
 
 			recentHistory.forEach((entry) => {
 				const time = new Date(entry.timestamp)
@@ -200,24 +200,24 @@ class PerformanceDashboard {
 				const errors = entry.performance.errorRate.toFixed(1);
 				const buffer = entry.performance.bufferOps.toFixed(1);
 
-				console.log(
+				console.info(
 					`   ${time} | ${memory.padStart(6)}MB | ${latency.padStart(6)}ms | ${errors.padStart(5)}% | ${buffer.padStart(5)}ms`,
 				);
 			});
-			console.log("");
+			console.info("");
 		}
 
 		// Controls
-		console.log("🎛️  Controls");
-		console.log("-----------");
-		console.log(
+		console.info("🎛️  Controls");
+		console.info("-----------");
+		console.info(
 			"   [r] Reset Alerts    [h] Show History    [q] Quit Dashboard",
 		);
-		console.log("   [e] Export Data     [c] Clear History   [s] Save Snapshot");
-		console.log("");
+		console.info("   [e] Export Data     [c] Clear History   [s] Save Snapshot");
+		console.info("");
 
 		// Footer
-		console.log("==================================");
+		console.info("==================================");
 	}
 
 	private checkAlerts(): void {
@@ -299,7 +299,7 @@ class PerformanceDashboard {
 
 		if (!recentDuplicate) {
 			this.alerts.push(alert);
-			console.log(`🚨 ${alert.type.toUpperCase()}: ${alert.message}`);
+			console.info(`🚨 ${alert.type.toUpperCase()}: ${alert.message}`);
 		}
 	}
 
@@ -361,7 +361,7 @@ class PerformanceDashboard {
 
 	stopMonitoring(): void {
 		this.isRunning = false;
-		console.log("🛑 Performance monitoring dashboard stopped");
+		console.info("🛑 Performance monitoring dashboard stopped");
 	}
 
 	exportData(): string {
@@ -388,7 +388,7 @@ class PerformanceDashboard {
 
 		try {
 			require("fs").writeFileSync(filename, snapshotData);
-			console.log(`💾 Performance snapshot saved to: ${filename}`);
+			console.info(`💾 Performance snapshot saved to: ${filename}`);
 		} catch (error) {
 			console.error(`❌ Failed to save snapshot: ${error}`);
 		}
@@ -397,29 +397,29 @@ class PerformanceDashboard {
 	clearHistory(): void {
 		this.history = [];
 		this.alerts = [];
-		console.log("🗑️  History and alerts cleared");
+		console.info("🗑️  History and alerts cleared");
 	}
 
 	showHistory(): void {
 		if (this.history.length === 0) {
-			console.log("📝 No history data available");
+			console.info("📝 No history data available");
 			return;
 		}
 
-		console.log("📝 Performance History");
-		console.log("======================");
+		console.info("📝 Performance History");
+		console.info("======================");
 
 		this.history.forEach((entry, index) => {
 			const time = new Date(entry.timestamp).toLocaleString();
 			const memory = (entry.memory.heapUsed / 1024 / 1024).toFixed(1);
 			const latency = entry.performance.latency.toFixed(1);
 
-			console.log(
+			console.info(
 				`${index + 1}. ${time} - Memory: ${memory}MB, Latency: ${latency}ms`,
 			);
 		});
 
-		console.log("");
+		console.info("");
 	}
 }
 
@@ -455,7 +455,7 @@ async function main() {
 				dashboard.showHistory();
 				break;
 			case "e":
-				console.log(dashboard.exportData());
+				console.info(dashboard.exportData());
 				break;
 			case "c":
 				dashboard.clearHistory();
@@ -469,7 +469,7 @@ async function main() {
 
 // Graceful shutdown
 process.on("SIGINT", () => {
-	console.log("\n👋 Shutting down performance dashboard...");
+	console.info("\n👋 Shutting down performance dashboard...");
 	process.exit(0);
 });
 

@@ -622,7 +622,7 @@ export class WageringEdgeCaseHandler {
   }
 
   private async voidBet(betId: string, reason: string): Promise<void> {
-    console.log(`Voiding bet ${betId}: ${reason}`);
+    console.info(`Voiding bet ${betId}: ${reason}`);
   }
 
   private async getLastOddsChange(betId: string): Promise<number> {
@@ -685,7 +685,7 @@ export class WageringEdgeCaseHandler {
     _action: string,
     _details: any
   ): Promise<void> {
-    console.log(
+    console.info(
       `Admin action: ${_adminUserId} ${_action} on ${_eventId}`,
       _details
     );

@@ -61,7 +61,7 @@ export class HookRegistry {
 
   // Adaptive: Auto-register hooks based on rules/skills/workflows definition
   async discoverAndRegisterHooks(): Promise<void> {
-    console.log('🔍 Discovering adaptive hooks...');
+    console.info('🔍 Discovering adaptive hooks...');
     
     const ruleHooks = await this.extractHooksFromRules();
     const skillHooks = await this.extractHooksFromSkills();
@@ -71,7 +71,7 @@ export class HookRegistry {
       this.register(hook);
     });
     
-    console.log(`🎯 Discovered ${this.getHookCount()} adaptive hooks`);
+    console.info(`🎯 Discovered ${this.getHookCount()} adaptive hooks`);
   }
 
   // Reinforcement: Every execution is measured and optimized
@@ -259,7 +259,7 @@ export class HookRegistry {
 
   private async validateMemoryConsistency(merchantId: string, result: any): Promise<void> {
     // Implementation for memory consistency validation
-    console.log(`🔍 Validating memory consistency for ${merchantId}`);
+    console.info(`🔍 Validating memory consistency for ${merchantId}`);
   }
 }
 

@@ -13,8 +13,8 @@ function buildUrl(tenant: string): string {
 
 let source = new EventSource(buildUrl(args.tenant));
 
-console.log(`Monitoring violations for tenant: ${args.tenant}`);
-console.log("=".repeat(89));
+console.info(`Monitoring violations for tenant: ${args.tenant}`);
+console.info("=".repeat(89));
 
 source.addEventListener("violation", (e) => {
 	const v = Bun.JSON5.parse(e.data);
@@ -30,7 +30,7 @@ source.addEventListener("violation", (e) => {
 		Bun.stringWidth(line) <= 89
 			? line
 			: Bun.wrapAnsi(line, 89, { wordWrap: false }).split("\n")[0];
-	console.log(`\x1b[${color}m${safe}\x1b[0m`);
+	console.info(`\x1b[${color}m${safe}\x1b[0m`);
 });
 
 source.onerror = () => {

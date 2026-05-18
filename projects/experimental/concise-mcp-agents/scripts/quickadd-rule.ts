@@ -23,8 +23,8 @@ class RuleQuickAdd {
   private templatesDir = 'templates';
 
   async createRuleFromTemplate(templateType: string = 'basic'): Promise<void> {
-    console.log(`🛡️  QuickAdd Rule - Template: ${templateType}`);
-    console.log('========================================');
+    console.info(`🛡️  QuickAdd Rule - Template: ${templateType}`);
+    console.info('========================================');
 
     // Get user input for rule details
     const rule = await this.promptRuleDetails();
@@ -41,9 +41,9 @@ class RuleQuickAdd {
     // Create branch and PR
     await this.createBranchAndPR(rule.id, rule.trigger);
 
-    console.log(`✅ Rule ${rule.id} created successfully!`);
-    console.log(`🔧 Test: bun rules:enforce ${rule.id}`);
-    console.log(`📋 PR: Check GitHub for ${rule.id} branch`);
+    console.info(`✅ Rule ${rule.id} created successfully!`);
+    console.info(`🔧 Test: bun rules:enforce ${rule.id}`);
+    console.info(`📋 PR: Check GitHub for ${rule.id} branch`);
   }
 
   private async promptRuleDetails(): Promise<Omit<QuickAddRule, 'id'>> {
@@ -200,7 +200,7 @@ class RuleQuickAdd {
     const branchName = `feat/${ruleId.toLowerCase()}`;
     const prTitle = `Add rule ${ruleId}: ${description.substring(0, 50)}...`;
 
-    console.log(`🌿 Creating branch: ${branchName}`);
+    console.info(`🌿 Creating branch: ${branchName}`);
 
     try {
       // Create and switch to new branch
@@ -218,17 +218,17 @@ Rule ID: ${ruleId}
 Category: Governance
 Priority: New Rule Implementation"`);
 
-      console.log(`✅ Branch created and committed: ${branchName}`);
-      console.log(`📋 PR Title: ${prTitle}`);
-      console.log(`🔗 Push with: git push origin ${branchName}`);
+      console.info(`✅ Branch created and committed: ${branchName}`);
+      console.info(`📋 PR Title: ${prTitle}`);
+      console.info(`🔗 Push with: git push origin ${branchName}`);
 
     } catch (error) {
       console.error('❌ Git operations failed:', error.message);
-      console.log('📋 Manual steps:');
-      console.log(`   git checkout -b ${branchName}`);
-      console.log('   git add scripts/gov-rules.ts');
-      console.log(`   git commit -m "feat: add rule ${ruleId}"`);
-      console.log(`   git push origin ${branchName}`);
+      console.info('📋 Manual steps:');
+      console.info(`   git checkout -b ${branchName}`);
+      console.info('   git add scripts/gov-rules.ts');
+      console.info(`   git commit -m "feat: add rule ${ruleId}"`);
+      console.info(`   git push origin ${branchName}`);
     }
   }
 
@@ -250,11 +250,11 @@ Priority: New Rule Implementation"`);
   }
 
   async validateNewRule(ruleId: string): Promise<void> {
-    console.log(`🔍 Validating rule: ${ruleId}`);
+    console.info(`🔍 Validating rule: ${ruleId}`);
 
     try {
       await this.runCommand('bun run rules:validate');
-      console.log(`✅ Rule ${ruleId} validation passed`);
+      console.info(`✅ Rule ${ruleId} validation passed`);
     } catch (error) {
       console.error(`❌ Rule ${ruleId} validation failed:`, error.message);
     }
@@ -266,7 +266,7 @@ const args = process.argv.slice(2);
 const command = args[0];
 
 if (!command || command === '--help') {
-  console.log(`
+  console.info(`
 🛡️  SYNDICATE RULE QUICKADD v2.9
 
 USAGE:

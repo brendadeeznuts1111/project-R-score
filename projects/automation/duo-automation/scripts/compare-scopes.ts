@@ -55,11 +55,11 @@ class ScopeComparator {
   static async compareScopes(beforePath: string, afterPath: string): Promise<ComparisonResult> {
     const startTime = Date.now();
     
-    console.log(`🔍 COMPARING SCOPES`);
-    console.log(`═════════════════════════════════════════════════════`);
-    console.log(`Before: ${beforePath}`);
-    console.log(`After:  ${afterPath}`);
-    console.log(``);
+    console.info(`🔍 COMPARING SCOPES`);
+    console.info(`═════════════════════════════════════════════════════`);
+    console.info(`Before: ${beforePath}`);
+    console.info(`After:  ${afterPath}`);
+    console.info(``);
     
     // Load scope data
     const beforeData = this.loadScopeData(beforePath);
@@ -221,82 +221,82 @@ class ScopeComparator {
   }
   
   static formatResults(result: ComparisonResult): void {
-    console.log(`📊 COMPARISON RESULTS`);
-    console.log(`═════════════════════════════════════════════════════`);
-    console.log(``);
+    console.info(`📊 COMPARISON RESULTS`);
+    console.info(`═════════════════════════════════════════════════════`);
+    console.info(``);
     
     // Summary
-    console.log(`📋 SUMMARY`);
-    console.log(`───────────────────────────────────────────────────`);
-    console.log(`Total Changes: ${result.summary.totalChanges}`);
-    console.log(`Additions:    ${result.summary.additions}`);
-    console.log(`Modifications: ${result.summary.modifications}`);
-    console.log(`Deletions:    ${result.summary.deletions}`);
-    console.log(`Unchanged:    ${result.summary.unchanged}`);
-    console.log(``);
+    console.info(`📋 SUMMARY`);
+    console.info(`───────────────────────────────────────────────────`);
+    console.info(`Total Changes: ${result.summary.totalChanges}`);
+    console.info(`Additions:    ${result.summary.additions}`);
+    console.info(`Modifications: ${result.summary.modifications}`);
+    console.info(`Deletions:    ${result.summary.deletions}`);
+    console.info(`Unchanged:    ${result.summary.unchanged}`);
+    console.info(``);
     
     // Statistics
-    console.log(`📈 STATISTICS`);
-    console.log(`───────────────────────────────────────────────────`);
-    console.log(`Before Size:  ${result.statistics.beforeSize} bytes`);
-    console.log(`After Size:   ${result.statistics.afterSize} bytes`);
-    console.log(`Size Change:  ${result.statistics.sizeDifference > 0 ? '+' : ''}${result.statistics.sizeDifference} bytes`);
-    console.log(`Processing:   ${result.statistics.processingTime}ms`);
-    console.log(``);
+    console.info(`📈 STATISTICS`);
+    console.info(`───────────────────────────────────────────────────`);
+    console.info(`Before Size:  ${result.statistics.beforeSize} bytes`);
+    console.info(`After Size:   ${result.statistics.afterSize} bytes`);
+    console.info(`Size Change:  ${result.statistics.sizeDifference > 0 ? '+' : ''}${result.statistics.sizeDifference} bytes`);
+    console.info(`Processing:   ${result.statistics.processingTime}ms`);
+    console.info(``);
     
     // Changes
     if (result.changes.added.length > 0) {
-      console.log(`➕ ADDED (${result.changes.added.length})`);
-      console.log(`───────────────────────────────────────────────────`);
+      console.info(`➕ ADDED (${result.changes.added.length})`);
+      console.info(`───────────────────────────────────────────────────`);
       result.changes.added.forEach(change => {
-        console.log(`+ ${change.path} (${change.type})`);
+        console.info(`+ ${change.path} (${change.type})`);
         if (typeof change.value !== 'object') {
-          console.log(`  Value: ${JSON.stringify(change.value)}`);
+          console.info(`  Value: ${JSON.stringify(change.value)}`);
         } else {
-          console.log(`  Value: [${change.type}]`);
+          console.info(`  Value: [${change.type}]`);
         }
       });
-      console.log(``);
+      console.info(``);
     }
     
     if (result.changes.modified.length > 0) {
-      console.log(`🔄 MODIFIED (${result.changes.modified.length})`);
-      console.log(`───────────────────────────────────────────────────`);
+      console.info(`🔄 MODIFIED (${result.changes.modified.length})`);
+      console.info(`───────────────────────────────────────────────────`);
       result.changes.modified.forEach(change => {
-        console.log(`~ ${change.path} (${change.type})`);
+        console.info(`~ ${change.path} (${change.type})`);
         if (typeof change.oldValue !== 'object' && typeof change.newValue !== 'object') {
-          console.log(`  Before: ${JSON.stringify(change.oldValue)}`);
-          console.log(`  After:  ${JSON.stringify(change.newValue)}`);
+          console.info(`  Before: ${JSON.stringify(change.oldValue)}`);
+          console.info(`  After:  ${JSON.stringify(change.newValue)}`);
         } else {
-          console.log(`  Before: [${change.type}]`);
-          console.log(`  After:  [${change.type}]`);
+          console.info(`  Before: [${change.type}]`);
+          console.info(`  After:  [${change.type}]`);
         }
       });
-      console.log(``);
+      console.info(``);
     }
     
     if (result.changes.deleted.length > 0) {
-      console.log(`➖ DELETED (${result.changes.deleted.length})`);
-      console.log(`───────────────────────────────────────────────────`);
+      console.info(`➖ DELETED (${result.changes.deleted.length})`);
+      console.info(`───────────────────────────────────────────────────`);
       result.changes.deleted.forEach(change => {
-        console.log(`- ${change.path} (${change.type})`);
+        console.info(`- ${change.path} (${change.type})`);
         if (typeof change.oldValue !== 'object') {
-          console.log(`  Value: ${JSON.stringify(change.oldValue)}`);
+          console.info(`  Value: ${JSON.stringify(change.oldValue)}`);
         } else {
-          console.log(`  Value: [${change.type}]`);
+          console.info(`  Value: [${change.type}]`);
         }
       });
-      console.log(``);
+      console.info(``);
     }
     
     if (result.summary.totalChanges === 0) {
-      console.log(`✅ NO CHANGES DETECTED`);
-      console.log(`The scopes are identical!`);
+      console.info(`✅ NO CHANGES DETECTED`);
+      console.info(`The scopes are identical!`);
     }
     
-    console.log(``);
-    console.log(`🎯 SCOPE COMPARISON COMPLETE`);
-    console.log(`═════════════════════════════════════════════════════`);
+    console.info(``);
+    console.info(`🎯 SCOPE COMPARISON COMPLETE`);
+    console.info(`═════════════════════════════════════════════════════`);
   }
   
   static generateDiffReport(result: ComparisonResult): string {
@@ -401,7 +401,7 @@ EXAMPLE:
     const reportPath = 'scope-comparison-report.md';
     
     await Bun.write(reportPath, report);
-    console.log(`📄 Markdown report saved to: ${reportPath}`);
+    console.info(`📄 Markdown report saved to: ${reportPath}`);
     
   } catch (error) {
     console.error(`❌ Comparison failed: ${error.message}`);

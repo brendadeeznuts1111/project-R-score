@@ -15,8 +15,8 @@ import {
   INSPECT_CUSTOM 
 } from '../../ecosystem/inspect-custom.ts';
 
-console.log('⚡ BATCH INSPECTION DEMONSTRATION');
-console.log('='.repeat(50));
+console.info('⚡ BATCH INSPECTION DEMONSTRATION');
+console.info('='.repeat(50));
 
 // ============================================================================
 // BATCH PROCESSING DEMONSTRATION
@@ -31,11 +31,11 @@ class BatchInspectionDemo {
   };
 
   async demonstrateBatchProcessing() {
-    console.log('🚀 Starting batch inspection demonstration...\n');
+    console.info('🚀 Starting batch inspection demonstration...\n');
 
     // 1. Create a large dataset of inspectable objects
     const dataset = this.createLargeDataset();
-    console.log(`📊 Created dataset with ${dataset.length} objects\n`);
+    console.info(`📊 Created dataset with ${dataset.length} objects\n`);
 
     // 2. Demonstrate batch inspection
     await this.demonstrateBatchInspection(dataset);
@@ -129,8 +129,8 @@ class BatchInspectionDemo {
   }
 
   private async demonstrateBatchInspection(dataset: any[]) {
-    console.log('⚡ BATCH INSPECTION');
-    console.log('-'.repeat(30));
+    console.info('⚡ BATCH INSPECTION');
+    console.info('-'.repeat(30));
 
     const startTime = performance.now();
     
@@ -139,22 +139,22 @@ class BatchInspectionDemo {
     
     this.metrics.batchTime = performance.now() - startTime;
 
-    console.log(`📊 Batch processed ${dataset.length} objects in ${this.metrics.batchTime.toFixed(2)}ms`);
-    console.log(`🚀 Average per object: ${(this.metrics.batchTime / dataset.length).toFixed(4)}ms`);
+    console.info(`📊 Batch processed ${dataset.length} objects in ${this.metrics.batchTime.toFixed(2)}ms`);
+    console.info(`🚀 Average per object: ${(this.metrics.batchTime / dataset.length).toFixed(4)}ms`);
     
     // Show first few results
     const lines = batchResult.split('\n---\n');
-    console.log('\n📋 Sample Results (first 3):');
-    console.log(lines.slice(0, 3).join('\n---\n'));
+    console.info('\n📋 Sample Results (first 3):');
+    console.info(lines.slice(0, 3).join('\n---\n'));
     
     if (lines.length > 3) {
-      console.log(`\n... and ${lines.length - 3} more objects`);
+      console.info(`\n... and ${lines.length - 3} more objects`);
     }
   }
 
   private async demonstrateIndividualInspection(dataset: any[]) {
-    console.log('\n🔍 INDIVIDUAL INSPECTION');
-    console.log('-'.repeat(30));
+    console.info('\n🔍 INDIVIDUAL INSPECTION');
+    console.info('-'.repeat(30));
 
     const startTime = performance.now();
     
@@ -163,75 +163,75 @@ class BatchInspectionDemo {
     
     this.metrics.individualTime = performance.now() - startTime;
 
-    console.log(`📊 Individual processed ${dataset.length} objects in ${this.metrics.individualTime.toFixed(2)}ms`);
-    console.log(`🚀 Average per object: ${(this.metrics.individualTime / dataset.length).toFixed(4)}ms`);
+    console.info(`📊 Individual processed ${dataset.length} objects in ${this.metrics.individualTime.toFixed(2)}ms`);
+    console.info(`🚀 Average per object: ${(this.metrics.individualTime / dataset.length).toFixed(4)}ms`);
     
     // Calculate savings
     this.metrics.savings = this.metrics.individualTime - this.metrics.batchTime;
     const savingsPercent = (this.metrics.savings / this.metrics.individualTime) * 100;
     
-    console.log(`💰 Time savings: ${this.metrics.savings.toFixed(2)}ms (${savingsPercent.toFixed(1)}% faster)`);
+    console.info(`💰 Time savings: ${this.metrics.savings.toFixed(2)}ms (${savingsPercent.toFixed(1)}% faster)`);
   }
 
   private showPerformanceComparison() {
-    console.log('\n📈 PERFORMANCE COMPARISON');
-    console.log('-'.repeat(30));
+    console.info('\n📈 PERFORMANCE COMPARISON');
+    console.info('-'.repeat(30));
 
     const batchAvg = this.metrics.batchTime / this.metrics.totalObjects;
     const individualAvg = this.metrics.individualTime / this.metrics.totalObjects;
     const speedup = individualAvg / batchAvg;
 
-    console.log(`┌${'─'.repeat(58)}┐`);
-    console.log(`│ ${'BATCH INSPECTION PERFORMANCE'.padStart(35)}${' '.repeat(23)}│`);
-    console.log(`├${'─'.repeat(58)}┤`);
-    console.log(`│ Total Objects: ${this.metrics.totalObjects.toString().padStart(4)}${' '.repeat(46)}│`);
-    console.log(`│ Batch Time:    ${this.metrics.batchTime.toFixed(2).padStart(8)}ms${' '.repeat(42)}│`);
-    console.log(`│ Individual:    ${this.metrics.individualTime.toFixed(2).padStart(8)}ms${' '.repeat(42)}│`);
-    console.log(`│ Savings:       ${this.metrics.savings.toFixed(2).padStart(8)}ms${' '.repeat(42)}│`);
-    console.log(`│ Speedup:       ${speedup.toFixed(1).padStart(8)}x${' '.repeat(44)}│`);
-    console.log(`│ Batch Avg:     ${batchAvg.toFixed(4).padStart(8)}ms${' '.repeat(42)}│`);
-    console.log(`│ Individual Avg: ${individualAvg.toFixed(4).padStart(8)}ms${' '.repeat(38)}│`);
-    console.log(`└${'─'.repeat(58)}┘`);
+    console.info(`┌${'─'.repeat(58)}┐`);
+    console.info(`│ ${'BATCH INSPECTION PERFORMANCE'.padStart(35)}${' '.repeat(23)}│`);
+    console.info(`├${'─'.repeat(58)}┤`);
+    console.info(`│ Total Objects: ${this.metrics.totalObjects.toString().padStart(4)}${' '.repeat(46)}│`);
+    console.info(`│ Batch Time:    ${this.metrics.batchTime.toFixed(2).padStart(8)}ms${' '.repeat(42)}│`);
+    console.info(`│ Individual:    ${this.metrics.individualTime.toFixed(2).padStart(8)}ms${' '.repeat(42)}│`);
+    console.info(`│ Savings:       ${this.metrics.savings.toFixed(2).padStart(8)}ms${' '.repeat(42)}│`);
+    console.info(`│ Speedup:       ${speedup.toFixed(1).padStart(8)}x${' '.repeat(44)}│`);
+    console.info(`│ Batch Avg:     ${batchAvg.toFixed(4).padStart(8)}ms${' '.repeat(42)}│`);
+    console.info(`│ Individual Avg: ${individualAvg.toFixed(4).padStart(8)}ms${' '.repeat(38)}│`);
+    console.info(`└${'─'.repeat(58)}┘`);
   }
 
   private async demonstrateAdvancedBatchFeatures() {
-    console.log('\n🎯 ADVANCED BATCH FEATURES');
-    console.log('-'.repeat(30));
+    console.info('\n🎯 ADVANCED BATCH FEATURES');
+    console.info('-'.repeat(30));
 
     // 1. Filtered batch inspection
-    console.log('\n1️⃣ FILTERED BATCH INSPECTION');
+    console.info('\n1️⃣ FILTERED BATCH INSPECTION');
     const securityChecks = this.createLargeDataset().filter(item => 
       item.constructor.name === 'SecurityCheckInspectable'
     );
     
     const securityBatch = InspectionUtils.batchInspect(securityChecks);
-    console.log(`🔍 Processed ${securityChecks.length} security checks`);
+    console.info(`🔍 Processed ${securityChecks.length} security checks`);
     
     // Show sample
     const securityLines = securityBatch.split('\n---\n');
-    console.log(securityLines.slice(0, 2).join('\n---\n'));
+    console.info(securityLines.slice(0, 2).join('\n---\n'));
 
     // 2. Grouped batch inspection
-    console.log('\n2️⃣ GROUPED BATCH INSPECTION');
+    console.info('\n2️⃣ GROUPED BATCH INSPECTION');
     const dataset = this.createLargeDataset();
     const groups = this.groupByType(dataset);
     
-    console.log(`📊 Created ${groups.size} type groups:`);
+    console.info(`📊 Created ${groups.size} type groups:`);
     groups.forEach((items, type) => {
-      console.log(`   ${type}: ${items.length} items`);
+      console.info(`   ${type}: ${items.length} items`);
     });
 
     // 3. Batch with custom formatting
-    console.log('\n3️⃣ BATCH WITH CUSTOM FORMATTING');
+    console.info('\n3️⃣ BATCH WITH CUSTOM FORMATTING');
     const payments = dataset.filter(item => 
       item.constructor.name === 'PaymentRequestInspectable'
     );
     
     const paymentBatch = this.formatBatchWithHeaders(payments);
-    console.log(paymentBatch);
+    console.info(paymentBatch);
 
     // 4. Performance metrics for batch operations
-    console.log('\n4️⃣ BATCH PERFORMANCE METRICS');
+    console.info('\n4️⃣ BATCH PERFORMANCE METRICS');
     this.showBatchMetrics(groups);
   }
 
@@ -259,9 +259,9 @@ class BatchInspectionDemo {
   }
 
   private showBatchMetrics(groups: Map<string, any[]>) {
-    console.log(`┌${'─'.repeat(58)}┐`);
-    console.log(`│ ${'BATCH PROCESSING METRICS'.padStart(35)}${' '.repeat(23)}│`);
-    console.log(`├${'─'.repeat(58)}┤`);
+    console.info(`┌${'─'.repeat(58)}┐`);
+    console.info(`│ ${'BATCH PROCESSING METRICS'.padStart(35)}${' '.repeat(23)}│`);
+    console.info(`├${'─'.repeat(58)}┤`);
     
     let totalItems = 0;
     groups.forEach((items, type) => {
@@ -269,13 +269,13 @@ class BatchInspectionDemo {
       const batch = InspectionUtils.batchInspect(items);
       const processingTime = performance.now() - startTime;
       
-      console.log(`│ ${type.padEnd(15)}: ${items.length.toString().padStart(3)} items │ ${processingTime.toFixed(2).padStart(6)}ms │ ${(processingTime / items.length).toFixed(4).padStart(6)}ms avg │`);
+      console.info(`│ ${type.padEnd(15)}: ${items.length.toString().padStart(3)} items │ ${processingTime.toFixed(2).padStart(6)}ms │ ${(processingTime / items.length).toFixed(4).padStart(6)}ms avg │`);
       totalItems += items.length;
     });
     
-    console.log(`├${'─'.repeat(58)}┤`);
-    console.log(`│ ${'Total'.padEnd(15)}: ${totalItems.toString().padStart(3)} items │ ${this.metrics.batchTime.toFixed(2).padStart(6)}ms │ ${(this.metrics.batchTime / totalItems).toFixed(4).padStart(6)}ms avg │`);
-    console.log(`└${'─'.repeat(58)}┘`);
+    console.info(`├${'─'.repeat(58)}┤`);
+    console.info(`│ ${'Total'.padEnd(15)}: ${totalItems.toString().padStart(3)} items │ ${this.metrics.batchTime.toFixed(2).padStart(6)}ms │ ${(this.metrics.batchTime / totalItems).toFixed(4).padStart(6)}ms avg │`);
+    console.info(`└${'─'.repeat(58)}┘`);
   }
 }
 
@@ -284,20 +284,20 @@ class BatchInspectionDemo {
 // ============================================================================
 
 async function runBatchInspectionDemo() {
-  console.log('⚡ Starting Batch Inspection Demo...\n');
+  console.info('⚡ Starting Batch Inspection Demo...\n');
 
   const demo = new BatchInspectionDemo();
   await demo.demonstrateBatchProcessing();
 
-  console.log('\n✅ Batch Inspection Demo Complete!');
-  console.log('\n🎯 Batch Processing Benefits Demonstrated:');
-  console.log('  • Efficient processing of multiple objects');
-  console.log('  • Performance optimization with batch operations');
-  console.log('  • Type-based grouping and filtering');
-  console.log('  • Custom formatting for batch results');
-  console.log('  • Detailed performance metrics');
-  console.log('  • Memory-efficient processing');
-  console.log('  • Scalable for large datasets');
+  console.info('\n✅ Batch Inspection Demo Complete!');
+  console.info('\n🎯 Batch Processing Benefits Demonstrated:');
+  console.info('  • Efficient processing of multiple objects');
+  console.info('  • Performance optimization with batch operations');
+  console.info('  • Type-based grouping and filtering');
+  console.info('  • Custom formatting for batch results');
+  console.info('  • Detailed performance metrics');
+  console.info('  • Memory-efficient processing');
+  console.info('  • Scalable for large datasets');
 }
 
 // Run the demo if this is the main module

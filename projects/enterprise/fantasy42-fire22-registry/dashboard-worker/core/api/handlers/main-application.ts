@@ -40,7 +40,7 @@ export class MainApplication {
    * Initialize the application
    */
   async initialize(): Promise<void> {
-    console.log('🚀 Initializing Fire22 Dashboard Worker...');
+    console.info('🚀 Initializing Fire22 Dashboard Worker...');
 
     try {
       // Initialize core services
@@ -64,8 +64,8 @@ export class MainApplication {
       await featureFlags.initialize();
       this.container.register('featureFlags', featureFlags);
 
-      console.log('✅ Application initialized successfully');
-      console.log('📊 Health Status:', this.container.getHealthStatus());
+      console.info('✅ Application initialized successfully');
+      console.info('📊 Health Status:', this.container.getHealthStatus());
     } catch (error) {
       console.error('❌ Application initialization failed:', error);
       throw error;
@@ -97,9 +97,9 @@ export class MainApplication {
    * Cleanup application resources
    */
   async cleanup(): Promise<void> {
-    console.log('🧹 Cleaning up application...');
+    console.info('🧹 Cleaning up application...');
     await this.container.cleanup();
-    console.log('✅ Application cleanup completed');
+    console.info('✅ Application cleanup completed');
   }
 
   /**

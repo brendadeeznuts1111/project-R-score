@@ -3,27 +3,27 @@ import { hardwareDetector } from "./utils/hardware-detector";
 import { batchCRC32, simdProcessor } from "./workers/crc32-simd-batch";
 
 async function runSIMDBenchmark() {
-  console.log("🚀 Enhanced CRC32 Architecture v2.0 - SIMD Benchmark");
-  console.log("=".repeat(60));
+  console.info("🚀 Enhanced CRC32 Architecture v2.0 - SIMD Benchmark");
+  console.info("=".repeat(60));
 
   // Detect hardware capabilities
-  console.log("\n🔧 Detecting hardware capabilities...");
+  console.info("\n🔧 Detecting hardware capabilities...");
   const capabilities = await hardwareDetector.detectCapabilities();
-  console.log(hardwareDetector.generateReport(capabilities));
+  console.info(hardwareDetector.generateReport(capabilities));
 
   // Run hardware benchmark
-  console.log("\n📊 Running hardware benchmark...");
+  console.info("\n📊 Running hardware benchmark...");
   const benchmark = await hardwareDetector.benchmark();
-  console.log(`Throughput: ${benchmark.throughput} MB/s`);
-  console.log(`Latency: ${benchmark.latency} ms`);
-  console.log(`Efficiency: ${benchmark.efficiency} MB/s per core`);
+  console.info(`Throughput: ${benchmark.throughput} MB/s`);
+  console.info(`Latency: ${benchmark.latency} ms`);
+  console.info(`Efficiency: ${benchmark.efficiency} MB/s per core`);
 
   // Test SIMD batch processing
-  console.log("\n🧪 Testing SIMD batch processing...");
+  console.info("\n🧪 Testing SIMD batch processing...");
   const metrics = simdProcessor.getMetrics();
-  console.log(`Vector size: ${metrics.vectorSize}`);
-  console.log(`Batch size: ${metrics.batchSize}`);
-  console.log(`Throughput estimate: ${metrics.throughputEstimate}`);
+  console.info(`Vector size: ${metrics.vectorSize}`);
+  console.info(`Batch size: ${metrics.batchSize}`);
+  console.info(`Throughput estimate: ${metrics.throughputEstimate}`);
 
   // Generate test data
   const testSizes = [1024, 16384, 65536, 262144, 1048576]; // 1KB to 1MB
@@ -35,15 +35,15 @@ async function runSIMDBenchmark() {
     return data;
   });
 
-  console.log("\n📈 Processing test datasets...");
+  console.info("\n📈 Processing test datasets...");
 
   // Individual CRC32 (baseline)
-  console.log("\n🔍 Baseline (individual CRC32):");
+  console.info("\n🔍 Baseline (individual CRC32):");
   const baselineStart = performance.now();
   const baselineResults = testDatasets.map((data) => Bun.hash.crc32(data));
   const baselineTime = performance.now() - baselineStart;
-  console.log(`Time: ${baselineTime.toFixed(2)}ms`);
-  console.log(
+  console.info(`Time: ${baselineTime.toFixed(2)}ms`);
+  console.info(
     `Throughput: ${(
       testDatasets.reduce((sum, d) => sum + d.length, 0) /
       baselineTime /
@@ -52,12 +52,12 @@ async function runSIMDBenchmark() {
   );
 
   // SIMD batch processing
-  console.log("\n⚡ SIMD batch processing:");
+  console.info("\n⚡ SIMD batch processing:");
   const simdStart = performance.now();
   const simdResults = await batchCRC32(testDatasets);
   const simdTime = performance.now() - simdStart;
-  console.log(`Time: ${simdTime.toFixed(2)}ms`);
-  console.log(
+  console.info(`Time: ${simdTime.toFixed(2)}ms`);
+  console.info(
     `Throughput: ${(
       testDatasets.reduce((sum, d) => sum + d.length, 0) /
       simdTime /
@@ -69,14 +69,14 @@ async function runSIMDBenchmark() {
   const resultsMatch = baselineResults.every(
     (crc, i) => crc === simdResults[i]
   );
-  console.log(`✅ Results match: ${resultsMatch ? "YES" : "NO"}`);
+  console.info(`✅ Results match: ${resultsMatch ? "YES" : "NO"}`);
 
   // Performance improvement
   const improvement = baselineTime / simdTime;
-  console.log(`🚀 Performance improvement: ${improvement.toFixed(2)}x`);
+  console.info(`🚀 Performance improvement: ${improvement.toFixed(2)}x`);
 
   // Large dataset test
-  console.log("\n🎯 Large dataset test (100 files):");
+  console.info("\n🎯 Large dataset test (100 files):");
   const largeDatasets = Array(100)
     .fill(null)
     .map((_, i) => {
@@ -92,38 +92,38 @@ async function runSIMDBenchmark() {
   const largeResult = await simdProcessor.processLargeDataset(largeDatasets);
   const largeTime = performance.now() - largeStart;
 
-  console.log(`Files processed: ${largeDatasets.length}`);
-  console.log(
+  console.info(`Files processed: ${largeDatasets.length}`);
+  console.info(
     `Total bytes: ${(largeResult.bytesProcessed / 1024).toFixed(2)} KB`
   );
-  console.log(`Time: ${largeTime.toFixed(2)}ms`);
-  console.log(
+  console.info(`Time: ${largeTime.toFixed(2)}ms`);
+  console.info(
     `Throughput: ${(largeResult.bytesProcessed / largeTime / 1024).toFixed(
       2
     )} KB/ms`
   );
-  console.log(`Chunks: ${largeResult.chunks}`);
-  console.log(
+  console.info(`Chunks: ${largeResult.chunks}`);
+  console.info(
     `Final CRC32: 0x${largeResult.hash.toString(16).padStart(8, "0")}`
   );
 
-  console.log("\n✅ SIMD benchmark complete!");
-  console.log("\n🎯 Recommendations:");
+  console.info("\n✅ SIMD benchmark complete!");
+  console.info("\n🎯 Recommendations:");
 
   if (capabilities.simd && capabilities.crc32) {
-    console.log("  🚀 Use SIMD batch processing for maximum performance");
+    console.info("  🚀 Use SIMD batch processing for maximum performance");
   } else if (capabilities.crc32) {
-    console.log("  ⚡ Hardware CRC32 available - good performance");
+    console.info("  ⚡ Hardware CRC32 available - good performance");
   } else {
-    console.log("  🐌 Software CRC32 only - consider hardware upgrade");
+    console.info("  🐌 Software CRC32 only - consider hardware upgrade");
   }
 
   if (largeTime < 100) {
-    console.log("  ⚡ Excellent performance for large datasets");
+    console.info("  ⚡ Excellent performance for large datasets");
   } else if (largeTime < 500) {
-    console.log("  👍 Good performance for large datasets");
+    console.info("  👍 Good performance for large datasets");
   } else {
-    console.log("  🐌 Consider optimization for large datasets");
+    console.info("  🐌 Consider optimization for large datasets");
   }
 }
 

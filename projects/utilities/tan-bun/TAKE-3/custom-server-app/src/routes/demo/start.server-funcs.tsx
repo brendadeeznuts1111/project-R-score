@@ -6,7 +6,7 @@ import { createServerFn } from '@tanstack/react-start';
 /*
 const loggingMiddleware = createMiddleware().server(
   async ({ next, request }) => {
-    console.log("Request:", request.url);
+    console.info("Request:", request.url);
     return next();
   }
 );

@@ -267,7 +267,7 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.length === 0 && process.stdin.isTTY || args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🔍 Enhanced Enterprise Scanner with Codepoint Analysis
 
 Usage:
@@ -338,15 +338,15 @@ Examples:
   // Output
   switch (format) {
     case 'json':
-      console.log(scanner.exportJSON(result));
+      console.info(scanner.exportJSON(result));
       break;
     default:
       if (codepointsOnly) {
-        console.log(scanner.generateCodepointReport(result.codepointAnalysis));
+        console.info(scanner.generateCodepointReport(result.codepointAnalysis));
       } else if (enterpriseOnly) {
-        console.log(scanner.generateEnterpriseReport(result.enterpriseAnnotations));
+        console.info(scanner.generateEnterpriseReport(result.enterpriseAnnotations));
       } else {
-        console.log(scanner.generateEnhancedReport(result));
+        console.info(scanner.generateEnhancedReport(result));
       }
       break;
   }

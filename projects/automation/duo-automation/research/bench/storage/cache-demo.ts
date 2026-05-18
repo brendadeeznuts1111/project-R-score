@@ -52,7 +52,7 @@ async function demo() {
   
   // Get from cache
   const data = await cache.get('test');
-  console.log('Cache hit:', data ? '✅' : '❌');
+  console.info('Cache hit:', data ? '✅' : '❌');
 }
 
 demo();

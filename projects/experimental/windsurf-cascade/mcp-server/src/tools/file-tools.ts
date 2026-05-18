@@ -112,11 +112,11 @@ class FileWatcher {
   }
 
   async startWatching() {
-    console.log('👁️ Starting file watcher...');
-    console.log(\`📁 Watching: \${this.config.paths.join(', ')}\`);
-    console.log(\`📝 Events: \${this.config.events.join(', ')}\`);
-    console.log(\`🔄 Recursive: \${this.config.recursive}\`);
-    console.log(\`⏱️ Debounce: \${this.config.debounceMs}ms\\n\`);
+    console.info('👁️ Starting file watcher...');
+    console.info(\`📁 Watching: \${this.config.paths.join(', ')}\`);
+    console.info(\`📝 Events: \${this.config.events.join(', ')}\`);
+    console.info(\`🔄 Recursive: \${this.config.recursive}\`);
+    console.info(\`⏱️ Debounce: \${this.config.debounceMs}ms\\n\`);
     
     // Initialize watcher
     const watcher = chokidar.watch(this.config.paths, {
@@ -136,11 +136,11 @@ class FileWatcher {
       .on('addDir', (dirPath) => this.handleEvent('addDir', dirPath))
       .on('unlinkDir', (dirPath) => this.handleEvent('unlinkDir', dirPath))
       .on('error', (error) => this.handleError(error))
-      .on('ready', () => console.log('✅ Initial scan complete. Ready for changes.'));
+      .on('ready', () => console.info('✅ Initial scan complete. Ready for changes.'));
 
     // Graceful shutdown
     process.on('SIGINT', () => {
-      console.log('\\n🛑 Shutting down file watcher...');
+      console.info('\\n🛑 Shutting down file watcher...');
       watcher.close();
       this.printStats();
       process.exit(0);
@@ -151,7 +151,7 @@ class FileWatcher {
     this.eventCount++;
     
     if (this.eventCount > this.config.maxEvents) {
-      console.log(\`⚠️ Max events (\${this.config.maxEvents}) reached. Stopping watcher.\`);
+      console.info(\`⚠️ Max events (\${this.config.maxEvents}) reached. Stopping watcher.\`);
       process.exit(0);
       return;
     }
@@ -189,10 +189,10 @@ class FileWatcher {
     const icon = this.getEventIcon(eventData.event);
     const size = eventData.stats?.size ? \` (\${this.formatSize(eventData.stats.size)})\` : '';
     
-    console.log(\`\${icon} \${eventData.timestamp} | \${eventData.event.toUpperCase()} | \${eventData.relativePath}\${size}\`);
+    console.info(\`\${icon} \${eventData.timestamp} | \${eventData.event.toUpperCase()} | \${eventData.relativePath}\${size}\`);
 
     if (this.config.outputFormat === 'json') {
-      console.log(JSON.stringify(eventData));
+      console.info(JSON.stringify(eventData));
     } else if (this.config.outputFormat === 'file' && this.config.logFile) {
       this.logToFile(eventData);
     }
@@ -228,10 +228,10 @@ class FileWatcher {
 
   printStats() {
     const duration = (Date.now() - this.startTime) / 1000;
-    console.log(\`\\n📊 File Watcher Statistics:\`);
-    console.log(\`⏱️  Duration: \${duration.toFixed(1)}s\`);
-    console.log(\`📊 Total Events: \${this.eventCount}\`);
-    console.log(\`📈 Events/Second: \${(this.eventCount / duration).toFixed(1)}\`);
+    console.info(\`\\n📊 File Watcher Statistics:\`);
+    console.info(\`⏱️  Duration: \${duration.toFixed(1)}s\`);
+    console.info(\`📊 Total Events: \${this.eventCount}\`);
+    console.info(\`📈 Events/Second: \${(this.eventCount / duration).toFixed(1)}\`);
   }
 }
 
@@ -372,14 +372,14 @@ class FileCompressor {
   }
 
   async compressFiles() {
-    console.log('🗜️ Starting file compression...');
-    console.log(\`📁 Input: \${this.config.inputPaths.join(', ')}\`);
-    console.log(\`📦 Output: \${this.config.outputPath}\`);
-    console.log(\`🗜️ Algorithm: \${this.config.algorithm}\`);
-    console.log(\`📊 Level: \${this.config.level}\\n\`);
+    console.info('🗜️ Starting file compression...');
+    console.info(\`📁 Input: \${this.config.inputPaths.join(', ')}\`);
+    console.info(\`📦 Output: \${this.config.outputPath}\`);
+    console.info(\`🗜️ Algorithm: \${this.config.algorithm}\`);
+    console.info(\`📊 Level: \${this.config.level}\\n\`);
     
     const files = await this.collectFiles();
-    console.log(\`📋 Found \${files.length} files to compress\\n\`);
+    console.info(\`📋 Found \${files.length} files to compress\\n\`);
     
     for (const file of files) {
       await this.compressFile(file);
@@ -448,7 +448,7 @@ class FileCompressor {
       this.stats.compressedSize += compressedData.length;
       
       const ratio = ((originalData.length - compressedData.length) / originalData.length * 100).toFixed(1);
-      console.log(\`✅ \${relativePath}: \${this.formatBytes(originalData.length)} → \${this.formatBytes(compressedData.length)} (\${ratio}% reduction)\`);
+      console.info(\`✅ \${relativePath}: \${this.formatBytes(originalData.length)} → \${this.formatBytes(compressedData.length)} (\${ratio}% reduction)\`);
       
     } catch (error) {
       console.error(\`❌ Error compressing \${filePath}:\`, error.message);
@@ -482,13 +482,13 @@ class FileCompressor {
     const duration = (Date.now() - this.stats.startTime) / 1000;
     const compressionRatio = ((this.stats.totalSize - this.stats.compressedSize) / this.stats.totalSize * 100).toFixed(1);
     
-    console.log('\\n📊 Compression Statistics:');
-    console.log(\`📁 Files Processed: \${this.stats.filesProcessed}\`);
-    console.log(\`📦 Original Size: \${this.formatBytes(this.stats.totalSize)}\`);
-    console.log(\`🗜️ Compressed Size: \${this.formatBytes(this.stats.compressedSize)}\`);
-    console.log(\`📈 Compression Ratio: \${compressionRatio}%\`);
-    console.log(\`⏱️ Duration: \${duration.toFixed(1)}s\`);
-    console.log(\`📊 Throughput: \${(this.stats.totalSize / duration / 1024 / 1024).toFixed(1)} MB/s\`);
+    console.info('\\n📊 Compression Statistics:');
+    console.info(\`📁 Files Processed: \${this.stats.filesProcessed}\`);
+    console.info(\`📦 Original Size: \${this.formatBytes(this.stats.totalSize)}\`);
+    console.info(\`🗜️ Compressed Size: \${this.formatBytes(this.stats.compressedSize)}\`);
+    console.info(\`📈 Compression Ratio: \${compressionRatio}%\`);
+    console.info(\`⏱️ Duration: \${duration.toFixed(1)}s\`);
+    console.info(\`📊 Throughput: \${(this.stats.totalSize / duration / 1024 / 1024).toFixed(1)} MB/s\`);
   }
 }
 
@@ -622,14 +622,14 @@ class FileEncryptor {
   }
 
   async encryptFiles() {
-    console.log('🔒 Starting file encryption...');
-    console.log(\`📁 Input: \${this.config.inputPaths.join(', ')}\`);
-    console.log(\`📦 Output: \${this.config.outputPath}\`);
-    console.log(\`🔐 Algorithm: \${this.config.algorithm}\`);
-    console.log(\`🏗️ Preserve Structure: \${this.config.preserveStructure}\\n\`);
+    console.info('🔒 Starting file encryption...');
+    console.info(\`📁 Input: \${this.config.inputPaths.join(', ')}\`);
+    console.info(\`📦 Output: \${this.config.outputPath}\`);
+    console.info(\`🔐 Algorithm: \${this.config.algorithm}\`);
+    console.info(\`🏗️ Preserve Structure: \${this.config.preserveStructure}\\n\`);
     
     const files = await this.collectFiles();
-    console.log(\`📋 Found \${files.length} files to encrypt\\n\`);
+    console.info(\`📋 Found \${files.length} files to encrypt\\n\`);
     
     for (const file of files) {
       await this.encryptFile(file);
@@ -710,7 +710,7 @@ class FileEncryptor {
       this.stats.totalSize += originalData.length;
       this.stats.encryptedSize += Buffer.from(JSON.stringify(fileData)).length;
       
-      console.log(\`🔒 \${relativePath}: \${this.formatBytes(originalData.length)} → \${this.formatBytes(Buffer.from(JSON.stringify(fileData)).length)}\`);
+      console.info(\`🔒 \${relativePath}: \${this.formatBytes(originalData.length)} → \${this.formatBytes(Buffer.from(JSON.stringify(fileData)).length)}\`);
       
     } catch (error) {
       console.error(\`❌ Error encrypting \${filePath}:\`, error.message);
@@ -777,13 +777,13 @@ class FileEncryptor {
     const duration = (Date.now() - this.stats.startTime) / 1000;
     const overhead = ((this.stats.encryptedSize - this.stats.totalSize) / this.stats.totalSize * 100).toFixed(1);
     
-    console.log('\\n📊 Encryption Statistics:');
-    console.log(\`📁 Files Processed: \${this.stats.filesProcessed}\`);
-    console.log(\`📦 Original Size: \${this.formatBytes(this.stats.totalSize)}\`);
-    console.log(\`🔒 Encrypted Size: \${this.formatBytes(this.stats.encryptedSize)}\`);
-    console.log(\`📈 Metadata Overhead: \${overhead}%\`);
-    console.log(\`⏱️ Duration: \${duration.toFixed(1)}s\`);
-    console.log(\`📊 Throughput: \${(this.stats.totalSize / duration / 1024 / 1024).toFixed(1)} MB/s\`);
+    console.info('\\n📊 Encryption Statistics:');
+    console.info(\`📁 Files Processed: \${this.stats.filesProcessed}\`);
+    console.info(\`📦 Original Size: \${this.formatBytes(this.stats.totalSize)}\`);
+    console.info(\`🔒 Encrypted Size: \${this.formatBytes(this.stats.encryptedSize)}\`);
+    console.info(\`📈 Metadata Overhead: \${overhead}%\`);
+    console.info(\`⏱️ Duration: \${duration.toFixed(1)}s\`);
+    console.info(\`📊 Throughput: \${(this.stats.totalSize / duration / 1024 / 1024).toFixed(1)} MB/s\`);
   }
 }
 
@@ -932,14 +932,14 @@ class FileTransfer {
   }
 
   async transferFiles() {
-    console.log('📤 Starting file transfer...');
-    console.log(\`📁 Source: \${this.config.sourcePaths.join(', ')}\`);
-    console.log(\`🎯 Destination: \${this.config.destination}\`);
-    console.log(\`🌐 Protocol: \${this.config.protocol.toUpperCase()}\`);
-    console.log(\`🏗️ Preserve Attributes: \${this.config.preserveAttributes}\\n\`);
+    console.info('📤 Starting file transfer...');
+    console.info(\`📁 Source: \${this.config.sourcePaths.join(', ')}\`);
+    console.info(\`🎯 Destination: \${this.config.destination}\`);
+    console.info(\`🌐 Protocol: \${this.config.protocol.toUpperCase()}\`);
+    console.info(\`🏗️ Preserve Attributes: \${this.config.preserveAttributes}\\n\`);
     
     const files = await this.collectFiles();
-    console.log(\`📋 Found \${files.length} files to transfer\\n\`);
+    console.info(\`📋 Found \${files.length} files to transfer\\n\`);
     
     for (const file of files) {
       await this.transferFile(file);
@@ -1010,7 +1010,7 @@ class FileTransfer {
       this.stats.filesTransferred++;
       this.stats.bytesTransferred += sourceStats.size;
       
-      console.log(\`📤 \${relativePath}: \${this.formatBytes(sourceStats.size)}\`);
+      console.info(\`📤 \${relativePath}: \${this.formatBytes(sourceStats.size)}\`);
       
     } catch (error) {
       console.error(\`❌ Error transferring \${filePath}:\`, error.message);
@@ -1118,11 +1118,11 @@ class FileTransfer {
   printStats() {
     const duration = (Date.now() - this.stats.startTime) / 1000;
     
-    console.log('\\n📊 Transfer Statistics:');
-    console.log(\`📁 Files Transferred: \${this.stats.filesTransferred}\`);
-    console.log(\`📦 Bytes Transferred: \${this.formatBytes(this.stats.bytesTransferred)}\`);
-    console.log(\`⏱️ Duration: \${duration.toFixed(1)}s\`);
-    console.log(\`📊 Throughput: \${(this.stats.bytesTransferred / duration / 1024 / 1024).toFixed(1)} MB/s\`);
+    console.info('\\n📊 Transfer Statistics:');
+    console.info(\`📁 Files Transferred: \${this.stats.filesTransferred}\`);
+    console.info(\`📦 Bytes Transferred: \${this.formatBytes(this.stats.bytesTransferred)}\`);
+    console.info(\`⏱️ Duration: \${duration.toFixed(1)}s\`);
+    console.info(\`📊 Throughput: \${(this.stats.bytesTransferred / duration / 1024 / 1024).toFixed(1)} MB/s\`);
   }
 }
 

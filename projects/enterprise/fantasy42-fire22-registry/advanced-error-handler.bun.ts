@@ -175,7 +175,7 @@ class AdvancedErrorHandler {
           await this.delay(delay);
           try {
             // Simulate retry logic - in real implementation, this would retry the actual operation
-            console.log(`🔄 Retry attempt ${attempt} for ${context.component}`);
+            console.info(`🔄 Retry attempt ${attempt} for ${context.component}`);
             delay = Math.min(
               delay * pattern.retryConfig.backoffMultiplier,
               pattern.retryConfig.maxDelay
@@ -197,7 +197,7 @@ class AdvancedErrorHandler {
       name: 'Re-authentication Flow',
       description: 'Trigger re-authentication and token refresh',
       execute: async (error: Error, context: ErrorContext) => {
-        console.log('🔐 Triggering re-authentication for user:', context.userId);
+        console.info('🔐 Triggering re-authentication for user:', context.userId);
         // In real implementation, this would redirect to login or refresh tokens
         return true;
       },
@@ -210,7 +210,7 @@ class AdvancedErrorHandler {
       name: 'Fallback Chart Rendering',
       description: 'Render a simplified fallback chart when main chart fails',
       execute: async (error: Error, context: ErrorContext) => {
-        console.log('📊 Rendering fallback chart for component:', context.component);
+        console.info('📊 Rendering fallback chart for component:', context.component);
         // In real implementation, this would render a simplified chart
         return true;
       },
@@ -223,7 +223,7 @@ class AdvancedErrorHandler {
       name: 'Auto WebSocket Reconnect',
       description: 'Automatically reconnect WebSocket connections',
       execute: async (error: Error, context: ErrorContext) => {
-        console.log('🔗 Attempting WebSocket reconnection for:', context.component);
+        console.info('🔗 Attempting WebSocket reconnection for:', context.component);
         // In real implementation, this would handle WebSocket reconnection
         return true;
       },
@@ -481,8 +481,8 @@ export const advancedErrorHandler = new AdvancedErrorHandler();
 
 // Example usage and demonstration
 async function demonstrateAdvancedErrorHandling() {
-  console.log('🚨 Advanced Error Handler Demonstration');
-  console.log('=======================================\n');
+  console.info('🚨 Advanced Error Handler Demonstration');
+  console.info('=======================================\n');
 
   // Simulate various error scenarios
   const testErrors = [
@@ -515,27 +515,27 @@ async function demonstrateAdvancedErrorHandling() {
     },
   ];
 
-  console.log('🧪 Testing Error Scenarios:\n');
+  console.info('🧪 Testing Error Scenarios:\n');
 
   for (const { error, context } of testErrors) {
-    console.log(`❌ Simulating: ${error.message}`);
-    console.log(`   Component: ${context.component}`);
-    console.log(`   Action: ${context.action}`);
+    console.info(`❌ Simulating: ${error.message}`);
+    console.info(`   Component: ${context.component}`);
+    console.info(`   Action: ${context.action}`);
 
     const result = await advancedErrorHandler.handleError(error, context);
 
-    console.log(`   ✅ Handled: ${result.handled}`);
-    console.log(`   💬 User Message: ${result.userMessage}`);
-    console.log(`   🔧 Recovery Action: ${result.recoveryAction || 'None'}`);
-    console.log(`   💡 Suggestions: ${result.suggestedActions.join(', ')}\n`);
+    console.info(`   ✅ Handled: ${result.handled}`);
+    console.info(`   💬 User Message: ${result.userMessage}`);
+    console.info(`   🔧 Recovery Action: ${result.recoveryAction || 'None'}`);
+    console.info(`   💡 Suggestions: ${result.suggestedActions.join(', ')}\n`);
   }
 
   // Generate error report
   const report = await advancedErrorHandler.generateErrorReport();
   await Bun.write('./advanced-error-report.md', report);
 
-  console.log('📄 Generated Error Report: ./advanced-error-report.md');
-  console.log('\n✨ Advanced error handling demonstration complete!');
+  console.info('📄 Generated Error Report: ./advanced-error-report.md');
+  console.info('\n✨ Advanced error handling demonstration complete!');
 }
 
 // Run demonstration if called directly

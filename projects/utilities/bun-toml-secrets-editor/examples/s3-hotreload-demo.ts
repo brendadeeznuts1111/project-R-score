@@ -98,19 +98,19 @@ class S3ConfigDashboard {
 
   displayDashboard() {
     if (!this.config) {
-      console.log("❌ No configuration loaded");
+      console.info("❌ No configuration loaded");
       return;
     }
 
     console.clear();
-    console.log("🎯 S3 Configuration Dashboard");
-    console.log("=".repeat(40));
-    console.log(`📝 Title: ${this.config.title}`);
-    console.log(`🎨 Theme: ${this.config.theme}`);
-    console.log(`📅 Last Updated: ${this.config.lastUpdated}`);
-    console.log(`⚡ Features: ${this.config.features.length} enabled`);
-    console.log("🔥 Hot Reload: " + (this.hotReload.isHotReloadAvailable() ? "✅ Enabled" : "❌ Disabled"));
-    console.log("=".repeat(40));
+    console.info("🎯 S3 Configuration Dashboard");
+    console.info("=".repeat(40));
+    console.info(`📝 Title: ${this.config.title}`);
+    console.info(`🎨 Theme: ${this.config.theme}`);
+    console.info(`📅 Last Updated: ${this.config.lastUpdated}`);
+    console.info(`⚡ Features: ${this.config.features.length} enabled`);
+    console.info("🔥 Hot Reload: " + (this.hotReload.isHotReloadAvailable() ? "✅ Enabled" : "❌ Disabled"));
+    console.info("=".repeat(40));
   }
 }
 
@@ -170,7 +170,7 @@ async function runDemo() {
 
 // Handle graceful shutdown
 process.on("SIGINT", () => {
-  console.log("\n👋 Shutting down dashboard...");
+  console.info("\n👋 Shutting down dashboard...");
   process.exit(0);
 });
 

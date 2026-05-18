@@ -77,11 +77,11 @@ export class Logger {
   }
 
   info(message: string): void {
-    console.log(this.formatMessage("info", message));
+    console.info(this.formatMessage("info", message));
   }
 
   success(message: string): void {
-    console.log(this.formatMessage("success", message));
+    console.info(this.formatMessage("success", message));
   }
 
   warning(message: string): void {
@@ -98,7 +98,7 @@ export class Logger {
 
   debug(message: string): void {
     if (this.debugEnabled) {
-      console.log(this.formatMessage("debug", message));
+      console.info(this.formatMessage("debug", message));
     }
   }
 
@@ -112,7 +112,7 @@ export class Logger {
     const contextStr = colors.dim(
       `\n  ${JSON.stringify(context, null, 2).replace(/\n/g, "\n  ")}`
     );
-    console.log(formatted + contextStr);
+    console.info(formatted + contextStr);
   }
 
   // Boxed message for important notices
@@ -123,22 +123,22 @@ export class Logger {
     const top = `╭${"─".repeat(width - 2)}╮`;
     const bottom = `╰${"─".repeat(width - 2)}╯`;
 
-    console.log(colors.info(top));
+    console.info(colors.info(top));
 
     if (title) {
       const titlePadded = ` ${title} `.padStart(
         (width - 2 + title.length + 2) / 2
       ).padEnd(width - 2);
-      console.log(colors.info(`│${colors.bold(titlePadded)}│`));
-      console.log(colors.info(`├${"─".repeat(width - 2)}┤`));
+      console.info(colors.info(`│${colors.bold(titlePadded)}│`));
+      console.info(colors.info(`├${"─".repeat(width - 2)}┤`));
     }
 
     for (const line of lines) {
       const padded = ` ${line}`.padEnd(width - 2);
-      console.log(colors.info(`│${padded}│`));
+      console.info(colors.info(`│${padded}│`));
     }
 
-    console.log(colors.info(bottom));
+    console.info(colors.info(bottom));
   }
 
   private wrapText(text: string, maxWidth: number): string[] {

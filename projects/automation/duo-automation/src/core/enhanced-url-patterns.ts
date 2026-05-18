@@ -423,34 +423,34 @@ export const validateEvidenceId = (id: string) => EnhancedURLPatterns.validateRe
 
 // Run demo if this is the main module
 if (import.meta.main) {
-  console.log('🌐 ENHANCED URL PATTERNS DEMO');
-  console.log('='.repeat(40));
+  console.info('🌐 ENHANCED URL PATTERNS DEMO');
+  console.info('='.repeat(40));
   
-  console.log('\n🔧 Generated Resource IDs:');
-  console.log(`Merchant ID: ${generateMerchantId()}`);
-  console.log(`Evidence ID: ${generateEvidenceId()}`);
-  console.log(`Batch ID: ${generateBatchId()}`);
-  console.log(`Alert ID: ${generateAlertId()}`);
-  console.log(`Dispute ID: ${generateDisputeId()}`);
+  console.info('\n🔧 Generated Resource IDs:');
+  console.info(`Merchant ID: ${generateMerchantId()}`);
+  console.info(`Evidence ID: ${generateEvidenceId()}`);
+  console.info(`Batch ID: ${generateBatchId()}`);
+  console.info(`Alert ID: ${generateAlertId()}`);
+  console.info(`Dispute ID: ${generateDisputeId()}`);
 
-  console.log('\n🔗 Example API URLs:');
+  console.info('\n🔗 Example API URLs:');
   const merchantId = generateMerchantId();
   const evidenceId = generateEvidenceId();
   
-  console.log(EnhancedURLPatterns.buildURL('/v1/merchants/{merchantId}/evidence', { merchantId }));
-  console.log(EnhancedURLPatterns.buildURL('/v1/evidence/{evidenceId}/verify', { evidenceId }));
-  console.log(EnhancedURLPatterns.buildURL('/v1/merchants/{merchantId}/evidence/live-monitor', { merchantId }));
+  console.info(EnhancedURLPatterns.buildURL('/v1/merchants/{merchantId}/evidence', { merchantId }));
+  console.info(EnhancedURLPatterns.buildURL('/v1/evidence/{evidenceId}/verify', { evidenceId }));
+  console.info(EnhancedURLPatterns.buildURL('/v1/merchants/{merchantId}/evidence/live-monitor', { merchantId }));
 
-  console.log('\n🛡️ Security Validation:');
+  console.info('\n🛡️ Security Validation:');
   const secureURL = '/v1/evidence/ev_2026_xH7zK9qR/verify';
   const insecureURL = '/evidence?file=../../etc/passwd';
   
-  console.log(`Secure URL: ${secureURL}`);
-  console.log(`Validation: ${JSON.stringify(EnhancedURLPatterns.validateURLSecurity(secureURL))}`);
+  console.info(`Secure URL: ${secureURL}`);
+  console.info(`Validation: ${JSON.stringify(EnhancedURLPatterns.validateURLSecurity(secureURL))}`);
   
-  console.log(`\nInsecure URL: ${insecureURL}`);
-  console.log(`Validation: ${JSON.stringify(EnhancedURLPatterns.validateURLSecurity(insecureURL))}`);
+  console.info(`\nInsecure URL: ${insecureURL}`);
+  console.info(`Validation: ${JSON.stringify(EnhancedURLPatterns.validateURLSecurity(insecureURL))}`);
 
-  console.log('\n📋 Migration Plan:');
-  console.log(EnhancedURLPatterns.generateMigrationPlan());
+  console.info('\n📋 Migration Plan:');
+  console.info(EnhancedURLPatterns.generateMigrationPlan());
 }

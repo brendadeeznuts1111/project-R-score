@@ -131,8 +131,8 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log("Usage: grep-assistant <command> [query]");
-    console.log("Commands: suggest, list");
+    console.info("Usage: grep-assistant <command> [query]");
+    console.info("Commands: suggest, list");
     process.exit(1);
   }
 
@@ -144,7 +144,7 @@ if (import.meta.main) {
         console.error("Usage: grep-assistant suggest <query>");
         process.exit(1);
       }
-      console.log(GrepAssistant.suggest(args[1]));
+      console.info(GrepAssistant.suggest(args[1]));
       break;
 
     case "search":
@@ -153,16 +153,16 @@ if (import.meta.main) {
         process.exit(1);
       }
       const result = GrepAssistant.search(args[1]);
-      console.log(JSON.stringify(result, null, 2));
+      console.info(JSON.stringify(result, null, 2));
       break;
 
     case "list":
-      console.log(GrepAssistant.list());
+      console.info(GrepAssistant.list());
       break;
 
     default:
       console.error(`Unknown command: ${command}`);
-      console.log("Available commands: suggest, search, list");
+      console.info("Available commands: suggest, search, list");
       process.exit(1);
   }
 }

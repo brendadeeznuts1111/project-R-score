@@ -186,11 +186,11 @@ const items = parseContents(xml)
   .slice(0, max);
 
 if (json) {
-  console.log(JSON.stringify({ prefix: effectivePrefix, count: items.length, items }, null, 2));
+  console.info(JSON.stringify({ prefix: effectivePrefix, count: items.length, items }, null, 2));
   process.exit(0);
 }
 
-console.log(`[list-r2-profiles] prefix=${effectivePrefix} count=${items.length}`);
+console.info(`[list-r2-profiles] prefix=${effectivePrefix} count=${items.length}`);
 for (const item of items) {
-  console.log(wrapAnsiLine(`${item.lastModified || '-'}\t${item.size}\t${item.key}`));
+  console.info(wrapAnsiLine(`${item.lastModified || '-'}\t${item.size}\t${item.key}`));
 }

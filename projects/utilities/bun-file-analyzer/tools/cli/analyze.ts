@@ -18,10 +18,10 @@ if (!filePath) {
 const file = Bun.file(filePath);
 const bytes = await file.bytes();
 
-console.log(`📊 Analyzing: ${filePath}`);
-console.log(`📏 Size: ${file.size} bytes`);
-console.log(`🏷️  Type: ${file.type || "Unknown"}`);
+console.info(`📊 Analyzing: ${filePath}`);
+console.info(`📏 Size: ${file.size} bytes`);
+console.info(`🏷️  Type: ${file.type || "Unknown"}`);
 
 const hasher = new Bun.CryptoHasher("sha256");
 hasher.update(bytes);
-console.log(`🔐 SHA-256: ${hasher.digest("hex")}`);
+console.info(`🔐 SHA-256: ${hasher.digest("hex")}`);

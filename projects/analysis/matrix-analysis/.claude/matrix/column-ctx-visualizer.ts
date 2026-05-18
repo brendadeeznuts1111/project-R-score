@@ -49,7 +49,7 @@ const CATEGORY_COLORS: Record<ColumnCategory, string> = {
  * Render a 60-column matrix visualization
  */
 export function renderMatrixGrid(): void {
-	console.log(`${COLORS.bold}Tier-1380 OMEGA 60-Column Matrix${COLORS.reset}\n`);
+	console.info(`${COLORS.bold}Tier-1380 OMEGA 60-Column Matrix${COLORS.reset}\n`);
 
 	const categories: ColumnCategory[] = [
 		"core",
@@ -62,14 +62,14 @@ export function renderMatrixGrid(): void {
 	];
 
 	// Legend
-	console.log("Legend:");
+	console.info("Legend:");
 	for (const cat of categories) {
 		const cols = getColumnsByCategory(cat);
-		console.log(
+		console.info(
 			`  ${CATEGORY_COLORS[cat]}██${COLORS.reset} ${cat.padEnd(10)} (${cols.length} cols)`,
 		);
 	}
-	console.log();
+	console.info();
 
 	// Grid: 6 rows of 10 columns
 	for (let row = 0; row < 6; row++) {
@@ -88,10 +88,10 @@ export function renderMatrixGrid(): void {
 			}
 		}
 
-		console.log(`  ${rowCols.join(" ")}`);
+		console.info(`  ${rowCols.join(" ")}`);
 	}
 
-	console.log();
+	console.info();
 }
 
 /**
@@ -101,64 +101,64 @@ export function renderColumnDetails(index: number): void {
 	const col = Object.values(COLUMN_STANDARDS).find((c) => c.index === index);
 
 	if (!col) {
-		console.log(`${COLORS.red}Column ${index} not defined${COLORS.reset}`);
+		console.info(`${COLORS.red}Column ${index} not defined${COLORS.reset}`);
 		return;
 	}
 
 	const color = CATEGORY_COLORS[col.category];
 
-	console.log(
+	console.info(
 		`${COLORS.bold}╔══════════════════════════════════════════════════════════════╗${COLORS.reset}`,
 	);
-	console.log(
+	console.info(
 		`${COLORS.bold}║${COLORS.reset}  ${color}${col.displayName}${COLORS.reset}${"".padEnd(46 - col.displayName.length)}${COLORS.bold}║${COLORS.reset}`,
 	);
-	console.log(
+	console.info(
 		`${COLORS.bold}╠══════════════════════════════════════════════════════════════╣${COLORS.reset}`,
 	);
 
 	// Basic Info
-	console.log(
+	console.info(
 		`${COLORS.bold}║${COLORS.reset}  ${COLORS.dim}Index:${COLORS.reset}      ${col.index.toString().padStart(2, "0")}${"".padEnd(44)}${COLORS.bold}║${COLORS.reset}`,
 	);
-	console.log(
+	console.info(
 		`${COLORS.bold}║${COLORS.reset}  ${COLORS.dim}ID:${COLORS.reset}         ${col.id.padEnd(44)}${COLORS.bold}║${COLORS.reset}`,
 	);
-	console.log(
+	console.info(
 		`${COLORS.bold}║${COLORS.reset}  ${COLORS.dim}Category:${COLORS.reset}   ${color}${col.category.padEnd(44 - col.category.length)}${COLORS.reset}${COLORS.bold}║${COLORS.reset}`,
 	);
-	console.log(
+	console.info(
 		`${COLORS.bold}║${COLORS.reset}  ${COLORS.dim}Type:${COLORS.reset}       ${col.type.padEnd(44)}${COLORS.bold}║${COLORS.reset}`,
 	);
-	console.log(
+	console.info(
 		`${COLORS.bold}║${COLORS.reset}  ${COLORS.dim}Required:${COLORS.reset}   ${col.required ? `${COLORS.green}YES${COLORS.reset}` : `${COLORS.yellow}NO`}${"".padEnd(41)}${COLORS.bold}║${COLORS.reset}`,
 	);
-	console.log(
+	console.info(
 		`${COLORS.bold}║${COLORS.reset}  ${COLORS.dim}Bun Ver:${COLORS.reset}    ${col.bunVersion.padEnd(44)}${COLORS.bold}║${COLORS.reset}`,
 	);
 
-	console.log(
+	console.info(
 		`${COLORS.bold}╠══════════════════════════════════════════════════════════════╣${COLORS.reset}`,
 	);
 
 	// Description
-	console.log(
+	console.info(
 		`${COLORS.bold}║${COLORS.reset}  ${COLORS.dim}Description:${COLORS.reset}${"".padEnd(42)}${COLORS.bold}║${COLORS.reset}`,
 	);
 	const descLines = wrapText(col.description, 56);
 	for (const line of descLines) {
-		console.log(
+		console.info(
 			`${COLORS.bold}║${COLORS.reset}    ${line.padEnd(58)}${COLORS.bold}║${COLORS.reset}`,
 		);
 	}
 
-	console.log(
+	console.info(
 		`${COLORS.bold}╠══════════════════════════════════════════════════════════════╣${COLORS.reset}`,
 	);
 
 	// Options/Props (for enum types)
 	if (col.type === "enum") {
-		console.log(
+		console.info(
 			`${COLORS.bold}║${COLORS.reset}  ${COLORS.dim}Options/Props:${COLORS.reset}${"".padEnd(40)}${COLORS.bold}║${COLORS.reset}`,
 		);
 		// Common enum values based on column ID
@@ -168,28 +168,28 @@ export function renderColumnDetails(index: number): void {
 				opt === col.defaultValue
 					? `${COLORS.green}●${COLORS.reset}`
 					: `${COLORS.dim}○${COLORS.reset}`;
-			console.log(
+			console.info(
 				`${COLORS.bold}║${COLORS.reset}    ${marker} ${opt.padEnd(55)}${COLORS.bold}║${COLORS.reset}`,
 			);
 		}
-		console.log(
+		console.info(
 			`${COLORS.bold}╠══════════════════════════════════════════════════════════════╣${COLORS.reset}`,
 		);
 	}
 
 	// Default Value
-	console.log(
+	console.info(
 		`${COLORS.bold}║${COLORS.reset}  ${COLORS.dim}Default:${COLORS.reset}    ${String(col.defaultValue).padEnd(44)}${COLORS.bold}║${COLORS.reset}`,
 	);
 
 	// Validation
 	if (col.validate) {
-		console.log(
+		console.info(
 			`${COLORS.bold}║${COLORS.reset}  ${COLORS.dim}Validation:${COLORS.reset} ${COLORS.green}Custom validator defined${COLORS.reset}${"".padEnd(24)}${COLORS.bold}║${COLORS.reset}`,
 		);
 	}
 
-	console.log(
+	console.info(
 		`${COLORS.bold}╚══════════════════════════════════════════════════════════════╝${COLORS.reset}`,
 	);
 }
@@ -245,13 +245,13 @@ function wrapText(text: string, maxWidth: number): string[] {
  * Render a full context with values
  */
 export function renderContext(ctx: ColumnContext): void {
-	console.log(`${COLORS.bold}Column Context${COLORS.reset}`);
-	console.log(`  Version: ${ctx.version}`);
-	console.log(`  Bun: ${ctx.bunVersion}`);
-	console.log(`  Run ID: ${ctx.meta.runId}`);
-	console.log(`  Environment: ${ctx.meta.environment}`);
-	console.log(`  Platform: ${ctx.meta.platform}/${ctx.meta.arch}`);
-	console.log();
+	console.info(`${COLORS.bold}Column Context${COLORS.reset}`);
+	console.info(`  Version: ${ctx.version}`);
+	console.info(`  Bun: ${ctx.bunVersion}`);
+	console.info(`  Run ID: ${ctx.meta.runId}`);
+	console.info(`  Environment: ${ctx.meta.environment}`);
+	console.info(`  Platform: ${ctx.meta.platform}/${ctx.meta.arch}`);
+	console.info();
 
 	const categories: ColumnCategory[] = [
 		"core",
@@ -268,7 +268,7 @@ export function renderContext(ctx: ColumnContext): void {
 		if (cols.length === 0) continue;
 
 		const color = CATEGORY_COLORS[cat];
-		console.log(`${color}${COLORS.bold}${cat.toUpperCase()}${COLORS.reset}`);
+		console.info(`${color}${COLORS.bold}${cat.toUpperCase()}${COLORS.reset}`);
 
 		for (const col of cols.sort((a, b) => a.index - b.index)) {
 			const val = ctx.columns[col.id];
@@ -279,12 +279,12 @@ export function renderContext(ctx: ColumnContext): void {
 					: `${COLORS.dim}○${COLORS.reset}`;
 
 			const valueStr = String(val?.value ?? "unset").slice(0, 20);
-			console.log(
+			console.info(
 				`  ${status} ${col.index.toString().padStart(2, "0")} ${col.id.padEnd(25)} = ${valueStr}`,
 			);
 		}
 
-		console.log();
+		console.info();
 	}
 }
 
@@ -304,7 +304,7 @@ if (import.meta.main) {
 		case "show": {
 			const index = parseInt(Bun.argv[3], 10);
 			if (Number.isNaN(index) || index < 1 || index > 60) {
-				console.log("Usage: bun run column-ctx-visualizer.ts show <1-60>");
+				console.info("Usage: bun run column-ctx-visualizer.ts show <1-60>");
 				process.exit(1);
 			}
 			renderColumnDetails(index);
@@ -327,11 +327,11 @@ if (import.meta.main) {
 		case "search": {
 			const query = Bun.argv[3]?.toLowerCase();
 			if (!query) {
-				console.log("Usage: bun run column-ctx-visualizer.ts search <term>");
+				console.info("Usage: bun run column-ctx-visualizer.ts search <term>");
 				process.exit(1);
 			}
 
-			console.log(`Searching for: "${query}"\n`);
+			console.info(`Searching for: "${query}"\n`);
 
 			const matches = Object.values(COLUMN_STANDARDS).filter(
 				(col) =>
@@ -341,21 +341,21 @@ if (import.meta.main) {
 			);
 
 			for (const col of matches) {
-				console.log(`${col.index.toString().padStart(2, "0")}: ${col.displayName}`);
-				console.log(`    ${col.description}\n`);
+				console.info(`${col.index.toString().padStart(2, "0")}: ${col.displayName}`);
+				console.info(`    ${col.description}\n`);
 			}
 
-			console.log(`Found ${matches.length} match(es)`);
+			console.info(`Found ${matches.length} match(es)`);
 			break;
 		}
 
 		default: {
-			console.log("Tier-1380 OMEGA Column Context Visualizer\n");
-			console.log("Commands:");
-			console.log("  grid          Show 60-column matrix grid");
-			console.log("  show <index>  Show detailed column info (1-60)");
-			console.log("  demo          Render demo context");
-			console.log("  search <term> Search columns by term");
+			console.info("Tier-1380 OMEGA Column Context Visualizer\n");
+			console.info("Commands:");
+			console.info("  grid          Show 60-column matrix grid");
+			console.info("  show <index>  Show detailed column info (1-60)");
+			console.info("  demo          Render demo context");
+			console.info("  search <term> Search columns by term");
 		}
 	}
 }

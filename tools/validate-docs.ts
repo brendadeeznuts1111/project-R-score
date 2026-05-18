@@ -92,7 +92,7 @@ const command = commands[0] || 'all';
 const validCommands = ['urls', 'enums', 'imports', 'all'];
 
 if (showHelp) {
-  console.log(`Usage: bun tools/validate-docs.ts [command] [options]
+  console.info(`Usage: bun tools/validate-docs.ts [command] [options]
 
 Commands:
   urls      Check URL patterns for known-broken patterns (feed.xml, dead domains)
@@ -387,39 +387,39 @@ async function run() {
   const report = buildReport(results);
 
   if (jsonOutput) {
-    console.log(JSON.stringify(report, null, 2));
+    console.info(JSON.stringify(report, null, 2));
   } else {
     // Per-check results (use filtered results from report)
     for (const r of report.results) {
       const icon = r.issues.length === 0 ? color('PASS', 'green') : color('FAIL', 'red');
-      console.log(`\n${icon} ${r.name}: ${r.issues.length} issue(s)`);
+      console.info(`\n${icon} ${r.name}: ${r.issues.length} issue(s)`);
 
       for (const issue of r.issues) {
         const loc = color(`${issue.file}:${issue.line}`, 'cyan');
         const sev = issue.severity === 'error' ? color('ERROR', 'red') : color('WARN', 'yellow');
         const src = color(`[${issue.source}]`, 'magenta');
-        console.log(`  ${sev} ${src} ${loc} ${issue.message}`);
+        console.info(`  ${sev} ${src} ${loc} ${issue.message}`);
         if (showFix && issue.fix) {
-          console.log(`    ${color('fix:', 'dim')} ${issue.fix}`);
+          console.info(`    ${color('fix:', 'dim')} ${issue.fix}`);
         }
       }
 
       if (verbose && r.issues.length === 0) {
-        console.log(`  ${color('All checks passed', 'green')}`);
+        console.info(`  ${color('All checks passed', 'green')}`);
       }
     }
 
     // Breakdown by error source
     const sourceCounts = Object.entries(report.bySource);
     if (sourceCounts.length > 0) {
-      console.log(`\n${color('By error source:', 'bold')}`);
+      console.info(`\n${color('By error source:', 'bold')}`);
       for (const [src, count] of sourceCounts.sort((a, b) => b[1] - a[1])) {
         const label = SOURCE_LABELS[src as ErrorSource] || src;
-        console.log(`  ${color(String(count), 'yellow')} ${label} ${color(`(${src})`, 'dim')}`);
+        console.info(`  ${color(String(count), 'yellow')} ${label} ${color(`(${src})`, 'dim')}`);
       }
     }
 
-    console.log(`\n${color('Total:', 'blue')} ${report.totalIssues} issue(s)`);
+    console.info(`\n${color('Total:', 'blue')} ${report.totalIssues} issue(s)`);
   }
 
   process.exit(report.totalIssues > 0 ? 1 : 0);

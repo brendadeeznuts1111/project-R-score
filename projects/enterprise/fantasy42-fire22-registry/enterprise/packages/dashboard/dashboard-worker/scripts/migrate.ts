@@ -13,9 +13,9 @@ async function main() {
   try {
     const db = drizzle(env.DB, { schema });
 
-    console.log('Running migrations...');
+    console.info('Running migrations...');
     await migrate(db, { migrationsFolder: './drizzle' });
-    console.log('Migrations applied successfully!');
+    console.info('Migrations applied successfully!');
   } catch (error) {
     console.error('Error during migration:', error);
     process.exit(1);

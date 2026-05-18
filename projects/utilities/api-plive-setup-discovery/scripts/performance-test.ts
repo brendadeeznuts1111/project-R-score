@@ -89,11 +89,11 @@ class PerformanceTester {
   }
 
   public async run(): Promise<TestResult> {
-    console.log(`🚀 Starting performance test...`);
-    console.log(`   Target: ${this.config.targetUrl}`);
-    console.log(`   Duration: ${this.config.duration}s`);
-    console.log(`   Connections: ${this.config.connections}`);
-    console.log(`   Method: ${this.config.method}`);
+    console.info(`🚀 Starting performance test...`);
+    console.info(`   Target: ${this.config.targetUrl}`);
+    console.info(`   Duration: ${this.config.duration}s`);
+    console.info(`   Connections: ${this.config.connections}`);
+    console.info(`   Method: ${this.config.method}`);
 
     this.startTime = performance.now();
     const endTime = this.startTime + (this.config.duration * 1000);
@@ -143,27 +143,27 @@ class PerformanceTester {
   }
 
   public printResults(result: TestResult): void {
-    console.log('\n📊 Performance Test Results');
-    console.log('='.repeat(50));
-    console.log(`Duration: ${result.duration.toFixed(2)}s`);
-    console.log(`Total Requests: ${result.totalRequests.toLocaleString()}`);
-    console.log(`Successful Requests: ${result.successfulRequests.toLocaleString()}`);
-    console.log(`Failed Requests: ${result.failedRequests.toLocaleString()}`);
-    console.log(`Error Rate: ${result.errorRate.toFixed(2)}%`);
+    console.info('\n📊 Performance Test Results');
+    console.info('='.repeat(50));
+    console.info(`Duration: ${result.duration.toFixed(2)}s`);
+    console.info(`Total Requests: ${result.totalRequests.toLocaleString()}`);
+    console.info(`Successful Requests: ${result.successfulRequests.toLocaleString()}`);
+    console.info(`Failed Requests: ${result.failedRequests.toLocaleString()}`);
+    console.info(`Error Rate: ${result.errorRate.toFixed(2)}%`);
 
-    console.log('\n⚡ Throughput:');
-    console.log(`Requests/sec: ${result.requestsPerSecond.toFixed(2)}`);
+    console.info('\n⚡ Throughput:');
+    console.info(`Requests/sec: ${result.requestsPerSecond.toFixed(2)}`);
 
-    console.log('\n⏱️  Response Times (ms):');
-    console.log(`Average: ${result.averageResponseTime.toFixed(2)}`);
-    console.log(`Min: ${result.minResponseTime.toFixed(2)}`);
-    console.log(`Max: ${result.maxResponseTime.toFixed(2)}`);
-    console.log(`P50: ${result.p50ResponseTime.toFixed(2)}`);
-    console.log(`P95: ${result.p95ResponseTime.toFixed(2)}`);
-    console.log(`P99: ${result.p99ResponseTime.toFixed(2)}`);
+    console.info('\n⏱️  Response Times (ms):');
+    console.info(`Average: ${result.averageResponseTime.toFixed(2)}`);
+    console.info(`Min: ${result.minResponseTime.toFixed(2)}`);
+    console.info(`Max: ${result.maxResponseTime.toFixed(2)}`);
+    console.info(`P50: ${result.p50ResponseTime.toFixed(2)}`);
+    console.info(`P95: ${result.p95ResponseTime.toFixed(2)}`);
+    console.info(`P99: ${result.p99ResponseTime.toFixed(2)}`);
 
     // Performance validation against targets
-    console.log('\n🎯 Performance Validation:');
+    console.info('\n🎯 Performance Validation:');
     const targets = {
       throughput: 100, // Minimum acceptable req/sec
       p95: 10, // Maximum acceptable p95 response time (ms)
@@ -174,24 +174,24 @@ class PerformanceTester {
     const latencyOk = result.p95ResponseTime <= targets.p95;
     const errorsOk = result.errorRate <= targets.errorRate;
 
-    console.log(`Throughput (>=${targets.throughput} req/sec): ${throughputOk ? '✅ PASS' : '❌ FAIL'}`);
-    console.log(`Latency (P95 <=${targets.p95}ms): ${latencyOk ? '✅ PASS' : '❌ FAIL'}`);
-    console.log(`Error Rate (<=${targets.errorRate}%): ${errorsOk ? '✅ PASS' : '❌ FAIL'}`);
+    console.info(`Throughput (>=${targets.throughput} req/sec): ${throughputOk ? '✅ PASS' : '❌ FAIL'}`);
+    console.info(`Latency (P95 <=${targets.p95}ms): ${latencyOk ? '✅ PASS' : '❌ FAIL'}`);
+    console.info(`Error Rate (<=${targets.errorRate}%): ${errorsOk ? '✅ PASS' : '❌ FAIL'}`);
 
     const overallPass = throughputOk && latencyOk && errorsOk;
-    console.log(`\n🏆 Overall Performance: ${overallPass ? '✅ PASS' : '❌ FAIL'}`);
+    console.info(`\n🏆 Overall Performance: ${overallPass ? '✅ PASS' : '❌ FAIL'}`);
 
     if (!overallPass) {
-      console.log('\n💡 Recommendations:');
-      if (!throughputOk) console.log('  - Optimize database queries or add caching');
-      if (!latencyOk) console.log('  - Review middleware performance or add load balancing');
-      if (!errorsOk) console.log('  - Check error handling and service dependencies');
+      console.info('\n💡 Recommendations:');
+      if (!throughputOk) console.info('  - Optimize database queries or add caching');
+      if (!latencyOk) console.info('  - Review middleware performance or add load balancing');
+      if (!errorsOk) console.info('  - Check error handling and service dependencies');
     }
 
     if (this.errors.length > 0) {
-      console.log(`\n❌ Sample Errors (${Math.min(5, this.errors.length)}):`);
+      console.info(`\n❌ Sample Errors (${Math.min(5, this.errors.length)}):`);
       this.errors.slice(0, 5).forEach((error, i) => {
-        console.log(`  ${i + 1}. ${error}`);
+        console.info(`  ${i + 1}. ${error}`);
       });
     }
   }
@@ -229,14 +229,14 @@ function parseArgs(): TestConfig {
         break;
       case '--help':
       case '-h':
-        console.log('Usage: performance-test [options]');
-        console.log('');
-        console.log('Options:');
-        console.log('  -d, --duration <seconds>    Test duration (default: 60)');
-        console.log('  -c, --connections <num>     Number of concurrent connections (default: 100)');
-        console.log('  -u, --url <url>             Target URL (default: http://localhost:3000/health)');
-        console.log('  -m, --method <method>       HTTP method (default: GET)');
-        console.log('  -h, --help                  Show this help');
+        console.info('Usage: performance-test [options]');
+        console.info('');
+        console.info('Options:');
+        console.info('  -d, --duration <seconds>    Test duration (default: 60)');
+        console.info('  -c, --connections <num>     Number of concurrent connections (default: 100)');
+        console.info('  -u, --url <url>             Target URL (default: http://localhost:3000/health)');
+        console.info('  -m, --method <method>       HTTP method (default: GET)');
+        console.info('  -h, --help                  Show this help');
         process.exit(0);
         break;
     }

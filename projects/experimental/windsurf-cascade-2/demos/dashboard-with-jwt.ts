@@ -247,6 +247,6 @@ const server = serve({
   }
 });
 
-console.log(`🚀 Dashboard running on http://localhost:3001`);
-console.log(`📊 JWT issuer API: http://localhost:3001/api/jwt-issuer`);
-console.log(`🎯 13-byte config controls: ${getJwtIssuer()}`);
+console.info(`🚀 Dashboard running on http://localhost:3001`);
+console.info(`📊 JWT issuer API: http://localhost:3001/api/jwt-issuer`);
+console.info(`🎯 13-byte config controls: ${getJwtIssuer()}`);

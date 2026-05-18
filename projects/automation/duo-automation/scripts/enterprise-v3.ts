@@ -12,8 +12,8 @@ class EnterpriseFeaturesV3 {
   private spinner = ora();
 
   async execute() {
-    console.log(chalk.blue.bold('\n🏢 Executing Phase 4: Enterprise Features (v3.0)'));
-    console.log(chalk.gray('Target: Global Multi-Region + Enterprise Compliance\n'));
+    console.info(chalk.blue.bold('\n🏢 Executing Phase 4: Enterprise Features (v3.0)'));
+    console.info(chalk.gray('Target: Global Multi-Region + Enterprise Compliance\n'));
 
     const steps = [
       { name: 'Deploying Enterprise Suite v3.0 Core', duration: 2500 },
@@ -37,14 +37,14 @@ class EnterpriseFeaturesV3 {
   }
 
   private displayResults() {
-    console.log(chalk.white('\n📊 Phase 4 Results:'));
-    console.log(chalk.green('   • Enterprise Clients: 100+ Ready'));
-    console.log(chalk.green('   • Global Regions: 4 (NA, EU, APAC, LATAM)'));
-    console.log(chalk.green('   • Compliance: SOC2/ISO27001 certified'));
-    console.log(chalk.green('   • Multi-Tenant: Fully Enabled'));
-    console.log(chalk.green('   • Latency: <100ms globally'));
+    console.info(chalk.white('\n📊 Phase 4 Results:'));
+    console.info(chalk.green('   • Enterprise Clients: 100+ Ready'));
+    console.info(chalk.green('   • Global Regions: 4 (NA, EU, APAC, LATAM)'));
+    console.info(chalk.green('   • Compliance: SOC2/ISO27001 certified'));
+    console.info(chalk.green('   • Multi-Tenant: Fully Enabled'));
+    console.info(chalk.green('   • Latency: <100ms globally'));
     
-    console.log(chalk.green.bold('\n✅ Phase 4 Complete: $575M ARR Ready'));
+    console.info(chalk.green.bold('\n✅ Phase 4 Complete: $575M ARR Ready'));
   }
 }
 

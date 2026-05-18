@@ -187,11 +187,11 @@ function serveFile(filePath: string): Response {
   }
 }
 
-console.log(`🚀 Starting Dashboard Server`);
-console.log(`📁 Serving directory: ${PUBLIC_DIR}`);
-console.log(`🌐 Server running on: http://127.0.0.1:${PORT}`);
-console.log(`📊 Dashboard: http://127.0.0.1:${PORT}/dashboard-landing.html`);
-console.log('');
+console.info(`🚀 Starting Dashboard Server`);
+console.info(`📁 Serving directory: ${PUBLIC_DIR}`);
+console.info(`🌐 Server running on: http://127.0.0.1:${PORT}`);
+console.info(`📊 Dashboard: http://127.0.0.1:${PORT}/dashboard-landing.html`);
+console.info('');
 
 const server = serve({
   port: PORT,
@@ -215,23 +215,23 @@ const server = serve({
       filePath = 'dashboard-landing.html';
     }
     
-    console.log(`📄 Serving: ${filePath}`);
+    console.info(`📄 Serving: ${filePath}`);
     return serveFile(filePath);
   },
 });
 
-console.log('✅ Server started successfully!');
-console.log('🎯 Press Ctrl+C to stop the server');
+console.info('✅ Server started successfully!');
+console.info('🎯 Press Ctrl+C to stop the server');
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n👋 Shutting down server...');
+  console.info('\n👋 Shutting down server...');
   server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n👋 Shutting down server...');
+  console.info('\n👋 Shutting down server...');
   server.stop();
   process.exit(0);
 });

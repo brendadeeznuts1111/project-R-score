@@ -301,16 +301,16 @@ class PerformanceTester {
   }
 
   async runTests(): Promise<TestSuiteResult> {
-    console.log('🧪 Running Performance Test Suite...');
-    console.log('='.repeat(50));
+    console.info('🧪 Running Performance Test Suite...');
+    console.info('='.repeat(50));
 
     const startTime = Date.now();
     const results: PerformanceResult[] = [];
     const regressions: string[] = [];
 
     for (const test of this.tests) {
-      console.log(`\n🔬 Running ${test.name}...`);
-      console.log(`   ${test.description}`);
+      console.info(`\n🔬 Running ${test.name}...`);
+      console.info(`   ${test.description}`);
 
       try {
         const result = await test.run();
@@ -321,22 +321,22 @@ class PerformanceTester {
         const regression = this.checkRegression(test.name, result);
 
         if (passed) {
-          console.log(`   ✅ PASSED (${result.duration.toFixed(2)}ms)`);
+          console.info(`   ✅ PASSED (${result.duration.toFixed(2)}ms)`);
         } else {
-          console.log(`   ❌ FAILED (${result.duration.toFixed(2)}ms)`);
+          console.info(`   ❌ FAILED (${result.duration.toFixed(2)}ms)`);
         }
 
         if (regression) {
-          console.log(`   📉 REGRESSION detected!`);
+          console.info(`   📉 REGRESSION detected!`);
           regressions.push(test.name);
         }
 
         if (result.operationsPerSecond) {
-          console.log(`   📊 ${result.operationsPerSecond.toFixed(0)} ops/sec`);
+          console.info(`   📊 ${result.operationsPerSecond.toFixed(0)} ops/sec`);
         }
 
         if (result.memoryUsage) {
-          console.log(`   💾 ${(result.memoryUsage / 1024 / 1024).toFixed(2)} MB`);
+          console.info(`   💾 ${(result.memoryUsage / 1024 / 1024).toFixed(2)} MB`);
         }
 
       } catch (error) {
@@ -468,61 +468,61 @@ class PerformanceTester {
   }
 
   printResults(result: TestSuiteResult) {
-    console.log('\n📊 Performance Test Results');
-    console.log('='.repeat(50));
+    console.info('\n📊 Performance Test Results');
+    console.info('='.repeat(50));
 
-    console.log(`\n⏱️  Total Duration: ${(result.duration / 1000).toFixed(2)}s`);
-    console.log(`📅 Timestamp: ${new Date(result.timestamp).toISOString()}`);
+    console.info(`\n⏱️  Total Duration: ${(result.duration / 1000).toFixed(2)}s`);
+    console.info(`📅 Timestamp: ${new Date(result.timestamp).toISOString()}`);
 
-    console.log('\n🏆 Summary:');
-    console.log(`   ✅ Passed: ${result.summary.passed}`);
-    console.log(`   ❌ Failed: ${result.summary.failed}`);
-    console.log(`   📊 Total: ${result.summary.total}`);
+    console.info('\n🏆 Summary:');
+    console.info(`   ✅ Passed: ${result.summary.passed}`);
+    console.info(`   ❌ Failed: ${result.summary.failed}`);
+    console.info(`   📊 Total: ${result.summary.total}`);
 
     if (result.summary.regressions.length > 0) {
-      console.log(`\n📉 Regressions Detected: ${result.summary.regressions.length}`);
+      console.info(`\n📉 Regressions Detected: ${result.summary.regressions.length}`);
       result.summary.regressions.forEach(reg => {
-        console.log(`   🔴 ${reg}`);
+        console.info(`   🔴 ${reg}`);
       });
     }
 
-    console.log('\n🔬 Detailed Results:');
+    console.info('\n🔬 Detailed Results:');
     result.tests.forEach(test => {
       const status = test.error ? '💥 ERROR' :
                     result.summary.regressions.includes(test.name) ? '📉 REGRESSION' :
                     '✅ PASS';
 
-      console.log(`\n${status} ${test.name}`);
-      console.log(`   Duration: ${test.duration.toFixed(2)}ms`);
+      console.info(`\n${status} ${test.name}`);
+      console.info(`   Duration: ${test.duration.toFixed(2)}ms`);
 
       if (test.memoryUsage) {
-        console.log(`   Memory: ${(test.memoryUsage / 1024 / 1024).toFixed(2)} MB`);
+        console.info(`   Memory: ${(test.memoryUsage / 1024 / 1024).toFixed(2)} MB`);
       }
 
       if (test.operationsPerSecond) {
-        console.log(`   Ops/sec: ${test.operationsPerSecond.toFixed(0)}`);
+        console.info(`   Ops/sec: ${test.operationsPerSecond.toFixed(0)}`);
       }
 
       if (test.error) {
-        console.log(`   Error: ${test.error}`);
+        console.info(`   Error: ${test.error}`);
       }
 
       if (test.metadata) {
-        console.log(`   Metadata: ${JSON.stringify(test.metadata)}`);
+        console.info(`   Metadata: ${JSON.stringify(test.metadata)}`);
       }
     });
 
-    console.log('\n💻 Environment:');
-    console.log(`   Platform: ${result.environment.platform}`);
-    console.log(`   Architecture: ${result.environment.arch}`);
-    console.log(`   Node Version: ${result.environment.nodeVersion}`);
-    console.log(`   Bun Version: ${result.environment.bunVersion}`);
+    console.info('\n💻 Environment:');
+    console.info(`   Platform: ${result.environment.platform}`);
+    console.info(`   Architecture: ${result.environment.arch}`);
+    console.info(`   Node Version: ${result.environment.nodeVersion}`);
+    console.info(`   Bun Version: ${result.environment.bunVersion}`);
 
-    console.log('\n✅ Test suite complete!');
+    console.info('\n✅ Test suite complete!');
   }
 
   async runContinuousMonitoring(intervalMinutes: number = 60) {
-    console.log(`🔄 Starting continuous performance monitoring (${intervalMinutes}min intervals)`);
+    console.info(`🔄 Starting continuous performance monitoring (${intervalMinutes}min intervals)`);
 
     const runMonitoring = async () => {
       try {
@@ -530,8 +530,8 @@ class PerformanceTester {
         this.printResults(results);
 
         if (results.summary.regressions.length > 0) {
-          console.log('\n🚨 PERFORMANCE REGRESSION ALERT!');
-          console.log('Regressions detected - immediate investigation required');
+          console.info('\n🚨 PERFORMANCE REGRESSION ALERT!');
+          console.info('Regressions detected - immediate investigation required');
         }
       } catch (error) {
         console.error('❌ Monitoring error:', error);
@@ -568,7 +568,7 @@ async function main() {
         const analyzer = new ProfileAnalyzer();
         const recommender = new OptimizationRecommender();
 
-        console.log('🔬 Running comprehensive performance analysis...');
+        console.info('🔬 Running comprehensive performance analysis...');
 
         const profileResults = await analyzer.analyzeAllProfiles();
         analyzer.printAnalysis(profileResults);
@@ -581,11 +581,11 @@ async function main() {
         break;
 
       default:
-        console.log('🚀 Performance Testing Suite');
-        console.log('Usage:');
-        console.log('  bun run performance-tester.ts run          # Run test suite');
-        console.log('  bun run performance-tester.ts monitor [min] # Continuous monitoring');
-        console.log('  bun run performance-tester.ts analyze       # Full analysis');
+        console.info('🚀 Performance Testing Suite');
+        console.info('Usage:');
+        console.info('  bun run performance-tester.ts run          # Run test suite');
+        console.info('  bun run performance-tester.ts monitor [min] # Continuous monitoring');
+        console.info('  bun run performance-tester.ts analyze       # Full analysis');
         break;
     }
   } catch (error) {

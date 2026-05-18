@@ -71,9 +71,9 @@ export class SecureKeyManager {
     // Store both keys during rotation window
     this.nextKey = newKey;
     
-    console.log("✅ Key rotation prepared:");
-    console.log(`   Current key class: ${this.currentKey.constructor.name}`); // SecretKeyObject
-    console.log(`   Cloned key equals original: ${this.currentKey.equals(currentKeyClone)}`); // true
+    console.info("✅ Key rotation prepared:");
+    console.info(`   Current key class: ${this.currentKey.constructor.name}`); // SecretKeyObject
+    console.info(`   Cloned key equals original: ${this.currentKey.equals(currentKeyClone)}`); // true
   }
 
   /**
@@ -88,7 +88,7 @@ export class SecureKeyManager {
     this.currentKey = this.nextKey;
     this.nextKey = null;
     
-    console.log("✅ Key rotated successfully (zero downtime)");
+    console.info("✅ Key rotated successfully (zero downtime)");
   }
 
   getCurrentKey(): SecretKeyObject {
@@ -112,18 +112,18 @@ export async function shareKeysWithWorkers() {
     modulusLength: 2048,
   });
 
-  console.log("✅ Generated key pair:");
-  console.log(`   Public key class: ${publicKey.constructor.name}`); // PublicKeyObject
-  console.log(`   Private key class: ${privateKey.constructor.name}`); // PrivateKeyObject
+  console.info("✅ Generated key pair:");
+  console.info(`   Public key class: ${publicKey.constructor.name}`); // PublicKeyObject
+  console.info(`   Private key class: ${privateKey.constructor.name}`); // PrivateKeyObject
 
   // Clone keys for worker (Bun v1.2.11+)
   const publicKeyClone = structuredClone(publicKey);
   const privateKeyClone = structuredClone(privateKey);
 
   // Verify clones are identical
-  console.log("\n✅ Key clones verified:");
-  console.log(`   Public keys equal: ${publicKey.equals(publicKeyClone)}`); // true
-  console.log(`   Private keys equal: ${privateKey.equals(privateKeyClone)}`); // true
+  console.info("\n✅ Key clones verified:");
+  console.info(`   Public keys equal: ${publicKey.equals(publicKeyClone)}`); // true
+  console.info(`   Private keys equal: ${privateKey.equals(privateKeyClone)}`); // true
 
   // In real scenario, you'd pass clones to workers:
   // const worker = new Worker("./worker.ts", {
@@ -156,7 +156,7 @@ export class DeploymentManager {
    * Deploy application with type-safe shell operations
    */
   async deploy(environment: "staging" | "production"): Promise<void> {
-    console.log(`🚀 Deploying to ${environment}...`);
+    console.info(`🚀 Deploying to ${environment}...`);
 
     // Type-safe shell operations
     // IDE will autocomplete and catch errors at compile-time
@@ -166,11 +166,11 @@ export class DeploymentManager {
     }
 
     const currentBranch = await this.shell`git rev-parse --abbrev-ref HEAD`;
-    console.log(`   Current branch: ${currentBranch.stdout.toString().trim()}`);
+    console.info(`   Current branch: ${currentBranch.stdout.toString().trim()}`);
 
     // Build application
     await this.shell`bun run build`;
-    console.log("✅ Build completed");
+    console.info("✅ Build completed");
 
     // Deploy based on environment
     if (environment === "production") {
@@ -179,7 +179,7 @@ export class DeploymentManager {
       await this.shell`bun run deploy:staging`;
     }
 
-    console.log(`✅ Deployment to ${environment} completed`);
+    console.info(`✅ Deployment to ${environment} completed`);
   }
 
   /**
@@ -193,7 +193,7 @@ export class DeploymentManager {
       throw new Error(`Migration failed: ${result.stderr.toString()}`);
     }
     
-    console.log("✅ Database migrations completed");
+    console.info("✅ Database migrations completed");
   }
 }
 
@@ -333,7 +333,7 @@ export class RateLimitedAPI {
       // Rotate key (zero downtime)
       this.keyManager.rotate();
       this.requestCount = 0;
-      console.log("🔄 Rate limit reached, key rotated");
+      console.info("🔄 Rate limit reached, key rotated");
     }
 
     const key = this.keyManager.getCurrentKey();
@@ -353,50 +353,50 @@ export class RateLimitedAPI {
 // ═══════════════════════════════════════════════════════════════
 
 async function main() {
-  console.log("🎯 Bun v1.2.11 Real-World Examples\n");
-  console.log("=" .repeat(60));
+  console.info("🎯 Bun v1.2.11 Real-World Examples\n");
+  console.info("=" .repeat(60));
 
   // Example 1: Key Rotation
-  console.log("\n1️⃣  Zero-Downtime Key Rotation");
-  console.log("-".repeat(60));
+  console.info("\n1️⃣  Zero-Downtime Key Rotation");
+  console.info("-".repeat(60));
   const keyManager = new SecureKeyManager();
   keyManager.prepareRotation();
   keyManager.rotate();
 
   // Example 2: Key Sharing
-  console.log("\n2️⃣  Multi-Worker Key Sharing");
-  console.log("-".repeat(60));
+  console.info("\n2️⃣  Multi-Worker Key Sharing");
+  console.info("-".repeat(60));
   await shareKeysWithWorkers();
 
   // Example 3: Type-Safe Shell
-  console.log("\n3️⃣  Type-Safe Shell Operations");
-  console.log("-".repeat(60));
+  console.info("\n3️⃣  Type-Safe Shell Operations");
+  console.info("-".repeat(60));
   const deployer = new DeploymentManager();
-  console.log("   ✅ Shell instance is type-safe (Bun.$ type)");
-  console.log("   ✅ IDE autocomplete and type checking available");
+  console.info("   ✅ Shell instance is type-safe (Bun.$ type)");
+  console.info("   ✅ IDE autocomplete and type checking available");
 
   // Example 4: HTTP/2 Validation
-  console.log("\n4️⃣  HTTP/2 Type Validation");
-  console.log("-".repeat(60));
-  console.log("   ✅ Invalid options now throw clear errors");
-  console.log("   ✅ Type validation prevents runtime failures");
+  console.info("\n4️⃣  HTTP/2 Type Validation");
+  console.info("-".repeat(60));
+  console.info("   ✅ Invalid options now throw clear errors");
+  console.info("   ✅ Type validation prevents runtime failures");
 
   // Example 5: Microtask Scheduling
-  console.log("\n5️⃣  Reliable Microtask Scheduling");
-  console.log("-".repeat(60));
+  console.info("\n5️⃣  Reliable Microtask Scheduling");
+  console.info("-".repeat(60));
   TaskScheduler.schedule(() => {
-    console.log("   ✅ Microtask executed successfully");
+    console.info("   ✅ Microtask executed successfully");
   });
 
   // Example 6: Rate Limiting
-  console.log("\n6️⃣  API Rate Limiting with Key Rotation");
-  console.log("-".repeat(60));
+  console.info("\n6️⃣  API Rate Limiting with Key Rotation");
+  console.info("-".repeat(60));
   const api = new RateLimitedAPI();
-  console.log("   ✅ Rate limiting with seamless key rotation");
+  console.info("   ✅ Rate limiting with seamless key rotation");
 
-  console.log("\n" + "=".repeat(60));
-  console.log("✨ All examples demonstrate real-world value!");
-  console.log("\n📚 See docs/BUN-1.2.11-IMPROVEMENTS.md for details");
+  console.info("\n" + "=".repeat(60));
+  console.info("✨ All examples demonstrate real-world value!");
+  console.info("\n📚 See docs/BUN-1.2.11-IMPROVEMENTS.md for details");
 }
 
 // Run if executed directly

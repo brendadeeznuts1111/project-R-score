@@ -223,35 +223,35 @@ class PerformanceMonitor {
       alerts
     };
     
-    console.log(JSON.stringify(data, null, 2));
+    console.info(JSON.stringify(data, null, 2));
   }
 
   outputPrometheus(metrics) {
-    console.log(\`# HELP bun_cpu_usage_total Total CPU usage\`);
-    console.log(\`# TYPE bun_cpu_usage_total counter\`);
-    console.log(\`bun_cpu_usage_total \${metrics.cpu.total}\`);
+    console.info(\`# HELP bun_cpu_usage_total Total CPU usage\`);
+    console.info(\`# TYPE bun_cpu_usage_total counter\`);
+    console.info(\`bun_cpu_usage_total \${metrics.cpu.total}\`);
     
-    console.log(\`# HELP bun_memory_usage_bytes Memory usage in bytes\`);
-    console.log(\`# TYPE bun_memory_usage_bytes gauge\`);
-    console.log(\`bun_memory_usage_bytes \${metrics.memory.used.rss}\`);
+    console.info(\`# HELP bun_memory_usage_bytes Memory usage in bytes\`);
+    console.info(\`# TYPE bun_memory_usage_bytes gauge\`);
+    console.info(\`bun_memory_usage_bytes \${metrics.memory.used.rss}\`);
   }
 
   outputDashboard(metrics) {
-    console.log(\`\\n╔════════════════════════════════════════════════════════════╗\`);
-    console.log(\`║                   Performance Dashboard                   ║\`);
-    console.log(\`╠════════════════════════════════════════════════════════════╣\`);
-    console.log(\`║ CPU Usage:     \${metrics.cpu.total.toString().padEnd(35)}║\`);
-    console.log(\`║ Memory Usage:  \${metrics.memory.usage}%                                    ║\`);
-    console.log(\`║ Uptime:        \${(metrics.uptime / 1000).toFixed(1)}s                             ║\`);
-    console.log(\`║ Active Handles: \${metrics.eventLoop.activeHandles}                              ║\`);
-    console.log(\`╚════════════════════════════════════════════════════════════╝\\n\`);
+    console.info(\`\\n╔════════════════════════════════════════════════════════════╗\`);
+    console.info(\`║                   Performance Dashboard                   ║\`);
+    console.info(\`╠════════════════════════════════════════════════════════════╣\`);
+    console.info(\`║ CPU Usage:     \${metrics.cpu.total.toString().padEnd(35)}║\`);
+    console.info(\`║ Memory Usage:  \${metrics.memory.usage}%                                    ║\`);
+    console.info(\`║ Uptime:        \${(metrics.uptime / 1000).toFixed(1)}s                             ║\`);
+    console.info(\`║ Active Handles: \${metrics.eventLoop.activeHandles}                              ║\`);
+    console.info(\`╚════════════════════════════════════════════════════════════╝\\n\`);
   }
 
   async start() {
-    console.log(\`🚀 Starting performance monitor...\`);
-    console.log(\`📊 Collecting: \${this.config.metrics.join(', ')}\`);
-    console.log(\`⏱️  Interval: \${this.config.interval}ms\`);
-    console.log(\`📏 Duration: \${Math.round(this.config.duration / 1000)}s\\n\`);
+    console.info(\`🚀 Starting performance monitor...\`);
+    console.info(\`📊 Collecting: \${this.config.metrics.join(', ')}\`);
+    console.info(\`⏱️  Interval: \${this.config.interval}ms\`);
+    console.info(\`📏 Duration: \${Math.round(this.config.duration / 1000)}s\\n\`);
     
     const endTime = Date.now() + this.config.duration;
     
@@ -262,13 +262,13 @@ class PerformanceMonitor {
       this.outputMetrics(metrics, alerts);
       
       if (alerts.length > 0) {
-        console.log(\`⚠️  ALERTS: \${alerts.join(', ')}\`);
+        console.info(\`⚠️  ALERTS: \${alerts.join(', ')}\`);
       }
       
       await new Promise(resolve => setTimeout(resolve, this.config.interval));
     }
     
-    console.log('✅ Performance monitoring completed');
+    console.info('✅ Performance monitoring completed');
   }
 }
 
@@ -389,7 +389,7 @@ class MemoryProfiler {
 
   async takeSnapshot(label = 'snapshot') {
     if (!v8.writeHeapSnapshot) {
-      console.log('Heap snapshots not available');
+      console.info('Heap snapshots not available');
       return null;
     }
     
@@ -399,7 +399,7 @@ class MemoryProfiler {
     try {
       v8.writeHeapSnapshot(filepath);
       this.snapshots.push({ label, filename, filepath, time: Date.now() });
-      console.log(\`📸 Heap snapshot saved: \${filename}\`);
+      console.info(\`📸 Heap snapshot saved: \${filename}\`);
       return filepath;
     } catch (error) {
       console.error('Failed to take heap snapshot:', error);
@@ -431,7 +431,7 @@ class MemoryProfiler {
 
   forceGC() {
     if (this.config.gcForce && global.gc) {
-      console.log('🗑️  Forcing garbage collection...');
+      console.info('🗑️  Forcing garbage collection...');
       global.gc();
     }
   }
@@ -459,8 +459,8 @@ class MemoryProfiler {
   }
 
   async profile() {
-    console.log('🚀 Starting memory profiling...');
-    console.log(\`⏱️  Duration: \${Math.round(this.config.duration / 1000)}s\`);
+    console.info('🚀 Starting memory profiling...');
+    console.info(\`⏱️  Duration: \${Math.round(this.config.duration / 1000)}s\`);
     
     const endTime = Date.now() + this.config.duration;
     let snapshotCount = 0;
@@ -468,7 +468,7 @@ class MemoryProfiler {
     while (Date.now() < endTime) {
       // Collect memory stats
       const memory = this.getMemoryStats();
-      console.log(\`📊 Memory: \${Math.round(memory.heapUsed / 1024 / 1024)}MB used\`);
+      console.info(\`📊 Memory: \${Math.round(memory.heapUsed / 1024 / 1024)}MB used\`);
       
       // Take periodic snapshots
       snapshotCount++;
@@ -491,17 +491,17 @@ class MemoryProfiler {
     const finalMemory = this.getMemoryStats();
     const leaks = this.detectMemoryLeaks(this.snapshots);
     
-    console.log('\\n📊 Memory Profile Summary:');
-    console.log(\`💾 Final Heap Usage: \${Math.round(finalMemory.heapUsed / 1024 / 1024)}MB\`);
-    console.log(\`📸 Total Snapshots: \${this.snapshots.length}\`);
+    console.info('\\n📊 Memory Profile Summary:');
+    console.info(\`💾 Final Heap Usage: \${Math.round(finalMemory.heapUsed / 1024 / 1024)}MB\`);
+    console.info(\`📸 Total Snapshots: \${this.snapshots.length}\`);
     
     if (leaks.length > 0) {
-      console.log('⚠️  Potential Memory Issues:');
+      console.info('⚠️  Potential Memory Issues:');
       leaks.forEach(leak => {
-        console.log(\`  - \${leak.description}\`);
+        console.info(\`  - \${leak.description}\`);
       });
     } else {
-      console.log('✅ No memory leaks detected');
+      console.info('✅ No memory leaks detected');
     }
     
     return {
@@ -514,8 +514,8 @@ class MemoryProfiler {
 
 const profiler = new MemoryProfiler(${JSON.stringify(config)});
 profiler.profile().then(results => {
-  console.log('\\n✅ Memory profiling completed');
-  console.log(\`📁 Snapshots saved: \${results.snapshots.length}\`);
+  console.info('\\n✅ Memory profiling completed');
+  console.info(\`📁 Snapshots saved: \${results.snapshots.length}\`);
 }).catch(console.error);`;
   }
 }
@@ -622,7 +622,7 @@ class BenchmarkSuite {
   }
 
   async cpuBenchmarks() {
-    console.log('⚡ Running CPU benchmarks...');
+    console.info('⚡ Running CPU benchmarks...');
     
     // Fibonacci calculation benchmark
     const fibStart = Date.now();
@@ -651,7 +651,7 @@ class BenchmarkSuite {
   }
 
   async memoryBenchmarks() {
-    console.log('💾 Running memory benchmarks...');
+    console.info('💾 Running memory benchmarks...');
     
     // Array allocation benchmark
     const arrayStart = Date.now();
@@ -680,7 +680,7 @@ class BenchmarkSuite {
   }
 
   async ioBenchmarks() {
-    console.log('📁 Running I/O benchmarks...');
+    console.info('📁 Running I/O benchmarks...');
     
     // File write benchmark
     const writeStart = Date.now();
@@ -709,10 +709,10 @@ class BenchmarkSuite {
   }
 
   async runBenchmarks() {
-    console.log('🏁 Starting benchmark suite...');
-    console.log(\`🔄 Iterations: ${config.iterations}\`);
-    console.log(\`🔥 Warmup: ${config.warmup}\`);
-    console.log('');
+    console.info('🏁 Starting benchmark suite...');
+    console.info(\`🔄 Iterations: ${config.iterations}\`);
+    console.info(\`🔥 Warmup: ${config.warmup}\`);
+    console.info('');
     
     if (${config.categories}.includes('cpu')) {
       this.results.cpu = await this.cpuBenchmarks();
@@ -732,7 +732,7 @@ class BenchmarkSuite {
   outputResults() {
     switch (${JSON.stringify(config.outputFormat)}) {
       case 'json':
-        console.log(JSON.stringify(this.results, null, 2));
+        console.info(JSON.stringify(this.results, null, 2));
         break;
       case 'prometheus':
         this.outputPrometheus();
@@ -743,27 +743,27 @@ class BenchmarkSuite {
   }
 
   outputTable() {
-    console.log('\\n╔════════════════════════════════════════════════════════════╗');
-    console.log('║                    Benchmark Results                       ║');
-    console.log('╠════════════════════════════════════════════════════════════╣');
+    console.info('\\n╔════════════════════════════════════════════════════════════╗');
+    console.info('║                    Benchmark Results                       ║');
+    console.info('╠════════════════════════════════════════════════════════════╣');
     
     Object.entries(this.results).forEach(([category, tests]) => {
-      console.log(\`║ \${category.toUpperCase()} Benchmarks:\`);
+      console.info(\`║ \${category.toUpperCase()} Benchmarks:\`);
       Object.entries(tests).forEach(([test, result]) => {
-        console.log(\`║   \${test.padEnd(20)} | \${result.opsPerSec.toString().padEnd(8)} ops/sec\`);
+        console.info(\`║   \${test.padEnd(20)} | \${result.opsPerSec.toString().padEnd(8)} ops/sec\`);
       });
-      console.log('║');
+      console.info('║');
     });
     
-    console.log('╚════════════════════════════════════════════════════════════╝');
+    console.info('╚════════════════════════════════════════════════════════════╝');
   }
 
   outputPrometheus() {
     Object.entries(this.results).forEach(([category, tests]) => {
       Object.entries(tests).forEach(([test, result]) => {
-        console.log(\`# HELP bun_benchmark_\${category}_\${test}_ops_per_sec Operations per second\`);
-        console.log(\`# TYPE bun_benchmark_\${category}_\${test}_ops_per_sec counter\`);
-        console.log(\`bun_benchmark_\${category}_\${test}_ops_per_sec \${result.opsPerSec}\\n\`);
+        console.info(\`# HELP bun_benchmark_\${category}_\${test}_ops_per_sec Operations per second\`);
+        console.info(\`# TYPE bun_benchmark_\${category}_\${test}_ops_per_sec counter\`);
+        console.info(\`bun_benchmark_\${category}_\${test}_ops_per_sec \${result.opsPerSec}\\n\`);
       });
     });
   }
@@ -771,7 +771,7 @@ class BenchmarkSuite {
 
 const suite = new BenchmarkSuite(${JSON.stringify(config)});
 suite.runBenchmarks().then(() => {
-  console.log('\\n✅ Benchmark suite completed');
+  console.info('\\n✅ Benchmark suite completed');
 }).catch(console.error);`;
   }
 }
@@ -960,9 +960,9 @@ class ResourceMonitor {
   }
 
   async monitor() {
-    console.log('📊 Starting resource monitoring...');
-    console.log(\`⏱️  Interval: \${this.config.interval}ms\`);
-    console.log(\`📏 Duration: \${Math.round(this.config.duration / 1000)}s\\n\`);
+    console.info('📊 Starting resource monitoring...');
+    console.info(\`⏱️  Interval: \${this.config.interval}ms\`);
+    console.info(\`📏 Duration: \${Math.round(this.config.duration / 1000)}s\\n\`);
     
     const endTime = Date.now() + this.config.duration;
     
@@ -976,14 +976,14 @@ class ResourceMonitor {
     }
     
     this.exportData();
-    console.log('✅ Resource monitoring completed');
+    console.info('✅ Resource monitoring completed');
   }
 
   outputResource(resources) {
     const cpuLoad = resources.cpu.load['1m'].toFixed(2);
     const memUsage = resources.memory.usage;
     
-    console.log(\`📊 [\${new Date(resources.timestamp).toLocaleTimeString()}] \` +
+    console.info(\`📊 [\${new Date(resources.timestamp).toLocaleTimeString()}] \` +
                \`CPU: \${cpuLoad} | Memory: \${memUsage}% | \` +
                \`Process: \${Math.round(resources.process.memory.rss / 1024 / 1024)}MB\`);
   }
@@ -1003,7 +1003,7 @@ class ResourceMonitor {
         break;
     }
     
-    console.log(\`📁 Data exported to: \${filename}\`);
+    console.info(\`📁 Data exported to: \${filename}\`);
   }
 
   exportJSON(filename) {

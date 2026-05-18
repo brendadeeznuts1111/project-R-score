@@ -27,7 +27,7 @@ class EvidenceArchiveSystem {
    * 📦 Create evidence archive with gzip compression
    */
   async createEvidenceArchive(evidenceFiles: Record<string, string>): Promise<Blob> {
-    console.log('📦 Creating evidence archive...');
+    console.info('📦 Creating evidence archive...');
     
     // Add quantum hash verification
     const metadata: EvidenceMetadata = {
@@ -72,10 +72,10 @@ class EvidenceArchiveSystem {
       level: 9 // Maximum compression for evidence integrity
     });
 
-    console.log(`✅ Evidence archive created: ${metadata.id}`);
-    console.log(`   • Files: ${Object.keys(processedFiles).length}`);
-    console.log(`   • Size: ${totalSize} bytes`);
-    console.log(`   • Hash: ${metadata.hash}`);
+    console.info(`✅ Evidence archive created: ${metadata.id}`);
+    console.info(`   • Files: ${Object.keys(processedFiles).length}`);
+    console.info(`   • Size: ${totalSize} bytes`);
+    console.info(`   • Hash: ${metadata.hash}`);
     
     return await archive.blob();
   }
@@ -84,7 +84,7 @@ class EvidenceArchiveSystem {
    * 📤 Extract and verify evidence archive
    */
   async extractEvidenceArchive(archiveBlob: Blob, outputDir: string): Promise<boolean> {
-    console.log('📤 Extracting evidence archive...');
+    console.info('📤 Extracting evidence archive...');
     
     try {
       // Create archive from blob
@@ -92,16 +92,16 @@ class EvidenceArchiveSystem {
       
       // Extract all files
       const fileCount = await archive.extract(outputDir);
-      console.log(`✅ Extracted ${fileCount} files to ${outputDir}`);
+      console.info(`✅ Extracted ${fileCount} files to ${outputDir}`);
       
       // Verify metadata
       const metadataPath = `${outputDir}/metadata.json`;
       const metadata = JSON.parse(await Bun.file(metadataPath).text());
       
-      console.log(`🔍 Verification:`);
-      console.log(`   • Archive ID: ${metadata.id}`);
-      console.log(`   • Created: ${metadata.timestamp}`);
-      console.log(`   • Hash: ${metadata.hash}`);
+      console.info(`🔍 Verification:`);
+      console.info(`   • Archive ID: ${metadata.id}`);
+      console.info(`   • Created: ${metadata.timestamp}`);
+      console.info(`   • Hash: ${metadata.hash}`);
       
       return true;
     } catch (error) {
@@ -114,12 +114,12 @@ class EvidenceArchiveSystem {
    * 📊 Store evidence archive to S3
    */
   async storeToS3(archiveBlob: Blob, key: string): Promise<boolean> {
-    console.log('📊 Storing evidence archive to S3...');
+    console.info('📊 Storing evidence archive to S3...');
     
     try {
       // Write directly to S3 using Bun's S3 support
       await Bun.write(`s3://factory-wager-evidence/${key}`, archiveBlob);
-      console.log(`✅ Evidence stored: s3://factory-wager-evidence/${key}`);
+      console.info(`✅ Evidence stored: s3://factory-wager-evidence/${key}`);
       return true;
     } catch (error) {
       console.error('❌ S3 storage failed:', error);
@@ -130,8 +130,8 @@ class EvidenceArchiveSystem {
 
 // 🚀 Demonstration
 async function demonstrateEvidenceArchive() {
-  console.log('🚀 Evidence Archive System Demo - Bun v1.3.6 Features');
-  console.log('====================================================');
+  console.info('🚀 Evidence Archive System Demo - Bun v1.3.6 Features');
+  console.info('====================================================');
   
   const archiveSystem = new EvidenceArchiveSystem();
   
@@ -152,11 +152,11 @@ async function demonstrateEvidenceArchive() {
   // Extract and verify
   await archiveSystem.extractEvidenceArchive(archive, './temp-evidence');
   
-  console.log('\n🎯 Evidence Archive System: FULLY OPERATIONAL!');
-  console.log('   • Bun.Archive API: ✅ Utilized');
-  console.log('   • Gzip compression: ✅ Active');
-  console.log('   • Quantum hash: ✅ Integrated');
-  console.log('   • S3 storage: ✅ Working');
+  console.info('\n🎯 Evidence Archive System: FULLY OPERATIONAL!');
+  console.info('   • Bun.Archive API: ✅ Utilized');
+  console.info('   • Gzip compression: ✅ Active');
+  console.info('   • Quantum hash: ✅ Integrated');
+  console.info('   • S3 storage: ✅ Working');
 }
 
 // Run demonstration

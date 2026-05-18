@@ -10,8 +10,8 @@ import { processWithDefaults } from './simple-default-demo'
  * Test with real frontmatter files
  */
 async function testWithRealFiles() {
-  console.log('📁 FactoryWager Tabular v4.2.1 - Real File Integration Test');
-  console.log('=' .repeat(70));
+  console.info('📁 FactoryWager Tabular v4.2.1 - Real File Integration Test');
+  console.info('=' .repeat(70));
 
   const testFiles = [
     './test-frontmatter.md',
@@ -21,15 +21,15 @@ async function testWithRealFiles() {
   ];
 
   for (const filePath of testFiles) {
-    console.log(`\n🔍 Processing: ${filePath}`);
-    console.log('-' .repeat(40));
+    console.info(`\n🔍 Processing: ${filePath}`);
+    console.info('-' .repeat(40));
 
     try {
       // Extract frontmatter using our existing extractor
       const frontmatter = await extractFrontmatter(filePath);
 
       if (!frontmatter) {
-        console.log('❌ No frontmatter found');
+        console.info('❌ No frontmatter found');
         continue;
       }
 
@@ -45,7 +45,7 @@ async function testWithRealFiles() {
       );
 
       // Display results
-      console.log(`📊 Found ${processed.length} frontmatter entries:`);
+      console.info(`📊 Found ${processed.length} frontmatter entries:`);
 
       processed.forEach((item, idx) => {
         const isDefault = (field: string) => {
@@ -61,30 +61,30 @@ async function testWithRealFiles() {
           return item[field as keyof typeof item] === defaults[field as keyof typeof defaults];
         };
 
-        console.log(`  ${idx + 1}. ${item.key}: ${item.value}`);
-        console.log(`     Type: ${item.type}${isDefault('type') ? ' (default)' : ''}`);
-        console.log(`     Author: ${item.author}${isDefault('author') ? ' (default)' : ''}`);
-        console.log(`     Status: ${item.status}${isDefault('status') ? ' (default)' : ''}`);
+        console.info(`  ${idx + 1}. ${item.key}: ${item.value}`);
+        console.info(`     Type: ${item.type}${isDefault('type') ? ' (default)' : ''}`);
+        console.info(`     Author: ${item.author}${isDefault('author') ? ' (default)' : ''}`);
+        console.info(`     Status: ${item.status}${isDefault('status') ? ' (default)' : ''}`);
       });
 
     } catch (error: any) {
-      console.log(`❌ Error processing ${filePath}: ${error.message}`);
+      console.info(`❌ Error processing ${filePath}: ${error.message}`);
     }
   }
 
-  console.log('\n🎯 Integration Test Summary:');
-  console.log('✅ Default value enforcement working correctly');
-  console.log('✅ Multiple frontmatter formats supported (YAML, TOML, JSON)');
-  console.log('✅ Real-world file processing successful');
-  console.log('✅ No null/undefined values in output');
+  console.info('\n🎯 Integration Test Summary:');
+  console.info('✅ Default value enforcement working correctly');
+  console.info('✅ Multiple frontmatter formats supported (YAML, TOML, JSON)');
+  console.info('✅ Real-world file processing successful');
+  console.info('✅ No null/undefined values in output');
 }
 
 /**
  * Performance test with large dataset
  */
 function performanceTest() {
-  console.log('\n⚡ Performance Test - Large Dataset');
-  console.log('=' .repeat(40));
+  console.info('\n⚡ Performance Test - Large Dataset');
+  console.info('=' .repeat(40));
 
   const startTime = performance.now();
 
@@ -109,14 +109,14 @@ function performanceTest() {
     Object.values(item).some(val => val === null || val === undefined)
   );
 
-  console.log(`📊 Processed ${processed.length} entries in ${duration.toFixed(2)}ms`);
-  console.log(`📈 Performance: ${(processed.length / duration * 1000).toFixed(0)} entries/second`);
-  console.log(`🔒 Data integrity: ${hasNulls ? '❌ Found nulls' : '✅ No nulls or undefined values'}`);
+  console.info(`📊 Processed ${processed.length} entries in ${duration.toFixed(2)}ms`);
+  console.info(`📈 Performance: ${(processed.length / duration * 1000).toFixed(0)} entries/second`);
+  console.info(`🔒 Data integrity: ${hasNulls ? '❌ Found nulls' : '✅ No nulls or undefined values'}`);
 
   // Show sample of processed data
-  console.log('\n📋 Sample processed entries:');
+  console.info('\n📋 Sample processed entries:');
   processed.slice(0, 3).forEach((item, idx) => {
-    console.log(`  ${idx + 1}. ${item.key}: "${item.value}" (author: ${item.author})`);
+    console.info(`  ${idx + 1}. ${item.key}: "${item.value}" (author: ${item.author})`);
   });
 }
 
@@ -125,8 +125,8 @@ async function main() {
   await testWithRealFiles();
   performanceTest();
 
-  console.log('\n🎉 FactoryWager Tabular v4.2.1 - All Tests Passed!');
-  console.log('🚀 Ready for production deployment!');
+  console.info('\n🎉 FactoryWager Tabular v4.2.1 - All Tests Passed!');
+  console.info('🚀 Ready for production deployment!');
 }
 
 if (import.meta.main) {

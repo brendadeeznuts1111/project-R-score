@@ -1,7 +1,7 @@
 // monitoring/monitor-demo.ts
 import { DuplexMonitor, TerminalLayout } from './terminal-dashboard';
 
-console.log(`
+console.info(`
 🖥️ **TERMINAL MONITORING DASHBOARD DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -18,14 +18,14 @@ const monitor = new DuplexMonitor({
 });
 
 // Demo the terminal layout system
-console.log(`
+console.info(`
 📐 **TERMINAL LAYOUT SYSTEM**
 ═══════════════════════════════════════════════════════════════════
 
 const layout = new TerminalLayout(80, 24);
 
 // Create boxes
-console.log(layout.createBox('System Status', 'All systems operational'));
+console.info(layout.createBox('System Status', 'All systems operational'));
 `);
 
 const layout = new TerminalLayout(80, 24);
@@ -35,9 +35,9 @@ const boxDemo = layout.createBox(
   '🖥️ System Status',
   'All systems operational\nUptime: 2h 34m\nMemory: 245 MB\nCPU: 12%'
 );
-console.log(boxDemo);
+console.info(boxDemo);
 
-console.log(`
+console.info(`
 // Create tables
 const table = layout.createTable(
   ['Metric', 'Value', 'Status'],
@@ -60,30 +60,30 @@ const tableDemo = layout.createTable(
     ['Active Sessions', '23', '🟡']
   ]
 );
-console.log(tableDemo);
+console.info(tableDemo);
 
-console.log(`
+console.info(`
 // Create progress bars
 const progress = layout.createProgressBar(75, 100, 20);
-console.log(progress); // [████████████████████░░] 75.0%
+console.info(progress); // [████████████████████░░] 75.0%
 `);
 
 // Demo progress bar
 const progressDemo = layout.createProgressBar(75, 100, 30);
-console.log(`Progress: ${progressDemo}`);
+console.info(`Progress: ${progressDemo}`);
 
-console.log(`
+console.info(`
 // Create sparklines
 const sparkline = layout.createSparkline([1, 3, 2, 5, 4, 6, 3, 7, 5, 8], 10);
-console.log(sparkline); // ▂▃▄▅▄▆▅▇▆█
+console.info(sparkline); // ▂▃▄▅▄▆▅▇▆█
 `);
 
 // Demo sparkline
 const sparklineDemo = layout.createSparkline([1, 3, 2, 5, 4, 6, 3, 7, 5, 8, 6, 9, 7, 8, 9], 15);
-console.log(`Sparkline: ${sparklineDemo}`);
+console.info(`Sparkline: ${sparklineDemo}`);
 
 // Simulate metrics collection
-console.log(`
+console.info(`
 📊 **METRICS COLLECTION DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -120,7 +120,7 @@ const demoMetrics = {
   active_sessions: 23
 };
 
-console.log('Status Indicators:');
+console.info('Status Indicators:');
 Object.entries(demoMetrics).forEach(([key, value]) => {
   let indicator = '🟢';
   if (key === 'error_rate') {
@@ -132,11 +132,11 @@ Object.entries(demoMetrics).forEach(([key, value]) => {
   } else if (key === 'active_sessions') {
     indicator = value > 100 ? '🔴' : value > 50 ? '🟡' : '🟢';
   }
-  console.log(`  ${key}: ${value} ${indicator}`);
+  console.info(`  ${key}: ${value} ${indicator}`);
 });
 
 // Simulate active sessions
-console.log(`
+console.info(`
 👥 **ACTIVE SESSIONS DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -190,15 +190,15 @@ const activeSessionsDemo = [
   }
 ];
 
-console.log('Active Sessions:');
+console.info('Active Sessions:');
 activeSessionsDemo.forEach(session => {
   const duration = Math.floor((Date.now() - session.startTime.getTime()) / 1000 / 60);
   const status = session.status === 'active' ? '🟢' : '⏳';
-  console.log(`  ${status} ${session.userId}: ${session.command} (${duration}m)`);
+  console.info(`  ${status} ${session.userId}: ${session.command} (${duration}m)`);
 });
 
 // Feature flag watching demo
-console.log(`
+console.info(`
 🚩 **FEATURE FLAG WATCHING DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -240,16 +240,16 @@ const featureFlags = {
   experimental_ui: true
 };
 
-console.log('Current Feature Flags:');
+console.info('Current Feature Flags:');
 Object.entries(featureFlags).forEach(([flag, enabled]) => {
   const status = enabled ? '✅' : '❌';
-  console.log(`  ${status} ${flag}`);
+  console.info(`  ${status} ${flag}`);
 });
 
-console.log(`\nEnvironment: BUN_FEATURES=${Object.keys(featureFlags).join(',')}`);
+console.info(`\nEnvironment: BUN_FEATURES=${Object.keys(featureFlags).join(',')}`);
 
 // Interactive commands demo
-console.log(`
+console.info(`
 ⌨️ **INTERACTIVE COMMANDS DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -297,17 +297,17 @@ const helpText = \`
 \`;
 `);
 
-console.log('Interactive Commands:');
-console.log('  [m] Metrics - Show detailed system metrics');
-console.log('  [l] Logs    - Display recent log entries');
-console.log('  [f] Flags   - Show active feature flags');
-console.log('  [s] Sessions - List active user sessions');
-console.log('  [r] Restart - Restart system services');
-console.log('  [h] Help    - Show this help menu');
-console.log('  [q] Quit    - Exit monitoring dashboard');
+console.info('Interactive Commands:');
+console.info('  [m] Metrics - Show detailed system metrics');
+console.info('  [l] Logs    - Display recent log entries');
+console.info('  [f] Flags   - Show active feature flags');
+console.info('  [s] Sessions - List active user sessions');
+console.info('  [r] Restart - Restart system services');
+console.info('  [h] Help    - Show this help menu');
+console.info('  [q] Quit    - Exit monitoring dashboard');
 
 // Performance trends demo
-console.log(`
+console.info(`
 📈 **PERFORMANCE TRENDS DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -357,13 +357,13 @@ const memoryData = metricsHistory.map(m => m.memory_usage);
 const latencyData = metricsHistory.map(m => m.latency);
 const errorData = metricsHistory.map(m => m.error_rate * 100);
 
-console.log('Performance Trends:');
-console.log(`  Memory: ${layout.createSparkline(memoryData, 20)}`);
-console.log(`  Latency: ${layout.createSparkline(latencyData, 20)}`);
-console.log(`  Errors:  ${layout.createSparkline(errorData, 20)}`);
+console.info('Performance Trends:');
+console.info(`  Memory: ${layout.createSparkline(memoryData, 20)}`);
+console.info(`  Latency: ${layout.createSparkline(latencyData, 20)}`);
+console.info(`  Errors:  ${layout.createSparkline(errorData, 20)}`);
 
 // System integration demo
-console.log(`
+console.info(`
 🔧 **SYSTEM INTEGRATION DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -402,17 +402,17 @@ process.on('SIGINT', () => {
 });
 `);
 
-console.log('System Integration Features:');
-console.log('  ✅ Real-time metrics collection');
-console.log('  ✅ Feature flag watching');
-console.log('  ✅ Automatic rebuild on changes');
-console.log('  ✅ Interactive keyboard controls');
-console.log('  ✅ Performance trend visualization');
-console.log('  ✅ Session monitoring');
-console.log('  ✅ Graceful shutdown handling');
+console.info('System Integration Features:');
+console.info('  ✅ Real-time metrics collection');
+console.info('  ✅ Feature flag watching');
+console.info('  ✅ Automatic rebuild on changes');
+console.info('  ✅ Interactive keyboard controls');
+console.info('  ✅ Performance trend visualization');
+console.info('  ✅ Session monitoring');
+console.info('  ✅ Graceful shutdown handling');
 
 // Start the monitoring demo
-console.log(`
+console.info(`
 🚀 **STARTING MONITORING DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -442,7 +442,7 @@ await monitor.startMonitoring();
 // [r] Restart [h] Help [q] Quit
 `);
 
-console.log(`
+console.info(`
 🎯 **MONITORING DASHBOARD FEATURES**
 ═══════════════════════════════════════════════════════════════════
 

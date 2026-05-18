@@ -19,7 +19,7 @@ const app = new Elysia()
 
 // Note: /api/test/run endpoint is defined in dashboard.ts
 
-console.log("📊 Registry Dashboard running at http://localhost:4000");
-console.log("   Dashboard: http://localhost:4000/dashboard");
+console.info("📊 Registry Dashboard running at http://localhost:4000");
+console.info("   Dashboard: http://localhost:4000/dashboard");
 
 export default app;

@@ -150,7 +150,7 @@ export class EliteScheduler {
     job.nextRun = this.getNextRun(cron);
     
     this.jobs.set(id, job);
-    console.log(`[SCHEDULER] Added job "${name}" (${cron}) -> ${job.nextRun.toISOString()}`);
+    console.info(`[SCHEDULER] Added job "${name}" (${cron}) -> ${job.nextRun.toISOString()}`);
     
     return id;
   }
@@ -181,7 +181,7 @@ export class EliteScheduler {
     };
     
     this.jobs.set(id, job);
-    console.log(`[SCHEDULER] Added one-time job "${name}" -> ${runAt.toISOString()}`);
+    console.info(`[SCHEDULER] Added one-time job "${name}" -> ${runAt.toISOString()}`);
     
     return id;
   }
@@ -214,7 +214,7 @@ export class EliteScheduler {
     if (this.running) return;
     
     this.running = true;
-    console.log('[SCHEDULER] Started');
+    console.info('[SCHEDULER] Started');
     
     // Check every minute
     this.checkInterval = setInterval(() => this.checkJobs(), 1000);
@@ -228,7 +228,7 @@ export class EliteScheduler {
     if (this.checkInterval) {
       clearInterval(this.checkInterval);
     }
-    console.log('[SCHEDULER] Stopped');
+    console.info('[SCHEDULER] Stopped');
   }
   
   /**
@@ -274,7 +274,7 @@ export class EliteScheduler {
     job.status = 'running';
     job.lastRun = new Date();
     
-    console.log(`[SCHEDULER] Running job "${job.name}" (retry: ${retryCount})`);
+    console.info(`[SCHEDULER] Running job "${job.name}" (retry: ${retryCount})`);
     
     try {
       // Create timeout promise
@@ -294,11 +294,11 @@ export class EliteScheduler {
       // Schedule next run for recurring jobs
       if (job.cron) {
         job.nextRun = this.getNextRun(job.cron);
-        console.log(`[SCHEDULER] Job "${job.name}" completed in ${durationMs.toFixed(2)}ms, next run: ${job.nextRun.toISOString()}`);
+        console.info(`[SCHEDULER] Job "${job.name}" completed in ${durationMs.toFixed(2)}ms, next run: ${job.nextRun.toISOString()}`);
       } else {
         // Remove one-time job
         this.jobs.delete(job.id);
-        console.log(`[SCHEDULER] One-time job "${job.name}" completed in ${durationMs.toFixed(2)}ms`);
+        console.info(`[SCHEDULER] One-time job "${job.name}" completed in ${durationMs.toFixed(2)}ms`);
       }
       
       this.runningJobs.delete(job.id);
@@ -315,7 +315,7 @@ export class EliteScheduler {
       
       // Retry logic
       if (retryCount < job.maxRetries) {
-        console.log(`[SCHEDULER] Retrying job "${job.name}" in ${Math.pow(2, retryCount)}s...`);
+        console.info(`[SCHEDULER] Retrying job "${job.name}" in ${Math.pow(2, retryCount)}s...`);
         await sleep(Math.pow(2, retryCount) * 1000);
         this.runningJobs.delete(job.id);
         return this.runJob(job, retryCount + 1);
@@ -401,7 +401,7 @@ export const CronPresets = {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 if (import.meta.main) {
-  console.log(`
+  console.info(`
 ╔══════════════════════════════════════════════════════════════════╗
 ║  ⏰ ELITE SCHEDULER                                              ║
 ╠══════════════════════════════════════════════════════════════════╣
@@ -413,23 +413,23 @@ if (import.meta.main) {
   
   // Daily report job
   sched.addJob('daily-report', '*/1 * * * *', async () => {
-    console.log('   📊 Generating daily report...');
+    console.info('   📊 Generating daily report...');
     await sleep(500);
-    console.log('   ✓ Daily report complete');
+    console.info('   ✓ Daily report complete');
   }, { priority: 5 });
   
   // Cleanup job (lower priority)
   sched.addJob('cleanup', '*/1 * * * *', async () => {
-    console.log('   🧹 Running cleanup...');
+    console.info('   🧹 Running cleanup...');
     await sleep(300);
-    console.log('   ✓ Cleanup complete');
+    console.info('   ✓ Cleanup complete');
   }, { priority: 1 });
   
   // High priority payment processing
   sched.addJob('payment-processing', '*/1 * * * *', async () => {
-    console.log('   💳 Processing payments...');
+    console.info('   💳 Processing payments...');
     await sleep(200);
-    console.log('   ✓ Payments processed');
+    console.info('   ✓ Payments processed');
   }, { priority: 10 });
   
   // Failing job with retries
@@ -439,29 +439,29 @@ if (import.meta.main) {
     if (failCount < 3) {
       throw new Error('Simulated failure');
     }
-    console.log('   ✓ Unreliable task succeeded after retries');
+    console.info('   ✓ Unreliable task succeeded after retries');
   }, { priority: 3, maxRetries: 3 });
   
   // One-time job
   const futureTime = new Date(Date.now() + 5000);
   sched.addOneTimeJob('one-time-setup', futureTime, () => {
-    console.log('   🚀 One-time setup executed!');
+    console.info('   🚀 One-time setup executed!');
   });
   
-  console.log('\nScheduled Jobs:');
-  console.log(sched.listJobs().map(j => `  - ${j.name}: ${j.cron || 'one-time'} (priority: ${j.priority || 0})`).join('\n'));
+  console.info('\nScheduled Jobs:');
+  console.info(sched.listJobs().map(j => `  - ${j.name}: ${j.cron || 'one-time'} (priority: ${j.priority || 0})`).join('\n'));
   
-  console.log('\nStarting scheduler for 10 seconds...\n');
+  console.info('\nStarting scheduler for 10 seconds...\n');
   
   sched.start();
   
   // Stop after 10 seconds
   setTimeout(() => {
     sched.stop();
-    console.log('\n✅ Scheduler demo complete!');
-    console.log('\nFinal stats:');
+    console.info('\n✅ Scheduler demo complete!');
+    console.info('\nFinal stats:');
     sched.listJobs().forEach(j => {
-      console.log(`   ${j.name}: ${j.runCount} runs, status: ${j.status}`);
+      console.info(`   ${j.name}: ${j.runCount} runs, status: ${j.status}`);
     });
     process.exit(0);
   }, 10000);

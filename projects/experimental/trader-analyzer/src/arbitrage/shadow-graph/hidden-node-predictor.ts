@@ -53,7 +53,7 @@ export class HiddenNodePredictor {
 	 * Extracts training examples from historical shadow graph snapshots
 	 */
 	async train(trainingData?: HiddenNodeTrainingExample[]): Promise<void> {
-		console.log("🧠 Training hidden node predictor...");
+		console.info("🧠 Training hidden node predictor...");
 
 		// If no training data provided, extract from historical data
 		if (!trainingData) {
@@ -83,7 +83,7 @@ export class HiddenNodePredictor {
 		});
 
 		this.isTrained = true;
-		console.log(`✅ Predictor trained on ${trainingData.length} examples`);
+		console.info(`✅ Predictor trained on ${trainingData.length} examples`);
 	}
 
 	/**

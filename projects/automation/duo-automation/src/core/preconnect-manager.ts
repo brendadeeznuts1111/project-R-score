@@ -179,11 +179,11 @@ export class PreconnectManager {
       throw new Error(`Strategy '${strategyName}' not found`);
     }
 
-    console.log(`🚀 Executing preconnect strategy: ${strategy.name}`);
+    console.info(`🚀 Executing preconnect strategy: ${strategy.name}`);
     
     try {
       await this.executePreconnects(strategy);
-      console.log(`✅ Preconnect strategy '${strategy.name}' completed successfully`);
+      console.info(`✅ Preconnect strategy '${strategy.name}' completed successfully`);
     } catch (error) {
       console.error(`❌ Preconnect strategy '${strategy.name}' failed:`, error);
       throw error;
@@ -255,7 +255,7 @@ export class PreconnectManager {
       link.href = `//${domain}`;
       document.head.appendChild(link);
       
-      console.log(`🔍 DNS prefetch initiated for: ${domain}`);
+      console.info(`🔍 DNS prefetch initiated for: ${domain}`);
     } catch (error) {
       console.warn(`⚠️ DNS prefetch failed for ${domain}:`, error);
     } finally {
@@ -277,7 +277,7 @@ export class PreconnectManager {
       link.href = `https://${domain}`;
       document.head.appendChild(link);
       
-      console.log(`🔗 Preconnect initiated for domain: ${domain}`);
+      console.info(`🔗 Preconnect initiated for domain: ${domain}`);
     } catch (error) {
       console.warn(`⚠️ Preconnect failed for domain ${domain}:`, error);
       this.activeConnections.delete(key);
@@ -298,7 +298,7 @@ export class PreconnectManager {
       link.href = origin;
       document.head.appendChild(link);
       
-      console.log(`🔗 Preconnect initiated for origin: ${origin}`);
+      console.info(`🔗 Preconnect initiated for origin: ${origin}`);
     } catch (error) {
       console.warn(`⚠️ Preconnect failed for origin ${origin}:`, error);
       this.activeConnections.delete(key);
@@ -319,7 +319,7 @@ export class PreconnectManager {
       link.href = url;
       document.head.appendChild(link);
       
-      console.log(`🔗 Preconnect initiated for resource: ${url}`);
+      console.info(`🔗 Preconnect initiated for resource: ${url}`);
     } catch (error) {
       console.warn(`⚠️ Preconnect failed for resource ${url}:`, error);
       this.activeConnections.delete(key);
@@ -341,7 +341,7 @@ export class PreconnectManager {
       link.crossOrigin = 'anonymous';
       document.head.appendChild(link);
       
-      console.log(`🔗 Cross-origin preconnect initiated for: ${origin}`);
+      console.info(`🔗 Cross-origin preconnect initiated for: ${origin}`);
     } catch (error) {
       console.warn(`⚠️ Cross-origin preconnect failed for ${origin}:`, error);
       this.activeConnections.delete(key);
@@ -401,7 +401,7 @@ export class PreconnectManager {
     const links = document.querySelectorAll('link[rel="preconnect"], link[rel="dns-prefetch"]');
     links.forEach(link => link.remove());
     
-    console.log('🧹 All preconnect connections cleared');
+    console.info('🧹 All preconnect connections cleared');
   }
 
   public getConnectionStats(): {
@@ -433,7 +433,7 @@ export class PreconnectManager {
   }
 
   public async optimizeForNetwork(networkType: 'slow-2g' | '2g' | '3g' | '4g' | '5g' | 'wifi'): Promise<void> {
-    console.log(`📶 Optimizing preconnects for network type: ${networkType}`);
+    console.info(`📶 Optimizing preconnects for network type: ${networkType}`);
     
     switch (networkType) {
       case 'slow-2g':
@@ -455,7 +455,7 @@ export class PreconnectManager {
   }
 
   private async executeMinimalStrategy(): Promise<void> {
-    console.log('📶 Executing minimal preconnect strategy for slow networks');
+    console.info('📶 Executing minimal preconnect strategy for slow networks');
     
     // Only preconnect to critical domains
     const criticalDomains = ['admin.factory-wager.com', 'api.factory-wager.com'];

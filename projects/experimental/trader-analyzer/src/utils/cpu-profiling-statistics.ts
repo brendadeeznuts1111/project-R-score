@@ -280,7 +280,7 @@ function tCritical(df: number, alpha: number): number {
  * const result = studentsTTest(baseline, current);
  *
  * if (result.isSignificant) {
- *   console.log(`Statistically significant difference: p = ${result.pValue}`);
+ *   console.info(`Statistically significant difference: p = ${result.pValue}`);
  * }
  * ```
  */
@@ -409,7 +409,7 @@ export function studentsTTest(
  * const current = [12.1, 12.3, 12.0];
  * const ci = confidenceInterval(baseline, current);
  *
- * console.log(`95% CI: [${ci.lower.toFixed(2)}, ${ci.upper.toFixed(2)}]`);
+ * console.info(`95% CI: [${ci.lower.toFixed(2)}, ${ci.upper.toFixed(2)}]`);
  * // If interval excludes zero, difference is statistically significant
  * ```
  */
@@ -463,7 +463,7 @@ export function confidenceInterval(
  * const current = [15.1, 15.3, 15.0];
  * const effect = cohensD(baseline, current);
  *
- * console.log(`Effect size: ${effect.value.toFixed(2)} (${effect.magnitude})`);
+ * console.info(`Effect size: ${effect.value.toFixed(2)} (${effect.magnitude})`);
  * // Large effect sizes (>0.8) indicate practically important differences
  * ```
  */
@@ -532,7 +532,7 @@ export function cohensD(baseline: number[], current: number[]): EffectSize {
  * const result = fTest(baseline, current);
  *
  * if (result.isSignificant) {
- *   console.log('Variance has changed significantly - performance may be less stable');
+ *   console.info('Variance has changed significantly - performance may be less stable');
  * }
  * ```
  */
@@ -628,7 +628,7 @@ export function fTest(
  * const result = kolmogorovSmirnovTest(baseline, current);
  *
  * if (result.isSignificant) {
- *   console.log('Distributions differ significantly - entire shape has changed');
+ *   console.info('Distributions differ significantly - entire shape has changed');
  * }
  * ```
  */
@@ -741,12 +741,12 @@ export function kolmogorovSmirnovTest(
  *
  * if (analysis.meanDifference.test.isSignificant) {
  *   const effect = analysis.meanDifference.effectSize;
- *   console.log(`Significant regression detected: ${effect.magnitude} effect (d=${effect.value.toFixed(2)})`);
+ *   console.info(`Significant regression detected: ${effect.magnitude} effect (d=${effect.value.toFixed(2)})`);
  * }
  *
  * // Check variance stability
  * if (analysis.varianceComparison.test.isSignificant) {
- *   console.log('Warning: Performance variance has changed significantly');
+ *   console.info('Warning: Performance variance has changed significantly');
  * }
  * ```
  */

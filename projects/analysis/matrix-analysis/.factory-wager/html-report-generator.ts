@@ -487,7 +487,7 @@ if (import.meta.main) {
   generator.loadAuditData()
     .then(data => {
       const reportPath = generator.generateReport(data);
-      console.log(`HTML report generated: ${reportPath}`);
+      console.info(`HTML report generated: ${reportPath}`);
     })
     .catch((error: unknown) => {
       // Proper error handling with type checking

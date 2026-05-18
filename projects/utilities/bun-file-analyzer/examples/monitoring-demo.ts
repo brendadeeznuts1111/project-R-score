@@ -16,7 +16,7 @@ async function runMonitoringDemo() {
     return typeof Bun !== 'undefined' ? Bun.color(text, color) : text;
   };
   
-  console.log(colorize("🎯 Starting Comprehensive Monitoring Demo", "ansi"));
+  console.info(colorize("🎯 Starting Comprehensive Monitoring Demo", "ansi"));
   
   // Initialize monitoring system
   const monitoring = await initializeMonitoring({
@@ -85,17 +85,17 @@ async function runMonitoringDemo() {
       },
     });
     
-    console.log(colorize("🌐 Demo server started on http://localhost:3000", "ansi"));
+    console.info(colorize("🌐 Demo server started on http://localhost:3000", "ansi"));
   } else {
-    console.log(colorize("⚠️ Demo server not available in test environment", "ansi"));
+    console.info(colorize("⚠️ Demo server not available in test environment", "ansi"));
   }
   
   const monitoringServer = await monitoring.monitor.startMonitoring(3003);
   if (monitoringServer) {
-    console.log(colorize("📊 Monitoring dashboard: http://localhost:3003", "ansi"));
-    console.log(colorize("🔍 Bundle analysis: http://localhost:3003/bundle-analysis", "ansi"));
+    console.info(colorize("📊 Monitoring dashboard: http://localhost:3003", "ansi"));
+    console.info(colorize("🔍 Bundle analysis: http://localhost:3003/bundle-analysis", "ansi"));
   } else {
-    console.log(colorize("⚠️ Monitoring server not available", "ansi"));
+    console.info(colorize("⚠️ Monitoring server not available", "ansi"));
   }
   
   return { server: demoServer, monitoring };
@@ -413,7 +413,7 @@ function getHomePage(): string {
           try {
             const response = await fetch('/api/performance-test');
             const data = await response.json();
-            console.log('Performance results:', data);
+            console.info('Performance results:', data);
             alert('Performance test completed! Check console for details.');
           } catch (error) {
             alert('Performance test failed: ' + error.message);
@@ -468,8 +468,8 @@ if (import.meta.main) {
   
   runMonitoringDemo()
     .then(({ server, monitoring }) => {
-      console.log(colorize("🎉 Demo started successfully!", "ansi"));
-      console.log(colorize("Press Ctrl+C to stop", "ansi"));
+      console.info(colorize("🎉 Demo started successfully!", "ansi"));
+      console.info(colorize("Press Ctrl+C to stop", "ansi"));
     })
     .catch(error => {
       console.error(colorize("❌ Demo failed:", "ansi"), error);

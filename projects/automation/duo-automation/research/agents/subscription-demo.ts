@@ -24,8 +24,8 @@ class SubscriptionDemo {
    * 🚀 Run complete subscription demo
    */
   async runDemo(): Promise<void> {
-    console.log('🎯 Virtual Device Tracker Subscription Demo');
-    console.log('═'.repeat(60));
+    console.info('🎯 Virtual Device Tracker Subscription Demo');
+    console.info('═'.repeat(60));
     
     try {
       await this.createSampleSubscriptions();
@@ -45,8 +45,8 @@ class SubscriptionDemo {
    * 🔁 Create sample subscriptions
    */
   private async createSampleSubscriptions(): Promise<void> {
-    console.log('\n🔁 Creating Sample Subscriptions');
-    console.log('─'.repeat(40));
+    console.info('\n🔁 Creating Sample Subscriptions');
+    console.info('─'.repeat(40));
 
     // 1. Monthly CashApp payment subscription
     const monthlyPayment = await this.tracker.createSubscription(
@@ -83,7 +83,7 @@ class SubscriptionDemo {
       }
     );
 
-    console.log(`✅ Created monthly payment subscription: ${monthlyPayment.subscriptionId}`);
+    console.info(`✅ Created monthly payment subscription: ${monthlyPayment.subscriptionId}`);
 
     // 2. Weekly monitoring subscription
     const weeklyMonitoring = await this.tracker.createSubscription(
@@ -112,7 +112,7 @@ class SubscriptionDemo {
       }
     );
 
-    console.log(`✅ Created weekly monitoring subscription: ${weeklyMonitoring.subscriptionId}`);
+    console.info(`✅ Created weekly monitoring subscription: ${weeklyMonitoring.subscriptionId}`);
 
     // 3. Daily maintenance subscription
     const dailyMaintenance = await this.tracker.createSubscription(
@@ -139,7 +139,7 @@ class SubscriptionDemo {
       }
     );
 
-    console.log(`✅ Created daily maintenance subscription: ${dailyMaintenance.subscriptionId}`);
+    console.info(`✅ Created daily maintenance subscription: ${dailyMaintenance.subscriptionId}`);
 
     // 4. Hourly analytics subscription
     const hourlyAnalytics = await this.tracker.createSubscription(
@@ -166,7 +166,7 @@ class SubscriptionDemo {
       }
     );
 
-    console.log(`✅ Created hourly analytics subscription: ${hourlyAnalytics.subscriptionId}`);
+    console.info(`✅ Created hourly analytics subscription: ${hourlyAnalytics.subscriptionId}`);
 
     // 5. Custom bi-weekly subscription
     const biWeeklyReport = await this.tracker.createSubscription(
@@ -203,17 +203,17 @@ class SubscriptionDemo {
       }
     );
 
-    console.log(`✅ Created bi-weekly reporting subscription: ${biWeeklyReport.subscriptionId}`);
+    console.info(`✅ Created bi-weekly reporting subscription: ${biWeeklyReport.subscriptionId}`);
 
-    console.log(`\n📊 Created 5 sample subscriptions with various intervals and billing`);
+    console.info(`\n📊 Created 5 sample subscriptions with various intervals and billing`);
   }
 
   /**
    * ⚡ Execute some tasks to demonstrate functionality
    */
   private async executeTasks(): Promise<void> {
-    console.log('\n⚡ Executing Sample Tasks');
-    console.log('─'.repeat(40));
+    console.info('\n⚡ Executing Sample Tasks');
+    console.info('─'.repeat(40));
 
     // Create some standalone tasks
     const tasks = [
@@ -272,44 +272,44 @@ class SubscriptionDemo {
 
     for (const taskData of tasks) {
       const task = await this.tracker.createTask(taskData);
-      console.log(`✅ Created and executed task: ${task.taskId} (${task.taskType})`);
+      console.info(`✅ Created and executed task: ${task.taskId} (${task.taskType})`);
       
       // Wait a moment between tasks
       await new Promise(resolve => setTimeout(resolve, 500));
     }
 
-    console.log(`\n📊 Executed ${tasks.length} sample tasks`);
+    console.info(`\n📊 Executed ${tasks.length} sample tasks`);
   }
 
   /**
    * 📊 Display metrics and analytics
    */
   private async displayMetrics(): Promise<void> {
-    console.log('\n📊 Subscription & Task Metrics');
-    console.log('─'.repeat(40));
+    console.info('\n📊 Subscription & Task Metrics');
+    console.info('─'.repeat(40));
 
     const subMetrics = await this.tracker.getSubscriptionMetrics();
     const taskMetrics = await this.tracker.getTaskMetrics();
     const perfMetrics = this.tracker.getPerformanceMetrics();
 
-    console.log('\n🔁 Subscription Metrics:');
-    console.log(`   Total: ${subMetrics.total}`);
-    console.log(`   Active: ${subMetrics.active}`);
-    console.log(`   Paused: ${subMetrics.paused}`);
-    console.log(`   Cancelled: ${subMetrics.cancelled}`);
-    console.log(`   Success Rate: ${subMetrics.successRate.toFixed(2)}%`);
-    console.log(`   Avg Latency: ${subMetrics.avgLatency}ms`);
+    console.info('\n🔁 Subscription Metrics:');
+    console.info(`   Total: ${subMetrics.total}`);
+    console.info(`   Active: ${subMetrics.active}`);
+    console.info(`   Paused: ${subMetrics.paused}`);
+    console.info(`   Cancelled: ${subMetrics.cancelled}`);
+    console.info(`   Success Rate: ${subMetrics.successRate.toFixed(2)}%`);
+    console.info(`   Avg Latency: ${subMetrics.avgLatency}ms`);
 
-    console.log('\n📋 Task Metrics:');
-    console.log(`   Total: ${taskMetrics.total}`);
-    console.log(`   Completed: ${taskMetrics.byStatus.completed || 0}`);
-    console.log(`   Running: ${taskMetrics.byStatus.running || 0}`);
-    console.log(`   Failed: ${taskMetrics.byStatus.failed || 0}`);
-    console.log(`   Avg Duration: ${Math.round(taskMetrics.avgDuration)}ms`);
+    console.info('\n📋 Task Metrics:');
+    console.info(`   Total: ${taskMetrics.total}`);
+    console.info(`   Completed: ${taskMetrics.byStatus.completed || 0}`);
+    console.info(`   Running: ${taskMetrics.byStatus.running || 0}`);
+    console.info(`   Failed: ${taskMetrics.byStatus.failed || 0}`);
+    console.info(`   Avg Duration: ${Math.round(taskMetrics.avgDuration)}ms`);
 
-    console.log('\n⚡ Performance Metrics:');
+    console.info('\n⚡ Performance Metrics:');
     Object.entries(perfMetrics).forEach(([metric, value]) => {
-      console.log(`   ${metric}: ${value}ms`);
+      console.info(`   ${metric}: ${value}ms`);
     });
   }
 
@@ -317,20 +317,20 @@ class SubscriptionDemo {
    * 🛠️ Test subscription management
    */
   private async testSubscriptionManagement(): Promise<void> {
-    console.log('\n🛠️ Testing Subscription Management');
-    console.log('─'.repeat(40));
+    console.info('\n🛠️ Testing Subscription Management');
+    console.info('─'.repeat(40));
 
     // Get all subscriptions
     const allSubs = await this.tracker.listSubscriptions({});
-    console.log(`📋 Found ${allSubs.length} total subscriptions`);
+    console.info(`📋 Found ${allSubs.length} total subscriptions`);
 
     // Get active subscriptions
     const activeSubs = await this.tracker.listSubscriptions({ status: 'active' });
-    console.log(`🟢 ${activeSubs.length} active subscriptions`);
+    console.info(`🟢 ${activeSubs.length} active subscriptions`);
 
     // Get subscriptions by type
     const transactionSubs = await this.tracker.listSubscriptions({ taskType: 'transaction' });
-    console.log(`💳 ${transactionSubs.length} transaction subscriptions`);
+    console.info(`💳 ${transactionSubs.length} transaction subscriptions`);
 
     // Test pausing a subscription
     if (activeSubs.length > 0) {
@@ -340,14 +340,14 @@ class SubscriptionDemo {
       });
       
       if (updated) {
-        console.log(`⏸️ Paused subscription: ${firstSub.subscriptionId}`);
+        console.info(`⏸️ Paused subscription: ${firstSub.subscriptionId}`);
         
         // Resume it after a moment
         await new Promise(resolve => setTimeout(resolve, 1000));
         await this.tracker.updateSubscription(firstSub.subscriptionId, {
           status: 'active'
         });
-        console.log(`▶️ Resumed subscription: ${firstSub.subscriptionId}`);
+        console.info(`▶️ Resumed subscription: ${firstSub.subscriptionId}`);
       }
     }
 
@@ -355,10 +355,10 @@ class SubscriptionDemo {
     if (allSubs.length > 0) {
       const specificSub = await this.tracker.getSubscription(allSubs[0].subscriptionId);
       if (specificSub) {
-        console.log(`🔍 Retrieved subscription: ${specificSub.subscriptionId}`);
-        console.log(`   Status: ${specificSub.status}`);
-        console.log(`   Interval: ${specificSub.recurrence.interval}`);
-        console.log(`   Executed: ${specificSub.recurrence.executed}/${specificSub.recurrence.count || '∞'}`);
+        console.info(`🔍 Retrieved subscription: ${specificSub.subscriptionId}`);
+        console.info(`   Status: ${specificSub.status}`);
+        console.info(`   Interval: ${specificSub.recurrence.interval}`);
+        console.info(`   Executed: ${specificSub.recurrence.executed}/${specificSub.recurrence.count || '∞'}`);
       }
     }
   }
@@ -367,12 +367,12 @@ class SubscriptionDemo {
    * 📊 Show dashboard
    */
   private async showDashboard(): Promise<void> {
-    console.log('\n📊 Virtual Device Dashboard');
-    console.log('═'.repeat(60));
+    console.info('\n📊 Virtual Device Dashboard');
+    console.info('═'.repeat(60));
     
     await this.dashboard.updateDashboard();
     
-    console.log('\n📈 Detailed Subscription Report:');
+    console.info('\n📈 Detailed Subscription Report:');
     await this.dashboard.displaySubscriptionReport();
   }
 }
@@ -381,18 +381,18 @@ class SubscriptionDemo {
  * 🚀 Main execution function
  */
 async function main(): Promise<void> {
-  console.log('🎯 Starting Virtual Device Tracker Subscription Demo...\n');
+  console.info('🎯 Starting Virtual Device Tracker Subscription Demo...\n');
   
   const demo = new SubscriptionDemo();
   await demo.runDemo();
   
-  console.log('\n🎉 Demo completed successfully!');
-  console.log('\n💡 Next steps:');
-  console.log('   • Integrate with real CashApp API');
-  console.log('   • Add webhook-based subscription triggers');
-  console.log('   • Implement cancellation/refund workflows');
-  console.log('   • Add proration logic for plan changes');
-  console.log('   • Export to CSV/JSON for billing reconciliation');
+  console.info('\n🎉 Demo completed successfully!');
+  console.info('\n💡 Next steps:');
+  console.info('   • Integrate with real CashApp API');
+  console.info('   • Add webhook-based subscription triggers');
+  console.info('   • Implement cancellation/refund workflows');
+  console.info('   • Add proration logic for plan changes');
+  console.info('   • Export to CSV/JSON for billing reconciliation');
 }
 
 // Run if called directly

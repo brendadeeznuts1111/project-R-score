@@ -275,7 +275,7 @@ export class NAPIThreadSafetyGuard {
     }
     this.activeThreads.clear();
     this.metrics.activeThreads = 0;
-    console.log("[NAPI-THREADSAFE] Cleaned up all threads");
+    console.info("[NAPI-THREADSAFE] Cleaned up all threads");
   }
 }
 

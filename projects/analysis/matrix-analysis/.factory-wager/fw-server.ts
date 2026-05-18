@@ -63,7 +63,7 @@ class FactoryWagerServer {
       // WebSocket support with typed messages
       websocket: {
         open: (ws) => {
-          console.log(`🔌 FactoryWager WebSocket connected: ${ws.remoteAddress}`);
+          console.info(`🔌 FactoryWager WebSocket connected: ${ws.remoteAddress}`);
           // Send welcome message with type safety
           ws.send(JSON.stringify({
             type: "welcome",
@@ -138,7 +138,7 @@ class FactoryWagerServer {
         },
         
         close: (ws) => {
-          console.log(`🔌 FactoryWager WebSocket disconnected: ${ws.remoteAddress}`);
+          console.info(`🔌 FactoryWager WebSocket disconnected: ${ws.remoteAddress}`);
         },
         
         error: (ws, error) => {
@@ -160,9 +160,9 @@ class FactoryWagerServer {
       }
     } as ServeOptions); // ← explicit cast ensures full type checking
 
-    console.log(`🚀 FactoryWager server running at http://localhost:${server.port}`);
-    console.log(`🔧 Environment: ${this.fwConfig.mode} | Debug: ${this.fwConfig.debug}`);
-    console.log(`🥟 Bun Version: ${process.versions.bun} | TLS: ${this.bunConfig.tlsRejectUnauthorized ? "Secure" : "Disabled"}`);
+    console.info(`🚀 FactoryWager server running at http://localhost:${server.port}`);
+    console.info(`🔧 Environment: ${this.fwConfig.mode} | Debug: ${this.fwConfig.debug}`);
+    console.info(`🥟 Bun Version: ${process.versions.bun} | TLS: ${this.bunConfig.tlsRejectUnauthorized ? "Secure" : "Disabled"}`);
     
     // Show security warnings if any
     this.displaySecurityWarnings();
@@ -376,8 +376,8 @@ class FactoryWagerServer {
   private displaySecurityWarnings(): void {
     const warnings = this.getSecurityWarnings();
     if (warnings.length > 0) {
-      console.log("⚠️  Security Warnings:");
-      warnings.forEach(warning => console.log(`   ${warning}`));
+      console.info("⚠️  Security Warnings:");
+      warnings.forEach(warning => console.info(`   ${warning}`));
     }
   }
 
@@ -414,7 +414,7 @@ async function main(): Promise<void> {
   const port = parseInt(args[0]) || 3000;
   
   if (args.includes("--help") || args.includes("-h")) {
-    console.log(`
+    console.info(`
 🏭 FactoryWager Server — Native Bun.serve with Typed Routes
 
 Usage:

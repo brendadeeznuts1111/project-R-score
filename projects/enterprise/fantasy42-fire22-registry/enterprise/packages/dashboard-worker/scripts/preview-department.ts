@@ -41,15 +41,15 @@ class Fire22DepartmentPreview {
   async createPreview(options: PreviewOptions = {}): Promise<void> {
     const startTime = Bun.nanoseconds();
 
-    console.log('👁️ Fire22 Department Preview System');
-    console.log('!==!==!==!==!==!===');
+    console.info('👁️ Fire22 Department Preview System');
+    console.info('!==!==!==!==!==!===');
 
     const branch = options.branch || `preview-${Date.now()}`;
-    console.log(`\n🌿 Branch: ${branch}`);
-    console.log(`🏢 Department: ${options.department || 'ALL'}`);
+    console.info(`\n🌿 Branch: ${branch}`);
+    console.info(`🏢 Department: ${options.department || 'ALL'}`);
 
     if (options.dryRun) {
-      console.log('🔍 DRY RUN MODE - No actual preview deployment');
+      console.info('🔍 DRY RUN MODE - No actual preview deployment');
     }
 
     try {
@@ -69,7 +69,7 @@ class Fire22DepartmentPreview {
       this.showPreviewUrls(branch, options);
 
       const previewTime = (Bun.nanoseconds() - startTime) / 1_000_000;
-      console.log(`\n✅ Preview created successfully in ${previewTime.toFixed(2)}ms`);
+      console.info(`\n✅ Preview created successfully in ${previewTime.toFixed(2)}ms`);
     } catch (error) {
       console.error('❌ Preview creation failed:', error);
       process.exit(1);
@@ -80,16 +80,16 @@ class Fire22DepartmentPreview {
    * ✅ Verify preview prerequisites
    */
   private async verifyPrerequisites(options: PreviewOptions): Promise<void> {
-    console.log('\n✅ Verifying prerequisites...');
+    console.info('\n✅ Verifying prerequisites...');
 
     // Check Git status
     try {
       const gitStatus = await $`git status --porcelain`.text();
       if (gitStatus.trim() && !options.dryRun) {
-        console.log('  ⚠️ Warning: Uncommitted changes detected');
-        console.log('  💡 Consider committing changes before creating preview');
+        console.info('  ⚠️ Warning: Uncommitted changes detected');
+        console.info('  💡 Consider committing changes before creating preview');
       }
-      console.log('  ✅ Git repository ready');
+      console.info('  ✅ Git repository ready');
     } catch (error) {
       throw new Error('Git not available or not in a Git repository');
     }
@@ -97,7 +97,7 @@ class Fire22DepartmentPreview {
     // Check Wrangler
     try {
       await $`wrangler --version`.quiet();
-      console.log('  ✅ Wrangler CLI available');
+      console.info('  ✅ Wrangler CLI available');
     } catch (error) {
       throw new Error('Wrangler CLI not found. Install: npm install -g wrangler');
     }
@@ -105,7 +105,7 @@ class Fire22DepartmentPreview {
     // Check Cloudflare auth
     try {
       await $`wrangler whoami`.quiet();
-      console.log('  ✅ Cloudflare authentication verified');
+      console.info('  ✅ Cloudflare authentication verified');
     } catch (error) {
       throw new Error('Not authenticated with Cloudflare. Run: wrangler login');
     }
@@ -115,7 +115,7 @@ class Fire22DepartmentPreview {
    * 🏗️ Build for preview
    */
   private async buildForPreview(options: PreviewOptions): Promise<void> {
-    console.log('\n🏗️ Building for preview...');
+    console.info('\n🏗️ Building for preview...');
 
     if (!options.dryRun) {
       const buildArgs = ['--env', 'development'];
@@ -127,14 +127,14 @@ class Fire22DepartmentPreview {
       await $`bun run scripts/build-pages.ts ${buildArgs}`;
     }
 
-    console.log('  ✅ Preview build completed');
+    console.info('  ✅ Preview build completed');
   }
 
   /**
    * 🌿 Create preview branch
    */
   private async createPreviewBranch(branch: string, options: PreviewOptions): Promise<void> {
-    console.log(`\n🌿 Creating preview branch: ${branch}`);
+    console.info(`\n🌿 Creating preview branch: ${branch}`);
 
     if (!options.dryRun) {
       try {
@@ -151,7 +151,7 @@ class Fire22DepartmentPreview {
 
         await $`git commit -m "${commitMessage}\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>"`;
 
-        console.log(`  ✅ Branch ${branch} created and committed`);
+        console.info(`  ✅ Branch ${branch} created and committed`);
       } catch (error) {
         console.error('  ❌ Failed to create preview branch:', error);
         throw error;
@@ -163,7 +163,7 @@ class Fire22DepartmentPreview {
    * 🚀 Deploy preview
    */
   private async deployPreview(branch: string, options: PreviewOptions): Promise<void> {
-    console.log(`\n🚀 Deploying preview from branch: ${branch}`);
+    console.info(`\n🚀 Deploying preview from branch: ${branch}`);
 
     if (!options.dryRun) {
       try {
@@ -190,7 +190,7 @@ class Fire22DepartmentPreview {
           }
 
           await $`wrangler ${deployArgs}`;
-          console.log(`  ✅ ${options.department} preview deployed`);
+          console.info(`  ✅ ${options.department} preview deployed`);
         } else {
           // Deploy main preview
           const mainDeployArgs = [
@@ -210,7 +210,7 @@ class Fire22DepartmentPreview {
           }
 
           await $`wrangler ${mainDeployArgs}`;
-          console.log('  ✅ Main dashboard preview deployed');
+          console.info('  ✅ Main dashboard preview deployed');
         }
       } catch (error) {
         console.error('  ❌ Preview deployment failed:', error);
@@ -223,38 +223,38 @@ class Fire22DepartmentPreview {
    * 🔗 Show preview URLs
    */
   private showPreviewUrls(branch: string, options: PreviewOptions): void {
-    console.log('\n🔗 Preview URLs:');
-    console.log('!==!==!==');
+    console.info('\n🔗 Preview URLs:');
+    console.info('!==!==!==');
 
     const basePreviewUrl = `https://${branch}.fire22-dashboard.pages.dev`;
 
     if (options.department) {
       const dept = this.getDepartment(options.department);
-      console.log(`👁️ ${dept?.name} Preview: ${basePreviewUrl}/${options.department}/`);
+      console.info(`👁️ ${dept?.name} Preview: ${basePreviewUrl}/${options.department}/`);
     } else {
-      console.log(`👁️ Main Preview: ${basePreviewUrl}`);
+      console.info(`👁️ Main Preview: ${basePreviewUrl}`);
 
       const departments = this.getDepartments();
       departments.forEach(dept => {
-        console.log(`🏢 ${dept.name} Preview: ${basePreviewUrl}/${dept.id}/`);
+        console.info(`🏢 ${dept.name} Preview: ${basePreviewUrl}/${dept.id}/`);
       });
     }
 
-    console.log(`📡 RSS Feed Preview: ${basePreviewUrl}/feeds/error-codes-rss.xml`);
-    console.log(`⚛️ Atom Feed Preview: ${basePreviewUrl}/feeds/error-codes-atom.xml`);
+    console.info(`📡 RSS Feed Preview: ${basePreviewUrl}/feeds/error-codes-rss.xml`);
+    console.info(`⚛️ Atom Feed Preview: ${basePreviewUrl}/feeds/error-codes-atom.xml`);
 
-    console.log('\n💡 Preview Management:');
-    console.log('!==!==!==!===');
-    console.log(`🗑️ Delete preview: bun run preview:delete ${branch}`);
-    console.log(`🔄 Update preview: bun run preview:update ${branch}`);
-    console.log(`✅ Promote to production: bun run preview:promote ${branch}`);
+    console.info('\n💡 Preview Management:');
+    console.info('!==!==!==!===');
+    console.info(`🗑️ Delete preview: bun run preview:delete ${branch}`);
+    console.info(`🔄 Update preview: bun run preview:update ${branch}`);
+    console.info(`✅ Promote to production: bun run preview:promote ${branch}`);
   }
 
   /**
    * 🗑️ Delete preview
    */
   async deletePreview(branch: string, options: PreviewOptions = {}): Promise<void> {
-    console.log(`\n🗑️ Deleting preview: ${branch}`);
+    console.info(`\n🗑️ Deleting preview: ${branch}`);
 
     if (!options.dryRun) {
       try {
@@ -265,8 +265,8 @@ class Fire22DepartmentPreview {
         await $`git branch -D ${branch}`;
 
         // Note: Cloudflare Pages previews are automatically cleaned up
-        console.log(`  ✅ Preview branch ${branch} deleted`);
-        console.log('  💡 Cloudflare Pages preview will be automatically cleaned up');
+        console.info(`  ✅ Preview branch ${branch} deleted`);
+        console.info('  💡 Cloudflare Pages preview will be automatically cleaned up');
       } catch (error) {
         console.error('  ❌ Failed to delete preview:', error);
       }
@@ -277,8 +277,8 @@ class Fire22DepartmentPreview {
    * 📊 List active previews
    */
   async listPreviews(): Promise<void> {
-    console.log('\n📊 Active Preview Branches:');
-    console.log('!==!==!==!==!===');
+    console.info('\n📊 Active Preview Branches:');
+    console.info('!==!==!==!==!===');
 
     try {
       const branches = await $`git branch --list "preview-*"`.text();
@@ -288,13 +288,13 @@ class Fire22DepartmentPreview {
         .filter(b => b.startsWith('preview-') && b.length > 8);
 
       if (previewBranches.length === 0) {
-        console.log('  📭 No active preview branches');
+        console.info('  📭 No active preview branches');
       } else {
         previewBranches.forEach((branch, index) => {
           const timestamp = branch.replace('preview-', '');
           const date = new Date(parseInt(timestamp));
-          console.log(`  ${index + 1}. ${branch} (Created: ${date.toLocaleString()})`);
-          console.log(`     🔗 https://${branch}.fire22-dashboard.pages.dev`);
+          console.info(`  ${index + 1}. ${branch} (Created: ${date.toLocaleString()})`);
+          console.info(`     🔗 https://${branch}.fire22-dashboard.pages.dev`);
         });
       }
     } catch (error) {
@@ -383,7 +383,7 @@ async function main() {
       break;
 
     default:
-      console.log(`
+      console.info(`
 👁️ Fire22 Department Preview System
 
 Usage:

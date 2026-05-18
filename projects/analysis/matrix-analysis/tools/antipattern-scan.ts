@@ -103,18 +103,18 @@ defineCommand({
 		// ── --patterns: print pattern catalog and exit ──────────────────────
 		if (showPatterns) {
 			const catalog = SCANS.map((s) => ({ name: s.name, fix: s.fix }));
-			console.log("Anti-Bun Pattern Catalog\n");
-			console.log(Bun.inspect.table(catalog, ["name", "fix"]));
-			console.log(`${SCANS.length} patterns registered`);
+			console.info("Anti-Bun Pattern Catalog\n");
+			console.info(Bun.inspect.table(catalog, ["name", "fix"]));
+			console.info(`${SCANS.length} patterns registered`);
 			process.exit(EXIT_CODES.SUCCESS);
 		}
 
 		// ── --regex: print raw regex patterns and exit ──────────────────────
 		if (showRegex) {
 			const regexes = SCANS.map((s) => ({ name: s.name, regex: s.pattern }));
-			console.log("Anti-Bun Raw Regex Patterns\n");
-			console.log(Bun.inspect.table(regexes, ["name", "regex"]));
-			console.log(`${SCANS.length} patterns registered`);
+			console.info("Anti-Bun Raw Regex Patterns\n");
+			console.info(Bun.inspect.table(regexes, ["name", "regex"]));
+			console.info(`${SCANS.length} patterns registered`);
 			process.exit(EXIT_CODES.SUCCESS);
 		}
 
@@ -174,12 +174,12 @@ defineCommand({
 				.filter((p) => p.hits > 0)
 				.sort((a, b) => b.hits - a.hits);
 
-			console.log(`Anti-Bun Metrics (${scanDirs.join(", ")})\n`);
-			console.log("── By Pattern ──\n");
-			console.log(Bun.inspect.table(patternCounts, ["pattern", "hits"]));
-			console.log("── By File ──\n");
-			console.log(Bun.inspect.table(byFile, ["file", "hits"]));
-			console.log(
+			console.info(`Anti-Bun Metrics (${scanDirs.join(", ")})\n`);
+			console.info("── By Pattern ──\n");
+			console.info(Bun.inspect.table(patternCounts, ["pattern", "hits"]));
+			console.info("── By File ──\n");
+			console.info(Bun.inspect.table(byFile, ["file", "hits"]));
+			console.info(
 				`${allHits.length} hits across ${fileMap.size} files, ${patternCounts.length}/${SCANS.length} patterns triggered`,
 			);
 			process.exit(EXIT_CODES.SUCCESS);
@@ -187,9 +187,9 @@ defineCommand({
 
 		// ── Default / --json / --verbose output ─────────────────────────────
 		if (jsonOut) {
-			console.log(JSON.stringify(allHits, null, 2));
+			console.info(JSON.stringify(allHits, null, 2));
 		} else {
-			console.log(`Anti-Bun Pattern Scan (${scanDirs.join(", ")})\n`);
+			console.info(`Anti-Bun Pattern Scan (${scanDirs.join(", ")})\n`);
 
 			const summary: { pattern: string; fix: string; count: number }[] = [];
 			for (const scan of SCANS) {
@@ -198,14 +198,14 @@ defineCommand({
 
 				if (verbose && hits.length > 0) {
 					for (const h of hits) {
-						console.log(`  ${h.file}:${h.line}  ${h.text}`);
+						console.info(`  ${h.file}:${h.line}  ${h.text}`);
 					}
-					console.log("");
+					console.info("");
 				}
 			}
 
-			console.log(Bun.inspect.table(summary, ["pattern", "fix", "count"]));
-			console.log(`Total: ${allHits.length} hits`);
+			console.info(Bun.inspect.table(summary, ["pattern", "fix", "count"]));
+			console.info(`Total: ${allHits.length} hits`);
 		}
 	},
 });

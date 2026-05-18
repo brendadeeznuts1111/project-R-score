@@ -14,17 +14,17 @@
 
 // Main execution function to handle async operations
 async function runAdvancedFetchDemo() {
-  console.log("🚀 Advanced Bun Fetch Features Demo");
-  console.log("====================================\n");
+  console.info("🚀 Advanced Bun Fetch Features Demo");
+  console.info("====================================\n");
 
   // Example 1: Request body streaming with ReadableStream
-  console.log("📡 Example 1: Request body streaming");
+  console.info("📡 Example 1: Request body streaming");
   try {
-    console.log("🌐 Creating streaming request...");
+    console.info("🌐 Creating streaming request...");
 
     const requestStream = new ReadableStream({
       start(controller) {
-        console.log("📝 Enqueuing stream chunks...");
+        console.info("📝 Enqueuing stream chunks...");
         controller.enqueue("Part 1: Streaming data\n");
         controller.enqueue("Part 2: Chunk by chunk\n");
         controller.enqueue("Part 3: Direct to network\n");
@@ -42,43 +42,43 @@ async function runAdvancedFetchDemo() {
     });
 
     const result = await response.json();
-    console.log("✅ Streaming request completed:");
-    console.log("  Status:", response.status);
-    console.log("  Data received:", result.data?.length || 0, "characters");
-    console.log("  Content preview:", result.data?.substring(0, 50) + "...");
+    console.info("✅ Streaming request completed:");
+    console.info("  Status:", response.status);
+    console.info("  Data received:", result.data?.length || 0, "characters");
+    console.info("  Content preview:", result.data?.substring(0, 50) + "...");
 
   } catch (error) {
-    console.log("❌ Error:", error.message);
+    console.info("❌ Error:", error.message);
   }
 
-  console.log("\n" + "=".repeat(50) + "\n");
+  console.info("\n" + "=".repeat(50) + "\n");
 
   // Example 2: Fetch with timeout
-  console.log("⏱️ Example 2: Fetch with timeout");
+  console.info("⏱️ Example 2: Fetch with timeout");
   try {
-    console.log("🌐 Testing timeout with short delay...");
+    console.info("🌐 Testing timeout with short delay...");
 
     // This should timeout quickly
     const response = await fetch("https://httpbin.org/delay/5", {
       signal: AbortSignal.timeout(1000), // 1 second timeout
     });
 
-    console.log("✅ Request completed (unexpected)");
+    console.info("✅ Request completed (unexpected)");
 
   } catch (error) {
     if (error.name === 'AbortError') {
-      console.log("✅ Timeout working correctly:", error.message);
+      console.info("✅ Timeout working correctly:", error.message);
     } else {
-      console.log("❌ Unexpected error:", error.message);
+      console.info("❌ Unexpected error:", error.message);
     }
   }
 
-  console.log("\n" + "=".repeat(50) + "\n");
+  console.info("\n" + "=".repeat(50) + "\n");
 
   // Example 3: Request cancellation with AbortController
-  console.log("🛑 Example 3: Request cancellation");
+  console.info("🛑 Example 3: Request cancellation");
   try {
-    console.log("🌐 Starting cancellable request...");
+    console.info("🌐 Starting cancellable request...");
 
     const controller = new AbortController();
 
@@ -89,27 +89,27 @@ async function runAdvancedFetchDemo() {
 
     // Cancel after 1 second
     setTimeout(() => {
-      console.log("🛑 Cancelling request...");
+      console.info("🛑 Cancelling request...");
       controller.abort();
     }, 1000);
 
     const response = await requestPromise;
-    console.log("✅ Request completed (unexpected)");
+    console.info("✅ Request completed (unexpected)");
 
   } catch (error) {
     if (error.name === 'AbortError') {
-      console.log("✅ Cancellation working correctly:", error.message);
+      console.info("✅ Cancellation working correctly:", error.message);
     } else {
-      console.log("❌ Unexpected error:", error.message);
+      console.info("❌ Unexpected error:", error.message);
     }
   }
 
-  console.log("\n" + "=".repeat(50) + "\n");
+  console.info("\n" + "=".repeat(50) + "\n");
 
   // Example 4: Custom request options
-  console.log("⚙️ Example 4: Custom request options");
+  console.info("⚙️ Example 4: Custom request options");
   try {
-    console.log("🌐 Testing custom fetch options...");
+    console.info("🌐 Testing custom fetch options...");
 
     const response = await fetch("https://httpbin.org/get", {
       // Disable automatic decompression
@@ -121,68 +121,68 @@ async function runAdvancedFetchDemo() {
     });
 
     const result = await response.json();
-    console.log("✅ Custom options applied:");
-    console.log("  Status:", response.status);
-    console.log("  Headers received:", Object.keys(result.headers).length);
-    console.log("  User-Agent:", result.headers['User-Agent']);
+    console.info("✅ Custom options applied:");
+    console.info("  Status:", response.status);
+    console.info("  Headers received:", Object.keys(result.headers).length);
+    console.info("  User-Agent:", result.headers['User-Agent']);
 
   } catch (error) {
-    console.log("❌ Error:", error.message);
+    console.info("❌ Error:", error.message);
   }
 
-  console.log("\n" + "=".repeat(50) + "\n");
+  console.info("\n" + "=".repeat(50) + "\n");
 
   // Example 5: File URL protocol
-  console.log("📁 Example 5: File URL protocol");
+  console.info("📁 Example 5: File URL protocol");
   try {
-    console.log("📝 Creating test file...");
+    console.info("📝 Creating test file...");
 
     // Create a test file
     const testContent = "Hello from file URL!\nThis is a test file for Bun fetch.";
     await Bun.write("test-file.txt", testContent);
 
-    console.log("🌐 Fetching file using file:// protocol...");
+    console.info("🌐 Fetching file using file:// protocol...");
 
     const response = await fetch("file://" + Bun.resolveSync("./test-file.txt", (import.meta as any).dir));
     const content = await response.text();
 
-    console.log("✅ File fetched successfully:");
-    console.log("  Status:", response.status);
-    console.log("  Content length:", content.length);
-    console.log("  Content preview:", content.substring(0, 50) + "...");
+    console.info("✅ File fetched successfully:");
+    console.info("  Status:", response.status);
+    console.info("  Content length:", content.length);
+    console.info("  Content preview:", content.substring(0, 50) + "...");
 
     // Clean up
     await Bun.file("test-file.txt").delete();
 
   } catch (error) {
-    console.log("❌ Error:", error.message);
+    console.info("❌ Error:", error.message);
   }
 
-  console.log("\n" + "=".repeat(50) + "\n");
+  console.info("\n" + "=".repeat(50) + "\n");
 
   // Example 6: Data URL protocol
-  console.log("📊 Example 6: Data URL protocol");
+  console.info("📊 Example 6: Data URL protocol");
   try {
-    console.log("🌐 Fetching data URL...");
+    console.info("🌐 Fetching data URL...");
 
     const response = await fetch("data:text/plain;base64,SGVsbG8sIFdvcmxkIQ==");
     const text = await response.text();
 
-    console.log("✅ Data URL decoded:");
-    console.log("  Status:", response.status);
-    console.log("  Content-Type:", response.headers.get("content-type"));
-    console.log("  Decoded text:", text);
+    console.info("✅ Data URL decoded:");
+    console.info("  Status:", response.status);
+    console.info("  Content-Type:", response.headers.get("content-type"));
+    console.info("  Decoded text:", text);
 
   } catch (error) {
-    console.log("❌ Error:", error.message);
+    console.info("❌ Error:", error.message);
   }
 
-  console.log("\n" + "=".repeat(50) + "\n");
+  console.info("\n" + "=".repeat(50) + "\n");
 
   // Example 7: Blob URL protocol
-  console.log("🫧 Example 7: Blob URL protocol");
+  console.info("🫧 Example 7: Blob URL protocol");
   try {
-    console.log("🌐 Creating and fetching blob URL...");
+    console.info("🌐 Creating and fetching blob URL...");
 
     const blob = new Blob(["Hello from Blob URL!"], { type: "text/plain" });
     const blobUrl = URL.createObjectURL(blob);
@@ -190,24 +190,24 @@ async function runAdvancedFetchDemo() {
     const response = await fetch(blobUrl);
     const text = await response.text();
 
-    console.log("✅ Blob URL fetched:");
-    console.log("  Status:", response.status);
-    console.log("  Content-Type:", response.headers.get("content-type"));
-    console.log("  Content:", text);
+    console.info("✅ Blob URL fetched:");
+    console.info("  Status:", response.status);
+    console.info("  Content-Type:", response.headers.get("content-type"));
+    console.info("  Content:", text);
 
     // Clean up
     URL.revokeObjectURL(blobUrl);
 
   } catch (error) {
-    console.log("❌ Error:", error.message);
+    console.info("❌ Error:", error.message);
   }
 
-  console.log("\n" + "=".repeat(50) + "\n");
+  console.info("\n" + "=".repeat(50) + "\n");
 
   // Example 8: Content-Type handling
-  console.log("📝 Example 8: Content-Type handling");
+  console.info("📝 Example 8: Content-Type handling");
   try {
-    console.log("🌐 Testing automatic Content-Type...");
+    console.info("🌐 Testing automatic Content-Type...");
 
     // Test with Blob (should use blob's type)
     const jsonBlob = new Blob([JSON.stringify({ test: true })], { type: "application/json" });
@@ -219,26 +219,26 @@ async function runAdvancedFetchDemo() {
     });
 
     const result = await response.json();
-    console.log("✅ Content-Type handling:");
-    console.log("  Sent Content-Type:", result.headers['Content-Type']);
-    console.log("  Server received:", result.json);
+    console.info("✅ Content-Type handling:");
+    console.info("  Sent Content-Type:", result.headers['Content-Type']);
+    console.info("  Server received:", result.json);
 
   } catch (error) {
-    console.log("❌ Error:", error.message);
+    console.info("❌ Error:", error.message);
   }
 
-  console.log("\n" + "=".repeat(50) + "\n");
+  console.info("\n" + "=".repeat(50) + "\n");
 
   // Example 9: Error handling demonstration
-  console.log("⚠️ Example 9: Error handling");
+  console.info("⚠️ Example 9: Error handling");
   try {
-    console.log("🌐 Testing error cases...");
+    console.info("🌐 Testing error cases...");
 
     // Test invalid URL
     try {
       await fetch("invalid-url");
     } catch (error) {
-      console.log("✅ Invalid URL error caught:", error.message);
+      console.info("✅ Invalid URL error caught:", error.message);
     }
 
     // Test GET with body (should error)
@@ -248,52 +248,52 @@ async function runAdvancedFetchDemo() {
         body: "This should cause an error",
       });
     } catch (error) {
-      console.log("✅ GET with body error caught:", error.message);
+      console.info("✅ GET with body error caught:", error.message);
     }
 
   } catch (error) {
-    console.log("❌ Unexpected error:", error.message);
+    console.info("❌ Unexpected error:", error.message);
   }
 
-  console.log("\n" + "=".repeat(50) + "\n");
+  console.info("\n" + "=".repeat(50) + "\n");
 
   // Example 10: S3 protocol (simulation)
-  console.log("🪣 Example 10: S3 protocol support");
+  console.info("🪣 Example 10: S3 protocol support");
   try {
-    console.log("🌐 S3 URL format demonstration...");
-    console.log("  S3 URLs supported: s3://bucket/path/to/object");
-    console.log("  Options: accessKeyId, secretAccessKey, region");
-    console.log("  Features: Automatic multipart upload for large files");
-    console.log("  Methods: PUT, POST support request bodies");
+    console.info("🌐 S3 URL format demonstration...");
+    console.info("  S3 URLs supported: s3://bucket/path/to/object");
+    console.info("  Options: accessKeyId, secretAccessKey, region");
+    console.info("  Features: Automatic multipart upload for large files");
+    console.info("  Methods: PUT, POST support request bodies");
 
     // Note: Actual S3 demo would require real credentials
-    console.log("✅ S3 protocol support documented");
+    console.info("✅ S3 protocol support documented");
 
   } catch (error) {
-    console.log("❌ Error:", error.message);
+    console.info("❌ Error:", error.message);
   }
 
-  console.log("\n🎯 Advanced Fetch Features Summary:");
-  console.log("✅ ReadableStream request bodies - Direct network streaming");
-  console.log("✅ AbortSignal.timeout() - Automatic timeout handling");
-  console.log("✅ AbortController - Manual request cancellation");
-  console.log("✅ Custom options - decompress, keepalive, verbose");
-  console.log("✅ File URLs - Local file access");
-  console.log("✅ Data URLs - Inline data handling");
-  console.log("✅ Blob URLs - In-memory object URLs");
-  console.log("✅ Content-Type - Automatic header management");
-  console.log("✅ Error handling - Comprehensive error cases");
-  console.log("✅ S3 protocol - Cloud storage integration");
+  console.info("\n🎯 Advanced Fetch Features Summary:");
+  console.info("✅ ReadableStream request bodies - Direct network streaming");
+  console.info("✅ AbortSignal.timeout() - Automatic timeout handling");
+  console.info("✅ AbortController - Manual request cancellation");
+  console.info("✅ Custom options - decompress, keepalive, verbose");
+  console.info("✅ File URLs - Local file access");
+  console.info("✅ Data URLs - Inline data handling");
+  console.info("✅ Blob URLs - In-memory object URLs");
+  console.info("✅ Content-Type - Automatic header management");
+  console.info("✅ Error handling - Comprehensive error cases");
+  console.info("✅ S3 protocol - Cloud storage integration");
 
-  console.log("\n💡 Advanced Benefits:");
-  console.log("• Memory efficiency - Streaming without buffering");
-  console.log("• Network control - Timeouts and cancellation");
-  console.log("• Protocol support - HTTP(S), S3, file, data, blob");
-  console.log("• Security features - TLS configuration");
-  console.log("• Debug capabilities - Verbose logging");
-  console.log("• Standards compliance - Web API compatible");
+  console.info("\n💡 Advanced Benefits:");
+  console.info("• Memory efficiency - Streaming without buffering");
+  console.info("• Network control - Timeouts and cancellation");
+  console.info("• Protocol support - HTTP(S), S3, file, data, blob");
+  console.info("• Security features - TLS configuration");
+  console.info("• Debug capabilities - Verbose logging");
+  console.info("• Standards compliance - Web API compatible");
 
-  console.log("\n🚀 Advanced Fetch Demo Complete!");
+  console.info("\n🚀 Advanced Fetch Demo Complete!");
 }
 
 // Execute the demo

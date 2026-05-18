@@ -30,11 +30,11 @@ export class DeviceManagementSystem {
    * Initialize the device management system
    */
   async initialize(): Promise<void> {
-    console.log('📱 Initializing Device Management System...');
+    console.info('📱 Initializing Device Management System...');
 
     // Any additional initialization would go here
 
-    console.log('✅ Device Management System initialized successfully');
+    console.info('✅ Device Management System initialized successfully');
   }
 
   // Device Detection Methods
@@ -158,7 +158,7 @@ export class DeviceManagementSystem {
     // Update analytics
     this.updateAnalytics(callData.userAgent, callData);
 
-    console.log(
+    console.info(
       `📡 API Call tracked: ${callData.method} ${callData.endpoint} (${callData.responseTime}ms)`
     );
   }
@@ -238,7 +238,7 @@ export class DeviceManagementSystem {
     this.apiCalls = this.apiCalls.filter(call => call.timestamp >= cutoffDate);
 
     const clearedCount = initialCount - this.apiCalls.length;
-    console.log(`🧹 Cleared ${clearedCount} old API calls`);
+    console.info(`🧹 Cleared ${clearedCount} old API calls`);
 
     return clearedCount;
   }

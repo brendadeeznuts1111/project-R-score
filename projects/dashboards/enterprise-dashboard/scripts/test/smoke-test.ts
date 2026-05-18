@@ -98,7 +98,7 @@ const failed = results.filter(r => !r.pass).length;
 const totalTime = results.reduce((sum, r) => sum + r.time, 0);
 const avgTime = totalTime / results.length;
 
-console.log("\n🔥 Smoke Test Results\n");
+console.info("\n🔥 Smoke Test Results\n");
 
 // Format for table
 const formatted = results.map((r, i) => ({
@@ -112,14 +112,14 @@ const formatted = results.map((r, i) => ({
   "Time": r.time + "ms"
 }));
 
-console.log(Bun.inspect.table(formatted, { colors: true }));
+console.info(Bun.inspect.table(formatted, { colors: true }));
 
-console.log("\n📊 Summary: " + passed + "/" + results.length + " passed, " + failed + " failed");
-console.log("⏱️  Total: " + totalTime.toFixed(1) + "ms | Avg: " + avgTime.toFixed(2) + "ms/request");
+console.info("\n📊 Summary: " + passed + "/" + results.length + " passed, " + failed + " failed");
+console.info("⏱️  Total: " + totalTime.toFixed(1) + "ms | Avg: " + avgTime.toFixed(2) + "ms/request");
 
 if (failed > 0) {
-  console.log("\n❌ Failed tests:");
+  console.info("\n❌ Failed tests:");
   results.filter(r => !r.pass).forEach(r => {
-    console.log("   " + r.method + " " + r.endpoint + " - got " + r.status + ", expected " + r.expected);
+    console.info("   " + r.method + " " + r.endpoint + " - got " + r.status + ", expected " + r.expected);
   });
 }

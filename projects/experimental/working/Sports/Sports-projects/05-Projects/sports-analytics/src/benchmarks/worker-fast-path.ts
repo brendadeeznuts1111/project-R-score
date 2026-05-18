@@ -76,8 +76,8 @@ function fmt(bytes: number) {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
-console.log("🧬 T3-Lattice Worker Fast-Path Benchmarks");
-console.log("==========================================");
+console.info("🧬 T3-Lattice Worker Fast-Path Benchmarks");
+console.info("==========================================");
 
 bench(`postMessage(LatticePayload: ${fmt(payloads.small.glyph.length)} glyph)`, () => {
   sentCount++;
@@ -98,6 +98,6 @@ await run();
 
 // Cleanup
 setTimeout(() => {
-  console.log(`\nVerification: Sent ${sentCount}, Received ${receivedCount[0]}`);
+  console.info(`\nVerification: Sent ${sentCount}, Received ${receivedCount[0]}`);
   worker.terminate();
 }, 1000);

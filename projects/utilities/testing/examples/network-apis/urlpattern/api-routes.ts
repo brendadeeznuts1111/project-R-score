@@ -15,4 +15,4 @@ const matches = [
   apiPattern.exec("https://api.example.com/v1/users/123")
 ];
 
-console.log("API routes:", matches);
+console.info("API routes:", matches);

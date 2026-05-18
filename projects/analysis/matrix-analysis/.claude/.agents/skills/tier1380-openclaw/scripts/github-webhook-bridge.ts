@@ -85,7 +85,7 @@ class GitHubWebhookBridge {
 
 		const webhooks = repoConfig.webhooks;
 		if (!webhooks || !webhooks[payload.event]) {
-			console.log(`No webhook config for event: ${payload.event}`);
+			console.info(`No webhook config for event: ${payload.event}`);
 			return null;
 		}
 
@@ -188,10 +188,10 @@ class GitHubWebhookBridge {
 			data: this.generateMockData(event, action),
 		};
 
-		console.log(
+		console.info(
 			`${COLORS.bold}🔄 Simulating:${COLORS.reset} ${event}${action ? `:${action}` : ""}`,
 		);
-		console.log(`${COLORS.gray}Repository:${COLORS.reset} ${repo}`);
+		console.info(`${COLORS.gray}Repository:${COLORS.reset} ${repo}`);
 
 		const result = this.processWebhook(payload);
 
@@ -203,13 +203,13 @@ class GitHubWebhookBridge {
 				7: "💻 Development",
 			};
 
-			console.log(
+			console.info(
 				`${COLORS.bold}Route:${COLORS.reset} ${topicNames[result.topic] || `Topic ${result.topic}`}`,
 			);
-			console.log(`${COLORS.bold}Priority:${COLORS.reset} ${result.priority}`);
-			console.log(`${COLORS.bold}Message:${COLORS.reset} ${result.message}`);
+			console.info(`${COLORS.bold}Priority:${COLORS.reset} ${result.priority}`);
+			console.info(`${COLORS.bold}Message:${COLORS.reset} ${result.message}`);
 		} else {
-			console.log(`${COLORS.yellow}⚠ Not routed${COLORS.reset}`);
+			console.info(`${COLORS.yellow}⚠ Not routed${COLORS.reset}`);
 		}
 	}
 
@@ -258,10 +258,10 @@ class GitHubWebhookBridge {
 	 * Start webhook server
 	 */
 	async startServer(port: number = 3000): Promise<void> {
-		console.log(
+		console.info(
 			`${COLORS.green}🚀 Starting webhook bridge server on port ${port}${COLORS.reset}`,
 		);
-		console.log(
+		console.info(
 			`${COLORS.gray}Configure GitHub webhook to POST to http://localhost:${port}/webhook${COLORS.reset}\n`,
 		);
 
@@ -274,7 +274,7 @@ class GitHubWebhookBridge {
 					const event = request.headers.get("X-GitHub-Event") as GitHubEvent;
 					const payload = await request.json();
 
-					console.log(`\n${COLORS.cyan}📨 Received:${COLORS.reset} ${event}`);
+					console.info(`\n${COLORS.cyan}📨 Received:${COLORS.reset} ${event}`);
 
 					const result = this.processWebhook({
 						event,
@@ -286,10 +286,10 @@ class GitHubWebhookBridge {
 
 					if (result) {
 						// Here you would send to Telegram
-						console.log(
+						console.info(
 							`  ${COLORS.green}✓${COLORS.reset} Routed to Topic ${result.topic}`,
 						);
-						console.log(`  ${COLORS.gray}${result.message}${COLORS.reset}`);
+						console.info(`  ${COLORS.gray}${result.message}${COLORS.reset}`);
 
 						return new Response(JSON.stringify({ success: true, topic: result.topic }), {
 							status: 200,
@@ -307,7 +307,7 @@ class GitHubWebhookBridge {
 			},
 		});
 
-		console.log(`${COLORS.green}✓${COLORS.reset} Server running`);
+		console.info(`${COLORS.green}✓${COLORS.reset} Server running`);
 
 		// Keep alive
 		await new Promise(() => {});
@@ -346,32 +346,32 @@ async function main() {
 		case "test": {
 			// Test all event types
 			const testRepo = "github.com/brendadeeznuts1111/matrix-analysis";
-			console.log(`${COLORS.bold}Testing all webhook events...${COLORS.reset}\n`);
+			console.info(`${COLORS.bold}Testing all webhook events...${COLORS.reset}\n`);
 
 			bridge.simulate("push", testRepo);
-			console.log();
+			console.info();
 			bridge.simulate("pull_request", testRepo, "opened");
-			console.log();
+			console.info();
 			bridge.simulate("pull_request", testRepo, "merged");
-			console.log();
+			console.info();
 			bridge.simulate("issues", testRepo, "opened");
-			console.log();
+			console.info();
 			bridge.simulate("release", testRepo, "published");
 			break;
 		}
 
 		default:
-			console.log(`${COLORS.bold}🔗 GitHub Webhook → Telegram Bridge${COLORS.reset}\n`);
-			console.log("Usage:");
-			console.log("  github-webhook-bridge.ts simulate <event> <repo> [action]");
-			console.log("  github-webhook-bridge.ts server [port]");
-			console.log("  github-webhook-bridge.ts test");
-			console.log("\nExamples:");
-			console.log("  github-webhook-bridge.ts simulate push github.com/user/repo");
-			console.log(
+			console.info(`${COLORS.bold}🔗 GitHub Webhook → Telegram Bridge${COLORS.reset}\n`);
+			console.info("Usage:");
+			console.info("  github-webhook-bridge.ts simulate <event> <repo> [action]");
+			console.info("  github-webhook-bridge.ts server [port]");
+			console.info("  github-webhook-bridge.ts test");
+			console.info("\nExamples:");
+			console.info("  github-webhook-bridge.ts simulate push github.com/user/repo");
+			console.info(
 				"  github-webhook-bridge.ts simulate pull_request github.com/user/repo opened",
 			);
-			console.log("  github-webhook-bridge.ts server 3000");
+			console.info("  github-webhook-bridge.ts server 3000");
 	}
 }
 

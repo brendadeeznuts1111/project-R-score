@@ -277,7 +277,7 @@ describe("Tier-1380 Lifecycle Integrity Seal", () => {
     
     it("should identify script anomalies", async () => {
       const suspiciousScripts = {
-        test: 'eval("console.log(\'test\')")',
+        test: 'eval("console.info(\'test\')")',
         build: 'Function("return process")()',
         deploy: 'child_process.spawn("malicious-command")'
       };

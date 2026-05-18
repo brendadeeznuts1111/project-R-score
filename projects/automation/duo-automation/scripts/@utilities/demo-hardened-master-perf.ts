@@ -6,26 +6,26 @@ import { MasterPerfTracker } from '../src/storage/r2-apple-manager.ts';
 import { HardenedInfrastructureDashboard } from '../server/infrastructure-dashboard-server-hardened.ts';
 import { feature } from "bun:bundle";
 
-console.log('🔒 Empire Pro v3.7 - Hardened MASTER_PERF System Demo');
-console.log('=====================================================\n');
+console.info('🔒 Empire Pro v3.7 - Hardened MASTER_PERF System Demo');
+console.info('=====================================================\n');
 
 // Demo 1: Scope Isolation Security
-console.log('🛡️  Demo 1: Scope Isolation Security');
-console.log('=====================================');
+console.info('🛡️  Demo 1: Scope Isolation Security');
+console.info('=====================================');
 
 try {
   // Test invalid scope rejection
   process.env.DASHBOARD_SCOPE = 'INVALID_SCOPE';
   new MasterPerfTracker();
-  console.log('❌ Security failed - should have rejected invalid scope');
+  console.info('❌ Security failed - should have rejected invalid scope');
 } catch (error) {
-  console.log('✅ Security working - rejected invalid scope:', error.message);
+  console.info('✅ Security working - rejected invalid scope:', error.message);
 }
 
 // Test valid scope initialization
 process.env.DASHBOARD_SCOPE = 'ENTERPRISE';
 const enterpriseTracker = new MasterPerfTracker();
-console.log('✅ Enterprise tracker initialized successfully');
+console.info('✅ Enterprise tracker initialized successfully');
 
 // Test cross-scope rejection
 try {
@@ -45,14 +45,14 @@ try {
     impact: 'high',
     properties: { scope: 'ENTERPRISE' } // Should reject
   });
-  console.log('❌ Security failed - should have rejected cross-scope metric');
+  console.info('❌ Security failed - should have rejected cross-scope metric');
 } catch (error) {
-  console.log('✅ Security working - rejected cross-scope metric:', error.message);
+  console.info('✅ Security working - rejected cross-scope metric:', error.message);
 }
 
 // Demo 2: Property Sanitization
-console.log('\n🧹 Demo 2: Property Sanitization');
-console.log('===============================');
+console.info('\n🧹 Demo 2: Property Sanitization');
+console.info('===============================');
 
 // Reset to enterprise scope and enable tracking for demo
 process.env.DASHBOARD_SCOPE = 'ENTERPRISE';
@@ -82,10 +82,10 @@ const testMetric = {
 };
 
 // Demonstrate sanitization logic directly
-console.log('🔍 Original vs Sanitized properties:');
-console.log('Original properties:');
+console.info('🔍 Original vs Sanitized properties:');
+console.info('Original properties:');
 Object.entries(testMetric.properties || {}).forEach(([key, value]) => {
-  console.log(`  ${key}: ${value}`);
+  console.info(`  ${key}: ${value}`);
 });
 
 // Simulate sanitization
@@ -97,29 +97,29 @@ for (const [key, value] of Object.entries(testMetric.properties || {})) {
   sanitized[cleanKey] = truncatedValue;
 }
 
-console.log('\n✅ Sanitized properties:');
+console.info('\n✅ Sanitized properties:');
 Object.entries(sanitized).forEach(([key, value]) => {
-  console.log(`  ${key}: ${value}`);
+  console.info(`  ${key}: ${value}`);
 });
 
-console.log('\n🔍 Security validation:');
-console.log(`  ✅ Dangerous keys removed: ${!sanitized.hasOwnProperty('dangerous/key')}`);
-console.log(`  ✅ Control characters removed: ${!sanitized.malicious_value?.includes('\r')}`);
-console.log(`  ✅ Long values truncated: ${sanitized.very_long_value?.includes('...')}`);
-console.log(`  ✅ Spaces replaced with underscores: ${sanitized.hasOwnProperty('key_with_spaces')}`);
-console.log(`  ✅ Symbols removed from keys: ${sanitized.hasOwnProperty('key_with_symbols')}`);
+console.info('\n🔍 Security validation:');
+console.info(`  ✅ Dangerous keys removed: ${!sanitized.hasOwnProperty('dangerous/key')}`);
+console.info(`  ✅ Control characters removed: ${!sanitized.malicious_value?.includes('\r')}`);
+console.info(`  ✅ Long values truncated: ${sanitized.very_long_value?.includes('...')}`);
+console.info(`  ✅ Spaces replaced with underscores: ${sanitized.hasOwnProperty('key_with_spaces')}`);
+console.info(`  ✅ Symbols removed from keys: ${sanitized.hasOwnProperty('key_with_symbols')}`);
 
 // Demo 3: Performance Optimization
-console.log('\n⚡ Demo 3: Performance Optimization');
-console.log('===================================');
+console.info('\n⚡ Demo 3: Performance Optimization');
+console.info('===================================');
 
-console.log('📊 Performance tracking behavior:');
-console.log(`  PERF_TRACKING feature: ${feature("PERF_TRACKING") ? '✅ Enabled' : '❌ Disabled'}`);
-console.log(`  DEBUG_PERF feature: ${feature("DEBUG_PERF") ? '✅ Enabled' : '❌ Disabled'}`);
-console.log(`  Current max metrics: ${enterpriseTracker.maxMetricsLimit}`);
+console.info('📊 Performance tracking behavior:');
+console.info(`  PERF_TRACKING feature: ${feature("PERF_TRACKING") ? '✅ Enabled' : '❌ Disabled'}`);
+console.info(`  DEBUG_PERF feature: ${feature("DEBUG_PERF") ? '✅ Enabled' : '❌ Disabled'}`);
+console.info(`  Current max metrics: ${enterpriseTracker.maxMetricsLimit}`);
 
 // Add some metrics to demonstrate FIFO behavior
-console.log('\n📈 Adding metrics to test FIFO eviction...');
+console.info('\n📈 Adding metrics to test FIFO eviction...');
 for (let i = 0; i < 10; i++) {
   enterpriseTracker.addMetric({
     category: 'PERFORMANCE',
@@ -135,11 +135,11 @@ for (let i = 0; i < 10; i++) {
 }
 
 const finalMetrics = enterpriseTracker.getMetrics();
-console.log(`✅ Final metric count: ${finalMetrics.length} (should be ≤ ${enterpriseTracker.maxMetricsLimit})`);
+console.info(`✅ Final metric count: ${finalMetrics.length} (should be ≤ ${enterpriseTracker.maxMetricsLimit})`);
 
 // Demo 4: Unicode-Aware Output
-console.log('\n🌐 Demo 4: Unicode-Aware Output');
-console.log('===============================');
+console.info('\n🌐 Demo 4: Unicode-Aware Output');
+console.info('===============================');
 
 enterpriseTracker.addMetric({
   category: 'UNICODE',
@@ -159,37 +159,37 @@ enterpriseTracker.addMetric({
   }
 });
 
-console.log('📊 Enhanced matrix output:');
+console.info('📊 Enhanced matrix output:');
 enterpriseTracker.printMasterPerfMatrix();
 
 // Demo 5: S3 Export Security
-console.log('\n☁️ Demo 5: S3 Export Security');
-console.log('============================');
+console.info('\n☁️ Demo 5: S3 Export Security');
+console.info('============================');
 
-console.log('🔐 Export security validation:');
-console.log(`  AUDIT_EXPORT feature: ${feature("AUDIT_EXPORT") ? '✅ Enabled' : '❌ Disabled'}`);
+console.info('🔐 Export security validation:');
+console.info(`  AUDIT_EXPORT feature: ${feature("AUDIT_EXPORT") ? '✅ Enabled' : '❌ Disabled'}`);
 
 if (feature("AUDIT_EXPORT")) {
-  console.log('✅ S3 export would be available with:');
-  console.log('  - Descriptive filenames with timestamps');
-  console.log('  - Content-Disposition headers');
-  console.log('  - Scope-isolated storage paths');
-  console.log('  - Metadata tracking');
+  console.info('✅ S3 export would be available with:');
+  console.info('  - Descriptive filenames with timestamps');
+  console.info('  - Content-Disposition headers');
+  console.info('  - Scope-isolated storage paths');
+  console.info('  - Metadata tracking');
 } else {
-  console.log('ℹ️  S3 export requires AUDIT_EXPORT feature flag');
+  console.info('ℹ️  S3 export requires AUDIT_EXPORT feature flag');
 }
 
 // Demo 6: WebSocket Security (simulation)
-console.log('\n🌐 Demo 6: WebSocket Security');
-console.log('===========================');
+console.info('\n🌐 Demo 6: WebSocket Security');
+console.info('===========================');
 
-console.log('🔒 WebSocket security features:');
-console.log('  ✅ RBAC token validation');
-console.log('  ✅ Scope-based connection limits');
-console.log('  ✅ Message size validation');
-console.log('  ✅ Rate limiting per scope');
-console.log('  ✅ Connection timeout handling');
-console.log('  ✅ Scope-isolated metric streaming');
+console.info('🔒 WebSocket security features:');
+console.info('  ✅ RBAC token validation');
+console.info('  ✅ Scope-based connection limits');
+console.info('  ✅ Message size validation');
+console.info('  ✅ Rate limiting per scope');
+console.info('  ✅ Connection timeout handling');
+console.info('  ✅ Scope-isolated metric streaming');
 
 // Simulate connection validation
 const mockTokens = [
@@ -202,12 +202,12 @@ const mockTokens = [
 mockTokens.forEach(({ token, scope, valid }) => {
   const status = valid ? '✅' : '❌';
   const tokenDisplay = token ? token.substring(0, 8) + '...' : '(empty)';
-  console.log(`  ${status} ${tokenDisplay.padEnd(12)} → ${scope.padEnd(12)} ${valid ? 'Allowed' : 'Rejected'}`);
+  console.info(`  ${status} ${tokenDisplay.padEnd(12)} → ${scope.padEnd(12)} ${valid ? 'Allowed' : 'Rejected'}`);
 });
 
 // Demo 7: Feature Flag Integration
-console.log('\n🚩 Demo 7: Feature Flag Integration');
-console.log('===================================');
+console.info('\n🚩 Demo 7: Feature Flag Integration');
+console.info('===================================');
 
 const securityFeatures = [
   { flag: 'PERF_TRACKING', description: 'Performance tracking' },
@@ -218,17 +218,17 @@ const securityFeatures = [
   { flag: 'DEBUG_UNICODE', description: 'Unicode formatting' }
 ];
 
-console.log('🎯 Security feature flags:');
-console.log(`  ${feature("PERF_TRACKING") ? '✅' : '❌'} ${'PERF_TRACKING'.padEnd(20)} - Performance tracking`);
-console.log(`  ${feature("DEBUG_PERF") ? '✅' : '❌'} ${'DEBUG_PERF'.padEnd(20)} - Detailed debug info`);
-console.log(`  ${feature("AUDIT_EXPORT") ? '✅' : '❌'} ${'AUDIT_EXPORT'.padEnd(20)} - S3 export capability`);
-console.log(`  ${feature("ENTERPRISE_SECURITY") ? '✅' : '❌'} ${'ENTERPRISE_SECURITY'.padEnd(20)} - Cross-scope access`);
-console.log(`  ${feature("MULTI_TENANT") ? '✅' : '❌'} ${'MULTI_TENANT'.padEnd(20)} - Location tracking`);
-console.log(`  ${feature("DEBUG_UNICODE") ? '✅' : '❌'} ${'DEBUG_UNICODE'.padEnd(20)} - Unicode formatting`);
+console.info('🎯 Security feature flags:');
+console.info(`  ${feature("PERF_TRACKING") ? '✅' : '❌'} ${'PERF_TRACKING'.padEnd(20)} - Performance tracking`);
+console.info(`  ${feature("DEBUG_PERF") ? '✅' : '❌'} ${'DEBUG_PERF'.padEnd(20)} - Detailed debug info`);
+console.info(`  ${feature("AUDIT_EXPORT") ? '✅' : '❌'} ${'AUDIT_EXPORT'.padEnd(20)} - S3 export capability`);
+console.info(`  ${feature("ENTERPRISE_SECURITY") ? '✅' : '❌'} ${'ENTERPRISE_SECURITY'.padEnd(20)} - Cross-scope access`);
+console.info(`  ${feature("MULTI_TENANT") ? '✅' : '❌'} ${'MULTI_TENANT'.padEnd(20)} - Location tracking`);
+console.info(`  ${feature("DEBUG_UNICODE") ? '✅' : '❌'} ${'DEBUG_UNICODE'.padEnd(20)} - Unicode formatting`);
 
 // Demo 8: Production Readiness Checklist
-console.log('\n✅ Demo 8: Production Readiness Checklist');
-console.log('========================================');
+console.info('\n✅ Demo 8: Production Readiness Checklist');
+console.info('========================================');
 
 const readinessChecks = [
   { item: 'Scope isolation enforcement', status: '✅' },
@@ -244,34 +244,34 @@ const readinessChecks = [
 ];
 
 readinessChecks.forEach(({ item, status }) => {
-  console.log(`  ${status} ${item}`);
+  console.info(`  ${status} ${item}`);
 });
 
-console.log('\n🎉 Hardened MASTER_PERF System Demo Completed!');
-console.log('🚀 Empire Pro v3.7 - Enterprise-grade security & performance!');
+console.info('\n🎉 Hardened MASTER_PERF System Demo Completed!');
+console.info('🚀 Empire Pro v3.7 - Enterprise-grade security & performance!');
 
-console.log('\n📋 Security Summary:');
-console.log('==================');
-console.log('🔒 Zero-Trust Architecture: All connections validated');
-console.log('🛡️  Multi-Tenant Isolation: Scope-based data segregation');
-console.log('⚡ Performance Optimization: Compile-time feature flags');
-console.log('🌐 Unicode Safety: Proper character handling');
-console.log('☁️ Secure Exports: S3 with Content-Disposition');
-console.log('📊 Real-time Security: WebSocket with RBAC');
+console.info('\n📋 Security Summary:');
+console.info('==================');
+console.info('🔒 Zero-Trust Architecture: All connections validated');
+console.info('🛡️  Multi-Tenant Isolation: Scope-based data segregation');
+console.info('⚡ Performance Optimization: Compile-time feature flags');
+console.info('🌐 Unicode Safety: Proper character handling');
+console.info('☁️ Secure Exports: S3 with Content-Disposition');
+console.info('📊 Real-time Security: WebSocket with RBAC');
 
-console.log('\n🔧 Usage Examples:');
-console.log('================');
-console.log('// Create hardened tracker');
-console.log('const tracker = new MasterPerfTracker();');
-console.log('');
-console.log('// Add metrics (auto-sanitized and scoped)');
-console.log('tracker.addMetric({ category: "SECURITY", ... });');
-console.log('');
-console.log('// Export with security');
-console.log('await tracker.exportMetricsToS3();');
-console.log('');
-console.log('// Start secure WebSocket server');
-console.log('const server = new HardenedInfrastructureDashboard();');
+console.info('\n🔧 Usage Examples:');
+console.info('================');
+console.info('// Create hardened tracker');
+console.info('const tracker = new MasterPerfTracker();');
+console.info('');
+console.info('// Add metrics (auto-sanitized and scoped)');
+console.info('tracker.addMetric({ category: "SECURITY", ... });');
+console.info('');
+console.info('// Export with security');
+console.info('await tracker.exportMetricsToS3();');
+console.info('');
+console.info('// Start secure WebSocket server');
+console.info('const server = new HardenedInfrastructureDashboard();');
 
 // Cleanup
 process.env.DASHBOARD_SCOPE = 'ENTERPRISE';

@@ -16,7 +16,7 @@ class CIValidator {
   private startTime = performance.now();
 
   async runValidation(): Promise<boolean> {
-    console.log('🔍 Running CI Validation...\n');
+    console.info('🔍 Running CI Validation...\n');
 
     // 1. TypeScript compilation
     await this.checkTypeScript();
@@ -44,12 +44,12 @@ class CIValidator {
     const failed = this.checks.filter(c => c.status === 'fail').length;
     const skipped = this.checks.filter(c => c.status === 'skip').length;
 
-    console.log(`\n📊 Summary:`);
-    console.log(`   Total Checks: ${this.checks.length}`);
-    console.log(`   ✅ Passed: ${passed}`);
-    console.log(`   ❌ Failed: ${failed}`);
-    console.log(`   ⏭️  Skipped: ${skipped}`);
-    console.log(`   ⏱️  Duration: ${totalDuration.toFixed(2)}ms`);
+    console.info(`\n📊 Summary:`);
+    console.info(`   Total Checks: ${this.checks.length}`);
+    console.info(`   ✅ Passed: ${passed}`);
+    console.info(`   ❌ Failed: ${failed}`);
+    console.info(`   ⏭️  Skipped: ${skipped}`);
+    console.info(`   ⏱️  Duration: ${totalDuration.toFixed(2)}ms`);
 
     return failed === 0;
   }
@@ -194,11 +194,11 @@ class CIValidator {
   }
 
   private printResults(): void {
-    console.log('\n📋 Validation Results:\n');
+    console.info('\n📋 Validation Results:\n');
     this.checks.forEach(check => {
       const icon = check.status === 'pass' ? '✅' : check.status === 'fail' ? '❌' : '⏭️';
       const duration = check.duration ? ` (${check.duration.toFixed(2)}ms)` : '';
-      console.log(`${icon} ${check.name}: ${check.message}${duration}`);
+      console.info(`${icon} ${check.name}: ${check.message}${duration}`);
     });
   }
 }

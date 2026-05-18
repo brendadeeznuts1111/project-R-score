@@ -261,11 +261,11 @@ export class DevWorkspaceManager {
 		// Add to key index list
 		await this.addToKeyIndex(keyId);
 
-		console.log(`✅ Created workspace key for ${options.email}`);
-		console.log(`   Key ID: ${keyId}`);
-		console.log(`   Purpose: ${options.purpose}`);
-		console.log(`   Expires: ${new Date(expiresAt).toISOString()}`);
-		console.log(`   Rate Limit: ${rateLimitPerHour} requests/hour`);
+		console.info(`✅ Created workspace key for ${options.email}`);
+		console.info(`   Key ID: ${keyId}`);
+		console.info(`   Purpose: ${options.purpose}`);
+		console.info(`   Expires: ${new Date(expiresAt).toISOString()}`);
+		console.info(`   Rate Limit: ${rateLimitPerHour} requests/hour`);
 
 		return keyData;
 	}
@@ -674,7 +674,7 @@ export class DevWorkspaceManager {
 		// Note: We keep the key in the index even when revoked for audit purposes
 		// Remove from index only if you want to completely delete it
 
-		console.log(`✅ Revoked key: ${keyId}`);
+		console.info(`✅ Revoked key: ${keyId}`);
 		return true;
 	}
 
@@ -1028,15 +1028,15 @@ export async function cli(args: string[]) {
 					expirationHours,
 				});
 
-				console.log("\n📋 API Key Details:");
-				console.log(`   Key ID: ${key.id}`);
-				console.log(`   API Key: ${key.apiKey}`);
-				console.log(`   Email: ${key.email}`);
-				console.log(`   Purpose: ${key.purpose}`);
-				console.log(`   Expires: ${new Date(key.expiresAt).toISOString()}`);
-				console.log(`   Rate Limit: ${key.rateLimitPerHour} requests/hour`);
-				console.log("\n💡 Use this API key in requests:");
-				console.log(`   curl -H "X-API-Key: ${key.apiKey}" http://localhost:3001/api/v1/...`);
+				console.info("\n📋 API Key Details:");
+				console.info(`   Key ID: ${key.id}`);
+				console.info(`   API Key: ${key.apiKey}`);
+				console.info(`   Email: ${key.email}`);
+				console.info(`   Purpose: ${key.purpose}`);
+				console.info(`   Expires: ${new Date(key.expiresAt).toISOString()}`);
+				console.info(`   Rate Limit: ${key.rateLimitPerHour} requests/hour`);
+				console.info("\n💡 Use this API key in requests:");
+				console.info(`   curl -H "X-API-Key: ${key.apiKey}" http://localhost:3001/api/v1/...`);
 			}
 			break;
 
@@ -1054,16 +1054,16 @@ export async function cli(args: string[]) {
 					process.exit(1);
 				}
 
-				console.log("\n📊 Key Statistics:");
-				console.log(`   Key ID: ${stats.keyId}`);
-				console.log(`   Total Requests: ${stats.totalRequests}`);
-				console.log(`   Requests (Last Hour): ${stats.requestsLastHour}`);
-				console.log(`   Requests (Today): ${stats.requestsToday}`);
-				console.log(`   Last Used: ${stats.lastUsedAt ? new Date(stats.lastUsedAt).toISOString() : "Never"}`);
-				console.log(`   Created: ${new Date(stats.createdAt).toISOString()}`);
-				console.log(`   Expires: ${new Date(stats.expiresAt).toISOString()}`);
-				console.log(`   Time Remaining: ${Math.floor(stats.timeRemaining / 1000 / 60)} minutes`);
-				console.log(`   Status: ${stats.isExpired ? "❌ Expired" : stats.isRateLimited ? "⚠️ Rate Limited" : "✅ Active"}`);
+				console.info("\n📊 Key Statistics:");
+				console.info(`   Key ID: ${stats.keyId}`);
+				console.info(`   Total Requests: ${stats.totalRequests}`);
+				console.info(`   Requests (Last Hour): ${stats.requestsLastHour}`);
+				console.info(`   Requests (Today): ${stats.requestsToday}`);
+				console.info(`   Last Used: ${stats.lastUsedAt ? new Date(stats.lastUsedAt).toISOString() : "Never"}`);
+				console.info(`   Created: ${new Date(stats.createdAt).toISOString()}`);
+				console.info(`   Expires: ${new Date(stats.expiresAt).toISOString()}`);
+				console.info(`   Time Remaining: ${Math.floor(stats.timeRemaining / 1000 / 60)} minutes`);
+				console.info(`   Status: ${stats.isExpired ? "❌ Expired" : stats.isRateLimited ? "⚠️ Rate Limited" : "✅ Active"}`);
 			}
 			break;
 
@@ -1081,7 +1081,7 @@ export async function cli(args: string[]) {
 					process.exit(1);
 				}
 
-				console.log(`✅ Key revoked: ${keyId}`);
+				console.info(`✅ Key revoked: ${keyId}`);
 			}
 			break;
 
@@ -1091,27 +1091,27 @@ export async function cli(args: string[]) {
 				const keys = await manager.listKeys(purpose);
 
 				if (keys.length === 0) {
-					console.log("📭 No keys found");
+					console.info("📭 No keys found");
 					break;
 				}
 
-				console.log(`\n📋 Active Keys${purpose ? ` (${purpose})` : ""}:`);
+				console.info(`\n📋 Active Keys${purpose ? ` (${purpose})` : ""}:`);
 				keys.forEach((key) => {
-					console.log(`\n   Key ID: ${key.keyId}`);
-					console.log(`   Email: ${key.email}`);
-					console.log(`   Purpose: ${key.purpose}`);
-					console.log(`   Created: ${new Date(key.createdAt).toISOString()}`);
-					console.log(`   Expires: ${new Date(key.expiresAt).toISOString()}`);
-					console.log(`   Status: ${key.active ? "✅ Active" : "❌ Revoked"}`);
+					console.info(`\n   Key ID: ${key.keyId}`);
+					console.info(`   Email: ${key.email}`);
+					console.info(`   Purpose: ${key.purpose}`);
+					console.info(`   Created: ${new Date(key.createdAt).toISOString()}`);
+					console.info(`   Expires: ${new Date(key.expiresAt).toISOString()}`);
+					console.info(`   Status: ${key.active ? "✅ Active" : "❌ Revoked"}`);
 					if (key.stats) {
-						console.log(`   Requests: ${key.stats.totalRequests} total, ${key.stats.requestsLastHour} last hour`);
+						console.info(`   Requests: ${key.stats.totalRequests} total, ${key.stats.requestsLastHour} last hour`);
 					}
 				});
 			}
 			break;
 
 		default:
-			console.log(`
+			console.info(`
 🔐 Developer Workspace API Key Management
 
 Usage:

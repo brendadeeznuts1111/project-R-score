@@ -255,22 +255,22 @@ export class FileHandler {
 
   private static async processWithBunFileSystemEntry(): Promise<void> {
     // Simulate streaming upload process
-    console.log("Processing BunFileSystemEntry with streaming upload");
+    console.info("Processing BunFileSystemEntry with streaming upload");
   }
 
   private static async processWithFile(): Promise<void> {
     // Standard file processing
-    console.log("Processing file with standard method");
+    console.info("Processing file with standard method");
   }
 
   private static async downloadAsBunFileSystemEntry(): Promise<void> {
     // Simulate download and save as BunFileSystemEntry
-    console.log("Downloading file as BunFileSystemEntry to local storage");
+    console.info("Downloading file as BunFileSystemEntry to local storage");
   }
 
   private static async downloadAsFile(): Promise<void> {
     // Simulate standard file download for browser
-    console.log("Downloading file for browser use");
+    console.info("Downloading file for browser use");
   }
 
   private static async getFileSize(file: File | BunFileSystemEntry): Promise<number> {
@@ -298,7 +298,7 @@ export class FileHandlerExamples {
     // Options available for future use - currently demonstrating basic upload
     const result = await FileHandler.processFileUpload(apkFile);
 
-    console.log("APK upload completed:", {
+    console.info("APK upload completed:", {
       method: result.method,
       size: `${(result.size / 1024 / 1024).toFixed(2)}MB`,
       duration: `${result.duration}ms`,
@@ -319,7 +319,7 @@ export class FileHandlerExamples {
 
     const result = await FileHandler.processFileDownload(options);
 
-    console.log("Screenshot downloaded:", {
+    console.info("Screenshot downloaded:", {
       method: result.method,
       duration: `${result.duration}ms`,
       success: result.success

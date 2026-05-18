@@ -58,7 +58,7 @@ const inspectCustom = typeof Bun !== "undefined" && (Bun as any).inspect?.custom
 
 /**
  * Table report with [Bun.inspect.custom] for pretty console output.
- * console.log(report) => renders Bun.inspect.table.
+ * console.info(report) => renders Bun.inspect.table.
  */
 class AnalyzeTable<T extends Record<string, unknown>> {
   constructor(
@@ -735,13 +735,13 @@ async function cmdScan(options: AnalyzeOptions, config: AnalyzeConfig) {
   const depth = options.depth || 3;
   const files = await findTypeScriptFiles(path, depth, config.ignore || []);
 
-  console.log(`${c.bold}📊 Code Structure Analysis${c.reset}\n`);
-  console.log(`Path: ${c.cyan}${path}${c.reset}`);
-  console.log(`Depth: ${c.cyan}${depth}${c.reset}`);
-  console.log(`Files found: ${c.green}${files.length}${c.reset}\n`);
+  console.info(`${c.bold}📊 Code Structure Analysis${c.reset}\n`);
+  console.info(`Path: ${c.cyan}${path}${c.reset}`);
+  console.info(`Depth: ${c.cyan}${depth}${c.reset}`);
+  console.info(`Files found: ${c.green}${files.length}${c.reset}\n`);
 
   if (options.format === "json") {
-    console.log(JSON.stringify({ files: files.map((f) => relative(process.cwd(), f)) }, null, 2));
+    console.info(JSON.stringify({ files: files.map((f) => relative(process.cwd(), f)) }, null, 2));
     return;
   }
 
@@ -763,14 +763,14 @@ async function cmdScan(options: AnalyzeOptions, config: AnalyzeConfig) {
       }
     }
     rows.sort((a, b) => b.complexity - a.complexity);
-    console.log(`${c.bold}Metrics (Bun.inspect.table)${c.reset}\n`);
-    console.log(new AnalyzeTable(rows, ["file", "lines", "complexity", "functions", "max depth"]));
+    console.info(`${c.bold}Metrics (Bun.inspect.table)${c.reset}\n`);
+    console.info(new AnalyzeTable(rows, ["file", "lines", "complexity", "functions", "max depth"]));
     return;
   }
 
   if (options.format === "table") {
     const rows = files.map((f) => ({ file: relative(process.cwd(), f) }));
-    console.log(new AnalyzeTable(rows, ["file"]));
+    console.info(new AnalyzeTable(rows, ["file"]));
     return;
   }
 
@@ -786,9 +786,9 @@ async function cmdScan(options: AnalyzeOptions, config: AnalyzeConfig) {
   }
 
   for (const [dir, dirFiles] of Array.from(byDir.entries()).sort()) {
-    console.log(`${c.bold}${dir}/${c.reset}`);
+    console.info(`${c.bold}${dir}/${c.reset}`);
     for (const file of dirFiles.sort()) {
-      console.log(`  ${c.dim}${file}${c.reset}`);
+      console.info(`  ${c.dim}${file}${c.reset}`);
     }
   }
 }
@@ -799,7 +799,7 @@ async function cmdTypes(options: AnalyzeOptions, config: AnalyzeConfig) {
   const types = await extractTypes(files, options);
 
   if (options.format === "json") {
-    console.log(JSON.stringify(types, null, 2));
+    console.info(JSON.stringify(types, null, 2));
     return;
   }
 
@@ -811,12 +811,12 @@ async function cmdTypes(options: AnalyzeOptions, config: AnalyzeConfig) {
       line: t.line,
       exported: t.exported,
     }));
-    console.log(`${c.bold}📋 Type Extraction (${rows.length})${c.reset}\n`);
-    console.log(new AnalyzeTable(rows, ["name", "kind", "file", "line", "exported"]));
+    console.info(`${c.bold}📋 Type Extraction (${rows.length})${c.reset}\n`);
+    console.info(new AnalyzeTable(rows, ["name", "kind", "file", "line", "exported"]));
     return;
   }
 
-  console.log(`${c.bold}📋 Type Extraction${c.reset}\n`);
+  console.info(`${c.bold}📋 Type Extraction${c.reset}\n`);
 
   const byKind = {
     interface: types.filter((t) => t.kind === "interface"),
@@ -824,22 +824,22 @@ async function cmdTypes(options: AnalyzeOptions, config: AnalyzeConfig) {
     class: types.filter((t) => t.kind === "class"),
   };
 
-  console.log(`${c.bold}Interfaces (${byKind.interface.length}):${c.reset}`);
+  console.info(`${c.bold}Interfaces (${byKind.interface.length}):${c.reset}`);
   for (const t of byKind.interface) {
     const exportMark = t.exported ? `${c.green}export${c.reset} ` : "";
-    console.log(`  ${exportMark}${c.cyan}${t.name}${c.reset}      ${c.dim}${t.file}:${t.line}${c.reset}`);
+    console.info(`  ${exportMark}${c.cyan}${t.name}${c.reset}      ${c.dim}${t.file}:${t.line}${c.reset}`);
   }
 
-  console.log(`\n${c.bold}Type Aliases (${byKind.type.length}):${c.reset}`);
+  console.info(`\n${c.bold}Type Aliases (${byKind.type.length}):${c.reset}`);
   for (const t of byKind.type) {
     const exportMark = t.exported ? `${c.green}export${c.reset} ` : "";
-    console.log(`  ${exportMark}${c.cyan}${t.name}${c.reset}      ${c.dim}${t.file}:${t.line}${c.reset}`);
+    console.info(`  ${exportMark}${c.cyan}${t.name}${c.reset}      ${c.dim}${t.file}:${t.line}${c.reset}`);
   }
 
-  console.log(`\n${c.bold}Classes (${byKind.class.length}):${c.reset}`);
+  console.info(`\n${c.bold}Classes (${byKind.class.length}):${c.reset}`);
   for (const t of byKind.class) {
     const exportMark = t.exported ? `${c.green}export${c.reset} ` : "";
-    console.log(`  ${exportMark}${c.cyan}${t.name}${c.reset}      ${c.dim}${t.file}:${t.line}${c.reset}`);
+    console.info(`  ${exportMark}${c.cyan}${t.name}${c.reset}      ${c.dim}${t.file}:${t.line}${c.reset}`);
   }
 }
 
@@ -2165,9 +2165,9 @@ async function formatClassesHTML(classes: ClassInfo[], inheritanceMap: Map<strin
       updateTelemetryButton();
       
       if (telemetryEnabled) {
-        console.log('Telemetry enabled - collecting interaction data');
+        console.info('Telemetry enabled - collecting interaction data');
       } else {
-        console.log('Telemetry disabled');
+        console.info('Telemetry disabled');
       }
     }
     
@@ -2600,7 +2600,7 @@ async function cmdClasses(options: AnalyzeOptions, config: AnalyzeConfig) {
   }
 
   if (options.format === "json") {
-    console.log(JSON.stringify(classes, null, 2));
+    console.info(JSON.stringify(classes, null, 2));
     return;
   }
 
@@ -2615,34 +2615,34 @@ async function cmdClasses(options: AnalyzeOptions, config: AnalyzeConfig) {
         // Error already handled in openInChrome
       });
       const userInfo = options.user ? ` (user: ${options.user})` : '';
-      console.log(`${c.green}✓${c.reset} HTML report generated`);
-      console.log(`${c.dim}File: ${htmlFile}${c.reset}`);
-      console.log(`${c.dim}Opening in Chrome${userInfo}...${c.reset}`);
+      console.info(`${c.green}✓${c.reset} HTML report generated`);
+      console.info(`${c.dim}File: ${htmlFile}${c.reset}`);
+      console.info(`${c.dim}Opening in Chrome${userInfo}...${c.reset}`);
     } else {
-      console.log(html);
+      console.info(html);
     }
     return;
   }
 
-  console.log(`${c.bold}🏛️  Class Hierarchy Analysis${c.reset}\n`);
+  console.info(`${c.bold}🏛️  Class Hierarchy Analysis${c.reset}\n`);
 
   for (const cls of classes) {
-    console.log(`${c.bold}${cls.name}${c.reset}`);
-    console.log(`  ${c.dim}${cls.file}:${cls.line}${c.reset}`);
+    console.info(`${c.bold}${cls.name}${c.reset}`);
+    console.info(`  ${c.dim}${cls.file}:${cls.line}${c.reset}`);
     if (cls.extends) {
-      console.log(`  ${c.yellow}extends${c.reset} ${cls.extends}`);
+      console.info(`  ${c.yellow}extends${c.reset} ${cls.extends}`);
     }
     if (cls.implements && cls.implements.length > 0) {
-      console.log(`  ${c.yellow}implements${c.reset} ${cls.implements.join(", ")}`);
+      console.info(`  ${c.yellow}implements${c.reset} ${cls.implements.join(", ")}`);
     }
-    console.log(`  Methods: ${cls.methods.length}`);
-    console.log(`  Properties: ${cls.properties.length}`);
-    console.log();
+    console.info(`  Methods: ${cls.methods.length}`);
+    console.info(`  Properties: ${cls.properties.length}`);
+    console.info();
   }
 
   if (options.inheritance) {
     if (inheritanceMap.size > 0) {
-      console.log(`\n${c.bold}Inheritance Tree:${c.reset}\n`);
+      console.info(`\n${c.bold}Inheritance Tree:${c.reset}\n`);
       
       // Find root classes (parents that are not children of other classes in our analysis)
       const allParents = new Set<string>();
@@ -2659,7 +2659,7 @@ async function cmdClasses(options: AnalyzeOptions, config: AnalyzeConfig) {
         
         // Print parent (only if it's a root or we're recursing)
         if (prefix === "" || rootClasses.includes(parent)) {
-          console.log(`${prefix}${c.cyan}${parent}${c.reset}${parentClass ? ` ${c.dim}(${parentClass.methods.length} methods, ${parentClass.properties.length} props)${c.reset}` : ''}`);
+          console.info(`${prefix}${c.cyan}${parent}${c.reset}${parentClass ? ` ${c.dim}(${parentClass.methods.length} methods, ${parentClass.properties.length} props)${c.reset}` : ''}`);
         }
         
         // Print children
@@ -2668,7 +2668,7 @@ async function cmdClasses(options: AnalyzeOptions, config: AnalyzeConfig) {
           const childIsLast = index === children.length - 1;
           const childClass = classes.find(c => c.name === child);
           const childConnector = childIsLast ? "└─ " : "├─ ";
-          console.log(`${newPrefix}${childConnector}${c.yellow}${child}${c.reset}${childClass ? ` ${c.dim}(${childClass.methods.length} methods, ${childClass.properties.length} props)${c.reset}` : ''}`);
+          console.info(`${newPrefix}${childConnector}${c.yellow}${child}${c.reset}${childClass ? ` ${c.dim}(${childClass.methods.length} methods, ${childClass.properties.length} props)${c.reset}` : ''}`);
           
           // Recursively print subtree if this child is also a parent
           if (inheritanceMap.has(child)) {
@@ -2688,10 +2688,10 @@ async function cmdClasses(options: AnalyzeOptions, config: AnalyzeConfig) {
         }
       }
       
-      console.log(`\n${c.dim}Total inheritance relationships: ${inheritanceMap.size}${c.reset}`);
+      console.info(`\n${c.dim}Total inheritance relationships: ${inheritanceMap.size}${c.reset}`);
     } else {
-      console.log(`\n${c.bold}Inheritance Tree:${c.reset}`);
-      console.log(`${c.dim}No inheritance relationships found. All classes are standalone.${c.reset}\n`);
+      console.info(`\n${c.bold}Inheritance Tree:${c.reset}`);
+      console.info(`${c.dim}No inheritance relationships found. All classes are standalone.${c.reset}\n`);
     }
   }
 }
@@ -2745,7 +2745,7 @@ async function cmdStrength(options: AnalyzeOptions, config: AnalyzeConfig) {
   strengths.sort((a, b) => (options.byComplexity ? a.complexity.cyclomatic - b.complexity.cyclomatic : b.score - a.score));
 
   if (options.format === "json") {
-    console.log(JSON.stringify(strengths, null, 2));
+    console.info(JSON.stringify(strengths, null, 2));
     return;
   }
 
@@ -2760,13 +2760,13 @@ async function cmdStrength(options: AnalyzeOptions, config: AnalyzeConfig) {
   const strongest = strengths.slice(0, 5).map(toRow);
   const weakest = strengths.slice(-5).reverse().map(toRow);
 
-  console.log(`${c.bold}💪 Component Strength Analysis (Bun.inspect.table)${c.reset}\n`);
+  console.info(`${c.bold}💪 Component Strength Analysis (Bun.inspect.table)${c.reset}\n`);
 
-  console.log(`${c.bold}Strongest:${c.reset}`);
-  console.log(new AnalyzeTable(strongest, [...cols]));
+  console.info(`${c.bold}Strongest:${c.reset}`);
+  console.info(new AnalyzeTable(strongest, [...cols]));
 
-  console.log(`\n${c.bold}Weakest:${c.reset}`);
-  console.log(new AnalyzeTable(weakest, [...cols]));
+  console.info(`\n${c.bold}Weakest:${c.reset}`);
+  console.info(new AnalyzeTable(weakest, [...cols]));
 }
 
 async function cmdDeps(options: AnalyzeOptions, config: AnalyzeConfig) {
@@ -2777,18 +2777,18 @@ async function cmdDeps(options: AnalyzeOptions, config: AnalyzeConfig) {
   if (options.circular) {
     const cycles = findCircularDependencies(deps);
     if (cycles.length > 0) {
-      console.log(`${c.bold}${c.red}⚠️  Circular Dependencies Found${c.reset}\n`);
+      console.info(`${c.bold}${c.red}⚠️  Circular Dependencies Found${c.reset}\n`);
       for (const cycle of cycles) {
-        console.log(`  ${cycle.join(" → ")}`);
+        console.info(`  ${cycle.join(" → ")}`);
       }
     } else {
-      console.log(`${c.green}✓ No circular dependencies found${c.reset}`);
+      console.info(`${c.green}✓ No circular dependencies found${c.reset}`);
     }
     return;
   }
 
   if (options.format === "json") {
-    console.log(JSON.stringify(Array.from(deps.entries()), null, 2));
+    console.info(JSON.stringify(Array.from(deps.entries()), null, 2));
     return;
   }
 
@@ -2803,22 +2803,22 @@ async function cmdDeps(options: AnalyzeOptions, config: AnalyzeConfig) {
         "imports (sample)": trunc(info.imports.slice(0, 2).join(", ") || "—"),
         "exports (sample)": trunc(info.exports.slice(0, 2).join(", ") || "—"),
       }));
-    console.log(`${c.bold}📦 Dependency Analysis (Bun.inspect.table)${c.reset}\n`);
-    console.log(new AnalyzeTable(rows, ["file", "imports", "exports", "imports (sample)", "exports (sample)"]));
+    console.info(`${c.bold}📦 Dependency Analysis (Bun.inspect.table)${c.reset}\n`);
+    console.info(new AnalyzeTable(rows, ["file", "imports", "exports", "imports (sample)", "exports (sample)"]));
     return;
   }
 
-  console.log(`${c.bold}📦 Dependency Analysis${c.reset}\n`);
+  console.info(`${c.bold}📦 Dependency Analysis${c.reset}\n`);
 
   for (const [file, info] of Array.from(deps.entries()).sort()) {
-    console.log(`${c.bold}${file}${c.reset}`);
+    console.info(`${c.bold}${file}${c.reset}`);
     if (info.imports.length > 0) {
-      console.log(`  ${c.dim}Imports:${c.reset} ${info.imports.join(", ")}`);
+      console.info(`  ${c.dim}Imports:${c.reset} ${info.imports.join(", ")}`);
     }
     if (info.exports.length > 0) {
-      console.log(`  ${c.dim}Exports:${c.reset} ${info.exports.join(", ")}`);
+      console.info(`  ${c.dim}Exports:${c.reset} ${info.exports.join(", ")}`);
     }
-    console.log();
+    console.info();
   }
 }
 
@@ -2826,10 +2826,10 @@ async function cmdRename(options: AnalyzeOptions, config: AnalyzeConfig) {
   const path = options.path || "src";
   const files = await findTypeScriptFiles(path, options.depth || 3, config.ignore || []);
 
-  console.log(`${c.bold}🔀 Intelligent Symbol Renaming${c.reset}\n`);
+  console.info(`${c.bold}🔀 Intelligent Symbol Renaming${c.reset}\n`);
 
   if (options.dryRun) {
-    console.log(`${c.yellow}Dry run mode: No changes will be made${c.reset}\n`);
+    console.info(`${c.yellow}Dry run mode: No changes will be made${c.reset}\n`);
   }
 
   // Extract symbols that need renaming
@@ -2891,24 +2891,24 @@ async function cmdRename(options: AnalyzeOptions, config: AnalyzeConfig) {
   }
 
   if (candidates.length === 0) {
-    console.log(`${c.green}✓ No rename candidates found${c.reset}`);
+    console.info(`${c.green}✓ No rename candidates found${c.reset}`);
     return;
   }
 
-  console.log(`Found ${candidates.length} rename candidates:\n`);
+  console.info(`Found ${candidates.length} rename candidates:\n`);
 
   for (const candidate of candidates.slice(0, 20)) {
-    console.log(`${c.cyan}${candidate.file}:${candidate.line}${c.reset}`);
-    console.log(`  ${candidate.kind}: ${c.yellow}${candidate.currentName}${c.reset} → ${c.green}${candidate.suggestedName}${c.reset}`);
-    console.log(`  ${c.dim}Reason: ${candidate.reason}${c.reset}\n`);
+    console.info(`${c.cyan}${candidate.file}:${candidate.line}${c.reset}`);
+    console.info(`  ${candidate.kind}: ${c.yellow}${candidate.currentName}${c.reset} → ${c.green}${candidate.suggestedName}${c.reset}`);
+    console.info(`  ${c.dim}Reason: ${candidate.reason}${c.reset}\n`);
   }
 
   if (candidates.length > 20) {
-    console.log(`${c.dim}... and ${candidates.length - 20} more${c.reset}\n`);
+    console.info(`${c.dim}... and ${candidates.length - 20} more${c.reset}\n`);
   }
 
   if (!options.dryRun && options.auto) {
-    console.log(`${c.yellow}⚠️  Auto-rename not implemented. Use --dry-run to preview.${c.reset}`);
+    console.info(`${c.yellow}⚠️  Auto-rename not implemented. Use --dry-run to preview.${c.reset}`);
   }
 }
 
@@ -2916,7 +2916,7 @@ async function cmdPolish(options: AnalyzeOptions, config: AnalyzeConfig) {
   const path = options.path || "src";
   const files = await findTypeScriptFiles(path, options.depth || 3, config.ignore || []);
 
-  console.log(`${c.bold}✨ Code Enhancement & Fixes${c.reset}\n`);
+  console.info(`${c.bold}✨ Code Enhancement & Fixes${c.reset}\n`);
 
   interface PolishIssue {
     file: string;
@@ -2994,7 +2994,7 @@ async function cmdPolish(options: AnalyzeOptions, config: AnalyzeConfig) {
   }
 
   if (issues.length === 0) {
-    console.log(`${c.green}✓ No polish issues found${c.reset}`);
+    console.info(`${c.green}✓ No polish issues found${c.reset}`);
     return;
   }
 
@@ -3004,30 +3004,30 @@ async function cmdPolish(options: AnalyzeOptions, config: AnalyzeConfig) {
     low: issues.filter((i) => i.severity === "low"),
   };
 
-  console.log(`Found ${issues.length} polish issues:\n`);
-  console.log(`  ${c.red}High:${c.reset} ${bySeverity.high.length}`);
-  console.log(`  ${c.yellow}Medium:${c.reset} ${bySeverity.medium.length}`);
-  console.log(`  ${c.cyan}Low:${c.reset} ${bySeverity.low.length}\n`);
+  console.info(`Found ${issues.length} polish issues:\n`);
+  console.info(`  ${c.red}High:${c.reset} ${bySeverity.high.length}`);
+  console.info(`  ${c.yellow}Medium:${c.reset} ${bySeverity.medium.length}`);
+  console.info(`  ${c.cyan}Low:${c.reset} ${bySeverity.low.length}\n`);
 
   // Show top issues
   const topIssues = [...bySeverity.high, ...bySeverity.medium, ...bySeverity.low].slice(0, 15);
   for (const issue of topIssues) {
     const severityColor = issue.severity === "high" ? c.red : issue.severity === "medium" ? c.yellow : c.cyan;
-    console.log(`${severityColor}[${issue.severity.toUpperCase()}]${c.reset} ${issue.file}:${issue.line}`);
-    console.log(`  ${c.dim}${issue.issue}${c.reset}`);
+    console.info(`${severityColor}[${issue.severity.toUpperCase()}]${c.reset} ${issue.file}:${issue.line}`);
+    console.info(`  ${c.dim}${issue.issue}${c.reset}`);
     if (issue.fix.length < 60) {
-      console.log(`  Fix: ${c.green}${issue.fix}${c.reset}\n`);
+      console.info(`  Fix: ${c.green}${issue.fix}${c.reset}\n`);
     }
   }
 
   if (issues.length > 15) {
-    console.log(`\n${c.dim}... and ${issues.length - 15} more issues${c.reset}\n`);
+    console.info(`\n${c.dim}... and ${issues.length - 15} more issues${c.reset}\n`);
   }
 
   if (options.autoApply) {
-    console.log(`${c.yellow}⚠️  Auto-apply not fully implemented. Review issues above.${c.reset}`);
+    console.info(`${c.yellow}⚠️  Auto-apply not fully implemented. Review issues above.${c.reset}`);
   } else {
-    console.log(`\n${c.dim}Use --auto-apply to automatically fix issues${c.reset}`);
+    console.info(`\n${c.dim}Use --auto-apply to automatically fix issues${c.reset}`);
   }
 }
 
@@ -3206,27 +3206,27 @@ async function cmdAnnotations(options: AnalyzeOptions, config: AnalyzeConfig) {
   }
 
   if (filtered.length === 0) {
-    console.log(`${c.yellow}No annotations found${c.reset}`);
+    console.info(`${c.yellow}No annotations found${c.reset}`);
     if (options.domain || options.scope || options.bunNative || options.ref) {
-      console.log(`${c.dim}Try removing filters or check your criteria${c.reset}`);
+      console.info(`${c.dim}Try removing filters or check your criteria${c.reset}`);
     } else {
-      console.log(`\n${c.dim}Add annotations using format:${c.reset}`);
-      console.log(`  ${c.cyan}[DOMAIN][SCOPE][TYPE][META:{PROPERTY}][CLASS][FUNCTION][INTERFACE][#REF:*][BUN-NATIVE]${c.reset}`);
+      console.info(`\n${c.dim}Add annotations using format:${c.reset}`);
+      console.info(`  ${c.cyan}[DOMAIN][SCOPE][TYPE][META:{PROPERTY}][CLASS][FUNCTION][INTERFACE][#REF:*][BUN-NATIVE]${c.reset}`);
     }
     return;
   }
 
   // JSON output - show only JSON, no human-readable output
   if (options.format === "json") {
-    console.log(JSON.stringify(filtered, null, 2));
+    console.info(JSON.stringify(filtered, null, 2));
     return;
   }
 
-  console.log(`${c.bold}📋 Code Annotations${c.reset}\n`);
+  console.info(`${c.bold}📋 Code Annotations${c.reset}\n`);
   if (filtered.length !== annotations.length) {
-    console.log(`Found ${c.green}${filtered.length}${c.reset} annotations (filtered from ${annotations.length} total)\n`);
+    console.info(`Found ${c.green}${filtered.length}${c.reset} annotations (filtered from ${annotations.length} total)\n`);
   } else {
-    console.log(`Found ${c.green}${filtered.length}${c.reset} annotations\n`);
+    console.info(`Found ${c.green}${filtered.length}${c.reset} annotations\n`);
   }
 
   // Group by domain
@@ -3241,7 +3241,7 @@ async function cmdAnnotations(options: AnalyzeOptions, config: AnalyzeConfig) {
 
   // Display by domain
   for (const [domain, domainAnns] of Array.from(byDomain.entries()).sort()) {
-    console.log(`${c.bold}${domain}${c.reset} (${domainAnns.length})`);
+    console.info(`${c.bold}${domain}${c.reset} (${domainAnns.length})`);
     for (const ann of domainAnns.slice(0, 5)) {
       const tags: string[] = [];
       if (ann.scope) tags.push(`scope:${ann.scope}`);
@@ -3257,13 +3257,13 @@ async function cmdAnnotations(options: AnalyzeOptions, config: AnalyzeConfig) {
         tags.push(`meta:${metaKeys}`);
       }
       
-      console.log(`  ${c.dim}${ann.file}:${ann.line}${c.reset} ${tags.join(" ")}`);
-      console.log(`    ${c.cyan}${ann.raw.split("\n")[0]}${c.reset}`);
+      console.info(`  ${c.dim}${ann.file}:${ann.line}${c.reset} ${tags.join(" ")}`);
+      console.info(`    ${c.cyan}${ann.raw.split("\n")[0]}${c.reset}`);
     }
     if (domainAnns.length > 5) {
-      console.log(`  ${c.dim}... and ${domainAnns.length - 5} more${c.reset}\n`);
+      console.info(`  ${c.dim}... and ${domainAnns.length - 5} more${c.reset}\n`);
     } else {
-      console.log();
+      console.info();
     }
   }
 
@@ -3281,27 +3281,27 @@ async function cmdAnnotations(options: AnalyzeOptions, config: AnalyzeConfig) {
       byType.set(ann.type || "UNKNOWN", (byType.get(ann.type || "UNKNOWN") || 0) + 1);
     }
 
-    console.log(`\n${c.bold}📊 Annotation Statistics${c.reset}\n`);
-    console.log(`Total: ${c.green}${filtered.length}${c.reset} annotations\n`);
+    console.info(`\n${c.bold}📊 Annotation Statistics${c.reset}\n`);
+    console.info(`Total: ${c.green}${filtered.length}${c.reset} annotations\n`);
     
-    console.log(`${c.bold}By Domain:${c.reset}`);
+    console.info(`${c.bold}By Domain:${c.reset}`);
     for (const [domain, count] of Array.from(byDomain.entries()).sort((a, b) => b[1] - a[1])) {
-      console.log(`  ${domain}: ${count}`);
+      console.info(`  ${domain}: ${count}`);
     }
     
-    console.log(`\n${c.bold}By Scope:${c.reset}`);
+    console.info(`\n${c.bold}By Scope:${c.reset}`);
     for (const [scope, count] of Array.from(byScope.entries()).sort((a, b) => b[1] - a[1])) {
-      console.log(`  ${scope}: ${count}`);
+      console.info(`  ${scope}: ${count}`);
     }
     
-    console.log(`\n${c.bold}By Type:${c.reset}`);
+    console.info(`\n${c.bold}By Type:${c.reset}`);
     for (const [type, count] of Array.from(byType.entries()).sort((a, b) => b[1] - a[1])) {
-      console.log(`  ${type}: ${count}`);
+      console.info(`  ${type}: ${count}`);
     }
     
-    console.log(`\n${c.bold}Features:${c.reset}`);
-    console.log(`  Bun-Native: ${c.cyan}${bunNativeCount}${c.reset} (${Math.round(bunNativeCount / filtered.length * 100)}%)`);
-    console.log(`  With References: ${c.cyan}${withRefs}${c.reset} (${Math.round(withRefs / filtered.length * 100)}%)\n`);
+    console.info(`\n${c.bold}Features:${c.reset}`);
+    console.info(`  Bun-Native: ${c.cyan}${bunNativeCount}${c.reset} (${Math.round(bunNativeCount / filtered.length * 100)}%)`);
+    console.info(`  With References: ${c.cyan}${withRefs}${c.reset} (${Math.round(withRefs / filtered.length * 100)}%)\n`);
   }
 }
 
@@ -3310,7 +3310,7 @@ async function cmdAnnotations(options: AnalyzeOptions, config: AnalyzeConfig) {
 // =============================================================================
 
 function printHelp() {
-  console.log(`
+  console.info(`
 ${c.bold}Code Analysis & Refactoring Tool${c.reset}
 
 ${c.bold}Commands:${c.reset}

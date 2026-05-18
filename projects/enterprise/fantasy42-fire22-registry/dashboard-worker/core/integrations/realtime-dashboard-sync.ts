@@ -57,7 +57,7 @@ export class RealtimeDashboardSync {
 
     ws.on('close', () => {
       this.clients.delete(clientId);
-      console.log(`Client ${clientId} disconnected`);
+      console.info(`Client ${clientId} disconnected`);
     });
 
     ws.on('error', error => {
@@ -65,7 +65,7 @@ export class RealtimeDashboardSync {
       this.clients.delete(clientId);
     });
 
-    console.log(`Client ${clientId} registered`);
+    console.info(`Client ${clientId} registered`);
   }
 
   private handleClientMessage(clientId: string, message: any): void {
@@ -100,7 +100,7 @@ export class RealtimeDashboardSync {
       this.sendCurrentDashboardData(clientId, dashboard);
     }
 
-    console.log(`Client ${clientId} subscribed to dashboards:`, dashboards);
+    console.info(`Client ${clientId} subscribed to dashboards:`, dashboards);
   }
 
   private unsubscribeClientFromDashboards(clientId: string, dashboards: string[]): void {
@@ -111,7 +111,7 @@ export class RealtimeDashboardSync {
       dashboard => !dashboards.includes(dashboard)
     );
 
-    console.log(`Client ${clientId} unsubscribed from dashboards:`, dashboards);
+    console.info(`Client ${clientId} unsubscribed from dashboards:`, dashboards);
   }
 
   private async sendCurrentDashboardData(clientId: string, dashboardType: string): Promise<void> {
@@ -216,7 +216,7 @@ export class RealtimeDashboardSync {
       client.subscribedDashboards.includes(update.dashboardType)
     );
 
-    console.log(
+    console.info(
       `Broadcasting ${update.dashboardType} update to ${interestedClients.length} clients`
     );
 
@@ -252,7 +252,7 @@ export class RealtimeDashboardSync {
       for (const [clientId, client] of this.clients) {
         // Check for inactive clients
         if (now.getTime() - client.lastActivity.getTime() > timeoutThreshold) {
-          console.log(`Removing inactive client ${clientId}`);
+          console.info(`Removing inactive client ${clientId}`);
           client.ws.close();
           this.clients.delete(clientId);
           continue;
@@ -340,7 +340,7 @@ export class RealtimeDashboardSync {
     this.clients.clear();
     this.updateQueue.length = 0;
 
-    console.log('🧹 Real-time dashboard sync cleaned up');
+    console.info('🧹 Real-time dashboard sync cleaned up');
   }
 }
 

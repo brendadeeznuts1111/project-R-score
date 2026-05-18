@@ -33,9 +33,9 @@ export function exportCompressedReport(
   Bun.write(path, compressed);
 
   const ratio = ((compressed.length / json.length) * 100).toFixed(1);
-  console.log(`📦 Exported ${results.length} rows to ${path}`);
-  console.log(`   Original: ${json.length} bytes, Compressed: ${compressed.length} bytes`);
-  console.log(`   Ratio: ${ratio}%`);
+  console.info(`📦 Exported ${results.length} rows to ${path}`);
+  console.info(`   Original: ${json.length} bytes, Compressed: ${compressed.length} bytes`);
+  console.info(`   Ratio: ${ratio}%`);
 
   return path;
 }

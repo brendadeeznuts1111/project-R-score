@@ -191,7 +191,7 @@ export class PerformanceAnalyzer {
 		iterations: number = 10,
 		tenantId: string = "default",
 	): Promise<BenchmarkResult> {
-		console.log(`🏁 Running benchmark: ${operationName} (${iterations} iterations)`);
+		console.info(`🏁 Running benchmark: ${operationName} (${iterations} iterations)`);
 
 		const times: number[] = [];
 		let memoryPeak = 0;
@@ -214,7 +214,7 @@ export class PerformanceAnalyzer {
 			memoryPeak = Math.max(memoryPeak, memAfter);
 
 			if (i % Math.max(1, Math.floor(iterations / 10)) === 0) {
-				console.log(`  Iteration ${i + 1}/${iterations}: ${opDuration.toFixed(2)}ms`);
+				console.info(`  Iteration ${i + 1}/${iterations}: ${opDuration.toFixed(2)}ms`);
 			}
 		}
 
@@ -262,11 +262,11 @@ export class PerformanceAnalyzer {
 			tenantId,
 		);
 
-		console.log(`✅ Benchmark complete:`);
-		console.log(`  Average: ${averageTime.toFixed(2)}ms`);
-		console.log(`  Throughput: ${throughput.toFixed(2)} ops/sec`);
-		console.log(`  Memory peak: ${(memoryPeak / 1024 / 1024).toFixed(1)}MB`);
-		console.log(`  Efficiency: ${efficiency.toFixed(1)}%`);
+		console.info(`✅ Benchmark complete:`);
+		console.info(`  Average: ${averageTime.toFixed(2)}ms`);
+		console.info(`  Throughput: ${throughput.toFixed(2)} ops/sec`);
+		console.info(`  Memory peak: ${(memoryPeak / 1024 / 1024).toFixed(1)}MB`);
+		console.info(`  Efficiency: ${efficiency.toFixed(1)}%`);
 
 		return result;
 	}
@@ -281,8 +281,8 @@ export class PerformanceAnalyzer {
 		const start = dateRange?.start || new Date(Date.now() - 24 * 60 * 60 * 1000); // Last 24 hours
 		const end = dateRange?.end || new Date();
 
-		console.log(`📊 Generating performance report for tenant: ${tenantId}`);
-		console.log(`📅 Date range: ${start.toISOString()} to ${end.toISOString()}`);
+		console.info(`📊 Generating performance report for tenant: ${tenantId}`);
+		console.info(`📅 Date range: ${start.toISOString()} to ${end.toISOString()}`);
 
 		// Get metrics from database
 		const metrics = this.db
@@ -361,10 +361,10 @@ export class PerformanceAnalyzer {
 			recommendations,
 		};
 
-		console.log(`📈 Report generated:`);
-		console.log(`  Total operations: ${totalOperations}`);
-		console.log(`  Average throughput: ${averageThroughput.toFixed(2)} MB/s`);
-		console.log(`  Peak memory: ${(peakMemoryUsage / 1024 / 1024).toFixed(1)}MB`);
+		console.info(`📈 Report generated:`);
+		console.info(`  Total operations: ${totalOperations}`);
+		console.info(`  Average throughput: ${averageThroughput.toFixed(2)} MB/s`);
+		console.info(`  Peak memory: ${(peakMemoryUsage / 1024 / 1024).toFixed(1)}MB`);
 
 		return report;
 	}

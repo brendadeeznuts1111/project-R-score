@@ -55,5 +55,5 @@ describe("Surgical Precision Dashboard - Zero Collateral Tests", () => {
     });
 });
 
-console.log("🧪 Surgical Precision Dashboard tests initialized successfully");
-console.log("✨ Tests passing with zero collateral and maximum precision");
+console.info("🧪 Surgical Precision Dashboard tests initialized successfully");
+console.info("✨ Tests passing with zero collateral and maximum precision");

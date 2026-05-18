@@ -97,7 +97,7 @@ class AutoProfiler {
 
 		const profilePath = join(this.config.outputDir, `${profileName}.md`);
 
-		console.log(`🔥 Starting CPU profile: ${profileName}`);
+		console.info(`🔥 Starting CPU profile: ${profileName}`);
 
 		const proc = spawn(
 			[
@@ -122,7 +122,7 @@ class AutoProfiler {
 		await proc.exited;
 
 		if (proc.exitCode === 0) {
-			console.log(`✅ CPU profile completed: ${profilePath}`);
+			console.info(`✅ CPU profile completed: ${profilePath}`);
 			return profilePath;
 		} else {
 			const error = await new Response(proc.stderr).text();
@@ -137,7 +137,7 @@ class AutoProfiler {
 		const heapProfileName = `${profileName}-heap`;
 		const profilePath = join(this.config.outputDir, `${heapProfileName}.md`);
 
-		console.log(`💾 Starting heap profile: ${heapProfileName}`);
+		console.info(`💾 Starting heap profile: ${heapProfileName}`);
 
 		const proc = spawn(
 			[
@@ -158,7 +158,7 @@ class AutoProfiler {
 		await proc.exited;
 
 		if (proc.exitCode === 0) {
-			console.log(`✅ Heap profile completed: ${profilePath}`);
+			console.info(`✅ Heap profile completed: ${profilePath}`);
 			return profilePath;
 		} else {
 			const error = await new Response(proc.stderr).text();
@@ -186,7 +186,7 @@ class AutoProfiler {
 				for (const file of filesToDelete) {
 					const filePath = join(this.config.outputDir, file);
 					await spawn(["rm", filePath]).exited;
-					console.log(`🗑️  Removed old profile: ${file}`);
+					console.info(`🗑️  Removed old profile: ${file}`);
 				}
 			}
 		} catch (error) {
@@ -210,12 +210,12 @@ class AutoProfiler {
 	public async checkAndProfile(): Promise<void> {
 		const metrics = await this.collectMetrics();
 
-		console.log(
+		console.info(
 			`📊 CPU: ${metrics.cpuUsage.toFixed(1)}% | Memory: ${(metrics.memoryUsage.heapUsed / 1024 / 1024).toFixed(1)}MB`,
 		);
 
 		if (metrics.cpuUsage >= this.config.threshold) {
-			console.log(
+			console.info(
 				`🚨 CPU threshold exceeded (${metrics.cpuUsage.toFixed(1)}% >= ${this.config.threshold}%)`,
 			);
 
@@ -231,7 +231,7 @@ class AutoProfiler {
 			this.saveMetrics();
 			await this.cleanupOldProfiles();
 
-			console.log(`🎯 Auto-profile #${this.profileCount} completed`);
+			console.info(`🎯 Auto-profile #${this.profileCount} completed`);
 
 			// Brief pause after profiling
 			await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -240,17 +240,17 @@ class AutoProfiler {
 
 	public start(): undefined {
 		if (this.isRunning) {
-			console.log("⚠️  Auto-profiler is already running");
+			console.info("⚠️  Auto-profiler is already running");
 			return;
 		}
 
 		this.isRunning = true;
-		console.log(`🚀 Auto-profiler started`);
-		console.log(`   CPU threshold: ${this.config.threshold}%`);
-		console.log(`   Check interval: ${this.config.interval}s`);
-		console.log(`   Output directory: ${this.config.outputDir}`);
-		console.log(`   Max profiles: ${this.config.maxProfiles}`);
-		console.log("---");
+		console.info(`🚀 Auto-profiler started`);
+		console.info(`   CPU threshold: ${this.config.threshold}%`);
+		console.info(`   Check interval: ${this.config.interval}s`);
+		console.info(`   Output directory: ${this.config.outputDir}`);
+		console.info(`   Max profiles: ${this.config.maxProfiles}`);
+		console.info("---");
 
 		const runLoop = async () => {
 			while (this.isRunning) {
@@ -272,7 +272,7 @@ class AutoProfiler {
 
 	public stop(): undefined {
 		this.isRunning = false;
-		console.log("🛑 Auto-profiler stopped");
+		console.info("🛑 Auto-profiler stopped");
 	}
 
 	public getStats(): any {
@@ -286,7 +286,7 @@ class AutoProfiler {
 
 	public updateConfig(newConfig: Partial<AutoProfilerConfig>): undefined {
 		this.config = { ...this.config, ...newConfig };
-		console.log("⚙️  Auto-profiler config updated:", newConfig);
+		console.info("⚙️  Auto-profiler config updated:", newConfig);
 	}
 }
 
@@ -324,7 +324,7 @@ async function main() {
 		} else if (arg === "--preserve-sourcemaps") {
 			config.preserveSourceMaps = true;
 		} else if (arg === "--help") {
-			console.log(`
+			console.info(`
 🚀 Auto Profiler - Intelligent Automatic Profiling System
 
 USAGE:
@@ -367,10 +367,10 @@ FEATURES:
 
 	// Handle graceful shutdown
 	process.on("SIGINT", () => {
-		console.log("\n👋 Auto-profiler shutting down...");
+		console.info("\n👋 Auto-profiler shutting down...");
 		profiler.stop();
 		const stats = profiler.getStats();
-		console.log(`📊 Final stats: ${stats.profileCount} profiles generated`);
+		console.info(`📊 Final stats: ${stats.profileCount} profiles generated`);
 		process.exit(0);
 	});
 

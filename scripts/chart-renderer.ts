@@ -356,7 +356,7 @@ if (import.meta.main) {
           });
           
           writeFileSync('chart.svg', result);
-          console.log('✅ Line chart saved to chart.svg');
+          console.info('✅ Line chart saved to chart.svg');
           break;
         }
         
@@ -376,7 +376,7 @@ if (import.meta.main) {
           });
           
           writeFileSync('chart.svg', result);
-          console.log('✅ Bar chart saved to chart.svg');
+          console.info('✅ Bar chart saved to chart.svg');
           break;
         }
         
@@ -391,14 +391,14 @@ if (import.meta.main) {
             format: 'svg'
           });
           
-          console.log(result);
+          console.info(result);
           break;
         }
         
         case 'serve': {
           const port = parseInt(args[0]) || 8082;
           
-          console.log(`📊 Chart server starting on port ${port}`);
+          console.info(`📊 Chart server starting on port ${port}`);
           
           const server = (globalThis as any).Bun.serve({
             port,
@@ -519,9 +519,9 @@ if (import.meta.main) {
             }
           });
           
-          console.log(`🚀 Chart server running on http://localhost:${port}`);
-          console.log(`   GET /chart?type=line&data=1,2,3 - Generate chart`);
-          console.log(`   GET / - Interactive demo`);
+          console.info(`🚀 Chart server running on http://localhost:${port}`);
+          console.info(`   GET /chart?type=line&data=1,2,3 - Generate chart`);
+          console.info(`   GET / - Interactive demo`);
           
           // Keep server running
           await new Promise(() => {});
@@ -529,11 +529,11 @@ if (import.meta.main) {
         }
         
         default:
-          console.log('📊 Chart Renderer Commands:');
-          console.log('  line [data] - Generate line chart');
-          console.log('  bar --labels "x,y,z" --data "1,2,3" - Generate bar chart');
-          console.log('  heatmap [data] - Generate heatmap (SVG)');
-          console.log('  serve [port] - Start chart server');
+          console.info('📊 Chart Renderer Commands:');
+          console.info('  line [data] - Generate line chart');
+          console.info('  bar --labels "x,y,z" --data "1,2,3" - Generate bar chart');
+          console.info('  heatmap [data] - Generate heatmap (SVG)');
+          console.info('  serve [port] - Start chart server');
           break;
       }
     } catch (error) {

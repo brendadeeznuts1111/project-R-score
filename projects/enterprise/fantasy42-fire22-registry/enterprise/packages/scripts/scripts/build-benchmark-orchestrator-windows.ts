@@ -8,8 +8,8 @@
 
 import { join } from 'path';
 
-console.log('🪟 Building Fantasy42 Package Benchmark Orchestrator for Windows');
-console.log('===============================================================');
+console.info('🪟 Building Fantasy42 Package Benchmark Orchestrator for Windows');
+console.info('===============================================================');
 
 const buildConfig = {
   entrypoints: ['./package-benchmark-orchestrator.ts'],
@@ -50,9 +50,9 @@ const buildConfig = {
 
 try {
   await Bun.build(buildConfig);
-  console.log('✅ Fantasy42 Package Benchmark Orchestrator built successfully for Windows');
-  console.log('🏆 NEVER COMPROMISE: Security + Performance = Enterprise Excellence!');
-  console.log('📊 Ready to benchmark and validate packages for production deployment');
+  console.info('✅ Fantasy42 Package Benchmark Orchestrator built successfully for Windows');
+  console.info('🏆 NEVER COMPROMISE: Security + Performance = Enterprise Excellence!');
+  console.info('📊 Ready to benchmark and validate packages for production deployment');
 } catch (error) {
   console.error('❌ Build failed:', error);
   process.exit(1);

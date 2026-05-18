@@ -50,7 +50,7 @@ export class EnhancedConfigManager {
    * Enhanced credential setup with validation and security checks
    */
   async setupEnhancedConfig(config: Partial<EnhancedSecureConfig>): Promise<void> {
-    console.log(`
+    console.info(`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                    Fire22 Enhanced Security Configuration                    ║
 ║                                                                              ║
@@ -68,7 +68,7 @@ export class EnhancedConfigManager {
 
     for (const [key, value] of Object.entries(config)) {
       if (!value) {
-        console.log(`⚪ Skipping ${key} (no value provided)`);
+        console.info(`⚪ Skipping ${key} (no value provided)`);
         results.skipped++;
         continue;
       }
@@ -84,7 +84,7 @@ export class EnhancedConfigManager {
             value: value.toString(),
           });
 
-          console.log(`✅ Securely stored ${key} (${validationResult.type})`);
+          console.info(`✅ Securely stored ${key} (${validationResult.type})`);
           results.stored++;
         } else {
           console.error(`❌ Validation failed for ${key}: ${validationResult.reason}`);
@@ -96,10 +96,10 @@ export class EnhancedConfigManager {
       }
     }
 
-    console.log(`\n📊 Configuration Summary:`);
-    console.log(`   ✅ Successfully stored: ${results.stored}`);
-    console.log(`   ❌ Failed: ${results.failed}`);
-    console.log(`   ⚪ Skipped: ${results.skipped}`);
+    console.info(`\n📊 Configuration Summary:`);
+    console.info(`   ✅ Successfully stored: ${results.stored}`);
+    console.info(`   ❌ Failed: ${results.failed}`);
+    console.info(`   ⚪ Skipped: ${results.skipped}`);
   }
 
   /**
@@ -181,7 +181,7 @@ export class EnhancedConfigManager {
    * Retrieve enhanced configuration with fallback to existing systems
    */
   async getEnhancedConfig(): Promise<Partial<EnhancedSecureConfig>> {
-    console.log('🔍 Retrieving enhanced configuration...\n');
+    console.info('🔍 Retrieving enhanced configuration...\n');
 
     const config: Partial<EnhancedSecureConfig> = {};
     const keys: (keyof EnhancedSecureConfig)[] = [
@@ -212,7 +212,7 @@ export class EnhancedConfigManager {
 
         if (secret) {
           config[key] = secret.value;
-          console.log(`✅ Retrieved ${key} from enhanced storage`);
+          console.info(`✅ Retrieved ${key} from enhanced storage`);
           continue;
         }
 
@@ -220,7 +220,7 @@ export class EnhancedConfigManager {
         const fallbackValue = await this.credManager.getCredential(key.toLowerCase());
         if (fallbackValue) {
           config[key] = fallbackValue;
-          console.log(`🔄 Retrieved ${key} from fallback storage`);
+          console.info(`🔄 Retrieved ${key} from fallback storage`);
           continue;
         }
 
@@ -228,11 +228,11 @@ export class EnhancedConfigManager {
         const envValue = process.env[key];
         if (envValue) {
           config[key] = envValue;
-          console.log(`🌍 Retrieved ${key} from environment`);
+          console.info(`🌍 Retrieved ${key} from environment`);
           continue;
         }
 
-        console.log(`⚠️  ${key} not found in any storage`);
+        console.info(`⚠️  ${key} not found in any storage`);
       } catch (error) {
         console.error(`❌ Error retrieving ${key}:`, error);
       }
@@ -245,7 +245,7 @@ export class EnhancedConfigManager {
    * Enhanced security audit with multiple storage backends
    */
   async auditEnhancedSecurity(): Promise<void> {
-    console.log('🛡️  Enhanced Security Audit\n');
+    console.info('🛡️  Enhanced Security Audit\n');
 
     const auditResults = {
       enhancedStorage: 0,
@@ -268,7 +268,7 @@ export class EnhancedConfigManager {
       'DATABASE_PASSWORD',
     ];
 
-    console.log('🔍 Auditing credential storage across all backends...\n');
+    console.info('🔍 Auditing credential storage across all backends...\n');
 
     for (const key of keys) {
       let found = false;
@@ -320,31 +320,31 @@ export class EnhancedConfigManager {
       }
 
       const status = found ? '✅' : '❌';
-      console.log(`${status} ${key}: ${storageType}`);
+      console.info(`${status} ${key}: ${storageType}`);
     }
 
-    console.log('\n📊 Security Audit Summary:');
-    console.log(`   🔐 Enhanced Storage (Bun.secrets): ${auditResults.enhancedStorage}`);
-    console.log(`   🔑 Fallback Storage (OS Keychain): ${auditResults.fallbackStorage}`);
-    console.log(`   🌍 Environment Variables: ${auditResults.environmentVars}`);
-    console.log(`   ❌ Missing Credentials: ${auditResults.missing}`);
-    console.log(`   ⚠️  Security Issues: ${auditResults.securityIssues}`);
+    console.info('\n📊 Security Audit Summary:');
+    console.info(`   🔐 Enhanced Storage (Bun.secrets): ${auditResults.enhancedStorage}`);
+    console.info(`   🔑 Fallback Storage (OS Keychain): ${auditResults.fallbackStorage}`);
+    console.info(`   🌍 Environment Variables: ${auditResults.environmentVars}`);
+    console.info(`   ❌ Missing Credentials: ${auditResults.missing}`);
+    console.info(`   ⚠️  Security Issues: ${auditResults.securityIssues}`);
 
     // Security recommendations
     if (auditResults.missing > 0) {
-      console.log('\n🚨 Security Recommendations:');
-      console.log(`   • Set up ${auditResults.missing} missing credentials`);
+      console.info('\n🚨 Security Recommendations:');
+      console.info(`   • Set up ${auditResults.missing} missing credentials`);
     }
 
     if (auditResults.securityIssues > 0) {
-      console.log('\n⚠️  Security Warnings:');
-      console.log(
+      console.info('\n⚠️  Security Warnings:');
+      console.info(
         `   • Move ${auditResults.securityIssues} credentials from environment to secure storage`
       );
     }
 
     if (auditResults.enhancedStorage === keys.length) {
-      console.log('\n🎉 Excellent! All credentials are using enhanced secure storage.');
+      console.info('\n🎉 Excellent! All credentials are using enhanced secure storage.');
     }
   }
 
@@ -352,7 +352,7 @@ export class EnhancedConfigManager {
    * Migrate credentials to enhanced storage
    */
   async migrateToEnhancedStorage(): Promise<void> {
-    console.log('🔄 Migrating to Enhanced Security Storage\n');
+    console.info('🔄 Migrating to Enhanced Security Storage\n');
 
     const keys: (keyof EnhancedSecureConfig)[] = [
       'BOT_TOKEN',
@@ -379,7 +379,7 @@ export class EnhancedConfigManager {
         });
 
         if (existing) {
-          console.log(`✅ ${key} already in enhanced storage`);
+          console.info(`✅ ${key} already in enhanced storage`);
           continue;
         }
 
@@ -400,14 +400,14 @@ export class EnhancedConfigManager {
               name: key,
               value: value,
             });
-            console.log(`✅ Migrated ${key} to enhanced storage`);
+            console.info(`✅ Migrated ${key} to enhanced storage`);
             migrated++;
           } else {
-            console.log(`⚠️  Skipped ${key} (validation failed: ${validation.reason})`);
+            console.info(`⚠️  Skipped ${key} (validation failed: ${validation.reason})`);
             failed++;
           }
         } else {
-          console.log(`⚪ ${key} not found in any storage, skipping migration`);
+          console.info(`⚪ ${key} not found in any storage, skipping migration`);
         }
       } catch (error) {
         console.error(`❌ Failed to migrate ${key}:`, error);
@@ -415,16 +415,16 @@ export class EnhancedConfigManager {
       }
     }
 
-    console.log(`\n📊 Migration Summary:`);
-    console.log(`   ✅ Successfully migrated: ${migrated}`);
-    console.log(`   ❌ Failed: ${failed}`);
-    console.log(`   ⚪ Skipped: ${keys.length - migrated - failed}`);
+    console.info(`\n📊 Migration Summary:`);
+    console.info(`   ✅ Successfully migrated: ${migrated}`);
+    console.info(`   ❌ Failed: ${failed}`);
+    console.info(`   ⚪ Skipped: ${keys.length - migrated - failed}`);
 
     if (migrated > 0) {
-      console.log('\n💡 Next steps:');
-      console.log('   1. Verify credentials with: bun run enhanced:audit');
-      console.log('   2. Test dashboard functionality');
-      console.log('   3. Remove old credentials from fallback storage if desired');
+      console.info('\n💡 Next steps:');
+      console.info('   1. Verify credentials with: bun run enhanced:audit');
+      console.info('   2. Test dashboard functionality');
+      console.info('   3. Remove old credentials from fallback storage if desired');
     }
   }
 
@@ -432,7 +432,7 @@ export class EnhancedConfigManager {
    * Clear all enhanced credentials
    */
   async clearEnhancedConfig(): Promise<void> {
-    console.log('🗑️  Clearing Enhanced Security Configuration\n');
+    console.info('🗑️  Clearing Enhanced Security Configuration\n');
 
     const keys: (keyof EnhancedSecureConfig)[] = [
       'BOT_TOKEN',
@@ -461,18 +461,18 @@ export class EnhancedConfigManager {
           service: this.serviceName,
           name: key,
         });
-        console.log(`✅ Deleted ${key}`);
+        console.info(`✅ Deleted ${key}`);
         deleted++;
       } catch (error) {
-        console.log(`⚠️  Could not delete ${key} (may not exist)`);
+        console.info(`⚠️  Could not delete ${key} (may not exist)`);
         failed++;
       }
     }
 
-    console.log(`\n📊 Cleanup Summary:`);
-    console.log(`   ✅ Successfully deleted: ${deleted}`);
-    console.log(`   ⚪ Skipped/not found: ${failed}`);
-    console.log('\n✨ Enhanced security configuration cleared');
+    console.info(`\n📊 Cleanup Summary:`);
+    console.info(`   ✅ Successfully deleted: ${deleted}`);
+    console.info(`   ⚪ Skipped/not found: ${failed}`);
+    console.info('\n✨ Enhanced security configuration cleared');
   }
 }
 
@@ -486,20 +486,20 @@ if (import.meta.main) {
 
   switch (command) {
     case 'setup':
-      console.log('🔐 Enhanced Security Configuration Setup');
-      console.log('Please provide credentials interactively or via environment variables');
+      console.info('🔐 Enhanced Security Configuration Setup');
+      console.info('Please provide credentials interactively or via environment variables');
       break;
 
     case 'get':
       enhancedConfigManager
         .getEnhancedConfig()
         .then(config => {
-          console.log('\n📋 Current Configuration:');
+          console.info('\n📋 Current Configuration:');
           Object.entries(config).forEach(([key, value]) => {
             const masked = value
               ? `${value.substring(0, 4)}...${value.substring(value.length - 4)}`
               : 'undefined';
-            console.log(`   ${key}: ${masked}`);
+            console.info(`   ${key}: ${masked}`);
           });
         })
         .catch(console.error);
@@ -519,7 +519,7 @@ if (import.meta.main) {
 
     case 'help':
     default:
-      console.log(`
+      console.info(`
 🔐 Fire22 Enhanced Security Configuration Manager
 
 Usage: bun run enhanced-secure-config.ts [command]

@@ -10,7 +10,7 @@ await EntryPointGuard.verify('scripts/verify-v37-security.ts');
 // 2. Demo File System Utility
 const configPath = 'package.json';
 const configURL = FileURLHandler.createFileURL(configPath);
-console.log(`📡 Secure Config Access: ${configURL}`);
+console.info(`📡 Secure Config Access: ${configURL}`);
 
 // Mock function representing existing collection logic
 async function collectSecurityMetrics(): Promise<PerfMetric[]> {
@@ -53,14 +53,14 @@ async function collectSecurityMetrics(): Promise<PerfMetric[]> {
   ];
 }
 
-console.log('\n🔒 SECURITY METRICS (v3.7-hardened):');
+console.info('\n🔒 SECURITY METRICS (v3.7-hardened):');
 const securityMetrics = await collectSecurityMetrics();
 const enhanced = enhanceSecurityMetrics(securityMetrics);
 
 // 3. Proper Table Optimization with TableOptimizer
-console.log(TableOptimizer.generateTable(enhanced, {
+console.info(TableOptimizer.generateTable(enhanced, {
   columns: ['domain', 'topic', 'id', 'value', 'riskLevel', 'impact', 'properties'],
   maxColumnWidth: 40
 }));
 
-console.log('\n✅ Verification Flow Complete.');
+console.info('\n✅ Verification Flow Complete.');

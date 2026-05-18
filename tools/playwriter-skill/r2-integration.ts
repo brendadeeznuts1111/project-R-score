@@ -216,7 +216,7 @@ export async function executeAndUpload(
     try {
       const screenshotCode = `
         const buffer = await page.screenshot({ fullPage: true });
-        console.log('SCREENSHOT_DATA:' + buffer.toString('base64'));
+        console.info('SCREENSHOT_DATA:' + buffer.toString('base64'));
       `;
 
       const ssProc = Bun.spawn(['playwriter', '-s', String(sessionId), '-e', screenshotCode], {
@@ -247,7 +247,7 @@ export async function executeAndUpload(
     try {
       const harCode = `
         const har = await page.evaluate(() => JSON.stringify(performance.getEntries()));
-        console.log('HAR_DATA:' + har);
+        console.info('HAR_DATA:' + har);
       `;
 
       const harProc = Bun.spawn(['playwriter', '-s', String(sessionId), '-e', harCode], {

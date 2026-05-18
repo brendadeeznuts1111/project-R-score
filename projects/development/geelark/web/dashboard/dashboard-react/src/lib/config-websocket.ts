@@ -76,7 +76,7 @@ export class ConfigWebSocketClient {
 
       // Connection opened
       this.ws.addEventListener("open", () => {
-        console.log(`[WebSocket] Connected to ${this.config.url}`);
+        console.info(`[WebSocket] Connected to ${this.config.url}`);
         this.connected = true;
         this.startHeartbeat();
         this.config.onConnect?.();
@@ -89,7 +89,7 @@ export class ConfigWebSocketClient {
 
       // Connection closed
       this.ws.addEventListener("close", (event) => {
-        console.log(`[WebSocket] Disconnected: ${event.code} ${event.reason}`);
+        console.info(`[WebSocket] Disconnected: ${event.code} ${event.reason}`);
         this.connected = false;
         this.stopHeartbeat();
         this.scheduleReconnect();
@@ -141,7 +141,7 @@ export class ConfigWebSocketClient {
     const frame = encodeConfigUpdate(field, value);
     this.ws.send(frame);
 
-    console.log(`[WebSocket] Sent config update: ${field} = 0x${value.toString(16)}`);
+    console.info(`[WebSocket] Sent config update: ${field} = 0x${value.toString(16)}`);
   }
 
   /**
@@ -183,7 +183,7 @@ export class ConfigWebSocketClient {
     const frame = encodeTerminalResize(rows, cols);
     this.ws.send(frame);
 
-    console.log(`[WebSocket] Sent terminal resize: ${cols}x${rows}`);
+    console.info(`[WebSocket] Sent terminal resize: ${cols}x${rows}`);
   }
 
   /**
@@ -264,11 +264,11 @@ export class ConfigWebSocketClient {
 
         case WS_MSG.FEATURE_TOGGLE:
           // Handled by server, client just logs
-          console.log("[WebSocket] Feature toggle confirmed");
+          console.info("[WebSocket] Feature toggle confirmed");
           break;
 
         case WS_MSG.TERMINAL_RESIZE:
-          console.log("[WebSocket] Terminal resize confirmed");
+          console.info("[WebSocket] Terminal resize confirmed");
           break;
 
         case WS_MSG.HEARTBEAT:
@@ -276,7 +276,7 @@ export class ConfigWebSocketClient {
           break;
 
         case WS_MSG.ACK:
-          console.log("[WebSocket] Operation acknowledged");
+          console.info("[WebSocket] Operation acknowledged");
           break;
 
         case WS_MSG.ERROR:
@@ -300,7 +300,7 @@ export class ConfigWebSocketClient {
   private handleConfigUpdate(frame: Uint8Array): void {
     try {
       const { field, value } = decodeConfigUpdate(frame);
-      console.log(`[WebSocket] Config update: ${field} = 0x${value.toString(16)}`);
+      console.info(`[WebSocket] Config update: ${field} = 0x${value.toString(16)}`);
       this.config.onConfigUpdate?.({ field, value });
     } catch (error) {
       console.error("[WebSocket] Failed to decode config update:", error);
@@ -314,7 +314,7 @@ export class ConfigWebSocketClient {
     if (this.reconnectTimer) return;
 
     this.reconnectTimer = setTimeout(() => {
-      console.log(`[WebSocket] Reconnecting in ${this.config.reconnectInterval}ms`);
+      console.info(`[WebSocket] Reconnecting in ${this.config.reconnectInterval}ms`);
       this.connect();
       this.reconnectTimer = null;
     }, this.config.reconnectInterval);

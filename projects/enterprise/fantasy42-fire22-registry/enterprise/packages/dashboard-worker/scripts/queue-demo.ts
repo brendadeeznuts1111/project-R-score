@@ -20,7 +20,7 @@ class QueueDemo {
   }
 
   private setupDatabase() {
-    console.log('🔧 Setting up demo database...');
+    console.info('🔧 Setting up demo database...');
 
     // Create players table
     this.db.run(`
@@ -122,14 +122,14 @@ class QueueDemo {
       ['CUSTOMER_003', 'Bob Johnson', 750.0]
     );
 
-    console.log('✅ Demo database setup complete\n');
+    console.info('✅ Demo database setup complete\n');
   }
 
   public async runDemo() {
-    console.log('🚀 Starting Queue System Demo\n');
+    console.info('🚀 Starting Queue System Demo\n');
 
     // Step 1: Add withdrawal to queue
-    console.log('📤 Step 1: Adding withdrawal to queue...');
+    console.info('📤 Step 1: Adding withdrawal to queue...');
     const withdrawalId = await this.queueSystem.addToQueue({
       type: 'withdrawal',
       customerId: 'CUSTOMER_001',
@@ -139,10 +139,10 @@ class QueueDemo {
       priority: 1,
       notes: 'Need money for weekend',
     });
-    console.log(`   ✅ Withdrawal added with ID: ${withdrawalId}`);
+    console.info(`   ✅ Withdrawal added with ID: ${withdrawalId}`);
 
     // Step 2: Add deposit to queue
-    console.log('\n📥 Step 2: Adding deposit to queue...');
+    console.info('\n📥 Step 2: Adding deposit to queue...');
     const depositId = await this.queueSystem.addDepositToQueue({
       customerId: 'CUSTOMER_002',
       amount: 250.0,
@@ -151,42 +151,42 @@ class QueueDemo {
       priority: 1,
       notes: 'Deposit from bank transfer',
     });
-    console.log(`   ✅ Deposit added with ID: ${depositId}`);
+    console.info(`   ✅ Deposit added with ID: ${depositId}`);
 
     // Step 3: Check queue status
-    console.log('\n📊 Step 3: Checking queue status...');
+    console.info('\n📊 Step 3: Checking queue status...');
     const stats = this.queueSystem.getQueueStats();
-    console.log(`   📈 Queue Statistics:`);
-    console.log(`      Total Items: ${stats.totalItems}`);
-    console.log(`      Pending Withdrawals: ${stats.pendingWithdrawals}`);
-    console.log(`      Pending Deposits: ${stats.pendingDeposits}`);
-    console.log(`      Matched Pairs: ${stats.matchedPairs}`);
+    console.info(`   📈 Queue Statistics:`);
+    console.info(`      Total Items: ${stats.totalItems}`);
+    console.info(`      Pending Withdrawals: ${stats.pendingWithdrawals}`);
+    console.info(`      Pending Deposits: ${stats.pendingDeposits}`);
+    console.info(`      Matched Pairs: ${stats.matchedPairs}`);
 
     // Step 4: Show queue items
-    console.log('\n📋 Step 4: Queue items...');
+    console.info('\n📋 Step 4: Queue items...');
     const allItems = this.queueSystem.getQueueItems();
     allItems.forEach(item => {
-      console.log(
+      console.info(
         `   ${item.type.toUpperCase()}: $${item.amount} (${item.paymentType}) - Status: ${item.status}`
       );
     });
 
     // Step 5: Show matches
-    console.log('\n🔗 Step 5: Matches...');
+    console.info('\n🔗 Step 5: Matches...');
     const matches = this.queueSystem.getAllMatches();
     if (matches.length > 0) {
       matches.forEach(match => {
-        console.log(`   ✅ Match: Withdrawal ${match.withdrawalId} ↔ Deposit ${match.depositId}`);
-        console.log(
+        console.info(`   ✅ Match: Withdrawal ${match.withdrawalId} ↔ Deposit ${match.depositId}`);
+        console.info(
           `      Amount: $${match.amount}, Score: ${match.matchScore}, Status: ${match.status}`
         );
       });
     } else {
-      console.log('   ⏳ No matches found yet');
+      console.info('   ⏳ No matches found yet');
     }
 
     // Step 6: Add another withdrawal (different payment type)
-    console.log('\n📤 Step 6: Adding PayPal withdrawal...');
+    console.info('\n📤 Step 6: Adding PayPal withdrawal...');
     const paypalWithdrawalId = await this.queueSystem.addToQueue({
       type: 'withdrawal',
       customerId: 'CUSTOMER_003',
@@ -196,10 +196,10 @@ class QueueDemo {
       priority: 1,
       notes: 'PayPal withdrawal',
     });
-    console.log(`   ✅ PayPal withdrawal added with ID: ${paypalWithdrawalId}`);
+    console.info(`   ✅ PayPal withdrawal added with ID: ${paypalWithdrawalId}`);
 
     // Step 7: Add matching PayPal deposit
-    console.log('\n📥 Step 7: Adding PayPal deposit...');
+    console.info('\n📥 Step 7: Adding PayPal deposit...');
     const paypalDepositId = await this.queueSystem.addDepositToQueue({
       customerId: 'CUSTOMER_001',
       amount: 180.0,
@@ -208,33 +208,33 @@ class QueueDemo {
       priority: 1,
       notes: 'PayPal deposit',
     });
-    console.log(`   ✅ PayPal deposit added with ID: ${paypalDepositId}`);
+    console.info(`   ✅ PayPal deposit added with ID: ${paypalDepositId}`);
 
     // Step 8: Final queue status
-    console.log('\n📊 Step 8: Final queue status...');
+    console.info('\n📊 Step 8: Final queue status...');
     const finalStats = this.queueSystem.getQueueStats();
-    console.log(`   📈 Final Queue Statistics:`);
-    console.log(`      Total Items: ${finalStats.totalItems}`);
-    console.log(`      Pending Withdrawals: ${finalStats.pendingWithdrawals}`);
-    console.log(`      Pending Deposits: ${finalStats.pendingDeposits}`);
-    console.log(`      Matched Pairs: ${finalStats.matchedPairs}`);
+    console.info(`   📈 Final Queue Statistics:`);
+    console.info(`      Total Items: ${finalStats.totalItems}`);
+    console.info(`      Pending Withdrawals: ${finalStats.pendingWithdrawals}`);
+    console.info(`      Pending Deposits: ${finalStats.pendingDeposits}`);
+    console.info(`      Matched Pairs: ${finalStats.matchedPairs}`);
 
     // Step 9: Show all matches
-    console.log('\n🔗 Step 9: All matches...');
+    console.info('\n🔗 Step 9: All matches...');
     const allMatches = this.queueSystem.getAllMatches();
     if (allMatches.length > 0) {
       allMatches.forEach(match => {
-        console.log(`   ✅ Match: Withdrawal ${match.withdrawalId} ↔ Deposit ${match.depositId}`);
-        console.log(
+        console.info(`   ✅ Match: Withdrawal ${match.withdrawalId} ↔ Deposit ${match.depositId}`);
+        console.info(
           `      Amount: $${match.amount}, Score: ${match.matchScore}, Status: ${match.status}`
         );
       });
     } else {
-      console.log('   ⏳ No matches found');
+      console.info('   ⏳ No matches found');
     }
 
     // Step 10: Show matching opportunities
-    console.log('\n🎯 Step 10: Matching opportunities...');
+    console.info('\n🎯 Step 10: Matching opportunities...');
     const opportunities = this.db
       .prepare(
         `
@@ -275,26 +275,26 @@ class QueueDemo {
       .all();
 
     if (opportunities.length > 0) {
-      console.log(`   🎯 Found ${opportunities.length} matching opportunities:`);
+      console.info(`   🎯 Found ${opportunities.length} matching opportunities:`);
       opportunities.forEach((opp, index) => {
-        console.log(
+        console.info(
           `      ${index + 1}. Withdrawal $${opp.withdrawal_amount} (${opp.withdrawal_payment_type}) ↔ Deposit $${opp.deposit_amount} (${opp.deposit_payment_type})`
         );
-        console.log(
+        console.info(
           `         Score: ${opp.match_score}, Customer: ${opp.withdrawal_customer} ↔ ${opp.deposit_customer}`
         );
       });
     } else {
-      console.log('   ⏳ No matching opportunities found');
+      console.info('   ⏳ No matching opportunities found');
     }
 
-    console.log('\n🎉 Demo completed!');
-    console.log('\n💡 Key Insights:');
-    console.log('   • The queue system automatically attempts to match items when they are added');
-    console.log('   • Payment types must match exactly for successful pairing');
-    console.log('   • Amount compatibility is required (withdrawal ≤ deposit)');
-    console.log('   • Higher match scores indicate better compatibility');
-    console.log('   • The system prioritizes by payment type, amount difference, and wait time');
+    console.info('\n🎉 Demo completed!');
+    console.info('\n💡 Key Insights:');
+    console.info('   • The queue system automatically attempts to match items when they are added');
+    console.info('   • Payment types must match exactly for successful pairing');
+    console.info('   • Amount compatibility is required (withdrawal ≤ deposit)');
+    console.info('   • Higher match scores indicate better compatibility');
+    console.info('   • The system prioritizes by payment type, amount difference, and wait time');
   }
 
   public cleanup() {

@@ -28,8 +28,8 @@ const identicalData = JSON.parse(JSON.stringify(baseData));
 const slightlyDifferentData = JSON.parse(JSON.stringify(baseData));
 slightlyDifferentData.metadata.nested.c.d = "f";
 
-console.log("🧬 T3-Lattice Deep Equality Benchmarks");
-console.log("=======================================");
+console.info("🧬 T3-Lattice Deep Equality Benchmarks");
+console.info("=======================================");
 
 bench("JSON.stringify comparison", () => {
   return JSON.stringify(baseData) === JSON.stringify(identicalData);

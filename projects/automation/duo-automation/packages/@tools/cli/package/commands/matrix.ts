@@ -5,7 +5,7 @@ import { DesignSystem } from '../../../terminal/src/design-system';
 import { UnicodeTableFormatter, EmpireProDashboard } from '../../../terminal/src/enhanced-unicode-formatter';
 
 async function main() {
-  console.log(EmpireProDashboard.generateHeader(
+  console.info(EmpireProDashboard.generateHeader(
     'DUOPLUS MATRIX - NATIVE UNICODE FORMATTER',
     'Using our native UnicodeTableFormatter with Empire Pro colors'
   ));
@@ -51,16 +51,16 @@ async function main() {
   ];
 
   if (data.length === 0) {
-    console.log(UnicodeTableFormatter.colorize('❌ No data available', DesignSystem.status.downtime));
+    console.info(UnicodeTableFormatter.colorize('❌ No data available', DesignSystem.status.downtime));
     process.exit(1);
   }
 
-  console.log(UnicodeTableFormatter.colorize(`📂 Generated ${data.length} entries with native UnicodeTableFormatter`, DesignSystem.text.accent.blue));
+  console.info(UnicodeTableFormatter.colorize(`📂 Generated ${data.length} entries with native UnicodeTableFormatter`, DesignSystem.text.accent.blue));
   
   // Display using our native UnicodeTableFormatter
-  console.log(UnicodeTableFormatter.generateTable(data, { maxWidth: 120 }));
+  console.info(UnicodeTableFormatter.generateTable(data, { maxWidth: 120 }));
   
-  console.log(EmpireProDashboard.generateFooter());
+  console.info(EmpireProDashboard.generateFooter());
 }
 
 main().catch(err => {

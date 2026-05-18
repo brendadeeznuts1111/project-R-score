@@ -65,7 +65,7 @@ async function generateTestData(count: number, runIndex: number): Promise<AppleI
 }
 
 async function generatePresignsWithWrangler(bucket: string, prefix: string): Promise<Record<string, string>> {
-  console.log(`🔑 Generating presigned URLs for prefix: ${prefix}`);
+  console.info(`🔑 Generating presigned URLs for prefix: ${prefix}`);
   
   try {
     // Initialize R2 manager to generate presigns
@@ -95,12 +95,12 @@ async function generatePresignsWithWrangler(bucket: string, prefix: string): Pro
     // Wait for all presigns to complete in parallel
     await Promise.all(presignPromises);
     
-    console.log(`✅ Generated ${Object.keys(presigns).length} presigned URLs`);
+    console.info(`✅ Generated ${Object.keys(presigns).length} presigned URLs`);
     return presigns;
   } catch (error: any) {
     console.error('❌ Failed to generate presigns:', error);
     // Fallback to mock presigns for development
-    console.log('⚠️ Using mock presign URLs for development');
+    console.info('⚠️ Using mock presign URLs for development');
     const mockPresigns: Record<string, string> = {};
     for (let i = 0; i < 600; i++) {
       const key = `apple-ids/${prefix}bench-${i}.json`;
@@ -115,10 +115,10 @@ async function r2Benchmark(name: string, uploads: number, parallel: boolean, buc
   let totalSavings = 0;
   let etagCount = 0;
 
-  console.log(`\n🚀 Running ${name} benchmark: ${uploads} uploads (${parallel ? 'parallel' : 'serial'})`);
+  console.info(`\n🚀 Running ${name} benchmark: ${uploads} uploads (${parallel ? 'parallel' : 'serial'})`);
 
   for (let run = 0; run < R2_BENCH.RUNS; run++) {
-    console.log(`   Run ${run + 1}/${R2_BENCH.RUNS}...`);
+    console.info(`   Run ${run + 1}/${R2_BENCH.RUNS}...`);
     
     // Generate test data
     const testData = await generateTestData(uploads, run);
@@ -163,7 +163,7 @@ async function r2Benchmark(name: string, uploads: number, parallel: boolean, buc
     totalSavings += successful.length > 0 ? runSavings / successful.length : 0;
     etagCount += successful.length;
 
-    console.log(`     ⏱️  ${timeMs.toFixed(0)}ms | ✅ ${successful.length}/${uploads} | 💾 ${successful.length > 0 ? (runSavings / successful.length).toFixed(1) : 0}% saved`);
+    console.info(`     ⏱️  ${timeMs.toFixed(0)}ms | ✅ ${successful.length}/${uploads} | 💾 ${successful.length > 0 ? (runSavings / successful.length).toFixed(1) : 0}% saved`);
     
     // Cleanup between runs
     await cleanupBenchObjects(bucket, prefix);
@@ -189,14 +189,14 @@ async function r2Benchmark(name: string, uploads: number, parallel: boolean, buc
 async function cleanupBenchObjects(bucket: string, prefix?: string) {
   try {
     const cleanupPrefix = prefix || 'bench-';
-    console.log(`🧹 Cleanup: removing objects with prefix "${cleanupPrefix}"`);
+    console.info(`🧹 Cleanup: removing objects with prefix "${cleanupPrefix}"`);
     
     // Use R2 manager for cleanup if possible
     const manager = new BunR2AppleManager({}, bucket);
     await manager.initialize();
     
     // For now, just log cleanup (actual deletion would require listing objects first)
-    console.log(`🧹 Cleanup completed (simulated for prefix "${cleanupPrefix}")`);
+    console.info(`🧹 Cleanup completed (simulated for prefix "${cleanupPrefix}")`);
   } catch (error: any) {
     console.warn('⚠️ Cleanup failed (may be expected in mock mode):', error.message);
   }
@@ -246,23 +246,23 @@ function generateMasterPerfMatrix(results: R2BenchResult[], presignTime: number)
 }
 
 function logMasterPerfMatrix(matrix: MasterPerfRow[]) {
-  console.log('\n📊 MASTER_PERF Matrix Update:');
-  console.log('| Category | SubCat | ID | Value | Locations | Impact |');
-  console.log('|----------|--------|----|-------|-----------|--------|');
+  console.info('\n📊 MASTER_PERF Matrix Update:');
+  console.info('| Category | SubCat | ID | Value | Locations | Impact |');
+  console.info('|----------|--------|----|-------|-----------|--------|');
   
   matrix.forEach(row => {
-    console.log(`| ${row.category} | ${row.subcat} | ${row.id} | ${row.value} | ${row.locations} | ${row.impact} |`);
+    console.info(`| ${row.category} | ${row.subcat} | ${row.id} | ${row.value} | ${row.locations} | ${row.impact} |`);
   });
 }
 
 async function main() {
   const bucket = Bun.env.R2_BUCKET || 'apple-ids-bucket';
-  console.log(`🚀 LIVE R2 Bench on ${bucket} (zstd + presigns + parallel)`);
-  console.log(`📈 Testing scales: ${R2_BENCH.UPLOADS.join(', ')} uploads | ${R2_BENCH.RUNS} runs each`);
+  console.info(`🚀 LIVE R2 Bench on ${bucket} (zstd + presigns + parallel)`);
+  console.info(`📈 Testing scales: ${R2_BENCH.UPLOADS.join(', ')} uploads | ${R2_BENCH.RUNS} runs each`);
   
   // Set Cloudflare API token for fallback
   if (Bun.env.CLOUDFLARE_API_TOKEN) {
-    console.log('✅ Cloudflare API token available for fallback');
+    console.info('✅ Cloudflare API token available for fallback');
   }
 
   const results: R2BenchResult[] = [];
@@ -281,7 +281,7 @@ async function main() {
   }
 
   // Presign Generation Benchmark (Bonus)
-  console.log('\n🔑 Benchmarking presign generation...');
+  console.info('\n🔑 Benchmarking presign generation...');
   const presignStart = Bun.nanoseconds();
   let presignTime = 45; // Default fallback time
   
@@ -290,10 +290,10 @@ async function main() {
     await manager.initialize();
     await manager.getPresignedUrl('bench-presign-test/test.json', 'PUT');
     presignTime = (Bun.nanoseconds() - presignStart) / 1e6;
-    console.log(`Presign Gen: ${presignTime.toFixed(0)}ms`);
+    console.info(`Presign Gen: ${presignTime.toFixed(0)}ms`);
   } catch (error: any) {
     console.warn('⚠️ Presign benchmark failed:', error.message);
-    console.log(`Presign Gen: using fallback time ${presignTime}ms`);
+    console.info(`Presign Gen: using fallback time ${presignTime}ms`);
   }
 
   // Generate and log MASTER_PERF matrix (always display)
@@ -301,8 +301,8 @@ async function main() {
   logMasterPerfMatrix(matrix);
 
   // Final results table
-  console.log('\n📊 R2 LIVE Benchmark Results:');
-  console.log(Bun.inspect.table(results.map(r => ({
+  console.info('\n📊 R2 LIVE Benchmark Results:');
+  console.info(Bun.inspect.table(results.map(r => ({
     Benchmark: r.name,
     'Time (avg)': `${r.avg.toFixed(0)}ms`,
     '(min…max)': `${r.min.toFixed(0)}…${r.max.toFixed(0)}ms`,
@@ -320,8 +320,8 @@ async function main() {
   const summaryTime = maxParallelResult?.avg || 0;
   const summaryThroughput = maxParallelResult?.throughput || 0;
   
-  console.log(`\n📊 R2 LIVE Summary: 500 parallel → ${summaryTime.toFixed(0)}ms (${summaryThroughput.toLocaleString()} IDs/s) 🚀`);
-  console.log('✅ Live R2 performance proven - zstd compression + parallel uploads achieved!');
+  console.info(`\n📊 R2 LIVE Summary: 500 parallel → ${summaryTime.toFixed(0)}ms (${summaryThroughput.toLocaleString()} IDs/s) 🚀`);
+  console.info('✅ Live R2 performance proven - zstd compression + parallel uploads achieved!');
 }
 
 if (Bun.main === import.meta.path) {

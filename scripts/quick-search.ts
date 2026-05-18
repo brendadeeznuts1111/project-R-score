@@ -19,7 +19,7 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.length === 0) {
-    console.log(`
+    console.info(`
 🔍 Quick Search - Ghost Search Maneuver
 
 USAGE:
@@ -76,7 +76,7 @@ EXAMPLES:
 
   const startTime = performance.now();
   
-  console.log(`🔍 Searching for "${query}"...\n`);
+  console.info(`🔍 Searching for "${query}"...\n`);
 
   try {
     if (options.docsOnly) {
@@ -86,7 +86,7 @@ EXAMPLES:
         maxResults: options.maxResults
       });
       
-      console.log(`--- Documentation Matches (${docs.length}) ---`);
+      console.info(`--- Documentation Matches (${docs.length}) ---`);
       displayResults(docs, 'docs');
       
     } else if (options.codeOnly) {
@@ -100,7 +100,7 @@ EXAMPLES:
         }
       );
       
-      console.log(`--- Code Matches (${code.length}) ---`);
+      console.info(`--- Code Matches (${code.length}) ---`);
       displayResults(code, 'code');
       
     } else {
@@ -114,19 +114,19 @@ EXAMPLES:
         }
       );
       
-      console.log(`--- Documentation Matches (${docs.length}) ---`);
+      console.info(`--- Documentation Matches (${docs.length}) ---`);
       displayResults(docs, 'docs');
       
-      console.log(`\n--- Project Code Matches (${code.length}) ---`);
+      console.info(`\n--- Project Code Matches (${code.length}) ---`);
       displayResults(code, 'code');
       
       const totalMatches = docs.length + code.length;
-      console.log(`\n📊 Total matches: ${totalMatches}`);
+      console.info(`\n📊 Total matches: ${totalMatches}`);
     }
 
     const endTime = performance.now();
     const duration = (endTime - startTime).toFixed(2);
-    console.log(`⚡ Search completed in ${duration}ms`);
+    console.info(`⚡ Search completed in ${duration}ms`);
 
   } catch (error) {
     console.error('❌ Search failed:', error);
@@ -136,7 +136,7 @@ EXAMPLES:
 
 function displayResults(matches: any[], type: 'docs' | 'code'): void {
   if (matches.length === 0) {
-    console.log('No matches found.');
+    console.info('No matches found.');
     return;
   }
 
@@ -154,15 +154,15 @@ function displayResults(matches: any[], type: 'docs' | 'code'): void {
       highlightedLine = line.replace(matchText, `🎯${matchText}🎯`);
     }
 
-    console.log(`${index + 1}. ${filename}:${lineNumber}`);
-    console.log(`   ${highlightedLine}`);
-    console.log('');
+    console.info(`${index + 1}. ${filename}:${lineNumber}`);
+    console.info(`   ${highlightedLine}`);
+    console.info('');
   });
 }
 
 // Performance comparison mode
 if (process.argv.includes('--parallel')) {
-  console.log('🏎️ Running parallel performance test...\n');
+  console.info('🏎️ Running parallel performance test...\n');
   
   const testQueries = ['Bun.serve', 'SQLite', 'fetch', 'markdown'];
   const projectDir = '.';
@@ -177,13 +177,13 @@ if (process.argv.includes('--parallel')) {
   const parallelResults = await Promise.all(parallelPromises);
   const parallelEnd = performance.now();
   
-  console.log('📊 Parallel Results:');
+  console.info('📊 Parallel Results:');
   testQueries.forEach((query, index) => {
     const { docs, code } = parallelResults[index];
-    console.log(`  ${query}: ${docs.length} docs, ${code.length} code matches`);
+    console.info(`  ${query}: ${docs.length} docs, ${code.length} code matches`);
   });
   
-  console.log(`\n⚡ Parallel execution time: ${(parallelEnd - parallelStart).toFixed(2)}ms`);
+  console.info(`\n⚡ Parallel execution time: ${(parallelEnd - parallelStart).toFixed(2)}ms`);
   
   // Compare with sequential execution
   const sequentialStart = performance.now();
@@ -195,8 +195,8 @@ if (process.argv.includes('--parallel')) {
   const sequentialEnd = performance.now();
   const speedup = ((sequentialEnd - sequentialStart) / (parallelEnd - parallelStart)).toFixed(2);
   
-  console.log(`🐌 Sequential execution time: ${(sequentialEnd - sequentialStart).toFixed(2)}ms`);
-  console.log(`🚀 Speedup: ${speedup}x faster with parallel execution`);
+  console.info(`🐌 Sequential execution time: ${(sequentialEnd - sequentialStart).toFixed(2)}ms`);
+  console.info(`🚀 Speedup: ${speedup}x faster with parallel execution`);
   
 } else {
   main();

@@ -97,7 +97,7 @@ class Logger {
 
 	private write(entry: LogEntry): void {
 		if (this.outputFormat === "json") {
-			console.log(JSON.stringify(entry));
+			console.info(JSON.stringify(entry));
 		} else {
 			const levelColor =
 				{
@@ -115,7 +115,7 @@ class Logger {
 				? `\n  Error: ${entry.error.name}: ${entry.error.message}`
 				: "";
 
-			console.log(
+			console.info(
 				`${levelColor}[${entry.level}]${reset} ${entry.message}${contextStr}${errorStr}`,
 			);
 		}

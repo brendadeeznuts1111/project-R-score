@@ -41,39 +41,39 @@ const colors = options.noColor ? {
 
 // Show help
 if (options.help) {
-  console.log(`${colors.cyan}🔧 Failure Handler & Fix Manager${colors.reset}`);
-  console.log('');
-  console.log('Usage: bun failure-handler.ts [options]');
-  console.log('');
-  console.log('Options:');
-  console.log('  -v, --verbose         Verbose output with detailed information');
-  console.log('  -q, --quiet           Quiet mode with minimal output');
-  console.log('  --analyze             Analyze failure patterns and root causes');
-  console.log('  --suggest             Suggest specific fixes for failures');
-  console.log('  --auto-fix            Attempt automatic fixes where possible');
-  console.log('  --dry-run             Preview auto-fixes without applying changes');
-  console.log('  --generate-report     Generate comprehensive failure report');
-  console.log('  --json                Output results in JSON format');
-  console.log('  --no-color            Disable colored output');
-  console.log('  -h, --help            Show this help message');
-  console.log('');
-  console.log('Examples:');
-  console.log('  bun failure-handler.ts --analyze');
-  console.log('  bun failure-handler.ts --suggest --verbose');
-  console.log('  bun failure-handler.ts --dry-run --auto-fix');
-  console.log('  bun failure-handler.ts --auto-fix --generate-report');
+  console.info(`${colors.cyan}🔧 Failure Handler & Fix Manager${colors.reset}`);
+  console.info('');
+  console.info('Usage: bun failure-handler.ts [options]');
+  console.info('');
+  console.info('Options:');
+  console.info('  -v, --verbose         Verbose output with detailed information');
+  console.info('  -q, --quiet           Quiet mode with minimal output');
+  console.info('  --analyze             Analyze failure patterns and root causes');
+  console.info('  --suggest             Suggest specific fixes for failures');
+  console.info('  --auto-fix            Attempt automatic fixes where possible');
+  console.info('  --dry-run             Preview auto-fixes without applying changes');
+  console.info('  --generate-report     Generate comprehensive failure report');
+  console.info('  --json                Output results in JSON format');
+  console.info('  --no-color            Disable colored output');
+  console.info('  -h, --help            Show this help message');
+  console.info('');
+  console.info('Examples:');
+  console.info('  bun failure-handler.ts --analyze');
+  console.info('  bun failure-handler.ts --suggest --verbose');
+  console.info('  bun failure-handler.ts --dry-run --auto-fix');
+  console.info('  bun failure-handler.ts --auto-fix --generate-report');
   process.exit(0);
 }
 
 // Logging utilities
 const log = {
-  info: (msg: string) => !options.quiet && console.log(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) => !options.quiet && console.log(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) => !options.quiet && console.log(`${colors.yellow}⚠️${colors.reset} ${msg}`),
-  error: (msg: string) => console.log(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) => options.verbose && console.log(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) => !options.quiet && console.log(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.log(JSON.stringify(data, null, 2))
+  info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
+  success: (msg: string) => !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
+  warning: (msg: string) => !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
+  error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
+  verbose: (msg: string) => options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
+  section: (title: string) => !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
+  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2))
 };
 
 // Failure classification system
@@ -322,24 +322,24 @@ class FixSuggester {
     log.section('💡 Suggested Fixes');
 
     failures.forEach((failure, index) => {
-      console.log(`\n${colors.yellow}${index + 1}. ${failure.category}${colors.reset}`);
-      console.log(`${colors.gray}Severity: ${failure.severity.toUpperCase()}${colors.reset}`);
-      console.log(`${colors.white}Description: ${failure.description}${colors.reset}`);
-      console.log(`${colors.blue}Impact: ${failure.impact}${colors.reset}`);
+      console.info(`\n${colors.yellow}${index + 1}. ${failure.category}${colors.reset}`);
+      console.info(`${colors.gray}Severity: ${failure.severity.toUpperCase()}${colors.reset}`);
+      console.info(`${colors.white}Description: ${failure.description}${colors.reset}`);
+      console.info(`${colors.blue}Impact: ${failure.impact}${colors.reset}`);
 
-      console.log(`\n${colors.cyan}Suggested Fixes:${colors.reset}`);
+      console.info(`\n${colors.cyan}Suggested Fixes:${colors.reset}`);
       failure.suggestedFixes.forEach((fix, fixIndex) => {
         const icon = fix.type === 'auto' ? '🤖' : fix.type === 'semi-auto' ? '🔧' : '👤';
-        console.log(`  ${icon} ${fixIndex + 1}. ${fix.description}`);
-        console.log(`     ${colors.gray}Type: ${fix.type}${colors.reset}`);
-        console.log(`     ${colors.gray}Time: ${fix.estimatedTime}${colors.reset}`);
-        console.log(`     ${colors.gray}Risk: ${fix.risk}${colors.reset}`);
+        console.info(`  ${icon} ${fixIndex + 1}. ${fix.description}`);
+        console.info(`     ${colors.gray}Type: ${fix.type}${colors.reset}`);
+        console.info(`     ${colors.gray}Time: ${fix.estimatedTime}${colors.reset}`);
+        console.info(`     ${colors.gray}Risk: ${fix.risk}${colors.reset}`);
 
         if (options.verbose) {
-          console.log(`     ${colors.gray}Files: ${fix.filesToModify.join(', ')}${colors.reset}`);
-          console.log(`     ${colors.gray}Steps:${colors.reset}`);
+          console.info(`     ${colors.gray}Files: ${fix.filesToModify.join(', ')}${colors.reset}`);
+          console.info(`     ${colors.gray}Steps:${colors.reset}`);
           fix.steps.forEach((step, stepIndex) => {
-            console.log(`       ${stepIndex + 1}. ${step}`);
+            console.info(`       ${stepIndex + 1}. ${step}`);
           });
         }
       });
@@ -419,17 +419,17 @@ class AutoFixer {
 
     if (dryRunMode) {
       log.section('📊 DRY RUN Summary');
-      console.log(`${colors.blue}Auto-fixes analyzed: ${autoFixesAttempted}${colors.reset}`);
-      console.log(`${colors.green}Would succeed: ${dryRunResults.filter(r => r.wouldSucceed).length}${colors.reset}`);
-      console.log(`${colors.yellow}Would fail: ${dryRunResults.filter(r => !r.wouldSucceed).length}${colors.reset}`);
+      console.info(`${colors.blue}Auto-fixes analyzed: ${autoFixesAttempted}${colors.reset}`);
+      console.info(`${colors.green}Would succeed: ${dryRunResults.filter(r => r.wouldSucceed).length}${colors.reset}`);
+      console.info(`${colors.yellow}Would fail: ${dryRunResults.filter(r => !r.wouldSucceed).length}${colors.reset}`);
 
       if (options.verbose && dryRunResults.length > 0) {
-        console.log(`\n${colors.cyan}Detailed Results:${colors.reset}`);
+        console.info(`\n${colors.cyan}Detailed Results:${colors.reset}`);
         dryRunResults.forEach((result, index) => {
           const status = result.wouldSucceed ? '✅' : '❌';
-          console.log(`${index + 1}. ${status} ${result.fix.description}`);
-          console.log(`   ${colors.gray}Failure: ${result.failure.category}${colors.reset}`);
-          console.log(`   ${colors.gray}Details: ${result.details}${colors.reset}`);
+          console.info(`${index + 1}. ${status} ${result.fix.description}`);
+          console.info(`   ${colors.gray}Failure: ${result.failure.category}${colors.reset}`);
+          console.info(`   ${colors.gray}Details: ${result.details}${colors.reset}`);
         });
       }
 
@@ -440,9 +440,9 @@ class AutoFixer {
       });
 
       if (filesToModify.size > 0) {
-        console.log(`\n${colors.cyan}Files that would be modified:${colors.reset}`);
+        console.info(`\n${colors.cyan}Files that would be modified:${colors.reset}`);
         Array.from(filesToModify).forEach(file => {
-          console.log(`  📁 ${file}`);
+          console.info(`  📁 ${file}`);
         });
       }
 
@@ -522,12 +522,12 @@ class ReportGenerator {
     const mediumFailures = failures.filter(f => f.severity === 'medium');
     const lowFailures = failures.filter(f => f.severity === 'low');
 
-    console.log(`${colors.red}Critical: ${criticalFailures.length}${colors.reset}`);
-    console.log(`${colors.yellow}High: ${highFailures.length}${colors.reset}`);
-    console.log(`${colors.blue}Medium: ${mediumFailures.length}${colors.reset}`);
-    console.log(`${colors.green}Low: ${lowFailures.length}${colors.reset}`);
+    console.info(`${colors.red}Critical: ${criticalFailures.length}${colors.reset}`);
+    console.info(`${colors.yellow}High: ${highFailures.length}${colors.reset}`);
+    console.info(`${colors.blue}Medium: ${mediumFailures.length}${colors.reset}`);
+    console.info(`${colors.green}Low: ${lowFailures.length}${colors.reset}`);
 
-    console.log(`\n${colors.cyan}Priority Order:${colors.reset}`);
+    console.info(`\n${colors.cyan}Priority Order:${colors.reset}`);
 
     const sortedFailures = [...failures].sort((a, b) => {
       const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
@@ -542,11 +542,11 @@ class ReportGenerator {
         low: colors.green
       }[failure.severity];
 
-      console.log(`${index + 1}. ${severityColor}${failure.category}${colors.reset} - ${failure.description}`);
+      console.info(`${index + 1}. ${severityColor}${failure.category}${colors.reset} - ${failure.description}`);
     });
 
     // Generate action plan
-    console.log(`\n${colors.cyan}🎯 Recommended Action Plan:${colors.reset}`);
+    console.info(`\n${colors.cyan}🎯 Recommended Action Plan:${colors.reset}`);
 
     const totalEstimatedTime = failures
       .flatMap(f => f.suggestedFixes)
@@ -556,16 +556,16 @@ class ReportGenerator {
         return total + hours;
       }, 0);
 
-    console.log(`Total estimated fix time: ${totalEstimatedTime} hours`);
-    console.log(`High-priority fixes: ${criticalFailures.length + highFailures.length}`);
-    console.log(`Auto-fixable issues: ${failures.flatMap(f => f.suggestedFixes).filter(f => f.type === 'auto').length}`);
+    console.info(`Total estimated fix time: ${totalEstimatedTime} hours`);
+    console.info(`High-priority fixes: ${criticalFailures.length + highFailures.length}`);
+    console.info(`Auto-fixable issues: ${failures.flatMap(f => f.suggestedFixes).filter(f => f.type === 'auto').length}`);
   }
 }
 
 // Main failure handler
 async function handleFailures() {
-  console.log(`${colors.cyan}🔧 Failure Handler & Fix Manager${colors.reset}`);
-  console.log(`${colors.gray}Systematic approach to handling validation failures${colors.reset}\n`);
+  console.info(`${colors.cyan}🔧 Failure Handler & Fix Manager${colors.reset}`);
+  console.info(`${colors.gray}Systematic approach to handling validation failures${colors.reset}\n`);
 
   const startTime = Date.now();
 
@@ -621,26 +621,26 @@ async function handleFailures() {
     const duration = endTime - startTime;
 
     log.section('📊 Handler Summary');
-    console.log(`${colors.gray}Duration: ${duration}ms${colors.reset}`);
-    console.log(`${colors.gray}Failures analyzed: ${failures.length}${colors.reset}`);
+    console.info(`${colors.gray}Duration: ${duration}ms${colors.reset}`);
+    console.info(`${colors.gray}Failures analyzed: ${failures.length}${colors.reset}`);
 
     if (options.dryRun) {
-      console.log(`\n${colors.yellow}🔍 DRY RUN MODE: No changes were applied${colors.reset}`);
-      console.log(`${colors.blue}💡 To apply changes, run: bun failure-handler.ts --auto-fix${colors.reset}`);
+      console.info(`\n${colors.yellow}🔍 DRY RUN MODE: No changes were applied${colors.reset}`);
+      console.info(`${colors.blue}💡 To apply changes, run: bun failure-handler.ts --auto-fix${colors.reset}`);
     }
 
     if (failures.length > 0) {
-      console.log(`\n${colors.yellow}🎯 Next Steps:${colors.reset}`);
+      console.info(`\n${colors.yellow}🎯 Next Steps:${colors.reset}`);
       if (options.dryRun) {
-        console.log('1. Review dry-run results above');
-        console.log('2. Confirm the proposed changes look correct');
-        console.log('3. Apply fixes: bun failure-handler.ts --auto-fix');
-        console.log('4. Re-run validation to verify fixes');
+        console.info('1. Review dry-run results above');
+        console.info('2. Confirm the proposed changes look correct');
+        console.info('3. Apply fixes: bun failure-handler.ts --auto-fix');
+        console.info('4. Re-run validation to verify fixes');
       } else {
-        console.log('1. Review suggested fixes above');
-        console.log('2. Prioritize critical and high-severity issues');
-        console.log('3. Apply fixes in recommended order');
-        console.log('4. Re-run validation to verify fixes');
+        console.info('1. Review suggested fixes above');
+        console.info('2. Prioritize critical and high-severity issues');
+        console.info('3. Apply fixes in recommended order');
+        console.info('4. Re-run validation to verify fixes');
       }
     }
 

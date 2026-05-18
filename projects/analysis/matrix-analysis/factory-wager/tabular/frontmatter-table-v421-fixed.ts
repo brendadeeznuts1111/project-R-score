@@ -104,9 +104,9 @@ function renderFactoryTabular(fmEntries: any[]) {
   }).join("│");
 
   // Render table
-  console.log(border);
-  console.log(header);
-  console.log(border);
+  console.info(border);
+  console.info(header);
+  console.info(border);
 
   // Rows with guaranteed defaults
   enriched.forEach((row, idx) => {
@@ -114,11 +114,11 @@ function renderFactoryTabular(fmEntries: any[]) {
       const val = col.key === null ? idx + 1 : row[col.key as keyof typeof row];
       return renderCell(val, col, idx);
     });
-    console.log(cells.join("│"));
+    console.info(cells.join("│"));
   });
 
-  console.log(border);
-  console.log(`${DIM}Defaults: type=unknown, version=none, bun=any, author=anonymous, status=active${RESET}`);
+  console.info(border);
+  console.info(`${DIM}Defaults: type=unknown, version=none, bun=any, author=anonymous, status=active${RESET}`);
 }
 
 /**
@@ -143,8 +143,8 @@ function pad(str: string, width: number, align: "left" | "center" | "right"): st
  * Demo function with sample frontmatter data
  */
 function demoFactoryTabular() {
-  console.log('📊 FactoryWager Tabular v4.2.1 - Frontmatter Display Demo');
-  console.log('=' .repeat(80));
+  console.info('📊 FactoryWager Tabular v4.2.1 - Frontmatter Display Demo');
+  console.info('=' .repeat(80));
 
   const sampleData = [
     {

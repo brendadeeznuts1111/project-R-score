@@ -26,7 +26,7 @@ export async function safeSpawn(command: string[], options: SafeSpawnOptions = {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       if (attempt > 0) {
-        console.log(`🔄 Retry ${attempt}/${retries} for: ${command.join(' ')}`);
+        console.info(`🔄 Retry ${attempt}/${retries} for: ${command.join(' ')}`);
         await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
       }
 
@@ -67,7 +67,7 @@ export async function safeSpawnSync(command: string[], options: SafeSpawnOptions
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       if (attempt > 0) {
-        console.log(`🔄 Retry ${attempt}/${retries} for: ${command.join(' ')}`);
+        console.info(`🔄 Retry ${attempt}/${retries} for: ${command.join(' ')}`);
         await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
       }
 
@@ -92,13 +92,13 @@ if (import.meta.main) {
   const [cmd, ...args] = process.argv.slice(2);
 
   if (!cmd) {
-    console.log('Usage: safe-spawn <command> [args...]');
-    console.log('Example: safe-spawn bun datapipe:fetch');
+    console.info('Usage: safe-spawn <command> [args...]');
+    console.info('Example: safe-spawn bun datapipe:fetch');
     process.exit(1);
   }
 
   safeSpawn([cmd, ...args], { timeout: 10000 })
-    .then(() => console.log('✅ Command completed successfully'))
+    .then(() => console.info('✅ Command completed successfully'))
     .catch(error => {
       console.error(`❌ Command failed: ${error.message}`);
       process.exit(1);

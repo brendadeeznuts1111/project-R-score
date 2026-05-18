@@ -1,7 +1,7 @@
 // server/enhanced-server-manager.ts
 import { s3 } from 'bun';
 
-console.log(`
+console.info(`
 🚀 **ENHANCED PRODUCTION SERVER MANAGER - BUN v1.3.5**
 ═══════════════════════════════════════════════════════════════════
 
@@ -178,7 +178,7 @@ export class EnhancedLogger {
     // Console output for INFO and above
     if (level !== 'DEBUG') {
       const icon = this.getLevelIcon(level);
-      console.log(`${icon} ${level}: ${message}`);
+      console.info(`${icon} ${level}: ${message}`);
     }
   }
   
@@ -929,7 +929,7 @@ export class EnhancedServerManager {
       processId: process.pid
     });
     
-    console.log(`
+    console.info(`
 🚀 **ENHANCED DUOPLUS SERVER RUNNING**
 ═══════════════════════════════════════════════
 📡 URL: ${url}
@@ -1195,7 +1195,7 @@ export class EnhancedServerManager {
 // ============================================================================
 
 async function runEnhancedDemo() {
-  console.log(`
+  console.info(`
 🚀 **ENHANCED BUN v1.3.5 PRODUCTION DEMO**
 ═══════════════════════════════════════════════════════════════════
 
@@ -1211,55 +1211,55 @@ async function runEnhancedDemo() {
 `);
   
   try {
-    console.log('🚀 Starting enhanced production server...\n');
+    console.info('🚀 Starting enhanced production server...\n');
     
     const serverManager = new EnhancedServerManager();
     const { url, port } = await serverManager.start();
     
     // Show enhanced endpoints
-    console.log(`📋 Enhanced endpoints available:`);
-    console.log(`   GET  ${url}/                    - Enhanced dashboard`);
-    console.log(`   GET  ${url}/health             - Detailed health check`);
-    console.log(`   GET  ${url}/metrics            - Process and connection metrics`);
-    console.log(`   GET  ${url}/connections        - Connection pool statistics`);
-    console.log(`   GET  ${url}/health/history     - Health check history`);
+    console.info(`📋 Enhanced endpoints available:`);
+    console.info(`   GET  ${url}/                    - Enhanced dashboard`);
+    console.info(`   GET  ${url}/health             - Detailed health check`);
+    console.info(`   GET  ${url}/metrics            - Process and connection metrics`);
+    console.info(`   GET  ${url}/connections        - Connection pool statistics`);
+    console.info(`   GET  ${url}/health/history     - Health check history`);
     
     // Show logging information
-    console.log(`\n📁 Logging system:`);
-    console.log(`   Directory: ./logs/`);
-    console.log(`   Files: app-*.log, error-*.log, access-*.log, performance-*.log`);
-    console.log(`   Rotation: 10MB max file size, 5 files retained`);
+    console.info(`\n📁 Logging system:`);
+    console.info(`   Directory: ./logs/`);
+    console.info(`   Files: app-*.log, error-*.log, access-*.log, performance-*.log`);
+    console.info(`   Rotation: 10MB max file size, 5 files retained`);
     
     // Show process management
-    console.log(`\n🔄 Process management:`);
-    console.log(`   Memory monitoring: Every 10 seconds`);
-    console.log(`   Metrics update: Every 5 seconds`);
-    console.log(`   Health checks: Available via API`);
-    console.log(`   Signals: SIGTERM/SIGINT (shutdown), SIGUSR1 (memory), SIGUSR2 (GC)`);
+    console.info(`\n🔄 Process management:`);
+    console.info(`   Memory monitoring: Every 10 seconds`);
+    console.info(`   Metrics update: Every 5 seconds`);
+    console.info(`   Health checks: Available via API`);
+    console.info(`   Signals: SIGTERM/SIGINT (shutdown), SIGUSR1 (memory), SIGUSR2 (GC)`);
     
     // Open browser if not in CI
     if (process.env.NODE_ENV !== 'ci' && process.stdin.isTTY) {
-      console.log(`\n🌐 Opening ${url} in browser...`);
+      console.info(`\n🌐 Opening ${url} in browser...`);
       try {
         await Bun.$`open ${url}`;
       } catch (error) {
-        console.log(`⚠️  Could not open browser automatically`);
+        console.info(`⚠️  Could not open browser automatically`);
       }
     }
     
-    console.log(`\n✅ Enhanced server running on port ${port}. Press Ctrl+C to stop.`);
-    console.log(`📊 View logs: tail -f ./logs/app-$(date +%Y-%m-%d).log`);
-    console.log(`🔧 Monitor health: curl ${url}/health | jq .`);
+    console.info(`\n✅ Enhanced server running on port ${port}. Press Ctrl+C to stop.`);
+    console.info(`📊 View logs: tail -f ./logs/app-$(date +%Y-%m-%d).log`);
+    console.info(`🔧 Monitor health: curl ${url}/health | jq .`);
     
     // Keep server running
     if (process.stdin.isTTY) {
-      console.log(`\n📮 Enhanced commands:`);
-      console.log(`   [R]efresh metrics`);
-      console.log(`   [H]ealth check`);
-      console.log(`   [L]og status`);
-      console.log(`   [M]emory info`);
-      console.log(`   [C]onnection stats`);
-      console.log(`   [Q]uit server`);
+      console.info(`\n📮 Enhanced commands:`);
+      console.info(`   [R]efresh metrics`);
+      console.info(`   [H]ealth check`);
+      console.info(`   [L]og status`);
+      console.info(`   [M]emory info`);
+      console.info(`   [C]onnection stats`);
+      console.info(`   [Q]uit server`);
       
       process.stdin.setRawMode(true);
       
@@ -1271,14 +1271,14 @@ async function runEnhancedDemo() {
             try {
               const metricsResponse = await fetch(`${url}/metrics`);
               const metrics = await metricsResponse.json();
-              console.log(`\n📊 Current Metrics:`);
-              console.log(`   Requests/sec: ${metrics.process.requestsPerSecond.toFixed(2)}`);
-              console.log(`   Avg Response: ${metrics.process.averageResponseTime.toFixed(2)}ms`);
-              console.log(`   Error Rate: ${metrics.process.errorRate.toFixed(2)}%`);
-              console.log(`   Memory: ${Math.round(metrics.process.memory.heapUsed / 1024 / 1024)}MB`);
-              console.log(`   Active Connections: ${metrics.process.activeConnections}\n`);
+              console.info(`\n📊 Current Metrics:`);
+              console.info(`   Requests/sec: ${metrics.process.requestsPerSecond.toFixed(2)}`);
+              console.info(`   Avg Response: ${metrics.process.averageResponseTime.toFixed(2)}ms`);
+              console.info(`   Error Rate: ${metrics.process.errorRate.toFixed(2)}%`);
+              console.info(`   Memory: ${Math.round(metrics.process.memory.heapUsed / 1024 / 1024)}MB`);
+              console.info(`   Active Connections: ${metrics.process.activeConnections}\n`);
             } catch (error) {
-              console.log(`❌ Failed to get metrics: ${(error as Error).message}\n`);
+              console.info(`❌ Failed to get metrics: ${(error as Error).message}\n`);
             }
             break;
             
@@ -1286,48 +1286,48 @@ async function runEnhancedDemo() {
             try {
               const healthResponse = await fetch(`${url}/health`);
               const health = await healthResponse.json();
-              console.log(`\n🏥 Health Status: ${health.status.toUpperCase()}`);
-              console.log(`   Checks: ${Object.entries(health.checks).map(([check, passed]) => `${check}: ${passed ? '✅' : '❌'}`).join(', ')}\n`);
+              console.info(`\n🏥 Health Status: ${health.status.toUpperCase()}`);
+              console.info(`   Checks: ${Object.entries(health.checks).map(([check, passed]) => `${check}: ${passed ? '✅' : '❌'}`).join(', ')}\n`);
             } catch (error) {
-              console.log(`❌ Failed to get health status: ${(error as Error).message}\n`);
+              console.info(`❌ Failed to get health status: ${(error as Error).message}\n`);
             }
             break;
             
           case 'l':
-            console.log(`\n📁 Logging Status:`);
-            console.log(`   Directory: ./logs/`);
-            console.log(`   Level: INFO (and above)`);
-            console.log(`   Buffer: Flushed every 5 seconds`);
-            console.log(`   Rotation: 10MB max, 5 files retained\n`);
+            console.info(`\n📁 Logging Status:`);
+            console.info(`   Directory: ./logs/`);
+            console.info(`   Level: INFO (and above)`);
+            console.info(`   Buffer: Flushed every 5 seconds`);
+            console.info(`   Rotation: 10MB max, 5 files retained\n`);
             break;
             
           case 'm':
             const memory = process.memoryUsage();
-            console.log(`\n💾 Memory Usage:`);
-            console.log(`   Heap Used: ${Math.round(memory.heapUsed / 1024 / 1024)}MB`);
-            console.log(`   Heap Total: ${Math.round(memory.heapTotal / 1024 / 1024)}MB`);
-            console.log(`   External: ${Math.round(memory.external / 1024 / 1024)}MB`);
-            console.log(`   RSS: ${Math.round(memory.rss / 1024 / 1024)}MB\n`);
+            console.info(`\n💾 Memory Usage:`);
+            console.info(`   Heap Used: ${Math.round(memory.heapUsed / 1024 / 1024)}MB`);
+            console.info(`   Heap Total: ${Math.round(memory.heapTotal / 1024 / 1024)}MB`);
+            console.info(`   External: ${Math.round(memory.external / 1024 / 1024)}MB`);
+            console.info(`   RSS: ${Math.round(memory.rss / 1024 / 1024)}MB\n`);
             break;
             
           case 'c':
             try {
               const connectionsResponse = await fetch(`${url}/connections`);
               const connections = await connectionsResponse.json();
-              console.log(`\n🔗 Connection Statistics:`);
-              console.log(`   Total Pools: ${connections.summary.totalPools}`);
-              console.log(`   Total Connections: ${connections.summary.totalConnections}`);
-              console.log(`   Active: ${connections.summary.activeConnections}`);
-              console.log(`   Idle: ${connections.summary.idleConnections}`);
-              console.log(`   Created: ${connections.summary.totalCreated}`);
-              console.log(`   Reused: ${connections.summary.totalReused}\n`);
+              console.info(`\n🔗 Connection Statistics:`);
+              console.info(`   Total Pools: ${connections.summary.totalPools}`);
+              console.info(`   Total Connections: ${connections.summary.totalConnections}`);
+              console.info(`   Active: ${connections.summary.activeConnections}`);
+              console.info(`   Idle: ${connections.summary.idleConnections}`);
+              console.info(`   Created: ${connections.summary.totalCreated}`);
+              console.info(`   Reused: ${connections.summary.totalReused}\n`);
             } catch (error) {
-              console.log(`❌ Failed to get connection stats: ${(error as Error).message}\n`);
+              console.info(`❌ Failed to get connection stats: ${(error as Error).message}\n`);
             }
             break;
             
           case 'q':
-            console.log(`\n👋 Shutting down enhanced server...`);
+            console.info(`\n👋 Shutting down enhanced server...`);
             process.exit(0);
             break;
         }

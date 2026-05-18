@@ -11,8 +11,8 @@ interface StoreOptions {
 }
 
 async function storeYAML(options: StoreOptions): Promise<void> {
-  console.log(`📦 Storing YAML to registry: ${options.filePath}`);
-  console.log(`   Compression: ${options.compress}`);
+  console.info(`📦 Storing YAML to registry: ${options.filePath}`);
+  console.info(`   Compression: ${options.compress}`);
 
   try {
     // Read file
@@ -20,7 +20,7 @@ async function storeYAML(options: StoreOptions): Promise<void> {
     
     // Validate YAML
     const parsed = YAML.parse(content);
-    console.log('✅ YAML validation passed');
+    console.info('✅ YAML validation passed');
 
     // Generate hash
     const contentBuffer = new TextEncoder().encode(content);
@@ -35,11 +35,11 @@ async function storeYAML(options: StoreOptions): Promise<void> {
     if (options.compress === 'zstd') {
       finalContent = Bun.zstdCompressSync(contentBuffer);
       compressed = true;
-      console.log(`✅ Compressed with zstd: ${contentBuffer.length} → ${finalContent.length} bytes`);
+      console.info(`✅ Compressed with zstd: ${contentBuffer.length} → ${finalContent.length} bytes`);
     } else if (options.compress === 'gzip') {
       finalContent = Bun.gzipSync(contentBuffer);
       compressed = true;
-      console.log(`✅ Compressed with gzip: ${contentBuffer.length} → ${finalContent.length} bytes`);
+      console.info(`✅ Compressed with gzip: ${contentBuffer.length} → ${finalContent.length} bytes`);
     } else {
       finalContent = contentBuffer;
     }
@@ -49,19 +49,19 @@ async function storeYAML(options: StoreOptions): Promise<void> {
     const path = `registry/yaml-${shortHash}${extension}`;
     await Bun.write(path, finalContent);
 
-    console.log(`\n✅ YAML stored:`);
-    console.log(`   Hash: ${shortHash}`);
-    console.log(`   Path: ${path}`);
-    console.log(`   Original Size: ${contentBuffer.length} bytes`);
+    console.info(`\n✅ YAML stored:`);
+    console.info(`   Hash: ${shortHash}`);
+    console.info(`   Path: ${path}`);
+    console.info(`   Original Size: ${contentBuffer.length} bytes`);
     if (compressed) {
-      console.log(`   Compressed Size: ${finalContent.length} bytes`);
+      console.info(`   Compressed Size: ${finalContent.length} bytes`);
       const ratio = ((1 - finalContent.length / contentBuffer.length) * 100).toFixed(1);
-      console.log(`   Compression Ratio: ${ratio}%`);
+      console.info(`   Compression Ratio: ${ratio}%`);
     }
-    console.log(`   Format: ${parsed ? 'Valid YAML' : 'Invalid'}`);
+    console.info(`   Format: ${parsed ? 'Valid YAML' : 'Invalid'}`);
 
-    console.log(`\n💡 Retrieval:`);
-    console.log(`   bun run registry:retrieve-yaml --hash=${shortHash}`);
+    console.info(`\n💡 Retrieval:`);
+    console.info(`   bun run registry:retrieve-yaml --hash=${shortHash}`);
 
   } catch (error) {
     console.error('❌ Error:', error.message);

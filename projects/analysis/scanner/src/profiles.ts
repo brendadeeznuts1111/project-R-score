@@ -261,7 +261,7 @@ function loadBenchrcTeamMembers(): string[] {
 
 // ── CLI entry point (inside import.meta.main to avoid side effects on import) ──
 function printDocs(): void {
-	console.log(`
+	console.info(`
 Overview
 - Bun.secrets stores credentials in OS-native credential managers (Keychain/libsecret/CredMan).
 - Use for local development tools; avoid for production deployment secrets.
@@ -295,7 +295,7 @@ const password = await Bun.secrets.get({
 });
 
 if (password === null) {
-  console.log("No credential found");
+  console.info("No credential found");
 }
 `);
 }
@@ -324,8 +324,8 @@ if (import.meta.main) {
 			process.exit(1);
 		}
 		const service = deriveKeychainService(profileArg);
-		console.log(`${c.bold('Migrating env vars \u2192 keychain')} for profile ${c.cyan(profileArg)}`);
-		console.log(`${c.dim('service:')} ${service}\n`);
+		console.info(`${c.bold('Migrating env vars \u2192 keychain')} for profile ${c.cyan(profileArg)}`);
+		console.info(`${c.dim('service:')} ${service}\n`);
 
 		let migrated = 0;
 		let skipped = 0;
@@ -333,19 +333,19 @@ if (import.meta.main) {
 		for (const [envVar, secretName] of Object.entries(BUN_PROFILES_ENV_MAP)) {
 			const envValue = Bun.env[envVar];
 			if (!envValue) {
-				console.log(`  ${c.dim('skip')} ${secretName} \u2014 ${c.dim(`$${envVar} not set`)}`);
+				console.info(`  ${c.dim('skip')} ${secretName} \u2014 ${c.dim(`$${envVar} not set`)}`);
 				skipped++;
 				continue;
 			}
 			const check = validateSecretValue(envValue);
 			if (!check.valid) {
-				console.log(`  ${c.yellow('\u26A0')} ${secretName} \u2014 ${c.yellow(check.reason)}`);
+				console.info(`  ${c.yellow('\u26A0')} ${secretName} \u2014 ${c.yellow(check.reason)}`);
 				skipped++;
 				continue;
 			}
 			const result = await profileKeychainSet(service, secretName, envValue);
 			if (result.ok) {
-				console.log(`  ${c.green('\u2713')} ${secretName} \u2014 stored (${maskValue(envValue)})`);
+				console.info(`  ${c.green('\u2713')} ${secretName} \u2014 stored (${maskValue(envValue)})`);
 				migrated++;
 			} else {
 				console.error(`Failed to store credential: ${result.reason}`);
@@ -353,7 +353,7 @@ if (import.meta.main) {
 			}
 		}
 
-		console.log(`\n${c.bold('Done:')} ${migrated} migrated, ${skipped} skipped`);
+		console.info(`\n${c.bold('Done:')} ${migrated} migrated, ${skipped} skipped`);
 	} else if (subcommand === 'keychain-verify') {
 		if (!profileArg) {
 			console.error(`${c.red('error:')} missing profile argument`);
@@ -361,8 +361,8 @@ if (import.meta.main) {
 			process.exit(1);
 		}
 		const service = deriveKeychainService(profileArg);
-		console.log(`${c.bold('Verifying keychain secrets')} for profile ${c.cyan(profileArg)}`);
-		console.log(`${c.dim('service:')} ${service}\n`);
+		console.info(`${c.bold('Verifying keychain secrets')} for profile ${c.cyan(profileArg)}`);
+		console.info(`${c.dim('service:')} ${service}\n`);
 
 		let found = 0;
 		let missing = 0;
@@ -370,21 +370,21 @@ if (import.meta.main) {
 		for (const secretName of BUN_PROFILES_SECRET_NAMES) {
 			const result = await profileKeychainGet(service, secretName);
 			if (result.ok && result.value) {
-				console.log(`  ${c.green('\u2713')} ${secretName} \u2014 ${c.dim(maskValue(result.value))}`);
+				console.info(`  ${c.green('\u2713')} ${secretName} \u2014 ${c.dim(maskValue(result.value))}`);
 				found++;
 			} else {
 				if (result.ok && !result.value) {
-					console.log('No credential found');
+					console.info('No credential found');
 				} else if (!result.ok) {
 					console.error(`Failed to retrieve credential: ${result.reason}`);
 				}
 				const reason = result.ok ? 'not set' : result.reason;
-				console.log(`  ${c.red('\u2717')} ${secretName} \u2014 ${c.red(reason)}`);
+				console.info(`  ${c.red('\u2717')} ${secretName} \u2014 ${c.red(reason)}`);
 				missing++;
 			}
 		}
 
-		console.log(`\n${c.bold('Result:')} ${found}/${BUN_PROFILES_SECRET_NAMES.length} secrets found`);
+		console.info(`\n${c.bold('Result:')} ${found}/${BUN_PROFILES_SECRET_NAMES.length} secrets found`);
 		if (missing > 0) process.exit(1);
 	} else if (subcommand === 'keychain-list') {
 		const profiles = new Set<string>();
@@ -397,31 +397,31 @@ if (import.meta.main) {
 			for (const member of loadBenchrcTeamMembers()) profiles.add(member);
 		}
 
-		console.log(`${c.bold('Keychain secrets by profile')}\n`);
+		console.info(`${c.bold('Keychain secrets by profile')}\n`);
 
 		for (const profile of profiles) {
 			const service = deriveKeychainService(profile);
-			console.log(`${c.cyan(profile)} ${c.dim(`(${service})`)}`);
+			console.info(`${c.cyan(profile)} ${c.dim(`(${service})`)}`);
 
 			let found = 0;
 			for (const secretName of BUN_PROFILES_SECRET_NAMES) {
 				const result = await profileKeychainGet(service, secretName);
 				if (result.ok && result.value) {
-					console.log(`  ${c.green('\u2713')} ${secretName}`);
+					console.info(`  ${c.green('\u2713')} ${secretName}`);
 					found++;
 				} else {
-					console.log(`  ${c.dim('\u00B7')} ${secretName}`);
+					console.info(`  ${c.dim('\u00B7')} ${secretName}`);
 				}
 			}
 
-			console.log(`  ${c.dim(`${found}/${BUN_PROFILES_SECRET_NAMES.length} stored`)}\n`);
+			console.info(`  ${c.dim(`${found}/${BUN_PROFILES_SECRET_NAMES.length} stored`)}\n`);
 		}
 	} else {
-		console.log(`${c.bold('profiles.ts')} \u2014 keychain profile management\n`);
-		console.log('subcommands:');
-		console.log(`  ${c.cyan('keychain-migrate')} <profile>  migrate env vars to keychain`);
-		console.log(`  ${c.cyan('keychain-verify')} <profile>   verify keychain secrets`);
-		console.log(`  ${c.cyan('keychain-list')} [profile]     list stored secrets per profile`);
-		console.log(`  ${c.cyan('--docs')}                   print Bun.secrets overview + error handling`);
+		console.info(`${c.bold('profiles.ts')} \u2014 keychain profile management\n`);
+		console.info('subcommands:');
+		console.info(`  ${c.cyan('keychain-migrate')} <profile>  migrate env vars to keychain`);
+		console.info(`  ${c.cyan('keychain-verify')} <profile>   verify keychain secrets`);
+		console.info(`  ${c.cyan('keychain-list')} [profile]     list stored secrets per profile`);
+		console.info(`  ${c.cyan('--docs')}                   print Bun.secrets overview + error handling`);
 	}
 }

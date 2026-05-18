@@ -77,7 +77,7 @@ export const ensureQuantumFile = async (filePath: string): Promise<Blob> => {
     throw new Error(`Quantum artefact is empty: ${filePath}`);
   }
   
-  console.log(`📊 ${filePath}: ${(size / 1024).toFixed(2)} KB`);
+  console.info(`📊 ${filePath}: ${(size / 1024).toFixed(2)} KB`);
   
   return new Blob([await file.arrayBuffer()]);
 };
@@ -97,7 +97,7 @@ export const s3InlineBatchStream = async (
         await s3Inline(key, file, mime);
         
         results.push({ key, success: true, size: file.size });
-        console.log(`✅ ${key} (${(file.size / 1024).toFixed(2)} KB)`);
+        console.info(`✅ ${key} (${(file.size / 1024).toFixed(2)} KB)`);
         return { key, success: true, size: file.size };
       } catch (error: any) {
         console.error(`❌ ${key}: ${error.message}`);
@@ -146,7 +146,7 @@ const getArtefactDescription = (key: string): string => {
 
 /* ---------- Complete Deployment Pipeline --------------- */
 export const deployQuantumLattice = async (): Promise<void> => {
-  console.log("🚀 Deploying Quantum Cash-Flow Lattice v1.5.1...\n");
+  console.info("🚀 Deploying Quantum Cash-Flow Lattice v1.5.1...\n");
   
   const quantumArtefacts = [
     {
@@ -177,23 +177,23 @@ export const deployQuantumLattice = async (): Promise<void> => {
   
   const manifest = generateQuantumManifest(quantumArtefacts);
   await s3Inline("manifest/v1.5.1.json", manifest, "application/json");
-  console.log("📄 Uploaded deployment manifest\n");
+  console.info("📄 Uploaded deployment manifest\n");
   
-  console.log("📤 Uploading quantum artefacts:");
+  console.info("📤 Uploading quantum artefacts:");
   const uploadResults = await s3InlineBatchStream(quantumArtefacts);
   
   const successful = uploadResults.filter(r => r.success).length;
   const totalSize = uploadResults.reduce((sum, r) => sum + r.size, 0);
   
-  console.log(`\n🎉 Deployment Complete!`);
-  console.log(`   Successful: ${successful}/${quantumArtefacts.length}`);
-  console.log(`   Total size: ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`   Bucket: quantum-releases`);
-  console.log(`   All artefacts served inline`);
+  console.info(`\n🎉 Deployment Complete!`);
+  console.info(`   Successful: ${successful}/${quantumArtefacts.length}`);
+  console.info(`   Total size: ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`   Bucket: quantum-releases`);
+  console.info(`   All artefacts served inline`);
   
-  console.log(`\n🔗 Quick Links:`);
+  console.info(`\n🔗 Quick Links:`);
   quantumArtefacts.forEach(artefact => {
-    console.log(`   https://quantum-releases.s3.amazonaws.com/${artefact.key}`);
+    console.info(`   https://quantum-releases.s3.amazonaws.com/${artefact.key}`);
   });
 };
 
@@ -217,8 +217,8 @@ export type UploadResult = {
 
 // Main execution
 if (import.meta.main) {
-  console.log("🧪 S3 Inline Patch Optimized v1.5.1");
-  console.log("═".repeat(50));
-  console.log("📝 Ready for quantum artefact deployment");
-  console.log("   Call deployQuantumLattice() to start deployment");
+  console.info("🧪 S3 Inline Patch Optimized v1.5.1");
+  console.info("═".repeat(50));
+  console.info("📝 Ready for quantum artefact deployment");
+  console.info("   Call deployQuantumLattice() to start deployment");
 }

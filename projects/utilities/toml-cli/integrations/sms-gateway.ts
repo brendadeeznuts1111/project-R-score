@@ -244,7 +244,7 @@ export class SMSGateway {
   handleStatusCallback(callback: SMSStatusCallback): SMSMessage | null {
     // This would be called by your webhook endpoint
     // Update local message status based on callback
-    console.log(`SMS Status Update: ${callback.MessageSid} -> ${callback.MessageStatus}`);
+    console.info(`SMS Status Update: ${callback.MessageSid} -> ${callback.MessageStatus}`);
 
     // In a real implementation, you'd update your database
     // For now, just return a formatted message

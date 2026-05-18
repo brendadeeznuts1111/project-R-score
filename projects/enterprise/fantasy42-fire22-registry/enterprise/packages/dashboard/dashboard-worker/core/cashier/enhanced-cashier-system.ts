@@ -223,7 +223,7 @@ export class EnhancedCashierSystem {
           transaction.status = 'processing';
         }
       } catch (error) {
-        console.log('P2P matching failed, proceeding with standard deposit:', error);
+        console.info('P2P matching failed, proceeding with standard deposit:', error);
       }
     }
 
@@ -496,7 +496,7 @@ export class EnhancedCashierSystem {
 
       return null;
     } catch (error) {
-      console.log('Peer matching attempt failed:', error);
+      console.info('Peer matching attempt failed:', error);
       return null;
     }
   }

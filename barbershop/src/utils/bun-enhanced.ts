@@ -392,64 +392,64 @@ export function isMainModule(importMeta: ImportMeta): boolean {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export async function demoBunEnhanced(): Promise<void> {
-  console.log('\n╔══════════════════════════════════════════════════════════════════╗');
-  console.log('║              🚀 BUN-ENHANCED UTILITIES DEMO                      ║');
-  console.log('╚══════════════════════════════════════════════════════════════════╝\n');
+  console.info('\n╔══════════════════════════════════════════════════════════════════╗');
+  console.info('║              🚀 BUN-ENHANCED UTILITIES DEMO                      ║');
+  console.info('╚══════════════════════════════════════════════════════════════════╝\n');
 
   // Hashing demo
-  console.log('1️⃣  Fast Hashing (wyhash):');
+  console.info('1️⃣  Fast Hashing (wyhash):');
   const data = 'Hello, FactoryWager!';
   const hash = fastHash(data, 'wyhash');
-  console.log(`   Input: "${data}"`);
-  console.log(`   Hash: ${hash}`);
+  console.info(`   Input: "${data}"`);
+  console.info(`   Hash: ${hash}`);
 
   // Password hashing demo
-  console.log('\n2️⃣  Password Hashing (Argon2):');
+  console.info('\n2️⃣  Password Hashing (Argon2):');
   const password = 'super-secret-password';
   const passwordHash = await hashPassword(password);
-  console.log(`   Password: "${password}"`);
-  console.log(`   Hash: ${passwordHash.slice(0, 50)}...`);
+  console.info(`   Password: "${password}"`);
+  console.info(`   Hash: ${passwordHash.slice(0, 50)}...`);
   const isValid = await verifyPassword(password, passwordHash);
-  console.log(`   Valid: ${isValid ? '✅' : '❌'}`);
+  console.info(`   Valid: ${isValid ? '✅' : '❌'}`);
 
   // Compression demo
-  console.log('\n3️⃣  Compression (gzip):');
+  console.info('\n3️⃣  Compression (gzip):');
   const original = 'x'.repeat(10000);
   const compressed = compressData(original, 'gzip', 6);
   const ratio = (((original.length - compressed.length) / original.length) * 100).toFixed(1);
-  console.log(`   Original: ${original.length} bytes`);
-  console.log(`   Compressed: ${compressed.length} bytes`);
-  console.log(`   Ratio: ${ratio}% smaller`);
+  console.info(`   Original: ${original.length} bytes`);
+  console.info(`   Compressed: ${compressed.length} bytes`);
+  console.info(`   Ratio: ${ratio}% smaller`);
 
   // Timing demo
-  console.log('\n4️⃣  High-Resolution Timing:');
+  console.info('\n4️⃣  High-Resolution Timing:');
   const timer = createTimer('Operation');
   await sleep(100);
   const elapsed = timer.log();
-  console.log(`   Slept for ~100ms, measured: ${elapsed.toFixed(2)}ms`);
+  console.info(`   Slept for ~100ms, measured: ${elapsed.toFixed(2)}ms`);
 
   // Semver demo
-  console.log('\n5️⃣  Semver Parsing:');
+  console.info('\n5️⃣  Semver Parsing:');
   const v1 = '1.2.3';
   const v2 = '1.3.0';
   const comparison = compareVersions(v1, v2);
-  console.log(`   ${v1} vs ${v2}: ${comparison < 0 ? '<' : comparison > 0 ? '>' : '='}`);
-  console.log(`   ${v1} satisfies ^1.0.0: ${satisfiesVersion(v1, '^1.0.0') ? '✅' : '❌'}`);
+  console.info(`   ${v1} vs ${v2}: ${comparison < 0 ? '<' : comparison > 0 ? '>' : '='}`);
+  console.info(`   ${v1} satisfies ^1.0.0: ${satisfiesVersion(v1, '^1.0.0') ? '✅' : '❌'}`);
 
   // HTML escaping demo
-  console.log('\n6️⃣  HTML Escaping:');
+  console.info('\n6️⃣  HTML Escaping:');
   const html = '<script>alert("xss")</script>';
   const escaped = escapeHTML(html);
-  console.log(`   Input: ${html}`);
-  console.log(`   Escaped: ${escaped}`);
+  console.info(`   Input: ${html}`);
+  console.info(`   Escaped: ${escaped}`);
 
   // Bun version
-  console.log('\n7️⃣  Bun Version:');
+  console.info('\n7️⃣  Bun Version:');
   const version = getBunVersion();
-  console.log(`   Version: ${version.version}`);
-  console.log(`   Revision: ${version.revision.slice(0, 8)}...`);
+  console.info(`   Version: ${version.version}`);
+  console.info(`   Revision: ${version.revision.slice(0, 8)}...`);
 
-  console.log('\n✅ Demo complete!\n');
+  console.info('\n✅ Demo complete!\n');
 }
 
 if (isMainModule(import.meta)) {

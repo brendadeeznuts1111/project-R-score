@@ -117,7 +117,7 @@ class OpenAIRealtimeSTTSession implements RealtimeSTTSession {
       });
 
       this.ws.on("open", () => {
-        console.log("[RealtimeSTT] WebSocket connected");
+        console.info("[RealtimeSTT] WebSocket connected");
         this.connected = true;
         this.reconnectAttempts = 0;
 
@@ -156,7 +156,7 @@ class OpenAIRealtimeSTTSession implements RealtimeSTTSession {
       });
 
       this.ws.on("close", (code, reason) => {
-        console.log(
+        console.info(
           `[RealtimeSTT] WebSocket closed (code: ${code}, reason: ${reason?.toString() || "none"})`,
         );
         this.connected = false;
@@ -193,7 +193,7 @@ class OpenAIRealtimeSTTSession implements RealtimeSTTSession {
     const delay =
       OpenAIRealtimeSTTSession.RECONNECT_DELAY_MS *
       2 ** (this.reconnectAttempts - 1);
-    console.log(
+    console.info(
       `[RealtimeSTT] Reconnecting ${this.reconnectAttempts}/${OpenAIRealtimeSTTSession.MAX_RECONNECT_ATTEMPTS} in ${delay}ms...`,
     );
 
@@ -205,7 +205,7 @@ class OpenAIRealtimeSTTSession implements RealtimeSTTSession {
 
     try {
       await this.doConnect();
-      console.log("[RealtimeSTT] Reconnected successfully");
+      console.info("[RealtimeSTT] Reconnected successfully");
     } catch (error) {
       console.error("[RealtimeSTT] Reconnect failed:", error);
     }
@@ -222,7 +222,7 @@ class OpenAIRealtimeSTTSession implements RealtimeSTTSession {
       case "transcription_session.updated":
       case "input_audio_buffer.speech_stopped":
       case "input_audio_buffer.committed":
-        console.log(`[RealtimeSTT] ${event.type}`);
+        console.info(`[RealtimeSTT] ${event.type}`);
         break;
 
       case "conversation.item.input_audio_transcription.delta":
@@ -234,14 +234,14 @@ class OpenAIRealtimeSTTSession implements RealtimeSTTSession {
 
       case "conversation.item.input_audio_transcription.completed":
         if (event.transcript) {
-          console.log(`[RealtimeSTT] Transcript: ${event.transcript}`);
+          console.info(`[RealtimeSTT] Transcript: ${event.transcript}`);
           this.onTranscriptCallback?.(event.transcript);
         }
         this.pendingTranscript = "";
         break;
 
       case "input_audio_buffer.speech_started":
-        console.log("[RealtimeSTT] Speech started");
+        console.info("[RealtimeSTT] Speech started");
         this.pendingTranscript = "";
         break;
 

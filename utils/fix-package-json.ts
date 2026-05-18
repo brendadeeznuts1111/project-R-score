@@ -18,7 +18,7 @@ async function fixPackageJson() {
     
     // Skip duplicates - keep first occurrence
     if (seenKeys.has(key)) {
-      console.log(`🗑️  Removing duplicate script: ${key}`);
+      console.info(`🗑️  Removing duplicate script: ${key}`);
       continue;
     }
     
@@ -35,11 +35,11 @@ async function fixPackageJson() {
   pkg.scripts = uniqueScripts;
   await Bun.write('package.json', JSON.stringify(pkg, null, 2));
   
-  console.log(`✅ package.json deduped!`);
-  console.log(`📊 Original scripts: ${originalCount}`);
-  console.log(`🧹 Cleaned scripts: ${cleanedCount}`);
-  console.log(`🗑️  Removed duplicates: ${removedCount}`);
-  console.log(`🎯 No more duplicate key warnings!`);
+  console.info(`✅ package.json deduped!`);
+  console.info(`📊 Original scripts: ${originalCount}`);
+  console.info(`🧹 Cleaned scripts: ${cleanedCount}`);
+  console.info(`🗑️  Removed duplicates: ${removedCount}`);
+  console.info(`🎯 No more duplicate key warnings!`);
 }
 
 // CLI interface

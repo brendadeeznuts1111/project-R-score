@@ -97,8 +97,8 @@ class InteractiveProjectDashboard {
    */
   async showDashboard(): Promise<void> {
     console.clear();
-    console.log('🎮 Interactive Project Management Dashboard');
-    console.log('==========================================\n');
+    console.info('🎮 Interactive Project Management Dashboard');
+    console.info('==========================================\n');
 
     this.showHeader();
     this.showProgressOverview();
@@ -111,101 +111,101 @@ class InteractiveProjectDashboard {
 
   private showHeader(): void {
     const now = new Date();
-    console.log(`📅 Last Updated: ${now.toLocaleString()}`);
-    console.log(`🎯 Current Phase: ${this.liveStatus.currentPhase}`);
-    console.log(`📊 Overall Progress: ${this.liveStatus.overallProgress}%`);
-    console.log(`⏰ Project Day: ${this.calculateProjectDay(now)} of 22\n`);
+    console.info(`📅 Last Updated: ${now.toLocaleString()}`);
+    console.info(`🎯 Current Phase: ${this.liveStatus.currentPhase}`);
+    console.info(`📊 Overall Progress: ${this.liveStatus.overallProgress}%`);
+    console.info(`⏰ Project Day: ${this.calculateProjectDay(now)} of 22\n`);
   }
 
   private showProgressOverview(): void {
-    console.log('📈 Progress Overview');
-    console.log('===================');
+    console.info('📈 Progress Overview');
+    console.info('===================');
     
     this.projectData.phases.forEach((phase: any, index: number) => {
       const progressBar = this.createProgressBar(phase.progress, 20);
       const statusIcon = this.getStatusIcon(phase.status);
-      console.log(`${statusIcon} Phase ${index + 1}: ${phase.name.padEnd(12)} ${progressBar} ${phase.progress}%`);
+      console.info(`${statusIcon} Phase ${index + 1}: ${phase.name.padEnd(12)} ${progressBar} ${phase.progress}%`);
     });
-    console.log();
+    console.info();
   }
 
   private showPhaseStatus(): void {
-    console.log('📍 Phase Details');
-    console.log('================');
+    console.info('📍 Phase Details');
+    console.info('================');
     
     this.projectData.phases.forEach((phase: any) => {
-      console.log(`\n🔧 ${phase.name} (${phase.startDate} → ${phase.endDate})`);
-      console.log(`   Status: ${phase.status}`);
+      console.info(`\n🔧 ${phase.name} (${phase.startDate} → ${phase.endDate})`);
+      console.info(`   Status: ${phase.status}`);
       
       phase.tasks.forEach((task: any) => {
         const taskIcon = this.getStatusIcon(task.status);
         const taskBar = this.createProgressBar(task.progress, 15);
-        console.log(`   ${taskIcon} ${task.name}: ${taskBar} ${task.progress}%`);
+        console.info(`   ${taskIcon} ${task.name}: ${taskBar} ${task.progress}%`);
       });
     });
-    console.log();
+    console.info();
   }
 
   private showTeamStatus(): void {
-    console.log('👥 Team Status');
-    console.log('==============');
+    console.info('👥 Team Status');
+    console.info('==============');
     
     Object.entries(this.liveStatus.teamStatus).forEach(([team, status]) => {
       const statusIcon = status.includes('Ready') ? '✅' : 
                         status.includes('Waiting') ? '⏳' : 
                         status.includes('Active') ? '🔄' : '📋';
-      console.log(`${statusIcon} ${team.padEnd(18)}: ${status}`);
+      console.info(`${statusIcon} ${team.padEnd(18)}: ${status}`);
     });
-    console.log();
+    console.info();
   }
 
   private showUpcomingMilestones(): void {
-    console.log('🎯 Upcoming Milestones');
-    console.log('======================');
+    console.info('🎯 Upcoming Milestones');
+    console.info('======================');
     
     this.liveStatus.upcomingMilestones.slice(0, 3).forEach((milestone, index) => {
       const daysUntil = this.calculateDaysUntil(milestone);
       const urgency = daysUntil <= 3 ? '🔴' : daysUntil <= 7 ? '🟡' : '🟢';
-      console.log(`${index + 1}. ${urgency} ${milestone} (${daysUntil} days)`);
+      console.info(`${index + 1}. ${urgency} ${milestone} (${daysUntil} days)`);
     });
-    console.log();
+    console.info();
   }
 
   private showActiveTasks(): void {
-    console.log('🔄 Active Tasks');
-    console.log('===============');
+    console.info('🔄 Active Tasks');
+    console.info('===============');
     
     if (this.liveStatus.activeTasks.length === 0) {
-      console.log('No active tasks. Use "start <task-id>" to begin work.');
+      console.info('No active tasks. Use "start <task-id>" to begin work.');
     } else {
       this.liveStatus.activeTasks.forEach((task, index) => {
-        console.log(`${index + 1}. 🔄 ${task}`);
+        console.info(`${index + 1}. 🔄 ${task}`);
       });
     }
     
     if (this.liveStatus.blockedItems.length > 0) {
-      console.log('\n⚠️  Blocked Items:');
+      console.info('\n⚠️  Blocked Items:');
       this.liveStatus.blockedItems.forEach((item, index) => {
-        console.log(`${index + 1}. 🚫 ${item}`);
+        console.info(`${index + 1}. 🚫 ${item}`);
       });
     }
-    console.log();
+    console.info();
   }
 
   private showMenu(): void {
-    console.log('🎮 Available Commands');
-    console.log('====================');
-    console.log('start <task-id>    - Start working on a task');
-    console.log('progress <task-id> <0-100> - Update task progress');
-    console.log('complete <task-id> - Mark task as completed');
-    console.log('block <description> - Add a blocked item');
-    console.log('status <team> <status> - Update team status');
-    console.log('milestone <description> - Add new milestone');
-    console.log('report             - Generate progress report');
-    console.log('refresh            - Refresh dashboard');
-    console.log('help               - Show this help');
-    console.log('exit               - Exit dashboard');
-    console.log();
+    console.info('🎮 Available Commands');
+    console.info('====================');
+    console.info('start <task-id>    - Start working on a task');
+    console.info('progress <task-id> <0-100> - Update task progress');
+    console.info('complete <task-id> - Mark task as completed');
+    console.info('block <description> - Add a blocked item');
+    console.info('status <team> <status> - Update team status');
+    console.info('milestone <description> - Add new milestone');
+    console.info('report             - Generate progress report');
+    console.info('refresh            - Refresh dashboard');
+    console.info('help               - Show this help');
+    console.info('exit               - Exit dashboard');
+    console.info();
   }
 
   /**
@@ -224,7 +224,7 @@ class InteractiveProjectDashboard {
       });
     };
 
-    console.log('🎮 Interactive mode started. Type "help" for commands.\n');
+    console.info('🎮 Interactive mode started. Type "help" for commands.\n');
 
     while (true) {
       try {
@@ -238,7 +238,7 @@ class InteractiveProjectDashboard {
         await this.handleCommand(command, args);
         
         if (command !== 'help') {
-          console.log('\nPress Enter to continue...');
+          console.info('\nPress Enter to continue...');
           await askQuestion('');
           await this.showDashboard();
         }
@@ -248,7 +248,7 @@ class InteractiveProjectDashboard {
     }
 
     rl.close();
-    console.log('\n👋 Dashboard session ended. Project data saved.');
+    console.info('\n👋 Dashboard session ended. Project data saved.');
   }
 
   private async handleCommand(command: string, args: string[]): Promise<void> {
@@ -276,19 +276,19 @@ class InteractiveProjectDashboard {
         break;
       case 'refresh':
         this.liveStatus.lastUpdated = new Date();
-        console.log('✅ Dashboard refreshed');
+        console.info('✅ Dashboard refreshed');
         break;
       case 'help':
         this.showMenu();
         break;
       default:
-        console.log('Unknown command. Type "help" for available commands.');
+        console.info('Unknown command. Type "help" for available commands.');
     }
   }
 
   private async handleStartTask(taskId: string): Promise<void> {
     if (!taskId) {
-      console.log('❌ Please provide a task ID (e.g., a1, a2, b1, b2, c1, c2)');
+      console.info('❌ Please provide a task ID (e.g., a1, a2, b1, b2, c1, c2)');
       return;
     }
 
@@ -300,22 +300,22 @@ class InteractiveProjectDashboard {
         if (!this.liveStatus.activeTasks.includes(task.name)) {
           this.liveStatus.activeTasks.push(task.name);
         }
-        console.log(`✅ Started task: ${task.name}`);
+        console.info(`✅ Started task: ${task.name}`);
         return;
       }
     }
     
-    console.log('❌ Task not found');
+    console.info('❌ Task not found');
   }
 
   private async handleUpdateProgress(taskId: string, progress: number): Promise<void> {
     if (!taskId || isNaN(progress)) {
-      console.log('❌ Usage: progress <task-id> <0-100>');
+      console.info('❌ Usage: progress <task-id> <0-100>');
       return;
     }
 
     if (progress < 0 || progress > 100) {
-      console.log('❌ Progress must be between 0 and 100');
+      console.info('❌ Progress must be between 0 and 100');
       return;
     }
 
@@ -326,17 +326,17 @@ class InteractiveProjectDashboard {
         task.progress = progress;
         this.updatePhaseProgress(phase);
         this.updateOverallProgress();
-        console.log(`✅ Updated ${task.name} progress to ${progress}%`);
+        console.info(`✅ Updated ${task.name} progress to ${progress}%`);
         return;
       }
     }
     
-    console.log('❌ Task not found');
+    console.info('❌ Task not found');
   }
 
   private async handleCompleteTask(taskId: string): Promise<void> {
     if (!taskId) {
-      console.log('❌ Please provide a task ID');
+      console.info('❌ Please provide a task ID');
       return;
     }
 
@@ -349,60 +349,60 @@ class InteractiveProjectDashboard {
         this.liveStatus.activeTasks = this.liveStatus.activeTasks.filter(t => t !== task.name);
         this.updatePhaseProgress(phase);
         this.updateOverallProgress();
-        console.log(`✅ Completed task: ${task.name}`);
+        console.info(`✅ Completed task: ${task.name}`);
         return;
       }
     }
     
-    console.log('❌ Task not found');
+    console.info('❌ Task not found');
   }
 
   private handleBlockItem(description: string): void {
     if (!description) {
-      console.log('❌ Please provide a description');
+      console.info('❌ Please provide a description');
       return;
     }
     
     this.liveStatus.blockedItems.push(description);
-    console.log(`🚫 Added blocked item: ${description}`);
+    console.info(`🚫 Added blocked item: ${description}`);
   }
 
   private handleUpdateTeamStatus(team: string, status: string): void {
     if (!team || !status) {
-      console.log('❌ Usage: status <team> <status>');
+      console.info('❌ Usage: status <team> <status>');
       return;
     }
     
     if (this.liveStatus.teamStatus[team]) {
       this.liveStatus.teamStatus[team] = status;
-      console.log(`✅ Updated ${team} status to: ${status}`);
+      console.info(`✅ Updated ${team} status to: ${status}`);
     } else {
-      console.log('❌ Team not found');
+      console.info('❌ Team not found');
     }
   }
 
   private handleAddMilestone(description: string): void {
     if (!description) {
-      console.log('❌ Please provide a milestone description');
+      console.info('❌ Please provide a milestone description');
       return;
     }
     
     this.liveStatus.upcomingMilestones.push(description);
-    console.log(`✅ Added milestone: ${description}`);
+    console.info(`✅ Added milestone: ${description}`);
   }
 
   private generateReport(): void {
-    console.log('\n📊 Project Progress Report');
-    console.log('========================');
-    console.log(`Generated: ${new Date().toLocaleString()}`);
-    console.log(`Overall Progress: ${this.liveStatus.overallProgress}%`);
-    console.log(`Active Tasks: ${this.liveStatus.activeTasks.length}`);
-    console.log(`Blocked Items: ${this.liveStatus.blockedItems.length}`);
-    console.log(`Upcoming Milestones: ${this.liveStatus.upcomingMilestones.length}`);
+    console.info('\n📊 Project Progress Report');
+    console.info('========================');
+    console.info(`Generated: ${new Date().toLocaleString()}`);
+    console.info(`Overall Progress: ${this.liveStatus.overallProgress}%`);
+    console.info(`Active Tasks: ${this.liveStatus.activeTasks.length}`);
+    console.info(`Blocked Items: ${this.liveStatus.blockedItems.length}`);
+    console.info(`Upcoming Milestones: ${this.liveStatus.upcomingMilestones.length}`);
     
-    console.log('\n📈 Phase Progress:');
+    console.info('\n📈 Phase Progress:');
     this.projectData.phases.forEach((phase: any, index: number) => {
-      console.log(`Phase ${index + 1} (${phase.name}): ${phase.progress}% - ${phase.tasks.filter((t: any) => t.status === 'completed').length}/${phase.tasks.length} tasks completed`);
+      console.info(`Phase ${index + 1} (${phase.name}): ${phase.progress}% - ${phase.tasks.filter((t: any) => t.status === 'completed').length}/${phase.tasks.length} tasks completed`);
     });
   }
 

@@ -28,7 +28,7 @@ async function main() {
   if (hasFlag(args, "--version") || hasFlag(args, "-v")) {
     // Match `clawdbot --version` behavior for Swift env/version checks.
     // Keep output a single line.
-    console.log(BUNDLED_VERSION);
+    console.info(BUNDLED_VERSION);
     process.exit(0);
   }
 

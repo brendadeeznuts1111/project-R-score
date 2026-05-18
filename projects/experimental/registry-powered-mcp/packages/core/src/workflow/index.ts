@@ -133,9 +133,9 @@ export async function createWorkflowSystem(
     engine.registerHook(hook);
   }
 
-  console.log('✅ Workflow system initialized');
-  console.log(`   Handlers: ${Object.keys(builtinHandlers).length} built-in`);
-  console.log(`   Hooks: ${builtinHooks.length} built-in`);
+  console.info('✅ Workflow system initialized');
+  console.info(`   Handlers: ${Object.keys(builtinHandlers).length} built-in`);
+  console.info(`   Hooks: ${builtinHooks.length} built-in`);
 
   return { engine, registry };
 }
@@ -169,11 +169,11 @@ export async function createWorkflowSystemFromConfig(
     engine.registerWorkflow(workflow);
   }
 
-  console.log(`   Workflows: ${workflows.length} from config`);
+  console.info(`   Workflows: ${workflows.length} from config`);
 
   // Load plugins if specified
   if (tomlConfig.plugins.length > 0) {
-    console.log(`   Loading ${tomlConfig.plugins.length} plugins...`);
+    console.info(`   Loading ${tomlConfig.plugins.length} plugins...`);
     for (const pluginPath of tomlConfig.plugins) {
       try {
         const plugin = await registry.loadFromFile(pluginPath);

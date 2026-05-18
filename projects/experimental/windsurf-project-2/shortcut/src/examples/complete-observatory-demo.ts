@@ -13,15 +13,15 @@
  * @see https://github.com/oven-sh/bun
  */
 
-console.log(`🚀 Complete URLPattern Observatory Demo`);
-console.log(`===================================`);
-console.log(`🔐 Bun API Secrets Aligned Services`);
-console.log(`⏰ Started at ${new Date().toLocaleString()}`);
-console.log(``);
+console.info(`🚀 Complete URLPattern Observatory Demo`);
+console.info(`===================================`);
+console.info(`🔐 Bun API Secrets Aligned Services`);
+console.info(`⏰ Started at ${new Date().toLocaleString()}`);
+console.info(``);
 
 // Demo 1: TOML Editor & Optimizer
-console.log(`📝 1. TOML Editor & Optimizer Demo`);
-console.log(`================================`);
+console.info(`📝 1. TOML Editor & Optimizer Demo`);
+console.info(`================================`);
 
 const sampleTOML = `# Sample Configuration
 [service]
@@ -42,9 +42,9 @@ encryption_key = "encryption-key-456"
 token = "monitoring-token-789"
 enabled = true`;
 
-console.log(`📄 Original TOML:`);
-console.log(sampleTOML);
-console.log(``);
+console.info(`📄 Original TOML:`);
+console.info(sampleTOML);
+console.info(``);
 
 // Simulate optimization
 const optimizedTOML = `# Optimized Configuration
@@ -65,13 +65,13 @@ encryption_key="\${BUN_SECRETS_ENCRYPTION_KEY}"
 enabled=true
 token="\${BUN_SECRETS_MONITORING_TOKEN}"`;
 
-console.log(`✅ Optimized TOML (with Bun API Secrets):`);
-console.log(optimizedTOML);
-console.log(``);
+console.info(`✅ Optimized TOML (with Bun API Secrets):`);
+console.info(optimizedTOML);
+console.info(``);
 
 // Demo 2: Security Validation
-console.log(`🔒 2. Security Validation Demo`);
-console.log(`============================`);
+console.info(`🔒 2. Security Validation Demo`);
+console.info(`============================`);
 
 const securityIssues = [
   {
@@ -94,18 +94,18 @@ const securityIssues = [
   }
 ];
 
-console.log(`🚨 Security Issues Found:`);
+console.info(`🚨 Security Issues Found:`);
 securityIssues.forEach((issue, index) => {
-  console.log(`   ${index + 1}. ${issue.pattern}`);
-  console.log(`      Risk: ${issue.risk.toUpperCase()}`);
-  console.log(`      Issue: ${issue.description}`);
-  console.log(`      Fix: ${issue.suggestion}`);
-  console.log(``);
+  console.info(`   ${index + 1}. ${issue.pattern}`);
+  console.info(`      Risk: ${issue.risk.toUpperCase()}`);
+  console.info(`      Issue: ${issue.description}`);
+  console.info(`      Fix: ${issue.suggestion}`);
+  console.info(``);
 });
 
 // Demo 3: Bun Secrets Service
-console.log(`🔐 3. Bun Secrets Service Demo`);
-console.log(`============================`);
+console.info(`🔐 3. Bun Secrets Service Demo`);
+console.info(`============================`);
 
 const bunSecrets = {
   BUN_SECRETS_DATABASE_PASSWORD: 'secure-db-password-123',
@@ -118,16 +118,16 @@ const bunSecrets = {
   BUN_SECRETS_STORAGE_ACCESS_KEY: 'storage-access-key-456'
 };
 
-console.log(`🔑 Loaded Bun Secrets (following API pattern):`);
+console.info(`🔑 Loaded Bun Secrets (following API pattern):`);
 Object.entries(bunSecrets).forEach(([key, value]) => {
   const maskedValue = value.substring(0, 8) + '...';
-  console.log(`   ${key}: ${maskedValue}`);
+  console.info(`   ${key}: ${maskedValue}`);
 });
-console.log(``);
+console.info(``);
 
 // Demo 4: Configuration Templates
-console.log(`📋 4. Configuration Templates Demo`);
-console.log(`===============================`);
+console.info(`📋 4. Configuration Templates Demo`);
+console.info(`===============================`);
 
 const templates = [
   {
@@ -147,16 +147,16 @@ const templates = [
   }
 ];
 
-console.log(`📁 Available Templates:`);
+console.info(`📁 Available Templates:`);
 templates.forEach((template, index) => {
-  console.log(`   ${index + 1}. ${template.name} (${template.category})`);
-  console.log(`      ${template.description}`);
+  console.info(`   ${index + 1}. ${template.name} (${template.category})`);
+  console.info(`      ${template.description}`);
 });
-console.log(``);
+console.info(``);
 
 // Demo 5: Performance Metrics
-console.log(`📊 5. Performance Metrics Demo`);
-console.log(`============================`);
+console.info(`📊 5. Performance Metrics Demo`);
+console.info(`============================`);
 
 const performanceMetrics = {
   parse_time: 1.2, // ms
@@ -168,19 +168,19 @@ const performanceMetrics = {
   secrets_resolved: 8
 };
 
-console.log(`⚡ Performance Metrics:`);
-console.log(`   • Parse Time: ${performanceMetrics.parse_time}ms`);
-console.log(`   • Optimize Time: ${performanceMetrics.optimize_time}ms`);
-console.log(`   • Size Reduction: ${performanceMetrics.size_reduction} bytes`);
-console.log(`   • Compression Ratio: ${(performanceMetrics.compression_ratio * 100).toFixed(1)}%`);
-console.log(`   • Patterns Processed: ${performanceMetrics.patterns_processed}`);
-console.log(`   • Security Issues Found: ${performanceMetrics.security_issues_found}`);
-console.log(`   • Secrets Resolved: ${performanceMetrics.secrets_resolved}`);
-console.log(``);
+console.info(`⚡ Performance Metrics:`);
+console.info(`   • Parse Time: ${performanceMetrics.parse_time}ms`);
+console.info(`   • Optimize Time: ${performanceMetrics.optimize_time}ms`);
+console.info(`   • Size Reduction: ${performanceMetrics.size_reduction} bytes`);
+console.info(`   • Compression Ratio: ${(performanceMetrics.compression_ratio * 100).toFixed(1)}%`);
+console.info(`   • Patterns Processed: ${performanceMetrics.patterns_processed}`);
+console.info(`   • Security Issues Found: ${performanceMetrics.security_issues_found}`);
+console.info(`   • Secrets Resolved: ${performanceMetrics.secrets_resolved}`);
+console.info(``);
 
 // Demo 6: Service Integration
-console.log(`🔗 6. Service Integration Demo`);
-console.log(`============================`);
+console.info(`🔗 6. Service Integration Demo`);
+console.info(`============================`);
 
 const services = [
   {
@@ -206,18 +206,18 @@ const services = [
   }
 ];
 
-console.log(`🌐 Integrated Services:`);
+console.info(`🌐 Integrated Services:`);
 services.forEach((service, index) => {
-  console.log(`   ${index + 1}. ${service.name}`);
-  console.log(`      Status: ${service.status}`);
-  console.log(`      URL: ${service.url}`);
-  console.log(`      Features: ${service.features.join(', ')}`);
-  console.log(``);
+  console.info(`   ${index + 1}. ${service.name}`);
+  console.info(`      Status: ${service.status}`);
+  console.info(`      URL: ${service.url}`);
+  console.info(`      Features: ${service.features.join(', ')}`);
+  console.info(``);
 });
 
 // Demo 7: Bun API Secrets Alignment
-console.log(`🔐 7. Bun API Secrets Alignment`);
-console.log(`============================`);
+console.info(`🔐 7. Bun API Secrets Alignment`);
+console.info(`============================`);
 
 const alignmentFeatures = [
   '✅ Naming Convention: BUN_SECRETS_*',
@@ -230,15 +230,15 @@ const alignmentFeatures = [
   '✅ Integration: Full Bun ecosystem compatibility'
 ];
 
-console.log(`🎯 Bun API Secrets Alignment Features:`);
+console.info(`🎯 Bun API Secrets Alignment Features:`);
 alignmentFeatures.forEach((feature, index) => {
-  console.log(`   ${index + 1}. ${feature}`);
+  console.info(`   ${index + 1}. ${feature}`);
 });
-console.log(``);
+console.info(``);
 
 // Final Summary
-console.log(`🎉 Complete Observatory Demo Summary`);
-console.log(`====================================`);
+console.info(`🎉 Complete Observatory Demo Summary`);
+console.info(`====================================`);
 
 const summaryStats = {
   total_services: 3,
@@ -249,44 +249,44 @@ const summaryStats = {
   bun_api_alignments: 8
 };
 
-console.log(`📈 Summary Statistics:`);
-console.log(`   • Total Services: ${summaryStats.total_services}`);
-console.log(`   • Configuration Templates: ${summaryStats.total_templates}`);
-console.log(`   • Bun Secrets Managed: ${summaryStats.total_secrets}`);
-console.log(`   • Security Features: ${summaryStats.security_features}`);
-console.log(`   • Performance Optimizations: ${summaryStats.performance_optimizations}`);
-console.log(`   • Bun API Alignments: ${summaryStats.bun_api_alignments}`);
-console.log(``);
+console.info(`📈 Summary Statistics:`);
+console.info(`   • Total Services: ${summaryStats.total_services}`);
+console.info(`   • Configuration Templates: ${summaryStats.total_templates}`);
+console.info(`   • Bun Secrets Managed: ${summaryStats.total_secrets}`);
+console.info(`   • Security Features: ${summaryStats.security_features}`);
+console.info(`   • Performance Optimizations: ${summaryStats.performance_optimizations}`);
+console.info(`   • Bun API Alignments: ${summaryStats.bun_api_alignments}`);
+console.info(``);
 
-console.log(`🚀 How to Use the Complete Observatory:`);
-console.log(``);
-console.log(`1. Start Security Dashboard:`);
-console.log(`   bun run dashboard-server.ts`);
-console.log(`   → http://localhost:3000`);
-console.log(``);
-console.log(`2. Start TOML Editor & Optimizer:`);
-console.log(`   bun run toml-editor-optimizer.ts`);
-console.log(`   → http://localhost:3001`);
-console.log(``);
-console.log(`3. Start Bun Secrets Service:`);
-console.log(`   bun run bun-secrets-service.ts`);
-console.log(`   → http://localhost:3002`);
-console.log(``);
-console.log(`4. Or use Unified Launcher:`);
-console.log(`   bun run unified-observatory-launcher.ts start`);
-console.log(``);
-console.log(`🔥 The Complete URLPattern Observatory v1.3.6+ with Bun API Secrets alignment is ready!`);
-console.log(``);
-console.log(`🎯 Key Achievements:`);
-console.log(`   ✅ TOML Editor & Optimizer with real-time validation`);
-console.log(`   ✅ Bun Secrets Service with API-aligned naming`);
-console.log(`   ✅ Security Dashboard with interactive cards`);
-console.log(`   ✅ Unified service management and orchestration`);
-console.log(`   ✅ Complete audit trail and security monitoring`);
-console.log(`   ✅ Performance optimization and caching`);
-console.log(`   ✅ Template-based configuration management`);
-console.log(`   ✅ Full Bun ecosystem integration`);
+console.info(`🚀 How to Use the Complete Observatory:`);
+console.info(``);
+console.info(`1. Start Security Dashboard:`);
+console.info(`   bun run dashboard-server.ts`);
+console.info(`   → http://localhost:3000`);
+console.info(``);
+console.info(`2. Start TOML Editor & Optimizer:`);
+console.info(`   bun run toml-editor-optimizer.ts`);
+console.info(`   → http://localhost:3001`);
+console.info(``);
+console.info(`3. Start Bun Secrets Service:`);
+console.info(`   bun run bun-secrets-service.ts`);
+console.info(`   → http://localhost:3002`);
+console.info(``);
+console.info(`4. Or use Unified Launcher:`);
+console.info(`   bun run unified-observatory-launcher.ts start`);
+console.info(``);
+console.info(`🔥 The Complete URLPattern Observatory v1.3.6+ with Bun API Secrets alignment is ready!`);
+console.info(``);
+console.info(`🎯 Key Achievements:`);
+console.info(`   ✅ TOML Editor & Optimizer with real-time validation`);
+console.info(`   ✅ Bun Secrets Service with API-aligned naming`);
+console.info(`   ✅ Security Dashboard with interactive cards`);
+console.info(`   ✅ Unified service management and orchestration`);
+console.info(`   ✅ Complete audit trail and security monitoring`);
+console.info(`   ✅ Performance optimization and caching`);
+console.info(`   ✅ Template-based configuration management`);
+console.info(`   ✅ Full Bun ecosystem integration`);
 
-console.log(``);
-console.log(`🌟 This demonstrates the most comprehensive URLPattern security platform possible,`);
-console.log(`   fully aligned with Bun's API Secrets naming conventions and best practices!`);
+console.info(``);
+console.info(`🌟 This demonstrates the most comprehensive URLPattern security platform possible,`);
+console.info(`   fully aligned with Bun's API Secrets naming conventions and best practices!`);

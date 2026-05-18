@@ -48,17 +48,17 @@ class TemplateStructureFixer {
      * Scan templates directory for structure issues
      */
     async scanTemplates(): Promise<void> {
-        console.log(chalk.blue.bold('🔍 Scanning templates for structure issues...'));
+        console.info(chalk.blue.bold('🔍 Scanning templates for structure issues...'));
 
         try {
             const files = await this.getAllTemplateFiles();
-            console.log(chalk.cyan(`Found ${files.length} template files to analyze`));
+            console.info(chalk.cyan(`Found ${files.length} template files to analyze`));
 
             for (const filePath of files) {
                 await this.analyzeFile(filePath);
             }
 
-            console.log(chalk.green(`\n✅ Analysis complete: ${this.issues.length} structure issues found`));
+            console.info(chalk.green(`\n✅ Analysis complete: ${this.issues.length} structure issues found`));
         } catch (error) {
             console.error(chalk.red(`❌ Error scanning templates: ${error.message}`));
             throw error;
@@ -161,11 +161,11 @@ class TemplateStructureFixer {
      */
     async fixIssues(): Promise<void> {
         if (this.issues.length === 0) {
-            console.log(chalk.green('✅ No structure issues found!'));
+            console.info(chalk.green('✅ No structure issues found!'));
             return;
         }
 
-        console.log(chalk.blue.bold(`\n🔧 ${this.dryRun ? 'DRY RUN: Would fix' : 'Fixing'} ${this.issues.length} structure issues...`));
+        console.info(chalk.blue.bold(`\n🔧 ${this.dryRun ? 'DRY RUN: Would fix' : 'Fixing'} ${this.issues.length} structure issues...`));
 
         // Group issues by file
         const issuesByFile = this.issues.reduce((acc, issue) => {
@@ -188,24 +188,24 @@ class TemplateStructureFixer {
 
                     if (!this.dryRun) {
                         await writeFile(filePath, fixOperation.fixedContent, 'utf-8');
-                        console.log(chalk.green(`   ✅ Fixed ${filePath}`));
+                        console.info(chalk.green(`   ✅ Fixed ${filePath}`));
                     } else {
-                        console.log(chalk.cyan(`   🔧 Would fix ${filePath}:`));
+                        console.info(chalk.cyan(`   🔧 Would fix ${filePath}:`));
                         for (const fix of fixOperation.fixes) {
-                            console.log(chalk.gray(`      - ${fix}`));
+                            console.info(chalk.gray(`      - ${fix}`));
                         }
                     }
                     results.success++;
                 }
             } catch (error) {
-                console.log(chalk.red(`   ❌ Failed to fix ${filePath}: ${error.message}`));
+                console.info(chalk.red(`   ❌ Failed to fix ${filePath}: ${error.message}`));
                 results.failed++;
             }
         }
 
-        console.log(chalk.blue.bold(`\n📊 Results:`));
-        console.log(chalk.green(`   ✅ Success: ${results.success}`));
-        console.log(chalk.red(`   ❌ Failed: ${results.failed}`));
+        console.info(chalk.blue.bold(`\n📊 Results:`));
+        console.info(chalk.green(`   ✅ Success: ${results.success}`));
+        console.info(chalk.red(`   ❌ Failed: ${results.failed}`));
     }
 
     /**
@@ -354,12 +354,12 @@ review-date: ${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().spl
      */
     displayReport(): void {
         if (this.issues.length === 0) {
-            console.log(chalk.green('✅ No template structure issues found!'));
+            console.info(chalk.green('✅ No template structure issues found!'));
             return;
         }
 
-        console.log(chalk.blue.bold('\n📋 Structure Issues Report:'));
-        console.log(chalk.gray('='.repeat(80)));
+        console.info(chalk.blue.bold('\n📋 Structure Issues Report:'));
+        console.info(chalk.gray('='.repeat(80)));
 
         // Group by issue type
         const byType = this.issues.reduce((acc, issue) => {
@@ -375,22 +375,22 @@ review-date: ${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().spl
                 'missing-overview': '🟠 Missing H1 Heading'
             }[issueType] || issueType;
 
-            console.log(chalk.cyan(`\n${typeLabel} (${issues.length} files):`));
+            console.info(chalk.cyan(`\n${typeLabel} (${issues.length} files):`));
 
             for (const issue of issues.slice(0, 5)) { // Show max 5 examples
                 const relativePath = issue.filePath.replace(this.vaultPath + '/', '');
-                console.log(chalk.gray(`   ${relativePath}`));
+                console.info(chalk.gray(`   ${relativePath}`));
                 if (issue.issueType === 'multiple-h1') {
-                    console.log(chalk.gray(`      → ${issue.details.count} H1 headings found`));
+                    console.info(chalk.gray(`      → ${issue.details.count} H1 headings found`));
                 }
             }
 
             if (issues.length > 5) {
-                console.log(chalk.gray(`   ... and ${issues.length - 5} more files`));
+                console.info(chalk.gray(`   ... and ${issues.length - 5} more files`));
             }
         }
 
-        console.log(chalk.blue.bold(`\n📊 Summary: ${this.issues.length} structure issues found`));
+        console.info(chalk.blue.bold(`\n📊 Summary: ${this.issues.length} structure issues found`));
     }
 }
 
@@ -408,12 +408,12 @@ async function main(): Promise<void> {
     };
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('🔧 Template Structure Fix Script'));
-        console.log(chalk.gray('Usage: bun fix-template-structure.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --dry-run    Show what would be fixed without doing it'));
-        console.log(chalk.gray('  --report     Show detailed report of issues found'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.blue.bold('🔧 Template Structure Fix Script'));
+        console.info(chalk.gray('Usage: bun fix-template-structure.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --dry-run    Show what would be fixed without doing it'));
+        console.info(chalk.gray('  --report     Show detailed report of issues found'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
         process.exit(0);
     }
 

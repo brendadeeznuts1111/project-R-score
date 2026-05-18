@@ -106,7 +106,7 @@ export class FederatedLearningController {
    * Execute a federated training round
    */
   async federatedTrainingRound(marketParticipants: string[]): Promise<void> {
-    console.log(
+    console.info(
       `🔄 Starting federated training round with ${marketParticipants.length} participants`
     );
 
@@ -150,7 +150,7 @@ export class FederatedLearningController {
       // 6. Record training round
       this.recordTrainingRound(marketParticipants, aggregatedUpdates);
 
-      console.log("✅ Federated training round completed successfully");
+      console.info("✅ Federated training round completed successfully");
     } catch (error) {
       console.error("❌ Federated training round failed:", error);
       throw error;
@@ -172,7 +172,7 @@ export class FederatedLearningController {
     );
 
     // In a real implementation, this would send the model to the participant
-    console.log(`📤 Distributed global model to participant: ${participantId}`);
+    console.info(`📤 Distributed global model to participant: ${participantId}`);
 
     // Store local model copy for participant
     this.localModels.set(participantId, { ...this.globalModel });
@@ -233,7 +233,7 @@ export class FederatedLearningController {
   private async secureMPCAggregation(
     updates: ModelUpdate[]
   ): Promise<ModelUpdate> {
-    console.log(
+    console.info(
       `🔐 Performing secure MPC aggregation on ${updates.length} updates`
     );
 
@@ -441,7 +441,7 @@ export class FederatedLearningController {
       f1Score: aggregatedUpdates.accuracy,
     };
 
-    console.log(
+    console.info(
       `📈 Global model updated. New accuracy: ${this.globalModel.accuracy.toFixed(
         4
       )}`
@@ -467,7 +467,7 @@ export class FederatedLearningController {
       this.localModels.set(participantId, { ...privateModel });
     }
 
-    console.log(
+    console.info(
       `🔒 Distributed privacy-protected model to ${participants.length} participants`
     );
   }

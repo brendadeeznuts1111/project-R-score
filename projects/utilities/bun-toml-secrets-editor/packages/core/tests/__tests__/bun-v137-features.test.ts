@@ -209,7 +209,7 @@ describe("Bun v1.3.7 Integration", () => {
 			version: typeof Bun !== "undefined" && Bun.version,
 		};
 
-		console.log("Bun v1.3.7 Features:", features);
+		console.info("Bun v1.3.7 Features:", features);
 
 		expect(features.wrapAnsi).toBe(true);
 		expect(features.JSON5).toBe(true);

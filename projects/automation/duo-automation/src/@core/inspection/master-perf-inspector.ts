@@ -803,7 +803,7 @@ export async function runIntegratedUriSecurityInspection(
   // Initialize production URI inspector directly
   const uriInspector = new ProductionUriInspector();
   
-  console.log(`🔍 Running URI Security Inspection on ${uris.length} URIs...`);
+  console.info(`🔍 Running URI Security Inspection on ${uris.length} URIs...`);
   
   // Inspect each URI
   const inspectionResults: InspectionResult[] = [];
@@ -937,25 +937,25 @@ export async function testMasterPerfInspector(): Promise<void> {
     }
   ];
   
-  console.log('\n🧪 Testing Enhanced MASTER_PERF Inspector with URI Security Integration\n');
+  console.info('\n🧪 Testing Enhanced MASTER_PERF Inspector with URI Security Integration\n');
   
-  console.log('\n📊 Colored Terminal Output:');
-  console.log(generateMasterPerfTable(testMetrics));
+  console.info('\n📊 Colored Terminal Output:');
+  console.info(generateMasterPerfTable(testMetrics));
   
-  console.log('\n📄 Plain Text Output:');
-  console.log(generateMasterPerfPlainText(testMetrics));
+  console.info('\n📄 Plain Text Output:');
+  console.info(generateMasterPerfPlainText(testMetrics));
   
-  console.log('\n📋 JSON Output:');
-  console.log(generateMasterPerfJson(testMetrics, { includeColors: true }));
+  console.info('\n📋 JSON Output:');
+  console.info(generateMasterPerfJson(testMetrics, { includeColors: true }));
   
-  console.log('\n📈 CSV Output:');
-  console.log(generateMasterPerfCsv(testMetrics));
+  console.info('\n📈 CSV Output:');
+  console.info(generateMasterPerfCsv(testMetrics));
   
-  console.log('\n🌐 WebSocket Output:');
-  console.log(generateMasterPerfWebSocket(testMetrics, { minimal: true }));
+  console.info('\n🌐 WebSocket Output:');
+  console.info(generateMasterPerfWebSocket(testMetrics, { minimal: true }));
   
   // Test URI Security Inspection Integration
-  console.log('\n🛡️ Testing URI Security Inspection Integration:');
+  console.info('\n🛡️ Testing URI Security Inspection Integration:');
   
   const testUris = [
     'https://example.com/api/users',
@@ -967,13 +967,13 @@ export async function testMasterPerfInspector(): Promise<void> {
   try {
     const { inspectionResults, perfMetrics, summary } = await runIntegratedUriSecurityInspection(testUris);
     
-    console.log(summary);
+    console.info(summary);
     
-    console.log('\n🔍 URI Security Inspection Results:');
-    console.log(generateUriSecurityDashboard(perfMetrics, { maxRows: 20, includeCharts: true }));
+    console.info('\n🔍 URI Security Inspection Results:');
+    console.info(generateUriSecurityDashboard(perfMetrics, { maxRows: 20, includeCharts: true }));
     
-    console.log('\n📊 Converted MASTER_PERF Metrics:');
-    console.log(generateMasterPerfTable(perfMetrics, { maxRows: 10, showProperties: true }));
+    console.info('\n📊 Converted MASTER_PERF Metrics:');
+    console.info(generateMasterPerfTable(perfMetrics, { maxRows: 10, showProperties: true }));
     
   } catch (error) {
     console.error('❌ URI Security Inspection test failed:', error);

@@ -42,22 +42,22 @@ function parseArgs(): GraphOptions {
 }
 
 function showHelp() {
-  console.log('📊 Generate Initial Version Graphs');
-  console.log('=================================');
-  console.log();
-  console.log('Generate visual version graphs for secrets.');
-  console.log();
-  console.log('Options:');
-  console.log('  --all-secrets        Generate graphs for all secrets');
-  console.log('  --secrets <list>     Comma-separated list of secret keys');
-  console.log('  --output <type>      Output destination: r2, local, both');
-  console.log('  --format <type>      Graph format: all, mermaid, d3, terminal');
-  console.log('  --help, -h           Show this help');
-  console.log();
-  console.log('Examples:');
-  console.log('  bun generate-graphs.ts --all-secrets --output r2');
-  console.log('  bun generate-graphs.ts --secrets API_KEY,DATABASE_URL --format mermaid');
-  console.log('  bun generate-graphs.ts --all-secrets --output both --format all');
+  console.info('📊 Generate Initial Version Graphs');
+  console.info('=================================');
+  console.info();
+  console.info('Generate visual version graphs for secrets.');
+  console.info();
+  console.info('Options:');
+  console.info('  --all-secrets        Generate graphs for all secrets');
+  console.info('  --secrets <list>     Comma-separated list of secret keys');
+  console.info('  --output <type>      Output destination: r2, local, both');
+  console.info('  --format <type>      Graph format: all, mermaid, d3, terminal');
+  console.info('  --help, -h           Show this help');
+  console.info();
+  console.info('Examples:');
+  console.info('  bun generate-graphs.ts --all-secrets --output r2');
+  console.info('  bun generate-graphs.ts --secrets API_KEY,DATABASE_URL --format mermaid');
+  console.info('  bun generate-graphs.ts --all-secrets --output both --format all');
 }
 
 function styled(
@@ -80,40 +80,40 @@ function styled(
 async function main() {
   const options = parseArgs();
 
-  console.log(styled('📊 Version Graph Generator', 'primary'));
-  console.log(styled('==========================', 'muted'));
-  console.log();
+  console.info(styled('📊 Version Graph Generator', 'primary'));
+  console.info(styled('==========================', 'muted'));
+  console.info();
 
   try {
     // Step 1: Discover secrets to process
-    console.log(styled('🔍 Step 1: Discovering secrets...', 'info'));
+    console.info(styled('🔍 Step 1: Discovering secrets...', 'info'));
 
     let secretsToProcess: string[] = [];
 
     if (options.allSecrets) {
       secretsToProcess = await discoverAllSecrets();
-      console.log(styled(`   Found ${secretsToProcess.length} secrets`, 'success'));
+      console.info(styled(`   Found ${secretsToProcess.length} secrets`, 'success'));
     } else if (options.secrets) {
       secretsToProcess = options.secrets;
-      console.log(styled(`   Processing ${secretsToProcess.length} specified secrets`, 'info'));
+      console.info(styled(`   Processing ${secretsToProcess.length} specified secrets`, 'info'));
     } else {
-      console.log(styled('❌ No secrets specified. Use --all-secrets or --secrets', 'error'));
+      console.info(styled('❌ No secrets specified. Use --all-secrets or --secrets', 'error'));
       process.exit(1);
     }
 
     secretsToProcess.forEach(secret => {
-      console.log(styled(`   • ${secret}`, 'muted'));
+      console.info(styled(`   • ${secret}`, 'muted'));
     });
-    console.log();
+    console.info();
 
     // Step 2: Generate graphs for each secret
-    console.log(styled('📊 Step 2: Generating graphs...', 'info'));
+    console.info(styled('📊 Step 2: Generating graphs...', 'info'));
 
     const results = [];
 
     for (const secretKey of secretsToProcess) {
       try {
-        console.log(styled(`   🔄 Processing: ${secretKey}`, 'primary'));
+        console.info(styled(`   🔄 Processing: ${secretKey}`, 'primary'));
 
         const graphData = await factoryWagerSecurityCitadel.generateVisualGraph(secretKey);
 
@@ -137,9 +137,9 @@ async function main() {
           await storeGraphsInR2(result, options.format);
         }
 
-        console.log(styled(`   ✅ Generated: ${secretKey}`, 'success'));
+        console.info(styled(`   ✅ Generated: ${secretKey}`, 'success'));
       } catch (error) {
-        console.log(styled(`   ❌ Failed: ${secretKey} - ${error.message}`, 'error'));
+        console.info(styled(`   ❌ Failed: ${secretKey} - ${error.message}`, 'error'));
         results.push({
           key: secretKey,
           error: error.message,
@@ -148,10 +148,10 @@ async function main() {
       }
     }
 
-    console.log();
+    console.info();
 
     // Step 3: Generate summary report
-    console.log(styled('📋 Step 3: Generating summary report...', 'info'));
+    console.info(styled('📋 Step 3: Generating summary report...', 'info'));
 
     const summary = {
       generated: new Date().toISOString(),
@@ -169,36 +169,36 @@ async function main() {
 
     await storeSummaryReport(summary, options.output);
 
-    console.log(styled('   ✅ Summary report generated', 'success'));
-    console.log();
+    console.info(styled('   ✅ Summary report generated', 'success'));
+    console.info();
 
     // Step 4: Show results
-    console.log(styled('📊 Generation Summary:', 'primary'));
-    console.log(styled(`   Total secrets: ${summary.totalSecrets}`, 'info'));
-    console.log(styled(`   Successful: ${summary.successful}`, 'success'));
-    console.log(styled(`   Failed: ${summary.failed}`, summary.failed > 0 ? 'error' : 'success'));
-    console.log(styled(`   Output: ${options.output}`, 'muted'));
-    console.log(styled(`   Format: ${options.format}`, 'muted'));
+    console.info(styled('📊 Generation Summary:', 'primary'));
+    console.info(styled(`   Total secrets: ${summary.totalSecrets}`, 'info'));
+    console.info(styled(`   Successful: ${summary.successful}`, 'success'));
+    console.info(styled(`   Failed: ${summary.failed}`, summary.failed > 0 ? 'error' : 'success'));
+    console.info(styled(`   Output: ${options.output}`, 'muted'));
+    console.info(styled(`   Format: ${options.format}`, 'muted'));
 
     if (summary.failed > 0) {
-      console.log();
-      console.log(styled('⚠️  Failed generations:', 'warning'));
+      console.info();
+      console.info(styled('⚠️  Failed generations:', 'warning'));
       results
         .filter(r => r.error)
         .forEach(result => {
-          console.log(styled(`   • ${result.key}: ${result.error}`, 'error'));
+          console.info(styled(`   • ${result.key}: ${result.error}`, 'error'));
         });
     }
 
-    console.log();
-    console.log(styled('🎉 Graph generation completed!', 'success'));
+    console.info();
+    console.info(styled('🎉 Graph generation completed!', 'success'));
 
     if (options.output === 'r2' || options.output === 'both') {
-      console.log(styled('🌐 Graphs available in R2 bucket', 'info'));
+      console.info(styled('🌐 Graphs available in R2 bucket', 'info'));
     }
 
     if (options.output === 'local' || options.output === 'both') {
-      console.log(styled('📁 Graphs saved to local directory', 'info'));
+      console.info(styled('📁 Graphs saved to local directory', 'info'));
     }
   } catch (error) {
     console.error(styled(`❌ Graph generation failed: ${error.message}`, 'error'));

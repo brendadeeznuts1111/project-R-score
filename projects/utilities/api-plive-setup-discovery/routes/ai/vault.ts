@@ -20,7 +20,7 @@ export const handle = async (req: Request) => {
 
     // TODO: Implement actual vault sync with Bun.secrets
     // For now, simulate successful sync
-    console.log(`🔐 Syncing secret to vault: ${request.secrets.service}/${request.secrets.name}`);
+    console.info(`🔐 Syncing secret to vault: ${request.secrets.service}/${request.secrets.name}`);
 
     // In production, this would use:
     // await Bun.secrets.set({ service: request.secrets.service, name: request.secrets.name, value: request.secrets.value });

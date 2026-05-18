@@ -362,13 +362,13 @@ async function main() {
       if (args[1]) {
         const result = tagSystem.parseTag(args[1]);
         if (result.success) {
-          console.log('✅ Tag parsed successfully:');
-          console.log(JSON.stringify(result.tag, null, 2));
+          console.info('✅ Tag parsed successfully:');
+          console.info(JSON.stringify(result.tag, null, 2));
         } else {
-          console.log('❌ Parse error:', result.error);
+          console.info('❌ Parse error:', result.error);
         }
       } else {
-        console.log('Usage: tag-system parse "<tag>"');
+        console.info('Usage: tag-system parse "<tag>"');
       }
       break;
 
@@ -377,27 +377,27 @@ async function main() {
         const parseResult = tagSystem.parseTag(args[1]);
         if (parseResult.success) {
           const validation = tagSystem.validateTag(parseResult.tag!);
-          console.log(`📊 Validation result: ${validation.isValid ? '✅ Valid' : '❌ Invalid'}`);
+          console.info(`📊 Validation result: ${validation.isValid ? '✅ Valid' : '❌ Invalid'}`);
           
           if (validation.errors.length > 0) {
-            console.log('\n❌ Errors:');
-            validation.errors.forEach(error => console.log(`  • ${error}`));
+            console.info('\n❌ Errors:');
+            validation.errors.forEach(error => console.info(`  • ${error}`));
           }
           
           if (validation.warnings.length > 0) {
-            console.log('\n⚠️  Warnings:');
-            validation.warnings.forEach(warning => console.log(`  • ${warning}`));
+            console.info('\n⚠️  Warnings:');
+            validation.warnings.forEach(warning => console.info(`  • ${warning}`));
           }
           
           if (validation.suggestions.length > 0) {
-            console.log('\n💡 Suggestions:');
-            validation.suggestions.forEach(suggestion => console.log(`  • ${suggestion}`));
+            console.info('\n💡 Suggestions:');
+            validation.suggestions.forEach(suggestion => console.info(`  • ${suggestion}`));
           }
         } else {
-          console.log('❌ Parse error:', parseResult.error);
+          console.info('❌ Parse error:', parseResult.error);
         }
       } else {
-        console.log('Usage: tag-system validate "<tag>"');
+        console.info('Usage: tag-system validate "<tag>"');
       }
       break;
 
@@ -406,12 +406,12 @@ async function main() {
         try {
           const components = JSON.parse(args[1]);
           const tag = tagSystem.generateTag(components);
-          console.log('🏷️  Generated tag:', tag);
+          console.info('🏷️  Generated tag:', tag);
         } catch (error) {
-          console.log('❌ Invalid JSON components');
+          console.info('❌ Invalid JSON components');
         }
       } else {
-        console.log('Usage: tag-system generate \'{"domain":"CORE","type":"TYPESCRIPT"}\'');
+        console.info('Usage: tag-system generate \'{"domain":"CORE","type":"TYPESCRIPT"}\'');
       }
       break;
 
@@ -427,50 +427,50 @@ async function main() {
       }
       
       const results = tagSystem.searchByTags(criteria);
-      console.log(`🔍 Found ${results.length} matching tags:`);
+      console.info(`🔍 Found ${results.length} matching tags:`);
       results.forEach((tag, index) => {
-        console.log(`${index + 1}. ${tag}`);
+        console.info(`${index + 1}. ${tag}`);
       });
       break;
 
     case 'analytics':
       const analytics = tagSystem.getTagAnalytics();
-      console.log('📊 Tag Analytics:');
-      console.log('==================');
-      console.log(`Total tags: ${analytics.totalTags}`);
-      console.log(`Metadata usage: ${analytics.metadataUsage} (${Math.round(analytics.metadataUsage / analytics.totalTags * 100)}%)`);
-      console.log(`Reference usage: ${analytics.referenceUsage} (${Math.round(analytics.referenceUsage / analytics.totalTags * 100)}%)`);
-      console.log(`Bun-Native usage: ${analytics.bunNativeUsage} (${Math.round(analytics.bunNativeUsage / analytics.totalTags * 100)}%)`);
+      console.info('📊 Tag Analytics:');
+      console.info('==================');
+      console.info(`Total tags: ${analytics.totalTags}`);
+      console.info(`Metadata usage: ${analytics.metadataUsage} (${Math.round(analytics.metadataUsage / analytics.totalTags * 100)}%)`);
+      console.info(`Reference usage: ${analytics.referenceUsage} (${Math.round(analytics.referenceUsage / analytics.totalTags * 100)}%)`);
+      console.info(`Bun-Native usage: ${analytics.bunNativeUsage} (${Math.round(analytics.bunNativeUsage / analytics.totalTags * 100)}%)`);
       
-      console.log('\n📁 Domain Distribution:');
+      console.info('\n📁 Domain Distribution:');
       Object.entries(analytics.domainDistribution).forEach(([domain, count]) => {
-        console.log(`  ${domain}: ${count}`);
+        console.info(`  ${domain}: ${count}`);
       });
       
-      console.log('\n🗂️  Type Distribution:');
+      console.info('\n🗂️  Type Distribution:');
       Object.entries(analytics.typeDistribution).forEach(([type, count]) => {
-        console.log(`  ${type}: ${count}`);
+        console.info(`  ${type}: ${count}`);
       });
       break;
 
     case 'registry':
       const registry = tagSystem.exportRegistry();
-      console.log('📋 Tag Registry:');
-      console.log('================');
-      console.log('\n🏷️  Examples:');
+      console.info('📋 Tag Registry:');
+      console.info('================');
+      console.info('\n🏷️  Examples:');
       registry.examples.forEach((example, index) => {
-        console.log(`${index + 1}. ${example}`);
+        console.info(`${index + 1}. ${example}`);
       });
       break;
 
     default:
-      console.log(`Unknown command: ${command}`);
+      console.info(`Unknown command: ${command}`);
       showHelp();
   }
 }
 
 function showHelp(): void {
-  console.log(`
+  console.info(`
 🏷️  Advanced Tag System CLI
 
 FORMAT: [DOMAIN][SCOPE][TYPE][META:{PROPERTY}][CLASS][#REF:*][BUN-NATIVE]

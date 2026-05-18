@@ -78,7 +78,7 @@ export class WASMMachine {
    */
   grow(delta: number): number {
     const previous = this.table.grow(delta);
-    console.log(`${ANSI.green}↗${ANSI.reset} Table grown: ${previous} → ${this.length}`);
+    console.info(`${ANSI.green}↗${ANSI.reset} Table grown: ${previous} → ${this.length}`);
     return previous;
   }
 
@@ -159,7 +159,7 @@ export class WASMMachine {
     const oldName = hook.name;
     hook.fn = newFn;
 
-    console.log(
+    console.info(
       `${ANSI.yellow}⚡ Hot-swap${ANSI.reset} [${index}]: ${oldName} → ${reason || 'updated'}`
     );
   }
@@ -192,7 +192,7 @@ export class WASMMachine {
     }
 
     this.initialized = true;
-    console.log(`${ANSI.green}✓${ANSI.reset} WASM loaded: ${wasmCount} functions → table`);
+    console.info(`${ANSI.green}✓${ANSI.reset} WASM loaded: ${wasmCount} functions → table`);
   }
 
   /**
@@ -282,24 +282,24 @@ export class WASMMachine {
    * Print table status
    */
   printStatus(): void {
-    console.log(`\n${ANSI.bold}WebAssembly.Table Status${ANSI.reset}`);
-    console.log(`  Table length: ${this.length}`);
-    console.log(`  Registry size: ${this.registry.size}`);
-    console.log(`  Initialized: ${this.initialized ? 'Yes' : 'No'}`);
+    console.info(`\n${ANSI.bold}WebAssembly.Table Status${ANSI.reset}`);
+    console.info(`  Table length: ${this.length}`);
+    console.info(`  Registry size: ${this.registry.size}`);
+    console.info(`  Initialized: ${this.initialized ? 'Yes' : 'No'}`);
 
     if (this.registry.size > 0) {
-      console.log(`\n${ANSI.dim}Registered Functions:${ANSI.reset}`);
+      console.info(`\n${ANSI.dim}Registered Functions:${ANSI.reset}`);
 
       for (const [index, entry] of this.registry) {
         const icon = entry.isWASM ? '⚡ WASM' : '📦 JS  ';
         const type = entry.isWASM ? ANSI.cyan : ANSI.yellow;
-        console.log(`  ${icon} [${index}] ${type}${entry.name}${ANSI.reset}`);
+        console.info(`  ${icon} [${index}] ${type}${entry.name}${ANSI.reset}`);
         if (entry.description) {
-          console.log(`      ${ANSI.dim}${entry.description}${ANSI.reset}`);
+          console.info(`      ${ANSI.dim}${entry.description}${ANSI.reset}`);
         }
       }
     }
-    console.log();
+    console.info();
   }
 }
 
@@ -366,31 +366,31 @@ export function createDefaultMachine(): WASMMachine {
  * Demo function showing WASM Table usage
  */
 export async function demoWASMTable(): Promise<void> {
-  console.log(`\n${ANSI.bold}${ANSI.blue}🏰 WebAssembly.Table Demo${ANSI.reset}\n`);
+  console.info(`\n${ANSI.bold}${ANSI.blue}🏰 WebAssembly.Table Demo${ANSI.reset}\n`);
 
   const machine = createDefaultMachine();
   machine.printStatus();
 
   // Demo computations
-  console.log(`${ANSI.bold}Compute Examples:${ANSI.reset}`);
+  console.info(`${ANSI.bold}Compute Examples:${ANSI.reset}`);
 
   // Risk score
   const riskInput = [7.5, 30, 1000];
   const risk = machine.execute(0, riskInput);
-  console.log(`  Risk Score: ${risk.toFixed(2)}`);
+  console.info(`  Risk Score: ${risk.toFixed(2)}`);
 
   // Entropy
   const entropyInput = [0.1, 0.2, 0.3, 0.4];
   const entropy = machine.execute(1, entropyInput);
-  console.log(`  Entropy: ${entropy.toFixed(4)} bits`);
+  console.info(`  Entropy: ${entropy.toFixed(4)} bits`);
 
   // Magnitude (3-4-5 triangle)
   const magInput = [3, 4];
   const magnitude = machine.execute(4, magInput);
-  console.log(`  Magnitude: ${magnitude.toFixed(2)}`);
+  console.info(`  Magnitude: ${magnitude.toFixed(2)}`);
 
   // Hot-swap demo
-  console.log(`\n${ANSI.bold}Hot-swap Demo:${ANSI.reset}`);
+  console.info(`\n${ANSI.bold}Hot-swap Demo:${ANSI.reset}`);
   machine.hotSwap(
     0,
     (input: number[]): number => {
@@ -401,29 +401,29 @@ export async function demoWASMTable(): Promise<void> {
   );
 
   const newRisk = machine.execute(0, riskInput);
-  console.log(`  New Risk Score: ${newRisk.toFixed(2)}`);
+  console.info(`  New Risk Score: ${newRisk.toFixed(2)}`);
 
   // Table growth demo
-  console.log(`\n${ANSI.bold}Table Growth:${ANSI.reset}`);
+  console.info(`\n${ANSI.bold}Table Growth:${ANSI.reset}`);
   machine.grow(8);
   machine.printStatus();
 
   // Test WASM loading (optional)
   try {
-    console.log(`${ANSI.bold}Loading Test WASM:${ANSI.reset}`);
+    console.info(`${ANSI.bold}Loading Test WASM:${ANSI.reset}`);
     await machine.loadTestWASM();
 
     // Try calling WASM function
     const wasmHook = machine.getHook(5);
     if (wasmHook?.isWASM) {
-      console.log(`  WASM function "${wasmHook.name}" loaded at index 5`);
+      console.info(`  WASM function "${wasmHook.name}" loaded at index 5`);
     }
   } catch (e) {
-    console.log(`  ${ANSI.dim}WASM test skipped: ${(e as Error).message}${ANSI.reset}`);
+    console.info(`  ${ANSI.dim}WASM test skipped: ${(e as Error).message}${ANSI.reset}`);
   }
 
-  console.log(`\n${ANSI.green}✓${ANSI.reset} Demo complete!`);
-  console.log(`\n${ANSI.dim}Table.length: ${machine.length}${ANSI.reset}\n`);
+  console.info(`\n${ANSI.green}✓${ANSI.reset} Demo complete!`);
+  console.info(`\n${ANSI.dim}Table.length: ${machine.length}${ANSI.reset}\n`);
 }
 
 // Run demo if executed directly

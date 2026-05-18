@@ -122,14 +122,14 @@ class EnhancedLogger {
 		// Format: [TIME] LEVEL MESSAGE
 		const formattedOutput = `${this.colorize(`[${time}]`, "dim")} ${coloredLevel} ${coloredMessage}`;
 
-		console.log(formattedOutput);
+		console.info(formattedOutput);
 
 		// Print metadata if present
 		if (Object.keys(metadata).length > 0) {
 			const metadataStr =
 				this.colorize("   Metadata: ", "dim") +
 				this.colorize(JSON.stringify(metadata, null, 2), "blue");
-			console.log(metadataStr);
+			console.info(metadataStr);
 		}
 	}
 
@@ -371,6 +371,6 @@ if (import.meta.main) {
 		metadata: { cpu: 85.3, threshold: 80 },
 	});
 
-	console.log("\n📋 Enhanced logging demo complete!");
-	console.log("📁 Check the JSONL log file for structured logs");
+	console.info("\n📋 Enhanced logging demo complete!");
+	console.info("📁 Check the JSONL log file for structured logs");
 }

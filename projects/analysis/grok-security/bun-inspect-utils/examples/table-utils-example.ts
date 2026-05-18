@@ -38,7 +38,7 @@ const medicalRecords = [
 ];
 
 // Example 1: Enforce table with minimum columns
-console.log("=== Example 1: Enforce Table ===");
+console.info("=== Example 1: Enforce Table ===");
 try {
   const columns = [
     "id",
@@ -49,53 +49,53 @@ try {
     "timestamp",
   ];
   const result = enforceTable(medicalRecords, columns);
-  console.log(result);
+  console.info(result);
 } catch (error) {
   console.error("Error:", (error as Error).message);
 }
 
 // Example 2: AI-suggest columns from data
-console.log("\n=== Example 2: AI Suggest Columns ===");
+console.info("\n=== Example 2: AI Suggest Columns ===");
 const suggestedColumns = aiSuggestColumns(medicalRecords[0]);
-console.log("Suggested columns:", suggestedColumns);
-console.log("Total suggested:", suggestedColumns.length);
+console.info("Suggested columns:", suggestedColumns);
+console.info("Total suggested:", suggestedColumns.length);
 
 // Example 3: Validate table data
-console.log("\n=== Example 3: Validate Table Data ===");
+console.info("\n=== Example 3: Validate Table Data ===");
 const isValid = validateTableData(medicalRecords);
-console.log("Is valid for table display:", isValid);
+console.info("Is valid for table display:", isValid);
 
 // Example 4: Compare table datasets
-console.log("\n=== Example 4: Compare Table Data ===");
+console.info("\n=== Example 4: Compare Table Data ===");
 const medicalRecords2 = JSON.parse(JSON.stringify(medicalRecords));
 const isEqual = compareTableData(medicalRecords, medicalRecords2);
-console.log("Datasets are equal:", isEqual);
+console.info("Datasets are equal:", isEqual);
 
 // Example 5: Calculate column widths
-console.log("\n=== Example 5: Calculate Column Widths ===");
+console.info("\n=== Example 5: Calculate Column Widths ===");
 const columns = ["id", "patientName", "email", "department"];
 const widths = calculateColumnWidths(medicalRecords, columns);
-console.log("Column widths:");
+console.info("Column widths:");
 for (const [col, width] of widths) {
-  console.log(`  ${col}: ${width} chars`);
+  console.info(`  ${col}: ${width} chars`);
 }
 
 // Example 6: Enforce with custom minimum columns
-console.log("\n=== Example 6: Custom Minimum Columns ===");
+console.info("\n=== Example 6: Custom Minimum Columns ===");
 try {
   const minimalColumns = ["id", "patientName", "status"];
   const result = enforceTable(medicalRecords, minimalColumns, 3);
-  console.log(result);
+  console.info(result);
 } catch (error) {
   console.error("Error:", (error as Error).message);
 }
 
 // Example 7: Insufficient columns error
-console.log("\n=== Example 7: Insufficient Columns Error ===");
+console.info("\n=== Example 7: Insufficient Columns Error ===");
 try {
   const tooFewColumns = ["id", "patientName"];
   const result = enforceTable(medicalRecords, tooFewColumns, 6);
-  console.log(result);
+  console.info(result);
 } catch (error) {
   console.error("Expected error:", (error as Error).message);
 }

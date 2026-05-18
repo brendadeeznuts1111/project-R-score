@@ -72,7 +72,7 @@ export class Fantasy42BettingEngine {
    * Initialize the betting engine
    */
   async initialize(): Promise<void> {
-    console.log('🔥 Initializing Fantasy42 Betting Engine...');
+    console.info('🔥 Initializing Fantasy42 Betting Engine...');
 
     // Validate configuration
     await this.validateConfiguration();
@@ -86,7 +86,7 @@ export class Fantasy42BettingEngine {
     // Initialize analytics
     await this.analyticsEngine.initialize();
 
-    console.log('✅ Fantasy42 Betting Engine initialized successfully');
+    console.info('✅ Fantasy42 Betting Engine initialized successfully');
   }
 
   /**
@@ -377,7 +377,7 @@ export class Fantasy42BettingEngine {
    * Emergency shutdown
    */
   async emergencyShutdown(reason?: string): Promise<void> {
-    console.log(`🚨 Emergency shutdown initiated: ${reason || 'No reason provided'}`);
+    console.info(`🚨 Emergency shutdown initiated: ${reason || 'No reason provided'}`);
 
     // Cancel all pending bets
     const pendingBets = Array.from(this.activeBets.values()).filter(
@@ -403,7 +403,7 @@ export class Fantasy42BettingEngine {
       },
     });
 
-    console.log('✅ Emergency shutdown completed');
+    console.info('✅ Emergency shutdown completed');
   }
 }
 

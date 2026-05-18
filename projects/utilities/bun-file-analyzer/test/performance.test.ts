@@ -15,7 +15,7 @@ beforeAll(() => {
 describe("performance benchmarks", () => {
   it("Bun.file().bytes() 10MB", async () => {
     if (!fixturesExist) {
-      console.log("fixtures/10mb.bin not found, skipping test");
+      console.info("fixtures/10mb.bin not found, skipping test");
       return;
     }
 
@@ -23,7 +23,7 @@ describe("performance benchmarks", () => {
     const file = Bun.file("./fixtures/10mb.bin");
     await file.bytes();
     const duration = performance.now() - start;
-    console.log(`10MB read: ${duration.toFixed(2)}ms`);
+    console.info(`10MB read: ${duration.toFixed(2)}ms`);
     expect(duration).toBeLessThan(100);
   });
 
@@ -32,7 +32,7 @@ describe("performance benchmarks", () => {
     const start = performance.now();
     detectFormatSIMD(bytes);
     const duration = performance.now() - start;
-    console.log(`10MB signature detect: ${duration.toFixed(2)}ms`);
+    console.info(`10MB signature detect: ${duration.toFixed(2)}ms`);
     expect(duration).toBeLessThan(50);
   });
 
@@ -41,11 +41,11 @@ describe("performance benchmarks", () => {
     try {
       const workerFile = Bun.file("./workers/analyzer.ts");
       if (!workerFile.exists()) {
-        console.log("workers/analyzer.ts not found, skipping worker test");
+        console.info("workers/analyzer.ts not found, skipping worker test");
         return;
       }
     } catch {
-      console.log("Worker file not available, skipping test");
+      console.info("Worker file not available, skipping test");
       return;
     }
 
@@ -55,7 +55,7 @@ describe("performance benchmarks", () => {
     await new Promise(resolve => worker.onmessage = resolve);
     worker.terminate();
     const duration = performance.now() - start;
-    console.log(`Worker roundtrip: ${duration.toFixed(2)}ms`);
+    console.info(`Worker roundtrip: ${duration.toFixed(2)}ms`);
     expect(duration).toBeLessThan(200);
   });
 });

@@ -291,7 +291,7 @@ export async function downloadPackageFromCloudflareR2(
   // Optional integrity validation
   if (options.validateIntegrity && options.expectedIntegrity) {
     // TODO: Implement integrity checksum validation
-    console.log('[R2] Integrity validation requested but not yet implemented');
+    console.info('[R2] Integrity validation requested but not yet implemented');
   }
   
   return packageData;

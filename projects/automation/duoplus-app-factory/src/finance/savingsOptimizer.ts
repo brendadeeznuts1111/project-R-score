@@ -48,7 +48,7 @@ export class SavingsOptimizer {
         const quest = YieldQuest.fromDB(questData as any);
         this.activeQuests.set(quest.id, quest);
       }
-      console.log(`🚀 Loaded ${this.activeQuests.size} active yield quests`);
+      console.info(`🚀 Loaded ${this.activeQuests.size} active yield quests`);
     } catch (error) {
       console.error("Error loading active quests:", error);
     }
@@ -71,7 +71,7 @@ export class SavingsOptimizer {
     await quest.start();
 
     this.activeQuests.set(quest.id, quest);
-    console.log(`🎯 Created yield quest: ${quest.id} for ${params.amount} sats`);
+    console.info(`🎯 Created yield quest: ${quest.id} for ${params.amount} sats`);
 
     return quest;
   }
@@ -91,7 +91,7 @@ export class SavingsOptimizer {
       riskLevel: 'low'
     });
 
-    console.log(`💰 Consolidated ${amount} sats into yield quest ${quest.id}`);
+    console.info(`💰 Consolidated ${amount} sats into yield quest ${quest.id}`);
     return quest;
   }
 
@@ -137,7 +137,7 @@ export class SavingsOptimizer {
     // Always route system consolidations to standard account for maximum yield
     await this.depositToStandardAccount(userId, amountUsd, "system_consolidation");
     
-    console.log(`💰 System consolidation: $${amountUsd} → standard account`);
+    console.info(`💰 System consolidation: $${amountUsd} → standard account`);
   }
 
   private async creditLightningWallet(userId: string, amountSats: number): Promise<void> {
@@ -150,7 +150,7 @@ export class SavingsOptimizer {
         [userId, amountSats, new Date().toISOString(), amountSats, new Date().toISOString()]
       );
       
-      console.log(`⚡ Credited microtransaction wallet: ${amountSats} sats ($${amountUsd})`);
+      console.info(`⚡ Credited microtransaction wallet: ${amountSats} sats ($${amountUsd})`);
     } catch (error) {
       console.error("Error crediting Lightning wallet:", error);
       throw error;
@@ -191,7 +191,7 @@ export class SavingsOptimizer {
       }
 
       const deposit = await response.json();
-      console.log(`💰 Deposited $${amountUsd} to Cash App Green: ${deposit.id}`);
+      console.info(`💰 Deposited $${amountUsd} to Cash App Green: ${deposit.id}`);
       
       await this.logYieldGeneration(userId, amountUsd, this.CASHAPP_GREEN_APY, questId);
     } catch (error) {
@@ -213,7 +213,7 @@ export class SavingsOptimizer {
         [userId, amountUsd, questId, new Date().toISOString()]
       );
       
-      console.log(`🏦 Deposited $${amountUsd} to standard account for user ${userId}`);
+      console.info(`🏦 Deposited $${amountUsd} to standard account for user ${userId}`);
       
       await this.logYieldGeneration(userId, amountUsd, this.STANDARD_ACCOUNT_APY, questId);
     } catch (error) {
@@ -344,7 +344,7 @@ export class SavingsOptimizer {
         [new Date(), userId]
       );
 
-      console.log(`🔄 Consolidated ${balance} sats → $${amountUsd} to Cash App Green`);
+      console.info(`🔄 Consolidated ${balance} sats → $${amountUsd} to Cash App Green`);
     } catch (error) {
       console.error("Microtransaction consolidation error:", error);
     }

@@ -6,7 +6,7 @@
 // Enhanced API quick action functions
 export async function fetchApiEndpoint(endpoint: string): Promise<void> {
   try {
-    console.log('Fetching API endpoint:', endpoint);
+    console.info('Fetching API endpoint:', endpoint);
     const response = await fetch(endpoint);
     const data = await response.json();
 
@@ -29,7 +29,7 @@ export async function fetchApiEndpoint(endpoint: string): Promise<void> {
 
 export async function clearCache(): Promise<void> {
   try {
-    console.log('Clearing API cache...');
+    console.info('Clearing API cache...');
     const response = await fetch('/api/cache/clear', {
       method: 'POST',
       headers: {
@@ -176,7 +176,7 @@ export async function configureWebhook(): Promise<void> {
  */
 export async function runSecurityHealthCheck(): Promise<void> {
   try {
-    console.log('🔍 Running security-enhanced health check...');
+    console.info('🔍 Running security-enhanced health check...');
 
     // Run standard health check
     await runHealthCheck();
@@ -300,7 +300,7 @@ export async function generateSecureApiKey(): Promise<void> {
       `🔐 Secure API Key Generated\n\n🔑 Key: ${secureKey}\n\n🛡️ Security Features:\n• Cryptographically secure generation\n• 1-year expiration\n• Rate limiting (1000/min)\n• Environment-specific\n\n⚠️ Important:\n• Store securely - never in code\n• Rotate regularly\n• Monitor usage\n• Enable 2FA if available\n\n✅ Key details logged for audit trail`
     );
 
-    console.log('🔐 Secure API Key Generated:', {
+    console.info('🔐 Secure API Key Generated:', {
       ...keyInfo,
       key: keyInfo.key.substring(0, 8) + '...', // Log partial key for audit
     });
@@ -316,7 +316,7 @@ export async function generateSecureApiKey(): Promise<void> {
  */
 export async function auditApiEndpoints(): Promise<void> {
   try {
-    console.log('🔍 Starting API endpoint security audit...');
+    console.info('🔍 Starting API endpoint security audit...');
 
     const endpoints = [
       '/api/v2/clients',
@@ -397,7 +397,7 @@ export async function auditApiEndpoints(): Promise<void> {
  */
 export async function secureClearCache(): Promise<void> {
   try {
-    console.log('🧹 Clearing cache with security validation...');
+    console.info('🧹 Clearing cache with security validation...');
 
     // First, validate user permissions
     const hasPermission = await validateCacheClearPermission();
@@ -410,7 +410,7 @@ export async function secureClearCache(): Promise<void> {
     await clearCache();
 
     // Log security event
-    console.log('🔐 Security Event: Cache cleared by authorized user', {
+    console.info('🔐 Security Event: Cache cleared by authorized user', {
       timestamp: new Date().toISOString(),
       user: 'current-user', // Would be from auth context
       ip: 'current-ip', // Would be from request context
@@ -440,7 +440,7 @@ async function performSecurityCleanup(): Promise<void> {
   // Clear any sensitive data from memory
   // Reset security tokens if needed
   // Clean up temporary files
-  console.log('🧹 Security cleanup completed');
+  console.info('🧹 Security cleanup completed');
 }
 
 // ============================================================================
@@ -475,7 +475,7 @@ export function handleQuickAction(action: string): void {
       auditApiEndpoints(); // New security action
       break;
     default:
-      console.log('Unknown action:', action);
+      console.info('Unknown action:', action);
   }
 }
 

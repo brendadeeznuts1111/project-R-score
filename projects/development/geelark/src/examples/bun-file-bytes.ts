@@ -12,7 +12,7 @@
  * Example 1: Basic file reading to Uint8Array
  */
 async function example1_BasicBytes() {
-  console.log('=== Example 1: Basic File Reading to Uint8Array ===\n');
+  console.info('=== Example 1: Basic File Reading to Uint8Array ===\n');
 
   const path = './package.json';
   const file = Bun.file(path);
@@ -20,19 +20,19 @@ async function example1_BasicBytes() {
   // Read file as Uint8Array
   const byteArray = await file.bytes();
 
-  console.log(`File: ${path}`);
-  console.log(`  Size: ${file.size} bytes`);
-  console.log(`  Uint8Array length: ${byteArray.length}`);
-  console.log(`  First byte: ${byteArray[0]}`);
-  console.log(`  Last byte: ${byteArray[byteArray.length - 1]}`);
-  console.log(`  Type: ${file.type}`);
+  console.info(`File: ${path}`);
+  console.info(`  Size: ${file.size} bytes`);
+  console.info(`  Uint8Array length: ${byteArray.length}`);
+  console.info(`  First byte: ${byteArray[0]}`);
+  console.info(`  Last byte: ${byteArray[byteArray.length - 1]}`);
+  console.info(`  Type: ${file.type}`);
 }
 
 /**
  * Example 2: Binary file operations
  */
 async function example2_BinaryOperations() {
-  console.log('\n=== Example 2: Binary File Operations ===\n');
+  console.info('\n=== Example 2: Binary File Operations ===\n');
 
   // Create a binary file
   const binaryPath = '/tmp/test-binary.bin';
@@ -45,55 +45,55 @@ async function example2_BinaryOperations() {
   const file = Bun.file(binaryPath);
   const byteArray = await file.bytes();
 
-  console.log('Original data:', Array.from(originalData).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' '));
-  console.log('Read data:', Array.from(byteArray).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' '));
-  console.log(`  Arrays match: ${originalData.length === byteArray.length && originalData.every((b, i) => b === byteArray[i])}`);
+  console.info('Original data:', Array.from(originalData).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' '));
+  console.info('Read data:', Array.from(byteArray).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' '));
+  console.info(`  Arrays match: ${originalData.length === byteArray.length && originalData.every((b, i) => b === byteArray[i])}`);
 
   // Convert to string
   const text = new TextDecoder().decode(byteArray);
-  console.log(`  As text: "${text}"`);
+  console.info(`  As text: "${text}"`);
 }
 
 /**
  * Example 3: Comparing bytes() vs arrayBuffer() vs text()
  */
 async function example3_Comparison() {
-  console.log('\n=== Example 3: bytes() vs arrayBuffer() vs text() ===\n');
+  console.info('\n=== Example 3: bytes() vs arrayBuffer() vs text() ===\n');
 
   const path = './package.json';
   const file = Bun.file(path);
 
   // Method 1: bytes() - Returns Uint8Array directly
   const bytes = await file.bytes();
-  console.log('1. file.bytes():');
-  console.log(`   Type: ${bytes.constructor.name}`);
-  console.log(`   Length: ${bytes.length}`);
-  console.log(`   First 10 bytes: ${Array.from(bytes.slice(0, 10)).join(', ')}`);
+  console.info('1. file.bytes():');
+  console.info(`   Type: ${bytes.constructor.name}`);
+  console.info(`   Length: ${bytes.length}`);
+  console.info(`   First 10 bytes: ${Array.from(bytes.slice(0, 10)).join(', ')}`);
 
   // Method 2: arrayBuffer() - Returns ArrayBuffer, need to wrap in Uint8Array
   const arrayBuffer = await file.arrayBuffer();
   const bytesFromBuffer = new Uint8Array(arrayBuffer);
-  console.log('\n2. file.arrayBuffer():');
-  console.log(`   Type: ${arrayBuffer.constructor.name}`);
-  console.log(`   Length: ${arrayBuffer.byteLength}`);
-  console.log(`   Wrapped as Uint8Array: ${bytesFromBuffer.length}`);
-  console.log(`   Arrays equal: ${bytes.length === bytesFromBuffer.length && bytes.every((b, i) => b === bytesFromBuffer[i])}`);
+  console.info('\n2. file.arrayBuffer():');
+  console.info(`   Type: ${arrayBuffer.constructor.name}`);
+  console.info(`   Length: ${arrayBuffer.byteLength}`);
+  console.info(`   Wrapped as Uint8Array: ${bytesFromBuffer.length}`);
+  console.info(`   Arrays equal: ${bytes.length === bytesFromBuffer.length && bytes.every((b, i) => b === bytesFromBuffer[i])}`);
 
   // Method 3: text() - Returns string
   const text = await file.text();
   const bytesFromText = new TextEncoder().encode(text);
-  console.log('\n3. file.text():');
-  console.log(`   Type: ${typeof text}`);
-  console.log(`   Length: ${text.length} characters`);
-  console.log(`   Encoded to Uint8Array: ${bytesFromText.length}`);
-  console.log(`   Note: bytes() is more efficient for binary data`);
+  console.info('\n3. file.text():');
+  console.info(`   Type: ${typeof text}`);
+  console.info(`   Length: ${text.length} characters`);
+  console.info(`   Encoded to Uint8Array: ${bytesFromText.length}`);
+  console.info(`   Note: bytes() is more efficient for binary data`);
 }
 
 /**
  * Example 4: Processing binary data
  */
 async function example4_BinaryProcessing() {
-  console.log('\n=== Example 4: Binary Data Processing ===\n');
+  console.info('\n=== Example 4: Binary Data Processing ===\n');
 
   // Create a file with mixed binary data
   const dataPath = '/tmp/mixed-data.bin';
@@ -110,26 +110,26 @@ async function example4_BinaryProcessing() {
   const file = Bun.file(dataPath);
   const bytes = await file.bytes();
 
-  console.log('Binary data analysis:');
-  console.log(`  Total bytes: ${bytes.length}`);
-  console.log(`  Null bytes: ${bytes.filter(b => b === 0).length}`);
-  console.log(`  Max value: ${Math.max(...bytes)}`);
-  console.log(`  Min value: ${Math.min(...bytes)}`);
-  console.log(`  Sum: ${bytes.reduce((a, b) => a + b, 0)}`);
+  console.info('Binary data analysis:');
+  console.info(`  Total bytes: ${bytes.length}`);
+  console.info(`  Null bytes: ${bytes.filter(b => b === 0).length}`);
+  console.info(`  Max value: ${Math.max(...bytes)}`);
+  console.info(`  Min value: ${Math.min(...bytes)}`);
+  console.info(`  Sum: ${bytes.reduce((a, b) => a + b, 0)}`);
 
   // Find patterns
   const helloPattern = new Uint8Array([0x48, 0x65, 0x6C, 0x6C, 0x6F]);
   const found = bytes.findIndex((_, i) => {
     return helloPattern.every((b, j) => bytes[i + j] === b);
   });
-  console.log(`  "Hello" pattern found at index: ${found >= 0 ? found : 'not found'}`);
+  console.info(`  "Hello" pattern found at index: ${found >= 0 ? found : 'not found'}`);
 }
 
 /**
  * Example 5: Large file chunking
  */
 async function example5_LargeFileChunking() {
-  console.log('\n=== Example 5: Large File Chunking ===\n');
+  console.info('\n=== Example 5: Large File Chunking ===\n');
 
   // Create a large file
   const largePath = '/tmp/large-file.bin';
@@ -142,7 +142,7 @@ async function example5_LargeFileChunking() {
   const file = Bun.file(largePath);
   const bytes = await file.bytes();
 
-  console.log(`File size: ${bytes.length} bytes (${(bytes.length / 1024).toFixed(2)} KB)`);
+  console.info(`File size: ${bytes.length} bytes (${(bytes.length / 1024).toFixed(2)} KB)`);
 
   // Process in chunks
   const chunkSize = 1024; // 1KB chunks
@@ -152,19 +152,19 @@ async function example5_LargeFileChunking() {
     chunks.push(bytes.slice(i, i + chunkSize));
   }
 
-  console.log(`  Chunks: ${chunks.length}`);
-  console.log(`  Last chunk size: ${chunks[chunks.length - 1].length} bytes`);
+  console.info(`  Chunks: ${chunks.length}`);
+  console.info(`  Last chunk size: ${chunks[chunks.length - 1].length} bytes`);
 
   // Verify all chunks
   const allSame = chunks.every(chunk => chunk.every(b => b === 0x42));
-  console.log(`  All chunks contain 0x42: ${allSame}`);
+  console.info(`  All chunks contain 0x42: ${allSame}`);
 }
 
 /**
  * Example 6: File comparison using bytes()
  */
 async function example6_FileComparison() {
-  console.log('\n=== Example 6: File Comparison ===\n');
+  console.info('\n=== Example 6: File Comparison ===\n');
 
   const path1 = './package.json';
   const path2 = './package.json'; // Same file for demo
@@ -175,19 +175,19 @@ async function example6_FileComparison() {
   const bytes1 = await file1.bytes();
   const bytes2 = await file2.bytes();
 
-  console.log(`Comparing: ${path1} vs ${path2}`);
-  console.log(`  Same length: ${bytes1.length === bytes2.length}`);
+  console.info(`Comparing: ${path1} vs ${path2}`);
+  console.info(`  Same length: ${bytes1.length === bytes2.length}`);
 
   if (bytes1.length === bytes2.length) {
     const areEqual = bytes1.every((b, i) => b === bytes2[i]);
-    console.log(`  Files are identical: ${areEqual}`);
+    console.info(`  Files are identical: ${areEqual}`);
 
     if (!areEqual) {
       const firstDiff = bytes1.findIndex((b, i) => b !== bytes2[i]);
-      console.log(`  First difference at byte ${firstDiff}`);
+      console.info(`  First difference at byte ${firstDiff}`);
     }
   } else {
-    console.log(`  Files have different sizes`);
+    console.info(`  Files have different sizes`);
   }
 }
 
@@ -195,40 +195,40 @@ async function example6_FileComparison() {
  * Example 7: Converting between formats
  */
 async function example7_FormatConversion() {
-  console.log('\n=== Example 7: Format Conversion ===\n');
+  console.info('\n=== Example 7: Format Conversion ===\n');
 
   const path = './package.json';
   const file = Bun.file(path);
   const bytes = await file.bytes();
 
-  console.log('Converting Uint8Array to different formats:');
+  console.info('Converting Uint8Array to different formats:');
 
   // To ArrayBuffer
   const arrayBuffer = bytes.buffer;
-  console.log(`  1. ArrayBuffer: ${arrayBuffer.byteLength} bytes`);
+  console.info(`  1. ArrayBuffer: ${arrayBuffer.byteLength} bytes`);
 
   // To Buffer (Node.js compatible)
   const buffer = Buffer.from(bytes);
-  console.log(`  2. Buffer: ${buffer.length} bytes`);
+  console.info(`  2. Buffer: ${buffer.length} bytes`);
 
   // To string
   const text = new TextDecoder().decode(bytes);
-  console.log(`  3. String: ${text.length} characters`);
+  console.info(`  3. String: ${text.length} characters`);
 
   // To hex string
   const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
-  console.log(`  4. Hex string: ${hex.substring(0, 40)}... (${hex.length} chars)`);
+  console.info(`  4. Hex string: ${hex.substring(0, 40)}... (${hex.length} chars)`);
 
   // To base64
   const base64 = Buffer.from(bytes).toString('base64');
-  console.log(`  5. Base64: ${base64.substring(0, 40)}... (${base64.length} chars)`);
+  console.info(`  5. Base64: ${base64.substring(0, 40)}... (${base64.length} chars)`);
 }
 
 /**
  * Example 8: Memory-efficient processing
  */
 async function example8_MemoryEfficient() {
-  console.log('\n=== Example 8: Memory-Efficient Processing ===\n');
+  console.info('\n=== Example 8: Memory-Efficient Processing ===\n');
 
   const path = './package.json';
   const file = Bun.file(path);
@@ -237,16 +237,16 @@ async function example8_MemoryEfficient() {
   // For very large files, consider using stream() instead
   const bytes = await file.bytes();
 
-  console.log('Memory usage:');
-  console.log(`  File size: ${file.size} bytes`);
-  console.log(`  Uint8Array size: ${bytes.length} bytes`);
-  console.log(`  Memory overhead: ~${bytes.length * 1} bytes (1 byte per element)`);
+  console.info('Memory usage:');
+  console.info(`  File size: ${file.size} bytes`);
+  console.info(`  Uint8Array size: ${bytes.length} bytes`);
+  console.info(`  Memory overhead: ~${bytes.length * 1} bytes (1 byte per element)`);
 
   // For large files, streaming is more memory-efficient
   if (file.size > 1024 * 1024) { // > 1MB
-    console.log('\n  ⚠️  Large file detected. Consider using file.stream() for memory efficiency.');
+    console.info('\n  ⚠️  Large file detected. Consider using file.stream() for memory efficiency.');
   } else {
-    console.log('\n  ✅ File size is manageable for bytes() method.');
+    console.info('\n  ✅ File size is manageable for bytes() method.');
   }
 }
 
@@ -262,13 +262,13 @@ async function main() {
     await example7_FormatConversion();
     await example8_MemoryEfficient();
 
-    console.log('\n✅ All examples completed!');
-    console.log('\n💡 Key Points:');
-    console.log('  • file.bytes() returns Uint8Array directly');
-    console.log('  • More efficient than arrayBuffer() for binary operations');
-    console.log('  • Use for small to medium files (< 100MB)');
-    console.log('  • For large files, consider file.stream() instead');
-    console.log('  • Uint8Array provides direct byte access and manipulation');
+    console.info('\n✅ All examples completed!');
+    console.info('\n💡 Key Points:');
+    console.info('  • file.bytes() returns Uint8Array directly');
+    console.info('  • More efficient than arrayBuffer() for binary operations');
+    console.info('  • Use for small to medium files (< 100MB)');
+    console.info('  • For large files, consider file.stream() instead');
+    console.info('  • Uint8Array provides direct byte access and manipulation');
   } catch (error) {
     console.error('❌ Error:', error instanceof Error ? error.message : String(error));
     process.exit(1);

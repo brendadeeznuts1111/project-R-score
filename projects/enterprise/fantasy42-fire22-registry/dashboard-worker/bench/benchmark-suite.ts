@@ -51,9 +51,9 @@ export class BenchmarkSuite {
   ): Promise<BenchmarkResult> {
     const { iterations = 10000, warmup = 100, timeout = 30000, async = false } = options;
 
-    console.log(`\n📊 Benchmarking: ${name}`);
-    console.log(`   Iterations: ${iterations.toLocaleString()}`);
-    console.log(`   Warmup: ${warmup.toLocaleString()}`);
+    console.info(`\n📊 Benchmarking: ${name}`);
+    console.info(`   Iterations: ${iterations.toLocaleString()}`);
+    console.info(`   Warmup: ${warmup.toLocaleString()}`);
 
     // Warmup phase
     if (warmup > 0) {
@@ -65,7 +65,7 @@ export class BenchmarkSuite {
           fn();
         }
       }
-      console.log(' ✅');
+      console.info(' ✅');
     }
 
     // Collect timing samples
@@ -93,7 +93,7 @@ export class BenchmarkSuite {
     }
 
     const endTotal = Bun.nanoseconds();
-    console.log(' ✅');
+    console.info(' ✅');
 
     // Calculate statistics
     const totalTime = endTotal - startTotal;
@@ -129,8 +129,8 @@ export class BenchmarkSuite {
     implementations: Record<string, () => void | Promise<void>>,
     options: BenchmarkOptions = {}
   ): Promise<void> {
-    console.log(`\n⚔️  Comparison: ${name}`);
-    console.log('='.repeat(50));
+    console.info(`\n⚔️  Comparison: ${name}`);
+    console.info('='.repeat(50));
 
     const results: BenchmarkResult[] = [];
 
@@ -144,11 +144,11 @@ export class BenchmarkSuite {
       prev.avgTime < current.avgTime ? prev : current
     );
 
-    console.log('\n📊 Comparison Results:');
+    console.info('\n📊 Comparison Results:');
     results.forEach(result => {
       const ratio = result.avgTime / fastest.avgTime;
       const status = result === fastest ? '🏆 FASTEST' : `${ratio.toFixed(2)}x slower`;
-      console.log(`   ${result.name}: ${status}`);
+      console.info(`   ${result.name}: ${status}`);
     });
   }
 
@@ -173,8 +173,8 @@ export class BenchmarkSuite {
    * Benchmark file operations
    */
   async benchmarkFileOps(): Promise<void> {
-    console.log('\n📁 File Operations Benchmarks');
-    console.log('='.repeat(50));
+    console.info('\n📁 File Operations Benchmarks');
+    console.info('='.repeat(50));
 
     const testFile = '/tmp/benchmark-test.txt';
     const testData = 'A'.repeat(1024 * 10); // 10KB
@@ -217,8 +217,8 @@ export class BenchmarkSuite {
    * Benchmark HTTP operations
    */
   async benchmarkHttp(): Promise<void> {
-    console.log('\n🌐 HTTP Operations Benchmarks');
-    console.log('='.repeat(50));
+    console.info('\n🌐 HTTP Operations Benchmarks');
+    console.info('='.repeat(50));
 
     // Start a test server
     const server = Bun.serve({
@@ -256,8 +256,8 @@ export class BenchmarkSuite {
    * Benchmark JSON operations
    */
   async benchmarkJson(): Promise<void> {
-    console.log('\n📋 JSON Operations Benchmarks');
-    console.log('='.repeat(50));
+    console.info('\n📋 JSON Operations Benchmarks');
+    console.info('='.repeat(50));
 
     const smallObject = { id: 1, name: 'test', active: true };
     const largeObject = {
@@ -297,8 +297,8 @@ export class BenchmarkSuite {
    * Benchmark crypto operations
    */
   async benchmarkCrypto(): Promise<void> {
-    console.log('\n🔐 Crypto Operations Benchmarks');
-    console.log('='.repeat(50));
+    console.info('\n🔐 Crypto Operations Benchmarks');
+    console.info('='.repeat(50));
 
     const data = 'The quick brown fox jumps over the lazy dog';
     const encoder = new TextEncoder();
@@ -335,8 +335,8 @@ export class BenchmarkSuite {
    * Benchmark array operations
    */
   async benchmarkArrays(): Promise<void> {
-    console.log('\n📊 Array Operations Benchmarks');
-    console.log('='.repeat(50));
+    console.info('\n📊 Array Operations Benchmarks');
+    console.info('='.repeat(50));
 
     const smallArray = Array(100)
       .fill(null)
@@ -377,16 +377,16 @@ export class BenchmarkSuite {
    * Print formatted result
    */
   private printResult(result: BenchmarkResult): void {
-    console.log(`\n   ✅ Results for: ${result.name}`);
-    console.log(`      Average: ${this.formatNanoseconds(result.avgTime)}`);
-    console.log(`      Min: ${this.formatNanoseconds(Number(result.minTime))}`);
-    console.log(`      Max: ${this.formatNanoseconds(Number(result.maxTime))}`);
-    console.log(`      Ops/sec: ${result.opsPerSecond.toLocaleString()}`);
-    console.log(`      Percentiles:`);
-    console.log(`        P50: ${this.formatNanoseconds(result.percentiles.p50)}`);
-    console.log(`        P90: ${this.formatNanoseconds(result.percentiles.p90)}`);
-    console.log(`        P95: ${this.formatNanoseconds(result.percentiles.p95)}`);
-    console.log(`        P99: ${this.formatNanoseconds(result.percentiles.p99)}`);
+    console.info(`\n   ✅ Results for: ${result.name}`);
+    console.info(`      Average: ${this.formatNanoseconds(result.avgTime)}`);
+    console.info(`      Min: ${this.formatNanoseconds(Number(result.minTime))}`);
+    console.info(`      Max: ${this.formatNanoseconds(Number(result.maxTime))}`);
+    console.info(`      Ops/sec: ${result.opsPerSecond.toLocaleString()}`);
+    console.info(`      Percentiles:`);
+    console.info(`        P50: ${this.formatNanoseconds(result.percentiles.p50)}`);
+    console.info(`        P90: ${this.formatNanoseconds(result.percentiles.p90)}`);
+    console.info(`        P95: ${this.formatNanoseconds(result.percentiles.p95)}`);
+    console.info(`        P99: ${this.formatNanoseconds(result.percentiles.p99)}`);
   }
 
   /**
@@ -459,9 +459,9 @@ export class BenchmarkSuite {
    * Run all benchmarks
    */
   async runAll(): Promise<void> {
-    console.log(`🚀 ${this.suiteName}`);
-    console.log('='.repeat(50));
-    console.log(`Started at: ${new Date().toISOString()}`);
+    console.info(`🚀 ${this.suiteName}`);
+    console.info('='.repeat(50));
+    console.info(`Started at: ${new Date().toISOString()}`);
 
     await this.benchmarkFileOps();
     await this.benchmarkJson();
@@ -469,9 +469,9 @@ export class BenchmarkSuite {
     await this.benchmarkArrays();
     await this.benchmarkHttp();
 
-    console.log('\n' + '='.repeat(50));
-    console.log('✅ All benchmarks completed!');
-    console.log(`Total benchmarks run: ${this.results.length}`);
+    console.info('\n' + '='.repeat(50));
+    console.info('✅ All benchmarks completed!');
+    console.info(`Total benchmarks run: ${this.results.length}`);
   }
 }
 
@@ -488,9 +488,9 @@ if (import.meta.main) {
   const json = suite.exportJson();
   await Bun.write('benchmark-results.json', json);
 
-  console.log('\n📊 Reports saved:');
-  console.log('   - benchmark-report.md');
-  console.log('   - benchmark-results.json');
+  console.info('\n📊 Reports saved:');
+  console.info('   - benchmark-report.md');
+  console.info('   - benchmark-results.json');
 }
 
 export default BenchmarkSuite;

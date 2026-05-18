@@ -29,7 +29,7 @@ const dashboards = [
 await Bun.$`mkdir -p vendor dist`;
 
 for (const [name, url] of Object.entries(assets)) {
-  console.log(`Bundling ${name}...`);
+  console.info(`Bundling ${name}...`);
   const fallbackPath = localFallbacks[url];
   let content: string | null = null;
 

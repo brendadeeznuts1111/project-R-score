@@ -6,10 +6,10 @@ describe("🚀 Bun Runtime - CLI Examples & Usage", () => {
   test("✅ Basic file execution", async () => {
     // Create test files for different extensions
     const testFiles = {
-      "index.js": "console.log('Hello from JS');",
-      "index.ts": "console.log('Hello from TS');",
-      "index.jsx": "console.log('Hello from JSX');",
-      "index.tsx": "console.log('Hello from TSX');",
+      "index.js": "console.info('Hello from JS');",
+      "index.ts": "console.info('Hello from TS');",
+      "index.jsx": "console.info('Hello from JSX');",
+      "index.tsx": "console.info('Hello from TSX');",
     };
 
     for (const [filename, content] of Object.entries(testFiles)) {
@@ -62,7 +62,7 @@ describe("🚀 Bun Runtime - CLI Examples & Usage", () => {
   test("✅ --bun flag with Node.js scripts", async () => {
     // Create a Node.js script with shebang
     const nodeScript = `#!/usr/bin/env node
-console.log('Running with Node.js shebang');
+console.info('Running with Node.js shebang');
 process.exit(0);`;
 
     const testFile = "/tmp/node-script.js";
@@ -81,8 +81,8 @@ process.exit(0);`;
     // Create a script with nested objects
     const deepScript = `
 const nested = { a: { b: { c: { d: "deep" } } } };
-console.log('Default depth:', nested);
-console.log('Should show full object with depth 5:', nested);
+console.info('Default depth:', nested);
+console.info('Should show full object with depth 5:', nested);
 `;
 
     const testFile = "/tmp/console-depth-test.js";
@@ -111,7 +111,7 @@ console.log('Should show full object with depth 5:', nested);
   test("✅ Pipe from stdin", async () => {
     // Test piping code to bun
     const result = await Bun.spawn(
-      ["sh", "-c", "echo \"console.log('Hello from stdin')\" | bun run -"],
+      ["sh", "-c", "echo \"console.info('Hello from stdin')\" | bun run -"],
       {
         stdout: "pipe",
         stderr: "pipe",
@@ -123,7 +123,7 @@ console.log('Should show full object with depth 5:', nested);
 
   test("✅ --smol mode", async () => {
     // Create a lightweight script
-    const smolScript = "console.log('Running in smol mode');";
+    const smolScript = "console.info('Running in smol mode');";
     const testFile = "/tmp/smol-test.js";
     await Bun.write(testFile, smolScript);
 
@@ -153,7 +153,7 @@ console.log('Should show full object with depth 5:', nested);
     );
 
     // 2. Create source file
-    await Bun.write(`${tempDir}/test.js`, "console.log('From source file');");
+    await Bun.write(`${tempDir}/test.js`, "console.info('From source file');");
 
     // 3. Test package.json script takes precedence
     const scriptResult = await Bun.spawn(["bun", "run", "test"], {
@@ -178,12 +178,12 @@ console.log('Should show full object with depth 5:', nested);
     // Test TypeScript file
     const tsScript = `
 const message: string = "Hello from TypeScript";
-console.log(message);
+console.info(message);
 `;
 
     const tsxScript = `
 const App = () => <div>Hello TSX</div>;
-console.log('TSX component defined');
+console.info('TSX component defined');
 `;
 
     await Bun.write("/tmp/test-ts.ts", tsScript);
@@ -220,8 +220,8 @@ console.log('TSX component defined');
   test("✅ Environment variable handling", async () => {
     // Create script that uses environment variables
     const envScript = `
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('Custom var:', process.env.CUSTOM_VAR);
+console.info('NODE_ENV:', process.env.NODE_ENV);
+console.info('Custom var:', process.env.CUSTOM_VAR);
 `;
 
     const testFile = "/tmp/env-test.js";

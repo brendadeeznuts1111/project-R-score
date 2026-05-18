@@ -85,7 +85,7 @@ export class CPUProfilerEngine {
       console.warn(`Failed to start profiling: ${error}`);
     }
 
-    console.log(`[PROFILER] Started CPU profile: ${sessionId}`);
+    console.info(`[PROFILER] Started CPU profile: ${sessionId}`);
     return sessionId;
   }
 
@@ -127,7 +127,7 @@ export class CPUProfilerEngine {
       // Analyze for Kalman-specific hotspots
       this.analyzeKalmanHotspots(profilePath);
 
-      console.log(
+      console.info(
         `[PROFILER] Stopped profile: ${profileId} (${duration.toFixed(2)}ms)`
       );
       return profilePath;
@@ -238,14 +238,14 @@ export class CPUProfilerEngine {
         );
         const avgHitCount = totalHitCount / kalmanFunctions.length;
 
-        console.log(
+        console.info(
           `[PROFILER] Found ${kalmanFunctions.length} Kalman hotspots (avg hits: ${avgHitCount.toFixed(0)})`
         );
         this.metrics.kalmanOptimizations++;
 
         // Log optimization suggestions
         if (avgHitCount > 1000) {
-          console.log(
+          console.info(
             `[PROFILER] High-frequency Kalman function detected - consider optimization`
           );
         }
@@ -282,11 +282,11 @@ export class CPUProfilerEngine {
   // CLI helper for CPU profiling
   static cpuProfCLIHelper(): void {
     if (!process.env.FEATURE_CPU_PROFILING === "1") {
-      console.log("CPU profiling is disabled");
+      console.info("CPU profiling is disabled");
       return;
     }
 
-    console.log(`
+    console.info(`
 CPU Profiler CLI Helper
 =====================
 
@@ -304,7 +304,7 @@ Usage:
 
   // Stop profiling
   const profilePath = profiler.stop(sessionId);
-  console.log(\`Profile saved to: \${profilePath}\`);
+  console.info(\`Profile saved to: \${profilePath}\`);
 
 Current Metrics:
 - Total Profiles: ${this.metrics.totalProfiles}
@@ -335,7 +335,7 @@ export const { start, stop, getMetrics, resetMetrics, cpuProfCLIHelper } =
           kalmanOptimizations: 0,
         }),
         resetMetrics: () => {},
-        cpuProfCLIHelper: () => console.log("CPU profiling disabled"),
+        cpuProfCLIHelper: () => console.info("CPU profiling disabled"),
       };
 
 export default CPUProfilerEngine;

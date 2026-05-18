@@ -301,7 +301,7 @@ export class Fire22TelegramIntegration {
         await this.telegramBot.handleMessage(update.message);
       }
 
-      console.log(`📨 Webhook update processed: ${update.update_id || 'unknown'}`);
+      console.info(`📨 Webhook update processed: ${update.update_id || 'unknown'}`);
 
     } catch (error) {
       console.error('❌ Error processing webhook update:', error);
@@ -323,7 +323,7 @@ export class Fire22TelegramIntegration {
       }
 
       this.systemMetrics.totalMessages++;
-      console.log(`✅ Notification sent to user ${userId}`);
+      console.info(`✅ Notification sent to user ${userId}`);
 
     } catch (error) {
       console.error('❌ Error sending notification:', error);
@@ -351,7 +351,7 @@ export class Fire22TelegramIntegration {
   private logStartupSummary(): void {
     const configSummary = this.environment.getConfigSummary();
 
-    console.log(`
+    console.info(`
 Fire22 Telegram Integration Started Successfully!
 ════════════════════════════════════════════════════
 

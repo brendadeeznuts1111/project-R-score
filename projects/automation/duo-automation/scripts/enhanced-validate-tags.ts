@@ -79,14 +79,14 @@ class EnhancedTagValidator {
    * Validate all artifacts with enhanced registry support
    */
   async validate(options: ValidationOptions = {}): Promise<ValidationResult[]> {
-    console.log('🔍 Running enhanced tag validation with registry...');
+    console.info('🔍 Running enhanced tag validation with registry...');
     const startTime = Date.now();
 
     await this.scanArtifacts('./');
     this.analyzeResults(options);
 
     const elapsed = Date.now() - startTime;
-    console.log(`✅ Validated ${this.results.length} artifacts in ${elapsed}ms`);
+    console.info(`✅ Validated ${this.results.length} artifacts in ${elapsed}ms`);
 
     this.outputResults(options.output || 'table');
 
@@ -204,7 +204,7 @@ class EnhancedTagValidator {
     try {
       const registryContent = readFileSync('./docs/TAG_REGISTRY.json', 'utf-8');
       this.registry = JSON.parse(registryContent);
-      console.log('✅ Tag registry loaded successfully');
+      console.info('✅ Tag registry loaded successfully');
     } catch (error) {
       console.warn('⚠️ Could not load tag registry, using defaults');
       this.registry = this.getDefaultRegistry();
@@ -474,14 +474,14 @@ class EnhancedTagValidator {
   private analyzeResults(options: ValidationOptions): void {
     const stats = this.getEnhancedStats();
     
-    console.log(`\n📊 Enhanced Validation Summary:`);
-    console.log(`  Total Artifacts: ${stats.total}`);
-    console.log(`  Valid: ${stats.valid} (${stats.complianceRate}%)`);
-    console.log(`  Invalid: ${stats.invalid}`);
-    console.log(`  Errors: ${stats.errorCount}`);
-    console.log(`  Warnings: ${stats.warningCount}`);
-    console.log(`  Suggestions: ${stats.suggestionCount}`);
-    console.log(`  Relationship Score: ${stats.relationshipScore}%`);
+    console.info(`\n📊 Enhanced Validation Summary:`);
+    console.info(`  Total Artifacts: ${stats.total}`);
+    console.info(`  Valid: ${stats.valid} (${stats.complianceRate}%)`);
+    console.info(`  Invalid: ${stats.invalid}`);
+    console.info(`  Errors: ${stats.errorCount}`);
+    console.info(`  Warnings: ${stats.warningCount}`);
+    console.info(`  Suggestions: ${stats.suggestionCount}`);
+    console.info(`  Relationship Score: ${stats.relationshipScore}%`);
   }
 
   /**
@@ -490,7 +490,7 @@ class EnhancedTagValidator {
   private outputResults(format: string): void {
     switch (format) {
       case 'json':
-        console.log(JSON.stringify(this.results, null, 2));
+        console.info(JSON.stringify(this.results, null, 2));
         break;
       case 'summary':
         this.outputSummary();
@@ -509,35 +509,35 @@ class EnhancedTagValidator {
     const invalidResults = this.results.filter(r => !r.valid);
     
     if (invalidResults.length === 0) {
-      console.log('\n✅ All artifacts passed validation!');
+      console.info('\n✅ All artifacts passed validation!');
       return;
     }
 
-    console.log('\n❌ Validation Issues Found:');
-    console.log('─'.repeat(120));
+    console.info('\n❌ Validation Issues Found:');
+    console.info('─'.repeat(120));
 
     invalidResults.forEach((result, index) => {
-      console.log(`\n${index + 1}. ${result.path}`);
+      console.info(`\n${index + 1}. ${result.path}`);
       
       if (result.errors.length > 0) {
-        console.log('   Errors:');
-        result.errors.forEach(error => console.log(`     ❌ ${error}`));
+        console.info('   Errors:');
+        result.errors.forEach(error => console.info(`     ❌ ${error}`));
       }
       
       if (result.warnings.length > 0) {
-        console.log('   Warnings:');
-        result.warnings.forEach(warning => console.log(`     ⚠️  ${warning}`));
+        console.info('   Warnings:');
+        result.warnings.forEach(warning => console.info(`     ⚠️  ${warning}`));
       }
       
       if (result.suggestions.length > 0) {
-        console.log('   Suggestions:');
-        result.suggestions.slice(0, 3).forEach(suggestion => console.log(`     💡 ${suggestion}`));
+        console.info('   Suggestions:');
+        result.suggestions.slice(0, 3).forEach(suggestion => console.info(`     💡 ${suggestion}`));
       }
       
-      console.log(`   Tags: ${result.tags.join(', ') || 'None'}`);
+      console.info(`   Tags: ${result.tags.join(', ') || 'None'}`);
     });
 
-    console.log(`\nFound ${invalidResults.length} artifacts with issues`);
+    console.info(`\nFound ${invalidResults.length} artifacts with issues`);
   }
 
   /**
@@ -546,18 +546,18 @@ class EnhancedTagValidator {
   private outputSummary(): void {
     const stats = this.getEnhancedStats();
     
-    console.log('\n📊 Enhanced Validation Summary:');
-    console.log(`  Total artifacts: ${stats.total}`);
-    console.log(`  Valid: ${stats.valid} (${stats.complianceRate}%)`);
-    console.log(`  Invalid: ${stats.invalid}`);
-    console.log(`  Errors: ${stats.errorCount}`);
-    console.log(`  Warnings: ${stats.warningCount}`);
-    console.log(`  Suggestions: ${stats.suggestionCount}`);
-    console.log(`  Relationship Score: ${stats.relationshipScore}%`);
+    console.info('\n📊 Enhanced Validation Summary:');
+    console.info(`  Total artifacts: ${stats.total}`);
+    console.info(`  Valid: ${stats.valid} (${stats.complianceRate}%)`);
+    console.info(`  Invalid: ${stats.invalid}`);
+    console.info(`  Errors: ${stats.errorCount}`);
+    console.info(`  Warnings: ${stats.warningCount}`);
+    console.info(`  Suggestions: ${stats.suggestionCount}`);
+    console.info(`  Relationship Score: ${stats.relationshipScore}%`);
     
-    console.log('\n🏷️  Category Distribution:');
+    console.info('\n🏷️  Category Distribution:');
     Object.entries(stats.categoryStats).forEach(([category, count]) => {
-      console.log(`  ${category}: ${count}`);
+      console.info(`  ${category}: ${count}`);
     });
   }
 
@@ -636,7 +636,7 @@ async function main() {
         break;
       case '--help':
       case '-h':
-        console.log(`
+        console.info(`
 🔍 Enhanced Tag Validation CLI
 
 Usage: bun run scripts/enhanced-validate-tags.ts [options]

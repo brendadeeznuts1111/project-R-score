@@ -15,7 +15,7 @@ describe("Config Server Enhanced Smoke Tests", () => {
 		try {
 			const response = await fetch(`${BASE_URL}/health`);
 			if (response.ok) {
-				console.log(
+				console.info(
 					"Server already running on port 3227, using existing instance",
 				);
 				serverStarted = false; // Use existing server
@@ -38,7 +38,7 @@ describe("Config Server Enhanced Smoke Tests", () => {
 				"code" in error &&
 				error.code === "EADDRINUSE"
 			) {
-				console.log("Port 3227 in use, using existing server instance");
+				console.info("Port 3227 in use, using existing server instance");
 				serverStarted = false;
 			} else {
 				throw error;

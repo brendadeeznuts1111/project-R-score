@@ -63,6 +63,6 @@ export function summarizePerformanceImpact() {
 }
 
 if (import.meta.main) {
-  console.log(JSON.stringify(summarizePerformanceImpact(), null, 2));
+  console.info(JSON.stringify(summarizePerformanceImpact(), null, 2));
 }
 

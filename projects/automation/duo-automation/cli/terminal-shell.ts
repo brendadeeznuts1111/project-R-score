@@ -63,7 +63,7 @@ export class DuoPlusTerminalShell {
       this.tagVisualizer = new TagVisualizer();
       
       await this.artifactSearch.initialize();
-      console.log('🔍 Artifact system initialized');
+      console.info('🔍 Artifact system initialized');
     } catch (error) {
       console.warn('⚠️  Artifact system initialization failed:', error.message);
     }
@@ -108,9 +108,9 @@ export class DuoPlusTerminalShell {
     process.stdin.setEncoding('utf8');
     
     const artifactStatus = this.artifactIntegrationEnabled ? '✅' : '❌';
-    console.log(`🚀 DuoPlus Interactive Shell (PTY: ${shell})`);
-    console.log(`🔍 Artifact Integration: ${artifactStatus}`);
-    console.log('📟 Type "help" for commands, "exit" to quit\n');
+    console.info(`🚀 DuoPlus Interactive Shell (PTY: ${shell})`);
+    console.info(`🔍 Artifact Integration: ${artifactStatus}`);
+    console.info('📟 Type "help" for commands, "exit" to quit\n');
   }
   
   private async commandLoop(): Promise<void> {
@@ -126,17 +126,17 @@ export class DuoPlusTerminalShell {
       
       // Handle control characters
       if (key === '\u0003') { // Ctrl+C
-        console.log('\n👋 Exiting DuoPlus Shell');
+        console.info('\n👋 Exiting DuoPlus Shell');
         this.cleanup();
         process.exit(0);
       } else if (key === '\u0004') { // Ctrl+D
         if (currentInput.length === 0) {
-          console.log('\n👋 Exiting DuoPlus Shell');
+          console.info('\n👋 Exiting DuoPlus Shell');
           this.cleanup();
           process.exit(0);
         }
       } else if (key === '\r' || key === '\n') { // Enter
-        console.log(); // New line
+        console.info(); // New line
         await this.executeCommand(currentInput.trim());
         currentInput = '';
         cursorPosition = 0;
@@ -186,7 +186,7 @@ export class DuoPlusTerminalShell {
           cursorPosition = currentInput.length;
           process.stdout.write('\r\u001b[K' + this.getPrompt() + currentInput);
         } else if (suggestions.length > 1) {
-          console.log('\n' + suggestions.join('  '));
+          console.info('\n' + suggestions.join('  '));
           process.stdout.write(this.getPrompt() + currentInput);
         }
       } else if (key.length === 1 && key >= ' ') { // Printable character
@@ -298,7 +298,7 @@ export class DuoPlusTerminalShell {
         
       case 'exit':
       case 'quit':
-        console.log('👋 Goodbye!');
+        console.info('👋 Goodbye!');
         this.cleanup();
         process.exit(0);
         break;
@@ -318,23 +318,23 @@ export class DuoPlusTerminalShell {
    */
   private async searchArtifacts(args: string[]): Promise<void> {
     if (!this.artifactIntegrationEnabled) {
-      console.log('❌ Artifact integration not enabled');
-      console.log('   Start with: --artifact-integration flag');
+      console.info('❌ Artifact integration not enabled');
+      console.info('   Start with: --artifact-integration flag');
       return;
     }
     
-    console.log('\n🔍 Searching artifacts...');
+    console.info('\n🔍 Searching artifacts...');
     
     try {
       const options = this.parseSearchOptions(args);
       const results = await this.artifactSearch.search(options);
       
       if (results.length === 0) {
-        console.log('❌ No artifacts found matching your criteria');
+        console.info('❌ No artifacts found matching your criteria');
         return;
       }
       
-      console.log(`✅ Found ${results.length} artifacts:\n`);
+      console.info(`✅ Found ${results.length} artifacts:\n`);
       
       // Display results in a formatted table
       this.displayArtifactResults(results, options.output);
@@ -349,11 +349,11 @@ export class DuoPlusTerminalShell {
    */
   private async findArtifacts(args: string[]): Promise<void> {
     if (!this.artifactIntegrationEnabled) {
-      console.log('❌ Artifact integration not enabled');
+      console.info('❌ Artifact integration not enabled');
       return;
     }
     
-    console.log('\n🎯 Advanced artifact search...');
+    console.info('\n🎯 Advanced artifact search...');
     
     // Parse complex find commands
     const findOptions = this.parseFindOptions(args);
@@ -361,14 +361,14 @@ export class DuoPlusTerminalShell {
     try {
       const results = await this.artifactSearch.search(findOptions);
       
-      console.log(`🔍 Found ${results.length} artifacts:\n`);
+      console.info(`🔍 Found ${results.length} artifacts:\n`);
       
       // Show detailed results
       results.forEach((artifact, index) => {
-        console.log(`${index + 1}. ${artifact.path}`);
-        console.log(`   Tags: ${artifact.tags.join(', ')}`);
-        console.log(`   Status: ${artifact.status || 'N/A'} | Type: ${artifact.type}`);
-        console.log(`   Modified: ${artifact.lastModified.toLocaleDateString()}\n`);
+        console.info(`${index + 1}. ${artifact.path}`);
+        console.info(`   Tags: ${artifact.tags.join(', ')}`);
+        console.info(`   Status: ${artifact.status || 'N/A'} | Type: ${artifact.type}`);
+        console.info(`   Modified: ${artifact.lastModified.toLocaleDateString()}\n`);
       });
       
     } catch (error) {
@@ -381,39 +381,39 @@ export class DuoPlusTerminalShell {
    */
   private async showTagInfo(args: string[]): Promise<void> {
     if (!this.artifactIntegrationEnabled) {
-      console.log('❌ Artifact integration not enabled');
+      console.info('❌ Artifact integration not enabled');
       return;
     }
     
-    console.log('\n🏷️  Tag Information:\n');
+    console.info('\n🏷️  Tag Information:\n');
     
     try {
       const stats = this.artifactSearch.getStats();
       
       // Show tag statistics
-      console.log('📊 Tag Statistics:');
-      console.log(`   Total Tags: ${stats.totalTags}`);
-      console.log(`   Total Artifacts: ${stats.totalArtifacts}`);
-      console.log(`   Tag Usage: ${Object.keys(stats.tagStats).length} unique tags\n`);
+      console.info('📊 Tag Statistics:');
+      console.info(`   Total Tags: ${stats.totalTags}`);
+      console.info(`   Total Artifacts: ${stats.totalArtifacts}`);
+      console.info(`   Tag Usage: ${Object.keys(stats.tagStats).length} unique tags\n`);
       
       // Show top tags
-      console.log('🔥 Top 10 Most Used Tags:');
+      console.info('🔥 Top 10 Most Used Tags:');
       Object.entries(stats.tagStats)
         .sort(([,a], [,b]) => b - a)
         .slice(0, 10)
         .forEach(([tag, count], index) => {
           const percentage = Math.round((count / stats.totalArtifacts) * 100);
-          console.log(`   ${index + 1}. ${tag}: ${count} artifacts (${percentage}%)`);
+          console.info(`   ${index + 1}. ${tag}: ${count} artifacts (${percentage}%)`);
         });
       
       // Show category distribution
-      console.log('\n📂 Category Distribution:');
+      console.info('\n📂 Category Distribution:');
       const categories = ['status', 'domain', 'technology', 'type', 'priority'];
       categories.forEach(category => {
         const categoryTags = Object.keys(stats.tagStats).filter(tag => 
           tag.startsWith('#') && this.getTagCategory(tag) === category
         );
-        console.log(`   ${category}: ${categoryTags.length} tags`);
+        console.info(`   ${category}: ${categoryTags.length} tags`);
       });
       
     } catch (error) {
@@ -426,11 +426,11 @@ export class DuoPlusTerminalShell {
    */
   private async validateArtifacts(args: string[]): Promise<void> {
     if (!this.artifactIntegrationEnabled) {
-      console.log('❌ Artifact integration not enabled');
+      console.info('❌ Artifact integration not enabled');
       return;
     }
     
-    console.log('\n🛡️  Validating artifacts...\n');
+    console.info('\n🛡️  Validating artifacts...\n');
     
     try {
       const options = this.parseValidationOptions(args);
@@ -438,27 +438,27 @@ export class DuoPlusTerminalShell {
       
       const stats = this.tagValidator.getEnhancedStats();
       
-      console.log('📊 Validation Results:');
-      console.log(`   Total Artifacts: ${stats.total}`);
-      console.log(`   Valid: ${stats.valid} (${stats.complianceRate}%)`);
-      console.log(`   Invalid: ${stats.invalid}`);
-      console.log(`   Errors: ${stats.errorCount}`);
-      console.log(`   Warnings: ${stats.warningCount}`);
-      console.log(`   Suggestions: ${stats.suggestionCount}\n`);
+      console.info('📊 Validation Results:');
+      console.info(`   Total Artifacts: ${stats.total}`);
+      console.info(`   Valid: ${stats.valid} (${stats.complianceRate}%)`);
+      console.info(`   Invalid: ${stats.invalid}`);
+      console.info(`   Errors: ${stats.errorCount}`);
+      console.info(`   Warnings: ${stats.warningCount}`);
+      console.info(`   Suggestions: ${stats.suggestionCount}\n`);
       
       // Show issues if any
       const invalidArtifacts = results.filter(r => !r.valid);
       if (invalidArtifacts.length > 0) {
-        console.log('❌ Issues Found:');
+        console.info('❌ Issues Found:');
         invalidArtifacts.slice(0, 5).forEach(result => {
-          console.log(`   • ${result.path}`);
+          console.info(`   • ${result.path}`);
           result.errors.slice(0, 2).forEach(error => {
-            console.log(`     - ${error}`);
+            console.info(`     - ${error}`);
           });
         });
         
         if (invalidArtifacts.length > 5) {
-          console.log(`   ... and ${invalidArtifacts.length - 5} more`);
+          console.info(`   ... and ${invalidArtifacts.length - 5} more`);
         }
       }
       
@@ -472,11 +472,11 @@ export class DuoPlusTerminalShell {
    */
   private async auditArtifacts(args: string[]): Promise<void> {
     if (!this.artifactIntegrationEnabled) {
-      console.log('❌ Artifact integration not enabled');
+      console.info('❌ Artifact integration not enabled');
       return;
     }
     
-    console.log('\n📊 Auditing artifacts...\n');
+    console.info('\n📊 Auditing artifacts...\n');
     
     try {
       const { TagAuditor } = await import('../scripts/audit-tags.ts');
@@ -485,18 +485,18 @@ export class DuoPlusTerminalShell {
       const options = this.parseAuditOptions(args);
       const auditResults = await auditor.audit(options);
       
-      console.log('📈 Audit Results:');
-      console.log(`   Total Artifacts: ${auditResults.totalArtifacts}`);
-      console.log(`   Tagged Artifacts: ${auditResults.taggedArtifacts}`);
-      console.log(`   Tag Coverage: ${auditResults.tagCoverage}%`);
-      console.log(`   Deprecated Tags: ${auditResults.deprecatedTags.length}`);
-      console.log(`   Orphaned Tags: ${auditResults.orphanedTags.length}\n`);
+      console.info('📈 Audit Results:');
+      console.info(`   Total Artifacts: ${auditResults.totalArtifacts}`);
+      console.info(`   Tagged Artifacts: ${auditResults.taggedArtifacts}`);
+      console.info(`   Tag Coverage: ${auditResults.tagCoverage}%`);
+      console.info(`   Deprecated Tags: ${auditResults.deprecatedTags.length}`);
+      console.info(`   Orphaned Tags: ${auditResults.orphanedTags.length}\n`);
       
       // Show recommendations
       if (auditResults.recommendations.length > 0) {
-        console.log('💡 Recommendations:');
+        console.info('💡 Recommendations:');
         auditResults.recommendations.slice(0, 5).forEach((rec, index) => {
-          console.log(`   ${index + 1}. ${rec}`);
+          console.info(`   ${index + 1}. ${rec}`);
         });
       }
       
@@ -510,26 +510,26 @@ export class DuoPlusTerminalShell {
    */
   private async visualizeTags(args: string[]): Promise<void> {
     if (!this.artifactIntegrationEnabled) {
-      console.log('❌ Artifact integration not enabled');
+      console.info('❌ Artifact integration not enabled');
       return;
     }
     
-    console.log('\n🎨 Generating tag visualizations...\n');
+    console.info('\n🎨 Generating tag visualizations...\n');
     
     try {
       const options = this.parseVisualizationOptions(args);
       await this.tagVisualizer.generateVisualizations(options);
       
-      console.log('✅ Visualizations generated:');
-      console.log('   📊 docs/TAG_RELATIONSHIPS.mmd - Relationship diagram');
-      console.log('   🔥 docs/TAG_HEATMAP.md - Usage heatmap');
-      console.log('   🕸️  docs/ARTIFACT_DEPENDENCIES.dot - Dependency graph');
+      console.info('✅ Visualizations generated:');
+      console.info('   📊 docs/TAG_RELATIONSHIPS.mmd - Relationship diagram');
+      console.info('   🔥 docs/TAG_HEATMAP.md - Usage heatmap');
+      console.info('   🕸️  docs/ARTIFACT_DEPENDENCIES.dot - Dependency graph');
       
       const stats = this.tagVisualizer.getStats();
-      console.log('\n📈 Visualization Statistics:');
-      console.log(`   Total Tags: ${stats.totalTags}`);
-      console.log(`   Relationships: ${stats.totalRelationships}`);
-      console.log(`   Artifacts: ${stats.totalArtifacts}`);
+      console.info('\n📈 Visualization Statistics:');
+      console.info(`   Total Tags: ${stats.totalTags}`);
+      console.info(`   Relationships: ${stats.totalRelationships}`);
+      console.info(`   Artifacts: ${stats.totalArtifacts}`);
       
     } catch (error) {
       console.error('❌ Visualization failed:', error.message);
@@ -541,25 +541,25 @@ export class DuoPlusTerminalShell {
    */
   private async suggestTags(args: string[]): Promise<void> {
     if (!this.artifactIntegrationEnabled) {
-      console.log('❌ Artifact integration not enabled');
+      console.info('❌ Artifact integration not enabled');
       return;
     }
     
     const partialTag = args[0] || '';
-    console.log(`\n💡 Tag suggestions for "${partialTag}":\n`);
+    console.info(`\n💡 Tag suggestions for "${partialTag}":\n`);
     
     try {
       const suggestions = this.artifactSearch.suggestTags(partialTag, 10);
       
       if (suggestions.length === 0) {
-        console.log('❌ No suggestions found');
+        console.info('❌ No suggestions found');
         return;
       }
       
       suggestions.forEach((suggestion, index) => {
         const stats = this.artifactSearch.getStats();
         const usage = stats.tagStats[suggestion] || 0;
-        console.log(`   ${index + 1}. ${suggestion} (${usage} artifacts)`);
+        console.info(`   ${index + 1}. ${suggestion} (${usage} artifacts)`);
       });
       
     } catch (error) {
@@ -572,34 +572,34 @@ export class DuoPlusTerminalShell {
    */
   private async showArtifactStats(): Promise<void> {
     if (!this.artifactIntegrationEnabled) {
-      console.log('❌ Artifact integration not enabled');
+      console.info('❌ Artifact integration not enabled');
       return;
     }
     
-    console.log('\n📊 Artifact System Statistics:\n');
+    console.info('\n📊 Artifact System Statistics:\n');
     
     try {
       const searchStats = this.artifactSearch.getStats();
       const validationStats = this.tagValidator.getEnhancedStats();
       
-      console.log('🔍 Search Engine:');
-      console.log(`   Total Artifacts: ${searchStats.totalArtifacts}`);
-      console.log(`   Unique Tags: ${searchStats.totalTags}`);
-      console.log(`   Tag Usage: ${Object.keys(searchStats.tagStats).length} tags in use\n`);
+      console.info('🔍 Search Engine:');
+      console.info(`   Total Artifacts: ${searchStats.totalArtifacts}`);
+      console.info(`   Unique Tags: ${searchStats.totalTags}`);
+      console.info(`   Tag Usage: ${Object.keys(searchStats.tagStats).length} tags in use\n`);
       
-      console.log('🛡️  Validation:');
-      console.log(`   Compliance Rate: ${validationStats.complianceRate}%`);
-      console.log(`   Valid Artifacts: ${validationStats.valid}`);
-      console.log(`   Issues Found: ${validationStats.errorCount}\n`);
+      console.info('🛡️  Validation:');
+      console.info(`   Compliance Rate: ${validationStats.complianceRate}%`);
+      console.info(`   Valid Artifacts: ${validationStats.valid}`);
+      console.info(`   Issues Found: ${validationStats.errorCount}\n`);
       
-      console.log('📈 Performance:');
-      console.log(`   Index Size: ${(JSON.stringify(searchStats).length / 1024).toFixed(1)}KB`);
-      console.log(`   Search Speed: <100ms`);
-      console.log(`   Validation Speed: <200ms\n`);
+      console.info('📈 Performance:');
+      console.info(`   Index Size: ${(JSON.stringify(searchStats).length / 1024).toFixed(1)}KB`);
+      console.info(`   Search Speed: <100ms`);
+      console.info(`   Validation Speed: <200ms\n`);
       
       // Show system health
       const health = this.calculateSystemHealth(searchStats, validationStats);
-      console.log(`🏥 System Health: ${health.score}/100 (${health.status})`);
+      console.info(`🏥 System Health: ${health.score}/100 (${health.status})`);
       
     } catch (error) {
       console.error('❌ Failed to get stats:', error.message);
@@ -673,24 +673,24 @@ export class DuoPlusTerminalShell {
   private displayArtifactResults(results: any[], outputFormat: string = 'table'): void {
     switch (outputFormat) {
       case 'json':
-        console.log(JSON.stringify(results, null, 2));
+        console.info(JSON.stringify(results, null, 2));
         break;
       case 'paths':
-        results.forEach(artifact => console.log(artifact.path));
+        results.forEach(artifact => console.info(artifact.path));
         break;
       case 'csv':
-        console.log('Path,Tags,Status,Type,Modified');
+        console.info('Path,Tags,Status,Type,Modified');
         results.forEach(artifact => {
-          console.log(`"${artifact.path}","${artifact.tags.join(';')}","${artifact.status || ''}","${artifact.type}","${artifact.lastModified.toISOString()}"`);
+          console.info(`"${artifact.path}","${artifact.tags.join(';')}","${artifact.status || ''}","${artifact.type}","${artifact.lastModified.toISOString()}"`);
         });
         break;
       case 'table':
       default:
         results.forEach((artifact, index) => {
-          console.log(`${index + 1}. ${artifact.path}`);
-          console.log(`   Tags: ${artifact.tags.slice(0, 3).join(', ')}${artifact.tags.length > 3 ? '...' : ''}`);
-          console.log(`   Status: ${artifact.status || 'N/A'} | Type: ${artifact.type}`);
-          console.log(`   Modified: ${artifact.lastModified.toLocaleDateString()}\n`);
+          console.info(`${index + 1}. ${artifact.path}`);
+          console.info(`   Tags: ${artifact.tags.slice(0, 3).join(', ')}${artifact.tags.length > 3 ? '...' : ''}`);
+          console.info(`   Status: ${artifact.status || 'N/A'} | Type: ${artifact.type}`);
+          console.info(`   Modified: ${artifact.lastModified.toLocaleDateString()}\n`);
         });
         break;
     }
@@ -732,8 +732,8 @@ export class DuoPlusTerminalShell {
   // ============================================
   
   private async openShell(shell: string): Promise<void> {
-    console.log(`\n🚀 Launching ${shell} shell (PTY)...`);
-    console.log('Type "exit" to return to DuoPlus shell\n');
+    console.info(`\n🚀 Launching ${shell} shell (PTY)...`);
+    console.info('Type "exit" to return to DuoPlus shell\n');
     
     const proc = Bun.spawn([shell], {
       terminal: {
@@ -761,12 +761,12 @@ export class DuoPlusTerminalShell {
     
     process.stdin.setRawMode(originalRawMode);
     await proc.exited;
-    console.log('\n🔙 Returned to DuoPlus shell\n');
+    console.info('\n🔙 Returned to DuoPlus shell\n');
   }
   
   private async openVim(filename: string): Promise<void> {
-    console.log(`\n📝 Opening ${filename} in vim...`);
-    console.log('Press Ctrl+C to exit vim\n');
+    console.info(`\n📝 Opening ${filename} in vim...`);
+    console.info('Press Ctrl+C to exit vim\n');
     
     if (!Bun.file(filename).exists()) {
       await Bun.write(filename, '# DuoPlus Configuration\n\n');
@@ -800,7 +800,7 @@ export class DuoPlusTerminalShell {
     
     process.stdout.off('resize', resizeHandler);
     await proc.exited;
-    console.log('\n✅ File saved\n');
+    console.info('\n✅ File saved\n');
   }
   
   private async runInteractiveInspection(args: string[]): Promise<void> {
@@ -813,13 +813,13 @@ export class DuoPlusTerminalShell {
     } else if (hasBasicInspection) {
       await this.runBasicInspection(args);
     } else {
-      console.log('⚠️  Inspection feature not available in this build');
-      console.log('   Use: bun build --feature=PREMIUM_INSPECTION ./cli.ts');
+      console.info('⚠️  Inspection feature not available in this build');
+      console.info('   Use: bun build --feature=PREMIUM_INSPECTION ./cli.ts');
     }
   }
   
   private async runPremiumInspection(args: string[]): Promise<void> {
-    console.log('\n🔍 Premium Inspection Mode');
+    console.info('\n🔍 Premium Inspection Mode');
     
     const proc = Bun.spawn(['watch', '-n1', 'bun', 'run', 'cli.ts', 'scope', '--inspect', ...args], {
       terminal: {
@@ -832,7 +832,7 @@ export class DuoPlusTerminalShell {
       },
     });
     
-    console.log('📊 Watching for changes (press any key to stop)...');
+    console.info('📊 Watching for changes (press any key to stop)...');
     
     process.stdin.setRawMode(true);
     await new Promise(resolve => {
@@ -851,7 +851,7 @@ export class DuoPlusTerminalShell {
       highlight: true,
     });
     
-    console.log(result.data);
+    console.info(result.data);
   }
   
   private async showMatrixTable(): Promise<void> {
@@ -876,8 +876,8 @@ export class DuoPlusTerminalShell {
       return Math.max(...table.map(row => Bun.stringWidth(row[colIndex] || '')));
     });
     
-    console.log('\n📊 System Matrix');
-    console.log('═'.repeat(colWidths.reduce((a, b) => a + b + 3, 0)));
+    console.info('\n📊 System Matrix');
+    console.info('═'.repeat(colWidths.reduce((a, b) => a + b + 3, 0)));
     
     table.forEach((row, rowIndex) => {
       const line = row.map((cell, colIndex) => {
@@ -894,29 +894,29 @@ export class DuoPlusTerminalShell {
         }
       }).join(' │ ');
       
-      console.log(` ${line} `);
+      console.info(` ${line} `);
     });
     
-    console.log('═'.repeat(colWidths.reduce((a, b) => a + b + 3, 0)));
+    console.info('═'.repeat(colWidths.reduce((a, b) => a + b + 3, 0)));
     
-    console.log('\n🎯 Active Feature Flags:');
+    console.info('\n🎯 Active Feature Flags:');
     scope.featureFlags.forEach(flag => {
       const emoji = this.getFlagEmoji(flag);
       const paddedFlag = flag.padEnd(25);
       const width = Bun.stringWidth(`${emoji} ${paddedFlag}`);
-      console.log(`  ${emoji} ${paddedFlag} ${'·'.repeat(40 - width)} ✅`);
+      console.info(`  ${emoji} ${paddedFlag} ${'·'.repeat(40 - width)} ✅`);
     });
     
     // Show artifact system status
     if (this.artifactIntegrationEnabled) {
-      console.log('\n🔍 Artifact System Status:');
+      console.info('\n🔍 Artifact System Status:');
       try {
         const artifactStats = this.artifactSearch.getStats();
-        console.log(`  📊 Indexed Artifacts: ${artifactStats.totalArtifacts}`);
-        console.log(`  🏷️  Unique Tags: ${artifactStats.totalTags}`);
-        console.log(`  🔍 Search Ready: ✅`);
+        console.info(`  📊 Indexed Artifacts: ${artifactStats.totalArtifacts}`);
+        console.info(`  🏷️  Unique Tags: ${artifactStats.totalTags}`);
+        console.info(`  🔍 Search Ready: ✅`);
       } catch (error) {
-        console.log(`  🔍 Search Ready: ❌`);
+        console.info(`  🔍 Search Ready: ❌`);
       }
     }
   }
@@ -942,15 +942,15 @@ export class DuoPlusTerminalShell {
     const scope = await this.matrixManager.detectScope();
     const stats = this.matrixManager.getScopeStats();
     
-    console.log('\n📈 System Status');
-    console.log('─'.repeat(40));
+    console.info('\n📈 System Status');
+    console.info('─'.repeat(40));
     
     const formatLine = (label: string, value: string, emoji: string = '') => {
       const labelWidth = Bun.stringWidth(label);
       const valueWidth = Bun.stringWidth(value);
       const totalWidth = 36;
       const dots = '.'.repeat(totalWidth - labelWidth - valueWidth - (emoji ? 3 : 0));
-      console.log(`  ${emoji} ${label} ${dots} ${value}`);
+      console.info(`  ${emoji} ${label} ${dots} ${value}`);
     };
     
     formatLine('Scope', scope.detectedScope, '🎯');
@@ -969,11 +969,11 @@ export class DuoPlusTerminalShell {
       formatLine('Tag Coverage', `${this.tagValidator.getEnhancedStats().complianceRate}%`, '🏷️');
     }
     
-    console.log('\n🚩 Feature Flags:');
+    console.info('\n🚩 Feature Flags:');
     // Note: Feature flags will be available at build time
     const flags = ['PREMIUM', 'DEBUG', 'TERMINAL_PTY', 'S3_UPLOAD'];
     flags.forEach(flag => {
-      console.log(`  ✅ ${flag.padEnd(15)} Available at build time`);
+      console.info(`  ✅ ${flag.padEnd(15)} Available at build time`);
     });
   }
   
@@ -994,7 +994,7 @@ export class DuoPlusTerminalShell {
   }
   
   private async runExternalCommand(command: string, args: string[]): Promise<void> {
-    console.log(`\n🔧 Running: ${command} ${args.join(' ')}`);
+    console.info(`\n🔧 Running: ${command} ${args.join(' ')}`);
     
     try {
       const proc = Bun.spawn([command, ...args], {
@@ -1005,18 +1005,18 @@ export class DuoPlusTerminalShell {
       const stdout = await new Response(proc.stdout).text();
       const stderr = await new Response(proc.stderr).text();
       
-      if (stdout) console.log(stdout);
+      if (stdout) console.info(stdout);
       if (stderr) console.error(stderr);
       
       await proc.exited;
       
       if (proc.exitCode === 0) {
-        console.log('✅ Command completed successfully');
+        console.info('✅ Command completed successfully');
       } else {
-        console.log(`❌ Command failed with code ${proc.exitCode}`);
+        console.info(`❌ Command failed with code ${proc.exitCode}`);
       }
     } catch (error) {
-      console.log(`❌ Command not found: ${command}`);
+      console.info(`❌ Command not found: ${command}`);
     }
   }
   
@@ -1029,8 +1029,8 @@ export class DuoPlusTerminalShell {
       retro: '\x1b[32;40m',
     };
     
-    console.log(themes[theme] + `\n🎨 Theme set to ${theme}`);
-    console.log('\x1b[0m');
+    console.info(themes[theme] + `\n🎨 Theme set to ${theme}`);
+    console.info('\x1b[0m');
   }
   
   private printWelcomeBanner(): void {
@@ -1051,7 +1051,7 @@ export class DuoPlusTerminalShell {
 ╚══════════════════════════════════════════════╝
     `.trim();
     
-    console.log(banner);
+    console.info(banner);
   }
   
   private getFeatureFlagStatus(): string {
@@ -1073,8 +1073,8 @@ export class DuoPlusTerminalShell {
   }
   
   private async startRecording(filename: string): Promise<void> {
-    console.log(`🎥 Recording session to ${filename}...`);
-    console.log('Press Ctrl+C to stop recording\n');
+    console.info(`🎥 Recording session to ${filename}...`);
+    console.info('Press Ctrl+C to stop recording\n');
     
     const commands: string[] = [];
     const startTime = Date.now();
@@ -1110,21 +1110,21 @@ export class DuoPlusTerminalShell {
     
     this.executeCommand = originalExecute;
     
-    console.log(`\n✅ Recorded ${commands.length} commands to ${filename}`);
+    console.info(`\n✅ Recorded ${commands.length} commands to ${filename}`);
   }
   
   private async playbackRecording(filename: string): Promise<void> {
     if (!Bun.file(filename).exists()) {
-      console.log(`❌ Recording not found: ${filename}`);
+      console.info(`❌ Recording not found: ${filename}`);
       return;
     }
     
     const recording = JSON.parse(await Bun.file(filename).text());
     
-    console.log(`\n▶️  Playing back recording: ${filename}`);
-    console.log(`   Recorded: ${recording.metadata.recordedAt}`);
-    console.log(`   Duration: ${recording.metadata.duration}ms`);
-    console.log(`   Commands: ${recording.metadata.commandsCount}\n`);
+    console.info(`\n▶️  Playing back recording: ${filename}`);
+    console.info(`   Recorded: ${recording.metadata.recordedAt}`);
+    console.info(`   Duration: ${recording.metadata.duration}ms`);
+    console.info(`   Commands: ${recording.metadata.commandsCount}\n`);
     
     for (const cmd of recording.commands) {
       await new Promise(resolve => setTimeout(resolve, cmd.time));
@@ -1165,7 +1165,7 @@ async function main() {
   
   // Fallback to regular CLI
   if (args.includes('--no-pty') || !ptyAvailable) {
-    console.log('📟 Running in standard mode (PTY disabled)');
+    console.info('📟 Running in standard mode (PTY disabled)');
     
     // Handle artifact commands in non-PTY mode
     if (artifactIntegration && (args.includes('--search') || args.includes('--validate'))) {

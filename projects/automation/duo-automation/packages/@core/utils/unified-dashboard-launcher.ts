@@ -245,13 +245,13 @@ export class UnifiedDashboardLauncher {
       const url = `http://localhost:${config.port}`;
       
       // In a real implementation, this would start the dashboard server
-      console.log(`🚀 Launching dashboard with scope: ${config.scope}`);
-      console.log(`📊 Platform scope: ${config.platformScope}`);
-      console.log(`🌐 Domain: ${config.domain}`);
-      console.log(`🔗 URL: ${url}`);
+      console.info(`🚀 Launching dashboard with scope: ${config.scope}`);
+      console.info(`📊 Platform scope: ${config.platformScope}`);
+      console.info(`🌐 Domain: ${config.domain}`);
+      console.info(`🔗 URL: ${url}`);
       
       if (config.team) {
-        console.log(`👥 Team: ${config.team}`);
+        console.info(`👥 Team: ${config.team}`);
       }
 
       return {
@@ -312,7 +312,7 @@ export class UnifiedDashboardLauncher {
       }
 
       // 4. Spawn child with both env and CLI args (as required by policy)
-      console.log(`🚀 Spawning dashboard child [${scope}]: ${entryPoint}`);
+      console.info(`🚀 Spawning dashboard child [${scope}]: ${entryPoint}`);
       const spawnArgs = entryPoint === "-e" 
         ? ["bun", "-e", ...args]
         : ["bun", "run", entryPoint, "--scope", scope, ...args];
@@ -331,9 +331,9 @@ export class UnifiedDashboardLauncher {
             if (exitCode !== 0 && signalCode === null) {
               console.error(`🚨 Dashboard child [${scope}] exited with code ${exitCode}`);
             } else if (signalCode) {
-              console.log(`🛑 Dashboard child [${scope}] was terminated by signal: ${signalCode}`);
+              console.info(`🛑 Dashboard child [${scope}] was terminated by signal: ${signalCode}`);
             } else {
-              console.log(`✅ Dashboard child [${scope}] exited cleanly.`);
+              console.info(`✅ Dashboard child [${scope}] exited cleanly.`);
             }
           },
         }
@@ -401,11 +401,11 @@ export class UnifiedDashboardLauncher {
       const data = typeof message === 'string' ? JSON.parse(message) : message;
       
       if (data.type === 'status') {
-        console.log(`[IPC] Status from [${scope}]: ${data.status} (PID: ${data.pid})`);
+        console.info(`[IPC] Status from [${scope}]: ${data.status} (PID: ${data.pid})`);
       } else if (data.type === 'metrics') {
         this.scopeMetrics.set(scope, data.data);
       } else {
-        console.log(`[IPC] Message from [${scope}]:`, data);
+        console.info(`[IPC] Message from [${scope}]:`, data);
       }
     } catch (e) {
       console.warn(`[IPC] Failed to parse message from [${scope}]:`, message);
@@ -422,11 +422,11 @@ export class UnifiedDashboardLauncher {
       return false;
     }
 
-    console.log(`🛑 Terminating process ${processInfo.scope} (PID: ${pid})...`);
+    console.info(`🛑 Terminating process ${processInfo.scope} (PID: ${pid})...`);
     processInfo.proc.kill(); // SIGTERM
     await processInfo.proc.exited;
     this.activeProcesses.delete(pid);
-    console.log(`✅ Process ${pid} terminated.`);
+    console.info(`✅ Process ${pid} terminated.`);
     return true;
   }
 
@@ -462,17 +462,17 @@ export class UnifiedDashboardLauncher {
       return;
     }
 
-    console.log(`🛑 Shutting down ${this.activeProcesses.size} active dashboard processes...`);
+    console.info(`🛑 Shutting down ${this.activeProcesses.size} active dashboard processes...`);
     
     const terminations = Array.from(this.activeProcesses.values()).map(async ({ proc, scope }) => {
-      console.log(`   -> Terminating ${scope} (PID: ${proc.pid})`);
+      console.info(`   -> Terminating ${scope} (PID: ${proc.pid})`);
       proc.kill(); // Sends SIGTERM by default
       return proc.exited;
     });
 
     await Promise.all(terminations);
     this.activeProcesses.clear();
-    console.log('✅ All child processes shut down.');
+    console.info('✅ All child processes shut down.');
   }
 
   /**
@@ -562,11 +562,11 @@ export class UnifiedDashboardLauncher {
     switch (command) {
       case 'detect':
         const detected = this.autoDetectScope();
-        console.log('🔍 Detected scope configuration:');
-        console.log(`   Scope: ${detected.scope}`);
-        console.log(`   Platform Scope: ${detected.platformScope}`);
-        console.log(`   Domain: ${detected.domain}`);
-        console.log(`   Storage: ${detected.storageType}`);
+        console.info('🔍 Detected scope configuration:');
+        console.info(`   Scope: ${detected.scope}`);
+        console.info(`   Platform Scope: ${detected.platformScope}`);
+        console.info(`   Domain: ${detected.domain}`);
+        console.info(`   Storage: ${detected.storageType}`);
         break;
 
       case 'set':
@@ -576,14 +576,14 @@ export class UnifiedDashboardLauncher {
           process.exit(1);
         }
         process.env[this.SCOPE_ENV_VAR] = scope;
-        console.log(`✅ Scope set to: ${scope}`);
+        console.info(`✅ Scope set to: ${scope}`);
         break;
 
       case 'launch':
         const options = this.parseArgs(args.slice(1));
         const result = await this.launchDashboard(options);
         if (result.success) {
-          console.log(`✅ Dashboard launched: ${result.url}`);
+          console.info(`✅ Dashboard launched: ${result.url}`);
         } else {
           console.error('❌ Launch failed:', result.errors);
           process.exit(1);
@@ -592,18 +592,18 @@ export class UnifiedDashboardLauncher {
 
       case 'info':
         const info = this.exportScopeInfo();
-        console.log('📊 Scope Information:');
-        console.log(`   Current Scope: ${info.current.scope}`);
-        console.log(`   Platform Scope: ${info.current.platformScope}`);
-        console.log(`   Domain: ${info.current.domain}`);
+        console.info('📊 Scope Information:');
+        console.info(`   Current Scope: ${info.current.scope}`);
+        console.info(`   Platform Scope: ${info.current.platformScope}`);
+        console.info(`   Domain: ${info.current.domain}`);
         if (info.current.team) {
-          console.log(`   Team: ${info.current.team}`);
+          console.info(`   Team: ${info.current.team}`);
         }
-        console.log(`   Scoped Environment: ${info.isScoped ? 'Yes' : 'No'}`);
+        console.info(`   Scoped Environment: ${info.isScoped ? 'Yes' : 'No'}`);
         break;
 
       default:
-        console.log(`
+        console.info(`
 Unified Dashboard Launcher CLI
 
 Commands:

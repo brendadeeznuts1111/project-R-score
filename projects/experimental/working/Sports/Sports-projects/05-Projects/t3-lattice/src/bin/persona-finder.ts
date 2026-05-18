@@ -19,19 +19,19 @@ async function main() {
     case 'detect': {
       const gameId = args[1];
       if (!gameId) {
-        console.log('Usage: persona-finder detect <GAME_ID>');
-        console.log('Available games:', DEC_29_GAMES.map(g => g.id).join(', '));
+        console.info('Usage: persona-finder detect <GAME_ID>');
+        console.info('Available games:', DEC_29_GAMES.map(g => g.id).join(', '));
         process.exit(1);
       }
 
       const game = DEC_29_GAMES.find(g => g.id === gameId);
       if (!game) {
-        console.log(`Game not found: ${gameId}`);
-        console.log('Available games:', DEC_29_GAMES.map(g => g.id).join(', '));
+        console.info(`Game not found: ${gameId}`);
+        console.info('Available games:', DEC_29_GAMES.map(g => g.id).join(', '));
         process.exit(1);
       }
 
-      console.log(`\n🎯 Detecting edges for ${gameId}...\n`);
+      console.info(`\n🎯 Detecting edges for ${gameId}...\n`);
 
       const orchestrator = new T3LatticeOrchestrator({
         source: 'demo',
@@ -41,22 +41,22 @@ async function main() {
       const result = await orchestrator.run([game]);
 
       if (result.edges.length > 0) {
-        console.log('\n📊 Edge Summary:');
+        console.info('\n📊 Edge Summary:');
         for (const edge of result.edges) {
-          console.log(`  Market: ${edge.market}`);
-          console.log(`  Type: ${edge.type}`);
-          console.log(`  Confidence: ${(edge.confidence * 100).toFixed(1)}%`);
-          console.log(`  Glyph: ${edge.glyph}`);
-          console.log(`  Description: ${edge.description}`);
+          console.info(`  Market: ${edge.market}`);
+          console.info(`  Type: ${edge.type}`);
+          console.info(`  Confidence: ${(edge.confidence * 100).toFixed(1)}%`);
+          console.info(`  Glyph: ${edge.glyph}`);
+          console.info(`  Description: ${edge.description}`);
         }
       } else {
-        console.log('\n⚪ No edges detected for this game.');
+        console.info('\n⚪ No edges detected for this game.');
       }
       break;
     }
 
     case 'analyze': {
-      console.log('\n📈 Running full December 29 analysis...\n');
+      console.info('\n📈 Running full December 29 analysis...\n');
 
       const orchestrator = new T3LatticeOrchestrator({
         source: 'demo',
@@ -65,13 +65,13 @@ async function main() {
 
       const result = await orchestrator.run(DEC_29_GAMES);
 
-      console.log('\n📊 Final Report:');
-      console.log(JSON.stringify(result.stats, null, 2));
+      console.info('\n📊 Final Report:');
+      console.info(JSON.stringify(result.stats, null, 2));
       break;
     }
 
     case 'benchmark': {
-      console.log(`
+      console.info(`
 ╔════════════════════════════════════════════════════════════╗
 ║  HIDDEN LATTICE FINDER BENCHMARKS                           ║
 ╚════════════════════════════════════════════════════════════╝
@@ -92,20 +92,20 @@ async function main() {
     }
 
     case 'sla': {
-      console.log('\n📋 SLA Report:\n');
+      console.info('\n📋 SLA Report:\n');
       for (const line of getSLAReport()) {
-        console.log(`  ${line}`);
+        console.info(`  ${line}`);
       }
       break;
     }
 
     case 'glyphs': {
-      console.log('\n🔣 Quantum Glyph Registry:\n');
+      console.info('\n🔣 Quantum Glyph Registry:\n');
       for (const glyph of QUANTUM_GLYPHS) {
-        console.log(`  ${glyph.pattern.padEnd(20)} ${glyph.name}`);
-        console.log(`    FD Range: ${glyph.fdRange[0]}-${glyph.fdRange[1]}`);
-        console.log(`    Use Case: ${glyph.useCase}`);
-        console.log('');
+        console.info(`  ${glyph.pattern.padEnd(20)} ${glyph.name}`);
+        console.info(`    FD Range: ${glyph.fdRange[0]}-${glyph.fdRange[1]}`);
+        console.info(`    Use Case: ${glyph.useCase}`);
+        console.info('');
       }
       break;
     }
@@ -113,13 +113,13 @@ async function main() {
     case 'classify': {
       const fd = parseFloat(args[1]);
       if (isNaN(fd)) {
-        console.log('Usage: persona-finder classify <FD_VALUE>');
-        console.log('Example: persona-finder classify 1.85');
+        console.info('Usage: persona-finder classify <FD_VALUE>');
+        console.info('Example: persona-finder classify 1.85');
         process.exit(1);
       }
 
       const classification = classifyFD(fd);
-      console.log(`
+      console.info(`
 FD Value: ${fd}
 Classification: ${classification.classification}
 Glyph: ${classification.glyph}
@@ -129,14 +129,14 @@ Action: ${classification.action}
     }
 
     case 'games': {
-      console.log('\n📅 December 29, 2025 NBA Schedule:\n');
-      console.log('  ID          Tipoff   Spread    Total');
-      console.log('  ─────────────────────────────────────');
+      console.info('\n📅 December 29, 2025 NBA Schedule:\n');
+      console.info('  ID          Tipoff   Spread    Total');
+      console.info('  ─────────────────────────────────────');
       for (const game of DEC_29_GAMES) {
         const spread = game.opening.spread > 0 ? `+${game.opening.spread}` : game.opening.spread.toString();
-        console.log(`  ${game.id.padEnd(10)}  ${game.tipoff}    ${spread.padEnd(6)}    ${game.opening.total}`);
+        console.info(`  ${game.id.padEnd(10)}  ${game.tipoff}    ${spread.padEnd(6)}    ${game.opening.total}`);
       }
-      console.log(`\n  Total: ${DEC_29_GAMES.length} games`);
+      console.info(`\n  Total: ${DEC_29_GAMES.length} games`);
       break;
     }
 
@@ -149,14 +149,14 @@ Action: ${classification.action}
     }
 
     case 'version': {
-      console.log(`T3-Lattice Persona v${VERSION}`);
-      console.log(`Bun ${Bun.version}`);
+      console.info(`T3-Lattice Persona v${VERSION}`);
+      console.info(`Bun ${Bun.version}`);
       break;
     }
 
     case 'help':
     default: {
-      console.log(`
+      console.info(`
 🏆 T3-Lattice Edge Hunter CLI v${VERSION}
 
 Usage: bun run src/bin/persona-finder.ts <command> [options]

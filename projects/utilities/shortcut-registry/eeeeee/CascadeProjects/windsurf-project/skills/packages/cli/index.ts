@@ -26,22 +26,22 @@ program
   .description('Initialize skills workspace with annotations')
   .option('--with-annotations', 'Include annotation system setup')
   .action(async (options) => {
-    console.log('🚀 Initializing Bun-Native Skills Workspace...');
+    console.info('🚀 Initializing Bun-Native Skills Workspace...');
     
     if (options.withAnnotations) {
-      console.log('📝 Setting up annotation system...');
+      console.info('📝 Setting up annotation system...');
       // Create annotation configuration
       await setupAnnotationSystem();
     }
     
-    console.log('✅ Skills workspace ready!');
-    console.log('\\n📚 Available exercises:');
-    console.log('  1. File I/O Mastery');
-    console.log('  2. Concurrency Patterns');
-    console.log('  3. Performance Optimization');
-    console.log('  4. Security Best Practices');
-    console.log('  5. Testing with bun:test');
-    console.log('\\n🎯 Get started: bun run skills exercise 1');
+    console.info('✅ Skills workspace ready!');
+    console.info('\\n📚 Available exercises:');
+    console.info('  1. File I/O Mastery');
+    console.info('  2. Concurrency Patterns');
+    console.info('  3. Performance Optimization');
+    console.info('  4. Security Best Practices');
+    console.info('  5. Testing with bun:test');
+    console.info('\\n🎯 Get started: bun run skills exercise 1');
   });
 
 // Start interactive exercise
@@ -71,14 +71,14 @@ program
       process.exit(1);
     }
     
-    console.log(`🎯 Exercise ${number}: ${getExerciseTitle(exerciseDir)}`);
-    console.log(`📁 Challenge: ${challengePath}`);
-    console.log(`💡 Solution: ${solutionPath}`);
-    console.log('\\n📝 Instructions:');
-    console.log('  1. Run "bun run skills scan" to find issues');
-    console.log('  2. Fix all annotations in the challenge file');
-    console.log('  3. Run "bun run skills benchmark" to verify improvements');
-    console.log('  4. Check your solution against solution.ts');
+    console.info(`🎯 Exercise ${number}: ${getExerciseTitle(exerciseDir)}`);
+    console.info(`📁 Challenge: ${challengePath}`);
+    console.info(`💡 Solution: ${solutionPath}`);
+    console.info('\\n📝 Instructions:');
+    console.info('  1. Run "bun run skills scan" to find issues');
+    console.info('  2. Fix all annotations in the challenge file');
+    console.info('  3. Run "bun run skills benchmark" to verify improvements');
+    console.info('  4. Check your solution against solution.ts');
     
     // Show exercise-specific tips
     await showExerciseTips(exerciseDir);
@@ -91,7 +91,7 @@ program
   .option('--exercise <number>', 'Scan specific exercise')
   .option('--file <path>', 'Scan specific file')
   .action(async (options) => {
-    console.log('🔍 Scanning for anti-patterns...');
+    console.info('🔍 Scanning for anti-patterns...');
     
     let filesToScan: string[] = [];
     
@@ -133,17 +133,17 @@ program
     };
     
     for (const report of reports) {
-      console.log(`\\n📄 ${report.file}:`);
+      console.info(`\\n📄 ${report.file}:`);
       
       if (report.detections.length === 0) {
-        console.log('  ✅ No issues found!');
+        console.info('  ✅ No issues found!');
         continue;
       }
       
       for (const detection of report.detections) {
-        console.log(`  ${getSeverityIcon(detection.annotation.meta.severity)} Line ${detection.line}: ${detection.annotation.domain}[${detection.annotation.type}]`);
-        console.log(`    💡 ${detection.suggestion}`);
-        console.log(`    🔧 Fix: ${detection.annotation.meta.fix}`);
+        console.info(`  ${getSeverityIcon(detection.annotation.meta.severity)} Line ${detection.line}: ${detection.annotation.domain}[${detection.annotation.type}]`);
+        console.info(`    💡 ${detection.suggestion}`);
+        console.info(`    🔧 Fix: ${detection.annotation.meta.fix}`);
         
         totalDetections++;
         summary.byDomain[detection.annotation.domain] = (summary.byDomain[detection.annotation.domain] || 0) + 1;
@@ -151,28 +151,28 @@ program
       }
     }
     
-    console.log('\\n📊 Scan Summary:');
-    console.log(`  Total Issues: ${totalDetections}`);
+    console.info('\\n📊 Scan Summary:');
+    console.info(`  Total Issues: ${totalDetections}`);
     
     if (Object.keys(summary.byDomain).length > 0) {
-      console.log('\\n  By Domain:');
+      console.info('\\n  By Domain:');
       Object.entries(summary.byDomain).forEach(([domain, count]) => {
-        console.log(`    ${domain}: ${count}`);
+        console.info(`    ${domain}: ${count}`);
       });
     }
     
     if (Object.keys(summary.bySeverity).length > 0) {
-      console.log('\\n  By Severity:');
+      console.info('\\n  By Severity:');
       Object.entries(summary.bySeverity).forEach(([severity, count]) => {
-        console.log(`    ${getSeverityIcon(severity)} ${severity}: ${count}`);
+        console.info(`    ${getSeverityIcon(severity)} ${severity}: ${count}`);
       });
     }
     
     if (totalDetections > 0) {
-      console.log('\\n🎯 Next steps:');
-      console.log('  1. Fix the issues shown above');
-      console.log('  2. Run "bun run skills scan" again to verify');
-      console.log('  3. Use "bun run skills benchmark" to measure improvements');
+      console.info('\\n🎯 Next steps:');
+      console.info('  1. Fix the issues shown above');
+      console.info('  2. Run "bun run skills scan" again to verify');
+      console.info('  3. Use "bun run skills benchmark" to measure improvements');
     }
   });
 
@@ -183,14 +183,14 @@ program
   .option('--exercise <number>', 'Benchmark specific exercise')
   .option('--compare', 'Compare Node.js vs Bun performance')
   .action(async (options) => {
-    console.log('⚡ Running performance benchmarks...');
+    console.info('⚡ Running performance benchmarks...');
     
     if (options.exercise === '1') {
       await runFileIOBenchmark(options.compare);
     } else {
-      console.log('📈 Available benchmarks:');
-      console.log('  Exercise 1: File I/O Performance');
-      console.log('\\n🎯 Run: bun run skills benchmark --exercise 1 --compare');
+      console.info('📈 Available benchmarks:');
+      console.info('  Exercise 1: File I/O Performance');
+      console.info('\\n🎯 Run: bun run skills benchmark --exercise 1 --compare');
     }
   });
 
@@ -214,7 +214,7 @@ async function setupAnnotationSystem(): Promise<void> {
   };
   
   await Bun.write('./skills.config.json', JSON.stringify(config, null, 2));
-  console.log('  ✅ Annotation system configured');
+  console.info('  ✅ Annotation system configured');
 }
 
 function getExerciseTitle(exerciseDir: string): string {
@@ -258,13 +258,13 @@ async function showExerciseTips(exerciseDir: string): Promise<void> {
   
   const exerciseTips = tips[exerciseDir as keyof typeof tips];
   if (exerciseTips) {
-    console.log('\\n💡 Pro Tips:');
-    exerciseTips.forEach(tip => console.log(`  ${tip}`));
+    console.info('\\n💡 Pro Tips:');
+    exerciseTips.forEach(tip => console.info(`  ${tip}`));
   }
 }
 
 async function runFileIOBenchmark(compare: boolean = false): Promise<void> {
-  console.log('📁 File I/O Performance Benchmark');
+  console.info('📁 File I/O Performance Benchmark');
   
   // Create test data
   const testData = generateTestData(1000);
@@ -273,7 +273,7 @@ async function runFileIOBenchmark(compare: boolean = false): Promise<void> {
   
   try {
     if (compare) {
-      console.log('\\n🏁 Comparing Node.js vs Bun performance...');
+      console.info('\\n🏁 Comparing Node.js vs Bun performance...');
       
       // Node.js sync benchmark
       const nodeStart = performance.now();
@@ -291,11 +291,11 @@ async function runFileIOBenchmark(compare: boolean = false): Promise<void> {
       
       const speedup = nodeTime / bunTime;
       
-      console.log(`  Node.js sync: ${nodeTime.toFixed(2)}ms`);
-      console.log(`  Bun async:   ${bunTime.toFixed(2)}ms`);
-      console.log(`  Speedup:      ${speedup.toFixed(1)}x ${speedup > 1 ? '🚀' : ''}`);
+      console.info(`  Node.js sync: ${nodeTime.toFixed(2)}ms`);
+      console.info(`  Bun async:   ${bunTime.toFixed(2)}ms`);
+      console.info(`  Speedup:      ${speedup.toFixed(1)}x ${speedup > 1 ? '🚀' : ''}`);
     } else {
-      console.log('\\n⚡ Bun performance metrics...');
+      console.info('\\n⚡ Bun performance metrics...');
       
       const iterations = 1000;
       const start = performance.now();
@@ -307,10 +307,10 @@ async function runFileIOBenchmark(compare: boolean = false): Promise<void> {
       const totalTime = performance.now() - start;
       const avgTime = totalTime / iterations;
       
-      console.log(`  Iterations: ${iterations}`);
-      console.log(`  Total time: ${totalTime.toFixed(2)}ms`);
-      console.log(`  Average: ${avgTime.toFixed(3)}ms per operation`);
-      console.log(`  Throughput: ${(1000 / avgTime).toFixed(0)} ops/sec`);
+      console.info(`  Iterations: ${iterations}`);
+      console.info(`  Total time: ${totalTime.toFixed(2)}ms`);
+      console.info(`  Average: ${avgTime.toFixed(3)}ms per operation`);
+      console.info(`  Throughput: ${(1000 / avgTime).toFixed(0)} ops/sec`);
     }
   } finally {
     // Cleanup
@@ -319,30 +319,30 @@ async function runFileIOBenchmark(compare: boolean = false): Promise<void> {
 }
 
 async function showProgressDashboard(open: boolean = false): Promise<void> {
-  console.log('📊 Learning Progress Dashboard');
-  console.log('\\n🎯 Overall Progress:');
-  console.log('  Exercises Completed: 0/5');
-  console.log('  Annotations Fixed: 0');
-  console.log('  Performance Gains: 0x');
-  console.log('  Badges Earned: None');
+  console.info('📊 Learning Progress Dashboard');
+  console.info('\\n🎯 Overall Progress:');
+  console.info('  Exercises Completed: 0/5');
+  console.info('  Annotations Fixed: 0');
+  console.info('  Performance Gains: 0x');
+  console.info('  Badges Earned: None');
   
-  console.log('\\n📚 Exercise Status:');
-  console.log('  1. File I/O Mastery: ❌ Not started');
-  console.log('  2. Concurrency Patterns: ❌ Not started');
-  console.log('  3. Performance Optimization: ❌ Not started');
-  console.log('  4. Security Best Practices: ❌ Not started');
-  console.log('  5. Testing with bun:test: ❌ Not started');
+  console.info('\\n📚 Exercise Status:');
+  console.info('  1. File I/O Mastery: ❌ Not started');
+  console.info('  2. Concurrency Patterns: ❌ Not started');
+  console.info('  3. Performance Optimization: ❌ Not started');
+  console.info('  4. Security Best Practices: ❌ Not started');
+  console.info('  5. Testing with bun:test: ❌ Not started');
   
-  console.log('\\n🏆 Available Badges:');
-  console.log('  ⚡ speed-demon: Fix 10 [PERF] annotations');
-  console.log('  🛡️ error-slayer: Fix 10 [ERROR] annotations');
-  console.log('  🔒 security-guard: Fix 5 [SECURITY] annotations');
-  console.log('  🥇 bun-master: Complete all modules');
+  console.info('\\n🏆 Available Badges:');
+  console.info('  ⚡ speed-demon: Fix 10 [PERF] annotations');
+  console.info('  🛡️ error-slayer: Fix 10 [ERROR] annotations');
+  console.info('  🔒 security-guard: Fix 5 [SECURITY] annotations');
+  console.info('  🥇 bun-master: Complete all modules');
   
   if (open) {
-    console.log('\\n🌐 Opening dashboard in browser...');
+    console.info('\\n🌐 Opening dashboard in browser...');
     // In a real implementation, this would start a web server
-    console.log('  (Web dashboard coming soon!)');
+    console.info('  (Web dashboard coming soon!)');
   }
 }
 

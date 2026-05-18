@@ -38,14 +38,14 @@ async function buildStandalone(options: BuildStandaloneOptions) {
 		target = "bun",
 	} = options;
 
-	console.log(`🔨 Building standalone executable: ${entrypoint}`);
-	console.log(`📦 Output directory: ${outdir || "default"}`);
-	console.log(`🎯 Target: ${target}`);
-	console.log(`\n📋 Config autoload options:`);
-	console.log(`   - tsconfig.json: ${autoloadTsconfig ? "✅" : "❌"}`);
-	console.log(`   - package.json: ${autoloadPackageJson ? "✅" : "❌"}`);
-	console.log(`   - .env files: ${autoloadDotenv ? "✅" : "❌"}`);
-	console.log(`   - bunfig.toml: ${autoloadBunfig ? "✅" : "❌"}`);
+	console.info(`🔨 Building standalone executable: ${entrypoint}`);
+	console.info(`📦 Output directory: ${outdir || "default"}`);
+	console.info(`🎯 Target: ${target}`);
+	console.info(`\n📋 Config autoload options:`);
+	console.info(`   - tsconfig.json: ${autoloadTsconfig ? "✅" : "❌"}`);
+	console.info(`   - package.json: ${autoloadPackageJson ? "✅" : "❌"}`);
+	console.info(`   - .env files: ${autoloadDotenv ? "✅" : "❌"}`);
+	console.info(`   - bunfig.toml: ${autoloadBunfig ? "✅" : "❌"}`);
 
 	const buildOptions: Parameters<typeof Bun.build>[0] = {
 		entrypoints: [entrypoint],
@@ -71,10 +71,10 @@ async function buildStandalone(options: BuildStandaloneOptions) {
 			process.exit(1);
 		}
 
-		console.log("\n✅ Build successful!");
+		console.info("\n✅ Build successful!");
 		for (const output of result.outputs) {
 			const sizeKB = (output.size / 1024).toFixed(2);
-			console.log(`   📄 ${output.path} (${sizeKB} KB)`);
+			console.info(`   📄 ${output.path} (${sizeKB} KB)`);
 		}
 
 		return result;
@@ -140,7 +140,7 @@ async function main() {
 	});
 
 	if (args.values.help || args.positionals.length === 0) {
-		console.log(`
+		console.info(`
 Usage: bun run scripts/build-standalone.ts <entrypoint> [options]
 
 Options:

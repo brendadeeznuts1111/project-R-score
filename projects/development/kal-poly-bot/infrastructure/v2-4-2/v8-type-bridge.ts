@@ -216,9 +216,9 @@ export class V8TypeCheckingBridge {
 
   // Performance testing utilities
   static benchmark(iterations: number = 100000): void {
-    console.log("🧪 V8 Type Checking Bridge Benchmark");
-    console.log("====================================");
-    console.log(`Iterations: ${iterations}`);
+    console.info("🧪 V8 Type Checking Bridge Benchmark");
+    console.info("====================================");
+    console.info(`Iterations: ${iterations}`);
 
     const testValues = [
       new Map([["key", "value"]]),
@@ -234,7 +234,7 @@ export class V8TypeCheckingBridge {
       new ArrayBuffer(8),
     ];
 
-    console.log("\n📊 Type Check Performance:");
+    console.info("\n📊 Type Check Performance:");
 
     for (const value of testValues) {
       const start = performance.now();
@@ -246,7 +246,7 @@ export class V8TypeCheckingBridge {
       }
       const time = performance.now() - start;
 
-      console.log(
+      console.info(
         `   ${typeof value === "object" ? value.constructor.name : typeof value}: ${time.toFixed(2)}ms`
       );
     }
@@ -328,10 +328,10 @@ export const {
 
 // Demonstration function
 export function demonstrateV8Bridge(): void {
-  console.log("🚀 Component #43: V8 Type Checking Bridge");
-  console.log("=======================================");
+  console.info("🚀 Component #43: V8 Type Checking Bridge");
+  console.info("=======================================");
 
-  console.log("\n🔧 Type Checking Examples:");
+  console.info("\n🔧 Type Checking Examples:");
 
   const testValues = [
     { value: new Map([["test", "value"]]), name: "Map" },
@@ -345,39 +345,39 @@ export function demonstrateV8Bridge(): void {
   ];
 
   for (const { value, name } of testValues) {
-    console.log(`   ${name}:`);
-    console.log(`     isMap: ${V8TypeCheckingBridge.isMap(value)}`);
-    console.log(`     isArray: ${V8TypeCheckingBridge.isArray(value)}`);
-    console.log(`     isInt32: ${V8TypeCheckingBridge.isInt32(value)}`);
-    console.log(`     isBigInt: ${V8TypeCheckingBridge.isBigInt(value)}`);
-    console.log(`     isUint32: ${V8TypeCheckingBridge.isUint32(value)}`);
-    console.log(`     isDate: ${V8TypeCheckingBridge.isDate(value)}`);
-    console.log(`     isRegExp: ${V8TypeCheckingBridge.isRegExp(value)}`);
-    console.log(
+    console.info(`   ${name}:`);
+    console.info(`     isMap: ${V8TypeCheckingBridge.isMap(value)}`);
+    console.info(`     isArray: ${V8TypeCheckingBridge.isArray(value)}`);
+    console.info(`     isInt32: ${V8TypeCheckingBridge.isInt32(value)}`);
+    console.info(`     isBigInt: ${V8TypeCheckingBridge.isBigInt(value)}`);
+    console.info(`     isUint32: ${V8TypeCheckingBridge.isUint32(value)}`);
+    console.info(`     isDate: ${V8TypeCheckingBridge.isDate(value)}`);
+    console.info(`     isRegExp: ${V8TypeCheckingBridge.isRegExp(value)}`);
+    console.info(
       `     isTypedArray: ${V8TypeCheckingBridge.isTypedArray(value)}`
     );
   }
 
-  console.log("\n📝 Native Addon Registration:");
+  console.info("\n📝 Native Addon Registration:");
   V8TypeCheckingBridge.registerTypeChecks("example-addon");
-  console.log(
+  console.info(
     `   Registered addons: ${V8TypeCheckingBridge.getRegisteredAddons().join(", ")}`
   );
 
-  console.log("\n🔍 V8 Compatibility:");
+  console.info("\n🔍 V8 Compatibility:");
   const isCompatible = V8TypeCheckingBridge.validateV8Compatibility();
-  console.log(`   V8 Compatible: ${isCompatible ? "✅" : "❌"}`);
+  console.info(`   V8 Compatible: ${isCompatible ? "✅" : "❌"}`);
 
-  console.log("\n🧪 Performance Benchmark:");
+  console.info("\n🧪 Performance Benchmark:");
   V8TypeCheckingBridge.benchmark(50000);
 
-  console.log("\n🎯 Key Features:");
-  console.log(`   ✅ V8 C++ API compatibility`);
-  console.log(`   ✅ Native addon type checking`);
-  console.log(`   ✅ Zero-cost abstraction`);
-  console.log(`   ✅ Value conversion utilities`);
-  console.log(`   ✅ Performance optimized`);
-  console.log(`   ✅ HMR and worker thread support`);
+  console.info("\n🎯 Key Features:");
+  console.info(`   ✅ V8 C++ API compatibility`);
+  console.info(`   ✅ Native addon type checking`);
+  console.info(`   ✅ Zero-cost abstraction`);
+  console.info(`   ✅ Value conversion utilities`);
+  console.info(`   ✅ Performance optimized`);
+  console.info(`   ✅ HMR and worker thread support`);
 }
 
 // Run demonstration if called directly

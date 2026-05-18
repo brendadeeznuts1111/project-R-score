@@ -45,7 +45,7 @@ describe('6.1.1.2.2.8.1.1.2.9.6: High-Frequency Tick Performance Benchmarks', ()
     }
 
     const duration = performance.now() - start;
-    console.log(`Ingested 10,000 ticks in ${duration.toFixed(2)}ms`);
+    console.info(`Ingested 10,000 ticks in ${duration.toFixed(2)}ms`);
 
     expect(duration).toBeLessThan(100);
   });
@@ -82,8 +82,8 @@ describe('6.1.1.2.2.8.1.1.2.9.6: High-Frequency Tick Performance Benchmarks', ()
     const correlation = await engine.calculateTickCorrelation('node-a', 'node-b', 30000);
     const duration = performance.now() - start;
 
-    console.log(`Correlation calculation: ${duration.toFixed(2)}ms`);
-    console.log(`Correlation score: ${correlation.correlationScore.toFixed(2)}`);
+    console.info(`Correlation calculation: ${duration.toFixed(2)}ms`);
+    console.info(`Correlation score: ${correlation.correlationScore.toFixed(2)}`);
 
     expect(duration).toBeLessThan(50);
     expect(correlation.correlationScore).toBeGreaterThan(0.7); // Should be highly correlated
@@ -127,8 +127,8 @@ describe('6.1.1.2.2.8.1.1.2.9.6: High-Frequency Tick Performance Benchmarks', ()
       1000,
     );
 
-    console.log(`Arbitrage opportunities: ${correlation.arbitrage?.totalOpportunities || 0}`);
-    console.log(`Total profit: ${correlation.arbitrage?.totalProfit?.toFixed(4) || 0}`);
+    console.info(`Arbitrage opportunities: ${correlation.arbitrage?.totalOpportunities || 0}`);
+    console.info(`Total profit: ${correlation.arbitrage?.totalProfit?.toFixed(4) || 0}`);
 
     expect(correlation.arbitrage?.totalOpportunities).toBeGreaterThan(0);
     expect(correlation.arbitrage?.totalProfit).toBeGreaterThan(0);
@@ -160,8 +160,8 @@ describe('6.1.1.2.2.8.1.1.2.9.6: High-Frequency Tick Performance Benchmarks', ()
     const memoryIncrease = finalMemory - initialMemory;
     const memoryPerTick = memoryIncrease / 100000;
 
-    console.log(`Memory increase: ${(memoryIncrease / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`Memory per tick: ${memoryPerTick.toFixed(2)} bytes`);
+    console.info(`Memory increase: ${(memoryIncrease / 1024 / 1024).toFixed(2)}MB`);
+    console.info(`Memory per tick: ${memoryPerTick.toFixed(2)} bytes`);
 
     // Should be less than 1KB per tick
     expect(memoryPerTick).toBeLessThan(1024);

@@ -123,23 +123,23 @@ const endpoints = {
 };
 
 // Generate all badge data
-console.log('Generating badge status data...');
+console.info('Generating badge status data...');
 
 const statusData = generateBadgeStatus();
 await write('reports/badge-status.json', JSON.stringify(statusData, null, 2));
-console.log(`✓ Status: ${statusData.label} (${statusData.color})`);
+console.info(`✓ Status: ${statusData.label} (${statusData.color})`);
 
 const perfData = generatePerformanceScore();
 await write('reports/performance-score.json', JSON.stringify(perfData, null, 2));
-console.log(`✓ Performance: ${perfData.label} (${perfData.color})`);
+console.info(`✓ Performance: ${perfData.label} (${perfData.color})`);
 
 const coverageData = generateCoverage();
 await write('reports/coverage.json', JSON.stringify(coverageData, null, 2));
-console.log(`✓ Coverage: ${coverageData.label} (${coverageData.color})`);
+console.info(`✓ Coverage: ${coverageData.label} (${coverageData.color})`);
 
 const lastRunData = generateLastRun();
 await write('reports/last-run.json', JSON.stringify(lastRunData, null, 2));
-console.log(`✓ Last Run: ${lastRunData.label} (${lastRunData.color})`);
+console.info(`✓ Last Run: ${lastRunData.label} (${lastRunData.color})`);
 
 // Create combined status file
 const combinedStatus = {
@@ -151,7 +151,7 @@ const combinedStatus = {
 };
 
 await write('reports/combined-status.json', JSON.stringify(combinedStatus, null, 2));
-console.log('\n✓ All badge data generated in reports/');
+console.info('\n✓ All badge data generated in reports/');
 
 // Export for potential server use
 export {

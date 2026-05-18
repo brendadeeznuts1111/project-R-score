@@ -27,16 +27,16 @@ export class ArbServer {
 	 * Initialize cache and mappings
 	 */
 	async init() {
-		console.log('🚀 Initializing Arbitrage Server...');
+		console.info('🚀 Initializing Arbitrage Server...');
 
 		// 1. Init SQLite cache
 		await this.cache.initMapping();
-		console.log('✅ SQLite cache initialized');
+		console.info('✅ SQLite cache initialized');
 
 		// 2. Stream ALL mappings from private registry
 		try {
 			const sportsData = await this.streamer.streamFromPrivateRegistry('ALL');
-			console.log(`✅ Loaded ${sportsData.totalMarkets} markets from private registry`);
+			console.info(`✅ Loaded ${sportsData.totalMarkets} markets from private registry`);
 
 			// 3. Cache locally
 			await Bun.write(
@@ -63,12 +63,12 @@ export class ArbServer {
 				}
 			}
 
-			console.log(`✅ Cached ${sportsData.totalMarkets} markets`);
+			console.info(`✅ Cached ${sportsData.totalMarkets} markets`);
 		} catch (error) {
 			console.warn('⚠️  Private registry unavailable, using bundled data');
 		}
 
-		console.log('✅ Server initialization complete');
+		console.info('✅ Server initialization complete');
 	}
 
 	/**

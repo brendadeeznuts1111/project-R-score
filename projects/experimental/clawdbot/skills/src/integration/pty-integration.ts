@@ -210,7 +210,7 @@ export class PTYSkillIntegration {
       port?: number;
     } = {}
   ): Promise<DevEnvironment> {
-    console.log(`Creating development environment for ${skillId}`);
+    console.info(`Creating development environment for ${skillId}`);
 
     // Create debug terminal
     const debugTerminal = await this.ptyManager.createDebugTerminal(skillId, {
@@ -232,7 +232,7 @@ export class PTYSkillIntegration {
         { recursive: true },
         (event, filename) => {
           if (filename && (filename.endsWith(".ts") || filename.endsWith(".js"))) {
-            console.log(`File changed: ${filename}`);
+            console.info(`File changed: ${filename}`);
             debugTerminal.write("\x03"); // Send Ctrl+C
             setTimeout(() => {
               debugTerminal.write("bun run src/index.ts\n");
@@ -353,7 +353,7 @@ export class PTYSkillIntegration {
       env?: Record<string, string>;
     } = {}
   ): Promise<any> {
-    console.log(`Starting REPL for ${skillId}`);
+    console.info(`Starting REPL for ${skillId}`);
 
     const terminal = await this.ptyManager.createSkillTerminal(skillId, {
       command: "bun",

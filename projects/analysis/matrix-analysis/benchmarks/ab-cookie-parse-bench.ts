@@ -77,9 +77,9 @@ function runBench(
 // ── Benchmark Suite ────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log("╔═══════════════════════════════════════════════════════════════════╗");
-  console.log("║ A/B Cookie Parse Benchmarks (Bun Native)                          ║");
-  console.log("╚═══════════════════════════════════════════════════════════════════╝\n");
+  console.info("╔═══════════════════════════════════════════════════════════════════╗");
+  console.info("║ A/B Cookie Parse Benchmarks (Bun Native)                          ║");
+  console.info("╚═══════════════════════════════════════════════════════════════════╝\n");
 
   const results: BenchResult[] = [];
 
@@ -153,7 +153,7 @@ async function main() {
 
   // ── Display Results ───────────────────────────────────────────────────────────
 
-  console.log("\nResults:\n");
+  console.info("\nResults:\n");
 
   const table = results.map((r) => ({
     Benchmark: r.name,
@@ -163,7 +163,7 @@ async function main() {
   }));
 
   if (typeof Bun !== "undefined") {
-    console.log(Bun.inspect.table(table));
+    console.info(Bun.inspect.table(table));
   } else {
     console.table(table);
   }
@@ -174,39 +174,39 @@ async function main() {
   const tenResult = results[2];
   const largeResult = results[4];
 
-  console.log("\n═══════════════════════════════════════════════════════════════════");
-  console.log("Performance Analysis:");
-  console.log(`  Simple (2 vars):   ${simpleResult.perOpNs.toFixed(1)}ns/op`);
-  console.log(`  10 variants:       ${tenResult.perOpNs.toFixed(1)}ns/op (${(tenResult.perOpNs / simpleResult.perOpNs).toFixed(2)}x overhead)`);
-  console.log(`  Large (50 keys):   ${largeResult.perOpNs.toFixed(1)}ns/op (${(largeResult.perOpNs / simpleResult.perOpNs).toFixed(2)}x overhead)`);
-  console.log("\n  Target: 23ns/op (74x Node tough-cookie)");
-  console.log(`  Actual: ${simpleResult.perOpNs.toFixed(1)}ns/op`);
-  console.log(`  Status: ${simpleResult.perOpNs < 30 ? "✓ PASSED" : "✗ MISSED TARGET"}`);
-  console.log("═══════════════════════════════════════════════════════════════════\n");
+  console.info("\n═══════════════════════════════════════════════════════════════════");
+  console.info("Performance Analysis:");
+  console.info(`  Simple (2 vars):   ${simpleResult.perOpNs.toFixed(1)}ns/op`);
+  console.info(`  10 variants:       ${tenResult.perOpNs.toFixed(1)}ns/op (${(tenResult.perOpNs / simpleResult.perOpNs).toFixed(2)}x overhead)`);
+  console.info(`  Large (50 keys):   ${largeResult.perOpNs.toFixed(1)}ns/op (${(largeResult.perOpNs / simpleResult.perOpNs).toFixed(2)}x overhead)`);
+  console.info("\n  Target: 23ns/op (74x Node tough-cookie)");
+  console.info(`  Actual: ${simpleResult.perOpNs.toFixed(1)}ns/op`);
+  console.info(`  Status: ${simpleResult.perOpNs < 30 ? "✓ PASSED" : "✗ MISSED TARGET"}`);
+  console.info("═══════════════════════════════════════════════════════════════════\n");
 
   // ── One-Liners (Match User Request) ──────────────────────────────────────────
 
-  console.log("Bun One-Liners (Copy-Paste Ready):\n");
+  console.info("Bun One-Liners (Copy-Paste Ready):\n");
 
-  console.log("# Parse ab-variant-* cookies:");
-  console.log('bun -e \'let h="ab-variant-a=enabled;ab-variant-b=disabled;session=abc";let m=new Map(decodeURIComponent(h).split(";").map(p=>p.trim().split("=")));let ab=m.get("ab-variant-a")||m.get("ab-variant-b");console.log(ab)\'\n');
+  console.info("# Parse ab-variant-* cookies:");
+  console.info('bun -e \'let h="ab-variant-a=enabled;ab-variant-b=disabled;session=abc";let m=new Map(decodeURIComponent(h).split(";").map(p=>p.trim().split("=")));let ab=m.get("ab-variant-a")||m.get("ab-variant-b");console.info(ab)\'\n');
 
-  console.log("# Filter public prefixes:");
-  console.log('bun -e \'let h="public-ab-a=1;ab-variant-b=off;private=secret";let ab=[];h.split(";").forEach(p=>{let[k]=p.split("=");if(k.startsWith("ab-variant-"))ab.push(k)});console.log(ab)\'\n');
+  console.info("# Filter public prefixes:");
+  console.info('bun -e \'let h="public-ab-a=1;ab-variant-b=off;private=secret";let ab=[];h.split(";").forEach(p=>{let[k]=p.split("=");if(k.startsWith("ab-variant-"))ab.push(k)});console.info(ab)\'\n');
 
-  console.log("# 10 A/B variants benchmark:");
-  console.log('bun -e \'let h="ab-variant-"+Array.from({length:10},(_,i)=>`v${i}=${i%2?"on":"off"}`).join(";");console.time("10ab");for(let i=0;i<1e3;++i)new Map(decodeURIComponent(h).split(";").map(p=>p.trim().split("=")));console.timeEnd("10ab")\'\n');
+  console.info("# 10 A/B variants benchmark:");
+  console.info('bun -e \'let h="ab-variant-"+Array.from({length:10},(_,i)=>`v${i}=${i%2?"on":"off"}`).join(";");console.time("10ab");for(let i=0;i<1e3;++i)new Map(decodeURIComponent(h).split(";").map(p=>p.trim().split("=")));console.timeEnd("10ab")\'\n');
 
-  console.log("# Aggregate benchmark:");
-  console.log(`bun -e '
+  console.info("# Aggregate benchmark:");
+  console.info(`bun -e '
 let h="ab-variant-a=enabled;ab-variant-b=off;session=abc".repeat(10);
 ["prefix","fallback"].forEach(n=>{
   let t=performance.now();
   for(let i=0;i<1e3;++i){
     if(n==="prefix")new Map(decodeURIComponent(h).split(";").map(p=>p.trim().split("=")));
-    else console.log("control");  // Inline literal!
+    else console.info("control");  // Inline literal!
   }
-  console.log(\`\${n}: \${(performance.now()-t)/1e3}ms/1k\`);
+  console.info(\`\${n}: \${(performance.now()-t)/1e3}ms/1k\`);
 });
 '\n`);
 }

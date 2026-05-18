@@ -73,7 +73,7 @@ export class AccountSearch extends EventEmitter {
     // Setup results container
     this.setupResultsContainer();
 
-    console.log('🔍 Account search initialized');
+    console.info('🔍 Account search initialized');
   }
 
   private setupResultsContainer(): void {
@@ -461,7 +461,7 @@ export class AccountSearch extends EventEmitter {
   // Public API methods
   public setSearchCriteria(criteria: Partial<SearchCriteria>): void {
     // Update search behavior
-    console.log('Search criteria updated:', criteria);
+    console.info('Search criteria updated:', criteria);
   }
 
   public clearSearch(): void {

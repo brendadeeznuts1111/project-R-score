@@ -237,35 +237,35 @@ function calculateStats(
 // ============================================================================
 
 function printReport(results: BenchmarkResult[]): void {
-  console.log("\n" + "=".repeat(70));
-  console.log("IPC Transport Benchmark Results");
-  console.log("=".repeat(70));
-  console.log(`Bun version: ${Bun.version}`);
-  console.log(`Platform: ${process.platform} ${process.arch}`);
-  console.log(`Iterations: ${CONFIG.iterations} (warmup: ${CONFIG.warmupIterations})`);
-  console.log("=".repeat(70));
+  console.info("\n" + "=".repeat(70));
+  console.info("IPC Transport Benchmark Results");
+  console.info("=".repeat(70));
+  console.info(`Bun version: ${Bun.version}`);
+  console.info(`Platform: ${process.platform} ${process.arch}`);
+  console.info(`Iterations: ${CONFIG.iterations} (warmup: ${CONFIG.warmupIterations})`);
+  console.info("=".repeat(70));
   
   for (const result of results) {
-    console.log(`\n📊 ${result.transport} (${result.payloadSize}B payload)`);
-    console.log("-".repeat(50));
-    console.log(`  Average:     ${result.avgMs.toFixed(3)}ms`);
-    console.log(`  Min:         ${result.minMs.toFixed(3)}ms`);
-    console.log(`  Max:         ${result.maxMs.toFixed(3)}ms`);
-    console.log(`  P95:         ${result.p95Ms.toFixed(3)}ms`);
-    console.log(`  P99:         ${result.p99Ms.toFixed(3)}ms`);
-    console.log(`  Ops/sec:     ${result.opsPerSecond.toLocaleString()}`);
+    console.info(`\n📊 ${result.transport} (${result.payloadSize}B payload)`);
+    console.info("-".repeat(50));
+    console.info(`  Average:     ${result.avgMs.toFixed(3)}ms`);
+    console.info(`  Min:         ${result.minMs.toFixed(3)}ms`);
+    console.info(`  Max:         ${result.maxMs.toFixed(3)}ms`);
+    console.info(`  P95:         ${result.p95Ms.toFixed(3)}ms`);
+    console.info(`  P99:         ${result.p99Ms.toFixed(3)}ms`);
+    console.info(`  Ops/sec:     ${result.opsPerSecond.toLocaleString()}`);
     
     // Council validation
     if (result.payloadSize === 512 && result.avgMs > 5) {
-      console.log(`  ⚠️  WARNING: Exceeds 5ms threshold for <1KB claim`);
+      console.info(`  ⚠️  WARNING: Exceeds 5ms threshold for <1KB claim`);
     } else if (result.payloadSize === 512) {
-      console.log(`  ✅ PASS: Within 5ms threshold for <1KB claim`);
+      console.info(`  ✅ PASS: Within 5ms threshold for <1KB claim`);
     }
   }
   
-  console.log("\n" + "=".repeat(70));
-  console.log("Council Defense Status");
-  console.log("=".repeat(70));
+  console.info("\n" + "=".repeat(70));
+  console.info("Council Defense Status");
+  console.info("=".repeat(70));
   
   const unix512 = results.find(r => r.transport === "Unix Socket" && r.payloadSize === 512);
   const http512 = results.find(r => r.transport === "HTTP Localhost" && r.payloadSize === 512);
@@ -275,17 +275,17 @@ function printReport(results: BenchmarkResult[]): void {
     const unixVsHttp = ((http512.avgMs - unix512.avgMs) / http512.avgMs * 100).toFixed(1);
     const unixVsBlob = ((blob512.avgMs - unix512.avgMs) / blob512.avgMs * 100).toFixed(1);
     
-    console.log(`\n✅ Unix Socket vs HTTP Localhost: ${unixVsHttp}% faster`);
-    console.log(`✅ Unix Socket vs Blob Transfer: ${unixVsBlob}% faster`);
+    console.info(`\n✅ Unix Socket vs HTTP Localhost: ${unixVsHttp}% faster`);
+    console.info(`✅ Unix Socket vs Blob Transfer: ${unixVsBlob}% faster`);
     
     if (unix512.avgMs < 5) {
-      console.log(`✅ Council Claim Validated: <5ms for 500B payloads`);
+      console.info(`✅ Council Claim Validated: <5ms for 500B payloads`);
     } else {
-      console.log(`❌ Council Claim FAILED: ${unix512.avgMs}ms > 5ms threshold`);
+      console.info(`❌ Council Claim FAILED: ${unix512.avgMs}ms > 5ms threshold`);
     }
   }
   
-  console.log("=".repeat(70));
+  console.info("=".repeat(70));
 }
 
 // ============================================================================
@@ -293,34 +293,34 @@ function printReport(results: BenchmarkResult[]): void {
 // ============================================================================
 
 async function main(): Promise<void> {
-  console.log("🔬 IPC Transport Benchmark");
-  console.log("==========================\n");
+  console.info("🔬 IPC Transport Benchmark");
+  console.info("==========================\n");
   
   for (const payloadSize of CONFIG.payloadSizes) {
-    console.log(`Testing ${payloadSize}B payloads...`);
+    console.info(`Testing ${payloadSize}B payloads...`);
     
     // Unix Socket
     try {
       results.push(await benchmarkUnixSocket(payloadSize));
-      console.log(`  ✅ Unix Socket complete`);
+      console.info(`  ✅ Unix Socket complete`);
     } catch (e) {
-      console.log(`  ❌ Unix Socket failed: ${e}`);
+      console.info(`  ❌ Unix Socket failed: ${e}`);
     }
     
     // HTTP Localhost
     try {
       results.push(await benchmarkHttpLocalhost(payloadSize));
-      console.log(`  ✅ HTTP Localhost complete`);
+      console.info(`  ✅ HTTP Localhost complete`);
     } catch (e) {
-      console.log(`  ❌ HTTP Localhost failed: ${e}`);
+      console.info(`  ❌ HTTP Localhost failed: ${e}`);
     }
     
     // Blob Transfer
     try {
       results.push(await benchmarkBlobTransfer(payloadSize));
-      console.log(`  ✅ Blob Transfer complete`);
+      console.info(`  ✅ Blob Transfer complete`);
     } catch (e) {
-      console.log(`  ❌ Blob Transfer failed: ${e}`);
+      console.info(`  ❌ Blob Transfer failed: ${e}`);
     }
   }
   
@@ -337,7 +337,7 @@ async function main(): Promise<void> {
   
   const reportPath = `./reports/ipc-${Date.now()}.json`;
   await Bun.write(reportPath, JSON.stringify(evidenceData, null, 2));
-  console.log(`\n📄 Evidence saved: ${reportPath}`);
+  console.info(`\n📄 Evidence saved: ${reportPath}`);
 }
 
 if (import.meta.main) {

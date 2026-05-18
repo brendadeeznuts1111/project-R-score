@@ -31,17 +31,17 @@ export class PolishedErrorHandler extends EnhancedErrorHandler {
       };
 
       // Show polished error message
-      console.log();
-      console.log(colors.error(`${error.name}: ${error.message}`));
+      console.info();
+      console.info(colors.error(`${error.name}: ${error.message}`));
 
       // Show solutions based on error code
       const solutions = this.getSolutionsForCode(error.code);
       if (solutions.length > 0) {
-        console.log();
-        console.log(colors.info("Possible solutions:"));
-        solutions.forEach(s => console.log(colors.dim(`  ${s}`)));
+        console.info();
+        console.info(colors.info("Possible solutions:"));
+        solutions.forEach(s => console.info(colors.dim(`  ${s}`)));
       }
-      console.log();
+      console.info();
 
       // Trigger error feedback
       feedback.error().catch(() => null);

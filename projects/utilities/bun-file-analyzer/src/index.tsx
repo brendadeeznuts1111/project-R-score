@@ -25,7 +25,7 @@ function HMRPersistentApp() {
     
     // Listen for config updates
     const handleConfigUpdate = (event: CustomEvent) => {
-      console.log("🔄 App: Configuration updated via HMR");
+      console.info("🔄 App: Configuration updated via HMR");
       setCurrentConfig(event.detail.config);
     };
     
@@ -210,7 +210,7 @@ root.render(<AppWithTheme />);
 // HMR setup
 if (import.meta.hot) {
   import.meta.hot.accept((newModule) => {
-    console.log("%c✅ App updated via HMR", "color: #22c55e");
+    console.info("%c✅ App updated via HMR", "color: #22c55e");
   });
   
   import.meta.hot.dispose(() => {
@@ -221,6 +221,6 @@ if (import.meta.hot) {
 // Service worker registration (re-enabled)
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js").then(registration => {
-    console.log("%c📡 SW registered", "color: #0ea5e9");
+    console.info("%c📡 SW registered", "color: #0ea5e9");
   });
 }

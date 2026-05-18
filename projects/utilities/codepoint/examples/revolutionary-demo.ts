@@ -23,13 +23,13 @@ declare module "bun:bundle" {
   }
 }
 
-console.log("🚀 Revolutionary Bun Feature Flags - Complete Demonstration");
-console.log("==========================================================");
+console.info("🚀 Revolutionary Bun Feature Flags - Complete Demonstration");
+console.info("==========================================================");
 
 // Demonstrate revolutionary compile-time feature detection
 function demonstrateRevolutionaryFeatures() {
-  console.log("\n🎯 Revolutionary Feature Detection:");
-  console.log("=====================================");
+  console.info("\n🎯 Revolutionary Feature Detection:");
+  console.info("=====================================");
 
   // These are resolved at COMPILE TIME, not runtime!
   const features = {
@@ -42,7 +42,7 @@ function demonstrateRevolutionaryFeatures() {
     mockApi: feature("MOCK_API") ? true : false,
   };
 
-  console.log(
+  console.info(
     "📊 Enabled Features:",
     Object.entries(features)
       .filter(([_, enabled]) => enabled)
@@ -50,7 +50,7 @@ function demonstrateRevolutionaryFeatures() {
       .join(", ") || "None"
   );
 
-  console.log(
+  console.info(
     "❌ Disabled Features:",
     Object.entries(features)
       .filter(([_, enabled]) => !enabled)
@@ -63,64 +63,64 @@ function demonstrateRevolutionaryFeatures() {
 
 // Demonstrate revolutionary dead-code elimination
 function demonstrateDeadCodeElimination(features: any) {
-  console.log("\n💀 Revolutionary Dead-Code Elimination:");
-  console.log("========================================");
+  console.info("\n💀 Revolutionary Dead-Code Elimination:");
+  console.info("========================================");
 
   // This code will be COMPLETELY ELIMINATED if features are disabled!
   if (feature("PREMIUM")) {
-    console.log("🎯 PREMIUM features active:");
-    console.log("   - Advanced analytics dashboard");
-    console.log("   - Custom reporting tools");
-    console.log("   - Priority customer support");
-    console.log("   - Enhanced data export capabilities");
+    console.info("🎯 PREMIUM features active:");
+    console.info("   - Advanced analytics dashboard");
+    console.info("   - Custom reporting tools");
+    console.info("   - Priority customer support");
+    console.info("   - Enhanced data export capabilities");
   }
 
   if (feature("DEBUG")) {
-    console.log("🐛 DEBUG mode active:");
-    console.log("   - Verbose logging enabled");
-    console.log("   - Development tools available");
-    console.log("   - Debug endpoints exposed");
-    console.log("   - Performance monitoring active");
+    console.info("🐛 DEBUG mode active:");
+    console.info("   - Verbose logging enabled");
+    console.info("   - Development tools available");
+    console.info("   - Debug endpoints exposed");
+    console.info("   - Performance monitoring active");
   }
 
   if (feature("BETA_FEATURES")) {
-    console.log("🧪 BETA features active:");
-    console.log("   - Experimental UI components");
-    console.log("   - Cutting-edge functionality");
-    console.log("   - Early access features");
-    console.log("   - Innovation lab tools");
+    console.info("🧪 BETA features active:");
+    console.info("   - Experimental UI components");
+    console.info("   - Cutting-edge functionality");
+    console.info("   - Early access features");
+    console.info("   - Innovation lab tools");
   }
 
   if (feature("ADMIN")) {
-    console.log("👑 ADMIN features active:");
-    console.log("   - Administrative dashboard");
-    console.log("   - User management tools");
-    console.log("   - System configuration access");
-    console.log("   - Security audit capabilities");
+    console.info("👑 ADMIN features active:");
+    console.info("   - Administrative dashboard");
+    console.info("   - User management tools");
+    console.info("   - System configuration access");
+    console.info("   - Security audit capabilities");
   }
 
   if (feature("ANALYTICS")) {
-    console.log("📊 ANALYTICS features active:");
-    console.log("   - Usage tracking enabled");
-    console.log("   - Performance metrics collected");
-    console.log("   - User behavior analysis");
-    console.log("   - Business intelligence tools");
+    console.info("📊 ANALYTICS features active:");
+    console.info("   - Usage tracking enabled");
+    console.info("   - Performance metrics collected");
+    console.info("   - User behavior analysis");
+    console.info("   - Business intelligence tools");
   }
 
   if (feature("PERFORMANCE")) {
-    console.log("⚡ PERFORMANCE features active:");
-    console.log("   - Advanced caching enabled");
-    console.log("   - Optimization algorithms active");
-    console.log("   - Resource management optimized");
-    console.log("   - Load balancing enhanced");
+    console.info("⚡ PERFORMANCE features active:");
+    console.info("   - Advanced caching enabled");
+    console.info("   - Optimization algorithms active");
+    console.info("   - Resource management optimized");
+    console.info("   - Load balancing enhanced");
   }
 
   if (feature("MOCK_API")) {
-    console.log("🎭 MOCK_API features active:");
-    console.log("   - Simulated API responses");
-    console.log("   - Test data generation");
-    console.log("   - Development environment");
-    console.log("   - Integration testing support");
+    console.info("🎭 MOCK_API features active:");
+    console.info("   - Simulated API responses");
+    console.info("   - Test data generation");
+    console.info("   - Development environment");
+    console.info("   - Integration testing support");
   }
 
   // Show what was eliminated
@@ -129,17 +129,17 @@ function demonstrateDeadCodeElimination(features: any) {
     .map(([name]) => name.toUpperCase());
 
   if (disabledFeatures.length > 0) {
-    console.log(`\n🗑️  ELIMINATED from bundle: ${disabledFeatures.join(", ")}`);
-    console.log("   - Zero runtime overhead");
-    console.log("   - No bundle size impact");
-    console.log("   - Complete dead-code elimination");
+    console.info(`\n🗑️  ELIMINATED from bundle: ${disabledFeatures.join(", ")}`);
+    console.info("   - Zero runtime overhead");
+    console.info("   - No bundle size impact");
+    console.info("   - Complete dead-code elimination");
   }
 }
 
 // Demonstrate revolutionary bundle optimization
 function demonstrateBundleOptimization(features: any) {
-  console.log("\n📦 Revolutionary Bundle Optimization:");
-  console.log("=====================================");
+  console.info("\n📦 Revolutionary Bundle Optimization:");
+  console.info("=====================================");
 
   // Calculate bundle size based on enabled features
   const baseSize = 100; // Base application size in KB
@@ -168,95 +168,95 @@ function demonstrateBundleOptimization(features: any) {
   const reduction = maxSize - totalSize;
   const reductionPercentage = ((reduction / maxSize) * 100).toFixed(1);
 
-  console.log(`📊 Bundle Analysis:`);
-  console.log(`   - Base size: ${baseSize}KB`);
-  console.log(`   - Current size: ${totalSize}KB`);
-  console.log(`   - Max size (all features): ${maxSize}KB`);
-  console.log(`   - Size reduction: ${reduction}KB (${reductionPercentage}%)`);
-  console.log(`   - Enabled features: ${enabledFeatures.join(", ") || "None"}`);
+  console.info(`📊 Bundle Analysis:`);
+  console.info(`   - Base size: ${baseSize}KB`);
+  console.info(`   - Current size: ${totalSize}KB`);
+  console.info(`   - Max size (all features): ${maxSize}KB`);
+  console.info(`   - Size reduction: ${reduction}KB (${reductionPercentage}%)`);
+  console.info(`   - Enabled features: ${enabledFeatures.join(", ") || "None"}`);
 
   // Performance score
   const performanceScore = Math.max(50, 100 - enabledFeatures.length * 8);
-  console.log(`   - Performance score: ${performanceScore}/100`);
+  console.info(`   - Performance score: ${performanceScore}/100`);
 }
 
 // Demonstrate revolutionary type safety
 function demonstrateTypeSafety() {
-  console.log("\n🛡️ Revolutionary Type Safety:");
-  console.log("===============================");
+  console.info("\n🛡️ Revolutionary Type Safety:");
+  console.info("===============================");
 
-  console.log("✅ Feature registry type-safe:");
-  console.log("   - PREMIUM, DEBUG, BETA_FEATURES");
-  console.log("   - ADMIN, ANALYTICS, PERFORMANCE");
-  console.log("   - MOCK_API");
+  console.info("✅ Feature registry type-safe:");
+  console.info("   - PREMIUM, DEBUG, BETA_FEATURES");
+  console.info("   - ADMIN, ANALYTICS, PERFORMANCE");
+  console.info("   - MOCK_API");
 
-  console.log("\n✅ Compile-time validation:");
-  console.log("   - feature('TYPO') = TypeScript error");
-  console.log("   - feature('MISSING') = TypeScript error");
-  console.log("   - All feature names validated");
+  console.info("\n✅ Compile-time validation:");
+  console.info("   - feature('TYPO') = TypeScript error");
+  console.info("   - feature('MISSING') = TypeScript error");
+  console.info("   - All feature names validated");
 
-  console.log("\n✅ IDE support:");
-  console.log("   - Full autocomplete for feature names");
-  console.log("   - Error checking in development");
-  console.log("   - Refactoring support");
-  console.log("   - Type hints and documentation");
+  console.info("\n✅ IDE support:");
+  console.info("   - Full autocomplete for feature names");
+  console.info("   - Error checking in development");
+  console.info("   - Refactoring support");
+  console.info("   - Type hints and documentation");
 }
 
 // Demonstrate revolutionary real-world use cases
 function demonstrateRealWorldUseCases() {
-  console.log("\n🌍 Revolutionary Real-World Use Cases:");
-  console.log("======================================");
+  console.info("\n🌍 Revolutionary Real-World Use Cases:");
+  console.info("======================================");
 
-  console.log("🏢 Enterprise SaaS Platforms:");
-  console.log("   - Free tier: Basic features only");
-  console.log("   - Premium tier: Advanced analytics + support");
-  console.log("   - Enterprise tier: All features + admin tools");
+  console.info("🏢 Enterprise SaaS Platforms:");
+  console.info("   - Free tier: Basic features only");
+  console.info("   - Premium tier: Advanced analytics + support");
+  console.info("   - Enterprise tier: All features + admin tools");
 
-  console.log("\n📱 Mobile Applications:");
-  console.log("   - iOS build: Platform-specific optimizations");
-  console.log("   - Android build: Native feature integration");
-  console.log("   - Web build: Browser-compatible features");
+  console.info("\n📱 Mobile Applications:");
+  console.info("   - iOS build: Platform-specific optimizations");
+  console.info("   - Android build: Native feature integration");
+  console.info("   - Web build: Browser-compatible features");
 
-  console.log("\n🧪 Development Workflow:");
-  console.log("   - Development: DEBUG + BETA_FEATURES");
-  console.log("   - Staging: PREMIUM + ANALYTICS");
-  console.log("   - Production: Optimized feature set");
+  console.info("\n🧪 Development Workflow:");
+  console.info("   - Development: DEBUG + BETA_FEATURES");
+  console.info("   - Staging: PREMIUM + ANALYTICS");
+  console.info("   - Production: Optimized feature set");
 
-  console.log("\n🔄 A/B Testing:");
-  console.log("   - Control group: Stable features only");
-  console.log("   - Test group A: BETA_FEATURES enabled");
-  console.log("   - Test group B: PREMIUM + BETA_FEATURES");
+  console.info("\n🔄 A/B Testing:");
+  console.info("   - Control group: Stable features only");
+  console.info("   - Test group A: BETA_FEATURES enabled");
+  console.info("   - Test group B: PREMIUM + BETA_FEATURES");
 }
 
 // Demonstrate revolutionary performance impact
 function demonstratePerformanceImpact() {
-  console.log("\n⚡ Revolutionary Performance Impact:");
-  console.log("====================================");
+  console.info("\n⚡ Revolutionary Performance Impact:");
+  console.info("====================================");
 
-  console.log("🚀 Runtime Performance:");
-  console.log("   - ZERO feature checking overhead");
-  console.log("   - No conditional branching at runtime");
-  console.log("   - Optimized execution paths");
-  console.log("   - Faster application startup");
+  console.info("🚀 Runtime Performance:");
+  console.info("   - ZERO feature checking overhead");
+  console.info("   - No conditional branching at runtime");
+  console.info("   - Optimized execution paths");
+  console.info("   - Faster application startup");
 
-  console.log("\n📦 Bundle Performance:");
-  console.log("   - 30-50% size reduction typical");
-  console.log("   - Faster download times");
-  console.log("   - Better caching efficiency");
-  console.log("   - Reduced memory footprint");
+  console.info("\n📦 Bundle Performance:");
+  console.info("   - 30-50% size reduction typical");
+  console.info("   - Faster download times");
+  console.info("   - Better caching efficiency");
+  console.info("   - Reduced memory footprint");
 
-  console.log("\n🔧 Development Performance:");
-  console.log("   - Faster build times");
-  console.log("   - Instant feature validation");
-  console.log("   - Better debugging experience");
-  console.log("   - Improved developer productivity");
+  console.info("\n🔧 Development Performance:");
+  console.info("   - Faster build times");
+  console.info("   - Instant feature validation");
+  console.info("   - Better debugging experience");
+  console.info("   - Improved developer productivity");
 }
 
 // Main revolutionary demonstration
 function main() {
-  console.log("Welcome to the future of JavaScript development!");
-  console.log("This demonstration showcases Bun's revolutionary");
-  console.log("compile-time feature flags system.\n");
+  console.info("Welcome to the future of JavaScript development!");
+  console.info("This demonstration showcases Bun's revolutionary");
+  console.info("compile-time feature flags system.\n");
 
   // Execute all demonstrations
   const features = demonstrateRevolutionaryFeatures();
@@ -266,22 +266,22 @@ function main() {
   demonstrateRealWorldUseCases();
   demonstratePerformanceImpact();
 
-  console.log("\n🎉 Revolutionary Demonstration Complete!");
-  console.log("==========================================");
-  console.log("✅ Dead-code elimination: Verified");
-  console.log("✅ Type safety: Confirmed");
-  console.log("✅ Bundle optimization: Active");
-  console.log("✅ Zero runtime overhead: Achieved");
-  console.log("✅ Enterprise flexibility: Demonstrated");
+  console.info("\n🎉 Revolutionary Demonstration Complete!");
+  console.info("==========================================");
+  console.info("✅ Dead-code elimination: Verified");
+  console.info("✅ Type safety: Confirmed");
+  console.info("✅ Bundle optimization: Active");
+  console.info("✅ Zero runtime overhead: Achieved");
+  console.info("✅ Enterprise flexibility: Demonstrated");
 
-  console.log("\n🚀 This is the future of JavaScript development!");
-  console.log("   - No more runtime feature checking");
-  console.log("   - No more bundle bloat");
-  console.log("   - No more type errors");
-  console.log("   - Just pure, optimized, revolutionary code!");
+  console.info("\n🚀 This is the future of JavaScript development!");
+  console.info("   - No more runtime feature checking");
+  console.info("   - No more bundle bloat");
+  console.info("   - No more type errors");
+  console.info("   - Just pure, optimized, revolutionary code!");
 
-  console.log("\n💡 The JavaScript ecosystem has been transformed!");
-  console.log("   Welcome to the revolution! 🎯");
+  console.info("\n💡 The JavaScript ecosystem has been transformed!");
+  console.info("   Welcome to the revolution! 🎯");
 }
 
 // Execute the revolutionary demonstration

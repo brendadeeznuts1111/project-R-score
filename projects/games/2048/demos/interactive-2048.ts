@@ -117,14 +117,14 @@ class InteractiveGame2048 {
 
   private render(): void {
     console.clear();
-    console.log("\n🎮 2048 GAME - Interactive Mode");
-    console.log(
+    console.info("\n🎮 2048 GAME - Interactive Mode");
+    console.info(
       "Score: " +
         colourKit(Math.min(this.score / 10000, 1)).ansi +
         this.score +
         "\x1b[0m"
     );
-    console.log(
+    console.info(
       "\nControls: w(up) s(down) a(left) d(right) r(reset) q(quit)\n"
     );
 
@@ -142,18 +142,18 @@ class InteractiveGame2048 {
           line += color.ansi + display + "\x1b[0m │";
         }
       }
-      console.log(line);
+      console.info(line);
       if (i === this.size - 1) {
-        console.log("└─────┴─────┴─────┴─────┘");
+        console.info("└─────┴─────┴─────┴─────┘");
       } else {
-        console.log("├─────┼─────┼─────┼─────┤");
+        console.info("├─────┼─────┼─────┼─────┤");
       }
     }
 
     if (this.checkWin()) {
-      console.log("\n🎉 YOU WIN! 🎉");
+      console.info("\n🎉 YOU WIN! 🎉");
     } else if (this.checkGameOver()) {
-      console.log("\n💀 GAME OVER 💀");
+      console.info("\n💀 GAME OVER 💀");
     }
 
     console.write("\n> ");
@@ -229,11 +229,11 @@ class InteractiveGame2048 {
         case "q":
         case "quit":
         case "exit":
-          console.log("\n👋 Thanks for playing!");
+          console.info("\n👋 Thanks for playing!");
           return;
         default:
           if (command) {
-            console.log(`Unknown command: ${command}`);
+            console.info(`Unknown command: ${command}`);
           }
       }
 

@@ -590,10 +590,10 @@ async function main() {
 
       try {
         const hash = await Tier1380PasswordSecurity.hashPassword(password, { algorithm });
-        console.log('✅ Password hashed successfully:');
-        console.log(`   Algorithm: ${hash.algorithm}`);
-        console.log(`   Hash: ${hash.hash.substring(0, 50)}...`);
-        console.log(`   Created: ${hash.createdAt.toISOString()}`);
+        console.info('✅ Password hashed successfully:');
+        console.info(`   Algorithm: ${hash.algorithm}`);
+        console.info(`   Hash: ${hash.hash.substring(0, 50)}...`);
+        console.info(`   Created: ${hash.createdAt.toISOString()}`);
       } catch (error) {
         if (error instanceof PasswordPolicyError) {
           console.error('❌ Password policy violations:');
@@ -614,29 +614,29 @@ async function main() {
       }
 
       const result = await Tier1380PasswordSecurity.verifyPassword(verifyPassword, userId);
-      console.log('🔍 Password verification:');
-      console.log(`   Valid: ${result.valid ? '✅' : '❌'}`);
-      console.log(`   Score: ${result.score}/100`);
+      console.info('🔍 Password verification:');
+      console.info(`   Valid: ${result.valid ? '✅' : '❌'}`);
+      console.info(`   Score: ${result.score}/100`);
       if (result.needsRehash) {
-        console.log(`   ⚠️  Password needs rehashing (algorithm outdated)`);
+        console.info(`   ⚠️  Password needs rehashing (algorithm outdated)`);
       }
       break;
 
     case 'audit':
       const auditUserId = args[1];
       const report = await Tier1380PasswordAudit.generateReport(auditUserId);
-      console.log('📊 Password Security Audit Report');
-      console.log(`   Generated: ${report.timestamp.toISOString()}`);
-      console.log(`   Expired passwords: ${report.expiredPasswords}`);
-      console.log(`   Weak passwords: ${report.weakPasswords}`);
+      console.info('📊 Password Security Audit Report');
+      console.info(`   Generated: ${report.timestamp.toISOString()}`);
+      console.info(`   Expired passwords: ${report.expiredPasswords}`);
+      console.info(`   Weak passwords: ${report.weakPasswords}`);
       if (report.recommendations.length > 0) {
-        console.log('   Recommendations:');
-        report.recommendations.forEach(rec => console.log(`     • ${rec}`));
+        console.info('   Recommendations:');
+        report.recommendations.forEach(rec => console.info(`     • ${rec}`));
       }
       break;
 
     default:
-      console.log(`
+      console.info(`
 Tier-1380 Enterprise Password Security v4.5
 =======================================
 Commands:

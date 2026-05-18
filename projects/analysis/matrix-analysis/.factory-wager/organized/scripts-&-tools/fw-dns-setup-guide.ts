@@ -8,30 +8,30 @@ class DNSSetupGuide {
   private registryDomain = 'registry.factory-wager.co';
 
   async generateSetupInstructions(): Promise<void> {
-    console.log("🌐 FactoryWager DNS Setup Guide");
-    console.log("===============================");
+    console.info("🌐 FactoryWager DNS Setup Guide");
+    console.info("===============================");
 
-    console.log("\n📋 CURRENT STATUS:");
+    console.info("\n📋 CURRENT STATUS:");
     await this.checkCurrentDNS();
 
-    console.log("\n🔧 STEP-BY-STEP SETUP:");
-    console.log("1. DOMAIN REGISTRATION");
-    console.log("   - Ensure factory-wager.com is registered");
-    console.log("   - Verify domain ownership");
-    console.log("   - Configure nameservers to Cloudflare:");
-    console.log("     * ns1.cloudflare.com");
-    console.log("     * ns2.cloudflare.com");
+    console.info("\n🔧 STEP-BY-STEP SETUP:");
+    console.info("1. DOMAIN REGISTRATION");
+    console.info("   - Ensure factory-wager.com is registered");
+    console.info("   - Verify domain ownership");
+    console.info("   - Configure nameservers to Cloudflare:");
+    console.info("     * ns1.cloudflare.com");
+    console.info("     * ns2.cloudflare.com");
 
-    console.log("\n2. CLOUDFLARE SETUP");
-    console.log("   - Login to Cloudflare dashboard");
-    console.log("   - Add site: factory-wager.com");
-    console.log("   - Wait for DNS scan (2-5 minutes)");
-    console.log("   - Select FREE plan");
-    console.log("   - Confirm nameservers");
+    console.info("\n2. CLOUDFLARE SETUP");
+    console.info("   - Login to Cloudflare dashboard");
+    console.info("   - Add site: factory-wager.com");
+    console.info("   - Wait for DNS scan (2-5 minutes)");
+    console.info("   - Select FREE plan");
+    console.info("   - Confirm nameservers");
 
-    console.log("\n3. DNS RECORDS CREATION");
-    console.log("   - Go to DNS > Records");
-    console.log("   - Add the following records:");
+    console.info("\n3. DNS RECORDS CREATION");
+    console.info("   - Go to DNS > Records");
+    console.info("   - Add the following records:");
 
     const records = [
       {
@@ -58,44 +58,44 @@ class DNSSetupGuide {
     ];
 
     records.forEach(record => {
-      console.log(`   - ${record.type} ${record.name} → ${record.content} (Proxy: ${record.proxy})`);
+      console.info(`   - ${record.type} ${record.name} → ${record.content} (Proxy: ${record.proxy})`);
     });
 
-    console.log("\n4. SSL/TLS CONFIGURATION");
-    console.log("   - Go to SSL/TLS > Overview");
-    console.log("   - Select 'Full (strict)' mode");
-    console.log("   - Wait for certificate issuance");
+    console.info("\n4. SSL/TLS CONFIGURATION");
+    console.info("   - Go to SSL/TLS > Overview");
+    console.info("   - Select 'Full (strict)' mode");
+    console.info("   - Wait for certificate issuance");
 
-    console.log("\n5. REGISTRY SERVICE CONFIGURATION");
-    console.log("   - Deploy registry service to load balancer IP");
-    console.log("   - Configure health check endpoint: /health");
-    console.log("   - Set up firewall rules for port 443");
-    console.log("   - Install SSL certificate on load balancer");
+    console.info("\n5. REGISTRY SERVICE CONFIGURATION");
+    console.info("   - Deploy registry service to load balancer IP");
+    console.info("   - Configure health check endpoint: /health");
+    console.info("   - Set up firewall rules for port 443");
+    console.info("   - Install SSL certificate on load balancer");
 
-    console.log("\n⏳ PROPAGATION TIME:");
-    console.log("   - DNS changes: 5-60 minutes");
-    console.log("   - SSL certificate: 5-15 minutes");
-    console.log("   - Global propagation: up to 24 hours");
+    console.info("\n⏳ PROPAGATION TIME:");
+    console.info("   - DNS changes: 5-60 minutes");
+    console.info("   - SSL certificate: 5-15 minutes");
+    console.info("   - Global propagation: up to 24 hours");
 
-    console.log("\n🧪 VALIDATION COMMANDS:");
-    console.log("   # DNS resolution test");
-    console.log(`   dig ${this.registryDomain}`);
-    console.log("   # HTTP connectivity test");
-    console.log(`   curl -I https://${this.registryDomain}/health`);
-    console.log("   # TLS certificate test");
-    console.log(`   openssl s_client -connect ${this.registryDomain}:443 -servername ${this.registryDomain}`);
+    console.info("\n🧪 VALIDATION COMMANDS:");
+    console.info("   # DNS resolution test");
+    console.info(`   dig ${this.registryDomain}`);
+    console.info("   # HTTP connectivity test");
+    console.info(`   curl -I https://${this.registryDomain}/health`);
+    console.info("   # TLS certificate test");
+    console.info(`   openssl s_client -connect ${this.registryDomain}:443 -servername ${this.registryDomain}`);
 
-    console.log("\n🚨 TROUBLESHOOTING:");
-    console.log("   - If DNS doesn't resolve: Check nameservers");
-    console.log("   - If connection fails: Check firewall/proxy settings");
-    console.log("   - If SSL errors: Wait for certificate issuance");
-    console.log("   - If still failing: Check Cloudflare orange cloud status");
+    console.info("\n🚨 TROUBLESHOOTING:");
+    console.info("   - If DNS doesn't resolve: Check nameservers");
+    console.info("   - If connection fails: Check firewall/proxy settings");
+    console.info("   - If SSL errors: Wait for certificate issuance");
+    console.info("   - If still failing: Check Cloudflare orange cloud status");
 
     await this.generateAutomatedScript();
   }
 
   private async checkCurrentDNS(): Promise<void> {
-    console.log(`   Testing DNS resolution for ${this.registryDomain}...`);
+    console.info(`   Testing DNS resolution for ${this.registryDomain}...`);
 
     try {
       // Try multiple DNS resolution methods
@@ -109,9 +109,9 @@ class DNSSetupGuide {
             else resolve(addresses);
           });
         });
-        console.log(`   ✅ System DNS: ${addresses}`);
+        console.info(`   ✅ System DNS: ${addresses}`);
       } catch (error) {
-        console.log(`   ❌ System DNS: ${(error as Error).message}`);
+        console.info(`   ❌ System DNS: ${(error as Error).message}`);
       }
 
       // Method 2: Google DNS
@@ -119,12 +119,12 @@ class DNSSetupGuide {
         const response = await fetch(`https://dns.google/resolve?name=${this.registryDomain}&type=A`);
         const data = await response.json();
         if (data.Status === 0 && data.Answer) {
-          console.log(`   ✅ Google DNS: ${data.Answer[0].data}`);
+          console.info(`   ✅ Google DNS: ${data.Answer[0].data}`);
         } else {
-          console.log(`   ❌ Google DNS: ${data.Status || 'No answer'}`);
+          console.info(`   ❌ Google DNS: ${data.Status || 'No answer'}`);
         }
       } catch (error) {
-        console.log(`   ❌ Google DNS: ${(error as Error).message}`);
+        console.info(`   ❌ Google DNS: ${(error as Error).message}`);
       }
 
       // Method 3: Cloudflare DNS
@@ -134,22 +134,22 @@ class DNSSetupGuide {
         });
         const data = await response.json();
         if (data.Answer) {
-          console.log(`   ✅ Cloudflare DNS: ${data.Answer[0].data}`);
+          console.info(`   ✅ Cloudflare DNS: ${data.Answer[0].data}`);
         } else {
-          console.log(`   ❌ Cloudflare DNS: No answer`);
+          console.info(`   ❌ Cloudflare DNS: No answer`);
         }
       } catch (error) {
-        console.log(`   ❌ Cloudflare DNS: ${(error as Error).message}`);
+        console.info(`   ❌ Cloudflare DNS: ${(error as Error).message}`);
       }
 
     } catch (error) {
-      console.log(`   ❌ DNS check failed: ${(error as Error).message}`);
+      console.info(`   ❌ DNS check failed: ${(error as Error).message}`);
     }
   }
 
   private async generateAutomatedScript(): Promise<void> {
-    console.log("\n🔧 AUTOMATED SETUP SCRIPT:");
-    console.log("Save this as 'setup-dns.sh' and run with your actual API token:");
+    console.info("\n🔧 AUTOMATED SETUP SCRIPT:");
+    console.info("Save this as 'setup-dns.sh' and run with your actual API token:");
 
     const script = `#!/bin/bash
 # FactoryWager DNS Setup Script
@@ -191,14 +191,14 @@ echo "   dig registry.$DOMAIN"
 echo "   curl -I https://registry.$DOMAIN/health"
 `;
 
-    console.log(script);
+    console.info(script);
 
     // Save the script
     await Bun.write(Bun.file('./.factory-wager/setup-dns.sh'), script);
-    console.log("\n💾 Script saved to: .factory-wager/setup-dns.sh");
-    console.log("   chmod +x .factory-wager/setup-dns.sh");
-    console.log("   # Set your API_TOKEN and REGISTRY_IP");
-    console.log("   ./setup-dns.sh");
+    console.info("\n💾 Script saved to: .factory-wager/setup-dns.sh");
+    console.info("   chmod +x .factory-wager/setup-dns.sh");
+    console.info("   # Set your API_TOKEN and REGISTRY_IP");
+    console.info("   ./setup-dns.sh");
   }
 }
 

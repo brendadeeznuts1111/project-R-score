@@ -28,17 +28,17 @@ program
     const duoPlusEnabled = options.duoplus || false;
     const automationLevel = options.automation;
 
-    console.log('🍎 Apple ID Creation Optimization Analysis');
-    console.log('==========================================\n');
+    console.info('🍎 Apple ID Creation Optimization Analysis');
+    console.info('==========================================\n');
 
-    console.log(`📊 Budget: $${budget}/account`);
-    console.log(`⏰ Timeline: ${options.timeline} days`);
-    console.log(`💰 Account Value: $${accountValue}`);
-    console.log(`☁️ DuoPlus Enabled: ${duoPlusEnabled ? 'YES' : 'NO'}`);
+    console.info(`📊 Budget: $${budget}/account`);
+    console.info(`⏰ Timeline: ${options.timeline} days`);
+    console.info(`💰 Account Value: $${accountValue}`);
+    console.info(`☁️ DuoPlus Enabled: ${duoPlusEnabled ? 'YES' : 'NO'}`);
     if (duoPlusEnabled) {
-        console.log(`🤖 Automation Level: ${automationLevel.toUpperCase()}`);
+        console.info(`🤖 Automation Level: ${automationLevel.toUpperCase()}`);
     }
-    console.log('');
+    console.info('');
 
     let config;
     if (duoPlusEnabled) {
@@ -52,59 +52,59 @@ program
         config = AppleIDGradingSystem.getOptimalConfiguration(budget, options.timeline, accountValue);
     }
 
-    console.log('🎯 RECOMMENDED CONFIGURATION');
-    console.log('===========================\n');
+    console.info('🎯 RECOMMENDED CONFIGURATION');
+    console.info('===========================\n');
 
     const isDuoPlus = config.duoPlusDevice !== undefined;
 
     if (isDuoPlus) {
-        console.log(`☁️ DuoPlus Enhanced Configuration`);
-        console.log(`   Automation Level: ${config.automationWorkflow.replace('-', ' ').toUpperCase()}`);
-        console.log(`   Setup Time: ${config.setupTime} minutes`);
-        console.log('');
+        console.info(`☁️ DuoPlus Enhanced Configuration`);
+        console.info(`   Automation Level: ${config.automationWorkflow.replace('-', ' ').toUpperCase()}`);
+        console.info(`   Setup Time: ${config.setupTime} minutes`);
+        console.info('');
     }
 
-    console.log(`📱 Phone: ${isDuoPlus ? config.duoPlusNumber.provider : config.phone.provider} ($${isDuoPlus ? config.duoPlusNumber.cost : config.phone.cost})`);
-    console.log(`   Grade: ${isDuoPlus ? config.duoPlusNumber.grade : config.phone.grade} | Success Rate: ${((isDuoPlus ? config.duoPlusNumber.successRate : config.phone.successRate) * 100).toFixed(1)}%`);
-    console.log(`   ${isDuoPlus ? config.duoPlusNumber.notes : config.phone.notes}\n`);
+    console.info(`📱 Phone: ${isDuoPlus ? config.duoPlusNumber.provider : config.phone.provider} ($${isDuoPlus ? config.duoPlusNumber.cost : config.phone.cost})`);
+    console.info(`   Grade: ${isDuoPlus ? config.duoPlusNumber.grade : config.phone.grade} | Success Rate: ${((isDuoPlus ? config.duoPlusNumber.successRate : config.phone.successRate) * 100).toFixed(1)}%`);
+    console.info(`   ${isDuoPlus ? config.duoPlusNumber.notes : config.phone.notes}\n`);
 
-    console.log(`👤 Identity: ${config.identity.type.replace('_', ' ')} ($${config.identity.cost})`);
-    console.log(`   Grade: ${config.identity.grade} | Success Rate: ${(config.identity.successRate * 100).toFixed(1)}%`);
-    console.log(`   ${config.identity.notes}\n`);
+    console.info(`👤 Identity: ${config.identity.type.replace('_', ' ')} ($${config.identity.cost})`);
+    console.info(`   Grade: ${config.identity.grade} | Success Rate: ${(config.identity.successRate * 100).toFixed(1)}%`);
+    console.info(`   ${config.identity.notes}\n`);
 
-    console.log(`🔥 Warm-up: ${config.warmup.duration} days ${config.warmup.intensity} ($${config.warmup.cost})`);
-    console.log(`   Grade: ${config.warmup.grade} | Success Rate: ${(config.warmup.successRate * 100).toFixed(1)}%`);
-    console.log(`   ${config.warmup.notes}\n`);
+    console.info(`🔥 Warm-up: ${config.warmup.duration} days ${config.warmup.intensity} ($${config.warmup.cost})`);
+    console.info(`   Grade: ${config.warmup.grade} | Success Rate: ${(config.warmup.successRate * 100).toFixed(1)}%`);
+    console.info(`   ${config.warmup.notes}\n`);
 
-    console.log(`📱 Device: ${isDuoPlus ? `DuoPlus ${config.duoPlusDevice.duoPlusModel.toUpperCase()}` : config.device.type} (${isDuoPlus ? config.duoPlusDevice.age : config.device.age} days old, $${isDuoPlus ? config.duoPlusDevice.cost : config.device.cost})`);
-    console.log(`   Grade: ${isDuoPlus ? config.duoPlusDevice.grade : config.device.grade} | Success Rate: ${((isDuoPlus ? config.duoPlusDevice.successRate : config.device.successRate) * 100).toFixed(1)}%`);
-    console.log(`   ${isDuoPlus ? `${config.duoPlusDevice.age} days aged • ${config.duoPlusDevice.automationLevel} automation` : config.device.notes}\n`);
+    console.info(`📱 Device: ${isDuoPlus ? `DuoPlus ${config.duoPlusDevice.duoPlusModel.toUpperCase()}` : config.device.type} (${isDuoPlus ? config.duoPlusDevice.age : config.device.age} days old, $${isDuoPlus ? config.duoPlusDevice.cost : config.device.cost})`);
+    console.info(`   Grade: ${isDuoPlus ? config.duoPlusDevice.grade : config.device.grade} | Success Rate: ${((isDuoPlus ? config.duoPlusDevice.successRate : config.device.successRate) * 100).toFixed(1)}%`);
+    console.info(`   ${isDuoPlus ? `${config.duoPlusDevice.age} days aged • ${config.duoPlusDevice.automationLevel} automation` : config.device.notes}\n`);
 
-    console.log(`📶 SIM: ${isDuoPlus ? `Cloud ${config.sim.type}` : `${config.sim.type} ${config.sim.carrier}`} ($${config.sim.cost})`);
-    console.log(`   Grade: ${config.sim.grade} | Success Rate: ${(config.sim.successRate * 100).toFixed(1)}%`);
-    console.log(`   ${config.sim.notes}\n`);
+    console.info(`📶 SIM: ${isDuoPlus ? `Cloud ${config.sim.type}` : `${config.sim.type} ${config.sim.carrier}`} ($${config.sim.cost})`);
+    console.info(`   Grade: ${config.sim.grade} | Success Rate: ${(config.sim.successRate * 100).toFixed(1)}%`);
+    console.info(`   ${config.sim.notes}\n`);
 
-    console.log('💰 FINANCIAL ANALYSIS');
-    console.log('===================\n');
+    console.info('💰 FINANCIAL ANALYSIS');
+    console.info('===================\n');
 
     if (isDuoPlus) {
-        console.log(`🏠 Base Configuration: $${(config.totalCost - config.totalDuoPlusCost).toFixed(2)}`);
-        console.log(`☁️ DuoPlus Services: $${config.totalDuoPlusCost.toFixed(2)}`);
-        console.log(`⏱️ Setup Time: ${config.setupTime} minutes`);
-        console.log(`🤖 Automation: ${config.automationWorkflow.replace('-', ' ').toUpperCase()}`);
-        console.log('');
+        console.info(`🏠 Base Configuration: $${(config.totalCost - config.totalDuoPlusCost).toFixed(2)}`);
+        console.info(`☁️ DuoPlus Services: $${config.totalDuoPlusCost.toFixed(2)}`);
+        console.info(`⏱️ Setup Time: ${config.setupTime} minutes`);
+        console.info(`🤖 Automation: ${config.automationWorkflow.replace('-', ' ').toUpperCase()}`);
+        console.info('');
     }
 
-    console.log(`💵 Total Cost per Account: $${config.totalCost.toFixed(2)}`);
-    console.log(`📈 Expected Success Rate: ${(config.expectedSuccessRate * 100).toFixed(1)}%`);
-    console.log(`💹 Return on Investment: ${(config.roi).toFixed(1)}%`);
-    console.log(`🏆 Overall Grade: ${config.grade}`);
-    console.log(`✅ Recommended: ${config.recommended ? 'YES' : 'NO'}\n`);
+    console.info(`💵 Total Cost per Account: $${config.totalCost.toFixed(2)}`);
+    console.info(`📈 Expected Success Rate: ${(config.expectedSuccessRate * 100).toFixed(1)}%`);
+    console.info(`💹 Return on Investment: ${(config.roi).toFixed(1)}%`);
+    console.info(`🏆 Overall Grade: ${config.grade}`);
+    console.info(`✅ Recommended: ${config.recommended ? 'YES' : 'NO'}\n`);
 
     if (config.recommended) {
-      console.log('🚀 This configuration is recommended for production use!');
+      console.info('🚀 This configuration is recommended for production use!');
     } else {
-      console.log('⚠️  Consider increasing budget for better success rates.');
+      console.info('⚠️  Consider increasing budget for better success rates.');
     }
   });
 
@@ -113,21 +113,21 @@ program
   .description('Get recommendations for specific use cases')
   .option('-u, --use-case <type>', 'Use case: premium, production, testing, budget', 'production')
   .action((options) => {
-    console.log('🍎 Apple ID Creation Recommendations');
-    console.log('====================================\n');
+    console.info('🍎 Apple ID Creation Recommendations');
+    console.info('====================================\n');
 
-    console.log(`🎯 Use Case: ${options.useCase.toUpperCase()}\n`);
+    console.info(`🎯 Use Case: ${options.useCase.toUpperCase()}\n`);
 
     const recommendations = AppleIDGradingSystem.getRecommendations(options.useCase as any);
 
     recommendations.forEach((config, index) => {
-      console.log(`${index + 1}. ${config.grade} Configuration`);
-      console.log(`   💵 Cost: $${config.totalCost} | 📈 Success: ${(config.expectedSuccessRate * 100).toFixed(1)}% | 💹 ROI: ${(config.roi).toFixed(1)}%`);
+      console.info(`${index + 1}. ${config.grade} Configuration`);
+      console.info(`   💵 Cost: $${config.totalCost} | 📈 Success: ${(config.expectedSuccessRate * 100).toFixed(1)}% | 💹 ROI: ${(config.roi).toFixed(1)}%`);
 
       if (config.recommended) {
-        console.log('   ✅ RECOMMENDED');
+        console.info('   ✅ RECOMMENDED');
       }
-      console.log('');
+      console.info('');
     });
   });
 
@@ -138,18 +138,18 @@ program
   .action((options) => {
     const budgets = options.budgets.split(',').map((b: string) => parseFloat(b.trim()));
 
-    console.log('🍎 Apple ID Budget Comparison');
-    console.log('=============================\n');
+    console.info('🍎 Apple ID Budget Comparison');
+    console.info('=============================\n');
 
-    console.log('| Budget | Success Rate | Total Cost | ROI | Grade | Recommended |');
-    console.log('|--------|--------------|------------|-----|--------|-------------|');
+    console.info('| Budget | Success Rate | Total Cost | ROI | Grade | Recommended |');
+    console.info('|--------|--------------|------------|-----|--------|-------------|');
 
     budgets.forEach(budget => {
       const config = AppleIDGradingSystem.getOptimalConfiguration(budget, '30 days', 50);
-      console.log(`| $${budget.toString().padEnd(6)} | ${(config.expectedSuccessRate * 100).toFixed(1).toString().padEnd(12)}% | $${config.totalCost.toString().padEnd(10)} | ${(config.roi).toFixed(0).toString().padEnd(3)}% | ${config.grade.padEnd(6)} | ${config.recommended ? '✅' : '❌'} |`);
+      console.info(`| $${budget.toString().padEnd(6)} | ${(config.expectedSuccessRate * 100).toFixed(1).toString().padEnd(12)}% | $${config.totalCost.toString().padEnd(10)} | ${(config.roi).toFixed(0).toString().padEnd(3)}% | ${config.grade.padEnd(6)} | ${config.recommended ? '✅' : '❌'} |`);
     });
 
-    console.log('\n💡 Pro Tip: Professional tier ($50) offers best ROI for serious operations!');
+    console.info('\n💡 Pro Tip: Professional tier ($50) offers best ROI for serious operations!');
   });
 
 program
@@ -157,7 +157,7 @@ program
   .description('Generate comprehensive cost-benefit analysis')
   .action(() => {
     const analysis = AppleIDGradingSystem.generateCostBenefitAnalysis();
-    console.log(analysis);
+    console.info(analysis);
   });
 
 program
@@ -173,7 +173,7 @@ program
   .option('-i, --batch-id <id>', 'Batch ID for tracking')
   .option('-n, --notes <text>', 'Additional notes')
   .action(async (options) => {
-    console.log('📊 Recording Apple ID Creation Performance...\n');
+    console.info('📊 Recording Apple ID Creation Performance...\n');
 
     const budget = parseFloat(options.budget);
     const timeline = options.timeline;
@@ -196,13 +196,13 @@ program
       }
     );
 
-    console.log('✅ Performance recorded successfully!');
-    console.log(`📈 Record ID: ${record.id}`);
-    console.log(`🎯 Success Rate: ${(record.actualResults.successRate * 100).toFixed(1)}%`);
-    console.log(`💰 ROI: ${record.actualResults.roi.toFixed(1)}%`);
-    console.log(`📊 Prediction Accuracy: ${(record.validation.accuracy * 100).toFixed(1)}%`);
-    console.log(`👤 Operator: ${record.metadata.operator}`);
-    console.log(`🏭 Environment: ${record.metadata.environment}`);
+    console.info('✅ Performance recorded successfully!');
+    console.info(`📈 Record ID: ${record.id}`);
+    console.info(`🎯 Success Rate: ${(record.actualResults.successRate * 100).toFixed(1)}%`);
+    console.info(`💰 ROI: ${record.actualResults.roi.toFixed(1)}%`);
+    console.info(`📊 Prediction Accuracy: ${(record.validation.accuracy * 100).toFixed(1)}%`);
+    console.info(`👤 Operator: ${record.metadata.operator}`);
+    console.info(`🏭 Environment: ${record.metadata.environment}`);
   });
 
 program
@@ -210,7 +210,7 @@ program
   .description('Display performance analytics and insights')
   .option('--days <number>', 'Analyze last N days', '30')
   .action((options) => {
-    console.log('📊 Apple ID Performance Analytics\n');
+    console.info('📊 Apple ID Performance Analytics\n');
 
     const days = parseInt(options.days);
     const endTime = Date.now();
@@ -219,31 +219,31 @@ program
     const analytics = AppleIDGradingSystem.getPerformanceAnalytics({ start: startTime, end: endTime });
     const recommendations = AppleIDGradingSystem.getPerformanceRecommendations();
 
-    console.log('📈 Overall Performance:');
-    console.log(`   Total Records: ${analytics.overall.totalRecords}`);
-    console.log(`   Average Accuracy: ${(analytics.overall.averageAccuracy * 100).toFixed(1)}%`);
-    console.log(`   Average ROI: ${analytics.overall.averageROI.toFixed(1)}%`);
-    console.log(`   Overall Success Rate: ${(analytics.overall.overallSuccessRate * 100).toFixed(1)}%`);
-    console.log('');
+    console.info('📈 Overall Performance:');
+    console.info(`   Total Records: ${analytics.overall.totalRecords}`);
+    console.info(`   Average Accuracy: ${(analytics.overall.averageAccuracy * 100).toFixed(1)}%`);
+    console.info(`   Average ROI: ${analytics.overall.averageROI.toFixed(1)}%`);
+    console.info(`   Overall Success Rate: ${(analytics.overall.overallSuccessRate * 100).toFixed(1)}%`);
+    console.info('');
 
-    console.log('🏆 Best Performing Tiers:');
+    console.info('🏆 Best Performing Tiers:');
     Object.entries(analytics.byTier)
       .sort(([, a], [, b]) => b.averageAccuracy - a.averageAccuracy)
       .slice(0, 3)
       .forEach(([tier, stats]) => {
-        console.log(`   ${tier}: ${(stats.averageAccuracy * 100).toFixed(1)}% accuracy, ${(stats.averageROI).toFixed(1)}% ROI`);
+        console.info(`   ${tier}: ${(stats.averageAccuracy * 100).toFixed(1)}% accuracy, ${(stats.averageROI).toFixed(1)}% ROI`);
       });
-    console.log('');
+    console.info('');
 
     if (recommendations.length > 0) {
-      console.log('💡 AI Recommendations:');
+      console.info('💡 AI Recommendations:');
       recommendations.forEach(rec => {
-        console.log(`   • ${rec}`);
+        console.info(`   • ${rec}`);
       });
-      console.log('');
+      console.info('');
     }
 
-    console.log(`📅 Analysis Period: Last ${days} days`);
+    console.info(`📅 Analysis Period: Last ${days} days`);
   });
 
 program
@@ -251,7 +251,7 @@ program
   .description('Export performance data as CSV')
   .option('-o, --output <file>', 'Output file path', 'apple-id-performance-data.csv')
   .action(async (options) => {
-    console.log('📤 Exporting performance data...\n');
+    console.info('📤 Exporting performance data...\n');
 
     const csv = AppleIDGradingSystem.exportPerformanceData();
 
@@ -259,8 +259,8 @@ program
     const fs = await import('fs');
     fs.writeFileSync(options.output, csv);
 
-    console.log(`✅ Performance data exported to: ${options.output}`);
-    console.log(`📊 Total records: ${performanceTracker.getRecordsCount()}`);
+    console.info(`✅ Performance data exported to: ${options.output}`);
+    console.info(`📊 Total records: ${performanceTracker.getRecordsCount()}`);
   });
 
 program
@@ -269,21 +269,21 @@ program
   .option('--confirm', 'Confirm deletion of all performance data')
   .action((options) => {
     if (!options.confirm) {
-      console.log('⚠️  WARNING: This will delete ALL performance records!');
-      console.log('Run with --confirm to proceed.');
+      console.info('⚠️  WARNING: This will delete ALL performance records!');
+      console.info('Run with --confirm to proceed.');
       return;
     }
 
     performanceTracker.clearRecords();
-    console.log('🗑️  All performance records cleared.');
+    console.info('🗑️  All performance records cleared.');
   });
 
 program
   .command('tiers')
   .description('Show all available configuration tiers')
   .action(() => {
-    console.log('🍎 Apple ID Creation Tiers');
-    console.log('==========================\n');
+    console.info('🍎 Apple ID Creation Tiers');
+    console.info('==========================\n');
 
     const tiers = [
       {
@@ -321,13 +321,13 @@ program
     ];
 
     tiers.forEach(tier => {
-      console.log(`${tier.name.toUpperCase()} TIER`);
-      console.log('='.repeat(tier.name.length + 5));
-      console.log(`💰 Budget: ${tier.budget}`);
-      console.log(`📈 Success Rate: ${tier.success}`);
-      console.log(`💹 ROI: ${tier.roi}`);
-      console.log(`🎯 Use Case: ${tier.use}`);
-      console.log(`🧩 Components: ${tier.components}\n`);
+      console.info(`${tier.name.toUpperCase()} TIER`);
+      console.info('='.repeat(tier.name.length + 5));
+      console.info(`💰 Budget: ${tier.budget}`);
+      console.info(`📈 Success Rate: ${tier.success}`);
+      console.info(`💹 ROI: ${tier.roi}`);
+      console.info(`🎯 Use Case: ${tier.use}`);
+      console.info(`🧩 Components: ${tier.components}\n`);
     });
   });
 

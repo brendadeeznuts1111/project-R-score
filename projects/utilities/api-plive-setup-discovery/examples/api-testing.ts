@@ -275,7 +275,7 @@ describe('Betting Workflow API Integration Tests', () => {
   // Cleanup after tests
   afterAll(async () => {
     // Optional: Clean up test data
-    console.log('Test cleanup completed');
+    console.info('Test cleanup completed');
   });
 });
 

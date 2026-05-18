@@ -144,31 +144,31 @@ async function main(): Promise<void> {
 
 	const idx = await indexDocs(docsPath);
 
-	console.log('=== Bun documentation topics index ===\n');
-	console.log('Source:', docsPath);
-	console.log('\nStats:');
-	console.log('  Total navigation entries:', idx.stats.totalEntries);
-	console.log('  Unique pages:', idx.stats.uniquePages);
-	console.log('  Tabs (including external):', idx.stats.tabCount);
-	console.log('  Unique tab+group combinations:', idx.stats.groupCount);
+	console.info('=== Bun documentation topics index ===\n');
+	console.info('Source:', docsPath);
+	console.info('\nStats:');
+	console.info('  Total navigation entries:', idx.stats.totalEntries);
+	console.info('  Unique pages:', idx.stats.uniquePages);
+	console.info('  Tabs (including external):', idx.stats.tabCount);
+	console.info('  Unique tab+group combinations:', idx.stats.groupCount);
 
-	console.log('\n--- Topics by tab ---\n');
+	console.info('\n--- Topics by tab ---\n');
 
 	for (const [tab, pages] of idx.byTab.entries()) {
 		const groups = [...new Set(pages.map(p => p.group))];
 		const uniqueInTab = new Set(pages.map(p => p.path)).size;
-		console.log(`${tab}`);
-		console.log(`  Entries: ${pages.length}, Unique pages: ${uniqueInTab}`);
-		console.log(`  Groups: ${groups.length}`);
+		console.info(`${tab}`);
+		console.info(`  Entries: ${pages.length}, Unique pages: ${uniqueInTab}`);
+		console.info(`  Groups: ${groups.length}`);
 		for (const g of groups) {
 			const groupPages = pages.filter(p => p.group === g);
 			const paths = [...new Set(groupPages.map(p => p.path))];
-			console.log(`    - ${g}: ${paths.length} pages`);
+			console.info(`    - ${g}: ${paths.length} pages`);
 		}
-		console.log('');
+		console.info('');
 	}
 
-	console.log('--- Full group index (tab › group → page count) ---\n');
+	console.info('--- Full group index (tab › group → page count) ---\n');
 
 	const rows: {tab: string; group: string; count: number; unique: number}[] = [];
 	for (const [key, pages] of idx.byGroup.entries()) {
@@ -181,13 +181,13 @@ async function main(): Promise<void> {
 
 	for (const r of rows) {
 		const dup = r.count !== r.unique ? ` (${r.count - r.unique} dup)` : '';
-		console.log(`${r.tab} › ${r.group}: ${r.unique} pages${dup}`);
+		console.info(`${r.tab} › ${r.group}: ${r.unique} pages${dup}`);
 	}
 
-	console.log('\n--- All unique page paths (' + idx.uniquePaths.size + ') ---\n');
+	console.info('\n--- All unique page paths (' + idx.uniquePaths.size + ') ---\n');
 	const sortedPaths = [...idx.uniquePaths].sort();
 	for (const p of sortedPaths) {
-		console.log(p);
+		console.info(p);
 	}
 }
 

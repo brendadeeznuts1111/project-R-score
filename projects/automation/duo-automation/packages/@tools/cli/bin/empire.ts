@@ -44,7 +44,7 @@ program
       (globalThis as any).process?.exit(1);
       return; // Ensure TypeScript knows we exit here
     }
-    console.log(`👤 User: ${user.name} | Scope: ${user.scope}`);
+    console.info(`👤 User: ${user.name} | Scope: ${user.scope}`);
   });
 
 // --- Infrastructure Status ---
@@ -60,17 +60,17 @@ program
     const matrix = PatternMatrix.getInstance();
     const rows = matrix.getRows();
     
-    console.log('\n🏰 EMPIRE PRO INFRASTRUCTURE STATUS\n');
-    console.log(`Patterns Registered: ${rows.length}`);
-    console.log('---');
+    console.info('\n🏰 EMPIRE PRO INFRASTRUCTURE STATUS\n');
+    console.info(`Patterns Registered: ${rows.length}`);
+    console.info('---');
     
     const categories = [...new Set(rows.map((r: PatternRow) => r.category))];
     for (const cat of categories) {
       const catRows = rows.filter((r: PatternRow) => r.category === cat);
-      console.log(`${String(cat).padEnd(10)} | ${catRows.length} active`);
+      console.info(`${String(cat).padEnd(10)} | ${catRows.length} active`);
     }
     
-    console.log('\n✅ System: HEALTHY');
+    console.info('\n✅ System: HEALTHY');
   });
 
 // --- Storage Controls ---
@@ -94,24 +94,24 @@ storage
     }
     
     const components = audit.exec(path);
-    console.log(`🔍 Auditing ${path}...`);
-    console.log(`   Bucket:    ${components.bucket}`);
-    console.log(`   Namespace: ${components.namespace}`);
+    console.info(`🔍 Auditing ${path}...`);
+    console.info(`   Bucket:    ${components.bucket}`);
+    console.info(`   Namespace: ${components.namespace}`);
     
     const objects = await audit.list(path);
-    console.log(`\n✅ Audit complete. Found ${objects.length} compliant objects.`);
+    console.info(`\n✅ Audit complete. Found ${objects.length} compliant objects.`);
 
     if (options.export) {
       const s3Disp = new S3DispositionManager();
       const reportPath = `reports/compliance/audit-${Date.now()}.json`;
-      console.log(`\n📄 Generating Compliance Report...`);
+      console.info(`\n📄 Generating Compliance Report...`);
       const exportResult = await s3Disp.writeAuditReport(reportPath, { 
         timestamp: Date.now(), 
         path, 
         objects,
         status: 'COMPLIANT'
       });
-      console.log(`✅ Report Exported: ${exportResult.path}`);
+      console.info(`✅ Report Exported: ${exportResult.path}`);
     }
   });
 
@@ -133,19 +133,19 @@ heal
     }
 
     const controller = new AutonomicController();
-    console.log(`🛠️ Triggering autonomic healing for: ${subsystem}...`);
+    console.info(`🛠️ Triggering autonomic healing for: ${subsystem}...`);
     
     // Traditional autonomic healing
     const subsystems = subsystem === 'all' ? ['latency', 'cache', 'pool'] : [subsystem];
     for (const sub of subsystems) {
       const result = await controller.exec(sub);
       const action = (result.result as any).action;
-      console.log(`   ${sub.padEnd(10)}: ${action === 'none' ? 'OK' : 'HEALED (' + action + ')'} [${result.duration.toFixed(2)}ms]`);
+      console.info(`   ${sub.padEnd(10)}: ${action === 'none' ? 'OK' : 'HEALED (' + action + ')'} [${result.duration.toFixed(2)}ms]`);
     }
     
     // Enhanced v2.01.05 deep cleanup if requested
     if (options.deepCleanup) {
-      console.log('\n🧹 Running v2.01.05 deep filesystem cleanup...');
+      console.info('\n🧹 Running v2.01.05 deep filesystem cleanup...');
       try {
         const healOptions = {
           dryRun: options.dryRun,
@@ -157,18 +157,18 @@ heal
         };
         
         const metrics: HealMetrics = await healSystem(healOptions);
-        console.log(`✅ Deep cleanup completed:`);
-        console.log(`   📊 Files processed: ${metrics.filesFound}`);
-        console.log(`   🗑️  Files deleted: ${metrics.filesDeleted}`);
-        console.log(`   📋 Files backed up: ${metrics.filesBackedUp}`);
-        console.log(`   💾 Bytes processed: ${(metrics.totalBytesProcessed / 1024 / 1024).toFixed(2)}MB`);
-        console.log(`   🔐 Hashes verified: ${metrics.hashesGenerated}`);
-        console.log(`   🚀 Parallel ops: ${metrics.parallelOperations}`);
-        console.log(`   ⏱️  Duration: ${metrics.endTime - metrics.startTime}ms`);
-        console.log(`   📝 Audit entries: ${metrics.auditLogEntries}`);
+        console.info(`✅ Deep cleanup completed:`);
+        console.info(`   📊 Files processed: ${metrics.filesFound}`);
+        console.info(`   🗑️  Files deleted: ${metrics.filesDeleted}`);
+        console.info(`   📋 Files backed up: ${metrics.filesBackedUp}`);
+        console.info(`   💾 Bytes processed: ${(metrics.totalBytesProcessed / 1024 / 1024).toFixed(2)}MB`);
+        console.info(`   🔐 Hashes verified: ${metrics.hashesGenerated}`);
+        console.info(`   🚀 Parallel ops: ${metrics.parallelOperations}`);
+        console.info(`   ⏱️  Duration: ${metrics.endTime - metrics.startTime}ms`);
+        console.info(`   📝 Audit entries: ${metrics.auditLogEntries}`);
         
         if (options.dryRun) {
-          console.log(`   🔍 DRY RUN MODE - No files were actually deleted`);
+          console.info(`   🔍 DRY RUN MODE - No files were actually deleted`);
         }
       } catch (error) {
         console.error(`❌ Deep cleanup failed:`, error instanceof Error ? error.message : String(error));
@@ -195,8 +195,8 @@ heal
       (globalThis as any).process?.exit(1);
     }
 
-    console.log('🧹 Advanced v2.01.05 Filesystem Cleanup');
-    console.log(`📁 Target: ${options.targetDir}`);
+    console.info('🧹 Advanced v2.01.05 Filesystem Cleanup');
+    console.info(`📁 Target: ${options.targetDir}`);
     
     try {
       const healOptions = {
@@ -214,25 +214,25 @@ heal
       
       const metrics: HealMetrics = await healSystem(healOptions);
       
-      console.log('\n✅ Advanced cleanup completed successfully');
-      console.log(`📊 Files processed: ${metrics.filesFound}`);
-      console.log(`🗑️  Files deleted: ${metrics.filesDeleted}`);
-      console.log(`📋 Files backed up: ${metrics.filesBackedUp}`);
-      console.log(`⏭️  Files skipped: ${metrics.filesSkipped}`);
-      console.log(`💾 Bytes processed: ${(metrics.totalBytesProcessed / 1024 / 1024).toFixed(2)}MB`);
-      console.log(`🔐 Hashes generated: ${metrics.hashesGenerated}`);
-      console.log(`🚀 Parallel operations: ${metrics.parallelOperations}`);
-      console.log(`📝 Audit entries: ${metrics.auditLogEntries}`);
-      console.log(`⏱️  Duration: ${metrics.endTime - metrics.startTime}ms`);
-      console.log(`🎯 Success rate: ${metrics.filesFound > 0 ? Math.round((metrics.filesDeleted / metrics.filesFound) * 100) : 100}%`);
+      console.info('\n✅ Advanced cleanup completed successfully');
+      console.info(`📊 Files processed: ${metrics.filesFound}`);
+      console.info(`🗑️  Files deleted: ${metrics.filesDeleted}`);
+      console.info(`📋 Files backed up: ${metrics.filesBackedUp}`);
+      console.info(`⏭️  Files skipped: ${metrics.filesSkipped}`);
+      console.info(`💾 Bytes processed: ${(metrics.totalBytesProcessed / 1024 / 1024).toFixed(2)}MB`);
+      console.info(`🔐 Hashes generated: ${metrics.hashesGenerated}`);
+      console.info(`🚀 Parallel operations: ${metrics.parallelOperations}`);
+      console.info(`📝 Audit entries: ${metrics.auditLogEntries}`);
+      console.info(`⏱️  Duration: ${metrics.endTime - metrics.startTime}ms`);
+      console.info(`🎯 Success rate: ${metrics.filesFound > 0 ? Math.round((metrics.filesDeleted / metrics.filesFound) * 100) : 100}%`);
       
       if (options.dryRun) {
-        console.log(`\n🔍 DRY RUN MODE - No files were actually deleted`);
+        console.info(`\n🔍 DRY RUN MODE - No files were actually deleted`);
       }
       
       if (metrics.errors.length > 0) {
-        console.log(`\n⚠️  Errors encountered: ${metrics.errors.length}`);
-        metrics.errors.forEach((error: string) => console.log(`   • ${error}`));
+        console.info(`\n⚠️  Errors encountered: ${metrics.errors.length}`);
+        metrics.errors.forEach((error: string) => console.info(`   • ${error}`));
       }
       
     } catch (error) {
@@ -251,11 +251,11 @@ heal
       (globalThis as any).process?.exit(1);
     }
 
-    console.log('👁️  Monitoring autonomic telemetry (§100.HEAL)...');
+    console.info('👁️  Monitoring autonomic telemetry (§100.HEAL)...');
     if (options.includeCleanup) {
-      console.log('🧹 Including v2.01.05 cleanup events...');
+      console.info('🧹 Including v2.01.05 cleanup events...');
     }
-    console.log('--- (Tailing Live Events) ---');
+    console.info('--- (Tailing Live Events) ---');
     
     setInterval(() => {
       const events = options.includeCleanup ? 
@@ -269,7 +269,7 @@ heal
       else if (event === 'CLEANED') color = '\x1b[34m';
       else if (event === 'BACKED_UP') color = '\x1b[33m';
       
-      console.log(`${new Date().toLocaleTimeString()} | ${sub.padEnd(10)} | ${color}${event}\x1b[0m`);
+      console.info(`${new Date().toLocaleTimeString()} | ${sub.padEnd(10)} | ${color}${event}\x1b[0m`);
     }, 2000);
   });
 
@@ -288,16 +288,16 @@ shield
     const workflow = new IdentityShieldWorkflow();
     const idManager = new IdentityManager();
     
-    console.log('🛡️  Running Identity Shield workflow...');
+    console.info('🛡️  Running Identity Shield workflow...');
     const result = await workflow.exec({ idManager });
     
     if (typeof result.result === 'string' && result.result === 'IDENTITY_SAFE') {
-      console.log('✅ Identity is safe. No rotation required.');
+      console.info('✅ Identity is safe. No rotation required.');
     } else {
-      console.log('🔄 High risk detected! New identity generated:');
-      console.log(JSON.stringify(result.result, null, 2));
+      console.info('🔄 High risk detected! New identity generated:');
+      console.info(JSON.stringify(result.result, null, 2));
     }
-    console.log(`⏱️  Workflow completed in ${result.duration.toFixed(2)}ms`);
+    console.info(`⏱️  Workflow completed in ${result.duration.toFixed(2)}ms`);
   });
 
 // --- Pattern Matrix & Validation ---
@@ -323,7 +323,7 @@ matrix
   .action(() => {
     const matrix = PatternMatrix.getInstance();
     const rows = matrix.getRows();
-    console.log(`🧪 Validating ${rows.length} patterns...\n`);
+    console.info(`🧪 Validating ${rows.length} patterns...\n`);
     
     let totalErrors = 0;
     
@@ -355,7 +355,7 @@ matrix
     }
     
     if (totalErrors === 0) {
-      console.log('✅ All patterns are compliant with Empire Pro standards.');
+      console.info('✅ All patterns are compliant with Empire Pro standards.');
     } else {
       console.error(`\n❌ Validation failed with ${totalErrors} errors.`);
       (globalThis as any).process?.exit(1);
@@ -373,12 +373,12 @@ program
     }
 
     const bridge = TerminalBridge.getInstance();
-    console.log('🚀 Spawning Proxy Sniffer PTY...');
+    console.info('🚀 Spawning Proxy Sniffer PTY...');
     
     const result = await bridge.spawnSpecializedShell('sniff');
     const { terminalId, pid } = result.result;
     
-    console.log(`📡 PTY Session [ID: ${terminalId}, PID: ${pid}] active.\n`);
+    console.info(`📡 PTY Session [ID: ${terminalId}, PID: ${pid}] active.\n`);
     
     bridge.streamOutput(terminalId, (data) => {
       process.stdout.write(data);
@@ -386,7 +386,7 @@ program
 
     // Handle termination
     process.on('SIGINT', () => {
-      console.log('\nStopping sniffing session...');
+      console.info('\nStopping sniffing session...');
       (globalThis as any).process?.exit(0);
     });
   });
@@ -422,7 +422,7 @@ program
     } else {
       // Show all
       renderHyperDashboard();
-      console.log('\n');
+      console.info('\n');
       await new HyperStatusCommand().execute();
     }
   });

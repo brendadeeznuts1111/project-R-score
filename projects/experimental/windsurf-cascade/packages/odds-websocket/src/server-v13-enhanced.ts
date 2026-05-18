@@ -98,7 +98,7 @@ export class BunV13WebSocketServerEnhanced extends BunV13WebSocketServer {
             this.updateConnectionMetrics('connect');
 
             if (this.testMode) {
-                console.log(`📡 Test client connected: ${connectionData.id}`);
+                console.info(`📡 Test client connected: ${connectionData.id}`);
             }
 
         } catch (error) {
@@ -117,7 +117,7 @@ export class BunV13WebSocketServerEnhanced extends BunV13WebSocketServer {
                 this.updateConnectionMetrics('disconnect');
 
                 if (this.testMode) {
-                    console.log(`🔌 Test client disconnected: ${connectionData.id}`);
+                    console.info(`🔌 Test client disconnected: ${connectionData.id}`);
                 }
             }
         } catch (error) {
@@ -169,7 +169,7 @@ export class BunV13WebSocketServerEnhanced extends BunV13WebSocketServer {
             this.updatePerformanceMetrics(startTime);
 
             if (this.testMode) {
-                console.log(`📡 Broadcasted to ${sentCount} clients: ${message.type}`);
+                console.info(`📡 Broadcasted to ${sentCount} clients: ${message.type}`);
             }
 
         } catch (error) {
@@ -188,7 +188,7 @@ export class BunV13WebSocketServerEnhanced extends BunV13WebSocketServer {
                 client.send(messageStr);
 
                 if (this.testMode) {
-                    console.log(`📨 Sent to client ${clientId}: ${message.type}`);
+                    console.info(`📨 Sent to client ${clientId}: ${message.type}`);
                 }
             } else {
                 throw new Error(`Client ${clientId} not found or not connected`);
@@ -294,7 +294,7 @@ export class BunV13WebSocketServerEnhanced extends BunV13WebSocketServer {
             this.performanceMetrics.uptime = Date.now();
 
             if (this.testMode) {
-                console.log(`🚀 Starting test WebSocket server on port ${this.getPort()}`);
+                console.info(`🚀 Starting test WebSocket server on port ${this.getPort()}`);
             }
         }
     }
@@ -321,7 +321,7 @@ export class BunV13WebSocketServerEnhanced extends BunV13WebSocketServer {
             }
 
             if (this.testMode) {
-                console.log(`🛑 Test WebSocket server stopped`);
+                console.info(`🛑 Test WebSocket server stopped`);
             }
         }
     }
@@ -349,28 +349,28 @@ export class BunV13WebSocketServerEnhanced extends BunV13WebSocketServer {
     private processOddsUpdate(message: WebSocketMessage): void {
         // Process odds update logic
         if (this.testMode) {
-            console.log(`📊 Processing odds update: ${message.data.id}`);
+            console.info(`📊 Processing odds update: ${message.data.id}`);
         }
     }
 
     private processArbitrageAlert(message: WebSocketMessage): void {
         // Process arbitrage alert logic
         if (this.testMode) {
-            console.log(`⚡ Processing arbitrage alert: ${message.data.id}`);
+            console.info(`⚡ Processing arbitrage alert: ${message.data.id}`);
         }
     }
 
     private processMarketStatus(message: WebSocketMessage): void {
         // Process market status logic
         if (this.testMode) {
-            console.log(`📈 Processing market status: ${message.data.status}`);
+            console.info(`📈 Processing market status: ${message.data.status}`);
         }
     }
 
     private processGenericMessage(message: WebSocketMessage): void {
         // Process generic message logic
         if (this.testMode) {
-            console.log(`📨 Processing generic message: ${message.type}`);
+            console.info(`📨 Processing generic message: ${message.type}`);
         }
     }
 

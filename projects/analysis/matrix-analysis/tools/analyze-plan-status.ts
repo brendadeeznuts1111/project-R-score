@@ -144,7 +144,7 @@ async function main(): Promise<void> {
 	}
 
 	const status = await updateAnalyzePlanStatus(update);
-	console.log(JSON.stringify(status, null, 2));
+	console.info(JSON.stringify(status, null, 2));
 }
 
 if (import.meta.main) {

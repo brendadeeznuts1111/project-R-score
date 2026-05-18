@@ -185,8 +185,8 @@ const app = new Elysia()
   })
   .listen(3001);
 
-console.log("🏥 Health Check API Server running on http://localhost:3001");
-console.log(
+console.info("🏥 Health Check API Server running on http://localhost:3001");
+console.info(
   "📖 Swagger documentation available at http://localhost:3001/swagger"
 );
 

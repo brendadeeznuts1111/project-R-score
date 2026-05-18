@@ -164,7 +164,7 @@ class EnhancedErrorTracker {
             this.updateAnalytics();
 
             if (this.config.enableConsoleOutput) {
-                console.log(chalk.green(`✅ Error ${errorId} resolved by ${resolvedBy}`));
+                console.info(chalk.green(`✅ Error ${errorId} resolved by ${resolvedBy}`));
             }
 
             return true;
@@ -178,9 +178,9 @@ class EnhancedErrorTracker {
      */
     async displayErrorDashboard(): Promise<void> {
         console.clear();
-        console.log(chalk.red.bold('🚨 Enhanced Error Tracking & Analytics Dashboard'));
-        console.log(chalk.gray('Powered by Bun Utilities Mastery - Comprehensive Error Management'));
-        console.log(chalk.gray('═'.repeat(120)));
+        console.info(chalk.red.bold('🚨 Enhanced Error Tracking & Analytics Dashboard'));
+        console.info(chalk.gray('Powered by Bun Utilities Mastery - Comprehensive Error Management'));
+        console.info(chalk.gray('═'.repeat(120)));
 
         const analytics = this.generateAnalytics();
 
@@ -210,8 +210,8 @@ class EnhancedErrorTracker {
      * Display error summary with progress bars
      */
     private displayErrorSummary(analytics: ErrorAnalytics): void {
-        console.log(chalk.red.bold('\n📊 Error Summary'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.red.bold('\n📊 Error Summary'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const summaryData = [
             {
@@ -244,7 +244,7 @@ class EnhancedErrorTracker {
             }
         ];
 
-        console.log(Bun.inspect.table(summaryData, {}, {
+        console.info(Bun.inspect.table(summaryData, {}, {
             colors: true,
             maxStringLength: 20,
             compact: false
@@ -255,8 +255,8 @@ class EnhancedErrorTracker {
      * Display error trends
      */
     private displayErrorTrends(analytics: ErrorAnalytics): void {
-        console.log(chalk.red.bold('\n📈 Error Trends'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.red.bold('\n📈 Error Trends'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const trendsData = [
             {
@@ -285,7 +285,7 @@ class EnhancedErrorTracker {
             }
         ];
 
-        console.log(Bun.inspect.table(trendsData, {}, {
+        console.info(Bun.inspect.table(trendsData, {}, {
             colors: true,
             maxStringLength: 18,
             compact: false
@@ -296,8 +296,8 @@ class EnhancedErrorTracker {
      * Display top error categories
      */
     private displayTopCategories(analytics: ErrorAnalytics): void {
-        console.log(chalk.red.bold('\n🏷️ Top Error Categories'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.red.bold('\n🏷️ Top Error Categories'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const categoriesData = analytics.topErrorCategories.map(cat => ({
             'Category': cat.category,
@@ -308,7 +308,7 @@ class EnhancedErrorTracker {
             'Priority': cat.count > 10 ? '🔴 Critical' : cat.count > 5 ? '🟡 High' : '🔵 Normal'
         }));
 
-        console.log(Bun.inspect.table(categoriesData, {}, {
+        console.info(Bun.inspect.table(categoriesData, {}, {
             colors: true,
             maxStringLength: 20,
             compact: false
@@ -319,8 +319,8 @@ class EnhancedErrorTracker {
      * Display directory error analysis
      */
     private displayDirectoryAnalysis(analytics: ErrorAnalytics): void {
-        console.log(chalk.red.bold('\n📁 Directory Error Analysis'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.red.bold('\n📁 Directory Error Analysis'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const directoriesData = analytics.topErrorDirectories.map(dir => ({
             'Directory': dir.directory.split('/').pop() || dir.directory,
@@ -331,7 +331,7 @@ class EnhancedErrorTracker {
             'Action': dir.count > 0 ? '🔍 Investigate' : '✅ Monitor'
         }));
 
-        console.log(Bun.inspect.table(directoriesData, {}, {
+        console.info(Bun.inspect.table(directoriesData, {}, {
             colors: true,
             maxStringLength: 20,
             compact: false
@@ -342,8 +342,8 @@ class EnhancedErrorTracker {
      * Display recent errors
      */
     private displayRecentErrors(): void {
-        console.log(chalk.red.bold('\n📝 Recent Errors'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.red.bold('\n📝 Recent Errors'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const recentErrors = this.errors
             .filter(e => !e.resolved)
@@ -361,13 +361,13 @@ class EnhancedErrorTracker {
             }));
 
         if (recentErrors.length > 0) {
-            console.log(Bun.inspect.table(recentErrors, {}, {
+            console.info(Bun.inspect.table(recentErrors, {}, {
                 colors: true,
                 maxStringLength: 15,
                 compact: false
             }));
         } else {
-            console.log(chalk.green('🎉 No unresolved errors! All systems operating cleanly.'));
+            console.info(chalk.green('🎉 No unresolved errors! All systems operating cleanly.'));
         }
     }
 
@@ -375,8 +375,8 @@ class EnhancedErrorTracker {
      * Display resolution status
      */
     private displayResolutionStatus(): void {
-        console.log(chalk.red.bold('\n🔧 Resolution Status'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.red.bold('\n🔧 Resolution Status'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const resolutionData = [
             {
@@ -409,7 +409,7 @@ class EnhancedErrorTracker {
             }
         ];
 
-        console.log(Bun.inspect.table(resolutionData, {}, {
+        console.info(Bun.inspect.table(resolutionData, {}, {
             colors: true,
             maxStringLength: 20,
             compact: false
@@ -420,9 +420,9 @@ class EnhancedErrorTracker {
      * Display footer
      */
     private displayFooter(): void {
-        console.log(chalk.gray('─'.repeat(120)));
-        console.log(chalk.blue('Controls: [Ctrl+C] Exit | [Space] Refresh | [R] Resolve All | [E] Export Report'));
-        console.log(chalk.gray(`Last Update: ${new Date().toLocaleTimeString()} | Total Errors: ${this.errors.length} | Log File: ${this.logFile}`));
+        console.info(chalk.gray('─'.repeat(120)));
+        console.info(chalk.blue('Controls: [Ctrl+C] Exit | [Space] Refresh | [R] Resolve All | [E] Export Report'));
+        console.info(chalk.gray(`Last Update: ${new Date().toLocaleTimeString()} | Total Errors: ${this.errors.length} | Log File: ${this.logFile}`));
     }
 
     // =============================================================================
@@ -613,13 +613,13 @@ class EnhancedErrorTracker {
         };
 
         const colorFn = severityColors[error.severity];
-        console.log(colorFn(`🚨 ${error.severity.toUpperCase()} Error [${error.id}]`));
-        console.log(chalk.gray(`   ${error.category} in ${error.directory}/${error.script}`));
-        console.log(chalk.gray(`   ${error.message}`));
+        console.info(colorFn(`🚨 ${error.severity.toUpperCase()} Error [${error.id}]`));
+        console.info(chalk.gray(`   ${error.category} in ${error.directory}/${error.script}`));
+        console.info(chalk.gray(`   ${error.message}`));
         if (error.line) {
-            console.log(chalk.gray(`   Line: ${error.line}`));
+            console.info(chalk.gray(`   Line: ${error.line}`));
         }
-        console.log('');
+        console.info('');
     }
 
     private createSeverityBar(critical: number, high: number, medium: number, low: number): string {
@@ -797,14 +797,14 @@ async function main(): Promise<void> {
     const args = process.argv.slice(2);
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.red.bold('🚨 Enhanced Error Tracking & Logging System'));
-        console.log(chalk.gray('Usage: bun enhanced-error-tracker.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --help, -h     Show this help message'));
-        console.log(chalk.gray('  --dashboard    Display error analytics dashboard'));
-        console.log(chalk.gray('  --demo         Run demo with sample errors'));
-        console.log(chalk.gray('  --clear        Clear all error logs'));
-        console.log(chalk.gray('\nFeatures: Comprehensive error tracking, analytics, resolution management'));
+        console.info(chalk.red.bold('🚨 Enhanced Error Tracking & Logging System'));
+        console.info(chalk.gray('Usage: bun enhanced-error-tracker.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --help, -h     Show this help message'));
+        console.info(chalk.gray('  --dashboard    Display error analytics dashboard'));
+        console.info(chalk.gray('  --demo         Run demo with sample errors'));
+        console.info(chalk.gray('  --clear        Clear all error logs'));
+        console.info(chalk.gray('\nFeatures: Comprehensive error tracking, analytics, resolution management'));
         process.exit(0);
     }
 
@@ -847,12 +847,12 @@ async function main(): Promise<void> {
             await tracker.displayErrorDashboard();
         } else if (args.includes('--clear')) {
             // Clear error logs
-            console.log(chalk.yellow('🧹 Clearing error logs...'));
+            console.info(chalk.yellow('🧹 Clearing error logs...'));
             // Implementation would clear the log files
-            console.log(chalk.green('✅ Error logs cleared'));
+            console.info(chalk.green('✅ Error logs cleared'));
         } else {
-            console.log(chalk.blue('Enhanced Error Tracker initialized'));
-            console.log(chalk.gray('Use --dashboard to view analytics, --demo for sample data'));
+            console.info(chalk.blue('Enhanced Error Tracker initialized'));
+            console.info(chalk.gray('Use --dashboard to view analytics, --demo for sample data'));
         }
 
     } catch (error) {

@@ -53,13 +53,13 @@ export class S3R2NativeManager {
     if (!url && process.env.PRODUCTION_SIM === '1') {
       url = `https://sim.r2.dev/${key}`;
     }
-    console.log(`💾 DL: ${url} → "${filename}"`);
+    console.info(`💾 DL: ${url} → "${filename}"`);
     return url;
   }
 
   async uploadScreenshot(pngData: Uint8Array, key: string, metadata: any = {}) {
     const isSim = process.env.PRODUCTION_SIM === '1';
-    console.log(`📸 S3 Native uploadScreenshot: ${key} (Size: ${pngData.length}B, SIM: ${isSim})`);
+    console.info(`📸 S3 Native uploadScreenshot: ${key} (Size: ${pngData.length}B, SIM: ${isSim})`);
     const start = Bun.nanoseconds();
     
     if (this.client) {
@@ -95,7 +95,7 @@ export class S3R2NativeManager {
       }
     }
 
-    console.log(`🖼️ Inline Screenshot: ${key} (${timeMs.toFixed(0)}ms) → Embed URL: ${embedUrl}`);
+    console.info(`🖼️ Inline Screenshot: ${key} (${timeMs.toFixed(0)}ms) → Embed URL: ${embedUrl}`);
     return { success: true, key, timeMs, embedUrl };
   }
 

@@ -53,15 +53,15 @@ class Fire22PagesBuildSystem {
   async build(options: BuildOptions = {}): Promise<void> {
     const startTime = Bun.nanoseconds();
 
-    console.log('🚀 Fire22 Dashboard Pages Build System');
-    console.log('!==!==!==!==!==!=====');
+    console.info('🚀 Fire22 Dashboard Pages Build System');
+    console.info('!==!==!==!==!==!=====');
 
     const env = options.environment || 'development';
-    console.log(`\n📦 Environment: ${env}`);
-    console.log(`🎯 Output Directory: ${this.distDir}`);
+    console.info(`\n📦 Environment: ${env}`);
+    console.info(`🎯 Output Directory: ${this.distDir}`);
 
     if (options.dryRun) {
-      console.log('🔍 DRY RUN MODE - No files will be written');
+      console.info('🔍 DRY RUN MODE - No files will be written');
     }
 
     try {
@@ -84,7 +84,7 @@ class Fire22PagesBuildSystem {
       await this.generateDeploymentManifest(options);
 
       const buildTime = (Bun.nanoseconds() - startTime) / 1_000_000;
-      console.log(`\n✅ Build completed successfully in ${buildTime.toFixed(2)}ms`);
+      console.info(`\n✅ Build completed successfully in ${buildTime.toFixed(2)}ms`);
     } catch (error) {
       console.error('❌ Build failed:', error);
       process.exit(1);
@@ -95,7 +95,7 @@ class Fire22PagesBuildSystem {
    * 📁 Setup build environment
    */
   private async setupBuildEnvironment(options: BuildOptions): Promise<void> {
-    console.log('\n📁 Setting up build environment...');
+    console.info('\n📁 Setting up build environment...');
 
     if (!options.dryRun) {
       // Create output directories
@@ -109,16 +109,16 @@ class Fire22PagesBuildSystem {
       for (const dept of departments) {
         const deptDir = join(this.distDir, dept.id);
         mkdirSync(deptDir, { recursive: true });
-        console.log(`  📂 Created ${dept.name} directory`);
+        console.info(`  📂 Created ${dept.name} directory`);
       }
 
       // Create feeds directory
       mkdirSync(join(this.distDir, 'feeds'), { recursive: true });
-      console.log('  📡 Created feeds directory');
+      console.info('  📡 Created feeds directory');
 
       // Create assets directory
       mkdirSync(join(this.distDir, 'assets'), { recursive: true });
-      console.log('  🎨 Created assets directory');
+      console.info('  🎨 Created assets directory');
     }
   }
 
@@ -126,7 +126,7 @@ class Fire22PagesBuildSystem {
    * 🏢 Build department-specific pages
    */
   private async buildDepartmentPages(options: BuildOptions): Promise<void> {
-    console.log('\n🏢 Building department pages...');
+    console.info('\n🏢 Building department pages...');
 
     const departments = this.getDepartments();
 
@@ -135,7 +135,7 @@ class Fire22PagesBuildSystem {
         continue; // Skip if building specific department
       }
 
-      console.log(`  🔨 Building ${dept.name}...`);
+      console.info(`  🔨 Building ${dept.name}...`);
 
       // Get the correct HTML file name for this department
       const htmlFileName = this.getDepartmentHtmlFileName(dept.id);
@@ -151,14 +151,14 @@ class Fire22PagesBuildSystem {
           writeFileSync(outputPath, htmlContent);
         }
 
-        console.log(`    ✅ ${dept.name} page: index.html`);
+        console.info(`    ✅ ${dept.name} page: index.html`);
       } else {
-        console.log(`    ⚠️ ${dept.name} HTML file not found: ${deptHtmlPath}`);
+        console.info(`    ⚠️ ${dept.name} HTML file not found: ${deptHtmlPath}`);
 
         // Create missing department page from template
         if (!options.dryRun) {
           await this.createMissingDepartmentPage(dept, options);
-          console.log(`    🔧 Created missing ${dept.name} page from template`);
+          console.info(`    🔧 Created missing ${dept.name} page from template`);
         }
       }
 
@@ -174,7 +174,7 @@ class Fire22PagesBuildSystem {
    * 📡 Build RSS feeds
    */
   private async buildFeeds(options: BuildOptions): Promise<void> {
-    console.log('\n📡 Building RSS feeds...');
+    console.info('\n📡 Building RSS feeds...');
 
     const feedsSourceDir = join(this.srcDir, 'feeds');
     const feedsOutputDir = join(this.distDir, 'feeds');
@@ -200,7 +200,7 @@ class Fire22PagesBuildSystem {
           writeFileSync(outputPath, content);
         }
 
-        console.log(`  📡 ${feedFile}`);
+        console.info(`  📡 ${feedFile}`);
       }
     }
   }
@@ -209,7 +209,7 @@ class Fire22PagesBuildSystem {
    * 🏠 Build main dashboard
    */
   private async buildMainDashboard(options: BuildOptions): Promise<void> {
-    console.log('\n🏠 Building main dashboard...');
+    console.info('\n🏠 Building main dashboard...');
 
     const dashboardFiles = ['dashboard.html', 'dashboard-index.html', 'unified-dashboard.html'];
 
@@ -223,7 +223,7 @@ class Fire22PagesBuildSystem {
           content = this.processDashboardTemplate(content, options);
           writeFileSync(outputPath, content);
         }
-        console.log(`  🏠 ${file}`);
+        console.info(`  🏠 ${file}`);
       }
     }
 
@@ -232,14 +232,14 @@ class Fire22PagesBuildSystem {
       const indexContent = this.generateRootIndex(options);
       writeFileSync(join(this.distDir, 'index.html'), indexContent);
     }
-    console.log('  🏠 index.html (root)');
+    console.info('  🏠 index.html (root)');
   }
 
   /**
    * 🎨 Build assets and styles
    */
   private async buildAssets(options: BuildOptions): Promise<void> {
-    console.log('\n🎨 Building assets and styles...');
+    console.info('\n🎨 Building assets and styles...');
 
     // Copy CSS files
     const stylesDir = join(this.srcDir, 'styles');
@@ -265,7 +265,7 @@ class Fire22PagesBuildSystem {
           writeFileSync(outputPath, cssContent);
         }
 
-        console.log(`  🎨 ${cssFile}`);
+        console.info(`  🎨 ${cssFile}`);
       }
     }
 
@@ -283,7 +283,7 @@ class Fire22PagesBuildSystem {
           copyFileSync(sourcePath, outputPath);
         }
 
-        console.log(`  📜 ${jsFile}`);
+        console.info(`  📜 ${jsFile}`);
       }
     }
   }
@@ -292,7 +292,7 @@ class Fire22PagesBuildSystem {
    * 📋 Generate deployment manifest
    */
   private async generateDeploymentManifest(options: BuildOptions): Promise<void> {
-    console.log('\n📋 Generating deployment manifest...');
+    console.info('\n📋 Generating deployment manifest...');
 
     const manifest = {
       buildTime: new Date().toISOString(),
@@ -320,7 +320,7 @@ class Fire22PagesBuildSystem {
       writeFileSync(join(this.distDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
     }
 
-    console.log('  📋 manifest.json');
+    console.info('  📋 manifest.json');
   }
 
   /**
@@ -839,7 +839,7 @@ async function main() {
         options.dryRun = true;
         break;
       case '--help':
-        console.log(`
+        console.info(`
 Fire22 Dashboard Pages Build System
 
 Usage:

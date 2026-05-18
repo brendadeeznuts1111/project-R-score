@@ -55,15 +55,15 @@ class Database {
   private data: any[] = [];
   
   exec(sql: string): void {
-    console.log(`[DB] ${sql}`);
+    console.info(`[DB] ${sql}`);
   }
   
   query(sql: string): any {
-    console.log(`[DB Query] ${sql}`);
+    console.info(`[DB Query] ${sql}`);
     return {
       get: () => null,
       all: () => this.data,
-      run: (...params: any[]) => console.log(`[DB Run] ${sql}`, params)
+      run: (...params: any[]) => console.info(`[DB Run] ${sql}`, params)
     };
   }
 }
@@ -133,7 +133,7 @@ export class SelfImprovementLoop {
       suggestedActions: this.suggestImprovements(metric)
     });
     
-    console.log(`🤖 Queued improvement analysis for ${metric.name} (urgency: ${this.calculateUrgency(metric)})`);
+    console.info(`🤖 Queued improvement analysis for ${metric.name} (urgency: ${this.calculateUrgency(metric)})`);
   }
   
   // Reinforcement: ML-driven improvement suggestions
@@ -185,7 +185,7 @@ export class SelfImprovementLoop {
     
     const { metric, urgency, suggestedActions } = job.data;
     
-    console.log(`🤖 Analyzing improvement for ${metric.name} (urgency: ${urgency})`);
+    console.info(`🤖 Analyzing improvement for ${metric.name} (urgency: ${urgency})`);
     
     // Execute top-priority suggestion
     if (suggestedActions.length > 0) {
@@ -196,11 +196,11 @@ export class SelfImprovementLoop {
       const result = await this.measureImprovement(metric, bestAction);
       await this.learningModel.train(metric, bestAction, result);
       
-      console.log(`✅ Applied improvement: ${bestAction} (${result.improvement.toFixed(1)}% improvement)`);
+      console.info(`✅ Applied improvement: ${bestAction} (${result.improvement.toFixed(1)}% improvement)`);
     }
     
     // Acknowledge job (in real implementation)
-    console.log(`✅ Completed improvement job for ${metric.name}`);
+    console.info(`✅ Completed improvement job for ${metric.name}`);
   }
   
   // Reinforcement: A/B testing for improvements
@@ -216,7 +216,7 @@ export class SelfImprovementLoop {
   }
   
   private async applyImprovement(action: string, metric: MetricData): Promise<void> {
-    console.log(`🔧 Applying improvement: ${action}`);
+    console.info(`🔧 Applying improvement: ${action}`);
     
     switch (action) {
       case 'increase_rule_cache_size':
@@ -261,7 +261,7 @@ export class SelfImprovementLoop {
         break;
         
       default:
-        console.log(`⚠️ Unknown improvement action: ${action}`);
+        console.info(`⚠️ Unknown improvement action: ${action}`);
     }
   }
   
@@ -393,10 +393,10 @@ export class SelfImprovementLoop {
     // Generate weekly report
     setInterval(async () => {
       const report = await this.generateImprovementReport();
-      console.log('📊 Weekly Improvement Report:', report);
+      console.info('📊 Weekly Improvement Report:', report);
     }, 604800000); // Every 7 days
     
-    console.log('🔄 Self-improvement loop started');
+    console.info('🔄 Self-improvement loop started');
   }
   
   private hashString(str: string): number {

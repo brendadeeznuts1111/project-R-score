@@ -36,7 +36,7 @@ for (let i = 0; i < args.length; i++) {
       break;
     case "--help":
     case "-h":
-      console.log(`
+      console.info(`
 FactoryWager Unicode Table Renderer
 
 USAGE:
@@ -93,7 +93,7 @@ try {
     footer: options.footer
   });
   
-  console.log(result);
+  console.info(result);
   
 } catch (error) {
   console.error("❌ Error rendering table:", (error as Error).message);

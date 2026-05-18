@@ -6,8 +6,8 @@
 
 import { scan as securityScan } from '../packages/fire22-security-scanner/src/index.ts';
 
-console.log('🔍 Fire22 Verbose Security Scanner');
-console.log('='.repeat(60));
+console.info('🔍 Fire22 Verbose Security Scanner');
+console.info('='.repeat(60));
 
 // ============================================================================
 // VERBOSE SECURITY SCAN CONFIGURATION
@@ -22,14 +22,14 @@ const VERBOSE_CONFIG = {
   dependencyAnalysis: true,
 };
 
-console.log('⚙️  Scan Configuration:');
-console.log('   📊 Level: Detailed analysis');
-console.log('   ✅ Include healthy packages:', VERBOSE_CONFIG.includeHealthy);
-console.log('   🕐 Show timestamps:', VERBOSE_CONFIG.showTimestamps);
-console.log('   📤 Export results:', VERBOSE_CONFIG.exportResults);
-console.log('   ⚡ Performance metrics:', VERBOSE_CONFIG.performanceMetrics);
-console.log('   🔗 Dependency analysis:', VERBOSE_CONFIG.dependencyAnalysis);
-console.log();
+console.info('⚙️  Scan Configuration:');
+console.info('   📊 Level: Detailed analysis');
+console.info('   ✅ Include healthy packages:', VERBOSE_CONFIG.includeHealthy);
+console.info('   🕐 Show timestamps:', VERBOSE_CONFIG.showTimestamps);
+console.info('   📤 Export results:', VERBOSE_CONFIG.exportResults);
+console.info('   ⚡ Performance metrics:', VERBOSE_CONFIG.performanceMetrics);
+console.info('   🔗 Dependency analysis:', VERBOSE_CONFIG.dependencyAnalysis);
+console.info();
 
 // ============================================================================
 // COMPREHENSIVE PACKAGE SCANNING
@@ -59,46 +59,46 @@ const packagesToScan = [
   },
 ];
 
-console.log('📦 Packages to Analyze:');
-console.log('-'.repeat(40));
+console.info('📦 Packages to Analyze:');
+console.info('-'.repeat(40));
 packagesToScan.forEach((pkg, index) => {
   const registry = pkg.registry ? ` (${pkg.registry})` : '';
-  console.log(`${index + 1}. ${pkg.name}@${pkg.version}${registry}`);
-  console.log(`   📂 Category: ${pkg.category}`);
+  console.info(`${index + 1}. ${pkg.name}@${pkg.version}${registry}`);
+  console.info(`   📂 Category: ${pkg.category}`);
 });
-console.log();
+console.info();
 
 // ============================================================================
 // SECURITY ANALYSIS WITH DETAILED REPORTING
 // ============================================================================
 
 async function performVerboseSecurityScan() {
-  console.log('🔍 Starting Comprehensive Security Analysis...');
-  console.log('-'.repeat(50));
+  console.info('🔍 Starting Comprehensive Security Analysis...');
+  console.info('-'.repeat(50));
 
   // Security scan results will be handled by the scanner
   // This is a demonstration of verbose output
 
   const analysisStart = performance.now();
 
-  console.log('📊 Analysis Phases:');
-  console.log('1. 🔍 Package metadata collection');
-  console.log('2. 🛡️  Vulnerability database lookup');
-  console.log('3. 🚫 Malware signature scanning');
-  console.log('4. 📋 License compliance verification');
-  console.log('5. 🔒 Registry trust validation');
-  console.log('6. 📈 Risk assessment calculation');
-  console.log('7. 📝 Detailed report generation');
-  console.log();
+  console.info('📊 Analysis Phases:');
+  console.info('1. 🔍 Package metadata collection');
+  console.info('2. 🛡️  Vulnerability database lookup');
+  console.info('3. 🚫 Malware signature scanning');
+  console.info('4. 📋 License compliance verification');
+  console.info('5. 🔒 Registry trust validation');
+  console.info('6. 📈 Risk assessment calculation');
+  console.info('7. 📝 Detailed report generation');
+  console.info();
 
   // Simulate detailed analysis (in real implementation, this would be actual scanning)
-  console.log('🔬 Detailed Security Analysis:');
-  console.log('-'.repeat(40));
+  console.info('🔬 Detailed Security Analysis:');
+  console.info('-'.repeat(40));
 
   // Analyze each package verbosely
   for (const pkg of packagesToScan) {
-    console.log(`\n📦 Analyzing: ${pkg.name}@${pkg.version}`);
-    console.log(`   🏷️  Category: ${pkg.category}`);
+    console.info(`\n📦 Analyzing: ${pkg.name}@${pkg.version}`);
+    console.info(`   🏷️  Category: ${pkg.category}`);
 
     // Simulate detailed checks
     const checks = [
@@ -132,16 +132,16 @@ async function performVerboseSecurityScan() {
     ];
 
     checks.forEach(check => {
-      console.log(`   ${check.status} ${check.name}: ${check.details}`);
+      console.info(`   ${check.status} ${check.name}: ${check.details}`);
     });
 
-    console.log(`   📊 Risk Score: ${calculateRiskScore(pkg)}/100`);
+    console.info(`   📊 Risk Score: ${calculateRiskScore(pkg)}/100`);
   }
 
   const analysisEnd = performance.now();
   const analysisTime = (analysisEnd - analysisStart).toFixed(2);
 
-  console.log(`\n⚡ Analysis completed in ${analysisTime}ms`);
+  console.info(`\n⚡ Analysis completed in ${analysisTime}ms`);
 }
 
 // Calculate risk score for demonstration
@@ -171,52 +171,52 @@ function calculateRiskScore(pkg: any): number {
 // ============================================================================
 
 async function generateDetailedReport() {
-  console.log('\n📋 Detailed Security Report');
-  console.log('='.repeat(50));
+  console.info('\n📋 Detailed Security Report');
+  console.info('='.repeat(50));
 
-  console.log('🎯 Executive Summary:');
-  console.log('   📦 Total packages analyzed: 6');
-  console.log('   🚨 Critical vulnerabilities: 2');
-  console.log('   ⚠️  Security warnings: 3');
-  console.log('   🚫 Blocked packages: 1');
-  console.log('   ✅ Clean packages: 2');
-  console.log();
+  console.info('🎯 Executive Summary:');
+  console.info('   📦 Total packages analyzed: 6');
+  console.info('   🚨 Critical vulnerabilities: 2');
+  console.info('   ⚠️  Security warnings: 3');
+  console.info('   🚫 Blocked packages: 1');
+  console.info('   ✅ Clean packages: 2');
+  console.info();
 
-  console.log('🔴 Critical Findings:');
-  console.log('   1. lodash@4.17.10 - CVE-2020-8203 (Prototype pollution)');
-  console.log('      💡 Recommendation: Upgrade to >= 4.17.12');
-  console.log('   2. fake-package@1.0.0 - Malicious package detected');
-  console.log('      💡 Recommendation: Remove and find alternative');
-  console.log('   3. unknown-package@1.0.0 - Untrusted registry');
-  console.log('      💡 Recommendation: Use trusted registries only');
-  console.log();
+  console.info('🔴 Critical Findings:');
+  console.info('   1. lodash@4.17.10 - CVE-2020-8203 (Prototype pollution)');
+  console.info('      💡 Recommendation: Upgrade to >= 4.17.12');
+  console.info('   2. fake-package@1.0.0 - Malicious package detected');
+  console.info('      💡 Recommendation: Remove and find alternative');
+  console.info('   3. unknown-package@1.0.0 - Untrusted registry');
+  console.info('      💡 Recommendation: Use trusted registries only');
+  console.info();
 
-  console.log('🟡 Security Warnings:');
-  console.log('   1. axios@0.20.0 - CVE-2020-28168 (SSRF vulnerability)');
-  console.log('      💡 Recommendation: Upgrade to >= 0.21.1');
-  console.log('   2. fake-package@1.0.0 - License information unavailable');
-  console.log('      💡 Recommendation: Verify license manually');
-  console.log('   3. unknown-package@1.0.0 - License information unavailable');
-  console.log('      💡 Recommendation: Verify license manually');
-  console.log();
+  console.info('🟡 Security Warnings:');
+  console.info('   1. axios@0.20.0 - CVE-2020-28168 (SSRF vulnerability)');
+  console.info('      💡 Recommendation: Upgrade to >= 0.21.1');
+  console.info('   2. fake-package@1.0.0 - License information unavailable');
+  console.info('      💡 Recommendation: Verify license manually');
+  console.info('   3. unknown-package@1.0.0 - License information unavailable');
+  console.info('      💡 Recommendation: Verify license manually');
+  console.info();
 
-  console.log('📊 Risk Assessment:');
-  console.log('   🟢 Low Risk (0-20): react@18.2.0, typescript@5.0.0');
-  console.log('   🟡 Medium Risk (21-50): axios@0.20.0');
-  console.log(
+  console.info('📊 Risk Assessment:');
+  console.info('   🟢 Low Risk (0-20): react@18.2.0, typescript@5.0.0');
+  console.info('   🟡 Medium Risk (21-50): axios@0.20.0');
+  console.info(
     '   🔴 High Risk (51-100): lodash@4.17.10, fake-package@1.0.0, unknown-package@1.0.0'
   );
-  console.log();
+  console.info();
 
-  console.log('🏆 Security Score: 33/100 (Needs Improvement)');
-  console.log();
+  console.info('🏆 Security Score: 33/100 (Needs Improvement)');
+  console.info();
 
-  console.log('🎯 Recommendations:');
-  console.log('   1. Upgrade vulnerable packages immediately');
-  console.log('   2. Remove malicious packages from dependencies');
-  console.log('   3. Use only trusted package registries');
-  console.log('   4. Implement automated security scanning in CI/CD');
-  console.log('   5. Regular security audits and dependency updates');
+  console.info('🎯 Recommendations:');
+  console.info('   1. Upgrade vulnerable packages immediately');
+  console.info('   2. Remove malicious packages from dependencies');
+  console.info('   3. Use only trusted package registries');
+  console.info('   4. Implement automated security scanning in CI/CD');
+  console.info('   5. Regular security audits and dependency updates');
 }
 
 // ============================================================================
@@ -227,17 +227,17 @@ function displayPerformanceMetrics() {
   const scanEndTime = performance.now();
   const totalTime = (scanEndTime - scanStartTime).toFixed(2);
 
-  console.log('\n⚡ Performance Metrics');
-  console.log('='.repeat(40));
-  console.log(`   📊 Total scan time: ${totalTime}ms`);
-  console.log(
+  console.info('\n⚡ Performance Metrics');
+  console.info('='.repeat(40));
+  console.info(`   📊 Total scan time: ${totalTime}ms`);
+  console.info(
     `   📦 Packages per second: ${(packagesToScan.length / (parseFloat(totalTime) / 1000)).toFixed(2)}`
   );
-  console.log(`   🔍 Analysis depth: Comprehensive`);
-  console.log(
+  console.info(`   🔍 Analysis depth: Comprehensive`);
+  console.info(
     `   💾 Memory usage: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`
   );
-  console.log(`   ⚙️  CPU usage: Single-threaded analysis`);
+  console.info(`   ⚙️  CPU usage: Single-threaded analysis`);
 }
 
 // ============================================================================
@@ -246,9 +246,9 @@ function displayPerformanceMetrics() {
 
 async function main() {
   try {
-    console.log('🚀 Fire22 Verbose Security Scanner Started');
-    console.log(`🕐 Start time: ${new Date().toISOString()}`);
-    console.log();
+    console.info('🚀 Fire22 Verbose Security Scanner Started');
+    console.info(`🕐 Start time: ${new Date().toISOString()}`);
+    console.info();
 
     // Perform the detailed security scan
     await performVerboseSecurityScan();
@@ -259,11 +259,11 @@ async function main() {
     // Show performance metrics
     displayPerformanceMetrics();
 
-    console.log('\n🎉 Verbose Security Scan Complete!');
-    console.log('   📊 Detailed analysis completed');
-    console.log('   📋 Comprehensive report generated');
-    console.log('   ⚡ Performance metrics recorded');
-    console.log('   🔒 Security recommendations provided');
+    console.info('\n🎉 Verbose Security Scan Complete!');
+    console.info('   📊 Detailed analysis completed');
+    console.info('   📋 Comprehensive report generated');
+    console.info('   ⚡ Performance metrics recorded');
+    console.info('   🔒 Security recommendations provided');
   } catch (error) {
     console.error('\n❌ Security scan failed:', error.message);
     process.exit(1);

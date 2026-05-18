@@ -31,7 +31,7 @@ import { FeatureRegistry } from "../src/FeatureRegistry";
 import { Logger } from "../src/Logger";
 
 if (feature("FEAT_PREMIUM")) {
-  console.log("Premium features enabled");
+  console.info("Premium features enabled");
   const premiumService = {
     analytics: () => "premium-analytics",
     export: () => "premium-export",
@@ -43,7 +43,7 @@ const registry = new FeatureRegistry();
 const logger = new Logger({ level: "INFO" });
 const width = Bun.stringWidth("Hello, World!");
 
-console.log("Bundle test complete");
+console.info("Bundle test complete");
 `;
 
     try {
@@ -163,14 +163,14 @@ console.log("Bundle test complete");
             : 0,
         };
 
-        console.log("\n📦 Bundle Size Comparison:");
-        console.log(`  No features:     ${sizes.noFeatures} bytes`);
-        console.log(`  With features:   ${sizes.withFeatures} bytes`);
-        console.log(`  Minified:        ${sizes.minified} bytes`);
+        console.info("\n📦 Bundle Size Comparison:");
+        console.info(`  No features:     ${sizes.noFeatures} bytes`);
+        console.info(`  With features:   ${sizes.withFeatures} bytes`);
+        console.info(`  Minified:        ${sizes.minified} bytes`);
 
         if (sizes.withFeatures > 0 && sizes.noFeatures > 0) {
           const ratio = sizes.withFeatures / sizes.noFeatures;
-          console.log(`  Size ratio:      ${ratio.toFixed(2)}x`);
+          console.info(`  Size ratio:      ${ratio.toFixed(2)}x`);
           expect(ratio).toBeGreaterThan(1); // Features should increase size
         }
 
@@ -205,7 +205,7 @@ console.log("Bundle test complete");
         unlinkSync(output);
       }
 
-      console.log(`\n⏱️  Build time: ${duration.toFixed(2)}ms`);
+      console.info(`\n⏱️  Build time: ${duration.toFixed(2)}ms`);
       expect(duration).toBeGreaterThan(0);
     });
   });

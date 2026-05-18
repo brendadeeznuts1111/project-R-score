@@ -119,17 +119,17 @@ export function KYCReviewTab() {
   // Listen for keyboard shortcut events
   useEffect(() => {
     const handleKYCValidate = () => {
-      console.log("KYC validation requested via shortcut");
+      console.info("KYC validation requested via shortcut");
     };
 
     const handleKYCReview = () => {
-      console.log("KYC review queue requested via shortcut");
+      console.info("KYC review queue requested via shortcut");
       setFilters(prev => ({ ...prev, status: ["pending"] }));
       fetchQueue();
     };
 
     const handleKYCFailsafe = () => {
-      console.log("KYC failsafe requested via shortcut");
+      console.info("KYC failsafe requested via shortcut");
     };
 
     window.addEventListener("kyc:validate:requested", handleKYCValidate);

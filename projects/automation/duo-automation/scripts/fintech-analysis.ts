@@ -34,11 +34,11 @@ class FintechIntelligenceCLI {
   }
 
   async analyze(options: FintechAnalyzeOptions) {
-    console.log('💰 Fintech Intelligence Analysis');
-    console.log('===============================');
-    console.log(`🌐 Platform: ${options.platform.toUpperCase()}`);
-    console.log(`🎯 Risk Assessment: ${options.riskAssessment ? 'Enabled' : 'Disabled'}`);
-    console.log('');
+    console.info('💰 Fintech Intelligence Analysis');
+    console.info('===============================');
+    console.info(`🌐 Platform: ${options.platform.toUpperCase()}`);
+    console.info(`🎯 Risk Assessment: ${options.riskAssessment ? 'Enabled' : 'Disabled'}`);
+    console.info('');
 
     try {
       // Simulate comprehensive fintech analysis
@@ -76,41 +76,41 @@ class FintechIntelligenceCLI {
         }
       };
 
-      console.log('📊 Account Analysis Results:');
-      console.log('---------------------------');
-      console.log(`Cashtag: ${analysis.accountAnalysis.cashtag}`);
-      console.log(`Verification Status: ${analysis.accountAnalysis.verificationStatus}`);
-      console.log(`Account Created: ${analysis.accountAnalysis.accountCreated}`);
-      console.log(`Account Longevity: ${analysis.accountAnalysis.accountLongevity} years`);
-      console.log(`Transaction Capability: ${analysis.accountAnalysis.transactionCapability ? 'Enabled' : 'Disabled'}`);
-      console.log(`Weekly Limit: $${analysis.accountAnalysis.weeklyTransactionLimit.toLocaleString()}`);
-      console.log(`Monthly Limit: $${analysis.accountAnalysis.monthlyTransactionLimit.toLocaleString()}`);
-      console.log('');
+      console.info('📊 Account Analysis Results:');
+      console.info('---------------------------');
+      console.info(`Cashtag: ${analysis.accountAnalysis.cashtag}`);
+      console.info(`Verification Status: ${analysis.accountAnalysis.verificationStatus}`);
+      console.info(`Account Created: ${analysis.accountAnalysis.accountCreated}`);
+      console.info(`Account Longevity: ${analysis.accountAnalysis.accountLongevity} years`);
+      console.info(`Transaction Capability: ${analysis.accountAnalysis.transactionCapability ? 'Enabled' : 'Disabled'}`);
+      console.info(`Weekly Limit: $${analysis.accountAnalysis.weeklyTransactionLimit.toLocaleString()}`);
+      console.info(`Monthly Limit: $${analysis.accountAnalysis.monthlyTransactionLimit.toLocaleString()}`);
+      console.info('');
 
       if (analysis.riskAssessment) {
-        console.log('⚠️ Risk Assessment Results:');
-        console.log('--------------------------');
-        console.log(`Overall Risk: ${analysis.riskAssessment.overallRisk}`);
-        console.log(`Risk Score: ${analysis.riskAssessment.riskScore}/100`);
-        console.log(`Confidence Level: ${analysis.riskAssessment.confidenceLevel}%`);
-        console.log('');
-        console.log('Risk Factor Breakdown:');
-        console.log('----------------------');
+        console.info('⚠️ Risk Assessment Results:');
+        console.info('--------------------------');
+        console.info(`Overall Risk: ${analysis.riskAssessment.overallRisk}`);
+        console.info(`Risk Score: ${analysis.riskAssessment.riskScore}/100`);
+        console.info(`Confidence Level: ${analysis.riskAssessment.confidenceLevel}%`);
+        console.info('');
+        console.info('Risk Factor Breakdown:');
+        console.info('----------------------');
         analysis.riskAssessment.riskFactors.forEach(factor => {
           const status = factor.score <= 10 ? '✅' : factor.score <= 25 ? '⚠️' : '❌';
-          console.log(`${status} ${factor.factor}: ${factor.score}/100 (Weight: ${(factor.weight * 100).toFixed(0)}%)`);
+          console.info(`${status} ${factor.factor}: ${factor.score}/100 (Weight: ${(factor.weight * 100).toFixed(0)}%)`);
         });
-        console.log('');
+        console.info('');
       }
 
-      console.log('📋 Compliance Status:');
-      console.log('--------------------');
-      console.log(`KYC Status: ${analysis.compliance.kycStatus}`);
-      console.log(`AML Status: ${analysis.compliance.amlStatus}`);
-      console.log('Screening Results:');
+      console.info('📋 Compliance Status:');
+      console.info('--------------------');
+      console.info(`KYC Status: ${analysis.compliance.kycStatus}`);
+      console.info(`AML Status: ${analysis.compliance.amlStatus}`);
+      console.info('Screening Results:');
       Object.entries(analysis.compliance.screeningResults).forEach(([screen, result]) => {
         const icon = result === 'CLEAR' ? '✅' : '❌';
-        console.log(`  ${icon} ${screen.toUpperCase()}: ${result}`);
+        console.info(`  ${icon} ${screen.toUpperCase()}: ${result}`);
       });
 
       return analysis;
@@ -121,11 +121,11 @@ class FintechIntelligenceCLI {
   }
 
   async cashapp(options: FintechCashappOptions) {
-    console.log('💵 CashApp Protocol Analysis');
-    console.log('============================');
-    console.log(`🔍 Cashtag Verification: ${options.verifyCashtag ? 'Enabled' : 'Disabled'}`);
-    console.log(`💳 Transaction Check: ${options.checkTransactions ? 'Enabled' : 'Disabled'}`);
-    console.log('');
+    console.info('💵 CashApp Protocol Analysis');
+    console.info('============================');
+    console.info(`🔍 Cashtag Verification: ${options.verifyCashtag ? 'Enabled' : 'Disabled'}`);
+    console.info(`💳 Transaction Check: ${options.checkTransactions ? 'Enabled' : 'Disabled'}`);
+    console.info('');
 
     try {
       const cashappAnalysis = {
@@ -155,49 +155,49 @@ class FintechIntelligenceCLI {
         }
       };
 
-      console.log('💵 CashApp Account Information:');
-      console.log('------------------------------');
-      console.log(`Cashtag: ${cashappAnalysis.cashtag}`);
-      console.log('');
+      console.info('💵 CashApp Account Information:');
+      console.info('------------------------------');
+      console.info(`Cashtag: ${cashappAnalysis.cashtag}`);
+      console.info('');
 
       if (cashappAnalysis.verification) {
-        console.log('✅ Verification Results:');
-        console.log('-----------------------');
-        console.log(`Status: ${cashappAnalysis.verification.status}`);
-        console.log(`Verified At: ${cashappAnalysis.verification.verifiedAt}`);
-        console.log(`Method: ${cashappAnalysis.verification.method}`);
-        console.log(`Confidence: ${cashappAnalysis.verification.confidence}%`);
-        console.log('');
+        console.info('✅ Verification Results:');
+        console.info('-----------------------');
+        console.info(`Status: ${cashappAnalysis.verification.status}`);
+        console.info(`Verified At: ${cashappAnalysis.verification.verifiedAt}`);
+        console.info(`Method: ${cashappAnalysis.verification.method}`);
+        console.info(`Confidence: ${cashappAnalysis.verification.confidence}%`);
+        console.info('');
       }
 
       if (cashappAnalysis.transactions) {
-        console.log('💳 Transaction Analysis:');
-        console.log('-----------------------');
-        console.log(`Total Transactions: ${cashappAnalysis.transactions.totalTransactions.toLocaleString()}`);
-        console.log(`Total Volume: $${cashappAnalysis.transactions.totalVolume.toLocaleString()}`);
-        console.log(`Average Transaction: $${cashappAnalysis.transactions.averageTransaction.toFixed(2)}`);
-        console.log(`Last Transaction: ${cashappAnalysis.transactions.lastTransaction}`);
-        console.log(`Transaction Pattern: ${cashappAnalysis.transactions.transactionPattern}`);
-        console.log(`Suspicious Activity: ${cashappAnalysis.transactions.suspiciousActivity ? '⚠️ DETECTED' : '✅ CLEAR'}`);
-        console.log(`Monthly Volume: $${cashappAnalysis.transactions.monthlyVolume.toLocaleString()}`);
-        console.log(`Weekly Volume: $${cashappAnalysis.transactions.weeklyVolume.toLocaleString()}`);
-        console.log('');
+        console.info('💳 Transaction Analysis:');
+        console.info('-----------------------');
+        console.info(`Total Transactions: ${cashappAnalysis.transactions.totalTransactions.toLocaleString()}`);
+        console.info(`Total Volume: $${cashappAnalysis.transactions.totalVolume.toLocaleString()}`);
+        console.info(`Average Transaction: $${cashappAnalysis.transactions.averageTransaction.toFixed(2)}`);
+        console.info(`Last Transaction: ${cashappAnalysis.transactions.lastTransaction}`);
+        console.info(`Transaction Pattern: ${cashappAnalysis.transactions.transactionPattern}`);
+        console.info(`Suspicious Activity: ${cashappAnalysis.transactions.suspiciousActivity ? '⚠️ DETECTED' : '✅ CLEAR'}`);
+        console.info(`Monthly Volume: $${cashappAnalysis.transactions.monthlyVolume.toLocaleString()}`);
+        console.info(`Weekly Volume: $${cashappAnalysis.transactions.weeklyVolume.toLocaleString()}`);
+        console.info('');
       }
 
-      console.log('🔧 Protocol Analysis:');
-      console.log('--------------------');
-      console.log(`API Access: ${cashappAnalysis.protocolAnalysis.apiAccess}`);
-      console.log(`Webhook Endpoints: ${cashappAnalysis.protocolAnalysis.webhookEndpoints}`);
-      console.log(`Integration Status: ${cashappAnalysis.protocolAnalysis.integrationStatus}`);
-      console.log(`Rate Limit: ${cashappAnalysis.protocolAnalysis.rateLimit}`);
-      console.log(`Security Level: ${cashappAnalysis.protocolAnalysis.securityLevel}`);
-      console.log('');
+      console.info('🔧 Protocol Analysis:');
+      console.info('--------------------');
+      console.info(`API Access: ${cashappAnalysis.protocolAnalysis.apiAccess}`);
+      console.info(`Webhook Endpoints: ${cashappAnalysis.protocolAnalysis.webhookEndpoints}`);
+      console.info(`Integration Status: ${cashappAnalysis.protocolAnalysis.integrationStatus}`);
+      console.info(`Rate Limit: ${cashappAnalysis.protocolAnalysis.rateLimit}`);
+      console.info(`Security Level: ${cashappAnalysis.protocolAnalysis.securityLevel}`);
+      console.info('');
 
-      console.log('🎯 CashApp Protocol Summary:');
-      console.log('----------------------------');
-      console.log('├── Cashtag Verification: ✅ Confirmed Valid');
-      console.log('├── Transaction Capability: ✅ Active P2P Enabled');
-      console.log('└── Risk Level: ✅ LOW (Verified KYC status)');
+      console.info('🎯 CashApp Protocol Summary:');
+      console.info('----------------------------');
+      console.info('├── Cashtag Verification: ✅ Confirmed Valid');
+      console.info('├── Transaction Capability: ✅ Active P2P Enabled');
+      console.info('└── Risk Level: ✅ LOW (Verified KYC status)');
 
       return cashappAnalysis;
     } catch (error) {
@@ -207,11 +207,11 @@ class FintechIntelligenceCLI {
   }
 
   async risk(options: FintechRiskOptions) {
-    console.log('⚠️ Risk Assessment Analysis');
-    console.log('===========================');
-    console.log(`🏦 KYC Integration: ${options.kycIntegration ? 'Enabled' : 'Disabled'}`);
-    console.log(`📋 Compliance: ${options.compliance.toUpperCase()}`);
-    console.log('');
+    console.info('⚠️ Risk Assessment Analysis');
+    console.info('===========================');
+    console.info(`🏦 KYC Integration: ${options.kycIntegration ? 'Enabled' : 'Disabled'}`);
+    console.info(`📋 Compliance: ${options.compliance.toUpperCase()}`);
+    console.info('');
 
     try {
       const riskAnalysis = {
@@ -266,50 +266,50 @@ class FintechIntelligenceCLI {
         ]
       };
 
-      console.log('🎯 Overall Risk Assessment:');
-      console.log('---------------------------');
-      console.log(`Risk Level: ${riskAnalysis.overallRisk}`);
-      console.log(`Risk Score: ${riskAnalysis.riskScore}/100`);
-      console.log(`Assessment Date: ${new Date().toISOString()}`);
-      console.log('');
+      console.info('🎯 Overall Risk Assessment:');
+      console.info('---------------------------');
+      console.info(`Risk Level: ${riskAnalysis.overallRisk}`);
+      console.info(`Risk Score: ${riskAnalysis.riskScore}/100`);
+      console.info(`Assessment Date: ${new Date().toISOString()}`);
+      console.info('');
 
-      console.log('📊 Risk Category Breakdown:');
-      console.log('---------------------------');
+      console.info('📊 Risk Category Breakdown:');
+      console.info('---------------------------');
       Object.entries(riskAnalysis.riskCategories).forEach(([category, data]) => {
         const status = data.score <= 10 ? '✅' : data.score <= 25 ? '⚠️' : '❌';
-        console.log(`${status} ${category.toUpperCase()}: ${data.score}/100 (Weight: ${(data.weight * 100).toFixed(0)}%)`);
-        console.log(`   Factors: ${data.factors.join(', ')}`);
+        console.info(`${status} ${category.toUpperCase()}: ${data.score}/100 (Weight: ${(data.weight * 100).toFixed(0)}%)`);
+        console.info(`   Factors: ${data.factors.join(', ')}`);
       });
-      console.log('');
+      console.info('');
 
       if (riskAnalysis.kycIntegration) {
-        console.log('🏦 KYC Integration Results:');
-        console.log('--------------------------');
-        console.log(`Status: ${riskAnalysis.kycIntegration.status}`);
-        console.log(`Level: ${riskAnalysis.kycIntegration.level}`);
-        console.log(`Documents: ${riskAnalysis.kycIntegration.documents.join(', ')}`);
-        console.log(`Verification Methods: ${riskAnalysis.kycIntegration.verificationMethods.join(', ')}`);
-        console.log(`Last Updated: ${riskAnalysis.kycIntegration.lastUpdated}`);
-        console.log('');
+        console.info('🏦 KYC Integration Results:');
+        console.info('--------------------------');
+        console.info(`Status: ${riskAnalysis.kycIntegration.status}`);
+        console.info(`Level: ${riskAnalysis.kycIntegration.level}`);
+        console.info(`Documents: ${riskAnalysis.kycIntegration.documents.join(', ')}`);
+        console.info(`Verification Methods: ${riskAnalysis.kycIntegration.verificationMethods.join(', ')}`);
+        console.info(`Last Updated: ${riskAnalysis.kycIntegration.lastUpdated}`);
+        console.info('');
       }
 
-      console.log('📋 Compliance Framework:');
-      console.log('------------------------');
-      console.log(`Framework: ${riskAnalysis.compliance.framework}`);
-      console.log(`Status: ${riskAnalysis.compliance.status}`);
-      console.log('Requirements:');
+      console.info('📋 Compliance Framework:');
+      console.info('------------------------');
+      console.info(`Framework: ${riskAnalysis.compliance.framework}`);
+      console.info(`Status: ${riskAnalysis.compliance.status}`);
+      console.info('Requirements:');
       Object.entries(riskAnalysis.compliance.requirements).forEach(([req, status]) => {
         const icon = status === 'PASS' || status === 'ACTIVE' || status === 'ENABLED' ? '✅' : '❌';
-        console.log(`  ${icon} ${req.replace(/([A-Z])/g, ' $1').trim()}: ${status}`);
+        console.info(`  ${icon} ${req.replace(/([A-Z])/g, ' $1').trim()}: ${status}`);
       });
-      console.log(`Audit Trail: ${riskAnalysis.compliance.auditTrail}`);
-      console.log(`Data Retention: ${riskAnalysis.compliance.dataRetention}`);
-      console.log('');
+      console.info(`Audit Trail: ${riskAnalysis.compliance.auditTrail}`);
+      console.info(`Data Retention: ${riskAnalysis.compliance.dataRetention}`);
+      console.info('');
 
-      console.log('💡 Recommendations:');
-      console.log('-------------------');
+      console.info('💡 Recommendations:');
+      console.info('-------------------');
       riskAnalysis.recommendations.forEach((rec, index) => {
-        console.log(`${index + 1}. ${rec}`);
+        console.info(`${index + 1}. ${rec}`);
       });
 
       return riskAnalysis;
@@ -320,10 +320,10 @@ class FintechIntelligenceCLI {
   }
 
   async sim(options: FintechSimOptions) {
-    console.log('📱 SIM Swap Protection Analysis');
-    console.log('===============================');
-    console.log(`🗺️ Cell Tower Cross-Reference: ${options.crossReferenceCellTower ? 'Enabled' : 'Disabled'}`);
-    console.log('');
+    console.info('📱 SIM Swap Protection Analysis');
+    console.info('===============================');
+    console.info(`🗺️ Cell Tower Cross-Reference: ${options.crossReferenceCellTower ? 'Enabled' : 'Disabled'}`);
+    console.info('');
 
     try {
       const simAnalysis = {
@@ -355,52 +355,52 @@ class FintechIntelligenceCLI {
         }
       };
 
-      console.log('📱 Phone Information:');
-      console.log('---------------------');
-      console.log(`Phone Number: ${simAnalysis.phoneNumber}`);
-      console.log(`Carrier: ${simAnalysis.carrier}`);
-      console.log('');
+      console.info('📱 Phone Information:');
+      console.info('---------------------');
+      console.info(`Phone Number: ${simAnalysis.phoneNumber}`);
+      console.info(`Carrier: ${simAnalysis.carrier}`);
+      console.info('');
 
-      console.log('🔒 SIM Protection Status:');
-      console.log('------------------------');
-      console.log(`Status: ${simAnalysis.simProtection.status}`);
-      console.log(`Last Verification: ${simAnalysis.simProtection.lastVerification}`);
-      console.log(`Swap Detection: ${simAnalysis.simProtection.swapDetection}`);
-      console.log(`Alert Threshold: ${simAnalysis.simProtection.alertThreshold}`);
-      console.log(`Protection Level: ${simAnalysis.simProtection.protectionLevel}`);
-      console.log('');
+      console.info('🔒 SIM Protection Status:');
+      console.info('------------------------');
+      console.info(`Status: ${simAnalysis.simProtection.status}`);
+      console.info(`Last Verification: ${simAnalysis.simProtection.lastVerification}`);
+      console.info(`Swap Detection: ${simAnalysis.simProtection.swapDetection}`);
+      console.info(`Alert Threshold: ${simAnalysis.simProtection.alertThreshold}`);
+      console.info(`Protection Level: ${simAnalysis.simProtection.protectionLevel}`);
+      console.info('');
 
       if (simAnalysis.cellTowerAnalysis) {
-        console.log('🗺️ Cell Tower Analysis:');
-        console.log('-----------------------');
-        console.log(`Last Known Location: ${simAnalysis.cellTowerAnalysis.lastKnownLocation}`);
-        console.log(`Location Consistency: ${simAnalysis.cellTowerAnalysis.locationConsistency}`);
-        console.log(`Anomaly Detection: ${simAnalysis.cellTowerAnalysis.anomalyDetection}`);
-        console.log(`Geofence Compliance: ${simAnalysis.cellTowerAnalysis.geofenceCompliance}`);
-        console.log('');
-        console.log('Tower History (Last 12 hours):');
-        console.log('------------------------------');
+        console.info('🗺️ Cell Tower Analysis:');
+        console.info('-----------------------');
+        console.info(`Last Known Location: ${simAnalysis.cellTowerAnalysis.lastKnownLocation}`);
+        console.info(`Location Consistency: ${simAnalysis.cellTowerAnalysis.locationConsistency}`);
+        console.info(`Anomaly Detection: ${simAnalysis.cellTowerAnalysis.anomalyDetection}`);
+        console.info(`Geofence Compliance: ${simAnalysis.cellTowerAnalysis.geofenceCompliance}`);
+        console.info('');
+        console.info('Tower History (Last 12 hours):');
+        console.info('------------------------------');
         simAnalysis.cellTowerAnalysis.towerHistory.forEach((tower, index) => {
           const time = new Date(tower.timestamp).toLocaleTimeString();
-          console.log(`${index + 1}. ${time} - Tower ${tower.towerId} (Signal: ${tower.signal} dBm)`);
+          console.info(`${index + 1}. ${time} - Tower ${tower.towerId} (Signal: ${tower.signal} dBm)`);
         });
-        console.log('');
+        console.info('');
       }
 
-      console.log('🌉 Telecom-Financial Bridge:');
-      console.log('----------------------------');
-      console.log(`Linked Accounts: ${simAnalysis.telecomFinancialBridge.linkedAccounts}`);
-      console.log(`Verification Methods: ${simAnalysis.telecomFinancialBridge.verificationMethods.join(', ')}`);
-      console.log(`Risk Mitigation: ${simAnalysis.telecomFinancialBridge.riskMitigation.join(', ')}`);
-      console.log(`Last Security Update: ${simAnalysis.telecomFinancialBridge.lastSecurityUpdate}`);
-      console.log('');
+      console.info('🌉 Telecom-Financial Bridge:');
+      console.info('----------------------------');
+      console.info(`Linked Accounts: ${simAnalysis.telecomFinancialBridge.linkedAccounts}`);
+      console.info(`Verification Methods: ${simAnalysis.telecomFinancialBridge.verificationMethods.join(', ')}`);
+      console.info(`Risk Mitigation: ${simAnalysis.telecomFinancialBridge.riskMitigation.join(', ')}`);
+      console.info(`Last Security Update: ${simAnalysis.telecomFinancialBridge.lastSecurityUpdate}`);
+      console.info('');
 
-      console.log('🎯 SIM Protection Summary:');
-      console.log('--------------------------');
-      console.log('├── SIM Swap Protection: ✅ Cross-referencing Cell-Tower data');
-      console.log('├── Real-time Monitoring: ✅ Location and activity tracking');
-      console.log('├── Anomaly Detection: ✅ Behavioral analysis enabled');
-      console.log('└── Risk Mitigation: ✅ Enterprise-grade protection active');
+      console.info('🎯 SIM Protection Summary:');
+      console.info('--------------------------');
+      console.info('├── SIM Swap Protection: ✅ Cross-referencing Cell-Tower data');
+      console.info('├── Real-time Monitoring: ✅ Location and activity tracking');
+      console.info('├── Anomaly Detection: ✅ Behavioral analysis enabled');
+      console.info('└── Risk Mitigation: ✅ Enterprise-grade protection active');
 
       return simAnalysis;
     } catch (error) {
@@ -410,11 +410,11 @@ class FintechIntelligenceCLI {
   }
 
   async longevity(options: FintechLongevityOptions) {
-    console.log('⏰ Account Longevity Analysis');
-    console.log('=============================');
-    console.log(`📅 Minimum Years: ${options.minYears}`);
-    console.log(`🎯 Trust Factor: ${options.trustFactor ? 'Enabled' : 'Disabled'}`);
-    console.log('');
+    console.info('⏰ Account Longevity Analysis');
+    console.info('=============================');
+    console.info(`📅 Minimum Years: ${options.minYears}`);
+    console.info(`🎯 Trust Factor: ${options.trustFactor ? 'Enabled' : 'Disabled'}`);
+    console.info('');
 
     try {
       const longevityAnalysis = {
@@ -457,58 +457,58 @@ class FintechIntelligenceCLI {
         }
       };
 
-      console.log('📅 Account Age Analysis:');
-      console.log('-----------------------');
-      console.log(`Account Created: ${longevityAnalysis.accountAge.created}`);
-      console.log(`Current Age: ${longevityAnalysis.accountAge.currentAge} years`);
-      console.log(`Minimum Required: ${options.minYears} years`);
-      console.log(`Meets Requirement: ${longevityAnalysis.accountAge.meetsMinimum ? '✅ YES' : '❌ NO'}`);
-      console.log(`Age Category: ${longevityAnalysis.accountAge.ageCategory}`);
-      console.log(`Longevity Score: ${longevityAnalysis.accountAge.longevityScore}/100`);
-      console.log('');
+      console.info('📅 Account Age Analysis:');
+      console.info('-----------------------');
+      console.info(`Account Created: ${longevityAnalysis.accountAge.created}`);
+      console.info(`Current Age: ${longevityAnalysis.accountAge.currentAge} years`);
+      console.info(`Minimum Required: ${options.minYears} years`);
+      console.info(`Meets Requirement: ${longevityAnalysis.accountAge.meetsMinimum ? '✅ YES' : '❌ NO'}`);
+      console.info(`Age Category: ${longevityAnalysis.accountAge.ageCategory}`);
+      console.info(`Longevity Score: ${longevityAnalysis.accountAge.longevityScore}/100`);
+      console.info('');
 
-      console.log('📈 Activity Pattern Analysis:');
-      console.log('---------------------------');
-      console.log(`First Activity: ${longevityAnalysis.activityPattern.firstActivity}`);
-      console.log(`Last Activity: ${longevityAnalysis.activityPattern.lastActivity}`);
-      console.log(`Active Days: ${longevityAnalysis.activityPattern.activeDays}`);
-      console.log(`Total Days: ${longevityAnalysis.activityPattern.totalDays}`);
-      console.log(`Activity Rate: ${longevityAnalysis.activityPattern.activityRate}%`);
-      console.log(`Consistency: ${longevityAnalysis.activityPattern.consistency}`);
-      console.log('');
+      console.info('📈 Activity Pattern Analysis:');
+      console.info('---------------------------');
+      console.info(`First Activity: ${longevityAnalysis.activityPattern.firstActivity}`);
+      console.info(`Last Activity: ${longevityAnalysis.activityPattern.lastActivity}`);
+      console.info(`Active Days: ${longevityAnalysis.activityPattern.activeDays}`);
+      console.info(`Total Days: ${longevityAnalysis.activityPattern.totalDays}`);
+      console.info(`Activity Rate: ${longevityAnalysis.activityPattern.activityRate}%`);
+      console.info(`Consistency: ${longevityAnalysis.activityPattern.consistency}`);
+      console.info('');
 
       if (longevityAnalysis.trustFactors) {
-        console.log('🎯 Trust Factor Analysis:');
-        console.log('------------------------');
-        console.log(`Overall Score: ${longevityAnalysis.trustFactors.overallScore}/100`);
-        console.log(`Trust Level: ${longevityAnalysis.trustFactors.trustLevel}`);
-        console.log(`Risk Level: ${longevityAnalysis.trustFactors.riskLevel}`);
-        console.log('');
-        console.log('Component Scores:');
+        console.info('🎯 Trust Factor Analysis:');
+        console.info('------------------------');
+        console.info(`Overall Score: ${longevityAnalysis.trustFactors.overallScore}/100`);
+        console.info(`Trust Level: ${longevityAnalysis.trustFactors.trustLevel}`);
+        console.info(`Risk Level: ${longevityAnalysis.trustFactors.riskLevel}`);
+        console.info('');
+        console.info('Component Scores:');
         Object.entries(longevityAnalysis.trustFactors.components).forEach(([component, score]) => {
           const icon = score >= 90 ? '🏆' : score >= 80 ? '✅' : score >= 70 ? '⚠️' : '❌';
-          console.log(`  ${icon} ${component.replace(/([A-Z])/g, ' $1').trim()}: ${score}/100`);
+          console.info(`  ${icon} ${component.replace(/([A-Z])/g, ' $1').trim()}: ${score}/100`);
         });
-        console.log('');
+        console.info('');
       }
 
-      console.log('🔮 Predictive Analytics:');
-      console.log('-----------------------');
-      console.log(`Churn Risk: ${longevityAnalysis.predictiveAnalytics.churnRisk}`);
-      console.log(`Lifetime Value: ${longevityAnalysis.predictiveAnalytics.lifetimeValue}`);
-      console.log(`Growth Potential: ${longevityAnalysis.predictiveAnalytics.growthPotential}`);
-      console.log('');
-      console.log('Recommended Actions:');
+      console.info('🔮 Predictive Analytics:');
+      console.info('-----------------------');
+      console.info(`Churn Risk: ${longevityAnalysis.predictiveAnalytics.churnRisk}`);
+      console.info(`Lifetime Value: ${longevityAnalysis.predictiveAnalytics.lifetimeValue}`);
+      console.info(`Growth Potential: ${longevityAnalysis.predictiveAnalytics.growthPotential}`);
+      console.info('');
+      console.info('Recommended Actions:');
       longevityAnalysis.predictiveAnalytics.recommendedActions.forEach((action, index) => {
-        console.log(`${index + 1}. ${action}`);
+        console.info(`${index + 1}. ${action}`);
       });
-      console.log('');
+      console.info('');
 
-      console.log('⏰ Account Longevity Summary:');
-      console.log('-----------------------------');
-      console.log(`├── Account Longevity: ✅ >${options.minYears} years (${longevityAnalysis.accountAge.currentAge} years)`);
-      console.log(`├── Trust Factor: ✅ High (${longevityAnalysis.trustFactors?.overallScore || 92}/100)`);
-      console.log(`└── Risk Assessment: ✅ LOW (Mature account with consistent activity)`);
+      console.info('⏰ Account Longevity Summary:');
+      console.info('-----------------------------');
+      console.info(`├── Account Longevity: ✅ >${options.minYears} years (${longevityAnalysis.accountAge.currentAge} years)`);
+      console.info(`├── Trust Factor: ✅ High (${longevityAnalysis.trustFactors?.overallScore || 92}/100)`);
+      console.info(`└── Risk Assessment: ✅ LOW (Mature account with consistent activity)`);
 
       return longevityAnalysis;
     } catch (error) {
@@ -561,22 +561,22 @@ async function main() {
         break;
 
       default:
-        console.log('Fintech Intelligence CLI');
-        console.log('========================');
-        console.log('');
-        console.log('Available commands:');
-        console.log('  analyze    - Analyze fintech platform');
-        console.log('  cashapp    - CashApp protocol analysis');
-        console.log('  risk       - Risk assessment with KYC');
-        console.log('  sim        - SIM swap protection analysis');
-        console.log('  longevity  - Account longevity analysis');
-        console.log('');
-        console.log('Examples:');
-        console.log('  bun run scripts/fintech-analysis.ts analyze --platform=cashapp --risk-assessment');
-        console.log('  bun run scripts/fintech-analysis.ts cashapp --verify-cashtag --check-transactions');
-        console.log('  bun run scripts/fintech-analysis.ts risk --kyc-integration --compliance=aml5');
-        console.log('  bun run scripts/fintech-analysis.ts sim --cross-reference-cell-tower');
-        console.log('  bun run scripts/fintech-analysis.ts longevity --min-years=2 --trust-factor');
+        console.info('Fintech Intelligence CLI');
+        console.info('========================');
+        console.info('');
+        console.info('Available commands:');
+        console.info('  analyze    - Analyze fintech platform');
+        console.info('  cashapp    - CashApp protocol analysis');
+        console.info('  risk       - Risk assessment with KYC');
+        console.info('  sim        - SIM swap protection analysis');
+        console.info('  longevity  - Account longevity analysis');
+        console.info('');
+        console.info('Examples:');
+        console.info('  bun run scripts/fintech-analysis.ts analyze --platform=cashapp --risk-assessment');
+        console.info('  bun run scripts/fintech-analysis.ts cashapp --verify-cashtag --check-transactions');
+        console.info('  bun run scripts/fintech-analysis.ts risk --kyc-integration --compliance=aml5');
+        console.info('  bun run scripts/fintech-analysis.ts sim --cross-reference-cell-tower');
+        console.info('  bun run scripts/fintech-analysis.ts longevity --min-years=2 --trust-factor');
     }
   } catch (error) {
     console.error('❌ Command failed:', error);

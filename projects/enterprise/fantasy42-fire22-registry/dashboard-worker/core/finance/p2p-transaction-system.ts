@@ -831,12 +831,12 @@ export class P2PTransactionSystem {
 
   private async sendDisputeNotifications(dispute: P2PDispute): Promise<void> {
     // Implementation would send actual notifications
-    console.log(`Dispute notifications sent for dispute ${dispute.disputeId}`);
+    console.info(`Dispute notifications sent for dispute ${dispute.disputeId}`);
   }
 
   private async sendDisputeResolutionNotifications(dispute: P2PDispute): Promise<void> {
     // Implementation would send resolution notifications
-    console.log(`Dispute resolution notifications sent for dispute ${dispute.disputeId}`);
+    console.info(`Dispute resolution notifications sent for dispute ${dispute.disputeId}`);
   }
 
   /**

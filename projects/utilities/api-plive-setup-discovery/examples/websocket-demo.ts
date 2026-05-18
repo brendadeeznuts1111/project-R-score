@@ -11,137 +11,137 @@ import { BettingWorkflowWebSocketClient } from './websocket-client';
 import { WebSocketBettingWorkflowTester } from './websocket-testing';
 
 async function runWebSocketDemo() {
-  console.log('🎯 BETTING WORKFLOW API - WEBSOCKET REAL-TIME DEMO');
-  console.log('='.repeat(60));
-  console.log();
+  console.info('🎯 BETTING WORKFLOW API - WEBSOCKET REAL-TIME DEMO');
+  console.info('='.repeat(60));
+  console.info();
 
-  console.log('📋 This demo will test:');
-  console.log('   • WebSocket connection and authentication');
-  console.log('   • Real-time workflow creation notifications');
-  console.log('   • Live approval status updates');
-  console.log('   • Bulk operation broadcasting');
-  console.log('   • Connection recovery and error handling');
-  console.log();
+  console.info('📋 This demo will test:');
+  console.info('   • WebSocket connection and authentication');
+  console.info('   • Real-time workflow creation notifications');
+  console.info('   • Live approval status updates');
+  console.info('   • Bulk operation broadcasting');
+  console.info('   • Connection recovery and error handling');
+  console.info();
 
   // Create clients
   const wsClient = new BettingWorkflowWebSocketClient();
   const tester = new WebSocketBettingWorkflowTester();
 
   try {
-    console.log('🔌 STEP 1: Testing WebSocket Connection');
-    console.log('-'.repeat(40));
+    console.info('🔌 STEP 1: Testing WebSocket Connection');
+    console.info('-'.repeat(40));
 
     // Test basic connection
     await wsClient.connect();
-    console.log('✅ WebSocket connected successfully');
-    console.log();
+    console.info('✅ WebSocket connected successfully');
+    console.info();
 
-    console.log('🎭 STEP 2: Setting up Event Listeners');
-    console.log('-'.repeat(40));
+    console.info('🎭 STEP 2: Setting up Event Listeners');
+    console.info('-'.repeat(40));
 
     // Set up comprehensive event listeners
     wsClient.on('authenticated', (data) => {
-      console.log(`🔑 WebSocket authenticated for user: ${data.userId}`);
+      console.info(`🔑 WebSocket authenticated for user: ${data.userId}`);
     });
 
     wsClient.on('workflow.created', (workflow) => {
-      console.log(`🆕 WORKFLOW CREATED: ${workflow.id}`);
-      console.log(`   Status: ${workflow.status} | Step: ${workflow.currentStep}`);
-      console.log(`   Time: ${workflow.updatedAt}`);
-      console.log();
+      console.info(`🆕 WORKFLOW CREATED: ${workflow.id}`);
+      console.info(`   Status: ${workflow.status} | Step: ${workflow.currentStep}`);
+      console.info(`   Time: ${workflow.updatedAt}`);
+      console.info();
     });
 
     wsClient.on('workflow.updated', (workflow) => {
-      console.log(`📝 WORKFLOW UPDATED: ${workflow.id}`);
-      console.log(`   Status: ${workflow.status} | Step: ${workflow.currentStep}`);
-      console.log(`   Time: ${workflow.updatedAt}`);
-      console.log();
+      console.info(`📝 WORKFLOW UPDATED: ${workflow.id}`);
+      console.info(`   Status: ${workflow.status} | Step: ${workflow.currentStep}`);
+      console.info(`   Time: ${workflow.updatedAt}`);
+      console.info();
     });
 
     wsClient.on('workflow.approved', (approval) => {
-      console.log(`✅ WORKFLOW APPROVED: ${approval.workflowId}`);
-      console.log(`   Step: ${approval.stepId} | Approver: ${approval.approver}`);
+      console.info(`✅ WORKFLOW APPROVED: ${approval.workflowId}`);
+      console.info(`   Step: ${approval.stepId} | Approver: ${approval.approver}`);
       if (approval.comments) {
-        console.log(`   Comments: "${approval.comments}"`);
+        console.info(`   Comments: "${approval.comments}"`);
       }
-      console.log(`   Time: ${approval.approvedAt}`);
-      console.log();
+      console.info(`   Time: ${approval.approvedAt}`);
+      console.info();
     });
 
     wsClient.on('subscribed', (data) => {
-      console.log(`📡 Subscribed to workflow: ${data.workflowId}`);
+      console.info(`📡 Subscribed to workflow: ${data.workflowId}`);
     });
 
     wsClient.on('error', (error) => {
       console.error(`🚨 WebSocket error:`, error);
     });
 
-    console.log('✅ Event listeners configured');
-    console.log();
+    console.info('✅ Event listeners configured');
+    console.info();
 
-    console.log('🎯 STEP 3: Running Comprehensive Tests');
-    console.log('-'.repeat(40));
+    console.info('🎯 STEP 3: Running Comprehensive Tests');
+    console.info('-'.repeat(40));
 
     // Run the full test suite
     const testResults = await tester.runAllTests();
 
-    console.log();
-    console.log('📊 STEP 4: Demo Summary');
-    console.log('-'.repeat(40));
+    console.info();
+    console.info('📊 STEP 4: Demo Summary');
+    console.info('-'.repeat(40));
 
-    console.log(`⏱️  Demo Duration: ${(testResults.duration / 1000).toFixed(2)} seconds`);
-    console.log(`🧪 Tests Run: ${testResults.total}`);
-    console.log(`✅ Tests Passed: ${testResults.passed}`);
-    console.log(`❌ Tests Failed: ${testResults.failed}`);
+    console.info(`⏱️  Demo Duration: ${(testResults.duration / 1000).toFixed(2)} seconds`);
+    console.info(`🧪 Tests Run: ${testResults.total}`);
+    console.info(`✅ Tests Passed: ${testResults.passed}`);
+    console.info(`❌ Tests Failed: ${testResults.failed}`);
 
     const successRate = testResults.total > 0 ? (testResults.passed / testResults.total * 100).toFixed(1) : '0';
-    console.log(`📈 Success Rate: ${successRate}%`);
+    console.info(`📈 Success Rate: ${successRate}%`);
 
     if (testResults.errors.length > 0) {
-      console.log();
-      console.log('🚨 Issues Found:');
+      console.info();
+      console.info('🚨 Issues Found:');
       testResults.errors.forEach((error, index) => {
-        console.log(`   ${index + 1}. ${error}`);
+        console.info(`   ${index + 1}. ${error}`);
       });
     }
 
-    console.log();
-    console.log('🎉 STEP 5: Demo Complete');
-    console.log('-'.repeat(40));
+    console.info();
+    console.info('🎉 STEP 5: Demo Complete');
+    console.info('-'.repeat(40));
 
     if (testResults.failed === 0) {
-      console.log('🎊 ALL TESTS PASSED!');
-      console.log('✅ WebSocket real-time integration is working perfectly');
-      console.log();
-      console.log('🚀 Your betting platform now supports:');
-      console.log('   • Real-time workflow notifications');
-      console.log('   • Live approval status updates');
-      console.log('   • Instant bulk operation feedback');
-      console.log('   • Automatic connection recovery');
-      console.log('   • Comprehensive error handling');
+      console.info('🎊 ALL TESTS PASSED!');
+      console.info('✅ WebSocket real-time integration is working perfectly');
+      console.info();
+      console.info('🚀 Your betting platform now supports:');
+      console.info('   • Real-time workflow notifications');
+      console.info('   • Live approval status updates');
+      console.info('   • Instant bulk operation feedback');
+      console.info('   • Automatic connection recovery');
+      console.info('   • Comprehensive error handling');
     } else {
-      console.log('⚠️  SOME TESTS FAILED');
-      console.log('🔧 Check the issues above and ensure:');
-      console.log('   • API server is running on localhost:3000');
-      console.log('   • Database and Redis are accessible');
-      console.log('   • JWT tokens are valid (if using authentication)');
-      console.log('   • Network connectivity is stable');
+      console.info('⚠️  SOME TESTS FAILED');
+      console.info('🔧 Check the issues above and ensure:');
+      console.info('   • API server is running on localhost:3000');
+      console.info('   • Database and Redis are accessible');
+      console.info('   • JWT tokens are valid (if using authentication)');
+      console.info('   • Network connectivity is stable');
     }
 
-    console.log();
-    console.log('='.repeat(60));
-    console.log('🎯 DEMO FINISHED - WebSocket Real-Time Integration Ready!');
-    console.log('='.repeat(60));
+    console.info();
+    console.info('='.repeat(60));
+    console.info('🎯 DEMO FINISHED - WebSocket Real-Time Integration Ready!');
+    console.info('='.repeat(60));
 
   } catch (error) {
     console.error('❌ Demo failed with error:', error);
-    console.log();
-    console.log('🔧 Troubleshooting:');
-    console.log('   1. Ensure API server is running: npm run dev');
-    console.log('   2. Check database connectivity');
-    console.log('   3. Verify Redis is running');
-    console.log('   4. Check network firewall settings');
-    console.log('   5. Review server logs for detailed errors');
+    console.info();
+    console.info('🔧 Troubleshooting:');
+    console.info('   1. Ensure API server is running: npm run dev');
+    console.info('   2. Check database connectivity');
+    console.info('   3. Verify Redis is running');
+    console.info('   4. Check network firewall settings');
+    console.info('   5. Review server logs for detailed errors');
   } finally {
     // Cleanup
     wsClient.disconnect();
@@ -151,56 +151,56 @@ async function runWebSocketDemo() {
 // ===== INTERACTIVE DEMO MODE =====
 
 async function runInteractiveDemo() {
-  console.log('🎮 INTERACTIVE WEBSOCKET DEMO MODE');
-  console.log('='.repeat(50));
-  console.log();
-  console.log('This mode allows you to manually test WebSocket features:');
-  console.log('• Connect/disconnect from WebSocket');
-  console.log('• Subscribe to workflow updates');
-  console.log('• Create workflows via API to see real-time updates');
-  console.log('• Test authentication and error scenarios');
-  console.log();
+  console.info('🎮 INTERACTIVE WEBSOCKET DEMO MODE');
+  console.info('='.repeat(50));
+  console.info();
+  console.info('This mode allows you to manually test WebSocket features:');
+  console.info('• Connect/disconnect from WebSocket');
+  console.info('• Subscribe to workflow updates');
+  console.info('• Create workflows via API to see real-time updates');
+  console.info('• Test authentication and error scenarios');
+  console.info();
 
   const wsClient = new BettingWorkflowWebSocketClient();
 
   // Set up event listeners
   wsClient.on('authenticated', (data) => {
-    console.log(`🔑 ✅ Authenticated as: ${data.userId}`);
+    console.info(`🔑 ✅ Authenticated as: ${data.userId}`);
   });
 
   wsClient.on('authentication_error', (error) => {
-    console.log(`🔑 ❌ Authentication failed: ${error.message}`);
+    console.info(`🔑 ❌ Authentication failed: ${error.message}`);
   });
 
   wsClient.on('workflow.created', (workflow) => {
-    console.log(`🆕 📡 WORKFLOW CREATED: ${workflow.id} (${workflow.status})`);
+    console.info(`🆕 📡 WORKFLOW CREATED: ${workflow.id} (${workflow.status})`);
   });
 
   wsClient.on('workflow.updated', (workflow) => {
-    console.log(`📝 📡 WORKFLOW UPDATED: ${workflow.id} (${workflow.status})`);
+    console.info(`📝 📡 WORKFLOW UPDATED: ${workflow.id} (${workflow.status})`);
   });
 
   wsClient.on('workflow.approved', (approval) => {
-    console.log(`✅ 📡 WORKFLOW APPROVED: ${approval.workflowId} by ${approval.approver}`);
+    console.info(`✅ 📡 WORKFLOW APPROVED: ${approval.workflowId} by ${approval.approver}`);
   });
 
   wsClient.on('subscribed', (data) => {
-    console.log(`📡 ✅ Subscribed to: ${data.workflowId}`);
+    console.info(`📡 ✅ Subscribed to: ${data.workflowId}`);
   });
 
   wsClient.on('unsubscribed', (data) => {
-    console.log(`🚫 ✅ Unsubscribed from: ${data.workflowId}`);
+    console.info(`🚫 ✅ Unsubscribed from: ${data.workflowId}`);
   });
 
-  console.log('Available commands:');
-  console.log('  connect          - Connect to WebSocket server');
-  console.log('  auth <token>     - Authenticate with JWT token');
-  console.log('  subscribe <id>   - Subscribe to workflow updates');
-  console.log('  unsubscribe <id> - Unsubscribe from workflow updates');
-  console.log('  status          - Show connection status');
-  console.log('  disconnect      - Disconnect from WebSocket');
-  console.log('  quit            - Exit demo');
-  console.log();
+  console.info('Available commands:');
+  console.info('  connect          - Connect to WebSocket server');
+  console.info('  auth <token>     - Authenticate with JWT token');
+  console.info('  subscribe <id>   - Subscribe to workflow updates');
+  console.info('  unsubscribe <id> - Unsubscribe from workflow updates');
+  console.info('  status          - Show connection status');
+  console.info('  disconnect      - Disconnect from WebSocket');
+  console.info('  quit            - Exit demo');
+  console.info();
 
   const readline = require('readline');
   const rl = readline.createInterface({
@@ -216,23 +216,23 @@ async function runInteractiveDemo() {
       try {
         switch (command.toLowerCase()) {
           case 'connect':
-            console.log('🔌 Connecting...');
+            console.info('🔌 Connecting...');
             await wsClient.connect();
-            console.log('✅ Connected!');
+            console.info('✅ Connected!');
             break;
 
           case 'auth':
             if (!param) {
-              console.log('❌ Please provide a JWT token: auth <token>');
+              console.info('❌ Please provide a JWT token: auth <token>');
             } else {
               wsClient.authenticate(param);
-              console.log('🔑 Authenticating...');
+              console.info('🔑 Authenticating...');
             }
             break;
 
           case 'subscribe':
             if (!param) {
-              console.log('❌ Please provide a workflow ID: subscribe <workflow-id>');
+              console.info('❌ Please provide a workflow ID: subscribe <workflow-id>');
             } else {
               wsClient.subscribeToWorkflow(param);
             }
@@ -240,36 +240,36 @@ async function runInteractiveDemo() {
 
           case 'unsubscribe':
             if (!param) {
-              console.log('❌ Please provide a workflow ID: unsubscribe <workflow-id>');
+              console.info('❌ Please provide a workflow ID: unsubscribe <workflow-id>');
             } else {
               wsClient.unsubscribeFromWorkflow(param);
             }
             break;
 
           case 'status':
-            console.log(`🔌 Connection Status: ${wsClient.isConnected ? '✅ Connected' : '❌ Disconnected'}`);
+            console.info(`🔌 Connection Status: ${wsClient.isConnected ? '✅ Connected' : '❌ Disconnected'}`);
             if (wsClient.connectionId) {
-              console.log(`🆔 Connection ID: ${wsClient.connectionId}`);
+              console.info(`🆔 Connection ID: ${wsClient.connectionId}`);
             }
             break;
 
           case 'disconnect':
-            console.log('🔌 Disconnecting...');
+            console.info('🔌 Disconnecting...');
             wsClient.disconnect();
-            console.log('✅ Disconnected!');
+            console.info('✅ Disconnected!');
             break;
 
           case 'quit':
           case 'exit':
-            console.log('👋 Goodbye!');
+            console.info('👋 Goodbye!');
             rl.close();
             return;
 
           default:
-            console.log('❓ Unknown command. Available: connect, auth, subscribe, unsubscribe, status, disconnect, quit');
+            console.info('❓ Unknown command. Available: connect, auth, subscribe, unsubscribe, status, disconnect, quit');
         }
       } catch (error) {
-        console.log(`❌ Error: ${error}`);
+        console.info(`❌ Error: ${error}`);
       }
 
       askCommand();

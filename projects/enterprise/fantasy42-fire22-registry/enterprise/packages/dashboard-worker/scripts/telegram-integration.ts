@@ -23,17 +23,17 @@ class TelegramIntegrationManager {
     const cashierBotToken = Bun.env.CASHIER_BOT_TOKEN;
 
     if (!botToken) {
-      console.log('⚠️  BOT_TOKEN not found in environment variables');
-      console.log('   Add BOT_TOKEN=your_telegram_bot_token to your .env file');
+      console.info('⚠️  BOT_TOKEN not found in environment variables');
+      console.info('   Add BOT_TOKEN=your_telegram_bot_token to your .env file');
     } else {
-      console.log('✅ BOT_TOKEN found in environment');
+      console.info('✅ BOT_TOKEN found in environment');
     }
 
     if (!cashierBotToken) {
-      console.log('⚠️  CASHIER_BOT_TOKEN not found in environment variables');
-      console.log('   Add CASHIER_BOT_TOKEN=your_cashier_bot_token to your .env file');
+      console.info('⚠️  CASHIER_BOT_TOKEN not found in environment variables');
+      console.info('   Add CASHIER_BOT_TOKEN=your_cashier_bot_token to your .env file');
     } else {
-      console.log('✅ CASHIER_BOT_TOKEN found in environment');
+      console.info('✅ CASHIER_BOT_TOKEN found in environment');
     }
   }
 
@@ -47,7 +47,7 @@ class TelegramIntegrationManager {
         throw new Error('BOT_TOKEN is required to initialize the bot');
       }
 
-      console.log('🚀 Initializing Fire22 Telegram Bot...');
+      console.info('🚀 Initializing Fire22 Telegram Bot...');
 
       // Create bot with configuration
       this.bot = createFire22TelegramBot(botToken, {
@@ -61,7 +61,7 @@ class TelegramIntegrationManager {
         },
       });
 
-      console.log('✅ Bot initialized successfully');
+      console.info('✅ Bot initialized successfully');
       return true;
     } catch (error) {
       console.error('❌ Failed to initialize bot:', error);
@@ -75,16 +75,16 @@ class TelegramIntegrationManager {
   async startBot() {
     try {
       if (!this.bot) {
-        console.log('❌ Bot not initialized. Run initializeBot() first.');
+        console.info('❌ Bot not initialized. Run initializeBot() first.');
         return false;
       }
 
-      console.log('🚀 Starting Fire22 Telegram Bot...');
+      console.info('🚀 Starting Fire22 Telegram Bot...');
       await this.bot.start();
       this.isRunning = true;
 
-      console.log('✅ Bot started successfully!');
-      console.log('📱 Users can now interact with your bot on Telegram');
+      console.info('✅ Bot started successfully!');
+      console.info('📱 Users can now interact with your bot on Telegram');
 
       return true;
     } catch (error) {
@@ -99,15 +99,15 @@ class TelegramIntegrationManager {
   async stopBot() {
     try {
       if (!this.bot) {
-        console.log('❌ Bot not running');
+        console.info('❌ Bot not running');
         return false;
       }
 
-      console.log('🛑 Stopping Fire22 Telegram Bot...');
+      console.info('🛑 Stopping Fire22 Telegram Bot...');
       await this.bot.stop();
       this.isRunning = false;
 
-      console.log('✅ Bot stopped successfully');
+      console.info('✅ Bot stopped successfully');
       return true;
     } catch (error) {
       console.error('❌ Failed to stop bot:', error);
@@ -139,14 +139,14 @@ class TelegramIntegrationManager {
   async sendTestNotification(username: string, message: string) {
     try {
       if (!this.bot) {
-        console.log('❌ Bot not initialized');
+        console.info('❌ Bot not initialized');
         return false;
       }
 
-      console.log(`📱 Sending test notification to @${username}...`);
+      console.info(`📱 Sending test notification to @${username}...`);
       await this.bot.sendNotificationByUsername(username, message);
 
-      console.log('✅ Test notification sent successfully');
+      console.info('✅ Test notification sent successfully');
       return true;
     } catch (error) {
       console.error('❌ Failed to send test notification:', error);
@@ -160,14 +160,14 @@ class TelegramIntegrationManager {
   async sendSystemAlert(message: string) {
     try {
       if (!this.bot) {
-        console.log('❌ Bot not initialized');
+        console.info('❌ Bot not initialized');
         return false;
       }
 
-      console.log('🚨 Sending system alert...');
+      console.info('🚨 Sending system alert...');
       await this.bot.notifyAdmins(`🚨 **System Alert**\n\n${message}`);
 
-      console.log('✅ System alert sent to admins');
+      console.info('✅ System alert sent to admins');
       return true;
     } catch (error) {
       console.error('❌ Failed to send system alert:', error);
@@ -179,132 +179,132 @@ class TelegramIntegrationManager {
    * Demonstrate bot commands
    */
   async demonstrateCommands() {
-    console.log('📚 **Fire22 Telegram Bot Commands**\n');
+    console.info('📚 **Fire22 Telegram Bot Commands**\n');
 
-    console.log('🔍 **User Commands:**');
-    console.log('  /start - Welcome message and quick start guide');
-    console.log('  /help - Complete command reference');
-    console.log('  /balance - Check your account balance');
-    console.log('  /wagers - View recent wager history');
-    console.log('  /profile - Your profile information');
-    console.log('  /settings - Bot notification settings');
-    console.log('  /support - Get help and support');
+    console.info('🔍 **User Commands:**');
+    console.info('  /start - Welcome message and quick start guide');
+    console.info('  /help - Complete command reference');
+    console.info('  /balance - Check your account balance');
+    console.info('  /wagers - View recent wager history');
+    console.info('  /profile - Your profile information');
+    console.info('  /settings - Bot notification settings');
+    console.info('  /support - Get help and support');
 
-    console.log('\n⚙️ **Account Management:**');
-    console.log('  /register - Link your Telegram account to Fire22');
-    console.log('  /unregister - Unlink your account');
+    console.info('\n⚙️ **Account Management:**');
+    console.info('  /register - Link your Telegram account to Fire22');
+    console.info('  /unregister - Unlink your account');
 
-    console.log('\n🛡️ **Admin Commands:**');
-    console.log('  /admin - Access admin panel');
-    console.log('  /stats - View system statistics');
-    console.log('  /broadcast - Send message to all users');
+    console.info('\n🛡️ **Admin Commands:**');
+    console.info('  /admin - Access admin panel');
+    console.info('  /stats - View system statistics');
+    console.info('  /broadcast - Send message to all users');
 
-    console.log('\n💡 **Integration Features:**');
-    console.log('  • Real-time balance updates');
-    console.log('  • Wager notifications');
-    console.log('  • System alerts');
-    console.log('  • Weekly reports');
-    console.log('  • User management');
+    console.info('\n💡 **Integration Features:**');
+    console.info('  • Real-time balance updates');
+    console.info('  • Wager notifications');
+    console.info('  • System alerts');
+    console.info('  • Weekly reports');
+    console.info('  • User management');
   }
 
   /**
    * Show integration benefits
    */
   showIntegrationBenefits() {
-    console.log('🎯 **Telegram Integration Benefits**\n');
+    console.info('🎯 **Telegram Integration Benefits**\n');
 
-    console.log('📱 **User Experience:**');
-    console.log('  • Instant notifications on mobile');
-    console.log('  • Easy access to account information');
-    console.log('  • Quick support and help');
-    console.log('  • Real-time updates');
+    console.info('📱 **User Experience:**');
+    console.info('  • Instant notifications on mobile');
+    console.info('  • Easy access to account information');
+    console.info('  • Quick support and help');
+    console.info('  • Real-time updates');
 
-    console.log('\n🔒 **Security & Control:**');
-    console.log('  • User access control');
-    console.log('  • Admin-only commands');
-    console.log('  • Secure authentication');
-    console.log('  • Audit logging');
+    console.info('\n🔒 **Security & Control:**');
+    console.info('  • User access control');
+    console.info('  • Admin-only commands');
+    console.info('  • Secure authentication');
+    console.info('  • Audit logging');
 
-    console.log('\n📊 **Business Intelligence:**');
-    console.log('  • User engagement metrics');
-    console.log('  • Notification delivery rates');
-    console.log('  • User behavior analytics');
-    console.log('  • Support ticket tracking');
+    console.info('\n📊 **Business Intelligence:**');
+    console.info('  • User engagement metrics');
+    console.info('  • Notification delivery rates');
+    console.info('  • User behavior analytics');
+    console.info('  • Support ticket tracking');
 
-    console.log('\n🔄 **System Integration:**');
-    console.log('  • Seamless with existing telegram_username field');
-    console.log('  • Database integration ready');
-    console.log('  • Webhook support');
-    console.log('  • Scalable architecture');
+    console.info('\n🔄 **System Integration:**');
+    console.info('  • Seamless with existing telegram_username field');
+    console.info('  • Database integration ready');
+    console.info('  • Webhook support');
+    console.info('  • Scalable architecture');
   }
 
   /**
    * Show setup instructions
    */
   showSetupInstructions() {
-    console.log('🚀 **Setup Instructions**\n');
+    console.info('🚀 **Setup Instructions**\n');
 
-    console.log('1️⃣ **Environment Configuration:**');
-    console.log('   Add to your .env file:');
-    console.log('   BOT_TOKEN=your_telegram_bot_token');
-    console.log('   CASHIER_BOT_TOKEN=your_cashier_bot_token');
+    console.info('1️⃣ **Environment Configuration:**');
+    console.info('   Add to your .env file:');
+    console.info('   BOT_TOKEN=your_telegram_bot_token');
+    console.info('   CASHIER_BOT_TOKEN=your_cashier_bot_token');
 
-    console.log('\n2️⃣ **Bot Creation:**');
-    console.log('   • Message @BotFather on Telegram');
-    console.log('   • Use /newbot command');
-    console.log('   • Choose name: "Fire22 Dashboard Bot"');
-    console.log('   • Choose username: "fire22_dashboard_bot"');
-    console.log('   • Copy the token to BOT_TOKEN');
+    console.info('\n2️⃣ **Bot Creation:**');
+    console.info('   • Message @BotFather on Telegram');
+    console.info('   • Use /newbot command');
+    console.info('   • Choose name: "Fire22 Dashboard Bot"');
+    console.info('   • Choose username: "fire22_dashboard_bot"');
+    console.info('   • Copy the token to BOT_TOKEN');
 
-    console.log('\n3️⃣ **Database Integration:**');
-    console.log('   • Your telegram_username field is ready');
-    console.log('   • Link users via /register command');
-    console.log('   • Store telegram_id for notifications');
+    console.info('\n3️⃣ **Database Integration:**');
+    console.info('   • Your telegram_username field is ready');
+    console.info('   • Link users via /register command');
+    console.info('   • Store telegram_id for notifications');
 
-    console.log('\n4️⃣ **Deployment:**');
-    console.log('   • Use webhook for production');
-    console.log('   • Use polling for development');
-    console.log('   • Configure admin users');
-    console.log('   • Test all commands');
+    console.info('\n4️⃣ **Deployment:**');
+    console.info('   • Use webhook for production');
+    console.info('   • Use polling for development');
+    console.info('   • Configure admin users');
+    console.info('   • Test all commands');
   }
 
   /**
    * Run integration demo
    */
   async runDemo() {
-    console.log('🎯 **Fire22 Telegram Integration Demo**\n');
+    console.info('🎯 **Fire22 Telegram Integration Demo**\n');
 
     // Check environment
     this.checkEnvironment();
-    console.log('');
+    console.info('');
 
     // Show benefits
     this.showIntegrationBenefits();
-    console.log('');
+    console.info('');
 
     // Show commands
     await this.demonstrateCommands();
-    console.log('');
+    console.info('');
 
     // Show setup
     this.showSetupInstructions();
-    console.log('');
+    console.info('');
 
     // Try to initialize bot
-    console.log('🔄 **Attempting Bot Initialization**\n');
+    console.info('🔄 **Attempting Bot Initialization**\n');
     const initialized = await this.initializeBot();
 
     if (initialized) {
-      console.log('✅ Bot ready for use!');
-      console.log('📱 Users can start chatting with your bot');
-      console.log('🔗 Bot commands are fully functional');
+      console.info('✅ Bot ready for use!');
+      console.info('📱 Users can start chatting with your bot');
+      console.info('🔗 Bot commands are fully functional');
     } else {
-      console.log('❌ Bot initialization failed');
-      console.log('💡 Check your environment variables and try again');
+      console.info('❌ Bot initialization failed');
+      console.info('💡 Check your environment variables and try again');
     }
 
-    console.log('\n🎉 **Demo Complete!**');
-    console.log('🚀 Your Fire22 Telegram integration is ready to use!');
+    console.info('\n🎉 **Demo Complete!**');
+    console.info('🚀 Your Fire22 Telegram integration is ready to use!');
   }
 }
 
@@ -324,9 +324,9 @@ async function main() {
       case 'init':
         const initialized = await manager.initializeBot();
         if (initialized) {
-          console.log('✅ Bot initialized successfully');
+          console.info('✅ Bot initialized successfully');
         } else {
-          console.log('❌ Bot initialization failed');
+          console.info('❌ Bot initialization failed');
           process.exit(1);
         }
         break;
@@ -341,7 +341,7 @@ async function main() {
 
       case 'status':
         const status = manager.getBotStatus();
-        console.log('📊 Bot Status:', status);
+        console.info('📊 Bot Status:', status);
         break;
 
       case 'test':
@@ -368,22 +368,22 @@ async function main() {
         break;
 
       default:
-        console.log('🚀 Fire22 Telegram Integration Manager\n');
-        console.log('Usage:');
-        console.log('  bun run telegram:integration demo       - Run full demo');
-        console.log('  bun run telegram:integration init       - Initialize bot');
-        console.log('  bun run telegram:integration start      - Start bot');
-        console.log('  bun run telegram:integration stop       - Stop bot');
-        console.log('  bun run telegram:integration status     - Show bot status');
-        console.log('  bun run telegram:integration test       - Send test notification');
-        console.log('  bun run telegram:integration alert      - Send system alert');
-        console.log('  bun run telegram:integration commands   - Show available commands');
-        console.log('  bun run telegram:integration benefits   - Show integration benefits');
-        console.log('  bun run telegram:integration setup      - Show setup instructions');
-        console.log('\nExamples:');
-        console.log('  bun run telegram:integration demo');
-        console.log('  bun run telegram:integration test username "Hello from Fire22!"');
-        console.log('  bun run telegram:integration alert "System maintenance in 1 hour"');
+        console.info('🚀 Fire22 Telegram Integration Manager\n');
+        console.info('Usage:');
+        console.info('  bun run telegram:integration demo       - Run full demo');
+        console.info('  bun run telegram:integration init       - Initialize bot');
+        console.info('  bun run telegram:integration start      - Start bot');
+        console.info('  bun run telegram:integration stop       - Stop bot');
+        console.info('  bun run telegram:integration status     - Show bot status');
+        console.info('  bun run telegram:integration test       - Send test notification');
+        console.info('  bun run telegram:integration alert      - Send system alert');
+        console.info('  bun run telegram:integration commands   - Show available commands');
+        console.info('  bun run telegram:integration benefits   - Show integration benefits');
+        console.info('  bun run telegram:integration setup      - Show setup instructions');
+        console.info('\nExamples:');
+        console.info('  bun run telegram:integration demo');
+        console.info('  bun run telegram:integration test username "Hello from Fire22!"');
+        console.info('  bun run telegram:integration alert "System maintenance in 1 hour"');
         break;
     }
   } catch (error) {

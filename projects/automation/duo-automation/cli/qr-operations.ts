@@ -101,10 +101,10 @@ export class GlobalQROperations {
     deviceCategory: DeviceCategory,
     geographicScope: string = 'GLOBAL'
   ): Promise<void> {
-    console.log(this.colorize('primary', `🌍 Generating Global QR Code for Enterprise: ${merchantIdentifier}`));
-    console.log(this.colorize('text', `📍 Geographic Scope: ${geographicScope}`));
-    console.log(this.colorize('text', `📱 Device Category: ${deviceCategory}`));
-    console.log('');
+    console.info(this.colorize('primary', `🌍 Generating Global QR Code for Enterprise: ${merchantIdentifier}`));
+    console.info(this.colorize('text', `📍 Geographic Scope: ${geographicScope}`));
+    console.info(this.colorize('text', `📱 Device Category: ${deviceCategory}`));
+    console.info('');
 
     try {
       const startTime = Date.now();
@@ -125,9 +125,9 @@ export class GlobalQROperations {
         await this.saveGlobalQRResult(qrResult, merchantIdentifier, deviceCategory);
       }
 
-      console.log('');
-      console.log(chalk.hex(this.colors.success)(`✅ Global QR Code generated successfully in ${executionDuration}ms`));
-      console.log(chalk.hex(this.colors.accent)(`🔗 Dashboard: ${qrResult.dashboardIntegration.markup.includes('global-onboarding-panel') ? 'https://monitor.factory-wager.com/global-onboarding' : 'N/A'}`));
+      console.info('');
+      console.info(chalk.hex(this.colors.success)(`✅ Global QR Code generated successfully in ${executionDuration}ms`));
+      console.info(chalk.hex(this.colors.accent)(`🔗 Dashboard: ${qrResult.dashboardIntegration.markup.includes('global-onboarding-panel') ? 'https://monitor.factory-wager.com/global-onboarding' : 'N/A'}`));
 
     } catch (error) {
       console.error(chalk.hex(this.colors.error)(`❌ Global QR Code generation failed: ${error.message}`));
@@ -140,10 +140,10 @@ export class GlobalQROperations {
     deviceSpecification: IGlobalDeviceSpecification,
     geographicLocation: { country: string; region: string; timezone: string }
   ): Promise<void> {
-    console.log(chalk.hex(this.colors.primary)(`🔗 Pairing Global Device: ${deviceSpecification.deviceId}`));
-    console.log(chalk.hex(this.colors.text)(`🌍 Geographic Location: ${geographicLocation.country}, ${geographicLocation.region}`));
-    console.log(chalk.hex(this.colors.text)(`📱 Device Category: ${deviceSpecification.category}`));
-    console.log('');
+    console.info(chalk.hex(this.colors.primary)(`🔗 Pairing Global Device: ${deviceSpecification.deviceId}`));
+    console.info(chalk.hex(this.colors.text)(`🌍 Geographic Location: ${geographicLocation.country}, ${geographicLocation.region}`));
+    console.info(chalk.hex(this.colors.text)(`📱 Device Category: ${deviceSpecification.category}`));
+    console.info('');
 
     try {
       const startTime = Date.now();
@@ -183,9 +183,9 @@ export class GlobalQROperations {
         lastActivity: new Date()
       });
 
-      console.log('');
-      console.log(chalk.hex(this.colors.success)(`✅ Global device paired successfully in ${executionDuration}ms`));
-      console.log(chalk.hex(this.colors.accent)(`📊 Dashboard: ${onboardingResult.dashboardEndpoint}`));
+      console.info('');
+      console.info(chalk.hex(this.colors.success)(`✅ Global device paired successfully in ${executionDuration}ms`));
+      console.info(chalk.hex(this.colors.accent)(`📊 Dashboard: ${onboardingResult.dashboardEndpoint}`));
 
     } catch (error) {
       console.error(chalk.hex(this.colors.error)(`❌ Global device pairing failed: ${error.message}`));
@@ -196,11 +196,11 @@ export class GlobalQROperations {
   async processBulkGlobalOnboarding(
     batchConfiguration: IGlobalDeviceBatch
   ): Promise<void> {
-    console.log(chalk.hex(this.colors.primary)(`📦 Processing Bulk Global Onboarding: ${batchConfiguration.batchIdentifier}`));
-    console.log(chalk.hex(this.colors.text)(`🏭 Merchant: ${batchConfiguration.merchantIdentifier}`));
-    console.log(chalk.hex(this.colors.text)(`📊 Device Count: ${batchConfiguration.deviceCount}`));
-    console.log(chalk.hex(this.colors.text)(`🌍 Geographic Scope: ${batchConfiguration.geographicScope}`));
-    console.log('');
+    console.info(chalk.hex(this.colors.primary)(`📦 Processing Bulk Global Onboarding: ${batchConfiguration.batchIdentifier}`));
+    console.info(chalk.hex(this.colors.text)(`🏭 Merchant: ${batchConfiguration.merchantIdentifier}`));
+    console.info(chalk.hex(this.colors.text)(`📊 Device Count: ${batchConfiguration.deviceCount}`));
+    console.info(chalk.hex(this.colors.text)(`🌍 Geographic Scope: ${batchConfiguration.geographicScope}`));
+    console.info('');
 
     const startTime = Date.now();
     const results: IGlobalOperationResult = {
@@ -225,14 +225,14 @@ export class GlobalQROperations {
       const batchSize = 10;
       const batches = Math.ceil(batchConfiguration.deviceCount / batchSize);
 
-      console.log(chalk.hex(this.colors.text)(`🔄 Processing ${batchConfiguration.deviceCount} devices in ${batches} batches of ${batchSize}...`));
-      console.log('');
+      console.info(chalk.hex(this.colors.text)(`🔄 Processing ${batchConfiguration.deviceCount} devices in ${batches} batches of ${batchSize}...`));
+      console.info('');
 
       for (let batchIndex = 0; batchIndex < batches; batchIndex++) {
         const startIndex = batchIndex * batchSize;
         const endIndex = Math.min(startIndex + batchSize, batchConfiguration.deviceCount);
         
-        console.log(chalk.hex(this.colors.secondary)(`📋 Processing batch ${batchIndex + 1}/${batches} (devices ${startIndex + 1}-${endIndex})...`));
+        console.info(chalk.hex(this.colors.secondary)(`📋 Processing batch ${batchIndex + 1}/${batches} (devices ${startIndex + 1}-${endIndex})...`));
 
         // Process current batch
         const batchResults = await this.processGlobalBatch(
@@ -249,9 +249,9 @@ export class GlobalQROperations {
 
         // Display batch progress
         const progress = ((batchIndex + 1) / batches) * 100;
-        console.log(chalk.hex(this.colors.success)(`✅ Batch ${batchIndex + 1} completed (${progress.toFixed(1)}% overall)`));
-        console.log(chalk.hex(this.colors.text)(`📊 Batch Results: ${batchResults.successfulDevices}/${batchResults.processedDevices} successful`));
-        console.log('');
+        console.info(chalk.hex(this.colors.success)(`✅ Batch ${batchIndex + 1} completed (${progress.toFixed(1)}% overall)`));
+        console.info(chalk.hex(this.colors.text)(`📊 Batch Results: ${batchResults.successfulDevices}/${batchResults.processedDevices} successful`));
+        console.info('');
       }
 
       // Calculate final performance metrics
@@ -265,11 +265,11 @@ export class GlobalQROperations {
       // Save detailed report
       await this.saveBulkGlobalReport(results, batchConfiguration);
 
-      console.log('');
-      console.log(chalk.hex(this.colors.success)(`✅ Bulk global onboarding completed successfully`));
-      console.log(chalk.hex(this.colors.text)(`⏱️  Total Duration: ${results.performanceMetrics.executionDuration}ms`));
-      console.log(chalk.hex(this.colors.text)(`📊 Success Rate: ${((results.successfulDevices / results.processedDevices) * 100).toFixed(1)}%`));
-      console.log(chalk.hex(this.colors.text)(`🚀 Throughput: ${results.performanceMetrics.throughputPerSecond.toFixed(2)} devices/second`));
+      console.info('');
+      console.info(chalk.hex(this.colors.success)(`✅ Bulk global onboarding completed successfully`));
+      console.info(chalk.hex(this.colors.text)(`⏱️  Total Duration: ${results.performanceMetrics.executionDuration}ms`));
+      console.info(chalk.hex(this.colors.text)(`📊 Success Rate: ${((results.successfulDevices / results.processedDevices) * 100).toFixed(1)}%`));
+      console.info(chalk.hex(this.colors.text)(`🚀 Throughput: ${results.performanceMetrics.throughputPerSecond.toFixed(2)} devices/second`));
 
     } catch (error) {
       console.error(chalk.hex(this.colors.error)(`❌ Bulk global onboarding failed: ${error.message}`));
@@ -278,8 +278,8 @@ export class GlobalQROperations {
   }
 
   async checkGlobalSystemStatus(): Promise<void> {
-    console.log(chalk.hex(this.colors.primary)(`🔍 Checking Global System Status`));
-    console.log('');
+    console.info(chalk.hex(this.colors.primary)(`🔍 Checking Global System Status`));
+    console.info('');
 
     try {
       // Collect status from all global components
@@ -291,8 +291,8 @@ export class GlobalQROperations {
       // Display comprehensive system status
       this.displayGlobalSystemStatus(securityMetrics, dashboardData);
 
-      console.log('');
-      console.log(chalk.hex(this.colors.success)(`✅ Global system status check completed`));
+      console.info('');
+      console.info(chalk.hex(this.colors.success)(`✅ Global system status check completed`));
 
     } catch (error) {
       console.error(chalk.hex(this.colors.error)(`❌ Global system status check failed: ${error.message}`));
@@ -304,28 +304,28 @@ export class GlobalQROperations {
     merchantIdentifier: string,
     targetRegions: string[] = ['NORTH_AMERICA', 'EUROPE', 'ASIA_PACIFIC', 'LATIN_AMERICA']
   ): Promise<void> {
-    console.log(chalk.hex(this.colors.primary)(`🚀 Deploying Global System to Production`));
-    console.log(chalk.hex(this.colors.text)(`🏭 Merchant: ${merchantIdentifier}`));
-    console.log(chalk.hex(this.colors.text)(`🌍 Target Regions: ${targetRegions.join(', ')}`));
-    console.log('');
+    console.info(chalk.hex(this.colors.primary)(`🚀 Deploying Global System to Production`));
+    console.info(chalk.hex(this.colors.text)(`🏭 Merchant: ${merchantIdentifier}`));
+    console.info(chalk.hex(this.colors.text)(`🌍 Target Regions: ${targetRegions.join(', ')}`));
+    console.info('');
 
     try {
       const startTime = Date.now();
 
       // Simulate global deployment process
-      console.log(chalk.hex(this.colors.secondary)(`🔄 Initializing global deployment...`));
+      console.info(chalk.hex(this.colors.secondary)(`🔄 Initializing global deployment...`));
       await this.simulateGlobalDeploymentStep('Infrastructure Provisioning', 2000);
       
-      console.log(chalk.hex(this.colors.secondary)(`🔧 Configuring global services...`));
+      console.info(chalk.hex(this.colors.secondary)(`🔧 Configuring global services...`));
       await this.simulateGlobalDeploymentStep('Service Configuration', 1500);
       
-      console.log(chalk.hex(this.colors.secondary)(`🌐 Establishing global connectivity...`));
+      console.info(chalk.hex(this.colors.secondary)(`🌐 Establishing global connectivity...`));
       await this.simulateGlobalDeploymentStep('Network Setup', 3000);
       
-      console.log(chalk.hex(this.colors.secondary)(`🛡️ Configuring global security...`));
+      console.info(chalk.hex(this.colors.secondary)(`🛡️ Configuring global security...`));
       await this.simulateGlobalDeploymentStep('Security Configuration', 2500);
       
-      console.log(chalk.hex(this.colors.secondary)(`📊 Deploying global monitoring...`));
+      console.info(chalk.hex(this.colors.secondary)(`📊 Deploying global monitoring...`));
       await this.simulateGlobalDeploymentStep('Monitoring Deployment', 1000);
 
       const executionDuration = Date.now() - startTime;
@@ -333,9 +333,9 @@ export class GlobalQROperations {
       // Display deployment results
       this.displayGlobalDeploymentResults(merchantIdentifier, targetRegions, executionDuration);
 
-      console.log('');
-      console.log(chalk.hex(this.colors.success)(`✅ Global deployment completed successfully in ${executionDuration}ms`));
-      console.log(chalk.hex(this.colors.accent)(`🌐 Global Dashboard: https://monitor.factory-wager.com/global-dashboard`));
+      console.info('');
+      console.info(chalk.hex(this.colors.success)(`✅ Global deployment completed successfully in ${executionDuration}ms`));
+      console.info(chalk.hex(this.colors.accent)(`🌐 Global Dashboard: https://monitor.factory-wager.com/global-dashboard`));
 
     } catch (error) {
       console.error(chalk.hex(this.colors.error)(`❌ Global deployment failed: ${error.message}`));
@@ -344,29 +344,29 @@ export class GlobalQROperations {
   }
 
   async monitorGlobalDashboard(merchantIdentifier: string, refreshInterval: number = 30000): Promise<void> {
-    console.log(chalk.hex(this.colors.primary)(`📊 Monitoring Global Dashboard: ${merchantIdentifier}`));
-    console.log(chalk.hex(this.colors.text)(`🔄 Refresh Interval: ${refreshInterval}ms`));
-    console.log('');
+    console.info(chalk.hex(this.colors.primary)(`📊 Monitoring Global Dashboard: ${merchantIdentifier}`));
+    console.info(chalk.hex(this.colors.text)(`🔄 Refresh Interval: ${refreshInterval}ms`));
+    console.info('');
 
     try {
       // Start real-time monitoring
-      console.log(chalk.hex(this.colors.secondary)(`🔌 Connecting to global dashboard...`));
+      console.info(chalk.hex(this.colors.secondary)(`🔌 Connecting to global dashboard...`));
       
       let updateCount = 0;
       const monitoringInterval = setInterval(async () => {
         try {
           updateCount++;
-          console.log(chalk.hex(this.colors.text)(`📊 Dashboard Update #${updateCount} - ${new Date().toISOString()}`));
+          console.info(chalk.hex(this.colors.text)(`📊 Dashboard Update #${updateCount} - ${new Date().toISOString()}`));
           
           // Get updated metrics
           const updatedMetrics = await this.globalDashboard.updateLiveGlobalMetrics(merchantIdentifier);
           
           // Display key metrics
-          console.log(chalk.hex(this.colors.success)(`📈 Scans (24h): ${updatedMetrics.scans24h}`));
-          console.log(chalk.hex(this.colors.success)(`✅ Success Rate: ${updatedMetrics.successRate}`));
-          console.log(chalk.hex(this.colors.success)(`🏭 Production Ready: ${updatedMetrics.productionReady}`));
-          console.log(chalk.hex(this.colors.success)(`💰 Revenue Impact: +$${updatedMetrics.revenueImpact.estimatedMonthly}/month`));
-          console.log(chalk.hex(this.colors.accent)(`─`.repeat(50)));
+          console.info(chalk.hex(this.colors.success)(`📈 Scans (24h): ${updatedMetrics.scans24h}`));
+          console.info(chalk.hex(this.colors.success)(`✅ Success Rate: ${updatedMetrics.successRate}`));
+          console.info(chalk.hex(this.colors.success)(`🏭 Production Ready: ${updatedMetrics.productionReady}`));
+          console.info(chalk.hex(this.colors.success)(`💰 Revenue Impact: +$${updatedMetrics.revenueImpact.estimatedMonthly}/month`));
+          console.info(chalk.hex(this.colors.accent)(`─`.repeat(50)));
 
         } catch (error) {
           console.error(chalk.hex(this.colors.error)(`❌ Dashboard update failed: ${error.message}`));
@@ -376,13 +376,13 @@ export class GlobalQROperations {
       // Handle graceful shutdown
       process.on('SIGINT', () => {
         clearInterval(monitoringInterval);
-        console.log('');
-        console.log(chalk.hex(this.colors.warning)(`⏹️  Global dashboard monitoring stopped after ${updateCount} updates`));
+        console.info('');
+        console.info(chalk.hex(this.colors.warning)(`⏹️  Global dashboard monitoring stopped after ${updateCount} updates`));
         process.exit(0);
       });
 
-      console.log(chalk.hex(this.colors.success)(`✅ Global dashboard monitoring started`));
-      console.log(chalk.hex(this.colors.text)(`Press Ctrl+C to stop monitoring`));
+      console.info(chalk.hex(this.colors.success)(`✅ Global dashboard monitoring started`));
+      console.info(chalk.hex(this.colors.text)(`Press Ctrl+C to stop monitoring`));
 
     } catch (error) {
       console.error(chalk.hex(this.colors.error)(`❌ Global dashboard monitoring failed: ${error.message}`));
@@ -393,67 +393,67 @@ export class GlobalQROperations {
   // Private helper methods
 
   private displayGlobalQRGenerationResult(qrResult: any, executionDuration: number): void {
-    console.log(chalk.hex(this.colors.surface)(`┌─ ${''.repeat(58)} ─┐`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + chalk.hex(this.colors.primary)(` 🌍 Global QR Code Generation Results `) + chalk.hex(this.colors.surface)(` │`));
-    console.log(chalk.hex(this.colors.surface)(`├─ ${''.repeat(58)} ─┤`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Operation: ${chalk.hex(this.colors.success)('SUCCESS')}` + ' '.repeat(35) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Token ID: ${qrResult.tokenPayload.tokenIdentifier.substring(0, 20)}...` + ' '.repeat(22) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Security Level: ${chalk.hex(this.colors.accent)(qrResult.securityLevel)}` + ' '.repeat(30) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Validity: ${qrResult.validityDuration}` + ' '.repeat(40) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Geographic Scope: ${chalk.hex(this.colors.text)(qrResult.payload.geographicScope)}` + ' '.repeat(23) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Execution Time: ${executionDuration}ms` + ' '.repeat(38) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`└─ ${''.repeat(58)} ─┘`));
+    console.info(chalk.hex(this.colors.surface)(`┌─ ${''.repeat(58)} ─┐`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + chalk.hex(this.colors.primary)(` 🌍 Global QR Code Generation Results `) + chalk.hex(this.colors.surface)(` │`));
+    console.info(chalk.hex(this.colors.surface)(`├─ ${''.repeat(58)} ─┤`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Operation: ${chalk.hex(this.colors.success)('SUCCESS')}` + ' '.repeat(35) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Token ID: ${qrResult.tokenPayload.tokenIdentifier.substring(0, 20)}...` + ' '.repeat(22) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Security Level: ${chalk.hex(this.colors.accent)(qrResult.securityLevel)}` + ' '.repeat(30) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Validity: ${qrResult.validityDuration}` + ' '.repeat(40) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Geographic Scope: ${chalk.hex(this.colors.text)(qrResult.payload.geographicScope)}` + ' '.repeat(23) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Execution Time: ${executionDuration}ms` + ' '.repeat(38) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`└─ ${''.repeat(58)} ─┘`));
   }
 
   private displayGlobalPairingResult(result: any, executionDuration: number): void {
-    console.log(chalk.hex(this.colors.surface)(`┌─ ${''.repeat(58)} ─┐`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + chalk.hex(this.colors.primary)(` 🔗 Global Device Pairing Results `) + chalk.hex(this.colors.surface)(` │`));
-    console.log(chalk.hex(this.colors.surface)(`├─ ${''.repeat(58)} ─┤`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Device ID: ${result.deviceIdentifier}` + ' '.repeat(36) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Status: ${chalk.hex(this.colors.success)(result.operationalStatus)}` + ' '.repeat(35) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Health Score: ${result.complianceValidations.overallScore}%` + ' '.repeat(35) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Compliance: ${chalk.hex(this.colors.success)(result.complianceValidations.complianceStatus)}` + ' '.repeat(30) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Production Ready: ${result.productionReadyStatus ? chalk.hex(this.colors.success)('YES') : chalk.hex(this.colors.warning)('NO')}` + ' '.repeat(28) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Execution Time: ${executionDuration}ms` + ' '.repeat(38) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`└─ ${''.repeat(58)} ─┘`));
+    console.info(chalk.hex(this.colors.surface)(`┌─ ${''.repeat(58)} ─┐`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + chalk.hex(this.colors.primary)(` 🔗 Global Device Pairing Results `) + chalk.hex(this.colors.surface)(` │`));
+    console.info(chalk.hex(this.colors.surface)(`├─ ${''.repeat(58)} ─┤`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Device ID: ${result.deviceIdentifier}` + ' '.repeat(36) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Status: ${chalk.hex(this.colors.success)(result.operationalStatus)}` + ' '.repeat(35) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Health Score: ${result.complianceValidations.overallScore}%` + ' '.repeat(35) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Compliance: ${chalk.hex(this.colors.success)(result.complianceValidations.complianceStatus)}` + ' '.repeat(30) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Production Ready: ${result.productionReadyStatus ? chalk.hex(this.colors.success)('YES') : chalk.hex(this.colors.warning)('NO')}` + ' '.repeat(28) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Execution Time: ${executionDuration}ms` + ' '.repeat(38) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`└─ ${''.repeat(58)} ─┘`));
   }
 
   private displayBulkGlobalResults(results: IGlobalOperationResult): void {
-    console.log(chalk.hex(this.colors.surface)(`┌─ ${''.repeat(58)} ─┐`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + chalk.hex(this.colors.primary)(` 📦 Bulk Global Onboarding Results `) + chalk.hex(this.colors.surface)(` │`));
-    console.log(chalk.hex(this.colors.surface)(`├─ ${''.repeat(58)} ─┤`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Operation ID: ${results.operationIdentifier}` + ' '.repeat(30) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Total Devices: ${results.processedDevices}` + ' '.repeat(36) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Successful: ${chalk.hex(this.colors.success)(results.successfulDevices)}` + ' '.repeat(39) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Failed: ${chalk.hex(this.colors.error)(results.failedDevices)}` + ' '.repeat(43) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Success Rate: ${((results.successfulDevices / results.processedDevices) * 100).toFixed(1)}%` + ' '.repeat(35) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Throughput: ${results.performanceMetrics.throughputPerSecond.toFixed(2)} devices/s` + ' '.repeat(24) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`└─ ${''.repeat(58)} ─┘`));
+    console.info(chalk.hex(this.colors.surface)(`┌─ ${''.repeat(58)} ─┐`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + chalk.hex(this.colors.primary)(` 📦 Bulk Global Onboarding Results `) + chalk.hex(this.colors.surface)(` │`));
+    console.info(chalk.hex(this.colors.surface)(`├─ ${''.repeat(58)} ─┤`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Operation ID: ${results.operationIdentifier}` + ' '.repeat(30) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Total Devices: ${results.processedDevices}` + ' '.repeat(36) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Successful: ${chalk.hex(this.colors.success)(results.successfulDevices)}` + ' '.repeat(39) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Failed: ${chalk.hex(this.colors.error)(results.failedDevices)}` + ' '.repeat(43) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Success Rate: ${((results.successfulDevices / results.processedDevices) * 100).toFixed(1)}%` + ' '.repeat(35) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Throughput: ${results.performanceMetrics.throughputPerSecond.toFixed(2)} devices/s` + ' '.repeat(24) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`└─ ${''.repeat(58)} ─┘`));
   }
 
   private displayGlobalSystemStatus(securityMetrics: any, dashboardData: any): void {
-    console.log(chalk.hex(this.colors.surface)(`┌─ ${''.repeat(58)} ─┐`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + chalk.hex(this.colors.primary)(` 🔍 Global System Status `) + chalk.hex(this.colors.surface)(` │`));
-    console.log(chalk.hex(this.colors.surface)(`├─ ${''.repeat(58)} ─┤`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Security Score: ${chalk.hex(this.colors.success)(securityMetrics.overallSecurityScore)}%` + ' '.repeat(32) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Tokens Generated (24h): ${securityMetrics.tokensGenerated24h}` + ' '.repeat(24) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Tokens Validated (24h): ${securityMetrics.tokensValidated24h}` + ' '.repeat(24) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` mTLS Handshakes (24h): ${securityMetrics.mTLSHandshakes24h}` + ' '.repeat(25) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Security Violations: ${chalk.hex(this.colors.error)(securityMetrics.securityViolations24h)}` + ' '.repeat(28) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Global Uptime: ${chalk.hex(this.colors.success)(dashboardData.systemStatus.globalUptime)}%` + ' '.repeat(35) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Active Regions: ${dashboardData.systemStatus.activeRegions.length}` + ' '.repeat(35) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`└─ ${''.repeat(58)} ─┘`));
+    console.info(chalk.hex(this.colors.surface)(`┌─ ${''.repeat(58)} ─┐`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + chalk.hex(this.colors.primary)(` 🔍 Global System Status `) + chalk.hex(this.colors.surface)(` │`));
+    console.info(chalk.hex(this.colors.surface)(`├─ ${''.repeat(58)} ─┤`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Security Score: ${chalk.hex(this.colors.success)(securityMetrics.overallSecurityScore)}%` + ' '.repeat(32) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Tokens Generated (24h): ${securityMetrics.tokensGenerated24h}` + ' '.repeat(24) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Tokens Validated (24h): ${securityMetrics.tokensValidated24h}` + ' '.repeat(24) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` mTLS Handshakes (24h): ${securityMetrics.mTLSHandshakes24h}` + ' '.repeat(25) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Security Violations: ${chalk.hex(this.colors.error)(securityMetrics.securityViolations24h)}` + ' '.repeat(28) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Global Uptime: ${chalk.hex(this.colors.success)(dashboardData.systemStatus.globalUptime)}%` + ' '.repeat(35) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Active Regions: ${dashboardData.systemStatus.activeRegions.length}` + ' '.repeat(35) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`└─ ${''.repeat(58)} ─┘`));
   }
 
   private displayGlobalDeploymentResults(merchant: string, regions: string[], duration: number): void {
-    console.log(chalk.hex(this.colors.surface)(`┌─ ${''.repeat(58)} ─┐`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + chalk.hex(this.colors.primary)(` 🚀 Global Deployment Results `) + chalk.hex(this.colors.surface)(` │`));
-    console.log(chalk.hex(this.colors.surface)(`├─ ${''.repeat(58)} ─┤`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Merchant: ${merchant}` + ' '.repeat(43) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Regions Deployed: ${regions.length}` + ' '.repeat(37) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Deployment Time: ${duration}ms` + ' '.repeat(37) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`│`) + ` Status: ${chalk.hex(this.colors.success)('DEPLOYED')}` + ' '.repeat(40) + chalk.hex(this.colors.surface)(`│`));
-    console.log(chalk.hex(this.colors.surface)(`└─ ${''.repeat(58)} ─┘`));
+    console.info(chalk.hex(this.colors.surface)(`┌─ ${''.repeat(58)} ─┐`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + chalk.hex(this.colors.primary)(` 🚀 Global Deployment Results `) + chalk.hex(this.colors.surface)(` │`));
+    console.info(chalk.hex(this.colors.surface)(`├─ ${''.repeat(58)} ─┤`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Merchant: ${merchant}` + ' '.repeat(43) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Regions Deployed: ${regions.length}` + ' '.repeat(37) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Deployment Time: ${duration}ms` + ' '.repeat(37) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`│`) + ` Status: ${chalk.hex(this.colors.success)('DEPLOYED')}` + ' '.repeat(40) + chalk.hex(this.colors.surface)(`│`));
+    console.info(chalk.hex(this.colors.surface)(`└─ ${''.repeat(58)} ─┘`));
   }
 
   private async processGlobalBatch(
@@ -490,7 +490,7 @@ export class GlobalQROperations {
         
         // Show progress for individual devices
         if (this.cliConfiguration.verboseLogging) {
-          console.log(chalk.hex(this.colors.text)(`  ✓ Device ${i + 1}/${batchConfig.deviceCount} processed`));
+          console.info(chalk.hex(this.colors.text)(`  ✓ Device ${i + 1}/${batchConfig.deviceCount} processed`));
         }
         
       } catch (error) {
@@ -499,7 +499,7 @@ export class GlobalQROperations {
         results.errorDetails.push(`Device ${i + 1}: ${error.message}`);
         
         if (this.cliConfiguration.verboseLogging) {
-          console.log(chalk.hex(this.colors.error)(`  ✗ Device ${i + 1}/${batchConfig.deviceCount} failed: ${error.message}`));
+          console.info(chalk.hex(this.colors.error)(`  ✗ Device ${i + 1}/${batchConfig.deviceCount} failed: ${error.message}`));
         }
       }
     }

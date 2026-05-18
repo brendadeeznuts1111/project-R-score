@@ -377,17 +377,17 @@ if (import.meta.main) {
 				.find((a) => a.startsWith("--team="))
 				?.split("=")[1] as TeamId;
 
-			console.log(renderMatrixGrid({ full, protocol, zone, columns, team }));
+			console.info(renderMatrixGrid({ full, protocol, zone, columns, team }));
 			break;
 		}
 
 		case "table": {
-			console.log(renderColumnTable());
+			console.info(renderColumnTable());
 			break;
 		}
 
 		case "stats": {
-			console.log(renderTeamStats());
+			console.info(renderTeamStats());
 			break;
 		}
 
@@ -395,29 +395,29 @@ if (import.meta.main) {
 			const team = Bun.argv[3] as TeamId;
 			const zone = Bun.argv[4];
 			const result = queryMatrix({ team, zone });
-			console.log(`Query results:`);
-			console.log(`  Team: ${team || "all"}`);
-			console.log(`  Zone: ${zone || "all"}`);
-			console.log(`  Found: ${result.count} columns`);
+			console.info(`Query results:`);
+			console.info(`  Team: ${team || "all"}`);
+			console.info(`  Zone: ${zone || "all"}`);
+			console.info(`  Found: ${result.count} columns`);
 			for (const col of result.columns.slice(0, 20)) {
 				const t = getTeamForColumn(col.index);
-				console.log(`    ${col.index}: ${col.id} (${t?.id || "unassigned"})`);
+				console.info(`    ${col.index}: ${col.id} (${t?.id || "unassigned"})`);
 			}
 			if (result.columns.length > 20) {
-				console.log(`    ... and ${result.columns.length - 20} more`);
+				console.info(`    ... and ${result.columns.length - 20} more`);
 			}
 			break;
 		}
 
 		case "demo": {
-			console.log(renderFull90Demo());
+			console.info(renderFull90Demo());
 			break;
 		}
 
 		case "zones": {
-			console.log("90-Column Matrix Zones:\n");
+			console.info("90-Column Matrix Zones:\n");
 			for (const [name, zone] of Object.entries(COLUMN_ZONES_90)) {
-				console.log(
+				console.info(
 					`${zone.emoji} ${name.padEnd(13)} ${zone.start.toString().padStart(2)}-${zone.end.toString().padStart(2)}`,
 				);
 			}
@@ -425,23 +425,23 @@ if (import.meta.main) {
 		}
 
 		default: {
-			console.log("Tier-1380 OMEGA 90-Column Matrix Table\n");
-			console.log("Commands:");
-			console.log("  grid [options]    Show colored matrix grid");
-			console.log("    --full          Show all 90 columns (default: 60)");
-			console.log("    --protocol      Enable OSC 8 hyperlinks");
-			console.log("    --zone=<name>   Filter by zone");
-			console.log("    --columns=x-y   Show column range");
-			console.log("    --team=<name>   Filter by team");
-			console.log("  table             Show detailed column table");
-			console.log("  stats             Show team statistics");
-			console.log("  query [team] [zone]  Query columns");
-			console.log("  zones             List all zones");
-			console.log("  demo              Full demonstration");
-			console.log(
+			console.info("Tier-1380 OMEGA 90-Column Matrix Table\n");
+			console.info("Commands:");
+			console.info("  grid [options]    Show colored matrix grid");
+			console.info("    --full          Show all 90 columns (default: 60)");
+			console.info("    --protocol      Enable OSC 8 hyperlinks");
+			console.info("    --zone=<name>   Filter by zone");
+			console.info("    --columns=x-y   Show column range");
+			console.info("    --team=<name>   Filter by team");
+			console.info("  table             Show detailed column table");
+			console.info("  stats             Show team statistics");
+			console.info("  query [team] [zone]  Query columns");
+			console.info("  zones             List all zones");
+			console.info("  demo              Full demonstration");
+			console.info(
 				"\nZones: core, security, platform, tension, infra, validation, extensibility",
 			);
-			console.log("Teams: runtime, security, platform, tension, infra, validation");
+			console.info("Teams: runtime, security, platform, tension, infra, validation");
 		}
 	}
 }

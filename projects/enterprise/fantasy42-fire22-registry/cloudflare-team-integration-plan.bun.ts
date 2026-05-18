@@ -637,8 +637,8 @@ echo "✅ R2 setup complete!"
 
 // Main execution
 async function createCloudflareIntegration() {
-  console.log('☁️ Creating Cloudflare Team Integration Plan...');
-  console.log('=============================================\n');
+  console.info('☁️ Creating Cloudflare Team Integration Plan...');
+  console.info('=============================================\n');
 
   const manager = new CloudflareIntegrationManager();
 
@@ -660,28 +660,28 @@ async function createCloudflareIntegration() {
     }
   }
 
-  console.log('✅ Generated Files:');
-  console.log('  📄 cloudflare-integration-plan.md - Comprehensive integration plan');
-  console.log('  ⚙️ wrangler.config.js - Cloudflare configuration');
-  console.log('  🚀 scripts/deploy-pages.sh - Pages deployment script');
-  console.log('  ⚙️ scripts/deploy-workers.sh - Workers deployment script');
-  console.log('  📦 scripts/setup-r2.sh - R2 storage setup script\n');
+  console.info('✅ Generated Files:');
+  console.info('  📄 cloudflare-integration-plan.md - Comprehensive integration plan');
+  console.info('  ⚙️ wrangler.config.js - Cloudflare configuration');
+  console.info('  🚀 scripts/deploy-pages.sh - Pages deployment script');
+  console.info('  ⚙️ scripts/deploy-workers.sh - Workers deployment script');
+  console.info('  📦 scripts/setup-r2.sh - R2 storage setup script\n');
 
-  console.log('🎯 Integration Highlights:');
-  console.log('  ☁️ 5 Cloudflare services integrated');
-  console.log('  👥 5 specialized team roles defined');
-  console.log('  📊 4-phase implementation roadmap');
-  console.log('  🎯 Performance targets: <100ms globally');
-  console.log('  🔒 Security: Enterprise-grade protection\n');
+  console.info('🎯 Integration Highlights:');
+  console.info('  ☁️ 5 Cloudflare services integrated');
+  console.info('  👥 5 specialized team roles defined');
+  console.info('  📊 4-phase implementation roadmap');
+  console.info('  🎯 Performance targets: <100ms globally');
+  console.info('  🔒 Security: Enterprise-grade protection\n');
 
-  console.log('📞 Next Steps:');
-  console.log('  1. Review integration plan with Cloudflare team');
-  console.log('  2. Set up Cloudflare enterprise account');
-  console.log('  3. Configure team access and permissions');
-  console.log('  4. Begin Phase 1 implementation');
-  console.log('  5. Schedule training and onboarding sessions\n');
+  console.info('📞 Next Steps:');
+  console.info('  1. Review integration plan with Cloudflare team');
+  console.info('  2. Set up Cloudflare enterprise account');
+  console.info('  3. Configure team access and permissions');
+  console.info('  4. Begin Phase 1 implementation');
+  console.info('  5. Schedule training and onboarding sessions\n');
 
-  console.log('✨ Cloudflare integration setup complete!');
+  console.info('✨ Cloudflare integration setup complete!');
 }
 
 createCloudflareIntegration().catch(console.error);

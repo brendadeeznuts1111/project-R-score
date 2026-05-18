@@ -173,7 +173,7 @@ export class QuantumHashSystem {
     
     const duration = performance.now() - startTime;
     
-    console.log(`🔍 Integrity hash computed in ${duration.toFixed(2)}ms (${(data.length / 1024).toFixed(2)}KB)`);
+    console.info(`🔍 Integrity hash computed in ${duration.toFixed(2)}ms (${(data.length / 1024).toFixed(2)}KB)`);
     
     return {
       crc32,
@@ -205,8 +205,8 @@ export class QuantumHashSystem {
     const passed = verificationResults.filter(r => r).length;
     const failed = verificationResults.filter(r => !r).length;
     
-    console.log(`📊 Batch verification: ${passed} passed, ${failed} failed in ${duration.toFixed(2)}ms`);
-    console.log(`   Throughput: ${(items.reduce((sum, item) => sum + item.data.length, 0) / 1024 / (duration / 1000)).toFixed(2)} KB/s`);
+    console.info(`📊 Batch verification: ${passed} passed, ${failed} failed in ${duration.toFixed(2)}ms`);
+    console.info(`   Throughput: ${(items.reduce((sum, item) => sum + item.data.length, 0) / 1024 / (duration / 1000)).toFixed(2)} KB/s`);
     
     return {
       results: verificationResults,
@@ -299,7 +299,7 @@ export class QuantumHashSystem {
    * Run performance benchmarks
    */
   async runBenchmarks(): Promise<BenchmarkResults> {
-    console.log('🚀 Running CRC32 Performance Benchmarks...\n');
+    console.info('🚀 Running CRC32 Performance Benchmarks...\n');
     
     const results: BenchmarkResults = {
       small: { size: 1024, time: 0 },
@@ -336,18 +336,18 @@ export class QuantumHashSystem {
     results.batch.time = performance.now() - batchStart;
     
     // Print results
-    console.log('📊 BENCHMARK RESULTS');
-    console.log('═'.repeat(60));
+    console.info('📊 BENCHMARK RESULTS');
+    console.info('═'.repeat(60));
     
     Object.entries(results).forEach(([name, result]) => {
       const opsPerSec = 1000 / (result.time / (name === 'batch' ? 1000 : 100));
-      console.log(`${name.toUpperCase().padEnd(8)}: ${result.size.toLocaleString().padStart(12)} bytes | ${result.time.toFixed(2).padStart(8)}ms | ${opsPerSec.toFixed(0).padStart(8)} ops/sec`);
+      console.info(`${name.toUpperCase().padEnd(8)}: ${result.size.toLocaleString().padStart(12)} bytes | ${result.time.toFixed(2).padStart(8)}ms | ${opsPerSec.toFixed(0).padStart(8)} ops/sec`);
     });
     
-    console.log('\n🎯 Performance Summary:');
-    console.log(`  • 20x faster than software CRC32`);
-    console.log(`  • Hardware-accelerated via zlib`);
-    console.log(`  • Uses PCLMULQDQ on x86, native CRC32 on ARM`);
+    console.info('\n🎯 Performance Summary:');
+    console.info(`  • 20x faster than software CRC32`);
+    console.info(`  • Hardware-accelerated via zlib`);
+    console.info(`  • Uses PCLMULQDQ on x86, native CRC32 on ARM`);
     
     return results;
   }
@@ -519,7 +519,7 @@ class FileMonitor {
     if (this.monitoring) return;
     
     this.monitoring = true;
-    console.log(`🔒 Started monitoring ${this.filePath} every ${this.interval}ms`);
+    console.info(`🔒 Started monitoring ${this.filePath} every ${this.interval}ms`);
     
     // Initial hash
     const initialHash = await this.hashSystem.crc32File(this.filePath);
@@ -527,7 +527,7 @@ class FileMonitor {
     const file = Bun.file(this.filePath);
     this.lastSize = await file.size;
     
-    console.log(`📄 Initial hash: ${initialHash.toString(16)} (${this.lastSize} bytes)`);
+    console.info(`📄 Initial hash: ${initialHash.toString(16)} (${this.lastSize} bytes)`);
     
     // Start monitoring
     this.timer = setInterval(async () => {
@@ -552,9 +552,9 @@ class FileMonitor {
           type: currentSize !== this.lastSize ? 'size_change' : 'content_change',
         };
         
-        console.log(`🚨 File tamper detected: ${this.filePath}`);
-        console.log(`   Old: ${this.lastHash.toString(16)} (${this.lastSize} bytes)`);
-        console.log(`   New: ${currentHash.toString(16)} (${currentSize} bytes)`);
+        console.info(`🚨 File tamper detected: ${this.filePath}`);
+        console.info(`   Old: ${this.lastHash.toString(16)} (${this.lastSize} bytes)`);
+        console.info(`   New: ${currentHash.toString(16)} (${currentSize} bytes)`);
         
         this.onTamper?.(event);
       }
@@ -562,7 +562,7 @@ class FileMonitor {
       this.lastHash = currentHash;
       this.lastSize = currentSize;
     } catch (error) {
-      console.log(`❌ File check failed: ${error.message}`);
+      console.info(`❌ File check failed: ${error.message}`);
     }
   }
   
@@ -572,7 +572,7 @@ class FileMonitor {
       this.timer = null;
     }
     this.monitoring = false;
-    console.log(`🔒 Stopped monitoring ${this.filePath}`);
+    console.info(`🔒 Stopped monitoring ${this.filePath}`);
   }
   
   isMonitoring(): boolean {

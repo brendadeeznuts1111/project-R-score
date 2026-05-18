@@ -18,7 +18,7 @@ export class ConfigManager {
           name: key,
           value: value.toString(),
         });
-        console.log(`✓ Securely stored ${key}`);
+        console.info(`✓ Securely stored ${key}`);
       }
     }
   }
@@ -62,7 +62,7 @@ export class ConfigManager {
       });
     }
 
-    console.log('✓ All credentials cleared from secure storage');
+    console.info('✓ All credentials cleared from secure storage');
   }
 }
 

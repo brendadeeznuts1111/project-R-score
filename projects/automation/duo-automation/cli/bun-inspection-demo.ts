@@ -273,11 +273,11 @@ export class BunInspectionCLI {
       }
     });
     
-    console.log("\n📊 Category Breakdown:");
+    console.info("\n📊 Category Breakdown:");
     Object.entries(categories).forEach(([status, data]) => {
       if (data.count > 0) {
         const bar = "▪".repeat(data.count);
-        console.log(`${data.icon} ${data.color}${status.padEnd(5)}\x1b[0m ${data.count} ${bar}`);
+        console.info(`${data.icon} ${data.color}${status.padEnd(5)}\x1b[0m ${data.count} ${bar}`);
       }
     });
   }
@@ -286,43 +286,43 @@ export class BunInspectionCLI {
    * Run comprehensive inspection demonstration
    */
   async runInspectionDemo(): Promise<void> {
-    console.log("🔍 DuoPlus CLI v3.0+ - Advanced Bun Inspection Demo");
-    console.log("=".repeat(70));
+    console.info("🔍 DuoPlus CLI v3.0+ - Advanced Bun Inspection Demo");
+    console.info("=".repeat(70));
     
     // 1. Security Checks Table
-    console.log("\n🛡️  Security Checks:");
+    console.info("\n🛡️  Security Checks:");
     const securityChecks = this.createSecurityChecks();
-    console.log(Bun.inspect.table(securityChecks, {
+    console.info(Bun.inspect.table(securityChecks, {
       colors: true,
       indent: 2
     }));
     
     // Generate security summary
     const passRate = (securityChecks.filter(c => c.result === "PASS").length / securityChecks.length) * 100;
-    console.log(`\n📈 Security Pass Rate: ${passRate.toFixed(1)}%`);
-    console.log(this.generateProgressBar(passRate));
+    console.info(`\n📈 Security Pass Rate: ${passRate.toFixed(1)}%`);
+    console.info(this.generateProgressBar(passRate));
     
     this.generateCategoryBreakdown(securityChecks);
     
     // 2. System Metrics Table
-    console.log("\n⚡ System Metrics:");
+    console.info("\n⚡ System Metrics:");
     const systemMetrics = this.createSystemMetrics();
-    console.log(Bun.inspect.table(systemMetrics, {
+    console.info(Bun.inspect.table(systemMetrics, {
       colors: true,
       indent: 2
     }));
     
     // 3. Unicode Width-Aware Table
-    console.log("\n🌐 Unicode Width Tests:");
+    console.info("\n🌐 Unicode Width Tests:");
     const enhancedRows = this.createEnhancedRows();
-    console.log(Bun.inspect.table(enhancedRows, {
+    console.info(Bun.inspect.table(enhancedRows, {
       columns: ["name", "status", "message", "width", "hasZW"],
       colors: true,
       indent: 2
     }));
     
     // 4. Custom inspection examples
-    console.log("\n🎨 Custom Inspection Examples:");
+    console.info("\n🎨 Custom Inspection Examples:");
     
     const customObjects = [
       {
@@ -358,11 +358,11 @@ export class BunInspectionCLI {
     ];
     
     customObjects.forEach(obj => {
-      console.log(`  ${obj[inspectCustom]()}`);
+      console.info(`  ${obj[inspectCustom]()}`);
     });
     
     // 5. Advanced table with nested objects
-    console.log("\n📋 Advanced Nested Table:");
+    console.info("\n📋 Advanced Nested Table:");
     const nestedData = [
       {
         service: "Authentication",
@@ -405,21 +405,21 @@ export class BunInspectionCLI {
       }
     ];
     
-    console.log(Bun.inspect.table(nestedData, {
+    console.info(Bun.inspect.table(nestedData, {
       columns: ["service", "endpoint", "methods"],
       colors: true,
       indent: 2
     }));
     
-    console.log("\n🎉 Advanced Bun Inspection Demo Complete!");
-    console.log("\n💡 Key Features Demonstrated:");
-    console.log("   🔧 Symbol.for(\"Bun.inspect.custom\") for per-object formatting");
-    console.log("   📊 Bun.inspect.table() with structured tabular output");
-    console.log("   🌐 Bun.stringWidth() for Unicode-safe layout");
-    console.log("   🎨 ANSI color codes for visual enhancement");
-    console.log("   📱 Emoji semantics and zero-width character detection");
-    console.log("   📈 Progress bars and category breakdowns");
-    console.log("   🗂️ Nested object inspection with custom formatting");
+    console.info("\n🎉 Advanced Bun Inspection Demo Complete!");
+    console.info("\n💡 Key Features Demonstrated:");
+    console.info("   🔧 Symbol.for(\"Bun.inspect.custom\") for per-object formatting");
+    console.info("   📊 Bun.inspect.table() with structured tabular output");
+    console.info("   🌐 Bun.stringWidth() for Unicode-safe layout");
+    console.info("   🎨 ANSI color codes for visual enhancement");
+    console.info("   📱 Emoji semantics and zero-width character detection");
+    console.info("   📈 Progress bars and category breakdowns");
+    console.info("   🗂️ Nested object inspection with custom formatting");
   }
 }
 

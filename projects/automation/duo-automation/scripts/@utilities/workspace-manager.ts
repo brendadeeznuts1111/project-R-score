@@ -24,7 +24,7 @@ class DuoWorkspaceManager {
   ];
 
   async runCommand(command: string, args: string[] = []): Promise<void> {
-    console.log(`🚀 Running: bun ${command} ${args.join(' ')}`);
+    console.info(`🚀 Running: bun ${command} ${args.join(' ')}`);
     
     try {
       const result = await Bun.spawn({
@@ -51,42 +51,42 @@ class DuoWorkspaceManager {
       return;
     }
 
-    console.log(`📦 Packing ${packageName}...`);
+    console.info(`📦 Packing ${packageName}...`);
     
     const packArgs = ['pm', 'pack', ...options];
     await this.runCommandInDirectory(pkg.path, packArgs);
   }
 
   async linkAllWorkspaces(): Promise<void> {
-    console.log('🔗 Linking all workspaces...');
+    console.info('🔗 Linking all workspaces...');
     
     for (const pkg of this.packages) {
-      console.log(`  Linking ${pkg.name}...`);
+      console.info(`  Linking ${pkg.name}...`);
       await this.runCommandInDirectory(pkg.path, ['link']);
     }
     
-    console.log('✅ All workspaces linked!');
+    console.info('✅ All workspaces linked!');
   }
 
   async unlinkAllWorkspaces(): Promise<void> {
-    console.log('🔓 Unlinking all workspaces...');
+    console.info('🔓 Unlinking all workspaces...');
     
     for (const pkg of this.packages) {
-      console.log(`  Unlinking ${pkg.name}...`);
+      console.info(`  Unlinking ${pkg.name}...`);
       await this.runCommandInDirectory(pkg.path, ['unlink']);
     }
     
-    console.log('✅ All workspaces unlinked!');
+    console.info('✅ All workspaces unlinked!');
   }
 
   async packAllWorkspaces(options: string[] = []): Promise<void> {
-    console.log('📦 Packing all workspaces...');
+    console.info('📦 Packing all workspaces...');
     
     for (const pkg of this.packages) {
       await this.packWorkspace(pkg.name, options);
     }
     
-    console.log('✅ All workspaces packed!');
+    console.info('✅ All workspaces packed!');
   }
 
   public async runCommandInDirectory(dir: string, args: string[]): Promise<void> {
@@ -110,53 +110,53 @@ class DuoWorkspaceManager {
   }
 
   async installWorkspaces(): Promise<void> {
-    console.log('📥 Installing all workspace dependencies...');
+    console.info('📥 Installing all workspace dependencies...');
     await this.runCommand('install');
-    console.log('✅ Workspaces installed successfully!');
+    console.info('✅ Workspaces installed successfully!');
   }
 
   async buildWorkspaces(): Promise<void> {
-    console.log('🔨 Building all workspaces...');
+    console.info('🔨 Building all workspaces...');
     await this.runCommand('run', ['build', '--workspaces']);
-    console.log('✅ Workspaces built successfully!');
+    console.info('✅ Workspaces built successfully!');
   }
 
   async testWorkspaces(): Promise<void> {
-    console.log('🧪 Testing all workspaces...');
+    console.info('🧪 Testing all workspaces...');
     await this.runCommand('test', ['--filter', '@duoplus/*']);
-    console.log('✅ Workspaces tested successfully!');
+    console.info('✅ Workspaces tested successfully!');
   }
 
   showWorkspaceInfo(): void {
-    console.log('📋 DuoPlus Workspaces:');
-    console.log('');
+    console.info('📋 DuoPlus Workspaces:');
+    console.info('');
     
     for (const pkg of this.packages) {
-      console.log(`  📦 ${pkg.name}`);
-      console.log(`     Path: ${pkg.path}`);
-      console.log('');
+      console.info(`  📦 ${pkg.name}`);
+      console.info(`     Path: ${pkg.path}`);
+      console.info('');
     }
     
-    console.log(`Total: ${this.packages.length} workspaces`);
+    console.info(`Total: ${this.packages.length} workspaces`);
   }
 
   showCatalogInfo(): void {
-    console.log('📚 Catalog Configuration:');
-    console.log('');
-    console.log('📦 Main Catalog (catalog:):');
-    console.log('  - commander, elysia, figlet, inquirer');
-    console.log('  - console-table-printer, libphonenumber-js');
-    console.log('  - mailparser, nodemailer, puppeteer');
-    console.log('  - tesseract.js, zstd, @supabase/supabase-js');
-    console.log('  - http-proxy-middleware, https-proxy-agent');
-    console.log('  - socks-proxy-agent, imap, reflect-metadata');
-    console.log('  - @types/*, typescript');
-    console.log('');
-    console.log('🧪 Testing Catalog (catalog:testing):');
-    console.log('  - jest, @types/jest');
-    console.log('');
-    console.log('🔨 Build Catalog (catalog:build):');
-    console.log('  - vite, @vitejs/plugin-react');
+    console.info('📚 Catalog Configuration:');
+    console.info('');
+    console.info('📦 Main Catalog (catalog:):');
+    console.info('  - commander, elysia, figlet, inquirer');
+    console.info('  - console-table-printer, libphonenumber-js');
+    console.info('  - mailparser, nodemailer, puppeteer');
+    console.info('  - tesseract.js, zstd, @supabase/supabase-js');
+    console.info('  - http-proxy-middleware, https-proxy-agent');
+    console.info('  - socks-proxy-agent, imap, reflect-metadata');
+    console.info('  - @types/*, typescript');
+    console.info('');
+    console.info('🧪 Testing Catalog (catalog:testing):');
+    console.info('  - jest, @types/jest');
+    console.info('');
+    console.info('🔨 Build Catalog (catalog:build):');
+    console.info('  - vite, @vitejs/plugin-react');
   }
 }
 
@@ -208,24 +208,24 @@ async function main() {
       break;
       
     default:
-      console.log('DuoPlus Workspace Manager');
-      console.log('');
-      console.log('Usage: bun run scripts/workspace-manager.ts <command> [args]');
-      console.log('');
-      console.log('Commands:');
-      console.log('  install           Install all workspace dependencies');
-      console.log('  build             Build all workspaces');
-      console.log('  test              Test all workspaces');
-      console.log('  pack <pkg|all>    Pack specific package or all');
-      console.log('  link <pkg|all>    Link specific package or all');
-      console.log('  unlink <pkg|all>  Unlink specific package or all');
-      console.log('  info              Show workspace and catalog info');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun run scripts/workspace-manager.ts install');
-      console.log('  bun run scripts/workspace-manager.ts pack all --destination ./dist');
-      console.log('  bun run scripts/workspace-manager.ts link all');
-      console.log('  bun run scripts/workspace-manager.ts info');
+      console.info('DuoPlus Workspace Manager');
+      console.info('');
+      console.info('Usage: bun run scripts/workspace-manager.ts <command> [args]');
+      console.info('');
+      console.info('Commands:');
+      console.info('  install           Install all workspace dependencies');
+      console.info('  build             Build all workspaces');
+      console.info('  test              Test all workspaces');
+      console.info('  pack <pkg|all>    Pack specific package or all');
+      console.info('  link <pkg|all>    Link specific package or all');
+      console.info('  unlink <pkg|all>  Unlink specific package or all');
+      console.info('  info              Show workspace and catalog info');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun run scripts/workspace-manager.ts install');
+      console.info('  bun run scripts/workspace-manager.ts pack all --destination ./dist');
+      console.info('  bun run scripts/workspace-manager.ts link all');
+      console.info('  bun run scripts/workspace-manager.ts info');
   }
 }
 

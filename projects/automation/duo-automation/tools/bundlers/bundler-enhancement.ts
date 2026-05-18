@@ -91,8 +91,8 @@ class EnhancedServer {
   }
   
   start() {
-    console.log('🚀 Enhanced server running on port 3000');
-    console.log('✅ Shebang support: CJS bundle executing correctly');
+    console.info('🚀 Enhanced server running on port 3000');
+    console.info('✅ Shebang support: CJS bundle executing correctly');
   }
 }
 
@@ -148,9 +148,9 @@ class EnhancedCLI {
       .action(async (query, options) => {
         const manager = new ArtifactManager();
         const results = await manager.search(query, options);
-        console.log(chalk.blue(\`Found \${results.length} artifacts\`));
+        console.info(chalk.blue(\`Found \${results.length} artifacts\`));
         results.forEach(artifact => {
-          console.log(\`  📦 \${artifact.path} (\${artifact.relevance})\`);
+          console.info(\`  📦 \${artifact.path} (\${artifact.relevance})\`);
         });
       });
     
@@ -472,62 +472,62 @@ export class BundlerCLI {
    * Run complete bundler enhancement demonstration
    */
   async runBundlerDemo(): Promise<void> {
-    console.log('📦 Bundler Enhancement Demo');
-    console.log('='.repeat(60));
+    console.info('📦 Bundler Enhancement Demo');
+    console.info('='.repeat(60));
     
     // Demonstrate shebang support
-    console.log('\n🔧 Shebang Support for CJS Bundles:');
+    console.info('\n🔧 Shebang Support for CJS Bundles:');
     const shebangResult = await this.bundlerCLI.demonstrateShebangSupport();
-    console.log(`   Bundle examples: ${shebangResult.bundleExamples.length}`);
+    console.info(`   Bundle examples: ${shebangResult.bundleExamples.length}`);
     shebangResult.bundleExamples.forEach(example => {
-      console.log(`   ${example.name}: ${example.features.length} features`);
-      console.log(`   Status: ${example.executionStatus}`);
+      console.info(`   ${example.name}: ${example.features.length} features`);
+      console.info(`   Status: ${example.executionStatus}`);
     });
-    console.log(`   Bundle size: ${(shebangResult.metrics.bundleSize / 1024).toFixed(2)} KB`);
-    console.log(`   Shebang processed: ${shebangResult.metrics.shebangProcessed ? '✅' : '❌'}`);
+    console.info(`   Bundle size: ${(shebangResult.metrics.bundleSize / 1024).toFixed(2)} KB`);
+    console.info(`   Shebang processed: ${shebangResult.metrics.shebangProcessed ? '✅' : '❌'}`);
     
     // Demonstrate memory optimization
-    console.log('\n🧠 Memory Optimization Improvements:');
+    console.info('\n🧠 Memory Optimization Improvements:');
     const memoryResult = await this.bundlerCLI.demonstrateMemoryOptimization();
-    console.log(`   Optimization results: ${memoryResult.optimizationResults.length}`);
+    console.info(`   Optimization results: ${memoryResult.optimizationResults.length}`);
     memoryResult.optimizationResults.forEach(result => {
-      console.log(`   ${result.name}: ${result.status}`);
+      console.info(`   ${result.name}: ${result.status}`);
     });
-    console.log(`   Memory usage: ${memoryResult.metrics.memoryUsage.toFixed(2)} MB`);
-    console.log(`   Optimization level: ${memoryResult.metrics.optimizationLevel}/5`);
+    console.info(`   Memory usage: ${memoryResult.metrics.memoryUsage.toFixed(2)} MB`);
+    console.info(`   Optimization level: ${memoryResult.metrics.optimizationLevel}/5`);
     
     // Show enhanced configuration
-    console.log('\n⚙️ Enhanced Bundle Configuration:');
+    console.info('\n⚙️ Enhanced Bundle Configuration:');
     const config = this.bundlerCLI.createEnhancedBundleConfig();
-    console.log(`   Build config: ${Object.keys(config.buildConfig).length} options`);
-    console.log(`   Optimization config: ${Object.keys(config.optimizationConfig).length} strategies`);
-    console.log(`   Shebang config: ${Object.keys(config.shebangConfig).length} settings`);
+    console.info(`   Build config: ${Object.keys(config.buildConfig).length} options`);
+    console.info(`   Optimization config: ${Object.keys(config.optimizationConfig).length} strategies`);
+    console.info(`   Shebang config: ${Object.keys(config.shebangConfig).length} settings`);
     
     // Validate enhancements
-    console.log('\n✅ Bundler Enhancement Validation:');
+    console.info('\n✅ Bundler Enhancement Validation:');
     const validation = await this.bundlerCLI.validateBundlerEnhancements();
-    console.log(`   Components validated: ${validation.validationResults.length}`);
+    console.info(`   Components validated: ${validation.validationResults.length}`);
     validation.validationResults.forEach(result => {
-      console.log(`   ${result.component}: ${result.status}`);
+      console.info(`   ${result.component}: ${result.status}`);
     });
     
     // Show comprehensive metrics
-    console.log('\n📊 Bundler Metrics:');
+    console.info('\n📊 Bundler Metrics:');
     const metrics = this.bundlerCLI.getBundlerMetrics();
-    console.log(`   Total bundle size: ${(metrics.totalBundleSize / 1024).toFixed(2)} KB`);
-    console.log(`   Average memory usage: ${metrics.averageMemoryUsage.toFixed(2)} MB`);
-    console.log(`   Average build time: ${metrics.averageBuildTime.toFixed(2)}ms`);
-    console.log(`   Shebang support: ${metrics.shebangSupportEnabled ? '✅' : '❌'}`);
-    console.log(`   Optimization level: ${metrics.optimizationLevel.toFixed(1)}/5`);
+    console.info(`   Total bundle size: ${(metrics.totalBundleSize / 1024).toFixed(2)} KB`);
+    console.info(`   Average memory usage: ${metrics.averageMemoryUsage.toFixed(2)} MB`);
+    console.info(`   Average build time: ${metrics.averageBuildTime.toFixed(2)}ms`);
+    console.info(`   Shebang support: ${metrics.shebangSupportEnabled ? '✅' : '❌'}`);
+    console.info(`   Optimization level: ${metrics.optimizationLevel.toFixed(1)}/5`);
     
-    console.log('\n🎉 Bundler Enhancement Complete!');
-    console.log('\n💡 Key Benefits Achieved:');
-    console.log('   🔧 CJS bundles with shebang now execute correctly');
-    console.log('   🧠 Memory optimization reduces overhead by 200KB–1.5MB');
-    console.log('   📦 Enhanced bundle configuration options');
-    console.log('   ⚙️ Boolean flag packing and field optimization');
-    console.log('   🚀 Improved performance for large bundle builds');
-    console.log('   ✅ Silent execution failures resolved');
+    console.info('\n🎉 Bundler Enhancement Complete!');
+    console.info('\n💡 Key Benefits Achieved:');
+    console.info('   🔧 CJS bundles with shebang now execute correctly');
+    console.info('   🧠 Memory optimization reduces overhead by 200KB–1.5MB');
+    console.info('   📦 Enhanced bundle configuration options');
+    console.info('   ⚙️ Boolean flag packing and field optimization');
+    console.info('   🚀 Improved performance for large bundle builds');
+    console.info('   ✅ Silent execution failures resolved');
   }
 }
 

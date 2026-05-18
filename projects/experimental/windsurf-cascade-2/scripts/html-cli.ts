@@ -33,7 +33,7 @@ class HTMLCLI {
     }
 
     public async execute(): Promise<void> {
-        console.log('🚀 HTML CLI - Unified Review and Correction Tool\n');
+        console.info('🚀 HTML CLI - Unified Review and Correction Tool\n');
 
         switch (this.options.action) {
             case 'review':
@@ -58,7 +58,7 @@ class HTMLCLI {
     }
 
     private async review(): Promise<void> {
-        console.log('🔍 Running HTML Review...\n');
+        console.info('🔍 Running HTML Review...\n');
         
         const reviewer = new HTMLReviewCLI({
             verbose: this.options.verbose,
@@ -75,16 +75,16 @@ class HTMLCLI {
     }
 
     private async correct(): Promise<void> {
-        console.log('🔧 Running HTML Correction...\n');
+        console.info('🔧 Running HTML Correction...\n');
         
         const corrector = new HTMLCorrector();
         corrector.correctFiles(this.options.files);
         
-        console.log('\n✅ HTML correction completed successfully!');
+        console.info('\n✅ HTML correction completed successfully!');
     }
 
     private async fix(): Promise<void> {
-        console.log('🛠️ Running HTML Review with Auto-Fix...\n');
+        console.info('🛠️ Running HTML Review with Auto-Fix...\n');
         
         const reviewer = new HTMLReviewCLI({
             verbose: this.options.verbose,
@@ -105,10 +105,10 @@ class HTMLCLI {
     }
 
     private async all(): Promise<void> {
-        console.log('🎯 Running Complete HTML Optimization...\n');
+        console.info('🎯 Running Complete HTML Optimization...\n');
         
         // Step 1: Review current state
-        console.log('📊 Step 1: Initial Review');
+        console.info('📊 Step 1: Initial Review');
         const reviewer = new HTMLReviewCLI({
             verbose: false,
             exclude: this.options.exclude
@@ -118,36 +118,36 @@ class HTMLCLI {
         const initialIssues = initialResults.reduce((sum, r) => sum + r.stats.total, 0);
         
         // Step 2: Apply corrections
-        console.log('\n🔧 Step 2: Apply Corrections');
+        console.info('\n🔧 Step 2: Apply Corrections');
         const corrector = new HTMLCorrector();
         corrector.correctFiles(this.options.files);
         
         // Step 3: Final review
-        console.log('\n🔍 Step 3: Final Review');
+        console.info('\n🔍 Step 3: Final Review');
         const finalResults = await reviewer.review(this.options.files);
         const finalIssues = finalResults.reduce((sum, r) => sum + r.stats.total, 0);
         
         // Summary
-        console.log('\n' + '='.repeat(60));
-        console.log('🎯 COMPLETE OPTIMIZATION SUMMARY');
-        console.log('='.repeat(60));
-        console.log(`Files processed: ${this.options.files.length}`);
-        console.log(`Issues before: ${initialIssues}`);
-        console.log(`Issues after: ${finalIssues}`);
-        console.log(`Issues resolved: ${initialIssues - finalIssues} 🎉`);
-        console.log(`Improvement: ${((initialIssues - finalIssues) / initialIssues * 100).toFixed(1)}%`);
+        console.info('\n' + '='.repeat(60));
+        console.info('🎯 COMPLETE OPTIMIZATION SUMMARY');
+        console.info('='.repeat(60));
+        console.info(`Files processed: ${this.options.files.length}`);
+        console.info(`Issues before: ${initialIssues}`);
+        console.info(`Issues after: ${finalIssues}`);
+        console.info(`Issues resolved: ${initialIssues - finalIssues} 🎉`);
+        console.info(`Improvement: ${((initialIssues - finalIssues) / initialIssues * 100).toFixed(1)}%`);
         
         if (finalResults.some(r => r.stats.errors > 0)) {
-            console.log('\n❌ Some critical issues remain. Review individual files for details.');
+            console.info('\n❌ Some critical issues remain. Review individual files for details.');
             process.exit(1);
         } else {
-            console.log('\n✅ All HTML files optimized successfully!');
+            console.info('\n✅ All HTML files optimized successfully!');
             process.exit(0);
         }
     }
 
     public showHelp(): void {
-        console.log(`
+        console.info(`
 🚀 HTML CLI - Unified Review and Correction Tool
 
 Usage: bun html-cli.ts <action> [options] [files...]
@@ -265,14 +265,14 @@ async function main(): Promise<void> {
     }
     
     if (options.files.length === 0) {
-        console.log('❌ No files specified. Use --help for usage information.');
+        console.info('❌ No files specified. Use --help for usage information.');
         process.exit(1);
     }
 
     // Validate files exist
     const missingFiles = options.files.filter(file => !existsSync(file));
     if (missingFiles.length > 0) {
-        console.log(`❌ Files not found: ${missingFiles.join(', ')}`);
+        console.info(`❌ Files not found: ${missingFiles.join(', ')}`);
         process.exit(1);
     }
 

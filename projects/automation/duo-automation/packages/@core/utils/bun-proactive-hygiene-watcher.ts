@@ -13,8 +13,8 @@ class BunProactiveHygieneWatcher {
   private pendingHeals = new Map<string, Timer>();
 
   constructor() {
-    console.log("🛡️  BunProactiveHygieneWatcher Initialized (v3.7)");
-    console.log(`📡 Monitoring: ${BunProactiveHygieneWatcher.targetDirs.join(", ")}`);
+    console.info("🛡️  BunProactiveHygieneWatcher Initialized (v3.7)");
+    console.info(`📡 Monitoring: ${BunProactiveHygieneWatcher.targetDirs.join(", ")}`);
   }
 
   public async start() {
@@ -45,10 +45,10 @@ class BunProactiveHygieneWatcher {
     const filePath = join(dir, filename);
     if (this.pendingHeals.has(filePath)) return;
 
-    console.log(`🔍 artifact detected: '${filePath}'. Scheduling heal in ${BunProactiveHygieneWatcher.watchDelay / 1000}s...`);
+    console.info(`🔍 artifact detected: '${filePath}'. Scheduling heal in ${BunProactiveHygieneWatcher.watchDelay / 1000}s...`);
 
     const timer = setTimeout(async () => {
-      console.log(`🧹 Triggering proactive self-heal for '${filePath}'...`);
+      console.info(`🧹 Triggering proactive self-heal for '${filePath}'...`);
       try {
         await $`bun run scripts/self-heal.ts`.quiet();
         this.pendingHeals.delete(filePath);

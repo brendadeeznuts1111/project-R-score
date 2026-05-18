@@ -10,7 +10,7 @@ import { vectorizeClient } from '../../src/core/vectorize-client';
 const DB_PATH = process.env.DB_PATH || './barbershop.db';
 
 async function indexCustomers() {
-  console.log('🔍 Indexing customers in Vectorize...\n');
+  console.info('🔍 Indexing customers in Vectorize...\n');
 
   // Check if Vectorize is available
   const available = await vectorizeClient.isAvailable();
@@ -40,10 +40,10 @@ async function indexCustomers() {
       zipcode: string | null;
     }>;
 
-    console.log(`Found ${customers.length} customers to index\n`);
+    console.info(`Found ${customers.length} customers to index\n`);
 
     if (customers.length === 0) {
-      console.log('No customers to index.');
+      console.info('No customers to index.');
       return;
     }
 
@@ -64,20 +64,20 @@ async function indexCustomers() {
         });
 
         successCount++;
-        console.log(`✅ Indexed: ${customer.name} (${customer.id})`);
+        console.info(`✅ Indexed: ${customer.name} (${customer.id})`);
       } catch (error: any) {
         errorCount++;
         console.error(`❌ Failed to index ${customer.name}:`, error.message);
       }
     }
 
-    console.log(`\n📊 Summary:`);
-    console.log(`   ✅ Successfully indexed: ${successCount}`);
-    console.log(`   ❌ Failed: ${errorCount}`);
-    console.log(`   📦 Total: ${customers.length}`);
+    console.info(`\n📊 Summary:`);
+    console.info(`   ✅ Successfully indexed: ${successCount}`);
+    console.info(`   ❌ Failed: ${errorCount}`);
+    console.info(`   📦 Total: ${customers.length}`);
 
     if (successCount > 0) {
-      console.log(`\n✨ Customer indexing complete!`);
+      console.info(`\n✨ Customer indexing complete!`);
     }
   } catch (error: any) {
     console.error('❌ Error indexing customers:', error);

@@ -143,19 +143,19 @@ function analyzeBundles(builds: BuildResult[]): AnalysisResult {
 }
 
 function printAnalysis(analysis: AnalysisResult): void {
-  console.log("\n🔍 BUNDLE ANALYSIS REPORT");
-  console.log("=".repeat(50));
+  console.info("\n🔍 BUNDLE ANALYSIS REPORT");
+  console.info("=".repeat(50));
 
   // Build results table
-  console.log("\n📦 BUILD RESULTS:");
-  console.log("| Build Name | Features | Size | Build Time |");
-  console.log("|------------|----------|------|------------|");
+  console.info("\n📦 BUILD RESULTS:");
+  console.info("| Build Name | Features | Size | Build Time |");
+  console.info("|------------|----------|------|------------|");
 
   analysis.builds.forEach((build) => {
     const features = build.features.length;
     const size = formatBytes(build.size);
     const time = `${build.buildTime}ms`;
-    console.log(
+    console.info(
       `| ${build.name.padEnd(11)} | ${features
         .toString()
         .padEnd(8)} | ${size.padEnd(6)} | ${time.padEnd(10)} |`
@@ -163,18 +163,18 @@ function printAnalysis(analysis: AnalysisResult): void {
   });
 
   // Comparisons
-  console.log("\n📊 DEAD CODE ELIMINATION:");
-  console.log(
+  console.info("\n📊 DEAD CODE ELIMINATION:");
+  console.info(
     "| Comparison | Size Reduction | % Reduction | Elimination Quality |"
   );
-  console.log(
+  console.info(
     "|------------|----------------|-------------|-------------------|"
   );
 
   Object.entries(analysis.comparisons).forEach(([name, comp]) => {
     const sizeRed = formatBytes(comp.sizeReduction);
     const percent = comp.sizeReductionPercent.toFixed(1) + "%";
-    console.log(
+    console.info(
       `| dev vs ${name.padEnd(12)} | ${sizeRed.padEnd(14)} | ${percent.padEnd(
         11
       )} | ${comp.deadCodeEliminated.padEnd(17)} |`
@@ -182,7 +182,7 @@ function printAnalysis(analysis: AnalysisResult): void {
   });
 
   // Feature impact analysis
-  console.log("\n🎯 FEATURE IMPACT ANALYSIS:");
+  console.info("\n🎯 FEATURE IMPACT ANALYSIS:");
   const premiumBuild = analysis.builds.find((b) => b.name === "prod-premium");
   const liteBuild = analysis.builds.find((b) => b.name === "prod-lite");
 
@@ -192,23 +192,23 @@ function printAnalysis(analysis: AnalysisResult): void {
     const sizeIncrease = premiumBuild.size - liteBuild.size;
     const sizePerFeature = sizeIncrease / premiumFeatures;
 
-    console.log(
+    console.info(
       `• Premium features add: ${formatBytes(
         sizeIncrease
       )} (${premiumFeatures} features)`
     );
-    console.log(`• Average cost per feature: ${formatBytes(sizePerFeature)}`);
+    console.info(`• Average cost per feature: ${formatBytes(sizePerFeature)}`);
   }
 
   // Recommendations
-  console.log("\n💡 RECOMMENDATIONS:");
+  console.info("\n💡 RECOMMENDATIONS:");
 
   const bestElimination = Object.entries(analysis.comparisons).sort(
     ([, a], [, b]) => b.sizeReductionPercent - a.sizeReductionPercent
   )[0];
 
   if (bestElimination) {
-    console.log(
+    console.info(
       `• Best dead code elimination: ${
         bestElimination[0]
       } (${bestElimination[1].sizeReductionPercent.toFixed(1)}%)`
@@ -219,7 +219,7 @@ function printAnalysis(analysis: AnalysisResult): void {
     build.buildTime < min.buildTime ? build : min
   );
 
-  console.log(
+  console.info(
     `• Fastest build: ${fastestBuild.name} (${fastestBuild.buildTime}ms)`
   );
 
@@ -227,17 +227,17 @@ function printAnalysis(analysis: AnalysisResult): void {
     build.size < min.size ? build : min
   );
 
-  console.log(
+  console.info(
     `• Smallest bundle: ${smallestBuild.name} (${formatBytes(
       smallestBuild.size
     )})`
   );
 
-  console.log("\n🚀 OPTIMIZATION TIPS:");
-  console.log("• Use --minify for production builds");
-  console.log("• Combine feature flags for maximum elimination");
-  console.log("• Consider feature dependencies to avoid conflicts");
-  console.log("• Test different feature combinations");
+  console.info("\n🚀 OPTIMIZATION TIPS:");
+  console.info("• Use --minify for production builds");
+  console.info("• Combine feature flags for maximum elimination");
+  console.info("• Consider feature dependencies to avoid conflicts");
+  console.info("• Test different feature combinations");
 }
 
 function cleanup(): void {
@@ -249,7 +249,7 @@ function cleanup(): void {
 }
 
 async function main(): Promise<void> {
-  console.log("🔍 Starting Bundle Analysis...\n");
+  console.info("🔍 Starting Bundle Analysis...\n");
 
   try {
     // Clean up previous analysis files
@@ -258,10 +258,10 @@ async function main(): Promise<void> {
     // Build all configurations
     const builds: BuildResult[] = [];
     for (const config of BUILD_CONFIGS) {
-      console.log(`📦 Building ${config.name}...`);
+      console.info(`📦 Building ${config.name}...`);
       const build = buildBundle(config);
       builds.push(build);
-      console.log(
+      console.info(
         `✅ ${config.name}: ${formatBytes(build.size)} (${build.buildTime}ms)`
       );
     }
@@ -275,7 +275,7 @@ async function main(): Promise<void> {
     // Cleanup
     cleanup();
 
-    console.log("\n✨ Bundle analysis complete!");
+    console.info("\n✨ Bundle analysis complete!");
   } catch (error) {
     console.error("❌ Analysis failed:", error);
     cleanup();

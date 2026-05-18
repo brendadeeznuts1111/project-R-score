@@ -398,25 +398,25 @@ ${details}`;
   saveReport(filename: string = './SYSTEM_STATUS_REPORT.md'): void {
     const report = this.generateReport();
     writeFileSync(filename, report);
-    console.log(`📄 System status report saved to: ${filename}`);
+    console.info(`📄 System status report saved to: ${filename}`);
   }
 
   /**
    * Display status summary
    */
   displaySummary(): void {
-    console.log('🎯 Production Deployment System Status');
-    console.log('=======================================');
-    console.log(`📊 Overall Status: ${this.getStatusEmoji(this.status.status)} ${this.status.status.toUpperCase()}`);
-    console.log(`🚀 Performance: ${this.status.performance.performanceImprovement}`);
-    console.log(`🛡️ Security: ${this.status.security.complianceStatus}`);
-    console.log(`📦 Deployments: ${this.status.deployment.artifactsDeployed} artifacts`);
-    console.log(`🕐 Last Check: ${this.status.timestamp}`);
-    console.log('');
+    console.info('🎯 Production Deployment System Status');
+    console.info('=======================================');
+    console.info(`📊 Overall Status: ${this.getStatusEmoji(this.status.status)} ${this.status.status.toUpperCase()}`);
+    console.info(`🚀 Performance: ${this.status.performance.performanceImprovement}`);
+    console.info(`🛡️ Security: ${this.status.security.complianceStatus}`);
+    console.info(`📦 Deployments: ${this.status.deployment.artifactsDeployed} artifacts`);
+    console.info(`🕐 Last Check: ${this.status.timestamp}`);
+    console.info('');
     
-    console.log('🏗️ Components:');
+    console.info('🏗️ Components:');
     this.status.components.forEach(component => {
-      console.log(`   ${this.getStatusEmoji(component.status)} ${component.name}: ${component.status.toUpperCase()}`);
+      console.info(`   ${this.getStatusEmoji(component.status)} ${component.name}: ${component.status.toUpperCase()}`);
     });
   }
 }
@@ -431,8 +431,8 @@ if (import.meta.main) {
   // Save detailed report
   reporter.saveReport();
   
-  console.log('\n🎉 Production deployment system is fully operational!');
-  console.log('📄 Detailed report saved to: SYSTEM_STATUS_REPORT.md');
+  console.info('\n🎉 Production deployment system is fully operational!');
+  console.info('📄 Detailed report saved to: SYSTEM_STATUS_REPORT.md');
 }
 
 export { SystemStatusReporter, SystemStatus };

@@ -263,7 +263,7 @@ export function setupErrorHandling(config?: {
   // Initialize global error handling
   const globalHandler = initializeGlobalErrorHandling(config?.global);
   
-  console.log('✅ Error handling system initialized');
+  console.info('✅ Error handling system initialized');
   
   return {
     globalHandler,

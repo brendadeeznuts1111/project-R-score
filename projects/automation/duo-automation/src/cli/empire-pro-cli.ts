@@ -78,9 +78,9 @@ program
         spinner.succeed();
         empireLog.success('✅ Phone Audit Complete');
         empireLog.info('📊 Consistency: ${audit.consistency}%');
-        console.log(`${empire.warning}📧 Email: ${audit.correlations.email || 'Not found'}${colors.reset}`);
-        console.log(chalk.cyan(`🏠 Address: ${audit.correlations.address || 'Not found'}`));
-        console.log(chalk.magenta(`👤 Social: ${audit.correlations.social || 'Not found'}`));
+        console.info(`${empire.warning}📧 Email: ${audit.correlations.email || 'Not found'}${colors.reset}`);
+        console.info(chalk.cyan(`🏠 Address: ${audit.correlations.address || 'Not found'}`));
+        console.info(chalk.magenta(`👤 Social: ${audit.correlations.social || 'Not found'}`));
         
         if (options.riskBreakdown) {
           empireLog.error('⚠️ SyntheticRisk: ${audit.risk.synthetic}% | FraudRisk: ${audit.risk.fraud}% | TakeoverRisk: ${audit.risk.takeover}%');
@@ -99,10 +99,10 @@ program
         empireLog.success('✅ Intelligence Gathering Complete');
         empireLog.info('📱 Carrier: ${result.carrier}');
         empireLog.warning('🏷️ Type: ${result.type}');
-        console.log(chalk.cyan(`🌍 Location: ${result.location}`));
+        console.info(chalk.cyan(`🌍 Location: ${result.location}`));
         
         if (options.temporal) {
-          console.log(chalk.magenta(`📅 CarrierChanges: ${result.temporal.carrierChanges} | AddressChanges: ${result.temporal.addressChanges}`));
+          console.info(chalk.magenta(`📅 CarrierChanges: ${result.temporal.carrierChanges} | AddressChanges: ${result.temporal.addressChanges}`));
           if (result.temporal.riskPeak) {
             empireLog.error('⚠️ RiskPeak: ${result.temporal.riskPeak}');
           }
@@ -194,8 +194,8 @@ program
         empireLog.success('✅ Email Audit Complete');
         empireLog.info('📅 DomainAge: ${audit.domainAge}d');
         empireLog.warning('🚨 Breaches: ${audit.breaches}');
-        console.log(chalk.cyan(`📮 MX: ${audit.mxProvider}`));
-        console.log(chalk.magenta(`🗑️ Disposable: ${audit.isDisposable ? '✅' : '❌'}`));
+        console.info(chalk.cyan(`📮 MX: ${audit.mxProvider}`));
+        console.info(chalk.magenta(`🗑️ Disposable: ${audit.isDisposable ? '✅' : '❌'}`));
         empireLog.success('📊 Reputation: ${audit.reputation}');
       }
       
@@ -231,8 +231,8 @@ program
         empireLog.success('✅ LinkedIn Enrichment Complete');
         empireLog.info('👔 LinkedIn: ${enrichment.title}');
         empireLog.warning('🏢 Company: ${enrichment.company}');
-        console.log(chalk.cyan(`👥 Employees: ${enrichment.employees}+`));
-        console.log(chalk.magenta(`💰 Revenue: $${enrichement.revenue}`));
+        console.info(chalk.cyan(`👥 Employees: ${enrichment.employees}+`));
+        console.info(chalk.magenta(`💰 Revenue: $${enrichement.revenue}`));
       }
       
       if (options.findAssociated) {
@@ -247,8 +247,8 @@ program
         
         // Show summary
         empireLog.warning('📧 Emails: ${graph.emails.length}');
-        console.log(chalk.cyan(`📱 Phones: ${graph.phones.length}`));
-        console.log(chalk.magenta(`🏠 Addresses: ${graph.addresses.length}`));
+        console.info(chalk.cyan(`📱 Phones: ${graph.phones.length}`));
+        console.info(chalk.magenta(`🏠 Addresses: ${graph.addresses.length}`));
         empireLog.success('👤 Social: ${graph.socialProfiles.length}');
       }
       
@@ -311,8 +311,8 @@ program
         empireLog.success('✅ Address Audit Complete');
         empireLog.info('💰 Value: $${audit.propertyValue}');
         empireLog.warning('🚨 CrimeRate: ${audit.crimeRate}/100');
-        console.log(chalk.cyan(`💵 Income: ${audit.incomeLevel}`));
-        console.log(chalk.magenta(`📊 Turnover: ${audit.turnover}`));
+        console.info(chalk.cyan(`💵 Income: ${audit.incomeLevel}`));
+        console.info(chalk.magenta(`📊 Turnover: ${audit.turnover}`));
       }
       
       if (options.geoBatch) {
@@ -371,7 +371,7 @@ program
         empireLog.info('👥 Residents: ${history.totalResidents} (${options.temporal}y)');
         empireLog.warning('📅 AvgStay: ${history.averageStay}y');
         if (history.currentResident) {
-          console.log(chalk.cyan(`🏠 Current: ${history.currentResident.family} (${history.currentResident.duration}y)`));
+          console.info(chalk.cyan(`🏠 Current: ${history.currentResident.family} (${history.currentResident.duration}y)`));
         }
       }
       
@@ -383,8 +383,8 @@ program
         
         spinner.succeed();
         empireLog.success('✅ Map Visualization Created');
-        console.log(`${empire.info}🗺️ Map: ${map.description} (layers: ${options.layers.split(':').length})${colors.reset}`);
-        console.log(chalk.cyan(`🌐 View at: ${map.url}`));
+        console.info(`${empire.info}🗺️ Map: ${map.description} (layers: ${options.layers.split(':').length})${colors.reset}`);
+        console.info(chalk.cyan(`🌐 View at: ${map.url}`));
       }
       
     } catch (error) {
@@ -432,10 +432,10 @@ program
         
         mapping.platforms.forEach(platform => {
           const verified = platform.verified ? chalk.green('✅') : chalk.red('❌');
-          console.log(`${verified} ${platform.name}: ${platform.handle || 'Not found'}`);
+          console.info(`${verified} ${platform.name}: ${platform.handle || 'Not found'}`);
         });
         
-        console.log(chalk.magenta(`📊 GraphScore: ${mapping.graphScore}`));
+        console.info(chalk.magenta(`📊 GraphScore: ${mapping.graphScore}`));
       }
       
       if (options.findProfiles) {
@@ -447,15 +447,15 @@ program
         
         spinner.succeed();
         empireLog.success('✅ Professional Identity Found');
-        console.log(`${empire.info}💼 Corporate: ${profiles.corporate.join('/')}${colors.reset}`);
+        console.info(`${empire.info}💼 Corporate: ${profiles.corporate.join('/')}${colors.reset}`);
         
         if (profiles.executive) {
           empireLog.warning('👔 Executive: ${profiles.executive.title}');
-          console.log(chalk.cyan(`🏢 Company: ${profiles.executive.company}`));
+          console.info(chalk.cyan(`🏢 Company: ${profiles.executive.company}`));
         }
         
         if (profiles.companyMatches > 0) {
-          console.log(chalk.magenta(`🎯 CompanyMatches: ${profiles.companyMatches}`));
+          console.info(chalk.magenta(`🎯 CompanyMatches: ${profiles.companyMatches}`));
         }
       }
       
@@ -469,7 +469,7 @@ program
         empireLog.success('✅ Automated Enrichment Complete');
         empireLog.info('🔍 Enriched: ${enrichment.enrichmentPath}');
         empireLog.warning('📊 Confidence: ${enrichment.confidence}');
-        console.log(chalk.cyan(`📈 NewData: ${enrichment.newDataPercentage}%`));
+        console.info(chalk.cyan(`📈 NewData: ${enrichment.newDataPercentage}%`));
       }
       
       if (options.identityGraph) {
@@ -482,8 +482,8 @@ program
         
         // Show graph summary
         empireLog.warning('📧 Emails: ${graph.data.emails.length}');
-        console.log(chalk.cyan(`📱 Phones: ${graph.data.phones.length}`));
-        console.log(chalk.magenta(`🏠 Addresses: ${graph.data.addresses.length}`));
+        console.info(chalk.cyan(`📱 Phones: ${graph.data.phones.length}`));
+        console.info(chalk.magenta(`🏠 Addresses: ${graph.data.addresses.length}`));
         empireLog.success('👤 Social: ${graph.data.social.length}');
       }
       
@@ -495,8 +495,8 @@ program
         empireLog.success('✅ Behavioral Analysis Complete');
         empireLog.info('📊 Activity: ${patterns.frequency}');
         empireLog.warning('🔄 Patterns: ${patterns.consistency}');
-        console.log(chalk.cyan(`📈 BehavioralScore: ${patterns.score}`));
-        console.log(chalk.magenta(`⚠️ Anomalies: ${patterns.anomalies}`));
+        console.info(chalk.cyan(`📈 BehavioralScore: ${patterns.score}`));
+        console.info(chalk.magenta(`⚠️ Anomalies: ${patterns.anomalies}`));
       }
       
     } catch (error) {
@@ -575,7 +575,7 @@ program
       if (options.export) {
         const outputPath = file.replace(/\.[^.]+$/, `.${options.export}`);
         await fs.writeFile(outputPath, JSON.stringify(results, null, 2));
-        console.log(chalk.cyan(`📁 Exported to: ${outputPath}`));
+        console.info(chalk.cyan(`📁 Exported to: ${outputPath}`));
       }
       
     } catch (error) {
@@ -614,8 +614,8 @@ program
         spinner.succeed();
         empireLog.success('✅ Enterprise Monitoring Active');
         empireLog.info('👁️ Monitoring: 24/7');
-        console.log(`${empire.warning}📡 Alerts: ${options.webhooks || 'None'}${colors.reset}`);
-        console.log(chalk.cyan('📈 SLA: 99.9%'));
+        console.info(`${empire.warning}📡 Alerts: ${options.webhooks || 'None'}${colors.reset}`);
+        console.info(chalk.cyan('📈 SLA: 99.9%'));
       }
       
       if (options.kafkaProduce) {
@@ -627,7 +627,7 @@ program
         
         spinner.succeed();
         empireLog.success('✅ Kafka: Producing to ${options.kafkaProduce}');
-        console.log(`${empire.info}📋 AvroSchema: ${options.avroSchema ? 'valid' : 'disabled'}${colors.reset}`);
+        console.info(`${empire.info}📋 AvroSchema: ${options.avroSchema ? 'valid' : 'disabled'}${colors.reset}`);
         empireLog.warning('📊 Throughput: 1k msgs/s');
       }
       
@@ -671,8 +671,8 @@ program
       empireLog.success('✅ ML Training Complete');
       empireLog.info('🧠 Training: ${options.trainModel}');
       empireLog.warning('📊 Epochs: ${options.epochs}/${options.epochs}');
-      console.log(chalk.cyan(`📈 Accuracy: ${training.accuracy}%`));
-      console.log(chalk.magenta(`📦 Exported: model.${options.export}`));
+      console.info(chalk.cyan(`📈 Accuracy: ${training.accuracy}%`));
+      console.info(chalk.magenta(`📦 Exported: model.${options.export}`));
       
     } catch (error) {
       spinner.fail('❌ ML training failed');
@@ -745,8 +745,8 @@ program
         empireLog.success('✅ Grafana Dashboard Created');
         empireLog.info('📈 Dashboard: ${dashboard.url}');
         empireLog.warning('📊 Datasource: ${options.datasource}');
-        console.log(chalk.cyan(`📋 Panels: ${dashboard.panelCount}`));
-        console.log(chalk.magenta(`🚨 Alerts: ${dashboard.alertCount}`));
+        console.info(chalk.cyan(`📋 Panels: ${dashboard.panelCount}`));
+        console.info(chalk.magenta(`🚨 Alerts: ${dashboard.alertCount}`));
       }
       
       if (options.dashboard === 'tableau') {
@@ -757,7 +757,7 @@ program
         empireLog.success('✅ Tableau Integration Complete');
         empireLog.info('📊 Tableau: Hyper extract created');
         empireLog.warning('📋 Sheets: ${extract.sheetCount}');
-        console.log(chalk.cyan(`📈 Dashboards: ${extract.dashboardCount}`));
+        console.info(chalk.cyan(`📈 Dashboards: ${extract.dashboardCount}`));
       }
       
       if (options['3d'] && options['vr-ready']) {
@@ -770,8 +770,8 @@ program
         spinner.succeed();
         empireLog.success('✅ 3D/VR Visualization Created');
         empireLog.info('🎮 3D Graph: ${vr.nodeCount} nodes');
-        console.log(`${empire.warning}🥽 VR Ready: ${vr.platforms.join('/')}${colors.reset}`);
-        console.log(chalk.cyan(`📦 Export: graph.${options.export}`));
+        console.info(`${empire.warning}🥽 VR Ready: ${vr.platforms.join('/')}${colors.reset}`);
+        console.info(chalk.cyan(`📦 Export: graph.${options.export}`));
       }
       
     } catch (error) {
@@ -808,7 +808,7 @@ program
       empireLog.success('✅ Benchmark Complete');
       empireLog.info('⚡ Benchmark: ${options.scale} requests');
       empireLog.warning('📊 Throughput: ${results.throughput}/sec');
-      console.log(chalk.cyan(`⏱️ Latency: p95<${results.latency.p95}ms`));
+      console.info(chalk.cyan(`⏱️ Latency: p95<${results.latency.p95}ms`));
       
     } catch (error) {
       spinner.fail('❌ Benchmark failed');
@@ -825,9 +825,9 @@ program
   .command('version')
   .description('Show version information')
   .action(() => {
-    console.log(renderLogo('small'));
+    console.info(renderLogo('small'));
     empireLog.info('Version 4.0.0 - Complete Identity Intelligence Platform');
-    console.log(chalk.gray('© 2026 Empire Pro Technologies'));
+    console.info(chalk.gray('© 2026 Empire Pro Technologies'));
   });
 
 program
@@ -843,8 +843,8 @@ program
     empireLog.success('✅ Empire Pro CLI Demo Complete');
     empireLog.info('🚀 Features: Phone, Email, Address, Social Intelligence');
     empireLog.warning('🧠 Capabilities: ML, Real-time, Batch, Visualization');
-    console.log(chalk.cyan('📊 Performance: <500ms response, 10k+ throughput'));
-    console.log(chalk.magenta('🔒 Security: Enterprise-grade, Compliance-ready'));
+    console.info(chalk.cyan('📊 Performance: <500ms response, 10k+ throughput'));
+    console.info(chalk.magenta('🔒 Security: Enterprise-grade, Compliance-ready'));
   });
 
 // ============================================================================

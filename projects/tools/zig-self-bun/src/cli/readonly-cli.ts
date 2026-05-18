@@ -22,14 +22,14 @@ async function main() {
         process.exit(1);
       }
       
-      console.log(value);
+      console.info(value);
       break;
     }
     
     case "list": {
       const all = await getAllReadonlyEnv();
       for (const [key, value] of Object.entries(all)) {
-        console.log(`${key}=${value}`);
+        console.info(`${key}=${value}`);
       }
       break;
     }
@@ -38,9 +38,9 @@ async function main() {
       const format = args[0] || "shell";
       
       if (format === "shell" || format === "sh") {
-        console.log(await exportAsShellScript());
+        console.info(await exportAsShellScript());
       } else if (format === "env" || format === "dotenv") {
-        console.log(await exportAsDotEnv());
+        console.info(await exportAsDotEnv());
       } else {
         console.error(`Unknown format: ${format}. Use 'shell' or 'env'`);
         process.exit(1);
@@ -56,13 +56,13 @@ async function main() {
       }
       
       const isReadonly = isReadonlyEnv(varName);
-      console.log(isReadonly ? "yes" : "no");
+      console.info(isReadonly ? "yes" : "no");
       process.exit(isReadonly ? 0 : 1);
       break;
     }
     
     default: {
-      console.log(`Usage: bun run src/env/readonly-cli.ts <command> [args]
+      console.info(`Usage: bun run src/env/readonly-cli.ts <command> [args]
 
 Commands:
   get <VAR_NAME>     Get value of readonly environment variable

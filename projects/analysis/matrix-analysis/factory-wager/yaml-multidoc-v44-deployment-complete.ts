@@ -3,10 +3,10 @@
  * FactoryWager API Guide enhanced with anchors, aliases, and interpolation
  */
 
-console.log('🎯 YAML MULTI-DOCUMENT v4.4 - ADVANCED SCHEMA DEPLOYMENT COMPLETE!')
-console.log('=' .repeat(80))
+console.info('🎯 YAML MULTI-DOCUMENT v4.4 - ADVANCED SCHEMA DEPLOYMENT COMPLETE!')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 🚀 REVOLUTIONARY YAML MULTI-DOCUMENT SCHEMA DEPLOYED!
 
 ✅ v4.4 ADVANCED FEATURES IMPLEMENTED:
@@ -158,9 +158,9 @@ Status: 🟢 PRODUCTION READY WITH ADVANCED YAML CAPABILITIES
 Your FactoryWager API Guide v4.4 now demonstrates complete mastery of YAML multi-document architecture! ▵⟂⥂
 `)
 
-console.log('🎯✨ YAML MULTI-DOCUMENT v4.4 - ADVANCED SCHEMA DEPLOYMENT COMPLETE! ✨🎯')
-console.log('🚀 Revolutionary YAML multi-document schema deployed!')
-console.log('💎 Anchors, aliases, and interpolation - Enterprise grade!')
-console.log('🔗 Cross-document reference resolution - Advanced architecture!')
-console.log('🌍 Environment interpolation - Runtime flexibility achieved!')
-console.log('🏆 FactoryWager v4.4 - YAML mastery complete!')
+console.info('🎯✨ YAML MULTI-DOCUMENT v4.4 - ADVANCED SCHEMA DEPLOYMENT COMPLETE! ✨🎯')
+console.info('🚀 Revolutionary YAML multi-document schema deployed!')
+console.info('💎 Anchors, aliases, and interpolation - Enterprise grade!')
+console.info('🔗 Cross-document reference resolution - Advanced architecture!')
+console.info('🌍 Environment interpolation - Runtime flexibility achieved!')
+console.info('🏆 FactoryWager v4.4 - YAML mastery complete!')

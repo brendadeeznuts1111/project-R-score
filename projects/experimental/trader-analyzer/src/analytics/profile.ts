@@ -5,9 +5,9 @@
  *
  * @example
  * const profile = analyzeTraderProfile(stats, trades, orders, sessions);
- * console.log(`Style: ${profile.style}`);
- * console.log(`Risk: ${profile.risk}`);
- * console.log(profile.insights.summary);
+ * console.info(`Style: ${profile.style}`);
+ * console.info(`Risk: ${profile.risk}`);
+ * console.info(profile.insights.summary);
  */
 
 import type {
@@ -32,7 +32,7 @@ import type {
  *
  * @example
  * const profile = analyzeTraderProfile(stats, trades, orders, sessions);
- * console.log(`${profile.risk} ${profile.style} with ${profile.metrics.winRate}% win rate`);
+ * console.info(`${profile.risk} ${profile.style} with ${profile.metrics.winRate}% win rate`);
  */
 export function analyzeTraderProfile(
 	stats: TradingStats,

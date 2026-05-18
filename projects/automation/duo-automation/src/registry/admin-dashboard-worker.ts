@@ -582,7 +582,7 @@ function getAdminDashboardHTML(): string {
                     const connection = (navigator as any).connection;
                     const networkType = connection.effectiveType || '4g';
                     
-                    console.log(`📶 Network detected: ${networkType}`);
+                    console.info(`📶 Network detected: ${networkType}`);
                     
                     switch (networkType) {
                         case 'slow-2g':
@@ -614,18 +614,18 @@ function getAdminDashboardHTML(): string {
             }
 
             preconnectMinimal() {
-                console.log('📶 Minimal preconnect strategy for slow networks');
+                console.info('📶 Minimal preconnect strategy for slow networks');
                 this.addPreconnect('https://api.factory-wager.com');
                 this.addPreconnect('https://fonts.googleapis.com');
             }
 
             preconnectBalanced() {
-                console.log('📶 Balanced preconnect strategy for 3G networks');
+                console.info('📶 Balanced preconnect strategy for 3G networks');
                 this.preconnectCriticalResources();
             }
 
             preconnectOptimal() {
-                console.log('📶 Optimal preconnect strategy for fast networks');
+                console.info('📶 Optimal preconnect strategy for fast networks');
                 const optimalDomains = [
                     'https://api.factory-wager.com',
                     'https://registry.factory-wager.com',
@@ -651,7 +651,7 @@ function getAdminDashboardHTML(): string {
                 document.head.appendChild(link);
                 
                 this.connections.add(url);
-                console.log(`🔗 Preconnect added: ${url}`);
+                console.info(`🔗 Preconnect added: ${url}`);
             }
 
             setupNetworkMonitoring() {
@@ -659,7 +659,7 @@ function getAdminDashboardHTML(): string {
                     const connection = (navigator as any).connection;
                     
                     connection.addEventListener('change', () => {
-                        console.log('📶 Network changed, re-optimizing...');
+                        console.info('📶 Network changed, re-optimizing...');
                         this.optimizeForNetwork();
                     });
                 }

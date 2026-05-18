@@ -137,14 +137,14 @@ export class InteractiveScopeInspector {
 
     process.stdin.on('keypress', (str, key) => {
       if (key.ctrl && key.name === 'c') {
-        console.log('\n👋 Exiting interactive mode.');
+        console.info('\n👋 Exiting interactive mode.');
         this.showSessionSummary();
         process.exit(0);
       }
       
       if (key.ctrl && key.name === 'r') {
         this.resetFilters();
-        console.log('\n🔄 Filters reset.');
+        console.info('\n🔄 Filters reset.');
         this.displayCurrent();
       }
       
@@ -155,7 +155,7 @@ export class InteractiveScopeInspector {
       
       if (key.ctrl && key.name === 's') {
         this.saveToFile('interactive-output.json');
-        console.log('\n💾 Saved current state.');
+        console.info('\n💾 Saved current state.');
       }
       
       if (key.ctrl && key.name === 'p') {
@@ -192,7 +192,7 @@ export class InteractiveScopeInspector {
         const duration = Date.now() - startTime;
         
         if (duration > 1000) {
-          console.log(`⏱️  Command completed in ${(duration / 1000).toFixed(2)}s`);
+          console.info(`⏱️  Command completed in ${(duration / 1000).toFixed(2)}s`);
         }
       } catch (error: any) {
         console.error(`❌ ${error.message}`);
@@ -203,7 +203,7 @@ export class InteractiveScopeInspector {
 
     this.rl.on('close', () => {
       this.showSessionSummary();
-      console.log('👋 Goodbye!');
+      console.info('👋 Goodbye!');
       process.exit(0);
     });
 
@@ -214,7 +214,7 @@ export class InteractiveScopeInspector {
    * Show beautiful welcome screen
    */
   private showWelcomeScreen(): void {
-    console.log(`
+    console.info(`
 🎯 FactoryWager Interactive Scope Inspector
 ═════════════════════════════════════════
 🔍 Advanced inspection with real-time filtering
@@ -323,12 +323,12 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
         break;
         
       case 'exit':
-        console.log('👋 Exiting...');
+        console.info('👋 Exiting...');
         process.exit(0);
         break;
         
       default:
-        console.log(`❓ Unknown command: ${command}. Type 'help' for commands.`);
+        console.info(`❓ Unknown command: ${command}. Type 'help' for commands.`);
     }
   }
 
@@ -337,7 +337,7 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
    */
   private applyFilter(text: string): void {
     if (!text) {
-      console.log('📝 Usage: filter <text>');
+      console.info('📝 Usage: filter <text>');
       return;
     }
     
@@ -357,7 +357,7 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
    */
   private applyRegex(pattern: string): void {
     if (!pattern) {
-      console.log('📝 Usage: regex <pattern>');
+      console.info('📝 Usage: regex <pattern>');
       return;
     }
     
@@ -382,7 +382,7 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
    */
   private applyJsonPath(path: string): void {
     if (!path) {
-      console.log('📝 Usage: jsonpath <path>');
+      console.info('📝 Usage: jsonpath <path>');
       return;
     }
     
@@ -402,23 +402,23 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
   private showPatterns(): void {
     const patterns = AdvancedScopeInspector.extractPatterns(this.currentObj);
     
-    console.log('\n🔍 Extracted Patterns:');
-    console.log('══════════════════════════');
+    console.info('\n🔍 Extracted Patterns:');
+    console.info('══════════════════════════');
     
     let totalPatterns = 0;
     Object.entries(patterns).forEach(([type, values]) => {
       if (values.length > 0) {
-        console.log(`\n📋 ${type.toUpperCase()}:`);
-        values.slice(0, 10).forEach(v => console.log(`  • ${v}`));
+        console.info(`\n📋 ${type.toUpperCase()}:`);
+        values.slice(0, 10).forEach(v => console.info(`  • ${v}`));
         if (values.length > 10) {
-          console.log(`  ... and ${values.length - 10} more`);
+          console.info(`  ... and ${values.length - 10} more`);
         }
         totalPatterns += values.length;
       }
     });
     
     this.sessionStats.patternsFound += totalPatterns;
-    console.log(`\n📊 Total patterns found: ${totalPatterns}`);
+    console.info(`\n📊 Total patterns found: ${totalPatterns}`);
   }
 
   /**
@@ -427,8 +427,8 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
   private showSecurityAnalysis(): void {
     const analysis = AdvancedScopeInspector.securityAnalysis(this.currentObj);
     
-    console.log('\n🛡️  Security Analysis:');
-    console.log('══════════════════════════');
+    console.info('\n🛡️  Security Analysis:');
+    console.info('══════════════════════════');
     
     const riskColors = {
       low: '🟢',
@@ -437,26 +437,26 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
       critical: '🔴'
     };
     
-    console.log(`\nRisk Level: ${riskColors[analysis.riskLevel]} ${analysis.riskLevel.toUpperCase()}`);
+    console.info(`\nRisk Level: ${riskColors[analysis.riskLevel]} ${analysis.riskLevel.toUpperCase()}`);
     
     if (analysis.findings.length > 0) {
-      console.log('\n🚨 Findings:');
+      console.info('\n🚨 Findings:');
       analysis.findings.slice(0, 10).forEach((finding, i) => {
-        console.log(`\n${i + 1}. ${finding.type.toUpperCase()} [${finding.severity.toUpperCase()}]`);
-        console.log(`   Path: ${finding.path}`);
-        console.log(`   Description: ${finding.description}`);
-        console.log(`   Recommendation: ${finding.recommendation}`);
+        console.info(`\n${i + 1}. ${finding.type.toUpperCase()} [${finding.severity.toUpperCase()}]`);
+        console.info(`   Path: ${finding.path}`);
+        console.info(`   Description: ${finding.description}`);
+        console.info(`   Recommendation: ${finding.recommendation}`);
       });
       
       if (analysis.findings.length > 10) {
-        console.log(`\n... and ${analysis.findings.length - 10} more findings`);
+        console.info(`\n... and ${analysis.findings.length - 10} more findings`);
       }
     }
     
-    console.log('\n📊 Summary:');
-    console.log(`  • Secrets: ${analysis.summary.totalSecrets}`);
-    console.log(`  • PII: ${analysis.summary.totalPII}`);
-    console.log(`  • Suspicious patterns: ${analysis.summary.suspiciousPatterns}`);
+    console.info('\n📊 Summary:');
+    console.info(`  • Secrets: ${analysis.summary.totalSecrets}`);
+    console.info(`  • PII: ${analysis.summary.totalPII}`);
+    console.info(`  • Suspicious patterns: ${analysis.summary.suspiciousPatterns}`);
   }
 
   /**
@@ -465,33 +465,33 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
   private showPerformanceAnalysis(): void {
     const analysis = AdvancedScopeInspector.performanceAnalysis(this.currentObj);
     
-    console.log('\n📊 Performance Analysis:');
-    console.log('═══════════════════════════');
+    console.info('\n📊 Performance Analysis:');
+    console.info('═══════════════════════════');
     
-    console.log('\n📈 Summary:');
-    console.log(`  • Total Keys: ${analysis.summary.totalKeys.toLocaleString()}`);
-    console.log(`  • Total Values: ${analysis.summary.totalValues.toLocaleString()}`);
-    console.log(`  • Max Depth: ${analysis.summary.maxDepth}`);
-    console.log(`  • Size: ${analysis.summary.estimatedMemoryUsage}`);
-    console.log(`  • Objects: ${analysis.summary.objectCount}`);
-    console.log(`  • Arrays: ${analysis.summary.arrayCount}`);
-    console.log(`  • Primitives: ${analysis.summary.primitiveCount.toLocaleString()}`);
+    console.info('\n📈 Summary:');
+    console.info(`  • Total Keys: ${analysis.summary.totalKeys.toLocaleString()}`);
+    console.info(`  • Total Values: ${analysis.summary.totalValues.toLocaleString()}`);
+    console.info(`  • Max Depth: ${analysis.summary.maxDepth}`);
+    console.info(`  • Size: ${analysis.summary.estimatedMemoryUsage}`);
+    console.info(`  • Objects: ${analysis.summary.objectCount}`);
+    console.info(`  • Arrays: ${analysis.summary.arrayCount}`);
+    console.info(`  • Primitives: ${analysis.summary.primitiveCount.toLocaleString()}`);
     
     if (analysis.bottlenecks.length > 0) {
-      console.log('\n⚠️  Performance Bottlenecks:');
+      console.info('\n⚠️  Performance Bottlenecks:');
       analysis.bottlenecks.slice(0, 5).forEach((bottleneck, i) => {
-        console.log(`\n${i + 1}. ${bottleneck.type.replace('_', ' ').toUpperCase()}`);
-        console.log(`   Path: ${bottleneck.path}`);
-        console.log(`   Impact: ${bottleneck.impact}`);
-        console.log(`   Recommendation: ${bottleneck.recommendation}`);
+        console.info(`\n${i + 1}. ${bottleneck.type.replace('_', ' ').toUpperCase()}`);
+        console.info(`   Path: ${bottleneck.path}`);
+        console.info(`   Impact: ${bottleneck.impact}`);
+        console.info(`   Recommendation: ${bottleneck.recommendation}`);
       });
     }
     
-    console.log('\n💡 Optimization Recommendations:');
+    console.info('\n💡 Optimization Recommendations:');
     analysis.optimization.recommendations.forEach(rec => {
-      console.log(`  • ${rec}`);
+      console.info(`  • ${rec}`);
     });
-    console.log(`\n💾 Potential Savings: ${analysis.optimization.potentialSavings}`);
+    console.info(`\n💾 Potential Savings: ${analysis.optimization.potentialSavings}`);
   }
 
   /**
@@ -502,30 +502,30 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
     const patterns = AdvancedScopeInspector.extractPatterns(this.currentObj);
     const security = AdvancedScopeInspector.securityAnalysis(this.currentObj);
     
-    console.log('\n📊 Analytics Dashboard:');
-    console.log('═════════════════════════');
+    console.info('\n📊 Analytics Dashboard:');
+    console.info('═════════════════════════');
     
-    console.log('\n🔍 Object Metrics:');
-    console.log(`  • Size: ${analysis.summary.estimatedMemoryUsage}`);
-    console.log(`  • Complexity: ${analysis.summary.maxDepth} levels deep`);
-    console.log(`  • Structure: ${analysis.summary.objectCount} objects, ${analysis.summary.arrayCount} arrays`);
+    console.info('\n🔍 Object Metrics:');
+    console.info(`  • Size: ${analysis.summary.estimatedMemoryUsage}`);
+    console.info(`  • Complexity: ${analysis.summary.maxDepth} levels deep`);
+    console.info(`  • Structure: ${analysis.summary.objectCount} objects, ${analysis.summary.arrayCount} arrays`);
     
-    console.log('\n🔒 Security Metrics:');
-    console.log(`  • Risk Level: ${security.riskLevel.toUpperCase()}`);
-    console.log(`  • Secrets Found: ${security.summary.totalSecrets}`);
-    console.log(`  • PII Found: ${security.summary.totalPII}`);
+    console.info('\n🔒 Security Metrics:');
+    console.info(`  • Risk Level: ${security.riskLevel.toUpperCase()}`);
+    console.info(`  • Secrets Found: ${security.summary.totalSecrets}`);
+    console.info(`  • PII Found: ${security.summary.totalPII}`);
     
-    console.log('\n🎯 Pattern Metrics:');
+    console.info('\n🎯 Pattern Metrics:');
     const patternCounts = Object.entries(patterns).filter(([_, values]) => values.length > 0);
     patternCounts.forEach(([type, values]) => {
-      console.log(`  • ${type}: ${values.length}`);
+      console.info(`  • ${type}: ${values.length}`);
     });
     
-    console.log('\n⚡ Session Stats:');
-    console.log(`  • Commands: ${this.sessionStats.commandsExecuted}`);
-    console.log(`  • Filters Applied: ${this.sessionStats.filtersApplied}`);
-    console.log(`  • Patterns Found: ${this.sessionStats.patternsFound}`);
-    console.log(`  • Session Duration: ${Math.floor((Date.now() - this.sessionStats.sessionStart.getTime()) / 1000)}s`);
+    console.info('\n⚡ Session Stats:');
+    console.info(`  • Commands: ${this.sessionStats.commandsExecuted}`);
+    console.info(`  • Filters Applied: ${this.sessionStats.filtersApplied}`);
+    console.info(`  • Patterns Found: ${this.sessionStats.patternsFound}`);
+    console.info(`  • Session Duration: ${Math.floor((Date.now() - this.sessionStats.sessionStart.getTime()) / 1000)}s`);
   }
 
   /**
@@ -533,23 +533,23 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
    */
   private displayCurrent(): void {
     console.clear();
-    console.log('🎯 FactoryWager Interactive Scope Inspector');
-    console.log('═════════════════════════════════════════\n');
+    console.info('🎯 FactoryWager Interactive Scope Inspector');
+    console.info('═════════════════════════════════════════\n');
     
     if (this.filters.length > 0) {
-      console.log('🔍 Active Filters:');
+      console.info('🔍 Active Filters:');
       this.filters.forEach((f, i) => {
-        console.log(`  ${i + 1}. ${f.type}: ${f.value}`);
+        console.info(`  ${i + 1}. ${f.type}: ${f.value}`);
       });
-      console.log('');
+      console.info('');
     }
     
     if (this.currentObj === undefined || 
         (typeof this.currentObj === 'object' && Object.keys(this.currentObj).length === 0)) {
-      console.log('📭 No data matches current filters.');
+      console.info('📭 No data matches current filters.');
     } else {
-      console.log('📋 Current Data:');
-      console.log(inspect(this.currentObj, { 
+      console.info('📋 Current Data:');
+      console.info(inspect(this.currentObj, { 
         colors: true, 
         depth: 6, 
         maxArrayLength: 10,
@@ -557,7 +557,7 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
       }));
     }
     
-    console.log('\n' + '─'.repeat(50));
+    console.info('\n' + '─'.repeat(50));
   }
 
   /**
@@ -565,9 +565,9 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
    */
   private showTree(): void {
     const tree = this.formatAsTree(this.currentObj);
-    console.log('\n🌳 Tree View:');
-    console.log('═══════════════════════════');
-    console.log(tree);
+    console.info('\n🌳 Tree View:');
+    console.info('═══════════════════════════');
+    console.info(tree);
   }
 
   /**
@@ -624,7 +624,7 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
   private async exportToHTML(): Promise<void> {
     const html = this.formatAsHTML(this.currentObj);
     await Bun.write('scope-export.html', html);
-    console.log('📄 Exported to scope-export.html');
+    console.info('📄 Exported to scope-export.html');
   }
 
   /**
@@ -757,7 +757,7 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
   tree               - Show hierarchical view
     `;
     
-    console.log(helpText);
+    console.info(helpText);
   }
 
   /**
@@ -766,7 +766,7 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
   private showSessionSummary(): void {
     const duration = Math.floor((Date.now() - this.sessionStats.sessionStart.getTime()) / 1000);
     
-    console.log(`
+    console.info(`
 📊 Session Summary
 ════════════════════
 ⏱️  Duration: ${duration}s
@@ -779,19 +779,19 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
 
   // Additional helper methods
   private applyExclude(text: string): void {
-    console.log(`Excluding: ${text}`);
+    console.info(`Excluding: ${text}`);
     // Implementation...
   }
 
   private applyJq(filter: string): void {
-    console.log(`Applying JQ: ${filter}`);
+    console.info(`Applying JQ: ${filter}`);
     // Implementation...
   }
 
   private showHistory(): void {
-    console.log('\nCommand History:');
+    console.info('\nCommand History:');
     this.history.forEach((cmd, i) => {
-      console.log(`  ${i + 1}. ${cmd}`);
+      console.info(`  ${i + 1}. ${cmd}`);
     });
   }
 
@@ -802,28 +802,28 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
 
   private async saveToFile(filename: string): Promise<void> {
     await Bun.write(filename, JSON.stringify(this.currentObj, null, 2));
-    console.log(`✅ Saved to ${filename}`);
+    console.info(`✅ Saved to ${filename}`);
   }
 
   private async exportToClipboard(): Promise<void> {
     const { $ } = await import('bun');
     await $`echo ${JSON.stringify(this.currentObj, null, 2)} | pbcopy`;
-    console.log('📋 Copied to clipboard!');
+    console.info('📋 Copied to clipboard!');
   }
 
   private searchInObject(text: string): void {
-    console.log(`Searching for: ${text}`);
+    console.info(`Searching for: ${text}`);
     // Implementation...
   }
 
   private findInObject(pattern: string): void {
-    console.log(`Finding pattern: ${pattern}`);
+    console.info(`Finding pattern: ${pattern}`);
     // Implementation...
   }
 
   private countObjects(): void {
     const count = this.countNodes(this.currentObj);
-    console.log(`📊 Total nodes: ${count}`);
+    console.info(`📊 Total nodes: ${count}`);
   }
 
   private countNodes(obj: any): number {
@@ -835,12 +835,12 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
 
   private showSize(): void {
     const size = Buffer.byteLength(JSON.stringify(this.currentObj), 'utf8');
-    console.log(`📏 Size: ${this.formatBytes(size)}`);
+    console.info(`📏 Size: ${this.formatBytes(size)}`);
   }
 
   private showDepth(): void {
     const depth = this.getMaxDepth(this.currentObj);
-    console.log(`📏 Max depth: ${depth}`);
+    console.info(`📏 Max depth: ${depth}`);
   }
 
   private getMaxDepth(obj: any, current: number = 0): number {
@@ -865,7 +865,7 @@ Shortcuts: Ctrl+R=Reset, Ctrl+L=Clear, Ctrl+S=Save, Ctrl+P=Patterns, Ctrl+C=Exit
 
   private toggleHelp(): void {
     // Toggle help overlay
-    console.log('\n📚 Quick Help: Use "help" for full commands');
+    console.info('\n📚 Quick Help: Use "help" for full commands');
   }
 }
 

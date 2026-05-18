@@ -162,7 +162,7 @@ export class EmailParser {
       };
       
       // Store transaction (you would implement this in your database)
-      console.log('💰 Email payment processed:', transaction);
+      console.info('💰 Email payment processed:', transaction);
       
       return { success: true, transactionId: transaction.id };
       
@@ -293,5 +293,5 @@ Transaction ID: ABC123XYZ789
 `;
 
 const result = await emailParser.parsePaymentEmail(venmoEmail);
-console.log('Parsed payment:', result);
+console.info('Parsed payment:', result);
 */

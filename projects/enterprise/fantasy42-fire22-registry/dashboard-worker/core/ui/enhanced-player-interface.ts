@@ -56,7 +56,7 @@ export class EnhancedPlayerUI {
    * Initialize all UI components
    */
   async initializeComponents(): Promise<void> {
-    console.log('🎨 Initializing Enhanced Player UI Components...');
+    console.info('🎨 Initializing Enhanced Player UI Components...');
 
     // Initialize Select2 components
     await this.initializeSelect2Components();
@@ -75,7 +75,7 @@ export class EnhancedPlayerUI {
       await this.initializeRealTimeUpdates();
     }
 
-    console.log('✅ Enhanced Player UI Components initialized successfully');
+    console.info('✅ Enhanced Player UI Components initialized successfully');
   }
 
   /**
@@ -129,7 +129,7 @@ export class EnhancedPlayerUI {
       // Add event handlers
       this.addSelect2EventHandlers(component.id, $element, enhancedConfig);
 
-      console.log(`✅ Select2 component initialized: ${component.id}`);
+      console.info(`✅ Select2 component initialized: ${component.id}`);
     } catch (error) {
       console.error(`❌ Failed to initialize Select2 component ${component.id}:`, error);
     }
@@ -364,31 +364,31 @@ export class EnhancedPlayerUI {
   private addSelect2EventHandlers(id: string, $element: any, config: any): void {
     // Handle select2:open event
     $element.on('select2:open', () => {
-      console.log(`📂 Select2 opened: ${id}`);
+      console.info(`📂 Select2 opened: ${id}`);
       this.handleSelect2Open(id);
     });
 
     // Handle select2:close event
     $element.on('select2:close', () => {
-      console.log(`📂 Select2 closed: ${id}`);
+      console.info(`📂 Select2 closed: ${id}`);
       this.handleSelect2Close(id);
     });
 
     // Handle select2:select event
     $element.on('select2:select', (e: any) => {
-      console.log(`📂 Selection made in ${id}:`, e.params.data);
+      console.info(`📂 Selection made in ${id}:`, e.params.data);
       this.handleSelect2Select(id, e.params.data);
     });
 
     // Handle select2:unselect event
     $element.on('select2:unselect', (e: any) => {
-      console.log(`📂 Selection removed from ${id}:`, e.params.data);
+      console.info(`📂 Selection removed from ${id}:`, e.params.data);
       this.handleSelect2Unselect(id, e.params.data);
     });
 
     // Handle change event
     $element.on('change', () => {
-      console.log(`📂 Value changed in ${id}`);
+      console.info(`📂 Value changed in ${id}`);
       this.handleSelect2Change(id);
     });
   }
@@ -455,7 +455,7 @@ export class EnhancedPlayerUI {
    * Handle state selection
    */
   private handleStateSelection(data: any): void {
-    console.log(`🏛️ State selected: ${data.text} (${data.id})`);
+    console.info(`🏛️ State selected: ${data.text} (${data.id})`);
     // Could trigger location-based features or restrictions
   }
 
@@ -463,7 +463,7 @@ export class EnhancedPlayerUI {
    * Handle payment method selection
    */
   private handlePaymentMethodSelection(data: any): void {
-    console.log(`💳 Payment method selected: ${data.text} (${data.id})`);
+    console.info(`💳 Payment method selected: ${data.text} (${data.id})`);
     // Could trigger payment method specific validation or setup
   }
 
@@ -471,7 +471,7 @@ export class EnhancedPlayerUI {
    * Handle lottery game selection
    */
   private handleLotteryGameSelection(data: any): void {
-    console.log(`🎲 Lottery game selected: ${data.text} (${data.id})`);
+    console.info(`🎲 Lottery game selected: ${data.text} (${data.id})`);
     // Could trigger game-specific information display
   }
 
@@ -479,7 +479,7 @@ export class EnhancedPlayerUI {
    * Handle peer group selection
    */
   private handlePeerGroupSelection(data: any): void {
-    console.log(`🤝 Peer group selected: ${data.text} (${data.id})`);
+    console.info(`🤝 Peer group selected: ${data.text} (${data.id})`);
     // Could trigger peer group specific features
   }
 
@@ -487,7 +487,7 @@ export class EnhancedPlayerUI {
    * Handle customer status selection
    */
   private handleCustomerStatusSelection(data: any): void {
-    console.log(`👤 Customer status selected: ${data.text} (${data.id})`);
+    console.info(`👤 Customer status selected: ${data.text} (${data.id})`);
     // Could trigger status-specific workflows
   }
 
@@ -542,7 +542,7 @@ export class EnhancedPlayerUI {
       // Add event handlers
       this.addDateTimeEventHandlers(component.id, $element, enhancedConfig);
 
-      console.log(`✅ Date/Time component initialized: ${component.id}`);
+      console.info(`✅ Date/Time component initialized: ${component.id}`);
     } catch (error) {
       console.error(`❌ Failed to initialize Date/Time component ${component.id}:`, error);
     }
@@ -593,19 +593,19 @@ export class EnhancedPlayerUI {
   private addDateTimeEventHandlers(id: string, $element: any, config: any): void {
     // Handle dp.change event for DateTimePicker
     $element.on('dp.change', (e: any) => {
-      console.log(`📅 Date/Time changed in ${id}:`, e.date);
+      console.info(`📅 Date/Time changed in ${id}:`, e.date);
       this.handleDateTimeChange(id, e.date);
     });
 
     // Handle apply.daterangepicker event for DateRangePicker
     $element.on('apply.daterangepicker', (ev: any, picker: any) => {
-      console.log(`📅 Date range applied in ${id}:`, picker.startDate, picker.endDate);
+      console.info(`📅 Date range applied in ${id}:`, picker.startDate, picker.endDate);
       this.handleDateRangeApply(id, picker.startDate, picker.endDate);
     });
 
     // Handle cancel.daterangepicker event
     $element.on('cancel.daterangepicker', () => {
-      console.log(`📅 Date range cancelled in ${id}`);
+      console.info(`📅 Date range cancelled in ${id}`);
       this.handleDateRangeCancel(id);
     });
   }
@@ -631,7 +631,7 @@ export class EnhancedPlayerUI {
    * Handle date range apply
    */
   private handleDateRangeApply(id: string, startDate: any, endDate: any): void {
-    console.log(
+    console.info(
       `📅 Date range applied: ${startDate.format('MM/DD/YYYY')} - ${endDate.format('MM/DD/YYYY')}`
     );
     // Could trigger data filtering or report generation
@@ -641,7 +641,7 @@ export class EnhancedPlayerUI {
    * Handle date range cancel
    */
   private handleDateRangeCancel(id: string): void {
-    console.log(`📅 Date range selection cancelled`);
+    console.info(`📅 Date range selection cancelled`);
   }
 
   /**
@@ -671,7 +671,7 @@ export class EnhancedPlayerUI {
    */
   private handleLotteryDrawDateChange(date: any): void {
     // Could trigger lottery game availability check or draw information
-    console.log(`🎲 Lottery draw date selected: ${date.format('MM/DD/YYYY')}`);
+    console.info(`🎲 Lottery draw date selected: ${date.format('MM/DD/YYYY')}`);
   }
 
   /**
@@ -718,7 +718,7 @@ export class EnhancedPlayerUI {
       // Add event handlers
       this.addTooltipEventHandlers(component.id, $element, enhancedConfig);
 
-      console.log(`✅ Tooltip component initialized: ${component.id}`);
+      console.info(`✅ Tooltip component initialized: ${component.id}`);
     } catch (error) {
       console.error(`❌ Failed to initialize tooltip component ${component.id}:`, error);
     }
@@ -769,25 +769,25 @@ export class EnhancedPlayerUI {
   private addTooltipEventHandlers(id: string, $element: any, config: any): void {
     // Handle show event
     $element.on('show.bs.tooltip', () => {
-      console.log(`💬 Tooltip showing: ${id}`);
+      console.info(`💬 Tooltip showing: ${id}`);
       this.handleTooltipShow(id);
     });
 
     // Handle shown event
     $element.on('shown.bs.tooltip', () => {
-      console.log(`💬 Tooltip shown: ${id}`);
+      console.info(`💬 Tooltip shown: ${id}`);
       this.handleTooltipShown(id);
     });
 
     // Handle hide event
     $element.on('hide.bs.tooltip', () => {
-      console.log(`💬 Tooltip hiding: ${id}`);
+      console.info(`💬 Tooltip hiding: ${id}`);
       this.handleTooltipHide(id);
     });
 
     // Handle hidden event
     $element.on('hidden.bs.tooltip', () => {
-      console.log(`💬 Tooltip hidden: ${id}`);
+      console.info(`💬 Tooltip hidden: ${id}`);
       this.handleTooltipHidden(id);
     });
   }
@@ -876,7 +876,7 @@ export class EnhancedPlayerUI {
    */
   private initializeNotifications(): void {
     // Could integrate with a notification library
-    console.log('🔔 Notification system initialized');
+    console.info('🔔 Notification system initialized');
   }
 
   /**
@@ -884,7 +884,7 @@ export class EnhancedPlayerUI {
    */
   private async initializeRealTimeUpdates(): Promise<void> {
     // Set up WebSocket or polling for real-time data
-    console.log('🔄 Real-time updates initialized');
+    console.info('🔄 Real-time updates initialized');
 
     // Example: Update balance every 30 seconds
     setInterval(async () => {
@@ -896,17 +896,17 @@ export class EnhancedPlayerUI {
    * Handle keyboard shortcuts
    */
   private handleSaveShortcut(): void {
-    console.log('💾 Save shortcut triggered');
+    console.info('💾 Save shortcut triggered');
     // Implement save logic
   }
 
   private handleNewShortcut(): void {
-    console.log('🆕 New shortcut triggered');
+    console.info('🆕 New shortcut triggered');
     // Implement new item logic
   }
 
   private handleHelpShortcut(): void {
-    console.log('❓ Help shortcut triggered');
+    console.info('❓ Help shortcut triggered');
     // Show help modal
   }
 
@@ -914,7 +914,7 @@ export class EnhancedPlayerUI {
    * Handle auto-save
    */
   private handleAutoSave(): void {
-    console.log('💾 Auto-saving data...');
+    console.info('💾 Auto-saving data...');
     // Implement auto-save logic
   }
 
@@ -934,7 +934,7 @@ export class EnhancedPlayerUI {
         }
       });
 
-      console.log('🔄 Real-time data updated');
+      console.info('🔄 Real-time data updated');
     } catch (error) {
       console.error('❌ Failed to update real-time data:', error);
     }

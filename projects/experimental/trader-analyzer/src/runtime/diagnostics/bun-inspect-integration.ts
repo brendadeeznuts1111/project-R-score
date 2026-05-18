@@ -74,7 +74,7 @@ export function inspectMarketData(
  *
  * @example 7.1.2.1.0: Feature Flags Deep Inspection
  * // Test Formula:
- * // 1. In UIContextRewriter, add: `console.log(inspectDeep(this.context, {depth: 2}))`
+ * // 1. In UIContextRewriter, add: `console.info(inspectDeep(this.context, {depth: 2}))`
  * // 2. Start server: `bun run dev`
  * // 3. Expected Result: Colored JSON with nested featureFlags object expanded
  *

@@ -71,8 +71,8 @@ function parseChunkManual(chunk: string): {
 
 // Example 1: CPU Profiling with Markdown Output
 async function demonstrateCPUProfiling() {
-	console.log("🔥 CPU Profiling with Markdown Output");
-	console.log("=====================================");
+	console.info("🔥 CPU Profiling with Markdown Output");
+	console.info("=====================================");
 
 	// Create a sample script to profile
 	const sampleScript = `
@@ -83,23 +83,23 @@ function fibonacci(n) {
 }
 
 function heavyComputation() {
-  console.log('Starting heavy computation...');
+  console.info('Starting heavy computation...');
   const start = performance.now();
   
   // Compute fibonacci numbers
   for (let i = 30; i <= 35; i++) {
     const result = fibonacci(i);
-    console.log(\`fibonacci(\${i}) = \${result}\`);
+    console.info(\`fibonacci(\${i}) = \${result}\`);
   }
   
   const end = performance.now();
-  console.log(\`Computation completed in \${(end - start).toFixed(2)}ms\`);
+  console.info(\`Computation completed in \${(end - start).toFixed(2)}ms\`);
 }
 
 // Simulate some async work
 async function asyncWork() {
   await new Promise(resolve => setTimeout(resolve, 100));
-  console.log('Async work completed');
+  console.info('Async work completed');
 }
 
 // Main execution
@@ -113,7 +113,7 @@ async function main() {
     arrays.push(new Array(100).fill(Math.random()));
   }
   
-  console.log('Memory allocation completed');
+  console.info('Memory allocation completed');
 }
 
 main().catch(console.error);
@@ -123,10 +123,10 @@ main().catch(console.error);
 	mkdirSync("./temp", { recursive: true });
 	await Bun.write(scriptPath, sampleScript);
 
-	console.log(`📝 Created sample script: ${scriptPath}`);
+	console.info(`📝 Created sample script: ${scriptPath}`);
 
 	// Run CPU profiling with markdown output
-	console.log("\n⚡ Running CPU profiling with markdown output...");
+	console.info("\n⚡ Running CPU profiling with markdown output...");
 
 	try {
 		const proc = Bun.spawn(
@@ -151,21 +151,21 @@ main().catch(console.error);
 		await proc.exited;
 
 		if (proc.exitCode === 0) {
-			console.log("✅ CPU profiling completed successfully!");
-			console.log("📊 Script output:");
-			console.log(output);
+			console.info("✅ CPU profiling completed successfully!");
+			console.info("📊 Script output:");
+			console.info(output);
 
 			// Check if markdown profile was created
 			const profileFile = "./profiles/fibonacci-cpu-profile.md";
 			if (existsSync(profileFile)) {
-				console.log(`📁 Markdown profile created: ${profileFile}`);
+				console.info(`📁 Markdown profile created: ${profileFile}`);
 
 				// Display a preview of the markdown profile
 				const profileContent = await Bun.file(profileFile).text();
 				const lines = profileContent.split("\n");
-				console.log("\n📋 Profile preview (first 20 lines):");
+				console.info("\n📋 Profile preview (first 20 lines):");
 				lines.slice(0, 20).forEach((line, i) => {
-					console.log(`${(i + 1).toString().padStart(2)}: ${line}`);
+					console.info(`${(i + 1).toString().padStart(2)}: ${line}`);
 				});
 			}
 		} else {
@@ -179,8 +179,8 @@ main().catch(console.error);
 
 // Example 2: Heap Profiling with Markdown Output
 async function demonstrateHeapProfiling() {
-	console.log("\n💾 Heap Profiling with Markdown Output");
-	console.log("======================================");
+	console.info("\n💾 Heap Profiling with Markdown Output");
+	console.info("======================================");
 
 	// Create a memory-intensive script
 	const memoryScript = `
@@ -192,7 +192,7 @@ class MemoryLeakSimulator {
   }
 
   createLargeArrays() {
-    console.log('Creating large arrays...');
+    console.info('Creating large arrays...');
     for (let i = 0; i < 100; i++) {
       const largeArray = new Array(10000).fill().map((_, index) => ({
         id: index,
@@ -201,11 +201,11 @@ class MemoryLeakSimulator {
       }));
       this.arrays.push(largeArray);
     }
-    console.log(\`Created \${this.arrays.length} large arrays\`);
+    console.info(\`Created \${this.arrays.length} large arrays\`);
   }
 
   createObjects() {
-    console.log('Creating objects...');
+    console.info('Creating objects...');
     for (let i = 0; i < 10000; i++) {
       this.objects.push({
         id: i,
@@ -216,11 +216,11 @@ class MemoryLeakSimulator {
         }
       });
     }
-    console.log(\`Created \${this.objects.length} objects\`);
+    console.info(\`Created \${this.objects.length} objects\`);
   }
 
   simulateLeak() {
-    console.log('Simulating memory leak...');
+    console.info('Simulating memory leak...');
     // Create objects that are never cleaned up
     const leakyData = [];
     setInterval(() => {
@@ -229,13 +229,13 @@ class MemoryLeakSimulator {
     
     // Return after some time to capture heap state
     setTimeout(() => {
-      console.log('Memory leak simulation completed');
-      console.log(\`Leaky data size: \${leakyData.length}\`);
+      console.info('Memory leak simulation completed');
+      console.info(\`Leaky data size: \${leakyData.length}\`);
     }, 200);
   }
 
   cleanup() {
-    console.log('Cleaning up memory...');
+    console.info('Cleaning up memory...');
     this.arrays = [];
     this.objects = [];
   }
@@ -255,7 +255,7 @@ async function main() {
   // Wait for leak simulation
   await new Promise(resolve => setTimeout(resolve, 300));
   
-  console.log('Heap profiling script completed');
+  console.info('Heap profiling script completed');
 }
 
 main().catch(console.error);
@@ -264,10 +264,10 @@ main().catch(console.error);
 	const scriptPath = "./temp/memory-demo.js";
 	await Bun.write(scriptPath, memoryScript);
 
-	console.log(`📝 Created memory script: ${scriptPath}`);
+	console.info(`📝 Created memory script: ${scriptPath}`);
 
 	// Run heap profiling with markdown output
-	console.log("\n⚡ Running heap profiling with markdown output...");
+	console.info("\n⚡ Running heap profiling with markdown output...");
 
 	try {
 		const proc = Bun.spawn(
@@ -292,21 +292,21 @@ main().catch(console.error);
 		await proc.exited;
 
 		if (proc.exitCode === 0) {
-			console.log("✅ Heap profiling completed successfully!");
-			console.log("📊 Script output:");
-			console.log(output);
+			console.info("✅ Heap profiling completed successfully!");
+			console.info("📊 Script output:");
+			console.info(output);
 
 			// Check if markdown profile was created
 			const profileFile = "./profiles/memory-heap-profile.md";
 			if (existsSync(profileFile)) {
-				console.log(`📁 Markdown heap profile created: ${profileFile}`);
+				console.info(`📁 Markdown heap profile created: ${profileFile}`);
 
 				// Display a preview of the markdown heap profile
 				const profileContent = await Bun.file(profileFile).text();
 				const lines = profileContent.split("\n");
-				console.log("\n📋 Heap Profile preview (first 25 lines):");
+				console.info("\n📋 Heap Profile preview (first 25 lines):");
 				lines.slice(0, 25).forEach((line, i) => {
-					console.log(`${(i + 1).toString().padStart(2)}: ${line}`);
+					console.info(`${(i + 1).toString().padStart(2)}: ${line}`);
 				});
 			}
 		} else {
@@ -320,8 +320,8 @@ main().catch(console.error);
 
 // Example 3: JSON5 Configuration Support
 async function demonstrateJSON5Support() {
-	console.log("\n📋 JSON5 Configuration Support");
-	console.log("===============================");
+	console.info("\n📋 JSON5 Configuration Support");
+	console.info("===============================");
 
 	// Create a JSON5 configuration file
 	const json5Config = {
@@ -377,18 +377,18 @@ async function demonstrateJSON5Support() {
 		JSON.stringify(json5Config, null, 2);
 	await Bun.write(configPath, json5Content);
 
-	console.log(`📝 Created JSON5 config: ${configPath}`);
-	console.log("📄 JSON5 content:");
-	console.log(json5Content);
+	console.info(`📝 Created JSON5 config: ${configPath}`);
+	console.info("📄 JSON5 content:");
+	console.info(json5Content);
 
 	// Parse the JSON5 configuration
 	try {
 		const parsedConfig =
 			(Bun as any).JSON5?.parse(json5Content) || JSON.parse(json5Content);
-		console.log("\n✅ JSON5 configuration parsed successfully!");
-		console.log(`📊 App name: ${(parsedConfig as any).app.name}`);
-		console.log(`📊 Database host: ${(parsedConfig as any).database.host}`);
-		console.log(`📊 Features: ${(parsedConfig as any).features.join(", ")}`);
+		console.info("\n✅ JSON5 configuration parsed successfully!");
+		console.info(`📊 App name: ${(parsedConfig as any).app.name}`);
+		console.info(`📊 Database host: ${(parsedConfig as any).database.host}`);
+		console.info(`📊 Features: ${(parsedConfig as any).features.join(", ")}`);
 	} catch (error) {
 		console.error("❌ Failed to parse JSON5 configuration:", error);
 	}
@@ -396,8 +396,8 @@ async function demonstrateJSON5Support() {
 
 // Example 4: JSONL Streaming Parsing
 async function demonstrateJSONLStreaming() {
-	console.log("\n📡 JSONL Streaming Parsing");
-	console.log("===========================");
+	console.info("\n📡 JSONL Streaming Parsing");
+	console.info("===========================");
 
 	// Create sample JSONL data
 	const sampleData = [
@@ -439,24 +439,24 @@ async function demonstrateJSONLStreaming() {
 	mkdirSync("./logs", { recursive: true });
 	await Bun.write(jsonlPath, jsonlContent);
 
-	console.log(`📝 Created JSONL data: ${jsonlPath}`);
-	console.log("📄 JSONL content:");
-	console.log(jsonlContent);
+	console.info(`📝 Created JSONL data: ${jsonlPath}`);
+	console.info("📄 JSONL content:");
+	console.info(jsonlContent);
 
 	// Demonstrate complete JSONL parsing
-	console.log("\n🔧 Complete JSONL parsing:");
+	console.info("\n🔧 Complete JSONL parsing:");
 	const parsedData = (Bun as any).JSONL?.parse
 		? (Bun as any).JSONL.parse(jsonlContent)
 		: parseJSONLManual(jsonlContent);
-	console.log(`📊 Parsed ${parsedData.length} records:`);
+	console.info(`📊 Parsed ${parsedData.length} records:`);
 	parsedData.forEach((record: any, index: number) => {
-		console.log(
+		console.info(
 			`  ${index + 1}. ${record.name} - ${record.action} (${record.timestamp})`,
 		);
 	});
 
 	// Demonstrate chunk parsing for streaming
-	console.log("\n🌊 Chunk-based streaming parsing:");
+	console.info("\n🌊 Chunk-based streaming parsing:");
 
 	// Split data into chunks to simulate streaming
 	const chunks = [
@@ -474,13 +474,13 @@ async function demonstrateJSONLStreaming() {
 			? (Bun as any).JSONL.parseChunk(buffer)
 			: parseChunkManual(buffer);
 
-		console.log(
+		console.info(
 			`Chunk ${i + 1}: ${result.values.length} records parsed, ${result.read} chars consumed`,
 		);
 
 		result.values.forEach((record: any) => {
 			totalRecords++;
-			console.log(
+			console.info(
 				`  Record ${totalRecords}: ${record.name} - ${record.action}`,
 			);
 		});
@@ -490,22 +490,22 @@ async function demonstrateJSONLStreaming() {
 	}
 
 	// Demonstrate buffer parsing
-	console.log("\n💾 Buffer-based parsing:");
+	console.info("\n💾 Buffer-based parsing:");
 	const jsonlBuffer = new TextEncoder().encode(jsonlContent);
 	const bufferParsed = (Bun as any).JSONL?.parse
 		? (Bun as any).JSONL.parse(jsonlBuffer)
 		: parseJSONLManual(jsonlContent);
-	console.log(`📊 Buffer parsing: ${bufferParsed.length} records parsed`);
+	console.info(`📊 Buffer parsing: ${bufferParsed.length} records parsed`);
 
 	// Create a streaming example
-	console.log("\n🔄 Creating streaming example...");
+	console.info("\n🔄 Creating streaming example...");
 
 	const streamingScript = `
 // Streaming JSONL processing example
 import { Bun } from 'bun';
 
 async function processJSONLStream(filePath) {
-  console.log('🌊 Processing JSONL stream...');
+  console.info('🌊 Processing JSONL stream...');
   
   const file = Bun.file(filePath);
   const stream = file.stream();
@@ -525,7 +525,7 @@ async function processJSONLStream(filePath) {
       
       for (const record of result.values) {
         recordCount++;
-        console.log(\`📝 Processed record \${recordCount}: \${record.name} - \${record.action}\`);
+        console.info(\`📝 Processed record \${recordCount}: \${record.name} - \${record.action}\`);
       }
       
       // Keep only the unconsumed portion
@@ -537,13 +537,13 @@ async function processJSONLStream(filePath) {
       try {
         const finalRecord = JSON.parse(buffer.trim());
         recordCount++;
-        console.log(\`📝 Final record \${recordCount}: \${finalRecord.name} - \${finalRecord.action}\`);
+        console.info(\`📝 Final record \${recordCount}: \${finalRecord.name} - \${finalRecord.action}\`);
       } catch (error) {
         console.warn('⚠️ Failed to parse final data:', error.message);
       }
     }
     
-    console.log(\`✅ Stream processing completed. Total records: \${recordCount}\`);
+    console.info(\`✅ Stream processing completed. Total records: \${recordCount}\`);
   } finally {
     reader.releaseLock();
   }
@@ -556,7 +556,7 @@ processJSONLStream('./logs/sample-data.jsonl').catch(console.error);
 	const streamingScriptPath = "./temp/jsonl-streaming-demo.js";
 	await Bun.write(streamingScriptPath, streamingScript);
 
-	console.log(`📝 Created streaming demo: ${streamingScriptPath}`);
+	console.info(`📝 Created streaming demo: ${streamingScriptPath}`);
 
 	// Run the streaming demo
 	try {
@@ -571,9 +571,9 @@ processJSONLStream('./logs/sample-data.jsonl').catch(console.error);
 		await proc.exited;
 
 		if (proc.exitCode === 0) {
-			console.log("✅ Streaming demo completed!");
-			console.log("📊 Output:");
-			console.log(output);
+			console.info("✅ Streaming demo completed!");
+			console.info("📊 Output:");
+			console.info(output);
 		} else {
 			console.error("❌ Streaming demo failed:");
 			console.error(error);
@@ -585,8 +585,8 @@ processJSONLStream('./logs/sample-data.jsonl').catch(console.error);
 
 // Example 5: Advanced Profiling Features
 async function demonstrateAdvancedProfiling() {
-	console.log("\n🚀 Advanced Profiling Features");
-	console.log("==============================");
+	console.info("\n🚀 Advanced Profiling Features");
+	console.info("==============================");
 
 	// Create a comprehensive test script
 	const advancedScript = `
@@ -604,7 +604,7 @@ class PerformanceTest {
 
   // CPU-intensive function
   cpuIntensiveTask(iterations = 1000000) {
-    console.log(\`🔥 Starting CPU-intensive task (\${iterations} iterations)...\`);
+    console.info(\`🔥 Starting CPU-intensive task (\${iterations} iterations)...\`);
     const start = performance.now();
     
     let result = 0;
@@ -615,13 +615,13 @@ class PerformanceTest {
     
     const end = performance.now();
     this.metrics.cpuTime = end - start;
-    console.log(\`✅ CPU task completed in \${this.metrics.cpuTime.toFixed(2)}ms\`);
+    console.info(\`✅ CPU task completed in \${this.metrics.cpuTime.toFixed(2)}ms\`);
     return result;
   }
 
   // Memory allocation patterns
   memoryAllocationTest() {
-    console.log('💾 Starting memory allocation test...');
+    console.info('💾 Starting memory allocation test...');
     
     const allocations = [];
     
@@ -656,13 +656,13 @@ class PerformanceTest {
       }
     }
     
-    console.log(\`✅ Memory allocation completed. Created \${allocations.length} objects\`);
+    console.info(\`✅ Memory allocation completed. Created \${allocations.length} objects\`);
     return allocations;
   }
 
   // Async operations
   async asyncOperationsTest() {
-    console.log('⏳ Starting async operations test...');
+    console.info('⏳ Starting async operations test...');
     
     const promises = [];
     const startTime = performance.now();
@@ -681,13 +681,13 @@ class PerformanceTest {
     const results = await Promise.all(promises);
     const endTime = performance.now();
     
-    console.log(\`✅ Async operations completed in \${(endTime - startTime).toFixed(2)}ms\`);
+    console.info(\`✅ Async operations completed in \${(endTime - startTime).toFixed(2)}ms\`);
     return results;
   }
 
   // Error handling and edge cases
   errorHandlingTest() {
-    console.log('⚠️ Starting error handling test...');
+    console.info('⚠️ Starting error handling test...');
     
     let errorsCaught = 0;
     
@@ -707,13 +707,13 @@ class PerformanceTest {
       }
     }
     
-    console.log(\`✅ Error handling test completed. Caught \${errorsCaught} errors\`);
+    console.info(\`✅ Error handling test completed. Caught \${errorsCaught} errors\`);
     return errorsCaught;
   }
 
   // Run all performance tests
   async runAllTests() {
-    console.log('🚀 Starting comprehensive performance tests...');
+    console.info('🚀 Starting comprehensive performance tests...');
     
     const results = {
       cpu: this.cpuIntensiveTask(),
@@ -722,12 +722,12 @@ class PerformanceTest {
       errors: this.errorHandlingTest()
     };
     
-    console.log('📊 Performance Test Results:');
-    console.log(\`  CPU Time: \${this.metrics.cpuTime.toFixed(2)}ms\`);
-    console.log(\`  Function Calls: \${this.functionCalls}\`);
-    console.log(\`  Memory Samples: \${this.metrics.memoryUsage.length}\`);
-    console.log(\`  Async Operations: \${results.async.length}\`);
-    console.log(\`  Errors Caught: \${results.errors}\`);
+    console.info('📊 Performance Test Results:');
+    console.info(\`  CPU Time: \${this.metrics.cpuTime.toFixed(2)}ms\`);
+    console.info(\`  Function Calls: \${this.functionCalls}\`);
+    console.info(\`  Memory Samples: \${this.metrics.memoryUsage.length}\`);
+    console.info(\`  Async Operations: \${results.async.length}\`);
+    console.info(\`  Errors Caught: \${results.errors}\`);
     
     return results;
   }
@@ -737,7 +737,7 @@ class PerformanceTest {
 async function main() {
   const test = new PerformanceTest();
   await test.runAllTests();
-  console.log('🎉 All performance tests completed!');
+  console.info('🎉 All performance tests completed!');
 }
 
 main().catch(console.error);
@@ -746,14 +746,14 @@ main().catch(console.error);
 	const scriptPath = "./temp/advanced-performance-demo.js";
 	await Bun.write(scriptPath, advancedScript);
 
-	console.log(`📝 Created advanced performance script: ${scriptPath}`);
+	console.info(`📝 Created advanced performance script: ${scriptPath}`);
 
 	// Run with both CPU and heap profiling
-	console.log("\n⚡ Running advanced performance profiling...");
+	console.info("\n⚡ Running advanced performance profiling...");
 
 	try {
 		// CPU profiling
-		console.log("🔥 Running CPU profiling...");
+		console.info("🔥 Running CPU profiling...");
 		const cpuProc = Bun.spawn(
 			[
 				"bun",
@@ -776,16 +776,16 @@ main().catch(console.error);
 		await cpuProc.exited;
 
 		if (cpuProc.exitCode === 0) {
-			console.log("✅ Advanced CPU profiling completed!");
-			console.log("📊 CPU Profile Output:");
-			console.log(cpuOutput);
+			console.info("✅ Advanced CPU profiling completed!");
+			console.info("📊 CPU Profile Output:");
+			console.info(cpuOutput);
 		} else {
 			console.error("❌ Advanced CPU profiling failed:");
 			console.error(cpuError);
 		}
 
 		// Heap profiling
-		console.log("\n💾 Running heap profiling...");
+		console.info("\n💾 Running heap profiling...");
 		const heapProc = Bun.spawn(
 			[
 				"bun",
@@ -808,9 +808,9 @@ main().catch(console.error);
 		await heapProc.exited;
 
 		if (heapProc.exitCode === 0) {
-			console.log("✅ Advanced heap profiling completed!");
-			console.log("📊 Heap Profile Output:");
-			console.log(heapOutput);
+			console.info("✅ Advanced heap profiling completed!");
+			console.info("📊 Heap Profile Output:");
+			console.info(heapOutput);
 		} else {
 			console.error("❌ Advanced heap profiling failed:");
 			console.error(heapError);
@@ -822,12 +822,12 @@ main().catch(console.error);
 
 // Main demonstration function
 async function runAllDemonstrations() {
-	console.log("🎯 Bun v1.3.7 Feature Demonstrations");
-	console.log("===================================");
-	console.log(
+	console.info("🎯 Bun v1.3.7 Feature Demonstrations");
+	console.info("===================================");
+	console.info(
 		"This script demonstrates all the new profiling and JSON features in Bun v1.3.7",
 	);
-	console.log("");
+	console.info("");
 
 	try {
 		await demonstrateCPUProfiling();
@@ -836,18 +836,18 @@ async function runAllDemonstrations() {
 		await demonstrateJSONLStreaming();
 		await demonstrateAdvancedProfiling();
 
-		console.log("\n🎉 All demonstrations completed successfully!");
-		console.log("\n📁 Generated files:");
-		console.log("  • ./profiles/*.md - Markdown profiling reports");
-		console.log("  • ./config/app.json5 - JSON5 configuration example");
-		console.log("  • ./logs/sample-data.jsonl - JSONL data sample");
-		console.log("  • ./temp/*.js - Example scripts");
+		console.info("\n🎉 All demonstrations completed successfully!");
+		console.info("\n📁 Generated files:");
+		console.info("  • ./profiles/*.md - Markdown profiling reports");
+		console.info("  • ./config/app.json5 - JSON5 configuration example");
+		console.info("  • ./logs/sample-data.jsonl - JSONL data sample");
+		console.info("  • ./temp/*.js - Example scripts");
 
-		console.log("\n🔍 Next steps:");
-		console.log("  1. Examine the generated markdown profiles");
-		console.log("  2. Try the JSON5 configuration in your own projects");
-		console.log("  3. Experiment with JSONL streaming for large datasets");
-		console.log("  4. Use the profiling CLI for advanced analysis");
+		console.info("\n🔍 Next steps:");
+		console.info("  1. Examine the generated markdown profiles");
+		console.info("  2. Try the JSON5 configuration in your own projects");
+		console.info("  3. Experiment with JSONL streaming for large datasets");
+		console.info("  4. Use the profiling CLI for advanced analysis");
 	} catch (error) {
 		console.error("❌ Demonstration failed:", error);
 		process.exit(1);

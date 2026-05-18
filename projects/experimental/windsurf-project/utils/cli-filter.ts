@@ -104,6 +104,6 @@ export function filterData(data: unknown[], { and, or }: ReturnType<typeof parse
     and.every(e => matchesFilter(row, e)) &&  // AND all
     (or.length === 0 || or.some(e => matchesFilter(row, e)))  // OR any
   );
-  console.log(`🔍 Filtered ${data.length} → ${filtered.length} (${((Bun.nanoseconds() - start) / 1e3).toFixed(1)}μs)`);
+  console.info(`🔍 Filtered ${data.length} → ${filtered.length} (${((Bun.nanoseconds() - start) / 1e3).toFixed(1)}μs)`);
   return filtered;
 }

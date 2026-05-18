@@ -23,14 +23,14 @@ const bucketName = "scanner-cookies";
 // export R2_SECRET_ACCESS_KEY="your_secret_key"
 
 if (!globalThis.process.env.R2_ACCESS_KEY_ID || !globalThis.process.env.R2_SECRET_ACCESS_KEY) {
-  console.log("❌ Missing R2 credentials");
-  console.log("Please set:");
-  console.log("export R2_ACCESS_KEY_ID='your_access_key'");
-  console.log("export R2_SECRET_ACCESS_KEY='your_secret_key'");
-  console.log("\nTo get credentials:");
-  console.log("1. Go to https://dash.cloudflare.com/profile/api-tokens");
-  console.log("2. Create token with R2 permissions");
-  console.log("3. Or use: bunx wrangler r2 bucket create scanner-cookies --output-json");
+  console.info("❌ Missing R2 credentials");
+  console.info("Please set:");
+  console.info("export R2_ACCESS_KEY_ID='your_access_key'");
+  console.info("export R2_SECRET_ACCESS_KEY='your_secret_key'");
+  console.info("\nTo get credentials:");
+  console.info("1. Go to https://dash.cloudflare.com/profile/api-tokens");
+  console.info("2. Create token with R2 permissions");
+  console.info("3. Or use: bunx wrangler r2 bucket create scanner-cookies --output-json");
   globalThis.process.exit(1);
 }
 
@@ -51,7 +51,7 @@ await Promise.all(keys.map(async k => {
 
 const r2Roundtrip = (performance.now() - start) / 10;
 
-console.log({
+console.info({
   r2Bucket: bucketName,
   liveR2: "✅ scanner-cookies",
   r2Latency: r2Roundtrip.toFixed(0) + "ms/roundtrip",

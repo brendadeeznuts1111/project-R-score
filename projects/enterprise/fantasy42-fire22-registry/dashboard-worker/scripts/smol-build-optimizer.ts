@@ -776,10 +776,10 @@ if (import.meta.main) {
       break;
 
     default:
-      console.log('Usage: bun smol-build-optimizer.ts [analyze|optimize|compare]');
-      console.log('  analyze  - Analyze current bundle and provide optimization recommendations');
-      console.log('  optimize - Build optimized bundle with --smol settings');
-      console.log('  compare  - Compare standard build vs optimized build');
+      console.info('Usage: bun smol-build-optimizer.ts [analyze|optimize|compare]');
+      console.info('  analyze  - Analyze current bundle and provide optimization recommendations');
+      console.info('  optimize - Build optimized bundle with --smol settings');
+      console.info('  compare  - Compare standard build vs optimized build');
       process.exit(1);
   }
 }

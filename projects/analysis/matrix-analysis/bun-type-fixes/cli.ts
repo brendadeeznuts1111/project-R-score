@@ -26,7 +26,7 @@ program
   .option('-v, --verbose', 'Verbose output')
   .option('--all', 'Run all verifications (default)')
   .action(async (options) => {
-    console.log('🔍 Bun Type Fixes Verification\n');
+    console.info('🔍 Bun Type Fixes Verification\n');
 
     const runAll = options.all || (!options.autoload && !options.sqlite && !options.filesink && !options.integration);
 
@@ -38,29 +38,29 @@ program
     };
 
     if (runAll || options.autoload) {
-      console.log('1. Verifying Bun.build() autoload options...');
+      console.info('1. Verifying Bun.build() autoload options...');
       results.autoload = await verifyBunBuildTypes(options.verbose);
     }
 
     if (runAll || options.sqlite) {
-      console.log('\n2. Verifying bun:sqlite .run() return type...');
+      console.info('\n2. Verifying bun:sqlite .run() return type...');
       results.sqlite = await verifySqliteTypes(options.verbose);
     }
 
     if (runAll || options.filesink) {
-      console.log('\n3. Verifying FileSink.write() return type...');
+      console.info('\n3. Verifying FileSink.write() return type...');
       results.filesink = await verifyFileSinkTypes(options.verbose);
     }
 
     if (runAll || options.integration) {
-      console.log('\n4. Running integration tests...');
+      console.info('\n4. Running integration tests...');
       results.integration = await verifyIntegration(options.verbose);
     }
 
     // Summary
-    console.log('\n' + '='.repeat(50));
-    console.log('RESULTS:');
-    console.log('='.repeat(50));
+    console.info('\n' + '='.repeat(50));
+    console.info('RESULTS:');
+    console.info('='.repeat(50));
 
     const testsRun = [];
     if (results.autoload || runAll) {
@@ -84,11 +84,11 @@ program
       integration: runAll || options.integration ? results.integration : true
     };
 
-    testsRun.forEach(test => console.log(test));
+    testsRun.forEach(test => console.info(test));
 
     const overall = Object.values(runResults).every(r => r);
-    console.log('='.repeat(50));
-    console.log(`Overall: ${overall ? '✅ ALL TESTS PASSED' : '❌ SOME TESTS FAILED'}`);
+    console.info('='.repeat(50));
+    console.info(`Overall: ${overall ? '✅ ALL TESTS PASSED' : '❌ SOME TESTS FAILED'}`);
 
     process.exit(overall ? 0 : 1);
   });
@@ -100,7 +100,7 @@ program
   .option('-w, --watch', 'Watch mode')
   .action(async (options) => {
     const testCommand = options.watch ? 'bun test --watch' : 'bun test';
-    console.log(`Running: ${testCommand}`);
+    console.info(`Running: ${testCommand}`);
     await Bun.$`${testCommand}`;
   });
 
@@ -112,7 +112,7 @@ program
   .option('-o, --outdir <path>', 'Output directory', './dist')
   .action(async (options) => {
     const buildCommand = `bun build src/index.ts --outdir=${options.outdir}${options.minify ? ' --minify' : ''}`;
-    console.log(`Building: ${buildCommand}`);
+    console.info(`Building: ${buildCommand}`);
     await Bun.$`${buildCommand}`;
   });
 
@@ -121,11 +121,11 @@ program
   .command('clean')
   .description('Clean build artifacts')
   .action(async () => {
-    console.log('Cleaning build artifacts...');
+    console.info('Cleaning build artifacts...');
     await Bun.$`rm -rf dist`.catch(() => {});
     await Bun.$`rm -rf *.log`.catch(() => {});
     await Bun.$`rm -rf test-*.txt`.catch(() => {});
-    console.log('✅ Clean completed');
+    console.info('✅ Clean completed');
   });
 
 // Parse command line arguments

@@ -370,7 +370,7 @@ export class TomlSecretsEditor {
 			await this.database.batchInsertPatterns(riskChain.patterns, secretMap);
 
 			const execTime = performance.now() - startTime;
-			console.log(
+			console.info(
 				`✓ Persisted ${secrets.length} secrets and ${riskChain.patterns.length} patterns in ${(execTime).toFixed(2)}ms`,
 			);
 		} catch (error) {
@@ -415,7 +415,7 @@ export class TomlSecretsEditor {
 		}
 
 		if (files.length === 0) {
-			console.log(`No files found matching pattern: ${pattern}`);
+			console.info(`No files found matching pattern: ${pattern}`);
 			return;
 		}
 
@@ -446,11 +446,11 @@ export class TomlSecretsEditor {
 				? (((originalSize - compressedSize) / originalSize) * 100).toFixed(1)
 				: "0.0";
 
-		console.log(`✓ Created compressed archive: ${defaultOutput}`);
-		console.log(`  Files archived: ${fileEntries.length}`);
-		console.log(`  Original: ${(originalSize / 1024).toFixed(1)}KB`);
-		console.log(`  Compressed: ${(compressedSize / 1024).toFixed(1)}KB`);
-		console.log(`  Ratio: ${ratio}% reduction`);
+		console.info(`✓ Created compressed archive: ${defaultOutput}`);
+		console.info(`  Files archived: ${fileEntries.length}`);
+		console.info(`  Original: ${(originalSize / 1024).toFixed(1)}KB`);
+		console.info(`  Compressed: ${(compressedSize / 1024).toFixed(1)}KB`);
+		console.info(`  Ratio: ${ratio}% reduction`);
 	}
 
 	// Deduplicated archive using CRC32 keys
@@ -478,9 +478,9 @@ export class TomlSecretsEditor {
 		const defaultOutput = outputPath || `secrets-archive-${Date.now()}.tar.gz`;
 		await Bun.write(defaultOutput, archiveBytes);
 
-		console.log(`✓ Created deduplicated secrets archive: ${defaultOutput}`);
-		console.log(`  Secrets archived: ${secrets.length}`);
-		console.log(`  Archive size: ${(archiveBytes.length / 1024).toFixed(1)}KB`);
+		console.info(`✓ Created deduplicated secrets archive: ${defaultOutput}`);
+		console.info(`  Secrets archived: ${secrets.length}`);
+		console.info(`  Archive size: ${(archiveBytes.length / 1024).toFixed(1)}KB`);
 	}
 
 	// Comprehensive backup with secrets, patterns, and audit log
@@ -560,12 +560,12 @@ export class TomlSecretsEditor {
 		const archiveBytes = await archive.bytes();
 		await Bun.write(defaultOutput, archiveBytes);
 
-		console.log(`✓ Created full backup: ${defaultOutput}`);
-		console.log(`  Configuration files: ${configFiles.length}`);
-		console.log(`  Secrets: ${secrets.length}`);
-		console.log(`  Patterns: ${riskChain.patterns.length}`);
-		console.log(`  Audit entries: ${auditLog.length}`);
-		console.log(`  Archive size: ${(archiveBytes.length / 1024).toFixed(1)}KB`);
+		console.info(`✓ Created full backup: ${defaultOutput}`);
+		console.info(`  Configuration files: ${configFiles.length}`);
+		console.info(`  Secrets: ${secrets.length}`);
+		console.info(`  Patterns: ${riskChain.patterns.length}`);
+		console.info(`  Audit entries: ${auditLog.length}`);
+		console.info(`  Archive size: ${(archiveBytes.length / 1024).toFixed(1)}KB`);
 	}
 
 	// Secret lifecycle management
@@ -756,13 +756,13 @@ export class TomlSecretsEditor {
 	// Start real-time monitoring
 	startMonitoring(): void {
 		// Monitoring is already started in constructor
-		console.log("🔍 Real-time security monitoring is active");
+		console.info("🔍 Real-time security monitoring is active");
 	}
 
 	// Stop real-time monitoring
 	stopMonitoring(): void {
 		this.monitoring.stopRealTimeScanning();
-		console.log("⏹️ Real-time security monitoring stopped");
+		console.info("⏹️ Real-time security monitoring stopped");
 	}
 
 	// Export monitoring data for backup
@@ -811,7 +811,7 @@ export class TomlSecretsEditor {
 
 	// Setup CI/CD for this project
 	async setupCIIntegration(): Promise<void> {
-		console.log("🔧 Setting up CI/CD integration...");
+		console.info("🔧 Setting up CI/CD integration...");
 
 		// Generate GitHub Actions workflow
 		const workflowContent = this.generateGitHubActionsWorkflow();
@@ -820,9 +820,9 @@ export class TomlSecretsEditor {
 		try {
 			// Create directory if it doesn't exist
 			await Bun.write(workflowPath, workflowContent);
-			console.log(`✅ Created GitHub Actions workflow: ${workflowPath}`);
+			console.info(`✅ Created GitHub Actions workflow: ${workflowPath}`);
 		} catch (error) {
-			console.log(`⚠️ Could not create GitHub Actions workflow: ${error}`);
+			console.info(`⚠️ Could not create GitHub Actions workflow: ${error}`);
 		}
 
 		// Generate pre-commit hook
@@ -835,9 +835,9 @@ export class TomlSecretsEditor {
 			if (process.platform !== "win32") {
 				await Bun.spawn(["chmod", "+x", hookPath]).exited;
 			}
-			console.log(`✅ Created pre-commit hook: ${hookPath}`);
+			console.info(`✅ Created pre-commit hook: ${hookPath}`);
 		} catch (error) {
-			console.log(`⚠️ Could not create pre-commit hook: ${error}`);
+			console.info(`⚠️ Could not create pre-commit hook: ${error}`);
 		}
 
 		// Generate Dockerfile
@@ -846,16 +846,16 @@ export class TomlSecretsEditor {
 
 		try {
 			await Bun.write(dockerfilePath, dockerfileContent);
-			console.log(`✅ Created validation Dockerfile: ${dockerfilePath}`);
+			console.info(`✅ Created validation Dockerfile: ${dockerfilePath}`);
 		} catch (error) {
-			console.log(`⚠️ Could not create Dockerfile: ${error}`);
+			console.info(`⚠️ Could not create Dockerfile: ${error}`);
 		}
 
-		console.log("\n🎉 CI/CD integration setup complete!");
-		console.log("Next steps:");
-		console.log("1. Review and commit the generated files");
-		console.log("2. Push to enable GitHub Actions");
-		console.log('3. Test the pre-commit hook with: git commit -m "test"');
+		console.info("\n🎉 CI/CD integration setup complete!");
+		console.info("Next steps:");
+		console.info("1. Review and commit the generated files");
+		console.info("2. Push to enable GitHub Actions");
+		console.info('3. Test the pre-commit hook with: git commit -m "test"');
 	}
 
 	// Close all connections

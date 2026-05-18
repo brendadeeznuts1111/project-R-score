@@ -204,10 +204,10 @@ class BunMCPServer {
       },
     });
 
-    console.log(`🚀 bun-mcp codesearch running on http://${HOST}:${PORT}`);
-    console.log(`📊 Health check: http://${HOST}:${PORT}/health`);
-    console.log(`🔍 MCP discovery: http://${HOST}:${PORT}/mcp`);
-    console.log(`⚡ Ready for AI agent integration!`);
+    console.info(`🚀 bun-mcp codesearch running on http://${HOST}:${PORT}`);
+    console.info(`📊 Health check: http://${HOST}:${PORT}/health`);
+    console.info(`🔍 MCP discovery: http://${HOST}:${PORT}/mcp`);
+    console.info(`⚡ Ready for AI agent integration!`);
 
     return server;
   }

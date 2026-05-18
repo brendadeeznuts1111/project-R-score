@@ -312,47 +312,47 @@ ${this.generateNextSteps(error, docs, audits)}
    * Display comprehensive diagnosis results
    */
   private displayDiagnosis(diagnosis: Diagnosis): void {
-    console.log('\n' + colorBar('success', 50));
-    console.log(styled('🎯 DIAGNOSIS COMPLETE', 'success'));
-    console.log(colorBar('success', 50));
+    console.info('\n' + colorBar('success', 50));
+    console.info(styled('🎯 DIAGNOSIS COMPLETE', 'success'));
+    console.info(colorBar('success', 50));
 
     // Error summary
-    console.log(styled('\n🚨 Error Summary:', 'error'));
-    console.log(styled(`   ${diagnosis.error}`, 'muted'));
+    console.info(styled('\n🚨 Error Summary:', 'error'));
+    console.info(styled(`   ${diagnosis.error}`, 'muted'));
 
     // Confidence score
     const confidenceColor = diagnosis.confidence > 0.8 ? 'success' : 
                            diagnosis.confidence > 0.6 ? 'warning' : 'error';
-    console.log(styled('\n📊 Confidence Score:', 'accent'));
-    console.log(styled(`   ${Math.round(diagnosis.confidence * 100)}%`, confidenceColor));
+    console.info(styled('\n📊 Confidence Score:', 'accent'));
+    console.info(styled(`   ${Math.round(diagnosis.confidence * 100)}%`, confidenceColor));
 
     // Documentation results
     if (diagnosis.bunDocs.length > 0) {
-      console.log(styled('\n📚 Relevant Documentation:', 'primary'));
+      console.info(styled('\n📚 Relevant Documentation:', 'primary'));
       diagnosis.bunDocs.slice(0, 3).forEach((doc, i) => {
-        console.log(styled(`   ${i + 1}. ${doc.title}`, 'info'));
+        console.info(styled(`   ${i + 1}. ${doc.title}`, 'info'));
         if (doc.links[0]) {
-          console.log(styled(`      🔗 ${doc.links[0]}`, 'muted'));
+          console.info(styled(`      🔗 ${doc.links[0]}`, 'muted'));
         }
       });
     }
 
     // Audit history
     if (diagnosis.similarPastIssues.length > 0) {
-      console.log(styled('\n📋 Audit History:', 'warning'));
-      console.log(styled(`   ✓ Found ${diagnosis.similarPastIssues.length} similar issues`, 'success'));
+      console.info(styled('\n📋 Audit History:', 'warning'));
+      console.info(styled(`   ✓ Found ${diagnosis.similarPastIssues.length} similar issues`, 'success'));
       diagnosis.similarPastIssues.slice(0, 2).forEach(audit => {
-        console.log(styled(`   • ${audit.resolution}`, 'muted'));
+        console.info(styled(`   • ${audit.resolution}`, 'muted'));
       });
     }
 
     // Suggested fix
     if (diagnosis.suggestedFix) {
-      console.log(styled('\n🔧 Suggested Fix:', 'success'));
-      console.log(styled(diagnosis.suggestedFix, 'background', 'primary'));
+      console.info(styled('\n🔧 Suggested Fix:', 'success'));
+      console.info(styled(diagnosis.suggestedFix, 'background', 'primary'));
     }
 
-    console.log('\n' + colorBar('muted', 50));
+    console.info('\n' + colorBar('muted', 50));
   }
 
   /**
@@ -366,72 +366,72 @@ ${this.generateNextSteps(error, docs, audits)}
     securityNotes: string[],
     performanceTips: string[]
   ): void {
-    console.log('\n' + colorBar('accent', 60));
-    console.log(styled(`🎓 LEARNING SESSION: ${apiName}`, 'accent'));
-    console.log(styled(`Context: ${context}`, 'muted'));
-    console.log(colorBar('accent', 60));
+    console.info('\n' + colorBar('accent', 60));
+    console.info(styled(`🎓 LEARNING SESSION: ${apiName}`, 'accent'));
+    console.info(styled(`Context: ${context}`, 'muted'));
+    console.info(colorBar('accent', 60));
 
     // Documentation
-    console.log(styled('\n📚 Official Documentation:', 'primary'));
+    console.info(styled('\n📚 Official Documentation:', 'primary'));
     docs.slice(0, 2).forEach((doc, i) => {
-      console.log(styled(`\n${i + 1}. ${doc.title}`, 'info'));
-      console.log(styled(doc.content.slice(0, 200) + '...', 'text'));
+      console.info(styled(`\n${i + 1}. ${doc.title}`, 'info'));
+      console.info(styled(doc.content.slice(0, 200) + '...', 'text'));
     });
 
     // FactoryWager example
-    console.log(styled('\n🔧 FactoryWager Example:', 'success'));
-    console.log(styled(example, 'background', 'primary'));
+    console.info(styled('\n🔧 FactoryWager Example:', 'success'));
+    console.info(styled(example, 'background', 'primary'));
 
     // Security considerations
     if (securityNotes.length > 0) {
-      console.log(styled('\n🛡️ Security Considerations:', 'warning'));
+      console.info(styled('\n🛡️ Security Considerations:', 'warning'));
       securityNotes.forEach(note => {
-        console.log(styled(`   • ${note}`, 'warning'));
+        console.info(styled(`   • ${note}`, 'warning'));
       });
     }
 
     // Performance tips
     if (performanceTips.length > 0) {
-      console.log(styled('\n📊 Performance Tips:', 'info'));
+      console.info(styled('\n📊 Performance Tips:', 'info'));
       performanceTips.forEach(tip => {
-        console.log(styled(`   • ${tip}`, 'info'));
+        console.info(styled(`   • ${tip}`, 'info'));
       });
     }
 
-    console.log(styled('\n💡 Next Steps:', 'success'));
-    console.log(styled('   • Try the example in your code', 'muted'));
-    console.log(styled('   • Experiment with different options', 'muted'));
-    console.log(styled('   • Check official docs for complete reference', 'muted'));
+    console.info(styled('\n💡 Next Steps:', 'success'));
+    console.info(styled('   • Try the example in your code', 'muted'));
+    console.info(styled('   • Experiment with different options', 'muted'));
+    console.info(styled('   • Check official docs for complete reference', 'muted'));
 
-    console.log('\n' + colorBar('muted', 60));
+    console.info('\n' + colorBar('muted', 60));
   }
 
   /**
    * Display validation results
    */
   private displayValidationResults(result: any): void {
-    console.log('\n' + colorBar('primary', 50));
+    console.info('\n' + colorBar('primary', 50));
     
     const statusColor = result.valid ? 'success' : 'error';
     const statusText = result.valid ? '✅ VALIDATION PASSED' : '❌ VALIDATION FAILED';
-    console.log(styled(statusText, statusColor));
+    console.info(styled(statusText, statusColor));
     
-    console.log(styled(`Overall Score: ${result.overallScore}/100`, 'accent'));
-    console.log(colorBar('primary', 50));
+    console.info(styled(`Overall Score: ${result.overallScore}/100`, 'accent'));
+    console.info(colorBar('primary', 50));
 
     // Suggestions
     if (result.suggestions.length > 0) {
-      console.log(styled('\n💡 Suggestions:', 'info'));
+      console.info(styled('\n💡 Suggestions:', 'info'));
       result.suggestions.forEach((suggestion: string) => {
-        console.log(styled(`   • ${suggestion}`, 'info'));
+        console.info(styled(`   • ${suggestion}`, 'info'));
       });
     }
 
     // Security review
     if (result.securityReview.issues.length > 0) {
-      console.log(styled('\n🛡️ Security Issues:', 'warning'));
+      console.info(styled('\n🛡️ Security Issues:', 'warning'));
       result.securityReview.issues.forEach((issue: string) => {
-        console.log(styled(`   • ${issue}`, 'warning'));
+        console.info(styled(`   • ${issue}`, 'warning'));
       });
     }
   }
@@ -647,11 +647,11 @@ if (import.meta.main) {
         break;
         
       default:
-        console.log(styled('Interactive Documentation System', 'accent'));
-        console.log(styled('Usage:', 'muted'));
-        console.log(styled('  bun interactive-docs diagnose "error message" [context]', 'info'));
-        console.log(styled('  bun interactive-docs learn "API name" [context]', 'info'));
-        console.log(styled('  bun interactive-docs validate ./file.ts [context]', 'info'));
+        console.info(styled('Interactive Documentation System', 'accent'));
+        console.info(styled('Usage:', 'muted'));
+        console.info(styled('  bun interactive-docs diagnose "error message" [context]', 'info'));
+        console.info(styled('  bun interactive-docs learn "API name" [context]', 'info'));
+        console.info(styled('  bun interactive-docs validate ./file.ts [context]', 'info'));
     }
   } catch (error) {
     log.error(`Command failed: ${error.message}`);

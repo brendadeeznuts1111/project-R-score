@@ -6,7 +6,7 @@ async function runCLI() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 🚀 Bun Enhanced Fetch Benchmark Tool
 
 Usage:
@@ -40,28 +40,28 @@ Examples:
   const timeout = args.includes('--timeout') ? parseInt(args[args.indexOf('--timeout') + 1]) : 5000;
   const retries = args.includes('--retries') ? parseInt(args[args.indexOf('--retries') + 1]) : 3;
   
-  console.log('🔥 BUN FETCH APOCALYPSE BENCHMARK 🔥');
-  console.log('=====================================');
-  console.log(`URL: ${url}`);
-  console.log(`Requests: ${count.toLocaleString()}`);
-  console.log(`Concurrency: ${concurrency}`);
-  console.log(`Body Type: ${bodyType}`);
-  console.log(`Integrity: ${integrity ? '✅' : '❌'}`);
-  console.log(`GOV Scope: ${govScope}`);
-  console.log(`Timeout: ${timeout}ms`);
-  console.log(`Max Retries: ${retries}`);
-  console.log('');
+  console.info('🔥 BUN FETCH APOCALYPSE BENCHMARK 🔥');
+  console.info('=====================================');
+  console.info(`URL: ${url}`);
+  console.info(`Requests: ${count.toLocaleString()}`);
+  console.info(`Concurrency: ${concurrency}`);
+  console.info(`Body Type: ${bodyType}`);
+  console.info(`Integrity: ${integrity ? '✅' : '❌'}`);
+  console.info(`GOV Scope: ${govScope}`);
+  console.info(`Timeout: ${timeout}ms`);
+  console.info(`Max Retries: ${retries}`);
+  console.info('');
   
   // Pre-warm
-  console.log('🔥 Pre-warming connection...');
+  console.info('🔥 Pre-warming connection...');
   try {
     await enhancedFetch(url, { 
       timeout: 5000,
       benchmark: false 
     });
-    console.log('✅ Pre-warm complete');
+    console.info('✅ Pre-warm complete');
   } catch (error) {
-    console.log('⚠️ Pre-warm failed, continuing anyway...');
+    console.info('⚠️ Pre-warm failed, continuing anyway...');
   }
   
   // Run benchmark
@@ -86,30 +86,30 @@ Examples:
   const speedImprovement = ((results.avgTime - nodeBaseline.avgTime) / nodeBaseline.avgTime) * 100;
   const throughputImprovement = ((results.throughput - nodeBaseline.throughput) / nodeBaseline.throughput) * 100;
   
-  console.log('\n🚀 PERFORMANCE COMPARISON vs Node.js');
-  console.log('=====================================');
-  console.log(`Time Improvement: ${timeImprovement > 0 ? '+' : ''}${timeImprovement.toFixed(1)}%`);
-  console.log(`Response Time: ${speedImprovement < 0 ? '+' : ''}${Math.abs(speedImprovement).toFixed(1)}% faster`);
-  console.log(`Throughput Improvement: ${throughputImprovement > 0 ? '+' : ''}${throughputImprovement.toFixed(1)}%`);
+  console.info('\n🚀 PERFORMANCE COMPARISON vs Node.js');
+  console.info('=====================================');
+  console.info(`Time Improvement: ${timeImprovement > 0 ? '+' : ''}${timeImprovement.toFixed(1)}%`);
+  console.info(`Response Time: ${speedImprovement < 0 ? '+' : ''}${Math.abs(speedImprovement).toFixed(1)}% faster`);
+  console.info(`Throughput Improvement: ${throughputImprovement > 0 ? '+' : ''}${throughputImprovement.toFixed(1)}%`);
   
   // System metrics
-  console.log('\n📊 SYSTEM METRICS');
-  console.log('==================');
+  console.info('\n📊 SYSTEM METRICS');
+  console.info('==================');
   const memUsage = process.memoryUsage();
-  console.log(`Memory Usage: ${(memUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`CPU Usage: ${process.cpuUsage().user / 1000000}ms user time`);
+  console.info(`Memory Usage: ${(memUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`CPU Usage: ${process.cpuUsage().user / 1000000}ms user time`);
   
   // Hot paths analysis
   const metrics = getFetchMetrics();
   if (Object.keys(metrics.hotPaths).length > 0) {
-    console.log('\n🔥 HOT PATHS');
-    console.log('============');
+    console.info('\n🔥 HOT PATHS');
+    console.info('============');
     const sortedPaths = Object.entries(metrics.hotPaths)
       .sort(([,a], [,b]) => b.count - a.count)
       .slice(0, 5);
     
     sortedPaths.forEach(([path, stats]) => {
-      console.log(`${path}: ${stats.count} calls, ${stats.avgTime.toFixed(2)}ms avg`);
+      console.info(`${path}: ${stats.count} calls, ${stats.avgTime.toFixed(2)}ms avg`);
     });
   }
   
@@ -121,14 +121,14 @@ Examples:
   
   const ratingEmoji = { S: '🌟', A: '⭐', B: '✨', C: '💫' }[rating];
   
-  console.log(`\n${ratingEmoji} PERFORMANCE RATING: ${rating}`);
+  console.info(`\n${ratingEmoji} PERFORMANCE RATING: ${rating}`);
   
   if (timeImprovement > 1000) {
-    console.log('🎆 LEGENDARY: Over 1000% improvement achieved!');
+    console.info('🎆 LEGENDARY: Over 1000% improvement achieved!');
   } else if (timeImprovement > 500) {
-    console.log('🚀 EPIC: Over 500% improvement achieved!');
+    console.info('🚀 EPIC: Over 500% improvement achieved!');
   } else if (timeImprovement > 100) {
-    console.log('⚡ EXCELLENT: Over 100% improvement achieved!');
+    console.info('⚡ EXCELLENT: Over 100% improvement achieved!');
   }
 }
 
@@ -136,8 +136,8 @@ Examples:
 async function runIntegrityTest() {
   const url = 'https://httpbin.org/json';
   
-  console.log('🔒 INTEGRITY VERIFICATION TEST');
-  console.log('============================');
+  console.info('🔒 INTEGRITY VERIFICATION TEST');
+  console.info('============================');
   
   try {
     // Test with integrity
@@ -147,10 +147,10 @@ async function runIntegrityTest() {
     });
     
     const data = await response.json();
-    console.log('✅ Integrity check passed');
-    console.log('Response data:', JSON.stringify(data, null, 2));
+    console.info('✅ Integrity check passed');
+    console.info('Response data:', JSON.stringify(data, null, 2));
   } catch (error) {
-    console.log('❌ Integrity check failed:', error.message);
+    console.info('❌ Integrity check failed:', error.message);
   }
 }
 
@@ -158,8 +158,8 @@ async function runIntegrityTest() {
 async function runGOVTest() {
   const url = 'https://httpbin.org/headers';
   
-  console.log('🏛️ GOV HEADERS TEST');
-  console.log('==================');
+  console.info('🏛️ GOV HEADERS TEST');
+  console.info('==================');
   
   try {
     const response = await enhancedFetch(url, {
@@ -172,10 +172,10 @@ async function runGOVTest() {
     });
     
     const data = await response.json();
-    console.log('✅ GOV headers sent successfully');
-    console.log('Response headers:', JSON.stringify(data.headers, null, 2));
+    console.info('✅ GOV headers sent successfully');
+    console.info('Response headers:', JSON.stringify(data.headers, null, 2));
   } catch (error) {
-    console.log('❌ GOV headers test failed:', error.message);
+    console.info('❌ GOV headers test failed:', error.message);
   }
 }
 

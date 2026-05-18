@@ -184,14 +184,14 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
       const bunFetch = fetch as any; // Cast to any to access Bun-specific methods
       if (typeof fetch !== 'undefined' && bunFetch.preconnect) {
         bunFetch.preconnect(this.config.baseUrl);
-        console.log(`🔗 Preconnected to betting platform: ${this.config.baseUrl}`);
+        console.info(`🔗 Preconnected to betting platform: ${this.config.baseUrl}`);
       } else {
-        console.log("ℹ️ fetch.preconnect not available, using standard connection pooling");
+        console.info("ℹ️ fetch.preconnect not available, using standard connection pooling");
       }
     } catch (error) {
       // Preconnect may fail in some Bun versions, but this doesn't break functionality
-      console.log("ℹ️ Preconnection skipped (may not be supported in this Bun version):", error instanceof Error ? error.message : String(error));
-      console.log("ℹ️ API calls will still work normally with connection pooling");
+      console.info("ℹ️ Preconnection skipped (may not be supported in this Bun version):", error instanceof Error ? error.message : String(error));
+      console.info("ℹ️ API calls will still work normally with connection pooling");
     }
   }
 
@@ -468,7 +468,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
       if (this.circuitBreaker.state === 'open' &&
           now - this.circuitBreaker.lastFailureTime > timeout) {
         this.circuitBreaker.state = 'half-open';
-        console.log('🔄 Circuit breaker transitioning to half-open state');
+        console.info('🔄 Circuit breaker transitioning to half-open state');
         this.emit('circuit-breaker:half-open');
       }
     }, 10000); // Check every 10 seconds
@@ -507,7 +507,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
     if (this.circuitBreaker.state === 'half-open') {
       this.circuitBreaker.state = 'closed';
       this.circuitBreaker.failures = 0;
-      console.log('✅ Circuit breaker closed - service recovered');
+      console.info('✅ Circuit breaker closed - service recovered');
       this.emit('circuit-breaker:closed');
     }
   }
@@ -584,7 +584,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
 
   async handleContentSubmission(data: any): Promise<WorkflowInstance> {
     try {
-      console.log('📤 Submitting content to plive platform:', data.contentId || data.title);
+      console.info('📤 Submitting content to plive platform:', data.contentId || data.title);
 
       // Submit content for approval using plive endpoint
       const submissionResponse = await this.client.post('submitContent/', {
@@ -620,7 +620,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
           approvals: new Map()
         };
 
-        console.log('✅ Content submitted to plive successfully, reference:', result?.referenceId || result?.id);
+        console.info('✅ Content submitted to plive successfully, reference:', result?.referenceId || result?.id);
         return workflowInstance;
 
       } else {
@@ -635,7 +635,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
 
   async handleLineChangeRequest(data: any): Promise<WorkflowInstance> {
     try {
-      console.log('📤 Submitting line change to betting platform:', data.lineId);
+      console.info('📤 Submitting line change to betting platform:', data.lineId);
 
       // First, get current line data to validate the change
       const currentLineResponse = await this.client.get(`/api/v1/lines/${data.lineId}`);
@@ -683,7 +683,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
         approvals: new Map()
       };
 
-      console.log('✅ Line change request submitted successfully, reference:', submissionResponse.data.requestId);
+      console.info('✅ Line change request submitted successfully, reference:', submissionResponse.data.requestId);
       return workflowInstance;
 
     } catch (error) {
@@ -694,7 +694,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
 
   async handleOddsUpdateRequest(data: any): Promise<WorkflowInstance> {
     try {
-      console.log('📤 Submitting odds update to betting platform:', data.eventId);
+      console.info('📤 Submitting odds update to betting platform:', data.eventId);
 
       // Validate event exists
       const eventResponse = await this.client.get(`/api/v1/events/${data.eventId}`);
@@ -742,7 +742,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
         approvals: new Map()
       };
 
-      console.log('✅ Odds update request submitted successfully, reference:', submissionResponse.data.requestId);
+      console.info('✅ Odds update request submitted successfully, reference:', submissionResponse.data.requestId);
       return workflowInstance;
 
     } catch (error) {
@@ -753,7 +753,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
 
   async handlePromotionSubmission(data: any): Promise<WorkflowInstance> {
     try {
-      console.log('📤 Submitting promotion to betting platform:', data.title);
+      console.info('📤 Submitting promotion to betting platform:', data.title);
 
       // Validate promotion data
       const validationResponse = await this.client.post('/api/v1/promotions/validate', {
@@ -799,7 +799,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
         approvals: new Map()
       };
 
-      console.log('✅ Promotion submitted successfully, reference:', submissionResponse.data.promotionId);
+      console.info('✅ Promotion submitted successfully, reference:', submissionResponse.data.promotionId);
       return workflowInstance;
 
     } catch (error) {
@@ -839,7 +839,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
       if (percentageChange > 20 || totalImpact > 50000) riskLevel = 'high';
       else if (percentageChange > 10 || totalImpact > 25000) riskLevel = 'medium';
 
-      console.log(`💰 Financial impact calculated: ${totalImpact.toFixed(2)}, risk: ${riskLevel}`);
+      console.info(`💰 Financial impact calculated: ${totalImpact.toFixed(2)}, risk: ${riskLevel}`);
 
       return {
         totalImpact,
@@ -871,7 +871,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
 
   async updateContentStatus(contentId: string, status: any): Promise<void> {
     try {
-      console.log('📤 Updating content status in betting platform:', { contentId, status });
+      console.info('📤 Updating content status in betting platform:', { contentId, status });
 
       await this.client.put(`/api/v1/content/${contentId}/status`, {
         status: status.status,
@@ -880,7 +880,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
         updatedAt: new Date().toISOString()
       });
 
-      console.log('✅ Content status updated successfully');
+      console.info('✅ Content status updated successfully');
     } catch (error) {
       console.error('❌ Content status update failed:', error instanceof Error ? error.message : String(error));
       throw error;
@@ -889,7 +889,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
 
   async notifyTradingTeam(lineId: string, workflowId: string, impactAnalysis: any): Promise<void> {
     try {
-      console.log('📤 Notifying trading team:', { lineId, workflowId });
+      console.info('📤 Notifying trading team:', { lineId, workflowId });
 
       await this.client.post('/api/v1/notifications/trading-team', {
         lineId,
@@ -900,7 +900,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
         timestamp: new Date().toISOString()
       });
 
-      console.log('✅ Trading team notified successfully');
+      console.info('✅ Trading team notified successfully');
     } catch (error) {
       console.error('❌ Trading team notification failed:', error instanceof Error ? error.message : String(error));
       // Don't throw here - notification failures shouldn't break workflows
@@ -914,12 +914,12 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
     const cached = this.getCacheEntry<BettingMetrics>(cacheKey);
 
     if (cached) {
-      console.log('📊 Returning cached betting metrics');
+      console.info('📊 Returning cached betting metrics');
       return cached;
     }
 
     try {
-      console.log('📊 Fetching betting metrics from plive platform');
+      console.info('📊 Fetching betting metrics from plive platform');
 
       // Fetch multiple metrics in parallel using correct plive endpoints
       const [
@@ -987,7 +987,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
       // Cache the successful result
       this.setCacheEntry(cacheKey, metrics, 180000); // Cache for 3 minutes
 
-      console.log(`✅ Retrieved betting metrics: ${liveEvents} live events, ${totalBets} total bets`);
+      console.info(`✅ Retrieved betting metrics: ${liveEvents} live events, ${totalBets} total bets`);
       return metrics;
 
     } catch (error) {
@@ -1131,7 +1131,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
     };
 
     try {
-      console.log('🏥 Running betting platform health check');
+      console.info('🏥 Running betting platform health check');
 
       // Test multiple endpoints in parallel
       const healthTests = await Promise.allSettled([
@@ -1224,7 +1224,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
   clearCache(): void {
     this.cache.clear();
     this.incrementMetric('cache.cleared');
-    console.log('🧹 Cache cleared manually');
+    console.info('🧹 Cache cleared manually');
   }
 
   /**
@@ -1236,7 +1236,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
       lastFailureTime: 0,
       state: 'closed'
     };
-    console.log('🔄 Circuit breaker reset');
+    console.info('🔄 Circuit breaker reset');
     this.emit('circuit-breaker:reset');
   }
 
@@ -1259,7 +1259,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
     const errors: string[] = [];
 
     try {
-      console.log('🏥 Running enhanced health check');
+      console.info('🏥 Running enhanced health check');
 
       // Test platform reachability
       const platformReachable = await this.isPlatformReachable().catch(() => false);
@@ -1341,7 +1341,7 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
         this.getTotalBetsCount(),
         this.getSportsVolume()
       ]);
-      console.log('🔄 Cache refreshed with fresh data');
+      console.info('🔄 Cache refreshed with fresh data');
     } catch (error) {
       console.warn('⚠️ Cache refresh partially failed:', error instanceof Error ? error.message : String(error));
     }
@@ -1353,6 +1353,6 @@ export class BettingPlatformWorkflowIntegration extends EventEmitter {
   setWebhookConfig(url: string): void {
     this.config.webhookUrl = url;
     this.config.enableWebhooks = !!url;
-    console.log(`🔗 Webhook URL ${url ? 'set' : 'cleared'}`);
+    console.info(`🔗 Webhook URL ${url ? 'set' : 'cleared'}`);
   }
 }

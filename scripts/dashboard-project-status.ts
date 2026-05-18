@@ -30,17 +30,17 @@ if (import.meta.main) {
     const html = renderHtml(payload, autoRefresh);
     if (output) {
       await Bun.write(output, html);
-      console.log(`Wrote ${output}`);
+      console.info(`Wrote ${output}`);
     } else {
-      console.log(html);
+      console.info(html);
     }
   } else if (format === "json") {
     const json = JSON.stringify(payload, null, 2);
     if (output) {
       await Bun.write(output, json);
-      console.log(`Wrote ${output}`);
+      console.info(`Wrote ${output}`);
     } else {
-      console.log(json);
+      console.info(json);
     }
   } else {
     const text = [
@@ -51,9 +51,9 @@ if (import.meta.main) {
     ].join("\n");
     if (output) {
       await Bun.write(output, text);
-      console.log(`Wrote ${output}`);
+      console.info(`Wrote ${output}`);
     } else {
-      console.log(text);
+      console.info(text);
     }
   }
 }

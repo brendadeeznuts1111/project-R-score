@@ -301,10 +301,10 @@ export class EnhancedAnalyticsManager {
       metrics
     };
 
-    console.log(`🚨 Alert triggered: ${rule.name} (${rule.severity})`);
-    console.log(`   Condition: ${rule.condition}`);
-    console.log(`   Current Value: ${alert.currentValue}`);
-    console.log(`   Threshold: ${rule.threshold}`);
+    console.info(`🚨 Alert triggered: ${rule.name} (${rule.severity})`);
+    console.info(`   Condition: ${rule.condition}`);
+    console.info(`   Current Value: ${alert.currentValue}`);
+    console.info(`   Threshold: ${rule.threshold}`);
 
     // Execute alert actions
     for (const action of rule.actions) {
@@ -345,18 +345,18 @@ export class EnhancedAnalyticsManager {
   private async executeAlertAction(action: string, alert: any): Promise<void> {
     switch (action) {
       case 'log':
-        console.log(`📝 Alert logged: ${alert.name}`);
+        console.info(`📝 Alert logged: ${alert.name}`);
         break;
       case 'email':
-        console.log(`📧 Email alert sent: ${alert.name}`);
+        console.info(`📧 Email alert sent: ${alert.name}`);
         // In production, send actual email
         break;
       case 'webhook':
-        console.log(`🔗 Webhook alert sent: ${alert.name}`);
+        console.info(`🔗 Webhook alert sent: ${alert.name}`);
         // In production, send actual webhook
         break;
       case 'sms':
-        console.log(`📱 SMS alert sent: ${alert.name}`);
+        console.info(`📱 SMS alert sent: ${alert.name}`);
         // In production, send actual SMS
         break;
       default:
@@ -635,7 +635,7 @@ export class EnhancedAnalyticsManager {
    */
   clearMetrics(): void {
     this.metrics = [];
-    console.log('🧹 Metrics history cleared');
+    console.info('🧹 Metrics history cleared');
   }
 
   /**

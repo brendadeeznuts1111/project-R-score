@@ -276,7 +276,7 @@ async function main() {
   }
 
   if (all.length === 0) {
-    console.log('PASS secrets conformance: no positional Bun.secrets usage found');
+    console.info('PASS secrets conformance: no positional Bun.secrets usage found');
     process.exit(0);
   }
 

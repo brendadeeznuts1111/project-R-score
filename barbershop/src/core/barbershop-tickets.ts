@@ -288,7 +288,7 @@ async function autoAssignTicket(ticket: Ticket): Promise<boolean> {
       })
     );
 
-    console.log(
+    console.info(
       `🎯 Auto-assigned ticket ${ticket.id} to ${bestBarber.name} (score: ${bestScore.toFixed(1)})`
     );
     return true;
@@ -392,7 +392,7 @@ async function seedData(): Promise<void> {
     status: 'off_duty',
   });
 
-  console.log('✅ Seeded 3 barbers');
+  console.info('✅ Seeded 3 barbers');
 }
 
 const server = serve({
@@ -652,7 +652,7 @@ const server = serve({
 // Initialize
 await seedData();
 
-console.log(`
+console.info(`
 🦘 Barbershop Ticket System Ready!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Port:      ${server.port}

@@ -84,7 +84,7 @@ export async function debugComplianceMiddleware(req: Request): Promise<Request> 
 
   // Log compliance check
   const duration = Date.now() - startTime;
-  console.log(`🔍 Compliance check: ${result.valid ? "✅" : "❌"} (${duration}ms)`);
+  console.info(`🔍 Compliance check: ${result.valid ? "✅" : "❌"} (${duration}ms)`);
 
   if (!result.valid) {
     console.warn("⚠️ Compliance violations:", result.violations);

@@ -19,12 +19,12 @@ interface AuditResult {
 async function securityAudit(): Promise<AuditResult[]> {
 	const results: AuditResult[] = [];
 
-	console.log("🔍 Tier-1380 Secrets Security Audit\n");
-	console.log(`Bun Version: ${Bun.version}`);
-	console.log(`Timestamp: ${new Date().toISOString()}\n`);
+	console.info("🔍 Tier-1380 Secrets Security Audit\n");
+	console.info(`Bun Version: ${Bun.version}`);
+	console.info(`Timestamp: ${new Date().toISOString()}\n`);
 
 	// Test 1: Secret availability
-	console.log("Test 1: Secret availability...");
+	console.info("Test 1: Secret availability...");
 	const r2Key = await Bun.secrets.get({ service: "r2", name: "access-key-id" });
 	const r2Secret = await Bun.secrets.get({
 		service: "r2",
@@ -43,12 +43,12 @@ async function securityAudit(): Promise<AuditResult[]> {
 			? "All required secrets configured"
 			: `Missing: ${[!r2Key && "R2_ACCESS_KEY_ID", !r2Secret && "R2_SECRET_ACCESS_KEY", !cfAccount && "CF_ACCOUNT_ID"].filter(Boolean).join(", ")}`,
 	});
-	console.log(
+	console.info(
 		`  ${hasAllSecrets ? "✅" : "❌"} Secrets available: ${hasAllSecrets ? "YES" : "NO"}\n`,
 	);
 
 	// Test 2: Secret redaction in logs
-	console.log("Test 2: Secret redaction simulation...");
+	console.info("Test 2: Secret redaction simulation...");
 	const testSecret = r2Key || "test-secret-value-12345";
 	const loggedString = `R2 Key in log: ${testSecret}`;
 	// Check if the full secret would appear in logs
@@ -60,10 +60,10 @@ async function securityAudit(): Promise<AuditResult[]> {
 		passed: true, // Bun handles this automatically
 		details: "Bun runtime auto-redacts secrets in console/error output",
 	});
-	console.log(`  ✅ Log Redaction: ACTIVE (runtime-level)\n`);
+	console.info(`  ✅ Log Redaction: ACTIVE (runtime-level)\n`);
 
 	// Test 3: No plaintext in process.env
-	console.log("Test 3: Process environment check...");
+	console.info("Test 3: Process environment check...");
 	const envVars = JSON.stringify(process.env);
 	const hasPlaintextSecrets =
 		(r2Key && envVars.includes(r2Key)) || (r2Secret && envVars.includes(r2Secret));
@@ -75,16 +75,16 @@ async function securityAudit(): Promise<AuditResult[]> {
 			? "WARNING: Secret found in process.env"
 			: "Secrets not exposed in process.env (Bun.secrets isolation working)",
 	});
-	console.log(
+	console.info(
 		`  ${!hasPlaintextSecrets ? "✅" : "⚠️"} No plaintext in env: ${!hasPlaintextSecrets ? "YES" : "POTENTIAL LEAK"}\n`,
 	);
 
 	// Test 4: Secret inheritance simulation
-	console.log("Test 4: Child process secret inheritance...");
+	console.info("Test 4: Child process secret inheritance...");
 	const workerScript = `
     // Worker: Check if secrets are inherited
     const key = await Bun.secrets.get({ service: "r2", name: "access-key-id" });
-    console.log(key ? "INHERITANCE:OK" : "INHERITANCE:FAIL");
+    console.info(key ? "INHERITANCE:OK" : "INHERITANCE:FAIL");
   `;
 
 	const worker = Bun.spawn({
@@ -105,12 +105,12 @@ async function securityAudit(): Promise<AuditResult[]> {
 			? "Child processes inherit secrets automatically"
 			: `Inheritance failed: ${stderr || "no output"}`,
 	});
-	console.log(
+	console.info(
 		`  ${inherited ? "✅" : "❌"} Secret inheritance: ${inherited ? "YES" : "NO"}\n`,
 	);
 
 	// Test 5: Secret format validation
-	console.log("Test 5: Secret format validation...");
+	console.info("Test 5: Secret format validation...");
 	const validations = [
 		{ name: "r2:access-key-id", valid: r2Key ? r2Key.length >= 20 : false },
 		{
@@ -131,13 +131,13 @@ async function securityAudit(): Promise<AuditResult[]> {
 			.map((v) => `${v.name}: ${v.valid ? "valid" : "invalid/missing"}`)
 			.join(", "),
 	});
-	console.log(
+	console.info(
 		`  ${allValid ? "✅" : "⚠️"} Format validation: ${allValid ? "PASS" : "WARN"}`,
 	);
 	for (const v of validations) {
-		console.log(`     ${v.valid ? "✓" : "○"} ${v.name}`);
+		console.info(`     ${v.valid ? "✓" : "○"} ${v.name}`);
 	}
-	console.log();
+	console.info();
 
 	return results;
 }
@@ -189,7 +189,7 @@ ${
 	await mkdir("./matrix", { recursive: true });
 	await Bun.write("./matrix/secrets-audit.md", report);
 
-	console.log("📄 Audit report saved: ./matrix/secrets-audit.md");
+	console.info("📄 Audit report saved: ./matrix/secrets-audit.md");
 }
 
 async function main() {
@@ -199,17 +199,17 @@ async function main() {
 	const passed = results.filter((r) => r.passed).length;
 	const total = results.length;
 
-	console.log("═══════════════════════════════════════");
-	console.log(`  Final Score: ${passed}/${total} tests passed`);
-	console.log("═══════════════════════════════════════\n");
+	console.info("═══════════════════════════════════════");
+	console.info(`  Final Score: ${passed}/${total} tests passed`);
+	console.info("═══════════════════════════════════════\n");
 
 	if (passed === total) {
-		console.log("✅ Tier-1380 Secrets: PRODUCTION SECURE");
-		console.log("   All security checks passed.");
+		console.info("✅ Tier-1380 Secrets: PRODUCTION SECURE");
+		console.info("   All security checks passed.");
 		process.exit(0);
 	} else {
-		console.log("⚠️  SECURITY REVIEW REQUIRED");
-		console.log("   Some checks failed. Review report for details.");
+		console.info("⚠️  SECURITY REVIEW REQUIRED");
+		console.info("   Some checks failed. Review report for details.");
 		process.exit(1);
 	}
 }

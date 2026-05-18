@@ -81,7 +81,7 @@ interface BunCompileOptions {
  */
 const testFormatSpecifier = (format: string, ...args: any[]): string => {
 	const result = Bun.spawnSync({
-		cmd: ["bun", "-e", `console.log(${JSON.stringify(format)}, ${args.map(a => JSON.stringify(a)).join(", ")});`],
+		cmd: ["bun", "-e", `console.info(${JSON.stringify(format)}, ${args.map(a => JSON.stringify(a)).join(", ")});`],
 		stdout: "pipe",
 	});
 	return new TextDecoder().decode(result.stdout).trim();
@@ -1048,7 +1048,7 @@ describe("Bun v1.3.4 Feature Verification", () => {
 			 */
 			test("should format undefined", () => {
 				const result = Bun.spawnSync({
-					cmd: ["bun", "-e", "console.log('%j', undefined);"],
+					cmd: ["bun", "-e", "console.info('%j', undefined);"],
 					stdout: "pipe",
 				});
 				const output = new TextDecoder().decode(result.stdout).trim();
@@ -1092,7 +1092,7 @@ describe("Bun v1.3.4 Feature Verification", () => {
 			 */
 			test("should handle multiple %j specifiers", () => {
 				const result = Bun.spawnSync({
-					cmd: ["bun", "-e", "console.log('%j %j', { a: 1 }, { b: 2 });"],
+					cmd: ["bun", "-e", "console.info('%j %j', { a: 1 }, { b: 2 });"],
 					stdout: "pipe",
 				});
 				const output = new TextDecoder().decode(result.stdout).trim();
@@ -1105,7 +1105,7 @@ describe("Bun v1.3.4 Feature Verification", () => {
 			 */
 			test("should mix %j with other specifiers", () => {
 				const result = Bun.spawnSync({
-					cmd: ["bun", "-e", "console.log('%j %s %d', { status: 'ok' }, 'done', 42);"],
+					cmd: ["bun", "-e", "console.info('%j %s %d', { status: 'ok' }, 'done', 42);"],
 					stdout: "pipe",
 				});
 				const output = new TextDecoder().decode(result.stdout).trim();
@@ -1119,7 +1119,7 @@ describe("Bun v1.3.4 Feature Verification", () => {
 			 */
 			test("should work alongside %o and %O", () => {
 				const result = Bun.spawnSync({
-					cmd: ["bun", "-e", "console.log('%j', { test: true });"],
+					cmd: ["bun", "-e", "console.info('%j', { test: true });"],
 					stdout: "pipe",
 				});
 				const output = new TextDecoder().decode(result.stdout).trim();
@@ -1369,7 +1369,7 @@ describe("Bun v1.3.4 Feature Verification", () => {
 		 * @test Compile without autoload options
 		 */
 		test("should compile without autoload options", async () => {
-			const testFile = await createTempFile("console.log('test');");
+			const testFile = await createTempFile("console.info('test');");
 			tempFiles.push(testFile);
 
 			const result = await Bun.build({
@@ -1389,7 +1389,7 @@ describe("Bun v1.3.4 Feature Verification", () => {
 		 * @test Compile with all autoload options
 		 */
 		test("should compile with all autoload options", async () => {
-			const testFile = await createTempFile("console.log('test');");
+			const testFile = await createTempFile("console.info('test');");
 			tempFiles.push(testFile);
 
 			const result = await Bun.build({
@@ -1409,7 +1409,7 @@ describe("Bun v1.3.4 Feature Verification", () => {
 		 * @test Selective autoload options
 		 */
 		test("should compile with selective autoload options", async () => {
-			const testFile = await createTempFile("console.log('test');");
+			const testFile = await createTempFile("console.info('test');");
 			tempFiles.push(testFile);
 
 			const result = await Bun.build({
@@ -1429,7 +1429,7 @@ describe("Bun v1.3.4 Feature Verification", () => {
 		 * @test Only dotenv autoload
 		 */
 		test("should compile with only dotenv autoload", async () => {
-			const testFile = await createTempFile("console.log('test');");
+			const testFile = await createTempFile("console.info('test');");
 			tempFiles.push(testFile);
 
 			const result = await Bun.build({
@@ -1449,7 +1449,7 @@ describe("Bun v1.3.4 Feature Verification", () => {
 		 * @test Produce executable output
 		 */
 		test("should produce executable output", async () => {
-			const testFile = await createTempFile("console.log('test');");
+			const testFile = await createTempFile("console.info('test');");
 			tempFiles.push(testFile);
 
 			const result = await Bun.build({
@@ -1473,7 +1473,7 @@ describe("Bun v1.3.4 Feature Verification", () => {
 		test("should build TypeScript files", async () => {
 			const testFile = await createTempFile(`
 				const greeting: string = "Hello";
-				console.log(greeting);
+				console.info(greeting);
 			`);
 			tempFiles.push(testFile);
 
@@ -1495,7 +1495,7 @@ describe("Bun v1.3.4 Feature Verification", () => {
 
 			const mainFile = await createTempFile(`
 				import { helper } from "${helperFile}";
-				console.log(helper());
+				console.info(helper());
 			`);
 			tempFiles.push(mainFile);
 
@@ -1868,7 +1868,7 @@ describe("Bun v1.3.4 Feature Verification", () => {
 			};
 
 			const result = Bun.spawnSync({
-				cmd: ["bun", "-e", `console.log('%j', ${JSON.stringify(logEvent)});`],
+				cmd: ["bun", "-e", `console.info('%j', ${JSON.stringify(logEvent)});`],
 				stdout: "pipe",
 			});
 

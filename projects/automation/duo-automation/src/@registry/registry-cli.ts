@@ -37,17 +37,17 @@ function initializeRegistry() {
 // Enhanced logging
 function logInfo(message: string, data?: any): void {
   if (data) {
-    console.log(`ℹ️  ${message}: %j`, data);
+    console.info(`ℹ️  ${message}: %j`, data);
   } else {
-    console.log(`ℹ️  ${message}`);
+    console.info(`ℹ️  ${message}`);
   }
 }
 
 function logSuccess(message: string, data?: any): void {
   if (data) {
-    console.log(`✅ ${message}: %j`, data);
+    console.info(`✅ ${message}: %j`, data);
   } else {
-    console.log(`✅ ${message}`);
+    console.info(`✅ ${message}`);
   }
 }
 
@@ -107,22 +107,22 @@ program
       
       const stats = catalogManager.getStatistics();
       
-      console.log("📊 Registry Statistics");
-      console.log("=======================");
-      console.log(`Total Workspaces: ${stats.totalWorkspaces}`);
-      console.log(`Total Packages: ${stats.totalPackages}`);
-      console.log(`Total Tests: ${stats.totalTests}`);
-      console.log(`Total Benchmarks: ${stats.totalBenchmarks}`);
-      console.log(`Total Entries: ${stats.totalEntries}`);
+      console.info("📊 Registry Statistics");
+      console.info("=======================");
+      console.info(`Total Workspaces: ${stats.totalWorkspaces}`);
+      console.info(`Total Packages: ${stats.totalPackages}`);
+      console.info(`Total Tests: ${stats.totalTests}`);
+      console.info(`Total Benchmarks: ${stats.totalBenchmarks}`);
+      console.info(`Total Entries: ${stats.totalEntries}`);
       
-      console.log("\n📈 By Type:");
+      console.info("\n📈 By Type:");
       Object.entries(stats.types).forEach(([type, count]) => {
-        console.log(`  ${type}: ${count}`);
+        console.info(`  ${type}: ${count}`);
       });
       
-      console.log("\n📂 By Category:");
+      console.info("\n📂 By Category:");
       Object.entries(stats.categories).forEach(([category, count]) => {
-        console.log(`  ${category}: ${count}`);
+        console.info(`  ${category}: ${count}`);
       });
     } catch (error) {
       logError("Failed to get catalog stats", error);
@@ -143,12 +143,12 @@ program
         logSuccess("Catalog validation passed");
       } else {
         logError("Catalog validation failed");
-        console.log("\n❌ Errors:");
-        validation.errors.forEach(error => console.log(`  - ${error}`));
+        console.info("\n❌ Errors:");
+        validation.errors.forEach(error => console.info(`  - ${error}`));
         
         if (validation.warnings.length > 0) {
-          console.log("\n⚠️  Warnings:");
-          validation.warnings.forEach(warning => console.log(`  - ${warning}`));
+          console.info("\n⚠️  Warnings:");
+          validation.warnings.forEach(warning => console.info(`  - ${warning}`));
         }
         
         process.exit(1);
@@ -184,11 +184,11 @@ program
         packages: workspace.packages.length
       });
       
-      console.log(`\n📦 Packages in workspace:`);
+      console.info(`\n📦 Packages in workspace:`);
       workspace.packages.forEach(packageId => {
         const pkg = workspaceManager.getWorkspacePackages(workspace.id).find(p => p.id === packageId);
         if (pkg) {
-          console.log(`  - ${pkg.name} (${pkg.type})`);
+          console.info(`  - ${pkg.name} (${pkg.type})`);
         }
       });
     } catch (error) {
@@ -211,21 +211,21 @@ program
         workspaces = workspaces.filter(ws => ws.type === options.type);
       }
       
-      console.log("🏢 Workspaces");
-      console.log("=============");
+      console.info("🏢 Workspaces");
+      console.info("=============");
       
       if (workspaces.length === 0) {
-        console.log("No workspaces found");
+        console.info("No workspaces found");
         return;
       }
       
       workspaces.forEach(workspace => {
-        console.log(`${workspace.name} (${workspace.type})`);
-        console.log(`  ID: ${workspace.id}`);
-        console.log(`  Path: ${workspace.path}`);
-        console.log(`  Packages: ${workspace.packages.length}`);
-        console.log(`  Created: ${new Date(workspace.createdAt).toLocaleDateString()}`);
-        console.log("");
+        console.info(`${workspace.name} (${workspace.type})`);
+        console.info(`  ID: ${workspace.id}`);
+        console.info(`  Path: ${workspace.path}`);
+        console.info(`  Packages: ${workspace.packages.length}`);
+        console.info(`  Created: ${new Date(workspace.createdAt).toLocaleDateString()}`);
+        console.info("");
       });
     } catch (error) {
       logError("Failed to list workspaces", error);
@@ -248,21 +248,21 @@ program
       
       const packages = workspaceManager.getWorkspacePackages(workspaceId);
       
-      console.log(`📦 Packages in ${workspace.name}`);
-      console.log("==============================");
+      console.info(`📦 Packages in ${workspace.name}`);
+      console.info("==============================");
       
       if (packages.length === 0) {
-        console.log("No packages found");
+        console.info("No packages found");
         return;
       }
       
       packages.forEach(pkg => {
-        console.log(`${pkg.name} (${pkg.type})`);
-        console.log(`  Version: ${pkg.version}`);
-        console.log(`  Description: ${pkg.description}`);
-        console.log(`  Tests: ${pkg.tests.length}`);
-        console.log(`  Benchmarks: ${pkg.benchmarks.length}`);
-        console.log("");
+        console.info(`${pkg.name} (${pkg.type})`);
+        console.info(`  Version: ${pkg.version}`);
+        console.info(`  Description: ${pkg.description}`);
+        console.info(`  Tests: ${pkg.tests.length}`);
+        console.info(`  Benchmarks: ${pkg.benchmarks.length}`);
+        console.info("");
       });
     } catch (error) {
       logError("Failed to get workspace packages", error);
@@ -321,11 +321,11 @@ program
       });
       
       if (bundleResult.metadata) {
-        console.log("\n📊 Bundle Statistics:");
-        console.log(`  Size: ${bundleResult.metadata.size} bytes`);
-        console.log(`  Hash: ${bundleResult.metadata.hash}`);
-        console.log(`  Dependencies: ${bundleResult.metadata.dependencies.length}`);
-        console.log(`  Exports: ${bundleResult.metadata.exports.length}`);
+        console.info("\n📊 Bundle Statistics:");
+        console.info(`  Size: ${bundleResult.metadata.size} bytes`);
+        console.info(`  Hash: ${bundleResult.metadata.hash}`);
+        console.info(`  Dependencies: ${bundleResult.metadata.dependencies.length}`);
+        console.info(`  Exports: ${bundleResult.metadata.exports.length}`);
       }
     } catch (error) {
       logError("Failed to bundle package", error);
@@ -371,13 +371,13 @@ program
       
       const stats = await r2Storage.getStorageStatistics();
       
-      console.log("💾 R2 Storage Statistics");
-      console.log("========================");
-      console.log(`Total Packages: ${stats.totalPackages}`);
-      console.log(`Total Size: ${(stats.totalSize / 1024 / 1024).toFixed(2)} MB`);
-      console.log(`Total Tests: ${stats.totalTests}`);
-      console.log(`Total Benchmarks: ${stats.totalBenchmarks}`);
-      console.log(`Last Updated: ${new Date(stats.lastUpdated).toLocaleString()}`);
+      console.info("💾 R2 Storage Statistics");
+      console.info("========================");
+      console.info(`Total Packages: ${stats.totalPackages}`);
+      console.info(`Total Size: ${(stats.totalSize / 1024 / 1024).toFixed(2)} MB`);
+      console.info(`Total Tests: ${stats.totalTests}`);
+      console.info(`Total Benchmarks: ${stats.totalBenchmarks}`);
+      console.info(`Last Updated: ${new Date(stats.lastUpdated).toLocaleString()}`);
     } catch (error) {
       logError("Failed to get storage stats", error);
       process.exit(1);
@@ -393,22 +393,22 @@ program
       
       const packages = await r2Storage.listPackages();
       
-      console.log("📦 Packages in R2 Storage");
-      console.log("==========================");
+      console.info("📦 Packages in R2 Storage");
+      console.info("==========================");
       
       if (packages.length === 0) {
-        console.log("No packages found");
+        console.info("No packages found");
         return;
       }
       
       for (const packageId of packages) {
         const metadata = await r2Storage.getPackageMetadata(packageId);
         if (metadata) {
-          console.log(`${metadata.name} (${metadata.version})`);
-          console.log(`  ID: ${packageId}`);
-          console.log(`  Size: ${metadata.metadata.size} bytes`);
-          console.log(`  Hash: ${metadata.metadata.hash}`);
-          console.log("");
+          console.info(`${metadata.name} (${metadata.version})`);
+          console.info(`  ID: ${packageId}`);
+          console.info(`  Size: ${metadata.metadata.size} bytes`);
+          console.info(`  Hash: ${metadata.metadata.hash}`);
+          console.info("");
         }
       }
     } catch (error) {
@@ -435,27 +435,27 @@ program
         workspace: options.workspace
       });
       
-      console.log(`🔍 Search Results for "${query}"`);
-      console.log("===============================");
+      console.info(`🔍 Search Results for "${query}"`);
+      console.info("===============================");
       
-      console.log(`\n🏢 Workspaces (${results.workspaces.length}):`);
+      console.info(`\n🏢 Workspaces (${results.workspaces.length}):`);
       results.workspaces.forEach(ws => {
-        console.log(`  - ${ws.name} (${ws.type})`);
+        console.info(`  - ${ws.name} (${ws.type})`);
       });
       
-      console.log(`\n📦 Packages (${results.packages.length}):`);
+      console.info(`\n📦 Packages (${results.packages.length}):`);
       results.packages.forEach(pkg => {
-        console.log(`  - ${pkg.name} v${pkg.version} (${pkg.type})`);
+        console.info(`  - ${pkg.name} v${pkg.version} (${pkg.type})`);
       });
       
-      console.log(`\n🧪 Tests (${results.tests.length}):`);
+      console.info(`\n🧪 Tests (${results.tests.length}):`);
       results.tests.forEach(test => {
-        console.log(`  - ${test.name} (${test.type})`);
+        console.info(`  - ${test.name} (${test.type})`);
       });
       
-      console.log(`\n⚡ Benchmarks (${results.benchmarks.length}):`);
+      console.info(`\n⚡ Benchmarks (${results.benchmarks.length}):`);
       results.benchmarks.forEach(bench => {
-        console.log(`  - ${bench.name} (${bench.type})`);
+        console.info(`  - ${bench.name} (${bench.type})`);
       });
     } catch (error) {
       logError("Failed to search catalog", error);

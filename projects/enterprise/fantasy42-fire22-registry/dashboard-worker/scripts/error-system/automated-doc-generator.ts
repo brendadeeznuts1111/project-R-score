@@ -70,7 +70,7 @@ class AutomatedDocGenerator {
     try {
       const content = readFileSync(registryPath, 'utf-8');
       this.registry = JSON.parse(content);
-      console.log(
+      console.info(
         `✅ Loaded error registry with ${this.registry.metadata.totalErrorCodes} error codes`
       );
     } catch (error) {
@@ -482,36 +482,36 @@ export const ERROR_HTTP_CODES = {
    * Run the documentation generation
    */
   async generate(): Promise<void> {
-    console.log('🤖 Starting automated documentation generation...\n');
+    console.info('🤖 Starting automated documentation generation...\n');
 
     try {
       // Generate markdown documentation
-      console.log('📝 Generating markdown documentation...');
+      console.info('📝 Generating markdown documentation...');
       const markdown = this.generateMarkdownDocumentation();
       const markdownPath = join(this.projectRoot, 'docs', 'error-codes-auto.md');
       writeFileSync(markdownPath, markdown, 'utf-8');
-      console.log(`✅ Generated: ${markdownPath}`);
+      console.info(`✅ Generated: ${markdownPath}`);
 
       // Generate TypeScript types
-      console.log('🔧 Generating TypeScript definitions...');
+      console.info('🔧 Generating TypeScript definitions...');
       const types = this.generateTypeDefinitions();
       const typesPath = join(this.projectRoot, 'src', 'types', 'error-system.ts');
       writeFileSync(typesPath, types, 'utf-8');
-      console.log(`✅ Generated: ${typesPath}`);
+      console.info(`✅ Generated: ${typesPath}`);
 
       // Generate constants
-      console.log('📋 Generating constants...');
+      console.info('📋 Generating constants...');
       const constants = this.generateConstants();
       const constantsPath = join(this.projectRoot, 'src', 'constants', 'error-registry.ts');
       writeFileSync(constantsPath, constants, 'utf-8');
-      console.log(`✅ Generated: ${constantsPath}`);
+      console.info(`✅ Generated: ${constantsPath}`);
 
-      console.log('\n🎉 Documentation generation completed successfully!');
-      console.log('\n📊 Generation Summary:');
-      console.log(`   • Error Codes: ${this.registry.metadata.totalErrorCodes}`);
-      console.log(`   • Categories: ${Object.keys(this.registry.errorCategories).length}`);
-      console.log(`   • Generated Files: 3`);
-      console.log(`   • Generated At: ${new Date().toLocaleString()}`);
+      console.info('\n🎉 Documentation generation completed successfully!');
+      console.info('\n📊 Generation Summary:');
+      console.info(`   • Error Codes: ${this.registry.metadata.totalErrorCodes}`);
+      console.info(`   • Categories: ${Object.keys(this.registry.errorCategories).length}`);
+      console.info(`   • Generated Files: 3`);
+      console.info(`   • Generated At: ${new Date().toLocaleString()}`);
     } catch (error) {
       console.error('❌ Documentation generation failed:', error);
       throw error;

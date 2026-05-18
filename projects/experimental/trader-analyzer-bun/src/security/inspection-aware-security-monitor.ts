@@ -46,7 +46,7 @@ export class InspectionAwareSecurityMonitor extends RuntimeSecurityMonitor {
 
 		// Log to console in development
 		if (process.env.NODE_ENV === "development") {
-			console.log(
+			console.info(
 				"🚨 Security Threat:",
 				Bun.inspect(inspectable, { colors: true, depth: 2 }),
 			);

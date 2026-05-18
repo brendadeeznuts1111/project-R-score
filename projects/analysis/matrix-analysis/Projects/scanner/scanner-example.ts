@@ -16,7 +16,7 @@ async function basicScan() {
   await scanner.initialize();
 
   const result = await scanner.scan(".");
-  console.log(`Scanned ${result.filesScanned} files, found ${result.issuesFound} issues`);
+  console.info(`Scanned ${result.filesScanned} files, found ${result.issuesFound} issues`);
 }
 
 /**
@@ -29,9 +29,9 @@ async function preInstallExample() {
 
   if (!result.allowed) {
     if (result.requiresForce) {
-      console.log("Use --force-license to proceed");
+      console.info("Use --force-license to proceed");
     } else {
-      console.log(`Blocked: ${result.reason}`);
+      console.info(`Blocked: ${result.reason}`);
     }
   }
 }
@@ -59,7 +59,7 @@ async function streamingSarifExample() {
   await scanner.initialize();
 
   const result = await scanner.scan(".");
-  console.log(`SARIF output: scan-${result.traceId}.sarif.json`);
+  console.info(`SARIF output: scan-${result.traceId}.sarif.json`);
 }
 
 /**
@@ -85,7 +85,7 @@ async function fixSuggestionsExample() {
     dryRun: false
   });
 
-  console.log(`Applied ${applied} fixes, ${failed} failed`);
+  console.info(`Applied ${applied} fixes, ${failed} failed`);
 }
 
 /**
@@ -159,7 +159,7 @@ async function enforcementExample() {
  */
 async function createConfigExample() {
   await createDefaultScannerRC(".scannerrc");
-  console.log("Created .scannerrc with default settings");
+  console.info("Created .scannerrc with default settings");
 }
 
 // Run examples
@@ -198,6 +198,6 @@ if (import.meta.main) {
       await createConfigExample();
       break;
     default:
-      console.log("Available examples: basic, preinstall, baseline, sarif, fixes, ndjson, metrics, sandbox, enforce, config");
+      console.info("Available examples: basic, preinstall, baseline, sarif, fixes, ndjson, metrics, sandbox, enforce, config");
   }
 }

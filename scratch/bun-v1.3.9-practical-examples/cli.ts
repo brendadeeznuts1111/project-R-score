@@ -39,7 +39,7 @@ async function loadConfig(): Promise<Config> {
 }
 
 function printBanner(): void {
-  console.log(`
+  console.info(`
 ╔══════════════════════════════════════════╗
 ║  ${config.name} v${config.version}                    ║
 ║  Built with Bun v${Bun.version}              ║
@@ -48,7 +48,7 @@ function printBanner(): void {
 }
 
 function printHelp(): void {
-  console.log(`
+  console.info(`
 Usage: my-cli [options] <command>
 
 Commands:
@@ -69,19 +69,19 @@ Examples:
 }
 
 function showInfo(): void {
-  console.log("Runtime Information:");
-  console.log("  Module Format: ESM");
-  console.log(`  Bun Version: ${Bun.version}`);
-  console.log(`  Platform: ${process.platform} ${process.arch}`);
-  console.log(`  Init Time: ${initDuration}ms`);
-  console.log(`  import.meta.url: ${import.meta.url}`);
-  console.log(`  import.meta.dirname: ${import.meta.dirname ?? "(not available)"}`);
-  console.log(`  import.meta.filename: ${import.meta.filename ?? "(not available)"}`);
+  console.info("Runtime Information:");
+  console.info("  Module Format: ESM");
+  console.info(`  Bun Version: ${Bun.version}`);
+  console.info(`  Platform: ${process.platform} ${process.arch}`);
+  console.info(`  Init Time: ${initDuration}ms`);
+  console.info(`  import.meta.url: ${import.meta.url}`);
+  console.info(`  import.meta.dirname: ${import.meta.dirname ?? "(not available)"}`);
+  console.info(`  import.meta.filename: ${import.meta.filename ?? "(not available)"}`);
 }
 
 function showConfig(): void {
-  console.log("Configuration:");
-  console.log(JSON.stringify(config, null, 2));
+  console.info("Configuration:");
+  console.info(JSON.stringify(config, null, 2));
 }
 
 async function greet(name: string): Promise<void> {
@@ -92,20 +92,20 @@ async function greet(name: string): Promise<void> {
   else if (hour < 18) greeting = "Good afternoon";
   else greeting = "Good evening";
   
-  console.log(`${greeting}, ${name}! 👋`);
-  console.log(`(Running from ESM bytecode executable)`);
+  console.info(`${greeting}, ${name}! 👋`);
+  console.info(`(Running from ESM bytecode executable)`);
 }
 
 async function fetchUrl(url: string): Promise<void> {
-  console.log(`Fetching ${url}...`);
+  console.info(`Fetching ${url}...`);
   
   try {
     const response = await fetch(url);
-    console.log(`Status: ${response.status} ${response.statusText}`);
+    console.info(`Status: ${response.status} ${response.statusText}`);
     
     const data = await response.json();
-    console.log("Response:");
-    console.log(JSON.stringify(data, null, 2).substring(0, 500));
+    console.info("Response:");
+    console.info(JSON.stringify(data, null, 2).substring(0, 500));
     
   } catch (error: any) {
     console.error(`Error: ${error.message}`);
@@ -114,10 +114,10 @@ async function fetchUrl(url: string): Promise<void> {
 
 async function dynamicDemo(): Promise<void> {
   // Dynamic import demo
-  console.log("Testing dynamic import...");
+  console.info("Testing dynamic import...");
   
   const { format } = await import("util");
-  console.log(`Dynamic import successful! format() is ${typeof format}`);
+  console.info(`Dynamic import successful! format() is ${typeof format}`);
 }
 
 // Parse arguments
@@ -137,7 +137,7 @@ if (values.help) {
 }
 
 if (values.version) {
-  console.log(`${config.name} v${config.version}`);
+  console.info(`${config.name} v${config.version}`);
   process.exit(0);
 }
 

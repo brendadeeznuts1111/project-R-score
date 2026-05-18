@@ -213,7 +213,7 @@ export async function buildGlobalHyperRankedPatterns(): Promise<RegionPatterns> 
  */
 export async function initializeGlobalHyperRanked(): Promise<void> {
 	AI_ADAPTIVE_MULTI_REGION_PATTERNS['global-hyper-ranked'] = await buildGlobalHyperRankedPatterns();
-	console.log(`✅ Initialized global-hyper-ranked with ${AI_ADAPTIVE_MULTI_REGION_PATTERNS['global-hyper-ranked'].length} patterns`);
+	console.info(`✅ Initialized global-hyper-ranked with ${AI_ADAPTIVE_MULTI_REGION_PATTERNS['global-hyper-ranked'].length} patterns`);
 }
 
 /**
@@ -226,7 +226,7 @@ export async function updateAIDrivenFeedPatterns(): Promise<void> {
 	// Rebuild global-hyper-ranked
 	await initializeGlobalHyperRanked();
 	
-	console.log(`✅ Updated ai-driven-feed with ${aiFeedPatterns.length} patterns`);
+	console.info(`✅ Updated ai-driven-feed with ${aiFeedPatterns.length} patterns`);
 }
 
 /**

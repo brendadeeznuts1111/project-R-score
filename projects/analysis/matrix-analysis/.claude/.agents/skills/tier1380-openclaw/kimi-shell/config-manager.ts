@@ -147,7 +147,7 @@ async function main() {
 				process.exit(1);
 			}
 			const value = manager.get(key);
-			console.log(JSON.stringify(value, null, 2));
+			console.info(JSON.stringify(value, null, 2));
 			break;
 		}
 
@@ -165,7 +165,7 @@ async function main() {
 				manager.set(key as keyof ShellConfig, value as any);
 			}
 			await manager.save();
-			console.log(`${COLORS.green}✓${COLORS.reset} Set ${key} = ${value}`);
+			console.info(`${COLORS.green}✓${COLORS.reset} Set ${key} = ${value}`);
 			break;
 		}
 
@@ -173,9 +173,9 @@ async function main() {
 			const action = args[1];
 			if (action === "list") {
 				const aliases = manager.listAliases();
-				console.log(`${COLORS.bold}Aliases:${COLORS.reset}`);
+				console.info(`${COLORS.bold}Aliases:${COLORS.reset}`);
 				for (const [name, cmd] of Object.entries(aliases)) {
-					console.log(`  ${COLORS.cyan}${name.padEnd(10)}${COLORS.reset} → ${cmd}`);
+					console.info(`  ${COLORS.cyan}${name.padEnd(10)}${COLORS.reset} → ${cmd}`);
 				}
 			} else if (action === "set") {
 				const [name, ...cmdParts] = args.slice(2);
@@ -185,7 +185,7 @@ async function main() {
 				}
 				manager.setAlias(name, cmdParts.join(" "));
 				await manager.save();
-				console.log(`${COLORS.green}✓${COLORS.reset} Alias '${name}' created`);
+				console.info(`${COLORS.green}✓${COLORS.reset} Alias '${name}' created`);
 			} else if (action === "remove") {
 				const name = args[2];
 				if (!name) {
@@ -194,44 +194,44 @@ async function main() {
 				}
 				manager.removeAlias(name);
 				await manager.save();
-				console.log(`${COLORS.green}✓${COLORS.reset} Alias '${name}' removed`);
+				console.info(`${COLORS.green}✓${COLORS.reset} Alias '${name}' removed`);
 			}
 			break;
 		}
 
 		case "show": {
 			const config = manager.getAll();
-			console.log(`${COLORS.bold}Current Configuration:${COLORS.reset}\n`);
-			console.log(JSON.stringify(config, null, 2));
+			console.info(`${COLORS.bold}Current Configuration:${COLORS.reset}\n`);
+			console.info(JSON.stringify(config, null, 2));
 			break;
 		}
 
 		case "reset": {
 			manager.reset();
 			await manager.save();
-			console.log(`${COLORS.green}✓${COLORS.reset} Configuration reset to defaults`);
+			console.info(`${COLORS.green}✓${COLORS.reset} Configuration reset to defaults`);
 			break;
 		}
 
 		case "path": {
-			console.log(CONFIG_PATH);
+			console.info(CONFIG_PATH);
 			break;
 		}
 
 		default: {
-			console.log(`${COLORS.bold}🐚 Kimi Shell Configuration Manager${COLORS.reset}\n`);
-			console.log("Usage:");
-			console.log("  config-manager.ts get <key>           Get configuration value");
-			console.log("  config-manager.ts set <key> <value>   Set configuration value");
-			console.log("  config-manager.ts alias list          List aliases");
-			console.log("  config-manager.ts alias set <n> <c>   Create alias");
-			console.log("  config-manager.ts alias remove <n>    Remove alias");
-			console.log("  config-manager.ts show                Show all config");
-			console.log("  config-manager.ts reset               Reset to defaults");
-			console.log("  config-manager.ts path                Show config file path");
-			console.log("\nExamples:");
-			console.log("  config-manager.ts set theme light");
-			console.log("  config-manager.ts alias set st status");
+			console.info(`${COLORS.bold}🐚 Kimi Shell Configuration Manager${COLORS.reset}\n`);
+			console.info("Usage:");
+			console.info("  config-manager.ts get <key>           Get configuration value");
+			console.info("  config-manager.ts set <key> <value>   Set configuration value");
+			console.info("  config-manager.ts alias list          List aliases");
+			console.info("  config-manager.ts alias set <n> <c>   Create alias");
+			console.info("  config-manager.ts alias remove <n>    Remove alias");
+			console.info("  config-manager.ts show                Show all config");
+			console.info("  config-manager.ts reset               Reset to defaults");
+			console.info("  config-manager.ts path                Show config file path");
+			console.info("\nExamples:");
+			console.info("  config-manager.ts set theme light");
+			console.info("  config-manager.ts alias set st status");
 		}
 	}
 }

@@ -46,23 +46,23 @@ export class ProgressiveDisclosureCLI {
     args: string[] = [],
     options: { enableStreaming?: boolean; analyzeCircular?: boolean; streamingOptions?: LargeObjectOptions } = {}
   ): Promise<RunResult> {
-    console.log('🎯 Enhanced Progressive Disclosure Mode');
-    console.log('='.repeat(60));
+    console.info('🎯 Enhanced Progressive Disclosure Mode');
+    console.info('='.repeat(60));
     
     if (options.enableStreaming) {
-      console.log('📡 Streaming enabled for large objects');
+      console.info('📡 Streaming enabled for large objects');
       if (options.streamingOptions) {
-        console.log(`   Strategy: ${options.streamingOptions.strategy || 'default'}`);
-        console.log(`   Threshold: ${ProgressiveDisclosureCLI.formatBytes(options.streamingOptions.streamingThreshold || this.STREAMING_THRESHOLD)}`);
+        console.info(`   Strategy: ${options.streamingOptions.strategy || 'default'}`);
+        console.info(`   Threshold: ${ProgressiveDisclosureCLI.formatBytes(options.streamingOptions.streamingThreshold || this.STREAMING_THRESHOLD)}`);
       }
     }
     
     if (options.analyzeCircular) {
-      console.log('🔄 Circular reference analysis enabled');
+      console.info('🔄 Circular reference analysis enabled');
     }
     
     for (const phase of this.PHASES) {
-      console.log(`\n🔍 Phase: ${phase.name} (depth=${phase.depth})`);
+      console.info(`\n🔍 Phase: ${phase.name} (depth=${phase.depth})`);
       
       try {
         const result = await this.runWithDepth(
@@ -73,37 +73,37 @@ export class ProgressiveDisclosureCLI {
           options
         );
         
-        console.log(`   Output length: ${result.output?.length || 0} chars`);
-        console.log(`   Estimated size: ${this.formatBytes(result.estimatedSize || 0)}`);
+        console.info(`   Output length: ${result.output?.length || 0} chars`);
+        console.info(`   Estimated size: ${this.formatBytes(result.estimatedSize || 0)}`);
         
         if (result.circularRefs !== undefined) {
-          console.log(`   Circular refs: ${result.circularRefs}`);
+          console.info(`   Circular refs: ${result.circularRefs}`);
         }
         
         if (result.truncated) {
-          console.log(`   ⚠️ Output appears truncated`);
+          console.info(`   ⚠️ Output appears truncated`);
         }
         
         if (result.error) {
-          console.log(`   Error: ${result.error}`);
+          console.info(`   Error: ${result.error}`);
         }
         
         if (result.success) {
-          console.log(`✅ ${phase.name} completed successfully`);
+          console.info(`✅ ${phase.name} completed successfully`);
           
           // Enhanced analysis for escalation decision
           if (this.shouldGoDeeper(result, phase.depth)) {
             const reason = this.getEscalationReason(result);
-            console.log(`⚠️ ${reason}, continuing to next phase...`);
+            console.info(`⚠️ ${reason}, continuing to next phase...`);
             continue;
           }
           
-          console.log(`🎯 Optimal depth found: ${phase.depth}`);
+          console.info(`🎯 Optimal depth found: ${phase.depth}`);
           return result;
         }
       } catch (error) {
-        console.log(`⚠️ ${phase.name} failed, escalating depth...`);
-        console.log(`   Error: ${error instanceof Error ? error.message : String(error)}`);
+        console.info(`⚠️ ${phase.name} failed, escalating depth...`);
+        console.info(`   Error: ${error instanceof Error ? error.message : String(error)}`);
       }
     }
     
@@ -136,7 +136,7 @@ export class ProgressiveDisclosureCLI {
         return ind ? names[idx] : null;
       }).filter(Boolean);
       
-      console.log(`   🔍 Detected: ${activeIndicators.join(', ')}`);
+      console.info(`   🔍 Detected: ${activeIndicators.join(', ')}`);
     }
     
     return shouldEscalate;
@@ -358,11 +358,11 @@ export class ProgressiveDisclosureCLI {
     
     const config = configs[env as keyof typeof configs] || configs.development;
     
-    console.log(`\n🔧 ${env.toUpperCase()} Environment Guide:`);
-    console.log(`   Recommended depth: ${config.depth}`);
-    console.log(`   Flags: ${config.flags.join(' ')}`);
-    console.log(`   Tips:`);
-    config.tips.forEach(tip => console.log(`     - ${tip}`));
+    console.info(`\n🔧 ${env.toUpperCase()} Environment Guide:`);
+    console.info(`   Recommended depth: ${config.depth}`);
+    console.info(`   Flags: ${config.flags.join(' ')}`);
+    console.info(`   Tips:`);
+    config.tips.forEach(tip => console.info(`     - ${tip}`));
   }
 }
 
@@ -371,17 +371,17 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.length < 2) {
-    console.log('Usage: bun benchmark-recovery.ts run <command> [args...] [--progressive] [--streaming] [--streaming-strategy=<strategy>] [--streaming-threshold=<size>] [--analyze-circular] [--env-guide]');
-    console.log('');
-    console.log('Examples:');
-    console.log('  bun benchmark-recovery.ts run bench.ts --progressive');
-    console.log('  bun benchmark-recovery.ts run bench.ts --progressive --streaming');
-    console.log('  bun benchmark-recovery.ts run bench.ts --progressive --streaming --streaming-strategy=file-stream --streaming-threshold=5MB');
-    console.log('  bun benchmark-recovery.ts run bench.ts --progressive --analyze-circular');
-    console.log('  bun benchmark-recovery.ts --env-guide development');
-    console.log('');
-    console.log('Streaming strategies: json-truncate, file-stream, sample');
-    console.log('Threshold format: <number><unit> (e.g., 5MB, 1024KB, 1GB)');
+    console.info('Usage: bun benchmark-recovery.ts run <command> [args...] [--progressive] [--streaming] [--streaming-strategy=<strategy>] [--streaming-threshold=<size>] [--analyze-circular] [--env-guide]');
+    console.info('');
+    console.info('Examples:');
+    console.info('  bun benchmark-recovery.ts run bench.ts --progressive');
+    console.info('  bun benchmark-recovery.ts run bench.ts --progressive --streaming');
+    console.info('  bun benchmark-recovery.ts run bench.ts --progressive --streaming --streaming-strategy=file-stream --streaming-threshold=5MB');
+    console.info('  bun benchmark-recovery.ts run bench.ts --progressive --analyze-circular');
+    console.info('  bun benchmark-recovery.ts --env-guide development');
+    console.info('');
+    console.info('Streaming strategies: json-truncate, file-stream, sample');
+    console.info('Threshold format: <number><unit> (e.g., 5MB, 1024KB, 1GB)');
     process.exit(1);
   }
   
@@ -445,26 +445,26 @@ async function main() {
         }
       );
       
-      console.log('\n🎯 Enhanced Progressive Disclosure Results:');
-      console.log(`   Success: ${result.success ? '✅' : '❌'}`);
-      console.log(`   Final Depth: ${result.depthUsed}`);
-      console.log(`   Duration: ${result.duration}ms`);
-      console.log(`   Output Size: ${ProgressiveDisclosureCLI.formatBytes(result.estimatedSize || 0)}`);
+      console.info('\n🎯 Enhanced Progressive Disclosure Results:');
+      console.info(`   Success: ${result.success ? '✅' : '❌'}`);
+      console.info(`   Final Depth: ${result.depthUsed}`);
+      console.info(`   Duration: ${result.duration}ms`);
+      console.info(`   Output Size: ${ProgressiveDisclosureCLI.formatBytes(result.estimatedSize || 0)}`);
       
       if (result.circularRefs !== undefined) {
-        console.log(`   Circular References: ${result.circularRefs}`);
+        console.info(`   Circular References: ${result.circularRefs}`);
       }
       
       if (result.truncated) {
-        console.log(`   Output Truncated: Yes`);
+        console.info(`   Output Truncated: Yes`);
       }
       
       if (result.streamingUsed) {
-        console.log(`   Streaming Used: Yes`);
+        console.info(`   Streaming Used: Yes`);
       }
       
       if (result.error) {
-        console.log(`   Error: ${result.error}`);
+        console.info(`   Error: ${result.error}`);
       }
       
       process.exit(result.success ? 0 : 1);
@@ -473,7 +473,7 @@ async function main() {
       process.exit(1);
     }
   } else {
-    console.log('🔧 Running without progressive disclosure...');
+    console.info('🔧 Running without progressive disclosure...');
     
     // Create a simple runWithDepth call for non-progressive mode
     const result = await new Promise<RunResult>((resolve) => {
@@ -542,10 +542,10 @@ async function main() {
     });
     
     if (result) {
-      console.log(`Result: ${result.success ? '✅ Success' : '❌ Failed'}`);
+      console.info(`Result: ${result.success ? '✅ Success' : '❌ Failed'}`);
       process.exit(result.success ? 0 : 1);
     } else {
-      console.log('❌ Failed to run command');
+      console.info('❌ Failed to run command');
       process.exit(1);
     }
   }

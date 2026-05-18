@@ -28,7 +28,7 @@ describe("🔄 Proxy & Connection Tests", () => {
       expect(headers["via"]).toContain("DevHQ");
       expect(headers["x-proxy-auth"]).toBe("custom-token");
 
-      console.log("✅ Mock proxy headers delivered!");
+      console.info("✅ Mock proxy headers delivered!");
     } else {
       expect(res.ok).toBe(true);
       const headers: Record<string, string> = {};
@@ -37,7 +37,7 @@ describe("🔄 Proxy & Connection Tests", () => {
       });
       expect(headers["via"]).toContain("DevHQ"); // Proxy trace
 
-      console.log("✅ Real proxy headers delivered!");
+      console.info("✅ Real proxy headers delivered!");
     }
   });
 
@@ -80,10 +80,10 @@ describe("🔄 Proxy & Connection Tests", () => {
 
     expect(successCount).toBeGreaterThan(5); // At least half should succeed
 
-    console.log(
+    console.info(
       `✅ ${successCount}/10 requests successful with connection pooling!`
     );
-    console.log(`📊 Agent sockets: ${Object.keys(agent.sockets).length}`);
+    console.info(`📊 Agent sockets: ${Object.keys(agent.sockets).length}`);
   });
 
   test("🚀 HTTP/2 Support - Multiplexing", async () => {
@@ -125,11 +125,11 @@ describe("🔄 Proxy & Connection Tests", () => {
       expect(successCount).toBeGreaterThan(3);
 
       client.close();
-      console.log(
+      console.info(
         `✅ HTTP/2 multiplexing: ${successCount}/5 requests successful!`
       );
     } catch (error) {
-      console.log("⚠️ HTTP/2 not available, skipping test");
+      console.info("⚠️ HTTP/2 not available, skipping test");
       expect(true).toBe(true); // Skip gracefully
     }
   });
@@ -174,7 +174,7 @@ describe("🔄 Proxy & Connection Tests", () => {
     expect(attemptCount).toBeGreaterThan(0);
     expect(endTime - startTime).toBeLessThan(10000); // Should complete within 10s
 
-    console.log(
+    console.info(
       `✅ Request successful after ${attemptCount} attempts in ${
         endTime - startTime
       }ms`
@@ -236,10 +236,10 @@ describe("🔄 Proxy & Connection Tests", () => {
     const avgResponseTime = metrics.totalResponseTime / metrics.totalRequests;
     expect(avgResponseTime).toBeGreaterThan(0);
 
-    console.log(
+    console.info(
       `📊 Metrics: ${metrics.successfulRequests}/${metrics.totalRequests} successful`
     );
-    console.log(`📊 Average response time: ${avgResponseTime.toFixed(2)}ms`);
+    console.info(`📊 Average response time: ${avgResponseTime.toFixed(2)}ms`);
   });
 
   test("🛡️ Circuit Breaker - Fault Tolerance", async () => {
@@ -314,7 +314,7 @@ describe("🔄 Proxy & Connection Tests", () => {
     expect(successCount).toBe(0); // First 2 should fail, rest should be blocked
     expect(failureCount).toBeGreaterThan(2);
 
-    console.log(
+    console.info(
       `✅ Circuit breaker: ${state.state} after ${failureCount} failures`
     );
   });

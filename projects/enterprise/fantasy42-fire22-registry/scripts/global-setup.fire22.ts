@@ -41,7 +41,7 @@ interface GlobalConfig {
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function validateEnvironment(): Promise<boolean> {
-  console.log('🔍 Validating environment configuration...');
+  console.info('🔍 Validating environment configuration...');
 
   const requiredVars = [
     'CLOUDFLARE_API_TOKEN',
@@ -55,10 +55,10 @@ async function validateEnvironment(): Promise<boolean> {
   for (const varName of requiredVars) {
     const value = process.env[varName];
     if (!value || value === `your_${varName.toLowerCase()}_here`) {
-      console.log(`❌ ${varName}: NOT CONFIGURED`);
+      console.info(`❌ ${varName}: NOT CONFIGURED`);
       valid = false;
     } else {
-      console.log(`✅ ${varName}: CONFIGURED`);
+      console.info(`✅ ${varName}: CONFIGURED`);
     }
   }
 
@@ -66,7 +66,7 @@ async function validateEnvironment(): Promise<boolean> {
 }
 
 async function validateRepository(): Promise<boolean> {
-  console.log('\n📦 Validating repository configuration...');
+  console.info('\n📦 Validating repository configuration...');
 
   try {
     const response = await fetch(
@@ -82,20 +82,20 @@ async function validateRepository(): Promise<boolean> {
     const repo = await response.json();
 
     if (repo.private) {
-      console.log('✅ Repository: PRIVATE (SECURE)');
+      console.info('✅ Repository: PRIVATE (SECURE)');
       return true;
     } else {
-      console.log('❌ Repository: PUBLIC (SECURITY RISK)');
+      console.info('❌ Repository: PUBLIC (SECURITY RISK)');
       return false;
     }
   } catch (error) {
-    console.log(`❌ Repository validation failed: ${error.message}`);
+    console.info(`❌ Repository validation failed: ${error.message}`);
     return false;
   }
 }
 
 async function validateCloudflare(): Promise<boolean> {
-  console.log('\n☁️ Validating Cloudflare configuration...');
+  console.info('\n☁️ Validating Cloudflare configuration...');
 
   try {
     const response = await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify', {
@@ -108,14 +108,14 @@ async function validateCloudflare(): Promise<boolean> {
     const result = await response.json();
 
     if (result.success) {
-      console.log('✅ Cloudflare API Token: VALID');
+      console.info('✅ Cloudflare API Token: VALID');
       return true;
     } else {
-      console.log('❌ Cloudflare API Token: INVALID');
+      console.info('❌ Cloudflare API Token: INVALID');
       return false;
     }
   } catch (error) {
-    console.log(`❌ Cloudflare validation failed: ${error.message}`);
+    console.info(`❌ Cloudflare validation failed: ${error.message}`);
     return false;
   }
 }
@@ -125,10 +125,10 @@ async function validateCloudflare(): Promise<boolean> {
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function setupRepository(): Promise<void> {
-  console.log('\n🏗️ Setting up repository integration...');
+  console.info('\n🏗️ Setting up repository integration...');
 
   // Create GitHub secrets for CI/CD
-  console.log('🔐 Configuring GitHub repository secrets...');
+  console.info('🔐 Configuring GitHub repository secrets...');
 
   const secrets = {
     CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN,
@@ -138,61 +138,61 @@ async function setupRepository(): Promise<void> {
   };
 
   // Note: GitHub secrets must be set manually in the web interface
-  console.log('📝 GitHub Secrets to configure manually:');
+  console.info('📝 GitHub Secrets to configure manually:');
   Object.keys(secrets).forEach(key => {
-    console.log(`   - ${key}: ${secrets[key] ? '✅ Set' : '❌ Missing'}`);
+    console.info(`   - ${key}: ${secrets[key] ? '✅ Set' : '❌ Missing'}`);
   });
 }
 
 async function setupCloudflare(): Promise<void> {
-  console.log('\n☁️ Setting up Cloudflare infrastructure...');
+  console.info('\n☁️ Setting up Cloudflare infrastructure...');
 
   try {
     // Test Wrangler authentication
     const whoami = await $`wrangler whoami`.quiet();
-    console.log('✅ Wrangler authentication: SUCCESS');
+    console.info('✅ Wrangler authentication: SUCCESS');
 
     // Check Cloudflare resources
-    console.log('🔍 Checking Cloudflare resources...');
+    console.info('🔍 Checking Cloudflare resources...');
 
     // D1 Database
     try {
       await $`wrangler d1 list`.quiet();
-      console.log('✅ D1 Database: AVAILABLE');
+      console.info('✅ D1 Database: AVAILABLE');
     } catch {
-      console.log('⚠️ D1 Database: NOT CONFIGURED');
+      console.info('⚠️ D1 Database: NOT CONFIGURED');
     }
 
     // KV Namespaces
     try {
       await $`wrangler kv:namespace list`.quiet();
-      console.log('✅ KV Namespaces: AVAILABLE');
+      console.info('✅ KV Namespaces: AVAILABLE');
     } catch {
-      console.log('⚠️ KV Namespaces: NOT CONFIGURED');
+      console.info('⚠️ KV Namespaces: NOT CONFIGURED');
     }
 
     // R2 Buckets
     try {
       await $`wrangler r2 bucket list`.quiet();
-      console.log('✅ R2 Buckets: AVAILABLE');
+      console.info('✅ R2 Buckets: AVAILABLE');
     } catch {
-      console.log('⚠️ R2 Buckets: NOT CONFIGURED');
+      console.info('⚠️ R2 Buckets: NOT CONFIGURED');
     }
 
     // Queues
     try {
       await $`wrangler queues list`.quiet();
-      console.log('✅ Queues: AVAILABLE');
+      console.info('✅ Queues: AVAILABLE');
     } catch {
-      console.log('⚠️ Queues: NOT CONFIGURED');
+      console.info('⚠️ Queues: NOT CONFIGURED');
     }
   } catch (error) {
-    console.log(`❌ Cloudflare setup failed: ${error.message}`);
+    console.info(`❌ Cloudflare setup failed: ${error.message}`);
   }
 }
 
 async function setupRegistry(): Promise<void> {
-  console.log('\n📦 Setting up registry integration...');
+  console.info('\n📦 Setting up registry integration...');
 
   // Test registry connectivity
   const registries = [
@@ -206,18 +206,18 @@ async function setupRegistry(): Promise<void> {
     try {
       const response = await fetch(`${registry.url}/-/ping`);
       if (response.ok) {
-        console.log(`✅ ${registry.name}: CONNECTED`);
+        console.info(`✅ ${registry.name}: CONNECTED`);
       } else {
-        console.log(`⚠️ ${registry.name}: HTTP ${response.status}`);
+        console.info(`⚠️ ${registry.name}: HTTP ${response.status}`);
       }
     } catch (error) {
-      console.log(`❌ ${registry.name}: FAILED (${error.message})`);
+      console.info(`❌ ${registry.name}: FAILED (${error.message})`);
     }
   }
 }
 
 async function setupHub(): Promise<void> {
-  console.log('\n🎯 Setting up hub system...');
+  console.info('\n🎯 Setting up hub system...');
 
   const hubPort = process.env.FIRE22_HUB_PORT || '3001';
 
@@ -227,9 +227,9 @@ async function setupHub(): Promise<void> {
   for (const script of hubScripts) {
     try {
       await Bun.file(script).exists();
-      console.log(`✅ Hub script: ${script}`);
+      console.info(`✅ Hub script: ${script}`);
     } catch {
-      console.log(`❌ Hub script missing: ${script}`);
+      console.info(`❌ Hub script missing: ${script}`);
     }
   }
 
@@ -237,12 +237,12 @@ async function setupHub(): Promise<void> {
   try {
     const response = await fetch(`http://localhost:${hubPort}/health`);
     if (response.ok) {
-      console.log(`✅ Hub service: RUNNING (port ${hubPort})`);
+      console.info(`✅ Hub service: RUNNING (port ${hubPort})`);
     } else {
-      console.log(`⚠️ Hub service: PORT ${hubPort} not responding`);
+      console.info(`⚠️ Hub service: PORT ${hubPort} not responding`);
     }
   } catch {
-    console.log(`ℹ️ Hub service: NOT RUNNING (expected if not started)`);
+    console.info(`ℹ️ Hub service: NOT RUNNING (expected if not started)`);
   }
 }
 
@@ -251,50 +251,50 @@ async function setupHub(): Promise<void> {
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function runGlobalSetup(): Promise<void> {
-  console.log('🔥 FIRE22 GLOBAL SYSTEM SETUP');
-  console.log('══════════════════════════════════════════════');
-  console.log('Setting up Repository + Registry + Hub + Cloudflare integration');
-  console.log('');
+  console.info('🔥 FIRE22 GLOBAL SYSTEM SETUP');
+  console.info('══════════════════════════════════════════════');
+  console.info('Setting up Repository + Registry + Hub + Cloudflare integration');
+  console.info('');
 
   // Phase 1: Validation
-  console.log('📋 PHASE 1: VALIDATION');
-  console.log('══════════════════════');
+  console.info('📋 PHASE 1: VALIDATION');
+  console.info('══════════════════════');
 
   const envValid = await validateEnvironment();
   const repoValid = await validateRepository();
   const cfValid = await validateCloudflare();
 
-  console.log('');
-  console.log('📊 VALIDATION SUMMARY:');
-  console.log(`Environment: ${envValid ? '✅' : '❌'}`);
-  console.log(`Repository: ${repoValid ? '✅' : '❌'}`);
-  console.log(`Cloudflare: ${cfValid ? '✅' : '❌'}`);
+  console.info('');
+  console.info('📊 VALIDATION SUMMARY:');
+  console.info(`Environment: ${envValid ? '✅' : '❌'}`);
+  console.info(`Repository: ${repoValid ? '✅' : '❌'}`);
+  console.info(`Cloudflare: ${cfValid ? '✅' : '❌'}`);
 
   if (!envValid || !repoValid || !cfValid) {
-    console.log('');
-    console.log('⚠️ SOME VALIDATION CHECKS FAILED');
-    console.log('Please fix the issues above before continuing.');
-    console.log('');
-    console.log('🔧 QUICK FIXES:');
+    console.info('');
+    console.info('⚠️ SOME VALIDATION CHECKS FAILED');
+    console.info('Please fix the issues above before continuing.');
+    console.info('');
+    console.info('🔧 QUICK FIXES:');
     if (!envValid) {
-      console.log('1. Edit .env file with your actual credentials');
-      console.log('2. Replace placeholder values with real tokens');
+      console.info('1. Edit .env file with your actual credentials');
+      console.info('2. Replace placeholder values with real tokens');
     }
     if (!repoValid) {
-      console.log('1. Go to GitHub repository settings');
-      console.log('2. Change visibility to Private');
+      console.info('1. Go to GitHub repository settings');
+      console.info('2. Change visibility to Private');
     }
     if (!cfValid) {
-      console.log('1. Create Cloudflare API token with proper permissions');
-      console.log('2. Update CLOUDFLARE_API_TOKEN in .env');
+      console.info('1. Create Cloudflare API token with proper permissions');
+      console.info('2. Update CLOUDFLARE_API_TOKEN in .env');
     }
     return;
   }
 
   // Phase 2: Setup
-  console.log('');
-  console.log('🚀 PHASE 2: SYSTEM SETUP');
-  console.log('════════════════════════');
+  console.info('');
+  console.info('🚀 PHASE 2: SYSTEM SETUP');
+  console.info('════════════════════════');
 
   await setupRepository();
   await setupCloudflare();
@@ -302,36 +302,36 @@ async function runGlobalSetup(): Promise<void> {
   await setupHub();
 
   // Phase 3: Integration
-  console.log('');
-  console.log('🔗 PHASE 3: SYSTEM INTEGRATION');
-  console.log('══════════════════════════════');
+  console.info('');
+  console.info('🔗 PHASE 3: SYSTEM INTEGRATION');
+  console.info('══════════════════════════════');
 
-  console.log('✅ Repository ↔️ Registry integration: CONFIGURED');
-  console.log('✅ Registry ↔️ Hub integration: CONFIGURED');
-  console.log('✅ Hub ↔️ Cloudflare integration: CONFIGURED');
-  console.log('✅ Cross-system sync: ENABLED');
-  console.log('✅ Auto-deployment: ENABLED');
-  console.log('✅ Health monitoring: ENABLED');
+  console.info('✅ Repository ↔️ Registry integration: CONFIGURED');
+  console.info('✅ Registry ↔️ Hub integration: CONFIGURED');
+  console.info('✅ Hub ↔️ Cloudflare integration: CONFIGURED');
+  console.info('✅ Cross-system sync: ENABLED');
+  console.info('✅ Auto-deployment: ENABLED');
+  console.info('✅ Health monitoring: ENABLED');
 
   // Final Summary
-  console.log('');
-  console.log('🎉 GLOBAL SYSTEM SETUP COMPLETE!');
-  console.log('═════════════════════════════════');
-  console.log('');
-  console.log('🔧 NEXT STEPS:');
-  console.log("1. Run 'bun run enterprise:setup' for full infrastructure deployment");
-  console.log("2. Run 'bun run enterprise:verify' to validate everything");
-  console.log("3. Run 'bun run hub:dev' to start the interactive hub");
-  console.log("4. Run 'bun run cloudflare:status' for ongoing monitoring");
-  console.log('');
-  console.log('📊 SYSTEM STATUS:');
-  console.log('• Repository: 🔒 Private & Secure');
-  console.log('• Registry: 📦 Multi-registry with authentication');
-  console.log('• Hub: 🎯 Interactive dashboard system');
-  console.log('• Cloudflare: ☁️ Full infrastructure (Workers, D1, KV, R2, DNS)');
-  console.log('• Integration: 🔗 Cross-system sync enabled');
-  console.log('');
-  console.log('🚀 Your enterprise Fantasy42-Fire22 system is ready for production!');
+  console.info('');
+  console.info('🎉 GLOBAL SYSTEM SETUP COMPLETE!');
+  console.info('═════════════════════════════════');
+  console.info('');
+  console.info('🔧 NEXT STEPS:');
+  console.info("1. Run 'bun run enterprise:setup' for full infrastructure deployment");
+  console.info("2. Run 'bun run enterprise:verify' to validate everything");
+  console.info("3. Run 'bun run hub:dev' to start the interactive hub");
+  console.info("4. Run 'bun run cloudflare:status' for ongoing monitoring");
+  console.info('');
+  console.info('📊 SYSTEM STATUS:');
+  console.info('• Repository: 🔒 Private & Secure');
+  console.info('• Registry: 📦 Multi-registry with authentication');
+  console.info('• Hub: 🎯 Interactive dashboard system');
+  console.info('• Cloudflare: ☁️ Full infrastructure (Workers, D1, KV, R2, DNS)');
+  console.info('• Integration: 🔗 Cross-system sync enabled');
+  console.info('');
+  console.info('🚀 Your enterprise Fantasy42-Fire22 system is ready for production!');
 }
 
 // ╔══════════════════════════════════════════════════════════════╗
@@ -339,7 +339,7 @@ async function runGlobalSetup(): Promise<void> {
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function showHelp(): Promise<void> {
-  console.log(`
+  console.info(`
 🔥 FIRE22 GLOBAL SYSTEM SETUP
 Comprehensive integration of Repository, Registry, Hub, and Cloudflare
 
@@ -391,20 +391,20 @@ async function main(): Promise<void> {
       break;
 
     case 'validate':
-      console.log('🔍 VALIDATION MODE');
+      console.info('🔍 VALIDATION MODE');
       const envValid = await validateEnvironment();
       const repoValid = await validateRepository();
       const cfValid = await validateCloudflare();
-      console.log('');
-      console.log('📊 VALIDATION RESULTS:');
-      console.log(`Environment: ${envValid ? '✅ PASS' : '❌ FAIL'}`);
-      console.log(`Repository: ${repoValid ? '✅ PASS' : '❌ FAIL'}`);
-      console.log(`Cloudflare: ${cfValid ? '✅ PASS' : '❌ FAIL'}`);
+      console.info('');
+      console.info('📊 VALIDATION RESULTS:');
+      console.info(`Environment: ${envValid ? '✅ PASS' : '❌ FAIL'}`);
+      console.info(`Repository: ${repoValid ? '✅ PASS' : '❌ FAIL'}`);
+      console.info(`Cloudflare: ${cfValid ? '✅ PASS' : '❌ FAIL'}`);
       break;
 
     case 'status':
-      console.log('📊 SYSTEM STATUS');
-      console.log('═══════════════');
+      console.info('📊 SYSTEM STATUS');
+      console.info('═══════════════');
       await validateEnvironment();
       await validateRepository();
       await validateCloudflare();

@@ -224,7 +224,7 @@ test("SQLite v3.51.1 EXISTS-to-JOIN Performance Benchmark", () => {
   const endTime = performance.now();
 
   expect(rule?.config.target_proxy).toContain('proxy-500');
-  console.log(`[SmartProxyGateway] Single rule lookup: ${(endTime - startTime).toFixed(4)}ms`);
+  console.info(`[SmartProxyGateway] Single rule lookup: ${(endTime - startTime).toFixed(4)}ms`);
 
   gateway.close();
 });

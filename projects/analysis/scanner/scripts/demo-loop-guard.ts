@@ -4,13 +4,13 @@
 import {interactive} from '../lib/interactive-cli';
 
 async function demo() {
-	console.log('🧪 Tier-1380 LoopGuard Demo\n');
+	console.info('🧪 Tier-1380 LoopGuard Demo\n');
 
 	// Simulate repeated command execution
 	const command = 'validate-pointers --bun-native';
 
 	for (let i = 0; i < 3; i++) {
-		console.log(`\n--- Execution ${i + 1} ---`);
+		console.info(`\n--- Execution ${i + 1} ---`);
 		try {
 			await interactive.execute(command, async () => {
 				// Simulate work
@@ -23,7 +23,7 @@ async function demo() {
 		}
 	}
 
-	console.log('\n✅ Demo complete');
+	console.info('\n✅ Demo complete');
 }
 
 void demo();

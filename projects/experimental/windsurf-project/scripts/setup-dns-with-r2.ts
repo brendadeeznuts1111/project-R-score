@@ -63,7 +63,7 @@ class ProductionDNSManager {
   }
 
   async validateR2Connection(): Promise<boolean> {
-    console.log('🔍 Validating R2 Storage connection...');
+    console.info('🔍 Validating R2 Storage connection...');
     
     try {
       // Test R2 connection using existing config
@@ -76,10 +76,10 @@ class ProductionDNSManager {
       });
       
       if (response.ok || response.status === 403) { // 403 means auth works but no list permission
-        console.log('✅ R2 Storage connection validated');
-        console.log(`   Bucket: ${this.r2Config.bucket}`);
-        console.log(`   Account: ${this.r2Config.accountId}`);
-        console.log(`   Endpoint: ${this.r2Config.endpoint}`);
+        console.info('✅ R2 Storage connection validated');
+        console.info(`   Bucket: ${this.r2Config.bucket}`);
+        console.info(`   Account: ${this.r2Config.accountId}`);
+        console.info(`   Endpoint: ${this.r2Config.endpoint}`);
         return true;
       }
       
@@ -91,14 +91,14 @@ class ProductionDNSManager {
   }
 
   async setupCloudflareSecrets(): Promise<void> {
-    console.log('🔐 Setting up Cloudflare API secrets...');
-    console.log('');
-    console.log('R2 Storage is already configured with these credentials:');
-    console.log(`   Account ID: ${this.r2Config.accountId}`);
-    console.log(`   Bucket: ${this.r2Config.bucket}`);
-    console.log('');
-    console.log('Now add Cloudflare API credentials for DNS management:');
-    console.log('');
+    console.info('🔐 Setting up Cloudflare API secrets...');
+    console.info('');
+    console.info('R2 Storage is already configured with these credentials:');
+    console.info(`   Account ID: ${this.r2Config.accountId}`);
+    console.info(`   Bucket: ${this.r2Config.bucket}`);
+    console.info('');
+    console.info('Now add Cloudflare API credentials for DNS management:');
+    console.info('');
 
     try {
       // Check if secrets already exist
@@ -106,25 +106,25 @@ class ProductionDNSManager {
       const zoneId = await this.getSecret('CF_ZONE_ID').catch(() => null);
 
       if (apiToken && zoneId) {
-        console.log('✅ Cloudflare API secrets already configured');
+        console.info('✅ Cloudflare API secrets already configured');
         return;
       }
 
-      console.log('📝 Required Cloudflare API credentials:');
-      console.log('');
+      console.info('📝 Required Cloudflare API credentials:');
+      console.info('');
       
       if (!apiToken) {
-        console.log('1. Create API Token at: https://dash.cloudflare.com/profile/api-tokens');
-        console.log('   Permissions: Zone:Edit, DNS:Edit for apple.factory-wager.com');
-        console.log('   Then run: bun run cli secrets set CF_API_TOKEN "your-token"');
-        console.log('');
+        console.info('1. Create API Token at: https://dash.cloudflare.com/profile/api-tokens');
+        console.info('   Permissions: Zone:Edit, DNS:Edit for apple.factory-wager.com');
+        console.info('   Then run: bun run cli secrets set CF_API_TOKEN "your-token"');
+        console.info('');
       }
 
       if (!zoneId) {
-        console.log('2. Find Zone ID at: https://dash.cloudflare.com');
-        console.log('   Go to apple.factory-wager.com → API → Zone ID');
-        console.log('   Then run: bun run cli secrets set CF_ZONE_ID "your-zone-id"');
-        console.log('');
+        console.info('2. Find Zone ID at: https://dash.cloudflare.com');
+        console.info('   Go to apple.factory-wager.com → API → Zone ID');
+        console.info('   Then run: bun run cli secrets set CF_ZONE_ID "your-zone-id"');
+        console.info('');
       }
 
     } catch (error: any) {
@@ -134,7 +134,7 @@ class ProductionDNSManager {
 
   async validateCloudflareSecrets(): Promise<boolean> {
     try {
-      console.log('🔍 Validating Cloudflare API secrets...');
+      console.info('🔍 Validating Cloudflare API secrets...');
       
       const apiToken = await this.getSecret('CF_API_TOKEN');
       const zoneId = await this.getSecret('CF_ZONE_ID');
@@ -142,8 +142,8 @@ class ProductionDNSManager {
       // Test API connection
       const response = await this.makeCloudflareRequest('');
       if (response.success) {
-        console.log('✅ Cloudflare API connection successful');
-        console.log(`✅ Zone: ${response.result.name} (${response.result.id})`);
+        console.info('✅ Cloudflare API connection successful');
+        console.info(`✅ Zone: ${response.result.name} (${response.result.id})`);
         return true;
       }
       
@@ -155,8 +155,8 @@ class ProductionDNSManager {
   }
 
   async setupProductionDNS(): Promise<void> {
-    console.log('🌐 Setting up Empire Pro Production DNS...');
-    console.log('═'.repeat(50));
+    console.info('🌐 Setting up Empire Pro Production DNS...');
+    console.info('═'.repeat(50));
 
     const requiredRecords: DNSRecord[] = [
       {
@@ -211,11 +211,11 @@ class ProductionDNSManager {
       }
 
       // List existing records
-      console.log('\n📋 Checking existing DNS records...');
+      console.info('\n📋 Checking existing DNS records...');
       const existingData = await this.makeCloudflareRequest('/dns_records');
       const existingRecords = existingData.result || [];
       
-      console.log(`Found ${existingRecords.length} existing records`);
+      console.info(`Found ${existingRecords.length} existing records`);
       
       // Create or update records
       for (const record of requiredRecords) {
@@ -225,20 +225,20 @@ class ProductionDNSManager {
 
         if (existing) {
           if (existing.content !== record.content) {
-            console.log(`🔄 Updating ${record.name} → ${record.content}`);
+            console.info(`🔄 Updating ${record.name} → ${record.content}`);
             await this.updateDNSRecord(existing.id, record);
           } else {
-            console.log(`✅ Already exists: ${record.name} → ${record.content}`);
+            console.info(`✅ Already exists: ${record.name} → ${record.content}`);
           }
         } else {
-          console.log(`🔧 Creating ${record.name} → ${record.content}`);
+          console.info(`🔧 Creating ${record.name} → ${record.content}`);
           await this.createDNSRecord(record);
         }
       }
 
-      console.log('\n🎉 DNS setup complete!');
-      console.log('📡 DNS records configured for Empire Pro Production');
-      console.log('🔗 R2 Storage integration active');
+      console.info('\n🎉 DNS setup complete!');
+      console.info('📡 DNS records configured for Empire Pro Production');
+      console.info('🔗 R2 Storage integration active');
       
     } catch (error: any) {
       console.error('❌ DNS setup failed:', error?.message || error);
@@ -277,12 +277,12 @@ class ProductionDNSManager {
   }
 
   async validateFullSystem(): Promise<void> {
-    console.log('\n🔍 Validating complete system...');
+    console.info('\n🔍 Validating complete system...');
     
-    console.log('\n📊 R2 Storage Status:');
+    console.info('\n📊 R2 Storage Status:');
     await this.validateR2Connection();
     
-    console.log('\n🌐 DNS Endpoints:');
+    console.info('\n🌐 DNS Endpoints:');
     const endpoints = [
       { name: 'API', url: 'https://api.apple' },
       { name: 'Dashboard', url: 'https://dashboard.apple' },
@@ -296,13 +296,13 @@ class ProductionDNSManager {
           signal: AbortSignal.timeout(5000)
         });
         
-        console.log(`✅ ${endpoint.name}: ${response.status} (ACTIVE)`);
+        console.info(`✅ ${endpoint.name}: ${response.status} (ACTIVE)`);
       } catch (error) {
-        console.log(`⚠️  ${endpoint.name}: Pending DNS propagation`);
+        console.info(`⚠️  ${endpoint.name}: Pending DNS propagation`);
       }
     }
 
-    console.log('\n🚀 Empire Pro Phone Intelligence: PRODUCTION READY');
+    console.info('\n🚀 Empire Pro Phone Intelligence: PRODUCTION READY');
   }
 }
 
@@ -320,12 +320,12 @@ async function main() {
       
       case 'validate-r2':
         const r2Valid = await dns.validateR2Connection();
-        console.log(`R2 Status: ${r2Valid ? '✅ ONLINE' : '❌ OFFLINE'}`);
+        console.info(`R2 Status: ${r2Valid ? '✅ ONLINE' : '❌ OFFLINE'}`);
         break;
       
       case 'validate-cloudflare':
         const cfValid = await dns.validateCloudflareSecrets();
-        console.log(`Cloudflare Status: ${cfValid ? '✅ CONNECTED' : '❌ FAILED'}`);
+        console.info(`Cloudflare Status: ${cfValid ? '✅ CONNECTED' : '❌ FAILED'}`);
         break;
       
       case 'setup':
@@ -334,22 +334,22 @@ async function main() {
         break;
       
       default:
-        console.log('🌐 Empire Pro Production DNS Manager (with R2 Integration)');
-        console.log('');
-        console.log('R2 Storage Configuration:');
-        console.log(`  Account: ${dns['r2Config'].accountId}`);
-        console.log(`  Bucket: ${dns['r2Config'].bucket}`);
-        console.log('');
-        console.log('Usage:');
-        console.log('  bun run scripts/setup-dns-with-r2.ts setup-secrets      # Setup Cloudflare secrets');
-        console.log('  bun run scripts/setup-dns-with-r2.ts validate-r2        # Validate R2 connection');
-        console.log('  bun run scripts/setup-dns-with-r2.ts validate-cloudflare # Validate Cloudflare API');
-        console.log('  bun run scripts/setup-dns-with-r2.ts setup              # Setup complete system');
-        console.log('');
-        console.log('Quick Start:');
-        console.log('  1. bun run cli secrets set CF_API_TOKEN "your-token"');
-        console.log('  2. bun run cli secrets set CF_ZONE_ID "your-zone-id"');
-        console.log('  3. bun run scripts/setup-dns-with-r2.ts setup');
+        console.info('🌐 Empire Pro Production DNS Manager (with R2 Integration)');
+        console.info('');
+        console.info('R2 Storage Configuration:');
+        console.info(`  Account: ${dns['r2Config'].accountId}`);
+        console.info(`  Bucket: ${dns['r2Config'].bucket}`);
+        console.info('');
+        console.info('Usage:');
+        console.info('  bun run scripts/setup-dns-with-r2.ts setup-secrets      # Setup Cloudflare secrets');
+        console.info('  bun run scripts/setup-dns-with-r2.ts validate-r2        # Validate R2 connection');
+        console.info('  bun run scripts/setup-dns-with-r2.ts validate-cloudflare # Validate Cloudflare API');
+        console.info('  bun run scripts/setup-dns-with-r2.ts setup              # Setup complete system');
+        console.info('');
+        console.info('Quick Start:');
+        console.info('  1. bun run cli secrets set CF_API_TOKEN "your-token"');
+        console.info('  2. bun run cli secrets set CF_ZONE_ID "your-zone-id"');
+        console.info('  3. bun run scripts/setup-dns-with-r2.ts setup');
         break;
     }
   } catch (error: any) {

@@ -159,7 +159,7 @@ export class BunxMetadataCorruptionFix {
 
   // Attempt to recover corrupted metadata
   private static async attemptRecovery(filePath: string): Promise<any> {
-    console.log(`🔄 Attempting recovery for ${filePath}`);
+    console.info(`🔄 Attempting recovery for ${filePath}`);
 
     // Try backup file
     const backupPath = `${filePath}.backup`;
@@ -169,7 +169,7 @@ export class BunxMetadataCorruptionFix {
       try {
         const backupContent = await backupFile.text();
         if (this.isValidMetadata(backupContent)) {
-          console.log(`✅ Recovered from backup: ${backupPath}`);
+          console.info(`✅ Recovered from backup: ${backupPath}`);
           const data = JSON.parse(backupContent);
           // Restore original file
           await Bun.write(filePath, backupContent);
@@ -187,7 +187,7 @@ export class BunxMetadataCorruptionFix {
       const salvaged = this.salvageData(corruptedContent);
 
       if (salvaged) {
-        console.log(`✅ Salvaged partial data from corrupted file`);
+        console.info(`✅ Salvaged partial data from corrupted file`);
         await Bun.write(filePath, JSON.stringify(salvaged, null, 2));
         this.fixCount++;
         return salvaged;
@@ -197,7 +197,7 @@ export class BunxMetadataCorruptionFix {
     }
 
     // Return default metadata
-    console.log(`ℹ️  Using default metadata for ${filePath}`);
+    console.info(`ℹ️  Using default metadata for ${filePath}`);
     const defaultMeta = this.createDefaultMetadata();
     await this.writeMetadata(filePath, defaultMeta);
     return defaultMeta;

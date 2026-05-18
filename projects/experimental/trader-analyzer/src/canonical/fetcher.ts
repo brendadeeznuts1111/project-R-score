@@ -140,7 +140,7 @@ const marketCache = createNamespacedCache("market");
  * @example
  * ```ts
  * const market = await fetchCanonicalMarket("polymarket:USElectionWinner2024");
- * console.log(market.uuid); // Always the same UUID
+ * console.info(market.uuid); // Always the same UUID
  * ```
  */
 export async function fetchCanonicalMarket(

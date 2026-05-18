@@ -178,7 +178,7 @@ export class CacheManager {
 
     if (removed > 0) {
       this.stats.evictions += removed;
-      console.log(`Cache cleanup removed ${removed} expired entries`);
+      console.info(`Cache cleanup removed ${removed} expired entries`);
     }
   }
 
@@ -213,6 +213,6 @@ export class CacheManager {
       this.memoryCache.delete(key);
     }
 
-    console.log(`Invalidated ${keysToDelete.length} cache entries matching ${pattern}`);
+    console.info(`Invalidated ${keysToDelete.length} cache entries matching ${pattern}`);
   }
 }

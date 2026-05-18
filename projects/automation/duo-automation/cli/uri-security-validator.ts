@@ -413,8 +413,8 @@ export class URISecurityValidator {
    * Demonstrate URI security validation
    */
   demonstrateSecurityValidation(): void {
-    console.log("🔒 DuoPlus CLI v3.0+ - URI Security Validation Demo");
-    console.log("=".repeat(70));
+    console.info("🔒 DuoPlus CLI v3.0+ - URI Security Validation Demo");
+    console.info("=".repeat(70));
     
     const testURIs = [
       // Safe URIs
@@ -440,7 +440,7 @@ export class URISecurityValidator {
       "https://example.com/%3Ciframe%20src%3Djavascript:alert(1)%3E%3C%2Fiframe%3E"
     ];
     
-    console.log("\n🧪 Testing URI Security Validation:\n");
+    console.info("\n🧪 Testing URI Security Validation:\n");
     
     for (const uri of testURIs) {
       const result = this.validateURI(uri);
@@ -453,47 +453,47 @@ export class URISecurityValidator {
                         result.securityLevel === "SUSPICIOUS" ? "\x1b[33m" :
                         result.securityLevel === "DANGEROUS" ? "\x1b[31m" : "\x1b[91m";
       
-      console.log(`${levelIcon} ${levelColor}${result.securityLevel}\x1b[0m: ${uri}`);
+      console.info(`${levelIcon} ${levelColor}${result.securityLevel}\x1b[0m: ${uri}`);
       
       if (result.threats.length > 0) {
         result.threats.forEach(threat => {
-          console.log(`   ⚠️  ${threat}`);
+          console.info(`   ⚠️  ${threat}`);
         });
       }
       
       if (result.decodedUri && result.decodedUri !== uri) {
-        console.log(`   📝 Decoded: ${result.decodedUri}`);
+        console.info(`   📝 Decoded: ${result.decodedUri}`);
       }
       
-      console.log();
+      console.info();
     }
     
     // Show statistics
     const stats = this.getSecurityStatistics();
-    console.log("📊 Security Statistics:");
-    console.log(`   Total Checks: ${stats.totalChecks}`);
+    console.info("📊 Security Statistics:");
+    console.info(`   Total Checks: ${stats.totalChecks}`);
     
     stats.byLevel.forEach((level: any) => {
       const icon = level.security_level === "SAFE" ? "✅" :
                    level.security_level === "SUSPICIOUS" ? "⚠️" :
                    level.security_level === "DANGEROUS" ? "🚨" : "🔴";
-      console.log(`   ${icon} ${level.security_level}: ${level.count}`);
+      console.info(`   ${icon} ${level.security_level}: ${level.count}`);
     });
     
-    console.log("\n🎯 Top Threat Patterns:");
+    console.info("\n🎯 Top Threat Patterns:");
     stats.topThreats.forEach((threat: any) => {
-      console.log(`   ${threat.pattern_name}: ${threat.detection_count} detections`);
+      console.info(`   ${threat.pattern_name}: ${threat.detection_count} detections`);
     });
     
-    console.log("\n💡 Security Recommendations:");
-    console.log("   🔒 Always validate and sanitize user input");
-    console.log("   🛡️ Use allowlists for file paths and domains");
-    console.log("   🔍 Log and monitor suspicious URI patterns");
-    console.log("   🚫 Reject URIs with empty decoded values");
-    console.log("   🔄 Normalize encoding before validation");
-    console.log("   📊 Implement rate limiting for suspicious patterns");
+    console.info("\n💡 Security Recommendations:");
+    console.info("   🔒 Always validate and sanitize user input");
+    console.info("   🛡️ Use allowlists for file paths and domains");
+    console.info("   🔍 Log and monitor suspicious URI patterns");
+    console.info("   🚫 Reject URIs with empty decoded values");
+    console.info("   🔄 Normalize encoding before validation");
+    console.info("   📊 Implement rate limiting for suspicious patterns");
     
-    console.log("\n🎉 URI Security Validation Demo Complete!");
+    console.info("\n🎉 URI Security Validation Demo Complete!");
   }
 }
 

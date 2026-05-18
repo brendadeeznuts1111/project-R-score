@@ -280,4 +280,4 @@ Bun.serve({
   }
 });
 
-console.log(`[DUOPLUS][DASHBOARD][V56][READY] http://localhost:${port}`);
+console.info(`[DUOPLUS][DASHBOARD][V56][READY] http://localhost:${port}`);

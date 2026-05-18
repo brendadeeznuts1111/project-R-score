@@ -52,7 +52,7 @@ export class DomainEvents {
    */
   async publish<T extends DomainEvent>(eventType: string, event: T): Promise<void> {
     // Log event
-    console.log(`📢 Domain Event: ${eventType}`, {
+    console.info(`📢 Domain Event: ${eventType}`, {
       eventId: event.eventId,
       aggregateId: event.aggregateId,
       timestamp: event.timestamp,

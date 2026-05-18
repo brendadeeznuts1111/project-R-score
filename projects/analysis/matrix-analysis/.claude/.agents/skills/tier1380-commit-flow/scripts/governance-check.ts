@@ -113,11 +113,11 @@ async function checkMatrixColumns(): Promise<CheckResult> {
 if (import.meta.main) {
 	const scope = Bun.argv[2] || "staged";
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Governance Check                   ║");
-	console.log(`║     Scope: ${scope.padEnd(45)} ║`);
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Governance Check                   ║");
+	console.info(`║     Scope: ${scope.padEnd(45)} ║`);
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	const results = await runGovernanceChecks(scope);
 
@@ -126,25 +126,25 @@ if (import.meta.main) {
 
 	for (const result of results) {
 		if (result.passed) {
-			console.log(`✅ ${result.name}`);
+			console.info(`✅ ${result.name}`);
 			passed++;
 		} else {
-			console.log(`❌ ${result.name}`);
+			console.info(`❌ ${result.name}`);
 			if (result.details) {
-				console.log(`   ${result.details}`);
+				console.info(`   ${result.details}`);
 			}
 			failed++;
 		}
 	}
 
-	console.log();
-	console.log(`Results: ${passed} passed, ${failed} failed`);
-	console.log();
+	console.info();
+	console.info(`Results: ${passed} passed, ${failed} failed`);
+	console.info();
 
 	if (failed === 0) {
-		console.log("✨ All governance checks passed!");
+		console.info("✨ All governance checks passed!");
 	} else {
-		console.log("⚠️  Fix failing checks before committing");
+		console.info("⚠️  Fix failing checks before committing");
 	}
 
 	process.exit(failed === 0 ? 0 : 1);

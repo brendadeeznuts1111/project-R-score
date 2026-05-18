@@ -449,11 +449,11 @@ export class BunProxyServer {
       // Start background tasks
       this.startBackgroundTasks();
 
-      console.log(
+      console.info(
         `🚀 Bun Proxy Server started on ${this.config.getServerUrl()}`
       );
-      console.log(`📡 Proxying to: ${this.config.targetUrl}`);
-      console.log(`🔧 Max connections: ${this.config.maxConnections}`);
+      console.info(`📡 Proxying to: ${this.config.targetUrl}`);
+      console.info(`🔧 Max connections: ${this.config.maxConnections}`);
     } catch (error) {
       throw new WebSocketProxyOperationalError(
         `Failed to start server: ${(error as Error).message}`,
@@ -484,7 +484,7 @@ export class BunProxyServer {
         this.server = undefined;
       }
 
-      console.log("🛑 Bun Proxy Server stopped");
+      console.info("🛑 Bun Proxy Server stopped");
     } catch (error) {
       throw new WebSocketProxyOperationalError(
         `Failed to stop server: ${(error as Error).message}`,
@@ -653,7 +653,7 @@ export class BunProxyServer {
         this.config.idleTimeout
       );
       if (cleaned > 0 && this.config.debug) {
-        console.log(`🧹 Cleaned up ${cleaned} idle connections`);
+        console.info(`🧹 Cleaned up ${cleaned} idle connections`);
       }
     }, this.config.idleTimeout);
   }

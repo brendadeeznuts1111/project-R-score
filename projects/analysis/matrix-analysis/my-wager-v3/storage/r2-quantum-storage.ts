@@ -209,7 +209,7 @@ export class R2QuantumStorage {
 
   private async ensureBucketExists(config: R2BucketConfig): Promise<void> {
     // Simulate bucket creation
-    console.log(`Ensuring R2 bucket exists: ${config.bucketName}`);
+    console.info(`Ensuring R2 bucket exists: ${config.bucketName}`);
   }
 
   private async simulateR2Put(

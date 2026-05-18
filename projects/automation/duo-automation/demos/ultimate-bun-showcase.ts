@@ -1,7 +1,7 @@
 // demo/ultimate-bun-showcase.ts
 import { feature } from "bun:bundle";
 
-console.log(`
+console.info(`
 🚀 **ULTIMATE BUN v1.3.5 SHOWCASE - THE GRAND FINALE**
 ═══════════════════════════════════════════════════════════════════
 
@@ -40,8 +40,8 @@ class UltimateBunShowcase {
   }
   
   async startUltimateDemo() {
-    console.log(`🎯 Starting Ultimate Bun v1.3.5 Showcase!`);
-    console.log(`🔧 Features: ${JSON.stringify(this.features, null, 2)}`);
+    console.info(`🎯 Starting Ultimate Bun v1.3.5 Showcase!`);
+    console.info(`🔧 Features: ${JSON.stringify(this.features, null, 2)}`);
     
     // Create ultimate terminal with all features
     this.terminal = new Bun.Terminal({
@@ -49,7 +49,7 @@ class UltimateBunShowcase {
       rows: 40,
       data: (term: any, data: string) => {
         if (this.features.debugMode) {
-          console.log(`🐛 [DEBUG] ${data.replace(/\n/g, '\\n')}`);
+          console.info(`🐛 [DEBUG] ${data.replace(/\n/g, '\\n')}`);
         }
         process.stdout.write(data);
       },
@@ -63,7 +63,7 @@ class UltimateBunShowcase {
   }
   
   private async demonstrateAllFeatures() {
-    console.log(`🚀 Demonstrating ALL Bun v1.3.5 features...`);
+    console.info(`🚀 Demonstrating ALL Bun v1.3.5 features...`);
     
     // 1. PTY with Unicode and Colors
     await this.demonstratePTYUnicodeColors();
@@ -88,7 +88,7 @@ class UltimateBunShowcase {
   }
   
   private async demonstratePTYUnicodeColors() {
-    console.log(`🖥️ 1. PTY + Unicode + Colors = MAGIC!`);
+    console.info(`🖥️ 1. PTY + Unicode + Colors = MAGIC!`);
     
     const proc = Bun.spawn(["bash"], {
       terminal: this.terminal,
@@ -122,7 +122,7 @@ class UltimateBunShowcase {
   }
   
   private async demonstrateFeatureGatedPower() {
-    console.log(`🚩 2. Feature-Gated Power - Conditional Compilation!`);
+    console.info(`🚩 2. Feature-Gated Power - Conditional Compilation!`);
     
     const proc = Bun.spawn(["bash"], {
       terminal: this.terminal,
@@ -168,7 +168,7 @@ class UltimateBunShowcase {
   }
   
   private async demonstrateUnicodeMastery() {
-    console.log(`📏 3. Unicode Mastery - Perfect String Width!`);
+    console.info(`📏 3. Unicode Mastery - Perfect String Width!`);
     
     // Test Unicode string width
     const unicodeTests = [
@@ -180,10 +180,10 @@ class UltimateBunShowcase {
       { str: "🏆🎯💎", desc: "Award sequence" }
     ];
     
-    console.log(`📏 Unicode Width Tests:`);
+    console.info(`📏 Unicode Width Tests:`);
     unicodeTests.forEach(({ str, desc }) => {
       const width = Bun.stringWidth(str);
-      console.log(`  ${desc.padEnd(20)}: "${str}" → width: ${width}`);
+      console.info(`  ${desc.padEnd(20)}: "${str}" → width: ${width}`);
     });
     
     // Create perfect Unicode box
@@ -204,8 +204,8 @@ class UltimateBunShowcase {
       "🇺🇸 👋🏽 👨‍👩‍👧 🎉 🔥 🚀"
     );
     
-    console.log(`\n📦 Perfect Unicode Box:`);
-    console.log(perfectBox);
+    console.info(`\n📦 Perfect Unicode Box:`);
+    console.info(perfectBox);
     
     // Test in PTY
     const proc = Bun.spawn(["bash"], {
@@ -240,10 +240,10 @@ class UltimateBunShowcase {
   }
   
   private async demonstrateS3Integration() {
-    console.log(`📎 4. S3 Integration - Content-Disposition!`);
+    console.info(`📎 4. S3 Integration - Content-Disposition!`);
     
     // Simulate S3 operations
-    console.log(`📎 S3 Content-Disposition Examples:`);
+    console.info(`📎 S3 Content-Disposition Examples:`);
     
     const s3Examples = [
       'attachment; filename="report.pdf"',
@@ -253,7 +253,7 @@ class UltimateBunShowcase {
     ];
     
     s3Examples.forEach((example, index) => {
-      console.log(`  ${index + 1}. ${example}`);
+      console.info(`  ${index + 1}. ${example}`);
     });
     
     // Demonstrate with PTY
@@ -297,7 +297,7 @@ class UltimateBunShowcase {
   }
   
   private async demonstrateV8Compatibility() {
-    console.log(`🔍 5. V8 API Compatibility - Node.js Ready!`);
+    console.info(`🔍 5. V8 API Compatibility - Node.js Ready!`);
     
     // Test V8 type checking APIs
     const testValues = [
@@ -309,7 +309,7 @@ class UltimateBunShowcase {
       { value: new Set(), expected: { map: false, array: false, int32: false, bigint: false } }
     ];
     
-    console.log(`🔍 V8 Type Checking Tests:`);
+    console.info(`🔍 V8 Type Checking Tests:`);
     testValues.forEach(({ value, expected }) => {
       const actual = {
         map: value instanceof Map,
@@ -319,7 +319,7 @@ class UltimateBunShowcase {
       };
       
       const status = Object.keys(expected).every(key => expected[key as keyof typeof expected] === actual[key as keyof typeof actual]) ? '✅' : '❌';
-      console.log(`  ${status} ${value} → Map: ${actual.map}, Array: ${actual.array}, Int32: ${actual.int32}, BigInt: ${actual.bigint}`);
+      console.info(`  ${status} ${value} → Map: ${actual.map}, Array: ${actual.array}, Int32: ${actual.int32}, BigInt: ${actual.bigint}`);
     });
     
     // Demonstrate with PTY
@@ -367,16 +367,16 @@ class UltimateBunShowcase {
   }
   
   private async demonstrateEnvironmentExpansion() {
-    console.log(`🌍 6. Environment Variable Expansion - Fixed!`);
+    console.info(`🌍 6. Environment Variable Expansion - Fixed!`);
     
     // Test environment variable expansion
     process.env.DEMO_TOKEN = "abc123";
     process.env.DEMO_SECRET = undefined;
     
-    console.log(`🌍 Environment Variable Expansion Tests:`);
-    console.log(`  DEMO_TOKEN: ${process.env.DEMO_TOKEN}`);
-    console.log(`  DEMO_SECRET: ${process.env.DEMO_SECRET || '(undefined)'}`);
-    console.log(`  With ? modifier: ${process.env.DEMO_SECRET || '(empty)'}`);
+    console.info(`🌍 Environment Variable Expansion Tests:`);
+    console.info(`  DEMO_TOKEN: ${process.env.DEMO_TOKEN}`);
+    console.info(`  DEMO_SECRET: ${process.env.DEMO_SECRET || '(undefined)'}`);
+    console.info(`  With ? modifier: ${process.env.DEMO_SECRET || '(empty)'}`);
     
     // Demonstrate with PTY
     const proc = Bun.spawn(["bash"], {
@@ -425,7 +425,7 @@ class UltimateBunShowcase {
   }
   
   private async demonstratePerformancePower() {
-    console.log(`⚡ 7. Performance Power - Optimized to the MAX!`);
+    console.info(`⚡ 7. Performance Power - Optimized to the MAX!`);
     
     // Performance metrics
     const startTime = performance.now();
@@ -442,15 +442,15 @@ class UltimateBunShowcase {
       "✅ Improved PTY responsiveness"
     ];
     
-    console.log(`⚡ Performance Improvements:`);
+    console.info(`⚡ Performance Improvements:`);
     improvements.forEach(improvement => {
-      console.log(`  ${improvement}`);
+      console.info(`  ${improvement}`);
     });
     
     const endTime = performance.now();
     const duration = endTime - startTime;
     
-    console.log(`⚡ Demo completed in ${duration.toFixed(2)}ms`);
+    console.info(`⚡ Demo completed in ${duration.toFixed(2)}ms`);
     
     // Final celebration in PTY
     const proc = Bun.spawn(["bash"], {
@@ -498,7 +498,7 @@ class UltimateBunShowcase {
 // ============================================================================
 
 const mindBlowingFinalDemo = async () => {
-  console.log(`
+  console.info(`
 🤯 **MIND-BLOWING FINAL DEMONSTRATION**
 ═══════════════════════════════════════════════════════════════════
 
@@ -510,7 +510,7 @@ const mindBlowingFinalDemo = async () => {
   const ultimateShowcase = new UltimateBunShowcase();
   await ultimateShowcase.startUltimateDemo();
   
-  console.log(`
+  console.info(`
 🎉 **CONGRATULATIONS! YOU'VE SEEN IT ALL!**
 ═══════════════════════════════════════════════════════════════════
 
@@ -541,7 +541,7 @@ const mindBlowingFinalDemo = async () => {
 // 🚀 START THE ULTIMATE SHOWCASE
 // ============================================================================
 
-console.log(`
+console.info(`
 🚀 **INITIALIZING ULTIMATE BUN v1.3.5 SHOWCASE...**
 ═══════════════════════════════════════════════════════════════════
 

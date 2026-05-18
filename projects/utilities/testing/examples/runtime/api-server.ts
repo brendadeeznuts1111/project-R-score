@@ -83,7 +83,7 @@ export type UserStatus = 'active' | 'inactive' | 'suspended' | 'pending';
 
 // --- Server Implementation ---
 
-console.log("=== Advanced API Server Demo ===");
+console.info("=== Advanced API Server Demo ===");
 
 // Simple in-memory cache
 const cache = new Map<string, CacheEntry<string>>();
@@ -136,8 +136,8 @@ const server = Bun.serve({
 
     // Display logs periodically (simplified)
     if (requestLogs.length % 3 === 0) {
-      console.log("\n--- Recent Requests (Bun.inspect.table) ---");
-      console.log(Bun.inspect.table(requestLogs.slice(-5)));
+      console.info("\n--- Recent Requests (Bun.inspect.table) ---");
+      console.info(Bun.inspect.table(requestLogs.slice(-5)));
     }
 
     return new Response(JSON.stringify({ message: "Hello from typed API" }), {
@@ -146,9 +146,9 @@ const server = Bun.serve({
   },
 });
 
-console.log(`Server running at http://localhost:${server.port}`);
-console.log("Visit /metrics to see structured data.");
-console.log("Press Ctrl+C to stop.");
+console.info(`Server running at http://localhost:${server.port}`);
+console.info("Visit /metrics to see structured data.");
+console.info("Press Ctrl+C to stop.");
 
 // Keep alive
 await new Promise(() => {});

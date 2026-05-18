@@ -665,79 +665,79 @@ export class ColorfulContextManager {
  * Demonstrate the enhanced ColorfulTypeContext
  */
 async function demonstrateColorfulTypeContext(): Promise<void> {
-  console.log('🎨 Enhanced ColorfulTypeContext Demonstration');
-  console.log('='.repeat(50));
+  console.info('🎨 Enhanced ColorfulTypeContext Demonstration');
+  console.info('='.repeat(50));
   
   // Create context manager
   const manager = new ColorfulContextManager();
   
   // Create different contexts
-  console.log('\n📦 Creating contexts...');
+  console.info('\n📦 Creating contexts...');
   
   const storageContext = manager.createContext('STORAGE', 'ENTERPRISE', 'duoplus');
   const secretsContext = manager.createContext('SECRETS', 'DEVELOPMENT', 'duoplus');
   const serviceContext = manager.createContext('SERVICE', 'LOCAL-SANDBOX', 'duoplus');
   
-  console.log(`✅ Created ${manager.getAllContexts().length} contexts`);
+  console.info(`✅ Created ${manager.getAllContexts().length} contexts`);
   
   // Display context information
-  console.log('\n📊 Context Information:');
+  console.info('\n📊 Context Information:');
   
   const contexts = [storageContext, secretsContext, serviceContext];
   
   contexts.forEach(context => {
-    console.log(`\n${context.type} (${context.scope}):`);
-    console.log(`  Tension: ${context.tension}% (${context.trend})`);
-    console.log(`  Status: ${context.getTensionLevel()} ${context.getTensionEmoji()}`);
-    console.log(`  HSL: ${context.hslColor}`);
-    console.log(`  HEX: ${context.hexColor}`);
-    console.log(`  Backend: ${context.getBackend().type}`);
-    console.log(`  Contributors: ${context.tensionMetrics.contributors.length}`);
-    console.log(`  Confidence: ${context.tensionMetrics.metadata.analysisConfidence}%`);
+    console.info(`\n${context.type} (${context.scope}):`);
+    console.info(`  Tension: ${context.tension}% (${context.trend})`);
+    console.info(`  Status: ${context.getTensionLevel()} ${context.getTensionEmoji()}`);
+    console.info(`  HSL: ${context.hslColor}`);
+    console.info(`  HEX: ${context.hexColor}`);
+    console.info(`  Backend: ${context.getBackend().type}`);
+    console.info(`  Contributors: ${context.tensionMetrics.contributors.length}`);
+    console.info(`  Confidence: ${context.tensionMetrics.metadata.analysisConfidence}%`);
   });
   
   // Subscribe to updates
-  console.log('\n🔔 Subscribing to updates...');
+  console.info('\n🔔 Subscribing to updates...');
   
   const unsubscribeStorage = storageContext.subscribe(update => {
-    console.log(`📈 Storage Update: ${update.tension}% - ${update.colors.description}`);
+    console.info(`📈 Storage Update: ${update.tension}% - ${update.colors.description}`);
   });
   
   const unsubscribeSecrets = secretsContext.subscribe(update => {
-    console.log(`🔐 Secrets Update: ${update.tension}% - ${update.colors.description}`);
+    console.info(`🔐 Secrets Update: ${update.tension}% - ${update.colors.description}`);
   });
   
   // Let updates run for a few seconds
-  console.log('\n⏱️ Monitoring for updates...');
+  console.info('\n⏱️ Monitoring for updates...');
   await new Promise(resolve => setTimeout(resolve, 6000));
   
   // Display system overview
-  console.log('\n📋 System Overview:');
+  console.info('\n📋 System Overview:');
   const overview = manager.getSystemOverview();
   
-  console.log(`  Total Contexts: ${overview.totalContexts}`);
-  console.log(`  Average Tension: ${overview.averageTension}%`);
-  console.log(`  Critical Contexts: ${overview.criticalContexts}`);
-  console.log(`  Healthy Contexts: ${overview.healthyContexts}`);
-  console.log(`  Types: ${Object.entries(overview.types).map(([k, v]) => `${k}(${v})`).join(', ')}`);
-  console.log(`  Scopes: ${Object.entries(overview.scopes).map(([k, v]) => `${k}(${v})`).join(', ')}`);
+  console.info(`  Total Contexts: ${overview.totalContexts}`);
+  console.info(`  Average Tension: ${overview.averageTension}%`);
+  console.info(`  Critical Contexts: ${overview.criticalContexts}`);
+  console.info(`  Healthy Contexts: ${overview.healthyContexts}`);
+  console.info(`  Types: ${Object.entries(overview.types).map(([k, v]) => `${k}(${v})`).join(', ')}`);
+  console.info(`  Scopes: ${Object.entries(overview.scopes).map(([k, v]) => `${k}(${v})`).join(', ')}`);
   
   // Generate CSS
-  console.log('\n🎨 Generating CSS...');
+  console.info('\n🎨 Generating CSS...');
   const css = manager.generateCombinedCSS();
-  console.log(`Generated ${css.length} characters of CSS`);
+  console.info(`Generated ${css.length} characters of CSS`);
   
   // Display Bun.inspect output
-  console.log('\n🔍 Bun.inspect output:');
-  console.log(storageContext);
+  console.info('\n🔍 Bun.inspect output:');
+  console.info(storageContext);
   
   // Cleanup
-  console.log('\n🧹 Cleaning up...');
+  console.info('\n🧹 Cleaning up...');
   unsubscribeStorage();
   unsubscribeSecrets();
   manager.stopAll();
   
-  console.log('\n✅ Demonstration complete!');
+  console.info('\n✅ Demonstration complete!');
 }
 
 // Run demonstration if this file is executed directly

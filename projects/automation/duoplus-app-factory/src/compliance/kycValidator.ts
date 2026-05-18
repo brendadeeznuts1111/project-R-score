@@ -147,7 +147,7 @@ export class KYCValidator {
       { flag: 'a', createPath: true }
     );
     
-    console.log(`🚨 Manual review triggered for user ${userId}: ${reason}`);
+    console.info(`🚨 Manual review triggered for user ${userId}: ${reason}`);
   }
 
   private async isSanctionedJurisdiction(userId: string): Promise<boolean> {

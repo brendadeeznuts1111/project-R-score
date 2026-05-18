@@ -33,14 +33,14 @@ function createTestData(size: number): Buffer {
 
 // Warmup function to ensure JIT compilation
 async function warmup(): Promise<void> {
-  console.log("🔥 Warming up...");
+  console.info("🔥 Warming up...");
   const testData = createTestData(1024);
   
   for (let i = 0; i < WARMUP_ITERATIONS; i++) {
     Bun.hash.crc32(testData);
   }
   
-  console.log("✅ Warmup complete\n");
+  console.info("✅ Warmup complete\n");
 }
 
 // Benchmark function
@@ -87,20 +87,20 @@ function formatThroughput(mbPerSec: number): string {
 
 // Main benchmark execution
 async function runBenchmark(): Promise<void> {
-  console.log("🚀 Bun.hash.crc32 Performance Benchmark");
-  console.log("=====================================\n");
+  console.info("🚀 Bun.hash.crc32 Performance Benchmark");
+  console.info("=====================================\n");
   
-  console.log("Hardware Acceleration Info:");
-  console.log("- x86: Uses PCLMULQDQ instruction");
-  console.log("- ARM: Uses native CRC32 instruction");
-  console.log("- ~20x faster than previous software-only implementation\n");
+  console.info("Hardware Acceleration Info:");
+  console.info("- x86: Uses PCLMULQDQ instruction");
+  console.info("- ARM: Uses native CRC32 instruction");
+  console.info("- ~20x faster than previous software-only implementation\n");
   
   await warmup();
   
-  console.log("Benchmark Results:");
-  console.log("==================");
-  console.log("Size    | Avg Time     | Throughput  | Improvement");
-  console.log("--------|--------------|-------------|------------");
+  console.info("Benchmark Results:");
+  console.info("==================");
+  console.info("Size    | Avg Time     | Throughput  | Improvement");
+  console.info("--------|--------------|-------------|------------");
   
   const results: Array<{ size: string; avgTime: number; throughput: number }> = [];
   
@@ -126,30 +126,30 @@ async function runBenchmark(): Promise<void> {
     const prev = previousBenchmark[result.size as keyof typeof previousBenchmark];
     const improvement = prev.time / result.avgTime;
     
-    console.log(
+    console.info(
       `${result.size.padEnd(7)} | ${formatTime(result.avgTime).padEnd(12)} | ${formatThroughput(result.throughput).padEnd(11)} | ${improvement.toFixed(1)}x faster`
     );
   }
   
-  console.log("\n" + "=".repeat(50));
-  console.log("Summary:");
-  console.log("========");
+  console.info("\n" + "=".repeat(50));
+  console.info("Summary:");
+  console.info("========");
   
   const mbResult = results.find(r => r.size === "1MB");
   if (mbResult) {
     const improvement = previousBenchmark["1MB"].time / mbResult.avgTime;
-    console.log(`✅ 1MB benchmark: ${formatTime(mbResult.avgTime)} (was ${formatTime(previousBenchmark["1MB"].time)})`);
-    console.log(`✅ Performance improvement: ${improvement.toFixed(1)}x faster`);
-    console.log(`✅ Throughput: ${formatThroughput(mbResult.throughput)} (was ${formatThroughput(previousBenchmark["1MB"].throughput)})`);
+    console.info(`✅ 1MB benchmark: ${formatTime(mbResult.avgTime)} (was ${formatTime(previousBenchmark["1MB"].time)})`);
+    console.info(`✅ Performance improvement: ${improvement.toFixed(1)}x faster`);
+    console.info(`✅ Throughput: ${formatThroughput(mbResult.throughput)} (was ${formatThroughput(previousBenchmark["1MB"].throughput)})`);
   }
   
-  console.log("\nHardware acceleration is working! 🎉");
+  console.info("\nHardware acceleration is working! 🎉");
 }
 
 // Additional tests
 async function runAdditionalTests(): Promise<void> {
-  console.log("\n🔬 Additional Tests:");
-  console.log("====================");
+  console.info("\n🔬 Additional Tests:");
+  console.info("====================");
   
   // Test with different data patterns
   const patterns = [
@@ -179,11 +179,11 @@ async function runAdditionalTests(): Promise<void> {
     const hash = Bun.hash.crc32(data);
     const end = performance.now();
     
-    console.log(`${pattern.name.padEnd(12)}: ${formatTime((end - start) * 1000)} | Hash: 0x${hash.toString(16).padStart(8, '0').toUpperCase()}`);
+    console.info(`${pattern.name.padEnd(12)}: ${formatTime((end - start) * 1000)} | Hash: 0x${hash.toString(16).padStart(8, '0').toUpperCase()}`);
   }
   
   // Test multiple small hashes (common use case)
-  console.log("\nMultiple small hashes (1KB x 1000):");
+  console.info("\nMultiple small hashes (1KB x 1000):");
   const smallData = createTestData(1024);
   const start = performance.now();
   for (let i = 0; i < 1000; i++) {
@@ -193,34 +193,34 @@ async function runAdditionalTests(): Promise<void> {
   const totalTime = end - start;
   const avgPerHash = totalTime / 1000;
   
-  console.log(`Total time: ${totalTime.toFixed(2)} ms`);
-  console.log(`Avg per hash: ${formatTime(avgPerHash * 1000)}`);
-  console.log(`Hashes/sec: ${(1000 / (totalTime / 1000)).toLocaleString()}`);
+  console.info(`Total time: ${totalTime.toFixed(2)} ms`);
+  console.info(`Avg per hash: ${formatTime(avgPerHash * 1000)}`);
+  console.info(`Hashes/sec: ${(1000 / (totalTime / 1000)).toLocaleString()}`);
 }
 
 // CPU info detection
 function detectCPUInfo(): void {
-  console.log("\n💻 CPU Information:");
-  console.log("===================");
+  console.info("\n💻 CPU Information:");
+  console.info("===================");
   
   // Try to detect CPU architecture
   const arch = process.arch;
-  console.log(`Architecture: ${arch}`);
+  console.info(`Architecture: ${arch}`);
   
   // On ARM Macs, we can check for specific features
   if (arch === 'arm64' && process.platform === 'darwin') {
-    console.log("Platform: Apple Silicon (ARM64)");
-    console.log("Hardware acceleration: Native CRC32 instructions");
+    console.info("Platform: Apple Silicon (ARM64)");
+    console.info("Hardware acceleration: Native CRC32 instructions");
   } else if (arch === 'x64') {
-    console.log("Platform: x86_64");
-    console.log("Hardware acceleration: PCLMULQDQ instruction (via zlib)");
+    console.info("Platform: x86_64");
+    console.info("Hardware acceleration: PCLMULQDQ instruction (via zlib)");
   } else {
-    console.log(`Platform: ${process.platform}`);
-    console.log("Hardware acceleration: Available if supported by CPU");
+    console.info(`Platform: ${process.platform}`);
+    console.info("Hardware acceleration: Available if supported by CPU");
   }
   
   // Bun version info
-  console.log(`Bun version: ${process.version}`);
+  console.info(`Bun version: ${process.version}`);
 }
 
 // Run all tests
@@ -230,7 +230,7 @@ async function main(): Promise<void> {
     await runBenchmark();
     await runAdditionalTests();
     
-    console.log("\n✨ Benchmark complete!");
+    console.info("\n✨ Benchmark complete!");
   } catch (error) {
     console.error("❌ Error during benchmark:", error);
     process.exit(1);

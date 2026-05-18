@@ -11,34 +11,34 @@ interface PartnerDeployOptions {
 class MobileDeploymentCLI {
   
   async mobileBuild(options: MobileBuildOptions) {
-    console.log('📱 MOBILE APP DEPLOYMENT - 13.X.X.X TIERS');
-    console.log('===========================================');
-    console.log(`📱 Platforms: ${options.platforms}`);
-    console.log('');
+    console.info('📱 MOBILE APP DEPLOYMENT - 13.X.X.X TIERS');
+    console.info('===========================================');
+    console.info(`📱 Platforms: ${options.platforms}`);
+    console.info('');
 
     try {
       const platforms = options.platforms.split(',');
       
-      console.log('🔨 13.1.0.0 | CROSS-PLATFORM MOBILE BUILD');
-      console.log('---------------------------------------');
+      console.info('🔨 13.1.0.0 | CROSS-PLATFORM MOBILE BUILD');
+      console.info('---------------------------------------');
       
       for (const platform of platforms) {
-        console.log(`📱 Building ${platform.toUpperCase()} app...`);
+        console.info(`📱 Building ${platform.toUpperCase()} app...`);
         const buildResult = await this.buildPlatform(platform.trim());
-        console.log(`   ✅ Build Status: ${buildResult.status}`);
-        console.log(`   📦 Bundle Size: ${buildResult.bundleSize}`);
-        console.log(`   🔐 Security: ${buildResult.security}`);
-        console.log(`   📊 Performance: ${buildResult.performance}`);
-        console.log('');
+        console.info(`   ✅ Build Status: ${buildResult.status}`);
+        console.info(`   📦 Bundle Size: ${buildResult.bundleSize}`);
+        console.info(`   🔐 Security: ${buildResult.security}`);
+        console.info(`   📊 Performance: ${buildResult.performance}`);
+        console.info('');
       }
       
-      console.log('📊 MOBILE BUILD SUMMARY');
-      console.log('=======================');
-      console.log(`Platforms Built: ${platforms.length}`);
-      console.log('Total Bundle Size: 47.3MB');
-      console.log('Security Rating: A+');
-      console.log('Performance Score: 94/100');
-      console.log('App Store Ready: YES');
+      console.info('📊 MOBILE BUILD SUMMARY');
+      console.info('=======================');
+      console.info(`Platforms Built: ${platforms.length}`);
+      console.info('Total Bundle Size: 47.3MB');
+      console.info('Security Rating: A+');
+      console.info('Performance Score: 94/100');
+      console.info('App Store Ready: YES');
       
       return {
         platforms: platforms,
@@ -54,34 +54,34 @@ class MobileDeploymentCLI {
   }
 
   async partnerDeploy(options: PartnerDeployOptions) {
-    console.log('🤝 PARTNER INTEGRATION DEPLOYMENT - 13.X.X.X');
-    console.log('============================================');
-    console.log(`🏢 Partners: ${options.partners}`);
-    console.log('');
+    console.info('🤝 PARTNER INTEGRATION DEPLOYMENT - 13.X.X.X');
+    console.info('============================================');
+    console.info(`🏢 Partners: ${options.partners}`);
+    console.info('');
 
     try {
       const partners = options.partners.split(',');
       
-      console.log('🔗 13.2.0.0 | PARTNER ECOSYSTEM INTEGRATION');
-      console.log('----------------------------------------');
+      console.info('🔗 13.2.0.0 | PARTNER ECOSYSTEM INTEGRATION');
+      console.info('----------------------------------------');
       
       for (const partner of partners) {
-        console.log(`🏢 Deploying ${partner.toUpperCase()} integration...`);
+        console.info(`🏢 Deploying ${partner.toUpperCase()} integration...`);
         const deployResult = await this.deployPartner(partner.trim());
-        console.log(`   ✅ Integration Status: ${deployResult.status}`);
-        console.log(`   🔌 API Endpoints: ${deployResult.endpoints}`);
-        console.log(`   💰 Revenue Share: ${deployResult.revenueShare}`);
-        console.log(`   📊 Transaction Volume: ${deployResult.volume}`);
-        console.log('');
+        console.info(`   ✅ Integration Status: ${deployResult.status}`);
+        console.info(`   🔌 API Endpoints: ${deployResult.endpoints}`);
+        console.info(`   💰 Revenue Share: ${deployResult.revenueShare}`);
+        console.info(`   📊 Transaction Volume: ${deployResult.volume}`);
+        console.info('');
       }
       
-      console.log('💰 PARTNER REVENUE PROJECTION');
-      console.log('============================');
-      console.log('Active Integrations: 3');
-      console.log('Monthly Transaction Volume: $2.4M');
-      console.log('Revenue Share: 15% average');
-      console.log('Additional ARR: +$1.8M');
-      console.log('Market Expansion: 25% increase');
+      console.info('💰 PARTNER REVENUE PROJECTION');
+      console.info('============================');
+      console.info('Active Integrations: 3');
+      console.info('Monthly Transaction Volume: $2.4M');
+      console.info('Revenue Share: 15% average');
+      console.info('Additional ARR: +$1.8M');
+      console.info('Market Expansion: 25% increase');
       
       return {
         partners: partners,
@@ -162,16 +162,16 @@ async function main() {
         break;
 
       default:
-        console.log('📱 Mobile Deployment CLI');
-        console.log('========================');
-        console.log('');
-        console.log('Available commands:');
-        console.log('  mobile:build    - Build mobile apps');
-        console.log('  partner:deploy  - Deploy partner integrations');
-        console.log('');
-        console.log('Examples:');
-        console.log('  bun run scripts/mobile-deploy.ts mobile:build --platforms="ios,android"');
-        console.log('  bun run scripts/mobile-deploy.ts partner:deploy --partners="square,twilio,stripe"');
+        console.info('📱 Mobile Deployment CLI');
+        console.info('========================');
+        console.info('');
+        console.info('Available commands:');
+        console.info('  mobile:build    - Build mobile apps');
+        console.info('  partner:deploy  - Deploy partner integrations');
+        console.info('');
+        console.info('Examples:');
+        console.info('  bun run scripts/mobile-deploy.ts mobile:build --platforms="ios,android"');
+        console.info('  bun run scripts/mobile-deploy.ts partner:deploy --partners="square,twilio,stripe"');
     }
   } catch (error) {
     console.error('❌ Command failed:', error);

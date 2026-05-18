@@ -80,9 +80,9 @@ class BenchmarkRunner {
     category: string;
     thresholds: { maxLatency: number; minThroughput?: number };
   }): Promise<BenchmarkResult> {
-    console.log(`\n🚀 Running: ${suite.name}`);
-    console.log(`📂 Category: ${suite.category}`);
-    console.log(`⏱️  Thresholds: Max ${suite.thresholds.maxLatency}ms latency`);
+    console.info(`\n🚀 Running: ${suite.name}`);
+    console.info(`📂 Category: ${suite.category}`);
+    console.info(`⏱️  Thresholds: Max ${suite.thresholds.maxLatency}ms latency`);
 
     const startTime = Date.now();
 
@@ -105,11 +105,11 @@ class BenchmarkRunner {
         timestamp: new Date().toISOString(),
       };
 
-      console.log(`${passed ? "✅" : "❌"} ${suite.name}: ${duration}ms`);
-      console.log(`   Average Latency: ${metrics.average.toFixed(2)}ms`);
-      console.log(`   P95 Latency: ${metrics.p95.toFixed(2)}ms`);
+      console.info(`${passed ? "✅" : "❌"} ${suite.name}: ${duration}ms`);
+      console.info(`   Average Latency: ${metrics.average.toFixed(2)}ms`);
+      console.info(`   P95 Latency: ${metrics.p95.toFixed(2)}ms`);
       if (metrics.throughput) {
-        console.log(`   Throughput: ${metrics.throughput.toFixed(0)} req/s`);
+        console.info(`   Throughput: ${metrics.throughput.toFixed(0)} req/s`);
       }
 
       return result;
@@ -127,8 +127,8 @@ class BenchmarkRunner {
         timestamp: new Date().toISOString(),
       };
 
-      console.log(`❌ ${suite.name} failed: ${duration}ms`);
-      console.log(`   Error: ${errorMessage}`);
+      console.info(`❌ ${suite.name} failed: ${duration}ms`);
+      console.info(`   Error: ${errorMessage}`);
 
       return result;
     }
@@ -192,8 +192,8 @@ class BenchmarkRunner {
   }
 
   async runAll(): Promise<BenchmarkReport> {
-    console.log("🎯 Phase 3 Zero-Trust Benchmark Suite");
-    console.log("=".repeat(80));
+    console.info("🎯 Phase 3 Zero-Trust Benchmark Suite");
+    console.info("=".repeat(80));
 
     const startTime = Date.now();
 
@@ -291,54 +291,54 @@ class BenchmarkRunner {
   private saveReport(report: BenchmarkReport): void {
     const reportPath = join(process.cwd(), "benchmark-report.json");
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`\n📄 Report saved to: ${reportPath}`);
+    console.info(`\n📄 Report saved to: ${reportPath}`);
   }
 
   private printReport(report: BenchmarkReport): void {
-    console.log("\n" + "=".repeat(80));
-    console.log("📊 BENCHMARK EXECUTION SUMMARY");
-    console.log("=".repeat(80));
-    console.log(`Total Benchmarks: ${report.summary.total}`);
-    console.log(`Passed: ${report.summary.passed} ✅`);
-    console.log(
+    console.info("\n" + "=".repeat(80));
+    console.info("📊 BENCHMARK EXECUTION SUMMARY");
+    console.info("=".repeat(80));
+    console.info(`Total Benchmarks: ${report.summary.total}`);
+    console.info(`Passed: ${report.summary.passed} ✅`);
+    console.info(
       `Failed: ${report.summary.failed} ${report.summary.failed > 0 ? "❌" : ""}`
     );
-    console.log(`Pass Rate: ${report.summary.passRate.toFixed(1)}%`);
-    console.log(`Total Duration: ${report.summary.totalDuration}ms`);
+    console.info(`Pass Rate: ${report.summary.passRate.toFixed(1)}%`);
+    console.info(`Total Duration: ${report.summary.totalDuration}ms`);
 
-    console.log("\n🎯 Performance Results:");
+    console.info("\n🎯 Performance Results:");
     this.results.forEach((result) => {
       const status = result.passed ? "✅" : "❌";
-      console.log(`   ${status} ${result.name} (${result.category})`);
-      console.log(
+      console.info(`   ${status} ${result.name} (${result.category})`);
+      console.info(
         `      Latency: ${result.metrics.average.toFixed(2)}ms avg, ${result.metrics.p95.toFixed(2)}ms P95`
       );
       if (result.metrics.throughput !== undefined) {
-        console.log(
+        console.info(
           `      Throughput: ${result.metrics.throughput.toFixed(0)} req/s`
         );
       }
     });
 
     if (report.recommendations.length > 0) {
-      console.log("\n💡 Recommendations:");
+      console.info("\n💡 Recommendations:");
       report.recommendations.forEach((rec) => {
-        console.log(`   ${rec}`);
+        console.info(`   ${rec}`);
       });
     }
 
-    console.log("\n" + "=".repeat(80));
+    console.info("\n" + "=".repeat(80));
 
     if (report.summary.passRate === 100) {
-      console.log(
+      console.info(
         "🎉 ALL BENCHMARKS PASSED! System exceeds performance targets."
       );
     } else if (report.summary.passRate >= 80) {
-      console.log(
+      console.info(
         "⚠️  Most benchmarks passed. Review recommendations for optimization."
       );
     } else {
-      console.log(
+      console.info(
         "🚨 CRITICAL: Multiple benchmark failures. Performance optimization required."
       );
     }

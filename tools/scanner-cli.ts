@@ -142,14 +142,14 @@ export class Tier1380ScannerCLI {
       { hard: true, trim: false }
     )
 
-    console.log(wrapped)
+    console.info(wrapped)
   }
 
   /**
    * Display summary
    */
   displaySummary(): void {
-    console.log({
+    console.info({
       projectId: this.config.projectId,
       sessionId: `${this.config.sessionId.slice(0, 8)}...`,
       bundle: `${this.data.compressedSize}B`,
@@ -281,10 +281,10 @@ if (import.meta.path === Bun.main) {
     if (process.env.SCANNER_EXPORT_R2 === 'true') {
       try {
         const r2Data = scanner.exportForR2()
-        console.log('\n📦 R2 Export Data:')
-        console.log(`   Key: ${r2Data.key}`)
-        console.log(`   Size: ${r2Data.data.length}B`)
-        console.log(`   Metadata: ${Object.keys(r2Data.metadata).length} fields`)
+        console.info('\n📦 R2 Export Data:')
+        console.info(`   Key: ${r2Data.key}`)
+        console.info(`   Size: ${r2Data.data.length}B`)
+        console.info(`   Metadata: ${Object.keys(r2Data.metadata).length} fields`)
       } catch (error) {
         console.error('❌ R2 export failed:', error.message)
       }

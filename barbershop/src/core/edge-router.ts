@@ -331,7 +331,7 @@ export function createEdgeHandler() {
 
 // Demo
 if (import.meta.main) {
-  console.log(`
+  console.info(`
 ╔══════════════════════════════════════════════════════════════════╗
 ║  🔥 ELITE EDGE DEPLOYMENT                                        ║
 ╠══════════════════════════════════════════════════════════════════╣
@@ -342,7 +342,7 @@ if (import.meta.main) {
   const edge = createEdgeHandler();
   
   // Simulate edge requests
-  console.log('--- Simulating Edge Requests ---\n');
+  console.info('--- Simulating Edge Requests ---\n');
   
   const testRequests = [
     { url: 'https://api.barbershop.io/edge/health', region: 'US' },
@@ -365,15 +365,15 @@ if (import.meta.main) {
     });
     
     const data = await response.json();
-    console.log(`${test.url}:`);
-    console.log(`  Status: ${response.status}`);
-    console.log(`  Latency: ${response.headers.get('x-edge-latency')}`);
-    console.log(`  Region: ${response.headers.get('x-edge-region')}`);
-    console.log(`  Data:`, JSON.stringify(data).slice(0, 100) + '...\n');
+    console.info(`${test.url}:`);
+    console.info(`  Status: ${response.status}`);
+    console.info(`  Latency: ${response.headers.get('x-edge-latency')}`);
+    console.info(`  Region: ${response.headers.get('x-edge-region')}`);
+    console.info(`  Data:`, JSON.stringify(data).slice(0, 100) + '...\n');
   }
   
   // Load balancer demo
-  console.log('--- Load Balancer Distribution ---');
+  console.info('--- Load Balancer Distribution ---');
   const distribution = new Map<string, number>();
   
   for (let i = 0; i < 1000; i++) {
@@ -385,20 +385,20 @@ if (import.meta.main) {
   
   for (const [url, count] of distribution) {
     const percentage = ((count / 1000) * 100).toFixed(1);
-    console.log(`  ${url}: ${count} requests (${percentage}%)`);
+    console.info(`  ${url}: ${count} requests (${percentage}%)`);
   }
   
   // Cache demo
-  console.log('\n--- KV Cache Demo ---');
+  console.info('\n--- KV Cache Demo ---');
   await edge.cache.set('test-key', { foo: 'bar' }, 60);
   const cached = await edge.cache.get('test-key');
-  console.log(`  Set: { foo: 'bar' }`);
-  console.log(`  Get:`, cached);
+  console.info(`  Set: { foo: 'bar' }`);
+  console.info(`  Get:`, cached);
   
-  console.log('\n✅ Elite Edge Deployment ready!');
-  console.log('\nDeploy to Cloudflare Workers:');
-  console.log('  1. bun run build:edge');
-  console.log('  2. wrangler deploy');
+  console.info('\n✅ Elite Edge Deployment ready!');
+  console.info('\nDeploy to Cloudflare Workers:');
+  console.info('  1. bun run build:edge');
+  console.info('  2. wrangler deploy');
 }
 
 export default createEdgeHandler;

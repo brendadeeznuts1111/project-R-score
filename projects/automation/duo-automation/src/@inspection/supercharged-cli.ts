@@ -67,7 +67,7 @@ class SuperchargedInspectionSystem {
     console.clear();
     
     const welcomeBox = boxen(
-      console.log('\u001b[36m\u001b[1m🚀 FactoryWager Supercharged Inspection System\u001b[0m' + '\n\n' +
+      console.info('\u001b[36m\u001b[1m🚀 FactoryWager Supercharged Inspection System\u001b[0m' + '\n\n' +
       '\u001b[90mEnterprise-grade URI security inspection with advanced analytics\u001b[0m'),
       {
         title: 'Welcome',
@@ -78,8 +78,8 @@ class SuperchargedInspectionSystem {
       }
     );
     
-    console.log(welcomeBox);
-    console.log();
+    console.info(welcomeBox);
+    console.info();
     
     const { action } = await inquirer.prompt([
       {
@@ -122,7 +122,7 @@ class SuperchargedInspectionSystem {
         await this.interactiveExport();
         break;
       case 'exit':
-        console.log('\u001b[32m👋 Goodbye!\u001b[0m');
+        console.info('\u001b[32m👋 Goodbye!\u001b[0m');
         process.exit(0);
     }
   }
@@ -180,26 +180,26 @@ class SuperchargedInspectionSystem {
    * Display detailed inspection result
    */
   private displayDetailedResult(result: any): void {
-    console.log('\n' + '='.repeat(60));
-    console.log(`\u001b[36mURI:\u001b[0m ${result.uri}`);
-    console.log(`\u001b[36mStatus:\u001b[0m ${result.status}`);
-    console.log(`\u001b[36mCategory:\u001b[0m ${result.category}`);
-    console.log(`\u001b[36mSecurity Risk:\u001b[0m ${result.securityRisk}`);
-    console.log(`\u001b[36mMessage:\u001b[0m ${result.message}`);
-    console.log(`\u001b[36mProcessing Time:\u001b[0m ${result.processingTime.toFixed(2)}ms`);
-    console.log('='.repeat(60) + '\n');
+    console.info('\n' + '='.repeat(60));
+    console.info(`\u001b[36mURI:\u001b[0m ${result.uri}`);
+    console.info(`\u001b[36mStatus:\u001b[0m ${result.status}`);
+    console.info(`\u001b[36mCategory:\u001b[0m ${result.category}`);
+    console.info(`\u001b[36mSecurity Risk:\u001b[0m ${result.securityRisk}`);
+    console.info(`\u001b[36mMessage:\u001b[0m ${result.message}`);
+    console.info(`\u001b[36mProcessing Time:\u001b[0m ${result.processingTime.toFixed(2)}ms`);
+    console.info('='.repeat(60) + '\n');
     
     if (result.zeroWidthAnalysis.has) {
-      console.log('\n⚠️  Zero-Width Characters:');
+      console.info('\n⚠️  Zero-Width Characters:');
       result.zeroWidthAnalysis.positions.forEach((pos: number, i: number) => {
-        console.log(`   ${i + 1}. Position ${pos}: ${result.zeroWidthAnalysis.types[i]}`);
+        console.info(`   ${i + 1}. Position ${pos}: ${result.zeroWidthAnalysis.types[i]}`);
       });
     }
     
     if (result.encodingAnomalies.length > 0) {
-      console.log('\n🚨 Encoding Anomalies:');
+      console.info('\n🚨 Encoding Anomalies:');
       result.encodingAnomalies.forEach((anomaly: string, i: number) => {
-        console.log(`   ${i + 1}. ${anomaly}`);
+        console.info(`   ${i + 1}. ${anomaly}`);
       });
     }
   }
@@ -269,17 +269,17 @@ program
     if (uri) {
       // Single URI inspection
       const result = system['uriInspector'].inspectUri(uri);
-      console.log(result[Symbol.for('Bun.inspect.custom')]());
+      console.info(result[Symbol.for('Bun.inspect.custom')]());
       
       if (options.verbose) {
-        console.log('\n📊 Detailed Analysis:');
-        console.log(`   Raw URI: ${result.uri}`);
-        console.log(`   Decoded URI: ${result.decodedUri || 'N/A'}`);
-        console.log(`   Security Risk: ${result.securityRisk}`);
-        console.log(`   Processing Time: ${result.processingTime.toFixed(2)}ms`);
+        console.info('\n📊 Detailed Analysis:');
+        console.info(`   Raw URI: ${result.uri}`);
+        console.info(`   Decoded URI: ${result.decodedUri || 'N/A'}`);
+        console.info(`   Security Risk: ${result.securityRisk}`);
+        console.info(`   Processing Time: ${result.processingTime.toFixed(2)}ms`);
       }
     } else {
-      console.log('\u001b[33mPlease provide a URI or use --interactive mode\u001b[0m');
+      console.info('\u001b[33mPlease provide a URI or use --interactive mode\u001b[0m');
     }
   });
 

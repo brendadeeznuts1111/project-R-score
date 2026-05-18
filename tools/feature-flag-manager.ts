@@ -44,48 +44,48 @@ const colors = options.noColor ? {
 
 // Show help
 if (options.help) {
-  console.log(`${colors.cyan}🚀 Feature Flag & Deployment Manager${colors.reset}`);
-  console.log('');
-  console.log('Usage: bun feature-flag-manager.ts [options]');
-  console.log('');
-  console.log('Feature Flags:');
-  console.log('  --enable [flag]        Enable a feature flag');
-  console.log('  --disable [flag]       Disable a feature flag');
-  console.log('  --status               Show all feature flag statuses');
-  console.log('');
-  console.log('Deployment:');
-  console.log('  --canary               Deploy to canary group');
-  console.log('  --deploy [group]       Deploy to specific group');
-  console.log('  --rollback             Rollback to previous version');
-  console.log('');
-  console.log('Testing:');
-  console.log('  --ab-test              Start A/B test for URL structures');
-  console.log('  --monitor              Monitor metrics and error rates');
-  console.log('');
-  console.log('Options:');
-  console.log('  -v, --verbose         Verbose output with detailed information');
-  console.log('  -q, --quiet           Quiet mode with minimal output');
-  console.log('  --json                Output results in JSON format');
-  console.log('  --no-color            Disable colored output');
-  console.log('  -h, --help            Show this help message');
-  console.log('');
-  console.log('Examples:');
-  console.log('  bun feature-flag-manager.ts --status');
-  console.log('  bun feature-flag-manager.ts --enable direct-urls --canary');
-  console.log('  bun feature-flag-manager.ts --ab-test --monitor');
-  console.log('  bun feature-flag-manager.ts --rollback');
+  console.info(`${colors.cyan}🚀 Feature Flag & Deployment Manager${colors.reset}`);
+  console.info('');
+  console.info('Usage: bun feature-flag-manager.ts [options]');
+  console.info('');
+  console.info('Feature Flags:');
+  console.info('  --enable [flag]        Enable a feature flag');
+  console.info('  --disable [flag]       Disable a feature flag');
+  console.info('  --status               Show all feature flag statuses');
+  console.info('');
+  console.info('Deployment:');
+  console.info('  --canary               Deploy to canary group');
+  console.info('  --deploy [group]       Deploy to specific group');
+  console.info('  --rollback             Rollback to previous version');
+  console.info('');
+  console.info('Testing:');
+  console.info('  --ab-test              Start A/B test for URL structures');
+  console.info('  --monitor              Monitor metrics and error rates');
+  console.info('');
+  console.info('Options:');
+  console.info('  -v, --verbose         Verbose output with detailed information');
+  console.info('  -q, --quiet           Quiet mode with minimal output');
+  console.info('  --json                Output results in JSON format');
+  console.info('  --no-color            Disable colored output');
+  console.info('  -h, --help            Show this help message');
+  console.info('');
+  console.info('Examples:');
+  console.info('  bun feature-flag-manager.ts --status');
+  console.info('  bun feature-flag-manager.ts --enable direct-urls --canary');
+  console.info('  bun feature-flag-manager.ts --ab-test --monitor');
+  console.info('  bun feature-flag-manager.ts --rollback');
   process.exit(0);
 }
 
 // Logging utilities
 const log = {
-  info: (msg: string) => !options.quiet && console.log(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) => !options.quiet && console.log(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) => !options.quiet && console.log(`${colors.yellow}⚠️${colors.reset} ${msg}`),
-  error: (msg: string) => console.log(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) => options.verbose && console.log(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) => !options.quiet && console.log(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.log(JSON.stringify(data, null, 2))
+  info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
+  success: (msg: string) => !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
+  warning: (msg: string) => !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
+  error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
+  verbose: (msg: string) => options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
+  section: (title: string) => !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
+  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2))
 };
 
 // Feature flag configuration
@@ -507,14 +507,14 @@ class ABTestManager {
     log.info(`Statistical significance: ${results.significance * 100}%`);
 
     if (options.verbose) {
-      console.log('\nControl (Fragment URLs):');
+      console.info('\nControl (Fragment URLs):');
       Object.entries(results.control).forEach(([metric, value]) => {
-        console.log(`  ${metric}: ${value}`);
+        console.info(`  ${metric}: ${value}`);
       });
 
-      console.log('\nTreatment (Direct URLs):');
+      console.info('\nTreatment (Direct URLs):');
       Object.entries(results.treatment).forEach(([metric, value]) => {
-        console.log(`  ${metric}: ${value}`);
+        console.info(`  ${metric}: ${value}`);
       });
     }
   }
@@ -579,7 +579,7 @@ class MonitoringManager {
     }
 
     if (options.verbose) {
-      console.log(`\r📊 Error: ${errorRate.toFixed(2)}% | Response: ${responseTime.toFixed(0)}ms | Satisfaction: ${userSatisfaction.toFixed(2)}/5`);
+      console.info(`\r📊 Error: ${errorRate.toFixed(2)}% | Response: ${responseTime.toFixed(0)}ms | Satisfaction: ${userSatisfaction.toFixed(2)}/5`);
     }
   }
 
@@ -665,8 +665,8 @@ class URLStructureManager {
 
 // Main function
 async function main() {
-  console.log(`${colors.cyan}🚀 Feature Flag & Deployment Manager${colors.reset}`);
-  console.log(`${colors.gray}URL Structure Migration with Feature Flags${colors.reset}\n`);
+  console.info(`${colors.cyan}🚀 Feature Flag & Deployment Manager${colors.reset}`);
+  console.info(`${colors.gray}URL Structure Migration with Feature Flags${colors.reset}\n`);
 
   const featureFlagManager = new FeatureFlagManager();
   const deploymentManager = new DeploymentManager();
@@ -684,11 +684,11 @@ async function main() {
         flags.forEach(flag => {
           const status = flag.enabled ? '✅ ENABLED' : '❌ DISABLED';
           const rollout = flag.enabled ? ` (${flag.rolloutPercentage}%)` : '';
-          console.log(`${status} ${flag.name}${rollout}`);
+          console.info(`${status} ${flag.name}${rollout}`);
 
           if (options.verbose && flag.enabled) {
-            console.log(`   Target groups: ${flag.targetGroups.join(', ') || 'All users'}`);
-            console.log(`   Updated: ${flag.metadata.updatedAt}`);
+            console.info(`   Target groups: ${flag.targetGroups.join(', ') || 'All users'}`);
+            console.info(`   Updated: ${flag.metadata.updatedAt}`);
           }
         });
       }
@@ -751,35 +751,35 @@ async function main() {
 
     else {
       log.section('📋 Available Actions');
-      console.log('Feature Flags:');
-      console.log('  --enable [flag]        Enable a feature flag');
-      console.log('  --disable [flag]       Disable a feature flag');
-      console.log('  --status               Show all feature flag statuses');
-      console.log('');
-      console.log('Deployment:');
-      console.log('  --canary               Deploy to canary group');
-      console.log('  --deploy [group]       Deploy to specific group');
-      console.log('  --rollback             Rollback to previous version');
-      console.log('');
-      console.log('Testing:');
-      console.log('  --ab-test              Start A/B test for URL structures');
-      console.log('  --monitor              Monitor metrics and error rates');
-      console.log('');
-      console.log('Available Feature Flags:');
-      console.log('  - direct-urls-enabled');
-      console.log('  - fragment-redirects');
-      console.log('  - ab-testing-active');
-      console.log('  - canary-deployment');
+      console.info('Feature Flags:');
+      console.info('  --enable [flag]        Enable a feature flag');
+      console.info('  --disable [flag]       Disable a feature flag');
+      console.info('  --status               Show all feature flag statuses');
+      console.info('');
+      console.info('Deployment:');
+      console.info('  --canary               Deploy to canary group');
+      console.info('  --deploy [group]       Deploy to specific group');
+      console.info('  --rollback             Rollback to previous version');
+      console.info('');
+      console.info('Testing:');
+      console.info('  --ab-test              Start A/B test for URL structures');
+      console.info('  --monitor              Monitor metrics and error rates');
+      console.info('');
+      console.info('Available Feature Flags:');
+      console.info('  - direct-urls-enabled');
+      console.info('  - fragment-redirects');
+      console.info('  - ab-testing-active');
+      console.info('  - canary-deployment');
 
       // Show redirect info
       log.section('🔗 URL Redirect Configuration');
       log.info(`Configured redirects: ${urlStructureManager.getRedirectCount()}`);
 
       if (options.verbose) {
-        console.log('\nSample redirect rules:');
+        console.info('\nSample redirect rules:');
         const rules = urlStructureManager.generateRedirectRules();
-        console.log(rules.split('\n').slice(0, 10).join('\n'));
-        console.log('...(truncated)');
+        console.info(rules.split('\n').slice(0, 10).join('\n'));
+        console.info('...(truncated)');
       }
     }
 
@@ -794,7 +794,7 @@ async function main() {
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log(`\n${colors.yellow}👋 Shutting down gracefully...${colors.reset}`);
+  console.info(`\n${colors.yellow}👋 Shutting down gracefully...${colors.reset}`);
   process.exit(0);
 });
 

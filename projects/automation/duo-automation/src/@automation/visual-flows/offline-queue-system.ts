@@ -643,7 +643,7 @@ const paymentId = await queueManager.addPayment({
 
 // Get queue statistics
 const stats = queueManager.getQueueStats();
-console.log('Queue stats:', stats);
+console.info('Queue stats:', stats);
 
 // Get pending items for UI
 const pendingItems = queueManager.getPendingItems();
@@ -655,7 +655,7 @@ await queueManager.resolveConflict(paymentId, 'merge');
 
 // Force sync
 const results = await queueManager.syncAll();
-console.log('Sync results:', results);
+console.info('Sync results:', results);
 */
 
 // Example queue item in storage:

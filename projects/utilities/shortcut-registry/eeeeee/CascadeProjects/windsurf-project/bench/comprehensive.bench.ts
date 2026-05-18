@@ -7,7 +7,7 @@ class BenchmarkRunner {
   private results: Array<{ name: string; time: number }> = [];
 
   async bench(name: string, fn: () => void | Promise<void>) {
-    console.log(`Running benchmark: ${name}`);
+    console.info(`Running benchmark: ${name}`);
     const start = performance.now();
 
     try {
@@ -19,14 +19,14 @@ class BenchmarkRunner {
       const end = performance.now();
       const time = end - start;
       this.results.push({ name, time });
-      console.log(`✓ ${name}: ${time.toFixed(2)}ms`);
+      console.info(`✓ ${name}: ${time.toFixed(2)}ms`);
     } catch (error) {
       console.error(`✗ ${name}: Failed - ${error}`);
     }
   }
 
   describe(name: string, fn: () => void | Promise<void>) {
-    console.log(`\n📊 ${name}`);
+    console.info(`\n📊 ${name}`);
     const result = fn();
     if (result && typeof result.then === 'function') {
       return result;
@@ -41,10 +41,10 @@ class BenchmarkRunner {
     const totalTime = this.results.reduce((sum, r) => sum + r.time, 0);
     const avgTime = totalTime / this.results.length;
 
-    console.log('\n📈 Benchmark Summary:');
-    console.log(`   Total benchmarks: ${this.results.length}`);
-    console.log(`   Total time: ${totalTime.toFixed(2)}ms`);
-    console.log(`   Average time: ${avgTime.toFixed(2)}ms`);
+    console.info('\n📈 Benchmark Summary:');
+    console.info(`   Total benchmarks: ${this.results.length}`);
+    console.info(`   Total time: ${totalTime.toFixed(2)}ms`);
+    console.info(`   Average time: ${avgTime.toFixed(2)}ms`);
   }
 }
 
@@ -230,7 +230,7 @@ runner.describe('Console Cleanup Performance', () => {
 
   runner.bench('Console Statement Detection (1000 lines)', () => {
     const testLines = Array.from({ length: 1000 }, (_, i) =>
-      i % 10 === 0 ? `console.log('Test log ${i}');` : `const value${i} = ${i};`
+      i % 10 === 0 ? `console.info('Test log ${i}');` : `const value${i} = ${i};`
     );
 
     const consoleStatements = testLines.filter(line =>
@@ -242,7 +242,7 @@ runner.describe('Console Cleanup Performance', () => {
     let code = '';
     for (let i = 0; i < 1000; i++) {
       if (i % 10 === 0) {
-        code += `console.log('Test ${i}');\n`;
+        code += `console.info('Test ${i}');\n`;
       } else {
         code += `const value${i} = ${i};\n`;
       }
@@ -435,18 +435,18 @@ runner.describe('Performance Baselines', () => {
 
 // Main benchmark runner
 async function runComprehensiveBenchmarks() {
-  console.log('🚀 Sovereign Unit [01] - Comprehensive Benchmark Suite');
-  console.log('📊 Performance Monitoring & Optimization Tracking');
-  console.log('🎯 Target: A+ Grade (9.5-10.0/10.0)');
-  console.log('');
+  console.info('🚀 Sovereign Unit [01] - Comprehensive Benchmark Suite');
+  console.info('📊 Performance Monitoring & Optimization Tracking');
+  console.info('🎯 Target: A+ Grade (9.5-10.0/10.0)');
+  console.info('');
 
   // All benchmarks are already run above
   runner.summary();
 
-  console.log('');
-  console.log('✅ Comprehensive Benchmark Suite Completed');
-  console.log('📈 Results saved for performance monitoring');
-  console.log('🎯 Next: Implement bundle splitting and advanced caching');
+  console.info('');
+  console.info('✅ Comprehensive Benchmark Suite Completed');
+  console.info('📈 Results saved for performance monitoring');
+  console.info('🎯 Next: Implement bundle splitting and advanced caching');
 }
 
 // Execute benchmarks

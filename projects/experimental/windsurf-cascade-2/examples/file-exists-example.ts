@@ -15,7 +15,7 @@ export {};
 
 // Example 1: Basic file existence checking
 async function basicFileExistence() {
-  console.log('🔍 Basic File Existence Checking:');
+  console.info('🔍 Basic File Existence Checking:');
   
   // Check existing files
   const existingFiles = [
@@ -28,7 +28,7 @@ async function basicFileExistence() {
   for (const filePath of existingFiles) {
     const file = Bun.file(filePath);
     const exists = await file.exists();
-    console.log(`${filePath}: ${exists ? '✅ Exists' : '❌ Not found'}`);
+    console.info(`${filePath}: ${exists ? '✅ Exists' : '❌ Not found'}`);
   }
   
   // Check non-existing files
@@ -38,17 +38,17 @@ async function basicFileExistence() {
     './temp-file.tmp'
   ];
   
-  console.log('\nChecking non-existing files:');
+  console.info('\nChecking non-existing files:');
   for (const filePath of nonExistingFiles) {
     const file = Bun.file(filePath);
     const exists = await file.exists();
-    console.log(`${filePath}: ${exists ? '✅ Exists' : '❌ Not found'}`);
+    console.info(`${filePath}: ${exists ? '✅ Exists' : '❌ Not found'}`);
   }
 }
 
 // Example 2: Conditional file operations based on existence
 async function conditionalOperations() {
-  console.log('\n🔄 Conditional File Operations:');
+  console.info('\n🔄 Conditional File Operations:');
   
   const configFiles = [
     'app-config.json',
@@ -64,7 +64,7 @@ async function conditionalOperations() {
   };
   
   await Bun.write('app-config.json', JSON.stringify(sampleConfig, null, 2));
-  console.log('Created app-config.json');
+  console.info('Created app-config.json');
   
   // Check for config files and load the first one that exists
   let config = null;
@@ -73,23 +73,23 @@ async function conditionalOperations() {
   for (const configFile of configFiles) {
     const file = Bun.file(configFile);
     if (await file.exists()) {
-      console.log(`Found config file: ${configFile}`);
+      console.info(`Found config file: ${configFile}`);
       configPath = configFile;
       try {
         config = await file.json();
         break;
       } catch (error: any) {
-        console.log(`Error reading ${configFile}: ${error.message}`);
+        console.info(`Error reading ${configFile}: ${error.message}`);
       }
     } else {
-      console.log(`Config file not found: ${configFile}`);
+      console.info(`Config file not found: ${configFile}`);
     }
   }
   
   if (config) {
-    console.log(`Loaded config from ${configPath}:`, config);
+    console.info(`Loaded config from ${configPath}:`, config);
   } else {
-    console.log('No valid config file found, using defaults');
+    console.info('No valid config file found, using defaults');
     config = { appName: 'DefaultApp', version: '1.0.0', features: [] };
   }
   
@@ -98,7 +98,7 @@ async function conditionalOperations() {
 
 // Example 3: File existence with metadata
 async function existenceWithMetadata() {
-  console.log('\n📊 File Existence with Metadata:');
+  console.info('\n📊 File Existence with Metadata:');
   
   const files = [
     '../package.json',
@@ -111,20 +111,20 @@ async function existenceWithMetadata() {
     const file = Bun.file(filePath);
     const exists = await file.exists();
     
-    console.log(`\nFile: ${filePath}`);
-    console.log(`  Exists: ${exists ? '✅ Yes' : '❌ No'}`);
+    console.info(`\nFile: ${filePath}`);
+    console.info(`  Exists: ${exists ? '✅ Yes' : '❌ No'}`);
     
     if (exists) {
       // Get additional metadata
-      console.log(`  Size: ${file.size} bytes`);
-      console.log(`  Type: ${file.type}`);
+      console.info(`  Size: ${file.size} bytes`);
+      console.info(`  Type: ${file.type}`);
       
       // Try to get last modified time (this might not be available in all cases)
       try {
         const text = await file.text();
-        console.log(`  Content preview: ${text.substring(0, 50)}...`);
+        console.info(`  Content preview: ${text.substring(0, 50)}...`);
       } catch (error: any) {
-        console.log(`  Content preview: Error - ${error.message}`);
+        console.info(`  Content preview: Error - ${error.message}`);
       }
     }
   }
@@ -132,7 +132,7 @@ async function existenceWithMetadata() {
 
 // Example 4: Batch file existence checking
 async function batchExistenceChecking() {
-  console.log('\n📦 Batch File Existence Checking:');
+  console.info('\n📦 Batch File Existence Checking:');
   
   const projectFiles = [
     '../package.json',
@@ -154,24 +154,24 @@ async function batchExistenceChecking() {
   
   const results = await Promise.all(existenceChecks);
   
-  console.log('Batch results:');
+  console.info('Batch results:');
   const existingFiles = results.filter(result => result.exists);
   const missingFiles = results.filter(result => !result.exists);
   
-  console.log(`Found ${existingFiles.length} existing files:`);
-  existingFiles.forEach(result => console.log(`  ✅ ${result.path}`));
+  console.info(`Found ${existingFiles.length} existing files:`);
+  existingFiles.forEach(result => console.info(`  ✅ ${result.path}`));
   
-  console.log(`\nMissing ${missingFiles.length} files:`);
-  missingFiles.forEach(result => console.log(`  ❌ ${result.path}`));
+  console.info(`\nMissing ${missingFiles.length} files:`);
+  missingFiles.forEach(result => console.info(`  ❌ ${result.path}`));
   
-  console.log(`\nSuccess rate: ${((existingFiles.length / results.length) * 100).toFixed(1)}%`);
+  console.info(`\nSuccess rate: ${((existingFiles.length / results.length) * 100).toFixed(1)}%`);
   
   return results;
 }
 
 // Example 5: File existence utilities
 async function fileExistenceUtilities() {
-  console.log('\n🔧 File Existence Utilities:');
+  console.info('\n🔧 File Existence Utilities:');
   
   // Utility function to check multiple files
   async function checkAnyExists(filePaths: string[]): Promise<string | null> {
@@ -216,18 +216,18 @@ async function fileExistenceUtilities() {
   ];
   
   const firstExisting = await checkAnyExists(testFiles);
-  console.log(`First existing file: ${firstExisting || 'None found'}`);
+  console.info(`First existing file: ${firstExisting || 'None found'}`);
   
   const allExist = await checkAllExist(testFiles);
-  console.log(`All files exist: ${allExist}`);
+  console.info(`All files exist: ${allExist}`);
   
   const existingFiles = await getExistingFiles(testFiles);
-  console.log(`Existing files: ${existingFiles.join(', ')}`);
+  console.info(`Existing files: ${existingFiles.join(', ')}`);
 }
 
 // Example 6: File existence in conditional logic
 async function existenceInConditionalLogic() {
-  console.log('\n🧠 File Existence in Conditional Logic:');
+  console.info('\n🧠 File Existence in Conditional Logic:');
   
   // Create some test files
   await Bun.write('test-file-1.txt', 'This is test file 1');
@@ -239,21 +239,21 @@ async function existenceInConditionalLogic() {
   
   // Complex conditional logic
   if (await file1.exists() && await file2.exists()) {
-    console.log('✅ Both test files exist');
+    console.info('✅ Both test files exist');
     
     if (!(await file3.exists())) {
-      console.log('✅ File 3 does not exist (as expected)');
+      console.info('✅ File 3 does not exist (as expected)');
       
       // Create file 3
       await Bun.write('test-file-3.txt', 'This is test file 3');
-      console.log('✅ Created file 3');
+      console.info('✅ Created file 3');
       
       if (await file3.exists()) {
-        console.log('✅ File 3 now exists');
+        console.info('✅ File 3 now exists');
       }
     }
   } else {
-    console.log('❌ Required test files are missing');
+    console.info('❌ Required test files are missing');
   }
   
   // Clean up
@@ -261,16 +261,16 @@ async function existenceInConditionalLogic() {
     await fs.promises.unlink('test-file-1.txt');
     await fs.promises.unlink('test-file-2.txt');
     await fs.promises.unlink('test-file-3.txt');
-    console.log('🧹 Cleaned up test files');
+    console.info('🧹 Cleaned up test files');
   } catch (error: any) {
-    console.log(`🧹 Error cleaning up: ${error.message}`);
+    console.info(`🧹 Error cleaning up: ${error.message}`);
   }
 }
 
 // Main execution
 async function main() {
-  console.log('🚀 File Existence Checking Examples');
-  console.log('===================================');
+  console.info('🚀 File Existence Checking Examples');
+  console.info('===================================');
   
   try {
     await basicFileExistence();
@@ -280,7 +280,7 @@ async function main() {
     await fileExistenceUtilities();
     await existenceInConditionalLogic();
     
-    console.log('\n✅ All file existence examples completed successfully!');
+    console.info('\n✅ All file existence examples completed successfully!');
   } catch (error) {
     console.error('❌ Error running examples:', error);
   }

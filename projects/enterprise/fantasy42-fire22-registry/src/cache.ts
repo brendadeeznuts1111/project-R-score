@@ -398,17 +398,17 @@ export class CacheMonitor {
   }
 
   private logStats(): void {
-    console.log('📊 Cache Performance Report:');
+    console.info('📊 Cache Performance Report:');
 
     for (const [name, cache] of this.caches) {
       if (cache instanceof LRUCache) {
         const stats = cache.getStats();
-        console.log(
+        console.info(
           `  ${name}: ${stats.hitRate.toFixed(1)}% hit rate, ${stats.size}/${stats.maxSize} items`
         );
       } else if (cache instanceof MultiLayerCache) {
         const stats = cache.getStats();
-        console.log(
+        console.info(
           `  ${name}: L1 ${stats.l1.hitRate.toFixed(1)}%, L2 ${stats.l2.hitRate.toFixed(1)}%, L3 ${stats.l3.hitRate.toFixed(1)}%`
         );
       }
@@ -433,7 +433,7 @@ export class CacheMonitor {
     }
 
     if (totalCleaned > 0) {
-      console.log(`🧹 Cleaned ${totalCleaned} expired cache entries`);
+      console.info(`🧹 Cleaned ${totalCleaned} expired cache entries`);
     }
   }
 

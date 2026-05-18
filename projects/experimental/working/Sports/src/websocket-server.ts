@@ -233,7 +233,7 @@ export function generateSimulatedPacket(): Uint8Array {
  * WebSocket server with Bun.serve
  */
 export function startWebSocketServer(port: number = 3000) {
-  console.log(`🚀 Starting WebSocket server on port ${port}...`);
+  console.info(`🚀 Starting WebSocket server on port ${port}...`);
   
   const server = Bun.serve<WebSocketData>({
     port,
@@ -272,7 +272,7 @@ export function startWebSocketServer(port: number = 3000) {
       open(ws) {
         const sessionId = ws.data.sessionId;
         
-        console.log(`📡 Client connected: ${sessionId}`);
+        console.info(`📡 Client connected: ${sessionId}`);
         
         // Initialize session cache
         sessionCache.set(sessionId, []);
@@ -333,7 +333,7 @@ export function startWebSocketServer(port: number = 3000) {
       close(ws) {
         const sessionId = ws.data.sessionId;
         
-        console.log(`🔌 Client disconnected: ${sessionId}`);
+        console.info(`🔌 Client disconnected: ${sessionId}`);
         sessionCache.delete(sessionId);
       }
     }
@@ -369,7 +369,7 @@ function startDataStream(ws: any, sessionId: string) {
       // Log for demo
       const highChaos = nodes.filter(n => n.fd > 2.0);
       if (highChaos.length > 0) {
-        console.log(`🚨 High chaos detected: ${highChaos.length} nodes`);
+        console.info(`🚨 High chaos detected: ${highChaos.length} nodes`);
       }
     });
   };

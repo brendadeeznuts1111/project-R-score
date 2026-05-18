@@ -16,7 +16,7 @@ const server = Bun.serve({
     const url = new URL(req.url);
     
     // Log all requests for debugging
-    console.log(`${req.method} ${url.pathname}`);
+    console.info(`${req.method} ${url.pathname}`);
     
     // Serve the main dashboard
     if (url.pathname === '/' || url.pathname === '/dashboard') {
@@ -170,8 +170,8 @@ const server = Bun.serve({
   }
 });
 
-console.log(`🚀 Simple Dashboard Server running on http://localhost:${server.port}`);
-console.log(`📊 Dashboard: http://localhost:${server.port}/dashboard`);
-console.log(`💚 Health: http://localhost:${server.port}/health`);
-console.log(`🔍 System: http://localhost:${server.port}/api/system`);
-console.log('\n🎯 Powered by Bun - No Tailwind, No Python, Pure Performance!');
+console.info(`🚀 Simple Dashboard Server running on http://localhost:${server.port}`);
+console.info(`📊 Dashboard: http://localhost:${server.port}/dashboard`);
+console.info(`💚 Health: http://localhost:${server.port}/health`);
+console.info(`🔍 System: http://localhost:${server.port}/api/system`);
+console.info('\n🎯 Powered by Bun - No Tailwind, No Python, Pure Performance!');

@@ -248,7 +248,7 @@ export class CascadeSecurityManager {
     this.checkForBruteForce(principal);
     
     // Log to file (in real implementation)
-    console.log(`🚨 Security denial: ${principal} attempted ${action} on ${resource}`);
+    console.info(`🚨 Security denial: ${principal} attempted ${action} on ${resource}`);
   }
   
   private async checkForBruteForce(principal: string): Promise<void> {
@@ -265,12 +265,12 @@ export class CascadeSecurityManager {
   }
   
   private async lockPrincipal(principal: string): Promise<void> {
-    console.log(`🔒 Locking principal: ${principal}`);
+    console.info(`🔒 Locking principal: ${principal}`);
     // In real implementation, this would update a database
   }
   
   private async sendSecurityAlert(message: string): Promise<void> {
-    console.log(`🚨 SECURITY ALERT: ${message}`);
+    console.info(`🚨 SECURITY ALERT: ${message}`);
     
     // Hook: Allow custom alert handling
     this.hookRegistry.executeWithHooks(
@@ -278,7 +278,7 @@ export class CascadeSecurityManager {
       { message, timestamp: Date.now(), requestId: this.generateRequestId() },
       async () => {
         // Default alert handling
-        console.log(`📧 Alert sent: ${message}`);
+        console.info(`📧 Alert sent: ${message}`);
       }
     ).catch(error => {
       console.error('❌ Security alert hooks failed:', error);
@@ -478,7 +478,7 @@ export class CascadeSecurityManager {
         false,
         ['encrypt', 'decrypt']
       );
-      console.log('🔐 Encryption key initialized');
+      console.info('🔐 Encryption key initialized');
     } catch (error) {
       console.error('❌ Failed to initialize encryption:', error);
       throw error;
@@ -509,7 +509,7 @@ export class CascadeSecurityManager {
       }
     ];
     
-    console.log(`🛡️ Loaded ${this.policies.length} security policies`);
+    console.info(`🛡️ Loaded ${this.policies.length} security policies`);
   }
   
   private async getPolicy(policyId: string): Promise<SecurityPolicy | null> {
@@ -535,7 +535,7 @@ export class CascadeSecurityManager {
     setInterval(async () => {
       const audit = await this.validateSecurityPrinciples();
       if (!audit.passed) {
-        console.log(`🔍 Security audit found ${audit.totalViolations} violations`);
+        console.info(`🔍 Security audit found ${audit.totalViolations} violations`);
       }
     }, 3600000); // 1 hour
   }
@@ -549,7 +549,7 @@ export class CascadeSecurityManager {
   }
   
   private async storeSecurityAudit(audit: SecurityAudit): Promise<void> {
-    console.log(`📝 Security audit stored: ${audit.totalViolations} violations`);
+    console.info(`📝 Security audit stored: ${audit.totalViolations} violations`);
     // In real implementation, would store to database
   }
   

@@ -133,13 +133,13 @@ export class VirtualDocumentationManager {
     // Check if we already have cached results
     const cacheKey = `${filename}:${format}`;
     if (this.exportCache.has(cacheKey)) {
-      console.log(`📋 Using cached export for ${filename}`);
+      console.info(`📋 Using cached export for ${filename}`);
       return;
     }
 
     // Generate content only if file doesn't exist or cache is empty
     if (!(await exportFile.exists())) {
-      console.log(`🔨 Generating ${format} export: ${filename}`);
+      console.info(`🔨 Generating ${format} export: ${filename}`);
       
       let content: string;
       switch (format) {
@@ -287,7 +287,7 @@ export class ZenDocumentationSystem {
     pipes?: number[];
     useTemplate?: string;
   } = {}): Promise<any> {
-    console.log(`🚀 Ultimate Zen Search: ${query}`);
+    console.info(`🚀 Ultimate Zen Search: ${query}`);
     
     // Perform the search
     const results = await this.searcher.streamSearch({
@@ -325,7 +325,7 @@ export class ZenDocumentationSystem {
     if (options.useTemplate) {
       try {
         const template = await this.selfSystem.loadTemplate(options.useTemplate);
-        console.log(`📋 Template loaded: ${template.substring(0, 50)}...`);
+        console.info(`📋 Template loaded: ${template.substring(0, 50)}...`);
       } catch (error) {
         this.outputSystem.writeError(`Template error: ${error.message}`);
       }
@@ -338,25 +338,25 @@ export class ZenDocumentationSystem {
    * System health check
    */
   async systemHealthCheck(): Promise<void> {
-    console.log('🏥 Zen I/O System Health Check');
-    console.log('=' .repeat(40));
+    console.info('🏥 Zen I/O System Health Check');
+    console.info('=' .repeat(40));
 
     // Check stdout writer
     this.outputSystem.writeSuccess('✓ Stdout writer operational');
 
     // Check file descriptors
     const pipe3Available = await this.fdManager.isPipeAvailable(3);
-    console.log(`${pipe3Available ? '✓' : '⚠️'} FD 3 ${pipe3Available ? 'available' : 'not available'}`);
+    console.info(`${pipe3Available ? '✓' : '⚠️'} FD 3 ${pipe3Available ? 'available' : 'not available'}`);
 
     // Check self-referential system
     const config = this.selfSystem.getSelfConfig();
-    console.log(`✓ Self-aware: ${config.directory}`);
+    console.info(`✓ Self-aware: ${config.directory}`);
 
     // Check virtual manager
     this.virtualManager.clearCache();
-    console.log('✓ Virtual manager ready');
+    console.info('✓ Virtual manager ready');
 
-    console.log('\n🎯 System Status: OPTIMAL');
+    console.info('\n🎯 System Status: OPTIMAL');
   }
 }
 
@@ -364,8 +364,8 @@ export class ZenDocumentationSystem {
  * Demonstration of the complete Zen I/O system
  */
 export async function demonstrateZenIO() {
-  console.log('🧘 Zen I/O System - Complete Integration');
-  console.log('=' .repeat(60));
+  console.info('🧘 Zen I/O System - Complete Integration');
+  console.info('=' .repeat(60));
 
   const zenSystem = new ZenDocumentationSystem();
 
@@ -373,8 +373,8 @@ export async function demonstrateZenIO() {
   await zenSystem.systemHealthCheck();
 
   // Ultimate search demonstration
-  console.log('\n🔍 Ultimate Search Demonstration');
-  console.log('-' .repeat(40));
+  console.info('\n🔍 Ultimate Search Demonstration');
+  console.info('-' .repeat(40));
 
   await zenSystem.ultimateSearch('bun', {
     stdout: true,
@@ -383,13 +383,13 @@ export async function demonstrateZenIO() {
     useTemplate: 'search-results'
   });
 
-  console.log('\n🎉 Zen I/O Integration Complete!');
-  console.log('💡 Achievements:');
-  console.log('   - Zero-latency output with Bun.stdout.writer()');
-  console.log('   - Advanced file descriptor management');
-  console.log('   - Virtual file system for exports');
-  console.log('   - Self-referential resource management');
-  console.log('   - Perfect integration with Web Standard APIs');
+  console.info('\n🎉 Zen I/O Integration Complete!');
+  console.info('💡 Achievements:');
+  console.info('   - Zero-latency output with Bun.stdout.writer()');
+  console.info('   - Advanced file descriptor management');
+  console.info('   - Virtual file system for exports');
+  console.info('   - Self-referential resource management');
+  console.info('   - Perfect integration with Web Standard APIs');
 }
 
 // Run demonstration

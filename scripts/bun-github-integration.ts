@@ -222,12 +222,12 @@ async function validateCommit(commitHash: string): Promise<ValidationResult> {
 }
 
 async function runGitHubIntegration(): Promise<void> {
-  console.log(colorize('🔗 Bun GitHub Integration Suite', 'bright'));
-  console.log(colorize('==============================', 'cyan'));
-  console.log();
+  console.info(colorize('🔗 Bun GitHub Integration Suite', 'bright'));
+  console.info(colorize('==============================', 'cyan'));
+  console.info();
 
-  console.log(colorize('🚀 Running advanced GitHub integration checks...', 'yellow'));
-  console.log();
+  console.info(colorize('🚀 Running advanced GitHub integration checks...', 'yellow'));
+  console.info();
 
   // Run all checks
   const checks = await Promise.all([
@@ -245,14 +245,14 @@ async function runGitHubIntegration(): Promise<void> {
     const statusIcon = check.status === 'success' ? '✅' :
                       check.status === 'warning' ? '⚠️' : '❌';
 
-    console.log(`${statusIcon} ${colorize(check.check, 'bright')}:`);
-    console.log(`   ${check.message}`);
+    console.info(`${statusIcon} ${colorize(check.check, 'bright')}:`);
+    console.info(`   ${check.message}`);
 
     if (check.url) {
-      console.log(`   ${colorize('URL:', 'gray')} ${check.url}`);
+      console.info(`   ${colorize('URL:', 'gray')} ${check.url}`);
     }
 
-    console.log();
+    console.info();
   }
 
   // Summary
@@ -260,16 +260,16 @@ async function runGitHubIntegration(): Promise<void> {
   const warningCount = checks.filter(c => c.status === 'warning').length;
   const errorCount = checks.filter(c => c.status === 'error').length;
 
-  console.log(colorize('📊 Integration Summary:', 'bright'));
-  console.log(colorize('=======================', 'cyan'));
-  console.log(`✅ Successful: ${colorize(successCount.toString(), 'green')}`);
-  console.log(`⚠️  Warnings: ${colorize(warningCount.toString(), 'yellow')}`);
-  console.log(`❌ Errors: ${colorize(errorCount.toString(), 'red')}`);
-  console.log(`📈 Total checks: ${checks.length}`);
+  console.info(colorize('📊 Integration Summary:', 'bright'));
+  console.info(colorize('=======================', 'cyan'));
+  console.info(`✅ Successful: ${colorize(successCount.toString(), 'green')}`);
+  console.info(`⚠️  Warnings: ${colorize(warningCount.toString(), 'yellow')}`);
+  console.info(`❌ Errors: ${colorize(errorCount.toString(), 'red')}`);
+  console.info(`📈 Total checks: ${checks.length}`);
 
   // Key insights
-  console.log();
-  console.log(colorize('💡 Key Insights:', 'bright'));
+  console.info();
+  console.info(colorize('💡 Key Insights:', 'bright'));
 
   const latestCommit = checks.find(c => c.check === 'Latest Main Commit')?.data?.commitHash;
   const localRevision = checks.find(c => c.check === 'Bun Version Status')?.data?.localRevision;
@@ -279,30 +279,30 @@ async function runGitHubIntegration(): Promise<void> {
     const isCanary = localRevision !== latestCommit && localRevision.length === 40;
 
     if (isUpToDate) {
-      console.log(`🎯 Your Bun is running the ${colorize('latest commit', 'green')} from main!`);
+      console.info(`🎯 Your Bun is running the ${colorize('latest commit', 'green')} from main!`);
     } else if (isCanary) {
-      console.log(`🚀 You're running a ${colorize('canary build', 'yellow')} ahead of main.`);
-      console.log(`   Latest main: ${colorize(latestCommit.slice(0, 12), 'blue')}...`);
-      console.log(`   Your build:  ${colorize(localRevision.slice(0, 12), 'blue')}...`);
+      console.info(`🚀 You're running a ${colorize('canary build', 'yellow')} ahead of main.`);
+      console.info(`   Latest main: ${colorize(latestCommit.slice(0, 12), 'blue')}...`);
+      console.info(`   Your build:  ${colorize(localRevision.slice(0, 12), 'blue')}...`);
     }
   }
 
-  console.log();
-  console.log(colorize('🔗 Useful Links:', 'bright'));
-  console.log(`   ${colorize('Bun Repository:', 'gray')} https://github.com/oven-sh/bun`);
-  console.log(`   ${colorize('Latest Release:', 'gray')} https://github.com/oven-sh/bun/releases/tag/bun-v1.3.8`);
-  console.log(`   ${colorize('Documentation:', 'gray')} https://bun.com/docs`);
-  console.log(`   ${colorize('API Reference:', 'gray')} https://bun.com/reference`);
+  console.info();
+  console.info(colorize('🔗 Useful Links:', 'bright'));
+  console.info(`   ${colorize('Bun Repository:', 'gray')} https://github.com/oven-sh/bun`);
+  console.info(`   ${colorize('Latest Release:', 'gray')} https://github.com/oven-sh/bun/releases/tag/bun-v1.3.8`);
+  console.info(`   ${colorize('Documentation:', 'gray')} https://bun.com/docs`);
+  console.info(`   ${colorize('API Reference:', 'gray')} https://bun.com/reference`);
 
-  console.log();
-  console.log(colorize('✨ GitHub integration checks complete!', 'green'));
+  console.info();
+  console.info(colorize('✨ GitHub integration checks complete!', 'green'));
 
   // Quick actions
-  console.log();
-  console.log(colorize('🚀 Quick Actions:', 'bright'));
-  console.log(`  ${colorize('bun upgrade', 'yellow')} - Upgrade to latest stable`);
-  console.log(`  ${colorize('bun run mcp-monitor', 'yellow')} - Full system monitoring`);
-  console.log(`  ${colorize('bun run validate:github', 'yellow')} - Advanced GitHub validation`);
+  console.info();
+  console.info(colorize('🚀 Quick Actions:', 'bright'));
+  console.info(`  ${colorize('bun upgrade', 'yellow')} - Upgrade to latest stable`);
+  console.info(`  ${colorize('bun run mcp-monitor', 'yellow')} - Full system monitoring`);
+  console.info(`  ${colorize('bun run validate:github', 'yellow')} - Advanced GitHub validation`);
 }
 
 // Run the GitHub integration suite

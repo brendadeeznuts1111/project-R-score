@@ -362,7 +362,7 @@ declare function configureThresholds(): void;
 // Security scanner implementation
 async function runSecurityScan(): Promise<void> {
   try {
-    console.log('🔍 Running enhanced security scan...');
+    console.info('🔍 Running enhanced security scan...');
     const response = await fetch('/api/security/scan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -420,7 +420,7 @@ function configureThresholds(): void {
     try {
       const thresholds = JSON.parse(newThresholds);
       alert('✅ Thresholds updated! Changes will take effect on next security scan.');
-      console.log('New thresholds:', thresholds);
+      console.info('New thresholds:', thresholds);
     } catch (error) {
       alert('❌ Invalid JSON format. Please try again.');
     }

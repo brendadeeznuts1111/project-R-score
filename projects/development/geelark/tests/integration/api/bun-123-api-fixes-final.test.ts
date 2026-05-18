@@ -20,7 +20,7 @@ describe("Bun 1.2.3 API Fixes", () => {
     expectTypeOf(secretKeys).toEqualTypeOf<string[]>();
     expect(Array.isArray(secretKeys)).toBe(true);
 
-    console.log(`✅ Bun.secrets type safety validated`);
+    console.info(`✅ Bun.secrets type safety validated`);
   });
 
   it("should validate Bun.mmap functionality", async () => {
@@ -42,7 +42,7 @@ describe("Bun 1.2.3 API Fixes", () => {
     const text = new TextDecoder().decode(view.slice(0, testContent.length));
     expect(text).toBe(testContent);
 
-    console.log(`✅ Bun.mmap functionality validated`);
+    console.info(`✅ Bun.mmap functionality validated`);
   });
 
   it("should test Bun.mmap edge cases", async () => {
@@ -68,7 +68,7 @@ describe("Bun 1.2.3 API Fixes", () => {
       expect(actualContent).toBe(testCase.content);
     }
 
-    console.log(`✅ Bun.mmap edge cases validated`);
+    console.info(`✅ Bun.mmap edge cases validated`);
   });
 
   it("should validate Bun.plugin functionality", () => {
@@ -87,9 +87,9 @@ describe("Bun 1.2.3 API Fixes", () => {
       expectTypeOf(plugin).toBeObject();
       expect(plugin).toHaveProperty("name", "test-plugin");
 
-      console.log(`✅ Bun.plugin functionality validated`);
+      console.info(`✅ Bun.plugin functionality validated`);
     } catch (error: any) {
-      console.log(`⚠️ Bun.plugin test skipped: ${error.message}`);
+      console.info(`⚠️ Bun.plugin test skipped: ${error.message}`);
       expect(true).toBe(true); // Skip test gracefully
     }
   });
@@ -112,7 +112,7 @@ describe("Bun 1.2.3 API Fixes", () => {
     const content = await testFile.text();
     expect(content).toBe(testContent);
 
-    console.log(`✅ Bun.file API consistency validated`);
+    console.info(`✅ Bun.file API consistency validated`);
   });
 
   it("should test Bun.serve with modern API", async () => {
@@ -137,7 +137,7 @@ describe("Bun 1.2.3 API Fixes", () => {
     expect(server.port).toBeGreaterThan(0);
     expect(server.protocol).toBe("http");
 
-    console.log(`✅ Bun.serve modern API validated: ${server.url.href}`);
+    console.info(`✅ Bun.serve modern API validated: ${server.url.href}`);
 
     server.stop();
   });
@@ -162,7 +162,7 @@ describe("Bun 1.2.3 API Fixes", () => {
     const bufferContent = await Bun.file(bufferPath).text();
     expect(bufferContent).toBe("Buffer test");
 
-    console.log(`✅ Bun.write API validated`);
+    console.info(`✅ Bun.write API validated`);
   });
 
   it("should test Bun.spawn functionality", async () => {
@@ -178,9 +178,9 @@ describe("Bun 1.2.3 API Fixes", () => {
       expectTypeOf(result.killed).toBeBoolean();
       expectTypeOf(result.exitCode).toEqualTypeOf<number | null>();
 
-      console.log(`✅ Bun.spawn functionality validated`);
+      console.info(`✅ Bun.spawn functionality validated`);
     } catch (error: any) {
-      console.log(`⚠️ Bun.spawn test skipped: ${error.message}`);
+      console.info(`⚠️ Bun.spawn test skipped: ${error.message}`);
       expect(true).toBe(true); // Skip test gracefully
     }
   });
@@ -205,6 +205,6 @@ describe("Bun 1.2.3 API Fixes", () => {
       Bun.env.TEST_VAR = originalValue;
     }
 
-    console.log(`✅ Bun.env API validated`);
+    console.info(`✅ Bun.env API validated`);
   });
 });

@@ -27,7 +27,7 @@ export class BunNativePrometheusBridge {
           return new Response('Prometheus Bridge Active', { status: 200 });
         }
       });
-      console.log(`📊 Prometheus Bridge exporting metrics on port ${this.PORT}`);
+      console.info(`📊 Prometheus Bridge exporting metrics on port ${this.PORT}`);
     } catch (e: any) {
       if (e.code === 'EADDRINUSE') {
         console.warn(`📊 Prometheus Bridge port ${this.PORT} already in use. Skipping start.`);

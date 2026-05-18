@@ -36,7 +36,7 @@ export default class LoadTester {
 
   constructor(scenario: LoadTestScenario) {
     this.scenario = scenario;
-    console.log(`LoadTester initialized for scenario: ${scenario.name}`);
+    console.info(`LoadTester initialized for scenario: ${scenario.name}`);
   }
 
   /**
@@ -44,7 +44,7 @@ export default class LoadTester {
    * @returns A promise that resolves with the load test result.
    */
   public async start(): Promise<LoadTestResult> {
-    console.log(
+    console.info(
       `Starting load test for ${this.scenario.url} with ${this.scenario.concurrency} concurrent users for ${this.scenario.duration} seconds.`
     );
     // In a real implementation, this would involve making HTTP requests
@@ -64,7 +64,7 @@ export default class LoadTester {
         '404 Not Found': 2,
       },
     };
-    console.log('Load test finished.');
+    console.info('Load test finished.');
     return mockResult;
   }
 
@@ -72,7 +72,7 @@ export default class LoadTester {
    * Stops the load test prematurely.
    */
   public stop(): void {
-    console.log('Load test stopped prematurely.');
+    console.info('Load test stopped prematurely.');
     // In a real implementation, this would stop ongoing requests.
   }
 }

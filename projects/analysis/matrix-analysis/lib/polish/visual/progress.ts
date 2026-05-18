@@ -86,7 +86,7 @@ export class AnimatedProgressBar {
     this.render();
     this.stop();
     if (text) {
-      console.log(`${colors.success("✓")} ${text}`);
+      console.info(`${colors.success("✓")} ${text}`);
     }
     return this;
   }

@@ -61,12 +61,12 @@ function checkFile(filePath: string): void {
             try {
               statSync(join(targetPath, 'README.md'));
             } catch {
-              console.log(`⚠️  ${relativePath}:${lineNumber} - Directory exists but no index.md/README.md: ${link}`);
+              console.info(`⚠️  ${relativePath}:${lineNumber} - Directory exists but no index.md/README.md: ${link}`);
             }
           }
         }
       } catch (error) {
-        console.log(`❌ ${relativePath}:${lineNumber} - Broken link: ${link}`);
+        console.info(`❌ ${relativePath}:${lineNumber} - Broken link: ${link}`);
         brokenCount++;
       }
     }
@@ -108,17 +108,17 @@ function scanDirectory(dir: string): void {
   }
 }
 
-console.log(`🔍 Quick link check in: ${rootDir}`);
+console.info(`🔍 Quick link check in: ${rootDir}`);
 scanDirectory(resolve(rootDir));
 
-console.log(`\n📊 Results:`);
-console.log(`  Total checked: ${checkedCount}`);
-console.log(`  Broken: ${brokenCount}`);
-console.log(`  OK: ${checkedCount - brokenCount}`);
+console.info(`\n📊 Results:`);
+console.info(`  Total checked: ${checkedCount}`);
+console.info(`  Broken: ${brokenCount}`);
+console.info(`  OK: ${checkedCount - brokenCount}`);
 
 if (brokenCount > 0) {
-  console.log(`\n❌ Found ${brokenCount} broken links!`);
+  console.info(`\n❌ Found ${brokenCount} broken links!`);
   process.exit(1);
 } else {
-  console.log(`\n✅ All links OK!`);
+  console.info(`\n✅ All links OK!`);
 }

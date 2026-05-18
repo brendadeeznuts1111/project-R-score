@@ -7,7 +7,7 @@ import { TelemetryProcessor } from "@duoplus/telemetry-kernel";
 
 async function runStressSim() {
   const AGENT_COUNT = 50000;
-  console.log(`🔥 [SOVEREIGN STRESS] Initiating ${AGENT_COUNT} agent telemetry burst...`);
+  console.info(`🔥 [SOVEREIGN STRESS] Initiating ${AGENT_COUNT} agent telemetry burst...`);
   
   const start = performance.now();
   
@@ -35,7 +35,7 @@ async function runStressSim() {
   const totalDuration = end - start;
   const avgLatency = totalLatency / AGENT_COUNT;
 
-  console.log(`
+  console.info(`
 🛰️ Sovereign Stress Report
 ==========================
 Agents:     ${AGENT_COUNT}

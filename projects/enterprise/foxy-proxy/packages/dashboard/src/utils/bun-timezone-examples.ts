@@ -11,51 +11,51 @@ import { DateUtils, PerformanceTimer } from "./date-utils";
  * Example 1: Basic timezone setup
  */
 export function basicTimezoneSetup() {
-  console.log("=== Basic Timezone Setup ===");
+  console.info("=== Basic Timezone Setup ===");
 
   // Check current timezone
-  console.log("Current Bun TZ:", DateUtils.getBunTimezone());
-  console.log("Effective timezone:", DateUtils.getEffectiveTimezone());
-  console.log("Timezone offset:", DateUtils.getCurrentTimezoneOffset());
+  console.info("Current Bun TZ:", DateUtils.getBunTimezone());
+  console.info("Effective timezone:", DateUtils.getEffectiveTimezone());
+  console.info("Timezone offset:", DateUtils.getCurrentTimezoneOffset());
 
   // Set timezone to New York
   DateUtils.setBunTimezone("America/New_York");
-  console.log("Set timezone to America/New_York");
+  console.info("Set timezone to America/New_York");
 
   // Create dates with the new timezone
   const now = DateUtils.now();
-  console.log("Current time (NY):", now.format("DISPLAY_DATETIME"));
-  console.log("UTC time:", now.format("ISO"));
+  console.info("Current time (NY):", now.format("DISPLAY_DATETIME"));
+  console.info("UTC time:", now.format("ISO"));
 }
 
 /**
  * Example 2: Development vs Testing vs Production
  */
 export function environmentSpecificTimezones() {
-  console.log("\n=== Environment-Specific Timezones ===");
+  console.info("\n=== Environment-Specific Timezones ===");
 
   // Development - use system timezone
   if (process.env.NODE_ENV === "development") {
-    console.log("Development mode - using system timezone");
+    console.info("Development mode - using system timezone");
     const devTime = DateUtils.now();
-    console.log("Dev time:", devTime.format("DISPLAY_DATETIME"));
+    console.info("Dev time:", devTime.format("DISPLAY_DATETIME"));
   }
 
   // Testing - force UTC for determinism
   if (process.env.NODE_ENV === "test") {
-    console.log("Test mode - forcing UTC");
+    console.info("Test mode - forcing UTC");
     DateUtils.setBunTimezone("UTC");
     const testTime = DateUtils.now();
-    console.log("Test time (UTC):", testTime.format("DISPLAY_DATETIME"));
+    console.info("Test time (UTC):", testTime.format("DISPLAY_DATETIME"));
   }
 
   // Production - use specific timezone
   if (process.env.NODE_ENV === "production") {
-    console.log("Production mode - using configured timezone");
+    console.info("Production mode - using configured timezone");
     const prodTimezone = process.env.TZ || "America/New_York";
     DateUtils.setBunTimezone(prodTimezone);
     const prodTime = DateUtils.now();
-    console.log("Production time:", prodTime.format("DISPLAY_DATETIME"));
+    console.info("Production time:", prodTime.format("DISPLAY_DATETIME"));
   }
 }
 
@@ -63,7 +63,7 @@ export function environmentSpecificTimezones() {
  * Example 3: File naming with timezone awareness
  */
 export function timezoneAwareFileNaming() {
-  console.log("\n=== Timezone-Aware File Naming ===");
+  console.info("\n=== Timezone-Aware File Naming ===");
 
   // Set timezone
   DateUtils.setBunTimezone("America/Los_Angeles");
@@ -72,40 +72,40 @@ export function timezoneAwareFileNaming() {
   const timestamp = DateUtils.fileTimestamp();
   const filename = `backup-${timestamp}.json`;
 
-  console.log("Generated filename:", filename);
-  console.log("Current LA time:", DateUtils.now().format("DISPLAY_DATETIME"));
+  console.info("Generated filename:", filename);
+  console.info("Current LA time:", DateUtils.now().format("DISPLAY_DATETIME"));
 
   // Files always use UTC timestamps for consistency
-  console.log("File timestamp is UTC-based:", timestamp);
+  console.info("File timestamp is UTC-based:", timestamp);
 }
 
 /**
  * Example 4: API responses with timezone handling
  */
 export function apiTimezoneHandling() {
-  console.log("\n=== API Timezone Handling ===");
+  console.info("\n=== API Timezone Handling ===");
 
   // API always returns UTC
   DateUtils.setBunTimezone("UTC");
   const apiTimestamp = DateUtils.now().format("ISO");
-  console.log("API response timestamp:", apiTimestamp);
+  console.info("API response timestamp:", apiTimestamp);
 
   // Client displays in local timezone
   DateUtils.setBunTimezone("Europe/London");
   const localDisplay = DateUtils.from(apiTimestamp).format("DISPLAY_DATETIME");
-  console.log("Client display time (London):", localDisplay);
+  console.info("Client display time (London):", localDisplay);
 
   // Another client in different timezone
   DateUtils.setBunTimezone("Asia/Tokyo");
   const tokyoDisplay = DateUtils.from(apiTimestamp).format("DISPLAY_DATETIME");
-  console.log("Client display time (Tokyo):", tokyoDisplay);
+  console.info("Client display time (Tokyo):", tokyoDisplay);
 }
 
 /**
  * Example 5: Performance timing across timezones
  */
 export function performanceWithTimezones() {
-  console.log("\n=== Performance Timing Across Timezones ===");
+  console.info("\n=== Performance Timing Across Timezones ===");
 
   // Set initial timezone
   DateUtils.setBunTimezone("America/New_York");
@@ -121,29 +121,29 @@ export function performanceWithTimezones() {
   DateUtils.setBunTimezone("UTC");
 
   timer.stop();
-  console.log("Operation duration:", timer.getFormattedDuration());
-  console.log("Timezone change doesn't affect timing measurement");
+  console.info("Operation duration:", timer.getFormattedDuration());
+  console.info("Timezone change doesn't affect timing measurement");
 }
 
 /**
  * Example 6: Timezone validation and error handling
  */
 export function timezoneValidation() {
-  console.log("\n=== Timezone Validation ===");
+  console.info("\n=== Timezone Validation ===");
 
   // Test supported timezones
   const supportedTimezones = ["UTC", "America/New_York", "Europe/London"];
   supportedTimezones.forEach((tz) => {
-    console.log(`${tz} supported:`, DateUtils.isTimezoneSupported(tz));
+    console.info(`${tz} supported:`, DateUtils.isTimezoneSupported(tz));
   });
 
   // Test unsupported timezone
-  console.log("Invalid timezone supported:", DateUtils.isTimezoneSupported("Invalid/Timezone"));
+  console.info("Invalid timezone supported:", DateUtils.isTimezoneSupported("Invalid/Timezone"));
 
   // Try to set invalid timezone (Bun will handle this gracefully)
   try {
     DateUtils.setBunTimezone("Invalid/Timezone");
-    console.log("Invalid timezone set (Bun may handle gracefully)");
+    console.info("Invalid timezone set (Bun may handle gracefully)");
   } catch (error) {
     console.error("Error setting invalid timezone:", error);
   }
@@ -153,7 +153,7 @@ export function timezoneValidation() {
  * Example 7: Logging with timezone information
  */
 export function timezoneAwareLogging() {
-  console.log("\n=== Timezone-Aware Logging ===");
+  console.info("\n=== Timezone-Aware Logging ===");
 
   // Set timezone for logging
   DateUtils.setBunTimezone("America/Chicago");
@@ -166,15 +166,15 @@ export function timezoneAwareLogging() {
     utcTimestamp: DateUtils.now().format("ISO")
   };
 
-  console.log("Log entry:", JSON.stringify(logEntry, null, 2));
+  console.info("Log entry:", JSON.stringify(logEntry, null, 2));
 }
 
 /**
  * Run all examples
  */
 export function runAllExamples() {
-  console.log("Bun Timezone Integration Examples");
-  console.log("=====================================");
+  console.info("Bun Timezone Integration Examples");
+  console.info("=====================================");
 
   basicTimezoneSetup();
   environmentSpecificTimezones();
@@ -184,10 +184,10 @@ export function runAllExamples() {
   timezoneValidation();
   timezoneAwareLogging();
 
-  console.log("\n=== Summary ===");
-  console.log("✅ Timezone configuration working");
-  console.log("✅ Date utilities integrated with Bun TZ");
-  console.log("✅ Environment-specific timezone handling");
-  console.log("✅ Performance timing unaffected by timezone");
-  console.log("✅ Proper UTC storage and local display");
+  console.info("\n=== Summary ===");
+  console.info("✅ Timezone configuration working");
+  console.info("✅ Date utilities integrated with Bun TZ");
+  console.info("✅ Environment-specific timezone handling");
+  console.info("✅ Performance timing unaffected by timezone");
+  console.info("✅ Proper UTC storage and local display");
 }

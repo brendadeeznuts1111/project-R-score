@@ -1,16 +1,16 @@
 #!/usr/bin/env bun
 
 // Practical demonstration of Bun v1.3.6 Hardware-Accelerated CRC32
-console.log("⚡ Practical CRC32 Performance with Hardware Acceleration");
-console.log("=".repeat(55));
+console.info("⚡ Practical CRC32 Performance with Hardware Acceleration");
+console.info("=".repeat(55));
 
 import { performance } from "node:perf_hooks";
 
 // Test 1: Basic CRC32 Performance
-console.log("\n1️⃣ Basic CRC32 Performance Test:");
+console.info("\n1️⃣ Basic CRC32 Performance Test:");
 
 async function testBasicCRC32Performance() {
-  console.log("✅ Testing hardware-accelerated CRC32 with various data sizes");
+  console.info("✅ Testing hardware-accelerated CRC32 with various data sizes");
 
   const sizes = [
     { name: "1KB", bytes: 1024 },
@@ -41,14 +41,14 @@ async function testBasicCRC32Performance() {
     const throughput =
       (size.bytes * iterations) / (totalTime / 1000) / 1024 / 1024;
 
-    console.log(
+    console.info(
       `   📊 ${size.name} (${size.bytes} bytes): ${throughput.toFixed(2)} MB/s`,
     );
   }
 }
 
 // Test 2: Real-World CRC32 Use Cases
-console.log("\n2️⃣ Real-World CRC32 Use Cases:");
+console.info("\n2️⃣ Real-World CRC32 Use Cases:");
 
 class FastCRC32Processor {
   // File integrity checking
@@ -110,7 +110,7 @@ class FastCRC32Processor {
     const data = Buffer.alloc(dataSize);
     const iterations = 1000;
 
-    console.log(`   📊 Performance test with ${dataSize} bytes data:`);
+    console.info(`   📊 Performance test with ${dataSize} bytes data:`);
 
     // Test Bun.hash.crc32 (hardware accelerated)
     const hwStart = performance.now();
@@ -132,26 +132,26 @@ class FastCRC32Processor {
 
     const speedup = swTime / hwTime;
 
-    console.log(`      Hardware CRC32: ${hwTime.toFixed(2)}ms`);
-    console.log(`      Software CRC32: ${swTime.toFixed(2)}ms`);
-    console.log(`      🚀 Speedup: ${speedup.toFixed(2)}x faster!`);
+    console.info(`      Hardware CRC32: ${hwTime.toFixed(2)}ms`);
+    console.info(`      Software CRC32: ${swTime.toFixed(2)}ms`);
+    console.info(`      🚀 Speedup: ${speedup.toFixed(2)}x faster!`);
   }
 }
 
 async function testRealWorldUseCases() {
   const processor = new FastCRC32Processor();
 
-  console.log("✅ File integrity checking");
+  console.info("✅ File integrity checking");
 
   // Test with package.json (existing file)
   const packageResult = await processor.calculateFileCRC32("package.json");
   if (packageResult.hash > 0) {
-    console.log(
+    console.info(
       `   📄 package.json CRC32: ${packageResult.hash.toString(16)} (${packageResult.time.toFixed(2)}ms)`,
     );
   }
 
-  console.log("✅ Data streaming CRC32");
+  console.info("✅ Data streaming CRC32");
 
   // Test streaming data
   const chunks = [
@@ -161,11 +161,11 @@ async function testRealWorldUseCases() {
   ];
 
   const streamResult = processor.calculateStreamingCRC32(chunks);
-  console.log(
+  console.info(
     `   📦 Streaming data CRC32: ${streamResult.hash.toString(16)} (${streamResult.time.toFixed(2)}ms)`,
   );
 
-  console.log("✅ Database record hashing");
+  console.info("✅ Database record hashing");
 
   // Test database record
   const record = {
@@ -177,21 +177,21 @@ async function testRealWorldUseCases() {
   };
 
   const recordResult = processor.calculateRecordCRC32(record);
-  console.log(
+  console.info(
     `   🗃️  Database record CRC32: ${recordResult.hash.toString(16)} (${recordResult.time.toFixed(2)}ms)`,
   );
 
-  console.log("✅ Performance comparison");
+  console.info("✅ Performance comparison");
 
   // Performance comparison with different data sizes
   await processor.comparePerformance(1024 * 1024); // 1MB
 }
 
 // Test 3: Integration Examples
-console.log("\n3️⃣ Integration Examples:");
+console.info("\n3️⃣ Integration Examples:");
 
 function demonstrateIntegrationExamples() {
-  console.log("✅ Seamless integration with existing code");
+  console.info("✅ Seamless integration with existing code");
 
   // Example 1: Data validation
   function validateDataIntegrity(
@@ -231,10 +231,10 @@ function demonstrateIntegrationExamples() {
   const modifiedData = Buffer.from("test data for integrity check");
   const corruptedData = Buffer.from("test data for integrity check!");
 
-  console.log(
+  console.info(
     `   🔍 Data integrity check: ${validateDataIntegrity(testData, modifiedData)}`,
   );
-  console.log(
+  console.info(
     `   ❌ Corrupted data detected: ${!validateDataIntegrity(testData, corruptedData)}`,
   );
 
@@ -244,24 +244,24 @@ function demonstrateIntegrationExamples() {
     filters: ["active", "recent"],
   };
   const cacheKey = generateCacheKey(cacheData);
-  console.log(`   🗝️  Cache key: ${cacheKey}`);
+  console.info(`   🗝️  Cache key: ${cacheKey}`);
 
   const deduplicator = new ContentDeduplicator();
   const content1 = deduplicator.addContent("duplicate content");
   const content2 = deduplicator.addContent("duplicate content");
   const content3 = deduplicator.addContent("unique content");
 
-  console.log(`   🔄 Deduplication: ${content1 === content2} (same content)`);
-  console.log(
+  console.info(`   🔄 Deduplication: ${content1 === content2} (same content)`);
+  console.info(
     `   🔄 Unique content: ${content2 !== content3} (different content)`,
   );
 }
 
 // Test 4: Performance Impact Analysis
-console.log("\n4️⃣ Performance Impact Analysis:");
+console.info("\n4️⃣ Performance Impact Analysis:");
 
 async function analyzePerformanceImpact() {
-  console.log("✅ Measuring real-world performance improvements");
+  console.info("✅ Measuring real-world performance improvements");
 
   // Simulate a data processing pipeline
   class DataProcessor {
@@ -293,16 +293,16 @@ async function analyzePerformanceImpact() {
     Buffer.from(`data chunk ${i} with some content to process`),
   );
 
-  console.log(`   📊 Processing ${testData.length} data chunks...`);
+  console.info(`   📊 Processing ${testData.length} data chunks...`);
 
   const result = await processor.processData(testData);
   const avgTimePerChunk = result.totalTime / result.processed;
 
-  console.log(
+  console.info(
     `   ✅ Processed ${result.processed} chunks in ${result.totalTime.toFixed(2)}ms`,
   );
-  console.log(`   📈 Average time per chunk: ${avgTimePerChunk.toFixed(2)}ms`);
-  console.log(
+  console.info(`   📈 Average time per chunk: ${avgTimePerChunk.toFixed(2)}ms`);
+  console.info(
     `   🚀 Hardware acceleration makes CRC32 negligible in processing time`,
   );
 }
@@ -315,21 +315,21 @@ async function main() {
     demonstrateIntegrationExamples();
     await analyzePerformanceImpact();
 
-    console.log("\n🎯 Hardware-Accelerated CRC32 Benefits:");
-    console.log(
+    console.info("\n🎯 Hardware-Accelerated CRC32 Benefits:");
+    console.info(
       "   ⚡ ~20x faster performance with PCLMULQDQ/ARM instructions",
     );
-    console.log("   🔧 zlib-based implementation for optimal performance");
-    console.log("   📊 Significant speedup on large data buffers");
-    console.log("   🔄 Drop-in replacement with zero code changes");
-    console.log(
+    console.info("   🔧 zlib-based implementation for optimal performance");
+    console.info("   📊 Significant speedup on large data buffers");
+    console.info("   🔄 Drop-in replacement with zero code changes");
+    console.info(
       "   💼 Perfect for file integrity, databases, and network protocols",
     );
-    console.log(
+    console.info(
       "   🚀 Makes CRC32 operations virtually free in performance terms",
     );
 
-    console.log("\n💨 Your CRC32 operations are now lightning fast!");
+    console.info("\n💨 Your CRC32 operations are now lightning fast!");
   } catch (error) {
     console.error("❌ Demonstration failed:", error);
   }

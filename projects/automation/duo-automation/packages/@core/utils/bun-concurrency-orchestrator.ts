@@ -9,12 +9,12 @@ export class BunConcurrencyOrchestrator {
   private static readonly CONCURRENCY_LIMIT = 50;
 
   static async parallelDeploy(agentIds: string[], command: string[]) {
-    console.log(`🚀 Orchestrating parallel deployment for ${agentIds.length} agents...`);
+    console.info(`🚀 Orchestrating parallel deployment for ${agentIds.length} agents...`);
     const results = [];
     
     for (let i = 0; i < agentIds.length; i += this.CONCURRENCY_LIMIT) {
       const batch = agentIds.slice(i, i + this.CONCURRENCY_LIMIT);
-      console.log(`📦 Executing batch ${i / this.CONCURRENCY_LIMIT + 1}...`);
+      console.info(`📦 Executing batch ${i / this.CONCURRENCY_LIMIT + 1}...`);
       
       const batchPromises = batch.map(id => this.executeOnAgent(id, command));
       const batchResults = await Promise.all(batchPromises);
@@ -22,7 +22,7 @@ export class BunConcurrencyOrchestrator {
     }
 
     const successCount = results.filter(r => r.success).length;
-    console.log(`✅ Parallel deployment complete: ${successCount}/${agentIds.length} successful.`);
+    console.info(`✅ Parallel deployment complete: ${successCount}/${agentIds.length} successful.`);
     return results;
   }
 

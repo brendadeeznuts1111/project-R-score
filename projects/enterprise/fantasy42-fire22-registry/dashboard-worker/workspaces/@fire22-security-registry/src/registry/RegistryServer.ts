@@ -64,13 +64,13 @@ export class Fire22RegistryServer {
         this.securityScanner = new SecurityScanner({
           strict: this.config.security.strict,
         });
-        console.log('🔍 Security scanner initialized');
+        console.info('🔍 Security scanner initialized');
       }
 
       // Load existing packages from storage
       await this.loadPackages();
 
-      console.log(`🚀 Fire22 Registry Server initialized at ${this.config.url}`);
+      console.info(`🚀 Fire22 Registry Server initialized at ${this.config.url}`);
     } catch (error) {
       throw new Error(`Registry initialization failed: ${error.message}`);
     }
@@ -125,8 +125,8 @@ export class Fire22RegistryServer {
       // Store package
       await this.storePackage(registryPackage, tarball);
 
-      console.log(`📦 Package published: ${packageData.name}@${packageData.version}`);
-      console.log(`🔐 Security score: ${registryPackage.security.score}/100`);
+      console.info(`📦 Package published: ${packageData.name}@${packageData.version}`);
+      console.info(`🔐 Security score: ${registryPackage.security.score}/100`);
 
       return registryPackage;
     } catch (error) {
@@ -390,7 +390,7 @@ export class Fire22RegistryServer {
    */
   private async loadPackages(): Promise<void> {
     // In production, this would load from database or file system
-    console.log('📦 Loaded 0 packages from storage');
+    console.info('📦 Loaded 0 packages from storage');
   }
 
   /**
@@ -398,7 +398,7 @@ export class Fire22RegistryServer {
    */
   private async savePackages(): Promise<void> {
     // In production, this would save to database or file system
-    console.log('💾 Registry state saved');
+    console.info('💾 Registry state saved');
   }
 
   /**
@@ -406,7 +406,7 @@ export class Fire22RegistryServer {
    */
   private async storeTarball(name: string, version: string, tarball: ArrayBuffer): Promise<void> {
     // In production, this would store to object storage (S3, R2, etc.)
-    console.log(`📦 Tarball stored: ${name}@${version}`);
+    console.info(`📦 Tarball stored: ${name}@${version}`);
   }
 
   /**
@@ -422,7 +422,7 @@ export class Fire22RegistryServer {
    */
   private async extractTarball(tarball: ArrayBuffer, targetDir: string): Promise<void> {
     // In production, this would use tar library to extract
-    console.log(`📂 Extracted to: ${targetDir}`);
+    console.info(`📂 Extracted to: ${targetDir}`);
   }
 
   /**
@@ -430,6 +430,6 @@ export class Fire22RegistryServer {
    */
   private async cleanupTempDir(dir: string): Promise<void> {
     // In production, this would recursively delete directory
-    console.log(`🧹 Cleaned up: ${dir}`);
+    console.info(`🧹 Cleaned up: ${dir}`);
   }
 }

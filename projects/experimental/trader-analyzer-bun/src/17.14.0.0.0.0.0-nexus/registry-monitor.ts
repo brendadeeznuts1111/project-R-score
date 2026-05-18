@@ -63,8 +63,8 @@ export function startRegistryMonitoring(
 	setRadianceServer(radianceServer);
 	isMonitoring = true;
 
-	console.log("[17.14.0] Starting NEXUS Registry System monitoring...");
-	console.log(
+	console.info("[17.14.0] Starting NEXUS Registry System monitoring...");
+	console.info(
 		`[17.14.0] Monitoring ${Object.keys(NEXUS_REGISTRY_OF_REGISTRIES).length} registries every ${MONITORING_INTERVAL_MS}ms`,
 	);
 
@@ -86,7 +86,7 @@ export function stopRegistryMonitoring(): void {
 		monitorInterval = null;
 	}
 	isMonitoring = false;
-	console.log("[17.14.0] Registry monitoring stopped");
+	console.info("[17.14.0] Registry monitoring stopped");
 }
 
 /**

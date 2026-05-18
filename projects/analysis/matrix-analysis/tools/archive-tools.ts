@@ -50,7 +50,7 @@ function parseArgs(argv) {
 
 // ─── Core Operations ───────────────────────────────────────────────────────
 async function createArchive(source, output, options = {}) {
-	console.log(`${GLYPH.archive} Creating archive: ${source} → ${output}`);
+	console.info(`${GLYPH.archive} Creating archive: ${source} → ${output}`);
 
 	const startTime = Date.now();
 	/** @type {{ [key: string]: Uint8Array }} */
@@ -98,12 +98,12 @@ async function createArchive(source, output, options = {}) {
 		await Bun.write(output, archive);
 
 		const duration = Date.now() - startTime;
-		console.log(`${GLYPH.ok} Archive created: ${output}`);
-		console.log(`${GLYPH.info} Files: ${fileCount}, Duration: ${duration}ms`);
+		console.info(`${GLYPH.ok} Archive created: ${output}`);
+		console.info(`${GLYPH.info} Files: ${fileCount}, Duration: ${duration}ms`);
 
 		if (options.validate) {
 			const hash = await generateHash(output);
-			console.log(`${GLYPH.lock} SHA-256: ${hash.slice(0, 16)}…`);
+			console.info(`${GLYPH.lock} SHA-256: ${hash.slice(0, 16)}…`);
 		}
 
 		if (options.audit) {
@@ -122,7 +122,7 @@ async function createArchive(source, output, options = {}) {
 }
 
 async function extractArchive(archive, output, options = {}) {
-	console.log(`${GLYPH.archive} Extracting archive: ${archive} → ${output}`);
+	console.info(`${GLYPH.archive} Extracting archive: ${archive} → ${output}`);
 
 	const startTime = Date.now();
 
@@ -132,14 +132,14 @@ async function extractArchive(archive, output, options = {}) {
 
 		if (options.validate) {
 			const hash = await generateHash(archive);
-			console.log(`${GLYPH.lock} Archive SHA-256: ${hash.slice(0, 16)}…`);
+			console.info(`${GLYPH.lock} Archive SHA-256: ${hash.slice(0, 16)}…`);
 		}
 
 		const count = await archiveObj.extract(output);
 		const duration = Date.now() - startTime;
 
-		console.log(`${GLYPH.ok} Extracted ${count} entries to ${output}`);
-		console.log(`${GLYPH.info} Duration: ${duration}ms`);
+		console.info(`${GLYPH.ok} Extracted ${count} entries to ${output}`);
+		console.info(`${GLYPH.info} Duration: ${duration}ms`);
 
 		if (options.audit) {
 			await logOperation("extract", archive, {
@@ -157,7 +157,7 @@ async function extractArchive(archive, output, options = {}) {
 }
 
 async function inspectArchive(archive, options = {}) {
-	console.log(`${GLYPH.scan} Inspecting archive: ${archive}`);
+	console.info(`${GLYPH.scan} Inspecting archive: ${archive}`);
 
 	try {
 		const archiveData = await Bun.file(archive).arrayBuffer();
@@ -168,34 +168,34 @@ async function inspectArchive(archive, options = {}) {
 		const totalSize = [...files.values()].reduce((sum, file) => sum + file.size, 0);
 		const maxPathWidth = Math.max(...[...files.keys()].map((p) => Bun.stringWidth(p)));
 
-		console.log(
+		console.info(
 			`${GLYPH.info} Archive size: ${(archiveSize / 1024 / 1024).toFixed(2)}MB`,
 		);
-		console.log(
+		console.info(
 			`${GLYPH.info} Files: ${files.size}, Total content: ${(totalSize / 1024 / 1024).toFixed(2)}MB`,
 		);
-		console.log(`${GLYPH.info} Max path width: ${maxPathWidth} cols`);
+		console.info(`${GLYPH.info} Max path width: ${maxPathWidth} cols`);
 
 		if (options.verbose) {
-			console.log(`\n${GLYPH.info} File list:`);
+			console.info(`\n${GLYPH.info} File list:`);
 			for (const [path, file] of files) {
 				const safePath = Bun.stringWidth(path) > 86 ? path.slice(0, 83) + "…" : path;
-				console.log(`  ${safePath}: ${file.size} bytes`);
+				console.info(`  ${safePath}: ${file.size} bytes`);
 			}
 		}
 
 		if (options.validate) {
 			const hash = await generateHash(archive);
-			console.log(`${GLYPH.lock} SHA-256: ${hash.slice(0, 16)}…`);
+			console.info(`${GLYPH.lock} SHA-256: ${hash.slice(0, 16)}…`);
 
 			// Check for suspicious paths
 			const suspicious = [...files.keys()].filter(
 				(p) => p.startsWith("/") || p.startsWith("../") || p.startsWith("."),
 			);
 			if (suspicious.length > 0) {
-				console.log(`${GLYPH.warn} Suspicious paths: ${suspicious.join(", ")}`);
+				console.info(`${GLYPH.warn} Suspicious paths: ${suspicious.join(", ")}`);
 			} else {
-				console.log(`${GLYPH.ok} No suspicious paths detected`);
+				console.info(`${GLYPH.ok} No suspicious paths detected`);
 			}
 		}
 	} catch (error) {
@@ -231,33 +231,33 @@ async function main() {
 	const args = parseArgs(process.argv);
 
 	if (!args.command || args.command === "--help") {
-		console.log(`${GLYPH.archive} Archive Tools - Quick CLI for Bun.Archive`);
-		console.log(`\nUsage: archive-tools.ts <command> [options]`);
-		console.log(`\nCommands:`);
-		console.log(`  create <source> <output>    Create archive from file or directory`);
-		console.log(`  extract <archive> <output>  Extract archive to directory`);
-		console.log(`  inspect <archive>           Inspect archive contents`);
-		console.log(`\nOptions:`);
-		console.log(`  --compress <type>          Compression: gzip (default: none)`);
-		console.log(`  --level <1-12>             Compression level (default: 6)`);
-		console.log(`  --tenant <name>            Tenant identifier for logging`);
-		console.log(`  --audit                    Log operation to audit file`);
-		console.log(`  --validate                 Validate archive integrity`);
-		console.log(`  --verbose                  Detailed output`);
-		console.log(`\nExamples:`);
-		console.log(
+		console.info(`${GLYPH.archive} Archive Tools - Quick CLI for Bun.Archive`);
+		console.info(`\nUsage: archive-tools.ts <command> [options]`);
+		console.info(`\nCommands:`);
+		console.info(`  create <source> <output>    Create archive from file or directory`);
+		console.info(`  extract <archive> <output>  Extract archive to directory`);
+		console.info(`  inspect <archive>           Inspect archive contents`);
+		console.info(`\nOptions:`);
+		console.info(`  --compress <type>          Compression: gzip (default: none)`);
+		console.info(`  --level <1-12>             Compression level (default: 6)`);
+		console.info(`  --tenant <name>            Tenant identifier for logging`);
+		console.info(`  --audit                    Log operation to audit file`);
+		console.info(`  --validate                 Validate archive integrity`);
+		console.info(`  --verbose                  Detailed output`);
+		console.info(`\nExamples:`);
+		console.info(
 			`  bun tools/archive-tools.ts create ./src ./backup.tar.gz --compress gzip --audit`,
 		);
-		console.log(
+		console.info(
 			`  bun tools/archive-tools.ts extract ./backup.tar.gz ./restore --validate`,
 		);
-		console.log(`  bun tools/archive-tools.ts inspect ./backup.tar.gz --verbose`);
+		console.info(`  bun tools/archive-tools.ts inspect ./backup.tar.gz --verbose`);
 		process.exit(1);
 	}
 
-	console.log(`${GLYPH.archive} Archive Tools v1.0.0`);
-	if (args.tenant) console.log(`${GLYPH.lock} Tenant: ${args.tenant}`);
-	console.log();
+	console.info(`${GLYPH.archive} Archive Tools v1.0.0`);
+	if (args.tenant) console.info(`${GLYPH.lock} Tenant: ${args.tenant}`);
+	console.info();
 
 	try {
 		switch (args.command) {

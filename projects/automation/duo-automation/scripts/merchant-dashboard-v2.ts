@@ -121,8 +121,8 @@ class MerchantDashboardV2 {
   }
 
   async deploy(features?: string) {
-    console.log(chalk.blue.bold('🏪 Merchant Dashboard v2.0 Deployment'));
-    console.log(chalk.gray('Target: $125M ARR with enhanced merchant experience\n'));
+    console.info(chalk.blue.bold('🏪 Merchant Dashboard v2.0 Deployment'));
+    console.info(chalk.gray('Target: $125M ARR with enhanced merchant experience\n'));
 
     const selectedFeatures = features ? features.split(',') : ['disputes', 'revenue', 'multi-location'];
     
@@ -142,7 +142,7 @@ class MerchantDashboardV2 {
   }
 
   private async deployDashboardFeatures(selectedFeatures: string[]) {
-    console.log(chalk.blue.bold('\n📊 Deploying Dashboard Features'));
+    console.info(chalk.blue.bold('\n📊 Deploying Dashboard Features'));
     
     for (const feature of this.features) {
       if (selectedFeatures.some(f => feature.id.includes(f))) {
@@ -157,13 +157,13 @@ class MerchantDashboardV2 {
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     this.spinner.succeed(chalk.green(`✅ ${feature.name} deployed`));
-    console.log(chalk.gray(`   • ${feature.description}`));
-    console.log(chalk.gray(`   • Impact: ${feature.impact}`));
-    console.log(chalk.gray(`   • Status: ${feature.status}`));
+    console.info(chalk.gray(`   • ${feature.description}`));
+    console.info(chalk.gray(`   • Impact: ${feature.impact}`));
+    console.info(chalk.gray(`   • Status: ${feature.status}`));
   }
 
   private async enhanceMobileApps() {
-    console.log(chalk.blue.bold('\n📱 Enhancing Mobile Apps (iOS/Android v2.0)'));
+    console.info(chalk.blue.bold('\n📱 Enhancing Mobile Apps (iOS/Android v2.0)'));
     
     for (const feature of this.mobileFeatures) {
       await this.deployMobileFeature(feature);
@@ -185,12 +185,12 @@ class MerchantDashboardV2 {
     if (feature.offline) capabilities.push('Offline Support');
     
     if (capabilities.length > 0) {
-      console.log(chalk.gray(`   • Capabilities: ${capabilities.join(', ')}`));
+      console.info(chalk.gray(`   • Capabilities: ${capabilities.join(', ')}`));
     }
   }
 
   private async configureMerchantTools() {
-    console.log(chalk.blue.bold('\n🛠️ Configuring Merchant Tools'));
+    console.info(chalk.blue.bold('\n🛠️ Configuring Merchant Tools'));
     
     // Configure Dispute Auto-Resolution
     await this.configureDisputeResolution();
@@ -208,9 +208,9 @@ class MerchantDashboardV2 {
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     this.spinner.succeed(chalk.green('✅ Dispute Auto-Resolution configured'));
-    console.log(chalk.gray('   • AI model: GPT-4 Vision + Identity verification'));
-    console.log(chalk.gray('   • Accuracy target: 95% auto-resolution'));
-    console.log(chalk.gray('   • Processing time: <30 seconds'));
+    console.info(chalk.gray('   • AI model: GPT-4 Vision + Identity verification'));
+    console.info(chalk.gray('   • Accuracy target: 95% auto-resolution'));
+    console.info(chalk.gray('   • Processing time: <30 seconds'));
   }
 
   private async configureRevenueAnalytics() {
@@ -219,9 +219,9 @@ class MerchantDashboardV2 {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     this.spinner.succeed(chalk.green('✅ Revenue Analytics configured'));
-    console.log(chalk.gray('   • Real-time data streaming: Active'));
-    console.log(chalk.gray('   • Predictive analytics: Enabled'));
-    console.log(chalk.gray('   • Custom KPIs: Configurable'));
+    console.info(chalk.gray('   • Real-time data streaming: Active'));
+    console.info(chalk.gray('   • Predictive analytics: Enabled'));
+    console.info(chalk.gray('   • Custom KPIs: Configurable'));
   }
 
   private async configureMultiLocation() {
@@ -230,9 +230,9 @@ class MerchantDashboardV2 {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     this.spinner.succeed(chalk.green('✅ Multi-Location configured'));
-    console.log(chalk.gray('   • Unlimited locations: Supported'));
-    console.log(chalk.gray('   • Centralized management: Active'));
-    console.log(chalk.gray('   • Location-based analytics: Enabled'));
+    console.info(chalk.gray('   • Unlimited locations: Supported'));
+    console.info(chalk.gray('   • Centralized management: Active'));
+    console.info(chalk.gray('   • Location-based analytics: Enabled'));
   }
 
   private async validateDeployment(): Promise<MerchantMetrics> {
@@ -254,37 +254,37 @@ class MerchantDashboardV2 {
   }
 
   private displayMetrics(metrics: MerchantMetrics) {
-    console.log(chalk.blue('\n📊 Merchant Dashboard v2.0 Metrics:'));
-    console.log(chalk.white(`   Dispute Auto-Resolution: ${metrics.disputesResolved}% accuracy`));
-    console.log(chalk.white(`   Revenue Growth: +${metrics.revenueGrowth}%`));
-    console.log(chalk.white(`   User Engagement: ${metrics.userEngagement}%`));
-    console.log(chalk.white(`   Mobile Adoption: ${metrics.mobileAdoption}%`));
+    console.info(chalk.blue('\n📊 Merchant Dashboard v2.0 Metrics:'));
+    console.info(chalk.white(`   Dispute Auto-Resolution: ${metrics.disputesResolved}% accuracy`));
+    console.info(chalk.white(`   Revenue Growth: +${metrics.revenueGrowth}%`));
+    console.info(chalk.white(`   User Engagement: ${metrics.userEngagement}%`));
+    console.info(chalk.white(`   Mobile Adoption: ${metrics.mobileAdoption}%`));
   }
 
   private displayResults(metrics: MerchantMetrics) {
-    console.log(chalk.green.bold('\n🎯 Merchant Dashboard v2.0 Results:'));
+    console.info(chalk.green.bold('\n🎯 Merchant Dashboard v2.0 Results:'));
     
-    console.log(chalk.white('🏪 New Features Deployed:'));
-    console.log(chalk.green('   • Dispute Auto-Resolution (AI + Identity)'));
-    console.log(chalk.green('   • Real-time Revenue Dashboard'));
-    console.log(chalk.green('   • Multi-Location Management'));
-    console.log(chalk.green('   • Custom Branded Mobile Apps'));
-    console.log(chalk.green('   • White-label API Endpoints'));
+    console.info(chalk.white('🏪 New Features Deployed:'));
+    console.info(chalk.green('   • Dispute Auto-Resolution (AI + Identity)'));
+    console.info(chalk.green('   • Real-time Revenue Dashboard'));
+    console.info(chalk.green('   • Multi-Location Management'));
+    console.info(chalk.green('   • Custom Branded Mobile Apps'));
+    console.info(chalk.green('   • White-label API Endpoints'));
     
-    console.log(chalk.white('📱 Mobile Enhancements:'));
-    console.log(chalk.green('   • Push Notifications (Dispute Alerts)'));
-    console.log(chalk.green('   • Offline Mode (Cached Evidence)'));
-    console.log(chalk.green('   • Biometric Login (Face ID)'));
-    console.log(chalk.green('   • AR Evidence Capture'));
-    console.log(chalk.green('   • In-app KYC Verification'));
+    console.info(chalk.white('📱 Mobile Enhancements:'));
+    console.info(chalk.green('   • Push Notifications (Dispute Alerts)'));
+    console.info(chalk.green('   • Offline Mode (Cached Evidence)'));
+    console.info(chalk.green('   • Biometric Login (Face ID)'));
+    console.info(chalk.green('   • AR Evidence Capture'));
+    console.info(chalk.green('   • In-app KYC Verification'));
     
-    console.log(chalk.blue.bold('\n📈 Business Impact:'));
-    console.log(chalk.white(`   • Dispute Resolution Efficiency: ${metrics.disputesResolved}%`));
-    console.log(chalk.white(`   • Revenue Growth: +${metrics.revenueGrowth}%`));
-    console.log(chalk.white(`   • User Engagement: ${metrics.userEngagement}%`));
-    console.log(chalk.white(`   • Mobile Adoption: ${metrics.mobileAdoption}%`));
+    console.info(chalk.blue.bold('\n📈 Business Impact:'));
+    console.info(chalk.white(`   • Dispute Resolution Efficiency: ${metrics.disputesResolved}%`));
+    console.info(chalk.white(`   • Revenue Growth: +${metrics.revenueGrowth}%`));
+    console.info(chalk.white(`   • User Engagement: ${metrics.userEngagement}%`));
+    console.info(chalk.white(`   • Mobile Adoption: ${metrics.mobileAdoption}%`));
     
-    console.log(chalk.green.bold('\n✅ Phase 2: Ready for $125M ARR scaling!'));
+    console.info(chalk.green.bold('\n✅ Phase 2: Ready for $125M ARR scaling!'));
   }
 }
 

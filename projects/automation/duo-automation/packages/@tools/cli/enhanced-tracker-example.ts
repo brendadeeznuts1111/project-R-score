@@ -33,35 +33,35 @@ class DryrunDemonstration {
    * Demonstrate dryrun functionality
    */
   public async demonstrateDryrun(): Promise<void> {
-    console.log('🔍 Dryrun Mode Demonstration');
-    console.log('═'.repeat(40));
+    console.info('🔍 Dryrun Mode Demonstration');
+    console.info('═'.repeat(40));
 
     // Simulate some API calls
-    console.log('🔄 Simulating API calls in dryrun mode...');
+    console.info('🔄 Simulating API calls in dryrun mode...');
     
     this.tracker.trackSynchronousCall('fetch', () => ({ data: 'response' }), 'native', { url: 'https://api.example.com' });
     this.tracker.trackSynchronousCall('Bun.file', () => ({ path: '/tmp/test.txt' }), 'native', { path: '/tmp/test.txt' });
     this.tracker.trackSynchronousCall('crypto.hash', () => 'hashed_data', 'native', { algorithm: 'sha256' });
 
     // Generate report (will show dryrun output)
-    console.log('📋 Generating report in dryrun mode...');
+    console.info('📋 Generating report in dryrun mode...');
     const reportPath = this.tracker.saveReport();
 
     // Test garbage collection in dryrun mode
-    console.log('🗑️  Testing garbage collection in dryrun mode...');
+    console.info('🗑️  Testing garbage collection in dryrun mode...');
     this.tracker.performGarbageCollection();
 
     // Show health status
     const health = this.tracker.getHealthStatus();
-    console.log('🏥 Health Status (Dryrun):');
-    console.log(`   Status: ${health.status}`);
-    console.log(`   Tracked APIs: ${health.trackedAPIs}`);
-    console.log(`   Total Calls: ${health.totalCalls}`);
-    console.log(`   Dryrun Mode: ${health.config.dryRun ? 'ENABLED' : 'DISABLED'}`);
+    console.info('🏥 Health Status (Dryrun):');
+    console.info(`   Status: ${health.status}`);
+    console.info(`   Tracked APIs: ${health.trackedAPIs}`);
+    console.info(`   Total Calls: ${health.totalCalls}`);
+    console.info(`   Dryrun Mode: ${health.config.dryRun ? 'ENABLED' : 'DISABLED'}`);
 
     // Cleanup
     this.tracker.shutdown();
-    console.log('✅ Dryrun demonstration completed');
+    console.info('✅ Dryrun demonstration completed');
   }
 }
 
@@ -91,7 +91,7 @@ class RealTimeMonitoringDashboard {
 
     this.subscriptionId = this.tracker.subscribeToDomainBreakdown(monitoringCallback);
     const mode = this.dryRun ? ' (DRYRUN)' : '';
-    console.log(`🚀 Real-time monitoring started${mode}`);
+    console.info(`🚀 Real-time monitoring started${mode}`);
   }
 
   /**
@@ -130,8 +130,8 @@ class RealTimeMonitoringDashboard {
   private updateDashboard(domainBreakdown: DomainBreakdown): void {
     console.clear();
     const mode = this.dryRun ? ' (DRYRUN MODE)' : '';
-    console.log(`📊 Real-time Bun Native API Dashboard${mode}`);
-    console.log('═'.repeat(60));
+    console.info(`📊 Real-time Bun Native API Dashboard${mode}`);
+    console.info('═'.repeat(60));
 
     Object.entries(domainBreakdown).forEach(([domain, metrics]) => {
       if (metrics.length === 0) return;
@@ -143,13 +143,13 @@ class RealTimeMonitoringDashboard {
 
       const status = nativeRate >= 90 ? '🟢' : nativeRate >= 70 ? '🟡' : '🔴';
       
-      console.log(`${status} ${domain.padEnd(12)} | ${metrics.length.toString().padStart(3)} APIs | ${totalCalls.toString().padStart(6)} calls | ${nativeRate.toFixed(1).padStart(5)}% native | ${avgResponseTime.toFixed(1).padStart(6)}ms`);
+      console.info(`${status} ${domain.padEnd(12)} | ${metrics.length.toString().padStart(3)} APIs | ${totalCalls.toString().padStart(6)} calls | ${nativeRate.toFixed(1).padStart(5)}% native | ${avgResponseTime.toFixed(1).padStart(6)}ms`);
     });
 
     const summary = this.tracker.getSummaryStatistics();
-    console.log('═'.repeat(60));
-    console.log(`📈 Total: ${summary.totalAPIs} APIs, ${summary.totalCalls} calls, ${summary.nativeImplementationRate.toFixed(1)}% native`);
-    console.log(`⏱️  Avg Response: ${summary.averageResponseTime.toFixed(1)}ms | Error Rate: ${summary.errorRate.toFixed(1)}% | Uptime: ${(summary.uptime / 1000).toFixed(0)}s`);
+    console.info('═'.repeat(60));
+    console.info(`📈 Total: ${summary.totalAPIs} APIs, ${summary.totalCalls} calls, ${summary.nativeImplementationRate.toFixed(1)}% native`);
+    console.info(`⏱️  Avg Response: ${summary.averageResponseTime.toFixed(1)}ms | Error Rate: ${summary.errorRate.toFixed(1)}% | Uptime: ${(summary.uptime / 1000).toFixed(0)}s`);
   }
 
   /**
@@ -158,7 +158,7 @@ class RealTimeMonitoringDashboard {
   private sendAlert(message: string): void {
     const timestamp = new Date().toISOString();
     const prefix = this.dryRun ? '🔍 DRYRUN ALERT:' : '🚨 ALERT:';
-    console.log(`${prefix} [${timestamp}] ${message}`);
+    console.info(`${prefix} [${timestamp}] ${message}`);
     
     if (!this.dryRun) {
       // In a real implementation, you might:
@@ -178,7 +178,7 @@ class RealTimeMonitoringDashboard {
       this.subscriptionId = null;
     }
     const mode = this.dryRun ? ' (DRYRUN)' : '';
-    console.log(`🛑 Real-time monitoring stopped${mode}`);
+    console.info(`🛑 Real-time monitoring stopped${mode}`);
   }
 }
 
@@ -203,7 +203,7 @@ class ScheduledReportGenerator {
    */
   private startScheduledReports(): void {
     const mode = this.dryRun ? ' (DRYRUN)' : '';
-    console.log(`📅 Starting scheduled reports every ${this.reportInterval / 60000} minutes${mode}`);
+    console.info(`📅 Starting scheduled reports every ${this.reportInterval / 60000} minutes${mode}`);
     
     // Generate initial report
     this.generateAndSaveReport();
@@ -221,7 +221,7 @@ class ScheduledReportGenerator {
     try {
       const reportPath = this.tracker.saveReport();
       const prefix = this.dryRun ? '🔍 DRYRUN:' : '📋';
-      console.log(`${prefix} Report processed: ${reportPath}`);
+      console.info(`${prefix} Report processed: ${reportPath}`);
       
       if (!this.dryRun) {
         // You could also:
@@ -246,7 +246,7 @@ class ScheduledReportGenerator {
       this.reportTimer = null;
     }
     const mode = this.dryRun ? ' (DRYRUN)' : '';
-    console.log(`🛑 Scheduled reports stopped${mode}`);
+    console.info(`🛑 Scheduled reports stopped${mode}`);
   }
 }
 
@@ -254,12 +254,12 @@ class ScheduledReportGenerator {
  * Example usage demonstration with dryrun support
  */
 async function demonstrateEnhancedTracker(): Promise<void> {
-  console.log('🚀 Enhanced Bun Native API Tracker Demo');
-  console.log('═'.repeat(50));
+  console.info('🚀 Enhanced Bun Native API Tracker Demo');
+  console.info('═'.repeat(50));
 
   // Check for dryrun flag
   const isDryRun = process.argv.includes('--dryrun');
-  console.log(`🔍 Dryrun mode: ${isDryRun ? 'ENABLED' : 'DISABLED'}`);
+  console.info(`🔍 Dryrun mode: ${isDryRun ? 'ENABLED' : 'DISABLED'}`);
 
   // Create tracker with configuration based on dryrun flag
   const tracker = new EnhancedBunNativeAPITracker({
@@ -277,7 +277,7 @@ async function demonstrateEnhancedTracker(): Promise<void> {
   const reportGenerator = new ScheduledReportGenerator(tracker, 0.17, isDryRun); // ~10 seconds
 
   // Simulate some API calls to generate data
-  console.log('🔄 Simulating API calls...');
+  console.info('🔄 Simulating API calls...');
   
   const simulateAPIcalls = async () => {
     for (let i = 0; i < 50; i++) {
@@ -315,13 +315,13 @@ async function demonstrateEnhancedTracker(): Promise<void> {
 
   // Let it run for 30 seconds, then cleanup
   setTimeout(() => {
-    console.log('\n🛑 Cleaning up demo...');
+    console.info('\n🛑 Cleaning up demo...');
     
     dashboard.stopMonitoring();
     reportGenerator.stopScheduledReports();
     tracker.shutdown();
     
-    console.log('✅ Demo completed');
+    console.info('✅ Demo completed');
     process.exit(0);
   }, 30000);
 }
@@ -338,8 +338,8 @@ async function demonstrateDryrunOnly(): Promise<void> {
  * Example of filtering specific domains in real-time
  */
 function demonstrateDomainFiltering(): void {
-  console.log('🔍 Domain Filtering Example');
-  console.log('═'.repeat(30));
+  console.info('🔍 Domain Filtering Example');
+  console.info('═'.repeat(30));
 
   // Subscribe to only specific domains
   const networkingCallback: SubscriptionCallback = (domainBreakdown: DomainBreakdown) => {
@@ -348,12 +348,12 @@ function demonstrateDomainFiltering(): void {
     
     if (networkingMetrics.length > 0) {
       const totalCalls = networkingMetrics.reduce((sum, m) => sum + m.callCount, 0);
-      console.log(`🌐 Networking: ${networkingMetrics.length} APIs, ${totalCalls} calls`);
+      console.info(`🌐 Networking: ${networkingMetrics.length} APIs, ${totalCalls} calls`);
     }
     
     if (cryptoMetrics.length > 0) {
       const totalCalls = cryptoMetrics.reduce((sum, m) => sum + m.callCount, 0);
-      console.log(`🔐 Crypto: ${cryptoMetrics.length} APIs, ${totalCalls} calls`);
+      console.info(`🔐 Crypto: ${cryptoMetrics.length} APIs, ${totalCalls} calls`);
     }
   };
 
@@ -362,7 +362,7 @@ function demonstrateDomainFiltering(): void {
   // Auto-unsubscribe after 10 seconds
   setTimeout(() => {
     globalEnhancedTracker.unsubscribeFromDomainBreakdown(subscriptionId);
-    console.log('🔍 Domain filtering demo completed');
+    console.info('🔍 Domain filtering demo completed');
   }, 10000);
 }
 

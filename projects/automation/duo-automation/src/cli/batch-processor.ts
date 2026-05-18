@@ -97,8 +97,8 @@ export class CashAppBatchProcessor {
       const match = pattern.exec(url);
       
       if (match) {
-        console.log(`🔄 Batch API: ${routeName} -> ${url.pathname}`);
-        console.log(`   Parameters:`, match.pathname.groups);
+        console.info(`🔄 Batch API: ${routeName} -> ${url.pathname}`);
+        console.info(`   Parameters:`, match.pathname.groups);
         
         // Route to appropriate handler
         switch (routeName) {
@@ -662,43 +662,43 @@ export class CashAppBatchProcessor {
    */
   private displayBatchSummary(job: BatchJob): void {
     console.clear();
-    console.log(chalk.cyan('📊 Batch Processing Summary\n'));
+    console.info(chalk.cyan('📊 Batch Processing Summary\n'));
 
-    console.log(`Job ID: ${chalk.yellow(job.id)}`);
-    console.log(`Status: ${job.status === 'completed' ? chalk.green('✅ Completed') : 
+    console.info(`Job ID: ${chalk.yellow(job.id)}`);
+    console.info(`Status: ${job.status === 'completed' ? chalk.green('✅ Completed') : 
                     job.status === 'failed' ? chalk.red('❌ Failed') : 
                     chalk.yellow('⏳ Running')}`);
     
     if (job.endTime) {
       const duration = job.endTime.getTime() - job.startTime.getTime();
-      console.log(`Duration: ${chalk.yellow(OutputFormatter.formatDuration(duration))}`);
+      console.info(`Duration: ${chalk.yellow(OutputFormatter.formatDuration(duration))}`);
     }
 
-    console.log(`Total Processed: ${chalk.yellow(job.total.toString())}`);
-    console.log(`Successful: ${chalk.green(job.results.length.toString())}`);
-    console.log(`Errors: ${chalk.red(job.errors.length.toString())}`);
+    console.info(`Total Processed: ${chalk.yellow(job.total.toString())}`);
+    console.info(`Successful: ${chalk.green(job.results.length.toString())}`);
+    console.info(`Errors: ${chalk.red(job.errors.length.toString())}`);
 
     if (job.results.length > 0) {
-      console.log(chalk.cyan('\n📈 Results Overview:'));
+      console.info(chalk.cyan('\n📈 Results Overview:'));
       
       // Risk distribution
       const riskDistribution = this.calculateRiskDistribution(job.results);
-      console.log(`\nRisk Distribution:`);
-      console.log(`  High Risk: ${chalk.red(riskDistribution.high.toString())}`);
-      console.log(`  Medium Risk: ${chalk.yellow(riskDistribution.medium.toString())}`);
-      console.log(`  Low Risk: ${chalk.green(riskDistribution.low.toString())}`);
+      console.info(`\nRisk Distribution:`);
+      console.info(`  High Risk: ${chalk.red(riskDistribution.high.toString())}`);
+      console.info(`  Medium Risk: ${chalk.yellow(riskDistribution.medium.toString())}`);
+      console.info(`  Low Risk: ${chalk.green(riskDistribution.low.toString())}`);
 
       // Verification status
       const verifiedCount = job.results.filter(r => r.verified).length;
-      console.log(`\nVerification Status:`);
-      console.log(`  Verified: ${chalk.green(verifiedCount.toString())}`);
-      console.log(`  Unverified: ${chalk.red((job.results.length - verifiedCount).toString())}`);
+      console.info(`\nVerification Status:`);
+      console.info(`  Verified: ${chalk.green(verifiedCount.toString())}`);
+      console.info(`  Unverified: ${chalk.red((job.results.length - verifiedCount).toString())}`);
     }
 
     if (job.errors.length > 0) {
-      console.log(chalk.red('\n❌ Errors:'));
+      console.info(chalk.red('\n❌ Errors:'));
       job.errors.forEach(error => {
-        console.log(`  • ${error}`);
+        console.info(`  • ${error}`);
       });
     }
   }
@@ -841,18 +841,18 @@ export async function runBatchProcessor(): Promise<void> {
   const args = process.argv.slice(2);
   
   if (args.length === 0) {
-    console.log(chalk.cyan('CashApp Batch Processor\n'));
-    console.log('Usage: bun run batch-processor.ts <input> [options]');
-    console.log('\nOptions:');
-    console.log('  --output <file>     Output file path');
-    console.log('  --format <format>   Output format (table|json|csv)');
-    console.log('  --concurrent <num>  Concurrent requests (default: 10)');
-    console.log('  --progress          Show progress bar');
-    console.log('  --retries <num>     Retry attempts (default: 3)');
-    console.log('  --timeout <ms>      Request timeout (default: 30000)');
-    console.log('\nExamples:');
-    console.log('  bun run batch-processor.ts cashtags.txt --output results.json --format json');
-    console.log('  bun run batch-processor.ts "$user1,$user2,$user3" --concurrent 5 --progress');
+    console.info(chalk.cyan('CashApp Batch Processor\n'));
+    console.info('Usage: bun run batch-processor.ts <input> [options]');
+    console.info('\nOptions:');
+    console.info('  --output <file>     Output file path');
+    console.info('  --format <format>   Output format (table|json|csv)');
+    console.info('  --concurrent <num>  Concurrent requests (default: 10)');
+    console.info('  --progress          Show progress bar');
+    console.info('  --retries <num>     Retry attempts (default: 3)');
+    console.info('  --timeout <ms>      Request timeout (default: 30000)');
+    console.info('\nExamples:');
+    console.info('  bun run batch-processor.ts cashtags.txt --output results.json --format json');
+    console.info('  bun run batch-processor.ts "$user1,$user2,$user3" --concurrent 5 --progress');
     return;
   }
 

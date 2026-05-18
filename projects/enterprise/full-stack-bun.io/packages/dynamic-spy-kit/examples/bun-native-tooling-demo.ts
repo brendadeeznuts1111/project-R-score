@@ -25,16 +25,16 @@ import { Database } from "bun:sqlite";
 // 1. Bun.hash.rapidhash() - 2x faster than city/metro
 // =============================================================================
 function demoRapidHash() {
-	console.log("=".repeat(60));
-	console.log("1. Bun.hash.rapidhash() - Ultra-fast 64-bit hashing");
-	console.log("=".repeat(60));
+	console.info("=".repeat(60));
+	console.info("1. Bun.hash.rapidhash() - Ultra-fast 64-bit hashing");
+	console.info("=".repeat(60));
 
 	// One-liner summary:
 	const h = hash.rapidhash("key"); // 9166712279701818032n — 2× faster than city/metro, 64-bit non-crypto
 
-	console.log(`\nOne-line summary:`);
-	console.log(`  const h = hash.rapidhash("key"); // ${h}n`);
-	console.log(`\nUse as high-speed key for hash maps, bloom filters, or checksums.`);
+	console.info(`\nOne-line summary:`);
+	console.info(`  const h = hash.rapidhash("key"); // ${h}n`);
+	console.info(`\nUse as high-speed key for hash maps, bloom filters, or checksums.`);
 
 	// Benchmark
 	const iterations = 1_000_000;
@@ -44,17 +44,17 @@ function demoRapidHash() {
 	}
 	const duration = performance.now() - start;
 
-	console.log(`\n📊 Benchmark: ${iterations.toLocaleString()} hashes in ${duration.toFixed(2)}ms`);
-	console.log(`   Throughput: ${((iterations / duration) * 1000).toFixed(0)} hashes/sec`);
+	console.info(`\n📊 Benchmark: ${iterations.toLocaleString()} hashes in ${duration.toFixed(2)}ms`);
+	console.info(`   Throughput: ${((iterations / duration) * 1000).toFixed(0)} hashes/sec`);
 }
 
 // =============================================================================
 // 2. Bun.peek() - Synchronous promise peeking
 // =============================================================================
 async function demoPeek() {
-	console.log("\n" + "=".repeat(60));
-	console.log("2. Bun.peek() - Synchronous promise peeking");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("2. Bun.peek() - Synchronous promise peeking");
+	console.info("=".repeat(60));
 
 	// Create a promise
 	const promise = new Promise<string>((resolve) => {
@@ -63,25 +63,25 @@ async function demoPeek() {
 
 	// Peek before resolution
 	const beforePeek = peek(promise);
-	console.log(`\nBefore resolution: peek(promise) === promise? ${beforePeek === promise}`);
+	console.info(`\nBefore resolution: peek(promise) === promise? ${beforePeek === promise}`);
 
 	// Wait for resolution
 	await promise;
 
 	// Peek after resolution
 	const afterPeek = peek(promise);
-	console.log(`After resolution: peek(promise) = "${afterPeek}"`);
+	console.info(`After resolution: peek(promise) = "${afterPeek}"`);
 
-	console.log(`\n💡 Use case: Fast cache lookups in hot paths without await overhead`);
+	console.info(`\n💡 Use case: Fast cache lookups in hot paths without await overhead`);
 }
 
 // =============================================================================
 // 3. Bun.sqlite - Pattern and route caching
 // =============================================================================
 function demoSqlite() {
-	console.log("\n" + "=".repeat(60));
-	console.log("3. Bun.sqlite - Pattern and route caching");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("3. Bun.sqlite - Pattern and route caching");
+	console.info("=".repeat(60));
 
 	// Create in-memory database
 	const db = new Database(":memory:");
@@ -121,17 +121,17 @@ function demoSqlite() {
 	insertMany(patterns);
 	const insertTime = performance.now() - start;
 
-	console.log(`\n✅ Inserted ${patterns.length} patterns in ${insertTime.toFixed(2)}ms`);
+	console.info(`\n✅ Inserted ${patterns.length} patterns in ${insertTime.toFixed(2)}ms`);
 
 	// Query patterns
 	const queryStart = performance.now();
 	const results = db.prepare(`SELECT * FROM patterns ORDER BY priority DESC`).all();
 	const queryTime = performance.now() - queryStart;
 
-	console.log(`✅ Queried ${results.length} patterns in ${queryTime.toFixed(4)}ms`);
-	console.log(`\n📋 Patterns by priority:`);
+	console.info(`✅ Queried ${results.length} patterns in ${queryTime.toFixed(4)}ms`);
+	console.info(`\n📋 Patterns by priority:`);
 	for (const r of results as any[]) {
-		console.log(`   ${r.id}: priority=${r.priority}, pathname=${r.pathname}`);
+		console.info(`   ${r.id}: priority=${r.priority}, pathname=${r.pathname}`);
 	}
 
 	db.close();
@@ -141,9 +141,9 @@ function demoSqlite() {
 // 4. Bun.gzipSync()/gunzipSync() - Compression
 // =============================================================================
 function demoCompression() {
-	console.log("\n" + "=".repeat(60));
-	console.log("4. Bun.gzipSync()/gunzipSync() - Compression");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("4. Bun.gzipSync()/gunzipSync() - Compression");
+	console.info("=".repeat(60));
 
 	// Sample JSON data
 	const data = JSON.stringify({
@@ -164,11 +164,11 @@ function demoCompression() {
 	const compressedSize = compressed.length;
 	const ratio = ((1 - compressedSize / originalSize) * 100).toFixed(1);
 
-	console.log(`\n📊 Compression results:`);
-	console.log(`   Original: ${originalSize.toLocaleString()} bytes`);
-	console.log(`   Compressed: ${compressedSize.toLocaleString()} bytes`);
-	console.log(`   Ratio: ${ratio}% smaller`);
-	console.log(`   Time: ${compressTime.toFixed(2)}ms`);
+	console.info(`\n📊 Compression results:`);
+	console.info(`   Original: ${originalSize.toLocaleString()} bytes`);
+	console.info(`   Compressed: ${compressedSize.toLocaleString()} bytes`);
+	console.info(`   Ratio: ${ratio}% smaller`);
+	console.info(`   Time: ${compressTime.toFixed(2)}ms`);
 
 	// Decompress
 	const decompressStart = performance.now();
@@ -178,16 +178,16 @@ function demoCompression() {
 	const decompressedData = new TextDecoder().decode(decompressed);
 	const isValid = decompressedData === data;
 
-	console.log(`\n✅ Decompressed in ${decompressTime.toFixed(2)}ms (valid: ${isValid})`);
+	console.info(`\n✅ Decompressed in ${decompressTime.toFixed(2)}ms (valid: ${isValid})`);
 }
 
 // =============================================================================
 // 5. Bun.semver - Version checking
 // =============================================================================
 function demoSemver() {
-	console.log("\n" + "=".repeat(60));
-	console.log("5. Bun.semver - Version checking");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("5. Bun.semver - Version checking");
+	console.info("=".repeat(60));
 
 	const versions = [
 		{ version: "1.0.0", range: ">=1.0.0" },
@@ -196,53 +196,53 @@ function demoSemver() {
 		{ version: "3.0.0-beta.1", range: ">=2.0.0" },
 	];
 
-	console.log(`\n📋 Version compatibility checks:`);
+	console.info(`\n📋 Version compatibility checks:`);
 	for (const { version, range } of versions) {
 		const satisfies = semver.satisfies(version, range);
 		const status = satisfies ? "✅" : "❌";
-		console.log(`   ${status} ${version} satisfies "${range}": ${satisfies}`);
+		console.info(`   ${status} ${version} satisfies "${range}": ${satisfies}`);
 	}
 
 	// Order comparison
 	const order = semver.order("1.0.0", "2.0.0");
-	console.log(`\n📊 semver.order("1.0.0", "2.0.0") = ${order} (negative = first is older)`);
+	console.info(`\n📊 semver.order("1.0.0", "2.0.0") = ${order} (negative = first is older)`);
 }
 
 // =============================================================================
 // 6. Bun.main & Bun.argv - Entry point and CLI
 // =============================================================================
 function demoMainAndArgv() {
-	console.log("\n" + "=".repeat(60));
-	console.log("6. Bun.main & Bun.argv - Entry point detection & CLI");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("6. Bun.main & Bun.argv - Entry point detection & CLI");
+	console.info("=".repeat(60));
 
 	const isMainEntry = Bun.main === import.meta.path;
 	const args = Bun.argv.slice(2);
 
-	console.log(`\n📋 Entry point detection:`);
-	console.log(`   Bun.main: ${Bun.main}`);
-	console.log(`   import.meta.path: ${import.meta.path}`);
-	console.log(`   Is main entry: ${isMainEntry}`);
+	console.info(`\n📋 Entry point detection:`);
+	console.info(`   Bun.main: ${Bun.main}`);
+	console.info(`   import.meta.path: ${import.meta.path}`);
+	console.info(`   Is main entry: ${isMainEntry}`);
 
-	console.log(`\n📋 CLI arguments (Bun.argv):`);
-	console.log(`   Full argv: ${JSON.stringify(Bun.argv)}`);
-	console.log(`   User args: ${JSON.stringify(args)}`);
+	console.info(`\n📋 CLI arguments (Bun.argv):`);
+	console.info(`   Full argv: ${JSON.stringify(Bun.argv)}`);
+	console.info(`   User args: ${JSON.stringify(args)}`);
 
 	// Parse flags
 	const hasBenchmark = args.includes("--benchmark");
 	const hasVerbose = args.includes("--verbose") || args.includes("-v");
-	console.log(`\n📋 Parsed flags:`);
-	console.log(`   --benchmark: ${hasBenchmark}`);
-	console.log(`   --verbose: ${hasVerbose}`);
+	console.info(`\n📋 Parsed flags:`);
+	console.info(`   --benchmark: ${hasBenchmark}`);
+	console.info(`   --verbose: ${hasVerbose}`);
 }
 
 // =============================================================================
 // 7. Bun.spawn() - Subprocess execution
 // =============================================================================
 async function demoSpawn() {
-	console.log("\n" + "=".repeat(60));
-	console.log("7. Bun.spawn() - Subprocess execution");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("7. Bun.spawn() - Subprocess execution");
+	console.info("=".repeat(60));
 
 	// Run a simple command
 	const proc = spawn({
@@ -253,7 +253,7 @@ async function demoSpawn() {
 	const output = await Bun.readableStreamToText(proc.stdout);
 	await proc.exited;
 
-	console.log(`\n📋 Subprocess output: ${output.trim()}`);
+	console.info(`\n📋 Subprocess output: ${output.trim()}`);
 
 	// Run bun version
 	const bunProc = spawn({
@@ -264,16 +264,16 @@ async function demoSpawn() {
 	const bunVersion = await Bun.readableStreamToText(bunProc.stdout);
 	await bunProc.exited;
 
-	console.log(`📋 Bun version (via spawn): ${bunVersion.trim()}`);
+	console.info(`📋 Bun version (via spawn): ${bunVersion.trim()}`);
 }
 
 // =============================================================================
 // 8. Bun.readableStreamTo* - Streaming
 // =============================================================================
 async function demoStreaming() {
-	console.log("\n" + "=".repeat(60));
-	console.log("8. Bun.readableStreamTo* - Streaming");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("8. Bun.readableStreamTo* - Streaming");
+	console.info("=".repeat(60));
 
 	// Create a stream from a large string
 	const largeData = "x".repeat(1024 * 1024); // 1MB
@@ -284,9 +284,9 @@ async function demoStreaming() {
 	const text = await Bun.readableStreamToText(stream);
 	const duration = performance.now() - start;
 
-	console.log(`\n📊 Streamed 1MB in ${duration.toFixed(2)}ms`);
-	console.log(`   Data length: ${text.length.toLocaleString()} chars`);
-	console.log(`   Throughput: ${((text.length / duration) * 1000 / 1024 / 1024).toFixed(2)} MB/s`);
+	console.info(`\n📊 Streamed 1MB in ${duration.toFixed(2)}ms`);
+	console.info(`   Data length: ${text.length.toLocaleString()} chars`);
+	console.info(`   Throughput: ${((text.length / duration) * 1000 / 1024 / 1024).toFixed(2)} MB/s`);
 
 	// ArrayBuffer streaming
 	const blob2 = new Blob([new Uint8Array(1024 * 100)]); // 100KB
@@ -296,17 +296,17 @@ async function demoStreaming() {
 	const arrayBuffer = await Bun.readableStreamToArrayBuffer(stream2);
 	const abDuration = performance.now() - abStart;
 
-	console.log(`\n📊 Streamed 100KB to ArrayBuffer in ${abDuration.toFixed(2)}ms`);
-	console.log(`   Buffer size: ${arrayBuffer.byteLength.toLocaleString()} bytes`);
+	console.info(`\n📊 Streamed 100KB to ArrayBuffer in ${abDuration.toFixed(2)}ms`);
+	console.info(`   Buffer size: ${arrayBuffer.byteLength.toLocaleString()} bytes`);
 }
 
 // =============================================================================
 // 9. Comprehensive Benchmark
 // =============================================================================
 async function runBenchmark() {
-	console.log("\n" + "=".repeat(60));
-	console.log("🏁 COMPREHENSIVE BENCHMARK");
-	console.log("=".repeat(60));
+	console.info("\n" + "=".repeat(60));
+	console.info("🏁 COMPREHENSIVE BENCHMARK");
+	console.info("=".repeat(60));
 
 	const results: { name: string; ops: number; time: number }[] = [];
 
@@ -347,13 +347,13 @@ async function runBenchmark() {
 	results.push({ name: "gzipSync", ops: compressIterations, time: compressTime });
 
 	// Print results
-	console.log("\n📊 Benchmark Results:\n");
-	console.log("Operation".padEnd(20) + "Ops".padStart(12) + "Time (ms)".padStart(12) + "Ops/sec".padStart(15));
-	console.log("-".repeat(59));
+	console.info("\n📊 Benchmark Results:\n");
+	console.info("Operation".padEnd(20) + "Ops".padStart(12) + "Time (ms)".padStart(12) + "Ops/sec".padStart(15));
+	console.info("-".repeat(59));
 	
 	for (const r of results) {
 		const opsPerSec = Math.floor((r.ops / r.time) * 1000);
-		console.log(
+		console.info(
 			r.name.padEnd(20) +
 			r.ops.toLocaleString().padStart(12) +
 			r.time.toFixed(2).padStart(12) +
@@ -366,9 +366,9 @@ async function runBenchmark() {
 // Main
 // =============================================================================
 async function main() {
-	console.log("\n⚡ Bun Native Tooling Demo - @dynamic-spy/kit v9.0\n");
-	console.log(`Bun version: ${Bun.version}`);
-	console.log(`Platform: ${process.platform} ${process.arch}`);
+	console.info("\n⚡ Bun Native Tooling Demo - @dynamic-spy/kit v9.0\n");
+	console.info(`Bun version: ${Bun.version}`);
+	console.info(`Platform: ${process.platform} ${process.arch}`);
 
 	const args = Bun.argv.slice(2);
 	const runBench = args.includes("--benchmark");
@@ -387,9 +387,9 @@ async function main() {
 		await runBenchmark();
 	}
 
-	console.log("\n" + "=".repeat(60));
-	console.log("✅ All demos complete!");
-	console.log("=".repeat(60) + "\n");
+	console.info("\n" + "=".repeat(60));
+	console.info("✅ All demos complete!");
+	console.info("=".repeat(60) + "\n");
 }
 
 if (import.meta.main) {

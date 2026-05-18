@@ -113,60 +113,60 @@ function compareSnapshots(before: SnapshotData, after: SnapshotData): DiffResult
 }
 
 function renderDiff(result: DiffResult): void {
-	console.log("\n📊 Snapshot Comparison");
-	console.log("═══════════════════════════════════════════════════\n");
+	console.info("\n📊 Snapshot Comparison");
+	console.info("═══════════════════════════════════════════════════\n");
 
 	const { summary } = result;
 	const trend = summary.complianceImprovement ? "📈" : "📉";
 
-	console.log(`${trend} Summary:`);
-	console.log(`  Before: ${summary.totalBefore} violations`);
-	console.log(`  After:  ${summary.totalAfter} violations`);
-	console.log(`  Change: ${summary.netChange > 0 ? "+" : ""}${summary.netChange}`);
-	console.log(
+	console.info(`${trend} Summary:`);
+	console.info(`  Before: ${summary.totalBefore} violations`);
+	console.info(`  After:  ${summary.totalAfter} violations`);
+	console.info(`  Change: ${summary.netChange > 0 ? "+" : ""}${summary.netChange}`);
+	console.info(
 		`  Status: ${summary.complianceImprovement ? "Improving ✅" : "Needs attention ⚠️"}`,
 	);
-	console.log();
+	console.info();
 
 	if (result.added.length > 0) {
-		console.log(`🔴 New Violations (${result.added.length}):`);
+		console.info(`🔴 New Violations (${result.added.length}):`);
 		for (const v of result.added.slice(0, 5)) {
-			console.log(`  + ${v.event} (${v.width} chars)`);
+			console.info(`  + ${v.event} (${v.width} chars)`);
 		}
 		if (result.added.length > 5) {
-			console.log(`  ... and ${result.added.length - 5} more`);
+			console.info(`  ... and ${result.added.length - 5} more`);
 		}
-		console.log();
+		console.info();
 	}
 
 	if (result.removed.length > 0) {
-		console.log(`🟢 Fixed Violations (${result.removed.length}):`);
+		console.info(`🟢 Fixed Violations (${result.removed.length}):`);
 		for (const v of result.removed.slice(0, 5)) {
-			console.log(`  - ${v.event} (${v.width} chars)`);
+			console.info(`  - ${v.event} (${v.width} chars)`);
 		}
 		if (result.removed.length > 5) {
-			console.log(`  ... and ${result.removed.length - 5} more`);
+			console.info(`  ... and ${result.removed.length - 5} more`);
 		}
-		console.log();
+		console.info();
 	}
 
 	if (result.widthIncreased.length > 0) {
-		console.log(`⚠️  Width Increased (${result.widthIncreased.length}):`);
+		console.info(`⚠️  Width Increased (${result.widthIncreased.length}):`);
 		for (const { before, after } of result.widthIncreased.slice(0, 3)) {
-			console.log(`  ${before.event}: ${before.width} → ${after.width} chars`);
+			console.info(`  ${before.event}: ${before.width} → ${after.width} chars`);
 		}
-		console.log();
+		console.info();
 	}
 
 	if (result.widthDecreased.length > 0) {
-		console.log(`✅ Width Decreased (${result.widthDecreased.length}):`);
+		console.info(`✅ Width Decreased (${result.widthDecreased.length}):`);
 		for (const { before, after } of result.widthDecreased.slice(0, 3)) {
-			console.log(`  ${before.event}: ${before.width} → ${after.width} chars`);
+			console.info(`  ${before.event}: ${before.width} → ${after.width} chars`);
 		}
-		console.log();
+		console.info();
 	}
 
-	console.log(`📋 Unchanged: ${result.unchanged.length} violations`);
+	console.info(`📋 Unchanged: ${result.unchanged.length} violations`);
 }
 
 function generateMarkdownReport(
@@ -210,23 +210,23 @@ if (import.meta.main) {
 	const output = args.find((a) => a.startsWith("--output="))?.split("=")[1];
 
 	if (!beforePath || !afterPath) {
-		console.log(
+		console.info(
 			"Usage: snapshot-compare.ts <before-snapshot> <after-snapshot> [--output=report.md]",
 		);
-		console.log();
-		console.log("Examples:");
-		console.log(
+		console.info();
+		console.info("Examples:");
+		console.info(
 			"  snapshot-compare.ts tenant-a-2026-01-01.tar.gz tenant-a-2026-01-31.tar.gz",
 		);
 		process.exit(1);
 	}
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Snapshot Comparison                ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
-	console.log(`Before: ${beforePath}`);
-	console.log(`After:  ${afterPath}`);
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Snapshot Comparison                ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
+	console.info(`Before: ${beforePath}`);
+	console.info(`After:  ${afterPath}`);
 
 	try {
 		const before = await loadSnapshot(beforePath);
@@ -243,7 +243,7 @@ if (import.meta.main) {
 		if (output) {
 			const report = generateMarkdownReport(beforePath, afterPath, result);
 			await Bun.write(output, report);
-			console.log(`\n📝 Report saved to ${output}`);
+			console.info(`\n📝 Report saved to ${output}`);
 		}
 
 		process.exit(result.summary.complianceImprovement ? 0 : 1);

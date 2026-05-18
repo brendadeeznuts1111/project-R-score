@@ -25,26 +25,26 @@ function colorize(text: string, color: keyof typeof colors): string {
 async function runQuickInfo(): Promise<void> {
   const filename = process.argv[2];
 
-  console.log(colorize('⚡ Bun Quick Info', 'bright'));
-  console.log(colorize('================', 'cyan'));
-  console.log();
+  console.info(colorize('⚡ Bun Quick Info', 'bright'));
+  console.info(colorize('================', 'cyan'));
+  console.info();
 
   // Bun Runtime Info
-  console.log(colorize('📦 Bun Runtime:', 'bright'));
-  console.log(`  Version: ${colorize(Bun.version, 'green')}`);
-  console.log(`  Revision: ${colorize(Bun.revision.slice(0, 8), 'blue')} (${Bun.revision})`);
-  console.log(`  Platform: ${colorize(`${process.platform}-${process.arch}`, 'cyan')}`);
+  console.info(colorize('📦 Bun Runtime:', 'bright'));
+  console.info(`  Version: ${colorize(Bun.version, 'green')}`);
+  console.info(`  Revision: ${colorize(Bun.revision.slice(0, 8), 'blue')} (${Bun.revision})`);
+  console.info(`  Platform: ${colorize(`${process.platform}-${process.arch}`, 'cyan')}`);
 
   // Update Status
   const currentRevision = Bun.revision.slice(0, 8);
   const latestStable = 'b64edcb4';
   const isLatest = currentRevision === latestStable;
-  console.log(`  Status: ${isLatest ? colorize('Latest stable', 'green') : colorize('Canary build', 'yellow')}`);
-  console.log();
+  console.info(`  Status: ${isLatest ? colorize('Latest stable', 'green') : colorize('Canary build', 'yellow')}`);
+  console.info();
 
   // Git File Check
   if (filename) {
-    console.log(colorize('📁 Git Status:', 'bright'));
+    console.info(colorize('📁 Git Status:', 'bright'));
     try {
       const proc = Bun.spawn(['git', 'ls-files', '--error-unmatch', filename], {
         stdout: 'pipe',
@@ -52,21 +52,21 @@ async function runQuickInfo(): Promise<void> {
       });
       const exitCode = await proc.exited;
       const isTracked = exitCode === 0;
-      console.log(`  ${filename}: ${isTracked ? colorize('tracked', 'green') : colorize('untracked', 'yellow')}`);
+      console.info(`  ${filename}: ${isTracked ? colorize('tracked', 'green') : colorize('untracked', 'yellow')}`);
     } catch {
-      console.log(`  ${filename}: ${colorize('git check failed', 'yellow')}`);
+      console.info(`  ${filename}: ${colorize('git check failed', 'yellow')}`);
     }
-    console.log();
+    console.info();
   }
 
   // Quick Actions
-  console.log(colorize('🚀 Quick Actions:', 'bright'));
-  console.log(`  ${colorize('bun upgrade', 'yellow')} - Update Bun`);
-  console.log(`  ${colorize('bun run validate:bun-urls', 'yellow')} - Validate URLs`);
-  console.log(`  ${colorize('bun run validate:github', 'yellow')} - Advanced checks`);
-  console.log();
+  console.info(colorize('🚀 Quick Actions:', 'bright'));
+  console.info(`  ${colorize('bun upgrade', 'yellow')} - Update Bun`);
+  console.info(`  ${colorize('bun run validate:bun-urls', 'yellow')} - Validate URLs`);
+  console.info(`  ${colorize('bun run validate:github', 'yellow')} - Advanced checks`);
+  console.info();
 
-  console.log(colorize('✨ Done!', 'green'));
+  console.info(colorize('✨ Done!', 'green'));
 }
 
 // Run the quick info

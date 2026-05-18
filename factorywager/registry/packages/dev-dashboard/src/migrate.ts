@@ -13,8 +13,8 @@ const MIGRATIONS_DIR = join(import.meta.dir, '..', 'migrations');
 const DB_PATH = join(import.meta.dir, '..', 'data', 'dashboard.db');
 
 async function runMigrations() {
-  console.log('🔄 Running Database Migrations');
-  console.log('='.repeat(50));
+  console.info('🔄 Running Database Migrations');
+  console.info('='.repeat(50));
   
   // Ensure data directory exists
   const dataDir = join(import.meta.dir, '..', 'data');
@@ -52,11 +52,11 @@ async function runMigrations() {
   }
   
   if (migrationFiles.length === 0) {
-    console.log('⚠️  No migration files found');
+    console.info('⚠️  No migration files found');
     return;
   }
   
-  console.log(`📁 Found ${migrationFiles.length} migration file(s)\n`);
+  console.info(`📁 Found ${migrationFiles.length} migration file(s)\n`);
   
   // Check which migrations have already been run
   const executedMigrations = db.prepare('SELECT name FROM migrations').all() as Array<{ name: string }>;
@@ -69,12 +69,12 @@ async function runMigrations() {
     const migrationName = migrationFile;
     
     if (executedNames.has(migrationName)) {
-      console.log(`⏭️  Skipping ${migrationName} (already executed)`);
+      console.info(`⏭️  Skipping ${migrationName} (already executed)`);
       continue;
     }
     
     try {
-      console.log(`📄 Applying ${migrationName}...`);
+      console.info(`📄 Applying ${migrationName}...`);
       
       const migrationPath = join(MIGRATIONS_DIR, migrationFile);
       const migrationSQL = await Bun.file(migrationPath).text();
@@ -85,7 +85,7 @@ async function runMigrations() {
       // Record migration
       db.prepare('INSERT INTO migrations (name) VALUES (?)').run(migrationName);
       
-      console.log(`✅ Applied ${migrationName}\n`);
+      console.info(`✅ Applied ${migrationName}\n`);
       appliedCount++;
     } catch (error) {
       console.error(`❌ Failed to apply ${migrationName}:`, error);
@@ -94,22 +94,22 @@ async function runMigrations() {
   }
   
   if (appliedCount === 0) {
-    console.log('✅ All migrations are up to date');
+    console.info('✅ All migrations are up to date');
   } else {
-    console.log(`✅ Applied ${appliedCount} migration(s)`);
+    console.info(`✅ Applied ${appliedCount} migration(s)`);
   }
   
   // Show migration status
-  console.log('\n📊 Migration Status:');
-  console.log('-'.repeat(50));
+  console.info('\n📊 Migration Status:');
+  console.info('-'.repeat(50));
   const allMigrations = db.prepare('SELECT name, executed_at FROM migrations ORDER BY executed_at').all() as Array<{ name: string; executed_at: number }>;
   
   if (allMigrations.length === 0) {
-    console.log('No migrations executed');
+    console.info('No migrations executed');
   } else {
     for (const migration of allMigrations) {
       const date = new Date(migration.executed_at * 1000).toISOString();
-      console.log(`  ✅ ${migration.name} - ${date}`);
+      console.info(`  ✅ ${migration.name} - ${date}`);
     }
   }
   
@@ -121,7 +121,7 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log(`
+    console.info(`
 Database Migration Runner
 ──────────────────────────
 

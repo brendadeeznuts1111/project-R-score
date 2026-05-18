@@ -24,8 +24,8 @@ const validateTemplate = (templatePath: string = "."): ValidationResult => {
     passed: [],
   };
 
-  console.log("🔍 Validating Surgical Precision Platform template...");
-  console.log(`📁 Template path: ${resolve(templatePath)}`);
+  console.info("🔍 Validating Surgical Precision Platform template...");
+  console.info(`📁 Template path: ${resolve(templatePath)}`);
 
   // Validate required files
   const requiredFiles = [
@@ -37,7 +37,7 @@ const validateTemplate = (templatePath: string = "."): ValidationResult => {
     ".gitignore",
   ];
 
-  console.log("\n📄 Checking required files...");
+  console.info("\n📄 Checking required files...");
   requiredFiles.forEach((file) => {
     const filePath = join(templatePath, file);
     if (existsSync(filePath)) {
@@ -67,7 +67,7 @@ const validateTemplate = (templatePath: string = "."): ValidationResult => {
     "demos",
   ];
 
-  console.log("\n📁 Checking required directories...");
+  console.info("\n📁 Checking required directories...");
   requiredDirs.forEach((dir) => {
     const dirPath = join(templatePath, dir);
     if (existsSync(dirPath)) {
@@ -85,7 +85,7 @@ const validateTemplate = (templatePath: string = "."): ValidationResult => {
   });
 
   // Validate package.json configuration
-  console.log("\n⚙️ Checking package.json configuration...");
+  console.info("\n⚙️ Checking package.json configuration...");
   try {
     const packageJson = JSON.parse(
       readFileSync(join(templatePath, "package.json"), "utf8")
@@ -142,7 +142,7 @@ const validateTemplate = (templatePath: string = "."): ValidationResult => {
   }
 
   // Validate workspace directories exist
-  console.log("\n📦 Checking workspace directories...");
+  console.info("\n📦 Checking workspace directories...");
   const workspaceDirs = [
     "operation-surgical-precision",
     "surgical-precision-mcp",
@@ -173,7 +173,7 @@ const validateTemplate = (templatePath: string = "."): ValidationResult => {
   });
 
   // Validate data directory structure
-  console.log("\n💾 Checking data directory structure...");
+  console.info("\n💾 Checking data directory structure...");
   const dataDirs = [
     "data/databases",
     "data/build-artifacts",
@@ -191,7 +191,7 @@ const validateTemplate = (templatePath: string = "."): ValidationResult => {
   });
 
   // Validate docs directory structure
-  console.log("\n📚 Checking documentation structure...");
+  console.info("\n📚 Checking documentation structure...");
   const docsDirs = ["docs/packages", "docs/workers", "docs/utils", "docs/root"];
 
   docsDirs.forEach((dir) => {
@@ -204,7 +204,7 @@ const validateTemplate = (templatePath: string = "."): ValidationResult => {
   });
 
   // Validate scripts directory
-  console.log("\n🔧 Checking setup scripts...");
+  console.info("\n🔧 Checking setup scripts...");
   const requiredScripts = [
     "scripts/setup-databases.ts",
     "scripts/setup-config.ts",
@@ -220,7 +220,7 @@ const validateTemplate = (templatePath: string = "."): ValidationResult => {
   });
 
   // Validate configuration files
-  console.log("\n⚙️ Checking configuration files...");
+  console.info("\n⚙️ Checking configuration files...");
   const configFiles = [
     "configs/team/alice.conf",
     "configs/deployment/cloudflare.conf",
@@ -240,40 +240,40 @@ const validateTemplate = (templatePath: string = "."): ValidationResult => {
 };
 
 const printValidationResult = (result: ValidationResult) => {
-  console.log("\n" + "=".repeat(60));
-  console.log("📊 VALIDATION RESULTS");
-  console.log("=".repeat(60));
+  console.info("\n" + "=".repeat(60));
+  console.info("📊 VALIDATION RESULTS");
+  console.info("=".repeat(60));
 
   if (result.passed.length > 0) {
-    console.log("\n✅ PASSED CHECKS:");
-    result.passed.forEach((check) => console.log(`   ${check}`));
+    console.info("\n✅ PASSED CHECKS:");
+    result.passed.forEach((check) => console.info(`   ${check}`));
   }
 
   if (result.warnings.length > 0) {
-    console.log("\n⚠️ WARNINGS:");
-    result.warnings.forEach((warning) => console.log(`   ${warning}`));
+    console.info("\n⚠️ WARNINGS:");
+    result.warnings.forEach((warning) => console.info(`   ${warning}`));
   }
 
   if (result.errors.length > 0) {
-    console.log("\n❌ ERRORS:");
-    result.errors.forEach((error) => console.log(`   ${error}`));
+    console.info("\n❌ ERRORS:");
+    result.errors.forEach((error) => console.info(`   ${error}`));
   }
 
-  console.log("\n" + "=".repeat(60));
-  console.log(`🎯 OVERALL STATUS: ${result.valid ? "✅ VALID" : "❌ INVALID"}`);
-  console.log(`📈 Passed: ${result.passed.length}`);
-  console.log(`⚠️ Warnings: ${result.warnings.length}`);
-  console.log(`❌ Errors: ${result.errors.length}`);
-  console.log("=".repeat(60));
+  console.info("\n" + "=".repeat(60));
+  console.info(`🎯 OVERALL STATUS: ${result.valid ? "✅ VALID" : "❌ INVALID"}`);
+  console.info(`📈 Passed: ${result.passed.length}`);
+  console.info(`⚠️ Warnings: ${result.warnings.length}`);
+  console.info(`❌ Errors: ${result.errors.length}`);
+  console.info("=".repeat(60));
 
   if (result.valid) {
-    console.log("\n🎉 Template is ready for use!");
-    console.log(
+    console.info("\n🎉 Template is ready for use!");
+    console.info(
       "💡 Run 'bun create surgical-precision-platform <project-name>' to create a new project"
     );
   } else {
-    console.log("\n🔧 Please fix the errors before using this template");
-    console.log("💡 Refer to the documentation for setup instructions");
+    console.info("\n🔧 Please fix the errors before using this template");
+    console.info("💡 Refer to the documentation for setup instructions");
   }
 };
 

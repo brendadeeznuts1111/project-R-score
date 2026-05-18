@@ -10,7 +10,7 @@ export class RegistryInfoKernel {
    * Fetch package metadata from the Sovereign Registry
    */
   static async getPackageInfo(packageName: string, property?: string) {
-    console.log(`🔍 Inspecting registry metadata for: ${packageName}...`);
+    console.info(`🔍 Inspecting registry metadata for: ${packageName}...`);
     
     try {
       // In a Sovereign v4.0 environment, we wrap 'bun info' to use our mTLS/Bearer-secured registry
@@ -45,7 +45,7 @@ export class RegistryInfoKernel {
     const args = ["pm", "pkg", "get"];
     if (property) args.push(property);
     
-    console.log(`📋 SPM: get ${property || "all"}`);
+    console.info(`📋 SPM: get ${property || "all"}`);
     const proc = Bun.spawn(["bun", ...args]);
     return await proc.exited;
   }
@@ -57,7 +57,7 @@ export class RegistryInfoKernel {
     const args = ["pm", "pkg", "set", ...keyValues];
     if (isJson) args.push("--json");
     
-    console.log(`🖋️ SPM: set ${keyValues.join(" ")} ${isJson ? "[JSON]" : ""}`);
+    console.info(`🖋️ SPM: set ${keyValues.join(" ")} ${isJson ? "[JSON]" : ""}`);
     const proc = Bun.spawn(["bun", ...args]);
     return await proc.exited;
   }
@@ -68,7 +68,7 @@ export class RegistryInfoKernel {
   static async pkgDelete(properties: string[]) {
     const args = ["pm", "pkg", "delete", ...properties];
     
-    console.log(`🗑️ SPM: delete ${properties.join(" ")}`);
+    console.info(`🗑️ SPM: delete ${properties.join(" ")}`);
     const proc = Bun.spawn(["bun", ...args]);
     return await proc.exited;
   }
@@ -79,7 +79,7 @@ export class RegistryInfoKernel {
   static async pkgFix() {
     const args = ["pm", "pkg", "fix"];
     
-    console.log("🛠️ SPM: fix");
+    console.info("🛠️ SPM: fix");
     const proc = Bun.spawn(["bun", ...args]);
     return await proc.exited;
   }
@@ -91,7 +91,7 @@ export class RegistryInfoKernel {
     const info = await this.getPackageInfo(packageName);
     if (!info) return;
 
-    console.log(`
+    console.info(`
 📦 ${info.name} (Latest: ${info["dist-tags"]?.latest || "unknown"})
 ==================================================
 Description: ${info.description || "N/A"}

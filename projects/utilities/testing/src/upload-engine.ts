@@ -35,7 +35,7 @@ export class UploadEngine {
     const start = performance.now();
     
     if (feature("DEBUG")) {
-      console.log(this.formatLogEntry(`Uploading ${file.name}`, "info"));
+      console.info(this.formatLogEntry(`Uploading ${file.name}`, "info"));
     }
 
     const buffer = await file.arrayBuffer();
@@ -109,7 +109,7 @@ export class UploadEngine {
 
   private async logAudit(entry: any) {
     if (feature("DEBUG")) {
-      console.log(this.formatLogEntry(`Audit log: ${entry.file} (${entry.size} bytes)`, "info"));
+      console.info(this.formatLogEntry(`Audit log: ${entry.file} (${entry.size} bytes)`, "info"));
     }
   }
 

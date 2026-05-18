@@ -371,7 +371,7 @@ export function runRiskDiagnostic(
 
 	switch (mode) {
 		case 'json':
-			console.log(
+			console.info(
 				JSON.stringify(
 					{
 						metrics: filtered,
@@ -389,19 +389,19 @@ export function runRiskDiagnostic(
 			break;
 
 		case 'prometheus':
-			console.log('# HELP diagnostic_risk Risk score per metric');
-			console.log('# TYPE diagnostic_risk gauge');
+			console.info('# HELP diagnostic_risk Risk score per metric');
+			console.info('# TYPE diagnostic_risk gauge');
 			for (const m of filtered) {
-				console.log(`diagnostic_risk{metric="${m.metric}",cat="${m.cat}"} ${m.risk}`);
+				console.info(`diagnostic_risk{metric="${m.metric}",cat="${m.cat}"} ${m.risk}`);
 			}
-			console.log('# HELP diagnostic_latency_ns Collection latency');
-			console.log('# TYPE diagnostic_latency_ns gauge');
-			console.log(`diagnostic_latency_ns ${collectionLatencyNs}`);
+			console.info('# HELP diagnostic_latency_ns Collection latency');
+			console.info('# TYPE diagnostic_latency_ns gauge');
+			console.info(`diagnostic_latency_ns ${collectionLatencyNs}`);
 			break;
 
 		case 'verbose':
 			// @ts-expect-error Bun.inspect.table accepts options as third arg
-			console.log(
+			console.info(
 				Bun.inspect.table(
 					filtered.map(m => ({
 						metric: m.metric,
@@ -419,7 +419,7 @@ export function runRiskDiagnostic(
 
 		default:
 			// @ts-expect-error Bun.inspect.table accepts options as third arg
-			console.log(
+			console.info(
 				Bun.inspect.table(
 					filtered.map(m => ({
 						metric: m.metric,

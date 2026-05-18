@@ -70,7 +70,7 @@ export class LiveMonitoringDashboard {
       };
 
       this.clients.set(clientId, client);
-      console.log(`🔌 Dashboard client connected: ${clientId}`);
+      console.info(`🔌 Dashboard client connected: ${clientId}`);
 
       // Send initial data
       this.sendInitialData(client);
@@ -81,7 +81,7 @@ export class LiveMonitoringDashboard {
 
       ws.on('close', () => {
         this.clients.delete(clientId);
-        console.log(`🔌 Dashboard client disconnected: ${clientId}`);
+        console.info(`🔌 Dashboard client disconnected: ${clientId}`);
       });
 
       ws.on('error', (err) => {
@@ -90,7 +90,7 @@ export class LiveMonitoringDashboard {
       });
     });
 
-    console.log(`📊 Live monitoring dashboard running on ws://localhost:${this.wss.options.port}`);
+    console.info(`📊 Live monitoring dashboard running on ws://localhost:${this.wss.options.port}`);
   }
 
   private generateClientId(): string {
@@ -141,7 +141,7 @@ export class LiveMonitoringDashboard {
           this.exportData(client, message.format);
           break;
         default:
-          console.log(`Unknown message type: ${message.type}`);
+          console.info(`Unknown message type: ${message.type}`);
       }
     } catch (err) {
       console.error('Error handling client message:', err);
@@ -252,7 +252,7 @@ export class LiveMonitoringDashboard {
   }
 
   private async startMetricsCollection(): Promise<void> {
-    console.log('📊 Starting metrics collection...');
+    console.info('📊 Starting metrics collection...');
 
     while (true) {
       const tensions = {
@@ -341,7 +341,7 @@ export class LiveMonitoringDashboard {
       if (now - client.lastActivity > timeout) {
         client.ws.terminate();
         this.clients.delete(id);
-        console.log(`🧹 Cleaned up inactive client: ${id}`);
+        console.info(`🧹 Cleaned up inactive client: ${id}`);
       }
     });
   }
@@ -1012,13 +1012,13 @@ if (import.meta.main) {
   // Generate HTML dashboard
   const html = dashboard.generateDashboardHTML();
   await Bun.write('./monitoring-dashboard.html', html);
-  console.log('📄 Monitoring dashboard saved to monitoring-dashboard.html');
-  console.log('🌐 Open monitoring-dashboard.html in your browser');
-  console.log('🔌 WebSocket server running on ws://localhost:3002');
+  console.info('📄 Monitoring dashboard saved to monitoring-dashboard.html');
+  console.info('🌐 Open monitoring-dashboard.html in your browser');
+  console.info('🔌 WebSocket server running on ws://localhost:3002');
 
   // Keep the process running
   process.on('SIGINT', () => {
-    console.log('\n👋 Shutting down monitoring dashboard...');
+    console.info('\n👋 Shutting down monitoring dashboard...');
     process.exit(EXIT_CODES.SUCCESS);
   });
 }

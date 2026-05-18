@@ -118,36 +118,36 @@ export class PremiumExportService {
    * 🎯 Feature demonstration
    */
   demonstrateFeatures(): void {
-    console.log('🚀 Premium Export Service - Feature Demonstration');
-    console.log('==================================================');
-    console.log('');
-    console.log('📊 Available Features:');
+    console.info('🚀 Premium Export Service - Feature Demonstration');
+    console.info('==================================================');
+    console.info('');
+    console.info('📊 Available Features:');
     Object.entries(this.features).forEach(([feature, enabled]) => {
-      console.log(`   • ${feature}: ${enabled ? '✅' : '❌'}`);
+      console.info(`   • ${feature}: ${enabled ? '✅' : '❌'}`);
     });
-    console.log('');
+    console.info('');
 
     // Demonstrate filename generation
     const userId = 'user-123';
     const exportType = 'monthly-report';
 
-    console.log('📁 Generated Filenames:');
-    console.log(`   • Export: ${this.generateExportFilename(userId, exportType)}`);
+    console.info('📁 Generated Filenames:');
+    console.info(`   • Export: ${this.generateExportFilename(userId, exportType)}`);
     
     if (this.features.BULK_EXPORTS) {
-      console.log(`   • Archive: ${this.generateArchiveFilename('arc-001')}`);
+      console.info(`   • Archive: ${this.generateArchiveFilename('arc-001')}`);
     }
     
     if (this.features.ADVANCED_ANALYTICS) {
-      console.log(`   • Analytics: ${this.generateAnalyticsFilename(userId, 'performance')}`);
+      console.info(`   • Analytics: ${this.generateAnalyticsFilename(userId, 'performance')}`);
     }
     
-    console.log('');
-    console.log('💡 Zero-Cost Optimization:');
-    console.log('   • Premium features: Tree-shaken if disabled');
-    console.log('   • Bundle size: Optimized per tier');
-    console.log('   • Performance: No penalty for unused features');
-    console.log('   • Memory: Only loaded features consume memory');
+    console.info('');
+    console.info('💡 Zero-Cost Optimization:');
+    console.info('   • Premium features: Tree-shaken if disabled');
+    console.info('   • Bundle size: Optimized per tier');
+    console.info('   • Performance: No penalty for unused features');
+    console.info('   • Memory: Only loaded features consume memory');
   }
 }
 
@@ -169,9 +169,9 @@ export class FeatureFlagTester {
   }
 
   static async testBundleOptimization(): Promise<void> {
-    console.log('🧪 Testing Bundle Optimization');
-    console.log('==============================');
-    console.log('');
+    console.info('🧪 Testing Bundle Optimization');
+    console.info('==============================');
+    console.info('');
 
     // Test free tier (minimal bundle)
     const freeService = FeatureFlagTester.withFeatures({
@@ -181,11 +181,11 @@ export class FeatureFlagTester {
       CUSTOM_BRANDING: false
     });
 
-    console.log('📦 Free Tier Bundle:');
-    console.log(`   • Features: ${Object.values(freeService.getAvailableFeatures()).filter(Boolean).length}`);
-    console.log(`   • Filename: ${freeService.generateExportFilename('user-123', 'report')}`);
-    console.log('   • Bundle size: Minimal (premium features tree-shaken)');
-    console.log('');
+    console.info('📦 Free Tier Bundle:');
+    console.info(`   • Features: ${Object.values(freeService.getAvailableFeatures()).filter(Boolean).length}`);
+    console.info(`   • Filename: ${freeService.generateExportFilename('user-123', 'report')}`);
+    console.info('   • Bundle size: Minimal (premium features tree-shaken)');
+    console.info('');
 
     // Test premium tier (full bundle)
     const premiumService = FeatureFlagTester.withFeatures({
@@ -195,19 +195,19 @@ export class FeatureFlagTester {
       CUSTOM_BRANDING: true
     });
 
-    console.log('📦 Premium Tier Bundle:');
-    console.log(`   • Features: ${Object.values(premiumService.getAvailableFeatures()).filter(Boolean).length}`);
-    console.log(`   • Filename: ${premiumService.generateExportFilename('user-123', 'report')}`);
-    console.log(`   • Archive: ${premiumService.generateArchiveFilename('arc-001')}`);
-    console.log(`   • Analytics: ${premiumService.generateAnalyticsFilename('user-123', 'perf')}`);
-    console.log('   • Bundle size: Full (all features included)');
-    console.log('');
+    console.info('📦 Premium Tier Bundle:');
+    console.info(`   • Features: ${Object.values(premiumService.getAvailableFeatures()).filter(Boolean).length}`);
+    console.info(`   • Filename: ${premiumService.generateExportFilename('user-123', 'report')}`);
+    console.info(`   • Archive: ${premiumService.generateArchiveFilename('arc-001')}`);
+    console.info(`   • Analytics: ${premiumService.generateAnalyticsFilename('user-123', 'perf')}`);
+    console.info('   • Bundle size: Full (all features included)');
+    console.info('');
 
-    console.log('💡 Optimization Results:');
-    console.log('   • Free tier: ~70% smaller bundle');
-    console.log('   • Premium tier: Full functionality');
-    console.log('   • Performance: Zero overhead for unused features');
-    console.log('   • Memory: Proportional to enabled features');
+    console.info('💡 Optimization Results:');
+    console.info('   • Free tier: ~70% smaller bundle');
+    console.info('   • Premium tier: Full functionality');
+    console.info('   • Performance: Zero overhead for unused features');
+    console.info('   • Memory: Proportional to enabled features');
   }
 }
 

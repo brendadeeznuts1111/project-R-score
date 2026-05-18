@@ -56,11 +56,11 @@ class MCPSystemDashboard {
   }
 
   private showWelcome(): void {
-    console.log(styled('\n🏭 FactoryWager MCP System Dashboard', 'accent'));
-    console.log(styled('==========================================', 'accent'));
-    console.log(styled('Real-time monitoring and management interface', 'muted'));
-    console.log(styled(`Started: ${this.startTime.toLocaleString()}`, 'muted'));
-    console.log('');
+    console.info(styled('\n🏭 FactoryWager MCP System Dashboard', 'accent'));
+    console.info(styled('==========================================', 'accent'));
+    console.info(styled('Real-time monitoring and management interface', 'muted'));
+    console.info(styled(`Started: ${this.startTime.toLocaleString()}`, 'muted'));
+    console.info('');
   }
 
   async generateSystemStatus(): Promise<SystemStatus[]> {
@@ -259,8 +259,8 @@ class MCPSystemDashboard {
   }
 
   async displaySystemStatus(): Promise<void> {
-    console.log(styled('\n📊 System Status Overview', 'primary'));
-    console.log(colorBar('primary', 50));
+    console.info(styled('\n📊 System Status Overview', 'primary'));
+    console.info(colorBar('primary', 50));
 
     const statuses = await this.generateSystemStatus();
     
@@ -270,79 +270,79 @@ class MCPSystemDashboard {
       const statusIcon = status.status === 'healthy' ? '✅' :
                         status.status === 'warning' ? '⚠️' : '❌';
       
-      console.log(styled(`${statusIcon} ${status.component}`, statusColor));
-      console.log(styled(`   ${status.message}`, 'muted'));
-      console.log(styled(`   Last checked: ${new Date(status.lastChecked).toLocaleString()}`, 'muted'));
+      console.info(styled(`${statusIcon} ${status.component}`, statusColor));
+      console.info(styled(`   ${status.message}`, 'muted'));
+      console.info(styled(`   Last checked: ${new Date(status.lastChecked).toLocaleString()}`, 'muted'));
       
       if (status.metrics) {
         Object.entries(status.metrics).forEach(([key, value]) => {
           if (typeof value !== 'object') {
-            console.log(styled(`   • ${key}: ${value}`, 'info'));
+            console.info(styled(`   • ${key}: ${value}`, 'info'));
           }
         });
       }
-      console.log('');
+      console.info('');
     });
   }
 
   async displayMetrics(): Promise<void> {
-    console.log(styled('\n📈 System Metrics', 'info'));
-    console.log(colorBar('info', 50));
+    console.info(styled('\n📈 System Metrics', 'info'));
+    console.info(colorBar('info', 50));
 
     const metrics = await this.collectMetrics();
 
     // Authentication Metrics
-    console.log(styled('\n🔐 Authentication Metrics:', 'accent'));
-    console.log(styled(`   Active Tokens: ${metrics.authentication.activeTokens}`, 'primary'));
-    console.log(styled(`   Recent Auths (1h): ${metrics.authentication.recentAuths}`, 'success'));
-    console.log(styled(`   Failed Auths (1h): ${metrics.authentication.failedAuths}`, 
+    console.info(styled('\n🔐 Authentication Metrics:', 'accent'));
+    console.info(styled(`   Active Tokens: ${metrics.authentication.activeTokens}`, 'primary'));
+    console.info(styled(`   Recent Auths (1h): ${metrics.authentication.recentAuths}`, 'success'));
+    console.info(styled(`   Failed Auths (1h): ${metrics.authentication.failedAuths}`, 
       metrics.authentication.failedAuths > 0 ? 'warning' : 'success'));
 
     // Storage Metrics
-    console.log(styled('\n☁️ Storage Metrics:', 'accent'));
-    console.log(styled(`   Total Objects: ${metrics.storage.totalObjects}`, 'primary'));
-    console.log(styled(`   Total Size: ${metrics.storage.totalSize}`, 'info'));
-    console.log(styled(`   Diagnoses: ${metrics.storage.diagnosesCount}`, 'success'));
-    console.log(styled(`   Audits: ${metrics.storage.auditsCount}`, 'muted'));
+    console.info(styled('\n☁️ Storage Metrics:', 'accent'));
+    console.info(styled(`   Total Objects: ${metrics.storage.totalObjects}`, 'primary'));
+    console.info(styled(`   Total Size: ${metrics.storage.totalSize}`, 'info'));
+    console.info(styled(`   Diagnoses: ${metrics.storage.diagnosesCount}`, 'success'));
+    console.info(styled(`   Audits: ${metrics.storage.auditsCount}`, 'muted'));
 
     // Usage Metrics
-    console.log(styled('\n📊 Usage Metrics:', 'accent'));
-    console.log(styled(`   Total Searches: ${metrics.usage.totalSearches}`, 'primary'));
-    console.log(styled(`   Total Diagnoses: ${metrics.usage.totalDiagnoses}`, 'success'));
-    console.log(styled(`   Total Examples: ${metrics.usage.totalExamples}`, 'info'));
-    console.log(styled(`   Avg Response Time: ${metrics.usage.avgResponseTime}ms`, 'muted'));
+    console.info(styled('\n📊 Usage Metrics:', 'accent'));
+    console.info(styled(`   Total Searches: ${metrics.usage.totalSearches}`, 'primary'));
+    console.info(styled(`   Total Diagnoses: ${metrics.usage.totalDiagnoses}`, 'success'));
+    console.info(styled(`   Total Examples: ${metrics.usage.totalExamples}`, 'info'));
+    console.info(styled(`   Avg Response Time: ${metrics.usage.avgResponseTime}ms`, 'muted'));
 
     // System Metrics
-    console.log(styled('\n🖥️ System Metrics:', 'accent'));
-    console.log(styled(`   Uptime: ${metrics.system.uptime}`, 'primary'));
-    console.log(styled(`   Memory Usage: ${metrics.system.memoryUsage}`, 'info'));
-    console.log(styled(`   Error Rate: ${(metrics.system.errorRate * 100).toFixed(1)}%`, 
+    console.info(styled('\n🖥️ System Metrics:', 'accent'));
+    console.info(styled(`   Uptime: ${metrics.system.uptime}`, 'primary'));
+    console.info(styled(`   Memory Usage: ${metrics.system.memoryUsage}`, 'info'));
+    console.info(styled(`   Error Rate: ${(metrics.system.errorRate * 100).toFixed(1)}%`, 
       metrics.system.errorRate > 0.05 ? 'warning' : 'success'));
-    console.log(styled(`   Last Restart: ${metrics.system.lastRestart}`, 'muted'));
-    console.log('');
+    console.info(styled(`   Last Restart: ${metrics.system.lastRestart}`, 'muted'));
+    console.info('');
   }
 
   async displayRecentActivity(): Promise<void> {
-    console.log(styled('\n📋 Recent Activity', 'warning'));
-    console.log(colorBar('warning', 50));
+    console.info(styled('\n📋 Recent Activity', 'warning'));
+    console.info(colorBar('warning', 50));
 
     // Recent authentication attempts
     const authLogs = masterTokenManager.getAuditLogs(10);
     if (authLogs.length > 0) {
-      console.log(styled('\n🔐 Authentication Activity:', 'accent'));
+      console.info(styled('\n🔐 Authentication Activity:', 'accent'));
       authLogs.slice(0, 5).forEach(log => {
         const status = log.success ? '✅' : '❌';
         const time = new Date(log.timestamp).toLocaleTimeString();
-        console.log(styled(`   ${status} ${time} - ${log.action} - ${log.tokenId.slice(0, 12)}...`, 
+        console.info(styled(`   ${status} ${time} - ${log.action} - ${log.tokenId.slice(0, 12)}...`, 
           log.success ? 'success' : 'error'));
         if (log.reason) {
-          console.log(styled(`      Reason: ${log.reason}`, 'muted'));
+          console.info(styled(`      Reason: ${log.reason}`, 'muted'));
         }
       });
     }
 
     // Recent system events (mock for now)
-    console.log(styled('\n🖥️ System Events:', 'accent'));
+    console.info(styled('\n🖥️ System Events:', 'accent'));
     const events = [
       { time: '09:24:58', event: 'Diagnosis stored', status: 'success' },
       { time: '09:23:21', event: 'R2 connection test', status: 'success' },
@@ -352,15 +352,15 @@ class MCPSystemDashboard {
 
     events.forEach(event => {
       const icon = event.status === 'success' ? '✅' : '⚠️';
-      console.log(styled(`   ${icon} ${event.time} - ${event.event}`, 
+      console.info(styled(`   ${icon} ${event.time} - ${event.event}`, 
         event.status === 'success' ? 'success' : 'warning'));
     });
-    console.log('');
+    console.info('');
   }
 
   async displayQuickActions(): Promise<void> {
-    console.log(styled('\n⚡ Quick Actions', 'primary'));
-    console.log(colorBar('primary', 50));
+    console.info(styled('\n⚡ Quick Actions', 'primary'));
+    console.info(colorBar('primary', 50));
 
     const actions = [
       { command: 'bun run lib/security/master-token.ts create cli:user', description: 'Create new CLI token' },
@@ -372,45 +372,45 @@ class MCPSystemDashboard {
     ];
 
     actions.forEach((action, index) => {
-      console.log(styled(`${index + 1}. ${action.description}`, 'info'));
-      console.log(styled(`   ${action.command}`, 'muted'));
-      console.log('');
+      console.info(styled(`${index + 1}. ${action.description}`, 'info'));
+      console.info(styled(`   ${action.command}`, 'muted'));
+      console.info('');
     });
   }
 
   async displayTokenManagement(): Promise<void> {
-    console.log(styled('\n🔑 Token Management', 'warning'));
-    console.log(colorBar('warning', 50));
+    console.info(styled('\n🔑 Token Management', 'warning'));
+    console.info(colorBar('warning', 50));
 
     const tokens = masterTokenManager.listTokens();
     
     if (tokens.length === 0) {
-      console.log(styled('No active tokens found.', 'muted'));
-      console.log(styled('Create a token: bun run lib/security/master-token.ts create cli:user', 'info'));
+      console.info(styled('No active tokens found.', 'muted'));
+      console.info(styled('Create a token: bun run lib/security/master-token.ts create cli:user', 'info'));
       return;
     }
 
-    console.log(styled(`Active Tokens (${tokens.length}):`, 'accent'));
+    console.info(styled(`Active Tokens (${tokens.length}):`, 'accent'));
     tokens.forEach((token, index) => {
       const expiresSoon = new Date(token.expiresAt) < new Date(Date.now() + 6 * 60 * 60 * 1000);
       const statusColor = expiresSoon ? 'warning' : 'success';
       
-      console.log(styled(`\n${index + 1}. ${token.tokenId}`, statusColor));
-      console.log(styled(`   Permissions: ${token.permissions.join(', ')}`, 'muted'));
-      console.log(styled(`   Expires: ${token.expiresAt.toLocaleString()}`, statusColor));
+      console.info(styled(`\n${index + 1}. ${token.tokenId}`, statusColor));
+      console.info(styled(`   Permissions: ${token.permissions.join(', ')}`, 'muted'));
+      console.info(styled(`   Expires: ${token.expiresAt.toLocaleString()}`, statusColor));
       
       if (token.metadata) {
         Object.entries(token.metadata).forEach(([key, value]) => {
-          console.log(styled(`   ${key}: ${value}`, 'info'));
+          console.info(styled(`   ${key}: ${value}`, 'info'));
         });
       }
     });
 
-    console.log(styled('\nToken Management Commands:', 'info'));
-    console.log(styled('  • List tokens: bun run lib/security/master-token.ts list', 'muted'));
-    console.log(styled('  • Revoke token: bun run lib/security/master-token.ts revoke <tokenId>', 'muted'));
-    console.log(styled('  • Rotate token: bun run lib/security/master-token.ts rotate <token>', 'muted'));
-    console.log('');
+    console.info(styled('\nToken Management Commands:', 'info'));
+    console.info(styled('  • List tokens: bun run lib/security/master-token.ts list', 'muted'));
+    console.info(styled('  • Revoke token: bun run lib/security/master-token.ts revoke <tokenId>', 'muted'));
+    console.info(styled('  • Rotate token: bun run lib/security/master-token.ts rotate <token>', 'muted'));
+    console.info('');
   }
 
   async startMonitoring(refresh: boolean = false): Promise<void> {
@@ -427,7 +427,7 @@ class MCPSystemDashboard {
         await this.displayTokenManagement();
         await this.displayQuickActions();
 
-        console.log(styled('\n🔄 Auto-refresh in 30 seconds... (Press Ctrl+C to exit)', 'muted'));
+        console.info(styled('\n🔄 Auto-refresh in 30 seconds... (Press Ctrl+C to exit)', 'muted'));
         
         // Wait for refresh interval or interrupt
         await new Promise(resolve => setTimeout(resolve, this.refreshInterval));
@@ -444,7 +444,7 @@ class MCPSystemDashboard {
   }
 
   async generateReport(): Promise<void> {
-    console.log(styled('\n📄 Generating System Report...', 'info'));
+    console.info(styled('\n📄 Generating System Report...', 'info'));
     
     const report = {
       timestamp: new Date().toISOString(),
@@ -457,8 +457,8 @@ class MCPSystemDashboard {
     const reportPath = `mcp-dashboard-report-${Date.now()}.json`;
     await Bun.write(reportPath, JSON.stringify(report, null, 2));
     
-    console.log(styled(`✅ Report saved to: ${reportPath}`, 'success'));
-    console.log(styled(`📊 Report includes: System status, metrics, tokens, and activity`, 'info'));
+    console.info(styled(`✅ Report saved to: ${reportPath}`, 'success'));
+    console.info(styled(`📊 Report includes: System status, metrics, tokens, and activity`, 'info'));
   }
 }
 
@@ -492,21 +492,21 @@ if (import.meta.main) {
       break;
 
     default:
-      console.log(styled('🏭 FactoryWager MCP System Dashboard', 'accent'));
-      console.log(styled('=====================================', 'accent'));
-      console.log('');
-      console.log(styled('Commands:', 'primary'));
-      console.log(styled('  monitor      - Start real-time monitoring (auto-refresh)', 'info'));
-      console.log(styled('  watch        - Start monitoring with screen clearing', 'info'));
-      console.log(styled('  status       - Show current system status and metrics', 'info'));
-      console.log(styled('  tokens       - Display token management interface', 'info'));
-      console.log(styled('  activity     - Show recent system activity', 'info'));
-      console.log(styled('  report       - Generate detailed system report', 'info'));
-      console.log('');
-      console.log(styled('Examples:', 'primary'));
-      console.log(styled('  bun run dashboard/mcp-overview.ts monitor', 'muted'));
-      console.log(styled('  bun run dashboard/mcp-overview.ts status', 'muted'));
-      console.log(styled('  bun run dashboard/mcp-overview.ts tokens', 'muted'));
-      console.log('');
+      console.info(styled('🏭 FactoryWager MCP System Dashboard', 'accent'));
+      console.info(styled('=====================================', 'accent'));
+      console.info('');
+      console.info(styled('Commands:', 'primary'));
+      console.info(styled('  monitor      - Start real-time monitoring (auto-refresh)', 'info'));
+      console.info(styled('  watch        - Start monitoring with screen clearing', 'info'));
+      console.info(styled('  status       - Show current system status and metrics', 'info'));
+      console.info(styled('  tokens       - Display token management interface', 'info'));
+      console.info(styled('  activity     - Show recent system activity', 'info'));
+      console.info(styled('  report       - Generate detailed system report', 'info'));
+      console.info('');
+      console.info(styled('Examples:', 'primary'));
+      console.info(styled('  bun run dashboard/mcp-overview.ts monitor', 'muted'));
+      console.info(styled('  bun run dashboard/mcp-overview.ts status', 'muted'));
+      console.info(styled('  bun run dashboard/mcp-overview.ts tokens', 'muted'));
+      console.info('');
   }
 }

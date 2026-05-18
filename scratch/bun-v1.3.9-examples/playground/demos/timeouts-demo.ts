@@ -6,10 +6,10 @@
  * https://bun.com/docs/test/runtime-behavior#timeouts
  */
 
-console.log("⏱️  Bun Test Timeouts Demo\n");
-console.log("=".repeat(70));
+console.info("⏱️  Bun Test Timeouts Demo\n");
+console.info("=".repeat(70));
 
-console.log("\n📋 Example: Test with timeout parameter\n");
+console.info("\n📋 Example: Test with timeout parameter\n");
 
 const exampleCode = `import { test, expect } from "bun:test";
 
@@ -28,31 +28,31 @@ test("no timeout", () => {
   // Can run forever
 }, 0);`;
 
-console.log(exampleCode);
+console.info(exampleCode);
 
-console.log("\n📊 Timeout Behavior:");
-console.log("-".repeat(70));
-console.log("Default:        5000ms (5 seconds)");
-console.log("Override:       test(name, fn, timeoutMs)");
-console.log("Disable:        test(name, fn, 0)");
-console.log("Applies to:     Both sync and async tests");
+console.info("\n📊 Timeout Behavior:");
+console.info("-".repeat(70));
+console.info("Default:        5000ms (5 seconds)");
+console.info("Override:       test(name, fn, timeoutMs)");
+console.info("Disable:        test(name, fn, 0)");
+console.info("Applies to:     Both sync and async tests");
 
-console.log("\n✅ Key Points:");
-console.log("  • 3rd argument to test() is timeout in milliseconds");
-console.log("  • Default is 5000ms for bun test");
-console.log("  • Set to 0 to disable timeout completely");
-console.log("  • Works with both sync and async tests");
-console.log("  • Test fails with timeout error if exceeded");
+console.info("\n✅ Key Points:");
+console.info("  • 3rd argument to test() is timeout in milliseconds");
+console.info("  • Default is 5000ms for bun test");
+console.info("  • Set to 0 to disable timeout completely");
+console.info("  • Works with both sync and async tests");
+console.info("  • Test fails with timeout error if exceeded");
 
-console.log("\n🚀 Run with:");
-console.log("  bun test my-test.ts");
+console.info("\n🚀 Run with:");
+console.info("  bun test my-test.ts");
 
-console.log("\n⚙️  CLI Flags Integration:");
-console.log("-".repeat(70));
-console.log("bun test --timeout 10000       # Set default timeout to 10s");
-console.log("bun test --bail                # Stop on first failure");
-console.log("bun test --test-name-pattern   # Run tests matching pattern");
-console.log("");
-console.log("Example:");
-console.log("  bun test --timeout 30000 --bail tests/");
-console.log("    (30s timeout, stop on first fail, run all in tests/)");
+console.info("\n⚙️  CLI Flags Integration:");
+console.info("-".repeat(70));
+console.info("bun test --timeout 10000       # Set default timeout to 10s");
+console.info("bun test --bail                # Stop on first failure");
+console.info("bun test --test-name-pattern   # Run tests matching pattern");
+console.info("");
+console.info("Example:");
+console.info("  bun test --timeout 30000 --bail tests/");
+console.info("    (30s timeout, stop on first fail, run all in tests/)");

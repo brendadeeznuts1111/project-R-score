@@ -165,7 +165,7 @@ class DashboardCLI {
     const cmd = this.commands.get(command);
     if (!cmd) {
       console.error(`❌ Unknown command: ${command}`);
-      console.log("Run 'dashboard-cli help' for available commands");
+      console.info("Run 'dashboard-cli help' for available commands");
       process.exit(1);
     }
 
@@ -178,34 +178,34 @@ class DashboardCLI {
   }
 
   private showHelp(): void {
-    console.log("🚀 Enhanced Multi-Tenant Dashboard CLI");
-    console.log("=" .repeat(50));
-    console.log();
+    console.info("🚀 Enhanced Multi-Tenant Dashboard CLI");
+    console.info("=" .repeat(50));
+    console.info();
     
-    console.log("Usage: dashboard-cli <command> [options]");
-    console.log();
+    console.info("Usage: dashboard-cli <command> [options]");
+    console.info();
     
-    console.log("Available commands:");
+    console.info("Available commands:");
     for (const [name, cmd] of this.commands) {
-      console.log(`  ${name.padEnd(12)} ${cmd.description}`);
-      console.log(`               ${cmd.usage}`);
-      console.log();
+      console.info(`  ${name.padEnd(12)} ${cmd.description}`);
+      console.info(`               ${cmd.usage}`);
+      console.info();
     }
     
-    console.log("Environment Variables:");
-    console.log("  PORT              Server port (default: 3333)");
-    console.log("  HOST              Server host (default: localhost)");
-    console.log("  CORS_ORIGIN       Allowed CORS origins");
-    console.log("  DB_PATH           Database file path");
-    console.log("  CACHE_ENABLED     Enable caching (default: true)");
-    console.log("  WEBSOCKETS_ENABLED Enable WebSockets (default: true)");
-    console.log("  METRICS_ENABLED   Enable metrics (default: true)");
-    console.log("  ALERTS_ENABLED    Enable alerts (default: true)");
-    console.log();
+    console.info("Environment Variables:");
+    console.info("  PORT              Server port (default: 3333)");
+    console.info("  HOST              Server host (default: localhost)");
+    console.info("  CORS_ORIGIN       Allowed CORS origins");
+    console.info("  DB_PATH           Database file path");
+    console.info("  CACHE_ENABLED     Enable caching (default: true)");
+    console.info("  WEBSOCKETS_ENABLED Enable WebSockets (default: true)");
+    console.info("  METRICS_ENABLED   Enable metrics (default: true)");
+    console.info("  ALERTS_ENABLED    Enable alerts (default: true)");
+    console.info();
   }
 
   private async handleStart(args: string[]): Promise<void> {
-    console.log("🚀 Starting Enhanced Dashboard Server...");
+    console.info("🚀 Starting Enhanced Dashboard Server...");
     
     // Parse command line arguments
     const portIndex = args.indexOf("--port");
@@ -223,7 +223,7 @@ class DashboardCLI {
 
     // Handle graceful shutdown
     process.on('SIGINT', () => {
-      console.log("\n🛑 Shutting down gracefully...");
+      console.info("\n🛑 Shutting down gracefully...");
       process.exit(0);
     });
   }
@@ -233,15 +233,15 @@ class DashboardCLI {
       const response = await fetch(`http://${this.config.server.host}:${this.config.server.port}/health`);
       const status = await response.json();
       
-      console.log("📊 Dashboard Server Status:");
-      console.log(`  Status: ${status.status}`);
-      console.log(`  Uptime: ${status.uptime}s`);
-      console.log(`  Memory: ${Math.round(status.memory.heapUsed / 1024 / 1024)}MB`);
-      console.log(`  Cache: ${status.cache.size}/${status.cache.maxSize} entries`);
-      console.log(`  Connections: ${status.connections.totalConnections}`);
+      console.info("📊 Dashboard Server Status:");
+      console.info(`  Status: ${status.status}`);
+      console.info(`  Uptime: ${status.uptime}s`);
+      console.info(`  Memory: ${Math.round(status.memory.heapUsed / 1024 / 1024)}MB`);
+      console.info(`  Cache: ${status.cache.size}/${status.cache.maxSize} entries`);
+      console.info(`  Connections: ${status.connections.totalConnections}`);
       
     } catch (error) {
-      console.log("❌ Dashboard server is not running or not accessible");
+      console.info("❌ Dashboard server is not running or not accessible");
       process.exit(1);
     }
   }
@@ -249,28 +249,28 @@ class DashboardCLI {
   private async handleConfig(args: string[]): Promise<void> {
     const showSecrets = args.includes("--show-secrets");
     
-    console.log("⚙️  Dashboard Configuration:");
-    console.log(`  Server: ${this.config.server.host}:${this.config.server.port}`);
-    console.log(`  CORS Origins: ${this.config.server.cors.origin.join(", ")}`);
-    console.log(`  Database: ${this.config.database.path}`);
-    console.log(`  Compression: ${this.config.server.compression}`);
-    console.log();
+    console.info("⚙️  Dashboard Configuration:");
+    console.info(`  Server: ${this.config.server.host}:${this.config.server.port}`);
+    console.info(`  CORS Origins: ${this.config.server.cors.origin.join(", ")}`);
+    console.info(`  Database: ${this.config.database.path}`);
+    console.info(`  Compression: ${this.config.server.compression}`);
+    console.info();
     
-    console.log("Features:");
-    console.log(`  Caching: ${this.config.features.caching.enabled} (TTL: ${this.config.features.caching.ttl}ms)`);
-    console.log(`  WebSockets: ${this.config.features.websockets}`);
-    console.log(`  Metrics: ${this.config.features.metrics}`);
-    console.log(`  Alerts: ${this.config.features.alerts}`);
-    console.log(`  Scheduling: ${this.config.features.scheduling}`);
-    console.log();
+    console.info("Features:");
+    console.info(`  Caching: ${this.config.features.caching.enabled} (TTL: ${this.config.features.caching.ttl}ms)`);
+    console.info(`  WebSockets: ${this.config.features.websockets}`);
+    console.info(`  Metrics: ${this.config.features.metrics}`);
+    console.info(`  Alerts: ${this.config.features.alerts}`);
+    console.info(`  Scheduling: ${this.config.features.scheduling}`);
+    console.info();
     
-    console.log("Security:");
-    console.log(`  API Key Auth: ${this.config.security.apiKey}`);
-    console.log(`  JWT Auth: ${this.config.security.jwt.enabled}`);
+    console.info("Security:");
+    console.info(`  API Key Auth: ${this.config.security.apiKey}`);
+    console.info(`  JWT Auth: ${this.config.security.jwt.enabled}`);
     if (showSecrets && this.config.security.jwt.enabled) {
-      console.log(`  JWT Secret: ${this.config.security.jwt.secret}`);
+      console.info(`  JWT Secret: ${this.config.security.jwt.secret}`);
     }
-    console.log(`  Audit Logging: ${this.config.security.audit}`);
+    console.info(`  Audit Logging: ${this.config.security.audit}`);
   }
 
   private async handleTenant(args: string[]): Promise<void> {
@@ -299,11 +299,11 @@ class DashboardCLI {
       const response = await fetch(`http://${this.config.server.host}:${this.config.server.port}/api/tenants/enhanced`);
       const tenants = await response.json();
       
-      console.log("📋 Tenants:");
+      console.info("📋 Tenants:");
       tenants.forEach((tenant: any) => {
-        console.log(`  ${tenant.id} (${tenant.name}) - ${tenant.enabled ? "✅" : "❌"}`);
-        console.log(`    Compliance: ${tenant.compliance.score}% (${tenant.compliance.status})`);
-        console.log(`    Violations: ${tenant.compliance.violations.total}`);
+        console.info(`  ${tenant.id} (${tenant.name}) - ${tenant.enabled ? "✅" : "❌"}`);
+        console.info(`    Compliance: ${tenant.compliance.score}% (${tenant.compliance.status})`);
+        console.info(`    Violations: ${tenant.compliance.violations.total}`);
       });
     } catch (error) {
       console.error("❌ Failed to fetch tenants");
@@ -319,7 +319,7 @@ class DashboardCLI {
       return;
     }
     
-    console.log(`🔧 Creating tenant: ${id} (${name})`);
+    console.info(`🔧 Creating tenant: ${id} (${name})`);
     // Implementation would call API to create tenant
   }
 
@@ -329,12 +329,12 @@ class DashboardCLI {
       return;
     }
     
-    console.log(`🗑️  Deleting tenant: ${tenantId}`);
+    console.info(`🗑️  Deleting tenant: ${tenantId}`);
     // Implementation would call API to delete tenant
   }
 
   private async updateTenant(args: string[]): Promise<void> {
-    console.log("📝 Updating tenant...");
+    console.info("📝 Updating tenant...");
     // Implementation would call API to update tenant
   }
 
@@ -361,7 +361,7 @@ class DashboardCLI {
   }
 
   private async createSnapshot(tenant?: string): Promise<void> {
-    console.log(`📸 Creating snapshot${tenant ? ` for ${tenant}` : " for all tenants"}...`);
+    console.info(`📸 Creating snapshot${tenant ? ` for ${tenant}` : " for all tenants"}...`);
     // Implementation would call snapshot API
   }
 
@@ -370,12 +370,12 @@ class DashboardCLI {
       const response = await fetch(`http://${this.config.server.host}:${this.config.server.port}/api/snapshots/enhanced`);
       const snapshots = await response.json();
       
-      console.log("📸 Snapshots:");
+      console.info("📸 Snapshots:");
       snapshots.forEach((snapshot: any) => {
         if (!tenant || snapshot.tenant === tenant) {
-          console.log(`  ${snapshot.filename} (${snapshot.tenant})`);
-          console.log(`    Size: ${Math.round(snapshot.size / 1024)}KB`);
-          console.log(`    Created: ${snapshot.createdAt}`);
+          console.info(`  ${snapshot.filename} (${snapshot.tenant})`);
+          console.info(`    Size: ${Math.round(snapshot.size / 1024)}KB`);
+          console.info(`    Created: ${snapshot.createdAt}`);
         }
       });
     } catch (error) {
@@ -384,12 +384,12 @@ class DashboardCLI {
   }
 
   private async deleteSnapshot(snapshotId: string): Promise<void> {
-    console.log(`🗑️  Deleting snapshot: ${snapshotId}`);
+    console.info(`🗑️  Deleting snapshot: ${snapshotId}`);
     // Implementation would call API to delete snapshot
   }
 
   private async verifySnapshot(snapshotId: string): Promise<void> {
-    console.log(`🔍 Verifying snapshot: ${snapshotId}`);
+    console.info(`🔍 Verifying snapshot: ${snapshotId}`);
     // Implementation would call verification API
   }
 
@@ -401,17 +401,17 @@ class DashboardCLI {
       const metrics = await response.json();
       
       if (format === "json") {
-        console.log(JSON.stringify(metrics, null, 2));
+        console.info(JSON.stringify(metrics, null, 2));
       } else {
-        console.log("📊 Performance Metrics:");
-        console.log(`  Total Requests: ${metrics.totalRequests}`);
-        console.log(`  Average Response Time: ${Math.round(metrics.averageResponseTime)}ms`);
-        console.log(`  Error Rate: ${metrics.errorRate.toFixed(2)}%`);
-        console.log(`  Cache Hit Rate: ${metrics.cacheHitRate.toFixed(2)}%`);
-        console.log();
-        console.log("Top Endpoints:");
+        console.info("📊 Performance Metrics:");
+        console.info(`  Total Requests: ${metrics.totalRequests}`);
+        console.info(`  Average Response Time: ${Math.round(metrics.averageResponseTime)}ms`);
+        console.info(`  Error Rate: ${metrics.errorRate.toFixed(2)}%`);
+        console.info(`  Cache Hit Rate: ${metrics.cacheHitRate.toFixed(2)}%`);
+        console.info();
+        console.info("Top Endpoints:");
         metrics.topEndpoints.forEach((endpoint: any, index: number) => {
-          console.log(`  ${index + 1}. ${endpoint.endpoint} (${endpoint.count} requests)`);
+          console.info(`  ${index + 1}. ${endpoint.endpoint} (${endpoint.count} requests)`);
         });
       }
     } catch (error) {
@@ -445,10 +445,10 @@ class DashboardCLI {
       const response = await fetch(`http://${this.config.server.host}:${this.config.server.port}/api/alerts`);
       const alerts = await response.json();
       
-      console.log("🚨 Alerts:");
+      console.info("🚨 Alerts:");
       alerts.forEach((alert: any) => {
-        console.log(`  ${alert.name} (${alert.enabled ? "✅" : "❌"})`);
-        console.log(`    ${alert.description}`);
+        console.info(`  ${alert.name} (${alert.enabled ? "✅" : "❌"})`);
+        console.info(`    ${alert.description}`);
       });
     } catch (error) {
       console.error("❌ Failed to fetch alerts");
@@ -456,17 +456,17 @@ class DashboardCLI {
   }
 
   private async createAlert(args: string[]): Promise<void> {
-    console.log("🔧 Creating alert...");
+    console.info("🔧 Creating alert...");
     // Implementation would call API to create alert
   }
 
   private async deleteAlert(alertId: string): Promise<void> {
-    console.log(`🗑️  Deleting alert: ${alertId}`);
+    console.info(`🗑️  Deleting alert: ${alertId}`);
     // Implementation would call API to delete alert
   }
 
   private async testAlert(): Promise<void> {
-    console.log("🧪 Testing alert system...");
+    console.info("🧪 Testing alert system...");
     // Implementation would trigger test alert
   }
 
@@ -493,16 +493,16 @@ class DashboardCLI {
       const response = await fetch(`http://${this.config.server.host}:${this.config.server.port}/api/cache/stats`);
       const stats = await response.json();
       
-      console.log("💾 Cache Statistics:");
-      console.log(`  Size: ${stats.size}/${stats.maxSize} entries`);
-      console.log(`  Hit Rate: ${stats.hitRate} hits`);
+      console.info("💾 Cache Statistics:");
+      console.info(`  Size: ${stats.size}/${stats.maxSize} entries`);
+      console.info(`  Hit Rate: ${stats.hitRate} hits`);
     } catch (error) {
       console.error("❌ Failed to fetch cache stats");
     }
   }
 
   private async clearCache(): Promise<void> {
-    console.log("🧹 Clearing cache...");
+    console.info("🧹 Clearing cache...");
     // Implementation would call API to clear cache
   }
 
@@ -511,7 +511,7 @@ class DashboardCLI {
       const response = await fetch(`http://${this.config.server.host}:${this.config.server.port}/api/cache/stats`);
       const stats = await response.json();
       
-      console.log(`Cache size: ${stats.size} entries`);
+      console.info(`Cache size: ${stats.size} entries`);
     } catch (error) {
       console.error("❌ Failed to fetch cache size");
     }
@@ -539,22 +539,22 @@ class DashboardCLI {
   }
 
   private async createBackup(): Promise<void> {
-    console.log("💾 Creating backup...");
+    console.info("💾 Creating backup...");
     // Implementation would create database backup
   }
 
   private async listBackups(): Promise<void> {
-    console.log("📋 Available backups:");
+    console.info("📋 Available backups:");
     // Implementation would list available backups
   }
 
   private async restoreBackup(backupId: string): Promise<void> {
-    console.log(`🔄 Restoring backup: ${backupId}`);
+    console.info(`🔄 Restoring backup: ${backupId}`);
     // Implementation would restore from backup
   }
 
   private async deleteBackup(backupId: string): Promise<void> {
-    console.log(`🗑️  Deleting backup: ${backupId}`);
+    console.info(`🗑️  Deleting backup: ${backupId}`);
     // Implementation would delete backup
   }
 
@@ -565,15 +565,15 @@ class DashboardCLI {
       const response = await fetch(`http://${this.config.server.host}:${this.config.server.port}/health`);
       const health = await response.json();
       
-      console.log("🏥 System Health:");
-      console.log(`  Overall Status: ${health.status}`);
-      console.log(`  Uptime: ${health.uptime}s`);
+      console.info("🏥 System Health:");
+      console.info(`  Overall Status: ${health.status}`);
+      console.info(`  Uptime: ${health.uptime}s`);
       
       if (detailed) {
-        console.log(`  Memory Usage: ${Math.round(health.memory.heapUsed / 1024 / 1024)}MB`);
-        console.log(`  Cache Health: ${health.cache.size}/${health.cache.maxSize}`);
-        console.log(`  Active Connections: ${health.connections.totalConnections}`);
-        console.log(`  Active Rooms: ${Object.keys(health.connections.rooms).length}`);
+        console.info(`  Memory Usage: ${Math.round(health.memory.heapUsed / 1024 / 1024)}MB`);
+        console.info(`  Cache Health: ${health.cache.size}/${health.cache.maxSize}`);
+        console.info(`  Active Connections: ${health.connections.totalConnections}`);
+        console.info(`  Active Rooms: ${Object.keys(health.connections.rooms).length}`);
       }
     } catch (error) {
       console.error("❌ Failed to fetch health status");
@@ -585,13 +585,13 @@ class DashboardCLI {
     const levelIndex = args.indexOf("--level");
     const level = levelIndex !== -1 ? args[levelIndex + 1] : "info";
     
-    console.log(`📋 Dashboard Logs (${level}${tail ? ", tailing" : ""}):`);
+    console.info(`📋 Dashboard Logs (${level}${tail ? ", tailing" : ""}):`);
     
     if (tail) {
-      console.log("🔄 Tailing logs... (Ctrl+C to stop)");
+      console.info("🔄 Tailing logs... (Ctrl+C to stop)");
       // Implementation would tail logs
     } else {
-      console.log("Recent logs:");
+      console.info("Recent logs:");
       // Implementation would show recent logs
     }
   }

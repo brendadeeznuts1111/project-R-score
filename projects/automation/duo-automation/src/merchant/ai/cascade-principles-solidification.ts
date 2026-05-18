@@ -202,7 +202,7 @@ export class IdempotencyManager {
     return {
       query: (sql: string) => ({
         get: (param: string) => null, // Mock implementation
-        run: (...params: any[]) => console.log(`[DB] ${sql}`, params)
+        run: (...params: any[]) => console.info(`[DB] ${sql}`, params)
       })
     };
   }
@@ -232,7 +232,7 @@ export class CascadeWorkflowExecutor {
   }
   
   private async runWorkflowSteps(workflowId: string, context: any): Promise<any> {
-    console.log(`🔄 Running workflow: ${workflowId}`);
+    console.info(`🔄 Running workflow: ${workflowId}`);
     return { workflowId, status: 'completed', context };
   }
 }
@@ -354,7 +354,7 @@ export class ObservabilityManager {
   
   // Reinforcement: Standardized metric collection
   recordMetric(name: string, value: number, tags: Record<string, string>): void {
-    console.log(`📊 Metric: ${name} = ${value}`, tags);
+    console.info(`📊 Metric: ${name} = ${value}`, tags);
   }
   
   private generateSpanId(): string {
@@ -362,7 +362,7 @@ export class ObservabilityManager {
   }
   
   private async sendAlert(alert: any): Promise<void> {
-    console.log('🚨 ALERT:', alert);
+    console.info('🚨 ALERT:', alert);
   }
   
   private getErrorCount(errorKey: string): number {

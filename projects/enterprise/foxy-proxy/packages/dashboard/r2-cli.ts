@@ -18,7 +18,7 @@ const { values, positionals } = parseArgs({
 });
 
 if (values.help || positionals.length === 0) {
-  console.log(`
+  console.info(`
 R2 Environment Manager
 Manage your foxy-proxy deployments across Dev, Staging, and Prod.
 
@@ -80,17 +80,17 @@ async function run() {
     switch (command) {
       case "list":
       case "ls":
-        console.log(`📂 Listing assets for ${env.toUpperCase()} (${config.bucketName})...\n`);
+        console.info(`📂 Listing assets for ${env.toUpperCase()} (${config.bucketName})...\n`);
         const objects = await s3.list();
         if (!objects.contents || objects.contents.length === 0) {
-          console.log("No assets found.");
+          console.info("No assets found.");
         } else {
-          console.log(`${"KEY".padEnd(50)} ${"SIZE".padEnd(10)} ${"LAST MODIFIED"}`);
-          console.log("-".repeat(85));
+          console.info(`${"KEY".padEnd(50)} ${"SIZE".padEnd(10)} ${"LAST MODIFIED"}`);
+          console.info("-".repeat(85));
           for (const obj of objects.contents) {
             const size = ((obj.size || 0) / 1024).toFixed(2) + " KB";
             const date = obj.lastModified ? obj.lastModified.toLocaleString() : "Unknown";
-            console.log(`${obj.key.padEnd(50)} ${size.padEnd(10)} ${date}`);
+            console.info(`${obj.key.padEnd(50)} ${size.padEnd(10)} ${date}`);
           }
         }
         break;
@@ -105,8 +105,8 @@ async function run() {
           console.error(`❌ Error: Asset "${targetPath}" not found in ${env}.`);
           process.exit(1);
         }
-        console.log(`\n--- CONTENT OF ${targetPath} (${env.toUpperCase()}) ---\n`);
-        console.log(await file.text());
+        console.info(`\n--- CONTENT OF ${targetPath} (${env.toUpperCase()}) ---\n`);
+        console.info(await file.text());
         break;
 
       case "stat":
@@ -116,17 +116,17 @@ async function run() {
         }
         const statFile = s3.file(targetPath);
         const metadata = await statFile.stat();
-        console.log(`\n📊 Metadata for ${targetPath}:`);
-        console.log(JSON.stringify(metadata, null, 2));
+        console.info(`\n📊 Metadata for ${targetPath}:`);
+        console.info(JSON.stringify(metadata, null, 2));
         break;
 
       case "envs":
-        console.log("\n🌍 Configured Environments:");
+        console.info("\n🌍 Configured Environments:");
         ["dev", "staging", "prod"].forEach((e) => {
           const c = getEnvConfig(e);
-          console.log(`\n[${e.toUpperCase()}]`);
-          console.log(`  Bucket: ${c.bucketName}`);
-          console.log(`  Target: https://${c.accountId}.r2.cloudflarestorage.com`);
+          console.info(`\n[${e.toUpperCase()}]`);
+          console.info(`  Bucket: ${c.bucketName}`);
+          console.info(`  Target: https://${c.accountId}.r2.cloudflarestorage.com`);
         });
         break;
 

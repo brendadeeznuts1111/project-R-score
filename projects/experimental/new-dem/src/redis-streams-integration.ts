@@ -78,7 +78,7 @@ export class RedisStreamsManager {
   // Initialize Redis connection pool
   async initialize(): Promise<void> {
     try {
-      console.log("🔄 Initializing Redis Streams connection pool...");
+      console.info("🔄 Initializing Redis Streams connection pool...");
 
       // Create connection pool
       for (let i = 0; i < this.config.maxConnections; i++) {
@@ -90,7 +90,7 @@ export class RedisStreamsManager {
       await this.testConnection();
 
       this.isInitialized = true;
-      console.log(
+      console.info(
         `✅ Redis Streams initialized with ${this.connections.length} connections`
       );
 
@@ -128,7 +128,7 @@ export class RedisStreamsManager {
       throw new Error("Redis connection failed");
     }
 
-    console.log("🏓 Redis PING successful");
+    console.info("🏓 Redis PING successful");
   }
 
   private getConnection(): any {
@@ -269,7 +269,7 @@ export class RedisStreamsManager {
       .toString(36)
       .substr(2, 9)}`;
 
-    console.log(
+    console.info(
       `📤 Published to stream ${stream}: ${messageId} (${message.type})`
     );
 
@@ -319,7 +319,7 @@ export class RedisStreamsManager {
         "MKSTREAM",
       ]);
 
-      console.log(
+      console.info(
         `👥 Created consumer group ${groupName} for stream ${stream}`
       );
 
@@ -348,7 +348,7 @@ export class RedisStreamsManager {
 
     const { name, stream, consumerId, batchSize, blockTimeout } = consumerGroup;
 
-    console.log(
+    console.info(
       `🎧 Starting consumer ${consumerId} for group ${name} on stream ${stream}`
     );
 
@@ -411,7 +411,7 @@ export class RedisStreamsManager {
     if (interval) {
       clearInterval(interval);
       this.activeConsumers.delete(key);
-      console.log(
+      console.info(
         `⏹️ Stopped consumer ${consumerId} for group ${groupName} on stream ${stream}`
       );
     }
@@ -527,7 +527,7 @@ export class RedisStreamsManager {
         maxLength.toString(),
       ]);
 
-      console.log(
+      console.info(
         `✂️ Trimmed stream ${stream} to ${maxLength} entries, deleted ${deletedCount} entries`
       );
 
@@ -606,7 +606,7 @@ export class RedisStreamsManager {
     // Simulate Redis command execution
     // In production, this would use actual Redis client
 
-    console.log(`🔴 Redis command: ${command} ${args.join(" ")}`);
+    console.info(`🔴 Redis command: ${command} ${args.join(" ")}`);
 
     // Simulate network latency
     await new Promise((resolve) => setTimeout(resolve, Math.random() * 10 + 5));
@@ -716,7 +716,7 @@ export class RedisStreamsManager {
 
   // Cleanup resources
   async cleanup(): Promise<void> {
-    console.log("🧹 Cleaning up Redis Streams manager...");
+    console.info("🧹 Cleaning up Redis Streams manager...");
 
     // Stop all consumers
     for (const interval of this.activeConsumers.values()) {
@@ -732,7 +732,7 @@ export class RedisStreamsManager {
 
     this.isInitialized = false;
 
-    console.log("✅ Redis Streams manager cleaned up");
+    console.info("✅ Redis Streams manager cleaned up");
   }
 }
 
@@ -755,12 +755,12 @@ export class HighPerformanceStreamProcessor {
   // Start high-performance processing
   async startProcessing(): Promise<void> {
     if (this.isProcessing) {
-      console.log("⚠️ Stream processor already running");
+      console.info("⚠️ Stream processor already running");
       return;
     }
 
     this.isProcessing = true;
-    console.log(
+    console.info(
       "🚀 Starting high-performance stream processor (10K req/s capability)..."
     );
 
@@ -784,7 +784,7 @@ export class HighPerformanceStreamProcessor {
   // Stop processing
   stopProcessing(): void {
     this.isProcessing = false;
-    console.log("⏹️ Stopped high-performance stream processor");
+    console.info("⏹️ Stopped high-performance stream processor");
   }
 
   // Add message to processing queue
@@ -849,12 +849,12 @@ export class HighPerformanceStreamProcessor {
 
   private async processOddsTick(tick: OddsTick): Promise<void> {
     // Process odds tick (e.g., update calculations, trigger analysis)
-    console.log(`📊 Processing odds tick: ${tick.marketId} @ ${tick.price}`);
+    console.info(`📊 Processing odds tick: ${tick.marketId} @ ${tick.price}`);
   }
 
   private async processVPINAnalysis(analysis: VPINAnalysis): Promise<void> {
     // Process VPIN analysis (e.g., check thresholds, trigger alerts)
-    console.log(
+    console.info(
       `📈 Processing VPIN analysis: ${analysis.vpin.toFixed(3)} (${
         analysis.regime
       })`
@@ -867,7 +867,7 @@ export class HighPerformanceStreamProcessor {
 
   private async processEdgeDetection(edgeResult: any): Promise<void> {
     // Process edge detection result
-    console.log(
+    console.info(
       `🎯 Processing edge detection: ${edgeResult.market} (confidence: ${edgeResult.confidence})`
     );
   }

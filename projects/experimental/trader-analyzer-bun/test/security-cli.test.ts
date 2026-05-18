@@ -41,7 +41,7 @@ describe('Security CLI', () => {
   describe('sri hash', () => {
     test('generates SHA-384 hash for a file', async () => {
       await using dir = await tempDir('sri-test', {
-        'test.js': 'console.log("hello");',
+        'test.js': 'console.info("hello");',
       });
 
       const result = await runBun(
@@ -55,7 +55,7 @@ describe('Security CLI', () => {
 
     test('generates SHA-256 hash with algorithm flag', async () => {
       await using dir = await tempDir('sri-test', {
-        'test.js': 'console.log("hello");',
+        'test.js': 'console.info("hello");',
       });
 
       const result = await runBun(
@@ -69,7 +69,7 @@ describe('Security CLI', () => {
 
     test('outputs JSON with --json flag', async () => {
       await using dir = await tempDir('sri-test', {
-        'test.js': 'console.log("hello");',
+        'test.js': 'console.info("hello");',
       });
 
       const result = await runBun(

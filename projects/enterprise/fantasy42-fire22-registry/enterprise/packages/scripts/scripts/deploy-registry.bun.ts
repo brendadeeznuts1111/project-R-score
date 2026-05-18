@@ -16,8 +16,8 @@ function loadEnvironmentConfig(target: string) {
   const configPath = join(CONFIG_DIR, `${target}.env`);
 
   if (!existsSync(configPath)) {
-    console.log(`⚠️  Configuration file not found: ${configPath}`);
-    console.log(`📝 Using default configuration`);
+    console.info(`⚠️  Configuration file not found: ${configPath}`);
+    console.info(`📝 Using default configuration`);
     return {};
   }
 
@@ -35,7 +35,7 @@ function loadEnvironmentConfig(target: string) {
       }
     });
 
-    console.log(`✅ Loaded ${target} environment configuration`);
+    console.info(`✅ Loaded ${target} environment configuration`);
     return config;
   } catch (error) {
     console.error(`❌ Failed to load configuration: ${error}`);
@@ -45,116 +45,116 @@ function loadEnvironmentConfig(target: string) {
 
 // Main deployment function
 async function deployRegistry() {
-  console.log('🚀 Fantasy42-Fire22 Registry Deployment');
-  console.log('======================================\n');
+  console.info('🚀 Fantasy42-Fire22 Registry Deployment');
+  console.info('======================================\n');
 
   // Load configuration
   const config = loadEnvironmentConfig(DEPLOY_TARGET);
   const env = DEPLOY_TARGET.toUpperCase();
 
-  console.log(`🎯 Deployment Target: ${DEPLOY_TARGET}`);
-  console.log(`🏗️  Build Destination: ${config.BUILD_DESTINATION || './dist'}`);
-  console.log(`🗜️  Gzip Level: ${config[`${env}_GZIP_LEVEL`] || config.DEFAULT_GZIP_LEVEL || '6'}`);
-  console.log(`🔒 Security Level: ${config.SECURITY_LEVEL || 'medium'}\n`);
+  console.info(`🎯 Deployment Target: ${DEPLOY_TARGET}`);
+  console.info(`🏗️  Build Destination: ${config.BUILD_DESTINATION || './dist'}`);
+  console.info(`🗜️  Gzip Level: ${config[`${env}_GZIP_LEVEL`] || config.DEFAULT_GZIP_LEVEL || '6'}`);
+  console.info(`🔒 Security Level: ${config.SECURITY_LEVEL || 'medium'}\n`);
 
   // Pre-deployment checks
-  console.log('🔍 Pre-deployment Checks:');
-  console.log('✅ Package.json validation');
-  console.log('✅ Dependencies audit');
-  console.log('✅ Build verification');
-  console.log('');
+  console.info('🔍 Pre-deployment Checks:');
+  console.info('✅ Package.json validation');
+  console.info('✅ Dependencies audit');
+  console.info('✅ Build verification');
+  console.info('');
 
   // Package creation
-  console.log('📦 Creating Deployment Package:');
+  console.info('📦 Creating Deployment Package:');
   try {
     const gzipLevel = config[`${env}_GZIP_LEVEL`] || config.DEFAULT_GZIP_LEVEL || '6';
     const destination = config[`${env}_DESTINATION`] || config.BUILD_DESTINATION || './dist';
 
-    console.log(`   Compression Level: ${gzipLevel}`);
-    console.log(`   Destination: ${destination}`);
-    console.log(`   Target: ${DEPLOY_TARGET}`);
+    console.info(`   Compression Level: ${gzipLevel}`);
+    console.info(`   Destination: ${destination}`);
+    console.info(`   Target: ${DEPLOY_TARGET}`);
 
     // Create timestamped package
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
     const packageName = `fantasy42-registry-${DEPLOY_TARGET}-${timestamp}.tgz`;
 
-    console.log(`   Package Name: ${packageName}`);
-    console.log('✅ Package created successfully');
+    console.info(`   Package Name: ${packageName}`);
+    console.info('✅ Package created successfully');
   } catch (error) {
     console.error('❌ Package creation failed:', error);
     process.exit(1);
   }
-  console.log('');
+  console.info('');
 
   // Security validation
-  console.log('🔐 Security Validation:');
+  console.info('🔐 Security Validation:');
   if (config.AUDIT_TRAIL === 'true') {
-    console.log('✅ Audit trail enabled');
+    console.info('✅ Audit trail enabled');
   }
   if (config.SECURITY_LEVEL === 'high') {
-    console.log('✅ High security validation');
+    console.info('✅ High security validation');
   }
-  console.log('✅ Dependency security scan');
-  console.log('✅ Package integrity verification');
-  console.log('');
+  console.info('✅ Dependency security scan');
+  console.info('✅ Package integrity verification');
+  console.info('');
 
   // Deployment preparation
-  console.log('🚀 Deployment Preparation:');
-  console.log('✅ Registry authentication configured');
-  console.log('✅ Deployment tokens validated');
-  console.log('✅ Target environment verified');
-  console.log('');
+  console.info('🚀 Deployment Preparation:');
+  console.info('✅ Registry authentication configured');
+  console.info('✅ Deployment tokens validated');
+  console.info('✅ Target environment verified');
+  console.info('');
 
   // Environment-specific deployment
-  console.log(`🏭 ${env} Environment Deployment:`);
+  console.info(`🏭 ${env} Environment Deployment:`);
 
   switch (DEPLOY_TARGET) {
     case 'production':
-      console.log('🏢 Production deployment initiated');
-      console.log('   • Load balancer configuration');
-      console.log('   • Database migration verification');
-      console.log('   • CDN cache invalidation');
-      console.log('   • Monitoring alerts setup');
+      console.info('🏢 Production deployment initiated');
+      console.info('   • Load balancer configuration');
+      console.info('   • Database migration verification');
+      console.info('   • CDN cache invalidation');
+      console.info('   • Monitoring alerts setup');
       break;
 
     case 'staging':
-      console.log('🧪 Staging deployment initiated');
-      console.log('   • Staging environment validation');
-      console.log('   • Integration tests execution');
-      console.log('   • Performance benchmarks');
+      console.info('🧪 Staging deployment initiated');
+      console.info('   • Staging environment validation');
+      console.info('   • Integration tests execution');
+      console.info('   • Performance benchmarks');
       break;
 
     case 'development':
-      console.log('🛠️  Development deployment initiated');
-      console.log('   • Development server restart');
-      console.log('   • Hot reload configuration');
-      console.log('   • Debug tools activation');
+      console.info('🛠️  Development deployment initiated');
+      console.info('   • Development server restart');
+      console.info('   • Hot reload configuration');
+      console.info('   • Debug tools activation');
       break;
 
     default:
-      console.log(`📋 Custom deployment for: ${DEPLOY_TARGET}`);
+      console.info(`📋 Custom deployment for: ${DEPLOY_TARGET}`);
   }
-  console.log('');
+  console.info('');
 
   // Final deployment status
-  console.log('🎉 Deployment Complete!');
-  console.log('==========================');
-  console.log(`✅ Target: ${DEPLOY_TARGET}`);
-  console.log(`✅ Package: fantasy42-registry-${DEPLOY_TARGET}-*.tgz`);
-  console.log(`✅ Environment: ${config.NODE_ENV || 'production'}`);
-  console.log(`✅ Security: ${config.SECURITY_LEVEL || 'medium'}`);
-  console.log(
+  console.info('🎉 Deployment Complete!');
+  console.info('==========================');
+  console.info(`✅ Target: ${DEPLOY_TARGET}`);
+  console.info(`✅ Package: fantasy42-registry-${DEPLOY_TARGET}-*.tgz`);
+  console.info(`✅ Environment: ${config.NODE_ENV || 'production'}`);
+  console.info(`✅ Security: ${config.SECURITY_LEVEL || 'medium'}`);
+  console.info(
     `✅ Compression: Level ${config[`${env}_GZIP_LEVEL`] || config.DEFAULT_GZIP_LEVEL || '6'}`
   );
-  console.log('');
-  console.log('📊 Deployment Summary:');
-  console.log('   • Files packaged: 4,876+');
-  console.log('   • Package size: ~58MB');
-  console.log('   • Compression ratio: ~75%');
-  console.log('   • Security validations: ✅');
-  console.log('   • Deployment ready: ✅');
-  console.log('');
-  console.log('🚀 Fantasy42-Fire22 Registry is now deployed and ready!');
+  console.info('');
+  console.info('📊 Deployment Summary:');
+  console.info('   • Files packaged: 4,876+');
+  console.info('   • Package size: ~58MB');
+  console.info('   • Compression ratio: ~75%');
+  console.info('   • Security validations: ✅');
+  console.info('   • Deployment ready: ✅');
+  console.info('');
+  console.info('🚀 Fantasy42-Fire22 Registry is now deployed and ready!');
 }
 
 // Execute deployment

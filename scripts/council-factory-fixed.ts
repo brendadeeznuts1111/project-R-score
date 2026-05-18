@@ -44,7 +44,7 @@ class CouncilTicketFactory {
     this.db.run(`CREATE INDEX IF NOT EXISTS idx_tickets_factory ON tickets_v4(factory, created_at)`);
     this.db.run(`CREATE INDEX IF NOT EXISTS idx_tickets_created ON tickets_v4(created_at DESC)`);
     
-    console.log('✅ Ticket factory initialized');
+    console.info('✅ Ticket factory initialized');
   }
   
   // Generate ticket with hash and scope
@@ -77,8 +77,8 @@ class CouncilTicketFactory {
       VALUES (?, ?, ?, ?, 'pending', ?)
     `, [ticketId, hash, scopeWithBrackets, factory, JSON.stringify(data)]);
     
-    console.log(`🎫 Created ticket: ${ticketId} ${scopeWithBrackets} ${factory}`);
-    console.log(`   Hash: ${hash.substring(0, 16)}...`);
+    console.info(`🎫 Created ticket: ${ticketId} ${scopeWithBrackets} ${factory}`);
+    console.info(`   Hash: ${hash.substring(0, 16)}...`);
     
     return {
       id: ticketId,
@@ -278,7 +278,7 @@ export const CouncilScripts = {
   
   // Threaded validation script
   async "validate:tickets"() {
-    console.log('🧪 Validating tickets...');
+    console.info('🧪 Validating tickets...');
     
     // Use 4 threads by default
     const result = await CouncilTicketFactory.validateTickets(4);
@@ -295,9 +295,9 @@ export const CouncilScripts = {
     
     await Bun.write('validation-report.json', JSON.stringify(report, null, 2));
     
-    console.log(`✅ Validated ${result.validated} tickets with ${result.errors.length} errors`);
-    console.log(`   Throughput: ${report.throughput.toFixed(2)} tickets/sec`);
-    console.log(`   Efficiency: ${report.efficiency.toFixed(1)}%`);
+    console.info(`✅ Validated ${result.validated} tickets with ${result.errors.length} errors`);
+    console.info(`   Throughput: ${report.throughput.toFixed(2)} tickets/sec`);
+    console.info(`   Efficiency: ${report.efficiency.toFixed(1)}%`);
     
     return report;
   },
@@ -380,7 +380,7 @@ class CouncilDisputeResolution {
       )
     `);
     
-    console.log('✅ Dispute resolution initialized');
+    console.info('✅ Dispute resolution initialized');
   }
   
   // Get stats for dashboard
@@ -418,7 +418,7 @@ class CouncilDisputeResolution {
       JSON.stringify({})
     ]);
     
-    console.log(`⚖️ Created dispute ${disputeId} with ${councilMembers.length} council members`);
+    console.info(`⚖️ Created dispute ${disputeId} with ${councilMembers.length} council members`);
     
     return disputeId;
   }
@@ -536,7 +536,7 @@ const server = serve({
 // 5. STARTUP & CLI
 // ====================
 async function startCouncilProtocol() {
-  console.log(`
+  console.info(`
 ⚖️ COUNCIL PROTOCOL INITIALIZING
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Mode: ULTRA (n=18–20)
@@ -550,7 +550,7 @@ Database: SQLite (WAL mode)
   await CouncilDisputeResolution.initialize();
   
   // Start dashboard
-  console.log(`📊 Dashboard: http://localhost:${server.port}/council/dashboard`);
+  console.info(`📊 Dashboard: http://localhost:${server.port}/council/dashboard`);
   
   // Create sample ticket
   await CouncilTicketFactory.createTicket(
@@ -560,7 +560,7 @@ Database: SQLite (WAL mode)
   
   // Auto-validate every 5 minutes
   setInterval(async () => {
-    console.log('⏰ Running scheduled validation...');
+    console.info('⏰ Running scheduled validation...');
     await CouncilScripts["validate:tickets"]();
   }, 5 * 60 * 1000);
 }
@@ -580,13 +580,13 @@ if (args.includes('--create')) {
     { type: 'cli', timestamp: Date.now() },
     'DISPUTE-CLI'
   );
-  console.log(ticket);
+  console.info(ticket);
   process.exit(0);
 }
 
 if (args.includes('--stats')) {
   await CouncilTicketFactory.initialize();
-  console.log(CouncilTicketFactory.getStats());
+  console.info(CouncilTicketFactory.getStats());
   process.exit(0);
 }
 

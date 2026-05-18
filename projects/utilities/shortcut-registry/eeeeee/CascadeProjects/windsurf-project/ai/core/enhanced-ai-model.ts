@@ -425,7 +425,7 @@ class EnhancedAIModel {
 		const buffer = this.realTimeBuffer.get("predictions") || [];
 		if (buffer.length < 100) return; // Need minimum data for learning
 
-		console.log(
+		console.info(
 			`🧠 Performing real-time learning with ${buffer.length} samples...`,
 		);
 
@@ -441,7 +441,7 @@ class EnhancedAIModel {
 		// Clear processed data
 		this.realTimeBuffer.set("predictions", []);
 
-		console.log("✅ Real-time learning complete");
+		console.info("✅ Real-time learning complete");
 	}
 
 	private updateFeatureWeights(learningData: any[]): void {
@@ -644,8 +644,8 @@ export {
 
 // Demo and testing section
 async function demonstrateEnhancedAI() {
-	console.log("🧠 Enhanced AI Model - Advanced Ensemble Methods Demo");
-	console.log("=" .repeat(60));
+	console.info("🧠 Enhanced AI Model - Advanced Ensemble Methods Demo");
+	console.info("=" .repeat(60));
 
 	// Initialize the enhanced AI model
 	const enhancedAI = new EnhancedAIModel({
@@ -656,10 +656,10 @@ async function demonstrateEnhancedAI() {
 		realTimeLearning: true,
 	});
 
-	console.log("✅ Enhanced AI Model initialized");
+	console.info("✅ Enhanced AI Model initialized");
 	const modelStatus = enhancedAI.getModelStatus();
-	console.log(`📊 Total models: ${modelStatus.models.length}`);
-	console.log(`🎯 Model initialized with 4 ensemble models`);
+	console.info(`📊 Total models: ${modelStatus.models.length}`);
+	console.info(`🎯 Model initialized with 4 ensemble models`);
 
 	// Simulate some training data
 	const trainingData = Array.from({ length: 100 }, (_, i) => ({
@@ -674,10 +674,10 @@ async function demonstrateEnhancedAI() {
 		timestamp: Date.now() - Math.random() * 86400000,
 	}));
 
-	console.log(`📚 Generated ${trainingData.length} training samples`);
+	console.info(`📚 Generated ${trainingData.length} training samples`);
 
 	// Test predictions directly
-	console.log("\n🔮 Testing predictions...");
+	console.info("\n🔮 Testing predictions...");
 	const testCases = [
 		{
 			name: "High Risk Case",
@@ -713,24 +713,24 @@ async function demonstrateEnhancedAI() {
 
 	for (const testCase of testCases) {
 		const prediction = await enhancedAI.predict(testCase.features);
-		console.log(`\n📊 ${testCase.name}:`);
-		console.log(`   Risk Score: ${(prediction.score * 100).toFixed(2)}%`);
-		console.log(`   Risk Level: ${prediction.riskLevel}`);
-		console.log(`   Confidence: ${(prediction.confidence * 100).toFixed(2)}%`);
-		console.log(`   Model Contributions: ${Object.keys(prediction.modelContributions).join(", ")}`);
-		console.log(`   Recommendations: ${prediction.recommendations.join(", ")}`);
+		console.info(`\n📊 ${testCase.name}:`);
+		console.info(`   Risk Score: ${(prediction.score * 100).toFixed(2)}%`);
+		console.info(`   Risk Level: ${prediction.riskLevel}`);
+		console.info(`   Confidence: ${(prediction.confidence * 100).toFixed(2)}%`);
+		console.info(`   Model Contributions: ${Object.keys(prediction.modelContributions).join(", ")}`);
+		console.info(`   Recommendations: ${prediction.recommendations.join(", ")}`);
 	}
 
 	// Get ensemble performance
-	console.log("\n📊 Ensemble Performance:");
+	console.info("\n📊 Ensemble Performance:");
 	const status = enhancedAI.getModelStatus();
 	const performance = status.ensemblePerformance;
-	console.log(`   Overall Accuracy: ${(performance.accuracy * 100).toFixed(2)}%`);
-	console.log(`   Overall Confidence: ${(performance.confidence * 100).toFixed(2)}%`);
-	console.log(`   Average Latency: ${performance.latency.toFixed(2)}ms`);
+	console.info(`   Overall Accuracy: ${(performance.accuracy * 100).toFixed(2)}%`);
+	console.info(`   Overall Confidence: ${(performance.confidence * 100).toFixed(2)}%`);
+	console.info(`   Average Latency: ${performance.latency.toFixed(2)}ms`);
 
-	console.log("\n🎉 Enhanced AI Model Demo Complete!");
-	console.log("💚 Advanced ensemble methods with real-time prediction operational!");
+	console.info("\n🎉 Enhanced AI Model Demo Complete!");
+	console.info("💚 Advanced ensemble methods with real-time prediction operational!");
 }
 
 // Run the demo if this file is executed directly

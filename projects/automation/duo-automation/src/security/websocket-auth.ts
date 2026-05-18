@@ -77,7 +77,7 @@ export class WebSocketAuthentication extends EventEmitter {
     ipAddress: string,
     userAgent: string
   ): Promise<IAuthenticationResult> {
-    console.log(`🔐 Authenticating WebSocket connection: ${connectionId}`);
+    console.info(`🔐 Authenticating WebSocket connection: ${connectionId}`);
 
     try {
       // Extract token from URL
@@ -553,7 +553,7 @@ export class WebSocketAuthentication extends EventEmitter {
       }
     };
     
-    console.log('🔒 WEBSOCKET SECURITY AUDIT:', JSON.stringify(auditEntry));
+    console.info('🔒 WEBSOCKET SECURITY AUDIT:', JSON.stringify(auditEntry));
     
     // Emit security event for monitoring
     this.emit('websocketSecurityEvent', auditEntry);

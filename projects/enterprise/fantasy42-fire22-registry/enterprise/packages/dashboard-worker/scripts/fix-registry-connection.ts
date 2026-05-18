@@ -74,7 +74,7 @@ class RegistryConnectionManager {
     const startTime = Date.now();
 
     try {
-      console.log(`🔍 Testing ${registry.name}: ${registry.url}`);
+      console.info(`🔍 Testing ${registry.name}: ${registry.url}`);
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), registry.timeout);
@@ -91,14 +91,14 @@ class RegistryConnectionManager {
       const responseTime = Date.now() - startTime;
 
       if (response.ok || response.status === 404) {
-        console.log(`✅ ${registry.name}: Connected (${responseTime}ms)`);
+        console.info(`✅ ${registry.name}: Connected (${responseTime}ms)`);
         return {
           registry: registry.name,
           connected: true,
           responseTime,
         };
       } else {
-        console.log(`❌ ${registry.name}: HTTP ${response.status} (${responseTime}ms)`);
+        console.info(`❌ ${registry.name}: HTTP ${response.status} (${responseTime}ms)`);
         return {
           registry: registry.name,
           connected: false,
@@ -108,7 +108,7 @@ class RegistryConnectionManager {
       }
     } catch (error: any) {
       const responseTime = Date.now() - startTime;
-      console.log(`❌ ${registry.name}: ${error.message} (${responseTime}ms)`);
+      console.info(`❌ ${registry.name}: ${error.message} (${responseTime}ms)`);
 
       return {
         registry: registry.name,
@@ -123,7 +123,7 @@ class RegistryConnectionManager {
    * Test all registries and return the best one
    */
   async findBestRegistry(): Promise<RegistryConfig | null> {
-    console.log('🚀 Testing registry connectivity...\n');
+    console.info('🚀 Testing registry connectivity...\n');
 
     const results: ConnectionResult[] = [];
 
@@ -133,7 +133,7 @@ class RegistryConnectionManager {
 
       // If we find a working registry with good response time, use it
       if (result.connected && result.responseTime < 3000) {
-        console.log(`\n🎯 Selected: ${registry.name} (${result.responseTime}ms)\n`);
+        console.info(`\n🎯 Selected: ${registry.name} (${result.responseTime}ms)\n`);
         return registry;
       }
     }
@@ -142,7 +142,7 @@ class RegistryConnectionManager {
     const workingResults = results.filter(r => r.connected);
 
     if (workingResults.length === 0) {
-      console.log('\n❌ No registries are accessible!\n');
+      console.info('\n❌ No registries are accessible!\n');
       this.showTroubleshootingOptions();
       return null;
     }
@@ -152,7 +152,7 @@ class RegistryConnectionManager {
     const fastest = workingResults[0];
     const selectedRegistry = this.registries.find(r => r.name === fastest.registry);
 
-    console.log(
+    console.info(
       `\n🎯 Selected fastest working registry: ${selectedRegistry?.name} (${fastest.responseTime}ms)\n`
     );
     return selectedRegistry || null;
@@ -236,7 +236,7 @@ mirror = "https://registry.yarnpkg.com/"
 `;
 
     writeFileSync(configPath, newConfig);
-    console.log(`✅ Updated bunfig.toml with ${registry.name} registry`);
+    console.info(`✅ Updated bunfig.toml with ${registry.name} registry`);
   }
 
   /**
@@ -291,9 +291,9 @@ fire22_bunx "$@"
     // Make executable
     try {
       await $`chmod +x scripts/bunx-wrapper.sh`;
-      console.log('✅ Created bunx wrapper script at scripts/bunx-wrapper.sh');
+      console.info('✅ Created bunx wrapper script at scripts/bunx-wrapper.sh');
     } catch (error) {
-      console.log('⚠️ Created wrapper script but could not set executable permissions');
+      console.info('⚠️ Created wrapper script but could not set executable permissions');
     }
   }
 
@@ -304,7 +304,7 @@ fire22_bunx "$@"
     const packagePath = 'package.json';
 
     if (!existsSync(packagePath)) {
-      console.log('❌ package.json not found');
+      console.info('❌ package.json not found');
       return;
     }
 
@@ -327,10 +327,10 @@ fire22_bunx "$@"
           'bun run scripts/fix-registry-connection.ts status';
 
         writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
-        console.log('✅ Updated package.json with registry-aware scripts');
+        console.info('✅ Updated package.json with registry-aware scripts');
       }
     } catch (error) {
-      console.log('⚠️ Could not update package.json scripts:', error);
+      console.info('⚠️ Could not update package.json scripts:', error);
     }
   }
 
@@ -338,41 +338,41 @@ fire22_bunx "$@"
    * Show troubleshooting options when registries fail
    */
   showTroubleshootingOptions(): void {
-    console.log('🔧 Registry Connection Troubleshooting Options:\n');
-    console.log('1. Network Diagnostics:');
-    console.log('   ping registry.npmjs.org');
-    console.log('   curl -I https://registry.npmjs.org/');
-    console.log('   nslookup registry.npmjs.org\n');
+    console.info('🔧 Registry Connection Troubleshooting Options:\n');
+    console.info('1. Network Diagnostics:');
+    console.info('   ping registry.npmjs.org');
+    console.info('   curl -I https://registry.npmjs.org/');
+    console.info('   nslookup registry.npmjs.org\n');
 
-    console.log('2. Proxy/Firewall Check:');
-    console.log('   export HTTP_PROXY=http://your-proxy:port');
-    console.log('   export HTTPS_PROXY=https://your-proxy:port');
-    console.log('   export NO_PROXY=localhost,127.0.0.1\n');
+    console.info('2. Proxy/Firewall Check:');
+    console.info('   export HTTP_PROXY=http://your-proxy:port');
+    console.info('   export HTTPS_PROXY=https://your-proxy:port');
+    console.info('   export NO_PROXY=localhost,127.0.0.1\n');
 
-    console.log('3. DNS Resolution:');
-    console.log('   echo "nameserver 8.8.8.8" >> /etc/resolv.conf');
-    console.log('   echo "nameserver 1.1.1.1" >> /etc/resolv.conf\n');
+    console.info('3. DNS Resolution:');
+    console.info('   echo "nameserver 8.8.8.8" >> /etc/resolv.conf');
+    console.info('   echo "nameserver 1.1.1.1" >> /etc/resolv.conf\n');
 
-    console.log('4. Alternative Registries:');
+    console.info('4. Alternative Registries:');
     this.registries.forEach(reg => {
-      console.log(`   ${reg.name}: ${reg.url}`);
+      console.info(`   ${reg.name}: ${reg.url}`);
     });
-    console.log();
+    console.info();
 
-    console.log('5. Manual Solutions:');
-    console.log('   bun add -g @changesets/cli  # Install globally first');
-    console.log('   npm i -g @changesets/cli    # Use npm instead');
-    console.log('   yarn global add @changesets/cli  # Use yarn instead\n');
+    console.info('5. Manual Solutions:');
+    console.info('   bun add -g @changesets/cli  # Install globally first');
+    console.info('   npm i -g @changesets/cli    # Use npm instead');
+    console.info('   yarn global add @changesets/cli  # Use yarn instead\n');
 
-    console.log('6. Run Registry Fix:');
-    console.log('   bun run registry:fix\n');
+    console.info('6. Run Registry Fix:');
+    console.info('   bun run registry:fix\n');
   }
 
   /**
    * Clean up problematic registry references
    */
   cleanupProblematicRegistries(): void {
-    console.log('🧹 Cleaning up problematic registry references...');
+    console.info('🧹 Cleaning up problematic registry references...');
 
     // Check for .npmrc files
     const npmrcFiles = ['.npmrc', '.yarnrc', '.yarnrc.yml'];
@@ -386,20 +386,20 @@ fire22_bunx "$@"
           this.problematicRegistries.forEach(registry => {
             if (content.includes(registry)) {
               hasProblematic = true;
-              console.log(`⚠️ Found problematic registry in ${file}: ${registry}`);
+              console.info(`⚠️ Found problematic registry in ${file}: ${registry}`);
             }
           });
 
           if (hasProblematic) {
-            console.log(`📝 Please manually review and fix ${file}`);
+            console.info(`📝 Please manually review and fix ${file}`);
           }
         } catch (error) {
-          console.log(`⚠️ Could not read ${file}`);
+          console.info(`⚠️ Could not read ${file}`);
         }
       }
     });
 
-    console.log('✅ Registry cleanup check completed');
+    console.info('✅ Registry cleanup check completed');
   }
 }
 
@@ -409,7 +409,7 @@ async function main() {
   const args = process.argv.slice(2);
   const command = args[0] || 'fix';
 
-  console.log('🔥 Fire22 Registry Connection Fixer\n');
+  console.info('🔥 Fire22 Registry Connection Fixer\n');
 
   switch (command) {
     case 'test':
@@ -417,7 +417,7 @@ async function main() {
       break;
 
     case 'fix':
-      console.log('🔧 Running comprehensive registry fix...\n');
+      console.info('🔧 Running comprehensive registry fix...\n');
 
       // Clean up problematic registries
       manager.cleanupProblematicRegistries();
@@ -431,28 +431,28 @@ async function main() {
         manager.createBunxWrapper();
         manager.updatePackageScripts();
 
-        console.log('✅ Registry configuration fixed!\n');
-        console.log('📋 Available commands:');
-        console.log('  bun run registry:test    - Test registry connectivity');
-        console.log('  bun run registry:status  - Show current registry status');
-        console.log('  bash scripts/bunx-wrapper.sh <package> - Use registry-aware bunx\n');
-        console.log('🔄 You may need to run: bun install --force');
+        console.info('✅ Registry configuration fixed!\n');
+        console.info('📋 Available commands:');
+        console.info('  bun run registry:test    - Test registry connectivity');
+        console.info('  bun run registry:status  - Show current registry status');
+        console.info('  bash scripts/bunx-wrapper.sh <package> - Use registry-aware bunx\n');
+        console.info('🔄 You may need to run: bun install --force');
       } else {
-        console.log('❌ Could not establish registry connection');
+        console.info('❌ Could not establish registry connection');
         process.exit(1);
       }
       break;
 
     case 'status':
-      console.log('📊 Current Registry Status:\n');
+      console.info('📊 Current Registry Status:\n');
       const current = await manager.findBestRegistry();
       if (current) {
-        console.log(`Active Registry: ${current.name} - ${current.url}`);
+        console.info(`Active Registry: ${current.name} - ${current.url}`);
       }
       break;
 
     default:
-      console.log('Usage: bun run scripts/fix-registry-connection.ts [test|fix|status]');
+      console.info('Usage: bun run scripts/fix-registry-connection.ts [test|fix|status]');
       break;
   }
 }

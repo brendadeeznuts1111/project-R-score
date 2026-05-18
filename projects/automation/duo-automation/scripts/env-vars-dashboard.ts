@@ -131,14 +131,14 @@ class EnvVarsDashboard {
     }
 
     await Bun.write(this.envFile, content);
-    console.log('✅ Environment variables saved successfully');
+    console.info('✅ Environment variables saved successfully');
   }
 
   public showDashboard(): void {
     console.clear();
-    console.log('🔧 Environment Variables Management Dashboard');
-    console.log('='.repeat(50));
-    console.log();
+    console.info('🔧 Environment Variables Management Dashboard');
+    console.info('='.repeat(50));
+    console.info();
 
     const categories = new Map<string, EnvVariable[]>();
     let archivedCount = 0;
@@ -155,11 +155,11 @@ class EnvVarsDashboard {
       categories.get(variable.category)!.push(variable);
     }
 
-    console.log(`📊 Total Variables: ${this.variables.size} | Active: ${this.variables.size - archivedCount} | Archived: ${archivedCount}\n`);
+    console.info(`📊 Total Variables: ${this.variables.size} | Active: ${this.variables.size - archivedCount} | Archived: ${archivedCount}\n`);
 
     for (const [category, vars] of categories) {
-      console.log(`\n📁 ${category}`);
-      console.log('-'.repeat(30));
+      console.info(`\n📁 ${category}`);
+      console.info('-'.repeat(30));
       
       for (const variable of vars) {
         const status = variable.required ? '🔴' : '🟢';
@@ -167,38 +167,38 @@ class EnvVarsDashboard {
           ? variable.value.substring(0, 27) + '...' 
           : variable.value;
         
-        console.log(`  ${status} ${variable.name} = ${displayValue}`);
+        console.info(`  ${status} ${variable.name} = ${displayValue}`);
       }
     }
 
     if (archivedCount > 0) {
-      console.log(`\n📦 Archived Variables: ${archivedCount}`);
+      console.info(`\n📦 Archived Variables: ${archivedCount}`);
     }
 
-    console.log('\n' + '='.repeat(50));
-    console.log('🎛️  Actions:');
-    console.log('  1. Add new variable');
-    console.log('  2. Archive variable');
-    console.log('  3. Restore archived variable');
-    console.log('  4. Edit variable');
-    console.log('  5. List archived variables');
-    console.log('  6. Save and exit');
-    console.log('  7. Exit without saving');
-    console.log();
+    console.info('\n' + '='.repeat(50));
+    console.info('🎛️  Actions:');
+    console.info('  1. Add new variable');
+    console.info('  2. Archive variable');
+    console.info('  3. Restore archived variable');
+    console.info('  4. Edit variable');
+    console.info('  5. List archived variables');
+    console.info('  6. Save and exit');
+    console.info('  7. Exit without saving');
+    console.info();
   }
 
   public async addVariable(): Promise<void> {
-    console.log('\n➕ Add New Environment Variable');
-    console.log('-'.repeat(30));
+    console.info('\n➕ Add New Environment Variable');
+    console.info('-'.repeat(30));
 
     const name = await this.prompt('Variable name (e.g., NEW_API_KEY): ');
     if (!name || !/^[A-Z_][A-Z0-9_]*$/.test(name)) {
-      console.log('❌ Invalid variable name. Use uppercase letters, numbers, and underscores only.');
+      console.info('❌ Invalid variable name. Use uppercase letters, numbers, and underscores only.');
       return;
     }
 
     if (this.variables.has(name)) {
-      console.log('❌ Variable already exists. Use edit option instead.');
+      console.info('❌ Variable already exists. Use edit option instead.');
       return;
     }
 
@@ -217,46 +217,46 @@ class EnvVarsDashboard {
       source: '.env.example'
     });
 
-    console.log(`✅ Added ${name} to ${category}`);
+    console.info(`✅ Added ${name} to ${category}`);
   }
 
   public async archiveVariable(): Promise<void> {
-    console.log('\n📦 Archive Environment Variable');
-    console.log('-'.repeat(30));
+    console.info('\n📦 Archive Environment Variable');
+    console.info('-'.repeat(30));
 
     const name = await this.prompt('Variable name to archive: ');
     if (!name) return;
 
     const variable = this.variables.get(name);
     if (!variable) {
-      console.log('❌ Variable not found');
+      console.info('❌ Variable not found');
       return;
     }
 
     if (variable.archived) {
-      console.log('❌ Variable already archived');
+      console.info('❌ Variable already archived');
       return;
     }
 
     variable.archived = true;
-    console.log(`✅ Archived ${name}`);
+    console.info(`✅ Archived ${name}`);
   }
 
   public async restoreVariable(): Promise<void> {
-    console.log('\n♻️  Restore Archived Variable');
-    console.log('-'.repeat(30));
+    console.info('\n♻️  Restore Archived Variable');
+    console.info('-'.repeat(30));
 
     const archivedVars = Array.from(this.variables.values())
       .filter(v => v.archived);
 
     if (archivedVars.length === 0) {
-      console.log('❌ No archived variables found');
+      console.info('❌ No archived variables found');
       return;
     }
 
-    console.log('Archived variables:');
+    console.info('Archived variables:');
     archivedVars.forEach((v, i) => {
-      console.log(`  ${i + 1}. ${v.name} (${v.category})`);
+      console.info(`  ${i + 1}. ${v.name} (${v.category})`);
     });
 
     const choice = await this.prompt('Enter number to restore: ');
@@ -265,53 +265,53 @@ class EnvVarsDashboard {
     if (index >= 0 && index < archivedVars.length) {
       const variable = archivedVars[index];
       variable.archived = false;
-      console.log(`✅ Restored ${variable.name}`);
+      console.info(`✅ Restored ${variable.name}`);
     } else {
-      console.log('❌ Invalid selection');
+      console.info('❌ Invalid selection');
     }
   }
 
   public async editVariable(): Promise<void> {
-    console.log('\n✏️  Edit Environment Variable');
-    console.log('-'.repeat(30));
+    console.info('\n✏️  Edit Environment Variable');
+    console.info('-'.repeat(30));
 
     const name = await this.prompt('Variable name to edit: ');
     if (!name) return;
 
     const variable = this.variables.get(name);
     if (!variable) {
-      console.log('❌ Variable not found');
+      console.info('❌ Variable not found');
       return;
     }
 
     if (variable.archived) {
-      console.log('❌ Cannot edit archived variable. Restore it first.');
+      console.info('❌ Cannot edit archived variable. Restore it first.');
       return;
     }
 
-    console.log(`Current value: ${variable.value}`);
+    console.info(`Current value: ${variable.value}`);
     const newValue = await this.prompt('New value (leave empty to keep current): ', true);
     
     if (newValue) {
       variable.value = newValue;
-      console.log(`✅ Updated ${name}`);
+      console.info(`✅ Updated ${name}`);
     }
   }
 
   public listArchived(): void {
-    console.log('\n📦 Archived Variables');
-    console.log('-'.repeat(30));
+    console.info('\n📦 Archived Variables');
+    console.info('-'.repeat(30));
 
     const archivedVars = Array.from(this.variables.values())
       .filter(v => v.archived);
 
     if (archivedVars.length === 0) {
-      console.log('No archived variables');
+      console.info('No archived variables');
       return;
     }
 
     archivedVars.forEach(variable => {
-      console.log(`  🗑️  ${variable.name} = ${variable.value} (${variable.category})`);
+      console.info(`  🗑️  ${variable.name} = ${variable.value} (${variable.category})`);
     });
   }
 
@@ -356,13 +356,13 @@ class EnvVarsDashboard {
           break;
         case '6':
           await this.saveVariables();
-          console.log('👋 Goodbye!');
+          console.info('👋 Goodbye!');
           return;
         case '7':
-          console.log('👋 Exiting without saving...');
+          console.info('👋 Exiting without saving...');
           return;
         default:
-          console.log('❌ Invalid option. Please choose 1-7.');
+          console.info('❌ Invalid option. Please choose 1-7.');
       }
 
       if (choice !== '7') {

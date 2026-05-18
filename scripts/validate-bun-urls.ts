@@ -66,19 +66,19 @@ function printResult(testName: string, result: ValidationResult): void {
   const statusIcon = result.ok ? '✅' : '❌';
   const statusColor = result.ok ? 'green' : 'red';
 
-  console.log(`${colorize(statusIcon, statusColor)} ${colorize(testName, 'bright')}`);
-  console.log(`   URL: ${colorize(result.url, 'blue')}`);
+  console.info(`${colorize(statusIcon, statusColor)} ${colorize(testName, 'bright')}`);
+  console.info(`   URL: ${colorize(result.url, 'blue')}`);
 
   if (result.ok) {
-    console.log(`   Status: ${colorize(`${result.status} ${result.statusText}`, 'green')}`);
+    console.info(`   Status: ${colorize(`${result.status} ${result.statusText}`, 'green')}`);
   } else {
-    console.log(`   Status: ${colorize(`${result.status} ${result.statusText}`, 'red')}`);
+    console.info(`   Status: ${colorize(`${result.status} ${result.statusText}`, 'red')}`);
     if (result.error) {
-      console.log(`   Error: ${colorize(result.error, 'red')}`);
+      console.info(`   Error: ${colorize(result.error, 'red')}`);
     }
   }
 
-  console.log();
+  console.info();
 }
 
 // Load constants from JSON file
@@ -115,9 +115,9 @@ function extractUrlConstants(constants: any): TestCase[] {
 }
 
 async function runValidation(): Promise<void> {
-  console.log(colorize('🔍 Bun URL Validation Script', 'bright'));
-  console.log(colorize('================================', 'cyan'));
-  console.log();
+  console.info(colorize('🔍 Bun URL Validation Script', 'bright'));
+  console.info(colorize('================================', 'cyan'));
+  console.info();
 
   // Load constants
   const constants = await loadConstants();
@@ -178,8 +178,8 @@ async function runValidation(): Promise<void> {
   // Add URL constants from the JSON file
   testCases.push(...constantUrls);
 
-  console.log(colorize(`Running ${testCases.length} validation tests...`, 'yellow'));
-  console.log();
+  console.info(colorize(`Running ${testCases.length} validation tests...`, 'yellow'));
+  console.info();
 
   let passed = 0;
   let failed = 0;
@@ -204,49 +204,49 @@ async function runValidation(): Promise<void> {
   }
 
   // Summary
-  console.log(colorize('📊 Summary', 'bright'));
-  console.log(colorize('==========', 'cyan'));
-  console.log(`Total tests: ${testCases.length}`);
-  console.log(colorize(`✅ Passed: ${passed}`, 'green'));
-  console.log(colorize(`❌ Failed: ${failed}`, 'red'));
+  console.info(colorize('📊 Summary', 'bright'));
+  console.info(colorize('==========', 'cyan'));
+  console.info(`Total tests: ${testCases.length}`);
+  console.info(colorize(`✅ Passed: ${passed}`, 'green'));
+  console.info(colorize(`❌ Failed: ${failed}`, 'red'));
 
   if (failed > 0) {
-    console.log();
-    console.log(colorize('⚠️  Some URLs failed validation. This may indicate:', 'yellow'));
-    console.log('   • Outdated commit hashes');
-    console.log('   • Broken documentation links');
-    console.log('   • Network connectivity issues');
-    console.log('   • Temporary service outages');
+    console.info();
+    console.info(colorize('⚠️  Some URLs failed validation. This may indicate:', 'yellow'));
+    console.info('   • Outdated commit hashes');
+    console.info('   • Broken documentation links');
+    console.info('   • Network connectivity issues');
+    console.info('   • Temporary service outages');
   } else {
-    console.log();
-    console.log(colorize('🎉 All URLs validated successfully!', 'green'));
+    console.info();
+    console.info(colorize('🎉 All URLs validated successfully!', 'green'));
   }
 
   // Commit hash validation
-  console.log();
-  console.log(colorize('🔍 Reference Analysis', 'bright'));
-  console.log(colorize('===================', 'cyan'));
+  console.info();
+  console.info(colorize('🔍 Reference Analysis', 'bright'));
+  console.info(colorize('===================', 'cyan'));
 
   const gitReference = 'main';
   const isCommitHash = gitReference.length === 40 && /^[a-f0-9]+$/.test(gitReference);
   const isBranchName = gitReference === 'main' || gitReference === 'master' || gitReference.match(/^[a-zA-Z0-9._-]+$/);
   const isValidReference = isCommitHash || isBranchName;
 
-  console.log(`Git reference: ${colorize(gitReference, 'blue')}`);
-  console.log(`Type: ${isCommitHash ? 'Commit hash' : 'Branch name'}`);
-  console.log(`Format check: ${isValidReference ? colorize('✅ Valid', 'green') : colorize('❌ Invalid', 'red')}`);
+  console.info(`Git reference: ${colorize(gitReference, 'blue')}`);
+  console.info(`Type: ${isCommitHash ? 'Commit hash' : 'Branch name'}`);
+  console.info(`Format check: ${isValidReference ? colorize('✅ Valid', 'green') : colorize('❌ Invalid', 'red')}`);
 
   if (isCommitHash) {
-    console.log(`Length check (40 chars): ${colorize('✅ Valid', 'green')}`);
-    console.log(`Hex format check: ${colorize('✅ Valid', 'green')}`);
+    console.info(`Length check (40 chars): ${colorize('✅ Valid', 'green')}`);
+    console.info(`Hex format check: ${colorize('✅ Valid', 'green')}`);
   } else if (isBranchName) {
-    console.log(`Branch name format: ${colorize('✅ Valid', 'green')}`);
+    console.info(`Branch name format: ${colorize('✅ Valid', 'green')}`);
   }
 
   if (isValidReference) {
-    console.log(colorize('✅ Git reference format is valid', 'green'));
+    console.info(colorize('✅ Git reference format is valid', 'green'));
   } else {
-    console.log(colorize('⚠️  Invalid git reference format detected!', 'red'));
+    console.info(colorize('⚠️  Invalid git reference format detected!', 'red'));
   }
 }
 

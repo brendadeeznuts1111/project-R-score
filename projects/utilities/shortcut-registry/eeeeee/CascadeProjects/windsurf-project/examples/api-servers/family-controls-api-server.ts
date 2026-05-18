@@ -113,19 +113,19 @@ if (feature("PREMIUM")) {
     }
   });
 
-  console.log(`🛡️ Family Controls API Server running on port ${PORT}`);
-  console.log('📊 Available endpoints:');
-  console.log('  POST /api/family/limits - Update spend limits');
-  console.log('  GET  /api/family/teen/:id - Get teen profile');
-  console.log('  GET  /api/family/logs/:id - Get activity logs');
-  console.log('  GET  /api/family/approvals/pending - Get pending approvals');
-  console.log('  POST /api/family/approvals/:id - Process approval');
-  console.log('  POST /api/family/allowance/setup - Setup auto-allowance');
-  console.log('  POST /api/family/access/:id - Toggle teen access');
-  console.log('  POST /api/family/approvals/create - Create approval request');
-  console.log('  POST /api/family/coppa/consent/generate - Generate COPPA consent');
-  console.log('  POST /api/family/coppa/consent/submit - Submit COPPA consent');
-  console.log('  POST /api/family/age-verification/submit - Submit age verification');
+  console.info(`🛡️ Family Controls API Server running on port ${PORT}`);
+  console.info('📊 Available endpoints:');
+  console.info('  POST /api/family/limits - Update spend limits');
+  console.info('  GET  /api/family/teen/:id - Get teen profile');
+  console.info('  GET  /api/family/logs/:id - Get activity logs');
+  console.info('  GET  /api/family/approvals/pending - Get pending approvals');
+  console.info('  POST /api/family/approvals/:id - Process approval');
+  console.info('  POST /api/family/allowance/setup - Setup auto-allowance');
+  console.info('  POST /api/family/access/:id - Toggle teen access');
+  console.info('  POST /api/family/approvals/create - Create approval request');
+  console.info('  POST /api/family/coppa/consent/generate - Generate COPPA consent');
+  console.info('  POST /api/family/coppa/consent/submit - Submit COPPA consent');
+  console.info('  POST /api/family/age-verification/submit - Submit age verification');
 }
 
 // Update Spend Limits

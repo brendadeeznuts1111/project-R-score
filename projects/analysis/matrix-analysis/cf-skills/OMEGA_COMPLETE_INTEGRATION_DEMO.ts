@@ -24,20 +24,20 @@ class MockCRC32 {
 
 class MockS3Client {
   static async write(key: string, data: string, options: any) {
-    console.log(`✅ S3 Write: ${key} (Requester Pays: ${options.requestPayer})`);
+    console.info(`✅ S3 Write: ${key} (Requester Pays: ${options.requestPayer})`);
     return `https://profiles.factory-wager.com/${key}`;
   }
   
   static async read(key: string, options: any) {
-    console.log(`✅ S3 Read: ${key} (Requester Pays: ${options.requestPayer})`);
+    console.info(`✅ S3 Read: ${key} (Requester Pays: ${options.requestPayer})`);
     return '# Profile Content\n\nPerformance metrics...';
   }
 }
 
 class MockWebSocket {
   static connect(url: string, options?: any) {
-    console.log(`✅ WebSocket: ${url} (Proxy: ${options?.proxy || 'none'})`);
-    return { url, readyState: 1, send: (data: string) => console.log(`📤 WebSocket Send: ${data}`) };
+    console.info(`✅ WebSocket: ${url} (Proxy: ${options?.proxy || 'none'})`);
+    return { url, readyState: 1, send: (data: string) => console.info(`📤 WebSocket Send: ${data}`) };
   }
 }
 
@@ -73,11 +73,11 @@ export class OMEGACompleteIntegrationDemo {
    * Demonstrate complete profile lifecycle with all features
    */
   async demonstrateCompleteProfileLifecycle(): Promise<void> {
-    console.log('🚀 Tier-1380 OMEGA Complete Integration Demo\n');
-    console.log('📋 Demonstrating all Bun v1.3.6 features working together\n');
+    console.info('🚀 Tier-1380 OMEGA Complete Integration Demo\n');
+    console.info('📋 Demonstrating all Bun v1.3.6 features working together\n');
 
     // Step 1: Create profile data with undefined values (SQL Helper feature)
-    console.log('--- Step 1: SQL Helper - Undefined Value Handling ---');
+    console.info('--- Step 1: SQL Helper - Undefined Value Handling ---');
     const profileData = {
       id: 'cpu-profile-123',
       type: 'cpu',
@@ -89,31 +89,31 @@ export class OMEGACompleteIntegrationDemo {
     };
 
     const sqlQuery = this.sql`INSERT INTO "profiles" ${this.sql(profileData)}`;
-    console.log('📝 Generated SQL:', sqlQuery.text);
-    console.log('📝 Parameters:', sqlQuery.values);
-    console.log('✅ Undefined values filtered out - database DEFAULTs will be used\n');
+    console.info('📝 Generated SQL:', sqlQuery.text);
+    console.info('📝 Parameters:', sqlQuery.values);
+    console.info('✅ Undefined values filtered out - database DEFAULTs will be used\n');
 
     // Step 2: Generate CRC32 hash (Performance feature)
-    console.log('--- Step 2: CRC32 Performance - Hardware Acceleration ---');
+    console.info('--- Step 2: CRC32 Performance - Hardware Acceleration ---');
     const profileContent = JSON.stringify(profileData);
     const hash = this.crc32.hash(profileContent);
-    console.log(`🔐 Generated CRC32 hash: ${hash.toString(16)}`);
+    console.info(`🔐 Generated CRC32 hash: ${hash.toString(16)}`);
     
     const benchmark = this.crc32.benchmark();
-    console.log(`⚡ Performance: ${benchmark.speedup}x faster, ${benchmark.throughput} throughput\n`);
+    console.info(`⚡ Performance: ${benchmark.speedup}x faster, ${benchmark.throughput} throughput\n`);
 
     // Step 3: Upload to S3 Requester Pays bucket (S3 feature)
-    console.log('--- Step 3: S3 Requester Pays - Cost-Effective Storage ---');
+    console.info('--- Step 3: S3 Requester Pays - Cost-Effective Storage ---');
     const s3Key = `cpu/1380/prod/${profileData.timestamp}_cpu-md-${profileData.timestamp}.md`;
     const s3Url = await this.s3.write(s3Key, profileContent, {
       bucket: 'profiles.factory-wager.com',
       requestPayer: true,
       contentType: 'text/markdown'
     });
-    console.log(`📤 S3 URL: ${s3Url}\n`);
+    console.info(`📤 S3 URL: ${s3Url}\n`);
 
     // Step 4: Stream updates via WebSocket proxy (WebSocket feature)
-    console.log('--- Step 4: WebSocket Proxy - Corporate Connectivity ---');
+    console.info('--- Step 4: WebSocket Proxy - Corporate Connectivity ---');
     const ws = this.ws.connect('wss://profiles.factory-wager.com/stream', {
       proxy: 'http://proxy.company.com:8080',
       headers: { 'Proxy-Authorization': 'Bearer token' }
@@ -127,49 +127,49 @@ export class OMEGACompleteIntegrationDemo {
       timestamp: profileData.timestamp
     });
     ws.send(updateMessage);
-    console.log('✅ Profile update streamed through corporate proxy\n');
+    console.info('✅ Profile update streamed through corporate proxy\n');
 
     // Step 5: Store in SQLite database (SQLite feature)
-    console.log('--- Step 5: SQLite 3.51.2 - Enhanced Database Operations ---');
+    console.info('--- Step 5: SQLite 3.51.2 - Enhanced Database Operations ---');
     this.db.run(sqlQuery.text, ...sqlQuery.values);
     
     const storedProfile = this.db.query('SELECT * FROM profiles WHERE id = ?').get(profileData.id);
-    console.log('📊 Stored in SQLite:', storedProfile);
-    console.log('✅ Database DEFAULT values applied: team = unassigned, benchmark = baseline\n');
+    console.info('📊 Stored in SQLite:', storedProfile);
+    console.info('✅ Database DEFAULT values applied: team = unassigned, benchmark = baseline\n');
 
     // Step 6: Read back from S3 Requester Pays
-    console.log('--- Step 6: S3 Requester Pays - Data Retrieval ---');
+    console.info('--- Step 6: S3 Requester Pays - Data Retrieval ---');
     const retrievedContent = await this.s3.read(s3Key, {
       bucket: 'profiles.factory-wager.com',
       requestPayer: true
     });
-    console.log('📥 Retrieved content length:', retrievedContent.length);
-    console.log('✅ Data retrieved with requester paying for transfer\n');
+    console.info('📥 Retrieved content length:', retrievedContent.length);
+    console.info('✅ Data retrieved with requester paying for transfer\n');
 
     // Step 7: Verify integrity with CRC32
-    console.log('--- Step 7: CRC32 Verification - Data Integrity ---');
+    console.info('--- Step 7: CRC32 Verification - Data Integrity ---');
     const retrievedHash = this.crc32.hash(retrievedContent);
     const isValid = retrievedHash === hash;
-    console.log(`🔐 Original hash: ${hash.toString(16)}`);
-    console.log(`🔐 Retrieved hash: ${retrievedHash.toString(16)}`);
-    console.log(`✅ Data integrity: ${isValid ? 'VERIFIED' : 'FAILED'}\n`);
+    console.info(`🔐 Original hash: ${hash.toString(16)}`);
+    console.info(`🔐 Retrieved hash: ${retrievedHash.toString(16)}`);
+    console.info(`✅ Data integrity: ${isValid ? 'VERIFIED' : 'FAILED'}\n`);
 
     // Step 8: Complete workflow summary
-    console.log('--- Complete Workflow Summary ---');
-    console.log('🎯 All Bun v1.3.6 features integrated successfully:');
-    console.log('✅ SQL Helper: Undefined values filtered, DEFAULTs respected');
-    console.log('✅ CRC32 Performance: 20x faster hardware acceleration');
-    console.log('✅ S3 Requester Pays: Cost-effective public bucket access');
-    console.log('✅ WebSocket Proxy: Corporate firewall traversal');
-    console.log('✅ SQLite 3.51.2: Enhanced database operations');
-    console.log('✅ Data Integrity: End-to-end verification');
+    console.info('--- Complete Workflow Summary ---');
+    console.info('🎯 All Bun v1.3.6 features integrated successfully:');
+    console.info('✅ SQL Helper: Undefined values filtered, DEFAULTs respected');
+    console.info('✅ CRC32 Performance: 20x faster hardware acceleration');
+    console.info('✅ S3 Requester Pays: Cost-effective public bucket access');
+    console.info('✅ WebSocket Proxy: Corporate firewall traversal');
+    console.info('✅ SQLite 3.51.2: Enhanced database operations');
+    console.info('✅ Data Integrity: End-to-end verification');
   }
 
   /**
    * Demonstrate bulk operations with all features
    */
   async demonstrateBulkOperations(): Promise<void> {
-    console.log('\n📦 Bulk Operations Demonstration\n');
+    console.info('\n📦 Bulk Operations Demonstration\n');
 
     // Create multiple profiles
     const profiles = Array.from({ length: 5 }, (_, i) => ({
@@ -182,7 +182,7 @@ export class OMEGACompleteIntegrationDemo {
       benchmark: i % 2 === 0 ? undefined : `benchmark-${i}`
     }));
 
-    console.log(`Processing ${profiles.length} profiles...`);
+    console.info(`Processing ${profiles.length} profiles...`);
 
     // Process each profile through the complete pipeline
     const results = [];
@@ -216,28 +216,28 @@ export class OMEGACompleteIntegrationDemo {
       });
     }
 
-    console.log('✅ Bulk processing complete:');
+    console.info('✅ Bulk processing complete:');
     results.forEach(result => {
-      console.log(`  - ${result.id}: ${result.type}, hash=${result.hash}, filtered=${result.sqlFiltered}`);
+      console.info(`  - ${result.id}: ${result.type}, hash=${result.hash}, filtered=${result.sqlFiltered}`);
     });
 
     // Performance summary
     const totalHashes = results.length;
     const crc32Benchmark = this.crc32.benchmark();
-    console.log(`\n⚡ Performance Summary:`);
-    console.log(`  - Total CRC32 hashes: ${totalHashes}`);
-    console.log(`  - CRC32 speedup: ${crc32Benchmark.speedup}x`);
-    console.log(`  - Estimated time saved: ${(totalHashes * 19).toFixed(0)}ms (vs non-accelerated)`);
+    console.info(`\n⚡ Performance Summary:`);
+    console.info(`  - Total CRC32 hashes: ${totalHashes}`);
+    console.info(`  - CRC32 speedup: ${crc32Benchmark.speedup}x`);
+    console.info(`  - Estimated time saved: ${(totalHashes * 19).toFixed(0)}ms (vs non-accelerated)`);
   }
 
   /**
    * Demonstrate corporate environment scenarios
    */
   async demonstrateCorporateScenarios(): Promise<void> {
-    console.log('\n🏢 Corporate Environment Scenarios\n');
+    console.info('\n🏢 Corporate Environment Scenarios\n');
 
     // Scenario 1: Corporate proxy with authentication
-    console.log('--- Scenario 1: Corporate Proxy with Authentication ---');
+    console.info('--- Scenario 1: Corporate Proxy with Authentication ---');
     const corporateWs = this.ws.connect('wss://profiles.factory-wager.com/stream', {
       proxy: 'http://user:pass@proxy.company.com:8080',
       headers: {
@@ -246,10 +246,10 @@ export class OMEGACompleteIntegrationDemo {
       },
       tls: { rejectUnauthorized: false }
     });
-    console.log('✅ Connected through corporate proxy with authentication\n');
+    console.info('✅ Connected through corporate proxy with authentication\n');
 
     // Scenario 2: Requester Pays for public data sharing
-    console.log('--- Scenario 2: Requester Pays for Public Data Sharing ---');
+    console.info('--- Scenario 2: Requester Pays for Public Data Sharing ---');
     const publicData = {
       profiles: Array.from({ length: 10 }, (_, i) => ({
         id: `public-profile-${i}`,
@@ -270,11 +270,11 @@ export class OMEGACompleteIntegrationDemo {
       contentType: 'application/json',
       cacheControl: 'public, max-age=3600'
     });
-    console.log(`✅ Public data shared: ${publicS3Url}`);
-    console.log('✅ External partner pays for data transfer costs\n');
+    console.info(`✅ Public data shared: ${publicS3Url}`);
+    console.info('✅ External partner pays for data transfer costs\n');
 
     // Scenario 3: Database operations with DEFAULT values
-    console.log('--- Scenario 3: Database Operations with DEFAULT Values ---');
+    console.info('--- Scenario 3: Database Operations with DEFAULT Values ---');
     const corporateProfile = {
       id: 'corporate-profile-1',
       type: 'tension',
@@ -287,35 +287,35 @@ export class OMEGACompleteIntegrationDemo {
     this.db.run(corporateSql.text, ...corporateSql.values);
     
     const result = this.db.query('SELECT * FROM profiles WHERE id = ?').get(corporateProfile.id);
-    console.log('📊 Corporate profile with DEFAULTs:', result);
-    console.log('✅ Database constraints respected, no NULL overrides\n');
+    console.info('📊 Corporate profile with DEFAULTs:', result);
+    console.info('✅ Database constraints respected, no NULL overrides\n');
   }
 
   /**
    * Run complete demonstration
    */
   async runCompleteDemo(): Promise<void> {
-    console.log('🔥 Tier-1380 OMEGA Complete Integration Demo');
-    console.log('📅 Bun v1.3.6 Features Demonstration\n');
+    console.info('🔥 Tier-1380 OMEGA Complete Integration Demo');
+    console.info('📅 Bun v1.3.6 Features Demonstration\n');
 
     await this.demonstrateCompleteProfileLifecycle();
     await this.demonstrateBulkOperations();
     await this.demonstrateCorporateScenarios();
 
-    console.log('\n🎉 Integration Demo Complete!');
-    console.log('\n📊 Summary of Bun v1.3.6 Features in Tier-1380 OMEGA:');
-    console.log('✅ SQL Helper: Undefined value filtering and DEFAULT respect');
-    console.log('✅ CRC32 Performance: 20x faster hardware acceleration');
-    console.log('✅ S3 Requester Pays: Cost-effective public bucket access');
-    console.log('✅ WebSocket Proxy: Corporate firewall traversal');
-    console.log('✅ SQLite 3.51.2: Enhanced database operations');
-    console.log('✅ Complete Integration: All features working together');
-    console.log('✅ Corporate Ready: Proxy authentication and TLS support');
-    console.log('✅ Performance Optimized: Hardware acceleration and bulk operations');
-    console.log('✅ Cost Effective: Requester Pays billing model');
-    console.log('✅ Data Integrity: End-to-end CRC32 verification');
+    console.info('\n🎉 Integration Demo Complete!');
+    console.info('\n📊 Summary of Bun v1.3.6 Features in Tier-1380 OMEGA:');
+    console.info('✅ SQL Helper: Undefined value filtering and DEFAULT respect');
+    console.info('✅ CRC32 Performance: 20x faster hardware acceleration');
+    console.info('✅ S3 Requester Pays: Cost-effective public bucket access');
+    console.info('✅ WebSocket Proxy: Corporate firewall traversal');
+    console.info('✅ SQLite 3.51.2: Enhanced database operations');
+    console.info('✅ Complete Integration: All features working together');
+    console.info('✅ Corporate Ready: Proxy authentication and TLS support');
+    console.info('✅ Performance Optimized: Hardware acceleration and bulk operations');
+    console.info('✅ Cost Effective: Requester Pays billing model');
+    console.info('✅ Data Integrity: End-to-end CRC32 verification');
 
-    console.log('\n🚀 The Tier-1380 OMEGA infrastructure is production-ready with Bun v1.3.6! 🔥');
+    console.info('\n🚀 The Tier-1380 OMEGA infrastructure is production-ready with Bun v1.3.6! 🔥');
   }
 
   /**

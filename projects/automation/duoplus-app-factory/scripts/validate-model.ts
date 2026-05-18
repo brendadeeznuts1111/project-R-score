@@ -18,7 +18,7 @@ export async function validateModel(): Promise<boolean> {
     };
 
     const score = await infer(testSignal);
-    console.log("Model validation score:", score);
+    console.info("Model validation score:", score);
     
     return score >= 0 && score <= 1;
   } catch (error) {
@@ -30,7 +30,7 @@ export async function validateModel(): Promise<boolean> {
 if (require.main === module) {
   validateModel()
     .then((success) => {
-      console.log("Model validation:", success ? "PASSED" : "FAILED");
+      console.info("Model validation:", success ? "PASSED" : "FAILED");
       process.exit(success ? 0 : 1);
     })
     .catch((error) => {

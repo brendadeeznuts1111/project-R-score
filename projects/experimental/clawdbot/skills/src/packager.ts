@@ -466,9 +466,9 @@ export class SkillPackager {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export function displayPackageInfo(manifest: PackageManifest) {
-  console.log("\n" + "═".repeat(60));
-  console.log("📦 PACKAGE INFO");
-  console.log("═".repeat(60));
+  console.info("\n" + "═".repeat(60));
+  console.info("📦 PACKAGE INFO");
+  console.info("═".repeat(60));
 
   const info = [
     { Field: "Name", Value: manifest.name },
@@ -482,36 +482,36 @@ export function displayPackageInfo(manifest: PackageManifest) {
     { Field: "Master CRC32", Value: manifest.masterChecksum },
   ];
 
-  console.log(Bun.inspect.table(info, { colors: true }));
+  console.info(Bun.inspect.table(info, { colors: true }));
 
   if (manifest.skills.length > 0) {
-    console.log("\nIncluded Skills:");
-    manifest.skills.forEach((s) => console.log(`  - ${s}`));
+    console.info("\nIncluded Skills:");
+    manifest.skills.forEach((s) => console.info(`  - ${s}`));
   }
 
   if (manifest.dependencies.length > 0) {
-    console.log("\nDependencies:");
+    console.info("\nDependencies:");
     const deps = manifest.dependencies.map((d) => ({
       Name: d.name,
       Type: d.type,
       Required: d.required ? "✅" : "○",
     }));
-    console.log(Bun.inspect.table(deps, { colors: true }));
+    console.info(Bun.inspect.table(deps, { colors: true }));
   }
 }
 
 export function displayPackageResult(result: PackageResult) {
   if (result.success) {
-    console.log("\n✅ Package created successfully!");
-    console.log(`   Path: ${result.path}`);
+    console.info("\n✅ Package created successfully!");
+    console.info(`   Path: ${result.path}`);
     if (result.stats) {
-      console.log(`   Skills: ${result.stats.skillCount}`);
-      console.log(`   Size: ${result.stats.originalSize}B → ${result.stats.compressedSize}B (${result.stats.ratio})`);
-      console.log(`   Time: ${result.stats.timeMs.toFixed(2)}ms`);
+      console.info(`   Skills: ${result.stats.skillCount}`);
+      console.info(`   Size: ${result.stats.originalSize}B → ${result.stats.compressedSize}B (${result.stats.ratio})`);
+      console.info(`   Time: ${result.stats.timeMs.toFixed(2)}ms`);
     }
   } else {
-    console.log("\n❌ Package creation failed!");
-    console.log(`   Error: ${result.error}`);
+    console.info("\n❌ Package creation failed!");
+    console.info(`   Error: ${result.error}`);
   }
 }
 

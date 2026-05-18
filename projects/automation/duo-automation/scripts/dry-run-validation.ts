@@ -33,10 +33,10 @@ class SystemValidator {
    * Run comprehensive validation
    */
   async validate(): Promise<void> {
-    console.log('🔍 Comprehensive Dry-Run Validation');
-    console.log('=====================================\n');
+    console.info('🔍 Comprehensive Dry-Run Validation');
+    console.info('=====================================\n');
 
-    console.log('📋 Validating System Components...\n');
+    console.info('📋 Validating System Components...\n');
 
     // 1. Core Scripts Validation
     await this.validateCoreScripts();
@@ -76,7 +76,7 @@ class SystemValidator {
    * Validate core scripts
    */
   private async validateCoreScripts(): Promise<void> {
-    console.log('🔧 Validating Core Scripts...');
+    console.info('🔧 Validating Core Scripts...');
 
     const coreScripts = [
       'scripts/dashboard.ts',
@@ -115,7 +115,7 @@ class SystemValidator {
    * Validate R2 integration
    */
   private async validateR2Integration(): Promise<void> {
-    console.log('🚀 Validating R2 Integration...');
+    console.info('🚀 Validating R2 Integration...');
 
     const r2Components = [
       { file: 'scripts/r2-integration.ts', description: 'R2 Integration CLI' },
@@ -153,7 +153,7 @@ class SystemValidator {
    * Validate tag system
    */
   private async validateTagSystem(): Promise<void> {
-    console.log('🏷️  Validating Tag System...');
+    console.info('🏷️  Validating Tag System...');
 
     const tagSystemPath = join(this.projectRoot, 'scripts/tag-system.ts');
     if (existsSync(tagSystemPath)) {
@@ -184,7 +184,7 @@ class SystemValidator {
    * Validate dashboard integration
    */
   private async validateDashboardIntegration(): Promise<void> {
-    console.log('📊 Validating Dashboard Integration...');
+    console.info('📊 Validating Dashboard Integration...');
 
     const dashboardPath = join(this.projectRoot, 'scripts/dashboard.ts');
     if (existsSync(dashboardPath)) {
@@ -213,7 +213,7 @@ class SystemValidator {
    * Validate repository structure
    */
   private async validateRepositoryStructure(): Promise<void> {
-    console.log('📁 Validating Repository Structure...');
+    console.info('📁 Validating Repository Structure...');
 
     const requiredStructure = [
       'src/',
@@ -247,7 +247,7 @@ class SystemValidator {
    * Validate dependencies
    */
   private async validateDependencies(): Promise<void> {
-    console.log('📦 Validating Dependencies...');
+    console.info('📦 Validating Dependencies...');
 
     const packageJsonPath = join(this.projectRoot, 'package.json');
     if (existsSync(packageJsonPath)) {
@@ -280,7 +280,7 @@ class SystemValidator {
    * Validate configuration
    */
   private async validateConfiguration(): Promise<void> {
-    console.log('⚙️  Validating Configuration...');
+    console.info('⚙️  Validating Configuration...');
 
     const configFiles = [
       'eslint.config.js',
@@ -311,7 +311,7 @@ class SystemValidator {
    * Validate documentation
    */
   private async validateDocumentation(): Promise<void> {
-    console.log('📚 Validating Documentation...');
+    console.info('📚 Validating Documentation...');
 
     const docs = [
       'README.md',
@@ -346,7 +346,7 @@ class SystemValidator {
    * Validate environment setup
    */
   private async validateEnvironmentSetup(): Promise<void> {
-    console.log('🌍 Validating Environment Setup...');
+    console.info('🌍 Validating Environment Setup...');
 
     const envFiles = [
       '.env.r2.template',
@@ -379,7 +379,7 @@ class SystemValidator {
    * Validate production readiness
    */
   private async validateProductionReadiness(): Promise<void> {
-    console.log('🚀 Validating Production Readiness...');
+    console.info('🚀 Validating Production Readiness...');
 
     // Check for GitHub workflows
     const workflowsPath = join(this.projectRoot, '.github/workflows');
@@ -413,8 +413,8 @@ class SystemValidator {
    * Generate comprehensive report
    */
   private generateReport(): void {
-    console.log('\n📊 VALIDATION REPORT');
-    console.log('====================\n');
+    console.info('\n📊 VALIDATION REPORT');
+    console.info('====================\n');
 
     const total = this.results.length;
     const passed = this.results.filter(r => r.status === '✅').length;
@@ -422,22 +422,22 @@ class SystemValidator {
     const warnings = this.results.filter(r => r.status === '⚠️').length;
 
     // Summary
-    console.log(`📈 Summary: ${passed}/${total} passed, ${warnings} warnings, ${failed} failed\n`);
+    console.info(`📈 Summary: ${passed}/${total} passed, ${warnings} warnings, ${failed} failed\n`);
 
     // Detailed results
-    console.log('📋 Detailed Results:');
-    console.log('===================');
+    console.info('📋 Detailed Results:');
+    console.info('===================');
     
     this.results.forEach(result => {
-      console.log(`${result.status} ${result.component}: ${result.message}`);
+      console.info(`${result.status} ${result.component}: ${result.message}`);
       if (result.details) {
-        console.log(`   ${result.details}`);
+        console.info(`   ${result.details}`);
       }
     });
 
     // Status breakdown
-    console.log('\n🎯 Status Breakdown:');
-    console.log('====================');
+    console.info('\n🎯 Status Breakdown:');
+    console.info('====================');
     
     const categories = {
       '✅ Passed': this.results.filter(r => r.status === '✅'),
@@ -447,16 +447,16 @@ class SystemValidator {
 
     Object.entries(categories).forEach(([status, items]) => {
       if (items.length > 0) {
-        console.log(`\n${status} (${items.length}):`);
+        console.info(`\n${status} (${items.length}):`);
         items.forEach(item => {
-          console.log(`   • ${item.component}`);
+          console.info(`   • ${item.component}`);
         });
       }
     });
 
     // Production readiness assessment
-    console.log('\n🚀 Production Readiness Assessment:');
-    console.log('===================================');
+    console.info('\n🚀 Production Readiness Assessment:');
+    console.info('===================================');
     
     const criticalComponents = [
       'Script: scripts/r2-integration.ts',
@@ -480,39 +480,39 @@ class SystemValidator {
 
     const readinessScore = Math.round((criticalPassed / criticalTotal) * 100);
 
-    console.log(`📊 Critical Components: ${criticalPassed}/${criticalTotal} (${readinessScore}%)`);
+    console.info(`📊 Critical Components: ${criticalPassed}/${criticalTotal} (${readinessScore}%)`);
     
     if (readinessScore >= 90) {
-      console.log('🎉 EXCELLENT: System is production-ready!');
+      console.info('🎉 EXCELLENT: System is production-ready!');
     } else if (readinessScore >= 75) {
-      console.log('✅ GOOD: System is mostly ready with minor issues');
+      console.info('✅ GOOD: System is mostly ready with minor issues');
     } else if (readinessScore >= 50) {
-      console.log('⚠️  FAIR: System needs attention before production');
+      console.info('⚠️  FAIR: System needs attention before production');
     } else {
-      console.log('❌ POOR: System requires significant work');
+      console.info('❌ POOR: System requires significant work');
     }
 
     // Next steps
-    console.log('\n📋 Next Steps:');
-    console.log('==============');
+    console.info('\n📋 Next Steps:');
+    console.info('==============');
     
     if (failed > 0) {
-      console.log('🔧 Fix failed components before deployment');
+      console.info('🔧 Fix failed components before deployment');
     }
     
     if (warnings > 0) {
-      console.log('⚠️  Review warnings for optimization opportunities');
+      console.info('⚠️  Review warnings for optimization opportunities');
     }
     
     if (readinessScore >= 90) {
-      console.log('🚀 Ready for production deployment!');
-      console.log('📝 Configure environment variables');
-      console.log('🔑 Set up Cloudflare R2 credentials');
-      console.log('🌐 Configure custom domain');
-      console.log('🚀 Deploy with: bun run r2:deploy production ./dist');
+      console.info('🚀 Ready for production deployment!');
+      console.info('📝 Configure environment variables');
+      console.info('🔑 Set up Cloudflare R2 credentials');
+      console.info('🌐 Configure custom domain');
+      console.info('🚀 Deploy with: bun run r2:deploy production ./dist');
     }
 
-    console.log('\n✅ Dry-run validation completed!');
+    console.info('\n✅ Dry-run validation completed!');
   }
 }
 

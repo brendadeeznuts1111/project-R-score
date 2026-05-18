@@ -71,7 +71,7 @@ class IssueTracker {
   }
 
   async scanForIssues(): Promise<void> {
-    console.log('🔍 Scanning for issues...');
+    console.info('🔍 Scanning for issues...');
 
     // Scan compliance reports
     await this.scanComplianceReports();
@@ -85,7 +85,7 @@ class IssueTracker {
     // Scan playbook audit results
     await this.scanPlaybookAudits();
 
-    console.log(`✅ Issue scanning complete`);
+    console.info(`✅ Issue scanning complete`);
   }
 
   private async scanComplianceReports(): Promise<void> {
@@ -237,7 +237,7 @@ class IssueTracker {
           const content = await Bun.file(file).text();
           // Parse security report and extract issues
           // This would be customized based on the actual security report format
-          console.log(`📄 Processing security report: ${file}`);
+          console.info(`📄 Processing security report: ${file}`);
         }
       } catch (error) {
         // File doesn't exist or can't be read
@@ -468,7 +468,7 @@ if (import.meta.main) {
   switch (command) {
     case 'scan':
       await tracker.scanForIssues();
-      console.log(tracker.generateIssueReport());
+      console.info(tracker.generateIssueReport());
       break;
 
     case 'report':
@@ -476,16 +476,16 @@ if (import.meta.main) {
       const report = tracker.generateIssueReport();
       const filename = `issue-tracking-report-${new Date().toISOString().slice(0, 10)}.md`;
       await Bun.write(filename, report);
-      console.log(`📄 Report saved: ${filename}`);
+      console.info(`📄 Report saved: ${filename}`);
       break;
 
     case 'list':
       const status = args[1] as Issue['status'];
       const severity = args[2] as Issue['severity'];
       const issues = tracker.getIssues({ status, severity });
-      console.log(`📋 Issues (${issues.length}):`);
+      console.info(`📋 Issues (${issues.length}):`);
       issues.forEach(issue => {
-        console.log(`  • ${issue.severity.toUpperCase()}: ${issue.title} (${issue.category}) - ${issue.status}`);
+        console.info(`  • ${issue.severity.toUpperCase()}: ${issue.title} (${issue.category}) - ${issue.status}`);
       });
       break;
 
@@ -498,17 +498,17 @@ if (import.meta.main) {
         process.exit(1);
       }
       await tracker.updateIssueStatus(issueId, newStatus, assignee);
-      console.log(`✅ Issue ${issueId} updated to ${newStatus}`);
+      console.info(`✅ Issue ${issueId} updated to ${newStatus}`);
       break;
 
     default:
-      console.log('Usage: bun run scripts/issue-tracker.ts [scan|report|list|update]');
-      console.log('');
-      console.log('Commands:');
-      console.log('  scan      - Scan for issues and show report');
-      console.log('  report    - Generate and save detailed report');
-      console.log('  list      - List issues (optionally filter by status/severity)');
-      console.log('  update    - Update issue status');
+      console.info('Usage: bun run scripts/issue-tracker.ts [scan|report|list|update]');
+      console.info('');
+      console.info('Commands:');
+      console.info('  scan      - Scan for issues and show report');
+      console.info('  report    - Generate and save detailed report');
+      console.info('  list      - List issues (optionally filter by status/severity)');
+      console.info('  update    - Update issue status');
       break;
   }
 

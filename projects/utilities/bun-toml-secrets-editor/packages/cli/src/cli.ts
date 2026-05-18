@@ -74,7 +74,7 @@ const commands: Record<string, (args: ParsedArgs) => Promise<void>> = {
 		const name = args[0] || "golden-project";
 		const profile = (flags.get("profile") as string) || "default";
 
-		console.log(colorize(`Initializing Golden Template: ${name}`, "cyan"));
+		console.info(colorize(`Initializing Golden Template: ${name}`, "cyan"));
 
 		// Generate and save template
 		const template = generateGoldenTemplate({
@@ -94,13 +94,13 @@ const commands: Record<string, (args: ParsedArgs) => Promise<void>> = {
 		for (const file of vfsList()) {
 			const path = join(outputDir, file);
 			await Bun.write(path, vfsRead(file)!);
-			console.log(colorize(`Created: ${file}`, "green"));
+			console.info(colorize(`Created: ${file}`, "green"));
 		}
 
-		console.log(colorize("\nNext steps:", "yellow"));
-		console.log(`  1. Edit golden-template.toml`);
-		console.log(`  2. Run: golden validate`);
-		console.log(`  3. Run: golden render`);
+		console.info(colorize("\nNext steps:", "yellow"));
+		console.info(`  1. Edit golden-template.toml`);
+		console.info(`  2. Run: golden validate`);
+		console.info(`  3. Run: golden render`);
 	},
 
 	async fetch({ args, flags }) {
@@ -110,7 +110,7 @@ const commands: Record<string, (args: ParsedArgs) => Promise<void>> = {
 			process.exit(1);
 		}
 
-		console.log(colorize(`Fetching: ${url}`, "cyan"));
+		console.info(colorize(`Fetching: ${url}`, "cyan"));
 
 		const result = await fetchRSS(url, {
 			http2: flags.has("http2"),
@@ -119,9 +119,9 @@ const commands: Record<string, (args: ParsedArgs) => Promise<void>> = {
 				: undefined,
 		});
 
-		console.log(colorize(`\nFeed: ${result.feed.title}`, "bold"));
-		console.log(`Items: ${result.feed.items.length}`);
-		console.log(`Duration: ${result.meta.duration}ms`);
+		console.info(colorize(`\nFeed: ${result.feed.title}`, "bold"));
+		console.info(`Items: ${result.feed.items.length}`);
+		console.info(`Duration: ${result.meta.duration}ms`);
 
 		// Display in table
 		if (result.feed.items.length > 0) {
@@ -144,7 +144,7 @@ const commands: Record<string, (args: ParsedArgs) => Promise<void>> = {
 				});
 			});
 
-			console.log(`\n${table.render()}`);
+			console.info(`\n${table.render()}`);
 		}
 	},
 
@@ -152,19 +152,19 @@ const commands: Record<string, (args: ParsedArgs) => Promise<void>> = {
 		const config = resolveConfig();
 
 		if (flags.has("verbose")) {
-			console.log(getConfigSummary(config));
+			console.info(getConfigSummary(config));
 		}
 
-		console.log(colorize(`Rendering with profile: ${config.profile}`, "cyan"));
+		console.info(colorize(`Rendering with profile: ${config.profile}`, "cyan"));
 
 		// TODO: Implement full render logic
-		console.log(colorize("Done!", "green"));
+		console.info(colorize("Done!", "green"));
 	},
 
 	async validate({ flags }) {
 		const config = resolveConfig();
 
-		console.log(colorize("Validating configuration...", "cyan"));
+		console.info(colorize("Validating configuration...", "cyan"));
 
 		const table = new TableFormatter({ useColors: true });
 		table.addColumn({ key: "source", header: "Source", width: 15 });
@@ -191,37 +191,37 @@ const commands: Record<string, (args: ParsedArgs) => Promise<void>> = {
 				: colorize("MISSING", "yellow"),
 		});
 
-		console.log(`\n${table.render()}`);
+		console.info(`\n${table.render()}`);
 	},
 
 	async version() {
-		console.log(`Golden Template CLI v${VERSION}`);
-		console.log(`Bun ${Bun.version}`);
+		console.info(`Golden Template CLI v${VERSION}`);
+		console.info(`Bun ${Bun.version}`);
 	},
 
 	async help() {
-		console.log(colorize("Golden Template CLI", "bold"));
-		console.log(`\nVersion: ${VERSION}\n`);
+		console.info(colorize("Golden Template CLI", "bold"));
+		console.info(`\nVersion: ${VERSION}\n`);
 
-		console.log("Commands:");
-		console.log("  init [name]       Initialize a new project");
-		console.log("  fetch <url>       Fetch RSS feed");
-		console.log("  render            Render template with secrets");
-		console.log("  validate          Validate configuration");
-		console.log("  version           Show version");
-		console.log("  help              Show this help\n");
+		console.info("Commands:");
+		console.info("  init [name]       Initialize a new project");
+		console.info("  fetch <url>       Fetch RSS feed");
+		console.info("  render            Render template with secrets");
+		console.info("  validate          Validate configuration");
+		console.info("  version           Show version");
+		console.info("  help              Show this help\n");
 
-		console.log("Flags:");
-		console.log("  --profile=<name>  Use specific profile");
-		console.log("  --secrets-dir=<p> Set secrets directory");
-		console.log("  --verbose         Enable verbose output");
-		console.log("  --http2           Use HTTP/2 for fetching");
-		console.log("  --timeout=<ms>    Set timeout\n");
+		console.info("Flags:");
+		console.info("  --profile=<name>  Use specific profile");
+		console.info("  --secrets-dir=<p> Set secrets directory");
+		console.info("  --verbose         Enable verbose output");
+		console.info("  --http2           Use HTTP/2 for fetching");
+		console.info("  --timeout=<ms>    Set timeout\n");
 
-		console.log("Examples:");
-		console.log("  golden init my-project");
-		console.log("  golden fetch https://example.com/feed.xml");
-		console.log("  golden render --profile=production");
+		console.info("Examples:");
+		console.info("  golden init my-project");
+		console.info("  golden fetch https://example.com/feed.xml");
+		console.info("  golden render --profile=production");
 	},
 };
 
@@ -247,7 +247,7 @@ async function main() {
 	const command = commands[args.command];
 	if (!command) {
 		console.error(colorize(`Unknown command: ${args.command}`, "red"));
-		console.log(`Run 'golden help' for usage.`);
+		console.info(`Run 'golden help' for usage.`);
 		process.exit(1);
 	}
 

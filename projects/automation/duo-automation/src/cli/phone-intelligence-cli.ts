@@ -36,7 +36,7 @@ program
   .option('--format <format>', 'Output format: json|csv|summary', 'summary')
   .option('--output <file>', 'Output file (optional)')
   .action(async (file, options) => {
-    console.log(`📁 Reading phone numbers from: ${file}`);
+    console.info(`📁 Reading phone numbers from: ${file}`);
     
     // Simulate reading phones from file
     const phones = Array.from({ length: 1000 }, (_, i) => `+1415555${(26000 + i).toString()}`);
@@ -52,20 +52,20 @@ program
   .option('--iterations <number>', 'Number of iterations', '1000')
   .option('--warmup <number>', 'Warmup iterations', '100')
   .action(async (options) => {
-    console.log('🏃 Running Phone Intelligence Benchmark...');
-    console.log('═'.repeat(60));
+    console.info('🏃 Running Phone Intelligence Benchmark...');
+    console.info('═'.repeat(60));
     
     const workflow = new PhoneIntelligenceSystem.workflow();
     const testPhone = '+14155552671';
     
     // Warmup
-    console.log('🔥 Warming up...');
+    console.info('🔥 Warming up...');
     for (let i = 0; i < options.warmup; i++) {
       await workflow.exec(testPhone);
     }
     
     // Benchmark
-    console.log(`📊 Running ${options.iterations} iterations...`);
+    console.info(`📊 Running ${options.iterations} iterations...`);
     const startTime = Date.now();
     
     const results = [];
@@ -79,19 +79,19 @@ program
     const throughput = Math.round(options.iterations / (totalTime / 1000));
     const successRate = (results.filter(r => !r.error).length / options.iterations) * 100;
     
-    console.log('');
-    console.log('📈 BENCHMARK RESULTS:');
-    console.log('─'.repeat(40));
-    console.log(`Total Time:     ${totalTime}ms`);
-    console.log(`Iterations:     ${options.iterations}`);
-    console.log(`Avg Time:       ${avgTime.toFixed(2)}ms`);
-    console.log(`Throughput:     ${throughput.toLocaleString()} ops/sec`);
-    console.log(`Success Rate:   ${successRate.toFixed(1)}%`);
-    console.log(`Target:         2.1ms`);
-    console.log(`Performance:    ${avgTime <= 2.1 ? '✅ PASS' : '❌ FAIL'}`);
-    console.log('');
-    console.log('🚀 Performance: 73× faster than original (154ms → 2.1ms)');
-    console.log('💰 ROI: 3310% cumulative');
+    console.info('');
+    console.info('📈 BENCHMARK RESULTS:');
+    console.info('─'.repeat(40));
+    console.info(`Total Time:     ${totalTime}ms`);
+    console.info(`Iterations:     ${options.iterations}`);
+    console.info(`Avg Time:       ${avgTime.toFixed(2)}ms`);
+    console.info(`Throughput:     ${throughput.toLocaleString()} ops/sec`);
+    console.info(`Success Rate:   ${successRate.toFixed(1)}%`);
+    console.info(`Target:         2.1ms`);
+    console.info(`Performance:    ${avgTime <= 2.1 ? '✅ PASS' : '❌ FAIL'}`);
+    console.info('');
+    console.info('🚀 Performance: 73× faster than original (154ms → 2.1ms)');
+    console.info('💰 ROI: 3310% cumulative');
   });
 
 // System status command
@@ -99,51 +99,51 @@ program
   .command('status')
   .description('Show system status and pattern information')
   .action(() => {
-    console.log('🧠 EMPIRE PRO PHONE INTELLIGENCE SYSTEM');
-    console.log('═'.repeat(60));
-    console.log('');
+    console.info('🧠 EMPIRE PRO PHONE INTELLIGENCE SYSTEM');
+    console.info('═'.repeat(60));
+    console.info('');
     
-    console.log('📊 PATTERN CLUSTER: §Filter:89-95');
-    console.log('┌─────────────────┬──────────┬────────────┬────────┐');
-    console.log('│ Pattern         │ Latency  │ ROI        │ Status │');
-    console.log('├─────────────────┼──────────┼────────────┼────────┤');
-    console.log('│ §Filter:89      │ <0.08ms  │ 1900x      │ ✅     │');
-    console.log('│ §Pattern:90     │ <1.5ms   │ 100x       │ ✅     │');
-    console.log('│ §Query:91       │ <0.2ms   │ 750x       │ ✅     │');
-    console.log('│ §Filter:92      │ <0.02ms  │ 50x        │ ✅     │');
-    console.log('│ §Pattern:93     │ <0.3ms   │ 10x        │ ✅     │');
-    console.log('│ §Workflow:96    │ 2.1ms    │ 73x        │ ✅     │');
-    console.log('├─────────────────┼──────────┼────────────┼────────┤');
-    console.log('│ TOTAL           │ 2.1ms    │ 3310%      │ ✅     │');
-    console.log('└─────────────────┴──────────┴────────────┴────────┘');
-    console.log('');
+    console.info('📊 PATTERN CLUSTER: §Filter:89-95');
+    console.info('┌─────────────────┬──────────┬────────────┬────────┐');
+    console.info('│ Pattern         │ Latency  │ ROI        │ Status │');
+    console.info('├─────────────────┼──────────┼────────────┼────────┤');
+    console.info('│ §Filter:89      │ <0.08ms  │ 1900x      │ ✅     │');
+    console.info('│ §Pattern:90     │ <1.5ms   │ 100x       │ ✅     │');
+    console.info('│ §Query:91       │ <0.2ms   │ 750x       │ ✅     │');
+    console.info('│ §Filter:92      │ <0.02ms  │ 50x        │ ✅     │');
+    console.info('│ §Pattern:93     │ <0.3ms   │ 10x        │ ✅     │');
+    console.info('│ §Workflow:96    │ 2.1ms    │ 73x        │ ✅     │');
+    console.info('├─────────────────┼──────────┼────────────┼────────┤');
+    console.info('│ TOTAL           │ 2.1ms    │ 3310%      │ ✅     │');
+    console.info('└─────────────────┴──────────┴────────────┴────────┘');
+    console.info('');
     
-    console.log('🎯 SYSTEM CAPABILITIES:');
-    console.log('  ✅ Security: XSS/SQLi stripping (SIMD-powered)');
-    console.log('  ✅ Intelligence: Trust scoring, risk assessment');
-    console.log('  ✅ Economics: Provider routing, cost optimization');
-    console.log('  ✅ Compliance: TCPA/GDPR audit trails');
-    console.log('  ✅ Scale: 543k numbers/sec bulk processing');
-    console.log('  ✅ Automation: Self-documenting, self-enforcing');
-    console.log('');
+    console.info('🎯 SYSTEM CAPABILITIES:');
+    console.info('  ✅ Security: XSS/SQLi stripping (SIMD-powered)');
+    console.info('  ✅ Intelligence: Trust scoring, risk assessment');
+    console.info('  ✅ Economics: Provider routing, cost optimization');
+    console.info('  ✅ Compliance: TCPA/GDPR audit trails');
+    console.info('  ✅ Scale: 543k numbers/sec bulk processing');
+    console.info('  ✅ Automation: Self-documenting, self-enforcing');
+    console.info('');
     
-    console.log('📈 PERFORMANCE METRICS:');
-    console.log('  ⚡ Latency: 2.1ms (73× faster than 154ms)');
-    console.log('  🚀 Throughput: 543,000 numbers/second');
-    console.log('  💰 Cost: $0.75 per 1,000 numbers');
-    console.log('  📊 ROI: 3,310% cumulative');
-    console.log('  🎯 Success Rate: 99.9%');
-    console.log('');
+    console.info('📈 PERFORMANCE METRICS:');
+    console.info('  ⚡ Latency: 2.1ms (73× faster than 154ms)');
+    console.info('  🚀 Throughput: 543,000 numbers/second');
+    console.info('  💰 Cost: $0.75 per 1,000 numbers');
+    console.info('  📊 ROI: 3,310% cumulative');
+    console.info('  🎯 Success Rate: 99.9%');
+    console.info('');
     
-    console.log('🛠️ INTEGRATION STATUS:');
-    console.log('  ✅ Pattern Matrix: Integrated');
-    console.log('  ✅ CLI Tools: Deployed');
-    console.log('  ✅ Dashboard: Connected');
-    console.log('  ✅ Workflows: Active');
-    console.log('  ✅ Monitoring: Real-time');
-    console.log('');
+    console.info('🛠️ INTEGRATION STATUS:');
+    console.info('  ✅ Pattern Matrix: Integrated');
+    console.info('  ✅ CLI Tools: Deployed');
+    console.info('  ✅ Dashboard: Connected');
+    console.info('  ✅ Workflows: Active');
+    console.info('  ✅ Monitoring: Real-time');
+    console.info('');
     
-    console.log('🎉 EMPIRE PRO - PRODUCTION READY!');
+    console.info('🎉 EMPIRE PRO - PRODUCTION READY!');
   });
 
 // Test command with examples
@@ -156,12 +156,12 @@ program
     
     switch (options.example) {
       case 'basic':
-        console.log('🧪 Running basic example...');
+        console.info('🧪 Running basic example...');
         await cli.qualify('+14155552671', { enrich: 'basic' });
         break;
         
       case 'advanced':
-        console.log('🧪 Running advanced example...');
+        console.info('🧪 Running advanced example...');
         await cli.qualify('+14155552671', { 
           enrich: 'deep', 
           format: 'json',
@@ -170,7 +170,7 @@ program
         break;
         
       case 'bulk':
-        console.log('🧪 Running bulk example...');
+        console.info('🧪 Running bulk example...');
         const phones = [
           '+14155552671',
           '+14155552672',
@@ -188,19 +188,19 @@ program
   .command('integrate')
   .description('Integrate patterns into the master matrix')
   .action(() => {
-    console.log('🔗 Integrating Phone Intelligence patterns...');
+    console.info('🔗 Integrating Phone Intelligence patterns...');
     PhoneIntelligenceSystem.integrate();
-    console.log('✅ Integration complete!');
-    console.log('');
-    console.log('📊 Added patterns:');
-    console.log('  • §Filter:89 - PhoneSanitizer');
-    console.log('  • §Pattern:90 - PhoneValidator');
-    console.log('  • §Query:91 - IPQSCache');
-    console.log('  • §Filter:92 - NumberQualifier');
-    console.log('  • §Pattern:93 - ProviderRouter');
-    console.log('  • §Workflow:96 - PhoneIntelligence');
-    console.log('');
-    console.log('🚀 Ready for production deployment!');
+    console.info('✅ Integration complete!');
+    console.info('');
+    console.info('📊 Added patterns:');
+    console.info('  • §Filter:89 - PhoneSanitizer');
+    console.info('  • §Pattern:90 - PhoneValidator');
+    console.info('  • §Query:91 - IPQSCache');
+    console.info('  • §Filter:92 - NumberQualifier');
+    console.info('  • §Pattern:93 - ProviderRouter');
+    console.info('  • §Workflow:96 - PhoneIntelligence');
+    console.info('');
+    console.info('🚀 Ready for production deployment!');
   });
 
 // Export for use in main CLI

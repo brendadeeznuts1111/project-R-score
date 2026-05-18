@@ -15,8 +15,8 @@ const SERVICE_NAME = 'fire22-dashboard-worker';
 const TOKEN_NAME = 'registry-token';
 
 async function setupRegistryToken() {
-  console.log('🔐 Fire22 Registry Token Setup');
-  console.log('!==!==!==!==!==!==\n');
+  console.info('🔐 Fire22 Registry Token Setup');
+  console.info('!==!==!==!==!==!==\n');
 
   // Check if token is already stored
   try {
@@ -26,7 +26,7 @@ async function setupRegistryToken() {
     });
 
     if (existingToken) {
-      console.log('✅ Registry token already configured in secure storage');
+      console.info('✅ Registry token already configured in secure storage');
 
       const response = await fetch(
         'https://fire22-security-registry.nolarose1968-806.workers.dev/health',
@@ -38,10 +38,10 @@ async function setupRegistryToken() {
       );
 
       if (response.ok) {
-        console.log('✅ Token validated successfully with registry');
+        console.info('✅ Token validated successfully with registry');
         return;
       } else {
-        console.log('⚠️ Existing token appears invalid, needs update');
+        console.info('⚠️ Existing token appears invalid, needs update');
       }
     }
   } catch (error) {
@@ -50,7 +50,7 @@ async function setupRegistryToken() {
 
   // Check for token in environment
   if (process.env.FIRE22_REGISTRY_TOKEN) {
-    console.log('📝 Found FIRE22_REGISTRY_TOKEN in environment');
+    console.info('📝 Found FIRE22_REGISTRY_TOKEN in environment');
 
     await secrets.set({
       service: SERVICE_NAME,
@@ -58,7 +58,7 @@ async function setupRegistryToken() {
       value: process.env.FIRE22_REGISTRY_TOKEN,
     });
 
-    console.log('✅ Token stored securely in OS credential manager');
+    console.info('✅ Token stored securely in OS credential manager');
     return;
   }
 
@@ -70,7 +70,7 @@ async function setupRegistryToken() {
       const match = content.match(/FIRE22_REGISTRY_TOKEN=(.+)/);
 
       if (match && match[1]) {
-        console.log(`📝 Found token in ${file}`);
+        console.info(`📝 Found token in ${file}`);
 
         await secrets.set({
           service: SERVICE_NAME,
@@ -78,23 +78,23 @@ async function setupRegistryToken() {
           value: match[1].trim(),
         });
 
-        console.log('✅ Token stored securely in OS credential manager');
-        console.log('💡 You can now remove it from the .env file for better security');
+        console.info('✅ Token stored securely in OS credential manager');
+        console.info('💡 You can now remove it from the .env file for better security');
         return;
       }
     }
   }
 
   // Prompt for token
-  console.log('\n⚠️ No registry token found!');
-  console.log('\nTo set up the Fire22 private registry token:');
-  console.log('\n1. Get your token from the Fire22 admin panel');
-  console.log('2. Run one of these commands:\n');
-  console.log('   # Set via environment variable:');
-  console.log('   FIRE22_REGISTRY_TOKEN=your-token-here bun run scripts/setup-registry-token.ts\n');
-  console.log('   # Or add to .env file:');
-  console.log("   echo 'FIRE22_REGISTRY_TOKEN=your-token-here' >> .env");
-  console.log('   bun run scripts/setup-registry-token.ts\n');
+  console.info('\n⚠️ No registry token found!');
+  console.info('\nTo set up the Fire22 private registry token:');
+  console.info('\n1. Get your token from the Fire22 admin panel');
+  console.info('2. Run one of these commands:\n');
+  console.info('   # Set via environment variable:');
+  console.info('   FIRE22_REGISTRY_TOKEN=your-token-here bun run scripts/setup-registry-token.ts\n');
+  console.info('   # Or add to .env file:');
+  console.info("   echo 'FIRE22_REGISTRY_TOKEN=your-token-here' >> .env");
+  console.info('   bun run scripts/setup-registry-token.ts\n');
 
   process.exit(1);
 }
@@ -116,9 +116,9 @@ async function deleteStoredToken() {
       service: SERVICE_NAME,
       name: TOKEN_NAME,
     });
-    console.log('✅ Token deleted from secure storage');
+    console.info('✅ Token deleted from secure storage');
   } catch (error) {
-    console.log('⚠️ No token found to delete');
+    console.info('⚠️ No token found to delete');
   }
 }
 
@@ -129,10 +129,10 @@ switch (command) {
   case 'get':
     const token = await getStoredToken();
     if (token) {
-      console.log('✅ Token retrieved from secure storage');
-      console.log(`Token: ${token.substring(0, 10)}...${token.substring(token.length - 4)}`);
+      console.info('✅ Token retrieved from secure storage');
+      console.info(`Token: ${token.substring(0, 10)}...${token.substring(token.length - 4)}`);
     } else {
-      console.log('⚠️ No token found in secure storage');
+      console.info('⚠️ No token found in secure storage');
     }
     break;
 
@@ -153,14 +153,14 @@ switch (command) {
       );
 
       if (response.ok) {
-        console.log('✅ Token validated successfully with registry');
+        console.info('✅ Token validated successfully with registry');
         const data = await response.json();
-        console.log('Registry Status:', data);
+        console.info('Registry Status:', data);
       } else {
-        console.log('❌ Token validation failed:', response.status);
+        console.info('❌ Token validation failed:', response.status);
       }
     } else {
-      console.log('⚠️ No token found to test');
+      console.info('⚠️ No token found to test');
     }
     break;
 

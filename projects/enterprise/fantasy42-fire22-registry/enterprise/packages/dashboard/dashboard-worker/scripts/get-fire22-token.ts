@@ -6,7 +6,7 @@
 
 import { updateToken } from './fire22-token-updater';
 
-console.log(`
+console.info(`
 🔑 Fire22 Token Fetcher
 !==!==!==!====
 
@@ -35,7 +35,7 @@ for await (const line of console) {
 
   if (input === '') {
     // Open browser to the login page
-    console.log('\n🌐 Opening browser...\n');
+    console.info('\n🌐 Opening browser...\n');
     const { $ } = await import('bun');
 
     const opener =
@@ -43,12 +43,12 @@ for await (const line of console) {
 
     await $`${opener} https://fantasy402.com`;
 
-    console.log('Browser opened! Follow these steps:');
-    console.log('1. Login to your account');
-    console.log('2. Open Developer Tools (F12)');
-    console.log('3. Go to Network tab');
-    console.log('4. Look for any "cloud/api" request');
-    console.log('5. Copy the Authorization header value\n');
+    console.info('Browser opened! Follow these steps:');
+    console.info('1. Login to your account');
+    console.info('2. Open Developer Tools (F12)');
+    console.info('3. Go to Network tab');
+    console.info('4. Look for any "cloud/api" request');
+    console.info('5. Copy the Authorization header value\n');
 
     process.stdout.write('Paste token when ready: ');
     continue;
@@ -63,19 +63,19 @@ for await (const line of console) {
   // Validate it looks like a JWT token
   if (!bearerToken.startsWith('eyJ')) {
     console.error('\n❌ Invalid token format. JWT tokens should start with "eyJ"');
-    console.log('Please copy the entire Authorization header value\n');
+    console.info('Please copy the entire Authorization header value\n');
     process.stdout.write(prompt);
     continue;
   }
 
   // Update the token
-  console.log('\n');
+  console.info('\n');
   await updateToken(bearerToken);
 
-  console.log('\n✅ Done! Your token has been saved.\n');
-  console.log('You can now run any of these commands:');
-  console.log('  bun run scripts/fire22-auto-refresh-client.ts');
-  console.log('  bun run scripts/fire22-authenticated-client.ts');
+  console.info('\n✅ Done! Your token has been saved.\n');
+  console.info('You can now run any of these commands:');
+  console.info('  bun run scripts/fire22-auto-refresh-client.ts');
+  console.info('  bun run scripts/fire22-authenticated-client.ts');
 
   process.exit(0);
 }

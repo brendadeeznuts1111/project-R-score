@@ -316,10 +316,10 @@ export function displayComplexityResults(
 ): void {
 	const { limit = 20 } = options;
 
-	console.log("\n📊 Cyclomatic Complexity Analysis\n");
+	console.info("\n📊 Cyclomatic Complexity Analysis\n");
 
 	// Summary
-	console.log(
+	console.info(
 		Bun.inspect.table(
 			[
 				{ Metric: "Total Functions", Value: report.summary.totalFunctions },
@@ -340,7 +340,7 @@ export function displayComplexityResults(
 	// Top complex functions
 	const topResults = report.results.slice(0, limit);
 	if (topResults.length > 0) {
-		console.log(`\n🔥 Most Complex Functions (top ${limit})\n`);
+		console.info(`\n🔥 Most Complex Functions (top ${limit})\n`);
 
 		const tableData = topResults.map((r) => ({
 			File: r.filePath.split("/").slice(-2).join("/"),
@@ -350,17 +350,17 @@ export function displayComplexityResults(
 			Severity: renderSeverity(complexityToSeverity(r.complexity)),
 		}));
 
-		console.log(Bun.inspect.table(tableData, { colors: true }));
+		console.info(Bun.inspect.table(tableData, { colors: true }));
 	}
 
 	// Recommendations
 	if (report.summary.highComplexityCount > 0) {
-		console.log("\n💡 Recommendations\n");
-		console.log("  Consider refactoring functions with complexity > 10:");
-		console.log("  • Extract helper functions for repeated logic");
-		console.log("  • Use early returns to reduce nesting");
-		console.log("  • Replace switch statements with lookup tables");
-		console.log("  • Consider the Strategy or State pattern for complex conditionals\n");
+		console.info("\n💡 Recommendations\n");
+		console.info("  Consider refactoring functions with complexity > 10:");
+		console.info("  • Extract helper functions for repeated logic");
+		console.info("  • Use early returns to reduce nesting");
+		console.info("  • Replace switch statements with lookup tables");
+		console.info("  • Consider the Strategy or State pattern for complex conditionals\n");
 	}
 }
 
@@ -374,7 +374,7 @@ if (import.meta.main) {
 
 	const analyzer = new ComplexityAnalyzer();
 
-	console.log(`Analyzing ${path}...`);
+	console.info(`Analyzing ${path}...`);
 
 	analyzer
 		.analyzeDirectory(path)

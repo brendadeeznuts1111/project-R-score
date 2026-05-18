@@ -48,7 +48,7 @@ class VaultCleanup {
     }
 
     async cleanupAll(): Promise<CleanupResult> {
-        console.log(chalk.blue.bold('🧹 Starting Vault Deep Cleanup...'));
+        console.info(chalk.blue.bold('🧹 Starting Vault Deep Cleanup...'));
 
         // Archive old files
         await this.archiveOldFiles();
@@ -70,7 +70,7 @@ class VaultCleanup {
     }
 
     private async archiveOldFiles(): Promise<void> {
-        console.log(chalk.blue('📦 Archiving old files...'));
+        console.info(chalk.blue('📦 Archiving old files...'));
 
         const files = await glob('**/*.md', {
             cwd: this.vaultPath,
@@ -103,7 +103,7 @@ class VaultCleanup {
                 this.result.archived.push(file);
                 this.result.spaceSaved += stats.size;
 
-                console.log(chalk.green(`  ✓ Archived: ${file}`));
+                console.info(chalk.green(`  ✓ Archived: ${file}`));
 
             } catch (error) {
                 this.result.errors.push(`${file}: ${error}`);
@@ -112,7 +112,7 @@ class VaultCleanup {
     }
 
     private async cleanupEmptyFiles(): Promise<void> {
-        console.log(chalk.blue('🗑️  Cleaning up empty files...'));
+        console.info(chalk.blue('🗑️  Cleaning up empty files...'));
 
         const files = await glob('**/*.md', {
             cwd: this.vaultPath,
@@ -140,7 +140,7 @@ class VaultCleanup {
                 this.result.cleaned.push(file);
                 this.result.spaceSaved += statSync(archivePath).size;
 
-                console.log(chalk.green(`  ✓ Archived empty: ${file}`));
+                console.info(chalk.green(`  ✓ Archived empty: ${file}`));
 
             } catch (error) {
                 this.result.errors.push(`${file}: ${error}`);
@@ -149,7 +149,7 @@ class VaultCleanup {
     }
 
     private async cleanupOrphanedFiles(): Promise<void> {
-        console.log(chalk.blue('🔍 Cleaning up orphaned files...'));
+        console.info(chalk.blue('🔍 Cleaning up orphaned files...'));
 
         const files = await glob('**/*.md', {
             cwd: this.vaultPath,
@@ -206,7 +206,7 @@ class VaultCleanup {
                 this.result.cleaned.push(file);
                 this.result.spaceSaved += stats.size;
 
-                console.log(chalk.green(`  ✓ Archived orphaned: ${file}`));
+                console.info(chalk.green(`  ✓ Archived orphaned: ${file}`));
 
             } catch (error) {
                 this.result.errors.push(`${file}: ${error}`);
@@ -215,7 +215,7 @@ class VaultCleanup {
     }
 
     private async cleanupDuplicates(): Promise<void> {
-        console.log(chalk.blue('🔄 Cleaning up duplicates...'));
+        console.info(chalk.blue('🔄 Cleaning up duplicates...'));
 
         const files = await glob('**/*.md', {
             cwd: this.vaultPath,
@@ -264,7 +264,7 @@ class VaultCleanup {
                         this.result.cleaned.push(file);
                         this.result.spaceSaved += stats.size;
 
-                        console.log(chalk.green(`  ✓ Archived duplicate: ${file} (kept: ${keep})`));
+                        console.info(chalk.green(`  ✓ Archived duplicate: ${file} (kept: ${keep})`));
 
                     } catch (error) {
                         this.result.errors.push(`${file}: ${error}`);
@@ -332,29 +332,29 @@ class VaultCleanup {
     }
 
     private displayResults(): void {
-        console.log(chalk.blue.bold('\n📊 Cleanup Results:'));
-        console.log(chalk.green(`✅ Files archived: ${this.result.archived.length}`));
-        console.log(chalk.blue(`🧹 Files cleaned: ${this.result.cleaned.length}`));
-        console.log(chalk.cyan(`💾 Space saved: ${(this.result.spaceSaved / 1024).toFixed(1)} KB`));
+        console.info(chalk.blue.bold('\n📊 Cleanup Results:'));
+        console.info(chalk.green(`✅ Files archived: ${this.result.archived.length}`));
+        console.info(chalk.blue(`🧹 Files cleaned: ${this.result.cleaned.length}`));
+        console.info(chalk.cyan(`💾 Space saved: ${(this.result.spaceSaved / 1024).toFixed(1)} KB`));
 
         if (this.result.errors.length > 0) {
-            console.log(chalk.red(`❌ Errors: ${this.result.errors.length}`));
-            this.result.errors.forEach(error => console.log(chalk.red(`   - ${error}`)));
+            console.info(chalk.red(`❌ Errors: ${this.result.errors.length}`));
+            this.result.errors.forEach(error => console.info(chalk.red(`   - ${error}`)));
         }
 
-        console.log(chalk.blue.bold('\n💡 Next Steps:'));
-        console.log('1. Run: bun run vault:organize - Reorganize remaining files');
-        console.log('2. Run: bun run vault:validate - Check vault compliance');
-        console.log('3. Review archived files in 07 - Archive folder');
-        console.log('4. Empty archive folder if satisfied with cleanup');
+        console.info(chalk.blue.bold('\n💡 Next Steps:'));
+        console.info('1. Run: bun run vault:organize - Reorganize remaining files');
+        console.info('2. Run: bun run vault:validate - Check vault compliance');
+        console.info('3. Review archived files in 07 - Archive folder');
+        console.info('4. Empty archive folder if satisfied with cleanup');
 
         if (this.result.archived.length > 0) {
-            console.log(chalk.blue.bold('\n📦 Archived Files:'));
+            console.info(chalk.blue.bold('\n📦 Archived Files:'));
             this.result.archived.slice(0, 10).forEach(file =>
-                console.log(chalk.gray(`   ${file}`))
+                console.info(chalk.gray(`   ${file}`))
             );
             if (this.result.archived.length > 10) {
-                console.log(chalk.gray(`   ... and ${this.result.archived.length - 10} more`));
+                console.info(chalk.gray(`   ... and ${this.result.archived.length - 10} more`));
             }
         }
     }

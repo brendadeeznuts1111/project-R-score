@@ -78,7 +78,7 @@ export async function benchmarkConfigs(): Promise<Record<ConfigLevel, number>> {
 	const results = {} as Record<ConfigLevel, number>;
 	const testPassword = "test-password-for-benchmark";
 
-	console.log("🔍 Benchmarking Argon2id configurations...\n");
+	console.info("🔍 Benchmarking Argon2id configurations...\n");
 
 	for (const [level, config] of Object.entries(ARGON2_CONFIGS)) {
 		const iterations = 5;
@@ -97,12 +97,12 @@ export async function benchmarkConfigs(): Promise<Record<ConfigLevel, number>> {
 		const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
 		results[level as ConfigLevel] = avgTime;
 
-		console.log(
+		console.info(
 			`${level.padEnd(15)} ${config.memoryCost / 1024}MiB, t=${config.timeCost}, p=${config.parallelism}  →  ${avgTime.toFixed(1)}ms`,
 		);
 	}
 
-	console.log("\n💡 Recommendation: Use 'production' for most apps (100-500ms target)");
+	console.info("\n💡 Recommendation: Use 'production' for most apps (100-500ms target)");
 	return results;
 }
 
@@ -135,8 +135,8 @@ async function main() {
 		}
 
 		const hash = await hashPassword(password, level);
-		console.log(`Level: ${level}`);
-		console.log(`Hash: ${hash}`);
+		console.info(`Level: ${level}`);
+		console.info(`Hash: ${hash}`);
 	} else if (command === "verify") {
 		const password = args[1];
 		const hash = args[2];
@@ -147,7 +147,7 @@ async function main() {
 		}
 
 		const valid = await verifyPassword(password, hash);
-		console.log(valid ? "✅ Valid" : "❌ Invalid");
+		console.info(valid ? "✅ Valid" : "❌ Invalid");
 		process.exit(valid ? 0 : 1);
 	} else if (command === "benchmark") {
 		await benchmarkConfigs();
@@ -161,10 +161,10 @@ async function main() {
 		}
 
 		const needs = needsRehash(hash, level);
-		console.log(needs ? "⚠️  Needs rehash" : "✅ Hash is up to date");
+		console.info(needs ? "⚠️  Needs rehash" : "✅ Hash is up to date");
 		process.exit(needs ? 1 : 0);
 	} else {
-		console.log(`
+		console.info(`
 Bun Password Hashing Utility
 
 USAGE:

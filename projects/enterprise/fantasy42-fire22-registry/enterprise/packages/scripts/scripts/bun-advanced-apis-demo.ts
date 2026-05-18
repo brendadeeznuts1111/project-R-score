@@ -4,14 +4,14 @@
  * Demonstrating Bun.password, Bun.file, Bun.write, Bun.serve, and more
  */
 
-console.log('🚀 Bun Advanced APIs Demo');
-console.log('='.repeat(60));
+console.info('🚀 Bun Advanced APIs Demo');
+console.info('='.repeat(60));
 
 // ============================================================================
 // 1. BUN.PASSWORD - Secure Password Hashing
 // ============================================================================
-console.log('\n🔐 Bun.password - Secure Password Operations');
-console.log('-'.repeat(50));
+console.info('\n🔐 Bun.password - Secure Password Operations');
+console.info('-'.repeat(50));
 
 const password = 'Fire22SecurePassword123!';
 
@@ -23,23 +23,23 @@ const hashedPassword = await Bun.password.hash(password, {
   parallelism: 4,
 });
 
-console.log('🔒 Password Hashing:');
-console.log(`   Original: ${password}`);
-console.log(`   Hashed: ${hashedPassword.substring(0, 50)}...`);
+console.info('🔒 Password Hashing:');
+console.info(`   Original: ${password}`);
+console.info(`   Hashed: ${hashedPassword.substring(0, 50)}...`);
 
 // Verify a password
 const isValidPassword = await Bun.password.verify(password, hashedPassword);
 const isInvalidPassword = await Bun.password.verify('wrongpassword', hashedPassword);
 
-console.log('\n✅ Password Verification:');
-console.log(`   Correct password: ${isValidPassword ? '✅ Valid' : '❌ Invalid'}`);
-console.log(`   Wrong password: ${isInvalidPassword ? '✅ Valid' : '❌ Invalid'}`);
+console.info('\n✅ Password Verification:');
+console.info(`   Correct password: ${isValidPassword ? '✅ Valid' : '❌ Invalid'}`);
+console.info(`   Wrong password: ${isInvalidPassword ? '✅ Valid' : '❌ Invalid'}`);
 
 // ============================================================================
 // 2. BUN.FILE - Advanced File Operations
 // ============================================================================
-console.log('\n\n📁 Bun.file - Advanced File Operations');
-console.log('-'.repeat(50));
+console.info('\n\n📁 Bun.file - Advanced File Operations');
+console.info('-'.repeat(50));
 
 // Create test data
 const testData = {
@@ -56,19 +56,19 @@ const testData = {
 const jsonFile = Bun.file('./test-output.json');
 await Bun.write(jsonFile, JSON.stringify(testData, null, 2));
 
-console.log('💾 File Writing Operations:');
-console.log(`   ✅ JSON file written: ${jsonFile.name}`);
-console.log(`   📏 File size: ${jsonFile.size} bytes`);
+console.info('💾 File Writing Operations:');
+console.info(`   ✅ JSON file written: ${jsonFile.name}`);
+console.info(`   📏 File size: ${jsonFile.size} bytes`);
 
 // Read the file back
 const readData = await jsonFile.json();
-console.log(`   📖 Read back data: version = ${readData.version}`);
+console.info(`   📖 Read back data: version = ${readData.version}`);
 
 // ============================================================================
 // 3. BUN.WRITE - Multi-format File Writing
 // ============================================================================
-console.log('\n\n✍️  Bun.write - Multi-format File Writing');
-console.log('-'.repeat(50));
+console.info('\n\n✍️  Bun.write - Multi-format File Writing');
+console.info('-'.repeat(50));
 
 // Write different formats to files
 const yamlData = `
@@ -88,56 +88,56 @@ Cache,2.0.0,stopped
 
 // Write YAML file
 await Bun.write('./test-output.yaml', yamlData);
-console.log('📝 Multi-format Writing:');
-console.log('   ✅ YAML file written');
+console.info('📝 Multi-format Writing:');
+console.info('   ✅ YAML file written');
 
 // Write CSV file
 await Bun.write('./test-output.csv', csvData);
-console.log('   ✅ CSV file written');
+console.info('   ✅ CSV file written');
 
 // Write binary data
 const binaryData = new Uint8Array([72, 101, 108, 108, 111]); // "Hello"
 await Bun.write('./test-output.bin', binaryData);
-console.log('   ✅ Binary file written');
+console.info('   ✅ Binary file written');
 
 // ============================================================================
 // 4. BUN.ENV - Environment Variables
 // ============================================================================
-console.log('\n\n🌍 Bun.env - Environment Variables');
-console.log('-'.repeat(50));
+console.info('\n\n🌍 Bun.env - Environment Variables');
+console.info('-'.repeat(50));
 
-console.log('🔧 Environment Information:');
-console.log(`   Node.js Environment: ${Bun.env.NODE_ENV || 'undefined'}`);
-console.log(`   Fire22 Environment: ${Bun.env.FIRE22_ENV || 'undefined'}`);
-console.log(`   Home Directory: ${Bun.env.HOME || Bun.env.USERPROFILE}`);
-console.log(`   Shell: ${Bun.env.SHELL || Bun.env.ComSpec}`);
-console.log(`   Platform: ${Bun.env.BUN_PLATFORM || process.platform}`);
+console.info('🔧 Environment Information:');
+console.info(`   Node.js Environment: ${Bun.env.NODE_ENV || 'undefined'}`);
+console.info(`   Fire22 Environment: ${Bun.env.FIRE22_ENV || 'undefined'}`);
+console.info(`   Home Directory: ${Bun.env.HOME || Bun.env.USERPROFILE}`);
+console.info(`   Shell: ${Bun.env.SHELL || Bun.env.ComSpec}`);
+console.info(`   Platform: ${Bun.env.BUN_PLATFORM || process.platform}`);
 
 // Set and use environment variables
 Bun.env.FIRE22_DEMO_VAR = 'demo-value';
-console.log(`   Custom Variable: ${Bun.env.FIRE22_DEMO_VAR}`);
+console.info(`   Custom Variable: ${Bun.env.FIRE22_DEMO_VAR}`);
 
 // ============================================================================
 // 5. BUN.SLEEP - Async Operations
 // ============================================================================
-console.log('\n\n⏰ Bun.sleep - Async Timing Operations');
-console.log('-'.repeat(50));
+console.info('\n\n⏰ Bun.sleep - Async Timing Operations');
+console.info('-'.repeat(50));
 
-console.log('⏳ Sleep Demonstration:');
+console.info('⏳ Sleep Demonstration:');
 
 // Simulate async operations with delays
 async function demonstrateSleep() {
-  console.log('   Starting operation 1...');
+  console.info('   Starting operation 1...');
   await Bun.sleep(100);
-  console.log('   ✅ Operation 1 completed');
+  console.info('   ✅ Operation 1 completed');
 
-  console.log('   Starting operation 2...');
+  console.info('   Starting operation 2...');
   await Bun.sleep(200);
-  console.log('   ✅ Operation 2 completed');
+  console.info('   ✅ Operation 2 completed');
 
-  console.log('   Starting operation 3...');
+  console.info('   Starting operation 3...');
   await Bun.sleep(150);
-  console.log('   ✅ Operation 3 completed');
+  console.info('   ✅ Operation 3 completed');
 }
 
 await demonstrateSleep();
@@ -145,8 +145,8 @@ await demonstrateSleep();
 // ============================================================================
 // 6. PATH OPERATIONS - Using Node.js path module
 // ============================================================================
-console.log('\n\n🛣️  Path Operations (Node.js compatibility)');
-console.log('-'.repeat(50));
+console.info('\n\n🛣️  Path Operations (Node.js compatibility)');
+console.info('-'.repeat(50));
 
 import { resolve, join, relative, extname, dirname, basename, normalize } from 'path';
 
@@ -155,26 +155,26 @@ const currentPath = resolve('.');
 const testFilePath = join(currentPath, 'test-output.json');
 const relativePath = relative(currentPath, testFilePath);
 
-console.log('🔧 Path Operations:');
-console.log(`   Current directory: ${currentPath}`);
-console.log(`   Test file path: ${testFilePath}`);
-console.log(`   Relative path: ${relativePath}`);
-console.log(`   File extension: ${extname(testFilePath)}`);
-console.log(`   Directory name: ${dirname(testFilePath)}`);
-console.log(`   Base name: ${basename(testFilePath)}`);
+console.info('🔧 Path Operations:');
+console.info(`   Current directory: ${currentPath}`);
+console.info(`   Test file path: ${testFilePath}`);
+console.info(`   Relative path: ${relativePath}`);
+console.info(`   File extension: ${extname(testFilePath)}`);
+console.info(`   Directory name: ${dirname(testFilePath)}`);
+console.info(`   Base name: ${basename(testFilePath)}`);
 
 // Normalize paths
 const messyPath = './src/../src/./domains//collections/';
 const normalizedPath = normalize(messyPath);
-console.log(`   Normalized path: ${messyPath} → ${normalizedPath}`);
+console.info(`   Normalized path: ${messyPath} → ${normalizedPath}`);
 
 // ============================================================================
 // 7. BUN.SPAWN - Process Spawning
 // ============================================================================
-console.log('\n\n⚡ Bun.spawn - Process Spawning');
-console.log('-'.repeat(50));
+console.info('\n\n⚡ Bun.spawn - Process Spawning');
+console.info('-'.repeat(50));
 
-console.log('🔧 Process Spawning:');
+console.info('🔧 Process Spawning:');
 
 try {
   // Spawn a simple command
@@ -184,7 +184,7 @@ try {
   });
 
   const output = await result.stdout.text();
-  console.log(`   ✅ Command output: ${output.trim()}`);
+  console.info(`   ✅ Command output: ${output.trim()}`);
 
   // Spawn with environment variables
   const envResult = Bun.spawn(['env'], {
@@ -197,29 +197,29 @@ try {
 
   const envOutput = await envResult.stdout.text();
   const hasCustomVar = envOutput.includes('FIRE22_SPAWN_TEST=spawn-successful');
-  console.log(`   ✅ Environment variable set: ${hasCustomVar ? 'Yes' : 'No'}`);
+  console.info(`   ✅ Environment variable set: ${hasCustomVar ? 'Yes' : 'No'}`);
 } catch (error) {
-  console.log(`   ❌ Spawn error: ${error.message}`);
+  console.info(`   ❌ Spawn error: ${error.message}`);
 }
 
 // ============================================================================
 // 8. PRACTICAL ENTERPRISE EXAMPLE
 // ============================================================================
-console.log('\n\n🏢 Practical Enterprise Example');
-console.log('-'.repeat(50));
+console.info('\n\n🏢 Practical Enterprise Example');
+console.info('-'.repeat(50));
 
 async function enterpriseWorkflowDemo() {
-  console.log('🔧 Fire22 Enterprise Workflow:');
+  console.info('🔧 Fire22 Enterprise Workflow:');
 
   // 1. Secure credential handling
-  console.log('   🔐 Step 1: Secure credential hashing');
+  console.info('   🔐 Step 1: Secure credential hashing');
   const secureToken = await Bun.password.hash('enterprise-token-123', {
     algorithm: 'argon2id',
   });
-  console.log(`      ✅ Token hashed: ${secureToken.substring(0, 20)}...`);
+  console.info(`      ✅ Token hashed: ${secureToken.substring(0, 20)}...`);
 
   // 2. Configuration file operations
-  console.log('   📝 Step 2: Configuration file operations');
+  console.info('   📝 Step 2: Configuration file operations');
   const config = {
     enterprise: true,
     security: 'high',
@@ -227,16 +227,16 @@ async function enterpriseWorkflowDemo() {
   };
 
   await Bun.write('./enterprise-config.json', JSON.stringify(config, null, 2));
-  console.log('      ✅ Enterprise config written');
+  console.info('      ✅ Enterprise config written');
 
   // 3. Environment-aware operations
-  console.log('   🌍 Step 3: Environment-aware operations');
+  console.info('   🌍 Step 3: Environment-aware operations');
   const env = Bun.env.NODE_ENV || 'development';
   const isProduction = env === 'production';
-  console.log(`      ✅ Environment: ${env} (${isProduction ? 'Production' : 'Development'})`);
+  console.info(`      ✅ Environment: ${env} (${isProduction ? 'Production' : 'Development'})`);
 
   // 4. Path operations for enterprise structure
-  console.log('   🏗️  Step 4: Enterprise file structure');
+  console.info('   🏗️  Step 4: Enterprise file structure');
   const enterprisePaths = {
     config: join('.', 'enterprise-config.json'),
     logs: join('.', 'logs', 'enterprise.log'),
@@ -244,18 +244,18 @@ async function enterpriseWorkflowDemo() {
   };
 
   Object.entries(enterprisePaths).forEach(([name, path]) => {
-    console.log(`      📁 ${name}: ${path}`);
+    console.info(`      📁 ${name}: ${path}`);
   });
 
   // 5. Async workflow coordination
-  console.log('   ⏱️  Step 5: Workflow coordination');
-  console.log('      📊 Processing enterprise data...');
+  console.info('   ⏱️  Step 5: Workflow coordination');
+  console.info('      📊 Processing enterprise data...');
   await Bun.sleep(100);
-  console.log('      📈 Running analytics...');
+  console.info('      📈 Running analytics...');
   await Bun.sleep(100);
-  console.log('      📋 Generating reports...');
+  console.info('      📋 Generating reports...');
   await Bun.sleep(100);
-  console.log('      ✅ Enterprise workflow completed');
+  console.info('      ✅ Enterprise workflow completed');
 
   return {
     secureToken,
@@ -270,8 +270,8 @@ const workflowResult = await enterpriseWorkflowDemo();
 // ============================================================================
 // 9. CLEANUP DEMO FILES
 // ============================================================================
-console.log('\n\n🧹 Cleanup Operations');
-console.log('-'.repeat(50));
+console.info('\n\n🧹 Cleanup Operations');
+console.info('-'.repeat(50));
 
 const demoFiles = [
   './test-output.json',
@@ -281,40 +281,40 @@ const demoFiles = [
   './enterprise-config.json',
 ];
 
-console.log('🗑️  Cleaning up demo files:');
+console.info('🗑️  Cleaning up demo files:');
 for (const file of demoFiles) {
   try {
     await Bun.write(file, ''); // Clear file content
-    console.log(`   ✅ Cleared: ${file}`);
+    console.info(`   ✅ Cleared: ${file}`);
   } catch (error) {
-    console.log(`   ⚠️  Could not clear: ${file}`);
+    console.info(`   ⚠️  Could not clear: ${file}`);
   }
 }
 
 // ============================================================================
 // 10. PERFORMANCE COMPARISON
 // ============================================================================
-console.log('\n\n⚡ Performance Insights');
-console.log('-'.repeat(50));
+console.info('\n\n⚡ Performance Insights');
+console.info('-'.repeat(50));
 
-console.log('🚀 Bun Advantages Demonstrated:');
-console.log('   ✅ Native file I/O without external dependencies');
-console.log('   ✅ Built-in password hashing (Argon2)');
-console.log('   ✅ Zero-config TOML/YAML parsing');
-console.log('   ✅ High-performance process spawning');
-console.log('   ✅ Cross-platform path operations');
-console.log('   ✅ Efficient async operations');
-console.log('   ✅ Environment variable access');
-console.log('   ✅ Rich terminal output capabilities');
+console.info('🚀 Bun Advantages Demonstrated:');
+console.info('   ✅ Native file I/O without external dependencies');
+console.info('   ✅ Built-in password hashing (Argon2)');
+console.info('   ✅ Zero-config TOML/YAML parsing');
+console.info('   ✅ High-performance process spawning');
+console.info('   ✅ Cross-platform path operations');
+console.info('   ✅ Efficient async operations');
+console.info('   ✅ Environment variable access');
+console.info('   ✅ Rich terminal output capabilities');
 
-console.log('\n📊 Enterprise Benefits:');
-console.log('   🔒 Security: Argon2 password hashing');
-console.log('   📁 Files: Native file operations');
-console.log('   🌐 Network: Built-in HTTP serving');
-console.log('   ⚙️  Config: TOML/YAML parsing');
-console.log('   🚀 Performance: Optimized async operations');
-console.log('   🛠️  Tooling: Rich development experience');
+console.info('\n📊 Enterprise Benefits:');
+console.info('   🔒 Security: Argon2 password hashing');
+console.info('   📁 Files: Native file operations');
+console.info('   🌐 Network: Built-in HTTP serving');
+console.info('   ⚙️  Config: TOML/YAML parsing');
+console.info('   🚀 Performance: Optimized async operations');
+console.info('   🛠️  Tooling: Rich development experience');
 
-console.log('\n🎉 Bun Advanced APIs Demo Complete!');
-console.log('   All major Bun runtime APIs demonstrated successfully!');
-console.log('   Ready for enterprise-scale Fire22 development!');
+console.info('\n🎉 Bun Advanced APIs Demo Complete!');
+console.info('   All major Bun runtime APIs demonstrated successfully!');
+console.info('   Ready for enterprise-scale Fire22 development!');

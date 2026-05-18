@@ -15,11 +15,11 @@ interface MockBuffer {
 // Mock Bun utilities for TypeScript compatibility
 const BunMock = {
   gzipSync: (data: MockBuffer): MockBuffer => {
-    console.log(`[Gzip] Compressed ${data.length} bytes`);
+    console.info(`[Gzip] Compressed ${data.length} bytes`);
     return data; // Mock compression
   },
   gunzipSync: (data: MockBuffer): MockBuffer => {
-    console.log(`[Gunzip] Decompressed ${data.length} bytes`);
+    console.info(`[Gunzip] Decompressed ${data.length} bytes`);
     return data; // Mock decompression
   },
   hash: {
@@ -52,7 +52,7 @@ export class MemoryCompressor {
   
   // Bun's native compression (15% better than zlib)
   async compressMemories(memories: any[]): Promise<CompressedBatch> {
-    console.log(`🗜️ Compressing ${memories.length} memories...`);
+    console.info(`🗜️ Compressing ${memories.length} memories...`);
     
     const json = JSON.stringify(memories);
     const originalBuffer = createMockBuffer(json, 'utf8');
@@ -81,14 +81,14 @@ export class MemoryCompressor {
       compressionTime: Date.now()
     };
     
-    console.log(`✅ Compression complete: ${compressionRatio.toFixed(2)}x ratio, ${((1 - compressed.length / originalBuffer.length) * 100).toFixed(1)}% space saved`);
+    console.info(`✅ Compression complete: ${compressionRatio.toFixed(2)}x ratio, ${((1 - compressed.length / originalBuffer.length) * 100).toFixed(1)}% space saved`);
     
     return result;
   }
   
   // Streaming decompression for large batches
   async* decompressMemoriesStream(compressed: MockBuffer): AsyncGenerator<any> {
-    console.log('📦 Starting streaming decompression...');
+    console.info('📦 Starting streaming decompression...');
     
     const decompressed = BunMock.gunzipSync(compressed);
     const jsonString = decompressed.toString('utf8');
@@ -102,7 +102,7 @@ export class MemoryCompressor {
       throw new Error('Memory integrity check failed');
     }
     
-    console.log(`✅ Integrity verified, streaming ${memories.length} memories...`);
+    console.info(`✅ Integrity verified, streaming ${memories.length} memories...`);
     
     // Stream memories one by one
     for (const memory of memories) {
@@ -114,7 +114,7 @@ export class MemoryCompressor {
       }
     }
     
-    console.log('✅ Streaming decompression complete');
+    console.info('✅ Streaming decompression complete');
   }
   
   getCompressionStats() {
@@ -234,7 +234,7 @@ export class SkillLRUCache {
   
   // Preload cache with common skill results
   async preloadCache(skills: string[], contexts: SkillContext[]): Promise<void> {
-    console.log(`🚀 Preloading cache with ${skills.length} skills and ${contexts.length} contexts...`);
+    console.info(`🚀 Preloading cache with ${skills.length} skills and ${contexts.length} contexts...`);
     
     for (const skillId of skills) {
       for (const context of contexts) {
@@ -249,7 +249,7 @@ export class SkillLRUCache {
       }
     }
     
-    console.log(`✅ Cache preloaded with ${this.cache.size} entries`);
+    console.info(`✅ Cache preloaded with ${this.cache.size} entries`);
   }
   
   private generateMockResult(skillId: string, context: SkillContext): any {
@@ -373,7 +373,7 @@ export class PerformanceMonitor {
       this.alerts.splice(0, this.alerts.length - 100);
     }
     
-    console.log(`🚨 ${alert.message}`);
+    console.info(`🚨 ${alert.message}`);
   }
   
   getMetricsSummary(): MetricsSummary {
@@ -431,7 +431,7 @@ export class AdaptiveOptimizationEngine {
   }
   
   async optimizeSystem(context: OptimizationContext): Promise<OptimizationResult> {
-    console.log('🔧 Starting adaptive optimization...');
+    console.info('🔧 Starting adaptive optimization...');
     
     const startTime = performance.now();
     const optimizations: Optimization[] = [];
@@ -489,7 +489,7 @@ export class AdaptiveOptimizationEngine {
           actualImprovement: result.improvement
         });
         
-        console.log(`✅ Applied optimization: ${optimization.description}`);
+        console.info(`✅ Applied optimization: ${optimization.description}`);
       } catch (error) {
         console.error(`❌ Failed to apply optimization: ${optimization.description}`, error);
       }
@@ -508,7 +508,7 @@ export class AdaptiveOptimizationEngine {
     // Record optimization
     this.recordOptimization(optimizationResult);
     
-    console.log(`🎯 Optimization complete: ${optimizationResult.totalImprovement}% improvement in ${totalTime.toFixed(2)}ms`);
+    console.info(`🎯 Optimization complete: ${optimizationResult.totalImprovement}% improvement in ${totalTime.toFixed(2)}ms`);
     
     return optimizationResult;
   }

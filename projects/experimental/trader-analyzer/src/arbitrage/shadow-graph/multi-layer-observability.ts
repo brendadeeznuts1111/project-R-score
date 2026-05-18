@@ -159,7 +159,7 @@ export class ObservabilityService extends EventEmitter {
 	 */
 	private createDefaultLogger(): Logger {
 		return {
-			info: (msg, meta) => console.log(`[INFO] ${msg}`, meta || ""),
+			info: (msg, meta) => console.info(`[INFO] ${msg}`, meta || ""),
 			warn: (msg, meta) => console.warn(`[WARN] ${msg}`, meta || ""),
 			error: (msg, error, meta) =>
 				console.error(`[ERROR] ${msg}`, error, meta || ""),

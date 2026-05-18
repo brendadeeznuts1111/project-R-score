@@ -28,8 +28,8 @@ class FeedValidator {
   private feedsDir = join(process.cwd(), 'src', 'feeds');
 
   async validateAll(): Promise<boolean> {
-    console.log('📡 Fire22 RSS Feed Validator');
-    console.log('!==!==!==!==!===\n');
+    console.info('📡 Fire22 RSS Feed Validator');
+    console.info('!==!==!==!==!===\n');
 
     const feeds = [
       'error-codes-rss.xml',
@@ -217,28 +217,28 @@ class FeedValidator {
 
   private printResult(result: ValidationResult): void {
     const status = result.valid ? '✅' : '❌';
-    console.log(`${status} ${result.feed}`);
+    console.info(`${status} ${result.feed}`);
 
     if (result.errors.length > 0) {
-      console.log('  Errors:');
-      result.errors.forEach(error => console.log(`    ❌ ${error}`));
+      console.info('  Errors:');
+      result.errors.forEach(error => console.info(`    ❌ ${error}`));
     }
 
     if (result.warnings.length > 0) {
-      console.log('  Warnings:');
-      result.warnings.forEach(warning => console.log(`    ⚠️  ${warning}`));
+      console.info('  Warnings:');
+      result.warnings.forEach(warning => console.info(`    ⚠️  ${warning}`));
     }
 
-    console.log(`  📊 Stats: ${result.stats.itemCount} items`);
+    console.info(`  📊 Stats: ${result.stats.itemCount} items`);
     if (result.stats.lastBuildDate) {
-      console.log(`  📅 Last Build: ${result.stats.lastBuildDate}`);
+      console.info(`  📅 Last Build: ${result.stats.lastBuildDate}`);
     }
-    console.log();
+    console.info();
   }
 
   private printSummary(): void {
-    console.log('!==!==!==!==!===');
-    console.log('📊 Validation Summary\n');
+    console.info('!==!==!==!==!===');
+    console.info('📊 Validation Summary\n');
 
     const validCount = this.results.filter(r => r.valid).length;
     const totalCount = this.results.length;
@@ -246,15 +246,15 @@ class FeedValidator {
     const totalWarnings = this.results.reduce((sum, r) => sum + r.warnings.length, 0);
     const totalItems = this.results.reduce((sum, r) => sum + r.stats.itemCount, 0);
 
-    console.log(`✅ Valid Feeds: ${validCount}/${totalCount}`);
-    console.log(`❌ Total Errors: ${totalErrors}`);
-    console.log(`⚠️  Total Warnings: ${totalWarnings}`);
-    console.log(`📰 Total Items: ${totalItems}`);
+    console.info(`✅ Valid Feeds: ${validCount}/${totalCount}`);
+    console.info(`❌ Total Errors: ${totalErrors}`);
+    console.info(`⚠️  Total Warnings: ${totalWarnings}`);
+    console.info(`📰 Total Items: ${totalItems}`);
 
     if (validCount === totalCount) {
-      console.log('\n🎉 All feeds are valid!');
+      console.info('\n🎉 All feeds are valid!');
     } else {
-      console.log('\n⚠️  Some feeds have validation errors. Please fix them before deployment.');
+      console.info('\n⚠️  Some feeds have validation errors. Please fix them before deployment.');
     }
   }
 }

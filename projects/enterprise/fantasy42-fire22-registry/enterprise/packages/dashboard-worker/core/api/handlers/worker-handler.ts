@@ -92,7 +92,7 @@ class RequestMonitor {
 
     // Log request start (based on log level)
     if (this.shouldLog('debug', env)) {
-      console.log(
+      console.info(
         `[REQUEST_START] ${context.method} ${new URL(context.url).pathname} - Trace: ${traceId}`
       );
     }
@@ -116,7 +116,7 @@ class RequestMonitor {
     // Log request end (based on log level)
     const logLevel = error ? 'error' : statusCode >= 400 ? 'warn' : 'info';
     if (this.shouldLog(logLevel, env as Env)) {
-      console.log(
+      console.info(
         `[${logLevel.toUpperCase()}] ${context.method} ${endpoint} - ${statusCode} - ${duration}ms - Trace: ${traceId}`
       );
     }

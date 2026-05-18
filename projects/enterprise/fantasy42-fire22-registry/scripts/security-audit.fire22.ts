@@ -118,32 +118,32 @@ async function runBunAudit(config: AuditConfig): Promise<AuditResult> {
 }
 
 async function runSecurityScans(): Promise<void> {
-  console.log('🔍 Running comprehensive security scans...');
+  console.info('🔍 Running comprehensive security scans...');
 
   // Check for security scanner
   try {
     await $`bun add -d @fire22/security-scanner`.quiet();
-    console.log('✅ Security scanner installed');
+    console.info('✅ Security scanner installed');
   } catch {
-    console.log('⚠️ Security scanner not available');
+    console.info('⚠️ Security scanner not available');
   }
 
   // Run dependency analysis
   try {
-    console.log('📦 Analyzing dependencies...');
+    console.info('📦 Analyzing dependencies...');
     await $`bun run deps:audit`.quiet();
-    console.log('✅ Dependency analysis complete');
+    console.info('✅ Dependency analysis complete');
   } catch {
-    console.log('⚠️ Dependency analysis failed');
+    console.info('⚠️ Dependency analysis failed');
   }
 
   // Check for malicious packages
   try {
-    console.log('🛡️ Scanning for malicious packages...');
+    console.info('🛡️ Scanning for malicious packages...');
     // This would integrate with a security scanner
-    console.log('✅ Malicious package scan complete');
+    console.info('✅ Malicious package scan complete');
   } catch {
-    console.log('⚠️ Malicious package scan failed');
+    console.info('⚠️ Malicious package scan failed');
   }
 }
 
@@ -168,7 +168,7 @@ async function generateSecurityReport(config: AuditConfig, result: AuditResult):
   };
 
   await Bun.write(reportPath, JSON.stringify(report, null, 2));
-  console.log(`📄 Security report saved: ${reportPath}`);
+  console.info(`📄 Security report saved: ${reportPath}`);
 }
 
 function generateRecommendations(result: AuditResult): string[] {
@@ -202,42 +202,42 @@ function generateRecommendations(result: AuditResult): string[] {
 // ╚══════════════════════════════════════════════════════════════╝
 
 function displayAuditResults(config: AuditConfig, result: AuditResult): void {
-  console.log('🔍 FIRE22 SECURITY AUDIT RESULTS');
-  console.log('═'.repeat(60));
+  console.info('🔍 FIRE22 SECURITY AUDIT RESULTS');
+  console.info('═'.repeat(60));
 
   // Configuration summary
-  console.log('⚙️ CONFIGURATION:');
-  console.log(`Audit Level: ${config.level.toUpperCase()}`);
-  console.log(`Production Only: ${config.prodOnly ? 'Yes' : 'No'}`);
-  console.log(`Ignored CVEs: ${config.ignoreCVEs.length}`);
-  console.log('');
+  console.info('⚙️ CONFIGURATION:');
+  console.info(`Audit Level: ${config.level.toUpperCase()}`);
+  console.info(`Production Only: ${config.prodOnly ? 'Yes' : 'No'}`);
+  console.info(`Ignored CVEs: ${config.ignoreCVEs.length}`);
+  console.info('');
 
   // Vulnerability summary
-  console.log('🚨 VULNERABILITY SUMMARY:');
-  console.log(`Total Vulnerabilities: ${result.vulnerabilities.total}`);
-  console.log(`Critical: ${result.vulnerabilities.bySeverity.critical}`);
-  console.log(`High: ${result.vulnerabilities.bySeverity.high}`);
-  console.log(`Moderate: ${result.vulnerabilities.bySeverity.moderate}`);
-  console.log(`Low: ${result.vulnerabilities.bySeverity.low}`);
-  console.log(`Ignored: ${result.vulnerabilities.ignored}`);
-  console.log('');
+  console.info('🚨 VULNERABILITY SUMMARY:');
+  console.info(`Total Vulnerabilities: ${result.vulnerabilities.total}`);
+  console.info(`Critical: ${result.vulnerabilities.bySeverity.critical}`);
+  console.info(`High: ${result.vulnerabilities.bySeverity.high}`);
+  console.info(`Moderate: ${result.vulnerabilities.bySeverity.moderate}`);
+  console.info(`Low: ${result.vulnerabilities.bySeverity.low}`);
+  console.info(`Ignored: ${result.vulnerabilities.ignored}`);
+  console.info('');
 
   // Status
   const statusIcon = result.status === 'PASS' ? '✅' : result.status === 'WARN' ? '⚠️' : '❌';
-  console.log(`${statusIcon} AUDIT STATUS: ${result.status}`);
-  console.log(`⏱️ Duration: ${result.duration}ms`);
-  console.log('');
+  console.info(`${statusIcon} AUDIT STATUS: ${result.status}`);
+  console.info(`⏱️ Duration: ${result.duration}ms`);
+  console.info('');
 
   // Recommendations
   const recommendations = generateRecommendations(result);
   if (recommendations.length > 0) {
-    console.log('💡 RECOMMENDATIONS:');
-    recommendations.forEach(rec => console.log(`• ${rec}`));
-    console.log('');
+    console.info('💡 RECOMMENDATIONS:');
+    recommendations.forEach(rec => console.info(`• ${rec}`));
+    console.info('');
   }
 
   // Compliance status
-  console.log('📋 COMPLIANCE STATUS:');
+  console.info('📋 COMPLIANCE STATUS:');
   const compliance = {
     pci_dss:
       result.vulnerabilities.bySeverity.critical === 0 &&
@@ -251,7 +251,7 @@ function displayAuditResults(config: AuditConfig, result: AuditResult): void {
 
   Object.entries(compliance).forEach(([standard, compliant]) => {
     const icon = compliant ? '✅' : '❌';
-    console.log(`${icon} ${standard.toUpperCase()}: ${compliant ? 'COMPLIANT' : 'NON-COMPLIANT'}`);
+    console.info(`${icon} ${standard.toUpperCase()}: ${compliant ? 'COMPLIANT' : 'NON-COMPLIANT'}`);
   });
 }
 
@@ -298,7 +298,7 @@ const AUDIT_PRESETS = {
 // ╚══════════════════════════════════════════════════════════════╝
 
 async function showHelp(): Promise<void> {
-  console.log(`
+  console.info(`
 🔥 FIRE22 SECURITY AUDIT
 Enhanced security auditing with Bun's advanced filtering
 
@@ -383,8 +383,8 @@ async function main(): Promise<void> {
   const runScans = additionalArgs.includes('--scan');
   const generateReport = additionalArgs.includes('--report');
 
-  console.log(`🔥 FIRE22 SECURITY AUDIT - ${preset.toUpperCase()} MODE`);
-  console.log('═'.repeat(60));
+  console.info(`🔥 FIRE22 SECURITY AUDIT - ${preset.toUpperCase()} MODE`);
+  console.info('═'.repeat(60));
 
   // Run the audit
   const result = await runBunAudit(config);
@@ -394,22 +394,22 @@ async function main(): Promise<void> {
 
   // Run additional scans if requested
   if (runScans) {
-    console.log('');
+    console.info('');
     await runSecurityScans();
   }
 
   // Generate report if requested
   if (generateReport) {
-    console.log('');
+    console.info('');
     await generateSecurityReport(config, result);
   }
 
   // Exit with appropriate code
   if (result.status === 'FAIL' || (config.failOnWarnings && result.status === 'WARN')) {
-    console.log('\n❌ Audit failed - check vulnerabilities above');
+    console.info('\n❌ Audit failed - check vulnerabilities above');
     process.exit(1);
   } else {
-    console.log('\n✅ Audit completed successfully');
+    console.info('\n✅ Audit completed successfully');
   }
 }
 

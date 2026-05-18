@@ -23,4 +23,4 @@ if (await schemaSource.exists()) {
 }
 
 // Tag successful build
-console.log("[DUOPLUS][BUILD][SUCCESS][META:{files:['index.js','cli.js']}] [#REF:BUILD-6.1]");
+console.info("[DUOPLUS][BUILD][SUCCESS][META:{files:['index.js','cli.js']}] [#REF:BUILD-6.1]");

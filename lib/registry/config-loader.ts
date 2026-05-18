@@ -18,7 +18,7 @@ export async function loadRegistryConfig(
   const configPath = options.path || findConfigFile();
 
   if (!configPath) {
-    console.log(styled('ℹ️ No config file found, using defaults', 'muted'));
+    console.info(styled('ℹ️ No config file found, using defaults', 'muted'));
     return getDefaultConfig();
   }
 
@@ -38,7 +38,7 @@ export async function loadRegistryConfig(
       case 'json5':
         // Bun v1.3.7: Native JSON5 support
         config = Bun.JSON5.parse(content);
-        console.log(styled(`📄 Loaded JSON5 config: ${configPath}`, 'success'));
+        console.info(styled(`📄 Loaded JSON5 config: ${configPath}`, 'success'));
         break;
 
       case 'jsonl':
@@ -46,7 +46,7 @@ export async function loadRegistryConfig(
         const lines = Bun.JSONL.parse(content);
         // Use last line as config (for incremental updates)
         config = lines[lines.length - 1] || {};
-        console.log(
+        console.info(
           styled(`📄 Loaded JSONL config: ${configPath} (${lines.length} entries)`, 'success')
         );
         break;
@@ -54,7 +54,7 @@ export async function loadRegistryConfig(
       case 'json':
       default:
         config = JSON.parse(content);
-        console.log(styled(`📄 Loaded JSON config: ${configPath}`, 'success'));
+        console.info(styled(`📄 Loaded JSON config: ${configPath}`, 'success'));
         break;
     }
 
@@ -98,7 +98,7 @@ ${content}`;
     }
 
     await Bun.write(configPath, content);
-    console.log(styled(`💾 Saved config: ${configPath}`, 'success'));
+    console.info(styled(`💾 Saved config: ${configPath}`, 'success'));
     return true;
   } catch (error) {
     console.error(styled(`❌ Failed to save config: ${error.message}`, 'error'));
@@ -205,7 +205,7 @@ export function validateConfig(config: RegistryConfig): { valid: boolean; errors
 
   if (config.auth?.type === 'jwt' && !config.auth.jwtSecret) {
     // Warning only - can use env var
-    console.log(styled('⚠️ JWT secret not in config, will use REGISTRY_SECRET env var', 'warning'));
+    console.info(styled('⚠️ JWT secret not in config, will use REGISTRY_SECRET env var', 'warning'));
   }
 
   return {
@@ -219,8 +219,8 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
   const command = args[0];
 
-  console.log(styled('⚙️ Registry Config Loader (Bun v1.3.7+)', 'accent'));
-  console.log(styled('=======================================', 'accent'));
+  console.info(styled('⚙️ Registry Config Loader (Bun v1.3.7+)', 'accent'));
+  console.info(styled('=======================================', 'accent'));
 
   switch (command) {
     case 'load': {
@@ -228,13 +228,13 @@ if (import.meta.main) {
       const config = await loadRegistryConfig({ path });
 
       if (config) {
-        console.log(styled('\n📋 Configuration:', 'info'));
-        console.log(styled(JSON.stringify(config, null, 2), 'muted'));
+        console.info(styled('\n📋 Configuration:', 'info'));
+        console.info(styled(JSON.stringify(config, null, 2), 'muted'));
 
         const validation = validateConfig(config);
         if (!validation.valid) {
-          console.log(styled('\n❌ Validation errors:', 'error'));
-          validation.errors.forEach(e => console.log(styled(`  - ${e}`, 'error')));
+          console.info(styled('\n❌ Validation errors:', 'error'));
+          validation.errors.forEach(e => console.info(styled(`  - ${e}`, 'error')));
         }
       }
       break;
@@ -302,17 +302,17 @@ if (import.meta.main) {
 `;
 
       await Bun.write(path, example);
-      console.log(styled(`✅ Created ${path}`, 'success'));
+      console.info(styled(`✅ Created ${path}`, 'success'));
       break;
     }
 
     default:
-      console.log(styled('\nCommands:', 'info'));
-      console.log(styled('  load [path]        Load and validate config', 'muted'));
-      console.log(styled('  save [path] [name] Save config', 'muted'));
-      console.log(styled('  init [path]        Create example JSON5 config', 'muted'));
-      console.log(styled('\nBun v1.3.7+ Features:', 'info'));
-      console.log(styled('  • JSON5 support (comments, trailing commas)', 'muted'));
-      console.log(styled('  • JSONL support (streaming config updates)', 'muted'));
+      console.info(styled('\nCommands:', 'info'));
+      console.info(styled('  load [path]        Load and validate config', 'muted'));
+      console.info(styled('  save [path] [name] Save config', 'muted'));
+      console.info(styled('  init [path]        Create example JSON5 config', 'muted'));
+      console.info(styled('\nBun v1.3.7+ Features:', 'info'));
+      console.info(styled('  • JSON5 support (comments, trailing commas)', 'muted'));
+      console.info(styled('  • JSONL support (streaming config updates)', 'muted'));
   }
 }

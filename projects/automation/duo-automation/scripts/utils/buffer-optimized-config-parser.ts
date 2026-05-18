@@ -8,10 +8,10 @@
 import { readFileSync } from 'fs';
 import { SecretsOnlyConfigManager } from '../src/config/secrets-only-config.js';
 
-console.log('🚀 Enhanced Configuration Parser - Buffer Optimized');
-console.log('==================================================');
-console.log('Empire Pro Config Empire with SIMD acceleration');
-console.log('');
+console.info('🚀 Enhanced Configuration Parser - Buffer Optimized');
+console.info('==================================================');
+console.info('Empire Pro Config Empire with SIMD acceleration');
+console.info('');
 
 // Enhanced configuration parser using buffers
 class BufferOptimizedConfigParser {
@@ -60,7 +60,7 @@ class BufferOptimizedConfigParser {
     const found: string[] = [];
     const missing: string[] = [];
     
-    console.log('🔍 Scanning configuration with SIMD-optimized buffer operations...');
+    console.info('🔍 Scanning configuration with SIMD-optimized buffer operations...');
     
     const start = performance.now();
     
@@ -74,8 +74,8 @@ class BufferOptimizedConfigParser {
     
     const end = performance.now();
     
-    console.log(`⚡ Scan completed in ${(end - start).toFixed(3)}ms`);
-    console.log(`📊 Found: ${found.length}/${requiredKeys.length} keys`);
+    console.info(`⚡ Scan completed in ${(end - start).toFixed(3)}ms`);
+    console.info(`📊 Found: ${found.length}/${requiredKeys.length} keys`);
     
     return { found, missing };
   }
@@ -84,8 +84,8 @@ class BufferOptimizedConfigParser {
    * Performance benchmark for different buffer sizes
    */
   static async benchmarkBufferSizes(): Promise<void> {
-    console.log('📊 Buffer Size Performance Benchmark');
-    console.log('=====================================');
+    console.info('📊 Buffer Size Performance Benchmark');
+    console.info('=====================================');
     
     const sizes = [1000, 10000, 100000, 1000000]; // 1KB to 1MB
     const testKey = 'TEST_CONFIG_KEY';
@@ -105,15 +105,15 @@ class BufferOptimizedConfigParser {
       const end = performance.now();
       const avgTime = (end - start) / iterations;
       
-      console.log(`${(size/1000).toFixed(0)}KB buffer: ${avgTime.toFixed(6)}ms avg | ${(1000/avgTime).toFixed(0)} ops/sec`);
+      console.info(`${(size/1000).toFixed(0)}KB buffer: ${avgTime.toFixed(6)}ms avg | ${(1000/avgTime).toFixed(0)} ops/sec`);
     }
   }
 }
 
 // Demonstration with real Empire Pro configuration
 async function demonstrateBufferOptimization() {
-  console.log('🏰 Empire Pro Configuration Demo');
-  console.log('================================');
+  console.info('🏰 Empire Pro Configuration Demo');
+  console.info('================================');
   
   // Sample configuration (similar to what we'd get from environment export)
   const sampleConfig = `
@@ -139,12 +139,12 @@ LOG_LEVEL=info
 
   const parser = new BufferOptimizedConfigParser(sampleConfig);
   
-  console.log(`📄 Configuration size: ${sampleConfig.length} bytes`);
-  console.log(`🔢 Buffer size: ${parser.configBuffer.length} bytes`);
-  console.log('');
+  console.info(`📄 Configuration size: ${sampleConfig.length} bytes`);
+  console.info(`🔢 Buffer size: ${parser.configBuffer.length} bytes`);
+  console.info('');
   
   // Test fast key searches
-  console.log('🔍 Fast Configuration Key Searches:');
+  console.info('🔍 Fast Configuration Key Searches:');
   const testKeys = ['OPENAI_API_KEY', 'DATABASE_URL', 'R2_ENDPOINT', 'NOT_PRESENT'];
   
   for (const key of testKeys) {
@@ -154,15 +154,15 @@ LOG_LEVEL=info
     const value = parser.extractConfigValue(key);
     const end = performance.now();
     
-    console.log(`  ${key}: ${hasKey ? '✅' : '❌'} | Position: ${position} | Time: ${(end-start).toFixed(6)}ms`);
+    console.info(`  ${key}: ${hasKey ? '✅' : '❌'} | Position: ${position} | Time: ${(end-start).toFixed(6)}ms`);
     if (value) {
       const displayValue = value.includes('KEY') || value.includes('SECRET') || value.includes('TOKEN') 
         ? `${value.substring(0, 8)}...${value.substring(value.length - 4)}`
         : value;
-      console.log(`    Value: ${displayValue}`);
+      console.info(`    Value: ${displayValue}`);
     }
   }
-  console.log('');
+  console.info('');
   
   // Validate all required keys
   const requiredKeys = [
@@ -173,31 +173,31 @@ LOG_LEVEL=info
   
   const validation = parser.validateRequiredKeys(requiredKeys);
   
-  console.log('📊 Validation Results:');
-  console.log(`  ✅ Found: ${validation.found.length} keys`);
-  console.log(`  ❌ Missing: ${validation.missing.length} keys`);
+  console.info('📊 Validation Results:');
+  console.info(`  ✅ Found: ${validation.found.length} keys`);
+  console.info(`  ❌ Missing: ${validation.missing.length} keys`);
   
   if (validation.missing.length > 0) {
-    console.log('  Missing keys:', validation.missing.join(', '));
+    console.info('  Missing keys:', validation.missing.join(', '));
   }
-  console.log('');
+  console.info('');
   
   // Performance benchmark
   await BufferOptimizedConfigParser.benchmarkBufferSizes();
   
-  console.log('');
-  console.log('🚀 Buffer Optimization Benefits:');
-  console.log('   ✅ SIMD-optimized pattern matching');
-  console.log('   ✅ 2x faster buffer operations');
-  console.log('   ✅ Memory-efficient scanning');
-  console.log('   ✅ Zero-copy operations');
-  console.log('   ✅ Single and multi-byte support');
+  console.info('');
+  console.info('🚀 Buffer Optimization Benefits:');
+  console.info('   ✅ SIMD-optimized pattern matching');
+  console.info('   ✅ 2x faster buffer operations');
+  console.info('   ✅ Memory-efficient scanning');
+  console.info('   ✅ Zero-copy operations');
+  console.info('   ✅ Single and multi-byte support');
 }
 
 // Compare with traditional string operations
 function compareWithStringOperations() {
-  console.log('🔄 Buffer vs String Operations Comparison');
-  console.log('=======================================');
+  console.info('🔄 Buffer vs String Operations Comparison');
+  console.info('=======================================');
   
   const largeConfig = 'a'.repeat(100000) + 'OPENAI_API_KEY=sk-test-key';
   const buffer = Buffer.from(largeConfig);
@@ -221,21 +221,21 @@ function compareWithStringOperations() {
   const stringEnd = performance.now();
   const stringTime = stringEnd - stringStart;
   
-  console.log(`📊 Performance Comparison (${iterations} iterations):`);
-  console.log(`   Buffer.indexOf(): ${bufferTime.toFixed(2)}ms (${(bufferTime/iterations).toFixed(6)}ms avg)`);
-  console.log(`   String.indexOf(): ${stringTime.toFixed(2)}ms (${(stringTime/iterations).toFixed(6)}ms avg)`);
-  console.log(`   Speed improvement: ${(stringTime/bufferTime).toFixed(2)}x faster`);
+  console.info(`📊 Performance Comparison (${iterations} iterations):`);
+  console.info(`   Buffer.indexOf(): ${bufferTime.toFixed(2)}ms (${(bufferTime/iterations).toFixed(6)}ms avg)`);
+  console.info(`   String.indexOf(): ${stringTime.toFixed(2)}ms (${(stringTime/iterations).toFixed(6)}ms avg)`);
+  console.info(`   Speed improvement: ${(stringTime/bufferTime).toFixed(2)}x faster`);
 }
 
 // Run demonstration
 if (import.meta.main) {
   demonstrateBufferOptimization()
     .then(() => {
-      console.log('');
+      console.info('');
       compareWithStringOperations();
-      console.log('');
-      console.log('✅ Empire Pro Config Empire - Buffer Optimization Complete!');
-      console.log('🚀 2x faster configuration parsing with SIMD acceleration!');
+      console.info('');
+      console.info('✅ Empire Pro Config Empire - Buffer Optimization Complete!');
+      console.info('🚀 2x faster configuration parsing with SIMD acceleration!');
     })
     .catch(console.error);
 }

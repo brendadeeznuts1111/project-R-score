@@ -41,9 +41,9 @@ security:
     - "https://redirect/:target"
 `;
 
-console.log('🔒 URLPattern Security Plugin - Live Demo');
-console.log('='.repeat(60));
-console.log('\n📄 Analyzing config with security violations...\n');
+console.info('🔒 URLPattern Security Plugin - Live Demo');
+console.info('='.repeat(60));
+console.info('\n📄 Analyzing config with security violations...\n');
 
 const config = parseYaml(yamlContent);
 const patterns: any[] = [];
@@ -71,17 +71,17 @@ extractPatterns(config);
 patterns.forEach(p => {
   const analysis = analyzePattern(p.pattern);
   const icon = analysis.risk === 'CRITICAL' ? '🚨' : analysis.risk === 'HIGH' ? '⚠️' : '✅';
-  console.log(`${icon} ${p.keyPath}: ${p.pattern}`);
+  console.info(`${icon} ${p.keyPath}: ${p.pattern}`);
   if (analysis.issues.length > 0) {
-    console.log(`   → ${analysis.issues.join(', ')}`);
+    console.info(`   → ${analysis.issues.join(', ')}`);
   }
 });
 
-console.log('\n📊 Summary:');
-console.log(`   Total patterns: ${patterns.length}`);
-console.log(`   Critical: ${patterns.filter(p => analyzePattern(p.pattern).risk === 'CRITICAL').length}`);
-console.log(`   High: ${patterns.filter(p => analyzePattern(p.pattern).risk === 'HIGH').length}`);
-console.log(`   Low: ${patterns.filter(p => analyzePattern(p.pattern).risk === 'LOW').length}`);
+console.info('\n📊 Summary:');
+console.info(`   Total patterns: ${patterns.length}`);
+console.info(`   Critical: ${patterns.filter(p => analyzePattern(p.pattern).risk === 'CRITICAL').length}`);
+console.info(`   High: ${patterns.filter(p => analyzePattern(p.pattern).risk === 'HIGH').length}`);
+console.info(`   Low: ${patterns.filter(p => analyzePattern(p.pattern).risk === 'LOW').length}`);
 
-console.log('\n✅ Plugin would FAIL build due to critical SSRF violations');
-console.log('   Build output: AggregateError with detailed file/key paths');
+console.info('\n✅ Plugin would FAIL build due to critical SSRF violations');
+console.info('   Build output: AggregateError with detailed file/key paths');

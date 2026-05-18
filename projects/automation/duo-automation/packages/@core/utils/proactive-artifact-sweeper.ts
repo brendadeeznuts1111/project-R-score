@@ -10,22 +10,22 @@ export class ProactiveArtifactSweeper {
   private static readonly sweeper = new Glob(this.GLOB_PATTERN);
 
   static async purge() {
-    console.log("🧹 Sovereign Sweeper: Scanning for ghost artifacts...");
+    console.info("🧹 Sovereign Sweeper: Scanning for ghost artifacts...");
     let purgedCount = 0;
     
     for await (const file of this.sweeper.scan(".")) {
-      console.log(`👻 Purging: ${file}`);
+      console.info(`👻 Purging: ${file}`);
       await $`rm -f ${file}`;
       purgedCount++;
     }
     
     if (purgedCount > 0) {
-      console.log(`✅ Cleaned ${purgedCount} artifacts.`);
+      console.info(`✅ Cleaned ${purgedCount} artifacts.`);
     }
   }
 
   static startWatching() {
-    console.log("👀 Sovereign Watcher: Monitoring for real-time hygiene...");
+    console.info("👀 Sovereign Watcher: Monitoring for real-time hygiene...");
     
     // Use fs.watch for efficient filesystem event monitoring
     watch(".", { recursive: true }, async (event, filename) => {

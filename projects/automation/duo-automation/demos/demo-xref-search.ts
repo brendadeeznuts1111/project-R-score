@@ -5,8 +5,8 @@
  * Shows detailed xref command functionality for "security compliance"
  */
 
-console.log('🔗 Enhanced Cross-Reference Search Demonstration');
-console.log('===============================================\n');
+console.info('🔗 Enhanced Cross-Reference Search Demonstration');
+console.info('===============================================\n');
 
 // Enhanced mock data for better demonstration
 const enhancedMatrixData = [
@@ -102,15 +102,15 @@ const enhancedSystemComponents = {
 };
 
 function performCrossReferenceSearch(query: string, type: string = 'all') {
-  console.log(`🔍 Cross-Reference Search: "${query}"`);
-  console.log(`📋 Search Type: ${type.toUpperCase()}`);
-  console.log('=' .repeat(60) + '\n');
+  console.info(`🔍 Cross-Reference Search: "${query}"`);
+  console.info(`📋 Search Type: ${type.toUpperCase()}`);
+  console.info('=' .repeat(60) + '\n');
 
   const searchTerms = query.toLowerCase().split(' ');
   
   // Search Matrix
   if (type === 'all' || type === 'matrix') {
-    console.log('📂 Matrix System Results:');
+    console.info('📂 Matrix System Results:');
     const matrixMatches = enhancedMatrixData.filter(row => {
       const searchText = JSON.stringify(row).toLowerCase();
       return searchTerms.every(term => searchText.includes(term));
@@ -118,24 +118,24 @@ function performCrossReferenceSearch(query: string, type: string = 'all') {
     
     if (matrixMatches.length > 0) {
       matrixMatches.forEach((match, index) => {
-        console.log(`  ${index + 1}. ${match.detectedScope} Scope`);
-        console.log(`     Platform: ${match.platform}`);
-        console.log(`     Security Level: ${match.securityLevel}`);
-        console.log(`     Security Features: ${match.securityFeatures.join(', ')}`);
-        console.log(`     Compliance Standards: ${match.complianceStandards.join(', ')}`);
-        console.log(`     Storage: ${match.storagePathPrefix}`);
-        console.log(`     Secrets Backend: ${match.secretsBackend}`);
-        if (index < matrixMatches.length - 1) console.log();
+        console.info(`  ${index + 1}. ${match.detectedScope} Scope`);
+        console.info(`     Platform: ${match.platform}`);
+        console.info(`     Security Level: ${match.securityLevel}`);
+        console.info(`     Security Features: ${match.securityFeatures.join(', ')}`);
+        console.info(`     Compliance Standards: ${match.complianceStandards.join(', ')}`);
+        console.info(`     Storage: ${match.storagePathPrefix}`);
+        console.info(`     Secrets Backend: ${match.secretsBackend}`);
+        if (index < matrixMatches.length - 1) console.info();
       });
     } else {
-      console.log('  No matrix matches found');
+      console.info('  No matrix matches found');
     }
-    console.log();
+    console.info();
   }
   
   // Search Documentation
   if (type === 'all' || type === 'docs') {
-    console.log('📚 Documentation Results:');
+    console.info('📚 Documentation Results:');
     const docMatches = Object.entries(enhancedDocumentation).filter(([key, doc]) => {
       const searchText = `${doc.title} ${doc.description} ${doc.tags.join(' ')}`.toLowerCase();
       return searchTerms.every(term => searchText.includes(term));
@@ -143,22 +143,22 @@ function performCrossReferenceSearch(query: string, type: string = 'all') {
     
     if (docMatches.length > 0) {
       docMatches.forEach(([key, doc], index) => {
-        console.log(`  ${index + 1}. ${doc.title}`);
-        console.log(`     📁 File: ${doc.file}`);
-        console.log(`     📝 ${doc.description}`);
-        console.log(`     🏷️  Tags: ${doc.tags.join(', ')}`);
-        console.log(`     📂 Category: ${doc.category}`);
-        if (index < docMatches.length - 1) console.log();
+        console.info(`  ${index + 1}. ${doc.title}`);
+        console.info(`     📁 File: ${doc.file}`);
+        console.info(`     📝 ${doc.description}`);
+        console.info(`     🏷️  Tags: ${doc.tags.join(', ')}`);
+        console.info(`     📂 Category: ${doc.category}`);
+        if (index < docMatches.length - 1) console.info();
       });
     } else {
-      console.log('  No documentation matches found');
+      console.info('  No documentation matches found');
     }
-    console.log();
+    console.info();
   }
   
   // Search System Components
   if (type === 'all' || type === 'system') {
-    console.log('⚙️  System Component Results:');
+    console.info('⚙️  System Component Results:');
     const componentMatches = Object.entries(enhancedSystemComponents).filter(([key, component]) => {
       const searchText = `${component.title} ${component.description} ${component.features.join(' ')}`.toLowerCase();
       return searchTerms.every(term => searchText.includes(term));
@@ -166,20 +166,20 @@ function performCrossReferenceSearch(query: string, type: string = 'all') {
     
     if (componentMatches.length > 0) {
       componentMatches.forEach(([key, component], index) => {
-        console.log(`  ${index + 1}. ${component.title}`);
-        console.log(`     📁 Path: ${component.path}`);
-        console.log(`     📝 ${component.description}`);
-        console.log(`     🔧 Features: ${component.features.join(', ')}`);
-        if (index < componentMatches.length - 1) console.log();
+        console.info(`  ${index + 1}. ${component.title}`);
+        console.info(`     📁 Path: ${component.path}`);
+        console.info(`     📝 ${component.description}`);
+        console.info(`     🔧 Features: ${component.features.join(', ')}`);
+        if (index < componentMatches.length - 1) console.info();
       });
     } else {
-      console.log('  No system component matches found');
+      console.info('  No system component matches found');
     }
-    console.log();
+    console.info();
   }
   
   // Show related search suggestions
-  console.log('💡 Related Search Suggestions:');
+  console.info('💡 Related Search Suggestions:');
   const suggestions = [
     'security audit',
     'compliance validation',
@@ -193,34 +193,34 @@ function performCrossReferenceSearch(query: string, type: string = 'all') {
   
   suggestions.forEach((suggestion, index) => {
     if (index < 4) {
-      console.log(`  • duoplus-enhanced xref "${suggestion}" --type all`);
+      console.info(`  • duoplus-enhanced xref "${suggestion}" --type all`);
     }
   });
-  console.log();
+  console.info();
 }
 
 // Demonstrate different search types
-console.log('🚀 Enhanced Cross-Reference Search Examples\n');
+console.info('🚀 Enhanced Cross-Reference Search Examples\n');
 
-console.log('─'.repeat(80));
+console.info('─'.repeat(80));
 performCrossReferenceSearch('security compliance', 'all');
 
-console.log('─'.repeat(80));
+console.info('─'.repeat(80));
 performCrossReferenceSearch('security compliance', 'docs');
 
-console.log('─'.repeat(80));
+console.info('─'.repeat(80));
 performCrossReferenceSearch('security compliance', 'matrix');
 
-console.log('─'.repeat(80));
+console.info('─'.repeat(80));
 performCrossReferenceSearch('security compliance', 'system');
 
-console.log('─'.repeat(80));
+console.info('─'.repeat(80));
 performCrossReferenceSearch('HIPAA PCI DSS', 'all');
 
-console.log('─'.repeat(80));
+console.info('─'.repeat(80));
 performCrossReferenceSearch('threat detection', 'all');
 
-console.log('✅ Cross-Reference Search Demonstration Complete!');
-console.log('📊 Enhanced search with multiple types and intelligent matching');
-console.log('🔗 Bidirectional cross-references between all system components');
-console.log('💡 Smart suggestions and related content discovery');
+console.info('✅ Cross-Reference Search Demonstration Complete!');
+console.info('📊 Enhanced search with multiple types and intelligent matching');
+console.info('🔗 Bidirectional cross-references between all system components');
+console.info('💡 Smart suggestions and related content discovery');

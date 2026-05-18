@@ -22,20 +22,20 @@ const variant = variantArg || 'free';
 const variantConfig = featuresConfig.variants[variant];
 if (!variantConfig) {
   console.error(`❌ Unknown variant: ${variant}`);
-  console.log('Available variants: free, premium, debug, beta, mock');
+  console.info('Available variants: free, premium, debug, beta, mock');
   process.exit(1);
 }
 
 const enabledFeatures = variantConfig.enabled;
 const disabledFeatures = variantConfig.disabled;
 
-console.log(`\n🌌 COSMIC BUNDLE BUILD INITIATED`);
-console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-console.log(`Variant: ${variant}`);
-console.log(`Enabled: ${enabledFeatures.join(', ')}`);
-console.log(`Disabled: ${disabledFeatures.join(', ')}`);
-console.log(`Timestamp: ${new Date().toISOString()}`);
-console.log(`Bun: ${Bun.version}`);
+console.info(`\n🌌 COSMIC BUNDLE BUILD INITIATED`);
+console.info(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+console.info(`Variant: ${variant}`);
+console.info(`Enabled: ${enabledFeatures.join(', ')}`);
+console.info(`Disabled: ${disabledFeatures.join(', ')}`);
+console.info(`Timestamp: ${new Date().toISOString()}`);
+console.info(`Bun: ${Bun.version}`);
 
 // Feature flag definitions for define
 const featureFlags: Record<string, string> = {
@@ -94,7 +94,7 @@ const buildConfig = {
 };
 
 // Execute build
-console.log(`\n🔨 Building ${variant} variant...`);
+console.info(`\n🔨 Building ${variant} variant...`);
 
 const result = await build(buildConfig);
 
@@ -103,14 +103,14 @@ if (result.success) {
   const totalSize = outputs.reduce((sum, output) => sum + output.size, 0);
   const gzipped = totalSize / 1024 / 1024; // MB
   
-  console.log(`\n✅ BUILD COMPLETE`);
-  console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-  console.log(`Output: dist/${variant}/`);
-  console.log(`Files: ${outputs.length}`);
-  console.log(`Size: ${gzipped.toFixed(2)} MB (raw)`);
-  console.log(`Target: ${targets['bundle-size-' + variant] || 'N/A'} (target)`);
-  console.log(`Features: ${enabledFeatures.length} active`);
-  console.log(`Dead code: ${disabledFeatures.length} eliminated`);
+  console.info(`\n✅ BUILD COMPLETE`);
+  console.info(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+  console.info(`Output: dist/${variant}/`);
+  console.info(`Files: ${outputs.length}`);
+  console.info(`Size: ${gzipped.toFixed(2)} MB (raw)`);
+  console.info(`Target: ${targets['bundle-size-' + variant] || 'N/A'} (target)`);
+  console.info(`Features: ${enabledFeatures.length} active`);
+  console.info(`Dead code: ${disabledFeatures.length} eliminated`);
   
   // Generate build metadata
   const metadata = {
@@ -135,31 +135,31 @@ if (result.success) {
     JSON.stringify(metadata, null, 2)
   );
   
-  console.log(`\n📊 Performance Targets (from TOML):`);
-  console.log(`  LCP: ${targets.lcp-ms}ms (was 3410ms)`);
-  console.log(`  TTI: ${targets.tti-ms}ms (was 5800ms)`);
-  console.log(`  FPS: ${targets['scroll-fps']} (was 12)`);
-  console.log(`  Memory: ${targets['memory-mb']}MB (was 184MB)`);
+  console.info(`\n📊 Performance Targets (from TOML):`);
+  console.info(`  LCP: ${targets.lcp-ms}ms (was 3410ms)`);
+  console.info(`  TTI: ${targets.tti-ms}ms (was 5800ms)`);
+  console.info(`  FPS: ${targets['scroll-fps']} (was 12)`);
+  console.info(`  Memory: ${targets['memory-mb']}MB (was 184MB)`);
   
-  console.log(`\n🎯 Feature Gates Active:`);
+  console.info(`\n🎯 Feature Gates Active:`);
   enabledFeatures.forEach(f => {
     const desc = featuresConfig.features[f] || 'Unknown';
-    console.log(`  ✓ ${f}: ${desc}`);
+    console.info(`  ✓ ${f}: ${desc}`);
   });
   
   if (disabledFeatures.length > 0) {
-    console.log(`\n🚫 Dead Code Eliminated:`);
+    console.info(`\n🚫 Dead Code Eliminated:`);
     disabledFeatures.forEach(f => {
       const desc = featuresConfig.features[f] || 'Unknown';
-      console.log(`  ✗ ${f}: ${desc}`);
+      console.info(`  ✗ ${f}: ${desc}`);
     });
   }
   
-  console.log(`\n🚀 Next Steps:`);
-  console.log(`  1. Test: bun run dist/${variant}/index-*.js`);
-  console.log(`  2. Verify: rg "COSMIC BUNDLE" dist/${variant}/`);
-  console.log(`  3. Deploy: docker build -f Dockerfile.${variant} .`);
-  console.log(`  4. Monitor: bun run bench:watch --variant=${variant}`);
+  console.info(`\n🚀 Next Steps:`);
+  console.info(`  1. Test: bun run dist/${variant}/index-*.js`);
+  console.info(`  2. Verify: rg "COSMIC BUNDLE" dist/${variant}/`);
+  console.info(`  3. Deploy: docker build -f Dockerfile.${variant} .`);
+  console.info(`  4. Monitor: bun run bench:watch --variant=${variant}`);
   
   // Create variant-specific README
   const readme = `# 🌌 COSMIC BUNDLE: ${variant.toUpperCase()}
@@ -205,10 +205,10 @@ bun run dist/${variant}/index-*.js
     readme
   );
   
-  console.log(`\n📚 Documentation generated: dist/${variant}/README.md`);
+  console.info(`\n📚 Documentation generated: dist/${variant}/README.md`);
   
 } else {
   console.error(`\n❌ BUILD FAILED`);
-  console.log(`Errors:`, result.logs);
+  console.info(`Errors:`, result.logs);
   process.exit(1);
 }

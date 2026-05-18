@@ -296,7 +296,7 @@ class AdvancedTableProcessor {
 }
 
 // Demo 1: Basic sorting
-console.log("=== Demo 1: Basic Sorting ===");
+console.info("=== Demo 1: Basic Sorting ===");
 const processor = new AdvancedTableProcessor(enhancedData);
 
 const sortedByConnections = processor.sortBy('connections', 'desc');
@@ -315,10 +315,10 @@ builder1.setOptions({
   zebra: true,
   caption: 'Protocols Sorted by Connections (Descending)'
 });
-console.log(builder1.render());
+console.info(builder1.render());
 
 // Demo 2: Filtering
-console.log("\n=== Demo 2: Filtering ===");
+console.info("\n=== Demo 2: Filtering ===");
 const activeOnly = processor.filter(row => row.status !== 'inactive');
 const builder2 = new TableBuilder();
 activeOnly.columns.forEach(col => {
@@ -335,10 +335,10 @@ builder2.setOptions({
   zebra: true,
   caption: 'Active Protocols Only'
 });
-console.log(builder2.render());
+console.info(builder2.render());
 
 // Demo 3: Combined sorting and filtering
-console.log("\n=== Demo 3: Combined Operations ===");
+console.info("\n=== Demo 3: Combined Operations ===");
 const combined = processor.chain([
   { type: 'filter', params: { predicate: (row: any) => row.status === 'active' } },
   { type: 'sort', params: { column: 'throughput', order: 'desc' } }
@@ -358,10 +358,10 @@ builder3.setOptions({
   zebra: true,
   caption: 'Active Protocols Sorted by Throughput (Descending)'
 });
-console.log(builder3.render());
+console.info(builder3.render());
 
 // Demo 4: Multiple sorting criteria
-console.log("\n=== Demo 4: Multi-Criteria Sorting ===");
+console.info("\n=== Demo 4: Multi-Criteria Sorting ===");
 const multiSorted = processor.chain([
   { type: 'filter', params: { predicate: (row: any) => row.connections > 1000 } },
   { type: 'sort', params: { column: 'status', order: 'asc' } },
@@ -382,18 +382,18 @@ builder4.setOptions({
   zebra: true,
   caption: 'High-Connection Protocols (Status → Latency)'
 });
-console.log(builder4.render());
+console.info(builder4.render());
 
 // Demo 5: Statistics and analysis
-console.log("\n=== Demo 5: Data Statistics ===");
+console.info("\n=== Demo 5: Data Statistics ===");
 const stats = processor.getStatistics();
-console.log(`Total protocols: ${stats.totalRows}`);
-console.log(`Status distribution:`, stats.statusDistribution);
-console.log(`Connection stats:`, stats.columnStats.connections);
-console.log(`Latency stats:`, stats.columnStats.latency);
+console.info(`Total protocols: ${stats.totalRows}`);
+console.info(`Status distribution:`, stats.statusDistribution);
+console.info(`Connection stats:`, stats.columnStats.connections);
+console.info(`Latency stats:`, stats.columnStats.latency);
 
 // Demo 6: Advanced filtering with multiple conditions
-console.log("\n=== Demo 6: Advanced Filtering ===");
+console.info("\n=== Demo 6: Advanced Filtering ===");
 const advancedFilter = processor.filter(row =>
   row.status === 'active' &&
   row.connections > 500 &&
@@ -415,23 +415,23 @@ builder5.setOptions({
   zebra: true,
   caption: 'High-Performance Protocols (Active, >500 conn, <100ms, <1% error)'
 });
-console.log(builder5.render());
+console.info(builder5.render());
 
 // Demo 7: Export filtered and sorted data
-console.log("\n=== Demo 7: Export Operations ===");
+console.info("\n=== Demo 7: Export Operations ===");
 const filteredForExport = processor.chain([
   { type: 'filter', params: { predicate: (row: any) => row.status === 'active' } },
   { type: 'sort', params: { column: 'throughput', order: 'desc' } }
 ]);
 
-console.log("CSV Export:");
-console.log(exportTable(filteredForExport, 'csv'));
+console.info("CSV Export:");
+console.info(exportTable(filteredForExport, 'csv'));
 
-console.log("\nMarkdown Export:");
-console.log(exportTable(filteredForExport, 'markdown'));
+console.info("\nMarkdown Export:");
+console.info(exportTable(filteredForExport, 'markdown'));
 
 // Demo 8: Real-time filtering simulation
-console.log("\n=== Demo 8: Real-time Filtering Simulation ===");
+console.info("\n=== Demo 8: Real-time Filtering Simulation ===");
 const filterConditions = [
   { name: "All protocols", filter: () => true },
   { name: "Active only", filter: (row: any) => row.status === 'active' },
@@ -442,7 +442,7 @@ const filterConditions = [
 ];
 
 filterConditions.forEach((condition, index) => {
-  console.log(`\n${index + 1}. ${condition.name}:`);
+  console.info(`\n${index + 1}. ${condition.name}:`);
   const filtered = processor.filter(condition.filter);
   const builder = new TableBuilder();
   filtered.columns.slice(0, 4).forEach(col => {
@@ -459,15 +459,15 @@ filterConditions.forEach((condition, index) => {
     zebra: true,
     caption: `${condition.name} (${filtered.rows.length} results)`
   });
-  console.log(builder.render());
+  console.info(builder.render());
 });
 
-console.log("\n=== Sorting and Filtering Demo Complete ===");
-console.log("✅ Multi-column sorting with customizable order");
-console.log("✅ Advanced filtering with complex predicates");
-console.log("✅ Chainable operations for combined processing");
-console.log("✅ Real-time statistics and data analysis");
-console.log("✅ Multiple export formats support");
-console.log("✅ Performance-optimized data processing");
-console.log("✅ Custom formatting with type-specific handlers");
-console.log("✅ Interactive table viewer integration");
+console.info("\n=== Sorting and Filtering Demo Complete ===");
+console.info("✅ Multi-column sorting with customizable order");
+console.info("✅ Advanced filtering with complex predicates");
+console.info("✅ Chainable operations for combined processing");
+console.info("✅ Real-time statistics and data analysis");
+console.info("✅ Multiple export formats support");
+console.info("✅ Performance-optimized data processing");
+console.info("✅ Custom formatting with type-specific handlers");
+console.info("✅ Interactive table viewer integration");

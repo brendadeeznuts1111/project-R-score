@@ -61,33 +61,33 @@ class PerformanceRegressionDetector {
   };
 
   async analyzeRegressions() {
-    console.log('🔍 Analyzing Performance Regressions\n');
+    console.info('🔍 Analyzing Performance Regressions\n');
 
     // Load all benchmark results
     await this.loadBenchmarkResults();
 
     if (this.results.length < 2) {
-      console.log('⚠️  Need at least 2 benchmark runs to detect regressions. Found:', this.results.length);
+      console.info('⚠️  Need at least 2 benchmark runs to detect regressions. Found:', this.results.length);
       return;
     }
 
-    console.log(`📊 Loaded ${this.results.length} benchmark suites`);
+    console.info(`📊 Loaded ${this.results.length} benchmark suites`);
 
     // Filter out invalid results
     this.results = this.results.filter(suite => suite && suite.results && suite.results.length > 0);
-    console.log(`📊 After filtering: ${this.results.length} valid benchmark suites`);
+    console.info(`📊 After filtering: ${this.results.length} valid benchmark suites`);
 
     if (this.results.length < 2) {
-      console.log('⚠️  Need at least 2 valid benchmark runs to detect regressions. Found:', this.results.length);
+      console.info('⚠️  Need at least 2 valid benchmark runs to detect regressions. Found:', this.results.length);
       return;
     }
 
     // Sort by timestamp (oldest first)
     this.results.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
 
-    console.log('📊 Sorted results:');
+    console.info('📊 Sorted results:');
     this.results.forEach((suite, i) => {
-      console.log(`   ${i}: ${suite.name} (${suite.timestamp}) - ${suite.results.length} tests`);
+      console.info(`   ${i}: ${suite.name} (${suite.timestamp}) - ${suite.results.length} tests`);
     });
 
     // Use oldest as baseline, newest as current
@@ -95,13 +95,13 @@ class PerformanceRegressionDetector {
     const current = this.results[this.results.length - 1];
 
     if (!baseline) {
-      console.log('❌ No baseline results found');
+      console.info('❌ No baseline results found');
       return;
     }
 
-    console.log(`\n📊 Comparing:`);
-    console.log(`   Baseline: ${baseline.name} (${baseline.timestamp})`);
-    console.log(`   Current:  ${current.name} (${current.timestamp})\n`);
+    console.info(`\n📊 Comparing:`);
+    console.info(`   Baseline: ${baseline.name} (${baseline.timestamp})`);
+    console.info(`   Current:  ${current.name} (${current.timestamp})\n`);
 
     // Analyze regressions
     const regressions = this.detectRegressions(baseline, current);
@@ -112,8 +112,8 @@ class PerformanceRegressionDetector {
     // Exit with error code if critical regressions found
     const criticalRegressions = regressions.filter(r => r.change.severity === 'critical');
     if (criticalRegressions.length > 0) {
-      console.log(`\n❌ CRITICAL REGRESSIONS DETECTED: ${criticalRegressions.length}`);
-      console.log('   Failing CI/CD pipeline due to performance degradation');
+      console.info(`\n❌ CRITICAL REGRESSIONS DETECTED: ${criticalRegressions.length}`);
+      console.info('   Failing CI/CD pipeline due to performance degradation');
       process.exit(1);
     }
   }
@@ -268,18 +268,18 @@ class PerformanceRegressionDetector {
   }
 
   private generateRegressionReport(regressions: RegressionAnalysis[], baseline: BenchmarkSuite, current: BenchmarkSuite) {
-    console.log('📈 PERFORMANCE REGRESSION ANALYSIS');
-    console.log('=' .repeat(50));
+    console.info('📈 PERFORMANCE REGRESSION ANALYSIS');
+    console.info('=' .repeat(50));
 
     // Summary statistics
     const totalTests = regressions.length;
     const regressionsOnly = regressions.filter(r => r.change.isRegression);
     const improvements = regressions.filter(r => !r.change.isRegression);
 
-    console.log(`\n📊 Summary:`);
-    console.log(`   Total Tests Compared: ${totalTests}`);
-    console.log(`   Regressions: ${regressionsOnly.length}`);
-    console.log(`   Improvements: ${improvements.length}`);
+    console.info(`\n📊 Summary:`);
+    console.info(`   Total Tests Compared: ${totalTests}`);
+    console.info(`   Regressions: ${regressionsOnly.length}`);
+    console.info(`   Improvements: ${improvements.length}`);
 
     // Group by severity
     const bySeverity = {
@@ -289,15 +289,15 @@ class PerformanceRegressionDetector {
       minor: regressionsOnly.filter(r => r.change.severity === 'minor')
     };
 
-    console.log(`\n🚨 Regressions by Severity:`);
-    console.log(`   Critical (>35%): ${bySeverity.critical.length}`);
-    console.log(`   Severe (20-35%): ${bySeverity.severe.length}`);
-    console.log(`   Moderate (10-20%): ${bySeverity.moderate.length}`);
-    console.log(`   Minor (5-10%): ${bySeverity.minor.length}`);
+    console.info(`\n🚨 Regressions by Severity:`);
+    console.info(`   Critical (>35%): ${bySeverity.critical.length}`);
+    console.info(`   Severe (20-35%): ${bySeverity.severe.length}`);
+    console.info(`   Moderate (10-20%): ${bySeverity.moderate.length}`);
+    console.info(`   Minor (5-10%): ${bySeverity.minor.length}`);
 
     // Detailed regression report
     if (regressionsOnly.length > 0) {
-      console.log(`\n📉 Detailed Regressions:`);
+      console.info(`\n📉 Detailed Regressions:`);
 
       // Sort by severity (most severe first)
       const sortedRegressions = regressionsOnly.sort((a, b) => {
@@ -307,38 +307,38 @@ class PerformanceRegressionDetector {
 
       for (const regression of sortedRegressions.slice(0, 10)) { // Show top 10
         const icon = this.getSeverityIcon(regression.change.severity);
-        console.log(`   ${icon} ${regression.testName}`);
-        console.log(`      ${regression.baseline.opsPerSecond.toLocaleString()} → ${regression.current.opsPerSecond.toLocaleString()} ops/sec`);
-        console.log(`      ${regression.change.percentage.toFixed(1)}% change (${regression.change.severity})`);
+        console.info(`   ${icon} ${regression.testName}`);
+        console.info(`      ${regression.baseline.opsPerSecond.toLocaleString()} → ${regression.current.opsPerSecond.toLocaleString()} ops/sec`);
+        console.info(`      ${regression.change.percentage.toFixed(1)}% change (${regression.change.severity})`);
       }
 
       if (sortedRegressions.length > 10) {
-        console.log(`   ... and ${sortedRegressions.length - 10} more`);
+        console.info(`   ... and ${sortedRegressions.length - 10} more`);
       }
     }
 
     // Improvements
     if (improvements.length > 0) {
-      console.log(`\n📈 Notable Improvements:`);
+      console.info(`\n📈 Notable Improvements:`);
       const topImprovements = improvements
         .sort((a, b) => b.change.percentage - a.change.percentage)
         .slice(0, 5);
 
       for (const improvement of topImprovements) {
-        console.log(`   ✅ ${improvement.testName}: +${improvement.change.percentage.toFixed(1)}%`);
+        console.info(`   ✅ ${improvement.testName}: +${improvement.change.percentage.toFixed(1)}%`);
       }
     }
 
     // Recommendations
-    console.log(`\n💡 Recommendations:`);
+    console.info(`\n💡 Recommendations:`);
     if (bySeverity.critical.length > 0) {
-      console.log(`   🚨 CRITICAL: Immediate investigation required for ${bySeverity.critical.length} test(s)`);
+      console.info(`   🚨 CRITICAL: Immediate investigation required for ${bySeverity.critical.length} test(s)`);
     }
     if (bySeverity.severe.length > 0) {
-      console.log(`   ⚠️  SEVERE: Review architecture changes for ${bySeverity.severe.length} test(s)`);
+      console.info(`   ⚠️  SEVERE: Review architecture changes for ${bySeverity.severe.length} test(s)`);
     }
     if (regressionsOnly.length === 0) {
-      console.log(`   ✅ EXCELLENT: No performance regressions detected!`);
+      console.info(`   ✅ EXCELLENT: No performance regressions detected!`);
     }
 
     // Save detailed report
@@ -386,7 +386,7 @@ class PerformanceRegressionDetector {
     };
 
     Bun.write(filename, JSON.stringify(report, null, 2));
-    console.log(`\n💾 Detailed regression report saved: ${filename}`);
+    console.info(`\n💾 Detailed regression report saved: ${filename}`);
   }
 }
 

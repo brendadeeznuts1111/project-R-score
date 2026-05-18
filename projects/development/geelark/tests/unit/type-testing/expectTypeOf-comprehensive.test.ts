@@ -5,7 +5,7 @@ import { describe, expectTypeOf, test } from "bun:test";
 describe("🎯 Comprehensive expectTypeOf() Test Suite - All Patterns", () => {
   test("📊 Test Suite Summary", () => {
     // This test serves as a comprehensive demonstration of all patterns
-    console.log(`
+    console.info(`
 🧪 expectTypeOf() PRO-TIPS COMPREHENSIVE TEST SUITE
 ==================================================
 

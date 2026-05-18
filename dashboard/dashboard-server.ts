@@ -527,15 +527,15 @@ function startDashboardServer() {
         port: candidatePort,
         fetch: fetchHandler,
       });
-      console.log('🏭 Starting FactoryWager MCP Dashboard Server...');
-      console.log(`📊 Dashboard: http://${DASHBOARD_HOST}:${ACTIVE_PORT}`);
-      console.log(`📡 API: http://${DASHBOARD_HOST}:${ACTIVE_PORT}/api/dashboard`);
-      console.log(`🩺 Health: http://${DASHBOARD_HOST}:${ACTIVE_PORT}/api/health`);
-      console.log(`🛠 Runtime: http://${DASHBOARD_HOST}:${ACTIVE_PORT}/api/dashboard/runtime`);
-      console.log(
+      console.info('🏭 Starting FactoryWager MCP Dashboard Server...');
+      console.info(`📊 Dashboard: http://${DASHBOARD_HOST}:${ACTIVE_PORT}`);
+      console.info(`📡 API: http://${DASHBOARD_HOST}:${ACTIVE_PORT}/api/dashboard`);
+      console.info(`🩺 Health: http://${DASHBOARD_HOST}:${ACTIVE_PORT}/api/health`);
+      console.info(`🛠 Runtime: http://${DASHBOARD_HOST}:${ACTIVE_PORT}/api/dashboard/runtime`);
+      console.info(
         `⚙️ Runtime: bun ${BUN_VERSION} (${BUN_REVISION}) on ${process.platform}/${process.arch} pid=${process.pid}`
       );
-      console.log('');
+      console.info('');
       if (candidatePort !== REQUESTED_PORT) {
         console.warn(
           `[dashboard] port fallback engaged: requested ${REQUESTED_PORT}, active ${candidatePort}`

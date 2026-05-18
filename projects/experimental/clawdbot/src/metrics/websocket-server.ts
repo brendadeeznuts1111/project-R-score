@@ -124,7 +124,7 @@ export class MetricsWebSocketServer {
       websocket: {
         open(ws) {
           self.clients.set(ws, ws.data);
-          console.log(`[metrics-ws] Client connected (${self.clients.size} total)`);
+          console.info(`[metrics-ws] Client connected (${self.clients.size} total)`);
         },
 
         message(ws, message) {
@@ -139,7 +139,7 @@ export class MetricsWebSocketServer {
 
         close(ws) {
           self.clients.delete(ws);
-          console.log(`[metrics-ws] Client disconnected (${self.clients.size} total)`);
+          console.info(`[metrics-ws] Client disconnected (${self.clients.size} total)`);
         },
 
         drain(ws) {
@@ -152,7 +152,7 @@ export class MetricsWebSocketServer {
     this.startUpdateTimer();
     this.startPingTimer();
 
-    console.log(`[metrics-ws] Server started on ${this.config.hostname}:${this.config.port}`);
+    console.info(`[metrics-ws] Server started on ${this.config.hostname}:${this.config.port}`);
   }
 
   /**
@@ -175,7 +175,7 @@ export class MetricsWebSocketServer {
     }
 
     this.clients.clear();
-    console.log("[metrics-ws] Server stopped");
+    console.info("[metrics-ws] Server stopped");
   }
 
   /**

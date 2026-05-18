@@ -44,15 +44,15 @@ class AllPackagesWindowsBuilder {
   };
 
   async buildAllPackages(): Promise<void> {
-    console.log('🪟 Fantasy42-Fire22 All Packages Windows Builder');
-    console.log('================================================');
+    console.info('🪟 Fantasy42-Fire22 All Packages Windows Builder');
+    console.info('================================================');
 
     try {
       // Discover and configure packages
       await this.discoverPackages();
 
-      console.log(`📦 Found ${this.packages.length} packages to build for Windows`);
-      console.log('');
+      console.info(`📦 Found ${this.packages.length} packages to build for Windows`);
+      console.info('');
 
       // Build each package
       for (const pkg of this.packages) {
@@ -170,7 +170,7 @@ class AllPackagesWindowsBuilder {
   }
 
   private async buildPackage(pkg: PackageBuildConfig): Promise<void> {
-    console.log(`🏗️ Building ${pkg.name} for Windows...`);
+    console.info(`🏗️ Building ${pkg.name} for Windows...`);
 
     try {
       const outputDir = join(pkg.path, 'dist', 'windows');
@@ -182,7 +182,7 @@ class AllPackagesWindowsBuilder {
       const entryPointPath = join(pkg.path, pkg.entryPoint);
 
       if (!existsSync(entryPointPath)) {
-        console.log(`   ⚠️ Entry point not found: ${pkg.entryPoint}`);
+        console.info(`   ⚠️ Entry point not found: ${pkg.entryPoint}`);
         this.buildStats.failed++;
         return;
       }
@@ -204,7 +204,7 @@ class AllPackagesWindowsBuilder {
       // Generate package manifest
       await this.generatePackageManifest(pkg, outputFile);
 
-      console.log(`   ✅ Built: ${basename(outputFile)}`);
+      console.info(`   ✅ Built: ${basename(outputFile)}`);
       this.buildStats.built++;
     } catch (error) {
       console.error(`   ❌ Build failed for ${pkg.name}:`, error);
@@ -402,33 +402,33 @@ class AllPackagesWindowsBuilder {
     };
 
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`📊 Comprehensive build report: ${basename(reportPath)}`);
+    console.info(`📊 Comprehensive build report: ${basename(reportPath)}`);
   }
 
   private showBuildSummary(): void {
-    console.log('\n🏆 All Packages Windows Build Summary');
-    console.log('====================================');
-    console.log(`📦 Total Packages: ${this.buildStats.total}`);
-    console.log(`✅ Successfully Built: ${this.buildStats.built}`);
-    console.log(`❌ Failed: ${this.buildStats.failed}`);
-    console.log(
+    console.info('\n🏆 All Packages Windows Build Summary');
+    console.info('====================================');
+    console.info(`📦 Total Packages: ${this.buildStats.total}`);
+    console.info(`✅ Successfully Built: ${this.buildStats.built}`);
+    console.info(`❌ Failed: ${this.buildStats.failed}`);
+    console.info(
       `📊 Success Rate: ${((this.buildStats.built / this.buildStats.total) * 100).toFixed(1)}%`
     );
-    console.log(
+    console.info(
       `⏱️ Total Duration: ${((Date.now() - this.buildStats.startTime) / 1000).toFixed(2)}s`
     );
 
     if (this.buildStats.built > 0) {
-      console.log('\n🚀 Next Steps:');
-      console.log('1. Test all Windows executables on target systems');
-      console.log('2. Verify Windows metadata in file properties');
-      console.log('3. Sign executables with: bun run sign:windows');
-      console.log('4. Create Windows installers with: bun run package:windows');
-      console.log('5. Deploy to enterprise environments');
+      console.info('\n🚀 Next Steps:');
+      console.info('1. Test all Windows executables on target systems');
+      console.info('2. Verify Windows metadata in file properties');
+      console.info('3. Sign executables with: bun run sign:windows');
+      console.info('4. Create Windows installers with: bun run package:windows');
+      console.info('5. Deploy to enterprise environments');
     }
 
     if (this.buildStats.failed > 0) {
-      console.log('\n⚠️ Some packages failed to build. Check the logs above for details.');
+      console.info('\n⚠️ Some packages failed to build. Check the logs above for details.');
     }
   }
 }

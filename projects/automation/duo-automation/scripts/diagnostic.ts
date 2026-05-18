@@ -3,7 +3,7 @@ import { $ } from "bun";
 import { enhanceSecurityMetrics } from '../types/enhance-metric';
 import type { PerfMetric } from '../types/perf-metric';
 
-console.log("🔍 Generating v3.7 Diagnostic Report...");
+console.info("🔍 Generating v3.7 Diagnostic Report...");
 
 // 1. Swap file check
 const swapCheck = await $`find utils -name ".*!*" -type f 2>/dev/null`.text();
@@ -12,7 +12,7 @@ const swapCheck = await $`find utils -name ".*!*" -type f 2>/dev/null`.text();
 const dryRun = await $`bun install --dry-run 2>&1`.text();
 const hasErrors = dryRun.toLowerCase().includes("error:");
 
-console.log(`
+console.info(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  v3.7 Readiness Assessment
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -43,5 +43,5 @@ const collectSecurityMetrics = async (): Promise<PerfMetric[]> => [
 const securityMetrics = await collectSecurityMetrics();
 const enhanced = enhanceSecurityMetrics(securityMetrics);
 
-console.log('🔒 SECURITY METRICS (v3.7-hardened):');
-console.log(Bun.inspect.table(enhanced, { colors: true }));
+console.info('🔒 SECURITY METRICS (v3.7-hardened):');
+console.info(Bun.inspect.table(enhanced, { colors: true }));

@@ -1270,10 +1270,10 @@ export class BunOptimizedDeepStructureEngine extends DeepStructureArbitrageEngin
  * // Process results
  * results.forEach(result => {
  *   if (result.detected && result.signal) {
- *     console.log(`Pattern ${result.signal.patternId}: ${result.signal.patternName}`);
- *     console.log(`Confidence: ${(result.signal.confidence * 100).toFixed(1)}%`);
- *     console.log(`Risk: ${result.signal.riskLevel}`);
- *     console.log(`Expected Edge: ${result.signal.expectedEdge}%`);
+ *     console.info(`Pattern ${result.signal.patternId}: ${result.signal.patternName}`);
+ *     console.info(`Confidence: ${(result.signal.confidence * 100).toFixed(1)}%`);
+ *     console.info(`Risk: ${result.signal.riskLevel}`);
+ *     console.info(`Expected Edge: ${result.signal.expectedEdge}%`);
  *     
  *     // CRITICAL: Check legal status
  *     if (result.signal.riskLevel === 'CRITICAL') {
@@ -1284,7 +1284,7 @@ export class BunOptimizedDeepStructureEngine extends DeepStructureArbitrageEngin
  * 
  * // Get decay report
  * const decay = engine.getDecayReport();
- * console.log('Alpha Decay Report:', decay);
+ * console.info('Alpha Decay Report:', decay);
  * 
  * // Export comprehensive report
  * const report = engine.exportReport();

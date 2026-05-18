@@ -102,7 +102,7 @@ export class IdempotencyManager {
       switch (existing.status) {
         case 'completed':
           if (existing.result) {
-            console.log(`🔄 Returning cached result for ${operation}`);
+            console.info(`🔄 Returning cached result for ${operation}`);
             return this.parseResult(existing.result);
           }
           break;
@@ -112,7 +112,7 @@ export class IdempotencyManager {
           
         case 'failed':
           // Allow retry for failed operations
-          console.log(`🔄 Retrying failed operation ${operation}`);
+          console.info(`🔄 Retrying failed operation ${operation}`);
           break;
           
         case 'pending':
@@ -146,7 +146,7 @@ export class IdempotencyManager {
         retryCount: 0
       });
       
-      console.log(`✅ Completed operation ${operation} with idempotency`);
+      console.info(`✅ Completed operation ${operation} with idempotency`);
       return result;
       
     } catch (error) {
@@ -202,7 +202,7 @@ export class IdempotencyManager {
       this.cleanupExpiredKeys();
     }, 3600000) as unknown as number;
     
-    console.log('🧹 Idempotency cleanup loop started (hourly)');
+    console.info('🧹 Idempotency cleanup loop started (hourly)');
   }
   
   /**
@@ -215,7 +215,7 @@ export class IdempotencyManager {
     );
     
     if (result.changes > 0) {
-      console.log(`🧹 Cleaned up ${result.changes} expired idempotency keys`);
+      console.info(`🧹 Cleaned up ${result.changes} expired idempotency keys`);
     }
     
     return result.changes;
@@ -344,7 +344,7 @@ export class IdempotencyManager {
     // Final cleanup
     this.cleanupExpiredKeys();
     this.store.close();
-    console.log('🔒 Idempotency manager shutdown complete');
+    console.info('🔒 Idempotency manager shutdown complete');
   }
 }
 
@@ -390,7 +390,7 @@ export class IdempotencyExample {
   }
   
   async demonstrateCleanup(): Promise<void> {
-    console.log('🧹 Demonstrating idempotency cleanup...');
+    console.info('🧹 Demonstrating idempotency cleanup...');
     
     // Create some test records with different TTLs
     await this.idempotency.executeWithIdempotency(
@@ -407,15 +407,15 @@ export class IdempotencyExample {
       60000 // 1 minute
     );
     
-    console.log('📊 Initial stats:', this.idempotency.getStats());
+    console.info('📊 Initial stats:', this.idempotency.getStats());
     
     // Wait for short TTL to expire
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     // Force cleanup
     const cleaned = this.idempotency.forceCleanup();
-    console.log(`🧹 Cleaned ${cleaned} expired records`);
+    console.info(`🧹 Cleaned ${cleaned} expired records`);
     
-    console.log('📊 Final stats:', this.idempotency.getStats());
+    console.info('📊 Final stats:', this.idempotency.getStats());
   }
 }

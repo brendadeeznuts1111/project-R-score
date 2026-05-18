@@ -52,11 +52,11 @@ interface PerfMetric {
 }
 
 function log(...args: any[]) {
-  if (!JSON_OUTPUT) console.log(...args);
+  if (!JSON_OUTPUT) console.info(...args);
 }
 
 function logVerbose(...args: any[]) {
-  if (VERBOSE && !JSON_OUTPUT) console.log(...args);
+  if (VERBOSE && !JSON_OUTPUT) console.info(...args);
 }
 
 export {}; // Make this file a module to allow top-level await
@@ -334,7 +334,7 @@ async function enhancedSetupCheck() {
   results.checks.push({ name: 'inline', score: inlineScore, max: 4 });
 
   // Binary Test (+4 points) - Now with REAL PNG
-  console.log('\n🔍 Binary APIs (Real PNG + GigBlob + Verify):');
+  console.info('\n🔍 Binary APIs (Real PNG + GigBlob + Verify):');
   let embedUrl;
   try {
     const uploadRes = await s3Native.uploadScreenshot(MINIMAL_PNG, 'test/binary-test.png');
@@ -364,7 +364,7 @@ async function enhancedSetupCheck() {
     'bench/storage/verify-dev-url.ts'
   ];
   let fileScore = 0;
-  console.log('\n📁 Files:');
+  console.info('\n📁 Files:');
   files.forEach(f => {
     const resolvedPath = resolve(f);
     if (existsSync(resolvedPath)) {
@@ -461,7 +461,7 @@ async function enhancedSetupCheck() {
     results.percent = scorePct;
     results.totalMs = totalMs.toFixed(0);
     results.timestamp = new Date().toISOString();
-    console.log(JSON.stringify(results, null, 2));
+    console.info(JSON.stringify(results, null, 2));
     return;
   }
 
@@ -589,18 +589,18 @@ async function enhancedSetupCheck() {
     }
   ];
 
-  console.log('\n📊 MASTER_PERF Matrix Update:');
-  console.log('| Category | Type | Topic | SubCat | ID | Value | Pattern | Locations | Impact | Properties |');
-  console.log('|----------|------|-------|--------|----|-------|---------|-----------|--------|------------|');
+  console.info('\n📊 MASTER_PERF Matrix Update:');
+  console.info('| Category | Type | Topic | SubCat | ID | Value | Pattern | Locations | Impact | Properties |');
+  console.info('|----------|------|-------|--------|----|-------|---------|-----------|--------|------------|');
   perfMetrics.forEach(m => {
     const props = m.properties ? JSON.stringify(m.properties).replace(/"/g, "'") : '-';
-    console.log(`| ${m.category} | ${m.type} | ${m.topic} | ${m.subCat} | ${m.id} | ${m.value} | ${m.pattern || '-'} | ${m.locations} | ${m.impact} | ${props} |`);
+    console.info(`| ${m.category} | ${m.type} | ${m.topic} | ${m.subCat} | ${m.id} | ${m.value} | ${m.pattern || '-'} | ${m.locations} | ${m.impact} | ${props} |`);
   });
 
   // Pretty-print perf metrics with Bun.inspect
   if (VERBOSE) {
-    console.log('\n🔍 Verbose Perf Metrics:');
-    console.log(Bun.inspect(perfMetrics, {
+    console.info('\n🔍 Verbose Perf Metrics:');
+    console.info(Bun.inspect(perfMetrics, {
       colors: true,
       compact: false,
       depth: 3,
@@ -612,11 +612,11 @@ async function enhancedSetupCheck() {
   results.perfMetrics = perfMetrics;
 
   if (scorePct === '100') {
-    console.log('\n✅ READY FOR LIVE R2 BENCH: bun bench-r2-real.ts 🎭');
+    console.info('\n✅ READY FOR LIVE R2 BENCH: bun bench-r2-real.ts 🎭');
   } else if (parseInt(scorePct) >= 80) {
-    console.log(`\n✅ MOSTLY READY (${scorePct}%) - Fix minor issues before benchmark`);
+    console.info(`\n✅ MOSTLY READY (${scorePct}%) - Fix minor issues before benchmark`);
   } else {
-    console.log(`\n⚠️ Score ${scorePct}% - Fix issues before running benchmark`);
+    console.info(`\n⚠️ Score ${scorePct}% - Fix issues before running benchmark`);
   }
 
   // Export results as JSON for CI

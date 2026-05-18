@@ -403,7 +403,7 @@ const server = serve({
     // Log with colors in development, clean in production
     const isDevelopment = process.env.NODE_ENV === 'development';
     const logMessage = formatLog('info', \`\${request.method} \${url.pathname}\`, isDevelopment);
-    console.log(logMessage);
+    console.info(logMessage);
     
     try {
       switch (url.pathname) {
@@ -458,16 +458,16 @@ const server = serve({
 });
 
 // Startup logs with colors
-console.log(formatLog('success', \`🚀 Water Dashboard Standalone Server started on port \${server.port}\`));
-console.log(formatLog('info', \`Version: \${RUNTIME_INFO.version}\`));
-console.log(formatLog('info', \`User Agent: \${RUNTIME_INFO.userAgent}\`));
-console.log(formatLog('info', \`Platform: \${RUNTIME_INFO.platform}\`));
-console.log(formatLog('info', \`Runtime Args: \${RUNTIME_INFO.execArgv.join(' ')}\`));
+console.info(formatLog('success', \`🚀 Water Dashboard Standalone Server started on port \${server.port}\`));
+console.info(formatLog('info', \`Version: \${RUNTIME_INFO.version}\`));
+console.info(formatLog('info', \`User Agent: \${RUNTIME_INFO.userAgent}\`));
+console.info(formatLog('info', \`Platform: \${RUNTIME_INFO.platform}\`));
+console.info(formatLog('info', \`Runtime Args: \${RUNTIME_INFO.execArgv.join(' ')}\`));
 
 // Production log (clean)
 const cleanStartupMessage = cleanLog(\`Water Dashboard v\${RUNTIME_INFO.version} started successfully on port \${server.port}\`);
 if (process.env.NODE_ENV === 'production') {
-  console.log(cleanStartupMessage);
+  console.info(cleanStartupMessage);
 }
 `;
 
@@ -479,22 +479,22 @@ if (process.env.NODE_ENV === 'production') {
  * Main build function
  */
 async function buildStandalone(): Promise<void> {
-  console.log(formatLog('info', '🚀 Starting Water Dashboard standalone build...'));
+  console.info(formatLog('info', '🚀 Starting Water Dashboard standalone build...'));
 
   try {
     // Ensure dist directory exists
     if (!existsSync('./dist')) {
       await mkdir('./dist', { recursive: true });
-      console.log(formatLog('success', '📁 Created dist directory'));
+      console.info(formatLog('success', '📁 Created dist directory'));
     }
 
     // Create standalone entry point
     const entryFile = await createStandaloneEntry();
-    console.log(formatLog('success', `✅ Created standalone entry: ${entryFile}`));
+    console.info(formatLog('success', `✅ Created standalone entry: ${entryFile}`));
 
     // Build for each target platform
     for (const target of buildTargets) {
-      console.log(formatLog('info', `🔨 Building for ${target.platform}...`));
+      console.info(formatLog('info', `🔨 Building for ${target.platform}...`));
 
       const buildResult = await Bun.build({
         entrypoints: [entryFile],
@@ -516,7 +516,7 @@ async function buildStandalone(): Promise<void> {
       }
 
       // Create executable with embedded runtime flags
-      console.log(formatLog('info', `📦 Compiling executable for ${target.platform}...`));
+      console.info(formatLog('info', `📦 Compiling executable for ${target.platform}...`));
 
       const compileResult =
         await $`bun build ${entryFile} --compile --target=bun --outfile=${target.outfile} --minify`.quiet();
@@ -527,28 +527,28 @@ async function buildStandalone(): Promise<void> {
         );
       }
 
-      console.log(formatLog('success', `✅ Built ${target.outfile}`));
-      console.log(formatLog('info', `   Runtime flags: ${target.compileExecArgv.join(' ')}`));
+      console.info(formatLog('success', `✅ Built ${target.outfile}`));
+      console.info(formatLog('info', `   Runtime flags: ${target.compileExecArgv.join(' ')}`));
 
       // Show file size
       const stat = await Bun.file(target.outfile).size;
       const sizeMB = (stat / 1024 / 1024).toFixed(2);
-      console.log(formatLog('info', `   Size: ${sizeMB} MB`));
+      console.info(formatLog('info', `   Size: ${sizeMB} MB`));
     }
 
-    console.log(formatLog('success', '🎉 All builds completed successfully!'));
-    console.log(formatLog('info', ''));
-    console.log(formatLog('info', '📋 Built executables:'));
+    console.info(formatLog('success', '🎉 All builds completed successfully!'));
+    console.info(formatLog('info', ''));
+    console.info(formatLog('info', '📋 Built executables:'));
 
     for (const target of buildTargets) {
-      console.log(formatLog('info', `   ${target.platform}: ${target.outfile}`));
+      console.info(formatLog('info', `   ${target.platform}: ${target.outfile}`));
     }
 
-    console.log(formatLog('info', ''));
-    console.log(formatLog('success', '🚀 Usage:'));
-    console.log(formatLog('info', '   Linux:   ./dist/water-dashboard-linux'));
-    console.log(formatLog('info', '   Windows: .\\dist\\WaterDashboard.exe'));
-    console.log(formatLog('info', '   macOS:   ./dist/water-dashboard-macos'));
+    console.info(formatLog('info', ''));
+    console.info(formatLog('success', '🚀 Usage:'));
+    console.info(formatLog('info', '   Linux:   ./dist/water-dashboard-linux'));
+    console.info(formatLog('info', '   Windows: .\\dist\\WaterDashboard.exe'));
+    console.info(formatLog('info', '   macOS:   ./dist/water-dashboard-macos'));
   } catch (error) {
     console.error(formatLog('error', `❌ Build failed: ${error}`));
     process.exit(1);

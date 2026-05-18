@@ -126,7 +126,7 @@ function openArbDashboard(): void {
 
 	if (result.exitCode !== 0) {
 		// Fallback: try opening in browser
-		console.log('Opening dashboard in browser...');
+		console.info('Opening dashboard in browser...');
 		spawnSync({
 			cmd: ['open', './arb-dashboard.html'],
 			stdout: 'inherit',
@@ -158,7 +158,7 @@ async function runBulkCliScrape(): Promise<any[]> {
 		.map(r => r.value)
 		.filter(v => v !== null);
 
-	console.log('%j', {
+	console.info('%j', {
 		cli_scrape_complete: true,
 		successful: successful.length,
 		failed: results.length - successful.length,
@@ -241,7 +241,7 @@ setInterval(async () => {
 
 	console.timeEnd('cli-cycle');
 
-	console.log('%j', {
+	console.info('%j', {
 		cli_scanner_cycle: true,
 		scrapers_run: cliResults.filter(r => r !== null).length,
 		spawn_sync_isolated: true,
@@ -249,7 +249,7 @@ setInterval(async () => {
 	});
 }, 5000); // 5s CLI cycles
 
-console.log('%j', {
+console.info('%j', {
 	cliEngine: 'SPAWNSYNC-ISOLATED-LIVE',
 	fixes_applied: 4,
 	windows_ready: true,

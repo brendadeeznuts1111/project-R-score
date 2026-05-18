@@ -227,14 +227,14 @@ export class AutomatedRemediationEngine {
       }
     ];
     
-    console.log(`📋 Loaded ${this.remediationRules.length} remediation rules`);
+    console.info(`📋 Loaded ${this.remediationRules.length} remediation rules`);
   }
 
   /**
    * Start monitoring for anomalies and trigger remediation
    */
   private startRemediationMonitor(): void {
-    console.log('🚀 Starting automated remediation monitor...');
+    console.info('🚀 Starting automated remediation monitor...');
     
     // Monitor for new anomalies every 30 seconds
     setInterval(async () => {
@@ -246,7 +246,7 @@ export class AutomatedRemediationEngine {
     }, 30000);
     
     // Also trigger on-demand remediation via API
-    console.log('✅ Remediation engine ready. Monitoring for anomalies...');
+    console.info('✅ Remediation engine ready. Monitoring for anomalies...');
   }
 
   /**
@@ -266,7 +266,7 @@ export class AutomatedRemediationEngine {
       return; // No new anomalies
     }
     
-    console.log(`🔍 Found ${recentAnomalies.length} recent anomalies for remediation`);
+    console.info(`🔍 Found ${recentAnomalies.length} recent anomalies for remediation`);
     
     // Process each anomaly
     for (const anomaly of recentAnomalies) {
@@ -371,7 +371,7 @@ export class AutomatedRemediationEngine {
     this.activeWorkflows.set(workflowId, workflow);
     this.logAuditEvent('workflow_started', { workflowId, anomaly });
     
-    console.log(`🚀 Starting remediation workflow ${workflowId} for anomaly: ${anomaly.pattern}`);
+    console.info(`🚀 Starting remediation workflow ${workflowId} for anomaly: ${anomaly.pattern}`);
     
     // Check if approval is required
     const requiresApproval = actions.some(a => a.approvalRequired);
@@ -463,12 +463,12 @@ export class AutomatedRemediationEngine {
       }
     }
     
-    console.log(`⏳ Waiting for approval for workflow ${workflow.workflowId}`);
+    console.info(`⏳ Waiting for approval for workflow ${workflow.workflowId}`);
     
     // Set timeout for auto-rejection
     setTimeout(() => {
       if (workflow.status === 'pending') {
-        console.log(`⏰ Approval timeout for workflow ${workflow.workflowId}`);
+        console.info(`⏰ Approval timeout for workflow ${workflow.workflowId}`);
         workflow.status = 'failed';
         workflow.results.push({
           action: workflow.actions[0],
@@ -487,7 +487,7 @@ export class AutomatedRemediationEngine {
     workflow.status = 'executing';
     this.logAuditEvent('workflow_executing', { workflowId: workflow.workflowId });
     
-    console.log(`⚡ Executing ${workflow.actions.length} actions for workflow ${workflow.workflowId}`);
+    console.info(`⚡ Executing ${workflow.actions.length} actions for workflow ${workflow.workflowId}`);
     
     for (const action of workflow.actions) {
       const actionResult = await this.executeRemediationAction(action, workflow.trigger);
@@ -525,7 +525,7 @@ export class AutomatedRemediationEngine {
       results: workflow.results
     });
     
-    console.log(`✅ Remediation workflow ${workflow.workflowId} completed`);
+    console.info(`✅ Remediation workflow ${workflow.workflowId} completed`);
     
     // Send completion notification
     await this.sendWorkflowCompletionNotification(workflow);
@@ -541,7 +541,7 @@ export class AutomatedRemediationEngine {
     const startTime = Date.now();
     
     try {
-      console.log(`🛠️  Executing action: ${action.name} (${action.id})`);
+      console.info(`🛠️  Executing action: ${action.name} (${action.id})`);
       
       // Resolve template variables in parameters
       const resolvedParams = this.resolveActionParameters(action, trigger);
@@ -661,7 +661,7 @@ export class AutomatedRemediationEngine {
     // For demo, simulate script execution
     const { script, args } = params;
     
-    console.log(`📜 Executing script: ${script} ${args.join(' ')}`);
+    console.info(`📜 Executing script: ${script} ${args.join(' ')}`);
     
     // Simulate script execution
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -675,7 +675,7 @@ export class AutomatedRemediationEngine {
   private async sendNotification(params: any): Promise<string> {
     const { channels, message, priority, recipients } = params;
     
-    console.log(`📢 Sending notification via ${channels.join(', ')}: ${message}`);
+    console.info(`📢 Sending notification via ${channels.join(', ')}: ${message}`);
     
     // Send to Slack if configured
     if (channels.includes('slack') && this.INTEGRATIONS.SLACK_WEBHOOK) {
@@ -718,7 +718,7 @@ export class AutomatedRemediationEngine {
    * Execute rollback for failed action
    */
   private async executeRollback(action: RemediationAction, workflow: RemediationWorkflow): Promise<void> {
-    console.log(`🔄 Executing rollback for failed action: ${action.name}`);
+    console.info(`🔄 Executing rollback for failed action: ${action.name}`);
     
     // Define rollback actions based on original action
     const rollbackActions: RemediationAction[] = [
@@ -753,7 +753,7 @@ export class AutomatedRemediationEngine {
     for (const rollbackAction of rollbackActions) {
       try {
         await this.executeRemediationAction(rollbackAction, workflow.trigger);
-        console.log(`✅ Rollback completed for action: ${action.name}`);
+        console.info(`✅ Rollback completed for action: ${action.name}`);
       } catch (error) {
         console.error(`❌ Rollback failed for action ${action.name}:`, error.message);
       }

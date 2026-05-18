@@ -600,7 +600,7 @@ export default {
  */
 export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
   try {
-    console.log('Complete status system health check completed at:', new Date().toISOString());
+    console.info('Complete status system health check completed at:', new Date().toISOString());
   } catch (error) {
     console.error('Scheduled health check failed:', error);
   }

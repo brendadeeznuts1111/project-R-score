@@ -256,7 +256,7 @@ export class BunSecretManager {
         // Windows enterprise naming convention
         service = this.config.windowsTargetName || `com.duoplus.enterprise.${this.serviceName}`;
         secretName = `DuoPlus_API_${teamId || 'Default'}`;
-        console.log(`🪟 Using Windows enterprise persistence: ${service}`);
+        console.info(`🪟 Using Windows enterprise persistence: ${service}`);
       }
 
       await secrets.set({
@@ -265,9 +265,9 @@ export class BunSecretManager {
         value: apiKey
       });
       
-      console.log(`✅ API key stored securely in system keychain for ${secretName}`);
+      console.info(`✅ API key stored securely in system keychain for ${secretName}`);
       if (process.platform === 'win32' && this.config.windowsEnterprise) {
-        console.log(`   🏢 Windows Enterprise: Scoped per user with CRED_PERSIST_ENTERPRISE`);
+        console.info(`   🏢 Windows Enterprise: Scoped per user with CRED_PERSIST_ENTERPRISE`);
       }
       return true;
     } catch (error) {
@@ -334,9 +334,9 @@ export class BunSecretManager {
       });
       
       if (deleted) {
-        console.log(`✅ API key deleted from system keychain for ${secretName}`);
+        console.info(`✅ API key deleted from system keychain for ${secretName}`);
         if (process.platform === 'win32' && this.config.windowsEnterprise) {
-          console.log(`   🏢 Windows Enterprise: Removed from Credential Manager`);
+          console.info(`   🏢 Windows Enterprise: Removed from Credential Manager`);
         }
       }
       return deleted;
@@ -366,7 +366,7 @@ export class BunSecretManager {
         value: credentials
       });
       
-      console.log(`✅ Proxy credentials stored securely in system keychain for ${provider}`);
+      console.info(`✅ Proxy credentials stored securely in system keychain for ${provider}`);
       return true;
     } catch (error) {
       console.error('❌ Failed to store proxy credentials in system keychain:', error instanceof Error ? error.message : String(error));
@@ -421,7 +421,7 @@ export class BunSecretManager {
       });
       
       if (deleted) {
-        console.log(`✅ Proxy credentials deleted from system keychain for ${provider}`);
+        console.info(`✅ Proxy credentials deleted from system keychain for ${provider}`);
       }
       return deleted;
     } catch (error) {
@@ -483,7 +483,7 @@ export class BunSecretManager {
 
     // Note: Bun's secrets API doesn't provide a list method
     // This is a placeholder for future implementation or custom tracking
-    console.log('📋 System keychain secrets listing not directly supported by Bun API');
+    console.info('📋 System keychain secrets listing not directly supported by Bun API');
     return [];
   }
 
@@ -545,10 +545,10 @@ export class BunSecretManager {
       info.credentialManagerPath = 'Control Panel → Credential Manager → Windows Credentials';
       
       if (this.config.windowsEnterprise) {
-        console.log('🪟 Windows Enterprise Mode:');
-        console.log(`   📍 Credential Manager: ${info.credentialManagerPath}`);
-        console.log(`   🔐 Persistence: CRED_PERSIST_ENTERPRISE (per-user scope)`);
-        console.log(`   🏢 Encryption: Windows Data Protection API`);
+        console.info('🪟 Windows Enterprise Mode:');
+        console.info(`   📍 Credential Manager: ${info.credentialManagerPath}`);
+        console.info(`   🔐 Persistence: CRED_PERSIST_ENTERPRISE (per-user scope)`);
+        console.info(`   🏢 Encryption: Windows Data Protection API`);
       }
     }
     
@@ -573,9 +573,9 @@ export class BunSecretManager {
         service = this.config.windowsTargetName || `com.duoplus.enterprise.${this.serviceName}`;
         name = `DuoPlus_${type.replace('-', '_').toUpperCase()}_${identifier || 'Default'}`;
         
-        console.log(`🪟 Storing enterprise credential: ${name}`);
-        console.log(`   🏢 Service: ${service}`);
-        console.log(`   🔐 Persistence: CRED_PERSIST_ENTERPRISE`);
+        console.info(`🪟 Storing enterprise credential: ${name}`);
+        console.info(`   🏢 Service: ${service}`);
+        console.info(`   🔐 Persistence: CRED_PERSIST_ENTERPRISE`);
       }
 
       await secrets.set({
@@ -584,7 +584,7 @@ export class BunSecretManager {
         value
       });
       
-      console.log(`✅ Enterprise ${type} stored securely`);
+      console.info(`✅ Enterprise ${type} stored securely`);
       return true;
     } catch (error) {
       console.error(`❌ Failed to store enterprise ${type}:`, error instanceof Error ? error.message : String(error));
@@ -646,9 +646,9 @@ export class BunSecretManager {
       });
       
       if (deleted) {
-        console.log(`✅ Enterprise ${type} deleted successfully`);
+        console.info(`✅ Enterprise ${type} deleted successfully`);
         if (process.platform === 'win32' && this.config.windowsEnterprise) {
-          console.log(`   🏢 Removed from Windows Credential Manager`);
+          console.info(`   🏢 Removed from Windows Credential Manager`);
         }
       }
       return deleted;

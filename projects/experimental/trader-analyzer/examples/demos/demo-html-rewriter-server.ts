@@ -208,8 +208,8 @@ function createAdvancedTransformation() {
   }
 </style>
 <script>
-  console.log('✅ Page transformed by HTMLRewriter!');
-  console.log('📊 Transformations applied:', {
+  console.info('✅ Page transformed by HTMLRewriter!');
+  console.info('📊 Transformations applied:', {
     title: 'Modified',
     banner: 'Added',
     headings: 'Styled',
@@ -476,31 +476,31 @@ const server = Bun.serve({
   },
 });
 
-console.log('\n' + '═'.repeat(70));
-console.log('  🚀 HTMLRewriter Interactive Demo Server');
-console.log('═'.repeat(70));
-console.log(`\n📊 Server running at: http://localhost:${server.port}`);
-console.log('🌐 Open in browser: http://localhost:' + server.port);
-console.log('\n💡 Features:');
-console.log('  • Side-by-side comparison (Original vs Transformed)');
-console.log('  • Multiple transformation modes');
-console.log('  • Real-time HTML transformation');
-console.log('  • Interactive preview');
-console.log('\n🎮 Controls:');
-console.log('  • Click buttons to switch transformation modes');
-console.log('  • View source to see transformed HTML');
-console.log('  • Check browser console for transformation logs');
-console.log('\nPress Ctrl+C to stop\n');
+console.info('\n' + '═'.repeat(70));
+console.info('  🚀 HTMLRewriter Interactive Demo Server');
+console.info('═'.repeat(70));
+console.info(`\n📊 Server running at: http://localhost:${server.port}`);
+console.info('🌐 Open in browser: http://localhost:' + server.port);
+console.info('\n💡 Features:');
+console.info('  • Side-by-side comparison (Original vs Transformed)');
+console.info('  • Multiple transformation modes');
+console.info('  • Real-time HTML transformation');
+console.info('  • Interactive preview');
+console.info('\n🎮 Controls:');
+console.info('  • Click buttons to switch transformation modes');
+console.info('  • View source to see transformed HTML');
+console.info('  • Check browser console for transformation logs');
+console.info('\nPress Ctrl+C to stop\n');
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n\n👋 Shutting down server...');
+  console.info('\n\n👋 Shutting down server...');
   server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n\n👋 Shutting down server...');
+  console.info('\n\n👋 Shutting down server...');
   server.stop();
   process.exit(0);
 });

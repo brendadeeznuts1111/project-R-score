@@ -21,16 +21,16 @@
 // =============================================================================
 
 console.clear();
-console.log('🔍 Canvas-Vault Integration Validation');
-console.log('═'.repeat(80));
-console.log();
+console.info('🔍 Canvas-Vault Integration Validation');
+console.info('═'.repeat(80));
+console.info();
 
 // =============================================================================
 // [VALIDATION_CRITERIA] - 2025-11-18
 // =============================================================================
 
-console.log('📋 Validation Criteria');
-console.log('═'.repeat(50));
+console.info('📋 Validation Criteria');
+console.info('═'.repeat(50));
 
 const validationCriteria = [
     {
@@ -56,17 +56,17 @@ const validationCriteria = [
 ];
 
 validationCriteria.forEach((criteria, index) => {
-    console.log(`${index + 1}. ${criteria.name}`);
-    console.log(`   ${criteria.description}`);
+    console.info(`${index + 1}. ${criteria.name}`);
+    console.info(`   ${criteria.description}`);
 });
-console.log();
+console.info();
 
 // =============================================================================
 // [CURRENT_CANVAS_ANALYSIS] - 2025-11-18
 // =============================================================================
 
-console.log('🎨 Current Canvas Node Analysis');
-console.log('═'.repeat(50));
+console.info('🎨 Current Canvas Node Analysis');
+console.info('═'.repeat(50));
 
 const canvasNodes = [
     {
@@ -215,8 +215,8 @@ const canvasNodes = [
     }
 ];
 
-console.log('📊 Node Validation Results:');
-console.log();
+console.info('📊 Node Validation Results:');
+console.info();
 
 canvasNodes.forEach((node, index) => {
     const kebabCasePattern = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -230,25 +230,25 @@ canvasNodes.forEach((node, index) => {
     const hasVersion = node.metadata?.version && node.metadata.version.length > 0;
     const hasHealthScore = typeof node.metadata?.healthScore === 'number' && node.metadata.healthScore >= 0 && node.metadata.healthScore <= 100;
 
-    console.log(`${index + 1}. ${node.id}`);
-    console.log(`   ✅ ID Pattern: ${isValidId ? 'Valid' : 'Invalid'} kebab-case`);
-    console.log(`   ${isValidDocumentType ? '✅' : '❌'} Document Type: ${isValidDocumentType ? 'Valid' : 'Invalid'} (${node.metadata?.documentType})`);
-    console.log(`   ${hasValidRelatedFile ? '✅' : '❌'} Related File: ${hasValidRelatedFile ? 'Present' : 'Missing'} (${node.metadata?.relatedFile})`);
-    console.log(`   ${hasTags ? '✅' : '❌'} Tags: ${hasTags ? 'Present' : 'Missing'} (${node.metadata?.tags?.length} tags)`);
-    console.log(`   ${hasValidPriority ? '✅' : '❌'} Priority: ${hasValidPriority ? 'Valid' : 'Invalid'} (${node.metadata?.priority})`);
-    console.log(`   ${hasValidStatus ? '✅' : '❌'} Status: ${hasValidStatus ? 'Valid' : 'Invalid'} (${node.metadata?.status})`);
-    console.log(`   ${hasVersion ? '✅' : '❌'} Version: ${hasVersion ? 'Present' : 'Missing'} (${node.metadata?.version})`);
-    console.log(`   ${hasHealthScore ? '✅' : '❌'} Health Score: ${hasHealthScore ? 'Valid' : 'Invalid'} (${node.metadata?.healthScore})`);
-    console.log(`   📝 Type: ${node.type} | Color: ${node.color}`);
-    console.log();
+    console.info(`${index + 1}. ${node.id}`);
+    console.info(`   ✅ ID Pattern: ${isValidId ? 'Valid' : 'Invalid'} kebab-case`);
+    console.info(`   ${isValidDocumentType ? '✅' : '❌'} Document Type: ${isValidDocumentType ? 'Valid' : 'Invalid'} (${node.metadata?.documentType})`);
+    console.info(`   ${hasValidRelatedFile ? '✅' : '❌'} Related File: ${hasValidRelatedFile ? 'Present' : 'Missing'} (${node.metadata?.relatedFile})`);
+    console.info(`   ${hasTags ? '✅' : '❌'} Tags: ${hasTags ? 'Present' : 'Missing'} (${node.metadata?.tags?.length} tags)`);
+    console.info(`   ${hasValidPriority ? '✅' : '❌'} Priority: ${hasValidPriority ? 'Valid' : 'Invalid'} (${node.metadata?.priority})`);
+    console.info(`   ${hasValidStatus ? '✅' : '❌'} Status: ${hasValidStatus ? 'Valid' : 'Invalid'} (${node.metadata?.status})`);
+    console.info(`   ${hasVersion ? '✅' : '❌'} Version: ${hasVersion ? 'Present' : 'Missing'} (${node.metadata?.version})`);
+    console.info(`   ${hasHealthScore ? '✅' : '❌'} Health Score: ${hasHealthScore ? 'Valid' : 'Invalid'} (${node.metadata?.healthScore})`);
+    console.info(`   📝 Type: ${node.type} | Color: ${node.color}`);
+    console.info();
 });
 
 // =============================================================================
 // [VALIDATION_RESULTS] - 2025-11-18
 // =============================================================================
 
-console.log('🔍 Integration Validation Results');
-console.log('═'.repeat(50));
+console.info('🔍 Integration Validation Results');
+console.info('═'.repeat(50));
 
 const validationResults = {
     'Node ID matches vault file path pattern': {
@@ -277,25 +277,25 @@ const validationResults = {
     }
 };
 
-console.log('📈 Overall Validation Score:');
+console.info('📈 Overall Validation Score:');
 Object.entries(validationResults).forEach(([criteria, result]) => {
     const percentage = Math.round((result.score / result.total) * 100);
     const statusIcon = result.status.includes('✅') ? '✅' :
         result.status.includes('⚠️') ? '⚠️' : '❌';
 
-    console.log(`${statusIcon} ${criteria}`);
-    console.log(`   Score: ${result.score}/${result.total} (${percentage}%)`);
-    console.log(`   Status: ${result.status}`);
-    console.log(`   Details: ${result.details}`);
-    console.log();
+    console.info(`${statusIcon} ${criteria}`);
+    console.info(`   Score: ${result.score}/${result.total} (${percentage}%)`);
+    console.info(`   Status: ${result.status}`);
+    console.info(`   Details: ${result.details}`);
+    console.info();
 });
 
 // =============================================================================
 // [RECOMMENDATIONS] - 2025-11-18
 // =============================================================================
 
-console.log('💡 Recommendations for Full Integration');
-console.log('═'.repeat(50));
+console.info('💡 Recommendations for Full Integration');
+console.info('═'.repeat(50));
 
 const recommendations = [
     {
@@ -321,43 +321,43 @@ const recommendations = [
 ];
 
 recommendations.forEach((rec, index) => {
-    console.log(`${index + 1}. ${rec.priority} ${rec.action}`);
-    console.log(`   ${rec.description}`);
-    console.log();
+    console.info(`${index + 1}. ${rec.priority} ${rec.action}`);
+    console.info(`   ${rec.description}`);
+    console.info();
 });
 
 // =============================================================================
 // [NEXT_STEPS] - 2025-11-18
 // =============================================================================
 
-console.log('🎯 Implementation Next Steps');
-console.log('═'.repeat(50));
+console.info('🎯 Implementation Next Steps');
+console.info('═'.repeat(50));
 
-console.log('📝 To achieve full canvas-vault integration:');
-console.log();
-console.log('1. **Enhanced Node Structure**');
-console.log('   Add metadata object to each canvas node');
-console.log('   Include: documentType, relatedFile, tags, priority, status');
-console.log();
-console.log('2. **Vault Type Integration**');
-console.log('   Connect to VaultDocumentType enum');
-console.log('   Validate all documentType values');
-console.log();
-console.log('3. **File Path Validation**');
-console.log('   Verify relatedFile paths exist in vault');
-console.log('   Implement path resolution logic');
-console.log();
-console.log('4. **Content Standards**');
-console.log('   Apply vault linting rules to node content');
-console.log('   Ensure consistent formatting');
-console.log();
-console.log('5. **Automated Generation**');
-console.log('   Use createNodeFromVaultFile() function');
-console.log('   Auto-populate metadata from vault files');
-console.log();
+console.info('📝 To achieve full canvas-vault integration:');
+console.info();
+console.info('1. **Enhanced Node Structure**');
+console.info('   Add metadata object to each canvas node');
+console.info('   Include: documentType, relatedFile, tags, priority, status');
+console.info();
+console.info('2. **Vault Type Integration**');
+console.info('   Connect to VaultDocumentType enum');
+console.info('   Validate all documentType values');
+console.info();
+console.info('3. **File Path Validation**');
+console.info('   Verify relatedFile paths exist in vault');
+console.info('   Implement path resolution logic');
+console.info();
+console.info('4. **Content Standards**');
+console.info('   Apply vault linting rules to node content');
+console.info('   Ensure consistent formatting');
+console.info();
+console.info('5. **Automated Generation**');
+console.info('   Use createNodeFromVaultFile() function');
+console.info('   Auto-populate metadata from vault files');
+console.info();
 
-console.log('🏆 Current Status: Enhanced Canvas with Vault Metadata');
-console.log('🎯 Target Status: Fully Integrated Canvas-Vault System');
-console.log();
-console.log('📊 Validation Complete! 🎨📊🔍');
-console.log('🎉 Major Improvement: All nodes now have comprehensive vault metadata!');
+console.info('🏆 Current Status: Enhanced Canvas with Vault Metadata');
+console.info('🎯 Target Status: Fully Integrated Canvas-Vault System');
+console.info();
+console.info('📊 Validation Complete! 🎨📊🔍');
+console.info('🎉 Major Improvement: All nodes now have comprehensive vault metadata!');

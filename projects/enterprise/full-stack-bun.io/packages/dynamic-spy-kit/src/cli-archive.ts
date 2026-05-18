@@ -42,8 +42,8 @@ class OddsPortalArchiver {
 	 * Archive historical odds data
 	 */
 	async archive(): Promise<void> {
-		console.log(`📊 Archiving ${this.options.months} months of data for bookies: ${this.options.bookies.join(', ')}`);
-		console.log(`📁 Output: ${this.options.output}`);
+		console.info(`📊 Archiving ${this.options.months} months of data for bookies: ${this.options.bookies.join(', ')}`);
+		console.info(`📁 Output: ${this.options.output}`);
 
 		// Initialize output file
 		if (this.options.format === 'jsonl' && existsSync(this.options.output)) {
@@ -55,28 +55,28 @@ class OddsPortalArchiver {
 		const startDate = new Date();
 		startDate.setMonth(startDate.getMonth() - this.options.months);
 
-		console.log(`📅 Date range: ${startDate.toISOString().split('T')[0]} to ${endDate.toISOString().split('T')[0]}`);
+		console.info(`📅 Date range: ${startDate.toISOString().split('T')[0]} to ${endDate.toISOString().split('T')[0]}`);
 
 		// Archive each bookie
 		for (const bookie of this.options.bookies) {
 			await this.archiveBookie(bookie, startDate, endDate);
 		}
 
-		console.log(`✅ Archive complete: ${this.options.output}`);
+		console.info(`✅ Archive complete: ${this.options.output}`);
 	}
 
 	/**
 	 * Archive data for a specific bookie
 	 */
 	private async archiveBookie(bookie: string, startDate: Date, endDate: Date): Promise<void> {
-		console.log(`📥 Archiving ${bookie}...`);
+		console.info(`📥 Archiving ${bookie}...`);
 
 		// Try to scrape real data first
 		let historicalData = await this.scrapeHistoricalData(bookie, startDate, endDate);
 
 		// Fallback to mock data if scraping fails or returns no results
 		if (historicalData.length === 0) {
-			console.log(`⚠️  No real data found, generating mock data for ${bookie}...`);
+			console.info(`⚠️  No real data found, generating mock data for ${bookie}...`);
 			historicalData = this.generateHistoricalData(bookie, startDate, endDate);
 		}
 
@@ -91,7 +91,7 @@ class OddsPortalArchiver {
 			await writeFile(this.options.output, JSON.stringify(allData, null, 2));
 		}
 
-		console.log(`✅ ${bookie}: ${historicalData.length} records archived`);
+		console.info(`✅ ${bookie}: ${historicalData.length} records archived`);
 	}
 
 	/**

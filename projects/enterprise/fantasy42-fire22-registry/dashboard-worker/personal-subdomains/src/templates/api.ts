@@ -53,7 +53,7 @@ export async function generateSecureApiPage(employee: any, pathname?: string): P
  * Run comprehensive security check for API endpoints
  */
 export async function runSecurityCheck(): Promise<void> {
-  console.log('🔍 Running API Security Check...');
+  console.info('🔍 Running API Security Check...');
 
   try {
     // Define API-related packages to scan
@@ -78,7 +78,7 @@ export async function runSecurityCheck(): Promise<void> {
       exportResults: true,
     });
 
-    console.log('✅ API Security Check Complete');
+    console.info('✅ API Security Check Complete');
   } catch (error) {
     console.error('❌ API Security Check Failed:', error);
   }

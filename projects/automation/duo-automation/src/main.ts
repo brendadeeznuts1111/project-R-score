@@ -4,7 +4,7 @@ import { initFactoryWager } from "./common/factory-wager-premium";
 import { PatternValidator } from "./validation/pattern-validator";
 import { IdentityShieldWorkflow } from "./apple-id/identity-shield-service";
 
-console.log("🏰 Empire Pro Starting...");
+console.info("🏰 Empire Pro Starting...");
 
 registerTypeDefinitions();
 
@@ -13,7 +13,7 @@ initFactoryWager();
 
 // Dead-code eliminated if !feature("VALIDATION")
 if (feature("VALIDATION")) {
-  console.log("🛡️  Validation Engine Active [DCE Check]");
+  console.info("🛡️  Validation Engine Active [DCE Check]");
   const workflow = new IdentityShieldWorkflow();
   PatternValidator.validate(workflow, PatternValidator.generateLSPInfo(workflow));
 }
@@ -28,7 +28,7 @@ export class MainOrchestrator {
 
   async initialize(configPath = `${import.meta.dir}/../config/config.json`) {
     try {
-      console.log('🚀 Initializing Apple ID Creation System...');
+      console.info('🚀 Initializing Apple ID Creation System...');
       
       // Load configuration
       const configFile = Bun.file(configPath);
@@ -45,10 +45,10 @@ export class MainOrchestrator {
         this.orchestrator = new AppleIDOrchestrator(this.config);
         await this.orchestrator.initialize();
         this.initialized = true;
-        console.log('✅ Apple ID Orchestrator Ready');
+        console.info('✅ Apple ID Orchestrator Ready');
       } catch (error) {
         if (error.message.includes('Cannot find package')) {
-          console.log('ℹ️  Apple ID Orchestrator disabled - missing dependencies:', error.message.split('from')[0]);
+          console.info('ℹ️  Apple ID Orchestrator disabled - missing dependencies:', error.message.split('from')[0]);
         } else {
           console.warn('⚠️  Apple ID Orchestrator not available:', error.message);
         }
@@ -61,7 +61,7 @@ export class MainOrchestrator {
   }
 }
 
-console.log("✨ Core Services Ready.");
+console.info("✨ Core Services Ready.");
 
 // Auto-initialize if run directly
 if (import.meta.url === `file://${process.argv[1]}`) {

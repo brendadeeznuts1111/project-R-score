@@ -40,10 +40,10 @@ export const MIDDLEWARE = {
    */
   logger: (req: Request, next: () => Promise<Response>) => {
     const start = Date.now();
-    console.log(`→ ${req.method} ${new URL(req.url).pathname}`);
+    console.info(`→ ${req.method} ${new URL(req.url).pathname}`);
     return next().then((res) => {
       const duration = Date.now() - start;
-      console.log(`← ${res.status} ${duration}ms`);
+      console.info(`← ${res.status} ${duration}ms`);
       return res;
     });
   },

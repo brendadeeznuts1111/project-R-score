@@ -26,11 +26,11 @@ class R2SetupManager {
   }
 
   async run(): Promise<void> {
-    console.log('🚀 Global Trading System R2 Setup');
-    console.log('================================');
-    console.log('This script will configure everything you need for R2 deployment');
-    console.log('Powered by Bun Package Manager for ultra-fast performance');
-    console.log('');
+    console.info('🚀 Global Trading System R2 Setup');
+    console.info('================================');
+    console.info('This script will configure everything you need for R2 deployment');
+    console.info('Powered by Bun Package Manager for ultra-fast performance');
+    console.info('');
 
     try {
       // Step 1: Check prerequisites
@@ -60,9 +60,9 @@ class R2SetupManager {
       // Step 9: Verify deployment
       await this.verifyDeployment();
       
-      console.log('');
-      console.log('🎉 Setup completed successfully!');
-      console.log('Your Global Trading System is now deployed to Cloudflare R2');
+      console.info('');
+      console.info('🎉 Setup completed successfully!');
+      console.info('Your Global Trading System is now deployed to Cloudflare R2');
       
     } catch (error) {
       console.error('❌ Setup failed:', error);
@@ -71,12 +71,12 @@ class R2SetupManager {
   }
 
   private async checkPrerequisites(): Promise<void> {
-    console.log('🔍 Checking prerequisites...');
+    console.info('🔍 Checking prerequisites...');
 
     // Check if Bun is installed
     try {
       const bunVersion = execSync('bun --version', { encoding: 'utf8' }).trim();
-      console.log(`  ✅ Bun ${bunVersion} installed`);
+      console.info(`  ✅ Bun ${bunVersion} installed`);
     } catch (error) {
       console.error('  ❌ Bun is not installed. Please install Bun first:');
       console.error('     curl -fsSL https://bun.sh/install | bash');
@@ -86,11 +86,11 @@ class R2SetupManager {
     // Check if Wrangler is installed
     try {
       execSync('wrangler --version', { stdio: 'pipe' });
-      console.log('  ✅ Wrangler CLI installed');
+      console.info('  ✅ Wrangler CLI installed');
     } catch (error) {
-      console.log('  ⚠️  Wrangler CLI not found, installing...');
+      console.info('  ⚠️  Wrangler CLI not found, installing...');
       execSync('bun install -g wrangler', { stdio: 'inherit' });
-      console.log('  ✅ Wrangler CLI installed');
+      console.info('  ✅ Wrangler CLI installed');
     }
 
     // Check if we're in the right directory
@@ -99,11 +99,11 @@ class R2SetupManager {
       throw new Error('Invalid directory');
     }
 
-    console.log('✅ All prerequisites satisfied');
+    console.info('✅ All prerequisites satisfied');
   }
 
   private async gatherConfiguration(): Promise<void> {
-    console.log('⚙️ Gathering configuration...');
+    console.info('⚙️ Gathering configuration...');
 
     // Try to read from environment first
     this.config.accountId = process.env.R2_ACCOUNT_ID || '';
@@ -112,28 +112,28 @@ class R2SetupManager {
 
     // If not in environment, prompt user
     if (!this.config.accountId) {
-      console.log('  🔑 Please provide your Cloudflare Account ID:');
-      console.log('     (Found in Cloudflare dashboard > Right sidebar > Account ID)');
+      console.info('  🔑 Please provide your Cloudflare Account ID:');
+      console.info('     (Found in Cloudflare dashboard > Right sidebar > Account ID)');
       // In a real setup, you'd use readline or similar
-      console.log('     Using environment variable R2_ACCOUNT_ID is recommended');
+      console.info('     Using environment variable R2_ACCOUNT_ID is recommended');
       this.config.accountId = 'your_account_id_here';
     }
 
     if (!this.config.apiToken) {
-      console.log('  🔑 Please provide your Cloudflare API Token:');
-      console.log('     (Create in Cloudflare dashboard > My Profile > API Tokens)');
-      console.log('     Required permissions: R2:Edit, Account:Read');
-      console.log('     Using environment variable CLOUDFLARE_API_TOKEN is recommended');
+      console.info('  🔑 Please provide your Cloudflare API Token:');
+      console.info('     (Create in Cloudflare dashboard > My Profile > API Tokens)');
+      console.info('     Required permissions: R2:Edit, Account:Read');
+      console.info('     Using environment variable CLOUDFLARE_API_TOKEN is recommended');
       this.config.apiToken = 'your_api_token_here';
     }
 
-    console.log(`  📦 Bucket name: ${this.config.bucketName}`);
-    console.log(`  🌍 Account ID: ${this.config.accountId.substring(0, 8)}...`);
-    console.log('✅ Configuration gathered');
+    console.info(`  📦 Bucket name: ${this.config.bucketName}`);
+    console.info(`  🌍 Account ID: ${this.config.accountId.substring(0, 8)}...`);
+    console.info('✅ Configuration gathered');
   }
 
   private async setupEnvironment(): Promise<void> {
-    console.log('🌍 Setting up environment...');
+    console.info('🌍 Setting up environment...');
 
     // Create .env.local from template
     if (!existsSync('.env.local')) {
@@ -147,38 +147,38 @@ class R2SetupManager {
           .replace('global-trading-packages', this.config.bucketName);
 
         writeFileSync('.env.local', envContent);
-        console.log('  ✅ Created .env.local from template');
+        console.info('  ✅ Created .env.local from template');
       }
     }
 
     // Create R2 bucket if it doesn't exist
     try {
-      console.log('  🪣 Creating R2 bucket...');
+      console.info('  🪣 Creating R2 bucket...');
       execSync(`wrangler r2 bucket create ${this.config.bucketName}`, { stdio: 'pipe' });
-      console.log(`  ✅ Created bucket: ${this.config.bucketName}`);
+      console.info(`  ✅ Created bucket: ${this.config.bucketName}`);
     } catch (error) {
       // Bucket might already exist
-      console.log(`  ℹ️  Bucket ${this.config.bucketName} already exists or creation failed`);
+      console.info(`  ℹ️  Bucket ${this.config.bucketName} already exists or creation failed`);
     }
 
-    console.log('✅ Environment setup completed');
+    console.info('✅ Environment setup completed');
   }
 
   private async configureBun(): Promise<void> {
-    console.log('🥕 Configuring Bun package manager...');
+    console.info('🥕 Configuring Bun package manager...');
 
     // Ensure bunfig.toml exists
     if (!existsSync('bunfig.toml')) {
-      console.log('  ⚙️  bunfig.toml already configured');
+      console.info('  ⚙️  bunfig.toml already configured');
     } else {
-      console.log('  ✅ Bun configuration optimized');
+      console.info('  ✅ Bun configuration optimized');
     }
 
-    console.log('✅ Bun configured for ultra-fast performance');
+    console.info('✅ Bun configured for ultra-fast performance');
   }
 
   private async createWorkspace(): Promise<void> {
-    console.log('📁 Creating workspace structure...');
+    console.info('📁 Creating workspace structure...');
 
     const dirs = [
       'packages/core',
@@ -193,20 +193,20 @@ class R2SetupManager {
     for (const dir of dirs) {
       if (!existsSync(dir)) {
         mkdirSync(dir, { recursive: true });
-        console.log(`  📁 Created ${dir}`);
+        console.info(`  📁 Created ${dir}`);
       }
     }
 
-    console.log('✅ Workspace structure created');
+    console.info('✅ Workspace structure created');
   }
 
   private async installDependencies(): Promise<void> {
-    console.log('⬇️ Installing dependencies with Bun...');
+    console.info('⬇️ Installing dependencies with Bun...');
 
     try {
       // Use Bun's ultra-fast package manager
       execSync('bun install --frozen-lockfile', { stdio: 'inherit' });
-      console.log('✅ Dependencies installed at lightning speed');
+      console.info('✅ Dependencies installed at lightning speed');
     } catch (error) {
       console.error('❌ Failed to install dependencies:', error);
       throw error;
@@ -214,12 +214,12 @@ class R2SetupManager {
   }
 
   private async buildPackages(): Promise<void> {
-    console.log('🔨 Building packages with Bun...');
+    console.info('🔨 Building packages with Bun...');
 
     try {
       // Build all packages
       execSync('bun run build:all', { stdio: 'inherit' });
-      console.log('✅ All packages built successfully');
+      console.info('✅ All packages built successfully');
     } catch (error) {
       console.error('❌ Build failed:', error);
       throw error;
@@ -227,12 +227,12 @@ class R2SetupManager {
   }
 
   private async deployToR2(): Promise<void> {
-    console.log('☁️ Deploying to Cloudflare R2...');
+    console.info('☁️ Deploying to Cloudflare R2...');
 
     try {
       // Run the deployment script
       execSync('bun run scripts/upload-to-r2.ts', { stdio: 'inherit' });
-      console.log('✅ Deployed to R2 successfully');
+      console.info('✅ Deployed to R2 successfully');
     } catch (error) {
       console.error('❌ Deployment failed:', error);
       throw error;
@@ -240,12 +240,12 @@ class R2SetupManager {
   }
 
   private async verifyDeployment(): Promise<void> {
-    console.log('🔍 Verifying deployment...');
+    console.info('🔍 Verifying deployment...');
 
     try {
       // Run verification script
       execSync('bun run scripts/verify-deployment.ts', { stdio: 'inherit' });
-      console.log('✅ Deployment verified successfully');
+      console.info('✅ Deployment verified successfully');
     } catch (error) {
       console.error('❌ Verification failed:', error);
       throw error;

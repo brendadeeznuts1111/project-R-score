@@ -85,7 +85,7 @@ async function main(): Promise<void> {
   lines.push('');
 
   await writeFile(outPath, `${lines.join('\n')}\n`);
-  console.log(`[search:loop:runbook] wrote ${outPath}`);
+  console.info(`[search:loop:runbook] wrote ${outPath}`);
 }
 
 await main();

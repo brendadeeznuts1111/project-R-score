@@ -25,15 +25,15 @@ export function inspect() {
 			const headerSeparator = `├${widths.map((w) => "─".repeat(w + 2)).join("┼")}┤`;
 			const footer = `└${widths.map((w) => "─".repeat(w + 2)).join("┴")}┘`;
 
-			console.log(separator);
+			console.info(separator);
 
 			// Header
 			const header =
 				"│ " +
 				columns.map((col, i) => col.padEnd(widths[i])).join(" │ ") +
 				" │";
-			console.log(header);
-			console.log(headerSeparator);
+			console.info(header);
+			console.info(headerSeparator);
 
 			// Rows
 			data.forEach((row) => {
@@ -43,10 +43,10 @@ export function inspect() {
 						.map((col, i) => String(row[col] || "").padEnd(widths[i]))
 						.join(" │ ") +
 					" │";
-				console.log(rowStr);
+				console.info(rowStr);
 			});
 
-			console.log(footer);
+			console.info(footer);
 		},
 	};
 }
@@ -112,11 +112,11 @@ export const processUtils = {
 
 // Console utilities with colors
 export const consoleUtils = {
-	log: (...args: any[]) => console.log(...args),
+	log: (...args: any[]) => console.info(...args),
 	error: (...args: any[]) => console.error("❌", ...args),
 	warn: (...args: any[]) => console.warn("⚠️", ...args),
 	info: (...args: any[]) => console.info("ℹ️", ...args),
-	success: (...args: any[]) => console.log("✅", ...args),
+	success: (...args: any[]) => console.info("✅", ...args),
 };
 
 // Network utilities

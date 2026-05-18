@@ -17,14 +17,14 @@ import { safeFilename } from "./native/safeFilename.bun.ts";
 // ============================================================================
 
 async function bootstrapSystem(): Promise<void> {
-  console.log("=" .repeat(60));
-  console.log("🏛️ FactoryWager Financial Tech Dispute Resolution System");
-  console.log("=" .repeat(60));
-  console.log(`[DOMAIN: financial-tech]`);
-  console.log(`[SCOPE: dispute-resolution]`);
-  console.log(`[RUNTIME: Bun ${Bun.version}]`);
-  console.log(`[META: REAL-TIME, AI, SECURE, SCALABLE]`);
-  console.log("=" .repeat(60));
+  console.info("=" .repeat(60));
+  console.info("🏛️ FactoryWager Financial Tech Dispute Resolution System");
+  console.info("=" .repeat(60));
+  console.info(`[DOMAIN: financial-tech]`);
+  console.info(`[SCOPE: dispute-resolution]`);
+  console.info(`[RUNTIME: Bun ${Bun.version}]`);
+  console.info(`[META: REAL-TIME, AI, SECURE, SCALABLE]`);
+  console.info("=" .repeat(60));
 
   try {
     // System configuration
@@ -38,13 +38,13 @@ async function bootstrapSystem(): Promise<void> {
       maxConcurrentDisputes: parseInt(process.env.MAX_CONCURRENT_DISPUTES || "1000")
     };
 
-    console.log("🚀 Initializing system kernel...");
+    console.info("🚀 Initializing system kernel...");
     const systemContext = await FactoryWagerSystemKernel.initialize(config);
 
-    console.log("⚖️ Initializing protocol engine...");
+    console.info("⚖️ Initializing protocol engine...");
     const protocolEngine = new DisputeResolutionProtocol();
 
-    console.log("🤖 Initializing AI analyzer...");
+    console.info("🤖 Initializing AI analyzer...");
     const aiAnalyzer = new BunNativeAIAnalyzer({
       gpu: {
         enabled: config.enableGPU,
@@ -99,13 +99,13 @@ async function bootstrapSystem(): Promise<void> {
     // Demonstrate system capabilities
     await demonstrateSystemCapabilities(systemContext, services, protocolContext);
 
-    console.log("=" .repeat(60));
-    console.log("✅ System bootstrap complete");
-    console.log(`📊 Services: ${Object.keys(services).join(", ")}`);
-    console.log(`🔒 Security level: ${systemContext.security.level}`);
-    console.log(`🤖 AI models: ${aiAnalyzer.getModelStatus().size}`);
-    console.log(`🚀 Memory usage: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`);
-    console.log("=" .repeat(60));
+    console.info("=" .repeat(60));
+    console.info("✅ System bootstrap complete");
+    console.info(`📊 Services: ${Object.keys(services).join(", ")}`);
+    console.info(`🔒 Security level: ${systemContext.security.level}`);
+    console.info(`🤖 AI models: ${aiAnalyzer.getModelStatus().size}`);
+    console.info(`🚀 Memory usage: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`);
+    console.info("=" .repeat(60));
 
   } catch (error) {
     console.error("❌ System bootstrap failed:", error);
@@ -122,8 +122,8 @@ async function demonstrateSystemCapabilities(
   services: any,
   protocolContext: ProtocolContext
 ): Promise<void> {
-  console.log("🎯 Demonstrating system capabilities...");
-  console.log("-".repeat(50));
+  console.info("🎯 Demonstrating system capabilities...");
+  console.info("-".repeat(50));
 
   // Create a sample dispute
   const sampleDispute: Dispute = {
@@ -165,39 +165,39 @@ async function demonstrateSystemCapabilities(
     updatedAt: new Date()
   };
 
-  console.log(`📋 Created sample dispute: ${sampleDispute.id}`);
-  console.log(`   • Amount: $${sampleDispute.amount} ${sampleDispute.currency}`);
-  console.log(`   • Evidence: ${sampleDispute.evidence.length} items`);
-  console.log(`   • Status: ${sampleDispute.status}`);
+  console.info(`📋 Created sample dispute: ${sampleDispute.id}`);
+  console.info(`   • Amount: $${sampleDispute.amount} ${sampleDispute.currency}`);
+  console.info(`   • Evidence: ${sampleDispute.evidence.length} items`);
+  console.info(`   • Status: ${sampleDispute.status}`);
 
   // Analyze evidence with AI
-  console.log("\n🤖 Analyzing evidence with AI...");
+  console.info("\n🤖 Analyzing evidence with AI...");
   for (const evidence of sampleDispute.evidence) {
     const analysis = await services.ai.analyzeEvidence(evidence);
     evidence.analysis = analysis;
     
-    console.log(`   • ${evidence.type}: tampering=${(analysis.tamperingScore * 100).toFixed(1)}%, authenticity=${(analysis.authenticityScore * 100).toFixed(1)}%`);
-    console.log(`     Recommendations: ${analysis.recommendations.join(", ")}`);
+    console.info(`   • ${evidence.type}: tampering=${(analysis.tamperingScore * 100).toFixed(1)}%, authenticity=${(analysis.authenticityScore * 100).toFixed(1)}%`);
+    console.info(`     Recommendations: ${analysis.recommendations.join(", ")}`);
   }
 
   // Execute dispute resolution protocol
-  console.log("\n⚖️ Executing dispute resolution protocol...");
+  console.info("\n⚖️ Executing dispute resolution protocol...");
   const protocolResult = await services.protocol.executeProtocol(sampleDispute, protocolContext);
   
-  console.log(`   • Final state: ${protocolResult.finalState}`);
-  console.log(`   • Success: ${protocolResult.success}`);
-  console.log(`   • Transitions: ${protocolResult.transitions.length}`);
-  console.log(`   • Execution time: ${protocolResult.executionTime.toFixed(2)}ms`);
+  console.info(`   • Final state: ${protocolResult.finalState}`);
+  console.info(`   • Success: ${protocolResult.success}`);
+  console.info(`   • Transitions: ${protocolResult.transitions.length}`);
+  console.info(`   • Execution time: ${protocolResult.executionTime.toFixed(2)}ms`);
 
   // Display transition log
   if (protocolResult.transitions.length > 0) {
-    console.log("\n📊 Protocol execution trace:");
+    console.info("\n📊 Protocol execution trace:");
     protocolResult.transitions.forEach((transition, index) => {
-      console.log(`   ${index + 1}. ${transition.from} → ${transition.to} (${transition.executionTime?.toFixed(2)}ms)`);
+      console.info(`   ${index + 1}. ${transition.from} → ${transition.to} (${transition.executionTime?.toFixed(2)}ms)`);
     });
   }
 
-  console.log("-".repeat(50));
+  console.info("-".repeat(50));
 }
 
 // ============================================================================
@@ -205,7 +205,7 @@ async function demonstrateSystemCapabilities(
 // ============================================================================
 
 function startHealthMonitoring(context: SystemContext, services: any): void {
-  console.log("📊 Starting health monitoring...");
+  console.info("📊 Starting health monitoring...");
 
   // Monitor system resources every 30 seconds
   setInterval(() => {
@@ -239,7 +239,7 @@ function startHealthMonitoring(context: SystemContext, services: any): void {
 
     // Log metrics (in production, would send to monitoring system)
     if (process.env.NODE_ENV === "development") {
-      console.log(`📈 Health: ${metrics.memory.heapUsed}MB memory, ${Math.round(metrics.uptime)}s uptime`);
+      console.info(`📈 Health: ${metrics.memory.heapUsed}MB memory, ${Math.round(metrics.uptime)}s uptime`);
     }
 
   }, 30000);
@@ -250,7 +250,7 @@ function startHealthMonitoring(context: SystemContext, services: any): void {
 // ============================================================================
 
 function startRealtimeProcessing(context: SystemContext, services: any): void {
-  console.log("⚡ Starting real-time processing...");
+  console.info("⚡ Starting real-time processing...");
 
   // Simulate real-time events
   setInterval(async () => {
@@ -270,7 +270,7 @@ function startRealtimeProcessing(context: SystemContext, services: any): void {
         updatedAt: new Date()
       };
 
-      console.log(`🔄 Processing real-time dispute: ${dispute.id}`);
+      console.info(`🔄 Processing real-time dispute: ${dispute.id}`);
       
       // Process dispute (simplified for demo)
       try {
@@ -297,9 +297,9 @@ function startRealtimeProcessing(context: SystemContext, services: any): void {
         // Quick auto-decision for demo
         if (dispute.amount < 100) {
           dispute.status = "RESOLVED";
-          console.log(`✅ Auto-resolved small dispute: ${dispute.id}`);
+          console.info(`✅ Auto-resolved small dispute: ${dispute.id}`);
         } else {
-          console.log(`📋 Escalated dispute: ${dispute.id} ($${dispute.amount.toFixed(2)})`);
+          console.info(`📋 Escalated dispute: ${dispute.id} ($${dispute.amount.toFixed(2)})`);
         }
       } catch (error) {
         console.error(`❌ Failed to process dispute ${dispute.id}:`, error);
@@ -313,18 +313,18 @@ function startRealtimeProcessing(context: SystemContext, services: any): void {
 // ============================================================================
 
 process.on('SIGINT', () => {
-  console.log("\n🛑 Shutting down gracefully...");
+  console.info("\n🛑 Shutting down gracefully...");
   
   // Cleanup resources
-  console.log("🧹 Cleaning up resources...");
+  console.info("🧹 Cleaning up resources...");
   
   // Close database connections
-  console.log("💾 Closing database connections...");
+  console.info("💾 Closing database connections...");
   
   // Shutdown AI analyzer
-  console.log("🤖 Shutting down AI analyzer...");
+  console.info("🤖 Shutting down AI analyzer...");
   
-  console.log("✅ Graceful shutdown complete");
+  console.info("✅ Graceful shutdown complete");
   process.exit(0);
 });
 

@@ -297,38 +297,38 @@ class ValidationResult {
 
 // Demo execution
 function runSecurityComplianceDemo() {
-  console.log('🔐 DuoPlus Security Compliance System Demo\n');
+  console.info('🔐 DuoPlus Security Compliance System Demo\n');
   
   const manager = new SecurityComplianceManager();
   
-  console.log(manager.generateFullReport());
-  console.log('\n' + '='.repeat(60));
-  console.log('✅ Security compliance assessment completed successfully!');
+  console.info(manager.generateFullReport());
+  console.info('\n' + '='.repeat(60));
+  console.info('✅ Security compliance assessment completed successfully!');
 }
 
 // Feature toggle demo
 function demonstrateFeatureToggles() {
-  console.log('\n🔄 FEATURE TOGGLE DEMONSTRATION\n');
+  console.info('\n🔄 FEATURE TOGGLE DEMONSTRATION\n');
   
   // Test with minimal features
   const minimalFeatures = new Set<string>(['ENTERPRISE_SECURITY']);
   
-  console.log('📊 MINIMAL ENTERPRISE CONFIGURATION:');
+  console.info('📊 MINIMAL ENTERPRISE CONFIGURATION:');
   const minimalDashboard = new UnicodeSecurityDashboard();
-  console.log(minimalDashboard.generateComplianceReport());
+  console.info(minimalDashboard.generateComplianceReport());
   
-  console.log('\n📊 FULL ENTERPRISE CONFIGURATION:');
-  console.log('All features enabled - see above for complete report');
+  console.info('\n📊 FULL ENTERPRISE CONFIGURATION:');
+  console.info('All features enabled - see above for complete report');
 }
 
 // Performance demo
 function demonstratePerformance() {
-  console.log('\n⚡ PERFORMANCE DEMONSTRATION\n');
+  console.info('\n⚡ PERFORMANCE DEMONSTRATION\n');
   
   const iterations = 1000;
   const manager = new SecurityComplianceManager();
   
-  console.log(`Running ${iterations} compliance validations...`);
+  console.info(`Running ${iterations} compliance validations...`);
   
   const start = performance.now();
   
@@ -340,10 +340,10 @@ function demonstratePerformance() {
   const totalTime = end - start;
   const avgTime = totalTime / iterations;
   
-  console.log(`⏱️ Performance Results:`);
-  console.log(`   Total time: ${totalTime.toFixed(2)}ms`);
-  console.log(`   Average per validation: ${avgTime.toFixed(4)}ms`);
-  console.log(`   Validations per second: ${(1000 / avgTime).toFixed(0)}`);
+  console.info(`⏱️ Performance Results:`);
+  console.info(`   Total time: ${totalTime.toFixed(2)}ms`);
+  console.info(`   Average per validation: ${avgTime.toFixed(4)}ms`);
+  console.info(`   Validations per second: ${(1000 / avgTime).toFixed(0)}`);
 }
 
 // Main execution

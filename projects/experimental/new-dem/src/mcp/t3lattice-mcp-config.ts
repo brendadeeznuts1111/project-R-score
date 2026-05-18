@@ -337,7 +337,7 @@ export class T3LatticeMCPServer implements BunMCPServer {
   }
 
   private async initialize(): Promise<void> {
-    console.log("🚀 Initializing T3-Lattice v3.4 MCP Server...");
+    console.info("🚀 Initializing T3-Lattice v3.4 MCP Server...");
 
     // Initialize worker pool
     await this.initializeWorkers();
@@ -348,27 +348,27 @@ export class T3LatticeMCPServer implements BunMCPServer {
     // Connect to external MCP servers
     await this.connectExternalServers();
 
-    console.log("✅ T3-Lattice MCP Server ready!");
+    console.info("✅ T3-Lattice MCP Server ready!");
   }
 
   private async initializeWorkers(): Promise<void> {
     const { max } = this.config.runtime.workers;
 
-    console.log(`👷 Initializing ${max} workers for parallel processing`);
+    console.info(`👷 Initializing ${max} workers for parallel processing`);
 
     // For now, we'll initialize without actual workers to test the MCP server
     // We'll add workers in a separate step once the basic MCP server is working
-    console.log("⚠️ Workers will be added in next iteration - MCP server ready for testing");
+    console.info("⚠️ Workers will be added in next iteration - MCP server ready for testing");
   }
 
   private async setupCache(): Promise<void> {
     // Pre-warm cache with common operations
-    console.log("💾 Setting up performance cache...");
+    console.info("💾 Setting up performance cache...");
   }
 
   private async connectExternalServers(): Promise<void> {
     // Connect to Zread MCP
-    console.log("🔗 Connecting to external MCP servers...");
+    console.info("🔗 Connecting to external MCP servers...");
   }
 
   // Tool execution methods
@@ -405,7 +405,7 @@ export class T3LatticeMCPServer implements BunMCPServer {
       this.cache.set(cacheKey, result);
 
       const duration = performance.now() - startTime;
-      console.log(`⚡ ${toolName} completed in ${duration.toFixed(2)}ms`);
+      console.info(`⚡ ${toolName} completed in ${duration.toFixed(2)}ms`);
 
       return result;
     } catch (error) {
@@ -535,7 +535,7 @@ export class T3LatticeMCPServer implements BunMCPServer {
 
   // Shutdown
   async shutdown(): Promise<void> {
-    console.log("🛑 Shutting down T3-Lattice MCP Server...");
+    console.info("🛑 Shutting down T3-Lattice MCP Server...");
 
     // Terminate all workers
     for (const worker of this.workers) {
@@ -545,7 +545,7 @@ export class T3LatticeMCPServer implements BunMCPServer {
     // Clear cache
     this.cache.clear();
 
-    console.log("✅ Shutdown complete");
+    console.info("✅ Shutdown complete");
   }
 }
 
@@ -558,12 +558,12 @@ async function main() {
   const isMain = typeof Bun !== 'undefined' && process.argv[1]?.includes('t3lattice-mcp-config.ts');
 
   if (isMain) {
-    console.log("🎯 T3-Lattice v3.4 MCP Server");
-    console.log("Usage: bun run src/mcp/t3lattice-mcp-config.ts");
+    console.info("🎯 T3-Lattice v3.4 MCP Server");
+    console.info("Usage: bun run src/mcp/t3lattice-mcp-config.ts");
 
     // Start server
     await t3LatticeMCPServer.healthCheck()
-      .then(health => console.log("Health:", health))
+      .then(health => console.info("Health:", health))
       .catch(console.error);
   }
 }

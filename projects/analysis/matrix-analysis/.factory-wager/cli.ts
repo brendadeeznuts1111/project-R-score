@@ -19,7 +19,7 @@ class FactoryWagerCLI {
 
   private setupSignalHandlers(): void {
     process.on('SIGINT', () => {
-      console.log('\n👋 FactoryWager CLI interrupted');
+      console.info('\n👋 FactoryWager CLI interrupted');
       process.exit(0);
     });
   }
@@ -49,7 +49,7 @@ class FactoryWagerCLI {
         break;
       case '--version':
       case '-v':
-        console.log(`factory-wager v${this.version}`);
+        console.info(`factory-wager v${this.version}`);
         break;
       case '--help':
       case '-h':
@@ -74,9 +74,9 @@ class FactoryWagerCLI {
         await archiveCLI.benchmark();
         break;
       default:
-        console.log(`🔧 Starting archive operation...`);
-        console.log(`   Type: ${type}`);
-        console.log(`   Use: factory-wager archive [status|config|benchmark]`);
+        console.info(`🔧 Starting archive operation...`);
+        console.info(`   Type: ${type}`);
+        console.info(`   Use: factory-wager archive [status|config|benchmark]`);
         break;
     }
   }
@@ -85,7 +85,7 @@ class FactoryWagerCLI {
     const file = args[0];
     if (!file) {
       console.error('❌ File argument required');
-      console.log('Usage: factory-wager render <file> [options]');
+      console.info('Usage: factory-wager render <file> [options]');
       return;
     }
 
@@ -136,25 +136,25 @@ class FactoryWagerCLI {
     const config = args[0];
     if (!config) {
       console.error('❌ Configuration file required');
-      console.log('Usage: factory-wager analyze <config-file>');
+      console.info('Usage: factory-wager analyze <config-file>');
       return;
     }
 
-    console.log(`🔍 Analyzing configuration: ${config}`);
-    console.log(`✅ Analysis complete`);
+    console.info(`🔍 Analyzing configuration: ${config}`);
+    console.info(`✅ Analysis complete`);
   }
 
   private async handleHealth(args: string[]): Promise<void> {
     const verbose = args.includes('--verbose');
 
-    console.log(`🏥 FactoryWager Health Check`);
-    console.log(`   Verbose: ${verbose}`);
+    console.info(`🏥 FactoryWager Health Check`);
+    console.info(`   Verbose: ${verbose}`);
 
     // Basic health checks
-    console.log(`✅ Bun runtime: ${Bun.version}`);
-    console.log(`✅ Memory usage: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`);
-    console.log(`✅ Uptime: ${Math.round(process.uptime())}s`);
-    console.log(`✅ Health check complete`);
+    console.info(`✅ Bun runtime: ${Bun.version}`);
+    console.info(`✅ Memory usage: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`);
+    console.info(`✅ Uptime: ${Math.round(process.uptime())}s`);
+    console.info(`✅ Health check complete`);
   }
 
   private async handleRelease(args: string[]): Promise<void> {
@@ -173,80 +173,80 @@ class FactoryWagerCLI {
       performance: args.includes('--performance')
     };
 
-    console.log(`🎪 FactoryWager Demo Mode`);
+    console.info(`🎪 FactoryWager Demo Mode`);
 
     if (options.markdown) {
-      console.log(`\n📝 Native Markdown Supremacy Demo:`);
+      console.info(`\n📝 Native Markdown Supremacy Demo:`);
       const fwMarkdown = new FactoryWagerNativeMarkdown();
       fwMarkdown.performanceTest();
     }
 
     if (options.archive) {
-      console.log(`\n📦 Archive Capabilities Demo:`);
+      console.info(`\n📦 Archive Capabilities Demo:`);
       await archiveCLI.status();
     }
 
     if (options.performance) {
-      console.log(`\n⚡ Performance Benchmarks Demo:`);
+      console.info(`\n⚡ Performance Benchmarks Demo:`);
       await archiveCLI.benchmark();
     }
 
     if (!options.markdown && !options.archive && !options.performance) {
-      console.log(`Available demos:`);
-      console.log(`  --markdown    Native markdown supremacy`);
-      console.log(`  --archive     Archive capabilities`);
-      console.log(`  --performance Performance benchmarks`);
+      console.info(`Available demos:`);
+      console.info(`  --markdown    Native markdown supremacy`);
+      console.info(`  --archive     Archive capabilities`);
+      console.info(`  --performance Performance benchmarks`);
     }
   }
 
   private showHelp(): void {
-    console.log(`🏭 FactoryWager CLI v${this.version} - Enterprise Configuration Management`);
-    console.log(``);
-    console.log(`USAGE:`);
-    console.log(`  factory-wager <command> [options]`);
-    console.log(``);
-    console.log(`COMMANDS:`);
-    console.log(`  archive     Manage R2 archives`);
-    console.log(`    status     Show archive status`);
-    console.log(`    config     Show archive configuration`);
-    console.log(`    benchmark  Run performance benchmarks`);
-    console.log(``);
-    console.log(`  render      Render markdown with Factory chromatics`);
-    console.log(`    <file>     Markdown file to render`);
-    console.log(`    -f, --format <format>    Output format (ansi|html|react|json)`);
-    console.log(`    -o, --output <file>      Write output to file`);
-    console.log(`    --chromatic              Use Factory color scheme`);
-    console.log(`    --performance            Show render timing`);
-    console.log(``);
-    console.log(`  analyze     Analyze FactoryWager configuration`);
-    console.log(`    <config>   Configuration file to analyze`);
-    console.log(``);
-    console.log(`  release     Release orchestrator (analyze → gate → deploy → finalize)`);
-    console.log(`    <config>   Configuration file (default: config.yaml)`);
-    console.log(`    --version=<ver>  Semantic version (required)`);
-    console.log(`    --yes            Auto-confirm for CI/CD`);
-    console.log(`    --dry-run        Simulate deployment`);
-    console.log(`    --from=<ref>     Base git ref for changelog`);
-    console.log(``);
-    console.log(`  health      Check system health`);
-    console.log(`    --verbose  Detailed health report`);
-    console.log(``);
-    console.log(`  demo        Run demonstrations`);
-    console.log(`    --markdown    Native markdown demo`);
-    console.log(`    --archive     Archive capabilities demo`);
-    console.log(`    --performance Performance benchmarks demo`);
-    console.log(``);
-    console.log(`  --version   Show version information`);
-    console.log(`  --help      Show this help message`);
-    console.log(``);
-    console.log(`EXAMPLES:`);
-    console.log(`  factory-wager archive status`);
-    console.log(`  factory-wager render README.md --chromatic`);
-    console.log(`  factory-wager health --verbose`);
-    console.log(`  factory-wager release config.yaml --version=1.3.0`);
-    console.log(`  factory-wager release config.yaml --version=1.3.0 --yes`);
-    console.log(`  factory-wager release config.yaml --version=1.3.0 --dry-run`);
-    console.log(`  factory-wager demo --markdown`);
+    console.info(`🏭 FactoryWager CLI v${this.version} - Enterprise Configuration Management`);
+    console.info(``);
+    console.info(`USAGE:`);
+    console.info(`  factory-wager <command> [options]`);
+    console.info(``);
+    console.info(`COMMANDS:`);
+    console.info(`  archive     Manage R2 archives`);
+    console.info(`    status     Show archive status`);
+    console.info(`    config     Show archive configuration`);
+    console.info(`    benchmark  Run performance benchmarks`);
+    console.info(``);
+    console.info(`  render      Render markdown with Factory chromatics`);
+    console.info(`    <file>     Markdown file to render`);
+    console.info(`    -f, --format <format>    Output format (ansi|html|react|json)`);
+    console.info(`    -o, --output <file>      Write output to file`);
+    console.info(`    --chromatic              Use Factory color scheme`);
+    console.info(`    --performance            Show render timing`);
+    console.info(``);
+    console.info(`  analyze     Analyze FactoryWager configuration`);
+    console.info(`    <config>   Configuration file to analyze`);
+    console.info(``);
+    console.info(`  release     Release orchestrator (analyze → gate → deploy → finalize)`);
+    console.info(`    <config>   Configuration file (default: config.yaml)`);
+    console.info(`    --version=<ver>  Semantic version (required)`);
+    console.info(`    --yes            Auto-confirm for CI/CD`);
+    console.info(`    --dry-run        Simulate deployment`);
+    console.info(`    --from=<ref>     Base git ref for changelog`);
+    console.info(``);
+    console.info(`  health      Check system health`);
+    console.info(`    --verbose  Detailed health report`);
+    console.info(``);
+    console.info(`  demo        Run demonstrations`);
+    console.info(`    --markdown    Native markdown demo`);
+    console.info(`    --archive     Archive capabilities demo`);
+    console.info(`    --performance Performance benchmarks demo`);
+    console.info(``);
+    console.info(`  --version   Show version information`);
+    console.info(`  --help      Show this help message`);
+    console.info(``);
+    console.info(`EXAMPLES:`);
+    console.info(`  factory-wager archive status`);
+    console.info(`  factory-wager render README.md --chromatic`);
+    console.info(`  factory-wager health --verbose`);
+    console.info(`  factory-wager release config.yaml --version=1.3.0`);
+    console.info(`  factory-wager release config.yaml --version=1.3.0 --yes`);
+    console.info(`  factory-wager release config.yaml --version=1.3.0 --dry-run`);
+    console.info(`  factory-wager demo --markdown`);
   }
 }
 

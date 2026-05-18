@@ -77,5 +77,5 @@ await S3Client.write(summaryKey, await Bun.file(summaryPath).text(), {
   type: 'application/json',
 });
 
-console.log(`[upload-latest-profile] uploaded archive=${archiveKey}`);
-console.log(`[upload-latest-profile] uploaded summary=${summaryKey}`);
+console.info(`[upload-latest-profile] uploaded archive=${archiveKey}`);
+console.info(`[upload-latest-profile] uploaded summary=${summaryKey}`);

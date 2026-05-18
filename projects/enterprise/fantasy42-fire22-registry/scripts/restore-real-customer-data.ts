@@ -29,7 +29,7 @@ class RealCustomerDataRestoration {
 
   private getVerifiedDataSource(): ProductionDataSource {
     // In production, this would check for verified data sources
-    console.log('🔍 SCANNING FOR VERIFIED PRODUCTION DATA SOURCES...');
+    console.info('🔍 SCANNING FOR VERIFIED PRODUCTION DATA SOURCES...');
 
     const possibleSources = [
       './backups/production-customer-data-2025-01-15.sql',
@@ -40,7 +40,7 @@ class RealCustomerDataRestoration {
 
     for (const source of possibleSources) {
       if (existsSync(source)) {
-        console.log(`✅ Found verified data source: ${source}`);
+        console.info(`✅ Found verified data source: ${source}`);
         return {
           type: source.includes('.sql')
             ? 'backup'
@@ -54,8 +54,8 @@ class RealCustomerDataRestoration {
       }
     }
 
-    console.log('❌ NO VERIFIED PRODUCTION DATA SOURCES FOUND');
-    console.log('📋 REQUIRED: Production database backup or verified data export');
+    console.info('❌ NO VERIFIED PRODUCTION DATA SOURCES FOUND');
+    console.info('📋 REQUIRED: Production database backup or verified data export');
 
     throw new Error('No verified production data sources available');
   }
@@ -67,7 +67,7 @@ class RealCustomerDataRestoration {
   }
 
   private verifyDataIntegrity(): void {
-    console.log('🔐 VERIFYING DATA INTEGRITY...');
+    console.info('🔐 VERIFYING DATA INTEGRITY...');
 
     // Production verification steps
     const checks = [
@@ -79,13 +79,13 @@ class RealCustomerDataRestoration {
       '✅ Checksum verification passed',
     ];
 
-    checks.forEach(check => console.log(`  ${check}`));
+    checks.forEach(check => console.info(`  ${check}`));
 
-    console.log('✅ DATA INTEGRITY VERIFICATION COMPLETE');
+    console.info('✅ DATA INTEGRITY VERIFICATION COMPLETE');
   }
 
   private async restoreFromSQLBackup(): Promise<void> {
-    console.log('🗄️ RESTORING FROM SQL BACKUP...');
+    console.info('🗄️ RESTORING FROM SQL BACKUP...');
 
     const sqlContent = readFileSync(this.productionData.source, 'utf-8');
 
@@ -97,18 +97,18 @@ class RealCustomerDataRestoration {
         try {
           this.db.run(statement);
         } catch (error) {
-          console.log(
+          console.info(
             `⚠️ Skipping statement (may already exist): ${statement.substring(0, 50)}...`
           );
         }
       }
     }
 
-    console.log('✅ SQL BACKUP RESTORED');
+    console.info('✅ SQL BACKUP RESTORED');
   }
 
   private async restoreFromCSV(): Promise<void> {
-    console.log('📊 RESTORING FROM CSV EXPORT...');
+    console.info('📊 RESTORING FROM CSV EXPORT...');
 
     const csvContent = readFileSync(this.productionData.source, 'utf-8');
     const lines = csvContent.split('\\n').filter(line => line.trim());
@@ -150,16 +150,16 @@ class RealCustomerDataRestoration {
             values
           );
         } catch (error) {
-          console.log(`⚠️ Error inserting customer record ${i}:`, error);
+          console.info(`⚠️ Error inserting customer record ${i}:`, error);
         }
       }
     }
 
-    console.log('✅ CSV DATA RESTORED');
+    console.info('✅ CSV DATA RESTORED');
   }
 
   private async restoreFromMigration(): Promise<void> {
-    console.log('🔄 RESTORING FROM MIGRATION FILE...');
+    console.info('🔄 RESTORING FROM MIGRATION FILE...');
 
     const migrationData = JSON.parse(readFileSync(this.productionData.source, 'utf-8'));
 
@@ -188,16 +188,16 @@ class RealCustomerDataRestoration {
             ]
           );
         } catch (error) {
-          console.log(`⚠️ Error migrating customer ${customer.id}:`, error);
+          console.info(`⚠️ Error migrating customer ${customer.id}:`, error);
         }
       }
     }
 
-    console.log('✅ MIGRATION DATA RESTORED');
+    console.info('✅ MIGRATION DATA RESTORED');
   }
 
   private async validateRestoredData(): Promise<void> {
-    console.log('✅ VALIDATING RESTORED DATA...');
+    console.info('✅ VALIDATING RESTORED DATA...');
 
     try {
       const customerCount = this.db.query('SELECT COUNT(*) as count FROM customers').get() as any;
@@ -205,9 +205,9 @@ class RealCustomerDataRestoration {
         .query('SELECT COUNT(*) as count FROM transactions')
         .get() as any;
 
-      console.log(`📊 RESTORATION SUMMARY:`);
-      console.log(`   👥 Customer Records: ${customerCount.count.toLocaleString()}`);
-      console.log(`   💰 Transaction Records: ${transactionCount.count.toLocaleString()}`);
+      console.info(`📊 RESTORATION SUMMARY:`);
+      console.info(`   👥 Customer Records: ${customerCount.count.toLocaleString()}`);
+      console.info(`   💰 Transaction Records: ${transactionCount.count.toLocaleString()}`);
 
       // Sample validation checks
       const activeCustomers = this.db
@@ -217,26 +217,26 @@ class RealCustomerDataRestoration {
         .query('SELECT SUM(balance) as total FROM customers')
         .get() as any;
 
-      console.log(`   ✅ Active Customers: ${activeCustomers.count.toLocaleString()}`);
-      console.log(`   💵 Total Account Balance: $${totalBalance.total.toLocaleString()}`);
+      console.info(`   ✅ Active Customers: ${activeCustomers.count.toLocaleString()}`);
+      console.info(`   💵 Total Account Balance: $${totalBalance.total.toLocaleString()}`);
     } catch (error) {
-      console.log('⚠️ Validation queries failed (tables may not exist yet)');
+      console.info('⚠️ Validation queries failed (tables may not exist yet)');
     }
   }
 
   async restore(): Promise<void> {
-    console.log('🚨 PRODUCTION DATA RESTORATION INITIATED');
-    console.log('⚠️  WARNING: This will restore REAL customer data');
-    console.log('📋 Data Source:', this.productionData.source);
-    console.log('🔐 Verified:', this.productionData.verified);
-    console.log('');
+    console.info('🚨 PRODUCTION DATA RESTORATION INITIATED');
+    console.info('⚠️  WARNING: This will restore REAL customer data');
+    console.info('📋 Data Source:', this.productionData.source);
+    console.info('🔐 Verified:', this.productionData.verified);
+    console.info('');
 
     try {
       // Step 1: Verify data integrity
       this.verifyDataIntegrity();
 
       // Step 2: Clear existing test data
-      console.log('🧹 CLEARING EXISTING TEST DATA...');
+      console.info('🧹 CLEARING EXISTING TEST DATA...');
       try {
         this.db.run('DELETE FROM customers');
         this.db.run('DELETE FROM transactions');
@@ -260,9 +260,9 @@ class RealCustomerDataRestoration {
       // Step 4: Validate restoration
       await this.validateRestoredData();
 
-      console.log('\\n🎉 PRODUCTION DATA RESTORATION COMPLETE!');
-      console.log('🔒 All customer data has been securely restored');
-      console.log('📊 Revenue tracking system is now operational with REAL data');
+      console.info('\\n🎉 PRODUCTION DATA RESTORATION COMPLETE!');
+      console.info('🔒 All customer data has been securely restored');
+      console.info('📊 Revenue tracking system is now operational with REAL data');
     } catch (error) {
       console.error('❌ PRODUCTION DATA RESTORATION FAILED:', error);
       throw error;
@@ -271,17 +271,17 @@ class RealCustomerDataRestoration {
 
   close(): void {
     this.db.close();
-    console.log('🔒 Database connection closed');
+    console.info('🔒 Database connection closed');
   }
 }
 
 // CLI interface
 if (import.meta.main) {
-  console.log('🔒 REAL CUSTOMER DATA RESTORATION');
-  console.log('==================================');
-  console.log('⚠️  PRODUCTION USE ONLY');
-  console.log('⚠️  Requires verified production data sources');
-  console.log('');
+  console.info('🔒 REAL CUSTOMER DATA RESTORATION');
+  console.info('==================================');
+  console.info('⚠️  PRODUCTION USE ONLY');
+  console.info('⚠️  Requires verified production data sources');
+  console.info('');
 
   const restorer = new RealCustomerDataRestoration();
 
@@ -289,11 +289,11 @@ if (import.meta.main) {
     .restore()
     .catch(error => {
       console.error('\\n❌ RESTORATION ABORTED');
-      console.log('📋 To restore real data:');
-      console.log('   1. Place verified production backup in ./backups/');
-      console.log('   2. Or provide CSV export from production system');
-      console.log('   3. Or prepare migration JSON from existing systems');
-      console.log('   4. Ensure data integrity and compliance');
+      console.info('📋 To restore real data:');
+      console.info('   1. Place verified production backup in ./backups/');
+      console.info('   2. Or provide CSV export from production system');
+      console.info('   3. Or prepare migration JSON from existing systems');
+      console.info('   4. Ensure data integrity and compliance');
       process.exit(1);
     })
     .finally(() => restorer.close());

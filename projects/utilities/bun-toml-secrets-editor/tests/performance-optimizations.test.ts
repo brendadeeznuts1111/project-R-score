@@ -144,7 +144,7 @@ describe("Performance Benchmarks", () => {
 		}
 		const elapsed = (Bun.nanoseconds() - start) / 1e6;
 
-		console.log(
+		console.info(
 			`Buffer.from: ${iterations} iterations in ${elapsed.toFixed(2)}ms`,
 		);
 		expect(elapsed).toBeLessThan(100); // Should complete quickly
@@ -159,7 +159,7 @@ describe("Performance Benchmarks", () => {
 		}
 		const elapsed = (Bun.nanoseconds() - start) / 1e6;
 
-		console.log(
+		console.info(
 			`padStart: ${iterations} iterations in ${elapsed.toFixed(2)}ms`,
 		);
 		expect(elapsed).toBeLessThan(50);
@@ -179,7 +179,7 @@ describe("Performance Benchmarks", () => {
 		}
 		const elapsed = (Bun.nanoseconds() - start) / 1e6;
 
-		console.log(`flat(): ${iterations} iterations in ${elapsed.toFixed(2)}ms`);
+		console.info(`flat(): ${iterations} iterations in ${elapsed.toFixed(2)}ms`);
 		expect(elapsed).toBeLessThan(50);
 	});
 });

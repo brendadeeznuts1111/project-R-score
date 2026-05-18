@@ -606,7 +606,7 @@ alias duoplus-health="curl http://localhost:8090/api/health"
             try {
                 const response = await fetch('/api/metrics');
                 const metrics = await response.json();
-                console.log('Metrics updated:', metrics);
+                console.info('Metrics updated:', metrics);
                 loadDashboards();
             } catch (error) {
                 console.error('Failed to refresh metrics:', error);
@@ -645,7 +645,7 @@ alias duoplus-health="curl http://localhost:8090/api/health"
             if ('serviceWorker' in navigator) {
                 try {
                     const registration = await navigator.serviceWorker.register('/sw.js');
-                    console.log('Service Worker registered:', registration);
+                    console.info('Service Worker registered:', registration);
                     alert('PWA installation ready! Check your browser for install prompt.');
                 } catch (error) {
                     console.error('Service Worker registration failed:', error);
@@ -725,9 +725,9 @@ alias duoplus-health="curl http://localhost:8090/api/health"
       await this.healthCheck();
     }, 30000); // Check every 30 seconds
 
-    console.log(`🚀 DuoPlus Dashboard Server v3.8 starting on port ${this.port}`);
-    console.log(`📊 Enhanced Matrix System with ${this.dashboards.length} dashboards`);
-    console.log(`🌐 Open http://localhost:${this.port} to access the dashboard`);
+    console.info(`🚀 DuoPlus Dashboard Server v3.8 starting on port ${this.port}`);
+    console.info(`📊 Enhanced Matrix System with ${this.dashboards.length} dashboards`);
+    console.info(`🌐 Open http://localhost:${this.port} to access the dashboard`);
 
     const server = this;
 
@@ -789,17 +789,17 @@ alias duoplus-health="curl http://localhost:8090/api/health"
       },
     });
 
-    console.log(`✅ DuoPlus Dashboard Server v3.8 is running!`);
-    console.log(`🔗 Dashboard: http://localhost:${this.port}/`);
-    console.log(`📊 Metrics: http://localhost:${this.port}/api/metrics`);
-    console.log(`🏥 Health: http://localhost:${this.port}/api/health`);
+    console.info(`✅ DuoPlus Dashboard Server v3.8 is running!`);
+    console.info(`🔗 Dashboard: http://localhost:${this.port}/`);
+    console.info(`📊 Metrics: http://localhost:${this.port}/api/metrics`);
+    console.info(`🏥 Health: http://localhost:${this.port}/api/health`);
   }
 
   public async stop(): Promise<void> {
     if (this.healthCheckInterval) {
       clearInterval(this.healthCheckInterval);
     }
-    console.log('🛑 DuoPlus Dashboard Server v3.8 stopped');
+    console.info('🛑 DuoPlus Dashboard Server v3.8 stopped');
   }
 }
 
@@ -808,13 +808,13 @@ const server = new DashboardServerV38();
 
 // Handle graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('\n🛑 Received SIGINT, shutting down gracefully...');
+  console.info('\n🛑 Received SIGINT, shutting down gracefully...');
   await server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-  console.log('\n🛑 Received SIGTERM, shutting down gracefully...');
+  console.info('\n🛑 Received SIGTERM, shutting down gracefully...');
   await server.stop();
   process.exit(0);
 });

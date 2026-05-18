@@ -29,7 +29,7 @@ const db = new Database(dbPath, { create: true });
 const mlgs = new MLGSGraph(mlgsPath);
 
 // ==================== MONOREPO ~/.bunfig.toml ====================
-console.log('%j', {
+console.info('%j', {
 	bunfig_loaded_once: true,  // ✅ Single load
 	config_source: '~/.bunfig.toml',
 	linker: 'hoisted',          // Fast monorepo
@@ -115,7 +115,7 @@ const server = Bun.serve({
 					// Feed MLGS shadow graph
 					await mlgs.buildFullGraph('nfl');
 					
-					console.log('%j', {
+					console.info('%j', {
 						mysql_feed: true,
 						rows: mysqlArbs.length,
 						top_edge_pct: mysqlArbs[0]?.profit_pct,
@@ -227,7 +227,7 @@ setInterval(async () => {
 			await mlgs.buildFullGraph('nfl');
 
 			// ANSI color perfect
-			console.log('%j', { 
+			console.info('%j', { 
 				mysql_cycle_success: true,
 				rows_processed: odds.length,
 				ok_packet_safe: true
@@ -248,7 +248,7 @@ setInterval(async () => {
 	console.timeEnd('enterprise-cli-cycle');
 }, 2000);
 
-console.log('%j', {
+console.info('%j', {
 	enterpriseArbV5: 'HARDENED-LIVE',
 	fixes_applied: 60,
 	mysql_safe: true,

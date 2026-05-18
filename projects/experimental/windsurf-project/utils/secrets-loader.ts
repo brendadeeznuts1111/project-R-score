@@ -19,7 +19,7 @@ export interface ScopedSecrets {
 
 export async function loadScopedSecrets(team: string = 'default'): Promise<ScopedSecrets> {
   const service = await scopedService(team);
-  console.log(`\n🔐 Scoped Service: ${service} (Per-user ${PLATFORM_SCOPE})`);
+  console.info(`\n🔐 Scoped Service: ${service} (Per-user ${PLATFORM_SCOPE})`);
 
   const getScoped = async (name: string, envFallbackKey?: string) => {
     // Phase 1.1: Keychain Foundation (indexable OS store)
@@ -29,7 +29,7 @@ export async function loadScopedSecrets(team: string = 'default'): Promise<Scope
     if (!val && envFallbackKey) {
       const envVal = Bun.env[envFallbackKey];
       if (envVal) {
-        console.log(`🔐 Auto-Ingest: Mirroring ${envFallbackKey} -> Keychain (${service})`);
+        console.info(`🔐 Auto-Ingest: Mirroring ${envFallbackKey} -> Keychain (${service})`);
         await secrets.set({ service, name, value: envVal });
         val = envVal;
       }
@@ -38,7 +38,7 @@ export async function loadScopedSecrets(team: string = 'default'): Promise<Scope
     // Phase 1.1.22: Self-Healing Recovery Loop (Zero-Failure)
     if (!val && process.env.PRODUCTION_SIM === '1') {
       const mockVal = `sim-${name.toLowerCase().replace('_', '-')}`;
-      console.log(`🩹 Self-Healing (1.1.22): Providing surrogate data for ${name}`);
+      console.info(`🩹 Self-Healing (1.1.22): Providing surrogate data for ${name}`);
       await secrets.set({ service, name, value: mockVal });
       val = mockVal;
     }
@@ -61,7 +61,7 @@ export async function loadScopedSecrets(team: string = 'default'): Promise<Scope
       if (val) {
         await secrets.set({ service, name, value: val });
         creds[key] = val;
-        console.log(`✅ Team "${team}" ${label} scoped (CRED_PERSIST_ENTERPRISE)`);
+        console.info(`✅ Team "${team}" ${label} scoped (CRED_PERSIST_ENTERPRISE)`);
       }
     }
   };
@@ -79,8 +79,8 @@ export async function loadScopedSecrets(team: string = 'default'): Promise<Scope
 if (import.meta.main) {
   const team = process.argv[2] || 'default';
   const creds = await loadScopedSecrets(team);
-  console.log(`\n--- Team: ${team} ---`);
-  console.log(`R2 Bucket:   ${creds.r2Bucket ? creds.r2Bucket.slice(0, 8) + '***' : '⚠️ Missing'}`);
-  console.log(`R2 Endpoint: ${creds.r2Endpoint ? creds.r2Endpoint : '⚠️ Missing'}`);
-  console.log(`DuoPlus Key: ${creds.duoPlusKey ? '********' : '⚠️ Missing'}`);
+  console.info(`\n--- Team: ${team} ---`);
+  console.info(`R2 Bucket:   ${creds.r2Bucket ? creds.r2Bucket.slice(0, 8) + '***' : '⚠️ Missing'}`);
+  console.info(`R2 Endpoint: ${creds.r2Endpoint ? creds.r2Endpoint : '⚠️ Missing'}`);
+  console.info(`DuoPlus Key: ${creds.duoPlusKey ? '********' : '⚠️ Missing'}`);
 }

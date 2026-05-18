@@ -106,8 +106,8 @@ export class DomainIntegration {
    * Initialize domain integration with R2 storage
    */
   async initialize(): Promise<void> {
-    console.log(styled('🌐 Initializing FactoryWager Domain Integration', 'accent'));
-    console.log(styled('==========================================', 'accent'));
+    console.info(styled('🌐 Initializing FactoryWager Domain Integration', 'accent'));
+    console.info(styled('==========================================', 'accent'));
 
     // Store domain configuration in R2
     await this.storeDomainConfig();
@@ -118,7 +118,7 @@ export class DomainIntegration {
     // Setup enterprise metrics tracking
     await this.setupEnterpriseMetrics();
 
-    console.log(styled('✅ Domain integration initialized', 'success'));
+    console.info(styled('✅ Domain integration initialized', 'success'));
   }
 
   /**
@@ -129,7 +129,7 @@ export class DomainIntegration {
 
     try {
       await this.r2.putJSON(key, this.config);
-      console.log(styled(`✅ Domain config stored: ${key}`, 'success'));
+      console.info(styled(`✅ Domain config stored: ${key}`, 'success'));
     } catch (error) {
       console.error(styled(`❌ Failed to store domain config: ${error.message}`, 'error'));
     }
@@ -139,7 +139,7 @@ export class DomainIntegration {
    * Initialize subdomain health monitoring
    */
   async initializeSubdomainMonitoring(): Promise<void> {
-    console.log(styled('🔍 Initializing subdomain monitoring...', 'info'));
+    console.info(styled('🔍 Initializing subdomain monitoring...', 'info'));
 
     const healthChecks: SubdomainHealth[] = [];
 
@@ -161,7 +161,7 @@ export class DomainIntegration {
     const key = `domains/factory-wager/health/${new Date().toISOString().split('T')[0]}.json`;
     await this.r2.putJSON(key, healthChecks);
 
-    console.log(styled(`✅ Subdomain health stored: ${key}`, 'success'));
+    console.info(styled(`✅ Subdomain health stored: ${key}`, 'success'));
   }
 
   /**
@@ -204,7 +204,7 @@ export class DomainIntegration {
    * Setup enterprise metrics tracking
    */
   async setupEnterpriseMetrics(): Promise<void> {
-    console.log(styled('📊 Setting up enterprise metrics...', 'info'));
+    console.info(styled('📊 Setting up enterprise metrics...', 'info'));
 
     const metrics: DomainMetrics = {
       timestamp: new Date().toISOString(),
@@ -228,7 +228,7 @@ export class DomainIntegration {
     const key = `domains/factory-wager/metrics/${new Date().toISOString().split('T')[0]}.json`;
     await this.r2.putJSON(key, metrics);
 
-    console.log(styled(`✅ Enterprise metrics stored: ${key}`, 'success'));
+    console.info(styled(`✅ Enterprise metrics stored: ${key}`, 'success'));
   }
 
   /**
@@ -338,7 +338,7 @@ export class DomainIntegration {
    * Generate domain health report
    */
   async generateDomainHealthReport(): Promise<void> {
-    console.log(styled('📋 Generating Domain Health Report...', 'info'));
+    console.info(styled('📋 Generating Domain Health Report...', 'info'));
 
     const report = {
       timestamp: new Date().toISOString(),
@@ -361,7 +361,7 @@ export class DomainIntegration {
     const key = `domains/factory-wager/reports/health-${new Date().toISOString().split('T')[0]}.json`;
     await this.r2.putJSON(key, report);
 
-    console.log(styled(`✅ Health report stored: ${key}`, 'success'));
+    console.info(styled(`✅ Health report stored: ${key}`, 'success'));
   }
 
   /**
@@ -386,34 +386,34 @@ export class DomainIntegration {
    * Display domain integration status
    */
   async displayStatus(): Promise<void> {
-    console.log(styled('\n🌐 FactoryWager Domain Integration Status', 'accent'));
-    console.log(styled('==========================================', 'accent'));
+    console.info(styled('\n🌐 FactoryWager Domain Integration Status', 'accent'));
+    console.info(styled('==========================================', 'accent'));
 
-    console.log(styled(`Domain: ${this.config.primary.domain}`, 'info'));
-    console.log(styled(`Tier: ${this.config.primary.tier}`, 'info'));
-    console.log(styled(`Environment: ${this.config.primary.environment}`, 'info'));
+    console.info(styled(`Domain: ${this.config.primary.domain}`, 'info'));
+    console.info(styled(`Tier: ${this.config.primary.tier}`, 'info'));
+    console.info(styled(`Environment: ${this.config.primary.environment}`, 'info'));
 
-    console.log(styled('\n📡 Subdomains:', 'info'));
+    console.info(styled('\n📡 Subdomains:', 'info'));
     for (const [name, subdomain] of Object.entries(this.config.subdomains)) {
-      console.log(styled(`  ${name}: ${subdomain}`, 'muted'));
+      console.info(styled(`  ${name}: ${subdomain}`, 'muted'));
     }
 
-    console.log(styled('\n🔒 Enterprise Configuration:', 'info'));
-    console.log(styled(`  MRR Baseline: ${this.config.enterprise.mrr_baseline}%`, 'muted'));
-    console.log(styled(`  Compliance: ${this.config.enterprise.compliance_level}`, 'muted'));
-    console.log(styled(`  Security: ${this.config.enterprise.security_posture}`, 'muted'));
-    console.log(styled(`  Monitoring: ${this.config.enterprise.monitoring}`, 'muted'));
+    console.info(styled('\n🔒 Enterprise Configuration:', 'info'));
+    console.info(styled(`  MRR Baseline: ${this.config.enterprise.mrr_baseline}%`, 'muted'));
+    console.info(styled(`  Compliance: ${this.config.enterprise.compliance_level}`, 'muted'));
+    console.info(styled(`  Security: ${this.config.enterprise.security_posture}`, 'muted'));
+    console.info(styled(`  Monitoring: ${this.config.enterprise.monitoring}`, 'muted'));
 
-    console.log(styled('\n☁️ Cloudflare Integration:', 'info'));
-    console.log(styled(`  Account ID: ${this.config.cloudflare.account_id}`, 'muted'));
-    console.log(styled(`  Dashboard: ${this.config.cloudflare.dashboard_url}`, 'muted'));
-    console.log(styled(`  R2 Bucket: ${this.config.cloudflare.r2_bucket}`, 'muted'));
+    console.info(styled('\n☁️ Cloudflare Integration:', 'info'));
+    console.info(styled(`  Account ID: ${this.config.cloudflare.account_id}`, 'muted'));
+    console.info(styled(`  Dashboard: ${this.config.cloudflare.dashboard_url}`, 'muted'));
+    console.info(styled(`  R2 Bucket: ${this.config.cloudflare.r2_bucket}`, 'muted'));
 
     const recommendations = await this.getDomainRecommendations();
     if (recommendations.length > 0) {
-      console.log(styled('\n💡 Recent Recommendations:', 'success'));
+      console.info(styled('\n💡 Recent Recommendations:', 'success'));
       recommendations.forEach((rec, i) => {
-        console.log(styled(`  ${i + 1}. ${rec.issue} → ${rec.resolution}`, 'muted'));
+        console.info(styled(`  ${i + 1}. ${rec.issue} → ${rec.resolution}`, 'muted'));
       });
     }
   }
@@ -429,6 +429,6 @@ if (import.meta.main) {
   await domain.initialize();
   await domain.displayStatus();
 
-  console.log(styled('\n🎉 Domain integration complete!', 'success'));
-  console.log(styled('All domain data stored in R2 for enterprise tracking.', 'info'));
+  console.info(styled('\n🎉 Domain integration complete!', 'success'));
+  console.info(styled('All domain data stored in R2 for enterprise tracking.', 'info'));
 }

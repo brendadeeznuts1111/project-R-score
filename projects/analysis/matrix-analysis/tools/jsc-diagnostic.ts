@@ -74,7 +74,7 @@ defineCommand({
 			!showAll;
 
 		if (noFlags || showHeap) {
-			console.log(`\n${fmt.bold("Heap Stats")}`);
+			console.info(`\n${fmt.bold("Heap Stats")}`);
 			const heap = jsc.heapStats();
 			const rows = [
 				{ metric: "Heap Size", value: `${(heap.heapSize / 1024 / 1024).toFixed(2)} MB` },
@@ -93,7 +93,7 @@ defineCommand({
 				},
 				{ metric: "Memory Pressure", value: `${jsc.memoryPressure().toFixed(1)}%` },
 			];
-			console.log(Bun.inspect.table(rows, ["metric", "value"]));
+			console.info(Bun.inspect.table(rows, ["metric", "value"]));
 
 			// Object type breakdown (top 15)
 			const types = Object.entries(heap.objectTypeCounts)
@@ -102,13 +102,13 @@ defineCommand({
 				.map(([type, count]) => ({ type, count }));
 
 			if (types.length > 0) {
-				console.log(`${fmt.bold("Object Types")} (top 15)`);
-				console.log(Bun.inspect.table(types, ["type", "count"]));
+				console.info(`${fmt.bold("Object Types")} (top 15)`);
+				console.info(Bun.inspect.table(types, ["type", "count"]));
 			}
 		}
 
 		if (noFlags || showGC) {
-			console.log(`\n${fmt.bold("GC Analysis")}`);
+			console.info(`\n${fmt.bold("GC Analysis")}`);
 			const pre = jsc.heapStats();
 			const gc = jsc.gc();
 			const post = jsc.heapStats();
@@ -124,11 +124,11 @@ defineCommand({
 					value: (pre.objectCount - post.objectCount).toLocaleString(),
 				},
 			];
-			console.log(Bun.inspect.table(gcRows, ["metric", "value"]));
+			console.info(Bun.inspect.table(gcRows, ["metric", "value"]));
 		}
 
 		if (showProfile && targetFile) {
-			console.log(`\n${fmt.bold("Profiling")} ${targetFile}`);
+			console.info(`\n${fmt.bold("Profiling")} ${targetFile}`);
 			try {
 				const mod = await import(resolve(targetFile));
 				const fn =
@@ -152,7 +152,7 @@ defineCommand({
 				const result = jsc.profile(fn, 100);
 				const info = jsc.compileInfo(fn);
 
-				console.log(`\n${fmt.bold("JIT Compile Stats")}`);
+				console.info(`\n${fmt.bold("JIT Compile Stats")}`);
 				const compileRows = [
 					{
 						metric: "Total Compile Time",
@@ -161,15 +161,15 @@ defineCommand({
 					{ metric: "DFG Compiles", value: info.dfgCompiles.toString() },
 					{ metric: "Reopt Retries", value: info.reoptRetries.toString() },
 				];
-				console.log(Bun.inspect.table(compileRows, ["metric", "value"]));
+				console.info(Bun.inspect.table(compileRows, ["metric", "value"]));
 
 				if (result.functions) {
-					console.log(`\n${fmt.bold("Hot Functions")}`);
-					console.log(result.functions);
+					console.info(`\n${fmt.bold("Hot Functions")}`);
+					console.info(result.functions);
 				}
 				if (result.bytecodes) {
-					console.log(`\n${fmt.bold("Bytecode Tiers")}`);
-					console.log(result.bytecodes);
+					console.info(`\n${fmt.bold("Bytecode Tiers")}`);
+					console.info(result.bytecodes);
 				}
 			} catch (err) {
 				console.error(fmt.fail(`Failed to profile: ${err}`));
@@ -182,7 +182,7 @@ defineCommand({
 		}
 
 		if (showDescribe && targetFile) {
-			console.log(`\n${fmt.bold("Module Exports")} — ${targetFile}`);
+			console.info(`\n${fmt.bold("Module Exports")} — ${targetFile}`);
 			try {
 				const mod = await import(resolve(targetFile));
 				const descRows = Object.entries(mod).map(([name, value]) => ({
@@ -194,7 +194,7 @@ defineCommand({
 							? `${jsc.sizeOf(value)} bytes`
 							: "-",
 				}));
-				console.log(Bun.inspect.table(descRows, ["export", "type", "jscType", "size"]));
+				console.info(Bun.inspect.table(descRows, ["export", "type", "jscType", "size"]));
 			} catch (err) {
 				console.error(fmt.fail(`Failed to describe: ${err}`));
 				process.exit(EXIT_CODES.GENERIC_ERROR);
@@ -206,10 +206,10 @@ defineCommand({
 		}
 
 		if (showTranspile && targetFile) {
-			console.log(`\n${fmt.bold("Transpiled Output")} — ${targetFile}`);
+			console.info(`\n${fmt.bold("Transpiled Output")} — ${targetFile}`);
 			try {
 				const output = await transpiler.transformFile(resolve(targetFile));
-				console.log(output);
+				console.info(output);
 			} catch (err) {
 				console.error(fmt.fail(`Failed to transpile: ${err}`));
 				process.exit(EXIT_CODES.GENERIC_ERROR);
@@ -221,27 +221,27 @@ defineCommand({
 		}
 
 		if ((showImports || showAll) && targetFile) {
-			console.log(`\n${fmt.bold("Imports & Exports")} — ${targetFile}`);
+			console.info(`\n${fmt.bold("Imports & Exports")} — ${targetFile}`);
 			try {
 				const result = await transpiler.scanFile(resolve(targetFile));
 
 				if (result.exports.length > 0) {
-					console.log(`\n${fmt.bold("Exports")} (${result.exports.length})`);
+					console.info(`\n${fmt.bold("Exports")} (${result.exports.length})`);
 					const exportRows = result.exports.map((name) => ({ export: name }));
-					console.log(Bun.inspect.table(exportRows, ["export"]));
+					console.info(Bun.inspect.table(exportRows, ["export"]));
 				}
 
 				if (result.imports.length > 0) {
-					console.log(`${fmt.bold("Imports")} (${result.imports.length})`);
+					console.info(`${fmt.bold("Imports")} (${result.imports.length})`);
 					const importRows = result.imports.map((imp) => ({
 						path: imp.path,
 						kind: imp.kind,
 					}));
-					console.log(Bun.inspect.table(importRows, ["path", "kind"]));
+					console.info(Bun.inspect.table(importRows, ["path", "kind"]));
 				}
 
 				if (result.exports.length === 0 && result.imports.length === 0) {
-					console.log(fmt.dim("  No imports or exports found."));
+					console.info(fmt.dim("  No imports or exports found."));
 				}
 			} catch (err) {
 				console.error(fmt.fail(`Failed to scan: ${err}`));

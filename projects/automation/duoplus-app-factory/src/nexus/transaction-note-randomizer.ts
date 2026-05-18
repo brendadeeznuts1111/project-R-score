@@ -330,19 +330,19 @@ if (import.meta.main) {
   // Generate 10 sample notes
   const notes = randomizer.generateBatch(10, "Worker-01", "Worker-02", [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00]);
   
-  console.log("\n🧬 Transaction Note Randomizer - Sample Output");
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+  console.info("\n🧬 Transaction Note Randomizer - Sample Output");
+  console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
   
   notes.forEach((note, index) => {
-    console.log(`${index + 1}. ${note.text} ${note.emoji} | Risk: ${note.riskProfile} | Category: ${note.category}`);
+    console.info(`${index + 1}. ${note.text} ${note.emoji} | Risk: ${note.riskProfile} | Category: ${note.category}`);
   });
   
   const report = randomizer.securityReport(notes);
-  console.log("\n📊 Security Report");
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log(`Total: ${report.total}`);
-  console.log(`By Category: ${JSON.stringify(report.byCategory)}`);
-  console.log(`By Risk Profile: ${JSON.stringify(report.byRiskProfile)}`);
-  console.log(`Average Length: ${report.averageLength.toFixed(1)} chars`);
-  console.log(`Emoji Coverage: ${report.emojiCoverage.toFixed(0)}%`);
+  console.info("\n📊 Security Report");
+  console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.info(`Total: ${report.total}`);
+  console.info(`By Category: ${JSON.stringify(report.byCategory)}`);
+  console.info(`By Risk Profile: ${JSON.stringify(report.byRiskProfile)}`);
+  console.info(`Average Length: ${report.averageLength.toFixed(1)} chars`);
+  console.info(`Emoji Coverage: ${report.emojiCoverage.toFixed(0)}%`);
 }

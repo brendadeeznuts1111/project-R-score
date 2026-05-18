@@ -175,9 +175,9 @@ const server = serve({
   }
 });
 
-console.log(`🌐 Configuration API Server running on port ${server.port}`);
-console.log(`📚 API Documentation: http://localhost:${server.port}/api`);
-console.log(`🔒 All configuration served from Bun Secrets API`);
-console.log(`🚫 No files, no environment variables, no fallbacks`);
+console.info(`🌐 Configuration API Server running on port ${server.port}`);
+console.info(`📚 API Documentation: http://localhost:${server.port}/api`);
+console.info(`🔒 All configuration served from Bun Secrets API`);
+console.info(`🚫 No files, no environment variables, no fallbacks`);
 
 export { server };

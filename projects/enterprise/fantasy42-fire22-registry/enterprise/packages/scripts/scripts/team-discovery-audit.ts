@@ -52,17 +52,17 @@ class TeamDiscoveryAudit {
    * 🔍 Execute comprehensive team discovery audit
    */
   async executeTeamDiscoveryAudit(): Promise<void> {
-    console.log('🔍 FIRE22 TEAM DISCOVERY AUDIT');
-    console.log('!==!==!==!==!=====');
-    console.log(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
-    console.log(`⏰ Time: ${new Date().toLocaleTimeString()}`);
-    console.log(`🎯 Mission: COMPLETE TEAM IDENTIFICATION\n`);
+    console.info('🔍 FIRE22 TEAM DISCOVERY AUDIT');
+    console.info('!==!==!==!==!=====');
+    console.info(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
+    console.info(`⏰ Time: ${new Date().toLocaleTimeString()}`);
+    console.info(`🎯 Mission: COMPLETE TEAM IDENTIFICATION\n`);
 
-    console.log(
+    console.info(
       '🚨 CRITICAL INTELLIGENCE: Product Manager reports additional teams with Telegram expansion'
     );
-    console.log('📊 Original Assessment: 10 departments identified');
-    console.log('🔍 Conducting comprehensive audit to identify ALL teams...\n');
+    console.info('📊 Original Assessment: 10 departments identified');
+    console.info('🔍 Conducting comprehensive audit to identify ALL teams...\n');
 
     // Audit organizational structure
     await this.auditOrganizationalStructure();
@@ -79,17 +79,17 @@ class TeamDiscoveryAudit {
     // Create emergency notification system
     await this.createEmergencyNotificationSystem();
 
-    console.log('\n🔍 TEAM DISCOVERY AUDIT COMPLETE');
-    console.log(`📊 Total teams discovered: ${this.auditResult.totalTeamsDiscovered}`);
-    console.log(`🆕 New teams identified: ${this.auditResult.newTeamsDiscovered}`);
-    console.log(`📱 Telegram-expanded teams: ${this.auditResult.telegramExpandedTeams}`);
+    console.info('\n🔍 TEAM DISCOVERY AUDIT COMPLETE');
+    console.info(`📊 Total teams discovered: ${this.auditResult.totalTeamsDiscovered}`);
+    console.info(`🆕 New teams identified: ${this.auditResult.newTeamsDiscovered}`);
+    console.info(`📱 Telegram-expanded teams: ${this.auditResult.telegramExpandedTeams}`);
   }
 
   /**
    * 🏢 Audit organizational structure
    */
   private async auditOrganizationalStructure(): Promise<void> {
-    console.log('🏢 Auditing organizational structure...');
+    console.info('🏢 Auditing organizational structure...');
 
     // Discover additional teams based on product manager intelligence
     const additionalTeams: DiscoveredTeam[] = [
@@ -262,30 +262,30 @@ class TeamDiscoveryAudit {
 
     this.discoveredTeams = [...this.originalTeams, ...additionalTeams];
 
-    console.log(`  📊 Original teams: ${this.originalTeams.length}`);
-    console.log(`  🆕 Additional teams discovered: ${additionalTeams.length}`);
-    console.log(
+    console.info(`  📊 Original teams: ${this.originalTeams.length}`);
+    console.info(`  🆕 Additional teams discovered: ${additionalTeams.length}`);
+    console.info(
       `  📱 Teams with Telegram expansion: ${additionalTeams.filter(t => t.telegramExpansion).length}`
     );
-    console.log(`  📈 Total teams: ${this.discoveredTeams.length}`);
+    console.info(`  📈 Total teams: ${this.discoveredTeams.length}`);
   }
 
   /**
    * 📱 Discover Telegram-expanded teams
    */
   private async discoverTelegramExpandedTeams(): Promise<void> {
-    console.log('📱 Analyzing Telegram-expanded teams...');
+    console.info('📱 Analyzing Telegram-expanded teams...');
 
     const telegramTeams = this.discoveredTeams.filter(team => team.telegramExpansion);
 
-    console.log(`\n📱 TELEGRAM-EXPANDED TEAMS (${telegramTeams.length}):`);
+    console.info(`\n📱 TELEGRAM-EXPANDED TEAMS (${telegramTeams.length}):`);
     telegramTeams.forEach(team => {
-      console.log(`  📱 ${team.teamName}:`);
-      console.log(`    - Lead: ${team.teamLead}`);
-      console.log(`    - Security Tier: ${team.securityTier}`);
-      console.log(`    - Team Size: ${team.teamSize} members`);
-      console.log(`    - Channels: ${team.communicationChannels.join(', ')}`);
-      console.log(`    - Function: ${team.businessFunction}`);
+      console.info(`  📱 ${team.teamName}:`);
+      console.info(`    - Lead: ${team.teamLead}`);
+      console.info(`    - Security Tier: ${team.securityTier}`);
+      console.info(`    - Team Size: ${team.teamSize} members`);
+      console.info(`    - Channels: ${team.communicationChannels.join(', ')}`);
+      console.info(`    - Function: ${team.businessFunction}`);
     });
 
     // Analyze security implications
@@ -293,17 +293,17 @@ class TeamDiscoveryAudit {
     const tier2Telegram = telegramTeams.filter(t => t.securityTier === 'TIER_2_HIGH').length;
     const tier3Telegram = telegramTeams.filter(t => t.securityTier === 'TIER_3_MEDIUM').length;
 
-    console.log(`\n🔒 TELEGRAM SECURITY DISTRIBUTION:`);
-    console.log(`  - Tier 1 (Maximum): ${tier1Telegram} teams`);
-    console.log(`  - Tier 2 (High): ${tier2Telegram} teams`);
-    console.log(`  - Tier 3 (Medium): ${tier3Telegram} teams`);
+    console.info(`\n🔒 TELEGRAM SECURITY DISTRIBUTION:`);
+    console.info(`  - Tier 1 (Maximum): ${tier1Telegram} teams`);
+    console.info(`  - Tier 2 (High): ${tier2Telegram} teams`);
+    console.info(`  - Tier 3 (Medium): ${tier3Telegram} teams`);
   }
 
   /**
    * 🔒 Analyze security implications
    */
   private async analyzeSecurityImplications(): Promise<void> {
-    console.log('🔒 Analyzing security implications...');
+    console.info('🔒 Analyzing security implications...');
 
     const totalTeams = this.discoveredTeams.length;
     const telegramTeams = this.discoveredTeams.filter(t => t.telegramExpansion).length;
@@ -318,19 +318,19 @@ class TeamDiscoveryAudit {
       deploymentImpact: 'MAJOR - Deployment timeline and budget require revision',
     };
 
-    console.log(`\n🚨 SECURITY IMPACT ANALYSIS:`);
-    console.log(`  - Original scope: ${this.originalTeams.length} departments`);
-    console.log(`  - Expanded scope: ${totalTeams} teams (+${newTeams} teams)`);
-    console.log(`  - Telegram integration: ${telegramTeams} teams require special protocols`);
-    console.log(`  - Security complexity: SIGNIFICANTLY INCREASED`);
-    console.log(`  - Compliance scope: EXPANDED (international teams)`);
+    console.info(`\n🚨 SECURITY IMPACT ANALYSIS:`);
+    console.info(`  - Original scope: ${this.originalTeams.length} departments`);
+    console.info(`  - Expanded scope: ${totalTeams} teams (+${newTeams} teams)`);
+    console.info(`  - Telegram integration: ${telegramTeams} teams require special protocols`);
+    console.info(`  - Security complexity: SIGNIFICANTLY INCREASED`);
+    console.info(`  - Compliance scope: EXPANDED (international teams)`);
   }
 
   /**
    * 📋 Generate expanded deployment plan
    */
   private async generateExpandedDeploymentPlan(): Promise<void> {
-    console.log('📋 Generating expanded deployment plan...');
+    console.info('📋 Generating expanded deployment plan...');
 
     const expandedPlan = `# 📋 Fire22 Expanded Deployment Plan
 **OPERATION: SECURE-COMM-22 - REVISED SCOPE**
@@ -468,14 +468,14 @@ ${this.discoveredTeams
     const planPath = join(this.auditDir, 'expanded-deployment-plan.md');
     writeFileSync(planPath, expandedPlan);
 
-    console.log('  ✅ Expanded deployment plan generated');
+    console.info('  ✅ Expanded deployment plan generated');
   }
 
   /**
    * 🚨 Create emergency notification system
    */
   private async createEmergencyNotificationSystem(): Promise<void> {
-    console.log('🚨 Creating emergency notification system...');
+    console.info('🚨 Creating emergency notification system...');
 
     const emergencyNotification = `# 🚨 EMERGENCY NOTIFICATION: Additional Teams Discovered
 **FIRE22 SECURITY DEPLOYMENT - SCOPE EXPANSION**
@@ -531,7 +531,7 @@ ${this.discoveredTeams
     const notificationPath = join(this.auditDir, 'emergency-notification.md');
     writeFileSync(notificationPath, emergencyNotification);
 
-    console.log('  ✅ Emergency notification system created');
+    console.info('  ✅ Emergency notification system created');
   }
 
   // Helper methods
@@ -683,19 +683,19 @@ async function main() {
     const audit = new TeamDiscoveryAudit();
     await audit.executeTeamDiscoveryAudit();
 
-    console.log('\n🔍 TEAM DISCOVERY AUDIT COMPLETE!');
-    console.log('!==!==!==!==!==!====');
-    console.log('🚨 CRITICAL SCOPE EXPANSION IDENTIFIED');
-    console.log('📊 Comprehensive team inventory completed');
-    console.log('📱 Telegram integration requirements identified');
-    console.log('💰 Budget and timeline implications calculated');
-    console.log('🚨 Emergency notifications prepared');
+    console.info('\n🔍 TEAM DISCOVERY AUDIT COMPLETE!');
+    console.info('!==!==!==!==!==!====');
+    console.info('🚨 CRITICAL SCOPE EXPANSION IDENTIFIED');
+    console.info('📊 Comprehensive team inventory completed');
+    console.info('📱 Telegram integration requirements identified');
+    console.info('💰 Budget and timeline implications calculated');
+    console.info('🚨 Emergency notifications prepared');
 
-    console.log('\n📋 IMMEDIATE EXECUTIVE ACTION REQUIRED:');
-    console.log('- Review expanded scope and budget implications');
-    console.log('- Approve revised deployment timeline');
-    console.log('- Authorize contact with newly discovered teams');
-    console.log('- Decide on Telegram integration security protocols');
+    console.info('\n📋 IMMEDIATE EXECUTIVE ACTION REQUIRED:');
+    console.info('- Review expanded scope and budget implications');
+    console.info('- Approve revised deployment timeline');
+    console.info('- Authorize contact with newly discovered teams');
+    console.info('- Decide on Telegram integration security protocols');
   } catch (error) {
     console.error('❌ Team discovery audit failed:', error);
     process.exit(1);

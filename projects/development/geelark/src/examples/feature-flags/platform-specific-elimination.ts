@@ -13,41 +13,41 @@ export class MobilePlatformFeatures {
   // This entire class is eliminated from non-mobile builds
   static initializeMobileFeatures() {
     if (feature("PLATFORM_ANDROID") || feature("PLATFORM_IOS")) {
-      console.log("📱 Initializing mobile platform features");
+      console.info("📱 Initializing mobile platform features");
 
       return {
         // Touch and gesture features
         gestures: {
-          swipe: () => console.log("👆 Swipe gesture detected"),
-          pinch: () => console.log("🤏 Pinch gesture detected"),
-          tap: () => console.log("👆 Tap gesture detected"),
+          swipe: () => console.info("👆 Swipe gesture detected"),
+          pinch: () => console.info("🤏 Pinch gesture detected"),
+          tap: () => console.info("👆 Tap gesture detected"),
         },
 
         // Mobile-specific APIs
         camera: {
-          takePhoto: () => console.log("📸 Taking photo"),
-          scanQR: () => console.log("📷 Scanning QR code"),
+          takePhoto: () => console.info("📸 Taking photo"),
+          scanQR: () => console.info("📷 Scanning QR code"),
         },
 
         // Push notifications
         notifications: {
           requestPermission: () =>
-            console.log("🔔 Requesting notification permission"),
-          sendPush: (message: string) => console.log(`📱 Push: ${message}`),
+            console.info("🔔 Requesting notification permission"),
+          sendPush: (message: string) => console.info(`📱 Push: ${message}`),
         },
 
         // Device hardware
         device: {
-          getAccelerometer: () => console.log("📊 Reading accelerometer"),
-          getGPS: () => console.log("🗺️ Getting GPS location"),
-          vibrate: () => console.log("📳 Vibrating device"),
+          getAccelerometer: () => console.info("📊 Reading accelerometer"),
+          getGPS: () => console.info("🗺️ Getting GPS location"),
+          vibrate: () => console.info("📳 Vibrating device"),
         },
 
         // Mobile UI components
         ui: {
-          showBottomSheet: () => console.log("📋 Showing bottom sheet"),
-          showModal: () => console.log("🪟 Showing modal"),
-          hideKeyboard: () => console.log("⌨️ Hiding keyboard"),
+          showBottomSheet: () => console.info("📋 Showing bottom sheet"),
+          showModal: () => console.info("🪟 Showing modal"),
+          hideKeyboard: () => console.info("⌨️ Hiding keyboard"),
         },
       };
     }
@@ -59,7 +59,7 @@ export class MobilePlatformFeatures {
   // Mobile-specific optimizations
   static optimizeForMobile() {
     if (feature("PLATFORM_ANDROID") || feature("PLATFORM_IOS")) {
-      console.log("⚡ Applying mobile optimizations");
+      console.info("⚡ Applying mobile optimizations");
 
       return {
         // Reduce memory usage for mobile
@@ -91,49 +91,49 @@ export class WebPlatformFeatures {
   // This entire class is eliminated from non-web builds
   static initializeWebFeatures() {
     if (feature("PLATFORM_WEB")) {
-      console.log("🌐 Initializing web platform features");
+      console.info("🌐 Initializing web platform features");
 
       return {
         // Browser APIs
         browser: {
           localStorage: {
             set: (key: string, value: string) =>
-              console.log(`💾 Storing ${key}`),
-            get: (key: string) => console.log(`📖 Getting ${key}`),
+              console.info(`💾 Storing ${key}`),
+            get: (key: string) => console.info(`📖 Getting ${key}`),
           },
           sessionStorage: {
             set: (key: string, value: string) =>
-              console.log(`🗄️ Session ${key}`),
-            get: (key: string) => console.log(`📋 Session ${key}`),
+              console.info(`🗄️ Session ${key}`),
+            get: (key: string) => console.info(`📋 Session ${key}`),
           },
           cookies: {
             set: (name: string, value: string) =>
-              console.log(`🍪 Setting ${name}`),
-            get: (name: string) => console.log(`🍪 Getting ${name}`),
+              console.info(`🍪 Setting ${name}`),
+            get: (name: string) => console.info(`🍪 Getting ${name}`),
           },
         },
 
         // Web-specific features
         features: {
-          serviceWorker: () => console.log("👷 Registering service worker"),
-          webSockets: () => console.log("🔌 Connecting WebSocket"),
-          webRTC: () => console.log("📹 Starting WebRTC"),
-          webGL: () => console.log("🎨 Initializing WebGL"),
+          serviceWorker: () => console.info("👷 Registering service worker"),
+          webSockets: () => console.info("🔌 Connecting WebSocket"),
+          webRTC: () => console.info("📹 Starting WebRTC"),
+          webGL: () => console.info("🎨 Initializing WebGL"),
         },
 
         // SEO and meta tags
         seo: {
-          updateTitle: (title: string) => console.log(`📝 Title: ${title}`),
+          updateTitle: (title: string) => console.info(`📝 Title: ${title}`),
           updateMeta: (name: string, content: string) =>
-            console.log(`🏷️ Meta ${name}: ${content}`),
-          addCanonical: (url: string) => console.log(`🔗 Canonical: ${url}`),
+            console.info(`🏷️ Meta ${name}: ${content}`),
+          addCanonical: (url: string) => console.info(`🔗 Canonical: ${url}`),
         },
 
         // Web performance
         performance: {
-          enableLazyLoading: () => console.log("⏳ Enabling lazy loading"),
-          enableCodeSplitting: () => console.log("✂️ Enabling code splitting"),
-          enableCaching: () => console.log("💾 Enabling caching"),
+          enableLazyLoading: () => console.info("⏳ Enabling lazy loading"),
+          enableCodeSplitting: () => console.info("✂️ Enabling code splitting"),
+          enableCaching: () => console.info("💾 Enabling caching"),
         },
       };
     }
@@ -145,7 +145,7 @@ export class WebPlatformFeatures {
   // Web-specific optimizations
   static optimizeForWeb() {
     if (feature("PLATFORM_WEB")) {
-      console.log("🚀 Applying web optimizations");
+      console.info("🚀 Applying web optimizations");
 
       return {
         // SEO optimizations
@@ -177,41 +177,41 @@ export class DesktopPlatformFeatures {
   // This entire class is eliminated from non-desktop builds
   static initializeDesktopFeatures() {
     if (feature("PLATFORM_DESKTOP")) {
-      console.log("🖥️ Initializing desktop platform features");
+      console.info("🖥️ Initializing desktop platform features");
 
       return {
         // Native system integration
         system: {
-          createWindow: () => console.log("🪟 Creating native window"),
-          createMenu: () => console.log("📋 Creating native menu"),
-          createTray: () => console.log("🔔 Creating system tray"),
+          createWindow: () => console.info("🪟 Creating native window"),
+          createMenu: () => console.info("📋 Creating native menu"),
+          createTray: () => console.info("🔔 Creating system tray"),
           showNotification: (title: string, body: string) =>
-            console.log(`🔔 Desktop notification: ${title} - ${body}`),
+            console.info(`🔔 Desktop notification: ${title} - ${body}`),
         },
 
         // File system access
         filesystem: {
-          readFile: (path: string) => console.log(`📖 Reading ${path}`),
+          readFile: (path: string) => console.info(`📖 Reading ${path}`),
           writeFile: (path: string, content: string) =>
-            console.log(`✍️ Writing ${path}`),
-          watchFile: (path: string) => console.log(`👀 Watching ${path}`),
-          createDirectory: (path: string) => console.log(`📁 Creating ${path}`),
+            console.info(`✍️ Writing ${path}`),
+          watchFile: (path: string) => console.info(`👀 Watching ${path}`),
+          createDirectory: (path: string) => console.info(`📁 Creating ${path}`),
         },
 
         // Native dialogs
         dialogs: {
-          showOpenDialog: () => console.log("📂 Open file dialog"),
-          showSaveDialog: () => console.log("💾 Save file dialog"),
+          showOpenDialog: () => console.info("📂 Open file dialog"),
+          showSaveDialog: () => console.info("💾 Save file dialog"),
           showMessageBox: (message: string) =>
-            console.log(`💬 Message: ${message}`),
+            console.info(`💬 Message: ${message}`),
         },
 
         // System integration
         integration: {
           registerProtocol: (protocol: string) =>
-            console.log(`🔗 Registering protocol: ${protocol}`),
-          setDefaultApp: () => console.log("🎯 Setting as default app"),
-          createShortcut: () => console.log("⚡ Creating desktop shortcut"),
+            console.info(`🔗 Registering protocol: ${protocol}`),
+          setDefaultApp: () => console.info("🎯 Setting as default app"),
+          createShortcut: () => console.info("⚡ Creating desktop shortcut"),
         },
       };
     }
@@ -223,7 +223,7 @@ export class DesktopPlatformFeatures {
   // Desktop-specific optimizations
   static optimizeForDesktop() {
     if (feature("PLATFORM_DESKTOP")) {
-      console.log("⚡ Applying desktop optimizations");
+      console.info("⚡ Applying desktop optimizations");
 
       return {
         // Native performance
@@ -271,7 +271,7 @@ export class PlatformAdapter {
   // Initialize appropriate platform features
   static initialize() {
     this.platform = this.detectPlatform();
-    console.log(`🎯 Platform detected: ${this.platform}`);
+    console.info(`🎯 Platform detected: ${this.platform}`);
 
     switch (this.platform) {
       case "mobile":
@@ -284,7 +284,7 @@ export class PlatformAdapter {
         return DesktopPlatformFeatures.initializeDesktopFeatures();
 
       default:
-        console.log("❓ Unknown platform - using fallback");
+        console.info("❓ Unknown platform - using fallback");
         return this.createFallbackFeatures();
     }
   }
@@ -293,7 +293,7 @@ export class PlatformAdapter {
   static createFallbackFeatures() {
     return {
       basic: {
-        log: (message: string) => console.log(`📝 ${message}`),
+        log: (message: string) => console.info(`📝 ${message}`),
         error: (error: string) => console.error(`❌ ${error}`),
       },
     };
@@ -305,29 +305,29 @@ export class PlatformAdapter {
       case "mobile":
         return {
           set: (key: string, value: string) =>
-            console.log(`📱 Mobile storage: ${key}`),
-          get: (key: string) => console.log(`📱 Mobile get: ${key}`),
+            console.info(`📱 Mobile storage: ${key}`),
+          get: (key: string) => console.info(`📱 Mobile get: ${key}`),
         };
 
       case "web":
         return {
           set: (key: string, value: string) =>
-            console.log(`🌐 Web storage: ${key}`),
-          get: (key: string) => console.log(`🌐 Web get: ${key}`),
+            console.info(`🌐 Web storage: ${key}`),
+          get: (key: string) => console.info(`🌐 Web get: ${key}`),
         };
 
       case "desktop":
         return {
           set: (key: string, value: string) =>
-            console.log(`🖥️ Desktop storage: ${key}`),
-          get: (key: string) => console.log(`🖥️ Desktop get: ${key}`),
+            console.info(`🖥️ Desktop storage: ${key}`),
+          get: (key: string) => console.info(`🖥️ Desktop get: ${key}`),
         };
 
       default:
         return {
           set: (key: string, value: string) =>
-            console.log(`❓ Fallback storage: ${key}`),
-          get: (key: string) => console.log(`❓ Fallback get: ${key}`),
+            console.info(`❓ Fallback storage: ${key}`),
+          get: (key: string) => console.info(`❓ Fallback get: ${key}`),
         };
     }
   }
@@ -338,25 +338,25 @@ export class PlatformAdapter {
       case "mobile":
         return {
           send: (title: string, body: string) =>
-            console.log(`📱 Mobile push: ${title} - ${body}`),
+            console.info(`📱 Mobile push: ${title} - ${body}`),
         };
 
       case "web":
         return {
           send: (title: string, body: string) =>
-            console.log(`🌐 Web notification: ${title} - ${body}`),
+            console.info(`🌐 Web notification: ${title} - ${body}`),
         };
 
       case "desktop":
         return {
           send: (title: string, body: string) =>
-            console.log(`🖥️ Desktop notification: ${title} - ${body}`),
+            console.info(`🖥️ Desktop notification: ${title} - ${body}`),
         };
 
       default:
         return {
           send: (title: string, body: string) =>
-            console.log(`❓ Fallback notification: ${title} - ${body}`),
+            console.info(`❓ Fallback notification: ${title} - ${body}`),
         };
     }
   }
@@ -369,59 +369,59 @@ export class PlatformAdapter {
 export class PlatformBundleOptimizer {
   // Show what gets eliminated in each platform build
   static analyzeBundleImpact() {
-    console.log("\n📦 PLATFORM BUNDLE ANALYSIS");
-    console.log("=".repeat(40));
+    console.info("\n📦 PLATFORM BUNDLE ANALYSIS");
+    console.info("=".repeat(40));
 
     // Mobile build analysis
-    console.log("\n📱 MOBILE BUILD:");
-    console.log("✅ INCLUDED:");
-    console.log("  • Touch and gesture handling");
-    console.log("  • Camera and device APIs");
-    console.log("  • Push notifications");
-    console.log("  • GPS and accelerometer");
-    console.log("  • Mobile UI components");
-    console.log("❌ ELIMINATED:");
-    console.log("  • Web browser APIs");
-    console.log("  • Desktop file system");
-    console.log("  • Native windows/menus");
-    console.log("  • Service worker code");
-    console.log("  • WebRTC/WebGL");
+    console.info("\n📱 MOBILE BUILD:");
+    console.info("✅ INCLUDED:");
+    console.info("  • Touch and gesture handling");
+    console.info("  • Camera and device APIs");
+    console.info("  • Push notifications");
+    console.info("  • GPS and accelerometer");
+    console.info("  • Mobile UI components");
+    console.info("❌ ELIMINATED:");
+    console.info("  • Web browser APIs");
+    console.info("  • Desktop file system");
+    console.info("  • Native windows/menus");
+    console.info("  • Service worker code");
+    console.info("  • WebRTC/WebGL");
 
     // Web build analysis
-    console.log("\n🌐 WEB BUILD:");
-    console.log("✅ INCLUDED:");
-    console.log("  • Browser storage APIs");
-    console.log("  • Service worker");
-    console.log("  • WebSockets and WebRTC");
-    console.log("  • SEO and meta tags");
-    console.log("  • PWA features");
-    console.log("❌ ELIMINATED:");
-    console.log("  • Mobile device APIs");
-    console.log("  • Native file system");
-    console.log("  • Desktop system integration");
-    console.log("  • Touch gesture handling");
-    console.log("  • Push notifications");
+    console.info("\n🌐 WEB BUILD:");
+    console.info("✅ INCLUDED:");
+    console.info("  • Browser storage APIs");
+    console.info("  • Service worker");
+    console.info("  • WebSockets and WebRTC");
+    console.info("  • SEO and meta tags");
+    console.info("  • PWA features");
+    console.info("❌ ELIMINATED:");
+    console.info("  • Mobile device APIs");
+    console.info("  • Native file system");
+    console.info("  • Desktop system integration");
+    console.info("  • Touch gesture handling");
+    console.info("  • Push notifications");
 
     // Desktop build analysis
-    console.log("\n🖥️ DESKTOP BUILD:");
-    console.log("✅ INCLUDED:");
-    console.log("  • Native file system");
-    console.log("  • System dialogs");
-    console.log("  • Native windows/menus");
-    console.log("  • System tray integration");
-    console.log("  • Protocol registration");
-    console.log("❌ ELIMINATED:");
-    console.log("  • Mobile device APIs");
-    console.log("  • Browser-specific APIs");
-    console.log("  • Touch gesture handling");
-    console.log("  • Service worker code");
-    console.log("  • WebRTC/WebGL");
+    console.info("\n🖥️ DESKTOP BUILD:");
+    console.info("✅ INCLUDED:");
+    console.info("  • Native file system");
+    console.info("  • System dialogs");
+    console.info("  • Native windows/menus");
+    console.info("  • System tray integration");
+    console.info("  • Protocol registration");
+    console.info("❌ ELIMINATED:");
+    console.info("  • Mobile device APIs");
+    console.info("  • Browser-specific APIs");
+    console.info("  • Touch gesture handling");
+    console.info("  • Service worker code");
+    console.info("  • WebRTC/WebGL");
   }
 
   // Calculate estimated bundle size savings
   static calculateSavings() {
-    console.log("\n💰 ESTIMATED BUNDLE SAVINGS:");
-    console.log("=".repeat(30));
+    console.info("\n💰 ESTIMATED BUNDLE SAVINGS:");
+    console.info("=".repeat(30));
 
     const savings = {
       mobile: {
@@ -442,10 +442,10 @@ export class PlatformBundleOptimizer {
     };
 
     Object.entries(savings).forEach(([platform, data]) => {
-      console.log(`${platform.toUpperCase()}:`);
-      console.log(`  • Features eliminated: ${data.eliminatedFeatures}`);
-      console.log(`  • Size savings: ${data.estimatedSavings}`);
-      console.log(`  • Reduction: ${data.percentageReduction}`);
+      console.info(`${platform.toUpperCase()}:`);
+      console.info(`  • Features eliminated: ${data.eliminatedFeatures}`);
+      console.info(`  • Size savings: ${data.estimatedSavings}`);
+      console.info(`  • Reduction: ${data.percentageReduction}`);
     });
   }
 }
@@ -532,4 +532,4 @@ export class PlatformDetection {
 
 // Initialize platform adapter when imported
 const platformFeatures = PlatformAdapter.initialize();
-console.log("🚀 Platform features initialized:", platformFeatures);
+console.info("🚀 Platform features initialized:", platformFeatures);

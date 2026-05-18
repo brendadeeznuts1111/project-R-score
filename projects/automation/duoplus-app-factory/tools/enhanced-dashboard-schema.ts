@@ -464,47 +464,47 @@ async function processDashboardExport(filename: string) {
     const data = JSON.parse(await Bun.file(filename).text());
     const processor = new EnhancedDashboardProcessor(data);
 
-    console.log('🧬 Nebula-Flow™ Enhanced Dashboard Processor');
-    console.log('==========================================\n');
+    console.info('🧬 Nebula-Flow™ Enhanced Dashboard Processor');
+    console.info('==========================================\n');
 
     // Show original data
-    console.log('📊 Original Data:');
-    console.log(`  • Logs: ${data.logs?.length || 0} entries`);
-    console.log(`  • System: ${Object.keys(data.system || {}).length} metrics`);
-    console.log(`  • Atlas: ${data.atlasData ? 'Present' : 'Not present'}`);
-    console.log(`  • Metrics: ${data.metricsData ? 'Present' : 'Not present'}\n`);
+    console.info('📊 Original Data:');
+    console.info(`  • Logs: ${data.logs?.length || 0} entries`);
+    console.info(`  • System: ${Object.keys(data.system || {}).length} metrics`);
+    console.info(`  • Atlas: ${data.atlasData ? 'Present' : 'Not present'}`);
+    console.info(`  • Metrics: ${data.metricsData ? 'Present' : 'Not present'}\n`);
 
     // Enhance the data
     const enhanced = processor.enhance();
 
-    console.log('🔧 Enhanced Data:');
-    console.log(`  • Categories: ${Object.keys(enhanced.categories).length}`);
-    console.log(`  • Enhanced Logs: ${enhanced.data.logs.length} entries`);
-    console.log(`  • Available Filters: ${enhanced.filters.available.categories?.length} categories`);
-    console.log(`  • Time Range: ${enhanced.filters.available.timeRange?.start.toLocaleString()} - ${enhanced.filters.available.timeRange?.end.toLocaleString()}\n`);
+    console.info('🔧 Enhanced Data:');
+    console.info(`  • Categories: ${Object.keys(enhanced.categories).length}`);
+    console.info(`  • Enhanced Logs: ${enhanced.data.logs.length} entries`);
+    console.info(`  • Available Filters: ${enhanced.filters.available.categories?.length} categories`);
+    console.info(`  • Time Range: ${enhanced.filters.available.timeRange?.start.toLocaleString()} - ${enhanced.filters.available.timeRange?.end.toLocaleString()}\n`);
 
     // Show statistics
     const stats = processor.getStatistics();
-    console.log('📈 Statistics:');
-    console.log(`  • Total Entries: ${stats.totalEntries}`);
-    console.log(`  • Time Span: ${Math.round(stats.timeRange.duration / 1000)} seconds`);
-    console.log('  • By Category:', stats.categories);
-    console.log('  • By Priority:', stats.priorities);
-    console.log('  • By Domain:', stats.domains);
-    console.log('');
+    console.info('📈 Statistics:');
+    console.info(`  • Total Entries: ${stats.totalEntries}`);
+    console.info(`  • Time Span: ${Math.round(stats.timeRange.duration / 1000)} seconds`);
+    console.info('  • By Category:', stats.categories);
+    console.info('  • By Priority:', stats.priorities);
+    console.info('  • By Domain:', stats.domains);
+    console.info('');
 
     // Example filtering
-    console.log('🎯 Example Filtering:');
+    console.info('🎯 Example Filtering:');
 
     // Filter for errors only
     const errorFilter = { categories: ['alert'] };
     const errorResults = processor.filter(errorFilter);
-    console.log(`  • Error logs: ${errorResults.data.logs.length} entries`);
+    console.info(`  • Error logs: ${errorResults.data.logs.length} entries`);
 
     // Filter for system events
     const systemFilter = { domains: ['system'] };
     const systemResults = processor.filter(systemFilter);
-    console.log(`  • System events: ${systemResults.data.logs.length} entries`);
+    console.info(`  • System events: ${systemResults.data.logs.length} entries`);
 
     // Filter by time range (last 30 seconds)
     const now = new Date();
@@ -513,14 +513,14 @@ async function processDashboardExport(filename: string) {
       timeRange: { start: thirtySecondsAgo, end: now }
     };
     const timeResults = processor.filter(timeFilter);
-    console.log(`  • Last 30 seconds: ${timeResults.data.logs.length} entries`);
+    console.info(`  • Last 30 seconds: ${timeResults.data.logs.length} entries`);
 
     // Export enhanced version
     const outputFile = filename.replace('.json', '-enhanced.json');
     await Bun.write(outputFile, processor.exportJson());
 
-    console.log(`\n💾 Enhanced export saved to: ${outputFile}`);
-    console.log('\n✅ Dashboard enhancement complete!');
+    console.info(`\n💾 Enhanced export saved to: ${outputFile}`);
+    console.info('\n✅ Dashboard enhancement complete!');
 
   } catch (error) {
     console.error('❌ Error processing dashboard export:', error);

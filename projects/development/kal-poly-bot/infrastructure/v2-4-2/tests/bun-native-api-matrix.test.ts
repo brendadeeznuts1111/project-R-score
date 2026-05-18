@@ -748,4 +748,4 @@ describe("Matrix Documentation", () => {
   });
 });
 
-console.log("✅ Bun Native API Mapping Matrix v2.4.1 - All tests completed");
+console.info("✅ Bun Native API Mapping Matrix v2.4.1 - All tests completed");

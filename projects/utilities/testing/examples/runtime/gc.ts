@@ -5,18 +5,18 @@
  * - --expose-gc: Enables the global gc() function (Node.js compatibility)
  */
 
-console.log("--- Garbage Collection Demo ---");
+console.info("--- Garbage Collection Demo ---");
 
 // Bun.gc() is always available in Bun
-console.log("Forcing GC using Bun.gc(true)...");
+console.info("Forcing GC using Bun.gc(true)...");
 Bun.gc(true); 
 
 // Check if global gc is exposed (via --expose-gc flag)
 if (typeof globalThis.gc === "function") {
-  console.log("Global gc() is available (enabled via --expose-gc)");
+  console.info("Global gc() is available (enabled via --expose-gc)");
   globalThis.gc();
 } else {
-  console.log("Global gc() is NOT available. Run with `bun --expose-gc examples/runtime/gc.ts` to enable it.");
+  console.info("Global gc() is NOT available. Run with `bun --expose-gc examples/runtime/gc.ts` to enable it.");
 }
 
 function createLargeObjects() {
@@ -27,6 +27,6 @@ function createLargeObjects() {
   return arr.length;
 }
 
-console.log(`Created ${createLargeObjects()} objects.`);
+console.info(`Created ${createLargeObjects()} objects.`);
 Bun.gc(true);
-console.log("GC performed after object creation.");
+console.info("GC performed after object creation.");

@@ -141,7 +141,7 @@ class EnhancedForwardingEngine {
       await redisExpireAt(`forwarding:rule:${ruleId}`, Math.floor(new Date(timeCondition.value).getTime() / 1000));
     }
     
-    console.log(`📝 Created forwarding rule ${ruleId}: ${rule.fromAlias} → ${rule.toAlias}`);
+    console.info(`📝 Created forwarding rule ${ruleId}: ${rule.fromAlias} → ${rule.toAlias}`);
     return ruleId;
   }
   
@@ -434,7 +434,7 @@ class EnhancedForwardingEngine {
         const createsCircle = await this.detectCircularForwarding(toAlias);
         if (createsCircle) {
           await this.deactivateRule(ruleId, 'circular_forwarding');
-          console.log(`⛓️ Disabled rule ${ruleId} to break circular forwarding`);
+          console.info(`⛓️ Disabled rule ${ruleId} to break circular forwarding`);
         }
       }
     }
@@ -508,7 +508,7 @@ class EnhancedForwardingEngine {
   // ====================
   
   static async analyzeAndCreateSmartRules(): Promise<void> {
-    console.log('🧠 Analyzing payment patterns for smart forwarding...');
+    console.info('🧠 Analyzing payment patterns for smart forwarding...');
     
     // Analyze failed/returned payments
     const failedPayments = await redisKeys(`payment:failed:*`);
@@ -532,7 +532,7 @@ class EnhancedForwardingEngine {
     // Generate suggested rules
     const suggestions = await this.generateRuleSuggestions();
     
-    console.log(`💡 Generated ${suggestions.length} smart rule suggestions`);
+    console.info(`💡 Generated ${suggestions.length} smart rule suggestions`);
     
     // Auto-create high-confidence rules
     for (const suggestion of suggestions.filter(s => s.confidence > 0.8)) {
@@ -581,7 +581,7 @@ class EnhancedForwardingEngine {
     await redis.hset(`forwarding:rule:${ruleId}`, 'status', 'inactive');
     await redis.hset(`forwarding:rule:${ruleId}`, 'deactivatedReason', reason);
     await redis.hset(`forwarding:rule:${ruleId}`, 'deactivatedAt', new Date().toISOString());
-    console.log(`⛔ Rule ${ruleId} deactivated: ${reason}`);
+    console.info(`⛔ Rule ${ruleId} deactivated: ${reason}`);
   }
 
   private static async getCustomerPaymentCount(customerId: string, businessId: string): Promise<number> {
@@ -606,7 +606,7 @@ class EnhancedForwardingEngine {
     toAlias: string, 
     amount: number
   ): Promise<void> {
-    console.log(`💸 Forwarding payment ${paymentId}: ${fromAlias} → ${toAlias} ($${amount})`);
+    console.info(`💸 Forwarding payment ${paymentId}: ${fromAlias} → ${toAlias} ($${amount})`);
     await redis.hmset(`payment:${paymentId}`, [
       'status', 'forwarded',
       'forwardedTo', toAlias,
@@ -642,13 +642,13 @@ class EnhancedForwardingEngine {
   }
 
   private static async sendNotification(config: any, data: any): Promise<void> {
-    console.log(`📧 Notification via ${config.channel}: ${config.template || 'default'}`);
+    console.info(`📧 Notification via ${config.channel}: ${config.template || 'default'}`);
   }
 
   private static async holdPayment(paymentId: string, reason: string): Promise<void> {
     await redis.hset(`payment:${paymentId}`, 'status', 'held');
     await redis.hset(`payment:${paymentId}`, 'holdReason', reason);
-    console.log(`⏸️ Payment ${paymentId} held: ${reason}`);
+    console.info(`⏸️ Payment ${paymentId} held: ${reason}`);
   }
 
   private static async convertAmount(amount: number, config: any): Promise<number> {
@@ -660,7 +660,7 @@ class EnhancedForwardingEngine {
   }
 
   private static async redirectPayment(paymentId: string, url: string): Promise<void> {
-    console.log(`🔄 Payment ${paymentId} redirected to ${url}`);
+    console.info(`🔄 Payment ${paymentId} redirected to ${url}`);
   }
 
   static async escalateToHuman(paymentId: string, config: any): Promise<void> {
@@ -669,7 +669,7 @@ class EnhancedForwardingEngine {
       'escalatedAt', new Date().toISOString(),
       'notify', JSON.stringify(config.notify || [])
     ]);
-    console.log(`🚨 Payment ${paymentId} escalated to human review`);
+    console.info(`🚨 Payment ${paymentId} escalated to human review`);
   }
 
   static async getBusinessStatus(alias: string): Promise<string> {
@@ -763,7 +763,7 @@ class EnhancedForwardingEngine {
       'reason', 'business_closed',
       'initiatedAt', new Date().toISOString()
     ]);
-    console.log(`↩️ Refund initiated for ${paymentData.paymentId}`);
+    console.info(`↩️ Refund initiated for ${paymentData.paymentId}`);
   }
 
   private static async getPossibleBusinessMatches(alias: string): Promise<string[]> {
@@ -772,7 +772,7 @@ class EnhancedForwardingEngine {
   }
 
   private static async notifyAdmin(event: string, data: any): Promise<void> {
-    console.log(`🔔 Admin notification: ${event}`, data);
+    console.info(`🔔 Admin notification: ${event}`, data);
     await redisLpush(`notifications:admin`, JSON.stringify({ event, data, timestamp: new Date().toISOString() }));
   }
 
@@ -786,7 +786,7 @@ class EnhancedForwardingEngine {
 
   private static async analyzeCustomerPatterns(): Promise<void> {
     // Analyze customer behavior patterns
-    console.log('📊 Analyzing customer patterns...');
+    console.info('📊 Analyzing customer patterns...');
   }
 
   private static async generateRuleSuggestions(): Promise<Array<{ confidence: number; rule: any }>> {
@@ -805,7 +805,7 @@ class EnhancedForwardingEngine {
   static async findAlternativeTarget(ruleId: string, closedAlias: string): Promise<void> {
     const similar = await this.findSimilarBusinesses(closedAlias);
     if (similar.length > 0) {
-      console.log(`💡 Suggest alternative for rule ${ruleId}: ${similar[0].alias}`);
+      console.info(`💡 Suggest alternative for rule ${ruleId}: ${similar[0].alias}`);
     }
   }
 }
@@ -815,7 +815,7 @@ class EnhancedForwardingEngine {
 // ====================
 class ForwardingMonitor {
   static async startMonitoring(): Promise<void> {
-    console.log('👁️ Starting forwarding monitor...');
+    console.info('👁️ Starting forwarding monitor...');
     
     // Subscribe to payment events
     const subscriber = new RedisClient();
@@ -863,7 +863,7 @@ class ForwardingMonitor {
     );
     
     if (needsForwarding.shouldForward) {
-      console.log(`🚀 Forwarding needed: ${event.alias} → ${needsForwarding.targetAlias}`);
+      console.info(`🚀 Forwarding needed: ${event.alias} → ${needsForwarding.targetAlias}`);
       await EnhancedForwardingEngine.logForwardingDecision(event.paymentId, needsForwarding);
     }
   }
@@ -913,7 +913,7 @@ class ForwardingMonitor {
 
   private static async generateReports(): Promise<void> {
     // Generate periodic reports
-    console.log('📈 Generating forwarding reports...');
+    console.info('📈 Generating forwarding reports...');
   }
 }
 
@@ -959,7 +959,7 @@ const edgeCaseExamples = {
       ]
     });
     
-    console.log(`📅 Gradual transition rule created: ${ruleId}`);
+    console.info(`📅 Gradual transition rule created: ${ruleId}`);
   },
   
   // Example 2: Split Payments for Partner Businesses
@@ -992,7 +992,7 @@ const edgeCaseExamples = {
       ]
     });
     
-    console.log(`✂️ Partner split rule created: ${ruleId}`);
+    console.info(`✂️ Partner split rule created: ${ruleId}`);
   },
   
   // Example 3: Time-Based Forwarding
@@ -1031,7 +1031,7 @@ const edgeCaseExamples = {
       ]
     });
     
-    console.log(`⏰ Time-based forwarding rule created: ${ruleId}`);
+    console.info(`⏰ Time-based forwarding rule created: ${ruleId}`);
   },
   
   // Example 4: Location-Based Forwarding
@@ -1069,7 +1069,7 @@ const edgeCaseExamples = {
       ]
     });
     
-    console.log(`📍 Location-based forwarding rule created: ${ruleId}`);
+    console.info(`📍 Location-based forwarding rule created: ${ruleId}`);
   },
   
   // Example 5: Emergency Contingency Rules
@@ -1119,9 +1119,9 @@ const edgeCaseExamples = {
     };
     
     const ruleId1 = await EnhancedForwardingEngine.createRule(rule1);
-    console.log(`🚨 Emergency rule created: ${ruleId1}`);
+    console.info(`🚨 Emergency rule created: ${ruleId1}`);
     const ruleId2 = await EnhancedForwardingEngine.createRule(rule2);
-    console.log(`🚨 Emergency rule created: ${ruleId2}`);
+    console.info(`🚨 Emergency rule created: ${ruleId2}`);
   }
 };
 
@@ -1130,7 +1130,7 @@ const edgeCaseExamples = {
 // ====================
 class ForwardingSimulator {
   static async runTestSuite(): Promise<void> {
-    console.log('🧪 Running forwarding rule tests...');
+    console.info('🧪 Running forwarding rule tests...');
     
     const testCases = [
       {
@@ -1183,16 +1183,16 @@ class ForwardingSimulator {
       );
       
       const passed = result.shouldForward === test.expected.shouldForward;
-      console.log(`${passed ? '✅' : '❌'} ${test.name}: ${passed ? 'PASS' : 'FAIL'}`);
+      console.info(`${passed ? '✅' : '❌'} ${test.name}: ${passed ? 'PASS' : 'FAIL'}`);
       
       if (!passed) {
-        console.log(`   Expected: ${test.expected.shouldForward}, Got: ${result.shouldForward}`);
+        console.info(`   Expected: ${test.expected.shouldForward}, Got: ${result.shouldForward}`);
       }
     }
   }
   
   static async simulateEdgeCases(): Promise<void> {
-    console.log('🌀 Simulating edge cases...');
+    console.info('🌀 Simulating edge cases...');
     
     // Simulate circular forwarding
     await redis.hmset('test:circular:1', ['toAlias', 'AliasB']);
@@ -1200,11 +1200,11 @@ class ForwardingSimulator {
     await redis.hmset('test:circular:3', ['toAlias', 'AliasA']); // Creates circle
     
     const hasCircle = await EnhancedForwardingEngine.detectCircularForwarding('AliasA');
-    console.log(`Circular forwarding detected: ${hasCircle}`);
+    console.info(`Circular forwarding detected: ${hasCircle}`);
     
     if (hasCircle) {
       await EnhancedForwardingEngine.breakCircularForwarding('AliasA');
-      console.log('Circular forwarding broken');
+      console.info('Circular forwarding broken');
     }
     
     // Simulate ambiguous business
@@ -1216,7 +1216,7 @@ class ForwardingSimulator {
       paymentId: 'test_123'
     });
     
-    console.log(`Ambiguous payment handled: ${ambiguousResult.action}`);
+    console.info(`Ambiguous payment handled: ${ambiguousResult.action}`);
   }
 }
 
@@ -1224,7 +1224,7 @@ class ForwardingSimulator {
 // 9. DEPLOYMENT & USAGE
 // ====================
 async function deployEnhancedForwarding() {
-  console.log('🚀 Deploying Enhanced Forwarding System...\n');
+  console.info('🚀 Deploying Enhanced Forwarding System...\n');
   
   // 1. Initialize the system
   await ForwardingMonitor.startMonitoring();
@@ -1342,7 +1342,7 @@ async function deployEnhancedForwarding() {
     }
   });
   
-  console.log(`
+  console.info(`
 🎉 Enhanced Forwarding System Ready!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Dashboard: http://localhost:${server.port}/forwarding/rules

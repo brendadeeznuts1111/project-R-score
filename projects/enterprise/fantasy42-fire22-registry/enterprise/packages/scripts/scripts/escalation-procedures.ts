@@ -48,11 +48,11 @@ class EscalationProcedures {
    * 🚨 Execute escalation procedures for non-responders
    */
   async executeEscalationProcedures(): Promise<void> {
-    console.log('🚨 FIRE22 ESCALATION PROCEDURES');
-    console.log('!==!==!==!==!==!==');
-    console.log(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
-    console.log(`⏰ Time: ${new Date().toLocaleTimeString()}`);
-    console.log(`🎯 Operation: SECURE-COMM-22\n`);
+    console.info('🚨 FIRE22 ESCALATION PROCEDURES');
+    console.info('!==!==!==!==!==!==');
+    console.info(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
+    console.info(`⏰ Time: ${new Date().toLocaleTimeString()}`);
+    console.info(`🎯 Operation: SECURE-COMM-22\n`);
 
     // Identify non-responders
     const nonResponders = await this.identifyNonResponders();
@@ -68,16 +68,16 @@ class EscalationProcedures {
     // Generate executive summary
     await this.generateExecutiveSummary(nonResponders);
 
-    console.log(`\n🚨 Escalation procedures activated for ${nonResponders.length} non-responders`);
-    console.log('📧 Escalation communications generated');
-    console.log('📅 Follow-up schedule created');
+    console.info(`\n🚨 Escalation procedures activated for ${nonResponders.length} non-responders`);
+    console.info('📧 Escalation communications generated');
+    console.info('📅 Follow-up schedule created');
   }
 
   /**
    * 🔍 Identify non-responders requiring escalation
    */
   private async identifyNonResponders(): Promise<NonResponder[]> {
-    console.log('🔍 Identifying non-responders...');
+    console.info('🔍 Identifying non-responders...');
 
     // Simulate non-responders based on time elapsed
     const nonResponders: NonResponder[] = [
@@ -119,7 +119,7 @@ class EscalationProcedures {
       },
     ];
 
-    console.log(`  🚨 Found ${nonResponders.length} non-responders requiring escalation`);
+    console.info(`  🚨 Found ${nonResponders.length} non-responders requiring escalation`);
     return nonResponders;
   }
 
@@ -127,7 +127,7 @@ class EscalationProcedures {
    * 📧 Generate escalation communication for non-responder
    */
   private async generateEscalationCommunication(nonResponder: NonResponder): Promise<void> {
-    console.log(
+    console.info(
       `📧 Generating escalation for ${nonResponder.name} (${nonResponder.department})...`
     );
 
@@ -146,7 +146,7 @@ class EscalationProcedures {
       await this.generateLevel3ExecutiveEscalation(nonResponder);
     }
 
-    console.log(`  ✅ Level ${nonResponder.escalationLevel} escalation generated`);
+    console.info(`  ✅ Level ${nonResponder.escalationLevel} escalation generated`);
   }
 
   /**
@@ -542,7 +542,7 @@ A critical security deployment issue requires immediate executive intervention.
    * 📅 Create escalation schedule
    */
   private async createEscalationSchedule(nonResponders: NonResponder[]): Promise<void> {
-    console.log('📅 Creating escalation schedule...');
+    console.info('📅 Creating escalation schedule...');
 
     const schedule = `# 📅 Fire22 Escalation Schedule
 **OPERATION: SECURE-COMM-22 - Non-Responder Follow-up**
@@ -592,7 +592,7 @@ ${this.getNext8HourActions(nonResponders)}
     const schedulePath = join(this.escalationDir, 'escalation-schedule.md');
     writeFileSync(schedulePath, schedule);
 
-    console.log('  ✅ Escalation schedule created');
+    console.info('  ✅ Escalation schedule created');
   }
 
   /**
@@ -809,12 +809,12 @@ async function main() {
     const escalation = new EscalationProcedures();
     await escalation.executeEscalationProcedures();
 
-    console.log('\n🚨 ESCALATION PROCEDURES COMPLETE!');
-    console.log('!==!==!==!==!==!====');
-    console.log('✅ Non-responders identified');
-    console.log('✅ Escalation communications generated');
-    console.log('✅ Follow-up schedule created');
-    console.log('✅ Executive summary prepared');
+    console.info('\n🚨 ESCALATION PROCEDURES COMPLETE!');
+    console.info('!==!==!==!==!==!====');
+    console.info('✅ Non-responders identified');
+    console.info('✅ Escalation communications generated');
+    console.info('✅ Follow-up schedule created');
+    console.info('✅ Executive summary prepared');
   } catch (error) {
     console.error('❌ Escalation procedures failed:', error);
     process.exit(1);

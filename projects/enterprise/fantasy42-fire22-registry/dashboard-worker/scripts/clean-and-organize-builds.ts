@@ -94,10 +94,10 @@ class BuildOrganizer {
   }
 
   async run(): Promise<void> {
-    console.log('🧹 Fire22 Dashboard - Build Cleanup & Organization');
-    console.log('!==!==!==!==!==!==!==!==!====');
-    console.log('🎯 Organizing and cleaning all build systems for optimal performance');
-    console.log('');
+    console.info('🧹 Fire22 Dashboard - Build Cleanup & Organization');
+    console.info('!==!==!==!==!==!==!==!==!====');
+    console.info('🎯 Organizing and cleaning all build systems for optimal performance');
+    console.info('');
 
     const startTime = Date.now();
 
@@ -106,13 +106,13 @@ class BuildOrganizer {
     const mediumPriorityTasks = this.tasks.filter(t => t.priority === 'medium');
     const lowPriorityTasks = this.tasks.filter(t => t.priority === 'low');
 
-    console.log('🔥 Phase 1: High Priority Tasks (Critical Build Issues)');
+    console.info('🔥 Phase 1: High Priority Tasks (Critical Build Issues)');
     await this.executeTasks(highPriorityTasks);
 
-    console.log('\\n⚡ Phase 2: Medium Priority Tasks (Organization & Optimization)');
+    console.info('\\n⚡ Phase 2: Medium Priority Tasks (Organization & Optimization)');
     await this.executeTasks(mediumPriorityTasks);
 
-    console.log('\\n✨ Phase 3: Low Priority Tasks (Polish & Automation)');
+    console.info('\\n✨ Phase 3: Low Priority Tasks (Polish & Automation)');
     await this.executeTasks(lowPriorityTasks);
 
     const duration = Date.now() - startTime;
@@ -121,14 +121,14 @@ class BuildOrganizer {
 
   private async executeTasks(tasks: CleanupTask[]): Promise<void> {
     for (const task of tasks) {
-      console.log(`\\n🔧 ${task.name}:`);
-      console.log(`   📋 ${task.description}`);
+      console.info(`\\n🔧 ${task.name}:`);
+      console.info(`   📋 ${task.description}`);
 
       try {
         const taskStart = Date.now();
         await task.action();
         const taskDuration = Date.now() - taskStart;
-        console.log(`   ✅ Completed in ${taskDuration}ms`);
+        console.info(`   ✅ Completed in ${taskDuration}ms`);
       } catch (error) {
         console.error(`   ❌ Failed: ${error.message}`);
       }
@@ -176,7 +176,7 @@ class BuildOrganizer {
       }
     }
 
-    console.log(`     🗑️  Cleaned ${cleanedFiles} build artifacts`);
+    console.info(`     🗑️  Cleaned ${cleanedFiles} build artifacts`);
     this.status.artifacts = 'clean';
   }
 
@@ -248,8 +248,8 @@ class BuildOrganizer {
       }
     }
 
-    console.log(`     📦 Archived ${archivedFiles} problematic files`);
-    console.log(`     ✨ Created ${createdCleanFiles} clean placeholder files`);
+    console.info(`     📦 Archived ${archivedFiles} problematic files`);
+    console.info(`     ✨ Created ${createdCleanFiles} clean placeholder files`);
     this.status.mdx = 'clean';
   }
 
@@ -479,8 +479,8 @@ export default config;
     // Write clean config
     await fs.writeFile(configPath, cleanConfig);
 
-    console.log('     ⚙️  Created clean Docusaurus configuration');
-    console.log('     💾 Original config backed up');
+    console.info('     ⚙️  Created clean Docusaurus configuration');
+    console.info('     💾 Original config backed up');
     this.status.docusaurus = 'clean';
   }
 
@@ -501,7 +501,7 @@ export default config;
       await fs.mkdir(join(process.cwd(), dir), { recursive: true });
     }
 
-    console.log(`     📁 Created ${directories.length} organized directories`);
+    console.info(`     📁 Created ${directories.length} organized directories`);
   }
 
   private async cleanDependencies(): Promise<void> {
@@ -509,7 +509,7 @@ export default config;
     const nodeModulesPath = join(process.cwd(), 'node_modules');
     try {
       await fs.rmdir(nodeModulesPath, { recursive: true });
-      console.log('     🗑️  Removed node_modules directory');
+      console.info('     🗑️  Removed node_modules directory');
     } catch (error) {
       // Directory might not exist
     }
@@ -524,7 +524,7 @@ export default config;
       }
     }
 
-    console.log('     🧹 Cleaned dependency lock files');
+    console.info('     🧹 Cleaned dependency lock files');
     this.status.dependencies = 'clean';
   }
 
@@ -580,7 +580,7 @@ export default config;
       // Scripts directory might not exist
     }
 
-    console.log(`     📋 Organized ${organizedScripts} script files`);
+    console.info(`     📋 Organized ${organizedScripts} script files`);
   }
 
   private async createBuildReports(): Promise<void> {
@@ -609,7 +609,7 @@ export default config;
       JSON.stringify(buildReport, null, 2)
     );
 
-    console.log('     📊 Generated comprehensive build report');
+    console.info('     📊 Generated comprehensive build report');
   }
 
   private async setupBuildAutomation(): Promise<void> {
@@ -627,33 +627,33 @@ export default config;
     };
 
     await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
-    console.log('     ⚙️  Added automated build cleanup scripts');
+    console.info('     ⚙️  Added automated build cleanup scripts');
   }
 
   private async generateFinalReport(duration: number): Promise<void> {
-    console.log('\\n🎉 Build Cleanup & Organization Complete!');
-    console.log('!==!==!==!==!==!==!==!==');
-    console.log(`⏱️  Total Duration: ${duration}ms`);
-    console.log('');
-    console.log('📊 Final Status:');
-    console.log(`   📖 Docusaurus: ${this.status.docusaurus}`);
-    console.log(`   📝 MDX Files: ${this.status.mdx}`);
-    console.log(`   📦 Dependencies: ${this.status.dependencies}`);
-    console.log(`   🗑️  Artifacts: ${this.status.artifacts}`);
-    console.log('');
-    console.log('🚀 Next Steps:');
-    console.log('   1. bun install           # Reinstall clean dependencies');
-    console.log('   2. bun run docs:start    # Start clean Docusaurus');
-    console.log('   3. Verify all pages load correctly');
-    console.log('   4. Gradually restore archived content with proper formatting');
-    console.log('');
-    console.log('📋 Available Commands:');
-    console.log('   bun run docs:clean       # Run this cleanup again');
-    console.log('   bun run docs:start:clean # Clean + Start Docusaurus');
-    console.log('   bun run docs:build:clean # Clean + Build Docusaurus');
-    console.log('');
-    console.log('💡 All problematic MDX files have been archived to docs-archive/');
-    console.log('   Clean placeholder files are now in place for stable builds.');
+    console.info('\\n🎉 Build Cleanup & Organization Complete!');
+    console.info('!==!==!==!==!==!==!==!==');
+    console.info(`⏱️  Total Duration: ${duration}ms`);
+    console.info('');
+    console.info('📊 Final Status:');
+    console.info(`   📖 Docusaurus: ${this.status.docusaurus}`);
+    console.info(`   📝 MDX Files: ${this.status.mdx}`);
+    console.info(`   📦 Dependencies: ${this.status.dependencies}`);
+    console.info(`   🗑️  Artifacts: ${this.status.artifacts}`);
+    console.info('');
+    console.info('🚀 Next Steps:');
+    console.info('   1. bun install           # Reinstall clean dependencies');
+    console.info('   2. bun run docs:start    # Start clean Docusaurus');
+    console.info('   3. Verify all pages load correctly');
+    console.info('   4. Gradually restore archived content with proper formatting');
+    console.info('');
+    console.info('📋 Available Commands:');
+    console.info('   bun run docs:clean       # Run this cleanup again');
+    console.info('   bun run docs:start:clean # Clean + Start Docusaurus');
+    console.info('   bun run docs:build:clean # Clean + Build Docusaurus');
+    console.info('');
+    console.info('💡 All problematic MDX files have been archived to docs-archive/');
+    console.info('   Clean placeholder files are now in place for stable builds.');
   }
 }
 

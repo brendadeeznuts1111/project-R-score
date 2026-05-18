@@ -23,20 +23,20 @@ declare module "bun:bundle" {
   }
 }
 
-console.log("🚀 Revolutionary Architectures with Bun Feature Flags");
-console.log("=====================================================");
+console.info("🚀 Revolutionary Architectures with Bun Feature Flags");
+console.info("=====================================================");
 
 // 1. Micro-Frontend Architecture Demonstration
 function demonstrateMicroFrontendArchitecture() {
-  console.log("\n🏗️  Micro-Frontend Architecture:");
-  console.log("=================================");
+  console.info("\n🏗️  Micro-Frontend Architecture:");
+  console.info("=================================");
 
   if (feature("PREMIUM")) {
-    console.log("✅ Micro-frontend features enabled:");
-    console.log("   - Independent deployable units");
-    console.log("   - Team-specific feature flags");
-    console.log("   - Modular bundle loading");
-    console.log("   - Cross-team communication");
+    console.info("✅ Micro-frontend features enabled:");
+    console.info("   - Independent deployable units");
+    console.info("   - Team-specific feature flags");
+    console.info("   - Modular bundle loading");
+    console.info("   - Cross-team communication");
 
     // Simulate micro-frontend loading
     const microFrontends = {
@@ -48,36 +48,36 @@ function demonstrateMicroFrontendArchitecture() {
       admin: feature("ADMIN") ? "admin-panel.js" : null,
     };
 
-    console.log("\n📦 Micro-frontend bundles:");
+    console.info("\n📦 Micro-frontend bundles:");
     Object.entries(microFrontends).forEach(([name, bundle]) => {
       if (bundle) {
-        console.log(`   - ${name}: ${bundle}`);
+        console.info(`   - ${name}: ${bundle}`);
       } else {
-        console.log(`   - ${name}: [eliminated from bundle]`);
+        console.info(`   - ${name}: [eliminated from bundle]`);
       }
     });
 
     // Calculate bundle size optimization
     const enabledCount = Object.values(microFrontends).filter(Boolean).length;
     const totalSize = 50 + enabledCount * 25; // Base 50KB + 25KB per module
-    console.log(
+    console.info(
       `\n📊 Bundle optimization: ${totalSize}KB (${enabledCount} modules loaded)`
     );
   } else {
-    console.log("❌ Micro-frontend architecture disabled");
-    console.log("   - Monolithic bundle generated");
-    console.log("   - Single deployment unit");
-    console.log("   - Larger bundle size");
+    console.info("❌ Micro-frontend architecture disabled");
+    console.info("   - Monolithic bundle generated");
+    console.info("   - Single deployment unit");
+    console.info("   - Larger bundle size");
   }
 }
 
 // 2. Progressive Web App Demonstration
 function demonstrateProgressiveWebApp() {
-  console.log("\n Progressive Web App:");
-  console.log("=======================");
+  console.info("\n Progressive Web App:");
+  console.info("=======================");
 
   if (feature("BETA_FEATURES")) {
-    console.log(" PWA features enabled:");
+    console.info(" PWA features enabled:");
 
     const pwaFeatures = {
       serviceWorker: feature("PERFORMANCE"),
@@ -87,42 +87,42 @@ function demonstrateProgressiveWebApp() {
       caching: feature("PERFORMANCE"),
     };
 
-    console.log("\n PWA capabilities:");
+    console.info("\n PWA capabilities:");
     Object.entries(pwaFeatures).forEach(([feature, enabled]) => {
-      console.log(`   - ${feature}: ${enabled ? " Enabled" : " Disabled"}`);
+      console.info(`   - ${feature}: ${enabled ? " Enabled" : " Disabled"}`);
     });
 
     // Capability-based loading
     if (feature("PERFORMANCE")) {
-      console.log("\n Offline capabilities:");
-      console.log("   - Service worker registered");
-      console.log("   - Critical resources cached");
-      console.log("   - Background sync active");
-      console.log("   - Offline-first navigation");
+      console.info("\n Offline capabilities:");
+      console.info("   - Service worker registered");
+      console.info("   - Critical resources cached");
+      console.info("   - Background sync active");
+      console.info("   - Offline-first navigation");
     }
 
     if (feature("DEBUG")) {
-      console.log("\n Real-time features:");
-      console.log("   - Push notifications enabled");
-      console.log("   - WebSocket connections");
-      console.log("   - Live data updates");
-      console.log("   - Background sync");
+      console.info("\n Real-time features:");
+      console.info("   - Push notifications enabled");
+      console.info("   - WebSocket connections");
+      console.info("   - Live data updates");
+      console.info("   - Background sync");
     }
   } else {
-    console.log(" PWA features disabled");
-    console.log("   - Standard web application");
-    console.log("   - No offline capabilities");
-    console.log("   - Larger bundle sizes");
+    console.info(" PWA features disabled");
+    console.info("   - Standard web application");
+    console.info("   - No offline capabilities");
+    console.info("   - Larger bundle sizes");
   }
 }
 
 // 3. Enterprise SaaS Platform Demonstration
 function demonstrateEnterpriseSaaS() {
-  console.log("\n🏢 Enterprise SaaS Platform:");
-  console.log("===========================");
+  console.info("\n🏢 Enterprise SaaS Platform:");
+  console.info("===========================");
 
   if (feature("ADMIN")) {
-    console.log("✅ Enterprise features enabled:");
+    console.info("✅ Enterprise features enabled:");
 
     const tiers = {
       free: {
@@ -148,45 +148,45 @@ function demonstrateEnterpriseSaaS() {
       },
     };
 
-    console.log("\n💼 Tier-based builds:");
+    console.info("\n💼 Tier-based builds:");
     Object.entries(tiers).forEach(([tier, config]) => {
-      console.log(`\n   ${tier.toUpperCase()} Tier (${config.bundleSize}):`);
+      console.info(`\n   ${tier.toUpperCase()} Tier (${config.bundleSize}):`);
       config.features.forEach((feature) => {
-        console.log(`     - ${feature}`);
+        console.info(`     - ${feature}`);
       });
     });
 
     // Enterprise-specific features
     if (feature("ADMIN")) {
-      console.log("\n🔒 Enhanced security:");
-      console.log("   - Multi-factor authentication");
-      console.log("   - Advanced encryption");
-      console.log("   - Audit logging");
-      console.log("   - Compliance features");
+      console.info("\n🔒 Enhanced security:");
+      console.info("   - Multi-factor authentication");
+      console.info("   - Advanced encryption");
+      console.info("   - Audit logging");
+      console.info("   - Compliance features");
     }
 
     if (feature("ANALYTICS")) {
-      console.log("\n📊 Enterprise analytics:");
-      console.log("   - Usage tracking");
-      console.log("   - Performance monitoring");
-      console.log("   - Business intelligence");
-      console.log("   - Custom reporting");
+      console.info("\n📊 Enterprise analytics:");
+      console.info("   - Usage tracking");
+      console.info("   - Performance monitoring");
+      console.info("   - Business intelligence");
+      console.info("   - Custom reporting");
     }
   } else {
-    console.log("❌ Enterprise features disabled");
-    console.log("   - Standard application build");
-    console.log("   - Basic feature set");
-    console.log("   - Limited customization");
+    console.info("❌ Enterprise features disabled");
+    console.info("   - Standard application build");
+    console.info("   - Basic feature set");
+    console.info("   - Limited customization");
   }
 }
 
 // 4. Mobile Application Demonstration
 function demonstrateMobileApplication() {
-  console.log("\n📱 Mobile Application:");
-  console.log("=====================");
+  console.info("\n📱 Mobile Application:");
+  console.info("=====================");
 
   if (feature("BETA_FEATURES")) {
-    console.log("✅ Mobile optimizations enabled:");
+    console.info("✅ Mobile optimizations enabled:");
 
     const mobileFeatures = {
       touchInterface: true,
@@ -198,28 +198,28 @@ function demonstrateMobileApplication() {
       nativeIntegration: feature("ADMIN"),
     };
 
-    console.log("\n📲 Mobile capabilities:");
+    console.info("\n📲 Mobile capabilities:");
     Object.entries(mobileFeatures).forEach(([feature, enabled]) => {
-      console.log(`   - ${feature}: ${enabled ? "✅ Enabled" : "❌ Disabled"}`);
+      console.info(`   - ${feature}: ${enabled ? "✅ Enabled" : "❌ Disabled"}`);
     });
 
     // Platform-specific builds
-    console.log("\n🔧 Platform-specific optimizations:");
+    console.info("\n🔧 Platform-specific optimizations:");
 
     if (feature("PERFORMANCE")) {
-      console.log("   ⚡ Performance optimizations:");
-      console.log("     - Lazy loading enabled");
-      console.log("     - Image optimization");
-      console.log("     - Code splitting");
-      console.log("     - Memory management");
+      console.info("   ⚡ Performance optimizations:");
+      console.info("     - Lazy loading enabled");
+      console.info("     - Image optimization");
+      console.info("     - Code splitting");
+      console.info("     - Memory management");
     }
 
     if (feature("PERFORMANCE")) {
-      console.log("   📱 Offline capabilities:");
-      console.log("     - Critical resources cached");
-      console.log("     - Offline data sync");
-      console.log("     - Background updates");
-      console.log("     - Progressive loading");
+      console.info("   📱 Offline capabilities:");
+      console.info("     - Critical resources cached");
+      console.info("     - Offline data sync");
+      console.info("     - Background updates");
+      console.info("     - Progressive loading");
     }
 
     // Bundle size optimization for mobile
@@ -240,22 +240,22 @@ function demonstrateMobileApplication() {
       }
     });
 
-    console.log(`\n📊 Mobile bundle size: ${Math.max(15, totalSize)}KB`);
+    console.info(`\n📊 Mobile bundle size: ${Math.max(15, totalSize)}KB`);
   } else {
-    console.log("❌ Mobile optimizations disabled");
-    console.log("   - Desktop-first design");
-    console.log("   - Larger bundle sizes");
-    console.log("   - Limited touch support");
+    console.info("❌ Mobile optimizations disabled");
+    console.info("   - Desktop-first design");
+    console.info("   - Larger bundle sizes");
+    console.info("   - Limited touch support");
   }
 }
 
 // 5. IoT Device Demonstration
 function demonstrateIoTDevice() {
-  console.log("\n🌐 IoT Device:");
-  console.log("===============");
+  console.info("\n🌐 IoT Device:");
+  console.info("===============");
 
   if (feature("PERFORMANCE")) {
-    console.log("✅ IoT optimizations enabled:");
+    console.info("✅ IoT optimizations enabled:");
 
     const iotConstraints = {
       memoryLimited: true,
@@ -265,15 +265,15 @@ function demonstrateIoTDevice() {
       essentialFeaturesOnly: true,
     };
 
-    console.log("\n⚙️  IoT constraints:");
+    console.info("\n⚙️  IoT constraints:");
     Object.entries(iotConstraints).forEach(([constraint, active]) => {
-      console.log(
+      console.info(
         `   - ${constraint}: ${active ? "✅ Active" : "❌ Inactive"}`
       );
     });
 
     // Minimal feature set for IoT
-    console.log("\n🔧 Essential IoT features:");
+    console.info("\n🔧 Essential IoT features:");
     const essentialFeatures = {
       sensorData: true,
       basicCommunication: true,
@@ -284,7 +284,7 @@ function demonstrateIoTDevice() {
     };
 
     Object.entries(essentialFeatures).forEach(([feature, enabled]) => {
-      console.log(
+      console.info(
         `   - ${feature}: ${enabled ? "✅ Included" : "❌ Eliminated"}`
       );
     });
@@ -307,23 +307,23 @@ function demonstrateIoTDevice() {
       }
     });
 
-    console.log(`\n📊 IoT bundle size: ${totalSize}KB (ultra-optimized)`);
-    console.log("   - Minimal memory footprint");
-    console.log("   - Low power consumption");
-    console.log("   - Network-efficient protocols");
-    console.log("   - Essential features only");
+    console.info(`\n📊 IoT bundle size: ${totalSize}KB (ultra-optimized)`);
+    console.info("   - Minimal memory footprint");
+    console.info("   - Low power consumption");
+    console.info("   - Network-efficient protocols");
+    console.info("   - Essential features only");
   } else {
-    console.log("❌ IoT optimizations disabled");
-    console.log("   - Standard application build");
-    console.log("   - Full feature set");
-    console.log("   - Larger resource requirements");
+    console.info("❌ IoT optimizations disabled");
+    console.info("   - Standard application build");
+    console.info("   - Full feature set");
+    console.info("   - Larger resource requirements");
   }
 }
 
 // 6. Cross-Architecture Analysis
 function demonstrateCrossArchitectureAnalysis() {
-  console.log("\n Cross-Architecture Analysis:");
-  console.log("==============================");
+  console.info("\n Cross-Architecture Analysis:");
+  console.info("==============================");
 
   const architectures = [
     {
@@ -359,24 +359,24 @@ function demonstrateCrossArchitectureAnalysis() {
   ];
 
   architectures.forEach((arch) => {
-    console.log(`\n   ${arch.name}:`);
-    console.log(`   Bundle size: ${arch.bundleSize}`);
-    console.log(`   Use case: ${arch.useCase}`);
-    console.log(`   Features: ${arch.features.join(", ")}`);
+    console.info(`\n   ${arch.name}:`);
+    console.info(`   Bundle size: ${arch.bundleSize}`);
+    console.info(`   Use case: ${arch.useCase}`);
+    console.info(`   Features: ${arch.features.join(", ")}`);
   });
 
-  console.log("\n Revolutionary Benefits:");
-  console.log("   - Single codebase, multiple architectures");
-  console.log("   - Compile-time optimization per target");
-  console.log("   - Zero runtime overhead for feature detection");
-  console.log("   - Type-safe architecture configuration");
-  console.log("   - Optimized bundles for each use case");
+  console.info("\n Revolutionary Benefits:");
+  console.info("   - Single codebase, multiple architectures");
+  console.info("   - Compile-time optimization per target");
+  console.info("   - Zero runtime overhead for feature detection");
+  console.info("   - Type-safe architecture configuration");
+  console.info("   - Optimized bundles for each use case");
 }
 
 // Main demonstration
 function main() {
-  console.log("Demonstrating revolutionary architectural possibilities");
-  console.log("made possible by Bun's compile-time feature flags!\n");
+  console.info("Demonstrating revolutionary architectural possibilities");
+  console.info("made possible by Bun's compile-time feature flags!\n");
 
   // Execute all architecture demonstrations
   demonstrateMicroFrontendArchitecture();
@@ -386,26 +386,26 @@ function main() {
   demonstrateIoTDevice();
   demonstrateCrossArchitectureAnalysis();
 
-  console.log("\n🎉 Revolutionary Architecture Demonstration Complete!");
-  console.log("===================================================");
-  console.log(
+  console.info("\n🎉 Revolutionary Architecture Demonstration Complete!");
+  console.info("===================================================");
+  console.info(
     "✅ Micro-frontend architecture: Modular, team-autonomous builds"
   );
-  console.log("✅ Progressive web apps: Capability-based loading");
-  console.log("✅ Enterprise SaaS: Tiered, secure, scalable");
-  console.log("✅ Mobile applications: Optimized, responsive, fast");
-  console.log("✅ IoT devices: Resource-constrained, efficient");
-  console.log("✅ Cross-architecture: Single codebase, multiple targets");
+  console.info("✅ Progressive web apps: Capability-based loading");
+  console.info("✅ Enterprise SaaS: Tiered, secure, scalable");
+  console.info("✅ Mobile applications: Optimized, responsive, fast");
+  console.info("✅ IoT devices: Resource-constrained, efficient");
+  console.info("✅ Cross-architecture: Single codebase, multiple targets");
 
-  console.log("\n🚀 This is the future of software architecture!");
-  console.log("   - Compile-time architectural decisions");
-  console.log("   - Zero runtime feature detection overhead");
-  console.log("   - Optimized bundles for every use case");
-  console.log("   - Type-safe architecture configuration");
-  console.log("   - Revolutionary development experience!");
+  console.info("\n🚀 This is the future of software architecture!");
+  console.info("   - Compile-time architectural decisions");
+  console.info("   - Zero runtime feature detection overhead");
+  console.info("   - Optimized bundles for every use case");
+  console.info("   - Type-safe architecture configuration");
+  console.info("   - Revolutionary development experience!");
 
-  console.log("\n💡 The architecture revolution has begun!");
-  console.log("   Welcome to the future of software design! 🏗️✨");
+  console.info("\n💡 The architecture revolution has begun!");
+  console.info("   Welcome to the future of software design! 🏗️✨");
 }
 
 // Execute the revolutionary architecture demonstration

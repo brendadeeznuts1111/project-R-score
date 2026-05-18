@@ -18,7 +18,7 @@ const auditDB = {
 };
 
 async function snapshotTenantAudit(tenant: string) {
-  console.log(`📸 Creating audit snapshot for tenant: ${tenant}`);
+  console.info(`📸 Creating audit snapshot for tenant: ${tenant}`);
 
   // Fetch tenant-specific violations (last 30 days)
   const violations = await auditDB.query(`
@@ -59,7 +59,7 @@ async function snapshotTenantAudit(tenant: string) {
 
   // Audit log (Col-89 safe)
   const logLine = `Snapshot: ${filename} | Size: ${Math.round(bytes.byteLength/1024)} KiB | SHA-256: ${sha256.slice(0,16)}…`;
-  console.log(Bun.stringWidth(logLine) > 89
+  console.info(Bun.stringWidth(logLine) > 89
     ? Bun.escapeHTML(logLine.slice(0,86)) + "…"
     : logLine);
 
@@ -68,8 +68,8 @@ async function snapshotTenantAudit(tenant: string) {
 
 // Demo usage
 async function demonstrateSnapshots() {
-  console.log("🎯 Tenant Audit Snapshot Demo");
-  console.log("=" .repeat(40));
+  console.info("🎯 Tenant Audit Snapshot Demo");
+  console.info("=" .repeat(40));
 
   try {
     // Create snapshots for different tenants
@@ -77,38 +77,38 @@ async function demonstrateSnapshots() {
 
     for (const tenant of tenants) {
       const result = await snapshotTenantAudit(tenant);
-      console.log(`✅ Created: ${result.filename}`);
-      console.log(`   Path: ${result.path}`);
-      console.log(`   Size: ${Math.round(result.size/1024)} KiB`);
-      console.log(`   SHA256: ${result.sha256.slice(0, 16)}…`);
-      console.log("");
+      console.info(`✅ Created: ${result.filename}`);
+      console.info(`   Path: ${result.path}`);
+      console.info(`   Size: ${Math.round(result.size/1024)} KiB`);
+      console.info(`   SHA256: ${result.sha256.slice(0, 16)}…`);
+      console.info("");
     }
 
     // Show snapshot directory
-    console.log("📁 Snapshot Directory:");
+    console.info("📁 Snapshot Directory:");
     const fs = require('fs');
     try {
       const files: string[] = fs.readdirSync("./snapshots").filter((f: string) => f.endsWith('.tar.gz'));
       files.forEach((file: string) => {
         const stats = fs.statSync(`./snapshots/${file}`);
-        console.log(`  📦 ${file} (${Math.round(stats.size/1024)} KiB)`);
+        console.info(`  📦 ${file} (${Math.round(stats.size/1024)} KiB)`);
       });
     } catch (error) {
-      console.log("  No snapshots found");
+      console.info("  No snapshots found");
     }
 
-    console.log("\n💡 Integration Benefits:");
-    console.log("  • Compressed archives save storage space");
-    console.log("  • SHA-256 ensures data integrity");
-    console.log("  • Metadata enables quick analysis");
-    console.log("  • Col-89 safe logging for audit trails");
-    console.log("  • Tenant isolation with safe filenames");
+    console.info("\n💡 Integration Benefits:");
+    console.info("  • Compressed archives save storage space");
+    console.info("  • SHA-256 ensures data integrity");
+    console.info("  • Metadata enables quick analysis");
+    console.info("  • Col-89 safe logging for audit trails");
+    console.info("  • Tenant isolation with safe filenames");
 
-    console.log("\n🚀 Dashboard Integration:");
-    console.log("  • Add snapshot buttons to tenant cards");
-    console.log("  • Show snapshot history per tenant");
-    console.log("  • Enable bulk snapshot operations");
-    console.log("  • Integrate with S3 for cloud storage");
+    console.info("\n🚀 Dashboard Integration:");
+    console.info("  • Add snapshot buttons to tenant cards");
+    console.info("  • Show snapshot history per tenant");
+    console.info("  • Enable bulk snapshot operations");
+    console.info("  • Integrate with S3 for cloud storage");
 
   } catch (error) {
     console.error("❌ Error creating snapshots:", error);

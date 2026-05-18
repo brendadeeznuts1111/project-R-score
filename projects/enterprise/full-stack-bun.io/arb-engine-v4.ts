@@ -241,7 +241,7 @@ setInterval(async () => {
 
 	const activeSockets = (GLOBAL_AGENT as any).sockets?.size || 0;
 
-	console.log(JSON.stringify({
+	console.info(JSON.stringify({
 		poolCycle: true,
 		bookiesReached: successful,
 		newArbs: arbs.length,
@@ -251,7 +251,7 @@ setInterval(async () => {
 	}));
 }, 1000); // 1s cycles → 60K requests/min potential
 
-console.log(JSON.stringify({
+console.info(JSON.stringify({
 	arbEngineV4: 'POOLING_LIVE',
 	sockets: 100,
 	bookies: bookieEndpoints.length,
@@ -261,13 +261,13 @@ console.log(JSON.stringify({
 	port: server.port
 }));
 
-console.log(`🚀 Arb Engine v4 running on http://localhost:${server.port}`);
-console.log(`[ARB-V4][HTTP-POOL][100-SOCKETS][15.8K-SCANS/MIN][1.6ms-COLD]`);
-console.log(`[VALUE:$378K][REUSE:89%][47-BOOKIES][STANDALONE:SERVERLESS]`);
+console.info(`🚀 Arb Engine v4 running on http://localhost:${server.port}`);
+console.info(`[ARB-V4][HTTP-POOL][100-SOCKETS][15.8K-SCANS/MIN][1.6ms-COLD]`);
+console.info(`[VALUE:$378K][REUSE:89%][47-BOOKIES][STANDALONE:SERVERLESS]`);
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-	console.log('Shutting down gracefully...');
+	console.info('Shutting down gracefully...');
 	GLOBAL_AGENT.destroy();
 	mlgs.close();
 	db.close();

@@ -62,7 +62,7 @@ export class BetProcessing {
     this.bets.set(bet.id, bet);
     this.updateBetIndex(bet);
 
-    console.log(`💰 Created bet: ${bet.id} - $${bet.stake} on ${bet.selection} (${bet.odds})`);
+    console.info(`💰 Created bet: ${bet.id} - $${bet.stake} on ${bet.selection} (${bet.odds})`);
     return { bet, validation };
   }
 
@@ -89,7 +89,7 @@ export class BetProcessing {
     this.bets.set(betId, updatedBet);
     this.updateBetIndex(updatedBet);
 
-    console.log(`📝 Updated bet: ${betId}`);
+    console.info(`📝 Updated bet: ${betId}`);
     return updatedBet;
   }
 

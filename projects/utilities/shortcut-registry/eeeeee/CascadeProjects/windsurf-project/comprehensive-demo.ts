@@ -10,8 +10,8 @@
 import { EnhancedEnterpriseScanner } from './enhanced-scanner';
 
 async function comprehensiveDemo() {
-  console.log('🎯 ENHANCED CODEPOINT ANALYSIS SYSTEM');
-  console.log('═════════════════════════════════════════════════\n');
+  console.info('🎯 ENHANCED CODEPOINT ANALYSIS SYSTEM');
+  console.info('═════════════════════════════════════════════════\n');
 
   const scanner = new EnhancedEnterpriseScanner();
 
@@ -59,27 +59,27 @@ const result = eval(userInput); // Security risk`,
     }
   ];
 
-  console.log('🔍 Running Comprehensive Security Analysis...\n');
+  console.info('🔍 Running Comprehensive Security Analysis...\n');
 
   for (let i = 0; i < testCases.length; i++) {
     const testCase = testCases[i];
     
-    console.log(`📋 Test Case ${i + 1}: ${testCase.name}`);
-    console.log(`🎯 Focus: ${testCase.focus}`);
-    console.log(`📝 Code Sample:`);
-    console.log('─'.repeat(50));
+    console.info(`📋 Test Case ${i + 1}: ${testCase.name}`);
+    console.info(`🎯 Focus: ${testCase.focus}`);
+    console.info(`📝 Code Sample:`);
+    console.info('─'.repeat(50));
     
     // Show code (truncated for display)
     const lines = testCase.code.split('\n');
     lines.forEach(line => {
       if (line.length > 60) {
-        console.log(`   ${line.substring(0, 57)}...`);
+        console.info(`   ${line.substring(0, 57)}...`);
       } else {
-        console.log(`   ${line}`);
+        console.info(`   ${line}`);
       }
     });
     
-    console.log('─'.repeat(50));
+    console.info('─'.repeat(50));
     
     // Analyze
     const result = await scanner.analyze(testCase.code);
@@ -88,32 +88,32 @@ const result = eval(userInput); // Security risk`,
     const scoreColor = result.combinedSecurityScore >= 80 ? '🟢' : 
                       result.combinedSecurityScore >= 60 ? '🟡' : '🔴';
     
-    console.log(`\n${scoreColor} Security Score: ${result.combinedSecurityScore}/100`);
-    console.log(`📊 Total Issues: ${result.summary.totalIssues}`);
-    console.log(`🚨 Critical Issues: ${result.summary.criticalSecurityIssues}`);
-    console.log(`🔤 Character Issues: ${result.summary.characterSecurityIssues}`);
-    console.log(`⚡ Performance Issues: ${result.summary.performanceIssues}`);
+    console.info(`\n${scoreColor} Security Score: ${result.combinedSecurityScore}/100`);
+    console.info(`📊 Total Issues: ${result.summary.totalIssues}`);
+    console.info(`🚨 Critical Issues: ${result.summary.criticalSecurityIssues}`);
+    console.info(`🔤 Character Issues: ${result.summary.characterSecurityIssues}`);
+    console.info(`⚡ Performance Issues: ${result.summary.performanceIssues}`);
     
     // Show top 3 critical issues
     if (result.criticalIssues.length > 0) {
-      console.log(`\n🚨 Critical Issues:`);
+      console.info(`\n🚨 Critical Issues:`);
       result.criticalIssues.slice(0, 3).forEach((issue, index) => {
-        console.log(`   ${index + 1}. ${issue}`);
+        console.info(`   ${index + 1}. ${issue}`);
       });
     }
     
     // Show top recommendation
     if (result.recommendations.length > 0) {
-      console.log(`\n💡 Top Recommendation:`);
-      console.log(`   ${result.recommendations[0]}`);
+      console.info(`\n💡 Top Recommendation:`);
+      console.info(`   ${result.recommendations[0]}`);
     }
     
-    console.log('\n' + '='.repeat(70) + '\n');
+    console.info('\n' + '='.repeat(70) + '\n');
   }
 
   // Performance benchmark
-  console.log('⚡ Performance Benchmark');
-  console.log('─────────────────────');
+  console.info('⚡ Performance Benchmark');
+  console.info('─────────────────────');
   
   const benchmarkCode = testCases.map(tc => tc.code).join('\n').repeat(100);
   const startTime = performance.now();
@@ -123,52 +123,52 @@ const result = eval(userInput); // Security risk`,
   const endTime = performance.now();
   const processingTime = endTime - startTime;
   
-  console.log(`📈 Processed ${benchmarkResult.codepointAnalysis.totalCharacters} characters in ${processingTime.toFixed(2)}ms`);
-  console.log(`🚀 Throughput: ${(benchmarkResult.codepointAnalysis.totalCharacters / processingTime * 1000).toFixed(0)} chars/second`);
-  console.log(`🔍 Issues Found: ${benchmarkResult.summary.totalIssues} (${benchmarkResult.summary.criticalSecurityIssues} critical)`);
-  console.log(`🎯 Detection Rate: ${((benchmarkResult.summary.criticalSecurityIssues / benchmarkResult.summary.totalIssues) * 100).toFixed(1)}% critical`);
+  console.info(`📈 Processed ${benchmarkResult.codepointAnalysis.totalCharacters} characters in ${processingTime.toFixed(2)}ms`);
+  console.info(`🚀 Throughput: ${(benchmarkResult.codepointAnalysis.totalCharacters / processingTime * 1000).toFixed(0)} chars/second`);
+  console.info(`🔍 Issues Found: ${benchmarkResult.summary.totalIssues} (${benchmarkResult.summary.criticalSecurityIssues} critical)`);
+  console.info(`🎯 Detection Rate: ${((benchmarkResult.summary.criticalSecurityIssues / benchmarkResult.summary.totalIssues) * 100).toFixed(1)}% critical`);
   
-  console.log('\n🎯 Enhanced Capabilities Demonstrated:');
-  console.log('─────────────────────────────────────');
-  console.log('✅ Homoglyph attack detection (Cyrillic ↔ Latin)');
-  console.log('✅ Invisible character identification (ZWS, ZWNJ, ZWJ)');
-  console.log('✅ Mixed script pattern analysis');
-  console.log('✅ Control sequence detection');
-  console.log('✅ Performance issue correlation');
-  console.log('✅ Multi-vector attack pattern recognition');
-  console.log('✅ Real-time security scoring (0-100 scale)');
-  console.log('✅ Comprehensive threat classification');
-  console.log('✅ Actionable remediation recommendations');
-  console.log('✅ High-performance processing (>10K chars/sec)');
+  console.info('\n🎯 Enhanced Capabilities Demonstrated:');
+  console.info('─────────────────────────────────────');
+  console.info('✅ Homoglyph attack detection (Cyrillic ↔ Latin)');
+  console.info('✅ Invisible character identification (ZWS, ZWNJ, ZWJ)');
+  console.info('✅ Mixed script pattern analysis');
+  console.info('✅ Control sequence detection');
+  console.info('✅ Performance issue correlation');
+  console.info('✅ Multi-vector attack pattern recognition');
+  console.info('✅ Real-time security scoring (0-100 scale)');
+  console.info('✅ Comprehensive threat classification');
+  console.info('✅ Actionable remediation recommendations');
+  console.info('✅ High-performance processing (>10K chars/sec)');
   
-  console.log('\n💻 Enterprise Integration Examples:');
-  console.log('────────────────────────────────────');
-  console.log('# CI/CD Pipeline Integration:');
-  console.log('bun enhanced-scanner.ts src/ --security --format json > security-report.json');
-  console.log('');
-  console.log('# Pre-commit Security Check:');
-  console.log('bun enhanced-scanner.ts $1 --security || exit 1');
-  console.log('');
-  console.log('# Code Review Automation:');
-  console.log('bun enhanced-scanner.ts pr-files.ts --format json | jq .criticalIssues');
-  console.log('');
-  console.log('# Real-time Monitoring:');
-  console.log('tail -f /var/log/app.log | bun enhanced-scanner.ts --codepoints');
+  console.info('\n💻 Enterprise Integration Examples:');
+  console.info('────────────────────────────────────');
+  console.info('# CI/CD Pipeline Integration:');
+  console.info('bun enhanced-scanner.ts src/ --security --format json > security-report.json');
+  console.info('');
+  console.info('# Pre-commit Security Check:');
+  console.info('bun enhanced-scanner.ts $1 --security || exit 1');
+  console.info('');
+  console.info('# Code Review Automation:');
+  console.info('bun enhanced-scanner.ts pr-files.ts --format json | jq .criticalIssues');
+  console.info('');
+  console.info('# Real-time Monitoring:');
+  console.info('tail -f /var/log/app.log | bun enhanced-scanner.ts --codepoints');
   
-  console.log('\n🔒 Security Impact Summary:');
-  console.log('─────────────────────────────');
-  console.log('🛡️  Prevents homoglyph phishing attacks');
-  console.log('👻 Detects invisible character obfuscation');
-  console.log('🌍 Identifies mixed script evasion techniques');
-  console.log('⚠️  Flags control sequence exploitation');
-  console.log('🔗 Correlates character and code security issues');
-  console.log('📊 Provides quantitative security scoring');
-  console.log('🚀 Enables automated security enforcement');
-  console.log('🎯 Supports enterprise security compliance');
+  console.info('\n🔒 Security Impact Summary:');
+  console.info('─────────────────────────────');
+  console.info('🛡️  Prevents homoglyph phishing attacks');
+  console.info('👻 Detects invisible character obfuscation');
+  console.info('🌍 Identifies mixed script evasion techniques');
+  console.info('⚠️  Flags control sequence exploitation');
+  console.info('🔗 Correlates character and code security issues');
+  console.info('📊 Provides quantitative security scoring');
+  console.info('🚀 Enables automated security enforcement');
+  console.info('🎯 Supports enterprise security compliance');
   
-  console.log('\n🎉 Enhanced Codepoint Analysis System - DEMO COMPLETE');
-  console.log('═══════════════════════════════════════════════════════');
-  console.log('Ready for enterprise deployment and integration!');
+  console.info('\n🎉 Enhanced Codepoint Analysis System - DEMO COMPLETE');
+  console.info('═══════════════════════════════════════════════════════');
+  console.info('Ready for enterprise deployment and integration!');
 }
 
 // Run the comprehensive demo

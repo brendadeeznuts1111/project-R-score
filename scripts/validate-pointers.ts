@@ -320,7 +320,7 @@ class BunNativeOptimizer {
     try {
       // Check if real Bun API is available
       if ("eliminateDeadPointers" in Bun) {
-        console.log('⚡ Using real Bun.eliminateDeadPointers() API...');
+        console.info('⚡ Using real Bun.eliminateDeadPointers() API...');
         // Real Bun API call
         const result = await (Bun as any).eliminateDeadPointers({
           pointers,
@@ -328,11 +328,11 @@ class BunNativeOptimizer {
           timeout: 5000
         });
         const end = Bun.nanoseconds();
-        console.log(`⚡ Bun.eliminateDeadPointers(): ${result.eliminated?.length || 0} eliminated in ${(end - start) / 1000000}ms`);
+        console.info(`⚡ Bun.eliminateDeadPointers(): ${result.eliminated?.length || 0} eliminated in ${(end - start) / 1000000}ms`);
         return result;
       } else {
         // Fallback implementation with native performance
-        console.log('⚡ Using optimized batch validation (fallback)...');
+        console.info('⚡ Using optimized batch validation (fallback)...');
         const validPointers: string[] = [];
         const eliminated: string[] = [];
 
@@ -372,7 +372,7 @@ class BunNativeOptimizer {
         }
 
         const end = Bun.nanoseconds();
-        console.log(`⚡ Batch elimination: ${eliminated.length} eliminated in ${(end - start) / 1000000}ms`);
+        console.info(`⚡ Batch elimination: ${eliminated.length} eliminated in ${(end - start) / 1000000}ms`);
 
         return { optimized: validPointers, eliminated };
       }
@@ -436,7 +436,7 @@ class BunNativeOptimizer {
             if (timeoutId) {
               clearTimeout(timeoutId);
             }
-            console.log('✅ Connection cleanup completed');
+            console.info('✅ Connection cleanup completed');
           };
 
           const dataHandler = (socket: Socket, data: Buffer) => {
@@ -1059,14 +1059,14 @@ function displayOptimizationRecommendations(rScore: RScoreMetrics): void {
   const { optimized, fixes } = applyOptimizationFixes(rScore);
 
   if (fixes.length === 0) {
-    console.log('\n🎯 All metrics are optimal - no optimizations needed!');
+    console.info('\n🎯 All metrics are optimal - no optimizations needed!');
     return;
   }
 
-  console.log('\n🔧 Performance Optimization Recommendations (v4.3)');
-  console.log('┌─────────────────┬─────────┬────────────────────────────────────────────────┬──────────────────────────────────────┬─────────────┬──────────────┐');
-  console.log('│ Weak Metric     │ Observed│ Primary Cause                                      │ Immediate Fix (v4.3)                   │ Expected Δ  │ New Projected │');
-  console.log('├─────────────────┼─────────┼────────────────────────────────────────────────┼──────────────────────────────────────┼─────────────┼──────────────┤');
+  console.info('\n🔧 Performance Optimization Recommendations (v4.3)');
+  console.info('┌─────────────────┬─────────┬────────────────────────────────────────────────┬──────────────────────────────────────┬─────────────┬──────────────┐');
+  console.info('│ Weak Metric     │ Observed│ Primary Cause                                      │ Immediate Fix (v4.3)                   │ Expected Δ  │ New Projected │');
+  console.info('├─────────────────┼─────────┼────────────────────────────────────────────────┼──────────────────────────────────────┼─────────────┼──────────────┤');
 
   fixes.forEach(fix => {
     const observed = fix.observedValue.toFixed(3).padEnd(7);
@@ -1075,20 +1075,20 @@ function displayOptimizationRecommendations(rScore: RScoreMetrics): void {
     const delta = `+${fix.expectedDelta.toFixed(2)}`.padEnd(9);
     const projected = fix.newProjectedScore.toFixed(3).padEnd(12);
 
-    console.log(`│ ${fix.metric.padEnd(15)} │ ${observed} │ ${cause} │ ${immediateFix} │ ${delta} │ ${projected} │`);
+    console.info(`│ ${fix.metric.padEnd(15)} │ ${observed} │ ${cause} │ ${immediateFix} │ ${delta} │ ${projected} │`);
   });
 
-  console.log('└─────────────────┴─────────┴────────────────────────────────────────────────┴──────────────────────────────────────┴─────────────┴──────────────┘');
+  console.info('└─────────────────┴─────────┴────────────────────────────────────────────────┴──────────────────────────────────────┴─────────────┴──────────────┘');
 
-  console.log(`\n📈 R-Score Projection:`);
-  console.log(`Current: ${rScore.total_score.toFixed(3)} → Optimized: ${optimized.total_score.toFixed(3)} (+${(optimized.total_score - rScore.total_score).toFixed(3)})`);
+  console.info(`\n📈 R-Score Projection:`);
+  console.info(`Current: ${rScore.total_score.toFixed(3)} → Optimized: ${optimized.total_score.toFixed(3)} (+${(optimized.total_score - rScore.total_score).toFixed(3)})`);
 
   if (optimized.total_score >= 0.95) {
-    console.log('🎯 Projected to achieve high-throughput threshold (>0.95)');
+    console.info('🎯 Projected to achieve high-throughput threshold (>0.95)');
   } else if (optimized.total_score >= 0.85) {
-    console.log('⚠️  Projected acceptable performance with optimizations');
+    console.info('⚠️  Projected acceptable performance with optimizations');
   } else {
-    console.log('🚨 Additional optimizations required beyond v4.3');
+    console.info('🚨 Additional optimizations required beyond v4.3');
   }
 }
 
@@ -1358,15 +1358,15 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
   // Reset metrics for this run
   networkController.reset();
 
-  console.log(`🚀 Starting validation with ${pointers.length} pointers...`);
+  console.info(`🚀 Starting validation with ${pointers.length} pointers...`);
 
   // P0: Apply Bun.eliminateDeadPointers() optimization first
-  console.log('⚡ Applying Bun.eliminateDeadPointers() optimization...');
+  console.info('⚡ Applying Bun.eliminateDeadPointers() optimization...');
   const { optimized: optimizedPointers, eliminated } = await BunNativeOptimizer.eliminateDeadPointers(pointers);
 
   if (eliminated.length > 0) {
-    console.log(`📋 E_elimination: Removed ${eliminated.length} dead pointers`);
-    eliminated.forEach(p => console.log(`   ❌ ${p}`));
+    console.info(`📋 E_elimination: Removed ${eliminated.length} dead pointers`);
+    eliminated.forEach(p => console.info(`   ❌ ${p}`));
   }
 
   // Separate network and file operations for optimal batching
@@ -1376,7 +1376,7 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
   const results: ValidationResult[] = [];
 
   // Process file operations first (faster, no network limits)
-  console.log(`📁 Processing ${filePointers.length} file operations with memory pooling...`);
+  console.info(`📁 Processing ${filePointers.length} file operations with memory pooling...`);
   const fileResults = await Promise.all(
     filePointers.map(async (p, i) => ({
       id: getPointerId(p) ?? generatePointerId(p, i),
@@ -1390,7 +1390,7 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
   results.push(...fileResults);
 
   // Process network operations with HTTP/2 multiplexing or HTTP/1.1 fallback
-  console.log(`🌐 Processing ${networkPointers.length} network requests...`);
+  console.info(`🌐 Processing ${networkPointers.length} network requests...`);
 
   // Group by hostname for HTTP/2 connection reuse
   const byHostname = new Map<string, string[]>();
@@ -1412,7 +1412,7 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
   for (const [hostname, hostPointers] of byHostname) {
     // Use HTTP/2 multiplexing for multiple requests to same host (except example.com)
     if (hostPointers.length > 1 && hostname !== 'example.com' && !hostname.startsWith('127.')) {
-      console.log(`🚀 HTTP/2 multiplexing ${hostPointers.length} streams to ${hostname}`);
+      console.info(`🚀 HTTP/2 multiplexing ${hostPointers.length} streams to ${hostname}`);
       const mux = new BunHTTP2Multiplexer();
 
       try {
@@ -1453,7 +1453,7 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
 
         // Log HTTP/2 stats
         const stats = mux.getStats();
-        console.log(`📊 HTTP/2 stats: ${stats.activeStreams} active, ${stats.totalStreams} total streams`);
+        console.info(`📊 HTTP/2 stats: ${stats.activeStreams} active, ${stats.totalStreams} total streams`);
 
         mux.disconnect();
       } catch (err: any) {
@@ -1498,12 +1498,12 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
 
   if (metrics.totalRequests > 0) {
     const totalTime = metrics.endTime - metrics.startTime;
-    console.log(`📊 Network Performance: ${metrics.successfulRequests}/${metrics.totalRequests} successful, ${metrics.averageLatency.toFixed(2)}ms avg latency, ${totalTime.toFixed(2)}ms total`);
+    console.info(`📊 Network Performance: ${metrics.successfulRequests}/${metrics.totalRequests} successful, ${metrics.averageLatency.toFixed(2)}ms avg latency, ${totalTime.toFixed(2)}ms total`);
   } else {
-    console.log(`📊 Network Performance: No network requests processed`);
+    console.info(`📊 Network Performance: No network requests processed`);
   }
 
-  console.log(`💾 SharedArrayBuffer Pool: ${(memoryStats.used / 1024).toFixed(1)}KB used of ${(memoryStats.total / 1024 / 1024).toFixed(1)}MB total (${(memoryStats.utilization * 100).toFixed(1)}% utilization)`);
+  console.info(`💾 SharedArrayBuffer Pool: ${(memoryStats.used / 1024).toFixed(1)}KB used of ${(memoryStats.total / 1024 / 1024).toFixed(1)}MB total (${(memoryStats.utilization * 100).toFixed(1)}% utilization)`);
 
   // Optimize pool size for next batch based on current utilization
   globalPool.optimizePoolSize();
@@ -1551,7 +1551,7 @@ async function main() {
   };
 
   if (showHelp) {
-    console.log(`
+    console.info(`
 Validate Pointers — Check URLs and local file paths in project
 
 USAGE:
@@ -1594,52 +1594,52 @@ EXAMPLES:
 
   // Show PATH information if requested
   if (showPathInfo) {
-    console.log('🔍 Enhanced PATH Information');
-    console.log('================================');
+    console.info('🔍 Enhanced PATH Information');
+    console.info('================================');
 
     const pathStats = PathResolver.getPathStats();
-    console.log(`📊 PATH Statistics:`);
-    console.log(`   Total paths configured: ${pathStats.totalPaths}`);
-    console.log(`   Valid paths found: ${pathStats.validPaths}`);
-    console.log(`   System paths: ${pathStats.systemPaths}`);
-    console.log(`   Custom paths: ${pathStats.customPaths}`);
-    console.log('');
+    console.info(`📊 PATH Statistics:`);
+    console.info(`   Total paths configured: ${pathStats.totalPaths}`);
+    console.info(`   Valid paths found: ${pathStats.validPaths}`);
+    console.info(`   System paths: ${pathStats.systemPaths}`);
+    console.info(`   Custom paths: ${pathStats.customPaths}`);
+    console.info('');
 
-    console.log(`🛤️  Valid PATH Directories:`);
+    console.info(`🛤️  Valid PATH Directories:`);
     pathStats.pathList.forEach((path, index) => {
-      console.log(`   ${index + 1}. ${path}`);
+      console.info(`   ${index + 1}. ${path}`);
     });
-    console.log('');
+    console.info('');
 
     // Test binary discovery
-    console.log(`🔍 Binary Discovery Test:`);
+    console.info(`🔍 Binary Discovery Test:`);
     const testBinaries = ['node', 'npm', 'bun', 'git', 'curl'];
 
     for (const binary of testBinaries) {
       try {
         const binaryPath = await PathResolver.findBinary(binary);
         if (binaryPath) {
-          console.log(`   ✅ ${binary}: ${binaryPath}`);
+          console.info(`   ✅ ${binary}: ${binaryPath}`);
         } else {
-          console.log(`   ❌ ${binary}: not found`);
+          console.info(`   ❌ ${binary}: not found`);
         }
       } catch (error) {
-        console.log(`   ❌ ${binary}: error - ${error}`);
+        console.info(`   ❌ ${binary}: error - ${error}`);
       }
     }
 
-    console.log('');
-    console.log(`🌐 Environment PATH:`);
-    console.log(`   ${process.env.PATH || 'PATH not set'}`);
-    console.log('');
+    console.info('');
+    console.info(`🌐 Environment PATH:`);
+    console.info(`   ${process.env.PATH || 'PATH not set'}`);
+    console.info('');
 
     return; // Exit after showing PATH info
   }
   if (doCanonicalTest) {
-    console.log("--- Pointer Validation Audit ---");
+    console.info("--- Pointer Validation Audit ---");
 
     // Test 1: Exact Match
-    console.log("Match Test:", validateDocPointer({
+    console.info("Match Test:", validateDocPointer({
       protocol: "https:",
       host: "bun.sh",
       sections: ["api", "runtime", "cli"],
@@ -1647,7 +1647,7 @@ EXAMPLES:
     }));
 
     // Test 2: Shadow Property Test (Strict Mode will catch 'extra: undefined')
-    console.log("Shadow Property Test:", validateDocPointer({
+    console.info("Shadow Property Test:", validateDocPointer({
       protocol: "https:",
       host: "bun.sh",
       sections: ["api", "runtime", "cli"],
@@ -1659,28 +1659,28 @@ EXAMPLES:
     const testUrl = "https://bun.sh/docs/api/runtime/cli?version=1.1.0";
     const structure = extractCanonicalStructure(testUrl);
     if (structure) {
-      console.log(`URL Test (${testUrl}):`, validateDocPointer(structure, config.metadata));
+      console.info(`URL Test (${testUrl}):`, validateDocPointer(structure, config.metadata));
     }
 
-    console.log("\n--- Enhanced Resolver Tests ---");
+    console.info("\n--- Enhanced Resolver Tests ---");
 
     // Test 4: Enhanced Resolver with canonical validation
-    console.log("Resolver Test 1:", resolvePointer("Bun deep equals utility"));
-    console.log("Resolver Test 2:", resolvePointer("Bun RSS feed"));
-    console.log("Resolver Test 3:", resolvePointer("Main Bun documentation"));
-    console.log("Resolver Test 4:", resolvePointer("Non-existent pointer"));
+    console.info("Resolver Test 1:", resolvePointer("Bun deep equals utility"));
+    console.info("Resolver Test 2:", resolvePointer("Bun RSS feed"));
+    console.info("Resolver Test 3:", resolvePointer("Main Bun documentation"));
+    console.info("Resolver Test 4:", resolvePointer("Non-existent pointer"));
 
     return;
   }
 
   // Show current configuration
   if (doCompare) {
-    console.log(`🔧 Comparison mode: ${strictModeEnabled ? 'STRICT' : 'LENIENT'}`);
-    console.log(`   Protocols: ${config.protocols ? 'strict' : 'lenient'}`);
-    console.log(`   Trailing slashes: ${config.trailing_slashes ? 'strict' : 'lenient'}`);
-    console.log(`   Metadata: ${config.metadata ? 'strict' : 'lenient'}`);
-    console.log(`   Object type: ${config.object_type ? 'strict' : 'lenient'}`);
-    console.log('');
+    console.info(`🔧 Comparison mode: ${strictModeEnabled ? 'STRICT' : 'LENIENT'}`);
+    console.info(`   Protocols: ${config.protocols ? 'strict' : 'lenient'}`);
+    console.info(`   Trailing slashes: ${config.trailing_slashes ? 'strict' : 'lenient'}`);
+    console.info(`   Metadata: ${config.metadata ? 'strict' : 'lenient'}`);
+    console.info(`   Object type: ${config.object_type ? 'strict' : 'lenient'}`);
+    console.info('');
   }
 
   // Curated pointers + URLs extracted from README.md
@@ -1715,7 +1715,7 @@ EXAMPLES:
 
   // Show validation table unless diagnostics-only mode
   if (!showDiagnosticsOnly) {
-    console.log(Bun.inspect.table(displayResults, ['id', 'conceptual', 'pointer', 'protocol', 'status', 'details'], { colors: true }));
+    console.info(Bun.inspect.table(displayResults, ['id', 'conceptual', 'pointer', 'protocol', 'status', 'details'], { colors: true }));
   }
 
   // Display R-Score diagnostics
@@ -1740,7 +1740,7 @@ EXAMPLES:
         StatusOutput.success('Results match baseline');
       } else {
         StatusOutput.error('Results differ from baseline:');
-        comparison.differences.forEach(diff => console.log(`   ${diff}`));
+        comparison.differences.forEach(diff => console.info(`   ${diff}`));
       }
     } catch (error) {
       StatusOutput.warning('No baseline found. Run with --save to create one.');
@@ -1834,7 +1834,7 @@ EXAMPLES:
     if (endpoint) {
       try {
         await metricsFeed.pushToEndpoint(endpoint, secret);
-        console.log('📡 Metrics pushed to Tier-1380 endpoint');
+        console.info('📡 Metrics pushed to Tier-1380 endpoint');
       } catch (error) {
         console.error('⚠️  Failed to push metrics:', error);
       }
@@ -1846,9 +1846,9 @@ EXAMPLES:
   // Start local RSS server if requested
   if (args.includes('--serve-metrics')) {
     const server = metricsFeed.serve(1380);
-    console.log('📡 Tier-1380 metrics feed: http://example.com/metrics/rss.xml');
-    console.log('📊 JSON endpoint: http://example.com/metrics/json');
-    console.log('Press Ctrl+C to stop the server');
+    console.info('📡 Tier-1380 metrics feed: http://example.com/metrics/rss.xml');
+    console.info('📊 JSON endpoint: http://example.com/metrics/json');
+    console.info('Press Ctrl+C to stop the server');
     // Keep process alive
     process.on('SIGINT', () => {
       server.stop();

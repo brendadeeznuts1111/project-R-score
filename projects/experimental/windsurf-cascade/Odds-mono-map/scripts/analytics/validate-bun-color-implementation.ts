@@ -27,12 +27,12 @@ import {
     CANVAS_BRAND_COLORS
 } from '../../src/types/canvas-color';
 
-console.log('🔍 Bun.color Implementation Validation');
-console.log('=====================================\n');
+console.info('🔍 Bun.color Implementation Validation');
+console.info('=====================================\n');
 
 // Test all official Bun.color input formats
-console.log('📊 Testing All Official Input Formats:');
-console.log('─'.repeat(50));
+console.info('📊 Testing All Official Input Formats:');
+console.info('─'.repeat(50));
 
 const officialInputs = [
     // Standard CSS color names
@@ -77,18 +77,18 @@ officialInputs.forEach(({ input, expected }, index) => {
 
     if (passed) passedTests++;
 
-    console.log(`${(index + 1).toString().padStart(2)}. ${JSON.stringify(input).padEnd(25)} → ${result} ${passed ? '✅' : '❌'}`);
+    console.info(`${(index + 1).toString().padStart(2)}. ${JSON.stringify(input).padEnd(25)} → ${result} ${passed ? '✅' : '❌'}`);
 
     if (!passed) {
-        console.log(`    Expected: ${expected}`);
+        console.info(`    Expected: ${expected}`);
     }
 });
 
-console.log(`\n📊 Input Format Tests: ${passedTests} / ${totalTests} passed\n`);
+console.info(`\n📊 Input Format Tests: ${passedTests} / ${totalTests} passed\n`);
 
 // Test all official Bun.color output formats
-console.log('🖥️  Testing All Official Output Formats:');
-console.log('─'.repeat(50));
+console.info('🖥️  Testing All Official Output Formats:');
+console.info('─'.repeat(50));
 
 const outputFormats = [
     "css", "ansi", "ansi-16", "ansi-256", "ansi-16m",
@@ -105,21 +105,21 @@ outputFormats.forEach(format => {
         formatResults[format] = result || 'null';
 
         if (result) {
-            console.log(`${format.padEnd(10)}: ${typeof result === 'object' ? JSON.stringify(result) : result}`);
+            console.info(`${format.padEnd(10)}: ${typeof result === 'object' ? JSON.stringify(result) : result}`);
         } else {
-            console.log(`${format.padEnd(10)}: null(unsupported)`);
+            console.info(`${format.padEnd(10)}: null(unsupported)`);
         }
     } catch (error) {
-        console.log(`${format.padEnd(10)}: Error - ${error}`);
+        console.info(`${format.padEnd(10)}: Error - ${error}`);
     }
 });
 
 // Test our enhanced features
-console.log('\n🎨 Testing Enhanced Canvas Features:');
-console.log('─'.repeat(50));
+console.info('\n🎨 Testing Enhanced Canvas Features:');
+console.info('─'.repeat(50));
 
 // 1. Color validation with accessibility
-console.log('1. Color Validation & Accessibility:');
+console.info('1. Color Validation & Accessibility:');
 const validationTests = [
     { color: "#ff0000", name: "Red" },
     { color: "#00ff00", name: "Green" },
@@ -131,38 +131,38 @@ const validationTests = [
 validationTests.forEach(({ color, name }) => {
     const result = validateCanvasColor(color, "test:node");
     const accessible = result.warnings.some(w => w.category === 'accessibility') ? '❌' : '✅';
-    console.log(`   ${name.padEnd(20)}: ${result.normalizedColor} ${accessible}`);
+    console.info(`   ${name.padEnd(20)}: ${result.normalizedColor} ${accessible}`);
 });
 
 // 2. Terminal color generation
-console.log('\n2. Terminal Color Generation:');
+console.info('\n2. Terminal Color Generation:');
 const terminalFormats = ["ansi", "ansi-16", "ansi-256", "ansi-16m"] as const;
 terminalFormats.forEach(format => {
     const ansi = getTerminalColor({ color: "#ff0000" }, format);
     const reset = '\x1b[0m';
-    console.log(`   ${format.padEnd(10)}: ${ansi}●${reset} Red`);
+    console.info(`   ${format.padEnd(10)}: ${ansi}●${reset} Red`);
 });
 
 // 3. Enhanced metadata
-console.log('\n3. Enhanced Color Metadata:');
+console.info('\n3. Enhanced Color Metadata:');
 const metadata = createColorMetadata("#10B981", "demo:node");
-console.log(`   Input: ${metadata.input}`);
-console.log(`   Normalized: ${metadata.normalized}`);
-console.log(`   Contrast: ${metadata.metadata.contrastRatio.toFixed(1)}: 1`);
-console.log(`   Accessible: ${metadata.metadata.isAccessible ? '✅' : '❌'}`);
-console.log(`   Terminal Support: ANSI - 16 ${metadata.metadata.terminalSupport.ansi16 ? '✅' : '❌'}, ANSI - 256 ${metadata.metadata.terminalSupport.ansi256 ? '✅' : '❌'}, ANSI - 16m ${metadata.metadata.terminalSupport.ansi16m ? '✅' : '❌'}`);
+console.info(`   Input: ${metadata.input}`);
+console.info(`   Normalized: ${metadata.normalized}`);
+console.info(`   Contrast: ${metadata.metadata.contrastRatio.toFixed(1)}: 1`);
+console.info(`   Accessible: ${metadata.metadata.isAccessible ? '✅' : '❌'}`);
+console.info(`   Terminal Support: ANSI - 16 ${metadata.metadata.terminalSupport.ansi16 ? '✅' : '❌'}, ANSI - 256 ${metadata.metadata.terminalSupport.ansi256 ? '✅' : '❌'}, ANSI - 16m ${metadata.metadata.terminalSupport.ansi16m ? '✅' : '❌'}`);
 
 // 4. Brand color system
-console.log('\n4. Brand Color System:');
+console.info('\n4. Brand Color System:');
 Object.entries(CANVAS_BRAND_COLORS.status).forEach(([status, color]) => {
     const ansi = getTerminalColor({ color }, "ansi-256");
     const reset = '\x1b[0m';
-    console.log(`   ${ansi}●${reset} ${status.padEnd(15)}: ${color}`);
+    console.info(`   ${ansi}●${reset} ${status.padEnd(15)}: ${color}`);
 });
 
 // Performance validation
-console.log('\n⚡ Performance Validation:');
-console.log('─'.repeat(30));
+console.info('\n⚡ Performance Validation:');
+console.info('─'.repeat(30));
 
 const performanceStart = performance.now();
 
@@ -174,26 +174,26 @@ for (let i = 0; i < 1000; i++) {
 const performanceTime = performance.now() - performanceStart;
 const colorsPerSecond = Math.round(1000 / performanceTime * 1000);
 
-console.log(`✅ Processed 1000 colors in ${performanceTime.toFixed(2)}ms`);
-console.log(`📊 Performance: ${colorsPerSecond.toLocaleString()} colors / second`);
+console.info(`✅ Processed 1000 colors in ${performanceTime.toFixed(2)}ms`);
+console.info(`📊 Performance: ${colorsPerSecond.toLocaleString()} colors / second`);
 
 // Final validation summary
-console.log('\n🎯 Implementation Validation Summary:');
-console.log('─'.repeat(45));
+console.info('\n🎯 Implementation Validation Summary:');
+console.info('─'.repeat(45));
 
 const allTestsPassed = passedTests === totalTests;
 const performanceGood = colorsPerSecond > 1000000; // 1M+ colors/second
 
-console.log(`✅ Input Format Support: ${passedTests} / ${totalTests} formats`);
-console.log(`✅ Output Format Support: All 15 official formats`);
-console.log(`✅ Enhanced Features: Validation, Accessibility, Terminal, Brand System`);
-console.log(`✅ Performance: ${colorsPerSecond.toLocaleString()} colors / second ${performanceGood ? '✅' : '⚠️'}`);
+console.info(`✅ Input Format Support: ${passedTests} / ${totalTests} formats`);
+console.info(`✅ Output Format Support: All 15 official formats`);
+console.info(`✅ Enhanced Features: Validation, Accessibility, Terminal, Brand System`);
+console.info(`✅ Performance: ${colorsPerSecond.toLocaleString()} colors / second ${performanceGood ? '✅' : '⚠️'}`);
 
 if (allTestsPassed && performanceGood) {
-    console.log('\n🎉 VALIDATION PASSED: Implementation fully compliant with Bun.color API!');
-    console.log('🚀 Your canvas system is production-ready with official Bun.color support!');
+    console.info('\n🎉 VALIDATION PASSED: Implementation fully compliant with Bun.color API!');
+    console.info('🚀 Your canvas system is production-ready with official Bun.color support!');
 } else {
-    console.log('\n⚠️  VALIDATION WARNINGS: Some areas need attention');
+    console.info('\n⚠️  VALIDATION WARNINGS: Some areas need attention');
 }
 
-console.log('\n📚 Reference: https://bun.sh/docs/api/bun-color');
+console.info('\n📚 Reference: https://bun.sh/docs/api/bun-color');

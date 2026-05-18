@@ -41,7 +41,7 @@ const fixes = [
 ];
 
 function applyFixes() {
-  console.log('🔧 Applying example.com URL fixes...\n');
+  console.info('🔧 Applying example.com URL fixes...\n');
   
   let totalFixes = 0;
   
@@ -56,8 +56,8 @@ function applyFixes() {
         
         if (content !== before) {
           const count = (before.match(new RegExp(replacement.from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
-          console.log(`✅ Fixed ${count} occurrences in ${fix.file}`);
-          console.log(`   ${replacement.from} → ${replacement.to}`);
+          console.info(`✅ Fixed ${count} occurrences in ${fix.file}`);
+          console.info(`   ${replacement.from} → ${replacement.to}`);
           fileFixes += count;
         }
       }
@@ -72,15 +72,15 @@ function applyFixes() {
     }
   }
   
-  console.log(`\n🎯 Applied ${totalFixes} fixes total`);
+  console.info(`\n🎯 Applied ${totalFixes} fixes total`);
   
   if (totalFixes > 0) {
-    console.log('\n💡 Next steps:');
-    console.log('1. Run "bun run url:check" to verify fixes');
-    console.log('2. Test the updated files to ensure they work correctly');
-    console.log('3. Commit the changes');
+    console.info('\n💡 Next steps:');
+    console.info('1. Run "bun run url:check" to verify fixes');
+    console.info('2. Test the updated files to ensure they work correctly');
+    console.info('3. Commit the changes');
   } else {
-    console.log('\nℹ️  No fixes needed - URLs already properly configured');
+    console.info('\nℹ️  No fixes needed - URLs already properly configured');
   }
 }
 

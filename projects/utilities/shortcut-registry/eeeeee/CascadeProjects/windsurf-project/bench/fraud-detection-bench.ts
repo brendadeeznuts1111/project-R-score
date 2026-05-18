@@ -108,7 +108,7 @@ async function fetchWithPreconnect(url: string): Promise<Response> {
 // === BENCHMARK SUITE ===
 // ============================================
 
-console.log("🚀 Starting Fraud Detection Performance Benchmarks...\n");
+console.info("🚀 Starting Fraud Detection Performance Benchmarks...\n");
 
 // Test 1: Variable Hoisting (Element Caching Pattern)
 bench("Loop: Standard (System calls in loop)", () => {
@@ -201,8 +201,8 @@ const results = await run({
 	max: 100,
 });
 
-console.log("\n📊 Benchmark Results Summary:");
-console.log("=".repeat(60));
+console.info("\n📊 Benchmark Results Summary:");
+console.info("=".repeat(60));
 
 // Results are in results.results array
 if (results && results.results) {
@@ -218,10 +218,10 @@ if (results && results.results) {
 			((loopStandard.stats.mean - loopOptimized.stats.mean) /
 				loopStandard.stats.mean) *
 			100;
-		console.log(
+		console.info(
 			`\n✅ Variable Hoisting Improvement: ${improvement.toFixed(1)}% faster`,
 		);
-		console.log(
+		console.info(
 			`   Standard: ${(loopStandard.stats.mean / 1000).toFixed(2)}ms | Optimized: ${(loopOptimized.stats.mean / 1000).toFixed(2)}ms`,
 		);
 	}
@@ -238,19 +238,19 @@ if (results && results.results) {
 			((jsonStandard.stats.mean - jsonOptimized.stats.mean) /
 				jsonStandard.stats.mean) *
 			100;
-		console.log(
+		console.info(
 			`✅ Response Buffering Improvement: ${improvement.toFixed(1)}% faster`,
 		);
-		console.log(
+		console.info(
 			`   Standard: ${(jsonStandard.stats.mean / 1000).toFixed(2)}ms | Optimized: ${(jsonOptimized.stats.mean / 1000).toFixed(2)}ms`,
 		);
 	}
 }
 
-console.log("\n" + "=".repeat(60));
-console.log("💡 For DNS/Preconnect benchmarks, check Network tab in browser");
-console.log("💡 For throughput testing, run: bombardier -c 256 -n 10000 http://localhost:3001/api/health");
-console.log("💡 Expected improvements:");
-console.log("   - Variable Hoisting: 5-8x faster");
-console.log("   - Response Buffering: 20-30% faster (on large payloads)");
-console.log("   - DNS Preconnect: 30x faster first call");
+console.info("\n" + "=".repeat(60));
+console.info("💡 For DNS/Preconnect benchmarks, check Network tab in browser");
+console.info("💡 For throughput testing, run: bombardier -c 256 -n 10000 http://localhost:3001/api/health");
+console.info("💡 Expected improvements:");
+console.info("   - Variable Hoisting: 5-8x faster");
+console.info("   - Response Buffering: 20-30% faster (on large payloads)");
+console.info("   - DNS Preconnect: 30x faster first call");

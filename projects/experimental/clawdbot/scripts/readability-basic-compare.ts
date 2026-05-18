@@ -41,16 +41,16 @@ function truncate(value: string, max = 160): string {
 
 async function run() {
   for (const url of targets) {
-    console.log(`\n=== ${url}`);
+    console.info(`\n=== ${url}`);
     const readable = await runFetch(url, true);
 
-    console.log(
+    console.info(
       `readability: ${readable.extractor ?? "unknown"} len=${readable.length ?? 0} title=${truncate(
         readable.title ?? "",
         80,
       )}`,
     );
-    if (readable.text) console.log(`readability sample: ${truncate(readable.text)}`);
+    if (readable.text) console.info(`readability sample: ${truncate(readable.text)}`);
   }
 }
 

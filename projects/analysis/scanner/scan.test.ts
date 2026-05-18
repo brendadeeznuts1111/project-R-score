@@ -826,7 +826,7 @@ describe('timezone subprocess (real TZ from command line)', () => {
 		// Spawn a script that prints Date fields — simulates what scanner does internally
 		const script = `
       const now = new Date("2026-06-15T04:00:00Z");
-      console.log(JSON.stringify({
+      console.info(JSON.stringify({
         tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
         hours: now.getHours(),
         date: now.getDate(),

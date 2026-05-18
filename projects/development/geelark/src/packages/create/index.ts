@@ -118,41 +118,41 @@ async function main() {
 
   // Dry run mode - show what would be done
   if (args.dryRun) {
-    console.log("🔍 Dry run mode - no changes will be made\n");
-    console.log("Would perform the following actions:");
-    console.log(`  📁 Template source: ${templateDir}`);
-    console.log(`  📁 Target directory: ${dest}`);
+    console.info("🔍 Dry run mode - no changes will be made\n");
+    console.info("Would perform the following actions:");
+    console.info(`  📁 Template source: ${templateDir}`);
+    console.info(`  📁 Target directory: ${dest}`);
 
     if (await pathExists(dest)) {
       if (args.force) {
-        console.log(`  🗑️  Would remove existing directory: ${dest}`);
+        console.info(`  🗑️  Would remove existing directory: ${dest}`);
       } else {
-        console.log(`  ❌ Target exists (use --force to overwrite): ${dest}`);
+        console.info(`  ❌ Target exists (use --force to overwrite): ${dest}`);
       }
     }
 
-    console.log(`  📋 Would copy template to: ${dest}`);
-    console.log(`  📝 Would rename package to: ${path.basename(dest)}`);
+    console.info(`  📋 Would copy template to: ${dest}`);
+    console.info(`  📝 Would rename package to: ${path.basename(dest)}`);
 
     if (!args.noInstall) {
-      console.log(`  📦 Would run: bun install --workspace`);
+      console.info(`  📦 Would run: bun install --workspace`);
     } else {
-      console.log(`  ⏭️  Would skip: bun install (--no-install)`);
+      console.info(`  ⏭️  Would skip: bun install (--no-install)`);
     }
 
     if (!args.noGit) {
-      console.log(`  🔧 Would run: git init`);
-      console.log(`  🔧 Would run: git add -A`);
-      console.log(`  🔧 Would run: git commit -m "feat: Dev HQ workspace via bun create"`);
+      console.info(`  🔧 Would run: git init`);
+      console.info(`  🔧 Would run: git add -A`);
+      console.info(`  🔧 Would run: git commit -m "feat: Dev HQ workspace via bun create"`);
     } else {
-      console.log(`  ⏭️  Would skip: git init (--no-git)`);
+      console.info(`  ⏭️  Would skip: git init (--no-git)`);
     }
 
     if (args.open) {
-      console.log(`  🌐 Would open browser after setup`);
+      console.info(`  🌐 Would open browser after setup`);
     }
 
-    console.log("\n✅ Dry run complete. Remove --dry-run to execute.");
+    console.info("\n✅ Dry run complete. Remove --dry-run to execute.");
     return;
   }
 
@@ -225,13 +225,13 @@ async function main() {
       ? bunCreateHooks.preinstall
       : [bunCreateHooks.preinstall];
     for (const cmd of preinstall) {
-      console.log(`🔧 Running preinstall: ${cmd}`);
+      console.info(`🔧 Running preinstall: ${cmd}`);
       await run(["sh", "-c", cmd], dest);
     }
   }
 
   if (!args.noInstall) {
-    console.log("📦 Installing dependencies...");
+    console.info("📦 Installing dependencies...");
     await run(["bun", "install", "--workspace"], dest);
   }
 
@@ -241,14 +241,14 @@ async function main() {
       ? bunCreateHooks.postinstall
       : [bunCreateHooks.postinstall];
     for (const cmd of postinstall) {
-      console.log(`🔧 Running postinstall: ${cmd}`);
+      console.info(`🔧 Running postinstall: ${cmd}`);
       await run(["sh", "-c", cmd], dest);
     }
   }
 
   if (!args.noGit) {
     try {
-      console.log("🔧 Initializing git repository...");
+      console.info("🔧 Initializing git repository...");
       await run(["git", "init"], dest);
       await run(["git", "add", "-A"], dest);
       await run(["git", "commit", "-m", "feat: Dev HQ workspace via bun create"], dest);
@@ -257,9 +257,9 @@ async function main() {
     }
   }
 
-  console.log(`\n✅ Dev HQ workspace created!`);
-  console.log(`cd ${path.relative(process.cwd(), dest) || "."}`);
-  console.log(`bun run dev`);
+  console.info(`\n✅ Dev HQ workspace created!`);
+  console.info(`cd ${path.relative(process.cwd(), dest) || "."}`);
+  console.info(`bun run dev`);
 
   if (args.open) {
     // Try to open browser (platform-specific)

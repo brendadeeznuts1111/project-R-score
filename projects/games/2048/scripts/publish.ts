@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 
 async function publishToBucket() {
-  console.log("📦 Publishing CRC32 Tools to Bucket");
-  console.log("=".repeat(40));
+  console.info("📦 Publishing CRC32 Tools to Bucket");
+  console.info("=".repeat(40));
 
   const args = process.argv.slice(2);
   const bucket = args.find((arg) => arg.startsWith("--bucket="))?.split("=")[1];
@@ -11,7 +11,7 @@ async function publishToBucket() {
   const dryRun = args.includes("--dry-run");
 
   if (!bucket) {
-    console.log(`
+    console.info(`
 Usage: bun run publish --bucket=<bucket-name> [options]
 
 Options:
@@ -27,9 +27,9 @@ Examples:
     return;
   }
 
-  console.log(`🎯 Target bucket: ${bucket}`);
-  console.log(`📦 Version: ${version}`);
-  console.log(`🔍 Dry run: ${dryRun ? "YES" : "NO"}`);
+  console.info(`🎯 Target bucket: ${bucket}`);
+  console.info(`📦 Version: ${version}`);
+  console.info(`🔍 Dry run: ${dryRun ? "YES" : "NO"}`);
 
   // Files to publish
   const filesToPublish = [
@@ -70,14 +70,14 @@ Examples:
     },
   ];
 
-  console.log("\n📋 Files to publish:");
-  console.log("-".repeat(50));
+  console.info("\n📋 Files to publish:");
+  console.info("-".repeat(50));
 
   for (const file of filesToPublish) {
     const fileObj = Bun.file(file.source);
     const exists = await fileObj.exists();
     const size = exists ? fileObj.size : 0;
-    console.log(
+    console.info(
       `${exists ? "✅" : "❌"} ${file.dest} (${size} bytes) - ${
         file.description
       }`
@@ -85,7 +85,7 @@ Examples:
   }
 
   if (dryRun) {
-    console.log("\n🔍 Dry run complete - no files uploaded");
+    console.info("\n🔍 Dry run complete - no files uploaded");
     return;
   }
 
@@ -121,14 +121,14 @@ Examples:
     ],
   };
 
-  console.log("\n📄 Package manifest:");
-  console.log(JSON.stringify(manifest, null, 2));
+  console.info("\n📄 Package manifest:");
+  console.info(JSON.stringify(manifest, null, 2));
 
   // Simulate upload process
-  console.log("\n🚀 Uploading to bucket...");
+  console.info("\n🚀 Uploading to bucket...");
 
   for (const file of filesToPublish) {
-    console.log(`📤 Uploading ${file.source} -> ${bucket}/${file.dest}`);
+    console.info(`📤 Uploading ${file.source} -> ${bucket}/${file.dest}`);
 
     if (!dryRun) {
       // In real implementation, use your cloud provider's SDK
@@ -144,7 +144,7 @@ Examples:
   }
 
   // Upload manifest
-  console.log(`📤 Uploading manifest -> ${bucket}/package.json`);
+  console.info(`📤 Uploading manifest -> ${bucket}/package.json`);
 
   if (!dryRun) {
     // await s3.upload({
@@ -154,18 +154,18 @@ Examples:
     // }).promise();
   }
 
-  console.log("\n✅ Publication complete!");
-  console.log(`📦 Package: crc32-sql-toolkit@${version}`);
-  console.log(`🪣 Bucket: ${bucket}`);
-  console.log(`📁 Files: ${filesToPublish.length}`);
+  console.info("\n✅ Publication complete!");
+  console.info(`📦 Package: crc32-sql-toolkit@${version}`);
+  console.info(`🪣 Bucket: ${bucket}`);
+  console.info(`📁 Files: ${filesToPublish.length}`);
 
-  console.log("\n🎯 Usage after publish:");
-  console.log(`# Download and use`);
-  console.log(`curl -O https://${bucket}.s3.amazonaws.com/crc32-archive.ts`);
-  console.log(`bun crc32-archive.ts --help`);
-  console.log(``);
-  console.log(`# Import in your project`);
-  console.log(`import { CRC32SQLHelper } from './crc32-sql-helper.ts';`);
+  console.info("\n🎯 Usage after publish:");
+  console.info(`# Download and use`);
+  console.info(`curl -O https://${bucket}.s3.amazonaws.com/crc32-archive.ts`);
+  console.info(`bun crc32-archive.ts --help`);
+  console.info(``);
+  console.info(`# Import in your project`);
+  console.info(`import { CRC32SQLHelper } from './crc32-sql-helper.ts';`);
 }
 
 if (import.meta.main) {

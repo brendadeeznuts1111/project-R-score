@@ -33,41 +33,41 @@ const COLORS = {
 };
 
 function printBanner() {
-  console.log(`${COLORS.blue}`);
-  console.log(
+  console.info(`${COLORS.blue}`);
+  console.info(
     '    ███████╗ █████╗  ██████╗████████╗ ██████╗ ██████╗ ██╗    ██╗   ██╗ █████╗  ██████╗ ███████╗██████╗ '
   );
-  console.log(
+  console.info(
     '    ██╔════╝██╔══██╗██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗██║    ██║   ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗'
   );
-  console.log(
+  console.info(
     '    █████╗  ███████║██║        ██║   ██║   ██║██████╔╝██║    ██║   ██║███████║██║  ███╗█████╗  ██████╔╝'
   );
-  console.log(
+  console.info(
     '    ██╔══╝  ██╔══██║██║        ██║   ██║   ██║██╔══██╗██║    ╚██╗ ██╔╝██╔══██║██║   ██║██╔══╝  ██╔══██╗'
   );
-  console.log(
+  console.info(
     '    ██║     ██║  ██║╚██████╗   ██║   ╚██████╔╝██║  ██║███████╗╚████╔╝ ██║  ██║╚██████╔╝███████╗██║  ██║'
   );
-  console.log(
+  console.info(
     '    ╚═╝     ╚═╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝'
   );
-  console.log(`${COLORS.reset}`);
-  console.log(
+  console.info(`${COLORS.reset}`);
+  console.info(
     `${COLORS.teal}                                    v3.8 - The Blue-Teal-Green-Orange-Red Release${COLORS.reset}`
   );
-  console.log();
+  console.info();
 }
 
 function printHeader(title: string) {
-  console.log();
-  console.log(
+  console.info();
+  console.info(
     `${COLORS.blue}┌────────────────────────────────────────────────────────────────┐${COLORS.reset}`
   );
-  console.log(
+  console.info(
     `${COLORS.blue}│${COLORS.reset} ${COLORS.bright}${title.padEnd(62)}${COLORS.reset}${COLORS.blue}│${COLORS.reset}`
   );
-  console.log(
+  console.info(
     `${COLORS.blue}└────────────────────────────────────────────────────────────────┘${COLORS.reset}`
   );
 }
@@ -75,29 +75,29 @@ function printHeader(title: string) {
 async function demoThemeSystem() {
   printHeader('🏰 THEME SYSTEM');
 
-  console.log(`${COLORS.dim}Available Themes:${COLORS.reset}`);
+  console.info(`${COLORS.dim}Available Themes:${COLORS.reset}`);
   for (const theme of themeList) {
-    console.log(
+    console.info(
       `  ${theme.icon} ${theme.name.padEnd(15)} ${COLORS.dim}v${theme.version}${COLORS.reset}`
     );
   }
 
-  console.log();
-  console.log(`${COLORS.dim}FactoryWager Palette:${COLORS.reset}`);
+  console.info();
+  console.info(`${COLORS.dim}FactoryWager Palette:${COLORS.reset}`);
   const fw = themes.factorywager;
-  console.log(`  ${COLORS.blue}█${COLORS.reset} Blue   (Primary)   ${fw.colors.primary['500']}`);
-  console.log(`  ${COLORS.teal}█${COLORS.reset} Teal   (Secondary) ${fw.colors.secondary['500']}`);
-  console.log(`  ${COLORS.green}█${COLORS.reset} Green  (Success)   ${fw.colors.success['500']}`);
-  console.log(`  ${COLORS.orange}█${COLORS.reset} Orange (Warning)   ${fw.colors.warning['500']}`);
-  console.log(`  ${COLORS.red}█${COLORS.reset} Red    (Error)     ${fw.colors.error['500']}`);
-  console.log();
-  console.log(
+  console.info(`  ${COLORS.blue}█${COLORS.reset} Blue   (Primary)   ${fw.colors.primary['500']}`);
+  console.info(`  ${COLORS.teal}█${COLORS.reset} Teal   (Secondary) ${fw.colors.secondary['500']}`);
+  console.info(`  ${COLORS.green}█${COLORS.reset} Green  (Success)   ${fw.colors.success['500']}`);
+  console.info(`  ${COLORS.orange}█${COLORS.reset} Orange (Warning)   ${fw.colors.warning['500']}`);
+  console.info(`  ${COLORS.red}█${COLORS.reset} Red    (Error)     ${fw.colors.error['500']}`);
+  console.info();
+  console.info(
     `  ${COLORS.green}✓${COLORS.reset} ${COLORS.dim}NO purple/indigo colors (hues 240-300)${COLORS.reset}`
   );
 
   // Themed console demo
-  console.log();
-  console.log(`${COLORS.dim}Themed Console Output:${COLORS.reset}`);
+  console.info();
+  console.info(`${COLORS.dim}Themed Console Output:${COLORS.reset}`);
   const t = new ThemedConsole('factorywager');
   t.success('Operation completed successfully');
   t.error('Something went wrong');
@@ -126,17 +126,17 @@ async function demoDashboardSystem() {
 
   spinner.stop('Dashboards built');
 
-  console.log();
-  console.log(
+  console.info();
+  console.info(
     renderTable(['Dashboard', 'Widgets', 'Theme'], rows, { align: ['left', 'right', 'left'] })
   );
 
   // Real-time sync demo
-  console.log();
-  console.log(`${COLORS.dim}Real-time Sync Engine:${COLORS.reset}`);
+  console.info();
+  console.info(`${COLORS.dim}Real-time Sync Engine:${COLORS.reset}`);
   const sync = createSyncEngine({ autoConnect: false, channel: 'demo' });
-  console.log(`  ${COLORS.green}✓${COLORS.reset} Sync engine created (channel: demo)`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} Status: ${sync.getState().status}`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} Sync engine created (channel: demo)`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} Status: ${sync.getState().status}`);
 }
 
 async function demoProfileSystem() {
@@ -153,61 +153,61 @@ async function demoProfileSystem() {
   await Bun.sleep(300);
   spinner.stop('Profile engine ready');
 
-  console.log();
-  console.log(`${COLORS.dim}Profile Engine Features:${COLORS.reset}`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} CPU profiling`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} Heap profiling`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} Sampling profiles`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} Session management`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} Performance markers`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} R2 upload integration`);
+  console.info();
+  console.info(`${COLORS.dim}Profile Engine Features:${COLORS.reset}`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} CPU profiling`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} Heap profiling`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} Sampling profiles`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} Session management`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} Performance markers`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} R2 upload integration`);
 }
 
 async function demoCacheSystem() {
   printHeader('💾 CACHE SYSTEM');
 
-  console.log(`${COLORS.dim}Cloudflare Cached Client:${COLORS.reset}`);
+  console.info(`${COLORS.dim}Cloudflare Cached Client:${COLORS.reset}`);
   const cfStats = cachedCloudflare.getCacheStats();
-  console.log(`  Hit rate: ${cfStats.hitRate.toFixed(1)}%`);
-  console.log(`  Hits: ${cfStats.hits}`);
-  console.log(`  Misses: ${cfStats.misses}`);
-  console.log(`  Size: ${cfStats.size} entries`);
+  console.info(`  Hit rate: ${cfStats.hitRate.toFixed(1)}%`);
+  console.info(`  Hits: ${cfStats.hits}`);
+  console.info(`  Misses: ${cfStats.misses}`);
+  console.info(`  Size: ${cfStats.size} entries`);
 
-  console.log();
-  console.log(`${COLORS.dim}Secret Manager Cache:${COLORS.reset}`);
+  console.info();
+  console.info(`${COLORS.dim}Secret Manager Cache:${COLORS.reset}`);
   const smStats = optimizedSecretManager.getMetrics();
-  console.log(`  Hit rate: ${smStats.hitRate.toFixed(1)}%`);
-  console.log(`  Hits: ${smStats.cacheHits}`);
-  console.log(`  Misses: ${smStats.cacheMisses}`);
-  console.log(`  Evictions: ${smStats.evictions}`);
+  console.info(`  Hit rate: ${smStats.hitRate.toFixed(1)}%`);
+  console.info(`  Hits: ${smStats.cacheHits}`);
+  console.info(`  Misses: ${smStats.cacheMisses}`);
+  console.info(`  Evictions: ${smStats.evictions}`);
 
-  console.log();
-  console.log(`${COLORS.dim}Cache Features:${COLORS.reset}`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} LRU cache with TTL`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} Request deduplication`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} Batch operations`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} Cache warming`);
+  console.info();
+  console.info(`${COLORS.dim}Cache Features:${COLORS.reset}`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} LRU cache with TTL`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} Request deduplication`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} Batch operations`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} Cache warming`);
 }
 
 async function demoCLIFramework() {
   printHeader('🖥️  CLI FRAMEWORK');
 
   // Progress bar demo
-  console.log(`${COLORS.dim}Progress Bar Demo:${COLORS.reset}`);
+  console.info(`${COLORS.dim}Progress Bar Demo:${COLORS.reset}`);
   const bar = new ProgressBar(20, 'Loading', 30);
   for (let i = 0; i <= 20; i++) {
     bar.update(i);
     await Bun.sleep(50);
   }
 
-  console.log();
-  console.log(`${COLORS.dim}CLI Features:${COLORS.reset}`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} Standardized argument parsing`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} Progress indicators`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} Colored output`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} Table rendering`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} Middleware system`);
-  console.log(`  ${COLORS.green}✓${COLORS.reset} Plugin architecture`);
+  console.info();
+  console.info(`${COLORS.dim}CLI Features:${COLORS.reset}`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} Standardized argument parsing`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} Progress indicators`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} Colored output`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} Table rendering`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} Middleware system`);
+  console.info(`  ${COLORS.green}✓${COLORS.reset} Plugin architecture`);
 }
 
 async function demoStats() {
@@ -222,15 +222,15 @@ async function demoStats() {
     ['CLI Tools', '✓ Active', '5+'],
   ];
 
-  console.log(renderTable(stats[0], stats.slice(1), { align: ['left', 'center', 'right'] }));
+  console.info(renderTable(stats[0], stats.slice(1), { align: ['left', 'center', 'right'] }));
 
-  console.log();
-  console.log(`${COLORS.dim}Lines of Code:${COLORS.reset}`);
-  console.log(`  Dashboard System:  ~2,100 lines`);
-  console.log(`  Profile System:    ~700 lines`);
-  console.log(`  Cache Layer:       ~485 lines`);
-  console.log(`  Secret Manager:    ~580 lines`);
-  console.log(`  CLI Framework:     ~505 lines`);
+  console.info();
+  console.info(`${COLORS.dim}Lines of Code:${COLORS.reset}`);
+  console.info(`  Dashboard System:  ~2,100 lines`);
+  console.info(`  Profile System:    ~700 lines`);
+  console.info(`  Cache Layer:       ~485 lines`);
+  console.info(`  Secret Manager:    ~580 lines`);
+  console.info(`  CLI Framework:     ~505 lines`);
 }
 
 async function main() {
@@ -248,15 +248,15 @@ async function main() {
   const duration = performance.now() - startTime;
 
   printHeader('✨ DEMO COMPLETE');
-  console.log();
-  console.log(`  ${COLORS.dim}Duration: ${duration.toFixed(2)}ms${COLORS.reset}`);
-  console.log(`  ${COLORS.dim}Version:  v3.8${COLORS.reset}`);
-  console.log();
-  console.log(
+  console.info();
+  console.info(`  ${COLORS.dim}Duration: ${duration.toFixed(2)}ms${COLORS.reset}`);
+  console.info(`  ${COLORS.dim}Version:  v3.8${COLORS.reset}`);
+  console.info();
+  console.info(
     `  ${COLORS.green}${COLORS.bright}🏰 FactoryWager - Blue, Teal, Green, Orange, Red${COLORS.reset}`
   );
-  console.log(`  ${COLORS.dim}NO purple colors. All systems operational.${COLORS.reset}`);
-  console.log();
+  console.info(`  ${COLORS.dim}NO purple colors. All systems operational.${COLORS.reset}`);
+  console.info();
 }
 
 main().catch(console.error);

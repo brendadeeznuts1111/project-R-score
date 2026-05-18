@@ -19,25 +19,25 @@ const problematicData = {
   a: 0.95, b: 0, c: -5, d: 0.88, e: 0.91
 };
 
-console.log('🚀 Geometric Mean Calculator Benchmark');
-console.log('=====================================\n');
+console.info('🚀 Geometric Mean Calculator Benchmark');
+console.info('=====================================\n');
 
 // Test original implementation
 console.time('Original (valid data)');
 try {
   const originalScore = originalCalculate(testData);
-  console.log(`✅ Original score: ${originalScore.toFixed(6)}`);
+  console.info(`✅ Original score: ${originalScore.toFixed(6)}`);
 } catch (error) {
-  console.log(`❌ Original failed: ${error}`);
+  console.info(`❌ Original failed: ${error}`);
 }
 console.timeEnd('Original (valid data)');
 
 console.time('Original (problematic data)');
 try {
   const originalScore = originalCalculate(problematicData);
-  console.log(`✅ Original score: ${originalScore.toFixed(6)}`);
+  console.info(`✅ Original score: ${originalScore.toFixed(6)}`);
 } catch (error) {
-  console.log(`❌ Original failed: ${error}`);
+  console.info(`❌ Original failed: ${error}`);
 }
 console.timeEnd('Original (problematic data)');
 
@@ -45,9 +45,9 @@ console.timeEnd('Original (problematic data)');
 console.time('Enhanced (valid data)');
 try {
   const enhancedScore = GeometricMeanCalculator.calculate(testData);
-  console.log(`✅ Enhanced score: ${enhancedScore.toFixed(6)}`);
+  console.info(`✅ Enhanced score: ${enhancedScore.toFixed(6)}`);
 } catch (error) {
-  console.log(`❌ Enhanced failed: ${error}`);
+  console.info(`❌ Enhanced failed: ${error}`);
 }
 console.timeEnd('Enhanced (valid data)');
 
@@ -57,17 +57,17 @@ try {
     handleInvalid: 'clamp',
     minValidValue: 0.0001
   });
-  console.log(`✅ Enhanced score (clamped): ${enhancedScore.toFixed(6)}`);
+  console.info(`✅ Enhanced score (clamped): ${enhancedScore.toFixed(6)}`);
 } catch (error) {
-  console.log(`❌ Enhanced failed: ${error}`);
+  console.info(`❌ Enhanced failed: ${error}`);
 }
 console.timeEnd('Enhanced (problematic data - clamp)');
 
 // Test with metadata
-console.log('\n📊 Enhanced with Metadata:');
+console.info('\n📊 Enhanced with Metadata:');
 const { score, metadata } = GeometricMeanCalculator.calculateWithMetadata(testData);
 
-console.log(Bun.inspect({
+console.info(Bun.inspect({
   score: score.toFixed(6),
   metadata: {
     ...metadata,
@@ -76,7 +76,7 @@ console.log(Bun.inspect({
 }));
 
 // Test edge cases
-console.log('\n🧪 Edge Case Testing:');
+console.info('\n🧪 Edge Case Testing:');
 
 const edgeCases = [
   { name: 'Empty object', data: {} },
@@ -87,21 +87,21 @@ const edgeCases = [
 ];
 
 for (const testCase of edgeCases) {
-  console.log(`\nTesting: ${testCase.name}`);
+  console.info(`\nTesting: ${testCase.name}`);
   try {
     const result = GeometricMeanCalculator.calculate(testCase.data as Record<string, number>, {
       handleInvalid: 'clamp',
       minValidValue: 0.001
     });
-    console.log(`✅ Score: ${result.toFixed(6)}`);
+    console.info(`✅ Score: ${result.toFixed(6)}`);
   } catch (error) {
-    console.log(`❌ Failed: ${error}`);
+    console.info(`❌ Failed: ${error}`);
   }
 }
 
-console.log('\n🎯 Performance Summary:');
-console.log('- Enhanced version handles all edge cases safely');
-console.log('- Original version fails on zeros, negatives, NaN, Infinity');
-console.log('- Enhanced version provides detailed error messages');
-console.log('- Enhanced version includes performance metadata');
-console.log('- Both versions are fast, but enhanced is production-ready');
+console.info('\n🎯 Performance Summary:');
+console.info('- Enhanced version handles all edge cases safely');
+console.info('- Original version fails on zeros, negatives, NaN, Infinity');
+console.info('- Enhanced version provides detailed error messages');
+console.info('- Enhanced version includes performance metadata');
+console.info('- Both versions are fast, but enhanced is production-ready');

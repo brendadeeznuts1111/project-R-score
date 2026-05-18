@@ -203,8 +203,8 @@ export class UltimateEnhancedZenDashboard {
   }
 
   private async initializeEnterpriseFeatures(): Promise<void> {
-    console.log('🏢 Initializing Ultimate Enhanced Zen Dashboard - Enterprise Edition');
-    console.log('=' .repeat(80));
+    console.info('🏢 Initializing Ultimate Enhanced Zen Dashboard - Enterprise Edition');
+    console.info('=' .repeat(80));
     
     // Initialize advanced MIME type detection
     await this.initializeAdvancedMimeTypes();
@@ -215,13 +215,13 @@ export class UltimateEnhancedZenDashboard {
     // Initialize performance optimization
     await this.initializePerformanceOptimization();
     
-    console.log('🎯 Enterprise Features Initialized:');
-    console.log('   ✅ Advanced Analytics & Monitoring');
-    console.log('   ✅ Real-time Performance Tracking');
-    console.log('   ✅ Intelligent Alert System');
-    console.log('   ✅ Compliance Scoring');
-    console.log('   ✅ Enhanced Caching System');
-    console.log('   ✅ Security Posture Analysis');
+    console.info('🎯 Enterprise Features Initialized:');
+    console.info('   ✅ Advanced Analytics & Monitoring');
+    console.info('   ✅ Real-time Performance Tracking');
+    console.info('   ✅ Intelligent Alert System');
+    console.info('   ✅ Compliance Scoring');
+    console.info('   ✅ Enhanced Caching System');
+    console.info('   ✅ Security Posture Analysis');
   }
 
   private async initializeAdvancedMimeTypes(): Promise<void> {
@@ -238,7 +238,7 @@ export class UltimateEnhancedZenDashboard {
       { ext: '.yaml', file: 'bunfig.toml', desc: 'YAML configuration' }
     ];
 
-    console.log('🎯 Advanced MIME Type Detection with File Analytics:');
+    console.info('🎯 Advanced MIME Type Detection with File Analytics:');
     
     for (const { ext, file, desc } of testFiles) {
       try {
@@ -259,10 +259,10 @@ export class UltimateEnhancedZenDashboard {
             detected: true
           });
           
-          console.log(`   ${ext} → ${mimeType || 'unknown'} (${desc})`);
-          console.log(`      📊 Size: ${this.formatBytes(size)}`);
-          console.log(`      🔍 Hash: ${fileStats.hash || 'N/A'}`);
-          console.log(`      📅 Modified: ${new Date(bunFile.lastModified).toISOString()}`);
+          console.info(`   ${ext} → ${mimeType || 'unknown'} (${desc})`);
+          console.info(`      📊 Size: ${this.formatBytes(size)}`);
+          console.info(`      🔍 Hash: ${fileStats.hash || 'N/A'}`);
+          console.info(`      📅 Modified: ${new Date(bunFile.lastModified).toISOString()}`);
           
           // Track file access
           this.trackFileAccess(file, size);
@@ -338,7 +338,7 @@ export class UltimateEnhancedZenDashboard {
   }
 
   private async initializeSecurityFeatures(): Promise<void> {
-    console.log('🔒 Initializing Security Features...');
+    console.info('🔒 Initializing Security Features...');
     
     // Security posture analysis
     const securityChecks = [
@@ -351,9 +351,9 @@ export class UltimateEnhancedZenDashboard {
     for (const { name, check } of securityChecks) {
       try {
         const result = await check();
-        console.log(`   ✅ ${name}: ${result ? 'SECURE' : 'WARNING'}`);
+        console.info(`   ✅ ${name}: ${result ? 'SECURE' : 'WARNING'}`);
       } catch (error) {
-        console.log(`   ❌ ${name}: ERROR - ${error.message}`);
+        console.info(`   ❌ ${name}: ERROR - ${error.message}`);
         this.addAlert('error', `Security check failed for ${name}: ${error.message}`);
       }
     }
@@ -381,16 +381,16 @@ export class UltimateEnhancedZenDashboard {
   }
 
   private async initializePerformanceOptimization(): Promise<void> {
-    console.log('⚡ Initializing Performance Optimization...');
+    console.info('⚡ Initializing Performance Optimization...');
     
     // Pre-warm the search cache
     const commonQueries = ['bun', 'performance', 'zen', 'fetch', 'spawn'];
     for (const query of commonQueries) {
       try {
         await this.performOptimizedSearch(query);
-        console.log(`   🚀 Pre-warmed cache for: ${query}`);
+        console.info(`   🚀 Pre-warmed cache for: ${query}`);
       } catch (error) {
-        console.log(`   ⚠️  Pre-warm failed for ${query}: ${error.message}`);
+        console.info(`   ⚠️  Pre-warm failed for ${query}: ${error.message}`);
       }
     }
     
@@ -398,7 +398,7 @@ export class UltimateEnhancedZenDashboard {
     if (globalThis.gc) {
       globalThis.gc();
     }
-    console.log('   🧹 Garbage collection completed');
+    console.info('   🧹 Garbage collection completed');
   }
 
   private async performOptimizedSearch(query: string): Promise<any> {
@@ -426,7 +426,7 @@ export class UltimateEnhancedZenDashboard {
         priority: 'high',
         onProgress: (stats) => {
           if (stats.matchesFound % 100 === 0) {
-            console.log(`   📊 Progress: ${stats.matchesFound} matches at ${stats.throughput.toFixed(0)} matches/sec`);
+            console.info(`   📊 Progress: ${stats.matchesFound} matches at ${stats.throughput.toFixed(0)} matches/sec`);
           }
         }
       });
@@ -589,7 +589,7 @@ export class UltimateEnhancedZenDashboard {
       this.metrics.alerts = this.metrics.alerts.slice(-50);
     }
     
-    console.log(`🚨 ${level.toUpperCase()}: ${message}`);
+    console.info(`🚨 ${level.toUpperCase()}: ${message}`);
   }
 
   private isCacheValid(cache: any): boolean {
@@ -608,7 +608,7 @@ export class UltimateEnhancedZenDashboard {
    * Start the ultimate enterprise dashboard
    */
   async startUltimateDashboard(): Promise<void> {
-    console.log('🚀 Starting Ultimate Enhanced Zen Dashboard - Enterprise Edition');
+    console.info('🚀 Starting Ultimate Enhanced Zen Dashboard - Enterprise Edition');
     
     const bun = (globalThis as any).Bun as any;
     this.server = bun.serve({
@@ -655,14 +655,14 @@ export class UltimateEnhancedZenDashboard {
       }
     });
     
-    console.log('🌐 Ultimate Enterprise Dashboard Started!');
-    console.log('=' .repeat(80));
-    console.log(`📱 Dashboard: http://localhost:3007/dashboard`);
-    console.log(`📊 Ultimate Metrics: http://localhost:3007/api/ultimate-metrics`);
-    console.log(`📈 Performance History: http://localhost:3007/api/performance-history`);
-    console.log(`🔍 Enhanced Search: http://localhost:3007/api/search?query=zen`);
-    console.log(`🚨 Alert System: http://localhost:3007/api/alerts`);
-    console.log('=' .repeat(80));
+    console.info('🌐 Ultimate Enterprise Dashboard Started!');
+    console.info('=' .repeat(80));
+    console.info(`📱 Dashboard: http://localhost:3007/dashboard`);
+    console.info(`📊 Ultimate Metrics: http://localhost:3007/api/ultimate-metrics`);
+    console.info(`📈 Performance History: http://localhost:3007/api/performance-history`);
+    console.info(`🔍 Enhanced Search: http://localhost:3007/api/search?query=zen`);
+    console.info(`🚨 Alert System: http://localhost:3007/api/alerts`);
+    console.info('=' .repeat(80));
   }
 
   private async generateUltimateDashboardHTML(): Promise<string> {

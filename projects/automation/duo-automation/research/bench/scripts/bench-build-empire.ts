@@ -12,7 +12,7 @@ async function benchmark(name: string, fn: () => Promise<void>) {
   };
 }
 
-console.log('🚀 Starting Empire Build Bench...');
+console.info('🚀 Starting Empire Build Bench...');
 
 const buildBench = await benchmark('Empire Build', async () => {
     await Bun.build({
@@ -25,10 +25,10 @@ const buildBench = await benchmark('Empire Build', async () => {
     });
 });
 
-console.log(`✅ Empire Build: ${buildBench.avg.toFixed(0)}ms (Tree-shake enabled)`);
+console.info(`✅ Empire Build: ${buildBench.avg.toFixed(0)}ms (Tree-shake enabled)`);
 
 if (buildBench.avg < 3000) {
-    console.log('⚡ Build speed optimized (Sub-3s bundle).');
+    console.info('⚡ Build speed optimized (Sub-3s bundle).');
 } else {
-    console.log('⚠️ Build slower than expected.');
+    console.info('⚠️ Build slower than expected.');
 }

@@ -27,13 +27,13 @@ const check = {
 };
 
 // This will trigger the custom inspection
-console.log(check);
+console.info(check);
 
 // Also show the raw decoded URI for verification
-console.log("\n📋 Verification:");
-console.log(`Raw URI: ${check.rawUri}`);
-console.log(`Decoded URI: ${decodeURIComponent(check.rawUri)}`);
-console.log(`Contains zero-width: ${decodeURIComponent(check.rawUri).includes('\u200B') ? 'Yes Ⓩ' : 'No'}`);
+console.info("\n📋 Verification:");
+console.info(`Raw URI: ${check.rawUri}`);
+console.info(`Decoded URI: ${decodeURIComponent(check.rawUri)}`);
+console.info(`Contains zero-width: ${decodeURIComponent(check.rawUri).includes('\u200B') ? 'Yes Ⓩ' : 'No'}`);
 
 // Enhanced version with position detection
 const enhancedCheck = {
@@ -56,5 +56,5 @@ const enhancedCheck = {
   }
 };
 
-console.log("\n🎯 Enhanced Version:");
-console.log(enhancedCheck);
+console.info("\n🎯 Enhanced Version:");
+console.info(enhancedCheck);

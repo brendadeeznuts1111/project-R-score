@@ -67,13 +67,13 @@ class WorkspaceCLI {
     // Handle CTRL+C (SIGINT)
     process.on('SIGINT', async () => {
       if (this.isShuttingDown) {
-        console.log('\n🚨 Force shutdown requested. Terminating immediately...');
+        console.info('\n🚨 Force shutdown requested. Terminating immediately...');
         process.exit(1);
       }
 
-      console.log('\n🛑 Graceful shutdown initiated...');
-      console.log('📋 Cleaning up active workspace operations...');
-      console.log('💡 Press CTRL+C again to force shutdown');
+      console.info('\n🛑 Graceful shutdown initiated...');
+      console.info('📋 Cleaning up active workspace operations...');
+      console.info('💡 Press CTRL+C again to force shutdown');
 
       this.isShuttingDown = true;
       await this.gracefulShutdown();
@@ -81,7 +81,7 @@ class WorkspaceCLI {
 
     // Handle SIGTERM (process termination)
     process.on('SIGTERM', async () => {
-      console.log('\n🛑 SIGTERM received. Shutting down gracefully...');
+      console.info('\n🛑 SIGTERM received. Shutting down gracefully...');
       this.isShuttingDown = true;
       await this.gracefulShutdown();
     });
@@ -89,14 +89,14 @@ class WorkspaceCLI {
     // Handle uncaught exceptions
     process.on('uncaughtException', error => {
       console.error('\n💥 Uncaught Exception:', error);
-      console.log('🛑 Attempting graceful shutdown...');
+      console.info('🛑 Attempting graceful shutdown...');
       this.gracefulShutdown().finally(() => process.exit(1));
     });
 
     // Handle unhandled promise rejections
     process.on('unhandledRejection', (reason, promise) => {
       console.error('\n💥 Unhandled Promise Rejection:', reason);
-      console.log('🛑 Attempting graceful shutdown...');
+      console.info('🛑 Attempting graceful shutdown...');
       this.gracefulShutdown().finally(() => process.exit(1));
     });
   }
@@ -109,7 +109,7 @@ class WorkspaceCLI {
       const startTime = Date.now();
       const maxShutdownTime = 10000; // 10 seconds max
 
-      console.log('⏳ Waiting for active operations to complete...');
+      console.info('⏳ Waiting for active operations to complete...');
 
       // Wait for active operations with timeout
       const shutdownPromise = Promise.allSettled(this.activeOperations);
@@ -120,15 +120,15 @@ class WorkspaceCLI {
       try {
         await Promise.race([shutdownPromise, timeoutPromise]);
         const elapsed = Date.now() - startTime;
-        console.log(`✅ Graceful shutdown completed in ${elapsed}ms`);
+        console.info(`✅ Graceful shutdown completed in ${elapsed}ms`);
       } catch (error) {
-        console.log('⚠️ Shutdown timeout reached. Some operations may be incomplete.');
+        console.info('⚠️ Shutdown timeout reached. Some operations may be incomplete.');
       }
 
       // Perform cleanup operations
       await this.performCleanup();
 
-      console.log('🎯 Workspace orchestrator shutdown complete.');
+      console.info('🎯 Workspace orchestrator shutdown complete.');
       process.exit(0);
     } catch (error) {
       console.error('❌ Error during shutdown:', error);
@@ -140,19 +140,19 @@ class WorkspaceCLI {
    * 🧽 Perform cleanup operations
    */
   private async performCleanup(): Promise<void> {
-    console.log('🧹 Performing cleanup operations...');
+    console.info('🧹 Performing cleanup operations...');
 
     try {
       // Save any pending state
-      console.log('💾 Saving workspace state...');
+      console.info('💾 Saving workspace state...');
 
       // Clean up temporary files
-      console.log('🗑️ Cleaning temporary files...');
+      console.info('🗑️ Cleaning temporary files...');
 
       // Close any open file handles or network connections
-      console.log('🔌 Closing connections...');
+      console.info('🔌 Closing connections...');
 
-      console.log('✨ Cleanup completed successfully');
+      console.info('✨ Cleanup completed successfully');
     } catch (error) {
       console.warn('⚠️ Some cleanup operations failed:', error);
     }
@@ -175,8 +175,8 @@ class WorkspaceCLI {
     const options = this.parseArgs(args);
 
     if (options.verbose) {
-      console.log('🚀 Fire22 Workspace Orchestrator');
-      console.log('='.repeat(50));
+      console.info('🚀 Fire22 Workspace Orchestrator');
+      console.info('='.repeat(50));
     }
 
     switch (options.action) {
@@ -233,11 +233,11 @@ class WorkspaceCLI {
 
   private async splitWorkspaces(options: CLIOptions): Promise<void> {
     if (this.isShuttingDown) {
-      console.log('🛑 Operation cancelled due to shutdown');
+      console.info('🛑 Operation cancelled due to shutdown');
       return;
     }
 
-    console.log('🔄 Splitting workspaces...');
+    console.info('🔄 Splitting workspaces...');
 
     const operation = this.orchestrator.splitWorkspace({
       dryRun: options.dryRun,
@@ -249,23 +249,23 @@ class WorkspaceCLI {
     const result = await this.trackOperation(operation);
 
     if (this.isShuttingDown) {
-      console.log('🛑 Operation completed during shutdown');
+      console.info('🛑 Operation completed during shutdown');
       return;
     }
 
-    console.log('\n📊 Split Results:');
+    console.info('\n📊 Split Results:');
     for (const [workspace, info] of result.workspaces) {
       const statusIcon = info.status === 'created' ? '✅' : info.status === 'updated' ? '🔄' : '❌';
-      console.log(`${statusIcon} ${workspace}: ${info.packages.join(', ')}`);
+      console.info(`${statusIcon} ${workspace}: ${info.packages.join(', ')}`);
     }
 
-    console.log(
+    console.info(
       `\n🎯 Summary: ${result.summary.created} created, ${result.summary.updated} updated, ${result.summary.failed} failed`
     );
   }
 
   private async publishWorkspaces(options: CLIOptions): Promise<void> {
-    console.log('📦 Publishing workspaces...');
+    console.info('📦 Publishing workspaces...');
 
     const result = await this.orchestrator.publishWorkspaces({
       workspaces: options.workspaces,
@@ -274,13 +274,13 @@ class WorkspaceCLI {
       verbose: options.verbose,
     });
 
-    console.log('\n📊 Publishing Results:');
+    console.info('\n📊 Publishing Results:');
     for (const [workspace, info] of result.published) {
       const statusIcon = info.status === 'success' ? '✅' : '❌';
-      console.log(`${statusIcon} ${workspace} → ${info.registry}@${info.version}`);
+      console.info(`${statusIcon} ${workspace} → ${info.registry}@${info.version}`);
     }
 
-    console.log(
+    console.info(
       `\n🎯 Summary: ${result.summary.success} published, ${result.summary.failed} failed`
     );
 
@@ -290,7 +290,7 @@ class WorkspaceCLI {
   }
 
   private async reunifyWorkspaces(options: CLIOptions): Promise<void> {
-    console.log('🔄 Reunifying workspaces...');
+    console.info('🔄 Reunifying workspaces...');
 
     const result = await this.orchestrator.reunifyWorkspaces({
       mode: options.mode,
@@ -299,16 +299,16 @@ class WorkspaceCLI {
       verbose: options.verbose,
     });
 
-    console.log('\n📊 Reunification Results:');
-    console.log(`📦 Dependencies updated: ${result.dependencies.size}`);
+    console.info('\n📊 Reunification Results:');
+    console.info(`📦 Dependencies updated: ${result.dependencies.size}`);
     if (result.dependencies.size > 0) {
       for (const [pkg, version] of result.dependencies) {
-        console.log(`  • ${pkg}: ${version}`);
+        console.info(`  • ${pkg}: ${version}`);
       }
     }
 
-    console.log(`🧪 Tests: ${result.tests.passed} passed, ${result.tests.failed} failed`);
-    console.log(`🎯 Status: ${result.status}`);
+    console.info(`🧪 Tests: ${result.tests.passed} passed, ${result.tests.failed} failed`);
+    console.info(`🎯 Status: ${result.status}`);
 
     if (result.status === 'failed') {
       process.exit(1);
@@ -316,7 +316,7 @@ class WorkspaceCLI {
   }
 
   private async runBenchmarks(options: CLIOptions): Promise<void> {
-    console.log('📊 Running benchmarks...');
+    console.info('📊 Running benchmarks...');
 
     const result = await this.orchestrator.runBenchmarks({
       suites: options.suites,
@@ -326,18 +326,18 @@ class WorkspaceCLI {
       verbose: options.verbose,
     });
 
-    console.log('\n📊 Benchmark Results:');
+    console.info('\n📊 Benchmark Results:');
     for (const [suite, results] of result.results) {
-      console.log(`📊 ${suite}: ${results.error ? '❌ Failed' : '✅ Completed'}`);
+      console.info(`📊 ${suite}: ${results.error ? '❌ Failed' : '✅ Completed'}`);
       if (results.error) {
-        console.log(`  Error: ${results.error}`);
+        console.info(`  Error: ${results.error}`);
       }
     }
 
-    console.log(
+    console.info(
       `🎯 Performance budgets: ${result.budgets.passed} passed, ${result.budgets.failed} failed`
     );
-    console.log(`🎯 Overall status: ${result.status}`);
+    console.info(`🎯 Overall status: ${result.status}`);
 
     if (result.status === 'failed') {
       process.exit(1);
@@ -349,11 +349,11 @@ class WorkspaceCLI {
    */
   private async runTests(options: CLIOptions): Promise<void> {
     if (this.isShuttingDown) {
-      console.log('🛑 Operation cancelled due to shutdown');
+      console.info('🛑 Operation cancelled due to shutdown');
       return;
     }
 
-    console.log('🧪 Running workspace tests...');
+    console.info('🧪 Running workspace tests...');
 
     const testOptions = {
       suites: options.suites?.filter(s =>
@@ -372,43 +372,43 @@ class WorkspaceCLI {
     const result = await this.trackOperation(operation);
 
     if (this.isShuttingDown) {
-      console.log('🛑 Test operation completed during shutdown');
+      console.info('🛑 Test operation completed during shutdown');
       return;
     }
 
-    console.log('\n🎯 Test Results Summary:');
-    console.log(`✅ Passed: ${result.passed}`);
-    console.log(`❌ Failed: ${result.failed}`);
-    console.log(`⏭️  Skipped: ${result.skipped}`);
-    console.log(`⏱️  Duration: ${result.duration}`);
+    console.info('\n🎯 Test Results Summary:');
+    console.info(`✅ Passed: ${result.passed}`);
+    console.info(`❌ Failed: ${result.failed}`);
+    console.info(`⏭️  Skipped: ${result.skipped}`);
+    console.info(`⏱️  Duration: ${result.duration}`);
 
     if (result.coverage) {
-      console.log(`\n📊 Test Coverage:`);
-      console.log(`  Lines: ${result.coverage.lines}%`);
-      console.log(`  Functions: ${result.coverage.functions}%`);
-      console.log(`  Branches: ${result.coverage.branches}%`);
+      console.info(`\n📊 Test Coverage:`);
+      console.info(`  Lines: ${result.coverage.lines}%`);
+      console.info(`  Functions: ${result.coverage.functions}%`);
+      console.info(`  Branches: ${result.coverage.branches}%`);
     }
 
     if (result.performance?.regressions?.length) {
-      console.log(`\n⚠️  Performance Regressions:`);
+      console.info(`\n⚠️  Performance Regressions:`);
       result.performance.regressions.forEach(regression => {
-        console.log(`  • ${regression}`);
+        console.info(`  • ${regression}`);
       });
     }
 
     if (result.performance?.improvements?.length) {
-      console.log(`\n📈 Performance Improvements:`);
+      console.info(`\n📈 Performance Improvements:`);
       result.performance.improvements.forEach(improvement => {
-        console.log(`  • ${improvement}`);
+        console.info(`  • ${improvement}`);
       });
     }
 
     if (result.failed > 0) {
-      console.log('\n❌ Some tests failed. Check output above for details.');
+      console.info('\n❌ Some tests failed. Check output above for details.');
       process.exit(1);
     }
 
-    console.log('\n✅ All tests passed successfully!');
+    console.info('\n✅ All tests passed successfully!');
   }
 
   /**
@@ -416,11 +416,11 @@ class WorkspaceCLI {
    */
   private async runEdgeCaseTests(options: CLIOptions): Promise<void> {
     if (this.isShuttingDown) {
-      console.log('🛑 Operation cancelled due to shutdown');
+      console.info('🛑 Operation cancelled due to shutdown');
       return;
     }
 
-    console.log('🛡️ Running comprehensive edge case tests...');
+    console.info('🛡️ Running comprehensive edge case tests...');
 
     const edgeCaseOptions = {
       verbose: options.verbose,
@@ -433,27 +433,27 @@ class WorkspaceCLI {
     const result = await this.trackOperation(operation);
 
     if (this.isShuttingDown) {
-      console.log('🛑 Edge case tests completed during shutdown');
+      console.info('🛑 Edge case tests completed during shutdown');
       return;
     }
 
-    console.log('\n🎯 Edge Case Test Results Summary:');
-    console.log(
+    console.info('\n🎯 Edge Case Test Results Summary:');
+    console.info(
       `📊 Test Suites: ${result.summary.passedSuites}/${result.summary.totalSuites} passed`
     );
-    console.log(
+    console.info(
       `🧪 Total Tests: ${result.summary.totalPassed}/${result.summary.totalTests} passed`
     );
-    console.log(`❌ Failed: ${result.summary.totalFailed}`);
-    console.log(`⏭️  Skipped: ${result.summary.totalSkipped}`);
-    console.log(`⏱️  Duration: ${result.summary.duration}`);
+    console.info(`❌ Failed: ${result.summary.totalFailed}`);
+    console.info(`⏭️  Skipped: ${result.summary.totalSkipped}`);
+    console.info(`⏱️  Duration: ${result.summary.duration}`);
 
     if (!result.success) {
-      console.log('\n❌ Some edge case tests failed. Check output above for details.');
+      console.info('\n❌ Some edge case tests failed. Check output above for details.');
       process.exit(1);
     }
 
-    console.log('\n✅ All edge case tests passed successfully!');
+    console.info('\n✅ All edge case tests passed successfully!');
   }
 
   /**
@@ -461,11 +461,11 @@ class WorkspaceCLI {
    */
   private async runRuntimeEdgeCases(options: CLIOptions): Promise<void> {
     if (this.isShuttingDown) {
-      console.log('🛑 Operation cancelled due to shutdown');
+      console.info('🛑 Operation cancelled due to shutdown');
       return;
     }
 
-    console.log('⚡ Running runtime environment edge case tests...');
+    console.info('⚡ Running runtime environment edge case tests...');
 
     const operation = this.edgeCaseRunner.runSpecificSuite('runtime', {
       verbose: options.verbose,
@@ -475,23 +475,23 @@ class WorkspaceCLI {
     const result = await this.trackOperation(operation);
 
     if (this.isShuttingDown) {
-      console.log('🛑 Runtime edge case tests completed during shutdown');
+      console.info('🛑 Runtime edge case tests completed during shutdown');
       return;
     }
 
-    console.log(
+    console.info(
       `\n⚡ Runtime Edge Cases: ${result.passed} passed, ${result.failed} failed (${result.duration})`
     );
 
     if (!result.success) {
-      console.log('❌ Runtime edge case tests failed');
+      console.info('❌ Runtime edge case tests failed');
       if (result.issues.length > 0) {
-        result.issues.forEach(issue => console.log(`  • ${issue}`));
+        result.issues.forEach(issue => console.info(`  • ${issue}`));
       }
       process.exit(1);
     }
 
-    console.log('✅ Runtime edge case tests passed!');
+    console.info('✅ Runtime edge case tests passed!');
   }
 
   /**
@@ -499,11 +499,11 @@ class WorkspaceCLI {
    */
   private async runWorkspaceEdgeCases(options: CLIOptions): Promise<void> {
     if (this.isShuttingDown) {
-      console.log('🛑 Operation cancelled due to shutdown');
+      console.info('🛑 Operation cancelled due to shutdown');
       return;
     }
 
-    console.log('🏗️ Running workspace edge case tests...');
+    console.info('🏗️ Running workspace edge case tests...');
 
     const operation = this.edgeCaseRunner.runSpecificSuite('workspace', {
       verbose: options.verbose,
@@ -513,23 +513,23 @@ class WorkspaceCLI {
     const result = await this.trackOperation(operation);
 
     if (this.isShuttingDown) {
-      console.log('🛑 Workspace edge case tests completed during shutdown');
+      console.info('🛑 Workspace edge case tests completed during shutdown');
       return;
     }
 
-    console.log(
+    console.info(
       `\n🏗️ Workspace Edge Cases: ${result.passed} passed, ${result.failed} failed (${result.duration})`
     );
 
     if (!result.success) {
-      console.log('❌ Workspace edge case tests failed');
+      console.info('❌ Workspace edge case tests failed');
       if (result.issues.length > 0) {
-        result.issues.forEach(issue => console.log(`  • ${issue}`));
+        result.issues.forEach(issue => console.info(`  • ${issue}`));
       }
       process.exit(1);
     }
 
-    console.log('✅ Workspace edge case tests passed!');
+    console.info('✅ Workspace edge case tests passed!');
   }
 
   /**
@@ -537,11 +537,11 @@ class WorkspaceCLI {
    */
   private async runPatternEdgeCases(options: CLIOptions): Promise<void> {
     if (this.isShuttingDown) {
-      console.log('🛑 Operation cancelled due to shutdown');
+      console.info('🛑 Operation cancelled due to shutdown');
       return;
     }
 
-    console.log('🕸️ Running pattern system edge case tests...');
+    console.info('🕸️ Running pattern system edge case tests...');
 
     const operation = this.edgeCaseRunner.runSpecificSuite('pattern', {
       verbose: options.verbose,
@@ -551,23 +551,23 @@ class WorkspaceCLI {
     const result = await this.trackOperation(operation);
 
     if (this.isShuttingDown) {
-      console.log('🛑 Pattern edge case tests completed during shutdown');
+      console.info('🛑 Pattern edge case tests completed during shutdown');
       return;
     }
 
-    console.log(
+    console.info(
       `\n🕸️ Pattern Edge Cases: ${result.passed} passed, ${result.failed} failed (${result.duration})`
     );
 
     if (!result.success) {
-      console.log('❌ Pattern edge case tests failed');
+      console.info('❌ Pattern edge case tests failed');
       if (result.issues.length > 0) {
-        result.issues.forEach(issue => console.log(`  • ${issue}`));
+        result.issues.forEach(issue => console.info(`  • ${issue}`));
       }
       process.exit(1);
     }
 
-    console.log('✅ Pattern edge case tests passed!');
+    console.info('✅ Pattern edge case tests passed!');
   }
 
   /**
@@ -575,13 +575,13 @@ class WorkspaceCLI {
    */
   private async runTestsInWatchMode(options: CLIOptions): Promise<void> {
     if (this.isShuttingDown) {
-      console.log('🛑 Operation cancelled due to shutdown');
+      console.info('🛑 Operation cancelled due to shutdown');
       return;
     }
 
-    console.log('👀 Starting workspace tests in watch mode...');
-    console.log('🔄 Tests will re-run automatically on file changes');
-    console.log('🛑 Press Ctrl+C to stop\n');
+    console.info('👀 Starting workspace tests in watch mode...');
+    console.info('🔄 Tests will re-run automatically on file changes');
+    console.info('🛑 Press Ctrl+C to stop\n');
 
     const testOptions = {
       suites: options.suites?.filter(s =>
@@ -603,50 +603,50 @@ class WorkspaceCLI {
   }
 
   private async showStatus(options: CLIOptions): Promise<void> {
-    console.log('📊 Workspace Status');
-    console.log('='.repeat(50));
+    console.info('📊 Workspace Status');
+    console.info('='.repeat(50));
 
     try {
       // Get comprehensive workspace status
       const status = await this.getWorkspaceStatus(options);
 
       // Display workspace overview
-      console.log(`\n🏗️  **Workspace Overview**`);
-      console.log(`   Workspaces: ${status.workspaces.size}`);
-      console.log(`   Total packages: ${status.totalPackages}`);
-      console.log(`   Created workspaces: ${status.createdWorkspaces}`);
-      console.log(`   Last split: ${status.lastSplit || 'Never'}`);
+      console.info(`\n🏗️  **Workspace Overview**`);
+      console.info(`   Workspaces: ${status.workspaces.size}`);
+      console.info(`   Total packages: ${status.totalPackages}`);
+      console.info(`   Created workspaces: ${status.createdWorkspaces}`);
+      console.info(`   Last split: ${status.lastSplit || 'Never'}`);
 
       // Display package health
-      console.log(`\n📦 **Package Health**`);
+      console.info(`\n📦 **Package Health**`);
       for (const [domain, packages] of status.workspaces) {
         const healthIcon = this.getHealthIcon(packages);
-        console.log(`   ${healthIcon} ${domain}: ${packages.packages.length} packages`);
+        console.info(`   ${healthIcon} ${domain}: ${packages.packages.length} packages`);
 
         if (options.verbose) {
           packages.packages.forEach(pkg => {
             const pkgIcon =
               pkg.buildStatus === 'success' ? '✅' : pkg.buildStatus === 'error' ? '❌' : '🔄';
-            console.log(`     ${pkgIcon} ${pkg.name}@${pkg.version} (${pkg.buildStatus})`);
+            console.info(`     ${pkgIcon} ${pkg.name}@${pkg.version} (${pkg.buildStatus})`);
           });
         }
       }
 
       // Display publishing status
-      console.log(`\n📤 **Publishing Status**`);
+      console.info(`\n📤 **Publishing Status**`);
       for (const [registry, regStatus] of status.publishing) {
         const statusIcon = regStatus.available ? '✅' : '❌';
-        console.log(
+        console.info(
           `   ${statusIcon} ${registry}: ${regStatus.published}/${regStatus.total} published`
         );
 
         if (!regStatus.available && options.verbose) {
-          console.log(`     Error: ${regStatus.error || 'Registry unavailable'}`);
+          console.info(`     Error: ${regStatus.error || 'Registry unavailable'}`);
         }
       }
 
       // Display benchmark results
-      console.log(`\n📊 **Performance Status**`);
+      console.info(`\n📊 **Performance Status**`);
       if (status.benchmarks.lastRun) {
         const trendIcon =
           status.benchmarks.trend === 'up'
@@ -654,35 +654,35 @@ class WorkspaceCLI {
             : status.benchmarks.trend === 'down'
               ? '📉'
               : '➡️';
-        console.log(`   Last run: ${status.benchmarks.lastRun}`);
-        console.log(`   Status: ${status.benchmarks.status}`);
-        console.log(`   Trend: ${trendIcon} ${status.benchmarks.trend.toUpperCase()}`);
-        console.log(
+        console.info(`   Last run: ${status.benchmarks.lastRun}`);
+        console.info(`   Status: ${status.benchmarks.status}`);
+        console.info(`   Trend: ${trendIcon} ${status.benchmarks.trend.toUpperCase()}`);
+        console.info(
           `   Budgets: ${status.benchmarks.budgetsPassed}/${status.benchmarks.totalBudgets} passed`
         );
       } else {
-        console.log(`   ⚠️  No benchmark data available`);
+        console.info(`   ⚠️  No benchmark data available`);
       }
 
       // Display dependency health
-      console.log(`\n🔗 **Dependency Health**`);
-      console.log(`   Outdated: ${status.dependencies.outdated}`);
-      console.log(`   Vulnerabilities: ${status.dependencies.vulnerabilities}`);
-      console.log(`   Health score: ${status.dependencies.healthScore}/100`);
+      console.info(`\n🔗 **Dependency Health**`);
+      console.info(`   Outdated: ${status.dependencies.outdated}`);
+      console.info(`   Vulnerabilities: ${status.dependencies.vulnerabilities}`);
+      console.info(`   Health score: ${status.dependencies.healthScore}/100`);
 
       if (status.dependencies.recommendations.length > 0 && options.verbose) {
-        console.log(`\n💡 **Recommendations**`);
+        console.info(`\n💡 **Recommendations**`);
         status.dependencies.recommendations.forEach(rec => {
-          console.log(`   • ${rec}`);
+          console.info(`   • ${rec}`);
         });
       }
 
       // Display git status for created workspaces
       if (status.git.workspaces.size > 0) {
-        console.log(`\n🔧 **Git Status**`);
+        console.info(`\n🔧 **Git Status**`);
         for (const [workspace, gitStatus] of status.git.workspaces) {
           const gitIcon = gitStatus.clean ? '✅' : '🔄';
-          console.log(`   ${gitIcon} ${workspace}: ${gitStatus.branch} (${gitStatus.status})`);
+          console.info(`   ${gitIcon} ${workspace}: ${gitStatus.branch} (${gitStatus.status})`);
         }
       }
     } catch (error) {
@@ -1136,7 +1136,7 @@ class WorkspaceCLI {
   }
 
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🚀 **Fire22 Workspace Orchestrator CLI**
 
 USAGE:

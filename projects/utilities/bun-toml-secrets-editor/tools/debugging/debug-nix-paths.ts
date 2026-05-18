@@ -1,25 +1,25 @@
 #!/usr/bin/env bun
 
-console.log("🔍 Nix FFI Environment Debug\n");
+console.info("🔍 Nix FFI Environment Debug\n");
 
 const vars = ["C_INCLUDE_PATH", "LIBRARY_PATH", "PATH", "LD_LIBRARY_PATH"];
 
 for (const v of vars) {
 	const val = process.env[v];
-	console.log(`${v}:`);
+	console.info(`${v}:`);
 	if (val) {
 		val.split(":").forEach((p) => {
 			const exists = require("node:fs").existsSync(p);
-			console.log(`  ${exists ? "✅" : "❌"} ${p}`);
+			console.info(`  ${exists ? "✅" : "❌"} ${p}`);
 		});
 	} else {
-		console.log("  (not set)");
+		console.info("  (not set)");
 	}
-	console.log();
+	console.info();
 }
 
 // Test compilation
-console.log("🧪 Testing FFI compilation...");
+console.info("🧪 Testing FFI compilation...");
 
 try {
 	const { cc } = require("bun:ffi");
@@ -43,7 +43,7 @@ try {
 		},
 	});
 
-	console.log(
+	console.info(
 		`libxml2 available: ${symbols.check() === 1 ? "YES ✅" : "NO ❌"}`,
 	);
 } catch (e: any) {

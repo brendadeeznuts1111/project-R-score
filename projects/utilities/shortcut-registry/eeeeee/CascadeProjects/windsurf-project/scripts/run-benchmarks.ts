@@ -5,17 +5,17 @@
 import { runComprehensiveBenchmarks } from '../bench/comprehensive.bench';
 
 async function runAllBenchmarks() {
-  console.log('🎯 Sovereign Unit [01] Benchmark Runner');
-  console.log('📊 Executing comprehensive performance monitoring suite');
-  console.log('');
+  console.info('🎯 Sovereign Unit [01] Benchmark Runner');
+  console.info('📊 Executing comprehensive performance monitoring suite');
+  console.info('');
 
   try {
     await runComprehensiveBenchmarks();
 
-    console.log('');
-    console.log('✅ All benchmarks completed successfully');
-    console.log('📈 Performance data collected for analysis');
-    console.log('🎯 Health Report Generation: Ready');
+    console.info('');
+    console.info('✅ All benchmarks completed successfully');
+    console.info('📈 Performance data collected for analysis');
+    console.info('🎯 Health Report Generation: Ready');
 
   } catch (error) {
     console.error('❌ Benchmark execution failed:', error);

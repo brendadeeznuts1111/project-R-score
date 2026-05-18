@@ -51,7 +51,7 @@ interface ReadinessReport {
 
 class DataExtractionReadinessChecker {
   async generateReadinessReport(): Promise<ReadinessReport> {
-    console.log('🔍 Generating Fire22 Data Extraction Readiness Report...\n');
+    console.info('🔍 Generating Fire22 Data Extraction Readiness Report...\n');
 
     const report: ReadinessReport = {
       infrastructure: await this.checkInfrastructure(),
@@ -68,7 +68,7 @@ class DataExtractionReadinessChecker {
   }
 
   private async checkInfrastructure(): Promise<ReadinessReport['infrastructure']> {
-    console.log('🏗️  Checking Infrastructure Components...');
+    console.info('🏗️  Checking Infrastructure Components...');
 
     const infrastructure = {
       localSqlite: false,
@@ -82,11 +82,11 @@ class DataExtractionReadinessChecker {
       await databaseService.connect('./dashboard.db');
       const healthCheck = await databaseService.healthCheck();
       infrastructure.localSqlite = healthCheck.connected;
-      console.log(
+      console.info(
         `   ${infrastructure.localSqlite ? '✅' : '❌'} Local SQLite: ${infrastructure.localSqlite}`
       );
     } catch (error) {
-      console.log('   ❌ Local SQLite: Connection failed');
+      console.info('   ❌ Local SQLite: Connection failed');
     }
 
     // Check Cloudflare D1 (via wrangler config)
@@ -94,11 +94,11 @@ class DataExtractionReadinessChecker {
       const wranglerConfig = await Bun.file('wrangler.toml').text();
       infrastructure.cloudflareD1 =
         wranglerConfig.includes('d1_databases') && wranglerConfig.includes('fire22-dashboard');
-      console.log(
+      console.info(
         `   ${infrastructure.cloudflareD1 ? '✅' : '❌'} Cloudflare D1: ${infrastructure.cloudflareD1}`
       );
     } catch (error) {
-      console.log('   ❌ Cloudflare D1: Configuration not found');
+      console.info('   ❌ Cloudflare D1: Configuration not found');
     }
 
     // Check R2 Storage
@@ -106,11 +106,11 @@ class DataExtractionReadinessChecker {
       const wranglerConfig = await Bun.file('wrangler.toml').text();
       infrastructure.r2Storage =
         wranglerConfig.includes('r2_buckets') && wranglerConfig.includes('fire22-packages');
-      console.log(
+      console.info(
         `   ${infrastructure.r2Storage ? '✅' : '❌'} R2 Storage: ${infrastructure.r2Storage}`
       );
     } catch (error) {
-      console.log('   ❌ R2 Storage: Configuration not found');
+      console.info('   ❌ R2 Storage: Configuration not found');
     }
 
     // Check KV Caching
@@ -118,18 +118,18 @@ class DataExtractionReadinessChecker {
       const wranglerConfig = await Bun.file('wrangler.toml').text();
       infrastructure.kvCaching =
         wranglerConfig.includes('kv_namespaces') && wranglerConfig.includes('FIRE22_DATA_CACHE');
-      console.log(
+      console.info(
         `   ${infrastructure.kvCaching ? '✅' : '❌'} KV Caching: ${infrastructure.kvCaching}`
       );
     } catch (error) {
-      console.log('   ❌ KV Caching: Configuration not found');
+      console.info('   ❌ KV Caching: Configuration not found');
     }
 
     return infrastructure;
   }
 
   private async checkDataStatus(): Promise<ReadinessReport['dataStatus']> {
-    console.log('\n📊 Checking Current Data Status...');
+    console.info('\n📊 Checking Current Data Status...');
 
     const dataStatus = {
       currentRecords: {
@@ -172,22 +172,22 @@ class DataExtractionReadinessChecker {
         100
       );
 
-      console.log(`   👥 Customers: ${dataStatus.currentRecords.customers.toLocaleString()}`);
-      console.log(`   🎯 Agents: ${dataStatus.currentRecords.agents.toLocaleString()}`);
-      console.log(`   💰 Transactions: ${dataStatus.currentRecords.transactions.toLocaleString()}`);
-      console.log(`   🎲 Bets: ${dataStatus.currentRecords.bets.toLocaleString()}`);
-      console.log(
+      console.info(`   👥 Customers: ${dataStatus.currentRecords.customers.toLocaleString()}`);
+      console.info(`   🎯 Agents: ${dataStatus.currentRecords.agents.toLocaleString()}`);
+      console.info(`   💰 Transactions: ${dataStatus.currentRecords.transactions.toLocaleString()}`);
+      console.info(`   🎲 Bets: ${dataStatus.currentRecords.bets.toLocaleString()}`);
+      console.info(
         `   📈 Estimated Completion: ${dataStatus.estimatedCompletionPercent.toFixed(1)}%`
       );
     } catch (error) {
-      console.log('   ⚠️  Could not check data status - database may not be initialized');
+      console.info('   ⚠️  Could not check data status - database may not be initialized');
     }
 
     return dataStatus;
   }
 
   private checkRetentionConfig(): ReadinessReport['retentionConfig'] {
-    console.log('\n⏰ Checking Retention Configuration...');
+    console.info('\n⏰ Checking Retention Configuration...');
 
     const config = {
       d1ActiveDays: 90,
@@ -196,23 +196,23 @@ class DataExtractionReadinessChecker {
       recommendedChanges: [] as string[],
     };
 
-    console.log(`   📅 D1 Active Storage: ${config.d1ActiveDays} days`);
-    console.log(`   🗄️  R2 Archive Storage: ${config.r2ArchiveYears} years`);
-    console.log(`   💾 SQLite Local Storage: ${config.sqliteLocalDays} days`);
+    console.info(`   📅 D1 Active Storage: ${config.d1ActiveDays} days`);
+    console.info(`   🗄️  R2 Archive Storage: ${config.r2ArchiveYears} years`);
+    console.info(`   💾 SQLite Local Storage: ${config.sqliteLocalDays} days`);
 
     // Check if R2 should be reduced from 7 years to 1 year
     if (config.r2ArchiveYears > 1) {
       config.recommendedChanges.push(
         `Consider reducing R2 retention from ${config.r2ArchiveYears} years to 1 year as originally planned`
       );
-      console.log('   ⚠️  R2 retention currently higher than planned (7yr vs 1yr)');
+      console.info('   ⚠️  R2 retention currently higher than planned (7yr vs 1yr)');
     }
 
     return config;
   }
 
   private checkTechnicalCapabilities(): ReadinessReport['technicalCapabilities'] {
-    console.log('\n🔧 Checking Technical Capabilities...');
+    console.info('\n🔧 Checking Technical Capabilities...');
 
     const capabilities = {
       lkeyMappings: Object.keys(FIRE22_DATABASE_FIELD_MAPPINGS).length,
@@ -221,14 +221,14 @@ class DataExtractionReadinessChecker {
       performanceReady: true, // Connection pooling, caching, etc.
     };
 
-    console.log(`   🔗 L-key Mappings: ${capabilities.lkeyMappings} configured`);
-    console.log(
+    console.info(`   🔗 L-key Mappings: ${capabilities.lkeyMappings} configured`);
+    console.info(
       `   🔐 Secure Authentication: ${capabilities.secureAuth ? '✅' : '❌'} Bun.secrets`
     );
-    console.log(
+    console.info(
       `   🌐 DNS Optimization: ${capabilities.dnsOptimized ? '✅' : '❌'} Sub-ms resolution`
     );
-    console.log(
+    console.info(
       `   ⚡ Performance Ready: ${capabilities.performanceReady ? '✅' : '❌'} Caching & pooling`
     );
 
@@ -262,62 +262,62 @@ class DataExtractionReadinessChecker {
   }
 
   printSummaryReport(report: ReadinessReport): void {
-    console.log('\n' + '='.repeat(60));
-    console.log('📋 FIRE22 DATA EXTRACTION READINESS SUMMARY');
-    console.log('='.repeat(60));
+    console.info('\n' + '='.repeat(60));
+    console.info('📋 FIRE22 DATA EXTRACTION READINESS SUMMARY');
+    console.info('='.repeat(60));
 
-    console.log(`\n🎯 Overall Readiness Score: ${report.readinessScore}/100`);
+    console.info(`\n🎯 Overall Readiness Score: ${report.readinessScore}/100`);
 
     if (report.readinessScore >= 80) {
-      console.log('✅ PRODUCTION READY - System ready for full data extraction');
+      console.info('✅ PRODUCTION READY - System ready for full data extraction');
     } else if (report.readinessScore >= 60) {
-      console.log('⚠️  MOSTLY READY - Minor issues to resolve');
+      console.info('⚠️  MOSTLY READY - Minor issues to resolve');
     } else {
-      console.log('❌ NOT READY - Significant issues need attention');
+      console.info('❌ NOT READY - Significant issues need attention');
     }
 
-    console.log('\n📊 Current Data Snapshot:');
-    console.log(`   • Customers: ${report.dataStatus.currentRecords.customers.toLocaleString()}`);
-    console.log(`   • Agents: ${report.dataStatus.currentRecords.agents.toLocaleString()}`);
-    console.log(
+    console.info('\n📊 Current Data Snapshot:');
+    console.info(`   • Customers: ${report.dataStatus.currentRecords.customers.toLocaleString()}`);
+    console.info(`   • Agents: ${report.dataStatus.currentRecords.agents.toLocaleString()}`);
+    console.info(
       `   • Transactions: ${report.dataStatus.currentRecords.transactions.toLocaleString()}`
     );
-    console.log(`   • Bets: ${report.dataStatus.currentRecords.bets.toLocaleString()}`);
-    console.log(
+    console.info(`   • Bets: ${report.dataStatus.currentRecords.bets.toLocaleString()}`);
+    console.info(
       `   • Estimated Progress: ${report.dataStatus.estimatedCompletionPercent.toFixed(1)}%`
     );
 
-    console.log('\n⏰ Retention Strategy:');
-    console.log(`   • D1 Hot Storage: ${report.retentionConfig.d1ActiveDays} days`);
-    console.log(`   • R2 Cold Archive: ${report.retentionConfig.r2ArchiveYears} years`);
+    console.info('\n⏰ Retention Strategy:');
+    console.info(`   • D1 Hot Storage: ${report.retentionConfig.d1ActiveDays} days`);
+    console.info(`   • R2 Cold Archive: ${report.retentionConfig.r2ArchiveYears} years`);
 
     if (report.retentionConfig.recommendedChanges.length > 0) {
-      console.log('\n💡 Recommended Changes:');
+      console.info('\n💡 Recommended Changes:');
       report.retentionConfig.recommendedChanges.forEach(change => {
-        console.log(`   • ${change}`);
+        console.info(`   • ${change}`);
       });
     }
 
-    console.log('\n🔧 Technical Readiness:');
-    console.log(`   • L-key Mappings: ${report.technicalCapabilities.lkeyMappings}/47`);
-    console.log(
+    console.info('\n🔧 Technical Readiness:');
+    console.info(`   • L-key Mappings: ${report.technicalCapabilities.lkeyMappings}/47`);
+    console.info(
       `   • Infrastructure: ${Object.values(report.infrastructure).filter(Boolean).length}/4 components`
     );
-    console.log(
+    console.info(
       `   • Security: ${report.technicalCapabilities.secureAuth ? 'Bun.secrets configured' : 'Needs setup'}`
     );
-    console.log(
+    console.info(
       `   • Performance: ${report.technicalCapabilities.performanceReady ? 'DNS + caching optimized' : 'Needs optimization'}`
     );
 
-    console.log('\n📧 Key Questions for Teams:');
-    console.log('   1. What % of full Fire22 data extraction is complete?');
-    console.log('   2. Confirm retention: 90 days D1 + 1 year R2 (vs current 7yr)?');
-    console.log('   3. Expected total record count for capacity planning?');
-    console.log('   4. Timeline for remaining data categories?');
+    console.info('\n📧 Key Questions for Teams:');
+    console.info('   1. What % of full Fire22 data extraction is complete?');
+    console.info('   2. Confirm retention: 90 days D1 + 1 year R2 (vs current 7yr)?');
+    console.info('   3. Expected total record count for capacity planning?');
+    console.info('   4. Timeline for remaining data categories?');
 
-    console.log(`\n✅ Report generated: ${new Date().toLocaleString()}`);
-    console.log('📄 Email template: data-extraction-status-inquiry.md');
+    console.info(`\n✅ Report generated: ${new Date().toLocaleString()}`);
+    console.info('📄 Email template: data-extraction-status-inquiry.md');
   }
 }
 
@@ -332,7 +332,7 @@ if (import.meta.main) {
     // Save report to file
     const reportFile = `data-extraction-readiness-${new Date().toISOString().split('T')[0]}.json`;
     await Bun.write(reportFile, JSON.stringify(report, null, 2));
-    console.log(`\n💾 Detailed report saved: ${reportFile}`);
+    console.info(`\n💾 Detailed report saved: ${reportFile}`);
   } catch (error) {
     console.error('❌ Readiness check failed:', error);
     process.exit(1);

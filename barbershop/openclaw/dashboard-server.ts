@@ -29,8 +29,8 @@ const corsHeaders = {
 };
 
 // Start server
-console.log(c.cyan(`🎯 OpenClaw Context Dashboard v3.16`));
-console.log(c.gray(`   Starting server on ${HOST}:${PORT}...\n`));
+console.info(c.cyan(`🎯 OpenClaw Context Dashboard v3.16`));
+console.info(c.gray(`   Starting server on ${HOST}:${PORT}...\n`));
 
 const server = Bun.serve({
   port: PORT,
@@ -407,14 +407,14 @@ const server = Bun.serve({
   },
 });
 
-console.log(c.green(`✓ Server running at http://${HOST}:${PORT}`));
-console.log(c.gray(`  Dashboard: http://${HOST}:${PORT}/dashboard`));
-console.log(c.gray(`  Health:    http://${HOST}:${PORT}/health`));
-console.log(c.gray(`  API:       http://${HOST}:${PORT}/context-run`));
+console.info(c.green(`✓ Server running at http://${HOST}:${PORT}`));
+console.info(c.gray(`  Dashboard: http://${HOST}:${PORT}/dashboard`));
+console.info(c.gray(`  Health:    http://${HOST}:${PORT}/health`));
+console.info(c.gray(`  API:       http://${HOST}:${PORT}/context-run`));
 
 // Keep alive
 process.on("SIGINT", () => {
-  console.log(c.yellow("\n\nShutting down..."));
+  console.info(c.yellow("\n\nShutting down..."));
   server.stop();
   process.exit(0);
 });

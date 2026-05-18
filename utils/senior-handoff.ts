@@ -39,17 +39,17 @@ interface JuniorProfile {
 }
 
 async function seniorHandoff(pattern: string = 'junior-*.json') {
-  console.log('🎓 Senior Handoff Processing...');
+  console.info('🎓 Senior Handoff Processing...');
   
   // Find junior profile files
   const files = await Array.fromAsync(new Bun.Glob(pattern).scan());
   
   if (files.length === 0) {
-    console.log('❌ No junior profile files found');
+    console.info('❌ No junior profile files found');
     process.exit(1);
   }
   
-  console.log(`📁 Found ${files.length} profile(s): ${files.join(', ')}`);
+  console.info(`📁 Found ${files.length} profile(s): ${files.join(', ')}`);
   
   for (const file of files) {
     await processProfile(file);
@@ -57,7 +57,7 @@ async function seniorHandoff(pattern: string = 'junior-*.json') {
 }
 
 async function processProfile(file: string) {
-  console.log(`\n🔄 Processing: ${file}`);
+  console.info(`\n🔄 Processing: ${file}`);
   
   try {
     const profile: JuniorProfile = await Bun.file(file).json();
@@ -72,9 +72,9 @@ async function processProfile(file: string) {
     const seniorFile = file.replace('junior-', 'senior-').replace('.json', '.md');
     await Bun.write(seniorFile, report);
     
-    console.log(`✅ Senior report created: ${seniorFile}`);
-    console.log(`📊 Complexity: ${profile.markdown.complexityTier.toUpperCase()}`);
-    console.log(`🔍 Analysis: ${analysis.recommendations.length} recommendations`);
+    console.info(`✅ Senior report created: ${seniorFile}`);
+    console.info(`📊 Complexity: ${profile.markdown.complexityTier.toUpperCase()}`);
+    console.info(`🔍 Analysis: ${analysis.recommendations.length} recommendations`);
     
   } catch (error) {
     console.error(`❌ Error processing ${file}:`, error.message);
@@ -212,7 +212,7 @@ async function main() {
   
   try {
     await seniorHandoff(pattern);
-    console.log('\n🎓 Senior handoff complete!');
+    console.info('\n🎓 Senior handoff complete!');
   } catch (error) {
     console.error('❌ Senior handoff failed:', error.message);
     process.exit(1);

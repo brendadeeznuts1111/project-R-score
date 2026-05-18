@@ -242,14 +242,14 @@ export class EnhancedProxyServer {
       await this.statisticsCollector.startStatisticsCollection();
       this.isServerRunning = true;
 
-      console.log(
+      console.info(
         `✅ Enhanced proxy server started on ${this.serverConfiguration.listenHost}:${this.serverConfiguration.listenPort}`
       );
-      console.log(
+      console.info(
         `🎯 Target endpoint: ${this.serverConfiguration.targetEndpointUrl}`
       );
-      console.log(`📊 Server name: ${this.serverConfiguration.serverName}`);
-      console.log(`🌍 Environment: ${this.serverConfiguration.environment}`);
+      console.info(`📊 Server name: ${this.serverConfiguration.serverName}`);
+      console.info(`🌍 Environment: ${this.serverConfiguration.environment}`);
     } catch (startError) {
       throw new EnhancedProxyError(
         "Failed to start enhanced proxy server",
@@ -270,7 +270,7 @@ export class EnhancedProxyServer {
       await this.statisticsCollector.stopStatisticsCollection();
       this.isServerRunning = false;
 
-      console.log("🛑 Enhanced proxy server stopped successfully");
+      console.info("🛑 Enhanced proxy server stopped successfully");
     } catch (stopError) {
       throw new EnhancedProxyError(
         "Failed to stop enhanced proxy server gracefully",
@@ -310,7 +310,7 @@ export class EnhancedProxyServer {
     };
     this.validateServerConfiguration(this.serverConfiguration);
 
-    console.log("🔧 Server configuration updated successfully");
+    console.info("🔧 Server configuration updated successfully");
   }
 
   getServerHealthStatus(): HealthStatus {
@@ -371,7 +371,7 @@ class EnhancedConnectionManager {
       this.closeConnection(connection.connectionId);
     }
 
-    console.log(`🔌 Closed ${activeConnections.length} active connections`);
+    console.info(`🔌 Closed ${activeConnections.length} active connections`);
   }
 
   getConnectionStatistics(): EnhancedConnectionStatistics {
@@ -425,7 +425,7 @@ class EnhancedHealthChecker {
         this.healthCheckConfiguration.checkIntervalMilliseconds
       );
 
-      console.log("🏥 Enhanced health checker initialized");
+      console.info("🏥 Enhanced health checker initialized");
     }
   }
 
@@ -435,7 +435,7 @@ class EnhancedHealthChecker {
       this.healthCheckInterval = undefined;
     }
 
-    console.log("🏥 Enhanced health checker terminated");
+    console.info("🏥 Enhanced health checker terminated");
   }
 
   getCurrentHealthStatus(): HealthStatus {
@@ -458,7 +458,7 @@ class EnhancedHealthChecker {
 
         this.healthCheckConfiguration.onStatusChangeCallback?.(newStatus);
 
-        console.log(
+        console.info(
           `🏥 Health status changed: ${previousStatus} → ${newStatus}`
         );
       }
@@ -507,11 +507,11 @@ class EnhancedStatisticsCollector {
   ) {}
 
   async startStatisticsCollection(): Promise<void> {
-    console.log("📊 Enhanced statistics collector started");
+    console.info("📊 Enhanced statistics collector started");
   }
 
   async stopStatisticsCollection(): Promise<void> {
-    console.log("📊 Enhanced statistics collector stopped");
+    console.info("📊 Enhanced statistics collector stopped");
   }
 
   getPerformanceStatistics(): EnhancedPerformanceStatistics {
@@ -566,7 +566,7 @@ class EnhancedMessageBuffer {
   private overflowCounter: number = 0;
 
   constructor(private bufferConfiguration: EnhancedBufferConfiguration) {
-    console.log("📦 Enhanced message buffer initialized");
+    console.info("📦 Enhanced message buffer initialized");
   }
 
   addMessageToBuffer(message: any): boolean {
@@ -743,8 +743,8 @@ export function validateEnhancedConfiguration(
 
 // Demo and Usage Examples
 async function demonstrateEnhancedProxyServer() {
-  console.log("🚀 Enhanced Bun Proxy Server Demo");
-  console.log("================================\n");
+  console.info("🚀 Enhanced Bun Proxy Server Demo");
+  console.info("================================\n");
 
   // Enhanced configuration with better naming
   const enhancedConfiguration: EnhancedProxyServerConfiguration = {
@@ -823,40 +823,40 @@ async function demonstrateEnhancedProxyServer() {
     await enhancedProxyServer.startProxyServer();
 
     // Demonstrate enhanced features
-    console.log("\n📊 Enhanced Server Statistics:");
+    console.info("\n📊 Enhanced Server Statistics:");
     const statistics = enhancedProxyServer.getEnhancedServerStatistics();
-    console.log(
+    console.info(
       `   Active Connections: ${statistics.activeConnections.toLocaleString()}`
     );
-    console.log(
+    console.info(
       `   Total Connections: ${statistics.totalConnections.toLocaleString()}`
     );
-    console.log(
+    console.info(
       `   Messages Processed: ${statistics.messagesProcessed.toLocaleString()}`
     );
-    console.log(
+    console.info(
       `   Average Latency: ${statistics.averageLatency.toFixed(2)}ms`
     );
-    console.log(
+    console.info(
       `   Memory Usage: ${formatEnhancedByteSize(statistics.memoryUsageBytes)}`
     );
-    console.log(
+    console.info(
       `   Uptime: ${formatEnhancedTimeDuration(statistics.uptimeMilliseconds)}`
     );
 
-    console.log("\n🏥 Enhanced Health Check:");
+    console.info("\n🏥 Enhanced Health Check:");
     const healthResult = await enhancedProxyServer.performHealthCheck();
-    console.log(`   Status: ${healthResult.status}`);
-    console.log(`   Latency: ${healthResult.latencyMilliseconds}ms`);
-    console.log(`   Timestamp: ${healthResult.timestamp.toISOString()}`);
+    console.info(`   Status: ${healthResult.status}`);
+    console.info(`   Latency: ${healthResult.latencyMilliseconds}ms`);
+    console.info(`   Timestamp: ${healthResult.timestamp.toISOString()}`);
 
     // Demonstrate enhanced utility functions
-    console.log("\n🔧 Enhanced Utility Functions:");
-    console.log(`   Byte Size: ${formatEnhancedByteSize(1048576)}`);
-    console.log(`   Time Duration: ${formatEnhancedTimeDuration(3661000)}`);
+    console.info("\n🔧 Enhanced Utility Functions:");
+    console.info(`   Byte Size: ${formatEnhancedByteSize(1048576)}`);
+    console.info(`   Time Duration: ${formatEnhancedTimeDuration(3661000)}`);
 
     // Enhanced configuration validation
-    console.log("\n✅ Enhanced Configuration Validation:");
+    console.info("\n✅ Enhanced Configuration Validation:");
     const validationRules: ValidationRule[] = [
       {
         fieldName: "listenPort",
@@ -908,11 +908,11 @@ async function demonstrateEnhancedProxyServer() {
     );
 
     if (validationResult.isValid) {
-      console.log("   ✅ Configuration validation passed");
+      console.info("   ✅ Configuration validation passed");
     } else {
-      console.log("   ❌ Configuration validation failed:");
+      console.info("   ❌ Configuration validation failed:");
       validationResult.errors.forEach((error) => {
-        console.log(`      - ${error.field}: ${error.message}`);
+        console.info(`      - ${error.field}: ${error.message}`);
       });
     }
 
@@ -927,7 +927,7 @@ async function demonstrateEnhancedProxyServer() {
     }
   }
 
-  console.log("\n✨ Enhanced Bun Proxy Server Demo Complete!");
+  console.info("\n✨ Enhanced Bun Proxy Server Demo Complete!");
 }
 
 // Run the demonstration

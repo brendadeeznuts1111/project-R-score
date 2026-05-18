@@ -23,19 +23,19 @@ export async function profileShow(name: string): Promise<void> {
 		process.exit(EXIT_CODES.NOT_FOUND);
 	}
 
-	console.log(`${colors.bold}Profile: ${profile.name}${colors.reset}`);
-	console.log(`Version: ${profile.version}`);
+	console.info(`${colors.bold}Profile: ${profile.name}${colors.reset}`);
+	console.info(`Version: ${profile.version}`);
 	if (profile.author) {
-		console.log(`Author: ${profile.author}`);
+		console.info(`Author: ${profile.author}`);
 	}
 	if (profile.created) {
-		console.log(`Created: ${profile.created}`);
+		console.info(`Created: ${profile.created}`);
 	}
 	if (profile.description) {
-		console.log(`Description: ${profile.description}`);
+		console.info(`Description: ${profile.description}`);
 	}
 
-	console.log(`\n${colors.bold}Environment Variables:${colors.reset}`);
+	console.info(`\n${colors.bold}Environment Variables:${colors.reset}`);
 
 	const rows = Object.entries(profile.env)
 		.sort(([a], [b]) => a.localeCompare(b))
@@ -44,17 +44,17 @@ export async function profileShow(name: string): Promise<void> {
 			Value: maskValue(key, value),
 		}));
 
-	console.log(Bun.inspect.table(rows, undefined, { colors: !process.env.NO_COLOR }));
+	console.info(Bun.inspect.table(rows, undefined, { colors: !process.env.NO_COLOR }));
 
 	if (profile.paths && Object.keys(profile.paths).length > 0) {
-		console.log(`\n${colors.bold}Path Variables:${colors.reset}`);
+		console.info(`\n${colors.bold}Path Variables:${colors.reset}`);
 		for (const [variable, config] of Object.entries(profile.paths)) {
-			console.log(`  ${variable}:`);
+			console.info(`  ${variable}:`);
 			if (config.prepend && config.prepend.length > 0) {
-				console.log(`    prepend: ${config.prepend.join(", ")}`);
+				console.info(`    prepend: ${config.prepend.join(", ")}`);
 			}
 			if (config.append && config.append.length > 0) {
-				console.log(`    append: ${config.append.join(", ")}`);
+				console.info(`    append: ${config.append.join(", ")}`);
 			}
 		}
 	}

@@ -27,7 +27,7 @@ const RSS_URL = 'https://bun.com/rss.xml';
  * calculating Deep R-Score with all performance factors.
  */
 async function auditRSSPerformance() {
-	console.log('--- Bun RSS R-Score Audit ---\n');
+	console.info('--- Bun RSS R-Score Audit ---\n');
 
 	// 1. Native Fetch Performance (P_native)
 	const startFetch = Bun.nanoseconds();
@@ -114,43 +114,43 @@ async function auditRSSPerformance() {
 		},
 	]);
 
-	console.log('\n--- Performance Breakdown ---');
-	console.log(`Native Fetch: ${(pNative / 1e6).toFixed(2)}ms`);
-	console.log(`Userland Parse: ${(pUserland / 1e6).toFixed(2)}ms`);
-	console.log(`Bypass Ratio: ${(bypassRatio * 100).toFixed(2)}%`);
-	console.log(`GC Pressure: ${gcPressure}`);
-	console.log(`Deep R-Score: ${rScore.toFixed(4)}`);
+	console.info('\n--- Performance Breakdown ---');
+	console.info(`Native Fetch: ${(pNative / 1e6).toFixed(2)}ms`);
+	console.info(`Userland Parse: ${(pUserland / 1e6).toFixed(2)}ms`);
+	console.info(`Bypass Ratio: ${(bypassRatio * 100).toFixed(2)}%`);
+	console.info(`GC Pressure: ${gcPressure}`);
+	console.info(`Deep R-Score: ${rScore.toFixed(4)}`);
 
 	// Calculate P_ratio for analysis (Network/Parse ratio)
 	const pRatioNetwork = pUserland > 0 ? pNative / pUserland : 0;
-	console.log(`\n--- Deep Matrix Analysis ---`);
-	console.log(
+	console.info(`\n--- Deep Matrix Analysis ---`);
+	console.info(
 		`P_ratio (Network/Parse): ${pRatioNetwork.toFixed(2)} (Network ${(pNative / 1e6).toFixed(2)}ms / Parse ${(pUserland / 1e6).toFixed(2)}ms)`,
 	);
-	console.log(`Network Dominance: ${((pNative / (pNative + pUserland)) * 100).toFixed(1)}% of total latency`);
-	console.log(`Parsing Efficiency: ${(xmlBuffer.byteLength / (pUserland / 1e6) / 1024).toFixed(2)} KB/ms`);
-	console.log(`\n--- RSS-Specific R-Score Formula ---`);
-	console.log(`R_Score_RSS = (P_ratio × 0.35) + (M_impact × 0.30) + (E_elim × 0.20) + (S_harden × 0.15)`);
-	console.log(`  P_ratio: ${pRatioRSS.toFixed(4)} × 0.35 = ${(pRatioRSS * 0.35).toFixed(4)}`);
-	console.log(`  M_impact: ${mImpact.toFixed(4)} × 0.30 = ${(mImpact * 0.3).toFixed(4)}`);
-	console.log(`  E_elim: ${eElim.toFixed(1)} × 0.20 = ${(eElim * 0.2).toFixed(4)} (complete overhead elimination)`);
-	console.log(`  S_harden: ${sHarden.toFixed(1)} × 0.15 = ${(sHarden * 0.15).toFixed(4)} (trusted origin: bun.com)`);
-	console.log(`  RSS R-Score: ${rssRScore.toFixed(4)}`);
-	console.log(
+	console.info(`Network Dominance: ${((pNative / (pNative + pUserland)) * 100).toFixed(1)}% of total latency`);
+	console.info(`Parsing Efficiency: ${(xmlBuffer.byteLength / (pUserland / 1e6) / 1024).toFixed(2)} KB/ms`);
+	console.info(`\n--- RSS-Specific R-Score Formula ---`);
+	console.info(`R_Score_RSS = (P_ratio × 0.35) + (M_impact × 0.30) + (E_elim × 0.20) + (S_harden × 0.15)`);
+	console.info(`  P_ratio: ${pRatioRSS.toFixed(4)} × 0.35 = ${(pRatioRSS * 0.35).toFixed(4)}`);
+	console.info(`  M_impact: ${mImpact.toFixed(4)} × 0.30 = ${(mImpact * 0.3).toFixed(4)}`);
+	console.info(`  E_elim: ${eElim.toFixed(1)} × 0.20 = ${(eElim * 0.2).toFixed(4)} (complete overhead elimination)`);
+	console.info(`  S_harden: ${sHarden.toFixed(1)} × 0.15 = ${(sHarden * 0.15).toFixed(4)} (trusted origin: bun.com)`);
+	console.info(`  RSS R-Score: ${rssRScore.toFixed(4)}`);
+	console.info(
 		`\n  Note: Bypass Ratio = ${bypassRatio.toFixed(3)} means Bridge Cost (12ns) is virtually non-existent`,
 	);
 
 	// Zero-copy analysis
 	if (mDelta === 0 && gcPressure === 'Zero') {
-		console.log(`\n✅ Zero-Copy Confirmed: GC Delta = 0.00 KB indicates:`);
-		console.log(`   - Memory allocated in Linear Memory (non-heap arena)`);
-		console.log(`   - Bun's Zig core handling decompression natively`);
-		console.log(`   - No JS heap allocations for XML processing`);
-		console.log(`   - Bridge Cost (12ns) eliminated due to Bypass Ratio = 1.0`);
+		console.info(`\n✅ Zero-Copy Confirmed: GC Delta = 0.00 KB indicates:`);
+		console.info(`   - Memory allocated in Linear Memory (non-heap arena)`);
+		console.info(`   - Bun's Zig core handling decompression natively`);
+		console.info(`   - No JS heap allocations for XML processing`);
+		console.info(`   - Bridge Cost (12ns) eliminated due to Bypass Ratio = 1.0`);
 	}
 
 	// 7. Scaling Predictions
-	console.log('\n--- Scaling Predictions (Real-Time Tracking Matrix) ---');
+	console.info('\n--- Scaling Predictions (Real-Time Tracking Matrix) ---');
 	const feedItems = items;
 	const sizeKB = xmlBuffer.byteLength / 1024;
 
@@ -184,24 +184,24 @@ async function auditRSSPerformance() {
 	]);
 
 	// 8. Scale Recommendations
-	console.log('\n--- Scale Recommendations ---');
+	console.info('\n--- Scale Recommendations ---');
 	if (mDelta === 0 && gcPressure === 'Zero') {
-		console.log(`✅ Zero-Copy Architecture Confirmed`);
-		console.log(`   - GC Delta: 0.00 KB indicates Linear Memory allocation`);
-		console.log(`   - Theoretical capacity: 10,000+ feed items without GC pause`);
-		console.log(`   - Maintains R-Score > 0.95 at production scale`);
-		console.log(
+		console.info(`✅ Zero-Copy Architecture Confirmed`);
+		console.info(`   - GC Delta: 0.00 KB indicates Linear Memory allocation`);
+		console.info(`   - Theoretical capacity: 10,000+ feed items without GC pause`);
+		console.info(`   - Maintains R-Score > 0.95 at production scale`);
+		console.info(
 			`   - Network latency dominates (${((pNative / (pNative + pUserland)) * 100).toFixed(1)}% of total)`,
 		);
-		console.log(`   - Parsing efficiency: ${(xmlBuffer.byteLength / (pUserland / 1e6) / 1024).toFixed(2)} KB/ms`);
+		console.info(`   - Parsing efficiency: ${(xmlBuffer.byteLength / (pUserland / 1e6) / 1024).toFixed(2)} KB/ms`);
 	}
 
 	// Check cache status from response headers
 	const cacheStatus = response.headers.get('cf-cache-status') || response.headers.get('x-vercel-cache') || 'UNKNOWN';
 	if (cacheStatus === 'HIT' || cacheStatus === 'DYNAMIC') {
-		console.log(`\n📦 Cache Status: ${cacheStatus}`);
-		console.log(`   - Edge cache ensures consistent byte delivery`);
-		console.log(`   - Reduces network variability in measurements`);
+		console.info(`\n📦 Cache Status: ${cacheStatus}`);
+		console.info(`   - Edge cache ensures consistent byte delivery`);
+		console.info(`   - Reduces network variability in measurements`);
 	}
 
 	const encoding = response.headers.get('content-encoding') || 'none';
@@ -210,11 +210,11 @@ async function auditRSSPerformance() {
 		const decompressedSize = xmlBuffer.byteLength;
 		const compressionRatio =
 			wireSize > 0 ? (((decompressedSize - wireSize) / decompressedSize) * 100).toFixed(1) : '0';
-		console.log(`\n🗜️  Compression: ${encoding.toUpperCase()}`);
-		console.log(`   - Wire size: ${(wireSize / 1024).toFixed(2)} KB`);
-		console.log(`   - Decompressed: ${(decompressedSize / 1024).toFixed(2)} KB`);
-		console.log(`   - Compression ratio: ${compressionRatio}%`);
-		console.log(`   - Native Brotli decompression handled by Bun's Zig core`);
+		console.info(`\n🗜️  Compression: ${encoding.toUpperCase()}`);
+		console.info(`   - Wire size: ${(wireSize / 1024).toFixed(2)} KB`);
+		console.info(`   - Decompressed: ${(decompressedSize / 1024).toFixed(2)} KB`);
+		console.info(`   - Compression ratio: ${compressionRatio}%`);
+		console.info(`   - Native Brotli decompression handled by Bun's Zig core`);
 	}
 
 	return {

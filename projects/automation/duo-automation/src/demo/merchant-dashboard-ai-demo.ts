@@ -26,21 +26,21 @@ const DEMO_CONFIG = {
 // ============================================================================
 
 async function runMerchantDashboardAIDemo(): Promise<void> {
-  console.log("🏪🤖 MERCHANT DASHBOARD + AI EVIDENCE ANALYSIS DEMO");
-  console.log("=" .repeat(60));
-  console.log(`📊 Merchant ID: ${DEMO_CONFIG.merchantId}`);
-  console.log(`📅 Timeframe: ${DEMO_CONFIG.timeframe}`);
-  console.log(`🤖 AI Analysis: ${DEMO_CONFIG.showAIAnalysis ? 'ENABLED' : 'DISABLED'}`);
-  console.log("=" .repeat(60));
+  console.info("🏪🤖 MERCHANT DASHBOARD + AI EVIDENCE ANALYSIS DEMO");
+  console.info("=" .repeat(60));
+  console.info(`📊 Merchant ID: ${DEMO_CONFIG.merchantId}`);
+  console.info(`📅 Timeframe: ${DEMO_CONFIG.timeframe}`);
+  console.info(`🤖 AI Analysis: ${DEMO_CONFIG.showAIAnalysis ? 'ENABLED' : 'DISABLED'}`);
+  console.info("=" .repeat(60));
 
   try {
     // Initialize systems
-    console.log("\n🚀 Initializing systems...");
+    console.info("\n🚀 Initializing systems...");
     const dashboardManager = new MerchantDashboardManager();
     const aiAnalyzer = new AIEvidenceAnalyzer();
 
     // Load merchant dashboard
-    console.log("\n📊 Loading merchant dashboard...");
+    console.info("\n📊 Loading merchant dashboard...");
     const dashboard = await dashboardManager.getMerchantDashboard(
       DEMO_CONFIG.merchantId, 
       DEMO_CONFIG.timeframe
@@ -69,7 +69,7 @@ async function runMerchantDashboardAIDemo(): Promise<void> {
     displayRecommendations(dashboard.recommendations);
     displayAlerts(dashboard.alerts);
 
-    console.log("\n✅ Demo completed successfully!");
+    console.info("\n✅ Demo completed successfully!");
 
   } catch (error) {
     console.error("\n❌ Demo failed:", error);
@@ -82,8 +82,8 @@ async function runMerchantDashboardAIDemo(): Promise<void> {
 // ============================================================================
 
 function displayOverviewMetrics(overview: any): void {
-  console.log("\n📈 OVERVIEW METRICS");
-  console.log("-".repeat(40));
+  console.info("\n📈 OVERVIEW METRICS");
+  console.info("-".repeat(40));
   
   const metrics = [
     { label: "Total Transactions", value: overview.totalTransactions.toLocaleString(), icon: "💰" },
@@ -98,96 +98,96 @@ function displayOverviewMetrics(overview: any): void {
 
   metrics.forEach(metric => {
     const riskColor = metric.label === "Risk Level" ? getRiskLevelColor(overview.riskLevel) : "";
-    console.log(`  ${metric.icon} ${metric.label.padEnd(20)}: ${riskColor}${metric.value}${riskColor}`);
+    console.info(`  ${metric.icon} ${metric.label.padEnd(20)}: ${riskColor}${metric.value}${riskColor}`);
   });
 
   // Display trends
-  console.log("\n📊 TRENDS (vs previous period)");
-  console.log("-".repeat(40));
-  console.log(`  📈 Volume: ${getTrendIndicator(overview.trends.volume)} ${Math.abs(overview.trends.volume).toFixed(1)}%`);
-  console.log(`  ⚖️ Disputes: ${getTrendIndicator(overview.trends.disputes)} ${Math.abs(overview.trends.disputes).toFixed(1)}%`);
-  console.log(`  🏆 Win Rate: ${getTrendIndicator(overview.trends.winRate)} ${Math.abs(overview.trends.winRate).toFixed(1)}%`);
+  console.info("\n📊 TRENDS (vs previous period)");
+  console.info("-".repeat(40));
+  console.info(`  📈 Volume: ${getTrendIndicator(overview.trends.volume)} ${Math.abs(overview.trends.volume).toFixed(1)}%`);
+  console.info(`  ⚖️ Disputes: ${getTrendIndicator(overview.trends.disputes)} ${Math.abs(overview.trends.disputes).toFixed(1)}%`);
+  console.info(`  🏆 Win Rate: ${getTrendIndicator(overview.trends.winRate)} ${Math.abs(overview.trends.winRate).toFixed(1)}%`);
 }
 
 function displayDisputesSummary(disputes: any): void {
-  console.log("\n⚖️ DISPUTES SUMMARY");
-  console.log("-".repeat(40));
+  console.info("\n⚖️ DISPUTES SUMMARY");
+  console.info("-".repeat(40));
   
-  console.log(`  📊 Total Disputes: ${disputes.counts.total}`);
-  console.log(`  🆕 New: ${disputes.counts.submitted}`);
-  console.log(`  🔍 Under Review: ${disputes.counts.under_review}`);
-  console.log(`  🚨 Escalated to Venmo: ${disputes.counts.escalated}`);
-  console.log(`  ✅ Resolved: ${disputes.counts.resolved}`);
+  console.info(`  📊 Total Disputes: ${disputes.counts.total}`);
+  console.info(`  🆕 New: ${disputes.counts.submitted}`);
+  console.info(`  🔍 Under Review: ${disputes.counts.under_review}`);
+  console.info(`  🚨 Escalated to Venmo: ${disputes.counts.escalated}`);
+  console.info(`  ✅ Resolved: ${disputes.counts.resolved}`);
   
   if (disputes.requiringAction.length > 0) {
-    console.log(`\n⚠️ REQUIRING ACTION: ${disputes.requiringAction.length} disputes`);
+    console.info(`\n⚠️ REQUIRING ACTION: ${disputes.requiringAction.length} disputes`);
     disputes.requiringAction.slice(0, 3).forEach((dispute: any, index: number) => {
-      console.log(`   ${index + 1}. ${dispute.id} - $${dispute.amount} (${dispute.reason})`);
+      console.info(`   ${index + 1}. ${dispute.id} - $${dispute.amount} (${dispute.reason})`);
     });
   }
 
   if (disputes.highRisk.length > 0) {
-    console.log(`\n🚨 HIGH RISK: ${disputes.highRisk.length} disputes`);
+    console.info(`\n🚨 HIGH RISK: ${disputes.highRisk.length} disputes`);
     disputes.highRisk.slice(0, 3).forEach((dispute: any, index: number) => {
-      console.log(`   ${index + 1}. ${dispute.id} - Risk: ${(dispute.riskScore * 100).toFixed(1)}%`);
+      console.info(`   ${index + 1}. ${dispute.id} - Risk: ${(dispute.riskScore * 100).toFixed(1)}%`);
     });
   }
 
   if (disputes.reasons.length > 0) {
-    console.log("\n📋 TOP DISPUTE REASONS");
-    console.log("-".repeat(40));
+    console.info("\n📋 TOP DISPUTE REASONS");
+    console.info("-".repeat(40));
     disputes.reasons.slice(0, 5).forEach((reason: any, index: number) => {
       const bar = "█".repeat(Math.round(reason.percentage / 5));
-      console.log(`   ${index + 1}. ${reason.reason.padEnd(20)} ${bar.padEnd(20)} ${reason.percentage.toFixed(1)}%`);
+      console.info(`   ${index + 1}. ${reason.reason.padEnd(20)} ${bar.padEnd(20)} ${reason.percentage.toFixed(1)}%`);
     });
   }
 }
 
 async function displayAIInsights(aiInsights: any, aiAnalyzer: AIEvidenceAnalyzer): Promise<void> {
-  console.log("\n🤖 AI INSIGHTS");
-  console.log("-".repeat(40));
+  console.info("\n🤖 AI INSIGHTS");
+  console.info("-".repeat(40));
   
-  console.log(`  📊 Total Analyzed: ${aiInsights.summary.totalAnalyzed}`);
-  console.log(`  🚨 High Risk: ${aiInsights.summary.highRiskCount}`);
-  console.log(`  🎯 Avg Confidence: ${(aiInsights.summary.avgConfidence * 100).toFixed(1)}%`);
+  console.info(`  📊 Total Analyzed: ${aiInsights.summary.totalAnalyzed}`);
+  console.info(`  🚨 High Risk: ${aiInsights.summary.highRiskCount}`);
+  console.info(`  🎯 Avg Confidence: ${(aiInsights.summary.avgConfidence * 100).toFixed(1)}%`);
   
   if (aiInsights.summary.topRiskFactors.length > 0) {
-    console.log("\n⚠️ TOP RISK FACTORS");
+    console.info("\n⚠️ TOP RISK FACTORS");
     aiInsights.summary.topRiskFactors.forEach((factor: string, index: number) => {
-      console.log(`   ${index + 1}. ${factor}`);
+      console.info(`   ${index + 1}. ${factor}`);
     });
   }
 
   if (aiInsights.analyses.length > 0) {
-    console.log("\n📈 RECENT AI ANALYSES");
-    console.log("-".repeat(40));
+    console.info("\n📈 RECENT AI ANALYSES");
+    console.info("-".repeat(40));
     aiInsights.analyses.slice(0, 3).forEach((analysis: any, index: number) => {
       const riskLevel = getRiskLevel(analysis.riskScore);
-      console.log(`   ${index + 1}. ${analysis.disputeId}`);
-      console.log(`      Risk: ${riskLevel} (${(analysis.riskScore * 100).toFixed(1)}%)`);
-      console.log(`      Confidence: ${(analysis.confidence * 100).toFixed(1)}%`);
-      console.log(`      Processing Time: ${analysis.metadata.processingTime}ms`);
+      console.info(`   ${index + 1}. ${analysis.disputeId}`);
+      console.info(`      Risk: ${riskLevel} (${(analysis.riskScore * 100).toFixed(1)}%)`);
+      console.info(`      Confidence: ${(analysis.confidence * 100).toFixed(1)}%`);
+      console.info(`      Processing Time: ${analysis.metadata.processingTime}ms`);
       
       if (analysis.keyFindings.length > 0) {
-        console.log(`      Findings: ${analysis.keyFindings.slice(0, 2).join(", ")}`);
+        console.info(`      Findings: ${analysis.keyFindings.slice(0, 2).join(", ")}`);
       }
     });
   }
 
   if (aiInsights.patterns.length > 0) {
-    console.log("\n🔍 DETECTED PATTERNS");
-    console.log("-".repeat(40));
+    console.info("\n🔍 DETECTED PATTERNS");
+    console.info("-".repeat(40));
     aiInsights.patterns.forEach((pattern: any, index: number) => {
       const impactIcon = pattern.impact === 'HIGH' ? '🚨' : pattern.impact === 'MEDIUM' ? '⚠️' : 'ℹ️';
-      console.log(`   ${index + 1}. ${impactIcon} ${pattern.description}`);
-      console.log(`      Confidence: ${(pattern.confidence * 100).toFixed(1)}%`);
+      console.info(`   ${index + 1}. ${impactIcon} ${pattern.description}`);
+      console.info(`      Confidence: ${(pattern.confidence * 100).toFixed(1)}%`);
     });
   }
 }
 
 async function demonstrateRealTimeUpdates(dashboardManager: MerchantDashboardManager): Promise<void> {
-  console.log("\n📡 REAL-TIME UPDATES DEMONSTRATION");
-  console.log("-".repeat(40));
+  console.info("\n📡 REAL-TIME UPDATES DEMONSTRATION");
+  console.info("-".repeat(40));
   
   let updateCount = 0;
   
@@ -195,23 +195,23 @@ async function demonstrateRealTimeUpdates(dashboardManager: MerchantDashboardMan
     DEMO_CONFIG.merchantId, 
     (update: any) => {
       updateCount++;
-      console.log(`  📨 Update ${updateCount}: ${update.type} at ${update.timestamp.toLocaleTimeString()}`);
+      console.info(`  📨 Update ${updateCount}: ${update.type} at ${update.timestamp.toLocaleTimeString()}`);
       
       if (updateCount >= 3) {
         dashboardManager.unsubscribeFromRealTimeUpdates(DEMO_CONFIG.merchantId);
-        console.log("  ✅ Real-time updates demo completed");
+        console.info("  ✅ Real-time updates demo completed");
       }
     }
   );
 
   // Simulate some updates
-  console.log("  🔄 Simulating real-time events...");
+  console.info("  🔄 Simulating real-time events...");
   await new Promise(resolve => setTimeout(resolve, 2000));
 }
 
 async function demonstrateAIEvidenceAnalysis(aiAnalyzer: AIEvidenceAnalyzer): Promise<void> {
-  console.log("\n🔍 AI EVIDENCE ANALYSIS DEMONSTRATION");
-  console.log("-".repeat(40));
+  console.info("\n🔍 AI EVIDENCE ANALYSIS DEMONSTRATION");
+  console.info("-".repeat(40));
   
   // Create sample dispute
   const sampleDispute: Dispute = {
@@ -257,52 +257,52 @@ async function demonstrateAIEvidenceAnalysis(aiAnalyzer: AIEvidenceAnalyzer): Pr
     createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000)
   };
 
-  console.log(`  📋 Analyzing dispute: ${sampleDispute.id}`);
-  console.log(`  💰 Amount: $${sampleDispute.amount}`);
-  console.log(`  📄 Evidence: ${sampleDispute.evidenceUrls.length} items`);
-  console.log(`  💬 Messages: ${sampleDispute.messages.length} exchanged`);
+  console.info(`  📋 Analyzing dispute: ${sampleDispute.id}`);
+  console.info(`  💰 Amount: $${sampleDispute.amount}`);
+  console.info(`  📄 Evidence: ${sampleDispute.evidenceUrls.length} items`);
+  console.info(`  💬 Messages: ${sampleDispute.messages.length} exchanged`);
   
   try {
     const analysis = await aiAnalyzer.analyzeDispute(sampleDispute);
     
-    console.log("\n  🤖 AI ANALYSIS RESULTS");
-    console.log("  " + "-".repeat(35));
-    console.log(`  🎯 Risk Score: ${(analysis.riskScore * 100).toFixed(1)}%`);
-    console.log(`  📊 Confidence: ${(analysis.confidence * 100).toFixed(1)}%`);
-    console.log(`  ⏱️ Processing Time: ${analysis.metadata.processingTime}ms`);
-    console.log(`  📈 Analyzed Items: ${analysis.metadata.analyzedItems}`);
+    console.info("\n  🤖 AI ANALYSIS RESULTS");
+    console.info("  " + "-".repeat(35));
+    console.info(`  🎯 Risk Score: ${(analysis.riskScore * 100).toFixed(1)}%`);
+    console.info(`  📊 Confidence: ${(analysis.confidence * 100).toFixed(1)}%`);
+    console.info(`  ⏱️ Processing Time: ${analysis.metadata.processingTime}ms`);
+    console.info(`  📈 Analyzed Items: ${analysis.metadata.analyzedItems}`);
     
     if (analysis.keyFindings.length > 0) {
-      console.log("\n  🔍 KEY FINDINGS");
+      console.info("\n  🔍 KEY FINDINGS");
       analysis.keyFindings.forEach((finding: string, index: number) => {
-        console.log(`     ${index + 1}. ${finding}`);
+        console.info(`     ${index + 1}. ${finding}`);
       });
     }
     
     if (analysis.recommendations.length > 0) {
-      console.log("\n  💡 RECOMMENDATIONS");
+      console.info("\n  💡 RECOMMENDATIONS");
       analysis.recommendations.forEach((rec: string, index: number) => {
-        console.log(`     ${index + 1}. ${rec.replace(/_/g, ' ').toUpperCase()}`);
+        console.info(`     ${index + 1}. ${rec.replace(/_/g, ' ').toUpperCase()}`);
       });
     }
     
     if (analysis.fraudIndicators.length > 0) {
-      console.log("\n  🚨 FRAUD INDICATORS");
+      console.info("\n  🚨 FRAUD INDICATORS");
       analysis.fraudIndicators.forEach((indicator: any, index: number) => {
         const severityIcon = getSeverityIcon(indicator.severity);
-        console.log(`     ${index + 1}. ${severityIcon} ${indicator.description}`);
-        console.log(`        Confidence: ${(indicator.confidence * 100).toFixed(1)}%`);
+        console.info(`     ${index + 1}. ${severityIcon} ${indicator.description}`);
+        console.info(`        Confidence: ${(indicator.confidence * 100).toFixed(1)}%`);
       });
     }
     
-    console.log("\n  🧠 EXPLAINABILITY");
-    console.log(`  ${analysis.explainability.reasoning}`);
+    console.info("\n  🧠 EXPLAINABILITY");
+    console.info(`  ${analysis.explainability.reasoning}`);
     
     if (analysis.explainability.riskFactors.length > 0) {
-      console.log("\n  📊 RISK FACTORS");
+      console.info("\n  📊 RISK FACTORS");
       analysis.explainability.riskFactors.forEach((factor: any, index: number) => {
         const impactIcon = factor.impact === 'NEGATIVE' ? '📉' : '📈';
-        console.log(`     ${index + 1}. ${impactIcon} ${factor.factor} (weight: ${(factor.weight * 100).toFixed(1)}%)`);
+        console.info(`     ${index + 1}. ${impactIcon} ${factor.factor} (weight: ${(factor.weight * 100).toFixed(1)}%)`);
       });
     }
     
@@ -312,11 +312,11 @@ async function demonstrateAIEvidenceAnalysis(aiAnalyzer: AIEvidenceAnalyzer): Pr
 }
 
 function displayRecommendations(recommendations: any[]): void {
-  console.log("\n💡 RECOMMENDATIONS");
-  console.log("-".repeat(40));
+  console.info("\n💡 RECOMMENDATIONS");
+  console.info("-".repeat(40));
   
   if (recommendations.length === 0) {
-    console.log("  ✅ No recommendations at this time");
+    console.info("  ✅ No recommendations at this time");
     return;
   }
   
@@ -324,27 +324,27 @@ function displayRecommendations(recommendations: any[]): void {
     const priorityIcon = rec.priority === 'HIGH' ? '🔴' : rec.priority === 'MEDIUM' ? '🟡' : '🟢';
     const dueDate = rec.dueDate ? ` (Due: ${rec.dueDate.toLocaleDateString()})` : '';
     
-    console.log(`  ${index + 1}. ${priorityIcon} ${rec.title}${dueDate}`);
-    console.log(`     ${rec.description}`);
-    console.log(`     Status: ${rec.status}`);
+    console.info(`  ${index + 1}. ${priorityIcon} ${rec.title}${dueDate}`);
+    console.info(`     ${rec.description}`);
+    console.info(`     Status: ${rec.status}`);
   });
 }
 
 function displayAlerts(alerts: any[]): void {
-  console.log("\n🚨 ALERTS");
-  console.log("-".repeat(40));
+  console.info("\n🚨 ALERTS");
+  console.info("-".repeat(40));
   
   if (alerts.length === 0) {
-    console.log("  ✅ No alerts at this time");
+    console.info("  ✅ No alerts at this time");
     return;
   }
   
   alerts.forEach((alert: any, index: number) => {
     const severityIcon = getSeverityIcon(alert.severity);
-    console.log(`  ${index + 1}. ${severityIcon} ${alert.title}`);
-    console.log(`     ${alert.message}`);
-    console.log(`     Time: ${alert.timestamp.toLocaleString()}`);
-    console.log(`     Read: ${alert.read ? 'Yes' : 'No'}`);
+    console.info(`  ${index + 1}. ${severityIcon} ${alert.title}`);
+    console.info(`     ${alert.message}`);
+    console.info(`     Time: ${alert.timestamp.toLocaleString()}`);
+    console.info(`     Read: ${alert.read ? 'Yes' : 'No'}`);
   });
 }
 
@@ -390,7 +390,7 @@ function getSeverityIcon(severity: string): string {
 if (import.meta.main) {
   runMerchantDashboardAIDemo()
     .then(() => {
-      console.log("\n🎉 MERCHANT DASHBOARD + AI DEMO COMPLETED!");
+      console.info("\n🎉 MERCHANT DASHBOARD + AI DEMO COMPLETED!");
       process.exit(0);
     })
     .catch((error) => {

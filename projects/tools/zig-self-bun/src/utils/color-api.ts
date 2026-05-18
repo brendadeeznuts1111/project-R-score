@@ -8,24 +8,24 @@
 // Color API Examples - Optimized for Bun's native color system
 export function demonstrateBunColor() {
   // Leverage Bun.color() for format conversions (not terminal output)
-  console.log("🎨 Bun Color API (Format Conversions):");
+  console.info("🎨 Bun Color API (Format Conversions):");
 
   // Convert between color formats
   const redHex = Bun.color("red", "hex"); // "#ff0000"
   const greenRgb = Bun.color("#00ff00", "rgb"); // "rgb(0, 255, 0)"
   const blueHsl = Bun.color([0, 0, 255], "hsl"); // "hsl(240, 1, 0.5)"
 
-  console.log(`Red to hex: ${redHex}`);
-  console.log(`Green to RGB: ${greenRgb}`);
-  console.log(`Blue to HSL: ${blueHsl}`);
+  console.info(`Red to hex: ${redHex}`);
+  console.info(`Green to RGB: ${greenRgb}`);
+  console.info(`Blue to HSL: ${blueHsl}`);
 
   // ANSI color codes for terminal use
-  console.log("\n🖥️ ANSI Color Codes:");
-  console.log(`Red ANSI: ${Bun.color("red", "ansi")}`); // "31"
-  console.log(`Green ANSI: ${Bun.color("#00ff00", "ansi_256")}`); // "46"
+  console.info("\n🖥️ ANSI Color Codes:");
+  console.info(`Red ANSI: ${Bun.color("red", "ansi")}`); // "31"
+  console.info(`Green ANSI: ${Bun.color("#00ff00", "ansi_256")}`); // "46"
 
   // ANSI Colors setting check
-  console.log(`\n🔧 ANSI Colors enabled: ${Bun.enableANSIColors}`);
+  console.info(`\n🔧 ANSI Colors enabled: ${Bun.enableANSIColors}`);
 }
 
 // Advanced color utilities - Integrated with Bun's color system

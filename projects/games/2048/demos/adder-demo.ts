@@ -3,7 +3,7 @@
 // Demo version that simulates stdin input
 import { colourKit } from "./quantum-toolkit-patch.ts";
 
-console.log(`Let's add some numbers!`);
+console.info(`Let's add some numbers!`);
 
 // Simulate the stdin input sequence
 const inputs = ["5", "5", "5"];
@@ -19,12 +19,12 @@ async function simulateInput() {
     count += Number(input);
     const color = colourKit(Math.min(count / 20, 1));
 
-    console.log(input); // Show what was "typed"
+    console.info(input); // Show what was "typed"
     console.write(`Count: ${color.ansi}${count}\x1b[0m\n> `);
   }
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log(
+  console.info(
     "\n✅ Demo complete! This simulates the interactive stdin behavior."
   );
 }

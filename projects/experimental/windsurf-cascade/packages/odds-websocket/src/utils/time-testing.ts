@@ -327,12 +327,12 @@ export class TimeTestUtils {
                 {
                     timestamp: new Date('2024-01-01T14:30:00.000Z'), // US market opens
                     description: 'US Market Opens',
-                    callback: () => console.log('US Market opened')
+                    callback: () => console.info('US Market opened')
                 },
                 {
                     timestamp: new Date('2024-01-01T21:00:00.000Z'), // US market closes
                     description: 'US Market Closes',
-                    callback: () => console.log('US Market closed')
+                    callback: () => console.info('US Market closed')
                 }
             ]
         });
@@ -345,12 +345,12 @@ export class TimeTestUtils {
                 {
                     timestamp: new Date('2024-01-01T15:00:01.000Z'),
                     description: 'Price discrepancy detected',
-                    callback: () => console.log('Arbitrage opportunity detected')
+                    callback: () => console.info('Arbitrage opportunity detected')
                 },
                 {
                     timestamp: new Date('2024-01-01T15:00:05.000Z'),
                     description: 'Arbitrage executed',
-                    callback: () => console.log('Arbitrage executed')
+                    callback: () => console.info('Arbitrage executed')
                 }
             ]
         });

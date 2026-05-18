@@ -9,7 +9,7 @@ describe("DOM Helpers", () => {
     try {
       JSDOM = (await import("jsdom")).JSDOM;
     } catch {
-      console.log("jsdom not available, skipping DOM helper tests");
+      console.info("jsdom not available, skipping DOM helper tests");
     }
   });
 
@@ -33,7 +33,7 @@ describe("DOM Helpers", () => {
 
   if (!JSDOM) {
     it("jsdom not installed - tests skipped", () => {
-      console.log("Install jsdom: bun add -D jsdom");
+      console.info("Install jsdom: bun add -D jsdom");
     });
   } else {
     describe("parent.getElementsByTagName", () => {

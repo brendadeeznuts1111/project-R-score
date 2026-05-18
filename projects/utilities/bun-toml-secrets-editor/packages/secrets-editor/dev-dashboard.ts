@@ -277,45 +277,45 @@ const COLORS = {
 // ============================================================================
 
 function print(text: string) {
-	console.log(text);
+	console.info(text);
 }
 
 function printHeader(title: string, subtitle?: string) {
-	console.log(
+	console.info(
 		`\n${COLORS.bright}${COLORS.cyan}╔${"═".repeat(48)}╗${COLORS.reset}`,
 	);
-	console.log(
+	console.info(
 		`${COLORS.bright}${COLORS.cyan}║${COLORS.reset} ${title.padEnd(46)} ${COLORS.bright}${COLORS.cyan}║${COLORS.reset}`,
 	);
 	if (subtitle) {
-		console.log(
+		console.info(
 			`${COLORS.bright}${COLORS.cyan}║${COLORS.reset} ${COLORS.dim}${subtitle.padEnd(46)}${COLORS.reset} ${COLORS.bright}${COLORS.cyan}║${COLORS.reset}`,
 		);
 	}
-	console.log(
+	console.info(
 		`${COLORS.bright}${COLORS.cyan}╚${"═".repeat(48)}╝${COLORS.reset}`,
 	);
 }
 
 function printSection(title: string) {
-	console.log(`\n${COLORS.bright}${COLORS.blue}▶ ${title}${COLORS.reset}`);
-	console.log(COLORS.dim + "─".repeat(50) + COLORS.reset);
+	console.info(`\n${COLORS.bright}${COLORS.blue}▶ ${title}${COLORS.reset}`);
+	console.info(COLORS.dim + "─".repeat(50) + COLORS.reset);
 }
 
 function printSuccess(text: string, icon = "✓") {
-	console.log(`${COLORS.green}${icon}${COLORS.reset} ${text}`);
+	console.info(`${COLORS.green}${icon}${COLORS.reset} ${text}`);
 }
 
 function printError(text: string, icon = "✗") {
-	console.log(`${COLORS.red}${icon}${COLORS.reset} ${text}`);
+	console.info(`${COLORS.red}${icon}${COLORS.reset} ${text}`);
 }
 
 function printWarning(text: string, icon = "⚠") {
-	console.log(`${COLORS.yellow}${icon}${COLORS.reset} ${text}`);
+	console.info(`${COLORS.yellow}${icon}${COLORS.reset} ${text}`);
 }
 
 function printInfo(text: string, icon = "ℹ") {
-	console.log(`${COLORS.blue}${icon}${COLORS.reset} ${text}`);
+	console.info(`${COLORS.blue}${icon}${COLORS.reset} ${text}`);
 }
 
 function formatDuration(ms: number): string {
@@ -425,7 +425,7 @@ async function showVersion() {
 	const maxKey = Math.max(...Object.keys(info).map((k) => k.length));
 	for (const [key, value] of Object.entries(info)) {
 		const paddedKey = key.padEnd(maxKey);
-		console.log(
+		console.info(
 			`  ${COLORS.dim}${paddedKey}${COLORS.reset}  ${COLORS.bright}${value}${COLORS.reset}`,
 		);
 	}
@@ -537,24 +537,24 @@ async function listCategories(detailed = false) {
 	printHeader("Example Categories");
 
 	for (const [key, info] of Object.entries(CATEGORIES)) {
-		console.log(
+		console.info(
 			`\n  ${COLORS.bright}${COLORS.cyan}${info.name}${COLORS.reset} (${key})`,
 		);
-		console.log(`  ${COLORS.dim}${info.description}${COLORS.reset}`);
+		console.info(`  ${COLORS.dim}${info.description}${COLORS.reset}`);
 
 		const counts: string[] = [`${info.examples.length} examples`];
 		if (info.tests?.length) counts.push(`${info.tests.length} tests`);
 		if (info.benchmarks?.length)
 			counts.push(`${info.benchmarks.length} benchmarks`);
-		console.log(`  ${COLORS.yellow}→ ${counts.join(" | ")}${COLORS.reset}`);
+		console.info(`  ${COLORS.yellow}→ ${counts.join(" | ")}${COLORS.reset}`);
 
 		if (detailed) {
-			console.log(`  ${COLORS.dim}  Examples:${COLORS.reset}`);
+			console.info(`  ${COLORS.dim}  Examples:${COLORS.reset}`);
 			for (const ex of info.examples.slice(0, 5)) {
-				console.log(`    • ${ex}`);
+				console.info(`    • ${ex}`);
 			}
 			if (info.examples.length > 5) {
-				console.log(
+				console.info(
 					`    ${COLORS.dim}    ... and ${info.examples.length - 5} more${COLORS.reset}`,
 				);
 			}
@@ -565,9 +565,9 @@ async function listCategories(detailed = false) {
 async function showCategory(category: string) {
 	if (!CATEGORIES[category]) {
 		printError(`Unknown category: ${category}`);
-		console.log("\nAvailable categories:");
+		console.info("\nAvailable categories:");
 		for (const key of Object.keys(CATEGORIES)) {
-			console.log(`  - ${key}`);
+			console.info(`  - ${key}`);
 		}
 		return;
 	}
@@ -577,24 +577,24 @@ async function showCategory(category: string) {
 
 	printSection("Examples");
 	for (const ex of info.examples) {
-		console.log(`  ${COLORS.cyan}•${COLORS.reset} ${ex}`);
+		console.info(`  ${COLORS.cyan}•${COLORS.reset} ${ex}`);
 	}
 
 	if (info.tests) {
 		printSection("Tests");
 		for (const test of info.tests) {
-			console.log(`  ${COLORS.green}✓${COLORS.reset} ${test}`);
+			console.info(`  ${COLORS.green}✓${COLORS.reset} ${test}`);
 		}
 	}
 
 	if (info.benchmarks) {
 		printSection("Benchmarks");
 		for (const bench of info.benchmarks) {
-			console.log(`  ${COLORS.yellow}⚡${COLORS.reset} ${bench}`);
+			console.info(`  ${COLORS.yellow}⚡${COLORS.reset} ${bench}`);
 		}
 	}
 
-	console.log(
+	console.info(
 		`\n${COLORS.dim}Run: dev-dashboard run ${category} <example-name>${COLORS.reset}`,
 	);
 }
@@ -663,14 +663,14 @@ async function runAllExamples() {
 
 					const duration = Date.now() - startTime;
 					if (proc.exitCode === 0) {
-						console.log(
+						console.info(
 							`${COLORS.green}✓${COLORS.reset} ${formatDuration(duration)}`,
 						);
 					} else {
-						console.log(`${COLORS.red}✗${COLORS.reset} exit ${proc.exitCode}`);
+						console.info(`${COLORS.red}✗${COLORS.reset} exit ${proc.exitCode}`);
 					}
 				} catch {
-					console.log(`${COLORS.red}✗${COLORS.reset} error`);
+					console.info(`${COLORS.red}✗${COLORS.reset} error`);
 				}
 			}
 		}
@@ -736,10 +736,10 @@ async function runTests(category?: string, watch = false) {
 
 			try {
 				await $`bun test ${test}`.cwd(join(import.meta.dir, "../.."));
-				console.log(`${COLORS.green}✓${COLORS.reset}`);
+				console.info(`${COLORS.green}✓${COLORS.reset}`);
 				passed++;
 			} catch {
-				console.log(`${COLORS.red}✗${COLORS.reset}`);
+				console.info(`${COLORS.red}✗${COLORS.reset}`);
 				failed++;
 			}
 		}
@@ -859,11 +859,11 @@ async function build(target?: string) {
 	if (!target) {
 		printSection("Available Targets");
 		for (const [key, script] of Object.entries(buildScripts)) {
-			console.log(
+			console.info(
 				`  ${COLORS.cyan}•${COLORS.reset} ${key.padEnd(12)} → bun run ${script}`,
 			);
 		}
-		console.log(
+		console.info(
 			`\n${COLORS.dim}Run: dev-dashboard build <target>${COLORS.reset}`,
 		);
 		return;
@@ -872,9 +872,9 @@ async function build(target?: string) {
 	const script = buildScripts[target];
 	if (!script) {
 		printError(`Unknown build target: ${target}`);
-		console.log("\nAvailable targets:");
+		console.info("\nAvailable targets:");
 		for (const key of Object.keys(buildScripts)) {
-			console.log(`  - ${key}`);
+			console.info(`  - ${key}`);
 		}
 		return;
 	}
@@ -958,13 +958,13 @@ async function profile(type?: string, target?: string) {
 	if (!type) {
 		printSection("Available Profile Types");
 		for (const [key, info] of Object.entries(profileTypes)) {
-			console.log(
+			console.info(
 				`  ${COLORS.cyan}•${COLORS.reset} ${key.padEnd(12)} ${COLORS.dim}${info.description}${COLORS.reset}`,
 			);
-			console.log(`    ${COLORS.dim}→ bun run ${info.script}${COLORS.reset}`);
-			console.log(`    ${COLORS.dim}  Output: ${info.output}${COLORS.reset}`);
+			console.info(`    ${COLORS.dim}→ bun run ${info.script}${COLORS.reset}`);
+			console.info(`    ${COLORS.dim}  Output: ${info.output}${COLORS.reset}`);
 		}
-		console.log(
+		console.info(
 			`\n${COLORS.dim}Run: dev-dashboard profile <type>${COLORS.reset}`,
 		);
 		return;
@@ -973,9 +973,9 @@ async function profile(type?: string, target?: string) {
 	const profileInfo = profileTypes[type];
 	if (!profileInfo) {
 		printError(`Unknown profile type: ${type}`);
-		console.log("\nAvailable types:");
+		console.info("\nAvailable types:");
 		for (const key of Object.keys(profileTypes)) {
-			console.log(`  - ${key}`);
+			console.info(`  - ${key}`);
 		}
 		return;
 	}
@@ -1024,7 +1024,7 @@ async function profileSearch(pattern: string) {
 			await $`grep -r ${pattern} profiles/ --include="*.md" --include="*.json" 2>/dev/null || echo "No matches found"`.cwd(
 				join(import.meta.dir, "../.."),
 			);
-		console.log(result.text());
+		console.info(result.text());
 	} catch (err: any) {
 		printError(`Search failed: ${err.message}`);
 	}
@@ -1074,7 +1074,7 @@ async function gitStatus() {
 			.then((r) => r.text().trim());
 		if (status) {
 			printWarning("Uncommitted changes:");
-			console.log(status);
+			console.info(status);
 		} else {
 			printSuccess("Working tree clean");
 		}
@@ -1084,7 +1084,7 @@ async function gitStatus() {
 		const log = await $`git log --oneline -5`
 			.quiet()
 			.then((r) => r.text().trim());
-		console.log(log);
+		console.info(log);
 	} catch (err: any) {
 		printError(`Git error: ${err.message}`);
 	}
@@ -1163,14 +1163,14 @@ async function healthCheck() {
 		try {
 			const result = await check.fn();
 			if (result) {
-				console.log(`${COLORS.green}✓${COLORS.reset}`);
+				console.info(`${COLORS.green}✓${COLORS.reset}`);
 				passed++;
 			} else {
-				console.log(`${COLORS.red}✗${COLORS.reset}`);
+				console.info(`${COLORS.red}✗${COLORS.reset}`);
 				failed++;
 			}
 		} catch {
-			console.log(`${COLORS.red}✗${COLORS.reset}`);
+			console.info(`${COLORS.red}✗${COLORS.reset}`);
 			failed++;
 		}
 	}
@@ -1208,16 +1208,16 @@ async function interactiveMode() {
 	];
 
 	for (const opt of options) {
-		console.log(`  ${COLORS.cyan}${opt.key}${COLORS.reset}) ${opt.label}`);
+		console.info(`  ${COLORS.cyan}${opt.key}${COLORS.reset}) ${opt.label}`);
 	}
 
-	console.log(
+	console.info(
 		"\n" +
 			COLORS.dim +
 			"Use: dev-dashboard <command> [options] for CLI mode" +
 			COLORS.reset,
 	);
-	console.log(
+	console.info(
 		COLORS.dim +
 			"Or run with a command directly: dev-dashboard version" +
 			COLORS.reset,
@@ -1237,7 +1237,7 @@ async function runRSSIntegration() {
 
 		// Check if command succeeded (exit code 0)
 		if (result.exitCode === 0) {
-			console.log("\n✅ RSS R2 integration completed successfully!");
+			console.info("\n✅ RSS R2 integration completed successfully!");
 
 			// Try to read and display a quick summary
 			try {
@@ -1248,7 +1248,7 @@ async function runRSSIntegration() {
 					const reportContent = await Bun.file(reportPath).text();
 					const lines = reportContent.split("\n");
 
-					console.log("\n📊 Quick Summary:");
+					console.info("\n📊 Quick Summary:");
 					for (const line of lines) {
 						if (
 							line.includes("Total Feeds Tested") ||
@@ -1256,14 +1256,14 @@ async function runRSSIntegration() {
 							line.includes("Average Fetch Time") ||
 							line.includes("Average Parse Time")
 						) {
-							console.log(`  ${line.replace(/^- /, "").trim()}`);
+							console.info(`  ${line.replace(/^- /, "").trim()}`);
 						}
 					}
 
-					console.log(`\n📋 Full report: ${reportPath}`);
+					console.info(`\n📋 Full report: ${reportPath}`);
 				}
 			} catch (summaryError) {
-				console.log("Note: Could not generate quick summary");
+				console.info("Note: Could not generate quick summary");
 			}
 		} else {
 			console.error("\n❌ RSS R2 integration failed");
@@ -1274,7 +1274,7 @@ async function runRSSIntegration() {
 }
 
 function showHelp() {
-	console.log(`
+	console.info(`
 ${COLORS.bright}Development Dashboard${COLORS.reset} - Comprehensive development tool
 
 ${COLORS.bright}Usage:${COLORS.reset}
@@ -1449,7 +1449,7 @@ async function main() {
 				command !== "--help" &&
 				command !== "-h"
 			) {
-				console.log(`${COLORS.red}Unknown command: ${command}${COLORS.reset}`);
+				console.info(`${COLORS.red}Unknown command: ${command}${COLORS.reset}`);
 			}
 			showHelp();
 			break;

@@ -290,7 +290,7 @@ export class DuoPlusIPQSCache {
 
   async invalidate(phone: string): Promise<void> {
     this.cache.delete(phone);
-    console.log(`[Cache] Invalidated entry for ${phone}`);
+    console.info(`[Cache] Invalidated entry for ${phone}`);
   }
 
   private async getEnrichmentFromDuoPlus(phone: string): Promise<DuoPlusEnrichment> {
@@ -519,7 +519,7 @@ export class DuoPlusPhoneIntelligenceWorkflow {
   }
 
   async batchExec(phones: string[]): Promise<any[]> {
-    console.log(`🚀 Executing DuoPlus Batch Lookup for ${phones.length} numbers...`);
+    console.info(`🚀 Executing DuoPlus Batch Lookup for ${phones.length} numbers...`);
     // Simple concurrency limit of 5
     const results = [];
     const batchSize = 5;
@@ -536,7 +536,7 @@ export class DuoPlusPhoneIntelligenceWorkflow {
     if (!webhook?.enabled || !webhook.url) return;
 
     if (result.trustScore < webhook.lowScoreThreshold) {
-      console.log(`🚨 High-risk profile detected (${result.trustScore}), sending webhook...`);
+      console.info(`🚨 High-risk profile detected (${result.trustScore}), sending webhook...`);
       try {
         await withRetry(async () => {
           const response = await fetch(webhook.url, {
@@ -550,7 +550,7 @@ export class DuoPlusPhoneIntelligenceWorkflow {
           });
           if (!response.ok) throw new Error(`Webhook failed: ${response.status}`);
         }, { maxAttempts: 3, baseDelay: 1000 });
-        console.log('✅ Webhook notification sent.');
+        console.info('✅ Webhook notification sent.');
       } catch (error) {
         console.error('❌ Webhook notification failed:', error);
       }

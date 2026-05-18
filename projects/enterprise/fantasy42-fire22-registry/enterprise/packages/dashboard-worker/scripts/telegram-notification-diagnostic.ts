@@ -45,7 +45,7 @@ class TelegramNotificationDiagnostic {
    * Run complete diagnostic suite
    */
   async runFullDiagnostic(): Promise<DiagnosticReport> {
-    console.log('🔍 Starting Telegram Notification Diagnostic...\n');
+    console.info('🔍 Starting Telegram Notification Diagnostic...\n');
 
     const results: DiagnosticResult[] = [];
 
@@ -77,7 +77,7 @@ class TelegramNotificationDiagnostic {
    * Test 1: Bot Token Validity
    */
   private async testBotToken(): Promise<DiagnosticResult> {
-    console.log('🧪 Testing bot token validity...');
+    console.info('🧪 Testing bot token validity...');
 
     try {
       const bot = new TelegramBot(this.botToken);
@@ -117,7 +117,7 @@ class TelegramNotificationDiagnostic {
    * Test 2: Bot Permissions
    */
   private async testBotPermissions(): Promise<DiagnosticResult> {
-    console.log('🧪 Testing bot permissions...');
+    console.info('🧪 Testing bot permissions...');
 
     try {
       const bot = new TelegramBot(this.botToken);
@@ -161,7 +161,7 @@ class TelegramNotificationDiagnostic {
    * Test 3: Webhook Configuration
    */
   private async testWebhookConfiguration(): Promise<DiagnosticResult> {
-    console.log('🧪 Testing webhook configuration...');
+    console.info('🧪 Testing webhook configuration...');
 
     try {
       const bot = new TelegramBot(this.botToken);
@@ -202,7 +202,7 @@ class TelegramNotificationDiagnostic {
    * Test 4: Database Connectivity
    */
   private async testDatabaseConnectivity(): Promise<DiagnosticResult> {
-    console.log('🧪 Testing database connectivity...');
+    console.info('🧪 Testing database connectivity...');
 
     try {
       // Try to connect to database
@@ -249,7 +249,7 @@ class TelegramNotificationDiagnostic {
    * Test 5: User Mapping
    */
   private async testUserMapping(): Promise<DiagnosticResult> {
-    console.log('🧪 Testing user mapping...');
+    console.info('🧪 Testing user mapping...');
 
     if (!this.testUsername && !this.testUserId) {
       return {
@@ -296,7 +296,7 @@ class TelegramNotificationDiagnostic {
    * Test 6: Message Sending
    */
   private async testMessageSending(): Promise<DiagnosticResult> {
-    console.log('🧪 Testing message sending...');
+    console.info('🧪 Testing message sending...');
 
     if (!this.testUserId) {
       return {
@@ -349,7 +349,7 @@ class TelegramNotificationDiagnostic {
    * Test 7: Rate Limits
    */
   private async testRateLimits(): Promise<DiagnosticResult> {
-    console.log('🧪 Testing rate limits...');
+    console.info('🧪 Testing rate limits...');
 
     try {
       const rateLimitStatus = await this.checkRateLimits();
@@ -384,7 +384,7 @@ class TelegramNotificationDiagnostic {
    * Test 8: Queue System
    */
   private async testQueueSystem(): Promise<DiagnosticResult> {
-    console.log('🧪 Testing queue system...');
+    console.info('🧪 Testing queue system...');
 
     try {
       const queueStatus = await this.checkQueueSystem();
@@ -419,7 +419,7 @@ class TelegramNotificationDiagnostic {
    * Test 9: Error Handling
    */
   private async testErrorHandling(): Promise<DiagnosticResult> {
-    console.log('🧪 Testing error handling...');
+    console.info('🧪 Testing error handling...');
 
     try {
       const errorHandling = await this.testErrorScenarios();
@@ -524,45 +524,45 @@ class TelegramNotificationDiagnostic {
   }
 
   private printReport(report: DiagnosticReport): void {
-    console.log('\n' + '='.repeat(80));
-    console.log('🔍 TELEGRAM NOTIFICATION DIAGNOSTIC REPORT');
-    console.log('='.repeat(80));
-    console.log(`📅 Generated: ${report.timestamp.toLocaleString()}`);
-    console.log(`📊 Status: ${report.overallStatus}`);
-    console.log('');
+    console.info('\n' + '='.repeat(80));
+    console.info('🔍 TELEGRAM NOTIFICATION DIAGNOSTIC REPORT');
+    console.info('='.repeat(80));
+    console.info(`📅 Generated: ${report.timestamp.toLocaleString()}`);
+    console.info(`📊 Status: ${report.overallStatus}`);
+    console.info('');
 
-    console.log('📈 SUMMARY:');
-    console.log(`   ✅ Passed: ${report.summary.passed}`);
-    console.log(`   ⚠️  Warnings: ${report.summary.warnings}`);
-    console.log(`   ❌ Failed: ${report.summary.failed}`);
-    console.log(`   📋 Total: ${report.summary.total}`);
-    console.log('');
+    console.info('📈 SUMMARY:');
+    console.info(`   ✅ Passed: ${report.summary.passed}`);
+    console.info(`   ⚠️  Warnings: ${report.summary.warnings}`);
+    console.info(`   ❌ Failed: ${report.summary.failed}`);
+    console.info(`   📋 Total: ${report.summary.total}`);
+    console.info('');
 
-    console.log('🧪 DETAILED RESULTS:');
+    console.info('🧪 DETAILED RESULTS:');
     report.results.forEach(result => {
       const emoji = { PASS: '✅', FAIL: '❌', WARN: '⚠️' }[result.status];
-      console.log(`${emoji} ${result.test}: ${result.message}`);
+      console.info(`${emoji} ${result.test}: ${result.message}`);
 
       if (result.details) {
-        console.log(`   📋 Details: ${JSON.stringify(result.details, null, 2)}`);
+        console.info(`   📋 Details: ${JSON.stringify(result.details, null, 2)}`);
       }
 
       if (result.recommendation) {
-        console.log(`   💡 Recommendation: ${result.recommendation}`);
+        console.info(`   💡 Recommendation: ${result.recommendation}`);
       }
 
-      console.log('');
+      console.info('');
     });
 
     if (report.recommendations.length > 0) {
-      console.log('🎯 RECOMMENDATIONS:');
+      console.info('🎯 RECOMMENDATIONS:');
       report.recommendations.forEach((rec, index) => {
-        console.log(`   ${index + 1}. ${rec}`);
+        console.info(`   ${index + 1}. ${rec}`);
       });
-      console.log('');
+      console.info('');
     }
 
-    console.log('='.repeat(80));
+    console.info('='.repeat(80));
   }
 }
 
@@ -574,17 +574,17 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length < 1) {
-    console.log(
+    console.info(
       'Usage: bun run scripts/telegram-notification-diagnostic.ts <BOT_TOKEN> [TEST_USER_ID] [TEST_USERNAME]'
     );
-    console.log('');
-    console.log('Arguments:');
-    console.log('  BOT_TOKEN      - Your Telegram bot token');
-    console.log('  TEST_USER_ID   - Telegram user ID for testing (optional)');
-    console.log('  TEST_USERNAME  - Telegram username for testing (optional)');
-    console.log('');
-    console.log('Example:');
-    console.log(
+    console.info('');
+    console.info('Arguments:');
+    console.info('  BOT_TOKEN      - Your Telegram bot token');
+    console.info('  TEST_USER_ID   - Telegram user ID for testing (optional)');
+    console.info('  TEST_USERNAME  - Telegram username for testing (optional)');
+    console.info('');
+    console.info('Example:');
+    console.info(
       '  bun run scripts/telegram-notification-diagnostic.ts 1234567890:ABCDEF... 123456789 @testuser'
     );
     process.exit(1);

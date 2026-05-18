@@ -92,12 +92,12 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0 || ["-h", "--help", "help"].includes(args[0])) {
-    console.log(HELP);
+    console.info(HELP);
     process.exit(0);
   }
 
   if (args[0] === "--version" || args[0] === "-V") {
-    console.log(CLI_VERSION);
+    console.info(CLI_VERSION);
     process.exit(0);
   }
 
@@ -161,13 +161,13 @@ async function main() {
           console.error("\nValidation failed with errors");
           process.exit(1);
         }
-        console.log("\nValidation passed - ready to publish");
+        console.info("\nValidation passed - ready to publish");
         break;
       }
 
       default:
         console.error(`Unknown command: ${command}`);
-        console.log(HELP);
+        console.info(HELP);
         process.exit(1);
     }
   } catch (error: any) {

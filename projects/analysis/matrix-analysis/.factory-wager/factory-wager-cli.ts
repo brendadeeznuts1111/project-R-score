@@ -26,7 +26,7 @@ class FactoryWagerCLI {
   }
 
   private async validateDeploymentSafety(environment: string): Promise<void> {
-    console.log(`🔒 Validating deployment safety for ${environment.toUpperCase()}...`);
+    console.info(`🔒 Validating deployment safety for ${environment.toUpperCase()}...`);
 
     const report = await this.realityGuard.audit();
 
@@ -65,11 +65,11 @@ class FactoryWagerCLI {
       process.exit(1);
     }
 
-    console.log("✅ Deployment safety validation passed");
+    console.info("✅ Deployment safety validation passed");
   }
 
   private async validateBackupSafety(mode?: string): Promise<void> {
-    console.log("🔒 Validating backup operation safety...");
+    console.info("🔒 Validating backup operation safety...");
 
     const report = await this.realityGuard.audit();
 
@@ -107,17 +107,17 @@ class FactoryWagerCLI {
       process.exit(1);
     }
 
-    console.log("✅ Backup safety validation passed");
+    console.info("✅ Backup safety validation passed");
   }
 
   private async triggerAutomaticRemediation(violation: string, context: any): Promise<void> {
-    console.log("\n🛠️  Auto-remediation: Clearing partial credentials...");
+    console.info("\n🛠️  Auto-remediation: Clearing partial credentials...");
 
     // Move to quarantine rather than delete (exact pattern from user's script)
     await Bun.$`mv .env .env.quarantine.$(date +%s) 2>/dev/null || true`;
     await Bun.$`cp .env.local .env 2>/dev/null || echo "NODE_ENV=development" > .env`;
 
-    console.log("✅ System reset to SIMULATED mode — re-run setup to configure");
+    console.info("✅ System reset to SIMULATED mode — re-run setup to configure");
 
     // Log the remediation action
     await this.logComplianceViolation("AUTOMATIC_REMEDIATION_TRIGGERED", {
@@ -146,118 +146,118 @@ class FactoryWagerCLI {
       { append: true }
     );
 
-    console.log("🔒 Violation logged with tamper-evident hash:", auditEntry.hash);
+    console.info("🔒 Violation logged with tamper-evident hash:", auditEntry.hash);
   }
 
   private async enforceLiveMode(): Promise<void> {
     const status = await this.checkRealityStatus();
 
-    console.log("🔒 Force Live Mode - Checking Reality Status...");
+    console.info("🔒 Force Live Mode - Checking Reality Status...");
 
     if (status.overall !== "LIVE") {
-      console.log("\n❌ FORCE LIVE MODE FAILED");
-      console.log("System is not in LIVE mode:");
-      console.log(`   R2 Storage: ${status.r2.mode}`);
-      console.log(`   MCP Servers: ${status.mcp.installed}/${status.mcp.total} installed`);
-      console.log(`   Secrets: ${status.secrets.real}/${status.secrets.total} real`);
-      console.log(`   Overall: ${status.overall}`);
+      console.info("\n❌ FORCE LIVE MODE FAILED");
+      console.info("System is not in LIVE mode:");
+      console.info(`   R2 Storage: ${status.r2.mode}`);
+      console.info(`   MCP Servers: ${status.mcp.installed}/${status.mcp.total} installed`);
+      console.info(`   Secrets: ${status.secrets.real}/${status.secrets.total} real`);
+      console.info(`   Overall: ${status.overall}`);
 
-      console.log("\n💡 To enable LIVE mode:");
-      console.log("   1. Set real R2 credentials (R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_ENDPOINT)");
-      console.log("   2. Install missing MCP servers");
-      console.log("   3. Configure real secrets");
-      console.log("   4. Run: bun run reality:check to verify");
+      console.info("\n💡 To enable LIVE mode:");
+      console.info("   1. Set real R2 credentials (R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_ENDPOINT)");
+      console.info("   2. Install missing MCP servers");
+      console.info("   3. Configure real secrets");
+      console.info("   4. Run: bun run reality:check to verify");
 
       process.exit(1);
     }
 
-    console.log("✅ All systems confirmed LIVE");
+    console.info("✅ All systems confirmed LIVE");
   }
 
   private async auditRealityMode(): Promise<void> {
-    console.log("🔍 FactoryWager Reality Audit Mode");
-    console.log("=" .repeat(40));
+    console.info("🔍 FactoryWager Reality Audit Mode");
+    console.info("=" .repeat(40));
 
     const status = await this.checkRealityStatus();
 
     // Component breakdown
-    console.log("\n📊 Component Reality Status:");
+    console.info("\n📊 Component Reality Status:");
 
     // R2 Status
     const r2Icon = status.r2.mode === "LIVE" && status.r2.connected ? "🌐" :
                    status.r2.mode === "LIVE" && !status.r2.connected ? "🔄" : "💾";
-    console.log(`${r2Icon} R2 Storage: ${status.r2.mode}`);
+    console.info(`${r2Icon} R2 Storage: ${status.r2.mode}`);
     if (status.r2.error) {
-      console.log(`   ⚠️ ${status.r2.error}`);
+      console.info(`   ⚠️ ${status.r2.error}`);
     }
 
     // MCP Status
     const mcpIcon = status.mcp.installed === status.mcp.total ? "🌐" :
                    status.mcp.installed > 0 ? "🔄" : "💾";
-    console.log(`${mcpIcon} MCP Servers: ${status.mcp.installed}/${status.mcp.total} installed`);
+    console.info(`${mcpIcon} MCP Servers: ${status.mcp.installed}/${status.mcp.total} installed`);
     const missingMcp = status.mcp.servers.filter(s => !s.installed).map(s => s.server);
     if (missingMcp.length > 0) {
-      console.log(`   ❌ Missing: ${missingMcp.join(", ")}`);
+      console.info(`   ❌ Missing: ${missingMcp.join(", ")}`);
     }
 
     // Secrets Status
     const secretsIcon = status.secrets.real >= 3 ? "🌐" :
                        status.secrets.real > 0 ? "🔄" : "💾";
-    console.log(`${secretsIcon} Secrets: ${status.secrets.real}/${status.secrets.total} real`);
+    console.info(`${secretsIcon} Secrets: ${status.secrets.real}/${status.secrets.total} real`);
     if (status.secrets.missing > 0) {
-      console.log(`   ❌ Missing: ${status.secrets.missing} secrets`);
+      console.info(`   ❌ Missing: ${status.secrets.missing} secrets`);
     }
 
     // Overall Status
     const overallIcons = { LIVE: "🌐", MIXED: "🔄", SIMULATED: "💾" };
     const overallColors = { LIVE: "green", MIXED: "yellow", SIMULATED: "blue" };
 
-    console.log(`\n${overallIcons[status.overall]} Overall Mode: ${status.overall}`);
+    console.info(`\n${overallIcons[status.overall]} Overall Mode: ${status.overall}`);
 
     // Security Assessment
-    console.log("\n🔒 Security Assessment:");
+    console.info("\n🔒 Security Assessment:");
     if (status.overall === "LIVE") {
-      console.log("   🔐 PRODUCTION MODE - All systems live");
-      console.log("   💡 Monitor credential rotation and access logs");
+      console.info("   🔐 PRODUCTION MODE - All systems live");
+      console.info("   💡 Monitor credential rotation and access logs");
     } else if (status.overall === "MIXED") {
-      console.log("   ⚠️ MIXED REALITY - Partial simulation");
-      console.log("   🔒 Some components may have security implications");
-      console.log("   💡 Complete configuration for full production mode");
+      console.info("   ⚠️ MIXED REALITY - Partial simulation");
+      console.info("   🔒 Some components may have security implications");
+      console.info("   💡 Complete configuration for full production mode");
     } else {
-      console.log("   ✅ SECURE SIMULATION - All operations local");
-      console.log("   💾 No external dependencies or credential exposure");
-      console.log("   💡 Ready for production credential setup");
+      console.info("   ✅ SECURE SIMULATION - All operations local");
+      console.info("   💾 No external dependencies or credential exposure");
+      console.info("   💡 Ready for production credential setup");
     }
 
     // Configuration Recommendations
-    console.log("\n💡 Configuration Recommendations:");
+    console.info("\n💡 Configuration Recommendations:");
 
     if (status.r2.mode !== "LIVE") {
-      console.log("   🌐 R2: Set R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_ENDPOINT");
+      console.info("   🌐 R2: Set R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_ENDPOINT");
     }
 
     if (status.mcp.installed < status.mcp.total) {
-      console.log("   🔄 MCP: Install missing servers with 'bun add @modelcontextprotocol/server-{name}'");
+      console.info("   🔄 MCP: Install missing servers with 'bun add @modelcontextprotocol/server-{name}'");
     }
 
     if (status.secrets.real < status.secrets.total) {
-      console.log("   🔐 Secrets: Configure with 'bun run secrets:enterprise:set KEY VALUE'");
+      console.info("   🔐 Secrets: Configure with 'bun run secrets:enterprise:set KEY VALUE'");
     }
 
     // Mode Switching Guide
-    console.log("\n🎯 Mode Switching:");
-    console.log("   📊 Audit: bun run factory-wager --mode=audit-reality");
-    console.log("   🔒 Force: bun run factory-wager --mode=force-live");
-    console.log("   💾 Simulate: bun run factory-wager --mode=simulate");
+    console.info("\n🎯 Mode Switching:");
+    console.info("   📊 Audit: bun run factory-wager --mode=audit-reality");
+    console.info("   🔒 Force: bun run factory-wager --mode=force-live");
+    console.info("   💾 Simulate: bun run factory-wager --mode=simulate");
   }
 
   private async setSimulateMode(): Promise<void> {
-    console.log("💾 FactoryWager Simulate Mode");
-    console.log("=" .repeat(35));
+    console.info("💾 FactoryWager Simulate Mode");
+    console.info("=" .repeat(35));
 
     const status = await this.checkRealityStatus();
 
-    console.log("🔒 Enforcing local simulation mode...");
+    console.info("🔒 Enforcing local simulation mode...");
 
     // Verify local operations work
     try {
@@ -266,37 +266,37 @@ class FactoryWagerCLI {
       const testFile = '.factory-wager/simulation-test.tmp';
       fs.writeFileSync(testFile, 'simulation-test');
       fs.unlinkSync(testFile);
-      console.log("✅ Local file operations working");
+      console.info("✅ Local file operations working");
 
       // Test Bun.secrets (local)
       try {
         await Bun.secrets.get({ service: "test", name: "simulation-test" });
-        console.log("✅ Bun.secrets API accessible");
+        console.info("✅ Bun.secrets API accessible");
       } catch {
-        console.log("⚠️ Bun.secrets API limited (expected in simulation)");
+        console.info("⚠️ Bun.secrets API limited (expected in simulation)");
       }
 
       // Test local archive operations
-      console.log("✅ Local archive operations available");
+      console.info("✅ Local archive operations available");
 
     } catch (error) {
-      console.log("❌ Local simulation setup failed:", (error as Error).message);
+      console.info("❌ Local simulation setup failed:", (error as Error).message);
       process.exit(1);
     }
 
-    console.log("\n💾 Simulation Mode Active:");
-    console.log("   🌐 R2 Storage: Local file system");
-    console.log("   🔄 MCP Servers: Local mock responses");
-    console.log("   🔐 Secrets: OS keychain (if available)");
-    console.log("   📊 Archives: Local compression only");
+    console.info("\n💾 Simulation Mode Active:");
+    console.info("   🌐 R2 Storage: Local file system");
+    console.info("   🔄 MCP Servers: Local mock responses");
+    console.info("   🔐 Secrets: OS keychain (if available)");
+    console.info("   📊 Archives: Local compression only");
 
-    console.log("\n🎯 Simulation Benefits:");
-    console.log("   🚀 Offline development capability");
-    console.log("   💰 No cloud costs during development");
-    console.log("   🔒 No credential exposure risk");
-    console.log("   🧪 Full feature testing capability");
+    console.info("\n🎯 Simulation Benefits:");
+    console.info("   🚀 Offline development capability");
+    console.info("   💰 No cloud costs during development");
+    console.info("   🔒 No credential exposure risk");
+    console.info("   🧪 Full feature testing capability");
 
-    console.log("\n⚡ Ready for local development!");
+    console.info("\n⚡ Ready for local development!");
   }
 
   private async routeCommand(command: string, args: string[]): Promise<void> {
@@ -381,7 +381,7 @@ class FactoryWagerCLI {
 
     const npmCommand = commandMap[command];
     if (npmCommand) {
-      console.log(`🚀 Running: ${npmCommand} ${args.join(' ')}`);
+      console.info(`🚀 Running: ${npmCommand} ${args.join(' ')}`);
 
       const child = spawn("bun", ["run", npmCommand, ...args], {
         stdio: "inherit",
@@ -399,17 +399,17 @@ class FactoryWagerCLI {
 
     } else {
       console.error(`❌ Unknown command: ${command}`);
-      console.log("\n📋 Available commands:");
+      console.info("\n📋 Available commands:");
       Object.keys(commandMap).forEach(cmd => {
-        console.log(`   ${cmd}`);
+        console.info(`   ${cmd}`);
       });
-      console.log("\n🎯 Mode commands:");
-      console.log("   --mode=audit-reality");
-      console.log("   --mode=force-live");
-      console.log("   --mode=simulate");
-      console.log("\n⚠️  Protected commands (require proper reality mode):");
-      console.log("   deploy --env=<environment>  (Production requires LIVE mode)");
-      console.log("   backup --mode=<mode>        (Live mode requires R2 credentials)");
+      console.info("\n🎯 Mode commands:");
+      console.info("   --mode=audit-reality");
+      console.info("   --mode=force-live");
+      console.info("   --mode=simulate");
+      console.info("\n⚠️  Protected commands (require proper reality mode):");
+      console.info("   deploy --env=<environment>  (Production requires LIVE mode)");
+      console.info("   backup --mode=<mode>        (Live mode requires R2 credentials)");
       process.exit(1);
     }
   }
@@ -461,7 +461,7 @@ class FactoryWagerCLI {
 
         default:
           console.error(`❌ Unknown mode: ${options.mode}`);
-          console.log("Available modes: audit-reality, force-live, simulate");
+          console.info("Available modes: audit-reality, force-live, simulate");
           process.exit(1);
       }
     }
@@ -470,30 +470,30 @@ class FactoryWagerCLI {
     if (options.command) {
       await this.routeCommand(options.command, options.args);
     } else {
-      console.log("🏭 FactoryWager CLI - Unified Interface");
-      console.log("=" .repeat(45));
-      console.log();
-      console.log("🎯 Usage:");
-      console.log("   bun run factory-wager <command> [args]");
-      console.log("   bun run factory-wager --mode=<mode>");
-      console.log();
-      console.log("📊 Reality Modes:");
-      console.log("   --mode=audit-reality  # Shows what's real vs. simulated");
-      console.log("   --mode=force-live     # Errors if any component is simulated");
-      console.log("   --mode=simulate       # Explicitly uses local fallbacks");
-      console.log();
-      console.log("🔍 Commands:");
-      console.log("   health*              # Vault health monitoring");
-      console.log("   secrets*              # Enterprise secrets management");
-      console.log("   archive*              # Archive and backup operations");
-      console.log("   organize*             # File organization");
-      console.log("   reality*              # Reality audit commands");
-      console.log();
-      console.log("💡 Examples:");
-      console.log("   bun run factory-wager --mode=audit-reality");
-      console.log("   bun run factory-wager health:verbose");
-      console.log("   bun run factory-wager --mode=force-live secrets:list");
-      console.log("   bun run factory-wager archive:create --id=backup-$(date +%Y-%m-%d)");
+      console.info("🏭 FactoryWager CLI - Unified Interface");
+      console.info("=" .repeat(45));
+      console.info();
+      console.info("🎯 Usage:");
+      console.info("   bun run factory-wager <command> [args]");
+      console.info("   bun run factory-wager --mode=<mode>");
+      console.info();
+      console.info("📊 Reality Modes:");
+      console.info("   --mode=audit-reality  # Shows what's real vs. simulated");
+      console.info("   --mode=force-live     # Errors if any component is simulated");
+      console.info("   --mode=simulate       # Explicitly uses local fallbacks");
+      console.info();
+      console.info("🔍 Commands:");
+      console.info("   health*              # Vault health monitoring");
+      console.info("   secrets*              # Enterprise secrets management");
+      console.info("   archive*              # Archive and backup operations");
+      console.info("   organize*             # File organization");
+      console.info("   reality*              # Reality audit commands");
+      console.info();
+      console.info("💡 Examples:");
+      console.info("   bun run factory-wager --mode=audit-reality");
+      console.info("   bun run factory-wager health:verbose");
+      console.info("   bun run factory-wager --mode=force-live secrets:list");
+      console.info("   bun run factory-wager archive:create --id=backup-$(date +%Y-%m-%d)");
     }
   }
 }

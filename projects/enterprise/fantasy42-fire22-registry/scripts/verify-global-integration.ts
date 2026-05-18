@@ -28,10 +28,10 @@ class IntegrationVerifier {
    * Run all verification tests
    */
   async runAllTests(): Promise<void> {
-    console.log('='.repeat(60));
-    console.log('   SportsBet Global/BunX Integration Verification');
-    console.log('='.repeat(60));
-    console.log();
+    console.info('='.repeat(60));
+    console.info('   SportsBet Global/BunX Integration Verification');
+    console.info('='.repeat(60));
+    console.info();
 
     await this.testDirectoryStructure();
     await this.testConfigurationFiles();
@@ -50,7 +50,7 @@ class IntegrationVerifier {
    * Test directory structure
    */
   private async testDirectoryStructure(): Promise<void> {
-    console.log('📁 Testing directory structure...');
+    console.info('📁 Testing directory structure...');
 
     const dirs = [
       { path: '~/.bun/install/global', name: 'Global packages directory' },
@@ -78,7 +78,7 @@ class IntegrationVerifier {
    * Test configuration files
    */
   private async testConfigurationFiles(): Promise<void> {
-    console.log('📋 Testing configuration files...');
+    console.info('📋 Testing configuration files...');
 
     const configs = [
       { path: '~/.bunfig.toml', name: 'Global bunfig.toml' },
@@ -124,7 +124,7 @@ class IntegrationVerifier {
    * Test registry connectivity
    */
   private async testRegistryConnectivity(): Promise<void> {
-    console.log('🌐 Testing registry connectivity...');
+    console.info('🌐 Testing registry connectivity...');
 
     const registries = [
       { url: 'https://registry.npmjs.org', name: 'NPM Registry' },
@@ -162,7 +162,7 @@ class IntegrationVerifier {
    * Test global packages
    */
   private async testGlobalPackages(): Promise<void> {
-    console.log('📦 Testing global packages...');
+    console.info('📦 Testing global packages...');
 
     try {
       const { stdout, exitCode } = await $`bun pm ls --global --json`.quiet();
@@ -208,7 +208,7 @@ class IntegrationVerifier {
    * Test BunX execution
    */
   private async testBunXExecution(): Promise<void> {
-    console.log('🚀 Testing BunX execution...');
+    console.info('🚀 Testing BunX execution...');
 
     // Test basic BunX
     try {
@@ -256,7 +256,7 @@ class IntegrationVerifier {
    * Test cache integration
    */
   private async testCacheIntegration(): Promise<void> {
-    console.log('💾 Testing cache integration...');
+    console.info('💾 Testing cache integration...');
 
     // Check cache sizes
     const caches = [
@@ -299,7 +299,7 @@ class IntegrationVerifier {
    * Test scope resolution
    */
   private async testScopeResolution(): Promise<void> {
-    console.log('🔍 Testing scope resolution...');
+    console.info('🔍 Testing scope resolution...');
 
     // Read bunfig to check scope configuration
     const bunfigPath = join(this.homeDir, '.bunfig.toml');
@@ -346,7 +346,7 @@ class IntegrationVerifier {
    * Test security features
    */
   private async testSecurityFeatures(): Promise<void> {
-    console.log('🔐 Testing security features...');
+    console.info('🔐 Testing security features...');
 
     // Test audit capability
     try {
@@ -387,7 +387,7 @@ class IntegrationVerifier {
    * Test performance metrics
    */
   private async testPerformance(): Promise<void> {
-    console.log('⚡ Testing performance...');
+    console.info('⚡ Testing performance...');
 
     // Test BunX execution speed
     const start = performance.now();
@@ -434,15 +434,15 @@ class IntegrationVerifier {
    * Display test results
    */
   private displayResults(): void {
-    console.log('\n' + '='.repeat(60));
-    console.log('                    TEST RESULTS');
-    console.log('='.repeat(60));
+    console.info('\n' + '='.repeat(60));
+    console.info('                    TEST RESULTS');
+    console.info('='.repeat(60));
 
     const passed = this.results.filter(r => r.status === 'pass').length;
     const failed = this.results.filter(r => r.status === 'fail').length;
     const warned = this.results.filter(r => r.status === 'warn').length;
 
-    console.log(`\n📊 Summary: ${passed} passed, ${warned} warnings, ${failed} failed\n`);
+    console.info(`\n📊 Summary: ${passed} passed, ${warned} warnings, ${failed} failed\n`);
 
     // Group results by status
     const groups = {
@@ -453,44 +453,44 @@ class IntegrationVerifier {
 
     // Display passed tests
     if (groups.pass.length > 0) {
-      console.log('✅ Passed:');
+      console.info('✅ Passed:');
       for (const result of groups.pass) {
-        console.log(`  • ${result.name}: ${result.message}`);
+        console.info(`  • ${result.name}: ${result.message}`);
       }
     }
 
     // Display warnings
     if (groups.warn.length > 0) {
-      console.log('\n⚠️ Warnings:');
+      console.info('\n⚠️ Warnings:');
       for (const result of groups.warn) {
-        console.log(`  • ${result.name}: ${result.message}`);
+        console.info(`  • ${result.name}: ${result.message}`);
         if (result.details) {
-          console.log(`    Details: ${JSON.stringify(result.details)}`);
+          console.info(`    Details: ${JSON.stringify(result.details)}`);
         }
       }
     }
 
     // Display failures
     if (groups.fail.length > 0) {
-      console.log('\n❌ Failed:');
+      console.info('\n❌ Failed:');
       for (const result of groups.fail) {
-        console.log(`  • ${result.name}: ${result.message}`);
+        console.info(`  • ${result.name}: ${result.message}`);
         if (result.details) {
-          console.log(`    Details: ${JSON.stringify(result.details)}`);
+          console.info(`    Details: ${JSON.stringify(result.details)}`);
         }
       }
     }
 
     // Overall status
-    console.log('\n' + '='.repeat(60));
+    console.info('\n' + '='.repeat(60));
     if (failed === 0 && warned < 3) {
-      console.log('✅ Integration is working correctly!');
+      console.info('✅ Integration is working correctly!');
     } else if (failed === 0) {
-      console.log('⚠️ Integration has some warnings but is functional.');
+      console.info('⚠️ Integration has some warnings but is functional.');
     } else {
-      console.log('❌ Integration has issues that need attention.');
+      console.info('❌ Integration has issues that need attention.');
     }
-    console.log('='.repeat(60));
+    console.info('='.repeat(60));
   }
 }
 

@@ -117,7 +117,7 @@ const BLOCKED_AI_BOTS = [
 // ═══════════════════════════════════════════════════════════
 
 async function enableCacheReserve(client: CloudflareClient): Promise<boolean> {
-  console.log('📦 Enabling Cache Reserve...');
+  console.info('📦 Enabling Cache Reserve...');
 
   try {
     const response = await fetch(
@@ -135,10 +135,10 @@ async function enableCacheReserve(client: CloudflareClient): Promise<boolean> {
     const data = await response.json() as { success: boolean; errors?: any[] };
 
     if (data.success) {
-      console.log('✅ Cache Reserve enabled');
+      console.info('✅ Cache Reserve enabled');
       return true;
     } else {
-      console.log('⚠️  Cache Reserve may already be enabled or not available');
+      console.info('⚠️  Cache Reserve may already be enabled or not available');
       return true; // Continue anyway
     }
   } catch (error) {
@@ -148,7 +148,7 @@ async function enableCacheReserve(client: CloudflareClient): Promise<boolean> {
 }
 
 async function createPageRule(rule: CacheRule): Promise<boolean> {
-  console.log(`📝 Creating page rule: ${rule.name}`);
+  console.info(`📝 Creating page rule: ${rule.name}`);
 
   try {
     const response = await fetch(
@@ -183,11 +183,11 @@ async function createPageRule(rule: CacheRule): Promise<boolean> {
     const data = await response.json() as { success: boolean; errors?: any[] };
 
     if (data.success) {
-      console.log(`✅ Page rule created: ${rule.name}`);
+      console.info(`✅ Page rule created: ${rule.name}`);
       return true;
     } else {
       const errorMsg = (data.errors as any[])?.map((e: any) => e.message).join(', ') || 'Unknown error';
-      console.log(`⚠️  Failed to create rule: ${errorMsg}`);
+      console.info(`⚠️  Failed to create rule: ${errorMsg}`);
       return false;
     }
   } catch (error) {
@@ -215,7 +215,7 @@ async function listPageRules(): Promise<any[]> {
 }
 
 async function blockAIBots(): Promise<boolean> {
-  console.log('🤖 Blocking AI crawler bots...');
+  console.info('🤖 Blocking AI crawler bots...');
 
   try {
     // Try bot management API (may require Pro+ plan)
@@ -236,12 +236,12 @@ async function blockAIBots(): Promise<boolean> {
     const data = await response.json() as { success: boolean };
 
     if (data.success) {
-      console.log('✅ AI bot protection enabled');
+      console.info('✅ AI bot protection enabled');
       return true;
     }
 
     // Fallback: Create WAF rules for known AI bots
-    console.log('⚠️  Bot management API not available, creating WAF rules...');
+    console.info('⚠️  Bot management API not available, creating WAF rules...');
 
     for (const bot of BLOCKED_AI_BOTS.slice(0, 5)) { // Limit to avoid rate limits
       await fetch(
@@ -263,7 +263,7 @@ async function blockAIBots(): Promise<boolean> {
       );
     }
 
-    console.log('✅ WAF rules created for AI bots');
+    console.info('✅ WAF rules created for AI bots');
     return true;
   } catch (error) {
     console.warn('⚠️  Could not configure bot blocking (may require higher plan)');
@@ -306,17 +306,17 @@ async function validateCacheStatus(endpoint: string): Promise<{
 // ═══════════════════════════════════════════════════════════
 
 function printCacheMatrix(): void {
-  console.log('\n' + '═'.repeat(80));
-  console.log('📊 Cache Configuration Matrix');
-  console.log('═'.repeat(80));
-  console.log(
+  console.info('\n' + '═'.repeat(80));
+  console.info('📊 Cache Configuration Matrix');
+  console.info('═'.repeat(80));
+  console.info(
     '| ' +
     'Endpoint Category'.padEnd(25) + ' | ' +
     'Cache Level'.padEnd(18) + ' | ' +
     'Edge TTL'.padEnd(10) + ' | ' +
     'Browser TTL'.padEnd(12) + ' |'
   );
-  console.log('|' + '-'.repeat(27) + '|' + '-'.repeat(20) + '|' + '-'.repeat(12) + '|' + '-'.repeat(14) + '|');
+  console.info('|' + '-'.repeat(27) + '|' + '-'.repeat(20) + '|' + '-'.repeat(12) + '|' + '-'.repeat(14) + '|');
 
   for (const rule of CACHE_RULES) {
     const edgeTTL = rule.actions.edge_cache_ttl >= 86400
@@ -331,7 +331,7 @@ function printCacheMatrix(): void {
         ? `${Math.round(rule.actions.browser_cache_ttl / 3600)}h`
         : `${rule.actions.browser_cache_ttl}s`;
 
-    console.log(
+    console.info(
       '| ' +
       rule.name.slice(0, 23).padEnd(25) + ' | ' +
       rule.actions.cache_level.padEnd(18) + ' | ' +
@@ -339,13 +339,13 @@ function printCacheMatrix(): void {
       browserTTL.padEnd(12) + ' |'
     );
   }
-  console.log('═'.repeat(80));
+  console.info('═'.repeat(80));
 }
 
 async function printValidationResults(): Promise<void> {
-  console.log('\n' + '═'.repeat(80));
-  console.log('🔍 Cache Validation Results');
-  console.log('═'.repeat(80));
+  console.info('\n' + '═'.repeat(80));
+  console.info('🔍 Cache Validation Results');
+  console.info('═'.repeat(80));
 
   const testEndpoints = [
     `https://${DEFAULT_DOMAIN}/api/qr/onboard`,
@@ -353,21 +353,21 @@ async function printValidationResults(): Promise<void> {
     `https://${DEFAULT_DOMAIN}/status`,
   ];
 
-  console.log(
+  console.info(
     '| ' +
     'Endpoint'.padEnd(40) + ' | ' +
     'Cache Status'.padEnd(14) + ' | ' +
     'Latency'.padEnd(10) + ' | ' +
     'Status'.padEnd(8) + ' |'
   );
-  console.log('|' + '-'.repeat(42) + '|' + '-'.repeat(16) + '|' + '-'.repeat(12) + '|' + '-'.repeat(10) + '|');
+  console.info('|' + '-'.repeat(42) + '|' + '-'.repeat(16) + '|' + '-'.repeat(12) + '|' + '-'.repeat(10) + '|');
 
   for (const endpoint of testEndpoints) {
     const result = await validateCacheStatus(endpoint);
     const statusEmoji = result.cached ? '✅' : result.cacheStatus === 'MISS' ? '🟡' : '🔴';
     const path = new URL(endpoint).pathname;
 
-    console.log(
+    console.info(
       '| ' +
       path.padEnd(40) + ' | ' +
       result.cacheStatus.padEnd(14) + ' | ' +
@@ -375,7 +375,7 @@ async function printValidationResults(): Promise<void> {
       statusEmoji.padEnd(8) + ' |'
     );
   }
-  console.log('═'.repeat(80));
+  console.info('═'.repeat(80));
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -386,26 +386,26 @@ async function main() {
   const command = process.argv[2];
 
   if (!process.env.CF_API_TOKEN) {
-    console.log('⚠️  CF_API_TOKEN environment variable is required');
-    console.log(`   Get your token: ${urlLink('https://dash.cloudflare.com/profile/api-tokens', 'Cloudflare API Tokens')}`);
+    console.info('⚠️  CF_API_TOKEN environment variable is required');
+    console.info(`   Get your token: ${urlLink('https://dash.cloudflare.com/profile/api-tokens', 'Cloudflare API Tokens')}`);
     process.exit(1);
   }
 
-  console.log('🚨 CRITICAL: Cloudflare Cache Configuration');
-  console.log(`Zone: ${DEFAULT_DOMAIN} (${DEFAULT_ZONE_ID.slice(0, 8)}...)`);
-  console.log('─'.repeat(60));
+  console.info('🚨 CRITICAL: Cloudflare Cache Configuration');
+  console.info(`Zone: ${DEFAULT_DOMAIN} (${DEFAULT_ZONE_ID.slice(0, 8)}...)`);
+  console.info('─'.repeat(60));
 
   switch (command) {
     case '--apply':
     case 'apply':
-      console.log('\n📋 Applying cache configuration...\n');
+      console.info('\n📋 Applying cache configuration...\n');
 
       // Step 1: Enable cache reserve
       await enableCacheReserve(new CloudflareClient());
 
       // Step 2: List existing rules
       const existingRules = await listPageRules();
-      console.log(`📝 Found ${existingRules.length} existing page rules\n`);
+      console.info(`📝 Found ${existingRules.length} existing page rules\n`);
 
       // Step 3: Create new rules
       let created = 0;
@@ -415,7 +415,7 @@ async function main() {
         await Bun.sleep(500); // Rate limit protection
       }
 
-      console.log(`\n✅ Created ${created}/${CACHE_RULES.length} cache rules`);
+      console.info(`\n✅ Created ${created}/${CACHE_RULES.length} cache rules`);
 
       // Step 4: Block AI bots
       await blockAIBots();
@@ -424,7 +424,7 @@ async function main() {
       printCacheMatrix();
 
       // Step 6: Validate
-      console.log('\n⏳ Waiting 5 seconds for rules to propagate...');
+      console.info('\n⏳ Waiting 5 seconds for rules to propagate...');
       await Bun.sleep(5000);
       await printValidationResults();
       break;
@@ -437,13 +437,13 @@ async function main() {
     case '--list':
     case 'list':
       const rules = await listPageRules();
-      console.log('\n📋 Current Page Rules:\n');
+      console.info('\n📋 Current Page Rules:\n');
       for (const rule of rules) {
-        console.log(`  ${rule.status === 'active' ? '🟢' : '⚪'} ${rule.targets?.[0]?.constraint?.value || 'N/A'}`);
-        console.log(`     Actions: ${rule.actions?.map((a: any) => `${a.id}=${a.value}`).join(', ')}`);
+        console.info(`  ${rule.status === 'active' ? '🟢' : '⚪'} ${rule.targets?.[0]?.constraint?.value || 'N/A'}`);
+        console.info(`     Actions: ${rule.actions?.map((a: any) => `${a.id}=${a.value}`).join(', ')}`);
       }
       if (rules.length === 0) {
-        console.log('  No page rules configured');
+        console.info('  No page rules configured');
       }
       break;
 
@@ -454,7 +454,7 @@ async function main() {
 
     case '--help':
     default:
-      console.log(`
+      console.info(`
 🚨 Cloudflare Cache Configuration Tool
 
 Usage:

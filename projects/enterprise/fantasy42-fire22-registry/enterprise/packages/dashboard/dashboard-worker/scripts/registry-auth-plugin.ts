@@ -49,13 +49,13 @@ plugin({
         init.headers = new Headers(init.headers);
         init.headers.set('Authorization', `Bearer ${token}`);
 
-        console.log(`🔐 Authenticating request to Fire22 registry`);
+        console.info(`🔐 Authenticating request to Fire22 registry`);
       }
 
       return originalFetch(input, init);
     };
 
-    console.log('✅ Fire22 registry authentication plugin loaded');
+    console.info('✅ Fire22 registry authentication plugin loaded');
   },
 });
 
@@ -64,15 +64,15 @@ export { getSecureToken, SERVICE_NAME, TOKEN_NAME, REGISTRY_URL };
 
 // Auto-setup when imported
 if (import.meta.main) {
-  console.log('🔐 Fire22 Registry Authentication Plugin');
-  console.log('!==!==!==!==!==!==!====\n');
+  console.info('🔐 Fire22 Registry Authentication Plugin');
+  console.info('!==!==!==!==!==!==!====\n');
 
   const token = await getSecureToken();
   if (token) {
-    console.log('✅ Token found in secure storage');
-    console.log(`   Service: ${SERVICE_NAME}`);
-    console.log(`   Registry: ${REGISTRY_URL}`);
-    console.log(`   Token: ${token.substring(0, 10)}...${token.substring(token.length - 4)}`);
+    console.info('✅ Token found in secure storage');
+    console.info(`   Service: ${SERVICE_NAME}`);
+    console.info(`   Registry: ${REGISTRY_URL}`);
+    console.info(`   Token: ${token.substring(0, 10)}...${token.substring(token.length - 4)}`);
 
     // Test the token
     const response = await fetch(`${REGISTRY_URL}health`, {
@@ -82,13 +82,13 @@ if (import.meta.main) {
     });
 
     if (response.ok) {
-      console.log('\n✅ Token validated successfully');
+      console.info('\n✅ Token validated successfully');
       const data = await response.json();
-      console.log('Registry Status:', JSON.stringify(data, null, 2));
+      console.info('Registry Status:', JSON.stringify(data, null, 2));
     } else {
-      console.log('\n❌ Token validation failed:', response.status);
+      console.info('\n❌ Token validation failed:', response.status);
     }
   } else {
-    console.log('⚠️ No token found. Run: bun run scripts/setup-registry-token.ts');
+    console.info('⚠️ No token found. Run: bun run scripts/setup-registry-token.ts');
   }
 }

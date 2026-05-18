@@ -96,7 +96,7 @@ export class AutomatedGovernanceEngine {
     this.auditLogs.push(auditEntry);
 
     // In production, this would write to secure audit log
-    console.log(`📊 [AUDIT] ${auditEntry.action} ${context.team}/${context.name} by ${auditEntry.teamMember}`);
+    console.info(`📊 [AUDIT] ${auditEntry.action} ${context.team}/${context.name} by ${auditEntry.teamMember}`);
 
     // Inform coordinator if available
     if (coordinator) {
@@ -232,7 +232,7 @@ export class BunSecretsManager {
     const envValue = this.tryEnvironmentFallback(team, secretName, env);
 
     if (envValue) {
-      console.log(`[Secrets] Using env fallback: ${secretName}`);
+      console.info(`[Secrets] Using env fallback: ${secretName}`);
 
       // Optionally store in Bun.secrets for future use (development only)
       if (env === 'development') {
@@ -308,7 +308,7 @@ export class BunSecretsManager {
       }, this.coordinator);
     }
 
-    console.log(`🔒 Secret stored: ${team}/${secretName} (${env})`);
+    console.info(`🔒 Secret stored: ${team}/${secretName} (${env})`);
   }
 
   /**
@@ -335,7 +335,7 @@ export class BunSecretsManager {
           environment: env,
           success: true,
         }, this.coordinator);
-        console.log(`🗑️ Secret deleted: ${team}/${secretName}`);
+        console.info(`🗑️ Secret deleted: ${team}/${secretName}`);
       }
 
       return deleted;
@@ -374,7 +374,7 @@ export class BunSecretsManager {
 
     // Store old version with timestamp (simulate version control)
     const rotationTimestamp = Date.now();
-    console.log(`🔄 Rotating secret: ${secretName} (${rotationTimestamp})`);
+    console.info(`🔄 Rotating secret: ${secretName} (${rotationTimestamp})`);
 
     // Set new value
     await this.setSecret(team, secretName, newValue, { skipAudit: true });
@@ -572,7 +572,7 @@ async function main() {
   });
 
   if (args.values.help || !args.values.command) {
-    console.log(`
+    console.info(`
 🔐 SERO Secrets Manager CLI
 
 Usage: secrets-manager.ts --command <command> [options]
@@ -611,7 +611,7 @@ Examples:
       case "get": {
         const secret = await manager.getSecret(team, name);
         if (secret) {
-          console.log(secret);
+          console.info(secret);
         } else {
           console.error(`❌ Secret ${team}/${name} not found`);
           process.exit(1);
@@ -635,7 +635,7 @@ Examples:
 
       case "has": {
         const exists = await manager.hasSecret(team, name);
-        console.log(exists ? "✅ Secret exists" : "❌ Secret not found");
+        console.info(exists ? "✅ Secret exists" : "❌ Secret not found");
         break;
       }
 

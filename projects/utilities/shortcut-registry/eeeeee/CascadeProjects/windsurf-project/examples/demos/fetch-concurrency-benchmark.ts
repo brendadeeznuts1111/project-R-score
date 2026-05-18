@@ -5,8 +5,8 @@
 
 import { fetch } from "bun";
 
-console.log("⚡ Bun Fetch Concurrency Benchmark");
-console.log("=" .repeat(50));
+console.info("⚡ Bun Fetch Concurrency Benchmark");
+console.info("=" .repeat(50));
 
 // Configuration
 const BASE_URL = process.env.BASE_URL || "https://httpbin.org";
@@ -27,17 +27,17 @@ interface BenchmarkResult {
 async function preconnectTarget(url: string) {
   try {
     const origin = new URL(url).origin;
-    console.log(`🔗 Preconnecting to ${origin}...`);
+    console.info(`🔗 Preconnecting to ${origin}...`);
     await fetch.preconnect(origin);
-    console.log("✅ Preconnect complete");
+    console.info("✅ Preconnect complete");
   } catch (error) {
-    console.log("⚠️ Preconnect failed:", error);
+    console.info("⚠️ Preconnect failed:", error);
   }
 }
 
 // Run benchmark at specific concurrency level
 async function runBenchmark(concurrency: number): Promise<BenchmarkResult> {
-  console.log(`🧪 Testing ${concurrency} concurrent requests...`);
+  console.info(`🧪 Testing ${concurrency} concurrent requests...`);
   
   const startTime = performance.now();
   const promises: Promise<{ success: boolean; latency: number; error?: string }>[] = [];
@@ -80,13 +80,13 @@ async function runBenchmark(concurrency: number): Promise<BenchmarkResult> {
     errors: Array.from(new Set(errors)) // Unique errors
   };
   
-  console.log(`   ✅ Completed in ${totalTime.toFixed(2)}ms`);
-  console.log(`   📈 ${requestsPerSecond.toFixed(0)} req/sec`);
-  console.log(`   🎯 Success rate: ${successRate.toFixed(1)}%`);
-  console.log(`   ⏱️ Avg latency: ${avgLatency.toFixed(2)}ms`);
+  console.info(`   ✅ Completed in ${totalTime.toFixed(2)}ms`);
+  console.info(`   📈 ${requestsPerSecond.toFixed(0)} req/sec`);
+  console.info(`   🎯 Success rate: ${successRate.toFixed(1)}%`);
+  console.info(`   ⏱️ Avg latency: ${avgLatency.toFixed(2)}ms`);
   
   if (result.errors.length > 0) {
-    console.log(`   ❌ Errors: ${result.errors.slice(0, 3).join(", ")}${result.errors.length > 3 ? "..." : ""}`);
+    console.info(`   ❌ Errors: ${result.errors.slice(0, 3).join(", ")}${result.errors.length > 3 ? "..." : ""}`);
   }
   
   return result;
@@ -94,14 +94,14 @@ async function runBenchmark(concurrency: number): Promise<BenchmarkResult> {
 
 // Test connection pooling efficiency
 async function testConnectionPooling() {
-  console.log("\n🔄 Testing Connection Pooling Efficiency");
-  console.log("-".repeat(40));
+  console.info("\n🔄 Testing Connection Pooling Efficiency");
+  console.info("-".repeat(40));
   
   const sameHostUrl = `${BASE_URL}/get`;
   const requestCount = 20;
   const times: number[] = [];
   
-  console.log(`Making ${requestCount} sequential requests to same host...`);
+  console.info(`Making ${requestCount} sequential requests to same host...`);
   
   for (let i = 0; i < requestCount; i++) {
     const start = performance.now();
@@ -111,13 +111,13 @@ async function testConnectionPooling() {
       times.push(time);
       
       if (i === 0) {
-        console.log(`   First request: ${time.toFixed(2)}ms (cold connection)`);
+        console.info(`   First request: ${time.toFixed(2)}ms (cold connection)`);
       } else if (i === requestCount - 1 && times[0]) {
         const improvement = ((times[0] - time) / times[0]) * 100;
-        console.log(`   Last request: ${time.toFixed(2)}ms (${improvement.toFixed(1)}% improvement)`);
+        console.info(`   Last request: ${time.toFixed(2)}ms (${improvement.toFixed(1)}% improvement)`);
       }
     } catch (error) {
-      console.log(`   Request ${i + 1} failed:`, error);
+      console.info(`   Request ${i + 1} failed:`, error);
     }
   }
   
@@ -125,8 +125,8 @@ async function testConnectionPooling() {
     const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
     const poolEfficiency = times[0] && times[times.length - 1] !== undefined ? ((times[0] - times[times.length - 1]) / times[0]) * 100 : 0;
   
-  console.log(`   📊 Average time: ${avgTime.toFixed(2)}ms`);
-  console.log(`   🚀 Pool efficiency: ${poolEfficiency.toFixed(1)}%`);
+  console.info(`   📊 Average time: ${avgTime.toFixed(2)}ms`);
+  console.info(`   🚀 Pool efficiency: ${poolEfficiency.toFixed(1)}%`);
   
   return { times, avgTime, poolEfficiency };
   } else {
@@ -136,14 +136,14 @@ async function testConnectionPooling() {
 
 // Test preconnect benefits
 async function testPreconnectBenefits() {
-  console.log("\n🔗 Testing Preconnect Benefits");
-  console.log("-".repeat(40));
+  console.info("\n🔗 Testing Preconnect Benefits");
+  console.info("-".repeat(40));
   
   const testUrl = `${BASE_URL}/delay/1`;
   const iterations = 5;
   
   // Test without preconnect
-  console.log("Testing without preconnect...");
+  console.info("Testing without preconnect...");
   const coldTimes: number[] = [];
   for (let i = 0; i < iterations; i++) {
     const start = performance.now();
@@ -151,12 +151,12 @@ async function testPreconnectBenefits() {
       await fetch(testUrl);
       coldTimes.push(performance.now() - start);
     } catch (error) {
-      console.log(`Cold request ${i + 1} failed:`, error);
+      console.info(`Cold request ${i + 1} failed:`, error);
     }
   }
   
   // Test with preconnect
-  console.log("Testing with preconnect...");
+  console.info("Testing with preconnect...");
   await fetch.preconnect(new URL(testUrl).origin);
   
   const preconnectTimes: number[] = [];
@@ -166,7 +166,7 @@ async function testPreconnectBenefits() {
       await fetch(testUrl);
       preconnectTimes.push(performance.now() - start);
     } catch (error) {
-      console.log(`Preconnect request ${i + 1} failed:`, error);
+      console.info(`Preconnect request ${i + 1} failed:`, error);
     }
   }
   
@@ -175,9 +175,9 @@ async function testPreconnectBenefits() {
     const preconnectAvg = preconnectTimes.reduce((a, b) => a + b, 0) / preconnectTimes.length;
     const improvement = ((coldAvg - preconnectAvg) / coldAvg) * 100;
     
-    console.log(`   🧊 Cold requests: ${coldAvg.toFixed(2)}ms avg`);
-    console.log(`   ⚡ Preconnected: ${preconnectAvg.toFixed(2)}ms avg`);
-    console.log(`   🚀 Improvement: ${improvement.toFixed(1)}%`);
+    console.info(`   🧊 Cold requests: ${coldAvg.toFixed(2)}ms avg`);
+    console.info(`   ⚡ Preconnected: ${preconnectAvg.toFixed(2)}ms avg`);
+    console.info(`   🚀 Improvement: ${improvement.toFixed(1)}%`);
     
     return { coldAvg, preconnectAvg, improvement };
   }
@@ -188,9 +188,9 @@ async function testPreconnectBenefits() {
 // Main benchmark function
 async function runFullBenchmark() {
   const maxRequests = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || "256";
-  console.log(`🔧 Environment: BUN_CONFIG_MAX_HTTP_REQUESTS=${maxRequests}`);
-  console.log(`🎯 Target: ${BASE_URL}`);
-  console.log("");
+  console.info(`🔧 Environment: BUN_CONFIG_MAX_HTTP_REQUESTS=${maxRequests}`);
+  console.info(`🎯 Target: ${BASE_URL}`);
+  console.info("");
   
   try {
     // Preconnect to target
@@ -203,15 +203,15 @@ async function runFullBenchmark() {
     const preconnectResults = await testPreconnectBenefits();
     
     // Run concurrency benchmarks
-    console.log("\n⚡ Concurrency Benchmark Results");
-    console.log("=" .repeat(50));
+    console.info("\n⚡ Concurrency Benchmark Results");
+    console.info("=" .repeat(50));
     
     const results: BenchmarkResult[] = [];
     
     for (const concurrency of CONCURRENCY_LEVELS) {
       // Skip if concurrency exceeds environment limit
       if (parseInt(maxRequests) < concurrency) {
-        console.log(`⚠️ Skipping ${concurrency} - exceeds BUN_CONFIG_MAX_HTTP_REQUESTS`);
+        console.info(`⚠️ Skipping ${concurrency} - exceeds BUN_CONFIG_MAX_HTTP_REQUESTS`);
         continue;
       }
       
@@ -223,33 +223,33 @@ async function runFullBenchmark() {
     }
     
     // Print summary
-    console.log("\n📊 BENCHMARK SUMMARY");
-    console.log("=" .repeat(50));
-    console.log("Concurrency | RPS      | Success | Latency  | Status");
-    console.log("-".repeat(55));
+    console.info("\n📊 BENCHMARK SUMMARY");
+    console.info("=" .repeat(50));
+    console.info("Concurrency | RPS      | Success | Latency  | Status");
+    console.info("-".repeat(55));
     
     for (const result of results) {
       const status = result.successRate >= 95 ? "🟢" : result.successRate >= 80 ? "🟡" : "🔴";
-      console.log(`${result.concurrency.toString().padEnd(11)} | ${result.requestsPerSecond.toFixed(0).padEnd(9)} | ${result.successRate.toFixed(1).padEnd(8)} | ${result.avgLatency.toFixed(1).padEnd(9)} | ${status}`);
+      console.info(`${result.concurrency.toString().padEnd(11)} | ${result.requestsPerSecond.toFixed(0).padEnd(9)} | ${result.successRate.toFixed(1).padEnd(8)} | ${result.avgLatency.toFixed(1).padEnd(9)} | ${status}`);
     }
     
-    console.log("\n🎯 OPTIMIZATION RESULTS");
-    console.log("-".repeat(25));
-    console.log(`🔄 Pool efficiency: ${poolingResults.poolEfficiency.toFixed(1)}%`);
-    console.log(`🔗 Preconnect gain: ${preconnectResults.improvement.toFixed(1)}%`);
+    console.info("\n🎯 OPTIMIZATION RESULTS");
+    console.info("-".repeat(25));
+    console.info(`🔄 Pool efficiency: ${poolingResults.poolEfficiency.toFixed(1)}%`);
+    console.info(`🔗 Preconnect gain: ${preconnectResults.improvement.toFixed(1)}%`);
     
     if (results.length > 0) {
       const bestRPS = Math.max(...results.map(r => r.requestsPerSecond));
       const bestResult = results.find(r => r.requestsPerSecond === bestRPS);
-      console.log(`⚡ Peak throughput: ${bestRPS.toFixed(0)} req/sec at ${bestResult?.concurrency} concurrency`);
+      console.info(`⚡ Peak throughput: ${bestRPS.toFixed(0)} req/sec at ${bestResult?.concurrency} concurrency`);
     }
     
-    console.log("\n💡 OPTIMIZATION TIPS");
-    console.log("-".repeat(20));
-    console.log("• Use --fetch-preconnect for startup optimization");
-    console.log("• Set BUN_CONFIG_MAX_HTTP_REQUESTS for higher concurrency");
-    console.log("• Same-host requests automatically reuse connections");
-    console.log("• Call fetch.preconnect() before known high-traffic endpoints");
+    console.info("\n💡 OPTIMIZATION TIPS");
+    console.info("-".repeat(20));
+    console.info("• Use --fetch-preconnect for startup optimization");
+    console.info("• Set BUN_CONFIG_MAX_HTTP_REQUESTS for higher concurrency");
+    console.info("• Same-host requests automatically reuse connections");
+    console.info("• Call fetch.preconnect() before known high-traffic endpoints");
     
   } catch (error) {
     console.error("❌ Benchmark failed:", error);

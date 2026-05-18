@@ -34,22 +34,22 @@ function parseArgs(): LifecycleOptions {
 }
 
 function showHelp() {
-  console.log('⚙️  Setup Lifecycle Schedules');
-  console.log('============================');
-  console.log();
-  console.log('Configure automated secret rotation and lifecycle management.');
-  console.log();
-  console.log('Options:');
-  console.log('  --config <file>   Configuration file (YAML)');
-  console.log('  --dry-run         Show what would be configured without doing it');
-  console.log('  --validate        Validate configuration only');
-  console.log('  --force           Force reconfiguration of existing rules');
-  console.log('  --help, -h        Show this help');
-  console.log();
-  console.log('Examples:');
-  console.log('  bun setup-lifecycle.ts --config factorywager-secrets-lifecycle.yaml');
-  console.log('  bun setup-lifecycle.ts --config config.yaml --validate');
-  console.log('  bun setup-lifecycle.ts --config config.yaml --dry-run');
+  console.info('⚙️  Setup Lifecycle Schedules');
+  console.info('============================');
+  console.info();
+  console.info('Configure automated secret rotation and lifecycle management.');
+  console.info();
+  console.info('Options:');
+  console.info('  --config <file>   Configuration file (YAML)');
+  console.info('  --dry-run         Show what would be configured without doing it');
+  console.info('  --validate        Validate configuration only');
+  console.info('  --force           Force reconfiguration of existing rules');
+  console.info('  --help, -h        Show this help');
+  console.info();
+  console.info('Examples:');
+  console.info('  bun setup-lifecycle.ts --config factorywager-secrets-lifecycle.yaml');
+  console.info('  bun setup-lifecycle.ts --config config.yaml --validate');
+  console.info('  bun setup-lifecycle.ts --config config.yaml --dry-run');
 }
 
 function styled(
@@ -72,56 +72,56 @@ function styled(
 async function main() {
   const options = parseArgs();
 
-  console.log(styled('⚙️  Lifecycle Setup', 'primary'));
-  console.log(styled('================', 'muted'));
-  console.log();
+  console.info(styled('⚙️  Lifecycle Setup', 'primary'));
+  console.info(styled('================', 'muted'));
+  console.info();
 
   if (options.dryRun) {
-    console.log(styled('🔍 DRY RUN MODE - No changes will be made', 'warning'));
-    console.log();
+    console.info(styled('🔍 DRY RUN MODE - No changes will be made', 'warning'));
+    console.info();
   }
 
   try {
     // Step 1: Load configuration
     const configFile = options.config || 'factorywager-secrets-lifecycle.yaml';
-    console.log(styled('📁 Step 1: Loading configuration...', 'info'));
-    console.log(styled(`   File: ${configFile}`, 'muted'));
+    console.info(styled('📁 Step 1: Loading configuration...', 'info'));
+    console.info(styled(`   File: ${configFile}`, 'muted'));
 
     const config = await factorywagerSecretsLifecycle.loadConfig(configFile);
 
-    console.log(
+    console.info(
       styled(`   ✅ Loaded v${config.version} with ${config.rules.length} rules`, 'success')
     );
-    console.log();
+    console.info();
 
     // Step 2: Validate configuration
-    console.log(styled('🔍 Step 2: Validating configuration...', 'info'));
+    console.info(styled('🔍 Step 2: Validating configuration...', 'info'));
 
     const validation = await factorywagerSecretsLifecycle.validateConfig();
 
     // Debug output
-    console.log(styled('   🔍 Debug - Audit config:', 'info'));
-    console.log(styled(`      enabled: ${config.audit.enabled}`, 'muted'));
-    console.log(styled(`      r2Bucket: ${config.audit.r2Bucket}`, 'muted'));
+    console.info(styled('   🔍 Debug - Audit config:', 'info'));
+    console.info(styled(`      enabled: ${config.audit.enabled}`, 'muted'));
+    console.info(styled(`      r2Bucket: ${config.audit.r2Bucket}`, 'muted'));
 
     if (!validation.valid) {
-      console.log(styled('   ❌ Configuration validation failed:', 'error'));
+      console.info(styled('   ❌ Configuration validation failed:', 'error'));
       validation.errors.forEach(error => {
-        console.log(styled(`      • ${error}`, 'warning'));
+        console.info(styled(`      • ${error}`, 'warning'));
       });
       process.exit(1);
     }
 
-    console.log(styled('   ✅ Configuration is valid', 'success'));
-    console.log();
+    console.info(styled('   ✅ Configuration is valid', 'success'));
+    console.info();
 
     if (options.validate) {
-      console.log(styled('✅ Validation complete - configuration is ready', 'success'));
+      console.info(styled('✅ Validation complete - configuration is ready', 'success'));
       return;
     }
 
     // Step 3: Show configuration summary
-    console.log(styled('📋 Step 3: Configuration summary...', 'info'));
+    console.info(styled('📋 Step 3: Configuration summary...', 'info'));
 
     const scheduleTypes = config.rules.reduce(
       (acc, rule) => {
@@ -142,62 +142,62 @@ async function main() {
       {} as Record<string, number>
     );
 
-    console.log(styled(`   Rules: ${config.rules.length}`, 'primary'));
-    console.log(styled(`   • Cron-based: ${scheduleTypes.cron || 0}`, 'muted'));
-    console.log(styled(`   • Interval-based: ${scheduleTypes.interval || 0}`, 'muted'));
-    console.log(styled(`   • Event-based: ${scheduleTypes.event || 0}`, 'muted'));
-    console.log(
+    console.info(styled(`   Rules: ${config.rules.length}`, 'primary'));
+    console.info(styled(`   • Cron-based: ${scheduleTypes.cron || 0}`, 'muted'));
+    console.info(styled(`   • Interval-based: ${scheduleTypes.interval || 0}`, 'muted'));
+    console.info(styled(`   • Event-based: ${scheduleTypes.event || 0}`, 'muted'));
+    console.info(
       styled(`   • Expiration-based: ${config.rules.filter(r => r.expiration).length}`, 'muted')
     );
-    console.log();
-    console.log(styled('   Severity distribution:', 'info'));
+    console.info();
+    console.info(styled('   Severity distribution:', 'info'));
     Object.entries(severityCount).forEach(([severity, count]) => {
       const color = severity === 'CRITICAL' ? 'error' : severity === 'HIGH' ? 'warning' : 'muted';
-      console.log(styled(`   • ${severity}: ${count}`, color));
+      console.info(styled(`   • ${severity}: ${count}`, color));
     });
-    console.log();
+    console.info();
 
     // Step 4: Apply configuration
     if (options.dryRun) {
-      console.log(styled('🔄 Step 4: Would apply configuration...', 'info'));
+      console.info(styled('🔄 Step 4: Would apply configuration...', 'info'));
 
       config.rules.forEach(rule => {
-        console.log(styled(`   • ${rule.key}: ${rule.schedule?.type || rule.action}`, 'muted'));
+        console.info(styled(`   • ${rule.key}: ${rule.schedule?.type || rule.action}`, 'muted'));
       });
 
-      console.log();
-      console.log(styled('💡 Remove --dry-run to apply the configuration', 'info'));
+      console.info();
+      console.info(styled('💡 Remove --dry-run to apply the configuration', 'info'));
     } else {
-      console.log(styled('🔄 Step 4: Applying configuration...', 'info'));
+      console.info(styled('🔄 Step 4: Applying configuration...', 'info'));
 
       await factorywagerSecretsLifecycle.applyConfig();
 
-      console.log(styled('   ✅ Configuration applied successfully', 'success'));
-      console.log();
+      console.info(styled('   ✅ Configuration applied successfully', 'success'));
+      console.info();
     }
 
     // Step 5: Generate setup report
     if (!options.dryRun) {
-      console.log(styled('📊 Step 5: Generating setup report...', 'info'));
+      console.info(styled('📊 Step 5: Generating setup report...', 'info'));
 
       const status = await factorywagerSecretsLifecycle.getStatus();
 
-      console.log(styled('   📊 Setup Summary:', 'primary'));
-      console.log(styled(`   • Version: ${status.version}`, 'muted'));
-      console.log(styled(`   • Rules Applied: ${status.rulesApplied}`, 'success'));
-      console.log(styled(`   • Active Rotations: ${status.activeRotations}`, 'info'));
-      console.log(
+      console.info(styled('   📊 Setup Summary:', 'primary'));
+      console.info(styled(`   • Version: ${status.version}`, 'muted'));
+      console.info(styled(`   • Rules Applied: ${status.rulesApplied}`, 'success'));
+      console.info(styled(`   • Active Rotations: ${status.activeRotations}`, 'info'));
+      console.info(
         styled(`   • Last Applied: ${new Date(status.lastApplied).toLocaleString()}`, 'muted')
       );
-      console.log();
+      console.info();
 
-      console.log(styled('🔗 Next steps:', 'accent'));
-      console.log(styled('   • Monitor: bun monitor-expirations.ts', 'muted'));
-      console.log(styled('   • Dashboard: bun serve-dashboard.ts', 'muted'));
-      console.log(styled('   • Audit: bun security-audit.ts', 'muted'));
+      console.info(styled('🔗 Next steps:', 'accent'));
+      console.info(styled('   • Monitor: bun monitor-expirations.ts', 'muted'));
+      console.info(styled('   • Dashboard: bun serve-dashboard.ts', 'muted'));
+      console.info(styled('   • Audit: bun security-audit.ts', 'muted'));
     }
 
-    console.log(styled('🎉 Lifecycle setup completed!', 'success'));
+    console.info(styled('🎉 Lifecycle setup completed!', 'success'));
   } catch (error) {
     console.error(styled(`❌ Setup failed: ${error.message}`, 'error'));
     process.exit(1);

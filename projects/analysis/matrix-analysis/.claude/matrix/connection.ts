@@ -54,7 +54,7 @@ export function prefetchDatabaseDns(): void {
 		if (hostname) {
 			// v1.2+: DNS prefetch reduces connection latency
 			dns.prefetch(hostname, 5432);
-			console.log(`🔍 DNS prefetch: ${hostname}:5432`);
+			console.info(`🔍 DNS prefetch: ${hostname}:5432`);
 		}
 	}
 }
@@ -70,10 +70,10 @@ export async function preconnectDatabase(): Promise<void> {
 			const preconnectUrl = `https://${hostname}:5432`;
 			try {
 				await fetch.preconnect(preconnectUrl);
-				console.log(`🔗 Preconnect: ${preconnectUrl}`);
+				console.info(`🔗 Preconnect: ${preconnectUrl}`);
 			} catch {
 				// Preconnect failure is non-fatal
-				console.log(`⚠️  Preconnect skipped (not HTTPS): ${hostname}:5432`);
+				console.info(`⚠️  Preconnect skipped (not HTTPS): ${hostname}:5432`);
 			}
 		}
 	}
@@ -101,7 +101,7 @@ export function getSqliteDb(): Database {
 		}
 
 		sqliteDb = new Database(DB_CONFIG.SQLITE_PATH, { create: true });
-		console.log(`📂 SQLite: ${DB_CONFIG.SQLITE_PATH}`);
+		console.info(`📂 SQLite: ${DB_CONFIG.SQLITE_PATH}`);
 	}
 	return sqliteDb;
 }
@@ -159,7 +159,7 @@ CREATE INDEX IF NOT EXISTS idx_tier1380_crc32 ON tier1380_matrix(col_51_crc32) W
 export function initSqliteSchema(): void {
 	const db = getSqliteDb();
 	db.exec(TIER1380_SCHEMA);
-	console.log("✅ SQLite schema initialized");
+	console.info("✅ SQLite schema initialized");
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -208,7 +208,7 @@ export function getConnectionStatus(): {
 // ═══════════════════════════════════════════════════════════════
 
 if (import.meta.main) {
-	console.log("🔌 Tier-1380 OMEGA: Connection Manager\n");
+	console.info("🔌 Tier-1380 OMEGA: Connection Manager\n");
 
 	const command = Bun.argv[2];
 
@@ -222,29 +222,29 @@ if (import.meta.main) {
 
 		case "status": {
 			const status = getConnectionStatus();
-			console.log(Bun.inspect.table([status]));
+			console.info(Bun.inspect.table([status]));
 			break;
 		}
 
 		case "prefetch": {
 			prefetchDatabaseDns();
 			await preconnectDatabase();
-			console.log("✅ DNS prefetch and preconnect complete");
+			console.info("✅ DNS prefetch and preconnect complete");
 			break;
 		}
 
 		default: {
-			console.log("Usage: bun matrix/connection.ts <command>\n");
-			console.log("Commands:");
-			console.log("  init      Initialize database and schema");
-			console.log("  status    Show connection status");
-			console.log("  prefetch  Run DNS prefetch and preconnect\n");
-			console.log("Environment:");
-			console.log(
+			console.info("Usage: bun matrix/connection.ts <command>\n");
+			console.info("Commands:");
+			console.info("  init      Initialize database and schema");
+			console.info("  status    Show connection status");
+			console.info("  prefetch  Run DNS prefetch and preconnect\n");
+			console.info("Environment:");
+			console.info(
 				"  TIER1380_SQLITE_PATH  SQLite file path (default: data/tier1380.db)",
 			);
-			console.log("  DATABASE_URL          PostgreSQL connection URL");
-			console.log("  TIER1380_DB_MODE      Connection mode: sqlite|postgres|auto");
+			console.info("  DATABASE_URL          PostgreSQL connection URL");
+			console.info("  TIER1380_DB_MODE      Connection mode: sqlite|postgres|auto");
 		}
 	}
 }

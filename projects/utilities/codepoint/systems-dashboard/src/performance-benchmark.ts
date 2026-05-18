@@ -54,7 +54,7 @@ async function gradePerformance() {
     const outDir = join(tmpdir(), `build-out-${Date.now()}`);
     tempFiles.push(buildFile, outDir);
 
-    await Bun.write(buildFile, 'console.log("graded");');
+    await Bun.write(buildFile, 'console.info("graded");');
     const bStart = hrtimeNs();
     const buildResult = await Bun.build({
       entrypoints: [buildFile],
@@ -89,7 +89,7 @@ async function gradePerformance() {
     }
 
     // 🖨️ Output with Bun.inspect.table for beautiful formatting
-    console.log(`\n🏆 BUN PERFORMANCE GRADE: ${finalGrade}\n`);
+    console.info(`\n🏆 BUN PERFORMANCE GRADE: ${finalGrade}\n`);
 
     const tableData = [
       {
@@ -114,7 +114,7 @@ async function gradePerformance() {
       },
     ];
 
-    console.log(
+    console.info(
       Bun.inspect.table(tableData, {
         columns: ["Operation", "Time", "Grade"],
         headerColor: "green",

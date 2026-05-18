@@ -93,7 +93,7 @@ class KimiCLI {
 
 		if (!cmd) {
 			console.error(`❌ Unknown command: ${command}`);
-			console.log(`Available: ${Array.from(this.commands.keys()).join(", ")}`);
+			console.info(`Available: ${Array.from(this.commands.keys()).join(", ")}`);
 			process.exit(1);
 		}
 
@@ -123,7 +123,7 @@ class KimiCLI {
 			process.exit(1);
 		}
 
-		console.log("🔐 Security Scanning TOML Secrets\n");
+		console.info("🔐 Security Scanning TOML Secrets\n");
 
 		const results: SecurityScanResult[] = [];
 
@@ -207,7 +207,7 @@ class KimiCLI {
 	}
 
 	private displaySecurityResults(results: SecurityScanResult[]): void {
-		console.log("📊 Security Analysis Results\n");
+		console.info("📊 Security Analysis Results\n");
 
 		const table = new TableFormatter(
 			[
@@ -254,21 +254,21 @@ class KimiCLI {
 		// Show details
 		for (const result of results) {
 			if (result.errors.length > 0 || result.warnings.length > 0) {
-				console.log(`\n📄 ${result.file}:`);
+				console.info(`\n📄 ${result.file}:`);
 
 				if (result.errors.length > 0) {
-					console.log("  \x1b[31mErrors:\x1b[0m");
-					result.errors.forEach((e) => console.log(`    • ${e}`));
+					console.info("  \x1b[31mErrors:\x1b[0m");
+					result.errors.forEach((e) => console.info(`    • ${e}`));
 				}
 
 				if (result.warnings.length > 0) {
-					console.log("  \x1b[33mWarnings:\x1b[0m");
-					result.warnings.forEach((w) => console.log(`    • ${w}`));
+					console.info("  \x1b[33mWarnings:\x1b[0m");
+					result.warnings.forEach((w) => console.info(`    • ${w}`));
 				}
 
 				if (result.recommendations.length > 0) {
-					console.log("  💡 Recommendations:");
-					result.recommendations.forEach((r) => console.log(`    • ${r}`));
+					console.info("  💡 Recommendations:");
+					result.recommendations.forEach((r) => console.info(`    • ${r}`));
 				}
 			}
 		}
@@ -282,13 +282,13 @@ class KimiCLI {
 		const avgRisk =
 			results.reduce((sum, r) => sum + r.riskScore, 0) / results.length;
 
-		console.log("\n📈 Summary:");
-		console.log(`   Files scanned: ${results.length}`);
-		console.log(`   Passed: ${results.filter((r) => r.valid).length}`);
-		console.log(`   Failed: ${results.filter((r) => !r.valid).length}`);
-		console.log(`   Total errors: ${totalErrors}`);
-		console.log(`   Total warnings: ${totalWarnings}`);
-		console.log(`   Average risk score: ${avgRisk.toFixed(1)}/100`);
+		console.info("\n📈 Summary:");
+		console.info(`   Files scanned: ${results.length}`);
+		console.info(`   Passed: ${results.filter((r) => r.valid).length}`);
+		console.info(`   Failed: ${results.filter((r) => !r.valid).length}`);
+		console.info(`   Total errors: ${totalErrors}`);
+		console.info(`   Total warnings: ${totalWarnings}`);
+		console.info(`   Average risk score: ${avgRisk.toFixed(1)}/100`);
 	}
 
 	// ========================================================================
@@ -296,10 +296,10 @@ class KimiCLI {
 	// ========================================================================
 
 	private async connectionAnalysis(_args: string[]): Promise<void> {
-		console.log("🔌 Bun-Native Connection Analysis\n");
+		console.info("🔌 Bun-Native Connection Analysis\n");
 
 		// Test HTTP connection
-		console.log("Testing HTTP connections...");
+		console.info("Testing HTTP connections...");
 		const http = Connections.http("https://httpbin.org");
 
 		try {
@@ -307,25 +307,25 @@ class KimiCLI {
 			await http.get("/get");
 			const latency = performance.now() - start;
 
-			console.log(`  ✅ HTTP GET: ${latency.toFixed(2)}ms`);
+			console.info(`  ✅ HTTP GET: ${latency.toFixed(2)}ms`);
 		} catch (error) {
-			console.log(`  ❌ HTTP GET failed: ${error}`);
+			console.info(`  ❌ HTTP GET failed: ${error}`);
 		}
 
 		// Show metrics
 		const metrics = http.getMetrics();
-		console.log("\n📊 Connection Metrics:");
-		console.log(`   Total requests: ${metrics.requestsTotal}`);
-		console.log(`   Failed requests: ${metrics.requestsFailed}`);
-		console.log(`   Retry count: ${metrics.retryCount}`);
-		console.log(`   Average latency: ${metrics.avgLatencyMs.toFixed(2)}ms`);
+		console.info("\n📊 Connection Metrics:");
+		console.info(`   Total requests: ${metrics.requestsTotal}`);
+		console.info(`   Failed requests: ${metrics.requestsFailed}`);
+		console.info(`   Retry count: ${metrics.retryCount}`);
+		console.info(`   Average latency: ${metrics.avgLatencyMs.toFixed(2)}ms`);
 
 		// Test Bun-native features
-		console.log("\n🔧 Bun-Native Features:");
-		console.log(`   HTTP/2: ${this.checkFeature("HTTP2")}`);
-		console.log(`   Keepalive: ✓ (automatic)`);
-		console.log(`   Compression: ✓ (gzip/brotli)`);
-		console.log(`   Connection pooling: ✓ (max 10)`);
+		console.info("\n🔧 Bun-Native Features:");
+		console.info(`   HTTP/2: ${this.checkFeature("HTTP2")}`);
+		console.info(`   Keepalive: ✓ (automatic)`);
+		console.info(`   Compression: ✓ (gzip/brotli)`);
+		console.info(`   Connection pooling: ✓ (max 10)`);
 	}
 
 	private checkFeature(_name: string): string {
@@ -340,29 +340,29 @@ class KimiCLI {
 	private async optimizeAnalysis(args: string[]): Promise<void> {
 		const files = args.filter((a) => !a.startsWith("--"));
 
-		console.log("⚡ TOML Optimization Analysis\n");
+		console.info("⚡ TOML Optimization Analysis\n");
 
-		console.log("Current optimizations available:");
-		console.log("  1. CRC32-based pattern deduplication");
-		console.log("     • Reduces memory by 66% for duplicate patterns");
-		console.log("     • Performance: 10M hashes/second");
-		console.log();
-		console.log("  2. SIMD-accelerated security scanning");
-		console.log("     • 1.3M secrets/second scanning rate");
-		console.log("     • Hardware-accelerated CRC32");
-		console.log();
-		console.log("  3. Fast TOML parsing with cache");
-		console.log("     • 24x faster on cache hits");
-		console.log("     • 0.09ms vs 2.2ms parse time");
-		console.log();
+		console.info("Current optimizations available:");
+		console.info("  1. CRC32-based pattern deduplication");
+		console.info("     • Reduces memory by 66% for duplicate patterns");
+		console.info("     • Performance: 10M hashes/second");
+		console.info();
+		console.info("  2. SIMD-accelerated security scanning");
+		console.info("     • 1.3M secrets/second scanning rate");
+		console.info("     • Hardware-accelerated CRC32");
+		console.info();
+		console.info("  3. Fast TOML parsing with cache");
+		console.info("     • 24x faster on cache hits");
+		console.info("     • 0.09ms vs 2.2ms parse time");
+		console.info();
 
 		if (files.length > 0) {
-			console.log("📁 File-specific recommendations:");
+			console.info("📁 File-specific recommendations:");
 			for (const file of files) {
 				const size = (await Bun.file(file).stat()).size;
-				console.log(`\n  ${file}:`);
-				console.log(`    Size: ${(size / 1024).toFixed(2)} KB`);
-				console.log(
+				console.info(`\n  ${file}:`);
+				console.info(`    Size: ${(size / 1024).toFixed(2)} KB`);
+				console.info(
 					`    Recommendation: ${size > 10240 ? "Compress with Bun.gzip" : "No optimization needed"}`,
 				);
 			}
@@ -376,7 +376,7 @@ class KimiCLI {
 	private async createProject(args: string[]): Promise<void> {
 		if (args.length < 2) {
 			console.error("❌ Usage: kimi create <template> <project-name>");
-			console.log("  Templates: cli, api, websocket, lib");
+			console.info("  Templates: cli, api, websocket, lib");
 			process.exit(1);
 		}
 
@@ -397,7 +397,7 @@ class KimiCLI {
 	// ========================================================================
 
 	private showMainHelp(): void {
-		console.log(`
+		console.info(`
 🤖 Kimi CLI - AI-Assisted Development for Bun-Native Codebase
 
 USAGE:

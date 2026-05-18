@@ -82,7 +82,7 @@ export class AuditLogger {
 
     // Log to console for immediate visibility
     const status = auditEntry.result === 'SUCCESS' ? '✅' : auditEntry.result === 'FAILURE' ? '❌' : '🚫';
-    console.log(`${status} AUDIT: ${auditEntry.userId} ${auditEntry.action} ${auditEntry.resource} (${auditEntry.result})`);
+    console.info(`${status} AUDIT: ${auditEntry.userId} ${auditEntry.action} ${auditEntry.resource} (${auditEntry.result})`);
   }
 
   verifyLogIntegrity(): { valid: boolean; issues: string[] } {
@@ -207,7 +207,7 @@ async function main() {
   const logger = new AuditLogger();
 
   if (args.length === 0) {
-    console.log(`📋 Audit Logging System v2.11
+    console.info(`📋 Audit Logging System v2.11
 
 USAGE:
   bun audit:log <user> <action> <resource> [result] [ip]    # Log access
@@ -242,16 +242,16 @@ EXAMPLES:
         const ip = args[5];
 
         await logger.logAccess({ userId, action, resource, result, ip });
-        console.log(`✅ Audit entry logged`);
+        console.info(`✅ Audit entry logged`);
         break;
 
       case 'verify':
         const verification = logger.verifyLogIntegrity();
         if (verification.valid) {
-          console.log(`✅ Log integrity verified`);
+          console.info(`✅ Log integrity verified`);
         } else {
-          console.log(`❌ Log integrity compromised:`);
-          verification.issues.forEach(issue => console.log(`   ${issue}`));
+          console.info(`❌ Log integrity compromised:`);
+          verification.issues.forEach(issue => console.info(`   ${issue}`));
           process.exit(1);
         }
         break;
@@ -259,9 +259,9 @@ EXAMPLES:
       case 'recent':
         const limit = args[1] ? parseInt(args[1]) : 10;
         const entries = logger.getRecentEntries(limit);
-        console.log(`📋 Recent ${limit} audit entries:`);
+        console.info(`📋 Recent ${limit} audit entries:`);
         entries.forEach((entry, i) => {
-          console.log(`${i + 1}. ${entry.timestamp} ${entry.userId} ${entry.action} ${entry.resource} ${entry.result}`);
+          console.info(`${i + 1}. ${entry.timestamp} ${entry.userId} ${entry.action} ${entry.resource} ${entry.result}`);
         });
         break;
 
@@ -273,21 +273,21 @@ EXAMPLES:
         const filter = args[1];
         const value = args[2];
         const searchResults = logger.searchEntries({ [filter]: value });
-        console.log(`🔍 Found ${searchResults.length} entries:`);
+        console.info(`🔍 Found ${searchResults.length} entries:`);
         searchResults.forEach(entry => {
-          console.log(`  ${entry.timestamp} ${entry.userId} ${entry.action} ${entry.resource} ${entry.result}`);
+          console.info(`  ${entry.timestamp} ${entry.userId} ${entry.action} ${entry.resource} ${entry.result}`);
         });
         break;
 
       case 'report':
         const since = args.includes('--since') ? new Date(args[args.indexOf('--since') + 1]) : undefined;
         const report = logger.generateReport(since);
-        console.log(report);
+        console.info(report);
         break;
 
       default:
         console.error(`Unknown command: ${command}`);
-        console.log('Use: bun audit --help');
+        console.info('Use: bun audit --help');
         process.exit(1);
     }
   } catch (error) {

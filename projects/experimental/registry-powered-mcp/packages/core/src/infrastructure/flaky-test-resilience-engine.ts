@@ -161,7 +161,7 @@ export class FlakyTestResilienceEngine {
    *   { maxRetries: 3, baseDelayMs: 100 }
    * );
    *
-   * console.log(`Passed after ${result.attempts} attempts`);
+   * console.info(`Passed after ${result.attempts} attempts`);
    * ```
    */
   static async executeWithRetry(
@@ -246,7 +246,7 @@ export class FlakyTestResilienceEngine {
    *   { repeatCount: 100, failFast: false }
    * );
    *
-   * console.log(`Passed ${result.passCount}/${result.totalRuns} times`);
+   * console.info(`Passed ${result.passCount}/${result.totalRuns} times`);
    * ```
    */
   static async executeWithRepeat(

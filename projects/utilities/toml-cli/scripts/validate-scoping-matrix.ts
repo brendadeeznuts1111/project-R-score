@@ -53,12 +53,12 @@ function validateDomainDetection(): ValidationResult {
         `Domain detection: ${domain} → ${detected} (expected ${expected})`
       );
       result.passed++;
-      console.log(`  ✅ ${domain} → ${detected}`);
+      console.info(`  ✅ ${domain} → ${detected}`);
     } catch (err) {
       result.failed++;
       const msg = err instanceof Error ? err.message : String(err);
       result.errors.push(msg);
-      console.log(`  ${msg}`);
+      console.info(`  ${msg}`);
     }
   }
 
@@ -120,12 +120,12 @@ function validateMatrixRowsCompleteness(): ValidationResult {
 
       result.passed++;
       const domain = row.servingDomain || '*(fallback)*';
-      console.log(`  ✅ Row ${i}: ${domain} (${row.detectedScope}/${row.platform})`);
+      console.info(`  ✅ Row ${i}: ${domain} (${row.detectedScope}/${row.platform})`);
     } catch (err) {
       result.failed++;
       const msg = err instanceof Error ? err.message : String(err);
       result.errors.push(msg);
-      console.log(`  ${msg}`);
+      console.info(`  ${msg}`);
     }
   }
 
@@ -148,7 +148,7 @@ function validateFeatureFlagMapping(): ValidationResult {
       const row = DUOPLUS_SCOPING_MATRIX.find(r => r.detectedScope === scope);
       if (!row?.servingDomain) {
         result.passed++;
-        console.log(`  ✅ ${scope}: Fallback (no specific domain)`);
+        console.info(`  ✅ ${scope}: Fallback (no specific domain)`);
         continue;
       }
 
@@ -163,12 +163,12 @@ function validateFeatureFlagMapping(): ValidationResult {
       }
 
       result.passed++;
-      console.log(`  ✅ ${scope}: ${flagArray.join(', ')}`);
+      console.info(`  ✅ ${scope}: ${flagArray.join(', ')}`);
     } catch (err) {
       result.failed++;
       const msg = err instanceof Error ? err.message : String(err);
       result.errors.push(msg);
-      console.log(`  ${msg}`);
+      console.info(`  ${msg}`);
     }
   }
 
@@ -201,12 +201,12 @@ function validateDomainNormalization(): ValidationResult {
         `Domain normalization: ${domain} → ${normalized} (expected ${expected})`
       );
       result.passed++;
-      console.log(`  ✅ ${domain} → ${normalized}`);
+      console.info(`  ✅ ${domain} → ${normalized}`);
     } catch (err) {
       result.failed++;
       const msg = err instanceof Error ? err.message : String(err);
       result.errors.push(msg);
-      console.log(`  ${msg}`);
+      console.info(`  ${msg}`);
     }
   }
 
@@ -240,12 +240,12 @@ function validateStoragePathStructure(): ValidationResult {
       }
 
       result.passed++;
-      console.log(`  ✅ ${row.storagePath}`);
+      console.info(`  ✅ ${row.storagePath}`);
     } catch (err) {
       result.failed++;
       const msg = err instanceof Error ? err.message : String(err);
       result.errors.push(msg);
-      console.log(`  ${msg}`);
+      console.info(`  ${msg}`);
     }
   }
 
@@ -275,12 +275,12 @@ function validateMatrixCoverage(): ValidationResult {
       }
 
       result.passed++;
-      console.log(`  ✅ ${scope}: ${platforms.join(', ')}`);
+      console.info(`  ✅ ${scope}: ${platforms.join(', ')}`);
     } catch (err) {
       result.failed++;
       const msg = err instanceof Error ? err.message : String(err);
       result.errors.push(msg);
-      console.log(`  ${msg}`);
+      console.info(`  ${msg}`);
     }
   }
 
@@ -289,12 +289,12 @@ function validateMatrixCoverage(): ValidationResult {
     const fallback = DUOPLUS_SCOPING_MATRIX.find(r => r.servingDomain === '*.local' || !r.servingDomain);
     assert(!!fallback, 'Matrix coverage: Missing fallback row');
     result.passed++;
-    console.log(`  ✅ Fallback: Defined for unknown domains`);
+    console.info(`  ✅ Fallback: Defined for unknown domains`);
   } catch (err) {
     result.failed++;
     const msg = err instanceof Error ? err.message : String(err);
     result.errors.push(msg);
-    console.log(`  ${msg}`);
+    console.info(`  ${msg}`);
   }
 
   return result;
@@ -311,45 +311,45 @@ function summarizeResults(...results: ValidationResult[]): void {
     allErrors.push(...result.errors);
   }
 
-  console.log('\n' + '='.repeat(60));
-  console.log(`📊 Validation Summary`);
-  console.log('='.repeat(60));
-  console.log(`✅ Passed: ${totalPassed}`);
-  console.log(`❌ Failed: ${totalFailed}`);
+  console.info('\n' + '='.repeat(60));
+  console.info(`📊 Validation Summary`);
+  console.info('='.repeat(60));
+  console.info(`✅ Passed: ${totalPassed}`);
+  console.info(`❌ Failed: ${totalFailed}`);
 
   if (totalFailed > 0) {
-    console.log('\n🔍 Failed Tests:');
+    console.info('\n🔍 Failed Tests:');
     for (const error of allErrors) {
-      console.log(`  ${error}`);
+      console.info(`  ${error}`);
     }
-    console.log('\n⚠️  Fix the errors above before deploying.');
+    console.info('\n⚠️  Fix the errors above before deploying.');
     process.exit(1);
   } else {
-    console.log('\n✅ All validations passed!');
-    console.log('🚀 Scoping matrix is ready for production.');
+    console.info('\n✅ All validations passed!');
+    console.info('🚀 Scoping matrix is ready for production.');
     process.exit(0);
   }
 }
 
 async function main(): Promise<void> {
-  console.log('🔍 Validating Scoping Matrix...\n');
+  console.info('🔍 Validating Scoping Matrix...\n');
 
-  console.log('1️⃣  Domain Detection');
+  console.info('1️⃣  Domain Detection');
   const domainResults = validateDomainDetection();
 
-  console.log('\n2️⃣  Matrix Completeness');
+  console.info('\n2️⃣  Matrix Completeness');
   const matrixResults = validateMatrixRowsCompleteness();
 
-  console.log('\n3️⃣  Feature Flag Mapping');
+  console.info('\n3️⃣  Feature Flag Mapping');
   const flagResults = validateFeatureFlagMapping();
 
-  console.log('\n4️⃣  Domain Normalization');
+  console.info('\n4️⃣  Domain Normalization');
   const normResults = validateDomainNormalization();
 
-  console.log('\n5️⃣  Storage Path Structure');
+  console.info('\n5️⃣  Storage Path Structure');
   const storageResults = validateStoragePathStructure();
 
-  console.log('\n6️⃣  Matrix Coverage');
+  console.info('\n6️⃣  Matrix Coverage');
   const coverageResults = validateMatrixCoverage();
 
   summarizeResults(

@@ -54,7 +54,7 @@ export class ChallengeAuthService {
     };
 
     this.challenges.set(challengeId, challenge);
-    console.log(`🔐 Challenge created: ${type} for user ${userId}`);
+    console.info(`🔐 Challenge created: ${type} for user ${userId}`);
 
     return challenge;
   }
@@ -110,7 +110,7 @@ export class ChallengeAuthService {
 
     challenge.verified = true;
     challenge.verifiedAt = Date.now();
-    console.log(`✅ Challenge verified: ${challenge.type} for user ${challenge.userId}`);
+    console.info(`✅ Challenge verified: ${challenge.type} for user ${challenge.userId}`);
 
     return {
       success: true,
@@ -150,7 +150,7 @@ export class ChallengeAuthService {
     }
 
     if (cleaned > 0) {
-      console.log(`🧹 Cleaned up ${cleaned} expired challenges`);
+      console.info(`🧹 Cleaned up ${cleaned} expired challenges`);
     }
 
     return cleaned;

@@ -6,11 +6,11 @@
 import { printTable, printTableBox } from "../../src/utils/string-formatting";
 
 async function tableFormattingExample() {
-	console.log("📊 Table Formatting Examples with Unicode-Aware Alignment\n");
-	console.log(`${"=".repeat(60)}\n`);
+	console.info("📊 Table Formatting Examples with Unicode-Aware Alignment\n");
+	console.info(`${"=".repeat(60)}\n`);
 
 	// Example 1: Basic table with emojis
-	console.log("1. Basic Table with Emojis:");
+	console.info("1. Basic Table with Emojis:");
 	printTable(
 		["Name", "Status", "Value"],
 		[
@@ -20,10 +20,10 @@ async function tableFormattingExample() {
 			["Cache", "🔴", "400"],
 		],
 	);
-	console.log();
+	console.info();
 
 	// Example 2: Table with ANSI colors
-	console.log("2. Table with ANSI Colors:");
+	console.info("2. Table with ANSI Colors:");
 	printTable(
 		["Service", "Status", "Response Time"],
 		[
@@ -33,10 +33,10 @@ async function tableFormattingExample() {
 			["CDN", "\x1b[36m→ Active\x1b[0m", "1ms"],
 		],
 	);
-	console.log();
+	console.info();
 
 	// Example 3: Table with mixed content
-	console.log("3. Table with Mixed Content (Emojis + Colors):");
+	console.info("3. Table with Mixed Content (Emojis + Colors):");
 	printTable(
 		["Icon", "Name", "Status", "Value"],
 		[
@@ -46,10 +46,10 @@ async function tableFormattingExample() {
 			["⚠️", "Warning", "\x1b[31mFailed\x1b[0m", "0%"],
 		],
 	);
-	console.log();
+	console.info();
 
 	// Example 4: Box-drawing table
-	console.log("4. Box-Drawing Table:");
+	console.info("4. Box-Drawing Table:");
 	printTableBox(
 		["Name", "Status", "Value"],
 		[
@@ -58,10 +58,10 @@ async function tableFormattingExample() {
 			["Data", "⚠️", "300"],
 		],
 	);
-	console.log();
+	console.info();
 
 	// Example 5: Box-drawing table with colors
-	console.log("5. Box-Drawing Table with Colors:");
+	console.info("5. Box-Drawing Table with Colors:");
 	printTableBox(
 		["Service", "Status", "Time"],
 		[
@@ -70,10 +70,10 @@ async function tableFormattingExample() {
 			["Cache", "\x1b[31m✗ Down\x1b[0m", "N/A"],
 		],
 	);
-	console.log();
+	console.info();
 
 	// Example 6: International text table
-	console.log("6. International Text Table:");
+	console.info("6. International Text Table:");
 	printTable(
 		["Language", "Text", "Width"],
 		[
@@ -84,10 +84,10 @@ async function tableFormattingExample() {
 			["Hindi", "प्रोग्रामर", "6"],
 		],
 	);
-	console.log();
+	console.info();
 
 	// Example 7: Currency table
-	console.log("7. Currency Table:");
+	console.info("7. Currency Table:");
 	printTableBox(
 		["Symbol", "Amount", "Currency"],
 		[
@@ -97,10 +97,10 @@ async function tableFormattingExample() {
 			["₹", "98,765,432", "INR"],
 		],
 	);
-	console.log();
+	console.info();
 
 	// Example 8: Get table as string array (without printing)
-	console.log("8. Table as String Array (for custom formatting):");
+	console.info("8. Table as String Array (for custom formatting):");
 	const tableLines = printTable(
 		["Name", "Value"],
 		[
@@ -110,19 +110,19 @@ async function tableFormattingExample() {
 		{ print: false },
 	);
 
-	console.log("Table lines:", tableLines.length);
+	console.info("Table lines:", tableLines.length);
 	tableLines.forEach((line, i) => {
-		console.log(`  ${i + 1}. ${line}`);
+		console.info(`  ${i + 1}. ${line}`);
 	});
-	console.log();
+	console.info();
 
-	console.log("✅ All table formatting examples completed!");
-	console.log("\n💡 Key Features:");
-	console.log("   • Unicode-aware column width calculation");
-	console.log("   • Works with emojis, flags, and colors");
-	console.log("   • Supports international text");
-	console.log("   • Box-drawing borders option");
-	console.log("   • Can return lines as array for custom formatting");
+	console.info("✅ All table formatting examples completed!");
+	console.info("\n💡 Key Features:");
+	console.info("   • Unicode-aware column width calculation");
+	console.info("   • Works with emojis, flags, and colors");
+	console.info("   • Supports international text");
+	console.info("   • Box-drawing borders option");
+	console.info("   • Can return lines as array for custom formatting");
 }
 
 // Run if executed directly

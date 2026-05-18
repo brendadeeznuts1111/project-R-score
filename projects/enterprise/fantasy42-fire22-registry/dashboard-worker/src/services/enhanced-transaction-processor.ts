@@ -264,7 +264,7 @@ export class EnhancedTransactionProcessor {
     const riskScore = this.calculateRiskScore(request);
     const complianceChecks = await this.performComplianceChecks(request, riskScore);
 
-    console.log(`🛡️  Compliance Status:
+    console.info(`🛡️  Compliance Status:
     Enhanced KYC Required: ${kycRequired}
     Risk Score: ${riskScore}/100
     Compliance Checks: ${complianceChecks.length} completed`);
@@ -278,7 +278,7 @@ export class EnhancedTransactionProcessor {
       statusLKey,
     });
 
-    console.log(`🔄 Transaction Flow: ${flowSequence.join(' → ')}`);
+    console.info(`🔄 Transaction Flow: ${flowSequence.join(' → ')}`);
 
     // Step 6: Create processed transaction
     const processedTransaction: ProcessedTransaction = {
@@ -348,7 +348,7 @@ export class EnhancedTransactionProcessor {
       processedTransaction.processedAt = new Date();
       processedTransaction.statusLKey = getLKeyForValue('FILLED') || 'L6004';
 
-      console.log(`✅ Transaction ${request.id} completed successfully`);
+      console.info(`✅ Transaction ${request.id} completed successfully`);
 
       // Log success audit entry
       auditTrailMapper.logEntry({
@@ -401,24 +401,24 @@ export class EnhancedTransactionProcessor {
     transaction.statusLKey = 'L6007'; // MATCHING
 
     // Validate balances
-    console.log(`🔍 Validating balances for ${transaction.amount} ${transaction.currency}`);
+    console.info(`🔍 Validating balances for ${transaction.amount} ${transaction.currency}`);
     await this.sleep(500);
 
     // Process payment
     transaction.status = 'PROCESSING_PAYMENT';
-    console.log(`💳 Processing ${transaction.paymentMethodLKey} payment`);
+    console.info(`💳 Processing ${transaction.paymentMethodLKey} payment`);
     await this.sleep(1500);
 
     // Settle transaction
     transaction.status = 'SETTLING';
-    console.log(`⚡ Settling transaction via ${getValueForLKey(transaction.paymentMethodLKey)}`);
+    console.info(`⚡ Settling transaction via ${getValueForLKey(transaction.paymentMethodLKey)}`);
     await this.sleep(1000);
 
     // Generate settlement hash
     transaction.settlementHash = this.generateSettlementHash();
     transaction.settledAt = new Date();
 
-    console.log(`🎯 Settlement completed: ${transaction.settlementHash}`);
+    console.info(`🎯 Settlement completed: ${transaction.settlementHash}`);
   }
 
   /**

@@ -56,7 +56,7 @@ export class InteractiveCLI {
    */
   async start(): Promise<void> {
     console.clear();
-    console.log(renderLogo('large'));
+    console.info(renderLogo('large'));
     empireLog.info('🚀 Empire Pro Interactive CLI v4.0');
     empireLog.info('💫 Advanced Identity Intelligence Platform\n');
 
@@ -207,22 +207,22 @@ export class InteractiveCLI {
    */
   private displayMenu(options: MenuOption[], title: string): void {
     console.clear();
-    console.log(renderLogo('small'));
-    console.log(chalk.cyan(`\n${title}\n`));
+    console.info(renderLogo('small'));
+    console.info(chalk.cyan(`\n${title}\n`));
     
     options.forEach((option, index) => {
       const prefix = `${index + 1}.`.padEnd(3);
-      console.log(`${prefix} ${chalk.green(option.label.padEnd(25))} ${chalk.gray(option.description)}`);
+      console.info(`${prefix} ${chalk.green(option.label.padEnd(25))} ${chalk.gray(option.description)}`);
     });
     
-    console.log(chalk.yellow('\n💡 Tip: You can also type the option name or number'));
+    console.info(chalk.yellow('\n💡 Tip: You can also type the option name or number'));
   }
 
   /**
    * Get user input with prompt
    */
   private async getUserInput(prompt: string): Promise<string> {
-    console.log(chalk.cyan(`\n${prompt}`));
+    console.info(chalk.cyan(`\n${prompt}`));
     process.stdout.write('> ');
     
     return new Promise((resolve) => {
@@ -236,7 +236,7 @@ export class InteractiveCLI {
         if (key === '\r' || key === '\n') {
           process.stdin.setRawMode(false);
           process.stdin.pause();
-          console.log();
+          console.info();
           resolve(input.trim());
         } else if (key === '\u0003') { // Ctrl+C
           process.exit(0);
@@ -300,19 +300,19 @@ export class InteractiveCLI {
    */
   private async showHelp(options: MenuOption[]): Promise<void> {
     console.clear();
-    console.log(chalk.cyan('📚 Help - Available Commands\n'));
+    console.info(chalk.cyan('📚 Help - Available Commands\n'));
     
     options.forEach(option => {
-      console.log(chalk.green(`${option.label}`));
-      console.log(`  ${option.description}`);
-      console.log(`  Command: ${option.id}`);
+      console.info(chalk.green(`${option.label}`));
+      console.info(`  ${option.description}`);
+      console.info(`  Command: ${option.id}`);
       if (option.suboptions) {
-        console.log('  Suboptions:');
+        console.info('  Suboptions:');
         option.suboptions.forEach(sub => {
-          console.log(`    • ${sub.label} (${sub.id})`);
+          console.info(`    • ${sub.label} (${sub.id})`);
         });
       }
-      console.log();
+      console.info();
     });
     
     await this.pause();
@@ -322,7 +322,7 @@ export class InteractiveCLI {
    * Pause execution until user presses Enter
    */
   private async pause(): Promise<void> {
-    console.log(chalk.yellow('\nPress Enter to continue...'));
+    console.info(chalk.yellow('\nPress Enter to continue...'));
     await this.getUserInput('');
   }
 
@@ -376,13 +376,13 @@ export class InteractiveCLI {
    */
   private async showSettingsMenu(): Promise<void> {
     console.clear();
-    console.log(chalk.cyan('⚙️ Settings\n'));
+    console.info(chalk.cyan('⚙️ Settings\n'));
     
-    console.log(`Current Settings:`);
-    console.log(`  Output Format: ${chalk.green(this.options.format)}`);
-    console.log(`  Debug Mode: ${chalk.green(this.options.debug ? 'Enabled' : 'Disabled')}`);
-    console.log(`  Parallel Processing: ${chalk.green(this.options.parallel.toString())}`);
-    console.log(`  Timeout: ${chalk.green(this.options.timeout.toString() + 'ms')}`);
+    console.info(`Current Settings:`);
+    console.info(`  Output Format: ${chalk.green(this.options.format)}`);
+    console.info(`  Debug Mode: ${chalk.green(this.options.debug ? 'Enabled' : 'Disabled')}`);
+    console.info(`  Parallel Processing: ${chalk.green(this.options.parallel.toString())}`);
+    console.info(`  Timeout: ${chalk.green(this.options.timeout.toString() + 'ms')}`);
     
     await this.pause();
   }
@@ -412,7 +412,7 @@ export class InteractiveCLI {
       spinner.succeed();
       
       console.clear();
-      console.log(chalk.cyan('📊 Phone Audit Results\n'));
+      console.info(chalk.cyan('📊 Phone Audit Results\n'));
       
       this.displayResults(result, this.options.format);
       
@@ -430,11 +430,11 @@ export class InteractiveCLI {
   private displayResults(results: any, format: string): void {
     switch (format) {
       case 'json':
-        console.log(JSON.stringify(results, null, 2));
+        console.info(JSON.stringify(results, null, 2));
         break;
       case 'csv':
         // CSV formatting implementation
-        console.log('CSV format coming soon...');
+        console.info('CSV format coming soon...');
         break;
       case 'table':
       default:
@@ -448,9 +448,9 @@ export class InteractiveCLI {
    */
   private displayTable(results: any): void {
     // Simple table display - will be enhanced
-    console.log(chalk.green('✅ Audit completed successfully'));
-    console.log(`Risk Score: ${chalk.yellow(results.risk?.score || 'N/A')}`);
-    console.log(`Trust Score: ${chalk.green(results.trust?.score || 'N/A')}`);
+    console.info(chalk.green('✅ Audit completed successfully'));
+    console.info(`Risk Score: ${chalk.yellow(results.risk?.score || 'N/A')}`);
+    console.info(`Trust Score: ${chalk.green(results.trust?.score || 'N/A')}`);
   }
 
   /**
@@ -502,8 +502,8 @@ export class InteractiveCLI {
   }
 
   private async exit(): Promise<void> {
-    console.log(chalk.green('\n👋 Thank you for using Empire Pro CLI!'));
-    console.log(chalk.cyan('🚀 Empire Pro - Advanced Identity Intelligence Platform\n'));
+    console.info(chalk.green('\n👋 Thank you for using Empire Pro CLI!'));
+    console.info(chalk.cyan('🚀 Empire Pro - Advanced Identity Intelligence Platform\n'));
     process.exit(0);
   }
 }

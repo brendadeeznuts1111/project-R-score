@@ -135,21 +135,21 @@ if (import.meta.main) {
 		"all") as ReportOptions["severity"];
 	const includeFix = args.includes("--fix");
 
-	console.log("╔════════════════════════════════════════════════════════╗");
-	console.log("║     Tier-1380 OMEGA Violation Reporter                 ║");
-	console.log("╚════════════════════════════════════════════════════════╝");
-	console.log();
+	console.info("╔════════════════════════════════════════════════════════╗");
+	console.info("║     Tier-1380 OMEGA Violation Reporter                 ║");
+	console.info("╚════════════════════════════════════════════════════════╝");
+	console.info();
 
 	// Get staged files
 	const stagedOutput = await $`git diff --cached --name-only`.text().catch(() => "");
 	const files = stagedOutput.trim().split("\n").filter(Boolean);
 
 	if (files.length === 0) {
-		console.log("No staged files to scan.");
+		console.info("No staged files to scan.");
 		process.exit(0);
 	}
 
-	console.log(`Scanning ${files.length} files...`);
+	console.info(`Scanning ${files.length} files...`);
 
 	let violations = await scanForViolations(files);
 
@@ -159,7 +159,7 @@ if (import.meta.main) {
 	}
 
 	if (violations.length === 0) {
-		console.log("✅ No Col-89 violations found!");
+		console.info("✅ No Col-89 violations found!");
 		process.exit(0);
 	}
 
@@ -178,9 +178,9 @@ if (import.meta.main) {
 
 	if (output) {
 		await Bun.write(output, report);
-		console.log(`\nReport written to ${output}`);
+		console.info(`\nReport written to ${output}`);
 	} else {
-		console.log(report);
+		console.info(report);
 	}
 
 	process.exit(1); // Exit with error if violations found

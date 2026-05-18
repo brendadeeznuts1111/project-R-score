@@ -84,7 +84,7 @@ export class ProxyServer extends EventEmitter {
         startTime: this.startTime
       });
 
-      console.log(`🚀 Proxy server started on ${this.config.protocol}://${this.config.host}:${this.config.port}`);
+      console.info(`🚀 Proxy server started on ${this.config.protocol}://${this.config.host}:${this.config.port}`);
 
     } catch (error) {
       this.isRunning = false;
@@ -121,7 +121,7 @@ export class ProxyServer extends EventEmitter {
         stats: this.stats
       });
 
-      console.log('🛑 Proxy server stopped');
+      console.info('🛑 Proxy server stopped');
 
     } catch (error) {
       this.emit('error', error);

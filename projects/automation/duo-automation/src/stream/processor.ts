@@ -68,10 +68,10 @@ export class StreamProcessor {
   async setupMonitoring(options: MonitoringOptions): Promise<void> {
     this.monitoring = options;
     
-    console.log('👁️ Setting up enterprise monitoring...');
-    console.log(`📡 Alerts: ${options.alerts ? 'Enabled' : 'Disabled'}`);
-    console.log(`🔗 Webhooks: ${options.webhooks.join(', ') || 'None'}`);
-    console.log(`📈 SLA Target: ${options.sla}%`);
+    console.info('👁️ Setting up enterprise monitoring...');
+    console.info(`📡 Alerts: ${options.alerts ? 'Enabled' : 'Disabled'}`);
+    console.info(`🔗 Webhooks: ${options.webhooks.join(', ') || 'None'}`);
+    console.info(`📈 SLA Target: ${options.sla}%`);
 
     // Setup webhook connections
     if (options.webhooks.length > 0) {
@@ -90,10 +90,10 @@ export class StreamProcessor {
    * Create Kafka producer
    */
   async createKafkaProducer(options: KafkaOptions): Promise<any> {
-    console.log('📡 Creating Kafka producer...');
-    console.log(`📋 Topic: ${options.topic}`);
-    console.log(`🔧 Brokers: ${options.brokers.join(', ')}`);
-    console.log(`📄 Avro Schema: ${options.avroSchema ? 'Enabled' : 'Disabled'}`);
+    console.info('📡 Creating Kafka producer...');
+    console.info(`📋 Topic: ${options.topic}`);
+    console.info(`🔧 Brokers: ${options.brokers.join(', ')}`);
+    console.info(`📄 Avro Schema: ${options.avroSchema ? 'Enabled' : 'Disabled'}`);
 
     // Mock Kafka producer setup
     this.kafkaProducer = {
@@ -102,12 +102,12 @@ export class StreamProcessor {
       avroSchema: options.avroSchema,
       connected: true,
       send: async (message: any) => {
-        console.log(`📤 Sending to Kafka topic ${options.topic}:`, message);
+        console.info(`📤 Sending to Kafka topic ${options.topic}:`, message);
         return { offset: Math.floor(Math.random() * 10000), partition: options.partition };
       }
     };
 
-    console.log('✅ Kafka producer created successfully');
+    console.info('✅ Kafka producer created successfully');
     this.emit('kafka:producer:created', { options });
 
     return this.kafkaProducer;
@@ -126,9 +126,9 @@ export class StreamProcessor {
       errors: []
     };
 
-    console.log(`🔄 Processing stream from ${filePath}...`);
-    console.log(`⚡ Real-time: ${options.realTime ? 'Yes' : 'No'}`);
-    console.log(`📦 Batch size: ${options.batchSize}`);
+    console.info(`🔄 Processing stream from ${filePath}...`);
+    console.info(`⚡ Real-time: ${options.realTime ? 'Yes' : 'No'}`);
+    console.info(`📦 Batch size: ${options.batchSize}`);
 
     try {
       this.isProcessing = true;
@@ -171,15 +171,15 @@ export class StreamProcessor {
 
         // Progress update
         const progress = ((i + 1) / batches * 100).toFixed(1);
-        console.log(`🚀 Progress: ${progress}% (${result.processed}/${totalLines})`);
+        console.info(`🚀 Progress: ${progress}% (${result.processed}/${totalLines})`);
       }
 
       result.duration = Date.now() - startTime;
       result.throughput = Math.round(result.processed / (result.duration / 1000));
 
-      console.log(`✅ Stream processing complete`);
-      console.log(`📊 Processed: ${result.processed} | Failed: ${result.failed}`);
-      console.log(`⚡ Throughput: ${result.throughput} records/sec`);
+      console.info(`✅ Stream processing complete`);
+      console.info(`📊 Processed: ${result.processed} | Failed: ${result.failed}`);
+      console.info(`⚡ Throughput: ${result.throughput} records/sec`);
 
       this.emit('stream:processed', { result });
 
@@ -208,7 +208,7 @@ export class StreamProcessor {
       throughput: number;
     };
   }): Promise<void> {
-    console.log('📡 Starting real-time monitoring...');
+    console.info('📡 Starting real-time monitoring...');
 
     const monitoringInterval = setInterval(() => {
       if (!this.isProcessing) {
@@ -249,7 +249,7 @@ export class StreamProcessor {
    */
   stop(): void {
     this.isProcessing = false;
-    console.log('🛑 Stream processing stopped');
+    console.info('🛑 Stream processing stopped');
     this.emit('stream:stopped');
   }
 
@@ -292,30 +292,30 @@ export class StreamProcessor {
   }
 
   private async setupWebhooks(webhooks: string[]): Promise<void> {
-    console.log('🔗 Setting up webhook connections...');
+    console.info('🔗 Setting up webhook connections...');
     
     for (const webhook of webhooks) {
-      console.log(`  Connecting to: ${webhook}`);
+      console.info(`  Connecting to: ${webhook}`);
       // Mock webhook connection
       await new Promise(resolve => setTimeout(resolve, 100));
     }
     
-    console.log('✅ All webhooks connected');
+    console.info('✅ All webhooks connected');
   }
 
   private setupAlerts(): void {
-    console.log('🚨 Setting up alert system...');
-    console.log('  - Error rate monitoring');
-    console.log('  - Latency monitoring');
-    console.log('  - Throughput monitoring');
-    console.log('  - SLA compliance monitoring');
+    console.info('🚨 Setting up alert system...');
+    console.info('  - Error rate monitoring');
+    console.info('  - Latency monitoring');
+    console.info('  - Throughput monitoring');
+    console.info('  - SLA compliance monitoring');
   }
 
   private async sendAlert(title: string, message: string): Promise<void> {
     if (!this.monitoring?.alerts) return;
 
-    console.log(`🚨 ALERT: ${title}`);
-    console.log(`   ${message}`);
+    console.info(`🚨 ALERT: ${title}`);
+    console.info(`   ${message}`);
 
     // Send to webhooks
     if (this.monitoring.webhooks.length > 0) {
@@ -329,7 +329,7 @@ export class StreamProcessor {
       for (const webhook of this.monitoring.webhooks) {
         try {
           // Mock webhook send
-          console.log(`📤 Sending alert to ${webhook}`);
+          console.info(`📤 Sending alert to ${webhook}`);
         } catch (error) {
           console.error(`Failed to send alert to ${webhook}:`, error.message);
         }

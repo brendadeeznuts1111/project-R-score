@@ -28,10 +28,10 @@ switch (environment) {
     userAgent = `Fire22-Dashboard/${version} (${environment})`;
 }
 
-console.log('🚀 Starting Fire22 Dashboard');
-console.log(`📱 User-Agent: ${userAgent}`);
-console.log(`🌍 Environment: ${environment}`);
-console.log('='.repeat(60));
+console.info('🚀 Starting Fire22 Dashboard');
+console.info(`📱 User-Agent: ${userAgent}`);
+console.info(`🌍 Environment: ${environment}`);
+console.info('='.repeat(60));
 
 // Set environment variables
 process.env.FIRE22_USER_AGENT = userAgent;

@@ -57,12 +57,12 @@ export class PublishReadyLSPClient {
   }
 
   async start(): Promise<void> {
-    console.log('🚀 Starting enhanced LSP integration...');
+    console.info('🚀 Starting enhanced LSP integration...');
 
     try {
       await this.startServer();
       await this.initializeClient();
-      console.log('✅ LSP integration ready!');
+      console.info('✅ LSP integration ready!');
     } catch (error) {
       console.error('❌ LSP initialization failed:', error);
       await this.shutdown();
@@ -142,13 +142,13 @@ export class PublishReadyLSPClient {
   }
 
   private async connectToServer(): Promise<void> {
-    console.log('📡 Connecting to LSP server...');
+    console.info('📡 Connecting to LSP server...');
     // Your LSP client connection logic here
     // This would implement the WebSocket connection as before
   }
 
   async shutdown(): Promise<void> {
-    console.log('🛑 Shutting down LSP integration...');
+    console.info('🛑 Shutting down LSP integration...');
     this.cleanup();
   }
 
@@ -175,14 +175,14 @@ class BunLSPClient {
 
   async initialize(): Promise<boolean> {
     if (!this.config.enabled) {
-      console.log('ℹ️  LSP client disabled in configuration');
+      console.info('ℹ️  LSP client disabled in configuration');
       return false;
     }
 
     try {
-      console.log('🚀 Initializing Bun LSP Client...');
-      console.log(`📁 Workspace: ${this.config.workspace}`);
-      console.log(`🔌 Port: ${this.config.port}`);
+      console.info('🚀 Initializing Bun LSP Client...');
+      console.info(`📁 Workspace: ${this.config.workspace}`);
+      console.info(`🔌 Port: ${this.config.port}`);
 
       // Start Bun LSP server
       this.process = spawn({
@@ -203,7 +203,7 @@ class BunLSPClient {
       // Establish WebSocket connection to LSP server
       await this.connectWebSocket();
 
-      console.log('✅ Bun LSP client initialized successfully');
+      console.info('✅ Bun LSP client initialized successfully');
       return true;
 
     } catch (error) {
@@ -243,12 +243,12 @@ class BunLSPClient {
   private async connectWebSocket(): Promise<void> {
     return new Promise((resolve, reject) => {
       const wsUrl = `ws://localhost:${this.config.port}/lsp/ws`;
-      console.log(`🔗 Connecting to WebSocket: ${wsUrl}`);
+      console.info(`🔗 Connecting to WebSocket: ${wsUrl}`);
 
       this.websocket = new WebSocket(wsUrl);
 
       this.websocket.onopen = () => {
-        console.log('✅ WebSocket connected to LSP server');
+        console.info('✅ WebSocket connected to LSP server');
         this.isConnected = true;
         resolve();
       };
@@ -256,7 +256,7 @@ class BunLSPClient {
       this.websocket.onmessage = (event) => {
         try {
           const message = JSON.parse(event.data);
-          console.log('📥 Received LSP message:', message.method || message.id || 'notification');
+          console.info('📥 Received LSP message:', message.method || message.id || 'notification');
 
           // Handle JSON-RPC response
           if (message.id && this.pendingRequests.has(message.id)) {
@@ -278,7 +278,7 @@ class BunLSPClient {
       };
 
       this.websocket.onclose = (event) => {
-        console.log(`🔌 WebSocket closed: ${event.code} ${event.reason}`);
+        console.info(`🔌 WebSocket closed: ${event.code} ${event.reason}`);
         this.isConnected = false;
       };
 
@@ -302,7 +302,7 @@ class BunLSPClient {
         });
         break;
       default:
-        console.log('⚠️ Unhandled LSP method:', message.method);
+        console.info('⚠️ Unhandled LSP method:', message.method);
     }
   }
 
@@ -394,11 +394,11 @@ class BunLSPClient {
 
   private async sendMessage(message: any): Promise<void> {
     if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
-      console.log('📤 Sending LSP request:', message.method);
+      console.info('📤 Sending LSP request:', message.method);
       this.websocket.send(JSON.stringify(message));
     } else {
       // Fallback to simulation if not connected
-      console.log('🔄 Fallback: Sending LSP request via simulation:', message.method);
+      console.info('🔄 Fallback: Sending LSP request via simulation:', message.method);
 
       // Simulate response
       setTimeout(() => {
@@ -458,7 +458,7 @@ class BunLSPClient {
   }
 
   async shutdown(): Promise<void> {
-    console.log('🛑 Shutting down LSP client...');
+    console.info('🛑 Shutting down LSP client...');
 
     // Close WebSocket connection
     if (this.websocket) {
@@ -472,7 +472,7 @@ class BunLSPClient {
     }
 
     this.isConnected = false;
-    console.log('✅ LSP client shutdown complete');
+    console.info('✅ LSP client shutdown complete');
   }
 }
 
@@ -491,15 +491,15 @@ class EnhancedBotController {
   }
 
   async initialize(): Promise<void> {
-    console.log('🚀 Starting Enhanced Bot Controller with LSP...');
+    console.info('🚀 Starting Enhanced Bot Controller with LSP...');
     
     // Initialize LSP client
     const lspReady = await this.lspClient.initialize();
     if (lspReady) {
-      console.log('✅ LSP integration ready');
+      console.info('✅ LSP integration ready');
       this.startLSPMonitoring();
     } else {
-      console.log('⚠️  LSP integration not available, continuing without it');
+      console.info('⚠️  LSP integration not available, continuing without it');
     }
 
     // Start existing bot controller functionality
@@ -514,9 +514,9 @@ class EnhancedBotController {
         this.diagnostics = diagnostics;
         
         if (diagnostics.length > 0) {
-          console.log(`🔍 Found ${diagnostics.length} diagnostics in ${this.currentFile}`);
+          console.info(`🔍 Found ${diagnostics.length} diagnostics in ${this.currentFile}`);
           diagnostics.forEach(diagnostic => {
-            console.log(`  Line ${diagnostic.range.start.line + 1}: ${diagnostic.message}`);
+            console.info(`  Line ${diagnostic.range.start.line + 1}: ${diagnostic.message}`);
           });
         }
       }
@@ -525,38 +525,38 @@ class EnhancedBotController {
 
   private startBotController(): void {
     // Existing bot controller logic
-    console.log('🤖 Bot controller functionality started');
-    console.log('🌐 Control Panel: http://localhost:3000');
-    console.log('📡 API: POST /api/start | /api/stop | /api/restart | GET /api/status | GET /api/metrics');
+    console.info('🤖 Bot controller functionality started');
+    console.info('🌐 Control Panel: http://localhost:3000');
+    console.info('📡 API: POST /api/start | /api/stop | /api/restart | GET /api/status | GET /api/metrics');
     
     if (this.lspClient) {
-      console.log('🔧 LSP: http://localhost:50045');
-      console.log('📝 TypeScript support: Enabled');
+      console.info('🔧 LSP: http://localhost:50045');
+      console.info('📝 TypeScript support: Enabled');
     }
   }
 
   async analyzeFile(filePath: string): Promise<void> {
     this.currentFile = `file://${filePath}`;
-    console.log(`📄 Analyzing file: ${filePath}`);
+    console.info(`📄 Analyzing file: ${filePath}`);
     
     const diagnostics = await this.lspClient.getDiagnostics(this.currentFile);
-    console.log(`🔍 Found ${diagnostics.length} issues`);
+    console.info(`🔍 Found ${diagnostics.length} issues`);
     
     if (diagnostics.length > 0) {
       diagnostics.forEach(diagnostic => {
         const severity = diagnostic.severity === 1 ? 'Error' : 
                         diagnostic.severity === 2 ? 'Warning' : 'Info';
-        console.log(`  [${severity}] Line ${diagnostic.range.start.line + 1}: ${diagnostic.message}`);
+        console.info(`  [${severity}] Line ${diagnostic.range.start.line + 1}: ${diagnostic.message}`);
       });
     }
   }
 
   async formatCode(filePath: string): Promise<void> {
     const fileUri = `file://${filePath}`;
-    console.log(`🎨 Formatting code: ${filePath}`);
+    console.info(`🎨 Formatting code: ${filePath}`);
     
     const edits = await this.lspClient.formatDocument(fileUri);
-    console.log(`✅ Applied ${edits.length} formatting changes`);
+    console.info(`✅ Applied ${edits.length} formatting changes`);
   }
 
   async getHealthStatus(): Promise<HealthStatus> {
@@ -573,16 +573,16 @@ interface HealthStatus {
 
 // Main execution
 if (import.meta.main) {
-  console.log('🚀 SERO LSP Integration Starting...');
-  console.log('🔧 Bun TypeScript Language Server');
-  console.log('📡 Port: 50045');
-  console.log('');
+  console.info('🚀 SERO LSP Integration Starting...');
+  console.info('🔧 Bun TypeScript Language Server');
+  console.info('📡 Port: 50045');
+  console.info('');
   
   const controller = new EnhancedBotController();
   
   // Handle graceful shutdown
   process.on('SIGINT', async () => {
-    console.log('\n🛑 Shutting down gracefully...');
+    console.info('\n🛑 Shutting down gracefully...');
     await controller.lspClient.shutdown();
     process.exit(0);
   });

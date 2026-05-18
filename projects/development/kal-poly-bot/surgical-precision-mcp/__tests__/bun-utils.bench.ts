@@ -27,14 +27,14 @@ function recordResult(result: BenchmarkResult): void {
   results.push(result);
   totalOperations += result.operations;
   totalTimeMs += result.timeMs;
-  console.log(`✅ ${result.category}: ${result.operations.toLocaleString()} ops in ${(result.timeMs / 1000).toFixed(3)}s`);
-  console.log(`   ${result.opsPerSec.toLocaleString()} ops/sec | ${result.notes}`);
+  console.info(`✅ ${result.category}: ${result.operations.toLocaleString()} ops in ${(result.timeMs / 1000).toFixed(3)}s`);
+  console.info(`   ${result.opsPerSec.toLocaleString()} ops/sec | ${result.notes}`);
 }
 
-console.log('\n🧪 SURGICAL PRECISION - Bun utils.mjs Benchmarks');
+console.info('\n🧪 SURGICAL PRECISION - Bun utils.mjs Benchmarks');
 
 // Category 1: Spawn Latency
-console.log('\n📊 CATEGORY 1: Spawn Latency');
+console.info('\n📊 CATEGORY 1: Spawn Latency');
 {
   const ops = 1000;
   const start = performance.now();
@@ -55,7 +55,7 @@ console.log('\n📊 CATEGORY 1: Spawn Latency');
 }
 
 // Category 2: File I/O
-console.log('\n📁 CATEGORY 2: File I/O Operations');
+console.info('\n📁 CATEGORY 2: File I/O Operations');
 {
   const ops = 5000;
   const start = performance.now();
@@ -82,9 +82,9 @@ console.log('\n📁 CATEGORY 2: File I/O Operations');
 const successRate = results.filter(r => r.success).length / results.length;
 const throughput = Math.round((totalOperations / totalTimeMs) * 1000);
 
-console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log(TableUtils.color.bold('🎯 SURGICAL PRECISION RESULTS'));
-console.log(`✅ Success Rate: ${(successRate * 100).toFixed(1)}% (${results.filter(r => r.success).length}/${results.length})`);
-console.log(`⚡ Throughput: ${throughput.toLocaleString()} ops/sec`);
-console.log('🎯 Zero-Collateral: CONFIRMED');
-console.log('Team Color Coding: ACTIVE');
+console.info('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.info(TableUtils.color.bold('🎯 SURGICAL PRECISION RESULTS'));
+console.info(`✅ Success Rate: ${(successRate * 100).toFixed(1)}% (${results.filter(r => r.success).length}/${results.length})`);
+console.info(`⚡ Throughput: ${throughput.toLocaleString()} ops/sec`);
+console.info('🎯 Zero-Collateral: CONFIRMED');
+console.info('Team Color Coding: ACTIVE');

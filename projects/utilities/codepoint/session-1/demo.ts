@@ -3,15 +3,15 @@
 // Demo script for HMR Event Tracker
 import { demonstrateHMRTracking, exportHMRData } from "./hmr-event-tracker";
 
-console.log("🚀 HMR Event Tracker Demo");
-console.log("========================\n");
+console.info("🚀 HMR Event Tracker Demo");
+console.info("========================\n");
 
 // Run the main demonstration
 const { servers, devServer } = demonstrateHMRTracking();
 
 // Additional real-time simulation
-console.log("\n🔄 Simulating Real-time HMR Events...");
-console.log("=====================================");
+console.info("\n🔄 Simulating Real-time HMR Events...");
+console.info("=====================================");
 
 let eventCount = 0;
 const maxEvents = 10;
@@ -19,11 +19,11 @@ const maxEvents = 10;
 const simulationInterval = setInterval(() => {
   if (eventCount >= maxEvents) {
     clearInterval(simulationInterval);
-    console.log("\n✅ Simulation complete!");
+    console.info("\n✅ Simulation complete!");
 
     // Final export demonstration
-    console.log("\n📤 Final Data Export:");
-    console.log(exportHMRData(devServer, "json"));
+    console.info("\n📤 Final Data Export:");
+    console.info(exportHMRData(devServer, "json"));
     return;
   }
 
@@ -46,12 +46,12 @@ const simulationInterval = setInterval(() => {
 
   // Update display every 2 events
   if (eventCount % 2 === 0) {
-    console.log(`\n📊 Update ${eventCount / 2}:`);
-    console.log(`Total Events: ${devServer.hmrEvents.length}`);
-    console.log(
+    console.info(`\n📊 Update ${eventCount / 2}:`);
+    console.info(`Total Events: ${devServer.hmrEvents.length}`);
+    console.info(
       `Last Event: ${devServer.hmrEvents[devServer.hmrEvents.length - 1].name}`
     );
   }
 }, 1000);
 
-console.log("📡 Monitoring HMR events... (will run for 10 seconds)");
+console.info("📡 Monitoring HMR events... (will run for 10 seconds)");

@@ -429,7 +429,7 @@ if (import.meta.main) {
       logger.info(`Written to: ${outputArg}`);
     } else {
       // Keep console.log for actual output to stdout
-      console.log(output);
+      console.info(output);
     }
     
     const totalLat = nanoseconds() - start;

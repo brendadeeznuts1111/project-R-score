@@ -25,7 +25,7 @@ interface SupportTicket {
 
 export default {
   async email(message: EmailMessage, env: any) {
-    console.log(`📧 Processing support email from: ${message.from}`);
+    console.info(`📧 Processing support email from: ${message.from}`);
 
     try {
       // Extract ticket information
@@ -43,7 +43,7 @@ export default {
       // Log to analytics
       await logEmailAnalytics(message, ticket, env);
 
-      console.log(`✅ Support ticket created: ${ticket.id}`);
+      console.info(`✅ Support ticket created: ${ticket.id}`);
     } catch (error) {
       console.error(`❌ Error processing support email:`, error);
 
@@ -102,9 +102,9 @@ async function sendAutoResponse(message: EmailMessage, ticket: SupportTicket, en
 
   // Here you would integrate with your email service
   // For now, we'll log the response
-  console.log(`📤 Auto-response for ticket ${ticket.id}:`);
-  console.log(`Subject: ${responseSubject}`);
-  console.log(`Body: ${responseBody}`);
+  console.info(`📤 Auto-response for ticket ${ticket.id}:`);
+  console.info(`Subject: ${responseSubject}`);
+  console.info(`Body: ${responseBody}`);
 }
 
 async function logEmailAnalytics(message: EmailMessage, ticket: SupportTicket, env: any) {

@@ -91,11 +91,11 @@ class SecurityEscalationTimer {
       `SECURITY ISSUE CREATED: ${issue.id} - ${type} - ${departmentHead} - Deadline: ${this.formatDeadline(issue.deadline)}`
     );
 
-    console.log(`🚨 Security Issue Created: ${issue.id}`);
-    console.log(`📊 Type: ${type}`);
-    console.log(`👤 Department Head: ${departmentHead} (${email})`);
-    console.log(`⏰ Deadline: ${this.formatTimeRemaining(issue.deadline - now)}`);
-    console.log(`🔍 Description: ${description}`);
+    console.info(`🚨 Security Issue Created: ${issue.id}`);
+    console.info(`📊 Type: ${type}`);
+    console.info(`👤 Department Head: ${departmentHead} (${email})`);
+    console.info(`⏰ Deadline: ${this.formatTimeRemaining(issue.deadline - now)}`);
+    console.info(`🔍 Description: ${description}`);
 
     return issue.id;
   }
@@ -108,7 +108,7 @@ class SecurityEscalationTimer {
     const issueIndex = issues.findIndex(i => i.id === issueId);
 
     if (issueIndex === -1) {
-      console.log(`❌ Issue not found: ${issueId}`);
+      console.info(`❌ Issue not found: ${issueId}`);
       return false;
     }
 
@@ -131,9 +131,9 @@ class SecurityEscalationTimer {
       `SECURITY ISSUE RESOLVED: ${issueId} - Resolution time: ${this.formatTimeRemaining(timeTaken)} - ${resolution}`
     );
 
-    console.log(`✅ Security Issue Resolved: ${issueId}`);
-    console.log(`⏱️  Resolution Time: ${this.formatTimeRemaining(timeTaken)}`);
-    console.log(`📝 Resolution: ${resolution}`);
+    console.info(`✅ Security Issue Resolved: ${issueId}`);
+    console.info(`⏱️  Resolution Time: ${this.formatTimeRemaining(timeTaken)}`);
+    console.info(`📝 Resolution: ${resolution}`);
 
     return true;
   }
@@ -155,7 +155,7 @@ class SecurityEscalationTimer {
 
     if (escalationsTriggered > 0) {
       this.saveIssues(issues);
-      console.log(`🚨 ${escalationsTriggered} critical escalation(s) triggered!`);
+      console.info(`🚨 ${escalationsTriggered} critical escalation(s) triggered!`);
     }
   }
 
@@ -172,12 +172,12 @@ class SecurityEscalationTimer {
       `CRITICAL ESCALATION TRIGGERED: ${issue.id} - ${this.formatTimeRemaining(timeOverdue)} overdue`
     );
 
-    console.log(`🔥 CRITICAL ESCALATION TRIGGERED 🔥`);
-    console.log(`📋 Issue ID: ${issue.id}`);
-    console.log(`📊 Type: ${issue.type}`);
-    console.log(`👤 Department Head: ${issue.departmentHead} (${issue.email})`);
-    console.log(`⏰ Overdue by: ${this.formatTimeRemaining(timeOverdue)}`);
-    console.log(`📞 Escalation contacts notified: ${this.config.escalationContacts.join(', ')}`);
+    console.info(`🔥 CRITICAL ESCALATION TRIGGERED 🔥`);
+    console.info(`📋 Issue ID: ${issue.id}`);
+    console.info(`📊 Type: ${issue.type}`);
+    console.info(`👤 Department Head: ${issue.departmentHead} (${issue.email})`);
+    console.info(`⏰ Overdue by: ${this.formatTimeRemaining(timeOverdue)}`);
+    console.info(`📞 Escalation contacts notified: ${this.config.escalationContacts.join(', ')}`);
 
     // In a real implementation, this would send emergency notifications
     this.sendEscalationNotifications(issue, timeOverdue);
@@ -187,12 +187,12 @@ class SecurityEscalationTimer {
    * Start the monitoring daemon
    */
   startMonitoring(): void {
-    console.log(`🔍 Security Escalation Timer Started`);
-    console.log(
+    console.info(`🔍 Security Escalation Timer Started`);
+    console.info(
       `⏰ Maximum Resolution Time: ${this.formatTimeRemaining(this.config.maxResolutionTimeNs)}`
     );
-    console.log(`🔄 Check Interval: ${this.config.checkIntervalMs}ms`);
-    console.log(`📧 Escalation Contacts: ${this.config.escalationContacts.length}`);
+    console.info(`🔄 Check Interval: ${this.config.checkIntervalMs}ms`);
+    console.info(`📧 Escalation Contacts: ${this.config.escalationContacts.length}`);
 
     this.log('SECURITY ESCALATION TIMER STARTED');
 
@@ -208,25 +208,25 @@ class SecurityEscalationTimer {
     const issues = this.loadIssues();
     const now = Bun.nanoseconds();
 
-    console.log(`\n📊 Security Issues Status Report`);
-    console.log(`📅 Generated: ${new Date().toISOString()}`);
-    console.log(`⏰ Current Time: ${now}`);
-    console.log(`📋 Total Issues: ${issues.length}`);
+    console.info(`\n📊 Security Issues Status Report`);
+    console.info(`📅 Generated: ${new Date().toISOString()}`);
+    console.info(`⏰ Current Time: ${now}`);
+    console.info(`📋 Total Issues: ${issues.length}`);
 
     const active = issues.filter(i => i.status === 'active');
     const resolved = issues.filter(i => i.status === 'resolved');
     const escalated = issues.filter(i => i.status === 'escalated');
 
-    console.log(`🟢 Active: ${active.length}`);
-    console.log(`✅ Resolved: ${resolved.length}`);
-    console.log(`🔥 Escalated: ${escalated.length}`);
+    console.info(`🟢 Active: ${active.length}`);
+    console.info(`✅ Resolved: ${resolved.length}`);
+    console.info(`🔥 Escalated: ${escalated.length}`);
 
     if (active.length > 0) {
-      console.log(`\n🟢 Active Issues:`);
+      console.info(`\n🟢 Active Issues:`);
       active.forEach(issue => {
         const timeRemaining = issue.deadline - now;
         const status = timeRemaining > 0 ? '⏰' : '🚨 OVERDUE';
-        console.log(
+        console.info(
           `  ${status} ${issue.id}: ${issue.type} - ${issue.departmentHead} - ${this.formatTimeRemaining(Math.abs(timeRemaining))} ${timeRemaining > 0 ? 'remaining' : 'overdue'}`
         );
       });
@@ -328,10 +328,10 @@ const args = process.argv.slice(3);
 switch (command) {
   case 'create':
     if (args.length < 4) {
-      console.log(
+      console.info(
         'Usage: bun security-escalation-timer.ts create <type> <description> <departmentHead> <email>'
       );
-      console.log(
+      console.info(
         'Types: key_compromise | setup_failure | access_issue | security_violation | gpg_distribution'
       );
       process.exit(1);
@@ -341,7 +341,7 @@ switch (command) {
 
   case 'resolve':
     if (args.length < 2) {
-      console.log('Usage: bun security-escalation-timer.ts resolve <issueId> <resolution>');
+      console.info('Usage: bun security-escalation-timer.ts resolve <issueId> <resolution>');
       process.exit(1);
     }
     timer.resolveIssue(args[0], args[1]);
@@ -360,26 +360,26 @@ switch (command) {
     break;
 
   default:
-    console.log('🔐 Fire22 Security Escalation Timer');
-    console.log('');
-    console.log('Commands:');
-    console.log(
+    console.info('🔐 Fire22 Security Escalation Timer');
+    console.info('');
+    console.info('Commands:');
+    console.info(
       '  create <type> <description> <departmentHead> <email>  - Create new security issue'
     );
-    console.log('  resolve <issueId> <resolution>                       - Resolve security issue');
-    console.log('  status                                               - Show all issues status');
-    console.log('  monitor                                              - Start monitoring daemon');
-    console.log(
+    console.info('  resolve <issueId> <resolution>                       - Resolve security issue');
+    console.info('  status                                               - Show all issues status');
+    console.info('  monitor                                              - Start monitoring daemon');
+    console.info(
       '  check                                               - Check for escalations once'
     );
-    console.log('');
-    console.log('Examples:');
-    console.log(
+    console.info('');
+    console.info('Examples:');
+    console.info(
       '  bun security-escalation-timer.ts create gpg_distribution "GPG key setup failed" "Sarah Martinez" "sarah.martinez@communications.fire22"'
     );
-    console.log(
+    console.info(
       '  bun security-escalation-timer.ts resolve sec-1234567890 "GPG keys configured successfully"'
     );
-    console.log('  bun security-escalation-timer.ts monitor');
+    console.info('  bun security-escalation-timer.ts monitor');
     break;
 }

@@ -325,7 +325,7 @@ export async function logAuthorizationEvent(
   if (!allowed) {
     console.warn('Authorization denied:', event);
   } else if (process.env.LOG_LEVEL === 'debug') {
-    console.log('Authorization granted:', event);
+    console.info('Authorization granted:', event);
   }
 }
 

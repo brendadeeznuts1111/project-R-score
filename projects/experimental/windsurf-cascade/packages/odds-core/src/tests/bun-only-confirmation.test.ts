@@ -14,8 +14,8 @@ describe("Bun-Only Implementation Confirmation", () => {
     expect(typeof bunInfo.version).toBe('string');
     expect(typeof bunInfo.revision).toBe('string');
     
-    console.log('✅ Running on Bun version:', bunInfo.version);
-    console.log('✅ Bun revision:', bunInfo.revision);
+    console.info('✅ Running on Bun version:', bunInfo.version);
+    console.info('✅ Bun revision:', bunInfo.revision);
   });
 
   test("should use Bun native time functions only", () => {
@@ -49,10 +49,10 @@ describe("Bun-Only Implementation Confirmation", () => {
   test("should show Bun version and revision info", () => {
     const bunInfo = BunUtils.getBunInfo();
     
-    console.log('\n🚀 Bun Runtime Information:');
-    console.log(`   Version: ${bunInfo.version}`);
-    console.log(`   Revision: ${bunInfo.revision}`);
-    console.log(`   Main script: ${bunInfo.main}`);
+    console.info('\n🚀 Bun Runtime Information:');
+    console.info(`   Version: ${bunInfo.version}`);
+    console.info(`   Revision: ${bunInfo.revision}`);
+    console.info(`   Main script: ${bunInfo.main}`);
     
     // Verify the format matches expected patterns
     expect(bunInfo.version).toMatch(/^\d+\.\d+\.\d+$/); // e.g., "1.3.2"

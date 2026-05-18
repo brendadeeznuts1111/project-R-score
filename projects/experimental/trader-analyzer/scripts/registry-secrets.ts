@@ -31,7 +31,7 @@ const commands = {
 		}
 
 		await registry.set(scope, credentials);
-		console.log(`✅ Stored credentials for ${scope}`);
+		console.info(`✅ Stored credentials for ${scope}`);
 	},
 
 	async get(scope: string) {
@@ -43,14 +43,14 @@ const commands = {
 		const creds = await registry.get(scope);
 		
 		if (!creds.token && !creds.username && !creds.password) {
-			console.log(`ℹ️  No credentials found for ${scope}`);
+			console.info(`ℹ️  No credentials found for ${scope}`);
 			return;
 		}
 
-		console.log(`\n📦 Credentials for ${scope}:`);
-		if (creds.token) console.log(`   Token: ${creds.token.substring(0, 8)}...`);
-		if (creds.username) console.log(`   Username: ${creds.username}`);
-		if (creds.password) console.log(`   Password: ${"*".repeat(creds.password.length)}`);
+		console.info(`\n📦 Credentials for ${scope}:`);
+		if (creds.token) console.info(`   Token: ${creds.token.substring(0, 8)}...`);
+		if (creds.username) console.info(`   Username: ${creds.username}`);
+		if (creds.password) console.info(`   Password: ${"*".repeat(creds.password.length)}`);
 	},
 
 	async delete(scope: string) {
@@ -60,24 +60,24 @@ const commands = {
 		}
 
 		await registry.del(scope);
-		console.log(`✅ Deleted credentials for ${scope}`);
+		console.info(`✅ Deleted credentials for ${scope}`);
 	},
 
 	async list() {
 		const scopes = ["@orca", "@nexus"];
-		console.log("\n📦 Registry Credentials:\n");
+		console.info("\n📦 Registry Credentials:\n");
 		
 		for (const scope of scopes) {
 			const creds = await registry.get(scope);
 			const hasCreds = creds.token || creds.username || creds.password;
 			
 			if (hasCreds) {
-				console.log(`  ${scope}:`);
-				if (creds.token) console.log(`    ✅ Token configured`);
-				if (creds.username) console.log(`    ✅ Username configured`);
-				if (creds.password) console.log(`    ✅ Password configured`);
+				console.info(`  ${scope}:`);
+				if (creds.token) console.info(`    ✅ Token configured`);
+				if (creds.username) console.info(`    ✅ Username configured`);
+				if (creds.password) console.info(`    ✅ Password configured`);
 			} else {
-				console.log(`  ${scope}: ❌ No credentials`);
+				console.info(`  ${scope}: ❌ No credentials`);
 			}
 		}
 	},
@@ -88,7 +88,7 @@ async function main() {
 	const command = args[0];
 
 	if (!command || !commands[command as keyof typeof commands]) {
-		console.log(`
+		console.info(`
 Registry Secrets CLI - Manage package registry credentials using Bun.secrets
 
 Usage:

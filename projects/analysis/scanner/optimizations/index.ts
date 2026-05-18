@@ -201,17 +201,17 @@ export function printOptimizationStatus(): void {
 	const status = checkBunVersionCompatibility();
 	const rScore = getModuleRScore();
 
-	console.log('╔════════════════════════════════════════════════════════╗');
-	console.log('║     Bun v1.3.7 API Integration - Status Report        ║');
-	console.log('╠════════════════════════════════════════════════════════╣');
-	console.log(`║  Bun Version: ${status.bunVersion.padEnd(42)} ║`);
-	console.log(`║  Compatible:  ${(status.compatible ? '✅ Yes' : '❌ No').padEnd(42)} ║`);
-	console.log(`║  R-Score:     ${rScore.toFixed(4).padEnd(42)} ║`);
-	console.log(
+	console.info('╔════════════════════════════════════════════════════════╗');
+	console.info('║     Bun v1.3.7 API Integration - Status Report        ║');
+	console.info('╠════════════════════════════════════════════════════════╣');
+	console.info(`║  Bun Version: ${status.bunVersion.padEnd(42)} ║`);
+	console.info(`║  Compatible:  ${(status.compatible ? '✅ Yes' : '❌ No').padEnd(42)} ║`);
+	console.info(`║  R-Score:     ${rScore.toFixed(4).padEnd(42)} ║`);
+	console.info(
 		`║  Tier:        ${(rScore >= 0.95 ? 'Elite' : rScore >= 0.9 ? 'Native-Grade' : 'Sub-Optimal').padEnd(42)} ║`,
 	);
-	console.log('╠════════════════════════════════════════════════════════╣');
-	console.log('║  API Availability:                                     ║');
+	console.info('╠════════════════════════════════════════════════════════╣');
+	console.info('║  API Availability:                                     ║');
 
 	const apis = [
 		['Bun.which()', 'which'],
@@ -225,16 +225,16 @@ export function printOptimizationStatus(): void {
 	for (const [name, key] of apis) {
 		const available = typeof (Bun as Record<string, unknown>)[key] === 'function';
 		const status = available ? '✅' : '❌';
-		console.log(`║    ${status} ${name.padEnd(48)} ║`);
+		console.info(`║    ${status} ${name.padEnd(48)} ║`);
 	}
 
 	if (status.missingApis.length > 0) {
-		console.log('╠════════════════════════════════════════════════════════╣');
-		console.log('║  Missing APIs:                                         ║');
+		console.info('╠════════════════════════════════════════════════════════╣');
+		console.info('║  Missing APIs:                                         ║');
 		for (const api of status.missingApis) {
-			console.log(`║    ⚠️  ${api.padEnd(48)} ║`);
+			console.info(`║    ⚠️  ${api.padEnd(48)} ║`);
 		}
 	}
 
-	console.log('╚════════════════════════════════════════════════════════╝');
+	console.info('╚════════════════════════════════════════════════════════╝');
 }

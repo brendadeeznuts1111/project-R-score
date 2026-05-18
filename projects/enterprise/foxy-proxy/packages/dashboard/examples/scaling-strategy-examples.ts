@@ -8,64 +8,64 @@ import { DuoPlusScalingManager } from "../src/utils/scaling/duoplus-scaling";
  * Demonstrates the full 3-phase scaling approach
  */
 export async function executeCompleteScalingStrategy(): Promise<void> {
-  console.log("🎯 DuoPlus Scaling Strategy - Complete Execution");
-  console.log("=".repeat(50));
+  console.info("🎯 DuoPlus Scaling Strategy - Complete Execution");
+  console.info("=".repeat(50));
 
   const scalingManager = new DuoPlusScalingManager();
 
   try {
     // Phase 1: 20→50 accounts (Validation Phase)
-    console.log("\n📊 PHASE 1: Platform Validation");
-    console.log("-".repeat(30));
+    console.info("\n📊 PHASE 1: Platform Validation");
+    console.info("-".repeat(30));
 
     const phase1Result = await scalingManager.executePhase1();
 
-    console.log("✅ Phase 1 Complete:");
-    console.log(`   Total Devices: ${phase1Result.totalDevices}`);
-    console.log(`   Estimated Cost: $${phase1Result.estimatedCost}/month`);
-    console.log(`   Provisioning Time: ${phase1Result.estimatedTime} minutes`);
+    console.info("✅ Phase 1 Complete:");
+    console.info(`   Total Devices: ${phase1Result.totalDevices}`);
+    console.info(`   Estimated Cost: $${phase1Result.estimatedCost}/month`);
+    console.info(`   Provisioning Time: ${phase1Result.estimatedTime} minutes`);
 
     // Display platform breakdown
-    console.log("\n📱 Platform Breakdown:");
+    console.info("\n📱 Platform Breakdown:");
     Object.entries(phase1Result.platformResults).forEach(([platform, result]) => {
-      console.log(`   ${platform}: ${result.deviceCount} devices (${result.template})`);
+      console.info(`   ${platform}: ${result.deviceCount} devices (${result.template})`);
     });
 
     // Simulate monitoring period (in real implementation, this would be days/weeks)
-    console.log("\n⏳ Monitoring Phase 1 Effectiveness...");
+    console.info("\n⏳ Monitoring Phase 1 Effectiveness...");
     await simulateMonitoringPeriod();
 
     // Phase 2: 50→100 accounts (Optimization Phase)
-    console.log("\n📈 PHASE 2: Optimization & Expansion");
-    console.log("-".repeat(30));
+    console.info("\n📈 PHASE 2: Optimization & Expansion");
+    console.info("-".repeat(30));
 
     const phase2Result = await scalingManager.executePhase2();
 
-    console.log("✅ Phase 2 Complete:");
-    console.log(`   Total Devices: ${phase2Result.totalDevices}`);
-    console.log(`   Estimated Cost: $${phase2Result.estimatedCost}/month`);
-    console.log(
+    console.info("✅ Phase 2 Complete:");
+    console.info(`   Total Devices: ${phase2Result.totalDevices}`);
+    console.info(`   Estimated Cost: $${phase2Result.estimatedCost}/month`);
+    console.info(
       `   Growth: ${((phase2Result.totalDevices / phase1Result.totalDevices - 1) * 100).toFixed(1)}%`
     );
 
     // Phase 3: 100→200 accounts (Full Automation)
-    console.log("\n🚀 PHASE 3: Full Automation");
-    console.log("-".repeat(30));
+    console.info("\n🚀 PHASE 3: Full Automation");
+    console.info("-".repeat(30));
 
     const phase3Result = await scalingManager.executePhase3();
 
-    console.log("✅ Phase 3 Complete:");
-    console.log(`   Total Devices: ${phase3Result.totalDevices}`);
-    console.log(`   Estimated Cost: $${phase3Result.estimatedCost}/month`);
-    console.log(`   Final Scale: ${phase3Result.totalDevices} accounts`);
+    console.info("✅ Phase 3 Complete:");
+    console.info(`   Total Devices: ${phase3Result.totalDevices}`);
+    console.info(`   Estimated Cost: $${phase3Result.estimatedCost}/month`);
+    console.info(`   Final Scale: ${phase3Result.totalDevices} accounts`);
 
     // Final Summary
-    console.log("\n🎉 SCALING STRATEGY COMPLETE");
-    console.log("=".repeat(30));
-    console.log(`📊 Final Scale: ${phase3Result.totalDevices} accounts`);
-    console.log(`💰 Monthly Cost: $${phase3Result.estimatedCost}`);
-    console.log(`📈 Total Growth: ${((phase3Result.totalDevices / 20 - 1) * 100).toFixed(0)}%`);
-    console.log("⚡ Effectiveness: 85% success rate achieved");
+    console.info("\n🎉 SCALING STRATEGY COMPLETE");
+    console.info("=".repeat(30));
+    console.info(`📊 Final Scale: ${phase3Result.totalDevices} accounts`);
+    console.info(`💰 Monthly Cost: $${phase3Result.estimatedCost}`);
+    console.info(`📈 Total Growth: ${((phase3Result.totalDevices / 20 - 1) * 100).toFixed(0)}%`);
+    console.info("⚡ Effectiveness: 85% success rate achieved");
   } catch (error) {
     console.error("❌ Scaling strategy failed:", error);
   }
@@ -76,8 +76,8 @@ export async function executeCompleteScalingStrategy(): Promise<void> {
  * Shows how to optimize individual platforms based on performance
  */
 export async function demonstratePlatformOptimization(): Promise<void> {
-  console.log("\n🔧 Platform-Specific Optimization Demo");
-  console.log("=".repeat(40));
+  console.info("\n🔧 Platform-Specific Optimization Demo");
+  console.info("=".repeat(40));
 
   const scalingManager = new DuoPlusScalingManager();
 
@@ -89,23 +89,23 @@ export async function demonstratePlatformOptimization(): Promise<void> {
     { platform: "github", banRate: 3, successRate: 97, status: "excellent" }
   ];
 
-  console.log("📊 Platform Performance Analysis:");
+  console.info("📊 Platform Performance Analysis:");
 
   // Process scenarios sequentially to handle async operations
   for (const scenario of platformScenarios) {
-    console.log(`\n${scenario.platform.toUpperCase()}:`);
-    console.log(`   Ban Rate: ${scenario.banRate}%`);
-    console.log(`   Success Rate: ${scenario.successRate}%`);
-    console.log(`   Status: ${scenario.status}`);
+    console.info(`\n${scenario.platform.toUpperCase()}:`);
+    console.info(`   Ban Rate: ${scenario.banRate}%`);
+    console.info(`   Success Rate: ${scenario.successRate}%`);
+    console.info(`   Status: ${scenario.status}`);
 
     // Get optimization recommendations
     const optimization = scalingManager.optimizeCosts(scenario.platform, 10);
-    console.log(`   Cost Optimization: $${optimization.baseCost} → $${optimization.optimizedCost}`);
-    console.log(`   Strategies: ${optimization.optimizationStrategies.join(", ")}`);
+    console.info(`   Cost Optimization: $${optimization.baseCost} → $${optimization.optimizedCost}`);
+    console.info(`   Strategies: ${optimization.optimizationStrategies.join(", ")}`);
 
     // Dynamic fingerprint adjustment if needed
     if (scenario.banRate > 15) {
-      console.log("   ⚠️  Recommendation: Switch to conservative fingerprint");
+      console.info("   ⚠️  Recommendation: Switch to conservative fingerprint");
       await scalingManager.adjustFingerprintSettings(scenario.platform, scenario.banRate);
     }
   }
@@ -116,8 +116,8 @@ export async function demonstratePlatformOptimization(): Promise<void> {
  * Demonstrates financial planning for different scale targets
  */
 export function demonstrateCostAnalysis(): void {
-  console.log("\n💰 Cost Analysis & Budget Planning");
-  console.log("=".repeat(40));
+  console.info("\n💰 Cost Analysis & Budget Planning");
+  console.info("=".repeat(40));
 
   const scaleTargets = [
     { name: "Small Scale", accounts: 50 },
@@ -126,9 +126,9 @@ export function demonstrateCostAnalysis(): void {
     { name: "Enterprise Scale", accounts: 500 }
   ];
 
-  console.log("📊 Cost Analysis by Scale:");
-  console.log("Scale Target | Est. Monthly Cost | Cost/Account | ROI Potential");
-  console.log("-".repeat(65));
+  console.info("📊 Cost Analysis by Scale:");
+  console.info("Scale Target | Est. Monthly Cost | Cost/Account | ROI Potential");
+  console.info("-".repeat(65));
 
   scaleTargets.forEach((target) => {
     // Calculate estimated costs based on platform mix
@@ -136,16 +136,16 @@ export function demonstrateCostAnalysis(): void {
     const costPerAccount = estimatedCost / target.accounts;
     const roiPotential = calculateROIPotential(target.accounts);
 
-    console.log(
+    console.info(
       `${target.name.padEnd(12)} | $${estimatedCost.toString().padStart(8)} | $${costPerAccount.toFixed(2).padStart(8)} | ${roiPotential}`
     );
   });
 
-  console.log("\n💡 Budget Recommendations:");
-  console.log("• Start with Small Scale (50 accounts) to validate effectiveness");
-  console.log("• Medium Scale (100 accounts) provides best ROI/cost balance");
-  console.log("• Large Scale (200 accounts) for established operations");
-  console.log("• Enterprise Scale requires multi-vendor strategy");
+  console.info("\n💡 Budget Recommendations:");
+  console.info("• Start with Small Scale (50 accounts) to validate effectiveness");
+  console.info("• Medium Scale (100 accounts) provides best ROI/cost balance");
+  console.info("• Large Scale (200 accounts) for established operations");
+  console.info("• Enterprise Scale requires multi-vendor strategy");
 }
 
 /**
@@ -153,25 +153,25 @@ export function demonstrateCostAnalysis(): void {
  * Shows how device warming reduces ban rates
  */
 export async function demonstrateDeviceWarming(): Promise<void> {
-  console.log("\n🔥 Device Warming Protocol Demo");
-  console.log("=".repeat(35));
+  console.info("\n🔥 Device Warming Protocol Demo");
+  console.info("=".repeat(35));
 
   const scalingManager = new DuoPlusScalingManager();
 
   // Simulate device pool
   const devicePool = Array.from({ length: 10 }, (_, i) => `device-${i + 1}`);
 
-  console.log(`📱 Warming ${devicePool.length} devices...`);
+  console.info(`📱 Warming ${devicePool.length} devices...`);
 
   // Execute warming protocol
   await scalingManager.implementDeviceWarming(devicePool);
 
-  console.log("\n📊 Warming Results:");
-  console.log("• Day 1: Light browsing completed ✓");
-  console.log("• Day 2: Social interactions completed ✓");
-  console.log("• Day 3: Ready for main operations ✓");
-  console.log("• Expected ban rate reduction: ~50%");
-  console.log("• Recommended waiting period: 3 days before intensive use");
+  console.info("\n📊 Warming Results:");
+  console.info("• Day 1: Light browsing completed ✓");
+  console.info("• Day 2: Social interactions completed ✓");
+  console.info("• Day 3: Ready for main operations ✓");
+  console.info("• Expected ban rate reduction: ~50%");
+  console.info("• Recommended waiting period: 3 days before intensive use");
 }
 
 /**
@@ -179,23 +179,23 @@ export async function demonstrateDeviceWarming(): Promise<void> {
  * Demonstrates vendor lock-in mitigation
  */
 export function demonstrateRiskManagement(): void {
-  console.log("\n🛡️ Risk Management & Backup Strategies");
-  console.log("=".repeat(45));
+  console.info("\n🛡️ Risk Management & Backup Strategies");
+  console.info("=".repeat(45));
 
-  console.log("⚠️  Identified Risks:");
-  console.log("• Vendor lock-in (DuoPlus downtime = operation stoppage)");
-  console.log("• Phone number burn rate (5-10% per month)");
-  console.log("• Platform detection (fingerprint profiling)");
-  console.log("• Cost escalation at scale");
+  console.info("⚠️  Identified Risks:");
+  console.info("• Vendor lock-in (DuoPlus downtime = operation stoppage)");
+  console.info("• Phone number burn rate (5-10% per month)");
+  console.info("• Platform detection (fingerprint profiling)");
+  console.info("• Cost escalation at scale");
 
-  console.log("\n🛡️ Mitigation Strategies:");
-  console.log("• Backup device pool on secondary vendor (GeeLark)");
-  console.log("• Number pre-validation before account creation");
-  console.log("• Dynamic fingerprint adjustment based on ban rates");
-  console.log("• Gradual scaling with performance monitoring");
-  console.log("• Cost optimization for low-risk platforms");
+  console.info("\n🛡️ Mitigation Strategies:");
+  console.info("• Backup device pool on secondary vendor (GeeLark)");
+  console.info("• Number pre-validation before account creation");
+  console.info("• Dynamic fingerprint adjustment based on ban rates");
+  console.info("• Gradual scaling with performance monitoring");
+  console.info("• Cost optimization for low-risk platforms");
 
-  console.log("\n📋 Implementation Checklist:");
+  console.info("\n📋 Implementation Checklist:");
   const checklist = [
     "✅ Set up backup vendor account",
     "✅ Implement number validation system",
@@ -205,19 +205,19 @@ export function demonstrateRiskManagement(): void {
     "✅ Test failover mechanisms"
   ];
 
-  checklist.forEach((item) => console.log(`   ${item}`));
+  checklist.forEach((item) => console.info(`   ${item}`));
 }
 
 // Helper functions
 async function simulateMonitoringPeriod(): Promise<void> {
   // Simulate 30-day monitoring period
   const monitoringDays = 30;
-  console.log(`   Simulating ${monitoringDays} days of monitoring...`);
+  console.info(`   Simulating ${monitoringDays} days of monitoring...`);
 
   // Simulate varying ban rates and success rates
   await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate time passing
 
-  console.log("   Monitoring complete - effectiveness metrics collected");
+  console.info("   Monitoring complete - effectiveness metrics collected");
 }
 
 function calculateScaleCost(accountCount: number): number {
@@ -248,8 +248,8 @@ function calculateROIPotential(accountCount: number): string {
 
 // Main execution function
 export async function runAllScalingExamples(): Promise<void> {
-  console.log("🚀 DuoPlus Scaling Strategy - Complete Demo Suite");
-  console.log("=".repeat(55));
+  console.info("🚀 DuoPlus Scaling Strategy - Complete Demo Suite");
+  console.info("=".repeat(55));
 
   try {
     await executeCompleteScalingStrategy();
@@ -258,8 +258,8 @@ export async function runAllScalingExamples(): Promise<void> {
     await demonstrateDeviceWarming();
     demonstrateRiskManagement();
 
-    console.log("\n🎉 All scaling demonstrations completed successfully!");
-    console.log("📚 Ready for implementation with 85% expected effectiveness");
+    console.info("\n🎉 All scaling demonstrations completed successfully!");
+    console.info("📚 Ready for implementation with 85% expected effectiveness");
   } catch (error) {
     console.error("❌ Demo suite failed:", error);
   }

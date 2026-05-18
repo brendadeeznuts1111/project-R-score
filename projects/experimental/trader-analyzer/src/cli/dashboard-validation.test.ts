@@ -479,7 +479,7 @@ describe("⚡ Performance: Scope Pattern Overhead", () => {
 
 		// ✅ Should be fast (< 100ns per call)
 		expect(avgNs).toBeLessThan(100);
-		console.log(`✅ safeNumber: ${avgNs.toFixed(2)}ns per call`);
+		console.info(`✅ safeNumber: ${avgNs.toFixed(2)}ns per call`);
 	});
 
 	test("✅ ScopePatterns.safe performance", () => {
@@ -499,16 +499,16 @@ describe("⚡ Performance: Scope Pattern Overhead", () => {
 
 		// ✅ Type guard should be fast (< 500ns per call)
 		expect(avgNs).toBeLessThan(500);
-		console.log(`✅ safe with guard: ${avgNs.toFixed(2)}ns per call`);
+		console.info(`✅ safe with guard: ${avgNs.toFixed(2)}ns per call`);
 	});
 });
 
-console.log("\n🔒 Type-Safe Scope Patterns Validated Successfully!");
-console.log("✅ ScopePatterns.safe validates and narrows types");
-console.log("✅ ScopePatterns.safeNumber validates numeric bounds");
-console.log("✅ ScopePatterns.safeString validates string constraints");
-console.log("✅ ScopePatterns.safeArray validates array elements");
-console.log("✅ ScopePatterns.safeProperty accesses nested properties");
-console.log("✅ API response validation with type guards");
-console.log("✅ Integration patterns validated");
-console.log("✅ Performance overhead < 500ns per validation");
+console.info("\n🔒 Type-Safe Scope Patterns Validated Successfully!");
+console.info("✅ ScopePatterns.safe validates and narrows types");
+console.info("✅ ScopePatterns.safeNumber validates numeric bounds");
+console.info("✅ ScopePatterns.safeString validates string constraints");
+console.info("✅ ScopePatterns.safeArray validates array elements");
+console.info("✅ ScopePatterns.safeProperty accesses nested properties");
+console.info("✅ API response validation with type guards");
+console.info("✅ Integration patterns validated");
+console.info("✅ Performance overhead < 500ns per validation");

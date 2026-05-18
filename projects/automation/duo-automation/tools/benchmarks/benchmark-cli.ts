@@ -85,21 +85,21 @@ class BenchmarkCLI {
     const config = this.configs.get(configName);
     if (!config) {
       console.error(`❌ Benchmark configuration '${configName}' not found`);
-      console.log('💡 Available configurations: quick, standard, comprehensive, production, preconnect');
+      console.info('💡 Available configurations: quick, standard, comprehensive, production, preconnect');
       process.exit(1);
     }
 
     // Override config with options
     const finalConfig = { ...config, ...options };
 
-    console.log('🚀 Starting Performance Benchmark');
-    console.log('='.repeat(40));
-    console.log(`📋 Test: ${finalConfig.name}`);
-    console.log(`🌐 URL: ${finalConfig.url}`);
-    console.log(`🔄 Iterations: ${finalConfig.iterations}`);
-    console.log(`🔥 Warmup: ${finalConfig.warmupIterations}`);
-    console.log(`⏱️ Timeout: ${finalConfig.timeout}ms`);
-    console.log('');
+    console.info('🚀 Starting Performance Benchmark');
+    console.info('='.repeat(40));
+    console.info(`📋 Test: ${finalConfig.name}`);
+    console.info(`🌐 URL: ${finalConfig.url}`);
+    console.info(`🔄 Iterations: ${finalConfig.iterations}`);
+    console.info(`🔥 Warmup: ${finalConfig.warmupIterations}`);
+    console.info(`⏱️ Timeout: ${finalConfig.timeout}ms`);
+    console.info('');
 
     try {
       // Create benchmark instance
@@ -121,7 +121,7 @@ class BenchmarkCLI {
 
       // Generate report
       const report = benchmark.generateReport();
-      console.log(report);
+      console.info(report);
 
       // Save results if requested
       if (finalConfig.outputPath || finalConfig.outputFormat !== 'report') {
@@ -133,7 +133,7 @@ class BenchmarkCLI {
         await this.compareWithBaseline(benchmark, finalConfig.compareBaseline);
       }
 
-      console.log('✅ Benchmark completed successfully');
+      console.info('✅ Benchmark completed successfully');
 
     } catch (error) {
       console.error('❌ Benchmark failed:', error);
@@ -148,20 +148,20 @@ class BenchmarkCLI {
       case 'json':
         const jsonPath = config.outputPath || `benchmark-results-${timestamp}.json`;
         writeFileSync(jsonPath, benchmark.exportResults('json'));
-        console.log(`💾 Results saved to: ${jsonPath}`);
+        console.info(`💾 Results saved to: ${jsonPath}`);
         break;
         
       case 'csv':
         const csvPath = config.outputPath || `benchmark-results-${timestamp}.csv`;
         writeFileSync(csvPath, benchmark.exportResults('csv'));
-        console.log(`💾 Results saved to: ${csvPath}`);
+        console.info(`💾 Results saved to: ${csvPath}`);
         break;
         
       case 'report':
         const reportPath = config.outputPath || `benchmark-report-${timestamp}.md`;
         const report = benchmark.generateReport();
         writeFileSync(reportPath, report);
-        console.log(`💾 Report saved to: ${reportPath}`);
+        console.info(`💾 Report saved to: ${reportPath}`);
         break;
     }
   }
@@ -172,19 +172,19 @@ class BenchmarkCLI {
       const baselineResults = JSON.parse(baselineData);
       
       const comparison = await benchmark.compareWithBaseline(baselineResults);
-      console.log('\n' + comparison);
+      console.info('\n' + comparison);
     } catch (error) {
       console.warn(`⚠️ Could not compare with baseline: ${error}`);
     }
   }
 
   async runPreconnectComparison(): Promise<void> {
-    console.log('🚀 Running Preconnect Optimization Comparison');
-    console.log('='.repeat(50));
-    console.log('');
+    console.info('🚀 Running Preconnect Optimization Comparison');
+    console.info('='.repeat(50));
+    console.info('');
 
     // Test without preconnect
-    console.log('📊 Testing WITHOUT preconnect optimization...');
+    console.info('📊 Testing WITHOUT preconnect optimization...');
     const benchmarkWithout = new PerformanceBenchmark({
       name: 'Without Preconnect',
       iterations: 8,
@@ -200,11 +200,11 @@ class BenchmarkCLI {
     const resultsWithout = await benchmarkWithout.runBenchmark();
     const avgWithout = resultsWithout.reduce((sum, r) => sum + r.duration, 0) / resultsWithout.length;
 
-    console.log(`⏱️ Average time without preconnect: ${avgWithout.toFixed(2)}ms`);
-    console.log('');
+    console.info(`⏱️ Average time without preconnect: ${avgWithout.toFixed(2)}ms`);
+    console.info('');
 
     // Test with preconnect
-    console.log('📊 Testing WITH preconnect optimization...');
+    console.info('📊 Testing WITH preconnect optimization...');
     const benchmarkWith = new PerformanceBenchmark({
       name: 'With Preconnect',
       iterations: 8,
@@ -220,27 +220,27 @@ class BenchmarkCLI {
     const resultsWith = await benchmarkWith.runBenchmark();
     const avgWith = resultsWith.reduce((sum, r) => sum + r.duration, 0) / resultsWith.length;
 
-    console.log(`⏱️ Average time with preconnect: ${avgWith.toFixed(2)}ms`);
-    console.log('');
+    console.info(`⏱️ Average time with preconnect: ${avgWith.toFixed(2)}ms`);
+    console.info('');
 
     // Calculate improvement
     const improvement = ((avgWithout - avgWith) / avgWithout * 100);
     const timeSaved = avgWithout - avgWith;
 
-    console.log('📈 Preconnect Optimization Results:');
-    console.log('='.repeat(35));
-    console.log(`⚡ Time Saved: ${timeSaved.toFixed(2)}ms`);
-    console.log(`📊 Performance Improvement: ${improvement > 0 ? '+' : ''}${improvement.toFixed(2)}%`);
+    console.info('📈 Preconnect Optimization Results:');
+    console.info('='.repeat(35));
+    console.info(`⚡ Time Saved: ${timeSaved.toFixed(2)}ms`);
+    console.info(`📊 Performance Improvement: ${improvement > 0 ? '+' : ''}${improvement.toFixed(2)}%`);
     
     if (improvement > 5) {
-      console.log('🎉 Preconnect optimization is HIGHLY effective!');
+      console.info('🎉 Preconnect optimization is HIGHLY effective!');
     } else if (improvement > 0) {
-      console.log('✅ Preconnect optimization shows positive results');
+      console.info('✅ Preconnect optimization shows positive results');
     } else {
-      console.log('⚠️ Preconnect optimization shows minimal impact');
+      console.info('⚠️ Preconnect optimization shows minimal impact');
     }
 
-    console.log('');
+    console.info('');
 
     // Save comparison results
     const comparisonData = {
@@ -261,21 +261,21 @@ class BenchmarkCLI {
 
     const comparisonPath = `preconnect-comparison-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
     writeFileSync(comparisonPath, JSON.stringify(comparisonData, null, 2));
-    console.log(`💾 Comparison saved to: ${comparisonPath}`);
+    console.info(`💾 Comparison saved to: ${comparisonPath}`);
   }
 
   async runNetworkAnalysis(): Promise<void> {
-    console.log('🌐 Running Network Performance Analysis');
-    console.log('='.repeat(40));
-    console.log('');
+    console.info('🌐 Running Network Performance Analysis');
+    console.info('='.repeat(40));
+    console.info('');
 
     // Test different network conditions if available
     if ('connection' in navigator) {
       const connection = (navigator as any).connection;
-      console.log(`📶 Current Network: ${connection.effectiveType || 'Unknown'}`);
-      console.log(`📊 Downlink: ${connection.downlink || 'Unknown'}Mbps`);
-      console.log(`⏱️ RTT: ${connection.rtt || 'Unknown'}ms`);
-      console.log('');
+      console.info(`📶 Current Network: ${connection.effectiveType || 'Unknown'}`);
+      console.info(`📊 Downlink: ${connection.downlink || 'Unknown'}Mbps`);
+      console.info(`⏱️ RTT: ${connection.rtt || 'Unknown'}ms`);
+      console.info('');
     }
 
     // Run network-focused benchmark
@@ -298,79 +298,79 @@ class BenchmarkCLI {
     const avgTCP = results.reduce((sum, r) => sum + (r.networkPerformance?.tcpConnect || 0), 0) / results.length;
     const avgFirstByte = results.reduce((sum, r) => sum + (r.networkPerformance?.firstByte || 0), 0) / results.length;
 
-    console.log('🌐 Network Performance Analysis:');
-    console.log('='.repeat(35));
-    console.log(`🔍 DNS Lookup: ${avgDNS.toFixed(2)}ms`);
-    console.log(`🔗 TCP Connect: ${avgTCP.toFixed(2)}ms`);
-    console.log(`📡 First Byte: ${avgFirstByte.toFixed(2)}ms`);
-    console.log(`🌍 Total Network Time: ${(avgDNS + avgTCP + avgFirstByte).toFixed(2)}ms`);
-    console.log('');
+    console.info('🌐 Network Performance Analysis:');
+    console.info('='.repeat(35));
+    console.info(`🔍 DNS Lookup: ${avgDNS.toFixed(2)}ms`);
+    console.info(`🔗 TCP Connect: ${avgTCP.toFixed(2)}ms`);
+    console.info(`📡 First Byte: ${avgFirstByte.toFixed(2)}ms`);
+    console.info(`🌍 Total Network Time: ${(avgDNS + avgTCP + avgFirstByte).toFixed(2)}ms`);
+    console.info('');
 
     // Network recommendations
-    console.log('💡 Network Optimization Recommendations:');
+    console.info('💡 Network Optimization Recommendations:');
     if (avgDNS > 100) {
-      console.log('  • Consider DNS prefetching for slow DNS resolution');
+      console.info('  • Consider DNS prefetching for slow DNS resolution');
     }
     if (avgTCP > 150) {
-      console.log('  • Consider HTTP/2 or HTTP/3 for faster connection setup');
+      console.info('  • Consider HTTP/2 or HTTP/3 for faster connection setup');
     }
     if (avgFirstByte > 200) {
-      console.log('  • Consider CDN optimization for faster TTFB');
+      console.info('  • Consider CDN optimization for faster TTFB');
     }
     if (avgDNS < 50 && avgTCP < 100 && avgFirstByte < 150) {
-      console.log('  ✅ Network performance is excellent');
+      console.info('  ✅ Network performance is excellent');
     }
   }
 
   listConfigs(): void {
-    console.log('📊 Available Benchmark Configurations:');
-    console.log('='.repeat(40));
+    console.info('📊 Available Benchmark Configurations:');
+    console.info('='.repeat(40));
 
     this.configs.forEach((config, name) => {
-      console.log(`\n🔧 ${name}: ${config.name}`);
-      console.log(`   🌐 URL: ${config.url}`);
-      console.log(`   🔄 Iterations: ${config.iterations}`);
-      console.log(`   🔥 Warmup: ${config.warmupIterations}`);
-      console.log(`   ⏱️ Timeout: ${config.timeout}ms`);
-      console.log(`   📊 Format: ${config.outputFormat}`);
+      console.info(`\n🔧 ${name}: ${config.name}`);
+      console.info(`   🌐 URL: ${config.url}`);
+      console.info(`   🔄 Iterations: ${config.iterations}`);
+      console.info(`   🔥 Warmup: ${config.warmupIterations}`);
+      console.info(`   ⏱️ Timeout: ${config.timeout}ms`);
+      console.info(`   📊 Format: ${config.outputFormat}`);
     });
   }
 
   showHelp(): void {
-    console.log('📊 Performance Benchmark CLI');
-    console.log('='.repeat(30));
-    console.log('');
-    console.log('USAGE:');
-    console.log('  bun run benchmark-cli.ts <command> [options]');
-    console.log('');
-    console.log('COMMANDS:');
-    console.log('  run <config>            Run benchmark with configuration');
-    console.log('  compare                 Compare preconnect optimization');
-    console.log('  network                 Analyze network performance');
-    console.log('  list                    List available configurations');
-    console.log('  help                    Show this help message');
-    console.log('');
-    console.log('CONFIGURATIONS:');
-    console.log('  quick                   Quick performance check (3 iterations)');
-    console.log('  standard                 Standard benchmark (10 iterations)');
-    console.log('  comprehensive           Comprehensive analysis (20 iterations)');
-    console.log('  production              Production environment test');
-    console.log('  preconnect              Preconnect optimization test');
-    console.log('');
-    console.log('OPTIONS:');
-    console.log('  --url <url>             Override target URL');
-    console.log('  --iterations <n>        Override iteration count');
-    console.log('  --output <format>       Output format (json|csv|report)');
-    console.log('  --output-path <path>    Save results to file');
-    console.log('  --compare <path>        Compare with baseline results');
-    console.log('');
-    console.log('EXAMPLES:');
-    console.log('  bun run benchmark-cli.ts run quick');
-    console.log('  bun run benchmark-cli.ts run standard --output json');
-    console.log('  bun run benchmark-cli.ts run production --output-path results.json');
-    console.log('  bun run benchmark-cli.ts compare');
-    console.log('  bun run benchmark-cli.ts network');
-    console.log('');
+    console.info('📊 Performance Benchmark CLI');
+    console.info('='.repeat(30));
+    console.info('');
+    console.info('USAGE:');
+    console.info('  bun run benchmark-cli.ts <command> [options]');
+    console.info('');
+    console.info('COMMANDS:');
+    console.info('  run <config>            Run benchmark with configuration');
+    console.info('  compare                 Compare preconnect optimization');
+    console.info('  network                 Analyze network performance');
+    console.info('  list                    List available configurations');
+    console.info('  help                    Show this help message');
+    console.info('');
+    console.info('CONFIGURATIONS:');
+    console.info('  quick                   Quick performance check (3 iterations)');
+    console.info('  standard                 Standard benchmark (10 iterations)');
+    console.info('  comprehensive           Comprehensive analysis (20 iterations)');
+    console.info('  production              Production environment test');
+    console.info('  preconnect              Preconnect optimization test');
+    console.info('');
+    console.info('OPTIONS:');
+    console.info('  --url <url>             Override target URL');
+    console.info('  --iterations <n>        Override iteration count');
+    console.info('  --output <format>       Output format (json|csv|report)');
+    console.info('  --output-path <path>    Save results to file');
+    console.info('  --compare <path>        Compare with baseline results');
+    console.info('');
+    console.info('EXAMPLES:');
+    console.info('  bun run benchmark-cli.ts run quick');
+    console.info('  bun run benchmark-cli.ts run standard --output json');
+    console.info('  bun run benchmark-cli.ts run production --output-path results.json');
+    console.info('  bun run benchmark-cli.ts compare');
+    console.info('  bun run benchmark-cli.ts network');
+    console.info('');
   }
 
   async run(): Promise<void> {
@@ -427,7 +427,7 @@ class BenchmarkCLI {
 
         default:
           console.error(`❌ Unknown command: ${command}`);
-          console.log('💡 Run "bun run benchmark-cli.ts help" for available commands');
+          console.info('💡 Run "bun run benchmark-cli.ts help" for available commands');
           process.exit(1);
       }
     } catch (error) {

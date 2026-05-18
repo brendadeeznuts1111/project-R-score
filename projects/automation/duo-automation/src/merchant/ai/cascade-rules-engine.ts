@@ -240,7 +240,7 @@ export class CascadeRulesEngine {
     }
     
     const executionTime = Date.now() - startTime;
-    console.log(`📋 Evaluated ${applicableRules.length} rules in ${executionTime}ms, executed ${executions.length}`);
+    console.info(`📋 Evaluated ${applicableRules.length} rules in ${executionTime}ms, executed ${executions.length}`);
     
     return executions;
   }
@@ -334,7 +334,7 @@ export class CascadeRulesEngine {
     const startTime = Date.now();
     const actionsTaken: string[] = [];
     
-    console.log(`🔧 Executing rule: ${rule.name}`);
+    console.info(`🔧 Executing rule: ${rule.name}`);
     
     // Execute actions
     for (const action of rule.actions) {
@@ -414,16 +414,16 @@ export class CascadeRulesEngine {
   private async enforceRule(value: string, context: RuleContext): Promise<boolean> {
     switch (value) {
       case 'mTLS':
-        console.log('🔐 Enforcing mTLS for', context.merchantId);
+        console.info('🔐 Enforcing mTLS for', context.merchantId);
         return true;
       case 'JWT_expiry_5min':
-        console.log('⏰ Setting JWT expiry to 5 minutes');
+        console.info('⏰ Setting JWT expiry to 5 minutes');
         return true;
       case 'enterprise_tier_features':
-        console.log('🏢 Enabling enterprise tier features');
+        console.info('🏢 Enabling enterprise tier features');
         return true;
       case 'mTLS_for_all_devices':
-        console.log('🔐 Requiring mTLS for all devices');
+        console.info('🔐 Requiring mTLS for all devices');
         return true;
       default:
         return false;
@@ -433,7 +433,7 @@ export class CascadeRulesEngine {
   private async requireFeature(value: string, context: RuleContext): Promise<boolean> {
     switch (value) {
       case 'biometric_verification':
-        console.log('👆 Requiring biometric verification');
+        console.info('👆 Requiring biometric verification');
         return true;
       default:
         return false;
@@ -441,64 +441,64 @@ export class CascadeRulesEngine {
   }
   
   private async runCheck(value: string, context: RuleContext): Promise<boolean> {
-    console.log(`🔍 Running check: ${value}`);
+    console.info(`🔍 Running check: ${value}`);
     // Simulate running various checks
     await new Promise(resolve => setTimeout(resolve, 100));
     return true;
   }
   
   private async applyStyle(value: string, context: RuleContext): Promise<boolean> {
-    console.log(`🎨 Applying style: ${value}`);
+    console.info(`🎨 Applying style: ${value}`);
     return true;
   }
   
   private async calculateMetric(value: string, context: RuleContext): Promise<boolean> {
-    console.log(`📊 Calculating metric: ${value}`);
+    console.info(`📊 Calculating metric: ${value}`);
     return true;
   }
   
   private async logData(value: string, context: RuleContext): Promise<boolean> {
-    console.log(`📝 Logging data: ${value}`);
+    console.info(`📝 Logging data: ${value}`);
     return true;
   }
   
   private async generateReport(value: string, context: RuleContext): Promise<boolean> {
-    console.log(`📄 Generating report: ${value}`);
+    console.info(`📄 Generating report: ${value}`);
     return true;
   }
   
   private async applyOptimization(value: string, context: RuleContext): Promise<boolean> {
-    console.log(`⚡ Applying optimization: ${value}`);
+    console.info(`⚡ Applying optimization: ${value}`);
     return true;
   }
   
   private async cacheData(value: string, context: RuleContext): Promise<boolean> {
-    console.log(`💾 Caching data: ${value}`);
+    console.info(`💾 Caching data: ${value}`);
     return true;
   }
   
   private async prefetchData(value: string, context: RuleContext): Promise<boolean> {
-    console.log(`📡 Prefetching data: ${value}`);
+    console.info(`📡 Prefetching data: ${value}`);
     return true;
   }
   
   private async applySetting(value: string, context: RuleContext): Promise<boolean> {
-    console.log(`⚙️ Applying setting: ${value}`);
+    console.info(`⚙️ Applying setting: ${value}`);
     return true;
   }
   
   private async syncData(value: string, context: RuleContext): Promise<boolean> {
-    console.log(`🔄 Syncing data: ${value}`);
+    console.info(`🔄 Syncing data: ${value}`);
     return true;
   }
   
   private async enableFeature(value: string, context: RuleContext): Promise<boolean> {
-    console.log(`✅ Enabling feature: ${value}`);
+    console.info(`✅ Enabling feature: ${value}`);
     return true;
   }
   
   private async trackMetric(value: string, context: RuleContext): Promise<boolean> {
-    console.log(`📈 Tracking metric: ${value}`);
+    console.info(`📈 Tracking metric: ${value}`);
     return true;
   }
   
@@ -508,7 +508,7 @@ export class CascadeRulesEngine {
     if (rule.enabled) {
       this.activeRules.add(rule.id);
     }
-    console.log(`📋 Added custom rule: ${rule.name}`);
+    console.info(`📋 Added custom rule: ${rule.name}`);
   }
   
   enableRule(ruleId: string): void {
@@ -516,7 +516,7 @@ export class CascadeRulesEngine {
     if (rule) {
       rule.enabled = true;
       this.activeRules.add(ruleId);
-      console.log(`✅ Enabled rule: ${rule.name}`);
+      console.info(`✅ Enabled rule: ${rule.name}`);
     }
   }
   
@@ -525,7 +525,7 @@ export class CascadeRulesEngine {
     if (rule) {
       rule.enabled = false;
       this.activeRules.delete(ruleId);
-      console.log(`❌ Disabled rule: ${rule.name}`);
+      console.info(`❌ Disabled rule: ${rule.name}`);
     }
   }
   

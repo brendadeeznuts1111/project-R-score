@@ -43,16 +43,16 @@ class Fire22DepartmentDeployment {
   async deploy(options: DeployOptions = {}): Promise<void> {
     const startTime = Bun.nanoseconds();
 
-    console.log('🚀 Fire22 Department Deployment System');
-    console.log('!==!==!==!==!==!=====');
+    console.info('🚀 Fire22 Department Deployment System');
+    console.info('!==!==!==!==!==!=====');
 
     const env = options.environment || 'development';
-    console.log(`\n🎯 Environment: ${env}`);
-    console.log(`🏢 Department: ${options.department || 'ALL'}`);
-    console.log(`👁️ Preview Mode: ${options.preview ? 'YES' : 'NO'}`);
+    console.info(`\n🎯 Environment: ${env}`);
+    console.info(`🏢 Department: ${options.department || 'ALL'}`);
+    console.info(`👁️ Preview Mode: ${options.preview ? 'YES' : 'NO'}`);
 
     if (options.dryRun) {
-      console.log('🔍 DRY RUN MODE - No actual deployment');
+      console.info('🔍 DRY RUN MODE - No actual deployment');
     }
 
     try {
@@ -77,7 +77,7 @@ class Fire22DepartmentDeployment {
       await this.updateDeploymentStatus(options);
 
       const deployTime = (Bun.nanoseconds() - startTime) / 1_000_000;
-      console.log(`\n✅ Deployment completed in ${deployTime.toFixed(2)}ms`);
+      console.info(`\n✅ Deployment completed in ${deployTime.toFixed(2)}ms`);
 
       // Show deployment URLs
       this.showDeploymentUrls(options);
@@ -91,12 +91,12 @@ class Fire22DepartmentDeployment {
    * ✅ Verify deployment prerequisites
    */
   private async verifyPrerequisites(options: DeployOptions): Promise<void> {
-    console.log('\n✅ Verifying prerequisites...');
+    console.info('\n✅ Verifying prerequisites...');
 
     // Check if wrangler is available
     try {
       await $`wrangler --version`;
-      console.log('  ✅ Wrangler CLI available');
+      console.info('  ✅ Wrangler CLI available');
     } catch (error) {
       throw new Error('Wrangler CLI not found. Install: npm install -g wrangler');
     }
@@ -104,7 +104,7 @@ class Fire22DepartmentDeployment {
     // Check if authenticated with Cloudflare
     try {
       await $`wrangler whoami`;
-      console.log('  ✅ Cloudflare authentication verified');
+      console.info('  ✅ Cloudflare authentication verified');
     } catch (error) {
       throw new Error('Not authenticated with Cloudflare. Run: wrangler login');
     }
@@ -113,26 +113,26 @@ class Fire22DepartmentDeployment {
     if (!existsSync(this.distDir)) {
       throw new Error(`Build directory not found: ${this.distDir}. Run: bun run build:pages`);
     }
-    console.log('  ✅ Build directory exists');
+    console.info('  ✅ Build directory exists');
 
     // Verify environment configuration
     const wranglerConfigPath = join(process.cwd(), 'wrangler.toml');
     if (!existsSync(wranglerConfigPath)) {
       throw new Error('wrangler.toml not found');
     }
-    console.log('  ✅ Wrangler configuration found');
+    console.info('  ✅ Wrangler configuration found');
   }
 
   /**
    * 🏗️ Ensure build is ready
    */
   private async ensureBuild(options: DeployOptions): Promise<void> {
-    console.log('\n🏗️ Ensuring build is ready...');
+    console.info('\n🏗️ Ensuring build is ready...');
 
     const manifestPath = join(this.distDir, 'manifest.json');
 
     if (!existsSync(manifestPath)) {
-      console.log('  🔨 Build not found, building pages...');
+      console.info('  🔨 Build not found, building pages...');
       if (!options.dryRun) {
         const buildArgs = ['--env', options.environment || 'development'];
 
@@ -142,9 +142,9 @@ class Fire22DepartmentDeployment {
 
         await $`bun run scripts/build-pages.ts ${buildArgs}`;
       }
-      console.log('  ✅ Build completed');
+      console.info('  ✅ Build completed');
     } else {
-      console.log('  ✅ Build already exists');
+      console.info('  ✅ Build already exists');
     }
   }
 
@@ -152,7 +152,7 @@ class Fire22DepartmentDeployment {
    * 🏢 Deploy single department
    */
   private async deploySingleDepartment(deptId: string, options: DeployOptions): Promise<void> {
-    console.log(`\n🏢 Deploying ${deptId} department...`);
+    console.info(`\n🏢 Deploying ${deptId} department...`);
 
     const department = this.getDepartment(deptId);
     if (!department) {
@@ -183,18 +183,18 @@ class Fire22DepartmentDeployment {
         deployArgs.push('--verbose');
       }
 
-      console.log(`  🚀 Deploying to ${deptId}.dashboard.fire22.ag...`);
+      console.info(`  🚀 Deploying to ${deptId}.dashboard.fire22.ag...`);
       await $`wrangler ${deployArgs}`;
     }
 
-    console.log(`  ✅ ${department.name} deployed successfully`);
+    console.info(`  ✅ ${department.name} deployed successfully`);
   }
 
   /**
    * 🌐 Deploy all departments
    */
   private async deployAllDepartments(options: DeployOptions): Promise<void> {
-    console.log('\n🌐 Deploying all departments...');
+    console.info('\n🌐 Deploying all departments...');
 
     const departments = this.getDepartments();
     const deploymentPromises = [];
@@ -212,7 +212,7 @@ class Fire22DepartmentDeployment {
     }
 
     // Deploy main site
-    console.log('\n🏠 Deploying main dashboard...');
+    console.info('\n🏠 Deploying main dashboard...');
     if (!options.dryRun) {
       const mainDeployArgs = [
         'pages',
@@ -228,14 +228,14 @@ class Fire22DepartmentDeployment {
 
       await $`wrangler ${mainDeployArgs}`;
     }
-    console.log('  ✅ Main dashboard deployed');
+    console.info('  ✅ Main dashboard deployed');
   }
 
   /**
    * 📡 Deploy RSS feeds
    */
   private async deployFeeds(options: DeployOptions): Promise<void> {
-    console.log('\n📡 Deploying RSS feeds...');
+    console.info('\n📡 Deploying RSS feeds...');
 
     const feedsPath = join(this.distDir, 'feeds');
     if (existsSync(feedsPath) && !options.dryRun) {
@@ -245,9 +245,9 @@ class Fire22DepartmentDeployment {
       for (const feedFile of feedFiles) {
         const feedPath = join(feedsPath, feedFile);
         if (existsSync(feedPath)) {
-          console.log(`  ✅ ${feedFile} ready for deployment`);
+          console.info(`  ✅ ${feedFile} ready for deployment`);
         } else {
-          console.log(`  ⚠️ ${feedFile} missing`);
+          console.info(`  ⚠️ ${feedFile} missing`);
         }
       }
     }
@@ -257,7 +257,7 @@ class Fire22DepartmentDeployment {
    * 📊 Update deployment status
    */
   private async updateDeploymentStatus(options: DeployOptions): Promise<void> {
-    console.log('\n📊 Updating deployment status...');
+    console.info('\n📊 Updating deployment status...');
 
     const deploymentInfo = {
       timestamp: new Date().toISOString(),
@@ -269,36 +269,36 @@ class Fire22DepartmentDeployment {
       status: 'SUCCESS',
     };
 
-    console.log(`  📅 Deployment Time: ${deploymentInfo.timestamp}`);
-    console.log(`  👤 Deployed By: ${deploymentInfo.deployer}`);
-    console.log(`  📝 Commit: ${deploymentInfo.commit}`);
+    console.info(`  📅 Deployment Time: ${deploymentInfo.timestamp}`);
+    console.info(`  👤 Deployed By: ${deploymentInfo.deployer}`);
+    console.info(`  📝 Commit: ${deploymentInfo.commit}`);
   }
 
   /**
    * 🔗 Show deployment URLs
    */
   private showDeploymentUrls(options: DeployOptions): void {
-    console.log('\n🔗 Deployment URLs:');
-    console.log('!==!==!====');
+    console.info('\n🔗 Deployment URLs:');
+    console.info('!==!==!====');
 
     if (options.environment === 'production') {
-      console.log('🌐 Main Dashboard: https://dashboard.fire22.ag');
+      console.info('🌐 Main Dashboard: https://dashboard.fire22.ag');
 
       if (options.department) {
         const dept = this.getDepartment(options.department);
-        console.log(`🏢 ${dept?.name}: https://${options.department}.dashboard.fire22.ag`);
+        console.info(`🏢 ${dept?.name}: https://${options.department}.dashboard.fire22.ag`);
       } else {
         const departments = this.getDepartments();
         departments.forEach(dept => {
-          console.log(`🏢 ${dept.name}: https://${dept.id}.dashboard.fire22.ag`);
+          console.info(`🏢 ${dept.name}: https://${dept.id}.dashboard.fire22.ag`);
         });
       }
 
-      console.log('📡 RSS Feed: https://dashboard.fire22.ag/feeds/error-codes-rss.xml');
-      console.log('⚛️ Atom Feed: https://dashboard.fire22.ag/feeds/error-codes-atom.xml');
+      console.info('📡 RSS Feed: https://dashboard.fire22.ag/feeds/error-codes-rss.xml');
+      console.info('⚛️ Atom Feed: https://dashboard.fire22.ag/feeds/error-codes-atom.xml');
     } else {
-      console.log('🌐 Main Dashboard: https://fire22-dashboard.pages.dev');
-      console.log('📡 RSS Feed: https://fire22-dashboard.pages.dev/feeds/error-codes-rss.xml');
+      console.info('🌐 Main Dashboard: https://fire22-dashboard.pages.dev');
+      console.info('📡 RSS Feed: https://fire22-dashboard.pages.dev/feeds/error-codes-rss.xml');
     }
   }
 
@@ -377,7 +377,7 @@ async function main() {
         options.verbose = true;
         break;
       case '--help':
-        console.log(`
+        console.info(`
 Fire22 Department Deployment System
 
 Usage:

@@ -12,7 +12,7 @@ class DatabaseManager {
   static getInstance(): Database {
     if (!this.instance) {
       this.instance = new Database("./data/tier1380.db");
-      console.log("📊 Database connection established");
+      console.info("📊 Database connection established");
     }
     return this.instance;
   }
@@ -21,7 +21,7 @@ class DatabaseManager {
     if (this.instance) {
       this.instance.close();
       this.instance = null;
-      console.log("📊 Database connection closed");
+      console.info("📊 Database connection closed");
     }
   }
 }
@@ -332,28 +332,28 @@ const server = Bun.serve({
   }
 });
 
-console.log(`🚀 Tier-1380 API Server running on port ${server.port}`);
-console.log(`📊 Available endpoints:`);
-console.log(`  GET  /api/tenants`);
-console.log(`  GET  /api/historical-compliance?months=12`);
-console.log(`  GET  /api/recent-violations?days=7&severity=critical`);
-console.log(`  GET  /api/tenant-metrics`);
-console.log(`  GET  /api/compliance-summary`);
-console.log(`  POST /api/insert-compliance`);
-console.log(`\n🔧 Test with:`);
-console.log(`  curl http://localhost:${API_PORT}/api/tenants -H "x-tenant-id: *"`);
-console.log(`  curl http://localhost:${API_PORT}/api/historical-compliance -H "x-tenant-id: tenant-a"`);
+console.info(`🚀 Tier-1380 API Server running on port ${server.port}`);
+console.info(`📊 Available endpoints:`);
+console.info(`  GET  /api/tenants`);
+console.info(`  GET  /api/historical-compliance?months=12`);
+console.info(`  GET  /api/recent-violations?days=7&severity=critical`);
+console.info(`  GET  /api/tenant-metrics`);
+console.info(`  GET  /api/compliance-summary`);
+console.info(`  POST /api/insert-compliance`);
+console.info(`\n🔧 Test with:`);
+console.info(`  curl http://localhost:${API_PORT}/api/tenants -H "x-tenant-id: *"`);
+console.info(`  curl http://localhost:${API_PORT}/api/historical-compliance -H "x-tenant-id: tenant-a"`);
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n👋 Shutting down API server...');
+  console.info('\n👋 Shutting down API server...');
   DatabaseManager.close();
   server.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n👋 Shutting down API server...');
+  console.info('\n👋 Shutting down API server...');
   DatabaseManager.close();
   server.stop();
   process.exit(0);

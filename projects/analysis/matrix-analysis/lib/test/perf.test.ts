@@ -60,7 +60,7 @@ describe("bench harness", () => {
 
   it("printBench outputs table with measurements", () => {
     const output: string[] = [];
-    const spy = spyOn(console, "log").mockImplementation((...args: any[]) => {
+    const spy = spyOn(console, 'info').mockImplementation((...args: any[]) => {
       output.push(args.map(String).join(" "));
     });
     const results: BenchResult[] = [
@@ -204,7 +204,7 @@ describe("runtime metrics", () => {
 
   it("printRuntimeMetrics outputs table with values", () => {
     const output: string[] = [];
-    const spy = spyOn(console, "log").mockImplementation((...args: any[]) => {
+    const spy = spyOn(console, 'info').mockImplementation((...args: any[]) => {
       output.push(args.map(String).join(" "));
     });
     printRuntimeMetrics();

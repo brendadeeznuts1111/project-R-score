@@ -90,7 +90,7 @@ describe("⚡ Bun Transpilation & Language Features Performance", () => {
 
           @HostListener('click')
           onClick() {
-            console.log('Clicked');
+            console.info('Clicked');
           }
         }
 

@@ -13,12 +13,12 @@
 
 import { Database } from 'bun:sqlite';
 
-console.log('🚀 Bun Loaders Showcase - Practical Demo');
-console.log('==========================================');
+console.info('🚀 Bun Loaders Showcase - Practical Demo');
+console.info('==========================================');
 
 // Create sample files to demonstrate loaders
 async function createDemoFiles() {
-  console.log('📁 Creating demo files...');
+  console.info('📁 Creating demo files...');
   
   // Clean up any existing demo files first
   const existingFiles = [
@@ -343,7 +343,7 @@ This text can be used for:
   // 7. JavaScript module
   await Bun.write('./demo.js', `
 // Bun JavaScript Loader Demo
-console.log('🚀 Demo JavaScript module loaded!');
+console.info('🚀 Demo JavaScript module loaded!');
 
 // This will be bundled and processed by Bun
 export function greet(name) {
@@ -419,109 +419,109 @@ if (typeof document !== 'undefined') {
   
   db.close();
   
-  console.log('✅ Demo files created successfully!\n');
+  console.info('✅ Demo files created successfully!\n');
 }
 
 // Main demonstration
 async function demonstrateLoaders() {
   await createDemoFiles();
   
-  console.log('🔄 Demonstrating Bun loaders...\n');
+  console.info('🔄 Demonstrating Bun loaders...\n');
   
   try {
     // Import configurations using different loaders
-    console.log('📋 Configuration Loaders:');
+    console.info('📋 Configuration Loaders:');
     
     // TOML loader
-    console.log('\n1️⃣ TOML Loader:');
+    console.info('\n1️⃣ TOML Loader:');
     const tomlConfig = await Bun.file('./demo-config.toml').text();
-    console.log(`   ✅ TOML file loaded (${tomlConfig.length} chars)`);
-    console.log(`   📊 Contains: ${tomlConfig.includes('[app]') ? 'app section' : 'no app section'}`);
+    console.info(`   ✅ TOML file loaded (${tomlConfig.length} chars)`);
+    console.info(`   📊 Contains: ${tomlConfig.includes('[app]') ? 'app section' : 'no app section'}`);
     
     // YAML loader  
-    console.log('\n2️⃣ YAML Loader:');
+    console.info('\n2️⃣ YAML Loader:');
     const yamlConfig = await Bun.file('./demo-config.yaml').text();
-    console.log(`   ✅ YAML file loaded (${yamlConfig.length} chars)`);
-    console.log(`   📊 Contains: ${yamlConfig.includes('app:') ? 'app config' : 'no app config'}`);
+    console.info(`   ✅ YAML file loaded (${yamlConfig.length} chars)`);
+    console.info(`   📊 Contains: ${yamlConfig.includes('app:') ? 'app config' : 'no app config'}`);
     
     // JSONC loader
-    console.log('\n3️⃣ JSONC Loader:');
+    console.info('\n3️⃣ JSONC Loader:');
     const jsoncConfig = await Bun.file('./demo-config.jsonc').text();
-    console.log(`   ✅ JSONC file loaded (${jsoncConfig.length} chars)`);
-    console.log(`   📊 Contains: ${jsoncConfig.includes('//') ? 'comments' : 'no comments'}`);
+    console.info(`   ✅ JSONC file loaded (${jsoncConfig.length} chars)`);
+    console.info(`   📊 Contains: ${jsoncConfig.includes('//') ? 'comments' : 'no comments'}`);
     
     // Content loaders
-    console.log('\n📄 Content Loaders:');
+    console.info('\n📄 Content Loaders:');
     
     // Text loader
-    console.log('\n4️⃣ Text Loader:');
+    console.info('\n4️⃣ Text Loader:');
     const textContent = await Bun.file('./demo-content.txt').text();
-    console.log(`   ✅ Text file loaded (${textContent.length} chars)`);
-    console.log(`   📝 Lines: ${textContent.split('\n').length}`);
+    console.info(`   ✅ Text file loaded (${textContent.length} chars)`);
+    console.info(`   📝 Lines: ${textContent.split('\n').length}`);
     
     // HTML loader
-    console.log('\n5️⃣ HTML Loader:');
+    console.info('\n5️⃣ HTML Loader:');
     const htmlContent = await Bun.file('./demo.html').text();
-    console.log(`   ✅ HTML file loaded (${htmlContent.length} chars)`);
-    console.log(`   🌐 Contains: ${htmlContent.includes('<title>') ? 'title' : 'no title'}`);
-    console.log(`   🖼️ Images: ${(htmlContent.match(/<img/g) || []).length}`);
-    console.log(`   🔗 Scripts: ${(htmlContent.match(/<script/g) || []).length}`);
+    console.info(`   ✅ HTML file loaded (${htmlContent.length} chars)`);
+    console.info(`   🌐 Contains: ${htmlContent.includes('<title>') ? 'title' : 'no title'}`);
+    console.info(`   🖼️ Images: ${(htmlContent.match(/<img/g) || []).length}`);
+    console.info(`   🔗 Scripts: ${(htmlContent.match(/<script/g) || []).length}`);
     
     // CSS loader
-    console.log('\n6️⃣ CSS Loader:');
+    console.info('\n6️⃣ CSS Loader:');
     const cssContent = await Bun.file('./demo.css').text();
-    console.log(`   ✅ CSS file loaded (${cssContent.length} chars)`);
-    console.log(`   🎨 Contains: ${cssContent.includes('@import') ? '@import' : 'no imports'}`);
-    console.log(`   📱 Media queries: ${(cssContent.match(/@media/g) || []).length}`);
+    console.info(`   ✅ CSS file loaded (${cssContent.length} chars)`);
+    console.info(`   🎨 Contains: ${cssContent.includes('@import') ? '@import' : 'no imports'}`);
+    console.info(`   📱 Media queries: ${(cssContent.match(/@media/g) || []).length}`);
     
     // JavaScript loader
-    console.log('\n7️⃣ JavaScript Loader:');
+    console.info('\n7️⃣ JavaScript Loader:');
     const jsContent = await Bun.file('./demo.js').text();
-    console.log(`   ✅ JS file loaded (${jsContent.length} chars)`);
-    console.log(`   ⚡ Functions: ${(jsContent.match(/function\s+\w+/g) || []).length}`);
-    console.log(`   📦 Exports: ${(jsContent.match(/export\s+/g) || []).length}`);
+    console.info(`   ✅ JS file loaded (${jsContent.length} chars)`);
+    console.info(`   ⚡ Functions: ${(jsContent.match(/function\s+\w+/g) || []).length}`);
+    console.info(`   📦 Exports: ${(jsContent.match(/export\s+/g) || []).length}`);
     
     // SQLite loader
-    console.log('\n8️⃣ SQLite Loader:');
+    console.info('\n8️⃣ SQLite Loader:');
     const db = new Database('./demo.db');
     const userCount = db.query('SELECT COUNT(*) as count FROM users').get() as { count: number };
     const featureCount = db.query('SELECT COUNT(*) as count FROM features').get() as { count: number };
-    console.log(`   ✅ SQLite database loaded`);
-    console.log(`   👥 Users: ${userCount.count}`);
-    console.log(`   ⚡ Features: ${featureCount.count}`);
+    console.info(`   ✅ SQLite database loaded`);
+    console.info(`   👥 Users: ${userCount.count}`);
+    console.info(`   ⚡ Features: ${featureCount.count}`);
     
     // Show some data
     const users = db.query('SELECT name, role FROM users LIMIT 3').all() as Array<{ name: string; role: string }>;
-    console.log('   👥 Sample users:');
+    console.info('   👥 Sample users:');
     users.forEach((user, i) => {
-      console.log(`      ${i + 1}. ${user.name} (${user.role})`);
+      console.info(`      ${i + 1}. ${user.name} (${user.role})`);
     });
     
     db.close();
     
-    console.log('\n🎉 Bun Loaders Showcase Complete!');
-    console.log('====================================');
+    console.info('\n🎉 Bun Loaders Showcase Complete!');
+    console.info('====================================');
     
-    console.log('\n🚀 Key Advantages Demonstrated:');
-    console.log('   ✅ Zero configuration - works out of the box');
-    console.log('   ✅ Native parsers - no npm dependencies needed');
-    console.log('   ✅ Runtime + Bundler parity - same behavior everywhere');
-    console.log('   ✅ Performance optimized - written in Zig');
-    console.log('   ✅ Full TypeScript support');
-    console.log('   ✅ Asset bundling and hashing');
-    console.log('   ✅ Database embedding');
+    console.info('\n🚀 Key Advantages Demonstrated:');
+    console.info('   ✅ Zero configuration - works out of the box');
+    console.info('   ✅ Native parsers - no npm dependencies needed');
+    console.info('   ✅ Runtime + Bundler parity - same behavior everywhere');
+    console.info('   ✅ Performance optimized - written in Zig');
+    console.info('   ✅ Full TypeScript support');
+    console.info('   ✅ Asset bundling and hashing');
+    console.info('   ✅ Database embedding');
     
-    console.log('\n📊 Loaders Demonstrated:');
-    console.log('   • TOML - Configuration files');
-    console.log('   • YAML - Configuration files');
-    console.log('   • JSONC - JSON with comments');
-    console.log('   • Text - Plain content');
-    console.log('   • HTML - Asset bundling');
-    console.log('   • CSS - Style processing');
-    console.log('   • JavaScript - Module loading');
-    console.log('   • SQLite - Database embedding');
+    console.info('\n📊 Loaders Demonstrated:');
+    console.info('   • TOML - Configuration files');
+    console.info('   • YAML - Configuration files');
+    console.info('   • JSONC - JSON with comments');
+    console.info('   • Text - Plain content');
+    console.info('   • HTML - Asset bundling');
+    console.info('   • CSS - Style processing');
+    console.info('   • JavaScript - Module loading');
+    console.info('   • SQLite - Database embedding');
     
-    console.log('\n🔥 This is why Bun is the future of JavaScript!');
+    console.info('\n🔥 This is why Bun is the future of JavaScript!');
     
   } catch (error) {
     console.error('❌ Error:', error);
@@ -530,7 +530,7 @@ async function demonstrateLoaders() {
 
 // Cleanup
 async function cleanup() {
-  console.log('\n🧹 Cleaning up demo files...');
+  console.info('\n🧹 Cleaning up demo files...');
   const files = [
     './demo-config.toml', './demo-config.yaml', './demo-config.jsonc',
     './demo.html', './demo.css', './demo-content.txt', './demo.js', './demo.db'
@@ -544,7 +544,7 @@ async function cleanup() {
     }
   }
   
-  console.log('✅ Cleanup completed!');
+  console.info('✅ Cleanup completed!');
 }
 
 // Run the demo

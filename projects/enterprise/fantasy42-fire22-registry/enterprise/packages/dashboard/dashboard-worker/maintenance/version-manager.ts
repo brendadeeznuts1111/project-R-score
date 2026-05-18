@@ -50,19 +50,19 @@ class VersionManager {
    * 🔢 Bump version and update all related files
    */
   async bumpVersion(type: 'patch' | 'minor' | 'major'): Promise<VersionInfo> {
-    console.log(`🔢 Fire22 Dashboard Version Manager`);
-    console.log(`!==!==!==!==!==!==!==`);
-    console.log(`📦 Bumping ${type} version...`);
+    console.info(`🔢 Fire22 Dashboard Version Manager`);
+    console.info(`!==!==!==!==!==!==!==`);
+    console.info(`📦 Bumping ${type} version...`);
 
     if (this.dryRun) {
-      console.log(`🧪 DRY RUN MODE - No files will be modified\n`);
+      console.info(`🧪 DRY RUN MODE - No files will be modified\n`);
     }
 
     // Get current version
     const currentVersion = await this.getCurrentVersion();
     const newVersion = this.calculateNewVersion(currentVersion, type);
 
-    console.log(`📊 Version: ${currentVersion} → ${newVersion}`);
+    console.info(`📊 Version: ${currentVersion} → ${newVersion}`);
 
     // Get recent changes from git
     const changes = await this.getRecentChanges();
@@ -83,7 +83,7 @@ class VersionManager {
       await this.createGitTag(newVersion);
     }
 
-    console.log(`\n✅ Version bump completed: ${newVersion}`);
+    console.info(`\n✅ Version bump completed: ${newVersion}`);
     return versionInfo;
   }
 
@@ -143,20 +143,20 @@ class VersionManager {
    * 📦 Update package.json with new version
    */
   private async updatePackageJson(newVersion: string): Promise<void> {
-    console.log('📦 Updating package.json...');
+    console.info('📦 Updating package.json...');
 
     const packageJson = JSON.parse(readFileSync(this.packagePath, 'utf-8'));
     packageJson.version = newVersion;
 
     writeFileSync(this.packagePath, JSON.stringify(packageJson, null, 2) + '\n');
-    console.log(`  ✅ Updated package.json to ${newVersion}`);
+    console.info(`  ✅ Updated package.json to ${newVersion}`);
   }
 
   /**
    * 📋 Update CHANGELOG.md with new version entry
    */
   private async updateChangelog(versionInfo: VersionInfo): Promise<void> {
-    console.log('📋 Updating CHANGELOG.md...');
+    console.info('📋 Updating CHANGELOG.md...');
 
     const changelogEntry = this.generateChangelogEntry(versionInfo);
 
@@ -169,7 +169,7 @@ class VersionManager {
       writeFileSync(this.changelogPath, newChangelog);
     }
 
-    console.log(`  ✅ Updated CHANGELOG.md with ${versionInfo.new}`);
+    console.info(`  ✅ Updated CHANGELOG.md with ${versionInfo.new}`);
   }
 
   /**
@@ -291,7 +291,7 @@ ${firstEntry}`;
    * 📚 Update documentation versions
    */
   private async updateDocumentationVersions(newVersion: string): Promise<void> {
-    console.log('📚 Updating documentation versions...');
+    console.info('📚 Updating documentation versions...');
 
     const docFiles = [
       'docs/api/TASK-MANAGEMENT-API.md',
@@ -327,14 +327,14 @@ ${firstEntry}`;
       }
     }
 
-    console.log(`  ✅ Updated ${updatedFiles} documentation files`);
+    console.info(`  ✅ Updated ${updatedFiles} documentation files`);
   }
 
   /**
    * 🏷️ Create git tag for new version
    */
   private async createGitTag(newVersion: string): Promise<void> {
-    console.log('🏷️ Creating git tag...');
+    console.info('🏷️ Creating git tag...');
 
     try {
       // Add changed files
@@ -346,8 +346,8 @@ ${firstEntry}`;
       // Create annotated tag
       await $`git tag -a v${newVersion} -m "Release version ${newVersion}"`;
 
-      console.log(`  ✅ Created git tag v${newVersion}`);
-      console.log(`  📝 Committed version bump changes`);
+      console.info(`  ✅ Created git tag v${newVersion}`);
+      console.info(`  📝 Committed version bump changes`);
     } catch (error) {
       console.warn('  ⚠️ Could not create git tag:', error);
     }
@@ -357,7 +357,7 @@ ${firstEntry}`;
    * 📊 Generate version report
    */
   async generateVersionReport(): Promise<void> {
-    console.log('📊 Generating version report...');
+    console.info('📊 Generating version report...');
 
     try {
       const currentVersion = await this.getCurrentVersion();
@@ -378,7 +378,7 @@ ${firstEntry}`;
       const reportPath = join(process.cwd(), 'maintenance', 'reports', 'version-report.json');
       writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
-      console.log(`  ✅ Version report saved to ${reportPath}`);
+      console.info(`  ✅ Version report saved to ${reportPath}`);
     } catch (error) {
       console.warn('  ⚠️ Could not generate version report:', error);
     }
@@ -407,14 +407,14 @@ async function main() {
     const versionInfo = await versionManager.bumpVersion(versionType);
     await versionManager.generateVersionReport();
 
-    console.log('\n🎉 Version management completed successfully!');
+    console.info('\n🎉 Version management completed successfully!');
 
     if (!dryRun) {
-      console.log('\n📋 Next steps:');
-      console.log('1. Review the changes in CHANGELOG.md');
-      console.log('2. Push changes: git push origin main');
-      console.log('3. Push tags: git push origin --tags');
-      console.log('4. Create release notes if needed');
+      console.info('\n📋 Next steps:');
+      console.info('1. Review the changes in CHANGELOG.md');
+      console.info('2. Push changes: git push origin main');
+      console.info('3. Push tags: git push origin --tags');
+      console.info('4. Create release notes if needed');
     }
   } catch (error) {
     console.error('❌ Version management failed:', error);

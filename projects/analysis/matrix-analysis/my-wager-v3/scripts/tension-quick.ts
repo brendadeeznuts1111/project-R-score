@@ -78,7 +78,7 @@ async function runCommand() {
       break;
 
     default:
-      console.log(`
+      console.info(`
 🔥 Tension Field Quick Commands:
 
 Validation:
@@ -112,18 +112,18 @@ Usage: bun scripts/tension-quick.ts <command> [args]
 }
 
 async function validateHeaders() {
-  console.log('🔍 Validating headers...');
+  console.info('🔍 Validating headers...');
   await $`bun scripts/validate-headers.ts`.quiet();
 }
 
 async function validateErrors() {
-  console.log('❌ Validation errors:');
+  console.info('❌ Validation errors:');
   await $`bun scripts/validate-headers.ts 2>&1 | grep -i "❌"`.quiet();
 }
 
 async function countHeaders() {
   const result = await $`rg -c '\\[TENSION-[A-Z]+-' --type=ts`.text();
-  console.log(`📊 Found ${result.trim().split('\n').reduce((a, b) => a + parseInt(b.split(':')[1] || '0'), 0)} TENSION headers`);
+  console.info(`📊 Found ${result.trim().split('\n').reduce((a, b) => a + parseInt(b.split(':')[1] || '0'), 0)} TENSION headers`);
 }
 
 async function showHeaders() {
@@ -135,12 +135,12 @@ async function findRequired() {
 }
 
 async function startWatcher() {
-  console.log('👀 Starting tension watcher...');
+  console.info('👀 Starting tension watcher...');
   await $`bun scripts/watch-tension.ts`.quiet();
 }
 
 async function startDevServer() {
-  console.log('🚀 Starting dev server...');
+  console.info('🚀 Starting dev server...');
   const server = Bun.spawn(['bun', 'dev'], {
     stdout: 'inherit',
     stderr: 'inherit',
@@ -173,7 +173,7 @@ async function createSnapshot(game: string) {
   }
   const timestamp = Date.now();
   await $`bun src/tension-field/core.ts ${game} > tension-snapshots/snapshot-${timestamp}.json`.quiet();
-  console.log(`📸 Snapshot saved: tension-snapshots/snapshot-${timestamp}.json`);
+  console.info(`📸 Snapshot saved: tension-snapshots/snapshot-${timestamp}.json`);
 }
 
 async function findAnomalies() {
@@ -189,49 +189,49 @@ async function findLegacy() {
 }
 
 async function showConfig() {
-  console.log('⚙️ Current propagation config:');
-  await $`bun -e 'console.log(await import("./src/graph-propagation/propagate.ts").then(m => m.globalTensionGraph.config))'`.quiet();
+  console.info('⚙️ Current propagation config:');
+  await $`bun -e 'console.info(await import("./src/graph-propagation/propagate.ts").then(m => m.globalTensionGraph.config))'`.quiet();
 }
 
 async function benchmark(count: string = '100') {
   const n = parseInt(count) || 100;
-  console.log(`⚡ Running ${n} propagations...`);
+  console.info(`⚡ Running ${n} propagations...`);
 
   await $`bun -e 'console.time("prop"); Promise.all(Array(${n}).fill(0).map(()=>import("./src/graph-propagation/propagate.ts").then(m=>m.runFullGraphPropagation("demo")))).then(()=>console.timeEnd("prop"))'`.quiet();
 }
 
 async function memorySnapshot() {
-  await $`bun -e 'await import("./src/graph-propagation/propagate.ts").then(async m=>{await m.runFullGraphPropagation("demo"); console.log(process.memoryUsage())})'`.quiet();
+  await $`bun -e 'await import("./src/graph-propagation/propagate.ts").then(async m=>{await m.runFullGraphPropagation("demo"); console.info(process.memoryUsage())})'`.quiet();
 }
 
 async function healthCheck() {
-  console.log('🏥 Tension Field Health Check');
-  console.log('==========================');
+  console.info('🏥 Tension Field Health Check');
+  console.info('==========================');
 
   try {
     await $`bun validate`.quiet();
-    console.log('✅ Validation passed');
+    console.info('✅ Validation passed');
   } catch {
-    console.log('❌ Validation failed');
+    console.info('❌ Validation failed');
   }
 
   const headerCount = await $`rg -c '\\[TENSION-[A-Z]+-' --type=ts`.text();
-  console.log(`📊 Headers: ${headerCount.trim().split('\n').reduce((a, b) => a + parseInt(b.split(':')[1] || '0'), 0)}`);
+  console.info(`📊 Headers: ${headerCount.trim().split('\n').reduce((a, b) => a + parseInt(b.split(':')[1] || '0'), 0)}`);
 
   const version = await $`bun --version`.text();
-  console.log(`🔧 Bun: ${version.trim()}`);
+  console.info(`🔧 Bun: ${version.trim()}`);
 
-  console.log('🚀 Tension-god status: ACTIVE ✓');
+  console.info('🚀 Tension-god status: ACTIVE ✓');
 }
 
 async function statusCheck() {
-  console.log('📊 All-in-one Status Check');
-  console.log('========================');
+  console.info('📊 All-in-one Status Check');
+  console.info('========================');
 
   await healthCheck();
-  console.log();
+  console.info();
 
-  console.log('📋 Recent TENSION files:');
+  console.info('📋 Recent TENSION files:');
   await $`rg -l '\\[TENSION-[A-Z]+-' | head -3`.quiet();
 }
 

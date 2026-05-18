@@ -516,37 +516,37 @@ await bucket.uploadFile('data.json', content);
 
 	// Generate all documentation
 	async generateDocumentation(sourceFiles: string[]): Promise<void> {
-		console.log("🚀 Generating Bun v1.3.7+ Documentation...\n");
+		console.info("🚀 Generating Bun v1.3.7+ Documentation...\n");
 
 		const parsed = await this.extractAnnotations(sourceFiles);
-		console.log(`📊 Extracted ${parsed.annotations.length} annotations\n`);
+		console.info(`📊 Extracted ${parsed.annotations.length} annotations\n`);
 
 		// Generate API documentation
 		const apiDoc = this.generateAPIDocumentation(parsed);
 		writeFileSync(join(this.outputDir, "api.md"), apiDoc);
-		console.log("✅ Generated api.md");
+		console.info("✅ Generated api.md");
 
 		// Generate CLI documentation
 		const cliDoc = this.generateCLIDocumentation(parsed.annotations);
 		writeFileSync(join(this.outputDir, "cli.md"), cliDoc);
-		console.log("✅ Generated cli.md");
+		console.info("✅ Generated cli.md");
 
 		// Generate index
 		const indexDoc = this.generateIndex(parsed.annotations);
 		writeFileSync(join(this.outputDir, "index.md"), indexDoc);
-		console.log("✅ Generated index.md");
+		console.info("✅ Generated index.md");
 
 		// Generate metrics report
 		const metricsDoc = this.generateMetricsReport(parsed);
 		writeFileSync(join(this.outputDir, "metrics.md"), metricsDoc);
-		console.log("✅ Generated metrics.md");
+		console.info("✅ Generated metrics.md");
 
 		// Generate compatibility matrix
 		const compatDoc = this.generateCompatibilityReport(parsed);
 		writeFileSync(join(this.outputDir, "compatibility.md"), compatDoc);
-		console.log("✅ Generated compatibility.md");
+		console.info("✅ Generated compatibility.md");
 
-		console.log(`\n📚 Documentation generated in: ${this.outputDir}`);
+		console.info(`\n📚 Documentation generated in: ${this.outputDir}`);
 	}
 
 	private generateMetricsReport(parsed: ParsedAPI): string {
@@ -627,7 +627,7 @@ async function main() {
 			for (const file of files) {
 				if (existsSync(file)) {
 					sourceFiles.push(file);
-					console.log(`📄 Found: ${file}`);
+					console.info(`📄 Found: ${file}`);
 				}
 			}
 		} catch (error) {

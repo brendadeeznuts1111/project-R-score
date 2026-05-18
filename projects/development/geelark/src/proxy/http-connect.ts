@@ -108,8 +108,8 @@ export class ConfigAwareProxy {
   async start(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.server.listen(this.config.listenPort, this.config.listenHost, () => {
-        console.log(`🔒 Config-aware proxy listening on ${this.config.listenHost}:${this.config.listenPort}`);
-        console.log(`   Upstreams: ${this.config.upstreams.map(u => u.host).join(", ")}`);
+        console.info(`🔒 Config-aware proxy listening on ${this.config.listenHost}:${this.config.listenPort}`);
+        console.info(`   Upstreams: ${this.config.upstreams.map(u => u.host).join(", ")}`);
         resolve();
       });
 
@@ -123,7 +123,7 @@ export class ConfigAwareProxy {
   async stop(): Promise<void> {
     return new Promise((resolve) => {
       this.server.close(() => {
-        console.log("Proxy stopped");
+        console.info("Proxy stopped");
         resolve();
       });
     });
@@ -193,8 +193,8 @@ export class ConfigAwareProxy {
       // Step 2: Extract validated config from headers
       const config = extractConfigFromHeaders(new Headers(headers));
 
-      console.log(`[${requestId}] ✅ Headers validated (${(validationDuration * 1000).toFixed(0)}ns)`);
-      console.log(`[${requestId}] CONNECT ${url} with config: ${headers.get(HEADERS.CONFIG_DUMP)}`);
+      console.info(`[${requestId}] ✅ Headers validated (${(validationDuration * 1000).toFixed(0)}ns)`);
+      console.info(`[${requestId}] CONNECT ${url} with config: ${headers.get(HEADERS.CONFIG_DUMP)}`);
 
       // Step 3: Validate config version (503 Service Unavailable on mismatch)
       if (!this.validateConfigVersion(config)) {
@@ -213,7 +213,7 @@ export class ConfigAwareProxy {
 
       // Step 5: Determine upstream based on registry hash
       const upstream = this.selectUpstream(config);
-      console.log(`[${requestId}] Selected upstream: ${upstream.host}:${upstream.port} (hash: 0x${config.registryHash.toString(16)})`);
+      console.info(`[${requestId}] Selected upstream: ${upstream.host}:${upstream.port} (hash: 0x${config.registryHash.toString(16)})`);
 
       // Step 6: Resolve upstream hostname via DNS cache (50ns hit, 5ms miss)
       const dnsStart = performance.now();
@@ -221,12 +221,12 @@ export class ConfigAwareProxy {
       const resolvedUrl = await resolveProxyUrl(proxyUrl);
       const dnsDuration = performance.now() - dnsStart;
 
-      console.log(`[${requestId}] DNS resolved: ${upstream.host} → ${new URL(resolvedUrl).hostname} (${(dnsDuration * 1000).toFixed(0)}µs)`);
+      console.info(`[${requestId}] DNS resolved: ${upstream.host} → ${new URL(resolvedUrl).hostname} (${(dnsDuration * 1000).toFixed(0)}µs)`);
 
       // Step 7: Log DNS stats (in debug mode)
       if (process.env.DEBUG || process.env.NODE_ENV === "development") {
         const dnsStats = getDNSStats();
-        console.log(`[${requestId}] DNS stats: ${dnsStats.hits} hits, ${dnsStats.misses} misses, ${(dnsStats.hitRate * 100).toFixed(1)}% hit rate`);
+        console.info(`[${requestId}] DNS stats: ${dnsStats.hits} hits, ${dnsStats.misses} misses, ${(dnsStats.hitRate * 100).toFixed(1)}% hit rate`);
       }
 
       // Step 8: Establish tunnel
@@ -234,7 +234,7 @@ export class ConfigAwareProxy {
 
       // Success log
       const totalDuration = performance.now() - validationStart;
-      console.log(`[${requestId}] ✅ CONNECT established in ${(totalDuration * 1000).toFixed(0)}µs`);
+      console.info(`[${requestId}] ✅ CONNECT established in ${(totalDuration * 1000).toFixed(0)}µs`);
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);

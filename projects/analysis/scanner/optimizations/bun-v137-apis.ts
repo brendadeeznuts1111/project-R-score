@@ -436,7 +436,7 @@ export class EditorIntegration {
 		} catch (error) {
 			// Fallback to console if editor fails
 			console.warn(`Failed to open editor: ${error}`);
-			console.log(`File location: ${path}`);
+			console.info(`File location: ${path}`);
 		}
 	}
 
@@ -514,7 +514,7 @@ export class EditorIntegration {
  *
  * // Quick check
  * if (EqualityChecker.configChanged(old, new)) {
- *   console.log("Config changed!");
+ *   console.info("Config changed!");
  * }
  * ```
  */

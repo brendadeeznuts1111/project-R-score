@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
 // src/index.ts - Surgical Precision Platform Entry Point
 
-console.log('🔬 my-demo-app - Surgical Precision Platform');
-console.log('🚀 Starting up...');
-console.log('');
+console.info('🔬 my-demo-app - Surgical Precision Platform');
+console.info('🚀 Starting up...');
+console.info('');
 
 
 // Start MCP server if enabled
@@ -12,18 +12,18 @@ import './mcp-init.ts';
 
 
 
-console.log('✅ Platform initialized successfully!');
-console.log('');
-console.log('🎯 Available commands:');
-console.log('   bun run help    - Show help');
-console.log('   bun run mcp:start - Start MCP server');
+console.info('✅ Platform initialized successfully!');
+console.info('');
+console.info('🎯 Available commands:');
+console.info('   bun run help    - Show help');
+console.info('   bun run mcp:start - Start MCP server');
 
-console.log('');
+console.info('');
 
 // Keep the process alive if MCP server is running
 
 process.on('SIGINT', () => {
-  console.log('\n👋 Shutting down gracefully...');
+  console.info('\n👋 Shutting down gracefully...');
   process.exit(0);
 });
 

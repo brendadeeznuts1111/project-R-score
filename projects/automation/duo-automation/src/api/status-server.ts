@@ -177,16 +177,16 @@ const app = new Elysia()
   })
   .listen(3000);
 
-console.log('🏭 Factory-Wager Status API Server running on http://localhost:3000');
-console.log('📊 Available endpoints:');
-console.log('  GET  /              - API information');
-console.log('  GET  /health        - Health check');
-console.log('  GET  /status        - Overall status');
-console.log('  GET  /domains       - All domains status');
-console.log('  GET  /domains/:domain - Specific domain');
-console.log('  GET  /metrics       - Prometheus metrics');
-console.log('  GET  /report        - Text report');
-console.log('  GET  /dashboard     - Dashboard data');
-console.log('  POST /domains/:domain/check - Force domain check');
+console.info('🏭 Factory-Wager Status API Server running on http://localhost:3000');
+console.info('📊 Available endpoints:');
+console.info('  GET  /              - API information');
+console.info('  GET  /health        - Health check');
+console.info('  GET  /status        - Overall status');
+console.info('  GET  /domains       - All domains status');
+console.info('  GET  /domains/:domain - Specific domain');
+console.info('  GET  /metrics       - Prometheus metrics');
+console.info('  GET  /report        - Text report');
+console.info('  GET  /dashboard     - Dashboard data');
+console.info('  POST /domains/:domain/check - Force domain check');
 
 export default app;

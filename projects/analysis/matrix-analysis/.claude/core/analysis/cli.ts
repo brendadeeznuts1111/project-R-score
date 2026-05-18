@@ -139,7 +139,7 @@ async function runComplexity(parsed: ParsedArgs): Promise<void> {
 	const path = parsed.path || ".";
 
 	if (parsed.args.includes("--help")) {
-		console.log(`
+		console.info(`
 📊 Complexity Analysis
 
 Usage:
@@ -166,7 +166,7 @@ Examples:
 		return;
 	}
 
-	console.log(`Analyzing complexity in ${path}...`);
+	console.info(`Analyzing complexity in ${path}...`);
 
 	const analyzer = new ComplexityAnalyzer();
 	const report = await analyzer.analyzeDirectory(path);
@@ -186,7 +186,7 @@ Examples:
 	}
 
 	if (parsed.format === "json") {
-		console.log(JSON.stringify(report, null, 2));
+		console.info(JSON.stringify(report, null, 2));
 	} else {
 		displayComplexityResults(report, { limit: parsed.limit });
 
@@ -199,7 +199,7 @@ Examples:
 				const html = htmlGenerator.generate(reportData, { theme: "dark" });
 				const filename = parsed.output || `complexity-report-${timestamp}.html`;
 				await Bun.write(filename, html);
-				console.log(`\n📄 HTML report saved to ${filename}`);
+				console.info(`\n📄 HTML report saved to ${filename}`);
 			}
 
 			if (parsed.exportMarkdown) {
@@ -208,7 +208,7 @@ Examples:
 					parsed.output?.replace(/\.html$/, ".md") ||
 					`complexity-report-${timestamp}.md`;
 				await Bun.write(filename, markdown);
-				console.log(`\n📝 Markdown report saved to ${filename}`);
+				console.info(`\n📝 Markdown report saved to ${filename}`);
 			}
 
 			if (parsed.exportCsv) {
@@ -219,7 +219,7 @@ Examples:
 					await Bun.write(filename, content);
 					filenames.push(filename);
 				}
-				console.log(`\n📊 CSV reports saved to: ${filenames.join(", ")}`);
+				console.info(`\n📊 CSV reports saved to: ${filenames.join(", ")}`);
 			}
 		}
 	}
@@ -229,7 +229,7 @@ async function runTypes(parsed: ParsedArgs): Promise<void> {
 	const path = parsed.path || ".";
 
 	if (parsed.args.includes("--help")) {
-		console.log(`
+		console.info(`
 📦 Type Extraction
 
 Usage:
@@ -248,13 +248,13 @@ Examples:
 		return;
 	}
 
-	console.log(`Extracting types from ${path}...`);
+	console.info(`Extracting types from ${path}...`);
 
 	const extractor = new TypeExtractor();
 	const report = await extractor.extractFromDirectory(path);
 
 	if (parsed.format === "json") {
-		console.log(JSON.stringify(report, null, 2));
+		console.info(JSON.stringify(report, null, 2));
 	} else if (parsed.format === "tree") {
 		displayTypesByFile(report);
 	} else {
@@ -269,7 +269,7 @@ async function runDeps(parsed: ParsedArgs): Promise<void> {
 	const path = parsed.path || ".";
 
 	if (parsed.args.includes("--help")) {
-		console.log(`
+		console.info(`
 🔗 Dependency Analysis
 
 Usage:
@@ -290,7 +290,7 @@ Examples:
 		return;
 	}
 
-	console.log(`Analyzing dependencies in ${path}...`);
+	console.info(`Analyzing dependencies in ${path}...`);
 
 	const analyzer = new DependencyAnalyzer();
 	const report = await analyzer.analyzeDirectory(path);
@@ -308,7 +308,7 @@ Examples:
 				entryPoints: report.graph.entryPoints,
 			},
 		};
-		console.log(JSON.stringify(jsonReport, null, 2));
+		console.info(JSON.stringify(jsonReport, null, 2));
 	} else {
 		displayDependencyResults(report);
 
@@ -329,7 +329,7 @@ Examples:
 				const html = htmlGenerator.generate(reportData, { theme: "dark" });
 				const filename = parsed.output || `deps-report-${timestamp}.html`;
 				await Bun.write(filename, html);
-				console.log(`\n📄 HTML report saved to ${filename}`);
+				console.info(`\n📄 HTML report saved to ${filename}`);
 			}
 
 			if (parsed.exportMarkdown) {
@@ -337,7 +337,7 @@ Examples:
 				const filename =
 					parsed.output?.replace(/\.html$/, ".md") || `deps-report-${timestamp}.md`;
 				await Bun.write(filename, markdown);
-				console.log(`\n📝 Markdown report saved to ${filename}`);
+				console.info(`\n📝 Markdown report saved to ${filename}`);
 			}
 
 			if (parsed.exportCsv) {
@@ -348,7 +348,7 @@ Examples:
 					await Bun.write(filename, content);
 					filenames.push(filename);
 				}
-				console.log(`\n📊 CSV reports saved to: ${filenames.join(", ")}`);
+				console.info(`\n📊 CSV reports saved to: ${filenames.join(", ")}`);
 			}
 		}
 	}
@@ -358,7 +358,7 @@ async function runClasses(parsed: ParsedArgs): Promise<void> {
 	const path = parsed.path || ".";
 
 	if (parsed.args.includes("--help")) {
-		console.log(`
+		console.info(`
 🏛️ Class Analysis
 
 Usage:
@@ -375,15 +375,15 @@ Examples:
 		return;
 	}
 
-	console.log(`Analyzing classes in ${path}...`);
+	console.info(`Analyzing classes in ${path}...`);
 
 	const analyzer = new ClassAnalyzer();
 	const report = await analyzer.analyzeDirectory(path);
 
 	if (parsed.format === "json") {
-		console.log(JSON.stringify(report, null, 2));
+		console.info(JSON.stringify(report, null, 2));
 	} else if (parsed.format === "dot") {
-		console.log(exportToDot(report));
+		console.info(exportToDot(report));
 	} else if (parsed.format === "table") {
 		displayClassTable(report);
 	} else {
@@ -397,7 +397,7 @@ async function runStrength(parsed: ParsedArgs): Promise<void> {
 	const path = parsed.path || ".";
 
 	if (parsed.args.includes("--help")) {
-		console.log(`
+		console.info(`
 💪 Code Strength Analysis
 
 Combines multiple metrics into a single quality score:
@@ -425,13 +425,13 @@ Examples:
 		return;
 	}
 
-	console.log(`Analyzing code strength in ${path}...`);
+	console.info(`Analyzing code strength in ${path}...`);
 
 	const scorer = new StrengthScorer();
 	const report = await scorer.analyzeDirectory(path);
 
 	if (parsed.format === "json") {
-		console.log(JSON.stringify(report, null, 2));
+		console.info(JSON.stringify(report, null, 2));
 	} else {
 		displayStrengthReport(report);
 
@@ -444,7 +444,7 @@ Examples:
 				const html = htmlGenerator.generate(reportData, { theme: "dark" });
 				const filename = parsed.output || `strength-report-${timestamp}.html`;
 				await Bun.write(filename, html);
-				console.log(`\n📄 HTML report saved to ${filename}`);
+				console.info(`\n📄 HTML report saved to ${filename}`);
 			}
 
 			if (parsed.exportMarkdown) {
@@ -452,7 +452,7 @@ Examples:
 				const filename =
 					parsed.output?.replace(/\.html$/, ".md") || `strength-report-${timestamp}.md`;
 				await Bun.write(filename, markdown);
-				console.log(`\n📝 Markdown report saved to ${filename}`);
+				console.info(`\n📝 Markdown report saved to ${filename}`);
 			}
 
 			if (parsed.exportCsv) {
@@ -463,7 +463,7 @@ Examples:
 					await Bun.write(filename, content);
 					filenames.push(filename);
 				}
-				console.log(`\n📊 CSV reports saved to: ${filenames.join(", ")}`);
+				console.info(`\n📊 CSV reports saved to: ${filenames.join(", ")}`);
 			}
 		}
 	}
@@ -584,7 +584,7 @@ async function runRename(parsed: ParsedArgs): Promise<void> {
 	const dryRun = !parsed.args.includes("--no-dry-run");
 
 	if (parsed.args.includes("--help") || !oldName || !newName) {
-		console.log(`
+		console.info(`
 🔄 Symbol Rename
 
 Usage:
@@ -601,7 +601,7 @@ Examples:
 		return;
 	}
 
-	console.log(`Scanning for "${oldName}" in ${path}...`);
+	console.info(`Scanning for "${oldName}" in ${path}...`);
 
 	const renamer = new SymbolRenamer();
 	const references = await renamer.findReferences(path, oldName);
@@ -619,7 +619,7 @@ Examples:
 
 	if (!dryRun && references.length > 0) {
 		const modified = await renamer.applyRename(path, references, oldName, newName);
-		console.log(`\n✅ Renamed ${oldName} → ${newName} in ${modified} file(s).`);
+		console.info(`\n✅ Renamed ${oldName} → ${newName} in ${modified} file(s).`);
 	}
 }
 
@@ -627,7 +627,7 @@ async function runPolish(parsed: ParsedArgs): Promise<void> {
 	const path = parsed.path || ".";
 
 	if (parsed.args.includes("--help")) {
-		console.log(`
+		console.info(`
 ✨ Code Polish
 
 Checks code quality: naming conventions, unused imports, missing types.
@@ -643,7 +643,7 @@ Examples:
 		return;
 	}
 
-	console.log(`Polishing ${path}...`);
+	console.info(`Polishing ${path}...`);
 
 	const polisher = new CodePolisher();
 	const report = await polisher.analyzeDirectory(path);
@@ -652,7 +652,7 @@ Examples:
 }
 
 function showHelp(): void {
-	console.log(`
+	console.info(`
 🔍 Code Analysis CLI
 
 Usage:

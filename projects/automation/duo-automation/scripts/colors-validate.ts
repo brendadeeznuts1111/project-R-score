@@ -61,7 +61,7 @@ function scanDirectory(dir) {
         if (fullPath.endsWith('.css') || fullPath.endsWith('.scss') || fullPath.endsWith('.ts') || fullPath.endsWith('.js') || fullPath.endsWith('.tsx') || fullPath.endsWith('.html')) {
           const violations = validateColors(fullPath);
           if (violations.length > 0) {
-            console.log(`❌ Color violations in ${fullPath}:`, violations);
+            console.info(`❌ Color violations in ${fullPath}:`, violations);
             totalViolations += violations.length;
           }
         }
@@ -74,8 +74,8 @@ function scanDirectory(dir) {
 
 const violations = scanDirectory('.');
 if (violations > 0) {
-  console.log(`❌ Found ${violations} color system violations.`);
+  console.info(`❌ Found ${violations} color system violations.`);
   process.exit(1);
 } else {
-  console.log('✅ All colors comply with the enforced system.');
+  console.info('✅ All colors comply with the enforced system.');
 }

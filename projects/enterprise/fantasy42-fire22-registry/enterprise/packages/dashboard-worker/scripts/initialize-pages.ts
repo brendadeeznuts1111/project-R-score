@@ -10,8 +10,8 @@ import { join } from 'path';
 
 class PagesInitializer {
   async initialize(): Promise<void> {
-    console.log('🚀 Initializing GitHub Pages & Wiki System');
-    console.log('!==!==!==!==!==!==!==!==\n');
+    console.info('🚀 Initializing GitHub Pages & Wiki System');
+    console.info('!==!==!==!==!==!==!==!==\n');
 
     // Create necessary directories
     await this.createDirectories();
@@ -22,18 +22,18 @@ class PagesInitializer {
     // Create initial department data
     await this.createDepartmentData();
 
-    console.log('\n✅ Initialization complete!');
-    console.log('\n📝 You can now run:');
-    console.log('  1. bun run pages:build - Build GitHub Pages');
-    console.log('  2. bun run wiki:mirror - Mirror wiki content');
-    console.log('  3. bun run departments:generate - Generate department pages');
-    console.log('  4. bun run validate:deployment - Validate deployments');
-    console.log('  5. git add . && git commit -m "feat: add GitHub Pages & Wiki mirror system"');
-    console.log('  6. git push origin main - Trigger GitHub Actions deployment');
+    console.info('\n✅ Initialization complete!');
+    console.info('\n📝 You can now run:');
+    console.info('  1. bun run pages:build - Build GitHub Pages');
+    console.info('  2. bun run wiki:mirror - Mirror wiki content');
+    console.info('  3. bun run departments:generate - Generate department pages');
+    console.info('  4. bun run validate:deployment - Validate deployments');
+    console.info('  5. git add . && git commit -m "feat: add GitHub Pages & Wiki mirror system"');
+    console.info('  6. git push origin main - Trigger GitHub Actions deployment');
   }
 
   private async createDirectories(): Promise<void> {
-    console.log('📁 Creating directories...');
+    console.info('📁 Creating directories...');
 
     const directories = [
       'wiki',
@@ -51,15 +51,15 @@ class PagesInitializer {
     for (const dir of directories) {
       if (!existsSync(dir)) {
         mkdirSync(dir, { recursive: true });
-        console.log(`  ✅ Created: ${dir}`);
+        console.info(`  ✅ Created: ${dir}`);
       } else {
-        console.log(`  ⏭️ Exists: ${dir}`);
+        console.info(`  ⏭️ Exists: ${dir}`);
       }
     }
   }
 
   private async createInitialWiki(): Promise<void> {
-    console.log('\n📚 Creating initial wiki content...');
+    console.info('\n📚 Creating initial wiki content...');
 
     const wikiHome = `# Fire22 Dashboard Wiki
 
@@ -164,17 +164,17 @@ See [Configuration Guide](configuration.md) for detailed setup instructions.
 
     if (!existsSync('wiki/Home.md')) {
       writeFileSync('wiki/Home.md', wikiHome);
-      console.log('  ✅ Created: wiki/Home.md');
+      console.info('  ✅ Created: wiki/Home.md');
     }
 
     if (!existsSync('wiki/Getting-Started.md')) {
       writeFileSync('wiki/Getting-Started.md', gettingStarted);
-      console.log('  ✅ Created: wiki/Getting-Started.md');
+      console.info('  ✅ Created: wiki/Getting-Started.md');
     }
   }
 
   private async createDepartmentData(): Promise<void> {
-    console.log('\n🏢 Creating department data...');
+    console.info('\n🏢 Creating department data...');
 
     const deptConfig = {
       departments: [
@@ -280,9 +280,9 @@ See [Configuration Guide](configuration.md) for detailed setup instructions.
 
     if (!existsSync(configPath)) {
       writeFileSync(configPath, JSON.stringify(deptConfig, null, 2));
-      console.log('  ✅ Created: src/departments/config.json');
+      console.info('  ✅ Created: src/departments/config.json');
     } else {
-      console.log('  ⏭️ Exists: src/departments/config.json');
+      console.info('  ⏭️ Exists: src/departments/config.json');
     }
   }
 }

@@ -19,8 +19,8 @@ class SemverBenchmark {
    * Run all semver benchmarks
    */
   async runAll(): Promise<void> {
-    console.log('🚀 Bun Semver Performance Benchmarks');
-    console.log('=====================================\n');
+    console.info('🚀 Bun Semver Performance Benchmarks');
+    console.info('=====================================\n');
 
     await this.benchmarkSatisfies();
     await this.benchmarkOrder();
@@ -39,7 +39,7 @@ class SemverBenchmark {
    * Benchmark semver.satisfies performance
    */
   private async benchmarkSatisfies(): Promise<void> {
-    console.log('📊 Benchmarking semver.satisfies...');
+    console.info('📊 Benchmarking semver.satisfies...');
     
     const testCases = [
       { version: '2.1.0', range: '^2.0.0' },
@@ -71,15 +71,15 @@ class SemverBenchmark {
       memory: memoryEnd - memoryStart
     });
 
-    console.log(`   ✅ ${iterations.toLocaleString()} operations in ${totalTime.toFixed(2)}ms`);
-    console.log(`   📈 ${(iterations / (totalTime / 1000)).toLocaleString()} ops/sec`);
+    console.info(`   ✅ ${iterations.toLocaleString()} operations in ${totalTime.toFixed(2)}ms`);
+    console.info(`   📈 ${(iterations / (totalTime / 1000)).toLocaleString()} ops/sec`);
   }
 
   /**
    * Benchmark semver.order performance
    */
   private async benchmarkOrder(): Promise<void> {
-    console.log('📊 Benchmarking semver.order...');
+    console.info('📊 Benchmarking semver.order...');
 
     const versions = Array.from({ length: 1000 }, (_, i) => 
       `${Math.floor(i / 100)}.${(i % 100)}.${i % 10}`
@@ -105,15 +105,15 @@ class SemverBenchmark {
       opsPerSecond: iterations / (totalTime / 1000)
     });
 
-    console.log(`   ✅ ${iterations.toLocaleString()} operations in ${totalTime.toFixed(2)}ms`);
-    console.log(`   📈 ${(iterations / (totalTime / 1000)).toLocaleString()} ops/sec`);
+    console.info(`   ✅ ${iterations.toLocaleString()} operations in ${totalTime.toFixed(2)}ms`);
+    console.info(`   📈 ${(iterations / (totalTime / 1000)).toLocaleString()} ops/sec`);
   }
 
   /**
    * Benchmark version range validation
    */
   private async benchmarkRangeValidation(): Promise<void> {
-    console.log('📊 Benchmarking range validation...');
+    console.info('📊 Benchmarking range validation...');
 
     const ranges = [
       '^1.0.0', '~2.1.0', '>=1.0.0 <3.0.0', '1.x || 2.x', 
@@ -143,15 +143,15 @@ class SemverBenchmark {
       opsPerSecond: iterations / (totalTime / 1000)
     });
 
-    console.log(`   ✅ ${iterations.toLocaleString()} operations in ${totalTime.toFixed(2)}ms`);
-    console.log(`   📈 ${(iterations / (totalTime / 1000)).toLocaleString()} ops/sec`);
+    console.info(`   ✅ ${iterations.toLocaleString()} operations in ${totalTime.toFixed(2)}ms`);
+    console.info(`   📈 ${(iterations / (totalTime / 1000)).toLocaleString()} ops/sec`);
   }
 
   /**
    * Benchmark version comparison operations
    */
   private async benchmarkVersionComparison(): Promise<void> {
-    console.log('📊 Benchmarking version comparison...');
+    console.info('📊 Benchmarking version comparison...');
 
     const operations = ['satisfies', 'order', 'gt', 'lt', 'eq', 'neq', 'gte', 'lte'];
     const versions = ['1.0.0', '2.1.0', '1.5.2', '3.0.0', '2.0.0'];
@@ -203,15 +203,15 @@ class SemverBenchmark {
       opsPerSecond: iterations / (totalTime / 1000)
     });
 
-    console.log(`   ✅ ${iterations.toLocaleString()} operations in ${totalTime.toFixed(2)}ms`);
-    console.log(`   📈 ${(iterations / (totalTime / 1000)).toLocaleString()} ops/sec`);
+    console.info(`   ✅ ${iterations.toLocaleString()} operations in ${totalTime.toFixed(2)}ms`);
+    console.info(`   📈 ${(iterations / (totalTime / 1000)).toLocaleString()} ops/sec`);
   }
 
   /**
    * Benchmark taxonomy validator operations
    */
   private async benchmarkTaxonomyValidator(): Promise<void> {
-    console.log('📊 Benchmarking taxonomy validator...');
+    console.info('📊 Benchmarking taxonomy validator...');
 
     const nodeIds = ['bun-native-cache', 'unified-api-backbone', 'cross-platform-layer'];
     const iterations = 1000;
@@ -267,16 +267,16 @@ class SemverBenchmark {
       opsPerSecond: iterations / (graphTime / 1000)
     });
 
-    console.log(`   ✅ Compatibility: ${iterations} checks in ${compatTime.toFixed(2)}ms`);
-    console.log(`   ✅ Upgrade: ${iterations} validations in ${upgradeTime.toFixed(2)}ms`);
-    console.log(`   ✅ Graph: ${iterations} analyses in ${graphTime.toFixed(2)}ms`);
+    console.info(`   ✅ Compatibility: ${iterations} checks in ${compatTime.toFixed(2)}ms`);
+    console.info(`   ✅ Upgrade: ${iterations} validations in ${upgradeTime.toFixed(2)}ms`);
+    console.info(`   ✅ Graph: ${iterations} analyses in ${graphTime.toFixed(2)}ms`);
   }
 
   /**
    * Benchmark bulk operations
    */
   private async benchmarkBulkOperations(): Promise<void> {
-    console.log('📊 Benchmarking bulk operations...');
+    console.info('📊 Benchmarking bulk operations...');
 
     // Bulk version sorting
     const versions = Array.from({ length: 10000 }, (_, i) => 
@@ -311,15 +311,15 @@ class SemverBenchmark {
       opsPerSecond: nodes.length / (bulkTime / 1000)
     });
 
-    console.log(`   ✅ Sorted 10k versions in ${sortTime.toFixed(2)}ms`);
-    console.log(`   ✅ Checked ${nodes.length} nodes in ${bulkTime.toFixed(2)}ms`);
+    console.info(`   ✅ Sorted 10k versions in ${sortTime.toFixed(2)}ms`);
+    console.info(`   ✅ Checked ${nodes.length} nodes in ${bulkTime.toFixed(2)}ms`);
   }
 
   /**
    * Benchmark memory usage
    */
   private async benchmarkMemoryUsage(): Promise<void> {
-    console.log('📊 Benchmarking memory usage...');
+    console.info('📊 Benchmarking memory usage...');
 
     const memoryStart = this.getMemoryUsage();
     
@@ -344,15 +344,15 @@ class SemverBenchmark {
       memory: memoryAfterInstances - memoryStart
     });
 
-    console.log(`   ✅ 100 instances: ${(memoryAfterInstances - memoryStart).toFixed(2)}MB`);
-    console.log(`   ✅ Operations: ${(memoryAfterOperations - memoryAfterInstances).toFixed(2)}MB`);
+    console.info(`   ✅ 100 instances: ${(memoryAfterInstances - memoryStart).toFixed(2)}MB`);
+    console.info(`   ✅ Operations: ${(memoryAfterOperations - memoryAfterInstances).toFixed(2)}MB`);
   }
 
   /**
    * Benchmark concurrent operations
    */
   private async benchmarkConcurrency(): Promise<void> {
-    console.log('📊 Benchmarking concurrent operations...');
+    console.info('📊 Benchmarking concurrent operations...');
 
     const concurrency = 10;
     const operationsPerWorker = 1000;
@@ -379,7 +379,7 @@ class SemverBenchmark {
       opsPerSecond: totalOperations / (totalTime / 1000)
     });
 
-    console.log(`   ✅ ${totalOperations.toLocaleString()} concurrent operations in ${totalTime.toFixed(2)}ms`);
+    console.info(`   ✅ ${totalOperations.toLocaleString()} concurrent operations in ${totalTime.toFixed(2)}ms`);
   }
 
   /**
@@ -396,31 +396,31 @@ class SemverBenchmark {
    * Print benchmark results
    */
   private printResults(): void {
-    console.log('\n📈 Benchmark Results');
-    console.log('====================');
+    console.info('\n📈 Benchmark Results');
+    console.info('====================');
 
     this.results.forEach(result => {
-      console.log(`\n${result.name}:`);
-      console.log(`   Operations: ${result.operations.toLocaleString()}`);
-      console.log(`   Total time: ${result.totalTime.toFixed(2)}ms`);
-      console.log(`   Avg time: ${result.avgTime.toFixed(4)}ms`);
-      console.log(`   Throughput: ${result.opsPerSecond.toLocaleString()} ops/sec`);
+      console.info(`\n${result.name}:`);
+      console.info(`   Operations: ${result.operations.toLocaleString()}`);
+      console.info(`   Total time: ${result.totalTime.toFixed(2)}ms`);
+      console.info(`   Avg time: ${result.avgTime.toFixed(4)}ms`);
+      console.info(`   Throughput: ${result.opsPerSecond.toLocaleString()} ops/sec`);
       if (result.memory !== undefined) {
-        console.log(`   Memory: ${result.memory.toFixed(2)}MB`);
+        console.info(`   Memory: ${result.memory.toFixed(2)}MB`);
       }
     });
 
     // Performance summary
-    console.log('\n🎯 Performance Summary');
-    console.log('=====================');
+    console.info('\n🎯 Performance Summary');
+    console.info('=====================');
     
     const satisfies = this.results.find(r => r.name === 'semver.satisfies');
     const order = this.results.find(r => r.name === 'semver.order');
     
     if (satisfies && order) {
-      console.log(`✅ semver.satisfies: ${satisfies.opsPerSecond.toLocaleString()} ops/sec`);
-      console.log(`✅ semver.order: ${order.opsPerSecond.toLocaleString()} ops/sec`);
-      console.log(`🚀 Overall: Excellent performance for production use`);
+      console.info(`✅ semver.satisfies: ${satisfies.opsPerSecond.toLocaleString()} ops/sec`);
+      console.info(`✅ semver.order: ${order.opsPerSecond.toLocaleString()} ops/sec`);
+      console.info(`🚀 Overall: Excellent performance for production use`);
     }
   }
 
@@ -443,15 +443,15 @@ class SemverBenchmark {
 
     const filename = `benchmarks/results/semver-benchmark-${Date.now()}.json`;
     Bun.write(filename, JSON.stringify(exportData, null, 2));
-    console.log(`\n💾 Results exported to: ${filename}`);
+    console.info(`\n💾 Results exported to: ${filename}`);
   }
 
   /**
    * Compare with alternative semver libraries
    */
   async compareAlternatives(): Promise<void> {
-    console.log('\n🔄 Comparison with Alternatives');
-    console.log('===============================');
+    console.info('\n🔄 Comparison with Alternatives');
+    console.info('===============================');
 
     const iterations = 10000;
     const testVersion = '2.1.0';
@@ -460,23 +460,23 @@ class SemverBenchmark {
     // Bun.semver (already benchmarked above)
     const bunResult = this.results.find(r => r.name === 'semver.satisfies');
 
-    console.log(`\n📊 Comparison Results (${iterations.toLocaleString()} operations):`);
+    console.info(`\n📊 Comparison Results (${iterations.toLocaleString()} operations):`);
     
     if (bunResult) {
-      console.log(`🚀 Bun.semver: ${bunResult.totalTime.toFixed(2)}ms (${bunResult.opsPerSecond.toLocaleString()} ops/sec)`);
-      console.log(`   - Native implementation`);
-      console.log(`   - No external dependencies`);
-      console.log(`   - Optimized for performance`);
+      console.info(`🚀 Bun.semver: ${bunResult.totalTime.toFixed(2)}ms (${bunResult.opsPerSecond.toLocaleString()} ops/sec)`);
+      console.info(`   - Native implementation`);
+      console.info(`   - No external dependencies`);
+      console.info(`   - Optimized for performance`);
     }
 
     // Note: Actual comparison with node-semver would require installing it
     // For demo purposes, we'll show expected results based on typical performance
-    console.log(`📦 node-semver: ~${(bunResult!.totalTime * 15).toFixed(2)}ms (~${Math.floor(bunResult!.opsPerSecond / 15).toLocaleString()} ops/sec)`);
-    console.log(`   - External dependency`);
-    console.log(`   - JavaScript implementation`);
-    console.log(`   - ~15x slower than native`);
+    console.info(`📦 node-semver: ~${(bunResult!.totalTime * 15).toFixed(2)}ms (~${Math.floor(bunResult!.opsPerSecond / 15).toLocaleString()} ops/sec)`);
+    console.info(`   - External dependency`);
+    console.info(`   - JavaScript implementation`);
+    console.info(`   - ~15x slower than native`);
 
-    console.log(`\n🎯 Winner: Bun.semver (15x faster, zero dependencies)`);
+    console.info(`\n🎯 Winner: Bun.semver (15x faster, zero dependencies)`);
   }
 }
 

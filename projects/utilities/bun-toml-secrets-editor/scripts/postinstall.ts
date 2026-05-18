@@ -73,7 +73,7 @@ try {
 					unlinkSync(symlinkPath);
 				} else {
 					// Already pointing to correct binary
-					console.log(`✅ Symlink already points to correct binary`);
+					console.info(`✅ Symlink already points to correct binary`);
 					process.exit(0);
 				}
 			} else {
@@ -88,11 +88,11 @@ try {
 	// Create symlink (or copy on Windows)
 	if (platform === "win32") {
 		// Windows doesn't support symlinks well, so we'll just document the binary location
-		console.log(`✅ Binary available at: ${binaryPath}`);
-		console.log(`   Use this binary directly or add dist/ to your PATH`);
+		console.info(`✅ Binary available at: ${binaryPath}`);
+		console.info(`   Use this binary directly or add dist/ to your PATH`);
 	} else {
 		symlinkSync(binaryPath, symlinkPath);
-		console.log(`✅ Linked ${binaryName} -> secrets-guard`);
+		console.info(`✅ Linked ${binaryName} -> secrets-guard`);
 	}
 } catch (error) {
 	console.warn(`⚠️  Could not create symlink: ${error}`);

@@ -1,5 +1,5 @@
 export {};
 
-console.log('Simple test output');
-console.log('This should work at depth 1');
-console.log('No truncation expected');
+console.info('Simple test output');
+console.info('This should work at depth 1');
+console.info('No truncation expected');

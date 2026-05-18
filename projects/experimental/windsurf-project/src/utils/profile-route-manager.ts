@@ -396,7 +396,7 @@ export class ProfileRouteManager {
 
   // Utility methods
   private executeCommand(command: string, message: string): void {
-    console.log(`🚀 Executing: ${command}`);
+    console.info(`🚀 Executing: ${command}`);
     this.showNotification(message, 'info');
     this.addActivity(message, 'info');
     

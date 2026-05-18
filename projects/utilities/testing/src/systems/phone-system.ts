@@ -13,8 +13,8 @@ export class PhoneSystem {
   private deviceStatus: Map<string, any> = new Map();
 
   constructor() {
-    console.log(`🚀 Phone System Initialized`);
-    console.log(`📊 Limits: Max Phones: ${SYSTEM_LIMITS.MAX_PHONES}, Batch Size: ${SYSTEM_LIMITS.BATCH_SIZE}`);
+    console.info(`🚀 Phone System Initialized`);
+    console.info(`📊 Limits: Max Phones: ${SYSTEM_LIMITS.MAX_PHONES}, Batch Size: ${SYSTEM_LIMITS.BATCH_SIZE}`);
   }
 
   /**
@@ -27,7 +27,7 @@ export class PhoneSystem {
       return;
     }
 
-    console.log(`📱 Entering interactive session for device: ${deviceId}`);
+    console.info(`📱 Entering interactive session for device: ${deviceId}`);
     
     await using terminal = new Bun.Terminal({
       cols: process.stdout.columns,
@@ -81,7 +81,7 @@ export class PhoneSystem {
    * Capture a screenshot and stream it directly to S3 with retry logic
    */
   async captureScreenshot(phoneId: string, attempts = SYSTEM_LIMITS.RETRY_ATTEMPTS) {
-    console.log(`📸 Capturing screenshot for phone: ${phoneId} (Attempts remaining: ${attempts})`);
+    console.info(`📸 Capturing screenshot for phone: ${phoneId} (Attempts remaining: ${attempts})`);
     
     for (let i = 0; i < attempts; i++) {
       try {
@@ -99,7 +99,7 @@ export class PhoneSystem {
         const filename = `screenshot-${phoneId}-${Date.now()}.png`;
         
         await S3Manager.uploadSnapshot(filename, Buffer.from(buffer));
-        console.log(`✅ Screenshot saved: snapshots/${filename}`);
+        console.info(`✅ Screenshot saved: snapshots/${filename}`);
         return { success: true, filename };
       } catch (e) {
         console.error(`Attempt ${i + 1} failed: ${e instanceof Error ? e.message : e}`);
@@ -116,7 +116,7 @@ export class PhoneSystem {
    * Install an application to the device with retry logic
    */
   async installApp(phoneId: string, apkPath: string, attempts = SYSTEM_LIMITS.RETRY_ATTEMPTS) {
-    console.log(`📦 Installing ${apkPath} to ${phoneId}...`);
+    console.info(`📦 Installing ${apkPath} to ${phoneId}...`);
     
     for (let i = 0; i < attempts; i++) {
       try {
@@ -124,7 +124,7 @@ export class PhoneSystem {
         const exitCode = await proc.exited;
         
         if (exitCode === 0) {
-          console.log("✅ App installed successfully");
+          console.info("✅ App installed successfully");
           return true;
         }
         throw new Error(`ADB install failed with code ${exitCode}`);
@@ -143,7 +143,7 @@ export class PhoneSystem {
    * Send text input to the device
    */
   async sendInput(phoneId: string, text: string) {
-    console.log(`⌨️ Sending input to ${phoneId}: ${text}`);
+    console.info(`⌨️ Sending input to ${phoneId}: ${text}`);
     const sanitized = text.replace(/ /g, "%s");
     await Bun.spawn(["adb", "-s", phoneId, "shell", "input", "text", sanitized]).exited;
   }
@@ -152,7 +152,7 @@ export class PhoneSystem {
    * Stream phone logs directly to S3 with zero-copy/low-memory usage
    */
   async startLogging(phoneId: string) {
-    console.log(`📂 Starting memory-efficient logging for Phone: ${phoneId}`);
+    console.info(`📂 Starting memory-efficient logging for Phone: ${phoneId}`);
 
     await using terminal = new Bun.Terminal({
       async data(term, data) {
@@ -228,7 +228,7 @@ export class PhoneSystem {
    * Run a quality gate check on a specific device
    */
   async runQualityGate(phoneId: string) {
-    console.log(`🛡️ Running Quality Gate for ${phoneId}...`);
+    console.info(`🛡️ Running Quality Gate for ${phoneId}...`);
     const checks = [
       { name: "Connection", status: await this.checkConnection(phoneId) },
       { name: "Disk Space", command: "df -h /data | grep /data" },
@@ -249,14 +249,14 @@ export class PhoneSystem {
   }
 
   async runBatch(commands: { deviceId: string; command: string }[]) {
-    console.log(`⚡ Processing batch of ${commands.length} tasks (Limit: ${SYSTEM_LIMITS.BATCH_SIZE})...`);
+    console.info(`⚡ Processing batch of ${commands.length} tasks (Limit: ${SYSTEM_LIMITS.BATCH_SIZE})...`);
     
     const results = [];
     for (let i = 0; i < commands.length; i += SYSTEM_LIMITS.BATCH_SIZE) {
       const batch = commands.slice(i, i + SYSTEM_LIMITS.BATCH_SIZE);
       const batchPromises = batch.map(async (task) => {
         try {
-          console.log(`  [Batch] Executing on ${task.deviceId}: ${task.command}`);
+          console.info(`  [Batch] Executing on ${task.deviceId}: ${task.command}`);
           const proc = Bun.spawn(["adb", "-s", task.deviceId, "shell", task.command]);
           const output = await new Response(proc.stdout).text();
           const exitCode = await proc.exited;

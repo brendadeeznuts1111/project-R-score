@@ -79,7 +79,7 @@ function parseCliArgs(): CLIOptions {
  * @private
  */
 function printHelp(): void {
-  console.log(`
+  console.info(`
 📡 bun rss-analyzer - RSS Feed Scraper & Analyzer
 
 Usage:
@@ -193,15 +193,15 @@ function displayTokenAnalysis(
   uniqueCount: number,
   topTokens: Array<[string, number]>
 ): void {
-  console.log(`\n🔍 Content Analysis`);
-  console.log(`${"─".repeat(50)}`);
-  console.log(`Total Tokens:    ${totalTokens}`);
-  console.log(`Unique Tokens:   ${uniqueCount}`);
-  console.log(`Avg Token Freq:  ${(totalTokens / uniqueCount).toFixed(2)}`);
+  console.info(`\n🔍 Content Analysis`);
+  console.info(`${"─".repeat(50)}`);
+  console.info(`Total Tokens:    ${totalTokens}`);
+  console.info(`Unique Tokens:   ${uniqueCount}`);
+  console.info(`Avg Token Freq:  ${(totalTokens / uniqueCount).toFixed(2)}`);
 
-  console.log(`\nTop Keywords:`);
+  console.info(`\nTop Keywords:`);
   for (const [token, freq] of topTokens) {
-    console.log(`  • ${token}: ${freq}`);
+    console.info(`  • ${token}: ${freq}`);
   }
 }
 
@@ -230,7 +230,7 @@ async function main(): Promise<void> {
   }
 
   try {
-    console.log(`\n📡 Fetching RSS feed: ${options.url}`);
+    console.info(`\n📡 Fetching RSS feed: ${options.url}`);
 
     const scraper = new RSSScraper({
       maxItems: options.maxItems,
@@ -249,7 +249,7 @@ async function main(): Promise<void> {
       output = formatSummary(feed);
     }
 
-    console.log(output);
+    console.info(output);
 
     // Analyze if requested
     if (options.analyze) {
@@ -259,7 +259,7 @@ async function main(): Promise<void> {
     // Save to file if requested
     if (options.output) {
       await Bun.write(options.output, output);
-      console.log(`\n✅ Output saved to ${options.output}`);
+      console.info(`\n✅ Output saved to ${options.output}`);
     }
   } catch (error) {
     console.error(`\n❌ Error: ${(error as Error).message}`);

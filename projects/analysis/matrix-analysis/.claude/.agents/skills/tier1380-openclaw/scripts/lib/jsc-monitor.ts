@@ -481,14 +481,14 @@ if (import.meta.main) {
 
 	switch (command) {
 		case "memory":
-			console.log(createPerformanceReport());
+			console.info(createPerformanceReport());
 			break;
 
 		case "gc":
-			console.log("Forcing garbage collection...");
+			console.info("Forcing garbage collection...");
 			forceGC();
-			console.log("GC complete");
-			console.log(createPerformanceReport());
+			console.info("GC complete");
+			console.info(createPerformanceReport());
 			break;
 
 		case "profile": {
@@ -502,20 +502,20 @@ if (import.meta.main) {
 				return testData.filter((item) => item.id % 2 === 0).map((item) => item.id);
 			}, 100);
 
-			console.log("Profile Result:");
-			console.log(`  Duration: ${profile?.duration.toFixed(2)}ms`);
-			console.log(`  Filtered items: ${result.length}`);
+			console.info("Profile Result:");
+			console.info(`  Duration: ${profile?.duration.toFixed(2)}ms`);
+			console.info(`  Filtered items: ${result.length}`);
 
 			if (profile) {
-				console.log("\nTier Breakdown:");
+				console.info("\nTier Breakdown:");
 				const total = Object.values(profile.tierBreakdown).reduce((a, b) => a + b, 0);
 				if (total > 0) {
 					for (const [tier, count] of Object.entries(profile.tierBreakdown)) {
 						const pct = ((count / total) * 100).toFixed(1);
-						console.log(`  ${tier}: ${count} (${pct}%)`);
+						console.info(`  ${tier}: ${count} (${pct}%)`);
 					}
 				} else {
-					console.log("  (Profiler data not available)");
+					console.info("  (Profiler data not available)");
 				}
 			}
 			break;
@@ -527,61 +527,61 @@ if (import.meta.main) {
 				args[0] ||
 				"/Users/nolarose/.kimi/skills/tier1380-openclaw/config/telegram-topics.yaml";
 
-			console.log(`Monitoring memory during file read: ${filePath}`);
+			console.info(`Monitoring memory during file read: ${filePath}`);
 
 			const { result, memoryDelta, peakMemory } = await monitorMemory(async () => {
 				const file = Bun.file(filePath);
 				return await file.text();
 			}, "file-read");
 
-			console.log(`\nFile size: ${formatBytes(result.length)}`);
-			console.log(`Memory delta: ${formatBytes(memoryDelta)}`);
-			console.log(`Peak memory: ${formatBytes(peakMemory)}`);
+			console.info(`\nFile size: ${formatBytes(result.length)}`);
+			console.info(`Memory delta: ${formatBytes(memoryDelta)}`);
+			console.info(`Peak memory: ${formatBytes(peakMemory)}`);
 			break;
 		}
 
 		case "timezone": {
 			if (args[0]) {
 				const newTz = setTimeZone(args[0]);
-				console.log(`Timezone set to: ${newTz}`);
+				console.info(`Timezone set to: ${newTz}`);
 			} else {
-				console.log(`Current timezone: ${getTimeZone()}`);
-				console.log("Usage: jsc-monitor timezone <timezone>");
-				console.log("Example: jsc-monitor timezone America/New_York");
+				console.info(`Current timezone: ${getTimeZone()}`);
+				console.info("Usage: jsc-monitor timezone <timezone>");
+				console.info("Example: jsc-monitor timezone America/New_York");
 			}
 			break;
 		}
 
 		case "describe": {
 			const value = args[0] || "test";
-			console.log(`Value: ${value}`);
-			console.log(`Description: ${describeValue(value)}`);
+			console.info(`Value: ${value}`);
+			console.info(`Description: ${describeValue(value)}`);
 
 			// Also describe some test values
-			console.log("\nTest descriptions:");
-			console.log(`  null: ${describeValue(null)}`);
-			console.log(`  undefined: ${describeValue(undefined)}`);
-			console.log(`  42: ${describeValue(42)}`);
-			console.log(`  {}: ${describeValue({})}`);
-			console.log(`  []: ${describeValue([])}`);
+			console.info("\nTest descriptions:");
+			console.info(`  null: ${describeValue(null)}`);
+			console.info(`  undefined: ${describeValue(undefined)}`);
+			console.info(`  42: ${describeValue(42)}`);
+			console.info(`  {}: ${describeValue({})}`);
+			console.info(`  []: ${describeValue([])}`);
 			break;
 		}
 
 		case "snapshot": {
 			const snapshot = createPerformanceSnapshot();
-			console.log(JSON.stringify(snapshot, null, 2));
+			console.info(JSON.stringify(snapshot, null, 2));
 			break;
 		}
 
 		case "drain": {
-			console.log("Draining microtasks...");
+			console.info("Draining microtasks...");
 			drainMicrotasks();
-			console.log("Microtasks drained");
+			console.info("Microtasks drained");
 			break;
 		}
 
 		default:
-			console.log(`
+			console.info(`
 JSC Performance Monitor
 
 Usage:

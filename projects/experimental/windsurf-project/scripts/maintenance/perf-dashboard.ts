@@ -6,7 +6,7 @@ import { emojiAlignedTable } from '../../utils/super-table.js';
  * Empire Perf Auditor: Counts sync I/O and other bottlenecks.
  */
 async function runAuditor() {
-  console.log('📊 Empire Perf Dashboard: Auditing codebase...');
+  console.info('📊 Empire Perf Dashboard: Auditing codebase...');
 
   const getCount = (pattern: string) => {
     const res = Bun.spawnSync(['grep', '-r', '--exclude=perf-dashboard.ts', '--exclude=fix-sync-io.ts', pattern, 'src', 'utils', 'scripts']);
@@ -32,8 +32,8 @@ async function runAuditor() {
 
   emojiAlignedTable(tableData, ['Indicator', 'Value', 'Impact', 'Scope', 'Recommendation']);
 
-  console.log(`\n📈 Total Issues: ${totalIssues}`);
-  console.log(totalIssues === 0 ? '✅ PERF BEST' : `⚠️ Found ${totalIssues} bottlenecks. Run mega-fixes.sh for quick wins.`);
+  console.info(`\n📈 Total Issues: ${totalIssues}`);
+  console.info(totalIssues === 0 ? '✅ PERF BEST' : `⚠️ Found ${totalIssues} bottlenecks. Run mega-fixes.sh for quick wins.`);
 }
 
 runAuditor().catch(console.error);

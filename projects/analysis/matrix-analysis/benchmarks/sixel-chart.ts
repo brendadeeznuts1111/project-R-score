@@ -175,16 +175,16 @@ function main() {
 
   if (useSixel) {
     // Try SIXEL (if terminal supports it)
-    console.log(renderSixelChart());
+    console.info(renderSixelChart());
   } else if (useSpark) {
     // Sparkline only
-    console.log(renderSparkline());
+    console.info(renderSparkline());
   } else {
     // Default: ASCII chart
-    console.log(renderAsciiChart());
+    console.info(renderAsciiChart());
 
     // Show sparkline at bottom
-    console.log(`Trend: ${renderSparkline()}`);
+    console.info(`Trend: ${renderSparkline()}`);
   }
 }
 

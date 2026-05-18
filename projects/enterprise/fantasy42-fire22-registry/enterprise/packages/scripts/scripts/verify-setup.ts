@@ -7,14 +7,14 @@
 import { existsSync } from 'fs';
 import { secrets } from 'bun';
 
-console.log('🔍 Crystal Clear Architecture - Setup Verification');
-console.log('='.repeat(60));
+console.info('🔍 Crystal Clear Architecture - Setup Verification');
+console.info('='.repeat(60));
 
 // ============================================================================
 // 1. ENVIRONMENT CHECKS
 // ============================================================================
-console.log('\n🌍 Environment Checks:');
-console.log('-'.repeat(30));
+console.info('\n🌍 Environment Checks:');
+console.info('-'.repeat(30));
 
 const checks = [
   {
@@ -43,17 +43,17 @@ for (const check of checks) {
   try {
     const result = check.check();
     const status = result ? '✅' : '❌';
-    console.log(`${status} ${check.name}: ${check.message}`);
+    console.info(`${status} ${check.name}: ${check.message}`);
   } catch (error) {
-    console.log(`❌ ${check.name}: Error - ${error.message}`);
+    console.info(`❌ ${check.name}: Error - ${error.message}`);
   }
 }
 
 // ============================================================================
 // 2. FILE SYSTEM CHECKS
 // ============================================================================
-console.log('\n📁 File System Checks:');
-console.log('-'.repeat(30));
+console.info('\n📁 File System Checks:');
+console.info('-'.repeat(30));
 
 const files = [
   'package.json',
@@ -70,14 +70,14 @@ for (const file of files) {
   const exists = existsSync(file);
   const status = exists ? '✅' : '❌';
   const type = file.endsWith('/') ? 'directory' : 'file';
-  console.log(`${status} ${file}: ${type} ${exists ? 'exists' : 'missing'}`);
+  console.info(`${status} ${file}: ${type} ${exists ? 'exists' : 'missing'}`);
 }
 
 // ============================================================================
 // 3. DEPENDENCY CHECKS
 // ============================================================================
-console.log('\n📦 Dependency Checks:');
-console.log('-'.repeat(30));
+console.info('\n📦 Dependency Checks:');
+console.info('-'.repeat(30));
 
 const dependencies = [
   { name: '@types/bun', required: true },
@@ -91,7 +91,7 @@ try {
   const packageContent = await Bun.file('package.json').text();
   packageJson = JSON.parse(packageContent);
 } catch (error) {
-  console.log(`❌ package.json: JSON parsing failed - ${error.message}`);
+  console.info(`❌ package.json: JSON parsing failed - ${error.message}`);
   packageJson = { dependencies: {}, devDependencies: {} };
 }
 
@@ -101,7 +101,7 @@ for (const dep of dependencies) {
   const installed = installedDeps[dep.name];
   const status = installed ? '✅' : dep.required ? '❌' : '⚠️';
   const version = installed ? `v${installed.replace('^', '')}` : 'not installed';
-  console.log(
+  console.info(
     `${status} ${dep.name}: ${version}${dep.required && !installed ? ' (required)' : ''}`
   );
 }
@@ -109,8 +109,8 @@ for (const dep of dependencies) {
 // ============================================================================
 // 4. SECURITY CHECKS
 // ============================================================================
-console.log('\n🔐 Security Checks:');
-console.log('-'.repeat(30));
+console.info('\n🔐 Security Checks:');
+console.info('-'.repeat(30));
 
 const securityChecks = [
   {
@@ -140,17 +140,17 @@ for (const check of securityChecks) {
   try {
     const result = await check.check();
     const status = result ? '✅' : '⚠️';
-    console.log(`${status} ${check.name}: ${check.message}`);
+    console.info(`${status} ${check.name}: ${check.message}`);
   } catch (error) {
-    console.log(`❌ ${check.name}: Error - ${error.message}`);
+    console.info(`❌ ${check.name}: Error - ${error.message}`);
   }
 }
 
 // ============================================================================
 // 5. CONFIGURATION VALIDATION
 // ============================================================================
-console.log('\n⚙️  Configuration Validation:');
-console.log('-'.repeat(30));
+console.info('\n⚙️  Configuration Validation:');
+console.info('-'.repeat(30));
 
 const configChecks = [
   {
@@ -189,17 +189,17 @@ for (const check of configChecks) {
   try {
     const result = await check.check();
     const status = result ? '✅' : '❌';
-    console.log(`${status} ${check.name}: ${check.message}`);
+    console.info(`${status} ${check.name}: ${check.message}`);
   } catch (error) {
-    console.log(`❌ ${check.name}: Error - ${error.message}`);
+    console.info(`❌ ${check.name}: Error - ${error.message}`);
   }
 }
 
 // ============================================================================
 // 6. RECOMMENDATIONS
 // ============================================================================
-console.log('\n💡 Recommendations:');
-console.log('-'.repeat(30));
+console.info('\n💡 Recommendations:');
+console.info('-'.repeat(30));
 
 const recommendations = [
   "Run 'bun run registry:setup' to configure private registries",
@@ -211,18 +211,18 @@ const recommendations = [
 ];
 
 recommendations.forEach((rec, index) => {
-  console.log(`${index + 1}. ${rec}`);
+  console.info(`${index + 1}. ${rec}`);
 });
 
 // ============================================================================
 // SUMMARY
 // ============================================================================
-console.log('\n🎉 Setup Verification Complete!');
-console.log('-'.repeat(60));
-console.log('If you see mostly ✅ marks, your environment is properly configured!');
-console.log('If you see ❌ marks, please address those issues before proceeding.');
-console.log('\n📚 Next Steps:');
-console.log('1. Read the README_PRIVATE_REPO.md for overview');
-console.log('2. Follow the SECURITY_SETUP_GUIDE.md for secure setup');
-console.log('3. Start with the DEVELOPER_GUIDE.md for development workflow');
-console.log('\n🚀 Happy coding with Crystal Clear Architecture!');
+console.info('\n🎉 Setup Verification Complete!');
+console.info('-'.repeat(60));
+console.info('If you see mostly ✅ marks, your environment is properly configured!');
+console.info('If you see ❌ marks, please address those issues before proceeding.');
+console.info('\n📚 Next Steps:');
+console.info('1. Read the README_PRIVATE_REPO.md for overview');
+console.info('2. Follow the SECURITY_SETUP_GUIDE.md for secure setup');
+console.info('3. Start with the DEVELOPER_GUIDE.md for development workflow');
+console.info('\n🚀 Happy coding with Crystal Clear Architecture!');

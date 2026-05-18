@@ -64,8 +64,8 @@ class MultiRegistryPublisher {
       tag?: string;
     } = {}
   ): Promise<void> {
-    console.log('🚀 Fire22 Multi-Registry Publisher v2.0');
-    console.log('='.repeat(60));
+    console.info('🚀 Fire22 Multi-Registry Publisher v2.0');
+    console.info('='.repeat(60));
 
     const workspaces = [
       '@fire22-pattern-system',
@@ -77,7 +77,7 @@ class MultiRegistryPublisher {
     ];
 
     for (const workspace of workspaces) {
-      console.log(`\n📦 Publishing ${workspace}...`);
+      console.info(`\n📦 Publishing ${workspace}...`);
 
       try {
         // Prepare workspace for publishing
@@ -92,14 +92,14 @@ class MultiRegistryPublisher {
           await this.publishToAllRegistries(workspace, options);
         }
 
-        console.log(`✅ ${workspace} published successfully`);
+        console.info(`✅ ${workspace} published successfully`);
       } catch (error) {
         console.error(`❌ Failed to publish ${workspace}:`, error);
       }
     }
 
-    console.log('\n' + '='.repeat(60));
-    console.log('🎉 Publishing complete!');
+    console.info('\n' + '='.repeat(60));
+    console.info('🎉 Publishing complete!');
   }
 
   /**
@@ -109,12 +109,12 @@ class MultiRegistryPublisher {
     const workspacePath = join(this.workspacesPath, workspace);
 
     // 1. Clean package.json with Bun PM
-    console.log('  📋 Cleaning package.json...');
+    console.info('  📋 Cleaning package.json...');
     await $`cd ${workspacePath} && bun pm pkg fix`;
 
     // 2. Run tests if required
     if (options.test !== false) {
-      console.log('  🧪 Running tests...');
+      console.info('  🧪 Running tests...');
       try {
         await $`cd ${workspacePath} && bun test`;
       } catch (error) {
@@ -124,12 +124,12 @@ class MultiRegistryPublisher {
 
     // 3. Build if required
     if (options.build !== false) {
-      console.log('  🔨 Building workspace...');
+      console.info('  🔨 Building workspace...');
       await $`cd ${workspacePath} && bun run build:standalone`;
     }
 
     // 4. Verify package integrity
-    console.log('  🔍 Verifying package...');
+    console.info('  🔍 Verifying package...');
     await this.verifyPackage(workspacePath);
 
     // 5. Update version if needed
@@ -147,7 +147,7 @@ class MultiRegistryPublisher {
 
     for (const registry of this.registries) {
       try {
-        console.log(`  📡 Publishing to ${registry.name}...`);
+        console.info(`  📡 Publishing to ${registry.name}...`);
         await this.publishToSpecificRegistry(workspacePath, registry, options);
         results.push({ registry: registry.name, status: 'success' });
       } catch (error) {
@@ -157,10 +157,10 @@ class MultiRegistryPublisher {
     }
 
     // Report results
-    console.log('  📊 Publishing results:');
+    console.info('  📊 Publishing results:');
     results.forEach(r => {
       const icon = r.status === 'success' ? '✅' : '❌';
-      console.log(`    ${icon} ${r.registry}: ${r.status}`);
+      console.info(`    ${icon} ${r.registry}: ${r.status}`);
     });
   }
 
@@ -236,7 +236,7 @@ class MultiRegistryPublisher {
 
         default:
           // Generic Bun publish
-          console.log(`    Running: bun publish ${publishArgs.join(' ')}`);
+          console.info(`    Running: bun publish ${publishArgs.join(' ')}`);
           await $`cd ${workspacePath} && bun publish ${publishArgs}`.env(envVars);
       }
     } finally {
@@ -256,7 +256,7 @@ class MultiRegistryPublisher {
     publishArgs: string[],
     envVars: any
   ): Promise<void> {
-    console.log(`    Running: bun publish ${publishArgs.join(' ')}`);
+    console.info(`    Running: bun publish ${publishArgs.join(' ')}`);
 
     // Use native bun publish
     await $`cd ${workspacePath} && bun publish ${publishArgs}`.env(envVars);
@@ -266,7 +266,7 @@ class MultiRegistryPublisher {
       const packageJson = JSON.parse(readFileSync(join(workspacePath, 'package.json'), 'utf-8'));
       try {
         await $`bun pm view ${packageJson.name}@${packageJson.version}`;
-        console.log(`    ✅ Package ${packageJson.name}@${packageJson.version} verified on npm`);
+        console.info(`    ✅ Package ${packageJson.name}@${packageJson.version} verified on npm`);
       } catch {
         console.warn(`    ⚠️  Could not verify package on npm (may take time to propagate)`);
       }
@@ -283,7 +283,7 @@ class MultiRegistryPublisher {
   ): Promise<void> {
     // For Cloudflare, we deploy as a Worker instead of npm package
     if (options.dryRun) {
-      console.log('    🌐 Dry run: Would deploy to Cloudflare Workers');
+      console.info('    🌐 Dry run: Would deploy to Cloudflare Workers');
       return;
     }
 
@@ -295,7 +295,7 @@ class MultiRegistryPublisher {
 
     // Register in Cloudflare Registry API if available
     const packageJson = JSON.parse(readFileSync(join(workspacePath, 'package.json'), 'utf-8'));
-    console.log(`    ✅ Deployed ${packageJson.name} to Cloudflare Workers`);
+    console.info(`    ✅ Deployed ${packageJson.name} to Cloudflare Workers`);
   }
 
   /**
@@ -307,7 +307,7 @@ class MultiRegistryPublisher {
     registry: Registry,
     envVars: any
   ): Promise<void> {
-    console.log(`    Running: bun publish ${publishArgs.join(' ')} (GitHub Packages)`);
+    console.info(`    Running: bun publish ${publishArgs.join(' ')} (GitHub Packages)`);
 
     // GitHub Packages requires scoped packages
     const packageJson = JSON.parse(readFileSync(join(workspacePath, 'package.json'), 'utf-8'));
@@ -397,7 +397,7 @@ class MultiRegistryPublisher {
     }
 
     // Pack the package to verify it can be packed
-    console.log('    📦 Packing for verification...');
+    console.info('    📦 Packing for verification...');
     await $`cd ${workspacePath} && bun pm pack --dry-run`;
   }
 
@@ -412,14 +412,14 @@ class MultiRegistryPublisher {
     const shouldBump = await this.shouldBumpVersion(packageJson.name, packageJson.version);
 
     if (shouldBump) {
-      console.log(`  📈 Bumping version from ${packageJson.version}...`);
+      console.info(`  📈 Bumping version from ${packageJson.version}...`);
 
       // Use bun version to bump
       await $`cd ${workspacePath} && bun version patch`;
 
       // Read new version
       const newPackageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
-      console.log(`  📈 Version bumped to ${newPackageJson.version}`);
+      console.info(`  📈 Version bumped to ${newPackageJson.version}`);
     }
   }
 
@@ -524,25 +524,25 @@ if (import.meta.main) {
       break;
 
     default:
-      console.log('Usage: bun multi-registry-publisher.ts [command] [options]');
-      console.log('');
-      console.log('Commands:');
-      console.log('  publish, all    - Publish to all registries');
-      console.log('  npm            - Publish to npm only');
-      console.log('  cloudflare     - Publish to Cloudflare only');
-      console.log('  github         - Publish to GitHub Packages only');
-      console.log('');
-      console.log('Options:');
-      console.log('  --dry-run      - Simulate publish without actually publishing');
-      console.log('  --no-test      - Skip running tests');
-      console.log('  --no-build     - Skip building');
-      console.log('  --tag=X        - Publish with specific tag (default: latest)');
-      console.log('  --registry=X   - Publish to specific registry');
-      console.log('');
-      console.log('Examples:');
-      console.log('  bun multi-registry-publisher.ts publish --dry-run');
-      console.log('  bun multi-registry-publisher.ts npm --tag=beta');
-      console.log('  bun multi-registry-publisher.ts all --no-test');
+      console.info('Usage: bun multi-registry-publisher.ts [command] [options]');
+      console.info('');
+      console.info('Commands:');
+      console.info('  publish, all    - Publish to all registries');
+      console.info('  npm            - Publish to npm only');
+      console.info('  cloudflare     - Publish to Cloudflare only');
+      console.info('  github         - Publish to GitHub Packages only');
+      console.info('');
+      console.info('Options:');
+      console.info('  --dry-run      - Simulate publish without actually publishing');
+      console.info('  --no-test      - Skip running tests');
+      console.info('  --no-build     - Skip building');
+      console.info('  --tag=X        - Publish with specific tag (default: latest)');
+      console.info('  --registry=X   - Publish to specific registry');
+      console.info('');
+      console.info('Examples:');
+      console.info('  bun multi-registry-publisher.ts publish --dry-run');
+      console.info('  bun multi-registry-publisher.ts npm --tag=beta');
+      console.info('  bun multi-registry-publisher.ts all --no-test');
   }
 }
 

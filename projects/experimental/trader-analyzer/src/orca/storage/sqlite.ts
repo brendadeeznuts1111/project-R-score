@@ -100,7 +100,7 @@ export class OrcaStorage {
       )
     `);
 
-		console.log("ORCA Storage: SQLite initialized");
+		console.info("ORCA Storage: SQLite initialized");
 	}
 
 	/**

@@ -9,15 +9,15 @@ import { AtlasSchema } from '../src/atlas/schema.js';
 import { ethers } from 'ethers';
 
 async function demoAtlas() {
-  console.log(chalk.hex("#FF6B35").bold(`
+  console.info(chalk.hex("#FF6B35").bold(`
 ╔══════════════════════════════════════════════╗
 ║        🗂  NEBULA-FLOW™ DEVICE ATLAS         ║
 ║     Device Lifecycle Management System      ║
 ╚══════════════════════════════════════════════╝
 `));
 
-  console.log(chalk.blue.bold("🗂️  Atlas Components:"));
-  console.log(`
+  console.info(chalk.blue.bold("🗂️  Atlas Components:"));
+  console.info(`
 ${chalk.green("✅")} SQLite Schema       - Device metadata & events
 ${chalk.green("✅")} Atlas-Agent™        - Zero-touch VM monitoring
 ${chalk.green("✅")} Automated Snapshots - Daily → Weekly → Monthly
@@ -26,9 +26,9 @@ ${chalk.green("✅")} Inventory System    - Real-time fleet overview
 ${chalk.green("✅")} Restore Capability  - 3-minute device resurrection
 `);
 
-  console.log(chalk.cyan.bold("📊 Database Schema:"));
+  console.info(chalk.cyan.bold("📊 Database Schema:"));
 
-  console.log(`
+  console.info(`
 ┌─────────────────────────────────────────────┐
 │ starlight (main table)                      │
 ├─────────────────────────────────────────────┤
@@ -50,7 +50,7 @@ ${chalk.green("✅")} Restore Capability  - 3-minute device resurrection
 `);
 
   // Create some demo data
-  console.log(chalk.yellow.bold("🔄 Creating demo Starlight-IDs..."));
+  console.info(chalk.yellow.bold("🔄 Creating demo Starlight-IDs..."));
 
   const demoDevices = [
     { handle: "$sarah123", volume: 1250.50 },
@@ -99,7 +99,7 @@ ${chalk.green("✅")} Restore Capability  - 3-minute device resurrection
       );
     }
 
-    console.log(`  ${chalk.green("✅")} Created ${device.handle} (${device.volume.toFixed(2)} vol, ${snapCount} snaps)`);
+    console.info(`  ${chalk.green("✅")} Created ${device.handle} (${device.volume.toFixed(2)} vol, ${snapCount} snaps)`);
   }
 
   // Add some cold exports
@@ -112,33 +112,33 @@ ${chalk.green("✅")} Restore Capability  - 3-minute device resurrection
     );
   }
 
-  console.log("");
-  console.log(chalk.magenta.bold("📊 Atlas Inventory:"));
+  console.info("");
+  console.info(chalk.magenta.bold("📊 Atlas Inventory:"));
 
   const inventory = AtlasSchema.getInventory();
 
-  console.log("┌──────────┬──────┬─────────┬──────────┬──────────┐");
-  console.log("│ Age days │ Count│ Active  │ Vol $k   │ Snaps    │");
-  console.log("├──────────┼──────┼─────────┼──────────┼──────────┤");
+  console.info("┌──────────┬──────┬─────────┬──────────┬──────────┐");
+  console.info("│ Age days │ Count│ Active  │ Vol $k   │ Snaps    │");
+  console.info("├──────────┼──────┼─────────┼──────────┼──────────┤");
 
   inventory.ageGroups.forEach(group => {
-    console.log(`│ ${group.range.padEnd(8)} │ ${group.count.toString().padStart(4)} │ ${group.active.toString().padStart(7)} │ ${(group.volume/1000).toFixed(1).padStart(8)} │ ${group.snaps.toString().padStart(8)} │`);
+    console.info(`│ ${group.range.padEnd(8)} │ ${group.count.toString().padStart(4)} │ ${group.active.toString().padStart(7)} │ ${(group.volume/1000).toFixed(1).padStart(8)} │ ${group.snaps.toString().padStart(8)} │`);
   });
 
-  console.log("└──────────┴──────┴─────────┴──────────┴──────────┘");
+  console.info("└──────────┴──────┴─────────┴──────────┴──────────┘");
 
   const lastExport = inventory.total.lastExport ?
     `${Math.floor((Date.now() - inventory.total.lastExport) / 60000)} min ago` : "never";
 
-  console.log("");
-  console.log(`Total Starlight-IDs: ${inventory.total.count}`);
-  console.log(`Total cold tarballs: ${inventory.total.coldExports} (encrypted)`);
-  console.log(`Last export: ${lastExport}`);
+  console.info("");
+  console.info(`Total Starlight-IDs: ${inventory.total.count}`);
+  console.info(`Total cold tarballs: ${inventory.total.coldExports} (encrypted)`);
+  console.info(`Last export: ${lastExport}`);
 
-  console.log("");
-  console.log(chalk.green.bold("🚀 Integration Commands:"));
+  console.info("");
+  console.info(chalk.green.bold("🚀 Integration Commands:"));
 
-  console.log(`
+  console.info(`
 // Start dashboard & access Atlas
 ${chalk.gray("$")} bun run dashboard
 ${chalk.gray("// Press 'd' for Device Commander")}
@@ -157,10 +157,10 @@ ${chalk.gray("$")} # Push env, then run agent
 ${chalk.gray("// In Device Commander: select device, press 'p', then 'r'")}
 `);
 
-  console.log("");
-  console.log(chalk.blue.bold("🔄 Automated Lifecycle:"));
+  console.info("");
+  console.info(chalk.blue.bold("🔄 Automated Lifecycle:"));
 
-  console.log(`
+  console.info(`
 ${chalk.cyan("📅 Daily (14:00 UTC):")}
   • Create snapshot
   • Thin old snapshots (daily→weekly→monthly)
@@ -177,10 +177,10 @@ ${chalk.cyan("🗂️  Cold Storage:")}
   • 90-day retention for destroyed devices
 `);
 
-  console.log("");
-  console.log(chalk.green.bold("💡 Key Benefits:"));
+  console.info("");
+  console.info(chalk.green.bold("💡 Key Benefits:"));
 
-  console.log(`
+  console.info(`
 • ${chalk.yellow("Zero-touch operation")} - Atlas-Agent runs automatically
 • ${chalk.yellow("Complete lifecycle")} - Birth to death to resurrection
 • ${chalk.yellow("Encrypted backups")} - Cold storage with birth-key encryption
@@ -189,10 +189,10 @@ ${chalk.cyan("🗂️  Cold Storage:")}
 • ${chalk.yellow("Immutable history")} - Every event logged & timestamped
 `);
 
-  console.log("");
-  console.log(chalk.magenta.bold("🎯 Production Deployment:"));
+  console.info("");
+  console.info(chalk.magenta.bold("🎯 Production Deployment:"));
 
-  console.log(`
+  console.info(`
 1. ${chalk.cyan("Device Creation:")}
    - Clone from base snapshot
    - Push Atlas-Agent + env vars
@@ -214,10 +214,10 @@ ${chalk.cyan("🗂️  Cold Storage:")}
    - Device back online in 3 minutes
 `);
 
-  console.log("");
-  console.log(chalk.green.bold("🎉 Nebula-Flow™ Device Atlas Ready!"));
-  console.log(chalk.gray("Run 'bun run dashboard' to access the Device Commander"));
-  console.log(chalk.gray("Press 'd' then 'a' to see the Atlas Inventory"));
+  console.info("");
+  console.info(chalk.green.bold("🎉 Nebula-Flow™ Device Atlas Ready!"));
+  console.info(chalk.gray("Run 'bun run dashboard' to access the Device Commander"));
+  console.info(chalk.gray("Press 'd' then 'a' to see the Atlas Inventory"));
 }
 
 if (import.meta.main) {

@@ -394,8 +394,8 @@ export class BunMCPServer {
       validateHost(process.env.MCP_SERVER_HOST) ||
       validateHost(process.env.SERVER_HOST) ||
       'localhost';
-    console.log(`🌐 Bun MCP server running on http://${MCP_SERVER_HOST}:${port}`);
-    console.log(`📊 Health check: http://${MCP_SERVER_HOST}:${port}/health`);
+    console.info(`🌐 Bun MCP server running on http://${MCP_SERVER_HOST}:${port}`);
+    console.info(`📊 Health check: http://${MCP_SERVER_HOST}:${port}/health`);
   }
 
   async run(): Promise<void> {

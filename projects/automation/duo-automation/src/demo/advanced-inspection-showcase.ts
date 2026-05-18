@@ -19,15 +19,15 @@ import {
 import { MerchantDashboardManager } from '../merchant/dashboard/merchant-dashboard-manager.ts';
 import { AIEvidenceAnalyzer } from '../ai/evidence-analyzer.ts';
 
-console.log('🎨 ADVANCED INSPECTION SYSTEM SHOWCASE');
-console.log('='.repeat(60));
+console.info('🎨 ADVANCED INSPECTION SYSTEM SHOWCASE');
+console.info('='.repeat(60));
 
 // ============================================================================
 // EVIDENCE INTEGRITY PIPELINE INSPECTION
 // ============================================================================
 
-console.log('\n🔍 EVIDENCE INTEGRITY PIPELINE INSPECTION');
-console.log('-'.repeat(50));
+console.info('\n🔍 EVIDENCE INTEGRITY PIPELINE INSPECTION');
+console.info('-'.repeat(50));
 
 // Demo 1: Evidence Security Checks
 const evidenceSecurityChecks = [
@@ -79,15 +79,15 @@ const evidenceSecurityChecks = [
 ];
 
 evidenceSecurityChecks.forEach((check, index) => {
-  console.log(`\n${index + 1}. ${check[INSPECT_CUSTOM]()}`);
+  console.info(`\n${index + 1}. ${check[INSPECT_CUSTOM]()}`);
 });
 
 // ============================================================================
 // DATABASE CONNECTION INSPECTION
 // ============================================================================
 
-console.log('\n🗄️  DATABASE CONNECTION INSPECTION');
-console.log('-'.repeat(50));
+console.info('\n🗄️  DATABASE CONNECTION INSPECTION');
+console.info('-'.repeat(50));
 
 const dbConnections = [
   new DatabaseConnectionInspectable(
@@ -128,15 +128,15 @@ const dbConnections = [
 ];
 
 dbConnections.forEach((conn, index) => {
-  console.log(`\n${index + 1}. ${conn[INSPECT_CUSTOM]()}`);
+  console.info(`\n${index + 1}. ${conn[INSPECT_CUSTOM]()}`);
 });
 
 // ============================================================================
 // CONNECTION STATISTICS INSPECTION
 // ============================================================================
 
-console.log('\n📊 CONNECTION STATISTICS INSPECTION');
-console.log('-'.repeat(50));
+console.info('\n📊 CONNECTION STATISTICS INSPECTION');
+console.info('-'.repeat(50));
 
 const connectionStats = [
   new ConnectionStatsInspectable(
@@ -181,15 +181,15 @@ const connectionStats = [
 ];
 
 connectionStats.forEach((stats, index) => {
-  console.log(`\n${index + 1}. ${stats[INSPECT_CUSTOM]()}`);
+  console.info(`\n${index + 1}. ${stats[INSPECT_CUSTOM]()}`);
 });
 
 // ============================================================================
 // FAMILY MEMBER TRUST INSPECTION
 // ============================================================================
 
-console.log('\n👥 FAMILY MEMBER TRUST INSPECTION');
-console.log('-'.repeat(50));
+console.info('\n👥 FAMILY MEMBER TRUST INSPECTION');
+console.info('-'.repeat(50));
 
 const familyMembers = [
   new FamilyMemberInspectable(
@@ -238,15 +238,15 @@ const familyMembers = [
 ];
 
 familyMembers.forEach((member, index) => {
-  console.log(`\n${index + 1}. ${member[INSPECT_CUSTOM]()}`);
+  console.info(`\n${index + 1}. ${member[INSPECT_CUSTOM]()}`);
 });
 
 // ============================================================================
 // PAYMENT FLOW INSPECTION
 // ============================================================================
 
-console.log('\n💳 PAYMENT FLOW INSPECTION');
-console.log('-'.repeat(50));
+console.info('\n💳 PAYMENT FLOW INSPECTION');
+console.info('-'.repeat(50));
 
 const paymentFlow = [
   new PaymentRequestInspectable(
@@ -315,15 +315,15 @@ const paymentFlow = [
 ];
 
 paymentFlow.forEach((payment, index) => {
-  console.log(`\n${index + 1}. ${payment[INSPECT_CUSTOM]()}`);
+  console.info(`\n${index + 1}. ${payment[INSPECT_CUSTOM]()}`);
 });
 
 // ============================================================================
 // INTEGRATED SYSTEM INSPECTION
 // ============================================================================
 
-console.log('\n🔗 INTEGRATED SYSTEM INSPECTION');
-console.log('-'.repeat(50));
+console.info('\n🔗 INTEGRATED SYSTEM INSPECTION');
+console.info('-'.repeat(50));
 
 // Create a comprehensive system status
 const systemStatus = {
@@ -352,22 +352,22 @@ const systemStatus = {
   }
 };
 
-console.log('\n📊 SYSTEM OVERVIEW');
-console.log('┌' + '─'.repeat(58) + '┐');
-console.log('│ 🔍 EVIDENCE INTEGRITY PIPELINE STATUS' + ' '.repeat(25) + '│');
-console.log('├' + '─'.repeat(58) + '┤');
-console.log(`│ Evidence:   ${systemStatus.evidence.total} total │ ${systemStatus.evidence.verified} verified │ ${systemStatus.evidence.pending} pending │ ${systemStatus.evidence.flagged} flagged │`);
-console.log(`│ Security:   ${systemStatus.security.checksRun} checks │ ${systemStatus.security.passed} passed │ ${systemStatus.security.warnings} warnings │ ${systemStatus.security.failures} failures │`);
-console.log(`│ Payments:   ${systemStatus.payments.total} total │ ${systemStatus.payments.completed} completed │ ${systemStatus.payments.pending} pending │ ${systemStatus.payments.failed} failed │`);
-console.log(`│ Connections: ${systemStatus.connections.active} active │ ${systemStatus.connections.idle} idle │ ${systemStatus.connections.failed} failed │`);
-console.log('└' + '─'.repeat(58) + '┘');
+console.info('\n📊 SYSTEM OVERVIEW');
+console.info('┌' + '─'.repeat(58) + '┐');
+console.info('│ 🔍 EVIDENCE INTEGRITY PIPELINE STATUS' + ' '.repeat(25) + '│');
+console.info('├' + '─'.repeat(58) + '┤');
+console.info(`│ Evidence:   ${systemStatus.evidence.total} total │ ${systemStatus.evidence.verified} verified │ ${systemStatus.evidence.pending} pending │ ${systemStatus.evidence.flagged} flagged │`);
+console.info(`│ Security:   ${systemStatus.security.checksRun} checks │ ${systemStatus.security.passed} passed │ ${systemStatus.security.warnings} warnings │ ${systemStatus.security.failures} failures │`);
+console.info(`│ Payments:   ${systemStatus.payments.total} total │ ${systemStatus.payments.completed} completed │ ${systemStatus.payments.pending} pending │ ${systemStatus.payments.failed} failed │`);
+console.info(`│ Connections: ${systemStatus.connections.active} active │ ${systemStatus.connections.idle} idle │ ${systemStatus.connections.failed} failed │`);
+console.info('└' + '─'.repeat(58) + '┘');
 
 // ============================================================================
 // PERFORMANCE METRICS INSPECTION
 // ============================================================================
 
-console.log('\n⚡ PERFORMANCE METRICS INSPECTION');
-console.log('-'.repeat(50));
+console.info('\n⚡ PERFORMANCE METRICS INSPECTION');
+console.info('-'.repeat(50));
 
 const performanceMetrics = {
   inspection: {
@@ -388,27 +388,27 @@ const performanceMetrics = {
   }
 };
 
-console.log('\n📈 PERFORMANCE BREAKDOWN');
-console.log('┌' + '─'.repeat(58) + '┐');
-console.log('│ ⚡ PERFORMANCE METRICS' + ' '.repeat(38) + '│');
-console.log('├' + '─'.repeat(58) + '┤');
-console.log(`│ Inspection: ${performanceMetrics.inspection.totalObjects} objects │ ${performanceMetrics.inspection.averageTime}ms avg │ ${performanceMetrics.inspection.throughput}/sec │ ${(performanceMetrics.inspection.successRate * 100).toFixed(1)}% success │`);
-console.log(`│ Evidence:   ${performanceMetrics.evidence.processingTime}s avg │ ${(performanceMetrics.evidence.verificationRate * 100).toFixed(1)}% verified │ ${(performanceMetrics.evidence.falsePositiveRate * 100).toFixed(1)}% false positive │`);
-console.log(`│ AI:         ${performanceMetrics.ai.analysisTime}s avg │ ${(performanceMetrics.ai.accuracy * 100).toFixed(1)}% accurate │ ${(performanceMetrics.ai.confidence * 100).toFixed(1)}% confidence │`);
-console.log('└' + '─'.repeat(58) + '┘');
+console.info('\n📈 PERFORMANCE BREAKDOWN');
+console.info('┌' + '─'.repeat(58) + '┐');
+console.info('│ ⚡ PERFORMANCE METRICS' + ' '.repeat(38) + '│');
+console.info('├' + '─'.repeat(58) + '┤');
+console.info(`│ Inspection: ${performanceMetrics.inspection.totalObjects} objects │ ${performanceMetrics.inspection.averageTime}ms avg │ ${performanceMetrics.inspection.throughput}/sec │ ${(performanceMetrics.inspection.successRate * 100).toFixed(1)}% success │`);
+console.info(`│ Evidence:   ${performanceMetrics.evidence.processingTime}s avg │ ${(performanceMetrics.evidence.verificationRate * 100).toFixed(1)}% verified │ ${(performanceMetrics.evidence.falsePositiveRate * 100).toFixed(1)}% false positive │`);
+console.info(`│ AI:         ${performanceMetrics.ai.analysisTime}s avg │ ${(performanceMetrics.ai.accuracy * 100).toFixed(1)}% accurate │ ${(performanceMetrics.ai.confidence * 100).toFixed(1)}% confidence │`);
+console.info('└' + '─'.repeat(58) + '┘');
 
-console.log('\n✅ Advanced Inspection Showcase Complete!');
-console.log('\n🎯 Advanced Features Demonstrated:');
-console.log('  • Evidence integrity security checks');
-console.log('  • Database connection monitoring');
-console.log('  • Connection statistics with utilization bars');
-console.log('  • Family member trust scoring');
-console.log('  • Payment flow with metadata');
-console.log('  • Integrated system status overview');
-console.log('  • Performance metrics visualization');
-console.log('  • Zero-width attack detection');
-console.log('  • Multi-currency payment formatting');
-console.log('  • Real-time connection monitoring');
+console.info('\n✅ Advanced Inspection Showcase Complete!');
+console.info('\n🎯 Advanced Features Demonstrated:');
+console.info('  • Evidence integrity security checks');
+console.info('  • Database connection monitoring');
+console.info('  • Connection statistics with utilization bars');
+console.info('  • Family member trust scoring');
+console.info('  • Payment flow with metadata');
+console.info('  • Integrated system status overview');
+console.info('  • Performance metrics visualization');
+console.info('  • Zero-width attack detection');
+console.info('  • Multi-currency payment formatting');
+console.info('  • Real-time connection monitoring');
 
 if (import.meta.main) {
   // Showcase completed

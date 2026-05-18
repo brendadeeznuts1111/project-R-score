@@ -107,10 +107,10 @@ export class BundleAnalyzerServer {
       }
     });
     
-    console.log('📦 Bundle Analyzer Server running on http://localhost:8777');
-    console.log('📊 Bundle Matrix: http://localhost:8777/bundle');
-    console.log('🔗 Dependency Graph: http://localhost:8777/bundle-graph');
-    console.log('📥 Metafile Download: http://localhost:8777/metafile.json');
+    console.info('📦 Bundle Analyzer Server running on http://localhost:8777');
+    console.info('📊 Bundle Matrix: http://localhost:8777/bundle');
+    console.info('🔗 Dependency Graph: http://localhost:8777/bundle-graph');
+    console.info('📥 Metafile Download: http://localhost:8777/metafile.json');
   }
   
   private static renderDependencyGraph(): string {

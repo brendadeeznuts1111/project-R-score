@@ -18,8 +18,8 @@ registryCommand
   .option('-j, --json', 'Output as JSON')
   .action(async (packageName, options) => {
     try {
-      console.log(`🔍 Getting info for: ${packageName}`);
-      console.log(`🌐 Registry: ${REGISTRY_URL}`);
+      console.info(`🔍 Getting info for: ${packageName}`);
+      console.info(`🌐 Registry: ${REGISTRY_URL}`);
       
       const response = await fetch(`${REGISTRY_URL}/${packageName}`, {
         headers: {
@@ -34,21 +34,21 @@ registryCommand
       const packageData = await response.json();
       
       if (options.json) {
-        console.log(JSON.stringify(packageData, null, 2));
+        console.info(JSON.stringify(packageData, null, 2));
       } else {
-        console.log('✅ Package info retrieved:');
-        console.log(`📦 Name: ${packageData.name}`);
-        console.log(`📋 Latest version: ${packageData['dist-tags']?.latest}`);
-        console.log(`📋 Description: ${packageData.description || 'Enterprise automation framework with CLI tools and utilities'}`);
-        console.log(`📋 Versions available: ${Object.keys(packageData.versions || {}).join(', ')}`);
-        console.log(`📋 Maintainers: ${packageData.maintainers?.map((m: any) => m.name).join(', ') || 'Unknown'}`);
+        console.info('✅ Package info retrieved:');
+        console.info(`📦 Name: ${packageData.name}`);
+        console.info(`📋 Latest version: ${packageData['dist-tags']?.latest}`);
+        console.info(`📋 Description: ${packageData.description || 'Enterprise automation framework with CLI tools and utilities'}`);
+        console.info(`📋 Versions available: ${Object.keys(packageData.versions || {}).join(', ')}`);
+        console.info(`📋 Maintainers: ${packageData.maintainers?.map((m: any) => m.name).join(', ') || 'Unknown'}`);
         
         if (packageData.repository) {
-          console.log(`📋 Repository: ${packageData.repository.url || packageData.repository}`);
+          console.info(`📋 Repository: ${packageData.repository.url || packageData.repository}`);
         }
         
         if (packageData.bin) {
-          console.log(`📋 Binaries: ${Object.keys(packageData.bin).join(', ')}`);
+          console.info(`📋 Binaries: ${Object.keys(packageData.bin).join(', ')}`);
         }
       }
     } catch (error: unknown) {
@@ -64,7 +64,7 @@ registryCommand
   .option('-j, --json', 'Output as JSON')
   .action(async (options) => {
     try {
-      console.log(`🔍 Searching registry: ${REGISTRY_URL}`);
+      console.info(`🔍 Searching registry: ${REGISTRY_URL}`);
       
       const response = await fetch(`${REGISTRY_URL}/${PACKAGE_NAME}`, {
         headers: {
@@ -79,17 +79,17 @@ registryCommand
       const packageData = await response.json();
       
       if (options.json) {
-        console.log(JSON.stringify([packageData], null, 2));
+        console.info(JSON.stringify([packageData], null, 2));
       } else {
-        console.log('📋 Available packages:');
-        console.log('✅ Registry is accessible');
-        console.log(`📦 Found package: ${packageData.name}`);
-        console.log(`📋 Version: ${packageData['dist-tags']?.latest}`);
-        console.log(`📋 Description: ${packageData.description || 'Enterprise automation framework with CLI tools and utilities'}`);
-        console.log(`📋 Size: ${packageData.dist?.unpackedSize ? `${packageData.dist.unpackedSize} bytes` : '8.35MB (unpacked)'}`);
+        console.info('📋 Available packages:');
+        console.info('✅ Registry is accessible');
+        console.info(`📦 Found package: ${packageData.name}`);
+        console.info(`📋 Version: ${packageData['dist-tags']?.latest}`);
+        console.info(`📋 Description: ${packageData.description || 'Enterprise automation framework with CLI tools and utilities'}`);
+        console.info(`📋 Size: ${packageData.dist?.unpackedSize ? `${packageData.dist.unpackedSize} bytes` : '8.35MB (unpacked)'}`);
         
-        console.log('\n💡 To get detailed info for a specific package:');
-        console.log('   windsurf-cli registry info <package-name>');
+        console.info('\n💡 To get detailed info for a specific package:');
+        console.info('   windsurf-cli registry info <package-name>');
       }
     } catch (error: unknown) {
       console.error('❌ Failed to access registry:', error instanceof Error ? error.message : String(error));
@@ -104,14 +104,14 @@ registryCommand
   .option('-d, --dry-run', 'Dry run without actually publishing')
   .action(async (options) => {
     try {
-      console.log('🚀 Publishing to custom NPM registry v3.7');
+      console.info('🚀 Publishing to custom NPM registry v3.7');
       
       if (options.dryRun) {
-        console.log('🔍 DRY RUN: Would publish with the following configuration:');
-        console.log(`🌐 Registry: ${REGISTRY_URL}`);
-        console.log('📦 Package: windsurf-project');
-        console.log('🔐 Authentication: Bearer token');
-        console.log('⚠️  This is a dry run - no actual publishing will occur');
+        console.info('🔍 DRY RUN: Would publish with the following configuration:');
+        console.info(`🌐 Registry: ${REGISTRY_URL}`);
+        console.info('📦 Package: windsurf-project');
+        console.info('🔐 Authentication: Bearer token');
+        console.info('⚠️  This is a dry run - no actual publishing will occur');
         return;
       }
 
@@ -130,7 +130,7 @@ registryCommand
       const result = await $`bun scripts/publish.ts`.env(envVars).quiet();
 
       if (result.exitCode === 0) {
-        console.log('✅ Package published successfully to registry v3.7!');
+        console.info('✅ Package published successfully to registry v3.7!');
       } else {
         console.error('❌ Publish failed');
         process.exit(1);
@@ -147,13 +147,13 @@ registryCommand
   .description('Test registry deployment and accessibility')
   .action(async () => {
     try {
-      console.log('🧪 Testing deployment from registry...');
+      console.info('🧪 Testing deployment from registry...');
       
       // Run the test script
       const result = await $`bun scripts/test-install.ts`.quiet();
 
       if (result.exitCode === 0) {
-        console.log('✅ Registry deployment test passed!');
+        console.info('✅ Registry deployment test passed!');
       } else {
         console.error('❌ Registry deployment test failed');
         process.exit(1);
@@ -173,7 +173,7 @@ registryCommand
   .option('-D, --save-dev', 'Save as dev dependency')
   .action(async (packageName, options) => {
     try {
-      console.log(`📦 Installing ${packageName} from custom registry...`);
+      console.info(`📦 Installing ${packageName} from custom registry...`);
       
       let installCmd = `bun install ${packageName} --registry ${REGISTRY_URL}`;
       
@@ -188,7 +188,7 @@ registryCommand
       const result = await $`${installCmd}`.quiet();
 
       if (result.exitCode === 0) {
-        console.log('✅ Package installed successfully!');
+        console.info('✅ Package installed successfully!');
       } else {
         console.error('❌ Installation failed');
         process.exit(1);
@@ -205,10 +205,10 @@ registryCommand
   .description('Show registry status and information')
   .action(async () => {
     try {
-      console.log('📊 NPM Registry v3.7 Status');
-      console.log('='.repeat(40));
-      console.log(`🌐 URL: ${REGISTRY_URL}`);
-      console.log(`📦 Package: ${PACKAGE_NAME}`);
+      console.info('📊 NPM Registry v3.7 Status');
+      console.info('='.repeat(40));
+      console.info(`🌐 URL: ${REGISTRY_URL}`);
+      console.info(`📦 Package: ${PACKAGE_NAME}`);
       
       // Test registry accessibility
       const response = await fetch(`${REGISTRY_URL}/${PACKAGE_NAME}`, {
@@ -219,21 +219,21 @@ registryCommand
 
       if (response.ok) {
         const packageData = await response.json();
-        console.log(`✅ Status: Online and accessible`);
-        console.log(`📋 Version: ${packageData['dist-tags']?.latest}`);
-        console.log(`🔐 Authentication: Working`);
-        console.log(`💾 Storage: Cloudflare R2`);
+        console.info(`✅ Status: Online and accessible`);
+        console.info(`📋 Version: ${packageData['dist-tags']?.latest}`);
+        console.info(`🔐 Authentication: Working`);
+        console.info(`💾 Storage: Cloudflare R2`);
       } else {
-        console.log(`❌ Status: Offline or error (${response.status})`);
+        console.info(`❌ Status: Offline or error (${response.status})`);
       }
       
-      console.log('\n🔧 Available Commands:');
-      console.log('  windsurf-cli registry info     - Get package info');
-      console.log('  windsurf-cli registry search   - Search packages');
-      console.log('  windsurf-cli registry publish  - Publish package');
-      console.log('  windsurf-cli registry test     - Test deployment');
-      console.log('  windsurf-cli registry install  - Install package');
-      console.log('  windsurf-cli registry status   - Show this status');
+      console.info('\n🔧 Available Commands:');
+      console.info('  windsurf-cli registry info     - Get package info');
+      console.info('  windsurf-cli registry search   - Search packages');
+      console.info('  windsurf-cli registry publish  - Publish package');
+      console.info('  windsurf-cli registry test     - Test deployment');
+      console.info('  windsurf-cli registry install  - Install package');
+      console.info('  windsurf-cli registry status   - Show this status');
     } catch (error: unknown) {
       console.error('❌ Failed to get status:', error instanceof Error ? error.message : String(error));
       process.exit(1);

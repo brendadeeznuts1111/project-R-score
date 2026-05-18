@@ -6,12 +6,12 @@
  * for generating profiling data in Markdown format.
  */
 
-console.log("🔥 Bun v1.3.7 Markdown Profiling Demo");
-console.log("=====================================\n");
+console.info("🔥 Bun v1.3.7 Markdown Profiling Demo");
+console.info("=====================================\n");
 
 // Simulate some CPU-intensive work for profiling
 async function performCPUWork() {
-	console.log("📊 Performing CPU-intensive work...");
+	console.info("📊 Performing CPU-intensive work...");
 
 	// Mathematical computations
 	let result = 0;
@@ -39,15 +39,15 @@ async function performCPUWork() {
 		buffers.push(buffer);
 	}
 
-	console.log(`   ✅ Math result: ${result.toFixed(2)}`);
-	console.log(`   ✅ Text length: ${text.length}`);
-	console.log(`   ✅ Arrays created: ${arrays.length}`);
-	console.log(`   ✅ Buffers created: ${buffers.length}`);
+	console.info(`   ✅ Math result: ${result.toFixed(2)}`);
+	console.info(`   ✅ Text length: ${text.length}`);
+	console.info(`   ✅ Arrays created: ${arrays.length}`);
+	console.info(`   ✅ Buffers created: ${buffers.length}`);
 }
 
 // Simulate memory allocation patterns for heap profiling
 async function performMemoryWork() {
-	console.log("💾 Performing memory-intensive work...");
+	console.info("💾 Performing memory-intensive work...");
 
 	const objects = [];
 
@@ -79,8 +79,8 @@ async function performMemoryWork() {
 		}
 	});
 
-	console.log(`   ✅ Objects created: ${objects.length}`);
-	console.log(`   ✅ Functions created: ${functions.length}`);
+	console.info(`   ✅ Objects created: ${objects.length}`);
+	console.info(`   ✅ Functions created: ${functions.length}`);
 
 	// Simulate some processing
 	objects.forEach((obj) => {
@@ -95,22 +95,22 @@ async function performMemoryWork() {
 async function main() {
 	try {
 		await performCPUWork();
-		console.log();
+		console.info();
 		await performMemoryWork();
-		console.log();
-		console.log("✅ Demo completed! Check generated profile files:");
-		console.log("   📄 CPU Profile: CPU.*.md (Markdown format)");
-		console.log("   💾 Heap Profile: Heap.*.md (Markdown format)");
-		console.log();
-		console.log("🔍 View profiles with:");
-		console.log("   cat CPU.*.md");
-		console.log("   cat Heap.*.md");
-		console.log();
-		console.log("📊 Key features of Markdown format:");
-		console.log("   • Human-readable tables and summaries");
-		console.log("   • Easy sharing on GitHub/GitLab");
-		console.log("   • LLM-friendly for analysis");
-		console.log("   • CLI-friendly with grep/sed/awk");
+		console.info();
+		console.info("✅ Demo completed! Check generated profile files:");
+		console.info("   📄 CPU Profile: CPU.*.md (Markdown format)");
+		console.info("   💾 Heap Profile: Heap.*.md (Markdown format)");
+		console.info();
+		console.info("🔍 View profiles with:");
+		console.info("   cat CPU.*.md");
+		console.info("   cat Heap.*.md");
+		console.info();
+		console.info("📊 Key features of Markdown format:");
+		console.info("   • Human-readable tables and summaries");
+		console.info("   • Easy sharing on GitHub/GitLab");
+		console.info("   • LLM-friendly for analysis");
+		console.info("   • CLI-friendly with grep/sed/awk");
 	} catch (error) {
 		console.error("❌ Error:", error);
 		process.exit(1);

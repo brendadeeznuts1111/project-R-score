@@ -25,7 +25,7 @@ class DNSCache {
   
   async warmup(): Promise<void> {
     const start = nanoseconds();
-    console.log("[dns] Starting DNS cache warmup");
+    console.info("[dns] Starting DNS cache warmup");
     
     // Pre-populate cache with known hosts
     const knownHosts: Record<string, string> = {
@@ -45,7 +45,7 @@ class DNSCache {
     }
     
     const duration = nanoseconds() - start;
-    console.log(`[dns] Cache warmed up in ${duration}ns (${this.cache.size} entries)`);
+    console.info(`[dns] Cache warmed up in ${duration}ns (${this.cache.size} entries)`);
   }
   
   async resolve(
@@ -79,7 +79,7 @@ class DNSCache {
       this.stats.misses++;
       this.stats.totalMissTime += nanoseconds() - start;
       
-      console.log(`[dns] Cache miss: ${hostname} -> ${ip}`);
+      console.info(`[dns] Cache miss: ${hostname} -> ${ip}`);
       return ip;
       
     } catch (error) {
@@ -109,7 +109,7 @@ class DNSCache {
   clear(): void {
     this.cache.clear();
     this.stats = { hits: 0, misses: 0, totalHitTime: 0n, totalMissTime: 0n };
-    console.log("[dns] Cache cleared");
+    console.info("[dns] Cache cleared");
   }
 }
 

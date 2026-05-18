@@ -24,6 +24,6 @@ test("premium-only logic elimination", () => {
   };
 
   const result = startAutomation();
-  console.log(`Automation status: ${result}`);
+  console.info(`Automation status: ${result}`);
   expect(["Automation disabled", "Automation running"]).toContain(result);
 });

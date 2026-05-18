@@ -58,7 +58,7 @@ class JSDocHeaderAdder {
     };
 
     async addHeadersToAll(): Promise<void> {
-        console.log('🏷️ Adding standardized JSDoc headers to all TypeScript files...\n');
+        console.info('🏷️ Adding standardized JSDoc headers to all TypeScript files...\n');
 
         const files = await this.getAllTypeScriptFiles();
 
@@ -66,8 +66,8 @@ class JSDocHeaderAdder {
             await this.addHeaderToFile(file);
         }
 
-        console.log(`\n✅ Processed ${files.length} TypeScript files`);
-        console.log('📊 Added standardized grepable/ripgrep tags to all files');
+        console.info(`\n✅ Processed ${files.length} TypeScript files`);
+        console.info('📊 Added standardized grepable/ripgrep tags to all files');
     }
 
     private async getAllTypeScriptFiles(): Promise<FileInfo[]> {
@@ -89,7 +89,7 @@ class JSDocHeaderAdder {
                     });
                 }
             } catch (error) {
-                console.log(`⚠️ No files found in ${category}/`);
+                console.info(`⚠️ No files found in ${category}/`);
             }
         }
 
@@ -102,7 +102,7 @@ class JSDocHeaderAdder {
 
             // Skip if already has standardized header
             if (content.includes('[DOMAIN]') && content.includes('[#REF]')) {
-                console.log(`⏭️  Skipping ${file.path} - already has header`);
+                console.info(`⏭️  Skipping ${file.path} - already has header`);
                 return;
             }
 
@@ -111,9 +111,9 @@ class JSDocHeaderAdder {
             const updatedContent = this.insertHeader(content, header);
 
             await writeFile(file.path, updatedContent, 'utf8');
-            console.log(`✅ Added header to ${file.path}`);
+            console.info(`✅ Added header to ${file.path}`);
         } catch (error) {
-            console.log(`❌ Failed to process ${file.path}: ${error.message}`);
+            console.info(`❌ Failed to process ${file.path}: ${error.message}`);
         }
     }
 

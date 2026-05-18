@@ -26,7 +26,7 @@ export class BunEdgeTelemetryKernel {
           tokenExpiry: t.Number()
         }),
         open(ws) {
-          console.log(`📡 Agent ${ws.data.query.id} connected to Telemetry Kernel`);
+          console.info(`📡 Agent ${ws.data.query.id} connected to Telemetry Kernel`);
         },
         message(ws, message) {
           // Process high-speed telemetry with <15ms latency SLA
@@ -46,7 +46,7 @@ export class BunEdgeTelemetryKernel {
       })
       .listen(this.PORT);
 
-    console.log(`🛰️ BunEdgeTelemetryKernel operational on port ${this.PORT}`);
+    console.info(`🛰️ BunEdgeTelemetryKernel operational on port ${this.PORT}`);
   }
 }
 

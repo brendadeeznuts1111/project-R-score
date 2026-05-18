@@ -16,9 +16,9 @@ function jsPluginProcessing(files: string[]): number {
     }
 
     const end = performance.now();
-    console.log(`🐌 JavaScript Plugin: ${files.length} files in ${(end - start).toFixed(2)}ms`);
-    console.log(`   Total imports found: ${totalImports}`);
-    console.log(`   UTF-8 -> UTF-16 conversion overhead: YES`);
+    console.info(`🐌 JavaScript Plugin: ${files.length} files in ${(end - start).toFixed(2)}ms`);
+    console.info(`   Total imports found: ${totalImports}`);
+    console.info(`   UTF-8 -> UTF-16 conversion overhead: YES`);
 
     return end - start;
 }
@@ -37,10 +37,10 @@ function nativePluginProcessing(files: string[]): number {
     }
 
     const end = performance.now();
-    console.log(`⚡ Native Plugin: ${files.length} files in ${(end - start).toFixed(2)}ms`);
-    console.log(`   Total imports found: ${totalImports}`);
-    console.log(`   UTF-8 -> UTF-16 conversion overhead: NO`);
-    console.log(`   Multi-threading capability: YES`);
+    console.info(`⚡ Native Plugin: ${files.length} files in ${(end - start).toFixed(2)}ms`);
+    console.info(`   Total imports found: ${totalImports}`);
+    console.info(`   UTF-8 -> UTF-16 conversion overhead: NO`);
+    console.info(`   Multi-threading capability: YES`);
 
     return end - start;
 }
@@ -54,22 +54,22 @@ const demoFiles = [
     'import { Bun } from "bun"; import { Database } from "bun:sqlite";'
 ];
 
-console.log('🚀 Plugin Performance Comparison');
-console.log('='.repeat(50));
+console.info('🚀 Plugin Performance Comparison');
+console.info('='.repeat(50));
 
 const jsTime = jsPluginProcessing(demoFiles);
-console.log('');
+console.info('');
 const nativeTime = nativePluginProcessing(demoFiles);
 
-console.log('');
-console.log('📊 Performance Summary:');
-console.log(`JavaScript Plugin: ${jsTime.toFixed(2)}ms`);
-console.log(`Native Plugin: ${nativeTime.toFixed(2)}ms`);
-console.log(`Speed improvement: ${((jsTime - nativeTime) / jsTime * 100).toFixed(1)}%`);
-console.log('');
-console.log('🎯 Native Plugin Advantages:');
-console.log('✅ Multi-threading support');
-console.log('✅ No UTF-8 -> UTF-16 conversion');
-console.log('✅ Direct memory access');
-console.log('✅ C/C++ performance optimization');
-console.log('✅ Parallel file processing');
+console.info('');
+console.info('📊 Performance Summary:');
+console.info(`JavaScript Plugin: ${jsTime.toFixed(2)}ms`);
+console.info(`Native Plugin: ${nativeTime.toFixed(2)}ms`);
+console.info(`Speed improvement: ${((jsTime - nativeTime) / jsTime * 100).toFixed(1)}%`);
+console.info('');
+console.info('🎯 Native Plugin Advantages:');
+console.info('✅ Multi-threading support');
+console.info('✅ No UTF-8 -> UTF-16 conversion');
+console.info('✅ Direct memory access');
+console.info('✅ C/C++ performance optimization');
+console.info('✅ Parallel file processing');

@@ -259,16 +259,16 @@ async function main() {
     const vaultPath = args.find(arg => arg.startsWith('--vault='))?.split('=')[1] || './Odds-mono-map';
     const minSharedTags = parseInt(args.find(arg => arg.startsWith('--min-tags='))?.split('=')[1] || '2');
 
-    console.log('🔗 Transitive Link Validator');
-    console.log(`📁 Vault: ${vaultPath}`);
-    console.log(`🏷️ Minimum shared tags: ${minSharedTags}`);
+    console.info('🔗 Transitive Link Validator');
+    console.info(`📁 Vault: ${vaultPath}`);
+    console.info(`🏷️ Minimum shared tags: ${minSharedTags}`);
 
     // Mock implementation for demo
     const validator = new TransitiveLinkValidator(minSharedTags);
 
     // In real implementation, this would load the actual graph
-    console.log('✅ Transitive link validator initialized');
-    console.log('🔍 Ready to analyze transitive relationships');
+    console.info('✅ Transitive link validator initialized');
+    console.info('🔍 Ready to analyze transitive relationships');
 
     // Example analysis
     const mockResults = {
@@ -286,15 +286,15 @@ async function main() {
         connectivityScore: 67.5
     };
 
-    console.log('\n📊 Transitive Analysis Results:');
-    console.log(`🔗 Missing transitive links: ${mockResults.totalMissingLinks}`);
-    console.log(`📈 Average confidence: ${(mockResults.averageConfidence * 100).toFixed(1)}%`);
-    console.log(`🌐 Connectivity score: ${mockResults.connectivityScore.toFixed(1)}%`);
+    console.info('\n📊 Transitive Analysis Results:');
+    console.info(`🔗 Missing transitive links: ${mockResults.totalMissingLinks}`);
+    console.info(`📈 Average confidence: ${(mockResults.averageConfidence * 100).toFixed(1)}%`);
+    console.info(`🌐 Connectivity score: ${mockResults.connectivityScore.toFixed(1)}%`);
 
-    console.log('\n🎯 Top Suggestions:');
+    console.info('\n🎯 Top Suggestions:');
     mockResults.topSuggestions.forEach((suggestion, index) => {
-        console.log(`${index + 1}. [[${suggestion.from}]] → [[${suggestion.to}]] (via [[${suggestion.via}]])`);
-        console.log(`   ${suggestion.reason} (${(suggestion.confidence * 100).toFixed(0)}% confidence)`);
+        console.info(`${index + 1}. [[${suggestion.from}]] → [[${suggestion.to}]] (via [[${suggestion.via}]])`);
+        console.info(`   ${suggestion.reason} (${(suggestion.confidence * 100).toFixed(0)}% confidence)`);
     });
 }
 

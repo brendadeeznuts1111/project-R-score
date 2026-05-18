@@ -407,7 +407,7 @@ export class SQLite3511Engine {
       // Update table statistics
       (db as any).run?.("ANALYZE");
 
-      console.log("Database optimization completed");
+      console.info("Database optimization completed");
     } catch (error: unknown) {
       console.error("Database optimization failed:", error);
     }

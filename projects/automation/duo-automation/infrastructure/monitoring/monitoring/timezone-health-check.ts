@@ -99,10 +99,10 @@ export function logTimezoneHealth(): void {
   const status = checkTimezoneHealth();
   
   if (status.healthy) {
-    console.log(`✅ Timezone Health Check Passed`);
-    console.log(`   Timezone: ${status.config?.displayName}`);
-    console.log(`   Offset: ${status.config?.standardOffset}`);
-    console.log(`   DST: ${status.config?.observesDst ? 'Yes' : 'No'}`);
+    console.info(`✅ Timezone Health Check Passed`);
+    console.info(`   Timezone: ${status.config?.displayName}`);
+    console.info(`   Offset: ${status.config?.standardOffset}`);
+    console.info(`   DST: ${status.config?.observesDst ? 'Yes' : 'No'}`);
   } else {
     console.error(`❌ Timezone Health Check Failed`);
     console.error(`   Errors: ${status.errors.join(', ')}`);
@@ -115,36 +115,36 @@ export function logTimezoneHealth(): void {
 
 // CLI usage
 if (import.meta.main) {
-  console.log('🔍 DuoPlus v3.7 Timezone Health Check\n');
+  console.info('🔍 DuoPlus v3.7 Timezone Health Check\n');
   
   // Auto-initialize if SCOPE_TIMEZONE is set but not initialized
   if (process.env.SCOPE_TIMEZONE && !isTimezoneInitialized()) {
-    console.log('🔄 Auto-initializing timezone from SCOPE_TIMEZONE...\n');
+    console.info('🔄 Auto-initializing timezone from SCOPE_TIMEZONE...\n');
     validateAndSetTimezone();
   }
   
   const status = checkTimezoneHealth();
   
-  console.log(`Timestamp: ${status.timestamp}`);
-  console.log(`Overall Health: ${status.healthy ? '✅ HEALTHY' : '❌ UNHEALTHY'}\n`);
+  console.info(`Timestamp: ${status.timestamp}`);
+  console.info(`Overall Health: ${status.healthy ? '✅ HEALTHY' : '❌ UNHEALTHY'}\n`);
   
-  console.log('Check Results:');
+  console.info('Check Results:');
   Object.entries(status.checks).forEach(([check, passed]) => {
-    console.log(`  ${passed ? '✅' : '❌'} ${check}`);
+    console.info(`  ${passed ? '✅' : '❌'} ${check}`);
   });
   
   if (status.config) {
-    console.log('\nActive Configuration:');
-    console.log(`  Scope Timezone: ${status.config.scopeTimezone}`);
-    console.log(`  Display Name: ${status.config.displayName}`);
-    console.log(`  Standard Offset: ${status.config.standardOffset}`);
-    console.log(`  Observes DST: ${status.config.observesDst}`);
-    console.log(`  Is UTC: ${status.config.isUtc}`);
+    console.info('\nActive Configuration:');
+    console.info(`  Scope Timezone: ${status.config.scopeTimezone}`);
+    console.info(`  Display Name: ${status.config.displayName}`);
+    console.info(`  Standard Offset: ${status.config.standardOffset}`);
+    console.info(`  Observes DST: ${status.config.observesDst}`);
+    console.info(`  Is UTC: ${status.config.isUtc}`);
   }
   
   if (status.errors.length > 0) {
-    console.log('\nErrors:');
-    status.errors.forEach(error => console.log(`  - ${error}`));
+    console.info('\nErrors:');
+    status.errors.forEach(error => console.info(`  - ${error}`));
   }
   
   process.exit(status.healthy ? 0 : 1);

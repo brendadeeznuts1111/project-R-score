@@ -49,20 +49,20 @@ console.timeEnd('Matrix Population');
 const totalBytes = COLUMNS * ROWS * 4 + ROWS * 1; // Float32Array + Uint8Array
 const totalMB = (totalBytes / (1024 * 1024)).toFixed(2);
 
-console.log(`✅ Matrix created: ${ROWS.toLocaleString()} rows × ${COLUMNS} columns`);
-console.log(`📊 Memory usage: ${totalMB} MB (${totalBytes.toLocaleString()} bytes)`);
-console.log(`🎯 Efficiency: ${(totalBytes / ROWS).toFixed(0)} bytes per row`);
+console.info(`✅ Matrix created: ${ROWS.toLocaleString()} rows × ${COLUMNS} columns`);
+console.info(`📊 Memory usage: ${totalMB} MB (${totalBytes.toLocaleString()} bytes)`);
+console.info(`🎯 Efficiency: ${(totalBytes / ROWS).toFixed(0)} bytes per row`);
 
 // Example operations demonstrating performance
 console.time('Column Sum');
 const col0Sum = matrix.col0.reduce((sum, val) => sum + val, 0);
 console.timeEnd('Column Sum');
-console.log(`📈 Column 0 sum: ${col0Sum.toLocaleString()}`);
+console.info(`📈 Column 0 sum: ${col0Sum.toLocaleString()}`);
 
 console.time('Active Row Filter');
 const activeRows = matrix.isActive.reduce((count, active) => count + active, 0);
 console.timeEnd('Active Row Filter');
-console.log(`🔍 Active rows: ${activeRows.toLocaleString()} (${(activeRows/ROWS*100).toFixed(1)}%)`);
+console.info(`🔍 Active rows: ${activeRows.toLocaleString()} (${(activeRows/ROWS*100).toFixed(1)}%)`);
 
 export { matrix, ROWS, COLUMNS };
 export type { MatrixType };

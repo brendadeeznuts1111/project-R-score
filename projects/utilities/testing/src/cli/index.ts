@@ -33,8 +33,8 @@ program
   .option("-r, --rows <n>", "Terminal rows", parseInt, process.stdout.rows || 24)
   .option("-s, --shell <path>", "Shell path", "bash")
   .action(async (opts) => {
-    console.log(`🎮 Starting Dev HQ Terminal (${opts.shell})...`);
-    console.log("Type 'exit' to quit\n");
+    console.info(`🎮 Starting Dev HQ Terminal (${opts.shell})...`);
+    console.info("Type 'exit' to quit\n");
 
     await using terminal = new Bun.Terminal({
       cols: opts.cols,
@@ -67,7 +67,7 @@ program
   .option("-p, --port <n>", "Server port", parseInt, 4000)
   .option("-i, --interval <ms>", "Refresh interval", parseInt, 1000)
   .action(async (opts) => {
-    console.log(`📊 Starting Dev HQ Monitor on port ${opts.port}...`);
+    console.info(`📊 Starting Dev HQ Monitor on port ${opts.port}...`);
 
     await using terminal = new Bun.Terminal({
       cols: process.stdout.columns || 80,
@@ -107,7 +107,7 @@ program
   .option("-r, --readonly", "Open in readonly mode", false)
   .action(async (file, opts) => {
     const targetFile = file || "./README.md";
-    console.log(`📝 Opening ${targetFile} in vim...`);
+    console.info(`📝 Opening ${targetFile} in vim...`);
     await editorPTY(targetFile, { readonly: opts.readonly });
     process.exit(0);
   });
@@ -128,13 +128,13 @@ program
     const insights = await analyzeCodebase();
 
     if (opts.json) {
-      console.log(JSON.stringify(insights, null, 2));
+      console.info(JSON.stringify(insights, null, 2));
       return;
     }
 
     if (opts.table) {
-      console.log(`\n\x1b[32mDev HQ Insights\x1b[0m • \x1b[33m${insights.stats.healthScore}%\x1b[0m (\x1b[36m${insights.stats.totalFiles}\x1b[0m files)`);
-      console.log(`Complexity: \x1b[${insights.stats.complexity === "Low" ? 32 : insights.stats.complexity === "Medium" ? 33 : 31}m${insights.stats.complexity}\x1b[0m\n`);
+      console.info(`\n\x1b[32mDev HQ Insights\x1b[0m • \x1b[33m${insights.stats.healthScore}%\x1b[0m (\x1b[36m${insights.stats.totalFiles}\x1b[0m files)`);
+      console.info(`Complexity: \x1b[${insights.stats.complexity === "Low" ? 32 : insights.stats.complexity === "Medium" ? 33 : 31}m${insights.stats.complexity}\x1b[0m\n`);
 
       const rows = [
         ["File", "Health", "Complexity", "Size", "Lines"],
@@ -145,9 +145,9 @@ program
       ];
       createTable(rows);
     } else {
-      console.log(`📊 Health Score: ${insights.stats.healthScore}%`);
-      console.log(`📁 Total Files: ${insights.stats.totalFiles}`);
-      console.log(`📈 Complexity: ${insights.stats.complexity}`);
+      console.info(`📊 Health Score: ${insights.stats.healthScore}%`);
+      console.info(`📁 Total Files: ${insights.stats.totalFiles}`);
+      console.info(`📈 Complexity: ${insights.stats.complexity}`);
     }
   });
 
@@ -168,7 +168,7 @@ program
       process.exit(1);
     }
 
-    console.log(`\x1b[36m☁️ Initializing Cloud Upload System...\x1b[0m`);
+    console.info(`\x1b[36m☁️ Initializing Cloud Upload System...\x1b[0m`);
     
     // Set debug feature flag for this run if requested
     if (opts.debug) process.env.DEBUG = "true";
@@ -200,7 +200,7 @@ program
     });
 
     await Promise.all(uploadTasks);
-    console.log(`\n\x1b[32m✅ Successfully uploaded ${files.length} files to ${opts.bucket}\x1b[0m`);
+    console.info(`\n\x1b[32m✅ Successfully uploaded ${files.length} files to ${opts.bucket}\x1b[0m`);
   });
 
 // ═══════════════════════════════════════════════════════════
@@ -214,8 +214,8 @@ program
   .option("-h, --host <addr>", "Host address", "0.0.0.0")
   .option("-d, --dev", "Development mode with hot reload", false)
   .action((opts) => {
-    console.log(`🚀 Starting Dev HQ Server on ${opts.host}:${opts.port}`);
-    console.log(`   Mode: ${opts.dev ? "development" : "production"}`);
+    console.info(`🚀 Starting Dev HQ Server on ${opts.host}:${opts.port}`);
+    console.info(`   Mode: ${opts.dev ? "development" : "production"}`);
     // Server startup logic would go here
   });
 
@@ -225,9 +225,9 @@ program
   .option("-w, --watch", "Watch for changes", false)
   .option("-m, --minify", "Minify output", true)
   .action((opts) => {
-    console.log(`📦 Building Dev HQ Dashboard...`);
-    console.log(`   Minify: ${opts.minify ? "yes" : "no"}`);
-    console.log(`   Watch: ${opts.watch ? "enabled" : "disabled"}`);
+    console.info(`📦 Building Dev HQ Dashboard...`);
+    console.info(`   Minify: ${opts.minify ? "yes" : "no"}`);
+    console.info(`   Watch: ${opts.watch ? "enabled" : "disabled"}`);
   });
 
 // ═══════════════════════════════════════════════════════════
@@ -241,10 +241,10 @@ program
   .option("-c, --coverage", "Generate coverage report", false)
   .option("-w, --watch", "Watch mode", false)
   .action((opts) => {
-    console.log(`🧪 Running tests...`);
-    console.log(`   Update: ${opts.update ? "yes" : "no"}`);
-    console.log(`   Coverage: ${opts.coverage ? "yes" : "no"}`);
-    console.log(`   Watch: ${opts.watch ? "enabled" : "disabled"}`);
+    console.info(`🧪 Running tests...`);
+    console.info(`   Update: ${opts.update ? "yes" : "no"}`);
+    console.info(`   Coverage: ${opts.coverage ? "yes" : "no"}`);
+    console.info(`   Watch: ${opts.watch ? "enabled" : "disabled"}`);
   });
 
 // ═══════════════════════════════════════════════════════════
@@ -257,8 +257,8 @@ program
   .description("List connected mobile devices")
   .option("-v, --verbose", "Verbose output", false)
   .action((opts) => {
-    console.log(`📱 Connected Devices:`);
-    console.log(`   (Use 'adb devices' to refresh)`);
+    console.info(`📱 Connected Devices:`);
+    console.info(`   (Use 'adb devices' to refresh)`);
   });
 
 // ═══════════════════════════════════════════════════════════
@@ -269,18 +269,18 @@ program
   .command("version", { hidden: true })
   .description("Display version information")
   .action(() => {
-    console.log(`Dev HQ CLI v1.3.0`);
-    console.log(`Bun v${Bun.version}`);
+    console.info(`Dev HQ CLI v1.3.0`);
+    console.info(`Bun v${Bun.version}`);
   });
 
 program
   .command("doctor", { hidden: false })
   .description("System health check")
   .action(() => {
-    console.log(`🔍 Running system diagnostics...`);
-    console.log(`   Bun: ${Bun.version}`);
-    console.log(`   Platform: ${process.platform} ${process.arch}`);
-    console.log(`   Node: ${process.version}`);
+    console.info(`🔍 Running system diagnostics...`);
+    console.info(`   Bun: ${Bun.version}`);
+    console.info(`   Platform: ${process.platform} ${process.arch}`);
+    console.info(`   Node: ${process.version}`);
   });
 
 // Global options

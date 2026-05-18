@@ -58,7 +58,7 @@ export class ZenDocumentationDashboard {
    * Start real-time dashboard monitoring
    */
   startMonitoring(): void {
-    console.log('📊 Starting Zen Documentation Dashboard...');
+    console.info('📊 Starting Zen Documentation Dashboard...');
     
     // Update metrics every 5 seconds
     this.updateInterval = setInterval(() => {
@@ -78,7 +78,7 @@ export class ZenDocumentationDashboard {
       clearInterval(this.updateInterval);
       this.updateInterval = null;
     }
-    console.log('📊 Dashboard monitoring stopped.');
+    console.info('📊 Dashboard monitoring stopped.');
   }
 
   /**
@@ -155,8 +155,8 @@ export class ZenDocumentationDashboard {
     // Clear screen
     console.clear();
     
-    console.log('🎪 Zen Documentation Dashboard - Real-time Monitoring');
-    console.log('='.repeat(80));
+    console.info('🎪 Zen Documentation Dashboard - Real-time Monitoring');
+    console.info('='.repeat(80));
     
     // System Health Indicator
     this.renderSystemHealth();
@@ -173,7 +173,7 @@ export class ZenDocumentationDashboard {
     // System Information
     this.renderSystemInfo();
     
-    console.log('\n🔄 Updating every 5 seconds... (Press Ctrl+C to stop)');
+    console.info('\n🔄 Updating every 5 seconds... (Press Ctrl+C to stop)');
   }
 
   /**
@@ -188,33 +188,33 @@ export class ZenDocumentationDashboard {
       critical: '🔴'
     };
     
-    console.log(`${healthIcons[health]} System Health: ${health.toUpperCase()}`);
-    console.log(`   Last Update: ${new Date(this.metrics.lastUpdate).toLocaleString()}`);
-    console.log('');
+    console.info(`${healthIcons[health]} System Health: ${health.toUpperCase()}`);
+    console.info(`   Last Update: ${new Date(this.metrics.lastUpdate).toLocaleString()}`);
+    console.info('');
   }
 
   /**
    * Render key metrics
    */
   private renderKeyMetrics(): void {
-    console.log('📊 Key Metrics:');
-    console.log(`   🔍 Total Searches: ${this.metrics.totalSearches}`);
-    console.log(`   ⚡ Avg Search Time: ${this.metrics.averageSearchTime.toFixed(2)}ms`);
-    console.log(`   🎯 Total Matches: ${this.metrics.totalMatches}`);
-    console.log(`   💾 Memory Usage: ${this.metrics.memoryUsage.toFixed(2)}MB`);
-    console.log(`   🌐 Network Streams: ${this.metrics.networkStreams}`);
-    console.log(`   📁 Virtual Files: ${this.metrics.virtualFiles}`);
-    console.log('');
+    console.info('📊 Key Metrics:');
+    console.info(`   🔍 Total Searches: ${this.metrics.totalSearches}`);
+    console.info(`   ⚡ Avg Search Time: ${this.metrics.averageSearchTime.toFixed(2)}ms`);
+    console.info(`   🎯 Total Matches: ${this.metrics.totalMatches}`);
+    console.info(`   💾 Memory Usage: ${this.metrics.memoryUsage.toFixed(2)}MB`);
+    console.info(`   🌐 Network Streams: ${this.metrics.networkStreams}`);
+    console.info(`   📁 Virtual Files: ${this.metrics.virtualFiles}`);
+    console.info('');
   }
 
   /**
    * Render search history
    */
   private renderSearchHistory(): void {
-    console.log('📜 Recent Searches:');
+    console.info('📜 Recent Searches:');
     
     if (this.searchHistory.length === 0) {
-      console.log('   No searches performed yet.');
+      console.info('   No searches performed yet.');
     } else {
       this.searchHistory.forEach((search, index) => {
         const typeIcons = {
@@ -224,20 +224,20 @@ export class ZenDocumentationDashboard {
           virtual: '🌐'
         };
         
-        console.log(`   ${index + 1}. ${typeIcons[search.type]} "${search.query}" - ${search.matches} matches in ${search.time.toFixed(2)}ms`);
+        console.info(`   ${index + 1}. ${typeIcons[search.type]} "${search.query}" - ${search.matches} matches in ${search.time.toFixed(2)}ms`);
       });
     }
-    console.log('');
+    console.info('');
   }
 
   /**
    * Render performance graph
    */
   private renderPerformanceGraph(): void {
-    console.log('📈 Performance Timeline:');
+    console.info('📈 Performance Timeline:');
     
     if (this.searchHistory.length === 0) {
-      console.log('   No data to display.');
+      console.info('   No data to display.');
       return;
     }
 
@@ -250,21 +250,21 @@ export class ZenDocumentationDashboard {
       const bar = '█'.repeat(barLength) + '░'.repeat(graphWidth - barLength);
       const query = search.query.substring(0, 12).padEnd(12);
       
-      console.log(`   ${query} │${bar}│ ${search.time.toFixed(0)}ms`);
+      console.info(`   ${query} │${bar}│ ${search.time.toFixed(0)}ms`);
     });
-    console.log('');
+    console.info('');
   }
 
   /**
    * Render system information
    */
   private renderSystemInfo(): void {
-    console.log('💻 System Information:');
-    console.log(`   Platform: ${process.platform} ${process.arch}`);
-    console.log(`   Node Version: ${process.version}`);
-    console.log(`   PID: ${process.pid}`);
-    console.log(`   Uptime: ${(process.uptime() / 60).toFixed(1)} minutes`);
-    console.log('');
+    console.info('💻 System Information:');
+    console.info(`   Platform: ${process.platform} ${process.arch}`);
+    console.info(`   Node Version: ${process.version}`);
+    console.info(`   PID: ${process.pid}`);
+    console.info(`   Uptime: ${(process.uptime() / 60).toFixed(1)} minutes`);
+    console.info('');
   }
 
   /**
@@ -348,8 +348,8 @@ export class ZenDocumentationDashboard {
    * Demonstrate dashboard with live searches
    */
   async demonstrateDashboard(): Promise<void> {
-    console.log('🎪 Zen Documentation Dashboard Demo');
-    console.log('=' .repeat(60));
+    console.info('🎪 Zen Documentation Dashboard Demo');
+    console.info('=' .repeat(60));
     
     this.startMonitoring();
     
@@ -357,7 +357,7 @@ export class ZenDocumentationDashboard {
     const demoQueries = ['bun', 'performance', 'streaming', 'zen'];
     
     for (const query of demoQueries) {
-      console.log(`\n🔍 Performing demo search: ${query}`);
+      console.info(`\n🔍 Performing demo search: ${query}`);
       
       try {
         // Local search
@@ -374,18 +374,18 @@ export class ZenDocumentationDashboard {
         await new Promise(resolve => setTimeout(resolve, 2000));
         
       } catch (error) {
-        console.log(`⚠️ Search failed: ${error.message}`);
+        console.info(`⚠️ Search failed: ${error.message}`);
       }
     }
     
     // Generate HTML dashboard
-    console.log('\n📄 Generating HTML dashboard...');
+    console.info('\n📄 Generating HTML dashboard...');
     const htmlDashboard = await this.generateHTMLDashboard();
     
     const dashboardFile = (Bun as any).file('zen-dashboard.html', { type: 'text/html' });
     await Bun.write(dashboardFile, new TextEncoder().encode(htmlDashboard));
     
-    console.log('✅ HTML dashboard saved as: zen-dashboard.html');
+    console.info('✅ HTML dashboard saved as: zen-dashboard.html');
     
     // Keep monitoring for a bit
     await new Promise(resolve => setTimeout(resolve, 10000));

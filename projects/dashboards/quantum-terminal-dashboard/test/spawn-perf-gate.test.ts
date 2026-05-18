@@ -18,7 +18,7 @@ describe("spawnSync Performance Gates", () => {
     const t0 = performance.now();
     for (let i = 0; i < 100; i++) Bun.spawnSync(["true"]);
     const avgMs = (performance.now() - t0) / 100;
-    console.log(`  ARM64 spawnSync avg: ${avgMs.toFixed(2)}ms`);
+    console.info(`  ARM64 spawnSync avg: ${avgMs.toFixed(2)}ms`);
     expect(avgMs).toBeLessThan(5); // Gate: catch >2x regression
   });
 
@@ -28,7 +28,7 @@ describe("spawnSync Performance Gates", () => {
     const t0 = performance.now();
     for (let i = 0; i < 100; i++) Bun.spawnSync(["true"]);
     const avgMs = (performance.now() - t0) / 100;
-    console.log(`  x64 spawnSync avg: ${avgMs.toFixed(2)}ms`);
+    console.info(`  x64 spawnSync avg: ${avgMs.toFixed(2)}ms`);
     expect(avgMs).toBeLessThan(5);
   });
 
@@ -37,7 +37,7 @@ describe("spawnSync Performance Gates", () => {
     const t0 = performance.now();
     for (let i = 0; i < 100; i++) Bun.spawnSync(["echo", "hello"]);
     const avgMs = (performance.now() - t0) / 100;
-    console.log(`  ARM64 spawnSync+args avg: ${avgMs.toFixed(2)}ms`);
+    console.info(`  ARM64 spawnSync+args avg: ${avgMs.toFixed(2)}ms`);
     expect(avgMs).toBeLessThan(5);
   });
 
@@ -49,7 +49,7 @@ describe("spawnSync Performance Gates", () => {
       result.stdout;
     }
     const avgMs = (performance.now() - t0) / 100;
-    console.log(`  ARM64 spawnSync+stdout avg: ${avgMs.toFixed(2)}ms`);
+    console.info(`  ARM64 spawnSync+stdout avg: ${avgMs.toFixed(2)}ms`);
     expect(avgMs).toBeLessThan(5);
   });
 
@@ -58,7 +58,7 @@ describe("spawnSync Performance Gates", () => {
     const t0 = performance.now();
     for (let i = 0; i < 100; i++) Bun.spawnSync(["true"]);
     const totalMs = performance.now() - t0;
-    console.log(`  ARM64 100x spawns total: ${totalMs.toFixed(2)}ms`);
+    console.info(`  ARM64 100x spawns total: ${totalMs.toFixed(2)}ms`);
     expect(totalMs).toBeLessThan(500);
   });
 
@@ -69,12 +69,12 @@ describe("spawnSync Performance Gates", () => {
     for (let i = 0; i < iterations; i++) Bun.spawnSync(["true"]);
     const avgMs = (performance.now() - t0) / iterations;
 
-    console.log(`\n  📊 spawnSync Performance Baseline`);
-    console.log(`  ─────────────────────────────────`);
-    console.log(`  Architecture: ${process.arch}`);
-    console.log(`  Iterations: ${iterations}`);
-    console.log(`  Avg per spawn: ${avgMs.toFixed(2)}ms`);
-    console.log(`  Throughput: ${Math.round(1000 / avgMs)} spawns/sec\n`);
+    console.info(`\n  📊 spawnSync Performance Baseline`);
+    console.info(`  ─────────────────────────────────`);
+    console.info(`  Architecture: ${process.arch}`);
+    console.info(`  Iterations: ${iterations}`);
+    console.info(`  Avg per spawn: ${avgMs.toFixed(2)}ms`);
+    console.info(`  Throughput: ${Math.round(1000 / avgMs)} spawns/sec\n`);
 
     // This test always passes - it's for info only
     expect(true).toBe(true);

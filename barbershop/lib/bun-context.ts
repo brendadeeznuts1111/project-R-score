@@ -291,7 +291,7 @@ export async function executeWithContext(
 
   // Check cache
   if (opts.useCache && contextCache.has(contextHash)) {
-    console.log(c.gray(`[cache hit] ${command}`));
+    console.info(c.gray(`[cache hit] ${command}`));
     return contextCache.get(contextHash)!;
   }
 
@@ -411,7 +411,7 @@ async function executeScriptWithContext(
   const pkg = await Bun.file(pkgPath).json();
   const scriptCmd = pkg.scripts[script];
 
-  console.log(c.gray(`$ ${scriptCmd}`));
+  console.info(c.gray(`$ ${scriptCmd}`));
 
   const proc = Bun.spawn({
     cmd: buildCommand(["bun", "run", script, ...args], flags),
@@ -437,7 +437,7 @@ async function executeFileWithContext(
     // Watch mode with context-aware restart
     const _watcher = watch(fullPath, { recursive: false }, async (event) => {
       if (!flags.noClear) console.clear();
-      console.log(c.cyan(`[${fmtTime()}] ${event} → ${file}`));
+      console.info(c.cyan(`[${fmtTime()}] ${event} → ${file}`));
       await runFileOnce(fullPath, args, flags, config);
     });
 
@@ -520,11 +520,11 @@ function renderContextResult(session: ContextSession): void {
   const { command, durationMs, globalConfig, contextHash } = session;
   const status = session.exitCode === 0 ? c.green("✓") : c.red("✗");
 
-  console.log(`\n${status} ${c.bold(command)}`);
-  console.log(c.gray(`  CWD: ${globalConfig.cwd}`));
-  console.log(c.gray(`  Config: ${globalConfig.configPath}`));
-  console.log(c.gray(`  Context: ${contextHash}`));
-  console.log(c.gray(`  Duration: ${(durationMs || 0).toFixed(2)}ms`));
+  console.info(`\n${status} ${c.bold(command)}`);
+  console.info(c.gray(`  CWD: ${globalConfig.cwd}`));
+  console.info(c.gray(`  Config: ${globalConfig.configPath}`));
+  console.info(c.gray(`  Context: ${contextHash}`));
+  console.info(c.gray(`  Duration: ${(durationMs || 0).toFixed(2)}ms`));
 }
 
 function fmtTime(): string {
@@ -546,7 +546,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log(`
+    console.info(`
 ${c.cyan("Bun Context v3.16")} - Global config + context resolution
 
 Usage:
@@ -576,24 +576,24 @@ Examples:
     case "config": {
       const config = await loadGlobalConfig();
       const bunfig = await loadBunfigToml(config.configPath);
-      console.log("Global Config:");
-      console.log(JSON.stringify(config, null, 2));
-      console.log("\nBunfig:");
-      console.log(JSON.stringify(bunfig, null, 2));
+      console.info("Global Config:");
+      console.info(JSON.stringify(config, null, 2));
+      console.info("\nBunfig:");
+      console.info(JSON.stringify(bunfig, null, 2));
       break;
     }
 
     case "cache": {
-      console.log(`Cached sessions: ${contextCache.size}`);
+      console.info(`Cached sessions: ${contextCache.size}`);
       for (const [hash, session] of contextCache) {
-        console.log(`  ${hash}: ${session.command} (${session.status})`);
+        console.info(`  ${hash}: ${session.command} (${session.status})`);
       }
       break;
     }
 
     case "clear-cache": {
       contextCache.clear();
-      console.log("Cache cleared");
+      console.info("Cache cleared");
       break;
     }
 

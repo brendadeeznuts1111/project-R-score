@@ -67,13 +67,13 @@ async function benchmark(
 }
 
 function printResult(result: BenchmarkResult): void {
-  console.log(`\n  ${result.name}`);
-  console.log(`    Iterations: ${result.iterations.toLocaleString()}`);
-  console.log(`    Total: ${result.totalMs.toFixed(2)}ms`);
-  console.log(`    Average: ${result.avgMs.toFixed(4)}ms`);
-  console.log(`    Min: ${result.minMs.toFixed(4)}ms`);
-  console.log(`    Max: ${result.maxMs.toFixed(4)}ms`);
-  console.log(`    Ops/sec: ${result.opsPerSecond.toFixed(0)}`);
+  console.info(`\n  ${result.name}`);
+  console.info(`    Iterations: ${result.iterations.toLocaleString()}`);
+  console.info(`    Total: ${result.totalMs.toFixed(2)}ms`);
+  console.info(`    Average: ${result.avgMs.toFixed(4)}ms`);
+  console.info(`    Min: ${result.minMs.toFixed(4)}ms`);
+  console.info(`    Max: ${result.maxMs.toFixed(4)}ms`);
+  console.info(`    Ops/sec: ${result.opsPerSecond.toFixed(0)}`);
 }
 
 // ============================================================================
@@ -81,8 +81,8 @@ function printResult(result: BenchmarkResult): void {
 // ============================================================================
 
 async function runSignalBenchmarks(): Promise<void> {
-  console.log("\n📡 Signal Handling Benchmarks");
-  console.log("==============================");
+  console.info("\n📡 Signal Handling Benchmarks");
+  console.info("==============================");
   
   // Signal handler registration
   const regResult = await benchmark(
@@ -108,8 +108,8 @@ async function runSignalBenchmarks(): Promise<void> {
 }
 
 async function runCommandBenchmarks(): Promise<void> {
-  console.log("\n⚡ Command Execution Benchmarks");
-  console.log("===============================");
+  console.info("\n⚡ Command Execution Benchmarks");
+  console.info("===============================");
   
   // Simple command
   const simpleResult = await benchmark(
@@ -153,8 +153,8 @@ async function runCommandBenchmarks(): Promise<void> {
 }
 
 async function runBunApiBenchmarks(): Promise<void> {
-  console.log("\n🔥 Bun Native API Benchmarks");
-  console.log("=============================");
+  console.info("\n🔥 Bun Native API Benchmarks");
+  console.info("=============================");
   
   // Bun.sleep
   const sleepResult = await benchmark(
@@ -211,8 +211,8 @@ async function runBunApiBenchmarks(): Promise<void> {
 }
 
 async function runMcpBenchmarks(): Promise<void> {
-  console.log("\n🔌 MCP Protocol Benchmarks");
-  console.log("===========================");
+  console.info("\n🔌 MCP Protocol Benchmarks");
+  console.info("===========================");
   
   // JSON-RPC request parse
   const parseResult = await benchmark(
@@ -265,8 +265,8 @@ async function runMcpBenchmarks(): Promise<void> {
 }
 
 async function runThroughputBenchmarks(): Promise<void> {
-  console.log("\n📊 Throughput Benchmarks");
-  console.log("========================");
+  console.info("\n📊 Throughput Benchmarks");
+  console.info("========================");
   
   // JSON-RPC throughput
   const iterations = 50000;
@@ -287,15 +287,15 @@ async function runThroughputBenchmarks(): Promise<void> {
   const duration = performance.now() - start;
   const perSecond = (iterations / duration) * 1000;
   
-  console.log(`\n  JSON-RPC messages`);
-  console.log(`    Iterations: ${iterations.toLocaleString()}`);
-  console.log(`    Duration: ${duration.toFixed(2)}ms`);
-  console.log(`    Messages/sec: ${perSecond.toFixed(0)}`);
+  console.info(`\n  JSON-RPC messages`);
+  console.info(`    Iterations: ${iterations.toLocaleString()}`);
+  console.info(`    Duration: ${duration.toFixed(2)}ms`);
+  console.info(`    Messages/sec: ${perSecond.toFixed(0)}`);
 }
 
 async function runRealWorldBenchmarks(): Promise<void> {
-  console.log("\n🌍 Real-World Scenario Benchmarks");
-  console.log("==================================");
+  console.info("\n🌍 Real-World Scenario Benchmarks");
+  console.info("==================================");
   
   // Typical workflow
   const workflowResult = await benchmark(
@@ -329,12 +329,12 @@ async function runRealWorldBenchmarks(): Promise<void> {
 // ============================================================================
 
 async function main(): Promise<void> {
-  console.log("🔥 Unified Shell Bridge Benchmark Suite");
-  console.log("========================================\n");
-  console.log(`Bun version: ${Bun.version}`);
-  console.log(`Platform: ${process.platform}`);
-  console.log(`Architecture: ${process.arch}`);
-  console.log(`PID: ${process.pid}`);
+  console.info("🔥 Unified Shell Bridge Benchmark Suite");
+  console.info("========================================\n");
+  console.info(`Bun version: ${Bun.version}`);
+  console.info(`Platform: ${process.platform}`);
+  console.info(`Architecture: ${process.arch}`);
+  console.info(`PID: ${process.pid}`);
   
   const startTime = performance.now();
   
@@ -347,9 +347,9 @@ async function main(): Promise<void> {
   
   const totalTime = performance.now() - startTime;
   
-  console.log("\n" + "=".repeat(50));
-  console.log(`✅ All benchmarks complete in ${totalTime.toFixed(0)}ms`);
-  console.log("=".repeat(50) + "\n");
+  console.info("\n" + "=".repeat(50));
+  console.info(`✅ All benchmarks complete in ${totalTime.toFixed(0)}ms`);
+  console.info("=".repeat(50) + "\n");
 }
 
 if (import.meta.main) {

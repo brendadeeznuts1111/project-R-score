@@ -319,10 +319,10 @@ export class CodePolisher {
  * Display polish results using Bun.inspect.table().
  */
 export function displayPolishReport(report: PolishReport): void {
-	console.log("\n✨ Code Polish Report\n");
+	console.info("\n✨ Code Polish Report\n");
 
 	// Summary
-	console.log(
+	console.info(
 		Bun.inspect.table(
 			[
 				{ Metric: "Files scanned", Value: report.summary.totalFiles },
@@ -336,7 +336,7 @@ export function displayPolishReport(report: PolishReport): void {
 	);
 
 	if (report.issues.length === 0) {
-		console.log("\nNo issues found. Code is clean!");
+		console.info("\nNo issues found. Code is clean!");
 		return;
 	}
 
@@ -351,10 +351,10 @@ export function displayPolishReport(report: PolishReport): void {
 		Suggestion: issue.suggestion || "",
 	}));
 
-	console.log(
+	console.info(
 		`\n🔍 Issues${report.issues.length > 50 ? ` (showing 50 of ${report.issues.length})` : ""}\n`,
 	);
-	console.log(
+	console.info(
 		Bun.inspect.table(
 			tableData,
 			["File", "Line", "Category", "Severity", "Message", "Suggestion"],
@@ -362,7 +362,7 @@ export function displayPolishReport(report: PolishReport): void {
 		),
 	);
 
-	console.log("\nNote: --auto-apply planned for v1.4");
+	console.info("\nNote: --auto-apply planned for v1.4");
 }
 
 // ============================================================================

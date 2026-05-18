@@ -46,7 +46,7 @@ export const UploadPanel: React.FC<UploadPanelProps> = ({
       wsRef.current = ws;
 
       ws.onopen = () => {
-        console.log('📊 Upload Panel WebSocket connected');
+        console.info('📊 Upload Panel WebSocket connected');
         setIsConnected(true);
         ws.send(JSON.stringify({ type: 'subscribe', channel: 'dashboard' }));
       };
@@ -70,7 +70,7 @@ export const UploadPanel: React.FC<UploadPanelProps> = ({
       };
 
       ws.onclose = () => {
-        console.log('📊 Upload Panel WebSocket disconnected');
+        console.info('📊 Upload Panel WebSocket disconnected');
         setIsConnected(false);
       };
 

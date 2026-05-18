@@ -23,24 +23,24 @@ const GLYPH = { pass: "✅", fail: "❌", warn: "⚠️", info: "ℹ️" };
 
 // ─── Asset Handling Demo ───────────────────────────
 function showAssetHandling() {
-	console.log("🎨 Asset Handling Demo:");
-	console.log(`   • Package name: ${config.name}`);
-	console.log(`   • Package version: ${config.version}`);
-	console.log(`   • README preview: ${readme.slice(0, 50)}...`);
-	console.log(`   • Build target: ${process.env.BUN_TARGET || "default"}`);
+	console.info("🎨 Asset Handling Demo:");
+	console.info(`   • Package name: ${config.name}`);
+	console.info(`   • Package version: ${config.version}`);
+	console.info(`   • README preview: ${readme.slice(0, 50)}...`);
+	console.info(`   • Build target: ${process.env.BUN_TARGET || "default"}`);
 
 	// Simulate asset imports (would work with real files)
-	console.log("\n📦 Asset Import Examples:");
-	console.log(`   • import logo from "./logo.svg" → "./logo.svg"`);
-	console.log(`   • import font from "./font.woff2" → "./font.woff2"`);
-	console.log(`   • import image from "./banner.png" → "./banner.png"`);
+	console.info("\n📦 Asset Import Examples:");
+	console.info(`   • import logo from "./logo.svg" → "./logo.svg"`);
+	console.info(`   • import font from "./font.woff2" → "./font.woff2"`);
+	console.info(`   • import image from "./banner.png" → "./banner.png"`);
 
 	// Show how assets are handled in different scenarios
-	console.log("\n🔧 Asset Resolution:");
-	console.log(`   • Runtime: Returns absolute file path`);
-	console.log(`   • Build with outdir: Copies asset, returns relative path`);
-	console.log(`   • Build with publicPath: Returns URL path`);
-	console.log(`   • Build without outdir: Returns in-memory path`);
+	console.info("\n🔧 Asset Resolution:");
+	console.info(`   • Runtime: Returns absolute file path`);
+	console.info(`   • Build with outdir: Copies asset, returns relative path`);
+	console.info(`   • Build with publicPath: Returns URL path`);
+	console.info(`   • Build without outdir: Returns in-memory path`);
 }
 
 // ─── Col-89 Scanner (Self-Compliant) ──────────────
@@ -66,7 +66,7 @@ async function scanCol89(file) {
 		if (w > COL_LIMIT) {
 			violations++;
 			const preview = Bun.escapeHTML(Bun.stripANSI(lines[i]).slice(0, 60)) + "…";
-			console.log(`${GLYPH.fail} Line ${i + 1}: ${w} cols → ${preview}`);
+			console.info(`${GLYPH.fail} Line ${i + 1}: ${w} cols → ${preview}`);
 		}
 	}
 
@@ -119,11 +119,11 @@ function initDB() {
 
 // ─── Main Execution ───────────────────────────────
 async function main() {
-	console.log("🎯 Tier-1380 Performance Suite v2.3 (Asset Handling)\n");
+	console.info("🎯 Tier-1380 Performance Suite v2.3 (Asset Handling)\n");
 
 	// Show asset handling information
 	showAssetHandling();
-	console.log("\n" + "=".repeat(60));
+	console.info("\n" + "=".repeat(60));
 
 	const db = initDB();
 	const target = process.argv[3] || "src/index.ts";
@@ -143,39 +143,39 @@ async function main() {
 	stmt.run(target, col89.violations, col89.maxWidth, contentInfo, assetInfo);
 
 	// ─── Report (All lines < 89 cols) ───────────────
-	console.log(`\n📊 Results for: ${target}`);
-	console.log(`${"=".repeat(60)}`);
+	console.info(`\n📊 Results for: ${target}`);
+	console.info(`${"=".repeat(60)}`);
 
 	// Col-89 status
 	const colStatus = col89.violations === 0 ? GLYPH.pass : GLYPH.fail;
-	console.log(
+	console.info(
 		`${colStatus} Col-89: ${col89.violations} violations ` +
 			`(max ${col89.maxWidth}, avg ${col89.avgWidth})`,
 	);
 
 	// Hardware
-	console.log(
+	console.info(
 		`${GLYPH.info} Hardware: ${Math.round(hardware.throughput).toLocaleString()} ` +
 			`${hardware.unit} (${hardware.duration.toFixed(2)}ms)`,
 	);
 
 	// Content types info
-	console.log(`${GLYPH.info} Content: JSON + TXT imports successful`);
-	console.log(`${GLYPH.info} Assets: File loader configured`);
+	console.info(`${GLYPH.info} Content: JSON + TXT imports successful`);
+	console.info(`${GLYPH.info} Assets: File loader configured`);
 
 	// Health score
 	const score = Math.max(0, 100 - col89.violations * 2);
 	const color = score >= 80 ? "32" : score >= 60 ? "33" : "31";
-	console.log(`\n\x1b[${color}m🏥 Health Score: ${score}%\x1b[0m`);
+	console.info(`\n\x1b[${color}m🏥 Health Score: ${score}%\x1b[0m`);
 
 	// Build artifact info
 	if (process.env.BUN_COMPILE) {
-		console.log(`\n📦 Compiled binary: ${process.argv[0]}`);
-		console.log(`   • Asset handling: ${assetInfo}`);
+		console.info(`\n📦 Compiled binary: ${process.argv[0]}`);
+		console.info(`   • Asset handling: ${assetInfo}`);
 	} else if (process.env.BUN_BUILD) {
-		console.log(`\n🔨 Build mode: Assets copied to outdir`);
+		console.info(`\n🔨 Build mode: Assets copied to outdir`);
 	} else {
-		console.log(`\n⚡ Runtime mode: Assets referenced by path`);
+		console.info(`\n⚡ Runtime mode: Assets referenced by path`);
 	}
 
 	db.close();

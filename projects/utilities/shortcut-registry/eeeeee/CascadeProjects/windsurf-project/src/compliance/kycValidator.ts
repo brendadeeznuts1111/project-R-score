@@ -284,7 +284,7 @@ export class KYCValidator {
     this.auditLog.push(auditEntry);
 
     // In production, this would write to S3 with ZSTD compression
-    console.log(`📝 AUDIT: ${action} for user ${userId} by ${performedBy}`);
+    console.info(`📝 AUDIT: ${action} for user ${userId} by ${performedBy}`);
   }
 
   /**

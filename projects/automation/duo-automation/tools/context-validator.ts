@@ -569,7 +569,7 @@ class ContextValidationSystem {
    * Run all validation rules
    */
   public async validateAll(): Promise<ContextValidationReport> {
-    console.log('🔍 Running comprehensive context validation...');
+    console.info('🔍 Running comprehensive context validation...');
 
     const results: Array<{
       rule: string;
@@ -583,7 +583,7 @@ class ContextValidationSystem {
     let errors = 0;
 
     for (const rule of this.rules) {
-      console.log(`  📋 Validating: ${rule.name}`);
+      console.info(`  📋 Validating: ${rule.name}`);
       
       try {
         const result = rule.validate();
@@ -631,8 +631,8 @@ class ContextValidationSystem {
       score
     };
 
-    console.log(`✅ Validation completed: ${passed}/${this.rules.length} rules passed`);
-    console.log(`📊 Score: ${score}/100`);
+    console.info(`✅ Validation completed: ${passed}/${this.rules.length} rules passed`);
+    console.info(`📊 Score: ${score}/100`);
 
     return report;
   }
@@ -741,27 +741,27 @@ if (import.meta.main) {
     case 'validate':
       validator.validateAll().then(report => {
         const reportText = validator.generateReport(report);
-        console.log(reportText);
+        console.info(reportText);
         
         // Save report to file
         require('fs').writeFileSync('context-validation-report.md', reportText);
-        console.log('\n📄 Report saved to context-validation-report.md');
+        console.info('\n📄 Report saved to context-validation-report.md');
       });
       break;
 
     case 'quick':
       // Quick validation of essential rules
       const essentialRules = ['token-config-exists', 'token-directories-exist', 'file-token-mapping'];
-      console.log('⚡ Running quick validation...');
+      console.info('⚡ Running quick validation...');
       
       for (const ruleName of essentialRules) {
-        console.log(`  ✓ ${ruleName}`);
+        console.info(`  ✓ ${ruleName}`);
       }
-      console.log('✅ Quick validation passed');
+      console.info('✅ Quick validation passed');
       break;
 
     default:
-      console.log(`
+      console.info(`
 Context Validation System
 
 Usage:

@@ -252,7 +252,7 @@ class MonitoringDashboard {
     console.clear();
 
     // Header
-    console.log(
+    console.info(
       boxen(chalk.bold.red('🔥 Fire22 Monitoring Dashboard'), {
         padding: 1,
         borderStyle: 'double',
@@ -273,37 +273,37 @@ class MonitoringDashboard {
     this.renderAlerts();
 
     // Footer
-    console.log(chalk.gray(`\nLast Updated: ${new Date().toLocaleTimeString()}`));
-    console.log(chalk.gray('Press Ctrl+C to exit monitoring\n'));
+    console.info(chalk.gray(`\nLast Updated: ${new Date().toLocaleTimeString()}`));
+    console.info(chalk.gray('Press Ctrl+C to exit monitoring\n'));
   }
 
   private renderSystemMetrics() {
     const current = this.metrics[this.metrics.length - 1];
     if (!current) return;
 
-    console.log(chalk.bold.cyan('\n📊 System Metrics'));
-    console.log('─'.repeat(60));
+    console.info(chalk.bold.cyan('\n📊 System Metrics'));
+    console.info('─'.repeat(60));
 
     const cpuStatus = current.cpu > 80 ? '🔴' : current.cpu > 60 ? '🟡' : '🟢';
     const memStatus = current.memory > 85 ? '🔴' : current.memory > 70 ? '🟡' : '🟢';
     const diskStatus = current.disk > 90 ? '🔴' : current.disk > 80 ? '🟡' : '🟢';
 
-    console.log(`${cpuStatus} CPU Usage:     ${this.renderBar(current.cpu, 100)} ${current.cpu}%`);
-    console.log(
+    console.info(`${cpuStatus} CPU Usage:     ${this.renderBar(current.cpu, 100)} ${current.cpu}%`);
+    console.info(
       `${memStatus} Memory Usage:  ${this.renderBar(current.memory, 100)} ${current.memory}%`
     );
-    console.log(
+    console.info(
       `${diskStatus} Disk Usage:    ${this.renderBar(current.disk, 100)} ${current.disk}%`
     );
-    console.log(`📡 Network In:    ${current.network.in} Mbps`);
-    console.log(`📡 Network Out:   ${current.network.out} Mbps`);
-    console.log(`⚙️  Processes:     ${current.processes}`);
-    console.log(`⏰ Uptime:        ${this.formatUptime(current.uptime)}`);
+    console.info(`📡 Network In:    ${current.network.in} Mbps`);
+    console.info(`📡 Network Out:   ${current.network.out} Mbps`);
+    console.info(`⚙️  Processes:     ${current.processes}`);
+    console.info(`⏰ Uptime:        ${this.formatUptime(current.uptime)}`);
   }
 
   private renderEndpointStatus() {
-    console.log(chalk.bold.cyan('\n🌐 API Endpoint Status'));
-    console.log('─'.repeat(60));
+    console.info(chalk.bold.cyan('\n🌐 API Endpoint Status'));
+    console.info('─'.repeat(60));
 
     this.endpoints.forEach(endpoint => {
       const statusIcon =
@@ -311,7 +311,7 @@ class MonitoringDashboard {
       const statusColor =
         endpoint.status === 'healthy' ? 'green' : endpoint.status === 'degraded' ? 'yellow' : 'red';
 
-      console.log(
+      console.info(
         `${statusIcon} ${chalk.white(endpoint.name.padEnd(25))} ` +
           `${chalk[statusColor](endpoint.status.padEnd(10))} ` +
           `${endpoint.responseTime}ms ` +
@@ -324,27 +324,27 @@ class MonitoringDashboard {
     const latest = this.performanceHistory[this.performanceHistory.length - 1];
     if (!latest) return;
 
-    console.log(chalk.bold.cyan('\n📈 Performance Analysis'));
-    console.log('─'.repeat(60));
+    console.info(chalk.bold.cyan('\n📈 Performance Analysis'));
+    console.info('─'.repeat(60));
 
-    console.log(`P50 Response Time:  ${latest.p50.toFixed(1)}ms`);
-    console.log(`P95 Response Time:  ${latest.p95.toFixed(1)}ms`);
-    console.log(`P99 Response Time:  ${latest.p99.toFixed(1)}ms`);
-    console.log(`Mean Response:      ${latest.mean.toFixed(1)}ms`);
-    console.log(`Std Deviation:      ${latest.stdDev.toFixed(1)}ms`);
-    console.log(`Throughput:         ${latest.throughput} req/s`);
+    console.info(`P50 Response Time:  ${latest.p50.toFixed(1)}ms`);
+    console.info(`P95 Response Time:  ${latest.p95.toFixed(1)}ms`);
+    console.info(`P99 Response Time:  ${latest.p99.toFixed(1)}ms`);
+    console.info(`Mean Response:      ${latest.mean.toFixed(1)}ms`);
+    console.info(`Std Deviation:      ${latest.stdDev.toFixed(1)}ms`);
+    console.info(`Throughput:         ${latest.throughput} req/s`);
   }
 
   private renderAlerts() {
     const activeAlerts = this.alerts.filter(a => !a.resolved).slice(-5);
 
     if (activeAlerts.length === 0) {
-      console.log(chalk.bold.green('\n✅ No Active Alerts'));
+      console.info(chalk.bold.green('\n✅ No Active Alerts'));
       return;
     }
 
-    console.log(chalk.bold.red('\n🚨 Active Alerts'));
-    console.log('─'.repeat(60));
+    console.info(chalk.bold.red('\n🚨 Active Alerts'));
+    console.info('─'.repeat(60));
 
     activeAlerts.forEach(alert => {
       const icon =
@@ -356,7 +356,7 @@ class MonitoringDashboard {
       const ageStr =
         age < 60000 ? `${Math.floor(age / 1000)}s ago` : `${Math.floor(age / 60000)}m ago`;
 
-      console.log(
+      console.info(
         `${icon} ${chalk[color](alert.component.padEnd(20))} ` +
           `${alert.message} ${chalk.gray(`(${ageStr})`)}`
       );
@@ -392,8 +392,8 @@ if (args.includes('--demo')) {
   dashboard.renderDashboard();
 } else {
   // Live mode: continuous monitoring
-  console.log(chalk.yellow('Starting Fire22 Monitoring Dashboard...'));
-  console.log(chalk.gray('Collecting initial metrics...\n'));
+  console.info(chalk.yellow('Starting Fire22 Monitoring Dashboard...'));
+  console.info(chalk.gray('Collecting initial metrics...\n'));
 
   setTimeout(() => {
     setInterval(() => {

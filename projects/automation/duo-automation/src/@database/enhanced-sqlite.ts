@@ -467,7 +467,7 @@ export async function exampleOptimizedQueries() {
   // Performance metrics
   const metrics = db.getPerformanceMetrics();
   
-  console.log("SQLite 3.51.1 Optimized Results:", {
+  console.info("SQLite 3.51.1 Optimized Results:", {
     familyPayments: familyPayments.length,
     memberStats: memberStats.length,
     userExists,

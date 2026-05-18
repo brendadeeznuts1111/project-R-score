@@ -34,7 +34,7 @@ export class Fantasy402NotesManager {
    */
   async initialize(): Promise<boolean> {
     try {
-      console.log('🎯 Initializing Fantasy402 Notes Integration...');
+      console.info('🎯 Initializing Fantasy402 Notes Integration...');
 
       // Wait for the page to be fully loaded
       if (document.readyState !== 'complete') {
@@ -60,7 +60,7 @@ export class Fantasy402NotesManager {
       await this.loadInitialNotes();
 
       this.isInitialized = true;
-      console.log('✅ Fantasy402 Notes Integration initialized successfully');
+      console.info('✅ Fantasy402 Notes Integration initialized successfully');
 
       return true;
     } catch (error) {
@@ -78,7 +78,7 @@ export class Fantasy402NotesManager {
         if (mutation.type === 'childList') {
           const element = findFantasy402Element();
           if (element && !this.isInitialized) {
-            console.log('🎯 Fantasy402 notes element found via DOM watcher');
+            console.info('🎯 Fantasy402 notes element found via DOM watcher');
             observer.disconnect();
             await this.initialize();
             break;
@@ -96,7 +96,7 @@ export class Fantasy402NotesManager {
     const checkInterval = setInterval(async () => {
       const element = findFantasy402Element();
       if (element && !this.isInitialized) {
-        console.log('🎯 Fantasy402 notes element found via interval check');
+        console.info('🎯 Fantasy402 notes element found via interval check');
         clearInterval(checkInterval);
         await this.initialize();
       }
@@ -121,7 +121,7 @@ export class Fantasy402NotesManager {
     // Handle keyboard shortcuts
     element.addEventListener('keydown', this.handleNotesKeydown.bind(this));
 
-    console.log('✅ Event listeners setup for Fantasy402 notes element');
+    console.info('✅ Event listeners setup for Fantasy402 notes element');
   }
 
   /**
@@ -133,7 +133,7 @@ export class Fantasy402NotesManager {
       const customerId = this.extractCustomerIdFromPage();
 
       if (customerId) {
-        console.log(`📝 Loading notes for customer: ${customerId}`);
+        console.info(`📝 Loading notes for customer: ${customerId}`);
 
         const notesResult = await this.client.getPlayerNotes(customerId);
 
@@ -141,12 +141,12 @@ export class Fantasy402NotesManager {
           // Update the element with the notes
           await handleFantasy402Element('write', notesResult.playerNotes);
 
-          console.log('✅ Initial notes loaded into Fantasy402 element');
+          console.info('✅ Initial notes loaded into Fantasy402 element');
         } else {
           console.warn('⚠️ Failed to load initial notes:', notesResult.error);
         }
       } else {
-        console.log('ℹ️ No customer ID found, skipping initial notes load');
+        console.info('ℹ️ No customer ID found, skipping initial notes load');
       }
     } catch (error) {
       console.error('❌ Failed to load initial notes:', error);
@@ -174,7 +174,7 @@ export class Fantasy402NotesManager {
     const target = event.target as HTMLTextAreaElement;
     const notes = target.value;
 
-    console.log(`📝 Notes changed (${notes.length} characters)`);
+    console.info(`📝 Notes changed (${notes.length} characters)`);
 
     // Immediate validation
     const validation = this.validateNotes(notes);
@@ -190,7 +190,7 @@ export class Fantasy402NotesManager {
    * Handle notes focus
    */
   private handleNotesFocus(event: Event): void {
-    console.log('📝 Notes element focused');
+    console.info('📝 Notes element focused');
     // Could highlight the element or show additional controls
   }
 
@@ -201,7 +201,7 @@ export class Fantasy402NotesManager {
     const target = event.target as HTMLTextAreaElement;
     const notes = target.value;
 
-    console.log('📝 Notes element blurred');
+    console.info('📝 Notes element blurred');
 
     // Save on blur if changed
     if (this.hasNotesChanged(notes)) {
@@ -241,7 +241,7 @@ export class Fantasy402NotesManager {
         return;
       }
 
-      console.log(`💾 Saving notes for customer: ${customerId}`);
+      console.info(`💾 Saving notes for customer: ${customerId}`);
 
       // Determine category based on content analysis
       const category = this.determineNotesCategory(notes);
@@ -249,7 +249,7 @@ export class Fantasy402NotesManager {
       const result = await this.client.updatePlayerNotes(customerId, notes, category);
 
       if (result.success) {
-        console.log('✅ Notes saved successfully');
+        console.info('✅ Notes saved successfully');
         this.showSaveStatus('success', 'Notes saved successfully');
 
         // Update last saved timestamp
@@ -508,7 +508,7 @@ export class Fantasy402NotesManager {
    * Undo last change (placeholder for future implementation)
    */
   private undoLastChange(): void {
-    console.log('🔄 Undo functionality not yet implemented');
+    console.info('🔄 Undo functionality not yet implemented');
     // Future: implement undo/redo functionality
   }
 
@@ -538,7 +538,7 @@ export class Fantasy402NotesManager {
     }
 
     this.xpathHandler.cleanup();
-    console.log('🧹 Fantasy402 Notes Manager cleaned up');
+    console.info('🧹 Fantasy402 Notes Manager cleaned up');
   }
 }
 

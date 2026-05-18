@@ -3,22 +3,22 @@
  * Reference: https://bun.com/docs/runtime#runtime-%26-process-control
  */
 
-console.log("--- Bun Runtime Info ---");
-console.log(`Bun version:  ${Bun.version}`);
-console.log(`Bun revision: ${Bun.revision}`);
-console.log(`Entry point:  ${Bun.main}`);
-console.log(`Arguments:    ${JSON.stringify(Bun.argv)}`);
+console.info("--- Bun Runtime Info ---");
+console.info(`Bun version:  ${Bun.version}`);
+console.info(`Bun revision: ${Bun.revision}`);
+console.info(`Entry point:  ${Bun.main}`);
+console.info(`Arguments:    ${JSON.stringify(Bun.argv)}`);
 
 // Bun.env is a proxy to process.env but faster
-console.log(`Environment:  ${Bun.env.NODE_ENV || "development"}`);
+console.info(`Environment:  ${Bun.env.NODE_ENV || "development"}`);
 
 // Check if we are running in a specific environment
 if (Bun.env.USER) {
-  console.log(`Current User: ${Bun.env.USER}`);
+  console.info(`Current User: ${Bun.env.USER}`);
 }
 
-console.log("\n--- Process Memory Usage ---");
-console.log(process.memoryUsage());
+console.info("\n--- Process Memory Usage ---");
+console.info(process.memoryUsage());
 
-console.log("\n--- CPU Usage ---");
-console.log(process.cpuUsage());
+console.info("\n--- CPU Usage ---");
+console.info(process.cpuUsage());

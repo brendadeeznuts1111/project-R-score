@@ -28,9 +28,9 @@ import {
 class EnhancedInspectionV2Demo {
   
   async runCompleteDemo(): Promise<void> {
-    console.log('🎨 Enhanced Custom Inspection System v2.0 - Updated with Monitoring');
-    console.log('='.repeat(80));
-    console.log('');
+    console.info('🎨 Enhanced Custom Inspection System v2.0 - Updated with Monitoring');
+    console.info('='.repeat(80));
+    console.info('');
     
     try {
       // Initialize inspection monitor
@@ -45,9 +45,9 @@ class EnhancedInspectionV2Demo {
       this.demonstrateAdvancedFeatures(monitor);
       
       // Show final metrics
-      console.log('\n🎯 FINAL SYSTEM METRICS');
-      console.log('═'.repeat(60));
-      console.log(monitor.getDashboard());
+      console.info('\n🎯 FINAL SYSTEM METRICS');
+      console.info('═'.repeat(60));
+      console.info(monitor.getDashboard());
       
     } catch (error) {
       console.error('❌ Demo failed:', error);
@@ -55,8 +55,8 @@ class EnhancedInspectionV2Demo {
   }
   
   private demonstrateRealTimeMonitoring(monitor: InspectionMonitor): void {
-    console.log('📊 REAL-TIME MONITORING DEMONSTRATION');
-    console.log('═'.repeat(60));
+    console.info('📊 REAL-TIME MONITORING DEMONSTRATION');
+    console.info('═'.repeat(60));
     
     // Create test objects
     const items = [
@@ -67,28 +67,28 @@ class EnhancedInspectionV2Demo {
     ];
     
     // Show dashboard
-    console.log(InspectionUtils.createMonitorDashboard(items, '🟢 Monitoring Active'));
-    console.log('');
+    console.info(InspectionUtils.createMonitorDashboard(items, '🟢 Monitoring Active'));
+    console.info('');
     
     // Monitor each inspection
     items.forEach((item, index) => {
       const start = performance.now();
-      console.log(item);
+      console.info(item);
       const duration = performance.now() - start;
       monitor.recordInspection(duration, true);
       
-      if (index < items.length - 1) console.log('');
+      if (index < items.length - 1) console.info('');
     });
     
-    console.log('');
-    console.log('📈 Current Performance:');
-    console.log(monitor.getDashboard());
-    console.log('');
+    console.info('');
+    console.info('📈 Current Performance:');
+    console.info(monitor.getDashboard());
+    console.info('');
   }
   
   private demonstratePerformanceTracking(monitor: InspectionMonitor): void {
-    console.log('⚡ PERFORMANCE TRACKING DEMONSTRATION');
-    console.log('═'.repeat(60));
+    console.info('⚡ PERFORMANCE TRACKING DEMONSTRATION');
+    console.info('═'.repeat(60));
     
     // Performance test with different object types
     const testObjects = [
@@ -100,29 +100,29 @@ class EnhancedInspectionV2Demo {
       new FamilyMemberInspectable('perf_user', 'Test User', 'guest', true, 0, 0, 85),
     ];
     
-    console.log(`Running performance test with ${testObjects.length} object types...`);
-    console.log('');
+    console.info(`Running performance test with ${testObjects.length} object types...`);
+    console.info('');
     
     testObjects.forEach((obj, index) => {
       const start = performance.now();
-      console.log(obj);
+      console.info(obj);
       const duration = performance.now() - start;
       monitor.recordInspection(duration, true);
       
-      console.log(`⏱️  Inspection time: ${duration.toFixed(4)}ms`);
+      console.info(`⏱️  Inspection time: ${duration.toFixed(4)}ms`);
       
-      if (index < testObjects.length - 1) console.log('');
+      if (index < testObjects.length - 1) console.info('');
     });
     
-    console.log('');
-    console.log('📊 Performance Summary:');
-    console.log(monitor.getDashboard());
-    console.log('');
+    console.info('');
+    console.info('📊 Performance Summary:');
+    console.info(monitor.getDashboard());
+    console.info('');
   }
   
   private demonstrateAdvancedFeatures(monitor: InspectionMonitor): void {
-    console.log('🔬 ADVANCED FEATURES DEMONSTRATION');
-    console.log('═'.repeat(60));
+    console.info('🔬 ADVANCED FEATURES DEMONSTRATION');
+    console.info('═'.repeat(60));
     
     // Enhanced security audit
     const securityChecks = [
@@ -144,21 +144,21 @@ class EnhancedInspectionV2Demo {
       }),
     ];
     
-    console.log('🔒 Enhanced Security Audit:');
-    console.log('');
+    console.info('🔒 Enhanced Security Audit:');
+    console.info('');
     
     securityChecks.forEach((check, index) => {
       const start = performance.now();
-      console.log(check);
+      console.info(check);
       const duration = performance.now() - start;
       monitor.recordInspection(duration, true);
       
-      if (index < securityChecks.length - 1) console.log('');
+      if (index < securityChecks.length - 1) console.info('');
     });
     
-    console.log('');
-    console.log(InspectionUtils.createSummaryCard('Security Audit Results', securityChecks));
-    console.log('');
+    console.info('');
+    console.info(InspectionUtils.createSummaryCard('Security Audit Results', securityChecks));
+    console.info('');
     
     // Database cluster monitoring
     const databaseConnections = [
@@ -168,21 +168,21 @@ class EnhancedInspectionV2Demo {
       new DatabaseConnectionInspectable('analytics-db-01', 'error', 30, 0, 0, 25),
     ];
     
-    console.log('🗄️ Database Cluster Monitoring:');
-    console.log('');
+    console.info('🗄️ Database Cluster Monitoring:');
+    console.info('');
     
     databaseConnections.forEach((db, index) => {
       const start = performance.now();
-      console.log(db);
+      console.info(db);
       const duration = performance.now() - start;
       monitor.recordInspection(duration, true);
       
-      if (index < databaseConnections.length - 1) console.log('');
+      if (index < databaseConnections.length - 1) console.info('');
     });
     
-    console.log('');
-    console.log(InspectionUtils.createMonitorDashboard(databaseConnections, '🔍 Database Status'));
-    console.log('');
+    console.info('');
+    console.info(InspectionUtils.createMonitorDashboard(databaseConnections, '🔍 Database Status'));
+    console.info('');
   }
 }
 

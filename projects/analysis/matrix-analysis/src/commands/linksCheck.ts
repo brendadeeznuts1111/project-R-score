@@ -25,10 +25,10 @@ export async function linksCheck(options: LinkCheckOptions = {}): Promise<void> 
 		directory = ".",
 	} = options;
 
-	console.log(fmt.bold("🔗 Checking documentation links..."));
+	console.info(fmt.bold("🔗 Checking documentation links..."));
 
 	if (external) {
-		console.log(fmt.warn("Note: External link checking is enabled (slower)"));
+		console.info(fmt.warn("Note: External link checking is enabled (slower)"));
 	}
 
 	const checker = new LinkChecker(directory, verbose, external);
@@ -49,7 +49,7 @@ export async function linksCheck(options: LinkCheckOptions = {}): Promise<void> 
 
 // Quick link check for internal links only
 export async function linksQuick(directory: string = "."): Promise<void> {
-	console.log(fmt.bold("🔍 Quick link check (internal only)..."));
+	console.info(fmt.bold("🔍 Quick link check (internal only)..."));
 
 	const scriptPath = join(
 		import.meta.dir,

@@ -203,7 +203,7 @@ export class ObsidianCanvasIntegration {
      * Handles node click events
      */
     private handleNodeClick(event: MouseEvent, node: CanvasNode): void {
-        console.log(`Node clicked: ${node.id}`);
+        console.info(`Node clicked: ${node.id}`);
 
         // Emit custom event for Obsidian integration
         const customEvent = new CustomEvent('canvas-node-click', {
@@ -352,7 +352,7 @@ export class ObsidianCanvasIntegration {
      * Handles context menu actions
      */
     private handleContextAction(action: string, node: CanvasNode): void {
-        console.log(`Context action: ${action} on node: ${node.id}`);
+        console.info(`Context action: ${action} on node: ${node.id}`);
 
         // Emit custom event
         const customEvent = new CustomEvent('canvas-node-action', {

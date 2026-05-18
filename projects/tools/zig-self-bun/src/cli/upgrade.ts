@@ -34,11 +34,11 @@ async function upgrade() {
         currentVersion = view.getUint8(4);
       }
     } catch (e) {
-      console.log("No existing lockfile, starting fresh");
+      console.info("No existing lockfile, starting fresh");
     }
     
     // 2. Fetch latest version manifest from registry
-    console.log("Fetching latest version...");
+    console.info("Fetching latest version...");
     const response = await fetch(`https://registry.npmjs.org/bun/latest`);
     if (!response.ok) {
       throw new Error(`Failed to fetch manifest: ${response.statusText}`);
@@ -47,11 +47,11 @@ async function upgrade() {
     const manifest = await response.json();
     const latestVersion = parseInt(manifest.version?.split(".")[0] || "1");
     
-    console.log(`Current version: ${currentVersion}, Latest: ${latestVersion}`);
+    console.info(`Current version: ${currentVersion}, Latest: ${latestVersion}`);
     
     // 3. Download new binary (if newer)
     if (latestVersion > currentVersion) {
-      console.log("New version available, downloading...");
+      console.info("New version available, downloading...");
       
       // In a real implementation, you would download the actual binary
       // For now, we'll just validate the concept
@@ -60,7 +60,7 @@ async function upgrade() {
         throw new Error("No download URL in manifest");
       }
       
-      console.log(`Download URL: ${downloadUrl}`);
+      console.info(`Download URL: ${downloadUrl}`);
       
       // 4. Validate checksum using 13-byte header
       // In production, you would:
@@ -69,10 +69,10 @@ async function upgrade() {
       // - Validate it
       // - Atomically replace the binary
       
-      console.log("Upgrade simulation complete (actual binary replacement would happen here)");
-      console.log("Cost: Network RTT + 67ns (header validation)");
+      console.info("Upgrade simulation complete (actual binary replacement would happen here)");
+      console.info("Cost: Network RTT + 67ns (header validation)");
     } else {
-      console.log("Already on latest version");
+      console.info("Already on latest version");
     }
   } catch (error) {
     console.error("Upgrade failed:", error);

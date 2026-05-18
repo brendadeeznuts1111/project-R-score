@@ -40,7 +40,7 @@ export async function executeBusinessMigration(
   newAlias: string,
   options: MigrationOptions
 ): Promise<MigrationReport> {
-  console.log('🔄 Starting Business Migration Workflow');
+  console.info('🔄 Starting Business Migration Workflow');
 
   // Step 1: Verify old business exists
   const oldBusinessId = await redis.hget(`alias:${oldAlias}`, 'businessId');
@@ -64,7 +64,7 @@ export async function executeBusinessMigration(
     forwardDays: options.forwardDuration,
   });
 
-  console.log(`✅ Business migrated: ${oldAlias} → ${newAlias}`);
+  console.info(`✅ Business migrated: ${oldAlias} → ${newAlias}`);
 
   // Step 4: Generate new QR codes if needed
   if (options.updateQRs) {
@@ -100,7 +100,7 @@ export async function executeBusinessMigration(
   // Step 6: Update any external systems
   await updateExternalServices(oldAlias, newAlias);
 
-  console.log(`
+  console.info(`
 🎉 Migration Complete!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Old Business: ${oldAlias}
@@ -140,7 +140,7 @@ async function generateNewQRCodes(alias: string): Promise<void> {
       await redis.set(`qr:${alias}:${amount}`, JSON.stringify(qrCode), 'EX', 365 * 24 * 60 * 60); // 1 year
     }
 
-    console.log(`📸 Generated ${amounts.length} new QR codes for ${alias}`);
+    console.info(`📸 Generated ${amounts.length} new QR codes for ${alias}`);
   } catch (error) {
     console.error('Error generating QR codes:', error);
   }
@@ -156,7 +156,7 @@ async function updateExternalServices(oldAlias: string, newAlias: string): Promi
   // - Email marketing platforms
   // - Analytics systems
 
-  console.log(`🔗 Would update external services: ${oldAlias} → ${newAlias}`);
+  console.info(`🔗 Would update external services: ${oldAlias} → ${newAlias}`);
 
   // Store update task
   await redis.lpush(
@@ -179,7 +179,7 @@ export async function handlePaymentAccountLoss(
   newHandle: string,
   emergencyContact: string
 ): Promise<any> {
-  console.log(`🚨 EMERGENCY: ${provider} account lost for ${alias}`);
+  console.info(`🚨 EMERGENCY: ${provider} account lost for ${alias}`);
 
   // 1. Immediately disable the affected provider
   const businessId = await redis.hget(`alias:${alias}`, 'businessId');
@@ -247,6 +247,6 @@ export async function handlePaymentAccountLoss(
     JSON.stringify(recovery, null, 2)
   );
 
-  console.log(`✅ Emergency response initiated for ${alias}`);
+  console.info(`✅ Emergency response initiated for ${alias}`);
   return recovery;
 }

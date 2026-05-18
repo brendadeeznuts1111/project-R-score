@@ -226,7 +226,7 @@ async function main() {
     case '--validate':
       const input = process.argv[3];
       if (!input) {
-        console.log('Usage: bun run meta-schema.ts --validate \'{"revenue":{"mrr":210000}}\'');
+        console.info('Usage: bun run meta-schema.ts --validate \'{"revenue":{"mrr":210000}}\'');
         process.exit(1);
       }
 
@@ -235,14 +235,14 @@ async function main() {
         const result = validateMeta(parsed);
 
         if (result.success) {
-          console.log('✅ Valid metadata');
-          console.log(JSON.stringify(result.data, null, 2));
+          console.info('✅ Valid metadata');
+          console.info(JSON.stringify(result.data, null, 2));
         } else {
-          console.log('❌ Invalid metadata:', result.error);
+          console.info('❌ Invalid metadata:', result.error);
           process.exit(1);
         }
       } catch (e) {
-        console.log('❌ Invalid JSON:', (e as Error).message);
+        console.info('❌ Invalid JSON:', (e as Error).message);
         process.exit(1);
       }
       break;
@@ -250,33 +250,33 @@ async function main() {
     case '--parse':
       const metaStr = process.argv[3];
       if (!metaStr) {
-        console.log('Usage: bun run meta-schema.ts --parse "META:{mrr:210000,live}"');
+        console.info('Usage: bun run meta-schema.ts --parse "META:{mrr:210000,live}"');
         process.exit(1);
       }
 
       const parsed = parseMetaString(metaStr);
-      console.log('Parsed:', JSON.stringify(parsed, null, 2));
+      console.info('Parsed:', JSON.stringify(parsed, null, 2));
       break;
 
     case '--serialize':
       const jsonStr = process.argv[3];
       if (!jsonStr) {
-        console.log('Usage: bun run meta-schema.ts --serialize \'{"revenue":{"mrr":210000},"live":true}\'');
+        console.info('Usage: bun run meta-schema.ts --serialize \'{"revenue":{"mrr":210000},"live":true}\'');
         process.exit(1);
       }
 
       try {
         const obj = JSON.parse(jsonStr) as Meta;
         const serialized = serializeMeta(obj);
-        console.log('Serialized:', serialized);
+        console.info('Serialized:', serialized);
       } catch (e) {
-        console.log('❌ Invalid JSON:', (e as Error).message);
+        console.info('❌ Invalid JSON:', (e as Error).message);
         process.exit(1);
       }
       break;
 
     default:
-      console.log(`
+      console.info(`
 📋 Meta Schema Validator v4.1
 
 Usage:

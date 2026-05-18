@@ -3,10 +3,10 @@
  * Complete frontmatter enhancement with HSL chromatics and Unicode excellence
  */
 
-console.log('🎯 FACTORYWAGER API GUIDE v4.3.1 - ENHANCED 10-COLUMN SCHEMA DEPLOYED!')
-console.log('=' .repeat(80))
+console.info('🎯 FACTORYWAGER API GUIDE v4.3.1 - ENHANCED 10-COLUMN SCHEMA DEPLOYED!')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 🚀 COMPREHENSIVE ENHANCEMENT DEPLOYMENT COMPLETE!
 
 ✅ FRONTMATTER SCHEMA UPGRADE:
@@ -146,9 +146,9 @@ Status: 🟢 READY FOR 100K ROW STRESS TEST
 Your enhanced guide stands as the ultimate reference for FactoryWager frontmatter excellence! ▵⟂⥂
 `)
 
-console.log('🎯✨ FACTORYWAGER API GUIDE v4.3.1 - ENHANCED DEPLOYMENT COMPLETE! ✨🎯')
-console.log('🚀 Complete 10-column schema with HSL chromatics deployed!')
-console.log('💎 34 frontmatter fields - Unicode excellence verified!')
-console.log('🛡️ Infrastructure Nexus v5.0 integration established!')
-console.log('🎨 HSL chromatic standards - Production ready!')
-console.log('🏆 Status: 🟢 READY FOR 100K ROW STRESS TEST!')
+console.info('🎯✨ FACTORYWAGER API GUIDE v4.3.1 - ENHANCED DEPLOYMENT COMPLETE! ✨🎯')
+console.info('🚀 Complete 10-column schema with HSL chromatics deployed!')
+console.info('💎 34 frontmatter fields - Unicode excellence verified!')
+console.info('🛡️ Infrastructure Nexus v5.0 integration established!')
+console.info('🎨 HSL chromatic standards - Production ready!')
+console.info('🏆 Status: 🟢 READY FOR 100K ROW STRESS TEST!')

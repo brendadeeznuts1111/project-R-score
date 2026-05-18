@@ -3,10 +3,10 @@
  * All critical errors resolved - Production Ready
  */
 
-console.log('🎉 FactoryWager Registry v4.0 - FINAL TypeScript Compliance Report')
-console.log('=' .repeat(80))
+console.info('🎉 FactoryWager Registry v4.0 - FINAL TypeScript Compliance Report')
+console.info('=' .repeat(80))
 
-console.log(`
+console.info(`
 🔧 ALL TYPESCRIPT ERRORS RESOLVED ✅
 
 🎨 COLOR FORMATTING SYSTEM - 100% COMPLIANT
@@ -94,5 +94,5 @@ FUNCTIONALITY STATUS:
 🚀 ALL CRITICAL ERRORS RESOLVED - READY FOR PRODUCTION DEPLOYMENT!
 `)
 
-console.log('✨ FactoryWager Registry v4.0 - TypeScript Compliance Complete! ✨')
-console.log('🚀 Production deployment ready - Zero TypeScript errors! 🚀')
+console.info('✨ FactoryWager Registry v4.0 - TypeScript Compliance Complete! ✨')
+console.info('🚀 Production deployment ready - Zero TypeScript errors! 🚀')

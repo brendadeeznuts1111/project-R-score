@@ -11,7 +11,7 @@ const currentConfig = {
 };
 
 async function compileStandaloneRegistry() {
-  console.log("🔨 Compiling standalone registry with frozen 13-byte config...");
+  console.info("🔨 Compiling standalone registry with frozen 13-byte config...");
   
   try {
     const buildResult = await Bun.build({
@@ -44,7 +44,7 @@ async function compileStandaloneRegistry() {
     });
 
     if (buildResult.success) {
-      console.log("✅ Build successful!");
+      console.info("✅ Build successful!");
       
       // Create a wrapper script that embeds the 13-byte config
       const wrapperScript = `
@@ -73,9 +73,9 @@ globalThis.Bun.config = EMBEDDED_CONFIG;
 // Import and start the registry
 import('./api-standalone.js');
 
-console.log("🚀 Standalone registry started with frozen 13-byte config");
-console.log(\`📊 Config: 0x\${EMBEDDED_CONFIG.version.toString(16)}\${EMBEDDED_CONFIG.registryHash.toString(16)}\${EMBEDDED_CONFIG.featureFlags.toString(16)}\${EMBEDDED_CONFIG.terminal.mode === "raw" ? "02" : "01"}\${EMBEDDED_CONFIG.terminal.rows.toString(16)}\${EMBEDDED_CONFIG.terminal.cols.toString(16)}00\`);
-console.log("🔒 Config is immutable - cannot be changed at runtime");
+console.info("🚀 Standalone registry started with frozen 13-byte config");
+console.info(\`📊 Config: 0x\${EMBEDDED_CONFIG.version.toString(16)}\${EMBEDDED_CONFIG.registryHash.toString(16)}\${EMBEDDED_CONFIG.featureFlags.toString(16)}\${EMBEDDED_CONFIG.terminal.mode === "raw" ? "02" : "01"}\${EMBEDDED_CONFIG.terminal.rows.toString(16)}\${EMBEDDED_CONFIG.terminal.cols.toString(16)}00\`);
+console.info("🔒 Config is immutable - cannot be changed at runtime");
 `;
 
       // Write wrapper script
@@ -88,9 +88,9 @@ console.log("🔒 Config is immutable - cannot be changed at runtime");
       const binaryFile = Bun.file("./dist/api-standalone.js");
       const binarySize = (await binaryFile.size) / 1024 / 1024; // MB
       
-      console.log(`📦 Binary size: ${binarySize.toFixed(2)}MB (includes Bun runtime + config)`);
-      console.log("🔒 13-byte config is now embedded and immutable");
-      console.log("🚀 Run with: ./dist/registry-standalone.sh");
+      console.info(`📦 Binary size: ${binarySize.toFixed(2)}MB (includes Bun runtime + config)`);
+      console.info("🔒 13-byte config is now embedded and immutable");
+      console.info("🚀 Run with: ./dist/registry-standalone.sh");
       
       return true;
     } else {
@@ -134,8 +134,8 @@ export function updateConfig() {
   throw new Error("Cannot update frozen config - embedded at compile time");
 }
 
-console.log("🔒 Loading frozen 13-byte config from binary");
-console.log(\`📊 Embedded config: 0x\${FROZEN_CONFIG.version.toString(16)}\${FROZEN_CONFIG.registryHash.toString(16)}\${FROZEN_CONFIG.featureFlags.toString(16)}\${FROZEN_CONFIG.terminal.mode === "raw" ? "02" : "01"}\${FROZEN_CONFIG.terminal.rows.toString(16)}\${FROZEN_CONFIG.terminal.cols.toString(16)}00\`);
+console.info("🔒 Loading frozen 13-byte config from binary");
+console.info(\`📊 Embedded config: 0x\${FROZEN_CONFIG.version.toString(16)}\${FROZEN_CONFIG.registryHash.toString(16)}\${FROZEN_CONFIG.featureFlags.toString(16)}\${FROZEN_CONFIG.terminal.mode === "raw" ? "02" : "01"}\${FROZEN_CONFIG.terminal.rows.toString(16)}\${FROZEN_CONFIG.terminal.cols.toString(16)}00\`);
 `;
 
   return configCode;
@@ -143,31 +143,31 @@ console.log(\`📊 Embedded config: 0x\${FROZEN_CONFIG.version.toString(16)}\${F
 
 // Main execution
 async function main() {
-  console.log("🏗️  Bun v1.3.5 Standalone Registry Compiler");
-  console.log("═════════════════════════════════════════════════");
+  console.info("🏗️  Bun v1.3.5 Standalone Registry Compiler");
+  console.info("═════════════════════════════════════════════════");
   
   // Create frozen config loader
   const configLoader = createFrozenConfigLoader();
   await Bun.write("./src/core/config/frozen-loader.ts", configLoader);
-  console.log("✅ Created frozen config loader");
+  console.info("✅ Created frozen config loader");
   
   // Compile standalone binary
   const success = await compileStandaloneRegistry();
   
   if (success) {
-    console.log("\n🎉 Standalone registry compiled successfully!");
-    console.log("\n📋 Summary:");
-    console.log("   • 13-byte config is embedded in binary");
-    console.log("   • Config is immutable (frozen at compile time)");
-    console.log("   • No external bun.lockb needed");
-    console.log("   • RegistryHash is frozen to 0x12345678");
-    console.log("   • Binary can be distributed to team");
+    console.info("\n🎉 Standalone registry compiled successfully!");
+    console.info("\n📋 Summary:");
+    console.info("   • 13-byte config is embedded in binary");
+    console.info("   • Config is immutable (frozen at compile time)");
+    console.info("   • No external bun.lockb needed");
+    console.info("   • RegistryHash is frozen to 0x12345678");
+    console.info("   • Binary can be distributed to team");
     
-    console.log("\n🚀 Usage:");
-    console.log("   $ ./dist/registry-standalone.sh");
-    console.log("   $ BUN_CONFIG_VERSION=0 ./dist/registry-standalone.sh  # Will be ignored");
+    console.info("\n🚀 Usage:");
+    console.info("   $ ./dist/registry-standalone.sh");
+    console.info("   $ BUN_CONFIG_VERSION=0 ./dist/registry-standalone.sh  # Will be ignored");
     
-    console.log("\n🔒 The 13 bytes are now inside the binary itself. They are immortal.");
+    console.info("\n🔒 The 13 bytes are now inside the binary itself. They are immortal.");
   } else {
     console.error("\n❌ Compilation failed. Check logs above.");
     process.exit(1);

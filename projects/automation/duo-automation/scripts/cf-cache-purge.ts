@@ -47,8 +47,8 @@ class CachePurgeManager {
    * Purge all cached content
    */
   async purgeEverything(): Promise<PurgeResult> {
-    console.log('🗑️  Purging all cached content...');
-    console.log(`   Zone: ${this.domain}`);
+    console.info('🗑️  Purging all cached content...');
+    console.info(`   Zone: ${this.domain}`);
 
     try {
       const result = await this.client.purgeEverything();
@@ -69,7 +69,7 @@ class CachePurgeManager {
    * Purge specific files/URLs
    */
   async purgeFiles(files: string[]): Promise<PurgeResult> {
-    console.log('🗑️  Purging specific files...');
+    console.info('🗑️  Purging specific files...');
 
     // Normalize URLs to full paths
     const normalizedFiles = files.map(file => {
@@ -81,9 +81,9 @@ class CachePurgeManager {
       return `https://${this.domain}${path}`;
     });
 
-    console.log(`   Files to purge:`);
+    console.info(`   Files to purge:`);
     for (const file of normalizedFiles) {
-      console.log(`   • ${file}`);
+      console.info(`   • ${file}`);
     }
 
     try {
@@ -106,7 +106,7 @@ class CachePurgeManager {
    * Purge by URL prefix
    */
   async purgePrefixes(prefixes: string[]): Promise<PurgeResult> {
-    console.log('🗑️  Purging by prefixes...');
+    console.info('🗑️  Purging by prefixes...');
 
     // Normalize prefixes
     const normalizedPrefixes = prefixes.map(prefix => {
@@ -117,9 +117,9 @@ class CachePurgeManager {
       return `https://${this.domain}${path}`;
     });
 
-    console.log(`   Prefixes to purge:`);
+    console.info(`   Prefixes to purge:`);
     for (const prefix of normalizedPrefixes) {
-      console.log(`   • ${prefix}*`);
+      console.info(`   • ${prefix}*`);
     }
 
     try {
@@ -142,8 +142,8 @@ class CachePurgeManager {
    * Purge by cache tags (Enterprise only)
    */
   async purgeTags(tags: string[]): Promise<PurgeResult> {
-    console.log('🗑️  Purging by cache tags (Enterprise feature)...');
-    console.log(`   Tags: ${tags.join(', ')}`);
+    console.info('🗑️  Purging by cache tags (Enterprise feature)...');
+    console.info(`   Tags: ${tags.join(', ')}`);
 
     try {
       const result = await this.client.purgeCacheByTags(tags);
@@ -165,7 +165,7 @@ class CachePurgeManager {
    * Smart purge based on file patterns
    */
   async smartPurge(pattern: string): Promise<PurgeResult> {
-    console.log(`🧠 Smart purge: ${pattern}`);
+    console.info(`🧠 Smart purge: ${pattern}`);
 
     // Common patterns
     const patterns: Record<string, string[]> = {
@@ -192,23 +192,23 @@ class CachePurgeManager {
    * Display purge status
    */
   displayResult(result: PurgeResult): void {
-    console.log('\n' + '═'.repeat(50));
+    console.info('\n' + '═'.repeat(50));
     if (result.success) {
-      console.log('✅ ' + result.message);
+      console.info('✅ ' + result.message);
       if (result.purgeId) {
-        console.log(`   Purge ID: ${result.purgeId}`);
+        console.info(`   Purge ID: ${result.purgeId}`);
       }
       if (result.purgedCount) {
-        console.log(`   Items purged: ${result.purgedCount}`);
+        console.info(`   Items purged: ${result.purgedCount}`);
       }
     } else {
-      console.log('❌ ' + result.message);
+      console.info('❌ ' + result.message);
     }
-    console.log('═'.repeat(50));
+    console.info('═'.repeat(50));
 
     // Dashboard link
     const dashboardUrl = this.client.getDashboardUrl();
-    console.log(`\n📊 Dashboard: ${urlLink(dashboardUrl + '/caching/configuration', 'Cloudflare Caching')}`);
+    console.info(`\n📊 Dashboard: ${urlLink(dashboardUrl + '/caching/configuration', 'Cloudflare Caching')}`);
   }
 }
 
@@ -222,8 +222,8 @@ async function main() {
 
   // Check for API token
   if (!process.env.CF_API_TOKEN && command !== '--help' && command !== '-h') {
-    console.log('⚠️  CF_API_TOKEN environment variable is required');
-    console.log(`   Get your token: ${urlLink('https://dash.cloudflare.com/profile/api-tokens', 'Cloudflare API Tokens')}`);
+    console.info('⚠️  CF_API_TOKEN environment variable is required');
+    console.info(`   Get your token: ${urlLink('https://dash.cloudflare.com/profile/api-tokens', 'Cloudflare API Tokens')}`);
     process.exit(1);
   }
 
@@ -240,7 +240,7 @@ async function main() {
     case '-f':
       const files = args.slice(1);
       if (files.length === 0) {
-        console.log('Usage: bun run cf:purge --files /path/to/file1.js /path/to/file2.css');
+        console.info('Usage: bun run cf:purge --files /path/to/file1.js /path/to/file2.css');
         process.exit(1);
       }
       const filesResult = await manager!.purgeFiles(files);
@@ -251,7 +251,7 @@ async function main() {
     case '-p':
       const prefixes = args.slice(1);
       if (prefixes.length === 0) {
-        console.log('Usage: bun run cf:purge --prefixes /assets/ /api/');
+        console.info('Usage: bun run cf:purge --prefixes /assets/ /api/');
         process.exit(1);
       }
       const prefixesResult = await manager!.purgePrefixes(prefixes);
@@ -262,7 +262,7 @@ async function main() {
     case '-t':
       const tags = args.slice(1);
       if (tags.length === 0) {
-        console.log('Usage: bun run cf:purge --tags release-v1 feature-xyz');
+        console.info('Usage: bun run cf:purge --tags release-v1 feature-xyz');
         process.exit(1);
       }
       const tagsResult = await manager!.purgeTags(tags);
@@ -273,8 +273,8 @@ async function main() {
     case '-s':
       const pattern = args[1];
       if (!pattern) {
-        console.log('Usage: bun run cf:purge --smart <pattern>');
-        console.log('Patterns: assets, js, css, images, api, html');
+        console.info('Usage: bun run cf:purge --smart <pattern>');
+        console.info('Patterns: assets, js, css, images, api, html');
         process.exit(1);
       }
       const smartResult = await manager!.smartPurge(pattern);
@@ -284,7 +284,7 @@ async function main() {
     case '--help':
     case '-h':
     default:
-      console.log(`
+      console.info(`
 🗑️  Cloudflare Cache Purge v4.6
 
 Invalidate CDN cache for ${DEFAULT_DOMAIN}

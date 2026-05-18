@@ -57,15 +57,15 @@ function box(text: string, width: number = 60): string {
 }
 
 function header(title: string): void {
-	console.log(
+	console.info(
 		colorize(
 			`
 ╔══════════════════════════════════════════════════════════════════════════════╗`,
 			"cyan",
 		),
 	);
-	console.log(colorize(box(title.toUpperCase()), "cyan"));
-	console.log(
+	console.info(colorize(box(title.toUpperCase()), "cyan"));
+	console.info(
 		colorize(
 			`╚══════════════════════════════════════════════════════════════════════════════╝`,
 			"cyan",
@@ -74,8 +74,8 @@ function header(title: string): void {
 }
 
 function section(title: string): void {
-	console.log(colorize(`\n📦 ${title}`, "yellow"));
-	console.log(colorize("─".repeat(70), "dim"));
+	console.info(colorize(`\n📦 ${title}`, "yellow"));
+	console.info(colorize("─".repeat(70), "dim"));
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -85,8 +85,8 @@ function section(title: string): void {
 function demoCCMPChains(): void {
 	section("DEMO 1: CCMP Conditional Compare Chains");
 
-	console.log(colorize("\n📝 TypeScript Source (Compound Boolean):", "blue"));
-	console.log(`
+	console.info(colorize("\n📝 TypeScript Source (Compound Boolean):", "blue"));
+	console.info(`
   if (node?.type === "ImportDeclaration" &&
       node?.source?.value === "wrap-ansi" &&
       node?.parent?.type === "Program") {
@@ -94,8 +94,8 @@ function demoCCMPChains(): void {
   }
 `);
 
-	console.log(colorize("🔧 ARM64 Assembly (v1.3.7+ CCMP Chain):", "green"));
-	console.log(`
+	console.info(colorize("🔧 ARM64 Assembly (v1.3.7+ CCMP Chain):", "green"));
+	console.info(`
   ${colorize("cmp   x0, #ImportDeclaration", "cyan")}      ; Compare node.type
   ${colorize('ccmp  x1, #"wrap-ansi", #0, eq', "magenta")} ; Compare source if equal
   ${colorize("ccmp  x2, #Program, #0, eq", "magenta")}     ; Compare parent if equal
@@ -103,8 +103,8 @@ function demoCCMPChains(): void {
   ${colorize("; All conditions met - process import", "dim")}
 `);
 
-	console.log(colorize("⚡ Performance Impact:", "blue"));
-	console.log(`
+	console.info(colorize("⚡ Performance Impact:", "blue"));
+	console.info(`
   Legacy Approach (x86_64):
     • 3 separate compare + branch instructions
     • 3 branch prediction opportunities
@@ -118,7 +118,7 @@ function demoCCMPChains(): void {
 `);
 
 	// Live demonstration
-	console.log(colorize("🎯 Live Test (5,000,000 iterations):", "blue"));
+	console.info(colorize("🎯 Live Test (5,000,000 iterations):", "blue"));
 
 	const testNode = {
 		type: "ImportDeclaration",
@@ -134,8 +134,8 @@ function demoCCMPChains(): void {
 	const end = performance.now();
 
 	const opsPerSec = (5000000 / (end - start)) * 1000;
-	console.log(`   ✓ Completed in ${colorize(`${(end - start).toFixed(2)}ms`, "green")}`);
-	console.log(
+	console.info(`   ✓ Completed in ${colorize(`${(end - start).toFixed(2)}ms`, "green")}`);
+	console.info(
 		`   ✓ ${colorize(`${opsPerSec.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, "green")} operations/second`,
 	);
 }
@@ -147,23 +147,23 @@ function demoCCMPChains(): void {
 function demoFPMaterialization(): void {
 	section("DEMO 2: NEON FP Vector Register Materialization");
 
-	console.log(colorize("\n📝 TypeScript Source:", "blue"));
-	console.log(`
+	console.info(colorize("\n📝 TypeScript Source:", "blue"));
+	console.info(`
   const scale = 1.5;              // Layout scale factor
   const width = 100;              // Container width
   const offset = width * scale;   // Calculate offset
 `);
 
-	console.log(colorize("🔧 ARM64 Assembly (v1.3.7+ NEON):", "green"));
-	console.log(`
+	console.info(colorize("🔧 ARM64 Assembly (v1.3.7+ NEON):", "green"));
+	console.info(`
   ${colorize("fmov  d0, #1.50000000", "magenta")}      ; Materialize 1.5 into v0.d[0]
   ${colorize("scvtf d1, x0", "cyan")}                  ; Convert width to float
   ${colorize("fmul  d0, d1, d0", "cyan")}              ; Multiply: width * scale
   ${colorize("; Result in d0 - never touched RAM!", "dim")}
 `);
 
-	console.log(colorize("⚡ Memory Access Comparison:", "blue"));
-	console.log(`
+	console.info(colorize("⚡ Memory Access Comparison:", "blue"));
+	console.info(`
   x86_64 Legacy:
     • Load constant from .rodata (L1 cache): ~4-8ns
     • Potential cache miss to main memory: ~100ns
@@ -176,7 +176,7 @@ function demoFPMaterialization(): void {
 `);
 
 	// Live demonstration
-	console.log(colorize("🎯 Live Test (10,000,000 iterations):", "blue"));
+	console.info(colorize("🎯 Live Test (10,000,000 iterations):", "blue"));
 
 	const start = performance.now();
 	for (let i = 0; i < 10000000; i++) {
@@ -188,11 +188,11 @@ function demoFPMaterialization(): void {
 	const end = performance.now();
 
 	const opsPerSec = (10000000 / (end - start)) * 1000;
-	console.log(`   ✓ Completed in ${colorize(`${(end - start).toFixed(2)}ms`, "green")}`);
-	console.log(
+	console.info(`   ✓ Completed in ${colorize(`${(end - start).toFixed(2)}ms`, "green")}`);
+	console.info(
 		`   ✓ ${colorize(`${opsPerSec.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, "green")} operations/second`,
 	);
-	console.log(
+	console.info(
 		`   ✓ Constants materialized in ${colorize("v0-v31 vector registers", "magenta")}`,
 	);
 }
@@ -204,21 +204,21 @@ function demoFPMaterialization(): void {
 function demoSIMDBuffer(): void {
 	section("DEMO 3: NEON SIMD Buffer Operations");
 
-	console.log(colorize("\n📝 TypeScript Source:", "blue"));
-	console.log(`
+	console.info(colorize("\n📝 TypeScript Source:", "blue"));
+	console.info(`
   const text = "Hello, ARM64 SIMD World!";
   const buffer = Buffer.from(text);
 `);
 
-	console.log(colorize("🔧 ARM64 Assembly (v1.3.7+ NEON SIMD):", "green"));
-	console.log(`
+	console.info(colorize("🔧 ARM64 Assembly (v1.3.7+ NEON SIMD):", "green"));
+	console.info(`
   ${colorize("ldp   q0, q1, [x1]", "magenta")}        ; Load 32 bytes (2x 128-bit)
   ${colorize("stp   q0, q1, [x0]", "magenta")}        ; Store 32 bytes (2x 128-bit)
   ${colorize("; 32 bytes copied in 2 instructions!", "dim")}
 `);
 
-	console.log(colorize("⚡ Buffer Allocation Speedup:", "blue"));
-	console.log(`
+	console.info(colorize("⚡ Buffer Allocation Speedup:", "blue"));
+	console.info(`
   Standard JavaScript (V8):
     • Byte-by-byte copy or scalar loops
     • Multiple memory accesses per element
@@ -231,7 +231,7 @@ function demoSIMDBuffer(): void {
 `);
 
 	// Live demonstration
-	console.log(colorize("🎯 Live Test (500,000 iterations):", "blue"));
+	console.info(colorize("🎯 Live Test (500,000 iterations):", "blue"));
 
 	const testString = "Hello, ARM64 SIMD World!".repeat(100);
 
@@ -243,12 +243,12 @@ function demoSIMDBuffer(): void {
 	const end = performance.now();
 
 	const opsPerSec = (500000 / (end - start)) * 1000;
-	console.log(`   ✓ String size: ${colorize(`${testString.length} bytes`, "cyan")}`);
-	console.log(`   ✓ Completed in ${colorize(`${(end - start).toFixed(2)}ms`, "green")}`);
-	console.log(
+	console.info(`   ✓ String size: ${colorize(`${testString.length} bytes`, "cyan")}`);
+	console.info(`   ✓ Completed in ${colorize(`${(end - start).toFixed(2)}ms`, "green")}`);
+	console.info(
 		`   ✓ ${colorize(`${opsPerSec.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, "green")} buffers/second`,
 	);
-	console.log(`   ✓ Using ${colorize("ldp/stp NEON instructions", "magenta")}`);
+	console.info(`   ✓ Using ${colorize("ldp/stp NEON instructions", "magenta")}`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -258,14 +258,14 @@ function demoSIMDBuffer(): void {
 function demoWrapAnsiMigration(): void {
 	section("DEMO 4: wrap-ansi Migration with ARM64 Optimizations");
 
-	console.log(colorize("\n📝 Migration Scenario:", "blue"));
-	console.log(`
+	console.info(colorize("\n📝 Migration Scenario:", "blue"));
+	console.info(`
   Converting npm 'wrap-ansi' imports to native Bun.wrapAnsi
   across a 10,000 file monorepo...
 `);
 
-	console.log(colorize("🔧 ARM64-Optimized Pipeline:", "green"));
-	console.log(`
+	console.info(colorize("🔧 ARM64-Optimized Pipeline:", "green"));
+	console.info(`
   Phase 1: Discovery (Bun.Glob)
     ├─ ARM64: SIMD directory traversal
     ├─ CCMP-optimized file filtering
@@ -287,7 +287,7 @@ function demoWrapAnsiMigration(): void {
 `);
 
 	// Simulate migration
-	console.log(colorize("🎯 Live Migration Simulation:", "blue"));
+	console.info(colorize("🎯 Live Migration Simulation:", "blue"));
 
 	const files = Array.from({ length: 100 }, (_, i) => ({
 		path: `src/components/File${i}.ts`,
@@ -315,10 +315,10 @@ function demoWrapAnsiMigration(): void {
 
 	const end = performance.now();
 
-	console.log(`   ✓ Scanned ${colorize(`${files.length}`, "cyan")} files`);
-	console.log(`   ✓ Migrated ${colorize(`${migrated}`, "green")} wrap-ansi imports`);
-	console.log(`   ✓ Completed in ${colorize(`${(end - start).toFixed(2)}ms`, "green")}`);
-	console.log(`   ✓ Using ${colorize("CCMP conditional compare chains", "magenta")}`);
+	console.info(`   ✓ Scanned ${colorize(`${files.length}`, "cyan")} files`);
+	console.info(`   ✓ Migrated ${colorize(`${migrated}`, "green")} wrap-ansi imports`);
+	console.info(`   ✓ Completed in ${colorize(`${(end - start).toFixed(2)}ms`, "green")}`);
+	console.info(`   ✓ Using ${colorize("CCMP conditional compare chains", "magenta")}`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -330,27 +330,27 @@ function displaySystemStatus(): void {
 
 	const metrics = getPerformanceMetrics();
 
-	console.log(colorize("\n🖥️  Platform Detection:", "blue"));
-	console.log(
+	console.info(colorize("\n🖥️  Platform Detection:", "blue"));
+	console.info(
 		`   Architecture:      ${IS_ARM64 ? colorize("ARM64 ✅", "green") : colorize("x86_64 ⚠️", "yellow")}`,
 	);
-	console.log(
+	console.info(
 		`   Apple Silicon:     ${IS_APPLE_SILICON ? colorize("YES ✅", "green") : colorize("NO", "dim")}`,
 	);
-	console.log(`   Bun Version:       ${Bun.version}`);
-	console.log(
+	console.info(`   Bun Version:       ${Bun.version}`);
+	console.info(
 		`   Optimizations:     ${HAS_ARM64_OPTIMIZATIONS ? colorize("ACTIVE 🚀", "green") : colorize("INACTIVE", "yellow")}`,
 	);
 
-	console.log(colorize("\n⚡ Performance Projections:", "blue"));
-	console.log(
+	console.info(colorize("\n⚡ Performance Projections:", "blue"));
+	console.info(
 		`   Branch Miss Rate:  ${(metrics.estimatedBranchMissRate * 100).toFixed(1)}%`,
 	);
-	console.log(`   Buffer Speedup:    ${metrics.bufferAllocSpeedup}x`);
-	console.log(`   AST Validation:    ${metrics.astValidationSpeedup}x`);
+	console.info(`   Buffer Speedup:    ${metrics.bufferAllocSpeedup}x`);
+	console.info(`   AST Validation:    ${metrics.astValidationSpeedup}x`);
 
 	if (IS_ARM64 && HAS_ARM64_OPTIMIZATIONS) {
-		console.log(
+		console.info(
 			colorize(
 				`
 ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -370,7 +370,7 @@ function displaySystemStatus(): void {
 			),
 		);
 	} else {
-		console.log(
+		console.info(
 			colorize(
 				`
 ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -396,8 +396,8 @@ async function main() {
 	console.clear();
 
 	header("ARM64 WEAPONIZATION DEMO");
-	console.log(colorize("\n   Bun v1.3.7+ Silicon-Native Performance Showcase", "dim"));
-	console.log(
+	console.info(colorize("\n   Bun v1.3.7+ Silicon-Native Performance Showcase", "dim"));
+	console.info(
 		colorize("   CCMP • NEON • SIMD • Branch Prediction Optimization\n", "dim"),
 	);
 
@@ -412,7 +412,7 @@ async function main() {
 
 	// Final summary
 	header("DEMO COMPLETE");
-	console.log(
+	console.info(
 		colorize(
 			`
 📊 Summary:

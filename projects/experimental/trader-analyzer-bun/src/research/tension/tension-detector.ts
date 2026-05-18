@@ -87,7 +87,7 @@ export class SubMarketTensionDetector extends EventEmitter {
 			return;
 		}
 
-		console.log(`🔬 Starting tension monitoring (${intervalMs}ms interval)`);
+		console.info(`🔬 Starting tension monitoring (${intervalMs}ms interval)`);
 
 		this.monitoringInterval = setInterval(() => {
 			this.checkAllActiveEvents().catch((error) => {
@@ -103,7 +103,7 @@ export class SubMarketTensionDetector extends EventEmitter {
 		if (this.monitoringInterval) {
 			clearInterval(this.monitoringInterval);
 			this.monitoringInterval = null;
-			console.log("🔬 Tension monitoring stopped");
+			console.info("🔬 Tension monitoring stopped");
 		}
 	}
 
@@ -479,7 +479,7 @@ export class SubMarketTensionDetector extends EventEmitter {
 			) as { tensionId: number } | undefined;
 
 			if (result?.tensionId) {
-				console.log(
+				console.info(
 					`🚨 TENSION [${tension.tension_type}] severity=${tension.severity} nodes=${tension.nodes.length}`,
 				);
 

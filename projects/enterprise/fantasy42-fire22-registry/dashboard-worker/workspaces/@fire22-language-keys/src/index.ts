@@ -491,7 +491,7 @@ export class Fire22LanguageManager {
  * Usage:
  * ```typescript
  * import { fire22Language } from '@fire22/language-keys';
- * console.log(fire22Language.getText('L-69')); // "Amount"
+ * console.info(fire22Language.getText('L-69')); // "Amount"
  * ```
  */
 export const fire22Language = new Fire22LanguageManager();

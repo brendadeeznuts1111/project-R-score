@@ -91,8 +91,8 @@ export function createConfigAwareProxy() {
         
         // Log successful connection with timing
         const duration = Bun.nanoseconds() - start;
-        console.log(`🔗 CONNECT tunnel established: ${target} -> ${upstream} (${duration}ns)`);
-        console.log(`📊 Config: v${config.version}, hash=${config.registryHash}, flags=0x${config.featureFlags.toString(16)}`);
+        console.info(`🔗 CONNECT tunnel established: ${target} -> ${upstream} (${duration}ns)`);
+        console.info(`📊 Config: v${config.version}, hash=${config.registryHash}, flags=0x${config.featureFlags.toString(16)}`);
         
         return tunnelResponse;
         
@@ -240,8 +240,8 @@ async function connectToUpstream(upstream: string, clientReq: Request): Promise<
 export function createProxyServer(port: number = 8080) {
   const proxy = createConfigAwareProxy();
   
-  console.log(`🚀 Starting config-aware proxy on port ${port}`);
-  console.log(`📊 Supported upstreams:`, Object.keys(UPSTREAM_REGISTRIES));
+  console.info(`🚀 Starting config-aware proxy on port ${port}`);
+  console.info(`📊 Supported upstreams:`, Object.keys(UPSTREAM_REGISTRIES));
   
   return {
     port,

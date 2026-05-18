@@ -203,12 +203,12 @@ const headersAPIMatrix: APIMatrix[] = [
 ];
 
 function generateMatrixTable() {
-  console.log("🔗 Headers API Cross-Reference Matrix");
-  console.log("=".repeat(80));
+  console.info("🔗 Headers API Cross-Reference Matrix");
+  console.info("=".repeat(80));
 
   // Create performance comparison table
-  console.log("\n📊 Performance Comparison (100,000 operations):");
-  console.log("-".repeat(80));
+  console.info("\n📊 Performance Comparison (100,000 operations):");
+  console.info("-".repeat(80));
 
   const performanceData = [
     { method: "headers.toJSON()", time: "40ms", relative: "🚀 Fastest" },
@@ -234,8 +234,8 @@ function generateMatrixTable() {
   console.table(performanceData);
 
   // Create use case matrix
-  console.log("\n🎯 Use Case Recommendations:");
-  console.log("-".repeat(80));
+  console.info("\n🎯 Use Case Recommendations:");
+  console.info("-".repeat(80));
 
   const useCaseMatrix = [
     {
@@ -279,24 +279,24 @@ function generateMatrixTable() {
   console.table(useCaseMatrix);
 
   // Create detailed API comparison
-  console.log("\n📋 Detailed API Comparison:");
-  console.log("-".repeat(80));
+  console.info("\n📋 Detailed API Comparison:");
+  console.info("-".repeat(80));
 
   headersAPIMatrix.forEach((api, index) => {
-    console.log(`\n${index + 1}. ${api.method}`);
-    console.log(`   Description: ${api.description}`);
-    console.log(`   Returns: ${api.returnType}`);
-    console.log(`   Performance: ${api.performance}`);
-    console.log(`   Best for: ${api.useCase}`);
-    console.log(`   Example: ${api.example}`);
-    console.log(`   ✅ Pros: ${api.pros.join(", ")}`);
-    console.log(`   ❌ Cons: ${api.cons.join(", ")}`);
+    console.info(`\n${index + 1}. ${api.method}`);
+    console.info(`   Description: ${api.description}`);
+    console.info(`   Returns: ${api.returnType}`);
+    console.info(`   Performance: ${api.performance}`);
+    console.info(`   Best for: ${api.useCase}`);
+    console.info(`   Example: ${api.example}`);
+    console.info(`   ✅ Pros: ${api.pros.join(", ")}`);
+    console.info(`   ❌ Cons: ${api.cons.join(", ")}`);
   });
 
   // Create decision tree
-  console.log("\n🌳 API Selection Decision Tree:");
-  console.log("-".repeat(80));
-  console.log(`
+  console.info("\n🌳 API Selection Decision Tree:");
+  console.info("-".repeat(80));
+  console.info(`
 Need to serialize to JSON?
 ├── Yes → Use headers.toJSON() (fastest) or JSON.stringify(headers)
 └── No → Need to process/filter headers?
@@ -309,8 +309,8 @@ Need to serialize to JSON?
   `);
 
   // Create performance benchmarks
-  console.log("\n⚡ Live Performance Benchmark:");
-  console.log("-".repeat(80));
+  console.info("\n⚡ Live Performance Benchmark:");
+  console.info("-".repeat(80));
 
   const headers = new Headers({
     "Content-Type": "application/json",
@@ -353,8 +353,8 @@ Need to serialize to JSON?
 }
 
 function generateCompatibilityMatrix() {
-  console.log("\n🌐 Cross-Platform Compatibility:");
-  console.log("-".repeat(80));
+  console.info("\n🌐 Cross-Platform Compatibility:");
+  console.info("-".repeat(80));
 
   const compatibilityMatrix = [
     {
@@ -395,16 +395,16 @@ function generateCompatibilityMatrix() {
 }
 
 // Main execution
-console.log("🔗 Headers API Cross-Reference Matrix Tool");
-console.log("=".repeat(80));
+console.info("🔗 Headers API Cross-Reference Matrix Tool");
+console.info("=".repeat(80));
 generateMatrixTable();
 generateCompatibilityMatrix();
 
-console.log("\n💡 Key Takeaways:");
-console.log("-".repeat(80));
-console.log("1. Use headers.toJSON() for fastest JSON serialization in Bun");
-console.log("2. Use headers.entries() for filtering and processing");
-console.log("3. Use headers.get() for single header lookups");
-console.log("4. Use Object.fromEntries() for cross-platform compatibility");
-console.log("5. Consider performance vs compatibility trade-offs");
-console.log("6. Bun-specific methods offer significant speed improvements");
+console.info("\n💡 Key Takeaways:");
+console.info("-".repeat(80));
+console.info("1. Use headers.toJSON() for fastest JSON serialization in Bun");
+console.info("2. Use headers.entries() for filtering and processing");
+console.info("3. Use headers.get() for single header lookups");
+console.info("4. Use Object.fromEntries() for cross-platform compatibility");
+console.info("5. Consider performance vs compatibility trade-offs");
+console.info("6. Bun-specific methods offer significant speed improvements");

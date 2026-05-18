@@ -95,6 +95,6 @@ Bun.serve({
   }
 })
 
-console.log('🎨 CSS Optimization Server running on http://localhost:3001')
-console.log('📦 Try: http://localhost:3001/styles/main.css')
-console.log('📦 Bundle: http://localhost:3001/css/bundle')
+console.info('🎨 CSS Optimization Server running on http://localhost:3001')
+console.info('📦 Try: http://localhost:3001/styles/main.css')
+console.info('📦 Bundle: http://localhost:3001/css/bundle')

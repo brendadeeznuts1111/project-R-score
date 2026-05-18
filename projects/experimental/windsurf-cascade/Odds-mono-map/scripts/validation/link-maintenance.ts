@@ -69,13 +69,13 @@ class LinkMaintenanceSystem {
     }
 
     async initialize(): Promise<void> {
-        console.log('🔗 Initializing link maintenance system...');
+        console.info('🔗 Initializing link maintenance system...');
         await this.buildFileIndex();
         await this.loadMappings();
     }
 
     async scanForLinks(): Promise<LinkMaintenanceReport> {
-        console.log('🔍 Scanning vault for links...');
+        console.info('🔍 Scanning vault for links...');
 
         const files = await this.getAllMarkdownFiles();
         const issues: LinkIssue[] = [];
@@ -100,7 +100,7 @@ class LinkMaintenanceSystem {
     }
 
     async fixBrokenLinks(dryRun: boolean = true): Promise<number> {
-        console.log(`🔧 ${dryRun ? 'Dry run: ' : ''}Fixing broken links...`);
+        console.info(`🔧 ${dryRun ? 'Dry run: ' : ''}Fixing broken links...`);
 
         const report = await this.scanForLinks();
         const brokenIssues = report.issues.filter(issue => issue.issue === 'broken');
@@ -113,7 +113,7 @@ class LinkMaintenanceSystem {
                     await this.applyFix(issue);
                     fixedCount++;
                 } else {
-                    console.log(`  📝 Would fix: ${issue.file} -> ${issue.suggestion}`);
+                    console.info(`  📝 Would fix: ${issue.file} -> ${issue.suggestion}`);
                     fixedCount++;
                 }
             }
@@ -127,7 +127,7 @@ class LinkMaintenanceSystem {
     }
 
     async updateLinksAfterFileMove(oldPath: string, newPath: string, reason: string = 'File moved'): Promise<void> {
-        console.log(`📁 Updating links after file move: ${oldPath} -> ${newPath}`);
+        console.info(`📁 Updating links after file move: ${oldPath} -> ${newPath}`);
 
         // Add to mappings
         const mapping: FileMapping = {
@@ -155,7 +155,7 @@ class LinkMaintenanceSystem {
     }
 
     async validateAllLinks(): Promise<LinkMaintenanceReport> {
-        console.log('✅ Validating all internal links...');
+        console.info('✅ Validating all internal links...');
         return this.scanForLinks();
     }
 
@@ -172,7 +172,7 @@ class LinkMaintenanceSystem {
             this.fileIndex.set(baseName.toLowerCase(), file);
         }
 
-        console.log(`  📚 Indexed ${files.length} files`);
+        console.info(`  📚 Indexed ${files.length} files`);
     }
 
     private async loadMappings(): Promise<void> {
@@ -181,9 +181,9 @@ class LinkMaintenanceSystem {
             const mappingsPath = join(this.vaultPath, '.vault', 'link-mappings.json');
             const content = await readFile(mappingsPath, 'utf-8');
             this.mappings = JSON.parse(content);
-            console.log(`  📋 Loaded ${this.mappings.length} file mappings`);
+            console.info(`  📋 Loaded ${this.mappings.length} file mappings`);
         } catch (error) {
-            console.log('  📋 No existing mappings found');
+            console.info('  📋 No existing mappings found');
             this.mappings = [];
         }
     }
@@ -429,7 +429,7 @@ class LinkMaintenanceSystem {
 
         if (updated !== content) {
             await writeFile(filePath, updated, 'utf-8');
-            console.log(`  ✅ Updated links in ${filePath}`);
+            console.info(`  ✅ Updated links in ${filePath}`);
         }
     }
 
@@ -513,15 +513,15 @@ async function main(): Promise<void> {
     const vaultPath = args[0] || process.cwd();
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log('🔗 Link Maintenance System');
-        console.log('Usage: bun link-maintenance.ts [vault-path] [options]');
-        console.log('\nOptions:');
-        console.log('  --help, -h              Show this help message');
-        console.log('  --scan                  Scan for link issues');
-        console.log('  --fix                   Fix broken links (dry run by default)');
-        console.log('  --apply                 Actually apply fixes (not dry run)');
-        console.log('  --validate              Validate all links');
-        console.log('  --update <old> <new>    Update links after file move');
+        console.info('🔗 Link Maintenance System');
+        console.info('Usage: bun link-maintenance.ts [vault-path] [options]');
+        console.info('\nOptions:');
+        console.info('  --help, -h              Show this help message');
+        console.info('  --scan                  Scan for link issues');
+        console.info('  --fix                   Fix broken links (dry run by default)');
+        console.info('  --apply                 Actually apply fixes (not dry run)');
+        console.info('  --validate              Validate all links');
+        console.info('  --update <old> <new>    Update links after file move');
         process.exit(0);
     }
 
@@ -531,30 +531,30 @@ async function main(): Promise<void> {
 
         if (args.includes('--scan')) {
             const report = await linkSystem.scanForLinks();
-            console.log('\n📊 Scan Results:');
-            console.log(`  Total Files: ${report.summary.totalFiles}`);
-            console.log(`  Total Links: ${report.summary.totalLinks}`);
-            console.log(`  Broken Links: ${report.summary.brokenLinks}`);
-            console.log(`  Redirected Links: ${report.summary.fixedLinks}`);
+            console.info('\n📊 Scan Results:');
+            console.info(`  Total Files: ${report.summary.totalFiles}`);
+            console.info(`  Total Links: ${report.summary.totalLinks}`);
+            console.info(`  Broken Links: ${report.summary.brokenLinks}`);
+            console.info(`  Redirected Links: ${report.summary.fixedLinks}`);
 
             if (report.issues.length > 0) {
-                console.log('\n🔍 Issues Found:');
+                console.info('\n🔍 Issues Found:');
                 report.issues.slice(0, 10).forEach(issue => {
-                    console.log(`  ${issue.issue === 'broken' ? '❌' : '⚠️'} ${issue.file}: ${issue.link.original}`);
+                    console.info(`  ${issue.issue === 'broken' ? '❌' : '⚠️'} ${issue.file}: ${issue.link.original}`);
                 });
 
                 if (report.issues.length > 10) {
-                    console.log(`  ... and ${report.issues.length - 10} more`);
+                    console.info(`  ... and ${report.issues.length - 10} more`);
                 }
             }
         } else if (args.includes('--fix')) {
             const dryRun = !args.includes('--apply');
             const fixedCount = await linkSystem.fixBrokenLinks(dryRun);
-            console.log(`\n${dryRun ? '🔍 Dry run: ' : '✅ '}Fixed ${fixedCount} links`);
+            console.info(`\n${dryRun ? '🔍 Dry run: ' : '✅ '}Fixed ${fixedCount} links`);
         } else if (args.includes('--validate')) {
             const report = await linkSystem.validateAllLinks();
-            console.log('\n✅ Validation Complete');
-            console.log(`  Compliance: ${((report.summary.totalLinks - report.summary.brokenLinks) / report.summary.totalLinks * 100).toFixed(1)}%`);
+            console.info('\n✅ Validation Complete');
+            console.info(`  Compliance: ${((report.summary.totalLinks - report.summary.brokenLinks) / report.summary.totalLinks * 100).toFixed(1)}%`);
         } else if (args.includes('--update')) {
             const updateIndex = args.indexOf('--update');
             const oldPath = args[updateIndex + 1];
@@ -566,9 +566,9 @@ async function main(): Promise<void> {
             }
 
             await linkSystem.updateLinksAfterFileMove(oldPath, newPath);
-            console.log('✅ Links updated successfully');
+            console.info('✅ Links updated successfully');
         } else {
-            console.log('Use --help to see available options');
+            console.info('Use --help to see available options');
         }
 
     } catch (error) {
